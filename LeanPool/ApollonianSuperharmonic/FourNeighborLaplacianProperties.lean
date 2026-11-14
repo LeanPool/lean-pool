@@ -57,6 +57,38 @@ theorem affineTranslate :
   simp
   ring
 
+/-- A rectangular affine identity supplies all five values of a lattice neighborhood. -/
+theorem affineValuesOnRectangle (f g : IntegerLatticeFunction) (x t : GaussianInt)
+    (A B C lowerReal upperReal lowerImaginary upperImaginary : ℤ)
+    (hxr : lowerReal + 1 ≤ x.re) (hxr' : x.re ≤ upperReal - 1)
+    (hxi : lowerImaginary + 1 ≤ x.im) (hxi' : x.im ≤ upperImaginary - 1)
+    (values : ∀ z : GaussianInt, lowerReal ≤ z.re → z.re ≤ upperReal →
+      lowerImaginary ≤ z.im → z.im ≤ upperImaginary →
+        f z = g (z - t) + A * z.re + B * z.im + C) :
+    f x = g (x - t) + A * x.re + B * x.im + C ∧
+    f (x - 1) = g ((x - t) - 1) + A * (x - 1).re + B * (x - 1).im + C ∧
+    f (x + 1) = g ((x - t) + 1) + A * (x + 1).re + B * (x + 1).im + C ∧
+    f (x - ⟨0, 1⟩) = g ((x - t) - ⟨0, 1⟩) +
+      A * (x - ⟨0, 1⟩).re + B * (x - ⟨0, 1⟩).im + C ∧
+    f (x + ⟨0, 1⟩) = g ((x - t) + ⟨0, 1⟩) +
+      A * (x + ⟨0, 1⟩).re + B * (x + ⟨0, 1⟩).im + C := by
+  have point (d : GaussianInt)
+      (hd : d = 0 ∨ d = -1 ∨ d = 1 ∨ d = -⟨0, 1⟩ ∨ d = ⟨0, 1⟩) :
+      f (x + d) = g ((x - t) + d) + A * (x + d).re + B * (x + d).im + C := by
+    have bounds : lowerReal ≤ (x + d).re ∧ (x + d).re ≤ upperReal ∧
+        lowerImaginary ≤ (x + d).im ∧ (x + d).im ≤ upperImaginary := by
+      rcases hd with rfl | rfl | rfl | rfl | rfl <;>
+        simp only [Zsqrtd.re_add, Zsqrtd.im_add, Zsqrtd.re_neg, Zsqrtd.im_neg,
+          Zsqrtd.re_zero, Zsqrtd.im_zero, Zsqrtd.re_one, Zsqrtd.im_one] <;> omega
+    have shift : (x + d) - t = (x - t) + d := by ring
+    simpa only [shift] using values (x + d) bounds.1 bounds.2.1 bounds.2.2.1 bounds.2.2.2
+  refine ⟨?_, ?_, ?_, ?_, ?_⟩
+  · simpa using point 0 (Or.inl rfl)
+  · simpa only [← sub_eq_add_neg] using point (-1) (Or.inr (Or.inl rfl))
+  · exact point 1 (Or.inr (Or.inr (Or.inl rfl)))
+  · simpa only [← sub_eq_add_neg] using point (-⟨0, 1⟩) (Or.inr (Or.inr (Or.inr (Or.inl rfl))))
+  · exact point ⟨0, 1⟩ (Or.inr (Or.inr (Or.inr (Or.inr rfl))))
+
 end FourNeighborLaplacianProperties
 end ApollonianSuperharmonic
 

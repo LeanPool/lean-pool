@@ -25,144 +25,23 @@ namespace ApollonianSuperharmonic
 
 namespace Parent2Rotation2Proof
 
-private theorem baseBd :
-    ∀ (P : FordFareyParameter),
-      let q : Int := P.q
-      let r : Int := P.q₁
-      let s : Int := P.q₂
-      let p : Int := P.p
-      q = r + s →
-        ∀ (hqn : q ≠ 0),
-          ((∀ (P : FordFareyParameter),
-                ∀ (x : GaussianInt),
-                  P.q = (1 : ℕ) →
-                    FordOdometer P x =
-                      x.re * (x.re - (1 : ℤ)) / (2 : ℤ) + P.p * x.re * x.im) ∧
-              (∀ (P : FordFareyParameter),
-                  ∀ x ∈ FordDoubledBoundary P.q,
-                    Classical.choose FordOdometerFamilyExistsUnique P x =
-                      IntegerCeilDiv (P.p * x.re * x.im) (↑P.q : ℤ)
-                        (by exact_mod_cast P.q_pos.ne')) ∧
-                (∀ (P : FordFareyParameter),
-                    ∀ (x : GaussianInt),
-                      Classical.choose FordOdometerFamilyExistsUnique P
-                          (x + ⟨(0 : ℤ), -(↑P.q : ℤ)⟩) =
-                        Classical.choose FordOdometerFamilyExistsUnique P x - P.p * x.re) ∧
-                  (∀ (P : FordFareyParameter),
-                      ∀ (x : GaussianInt),
-                        Classical.choose FordOdometerFamilyExistsUnique P
-                            (x + ⟨(↑P.q : ℤ), (↑P.q₁ : ℤ)⟩) =
-                          Classical.choose FordOdometerFamilyExistsUnique P x +
-                            P.p₁ * x.re +
-                            P.p * x.im +
-                            (↑P.q₁ : ℤ) * P.p) ∧
-                    (∀ (P : FordFareyParameter),
-                        ∀ (x : GaussianInt),
-                          Classical.choose FordOdometerFamilyExistsUnique P
-                            (x + ⟨-(↑P.q : ℤ), (↑P.q₂ : ℤ)⟩) =
-                            Classical.choose FordOdometerFamilyExistsUnique P x +
-                            P.p₂ * x.re -
-                            P.p * x.im -
-                            (↑P.q : ℤ) * P.p₂) ∧
-                      ∀ (P : FordFareyParameter),
-                        ∀ (P₁ : FordFareyParameter),
-                          ∀ (P₂ : FordFareyParameter),
-                            (1 : ℕ) < P.q →
-                            P₁.p = P.p₁ →
-                            P₁.q = P.q₁ →
-                            P₂.p = P.p₂ →
-                            P₂.q = P.q₂ →
-                            (∀ x ∈ FordRecursiveVertexDomains P (0 : Fin (4 : ℕ)),
-                            Classical.choose FordOdometerFamilyExistsUnique P x =
-                            Classical.choose FordOdometerFamilyExistsUnique P₁ x) ∧
-                            (∀ x ∈ FordRecursiveVertexDomains P (1 : Fin (4 : ℕ)),
-                            Classical.choose FordOdometerFamilyExistsUnique P x =
-                            Classical.choose FordOdometerFamilyExistsUnique P₁
-                            (x - ⟨(↑P.q₂ : ℤ), (↑P.q₂ : ℤ)⟩) +
-                            P.p₂ * x.re +
-                            P.p₂ * x.im -
-                            P.p₂ * (↑P.q₂ : ℤ) +
-                            (1 : ℤ)) ∧
-                            (∀ x ∈ FordRecursiveVertexDomains P (2 : Fin (4 : ℕ)),
-                            Classical.choose FordOdometerFamilyExistsUnique P x =
-                            Classical.choose FordOdometerFamilyExistsUnique P₂
-                            (x - ⟨(↑P.q₁ : ℤ), (0 : ℤ)⟩) +
-                            P.p₁ * x.im) ∧
-                            ∀ x ∈ FordRecursiveVertexDomains P (3 : Fin (4 : ℕ)),
-                            Classical.choose FordOdometerFamilyExistsUnique P x =
-                            Classical.choose FordOdometerFamilyExistsUnique P₂
-                            (x - ⟨(0 : ℤ), (↑P.q₁ : ℤ)⟩) +
-                            P.p₁ * x.re) →
-            ∀ (u : ℤ),
-              ∀ (v : ℤ),
-                (0 : ℤ) ≤ u →
-                  u ≤ q →
-                    (0 : ℤ) ≤ v →
-                      v ≤ q →
-                        u ≤ (1 : ℤ) ∨ q - (1 : ℤ) ≤ u ∨ v ≤ (1 : ℤ) ∨ q - (1 : ℤ) ≤ v →
-                          FordOdometer P ⟨u, v⟩ = IntegerCeilDiv (p * u * v) q hqn := by
-  classical
-  intro P q r s p hsum hqn laws u v hu huq hv hvq hedge
-  apply laws.2.1
-  change (0 ≤ u ∧ u ≤ (P.q : Int) ∧ 0 ≤ v ∧ v ≤ (P.q : Int)) ∧
-    ¬ (2 ≤ u ∧ u ≤ (P.q : Int)-2 ∧ 2 ≤ v ∧ v ≤ (P.q : Int)-2)
+private theorem baseBd (P : FordFareyParameter)
+    (boundary : ∀ x ∈ FordDoubledBoundary P.q,
+      FordOdometer P x = IntegerCeilDiv (P.p * x.re * x.im) (P.q : ℤ)
+        (by exact_mod_cast P.q_pos.ne'))
+    (u v : ℤ) (hu : 0 ≤ u) (huq : u ≤ (P.q : ℤ))
+    (hv : 0 ≤ v) (hvq : v ≤ (P.q : ℤ))
+    (hedge : u ≤ 1 ∨ (P.q : ℤ) - 1 ≤ u ∨ v ≤ 1 ∨ (P.q : ℤ) - 1 ≤ v) :
+    FordOdometer P ⟨u, v⟩ = IntegerCeilDiv (P.p * u * v) (P.q : ℤ)
+      (by exact_mod_cast P.q_pos.ne') := by
+  apply boundary
+  change (0 ≤ u ∧ u ≤ (P.q : ℤ) ∧ 0 ≤ v ∧ v ≤ (P.q : ℤ)) ∧
+    ¬ (2 ≤ u ∧ u ≤ (P.q : ℤ) - 2 ∧ 2 ≤ v ∧ v ≤ (P.q : ℤ) - 2)
   constructor
-  · exact ⟨hu,huq,hv,hvq⟩
+  · exact ⟨hu, huq, hv, hvq⟩
   · intro h
-    change 2 ≤ u ∧ u ≤ q-2 ∧ 2 ≤ v ∧ v ≤ q-2 at h
-    rcases h with ⟨hu2,hu2q,hv2,hv2q⟩
+    rcases h with ⟨hu2, hu2q, hv2, hv2q⟩
     rcases hedge with h1 | h2 | h3 | h4 <;> omega
-
-private theorem parentBd :
-    ∀ (P : FordFareyParameter), ∀ (A : FordFareyParameter), (A.p = P.p₂) → ((A.q = P.q₂) → (
-    let s : Int := P.q₂
-    let b : Int := P.p₂
-    ∀ (hsn : s ≠ 0), ((∀ (P : FordFareyParameter), ∀ (x : GaussianInt), P.q = (1 : ℕ) →
-        FordOdometer P x = x.re * (x.re - (1 : ℤ)) / (2 : ℤ) + P.p * x.re * x.im) ∧ (∀ (P :
-            FordFareyParameter), ∀ x ∈ FordDoubledBoundary P.q, Classical.choose
-        FordOdometerFamilyExistsUnique P x = IntegerCeilDiv (P.p * x.re * x.im) (↑P.q : ℤ) (by
-        exact_mod_cast P.q_pos.ne')) ∧ (∀ (P : FordFareyParameter), ∀ (x : GaussianInt),
-            Classical.choose FordOdometerFamilyExistsUnique P (x + ⟨(0 : ℤ), -(↑P.q : ℤ)⟩) =
-        Classical.choose FordOdometerFamilyExistsUnique P x - P.p * x.re) ∧ (∀ (P :
-            FordFareyParameter), ∀ (x : GaussianInt), Classical.choose
-            FordOdometerFamilyExistsUnique
-        P (x + ⟨(↑P.q : ℤ), (↑P.q₁ : ℤ)⟩) = Classical.choose FordOdometerFamilyExistsUnique P x +
-        P.p₁ * x.re + P.p * x.im + (↑P.q₁ : ℤ) * P.p) ∧ (∀ (P : FordFareyParameter), ∀ (x :
-            GaussianInt), Classical.choose FordOdometerFamilyExistsUnique P (x + ⟨-(↑P.q : ℤ),
-            (↑P.q₂
-        : ℤ)⟩) = Classical.choose FordOdometerFamilyExistsUnique P x + P.p₂ * x.re - P.p * x.im -
-        (↑P.q : ℤ) * P.p₂) ∧ ∀ (P : FordFareyParameter), ∀ (P₁ : FordFareyParameter), ∀ (P₂ :
-            FordFareyParameter), (1 : ℕ) < P.q → P₁.p = P.p₁ → P₁.q = P.q₁ → P₂.p = P.p₂ → P₂.q =
-        P.q₂ → (∀ x ∈ FordRecursiveVertexDomains P (0 : Fin (4 : ℕ)), Classical.choose
-        FordOdometerFamilyExistsUnique P x = Classical.choose FordOdometerFamilyExistsUnique P₁
-        x) ∧ (∀ x ∈ FordRecursiveVertexDomains P (1 : Fin (4 : ℕ)), Classical.choose
-        FordOdometerFamilyExistsUnique P x = Classical.choose FordOdometerFamilyExistsUnique P₁
-        (x - ⟨(↑P.q₂ : ℤ), (↑P.q₂ : ℤ)⟩) + P.p₂ * x.re + P.p₂ * x.im - P.p₂ * (↑P.q₂ : ℤ) + (1 :
-        ℤ)) ∧ (∀ x ∈ FordRecursiveVertexDomains P (2 : Fin (4 : ℕ)), Classical.choose
-        FordOdometerFamilyExistsUnique P x = Classical.choose FordOdometerFamilyExistsUnique P₂
-        (x - ⟨(↑P.q₁ : ℤ), (0 : ℤ)⟩) + P.p₁ * x.im) ∧ ∀ x ∈ FordRecursiveVertexDomains P (3 : Fin
-        (4 : ℕ)), Classical.choose FordOdometerFamilyExistsUnique P x = Classical.choose
-        FordOdometerFamilyExistsUnique P₂ (x - ⟨(0 : ℤ), (↑P.q₁ : ℤ)⟩) + P.p₁ * x.re) → (∀ (u :
-            ℤ), ∀ (v : ℤ), (0 : ℤ) ≤ u → u ≤ s → (0 : ℤ) ≤ v → v ≤ s → u ≤ (1 : ℤ) ∨ s - (1 : ℤ) ≤ u
-        ∨ v ≤ (1 : ℤ) ∨ s - (1 : ℤ) ≤ v → FordOdometer A ⟨u, v⟩ = IntegerCeilDiv (b * u * v) s
-        hsn))) := by
-  classical
-  intro P A hAp hAq s b hsn laws u v hu hus hv hvs hedge
-  have hAn : (A.q : Int) = s := by dsimp [s]; exact_mod_cast hAq
-  have hAp' : A.p = b := by dsimp [b]; exact hAp
-  have hAnz : (A.q : Int) ≠ 0 := by rw [hAn]; exact hsn
-  have hbdy : (⟨u,v⟩ : GaussianInt) ∈ FordDoubledBoundary A.q := by
-    change (0 ≤ u ∧ u ≤ (A.q : Int) ∧ 0 ≤ v ∧ v ≤ (A.q : Int)) ∧ ¬ _
-    rw [hAn]
-    constructor
-    · exact ⟨hu,hus,hv,hvs⟩
-    · intro h
-      change 2 ≤ u ∧ u ≤ s-2 ∧ 2 ≤ v ∧ v ≤ s-2 at h
-      rcases h with ⟨hu2,hus2,hv2,hvs2⟩
-      rcases hedge with h1 | h2 | h3 | h4 <;> omega
-  have hb := laws.2.1 A ⟨u,v⟩ hbdy
-  change FordOdometer A ⟨u,v⟩ = IntegerCeilDiv (A.p*u*v) (A.q : Int) (by omega) at hb
-  simpa [hAp', hAn] using hb
 
 private theorem htStrict :
     ∀ (P : FordFareyParameter), ∀ (A : FordFareyParameter),
@@ -349,13 +228,18 @@ theorem P5332T1Parent2Rotation2Values (P A : FordFareyParameter) (hq : 1 < P.q)
   have baseBd (u v : Int) (hu : 0 ≤ u) (huq : u ≤ q)
       (hv : 0 ≤ v) (hvq : v ≤ q)
       (hedge : u ≤ 1 ∨ q-1 ≤ u ∨ v ≤ 1 ∨ q-1 ≤ v) :
-      FordOdometer P ⟨u,v⟩ = IntegerCeilDiv (p*u*v) q hqn := Parent2Rotation2Proof.baseBd P
-          hsum hqn laws u v hu huq hv hvq hedge
+      FordOdometer P ⟨u,v⟩ = IntegerCeilDiv (p*u*v) q hqn :=
+        Parent2Rotation2Proof.baseBd P (laws.2.1 P) u v hu huq hv hvq hedge
   have parentBd (u v : Int) (hu : 0 ≤ u) (hus : u ≤ s)
       (hv : 0 ≤ v) (hvs : v ≤ s)
       (hedge : u ≤ 1 ∨ s-1 ≤ u ∨ v ≤ 1 ∨ s-1 ≤ v) :
-      FordOdometer A ⟨u,v⟩ = IntegerCeilDiv (b*u*v) s hsn := Parent2Rotation2Proof.parentBd P A
-          hAp hAq hsn laws u v hu hus hv hvs hedge
+      FordOdometer A ⟨u,v⟩ = IntegerCeilDiv (b*u*v) s hsn := by
+    have hAn : (A.q : ℤ) = s := by dsimp [s]; exact_mod_cast hAq
+    have hAp' : A.p = b := by dsimp [b]; exact hAp
+    have hb := Parent2Rotation2Proof.baseBd A (laws.2.1 A) u v hu
+      (by simpa only [hAn] using hus) hv (by simpa only [hAn] using hvs)
+      (by simpa only [hAn] using hedge)
+    simpa only [hAp', hAn] using hb
   have sideRight (u : Int) (hu : 0 ≤ u) (huq : u ≤ q) :
       FordOdometer P ⟨q,u⟩ = p*u := by
     rw [baseBd q u (by omega) (by omega) hu huq (by omega)]

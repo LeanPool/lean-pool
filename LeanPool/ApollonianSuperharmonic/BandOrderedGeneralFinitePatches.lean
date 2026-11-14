@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.RestrictedRelationWalk
 
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralLayoutCertificate
 public import LeanPool.ApollonianSuperharmonic.ConsecutivePatchInterface
@@ -143,26 +144,8 @@ theorem BandOrderedGeneralFinitePatches
         (∀ x ∈ p, S x) ∧
         ∀ x y : PeriodicSubtileIndex, ∀ l₁ l₂ : List PeriodicSubtileIndex,
           p = l₁ ++ x :: y :: l₂ → cert.modified.plane.adjacent x y := by
-    obtain ⟨l, hc, hl⟩ := List.exists_isChain_cons_of_relationReflTransGen h
-    refine ⟨a :: l, rfl, ?_, ?_, ?_⟩
-    · simpa only [List.getLast?_eq_some_getLast (List.cons_ne_nil a l)]
-        using congrArg some hl
-    · have go : ∀ (u : PeriodicSubtileIndex) (p : List PeriodicSubtileIndex), S u →
-          (u :: p).IsChain (fun x y ↦ AllowedSubtileIncidence x y ∧ S x ∧ S y) →
-          ∀ x ∈ u :: p, S x := by
-        intro u p
-        induction p generalizing u with
-        | nil => simp_all
-        | cons v p ih =>
-          intro hu hc x hx
-          simp only [List.mem_cons] at hx
-          rcases hx with hx | hx
-          · exact hx.symm ▸ hu
-          · exact ih v hc.rel.2.2 hc.tail x (by simpa only [List.mem_cons] using hx)
-      exact go a l ha hc
-    · intro x y l₁ l₂ he
-      exact (cert.modified_adjacency x y).mpr
-        (List.isChain_iff_forall_rel_of_append_cons_cons.mp hc he).1
+    exact restrictedRelationWalk AllowedSubtileIncidence cert.modified.plane.adjacent
+      (fun x y hxy => (cert.modified_adjacency x y).mpr hxy) S a b ha h
   let makePatch (S : Finset PeriodicSubtileIndex) (U : ProtoTile)
       (hS : S = K ∨ ∃ d ∈ K, S = K.erase d) (hne : S.Nonempty)
       (hU : ∀ x, x ∈ U.cells ↔ ∃ a ∈ S, x ∈ (cert.modified.tile a).cells) :

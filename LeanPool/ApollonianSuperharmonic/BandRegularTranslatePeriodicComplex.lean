@@ -218,68 +218,13 @@ private theorem delta_inj :
   intro i j h
   fin_cases i <;> fin_cases j <;> first | rfl | simp [delta] at h
 
-private theorem coord_adj :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (q : Fin 4 → CircleCoordinates), ∀ (T : ProtoTile), ∀ (k : ℤ × ℤ ≃+
-            ↥(TilingLattice C)), ∀ (D : P4812T1AffineDrawing (TilingLattice C) k), ((0 : ℤ) <
-            (q (0 : Fin (4 : ℕ))).1 ∧ (∀ (i : Fin (3 : ℕ)), (0 : ℤ) ≤ (q i.succ).1) ∧ ∀ (i : Fin
-            (3 : ℕ)), ∀ (j : Fin (3 : ℕ)), (q i.succ).1 = (0 : ℤ) → (q j.succ).1 = (0 : ℤ) → i =
-            j) → ((1 < (q 0).1) → ((LatticeTile T ∧ TileArea T = (q (0 : Fin (4 : ℕ))).1.toNat ∧
-            (∀ (S : Fin (3 : ℕ) → Bool → ProtoTile), (∀ (i : Fin (3 : ℕ)), ∀ (s : Bool),
-            BandSubtileOccurrence q T i s (S i s)) → (∀ (x : LatticeCell), x ∈ T.cells ↔ ∃ (i :
-            Fin (3 : ℕ)) (s : Bool), x ∈ (S i s).cells) → ∀ (i : Fin (3 : ℕ)), ∀ (s : Bool),
-            LatticeTile (TileCellComplement T (S i s)) ∧ TileTouching (TileCellComplement T (S i
-            s)) (S i s)) ∧ QuarterTurnSymmetric T ∧ ((1 : ℤ) < (q (0 : Fin (4 : ℕ))).1 → ∀ (i :
-            Fin (3 : ℕ)), TouchingTriple T (TileTranslation T (BandVectors.1 (q i.succ) (q (0 :
-            Fin (4 : ℕ))))) (TileTranslation T (-BandVectors.1 (q (i + (1 : Fin (3 : ℕ))).succ)
-            (q (0 : Fin (4 : ℕ)))))) ∧ ((1 : ℤ) < (q (0 : Fin (4 : ℕ))).1 → ∀ (i : Fin (3 : ℕ)),
-            ∀ (U : ProtoTile), BandPrototile (q i.succ) U → TileCentroid U - TileCentroid T = (1
-            / 2 : ℝ) • (GaussianRealPoint (BandVectors.1 (q i.succ) (q (0 : Fin (4 : ℕ)))) +
-            GaussianRealPoint (BandVectors.1 (q (0 : Fin (4 : ℕ))) (q i.succ))) → TouchingTriple
-            T (TileTranslation T (BandVectors.1 (q i.succ) (q (0 : Fin (4 : ℕ))))) U) ∧ (∀ (i :
-            Fin (3 : ℕ)), ∀ (U : ProtoTile), ∀ (V : ProtoTile), BandPrototile (q i.succ) U →
-            BandPrototile (q (i + (1 : Fin (3 : ℕ))).succ) V → TileCentroid U - TileCentroid T =
-            (1 / 2 : ℝ) • (GaussianRealPoint (BandVectors.1 (q i.succ) (q (0 : Fin (4 : ℕ)))) +
-            GaussianRealPoint (BandVectors.1 (q (0 : Fin (4 : ℕ))) (q i.succ))) → TileCentroid V
-            - TileCentroid T = (1 / 2 : ℝ) • (GaussianRealPoint (BandVectors.1 (q (i + (1 : Fin
-            (3 : ℕ))).succ) (q (0 : Fin (4 : ℕ)))) - GaussianRealPoint (BandVectors.1 (q (0 : Fin
-            (4 : ℕ))) (q (i + (1 : Fin (3 : ℕ))).succ))) → TouchingTriple T U V) ∧ ∀ (r : Fin (4
-            : ℕ) → CircleCoordinates), ProperBandQuadruple r → r (0 : Fin (4 : ℕ)) = q (1 : Fin
-            (4 : ℕ)) → r (2 : Fin (4 : ℕ)) = q (2 : Fin (4 : ℕ)) → r (3 : Fin (4 : ℕ)) = q (3 :
-            Fin (4 : ℕ)) → (q (2 : Fin (4 : ℕ))).1 ≤ (q (1 : Fin (4 : ℕ))).1 → (q (3 : Fin (4 :
-            ℕ))).1 ≤ (q (2 : Fin (4 : ℕ))).1 → (1 : ℤ) < (q (2 : Fin (4 : ℕ))).1 → ∀ (P : Fin (3
-            : ℕ) → Bool → ProtoTile), ∀ (Q : Fin (3 : ℕ) → Bool → ProtoTile), ∀ (S : Fin (3 : ℕ)
-            → Bool → ProtoTile), (∀ (i : Fin (3 : ℕ)), ∀ (s : Bool), BandSubtileOccurrence q T i
-            s (P i s)) → (∀ (x : LatticeCell), x ∈ T.cells ↔ ∃ (i : Fin (3 : ℕ)) (s : Bool), x ∈
-            (P i s).cells) → (∀ (i : Fin (3 : ℕ)), ∀ (s : Bool), BandSubtileOccurrence r (P (0 :
-            Fin (3 : ℕ)) true) i s (Q i s)) → (∀ (x : LatticeCell), x ∈ (P (0 : Fin (3 : ℕ))
-            true).cells ↔ ∃ (i : Fin (3 : ℕ)) (s : Bool), x ∈ (Q i s).cells) → (∀ (i : Fin (3 :
-            ℕ)), ∀ (s : Bool), BandSubtileOccurrence r (P (0 : Fin (3 : ℕ)) false) i s (S i s)) →
-            (∀ (x : LatticeCell), x ∈ (P (0 : Fin (3 : ℕ)) false).cells ↔ ∃ (i : Fin (3 : ℕ)) (s
-            : Bool), x ∈ (S i s).cells) →
-        let u := BandVectors.1 (q (0 : Fin (4 : ℕ))) (q (1 : Fin (4 : ℕ)));
-        let v := BandVectors.1 (q (0 : Fin (4 : ℕ))) (q (2 : Fin (4 : ℕ))); (∀ (a :
-            PeriodicSubtileIndex), ∀ (b : PeriodicSubtileIndex), a ≠ b → ((FootprintEdges
-            (SubtileOccurrenceInterpretation P u v a) ∩ FootprintEdges
-            (SubtileOccurrenceInterpretation P u v b)).Nonempty → AllowedSubtileIncidence a b) ∧
-            (¬AllowedSubtileIncidence a b → FootprintVertices (SubtileOccurrenceInterpretation P
-            u v a) ∩ FootprintVertices (SubtileOccurrenceInterpretation P u v b) = ∅ ∨
-            (FootprintVertices (SubtileOccurrenceInterpretation P u v a) ∩ FootprintVertices
-            (SubtileOccurrenceInterpretation P u v b)).Subsingleton)) ∧ FootprintVertices (P (0 :
-            Fin (3 : ℕ)) true) ∩ FootprintVertices (P (1 : Fin (3 : ℕ)) true) ⊆ FootprintVertices
-            (Q (1 : Fin (3 : ℕ)) true) ∩ FootprintVertices (P (1 : Fin (3 : ℕ)) true) ∧
-            FootprintVertices (P (0 : Fin (3 : ℕ)) true) ∩ FootprintVertices (P (0 : Fin (3 : ℕ))
-            false) ⊆ FootprintVertices (Q (1 : Fin (3 : ℕ)) true) ∩ FootprintVertices (S (2 : Fin
-            (3 : ℕ)) false) ∪ FootprintVertices (Q (0 : Fin (3 : ℕ)) false) ∪ FootprintVertices
-            (Q (2 : Fin (3 : ℕ)) true) ∩ FootprintVertices (S (1 : Fin (3 : ℕ)) false)) → (
-        let delta : Fin 6 → Int × Int := ![(1, 0), (0, 1), (-1, -1),
-          (-1, 0), (0, -1), (1, 1)]
-        ∀ (x : TilingLattice C), ∀ (y : TilingLattice C), D.plane.adjacent x y ↔ ∃ i : Fin 6,
-            k.symm y - k.symm x = delta i))) ) := by
+private theorem coord_adj (C : BandCircle)
+    (k : ℤ × ℤ ≃+ ↥(TilingLattice C)) (D : P4812T1AffineDrawing (TilingLattice C) k) :
+    let delta : Fin 6 → ℤ × ℤ := ![(1, 0), (0, 1), (-1, -1), (-1, 0), (0, -1), (1, 1)]
+    ∀ x y : TilingLattice C, D.plane.adjacent x y ↔ ∃ i : Fin 6,
+      k.symm y - k.symm x = delta i := by
   classical
-  intro C q T k D hc hc1 hgeom delta x y
+  intro delta x y
   rw [D.adjacent_iff]
   constructor
   · intro h
@@ -513,8 +458,7 @@ theorem BandRegularTranslatePeriodicComplex (C : BandCircle)
   let edges := Finset.univ.map edgeEmbed
   have edgecard : edges.card = 6 := by simp [edges]
   have coord_adj (x y : TilingLattice C) : D.plane.adjacent x y ↔
-      ∃ i : Fin 6, k.symm y - k.symm x = delta i := RegularPeriodicGeometry.coord_adj C q T k D
-          hc hc1 hgeom x y
+      ∃ i : Fin 6, k.symm y - k.symm x = delta i := RegularPeriodicGeometry.coord_adj C k D x y
   have graph_per (u x y : TilingLattice C) :
       D.plane.adjacent (u + x) (u + y) ↔ D.plane.adjacent x y :=
           RegularPeriodicGeometry.graph_per C k D coord_adj u x y

@@ -682,111 +682,27 @@ private theorem unit_segment :
     simp [ClosedSquareRealization]
     constructor <;> constructor <;> nlinarith [t.property.1, t.property.2]
 
-private theorem cycle_segments :
-    (by
-      classical
-      exact
-        ∀ (T : ProtoTile),
-          ∀ (E : Set (Finset GaussianInt)),
-            ∀ (p : List GaussianInt),
-              ∀ (x : GaussianInt),
-                ∀ (y : GaussianInt),
-                  p.head? = some x →
-                    p.getLast? = some y →
-                      FourNeighborAdjacent y x →
-                        (∀ (a : GaussianInt),
-                            ∀ (b : GaussianInt),
-                              ∀ (l₁ : List GaussianInt),
-                                ∀ (l₂ : List GaussianInt),
-                                p = l₁ ++ a :: b :: l₂ → FourNeighborAdjacent a b) →
-                          (∀ (e : Finset GaussianInt),
-                              e ∈ E ↔
-                                e = { y, x } ∨
-                                ∃ (a : GaussianInt) (b : GaussianInt) (l₁ :
-                                List GaussianInt) (l₂ : List GaussianInt),
-                                p = l₁ ++ a :: b :: l₂ ∧ e = { a, b }) →
-                            (∀ z ∈ p,
-                                z ∈ T.cells ∧
-                                z - 1 ∈ T.cells ∧
-                                z - ⟨0, 1⟩ ∈ T.cells ∧ z - 1 - ⟨0, 1⟩ ∈ T.cells) →
-                              (let cyclicEdges := p.zip p.tail ++ [(y, x)];
-                              ∀ (q : LatticeCell),
-                                ((q + (1 : LatticeCell),
-                                q + (1 : LatticeCell) +
-                                (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)) ∉
-                                cyclicEdges ∧
-                                (q + (1 : LatticeCell) +
-                                (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt),
-                                q + (1 : LatticeCell)) ∉
-                                cyclicEdges →
-                                GridRayCrossingIndex (q + (1 : LatticeCell)) p =
-                                GridRayCrossingIndex q p) ∧
-                                ((q + (1 : LatticeCell),
-                                q + (1 : LatticeCell) +
-                                (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)) ∈
-                                cyclicEdges ∨
-                                (q + (1 : LatticeCell) +
-                                (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt),
-                                q + (1 : LatticeCell)) ∈
-                                cyclicEdges →
-                                (GridRayCrossingIndex (q + (1 : LatticeCell)) p -
-                                GridRayCrossingIndex q p).natAbs =
-                                (1 : ℕ)) ∧
-                                ((q + (1 : LatticeCell) +
-                                (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt),
-                                q + (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)) ∉
-                                cyclicEdges ∧
-                                (q + (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt),
-                                q + (1 : LatticeCell) +
-                                (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)) ∉
-                                cyclicEdges →
-                                GridRayCrossingIndex
-                                (q + (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)) p =
-                                GridRayCrossingIndex q p) ∧
-                                ((q + (1 : LatticeCell) +
-                                (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt),
-                                q + (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)) ∈
-                                cyclicEdges ∨
-                                (q + (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt),
-                                q + (1 : LatticeCell) +
-                                (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)) ∈
-                                cyclicEdges →
-                                (GridRayCrossingIndex
-                                (q + (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt)) p -
-                                GridRayCrossingIndex q p).natAbs =
-                                (1 : ℕ))) →
-                                (∀ (U : ProtoTile),
-                                ∀ (a : GaussianInt),
-                                ∀ (b : GaussianInt),
-                                a ∈ U.cells →
-                                b ∈ U.cells →
-                                FourNeighborAdjacent a b →
-                                ∀ t : Set.Icc (0 : Real) 1,
-                                ((1 - (t : Real)) * (a.re : Real) +
-                                (t : Real) * (b.re : Real),
-                                (1 - (t : Real)) * (a.im : Real) +
-                                (t : Real) * (b.im : Real)) ∈
-                                TileRealization U) →
-                                ∀ a b : GaussianInt,
-                                (∃ l₁ l₂ : List GaussianInt, p = l₁ ++ a :: b :: l₂) ∨
-                                a = y ∧ b = x →
-                                ∀ t : Set.Icc (0 : Real) 1,
-                                ((1 - (t : Real)) * (a.re : Real) +
-                                (t : Real) * (b.re : Real),
-                                (1 - (t : Real)) * (a.im : Real) +
-                                (t : Real) * (b.im : Real)) ∈
-                                TileRealization T
-    ) := by
-  classical
-  intro T E p x y hpHead hpLast hclose hpAdjacent hpEdges hpCells index_control unit_segment a b
-      hab
+private theorem cycle_segments (T : ProtoTile) (p : List GaussianInt) (x y : GaussianInt)
+    (hpHead : p.head? = some x) (hpLast : p.getLast? = some y)
+    (hclose : FourNeighborAdjacent y x)
+    (hpAdjacent : ∀ a b l₁ l₂, p = l₁ ++ a :: b :: l₂ → FourNeighborAdjacent a b)
+    (hpCells : ∀ z ∈ p, z ∈ T.cells)
+    (unit_segment : ∀ (U : ProtoTile) (a b : GaussianInt), a ∈ U.cells → b ∈ U.cells →
+      FourNeighborAdjacent a b → ∀ t : Set.Icc (0 : ℝ) 1,
+        ((1 - (t : ℝ)) * (a.re : ℝ) + (t : ℝ) * (b.re : ℝ),
+          (1 - (t : ℝ)) * (a.im : ℝ) + (t : ℝ) * (b.im : ℝ)) ∈ TileRealization U) :
+    ∀ a b : GaussianInt, (∃ l₁ l₂ : List GaussianInt, p = l₁ ++ a :: b :: l₂) ∨
+      a = y ∧ b = x → ∀ t : Set.Icc (0 : ℝ) 1,
+        ((1 - (t : ℝ)) * (a.re : ℝ) + (t : ℝ) * (b.re : ℝ),
+          (1 - (t : ℝ)) * (a.im : ℝ) + (t : ℝ) * (b.im : ℝ)) ∈ TileRealization T := by
+  intro a b hab
   rcases hab with ⟨l₁, l₂, hd⟩ | ⟨rfl, rfl⟩
   · have ha : a ∈ p := by rw [hd]; simp
     have hb : b ∈ p := by rw [hd]; simp
-    exact unit_segment T a b (hpCells a ha).1 (hpCells b hb).1
+    exact unit_segment T a b (hpCells a ha) (hpCells b hb)
       (hpAdjacent a b l₁ l₂ hd)
-  · exact unit_segment T a b (hpCells a (List.mem_of_getLast? hpLast)).1
-      (hpCells b (List.mem_of_head? hpHead)).1 hclose
+  · exact unit_segment T a b (hpCells a (List.mem_of_getLast? hpLast))
+      (hpCells b (List.mem_of_head? hpHead)) hclose
 
 private theorem unoccupied_center_outside :
     (by
@@ -1270,9 +1186,9 @@ theorem P4250T2InterfaceCycleExclusion
   have index_horizontal := InterfaceCycleGeometry.index_horizontal E p x y es_edge index_control
   have index_vertical := InterfaceCycleGeometry.index_vertical E p x y es_edge index_control
   have outside_zero := InterfaceCycleGeometry.outside_zero T hlat p x y hpHead hpLast hclose
-      hpAdjacent (InterfaceCycleGeometry.cycle_segments T E p x y hpHead hpLast hclose hpAdjacent
-      hpEdges (InterfaceCycleGeometry.hpCells T p hpInteriorT hTne
-      (InterfaceCycleGeometry.vertex_cells)) index_control
+      hpAdjacent (InterfaceCycleGeometry.cycle_segments T p x y hpHead hpLast hclose hpAdjacent
+      (fun z hz => (InterfaceCycleGeometry.hpCells T p hpInteriorT hTne
+        (InterfaceCycleGeometry.vertex_cells) z hz).1)
       (InterfaceCycleGeometry.unit_segment)) (InterfaceCycleGeometry.unoccupied_center_outside T)
   have horizontal_vertical_ne := InterfaceCycleGeometry.horizontal_vertical_ne
   -- The common outer side anchors the index throughout each parent.

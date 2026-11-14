@@ -716,8 +716,6 @@ theorem RightLatticeAdjacentPackingSymmetryTransport
   have hsr := LatticeAdjacentPackingSymmetryFacts.slopeAction g T h p hp hTne hST
   have hsr' := LatticeAdjacentPackingSymmetryFacts.slopeAction g T' h' p' hp' hT'ne hST'
   have centroid_transport := LatticeAdjacentPackingSymmetryFacts.centroidTransport
-  have vector_sign (j : Fin 3) := LatticeAdjacentPackingSymmetryFacts.vectorSign g q negative
-      hphase j
   have vector_neg := LatticeAdjacentPackingSymmetryFacts.vectorNegation
   have affine_neg := LatticeAdjacentPackingSymmetryFacts.affineNegation
   have affine_first (a : BandPackingSymmetry) (v u : GaussianInt) :
@@ -747,56 +745,26 @@ theorem RightLatticeAdjacentPackingSymmetryTransport
   have newFlip := (hrec'.2.2.2.2
     (BandPackingSymmetryProperCovariance g q hq) newIndex).2
   have oldFlipVec := (hrec.2.2.2.2 hq i).1
-  have newFlipVec := (hrec'.2.2.2.2
-    (BandPackingSymmetryProperCovariance g q hq) newIndex).1
   have affineRight := affine_flip_second g
     (BandVectors.1 (q i.succ) (q 0))
     (BandVectors.2 (q i.succ) (q 0))
-  have oldFlipRe := congrArg (fun z : GaussianInt => (z.re : ℝ)) oldFlip
-  have oldFlipIm := congrArg (fun z : GaussianInt => (z.im : ℝ)) oldFlip
   have newFlipRe := congrArg (fun z : GaussianInt => (z.re : ℝ)) newFlip
   have newFlipIm := congrArg (fun z : GaussianInt => (z.im : ℝ)) newFlip
   have turn_mul (z : GaussianInt) := RightLatticeTransportGeometry.turn_mul z
   have neg_turn_mul' (z : GaussianInt) := RightLatticeTransportGeometry.neg_turn_mul' z
   have oldPair := RightLatticeTransportGeometry.oldPair q i oldFlip oldFlipVec turn_mul
       neg_turn_mul'
-  have oldFlipVecRe := congrArg (fun z : GaussianInt => (z.re : ℝ)) oldFlipVec
-  have oldFlipVecIm := congrArg (fun z : GaussianInt => (z.im : ℝ)) oldFlipVec
-  have newFlipVecRe := congrArg (fun z : GaussianInt => (z.re : ℝ)) newFlipVec
-  have newFlipVecIm := congrArg (fun z : GaussianInt => (z.im : ℝ)) newFlipVec
   have affineRightRe := congrArg (fun z : GaussianInt => (z.re : ℝ)) affineRight
   have affineRightIm := congrArg (fun z : GaussianInt => (z.im : ℝ)) affineRight
-  have phaseSlope := (hvec i).2
-  have phaseSlopeRe := congrArg (fun z : GaussianInt => (z.re : ℝ)) phaseSlope
-  have phaseSlopeIm := congrArg (fun z : GaussianInt => (z.im : ℝ)) phaseSlope
   simp only [Int.reduceNeg, Fin.isValue, GaussianInt.intCast_re, neg_mul, Zsqrtd.re_neg,
       Zsqrtd.re_mul, zero_mul, mul_one, one_mul, zero_add, neg_neg, GaussianInt.intCast_im,
-      Zsqrtd.im_neg, Zsqrtd.im_mul, Int.cast_neg] at oldFlipRe oldFlipIm newFlipRe newFlipIm
-  simp only [Int.reduceNeg, Fin.isValue, GaussianInt.intCast_re, Zsqrtd.re_mul, zero_mul,
-      mul_one, neg_mul, one_mul, zero_add, Int.cast_neg, GaussianInt.intCast_im,
-      Zsqrtd.im_mul] at oldFlipVecRe oldFlipVecIm newFlipVecRe newFlipVecIm
+      Zsqrtd.im_neg, Zsqrtd.im_mul, Int.cast_neg] at newFlipRe newFlipIm
   simp only [real_coord, imag_coord] at newFlipRe newFlipIm
-  try
-  try
-  rw [real_coord] at oldFlipVecRe newFlipVecRe
-  rw [imag_coord] at oldFlipVecIm newFlipVecIm
-  rw [imag_coord] at oldFlipVecRe newFlipVecRe
-  rw [real_coord] at oldFlipVecIm newFlipVecIm
   simp only [Int.reduceNeg, GaussianQuarterTurn, Fin.isValue, GaussianInt.intCast_re,
-      GaussianInt.intCast_im, mul_ite, mul_neg, ite_mul, neg_mul, one_mul]
-      at affineRightRe affineRightIm phaseSlopeRe phaseSlopeIm
-  try rw [← GaussianInt.intCast_re] at oldFlipRe
-  try
+      GaussianInt.intCast_im]
+      at affineRightRe affineRightIm
   try rw [← GaussianInt.intCast_re] at affineRightRe
-  try rw [← GaussianInt.intCast_re] at phaseSlopeRe
-  try rw [← GaussianInt.intCast_im] at oldFlipIm
-  try
   try rw [← GaussianInt.intCast_im] at affineRightIm
-  try rw [← GaussianInt.intCast_im] at phaseSlopeIm
-  try rw [← GaussianInt.intCast_im] at oldFlipRe
-  try
-  try rw [← GaussianInt.intCast_re] at oldFlipIm
-  try
   have transportedAdjacency := RightAdjacencyAssembly.transportedAdjacency g q i e T T' h h' p p'
       hcent hslopeRe hslopeIm negative hphase hvec hOT hOT' hsr hsr' centroid_transport
       vector_sign vector_neg affine_neg real_coord imag_coord slope_transport newIndex_eq oldPair

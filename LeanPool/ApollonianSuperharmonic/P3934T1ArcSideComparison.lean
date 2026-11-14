@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.ReversedPolygonalParameterization
 
 public import LeanPool.ApollonianSuperharmonic.P3934T1ArcSide
 public import Mathlib.Algebra.Order.Ring.Star
@@ -240,47 +241,9 @@ private theorem hsr :
     ∀ (flipHomeo_apply : ∀ (t : Set.Icc (0 : Real) 1), flipHomeo t = flip t),
     let gr : Set.Icc (0
         : Real) 1 → Real × Real := fun t => g (flipHomeo t)
-    let sr : P3723T1PolygonalParameterization gr := by
-      refine ⟨s.count, s.positive, fun i => 1 - s.time i.rev, ?_, ?_, ?_, ?_⟩
-      · intro i j hij
-        have hrev : j.rev < i.rev := by
-          have := (Fin.rev_lt_iff (i := j) (j := i.rev)).2 (by simpa using hij)
-          simpa using this
-        exact sub_lt_sub_left (s.strict hrev) 1
-      · simp [Fin.rev_zero, s.finish]
-      · simp [Fin.rev_last, s.start]
-      · intro i
-        let j : Fin s.count := i.rev
-        obtain ⟨A, B, hA⟩ := s.affine_on j
-        refine ⟨A + B, -B, ?_⟩
-        intro t hlow hupp
-        have hlow' : s.time j.castSucc ≤ 1 - (t : Real) := by
-          have hj : j.castSucc = i.succ.rev := by
-            apply Fin.ext
-            simp [j, Fin.rev_succ]
-          rw [hj]
-          exact (le_sub_iff_add_le).2 (by
-            simpa [add_comm] using (le_sub_iff_add_le).1 hupp)
-        have hupp' : 1 - (t : Real) ≤ s.time j.succ := by
-          have hj : j.succ = i.castSucc.rev := by
-            apply Fin.ext
-            simp [j, Fin.rev_castSucc]
-          rw [hj]
-          exact (sub_le_iff_le_add).2 (by
-            simpa [add_comm] using (sub_le_iff_le_add).1 hlow)
-        let u : Set.Icc (0 : Real) 1 := ⟨1 - (t : Real), ⟨sub_nonneg.mpr t.2.2, sub_le_self 1
-            t.2.1⟩⟩
-        have hseg' := hA u hlow' hupp'
-        change g (flipHomeo t) = _
-        rw [flipHomeo_apply]
-        have hu' : u = flip t := by apply Subtype.ext; rfl
-        rw [hu'] at hseg'
-        rw [hseg']
-        apply Prod.ext
-        · change A.1 + (1 - (t : Real)) * B.1 = A.1 + B.1 + (t : Real) * (-B.1)
-          ring
-        · change A.2 + (1 - (t : Real)) * B.2 = A.2 + B.2 + (t : Real) * (-B.2)
-          ring
+    let sr : P3723T1PolygonalParameterization gr :=
+      reversedPolygonalParameterization g s flipHomeo (fun t => by
+        rw [flipHomeo_apply])
     P3934T1PolygonalSide U gr sr (!e))) := by
   classical
   intro U e reverseLocal g s hs flip flip_invol flip_cont flipEquiv flipHomeo flipHomeo_apply gr
@@ -660,47 +623,9 @@ theorem P3934T1ArcSideComparison (U V S : Set (Real × Real))
       change g (flipHomeo r1) = a
       rw [flip1]
       exact hga
-    let sr : P3723T1PolygonalParameterization gr := by
-      refine ⟨s.count, s.positive, fun i => 1 - s.time i.rev, ?_, ?_, ?_, ?_⟩
-      · intro i j hij
-        have hrev : j.rev < i.rev := by
-          have := (Fin.rev_lt_iff (i := j) (j := i.rev)).2 (by simpa using hij)
-          simpa using this
-        exact sub_lt_sub_left (s.strict hrev) 1
-      · simp [Fin.rev_zero, s.finish]
-      · simp [Fin.rev_last, s.start]
-      · intro i
-        let j : Fin s.count := i.rev
-        obtain ⟨A, B, hA⟩ := s.affine_on j
-        refine ⟨A + B, -B, ?_⟩
-        intro t hlow hupp
-        have hlow' : s.time j.castSucc ≤ 1 - (t : Real) := by
-          have hj : j.castSucc = i.succ.rev := by
-            apply Fin.ext
-            simp [j, Fin.rev_succ]
-          rw [hj]
-          exact (le_sub_iff_add_le).2 (by
-            simpa [add_comm] using (le_sub_iff_add_le).1 hupp)
-        have hupp' : 1 - (t : Real) ≤ s.time j.succ := by
-          have hj : j.succ = i.castSucc.rev := by
-            apply Fin.ext
-            simp [j, Fin.rev_castSucc]
-          rw [hj]
-          exact (sub_le_iff_le_add).2 (by
-            simpa [add_comm] using (sub_le_iff_le_add).1 hlow)
-        let u : Set.Icc (0 : Real) 1 := ⟨1 - (t : Real), ⟨sub_nonneg.mpr t.2.2, sub_le_self 1
-            t.2.1⟩⟩
-        have hseg' := hA u hlow' hupp'
-        change g (flipHomeo t) = _
-        rw [flipHomeo_apply]
-        have hu' : u = flip t := by apply Subtype.ext; rfl
-        rw [hu'] at hseg'
-        rw [hseg']
-        apply Prod.ext
-        · change A.1 + (1 - (t : Real)) * B.1 = A.1 + B.1 + (t : Real) * (-B.1)
-          ring
-        · change A.2 + (1 - (t : Real)) * B.2 = A.2 + B.2 + (t : Real) * (-B.2)
-          ring
+    let sr : P3723T1PolygonalParameterization gr :=
+      reversedPolygonalParameterization g s flipHomeo (fun t => by
+        rw [flipHomeo_apply])
     have hsr := ArcComparisonGeometry.hsr U e reverseLocal
         g s hs flip_invol flip_cont flipHomeo_apply
     refine ⟨gr, grcont, grinj, grange, hga', hgb', sr, ?_⟩

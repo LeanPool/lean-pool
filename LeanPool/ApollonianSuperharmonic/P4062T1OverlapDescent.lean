@@ -351,59 +351,14 @@ private theorem htargetAt327 :
       _ = FordOdometer H (z-⟨(P.q₂ : Int),(P.q₂ : Int)⟩) +
             P.p₂*z.re + P.p₂*z.im - P.p₂*(P.q₂ : Int)+1 := by
           convert hchild1 using 1
-  have ht := hlapAffine (FordOdometer P) (FordOdometer H) x
-    ⟨(P.q₂ : Int),(P.q₂ : Int)⟩ P.p₂ P.p₂
-    (-P.p₂*(P.q₂ : Int)+1)
-  apply ht
-  · convert hpt x (by omega) (by omega) (by omega) (by omega) using 1; ring
-  · convert hpt (x-1) (by
-      simp only [Zsqrtd.re_sub, Zsqrtd.re_one]
-      omega)
-      (by
-          simp only [Zsqrtd.re_sub, Zsqrtd.re_one]
-          omega)
-      (by
-          simp only [Zsqrtd.im_sub, Zsqrtd.im_one]
-          omega)
-      (by
-          simp only [Zsqrtd.im_sub, Zsqrtd.im_one]
-          omega) using 1; ring
-  · convert hpt (x+1) (by
-      simp only [Zsqrtd.re_add, Zsqrtd.re_one]
-      omega)
-      (by
-          simp only [Zsqrtd.re_add, Zsqrtd.re_one]
-          omega)
-      (by
-          simp only [Zsqrtd.im_add, Zsqrtd.im_one]
-          omega)
-      (by
-          simp only [Zsqrtd.im_add, Zsqrtd.im_one]
-          omega) using 1; ring
-  · convert hpt (x-⟨0,1⟩) (by
-      simp only [Zsqrtd.re_sub]
-      omega)
-      (by
-          simp only [Zsqrtd.re_sub]
-          omega)
-      (by
-          simp only [Zsqrtd.im_sub]
-          omega)
-      (by
-          simp only [Zsqrtd.im_sub]
-          omega) using 1; ring
-  · convert hpt (x+⟨0,1⟩) (by
-      simp only [Zsqrtd.re_add]
-      omega)
-      (by
-          simp only [Zsqrtd.re_add]
-          omega)
-      (by
-          simp only [Zsqrtd.im_add]
-          omega)
-      (by
-          simp only [Zsqrtd.im_add]
-          omega) using 1; ring
+  obtain ⟨h0, hm, hp, hmi, hpi⟩ := FourNeighborLaplacianProperties.affineValuesOnRectangle
+    (FordOdometer P) (FordOdometer H) x ⟨(P.q₂ : ℤ), (P.q₂ : ℤ)⟩ P.p₂ P.p₂
+    (-P.p₂*(P.q₂ : Int)+1) (P.q₂ : ℤ) (P.q₁ : ℤ) (P.q₂ : ℤ) (P.q₁ : ℤ)
+    hb.1 hb.2.1 hb.2.2.1 hb.2.2.2 (by
+      intro z hzr hzr' hzi hzi'
+      convert hpt z hzr hzr' hzi hzi' using 1; ring)
+  exact hlapAffine (FordOdometer P) (FordOdometer H) x
+    ⟨(P.q₂ : ℤ), (P.q₂ : ℤ)⟩ P.p₂ P.p₂ (-P.p₂*(P.q₂ : Int)+1) h0 hm hp hmi hpi
 
 private theorem hdetdiffAt465 :
     (by
@@ -621,59 +576,14 @@ private theorem htargetAt542 :
         rw [harg]
         simp only [Zsqrtd.re_sub]
         ring
-  have ht := hlapAffine (FordOdometer P) (FordOdometer H) x
-    ⟨(P.q₁ : Int),(P.q₁ : Int)⟩ P.p₁ P.p₁
-    (-P.p₁*(P.q₁ : Int))
-  apply ht
-  · convert hpt x (by omega) (by omega) (by omega) (by omega) using 1; ring
-  · convert hpt (x-1) (by
-      simp only [Zsqrtd.re_sub, Zsqrtd.re_one]
-      omega)
-      (by
-          simp only [Zsqrtd.re_sub, Zsqrtd.re_one]
-          omega)
-      (by
-          simp only [Zsqrtd.im_sub, Zsqrtd.im_one]
-          omega)
-      (by
-          simp only [Zsqrtd.im_sub, Zsqrtd.im_one]
-          omega) using 1; ring
-  · convert hpt (x+1) (by
-      simp only [Zsqrtd.re_add, Zsqrtd.re_one]
-      omega)
-      (by
-          simp only [Zsqrtd.re_add, Zsqrtd.re_one]
-          omega)
-      (by
-          simp only [Zsqrtd.im_add, Zsqrtd.im_one]
-          omega)
-      (by
-          simp only [Zsqrtd.im_add, Zsqrtd.im_one]
-          omega) using 1; ring
-  · convert hpt (x-⟨0,1⟩) (by
-      simp only [Zsqrtd.re_sub]
-      omega)
-      (by
-          simp only [Zsqrtd.re_sub]
-          omega)
-      (by
-          simp only [Zsqrtd.im_sub]
-          omega)
-      (by
-          simp only [Zsqrtd.im_sub]
-          omega) using 1; ring
-  · convert hpt (x+⟨0,1⟩) (by
-      simp only [Zsqrtd.re_add]
-      omega)
-      (by
-          simp only [Zsqrtd.re_add]
-          omega)
-      (by
-          simp only [Zsqrtd.im_add]
-          omega)
-      (by
-          simp only [Zsqrtd.im_add]
-          omega) using 1; ring
+  obtain ⟨h0, hm, hp, hmi, hpi⟩ := FourNeighborLaplacianProperties.affineValuesOnRectangle
+    (FordOdometer P) (FordOdometer H) x ⟨(P.q₁ : ℤ), (P.q₁ : ℤ)⟩ P.p₁ P.p₁
+    (-P.p₁*(P.q₁ : Int)) (P.q₁ : ℤ) (P.q₂ : ℤ) (P.q₁ : ℤ) (P.q₂ : ℤ)
+    hb.1 hb.2.1 hb.2.2.1 hb.2.2.2 (by
+      intro z hzr hzr' hzi hzi'
+      convert hpt z hzr hzr' hzi hzi' using 1; ring)
+  exact hlapAffine (FordOdometer P) (FordOdometer H) x
+    ⟨(P.q₁ : ℤ), (P.q₁ : ℤ)⟩ P.p₁ P.p₁ (-P.p₁*(P.q₁ : Int)) h0 hm hp hmi hpi
 
 private theorem hyAt644 :
     (by

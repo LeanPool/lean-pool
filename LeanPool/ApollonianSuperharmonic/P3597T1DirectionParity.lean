@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import Mathlib.Logic.Equiv.Fin.Rotate
 
 public import LeanPool.ApollonianSuperharmonic.P3597T1GenericRayStability
 
@@ -179,76 +180,8 @@ private theorem ray_segment_axes :
     rw [segment_eq_image']
     exact ⟨u, ⟨hu0, hu1⟩, hpoint.symm⟩
 
-private theorem cyclicSucc_eq_add :
-    let cyclicSucc (m : Nat) : Fin (m+1) ≃ Fin (m+1) := {
-      toFun := fun i => ⟨(i.val + 1) % (m+1), Nat.mod_lt _ (by omega)⟩
-      invFun := fun i => ⟨(i.val + m) % (m+1), Nat.mod_lt _ (by omega)⟩
-      left_inv := by
-        intro i
-        apply Fin.ext
-        change (((i.val + 1) % (m+1) + m) % (m+1)) = i.val
-        by_cases hi : i.val = m
-        · simp [hi]
-        · have him : i.val < m := by omega
-          have hinner : (i.val + 1) % (m+1) = i.val + 1 := Nat.mod_eq_of_lt (by omega)
-          rw [hinner]
-          have heq : i.val + 1 + m = (m+1) + i.val := by omega
-          rw [heq, Nat.add_mod, Nat.mod_self, zero_add]
-          simp [Nat.mod_eq_of_lt i.isLt]
-      right_inv := by
-        intro i
-        apply Fin.ext
-        change (((i.val + m) % (m+1) + 1) % (m+1)) = i.val
-        by_cases hi : i.val = 0
-        · simp [hi]
-        · have heq : i.val + m = (m+1) + (i.val-1) := by omega
-          have hmod : (i.val + m) % (m+1) = i.val - 1 := by
-            have hmodi : (i.val-1) % (m+1) = i.val-1 := Nat.mod_eq_of_lt (by omega)
-            rw [heq, Nat.add_mod, Nat.mod_self, zero_add]
-            simp [hmodi]
-          rw [hmod]
-          have hlt : i.val - 1 + 1 < m+1 := by omega
-          rw [Nat.mod_eq_of_lt hlt]
-          omega
-    }
-    ∀ {m : Nat}, ∀ (i : Fin (m+1)), cyclicSucc m i = i + 1 := by
-  classical
-  intro cyclicSucc m i
-  apply Fin.ext
-  simp [cyclicSucc, Fin.val_add]
-
 private theorem cyclic_xor_count :
-    let cyclicSucc (m : Nat) : Fin (m+1) ≃ Fin (m+1) := {
-      toFun := fun i => ⟨(i.val + 1) % (m+1), Nat.mod_lt _ (by omega)⟩
-      invFun := fun i => ⟨(i.val + m) % (m+1), Nat.mod_lt _ (by omega)⟩
-      left_inv := by
-        intro i
-        apply Fin.ext
-        change (((i.val + 1) % (m+1) + m) % (m+1)) = i.val
-        by_cases hi : i.val = m
-        · simp [hi]
-        · have him : i.val < m := by omega
-          have hinner : (i.val + 1) % (m+1) = i.val + 1 := Nat.mod_eq_of_lt (by omega)
-          rw [hinner]
-          have heq : i.val + 1 + m = (m+1) + i.val := by omega
-          rw [heq, Nat.add_mod, Nat.mod_self, zero_add]
-          simp [Nat.mod_eq_of_lt i.isLt]
-      right_inv := by
-        intro i
-        apply Fin.ext
-        change (((i.val + m) % (m+1) + 1) % (m+1)) = i.val
-        by_cases hi : i.val = 0
-        · simp [hi]
-        · have heq : i.val + m = (m+1) + (i.val-1) := by omega
-          have hmod : (i.val + m) % (m+1) = i.val - 1 := by
-            have hmodi : (i.val-1) % (m+1) = i.val-1 := Nat.mod_eq_of_lt (by omega)
-            rw [heq, Nat.add_mod, Nat.mod_self, zero_add]
-            simp [hmodi]
-          rw [hmod]
-          have hlt : i.val - 1 + 1 < m+1 := by omega
-          rw [Nat.mod_eq_of_lt hlt]
-          omega
-    }
+    let cyclicSucc := fun m : ℕ => finRotate (m + 1)
     ∀ {m : Nat}, ∀ (P : Fin (m+1) → Prop), ∀ (Q : Fin (m+1) → Prop), ∀ [DecidablePred P], ∀
         [DecidablePred Q], ∀ (b : Fin (m+1) → Bool), (∀ i, (P i ∧ ¬ Q i ∨ ¬ P i ∧ Q i) ↔
         b i ≠ b (cyclicSucc m i)) → ((Finset.univ.filter P).card % 2 = (Finset.univ.filter
@@ -316,7 +249,7 @@ private theorem cyclic_xor_count :
         simp only [w, u]
         cases b i <;> cases b (cyclicSucc m i) <;> norm_num
       have hcomp : (∑ i, w (cyclicSucc m i)) = ∑ i, w i :=
-        (cyclicSucc m).sum_comp w
+        Equiv.sum_comp (cyclicSucc m) w
       refine ⟨∑ i, u i, ?_⟩
       simp_rw [hlocal']
       rw [Finset.sum_add_distrib, Finset.sum_sub_distrib, hcomp, sub_self,
@@ -514,37 +447,7 @@ private theorem cone_crossing_accounting_collinear :
     using and_congr haciff hbdiff
 
 private theorem axis_parity_from_no_origin :
-    let cyclicSucc (m : Nat) : Fin (m+1) ≃ Fin (m+1) := {
-      toFun := fun i => ⟨(i.val + 1) % (m+1), Nat.mod_lt _ (by omega)⟩
-      invFun := fun i => ⟨(i.val + m) % (m+1), Nat.mod_lt _ (by omega)⟩
-      left_inv := by
-        intro i
-        apply Fin.ext
-        change (((i.val + 1) % (m+1) + m) % (m+1)) = i.val
-        by_cases hi : i.val = m
-        · simp [hi]
-        · have him : i.val < m := by omega
-          have hinner : (i.val + 1) % (m+1) = i.val + 1 := Nat.mod_eq_of_lt (by omega)
-          rw [hinner]
-          have heq : i.val + 1 + m = (m+1) + i.val := by omega
-          rw [heq, Nat.add_mod, Nat.mod_self, zero_add]
-          simp [Nat.mod_eq_of_lt i.isLt]
-      right_inv := by
-        intro i
-        apply Fin.ext
-        change (((i.val + m) % (m+1) + 1) % (m+1)) = i.val
-        by_cases hi : i.val = 0
-        · simp [hi]
-        · have heq : i.val + m = (m+1) + (i.val-1) := by omega
-          have hmod : (i.val + m) % (m+1) = i.val - 1 := by
-            have hmodi : (i.val-1) % (m+1) = i.val-1 := Nat.mod_eq_of_lt (by omega)
-            rw [heq, Nat.add_mod, Nat.mod_self, zero_add]
-            simp [hmodi]
-          rw [hmod]
-          have hlt : i.val - 1 + 1 < m+1 := by omega
-          rw [Nat.mod_eq_of_lt hlt]
-          omega
-    }
+    let cyclicSucc := fun m : ℕ => finRotate (m + 1)
     (∀ {m : Nat}, ∀ (P : Fin (m+1) → Prop), ∀ (Q : Fin (m+1) → Prop), ∀ [DecidablePred P], ∀
         [DecidablePred Q], ∀ (b : Fin (m+1) → Bool), (∀ i, (P i ∧ ¬ Q i ∨ ¬ P i ∧ Q i) ↔ b i ≠ b
         (cyclicSucc m i)) → ((Finset.univ.filter P).card % 2 = (Finset.univ.filter Q).card % 2))
@@ -743,37 +646,7 @@ private theorem cyclic_direction_parity_nonparallel :
         e v + u * coordA d e w) → ((∀ (d : Real × Real), ∀ (e : Real × Real), ∀ (v : Real ×
         Real), ∀ (w : Real × Real), ∀ (u : Real), coordB d e (v + u • (w-v)) = (1-u) * coordB d e
         v + u * coordB d e w) → (
-    let cyclicSucc (m : Nat) : Fin (m+1) ≃ Fin (m+1) := {
-      toFun := fun i => ⟨(i.val + 1) % (m+1), Nat.mod_lt _ (by omega)⟩
-      invFun := fun i => ⟨(i.val + m) % (m+1), Nat.mod_lt _ (by omega)⟩
-      left_inv := by
-        intro i
-        apply Fin.ext
-        change (((i.val + 1) % (m+1) + m) % (m+1)) = i.val
-        by_cases hi : i.val = m
-        · simp [hi]
-        · have him : i.val < m := by omega
-          have hinner : (i.val + 1) % (m+1) = i.val + 1 := Nat.mod_eq_of_lt (by omega)
-          rw [hinner]
-          have heq : i.val + 1 + m = (m+1) + i.val := by omega
-          rw [heq, Nat.add_mod, Nat.mod_self, zero_add]
-          simp [Nat.mod_eq_of_lt i.isLt]
-      right_inv := by
-        intro i
-        apply Fin.ext
-        change (((i.val + m) % (m+1) + 1) % (m+1)) = i.val
-        by_cases hi : i.val = 0
-        · simp [hi]
-        · have heq : i.val + m = (m+1) + (i.val-1) := by omega
-          have hmod : (i.val + m) % (m+1) = i.val - 1 := by
-            have hmodi : (i.val-1) % (m+1) = i.val-1 := Nat.mod_eq_of_lt (by omega)
-            rw [heq, Nat.add_mod, Nat.mod_self, zero_add]
-            simp [hmodi]
-          rw [hmod]
-          have hlt : i.val - 1 + 1 < m+1 := by omega
-          rw [Nat.mod_eq_of_lt hlt]
-          omega
-    }
+    let cyclicSucc := fun m : ℕ => finRotate (m + 1)
     (∀ {m : Nat}, ∀ (A : Fin (m+1) → Real), ∀ (B : Fin (m+1) → Real), (∀ i, A i ≠ 0) → ((∀ i, B i
         ≠ 0) → ((∀ i u, u ∈ Set.Icc (0:Real) 1 → (1-u)*A i + u*A (cyclicSucc m i) = 0 → (1-u)*B i
         + u*B (cyclicSucc m i) = 0 → False) → ((Finset.univ.filter (fun i => B i * B (cyclicSucc
@@ -981,37 +854,7 @@ private theorem choose_common_generic :
 
 private theorem hcyc :
     ∀ (n : Nat),
-    let cyclicSucc (m : Nat) : Fin (m+1) ≃ Fin (m+1) := {
-      toFun := fun i => ⟨(i.val + 1) % (m+1), Nat.mod_lt _ (by omega)⟩
-      invFun := fun i => ⟨(i.val + m) % (m+1), Nat.mod_lt _ (by omega)⟩
-      left_inv := by
-        intro i
-        apply Fin.ext
-        change (((i.val + 1) % (m+1) + m) % (m+1)) = i.val
-        by_cases hi : i.val = m
-        · simp [hi]
-        · have him : i.val < m := by omega
-          have hinner : (i.val + 1) % (m+1) = i.val + 1 := Nat.mod_eq_of_lt (by omega)
-          rw [hinner]
-          have heq : i.val + 1 + m = (m+1) + i.val := by omega
-          rw [heq, Nat.add_mod, Nat.mod_self, zero_add]
-          simp [Nat.mod_eq_of_lt i.isLt]
-      right_inv := by
-        intro i
-        apply Fin.ext
-        change (((i.val + m) % (m+1) + 1) % (m+1)) = i.val
-        by_cases hi : i.val = 0
-        · simp [hi]
-        · have heq : i.val + m = (m+1) + (i.val-1) := by omega
-          have hmod : (i.val + m) % (m+1) = i.val - 1 := by
-            have hmodi : (i.val-1) % (m+1) = i.val-1 := Nat.mod_eq_of_lt (by omega)
-            rw [heq, Nat.add_mod, Nat.mod_self, zero_add]
-            simp [hmodi]
-          rw [hmod]
-          have hlt : i.val - 1 + 1 < m+1 := by omega
-          rw [Nat.mod_eq_of_lt hlt]
-          omega
-    }
+    let cyclicSucc := fun m : ℕ => finRotate (m + 1)
     (∀ {m : Nat}, ∀ (i : Fin (m+1)), cyclicSucc m i = i + 1) → (
     let m := n+2
     ∀ (i : Fin (m+1)), cyclicSucc m i = i+1) := by
@@ -1022,37 +865,7 @@ private theorem hcyc :
 private theorem hxseg :
     ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (x : Real × Real), (x ∉
         P3544T1BoundaryCarrier p) → (
-    let cyclicSucc (m : Nat) : Fin (m+1) ≃ Fin (m+1) := {
-      toFun := fun i => ⟨(i.val + 1) % (m+1), Nat.mod_lt _ (by omega)⟩
-      invFun := fun i => ⟨(i.val + m) % (m+1), Nat.mod_lt _ (by omega)⟩
-      left_inv := by
-        intro i
-        apply Fin.ext
-        change (((i.val + 1) % (m+1) + m) % (m+1)) = i.val
-        by_cases hi : i.val = m
-        · simp [hi]
-        · have him : i.val < m := by omega
-          have hinner : (i.val + 1) % (m+1) = i.val + 1 := Nat.mod_eq_of_lt (by omega)
-          rw [hinner]
-          have heq : i.val + 1 + m = (m+1) + i.val := by omega
-          rw [heq, Nat.add_mod, Nat.mod_self, zero_add]
-          simp [Nat.mod_eq_of_lt i.isLt]
-      right_inv := by
-        intro i
-        apply Fin.ext
-        change (((i.val + m) % (m+1) + 1) % (m+1)) = i.val
-        by_cases hi : i.val = 0
-        · simp [hi]
-        · have heq : i.val + m = (m+1) + (i.val-1) := by omega
-          have hmod : (i.val + m) % (m+1) = i.val - 1 := by
-            have hmodi : (i.val-1) % (m+1) = i.val-1 := Nat.mod_eq_of_lt (by omega)
-            rw [heq, Nat.add_mod, Nat.mod_self, zero_add]
-            simp [hmodi]
-          rw [hmod]
-          have hlt : i.val - 1 + 1 < m+1 := by omega
-          rw [Nat.mod_eq_of_lt hlt]
-          omega
-    }
+    let cyclicSucc := fun m : ℕ => finRotate (m + 1)
     let m := n+2
     let v : Fin (m+1) → Real × Real := p.vertex
     (∀ (i : Fin (m+1)), cyclicSucc m i = i+1) → (∀ i, x ∉ segment Real (v i) (v (cyclicSucc m
@@ -1129,39 +942,9 @@ theorem P3597T1DirectionParity {n : Nat} (p : P3381T1PolygonBoundary n)
         0 < (1-u) * coordA d e (v-x) + u * coordA d e (w-x)) :=
             DirectionParityLemmas.ray_segment_axes basis_coordinates coordA_affine coordB_affine
             coordA_scale coordB_scale x d e v w hD
-  let cyclicSucc (m : Nat) : Fin (m+1) ≃ Fin (m+1) := {
-    toFun := fun i => ⟨(i.val + 1) % (m+1), Nat.mod_lt _ (by omega)⟩
-    invFun := fun i => ⟨(i.val + m) % (m+1), Nat.mod_lt _ (by omega)⟩
-    left_inv := by
-      intro i
-      apply Fin.ext
-      change (((i.val + 1) % (m+1) + m) % (m+1)) = i.val
-      by_cases hi : i.val = m
-      · simp [hi]
-      · have him : i.val < m := by omega
-        have hinner : (i.val + 1) % (m+1) = i.val + 1 := Nat.mod_eq_of_lt (by omega)
-        rw [hinner]
-        have heq : i.val + 1 + m = (m+1) + i.val := by omega
-        rw [heq, Nat.add_mod, Nat.mod_self, zero_add]
-        simp [Nat.mod_eq_of_lt i.isLt]
-    right_inv := by
-      intro i
-      apply Fin.ext
-      change (((i.val + m) % (m+1) + 1) % (m+1)) = i.val
-      by_cases hi : i.val = 0
-      · simp [hi]
-      · have heq : i.val + m = (m+1) + (i.val-1) := by omega
-        have hmod : (i.val + m) % (m+1) = i.val - 1 := by
-          have hmodi : (i.val-1) % (m+1) = i.val-1 := Nat.mod_eq_of_lt (by omega)
-          rw [heq, Nat.add_mod, Nat.mod_self, zero_add]
-          simp [hmodi]
-        rw [hmod]
-        have hlt : i.val - 1 + 1 < m+1 := by omega
-        rw [Nat.mod_eq_of_lt hlt]
-        omega
-  }
+  let cyclicSucc := fun m : ℕ => finRotate (m + 1)
   let cyclicSucc_eq_add {m : Nat} (i : Fin (m+1)) : cyclicSucc m i = i + 1 :=
-      DirectionParityLemmas.cyclicSucc_eq_add (m := m) i
+      finRotate_apply i
   let cyclic_xor_count {m : Nat} (P Q : Fin (m+1) → Prop)
       [DecidablePred P] [DecidablePred Q] (b : Fin (m+1) → Bool)
       (hxor : ∀ i, (P i ∧ ¬ Q i ∨ ¬ P i ∧ Q i) ↔
