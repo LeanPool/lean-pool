@@ -47,60 +47,6 @@ private theorem hI3 :
   rw [pow_succ, hI2]
   simp
 
-private theorem hX :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates),
-        let U := BandVectors.1 (q 2) (q 1)
-        let W := BandVectors.1 (q 3) (q 2)
-        let X := BandVectors.1 (q 1) (q 3)
-        (BandVectors.1 (q (3 : Fin (4 : ℕ))) (q (2 : Fin (4 : ℕ))) + BandVectors.1 (q (1 : Fin (4
-            : ℕ))) (q (3 : Fin (4 : ℕ))) + BandVectors.1 (q (2 : Fin (4 : ℕ))) (q (1 : Fin (4 :
-            ℕ))) = (0 : GaussianInt) ∧ BandVectors.2 (q (3 : Fin (4 : ℕ))) (q (2 : Fin (4 : ℕ)))
-            + BandVectors.2 (q (1 : Fin (4 : ℕ))) (q (3 : Fin (4 : ℕ))) + BandVectors.2 (q (2 :
-            Fin (4 : ℕ))) (q (1 : Fin (4 : ℕ))) = (0 : GaussianInt) ∧ BandVectors.1 (q (1 : Fin
-            (4 : ℕ))) (q (0 : Fin (4 : ℕ))) = BandVectors.1 (q (1 : Fin (4 : ℕ))) (q (3 : Fin (4
-            : ℕ))) - (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) * BandVectors.1 (q (2 : Fin (4 : ℕ))) (q
-            (1 : Fin (4 : ℕ))) ∧ BandVectors.2 (q (1 : Fin (4 : ℕ))) (q (0 : Fin (4 : ℕ))) =
-            BandVectors.2 (q (1 : Fin (4 : ℕ))) (q (3 : Fin (4 : ℕ))) + (⟨(0 : ℤ), (1 : ℤ)⟩ :
-            GaussianInt) * BandVectors.2 (q (2 : Fin (4 : ℕ))) (q (1 : Fin (4 : ℕ))) ∧
-            (ProperBandQuadruple q → ∀ (j : Fin (3 : ℕ)), BandVectors.1 (q (0 : Fin (4 : ℕ))) (q
-            j.succ) = (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) * BandVectors.1 (q j.succ) (q (0 : Fin
-            (4 : ℕ))) ∧ BandVectors.2 (q (0 : Fin (4 : ℕ))) (q j.succ) = -(⟨(0 : ℤ), (1 : ℤ)⟩ :
-            GaussianInt) * BandVectors.2 (q j.succ) (q (0 : Fin (4 : ℕ))))) → (X = -U - W) ) := by
-  classical
-  intro q U W X laws
-  dsimp [X, U, W]
-  linear_combination laws.1
-
-private theorem hY :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates),
-        let A := BandVectors.2 (q 2) (q 1)
-        let B := BandVectors.2 (q 3) (q 2)
-        let Y := BandVectors.2 (q 1) (q 3)
-        (BandVectors.1 (q (3 : Fin (4 : ℕ))) (q (2 : Fin (4 : ℕ))) + BandVectors.1 (q (1 : Fin (4
-            : ℕ))) (q (3 : Fin (4 : ℕ))) + BandVectors.1 (q (2 : Fin (4 : ℕ))) (q (1 : Fin (4 :
-            ℕ))) = (0 : GaussianInt) ∧ BandVectors.2 (q (3 : Fin (4 : ℕ))) (q (2 : Fin (4 : ℕ)))
-            + BandVectors.2 (q (1 : Fin (4 : ℕ))) (q (3 : Fin (4 : ℕ))) + BandVectors.2 (q (2 :
-            Fin (4 : ℕ))) (q (1 : Fin (4 : ℕ))) = (0 : GaussianInt) ∧ BandVectors.1 (q (1 : Fin
-            (4 : ℕ))) (q (0 : Fin (4 : ℕ))) = BandVectors.1 (q (1 : Fin (4 : ℕ))) (q (3 : Fin (4
-            : ℕ))) - (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) * BandVectors.1 (q (2 : Fin (4 : ℕ))) (q
-            (1 : Fin (4 : ℕ))) ∧ BandVectors.2 (q (1 : Fin (4 : ℕ))) (q (0 : Fin (4 : ℕ))) =
-            BandVectors.2 (q (1 : Fin (4 : ℕ))) (q (3 : Fin (4 : ℕ))) + (⟨(0 : ℤ), (1 : ℤ)⟩ :
-            GaussianInt) * BandVectors.2 (q (2 : Fin (4 : ℕ))) (q (1 : Fin (4 : ℕ))) ∧
-            (ProperBandQuadruple q → ∀ (j : Fin (3 : ℕ)), BandVectors.1 (q (0 : Fin (4 : ℕ))) (q
-            j.succ) = (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) * BandVectors.1 (q j.succ) (q (0 : Fin
-            (4 : ℕ))) ∧ BandVectors.2 (q (0 : Fin (4 : ℕ))) (q j.succ) = -(⟨(0 : ℤ), (1 : ℤ)⟩ :
-            GaussianInt) * BandVectors.2 (q j.succ) (q (0 : Fin (4 : ℕ))))) → (Y = -A - B) ) := by
-  classical
-  intro q A B Y laws
-  dsimp [Y, A, B]
-  linear_combination laws.2.1
-
 private theorem hpos :
     (by
       classical
@@ -1697,7 +1643,9 @@ theorem P4250T1OrdinaryCompatibility
   have laws := VectorRecursionLaws q cfg.proper.1
   have firstLaws := VectorRecursionLaws cfg.firstPredecessor cfg.firstProper.1
   have secondLaws := VectorRecursionLaws cfg.secondPredecessor cfg.secondProper.1
-  have hX := OrdinaryCompatibilityGeometry.hX q laws
+  have hX : X = -U - W := by
+    dsimp [X, U, W]
+    linear_combination laws.1
   have hpos := OrdinaryCompatibilityGeometry.hpos q cfg
   let C1 : BandCircle := ⟨⟨q 1, Or.inl (hpos 0), q, cfg.proper.1, 1, rfl⟩, hpos 0⟩
   let C2 : BandCircle := ⟨⟨q 2, Or.inl (hpos 1), q, cfg.proper.1, 2, rfl⟩, hpos 1⟩
@@ -1740,7 +1688,10 @@ theorem P4250T1OrdinaryCompatibility
     apply Prod.ext <;> simp [sOff, P4250T1SlopeOffset]  <;> ring
   have sneg (a : GaussianInt) : sOff (-a) = -sOff a := by
     apply Prod.ext <;> simp [sOff, P4250T1SlopeOffset]  <;> ring
-  have sY := OrdinaryCompatibilityGeometry.sY q (OrdinaryCompatibilityGeometry.hY q laws) sadd sneg
+  have hY : Y = -A - B := by
+    dsimp [Y, A, B]
+    linear_combination laws.2.1
+  have sY := OrdinaryCompatibilityGeometry.sY q hY sadd sneg
   have gaussianPointNeg := GaussianRealPointProperties.negation
   have hV20 := OrdinaryCompatibilityGeometry.hV20 q cfg
   have hflip12 := firstLaws.2.2.2.2 cfg.firstProper 1

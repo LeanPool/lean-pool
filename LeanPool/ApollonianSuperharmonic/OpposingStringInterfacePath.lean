@@ -122,26 +122,6 @@ private theorem forall₂_mem :
     · obtain ⟨x', hx', hx'z⟩ := ih w hw
       exact ⟨x', by simp [hx'], hx'z⟩
 
-private theorem forwardInterior :
-    (by
-      classical
-      exact
-        ∀ (base : ProtoTile), ∀ (forward : List ProtoTile), ∀ (a : GaussianInt), ∀ (b :
-            GaussianInt),
-        let tileAt : Int × Int → ProtoTile := fun z =>
-          TileTranslation base ((z.1 : GaussianInt) * a + (z.2 : GaussianInt) * b)
-        ∀ (F : List (ℤ × ℤ)), (List.Forall₂ (fun (T : ProtoTile) (z : ℤ × ℤ) => T = (fun (z : ℤ ×
-            ℤ) => TileTranslation base ((↑z.1 : GaussianInt) * a + (↑z.2 : GaussianInt) * b)) z)
-            (List.drop (1 : ℕ) forward).dropLast (List.drop (1 : ℕ) F).dropLast) → ((∀
-            {α : Type}, ∀ {β : Type}, ∀ {Rel : α → β → Prop}, ∀ {xs : List α}, ∀ {ys : List β},
-            (List.Forall₂ Rel xs ys) → (∀ z ∈ ys, ∃ x ∈ xs, Rel x z)) → (∀ (z : Int × Int), (z ∈
-            (F.drop 1).dropLast) → (∃ T ∈ (forward.drop 1).dropLast, T = tileAt z))) ) := by
-  classical
-  intro base forward a b tileAt F forall₂_interior forall₂_mem z hz
-  exact forall₂_mem forall₂_interior z hz
-
-private abbrev reverseInterior := ApollonianSuperharmonic.OpposingInterfaceGeometry.forwardInterior
-
 private theorem hshift' :
     (by
       classical
@@ -1294,10 +1274,8 @@ theorem OpposingStringInterfacePath
       {xs : List α} {ys : List β} (hall : List.Forall₂ Rel xs ys) :=
           OpposingInterfaceGeometry.forall₂_mem (α := α) (β := β) (Rel := Rel) (xs := xs) (ys :=
           ys) hall
-  have forwardInterior := OpposingInterfaceGeometry.forwardInterior base forward a b F
-      forall₂_interior forall₂_mem
-  have reverseInterior := OpposingInterfaceGeometry.reverseInterior base reverse a b G
-      rfor₂_interior forall₂_mem
+  have forwardInterior := forall₂_mem forall₂_interior
+  have reverseInterior := forall₂_mem rfor₂_interior
   rcases hcertificate with hunit | hnonunit
   · rcases hunit with ⟨hcurv, horient⟩
     obtain ⟨x, hcells⟩ :=

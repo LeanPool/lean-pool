@@ -753,27 +753,6 @@ private theorem normalizedAdjacent :
   · simp only [↓reduceIte]
     exact reversedAdjacent a₀ i₀ s₀
 
-private theorem hZindex :
-    (by
-      classical
-      exact
-        ∀ (i : Fin 3), ∀ (s : Fin 4), ∀ (a : Fin 3), ∀ (g' : BandPackingSymmetry),
-        let k : Fin 3 := if BandPackingSymmetryReversesOrientation g'
-          then -(i - a) else i - a
-        let t : Fin 4 := if BandPackingSymmetryReversesOrientation g'
-          then -s - 1 else s
-        (∀ (rev : Bool), ∀ (a₀ : Fin 3), ∀ (i₀ : Fin 3), ∀ (s₀ : Fin 4),
-        let k₀ := if rev then -(i₀ - a₀) else i₀ - a₀
-          let t₀ := if rev then -s₀ - 1 else s₀
-          (if Even t₀.val then k₀ - 1 else k₀ + 1) =
-            if rev then -((if Even s₀.val then i₀ - 1 else i₀ + 1) - a₀)
-            else (if Even s₀.val then i₀ - 1 else i₀ + 1) - a₀) → ((if Even t.val then k - 1 else
-                k + 1) = if BandPackingSymmetryReversesOrientation g' then -((if Even s.val then
-                i - 1 else i + 1) - a) else (if Even s.val then i - 1 else i + 1) - a) ) := by
-  classical
-  intro i s a g' k t normalizedAdjacent
-  exact normalizedAdjacent (BandPackingSymmetryReversesOrientation g') a i s
-
 private theorem hZparentIndex :
     (by
       classical
@@ -1794,7 +1773,7 @@ theorem P4055T1PlacementNormalization
       PlacementNormalizationProof.reversedAdjacent quarterParity a₀ i₀ s₀
   have normalizedAdjacent (rev : Bool) (a₀ i₀ : Fin 3) (s₀ : Fin 4) :=
       PlacementNormalizationProof.normalizedAdjacent reversedAdjacent rev a₀ i₀ s₀
-  have hZindex := PlacementNormalizationProof.hZindex i s a g' normalizedAdjacent
+  have hZindex := normalizedAdjacent (BandPackingSymmetryReversesOrientation g') a i s
   let j : Fin 3 := if Even t.val then k - 1 else k + 1
   have hZparentIndex := PlacementNormalizationProof.hZparentIndex i s a g' hZindex
   have hZcircle := PlacementNormalizationProof.hZcircle r i s a g' cyclicIndex cyclicCancel

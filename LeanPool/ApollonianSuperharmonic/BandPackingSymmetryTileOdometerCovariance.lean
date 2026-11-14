@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.P5625T1CentroidSlopeDifferenceCovariance
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryCurvature
 public import LeanPool.ApollonianSuperharmonic.BandPrototileNonempty
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryDomainTransport
@@ -284,90 +285,6 @@ private theorem extractUnit :
         have hb := hq.2 i
         omega
       omega
-
-private theorem differenceTransport :
-    (by
-      classical
-      exact
-        ∀ (a : BandPackingSymmetry), ∀ (U : ProtoTile), ∀ (V : ProtoTile), ∀ (x : ℝ × ℝ), ∀ (y :
-            ℝ × ℝ), ∀ (v : GaussianInt), ∀ (w : GaussianInt), ∀ (r : ℝ), TileCentroid V -
-            TileCentroid U = r • GaussianRealPoint v → x - y = r • GaussianRealPoint w →
-            TileCentroid (BandPackingSymmetryTileAction a V) - TileCentroid
-            (BandPackingSymmetryTileAction a U) = r • GaussianRealPoint
-            (BandPackingSymmetryAffineVectorAction a (v, w)).1 ∧ BandPackingSymmetrySlopeAction a
-            V x - BandPackingSymmetrySlopeAction a U y = r • GaussianRealPoint
-            (BandPackingSymmetryAffineVectorAction a (v, w)).2 ) := by
-  classical
-  intro a
-  induction a with
-  | identity => intro U V x y v w r hc hp; exact ⟨hc, hp⟩
-  | shift t =>
-      intro U V x y v w r hc hp
-      rcases t with ⟨tr, ti⟩
-      rcases v with ⟨vr, vi⟩
-      rcases w with ⟨wr, wi⟩
-      have hc1 := congrArg Prod.fst hc
-      have hc2 := congrArg Prod.snd hc
-      have hp1 := congrArg Prod.fst hp
-      have hp2 := congrArg Prod.snd hp
-      refine ⟨hc, ?_⟩
-      apply Prod.ext
-      all_goals
-        simp [BandPackingSymmetrySlopeAction, BandPackingSymmetryAffineVectorAction,
-          GaussianRealPoint, GaussianReflection] at hc1 hc2 hp1 hp2 ⊢
-        ring_nf
-        nlinarith [congrArg (fun z : ℝ => (tr : ℝ) * z) hc1,
-          congrArg (fun z : ℝ => (ti : ℝ) * z) hc2,
-          congrArg (fun z : ℝ => (ti : ℝ) * z) hc1,
-          congrArg (fun z : ℝ => (tr : ℝ) * z) hc2]
-  | negate =>
-      intro U V x y v w r hc hp
-      have hc1 := congrArg Prod.fst hc
-      have hc2 := congrArg Prod.snd hc
-      have hp1 := congrArg Prod.fst hp
-      have hp2 := congrArg Prod.snd hp
-      change TileCentroid (TileQuarterTurn V) - TileCentroid (TileQuarterTurn U) = _ ∧ _
-      rw [(TileQuarterTurnFormulas V).2.2.2.2.1,
-        (TileQuarterTurnFormulas U).2.2.2.2.1]
-      constructor
-      · apply Prod.ext
-        all_goals simp [BandPackingSymmetryAffineVectorAction,
-          GaussianRealPoint, GaussianQuarterTurn] at hc1 hc2 hp1 hp2 ⊢; linarith
-      · apply Prod.ext
-        all_goals simp [BandPackingSymmetrySlopeAction,
-          BandPackingSymmetryAffineVectorAction,
-          GaussianRealPoint, GaussianQuarterTurn] at hp1 hp2 ⊢; linarith
-  | conjugate =>
-      intro U V x y v w r hc hp
-      have hc1 := congrArg Prod.fst hc
-      have hc2 := congrArg Prod.snd hc
-      have hp1 := congrArg Prod.fst hp
-      have hp2 := congrArg Prod.snd hp
-      change TileCentroid (TileQuarterTurn (TileQuarterTurn (TileReflection V))) -
-        TileCentroid (TileQuarterTurn (TileQuarterTurn (TileReflection U))) = _ ∧ _
-      rw [(TileQuarterTurnFormulas (TileQuarterTurn (TileReflection V))).2.2.2.2.1,
-        (TileQuarterTurnFormulas (TileQuarterTurn (TileReflection U))).2.2.2.2.1,
-        (TileQuarterTurnFormulas (TileReflection V)).2.2.2.2.1,
-        (TileQuarterTurnFormulas (TileReflection U)).2.2.2.2.1,
-        (TileReflectionFormulas V).2.2.2.2.1,
-        (TileReflectionFormulas U).2.2.2.2.1]
-      constructor
-      · apply Prod.ext
-        all_goals simp [BandPackingSymmetryAffineVectorAction,
-          GaussianRealPoint, GaussianReflection] at hc1 hc2 hp1 hp2 ⊢; linarith
-      · apply Prod.ext
-        all_goals simp [BandPackingSymmetrySlopeAction,
-          BandPackingSymmetryAffineVectorAction,
-          GaussianRealPoint, GaussianReflection] at hp1 hp2 ⊢; linarith
-  | comp a b iha ihb =>
-      intro U V x y v w r hc hp
-      have hb := ihb U V x y v w r hc hp
-      exact iha (BandPackingSymmetryTileAction b U)
-        (BandPackingSymmetryTileAction b V)
-        (BandPackingSymmetrySlopeAction b V x)
-        (BandPackingSymmetrySlopeAction b U y)
-        (BandPackingSymmetryAffineVectorAction b (v, w)).1
-        (BandPackingSymmetryAffineVectorAction b (v, w)).2 r hb.1 hb.2
 
 private theorem affineMix :
     (by
@@ -1764,7 +1681,6 @@ theorem BandPackingSymmetryTileOdometerCovariance
   have lineCov := TileOdometerSymmetryProof.lineCov lineCircle tileEmpty zeroLine
   have circleCurvature := TileOdometerSymmetryProof.circleCurvature
   have extractUnit := TileOdometerSymmetryProof.extractUnit
-  have differenceTransport := TileOdometerSymmetryProof.differenceTransport
   have affineMix := TileOdometerSymmetryProof.affineMix
   have transform : ∀ (D : CircleCoordinates) (U : ProtoTile) (k : PartialOdometer),
       TileOdometer D U k → ∀ a : BandPackingSymmetry,
@@ -1863,7 +1779,7 @@ theorem BandPackingSymmetryTileOdometerCovariance
             let scale : ℝ := (if p.2 = true then (1 : ℝ) else -1) * (1 / 2)
             have hcentMix := TileOdometerSymmetryProof.hcentMix U q S e i s hc
             have hslopeMix := TileOdometerSymmetryProof.hslopeMix q e i s p₀ pᵢ hdx hdy
-            have hdiffTransport := differenceTransport a U (S p.1 p.2)
+            have hdiffTransport := P5625T1CentroidSlopeDifferenceCovariance.2 a U (S p.1 p.2)
               pᵢ p₀ vmix umix scale hcentMix hslopeMix
             have hmix := congrArg Prod.snd (affineMix a false (v0, u0))
             have hmix' := TileOdometerSymmetryProof.hmix' q a e i s hmix

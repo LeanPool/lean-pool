@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.ExposedCornerAffineBasis
 
 public import Mathlib.LinearAlgebra.AffineSpace.FiniteDimensional
 
@@ -27,93 +28,6 @@ Changes: pool module paths, public exports, project namespace and current Mathli
 namespace ApollonianSuperharmonic
 
 namespace TriangleDiagonalGeometry
-
-private theorem hdet :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (E : P3650T1ExposedCorner p),
-        let a := p.vertex (E.b - 1)
-        let b := p.vertex E.b
-        let c := p.vertex (E.b + 1)
-        (b.1 - a.1) * (c.2 - a.2) - (c.1 - a.1) * (b.2 - a.2) ≠ 0 ) := by
-  classical
-  intro n p E a b c
-  simpa [P3381T1TriangleDeterminant, a, b, c] using E.nondegenerate
-
-private theorem hind :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (E : P3650T1ExposedCorner p),
-        let a := p.vertex (E.b - 1)
-        let b := p.vertex E.b
-        let c := p.vertex (E.b + 1)
-        let v : Fin 3 → Real × Real := ![a, b, c]
-        ((b.1 - a.1) * (c.2 - a.2) - (c.1 - a.1) * (b.2 - a.2) ≠ 0) → (AffineIndependent Real v)
-            ) := by
-  classical
-  intro n p E a b c v hdet
-  apply (affineIndependent_iff_of_fintype Real v).mpr
-  intro z hz hsum i
-  rw [Finset.weightedVSub_eq_linear_combination Finset.univ hz] at hsum
-  have hz' : z 0 + z 1 + z 2 = 0 := by
-    simpa [Fin.sum_univ_succ, ← add_assoc] using hz
-  have hx : z 0 * a.1 + z 1 * b.1 + z 2 * c.1 = 0 := by
-    simpa [Fin.sum_univ_succ, v, ← add_assoc] using congrArg Prod.fst hsum
-  have hy : z 0 * a.2 + z 1 * b.2 + z 2 * c.2 = 0 := by
-    simpa [Fin.sum_univ_succ, v, ← add_assoc] using congrArg Prod.snd hsum
-  have hx' : z 1 * (b.1 - a.1) + z 2 * (c.1 - a.1) = 0 := by
-    linear_combination hx - a.1 * hz'
-  have hy' : z 1 * (b.2 - a.2) + z 2 * (c.2 - a.2) = 0 := by
-    linear_combination hy - a.2 * hz'
-  have hz1 : z 1 = 0 := by
-    have hz1mul : z 1 * ((b.1 - a.1) * (c.2 - a.2) -
-        (c.1 - a.1) * (b.2 - a.2)) = 0 := by
-      linear_combination (c.2 - a.2) * hx' - (c.1 - a.1) * hy'
-    exact (mul_eq_zero.mp hz1mul).resolve_right hdet
-  have hz2 : z 2 = 0 := by
-    have hz2mul : z 2 * ((b.1 - a.1) * (c.2 - a.2) -
-        (c.1 - a.1) * (b.2 - a.2)) = 0 := by
-      linear_combination (b.1 - a.1) * hy' - (b.2 - a.2) * hx'
-    exact (mul_eq_zero.mp hz2mul).resolve_right hdet
-  fin_cases i <;> simp_all
-
-private theorem hspan :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (E : P3650T1ExposedCorner p),
-        let a := p.vertex (E.b - 1)
-        let b := p.vertex E.b
-        let c := p.vertex (E.b + 1)
-        let v : Fin 3 → Real × Real := ![a, b, c]
-        (AffineIndependent Real v) → (affineSpan Real (Set.range v) = ⊤) ) := by
-  classical
-  intro n p E a b c v hind
-  apply hind.affineSpan_eq_top_iff_card_eq_finrank_add_one.mpr
-  simp [Module.finrank_prod]
-
-private theorem hheight :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (E : P3650T1ExposedCorner p),
-        let a := p.vertex (E.b - 1)
-        let b := p.vertex E.b
-        let c := p.vertex (E.b + 1)
-        let v : Fin 3 → Real × Real := ![a, b, c]
-        ∀ (hind : AffineIndependent Real v), ∀ (hspan : affineSpan Real (Set.range v) = ⊤),
-        let A : AffineBasis (Fin 3) Real (Real × Real) := ⟨v, hind, hspan⟩
-        E.height = A.coord 1 ) := by
-  classical
-  intro n p E a b c v hind hspan A
-  apply AffineMap.ext_on A.tot
-  rintro x ⟨i, rfl⟩
-  fin_cases i <;> simp only [AffineBasis.coord_apply]
-  · exact E.height_prev
-  · exact E.height_top
-  · exact E.height_next
 
 private theorem hrangeAt179 :
     (by
@@ -1964,11 +1878,15 @@ theorem P3650T1EmptyTriangleDiagonal {n : Nat} (p : P3381T1PolygonBoundary n)
   let b := p.vertex E.b
   let c := p.vertex (E.b + 1)
   let triangleVertices : Fin 3 → Real × Real := ![a, b, c]
-  have hdet := TriangleDiagonalGeometry.hdet n p E
-  have hind := TriangleDiagonalGeometry.hind n p E hdet
-  have hspan := TriangleDiagonalGeometry.hspan n p E hind
+  have hdet : (b.1 - a.1) * (c.2 - a.2) - (c.1 - a.1) * (b.2 - a.2) ≠ 0 := by
+    simpa [P3381T1TriangleDeterminant, a, b, c] using E.nondegenerate
+  obtain ⟨basis, basis_vertices, height_coord⟩ := ExposedCornerAffineBasis n p E
+  have basis_eq : ⇑basis = triangleVertices := funext basis_vertices
+  have hind : AffineIndependent Real triangleVertices := basis_eq ▸ basis.ind
+  have hspan : affineSpan Real (Set.range triangleVertices) = ⊤ := basis_eq ▸ basis.tot
   let A : AffineBasis (Fin 3) Real (Real × Real) := ⟨triangleVertices, hind, hspan⟩
-  have hheight : E.height = A.coord 1 := TriangleDiagonalGeometry.hheight n p E hind hspan
+  have basis_eq_A : basis = A := AffineBasis.ext basis_eq
+  have hheight : E.height = A.coord 1 := by simpa only [basis_eq_A] using height_coord
   let T := convexHull Real ({a, b, c} : Set (Real × Real))
   have hrange := TriangleDiagonalGeometry.hrangeAt179 n p E hind hspan
   have hmem := TriangleDiagonalGeometry.hmemAt186 n p E hind

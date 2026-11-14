@@ -2249,43 +2249,6 @@ private theorem hshiftR :
   intro k shiftR
   apply Zsqrtd.ext <;> simp [shiftR]
 
-private theorem hJRSv :
-    (by
-      classical
-      exact
-        ∀ (k : Nat), (0 < k) → (
-        let D := DiamondTile k
-        let shiftR : GaussianInt := ⟨2 * (k : Int), 0⟩
-        let J : GaussianInt → GaussianInt := fun z =>
-          GaussianTranslation ⟨0, 2 * (k : Int)⟩ (GaussianReflection z)
-        (∀ (m : Nat), (0 < m) → (∀ (s : GaussianInt), ∀ (t : GaussianInt), (t = ⟨s.re, 2 * (k :
-            Int) - 2 * (m : Int) - s.im⟩) → (J '' FootprintVertices (TileTranslation (DiamondTile
-            m) s) = FootprintVertices (TileTranslation (DiamondTile m) t)))) → ((shiftR =
-            ⟨shiftR.re, 2 * (k : Int) - 2 * (k : Int) - shiftR.im⟩) → (J '' FootprintVertices
-            (TileTranslation D shiftR) = FootprintVertices (TileTranslation D shiftR)))) ) := by
-  classical
-  intro k hkpos D shiftR J JtranslatedVertices hshiftR
-  exact JtranslatedVertices k hkpos shiftR shiftR hshiftR
-
-private theorem hJRSe :
-    (by
-      classical
-      exact
-        ∀ (k : Nat), (0 < k) → (
-        let D := DiamondTile k
-        let shiftR : GaussianInt := ⟨2 * (k : Int), 0⟩
-        let J : GaussianInt → GaussianInt := fun z =>
-          GaussianTranslation ⟨0, 2 * (k : Int)⟩ (GaussianReflection z)
-        (∀ (m : Nat), (0 < m) → (∀ (s : GaussianInt), ∀ (t : GaussianInt), (t = ⟨s.re, 2 * (k :
-            Int) - 2 * (m : Int) - s.im⟩) → ((fun e : Finset GaussianInt => e.image J) ''
-            FootprintEdges (TileTranslation (DiamondTile m) s) = FootprintEdges (TileTranslation
-            (DiamondTile m) t)))) → ((shiftR = ⟨shiftR.re, 2 * (k : Int) - 2 * (k : Int) -
-            shiftR.im⟩) → ((fun e : Finset GaussianInt => e.image J) '' FootprintEdges
-            (TileTranslation D shiftR) = FootprintEdges (TileTranslation D shiftR)))) ) := by
-  classical
-  intro k hkpos D shiftR J JtranslatedEdges hshiftR
-  exact JtranslatedEdges k hkpos shiftR shiftR hshiftR
-
 private theorem hJRSe' :
     (by
       classical
@@ -2831,10 +2794,10 @@ private theorem reflectedInterfaces :
   have hJDe' : FootprintEdges D =
       (fun e : Finset GaussianInt => e.image J) '' FootprintEdges D := hJDe.symm
   have hshiftR := PredecessorInterfaceGeometry.hshiftR k
-  have hJRSv := PredecessorInterfaceGeometry.hJRSv k hkpos JtranslatedVertices hshiftR
+  have hJRSv := JtranslatedVertices k hkpos shiftR shiftR hshiftR
   have hJRSv' : FootprintVertices (TileTranslation D shiftR) =
       J '' FootprintVertices (TileTranslation D shiftR) := hJRSv.symm
-  have hJRSe := PredecessorInterfaceGeometry.hJRSe k hkpos JtranslatedEdges hshiftR
+  have hJRSe := JtranslatedEdges k hkpos shiftR shiftR hshiftR
   have hJRSe' := PredecessorInterfaceGeometry.hJRSe' k hJRSe
   let shiftHigh : GaussianInt := ⟨0, 2 * (k : Int)⟩
   have hJDLv := PredecessorInterfaceGeometry.hJDLv k hkpos JtranslatedVertices

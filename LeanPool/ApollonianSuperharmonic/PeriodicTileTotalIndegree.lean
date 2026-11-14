@@ -175,8 +175,7 @@ private theorem hvertex_partition :
     (by
       classical
       exact
-        ∀ (T : ProtoTile), ∀ (D : Finset GaussianInt), ((FootprintVertices T).ncard + Finset.card
-            T.cells = (FootprintEdges T).ncard + (1 : ℕ)) → (
+        ∀ (T : ProtoTile), ∀ (D : Finset GaussianInt), (
         let I : GaussianInt := ⟨0, 1⟩
         let cornerBag : Multiset GaussianInt := T.cells.1.bind fun c =>
           ([c, c + 1, c + I, c + 1 + I] : List GaussianInt)
@@ -189,7 +188,7 @@ private theorem hvertex_partition :
             (2 : ℕ) + N (3 : ℕ)) → ((D.card = N 4) → ((FootprintVertices T).ncard = D.card +
             (BoundaryFootprintEdges T).ncard))) ) := by
   classical
-  intro T D heuler I cornerBag N hinc hN4
+  intro T D I cornerBag N hinc hN4
   omega
 
 private abbrev hV :=
@@ -1784,7 +1783,6 @@ private theorem hcountBridge :
   intro C T hT hlat D hDmem hsectorAll
   have htiles := LatticeTileGridStructure T hlat
   have hcells : T.cells.Nonempty := htiles.1.1
-  have heuler := LatticeTileGridEulerCount T hlat
   have hreg := LatticeEdgeRegularity C T hT hlat
   let I : GaussianInt := ⟨0, 1⟩
   let cornerBag : Multiset GaussianInt := T.cells.1.bind fun c =>
@@ -1799,7 +1797,7 @@ private theorem hcountBridge :
     (BoundaryFootprintEdges T).ncard = N 1 + N 2 + N 3 at hinc
   have hvertex_partition : (FootprintVertices T).ncard =
       D.card + (BoundaryFootprintEdges T).ncard  := PeriodicIndegreeGeometry.hvertex_partition T
-          D heuler hinc
+          D hinc
       (PeriodicIndegreeGeometry.hN4 T D hDmem hsectorAll hcells
       (TileCornerMultiplicity.cornerCount T) (PeriodicIndegreeGeometry.hfull_not_boundary T
       hcells))

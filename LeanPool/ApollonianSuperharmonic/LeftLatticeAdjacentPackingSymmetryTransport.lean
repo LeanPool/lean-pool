@@ -52,44 +52,6 @@ private theorem hcAt345 :
   intro q i e T T' hcent he
   simpa [he, GaussianRealPoint] using hcent
 
-private theorem hscoordAt393 :
-    (by
-      classical
-      exact
-        ∀ (g : BandPackingSymmetry), ∀ (q : Fin 4 → CircleCoordinates), ∀ (i : Fin 3), ∀ (T :
-            ProtoTile), ∀ (T' : ProtoTile), ∀ (p : ℝ × ℝ), ∀ (p' : ℝ × ℝ),
-            ((BandPackingSymmetrySlopeAction g T' p').1 - (BandPackingSymmetrySlopeAction g T
-            p).1 = (↑(-BandPackingSymmetryAffineVectorAction g (BandVectors.1 (q i.succ) (q (0 :
-            Fin (4 : ℕ))), BandVectors.2 (q i.succ) (q (0 : Fin (4 : ℕ))))).2.re : ℝ) ∧
-            (BandPackingSymmetrySlopeAction g T' p').2 - (BandPackingSymmetrySlopeAction g T p).2
-            = (↑(-BandPackingSymmetryAffineVectorAction g (BandVectors.1 (q i.succ) (q (0 : Fin
-            (4 : ℕ))), BandVectors.2 (q i.succ) (q (0 : Fin (4 : ℕ))))).2.im : ℝ)) →
-            ((BandPackingSymmetrySlopeAction g T' p').1 - (BandPackingSymmetrySlopeAction g T
-            p).1 = -((BandPackingSymmetryAffineVectorAction g (BandVectors.1 (q i.succ) (q 0),
-            BandVectors.2 (q i.succ) (q 0))).2.re : ℝ)) ) := by
-  classical
-  intro g q i T T' p p' hs
-  simpa using hs.1
-
-private theorem hscoordAt451 :
-    (by
-      classical
-      exact
-        ∀ (g : BandPackingSymmetry), ∀ (q : Fin 4 → CircleCoordinates), ∀ (i : Fin 3), ∀ (T :
-            ProtoTile), ∀ (T' : ProtoTile), ∀ (p : ℝ × ℝ), ∀ (p' : ℝ × ℝ),
-            ((BandPackingSymmetrySlopeAction g T' p').1 - (BandPackingSymmetrySlopeAction g T
-            p).1 = (↑(-BandPackingSymmetryAffineVectorAction g (BandVectors.1 (q i.succ) (q (0 :
-            Fin (4 : ℕ))), BandVectors.2 (q i.succ) (q (0 : Fin (4 : ℕ))))).2.re : ℝ) ∧
-            (BandPackingSymmetrySlopeAction g T' p').2 - (BandPackingSymmetrySlopeAction g T p).2
-            = (↑(-BandPackingSymmetryAffineVectorAction g (BandVectors.1 (q i.succ) (q (0 : Fin
-            (4 : ℕ))), BandVectors.2 (q i.succ) (q (0 : Fin (4 : ℕ))))).2.im : ℝ)) →
-            ((BandPackingSymmetrySlopeAction g T' p').2 - (BandPackingSymmetrySlopeAction g T
-            p).2 = -((BandPackingSymmetryAffineVectorAction g (BandVectors.1 (q i.succ) (q 0),
-            BandVectors.2 (q i.succ) (q 0))).2.im : ℝ)) ) := by
-  classical
-  intro g q i T T' p p' hs
-  simpa using hs.2
-
 end LeftLatticeTransportGeometry
 
 theorem LeftLatticeAdjacentPackingSymmetryTransport
@@ -251,7 +213,7 @@ theorem LeftLatticeAdjacentPackingSymmetryTransport
               -((BandPackingSymmetryAffineVectorAction g
                 (BandVectors.1 (q i.succ) (q 0),
                   BandVectors.2 (q i.succ) (q 0))).2.re : ℝ) :=
-                      LeftLatticeTransportGeometry.hscoordAt393 g q i T T' p p' hs
+                      by simpa using hs.1
         linarith [hscoord, hcoord]
       · simp only [Int.reduceNeg, Fin.isValue, GaussianInt.intCast_re, hn, Bool.false_eq_true,
           ↓reduceIte, one_mul, he, bne_self_eq_false, neg_mul] at hvr ⊢
@@ -264,7 +226,7 @@ theorem LeftLatticeAdjacentPackingSymmetryTransport
               -((BandPackingSymmetryAffineVectorAction g
                 (BandVectors.1 (q i.succ) (q 0),
                   BandVectors.2 (q i.succ) (q 0))).2.re : ℝ) :=
-                      LeftLatticeTransportGeometry.hscoordAt393 g q i T T' p p' hs
+                      by simpa using hs.1
         linarith [hscoord, hcoord]
   · by_cases he : e = true
     · have hc : TileCentroid T' - TileCentroid T =
@@ -315,7 +277,7 @@ theorem LeftLatticeAdjacentPackingSymmetryTransport
               -((BandPackingSymmetryAffineVectorAction g
                 (BandVectors.1 (q i.succ) (q 0),
                   BandVectors.2 (q i.succ) (q 0))).2.im : ℝ) :=
-                      LeftLatticeTransportGeometry.hscoordAt451 g q i T T' p p' hs
+                      by simpa using hs.2
         linarith [hscoord, hcoord]
       · simp only [Int.reduceNeg, Fin.isValue, GaussianInt.intCast_im, hn, Bool.false_eq_true,
           ↓reduceIte, one_mul, he, bne_self_eq_false, neg_mul] at hvi ⊢
@@ -328,7 +290,7 @@ theorem LeftLatticeAdjacentPackingSymmetryTransport
               -((BandPackingSymmetryAffineVectorAction g
                 (BandVectors.1 (q i.succ) (q 0),
                   BandVectors.2 (q i.succ) (q 0))).2.im : ℝ) :=
-                      LeftLatticeTransportGeometry.hscoordAt451 g q i T T' p p' hs
+                      by simpa using hs.2
         linarith [hscoord, hcoord]
   · exact (BandPackingSymmetryPartialOdometerActionFormulas g h h').2.2.2.2.2.2.1
 

@@ -559,20 +559,11 @@ private theorem hnl'At620 :
 
 private theorem haum'At623 :
     ∀ (q : Fin 4 → CircleCoordinates), (∀ (i : Fin (4 : ℕ)), ∀ (j : Fin (4 : ℕ)), (q i).1 = (1 :
-        ℤ) → (q j).1 = (1 : ℤ) → i = j) → (∀ (p : Fin (4 : ℕ) → CircleCoordinates),
-            (ProperBandQuadruple p ∧ ![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 :
-            ℕ)),
-        q (1 : Fin (4 : ℕ))] = ![((2 : ℤ) * (p (0 : Fin (4 : ℕ))).1 + (2 : ℤ) * (p (2 : Fin (4 :
-        ℕ))).1 + (2 : ℤ) * (p (3 : Fin (4 : ℕ))).1 - (p (1 : Fin (4 : ℕ))).1, (2 : GaussianInt) *
-        (p (0 : Fin (4 : ℕ))).2 + (2 : GaussianInt) * (p (2 : Fin (4 : ℕ))).2 + (2 : GaussianInt)
-        * (p (3 : Fin (4 : ℕ))).2 - (p (1 : Fin (4 : ℕ))).2), p (0 : Fin (4 : ℕ)), p (2 : Fin (4
-        : ℕ)), p (3 : Fin (4 : ℕ))] ∧ p (0 : Fin (4 : ℕ)) = q (2 : Fin (4 : ℕ)) ∧ p (2 : Fin (4 :
-        ℕ)) = q (3 : Fin (4 : ℕ)) ∧ p (3 : Fin (4 : ℕ)) = q (1 : Fin (4 : ℕ)) ∧ (q (3 : Fin (4 :
-        ℕ))).1 < (q (2 : Fin (4 : ℕ))).1 ∧ (q (1 : Fin (4 : ℕ))).1 < (q (2 : Fin (4 : ℕ))).1) → (
+        ℤ) → (q j).1 = (1 : ℤ) → i = j) → (
     let u : Fin 4 → CircleCoordinates := ![q 0, q 2, q 3, q 1]
-    ∀ i j : Fin 4, (u i).1 = 1 → (u j).1 = 1 → i = j)) := by
+    ∀ i j : Fin 4, (u i).1 = 1 → (u j).1 = 1 → i = j) := by
   classical
-  intro q hatMostOneUnit p hsecond u i j hi hj
+  intro q hatMostOneUnit u i j hi hj
   fin_cases i <;> fin_cases j <;> simp only [Fin.isValue, Fin.mk_one, Matrix.cons_val_one,
       Matrix.cons_val_zero, Fin.reduceFinMk, Matrix.cons_val, Fin.reduceEq, u, Fin.zero_eta,
       one_ne_zero, zero_ne_one] at hi hj ⊢ <;>
@@ -607,21 +598,12 @@ private theorem hnl'At656 :
 
 private theorem haum'At660 :
     ∀ (q : Fin 4 → CircleCoordinates), (∀ (i : Fin (4 : ℕ)), ∀ (j : Fin (4 : ℕ)), (q i).1 = (1 :
-        ℤ) → (q j).1 = (1 : ℤ) → i = j) → (∀ (p : Fin (4 : ℕ) → CircleCoordinates),
-            (ProperBandQuadruple p ∧ ![q (0 : Fin (4 : ℕ)), q (2 : Fin (4 : ℕ)), q (3 : Fin (4 :
-            ℕ)),
-        q (1 : Fin (4 : ℕ))] = ![((2 : ℤ) * (p (0 : Fin (4 : ℕ))).1 + (2 : ℤ) * (p (2 : Fin (4 :
-        ℕ))).1 + (2 : ℤ) * (p (3 : Fin (4 : ℕ))).1 - (p (1 : Fin (4 : ℕ))).1, (2 : GaussianInt) *
-        (p (0 : Fin (4 : ℕ))).2 + (2 : GaussianInt) * (p (2 : Fin (4 : ℕ))).2 + (2 : GaussianInt)
-        * (p (3 : Fin (4 : ℕ))).2 - (p (1 : Fin (4 : ℕ))).2), p (0 : Fin (4 : ℕ)), p (2 : Fin (4
-        : ℕ)), p (3 : Fin (4 : ℕ))] ∧ p (0 : Fin (4 : ℕ)) = q (2 : Fin (4 : ℕ)) ∧ p (2 : Fin (4 :
-        ℕ)) = q (3 : Fin (4 : ℕ)) ∧ p (3 : Fin (4 : ℕ)) = q (1 : Fin (4 : ℕ)) ∧ (q (3 : Fin (4 :
-        ℕ))).1 < (q (2 : Fin (4 : ℕ))).1 ∧ (q (1 : Fin (4 : ℕ))).1 < (q (2 : Fin (4 : ℕ))).1) → (
+        ℤ) → (q j).1 = (1 : ℤ) → i = j) → (
     let base : Fin 4 → CircleCoordinates := ![q 0, q 2, q 3, q 1]
     let u := BandPackingSymmetryQuadrupleAction .conjugate base
-    ∀ i j : Fin 4, (u i).1 = 1 → (u j).1 = 1 → i = j)) := by
+    ∀ i j : Fin 4, (u i).1 = 1 → (u j).1 = 1 → i = j) := by
   classical
-  intro q hatMostOneUnit p hsecond base u i j hi hj
+  intro q hatMostOneUnit base u i j hi hj
   fin_cases i <;> fin_cases j <;> simp only [BandPackingSymmetryQuadrupleAction,
       BandPackingSymmetryCircleAction, Fin.isValue, Matrix.cons_val_zero,
       BandPackingSymmetryReversesOrientation, ↓reduceIte, neg_zero, Fin.succ_zero_eq_one,
@@ -753,20 +735,11 @@ private theorem hnl'At720 :
 
 private theorem haum'At723 :
     ∀ (q : Fin 4 → CircleCoordinates), (∀ (i : Fin (4 : ℕ)), ∀ (j : Fin (4 : ℕ)), (q i).1 = (1 :
-        ℤ) → (q j).1 = (1 : ℤ) → i = j) → (∀ (p : Fin (4 : ℕ) → CircleCoordinates),
-            (ProperBandQuadruple p ∧ ![q (0 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 :
-            ℕ)),
-        q (2 : Fin (4 : ℕ))] = ![((2 : ℤ) * (p (0 : Fin (4 : ℕ))).1 + (2 : ℤ) * (p (2 : Fin (4 :
-        ℕ))).1 + (2 : ℤ) * (p (3 : Fin (4 : ℕ))).1 - (p (1 : Fin (4 : ℕ))).1, (2 : GaussianInt) *
-        (p (0 : Fin (4 : ℕ))).2 + (2 : GaussianInt) * (p (2 : Fin (4 : ℕ))).2 + (2 : GaussianInt)
-        * (p (3 : Fin (4 : ℕ))).2 - (p (1 : Fin (4 : ℕ))).2), p (0 : Fin (4 : ℕ)), p (2 : Fin (4
-        : ℕ)), p (3 : Fin (4 : ℕ))] ∧ p (0 : Fin (4 : ℕ)) = q (3 : Fin (4 : ℕ)) ∧ p (2 : Fin (4 :
-        ℕ)) = q (1 : Fin (4 : ℕ)) ∧ p (3 : Fin (4 : ℕ)) = q (2 : Fin (4 : ℕ)) ∧ (q (1 : Fin (4 :
-        ℕ))).1 < (q (3 : Fin (4 : ℕ))).1 ∧ (q (2 : Fin (4 : ℕ))).1 < (q (3 : Fin (4 : ℕ))).1) → (
+        ℤ) → (q j).1 = (1 : ℤ) → i = j) → (
     let u : Fin 4 → CircleCoordinates := ![q 0, q 3, q 1, q 2]
-    ∀ i j : Fin 4, (u i).1 = 1 → (u j).1 = 1 → i = j)) := by
+    ∀ i j : Fin 4, (u i).1 = 1 → (u j).1 = 1 → i = j) := by
   classical
-  intro q hatMostOneUnit p hthird u i j hi hj
+  intro q hatMostOneUnit u i j hi hj
   fin_cases i <;> fin_cases j <;> simp only [Fin.isValue, Fin.mk_one, Matrix.cons_val_one,
       Matrix.cons_val_zero, Fin.reduceFinMk, Matrix.cons_val, Fin.reduceEq, u, Fin.zero_eta,
       one_ne_zero, zero_ne_one] at hi hj ⊢ <;>
@@ -789,21 +762,12 @@ private theorem hnl'At757 :
 
 private theorem haum'At761 :
     ∀ (q : Fin 4 → CircleCoordinates), (∀ (i : Fin (4 : ℕ)), ∀ (j : Fin (4 : ℕ)), (q i).1 = (1 :
-        ℤ) → (q j).1 = (1 : ℤ) → i = j) → (∀ (p : Fin (4 : ℕ) → CircleCoordinates),
-            (ProperBandQuadruple p ∧ ![q (0 : Fin (4 : ℕ)), q (3 : Fin (4 : ℕ)), q (1 : Fin (4 :
-            ℕ)),
-        q (2 : Fin (4 : ℕ))] = ![((2 : ℤ) * (p (0 : Fin (4 : ℕ))).1 + (2 : ℤ) * (p (2 : Fin (4 :
-        ℕ))).1 + (2 : ℤ) * (p (3 : Fin (4 : ℕ))).1 - (p (1 : Fin (4 : ℕ))).1, (2 : GaussianInt) *
-        (p (0 : Fin (4 : ℕ))).2 + (2 : GaussianInt) * (p (2 : Fin (4 : ℕ))).2 + (2 : GaussianInt)
-        * (p (3 : Fin (4 : ℕ))).2 - (p (1 : Fin (4 : ℕ))).2), p (0 : Fin (4 : ℕ)), p (2 : Fin (4
-        : ℕ)), p (3 : Fin (4 : ℕ))] ∧ p (0 : Fin (4 : ℕ)) = q (3 : Fin (4 : ℕ)) ∧ p (2 : Fin (4 :
-        ℕ)) = q (1 : Fin (4 : ℕ)) ∧ p (3 : Fin (4 : ℕ)) = q (2 : Fin (4 : ℕ)) ∧ (q (1 : Fin (4 :
-        ℕ))).1 < (q (3 : Fin (4 : ℕ))).1 ∧ (q (2 : Fin (4 : ℕ))).1 < (q (3 : Fin (4 : ℕ))).1) → (
+        ℤ) → (q j).1 = (1 : ℤ) → i = j) → (
     let base : Fin 4 → CircleCoordinates := ![q 0, q 3, q 1, q 2]
     let u := BandPackingSymmetryQuadrupleAction .conjugate base
-    ∀ i j : Fin 4, (u i).1 = 1 → (u j).1 = 1 → i = j)) := by
+    ∀ i j : Fin 4, (u i).1 = 1 → (u j).1 = 1 → i = j) := by
   classical
-  intro q hatMostOneUnit p hthird base u i j hi hj
+  intro q hatMostOneUnit base u i j hi hj
   fin_cases i <;> fin_cases j <;> simp only [BandPackingSymmetryQuadrupleAction,
       BandPackingSymmetryCircleAction, Fin.isValue, Matrix.cons_val_zero,
       BandPackingSymmetryReversesOrientation, ↓reduceIte, neg_zero, Fin.succ_zero_eq_one,
@@ -1082,7 +1046,7 @@ private theorem secondParentCase :
       let u : Fin 4 → CircleCoordinates := ![q 0, q 2, q 3, q 1]
       have hu := RetainedBoundaryDetails.huAt613 q hq
       have hnl' := RetainedBoundaryDetails.hnl'At620 q hnoLine
-      have haum' := RetainedBoundaryDetails.haum'At623 q hatMostOneUnit p hsecond
+      have haum' := RetainedBoundaryDetails.haum'At623 q hatMostOneUnit
       have hs' : u = ![(2 * (p 0).1 + 2 * (p 2).1 + 2 * (p 3).1 - (p 1).1,
           2 * (p 0).2 + 2 * (p 2).2 + 2 * (p 3).2 - (p 1).2), p 0, p 2, p 3] := hsucc
       have h0' : p 0 = u 1 := by simpa [u] using h0
@@ -1106,7 +1070,7 @@ private theorem secondParentCase :
       have hp' : ProperBandQuadruple pp := BandPackingSymmetryProperCovariance .conjugate p hp
       have ht' : ProperBandQuadruple tt := BandPackingSymmetryProperCovariance .conjugate t ht
       have hnl' := RetainedBoundaryDetails.hnl'At656 q hnoLine
-      have haum' := RetainedBoundaryDetails.haum'At660 q hatMostOneUnit p hsecond
+      have haum' := RetainedBoundaryDetails.haum'At660 q hatMostOneUnit
       have negOneSucc : (-1 : Fin 3).succ = 3 := by decide
       have negTwoSucc : (-2 : Fin 3).succ = 2 := by decide
       have hs' := RetainedBoundaryProof.conjugateSuccessor base p hsucc
@@ -1175,7 +1139,7 @@ private theorem thirdParentCase :
       let u : Fin 4 → CircleCoordinates := ![q 0, q 3, q 1, q 2]
       have hu := RetainedBoundaryDetails.huAt713 q hq
       have hnl' := RetainedBoundaryDetails.hnl'At720 q hnoLine
-      have haum' := RetainedBoundaryDetails.haum'At723 q hatMostOneUnit p hthird
+      have haum' := RetainedBoundaryDetails.haum'At723 q hatMostOneUnit
       have hs' := hsucc
       have h0' : p 0 = u 1 := by simpa [u] using h0
       have h2' : p 2 = u 2 := by simpa [u] using h2
@@ -1199,7 +1163,7 @@ private theorem thirdParentCase :
       have hp' : ProperBandQuadruple pp := BandPackingSymmetryProperCovariance .conjugate p hp
       have ht' : ProperBandQuadruple tt := BandPackingSymmetryProperCovariance .conjugate t ht
       have hnl' := RetainedBoundaryDetails.hnl'At757 q hnoLine
-      have haum' := RetainedBoundaryDetails.haum'At761 q hatMostOneUnit p hthird
+      have haum' := RetainedBoundaryDetails.haum'At761 q hatMostOneUnit
       have negOneSucc : (-1 : Fin 3).succ = 3 := by decide
       have negTwoSucc : (-2 : Fin 3).succ = 2 := by decide
       have hs' := RetainedBoundaryProof.conjugateSuccessor base p hsucc

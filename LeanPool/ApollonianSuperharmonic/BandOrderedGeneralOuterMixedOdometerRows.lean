@@ -26,62 +26,6 @@ namespace ApollonianSuperharmonic
 
 namespace OuterMixedOdometerGeometry
 
-private theorem hW :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 -> CircleCoordinates),
-        let U : GaussianInt := BandVectors.1 (q 2) (q 1)
-        let W : GaussianInt := BandVectors.1 (q 3) (q 2)
-        (BandVectors.1 (q (3 : Fin (4 : ℕ))) (q (2 : Fin (4 : ℕ))) + BandVectors.1 (q (1 : Fin (4
-            : ℕ))) (q (3 : Fin (4 : ℕ))) + BandVectors.1 (q (2 : Fin (4 : ℕ))) (q (1 : Fin (4 :
-            ℕ))) = (0 : GaussianInt) ∧ BandVectors.2 (q (3 : Fin (4 : ℕ))) (q (2 : Fin (4 : ℕ)))
-            + BandVectors.2 (q (1 : Fin (4 : ℕ))) (q (3 : Fin (4 : ℕ))) + BandVectors.2 (q (2 :
-            Fin (4 : ℕ))) (q (1 : Fin (4 : ℕ))) = (0 : GaussianInt) ∧ BandVectors.1 (q (1 : Fin
-            (4 : ℕ))) (q (0 : Fin (4 : ℕ))) = BandVectors.1 (q (1 : Fin (4 : ℕ))) (q (3 : Fin (4
-            : ℕ))) - (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) * BandVectors.1 (q (2 : Fin (4 : ℕ))) (q
-            (1 : Fin (4 : ℕ))) ∧ BandVectors.2 (q (1 : Fin (4 : ℕ))) (q (0 : Fin (4 : ℕ))) =
-            BandVectors.2 (q (1 : Fin (4 : ℕ))) (q (3 : Fin (4 : ℕ))) + (⟨(0 : ℤ), (1 : ℤ)⟩ :
-            GaussianInt) * BandVectors.2 (q (2 : Fin (4 : ℕ))) (q (1 : Fin (4 : ℕ))) ∧
-            (ProperBandQuadruple q → ∀ (j : Fin (3 : ℕ)), BandVectors.1 (q (0 : Fin (4 : ℕ))) (q
-            j.succ) = (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) * BandVectors.1 (q j.succ) (q (0 : Fin
-            (4 : ℕ))) ∧ BandVectors.2 (q (0 : Fin (4 : ℕ))) (q j.succ) = -(⟨(0 : ℤ), (1 : ℤ)⟩ :
-            GaussianInt) * BandVectors.2 (q j.succ) (q (0 : Fin (4 : ℕ))))) → (BandVectors.1 (q
-            1) (q 3) = -U - W) ) := by
-  classical
-  intro q U W laws
-  apply eq_of_sub_eq_zero
-  dsimp [U, W]
-  linear_combination laws.1
-
-private theorem hA :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 -> CircleCoordinates),
-        let A : GaussianInt := BandVectors.2 (q 2) (q 1)
-        let B : GaussianInt := BandVectors.2 (q 3) (q 2)
-        (BandVectors.1 (q (3 : Fin (4 : ℕ))) (q (2 : Fin (4 : ℕ))) + BandVectors.1 (q (1 : Fin (4
-            : ℕ))) (q (3 : Fin (4 : ℕ))) + BandVectors.1 (q (2 : Fin (4 : ℕ))) (q (1 : Fin (4 :
-            ℕ))) = (0 : GaussianInt) ∧ BandVectors.2 (q (3 : Fin (4 : ℕ))) (q (2 : Fin (4 : ℕ)))
-            + BandVectors.2 (q (1 : Fin (4 : ℕ))) (q (3 : Fin (4 : ℕ))) + BandVectors.2 (q (2 :
-            Fin (4 : ℕ))) (q (1 : Fin (4 : ℕ))) = (0 : GaussianInt) ∧ BandVectors.1 (q (1 : Fin
-            (4 : ℕ))) (q (0 : Fin (4 : ℕ))) = BandVectors.1 (q (1 : Fin (4 : ℕ))) (q (3 : Fin (4
-            : ℕ))) - (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) * BandVectors.1 (q (2 : Fin (4 : ℕ))) (q
-            (1 : Fin (4 : ℕ))) ∧ BandVectors.2 (q (1 : Fin (4 : ℕ))) (q (0 : Fin (4 : ℕ))) =
-            BandVectors.2 (q (1 : Fin (4 : ℕ))) (q (3 : Fin (4 : ℕ))) + (⟨(0 : ℤ), (1 : ℤ)⟩ :
-            GaussianInt) * BandVectors.2 (q (2 : Fin (4 : ℕ))) (q (1 : Fin (4 : ℕ))) ∧
-            (ProperBandQuadruple q → ∀ (j : Fin (3 : ℕ)), BandVectors.1 (q (0 : Fin (4 : ℕ))) (q
-            j.succ) = (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) * BandVectors.1 (q j.succ) (q (0 : Fin
-            (4 : ℕ))) ∧ BandVectors.2 (q (0 : Fin (4 : ℕ))) (q j.succ) = -(⟨(0 : ℤ), (1 : ℤ)⟩ :
-            GaussianInt) * BandVectors.2 (q j.succ) (q (0 : Fin (4 : ℕ))))) → (BandVectors.2 (q
-            1) (q 3) = -A - B) ) := by
-  classical
-  intro q A B laws
-  apply eq_of_sub_eq_zero
-  dsimp [A, B]
-  linear_combination laws.2.1
-
 private theorem hrotV :
     (by
       classical
@@ -2162,8 +2106,12 @@ theorem BandOrderedGeneralOuterMixedOdometerRows
   have firstLaws := VectorRecursionLaws cfg.firstPredecessor cfg.firstProper.1
   have secondFlip := (VectorRecursionLaws cfg.secondPredecessor
     cfg.secondProper.1).2.2.2.2 cfg.secondProper 0
-  have hW := OuterMixedOdometerGeometry.hW q laws
-  have hA := OuterMixedOdometerGeometry.hA q laws
+  have hW : BandVectors.1 (q 1) (q 3) = -U - W := by
+    dsimp [U, W]
+    linear_combination laws.1
+  have hA : BandVectors.2 (q 1) (q 3) =
+      -BandVectors.2 (q 2) (q 1) - BandVectors.2 (q 3) (q 2) := by
+    linear_combination laws.2.1
   have hrotA := OuterMixedOdometerGeometry.hrotA q cfg
   have hA21 := OuterMixedOdometerGeometry.hA21 q cfg hrotA
   have hV13 := OuterMixedOdometerGeometry.hV13 q cfg firstLaws (OuterMixedOdometerGeometry.hV21 q

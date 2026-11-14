@@ -148,55 +148,6 @@ private theorem hredchild :
   have hdval : d = 1 := by exact_mod_cast hdint
   simp [d, hdval]
 
-private theorem hfirst :
-    (by
-      classical
-      exact
-        ∀ (P : FordFareyParameter), (BandVectors.1 (FordRecursiveQuadruple P (1 : Fin (4 : ℕ)))
-            (FordRecursiveQuadruple P (0 : Fin (4 : ℕ))) = ⟨(↑P.q : ℤ), (↑P.q₁ : ℤ)⟩) →
-            ((BandVectors.1 (FordRecursiveQuadruple P (1 : Fin (4 : ℕ))) (FordRecursiveQuadruple
-            P (0 : Fin (4 : ℕ))) = BandVectors.1 (FordRecursiveQuadruple P (1 : Fin (4 : ℕ)))
-            (FordRecursiveQuadruple P (3 : Fin (4 : ℕ))) - ⟨(0 : ℤ), (1 : ℤ)⟩ * BandVectors.1
-            (FordRecursiveQuadruple P (2 : Fin (4 : ℕ))) (FordRecursiveQuadruple P (1 : Fin (4 :
-            ℕ)))) → (
-        let a := BandVectors.1 (FordRecursiveQuadruple P 1) (FordRecursiveQuadruple P 3)
-        let b := BandVectors.1 (FordRecursiveQuadruple P 2) (FordRecursiveQuadruple P 1)
-        a - (⟨0, 1⟩ : GaussianInt) * b = ⟨(P.q : Int), (P.q₁ : Int)⟩)) ) := by
-  classical
-  intro P h10 hrec a b
-  rw [← hrec]
-  exact h10
-
-private theorem hsecond :
-    (by
-      classical
-      exact
-        ∀ (P : FordFareyParameter), (BandVectors.1 (FordRecursiveQuadruple P (2 : Fin (4 : ℕ)))
-            (FordRecursiveQuadruple P (0 : Fin (4 : ℕ))) = ⟨-(↑P.q : ℤ), (↑P.q₂ : ℤ)⟩) → (
-        let w := BandVectors.1 (FordRecursiveQuadruple P 3) (FordRecursiveQuadruple P 2)
-        let b := BandVectors.1 (FordRecursiveQuadruple P 2) (FordRecursiveQuadruple P 1)
-        (BandVectors.1 (FordRecursiveQuadruple P (2 : Fin (4 : ℕ))) (FordRecursiveQuadruple P (0
-            : Fin (4 : ℕ))) = BandVectors.1 (FordRecursiveQuadruple P (2 : Fin (4 : ℕ)))
-            (FordRecursiveQuadruple P (1 : Fin (4 : ℕ))) - ⟨(0 : ℤ), (1 : ℤ)⟩ * BandVectors.1
-            (FordRecursiveQuadruple P (3 : Fin (4 : ℕ))) (FordRecursiveQuadruple P (2 : Fin (4 :
-            ℕ))) ∧ BandVectors.1 (FordRecursiveQuadruple P (0 : Fin (4 : ℕ)))
-            (FordRecursiveQuadruple P (3 : Fin (4 : ℕ))) = BandVectors.1 (FordRecursiveQuadruple
-            P (1 : Fin (4 : ℕ))) (FordRecursiveQuadruple P (3 : Fin (4 : ℕ))) + ⟨(0 : ℤ), (1 :
-            ℤ)⟩ * BandVectors.1 (FordRecursiveQuadruple P (3 : Fin (4 : ℕ)))
-            (FordRecursiveQuadruple P (2 : Fin (4 : ℕ))) ∧ BandVectors.2 (FordRecursiveQuadruple
-            P (2 : Fin (4 : ℕ))) (FordRecursiveQuadruple P (0 : Fin (4 : ℕ))) = BandVectors.2
-            (FordRecursiveQuadruple P (2 : Fin (4 : ℕ))) (FordRecursiveQuadruple P (1 : Fin (4 :
-            ℕ))) + ⟨(0 : ℤ), (1 : ℤ)⟩ * BandVectors.2 (FordRecursiveQuadruple P (3 : Fin (4 :
-            ℕ))) (FordRecursiveQuadruple P (2 : Fin (4 : ℕ))) ∧ BandVectors.2
-            (FordRecursiveQuadruple P (0 : Fin (4 : ℕ))) (FordRecursiveQuadruple P (3 : Fin (4 :
-            ℕ))) = BandVectors.2 (FordRecursiveQuadruple P (1 : Fin (4 : ℕ)))
-            (FordRecursiveQuadruple P (3 : Fin (4 : ℕ))) - ⟨(0 : ℤ), (1 : ℤ)⟩ * BandVectors.2
-            (FordRecursiveQuadruple P (3 : Fin (4 : ℕ))) (FordRecursiveQuadruple P (2 : Fin (4 :
-            ℕ)))) → (b - (⟨0, 1⟩ : GaussianInt) * w = ⟨-(P.q : Int), (P.q₂ : Int)⟩)) ) := by
-  classical
-  intro P h20 w b hstep
-  simpa [w, b] using hstep.1.symm.trans h20
-
 private theorem hv13 :
     (by
       classical
@@ -849,9 +800,11 @@ theorem P4158T1LargeSecondRestrictions
   let a := BandVectors.1 (FordRecursiveQuadruple P 1) (FordRecursiveQuadruple P 3)
   let b := BandVectors.1 (FordRecursiveQuadruple P 2) (FordRecursiveQuadruple P 1)
   have hsum' : w + a + b = 0 := by simpa [w, a, b] using hsum
-  have hfirst := LargeSecondRestrictions.hfirst P h10 hrec
+  have hfirst : a - (⟨0, 1⟩ : GaussianInt) * b = ⟨(P.q : Int), (P.q₁ : Int)⟩ :=
+    hrec.symm.trans h10
   have hstep := vstep (FordRecursiveQuadruple P) hq.1
-  have hsecond := LargeSecondRestrictions.hsecond P h20 hstep
+  have hsecond : b - (⟨0, 1⟩ : GaussianInt) * w = ⟨-(P.q : Int), (P.q₂ : Int)⟩ :=
+    hstep.1.symm.trans h20
   have hqsum : (P.q : Int) = (P.q₁ : Int) + (P.q₂ : Int) := by
     exact_mod_cast P.sum_q
   have hv13 := LargeSecondRestrictions.hv13 P hsum' hfirst hsecond hqsum
