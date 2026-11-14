@@ -404,6 +404,12 @@ jobs:
               --log lean-build.log --base "$time_base"
           fi
 
+      # Lake writes setup files only as compiler inputs, each listing every
+      # transitive import (~1.6 MB; ~46 GB pool-wide). Before validating,
+      # caching, or uploading, keep just the local entries our readers use.
+      - name: Slim Lake setup files
+        run: PYTHONPATH=python python3 -m lean_pool.slim_setup
+
       # Main publishes the shared full build. A minimal-verifier PR publishes
       # only its own projects; the verifier overlays them on the main cache.
       # A cold merge-queue build publishes it too, for main to restore.
@@ -648,6 +654,12 @@ jobs:
               --log shard-build.log --base "$time_base" --modules $modules
           fi
 
+      # Lake writes setup files only as compiler inputs, each listing every
+      # transitive import (~1.6 MB; ~46 GB pool-wide). Before validating,
+      # caching, or uploading, keep just the local entries our readers use.
+      - name: Slim Lake setup files
+        run: PYTHONPATH=python python3 -m lean_pool.slim_setup
+
       # Ship only what this build produced; unchanged (cache-replayed)
       # files stay out, so `finalize` can layer the shard outputs onto the
       # same restored cache without clobbering anything fresher.
@@ -832,6 +844,12 @@ jobs:
             PYTHONPATH=python python3 -m lean_pool.build_time_limits check \
               --log lean-build.log --base "$time_base" --exclude-projects $SHARD_PROJECTS
           fi
+
+      # Lake writes setup files only as compiler inputs, each listing every
+      # transitive import (~1.6 MB; ~46 GB pool-wide). Before validating,
+      # caching, or uploading, keep just the local entries our readers use.
+      - name: Slim Lake setup files
+        run: PYTHONPATH=python python3 -m lean_pool.slim_setup
 
       # Main publishes the shared full build. A minimal-verifier PR publishes
       # only its own projects; the verifier overlays them on the main cache.
@@ -1095,6 +1113,12 @@ jobs:
             PYTHONPATH=python python3 -m lean_pool.build_time_limits check \
               --log lean-build.log --base "$time_base"
           fi
+
+      # Lake writes setup files only as compiler inputs, each listing every
+      # transitive import (~1.6 MB; ~46 GB pool-wide). Before validating,
+      # caching, or uploading, keep just the local entries our readers use.
+      - name: Slim Lake setup files
+        run: PYTHONPATH=python python3 -m lean_pool.slim_setup
 
       - name: Install validation dependencies
         run: cd python && uv sync --locked
