@@ -36,6 +36,7 @@ public import LeanPool.ACMax.Counting.LargeN
 public import LeanPool.ACMax.Counting.MEdgeSparse
 public import LeanPool.ACMax.Counting.MoatSharp
 public import LeanPool.ACMax.Counting.Moats
+public import LeanPool.ACMax.Counting.PointwiseCharges
 public import LeanPool.ACMax.Counting.PoorCorner
 public import LeanPool.ACMax.Counting.Quotient
 public import LeanPool.ACMax.Counting.ResidualInterface

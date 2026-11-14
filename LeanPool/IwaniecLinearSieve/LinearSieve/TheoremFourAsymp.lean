@@ -70,7 +70,7 @@ theorem tendsto_lin_sub_rpow :
   have h6 : 6 ≤ pntκ * ℓ ^ (1 / 10 : ℝ) := by
     rw [div_le_iff₀ pntκ_pos] at h; linarith
   rw [hsplit]
-  nlinarith
+  nlinarith only [hℓ, h6]
 
 theorem tendsto_log_pow_pntE :
     Tendsto (fun y : ℝ => log y ^ 5 * pntE (y ^ (1 / xi y))) atTop (𝓝 0) := by
@@ -85,7 +85,7 @@ theorem tendsto_log_pow_pntE :
   · filter_upwards [eventually_gt_atTop 1] with y hy
     have hL := log_pos hy
     have hLe : log y ≤ exp (log (log (3 * y))) := by
-      rw [← log_add_log_three hy]; linarith [log_pos (by norm_num : (1 : ℝ) < 3)]
+      rw [← log_add_log_three hy]; linarith only [log_pos (by norm_num : (1 : ℝ) < 3)]
     rw [pntE_rpow_one_div_xi hy, sub_eq_add_neg, exp_add, ← neg_mul]
     gcongr
     calc log y ^ 5 ≤ exp (log (log (3 * y))) ^ 5 := by gcongr
@@ -110,12 +110,12 @@ theorem eventually_mul_pntE_le (K : ℝ) : ∀ᶠ y : ℝ in atTop,
       _ = log y ^ 5 := by ring
   have h2 : |K| * (log y ^ 5 * pntE (y ^ (1 / xi y))) ≤ |K| * (1 / (|K| + 1)) := by gcongr
   have h3 : |K| * (1 / (|K| + 1)) ≤ 1 := by
-    rw [mul_one_div, div_le_one (by positivity)]; linarith
+    rw [mul_one_div, div_le_one (by positivity)]; linarith only []
   calc K * xi y ^ 2 * log y ^ 3 * pntE (y ^ (1 / xi y))
       ≤ |K| * (xi y ^ 2 * log y ^ 3) * pntE (y ^ (1 / xi y)) := by
         rw [mul_assoc K]; gcongr; exact le_abs_self K
     _ ≤ |K| * log y ^ 5 * pntE (y ^ (1 / xi y)) := by gcongr
-    _ ≤ 1 := by rw [mul_assoc]; linarith
+    _ ≤ 1 := by rw [mul_assoc]; linarith only [h2, h3]
 
 /-- On `[0, 1]`, the exponential is at most `1 + 2v`. -/
 theorem exp_le_one_add_two_mul {v : ℝ} (hv0 : 0 ≤ v) (hv1 : v ≤ 1) :
@@ -186,13 +186,13 @@ theorem eventually_delta_mul_le (C : ℝ) (hC : 0 ≤ C) : ∀ᶠ y : ℝ in atT
 /-- `ξ log ξ - (ξ - 2) log (ξ - 2) ≤ 2 log ξ + 2`. -/
 theorem mul_log_sub_le {ξ : ℝ} (hξ : 2 < ξ) :
     ξ * log ξ - (ξ - 2) * log (ξ - 2) ≤ 2 * log ξ + 2 := by
-  have hu : 0 < ξ - 2 := by linarith
-  have h := log_le_sub_one_of_pos (div_pos (by linarith : 0 < ξ) hu)
-  rw [log_div (by linarith) hu.ne'] at h
+  have hu : 0 < ξ - 2 := by linarith only [hξ]
+  have h := log_le_sub_one_of_pos (div_pos (by linarith only [hξ] : 0 < ξ) hu)
+  rw [log_div (by linarith only [hξ]) hu.ne'] at h
   have h' : (ξ - 2) * (log ξ - log (ξ - 2)) ≤ (ξ - 2) * (ξ / (ξ - 2) - 1) :=
     mul_le_mul_of_nonneg_left h hu.le
   have e : (ξ - 2) * (ξ / (ξ - 2) - 1) = 2 := by field_simp; ring
-  nlinarith
+  nlinarith only [h', e]
 
 /-- The exponent comparison for [I71, (4.4), (4.9)], after bounding the logarithms. -/
 theorem crude_half_exponent_le {c ℓ L ξ X : ℝ} (hℓ_large : 2 ≤ ℓ) (hxi_large : 8 * ℓ ≤ ξ)
@@ -358,15 +358,15 @@ theorem eventually_crude_hyp (c C' : ℝ) : ∀ᶠ ℓ : ℝ in atTop,
       (by norm_num : (0 : ℝ) < 1 / 4)).eventually (eventually_ge_atTop (2 * C')),
     tendsto_log_atTop.eventually (eventually_ge_atTop (4 * (2 + c + 18 * log 2))), hF6,
     eventually_ge_atTop (16 * (2 + |c|))] with ℓ h1 h2 h3 h4 h4' h5 h6 h6'
-  have hℓ0 : 0 < ℓ := by linarith
-  have hlℓ : 0 ≤ log ℓ := log_nonneg (by linarith)
-  refine ⟨h1, h2, ?_, ?_, by linarith, ?_⟩
+  have hℓ0 : 0 < ℓ := by linarith only [h1]
+  have hlℓ : 0 ≤ log ℓ := log_nonneg (by linarith only [h1])
+  refine ⟨h1, h2, ?_, ?_, by linarith only [h5], ?_⟩
   · have := mul_le_mul_of_nonneg_right h3 (exp_pos (ℓ / 2)).le
     rw [mul_assoc, ← exp_add, show -(1 / 2) * ℓ + ℓ / 2 = 0 by ring, exp_zero, mul_one] at this
-    linarith
+    linarith only [this]
   · have hq := rpow_nonneg hℓ0.le (1 / 4 : ℝ)
     rw [norm_of_nonneg hlℓ, norm_of_nonneg hq] at h4
-    linarith
+    linarith only [h4, h4', hlℓ]
   · rw [norm_of_nonneg hlℓ, id, norm_of_nonneg hℓ0.le] at h6
     have := le_abs_self c
     have := abs_nonneg c

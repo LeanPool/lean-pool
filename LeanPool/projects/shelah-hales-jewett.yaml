@@ -1,0 +1,52 @@
+slug: shelah-hales-jewett
+title: Shelah's bound for the Hales–Jewett numbers
+summary: Proves the Hales–Jewett theorem with Shelah's primitive recursive bound. The
+  proof is by induction on the alphabet; to add a letter it finds a subspace on which
+  the coloring is insensitive to replacing the new letter by an old one, building each
+  dimension of the subspace from a line given by the pigeonhole principle. This gives an
+  explicit recursion shelahBound k r for the dimension, which is proved to be below the
+  fifth level of the Ackermann function, so every r-coloring of the words of length
+  n ≥ A(5, 2k + r) over k ≥ 1 letters has a monochromatic combinatorial line.
+branch: combinatorics
+entry_module: LeanPool.ShelahHalesJewett
+authors:
+- Gabriel Dahia
+source:
+  title: Primitive recursive bounds for van der Waerden numbers
+  authors:
+  - Saharon Shelah
+  doi: 10.1090/S0894-0347-1988-0929498-X
+  url: https://github.com/gdahia/ShelahHalesJewett/tree/8a91fc0e8a9617f8ade16ccb3b56e543990c9f45
+  github_repo: gdahia/ShelahHalesJewett
+  commit: 8a91fc0e8a9617f8ade16ccb3b56e543990c9f45
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+- Combinatorics.Line.exists_mono_of_shelahBound_le
+- Combinatorics.Line.shelahBound_lt_ack
+- Combinatorics.Line.exists_mono_of_ack_le
+main_results:
+- declaration: Combinatorics.Line.exists_mono_of_shelahBound_le
+  informal: Over a nonempty finite alphabet α, every coloring with κ colors of the
+    words indexed by a finite type ι has a monochromatic combinatorial line when
+    |ι| ≥ shelahBound |α| |κ|.
+  source_ref: The Hales–Jewett theorem with Shelah's bound.
+- declaration: Combinatorics.Subspace.exists_insensitive
+  informal: For letters a and b and a finite type η, in a cube of dimension
+    insensitiveBound every coloring has an η-dimensional subspace on which replacing
+    a by b in any coordinates does not change the color.
+  source_ref: Shelah's insensitivity lemma.
+- declaration: Combinatorics.Line.shelahBound_lt_ack
+  informal: shelahBound k r < A(5, 2k + r), where A is the Ackermann function.
+- declaration: Combinatorics.Line.exists_mono_of_ack_le
+  informal: Over a nonempty finite alphabet of k letters, every coloring with r colors
+    of the words of length n ≥ A(5, 2k + r) has a monochromatic combinatorial line.
+tags:
+- combinatorics
+- ramsey-theory
+- hales-jewett
+- ackermann-function
+msc:
+- 05D10
+- 03D20

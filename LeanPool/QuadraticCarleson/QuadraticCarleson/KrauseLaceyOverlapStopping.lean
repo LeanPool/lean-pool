@@ -139,7 +139,7 @@ theorem strictAncestors_card_le_of_mem_overlapStoppingIntervals
   let F := A.filter fun J ↦ I.carrier ⊆ J.carrier ∧ J ≠ I
   change F.card ≤ M
   by_cases he : F = ∅
-  · simp [he]
+  · simp only [he, Finset.card_empty, zero_le]
   obtain ⟨J, hJ, hmin⟩ := F.exists_min_image RealInterval.length
     (Finset.nonempty_iff_ne_empty.mpr he)
   have hj := Finset.mem_filter.mp hJ

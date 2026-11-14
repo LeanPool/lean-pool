@@ -14,7 +14,6 @@ import LeanPool.LeanModularForms.GeneralizedResidueTheory.Homotopy.Integrality
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 import Mathlib.CategoryTheory.Category.Init
 import Mathlib.Combinatorics.Matroid.Init
-import Mathlib.MeasureTheory.Covering.Besicovitch
 
 /-!
 # Contour Cycles
@@ -142,7 +141,7 @@ private theorem sum_swap_winding_residue (Γ : ContourCycle) (S0 : Finset ℂ)
       2 * ↑Real.pi * I *
         (↑(Γ γ) * generalizedWindingNumber' γ.toFun γ.a γ.b s *
           residueAt f s)
-    from by ring), ← Finset.mul_sum, ← Finset.sum_mul]
+    from by ac_rfl), ← Finset.mul_sum, ← Finset.sum_mul]
 
 /-- **Generalized Residue Theorem for simple poles on a cycle.**
 
@@ -260,11 +259,11 @@ theorem windingNumberCycle_isInt (Γ : ContourCycle)
     ∃ n : ℤ, windingNumberCycle Γ z = ↑n := by
   simp only [windingNumberCycle, Finsupp.sum]
   apply Finset.sum_induction _ (fun x : ℂ => ∃ n : ℤ, x = ↑n)
-  · rintro _ _ ⟨a, rfl⟩ ⟨b, rfl⟩; exact ⟨a + b, by push_cast; ring⟩
+  · rintro _ _ ⟨a, rfl⟩ ⟨b, rfl⟩; exact ⟨a + b, by push_cast; ac_rfl⟩
   · exact ⟨0, Int.cast_zero.symm⟩
   · intro γ hγ
     obtain ⟨m, hm⟩ := windingNumber_isInt_of_immersion_closed_avoiding γ z
       (h_closed γ hγ) (h_avoids γ hγ)
-    exact ⟨Γ γ * m, by rw [hm]; push_cast; ring⟩
+    exact ⟨Γ γ * m, by rw [hm]; push_cast; ac_rfl⟩
 
 end

@@ -100,7 +100,7 @@ theorem boundedCenteredHardyLittlewoodMaximal_weak_bound (n : ℕ)
   choose q hq using hex
   let radii : ℝ → ℝ := fun x ↦ if hx : x ∈ E then (q ⟨x, hx⟩ : ℚ) else 1
   have hselected (x : ℝ) (hx : x ∈ E) : radii x = (q ⟨x, hx⟩ : ℚ) := by
-    simp [radii, hx]
+    simp only [hx, ↓reduceDIte, radii]
   have hradius (x : ℝ) (hx : x ∈ E) : 0 < radii x := by
     rw [hselected x hx]
     exact_mod_cast (q ⟨x, hx⟩).property.1
@@ -211,7 +211,7 @@ theorem centeredHardyLittlewoodMaximal_truncated_sq_lintegral_le
         (min_le_left _ _)
     have hhalf : 2 * ENNReal.ofReal (a / 2) = ENNReal.ofReal a := by
       rw [← ENNReal.ofReal_ofNat,
-        ← ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 2)]
+        ← ENNReal.ofReal_mul (by norm_num1 : (0 : ℝ) ≤ 2)]
       congr 1
       ring
     have hw := centeredHardyLittlewoodMaximal_localized_weak_bound
@@ -220,7 +220,7 @@ theorem centeredHardyLittlewoodMaximal_truncated_sq_lintegral_le
     calc
       volume {x | a < g x} * ENNReal.ofReal (2 * a) =
           2 * (ENNReal.ofReal a * volume {x | a < g x}) := by
-        rw [ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 2)]
+        rw [ENNReal.ofReal_mul (by norm_num1 : (0 : ℝ) ≤ 2)]
         norm_num
         ring
       _ ≤ 2 * (ENNReal.ofReal a * volume {x | ENNReal.ofReal a < M x}) :=
@@ -239,7 +239,7 @@ theorem centeredHardyLittlewoodMaximal_truncated_sq_lintegral_le
       exact hpoint a ha
     _ = 16 * (∫⁻ a in Ioi (0 : ℝ),
           ∫⁻ y, {y | ENNReal.ofReal (a / 2) < f y}.indicator f y) :=
-      lintegral_const_mul' _ _ (by norm_num)
+      lintegral_const_mul' _ _ (by decide +kernel)
     _ = 32 * ∫⁻ y, f y ^ 2 := by
       rw [lintegral_high_value_tails hf]
       ring

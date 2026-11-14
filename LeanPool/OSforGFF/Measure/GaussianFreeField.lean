@@ -100,7 +100,7 @@ theorem gaussian_satisfies_OS0
   have h_rewrite : (fun z : Fin n → ℂ => GJGeneratingFunctionalℂ dμ_config (∑ i, z i • J i)) =
                    (fun z => Complex.exp (-(1/2 : ℂ) * SchwingerFunctionℂ₂ dμ_config (∑ i,
                      z i • J i) (∑ i, z i • J i))) := by
-    simp_all
+    simp_all only [one_div, neg_mul]
   rw [h_rewrite]
   -- Show exp(-½ * quadratic_form) is analytic
   apply AnalyticOn.cexp

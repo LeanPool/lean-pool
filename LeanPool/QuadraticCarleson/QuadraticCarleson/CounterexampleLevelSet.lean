@@ -36,7 +36,7 @@ theorem negativeEndpointDelta_pos : 0 < negativeEndpointDelta := by
 
 theorem dyadicModulation_natCast (n : ℕ) :
     dyadicModulation (n : ℤ) = (2 : ℝ) ^ n := by
-  simp [dyadicModulation]
+  simp only [dyadicModulation, zpow_natCast]
 
 /-- A single dyadic fixed-modulation lower bound is inherited by the
 lacunary supremum. -/

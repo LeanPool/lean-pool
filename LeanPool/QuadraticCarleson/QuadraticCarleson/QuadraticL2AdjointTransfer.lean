@@ -35,9 +35,9 @@ theorem enorm_integral_pairing_sq_le {f g : ℝ → ℂ}
     rw [enorm_mul]
     simp only [← ofReal_norm, RCLike.norm_conj]
   have hh := ENNReal.lintegral_mul_le_Lp_mul_Lq (volume : Measure ℝ)
-    (p := 2) (q := 2) (Real.holderConjugate_iff.mpr ⟨by norm_num, by norm_num⟩)
+    (p := 2) (q := 2) (Real.holderConjugate_iff.mpr ⟨by norm_num1, by norm_num1⟩)
     hf.enorm.aemeasurable hg.enorm.aemeasurable
-  simp only [ENNReal.rpow_two, Pi.mul_apply] at hh
+  simp only [Pi.mul_apply, ENNReal.rpow_two] at hh
   have hsqrt (v : ℝ≥0∞) : (v ^ (1 / (2 : ℝ))) ^ 2 = v := by
     rw [← ENNReal.rpow_natCast, ← ENNReal.rpow_mul]
     norm_num
@@ -61,7 +61,7 @@ theorem integrable_energy (K : FiniteRangeKernel)
   rw [Real.norm_of_nonneg (sq_nonneg _)]
   have hh := mul_le_mul_of_nonneg_right (K.norm_applyIntegral_le hf t)
     (norm_nonneg (K.applyIntegral f t))
-  nlinarith
+  linarith only [hh]
 
 /-- The output second moment is exactly its self-pairing. -/
 theorem sq_lintegral_eq_enorm_pairing (K : FiniteRangeKernel)
@@ -123,7 +123,7 @@ theorem sq_lintegral_le_of_correlation_form_bound_memLp
     {f : ℝ → ℂ} (hfm : Measurable f) (hf : MemLp f 2) :
     (∫⁻ t, ‖K.applyIntegral f t‖ₑ ^ 2) ≤ A * ∫⁻ t, ‖f t‖ₑ ^ 2 := by
   apply K.sq_lintegral_bound_of_integrable A ?_ hfm
-    (hf.locallyIntegrable (by norm_num))
+    (hf.locallyIntegrable (by norm_num1))
   intro g hgm hgi
   apply K.sq_lintegral_bound_of_adjoint A ?_ hgm hgi
   intro h hhm hhi
@@ -139,7 +139,7 @@ theorem sq_lintegral_le_of_selectedAverageKernel_memLp {N : ℕ}
     {f : ℝ → ℂ} (hfm : Measurable f) (hf : MemLp f 2) :
     (∫⁻ t, ‖K.applyIntegral f t‖ₑ ^ 2) ≤ (66 * C) * ∫⁻ t, ‖f t‖ₑ ^ 2 := by
   apply K.sq_lintegral_bound_of_integrable (66 * C) ?_ hfm
-    (hf.locallyIntegrable (by norm_num))
+    (hf.locallyIntegrable (by norm_num1))
   intro g hgm hgi
   apply K.sq_lintegral_bound_of_adjoint (66 * C) ?_ hgm hgi
   intro h hhm hhi

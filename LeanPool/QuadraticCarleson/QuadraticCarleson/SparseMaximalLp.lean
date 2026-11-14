@@ -36,7 +36,7 @@ theorem intervalMaximalAverage_rpow_lintegral_le
   let h : ℝ → ℝ≥0∞ := fun y ↦ ‖f y‖ₑ ^ p
   let M : ℝ → ℝ≥0∞ := centeredHardyLittlewoodMaximal h
   have hr : 0 < r := hp.trans hpr
-  have hq : 1 < r / p := (lt_div_iff₀ hp).2 (by simpa [one_mul] using hpr)
+  have hq : 1 < r / p := (lt_div_iff₀ hp).2 (by simpa only [one_mul] using hpr)
   have hq0 : 0 < r / p := zero_lt_one.trans hq
   have hh : Measurable h :=
     ENNReal.continuous_rpow_const.measurable.comp f.measurable_toFun.enorm
@@ -56,7 +56,7 @@ theorem intervalMaximalAverage_rpow_lintegral_le
       lintegral_mono hpoint
     _ = (4 : ℝ≥0∞) ^ (r / p) * ∫⁻ x, M x ^ (r / p) := by
       rw [lintegral_const_mul' _ _
-        (ENNReal.rpow_ne_top_of_nonneg hq0.le (by norm_num))]
+        (ENNReal.rpow_ne_top_of_nonneg hq0.le (by decide +kernel))]
     _ ≤ (4 : ℝ≥0∞) ^ (r / p) *
         (ENNReal.ofReal (centeredHardyLittlewoodRpowConstant (r / p)) *
           ∫⁻ x, h x ^ (r / p)) := by
@@ -99,7 +99,7 @@ theorem intervalAverageMajorant_rpow_lintegral_le
           ∫⁻ x, ‖f x‖ₑ ^ r := by
   let h : ℝ → ℝ≥0∞ := fun y ↦ ‖f y‖ₑ ^ p
   let M : ℝ → ℝ≥0∞ := centeredHardyLittlewoodMaximal h
-  have hq : 1 < r / p := (lt_div_iff₀ hp).2 (by simpa using hpr)
+  have hq : 1 < r / p := (lt_div_iff₀ hp).2 (by simpa only [one_mul] using hpr)
   have hh : Measurable h :=
     ENNReal.continuous_rpow_const.measurable.comp f.measurable_toFun.enorm
   have hhfinite (y : ℝ) : h y ≠ ∞ :=
@@ -111,7 +111,7 @@ theorem intervalAverageMajorant_rpow_lintegral_le
     rw [hexp, ENNReal.mul_rpow_of_nonneg _ _ (zero_lt_one.trans hq).le]
   simp_rw [hpoint]
   rw [lintegral_const_mul' _ _
-    (ENNReal.rpow_ne_top_of_nonneg (zero_lt_one.trans hq).le (by norm_num))]
+    (ENNReal.rpow_ne_top_of_nonneg (zero_lt_one.trans hq).le (by decide +kernel))]
   rw [mul_assoc]
   apply mul_le_mul' le_rfl
   apply (centeredHardyLittlewoodMaximal_rpow_lintegral_le hh hhfinite hq).trans_eq
@@ -145,7 +145,7 @@ theorem one_lt_holderConjugate_of_one_lt {r : ℝ} (hr : 1 < r) :
     1 < holderConjugate r := by
   unfold holderConjugate
   rw [lt_div_iff₀ (sub_pos.mpr hr)]
-  linarith
+  linarith only []
 
 /-- The fully quantified global sparse-form estimate obtained by combining
 the maximal-function comparison, Hölder, and both strong maximal bounds. -/
@@ -168,8 +168,7 @@ theorem sparseForm_le_strong_maximal_factors
         ENNReal.ofReal
           (centeredHardyLittlewoodRpowConstant (holderConjugate r)) *
           ∫⁻ x, ‖f x‖ₑ ^ holderConjugate r := by
-    simpa [q] using intervalAverageMajorant_rpow_lintegral_le
-      1 q zero_lt_one hq f
+    simpa only [div_one] using intervalAverageMajorant_rpow_lintegral_le 1 q zero_lt_one hq f
   have hg := intervalAverageMajorant_rpow_lintegral_le p r hp hpr g
   have hbase := sparseForm_le_lintegral_majorants_holder hS hp hr f g
   apply hbase.trans

@@ -16,11 +16,17 @@ import LeanPool.ZhangYeungInequality.PFR.Mathlib.Probability.Independence.Basic
 import Mathlib.Algebra.Group.Pointwise.Finset.BigOperators
 import Mathlib.Algebra.Group.Pointwise.Set.Card
 import Mathlib.Combinatorics.Additive.RuzsaCovering
-import Mathlib.Data.SetLike.Fintype
 
 /-!
 # Endgame for the Torsion PFR theorem
 -/
+
+-- Avoid repeated searches for empty or singleton types during simplification.
+attribute [-simp] IsEmpty.forall_iff Finset.univ_eq_empty forall_const
+  Function.const_inj Function.const_eq_zero Function.const_eq_one Set.range_const
+  exists_const IsEmpty.exists_iff add_eq_zero mul_eq_one
+  ProbabilityTheory.iIndepFun.of_subsingleton ProbabilityTheory.iIndep.of_subsingleton
+  ProbabilityTheory.iIndepSets.of_subsingleton
 
 open scoped ZhangYeungPFR
 
@@ -73,9 +79,11 @@ include h_mes h_indep in
 omit hΩ'_prob in
 public
 lemma indep_yj (j : Fin p.m) : iIndepFun (fun i ↦ Y (i, j)) := by
+  have : NeZero p.m := ⟨Nat.ne_of_gt (lt_of_lt_of_le (Nat.succ_pos 1) p.hm)⟩
   let S : Fin p.m → Finset (Fin p.m × Fin p.m) := fun i ↦ {(i,j)}
   let φ : (i:Fin p.m) → ((_: S i) → G) → G := fun i x ↦ x ⟨(i,j), by simp [S]⟩
-  convert iIndepFun.finsets_comp S _ h_indep (by fun_prop) φ (by fun_prop) with i ω
+  convert iIndepFun.finsets_comp S _ h_indep
+    (fun q ↦ h_mes q.1 q.2) φ (fun _ ↦ .of_discrete) with i ω
   rw [Finset.pairwiseDisjoint_iff]; rintro _ _ _ _ ⟨⟨_, _⟩, hij⟩
   simp [S] at hij; omega
 
@@ -84,6 +92,11 @@ include h_mes h_indep hident h_min in
 -/
 public
 lemma mutual_information_le_t_12 : I[Z1 : Z2 | W] ≤ p.m * (4*p.m+1) * p.η * k := by
+  have measurableW : Measurable W := by fun_prop
+  have measurableZ1 : Measurable Z1 := by fun_prop
+  have measurableZ2 : Measurable Z2 := by fun_prop
+  have : DiscreteMeasurableSpace G := inferInstance
+  have : NeZero p.m := ⟨Nat.ne_of_gt (lt_of_lt_of_le (Nat.succ_pos 1) p.hm)⟩
   have hm := p.hm
   let zero : Fin p.m := ⟨0, by linarith [hm]⟩
   have hindep_j (j: Fin p.m) : iIndepFun (fun i ↦ Y (i, j)) := indep_yj h_mes h_indep j
@@ -119,6 +132,10 @@ lemma torsion_mul_eq {i j : ℤ} (x : G) (h : i ≡ j [ZMOD p.m]) : i • x = j 
 include h_mes h_indep hident h_min in
 public
 lemma mutual_information_le_t_23 : I[Z2 : Z3 | W] ≤ p.m * (4*p.m+1) * p.η * k := by
+  have measurableW : Measurable W := by fun_prop
+  have measurableZ2 : Measurable Z2 := by fun_prop
+  have measurableZ3 : Measurable Z3 := by fun_prop
+  have : DiscreteMeasurableSpace G := inferInstance
   have hm := p.hm
   have _ : NeZero p.m := by rw [neZero_iff]; linarith
   let zero : Fin p.m := ⟨0, by linarith [hm]⟩
@@ -177,6 +194,10 @@ lemma mutual_information_le_t_23 : I[Z2 : Z3 | W] ≤ p.m * (4*p.m+1) * p.η * k
 include h_mes h_indep hident h_min in
 public
 lemma mutual_information_le_t_13 : I[Z1 : Z3 | W] ≤ p.m * (4*p.m+1) * p.η * k := by
+  have measurableW : Measurable W := by fun_prop
+  have measurableZ1 : Measurable Z1 := by fun_prop
+  have measurableZ3 : Measurable Z3 := by fun_prop
+  have : DiscreteMeasurableSpace G := inferInstance
   have hm := p.hm
   have _ : NeZero p.m := by rw [neZero_iff]; linarith
   let zero : Fin p.m := ⟨0, by linarith [hm]⟩
@@ -230,6 +251,8 @@ lemma mutual_information_le_t_13 : I[Z1 : Z3 | W] ≤ p.m * (4*p.m+1) * p.η * k
 include h_mes h_indep hident in
 public
 lemma Q_ident (j j' : Fin p.m) : IdentDistrib (Q j) (Q j') ℙ ℙ := by
+  have : DiscreteMeasurableSpace G := inferInstance
+  have : NeZero p.m := ⟨Nat.ne_of_gt (lt_of_lt_of_le (Nat.succ_pos 1) p.hm)⟩
   let f : (Fin p.m → G) → G := fun x ↦ ∑ i, x i
   convert_to IdentDistrib (f ∘ (fun ω i ↦ Y (i,j) ω)) (f ∘ (fun ω i ↦ Y (i,j') ω)) ℙ ℙ
   · ext ω; simp [f]
@@ -256,6 +279,8 @@ lemma Q_mes (j : Fin p.m) : Measurable (-(Q j)) := by
 include h_mes h_indep hident in
 public
 lemma Q_dist (j j' : Fin p.m) : d[Q j # -(Q j')] ≤ 2 * k := by
+  have : DiscreteMeasurableSpace G := inferInstance
+  have : NeZero p.m := ⟨Nat.ne_of_gt (lt_of_lt_of_le (Nat.succ_pos 1) p.hm)⟩
   have : IdentDistrib (Q j) (Q j') ℙ ℙ := Q_ident _ h_mes h_indep hident _ _
   have hQj_mes : Measurable (-(Q j')) := Q_mes h_mes _
   calc
@@ -269,6 +294,7 @@ lemma Q_dist (j j' : Fin p.m) : d[Q j # -(Q j')] ≤ 2 * k := by
 include h_mes h_indep hident in
 public
 lemma Q_ent (j : Fin p.m) : H[Q j] = k + (↑p.m)⁻¹ * ∑ i, H[X i] := by
+  have : NeZero p.m := ⟨Nat.ne_of_gt (lt_of_lt_of_le (Nat.succ_pos 1) p.hm)⟩
   rw [Q_eq, inv_mul_eq_div]
   have h1 := multiDist_indep hΩ' (fun i:Fin p.m ↦ h_mes i j) ?_
   · have h2 : D[fun i ↦ Y (i, j); fun x ↦ hΩ'] = k := by
@@ -276,19 +302,21 @@ lemma Q_ent (j : Fin p.m) : H[Q j] = k + (↑p.m)⁻¹ * ∑ i, H[X i] := by
     have h3 (i:Fin p.m) : H[Y (i, j)] = H[X i] := by
       apply IdentDistrib.entropy_congr; solve_by_elim
     simp [h2, h3] at h1
-    linarith
+    linarith only [h1]
   exact indep_yj h_mes h_indep j
 
 include h_mes h_indep in
 omit hΩ'_prob in
 public
 lemma Q_indep {j j' : Fin p.m} (h : j ≠ j') : IndepFun (Q j) (-Q j') ℙ := by
+  have : NeZero p.m := ⟨Nat.ne_of_gt (lt_of_lt_of_le (Nat.succ_pos 1) p.hm)⟩
   let T : Finset (Fin p.m × Fin p.m) := {q|q.2=j}
   let T' : Finset (Fin p.m × Fin p.m) := {q|q.2=j'}
   let φ : (T → G) → G := fun f ↦ ∑ i, f ⟨(i,j), by simp [T]⟩
   let φ' : (T' → G) → G := fun f ↦ -∑ i, f ⟨(i,j'), by simp [T']⟩
-  convert iIndepFun.finsets_comp' _ h_indep (by fun_prop) (show Measurable φ by fun_prop)
-    (show Measurable φ' by fun_prop) with ω ω <;> try simp [φ,φ']
+  convert iIndepFun.finsets_comp' _ h_indep
+    (fun q ↦ h_mes q.1 q.2) (show Measurable φ from .of_discrete)
+    (show Measurable φ' from .of_discrete) with ω ω <;> try simp [φ,φ']
   rw [Finset.disjoint_left]; rintro ⟨_, _⟩ h h'
   simp [T,T'] at h h'; order
 
@@ -296,6 +324,8 @@ include h_mes h_indep hident in
 /-- We have $\bbH[W] \leq (2m-1)k + \frac1m \sum_{i=1}^m \bbH[X_i]$. -/
 public
 lemma entropy_of_W_le : H[W] ≤ (2*p.m - 1) * k + (p.m:ℝ)⁻¹ * ∑ i, H[X i] := by
+  have measurableW : Measurable W := by fun_prop
+  have : DiscreteMeasurableSpace G := inferInstance
   have hm := p.hm
   have : NeZero p.m := ⟨by lia⟩
   calc
@@ -307,7 +337,8 @@ lemma entropy_of_W_le : H[W] ≤ (2*p.m - 1) * k + (p.m:ℝ)⁻¹ * ∑ i, H[X i
       · fun_prop
       let S : Fin p.m → Finset (Fin p.m × Fin p.m) := fun j ↦ {p|p.2=j}
       let φ : (j:Fin p.m) → ((_: S j) → G) → G := fun j x ↦ ∑ i, x ⟨(i,j), by simp [S]⟩
-      convert iIndepFun.finsets_comp S _ h_indep (by fun_prop) φ (by fun_prop) with i ω
+      convert iIndepFun.finsets_comp S _ h_indep
+        (fun q ↦ h_mes q.1 q.2) φ (fun _ ↦ .of_discrete) with i ω
       · simp [φ]
       rw [Finset.pairwiseDisjoint_iff]; rintro _ _ _ _ ⟨⟨_, _⟩, hij⟩
       simp [S] at hij; omega
@@ -321,7 +352,7 @@ lemma entropy_of_W_le : H[W] ≤ (2*p.m - 1) * k + (p.m:ℝ)⁻¹ * ∑ i, H[X i
         _ = d[Q 0 # -(Q j)] := by
           rw [IndepFun.rdist_eq _ (by fun_prop) hQj_mes, entropy_neg (by fun_prop),
             ← this.entropy_congr, sub_neg_eq_add]
-          · linarith
+          · linarith only
           exact Q_indep h_mes h_indep (by order)
         _ ≤ _ := Q_dist _ h_mes h_indep hident _ _
     _ = _ := by
@@ -340,6 +371,9 @@ include h_mes h_indep hident in
 /-- We have $\bbH[Z_2] \leq (8m^2-16m+1) k + \frac{1}{m} \sum_{i=1}^m \bbH[X_i]$. -/
 public
 lemma entropy_of_Z_two_le : H[Z2] ≤ (8 * p.m^2 - 16 * p.m + 1) * k + (p.m:ℝ)⁻¹ * ∑ i, H[X i] := by
+  have measurableZ2 : Measurable Z2 := by fun_prop
+  have : DiscreteMeasurableSpace G := inferInstance
+  have : NeZero p.m := ⟨Nat.ne_of_gt (lt_of_lt_of_le (Nat.succ_pos 1) p.hm)⟩
   have hm := p.hm
   let zero : Fin p.m := ⟨0, by linarith [hm]⟩
   let one : Fin p.m := ⟨1, by linarith [hm]⟩
@@ -363,7 +397,8 @@ lemma entropy_of_Z_two_le : H[Z2] ≤ (8 * p.m^2 - 16 * p.m + 1) * k + (p.m:ℝ)
       · fun_prop
       let S : Fin p.m → Finset (Fin p.m × Fin p.m) := fun j ↦ {p|p.2=j}
       let φ : (j:Fin p.m) → ((_: S j) → G) → G := fun j x ↦ j.val • ∑ i, x ⟨(i,j), by simp [S]⟩
-      convert iIndepFun.finsets_comp S _ h_indep (by fun_prop) φ (by fun_prop) with i ω
+      convert iIndepFun.finsets_comp S _ h_indep
+        (fun q ↦ h_mes q.1 q.2) φ (fun _ ↦ .of_discrete) with i ω
       · simp [φ, Y']
       rw [Finset.pairwiseDisjoint_iff]; rintro _ _ _ _ ⟨⟨_, _⟩, hij⟩
       simp [S] at hij; omega
@@ -392,6 +427,10 @@ include h_mes h_indep hident in
 /-- We have $\bbI[W : Z_2] \leq 2(m-1) k$. -/
 public
 lemma mutual_of_W_Z_two_le : I[W : Z2] ≤ 2 * (p.m-1) * k := by
+  have measurableW : Measurable W := by fun_prop
+  have measurableZ2 : Measurable Z2 := by fun_prop
+  have : DiscreteMeasurableSpace G := inferInstance
+  have : NeZero p.m := ⟨Nat.ne_of_gt (lt_of_lt_of_le (Nat.succ_pos 1) p.hm)⟩
   rw [mutualInfo_eq_entropy_sub_condEntropy (by fun_prop) (by fun_prop)]
   have hm := p.hm
   let zero : Fin p.m := ⟨0, by linarith [hm]⟩
@@ -424,21 +463,25 @@ lemma mutual_of_W_Z_two_le : I[W : Z2] ≤ 2 * (p.m-1) * k := by
       let φ : (T → G) → G := fun f ↦ ∑ i, f ⟨(i,zero), by simp [T]⟩
       let φ' (f : T' → G) (j : Finset.univ.erase zero) : G :=
         ∑ i, f ⟨(i, j), by obtain ⟨j, hj⟩ := j;  simpa [T, T'] using hj⟩
-      convert iIndepFun.finsets_comp' _ h_indep (by fun_prop) (show Measurable φ by fun_prop)
-        (show Measurable φ' by fun_prop) with ω ω <;> try simp [φ,φ']
+      convert iIndepFun.finsets_comp' _ h_indep
+        (fun q ↦ h_mes q.1 q.2) (show Measurable φ from .of_discrete)
+        (show Measurable φ' from .of_discrete) with ω ω <;> try simp [φ,φ']
       simp [T', disjoint_compl_right]
   have h3 := Q_ent _ h_mes h_indep hident zero
-  linarith
+  linarith only [h1, h2, h3]
 
 include h_mes h_indep hident hΩ_prob hX_mes in
 /-- We have $\sum_{i=1}^m d[X_i;Z_2|W] \leq 4(m^3-m^2) k$. -/
 public
 lemma sum_of_conditional_distance_le : ∑ i, d[ X i # Z2 | W] ≤ 4 * (p.m^3 - p.m^2)*k := by
+  have measurableW : Measurable W := by fun_prop
+  have measurableZ2 : Measurable Z2 := by fun_prop
+  have : DiscreteMeasurableSpace G := inferInstance
   have hm := p.hm
   let zero : Fin p.m := ⟨0, by linarith [hm]⟩
   let one : Fin p.m := ⟨1, by linarith [hm]⟩
   have hm_2 : (p.m:ℝ) ≥ 2 := by norm_cast
-  have hm_pos' : 2*(p.m:ℝ)-1 > 0 := by linarith
+  have hm_pos' : 2*(p.m:ℝ)-1 > 0 := by linarith only [hm_2]
   have hk : k ≥ 0 := multiDist_nonneg _ hΩ_prob _ hX_mes
   calc
     _ ≤ ∑ i, (d[ X i # X i] + (H[Z2] - H[X i])/ 2 + (p.m-1) * k) := by
@@ -641,6 +684,12 @@ include h_mes h_indep hident h_min hΩ hΩ_prob hX_mes in
 /-- We have $k = 0$. -/
 public
 lemma k_eq_zero (hη_eq : p.η = 1 / (32 * p.m ^ 3)) : k = 0 := by
+  have measurableW : Measurable W := by fun_prop
+  have measurableZ1 : Measurable Z1 := by fun_prop
+  have measurableZ2 : Measurable Z2 := by fun_prop
+  have measurableZ3 : Measurable Z3 := by fun_prop
+  have : DiscreteMeasurableSpace G := inferInstance
+  have : NeZero p.m := ⟨Nat.ne_of_gt (lt_of_lt_of_le (Nat.succ_pos 1) p.hm)⟩
   let hm := p.hm
   let hη := p.hη
   let zero : Fin p.m := ⟨0, by linarith only [hm]⟩
@@ -820,7 +869,7 @@ theorem rdist_le_of_isUniform_of_card_add_le' {G : Type*} [AddCommGroup G] {A : 
       U'unif.entropy_eq' A_fin_neg hU'.neg]
     have : log (-A).ncard = log A.ncard := by congr 2; simp
     linarith
-  replace idU' : IdentDistrib (-U') (-U₀) ℙ ℙ := idU'.comp (u := fun x ↦ -x) (by fun_prop)
+  replace idU' : IdentDistrib (-U') (-U₀) ℙ ℙ := idU'.comp (u := fun x ↦ -x) (.of_discrete)
   rwa [idU.rdist_congr idU'] at IU
 
 /-- Suppose that $G$ is a finite abelian group of torsion $m$. If $A \subset G$ is non-empty and
@@ -870,17 +919,17 @@ lemma torsion_PFR_conjecture_aux {G : Type*} [AddCommGroup G] [Finite G] {m : �
   have Icard : |log (A.ncard) - log ((H : Set G).ncard)| ≤ 256 * m^3 * log K := by
     rw [← VA_ent, ← VH_ent]
     apply (diff_ent_le_rdist VAmeas VHmeas).trans
-    linarith
+    linarith only [this]
   have IAH : A.ncard ≤ K ^ (256 * m^3) * (H : Set G).ncard := by
     have : log (A.ncard) ≤ log K * (256 * m^3) + log ((H : Set G).ncard) := by
-      linarith [(le_abs_self _).trans Icard]
+      linarith only [(le_abs_self _).trans Icard]
     convert! exp_monotone this using 1
     · exact (exp_log A_pos).symm
     · rw [exp_add, exp_log H_pos, ← rpow_def_of_pos K_pos, ←Real.rpow_natCast]
       norm_cast
   have IHA : (H : Set G).ncard ≤ K ^ (256 * m^3) * A.ncard := by
     have : log ((H : Set G).ncard) ≤ log K * (256 * m^3) + log (A.ncard) := by
-      linarith [(neg_le_abs _).trans Icard]
+      linarith only [(neg_le_abs _).trans Icard]
     convert! exp_monotone this using 1
     · exact (exp_log H_pos).symm
     · rw [exp_add, exp_log A_pos, ← rpow_def_of_pos K_pos, ←Real.rpow_natCast]
@@ -889,7 +938,7 @@ lemma torsion_PFR_conjecture_aux {G : Type*} [AddCommGroup G] [Finite G] {m : �
   have I : log K * (-128*m^3) + log (A.ncard) * (-1/2) + log ((H : Set G).ncard) * (-1/2)
       ≤ - H[VA - VH] := by
     rw [Vindep.rdist_eq VAmeas VHmeas] at this
-    linarith
+    linarith only [this, VA_ent, VH_ent]
   -- therefore, there exists a point `x₀` which is attained by `VA - VH` with a large probability
   obtain ⟨x₀, h₀⟩ : ∃ x₀ : G, rexp (- H[VA - VH]) ≤ (ℙ : Measure Ω).real ((VA - VH) ⁻¹' {x₀}) :=
     prob_ge_exp_neg_entropy' _ ((VAmeas.sub VHmeas).comp measurable_id')

@@ -1063,8 +1063,7 @@ theorem boundedFold_restore_step
         (computer.inputAlphabet.invFun bit :: input)
         counter scratch) := by
   classical
-  cases bit <;>
-    compactMachineStepTac [boundedDependentRecordFoldMachine,
+  compactMachineStepTac [boundedDependentRecordFoldMachine,
       boundedFoldRestoreConfiguration, boundedFoldPhaseConfiguration,
       boundedFoldStacks, Turing.initList]
   all_goals

@@ -42,7 +42,7 @@ theorem continuous_delayKer : Continuous delayKer := by
   refine (continuous_id.max continuous_const).div
     (((continuous_id.max continuous_const).sub continuous_const).pow 2) fun x => ?_
   have : (3 : ℝ) ≤ max x 3 := le_max_right _ _
-  have : (0 : ℝ) < max x 3 - 1 := by linarith
+  have : (0 : ℝ) < max x 3 - 1 := by linarith only [this]
   positivity
 
 theorem continuous_initW : Continuous initW := by
@@ -51,7 +51,7 @@ theorem continuous_initW : Continuous initW := by
     (continuous_id.max continuous_const).sub continuous_const
   have hne : ∀ s : ℝ, max s 2 - 1 ≠ 0 := fun s => by
     have : (2 : ℝ) ≤ max s 2 := le_max_right _ _
-    linarith
+    linarith only [this]
   exact (continuous_const.div h1 hne).sub (h1.log hne)
 
 theorem initW_of_le {s : ℝ} (hs : s ≤ 2) : initW s = 1 := by
@@ -77,10 +77,10 @@ theorem bigM_of_le_three {s : ℝ} (hs : s ≤ 3) : bigM s = 2 + initW s :=
   Delay.sol_of_le hs
 
 theorem bigW_of_le_two {s : ℝ} (hs : s ≤ 2) : bigW s = 1 := by
-  rw [bigW_of_le_three (by linarith), initW_of_le hs]
+  rw [bigW_of_le_three (by linarith only [hs]), initW_of_le hs]
 
 theorem bigM_of_le_two {s : ℝ} (hs : s ≤ 2) : bigM s = 3 := by
-  rw [bigM_of_le_three (by linarith), initW_of_le hs]; norm_num
+  rw [bigM_of_le_three (by linarith only [hs]), initW_of_le hs]; norm_num
 
 theorem bigW_eq {s : ℝ} (hs : 2 ≤ s) (hs' : s ≤ 3) : bigW s = 1 / (s - 1) - log (s - 1) := by
   rw [bigW_of_le_three hs', initW_of_ge hs]
@@ -102,7 +102,7 @@ theorem bigM_three : bigM 3 = 5 / 2 - log 2 := by
 /-- The derivative of `1/(x-1) - log(x-1)` is `-x/(x-1)²`. -/
 theorem hasDerivAt_initForm {x : ℝ} (hx : 1 < x) :
     HasDerivAt (fun x => 1 / (x - 1) - log (x - 1)) (-(x / (x - 1) ^ 2)) x := by
-  have h0 : x - 1 ≠ 0 := by linarith
+  have h0 : x - 1 ≠ 0 := by linarith only [hx]
   have h1 : HasDerivAt (fun x : ℝ => x - 1) 1 x := (hasDerivAt_id x).sub_const 1
   have := (h1.inv h0).sub (h1.log h0)
   convert this using 1
@@ -175,7 +175,7 @@ theorem eq_of_hasDerivAt_zero {g : ℝ → ℝ} {a : ℝ} (hg : ContinuousOn g (
     (hg.mono Icc_subset_Ici_self) fun x hx => hd x hx.1
   have : s - a ≠ 0 := by linarith
   field_simp at hc'
-  linarith
+  linarith only [hc']
 
 /-! ### (3.11) -/
 
@@ -197,14 +197,14 @@ theorem integral_wIntegrand_two_three :
       ∫ x in (2 : ℝ)..3, (1 / (x - 1) - log (x - 1)) / x ^ 2 := by
     refine intervalIntegral.integral_congr fun x hx => ?_
     rw [uIcc_of_le (by norm_num)] at hx
-    rw [wIntegrand_of_ge (by linarith [hx.1]), bigW_eq hx.1 hx.2]
+    rw [wIntegrand_of_ge (by linarith only [hx.1, hx]), bigW_eq hx.1 hx.2]
   rw [hcongr]
   have hderiv : ∀ x ∈ uIcc (2 : ℝ) 3, HasDerivAt (fun x => (1 + log (x - 1)) / x)
       ((1 / (x - 1) - log (x - 1)) / x ^ 2) x := by
     intro x hx
     rw [uIcc_of_le (by norm_num)] at hx
-    have hx1 : x - 1 ≠ 0 := by linarith [hx.1]
-    have hx0 : x ≠ 0 := by linarith [hx.1]
+    have hx1 : x - 1 ≠ 0 := by linarith only [hx.1, hx]
+    have hx0 : x ≠ 0 := by linarith only [hx.1, hx]
     have h1 : HasDerivAt (fun x : ℝ => x - 1) 1 x := (hasDerivAt_id x).sub_const 1
     have := ((h1.log hx1).const_add 1).div (hasDerivAt_id x) hx0
     refine this.congr_deriv ?_
@@ -214,8 +214,8 @@ theorem integral_wIntegrand_two_three :
   have hcont : ContinuousOn (fun x : ℝ => (1 / (x - 1) - log (x - 1)) / x ^ 2) (uIcc 2 3) := by
     rw [uIcc_of_le (by norm_num)]
     intro x hx
-    have hx1 : x - 1 ≠ 0 := by linarith [hx.1]
-    have hx0 : x ^ 2 ≠ 0 := pow_ne_zero 2 (by linarith [hx.1])
+    have hx1 : x - 1 ≠ 0 := by linarith only [hx.1, hx]
+    have hx0 : x ^ 2 ≠ 0 := pow_ne_zero 2 (by linarith only [hx.1, hx])
     exact (((continuousAt_const.div (continuousAt_id.sub continuousAt_const) hx1).sub
       ((continuousAt_id.sub continuousAt_const).log hx1)).div
       (continuousAt_id.pow 2) hx0).continuousWithinAt
@@ -229,13 +229,13 @@ theorem bigW_eq_neg_mul_integral {s : ℝ} (hs : 3 ≤ s) :
   have hgc : ContinuousOn g (Ici 3) := by
     refine ContinuousOn.add ?_ ?_
     · exact continuous_bigW.continuousOn.div continuousOn_id fun x hx => by
-        linarith [hx.out]
+        linarith only [hx.out, hx]
     · exact fun t _ => (hasDerivAt_integral_unit continuous_wIntegrand t).continuousAt
         |>.continuousWithinAt
   have hgd : ∀ t, 3 < t → HasDerivAt g 0 t := by
     intro t ht
-    have ht0 : t ≠ 0 := by linarith
-    have ht1 : t - 1 ≠ 0 := by linarith
+    have ht0 : t ≠ 0 := by linarith only [ht]
+    have ht1 : t - 1 ≠ 0 := by linarith only [ht]
     have := ((hasDerivAt_bigW ht).div (hasDerivAt_id t) ht0).add
       (hasDerivAt_integral_unit continuous_wIntegrand t)
     refine this.congr_deriv ?_
@@ -251,12 +251,12 @@ theorem bigW_eq_neg_mul_integral {s : ℝ} (hs : 3 ≤ s) :
   have hgs : g s = 0 := (eq_of_hasDerivAt_zero hgc hgd hs).trans h3
   have hint : ∫ x in (s - 1)..s, wIntegrand x = ∫ x in (s - 1)..s, bigW x / x ^ 2 := by
     refine intervalIntegral.integral_congr fun x hx => ?_
-    rw [uIcc_of_le (by linarith)] at hx
-    exact wIntegrand_of_ge (by linarith [hx.1])
+    rw [uIcc_of_le (by linarith only [])] at hx
+    exact wIntegrand_of_ge (by linarith only [hx.1, hs, hx])
   simp only [g, hint] at hgs
-  have hs0 : s ≠ 0 := by linarith
+  have hs0 : s ≠ 0 := by linarith only [hs]
   field_simp at hgs
-  linarith
+  linarith only [hgs]
 
 /-! ### (3.12) -/
 
@@ -280,7 +280,7 @@ theorem integral_mIntegrand_two_three :
       ∫ x in (2 : ℝ)..3, (1 - 1 / (2 * x ^ 2)) * (2 + (1 / (x - 1) - log (x - 1))) := by
     refine intervalIntegral.integral_congr fun x hx => ?_
     rw [uIcc_of_le (by norm_num)] at hx
-    rw [mIntegrand_of_ge (by linarith [hx.1]), bigM_eq hx.1 hx.2]
+    rw [mIntegrand_of_ge (by linarith only [hx.1, hx]), bigM_eq hx.1 hx.2]
     ring
   rw [hcongr]
   have hderiv : ∀ x ∈ uIcc (2 : ℝ) 3, HasDerivAt
@@ -289,12 +289,12 @@ theorem integral_mIntegrand_two_three :
       ((1 - 1 / (2 * x ^ 2)) * (2 + (1 / (x - 1) - log (x - 1)))) x := by
     intro x hx
     rw [uIcc_of_le (by norm_num)] at hx
-    have hx1 : x - 1 ≠ 0 := by linarith [hx.1]
-    have hx0 : x ≠ 0 := by linarith [hx.1]
+    have hx1 : x - 1 ≠ 0 := by linarith only [hx.1, hx]
+    have hx0 : x ≠ 0 := by linarith only [hx.1, hx]
     have h1 : HasDerivAt (fun x : ℝ => x - 1) 1 x := (hasDerivAt_id x).sub_const 1
     have hr : HasDerivAt (fun x : ℝ => (x - 1) ^ 2 - 1 / 2) (2 * (x - 1)) x := by
       convert (h1.pow 2).sub_const (1 / 2) using 1; ring
-    have hm := (hasDerivAt_initForm (x := x) (by linarith [hx.1])).const_add 2
+    have hm := (hasDerivAt_initForm (x := x) (by linarith only [hx.1, hx])).const_add 2
     have hq : HasDerivAt (fun x : ℝ => 2 * (x - 1)) 2 x := by
       convert h1.const_mul 2 using 1; ring
     have := (((hr.mul hm).div (hasDerivAt_id x) hx0).add (hasDerivAt_id x)).add
@@ -307,8 +307,8 @@ theorem integral_mIntegrand_two_three :
       (fun x : ℝ => (1 - 1 / (2 * x ^ 2)) * (2 + (1 / (x - 1) - log (x - 1)))) (uIcc 2 3) := by
     rw [uIcc_of_le (by norm_num)]
     intro x hx
-    have hx1 : x - 1 ≠ 0 := by linarith [hx.1]
-    have hx0 : 2 * x ^ 2 ≠ 0 := by have : x ≠ 0 := by linarith [hx.1]
+    have hx1 : x - 1 ≠ 0 := by linarith only [hx.1, hx]
+    have hx0 : 2 * x ^ 2 ≠ 0 := by have : x ≠ 0 := by linarith only [hx.1, hx]
                                    positivity
     exact ((continuousAt_const.sub (continuousAt_const.div
       (continuousAt_const.mul (continuousAt_id.pow 2)) hx0)).mul
@@ -324,15 +324,15 @@ theorem bigM_integral_identity {s : ℝ} (hs : 3 ≤ s) :
   set g : ℝ → ℝ := fun t => ((t - 1) ^ 2 - 1 / 2) * bigM t / t - ∫ x in (t - 1)..t, mIntegrand x
   have hgc : ContinuousOn g (Ici 3) := by
     refine ContinuousOn.sub ?_ ?_
-    · refine ContinuousOn.div ?_ continuousOn_id fun x hx => by linarith [hx.out]
+    · refine ContinuousOn.div ?_ continuousOn_id fun x hx => by linarith only [hx.out, hx]
       exact (((continuous_id.sub continuous_const).pow 2).sub continuous_const).continuousOn.mul
         continuous_bigM.continuousOn
     · exact fun t _ => (hasDerivAt_integral_unit continuous_mIntegrand t).continuousAt
         |>.continuousWithinAt
   have hgd : ∀ t, 3 < t → HasDerivAt g 0 t := by
     intro t ht
-    have ht0 : t ≠ 0 := by linarith
-    have ht1 : t - 1 ≠ 0 := by linarith
+    have ht0 : t ≠ 0 := by linarith only [ht]
+    have ht1 : t - 1 ≠ 0 := by linarith only [ht]
     have h1 : HasDerivAt (fun x : ℝ => x - 1) 1 t := (hasDerivAt_id t).sub_const 1
     have hr : HasDerivAt (fun x : ℝ => (x - 1) ^ 2 - 1 / 2) (2 * (t - 1)) t := by
       convert (h1.pow 2).sub_const (1 / 2) using 1; ring
@@ -352,9 +352,9 @@ theorem bigM_integral_identity {s : ℝ} (hs : 3 ≤ s) :
   have hint : ∫ x in (s - 1)..s, mIntegrand x =
       ∫ x in (s - 1)..s, (1 - 1 / (2 * x ^ 2)) * bigM x := by
     refine intervalIntegral.integral_congr fun x hx => ?_
-    rw [uIcc_of_le (by linarith)] at hx
-    exact mIntegrand_of_ge (by linarith [hx.1])
+    rw [uIcc_of_le (by linarith only [])] at hx
+    exact mIntegrand_of_ge (by linarith only [hx.1, hs, hx])
   simp only [g, hint] at hgs
-  linarith
+  linarith only [hgs]
 
 end IwaniecLinearSieve

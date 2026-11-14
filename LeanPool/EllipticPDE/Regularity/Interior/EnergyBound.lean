@@ -467,7 +467,7 @@ theorem firstOrder_energy_le (Op : FullEllipticOp d) (u : H01 Ω) (f : L2D Ω)
         + Op.lam / 2 * ∑ i : Fin d, ‖(u : H1amb Ω) i.succ‖ ^ 2 := by ring
   rw [hsplit] at hg
   have hdrop : (0 : ℝ) ≤ Op.lam / 2 * ‖(u : H1amb Ω) 0‖ ^ 2 :=
-    mul_nonneg (by have := Op.lam_pos; linarith) (sq_nonneg _)
+    mul_nonneg (by have := Op.lam_pos; linarith only [this]) (sq_nonneg _)
   linarith [hg, hfu, hdrop]
 
 /-- **Gradient control of the difference quotient of `u₀`.** For `u ∈ H₀¹(Ω)`,
@@ -1322,7 +1322,7 @@ theorem interior_diffQuot_energy_bound (Op : FullEllipticOp d) (hΩm : Measurabl
       - ⟪Op.cAct ((u : H1amb Ω) 0), (v : H1amb Ω) 0⟫ := by
     have hfull := hu v
     rw [Op.fullBilin_apply, Op.lowerBilin_apply, hRHSeq] at hfull
-    linarith [hfull]
+    linarith only [hfull]
   -- LEAD lower bound from ellipticity of the translated coefficients.
   have hLE : A.lam * E ≤ LEAD := by
     have h := energy_ge A' (fun i => mulTest hξ (Dg i))

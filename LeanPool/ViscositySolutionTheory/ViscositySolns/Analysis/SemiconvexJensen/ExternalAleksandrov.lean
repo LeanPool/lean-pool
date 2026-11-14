@@ -40,7 +40,7 @@ private theorem norm_comp_symm_sq_isBigO
   have hle : ‖S (z - x)‖ ≤ C * ‖z - x‖ := hC (z - x)
   have htarget_nonneg : 0 ≤ ‖z - x‖ ^ 2 := sq_nonneg _
   rw [Real.norm_of_nonneg (sq_nonneg _), Real.norm_of_nonneg htarget_nonneg]
-  nlinarith [hCpos.le, norm_nonneg (z - x), norm_nonneg (S (z - x))]
+  nlinarith only [hle, hCpos.le, norm_nonneg (z - x), norm_nonneg (S (z - x))]
 
 private def externalFirstDerivativeCLM
     (p : EuclideanSpace ℝ (Fin n)) :
@@ -130,7 +130,7 @@ private theorem hasSomeSecondOrderJet_of_external_secondOrderDifferentiableAt
       change Filter.Tendsto (fun z : Point n => z - x) (𝓝 x)
         (𝓝 ((fun z : Point n => z - x) x)) at hcont
       simpa using hcont
-    simpa [Function.comp_def] using hTaylor0.comp_tendsto hsub0
+    exact hTaylor0.comp_tendsto hsub0
   have hTaylorX :
       (fun z : Point n =>
         f z - frechetSecondOrderModel x (f x) Dφ D2φ z)
@@ -171,7 +171,7 @@ private theorem convex_openBall_badSet_volume_eq_zero_external
           (fun z : EuclideanSpace ℝ (Fin n) =>
             f ((EuclideanSpace.equiv (Fin n) ℝ) z))
           ((EuclideanSpace.equiv (Fin n) ℝ).symm (e y)) := by
-      simpa [u, e] using hy
+      exact hy
     exact hasSomeSecondOrderJet_of_external_secondOrderDifferentiableAt
       (n := n) (f := f) (x := e y) hy'
   have hnullRestrict :

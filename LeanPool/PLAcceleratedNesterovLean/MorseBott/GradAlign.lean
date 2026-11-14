@@ -37,8 +37,8 @@ variable {E : Type*}
 omit [FiniteDimensional ℝ E] in
 private lemma hasDerivAt_line' (x v : E) (t : ℝ) :
     HasDerivAt (fun s => x + s • v) v t := by
-  have := (hasDerivAt_id t).smul_const v
-  simp_all
+  simpa only [id_eq, one_smul, hasDerivAt_const_add_iff] using
+    (hasDerivAt_id t).smul_const v
 
 omit [FiniteDimensional ℝ E] in
 private lemma hasDerivAt_f_line' {f : E → ℝ} {x v : E} {t : ℝ}
@@ -57,8 +57,7 @@ private lemma hasDerivAt_fderiv_line_eval' {f : E → ℝ} {x v : E} {t : ℝ}
     ((hf.fderiv_right le_rfl).differentiableAt
       one_ne_zero).hasFDerivAt.comp_hasDerivAt
       t (hasDerivAt_line' x v t)
-  have h := hΦ.clm_apply (hasDerivAt_const t v)
-  simp_all
+  simpa only [map_zero, add_zero] using hΦ.clm_apply (hasDerivAt_const t v)
 
 omit [FiniteDimensional ℝ E] in
 private lemma taylor_remainder_bound' {f : E → ℝ} {x v : E}
@@ -76,8 +75,8 @@ private lemma taylor_remainder_bound' {f : E → ℝ} {x v : E}
     have hb : ∀ s ∈ Ico (0:ℝ) 1,
         ‖hessian f (x + s • v) v v‖ ≤ C * ‖v‖ ^ 2 :=
       fun s hs => hbound s ⟨hs.1, le_of_lt hs.2⟩
-    have h := norm_image_sub_le_of_norm_deriv_le_segment' hd hb
-    simp_all
+    simpa only [zero_smul, add_zero, sub_zero] using
+      norm_image_sub_le_of_norm_deriv_le_segment' hd hb
   have hk_deriv : ∀ s ∈ Icc (0:ℝ) 1,
       HasDerivWithinAt
         (fun s => f (x + s • v) - f x - s * (fderiv ℝ f x v))
@@ -99,10 +98,10 @@ private lemma taylor_remainder_bound' {f : E → ℝ} {x v : E}
     calc ‖fderiv ℝ f (x + s • v) v - fderiv ℝ f x v‖
         ≤ C * ‖v‖ ^ 2 * (s - 0) := h1
       _ ≤ C * ‖v‖ ^ 2 * 1 :=
-          mul_le_mul_of_nonneg_left (by linarith [hs.2]) (mul_nonneg hC (sq_nonneg _))
+          mul_le_mul_of_nonneg_left (by linarith only [hs, hs.2]) (mul_nonneg hC (sq_nonneg _))
       _ = C * ‖v‖ ^ 2 := mul_one _
-  have hmvt2 := norm_image_sub_le_of_norm_deriv_le_segment_01' hk_deriv hk_bound
-  simp_all
+  simpa only [one_smul, one_mul, zero_smul, add_zero, sub_self, zero_mul, sub_zero]
+    using norm_image_sub_le_of_norm_deriv_le_segment_01' hk_deriv hk_bound
 
 -- ═══════════════════════════════════════════════════════════════
 -- § Main theorem

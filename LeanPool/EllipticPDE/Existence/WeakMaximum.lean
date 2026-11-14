@@ -154,9 +154,9 @@ theorem weak_maximum_principle (hd : 0 < d) (hΩopen : IsOpen Ω)
     exact le_of_mul_le_mul_left this hlam
   -- Poincaré forces the truncation to vanish
   obtain ⟨C, hC, hpoin⟩ := poincare_H01_of_bounded hΩb
-  have hV0norm : ‖(V : H1amb Ω) 0‖ ^ 2 ≤ 0 := (hpoin V V.2).trans (by nlinarith)
+  have hV0norm : ‖(V : H1amb Ω) 0‖ ^ 2 ≤ 0 := (hpoin V V.2).trans (by nlinarith only [hS0, hC])
   have hV0zero : (V : H1amb Ω) 0 = 0 := by
-    have : ‖(V : H1amb Ω) 0‖ = 0 := by nlinarith [norm_nonneg ((V : H1amb Ω) 0)]
+    have : ‖(V : H1amb Ω) 0‖ = 0 := by nlinarith only [hV0norm, norm_nonneg ((V : H1amb Ω) 0)]
     exact norm_eq_zero.mp this
   have hzero : ((V : H1amb Ω) 0 : EuclideanSpace ℝ (Fin (n + 1)) → ℝ)
       =ᵐ[volume.restrict Ω] 0 := by

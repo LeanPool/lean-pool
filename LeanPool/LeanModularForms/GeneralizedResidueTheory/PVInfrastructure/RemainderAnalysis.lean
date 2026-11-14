@@ -10,7 +10,6 @@ public import Mathlib.Analysis.InnerProductSpace.Basic
 import LeanPool.LeanModularForms.GeneralizedResidueTheory.PVInfrastructure.GammaAnalysis
 import Mathlib.Analysis.Calculus.ContDiff.Comp
 import Mathlib.Analysis.Calculus.ContDiff.RCLike
-import Mathlib.MeasureTheory.Covering.Besicovitch
 
 /-!
 # PV Infrastructure: Remainder Analysis
@@ -28,7 +27,7 @@ The key result `remainder_bounded_of_C2` shows that the remainder
 
 @[expose] public section
 
-open Complex MeasureTheory Set Filter Topology
+open Complex Set Filter Topology
 open scoped Real Interval
 
 noncomputable section
@@ -93,7 +92,8 @@ lemma quadratic_approx_of_contDiffAt_two
   use K, δ, hδ_pos, hK_pos
   intro t ht
   by_cases ht_eq : t = t₀
-  · simp [ht_eq]
+  · simp only [ht_eq, sub_self, zero_smul, norm_zero, abs_zero, ne_eq, OfNat.ofNat_ne_zero,
+    not_false_eq_true, zero_pow, mul_zero, Std.le_refl]
   let f₁ : ℝ → ℂ := γ
   let f₂ : ℝ → ℂ := fun _ => γ t₀
   let f₃ : ℝ → ℂ := fun s => (s - t₀) • L
@@ -122,7 +122,8 @@ lemma quadratic_approx_of_contDiffAt_two
     intro s hs
     have hs_diff : DifferentiableAt ℝ γ s := h_γ_diff_on s hs
     have h_diff_f1f2 : DifferentiableAt ℝ (fun s => f₁ s - f₂ s) s := hs_diff.sub (h_f₂_diff s)
-    have h_eq_sub : h = fun s => (f₁ s - f₂ s) - f₃ s := by ext; simp [h, f₁, f₂, f₃]
+    have h_eq_sub : h = fun s => (f₁ s - f₂ s) - f₃ s := by ext; simp only [real_smul, ofReal_sub,
+      h, f₁, f₂, f₃]
     have step1 : deriv h s = deriv (fun s => (f₁ s - f₂ s) - f₃ s) s := by rw [← h_eq_sub]
     have step2 : deriv (fun s => (f₁ s - f₂ s) - f₃ s) s =
         deriv (fun s => f₁ s - f₂ s) s - deriv f₃ s :=
@@ -277,7 +278,8 @@ lemma remainder_bounded_of_C2
           mul_le_mul_of_nonneg_right h (abs_nonneg _)
   have h_denom_pos :
       0 < ‖(γ t - γ t₀) * (↑(t - t₀))‖ := by
-    simp_all
+    simp_all only [ne_eq, norm_pos_iff, not_false_eq_true, gt_iff_lt, abs_pos, ge_iff_le,
+      ofReal_sub, sq_abs, Complex.norm_mul, mul_pos_iff_of_pos_left]
   have h_sq_pos : 0 < |t - t₀| ^ 2 := sq_pos_of_pos ht_pos
   have h_d_pos : 0 < (‖L‖ / 2) * |t - t₀| ^ 2 := mul_pos (half_pos hL_norm_pos) h_sq_pos
   calc ‖(↑(t - t₀) : ℂ) * deriv γ t -

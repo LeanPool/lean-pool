@@ -72,7 +72,7 @@ theorem tendsto_pntE : Tendsto pntE atTop (𝓝 0) := by
 
 /-- `pntE` dominates `1 / x`. -/
 theorem inv_le_pntE {x : ℝ} (hx : 2 ≤ x) : x⁻¹ ≤ pntE x := by
-  have hx0 : 0 < x := by linarith
+  have hx0 : 0 < x := by linarith only [hx]
   have hL : 1 / 4 ≤ log x := by
     have := log_two_gt_d9
     have := log_le_log (by norm_num) hx
@@ -85,25 +85,25 @@ theorem inv_le_pntE {x : ℝ} (hx : 2 ≤ x) : x⁻¹ ≤ pntE x := by
     have := pntκ_le_half
     have := sqrt_nonneg (log x)
     nlinarith
-  rw [mul_self_sqrt (by linarith)] at h1
-  linarith
+  rw [mul_self_sqrt (by linarith only [hL])] at h1
+  linarith only [h1]
 
 theorem one_div_mul_log_le_pntE {x : ℝ} (hx : 2 ≤ x) : 1 / (x * log x) ≤ 2 * pntE x := by
-  have hx0 : 0 < x := by linarith
+  have hx0 : 0 < x := by linarith only [hx]
   have hL : 1 / 2 ≤ log x := by
     have := log_two_gt_d9
     have := log_le_log (by norm_num) hx
     linarith
   calc 1 / (x * log x) = x⁻¹ * (log x)⁻¹ := by rw [one_div, mul_inv]
     _ ≤ pntE x * 2 := by
-      refine mul_le_mul (inv_le_pntE hx) ?_ (inv_nonneg.2 (by linarith)) (pntE_nonneg _)
-      rw [inv_le_comm₀ (by linarith) (by norm_num)]
-      linarith
+      refine mul_le_mul (inv_le_pntE hx) ?_ (inv_nonneg.2 (by linarith only [hL])) (pntE_nonneg _)
+      rw [inv_le_comm₀ (by linarith only [hL]) (by norm_num)]
+      linarith only [hL]
     _ = 2 * pntE x := mul_comm _ _
 
 /-- `pntE` dominates `x ^ (-1/2) * log x`. -/
 theorem sqrt_mul_log_le {x : ℝ} (hx : 1 ≤ x) : √x * log x ≤ 12 * x * pntE x := by
-  have hx0 : 0 < x := by linarith
+  have hx0 : 0 < x := by linarith only [hx]
   set L := log x with hLdef
   have hL : 0 ≤ L := log_nonneg hx
   have hsx : √x = exp (L / 2) := by
@@ -113,19 +113,19 @@ theorem sqrt_mul_log_le {x : ℝ} (hx : 1 ≤ x) : √x * log x ≤ 12 * x * pnt
     rw [← exp_add, add_halves, hLdef, exp_log hx0]
   clear_value L
   -- `L ≤ 4 exp (L / 4)` and `κ √L ≤ (L + 1) / 4`.
-  have h1 : L ≤ 4 * exp (L / 4) := by linarith [add_one_le_exp (L / 4)]
+  have h1 : L ≤ 4 * exp (L / 4) := by linarith only [add_one_le_exp (L / 4)]
   have h2 : pntκ * √L ≤ L / 4 + 1 / 4 := by
     have hκ := pntκ_le_half
     have hs := sqrt_nonneg L
     have hsq := mul_self_sqrt hL
-    nlinarith [sq_nonneg (√L - 1)]
+    nlinarith only [sq_nonneg (√L - 1), hsq, hκ, hs]
   have h3 : exp (pntκ * √L) ≤ 3 * exp (L / 4) := by
     calc exp (pntκ * √L) ≤ exp (L / 4 + 1 / 4) := exp_le_exp.2 h2
       _ = exp (L / 4) * exp (1 / 4) := exp_add _ _
       _ ≤ exp (L / 4) * 3 := by
         gcongr
         calc exp (1 / 4 : ℝ) ≤ exp 1 := exp_le_exp.2 (by norm_num)
-          _ ≤ 3 := by have := exp_one_lt_d9; linarith
+          _ ≤ 3 := by have := exp_one_lt_d9; linarith only [this]
       _ = 3 * exp (L / 4) := mul_comm _ _
   have h4 : L * exp (pntκ * √L) ≤ 12 * exp (L / 2) := by
     calc L * exp (pntκ * √L) ≤ (4 * exp (L / 4)) * (3 * exp (L / 4)) := by
@@ -146,7 +146,7 @@ theorem sqrt_mul_log_le {x : ℝ} (hx : 1 ≤ x) : √x * log x ≤ 12 * x * pnt
 
 theorem hasDerivAt_pntE {x : ℝ} (hx : 1 < x) :
     HasDerivAt pntE (pntE x * (-pntκ * (x⁻¹ / (2 * √(log x))))) x := by
-  have hlog : HasDerivAt log x⁻¹ x := hasDerivAt_log (by linarith)
+  have hlog : HasDerivAt log x⁻¹ x := hasDerivAt_log (by linarith only [hx])
   have h := ((hlog.sqrt (log_pos hx).ne').const_mul (-pntκ)).exp
   exact h
 
@@ -157,7 +157,7 @@ theorem exists_abs_psi_sub_le :
   obtain ⟨X, hX⟩ := eventually_atTop.1 hC
   refine ⟨max C 0, max X 1, le_max_right _ _, fun x hx ↦ ?_⟩
   have hx1 : 1 ≤ x := (le_max_right _ _).trans hx
-  have hx0 : 0 < x := by linarith
+  have hx0 : 0 < x := by linarith only [hx1]
   have h := hX x ((le_max_left _ _).trans hx)
   simp only [Pi.sub_apply, id, norm_eq_abs, norm_mul, abs_of_pos hx0, abs_exp] at h
   have hexp : exp (-StrongPNT.choose * log x ^ ((1 : ℝ) / 2)) ≤ pntE x := by
@@ -176,22 +176,22 @@ theorem exists_abs_psi_sub_le :
 theorem theta_asymp : ∃ C : ℝ, 0 ≤ C ∧ ∀ x ≥ 2, |Chebyshev.theta x - x| ≤ C * x * pntE x := by
   obtain ⟨C, X, hC, hX⟩ := exists_abs_psi_sub_le
   set X' := max X 2
-  refine ⟨max (C + 24) (pntE X')⁻¹, (hC.trans (by linarith)).trans (le_max_left _ _),
+  refine ⟨max (C + 24) (pntE X')⁻¹, (hC.trans (by linarith only [])).trans (le_max_left _ _),
     fun x hx ↦ ?_⟩
-  have hx0 : 0 < x := by linarith
+  have hx0 : 0 < x := by linarith only [hx]
   have hE := pntE_pos x
   rcases le_or_gt X' x with hxX | hxX
   · -- large `x`: use the PNT for `ψ` and `ψ - θ = O(√x log x)`.
     have h1 := hX x ((le_max_left _ _).trans hxX)
-    have h2 := Chebyshev.psi_sub_theta_le (x := x) (by linarith)
+    have h2 := Chebyshev.psi_sub_theta_le (x := x) (by linarith only [hx])
     have h3 := Chebyshev.theta_le_psi x
-    have h4 := sqrt_mul_log_le (x := x) (by linarith)
+    have h4 := sqrt_mul_log_le (x := x) (by linarith only [hx])
     calc |Chebyshev.theta x - x|
         ≤ |Chebyshev.psi x - x| + (Chebyshev.psi x - Chebyshev.theta x) := by
           have h5 := le_abs_self (Chebyshev.psi x - x)
           have h6 := neg_abs_le (Chebyshev.psi x - x)
           rw [abs_le]; constructor <;> linarith
-      _ ≤ C * x * pntE x + 2 * (12 * x * pntE x) := by linarith
+      _ ≤ C * x * pntE x + 2 * (12 * x * pntE x) := by linarith only [h1, h2, h4]
       _ = (C + 24) * x * pntE x := by ring
       _ ≤ max (C + 24) (pntE X')⁻¹ * x * pntE x := by gcongr; exact le_max_left _ _
   · -- small `x`: `0 ≤ θ x ≤ log 4 * x ≤ 2 x` and `pntE x ≥ pntE X'`.
@@ -201,7 +201,7 @@ theorem theta_asymp : ∃ C : ℝ, 0 ≤ C ∧ ∀ x ≥ 2, |Chebyshev.theta x -
       rw [show (4 : ℝ) = 2 ^ 2 by norm_num, log_pow]
       have := log_two_lt_d9
       push_cast
-      linarith
+      linarith only [this]
     have h3 : |Chebyshev.theta x - x| ≤ x := by
       rw [abs_le]; constructor <;> nlinarith
     have h4 : pntE X' ≤ pntE x := pntE_le_pntE hx0 hxX.le

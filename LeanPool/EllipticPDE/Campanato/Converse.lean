@@ -115,7 +115,7 @@ theorem campanatoOn_of_holderOnWith {Ω : Set (EuclideanSpace ℝ (Fin d))}
       (u y - ballAverage u x r) ^ 2 ≤ ((K : ℝ) * (2 * r) ^ α) ^ 2 := by
     intro y hy
     have h := hosc y hy
-    nlinarith [abs_nonneg (u y - ballAverage u x r), sq_abs (u y - ballAverage u x r)]
+    nlinarith only [hB, h, abs_nonneg (u y - ballAverage u x r), sq_abs (u y - ballAverage u x r)]
   have hintsq : IntegrableOn (fun y => (u y - ballAverage u x r) ^ 2)
       (Metric.ball x r) volume := by
     have hcont : ContinuousOn (fun y => (u y - ballAverage u x r) ^ 2) (Metric.ball x r) :=

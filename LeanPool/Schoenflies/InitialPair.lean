@@ -411,17 +411,21 @@ theorem outerEdgeUniqueFace_initialStructure :
     intro k
     refine ⟨?_, fun h => initSub_face h⟩
     rintro (h | ⟨h, -⟩ | ⟨l, hl, hmem⟩)
-    · exact absurd h (by simp)
-    · exact absurd h (by simp [InitialCell.edges])
+    · exact absurd h (by simp only [reduceCtorEq, false_and, not_false_eq_true])
+    · exact absurd h (by simp only [InitialCell.edges, union_singleton, mem_insert_iff,
+      reduceCtorEq,
+  mem_range, exists_const, or_self, not_false_eq_true])
     · cases hl; exact hmem
+  have membership (j : Fin 6) (k : Bool) :
+      InitialCell.edge j ∈ faceCells k ↔ k = ![true, false, false, false, true, true] j := by
+    fin_cases j <;> cases k <;>
+      simp only [faceCells, Set.mem_insert_iff, Set.mem_singleton_iff] <;> decide
   refine ⟨.face (![true, false, false, false, true, true] i), ⟨⟨_, rfl⟩, ?_⟩, ?_⟩
   · rw [initialStructure_sub, hsub]
-    fin_cases i <;> simp [faceCells]
+    exact (membership i _).2 rfl
   · rintro T ⟨⟨k, rfl⟩, hT⟩
     rw [initialStructure_sub, hsub] at hT
-    have : k = ![true, false, false, false, true, true] i := by
-      fin_cases i <;> cases k <;> simp_all [faceCells]
-    rw [this]
+    rw [(membership i k).1 hT]
 
 /-! ### A realization of the initial structure, from six points and seven parametrizations
 
@@ -662,7 +666,11 @@ theorem outerArcs_eq :
   ext z
   simp only [outerArcs, Set.mem_iUnion, Set.mem_union]
   constructor
-  · rintro ⟨i, hi⟩; fin_cases i <;> tauto
+  · rintro ⟨i, hi⟩
+    fin_cases i
+    exacts [Or.inl hi, Or.inr (Or.inl hi), Or.inr (Or.inr (Or.inl hi)),
+      Or.inr (Or.inr (Or.inr (Or.inl hi))), Or.inr (Or.inr (Or.inr (Or.inr (Or.inl hi)))),
+      Or.inr (Or.inr (Or.inr (Or.inr (Or.inr hi))))]
   · rintro (h | h | h | h | h | h)
     exacts [⟨0, h⟩, ⟨1, h⟩, ⟨2, h⟩, ⟨3, h⟩, ⟨4, h⟩, ⟨5, h⟩]
 
@@ -671,7 +679,14 @@ theorem arcOf_union : H.arcOf false ∪ H.arcOf true = H.outerArcs := by
   simp only [arcOf]
   ext z
   simp only [Set.mem_union]
-  constructor <;> (intro h; tauto)
+  constructor
+  · rintro ((h | h | h) | (h | h | h))
+    exacts [Or.inr (Or.inl h), Or.inr (Or.inr (Or.inl h)),
+      Or.inr (Or.inr (Or.inr (Or.inl h))), Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h)))),
+      Or.inr (Or.inr (Or.inr (Or.inr (Or.inr h)))), Or.inl h]
+  · rintro (h | h | h | h | h | h)
+    exacts [Or.inr (Or.inr (Or.inr h)), Or.inl (Or.inl h), Or.inl (Or.inr (Or.inl h)),
+      Or.inl (Or.inr (Or.inr h)), Or.inr (Or.inl h), Or.inr (Or.inr (Or.inl h))]
 
 /-- **`A₁` is an arc from `a` to `b`.** Three consecutive outer edges, glued at the two corner
 vertices between them. -/
@@ -958,14 +973,14 @@ theorem hPiece_subset_modelCurve {c lo hi : ℝ} (hc : |c| = 1) (hlo : -1 ≤ lo
   rintro p ⟨h1, h2, h3⟩
   change Plane.supNorm p = 1
   simp only [Plane.supNorm, h1, hc]
-  exact max_eq_right (by rw [abs_le]; constructor <;> linarith)
+  exact max_eq_right (by rw [abs_le]; constructor <;> linarith only [h2, hlo, h3, hhi])
 
 theorem vPiece_subset_modelCurve {c lo hi : ℝ} (hc : |c| = 1) (hlo : -1 ≤ lo) (hhi : hi ≤ 1) :
     vPiece c lo hi ⊆ modelCurve := by
   rintro p ⟨h1, h2, h3⟩
   change Plane.supNorm p = 1
   simp only [Plane.supNorm, h1, hc]
-  exact max_eq_left (by rw [abs_le]; constructor <;> linarith)
+  exact max_eq_left (by rw [abs_le]; constructor <;> linarith only [h2, hlo, h3, hhi])
 
 variable {α β : ℝ}
 
@@ -1017,11 +1032,28 @@ theorem segment_tgtPos (hα : |α| < 1) (hβ : |β| < 1) (i : Fin 6) :
 theorem injective_tgtPos (hα : |α| < 1) (hβ : |β| < 1) : Function.Injective (tgtPos α β) := by
   obtain ⟨hα1, hα2⟩ := abs_lt.1 hα
   obtain ⟨hβ1, hβ2⟩ := abs_lt.1 hβ
+  have hpm : (1 : ℝ) ≠ -1 := by norm_num
   intro i j h
-  fin_cases i <;> fin_cases j <;>
-    first
-      | rfl
-      | (exfalso; obtain ⟨h0, h1⟩ := Plane.mk_inj h; linarith)
+  fin_cases i <;> fin_cases j
+  exacts [
+    rfl, ((ne_of_lt hα2) (Plane.mk_inj h).1.symm).elim,
+    (hpm (Plane.mk_inj h).1).elim, (hpm (Plane.mk_inj h).2).elim,
+    (hpm (Plane.mk_inj h).2).elim, (hpm (Plane.mk_inj h).2).elim,
+    ((ne_of_lt hα2) (Plane.mk_inj h).1).elim, rfl,
+    ((ne_of_lt hα1) (Plane.mk_inj h).1.symm).elim, (hpm (Plane.mk_inj h).2).elim,
+    (hpm (Plane.mk_inj h).2).elim, (hpm (Plane.mk_inj h).2).elim,
+    (hpm.symm (Plane.mk_inj h).1).elim, ((ne_of_lt hα1) (Plane.mk_inj h).1).elim,
+    rfl, (hpm (Plane.mk_inj h).2).elim,
+    (hpm (Plane.mk_inj h).2).elim, (hpm (Plane.mk_inj h).2).elim,
+    (hpm.symm (Plane.mk_inj h).2).elim, (hpm.symm (Plane.mk_inj h).2).elim,
+    (hpm.symm (Plane.mk_inj h).2).elim, rfl,
+    ((ne_of_lt hβ1) (Plane.mk_inj h).1).elim, (hpm.symm (Plane.mk_inj h).1).elim,
+    (hpm.symm (Plane.mk_inj h).2).elim, (hpm.symm (Plane.mk_inj h).2).elim,
+    (hpm.symm (Plane.mk_inj h).2).elim, ((ne_of_lt hβ1) (Plane.mk_inj h).1.symm).elim,
+    rfl, ((ne_of_lt hβ2) (Plane.mk_inj h).1).elim,
+    (hpm.symm (Plane.mk_inj h).2).elim, (hpm.symm (Plane.mk_inj h).2).elim,
+    (hpm.symm (Plane.mk_inj h).2).elim, (hpm (Plane.mk_inj h).1).elim,
+    ((ne_of_lt hβ2) (Plane.mk_inj h).1.symm).elim, rfl]
 
 theorem tgtOuter_subset_modelCurve (hα : |α| < 1) (hβ : |β| < 1) (i : Fin 6) :
     tgtOuter α β i '' I ⊆ modelCurve := by
@@ -1045,21 +1077,40 @@ theorem tgtOuter_meet (hα : |α| < 1) (hβ : |β| < 1) (i j : Fin 6) (hij : i �
     tgtOuter α β i '' I ∩ tgtOuter α β j '' I ⊆
       ({tgtPos α β i, tgtPos α β (i + 1)} : Set Plane) ∩
         {tgtPos α β j, tgtPos α β (j + 1)} := by
-  have hα' := abs_lt.1 hα
-  have hβ' := abs_lt.1 hβ
-  obtain ⟨hα1, hα2⟩ := hα'
-  obtain ⟨hβ1, hβ2⟩ := hβ'
-  simp only [tgtOuter_image, segment_tgtPos hα hβ]
-  fin_cases i <;> fin_cases j <;>
-    first
-      | exact absurd rfl hij
-      | · rintro p ⟨⟨e1, e2, e3⟩, f1, f2, f3⟩
-          first
-            | (exfalso; linarith)
-            | exact ⟨Or.inl (Plane.eq_mk (by linarith) (by linarith)),
-                Or.inr (Plane.eq_mk (by linarith) (by linarith))⟩
-            | exact ⟨Or.inr (Plane.eq_mk (by linarith) (by linarith)),
-                Or.inl (Plane.eq_mk (by linarith) (by linarith))⟩
+  obtain ⟨hα1, hα2⟩ := abs_lt.1 hα
+  obtain ⟨hβ1, hβ2⟩ := abs_lt.1 hβ
+  have ordered : ∀ k l : Fin 6, k < l →
+      tgtOuter α β k '' I ∩ tgtOuter α β l '' I ⊆
+        ({tgtPos α β k, tgtPos α β (k + 1)} : Set Plane) ∩
+          {tgtPos α β l, tgtPos α β (l + 1)} := by
+    intro k l hkl
+    simp only [tgtOuter_image, segment_tgtPos hα hβ]
+    fin_cases k <;> fin_cases l <;> norm_num at hkl
+    all_goals rintro p ⟨⟨e1, e2, e3⟩, f1, f2, f3⟩
+    · have point_eq : p = Plane.mk α 1 := Plane.eq_mk (le_antisymm f3 e2) e1
+      exact ⟨Or.inr point_eq, Or.inl point_eq⟩
+    · exfalso; linarith only [hα1, e2, f1]
+    · exfalso; linarith only [e1, f1]
+    · exfalso; linarith only [e1, f1]
+    · have point_eq : p = Plane.mk 1 1 := Plane.eq_mk f1 e1
+      exact ⟨Or.inl point_eq, Or.inr point_eq⟩
+    · have point_eq : p = Plane.mk (-1) 1 := Plane.eq_mk f1 e1
+      exact ⟨Or.inr point_eq, Or.inl point_eq⟩
+    · exfalso; linarith only [e1, f1]
+    · exfalso; linarith only [e1, f1]
+    · exfalso; linarith only [hα2, e3, f1]
+    · have point_eq : p = Plane.mk (-1) (-1) := Plane.eq_mk e1 f1
+      exact ⟨Or.inr point_eq, Or.inl point_eq⟩
+    · exfalso; linarith only [hβ1, e1, f2]
+    · exfalso; linarith only [e1, f1]
+    · have point_eq : p = Plane.mk β (-1) := Plane.eq_mk (le_antisymm e3 f2) e1
+      exact ⟨Or.inr point_eq, Or.inl point_eq⟩
+    · exfalso; linarith only [hβ2, e3, f1]
+    · have point_eq : p = Plane.mk 1 (-1) := Plane.eq_mk f1 e1
+      exact ⟨Or.inr point_eq, Or.inl point_eq⟩
+  rcases lt_or_gt_of_ne hij with h | h
+  · exact ordered i j h
+  · simpa only [inter_comm] using ordered j i h
 
 /-- **The straight chord between opposite sides has all its other points in the open square.**
 This is the single use of the nonadjacency hypothesis of `prop:initial-pair`. -/
@@ -1073,7 +1124,7 @@ theorem openSegment_chord_supNorm_lt (hα : |α| < 1) (hβ : |β| < 1) :
   have h1 : (a • Plane.mk α 1 + b • Plane.mk β (-1)) 1 = a - b := by
     rw [Plane.smul_add_apply]; simp; ring
   have hb0 : |a * α + b * β| < 1 := by rw [abs_lt]; constructor <;> nlinarith
-  have hb1 : |a - b| < 1 := by rw [abs_lt]; constructor <;> linarith
+  have hb1 : |a - b| < 1 := by rw [abs_lt]; constructor <;> linarith only [hab, ha, hb]
   rw [Plane.supNorm, h0, h1]
   exact max_lt hb0 hb1
 
@@ -1647,10 +1698,10 @@ theorem openSquare_subset_inside_modelCurve : Plane.openSquare 0 1 ⊆ inside mo
     refine (Metric.isBounded_closedBall (x := (0 : Plane)) (r := 2)).subset fun x hx => ?_
     have hx1 : Plane.supNorm x < 1 := mem_openSquare_zero_one.1 hx
     have h2 : Real.sqrt 2 ≤ 2 := by
-      nlinarith [Real.sq_sqrt (by norm_num : (0:ℝ) ≤ 2), Real.sqrt_nonneg 2]
+      nlinarith only [Real.sq_sqrt (by norm_num : (0:ℝ) ≤ 2), hx]
     have := Plane.norm_le_sqrt_two_mul_supNorm x
     rw [Metric.mem_closedBall, dist_zero_right]
-    nlinarith [Plane.supNorm_nonneg x]
+    nlinarith only [hx1, h2, this, Plane.supNorm_nonneg x]
   have hsub : Plane.openSquare 0 1 ⊆ modelCurveᶜ := fun x hx hxm =>
     absurd (mem_openSquare_zero_one.1 hx) (by rw [show Plane.supNorm x = 1 from hxm]; norm_num)
   have hfr : frontier (Plane.openSquare 0 1) ∩ modelCurveᶜ = ∅ := by
@@ -1767,7 +1818,7 @@ theorem mem_openTop {p : Plane} : p ∈ openTop ↔ p 1 = 1 ∧ |p 0| < 1 := by
     · exact absurd (h ▸ hmax) (ne_of_lt h0)
     · rcases (abs_eq (by norm_num : (0:ℝ) ≤ 1)).1 (h ▸ hmax) with h' | h'
       · exact h'
-      · linarith
+      · linarith only [h', hpos]
   · rintro ⟨h1, h0⟩
     refine ⟨⟨h0, by rw [h1]; norm_num⟩, ?_⟩
     change max |p 0| |p 1| = 1
@@ -1782,7 +1833,7 @@ theorem mem_openBottom {p : Plane} : p ∈ openBottom ↔ p 1 = -1 ∧ |p 0| < 1
     rcases max_choice |p 0| |p 1| with h | h
     · exact absurd (h ▸ hmax) (ne_of_lt h0)
     · rcases (abs_eq (by norm_num : (0:ℝ) ≤ 1)).1 (h ▸ hmax) with h' | h'
-      · linarith
+      · linarith only [h', hneg]
       · exact h'
   · rintro ⟨h1, h0⟩
     refine ⟨⟨h0, by rw [h1]; norm_num⟩, ?_⟩

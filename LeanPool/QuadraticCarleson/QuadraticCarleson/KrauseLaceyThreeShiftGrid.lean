@@ -150,7 +150,6 @@ theorem translatedDyadicRealInterval_parent_subset
     intro x hx
     simp only [translatedDyadicRealInterval_carrier, mem_Ioc] at hx ⊢
     rw [dyadicLength_succ] at hx
-    have hd := dyadicLength_pos hL depth
     push_cast at hx ⊢
     constructor <;> nlinarith
 

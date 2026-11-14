@@ -202,6 +202,31 @@ private theorem integral_norm_complexFrullaniSegment
     _ = ‖w - z‖ * (complexFrullaniSegment z w s).re⁻¹ := by
       rw [integral_laplaceKernel hpositive]
 
+private theorem integrable_parameter_kernel_of_exp_bound
+    {F : ℝ → ℝ → ℂ} {m C : ℝ} (hm : 0 < m)
+    (hF : AEStronglyMeasurable (Function.uncurry F)
+      ((volume.restrict (Set.uIoc (0 : ℝ) 1)).prod
+        (volume.restrict (Ioi 0))))
+    (hbound : ∀ s ∈ Icc (0 : ℝ) 1, ∀ x : ℝ, 0 < x →
+      ‖F s x‖ ≤ C * Real.exp (-m * x)) :
+    Integrable (Function.uncurry F)
+      ((volume.restrict (Set.uIoc (0 : ℝ) 1)).prod
+        (volume.restrict (Ioi 0))) := by
+  have hconstant : IntegrableOn (fun _ : ℝ => C) (Set.uIoc (0 : ℝ) 1) :=
+    intervalIntegrable_iff.mp intervalIntegrable_const
+  have hdomain : ∀ᵐ p ∂((volume.restrict (Set.uIoc (0 : ℝ) 1)).prod
+      (volume.restrict (Ioi (0 : ℝ)))),
+      p ∈ Set.uIoc (0 : ℝ) 1 ×ˢ Ioi (0 : ℝ) := by
+    apply (Measure.ae_prod_mem_iff_ae_ae_mem (measurableSet_uIoc.prod measurableSet_Ioi)).2
+    filter_upwards [ae_restrict_mem measurableSet_uIoc] with s hs
+    filter_upwards [ae_restrict_mem measurableSet_Ioi] with x hx
+    exact ⟨hs, hx⟩
+  apply (hconstant.mul_prod (laplaceKernel_integrable hm)).mono' hF
+  filter_upwards [hdomain] with p hp
+  have hs := hp.1
+  rw [Set.uIoc_of_le (show (0 : ℝ) ≤ 1 from zero_le_one)] at hs
+  exact hbound p.1 ⟨hs.1.le, hs.2⟩ p.2 hp.2
+
 private theorem complexFrullaniParameter_integrable
     {z w : ℂ} (hz : 0 < z.re) (hw : 0 < w.re) :
     Integrable
@@ -221,51 +246,16 @@ private theorem complexFrullaniParameter_integrable
           (volume.restrict (Ioi 0))) := by
     unfold complexFrullaniSegment
     fun_prop
-  apply (integrable_prod_iff hmeas).2
-  constructor
-  · filter_upwards [ae_restrict_mem measurableSet_uIoc]
-      with s hs
-    rw [Set.uIoc_of_le (show (0 : ℝ) ≤ 1 by norm_num)] at hs
-    have hclosed : s ∈ Icc (0 : ℝ) 1 :=
-      ⟨hs.1.le, hs.2⟩
-    exact
-      (complexLaplaceKernel_integrable
-        (complexFrullaniSegment_re_pos hz hw hclosed)).const_mul
-          (w - z)
-  · have hsegment :
-        Continuous (fun s : ℝ =>
-          (complexFrullaniSegment z w s).re) := by
-        unfold complexFrullaniSegment
-        fun_prop
-    have hnonzero :
-        ∀ s ∈ Set.uIcc (0 : ℝ) 1,
-          (complexFrullaniSegment z w s).re ≠ 0 := by
-      intro s hs
-      rw [Set.uIcc_of_le (show (0 : ℝ) ≤ 1 by norm_num)] at hs
-      exact (complexFrullaniSegment_re_pos hz hw hs).ne'
-    have hcontinuous :
-        ContinuousOn
-          (fun s : ℝ =>
-            ‖w - z‖ *
-              (complexFrullaniSegment z w s).re⁻¹)
-          (Set.uIcc (0 : ℝ) 1) :=
-      continuousOn_const.mul
-        (hsegment.continuousOn.inv₀ hnonzero)
-    have hintegrable :
-        Integrable
-          (fun s : ℝ =>
-            ‖w - z‖ *
-              (complexFrullaniSegment z w s).re⁻¹)
-          (volume.restrict (Set.uIoc (0 : ℝ) 1)) :=
-      intervalIntegrable_iff.mp
-        (hcontinuous.intervalIntegrable)
-    apply hintegrable.congr
-    filter_upwards [ae_restrict_mem measurableSet_uIoc]
-      with s hs
-    rw [Set.uIoc_of_le (show (0 : ℝ) ≤ 1 by norm_num)] at hs
-    have hclosed : s ∈ Icc (0 : ℝ) 1 :=
-      ⟨hs.1.le, hs.2⟩
-    exact (integral_norm_complexFrullaniSegment hz hw hclosed).symm
+  apply integrable_parameter_kernel_of_exp_bound (C := ‖w - z‖)
+    (lt_min hz hw) hmeas
+  intro s hs x hx
+  rw [norm_mul, Complex.norm_exp]
+  apply mul_le_mul_of_nonneg_left _ (norm_nonneg (w - z))
+  apply Real.exp_le_exp.mpr
+  simp only [Complex.mul_re, Complex.neg_re, Complex.ofReal_re,
+    Complex.ofReal_im, mul_zero, sub_zero]
+  exact mul_le_mul_of_nonneg_right
+    (neg_le_neg (complexFrullaniSegment_min_re_le z w hs)) hx.le
 
 private theorem complexFrullaniKernel_integrable
     {z w : ℂ} (hz : 0 < z.re) (hw : 0 < w.re) :
@@ -378,19 +368,19 @@ private theorem complexFrullaniShiftKernel_norm_le_exp
       ‖(1 : ℂ) - (z + (s : ℂ))‖ =
           ‖((1 : ℂ) - z) - (s : ℂ)‖ := by
             congr 1
-            ring
+            (symm; apply sub_sub)
       _ ≤ ‖(1 : ℂ) - z‖ + ‖(s : ℂ)‖ :=
         norm_sub_le _ _
       _ ≤ ‖(1 : ℂ) - z‖ + 1 := by
         rw [Complex.norm_real, Real.norm_eq_abs,
           abs_of_nonneg hs.1]
-        linarith only [hs.2, hs]
+        linear_combination (hs.2)
   have hmin :
       min z.re 1 ≤
         min (z + (s : ℂ)).re (1 : ℂ).re := by
     apply le_min
     · simp only [Complex.add_re, Complex.ofReal_re]
-      linarith only [min_le_left z.re (1 : ℝ), hs.1, hs]
+      linear_combination (min_le_left z.re (1 : ℝ) + hs.1)
     · exact min_le_right z.re (1 : ℝ)
   calc
     ‖complexFrullaniKernel (z + (s : ℂ)) 1 x‖ ≤
@@ -415,12 +405,6 @@ private theorem complexFrullaniShiftParameter_integrable
         complexFrullaniKernel (z + (s : ℂ)) 1 x))
       ((volume.restrict (Set.uIoc (0 : ℝ) 1)).prod
         (volume.restrict (Ioi 0))) := by
-  have hm : 0 < min z.re 1 :=
-    lt_min hz (by norm_num)
-  let C : ℝ := ‖(1 : ℂ) - z‖ + 1
-  have hC : 0 ≤ C := by
-    try dsimp [C]
-    positivity
   have hmeas :
       AEStronglyMeasurable
         (Function.uncurry (fun s x : ℝ =>
@@ -437,68 +421,10 @@ private theorem complexFrullaniShiftParameter_integrable
           (volume.restrict (Ioi 0)))
     apply Measurable.aestronglyMeasurable
     fun_prop
-  apply (integrable_prod_iff hmeas).2
-  constructor
-  · filter_upwards [ae_restrict_mem measurableSet_uIoc]
-      with s hs
-    rw [Set.uIoc_of_le (show (0 : ℝ) ≤ 1 by norm_num)] at hs
-    have hspositive : 0 < (z + (s : ℂ)).re := by
-      simp only [Complex.add_re, Complex.ofReal_re]
-      linarith only [hs.1, hz, hs]
-    change
-      IntegrableOn
-        (complexFrullaniKernel (z + (s : ℂ)) 1)
-        (Ioi 0)
-    exact complexFrullaniKernel_integrable
-      hspositive (by norm_num : 0 < (1 : ℂ).re)
-  · have hconstant :
-        Integrable (fun _ : ℝ => C * (min z.re 1)⁻¹)
-          (volume.restrict (Set.uIoc (0 : ℝ) 1)) :=
-      intervalIntegrable_iff.mp
-        (continuous_const.intervalIntegrable (a := (0 : ℝ))
-          (b := 1))
-    apply hconstant.mono'
-    · simpa only [Function.uncurry_apply_pair] using!
-        hmeas.norm.integral_prod_right'
-    filter_upwards [ae_restrict_mem measurableSet_uIoc]
-      with s hs
-    rw [Set.uIoc_of_le (show (0 : ℝ) ≤ 1 by norm_num)] at hs
-    have hclosed : s ∈ Icc (0 : ℝ) 1 :=
-      ⟨hs.1.le, hs.2⟩
-    have hspositive : 0 < (z + (s : ℂ)).re := by
-      simp only [Complex.add_re, Complex.ofReal_re]
-      linarith only [hs.1, hz, hs]
-    have hkernel :=
-      complexFrullaniKernel_integrable
-        hspositive (by norm_num : 0 < (1 : ℂ).re)
-    have hmajor :
-        IntegrableOn
-          (fun x : ℝ =>
-            C * Real.exp (-(min z.re 1) * x))
-          (Ioi 0) :=
-      (laplaceKernel_integrable hm).const_mul C
-    change
-      ‖∫ x : ℝ in Ioi 0,
-        ‖complexFrullaniKernel (z + (s : ℂ)) 1 x‖‖ ≤
-          C * (min z.re 1)⁻¹
-    rw [Real.norm_eq_abs, abs_of_nonneg
-      (integral_nonneg fun x => norm_nonneg
-        (complexFrullaniKernel (z + (s : ℂ)) 1 x))]
-    calc
-      (∫ x : ℝ in Ioi 0,
-        ‖complexFrullaniKernel (z + (s : ℂ)) 1 x‖) ≤
-          ∫ x : ℝ in Ioi 0,
-            C * Real.exp (-(min z.re 1) * x) := by
-        apply integral_mono_ae hkernel.norm hmajor
-        filter_upwards [ae_restrict_mem measurableSet_Ioi]
-          with x hx
-        change
-          ‖complexFrullaniKernel (z + (s : ℂ)) 1 x‖ ≤
-            C * Real.exp (-(min z.re 1) * x)
-        exact complexFrullaniShiftKernel_norm_le_exp z
-          hclosed hx
-      _ = C * (min z.re 1)⁻¹ := by
-        rw [integral_const_mul, integral_laplaceKernel hm]
+  apply integrable_parameter_kernel_of_exp_bound (C := ‖(1 : ℂ) - z‖ + 1)
+    (lt_min hz zero_lt_one) hmeas
+  intro s hs x hx
+  exact complexFrullaniShiftKernel_norm_le_exp z hs hx
 
 private noncomputable def complexWallisPhaseKernel (z : ℂ) (x : ℝ) : ℂ :=
   ((1 - Complex.exp (-(x : ℂ))) *
@@ -714,7 +640,7 @@ private theorem stripNormalizedPoissonKernel_eq_extension
           (x := 0) (y := stripAngle σ)
           (by norm_num) hangle.2.le hangle.1
         simpa only [gt_iff_lt, Real.cos_zero] using! h
-      linarith only [Real.one_le_cosh (Real.pi * T / 2), hcos]
+      linear_combination (Real.one_le_cosh (Real.pi * T / 2) + hcos)
     rw [stripAngle_eq_pi_sub, Real.cos_pi_sub] at horiginal
     have hpositive :
         0 < Real.cosh (Real.pi * T / 2) +
@@ -770,7 +696,7 @@ private theorem tendsto_stripNormalizedPoissonKernel (T : ℝ) :
         (fun σ : ℝ => stripNormalizedPoissonExtension σ T) := by
     filter_upwards [hpos, hlt] with σ hσpos hσlt
     exact stripNormalizedPoissonKernel_eq_extension
-      (by linarith only [hσpos, hσlt]) hσlt T
+      (by linear_combination (hσpos)) hσlt T
   have hext :
       Tendsto (fun σ : ℝ => stripNormalizedPoissonExtension σ T)
         (𝓝[<] 1) (𝓝 (limitingStripPoissonDensity T)) := by
@@ -794,7 +720,7 @@ private theorem inv_cosh_le_two_exp_neg_abs (u : ℝ) :
   have hhalf : Real.exp |u| / 2 ≤ Real.cosh u := by
     rw [← Real.cosh_abs, Real.cosh_eq]
     have hpositive := (Real.exp_pos (-|u|)).le
-    linarith only [hpositive]
+    linear_combination (hpositive / 2)
   rw [← one_div, div_le_iff₀ (Real.cosh_pos u)]
   calc
     (1 : ℝ) =
@@ -816,12 +742,10 @@ private theorem stripNormalizedPoissonExtension_le_majorant
   let u : ℝ := Real.pi * T / 2
   let q : ℝ := Real.pi * (1 - σ) / 2
   have hqzero : 0 ≤ q := by
-    try dsimp [q]
     exact div_nonneg (mul_nonneg Real.pi_pos.le (sub_nonneg.mpr hone))
       (by norm_num1)
   have hqlarge : q ≤ Real.pi / 2 := by
-    try dsimp [q]
-    linarith only [mul_nonneg Real.pi_pos.le hzero, hzero]
+    linear_combination (mul_nonneg Real.pi_pos.le hzero / 2)
   have hqpi : q ≤ Real.pi := by
     linarith only [Real.pi_pos, hqzero, hqlarge]
   have hcos : 0 ≤ Real.cos q :=
@@ -838,10 +762,9 @@ private theorem stripNormalizedPoissonExtension_le_majorant
   have hcoefficient : 0 < Real.pi / 4 :=
     div_pos Real.pi_pos (by norm_num1)
   have habsu : |u| = (Real.pi / 2) * |T| := by
-    try dsimp [u]
     rw [abs_div, abs_mul, abs_of_pos Real.pi_pos]
     norm_num1
-    ring
+    apply mul_right_comm
   constructor
   · unfold stripNormalizedPoissonExtension
     change 0 ≤ (Real.pi / 4) * Real.sinc q /
@@ -873,29 +796,7 @@ private theorem stripNormalizedPoissonExtension_le_majorant
 
 private theorem integrable_exp_neg_mul_abs {a : ℝ} (ha : 0 < a) :
     Integrable (fun T : ℝ => Real.exp (-a * |T|)) := by
-  have hright :
-      IntegrableOn (fun T : ℝ => Real.exp (-a * |T|))
-        (Ioi (0 : ℝ)) := by
-    have h := integrableOn_exp_mul_Ioi (neg_lt_zero.mpr ha) 0
-    apply h.congr_fun _ measurableSet_Ioi
-    intro T hT
-    change Real.exp (-a * T) = Real.exp (-a * |T|)
-    rw [abs_of_pos hT]
-  have hleft :
-      IntegrableOn (fun T : ℝ => Real.exp (-a * |T|))
-        (Iio (0 : ℝ)) := by
-    have h := (integrableOn_exp_mul_Iic ha 0).mono_set
-      (show Iio (0 : ℝ) ⊆ Iic (0 : ℝ) from
-        fun _ hT => (mem_Iio.mp hT).le)
-    apply h.congr_fun _ measurableSet_Iio
-    intro T hT
-    change Real.exp (a * T) = Real.exp (-a * |T|)
-    rw [abs_of_neg hT]
-    congr 1
-    ring
-  rw [← integrableOn_univ, ← @Iio_union_Ici _ _ (0 : ℝ),
-    integrableOn_union, integrableOn_Ici_iff_integrableOn_Ioi enorm_ne_top]
-  exact ⟨hleft, hright⟩
+  exact strip_exp_abs_integrable ha
 
 private theorem stripPoissonExponentialMajorant_integrable :
     Integrable stripPoissonExponentialMajorant := by
@@ -949,7 +850,6 @@ private theorem limitingStripPoissonDensity_integrable :
     apply Continuous.div continuous_const
     · fun_prop
     · intro T
-      have hcosh := Real.one_le_cosh (Real.pi * T / 2)
       positivity
   apply stripPoissonExponentialMajorant_integrable.mono'
     hcontinuous.aestronglyMeasurable
@@ -985,7 +885,6 @@ private theorem poissonLogistic_image_univ :
   ext x
   constructor
   · rintro ⟨u, _, rfl⟩
-    have he : 0 < Real.exp (Real.pi * u) := Real.exp_pos _
     unfold poissonLogistic
     constructor
     · positivity
@@ -1014,7 +913,7 @@ private theorem poissonLogistic_hasDerivAt (u : ℝ) :
   unfold poissonLogisticDensity
   simp only [Function.comp_apply, Pi.add_apply, mul_one, zero_add]
   field_simp [hden]
-  ring
+  (symm; apply add_sub_cancel_right)
 
 private theorem poissonLogistic_injective :
     Function.Injective poissonLogistic := by
@@ -1042,7 +941,7 @@ private theorem poissonLogistic_odds (u : ℝ) :
     positivity
   unfold poissonLogistic
   field_simp [hden]
-  ring
+  (symm; apply add_sub_cancel_right)
 
 private theorem poissonLogistic_cpow_ratio (u : ℝ) (w : ℂ) :
     ((poissonLogistic u : ℝ) : ℂ) ^ w *
@@ -1181,19 +1080,19 @@ private theorem poissonLogistic_characteristic_of_ne_zero
       ((t / Real.sinh t : ℝ) : ℂ) := by
   let x : ℝ := t / Real.pi
   have hx : x ≠ 0 := by
-    try dsimp [x]
+    try dsimp only [x]
     exact div_ne_zero ht Real.pi_ne_zero
   let w : ℂ := Complex.I * (x : ℂ)
   have hwplus : 0 < (1 + w).re := by
-    try dsimp [w]
+    try dsimp only [w]
     norm_num
   have hwminus : 0 < (1 - w).re := by
-    try dsimp [w]
+    try dsimp only [w]
     norm_num
   have hphase (u : ℝ) :
       ((Real.pi * u : ℝ) : ℂ) * w =
         Complex.I * (t : ℂ) * (u : ℂ) := by
-    try dsimp [w, x]
+    try dsimp only [w, x]
     push_cast
     field_simp [Real.pi_ne_zero]
   have hbeta :
@@ -1207,7 +1106,7 @@ private theorem poissonLogistic_characteristic_of_ne_zero
     rw [hsum]
     norm_num
   have hscale : Real.pi * x = t := by
-    try dsimp [x]
+    try dsimp only [x]
     field_simp [Real.pi_ne_zero]
   calc
     (∫ u : ℝ,
@@ -1242,7 +1141,6 @@ private theorem poissonLogistic_characteristic (t : ℝ) :
     calc
       (∫ u : ℝ, (poissonLogisticDensity u : ℂ)) =
           (m : ℂ) := by
-        try dsimp [m]
         exact integral_ofReal
       _ = 1 := by
         rw [hm]
@@ -1279,7 +1177,7 @@ private theorem poissonLogistic_characteristic_integrable (t : ℝ) :
       Complex.I * (t : ℂ) * (u : ℂ) =
         Complex.I * ((t * u : ℝ) : ℂ) := by
     push_cast
-    ring
+    apply mul_assoc
   rw [hphase, Complex.norm_exp_I_mul_ofReal]
   simp only [mul_one, Std.le_refl]
 
@@ -1325,7 +1223,6 @@ private theorem lowerEndpointPhase_continuous :
   have hlog : Continuous
       (fun T : ℝ => Real.log (1 + T ^ 2 / 4)) :=
     hargument.log (fun T => by
-      have hsq : 0 ≤ T ^ 2 := sq_nonneg T
       positivity)
   have hfirst : Continuous
       (fun T : ℝ => -Real.pi * |T| / 4) := by
@@ -1359,18 +1256,16 @@ private theorem abs_lowerEndpointPhase_le (T : ℝ) :
     (Real.arctan_lt_pi_div_two _).le
   have hmulzero :
       0 ≤ |T| / 2 * Real.arctan (|T| / 2) :=
-    mul_nonneg (by positivity) hatanzero
+    mul_nonneg (by exact Real.arctan_nonneg.mp hatanzero) hatanzero
   have hmulupper :
       |T| / 2 * Real.arctan (|T| / 2) ≤
         |T| / 2 * (Real.pi / 2) :=
-    mul_le_mul_of_nonneg_left hatanupper (by positivity)
-  have hpimagnitude : 0 ≤ Real.pi * |T| :=
-    mul_nonneg Real.pi_pos.le (abs_nonneg T)
+    mul_le_mul_of_nonneg_left hatanupper (by exact Real.arctan_nonneg.mp hatanzero)
   unfold lowerEndpointPhase
   apply (abs_le).2
   constructor
   · linarith only [sq_nonneg T, hnonneg, hlogupper, hmulzero, hmulupper]
-  · linarith only [sq_nonneg T, hnonneg, hlogzero, hmulzero, hmulupper]
+  · linarith only [sq_nonneg T, hlogzero, hmulzero, hmulupper]
 
 private theorem stripPoissonExponentialMajorant_mul_lowerEndpointPhase_integrable :
     Integrable
@@ -1452,11 +1347,11 @@ private theorem tendsto_integral_stripNormalizedPoissonKernel_mul
   · filter_upwards [hpos, hlt] with σ hσpos hσlt
     exact
       (stripNormalizedPoissonKernel_integrable
-        (by linarith only [hσpos, hσlt]) hσlt).aestronglyMeasurable.mul hf
+        (by linear_combination (hσpos)) hσlt).aestronglyMeasurable.mul hf
   · filter_upwards [hpos, hlt] with σ hσpos hσlt
     filter_upwards [] with T
     have hext := stripNormalizedPoissonKernel_eq_extension
-      (by linarith only [hσpos, hσlt] : -1 < σ) hσlt T
+      (by linear_combination (hσpos) : -1 < σ) hσlt T
     have hbound := stripNormalizedPoissonExtension_le_majorant
       hσpos.le hσlt.le T
     rw [norm_mul, Real.norm_eq_abs, hext,
@@ -1557,16 +1452,13 @@ private theorem lowerWallisPhaseKernel_abs_le_moment
     |lowerWallisPhaseKernel u t| ≤ |u| + 1 := by
   let q : ℝ := Real.exp (-t)
   have hqpos : 0 < q := by
-    try dsimp [q]
-    positivity
+    exact Real.exp_pos (-t)
   have hqone : q ≤ 1 := by
-    try dsimp [q]
     exact Real.exp_le_one_iff.mpr (by linear_combination ht)
   have hone : 0 ≤ 1 - q := by
     linear_combination hqone
   have hone_le : 1 - q ≤ t := by
-    try dsimp [q]
-    linarith only [Real.add_one_le_exp (-t)]
+    linear_combination (Real.add_one_le_exp (-t))
   have hcos :
       |Real.cos (u * t) - 1| ≤ |u| * t := by
     have h := Real.abs_cos_sub_cos_le (u * t) 0
@@ -1577,7 +1469,6 @@ private theorem lowerWallisPhaseKernel_abs_le_moment
         apply mul_le_mul_of_nonneg_right _ hqpos.le
         simpa only [add_comm] using! Real.add_one_le_exp t
       _ = 1 := by
-        try dsimp [q]
         rw [← Real.exp_add]
         simp only [add_neg_cancel, Real.exp_zero]
   have hcancel_nonneg : 0 ≤ 1 - q - t * q := by
@@ -1617,11 +1508,7 @@ private theorem lowerWallisPhaseKernel_abs_le_moment
         (mul_le_mul_of_nonneg_left hcos hone)
         hcancel_upper
     _ ≤ t * (|u| * t) + t ^ 2 := by
-      linarith only [
-        mul_le_mul_of_nonneg_right hone_le (mul_nonneg (abs_nonneg u) ht.le),
-        ht,
-        hone_le
-      ]
+      linear_combination (mul_le_mul_of_nonneg_right hone_le (mul_nonneg (abs_nonneg u) ht.le))
     _ = (|u| + 1) * t ^ 2 := by
       ring
 
@@ -1632,10 +1519,8 @@ private theorem lowerWallisPhaseKernel_abs_le_tail
   have htpos : 0 < t := lt_of_lt_of_le zero_lt_one ht
   let q : ℝ := Real.exp (-t)
   have hqpos : 0 < q := by
-    try dsimp [q]
-    positivity
+    exact Real.exp_pos (-t)
   have hqone : q ≤ 1 := by
-    try dsimp [q]
     exact Real.exp_le_one_iff.mpr (by linear_combination ht)
   have hone : 0 ≤ 1 - q := by
     linear_combination hqone
@@ -1670,7 +1555,7 @@ private theorem lowerWallisPhaseKernel_abs_le_tail
             simpa only [mul_one, tsub_le_iff_right, le_add_iff_nonneg_right] using! hone_upper
       linear_combination hfactor
     _ ≤ 1 + q * t ^ 2 := by
-      linarith only [mul_nonneg hqpos.le (sub_nonneg.mpr ht_sq), hqpos, ht_sq]
+      linear_combination (mul_nonneg hqpos.le (sub_nonneg.mpr ht_sq))
     _ = (1 / t ^ 2 + q) * t ^ 2 := by
       field_simp [htpos.ne']
 
@@ -1714,7 +1599,7 @@ private theorem poissonLogistic_lowerWallisPhase_product_integrable :
     poissonLogisticDensity p.1 *
       lowerWallisPhaseKernel p.1 p.2
   have hmeas : Measurable F := by
-    try dsimp [F]
+    try dsimp only [F]
     unfold poissonLogisticDensity lowerWallisPhaseKernel
     fun_prop
   have hfrequency :
@@ -1872,7 +1757,7 @@ private theorem integral_poissonLogistic_mul_lowerWallisPhaseKernel
         t * Real.exp (-t)) / t ^ 2 := by
       rw [poissonLogistic_cosine_transform t,
         ite_eq_right htne, integral_poissonLogisticDensity]
-      ring
+      ac_rfl
     _ = wallisLaplaceKernel t := by
       have hsinh : Real.sinh t ≠ 0 :=
         Real.sinh_ne_zero.mpr htne
@@ -1929,30 +1814,20 @@ private theorem lowerWallisRegularizedPhaseKernel_abs_le_moment
     |lowerWallisRegularizedPhaseKernel a u t| ≤ |u| + 2 := by
   let q : ℝ := Real.exp (-t)
   let r : ℝ := Real.exp (-a * t)
-  have hqpos : 0 < q := by
-    try dsimp [q]
-    positivity
   have hqone : q ≤ 1 := by
-    try dsimp [q]
     exact Real.exp_le_one_iff.mpr (by linear_combination ht)
-  have hrpos : 0 < r := by
-    try dsimp [r]
-    positivity
   have hrone : r ≤ 1 := by
-    try dsimp [r]
     apply Real.exp_le_one_iff.mpr
-    linarith only [mul_nonneg hazero ht.le, hazero, ht]
+    linear_combination (mul_nonneg hazero ht.le)
   have hqnonneg : 0 ≤ 1 - q := by linear_combination hqone
   have hrnonneg : 0 ≤ 1 - r := by linear_combination hrone
   have hqbound : 1 - q ≤ t := by
-    try dsimp [q]
-    linarith only [Real.add_one_le_exp (-t)]
+    linear_combination (Real.add_one_le_exp (-t))
   have hrbound : 1 - r ≤ t := by
     have hfirst : 1 - r ≤ a * t := by
-      try dsimp [r]
-      linarith only [Real.add_one_le_exp (-a * t)]
+      linear_combination (Real.add_one_le_exp (-a * t))
     have hsecond : a * t ≤ t := by
-      linarith only [mul_nonneg (sub_nonneg.mpr haone) ht.le, haone, ht]
+      linear_combination (mul_nonneg (sub_nonneg.mpr haone) ht.le)
     exact hfirst.trans hsecond
   have hsq : 0 < t ^ 2 := sq_pos_of_pos ht
   have hcorrection :
@@ -1968,7 +1843,7 @@ private theorem lowerWallisRegularizedPhaseKernel_abs_le_moment
           (1 - q) * (1 - r) := by
         have hfactor : 0 ≤ (1 - q) * (1 - r) :=
           mul_nonneg hqnonneg hrnonneg
-        linarith only [mul_le_mul_of_nonneg_left hcos hfactor, hcos, hfactor]
+        linear_combination (mul_le_mul_of_nonneg_left hcos hfactor)
       _ ≤ t * t :=
         mul_le_mul hqbound hrbound hrnonneg ht.le
       _ = 1 * t ^ 2 := by ring
@@ -1997,18 +1872,14 @@ private theorem lowerWallisRegularizedPhaseKernel_abs_le_tail
   let q : ℝ := Real.exp (-t)
   let r : ℝ := Real.exp (-a * t)
   have hqpos : 0 < q := by
-    try dsimp [q]
-    positivity
+    exact Real.exp_pos (-t)
   have hqone : q ≤ 1 := by
-    try dsimp [q]
     exact Real.exp_le_one_iff.mpr (by linear_combination ht)
   have hrpos : 0 < r := by
-    try dsimp [r]
-    positivity
+    exact Real.exp_pos (-a * t)
   have hrone : r ≤ 1 := by
-    try dsimp [r]
     apply Real.exp_le_one_iff.mpr
-    linarith only [mul_nonneg hazero htpos.le, hazero, htpos]
+    linear_combination (mul_nonneg hazero htpos.le)
   have hqnonneg : 0 ≤ 1 - q := by linear_combination hqone
   have hsq : 0 < t ^ 2 := sq_pos_of_pos htpos
   have htsq : t ≤ t ^ 2 := by nlinarith
@@ -2035,9 +1906,9 @@ private theorem lowerWallisRegularizedPhaseKernel_abs_le_tail
           _ ≤ 1 := by linear_combination hqpos
       have hfactor : 0 ≤ (1 - q) * r :=
         mul_nonneg hqnonneg hrpos.le
-      linarith only [mul_le_mul_of_nonneg_left hcos hfactor, hcos, hfirst, hfactor]
+      linear_combination (mul_le_mul_of_nonneg_left hcos hfactor + hfirst)
     _ ≤ 1 + q * t ^ 2 := by
-      linarith only [mul_nonneg hqpos.le (sub_nonneg.mpr htsq), hqpos, htsq]
+      linear_combination (mul_nonneg hqpos.le (sub_nonneg.mpr htsq))
     _ = (1 / t ^ 2 + q) * t ^ 2 := by
       field_simp [htpos.ne']
 
@@ -2091,10 +1962,9 @@ private theorem tendsto_integral_lowerWallisRegularizedPhaseKernel
     filter_upwards [ae_restrict_mem measurableSet_Ioi]
       with t ht
     have hapos : 0 < 1 / ((n : ℝ) + 1) := by
-      positivity
+      exact Nat.one_div_pos_of_nat
     have haone : 1 / ((n : ℝ) + 1) ≤ 1 := by
-      apply (div_le_iff₀ (show 0 < (n : ℝ) + 1 by positivity)).2
-      have hn : 0 ≤ (n : ℝ) := Nat.cast_nonneg n
+      apply (div_le_iff₀ (show 0 < (n : ℝ) + 1 by exact Nat.cast_add_one_pos n)).2
       linarith only []
     rw [Real.norm_eq_abs]
     by_cases htone : t ≤ 1
@@ -2235,7 +2105,7 @@ private theorem lowerWallis_norm_one_sub_I_mul (u : ℝ) :
     Complex.I_im, Complex.ofReal_im, mul_zero, sub_self, sub_zero, mul_one, Complex.sub_im,
       Complex.one_im,
     Complex.mul_im, one_mul, zero_add, zero_sub, mul_neg, neg_mul, neg_neg, add_right_inj]
-  ring
+  (symm; apply pow_two)
 
 private theorem lowerWallis_shifted_log_mul_re (u : ℝ) :
     ((1 - Complex.I * (u : ℂ)) *
@@ -2446,7 +2316,7 @@ private theorem integral_lowerWallisPhaseKernel (u : ℝ) :
             (((1 / ((n : ℝ) + 1) : ℝ) : ℂ) -
               Complex.I * (u : ℂ)) := by
       exact integral_lowerWallisRegularizedPhaseKernel
-        (by positivity) u
+        (by exact Nat.one_div_pos_of_nat) u
     simp_rw [hidentity]
     exact tendsto_lowerWallisComplexLogPhase_regularized u
   exact tendsto_nhds_unique hdominated hcomputed
@@ -2569,7 +2439,7 @@ private theorem limitingPoissonEndpointExpectation_eq_log_pi_div_two_sub_one :
         apply integral_congr_ae
         filter_upwards [] with u
         rw [poissonLogisticDensity_eq_limitingStripPoissonDensity]
-        ring
+        apply mul_assoc
       _ = 2 * (∫ u : ℝ,
           limitingStripPoissonDensity (2 * u) *
             lowerEndpointPhase (2 * u)) := by
@@ -2599,7 +2469,7 @@ private theorem lowerPoissonEndpointSharpCoefficient_eq
         ((2 * Real.pi * Real.exp 1 * c ^ 2) *
           (Real.pi / 2)) - 1 := by
         rw [Real.log_mul hleft hright]
-        ring
+        (symm; apply add_assoc)
     _ = Real.log (Real.pi ^ 2 * c ^ 2) := by
       rw [hfactor,
         Real.log_mul
@@ -2625,7 +2495,7 @@ private theorem lowerPoissonEndpointSharpCoefficient_neg
     have hfactor :
         0 < (1 - Real.pi * c) *
           (1 + Real.pi * c) :=
-      mul_pos (sub_pos.mpr hproduct) (by linarith only [hproduct, hpositive])
+      mul_pos (sub_pos.mpr hproduct) (by linear_combination (hpositive))
     linear_combination hfactor
   exact Real.log_neg (by positivity) hbelow
 
@@ -2665,7 +2535,7 @@ private theorem saddle_one_add_abs_cube_le (T : ℝ) :
   have hfactor : 0 ≤
       (|T| - 1) ^ 2 * (|T| + 1) :=
     mul_nonneg (sq_nonneg _) (by positivity)
-  linarith only [hfactor]
+  linear_combination (3 * hfactor)
 
 private theorem plusPolynomial_imaginary_norm_ge_beta
     {ε u : ℝ} (hε : 0 < ε) (hu : -1 ≤ u) :
@@ -2706,9 +2576,9 @@ private theorem plusPolynomial_imaginary_cubic_growth_le
   · have hlarge : 2 < u := lt_of_not_ge hbounded
     have hsquare : (1 + u) ^ 2 ≤ 9 * (1 - u) ^ 2 := by
       have hfactor := mul_nonneg
-        (show 0 ≤ 2 * u - 1 by linarith only [hlarge])
+        (show 0 ≤ 2 * u - 1 by linear_combination (2 * hlarge))
         (show 0 ≤ u - 2 by linear_combination hlarge)
-      linarith only [hfactor]
+      linear_combination (4 * hfactor)
     have hcubic : (1 + u) ^ 3 ≤ 9 * ((1 - u) ^ 2 * (1 + u)) := by
       have hproduct := mul_le_mul_of_nonneg_right hsquare
         (show 0 ≤ 1 + u by linear_combination hlarge)
@@ -2723,8 +2593,6 @@ private theorem minusPolynomial_imaginary_norm_ge_three_beta
     (hu : 1 + ε / 4 ≤ u) :
     3 * (ε / 4) ≤
       ‖minusPolynomial ε (Complex.I * (u : ℂ))‖ := by
-  have hb : 0 < (ε / 4) := div_pos hε four_pos
-  have hone : 1 ≤ u := by linarith only [hε, hu]
   have hbeta : (ε / 4) ≤ u - 1 := by
     linear_combination hu
   have hsquare : (4 : ℝ) ≤ (1 + u) ^ 2 := by
@@ -2732,7 +2600,7 @@ private theorem minusPolynomial_imaginary_norm_ge_three_beta
   have hproduct :
       4 * (ε / 4) ≤ (u - 1) * (1 + u) ^ 2 := by
     calc
-      4 * (ε / 4) = (ε / 4) * 4 := by ring
+      4 * (ε / 4) = (ε / 4) * 4 := by (symm; apply mul_comm)
       _ ≤ (u - 1) * (1 + u) ^ 2 :=
         mul_le_mul hbeta hsquare (by norm_num) (by linarith only [hε, hu])
   have hnegative := minusPolynomial_imaginary_re_neg hε hu
@@ -2903,7 +2771,7 @@ private theorem plusSaddleLinearCoefficient_norm_le (z : ℂ) :
     _ ≤ 2 * ‖z‖ + (1 + 3 * ‖z‖ ^ 2) := by
       exact add_le_add (le_refl (2 * ‖z‖)) hinner
     _ ≤ 3 * (1 + ‖z‖) ^ 2 := by
-      linarith only [norm_nonneg z]
+      linear_combination (4 * norm_nonneg z)
 
 private theorem minusSaddleLinearCoefficient_norm_le (z : ℂ) :
     ‖2 * z - Complex.I * (1 + 3 * z ^ 2)‖ ≤
@@ -2926,7 +2794,7 @@ private theorem minusSaddleLinearCoefficient_norm_le (z : ℂ) :
     _ ≤ 2 * ‖z‖ + (1 + 3 * ‖z‖ ^ 2) := by
       exact add_le_add (le_refl (2 * ‖z‖)) hinner
     _ ≤ 3 * (1 + ‖z‖) ^ 2 := by
-      linarith only [norm_nonneg z]
+      linear_combination (4 * norm_nonneg z)
 
 private theorem plusSaddleQuadraticCoefficient_norm_le (z : ℂ) :
     ‖1 + 3 * Complex.I * z‖ ≤
@@ -2970,19 +2838,15 @@ private theorem saddle_cubic_translation_norm_le
   let H : ℝ := (1 + |u|) ^ 2
   let S : ℝ := |T| + |T| ^ 3
   have hH : 1 ≤ H := by
-    try dsimp [H]
-    linarith only [abs_nonneg u, sq_nonneg |u|]
-  have hS : 0 ≤ S := by
-    try dsimp [S]
-    positivity
-  have hT : |T| ≤ S := by
-    try dsimp [S]
-    linarith only [pow_nonneg (abs_nonneg T) 3]
+    simpa only [one_pow] using
+      pow_le_pow_left₀ zero_le_one (le_add_of_nonneg_right (abs_nonneg u)) 2
+  have hHnonnegative : 0 ≤ H := sq_nonneg _
+  have hthree : 0 ≤ 3 * H := mul_nonneg (by norm_num) hHnonnegative
+  have hS : 0 ≤ S := add_nonneg (abs_nonneg T) (pow_nonneg (abs_nonneg T) 3)
+  have hT : |T| ≤ S := le_add_of_nonneg_right (pow_nonneg (abs_nonneg T) 3)
   have hT2 : |T| ^ 2 ≤ S := by
     exact saddle_abs_sq_le_add_cube T
-  have hT3 : |T| ^ 3 ≤ S := by
-    try dsimp [S]
-    linarith only [abs_nonneg T]
+  have hT3 : |T| ^ 3 ≤ S := le_add_of_nonneg_left (abs_nonneg T)
   have hfirst :
       ‖(T : ℂ) * A‖ ≤ |T| * (3 * H) := by
     rw [norm_mul, Complex.norm_real, Real.norm_eq_abs]
@@ -2997,14 +2861,15 @@ private theorem saddle_cubic_translation_norm_le
       ‖C * (T : ℂ) ^ 3‖ ≤ |T| ^ 3 := by
     rw [norm_mul, norm_pow, Complex.norm_real,
       Real.norm_eq_abs]
-    linarith only [mul_le_mul_of_nonneg_right hC (pow_nonneg (abs_nonneg T) 3), hC]
+    exact (mul_le_mul_of_nonneg_right hC (pow_nonneg (abs_nonneg T) 3)).trans_eq
+      (one_mul _)
   have hfirst' : |T| * (3 * H) ≤ 3 * H * S := by
-    linarith only [mul_le_mul_of_nonneg_left hT (show 0 ≤ 3 * H by positivity), hT]
+    exact (mul_le_mul_of_nonneg_right hT hthree).trans_eq (mul_comm _ _)
   have hsecond' : |T| ^ 2 * (3 * H) ≤ 3 * H * S := by
-    linarith only [mul_le_mul_of_nonneg_left hT2 (show 0 ≤ 3 * H by positivity), hT2]
+    exact (mul_le_mul_of_nonneg_right hT2 hthree).trans_eq (mul_comm _ _)
   have hthird' : |T| ^ 3 ≤ H * S := by
     have hraise : S ≤ H * S := by
-      linarith only [mul_nonneg (sub_nonneg.mpr hH) hS, hH, hS]
+      simpa only [one_mul] using mul_le_mul_of_nonneg_right hH hS
     exact hT3.trans hraise
   calc
     ‖(T : ℂ) * A + (T : ℂ) ^ 2 * B +
@@ -3019,10 +2884,13 @@ private theorem saddle_cubic_translation_norm_le
     _ ≤ (|T| * (3 * H) + |T| ^ 2 * (3 * H)) +
         |T| ^ 3 := by
       exact add_le_add (add_le_add hfirst hsecond) hthird
-    _ ≤ 9 * H * S := by
-      linarith only [mul_nonneg (show 0 ≤ H by positivity) hS, hT, hfirst', hsecond', hthird']
+    _ ≤ (3 * H * S + 3 * H * S) + H * S :=
+      add_le_add (add_le_add hfirst' hsecond') hthird'
+    _ = 7 * (H * S) := by ring
+    _ ≤ 9 * (H * S) :=
+      mul_le_mul_of_nonneg_right (by norm_num) (mul_nonneg hHnonnegative hS)
     _ = 9 * (1 + |u|) ^ 2 * (|T| + |T| ^ 3) := by
-      rfl
+      ring
 
 private theorem plusPolynomial_translation_norm_le
     (ε u T : ℝ) :
@@ -3031,7 +2899,7 @@ private theorem plusPolynomial_translation_norm_le
       9 * (1 + |u|) ^ 2 * (|T| + |T| ^ 3) := by
   let z : ℂ := Complex.I * (u : ℂ)
   have hz : ‖z‖ = |u| := by
-    try dsimp [z]
+    try dsimp only [z]
     simp only [Complex.norm_mul, Complex.norm_I, Complex.norm_real, Real.norm_eq_abs, one_mul]
   have hA :
       ‖2 * z + Complex.I * (1 + 3 * z ^ 2)‖ ≤
@@ -3065,7 +2933,7 @@ private theorem minusPolynomial_translation_norm_le
       9 * (1 + |u|) ^ 2 * (|T| + |T| ^ 3) := by
   let z : ℂ := Complex.I * (u : ℂ)
   have hz : ‖z‖ = |u| := by
-    try dsimp [z]
+    try dsimp only [z]
     simp only [Complex.norm_mul, Complex.norm_I, Complex.norm_real, Real.norm_eq_abs, one_mul]
   have hA :
       ‖2 * z - Complex.I * (1 + 3 * z ^ 2)‖ ≤
@@ -3109,9 +2977,6 @@ private theorem exists_plusPolynomial_uniform_difference_ratio
   let S : ℝ := |T| + |T| ^ 3
   have hD : 0 < D :=
     lt_of_lt_of_le hb (plusPolynomial_imaginary_norm_ge_beta hε hu)
-  have hS : 0 ≤ S := by
-    try dsimp [S]
-    positivity
   have hsquare : (1 + |u|) ^ 2 ≤ (1 + |u|) ^ 3 := by
     have hfactor :
         0 ≤ |u| * (1 + |u|) ^ 2 :=
@@ -3152,7 +3017,6 @@ private theorem exists_minusPolynomial_uniform_difference_ratio
             minusPolynomial ε (Complex.I * (u : ℂ))‖ /
           ‖minusPolynomial ε (Complex.I * (u : ℂ))‖ ≤
             C * (|T| + |T| ^ 3) := by
-  have hb : 0 < (ε / 4) := div_pos hε four_pos
   refine ⟨9 * (9 / (ε / 4) + 6), by positivity, ?_⟩
   intro u hu T
   let D : ℝ := ‖minusPolynomial ε (Complex.I * (u : ℂ))‖
@@ -3162,9 +3026,6 @@ private theorem exists_minusPolynomial_uniform_difference_ratio
       hε hu
     change 3 * (ε / 4) ≤ D at h
     linarith only [hε, h]
-  have hS : 0 ≤ S := by
-    try dsimp [S]
-    positivity
   have hsquare : (1 + |u|) ^ 2 ≤ (1 + |u|) ^ 3 := by
     have hfactor :
         0 ≤ |u| * (1 + |u|) ^ 2 :=
@@ -3214,7 +3075,6 @@ private theorem upperNegativeHalfGammaArgument_ne_zero
     zero_mul, Complex.I_im, Complex.div_ofNat_im, Complex.ofReal_im, zero_div, mul_zero,
       sub_self, sub_zero,
     Complex.zero_re] at hre
-  have hN : 0 ≤ (N : ℝ) := Nat.cast_nonneg N
   linarith only [hre]
 
 private theorem upperNegativeHalfGammaArgument_succ_add_one
@@ -3266,7 +3126,7 @@ private theorem eventually_upper_shortMargin_positive :
   change 0 < ε at hε
   have hcompare :
       ε * (1 + a) ≤ ε * (1 + (10 * Real.log (1 / ε))) :=
-    mul_le_mul_of_nonneg_left (by linarith only [ha.2, ha]) hε.le
+    mul_le_mul_of_nonneg_left (by linear_combination (ha.2)) hε.le
   change 10 * (ε * (1 + (10 * Real.log (1 / ε)))) < 1 / 2
     at hbound
   linarith only [hcompare, hbound]
@@ -3352,14 +3212,14 @@ private theorem upperShellMarginRatio_inv
       5000 * (10 * Real.log x + x ^ 3) *
         (Real.exp (x⁻¹ / 2 * (10 * Real.log x)) /
           (Real.exp (-(3 : ℝ) * x ^ 2 / 8) *
-            Real.exp (x⁻¹ / 2 * x ^ 3))) := by ring
+            Real.exp (x⁻¹ / 2 * x ^ 3))) := by apply mul_assoc
     _ = 5000 * (10 * Real.log x + x ^ 3) *
         (Real.exp (-(x ^ 2) / 8) *
           Real.exp (5 * Real.log x / x)) := by
       rw [hexp]
     _ = 5000 * (10 * Real.log x + x ^ 3) *
         Real.exp (-(x ^ 2) / 8) *
-          Real.exp (5 * Real.log x / x) := by ring
+          Real.exp (5 * Real.log x / x) := by (symm; apply mul_assoc)
 
 private theorem tendsto_upper_log_cubic_gaussian_atTop :
     Tendsto (fun x : ℝ =>
@@ -3384,7 +3244,7 @@ private theorem tendsto_upper_log_cubic_gaussian_atTop :
     have hsquare : 0 ≤ x ^ 2 - 1 := by
       linarith only [sq_nonneg (x - 1), hx]
     have hcube : x ≤ x ^ 3 := by
-      linarith only [mul_nonneg hxpos.le hsquare, hxpos, hsquare]
+      linear_combination (mul_nonneg hxpos.le hsquare)
     have hfactor :
         10 * Real.log x + x ^ 3 ≤
           11 * (x ^ 3 + 1) := by
@@ -3397,7 +3257,7 @@ private theorem tendsto_upper_log_cubic_gaussian_atTop :
         mul_le_mul_of_nonneg_right hfactor
           (Real.exp_pos _).le
       _ = 11 * ((x ^ 3 + 1) *
-          Real.exp (-(x ^ 2) / 8)) := by ring
+          Real.exp (-(x ^ 2) / 8)) := by apply mul_assoc
 
 private theorem tendsto_upper_shell_log_correction_atTop :
     Tendsto (fun x : ℝ =>
@@ -3413,7 +3273,7 @@ private theorem tendsto_upper_shell_log_correction_atTop :
       atTop (𝓝 (0 : ℝ)) := by
     convert hlog.const_mul (5 : ℝ) using 1
     · ext x
-      ring
+      apply mul_div_assoc
     · norm_num
   simpa only [Real.exp_zero] using! hscaled.rexp
 
@@ -3461,8 +3321,8 @@ private theorem eventually_upper_shell_parameter_margin :
 private theorem upper_one_sub_cos_le_min (x : ℝ) :
     1 - Real.cos x ≤ min (x ^ 2 / 2) 2 := by
   apply le_min
-  · linarith only [Real.one_sub_sq_div_two_le_cos (x := x)]
-  · linarith only [Real.neg_one_le_cos x]
+  · linear_combination (Real.one_sub_sq_div_two_le_cos (x := x))
+  · linear_combination (Real.neg_one_le_cos x)
 
 private theorem upper_min_frequency_inverse_sq_le
     {a : ℝ} (ha : 0 < a) (T : ℝ) :
@@ -3472,7 +3332,7 @@ private theorem upper_min_frequency_inverse_sq_le
   by_cases hsmall : T ^ 2 ≤ 1
   · rw [min_eq_left hsmall]
     have hmin := min_le_left (T ^ 2) ((a ^ 2)⁻¹)
-    linarith only [mul_nonneg (sq_nonneg T) hinv, hinv, hmin]
+    linear_combination (mul_nonneg (sq_nonneg T) hinv + hmin)
   · rw [min_eq_right (le_of_not_ge hsmall)]
     have hmin := min_le_right (T ^ 2) ((a ^ 2)⁻¹)
     linear_combination hmin
@@ -3519,9 +3379,9 @@ private theorem upper_shortShellDensity_damping_le
       Real.exp (δ * A) * min (T ^ 2) 1 *
         (1 + (a ^ 2)⁻¹) := by
   have hmarginone : (1 - 10 * ε * (1 + a)) ≤ 1 := by
-    linarith only [mul_nonneg hε.le (show 0 ≤ 1 + a by linarith), hε, ha]
+    linear_combination (10 * mul_nonneg hε.le (show 0 ≤ 1 + a by linarith))
   have hnegativeexp : Real.exp (-2 * a) ≤ 1 := by
-    exact Real.exp_le_one_iff.mpr (by linarith only [ha])
+    exact Real.exp_le_one_iff.mpr (by linear_combination (2 * ha))
   have hratio :
       Real.cosh ((1 + δ) * a) / Real.cosh a ≤
         Real.exp (δ * A) := by
@@ -3571,7 +3431,7 @@ private theorem upper_shortShellDensity_damping_le
         (upper_min_frequency_inverse_sq_le ha T)
         (Real.exp_pos _).le
     _ = Real.exp (δ * A) * min (T ^ 2) 1 *
-        (1 + (a ^ 2)⁻¹) := by ring
+        (1 + (a ^ 2)⁻¹) := by (symm; apply mul_assoc)
 
 private theorem upper_intervalIntegral_one_add_inv_sq
     {a b : ℝ} (ha : 0 < a) (hab : a ≤ b) :
@@ -3590,7 +3450,7 @@ private theorem upper_intervalIntegral_one_add_inv_sq
         (1 + (x ^ 2)⁻¹) x := by
     have hxpos : 0 < x := ha.trans_le hx.1
     convert! (hasDerivAt_id x).sub
-      (hasDerivAt_inv hxpos.ne') using 1; ring
+      (hasDerivAt_inv hxpos.ne') using 1; (symm; apply sub_neg_eq_add)
   rw [intervalIntegral.integral_eq_sub_of_hasDerivAt
     (fun x hx => hderiv x
       (by simpa only [mem_Icc, Set.uIcc_of_le hab] using! hx))
@@ -3611,28 +3471,14 @@ private theorem upperShortShellDamping_global_bound
   let A : ℝ := (10 * Real.log (1 / ε))
   let K : ℝ := Real.exp (δ * A) * min (T ^ 2) 1
   have ha₀ : 0 < a₀ := by
-    try dsimp [a₀]
     positivity
   have hA : 0 < A := ha₀.trans_le horder
   have hK : 0 ≤ K := by
-    try dsimp [K]
     exact mul_nonneg (Real.exp_pos _).le
       (le_min (sq_nonneg T) (by norm_num))
   have hshort :
-      ContinuousOn (shortShellDensity ε) (Set.Icc a₀ A) := by
-    have hn : Continuous (fun a : ℝ =>
-      (1 - 10 * ε * (1 + a)) * Real.exp (-2 * a)) := by
-      fun_prop
-    have hd : Continuous (fun a : ℝ =>
-      2 * a ^ 2 * Real.cosh a) := by
-      fun_prop
-    unfold shortShellDensity
-    apply (hn.continuousOn.div hd.continuousOn ?_).neg
-    intro a ha
-    have hapos : 0 < a := ha₀.trans_le ha.1
-    exact
-      (mul_pos (mul_pos (by norm_num) (sq_pos_of_pos hapos))
-        (Real.cosh_pos a)).ne'
+      ContinuousOn (shortShellDensity ε) (Set.Icc a₀ A) :=
+    (shortShellDensity_continuousOn_pos ε).mono (fun _ ha => ha₀.trans_le ha.1)
   have hcosh : Continuous
       (fun a : ℝ => Real.cosh ((1 + δ) * a)) := by
     exact Continuous.comp' Real.continuous_cosh (Continuous.const_mul continuous_id' (1 + δ))
@@ -3704,7 +3550,6 @@ private theorem upperShortShellDamping_global_bound
     _ = ℓ * upperShellShortCoefficient ε *
         Real.exp (δ * A) * min (T ^ 2) 1 := by
       unfold upperShellShortCoefficient
-      try dsimp [a₀, A, K]
       ring
 
 private theorem eventually_upper_shortCutoff_le_shortEndpoint :
@@ -3732,7 +3577,6 @@ private theorem upper_shell_parameter_margin_propagate
         Real.exp (δ * (ε⁻¹ ^ 3)) := by
   let q : ℝ := δ - ε / 2
   have hq : 0 ≤ q := by
-    try dsimp [q]
     linear_combination hδ
   have hexp :
       Real.exp (q * (10 * Real.log (1 / ε))) ≤
@@ -3753,7 +3597,6 @@ private theorem upper_shell_parameter_margin_propagate
           Real.exp (q * (10 * Real.log (1 / ε))) := by
       rw [mul_assoc, ← Real.exp_add]
       congr 2
-      try dsimp [q]
       ring
     _ ≤ ((1 / 5000 : ℝ) * shellWeight ε *
         Real.exp ((ε / 2) * (ε⁻¹ ^ 3))) *
@@ -3768,7 +3611,6 @@ private theorem upper_shell_parameter_margin_propagate
         Real.exp (δ * (ε⁻¹ ^ 3)) := by
       rw [mul_assoc, ← Real.exp_add]
       congr 2
-      try dsimp [q]
       ring
 
 private theorem eventually_upper_shortShell_domination :
@@ -3851,10 +3693,9 @@ private theorem upperPositiveShellVariance_bounds
   let hi : ℝ := (B + 1) ^ 2 *
     shellWeight ε * Real.exp (δ * (B + 1))
   have hB : 0 ≤ B := by
-    try dsimp [B]
     positivity
   have hQ : 0 < shellWeight ε := shellWeight_pos ε
-  have horder : B ≤ B + 1 := by linarith only []
+  have horder : B ≤ B + 1 := le_add_of_nonneg_right zero_le_one
   have hcont : Continuous (fun a : ℝ =>
       positiveShellDensity ε a * a ^ 2 *
         Real.cosh ((1 + δ) * a)) := by
@@ -3884,7 +3725,6 @@ private theorem upperPositiveShellVariance_bounds
     calc
       lo = shellWeight ε * B ^ 2 *
           (Real.exp (δ * B) / 2) := by
-        try dsimp [lo]
         ring
       _ ≤ shellWeight ε * a ^ 2 *
           (Real.cosh ((1 + δ) * a) /
@@ -3925,7 +3765,6 @@ private theorem upperPositiveShellVariance_bounds
           Real.exp (δ * (B + 1)) := by
         gcongr
       _ = hi := by
-        try dsimp [hi]
         ring
   have hlower := intervalIntegral.integral_mono_on
     (μ := volume) horder
@@ -3962,9 +3801,9 @@ private theorem upper_shortShellDensity_variance_le
         Real.cosh ((1 + δ) * a) ≤
       (1 / 2 : ℝ) * Real.exp (δ * A) := by
   have hmargin : (1 - 10 * ε * (1 + a)) ≤ 1 := by
-    linarith only [mul_nonneg hε.le (show 0 ≤ 1 + a by linarith), hε, ha]
+    linear_combination (10 * mul_nonneg hε.le (show 0 ≤ 1 + a by linarith))
   have hexp : Real.exp (-2 * a) ≤ 1 :=
-    Real.exp_le_one_iff.mpr (by linarith only [ha])
+    Real.exp_le_one_iff.mpr (by linear_combination (2 * ha))
   have hratio :
       Real.cosh ((1 + δ) * a) / Real.cosh a ≤
         Real.exp (δ * A) :=
@@ -4003,25 +3842,13 @@ private theorem upperShortShellVariance_global_bound
   let A : ℝ := (10 * Real.log (1 / ε))
   let K : ℝ := (1 / 2 : ℝ) * Real.exp (δ * A)
   have ha₀ : 0 < a₀ := by
-    try dsimp [a₀]
     positivity
   have hA : 0 < A := ha₀.trans_le horder
   have hK : 0 ≤ K := by
-    try dsimp [K]
     positivity
   have hshort :
-      ContinuousOn (shortShellDensity ε) (Set.Icc a₀ A) := by
-    have hn : Continuous (fun a : ℝ =>
-      (1 - 10 * ε * (1 + a)) * Real.exp (-2 * a)) := by
-      fun_prop
-    have hd : Continuous (fun a : ℝ =>
-      2 * a ^ 2 * Real.cosh a) := by
-      fun_prop
-    unfold shortShellDensity
-    apply (hn.continuousOn.div hd.continuousOn ?_).neg
-    intro a ha
-    have hapos : 0 < a := ha₀.trans_le ha.1
-    positivity
+      ContinuousOn (shortShellDensity ε) (Set.Icc a₀ A) :=
+    (shortShellDensity_continuousOn_pos ε).mono (fun _ ha => ha₀.trans_le ha.1)
   have hcosh : Continuous
       (fun a : ℝ => Real.cosh ((1 + δ) * a)) := by
     exact Continuous.comp' Real.continuous_cosh (Continuous.const_mul continuous_id' (1 + δ))
@@ -4066,7 +3893,6 @@ private theorem upperShortShellVariance_global_bound
     _ = (1 / 2 : ℝ) * upperShellShortCoefficient ε *
         Real.exp (δ * A) := by
       unfold upperShellShortCoefficient
-      try dsimp [A, a₀, K]
       ring
 
 private theorem upperShortShellVariance_nonneg
@@ -4147,7 +3973,7 @@ private theorem eventually_upper_shortShellVariance_domination :
           Real.exp (δ * (ε⁻¹ ^ 3))) := by
       convert mul_le_mul_of_nonneg_left
         hpropagate (by norm_num : (0 : ℝ) ≤ 1 / 2)
-        using 1; ring
+        using 1; apply mul_assoc
     _ ≤ (1 / 100 : ℝ) *
         ((1 / 2 : ℝ) * (ε⁻¹ ^ 3) ^ 2 *
           shellWeight ε *
@@ -4201,7 +4027,6 @@ private theorem upperPositiveShellThirdMoment_le
         upperPositiveShellVariance ε δ := by
   let B : ℝ := (ε⁻¹ ^ 3)
   have hB : 0 ≤ B := by
-    try dsimp [B]
     positivity
   have horder : B ≤ B + 1 := by
     linarith only []
@@ -4271,21 +4096,10 @@ private theorem upperShortShellThirdMoment_le
   let a₀ : ℝ := (ε ^ 3)
   let A : ℝ := (10 * Real.log (1 / ε))
   have ha₀ : 0 < a₀ := by
-    try dsimp [a₀]
     positivity
   have hshort :
-      ContinuousOn (shortShellDensity ε) (Set.Icc a₀ A) := by
-    have hn : Continuous (fun a : ℝ =>
-      (1 - 10 * ε * (1 + a)) * Real.exp (-2 * a)) := by
-      fun_prop
-    have hd : Continuous (fun a : ℝ =>
-      2 * a ^ 2 * Real.cosh a) := by
-      fun_prop
-    unfold shortShellDensity
-    apply (hn.continuousOn.div hd.continuousOn ?_).neg
-    intro a ha
-    have hapos : 0 < a := ha₀.trans_le ha.1
-    positivity
+      ContinuousOn (shortShellDensity ε) (Set.Icc a₀ A) :=
+    (shortShellDensity_continuousOn_pos ε).mono (fun _ ha => ha₀.trans_le ha.1)
   have hcosh : Continuous
       (fun a : ℝ => Real.cosh ((1 + δ) * a)) := by
     exact Continuous.comp' Real.continuous_cosh (Continuous.const_mul continuous_id' (1 + δ))
@@ -4413,13 +4227,13 @@ private theorem upper_inv_one_sub_exp_neg_bounds
       Real.exp_lt_one_iff.mpr (by linear_combination hx)
     linear_combination he
   have hlower : 1 - Real.exp (-x) ≤ x := by
-    linarith only [Real.add_one_le_exp (-x)]
+    linear_combination (Real.add_one_le_exp (-x))
   have hplus : 0 < 1 + x := by
     linear_combination hx
   have hexp : Real.exp (-x) ≤ (1 + x)⁻¹ := by
     rw [Real.exp_neg]
     apply (inv_le_inv₀ (Real.exp_pos x) hplus).2
-    linarith only [Real.add_one_le_exp x]
+    linear_combination (Real.add_one_le_exp x)
   constructor
   · exact (inv_le_inv₀ hx hden).2 hlower
   · have hgoal :
@@ -4473,7 +4287,7 @@ theorem upper_laplace_monomial_integral
               change a ^ k * Real.exp (-η * a) =
                 a ^ ((k : ℝ) + 1 - 1) *
                   Real.exp (-(η * a))
-              rw [show (k : ℝ) + 1 - 1 = (k : ℝ) by ring,
+              rw [show (k : ℝ) + 1 - 1 = (k : ℝ) by apply add_sub_cancel_right,
                 Real.rpow_natCast]
               congr 1
               ring_nf
@@ -4495,7 +4309,7 @@ private theorem upperGammaVarianceDensity_pointwise_bounds
       (a + ℓ / 2) * Real.exp (-η * a) := by
   let x : ℝ := 2 * a / ℓ
   have hx : 0 < x := by
-    try dsimp [x]
+    try dsimp only [x]
     positivity
   have hkernel := upper_inv_one_sub_exp_neg_bounds hx
   have hden : 0 < 1 - Real.exp (-x) := by
@@ -4509,13 +4323,13 @@ private theorem upperGammaVarianceDensity_pointwise_bounds
         a * Real.exp (-η * a) *
           (1 - Real.exp (-x))⁻¹ := by
     unfold upperGammaMeasureDensity
-    try dsimp [x]
+    try dsimp only [x]
     field_simp [ha.ne', hℓ.ne', hden.ne']
   constructor
   · calc
       (ℓ / 2) * Real.exp (-η * a) =
           a * Real.exp (-η * a) * x⁻¹ := by
-            try dsimp [x]
+            try dsimp only [x]
             field_simp [ha.ne', hℓ.ne']
       _ ≤ a * Real.exp (-η * a) *
           (1 - Real.exp (-x))⁻¹ :=
@@ -4529,7 +4343,7 @@ private theorem upperGammaVarianceDensity_pointwise_bounds
       _ ≤ a * Real.exp (-η * a) * (1 + x⁻¹) :=
         mul_le_mul_of_nonneg_left hkernel.2 hfactor
       _ = (a + ℓ / 2) * Real.exp (-η * a) := by
-        try dsimp [x]
+        try dsimp only [x]
         field_simp [ha.ne', hℓ.ne']
 
 private theorem upperGammaThirdMomentDensity_pointwise_bounds
@@ -4544,7 +4358,9 @@ private theorem upperGammaThirdMomentDensity_pointwise_bounds
       (η := η) hℓ ha
   have hlow := mul_le_mul_of_nonneg_left hlower ha.le
   have hupp := mul_le_mul_of_nonneg_left hupper ha.le
-  constructor <;> linarith
+  constructor
+  · convert hlow using 1 <;> ring
+  · convert hupp using 1 <;> ring
 
 private theorem upperGammaVarianceDensity_integrable
     {ℓ η : ℝ} (hℓ : 0 < ℓ) (hη : 0 < η) :
@@ -4563,7 +4379,7 @@ private theorem upperGammaVarianceDensity_integrable
       (ℓ / 2) * (a ^ 0 * Real.exp (-η * a)) =
         (a + ℓ / 2) * Real.exp (-η * a)
     simp only [pow_one, neg_mul, pow_zero, one_mul]
-    ring
+    (symm; apply add_mul)
   have hmeas : Measurable
       (fun a : ℝ => a ^ 2 * upperGammaMeasureDensity ℓ η a) := by
     unfold upperGammaMeasureDensity
@@ -4629,248 +4445,84 @@ private theorem upperGammaVariance_bounds
     1 / (2 * η) ≤ upperGammaVariance ℓ η ∧
       upperGammaVariance ℓ η ≤
         1 / (2 * η) + 1 / (ℓ * η ^ 2) := by
-  have hzero : IntegrableOn
-      (fun a : ℝ => Real.exp (-η * a))
-      (Set.Ioi 0) := by
-    simpa only [neg_mul, pow_zero, one_mul] using! upper_laplace_monomial_integrable hη 0
-  have hline : IntegrableOn
-      (fun a : ℝ => a * Real.exp (-η * a))
-      (Set.Ioi 0) := by
-    simpa only [neg_mul, pow_one] using! upper_laplace_monomial_integrable hη 1
-  have hconst : IntegrableOn
-      (fun a : ℝ => (ℓ / 2) * Real.exp (-η * a))
-      (Set.Ioi 0) :=
-    hzero.const_mul (ℓ / 2)
+  have hzero : IntegrableOn (fun a : ℝ => Real.exp (-η * a)) (Ioi 0) := by
+    simpa only [pow_zero, one_mul] using! upper_laplace_monomial_integrable hη 0
+  have hline : IntegrableOn (fun a : ℝ => a * Real.exp (-η * a)) (Ioi 0) := by
+    simpa only [pow_one] using! upper_laplace_monomial_integrable hη 1
+  have hconstant := hzero.const_mul (ℓ / 2)
   have hactual := upperGammaVarianceDensity_integrable hℓ hη
-  have hmajor : IntegrableOn
-      (fun a : ℝ => (a + ℓ / 2) * Real.exp (-η * a))
-      (Set.Ioi 0) := by
-    apply (hline.add hconst).congr_fun _ measurableSet_Ioi
-    intro a ha
-    change a * Real.exp (-η * a) +
-      (ℓ / 2) * Real.exp (-η * a) =
-        (a + ℓ / 2) * Real.exp (-η * a)
-    ring
-  have hlowerIntegral :
-      (∫ a : ℝ in Set.Ioi 0,
-        (ℓ / 2) * Real.exp (-η * a)) ≤
-        ∫ a : ℝ in Set.Ioi 0,
-          a ^ 2 * upperGammaMeasureDensity ℓ η a := by
-    apply integral_mono_ae hconst hactual
-    filter_upwards [ae_restrict_mem measurableSet_Ioi]
-      with a ha
-    exact (upperGammaVarianceDensity_pointwise_bounds
-      (η := η) hℓ ha).1
-  have hupperIntegral :
-      (∫ a : ℝ in Set.Ioi 0,
-        a ^ 2 * upperGammaMeasureDensity ℓ η a) ≤
-        ∫ a : ℝ in Set.Ioi 0,
-          (a + ℓ / 2) * Real.exp (-η * a) := by
-    apply integral_mono_ae hactual hmajor
-    filter_upwards [ae_restrict_mem measurableSet_Ioi]
-      with a ha
-    exact (upperGammaVarianceDensity_pointwise_bounds
-      (η := η) hℓ ha).2
-  have hzerovalue :
-      (∫ a : ℝ in Set.Ioi 0,
-        Real.exp (-η * a)) = η⁻¹ :=
-    integral_laplaceKernel hη
-  have hlinevalue :
-      (∫ a : ℝ in Set.Ioi 0,
-        a * Real.exp (-η * a)) = 1 / η ^ 2 := by
-    simpa only [neg_mul, one_div, pow_one, Nat.factorial_one, Nat.cast_one,
-      Nat.reduceAdd] using! upper_laplace_monomial_integral hη 1
-  have hconstvalue :
-      (∫ a : ℝ in Set.Ioi 0,
-        (ℓ / 2) * Real.exp (-η * a)) =
-          (ℓ / 2) * η⁻¹ := by
-    rw [integral_const_mul, hzerovalue]
-  have hmajorvalue :
-      (∫ a : ℝ in Set.Ioi 0,
-        (a + ℓ / 2) * Real.exp (-η * a)) =
-          1 / η ^ 2 + (ℓ / 2) * η⁻¹ := by
-    calc
-      (∫ a : ℝ in Set.Ioi 0,
-        (a + ℓ / 2) * Real.exp (-η * a)) =
-          ∫ a : ℝ in Set.Ioi 0,
-            (a * Real.exp (-η * a) +
-              (ℓ / 2) * Real.exp (-η * a)) := by
-              apply setIntegral_congr_fun measurableSet_Ioi
-              intro a ha
-              ring
-      _ = (∫ a : ℝ in Set.Ioi 0,
-            a * Real.exp (-η * a)) +
-          ∫ a : ℝ in Set.Ioi 0,
-            (ℓ / 2) * Real.exp (-η * a) :=
-        integral_add hline hconst
-      _ = 1 / η ^ 2 + (ℓ / 2) * η⁻¹ := by
-        rw [hlinevalue, hconstvalue]
-  have hℓinv : 0 ≤ ℓ⁻¹ := (inv_pos.mpr hℓ).le
+  have hlower :
+      (∫ a : ℝ in Ioi 0, (ℓ / 2) * Real.exp (-η * a)) ≤
+        ∫ a : ℝ in Ioi 0, a ^ 2 * upperGammaMeasureDensity ℓ η a := by
+    apply integral_mono_ae hconstant hactual
+    filter_upwards [ae_restrict_mem measurableSet_Ioi] with a ha
+    exact (upperGammaVarianceDensity_pointwise_bounds hℓ ha).1
+  have hupper :
+      (∫ a : ℝ in Ioi 0, a ^ 2 * upperGammaMeasureDensity ℓ η a) ≤
+        ∫ a : ℝ in Ioi 0, a * Real.exp (-η * a) + (ℓ / 2) * Real.exp (-η * a) := by
+    apply integral_mono_ae hactual (hline.add hconstant)
+    filter_upwards [ae_restrict_mem measurableSet_Ioi] with a ha
+    simpa only [Pi.add_apply, add_mul] using! (upperGammaVarianceDensity_pointwise_bounds hℓ ha).2
+  have hzeroValue : (∫ a : ℝ in Ioi 0, Real.exp (-η * a)) = η⁻¹ := by
+    simpa only [pow_zero, one_mul, Nat.factorial_zero, Nat.cast_one, zero_add, pow_one,
+      one_div] using! upper_laplace_monomial_integral hη 0
+  have hlineValue : (∫ a : ℝ in Ioi 0, a * Real.exp (-η * a)) = 1 / η ^ 2 := by
+    simpa only [pow_one, Nat.factorial_one, Nat.cast_one, Nat.reduceAdd] using!
+      upper_laplace_monomial_integral hη 1
+  rw [integral_const_mul, hzeroValue] at hlower
+  rw [integral_add hline hconstant, integral_const_mul, hlineValue, hzeroValue] at hupper
   unfold upperGammaVariance
   constructor
   · calc
-      1 / (2 * η) =
-          ℓ⁻¹ * ((ℓ / 2) * η⁻¹) := by
-            field_simp [hℓ.ne', hη.ne']
-      _ = ℓ⁻¹ *
-          (∫ a : ℝ in Set.Ioi 0,
-            (ℓ / 2) * Real.exp (-η * a)) := by
-            rw [hconstvalue]
-      _ ≤ ℓ⁻¹ *
-          (∫ a : ℝ in Set.Ioi 0,
-            a ^ 2 * upperGammaMeasureDensity ℓ η a) :=
-        mul_le_mul_of_nonneg_left hlowerIntegral hℓinv
+      1 / (2 * η) = ℓ⁻¹ * ((ℓ / 2) * η⁻¹) := by field_simp [hℓ.ne', hη.ne']
+      _ ≤ _ := mul_le_mul_of_nonneg_left hlower (inv_pos.mpr hℓ).le
   · calc
-      ℓ⁻¹ *
-          (∫ a : ℝ in Set.Ioi 0,
-            a ^ 2 * upperGammaMeasureDensity ℓ η a) ≤
-        ℓ⁻¹ *
-          (∫ a : ℝ in Set.Ioi 0,
-            (a + ℓ / 2) * Real.exp (-η * a)) :=
-        mul_le_mul_of_nonneg_left hupperIntegral hℓinv
-      _ = ℓ⁻¹ *
-          (1 / η ^ 2 + (ℓ / 2) * η⁻¹) := by
-            rw [hmajorvalue]
-      _ = 1 / (2 * η) + 1 / (ℓ * η ^ 2) := by
-            field_simp [hℓ.ne', hη.ne']; ring
+      _ ≤ ℓ⁻¹ * (1 / η ^ 2 + (ℓ / 2) * η⁻¹) :=
+        mul_le_mul_of_nonneg_left hupper (inv_pos.mpr hℓ).le
+      _ = _ := by field_simp [hℓ.ne', hη.ne']; apply add_comm
 
 private theorem upperGammaThirdMoment_bounds
     {ℓ η : ℝ} (hℓ : 0 < ℓ) (hη : 0 < η) :
     1 / (2 * η ^ 2) ≤ upperGammaThirdMoment ℓ η ∧
       upperGammaThirdMoment ℓ η ≤
         1 / (2 * η ^ 2) + 2 / (ℓ * η ^ 3) := by
-  have hline : IntegrableOn
-      (fun a : ℝ => a * Real.exp (-η * a))
-      (Set.Ioi 0) := by
-    simpa only [neg_mul, pow_one] using! upper_laplace_monomial_integrable hη 1
-  have hquadratic : IntegrableOn
-      (fun a : ℝ => a ^ 2 * Real.exp (-η * a))
-      (Set.Ioi 0) :=
-    upper_laplace_monomial_integrable hη 2
-  have hconst : IntegrableOn
-      (fun a : ℝ => (ℓ / 2) * a * Real.exp (-η * a))
-      (Set.Ioi 0) := by
-    have h : IntegrableOn
-        (fun a : ℝ =>
-          (ℓ / 2) * (a * Real.exp (-η * a)))
-        (Set.Ioi 0) :=
-      hline.const_mul (ℓ / 2)
-    apply h.congr_fun _ measurableSet_Ioi
-    intro a ha
-    change (ℓ / 2) *
-      (a * Real.exp (-η * a)) =
-        (ℓ / 2) * a * Real.exp (-η * a)
-    ring
+  have hline : IntegrableOn (fun a : ℝ => a * Real.exp (-η * a)) (Ioi 0) := by
+    simpa only [pow_one] using! upper_laplace_monomial_integrable hη 1
+  have hquadratic := upper_laplace_monomial_integrable hη 2
+  have hconstant := hline.const_mul (ℓ / 2)
   have hactual := upperGammaThirdMomentDensity_integrable hℓ hη
-  have hmajor : IntegrableOn
-      (fun a : ℝ =>
-        (a ^ 2 + (ℓ / 2) * a) * Real.exp (-η * a))
-      (Set.Ioi 0) := by
-    apply (hquadratic.add hconst).congr_fun _ measurableSet_Ioi
-    intro a ha
-    change a ^ 2 * Real.exp (-η * a) +
-      (ℓ / 2) * a * Real.exp (-η * a) =
-        (a ^ 2 + (ℓ / 2) * a) * Real.exp (-η * a)
-    ring
-  have hlowerIntegral :
-      (∫ a : ℝ in Set.Ioi 0,
-        (ℓ / 2) * a * Real.exp (-η * a)) ≤
-        ∫ a : ℝ in Set.Ioi 0,
-          a ^ 3 * upperGammaMeasureDensity ℓ η a := by
-    apply integral_mono_ae hconst hactual
-    filter_upwards [ae_restrict_mem measurableSet_Ioi]
-      with a ha
-    exact (upperGammaThirdMomentDensity_pointwise_bounds
-      (η := η) hℓ ha).1
-  have hupperIntegral :
-      (∫ a : ℝ in Set.Ioi 0,
-        a ^ 3 * upperGammaMeasureDensity ℓ η a) ≤
-        ∫ a : ℝ in Set.Ioi 0,
-          (a ^ 2 + (ℓ / 2) * a) *
-            Real.exp (-η * a) := by
-    apply integral_mono_ae hactual hmajor
-    filter_upwards [ae_restrict_mem measurableSet_Ioi]
-      with a ha
-    exact (upperGammaThirdMomentDensity_pointwise_bounds
-      (η := η) hℓ ha).2
-  have hlinevalue :
-      (∫ a : ℝ in Set.Ioi 0,
-        a * Real.exp (-η * a)) = 1 / η ^ 2 := by
-    simpa only [neg_mul, one_div, pow_one, Nat.factorial_one, Nat.cast_one,
-      Nat.reduceAdd] using! upper_laplace_monomial_integral hη 1
-  have hquadraticvalue :
-      (∫ a : ℝ in Set.Ioi 0,
-        a ^ 2 * Real.exp (-η * a)) = 2 / η ^ 3 := by
-    simpa only [neg_mul, Nat.factorial_two, Nat.cast_ofNat,
-      Nat.reduceAdd] using! upper_laplace_monomial_integral hη 2
-  have hconstvalue :
-      (∫ a : ℝ in Set.Ioi 0,
-        (ℓ / 2) * a * Real.exp (-η * a)) =
-          (ℓ / 2) * (1 / η ^ 2) := by
-    calc
-      (∫ a : ℝ in Set.Ioi 0,
-        (ℓ / 2) * a * Real.exp (-η * a)) =
-          ∫ a : ℝ in Set.Ioi 0,
-            (ℓ / 2) *
-              (a * Real.exp (-η * a)) := by
-              apply setIntegral_congr_fun measurableSet_Ioi
-              intro a ha
-              ring
-      _ = (ℓ / 2) *
-          (∫ a : ℝ in Set.Ioi 0,
-            a * Real.exp (-η * a)) := by
-        rw [integral_const_mul]
-      _ = (ℓ / 2) * (1 / η ^ 2) := by
-        rw [hlinevalue]
-  have hmajorvalue :
-      (∫ a : ℝ in Set.Ioi 0,
-        (a ^ 2 + (ℓ / 2) * a) * Real.exp (-η * a)) =
-          2 / η ^ 3 + (ℓ / 2) * (1 / η ^ 2) := by
-    calc
-      (∫ a : ℝ in Set.Ioi 0,
-        (a ^ 2 + (ℓ / 2) * a) * Real.exp (-η * a)) =
-          ∫ a : ℝ in Set.Ioi 0,
-            (a ^ 2 * Real.exp (-η * a) +
-              (ℓ / 2) * a * Real.exp (-η * a)) := by
-              apply setIntegral_congr_fun measurableSet_Ioi
-              intro a ha
-              ring
-      _ = (∫ a : ℝ in Set.Ioi 0,
-            a ^ 2 * Real.exp (-η * a)) +
-          ∫ a : ℝ in Set.Ioi 0,
-            (ℓ / 2) * a * Real.exp (-η * a) :=
-        integral_add hquadratic hconst
-      _ = 2 / η ^ 3 + (ℓ / 2) * (1 / η ^ 2) := by
-        rw [hquadraticvalue, hconstvalue]
-  have hℓinv : 0 ≤ ℓ⁻¹ := (inv_pos.mpr hℓ).le
+  have hlower :
+      (∫ a : ℝ in Ioi 0, (ℓ / 2) * (a * Real.exp (-η * a))) ≤
+        ∫ a : ℝ in Ioi 0, a ^ 3 * upperGammaMeasureDensity ℓ η a := by
+    apply integral_mono_ae hconstant hactual
+    filter_upwards [ae_restrict_mem measurableSet_Ioi] with a ha
+    simpa only [mul_assoc] using (upperGammaThirdMomentDensity_pointwise_bounds hℓ ha).1
+  have hupper :
+      (∫ a : ℝ in Ioi 0, a ^ 3 * upperGammaMeasureDensity ℓ η a) ≤
+        ∫ a : ℝ in Ioi 0, a ^ 2 * Real.exp (-η * a) +
+          (ℓ / 2) * (a * Real.exp (-η * a)) := by
+    apply integral_mono_ae hactual (hquadratic.add hconstant)
+    filter_upwards [ae_restrict_mem measurableSet_Ioi] with a ha
+    simpa only [Pi.add_apply, add_mul, mul_assoc] using!
+      (upperGammaThirdMomentDensity_pointwise_bounds hℓ ha).2
+  have hlineValue : (∫ a : ℝ in Ioi 0, a * Real.exp (-η * a)) = 1 / η ^ 2 := by
+    simpa only [pow_one, Nat.factorial_one, Nat.cast_one, Nat.reduceAdd] using!
+      upper_laplace_monomial_integral hη 1
+  have hquadraticValue : (∫ a : ℝ in Ioi 0, a ^ 2 * Real.exp (-η * a)) = 2 / η ^ 3 := by
+    simpa only [Nat.factorial_two, Nat.cast_ofNat, Nat.reduceAdd] using!
+      upper_laplace_monomial_integral hη 2
+  rw [integral_const_mul, hlineValue] at hlower
+  rw [integral_add hquadratic hconstant, integral_const_mul, hquadraticValue, hlineValue] at hupper
   unfold upperGammaThirdMoment
   constructor
   · calc
-      1 / (2 * η ^ 2) =
-          ℓ⁻¹ * ((ℓ / 2) * (1 / η ^ 2)) := by
-            field_simp [hℓ.ne', hη.ne']
-      _ = ℓ⁻¹ *
-          (∫ a : ℝ in Set.Ioi 0,
-            (ℓ / 2) * a * Real.exp (-η * a)) := by
-            rw [hconstvalue]
-      _ ≤ ℓ⁻¹ *
-          (∫ a : ℝ in Set.Ioi 0,
-            a ^ 3 * upperGammaMeasureDensity ℓ η a) :=
-        mul_le_mul_of_nonneg_left hlowerIntegral hℓinv
+      1 / (2 * η ^ 2) = ℓ⁻¹ * ((ℓ / 2) * (1 / η ^ 2)) := by
+        field_simp [hℓ.ne', hη.ne']
+      _ ≤ _ := mul_le_mul_of_nonneg_left hlower (inv_pos.mpr hℓ).le
   · calc
-      ℓ⁻¹ *
-          (∫ a : ℝ in Set.Ioi 0,
-            a ^ 3 * upperGammaMeasureDensity ℓ η a) ≤
-        ℓ⁻¹ *
-          (∫ a : ℝ in Set.Ioi 0,
-            (a ^ 2 + (ℓ / 2) * a) *
-              Real.exp (-η * a)) :=
-        mul_le_mul_of_nonneg_left hupperIntegral hℓinv
-      _ = ℓ⁻¹ *
-          (2 / η ^ 3 + (ℓ / 2) * (1 / η ^ 2)) := by
-            rw [hmajorvalue]
-      _ = 1 / (2 * η ^ 2) + 2 / (ℓ * η ^ 3) := by
-            field_simp [hℓ.ne', hη.ne']; ring
+      _ ≤ ℓ⁻¹ * (2 / η ^ 3 + (ℓ / 2) * (1 / η ^ 2)) :=
+        mul_le_mul_of_nonneg_left hupper (inv_pos.mpr hℓ).le
+      _ = _ := by field_simp [hℓ.ne', hη.ne']; apply add_comm
 
 private theorem plusPolynomial_negative_imaginary_residue
     (ε s : ℝ) :
@@ -4916,7 +4568,7 @@ private theorem plusSaddlePoleResidue_explicit_real
   rw [plusSaddleRegularMellinFactor_neg_even hℓ n,
     plusPolynomial_negative_imaginary_residue]
   push_cast
-  ring
+  (symm; apply mul_assoc)
 
 private theorem saddleSmallRadiusVariable_nonneg (ε r : ℝ) :
     0 ≤ saddleSmallRadiusVariable ε r := by
@@ -5081,17 +4733,14 @@ private theorem realHyperbolicShellInterval_hasDerivAt
   let F' : ℝ → ℝ → ℝ := fun v x =>
     w x * x * Real.sinh (x * v)
   have hF (v : ℝ) : Continuous (F v) := by
-    try dsimp [F]
     exact hw.mul
       ((Real.continuous_cosh.comp
         (continuous_id.mul continuous_const)).sub continuous_const)
   have hF' (v : ℝ) : Continuous (F' v) := by
-    try dsimp [F']
     exact (hw.mul continuous_id).mul
       (Real.continuous_sinh.comp
         (continuous_id.mul continuous_const))
   have hF'joint : Continuous (Function.uncurry F') := by
-    try dsimp [F', Function.uncurry]
     exact ((hw.comp continuous_snd).mul continuous_snd).mul
       (Real.continuous_sinh.comp
         (continuous_snd.mul continuous_fst))
@@ -5170,20 +4819,8 @@ private theorem realHyperbolicShellPhase_hasDerivAt
     positivity
   let w : ℝ → ℝ := fun a =>
     shortShellDensity ε (max a (ε ^ 3))
-  have hmax (a : ℝ) : 0 < max a (ε ^ 3) :=
-    hcutoff.trans_le (le_max_right _ _)
-  have hw : Continuous w := by
-    have hn : Continuous (fun a : ℝ =>
-        (1 - 10 * ε * (1 + (max a (ε ^ 3)))) *
-          Real.exp (-2 * max a (ε ^ 3))) := by
-      fun_prop
-    have hd : Continuous (fun a : ℝ =>
-        2 * (max a (ε ^ 3)) ^ 2 *
-          Real.cosh (max a (ε ^ 3))) := by
-      fun_prop
-    try dsimp [w]
-    unfold shortShellDensity
-    exact (hn.div hd (fun a => by positivity [hmax a])).neg
+  have hw : Continuous w :=
+    shortShellDensity_clamped_continuous ε (ε ^ 3) hcutoff
   have hshortfun :
       (fun v : ℝ => ∫ a in (ε ^ 3)..(10 * Real.log (1 / ε)),
         shortShellDensity ε a *
@@ -5194,7 +4831,7 @@ private theorem realHyperbolicShellPhase_hasDerivAt
     apply intervalIntegral.integral_congr
     intro a ha
     rw [uIcc_of_le horder] at ha
-    try dsimp [w]
+    try dsimp only [w]
     rw [max_eq_left ha.1]
   have hshortderiv :
       (∫ a in (ε ^ 3)..(10 * Real.log (1 / ε)),
@@ -5204,7 +4841,7 @@ private theorem realHyperbolicShellPhase_hasDerivAt
     apply intervalIntegral.integral_congr
     intro a ha
     rw [uIcc_of_le horder] at ha
-    try dsimp [w]
+    try dsimp only [w]
     rw [max_eq_left ha.1]
   have hshort :
       HasDerivAt
@@ -5216,8 +4853,8 @@ private theorem realHyperbolicShellPhase_hasDerivAt
     rw [hshortfun, hshortderiv]
     exact realHyperbolicShellInterval_hasDerivAt
       w hw horder u
-  have hremote : (ε⁻¹ ^ 3) ≤ (ε⁻¹ ^ 3) + 1 := by
-    linarith only []
+  have hremote : (ε⁻¹ ^ 3) ≤ (ε⁻¹ ^ 3) + 1 :=
+    le_add_of_nonneg_right zero_le_one
   have hpositive := realHyperbolicShellInterval_hasDerivAt
     (positiveShellDensity ε)
     (positiveShellDensity_continuous ε) hremote u
@@ -5282,7 +4919,7 @@ private theorem exists_realHyperbolicShellPhase_quadratic_remainder
         (realHyperbolicShellPhase ε 1 +
           (x - 1) * saddleShellDerivativeOne ε)| := by
         congr 1
-        ring
+        apply sub_sub
     _ ≤ C * (x - 1) ^ 2 := hxbound
     _ ≤ max C 0 * (x - 1) ^ 2 :=
       mul_le_mul_of_nonneg_right
@@ -5314,8 +4951,8 @@ private theorem exists_plusSaddleSmallRadiusPhase_error
   have hx : x ∈ Set.Icc (1 : ℝ) 2 := by
     constructor <;> dsimp [x] <;> linarith
   have hscale : ℓ * (x - 1) = 2 * (n : ℝ) := by
-    try dsimp [x]
-    field_simp; ring
+    try dsimp only [x]
+    field_simp; apply add_sub_cancel_left
   have hidentity :
       ℓ * (realHyperbolicShellPhase ε x -
         realHyperbolicShellPhase ε 1) -
@@ -5341,7 +4978,7 @@ private theorem exists_plusSaddleSmallRadiusPhase_error
     _ ≤ ℓ * (C * (x - 1) ^ 2) :=
       mul_le_mul_of_nonneg_left (hC x hx) hℓ.le
     _ = (4 * C) * (n : ℝ) ^ 2 / ℓ := by
-      try dsimp [x]
+      try dsimp only [x]
       field_simp; ring
 
 private theorem plusSaddleSmallRadiusPolynomial_error
@@ -5355,17 +4992,13 @@ private theorem plusSaddleSmallRadiusPolynomial_error
   have hb : 0 < (ε / 4) := div_pos hε four_pos
   let s : ℝ := 2 * (n : ℝ) / ℓ
   have hs : 0 ≤ s := by
-    try dsimp [s]
+    try dsimp only [s]
     positivity
   have hsone : s ≤ 1 := by
-    try dsimp [s]
+    try dsimp only [s]
     exact (div_le_iff₀ hℓ).mpr (by simpa only [one_mul] using! hn)
   have hsquare : (2 + s) ^ 2 ≤ 9 := by
-    linarith only [
-      mul_nonneg (show 0 ≤ 3 - (2 + s) by linarith) (show 0 ≤ 3 + (2 + s) by linarith),
-      hs,
-      hsone
-    ]
+    linarith only [mul_nonneg (show 0 ≤ 3 - (2 + s) by linarith) (show 0 ≤ 3 + (2 + s) by linarith)]
   have hnumerator : 0 ≤ s * (2 + s) ^ 2 :=
     mul_nonneg hs (sq_nonneg _)
   change |((ε / 4) - s * (2 + s) ^ 2) /
@@ -5374,7 +5007,7 @@ private theorem plusSaddleSmallRadiusPolynomial_error
   have hid :
       ((ε / 4) - s * (2 + s) ^ 2) / (ε / 4) - 1 =
         -(s * (2 + s) ^ 2) / (ε / 4) := by
-    field_simp; ring
+    field_simp; apply add_sub_cancel_left
   rw [hid, abs_div, abs_neg,
     abs_of_nonneg hnumerator, abs_of_pos hb]
   calc
@@ -5382,7 +5015,7 @@ private theorem plusSaddleSmallRadiusPolynomial_error
         s * 9 / (ε / 4) := by
           gcongr
     _ = (18 / (ε / 4)) * ((n : ℝ) / ℓ) := by
-      try dsimp [s]
+      try dsimp only [s]
       field_simp; ring
 
 private theorem abs_exp_sub_one_le_abs_mul_exp_abs (t : ℝ) :
@@ -5412,10 +5045,10 @@ private theorem abs_exp_sub_one_le_abs_mul_exp_abs (t : ℝ) :
     have hlinear : 1 - Real.exp t ≤ -t := by
       linear_combination hsupport
     calc
-      -(Real.exp t - 1) = 1 - Real.exp t := by ring
+      -(Real.exp t - 1) = 1 - Real.exp t := by apply neg_sub
       _ ≤ -t := hlinear
       _ ≤ -t * Real.exp (-t) := by
-        linarith only [mul_nonneg hnegt (sub_nonneg.mpr hexpneg), hnegt, hexpneg]
+        linear_combination (mul_nonneg hnegt (sub_nonneg.mpr hexpneg))
 
 private theorem plusSaddleSmallRadiusCoefficient_error_of_phase
     {ε ℓ : ℝ}
@@ -5444,11 +5077,7 @@ private theorem plusSaddleSmallRadiusCoefficient_error_of_phase
   let q : ℝ := C * (n : ℝ) ^ 2 / ℓ
   let k : ℝ := (18 / (ε / 4)) * ((n : ℝ) / ℓ)
   have hq : 0 ≤ q := by
-    try dsimp [q]
     positivity
-  have hk : 0 ≤ k := by
-    try dsimp [k]
-    positivity [div_pos hε four_pos]
   have hE : |E| ≤ q := by
     simpa only  using! hphase
   have hP : |P - 1| ≤ k := by
@@ -5495,7 +5124,6 @@ private theorem exists_plusSaddleSmallRadiusCoefficient_error
     exists_plusSaddleSmallRadiusPhase_error hε horder
   let K : ℝ := 18 / (ε / 4)
   have hK : 0 ≤ K := by
-    try dsimp [K]
     positivity [div_pos hε four_pos]
   refine ⟨C + K, add_nonneg hC hK, ?_⟩
   intro ℓ hℓ n hn
@@ -5510,7 +5138,7 @@ private theorem exists_plusSaddleSmallRadiusCoefficient_error
         (C * (n : ℝ) ^ 2 + K * (n : ℝ)) / ℓ by
           ring]
     apply (div_le_div_iff_of_pos_right hℓ).mpr
-    linarith only [mul_nonneg hC hnreal, mul_nonneg hK (sq_nonneg (n : ℝ)), hC, hK, hnreal]
+    linarith only [mul_nonneg hC hnreal, mul_nonneg hK (sq_nonneg (n : ℝ)), hC]
   have hq :
       C * (n : ℝ) ^ 2 / ℓ ≤
         (C + K) * (n : ℝ) ^ 2 / ℓ := by
@@ -5548,12 +5176,9 @@ private theorem saddleExpSeries_firstMoment_hasSum (y : ℝ) :
       (fun n : ℕ => y *
         (y ^ n / (n.factorial : ℝ))) := by
     funext n
-    try dsimp [f]
+    try dsimp only [f]
     rw [Nat.factorial_succ, pow_succ]
     push_cast
-    have hn : (n : ℝ) + 1 ≠ 0 := by positivity
-    have hfact : (n.factorial : ℝ) ≠ 0 := by
-      exact_mod_cast Nat.factorial_ne_zero n
     field_simp
   have htail : HasSum (fun n : ℕ => f (n + 1))
       (y * Real.exp y) := by
@@ -5575,15 +5200,11 @@ private theorem saddleExpSeries_secondFallingMoment_hasSum (y : ℝ) :
       (fun n : ℕ => y ^ 2 *
         (y ^ n / (n.factorial : ℝ))) := by
     funext n
-    try dsimp [f]
+    try dsimp only [f]
     rw [show n + 2 = (n + 1) + 1 by omega,
       Nat.factorial_succ, Nat.factorial_succ,
       pow_succ, pow_succ]
     push_cast
-    have hn : (n : ℝ) + 1 ≠ 0 := by positivity
-    have hn' : (n : ℝ) + 1 + 1 ≠ 0 := by positivity
-    have hfact : (n.factorial : ℝ) ≠ 0 := by
-      exact_mod_cast Nat.factorial_ne_zero n
     field_simp; ring
   have htail : HasSum (fun n : ℕ => f (n + 2))
       (y ^ 2 * Real.exp y) := by
@@ -5658,13 +5279,6 @@ private theorem exists_plusSaddleSmallRadius_weightedCoefficient_error
         have hbound := hcoeff ℓ hℓ n hnpole
         have hterm : 0 ≤ y ^ n / (n.factorial : ℝ) := by
           positivity
-        have hq :
-            C * (n : ℝ) ^ 2 / ℓ ≤
-              C * (N : ℝ) ^ 2 / ℓ := by
-          gcongr
-        have hbase :
-            0 ≤ C * ((n : ℝ) + (n : ℝ) ^ 2) / ℓ := by
-          positivity
         calc
           (y ^ n / (n.factorial : ℝ)) *
               |plusSaddleSmallRadiusCoefficient ε ℓ n - 1| ≤
@@ -5692,7 +5306,7 @@ private theorem exists_plusSaddleSmallRadius_weightedCoefficient_error
               hy (N + 1)) hnonneg
     _ = (C / ℓ) *
           Real.exp (C * (N : ℝ) ^ 2 / ℓ) *
-            (2 * y + y ^ 2) * Real.exp y := by ring
+            (2 * y + y ^ 2) * Real.exp y := by (symm; apply mul_assoc)
 
 private theorem saddleExpSeries_tail_term_le_geometric
     {y : ℝ} (hy : 0 ≤ y)
@@ -5734,7 +5348,7 @@ private theorem saddleExpSeries_tail_term_le_geometric
       _ = (y ^ m / (m.factorial : ℝ)) *
           ((1 / 2 : ℝ) ^ (k + 1)) := by
             rw [pow_succ]
-            ring
+            apply mul_assoc
 
 private theorem saddleExpSeries_alternating_tail_bound
     {y : ℝ} (hy : 0 ≤ y)
@@ -5787,7 +5401,7 @@ private theorem saddleExpSeries_alternating_tail_bound
   have hidentity : Real.exp (-y) -
       (∑ n ∈ Finset.range m, f n) =
         ∑' n : ℕ, f (n + m) := by
-    linarith only [hdecomp]
+    linear_combination (-hdecomp)
   calc
     |Real.exp (-y) -
         (∑ n ∈ Finset.range m, f n)| =
@@ -5806,7 +5420,7 @@ private theorem saddleExpSeries_alternating_tail_bound
         rw [tsum_geometric_of_lt_one
           (by norm_num : (0 : ℝ) ≤ 1 / 2)
           (by norm_num : (1 / 2 : ℝ) < 1)]
-        norm_num; ring
+        norm_num; (symm; apply mul_comm)
 
 private theorem exists_plusSaddleSmallRadius_finiteResidue_error
     {ε : ℝ}
@@ -5889,7 +5503,7 @@ private theorem exists_plusSaddleSmallRadius_finiteResidue_error
           (-y) ^ n / (n.factorial : ℝ)) -
           Real.exp (-y))| := by
         congr 1
-        ring
+        apply add_assoc
     _ ≤ |∑ n ∈ Finset.range (N + 1),
           ((-y) ^ n / (n.factorial : ℝ)) *
             (plusSaddleSmallRadiusCoefficient ε ℓ n - 1)| +
@@ -6029,7 +5643,7 @@ private theorem upperGammaDampingIntegrand_integrable
     sub_nonneg.mpr (Real.cos_le_one _)
   have hquad :
       1 - Real.cos (a * T) ≤ (a * T) ^ 2 / 2 := by
-    linarith only [Real.one_sub_sq_div_two_le_cos (x := a * T)]
+    linear_combination (Real.one_sub_sq_div_two_le_cos (x := a * T))
   unfold upperGammaDampingIntegrand
   rw [Real.norm_eq_abs,
     abs_of_nonneg (mul_nonneg hcos hdensity.le)]
@@ -6130,7 +5744,6 @@ private theorem upperGammaDamping_lower_bound
     let c : ℝ :=
       (ℓ / (8 * Real.exp 1)) * T ^ 2
     have hq : 0 < q := by
-      try dsimp [q]
       exact lt_min (inv_pos.mpr hη)
         (inv_pos.mpr (abs_pos.mpr hT))
     have hsubset : Ioc (0 : ℝ) q ⊆ Ioi 0 := by
@@ -6177,7 +5790,7 @@ private theorem upperGammaDamping_lower_bound
       change ((volume : Measure ℝ)
         (Ioc (0 : ℝ) q)).toReal = q
       rw [Real.volume_Ioc,
-        ENNReal.toReal_ofReal (by linarith only [hq])]
+        ENNReal.toReal_ofReal (by linear_combination (hq))]
       simp only [sub_zero]
     have hconstintegral :
         (∫ a : ℝ in Ioc (0 : ℝ) q, c) = q * c := by
@@ -6185,7 +5798,6 @@ private theorem upperGammaDamping_lower_bound
       rfl
     have hmin :
         q * T ^ 2 = min (T ^ 2 / η) |T| := by
-      try dsimp [q]
       rw [min_mul_of_nonneg η⁻¹ |T|⁻¹
         (sq_nonneg T)]
       congr 1
@@ -6199,9 +5811,8 @@ private theorem upperGammaDamping_lower_bound
     calc
       (ℓ / (8 * Real.exp 1)) *
           min (T ^ 2 / η) |T| = q * c := by
-        try dsimp [c]
         rw [← hmin]
-        ring
+        apply mul_left_comm
       _ = ∫ a : ℝ in Ioc (0 : ℝ) q, c :=
         hconstintegral.symm
       _ ≤ ∫ a : ℝ in Ioc (0 : ℝ) q,
@@ -6327,14 +5938,14 @@ private theorem upperGammaThirdMoment_le_two_mul_variance
     apply (div_le_div_iff₀
       (show 0 < 2 * η ^ 2 by positivity)
       (show 0 < 2 * η by positivity)).2
-    linarith only [mul_nonneg hηpositive.le (show 0 ≤ η - 1 by linarith), hη, hηpositive]
+    linear_combination (2 * mul_nonneg hηpositive.le (show 0 ≤ η - 1 by linarith))
   have hηsquare : 4 ≤ η ^ 2 := by
     linarith only [sq_nonneg (η - 2), hη]
   have hsquare : 4 ≤ ℓ * η ^ 2 := by
     calc
       (4 : ℝ) ≤ η ^ 2 := hηsquare
       _ ≤ ℓ * η ^ 2 := by
-        linarith only [mul_nonneg (show 0 ≤ ℓ - 1 by linarith) (sq_nonneg η), hℓ]
+        linear_combination (mul_nonneg (show 0 ≤ ℓ - 1 by linarith) (sq_nonneg η))
   have hsecond :
       2 / (ℓ * η ^ 3) ≤ 1 / (2 * η) := by
     apply (div_le_div_iff₀
@@ -6350,7 +5961,7 @@ private theorem upperGammaThirdMoment_le_two_mul_variance
     _ ≤ 2 * (1 / (2 * η)) := by
       linear_combination hfirst + hsecond
     _ ≤ 2 * upperGammaVariance ℓ η := by
-      linarith only [hγvariance]
+      linear_combination (2 * hγvariance)
 
 private noncomputable def upperSaddleShellThirdCoefficient (ε : ℝ) : ℝ :=
   (ε⁻¹ ^ 3) + 1 + (10 * Real.log (1 / ε)) / 100
@@ -6370,7 +5981,7 @@ private theorem eventually_upperSaddleThirdMoment_le_variance
     with ε hε horder hnet hthird
   change 0 < ε at hε
   intro ℓ hℓ δ hδ
-  have hℓpositive : 0 < ℓ := by linarith only [hℓ]
+  have hℓpositive : 0 < ℓ := by linear_combination (hℓ)
   have hδnonnegative : 0 ≤ δ := by
     linarith only [hε, hδ]
   have hη : 2 ≤ 2 + δ := by
@@ -6427,16 +6038,7 @@ private theorem eventually_upperSaddleThirdMoment_le_variance
             upperNetShellVariance ε δ := by
         ring
   unfold upperSaddleThirdMoment upperSaddleVariance
-  linarith only [
-    mul_nonneg hC hgammavariance,
-    mul_nonneg hC hnetnonnegative,
-    hgamma,
-    hnetlower,
-    hpositiveShell,
-    hgammavariance,
-    hC,
-    hthirdshell
-  ]
+  linarith only [mul_nonneg hC hgammavariance, hgamma, hnetlower, hpositiveShell, hthirdshell]
 
 private theorem upperShortMargin_mul_exp_antitone
     {ε : ℝ} (hε : 0 < ε) :
@@ -6469,7 +6071,6 @@ private theorem upperShortMargin_mul_exp_antitone
   apply antitoneOn_of_deriv_nonpos
     (convex_Ici (0 : ℝ))
   · have hc : Continuous f := by
-      try dsimp [f]
       fun_prop
     exact hc.continuousOn
   · intro a ha
@@ -6480,7 +6081,7 @@ private theorem upperShortMargin_mul_exp_antitone
       have h := interior_subset ha
       exact h
     have hmargin : (1 - 10 * ε * (1 + a)) ≤ 1 := by
-      linarith only [mul_nonneg hε.le (show 0 ≤ 1 + a by linarith), hε, ha0]
+      linear_combination (10 * mul_nonneg hε.le (show 0 ≤ 1 + a by linarith))
     exact mul_nonpos_of_nonneg_of_nonpos
       (mul_nonneg hε.le (Real.exp_pos _).le)
       (by linear_combination hmargin)
@@ -6506,7 +6107,7 @@ private theorem upperFirstBranch_shortRatio_le
       1 - 4 * ε := by
   have hmarginupper :
       (1 - 10 * ε * (1 + a)) ≤ 1 - 10 * ε := by
-    linarith only [mul_nonneg hε.le ha, hε, ha]
+    linear_combination (10 * mul_nonneg hε.le ha)
   by_cases hubounded : u ≤ 1
   · have huexp :
         Real.exp ((u - 1) * a) ≤ 1 := by
@@ -6531,7 +6132,7 @@ private theorem upperFirstBranch_shortRatio_le
           gcongr
       _ = (1 - 10 * ε * (1 + a)) := by ring
       _ ≤ 1 - 10 * ε := hmarginupper
-      _ ≤ 1 - 4 * ε := by linarith only [hε]
+      _ ≤ 1 - 4 * ε := by linear_combination (6 * hε)
   · have hugreater : 1 ≤ u :=
       (le_of_not_ge hubounded)
     have hδ : 0 ≤ u - 1 := by linarith only [hubounded]
@@ -6543,7 +6144,7 @@ private theorem upperFirstBranch_shortRatio_le
         Real.exp (2 * (u - 1) * a) ≤
           Real.exp (ε * a) := by
       apply Real.exp_le_exp.mpr
-      linarith only [mul_nonneg (show 0 ≤ ε - 2 * (u - 1) by linarith) ha, ha, huupper]
+      linear_combination (mul_nonneg (show 0 ≤ ε - 2 * (u - 1) by linarith) ha)
     calc
       (1 - 10 * ε * (1 + a)) *
           Real.exp ((u - 1) * a) *
@@ -6576,7 +6177,7 @@ private theorem upperFirstBranch_shortMeasure_pointwise
       (1 - 4 * ε) *
         upperGammaMeasureDensity ℓ (1 + u) a := by
   have hfactor : 0 ≤ 1 - 4 * ε := by
-    linarith only [hεsmall]
+    linear_combination (4 * hεsmall)
   have hratio := upperFirstBranch_shortRatio_le
     hε ha.le hulower huupper hmargin
   have hvariance :=
@@ -6611,7 +6212,7 @@ private theorem upperFirstBranch_shortMeasure_pointwise
     unfold shortShellDensity
     field_simp [ha.ne', (Real.cosh_pos a).ne']
     rw [← hexp]
-    ring
+    (symm; apply mul_assoc)
   rw [hidentity]
   calc
     ((1 - 10 * ε * (1 + a)) *
@@ -6643,13 +6244,11 @@ private theorem upperFirstBranch_shortDamping_le_gamma
   let A : ℝ := (10 * Real.log (1 / ε))
   let η : ℝ := 1 + u
   have hη : 0 < η := by
-    try dsimp [η]
-    linarith only [hulower]
+    linear_combination (hulower)
   have ha₀ : 0 < a₀ := by
-    try dsimp [a₀]
-    positivity
+    exact pow_pos hε 3
   have hfactor : 0 ≤ 1 - 4 * ε := by
-    linarith only [hεsmall]
+    linear_combination (4 * hεsmall)
   have hsubset : Ioc a₀ A ⊆ Ioi (0 : ℝ) := by
     intro a ha
     exact ha₀.trans ha.1
@@ -6735,7 +6334,7 @@ private theorem upperFirstBranch_shortDamping_le_gamma
             Real.cosh (u * a) *
               (1 - Real.cos (a * T)) := by
     unfold upperShortShellDamping
-    have hu : 1 + (u - 1) = u := by ring
+    have hu : 1 + (u - 1) = u := by apply add_sub_cancel
     rw [hu, ← intervalIntegral.integral_const_mul,
       intervalIntegral.integral_of_le horder]
     apply setIntegral_congr_fun measurableSet_Ioc
@@ -6769,7 +6368,7 @@ private theorem positiveShellDamping_nonneg
   unfold positiveShellDamping
   apply mul_nonneg hℓ
   apply intervalIntegral.integral_nonneg
-    (show (ε⁻¹ ^ 3) ≤ (ε⁻¹ ^ 3) + 1 by linarith only [])
+    (le_add_of_nonneg_right zero_le_one)
   intro a ha
   unfold positiveShellDensity
   exact mul_nonneg
@@ -6871,7 +6470,7 @@ private theorem saddle_complexShellInterval_re
           (Real.cos (x * T) * Real.cosh (x * u) - 1) := by
       apply intervalIntegral.integral_congr
       intro x hx
-      try dsimp [F]
+      try dsimp only [F]
       rw [Complex.mul_re, Complex.sub_re,
         saddle_shifted_complexCos_re]
       simp only [Complex.ofReal_re, Complex.one_re, Complex.ofReal_im, Complex.sub_im,
@@ -6882,21 +6481,8 @@ private theorem shortShellDensity_continuousOn_support
     {ε : ℝ} (hε : 0 < ε) :
     ContinuousOn (shortShellDensity ε)
       (Icc (ε ^ 3) (10 * Real.log (1 / ε))) := by
-  have hn : Continuous
-      (fun a : ℝ =>
-        (1 - 10 * ε * (1 + a)) * Real.exp (-2 * a)) := by
-    fun_prop
-  have hd : Continuous
-      (fun a : ℝ =>
-        2 * a ^ 2 * Real.cosh a) := by
-    fun_prop
-  unfold shortShellDensity
-  exact (hn.continuousOn.div hd.continuousOn
-    (fun a ha => by
-      have hcutoff : 0 < (ε ^ 3) := by
-        positivity
-      have ha0 : 0 < a := hcutoff.trans_le ha.1
-      positivity)).neg
+  exact (shortShellDensity_continuousOn_pos ε).mono
+    (fun _ ha => (pow_pos hε 3).trans_le ha.1)
 
 private theorem mellinShellPhase_shifted_re
     {ε : ℝ} (hε : 0 < ε)
@@ -6982,7 +6568,7 @@ private theorem saddleShellPhase_damping_identity
   rw [mellinShellPhase_shifted_re hε horder T u]
   unfold realHyperbolicShellPhase
     positiveShellDamping upperShortShellDamping
-  have hu : 1 + (u - 1) = u := by ring
+  have hu : 1 + (u - 1) = u := by apply add_sub_cancel
   simp only [hu]
   have hshortNormalized :
       (∫ a in (ε ^ 3)..(10 * Real.log (1 / ε)),
@@ -7592,13 +7178,12 @@ private theorem saddleLogGamma_add_one {x : ℝ} (hx : 0 < x) :
       (Real.log ∘ Real.Gamma) x + Real.log x := by
   simp only [Function.comp_apply, Real.Gamma_add_one hx.ne',
     Real.log_mul hx.ne' (Real.Gamma_pos_of_pos hx).ne']
-  ring
+  apply add_comm
 
 private theorem saddleLogGamma_differentiableAt {x : ℝ} (hx : 0 < x) :
     DifferentiableAt ℝ (Real.log ∘ Real.Gamma) x := by
   exact (Real.differentiableAt_Gamma
     (fun n => ne_of_gt (by
-      have hn : 0 ≤ (n : ℝ) := Nat.cast_nonneg n
       linarith only [hx]))).log (Real.Gamma_pos_of_pos hx).ne'
 
 private theorem saddleDigamma_bounds {x : ℝ} (hx : 1 < x) :
@@ -7614,11 +7199,11 @@ private theorem saddleDigamma_bounds {x : ℝ} (hx : 1 < x) :
       (show x ∈ Ioi (0 : ℝ) from hxpositive)
       (show x - 1 < x by linarith only []) hdiff
     have hrec := saddleLogGamma_add_one hxprevious
-    have hshift : (x - 1) + 1 = x := by ring
+    have hshift : (x - 1) + 1 = x := by apply sub_add_cancel
     rw [hshift] at hrec
     unfold saddleDigamma
     rw [slope_def_field] at hconv
-    have hden : x - (x - 1) = (1 : ℝ) := by ring
+    have hden : x - (x - 1) = (1 : ℝ) := by apply sub_sub_cancel
     rw [hden, div_one, hrec] at hconv
     simpa only [ge_iff_le, Function.comp_apply, add_sub_cancel_left] using! hconv
   · have hconv := Real.convexOn_log_Gamma.deriv_le_slope
@@ -7628,7 +7213,7 @@ private theorem saddleDigamma_bounds {x : ℝ} (hx : 1 < x) :
     have hrec := saddleLogGamma_add_one hxpositive
     unfold saddleDigamma
     rw [slope_def_field] at hconv
-    have hden : (x + 1) - x = (1 : ℝ) := by ring
+    have hden : (x + 1) - x = (1 : ℝ) := by apply add_sub_cancel_left
     rw [hden, div_one, hrec] at hconv
     simpa only [ge_iff_le, Function.comp_apply, add_sub_cancel_left] using! hconv
 
@@ -7711,13 +7296,12 @@ private theorem saddleSourceRadius_div_sqrt_eq
   let S : ℝ := shortShellRadiusContribution ε +
     positiveShellRadiusContribution ε
   have ha : 0 < a := by
-    try dsimp [a]
+    try dsimp only [a]
     positivity
   have hdreal : 0 < (d : ℝ) := by exact_mod_cast hd
-  have hm : 0 < m := saddleCriticalGammaArgument_pos hε hd
   have hquotient : 0 < a / (4 * Real.pi) := by positivity
   have hmformula : m = (d : ℝ) * a / 4 := by
-    try dsimp [m, a, saddleCriticalGammaArgument]
+    try dsimp only [m, a, saddleCriticalGammaArgument]
     ring
   have hlogm : Real.log m =
       Real.log (d : ℝ) + Real.log a - Real.log (4 : ℝ) := by
@@ -7738,8 +7322,8 @@ private theorem saddleSourceRadius_div_sqrt_eq
       -(Real.log Real.pi) / 2 +
         saddleDigamma m / 2 + S := by
     rw [saddleLogRadius_critical_eq]
-    try dsimp [m, S]
-    ring
+    try dsimp only [m, S]
+    apply add_assoc
   calc
     saddleSourceRadius ε d / Real.sqrt (d : ℝ) =
       Real.exp
@@ -7764,8 +7348,8 @@ private theorem saddleSourceRadius_div_sqrt_eq
             Real.log (saddleCriticalGammaArgument ε d)) / 2) *
           limitingSaddleRadius ε := by
       unfold limitingSaddleRadius
-      try dsimp [m, a, S]
-      ring
+      try dsimp only [m, a, S]
+      apply mul_assoc
 
 private theorem tendsto_saddleSourceRadius_normalized
     {ε : ℝ} (hε : 0 < ε) :

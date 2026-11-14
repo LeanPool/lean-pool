@@ -1,0 +1,52 @@
+slug: hyperelliptic-chabauty-coleman
+title: Chabauty–Coleman bounds for odd-degree hyperelliptic curves
+summary: Proves the rank-sensitive Chabauty–Coleman point-count bound for monic
+  odd-degree hyperelliptic curves over the rationals and number fields at primes
+  of squarefree reduction. The Jacobian group is the ideal class group of the
+  affine coordinate ring; its identification with an algebraic Jacobian variety
+  is outside this formalization. Includes Mumford representatives, reduction of
+  divisor classes, multivariable formal groups, p-adic logarithms, and residue-disk
+  zero counts. Independent upstream archive results are omitted.
+branch: arithmetic geometry
+entry_module: LeanPool.HyperellipticCurves
+authors:
+- Michael Stoll
+source:
+  title: Independence of rational points on twists of a given curve
+  doi: 10.1112/S0010437X06002168
+  url: https://github.com/MichaelStollBayreuth/HyperellipticCurves/tree/a541f7182de678e07edcccc7a307c777cecfc8fe
+  github_repo: MichaelStollBayreuth/HyperellipticCurves
+  commit: a541f7182de678e07edcccc7a307c777cecfc8fe
+  announcement_url: https://leanprover.zulipchat.com/#narrow/channel/583339/near/639081686
+  announcement_date: '2026-11-10'
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+- ChabautyColeman.main_affine_rat_of_rank_le
+- ChabautyColeman.NumberFieldBase.main_affine_numberField
+- ChabautyColeman.NumberFieldBase.ratPoints_finite_numberField
+main_results:
+- declaration: ChabautyColeman.main_affine_rat_of_rank_le
+  informal: For a monic odd-degree hyperelliptic curve over Q whose coordinate-ring
+    class group has rational rank at most r below the genus, and a prime p greater
+    than 2r + 2 with an integral model of squarefree reduction, the affine rational
+    point count plus one is at most the reduced affine point count plus one, plus 2r.
+- declaration: ChabautyColeman.NumberFieldBase.main_affine_numberField
+  informal: Over the fraction field of a Dedekind domain finite free over Z, the
+    same class-group-rank bound holds at a prime of squarefree reduction when the
+    residue characteristic exceeds 2r plus the absolute ramification index plus 1.
+- declaration: ChabautyColeman.NumberFieldBase.ratPoints_finite_numberField
+  informal: The set of rational affine points on a monic odd-degree hyperelliptic
+    curve over a number field is finite when the rational rank of the ideal class
+    group of its affine coordinate ring is smaller than its genus.
+tags:
+- hyperelliptic-curves
+- chabauty-coleman
+- rational-points
+- formal-groups
+- p-adic-analysis
+msc:
+- 11G30
+- 14G05
+- 14H25

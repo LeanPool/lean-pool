@@ -227,7 +227,7 @@ private theorem rightSeparatorCandidate_mem (h_root : A r) (h_sub : A ≤ IsAmbi
   unfold rightSeparatorCandidate
   apply ClosedUnderDicotic.closed_dicotic (IsAmbient := IsAmbient)
   · exact rightSeparatorLeftSet_mem h_root h_sub hh
-  · simp_all
+  · simp_all only [Set.mem_singleton_iff, implies_true]
   · exact ⟨r, Or.inl rfl⟩
   · exact Set.singleton_nonempty x
   · exact Ambient.isAmbient_rightSeparatorCandidate (h_sub r h_root) hh (h_sub x hx)
@@ -247,7 +247,7 @@ private theorem leftSeparatorCandidate_mem (h_root : A r) (h_sub : A ≤ IsAmbie
     A (leftSeparatorCandidate r g x) := by
   unfold leftSeparatorCandidate
   apply ClosedUnderDicotic.closed_dicotic (IsAmbient := IsAmbient)
-  · simp_all
+  · simp_all only [Set.mem_singleton_iff, implies_true]
   · exact leftSeparatorRightSet_mem h_root h_sub hg
   · exact Set.singleton_nonempty x
   · exact ⟨r, Or.inl rfl⟩
@@ -264,7 +264,7 @@ private theorem downlinkOptions_mem (h_root : A r) (h_sub : A ≤ IsAmbient)
   · exact hzA ⟨hp, hhp⟩
   · exact rootedAdjoint_mem_of_isAmbient h_root h_sub
       (Hereditary.has_option hg (IsOption.of_mem_moves hgp))
-  · simp_all
+  · simp_all only [Subtype.forall, not_mem_moves_of_isEnd, IsEmpty.forall_iff, implies_true]
 
 private theorem downlinkWitness_mem (h_root : A r) (h_sub : A ≤ IsAmbient)
     {g h : G} {x : moves .left g → G} {y : moves .right h → G}
@@ -417,7 +417,7 @@ private lemma not_misereGE_of_right_left_outcomes
     (hgt : MiserePlayerOutcome (g + t) p = .right)
     (hht : MiserePlayerOutcome (h + t) p = .left) : False := by
   have h_cmp := misereOutcome_ge_iff_miserePlayerOutcome_ge.mp (hge t ht) p
-  simp_all
+  simp_all only [ge_iff_le, Player.le_right_iff, reduceCtorEq]
 
 /--
 Comparison forbids downlinking to options: if `g ≥m A h`, then `g` is not
@@ -465,16 +465,16 @@ private lemma maintenance_of_misereGE_downlinking
     have h_downlinked : Downlinked A g hl := by
       apply Downlinking.downlinked_of_not_exists_moves_misereGE hg
         (Hereditary.has_option hh (IsOption.of_mem_moves hhl))
-      · simp_all
-      · simp_all
+      · simp_all only [not_or, not_exists, not_and, not_false_eq_true, implies_true]
+      · simp_all only [not_or, not_exists, not_and, not_false_eq_true, implies_true]
     exact not_downlinked_left_option_of_misereGE hge hhl h_downlinked
   · intro gr hgr
     by_contra h_not
     have h_downlinked : Downlinked A gr h := by
       apply Downlinking.downlinked_of_not_exists_moves_misereGE
         (Hereditary.has_option hg (IsOption.of_mem_moves hgr)) hh
-      · simp_all
-      · simp_all
+      · simp_all only [not_or, not_exists, not_and, not_false_eq_true, implies_true]
+      · simp_all only [not_or, not_exists, not_and, not_false_eq_true, implies_true]
     exact not_downlinked_right_option_of_misereGE hge hgr h_downlinked
 
 /--

@@ -124,7 +124,7 @@ theorem tendsto_inner_of_dense_of_bounded {E : Type*} [NormedAddCommGroup E]
         _ < ε / 3 := by
             rw [mul_div_assoc']
             rw [div_lt_div_iff₀ (by positivity) (by norm_num : (0:ℝ) < 3)]
-            nlinarith [hε.le, h0]
+            nlinarith only [hε, hε.le, h0]
   obtain ⟨N, hN⟩ := Metric.tendsto_atTop.mp (hconv z hzS) (ε / 3) (by positivity)
   refine ⟨N, fun n hn => ?_⟩
   have hsplit : ⟪X n, y⟫ - ⟪L, y⟫
@@ -144,7 +144,7 @@ theorem tendsto_inner_of_dense_of_bounded {E : Type*} [NormedAddCommGroup E]
       ≤ |⟪X n, y - z⟫ + (⟪X n, z⟫ - ⟪L, z⟫)| + |⟪L, z - y⟫| := abs_add_le _ _
     _ ≤ |⟪X n, y - z⟫| + |⟪X n, z⟫ - ⟪L, z⟫| + |⟪L, z - y⟫| := by
         have hsub := abs_add_le ⟪X n, y - z⟫ (⟪X n, z⟫ - ⟪L, z⟫)
-        linarith
+        linarith only [hsub]
     _ < ε := by linarith
 
 /-! ### Weak convergence of the difference quotients -/

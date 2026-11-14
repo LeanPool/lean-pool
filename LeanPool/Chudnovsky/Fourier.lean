@@ -62,7 +62,8 @@ private lemma G_Lτ_eq (τ : ℍ) {k : ℕ} (hk : 3 ≤ k) :
   have hbase : (((Lτ τ).latticeEquivProd.symm.toEquiv x : (Lτ τ).lattice) : ℂ)
       = (x.1 : ℂ) + (x.2 : ℂ) * (τ : ℂ) := by
     have h := (Lτ τ).latticeEquiv_symm_apply x
-    simpa using h
+    simpa only [LinearEquiv.toEquiv_symm, LinearEquiv.coe_symm_toEquiv, Lτ_ω₁, mul_one,
+      Lτ_ω₂] using h
   rw [hbase, eisSummand, pairArrowEquiv_apply]
   simp only [Matrix.cons_val_zero, Matrix.cons_val_one]
   rw [zpow_neg, zpow_natCast, add_comm]
@@ -76,8 +77,8 @@ private lemma eisensteinSeries_eq_two_E (τ : ℍ) {k : ℕ} (hk : 3 ≤ k) :
 
 /-- `ζ(6) = π⁶/945`. -/
 private lemma riemannZeta_six : riemannZeta 6 = (π : ℂ) ^ 6 / 945 := by
-  have h := riemannZeta_two_mul_nat (k := 3) (by norm_num)
-  norm_num [show bernoulli 6 = 1 / 42 by as_aux_lemma => exact bernoulli_six_value] at h
+  have h := riemannZeta_two_mul_nat (k := 3) (by norm_num1)
+  norm_num only [show bernoulli 6 = 1 / 42 by as_aux_lemma => exact bernoulli_six_value] at h
   rw [h]; ring
 
 private lemma pi_C_ne_zero : (π : ℂ) ≠ 0 := by exact_mod_cast Real.pi_ne_zero
@@ -147,10 +148,11 @@ private lemma weierstrassSigma_add_period (L : PeriodPair) (ω : ℂ) (hωlat : 
   set S : Set ℂ := (↑L.lattice)ᶜ with hSdef
   have hSopen : IsOpen S := L.isClosed_lattice.isOpen_compl
   have hSconn : IsPreconnected S :=
-    ((countable_lattice L).isConnected_compl_of_one_lt_rank (by simp)).isPreconnected
+    ((countable_lattice L).isConnected_compl_of_one_lt_rank (by simp only [rank_real_complex,
+      Nat.one_lt_ofNat])).isPreconnected
   have hσdiff : Differentiable ℂ sig := L.differentiable_weierstrassSigma
   have hmem : ∀ {x : ℂ}, x ∉ L.lattice → x + ω ∉ L.lattice := by
-    intro x hx hc; exact hx (by simpa using sub_mem hc hωlat)
+    intro x hx hc; exact hx (by simpa only [add_sub_cancel_right] using sub_mem hc hωlat)
   have hσne : ∀ {x : ℂ}, x ∉ L.lattice → sig x ≠ 0 := by
     intro x hx; rw [hsig]; exact fun h => hx ((L.weierstrassSigma_eq_zero_iff x).mp h)
   set E : ℂ → ℂ := fun z => Complex.exp (μ * (z + ω / 2)) with hE
@@ -159,8 +161,8 @@ private lemma weierstrassSigma_add_period (L : PeriodPair) (ω : ℂ) (hωlat : 
   have hEderiv : ∀ z, HasDerivAt E (μ * E z) z := by
     intro z
     have hlin : HasDerivAt (fun z : ℂ => μ * (z + ω / 2)) μ z := by
-      simpa using ((hasDerivAt_id z).add_const (ω / 2)).const_mul μ
-    simpa [hE, mul_comm] using hlin.cexp
+      simpa only [id_eq, mul_one] using ((hasDerivAt_id z).add_const (ω / 2)).const_mul μ
+    simpa only [hE, mul_comm] using hlin.cexp
   have hf : ∀ z, HasDerivAt (fun z => sig (z + ω)) (deriv sig (z + ω)) z := by
     intro z
     have h := (hσdiff (z + ω)).hasDerivAt.comp z ((hasDerivAt_id z).add_const ω)
@@ -205,7 +207,7 @@ private lemma weierstrassSigma_add_period (L : PeriodPair) (ω : ℂ) (hωlat : 
   -- Hence `m = -1` on `S`.
   have hmconst : Set.EqOn m (fun _ => (-1 : ℂ)) S := by
     have hx0mem : -(ω / 2) ∈ S := by
-      change -(ω / 2) ∉ L.lattice; intro hc; exact hω2 (by simpa using neg_mem hc)
+      change -(ω / 2) ∉ L.lattice; intro hc; exact hω2 (by simpa only [neg_neg] using neg_mem hc)
     have hval0 : m (-(ω / 2)) = -1 := by
       have e1 : -(ω / 2) + ω = ω / 2 := by ring
       have hEval : E (-(ω / 2)) = 1 := by
@@ -216,7 +218,7 @@ private lemma weierstrassSigma_add_period (L : PeriodPair) (ω : ℂ) (hωlat : 
       rw [inv_neg, mul_neg, mul_inv_cancel₀ hsne]
     refine hSopen.eqOn_of_deriv_eq hSconn ?_ (differentiableOn_const _) ?_ hx0mem ?_
     · exact fun z hz => (hmderiv z hz).differentiableAt.differentiableWithinAt
-    · intro z hz; rw [(hmderiv z hz).deriv]; simp
+    · intro z hz; rw [(hmderiv z hz).deriv]; simp only [deriv_const']
     · simpa using hval0
   -- Turn the constancy into the pointwise relation on `S`, then extend by density.
   have hkey : Set.EqOn (fun z => sig (z + ω)) (fun z => -E z * sig z) S := by
@@ -228,13 +230,13 @@ private lemma weierstrassSigma_add_period (L : PeriodPair) (ω : ℂ) (hωlat : 
     change sig (z + ω) = -E z * sig z
     rw [this, hg]; ring
   have hcontf : Continuous (fun z => sig (z + ω)) :=
-    hσdiff.continuous.comp (by fun_prop)
+    hσdiff.continuous.comp SeparatelyContinuousAdd.continuous_add_const
   have hcontg : Continuous (fun z => -E z * sig z) := by
     have hcE : Continuous E := by simp only [hE]; fun_prop
     exact (hcE.neg).mul hσdiff.continuous
   have heq := Continuous.ext_on (dense_compl_lattice L) hcontf hcontg hkey
   have := congrFun heq z
-  simpa [hsig, hE] using this
+  simpa only [hsig, neg_mul, hE] using this
 
 /-- σ transformation law for `L_τ` in the `ω₁ = 1` direction:
 `σ(z+1) = -exp(η₁·(z+1/2))·σ(z)`. -/
@@ -310,7 +312,8 @@ private lemma qProd_ne_zero {q : ℂ} (hq : ‖q‖ < 1) {v : ℂ}
     refine tprod_one_add_ne_zero_of_summable (fun k => ?_) ?_
     · rw [show (1 : ℂ) + -(q ^ (k + 1) * v) = 1 - q ^ (k + 1) * v by ring, sub_ne_zero]
       exact fun h => hv k h.symm
-    · simpa [norm_neg] using summable_norm_iff.mpr (summable_qpow_mul hq v)
+    · simpa only [norm_neg, Complex.norm_mul,
+      norm_pow] using summable_norm_iff.mpr (summable_qpow_mul hq v)
   have hcongr : (∏' k : ℕ, (1 + -(q ^ (k + 1) * v))) = qProd q v := by
     simp only [qProd]; exact tprod_congr (fun k => by ring)
   rwa [hcongr] at key
@@ -326,7 +329,7 @@ private lemma differentiable_qProd {q : ℂ} (hq : ‖q‖ < 1) :
     apply hasProdLocallyUniformlyOn_of_forall_compact isOpen_univ
     intro K _ hcK
     rcases K.eq_empty_or_nonempty with hN | hN
-    · simpa [hasProdUniformlyOn_iff_tendstoUniformlyOn, hN] using tendstoUniformlyOn_empty
+    · simpa only [hN, hasProdUniformlyOn_iff_tendstoUniformlyOn] using tendstoUniformlyOn_empty
     · obtain ⟨v₀, _, _, HB⟩ := hcK.exists_sSup_image_eq_and_ge hN
         (show ContinuousOn (fun v : ℂ => ‖v‖) K by fun_prop)
       refine (((summable_nat_add_iff 1).mpr
@@ -336,7 +339,7 @@ private lemma differentiable_qProd {q : ℂ} (hq : ‖q‖ < 1) :
       rw [norm_neg, norm_mul, norm_pow]
       exact mul_le_mul_of_nonneg_left (HB x hx) (by positivity)
   have := hLU.hasProdLocallyUniformlyOn.differentiableOn
-    (.of_forall fun _ => by simpa [Finset.prod_fn] using
+    (.of_forall fun _ => by simpa only [Finset.prod_fn] using
       DifferentiableOn.finsetProd (fun i _ => by fun_prop)) isOpen_univ
   exact this
 
@@ -592,7 +595,7 @@ private lemma deriv_weierstrassSigma_zero (L : PeriodPair) : deriv L.weierstrass
     rw [← differentiableOn_univ]
     refine (L.hasProdLocallyUniformly_weierstrassSigmaTerm.hasProdLocallyUniformlyOn
       |>.differentiableOn) (.of_forall fun _ => ?_) isOpen_univ
-    simpa [Finset.prod_fn] using DifferentiableOn.finsetProd (fun i _ =>
+    simpa only [ne_eq, Finset.prod_fn] using DifferentiableOn.finsetProd (fun i _ =>
       (by unfold PeriodPair.weierstrassSigmaTerm; fun_prop :
         DifferentiableOn ℂ (fun z => PeriodPair.weierstrassSigmaTerm z (i.1 : ℂ)) _))
   have hP0 : (∏' l : {l : L.lattice // l ≠ 0},
@@ -617,15 +620,15 @@ private lemma gfun_hasDerivAt_zero (τ : ℍ) : HasDerivAt (gfun τ) 1 0 := by
   have h1 : HasDerivAt (fun z : ℂ => exp (2 * (π : ℂ) * I * z))
       (exp (2 * (π : ℂ) * I * 0) * (2 * (π : ℂ) * I)) 0 := by
     have hlin : HasDerivAt (fun z : ℂ => 2 * (π : ℂ) * I * z) (2 * (π : ℂ) * I) 0 := by
-      simpa using (hasDerivAt_id (0 : ℂ)).const_mul (2 * (π : ℂ) * I)
-    simpa [mul_comm] using hlin.cexp
+      simpa only [id_eq, mul_one] using (hasDerivAt_id (0 : ℂ)).const_mul (2 * (π : ℂ) * I)
+    simpa only [mul_comm, zero_mul, exp_zero, one_mul] using hlin.cexp
   have hA : HasDerivAt (fun z : ℂ => (exp (2 * (π : ℂ) * I * z) - 1) / (2 * (π : ℂ) * I)) 1 0 := by
     have := (h1.sub_const 1).div_const (2 * (π : ℂ) * I)
     rwa [mul_zero, Complex.exp_zero, one_mul, div_self h2pi] at this
   have hmul := hA.mul (differentiable_Gfun τ 0).hasDerivAt
   have hval : (1 : ℂ) * Gfun τ 0 + (exp (2 * (π : ℂ) * I * 0) - 1) / (2 * (π : ℂ) * I)
       * deriv (Gfun τ) 0 = 1 := by
-    rw [Gfun_zero]; simp
+    rw [Gfun_zero]; simp only [mul_one, mul_zero, exp_zero, sub_self, zero_div, zero_mul, add_zero]
   rw [hval] at hmul
   exact hmul
 
@@ -651,7 +654,7 @@ private lemma phi_order (τ : ℍ) (z : ℂ) :
     rfl
   rw [heq, meromorphicOrderAt_mul hexpan.meromorphicAt hσ, hexpan.meromorphicOrderAt_eq,
     hexpan.analyticOrderAt_eq_zero.mpr (Complex.exp_ne_zero _)]
-  simp
+  simp only [ENat.map_zero, CharP.cast_eq_zero, WithTop.coe_zero, zero_add]
 
 /-- `H := φ/g` is periodic under the lattice `L_τ`. -/
 private lemma hfun_add_lattice (τ : ℍ) (l : ℂ) (hl : l ∈ (Lτ τ).lattice) (z : ℂ) :
@@ -699,7 +702,8 @@ theorem weierstrassSigma_Lτ (τ : ℍ) (z : ℂ) :
   have hHord0 : meromorphicOrderAt H 0 = 0 := by
     rw [hH, meromorphicOrderAt_div (hφmero 0) (hgmero 0), phi_order τ 0,
       (Lτ τ).meromorphicOrderAt_weierstrassSigma 0 (Lτ τ).lattice.zero_mem, gfun_order_zero]
-    simp
+    simp only [LinearOrderedAddCommGroupWithTop.sub_self_eq_zero_iff_ne_top, ne_eq,
+      WithTop.one_ne_top, not_false_eq_true]
   have hHordAll : ∀ w, meromorphicOrderAt H w = 0 := by
     intro w
     by_cases hw : w ∈ (Lτ τ).lattice
@@ -707,7 +711,7 @@ theorem weierstrassSigma_Lτ (τ : ℍ) (z : ℂ) :
       have hcomp : (H ∘ fun x => x + w) = H := by
         funext x
         have := hfun_add_lattice τ w hw x
-        simpa [hH, Pi.div_apply] using this
+        simpa only [hH, Function.comp_apply, Pi.div_apply] using this
       have hg : AnalyticAt ℂ (fun x : ℂ => x + w) 0 := by fun_prop
       have hg' : deriv (fun x : ℂ => x + w) 0 ≠ 0 := by
         rw [deriv_add_const, deriv_id'']; exact one_ne_zero
@@ -726,7 +730,7 @@ theorem weierstrassSigma_Lτ (τ : ℍ) (z : ℂ) :
         have han : AnalyticAt ℂ (gfun τ) w := (differentiable_gfun τ).analyticAt w
         rw [han.meromorphicOrderAt_eq, han.analyticOrderAt_eq_zero.mpr (gfun_ne_zero τ hw)]
         rfl
-      rw [hσw, hgw]; simp
+      rw [hσw, hgw]; simp only [sub_zero]
   -- Apply the workhorse against the constant `1`.
   have hone : (Lτ τ).IsEllipticWith (fun _ : ℂ => (1 : ℂ)) :=
     ⟨fun w => analyticAt_const.meromorphicAt, fun w l => rfl⟩
@@ -739,7 +743,7 @@ theorem weierstrassSigma_Lτ (τ : ℍ) (z : ℂ) :
   -- Turn the codiscrete equality into `φ = c·g` everywhere.
   have hcodis' : {w : ℂ | H w = c} ∈ Filter.codiscrete ℂ := by
     have h : {w : ℂ | H w = (fun _ => c * (1 : ℂ)) w} ∈ Filter.codiscrete ℂ := hcodis
-    simpa using h
+    simpa only [mul_one] using h
   have hsub : {w : ℂ | H w = c} ⊆ {w : ℂ | φfun τ w = c * gfun τ w} := by
     intro w hw
     simp only [Set.mem_ofPred_eq, hH, Pi.div_apply] at hw ⊢
@@ -770,9 +774,10 @@ theorem weierstrassSigma_Lτ (τ : ℍ) (z : ℂ) :
     have hvlin : HasDerivAt (fun z : ℂ => -(Lτ τ).eta₁ / 2 * z ^ 2 + (π : ℂ) * I * z)
         ((π : ℂ) * I) 0 := by
       have h1 : HasDerivAt (fun z : ℂ => -(Lτ τ).eta₁ / 2 * z ^ 2) 0 0 := by
-        simpa using (hasDerivAt_pow 2 (0 : ℂ)).const_mul (-(Lτ τ).eta₁ / 2)
+        simpa only [Nat.cast_ofNat, Nat.add_one_sub_one, pow_one,
+          mul_zero] using (hasDerivAt_pow 2 (0 : ℂ)).const_mul (-(Lτ τ).eta₁ / 2)
       have h2 : HasDerivAt (fun z : ℂ => (π : ℂ) * I * z) ((π : ℂ) * I) 0 := by
-        simpa using (hasDerivAt_id (0 : ℂ)).const_mul ((π : ℂ) * I)
+        simpa only [id_eq, mul_one] using (hasDerivAt_id (0 : ℂ)).const_mul ((π : ℂ) * I)
       have h3 := h1.add h2
       rw [zero_add] at h3
       exact h3

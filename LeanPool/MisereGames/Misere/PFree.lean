@@ -309,7 +309,7 @@ theorem isPFree_add_one {g : GameForm} (h1 : IsPFree g) : IsPFree (g + 1) := by
                            leftMoves_one, rightMoves_one] at h2
     rwa [<-h2]
 termination_by g
-decreasing_by form_wf
+decreasing_by exact MisereGames.Moves.Subposition.of_mem_moves h3
 
 @[aesop safe apply]
 theorem isPFree_add_natCast {g : GameForm} (h1 : IsPFree g) (n : ℕ) : IsPFree (g + n) := by
@@ -415,7 +415,7 @@ private theorem not_winsGoingFirst_add_one_of_isPFree_not_winsGoingFirst_left {g
         simp_all)
       exact h3 h6
 termination_by g
-decreasing_by form_wf
+decreasing_by exact MisereGames.Moves.Subposition.of_mem_moves h2
 
 private theorem not_winsGoingFirst_add_one_of_isPFree_not_winsGoingFirst_right {g : GameForm}
     (h0 : IsPFree g) (h1 : WinsGoingFirst .right g) : WinsGoingFirst .right (g + 1) := by
@@ -426,7 +426,7 @@ private theorem not_winsGoingFirst_add_one_of_isPFree_not_winsGoingFirst_right {
     rw [Player.neg_right] at ⊢ h2
     exact not_winsGoingFirst_add_one_of_isPFree_not_winsGoingFirst_left (isPFree_ofMoves h0 h1) h2
 termination_by g
-decreasing_by form_wf
+decreasing_by exact MisereGames.Moves.Subposition.of_mem_moves h1
 
 end
 
@@ -473,7 +473,7 @@ private theorem not_winsGoingFirst_sub_one_of_not_winsGoingFirst_right {g : Game
         simp_all)
       exact h3 h6
 termination_by g
-decreasing_by form_wf
+decreasing_by exact MisereGames.Moves.Subposition.of_mem_moves h2
 
 private theorem not_winsGoingFirst_sub_one_of_not_winsGoingFirst_left {g : GameForm}
     (h0 : IsPFree g) (h1 : WinsGoingFirst .left g) : WinsGoingFirst .left (g + (-1)) := by
@@ -484,7 +484,7 @@ private theorem not_winsGoingFirst_sub_one_of_not_winsGoingFirst_left {g : GameF
     rw [Player.neg_left] at ⊢ h2
     exact not_winsGoingFirst_sub_one_of_not_winsGoingFirst_right (isPFree_of_mem_moves h0 h1) h2
 termination_by g
-decreasing_by form_wf
+decreasing_by exact MisereGames.Moves.Subposition.of_mem_moves h1
 
 end
 
@@ -573,7 +573,10 @@ theorem _root_.MisereGames.PFree.isStrongTest_left {g : GameForm} (hp : IsPFree 
         (misereOutcome_R_iff_winsGoingFirst.mp hR).2 hglrwin
       exact isStrongTest_left hglrp hglrR
 termination_by g
-decreasing_by form_wf
+decreasing_by
+  · exact MisereGames.Moves.Subposition.of_mem_moves hgl
+  · exact MisereGames.Moves.Subposition.trans (MisereGames.Moves.Subposition.of_mem_moves hglr)
+      (MisereGames.Moves.Subposition.of_mem_moves hgl)
 
 theorem _root_.MisereGames.PFree.isStrongTest_right {g : GameForm} (h_isPFree : IsPFree g)
     (h_outcome : MisereOutcome g ≠ .L) : IsStrongTest .right g := by

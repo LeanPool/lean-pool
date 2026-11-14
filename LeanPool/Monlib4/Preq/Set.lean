@@ -8,8 +8,6 @@ module
 public import Mathlib.GroupTheory.Subsemigroup.Center
 public import Mathlib.Algebra.Group.Prod
 
-import Mathlib.Tactic.Finiteness.Attr
-import Mathlib.Tactic.SetLike
 
 /-!
 # Set center lemmas

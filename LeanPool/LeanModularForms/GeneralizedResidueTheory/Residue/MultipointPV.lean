@@ -8,7 +8,6 @@ module
 public import LeanPool.LeanModularForms.GeneralizedResidueTheory.Residue
 import Mathlib.CategoryTheory.Category.Init
 import Mathlib.Combinatorics.Matroid.Init
-import Mathlib.MeasureTheory.Covering.Besicovitch
 import Mathlib.MeasureTheory.Integral.DominatedConvergence
 import Mathlib.Tactic.Positivity.Finset
 
@@ -121,7 +120,7 @@ private lemma measurableSet_multipoint_condition {γ : ℝ → ℂ} {a b ε : �
     ext t; simp only [Set.mem_inter_iff, Set.mem_ofPred_eq, Set.mem_sdiff, not_and]
     constructor
     · intro ⟨h_le, ht_Icc⟩; exact ⟨ht_Icc, fun h_gt => absurd h_gt (not_lt.mpr h_le)⟩
-    · intro ⟨ht_Icc, h_not⟩; simp_all
+    · intro ⟨ht_Icc, h_not⟩; simp_all only [mem_Icc, and_self, not_true_eq_false, imp_false, not_lt]
   rw [h_eq']; exact isClosed_Icc.measurableSet.diff h_compl_meas
 
 private lemma measurableSet_multipoint_goodset {γ : ℝ → ℂ} {a b ε : ℝ} (S : Finset ℂ)
@@ -223,7 +222,7 @@ private theorem
     isClosed_Icc.measurableSet] with t ht
   simp only [Set.piecewise, Set.mem_inter_iff,
     Set.mem_ofPred_eq, gt_iff_lt]
-  simp_all
+  simp_all only [mem_Icc, and_self, and_true]
 
 private lemma aEStronglyMeasurable_singularSum_on_goodset
     {γ : ℝ → ℂ} {a b ε : ℝ}
@@ -446,7 +445,7 @@ lemma intervalIntegrable_cauchyPrincipalValueIntegrandOn {S0 : Finset ℂ} {f : 
             · exact le_trans (hMf _ (Set.mem_image_of_mem _ ht)) (le_abs_self _)
             · exact le_trans (hMγ' t ht) (le_abs_self _)
             · exact norm_nonneg _
-            · positivity
+            · exact abs_nonneg Mf
         _ ≤ |Mf| * |Mγ'| + 1 := by linarith only []
   let M := |Mf| * |Mγ'| + 1
   have h_meas :

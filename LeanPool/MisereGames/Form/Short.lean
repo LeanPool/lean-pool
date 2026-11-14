@@ -94,7 +94,7 @@ theorem finite_setOf_subposition {x : G} (hx : IsShort x) : {y | Moves.Subpositi
   refine (finite_setOf_isOption hx).union <| (finite_setOf_isOption hx).biUnion fun y hy ↦ ?_
   exact finite_setOf_subposition (Short.isOption hx hy)
 termination_by x
-decreasing_by form_wf
+decreasing_by exact MisereGames.Moves.Subposition.of_isOption hy
 
 theorem _root_.Moves.short_iff_finite_setOf_subposition {x : G} :
     IsShort x ↔ {y | Moves.Subposition y x}.Finite := by
@@ -103,7 +103,7 @@ theorem _root_.Moves.short_iff_finite_setOf_subposition {x : G} :
   on_goal 2 => refine fun y hy ↦ short_iff_finite_setOf_subposition.2 <| h.subset fun z hz ↦ ?_
   all_goals form_wf
 termination_by x
-decreasing_by form_wf
+decreasing_by exact MisereGames.Moves.Subposition.of_mem_moves hy
 
 protected theorem add {x y : G} (hx : IsShort x) (hy : IsShort y) : IsShort (x + y) := by
   refine Short.mk fun p ↦ ⟨?_, ?_⟩
@@ -114,7 +114,9 @@ protected theorem add {x y : G} (hx : IsShort x) (hy : IsShort y) : IsShort (x +
     | inl h => obtain ⟨a, ha, rfl⟩ := h; exact Short.add (Short.of_mem_moves hx ha) hy
     | inr h => obtain ⟨b, hb, rfl⟩ := h; exact Short.add hx (Short.of_mem_moves hy hb)
 termination_by (x, y)
-decreasing_by form_wf
+decreasing_by
+  · exact Prod.Lex.left _ _ (MisereGames.Moves.Subposition.of_mem_moves (by assumption))
+  · exact Prod.Lex.right _ (MisereGames.Moves.Subposition.of_mem_moves (by assumption))
 
 protected theorem neg {x : G} (hx : IsShort x) : IsShort (-x) := by
   rw [short_def]; intro p; constructor
@@ -124,7 +126,7 @@ protected theorem neg {x : G} (hx : IsShort x) : IsShort (-x) := by
     have h_neg_y : -y ∈ moves (-p) x := by rwa [Set.mem_neg] at hy
     simpa using Short.neg (Short.of_mem_moves hx h_neg_y)
 termination_by x
-decreasing_by form_wf
+decreasing_by exact MisereGames.Moves.Subposition.of_mem_moves h_neg_y
 
 instance : ClosedUnderNeg (IsShort (G := G)) where
   neg_of := Short.neg
@@ -143,7 +145,9 @@ theorem short_iff_finite_setOf_subposition {x : G} :
 @[simp]
 protected theorem zero : IsShort (0 : G) := by
   rw [Form.short_def]
-  simp
+  simp only [
+    moves_zero, Set.finite_empty, Set.mem_empty_iff_false, IsEmpty.forall_iff, implies_true,
+    and_self]
 
 instance : HasZero IsShort (G := G) where
   has_zero := Short.zero
@@ -162,14 +166,17 @@ protected theorem ofSets {s t : Set G} [Small s] [Small t]
 protected theorem star : IsShort (!{{0} | {0}} : G) := by
   apply Short.ofSets
   · exact Set.finite_singleton 0
-  · simp_all
+  · simp_all only [Set.mem_singleton_iff, Short.zero, implies_true]
   · exact Set.finite_singleton 0
-  · simp_all
+  · simp_all only [Set.mem_singleton_iff, Short.zero, implies_true]
 
 @[simp]
 protected theorem one : IsShort (1 : G) := by
   rw [one_def, Form.short_def]
-  simp_all
+  simp_all only [
+    moves_ofSets, Player.cases, Player.forall, Set.finite_singleton, Set.mem_singleton_iff,
+    Short.zero, implies_true, and_self, Set.finite_empty, Set.mem_empty_iff_false,
+    IsEmpty.forall_iff]
 
 protected theorem sub {x y : GameForm} (hx : IsShort x) (hy : IsShort y) : IsShort (x - y) :=
   Short.add hx (Short.neg hy)
@@ -213,7 +220,7 @@ theorem short_iff_birthday_finite {g : GameForm} :
     apply (birthdayFinset n).finite_toSet.subset fun y hy ↦ ?_
     exact (mem_birthdayFinset (x := y) (n := n)).2 ((birthday_lt_of_subposition hy).le.trans_eq hn)
 termination_by g
-decreasing_by form_wf
+decreasing_by exact MisereGames.Moves.Subposition.of_isOption y.prop
 
 theorem short_iff_birthday_nat {x : GameForm} :
     IsShort x ↔ (∃ (n : ℕ), birthday x = n) := by

@@ -52,6 +52,19 @@ def test_import_order_ignores_comments_and_strings(repository: Path) -> None:
     assert documentation.external_modules(repository) == ["Init", "Lake", "Lean", "Std"]
 
 
+def test_render_builds_uncached_dependencies(repository: Path) -> None:
+    """Tau Ceti has no olean cache, so rendering must compile what it links to."""
+    (repository / "LeanPool" / "Z.lean").write_text(
+        "module\n"
+        "public import TauCeti.LinearAlgebra.Dual.Rank\n"
+        "import Mathlib.Logic.Basic\n"
+    )
+    assert documentation.compiled_dependencies(repository) == [
+        "Mathlib.Logic.Basic",
+        "TauCeti.LinearAlgebra.Dual.Rank",
+    ]
+
+
 @pytest.mark.parametrize(
     "error", [RuntimeError("failed"), subprocess.TimeoutExpired("lake", 1)]
 )

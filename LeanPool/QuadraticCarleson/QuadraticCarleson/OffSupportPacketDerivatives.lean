@@ -7,9 +7,6 @@ module
 
 
 public import LeanPool.QuadraticCarleson.QuadraticCarleson.WavePacket
-public import Mathlib.Analysis.Calculus.IteratedDeriv.Defs
-public import Mathlib.Analysis.Calculus.ContDiff.Deriv
-public import Mathlib.Analysis.Calculus.Deriv.Support
 
 /-!
 # All derivatives of the rescaled off-support packet
@@ -33,12 +30,12 @@ noncomputable def iteratedWavePacketDeriv (r : ℕ) (s t u : ℝ) : ℝ :=
 @[simp] theorem iteratedWavePacketDeriv_zero (s t : ℝ) :
     iteratedWavePacketDeriv 0 s t = wavePacket s t := by
   funext u
-  simp [iteratedWavePacketDeriv, wavePacket]
+  simp only [iteratedWavePacketDeriv, zero_add, pow_one, iteratedDeriv_zero, wavePacket]
 
 theorem smooth_iteratedDeriv_baseBump (r : ℕ) :
     ContDiff ℝ ∞ (iteratedDeriv r baseBump) := by
   induction r with
-  | zero => simpa using baseBump_smooth
+  | zero => exact baseBump_smooth
   | succ r ih =>
     rw [iteratedDeriv_succ]
     exact (contDiff_infty_iff_deriv.mp ih).2
@@ -62,15 +59,14 @@ theorem hasDerivAt_iteratedWavePacketDeriv (r : ℕ) (s : ℝ) {t : ℝ}
   have h := (hd.comp u (((hasDerivAt_id u).sub_const s).div_const t)).const_mul
     (t⁻¹ ^ (r + 1))
   apply h.congr_deriv
-  simp only [iteratedWavePacketDeriv, iteratedDeriv_succ, pow_succ,
-    div_eq_mul_inv, one_mul]
+  simp only [pow_succ, div_eq_mul_inv, one_mul, iteratedWavePacketDeriv, iteratedDeriv_succ]
   ring
 
 theorem iteratedWavePacketDeriv_eq_iteratedDeriv (r : ℕ) (s : ℝ) {t : ℝ}
     (ht : t ≠ 0) :
     iteratedWavePacketDeriv r s t = iteratedDeriv r (wavePacket s t) := by
   induction r with
-  | zero => simp
+  | zero => simp only [iteratedWavePacketDeriv_zero, iteratedDeriv_zero]
   | succ r ih =>
     rw [iteratedDeriv_succ, ← ih]
     funext u
@@ -80,8 +76,7 @@ theorem iteratedDeriv_baseBump_tsupport_subset (r : ℕ) :
     tsupport (iteratedDeriv r baseBump) ⊆ Icc (-1 / 4 : ℝ) (1 / 4 : ℝ) := by
   induction r with
   | zero =>
-    simpa only [iteratedDeriv_zero, tsupport] using
-      (closure_minimal baseBump_support isClosed_Icc)
+    exact (closure_minimal baseBump_support isClosed_Icc)
   | succ r ih =>
     rw [iteratedDeriv_succ]
     exact tsupport_deriv_subset.trans ih
@@ -92,13 +87,13 @@ theorem iteratedWavePacketDeriv_support (r : ℕ) {s t : ℝ} (ht : 0 < t) :
   have hbase : iteratedDeriv r baseBump ((u - s) / t) ≠ 0 := by
     intro hzero
     apply hu
-    simp [iteratedWavePacketDeriv, hzero]
+    simp only [iteratedWavePacketDeriv, inv_pow, hzero, mul_zero]
   have hmem := iteratedDeriv_baseBump_tsupport_subset r (subset_tsupport _ hbase)
   constructor
   · have hscaled := (le_div_iff₀ ht).mp hmem.1
-    linarith
+    linarith only [hscaled]
   · have hscaled := (div_le_iff₀ ht).mp hmem.2
-    linarith
+    linarith only [hscaled]
 
 theorem iteratedWavePacketDeriv_hasCompactSupport (r : ℕ) (s : ℝ) {t : ℝ}
     (ht : 0 < t) : HasCompactSupport (iteratedWavePacketDeriv r s t) :=
@@ -110,14 +105,14 @@ theorem iteratedWavePacketDeriv_left_third_eq_zero (r : ℕ) (s : ℝ) {t : ℝ}
   apply notMem_support.mp
   intro hmem
   have h := iteratedWavePacketDeriv_support r ht hmem
-  linarith [h.1]
+  linarith only [ht, h, h.1]
 
 theorem iteratedWavePacketDeriv_right_third_eq_zero (r : ℕ) (s : ℝ) {t : ℝ}
     (ht : 0 < t) : iteratedWavePacketDeriv r s t (s + t / 3) = 0 := by
   apply notMem_support.mp
   intro hmem
   have h := iteratedWavePacketDeriv_support r ht hmem
-  linarith [h.2]
+  linarith only [ht, h, h.2]
 
 theorem integrable_iteratedDeriv_baseBump (r : ℕ) :
     Integrable (iteratedDeriv r baseBump) := by

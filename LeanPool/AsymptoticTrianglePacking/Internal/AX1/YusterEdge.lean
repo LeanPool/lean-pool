@@ -27,8 +27,6 @@ Must be sorry-free and axiom-clean `[propext, Classical.choice, Quot.sound]`.
 public import LeanPool.AsymptoticTrianglePacking.Internal.Basic
 public import Mathlib.Analysis.RCLike.Basic
 public import Mathlib.Combinatorics.SimpleGraph.Clique
-public import Mathlib.Data.Finset.Powerset
-public import Mathlib.Analysis.Real.Sqrt
 import Mathlib.Tactic.Bound
 
 /-! # Edge-based triangle hypergraph -/

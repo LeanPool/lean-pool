@@ -12,7 +12,6 @@ public import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
 public import Mathlib.MeasureTheory.Group.Defs
 import Mathlib.MeasureTheory.Group.Action
 import Mathlib.RingTheory.Ideal.Norm.AbsNorm
-import Mathlib.Topology.UniformSpace.Uniformizable
 
 /-!
 # Auxiliary file: the linear Haar scaling law
@@ -391,7 +390,7 @@ theorem measure_integerBox_eq_pow_mul {n : ℕ} [MeasurableSpace (Fin n → K)]
   congr 1
   rw [← Nat.card_eq_fintype_card, hcardQ]
   push_cast
-  ring
+  ac_rfl
 
 /-! ## The scaling law on boxes and on balls -/
 

@@ -177,7 +177,7 @@ private theorem
     ContinuousAt (fun p : ℂ × (Fin 2 → ℝ) => inverseDisplacement C p.1 p.2) (t, y) := by
   have ht0 : t ≠ 0 := by
     rintro rfl
-    simp at ht
+    simp only [norm_zero, Real.log_zero, lt_self_iff_false] at ht
   exact
     inverseDisplacement_continuousAt_of_det_ne_zero C hC ht0 ht.ne
       (displacementMatrix_det_ne_zero C ht hR) y
@@ -207,7 +207,7 @@ private theorem ToricSpace.position_norm_le_on_chartNeighbourhood {ε : ℝ} (h�
   by_cases ht : time x = 0
   · have hp : position x = 0 := by
       ext i
-      simp [position, ht]
+      simp only [position, ht, norm_zero, Real.log_zero, div_zero, Pi.zero_apply]
     rw [hp, norm_zero]
     exact le_max_left _ _
   · obtain ⟨z, hz, rfl⟩ := hx
@@ -216,7 +216,7 @@ private theorem ToricSpace.position_norm_le_on_chartNeighbourhood {ε : ℝ} (h�
       exact (mem_openTorus_iff _).mpr ht
     have hS : (1 : ℝ) ≤ (n : ℝ) + 2 := by
       have hn := Nat.cast_nonneg (α := ℝ) n
-      linarith
+      linarith only [hε, hε1]
     exact
       (position_norm_bound s hzT hS hε hε1 hz.2 (fun j => (hz.1 j).le)).trans (le_max_right _ _)
 
@@ -244,21 +244,25 @@ private theorem ToricCharts.coordinateModulus_continuous {d : ℕ} :
 private theorem ToricCharts.coordinateModulus_idempotent {d : ℕ} (z : CoordinateSpace d) :
     coordinateModulus (coordinateModulus z) = coordinateModulus z := by
   funext i
-  simp [coordinateModulus]
+  simp only [coordinateModulus, Complex.norm_real, norm_norm]
 
 @[simp]
 private theorem ToricCharts.coordinateModulus_mem_domain_iff {d : ℕ} (A : Matrix (Fin d) (Fin d) ℤ)
-    (z : CoordinateSpace d) : coordinateModulus z ∈ domain A ↔ z ∈ domain A := by simp [domain]
+    (z : CoordinateSpace d) : coordinateModulus z ∈ domain A ↔ z ∈ domain A :=
+      by simp only [domain, ne_eq, mem_ofPred_eq, coordinateModulus_apply, Complex.ofReal_eq_zero,
+      norm_eq_zero]
 
 @[simp]
 private theorem ToricCharts.coordinateModulus_mem_torus_iff {d : ℕ} (z : CoordinateSpace d) :
-    coordinateModulus z ∈ torus ↔ z ∈ torus := by simp [torus]
+    coordinateModulus z ∈ torus ↔ z ∈ torus := by simp only [torus, ne_eq, mem_ofPred_eq,
+      coordinateModulus_apply, Complex.ofReal_eq_zero, norm_eq_zero]
 
 private theorem ToricCharts.monomial_coordinateModulus {d : ℕ} (A : Matrix (Fin d) (Fin d) ℤ)
     (z : CoordinateSpace d) :
     monomial A (coordinateModulus z) = coordinateModulus (monomial A z) := by
   funext i
-  simp [monomial, coordinateModulus, norm_prod, norm_zpow]
+  simp only [monomial, coordinateModulus, norm_prod, norm_zpow, Complex.ofReal_prod,
+    Complex.ofReal_zpow]
 
 private def ToricCharts.nonnegativeCoordinates {d : ℕ} : Set (CoordinateSpace d) :=
   {z | ∃ r : Fin d → ℝ, (∀ i, 0 ≤ r i) ∧ z = fun i => (r i : ℂ)}
@@ -304,7 +308,8 @@ private theorem ToricSpace.modulus_continuous : Continuous modulus := by
   obtain ⟨s, z, rfl⟩ := inclusion_jointly_surjective x
   apply
     ((parametrization s).continuousAt_iff_continuousAt_comp_right
-        (show ToricSpace.inclusion s z ∈ (parametrization s).target by simp)).mpr
+        (show ToricSpace.inclusion s z ∈ (parametrization s).target by simp only
+          [parametrization_target, mem_range, exists_apply_eq_apply])).mpr
   have h : modulus ∘ parametrization s = ToricSpace.inclusion s ∘ ToricCharts.coordinateModulus :=
     by
     funext w
@@ -322,7 +327,8 @@ private theorem ToricSpace.modulus_idempotent (x : Space) : modulus (modulus x) 
 @[simp]
 private theorem ToricSpace.time_modulus (x : Space) : time (modulus x) = (‖time x‖ : ℂ) := by
   obtain ⟨s, z, rfl⟩ := inclusion_jointly_surjective x
-  simp [ToricFan.Triangle.time]
+  simp only [modulus_inclusion, time_inclusion, ToricFan.Triangle.time, Fin.isValue,
+      ToricCharts.coordinateModulus_apply, Complex.norm_mul, Complex.ofReal_mul]
 
 private def ToricSpace.positivePart : Set Space :=
   {x | modulus x = x}
@@ -385,11 +391,11 @@ private def ToricSpace.compactTorusAction (u : CompactTorus) (x : Space) : Space
 
 @[simp]
 private theorem ToricSpace.compactTorusAction_one (x : Space) : compactTorusAction 1 x = x := by
-  simp [compactTorusAction]
+  simp only [compactTorusAction, map_one, torusAction_one]
 
 private theorem ToricSpace.compactTorusAction_mul (u v : CompactTorus) (x : Space) :
     compactTorusAction u (compactTorusAction v x) = compactTorusAction (u * v) x := by
-  simp [compactTorusAction, torusAction_mul]
+  simp only [compactTorusAction, torusAction_mul, map_mul]
 
 private instance ToricSpace.compactTorusMulAction : MulAction CompactTorus Space
     where
@@ -413,7 +419,9 @@ private instance ToricSpace.compactTorusContinuousSMul : ContinuousSMul CompactT
 @[simp]
 private theorem ToricSpace.norm_factors_compactTorusUnits (s : ToricFan.Triangle) (u : CompactTorus)
     (i : Fin 3) : ‖factors s (compactTorusUnits u) i‖ = 1 := by
-  simp [factors, ToricCharts.monomial, norm_prod, norm_zpow, Circle.norm_coe]
+  simp only [factors, ToricCharts.monomial, compactTorusUnits_apply, norm_prod, norm_zpow,
+    Circle.norm_coe,
+      one_zpow, Finset.prod_const_one]
 
 private theorem ToricSpace.coordinateModulus_scale_compactTorusUnits (s : ToricFan.Triangle)
     (u : CompactTorus) (z : ToricCharts.CoordinateSpace 3) :
@@ -427,12 +435,15 @@ private theorem ToricSpace.coordinateModulus_scale_compactTorusUnits (s : ToricF
 private theorem ToricSpace.modulus_compactTorusAction (u : CompactTorus) (x : Space) :
     modulus (compactTorusAction u x) = modulus x := by
   obtain ⟨s, z, rfl⟩ := inclusion_jointly_surjective x
-  simp [compactTorusAction, coordinateModulus_scale_compactTorusUnits]
+  simp only [compactTorusAction, torusAction_inclusion, modulus_inclusion,
+      coordinateModulus_scale_compactTorusUnits]
 
 @[simp]
 private theorem ToricSpace.norm_time_compactTorusAction (u : CompactTorus) (x : Space) :
     ‖time (compactTorusAction u x)‖ = ‖time x‖ := by
-  simp [compactTorusAction, time_torusAction, Circle.norm_coe]
+  simp only [compactTorusAction, time_torusAction, Fin.isValue, compactTorusUnits_apply,
+    Complex.norm_mul,
+      Circle.norm_coe, one_mul]
 
 private theorem ToricSpace.exists_unitNorm_scale_modulus (s : ToricFan.Triangle)
     (z : ToricCharts.CoordinateSpace 3) :
@@ -441,7 +452,7 @@ private theorem ToricSpace.exists_unitNorm_scale_modulus (s : ToricFan.Triangle)
   classical
   have hphase (c : ℂ) : ∃ w : ℂ, ‖w‖ = 1 ∧ w * (‖c‖ : ℂ) = c := by
     by_cases hc : c = 0
-    · exact ⟨1, NormOneClass.norm_one, by simp [hc]⟩
+    · exact ⟨1, NormOneClass.norm_one, by simp only [hc, norm_zero, Complex.ofReal_zero, mul_zero]⟩
     · refine ⟨c / (‖c‖ : ℂ), ?_, ?_⟩
       · rw [norm_div, Complex.norm_real, norm_norm, div_self (norm_ne_zero_iff.mpr hc)]
       · exact
@@ -616,14 +627,15 @@ private theorem ToricSpace.factors_shift_phaseShear (s : ToricFan.Triangle) (v :
   rw [ToricFan.Triangle.dual_shift, phaseShear_coe,
     ToricCharts.monomial_mul_on_torus _ _ (fun j => (u j).coe_ne_zero), Matrix.mul_assoc,
     ToricFan.Triangle.shear_add]
-  simp
+  simp only [neg_add_cancel, ToricFan.Triangle.shear_zero, mul_one]
 
 private theorem
     ToricSpace.translate_compactTorusAction (v : Fin 2 → ℤ) (u : CompactTorus) (x : Space) :
     ToricSpace.translate v (compactTorusAction u x) =
       compactTorusAction (phaseShear v u) (ToricSpace.translate v x) := by
   obtain ⟨s, z, rfl⟩ := inclusion_jointly_surjective x
-  simp [compactTorusAction, scale, factors_shift_phaseShear]
+  simp only [compactTorusAction, torusAction_inclusion, scale, translate_inclusion,
+    factors_shift_phaseShear]
 
 private abbrev CuspHoneycombTiling.Plane :=
   Fin 2 → ℝ
@@ -643,19 +655,19 @@ private theorem
 @[simp]
 private theorem CuspHoneycombTiling.latticePoint_zero : latticePoint 0 = 0 := by
   funext i
-  simp [latticePoint]
+  simp only [latticePoint, Pi.zero_apply, Int.cast_zero]
 
 @[simp]
 private theorem CuspHoneycombTiling.latticePoint_add (v w : CuspHoneycombTiling.Lattice) :
     latticePoint (v + w) = latticePoint v + latticePoint w := by
   funext i
-  simp [latticePoint]
+  simp only [latticePoint, Pi.add_apply, Int.cast_add]
 
 @[simp]
 private theorem CuspHoneycombTiling.latticePoint_neg (v : CuspHoneycombTiling.Lattice) :
     latticePoint (-v) = -latticePoint v := by
   funext i
-  simp [latticePoint]
+  simp only [latticePoint, Pi.neg_apply, Int.cast_neg]
 
 private def CuspHoneycombTiling.baseCell : Set Plane :=
   {x | |2 * x 0 + x 1| ≤ 1 ∧ |x 0 - x 1| ≤ 1 ∧ |x 0 + 2 * x 1| ≤ 1}
@@ -686,9 +698,11 @@ private theorem CuspHoneycombTiling.baseCell_coordinate_bound_sharp {x : Plane} 
   have h2' := abs_le.mp h2
   fin_cases i
   · change |x 0| ≤ (2 / 3 : ℝ)
-    exact abs_le.mpr ⟨by linarith [h0'.1, h1'.1], by linarith [h0'.2, h1'.2]⟩
+    exact abs_le.mpr ⟨by linarith only [h0', h1', h0'.1, h1'.1], by linarith only [h0', h1',
+      h0'.2, h1'.2]⟩
   · change |x 1| ≤ (2 / 3 : ℝ)
-    exact abs_le.mpr ⟨by linarith [h2'.1, h1'.2], by linarith [h2'.2, h1'.1]⟩
+    exact abs_le.mpr ⟨by linarith only [h1', h2', h2'.1, h1'.2], by linarith only [h1', h2',
+      h2'.2, h1'.1]⟩
 
 private theorem CuspHoneycombTiling.baseCell_coordinate_bound {x : Plane} (hx : x ∈ baseCell)
     (i : Fin 2) : |x i| ≤ 1 :=
@@ -785,9 +799,9 @@ private theorem CuspHoneycombTiling.cell_finite_inter_ball (x : Plane) :
   have hnear := abs_lt.mp hdist
   constructor
   · apply Int.ceil_le.mpr
-    linarith [hcoord.2, hnear.1]
+    linarith only [hcoord, hnear, hcoord.2, hnear.1]
   · apply Int.le_floor.mpr
-    linarith [hcoord.1, hnear.2]
+    linarith only [hcoord, hnear, hcoord.1, hnear.2]
 
 private theorem CuspHoneycombTiling.cell_locallyFinite : LocallyFinite cell := by
   intro x
@@ -940,7 +954,8 @@ private def ToricCharts.vanishingIndices (z : CoordinateSpace 3) : Finset (Fin 3
 
 @[simp]
 private theorem ToricCharts.mem_vanishingIndices (z : CoordinateSpace 3) (j : Fin 3) :
-    j ∈ vanishingIndices z ↔ z j = 0 := by classical simp [vanishingIndices]
+    j ∈ vanishingIndices z ↔ z j = 0 := by classical simp only [vanishingIndices,
+      Finset.mem_filter, Finset.mem_univ, true_and]
 
 private theorem ToricCharts.vanishingIndices_card (z : CoordinateSpace 3) :
     (vanishingIndices z).card = zeroCount z := by
@@ -967,7 +982,8 @@ private theorem ToricCharts.zeroCount_pos_iff (z : CoordinateSpace 3) :
 
 @[simp]
 private theorem ToricCharts.zeroCount_zero : zeroCount (0 : CoordinateSpace 3) = 3 := by
-  classical simp [zeroCount, Nat.card_eq_fintype_card]
+  classical simp only [zeroCount, Pi.zero_apply, Nat.card_eq_fintype_card,
+    Fintype.card_subtype_true, Fintype.card_fin]
 
 public
 theorem ToricCharts.equal_columns_of_left_inverse {A B : Matrix (Fin 3) (Fin 3) ℤ}
@@ -977,7 +993,8 @@ theorem ToricCharts.equal_columns_of_left_inverse {A B : Matrix (Fin 3) (Fin 3) 
     exact Finset.sum_congr rfl (fun i _ => congrArg (fun c => B j i * c) (hcol i))
   rw [hBA] at he
   by_contra hne
-  simp [hne] at he
+  simp only [Matrix.one_apply_eq, ne_eq, hne, not_false_eq_true, Matrix.one_apply_ne,
+    one_ne_zero] at he
 
 private theorem
     ToricCharts.zeroCount_le_monomial {A B : Matrix (Fin 3) (Fin 3) ℤ} (hA : HeightOne A)
@@ -1046,7 +1063,7 @@ private theorem ToricFan.Triangle.origin_mem_chartChange_source (s t : ToricFan.
       | apply ToricFan.Triangle.ext
         · omega
         · omega
-        · simp [hs, ht]
+        · simp only [hs, ht]
   · rintro rfl
     rw [chartChange_self_source]
     exact Set.mem_univ _
@@ -1083,7 +1100,9 @@ private theorem
     (s : ToricFan.Triangle) :
     twistedTranslate C v (ToricSpace.inclusion s 0) =
       ToricSpace.inclusion (s.shift (cuspVector v)) 0 := by
-  simp [twistedTranslate, translate_inclusion, variableMultiplier, scale]
+  simp only [twistedTranslate, variableMultiplier, translate_inclusion, time_inclusion,
+    torusAction_inclusion,
+      scale, mul_zero]
 
 @[simp]
 private theorem ToricSpace.branchCount_translate (v : Fin 2 → ℤ) (x : Space) :
@@ -1102,7 +1121,8 @@ private theorem ToricSpace.branchCount_torusAction (u : ActingTorus) (x : Space)
 private theorem
     ToricSpace.branchCount_twistedTranslate (C : ℂ → Matrix (Fin 2) (Fin 2) ℂ) (v : Fin 2 → ℤ)
     (x : Space) : branchCount (twistedTranslate C v x) = branchCount x := by
-  simp [twistedTranslate, variableMultiplier]
+  simp only [twistedTranslate, variableMultiplier, time_translate, branchCount_torusAction,
+      branchCount_translate]
 
 private def ToricFan.Triangle.vertex (s : ToricFan.Triangle) (j : Fin 3) : Fin 2 → ℤ := fun i =>
   s.rays i.castSucc j
@@ -1114,7 +1134,7 @@ private theorem ToricFan.Triangle.vertex_eq_iff (s t : ToricFan.Triangle) (j k :
     fin_cases i
     · exact congrFun h 0
     · exact congrFun h 1
-    · simp
+    · simp only [Fin.reduceFinMk, rays_height]
   · intro h
     funext i
     exact h i.castSucc
@@ -1182,7 +1202,7 @@ private theorem ToricFan.Triangle.chartBranches_mul (s : ToricFan.Triangle)
   unfold chartBranches
   congr 1
   ext j
-  simp [hu]
+  simp only [Pi.mul_apply, mul_eq_zero, hu, false_or, mem_ofPred_eq]
 
 private theorem ToricFan.Triangle.chartBranches_shift (s : ToricFan.Triangle) (v : Fin 2 → ℤ)
     (z : ToricCharts.CoordinateSpace 3) :
@@ -1779,15 +1799,15 @@ private theorem CuspHoneycombHexagon.sector_decomposition {x : Plane} (hx : x �
       exact funext (Fin.forall_fin_two.mpr ⟨rfl, rfl⟩)
     · by_cases hab : 0 ≤ x 0 + x 1
       · refine ⟨5, -x 1, x 0 + x 1, ?_, hab, ?_, ?_⟩
-        · linarith
-        · linarith
+        · linarith only [hb]
+        · linarith only [h0u]
         · rw [sector_formula_5]
           refine funext (Fin.forall_fin_two.mpr ⟨?_, ?_⟩) <;>
               simp only [Matrix.cons_val_zero, Matrix.cons_val_one] <;>
             ring
       · refine ⟨4, -(x 0 + x 1), x 0, ?_, ha, ?_, ?_⟩
-        · linarith
-        · linarith
+        · linarith only [hab]
+        · linarith only [h1l]
         · rw [sector_formula_4]
           refine funext (Fin.forall_fin_two.mpr ⟨?_, ?_⟩) <;>
             simp only [Matrix.cons_val_zero, Matrix.cons_val_one];
@@ -1795,23 +1815,23 @@ private theorem CuspHoneycombHexagon.sector_decomposition {x : Plane} (hx : x �
   · by_cases hb : 0 ≤ x 1
     · by_cases hab : 0 ≤ x 0 + x 1
       · refine ⟨1, x 0 + x 1, -x 0, hab, ?_, ?_, ?_⟩
-        · linarith
-        · linarith
+        · linarith only [ha]
+        · linarith only [h1u]
         · rw [sector_formula_1]
           refine funext (Fin.forall_fin_two.mpr ⟨?_, ?_⟩) <;>
               simp only [Matrix.cons_val_zero, Matrix.cons_val_one] <;>
             ring
       · refine ⟨2, x 1, -(x 0 + x 1), hb, ?_, ?_, ?_⟩
-        · linarith
-        · linarith
+        · linarith only [hab]
+        · linarith only [h0l]
         · rw [sector_formula_2]
           refine funext (Fin.forall_fin_two.mpr ⟨?_, ?_⟩) <;>
             simp only [Matrix.cons_val_zero, Matrix.cons_val_one];
           ring
     · refine ⟨3, -x 0, -x 1, ?_, ?_, ?_, ?_⟩
-      · linarith
-      · linarith
-      · linarith
+      · linarith only [ha]
+      · linarith only [hb]
+      · linarith only [h01l]
       · rw [sector_formula_3]
         refine funext (Fin.forall_fin_two.mpr ⟨?_, ?_⟩) <;>
             simp only [Matrix.cons_val_zero, Matrix.cons_val_one] <;>
@@ -2034,7 +2054,7 @@ private theorem CuspHoneycombHexagon.tile_zero_eq_two_iff (p q : Square) :
       simp only [Matrix.cons_val_zero, Matrix.cons_val_one] at hx hy
       refine ⟨⟨?_, ?_⟩, ⟨?_, ?_⟩⟩ <;> linarith only [hp, hq, hx, hy, hp0, hp1, hq0, hq1]
   · rintro ⟨rfl, rfl⟩
-    simp
+    simp only [Fin.isValue, tile_cornerOne]
 
 private theorem CuspHoneycombHexagon.tile_zero_eq_three_iff (p q : Square) :
     tile 0 p = tile 3 q ↔ p = cornerOne ∧ q = cornerOne := by
@@ -2058,7 +2078,7 @@ private theorem CuspHoneycombHexagon.tile_zero_eq_three_iff (p q : Square) :
       simp only [Matrix.cons_val_zero, Matrix.cons_val_one] at hx hy
       refine ⟨⟨?_, ?_⟩, ⟨?_, ?_⟩⟩ <;> linarith only [hp, hq, hx, hy, hp0, hp1, hq0, hq1]
   · rintro ⟨rfl, rfl⟩
-    simp
+    simp only [Fin.isValue, tile_cornerOne]
 
 private theorem CuspHoneycombHexagon.tile_zero_eq_four_iff (p q : Square) :
     tile 0 p = tile 4 q ↔ p = cornerOne ∧ q = cornerOne := by
@@ -2082,7 +2102,7 @@ private theorem CuspHoneycombHexagon.tile_zero_eq_four_iff (p q : Square) :
       simp only [Matrix.cons_val_zero, Matrix.cons_val_one] at hx hy
       refine ⟨⟨?_, ?_⟩, ⟨?_, ?_⟩⟩ <;> linarith only [hp, hq, hx, hy, hp0, hp1, hq0, hq1]
   · rintro ⟨rfl, rfl⟩
-    simp
+    simp only [Fin.isValue, tile_cornerOne]
 
 private theorem CuspHoneycombHexagon.tile_zero_injective : Function.Injective (tile 0) := by
   intro p q h
@@ -2108,7 +2128,7 @@ private theorem CuspHoneycombHexagon.tile_zero_injective : Function.Injective (t
 private theorem CuspHoneycombHexagon.rotate_iterate_tile (n : ℕ) (i : Fin 6) (p : Square) :
     (rotate : Plane → Plane)^[n] (tile i p) = tile (i + (n : Fin 6)) p := by
   induction n with
-  | zero => simp
+  | zero => simp only [iterate_zero, id_eq, Nat.cast_zero, Fin.isValue, add_zero]
   | succ n ih =>
     rw [Function.iterate_succ_apply', ih, rotate_tile]
     congr 1
@@ -2212,7 +2232,7 @@ private theorem
           constructor <;> linarith⟩
     have hp : p.1 1 ≤ p.1 0 := by
       change 1 - α - β ≤ 1 - α + β
-      linarith
+      linarith only [hβ]
     refine ⟨i, p, ?_⟩
     rw [tile_sector_of_ge i p hp]
     ext k
@@ -2229,7 +2249,7 @@ private theorem
           constructor <;> linarith⟩
     have hp : p.1 0 ≤ p.1 1 := by
       change 1 - α - β ≤ 1 + α - β
-      linarith
+      linarith only [hα]
     refine ⟨i + 1, p, ?_⟩
     rw [tile_sector_of_le (i + 1) p hp, add_sub_cancel_right]
     ext k
@@ -2375,7 +2395,7 @@ private theorem CuspHoneycombHexagon.sideFunctional_rotate (k : Fin 6) (x : Plan
 private theorem CuspHoneycombHexagon.sideFunctional_iterate (n : ℕ) (k : Fin 6) (x : Plane) :
     sideFunctional (k + (n : Fin 6)) ((rotate : Plane → Plane)^[n] x) = sideFunctional k x := by
   induction n with
-  | zero => simp
+  | zero => simp only [Nat.cast_zero, Fin.isValue, add_zero, iterate_zero, id_eq]
   | succ n ih =>
     rw [Nat.cast_succ, ← add_assoc, Function.iterate_succ_apply', sideFunctional_rotate, ih]
 
@@ -2639,7 +2659,8 @@ private theorem CuspHoneycombHexagon.sideIntervalHomeomorph_apply (k : Fin 6) (t
   exact segmentIntervalHomeomorph_apply _ _ _ _
 
 private theorem CuspHoneycombHexagon.sideIntervalHomeomorph_one (k : Fin 6) :
-    (sideIntervalHomeomorph k 1 : Plane) = vertex k := by simp
+    (sideIntervalHomeomorph k 1 : Plane) = vertex k := by simp only [sideIntervalHomeomorph_apply,
+      Icc.coe_one, sub_self, Fin.isValue, zero_smul, one_smul, zero_add]
 
 private theorem CuspHoneycombHexagon.eq_vertex_of_consecutive_sideFunctional (k : Fin 6) (x : Plane)
     (h0 : sideFunctional k x = 1) (h1 : sideFunctional (k + 1) x = 1) : x = vertex k := by
@@ -2707,7 +2728,7 @@ private theorem CuspHoneycombHexagon.side_disjoint_nonadjacent {i j : Fin 6} (hi
     (hnext : j ≠ i + 1) (hprev : i ≠ j + 1) : Disjoint (side i) (side j) := by
   obtain ⟨k, rfl⟩ : ∃ k : Fin 6, j = i + k := ⟨j - i, by rw [add_comm i (j - i), sub_add_cancel]⟩
   fin_cases k
-  · exact (hij (by change i = i + 0; simp)).elim
+  · exact (hij (by change i = i + 0; simp only [Fin.isValue, add_zero])).elim
   · exact (hnext rfl).elim
   · change Disjoint (side i) (side (i + 2))
     exact side_disjoint_add_two i
@@ -2946,7 +2967,7 @@ private theorem
       apply Finset.prod_congr rfl
       intro k _
       split_ifs <;> simp
-    _ = a ^ A i j := by simp
+    _ = a ^ A i j := by simp only [Finset.prod_ite_eq', Finset.mem_univ, ↓reduceIte]
 
 private theorem ToricSpace.factors_rayCompactPhase_vertex (s : ToricFan.Triangle) (j : Fin 3)
     (a : Circle) :
@@ -2995,8 +3016,10 @@ private theorem CuspHoneycombHexagon.coordinateModulus_insertZero (j : Fin 3)
       ToricComponent.insertZero j (ToricCharts.coordinateModulus z) := by
   funext k
   obtain rfl | ⟨i, rfl⟩ := Fin.eq_self_or_eq_succAbove j k
-  · simp [ToricCharts.coordinateModulus]
-  · simp [ToricCharts.coordinateModulus, ToricComponent.insertZero, Fin.insertNth_apply_succAbove]
+  · simp only [ToricCharts.coordinateModulus, ToricComponent.insertZero_at, norm_zero,
+    Complex.ofReal_zero]
+  · simp only [ToricCharts.coordinateModulus, ToricComponent.insertZero,
+    Fin.insertNth_apply_succAbove]
 
 private theorem CuspHoneycombHexagon.affineInclusion_mem_positive_iff {v : Fin 2 → ℤ}
     (c : ToricComponent.ChartIndex v) (z : ToricCharts.CoordinateSpace 2) :
@@ -3033,8 +3056,10 @@ private theorem CuspHoneycombHexagon.twistedTranslate_zero_correction (v : Fin 2
   have he : ToricSpace.exponentialMultiplier (fun _ => 0) v = fun _ => 1 := by
     funext t
     ext i
-    simp [ToricSpace.exponentialMultiplier]
-  simp [ToricSpace.twistedTranslate, he]
+    simp only [ToricSpace.exponentialMultiplier, Matrix.zero_mulVec, Pi.zero_apply, mul_zero,
+      Complex.exp_zero,
+        Units.mk0_one, Units.val_one, Pi.one_apply]
+  simp only [ToricSpace.twistedTranslate, he, ToricSpace.variableMultiplier_one]
 
 private theorem CuspHoneycombHexagon.zeroComponent_bounded_chart (x : ToricSpace.rayDivisor 0) :
     ∃ (i : Fin 6) (z : ToricCharts.CoordinateSpace 2),
@@ -3069,7 +3094,7 @@ private theorem CuspHoneycombHexagon.zeroComponent_bounded_chart (x : ToricSpace
   have hx :
     ToricSpace.inclusion (s.shift (-ToricSpace.cuspVector g.toAdd)) z = (x : ToricSpace.Space) := by
     rw [← ToricSpace.translate_inclusion, hzb, ← hgb, ToricSpace.translate_add]
-    simp
+    simp only [neg_add_cancel, ToricSpace.translate_zero]
   obtain ⟨j, hj, hv⟩ := (ToricSpace.mem_rayDivisor_inclusion 0 _ z).mp (hx.symm ▸ x.2)
   let c : ToricComponent.ChartIndex 0 := ⟨s.shift (-ToricSpace.cuspVector g.toAdd), j, hv⟩
   obtain ⟨i, hi⟩ := ToricComponent.zeroChart_surjective c

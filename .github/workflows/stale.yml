@@ -2,29 +2,47 @@ name: Stale
 
 on:
   schedule:
-    - cron: '0 8 * * *'
+    - cron: '0 */6 * * *'
   workflow_dispatch:
 
 permissions:
   issues: write
   pull-requests: write
 
+concurrency:
+  group: stale
+  cancel-in-progress: false
+
 jobs:
-  stale:
+  stale-pull-requests:
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
     runs-on: ubuntu-latest
+    name: Label PRs stale at 7 days, close at 21 days
     steps:
-      - name: Mark and close stale issues and PRs
-        uses: actions/stale@b5d41d4e1d5dceea10e7104786b73624c18a190f
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
-          days-before-pr-stale: 30
-          days-before-pr-close: 14
+          persist-credentials: false
+      - name: Apply the age-based PR policy
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+        run: PYTHONPATH=python python3 -m lean_pool.stale_pull_requests --repository "$REPOSITORY"
+
+  stale-issues:
+    runs-on: ubuntu-latest
+    name: Mark and close inactive issues
+    steps:
+      - uses: actions/stale@b5d41d4e1d5dceea10e7104786b73624c18a190f
+        with:
+          days-before-pr-stale: -1
+          days-before-pr-close: -1
+          remove-pr-stale-when-updated: false
           days-before-issue-stale: 90
           days-before-issue-close: 30
-          stale-pr-label: stale
           stale-issue-label: stale
-          exempt-pr-labels: pinned,roadmap,good-first-issue
           exempt-issue-labels: pinned,roadmap,good-first-issue
-          stale-pr-message: This PR has been inactive for 30 days and is marked stale.
-          close-pr-message: Closing this PR after another 14 days of inactivity.
           stale-issue-message: This issue has been inactive for 90 days and is marked stale.
           close-issue-message: Closing this issue after another 30 days of inactivity.

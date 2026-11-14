@@ -135,8 +135,8 @@ def sqSE (c : Plane) (r : ℝ) : Plane := mk (c 0 + r) (c 1 - r)
 `a + r`, in either order. Stated through `uIcc` so that the two orders are one lemma. -/
 theorem mem_segment_abs {a r x : ℝ} (hr : 0 ≤ r) :
     x ∈ segment ℝ (a - r) (a + r) ↔ |x - a| ≤ r := by
-  rw [segment_eq_Icc (by linarith), mem_Icc, abs_le]
-  constructor <;> intro h <;> exact ⟨by linarith [h.1], by linarith [h.2]⟩
+  rw [segment_eq_Icc (by linarith only [hr]), mem_Icc, abs_le]
+  constructor <;> intro h <;> exact ⟨by linarith only [h.left], by linarith only [h.right]⟩
 
 theorem mem_segment_abs' {a r x : ℝ} (hr : 0 ≤ r) :
     x ∈ segment ℝ (a + r) (a - r) ↔ |x - a| ≤ r := by
@@ -175,11 +175,11 @@ theorem mem_frontier_closedSquare_iff_sides (hr : 0 ≤ r) :
     have h1 : |z 1 - c 1| ≤ r := h ▸ le_max_right _ _
     rcases max_choice |z 0 - c 0| |z 1 - c 1| with hm | hm
     · rcases (abs_eq hr).1 (hm ▸ h) with h' | h'
-      · exact Or.inr (Or.inr (Or.inr ⟨by linarith, h1⟩))
-      · exact Or.inr (Or.inl ⟨by linarith, h1⟩)
+      · exact Or.inr (Or.inr (Or.inr ⟨by linarith only [h'], h1⟩))
+      · exact Or.inr (Or.inl ⟨by linarith only [h'], h1⟩)
     · rcases (abs_eq hr).1 (hm ▸ h) with h' | h'
-      · exact Or.inl ⟨by linarith, h0⟩
-      · exact Or.inr (Or.inr (Or.inl ⟨by linarith, h0⟩))
+      · exact Or.inl ⟨by linarith only [h'], h0⟩
+      · exact Or.inr (Or.inr (Or.inl ⟨by linarith only [h'], h0⟩))
   · rintro (⟨h1, h0⟩ | ⟨h0, h1⟩ | ⟨h1, h0⟩ | ⟨h0, h1⟩)
     · have hz : |z 1 - c 1| = r := by rw [h1, add_sub_cancel_left, abs_of_nonneg hr]
       rw [hz, max_eq_right h0]
@@ -434,7 +434,7 @@ theorem beyondSquare_subset_compl_closedSquare (c : Plane) (r : ℝ) :
   have hmem' : supDist x c ≤ r := hmem
   -- The triangle inequality against the centre, with `supDist · 0 = supNorm ·`.
   have h1 : supNorm x ≤ supDist x c + supNorm c := by simpa using supDist_triangle x c 0
-  exact hx' (by linarith)
+  exact hx' (by linarith only [hmem, hmem', h1])
 
 theorem not_isBounded_compl_closedSquare (c : Plane) (r : ℝ) :
     ¬ Bornology.IsBounded (closedSquare c r)ᶜ := fun h =>
@@ -462,7 +462,8 @@ theorem compl_closedSquare_eq_image (c : Plane) (r : ℝ) :
 theorem isConnected_compl_closedSquare (c : Plane) (r : ℝ) :
     IsConnected (closedSquare c r)ᶜ := by
   rw [compl_closedSquare_eq_image]
-  exact (isConnected_beyondSquare r).image _ (by fun_prop)
+  exact (isConnected_beyondSquare r).image _
+    (ContinuousOn.add_const (continuousOn_id' (beyondSquare r)) c)
 
 /-- The complement of the boundary is the open square together with the outside. -/
 theorem compl_frontier_closedSquare (c : Plane) (r : ℝ) :
@@ -601,10 +602,10 @@ theorem squarePieces_nondeg (c : Plane) (hr : 0 < r) :
   intro P hP
   simp only [squarePieces, List.mem_cons, List.not_mem_nil, or_false] at hP
   rcases hP with rfl | rfl | rfl | rfl
-  · exact hfst _ _ (by simp; linarith)
-  · exact hsnd _ _ (by simp; linarith)
-  · exact hfst _ _ (by simp; linarith)
-  · exact hsnd _ _ (by simp; linarith)
+  · exact hfst _ _ (by simp; linarith only [hr, hfst])
+  · exact hsnd _ _ (by simp; linarith only [hr])
+  · exact hfst _ _ (by simp; linarith only [hr, hfst])
+  · exact hsnd _ _ (by simp; linarith only [hr, hfst])
 
 /-! ### A vertical side crosses a horizontal side in one point -/
 
@@ -663,64 +664,72 @@ theorem exists_two_meets {c₁ c₂ : Plane} {r : ℝ} (hr : 0 < r)
   · -- `c₂` is to the north-east: the right side of `S₁` meets the bottom side of `S₂`, and the
     -- top side of `S₁` meets the left side of `S₂`.
     refine ⟨Plane.mk (c₁ 0 + r) (c₂ 1 - r), Plane.mk (c₂ 0 - r) (c₁ 1 + r),
-      hfst _ _ _ _ (by intro h; linarith), ?_, ?_⟩
+      hfst _ _ _ _ (by intro h; linarith only [h, ha₁, hr]), ?_, ?_⟩
     · refine ⟨(Plane.mk (c₁ 0 + r) (c₁ 1 - r), Plane.mk (c₁ 0 + r) (c₁ 1 + r)), by
         simp [squarePieces, Plane.sqNE, Plane.sqNW, Plane.sqSW, Plane.sqSE],
         (Plane.mk (c₂ 0 - r) (c₂ 1 - r), Plane.mk (c₂ 0 + r) (c₂ 1 - r)), by
         simp [squarePieces, Plane.sqNE, Plane.sqNW, Plane.sqSW, Plane.sqSE], ?_⟩
-      exact meetOf_vert_horiz (mem_segment_of_bounds (Or.inl ⟨by linarith, by linarith⟩))
-        (mem_segment_of_bounds (Or.inl ⟨by linarith, by linarith⟩))
+      exact meetOf_vert_horiz (mem_segment_of_bounds (Or.inl ⟨by linarith, by linarith only [hb₁,
+        hr]⟩))
+        (mem_segment_of_bounds (Or.inl ⟨by linarith only [hr, ha₁], by linarith only [hA]⟩))
     · refine ⟨(Plane.mk (c₁ 0 + r) (c₁ 1 + r), Plane.mk (c₁ 0 - r) (c₁ 1 + r)), by
         simp [squarePieces, Plane.sqNE, Plane.sqNW, Plane.sqSW, Plane.sqSE],
         (Plane.mk (c₂ 0 - r) (c₂ 1 + r), Plane.mk (c₂ 0 - r) (c₂ 1 - r)), by
         simp [squarePieces, Plane.sqNE, Plane.sqNW, Plane.sqSW, Plane.sqSE], ?_⟩
-      exact meetOf_horiz_vert (mem_segment_of_bounds (Or.inr ⟨by linarith, by linarith⟩))
-        (mem_segment_of_bounds (Or.inr ⟨by linarith, by linarith⟩))
+      exact meetOf_horiz_vert (mem_segment_of_bounds (Or.inr ⟨by linarith only [hA],
+        by linarith only [ha₁, hr]⟩))
+        (mem_segment_of_bounds (Or.inr ⟨by linarith only [ha₁, ha₂, hb₁], by linarith only [hB]⟩))
   · -- `c₂` is to the south-east.
     refine ⟨Plane.mk (c₁ 0 + r) (c₂ 1 + r), Plane.mk (c₂ 0 - r) (c₁ 1 - r),
-      hfst _ _ _ _ (by intro h; linarith), ?_, ?_⟩
+      hfst _ _ _ _ (by intro h; linarith only [hr, ha₁, h]), ?_, ?_⟩
     · refine ⟨(Plane.mk (c₁ 0 + r) (c₁ 1 - r), Plane.mk (c₁ 0 + r) (c₁ 1 + r)), by
         simp [squarePieces, Plane.sqNE, Plane.sqNW, Plane.sqSW, Plane.sqSE],
         (Plane.mk (c₂ 0 + r) (c₂ 1 + r), Plane.mk (c₂ 0 - r) (c₂ 1 + r)), by
         simp [squarePieces, Plane.sqNE, Plane.sqNW, Plane.sqSW, Plane.sqSE], ?_⟩
-      exact meetOf_vert_horiz (mem_segment_of_bounds (Or.inl ⟨by linarith, by linarith⟩))
-        (mem_segment_of_bounds (Or.inr ⟨by linarith, by linarith⟩))
+      exact meetOf_vert_horiz (mem_segment_of_bounds (Or.inl ⟨by linarith only [hb₂, hr],
+        by linarith only [hB]⟩))
+        (mem_segment_of_bounds (Or.inr ⟨by linarith only [hr, ha₁], by linarith only [hA]⟩))
     · refine ⟨(Plane.mk (c₁ 0 - r) (c₁ 1 - r), Plane.mk (c₁ 0 + r) (c₁ 1 - r)), by
         simp [squarePieces, Plane.sqNE, Plane.sqNW, Plane.sqSW, Plane.sqSE],
         (Plane.mk (c₂ 0 - r) (c₂ 1 + r), Plane.mk (c₂ 0 - r) (c₂ 1 - r)), by
         simp [squarePieces, Plane.sqNE, Plane.sqNW, Plane.sqSW, Plane.sqSE], ?_⟩
-      exact meetOf_horiz_vert (mem_segment_of_bounds (Or.inl ⟨by linarith, by linarith⟩))
-        (mem_segment_of_bounds (Or.inr ⟨by linarith, by linarith⟩))
+      exact meetOf_horiz_vert (mem_segment_of_bounds (Or.inl ⟨by linarith only [hA],
+        by linarith only [ha₁, hr]⟩))
+        (mem_segment_of_bounds (Or.inr ⟨by linarith only [hB], by linarith only [hb₂, hB]⟩))
   · -- `c₂` is to the north-west.
     refine ⟨Plane.mk (c₁ 0 - r) (c₂ 1 - r), Plane.mk (c₂ 0 + r) (c₁ 1 + r),
-      hfst _ _ _ _ (by intro h; linarith), ?_, ?_⟩
+      hfst _ _ _ _ (by intro h; linarith only [ha₁, ha₂, h]), ?_, ?_⟩
     · refine ⟨(Plane.mk (c₁ 0 - r) (c₁ 1 + r), Plane.mk (c₁ 0 - r) (c₁ 1 - r)), by
         simp [squarePieces, Plane.sqNE, Plane.sqNW, Plane.sqSW, Plane.sqSE],
         (Plane.mk (c₂ 0 - r) (c₂ 1 - r), Plane.mk (c₂ 0 + r) (c₂ 1 - r)), by
         simp [squarePieces, Plane.sqNE, Plane.sqNW, Plane.sqSW, Plane.sqSE], ?_⟩
-      exact meetOf_vert_horiz (mem_segment_of_bounds (Or.inr ⟨by linarith, by linarith⟩))
-        (mem_segment_of_bounds (Or.inl ⟨by linarith, by linarith⟩))
+      exact meetOf_vert_horiz (mem_segment_of_bounds (Or.inr ⟨by linarith only [hB],
+        by linarith only [hb₁, hr]⟩))
+        (mem_segment_of_bounds (Or.inl ⟨by linarith only [hA], by linarith only [ha₁, ha₂]⟩))
     · refine ⟨(Plane.mk (c₁ 0 + r) (c₁ 1 + r), Plane.mk (c₁ 0 - r) (c₁ 1 + r)), by
         simp [squarePieces, Plane.sqNE, Plane.sqNW, Plane.sqSW, Plane.sqSE],
         (Plane.mk (c₂ 0 + r) (c₂ 1 - r), Plane.mk (c₂ 0 + r) (c₂ 1 + r)), by
         simp [squarePieces, Plane.sqNE, Plane.sqNW, Plane.sqSW, Plane.sqSE], ?_⟩
-      exact meetOf_horiz_vert (mem_segment_of_bounds (Or.inr ⟨by linarith, by linarith⟩))
-        (mem_segment_of_bounds (Or.inl ⟨by linarith, by linarith⟩))
+      exact meetOf_horiz_vert (mem_segment_of_bounds (Or.inr ⟨by linarith only [ha₂, hr],
+        by linarith only [hA]⟩))
+        (mem_segment_of_bounds (Or.inl ⟨by linarith only [ha₁, ha₂, hb₁], by linarith only [hB]⟩))
   · -- `c₂` is to the south-west.
     refine ⟨Plane.mk (c₁ 0 - r) (c₂ 1 + r), Plane.mk (c₂ 0 + r) (c₁ 1 - r),
-      hfst _ _ _ _ (by intro h; linarith), ?_, ?_⟩
+      hfst _ _ _ _ (by intro h; linarith only [ha₁, ha₂, h]), ?_, ?_⟩
     · refine ⟨(Plane.mk (c₁ 0 - r) (c₁ 1 + r), Plane.mk (c₁ 0 - r) (c₁ 1 - r)), by
         simp [squarePieces, Plane.sqNE, Plane.sqNW, Plane.sqSW, Plane.sqSE],
         (Plane.mk (c₂ 0 + r) (c₂ 1 + r), Plane.mk (c₂ 0 - r) (c₂ 1 + r)), by
         simp [squarePieces, Plane.sqNE, Plane.sqNW, Plane.sqSW, Plane.sqSE], ?_⟩
-      exact meetOf_vert_horiz (mem_segment_of_bounds (Or.inr ⟨by linarith, by linarith⟩))
-        (mem_segment_of_bounds (Or.inr ⟨by linarith, by linarith⟩))
+      exact meetOf_vert_horiz (mem_segment_of_bounds (Or.inr ⟨by linarith only [hb₂, hr],
+        by linarith only [hB]⟩))
+        (mem_segment_of_bounds (Or.inr ⟨by linarith only [hA], by linarith only [ha₁, ha₂]⟩))
     · refine ⟨(Plane.mk (c₁ 0 - r) (c₁ 1 - r), Plane.mk (c₁ 0 + r) (c₁ 1 - r)), by
         simp [squarePieces, Plane.sqNE, Plane.sqNW, Plane.sqSW, Plane.sqSE],
         (Plane.mk (c₂ 0 + r) (c₂ 1 - r), Plane.mk (c₂ 0 + r) (c₂ 1 + r)), by
         simp [squarePieces, Plane.sqNE, Plane.sqNW, Plane.sqSW, Plane.sqSE], ?_⟩
-      exact meetOf_horiz_vert (mem_segment_of_bounds (Or.inl ⟨by linarith, by linarith⟩))
-        (mem_segment_of_bounds (Or.inl ⟨by linarith, by linarith⟩))
+      exact meetOf_horiz_vert (mem_segment_of_bounds (Or.inl ⟨by linarith only [ha₂, hr],
+        by linarith only [hA]⟩))
+        (mem_segment_of_bounds (Or.inl ⟨by linarith only [hB], by linarith only [hb₂, hB]⟩))
 
 /-! ### From a meeting point to a vertex of the overlay
 
@@ -905,19 +914,12 @@ theorem sample_last {n : ℕ} (hn : 0 < n) : sample n n = 1 := by
 theorem sample_nonneg (n i : ℕ) : 0 ≤ sample n i :=
   div_nonneg (Nat.cast_nonneg i) (Nat.cast_nonneg n)
 
-theorem sample_mono {n i j : ℕ} (h : i ≤ j) : sample n i ≤ sample n j := by
-  have hij : (i : ℝ) ≤ j := by exact_mod_cast h
-  have key : sample n j - sample n i = ((j : ℝ) - i) / n := by simp only [sample]; ring
-  have hpos : 0 ≤ ((j : ℝ) - i) / n := div_nonneg (by linarith) (Nat.cast_nonneg n)
-  linarith [key, hpos]
+theorem sample_mono {n i j : ℕ} (h : i ≤ j) : sample n i ≤ sample n j :=
+  div_le_div_of_nonneg_right (by exact_mod_cast h) (Nat.cast_nonneg n)
 
 theorem sample_strictMono {n i j : ℕ} (hn : 0 < n) (h : i < j) :
-    sample n i < sample n j := by
-  have hnR : (0 : ℝ) < n := by exact_mod_cast hn
-  have hij : (i : ℝ) < j := by exact_mod_cast h
-  have key : sample n j - sample n i = ((j : ℝ) - i) / n := by simp only [sample]; ring
-  have hpos : 0 < ((j : ℝ) - i) / n := div_pos (by linarith) hnR
-  linarith [key, hpos]
+    sample n i < sample n j :=
+  div_lt_div_of_pos_right (by exact_mod_cast h) (by exact_mod_cast hn)
 
 theorem sample_le_one {n i : ℕ} (h : i ≤ n) : sample n i ≤ 1 := by
   rcases Nat.eq_zero_or_pos n with rfl | hn

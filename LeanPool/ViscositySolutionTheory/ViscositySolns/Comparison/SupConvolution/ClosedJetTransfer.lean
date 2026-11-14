@@ -149,7 +149,7 @@ theorem supConvolutionTransferValue_eq_of_mem_closure_superjetGraph_of_isCompact
         (z := supConvolutionTransferGraphPoint (n := n) lambda
           ((η, compactSupConvolution lambda K v η), J))
         hKcompact.isClosed hv hclosure
-    simpa [supConvolutionTransferGraphPoint, y, r] using h
+    exact h
   rcases hupper with ⟨hyK, hr_le⟩
   have hkernel_le :
       supConvolutionKernel lambda v η y <= compactSupConvolution lambda K v η := by
@@ -159,9 +159,9 @@ theorem supConvolutionTransferValue_eq_of_mem_closure_superjetGraph_of_isCompact
     exact exists_isMaxOn_supConvolutionKernel_of_isCompact hKne hKcompact hv
   have hv_le : v y <= r := by
     dsimp [supConvolutionKernel, supConvolutionTransferValue, y, r] at hkernel_le ⊢
-    linarith
+    linarith only [hkernel_le]
   have h_eq : r = v y := le_antisymm hr_le hv_le
-  simpa [y, r, supConvolutionTransferValue] using h_eq.symm
+  exact h_eq.symm
 
 /--
 Closed-superjet transfer for the compact sup-convolution, stated with explicit
@@ -502,7 +502,7 @@ theorem lowerSemicontinuousOn_infConvolutionKernel
       LowerSemicontinuousOn
         (fun x : Point n => (lambda / 2) * dotProduct (x - ξ) (x - ξ)) K :=
     (continuousOn_iff_lower_upperSemicontinuousOn.mp hpen).1
-  simpa [infConvolutionKernel] using hv.add hpenLower
+  exact hv.add hpenLower
 
 /--
 On a nonempty compact set, the inf-convolution kernel attains a minimum.
@@ -551,7 +551,7 @@ theorem compactInfConvolution_eq_of_isMinOn
     have hy_eq := infConvolutionKernel_eq_neg_supConvolutionKernel_neg lambda v ξ y
     have hz_eq := infConvolutionKernel_eq_neg_supConvolutionKernel_neg lambda v ξ z
     rw [hy_eq, hz_eq] at h
-    linarith
+    linarith only [h]
   have hsup := compactSupConvolution_eq_of_isMaxOn
     (K := K) (u := fun w : Point n => -v w)
     (lambda := lambda) (ξ := ξ) (y := y) hy hmax
@@ -579,7 +579,7 @@ theorem lowerSemicontinuousOn_neg_to_upperSemicontinuousOn
     {K : Set (Point n)} {v : Point n -> Real}
     (hv : LowerSemicontinuousOn v K) :
     UpperSemicontinuousOn (fun x => -v x) K := by
-  simpa [Function.comp_def] using
+  exact
     (continuous_neg.comp_lowerSemicontinuousOn_antitone hv
       (fun _ _ h => neg_le_neg h))
 

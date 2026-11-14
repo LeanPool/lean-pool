@@ -45,7 +45,7 @@ open UpperHalfPlane
 def Equiv (f g : BQF) : Prop :=
   ∃ p q r s : ℤ, p * s - q * r = 1 ∧ act f p q r s = g
 
-@[refl] theorem Equiv.refl (f : BQF) : Equiv f f := ⟨1, 0, 0, 1, by ring, act_one f⟩
+@[refl] theorem Equiv.refl (f : BQF) : Equiv f f := ⟨1, 0, 0, 1, by ac_rfl, act_one f⟩
 
 theorem Equiv.symm {f g : BQF} (h : Equiv f g) : Equiv g f := by
   obtain ⟨p, q, r, s, hdet, hfg⟩ := h
@@ -71,7 +71,7 @@ lemma act_T_c (f : BQF) (n : ℤ) : (act f 1 n 0 1).c = f.a * n ^ 2 + f.b * n + 
   simp only [act_c]; ring
 
 /-- The `S`-generator: swap `(a, b, c) ↦ (c, −b, a)`. -/
-theorem Equiv.S (f : BQF) : Equiv f (act f 0 (-1) 1 0) := ⟨0, -1, 1, 0, by ring, rfl⟩
+theorem Equiv.S (f : BQF) : Equiv f (act f 0 (-1) 1 0) := ⟨0, -1, 1, 0, by ac_rfl, rfl⟩
 
 lemma act_S_a (f : BQF) : (act f 0 (-1) 1 0).a = f.c := by simp
 lemma act_S_b (f : BQF) : (act f 0 (-1) 1 0).b = -f.b := by simp only [act_b]; ring
@@ -80,7 +80,7 @@ lemma act_S_c (f : BQF) : (act f 0 (-1) 1 0).c = f.a := by simp only [act_c]; ri
 /-- Equivalent forms have equal discriminant. -/
 theorem Equiv.disc_eq {f g : BQF} (h : Equiv f g) : disc f = disc g := by
   obtain ⟨p, q, r, s, hdet, rfl⟩ := h
-  rw [disc_act, hdet]; ring
+  rw [disc_act, hdet]; ac_rfl
 
 /-- Equivalence preserves primitivity. -/
 theorem Equiv.isPrimitive {f g : BQF} (h : Equiv f g) (hf : IsPrimitive f) : IsPrimitive g := by
@@ -284,8 +284,8 @@ theorem disc_of_three_relations {D0 : ℤ} (hD3 : D0 ≤ -3)
   have e1 := reprN_of_relation (m := 41) (by norm_num) hD3 hl1 (by exact_mod_cast h1)
   have e2 := reprN_of_relation (m := 43) (by norm_num) hD3 hl2 (by exact_mod_cast h2)
   have e3 := reprN_of_relation (m := 61) (by norm_num) hD3 hl3 (by exact_mod_cast h3)
-  have hl1sq : (1 : ℤ) ≤ l1 ^ 2 := by rcases lt_or_gt_of_ne hl1 with h' | h' <;> nlinarith
-  have hub : (-D0) ≤ 164 := by nlinarith [h1, hl1sq, sq_nonneg t1]
+  have hl1sq : (1 : ℤ) ≤ l1 ^ 2 := by rcases lt_or_gt_of_ne hl1 with h' | h' <;> nlinarith only [h']
+  have hub : (-D0) ≤ 164 := by nlinarith only [h1, hl1sq]
   have hmem : (-D0).toNat ∈ Finset.Icc 1 244 := by
     rw [Finset.mem_Icc]; omega
   have := three_prime_N (-D0).toNat hmem e1 e2 e3

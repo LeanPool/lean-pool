@@ -5,15 +5,16 @@ Authors: Zeru Zhu, Jinzheng Li, Yuanjie Ren, OpenAI
 -/
 module
 
+public import Mathlib.Basic.Real.Basic
 public import Mathlib.Tactic.Linarith
 public import Mathlib.Tactic.Positivity
 public import Mathlib.Tactic.Ring
 
 /-!
-# Scalar certificates for the sharp Moore bound
+# Scalar certificates for the graph bounds
 
-Keeping these integer arguments independent of graph definitions lets them elaborate
-while the graph infrastructure builds.
+Keeping these integer and real arguments independent of graph definitions lets them
+elaborate while the graph infrastructure builds.
 -/
 
 @[expose] public section
@@ -105,5 +106,46 @@ theorem moore_strip_core_sharp {N X H : ℤ} (hN : 123 ≤ N) (hH : 0 ≤ H) (hH
     convert mul_le_mul_of_nonneg_left hmul (by norm_num : (0 : ℤ) ≤ 23) using 1; ring
   have htv := moore_strip_twovar_sharp hN hH h17
   linarith only [hA, hB, htv]
+
+/-! ## Sigma cross-slot slack -/
+
+/-- The two sigma slack budgets absorb the unique crossing cost. -/
+theorem sigma_cross_arithmetic (left right total_left total_right fraction_left fraction_right : ℝ)
+    (hleft : total_left + fraction_left ≤ 2) (hright : total_right + fraction_right ≤ 2)
+    (hleft0 : 0 ≤ fraction_left) (hright0 : 0 ≤ fraction_right)
+    (hleft1 : fraction_left ≤ 1) (hright1 : fraction_right ≤ 1) :
+    (left * fraction_left + right * fraction_right) ^ 2
+        - (left * fraction_left) ^ 2 - (right * fraction_right) ^ 2
+        + left ^ 2 * total_left + right ^ 2 * total_right
+      ≤ 2 * left ^ 2 + 2 * right ^ 2 := by
+  have hleftSquare : fraction_left ^ 2 ≤ fraction_left := by
+    simpa only [pow_two, mul_one] using mul_le_mul_of_nonneg_left hleft1 hleft0
+  have hrightSquare : fraction_right ^ 2 ≤ fraction_right := by
+    simpa only [pow_two, mul_one] using mul_le_mul_of_nonneg_left hright1 hright0
+  have hcross : 2 * (left * fraction_left) * (right * fraction_right)
+      ≤ left ^ 2 * fraction_left + right ^ 2 * fraction_right := by
+    calc
+      2 * (left * fraction_left) * (right * fraction_right)
+          ≤ (left * fraction_left) ^ 2 + (right * fraction_right) ^ 2 :=
+        two_mul_le_add_sq _ _
+      _ = left ^ 2 * fraction_left ^ 2 + right ^ 2 * fraction_right ^ 2 := by simp only [mul_pow]
+      _ ≤ left ^ 2 * fraction_left + right ^ 2 * fraction_right :=
+        add_le_add (mul_le_mul_of_nonneg_left hleftSquare (sq_nonneg _))
+          (mul_le_mul_of_nonneg_left hrightSquare (sq_nonneg _))
+  calc
+    (left * fraction_left + right * fraction_right) ^ 2
+        - (left * fraction_left) ^ 2 - (right * fraction_right) ^ 2
+        + left ^ 2 * total_left + right ^ 2 * total_right
+        = 2 * (left * fraction_left) * (right * fraction_right)
+          + left ^ 2 * total_left + right ^ 2 * total_right := by ring
+    _ ≤ (left ^ 2 * fraction_left + right ^ 2 * fraction_right)
+          + left ^ 2 * total_left + right ^ 2 * total_right :=
+      add_le_add (add_le_add hcross le_rfl) le_rfl
+    _ = left ^ 2 * (total_left + fraction_left)
+          + right ^ 2 * (total_right + fraction_right) := by ring
+    _ ≤ left ^ 2 * 2 + right ^ 2 * 2 :=
+      add_le_add (mul_le_mul_of_nonneg_left hleft (sq_nonneg _))
+        (mul_le_mul_of_nonneg_left hright (sq_nonneg _))
+    _ = 2 * left ^ 2 + 2 * right ^ 2 := by ac_rfl
 
 end ACMax.Arithmetic

@@ -138,20 +138,20 @@ theorem centeredMaximal_excision
   have hHsmall : volume H ≤ volume E / 512 := by
     have hh : volume H ≤ (4 * mass) / b :=
       (ENNReal.le_div_iff_mul_le (Or.inl hb0) (Or.inl hbtop)).2
-        (by simpa [H, mass, mul_comm] using hweak)
+        (by simpa only [mul_comm, H, mass] using hweak)
     apply hh.trans_eq
     apply (ENNReal.toReal_eq_toReal_iff' (by finiteness) (by finiteness)).mp
     have hmreal : mass.toReal ≠ 0 :=
-      ENNReal.toReal_ne_zero.mpr ⟨by simpa [mass] using hmassZero,
-        by simpa [mass] using hmassTop⟩
-    simp only [b, ENNReal.toReal_div, ENNReal.toReal_ofNat, ENNReal.toReal_mul]
+      ENNReal.toReal_ne_zero.mpr ⟨by exact hmassZero,
+        by simpa only [ne_eq, mass] using hmassTop⟩
+    simp only [ENNReal.toReal_div, ENNReal.toReal_mul, ENNReal.toReal_ofNat, b]
     field_simp [hmreal]
     ring
   have hweakWide := centeredHardyLittlewoodMaximal_weak_bound
     (H.indicator fun _ ↦ (1 : ℝ≥0∞)) ((1 : ℝ≥0∞) / 32)
   have hindIntegral : (∫⁻ x, H.indicator (fun _ ↦ (1 : ℝ≥0∞)) x) = volume H := by
     rw [lintegral_indicator hH]
-    simp
+    simp only [lintegral_const, MeasurableSet.univ, Measure.restrict_apply, univ_inter, one_mul]
   rw [hindIntegral] at hweakWide
   change ((1 : ℝ≥0∞) / 32) * volume Hwide ≤ 4 * volume H at hweakWide
   have hwideSmall : volume Hwide ≤ 128 * volume H := by
@@ -159,7 +159,7 @@ theorem centeredMaximal_excision
     have hatop : (1 : ℝ≥0∞) / 32 ≠ ∞ := by norm_num
     have hh : volume Hwide ≤ (4 * volume H) / ((1 : ℝ≥0∞) / 32) :=
       (ENNReal.le_div_iff_mul_le (Or.inl ha0) (Or.inl hatop)).2
-        (by simpa [Hwide, mul_comm] using hweakWide)
+        (by simpa only [one_div, mul_comm, Hwide] using hweakWide)
     calc
       volume Hwide ≤ (4 * volume H) / ((1 : ℝ≥0∞) / 32) := hh
       _ = 128 * volume H := by norm_num [div_eq_mul_inv]; ring
@@ -173,14 +173,14 @@ theorem centeredMaximal_excision
           volume E / 512 + 128 * (volume E / 512) =
               129 * (volume E / 512) := by ring
           _ ≤ 256 * (volume E / 512) :=
-            mul_le_mul' (by norm_num) le_rfl
+            mul_le_mul' (by norm_num1) le_rfl
           _ = volume E / 2 := by
             apply (ENNReal.toReal_eq_toReal_iff' (by finiteness) (by finiteness)).mp
-            simp [ENNReal.toReal_div]
+            simp only [ENNReal.toReal_mul, ENNReal.toReal_ofNat, ENNReal.toReal_div]
             ring
   have hdiff : E \ (H ∪ Hwide) = E \ (E ∩ (H ∪ Hwide)) := by
     ext x
-    simp
+    simp only [Set.mem_sdiff, mem_union, not_or, sdiff_self_inter]
   rw [hdiff, measure_sdiff (inter_subset_left) (hE.inter (hH.union hHwide)).nullMeasurableSet
     (ne_top_of_le_ne_top hEtop (measure_mono inter_subset_left))]
   apply ENNReal.le_sub_of_add_le_left
@@ -217,7 +217,7 @@ theorem sparseForm_le_lintegral_on_of_majorSubsets
         ENNReal.ofReal η⁻¹ * ∫⁻ x in E I, M x := by
     intro I
     by_cases havg : localAverage p g I.1 = 0
-    · simp [havg]
+    · simp only [havg, mul_zero, ENNReal.ofReal_zero, zero_le]
     have hIfinite : volume I.1.carrier ≠ ∞ := by simp
     have hEfinite : volume (E I) ≠ ∞ :=
       ne_top_of_le_ne_top hIfinite (measure_mono (hEsub I))
@@ -320,7 +320,7 @@ theorem exists_mem_carrier_inter_of_localAverage_indicator_ne_zero
   have hzero : ∀ x ∈ I.carrier,
       ‖G.indicator (fun _ ↦ (1 : ℂ)) x‖ ^ p = 0 := by
     intro x hx
-    simp [Set.indicator_of_notMem (hnone x hx), Real.zero_rpow hp.ne']
+    simp only [Set.indicator_of_notMem (hnone x hx), norm_zero, Real.zero_rpow hp.ne']
   apply havg
   rw [localAverage]
   have hint : (∫ x in I.carrier,
@@ -408,19 +408,19 @@ theorem sparseForm_le_eight_lintegral_off_exceptional
     have hdiff : (volume (E' I)).toReal =
         (volume (E I)).toReal - (volume (E I ∩ H)).toReal := by
       dsimp only [E']
-      rw [show E I \ H = E I \ (E I ∩ H) by ext y; simp]
+      rw [show E I \ H = E I \ (E I ∩ H) by ext y; simp only [Set.mem_sdiff, sdiff_self_inter]]
       exact MeasureTheory.measureReal_sdiff inter_subset_left ((hEmeas I).inter hH) hEfinite
     rw [hdiff]
     have hquarter := hEsize I
     norm_num at hquarter ⊢
-    linarith
+    linarith only [hinter, hquarter]
   have hE'off (I : {I : RealInterval // I ∈ S}) : E' I ⊆ Hᶜ :=
     fun _ hx ↦ hx.2
   have h := sparseForm_le_lintegral_on_of_majorSubsets
     (p := p) (S := S) (f := f) (g := g) (D := Hᶜ)
-    (by norm_num : (0 : ℝ) < 1 / 8) hScount hH.compl E'
+    (by norm_num1 : (0 : ℝ) < 1 / 8) hScount hH.compl E'
     hE'meas hE'sub hE'disj hE'large hE'off
-  simpa using h
+  simpa only [ge_iff_le, one_div, inv_inv, ENNReal.ofReal_ofNat] using h
 
 /-- The weak `(1,1)` maximal estimate integrated only below a finite level.
 This is the layer-cake estimate used for the first Hölder factor after
@@ -569,16 +569,16 @@ theorem sparseForm_foliation_leaf_le
     have hfhi := hasFiniteIntegral_iff_enorm.mp
       f.integrable_finiteSparseProof.hasFiniteIntegral
     change (∫⁻ y, ‖f y‖ₑ) < ∞ at hfhi
-    exact ne_of_lt (by simpa [F] using hfhi)
+    exact ne_of_lt (by exact hfhi)
   have hbase := sparseForm_le_eight_lintegral_off_exceptional
-    hS f g H hH (by simpa [H, F] using hactive)
+    hS f g H hH (by exact hactive)
   apply hbase.trans
   have hpMajor (x : ℝ) : intervalMaximalAverage p g x ≤
       intervalAverageMajorant p g x :=
     intervalMaximalAverage_le_intervalAverageMajorant hp g x
   have h1Major (x : ℝ) : intervalMaximalAverage 1 f x ≤
       4 * centeredHardyLittlewoodMaximal F x := by
-    simpa [F] using intervalMaximalAverage_one_le_centeredHardyLittlewoodMaximal f x
+    exact intervalMaximalAverage_one_le_centeredHardyLittlewoodMaximal f x
   have hprod : (∫⁻ x in Hᶜ,
       intervalMaximalAverage 1 f x * intervalMaximalAverage p g x) ≤
       ∫⁻ x in Hᶜ,
@@ -602,7 +602,7 @@ theorem sparseForm_foliation_leaf_le
       ((∫⁻ x in Hᶜ, (4 * centeredHardyLittlewoodMaximal F x) ^
           holderConjugate r) ^ (1 / holderConjugate r) *
         (∫⁻ x in Hᶜ, intervalAverageMajorant p g x ^ r) ^ (1 / r)) := by
-    simpa only [Pi.mul_apply, U] using hholder
+    exact hholder
   apply hholder'.trans
   apply mul_le_mul'
   · apply ENNReal.rpow_le_rpow ?_ (one_div_nonneg.mpr (zero_lt_one.trans hq).le)
@@ -621,9 +621,9 @@ theorem sparseForm_foliation_leaf_le
         apply mul_le_mul' le_rfl
         have hset : Hᶜ = {x | centeredHardyLittlewoodMaximal F x ≤ ENNReal.ofReal b} := by
           ext x
-          simp [H]
+          simp only [mem_compl_iff, mem_ofPred_eq, not_lt, H]
         rw [hset]
-        simpa [F] using centeredMaximal_capped_rpow_lintegral_le F hF hmassTop hb hq
+        exact centeredMaximal_capped_rpow_lintegral_le F hF hmassTop hb hq
   · apply ENNReal.rpow_le_rpow
       ((setLIntegral_le_lintegral _ _).trans
         (intervalAverageMajorant_rpow_lintegral_le p r hp hpr g))
@@ -659,11 +659,11 @@ theorem lintegral_enorm_setIndicator_rpow
       ‖setIndicatorL0Infinity G K hG hK hGK x‖ₑ ^ r =
         G.indicator (fun _ ↦ (1 : ℝ≥0∞)) x := by
     by_cases hx : x ∈ G
-    · simp [setIndicatorL0Infinity_apply, hx]
+    · simp only [setIndicatorL0Infinity_apply, hx, indicator_of_mem, enorm_one, ENNReal.one_rpow]
     · simp [setIndicatorL0Infinity_apply, hx, ENNReal.zero_rpow_of_pos hr]
   simp_rw [hpoint]
   rw [lintegral_indicator hG]
-  simp
+  simp only [lintegral_const, MeasurableSet.univ, Measure.restrict_apply, univ_inter, one_mul]
 
 /-- The measurable leaves produced by the canonical maximizing index. -/
 noncomputable def maximizingFoliationSet (n : ℕ) (R : Fin (n + 1) → ℝ → ℂ)
@@ -706,7 +706,7 @@ theorem sum_volume_maximizingFoliationSet
     ∑ j, volume (maximizingFoliationSet n R G j) = volume G := by
   calc
     ∑ j, volume (maximizingFoliationSet n R G j) =
-        ∑' j, volume (maximizingFoliationSet n R G j) := by simp
+        ∑' j, volume (maximizingFoliationSet n R G j) := by simp only [tsum_fintype]
     _ = volume (⋃ j, maximizingFoliationSet n R G j) :=
       (measure_iUnion (pairwise_disjoint_maximizingFoliationSet n R G)
         (fun j ↦ measurableSet_maximizingFoliationSet n R hR G hG j)).symm
@@ -838,7 +838,7 @@ theorem finiteMaxRep_compact_level_bound
   have hmassTop : mass ≠ ∞ := by
     have hfhi := hasFiniteIntegral_iff_enorm.mp
       f.integrable_finiteSparseProof.hasFiniteIntegral
-    exact ne_of_lt (by simpa [mass] using hfhi)
+    exact ne_of_lt (by exact hfhi)
   have hEtop : volume E ≠ ∞ :=
     ne_top_of_le_ne_top hK.measure_lt_top.ne (measure_mono hEK)
   have hbE0 : bE ≠ 0 := by simp [bE, mass, hmassZero, hEtop]
@@ -858,8 +858,7 @@ theorem finiteMaxRep_compact_level_bound
   have hG : MeasurableSet G := hE.diff (hH.union hHwide)
   have hGE : G ⊆ E := sdiff_subset
   have hGhalf : volume E / 2 ≤ volume G := by
-    simpa [mass, bE, F, H, Hwide, G] using
-      centeredMaximal_excision F hF hmassTop hmassZero E hE hEzero hEtop
+    exact centeredMaximal_excision F hF hmassTop hmassZero E hE hEzero hEtop
   let hlocal : ∀ j, LocallyIntegrable (T j f) volume := fun j ↦ hT.2.1 j f
   let R : Fin (n + 1) → ℝ → ℂ := fun j ↦
     (hlocal j).aestronglyMeasurable.mk (T j f)
@@ -891,14 +890,13 @@ theorem finiteMaxRep_compact_level_bound
       calc
         ‖R j x‖ = ‖R (measurableMaximizingIndex n R x) x‖ := by rw [hj]
         _ = ↑(Finset.univ.sup fun k ↦ ‖R k x‖₊) := by
-          simpa using congrArg ((↑·) : ℝ≥0 → ℝ)
-            (norm_measurableMaximizingIndex_eq_sup n R x)
+          exact congrArg ((↑·) : ℝ≥0 → ℝ) (norm_measurableMaximizingIndex_eq_sup n R x)
         _ = measurableFiniteMaxRep T f (fun j ↦ hT.2.1 j f) x := rfl
     rw [hxT, ← ofReal_norm, hxmax]
     exact ENNReal.ofReal_le_ofReal hxlev.le
   have hsparse (j : Fin (n + 1)) :
       HasSparseOnePBound C p (absoluteValueOperator (T j)) := by
-    simpa [C] using hT.hasSparseOnePBound_add hp hp2 j hε
+    exact hT.hasSparseOnePBound_add hp hp2 j hε
   have hupperLeaf (j : Fin (n + 1)) :
       ENNReal.ofReal (∫ x in Gj j, ‖T j f x‖) ≤
         ENNReal.ofReal C * common * volume (Gj j) ^ (1 / r) := by
@@ -925,7 +923,7 @@ theorem finiteMaxRep_compact_level_bound
       (zero_lt_one.trans hp) hr hpr hbpos hS f (Gj j) K (hGj j) hK (hGjK j) ?_
     · have hfact' : sparseForm p f gj S ≤
           common * volume (Gj j) ^ (1 / r) := by
-          simpa only [common, mass, b, one_div] using hfact
+          exact hfact
       calc
         ENNReal.ofReal C * sparseForm p f gj S ≤
             ENNReal.ofReal C * (common * volume (Gj j) ^ (1 / r)) :=
@@ -938,7 +936,7 @@ theorem finiteMaxRep_compact_level_bound
     _ = ∑ j, ENNReal.ofReal a * volume (Gj j) := by
       rw [← Finset.mul_sum]
       congr 1
-      simpa [Gj] using (sum_volume_maximizingFoliationSet n R hR G hG).symm
+      exact (sum_volume_maximizingFoliationSet n R hR G hG).symm
     _ ≤ ∑ j, ENNReal.ofReal (∫ x in Gj j, ‖T j f x‖) :=
       Finset.sum_le_sum fun j _ ↦ hlowerLeaf j
     _ ≤ ∑ j, ENNReal.ofReal C * common * volume (Gj j) ^ (1 / r) :=
@@ -976,7 +974,7 @@ theorem holderConjugate_ratio {r : ℝ} (hr : 1 < r) :
 
 theorem inv_holderConjugate_add_inv {r : ℝ} (hr : 1 < r) :
     1 / holderConjugate r + 1 / r = 1 := by
-  simpa [one_div, add_comm] using (holderConjugate_spec hr).inv_add_inv_eq_one
+  simpa only [one_div, add_comm] using (holderConjugate_spec hr).inv_add_inv_eq_one
 
 /-- The explicit factor obtained by combining the finite sparse, Hölder, and Hardy–Littlewood
 estimates before simplification. -/
@@ -988,6 +986,25 @@ noncomputable def finiteSparseRawFactor (p r : ℝ) : ℝ :=
     ((4 : ℝ) ^ (r / p) *
       centeredHardyLittlewoodRpowConstant (r / p)) ^ (1 / r) *
     (2048 : ℝ) ^ (1 / r)
+
+/-- The raw sparse factor is nonnegative in the range used by the maximal estimate. -/
+lemma finiteSparseRawFactor_nonneg {p r : ℝ} (hp : 1 < p) (hr : 1 < r) (hpr : p < r) :
+    0 ≤ finiteSparseRawFactor p r := by
+  unfold finiteSparseRawFactor
+  have hs : 1 < r / p := (lt_div_iff₀ (zero_lt_one.trans hp)).2 (by simpa using hpr)
+  have hq : 1 < holderConjugate r := one_lt_holderConjugate_of_one_lt hr
+  have hb1 : 0 ≤ (4 : ℝ) ^ holderConjugate r *
+      (4 * holderConjugate r / (holderConjugate r - 1)) :=
+    mul_nonneg (Real.rpow_nonneg (by norm_num1) _)
+      (div_nonneg (mul_nonneg (by norm_num1) (zero_le_one.trans hq.le))
+        (sub_nonneg.mpr hq.le))
+  have hb2 : 0 ≤ (4 : ℝ) ^ (r / p) *
+      centeredHardyLittlewoodRpowConstant (r / p) :=
+    mul_nonneg (Real.rpow_nonneg (by norm_num1) _)
+      (centeredHardyLittlewoodRpowConstant_pos hs).le
+  exact mul_nonneg (mul_nonneg (mul_nonneg (by norm_num1)
+    (Real.rpow_nonneg hb1 _)) (Real.rpow_nonneg hb2 _))
+    (Real.rpow_nonneg (by norm_num1) _)
 
 /-- Exact cancellation of the compact level-set measure against the chosen
 threshold `b = 2048 mass / |E|`. -/
@@ -1012,7 +1029,7 @@ theorem finiteSparse_common_normalization
   have hq : 0 < holderConjugate r := (holderConjugate_spec hr).symm.pos
   have hq1 : 1 < holderConjugate r := one_lt_holderConjugate_of_one_lt hr
   have hcoef : 0 ≤ 4 * holderConjugate r / (holderConjugate r - 1) := by positivity
-  have hs : 1 < r / p := (lt_div_iff₀ (zero_lt_one.trans hp)).2 (by simpa using hpr)
+  have hs : 1 < r / p := (lt_div_iff₀ (zero_lt_one.trans hp)).2 (by simpa only [one_mul] using hpr)
   have hHL : 0 ≤ centeredHardyLittlewoodRpowConstant (r / p) :=
     (centeredHardyLittlewoodRpowConstant_pos hs).le
   have hbtop : 2048 * m / e ≠ ∞ := by finiteness
@@ -1038,7 +1055,7 @@ theorem finiteSparse_common_normalization
       field_simp [hq.ne'], ENNReal.rpow_one]
   rw [← ENNReal.rpow_mul (2048 * m / e)]
   have hexp : (holderConjugate r - 1) * (1 / holderConjugate r) = 1 / r := by
-    simpa [div_eq_mul_inv] using holderConjugate_sub_one_div hr
+    simpa only [div_eq_mul_inv, one_mul] using holderConjugate_sub_one_div hr
   rw [hexp]
   rw [ENNReal.div_rpow_of_nonneg _ _ (one_div_nonneg.mpr (zero_lt_one.trans hr).le),
     ENNReal.mul_rpow_of_nonneg _ _ (one_div_nonneg.mpr (zero_lt_one.trans hr).le)]
@@ -1062,39 +1079,39 @@ theorem finiteSparse_common_normalization
   rw [mul_assoc _ (m ^ (holderConjugate r)⁻¹) (m ^ r⁻¹)]
   rw [← ENNReal.rpow_add _ _ hm0 hmt]
   have hinv : (holderConjugate r)⁻¹ + r⁻¹ = 1 := by
-    simpa [one_div] using inv_holderConjugate_add_inv hr
+    simpa only [one_div] using inv_holderConjugate_add_inv hr
   rw [hinv, ENNReal.rpow_one]
   have hcoef_norm : holderConjugate r * (-1 + holderConjugate r)⁻¹ * 4 =
       4 * holderConjugate r / (holderConjugate r - 1) := by
-    rw [show -1 + holderConjugate r = holderConjugate r - 1 by ring]
+    rw [show -1 + holderConjugate r = holderConjugate r - 1 by ac_rfl]
     ring
   rw [hcoef_norm]
   rw [ENNReal.ofReal_rpow_of_nonneg (p := (holderConjugate r)⁻¹)
       hcoef (inv_nonneg.mpr hq.le)]
   rw [show (2048 : ℝ≥0∞) = ENNReal.ofReal (2048 : ℝ) by norm_num]
   rw [ENNReal.ofReal_rpow_of_nonneg (p := r⁻¹)
-      (by norm_num : (0 : ℝ) ≤ 2048) (inv_nonneg.mpr (zero_lt_one.trans hr).le)]
+      (by norm_num1 : (0 : ℝ) ≤ 2048) (inv_nonneg.mpr (zero_lt_one.trans hr).le)]
   rw [show (4 : ℝ≥0∞) = ENNReal.ofReal (4 : ℝ) by norm_num]
   rw [ENNReal.ofReal_rpow_of_nonneg (p := r * p⁻¹)
-      (by norm_num : (0 : ℝ) ≤ 4)
+      (by norm_num1 : (0 : ℝ) ≤ 4)
       (mul_nonneg (zero_lt_one.trans hr).le (inv_nonneg.mpr (zero_lt_one.trans hp).le))]
   rw [← ENNReal.ofReal_mul
-      (Real.rpow_nonneg (by norm_num : (0 : ℝ) ≤ 4) _)]
+      (Real.rpow_nonneg (by norm_num1 : (0 : ℝ) ≤ 4) _)]
   have hHL' : 0 ≤ centeredHardyLittlewoodRpowConstant (r * p⁻¹) := by
-    simpa [div_eq_mul_inv] using hHL
+    exact hHL
   rw [ENNReal.ofReal_rpow_of_nonneg
       (x := 4 ^ (r * p⁻¹) * centeredHardyLittlewoodRpowConstant (r * p⁻¹))
       (p := r⁻¹) (mul_nonneg
-        (Real.rpow_nonneg (by norm_num : (0 : ℝ) ≤ 4) _) hHL')
+        (Real.rpow_nonneg (by norm_num1 : (0 : ℝ) ≤ 4) _) hHL')
       (inv_nonneg.mpr (zero_lt_one.trans hr).le)]
   rw [← ENNReal.ofReal_toReal hmt]
   rw [show (32 : ℝ≥0∞) = ENNReal.ofReal 32 by norm_num]
   simp only [finiteSparseRawFactor]
   repeat' rw [← ENNReal.ofReal_mul (by positivity)]
   apply congrArg ENNReal.ofReal
-  rw [Real.mul_rpow (Real.rpow_nonneg (by norm_num : (0 : ℝ) ≤ 4) _)
+  rw [Real.mul_rpow (Real.rpow_nonneg (by norm_num1 : (0 : ℝ) ≤ 4) _)
     hcoef]
-  rw [← Real.rpow_mul (by norm_num : (0 : ℝ) ≤ 4)]
+  rw [← Real.rpow_mul (by norm_num1 : (0 : ℝ) ≤ 4)]
   have hqmul : holderConjugate r * (1 / holderConjugate r) = 1 := by
     field_simp [hq.ne']
   rw [hqmul, Real.rpow_one]
@@ -1115,33 +1132,27 @@ theorem finiteSparseRawFactor_le
   have hr0 : 0 < r := zero_lt_one.trans hr
   have hq : 1 < holderConjugate r := one_lt_holderConjugate_of_one_lt hr
   have hq0 : 0 < holderConjugate r := zero_lt_one.trans hq
-  have hqinv0 : 0 ≤ 1 / holderConjugate r := one_div_nonneg.mpr hq0.le
   have hqinv1 : 1 / holderConjugate r ≤ 1 := (div_le_one hq0).2 hq.le
-  have hs : 1 < r / p := (lt_div_iff₀ hp0).2 (by simpa using hpr)
-  have hs0 : 0 ≤ r / p := (zero_lt_one.trans hs).le
+  have hs : 1 < r / p := (lt_div_iff₀ hp0).2 (by simpa only [one_mul] using hpr)
   have hs4 : r / p ≤ 4 := by
     rw [div_le_iff₀ hp0]
-    nlinarith
-  have hs_sub : 0 ≤ r / p - 1 := sub_nonneg.mpr hs.le
-  have hs_sub3 : r / p - 1 ≤ 3 := by linarith
+    linarith only [hp, hr4]
+  have hs_sub3 : r / p - 1 ≤ 3 := by linarith only [hs4]
   have htwo : (2 : ℝ) ^ (r / p - 1) ≤ 8 := by
     calc
       (2 : ℝ) ^ (r / p - 1) ≤ (2 : ℝ) ^ (3 : ℝ) :=
-        Real.rpow_le_rpow_of_exponent_le (by norm_num) hs_sub3
-      _ = 8 := by norm_num
+        Real.rpow_le_rpow_of_exponent_le (by norm_num1) hs_sub3
+      _ = 8 := by norm_num1
   have hgap0 : 0 ≤ r / (r - p) :=
     div_nonneg hr0.le (sub_nonneg.mpr hpr.le)
   have hgap1 : 1 ≤ r / (r - p) := by
     rw [le_div_iff₀ (sub_pos.mpr hpr)]
-    linarith
+    linarith only [hp]
   have hsminus : (r / p - 1)⁻¹ = p / (r - p) := by
     field_simp [hp0.ne', (sub_pos.mpr hpr).ne']
-  have hp_gap_le : p / (r - p) ≤ r / (r - p) :=
-    div_le_div_of_nonneg_right hpr.le (sub_pos.mpr hpr).le
   have hHL : centeredHardyLittlewoodRpowConstant (r / p) ≤
       256 * (r / (r - p)) := by
     rw [centeredHardyLittlewoodRpowConstant]
-    have hden : 0 < r / p - 1 := sub_pos.mpr hs
     calc
       8 * (r / p) * ((2 : ℝ) ^ (r / p - 1) / (r / p - 1)) ≤
           8 * 4 * (8 / (r / p - 1)) := by gcongr
@@ -1155,61 +1166,53 @@ theorem finiteSparseRawFactor_le
           (1 / holderConjugate r) ≤
         64 * r ^ (1 / holderConjugate r) := by
     rw [mul_div_assoc, holderConjugate_ratio hr]
-    rw [Real.mul_rpow (Real.rpow_nonneg (by norm_num) _) (by positivity)]
-    rw [← Real.rpow_mul (by norm_num : (0 : ℝ) ≤ 4)]
+    rw [Real.mul_rpow (Real.rpow_nonneg (by norm_num1) _) (by positivity)]
+    rw [← Real.rpow_mul (by norm_num1 : (0 : ℝ) ≤ 4)]
     have hmul : holderConjugate r * (1 / holderConjugate r) = 1 := by
       field_simp [hq0.ne']
     rw [hmul, Real.rpow_one]
-    rw [Real.mul_rpow (by norm_num : (0 : ℝ) ≤ 4) hr0.le]
+    rw [Real.mul_rpow (by norm_num1 : (0 : ℝ) ≤ 4) hr0.le]
     have hfourpow : (4 : ℝ) ^ (1 / holderConjugate r) ≤ 4 :=
-      Real.rpow_le_self_of_one_le (by norm_num) hqinv1
+      Real.rpow_le_self_of_one_le (by norm_num1) hqinv1
     have hrrpow : 0 ≤ r ^ (1 / holderConjugate r) := Real.rpow_nonneg hr0.le _
     have hprod := mul_le_mul_of_nonneg_right hfourpow hrrpow
-    nlinarith
+    linarith only [hrrpow, hprod]
   have hrinv0 : 0 ≤ 1 / r := one_div_nonneg.mpr hr0.le
   have hrinv1 : 1 / r ≤ 1 := (div_le_one hr0).2 hr.le
-  have hinvpr : 1 / r ≤ 1 / p := one_div_le_one_div_of_le hp0 hpr.le
   have hfourS : (4 : ℝ) ^ (r / p) ≤ 256 := by
     calc
       (4 : ℝ) ^ (r / p) ≤ (4 : ℝ) ^ (4 : ℝ) :=
-        Real.rpow_le_rpow_of_exponent_le (by norm_num) hs4
-      _ = 256 := by norm_num
+        Real.rpow_le_rpow_of_exponent_le (by norm_num1) hs4
+      _ = 256 := by norm_num1
   have hsecond :
       ((4 : ℝ) ^ (r / p) * centeredHardyLittlewoodRpowConstant (r / p)) ^
           (1 / r) ≤
         65536 * (r / (r - p)) ^ (1 / p) := by
     have hHLpos : 0 ≤ centeredHardyLittlewoodRpowConstant (r / p) :=
       (centeredHardyLittlewoodRpowConstant_pos hs).le
-    rw [Real.mul_rpow (Real.rpow_nonneg (by norm_num) _) hHLpos]
+    have hprod : (4 : ℝ) ^ (r / p) * centeredHardyLittlewoodRpowConstant (r / p) ≤
+        65536 * (r / (r - p)) := by
+      calc
+        _ ≤ 256 * (256 * (r / (r - p))) :=
+          mul_le_mul hfourS hHL hHLpos (by norm_num1)
+        _ = _ := by ring
     calc
-      ((4 : ℝ) ^ (r / p)) ^ (1 / r) *
-          centeredHardyLittlewoodRpowConstant (r / p) ^ (1 / r) ≤
-          256 ^ (1 / r) * (256 * (r / (r - p))) ^ (1 / r) := by
-            exact mul_le_mul
-              (Real.rpow_le_rpow (Real.rpow_nonneg (by norm_num) _) hfourS hrinv0)
-              (Real.rpow_le_rpow hHLpos hHL hrinv0)
-              (Real.rpow_nonneg hHLpos _) (Real.rpow_nonneg (by norm_num) _)
-      _ = 256 ^ (1 / r) *
-          (256 ^ (1 / r) * (r / (r - p)) ^ (1 / r)) := by
-            rw [Real.mul_rpow (by norm_num) hgap0]
-      _ ≤ 256 * (256 * (r / (r - p)) ^ (1 / p)) := by
-            gcongr
-            · exact Real.rpow_le_self_of_one_le (by norm_num) hrinv1
-            · exact Real.rpow_le_self_of_one_le (by norm_num) hrinv1
-      _ = 65536 * (r / (r - p)) ^ (1 / p) := by ring
+      _ ≤ (65536 * (r / (r - p))) ^ (1 / r) :=
+        Real.rpow_le_rpow (mul_nonneg (Real.rpow_nonneg (by norm_num1) _) hHLpos)
+          hprod hrinv0
+      _ = (65536 : ℝ) ^ (1 / r) * (r / (r - p)) ^ (1 / r) := by
+        rw [Real.mul_rpow (by norm_num1) hgap0]
+      _ ≤ _ := mul_le_mul
+        (Real.rpow_le_self_of_one_le (by norm_num1) hrinv1)
+        (Real.rpow_le_rpow_of_exponent_le hgap1 (one_div_le_one_div_of_le hp0 hpr.le))
+        (Real.rpow_nonneg hgap0 _) (by norm_num1)
   have h2048 : (2048 : ℝ) ^ (1 / r) ≤ 2048 :=
-    Real.rpow_le_self_of_one_le (by norm_num) hrinv1
+    Real.rpow_le_self_of_one_le (by norm_num1) hrinv1
   unfold finiteSparseRawFactor
-  have hfirst0 : 0 ≤
-      ((4 : ℝ) ^ holderConjugate r *
-        (4 * holderConjugate r / (holderConjugate r - 1))) ^
-          (1 / holderConjugate r) := Real.rpow_nonneg (mul_nonneg
-            (Real.rpow_nonneg (by norm_num) _)
-            (div_nonneg (mul_nonneg (by norm_num) hq0.le) (sub_nonneg.mpr hq.le))) _
   have hsecond0 : 0 ≤
       ((4 : ℝ) ^ (r / p) * centeredHardyLittlewoodRpowConstant (r / p)) ^
           (1 / r) := Real.rpow_nonneg (mul_nonneg
-            (Real.rpow_nonneg (by norm_num) _)
+            (Real.rpow_nonneg (by norm_num1) _)
             (centeredHardyLittlewoodRpowConstant_pos hs).le) _
   calc
     8 * ((4 : ℝ) ^ holderConjugate r *
@@ -1255,7 +1258,7 @@ theorem finiteMaxRep_compact_level_bound_normalized
   have hmassTop : mass ≠ ∞ := by
     have hfhi := hasFiniteIntegral_iff_enorm.mp
       f.integrable_finiteSparseProof.hasFiniteIntegral
-    exact ne_of_lt (by simpa [mass] using hfhi)
+    exact ne_of_lt (by simpa only [mass] using hfhi)
   have hEtop : volume E ≠ ∞ :=
     ne_top_of_le_ne_top hK.measure_lt_top.ne (measure_mono hEK)
   have hbase := finiteMaxRep_compact_level_bound n T A hT hp hp2 hr hpr hε
@@ -1268,13 +1271,13 @@ theorem finiteMaxRep_compact_level_bound_normalized
     have hA := hT.1
     have hpconj : 0 ≤ holderConjugate p :=
       (holderConjugate_spec hp).symm.pos.le
-    positivity
+    exact le_of_lt (Right.add_pos_of_nonneg_of_pos (mul_nonneg hA hpconj) hε)
   change ENNReal.ofReal a * (volume E / 2) ≤ _
   have hbase' : ENNReal.ofReal a * (volume E / 2) ≤
       ENNReal.ofReal (A * holderConjugate p + ε) * common *
         ENNReal.ofReal ((volume E).toReal ^ (1 / r) *
           ((n + 1 : ℕ) : ℝ) ^ (1 / holderConjugate r)) := by
-    simpa only [mass, b, common] using hbase
+    exact hbase
   calc
     ENNReal.ofReal a * (volume E / 2) ≤
         ENNReal.ofReal (A * holderConjugate p + ε) * common *
@@ -1288,7 +1291,7 @@ theorem finiteMaxRep_compact_level_bound_normalized
       rw [← ENNReal.ofReal_mul hC]
       congr 1
       dsimp only [mass]
-      ring
+      ac_rfl
 
 theorem finiteSparse_normalized_factor_le
     {N : ℕ} {A p r ε : ℝ} (hA : 0 ≤ A) (hp : 1 < p) (hr : 1 < r)
@@ -1299,28 +1302,11 @@ theorem finiteSparse_normalized_factor_le
   have hpconj : 1 < holderConjugate p := one_lt_holderConjugate_of_one_lt hp
   have hcoef : A * holderConjugate p + ε ≤
       (A + ε) * holderConjugate p := by
-    nlinarith
+    nlinarith only [hε, hpconj]
   have hraw := finiteSparseRawFactor_le hp hr hpr hr4
   have hNpow : 0 ≤ (N : ℝ) ^ (1 / holderConjugate r) :=
     Real.rpow_nonneg (Nat.cast_nonneg _) _
-  have hraw0 : 0 ≤ finiteSparseRawFactor p r := by
-    unfold finiteSparseRawFactor
-    have hs : 1 < r / p := (lt_div_iff₀ (zero_lt_one.trans hp)).2 (by simpa using hpr)
-    have hq : 1 < holderConjugate r := one_lt_holderConjugate_of_one_lt hr
-    have hb1 : 0 ≤ (4 : ℝ) ^ holderConjugate r *
-        (4 * holderConjugate r / (holderConjugate r - 1)) :=
-      mul_nonneg (Real.rpow_nonneg (by norm_num) _)
-        (div_nonneg (mul_nonneg (by norm_num) (zero_le_one.trans hq.le))
-          (sub_nonneg.mpr hq.le))
-    have hb2 : 0 ≤ (4 : ℝ) ^ (r / p) *
-        centeredHardyLittlewoodRpowConstant (r / p) :=
-      mul_nonneg (Real.rpow_nonneg (by norm_num) _)
-        (centeredHardyLittlewoodRpowConstant_pos hs).le
-    exact mul_nonneg (mul_nonneg (mul_nonneg (by norm_num)
-      (Real.rpow_nonneg hb1 _)) (Real.rpow_nonneg hb2 _))
-      (Real.rpow_nonneg (by norm_num) _)
-  have hright0 : 0 ≤ r ^ (1 / holderConjugate r) *
-      (r / (r - p)) ^ (1 / p) := by positivity
+  have hraw0 := finiteSparseRawFactor_nonneg hp hr hpr
   have hnewcoef0 : 0 ≤ 2 * ((A + ε) * holderConjugate p) := by positivity
   rw [finiteSparseFactor]
   calc
@@ -1331,7 +1317,7 @@ theorem finiteSparse_normalized_factor_le
           (r / (r - p)) ^ (1 / p)) *
         (N : ℝ) ^ (1 / holderConjugate r) := by
           exact mul_le_mul_of_nonneg_right
-            (mul_le_mul (mul_le_mul_of_nonneg_left hcoef (by norm_num)) hraw
+            (mul_le_mul (mul_le_mul_of_nonneg_left hcoef (by norm_num1)) hraw
               hraw0 hnewcoef0) hNpow
     _ = (2 : ℝ) ^ 37 * (A + ε) *
         (holderConjugate p * r ^ (1 / holderConjugate r) *
@@ -1360,22 +1346,7 @@ theorem finiteMaxRep_compact_level_bound_optimized
     exact ne_of_lt (hasFiniteIntegral_iff_enorm.mp
       f.integrable_finiteSparseProof.hasFiniteIntegral)
   have hmassReal0 : 0 ≤ (∫⁻ y, ‖f y‖ₑ).toReal := ENNReal.toReal_nonneg
-  have hraw0 : 0 ≤ finiteSparseRawFactor p r := by
-    unfold finiteSparseRawFactor
-    have hs : 1 < r / p := (lt_div_iff₀ (zero_lt_one.trans hp)).2 (by simpa using hpr)
-    have hq : 1 < holderConjugate r := one_lt_holderConjugate_of_one_lt hr
-    have hb1 : 0 ≤ (4 : ℝ) ^ holderConjugate r *
-        (4 * holderConjugate r / (holderConjugate r - 1)) :=
-      mul_nonneg (Real.rpow_nonneg (by norm_num) _)
-        (div_nonneg (mul_nonneg (by norm_num) (zero_le_one.trans hq.le))
-          (sub_nonneg.mpr hq.le))
-    have hb2 : 0 ≤ (4 : ℝ) ^ (r / p) *
-        centeredHardyLittlewoodRpowConstant (r / p) :=
-      mul_nonneg (Real.rpow_nonneg (by norm_num) _)
-        (centeredHardyLittlewoodRpowConstant_pos hs).le
-    exact mul_nonneg (mul_nonneg (mul_nonneg (by norm_num)
-      (Real.rpow_nonneg hb1 _)) (Real.rpow_nonneg hb2 _))
-      (Real.rpow_nonneg (by norm_num) _)
+  have hraw0 := finiteSparseRawFactor_nonneg hp hr hpr
   have hcoef0 : 0 ≤ A * holderConjugate p + ε := by
     have hpconj : 0 ≤ holderConjugate p := (holderConjugate_spec hp).symm.pos.le
     exact add_nonneg (mul_nonneg hT.1 hpconj) hε.le
@@ -1390,8 +1361,8 @@ theorem finiteMaxRep_compact_level_bound_optimized
   calc
     ENNReal.ofReal a * volume E =
         (ENNReal.ofReal a * (volume E / 2)) * 2 := by
-      rw [mul_assoc, ENNReal.div_mul_cancel (by norm_num : (2 : ℝ≥0∞) ≠ 0)
-        (by norm_num : (2 : ℝ≥0∞) ≠ ∞)]
+      rw [mul_assoc, ENNReal.div_mul_cancel (by norm_num1 : (2 : ℝ≥0∞) ≠ 0)
+        (by decide +kernel : (2 : ℝ≥0∞) ≠ ∞)]
     _ ≤ ENNReal.ofReal
           ((A * holderConjugate p + ε) * finiteSparseRawFactor p r *
             (∫⁻ y, ‖f y‖ₑ).toReal *
@@ -1406,7 +1377,7 @@ theorem finiteMaxRep_compact_level_bound_optimized
           (mul_nonneg (mul_nonneg hcoef0 hraw0) hmassReal0)
           (Real.rpow_nonneg (Nat.cast_nonneg _) _))]
       congr 1
-      ring
+      ac_rfl
     _ ≤ ENNReal.ofReal
           (((2 : ℝ) ^ 37 * (A + ε) * finiteSparseFactor (n + 1) p r) *
             (∫⁻ y, ‖f y‖ₑ).toReal) := by
@@ -1424,7 +1395,7 @@ theorem localAverage_one_eq_zero_of_ae_eq_zero
     localAverage 1 f I = 0 := by
   have hnorm : (fun x ↦ ‖f x‖) =ᵐ[volume] 0 := by
     filter_upwards [hf] with x hx
-    simp [hx]
+    simp only [hx, Pi.zero_apply, norm_zero]
   have hnormI : (fun x ↦ ‖f x‖) =ᵐ[volume.restrict I.carrier] 0 :=
     ae_restrict_le hnorm
   unfold localAverage
@@ -1433,10 +1404,10 @@ theorem localAverage_one_eq_zero_of_ae_eq_zero
       ∫ x in I.carrier, ‖f x‖ ^ (1 : ℝ) =
           ∫ _x in I.carrier, (0 : ℝ) := integral_congr_ae (by
             filter_upwards [hnormI] with x hx
-            simp [hx])
-      _ = 0 := by simp
+            simp only [hx, Pi.zero_apply, Real.rpow_one])
+      _ = 0 := by simp only [integral_zero]
   rw [hint]
-  simp
+  simp only [mul_zero, ne_eq, one_ne_zero, not_false_eq_true, div_self, Real.rpow_one]
 
 theorem sparseForm_eq_zero_of_ae_eq_zero
     {p : ℝ} {f : ℝ → ℂ} (hf : f =ᵐ[volume] 0) (g : ℝ → ℂ)
@@ -1445,7 +1416,7 @@ theorem sparseForm_eq_zero_of_ae_eq_zero
   unfold sparseForm
   rw [ENNReal.tsum_eq_zero]
   intro I
-  simp [localAverage_one_eq_zero_of_ae_eq_zero hf I.1]
+  simp only [localAverage_one_eq_zero_of_ae_eq_zero hf I.1, mul_zero, zero_mul, ENNReal.ofReal_zero]
 
 /-- Zero input mass forces every member of a finite sparse-bounded family to
 vanish almost everywhere. This treats the normalization-degenerate case
@@ -1533,12 +1504,12 @@ theorem finiteMaxRep_level_bound_optimized
     have hlevelzero : volume {x | a < u x} = 0 := by
       have hae : {x | a < u x} =ᵐ[volume] (∅ : Set ℝ) := by
         filter_upwards [hzero] with x hx
-        have hx' : u x = 0 := by simpa [u] using hx
+        have hx' : u x = 0 := by simpa only [Pi.zero_apply] using hx
         apply propext
         change (a < u x ↔ False)
         rw [hx']
-        simp [not_lt_of_ge ha.le]
-      simpa using hae.measure_eq
+        simp only [not_lt_of_ge ha.le]
+      simpa only [measure_empty] using hae.measure_eq
     have hEz : volume E = 0 := measure_mono_null hElevel hlevelzero
     change ENNReal.ofReal a * volume E ≤ _
     rw [hEz, mul_zero]
@@ -1597,9 +1568,9 @@ theorem finiteMaxRep_level_bound_logarithmic_add
           (2 : ℝ) ^ 37 * (A + ε) *
             (50 * Real.exp 3 * paperLog 1 (n + 1) ^ 2) := by
               gcongr
-              simpa [Nat.cast_add, Nat.cast_one] using hfactor
+              simpa only [paperLog_succ, paperLog_zero, Nat.cast_add, Nat.cast_one] using hfactor
         _ = (2 : ℝ) ^ 37 * 50 * Real.exp 3 * (A + ε) *
-            paperLog 1 (n + 1) ^ 2 := by ring
+            paperLog 1 (n + 1) ^ 2 := by ac_rfl
 
 theorem finiteMaxRep_level_bound_logarithmic
     (n : ℕ) (T : Fin (n + 1) → TestOperator) (A : ℝ)
@@ -1619,7 +1590,7 @@ theorem finiteMaxRep_level_bound_logarithmic
     tendsto_one_div_add_atTop_nhds_zero_nat
   have hct : Tendsto (fun k : ℕ ↦ c * (A + (1 : ℝ) / (k + 1)) * l)
       atTop (nhds (c * A * l)) := by
-    simpa [Function.comp_def] using (hc.tendsto 0).comp heps
+    simpa only [one_div, comp_def, add_zero] using (hc.tendsto 0).comp heps
   have henn : Tendsto
       (fun k : ℕ ↦ ENNReal.ofReal (c * (A + (1 : ℝ) / (k + 1)) * l))
       atTop (nhds (ENNReal.ofReal (c * A * l))) :=

@@ -8,7 +8,6 @@ module
 public import LeanPool.LeanModularForms.ValenceFormula.RectHomotopy.Geometry
 import LeanPool.LeanModularForms.ValenceFormula.RectHomotopy.BoundaryHomotopySmooth
 import Mathlib.CategoryTheory.Category.Init
-import Mathlib.NumberTheory.ArithmeticFunction.Misc
 
 /-!
 # Derivative continuity for the homotopy on partition pieces
@@ -67,7 +66,7 @@ private lemma seg2_deriv_eq (s t : ℝ) (ht1 : 1 < t) (ht2 : t < 2) :
     have h2 : HasDerivAt (fun t' : ℝ => (t' - 1) • iPoint) iPoint t := by
       have := h_shift.smul_const iPoint
       simpa only [one_smul] using this
-    exact (h1.add h2).congr_deriv (by ring)
+    exact (h1.add h2).congr_deriv (by ac_rfl)
   exact ((h_arc.const_smul (1 - s)).add (h_chord.const_smul s)).deriv
 
 /-- On `(2, 3)`, the homotopy's `t`-derivative equals the arc/chord formula at `(t, s)`. -/
@@ -114,7 +113,7 @@ private lemma seg3_deriv_eq (s t : ℝ) (ht2 : 2 < t) (ht3 : t < 3) :
     have h2 : HasDerivAt (fun t' : ℝ => (t' - 2) • rho) rho t := by
       have := h_shift.smul_const rho
       simpa only [one_smul] using this
-    exact (h1.add h2).congr_deriv (by ring)
+    exact (h1.add h2).congr_deriv (by ac_rfl)
   exact ((h_arc.const_smul (1 - s)).add (h_chord.const_smul s)).deriv
 
 private lemma deriv_cont_seg1 (p₁ p₂ : ℝ) (_hp₁p₂ : p₁ < p₂) (h_seg1 : p₂ ≤ 1) :
@@ -209,7 +208,8 @@ private lemma deriv_cont_seg4 (p₁ p₂ : ℝ) (_hp₁p₂ : p₁ < p₂)
       have h4 : HasDerivAt (fun t' : ℝ =>
             (Real.sqrt 3 / 2 : ℂ) + ((↑t' : ℂ) - 3) * ((HHeight : ℂ) - Real.sqrt 3 / 2))
           ((HHeight : ℂ) - Real.sqrt 3 / 2) q.1 := by
-        simp_all
+        simp_all only [ge_iff_le, mem_Ioo, mem_Icc, gt_iff_lt, hasDerivAt_sub_const_iff,
+          hasDerivAt_const_add_iff]
       have h6 := (hasDerivAt_const q.1 ((-1/2 : ℂ))).add (h4.mul_const I)
       simp only [zero_add] at h6; exact h6.deriv
     apply ContinuousOn.congr continuousOn_const hconst
@@ -226,8 +226,8 @@ private lemma deriv_cont_seg5 (p₁ p₂ : ℝ) (_hp₁p₂ : p₁ < p₂) (h_se
           (fun t' : ℝ => ((↑t' : ℂ) - 9/2) + (HHeight : ℂ) * I) := by
         filter_upwards [eventually_gt_nhds ht_gt4] with t' ht4'
         simp only [fdBoundaryToPolygonHomotopy,
-          not_le.mpr (by linarith : 1 < t'), not_le.mpr (by linarith : 2 < t'),
-          not_le.mpr (by linarith : 3 < t'), not_le.mpr ht4', ite_false]
+          not_le.mpr (by linarith only [ht4'] : 1 < t'), not_le.mpr (by linarith : 2 < t'),
+          not_le.mpr (by linarith only [ht4'] : 3 < t'), not_le.mpr ht4', ite_false]
       rw [heq.deriv_eq]
       have hd : HasDerivAt (fun t' : ℝ => ((↑t' : ℂ) - 9/2) + (HHeight : ℂ) * I) 1 q.1 :=
         (Complex.ofRealCLM.hasDerivAt.sub_const (9/2)).add_const ((HHeight : ℂ) * I)

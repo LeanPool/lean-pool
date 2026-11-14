@@ -160,13 +160,13 @@ lemma timeShift_hasTemperateGrowth (s : ℝ) : Function.HasTemperateGrowth (time
     have h_eq : fderiv ℝ (timeShift s) = fun _ => ContinuousLinearMap.id ℝ SpaceTime := by
       ext x v
       have h : timeShift s = fun u => u + timeShiftConst s := funext (timeShift_eq_add_const s)
-      simp_all
-    simp_all
+      simp_all only [fderiv_add_const, fderiv_fun_id, ContinuousLinearMap.id_apply]
+    simp_all only [Function.HasTemperateGrowth.const]
   -- timeShift is differentiable
   have h_diff : Differentiable ℝ (timeShift s) := by
     intro x
     have h : timeShift s = fun u => u + timeShiftConst s := funext (timeShift_eq_add_const s)
-    simp_all
+    simp_all only [differentiableAt_fun_id, differentiableAt_const, DifferentiableAt.fun_add]
   -- Polynomial bound: ‖timeShift s x‖ ≤ C * (1 + ‖x‖)^k
   have h_bound : ∀ x : SpaceTime, ‖timeShift s x‖ ≤ (1 + ‖timeShiftConst s‖) * (1 + ‖x‖) ^ 1 := by
     intro x
@@ -174,7 +174,7 @@ lemma timeShift_hasTemperateGrowth (s : ℝ) : Function.HasTemperateGrowth (time
     calc ‖x + timeShiftConst s‖
         ≤ ‖x‖ + ‖timeShiftConst s‖ := norm_add_le _ _
       _ ≤ (1 + ‖timeShiftConst s‖) * (1 + ‖x‖) := by
-          nlinarith [norm_nonneg x, norm_nonneg (timeShiftConst s)]
+          nlinarith only [norm_nonneg x, norm_nonneg (timeShiftConst s)]
   exact Function.HasTemperateGrowth.of_fderiv h_fderiv_temperate h_diff h_bound
 
 /-! ## Time Translation on Schwartz Functions
@@ -309,11 +309,11 @@ lemma peetre_weight_bound (x y : SpaceTime) (k : ℕ) :
          _ ≤ ‖x + y‖ + ‖-y‖ := norm_add_le _ _
          _ = ‖x + y‖ + ‖y‖ := by rw [norm_neg]
   have h2 : 1 + ‖x‖ ≤ (1 + ‖x + y‖) * (1 + ‖y‖) := by
-    calc 1 + ‖x‖ ≤ 1 + (‖x + y‖ + ‖y‖) := by linarith
+    calc 1 + ‖x‖ ≤ 1 + (‖x + y‖ + ‖y‖) := by linarith only [h1]
          _ = 1 + ‖x + y‖ + ‖y‖ := by ring
-         _ ≤ (1 + ‖x + y‖) * (1 + ‖y‖) := by nlinarith [norm_nonneg (x + y), norm_nonneg y]
+         _ ≤ (1 + ‖x + y‖) * (1 + ‖y‖) := by nlinarith only [norm_nonneg (x + y), norm_nonneg y]
   calc (1 + ‖x‖) ^ k ≤ ((1 + ‖x + y‖) * (1 + ‖y‖)) ^ k := by
-           apply pow_le_pow_left₀ (by linarith [norm_nonneg x]) h2
+           apply pow_le_pow_left₀ (by linarith only [norm_nonneg x]) h2
        _ = (1 + ‖x + y‖) ^ k * (1 + ‖y‖) ^ k := mul_pow _ _ _
 
 /-- The iterated derivative commutes with time translation.
@@ -327,7 +327,8 @@ lemma iteratedFDeriv_timeTranslationSchwartz (n : ℕ) (h : ℝ)
   have h_shift_eq : timeShiftConst h = h • unitTimeDir := by
     ext i
     simp only [timeShiftConst, unitTimeDir, EuclideanSpace.single, timeIndex]
-    simp_all
+    simp_all only [Fin.val_eq_zero_iff, Fin.isValue, Fin.zero_eta, PiLp.smul_apply,
+      PiLp.single_apply, smul_eq_mul, mul_ite, mul_one, mul_zero]
   have h_eq : ∀ z, timeTranslationSchwartz h f z = f (z + h • unitTimeDir) := by
     intro z
     rw [timeTranslationSchwartz_apply, timeShift_eq_add_const, h_shift_eq]
@@ -777,14 +778,14 @@ lemma continuous_timeTranslationSchwartz (f : OSforGFF.TestFunction) :
   have h_eps : |h| < ε / L := lt_of_lt_of_le hh (min_le_right _ _)
   -- For |h| < 1: (1 + |h|)^k ≤ 2^k
   have h_pow_bound : (1 + |h|) ^ k ≤ (2 : ℝ) ^ k := by
-    apply pow_le_pow_left₀ (by linarith [abs_nonneg h])
-    linarith
+    apply pow_le_pow_left₀ (by linarith only [abs_nonneg h])
+    linarith only [h_small]
   have h4 : (2 : ℝ) ^ k * (2 : ℝ) ^ k = (4 : ℝ) ^ k := by rw [← mul_pow]; norm_num
   calc (SchwartzMap.seminorm ℝ k n) (timeTranslationSchwartz h f - f)
     _ ≤ |h| * (1 + |h|) ^ k * (2 : ℝ) ^ k * C := h_lip
     _ ≤ |h| * (2 : ℝ) ^ k * (2 : ℝ) ^ k * C := by gcongr
     _ = |h| * L := by simp only [L, ← h4]; ring
-    _ < (ε / L) * L := by nlinarith [abs_nonneg h]
+    _ < (ε / L) * L := by nlinarith only [hL_pos, h_eps, abs_nonneg h]
     _ = ε := by field_simp
 
 /-! ## Time Translation on Tempered Distributions
@@ -838,6 +839,7 @@ lemma timeTranslationDistribution_add (s t : ℝ) (ω : FieldConfiguration) :
 lemma timeTranslationDistribution_zero (ω : FieldConfiguration) :
     timeTranslationDistribution 0 ω = ω := by
   apply DFunLike.ext
-  simp_all
+  simp_all only [timeTranslationDistribution_apply, neg_zero, timeTranslationSchwartz_zero,
+    implies_true]
 
 end TimeTranslation

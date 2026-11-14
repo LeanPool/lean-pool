@@ -12,7 +12,6 @@ import Mathlib.Analysis.Calculus.FDeriv.Extend
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 import Mathlib.CategoryTheory.Category.Init
 import Mathlib.Combinatorics.Matroid.Init
-import Mathlib.MeasureTheory.Covering.Besicovitch
 
 /-!
 # Flatness and Higher-Order Pole Conditions (Definition 3.2)
@@ -59,10 +58,12 @@ def tangentDeviation (w L : ℂ) : ℂ :=
   w - orthogonalProjectionComplex w L
 
 theorem orthogonalProjectionComplex_zero_left (L : ℂ) :
-    orthogonalProjectionComplex 0 L = 0 := by simp [orthogonalProjectionComplex]
+    orthogonalProjectionComplex 0 L = 0 := by simp only [orthogonalProjectionComplex, zero_mul,
+      zero_re, zero_div, zero_smul]
 
 theorem tangentDeviation_zero_left (L : ℂ) :
-    tangentDeviation 0 L = 0 := by simp [tangentDeviation, orthogonalProjectionComplex_zero_left]
+    tangentDeviation 0 L = 0 := by simp only [tangentDeviation,
+      orthogonalProjectionComplex_zero_left, sub_self]
 
 theorem tangentDeviation_zero_right (w : ℂ) :
     tangentDeviation w 0 = w := by
@@ -172,7 +173,8 @@ private theorem tangentDeviation_isLittleO_of_remainder
     (fun t => tangentDeviation (γ t - γ t₀) L) =o[l] fun t => γ t - γ t₀ := by
   set r := fun t => γ t - γ t₀ - (t - t₀) • L with hr_def
   have h_eq : ∀ t, tangentDeviation (γ t - γ t₀) L = tangentDeviation (r t) L := fun t => by
-    rw [show γ t - γ t₀ = (t - t₀) • L + r t from by simp [hr_def],
+    rw [show γ t - γ t₀ = (t - t₀) • L + r t from by simp only [real_smul, ofReal_sub, hr_def,
+      add_sub_cancel],
       tangentDeviation_add, tangentDeviation_real_smul_self _ _ hL, zero_add]
   have hO : (fun t => tangentDeviation (r t) L) =O[l] r :=
     Asymptotics.isBigO_iff.mpr
@@ -185,7 +187,8 @@ private theorem tangentDeviation_isLittleO_of_remainder
     filter_upwards [hr.def (by positivity : (0 : ℝ) < ‖L‖ / 2)] with t ht
     have h1 : ‖t - t₀‖ * ‖L‖ = ‖(t - t₀) • L‖ := (norm_smul _ _).symm
     have h2 : ‖(t - t₀) • L‖ ≤ ‖γ t - γ t₀‖ + ‖r t‖ :=
-      (show (t - t₀) • L = (γ t - γ t₀) - r t by simp [hr_def]) ▸ norm_sub_le _ _
+      (show (t - t₀) • L = (γ t - γ t₀) - r t by simp only [real_smul, ofReal_sub, hr_def,
+        sub_sub_cancel]) ▸ norm_sub_le _ _
     rw [div_mul_eq_mul_div, le_div_iff₀ hL_pos]
     nlinarith only [ht, h1, h2, norm_nonneg (γ t - γ t₀)]
   exact (ho1.trans_isBigO hO2).congr_left fun t => (h_eq t).symm
@@ -399,8 +402,9 @@ theorem satisfiesConditionB_of_simple_poles
     refine ⟨1, ![c], g, hg, ?_, ?_⟩
     · filter_upwards [hf_eq] with z hz
       rw [hz]
-      simp [pow_one]
-      ring
+      simp only [Finset.univ_unique, Fin.default_eq_zero, Fin.isValue, Matrix.cons_val_fin_one,
+        Fin.val_eq_zero, zero_add, pow_one, Finset.sum_const, Finset.card_singleton, one_smul]
+      ac_rfl
     · simp_all only [mem_Icc, mem_Ioo, ne_eq, Nat.exists_ne_zero, Nat.cast_add, Nat.cast_one,
       forall_and_index, Matrix.cons_val_fin_one, Fin.val_eq_zero, ge_iff_le, nonpos_iff_eq_zero,
             one_ne_zero, CharP.cast_eq_zero,

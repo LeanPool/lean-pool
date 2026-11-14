@@ -86,7 +86,7 @@ theorem inner_self {ι : Type*} [DecidableEq ι] {s : Finset ι} {v : ι → E}
     (hv : FiniteOrthonormalOn s v) {i : ι} (hi : i ∈ s) :
     inner ℝ (v i) (v i) = 1 := by
   rw [hv hi hi]
-  simp
+  simp only [↓reduceIte]
 
 /-- Every member of a finite orthonormal family has squared norm one. -/
 theorem norm_sq {ι : Type*} [DecidableEq ι] {s : Finset ι} {v : ι → E}
@@ -99,7 +99,7 @@ theorem inner_ne {ι : Type*} [DecidableEq ι] {s : Finset ι} {v : ι → E}
     (hij : i ≠ j) :
     inner ℝ (v i) (v j) = 0 := by
   rw [hv hi hj]
-  simp [hij]
+  simp only [hij, ↓reduceIte]
 
 /-- The coordinate projection onto a finite orthonormal family has the expected coordinate in
 each selected direction. -/
@@ -125,12 +125,12 @@ theorem univ_of_basis {ι : Type*} [Fintype ι] (b : Module.Basis ι ℝ E) :
   intro z
   have hz : z ∈ (⊤ : Submodule ℝ E) := trivial
   rw [← b.span_eq] at hz
-  simp at hz ⊢
+  simp only [Module.Basis.span_eq, Submodule.mem_top, Finset.coe_univ, Set.image_univ] at hz ⊢
 
 theorem univ_of_orthonormalBasis {ι : Type*} [Fintype ι]
     (b : OrthonormalBasis ι ℝ E) :
     FiniteSpanningOn Finset.univ (b : ι → E) := by
-  simpa [OrthonormalBasis.coe_toBasis] using
+  exact
     (univ_of_basis (b := b.toBasis))
 
 /-- Linear isometry equivalences preserve finite spanning families. -/
@@ -146,12 +146,12 @@ theorem image_linearIsometryEquiv
     refine Submodule.span_induction (fun z hz ↦ ?_) ?_ ?_ ?_ hpre
     · rcases hz with ⟨i, hi, rfl⟩
       exact Submodule.subset_span ⟨i, hi, rfl⟩
-    · simp
+    · simp only [map_zero, zero_mem]
     · intro z w _hz _hw hzmem hwmem
-      simpa [map_add] using Submodule.add_mem _ hzmem hwmem
+      simpa only [map_add] using Submodule.add_mem _ hzmem hwmem
     · intro a z _hz hzmem
-      simpa [map_smul] using Submodule.smul_mem _ a hzmem
-  simpa using hmap
+      simpa only [map_smul] using Submodule.smul_mem _ a hzmem
+  simpa only [LinearIsometryEquiv.apply_symm_apply] using hmap
 
 end FiniteSpanningOn
 
@@ -205,7 +205,7 @@ theorem sum_inner_smul_eq {ι : Type*} [DecidableEq ι] {s : Finset ι} {v : ι 
     refine Submodule.span_induction (fun y hy => ?_) ?_ ?_ ?_ hy
     · rcases hy with ⟨i, hi, rfl⟩
       exact horth_gen hi
-    · simp
+    · simp only [inner_zero_left]
     · intro y w _hy _hw hy0 hw0
       rw [inner_add_left, hy0, hw0, add_zero]
     · intro a y _hy hy0
@@ -227,9 +227,9 @@ theorem exists_ne_zero_of_nonzero {ι : Type*} [DecidableEq ι] {s : Finset ι} 
     exact hnone ⟨i, hi, hvi⟩
   have hsum : (∑ i ∈ s, inner ℝ (v i) z • v i) = 0 := by
     refine Finset.sum_eq_zero fun i hi => ?_
-    simp [hzero hi]
+    simp only [hzero hi, inner_zero_left, smul_zero]
   have hcoord := hv.sum_inner_smul_eq z
-  exact hz (by simpa [hsum] using hcoord.symm)
+  exact hz (by simpa only [hsum] using hcoord.symm)
 
 /-- Pythagorean identity for coordinates in a finite orthonormal spanning family. -/
 theorem sum_inner_sq_eq_norm_sq {ι : Type*} [DecidableEq ι] {s : Finset ι} {v : ι → E}
@@ -309,14 +309,14 @@ theorem eq_zero_of_quadraticForm_eq_zero_on_frame_and_add
           inner ℝ (v i + v j) (B (v i + v j)) =
             inner ℝ (v i) (B (v i)) + inner ℝ (v i) (B (v j)) +
               (inner ℝ (v j) (B (v i)) + inner ℝ (v j) (B (v j))) := by
-        simp [map_add, inner_add_left, inner_add_right]
+        simp only [map_add, inner_add_right, inner_add_left]
         ring
       have hsum :
           inner ℝ (v i) (B (v j)) + inner ℝ (v j) (B (v i)) = 0 := by
         rw [hexpand, hpure hi, hpure hj] at hp
-        linarith
+        linarith only [hp]
       rw [hsymm] at hsum
-      linarith
+      linarith only [hsum]
   have hbilin : ∀ x y : E, inner ℝ x (B y) = 0 := by
     intro x y
     have hx := hv.sum_inner_smul_eq x
@@ -354,19 +354,19 @@ theorem ext_of_quadraticForm_eq_on_frame_and_add
     intro x y
     calc
       inner ℝ ((B - C) x) y = inner ℝ (B x) y - inner ℝ (C x) y := by
-        simp [inner_sub_left]
+        simp only [sub_apply, inner_sub_left]
       _ = inner ℝ x (B y) - inner ℝ x (C y) := by
         have hBx : inner ℝ (B x) y = inner ℝ x (B y) := by
-          simpa using hB x y
+          exact hB x y
         have hCx : inner ℝ (C x) y = inner ℝ x (C y) := by
-          simpa using hC x y
+          exact hC x y
         rw [hBx, hCx]
       _ = inner ℝ x ((B - C) y) := by
-        simp [inner_sub_right]
+        simp only [sub_apply, inner_sub_right]
   have hzero : B - C = 0 := by
     refine hv.eq_zero_of_quadraticForm_eq_zero_on_frame_and_add hsymm ?_ ?_
     · intro i hi
-      simpa [sub_apply, inner_sub_right] using
+      simpa only [sub_apply, inner_sub_right] using
         sub_eq_zero.mpr (hpure hi)
     · intro i hi j hj
       let d := v i + v j
@@ -374,11 +374,10 @@ theorem ext_of_quadraticForm_eq_on_frame_and_add
         inner ℝ d ((B - C) d)
             = inner ℝ d (B (v i) + B (v j)) -
                 inner ℝ d (C (v i) + C (v j)) := by
-              simp [d, map_add, inner_sub_right,
-                inner_add_right]
+              simp only [map_add, sub_apply, inner_add_right, inner_sub_right, d]
               ring
         _ = inner ℝ d (B d) - inner ℝ d (C d) := by
-              simp [d, map_add]
+              simp only [map_add, d]
         _ = 0 := by
               rw [hpair hi hj, sub_self]
   exact sub_eq_zero.mp hzero
@@ -410,14 +409,14 @@ theorem eq_zero_of_quadraticForm_eq_zero_on_frame_and_add_offDiagonal
           inner ℝ (v i + v j) (B (v i + v j)) =
             inner ℝ (v i) (B (v i)) + inner ℝ (v i) (B (v j)) +
               (inner ℝ (v j) (B (v i)) + inner ℝ (v j) (B (v j))) := by
-        simp [map_add, inner_add_left, inner_add_right]
+        simp only [map_add, inner_add_right, inner_add_left]
         ring
       have hsum :
           inner ℝ (v i) (B (v j)) + inner ℝ (v j) (B (v i)) = 0 := by
         rw [hexpand, hpure hi, hpure hj] at hp
-        linarith
+        linarith only [hp]
       rw [hsymm] at hsum
-      linarith
+      linarith only [hsum]
   have hbilin : ∀ x y : E, inner ℝ x (B y) = 0 := by
     intro x y
     have hx := hv.sum_inner_smul_eq x
@@ -455,19 +454,19 @@ theorem ext_of_quadraticForm_eq_on_frame_and_add_offDiagonal
     intro x y
     calc
       inner ℝ ((B - C) x) y = inner ℝ (B x) y - inner ℝ (C x) y := by
-        simp [inner_sub_left]
+        simp only [sub_apply, inner_sub_left]
       _ = inner ℝ x (B y) - inner ℝ x (C y) := by
         have hBx : inner ℝ (B x) y = inner ℝ x (B y) := by
-          simpa using hB x y
+          exact hB x y
         have hCx : inner ℝ (C x) y = inner ℝ x (C y) := by
-          simpa using hC x y
+          exact hC x y
         rw [hBx, hCx]
       _ = inner ℝ x ((B - C) y) := by
-        simp [inner_sub_right]
+        simp only [sub_apply, inner_sub_right]
   have hzero : B - C = 0 := by
     refine hv.eq_zero_of_quadraticForm_eq_zero_on_frame_and_add_offDiagonal hsymm ?_ ?_
     · intro i hi
-      simpa [sub_apply, inner_sub_right] using
+      simpa only [sub_apply, inner_sub_right] using
         sub_eq_zero.mpr (hpure hi)
     · intro i hi j hj hij
       let d := v i + v j
@@ -475,11 +474,10 @@ theorem ext_of_quadraticForm_eq_on_frame_and_add_offDiagonal
         inner ℝ d ((B - C) d)
             = inner ℝ d (B (v i) + B (v j)) -
                 inner ℝ d (C (v i) + C (v j)) := by
-              simp [d, map_add, inner_sub_right,
-                inner_add_right]
+              simp only [map_add, sub_apply, inner_add_right, inner_sub_right, d]
               ring
         _ = inner ℝ d (B d) - inner ℝ d (C d) := by
-              simp [d, map_add]
+              simp only [map_add, d]
         _ = 0 := by
               rw [hpair hi hj hij, sub_self]
   exact sub_eq_zero.mp hzero

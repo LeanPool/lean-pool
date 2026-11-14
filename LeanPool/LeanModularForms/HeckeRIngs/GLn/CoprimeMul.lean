@@ -62,13 +62,13 @@ lemma DivChain_mul (a b : Fin n → ℕ) (ha : DivChain n a) (hb : DivChain n b)
   ext i j; simp only [Matrix.mul_apply, Matrix.diagonal_apply]
   by_cases hij : i = j
   · subst hij; rw [Finset.sum_eq_single i]
-    · simp
-    · intro b' _ hb'; simp [hb']
+    · simp only [↓reduceIte, Nat.cast_mul]
+    · intro b' _ hb'; simp only [hb', ↓reduceIte, mul_zero]
     · intro h; exact absurd (Finset.mem_univ i) h
   · simp only [hij, ↓reduceIte]; apply Finset.sum_eq_zero; intro k _
     by_cases hik : i = k
-    · subst hik; simp [hij]
-    · simp [hik]
+    · subst hik; simp only [↓reduceIte, hij, mul_zero]
+    · simp only [hik, ↓reduceIte, mul_ite, zero_mul, mul_zero, ite_self]
 
 variable [NeZero n]
 
@@ -308,19 +308,19 @@ private lemma slTransvec_CRT (d d' : ℕ) (hcop : Nat.Coprime d d')
   refine ⟨slTransvec n i j hij (c * d * Nat.gcdA d d'),
     slTransvec n i j hij (c * d' * Nat.gcdB d d'), ?_, ?_, ?_⟩
   · rw [slTransvec_mul]; congr 1; linear_combination c * hbez
-  · exact slTransvec_congMod n d i j hij _ ⟨c * Nat.gcdA d d', by ring⟩
-  · exact slTransvec_congMod n d' i j hij _ ⟨c * Nat.gcdB d d', by ring⟩
+  · exact slTransvec_congMod n d i j hij _ ⟨c * Nat.gcdA d d', by ac_rfl⟩
+  · exact slTransvec_congMod n d' i j hij _ ⟨c * Nat.gcdB d d', by ac_rfl⟩
 
 omit [NeZero n] in
 private lemma congMod_one (d : ℕ) : congMod n d 1 :=
-  fun i j => by simp [SpecialLinearGroup.coe_one, Matrix.one_apply]
+  fun i j => by simp only [coe_one, Matrix.one_apply, sub_self, dvd_zero]
 
 omit [NeZero n] in
 private lemma congMod_mul (d : ℕ) (a b : SpecialLinearGroup (Fin n) ℤ)
     (ha : congMod n d a) (hb : congMod n d b) : congMod n d (a * b) := by
   intro i j; simp only [SpecialLinearGroup.coe_mul, Matrix.mul_apply]
   have h1 : ∑ k : Fin n, (if i = k then (1 : ℤ) else 0) * b.1 k j = b.1 i j := by
-    simp [Finset.mem_univ]
+    simp only [ite_mul, one_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, ↓reduceIte]
   have h2 : ∑ k, (a.1 i k - if i = k then 1 else 0) * b.1 k j =
       (∑ k, a.1 i k * b.1 k j) - b.1 i j := by
     rw [← h1, ← Finset.sum_sub_distrib]; congr 1; ext k; ring
@@ -469,10 +469,10 @@ lemma conjugate_congruent_mem_SLnZ (a : Fin n → ℕ) (ha : ∀ i, 0 < a i) (_h
     simp only [Units.val_mul, hτ_val, hM_val, diagMat_val _ _ ha]
     have h_mul_map : ∀ (A B : Matrix (Fin n) (Fin n) ℤ),
         (A * B).map (Int.cast : ℤ → ℚ) = A.map Int.cast * B.map Int.cast := by
-      intro A B; ext i j; simp [Matrix.mul_apply, Matrix.map_apply]
+      intro A B; ext i j; simp only [map_apply, Matrix.mul_apply, Int.cast_sum, Int.cast_mul]
     have h_diag_map : (Matrix.diagonal (fun i => (a i : ℤ))).map (Int.cast : ℤ → ℚ) =
         Matrix.diagonal (fun i => (a i : ℚ)) := by
-      ext i j; simp [Matrix.map_apply, Matrix.diagonal_apply]
+      ext i j; simp only [map_apply, diagonal_apply, Int.cast_ite, Int.cast_natCast, Int.cast_zero]
     rw [← h_diag_map, ← h_mul_map, ← h_mul_map, h_int_eq]
   exact eq_mul_inv_iff_mul_eq.mpr h_Q_eq.symm
 
@@ -516,10 +516,10 @@ lemma inv_conjugate_congruent_mem_SLnZ (b : Fin n → ℕ) (hb : ∀ i, 0 < b i)
     simp only [Units.val_mul, hτ_val, hN_val, diagMat_val _ _ hb]
     have h_mul_map : ∀ (A B : Matrix (Fin n) (Fin n) ℤ),
         (A * B).map (Int.cast : ℤ → ℚ) = A.map Int.cast * B.map Int.cast := by
-      intro A B; ext i j; simp [Matrix.mul_apply, Matrix.map_apply]
+      intro A B; ext i j; simp only [map_apply, Matrix.mul_apply, Int.cast_sum, Int.cast_mul]
     have h_diag_map : (Matrix.diagonal (fun i => (b i : ℤ))).map (Int.cast : ℤ → ℚ) =
         Matrix.diagonal (fun i => (b i : ℚ)) := by
-      ext i j; simp [Matrix.map_apply, Matrix.diagonal_apply]
+      ext i j; simp only [map_apply, diagonal_apply, Int.cast_ite, Int.cast_natCast, Int.cast_zero]
     rw [← h_diag_map, ← h_mul_map, ← h_mul_map, h_int_eq]
   calc mapGL ℚ ⟨N, hN_det⟩
       = (diagMat n b)⁻¹ * (diagMat n b * mapGL ℚ ⟨N, hN_det⟩) := by rw [inv_mul_cancel_left]
@@ -538,9 +538,9 @@ lemma doubleCoset_mul_coprime_mem (a b : Fin n → ℕ)
   obtain ⟨τ₁, τ₂, hτ, hτ₁, hτ₂⟩ := SLnZ_CRT_decomposition n (∏ i, a i) (∏ i, b i)
     (Finset.prod_pos (fun i _ => ha_pos i)) (Finset.prod_pos (fun i _ => hb_pos i)) hcop τ
   obtain ⟨σ₁, hσ₁⟩ := conjugate_congruent_mem_SLnZ n a ha_pos ha τ₁
-    (fun i j => by convert hτ₁ i j using 1; simp)
+    (fun i j => by convert hτ₁ i j using 1; simp only [Nat.cast_prod])
   obtain ⟨σ₂, hσ₂⟩ := inv_conjugate_congruent_mem_SLnZ n b hb_pos hb τ₂
-    (fun i j => by convert hτ₂ i j using 1; simp)
+    (fun i j => by convert hτ₂ i j using 1; simp only [Nat.cast_prod])
   rw [DoubleCoset.mem_doubleCoset]
   refine ⟨(σ₁ : GL (Fin n) ℚ), coe_mem_SLnZ n σ₁,
     (σ₂ : GL (Fin n) ℚ), coe_mem_SLnZ n σ₂, ?_⟩
@@ -615,7 +615,7 @@ private lemma GLnQ_mem_SLnZ_of_coprime_scaling (C : GL (Fin n) ℚ)
       have hst_Q : (s : ℚ) * (pa : ℚ) + (t : ℚ) * (pb : ℚ) = 1 := by exact_mod_cast hst
       have := congr_arg (· * (↑C : Matrix (Fin n) (Fin n) ℚ) i j) hst_Q
       simp only [add_mul, one_mul] at this; linarith only [this]
-    rw [h1, hza, hzb]; push_cast; ring
+    rw [h1, hza, hzb]; push_cast; ac_rfl
   set N : Matrix (Fin n) (Fin n) ℤ := Matrix.of fun i j => (h_int i j).choose
   have hN_eq : ∀ i j, (↑C : Matrix (Fin n) (Fin n) ℚ) i j = ((N i j : ℤ) : ℚ) :=
     fun i j => (h_int i j).choose_spec
@@ -653,9 +653,9 @@ private lemma diagConj_scaling (a : Fin n → ℕ) (ha : ∀ i, 0 < a i)
   rw [this, h_entry]
   have hai_ne_int : (a i : ℤ) ≠ 0 := ne_of_gt (Int.natCast_pos.mpr (ha i))
   rw [show ((∏ k, (a k : ℤ)) / (a i : ℤ) * σ.val i j * (a j : ℤ) : ℤ) =
-      (∏ k, (a k : ℤ)) / (a i : ℤ) * ((σ.val i j : ℤ) * (a j : ℤ)) from by ring]
+      (∏ k, (a k : ℤ)) / (a i : ℤ) * ((σ.val i j : ℤ) * (a j : ℤ)) from by ac_rfl]
   push_cast [Int.cast_div h_dvd (show ((a i : ℤ) : ℚ) ≠ 0 from Int.cast_ne_zero.mpr hai_ne_int)]
-  ring
+  ac_rfl
 
 omit [NeZero n] in
 private lemma diagSandwich_scaling (b : Fin n → ℕ) (hb : ∀ i, 0 < b i)
@@ -695,10 +695,10 @@ private lemma diagSandwich_scaling (b : Fin n → ℕ) (hb : ∀ i, 0 < b i)
     have hbq_ne_int : (b q : ℤ) ≠ 0 := Int.natCast_ne_zero.mpr (hb q).ne'
     refine ⟨(∏ k, (b k : ℤ)) / (b q : ℤ) * (b p : ℤ) * G.val p q, ?_⟩
     have h_div_eq : (∏ k, (b k : ℚ)) * ((b p : ℚ) * ↑(G.val p q) * ((b q : ℚ)⁻¹)) =
-        (∏ k, (b k : ℚ)) / (b q : ℚ) * ((b p : ℚ) * ↑(G.val p q)) := by rw [div_eq_mul_inv]; ring
+        (∏ k, (b k : ℚ)) / (b q : ℚ) * ((b p : ℚ) * ↑(G.val p q)) := by rw [div_eq_mul_inv]; ac_rfl
     rw [h_div_eq]
     push_cast [Int.cast_div h_dvd (show ((b q : ℤ) : ℚ) ≠ 0 from Int.cast_ne_zero.mpr hbq_ne_int)]
-    ring
+    ac_rfl
   rw [h_C_entry, Finset.mul_sum]; simp_rw [Finset.mul_sum, mul_assoc]
   refine ⟨∑ p, ∑ q, (F.val i p) * (h_D_scale p q).choose * (E.val q j), ?_⟩
   push_cast; apply Finset.sum_congr rfl; intro p _; apply Finset.sum_congr rfl; intro q _
@@ -707,7 +707,7 @@ private lemma diagSandwich_scaling (b : Fin n → ℕ) (hb : ∀ i, 0 < b i)
     Int.coe_castRingHom, algebraMap_int_eq, Matrix.map_apply]
   set z := (h_D_scale p q).choose
   have h1 : (∏ k, (b k : ℚ)) * ((↑(F.val i p) : ℚ) * (D_mat p q * (↑(E.val q j) : ℚ))) =
-      (↑(F.val i p) : ℚ) * ((∏ k, (b k : ℚ)) * D_mat p q) * (↑(E.val q j) : ℚ) := by ring
+      (↑(F.val i p) : ℚ) * ((∏ k, (b k : ℚ)) * D_mat p q) * (↑(E.val q j) : ℚ) := by ac_rfl
   rw [h1, hDpq]
 
 omit [NeZero n] in
@@ -725,8 +725,8 @@ private lemma coprime_coupling_mem_H (a b : Fin n → ℕ)
       RingHom.mapMatrix_apply, algebraMap_int_eq, Int.coe_castRingHom]
     rw [show (σ.val.map (Int.cast : ℤ → ℚ)).det = 1 from by
       rw [show σ.val.map (Int.cast : ℤ → ℚ) = (Int.castRingHom ℚ).mapMatrix σ.val from by
-        ext i j; simp [RingHom.mapMatrix_apply, Matrix.map_apply],
-        ← RingHom.map_det]; simp [σ.prop]]
+        ext i j; simp only [map_apply, RingHom.mapMatrix_apply, Int.coe_castRingHom],
+        ← RingHom.map_det]; simp only [σ.prop, eq_intCast, Int.cast_one] ]
     rw [mul_one, ← Matrix.det_mul, ← Units.val_mul, inv_mul_cancel, Units.val_one, Matrix.det_one]
   have h_scale_a : ∀ i j, ∃ z : ℤ,
       (↑(∏ i, a i) : ℚ) * (↑C : Matrix (Fin n) (Fin n) ℚ) i j = z := by

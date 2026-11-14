@@ -138,15 +138,15 @@ coefficients. These feed the ℤ-refinement `ModularPolynomialZ.lean` downstream
 /-- Every q-expansion coefficient of `E₄` is an integer (`1` at `n = 0`, `240·σ₃(n)` else). -/
 lemma E₄_qExpansion_coeff_int (n : ℕ) :
     ∃ c : ℤ, (qExpansion 1 E₄).coeff n = (c : ℂ) := by
-  have h := EisensteinSeries.E_qExpansion_coeff (k := 4) (by norm_num) (by decide) n
+  have h := EisensteinSeries.E_qExpansion_coeff (k := 4) (by norm_num only) (by decide) n
   have hb : bernoulli 4 = -1 / 30 := bernoulli_four_value
   rw [hb, show (4 : ℕ) - 1 = 3 from rfl] at h
   by_cases hn : n = 0
-  · exact ⟨1, by rw [h, ite_eq_left hn]; norm_num⟩
+  · exact ⟨1, by rw [h, ite_eq_left hn]; norm_num only⟩
   · refine ⟨240 * ArithmeticFunction.sigma 3 n, ?_⟩
     rw [h, ite_eq_right hn]
     push_cast
-    norm_num
+    norm_num only
 
 /-- Every q-expansion coefficient of the cube `(qExpansion E₄)³` — i.e. of `E₄³` — is an
 integer. This is the numerator side of `j = E₄³/Δ`. -/
@@ -155,7 +155,7 @@ lemma E₄_qExpansion_pow_three_coeff_int (n : ℕ) :
   choose c hc using E₄_qExpansion_coeff_int
   have hmap : qExpansion 1 E₄ = (PowerSeries.mk c).map (Int.castRingHom ℂ) := by
     ext m
-    simp [PowerSeries.coeff_map, PowerSeries.coeff_mk, hc m]
+    simp only [hc m, PowerSeries.coeff_map, PowerSeries.coeff_mk, eq_intCast]
   refine ⟨((PowerSeries.mk c) ^ 3).coeff n, ?_⟩
   rw [hmap, ← map_pow, PowerSeries.coeff_map]
   rfl
@@ -252,10 +252,10 @@ private lemma dvd_1728_coeff (m : ℕ) :
   have h24 : (24 : ℤ) ∣ PowerSeries.coeff m (sigmaPS 5 - sigmaPS 3) := by
     rw [map_sub, sigmaPS, sigmaPS, PowerSeries.coeff_mk, PowerSeries.coeff_mk]
     split_ifs
-    · simp
+    · simp only [sub_self, dvd_zero]
     · exact dvd_sigma_sub m
   obtain ⟨c, hc⟩ := h24
-  exact ⟨14 * c, by rw [hc]; ring⟩
+  exact ⟨14 * c, by rw [hc]; ac_rfl⟩
 
 private lemma exists_delta_coeff (m : ℕ) :
     ∃ t : ℤ, PowerSeries.coeff m (E4Z ^ 3 - E6Z ^ 2) = 1728 * t := dvd_1728_coeff m
@@ -390,12 +390,12 @@ private lemma cuspFunction_qfun_eqOn :
   intro z hz
   by_cases hz0 : z = 0
   · subst hz0
-    simpa using isZeroAtImInfty_qfun.cuspFunction_apply_zero one_pos
+    simpa only [id_eq] using isZeroAtImInfty_qfun.cuspFunction_apply_zero one_pos
   · have him := Function.Periodic.im_invQParam_pos_of_norm_lt_one one_pos
-      (by simpa [dist_zero_right] using hz) hz0
-    simp [cuspFunction, Function.Periodic.cuspFunction_eq_of_nonzero 1 _ hz0,
-      ofComplex_apply_of_im_pos him, q,
-      Function.Periodic.qParam_right_inv one_ne_zero hz0]
+      (by simpa only [Metric.mem_ball, dist_zero_right] using hz) hz0
+    simp only [cuspFunction, q, Function.Periodic.cuspFunction_eq_of_nonzero 1 _ hz0,
+      Function.comp_apply, ofComplex_apply_of_im_pos him,
+      Function.Periodic.qParam_right_inv one_ne_zero hz0, id_eq]
 
 /-- The q-expansion of the nome itself is the series `X`. -/
 private lemma qExpansion_qfun_eq : qExpansion 1 (fun τ : ℍ ↦ q τ) = PowerSeries.X := by
@@ -404,14 +404,16 @@ private lemma qExpansion_qfun_eq : qExpansion 1 (fun τ : ℍ ↦ q τ) = PowerS
   ext m
   rw [qExpansion_coeff, PowerSeries.coeff_X, Filter.EventuallyEq.iteratedDeriv_eq m heq]
   match m with
-  | 0 => simp
-  | 1 => simp
+  | 0 => simp only [Nat.factorial_zero, Nat.cast_one, inv_one, iteratedDeriv_zero, id_eq, mul_zero,
+    zero_ne_one, ↓reduceIte]
+  | 1 => simp only [Nat.factorial_one, Nat.cast_one, inv_one, iteratedDeriv_one, deriv_id', mul_one,
+    ↓reduceIte]
   | (k + 2) =>
     have hconst : iteratedDeriv (k + 2) (id : ℂ → ℂ) 0 = 0 := by
       rw [iteratedDeriv_succ', deriv_id']
-      simp [iteratedDeriv_const]
+      simp only [iteratedDeriv_const, Nat.add_eq_zero_iff, one_ne_zero, and_false, ↓reduceIte]
     rw [hconst]
-    simp
+    simp only [mul_zero, Nat.reduceEqDiff, ↓reduceIte]
 
 /-- `j·q` is invariant under `τ ↦ τ + 1`. -/
 private lemma jq_vadd_one (τ : ℍ) : j ((1 : ℝ) +ᵥ τ) * q ((1 : ℝ) +ᵥ τ) = j τ * q τ := by
@@ -446,7 +448,7 @@ private lemma isBoundedAtImInfty_jq : IsBoundedAtImInfty (fun τ : ℍ ↦ j τ 
   have hE : IsBoundedAtImInfty ⇑E₄ := ModularFormClass.bdd_at_infty E₄
   have hPinv : Filter.Tendsto (fun τ : ℍ ↦ (∏' n : ℕ, (1 - eta_q n ↑τ) ^ 24)⁻¹)
       atImInfty (nhds 1) := by
-    simpa using tendsto_atImInfty_tprod_one_sub_eta_q_pow.inv₀ one_ne_zero
+    simpa only [inv_one] using tendsto_atImInfty_tprod_one_sub_eta_q_pow.inv₀ one_ne_zero
   have hPb : IsBoundedAtImInfty (fun τ : ℍ ↦ (∏' n : ℕ, (1 - eta_q n ↑τ) ^ 24)⁻¹) :=
     hPinv.isBigO_one ℝ
   exact Filter.BoundedAtFilter.mul hE (Filter.BoundedAtFilter.mul hE
@@ -530,7 +532,7 @@ theorem j_mul_q_qExpansion_coeff_zero :
     PowerSeries.coeff 0 (qExpansion 1 (fun τ : ℍ ↦ j τ * q τ)) = 1 := by
   rw [qExpansion_j_mul_q, PowerSeries.coeff_map,
     PowerSeries.coeff_zero_eq_constantCoeff_apply, constantCoeff_jqInt]
-  simp
+  simp only [eq_intCast, Int.cast_one]
 
 /-- **(B1) headline, existential packaging**: `j·q ∈ 1 + q·ℤ⟦q⟧` — there are integers
 `c 0 = 1, c 1 = 744, c 2 = 196884, …` with `j τ · q τ = ∑ c n · q τ ^ n` for all `τ : ℍ`. -/

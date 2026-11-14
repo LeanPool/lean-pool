@@ -47,9 +47,9 @@ theorem badLengthTailAction_eq_at_max_lower_endpoint_of_geometry
   have hi := (Finset.mem_filter.mp (hN hI)).2
   have hbase : (2 : ℝ) ^ (k₀ + s) ≤ I.length := by
     rw [hi.1]
-    exact zpow_le_zpow_right₀ (by norm_num) (by omega)
+    exact zpow_le_zpow_right₀ (by norm_num1) (by omega)
   have hell : (2 : ℝ) ^ ell ≤ I.length :=
-    (zpow_le_zpow_right₀ (by norm_num) (le_of_not_ge he)).trans hbase
+    (zpow_le_zpow_right₀ (by norm_num1) (le_of_not_ge he)).trans hbase
   rw [ite_eq_left hbase, ite_eq_left hell]
 
 theorem badLengthTailAction_eq_at_max_lower_endpoint

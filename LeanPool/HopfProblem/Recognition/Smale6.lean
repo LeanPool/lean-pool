@@ -473,7 +473,8 @@ private theorem
   have hcutq := cubicAxisParameter_mem ha Tq
   have hcutp := cubicAxisParameter_mem ha Tp
   have horder : cubicAxisParameter a Tq < cubicAxisParameter a Tp :=
-    strictMono_cubicAxisParameter ha (by change Tq < -1 at hTq; change 2 < Tp at hTp; linarith)
+    strictMono_cubicAxisParameter ha (by change Tq < -1 at hTq; change 2 < Tp at hTp; linarith
+      only [hTq, hTp])
   have hgq' : (Φq : Model m → M) =ᶠ[𝓝 (cubicAxisParameter a Tq, 0)] Φm := by
     simpa only [cubicFlowCylinder_axis, cubicModelOrbit] using hgq
   have hgp' : (Φp : Model m → M) =ᶠ[𝓝 (cubicAxisParameter a Tp, 0)] Φm := by
@@ -674,7 +675,8 @@ private theorem MorseCancel.exists_full_cubic_chart_from_corrected_cylinder {Z E
     have hh := hmid 0 0
     simpa only [cubicFlowCylinder_zero_time, map_zero] using hh
   exact
-    ⟨Φ, haxis, hfield, hΦq.trans hqval, hΦp.trans hpval, (hΦmid 0 ⟨by linarith, ha⟩).trans hmid0⟩
+    ⟨Φ, haxis, hfield, hΦq.trans hqval, hΦp.trans hpval, (hΦmid 0 ⟨by linarith only [ha],
+      ha⟩).trans hmid0⟩
 
 private theorem Degree.FlowSuspension.cylinder_phase_basin_coordinates {E Z M : Type*}
     [NormedAddCommGroup E] [NormedSpace ℝ E] [NormedAddCommGroup Z] [NormedSpace ℝ Z]
@@ -826,7 +828,7 @@ private theorem Degree.FlowCancellation.exists_native_lyapunov_residence {E M : 
   obtain ⟨q, hq, hmax⟩ := hC.exists_isMaxOn hne hf.continuous.continuousOn
   let T := (f q - f p + 1) / δ
   have hpq : f p ≤ f q := hmax hp
-  have hT : 0 < T := div_pos (by linarith) hδ
+  have hT : 0 < T := div_pos (by linarith only [hpq]) hδ
   have hδT : δ * T = f q - f p + 1 := by
     dsimp [T]
     field_simp [hδ.ne']
@@ -849,7 +851,7 @@ private theorem Degree.FlowCancellation.exists_native_lyapunov_residence {E M : 
   rw [hδT] at hdrop
   have hlo : f p ≤ f (γ T) := hmin (hstay T hlast)
   have hhi : f (γ 0) ≤ f q := hmax (hstay 0 h0)
-  linarith
+  linarith only [hdrop, hlo, hhi]
 
 private theorem Degree.FlowCancellation.combine_native_residence_bounds {E M : Type*}
     [NormedAddCommGroup E] [NormedSpace ℝ E] [TopologicalSpace M] [ChartedSpace E M]
@@ -864,22 +866,23 @@ private theorem Degree.FlowCancellation.combine_native_residence_bounds {E M : T
     ∃ T : ℝ, 0 < T ∧ ∀ γ : ℝ → M, IsMIntegralCurve γ V → ∃ t ∈ Set.Icc (0 : ℝ) T, γ t ∉ B := by
   obtain ⟨T₀, hT₀, hout⟩ := houter
   obtain ⟨T₁, hT₁, hin⟩ := hinner
-  refine ⟨2 * T₀ + T₁, by linarith, ?_⟩
+  refine ⟨2 * T₀ + T₁, by linarith only [hT₀, hT₁], ?_⟩
   intro γ hγ
   by_contra! hstay
   obtain ⟨a, ha, haout⟩ := hout γ hγ
   have haN : γ a ∈ N := by
     by_contra haN
-    exact haout ⟨hstay a ⟨ha.1, by linarith [ha.2]⟩, haN⟩
+    exact haout ⟨hstay a ⟨ha.1, by linarith only [hT₀, hT₁, ha, ha.2]⟩, haN⟩
   obtain ⟨b, hb, hbout⟩ := hout (γ ∘ (· + (T₀ + T₁))) (hγ.comp_add (T₀ + T₁))
   have hbN : γ (b + (T₀ + T₁)) ∈ N := by
     by_contra hbN
-    exact hbout ⟨hstay (b + (T₀ + T₁)) ⟨by linarith [hb.1], by linarith [hb.2]⟩, hbN⟩
+    exact hbout ⟨hstay (b + (T₀ + T₁)) ⟨by linarith only [hT₀, hT₁, hb, hb.1],
+      by linarith only [hb, hb.2]⟩, hbN⟩
   obtain ⟨t, ht, htout⟩ := hin (γ ∘ (· + T₀)) (hγ.comp_add T₀)
   exact
     htout
       (hnoreturn γ hγ a (b + (T₀ + T₁)) haN hbN (t + T₀)
-        ⟨by linarith [ha.2, ht.1], by linarith [hb.1, ht.2]⟩)
+        ⟨by linarith only [ha, ht, ha.2, ht.1], by linarith only [hb, ht, hb.1, ht.2]⟩)
 
 private theorem Degree.FlowCancellation.exists_perturbed_band_residence {E M : Type*}
     [NormedAddCommGroup E] [NormedSpace ℝ E] [TopologicalSpace M] [ChartedSpace E M]
@@ -907,7 +910,8 @@ private theorem Degree.FlowCancellation.exists_perturbed_band_residence {E M : T
   exact
     combine_native_residence_bounds houter hinner
       (fun γ hγ a b ha hb =>
-        native_no_return_of_supported_perturbation (hV.of_le (by simp)) F hcurve hK hKN hNU hoff
+        native_no_return_of_supported_perturbation (hV.of_le (by simp only [WithTop.le_coe_top,
+          ne_eq, WithTop.one_ne_top, not_false_eq_true])) F hcurve hK hKN hNU hoff
           hnoreturn hγ ha hb)
 
 private def MorseCancel.transverseEnergy {m : ℕ} (σ : Fin m → ℝ) (p : Model m) : ℝ :=
@@ -927,7 +931,9 @@ private theorem MorseCancel.transverseEnergy_zero_iff {m : ℕ} (σ : Fin m → 
         (Finset.mem_univ i)
     exact (mul_eq_zero.mp (sq_eq_zero_iff.mp hh)).resolve_left (hσ i)
   · intro h
-    simp [transverseEnergy, h]
+    simp only [transverseEnergy, h, Pi.zero_apply, mul_zero, ne_eq, OfNat.ofNat_ne_zero,
+      not_false_eq_true,
+        zero_pow, Finset.sum_const_zero]
 
 private def MorseCancel.fieldLyapunov {m : ℕ} (σ : Fin m → ℝ) (k : ℝ) (p : Model m) : ℝ :=
   p.1 + k * ∑ i, σ i * p.2 i ^ 2
@@ -1010,14 +1016,14 @@ private theorem MorseCancel.exists_compact_fieldLyapunov {m : ℕ} (σ : Fin m �
       apply Set.mem_iUnion.mpr
       refine ⟨n, ?_⟩
       change (cancelledDescent σ a φ p).1 - 2 * (n : ℝ) * transverseEnergy σ p < 0
-      nlinarith
+      linarith only [hh]
   have hmono : Monotone O := by
     intro i j hij p hp
     have hij' : (i : ℝ) ≤ (j : ℝ) := by exact_mod_cast hij
     have he := transverseEnergy_nonneg σ p
     change (cancelledDescent σ a φ p).1 - 2 * (i : ℝ) * transverseEnergy σ p < 0 at hp
     change (cancelledDescent σ a φ p).1 - 2 * (j : ℝ) * transverseEnergy σ p < 0
-    nlinarith
+    nlinarith only [hij', he, hp]
   obtain ⟨n, hn⟩ :=
     hC.elim_directed_cover O hO hcover
       (fun i j => ⟨Max.max i j, hmono (le_max_left i j), hmono (le_max_right i j)⟩)
@@ -1038,7 +1044,8 @@ private theorem MorseCancel.exists_compact_lyapunov_residence {D : Type*} [Norme
   swap
   · exact ⟨1, zero_lt_one, fun γ _ => ⟨0, ⟨le_rfl, zero_le_one⟩, fun h => hne ⟨γ 0, h⟩⟩⟩
   have hspeed : Continuous (fun x => fderiv ℝ L x (W x)) :=
-    (hL.continuous_fderiv_apply (by simp)).comp (continuous_id.prodMk hW)
+    (hL.continuous_fderiv_apply (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
+      not_false_eq_true])).comp (continuous_id.prodMk hW)
   obtain ⟨v, hv, hmaxspeed⟩ := hC.exists_isMaxOn hne hspeed.continuousOn
   let δ := -fderiv ℝ L v (W v)
   have hδ : 0 < δ := neg_pos.mpr (hneg v hv)
@@ -1049,7 +1056,7 @@ private theorem MorseCancel.exists_compact_lyapunov_residence {D : Type*} [Norme
   obtain ⟨q, hq, hmax⟩ := hC.exists_isMaxOn hne hL.continuous.continuousOn
   let T := (L q - L p + 1) / δ
   have hpq : L p ≤ L q := hmax hp
-  have hT : 0 < T := div_pos (by linarith) hδ
+  have hT : 0 < T := div_pos (by linarith only [hpq]) hδ
   have hδT : δ * T = L q - L p + 1 := by
     dsimp [T]
     field_simp [hδ.ne']
@@ -1058,7 +1065,8 @@ private theorem MorseCancel.exists_compact_lyapunov_residence {D : Type*} [Norme
   by_contra! hstay
   have hd (t : ℝ) (ht : t ∈ Set.Icc (0 : ℝ) T) :
     HasDerivAt (fun u => L (γ u)) (fderiv ℝ L (γ t) (W (γ t))) t :=
-    (hL.differentiable (by simp) (γ t)).hasFDerivAt.comp_hasDerivAt t (hγ t ht (hstay t ht))
+    (hL.differentiable (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
+      not_false_eq_true]) (γ t)).hasFDerivAt.comp_hasDerivAt t (hγ t ht (hstay t ht))
   have hcont : ContinuousOn (fun t => L (γ t)) (Set.Icc (0 : ℝ) T) := fun t ht =>
     (hd t ht).continuousAt.continuousWithinAt
   have hdiff : DifferentiableOn ℝ (fun t => L (γ t)) (Set.Icc (0 : ℝ) T) := fun t ht =>
@@ -1075,7 +1083,7 @@ private theorem MorseCancel.exists_compact_lyapunov_residence {D : Type*} [Norme
   rw [hδT] at hdrop
   have hlo : L p ≤ L (γ T) := hmin (hstay T hlast)
   have hhi : L (γ 0) ≤ L q := hmax (hstay 0 h0)
-  linarith
+  linarith only [hdrop, hlo, hhi]
 
 private theorem
     MorseCancel.hasDerivAt_partialChart_integralCurve {D E M : Type*} [NormedAddCommGroup D]
@@ -1086,7 +1094,9 @@ private theorem
     HasDerivAt (e ∘ γ) (W (e (γ t))) t := by
   let e' := e.toOpenPartialHomeomorph
   have he : e'.MDifferentiable 𝓘(ℝ, E) 𝓘(ℝ, D) :=
-    ⟨e.contMDiffOn.mdifferentiableOn (by simp), e.symm.contMDiffOn.mdifferentiableOn (by simp)⟩
+    ⟨e.contMDiffOn.mdifferentiableOn (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
+      not_false_eq_true]), e.symm.contMDiffOn.mdifferentiableOn (by simp only [ne_eq,
+      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])⟩
   have hinv := he.comp_symm_deriv (e'.map_source ht)
   rw [e'.left_inv ht] at hinv
   have hd := (he.mdifferentiableAt ht).hasMFDerivAt.comp t (hγ t)
@@ -1239,16 +1249,18 @@ private theorem MorseCancel.native_cubic_axis_orbit {m : ℕ} {E M : Type*} [Nor
         Filter.Tendsto (fun t : ℝ => F t (Φ (0, 0))) Filter.atBot (𝓝 (Φ (-a, 0))) := by
   have heq : (fun t : ℝ => F t (Φ (0, 0))) = Φ ∘ cubicModelOrbit a :=
     funext (native_cubic_axis_flow σ ha Φ haxis hV hmodel F hcurve)
-  have hp : (a, (0 : Fin m → ℝ)) ∈ Φ.source := haxis ⟨⟨by linarith, le_rfl⟩, rfl⟩
-  have hq : (-a, (0 : Fin m → ℝ)) ∈ Φ.source := haxis ⟨⟨le_rfl, by linarith⟩, rfl⟩
+  have hp : (a, (0 : Fin m → ℝ)) ∈ Φ.source := haxis ⟨⟨by linarith only [ha], le_rfl⟩, rfl⟩
+  have hq : (-a, (0 : Fin m → ℝ)) ∈ Φ.source := haxis ⟨⟨le_rfl, by linarith only [ha]⟩, rfl⟩
   rw [heq]
   refine ⟨?_, ?_, ?_⟩
   · rw [Set.range_comp, range_cubicModelOrbit ha]
   · exact
-      (Φ.mdifferentiableAt (by simp) hp).continuousAt.tendsto.comp
+      (Φ.mdifferentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
+        not_false_eq_true]) hp).continuousAt.tendsto.comp
         (tendsto_cubicModelOrbit_atTop ha)
   · exact
-      (Φ.mdifferentiableAt (by simp) hq).continuousAt.tendsto.comp
+      (Φ.mdifferentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
+        not_false_eq_true]) hq).continuousAt.tendsto.comp
         (tendsto_cubicModelOrbit_atBot ha)
 
 private theorem MorseCancel.native_cubic_closed_axis {m : ℕ} {E M : Type*} [NormedAddCommGroup E]
@@ -1279,8 +1291,8 @@ private theorem MorseCancel.native_cubic_closed_axis {m : ℕ} {E M : Type*} [No
             ⟨(s, 0), ⟨⟨lt_of_le_of_ne hs.1 (Ne.symm hsleft), lt_of_le_of_ne hs.2 hsright⟩, rfl⟩,
               rfl⟩)
   · rintro (hx | hx | hx)
-    · exact ⟨(a, 0), ⟨⟨by linarith, le_rfl⟩, rfl⟩, hx.symm⟩
-    · exact ⟨(-a, 0), ⟨⟨le_rfl, by linarith⟩, rfl⟩, hx.symm⟩
+    · exact ⟨(a, 0), ⟨⟨by linarith only [ha], le_rfl⟩, rfl⟩, hx.symm⟩
+    · exact ⟨(-a, 0), ⟨⟨le_rfl, by linarith only [ha]⟩, rfl⟩, hx.symm⟩
     · obtain ⟨⟨s, z⟩, ⟨hs, hz⟩, he⟩ := hx
       exact ⟨(s, z), ⟨⟨hs.1.le, hs.2.le⟩, hz⟩, he⟩
 
@@ -1347,7 +1359,9 @@ private theorem Degree.FlowCancellation.exists_native_flow_band_crossing {E M : 
       (∀ x, IsMIntegralCurve (fun t => F t x) V) ∧
         (∃ T : ℝ, 0 < T ∧ (∀ x, f x ≤ d → f (F T x) < c) ∧ ∀ x, c ≤ f x → d < f (F (-T) x)) ∧
           ContinuousOn (Smale.FlowConstruction.entryTime F {x | f x ≤ c}) {x | f x ≤ d} := by
-  have hV₁ := hV.of_le (show (1 : WithTop ℕ∞) ≤ (↑(⊤ : ℕ∞) : ℕ∞ω) by simp)
+  have hV₁ :=
+    hV.of_le (show (1 : WithTop ℕ∞) ≤ (↑(⊤ : ℕ∞) : ℕ∞ω) by simp only [WithTop.le_coe_top, ne_eq,
+    WithTop.one_ne_top, not_false_eq_true])
   let F := Smale.FlowConstruction.compactFlow hV₁
   have hcurve (x : M) : IsMIntegralCurve (fun t => F t x) V :=
     Smale.FlowConstruction.isMIntegralCurve_compactFlow hV₁ x
@@ -1404,7 +1418,9 @@ private theorem
                             (∀ x, f x ≤ d → f (G T x) < c) ∧ ∀ x, c ≤ f x → d < f (G (-T) x)) ∧
                         ContinuousOn (Smale.FlowConstruction.entryTime G {x | f x ≤ c})
                           {x | f x ≤ d} := by
-  have hV₁ := hV.of_le (show (1 : WithTop ℕ∞) ≤ (↑(⊤ : ℕ∞) : ℕ∞ω) by simp)
+  have hV₁ :=
+    hV.of_le (show (1 : WithTop ℕ∞) ≤ (↑(⊤ : ℕ∞) : ℕ∞ω) by simp only [WithTop.le_coe_top, ne_eq,
+    WithTop.one_ne_top, not_false_eq_true])
   obtain ⟨hrange, htop, hbot⟩ := native_cubic_axis_orbit σ ha Φ haxis hV₁ hmodel F hcurve
   have hclosed := native_cubic_closed_axis σ ha Φ haxis hV₁ hmodel F hcurve
   have hmono := Smale.FlowConstruction.antitone_flow_height hf F hcurve hzero hdesc (Φ (0, 0))
@@ -1436,8 +1452,9 @@ private theorem
     Φ.toOpenPartialHomeomorph.isOpen_image_of_subset_source isOpen_interior
       (fun x hx => hCΦ (interior_subset hx))
   have hAU : Φ '' A ⊆ U := Set.image_mono hAC
-  have hpU : Φ (a, (0 : Fin m → ℝ)) ∈ U := hAU ⟨(a, 0), ⟨⟨by linarith, le_rfl⟩, rfl⟩, rfl⟩
-  have hqU : Φ (-a, (0 : Fin m → ℝ)) ∈ U := hAU ⟨(-a, 0), ⟨⟨le_rfl, by linarith⟩, rfl⟩, rfl⟩
+  have hpU : Φ (a, (0 : Fin m → ℝ)) ∈ U := hAU ⟨(a, 0), ⟨⟨by linarith only [ha], le_rfl⟩, rfl⟩, rfl⟩
+  have hqU : Φ (-a, (0 : Fin m → ℝ)) ∈ U := hAU ⟨(-a, 0), ⟨⟨le_rfl, by linarith only [ha]⟩, rfl⟩,
+    rfl⟩
   have hzU (t : ℝ) : F t (Φ (0, 0)) ∈ U := by
     apply hAU
     rw [hclosed]
@@ -1466,7 +1483,7 @@ private theorem
     intro x hx
     obtain ⟨z, hz, rfl⟩ := hNU (hKN hx)
     exact ⟨Φ.map_source' (hCΦ (interior_subset hz)), (hCsub (interior_subset hz)).2⟩
-  have hcd : c ≤ d := by linarith
+  have hcd : c ≤ d := by linarith only [hpq, hc, hd]
   have hboundary (x : M) (hx : f x = c ∨ f x = d) : mvfderiv 𝓘(ℝ, E) f x (V' x) < 0 := by
     have hxK : x ∉ K := by
       intro hxK
@@ -1521,7 +1538,8 @@ private theorem
   have hlocal := (hsmooth x hx).contMDiffAt (hB.mem_nhds hx)
   have hlocal0 : MDifferentiableAt 𝓘(ℝ, E) 𝓘(ℝ, ℝ) (signedLevelTime F f c) (F 0 x) := by
     rw [F.map_zero_apply]
-    exact hlocal.mdifferentiableAt (by simp)
+    exact hlocal.mdifferentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
+      not_false_eq_true])
   have hd := hasDerivAt_comp_native_integralCurve_at hlocal0 (hcurve x)
   have heq :
     (signedLevelTime F f c ∘ (fun t => F t x)) = fun t : ℝ => signedLevelTime F f c x - t :=
@@ -1632,7 +1650,8 @@ private theorem Degree.FlowCancellation.smooth_flowBandHeight {E M : Type*} [Nor
   intro x hx
   have hlocal : MDifferentiableAt 𝓘(ℝ, E) 𝓘(ℝ, ℝ) (flowBandHeight F f c d) (F 0 x) := by
     rw [F.map_zero_apply]
-    exact ((hg x hx).contMDiffAt (hB.mem_nhds hx)).mdifferentiableAt (by simp)
+    exact ((hg x hx).contMDiffAt (hB.mem_nhds hx)).mdifferentiableAt (by simp only [ne_eq,
+      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
   have hchain := hasDerivAt_comp_native_integralCurve_at hlocal (hcurve x)
   have heq :
     (flowBandHeight F f c d ∘ (fun t => F t x)) = fun t =>
@@ -1679,7 +1698,7 @@ private theorem
   have heq : t * (2 * t / (L * (η ^ 2 + t ^ 2))) = (2 / L) * (t ^ 2 / (η ^ 2 + t ^ 2)) := by
     field_simp
   rw [heq, abs_of_nonneg (by positivity)]
-  exact mul_le_of_le_one_right (by positivity) ((div_le_one hden).mpr (by nlinarith))
+  exact mul_le_of_le_one_right (by positivity) ((div_le_one hden).mpr (by nlinarith only []))
 
 private theorem
     Degree.FlowCancellation.exists_logarithmic_cutoff {ε δ : ℝ} (hε : 0 < ε) (hδ : 0 < δ) :
@@ -1691,14 +1710,18 @@ private theorem
               (∀ t, χ t ∈ Set.Icc (0 : ℝ) 1) ∧ ∀ t, |t * deriv χ t| < δ := by
   obtain ⟨β, hβ, hcompact, hsupp, hone, hrange⟩ :=
     Smale.exists_compact_smooth_cutoff (K := {(0 : ℝ)}) (U := Metric.ball 0 1) isCompact_singleton
-      Metric.isOpen_ball (by simp)
-  obtain ⟨C, hC⟩ := hcompact.deriv.exists_bound_of_continuous (hβ.continuous_deriv (by simp))
+      Metric.isOpen_ball (by simp only [singleton_subset_iff, Metric.mem_ball, dist_self,
+        zero_lt_one])
+  obtain ⟨C,
+    hC⟩ :=
+    hcompact.deriv.exists_bound_of_continuous (hβ.continuous_deriv (by simp only
+    [WithTop.le_coe_top, ne_eq, WithTop.one_ne_top, not_false_eq_true]))
   let B : ℝ := Max.max C 0 + 1
   have hB : 0 < B := by dsimp [B]; positivity
   have hbound (t : ℝ) : |deriv β t| ≤ B := by
     have hh := hC t
     rw [Real.norm_eq_abs] at hh
-    exact hh.trans (by dsimp [B]; linarith [le_max_left C 0])
+    exact hh.trans (by dsimp [B]; linarith only [le_max_left C 0])
   let L : ℝ := 2 * B / δ + 1
   have hL : 0 < L := by dsimp [L]; positivity
   have hsmall : B * (2 / L) < δ := by
@@ -1706,12 +1729,14 @@ private theorem
     apply (div_lt_iff₀ hL).mpr
     dsimp [L]
     have hd : δ * (2 * B / δ) = 2 * B := by field_simp
-    nlinarith
+    linarith only [hδ, hd]
   let η : ℝ := ε / Real.exp L
   have hη : 0 < η := div_pos hε (Real.exp_pos L)
   let q := logarithmicCoordinate η L
   have hq : ContDiff ℝ ∞ q := contDiff_logarithmicCoordinate η L
-  have hqzero : q 0 = 0 := by simp [q, logarithmicCoordinate]
+  have hqzero : q 0 = 0 := by simp only [logarithmicCoordinate, zero_div, ne_eq,
+    OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow, add_zero,
+      Real.log_one, q]
   let χ : ℝ → ℝ := β ∘ q
   have hχ : ContDiff ℝ ∞ χ := hβ.comp hq
   have hout (t : ℝ) (ht : ε ≤ |t|) : χ t = 0 := by
@@ -1722,13 +1747,13 @@ private theorem
     have heone : 1 ≤ Real.exp L := Real.one_le_exp_iff.mpr hL.le
     have hlower : L ≤ Real.log (1 + (t / η) ^ 2) := by
       apply (Real.le_log_iff_exp_le (by positivity)).mpr
-      nlinarith [sq_abs (t / η)]
+      nlinarith only [hratio, heone, sq_abs (t / η)]
     have honeq : 1 ≤ q t := (le_div_iff₀ hL).mpr (by simpa using hlower)
     have hnotsupp : q t ∉ tsupport β := by
       intro hh
       have hball := hsupp hh
       rw [Metric.mem_ball, Real.dist_eq, sub_zero, abs_lt] at hball
-      linarith [hball.2]
+      linarith only [honeq, hball, hball.2]
     change β (q t) = 0
     exact image_eq_zero_of_notMem_tsupport hnotsupp
   have hcompactχ : HasCompactSupport χ := by
@@ -1747,8 +1772,10 @@ private theorem
   refine ⟨χ, hχ, hcompactχ, hnear, hout, fun t => hrange (q t), ?_⟩
   intro t
   have hder : deriv χ t = deriv β (q t) * deriv q t :=
-    ((hβ.differentiable (by simp)).differentiableAt.hasDerivAt.comp t
-        (hq.differentiable (by simp)).differentiableAt.hasDerivAt).deriv
+    ((hβ.differentiable (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
+      not_false_eq_true])).differentiableAt.hasDerivAt.comp t
+        (hq.differentiable (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
+          not_false_eq_true])).differentiableAt.hasDerivAt).deriv
   rw [hder]
   have he : |t * (deriv β (q t) * deriv q t)| = |deriv β (q t)| * |t * deriv q t| := by
     rw [← abs_mul]; congr 1; ring
@@ -1774,15 +1801,15 @@ private theorem Degree.FlowCancellation.weighted_blend_neg {α a b r s z μ C δ
     (hα : α ∈ Set.Icc (0 : ℝ) 1) (ha : a ≤ -μ) (hb : b ≤ -μ) (hC : 0 ≤ C) (hr : |r| ≤ C * |s|)
     (hz : |s * z| ≤ δ) (hsmall : C * δ < μ) : b + α * (a - b) - z * r < 0 := by
   have hbase : b + α * (a - b) ≤ -μ := by
-    nlinarith [mul_nonneg hα.1 (sub_nonneg.mpr ha),
-      mul_nonneg (sub_nonneg.mpr hα.2) (sub_nonneg.mpr hb)]
+    linarith only [hα, ha, hb, mul_nonneg hα.1 (sub_nonneg.mpr ha),
+        mul_nonneg (sub_nonneg.mpr hα.2) (sub_nonneg.mpr hb)]
   have herr : |z * r| ≤ C * δ :=
     calc
       |z * r| = |z| * |r| := abs_mul _ _
       _ ≤ |z| * (C * |s|) := (mul_le_mul_of_nonneg_left hr (abs_nonneg _))
       _ = C * |s * z| := by rw [abs_mul]; ring
       _ ≤ C * δ := mul_le_mul_of_nonneg_left hz hC
-  linarith [neg_abs_le (z * r)]
+  linarith only [hsmall, hbase, herr, neg_abs_le (z * r)]
 
 private theorem
     Degree.FlowCancellation.hasDerivAt_flow_height_zero {E M : Type*} [NormedAddCommGroup E]
@@ -1813,15 +1840,20 @@ private theorem Degree.FlowCancellation.mvfderiv_descentBlend {E M : Type*} [Nor
       mvfderiv 𝓘(ℝ, E) g x (V x) +
           χ (θ x) * (mvfderiv 𝓘(ℝ, E) f x (V x) - mvfderiv 𝓘(ℝ, E) g x (V x)) -
         deriv χ (θ x) * (f x - g x) := by
-  have dθ := hasDerivAt_flow_height_zero (hθ.mdifferentiableAt (by simp)) F hcurve
-  have df := hasDerivAt_flow_height_zero (hf.mdifferentiableAt (by simp)) F hcurve
-  have dg := hasDerivAt_flow_height_zero (hg.mdifferentiableAt (by simp)) F hcurve
+  have dθ := hasDerivAt_flow_height_zero (hθ.mdifferentiableAt (by simp only [ne_eq,
+    WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])) F hcurve
+  have df := hasDerivAt_flow_height_zero (hf.mdifferentiableAt (by simp only [ne_eq,
+    WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])) F hcurve
+  have dg := hasDerivAt_flow_height_zero (hg.mdifferentiableAt (by simp only [ne_eq,
+    WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])) F hcurve
   rw [htime] at dθ
-  have dχ := ((hχ.differentiable (by simp)) (θ (F 0 x))).hasDerivAt.comp 0 dθ
+  have dχ := ((hχ.differentiable (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
+    not_false_eq_true])) (θ (F 0 x))).hasDerivAt.comp 0 dθ
   have db := dg.add (dχ.mul (df.sub dg))
   have hb : ContMDiffAt 𝓘(ℝ, E) 𝓘(ℝ, ℝ) ∞ (descentBlend χ θ f g) x :=
     hg.add ((hχ.contMDiff.contMDiffAt.comp x hθ).mul (hf.sub hg))
-  have dn := hasDerivAt_flow_height_zero (hb.mdifferentiableAt (by simp)) F hcurve
+  have dn := hasDerivAt_flow_height_zero (hb.mdifferentiableAt (by simp only [ne_eq,
+    WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])) F hcurve
   have he := dn.unique db
   simp only [Pi.sub_apply, Function.comp_apply, F.map_zero_apply] at he
   exact he.trans (by ring)
@@ -1851,7 +1883,7 @@ private theorem
   have hsmall : C * δ < μ := by
     dsimp [δ]
     rw [← mul_div_assoc, div_lt_iff₀ (by positivity : 0 < C + 1)]
-    nlinarith
+    linarith only [hμ]
   obtain ⟨χ, hχ, -, hone, hzero, hrange, hweight⟩ := exists_logarithmic_cutoff hε hδ
   let b := descentBlend χ θ f g
   have hb : ContMDiffOn 𝓘(ℝ, E) 𝓘(ℝ, ℝ) ∞ b U :=
@@ -1871,7 +1903,8 @@ private theorem
       exact weighted_blend_neg (hrange _) hdf hdg hC hdiff (hweight _).le hsmall
     · have hz := hzero (θ x) (le_of_not_gt hnear)
       have hdχ :=
-        deriv_eq_zero_of_nonneg_zero (hχ.differentiable (by simp)) (fun t => (hrange t).1) hz
+        deriv_eq_zero_of_nonneg_zero (hχ.differentiable (by simp only [ne_eq, WithTop.coe_eq_zero,
+          ENat.top_ne_zero, not_false_eq_true])) (fun t => (hrange t).1) hz
       simpa only [hz, hdχ, MulZeroClass.zero_mul, add_zero, sub_zero] using hgneg x hx
   · intro x hx hxzero
     have ht : ContinuousAt θ x := (hθ x hx).continuousWithinAt.continuousAt (hU.mem_nhds hx)
@@ -1910,7 +1943,7 @@ private theorem Degree.FlowCancellation.exists_flowTube_subset {X : Type*} [Topo
   rintro y ⟨⟨t, x⟩, ⟨ht, hx⟩, rfl⟩
   apply hball ?_ x hx
   rw [Metric.mem_ball, Real.dist_eq, sub_zero, abs_lt]
-  constructor <;> linarith [ht.1, ht.2]
+  constructor <;> linarith only [hr, ht, ht.1, ht.2]
 
 private theorem Degree.FlowCancellation.mem_flowTube_of_signedTime {X : Type*} [TopologicalSpace X]
     (F : Flow ℝ X) (f : X → ℝ) (c : ℝ) {ε : ℝ} {x : X} (hx : x ∈ levelBasin F f c)
@@ -1918,7 +1951,7 @@ private theorem Degree.FlowCancellation.mem_flowTube_of_signedTime {X : Type*} [
   refine
     ⟨(-signedLevelTime F f c x, F (signedLevelTime F f c x) x),
       ⟨?_, signedLevelTime_hits F f c hx⟩, ?_⟩
-  · constructor <;> linarith [(abs_le.mp ht).1, (abs_le.mp ht).2]
+  · constructor <;> linarith only [ht, (abs_le.mp ht).1, (abs_le.mp ht).2]
   · simp only [← F.map_add, neg_add_cancel, F.map_zero_apply]
 
 private theorem
@@ -1927,10 +1960,10 @@ private theorem
     ∃ μ : ℝ, 0 < μ ∧ ∀ x ∈ S, D x < -μ := by
   by_cases hne : S.Nonempty
   · obtain ⟨p, hp, hmax⟩ := hS.exists_isMaxOn hne hD
-    refine ⟨-D p / 2, by linarith [hneg p hp], ?_⟩
+    refine ⟨-D p / 2, by linarith only [hneg, hp, hneg p hp], ?_⟩
     intro x hx
     have hle : D x ≤ D p := hmax hx
-    linarith [hneg p hp]
+    linarith only [hneg, hp, hle, hneg p hp]
   · exact ⟨1, zero_lt_one, fun x hx => (hne ⟨x, hx⟩).elim⟩
 
 private theorem Degree.FlowCancellation.contMDiffOn_directionalDerivative {E M : Type*}
@@ -1940,7 +1973,8 @@ private theorem Degree.FlowCancellation.contMDiffOn_directionalDerivative {E M :
     (hV : ContMDiff 𝓘(ℝ, E) (𝓘(ℝ, E).tangent) ∞ (fun x => (⟨x, V x⟩ : TangentBundle 𝓘(ℝ, E) M))) :
     ContMDiffOn 𝓘(ℝ, E) 𝓘(ℝ, ℝ) ∞ (fun x => mvfderiv 𝓘(ℝ, E) g x (V x)) U := by
   have ht :=
-    (hg.contMDiffOn_tangentMapWithin (m := ∞) (by simp) hU.uniqueMDiffOn).comp hV.contMDiffOn
+    (hg.contMDiffOn_tangentMapWithin (m := ∞) (by simp only [ENat.coe_top_add_one,
+      Std.le_refl]) hU.uniqueMDiffOn).comp hV.contMDiffOn
       (fun x hx => hx)
   have hh := (contMDiff_snd_tangentBundle_modelSpace ℝ 𝓘(ℝ, ℝ)).comp_contMDiffOn ht
   apply hh.congr
@@ -2007,13 +2041,14 @@ private theorem Degree.FlowCancellation.exists_native_time_collar_bounds {E M : 
     have hgpoint :=
       ((hg (F t y) (hKU (hpoint t ht))).contMDiffAt
             (hU.mem_nhds (hKU (hpoint t ht)))).mdifferentiableAt
-        (by simp)
+        (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
     exact
-      (hasDerivAt_comp_native_integralCurve_at (hf.mdifferentiableAt (by simp)) (hcurve y)).sub
+      (hasDerivAt_comp_native_integralCurve_at (hf.mdifferentiableAt (by simp only [ne_eq,
+        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])) (hcurve y)).sub
         (hasDerivAt_comp_native_integralCurve_at hgpoint (hcurve y))
-  have h0 : (0 : ℝ) ∈ Set.Icc (-ε) ε := ⟨by linarith, hε.le⟩
+  have h0 : (0 : ℝ) ∈ Set.Icc (-ε) ε := ⟨by linarith only [hε], hε.le⟩
   have hθ : -θ ∈ Set.Icc (-ε) ε := by
-    constructor <;> linarith [(abs_lt.mp hxε).1, (abs_lt.mp hxε).2]
+    constructor <;> linarith only [hxε, (abs_lt.mp hxε).1, (abs_lt.mp hxε).2]
   have hmvt :=
     (convex_Icc (-ε) ε).norm_image_sub_le_of_norm_deriv_le
       (fun t ht => (hd t ht).differentiableAt)
@@ -2043,7 +2078,7 @@ private theorem Degree.FlowCancellation.exists_boundary_germ_correction {E M : T
       (fun x hx => hgneg x (hlevel hx))
   let ε := Min.min ε₀ (r / 2)
   have hε : 0 < ε := lt_min hε₀ (half_pos hr)
-  have hεr : ε < r := lt_of_le_of_lt (min_le_right _ _) (by linarith)
+  have hεr : ε < r := lt_of_le_of_lt (min_le_right _ _) (by linarith only [hr])
   obtain ⟨-, hθ, -⟩ := smooth_signed_level_time hf hV F hcurve hfc
   have htime (x : M) (hx : x ∈ U) : mvfderiv 𝓘(ℝ, E) (signedLevelTime F f c) x (V x) = -1 :=
     mvfderiv_signedLevelTime hf hV F hcurve hfc (hbasin hx)
@@ -2081,7 +2116,7 @@ private theorem Degree.FlowCancellation.exists_signedTime_level_separation {E M 
         exact hcd (hhit.symm.trans hx))
   refine ⟨r, hr, fun x hx => ?_⟩
   have hh : -|signedLevelTime F f c x| < -r := hmargin x hx
-  linarith
+  linarith only [hh]
 
 private theorem Degree.FlowCancellation.exists_boundary_correction_preserving_level {E M : Type*}
     [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteDimensional ℝ E] [TopologicalSpace M]
@@ -2117,7 +2152,7 @@ private theorem Degree.FlowCancellation.band_subset_crossingBasin {X : Type*} [T
           ⟨(hforward x hx.2).le, by simpa only [F.map_zero_apply] using hx.1⟩)
     exact ⟨t, ht⟩
   · obtain ⟨t, -, ht⟩ :=
-      intermediate_value_Icc' (show -T ≤ (0 : ℝ) by linarith) hcont.continuousOn
+      intermediate_value_Icc' (show -T ≤ (0 : ℝ) by linarith only [hT]) hcont.continuousOn
         (show d ∈ Set.Icc (f (F 0 x)) (f (F (-T) x)) from
           ⟨by simpa only [F.map_zero_apply] using hx.2, (hbackward x hx.1).le⟩)
     exact ⟨t, ht⟩
@@ -2339,14 +2374,15 @@ private theorem Degree.NativeCubicCancellation.exists_cutoff {m : ℕ} {V : Set 
             ∃ U : Set (MorseCancel.Model m),
               IsOpen U ∧ (0 : MorseCancel.Model m) ∈ U ∧ Set.EqOn φ (fun _ => 1) U := by
   obtain ⟨r, hr, hball⟩ := Metric.mem_nhds_iff.mp (hV.mem_nhds h0)
-  let φ : ContDiffBump (0 : MorseCancel.Model m) := ⟨r / 4, r / 2, by positivity, by linarith⟩
+  let φ : ContDiffBump (0 : MorseCancel.Model m) := ⟨r / 4, r / 2, by positivity,
+    by linarith only [hr]⟩
   refine
     ⟨φ, φ.contDiff, φ.hasCompactSupport, ?_, Metric.ball 0 (r / 4), Metric.isOpen_ball,
       Metric.mem_ball_self (by positivity), ?_⟩
   · rw [φ.tsupport_eq]
     intro p hp
     apply hball
-    exact lt_of_le_of_lt hp (by change r / 2 < r; linarith)
+    exact lt_of_le_of_lt hp (by change r / 2 < r; linarith only [hr])
   · intro p hp
     exact φ.one_of_mem_closedBall (Metric.ball_subset_closedBall hp)
 
@@ -2394,7 +2430,7 @@ private theorem Degree.FlowCancellation.not_critical_of_directional_neg {E M : T
   change mfderiv 𝓘(ℝ, E) 𝓘(ℝ, ℝ) g x = 0 at hx
   unfold mvfderiv at hneg
   rw [hx] at hneg
-  simp at hneg
+  simp only [ContinuousLinearMap.comp_zero, zero_apply, lt_self_iff_false] at hneg
 
 private theorem Degree.FlowCancellation.remove_morse_band_pair {E M : Type*} [NormedAddCommGroup E]
     [NormedSpace ℝ E] [FiniteDimensional ℝ E] [TopologicalSpace M] [ChartedSpace E M]
@@ -2990,9 +3026,11 @@ private theorem Degree.TransverseGerms.transverse_labels_of_native_flow_sheets {
   have hFt : F 0 ∈ C.target := hF0.symm ▸ C.map_source' hC0
   have hGt : G 0 ∈ C.target := hG0.symm ▸ C.map_source' hC0
   have hFb : MDifferentiableAt 𝓘(ℝ, ℝ × A) 𝓘(ℝ, Z × ℝ) (C.symm ∘ F) 0 :=
-    (C.symm.mdifferentiableAt (by simp) hFt).comp (f := F) 0 hF
+    (C.symm.mdifferentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
+      not_false_eq_true]) hFt).comp (f := F) 0 hF
   have hGb : MDifferentiableAt 𝓘(ℝ, ℝ × B) 𝓘(ℝ, Z × ℝ) (C.symm ∘ G) 0 :=
-    (C.symm.mdifferentiableAt (by simp) hGt).comp (f := G) 0 hG
+    (C.symm.mdifferentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
+      not_false_eq_true]) hGt).comp (f := G) 0 hG
   have hcross : G 0 = F 0 := hG0.trans hF0.symm
   have ht :=
     Smale.ChartMapPerturbation.transverse_in_chart C.symm hF hG hcross hFt (htrans hcross)
@@ -3035,7 +3073,8 @@ private theorem MorseCancel.NativeConnectionCancellationData.outgoingSheet_prope
           (fun w : ℝ × Smale.MorseHandle.NegativeSpace D.σ => D.slices.Q (w.2, 0)) := by
   have hflow :=
     Degree.FlowSuspension.native_vertical_cylinder_flow D.A D.slices.source
-      (D.smooth_field.of_le (by simp)) D.vertical D.flow D.integral
+      (D.smooth_field.of_le (by simp only [WithTop.le_coe_top, ne_eq, WithTop.one_ne_top,
+        not_false_eq_true])) D.vertical D.flow D.integral
   have hQU : D.slices.Q.target ⊆ D.slices.labelDomain := fun _ hz => D.slices.Q_target ▸ hz
   have hQ0 : 0 ∈ D.slices.Q.source := D.slices.Q_source ▸ D.slices.zero_source
   have hh :=
@@ -3062,7 +3101,8 @@ private theorem MorseCancel.NativeConnectionCancellationData.incomingSheet_prope
           (fun w : ℝ × Smale.MorseHandle.PositiveSpace D.σ => D.slices.P (0, w.2)) := by
   have hflow :=
     Degree.FlowSuspension.native_vertical_cylinder_flow D.A D.slices.source
-      (D.smooth_field.of_le (by simp)) D.vertical D.flow D.integral
+      (D.smooth_field.of_le (by simp only [WithTop.le_coe_top, ne_eq, WithTop.one_ne_top,
+        not_false_eq_true])) D.vertical D.flow D.integral
   have hPU : D.slices.P.target ⊆ D.slices.labelDomain := fun _ hz => D.slices.P_target ▸ hz
   have hP0 : 0 ∈ D.slices.P.source := by
     rw [D.slices.P_source, ← D.slices.H_zero]
@@ -3099,11 +3139,11 @@ private theorem
   have hQdiff :=
     (D.slices.Q.contMDiffOn_toFun.contDiffOn.contDiffAt
           (D.slices.Q.open_source.mem_nhds hQ0)).differentiableAt
-      (by simp)
+      (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
   have hPdiff :=
     (D.slices.P.contMDiffOn_toFun.contDiffOn.contDiffAt
           (D.slices.P.open_source.mem_nhds hP0)).differentiableAt
-      (by simp)
+      (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
   have hq :
     DifferentiableAt ℝ (fun x : Smale.MorseHandle.NegativeSpace D.σ => D.slices.Q (x, 0)) 0 :=
     hQdiff.comp (f := fun x : Smale.MorseHandle.NegativeSpace D.σ => (x, 0)) 0
@@ -3119,7 +3159,9 @@ private theorem
     exact ⟨D.slices.zero_domain, Set.mem_univ _⟩
   exact
     Degree.TransverseGerms.transverse_labels_of_native_flow_sheets D.A hA0 D.outgoingSheet
-      D.incomingSheet (hout.mdifferentiableAt (by simp)) (hin.mdifferentiableAt (by simp)) hout0
+      D.incomingSheet (hout.mdifferentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
+        ENat.top_ne_zero, not_false_eq_true])) (hin.mdifferentiableAt (by simp only [ne_eq,
+        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])) hout0
       hin0 hq hp houtlabel hinlabel htrans
 
 attribute [local instance 100] Classical.propDecidable in
@@ -3141,7 +3183,8 @@ private theorem MorseCancel.NativeConnectionCancellationData.outgoing_basin_char
               Filter.Tendsto (fun t => D.flow t (P w)) Filter.atBot (𝓝 q) ↔ w.1.2 = 0 := by
   have hflow :=
     Degree.FlowSuspension.native_vertical_cylinder_flow D.A D.slices.source
-      (D.smooth_field.of_le (by simp)) D.vertical D.flow D.integral
+      (D.smooth_field.of_le (by simp only [WithTop.le_coe_top, ne_eq, WithTop.one_ne_top,
+        not_false_eq_true])) D.vertical D.flow D.integral
   have hQU : D.slices.Q.target ⊆ D.slices.labelDomain := fun _ hz => D.slices.Q_target ▸ hz
   have hQ0 : 0 ∈ D.slices.Q.source := D.slices.Q_source ▸ D.slices.zero_source
   let S := fun u =>
@@ -3186,7 +3229,8 @@ private theorem MorseCancel.NativeConnectionCancellationData.incoming_basin_char
               Filter.Tendsto (fun t => D.flow t (P w)) Filter.atTop (𝓝 p) ↔ w.1.1 = 0 := by
   have hflow :=
     Degree.FlowSuspension.native_vertical_cylinder_flow D.A D.slices.source
-      (D.smooth_field.of_le (by simp)) D.vertical D.flow D.integral
+      (D.smooth_field.of_le (by simp only [WithTop.le_coe_top, ne_eq, WithTop.one_ne_top,
+        not_false_eq_true])) D.vertical D.flow D.integral
   have hPU : D.slices.P.target ⊆ D.slices.labelDomain := fun _ hz => D.slices.P_target ▸ hz
   have hP0 : 0 ∈ D.slices.P.source := by
     rw [D.slices.P_source, ← D.slices.H_zero]
@@ -3258,7 +3302,8 @@ private theorem Degree.TransverseGerms.exists_native_plane_factorization {A Z U 
     ∃ u : X → A, MDifferentiableAt I 𝓘(ℝ, A) u x ∧ u x = 0 ∧ F =ᶠ[𝓝 x] (fun y => P (L (u y))) := by
   let u : X → A := fun y => R (P.symm (F y))
   have hxt : F x ∈ P.target := hx.symm ▸ P.map_source' hP0
-  have hi := (P.symm.mdifferentiableAt (by simp) hxt).comp x hF
+  have hi := (P.symm.mdifferentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
+    ENat.top_ne_zero, not_false_eq_true]) hxt).comp x hF
   have hu : MDifferentiableAt I 𝓘(ℝ, A) u x := R.differentiableAt.mdifferentiableAt.comp x hi
   have hu0 : u x = 0 := by
     change R (P.symm (F x)) = 0
@@ -3391,8 +3436,10 @@ private theorem MorseCancel.NativeConnectionCancellationData.transverse_of_nativ
   apply D.transverse_of_native_sheets
   exact
     Degree.TransverseGerms.native_transversality_of_sheet_factorizations
-      (D.outgoingSheet_properties.1.mdifferentiableAt (by simp))
-      (D.incomingSheet_properties.1.mdifferentiableAt (by simp)) hu hv hu0 hv0 hFu hGv
+      (D.outgoingSheet_properties.1.mdifferentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
+        ENat.top_ne_zero, not_false_eq_true]))
+      (D.incomingSheet_properties.1.mdifferentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
+        ENat.top_ne_zero, not_false_eq_true])) hu hv hu0 hv0 hFu hGv
       (hy.trans hx.symm) htrans
 
 private theorem MorseCancel.NativeConnectionCancellationData.cancel_of_transverse_basin_sheets
@@ -3476,9 +3523,11 @@ private theorem MorseCancel.cancel_unique_connection_of_transverse_basin_sheets 
   let τ := Degree.SmoothODE.nativeFlowTimeDiffeomorph_of_field hV F hF t₀
   have hτ (u : M) : τ u = F t₀ u := rfl
   have hS' : MDifferentiableAt I 𝓘(ℝ, E) (τ ∘ S) x :=
-    (τ.contMDiff.mdifferentiableAt (by simp)).comp x hS
+    (τ.contMDiff.mdifferentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
+      not_false_eq_true])).comp x hS
   have hT' : MDifferentiableAt I' 𝓘(ℝ, E) (τ ∘ T) y :=
-    (τ.contMDiff.mdifferentiableAt (by simp)).comp y hT
+    (τ.contMDiff.mdifferentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
+      not_false_eq_true])).comp y hT
   have hS0' : (τ ∘ S) x = D.A 0 := by rw [Function.comp_apply, hτ, hS0, ht₀]
   have hT0' : (τ ∘ T) y = D.A 0 := by rw [Function.comp_apply, hτ, hT0, ht₀]
   have hSb : ∀ᶠ u in 𝓝 x, Filter.Tendsto (fun t => D.flow t ((τ ∘ S) u)) Filter.atBot (𝓝 q) := by
@@ -3643,7 +3692,8 @@ private theorem Smale.ManifoldMorse.MorseSurgeryData.surjective_beltNormal_deriv
   have hheight₀ : mfderiv 𝓘(ℝ, d.chart.NegativeCoordinates) 𝓘(ℝ, ℝ) (f ∘ γ) 0 = 0 := by
     rw [hheight.mfderiv_eq', mfderiv_eq_fderiv, fderiv_add_const, fderiv_const_sub,
       fderiv_norm_sq_apply]
-    simp
+    simp only [comp_apply, map_zero, nsmul_zero, neg_zero, ContinuousLinearMap.zero_comp,
+        ContinuousLinearMap.comp_zero]
     rfl
   have hnormal : n ∘ γ =ᶠ[𝓝 (0 : d.chart.NegativeCoordinates)] id := by
     filter_upwards [hnear] with u hu
@@ -3662,12 +3712,15 @@ private theorem Smale.ManifoldMorse.MorseSurgeryData.surjective_beltNormal_deriv
     rw [hpoint]
     rfl
   have hLR₀ : (mfderiv 𝓘(ℝ, E) 𝓘(ℝ, ℝ) f (γ 0) : E →L[ℝ] ℝ).comp R = 0 :=
-    (mfderiv_comp 0 (hf.mdifferentiableAt (by simp)) (hγ.mdifferentiableAt (by simp))).symm.trans
+    (mfderiv_comp 0 (hf.mdifferentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
+      ENat.top_ne_zero, not_false_eq_true])) (hγ.mdifferentiableAt (by simp only [ne_eq,
+      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))).symm.trans
       hheight₀
   have hLR : L.comp R = 0 := (congrArg (fun T : E →L[ℝ] ℝ => T.comp R) hLpoint).symm.trans hLR₀
   have hnγ : MDifferentiableAt 𝓘(ℝ, E) 𝓘(ℝ, d.chart.NegativeCoordinates) n (γ 0) := by
     rw [hpoint]
-    exact hn.mdifferentiableAt (by simp)
+    exact hn.mdifferentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
+      not_false_eq_true])
   have hBpoint :
     (mfderiv 𝓘(ℝ, E) 𝓘(ℝ, d.chart.NegativeCoordinates) n (γ 0) :
         E →L[ℝ] d.chart.NegativeCoordinates) =
@@ -3677,12 +3730,14 @@ private theorem Smale.ManifoldMorse.MorseSurgeryData.surjective_beltNormal_deriv
             E →L[ℝ] d.chart.NegativeCoordinates).comp
         R =
       ContinuousLinearMap.id ℝ d.chart.NegativeCoordinates :=
-    (mfderiv_comp 0 hnγ (hγ.mdifferentiableAt (by simp))).symm.trans hnormal₀
+    (mfderiv_comp 0 hnγ (hγ.mdifferentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
+      ENat.top_ne_zero, not_false_eq_true]))).symm.trans hnormal₀
   have hBR : B.comp R = ContinuousLinearMap.id ℝ d.chart.NegativeCoordinates :=
     (congrArg (fun T : E →L[ℝ] d.chart.NegativeCoordinates => T.comp R) hBpoint).symm.trans hBR₀
   exact
     Smale.RegularLevel.surjective_normal_derivative_of_tangent_lift hf d.upper_regular
-      (d.surgery.beltSphere v) (hn.mdifferentiableAt (by simp)) R hLR hBR
+      (d.surgery.beltSphere v) (hn.mdifferentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
+        ENat.top_ne_zero, not_false_eq_true])) R hLR hBR
 
 attribute [local instance 100] Classical.propDecidable in
 private theorem
@@ -3764,7 +3819,9 @@ private theorem
   have hnormal :=
     (d.contMDiffOn_beltNormal hf).contMDiffAt (d.isOpen_beltNormalDomain.mem_nhds hx)
   have heq : mfderiv (𝓡 m) 𝓘(ℝ, d.chart.NegativeCoordinates) (d.beltNormal ∘ g) x = Q.comp A := by
-    rw [mfderiv_comp x (hnormal.mdifferentiableAt (by simp)) (hg.mdifferentiableAt (by simp)), ←
+    rw [mfderiv_comp x (hnormal.mdifferentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
+      ENat.top_ne_zero, not_false_eq_true])) (hg.mdifferentiableAt (by simp only [ne_eq,
+      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])), ←
       hxy]
     rfl
   rw [heq]
@@ -3776,11 +3833,11 @@ private def Smale.TransverseCoordinates.sumMap {D Z A : Type*} [NormedAddCommGro
 
 private theorem Smale.TransverseCoordinates.sumMap_left {D Z A : Type*} [NormedAddCommGroup D]
     [NormedAddCommGroup Z] [NormedAddCommGroup A] (f : D → A) (g : Z → A) (hzero : g 0 = f 0)
-    (x : D) : sumMap f g (x, 0) = f x := by simp [sumMap, hzero]
+    (x : D) : sumMap f g (x, 0) = f x := by simp only [sumMap, hzero, add_sub_cancel_right]
 
 private theorem Smale.TransverseCoordinates.sumMap_right {D Z A : Type*} [NormedAddCommGroup D]
     [NormedAddCommGroup A] (f : D → A) (g : Z → A) (z : Z) : sumMap f g (0, z) = g z := by
-  simp [sumMap, add_sub_cancel_left]
+  simp only [sumMap, add_sub_cancel_left]
 
 private theorem Smale.TransverseCoordinates.contDiffOn_sumMap {D Z A : Type*} [NormedAddCommGroup D]
     [NormedSpace ℝ D] [NormedAddCommGroup Z] [NormedSpace ℝ Z] [NormedAddCommGroup A]
@@ -3804,7 +3861,8 @@ private theorem
   apply hd.congr_fderiv
   apply ContinuousLinearMap.ext
   intro q
-  simp [ContinuousLinearMap.coprod_apply]
+  simp only [sub_zero, add_apply, ContinuousLinearMap.comp_apply, ContinuousLinearMap.coe_fst',
+      ContinuousLinearMap.coe_snd', ContinuousLinearMap.coprod_apply]
 
 private def Smale.NativeEuclideanEmbedding.SmoothRetraction.sheetCoordinates {E M D Z : Type*}
     [NormedAddCommGroup E] [NormedSpace ℝ E] [TopologicalSpace M] [ChartedSpace E M]
@@ -3885,8 +3943,10 @@ private theorem Smale.NativeEuclideanEmbedding.SmoothRetraction.mfderiv_sheetCoo
   have heF := (e.smooth.contMDiffAt.comp 0 hf).contDiffAt
   have heG := (e.smooth.contMDiffAt.comp 0 hg).contDiffAt
   have hsum :=
-    Smale.TransverseCoordinates.hasFDerivAt_sumMap_zero (heF.differentiableAt (by simp))
-      (heG.differentiableAt (by simp))
+    Smale.TransverseCoordinates.hasFDerivAt_sumMap_zero (heF.differentiableAt (by simp only
+      [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
+      (heG.differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
+        not_false_eq_true]))
   have hbase :
     Smale.TransverseCoordinates.sumMap (e.toFun ∘ f) (e.toFun ∘ g) (0, 0) = e.toFun (f 0) := by
     rw [Smale.TransverseCoordinates.sumMap_right]
@@ -3897,13 +3957,15 @@ private theorem Smale.NativeEuclideanEmbedding.SmoothRetraction.mfderiv_sheetCoo
     rw [hbase]
     exact
       (r.smooth.contMDiffAt (r.open_domain.mem_nhds (r.contains ⟨f 0, rfl⟩))).mdifferentiableAt
-        (by simp)
+        (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
   have hdf :
     fderiv ℝ (e.toFun ∘ f) 0 =
       (mfderiv 𝓘(ℝ, E) (𝓡 e.ambientDimension) e.toFun (f 0)).comp (mfderiv 𝓘(ℝ, D) 𝓘(ℝ, E) f 0) :=
     by
     simpa only [mfderiv_eq_fderiv] using!
-      (mfderiv_comp 0 (e.smooth.mdifferentiableAt (by simp)) (hf.mdifferentiableAt (by simp)))
+      (mfderiv_comp 0 (e.smooth.mdifferentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
+        ENat.top_ne_zero, not_false_eq_true])) (hf.mdifferentiableAt (by simp only [ne_eq,
+        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])))
   have hdg :
     fderiv ℝ (e.toFun ∘ g) 0 =
       (mfderiv 𝓘(ℝ, E) (𝓡 e.ambientDimension) e.toFun (f 0)).comp (mfderiv 𝓘(ℝ, Z) 𝓘(ℝ, E) g 0) :=
@@ -3911,8 +3973,10 @@ private theorem Smale.NativeEuclideanEmbedding.SmoothRetraction.mfderiv_sheetCoo
     apply ContinuousLinearMap.ext
     intro v
     simpa only [mfderiv_eq_fderiv] using!
-      (mfderiv_comp_apply_of_eq 0 (e.smooth.mdifferentiableAt (by simp))
-        (hg.mdifferentiableAt (by simp)) hzero v)
+      (mfderiv_comp_apply_of_eq 0 (e.smooth.mdifferentiableAt (by simp only [ne_eq,
+        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
+        (hg.mdifferentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
+          not_false_eq_true])) hzero v)
   rw [sheetCoordinates, mfderiv_comp (0, 0) hr hsum.differentiableAt.mdifferentiableAt,
     mfderiv_eq_fderiv, hsum.fderiv, hbase, hdf, hdg]
   apply ContinuousLinearMap.ext
@@ -4129,11 +4193,15 @@ private theorem Smale.exists_clean_crossingChart_of_parametrizations {E M D Z N 
   have hdf :
     mfderiv 𝓘(ℝ, A) 𝓘(ℝ, E) f 0 =
       (mfderiv 𝓘(ℝ, D) 𝓘(ℝ, E) F (c 0)).comp (mfderiv 𝓘(ℝ, A) 𝓘(ℝ, D) c 0) :=
-    mfderiv_comp 0 (hF.mdifferentiableAt (by simp)) (c.mdifferentiableAt (by simp) hc0)
+    mfderiv_comp 0 (hF.mdifferentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
+      ENat.top_ne_zero, not_false_eq_true])) (c.mdifferentiableAt (by simp only [ne_eq,
+      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]) hc0)
   have hdg :
     mfderiv 𝓘(ℝ, B) 𝓘(ℝ, E) g 0 =
       (mfderiv 𝓘(ℝ, Z) 𝓘(ℝ, E) G (d 0)).comp (mfderiv 𝓘(ℝ, B) 𝓘(ℝ, Z) d 0) :=
-    mfderiv_comp 0 (hG.mdifferentiableAt (by simp)) (d.mdifferentiableAt (by simp) hd0)
+    mfderiv_comp 0 (hG.mdifferentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
+      ENat.top_ne_zero, not_false_eq_true])) (d.mdifferentiableAt (by simp only [ne_eq,
+      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]) hd0)
   have ht' :
     Function.Surjective ((mfderiv 𝓘(ℝ, A) 𝓘(ℝ, E) f 0).coprod (mfderiv 𝓘(ℝ, B) 𝓘(ℝ, E) g 0)) := by
     rw [hdf, hdg]
@@ -4331,7 +4399,7 @@ private theorem Smale.SphereBoundary.definingFunction_eq_zero_iff {E : Type*} [N
   simp only [definingFunction, Metric.mem_sphere, dist_zero_right]
   constructor
   · intro h
-    nlinarith [norm_nonneg x]
+    nlinarith only [h, norm_nonneg x]
   · intro h
     rw [h]
     norm_num
@@ -4348,7 +4416,7 @@ private theorem Smale.SphereBoundary.fderiv_definingFunction_eq_zero_iff {E : Ty
   change Inner.inner ℝ x v + Inner.inner ℝ x v = 0 ↔ Inner.inner ℝ x v = 0
   constructor
   · intro h
-    linarith
+    linarith only [h]
   · intro h
     rw [h, add_zero]
 
@@ -4377,8 +4445,10 @@ private theorem Smale.SphereBoundary.common_kernel_of_immersive_sphere_extension
       (mfderiv 𝓘(ℝ, E) J f y).comp
         (mfderiv (𝓡 n) 𝓘(ℝ, E) (Subtype.val : Metric.sphere (0 : E) 1 → E) x) := by
     rw [← hextfun,
-      mfderiv_comp x (hf.mdifferentiableAt (by simp))
-        ((contMDiff_coe_sphere (m := (∞ : ℕ∞ω))).mdifferentiableAt (by simp))]
+      mfderiv_comp x (hf.mdifferentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
+        ENat.top_ne_zero, not_false_eq_true]))
+        ((contMDiff_coe_sphere (m := (∞ : ℕ∞ω))).mdifferentiableAt (by simp only [ne_eq,
+          WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))]
   have hγzero : mfderiv (𝓡 n) J γ x w = 0 := by
     rw [hchain]
     change
@@ -4669,7 +4739,9 @@ private theorem Smale.TransverseCoordinates.mfderiv_normalCoordinate {D B E M : 
     rw [mfderiv_eq_fderiv]
     exact (ContinuousLinearMap.snd ℝ D B).fderiv
   rw [normalCoordinate,
-    mfderiv_comp p (hs.mdifferentiableAt (by simp)) (Φ.symm.mdifferentiableAt (by simp) hp), hd]
+    mfderiv_comp p (hs.mdifferentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
+      ENat.top_ne_zero, not_false_eq_true])) (Φ.symm.mdifferentiableAt (by simp only [ne_eq,
+      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]) hp), hd]
   rfl
 
 private theorem Smale.TransverseCoordinates.surjective_mfderiv_normalCoordinate {D B E M : Type*}
@@ -4707,8 +4779,10 @@ private theorem Smale.TransverseCoordinates.normalDerivative_comp_sheet_eq_zero 
     simp only [mfderiv_const]
     rfl
   have hnormal := (contMDiffOn_normalCoordinate Φ).contMDiffAt (Φ.open_target.mem_nhds hx)
-  rw [mfderiv_comp x (hnormal.mdifferentiableAt (by simp))
-      (hF.mdifferentiableAt (by simp))] at hzero
+  rw [mfderiv_comp x (hnormal.mdifferentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
+    ENat.top_ne_zero, not_false_eq_true]))
+      (hF.mdifferentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
+        not_false_eq_true]))] at hzero
   exact hzero
 
 public
@@ -4809,9 +4883,13 @@ private theorem Smale.StripCoordinates.normalDerivative_blend {A B : Type*} [Nor
   have hm : HasDerivAt (fun s : ℝ => s • v t) (v t) 0 := by
     simpa only [one_smul, id_eq] using (hasDerivAt_id (0 : ℝ)).smul_const (v t)
   have hd₀ :=
-    hasDerivAt_verticalSlice (t := t) (s := 0) (hF₀.snd.contDiffAt.differentiableAt (by simp))
+    hasDerivAt_verticalSlice (t :=
+      t) (s := 0) (hF₀.snd.contDiffAt.differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
+      ENat.top_ne_zero, not_false_eq_true]))
   have hd₁ :=
-    hasDerivAt_verticalSlice (t := t) (s := 0) (hF₁.snd.contDiffAt.differentiableAt (by simp))
+    hasDerivAt_verticalSlice (t :=
+      t) (s := 0) (hF₁.snd.contDiffAt.differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
+      ENat.top_ne_zero, not_false_eq_true]))
   have hterm₀ : β₀ t • (normalDerivative F₀ t - v t) = 0 := by
     by_cases h : β₀ t = 0
     · rw [h, zero_smul]
@@ -4829,7 +4907,8 @@ private theorem Smale.StripCoordinates.normalDerivative_blend {A B : Type*} [Nor
     simpa only [hterm₀, hterm₁, add_zero] using hblend
   exact
     (hasDerivAt_verticalSlice
-          ((contDiff_blend hv hF₀ hF₁ hβ₀ hβ₁).snd.contDiffAt.differentiableAt (by simp))).unique
+          ((contDiff_blend hv hF₀ hF₁ hβ₀ hβ₁).snd.contDiffAt.differentiableAt (by simp only
+            [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))).unique
       hblend'
 
 private structure Smale.StripNormalData (A B : Type*) [NormedAddCommGroup A] [NormedSpace ℝ A]
@@ -4884,7 +4963,8 @@ private theorem Smale.StripCoordinates.injective_of_horizontal_and_normal {A B :
     (hn : (L (0, 1)).2 ≠ 0) : Function.Injective L := by
   have hker : ∀ p : ℝ × ℝ, L p = 0 → p = 0 := by
     rintro ⟨a, b⟩ hp
-    have hsplit : (a, b) = a • ((1 : ℝ), 0) + b • (0, 1) := by ext <;> simp
+    have hsplit : (a, b) = a • ((1 : ℝ), 0) + b • (0, 1) := by ext <;> simp only [Prod.smul_mk,
+      smul_eq_mul, mul_one, mul_zero, Prod.mk_add_mk, add_zero, zero_add]
     rw [hsplit, map_add, map_smul, map_smul, hh] at hp
     have hb0 : b • (L (0, 1)).2 = 0 := by
       simpa [Smale.StripCoordinates.center] using congrArg Prod.snd hp
@@ -4925,7 +5005,8 @@ private theorem
     (p : ℝ × ℝ) : sheetTransverseInclusion a = L p ↔ a = 0 ∧ p = 0 := by
   constructor
   · intro heq
-    have hsplit : p = p.1 • ((1 : ℝ), 0) + p.2 • (0, 1) := by ext <;> simp
+    have hsplit : p = p.1 • ((1 : ℝ), 0) + p.2 • (0, 1) := by ext <;> simp only [Prod.smul_mk,
+      smul_eq_mul, mul_one, mul_zero, Prod.mk_add_mk, add_zero, zero_add, Prod.mk.eta]
     have hexp : L p = p.1 • Smale.StripCoordinates.center 1 + p.2 • L (0, 1) := by
       conv_lhs => rw [hsplit]
       rw [map_add, map_smul, map_smul, hh]
@@ -5035,7 +5116,8 @@ private theorem Smale.StripNormalData.horizontal_coordinateDerivative {A B E M :
     (ht : t ∈ Set.Icc (0 : ℝ) 1) (hk : ContMDiffAt 𝓘(ℝ, ℝ × ℝ) 𝓘(ℝ, E) ∞ k (t, 0)) :
     fderiv ℝ d.coordinateMap (t, 0) (1, 0) = Smale.StripCoordinates.center 1 :=
   Smale.StripCoordinates.horizontal_derivative_of_center_germ
-    ((d.contDiffAt_coordinateMap ht hk).differentiableAt (by simp)) (d.coordinate_center_germ ht)
+    ((d.contDiffAt_coordinateMap ht hk).differentiableAt (by simp only [ne_eq,
+      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])) (d.coordinate_center_germ ht)
 
 private theorem Smale.StripNormalData.normal_coordinateDerivative_nonzero {A B E M : Type*}
     [NormedAddCommGroup A] [NormedSpace ℝ A] [NormedAddCommGroup B] [NormedSpace ℝ B]
@@ -5045,7 +5127,8 @@ private theorem Smale.StripNormalData.normal_coordinateDerivative_nonzero {A B E
     (fderiv ℝ d.coordinateMap (t, 0) (0, 1)).2 ≠ 0 := by
   rw [←
     Smale.StripCoordinates.normalDerivative_eq_snd_fderiv
-      ((d.contDiffAt_coordinateMap ht hk).differentiableAt (by simp))]
+      ((d.contDiffAt_coordinateMap ht hk).differentiableAt (by simp only [ne_eq,
+        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))]
   exact d.normal_nonzero t ht
 
 private theorem
@@ -5069,8 +5152,10 @@ private theorem
     rw [d.coordinate_center ht]
     exact d.line ht
   rw [← heq.mfderiv_eq',
-    mfderiv_comp (t, 0) (d.chart.mdifferentiableAt (by simp) hcsource)
-      (hcoords.contMDiffAt.mdifferentiableAt (by simp)),
+    mfderiv_comp (t, 0) (d.chart.mdifferentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
+      ENat.top_ne_zero, not_false_eq_true]) hcsource)
+      (hcoords.contMDiffAt.mdifferentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
+        ENat.top_ne_zero, not_false_eq_true])),
     d.coordinate_center ht, mfderiv_eq_fderiv]
   rfl
 
@@ -5085,7 +5170,9 @@ private theorem
   have heq : f = Φ ∘ (ContinuousLinearMap.inl ℝ D B) := funext (fun y => (hzero y).symm)
   have hinl : ContMDiff 𝓘(ℝ, D) 𝓘(ℝ, D × B) ∞ (ContinuousLinearMap.inl ℝ D B) :=
     (ContinuousLinearMap.inl ℝ D B).contDiff.contMDiff
-  rw [heq, mfderiv_comp x (Φ.mdifferentiableAt (by simp) hx) (hinl.mdifferentiableAt (by simp)),
+  rw [heq, mfderiv_comp x (Φ.mdifferentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
+    ENat.top_ne_zero, not_false_eq_true]) hx) (hinl.mdifferentiableAt (by simp only [ne_eq,
+    WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])),
     mfderiv_eq_fderiv, (ContinuousLinearMap.inl ℝ D B).fderiv]
   rfl
 
@@ -5100,7 +5187,9 @@ private theorem
   let L : (D × B) →L[ℝ] E := mfderiv 𝓘(ℝ, D × B) 𝓘(ℝ, E) Φ (x, 0)
   let R : E →L[ℝ] (D × B) := mfderiv 𝓘(ℝ, E) 𝓘(ℝ, D × B) Φ.symm (Φ (x, 0))
   have hdiff : Φ.toOpenPartialHomeomorph.MDifferentiable 𝓘(ℝ, D × B) 𝓘(ℝ, E) :=
-    ⟨Φ.mdifferentiableOn (by simp), Φ.symm.mdifferentiableOn (by simp)⟩
+    ⟨Φ.mdifferentiableOn (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
+      not_false_eq_true]), Φ.symm.mdifferentiableOn (by simp only [ne_eq, WithTop.coe_eq_zero,
+      ENat.top_ne_zero, not_false_eq_true])⟩
   have hRL : R.comp L = ContinuousLinearMap.id ℝ (D × B) := hdiff.symm_comp_deriv hx
   have hRL_apply (q : D × B) : R (L q) = q := by
     change (R.comp L) q = q
@@ -5160,7 +5249,8 @@ private theorem
     ContDiff ℝ ∞ (Smale.StripCoordinates.center : ℝ → Smale.StripCoordinates.Space A B) :=
     (contDiff_id.prodMk contDiff_const).prodMk contDiff_const
   exact
-    (((htransition.fderiv_right (by simp)).comp t hcenter.contDiffAt).clm_comp
+    (((htransition.fderiv_right (by simp only [ENat.coe_top_add_one,
+      Std.le_refl])).comp t hcenter.contDiffAt).clm_comp
         contDiffAt_const).contDiffWithinAt
 
 private theorem Smale.StripNormalData.exists_open_normalFrame_domain {A B Z E M : Type*}
@@ -5215,8 +5305,10 @@ private theorem Smale.StripNormalData.injective_normalFrame_of_strip_germ {A B Z
     mfderiv 𝓘(ℝ, ℝ × ℝ) 𝓘(ℝ, E) f p =
       (mfderiv 𝓘(ℝ, ℝ × ℝ) 𝓘(ℝ, E) k (t, 0)).comp (fderiv ℝ c p) := by
     rw [hgerm.mfderiv_eq',
-      mfderiv_comp p (hk'.mdifferentiableAt (by simp))
-        (hc.contMDiffAt.mdifferentiableAt (by simp)),
+      mfderiv_comp p (hk'.mdifferentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
+        ENat.top_ne_zero, not_false_eq_true]))
+        (hc.contMDiffAt.mdifferentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
+          ENat.top_ne_zero, not_false_eq_true])),
       hcp, mfderiv_eq_fderiv]
     rfl
   have hker : Q.ker = (T.comp L).range := by
@@ -5248,8 +5340,10 @@ private theorem Smale.StripNormalData.injective_normalFrame_of_strip_germ {A B Z
     intro v
     simpa only [mfderiv_eq_fderiv] using!
       (mfderiv_comp_apply_of_eq (Smale.StripCoordinates.center t)
-        (hnormal.mdifferentiableAt (by simp))
-        (d.chart.mdifferentiableAt (by simp) (d.line ht)) hfp.symm v)
+        (hnormal.mdifferentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
+          not_false_eq_true]))
+        (d.chart.mdifferentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
+          not_false_eq_true]) (d.line ht)) hfp.symm v)
   change
     Function.Injective
       ((fderiv ℝ (Smale.TransverseCoordinates.normalCoordinate Ψ ∘ d.chart)
@@ -5312,7 +5406,9 @@ private theorem
       (fderiv ℝ (Ψ.symm ∘ d.chart) (Smale.StripCoordinates.center t)).comp
         (ContinuousLinearMap.inl ℝ (ℝ × A) B) := by
   rw [sheetDifferential, sheetTransition,
-    fderiv_comp (t, 0) ((d.contDiffAt_tubularTransition Ψ ht htarget).differentiableAt (by simp))
+    fderiv_comp (t,
+      0) ((d.contDiffAt_tubularTransition Ψ ht htarget).differentiableAt (by simp only [ne_eq,
+      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
       (ContinuousLinearMap.inl ℝ (ℝ × A) B).differentiableAt,
     (ContinuousLinearMap.inl ℝ (ℝ × A) B).fderiv]
   rfl
@@ -5338,7 +5434,8 @@ private theorem
           (Smale.StripCoordinates.center t) =
         _
     rw [fderiv_comp _ (ContinuousLinearMap.snd ℝ (ℝ × ℝ) Z).differentiableAt
-        ((d.contDiffAt_tubularTransition Ψ ht htarget).differentiableAt (by simp)),
+        ((d.contDiffAt_tubularTransition Ψ ht htarget).differentiableAt (by simp only [ne_eq,
+          WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])),
       (ContinuousLinearMap.snd ℝ (ℝ × ℝ) Z).fderiv]
   rw [d.sheetDifferential_eq Ψ ht htarget, normalFrame, hn]
   rfl
@@ -5371,7 +5468,8 @@ private theorem Smale.StripNormalData.sheetDifferential_arc_of_germ {A B Z E M :
     {q : ℝ → (ℝ × ℝ)} {v : ℝ × ℝ} (hq : HasDerivAt q v t)
     (hgerm : (fun s : ℝ => d.sheetTransition Ψ (s, 0)) =ᶠ[𝓝 t] fun s => (q s, 0)) :
     d.sheetDifferential Ψ t (1, 0) = (v, 0) := by
-  have hF := (d.contDiffAt_sheetTransition Ψ ht htarget).differentiableAt (by simp)
+  have hF := (d.contDiffAt_sheetTransition Ψ ht htarget).differentiableAt (by simp only [ne_eq,
+    WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
   have hi : HasDerivAt (fun s : ℝ => (s, (0 : A))) (1, 0) t :=
     (hasDerivAt_id t).prodMk (hasDerivAt_const t (0 : A))
   have hd := hF.hasFDerivAt.comp_hasDerivAt t hi
@@ -5412,9 +5510,9 @@ private theorem Smale.WhitneyPairModel.bigon_subset_rectangle {h : ℝ} (hh : 0 
     bigon h ⊆ Set.Icc (-1 : ℝ) 1 ×ˢ Set.Icc (0 : ℝ) h := by
   intro p hp
   rcases hp with ⟨ht, hupper⟩
-  have hsq : p.1 ^ 2 ≤ 1 := by nlinarith
-  have hheight : p.2 ≤ h := by nlinarith [sq_nonneg p.1]
-  exact ⟨⟨by nlinarith, by nlinarith⟩, ht, hheight⟩
+  have hsq : p.1 ^ 2 ≤ 1 := by nlinarith only [hh, ht, hupper]
+  have hheight : p.2 ≤ h := by nlinarith only [hh, hupper, sq_nonneg p.1]
+  exact ⟨⟨by nlinarith only [hsq], by nlinarith only [hsq]⟩, ht, hheight⟩
 
 private theorem Smale.WhitneyPairModel.isCompact_bigon {h : ℝ} (hh : 0 < h) : IsCompact (bigon h) :=
   (CompactIccSpace.isCompact_Icc.prod CompactIccSpace.isCompact_Icc).of_isClosed_subset
@@ -5425,15 +5523,16 @@ private theorem Smale.WhitneyPairModel.mem_interior_bigon_iff (h : ℝ) (p : ℝ
   constructor
   · intro hp
     obtain ⟨ε, hε, hball⟩ := Metric.mem_nhds_iff.mp (mem_interior_iff_mem_nhds.mp hp)
-    have hd (a : ℝ) : Dist.dist (p.1, p.2 + a) p = |a| := by simp [Prod.dist_eq]
+    have hd (a : ℝ) : Dist.dist (p.1, p.2 + a) p = |a| := by simp only [Prod.dist_eq, dist_self,
+      dist_self_add_left, Real.norm_eq_abs, abs_nonneg, sup_of_le_right]
     have hm : (p.1, p.2 + (-ε / 2)) ∈ Metric.ball p ε := by
       change Dist.dist (p.1, p.2 + (-ε / 2)) p < ε
-      rw [hd, abs_of_neg (by linarith)]
-      linarith
+      rw [hd, abs_of_neg (by linarith only [hε])]
+      linarith only [hε]
     have hp' : (p.1, p.2 + ε / 2) ∈ Metric.ball p ε := by
       change Dist.dist (p.1, p.2 + ε / 2) p < ε
-      rw [hd, abs_of_pos (by linarith)]
-      linarith
+      rw [hd, abs_of_pos (by linarith only [hε])]
+      linarith only [hε]
     have hlo := (hball hm).1
     have hhi := (hball hp').2
     change 0 ≤ p.2 + (-ε / 2) at hlo
@@ -5445,7 +5544,7 @@ private theorem Smale.WhitneyPairModel.mem_interior_bigon_iff (h : ℝ) (p : ℝ
       (isOpen_lt continuous_const continuous_snd).inter
         (isOpen_lt (show Continuous (fun q : ℝ × ℝ => h * q.1 ^ 2 + q.2) by fun_prop)
           continuous_const)
-    have hpU : p ∈ U := ⟨hlo, by nlinarith⟩
+    have hpU : p ∈ U := ⟨hlo, by linarith only [hhi]⟩
     exact
       mem_interior_iff_mem_nhds.mpr
         (Filter.mem_of_superset (hU.mem_nhds hpU) (fun _ hq => ⟨hq.1.le, hq.2.le⟩))
@@ -5463,7 +5562,7 @@ private theorem Smale.WhitneyPairModel.mem_frontier_bigon_iff (h : ℝ) (p : ℝ
       have hhi : ¬p.2 < h * (1 - p.1 ^ 2) := fun hlt => hnot ⟨hlo, hlt⟩
       have hupper := hp.2
       change h * p.1 ^ 2 + p.2 ≤ h at hupper
-      nlinarith
+      linarith only [hhi, hupper]
   · rintro ⟨hp, ht | ht⟩
     · exact ⟨hp, fun hstrict => hstrict.1.ne' ht⟩
     · exact ⟨hp, fun hstrict => hstrict.2.ne ht⟩
@@ -5482,22 +5581,22 @@ private theorem Smale.WhitneyPairModel.starConvex_bigon {h : ℝ} (hh : 0 ≤ h)
       (sub_le_self _
         (mul_nonneg (mul_nonneg ha₀ (sub_nonneg.mpr ha₁)) (mul_nonneg hh (sq_nonneg _))))
     _ ≤ a * h := (mul_le_mul_of_nonneg_left hupper ha₀)
-    _ ≤ h := by nlinarith
+    _ ≤ h := by nlinarith only [hh, ha₁]
 
 private theorem Smale.WhitneyPairModel.lowerArc_mem_bigon {h s : ℝ} (hh : 0 ≤ h) (hs : |s| ≤ 1) :
     (s, 0) ∈ bigon h := by
   have habs := abs_le.mp hs
   refine ⟨le_rfl, ?_⟩
   change h * s ^ 2 + 0 ≤ h
-  have hsq : s ^ 2 ≤ 1 := by nlinarith
+  have hsq : s ^ 2 ≤ 1 := by nlinarith only [habs]
   simpa only [mul_one, add_zero] using mul_le_mul_of_nonneg_left hsq hh
 
 private theorem Smale.WhitneyPairModel.upperArc_mem_bigon {h s : ℝ} (hh : 0 ≤ h) (hs : |s| ≤ 1) :
     (s, h * (1 - s ^ 2)) ∈ bigon h := by
   have habs := abs_le.mp hs
-  refine ⟨mul_nonneg hh (by nlinarith), ?_⟩
+  refine ⟨mul_nonneg hh (by nlinarith only [habs]), ?_⟩
   change h * s ^ 2 + h * (1 - s ^ 2) ≤ h
-  nlinarith
+  linarith only []
 
 private theorem Smale.WhitneyPairModel.exists_bigon_boundary_cover {h : ℝ} (hh : 0 < h)
     {D E O : Set (ℝ × ℝ)} (hD : IsOpen D) (hE : IsOpen E) (hO : IsOpen O) (hleft : (-1, 0) ∈ O)
@@ -5539,7 +5638,7 @@ private theorem Smale.WhitneyPairModel.exists_bigon_boundary_cover {h : ℝ} (hh
     right
     have hh' := hheight ⟨lt_of_le_of_ne ht.1 (Ne.symm ht0), lt_of_le_of_ne ht.2 ht1⟩
     change (0 : ℝ) < h * (1 - (2 * t - 1) ^ 2) / 2
-    linarith
+    linarith only [hh']
   have huppV : Set.MapsTo (fun t : ℝ => (2 * t - 1, h * (1 - (2 * t - 1) ^ 2))) (Set.Icc 0 1) V :=
     by
     intro t ht
@@ -5553,7 +5652,7 @@ private theorem Smale.WhitneyPairModel.exists_bigon_boundary_cover {h : ℝ} (hh
     right
     have hh' := hheight ⟨lt_of_le_of_ne ht.1 (Ne.symm ht0), lt_of_le_of_ne ht.2 ht1⟩
     change h * (1 - (2 * t - 1) ^ 2) / 2 < h * (1 - (2 * t - 1) ^ 2)
-    linarith
+    linarith only [hh']
   refine ⟨U, V, hU, hV, Set.inter_subset_left, Set.inter_subset_left, ?_, hlowU, huppV, ?_⟩
   · intro p hp
     rcases hp.1.2 with hpO | hpB
@@ -5569,7 +5668,7 @@ private theorem Smale.WhitneyPairModel.exists_bigon_boundary_cover {h : ℝ} (hh
     let t := (p.1 + 1) / 2
     have ht : t ∈ Set.Icc (0 : ℝ) 1 := by
       dsimp [t]
-      constructor <;> linarith [hpr.1.1, hpr.1.2]
+      constructor <;> linarith only [hpr, hpr.1.1, hpr.1.2]
     have hbase : p.1 = 2 * t - 1 := by dsimp [t]; ring
     rcases hpedge with hpzero | hpupper
     · left

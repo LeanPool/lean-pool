@@ -46,7 +46,7 @@ theorem hasFDerivAt_coordinate_gradient_fderiv
   have hfderiv :
       HasFDerivAt (fderiv Real f) (fderiv Real (fderiv Real f) x) x :=
     (hfderiv_cd.differentiable (by norm_num : (1 : ℕ∞ω) ≠ 0) x).hasFDerivAt
-  simpa [Function.comp_def] using
+  exact
     (linearMapGradientCLM (n := n)).hasFDerivAt.comp x hfderiv
 
 /--
@@ -57,7 +57,7 @@ theorem hasFDerivAt_neg_coordinate_gradient_fderiv
     HasFDerivAt
       (fun y : Point n => -linearMapGradient (fderiv Real f y))
       (-(linearMapGradientCLM (n := n).comp (fderiv Real (fderiv Real f) x))) x := by
-  simpa using (hasFDerivAt_coordinate_gradient_fderiv (n := n) hf x).neg
+  exact (hasFDerivAt_coordinate_gradient_fderiv (n := n) hf x).neg
 
 /--
 The matrix of the derivative of the coordinate-gradient map is the transpose
@@ -74,9 +74,11 @@ theorem toMatrix_coordinateGradient_comp
     ext k
     by_cases hjk : j = k
     · subst k
-      simp [coordinateVector]
-    · simp [coordinateVector, hjk]
-  simp [LinearMap.toMatrix'_apply, bilinearMapHessian, hsingle]
+      simp only [Pi.single_eq_same, coordinateVector, ↓reduceIte]
+    · simp only [ne_eq, hjk, not_false_eq_true, Pi.single_eq_of_ne', coordinateVector, ↓reduceIte]
+  simp only [toLinearMap_comp, LinearMap.toMatrix'_apply, hsingle, LinearMap.coe_comp, coe_coe,
+    Function.comp_apply, linearMapGradientCLM_apply, linearMapGradient_apply,
+    Matrix.transpose_apply, bilinearMapHessian]
 
 /--
 The absolute determinant of the derivative of the negative coordinate-gradient
@@ -99,9 +101,12 @@ theorem abs_det_neg_coordinateGradient_comp
       ext k
       by_cases hjk : j = k
       · subst k
-        simp [coordinateVector]
-      · simp [coordinateVector, hjk]
-    simp [LinearMap.toMatrix'_apply, bilinearMapHessian, hsingle]
+        simp only [Pi.single_eq_same, coordinateVector, ↓reduceIte]
+      · simp only [ne_eq, hjk, not_false_eq_true, Pi.single_eq_of_ne', coordinateVector,
+        ↓reduceIte]
+    simp only [LinearMap.toMatrix'_apply, hsingle, LinearMap.neg_apply, LinearMap.coe_comp,
+      coe_coe, Function.comp_apply, linearMapGradientCLM_apply, Pi.neg_apply,
+      linearMapGradient_apply, Matrix.neg_apply, Matrix.transpose_apply, bilinearMapHessian]
   calc
     |((-(linearMapGradientCLM (n := n).comp D2) :
         Point n →L[Real] Point n).det)| = |LinearMap.det (L : Point n →ₗ[Real] Point n)| := by
@@ -112,7 +117,7 @@ theorem abs_det_neg_coordinateGradient_comp
           rw [hmat]
     _ = |(bilinearMapHessian D2).det| := by
           rw [Matrix.det_neg, Matrix.det_transpose]
-          simp [abs_mul]
+          simp only [Fintype.card_fin, abs_mul, abs_pow, abs_neg, abs_one, one_pow, one_mul]
 
 /--
 Quantitative Jensen lower bound for the closed-ball global contact set of a
@@ -160,7 +165,7 @@ theorem
     have hGradient :
         ContDiff Real (1 : ℕ∞ω)
           (fun z : Point n => linearMapGradient (fderiv Real f z)) := by
-      simpa [G] using
+      simpa only [linearMapGradientCLM_apply] using
         hfFDeriv.continuousLinearMap_comp (linearMapGradientCLM (n := n))
     exact hGradient.continuous
   refine
@@ -169,7 +174,7 @@ theorem
       (G := G) (G' := G') (M := M)
       hr hdelta hfContinuous hGContinuous hstrict ?_ hM0 hMtop ?_ ?_
   · intro z _hz
-    simpa [G] using (hfDifferentiable z).hasFDerivAt
+    simpa only [G, gradientLinearMap_linearMapGradient] using (hfDifferentiable z).hasFDerivAt
   · intro z _hz
     exact (hasFDerivAt_neg_coordinate_gradient_fderiv (n := n) hf z).hasFDerivWithinAt
   · intro z hz
@@ -209,8 +214,8 @@ theorem exists_pos_radius_volume_ball_div_le_jensenGlobalContactSet_of_contDiff_
       (n := n) (f := f) (x0 := x0) (r := r) (delta := delta) (M := M)
       hr hdelta hf hstrict hM0 hMtop ?_
   intro z hz
-  simpa [abs_det_neg_coordinateGradient_comp (n := n)
-      (fderiv Real (fderiv Real f) z)] using hdet z hz
+  simpa only [abs_det_neg_coordinateGradient_comp (n := n) (fderiv Real (fderiv Real f) z)] using
+    hdet z hz
 
 /--
 A `C^2` function has the ordinary two-sided second-order jet determined by
@@ -228,16 +233,16 @@ theorem hasSecondOrderJet_of_contDiff_two
     · exact convex_univ
     · exact uniqueDiffOn_univ
     · exact Set.mem_univ x
-    · simp
+    · simp only [interior_univ, isClosed_univ, IsClosed.closure_eq, Set.mem_univ]
     · exact hf.contDiffOn
-    · simp [J]
-    · simp [J]
+    · simp only [fderivWithin_univ, Jet.toFirstDerivative_ofDerivatives, J]
+    · simp only [fderivWithin_univ, Jet.toSecondDerivative_ofDerivatives, J]
   have hAbove : TouchesAboveOn Set.univ f f x := by
     filter_upwards with y
-    simp
+    simp only [sub_self, Std.le_refl]
   have hBelow : TouchesBelowOn Set.univ f f x := by
     filter_upwards with y
-    simp
+    simp only [sub_self, Std.le_refl]
   have hjet : HasSecondOrderJet f x J.gradient J.hessian :=
     ⟨superjet_of_touchesAbove_hasSecondOrderExpansionWithin hAbove hExpansion,
       subjet_of_touchesBelow_hasSecondOrderExpansionWithin hBelow hExpansion⟩
@@ -307,12 +312,12 @@ theorem hessian_lower_bound_of_convexOn_semiconvexConvexification_contDiff_two
   let p : Point n := linearMapGradient (fderiv Real f x)
   let A : Jet n := quadraticModelJetAt 0 0 (lambda • (1 : Hessian n)) x
   have hjet : HasSecondOrderJet f x p H := by
-    simpa [H, p] using hasSecondOrderJet_of_contDiff_two (n := n) hf x
+    exact hasSecondOrderJet_of_contDiff_two (n := n) hf x
   have hQ :
       HasSecondOrderExpansionWithin Set.univ
         (fun y : Point n => quadraticModel 0 0 0 (lambda • (1 : Hessian n)) y)
         x A := by
-    simpa [A] using
+    exact
       hasSecondOrderExpansionWithin_quadraticModel_recenter
         (C := Set.univ) (x0 := 0) (r := 0) (p := 0)
         (X := lambda • (1 : Hessian n)) x
@@ -328,7 +333,7 @@ theorem hessian_lower_bound_of_convexOn_semiconvexConvexification_contDiff_two
         hjet.1 hQ
     exact h
   have hHherm : H.IsHermitian := by
-    simpa [H] using contDiff_two_bilinearMapHessian_isHermitian (n := n) hf x
+    exact contDiff_two_bilinearMapHessian_isHermitian (n := n) hf x
   have hAherm : (lambda • (1 : Hessian n)).IsHermitian :=
     Matrix.isHermitian_one.smul (IsSelfAdjoint.all lambda)
   have hsumHerm :
@@ -341,7 +346,7 @@ theorem hessian_lower_bound_of_convexOn_semiconvexConvexification_contDiff_two
     exact hnonneg
   calc
     -(lambda • (1 : Hessian n)) = 0 - lambda • (1 : Hessian n) := by
-      simp
+      simp only [zero_sub]
     _ <= (H + lambda • (1 : Hessian n)) - lambda • (1 : Hessian n) :=
       sub_le_sub_right hnonneg' _
     _ = H := by
@@ -368,12 +373,12 @@ theorem hessian_lower_bound_of_convexOn_closedBall_semiconvexConvexification_con
   let p : Point n := linearMapGradient (fderiv Real f x)
   let A : Jet n := quadraticModelJetAt 0 0 (lambda • (1 : Hessian n)) x
   have hjet : HasSecondOrderJet f x p H := by
-    simpa [H, p] using hasSecondOrderJet_of_contDiff_two (n := n) hf x
+    exact hasSecondOrderJet_of_contDiff_two (n := n) hf x
   have hQ :
       HasSecondOrderExpansionWithin Set.univ
         (fun y : Point n => quadraticModel 0 0 0 (lambda • (1 : Hessian n)) y)
         x A := by
-    simpa [A] using
+    exact
       hasSecondOrderExpansionWithin_quadraticModel_recenter
         (C := Set.univ) (x0 := 0) (r := 0) (p := 0)
         (X := lambda • (1 : Hessian n)) x
@@ -389,7 +394,7 @@ theorem hessian_lower_bound_of_convexOn_closedBall_semiconvexConvexification_con
         hjet.1 hQ
     exact h
   have hHherm : H.IsHermitian := by
-    simpa [H] using contDiff_two_bilinearMapHessian_isHermitian (n := n) hf x
+    exact contDiff_two_bilinearMapHessian_isHermitian (n := n) hf x
   have hAherm : (lambda • (1 : Hessian n)).IsHermitian :=
     Matrix.isHermitian_one.smul (IsSelfAdjoint.all lambda)
   have hsumHerm :
@@ -402,7 +407,7 @@ theorem hessian_lower_bound_of_convexOn_closedBall_semiconvexConvexification_con
     exact hnonneg
   calc
     -(lambda • (1 : Hessian n)) = 0 - lambda • (1 : Hessian n) := by
-      simp
+      simp only [zero_sub]
     _ <= (H + lambda • (1 : Hessian n)) - lambda • (1 : Hessian n) :=
       sub_le_sub_right hnonneg' _
     _ = H := by
@@ -629,7 +634,7 @@ theorem volume_explicit_ball_div_le_jensenGlobalContactSet_of_contDiff_two_conve
     have hGradient :
         ContDiff Real (1 : ℕ∞ω)
           (fun z : Point n => linearMapGradient (fderiv Real f z)) := by
-      simpa [G] using
+      simpa only [linearMapGradientCLM_apply] using
         hfFDeriv.continuousLinearMap_comp (linearMapGradientCLM (n := n))
     exact hGradient.continuous
   have hM0 : ENNReal.ofReal (max (lambda ^ n) 1) ≠ 0 := by
@@ -643,12 +648,12 @@ theorem volume_explicit_ball_div_le_jensenGlobalContactSet_of_contDiff_two_conve
       (M := ENNReal.ofReal (max (lambda ^ n) 1))
       hr hdelta hgamma hfContinuous.continuousOn hgap ?_ ?_ hM0 hMtop ?_ ?_
   · intro z _hz
-    simpa [G] using (hfDifferentiable z).hasFDerivAt
+    simpa only [G, gradientLinearMap_linearMapGradient] using (hfDifferentiable z).hasFDerivAt
   · exact measurableSet_jensenGlobalContactSet_of_continuous_gradient
       (n := n) (G := G) hfContinuous hGContinuous
       (by
         intro z _hz
-        simpa [G] using (hfDifferentiable z).hasFDerivAt)
+        simpa only [gradientLinearMap_linearMapGradient, G] using (hfDifferentiable z).hasFDerivAt)
   · intro z _hz
     exact (hasFDerivAt_neg_coordinate_gradient_fderiv (n := n) hf z).hasFDerivWithinAt
   · intro z hz
@@ -673,8 +678,8 @@ theorem volume_explicit_ball_div_le_jensenGlobalContactSet_of_contDiff_two_conve
         (n := n) (lambda := lambda)
         (A := bilinearMapHessian (fderiv Real (fderiv Real f) z))
         hlambda hHerm hlower hupper
-    simpa [G', abs_det_neg_coordinateGradient_comp (n := n)
-        (fderiv Real (fderiv Real f) z)] using hdet
+    simpa only [G', abs_det_neg_coordinateGradient_comp (n := n) (fderiv Real (fderiv Real f) z),
+      ENNReal.ofReal_max, ENNReal.ofReal_one, le_max_iff, ENNReal.ofReal_le_one] using hdet
 
 /--
 Uniformly convergent smooth semiconvex approximants have a common lower
@@ -728,11 +733,11 @@ theorem
     min (delta / 2) ((gamma / 2) / (2 * ((n : Real) * r + 1)))
   let M : ℝ≥0∞ := ENNReal.ofReal (max (lambda ^ n) 1)
   let c : ℝ≥0∞ := volume (Metric.ball (0 : Point n) rho) / M
-  have hgamma_half : 0 < gamma / 2 := by linarith
+  have hgamma_half : 0 < gamma / 2 := by linarith only [hgamma]
   have ha_nonneg : 0 <= (n : Real) * r := by
     exact mul_nonneg (Nat.cast_nonneg n) hr
   have ha1_pos : 0 < (n : Real) * r + 1 := by
-    linarith
+    linarith only [ha_nonneg]
   have hden_pos : 0 < 2 * ((n : Real) * r + 1) := by positivity
   have hrho_pos : 0 < rho := by
     dsimp [rho]
@@ -758,14 +763,14 @@ theorem
       have hGradient :
           ContDiff Real (1 : ℕ∞ω)
             (fun z : Point n => linearMapGradient (fderiv Real (fseq m) z)) := by
-        simpa [G] using
+        simpa only [linearMapGradientCLM_apply] using
           hfFDeriv.continuousLinearMap_comp (linearMapGradientCLM (n := n))
       exact hGradient.continuous
     exact measurableSet_jensenGlobalContactSet_of_continuous_gradient
       (n := n) (G := G) hfContinuous hGContinuous
       (by
         intro z _hz
-        simpa [G] using (hfDifferentiable z).hasFDerivAt)
+        simpa only [gradientLinearMap_linearMapGradient, G] using (hfDifferentiable z).hasFDerivAt)
   · intro m hm
     exact
       volume_explicit_ball_div_le_jensenGlobalContactSet_of_contDiff_two_convexified_boundary_gap
@@ -798,7 +803,7 @@ theorem volume_pos_jensenContactSet_of_contDiff_two
   have hGradient :
       ContDiff Real (1 : ℕ∞ω)
         (fun z : Point n => linearMapGradient (fderiv Real f z)) := by
-    simpa using
+    simpa only [linearMapGradientCLM_apply] using
       hfFDeriv.continuousLinearMap_comp (linearMapGradientCLM (n := n))
   have hNegGradient :
       Differentiable Real
@@ -809,7 +814,7 @@ theorem volume_pos_jensenContactSet_of_contDiff_two
     (G := fun z : Point n => linearMapGradient (fderiv Real f z))
     hr hdelta hfContinuous.continuousOn hfContinuous.continuousOn hstrict ?_ ?_
   · intro z _hz
-    simpa using (hfDifferentiable z).hasFDerivAt
+    simpa only [gradientLinearMap_linearMapGradient] using (hfDifferentiable z).hasFDerivAt
   · exact hNegGradient.differentiableOn
 
 /--
@@ -835,7 +840,7 @@ theorem volume_pos_jensenContactSet_of_contDiff_two_closedBall_strict
   intro x hx hdist
   exact hstrict x hx (fun hx0 => by
     subst x
-    simp [dist_self] at hdist
-    linarith)
+    simp only [dist_self] at hdist
+    linarith only [hr, hdist])
 
 end ViscositySolns

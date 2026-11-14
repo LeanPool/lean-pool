@@ -54,7 +54,7 @@ theorem krauseLacey_sameScaleCorrelation_le
     have hh := hsupport ht
     change max (x - R) (y - R) ≤ t ∧ t ≤ min (x - R / 4) (y - R / 4)
     rw [max_le_iff, le_min_iff]
-    constructor <;> constructor <;> linarith [hh.1, hh.2.1, hh.2.2.1, hh.2.2.2]
+    constructor <;> constructor <;> linarith only [hh, hh.1, hh.2.1, hh.2.2.1, hh.2.2.2]
   by_cases hspatial : |y - x| ≤ 2 * R
   · simp only [hspatial, ↓reduceIte]
     by_cases hlr : l ≤ r
@@ -73,7 +73,7 @@ theorem krauseLacey_sameScaleCorrelation_le
       have hlen : r - l ≤ R := by
         have hlower : x - R ≤ l := le_max_left _ _
         have hupper : r ≤ x - R / 4 := min_le_left _ _
-        linarith
+        linarith only [hR, hlower, hupper]
       by_cases hnear : |y - x| < 1 / 2
       · simp only [hnear, ↓reduceIte]
         rw [hid]
@@ -102,15 +102,15 @@ theorem krauseLacey_sameScaleCorrelation_le
           rw [integral_quadraticTTStar_eq_angularQuadraticCorrelation]
           have hh := angularQuadraticCorrelation_norm_le_nonstationary_scaled
             (R := R) (B := 0) (2 * Real.pi) (2 * Real.pi) x y l r hlr hR hlen
-            (fun t _ ↦ hp t) hp'.continuousOn hdelta hP (by norm_num)
+            (fun t _ ↦ hp t) hp'.continuousOn hdelta hP (by exact le_rfl)
             hslope (by simp) (fun t _ ↦ hbound t) (fun t _ ↦ hbound' t)
           simpa only [mul_one] using hh
         have hlast : (3 + 0) * P / delta ≤ P := by
           apply (div_le_iff₀ hdelta).2
           have hthree : 3 ≤ delta := by
             dsimp [delta]
-            nlinarith [Real.pi_gt_three]
-          nlinarith
+            nlinarith only [hnear, hpi, Real.pi_gt_three]
+          nlinarith only [hP, hthree]
         calc
           ‖∫ t, p t * phase (quadraticTTStarPhase 1 1 x y t)‖ =
               ‖∫ t in l..r, p t * phase (quadraticTTStarPhase 1 1 x y t)‖ :=
@@ -132,9 +132,9 @@ theorem krauseLacey_sameScaleCorrelation_le
       have hh := hsupport hn
       apply hspatial
       rw [abs_le]
-      constructor <;> linarith [hh.1, hh.2.1, hh.2.2.1, hh.2.2.2]
+      constructor <;> linarith only [hR, hh, hh.1, hh.2.1, hh.2.2.1, hh.2.2.2]
     rw [hzero]
-    simp
+    simp only [Pi.zero_apply, zero_mul, integral_zero, norm_zero, Std.le_refl]
 
 /-- KL18 (2.4), specialized to degree two and to the project's concrete
 positive-half dyadic amplitude. Here `R = 2^(j-1)` is the proved outer
@@ -178,17 +178,17 @@ theorem krauseLacey_positiveDyadicCorrelation_le (j : ℤ) (x y : ℝ) :
     intro t ht
     have hat : a (x - t) ≠ 0 := by
       intro hz
-      exact ht (by simp [p, hz])
+      exact ht (by simp only [hz, zero_mul, p])
     have hbt : a (y - t) ≠ 0 := by
       intro hz
-      exact ht (by simp [p, hz])
+      exact ht (by simp only [hz, map_zero, mul_zero, p])
     have hxamp := positiveDyadicAmplitude_support_subset j hat
     have hyamp := positiveDyadicAmplitude_support_subset j hbt
     exact ⟨hxamp.1, hxamp.2, hyamp.1, hyamp.2⟩
   have hP : 0 ≤ P := by dsimp [P]; positivity
   have hpbound (t : ℝ) : ‖p t‖ ≤ P := by
     calc
-      ‖p t‖ = ‖a (x - t)‖ * ‖a (y - t)‖ := by simp [p]
+      ‖p t‖ = ‖a (x - t)‖ * ‖a (y - t)‖ := by simp only [Complex.norm_mul, RCLike.norm_conj, p]
       _ ≤ (D / R) * (D / R) :=
         mul_le_mul (norm_positiveDyadicAmplitude_le j _) (norm_positiveDyadicAmplitude_le j _)
           (norm_nonneg _) (by positivity)
@@ -197,7 +197,7 @@ theorem krauseLacey_positiveDyadicCorrelation_le (j : ℤ) (x y : ℝ) :
         dsimp [P]
         calc
           D / R * (D / R) = D ^ 2 / R ^ 2 := by ring
-          _ ≤ 2 * (D ^ 2 / R ^ 2) := by linarith
+          _ ≤ 2 * (D ^ 2 / R ^ 2) := by linarith only [hbase]
           _ = 2 * D ^ 2 / R ^ 2 := by ring
   have hp'bound (t : ℝ) : ‖p' t‖ ≤ P / R := by
     calc
@@ -217,7 +217,7 @@ theorem krauseLacey_positiveDyadicCorrelation_le (j : ℤ) (x y : ℝ) :
     dsimp [P]
     field_simp
   simp_rw [annularQuadraticKernel_mul_conj]
-  simpa only [p, hPR, P, D, R] using h
+  simpa only [hPR] using h
 
 /-- Adapter from the sharp two-region KL18 correlation estimate to the
 project's integrable quadratic majorant. Its small parameter is the exact
@@ -234,7 +234,6 @@ theorem krauseLacey_positiveDyadicCorrelation_le_projectMajorant
   let R : ℝ := (2 : ℝ) ^ (j - 1)
   let D : ℝ := positiveDyadicAmplitudeBound
   have hR : 0 < R := by dsimp [R]; positivity
-  have hD : 0 ≤ D := positiveDyadicAmplitudeBound_nonneg
   have h := krauseLacey_positiveDyadicCorrelation_le j x y
   change ‖∫ t, annularQuadraticKernel (positiveDyadicAmplitude j) 1 (x - t) *
       conj (annularQuadraticKernel (positiveDyadicAmplitude j) 1 (y - t))‖ ≤
@@ -261,7 +260,7 @@ theorem krauseLacey_positiveDyadicCorrelation_le_projectMajorant
       have hbase : 0 ≤ D ^ 2 / R ^ 2 := div_nonneg (sq_nonneg D) (sq_nonneg R)
       calc
         2 * D ^ 2 / R ^ 2 = 2 * (D ^ 2 / R ^ 2) := by ring
-        _ ≤ 8403968 * (D ^ 2 / R ^ 2) := by nlinarith
+        _ ≤ 8403968 * (D ^ 2 / R ^ 2) := by linarith only [hbase]
         _ = 2 * D ^ 2 / R * (8403968 * (1 / (2 * R))) := by
           field_simp
   · simp only [hout, ↓reduceIte] at h ⊢
@@ -284,7 +283,6 @@ theorem krauseLacey_positiveDyadicConvolution_sq_lintegral_le
   let κ : Fin 1 → ℝ → ℂ := fun _ ↦
     annularQuadraticKernel (positiveDyadicAmplitude j) 1
   have hR : 0 < R := by dsimp [R]; positivity
-  have hD : 0 ≤ D := positiveDyadicAmplitudeBound_nonneg
   have hc : ∀ i, Continuous (κ i) := by
     intro i
     have ha : Continuous (positiveDyadicAmplitude j) :=
@@ -299,7 +297,7 @@ theorem krauseLacey_positiveDyadicConvolution_sq_lintegral_le
     intro t ht
     apply positiveDyadicAmplitude_support_subset j
     intro hz
-    exact ht (by simp [κ, annularQuadraticKernel, hz])
+    exact ht (by simp only [annularQuadraticKernel, hz, one_mul, zero_mul, κ])
   have hmax := finiteConvolutionMaximal_sq_lintegral_le_of_quadraticFixedHeightMajorant
     0 κ hc hs (fun _ ↦ R) (fun _ ↦ hR)
     (show 0 ≤ 2 * D ^ 2 by positivity)
@@ -343,7 +341,7 @@ theorem krauseLaceyLocalizedPiece_eq_positiveDyadicConvolution
       apply integral_congr_ae
       filter_upwards with y
       have hxy : x - (x - y) = y := by ring
-      simp only [F, annularQuadraticKernel, one_mul]
+      simp only [one_mul, annularQuadraticKernel, F]
       rw [hxy]
     _ = ∫ t, F t := MeasureTheory.integral_sub_left_eq_self F volume x
     _ = _ := rfl
@@ -383,7 +381,7 @@ theorem krauseLaceyFixedScaleLocalizedSum_eq_convolution
     intro t ht
     apply positiveDyadicAmplitude_support_subset j
     intro hz
-    exact ht (by simp [κ, annularQuadraticKernel, hz])
+    exact ht (by simp only [annularQuadraticKernel, hz, one_mul, zero_mul, κ])
   have hint (I : RealInterval) (hI : I ∈ S) :
       Integrable (fun t ↦ κ (x - t) * I.centralThird.indicator f t) :=
     integrable_convolution_row_of_memLp hκc hκs
@@ -408,7 +406,7 @@ theorem memLp_krauseLaceyFixedScaleInput
   | empty =>
       have hz : krauseLaceyFixedScaleInput ∅ f = 0 := by
         funext x
-        simp [krauseLaceyFixedScaleInput]
+        rfl
       rw [hz]
       exact MeasureTheory.MemLp.zero
   | @insert I S hI ih =>
@@ -438,7 +436,7 @@ theorem norm_krauseLaceyFixedScaleInput_le
         have hxJ : x ∉ J.centralThird := by
           intro hx
           exact Set.disjoint_left.1 hd hxI hx
-        simp [hxJ]
+        simp only [hxJ, not_false_eq_true, indicator_of_notMem]
       · intro hn
         exact (hn hIS).elim
     rw [hsum]
@@ -449,7 +447,7 @@ theorem norm_krauseLaceyFixedScaleInput_le
       unfold krauseLaceyFixedScaleInput
       apply Finset.sum_eq_zero
       intro I hIS
-      simp [hnone I hIS]
+      simp only [hnone I hIS, not_false_eq_true, indicator_of_notMem]
     rw [hzero, norm_zero]
     exact norm_nonneg _
 

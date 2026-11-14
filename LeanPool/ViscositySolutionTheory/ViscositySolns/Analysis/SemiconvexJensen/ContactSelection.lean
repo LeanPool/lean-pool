@@ -550,7 +550,7 @@ theorem exists_strictifiedQuadraticObjective_closedSuperjet_sequence_norm_bounds
             J ∈ ClosedSuperjet Set.univ g x ∧
             J.hessian <= (coordinateQuarticJetAt x).hessian + B := by
     intro k
-    simpa [eps] using
+    exact
       exists_strictifiedQuadraticObjective_closedSuperjet_data_closedBall_norm_bounds_hessian
         hJensen hAleksandrov hB hconv hmax
         (hr := heps_pos k) (hdelta := heps_pos k)
@@ -562,7 +562,7 @@ theorem exists_strictifiedQuadraticObjective_closedSuperjet_sequence_norm_bounds
     intro k
     exact (hdata k).2.1
   have heps_tendsto : Filter.Tendsto eps Filter.atTop (𝓝 0) := by
-    simpa [eps] using
+    exact
       (tendsto_one_div_add_atTop_nhds_zero_nat (𝕜 := Real))
   have hx_norm_tendsto :
       Filter.Tendsto (fun k : Nat => ‖xSeq k‖) Filter.atTop (𝓝 0) := by
@@ -581,8 +581,8 @@ theorem exists_strictifiedQuadraticObjective_closedSuperjet_sequence_norm_bounds
     rw [tendsto_iff_norm_sub_tendsto_zero]
     simpa using ha_norm_tendsto
   refine ⟨xSeq, aSeq, XSeq, JSeq, ?_, ?_, hx_tendsto, ha_tendsto, ?_, ?_, ?_, ?_, ?_, ?_⟩
-  · simpa [eps] using hx_bound
-  · simpa [eps] using ha_bound
+  · exact hx_bound
+  · exact ha_bound
   · intro k
     exact (hdata k).2.2.1
   · intro k

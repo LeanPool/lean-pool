@@ -15,7 +15,6 @@ import Mathlib.Analysis.Meromorphic.NormalForm
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 import Mathlib.CategoryTheory.Category.Init
 import Mathlib.Combinatorics.Matroid.Init
-import Mathlib.MeasureTheory.Covering.Besicovitch
 
 /-!
 # Meromorphic Laurent Principal Parts
@@ -176,7 +175,7 @@ private theorem taylor_remainder_factored (G : ℂ → ℂ) (s : ℂ) (N : ℕ)
     have hP_eq : P z = ∑ i ∈ Finset.range N, c i := by
       rw [hP_def]
       simp only [c, pG, FormalMultilinearSeries.coeff_ofScalars]
-      congr 1; ext k; ring
+      congr 1; ext k; ac_rfl
     rw [hP_eq]
     rw [← hG_tail.tsum_eq]
     rw [← hH_z.tsum_eq, ← tsum_mul_left]
@@ -222,7 +221,7 @@ theorem meromorphicAt_sub_principalPart_eventually (f : ℂ → ℂ) (s : ℂ)
       rw [show (z - s) ^ ((k : ℤ) - (poleOrderNat f s : ℤ)) =
         (z - s) ^ (-(poleOrderNat f s : ℤ)) * (z - s) ^ (k : ℕ) from by
         rw [← zpow_natCast (z - s) k, ← zpow_add₀ hne]; congr 1; omega]
-      ring
+      ac_rfl
     have h_taylor : ∃ H : ℂ → ℂ, AnalyticAt ℂ H s ∧
         ∀ᶠ z in 𝓝 s, G z - P z = (z - s) ^ N • H z :=
       taylor_remainder_factored G s N hG_an P rfl hP_an
@@ -234,7 +233,9 @@ theorem meromorphicAt_sub_principalPart_eventually (f : ℂ → ℂ) (s : ℂ)
     simp only [smul_eq_mul] at hf_z hH_z ⊢
     rw [hf_z, hpp_z]; simp only [h_ord_eq]
     rw [← mul_sub, hH_z]
-    simp_all
+    simp_all only [ne_eq, zpow_neg, zpow_natCast, smul_eq_mul, Int.neg_neg_iff_pos, Int.natCast_pos,
+      mem_compl_iff, mem_singleton_iff, pow_eq_zero_iff', false_and, not_false_eq_true,
+      inv_mul_cancel_left₀]
   · have h_pp : meromorphicPrincipalPart f s = fun _ => 0 := by
       unfold meromorphicPrincipalPart
       rw [dite_eq_right (not_and_of_not_right _ h_neg)]
@@ -265,7 +266,7 @@ private theorem hasDerivAt_zpow_comp_sub'
     (hγ : HasDerivAt γ L t) (hne : γ t ≠ s) :
     HasDerivAt (fun t => (γ t - s) ^ n) (↑n * (γ t - s) ^ (n - 1) * L) t := by
   have h := (hasDerivAt_zpow n (γ t - s) (Or.inl (sub_ne_zero.mpr hne))).comp t (hγ.sub_const s)
-  exact h.congr_deriv (by ring)
+  exact h.congr_deriv (by ac_rfl)
 
 /-- FTC for the integral of `(γ(t) - s)^n * γ'(t)` on `[a, b]` when `γ(t) ≠ s`
 on `[a, b]` and `n ≠ -1`. The primitive is `(γ(t) - s)^{n+1} / (n+1)`. -/
@@ -342,7 +343,7 @@ theorem contourIntegral_const_mul_zpow_eq_zero (s : ℂ) (n : ℤ) (hn : n ≤ -
     (hγ_avoids : ∀ t ∈ Icc γ.a γ.b, γ.toFun t ≠ s) :
     ∫ t in γ.a..γ.b, c * (γ.toFun t - s) ^ n * deriv γ.toFun t = 0 := by
   simp_rw [show ∀ t, c * (γ.toFun t - s) ^ n * deriv γ.toFun t =
-      c * ((γ.toFun t - s) ^ n * deriv γ.toFun t) from fun t => by ring]
+      c * ((γ.toFun t - s) ^ n * deriv γ.toFun t) from fun t => by ac_rfl]
   erw [intervalIntegral.integral_const_mul,
     contourIntegral_zpow_eq_zero s n hn γ hγ_closed hγ_avoids]
   simp only [mul_zero]

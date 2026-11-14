@@ -182,8 +182,7 @@ theorem measurable_frozenBlockMaxEnorm
       s.sup fun m ↦ ‖frozenBlockLowAction A f k B c τ m x‖ₑ := by
     induction s using Finset.induction_on with
     | empty =>
-      simpa only [Finset.sup_empty] using
-        (measurable_const : Measurable fun _ : ℝ ↦ (⊥ : ENNReal))
+      exact (measurable_const : Measurable fun _ : ℝ ↦ (⊥ : ENNReal))
     | @insert m s hm ih =>
       simp only [Finset.sup_insert]
       exact (hterm m).sup ih
@@ -278,9 +277,7 @@ theorem middleRangeLowAction_eq_frozenBlockLowAction_add_error
       ‖paperLowCZKernel
         (dyadicModulation m) (dyadicModulation_pos m).ne' B x y‖ ≤
           8 * Real.sqrt |dyadicModulation m| := Filter.Eventually.of_forall fun y ↦ by
-    simpa only [paperLowCZKernel] using
-      paperLowOscillatoryKernel_norm_le_global
-        (dyadicModulation_pos m).ne' B (x - y)
+    exact paperLowOscillatoryKernel_norm_le_global (dyadicModulation_pos m).ne' B (x - y)
   have hFrozen := (integrable_frozenBlockInput hf hfi hAk B c τ).bdd_mul hK hbound
   have hError := (integrable_frozenBlockErrorInput hf hfi hAk B c τ m).bdd_mul hK hbound
   unfold middleRangeLowAction frozenBlockLowAction frozenBlockErrorLowAction
@@ -337,9 +334,7 @@ theorem frozenBlockErrorLowAction_eq_neg_sum
       ‖paperLowCZKernel
         (dyadicModulation m) (dyadicModulation_pos m).ne' B x y‖ ≤
           8 * Real.sqrt |dyadicModulation m| := Filter.Eventually.of_forall fun y ↦ by
-    simpa only [paperLowCZKernel] using
-      paperLowOscillatoryKernel_norm_le_global
-        (dyadicModulation_pos m).ne' B (x - y)
+    exact paperLowOscillatoryKernel_norm_le_global (dyadicModulation_pos m).ne' B (x - y)
   have hi (j : ℤ) : Integrable (fun y ↦ paperLowCZKernel
       (dyadicModulation m) (dyadicModulation_pos m).ne' B x y *
         stoppingScaleLevelBadPart A f j k y) :=
@@ -442,9 +437,9 @@ theorem tsum_sparseFrozenBlockInputL1Mass_le_levelMass
         sparseBlockMass B c ρ a τ := by
     intro τ
     by_cases hτρ : τ ≡ ρ [ZMOD sparseModulus]
-    · simp only [sparseFrozenBlockInputL1Mass, sparseBlockMass, hτρ, ite_true]
+    · simp only [sparseFrozenBlockInputL1Mass, hτρ, ite_true, sparseBlockMass]
       exact frozenBlockInputL1Mass_le_scale_sum hf k B c τ
-    · simp [sparseFrozenBlockInputL1Mass, sparseBlockMass, hτρ]
+    · simp only [sparseFrozenBlockInputL1Mass, hτρ, ↓reduceIte, sparseBlockMass, Std.le_refl]
   calc
     (∑' τ : ℤ, sparseFrozenBlockInputL1Mass A f k B c ρ τ) ≤
         ∑' τ : ℤ, sparseBlockMass B c ρ a τ :=

@@ -84,7 +84,7 @@ theorem closedSemijets_and_cilBounds_original_of_regularizedDoubledConvolution_n
   have hAAHerm : (A * A).IsHermitian := by
     have htranspose : A.transpose = A := by
       ext i j
-      simpa using hHerm.apply i j
+      exact hHerm.apply i j
     have h := Matrix.isHermitian_mul_conjTranspose_self A
     simpa [htranspose] using h
   have hBHerm : B.IsHermitian :=
@@ -147,7 +147,7 @@ theorem closedSemijets_and_cilBounds_original_of_selectedTwoSidedJets_normalized
   have hAAHerm : (A * A).IsHermitian := by
     have htranspose : A.transpose = A := by
       ext i j
-      simpa using hHerm.apply i j
+      exact hHerm.apply i j
     have h := Matrix.isHermitian_mul_conjTranspose_self A
     simpa [htranspose] using h
   have hBHerm : B.IsHermitian :=
@@ -497,7 +497,7 @@ theorem closedSemijets_of_tendsto_twoSidedJet_blockFunctionToPointFunction_sub
         superjet_subset_closedSuperjet
           (C := Set.univ) (u := G) (x := pointLeft (n := n) (zSeq k))
           (Set.mem_univ _) (hsplit.1 k).1
-      simpa [leftPointJet] using hclosed
+      exact hclosed
   have hrightMem :
       ∀ᶠ k : Nat in Filter.atTop,
         (rightPointJet (n := n) (JSeq k)).neg ∈
@@ -507,7 +507,7 @@ theorem closedSemijets_of_tendsto_twoSidedJet_blockFunctionToPointFunction_sub
         subjet_subset_closedSubjet
           (C := Set.univ) (u := H) (x := pointRight (n := n) (zSeq k))
           (Set.mem_univ _) (hsplit.2 k).2
-      simpa [rightPointJet, Jet.neg] using hclosed
+      exact hclosed
   constructor
   · exact
       closedSuperjet_of_tendsto_closedSuperjet

@@ -114,7 +114,7 @@ private theorem CuspHoneycombHexagon.orientedCoordinates_involutive (i : Fin 6)
   by_cases hi : i = 1 ∨ i = 2 ∨ i = 3
   · funext j
     fin_cases j <;> simp [orientedCoordinates, hi]
-  · simp [orientedCoordinates, hi]
+  · simp only [orientedCoordinates, Fin.isValue, hi, ↓reduceIte]
 
 private theorem CuspHoneycombHexagon.orientedCoordinates_continuous (i : Fin 6) :
     Continuous (orientedCoordinates i) := by
@@ -393,14 +393,15 @@ private theorem CuspHoneycombHexagon.chartPoint_offset_two (i : Fin 6) (a b : �
 private theorem CuspHoneycombHexagon.chartPoint_offset_three (i : Fin 6) (a b : ℂ) (ha : a ≠ 0)
     (hb : b ≠ 0) : chartPoint (i + 3) ![a⁻¹, b⁻¹] = chartPoint i ![a, b] := by
   have hi : (i + 2) + 1 = i + 3 := by rw [add_assoc]; rfl
-  have hm : b * (a * b)⁻¹ = a⁻¹ := by simp [mul_inv_rev, hb]
+  have hm : b * (a * b)⁻¹ = a⁻¹ := by simp only [mul_inv_rev, ne_eq, hb, not_false_eq_true,
+    mul_inv_cancel_left₀]
   simpa only [hi, hm] using
     (chartPoint_next (i + 2) b (a * b)⁻¹ hb).trans (chartPoint_offset_two i a b ha hb)
 
 private theorem CuspHoneycombHexagon.chartPoint_offset_four (i : Fin 6) (a b : ℂ) (ha : a ≠ 0)
     (hb : b ≠ 0) : chartPoint (i + 4) ![(a * b)⁻¹, a] = chartPoint i ![a, b] := by
   have hi : (i + 3) + 1 = i + 4 := by rw [add_assoc]; rfl
-  have hm : a⁻¹ * b⁻¹ = (a * b)⁻¹ := by simp [mul_inv_rev, mul_comm]
+  have hm : a⁻¹ * b⁻¹ = (a * b)⁻¹ := by simp only [mul_inv_rev, mul_comm]
   simpa only [hi, hm, inv_inv] using
     (chartPoint_next (i + 3) a⁻¹ b⁻¹ (inv_ne_zero ha)).trans (chartPoint_offset_three i a b ha hb)
 
@@ -468,7 +469,7 @@ private theorem CuspHoneycombHexagon.unitSquare_inv_iff {a b : ℝ} (ha : a ∈ 
     apply (unitSquare_mul_eq_one_iff ha hb).mp
     exact_mod_cast hC
   · rintro ⟨rfl, rfl⟩
-    simp
+    simp only [Complex.ofReal_one, ne_eq, one_ne_zero, not_false_eq_true, inv_one, and_self]
 
 private theorem CuspHoneycombHexagon.unitSquare_inv_mul_iff {a b c : ℝ} (ha : a ∈ Set.Icc 0 1)
     (hb : b ∈ Set.Icc 0 1) (hc : c ∈ Set.Icc 0 1) :
@@ -484,7 +485,8 @@ private theorem CuspHoneycombHexagon.unitSquare_inv_mul_iff {a b c : ℝ} (ha : 
     obtain ⟨ha1, hb1⟩ := (unitSquare_mul_eq_one_iff ha hb).mp hmul.1
     exact ⟨ha1, hb1, hmul.2⟩
   · rintro ⟨rfl, rfl, rfl⟩
-    simp
+    simp only [Complex.ofReal_one, ne_eq, one_ne_zero, not_false_eq_true, mul_one, inv_one,
+      and_self]
 
 private theorem
     CuspHoneycombHexagon.unitSquare_transition_one_iff {a b c d : ℝ} (ha : a ∈ Set.Icc 0 1)
@@ -496,7 +498,8 @@ private theorem
     refine ⟨ha1, ?_, hd1⟩
     exact_mod_cast (show (c : ℂ) = (b : ℂ) by simpa [ha1] using hc)
   · rintro ⟨rfl, rfl, rfl⟩
-    simp
+    simp only [Complex.ofReal_one, ne_eq, one_ne_zero, not_false_eq_true, one_mul, inv_one,
+      and_self]
 
 private theorem
     CuspHoneycombHexagon.unitSquare_transition_two_iff {a b c d : ℝ} (ha : a ∈ Set.Icc 0 1)
@@ -509,7 +512,8 @@ private theorem
     refine ⟨ha1, hb1, ?_, hd1⟩
     exact_mod_cast (show (c : ℂ) = 1 by simpa [hb1] using hc)
   · rintro ⟨rfl, rfl, rfl, rfl⟩
-    simp
+    simp only [Complex.ofReal_one, ne_eq, one_ne_zero, not_false_eq_true, mul_one, inv_one,
+      and_self]
 
 private theorem
     CuspHoneycombHexagon.unitSquare_transition_three_iff {a b c d : ℝ} (ha : a ∈ Set.Icc 0 1)
@@ -522,7 +526,7 @@ private theorem
     obtain ⟨hb1, hd1⟩ := (unitSquare_inv_iff hb hd).mp ⟨hb0, hdInv⟩
     exact ⟨ha1, hb1, hc1, hd1⟩
   · rintro ⟨rfl, rfl, rfl, rfl⟩
-    simp
+    simp only [Complex.ofReal_one, ne_eq, one_ne_zero, not_false_eq_true, inv_one, and_self]
 
 private theorem
     CuspHoneycombHexagon.unitSquare_transition_four_iff {a b c d : ℝ} (ha : a ∈ Set.Icc 0 1)
@@ -535,7 +539,8 @@ private theorem
     refine ⟨ha1, hb1, hc1, ?_⟩
     exact_mod_cast (show (d : ℂ) = 1 by simpa [ha1] using hd)
   · rintro ⟨rfl, rfl, rfl, rfl⟩
-    simp
+    simp only [Complex.ofReal_one, ne_eq, one_ne_zero, not_false_eq_true, mul_one, inv_one,
+      and_self]
 
 private theorem
     CuspHoneycombHexagon.unitSquare_transition_five_iff {a b c d : ℝ} (hb : b ∈ Set.Icc 0 1)
@@ -547,7 +552,8 @@ private theorem
     refine ⟨hb1, hc1, ?_⟩
     exact_mod_cast (show (d : ℂ) = (a : ℂ) by simpa [hb1] using hd)
   · rintro ⟨rfl, rfl, rfl⟩
-    simp
+    simp only [Complex.ofReal_one, ne_eq, one_ne_zero, not_false_eq_true, inv_one, mul_one,
+      and_self]
 
 private theorem CuspHoneycombHexagon.squareComplexCoordinates_vector (p : Square) :
     (fun k : Fin 2 => (p.1 k : ℂ)) = ![(p.1 0 : ℂ), (p.1 1 : ℂ)] := by
@@ -623,14 +629,14 @@ private theorem CuspHoneycombHexagon.orientedSquare_involutive (i : Fin 6) (p : 
   · apply Subtype.ext
     funext k
     fin_cases k <;> simp [orientedSquare, hi]
-  · simp [orientedSquare, hi]
+  · simp only [orientedSquare, Fin.isValue, hi, ↓reduceIte]
 
 private theorem CuspHoneycombHexagon.orientedCoordinates_square (i : Fin 6) (p : Square) :
     orientedCoordinates i (fun k => (p.1 k : ℂ)) = fun k => ((orientedSquare i p).1 k : ℂ) := by
   by_cases hi : i = 1 ∨ i = 2 ∨ i = 3
   · funext k
     fin_cases k <;> simp [orientedSquare, orientedCoordinates, hi]
-  · simp [orientedSquare, orientedCoordinates, hi]
+  · simp only [orientedCoordinates, Fin.isValue, hi, ↓reduceIte, orientedSquare]
 
 private def CuspHoneycombHexagon.squarePoint (i : Fin 6) (p : Square) : PositiveE0 :=
   ⟨chartPoint i (fun k => (p.1 k : ℂ)),
@@ -695,7 +701,7 @@ private theorem
         ToricSpace.rayDivisor (ToricComponent.hexagonRay k) ↔
       _
   rw [chartPoint_mem_rayDivisor_iff]
-  simp
+  simp only [Fin.isValue, Complex.ofReal_eq_zero]
 
 private def CuspHoneycombHexagon.polygonProjection (p : TileSpace) : Hexagon :=
   ⟨tile p.1 p.2, tile_mem_hexagon p.1 p.2⟩
@@ -732,7 +738,8 @@ private theorem
         polygonProjection_surjective squareProjection_eq_iff_polygonProjection_eq (i, p))
 
 private theorem CuspHoneycombHexagon.positiveE0HexagonHomeomorph_cornerZero (i : Fin 6) :
-    (positiveE0HexagonHomeomorph (squarePoint i cornerZero) : Plane) = vertex i := by simp
+    (positiveE0HexagonHomeomorph (squarePoint i cornerZero) : Plane) = vertex i :=
+      by simp only [positiveE0HexagonHomeomorph_squarePoint, tile_cornerZero]
 
 private theorem CuspHoneycombHexagon.squarePoint_cornerZero_coe (i : Fin 6) :
     ((squarePoint i cornerZero : ToricSpace.rayDivisor 0) : ToricSpace.Space) =
@@ -745,7 +752,7 @@ private theorem CuspHoneycombHexagon.squarePoint_cornerZero_coe (i : Fin 6) :
 private theorem CuspHoneycombHexagon.squarePoint_cornerZero_mem_positiveBoundary_iff (i k : Fin 6) :
     squarePoint i cornerZero ∈ positiveBoundary k ↔ k = i ∨ k = i + 1 := by
   rw [squarePoint_mem_positiveBoundary_iff]
-  simp [cornerZero]
+  simp only [cornerZero, Fin.isValue, and_true]
 
 private theorem CuspHoneycombHexagon.positiveE0HexagonHomeomorph_mem_side_iff (x : PositiveE0)
     (k : Fin 6) : (positiveE0HexagonHomeomorph x : Plane) ∈ side k ↔ x ∈ positiveBoundary k := by
@@ -974,7 +981,8 @@ private def CuspHoneycombRadial.radialMap {E : Type*} [NormedAddCommGroup E] [No
 @[simp]
 private theorem
     CuspHoneycombRadial.radialMap_zero {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-    (e : UnitSphere E ≃ₜ UnitSphere E) : radialMap e (0 : E) = 0 := by simp [radialMap]
+    (e : UnitSphere E ≃ₜ UnitSphere E) : radialMap e (0 : E) = 0 := by simp only [radialMap,
+      ↓reduceDIte]
 
 private theorem CuspHoneycombRadial.radialMap_apply_of_ne_zero {E : Type*} [NormedAddCommGroup E]
     [NormedSpace ℝ E] (e : UnitSphere E ≃ₜ UnitSphere E) {x : E} (hx : x ≠ 0) :
@@ -1266,7 +1274,7 @@ private theorem CuspHoneycombHexagon.positiveBoundaryArc_zero (k : Fin 6) :
   apply positiveE0HexagonHomeomorph.injective
   apply Subtype.ext
   rw [positiveBoundaryArc_hexagon, positiveE0HexagonHomeomorph_cornerZero]
-  simp
+  simp only [Icc.coe_zero, sub_zero, Fin.isValue, one_smul, zero_smul, add_zero]
 
 @[simp]
 private theorem CuspHoneycombHexagon.positiveBoundaryArc_one (k : Fin 6) :
@@ -1274,7 +1282,7 @@ private theorem CuspHoneycombHexagon.positiveBoundaryArc_one (k : Fin 6) :
   apply positiveE0HexagonHomeomorph.injective
   apply Subtype.ext
   rw [positiveBoundaryArc_hexagon, positiveE0HexagonHomeomorph_cornerZero]
-  simp
+  simp only [Icc.coe_one, sub_self, Fin.isValue, zero_smul, one_smul, zero_add]
 
 private theorem CuspHoneycombHexagon.positiveBoundaryArc_zero_coe (k : Fin 6) :
     (((positiveBoundaryArc k 0).1 : ToricSpace.rayDivisor 0) : ToricSpace.Space) =
@@ -2305,9 +2313,14 @@ private theorem CuspHoneycomb.triangle_eq_zeroTriangle_shift (s : ToricFan.Trian
   rcases s with ⟨a, b, u⟩
   cases u
   · refine ⟨0, ![a, b], ?_⟩
-    ext <;> simp [ToricComponent.zeroTriangle, ToricFan.Triangle.shift]
+    ext <;> simp only [ToricFan.Triangle.shift, ToricComponent.zeroTriangle, Int.reduceNeg,
+      Fin.isValue,
+        Matrix.cons_val_zero, zero_add, Matrix.cons_val_one, Matrix.cons_val_fin_one]
   · refine ⟨1, ![a + 1, b], ?_⟩
-    ext <;> simp [ToricComponent.zeroTriangle, ToricFan.Triangle.shift]
+    ext <;> simp only [ToricFan.Triangle.shift, ToricComponent.zeroTriangle, Int.reduceNeg,
+      Fin.isValue,
+        Matrix.cons_val_one, Matrix.cons_val_zero, neg_add_cancel_comm_assoc,
+          Matrix.cons_val_fin_one, zero_add]
 
 private theorem
     CuspHoneycomb.honeycombHomeomorph_triangleBarycenter_coe (C₀ : Matrix (Fin 2) (Fin 2) ℂ)
@@ -2563,7 +2576,7 @@ private theorem CuspQuotient.affineTubeCharts_cover (ε : ℝ) :
   unfold affineTubeChart
   rw [← Set.preimage_iUnion, ← tube_eq_union]
   ext x
-  simp
+  simp only [mem_preimage, Subtype.coe_prop, mem_univ]
 
 private theorem CuspQuotient.tube_simplyConnected {ε : ℝ} (hε : 0 < ε) :
     SimplyConnectedSpace (ToricSpace.Tube (disc ε)) := by
@@ -2681,7 +2694,8 @@ private theorem ToricSpace.compactFibreAction_inclusion_eq_self_iff_of_at_most_o
     have hf := (compactFibreAction_inclusion_eq_self_iff_coordinatePhase u s z).mp h
     have hrest (i : Fin 3) (hij : i ≠ j) : fibreCoordinatePhase s u i = 1 := hf i (hz i hij)
     have hp : (∏ i, fibreCoordinatePhase s u i) = fibreCoordinatePhase s u j :=
-      Finset.prod_eq_single j (fun i _ hij => hrest i hij) (by simp)
+      Finset.prod_eq_single j (fun i _ hij => hrest i hij) (by simp only [Finset.mem_univ,
+        not_true_eq_false, IsEmpty.forall_iff])
     have hj : fibreCoordinatePhase s u j = 1 := hp.symm.trans (fibreCoordinatePhase_prod s u)
     have hall : fibreCoordinatePhase s u = 1 := by
       funext i
@@ -2731,11 +2745,12 @@ private theorem
       funext i
       by_cases hij : i = j
       · subst i
-        simp [hj, hjk, a]
+        simp only [hj, Circle.coe_inv, fibreCoordinatePhase_coe, Pi.mul_apply, ↓reduceIte, hjk,
+          mul_one, a]
       · by_cases hik : i = k
         · subst i
-          simp [hjk.symm, a]
-        · simp [hij, hik, hrest i hij hik]
+          simp only [fibreCoordinatePhase_coe, Pi.mul_apply, hjk.symm, ↓reduceIte, one_mul, a]
+        · simp only [hrest i hij hik, Circle.coe_one, Pi.mul_apply, hij, ↓reduceIte, hik, mul_one]
     have hr := monomial_rays_fibreCoordinatePhase s u
     rw [hc, ToricCharts.monomial_mul, monomial_single_coordinate_phase,
       monomial_single_coordinate_phase] at hr
@@ -2756,7 +2771,7 @@ private theorem
     have hij : i ≠ j := fun hij => hi (hij ▸ hzj)
     have hik : i ≠ k := fun hik => hi (hik ▸ hzk)
     rw [factors_vertexDifferencePhase]
-    simp [hij, hik]
+    simp only [Pi.mul_apply, hij, ↓reduceIte, hik, mul_one]
 
 @[simp]
 private theorem ToricSpace.compactFibreAction_inclusion_zero (u : CompactFibreTorus)

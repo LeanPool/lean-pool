@@ -47,12 +47,12 @@ private lemma det_upper_tri {k : ℕ} {M : Matrix (Fin k) (Fin k) ℤ}
     M.det = ∏ i, M i i := by
   simp only [det_apply]
   rw [Finset.sum_eq_single_of_mem 1 (Finset.mem_univ 1)]
-  · simp
+  · simp only [Equiv.Perm.sign_one, Equiv.Perm.coe_one, id_eq, one_smul]
   · intro σ _ hσ
     have hne : ∃ i, σ i ≠ i := by
       by_contra hc; push Not at hc
-      exact hσ (Equiv.Perm.ext (fun i => by simp [hc i]))
-    suffices hprod : ∏ i, M (σ i) i = 0 by simp [hprod]
+      exact hσ (Equiv.Perm.ext (fun i => by simp only [hc i, Equiv.Perm.coe_one, id_eq]))
+    suffices hprod : ∏ i, M (σ i) i = 0 by simp only [hprod, smul_zero]
     set S := Finset.univ.filter (fun i : Fin k => σ i ≠ i)
     have hS : S.Nonempty := by
       obtain ⟨i, hi⟩ := hne
@@ -91,12 +91,14 @@ def upperTriMat (a : Fin n → ℕ) (hdiv : DivChain n a) (B : UpperTriRep n a h
 @[simp]
 lemma upperTriMat_apply_lt (a : Fin n → ℕ) (hdiv : DivChain n a) (B : UpperTriRep n a hdiv)
     {i j : Fin n} (h : i < j) :
-    upperTriMat n a hdiv B i j = (a i : ℤ) * (B ⟨(i, j), h⟩ : ℕ) := by simp [upperTriMat, h]
+    upperTriMat n a hdiv B i j = (a i : ℤ) * (B ⟨(i, j), h⟩ : ℕ) := by simp only [upperTriMat, h,
+      ↓reduceDIte]
 
 @[simp]
 lemma upperTriMat_apply_diag (a : Fin n → ℕ) (hdiv : DivChain n a)
     (B : UpperTriRep n a hdiv) (i : Fin n) :
-    upperTriMat n a hdiv B i i = (a i : ℤ) := by simp [upperTriMat]
+    upperTriMat n a hdiv B i i = (a i : ℤ) := by simp only [upperTriMat, lt_self_iff_false,
+      ↓reduceDIte, ↓reduceIte]
 
 lemma upperTriMat_apply_gt (a : Fin n → ℕ) (hdiv : DivChain n a) (B : UpperTriRep n a hdiv)
     {i j : Fin n} (h : j < i) :
@@ -105,7 +107,7 @@ lemma upperTriMat_apply_gt (a : Fin n → ℕ) (hdiv : DivChain n a) (B : UpperT
 lemma upperTriMat_det (a : Fin n → ℕ) (hdiv : DivChain n a) (B : UpperTriRep n a hdiv) :
     (upperTriMat n a hdiv B).det = ∏ i, (a i : ℤ) := by
   rw [det_upper_tri (fun i j h => upperTriMat_apply_gt n a hdiv B h)]
-  congr 1; ext i; simp
+  congr 1; ext i; simp only [upperTriMat_apply_diag]
 
 lemma upperTriMat_det_pos (a : Fin n → ℕ) (hpos : ∀ i, 0 < a i)
     (hdiv : DivChain n a) (B : UpperTriRep n a hdiv) :
@@ -163,7 +165,7 @@ def unipMat (a : Fin n → ℕ) (hdiv : DivChain n a) (B : UpperTriRep n a hdiv)
 lemma unipMat_det (a : Fin n → ℕ) (hdiv : DivChain n a) (B : UpperTriRep n a hdiv) :
     (unipMat n a hdiv B).det = 1 := by
   rw [det_upper_tri (fun i j h => by simp [unipMat, not_lt.mpr (le_of_lt h), ne_of_gt h])]
-  simp [unipMat]
+  simp only [unipMat, lt_self_iff_false, ↓reduceDIte, ↓reduceIte, Finset.prod_const_one]
 
 /-- Each upper-triangular representative lies in `Γ · diag(a) · Γ`. -/
 theorem upperTriGL_mem_doubleCoset (a : Fin n → ℕ) (hpos : ∀ i, 0 < a i)
@@ -190,7 +192,8 @@ theorem upperTriGL_mem_doubleCoset (a : Fin n → ℕ) (hpos : ∀ i, 0 < a i)
     simp only [upperTriMat, unipMat]
     split_ifs <;> push_cast <;> ring
   · intro k _ hk
-    simp [Ne.symm hk]
+    simp only [Ne.symm hk, ↓reduceIte, map_apply_coe, RingHom.mapMatrix_apply, Int.coe_castRingHom,
+      map_apply, zero_mul]
   · intro h; exact absurd (Finset.mem_univ i) h
 
 /-- For `k ≠ j` and columns `< j` already identity-like, the product `σ i k * M₂ k j`
@@ -226,9 +229,12 @@ private lemma coset_sum_eq {a : Fin n → ℕ} {hdiv : DivChain n a}
     rw [Finset.sum_eq_single_of_mem i
         (Finset.mem_erase.mpr ⟨Fin.ne_of_lt hij, Finset.mem_univ i⟩)]
     · rw [h_sum_rest i (Fin.ne_of_lt hij)]; simp [hij]
-    · simp_all
+    · simp_all only [Fin.val_fin_lt, ne_eq, and_true, Finset.mem_erase, Finset.mem_univ,
+      not_false_eq_true, ↓reduceIte, implies_true]
   · simp only [hij, ite_false]
-    apply Finset.sum_eq_zero; simp_all
+    apply Finset.sum_eq_zero; simp_all only [Fin.val_fin_lt, ne_eq, and_false, ↓reduceIte,
+      mul_eq_zero, not_lt, Finset.mem_erase, Finset.mem_univ, and_true, not_false_eq_true,
+      implies_true]
 
 /-- When `i < j`, the entry `σ i j` must be zero: the bounded difference of `B₁` and `B₂`
     cannot absorb a nonzero integer multiple of `a_j / a_i`. -/
@@ -275,7 +281,8 @@ theorem upperTriMat_distinct_cosets (a : Fin n → ℕ)
   have hmat : upperTriMat n a hdiv B₁ = σ.val * upperTriMat n a hdiv B₂ := by
     have h := congr_arg Units.val heq
     have hσ_val : (↑(mapGL ℚ σ) : Matrix _ _ ℚ) = σ.val.map (Int.cast) := by
-      simp [mapGL_coe_matrix, algebraMap_int_eq, RingHom.mapMatrix_apply]
+      simp only [mapGL_coe_matrix, algebraMap_int_eq, map_apply_coe, RingHom.mapMatrix_apply,
+        Int.coe_castRingHom]
     simp only [Units.val_mul, upperTriGL_val, hσ_val] at h
     ext i j
     have hij := congr_fun (congr_fun h i) j
@@ -295,7 +302,8 @@ theorem upperTriMat_distinct_cosets (a : Fin n → ℕ)
     intro j hj i
     rcases Nat.lt_succ_iff_lt_or_eq.mp hj with hlt | hjeq
     · exact ih j hlt i
-    · have h_eq : M₁ i j = ∑ k : Fin n, σ.val i k * M₂ k j := by rw [hmat]; simp [Matrix.mul_apply]
+    · have h_eq : M₁ i j = ∑ k : Fin n, σ.val i k * M₂ k j := by rw [hmat]; simp only [
+      Matrix.mul_apply]
       have ih' : ∀ (k : Fin n), k.val < j.val → ∀ (i : Fin n),
           σ.val i k = if i = k then 1 else 0 :=
         fun k hk => ih k (hjeq ▸ hk)
@@ -307,12 +315,12 @@ theorem upperTriMat_distinct_cosets (a : Fin n → ℕ)
           (by simp only [hij, ↓reduceIte] at h_eq; exact h_eq)
       · simp only [lt_irrefl, ↓reduceIte, M₁, upperTriMat_apply_diag] at h_eq ⊢
         have h_ai_ne : (a i : ℤ) ≠ 0 := by exact_mod_cast (hpos i).ne'
-        exact mul_right_cancel₀ h_ai_ne (by linarith)
+        exact mul_right_cancel₀ h_ai_ne (by linarith only [h_eq])
       · rw [ite_eq_right (Fin.ne_of_gt hij)]
         simp only [show ¬(i < j) from not_lt.mpr (le_of_lt hij), ↓reduceIte,
           M₁, upperTriMat_apply_gt _ _ _ _ hij] at h_eq
         have : (a j : ℤ) ≠ 0 := by exact_mod_cast (hpos j).ne'
-        exact (mul_eq_zero.mp (by linarith)).resolve_right this
+        exact (mul_eq_zero.mp (by linarith only [h_eq])).resolve_right this
 
 /-- The number of upper-triangular representatives equals `∏_{i<j} (a_j / a_i)`. -/
 lemma upperTriRep_card (a : Fin n → ℕ) (hdiv : DivChain n a) :

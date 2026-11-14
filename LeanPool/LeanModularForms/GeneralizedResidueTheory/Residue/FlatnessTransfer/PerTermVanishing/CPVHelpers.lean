@@ -14,7 +14,6 @@ import Mathlib.Analysis.Complex.CauchyIntegral
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 import Mathlib.CategoryTheory.Category.Init
 import Mathlib.Combinatorics.Matroid.Init
-import Mathlib.MeasureTheory.Covering.Besicovitch
 
 /-!
 # Per-Term PV Vanishing: CPV Helpers and Assembly
@@ -399,7 +398,7 @@ lemma residueAt_sub_residueSum_eq_zero
     mul_ne_zero (mul_ne_zero two_ne_zero (Complex.ofReal_ne_zero.mpr Real.pi_ne_zero)) I_ne_zero
   set R₀ := ρ / 2 with hR₀_def
   have hR₀_pos : 0 < R₀ := by positivity
-  have hR₀_lt_ρ : R₀ < ρ := by linarith
+  have hR₀_lt_ρ : R₀ < ρ := by linarith only [hR₀_def, hR₀_pos]
   have hR₀_lt_δ : R₀ < δ := lt_of_lt_of_le hR₀_lt_ρ (min_le_left _ _)
   have hR₀_lt_rf : R₀ < rf := lt_of_lt_of_le hR₀_lt_ρ (min_le_right _ _)
   have hR₀_ne : R₀ ≠ 0 := ne_of_gt hR₀_pos
@@ -441,7 +440,7 @@ lemma residueAt_sub_residueSum_eq_zero
     apply sub_ne_zero.mpr; intro heq
     rw [heq] at hz
     have h_dist := hδ_sep p (Finset.mem_of_mem_erase hp) (Finset.ne_of_mem_erase hp)
-    rw [Metric.mem_closedBall] at hz; linarith
+    rw [Metric.mem_closedBall] at hz; linarith only [hR₀_lt_δ, hr_lt, hz, h_dist]
   rw [circleIntegral.integral_sub hf_ci hsum_ci,
     circleIntegral_simple_pole_sum S0 (residueAt f) s hs r hr_pos
       h_no_pole_on_sphere h_no_pole_in_cb,

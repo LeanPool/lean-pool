@@ -60,7 +60,7 @@ private theorem eventually_log_cube_dominates_oscillatory_constant :
   have hlog : Tendsto (fun N : ℕ ↦ Real.log (N : ℝ)) atTop atTop :=
     Real.tendsto_log_atTop.comp tendsto_natCast_atTop_atTop
   have hcube : Tendsto (fun N : ℕ ↦ Real.log (N : ℝ) ^ 3) atTop atTop :=
-    (tendsto_pow_atTop (by norm_num : (3 : ℕ) ≠ 0)).comp hlog
+    (tendsto_pow_atTop (by decide +kernel : (3 : ℕ) ≠ 0)).comp hlog
   exact hcube.eventually_ge_atTop _
 
 /-- With the explicit amplitude and height, all analytic errors eventually
@@ -80,13 +80,13 @@ theorem eventually_paper_negative_endpoint_error_budget :
       eventually_log_cube_dominates_oscillatory_constant]
       with N hN hlog896 hcube
   have hNr : (0 : ℝ) < N := by exact_mod_cast (by omega : 0 < N)
-  have hlog : 0 < Real.log (N : ℝ) := lt_of_lt_of_le (by norm_num) hlog896
+  have hlog : 0 < Real.log (N : ℝ) := lt_of_lt_of_le (by norm_num1) hlog896
   have hA : 0 < paperAmplitude N := by
     unfold paperAmplitude
     positivity
   have hamp : 14 * paperAmplitude N / N ≤
       Real.log N / (32 * N) := by
-    have hcoef : (14 : ℝ) / (2 : ℝ) ^ 40 ≤ 1 / 32 := by norm_num
+    have hcoef : (14 : ℝ) / (2 : ℝ) ^ 40 ≤ 1 / 32 := by norm_num1
     calc
       14 * paperAmplitude N / N =
           ((14 : ℝ) / (2 : ℝ) ^ 40) *
@@ -100,8 +100,8 @@ theorem eventually_paper_negative_endpoint_error_budget :
       Real.log N / (32 * N) := by
     have hscaled : (N : ℝ) * packetScale N 1 ≤ 1 :=
       nat_mul_packetScale_one_le_one N
-    apply (le_div_iff₀ (mul_pos (by norm_num) hNr)).mpr
-    nlinarith [packetScale_pos N 1]
+    apply (le_div_iff₀ (mul_pos (by norm_num1) hNr)).mpr
+    linarith only [hlog896, hscaled, packetScale_pos N 1]
   have hoscNumerator :
       128 * offSupportOscillatoryConstant / paperAmplitude N ^ 2 ≤
         Real.log N / 32 := by
@@ -113,8 +113,8 @@ theorem eventually_paper_negative_endpoint_error_budget :
           Real.log N ^ 3 / (32 * ((2 : ℝ) ^ 40) ^ 2) := by
       field_simp
     rw [heq]
-    apply (le_div_iff₀ (mul_pos (by norm_num) (sq_pos_of_pos hden))).mpr
-    nlinarith
+    apply (le_div_iff₀ (mul_pos (by norm_num1) (sq_pos_of_pos hden))).mpr
+    linarith only [hcube]
   have hosc :
       128 * offSupportOscillatoryConstant /
           ((N : ℝ) * paperAmplitude N ^ 2) ≤
@@ -134,6 +134,6 @@ theorem eventually_paper_negative_endpoint_error_budget :
         4 * (Real.log N / (32 * N)) := by ring
   rw [htarget]
   have hq : 0 ≤ Real.log N / (32 * N) := by positivity
-  nlinarith
+  linarith only [hamp, hpacket, hosc, hq]
 
 end QuadraticCarleson
