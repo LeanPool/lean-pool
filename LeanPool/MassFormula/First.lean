@@ -10,18 +10,15 @@ module
 public import Mathlib.MeasureTheory.Measure.Haar.Basic
 public import LeanPool.MassFormula.Defs
 import LeanPool.MassFormula.Discriminant
-import LeanPool.MassFormula.EisensteinMonogenic
 import LeanPool.MassFormula.UniformizerParam
 import Mathlib.Algebra.GroupWithZero.Submonoid.CancelMulZero
 import Mathlib.Algebra.Order.Ring.Star
-import Mathlib.MeasureTheory.Integral.IntegrableOn
 import Mathlib.NumberTheory.ArithmeticFunction.Misc
 import Mathlib.RingTheory.Flat.FaithfullyFlat.Algebra
 import Mathlib.RingTheory.Flat.TorsionFree
 import Mathlib.RingTheory.Henselian
 import Mathlib.RingTheory.Ideal.Norm.AbsNorm
 import Mathlib.RingTheory.Valuation.Integral
-import Mathlib.Topology.UniformSpace.Uniformizable
 
 /-!
 # Auxiliary file: `tsum_one_div_q_pow_c`—**Theorem 1**, the mass formula (§3, pp.1032–1033)
@@ -306,11 +303,11 @@ private lemma exists_rep : ∃ rep : 𝓀[K] → K, (∀ κ, rep κ ∈ 𝒪[K])
   set sec : 𝓀[K] → 𝒪[K] := Function.surjInv hsurj with hsec
   refine ⟨fun κ => (sec κ : K), fun κ => (sec κ).2, fun z => ?_, fun κ κ' h => ?_⟩
   · have : ((z - sec (IsLocalRing.residue 𝒪[K] z) : 𝒪[K]) : K) =
-        (z : K) - (sec (IsLocalRing.residue 𝒪[K] z) : K) := by push_cast; ring
+        (z : K) - (sec (IsLocalRing.residue 𝒪[K] z) : K) := by push_cast; ac_rfl
     rw [← this, valuation_lt_one_iff_residue_eq_zero, map_sub,
       Function.surjInv_eq hsurj, sub_self]
   · have hcoe : ((sec κ - sec κ' : 𝒪[K]) : K) = (sec κ : K) - (sec κ' : K) := by
-      push_cast; ring
+      push_cast; ac_rfl
     rw [← hcoe, valuation_lt_one_iff_residue_eq_zero, map_sub,
       Function.surjInv_eq hsurj, Function.surjInv_eq hsurj, sub_eq_zero] at h
     exact h
@@ -666,7 +663,7 @@ private lemma coeff_mem_eisensteinSet {n : ℕ} (hn : 0 < n) {f : Polynomial �
         Valuation.Integer.not_isUnit_iff_valuation_lt_one.mpr hlt hbu
       exact le_antisymm hble (not_lt.mp hbnl)
     have h4 : ((f.coeff 0 : 𝒪[K]) : K) = (π : K) * (b : K) := by
-      rw [hb]; push_cast; ring
+      rw [hb]; push_cast; ac_rfl
     rw [show algebraMap 𝒪[K] K (f.coeff 0) = ((f.coeff 0 : 𝒪[K]) : K) from rfl, h4, map_mul,
       hbv, mul_one]
   refine ⟨fun i => ?_, fun y hy => ?_⟩
@@ -677,6 +674,49 @@ private lemma coeff_mem_eisensteinSet {n : ℕ} (hn : 0 < n) {f : Polynomial �
     change valuation K y ≤ valuation K ((f.map (algebraMap 𝒪[K] K)).coeff 0)
     rw [Polynomial.coeff_map, hv0]
     exact valuation_le_of_lt_one hπ hy
+
+omit [IsUniformAddGroup K] in
+/-- A monic integral model of a point in the Eisenstein region is Eisenstein. -/
+private lemma exists_isEisenstein_integral_model {n : ℕ} (hn : 0 < n) {a : Fin n → K}
+    (ha : a ∈ eisensteinSet K n) {f : Polynomial 𝒪[K]} (hf : f.Monic)
+    (hdegree : f.natDegree = n)
+    (hcoeff : ∀ k (hk : k < n), (f.coeff k : K) = a ⟨k, hk⟩) :
+    ∃ π : 𝒪[K], Irreducible π ∧ f.IsEisensteinAt (IsLocalRing.maximalIdeal 𝒪[K]) := by
+  obtain ⟨h1, h2⟩ := ha
+  obtain ⟨ϖ₀, hϖ₀⟩ := IsDiscreteValuationRing.exists_irreducible 𝒪[K]
+  have hϖlt : valuation K (ϖ₀ : K) < 1 :=
+    Valuation.Integer.not_isUnit_iff_valuation_lt_one.mp hϖ₀.not_isUnit
+  refine ⟨ϖ₀, hϖ₀, ?_, ?_, ?_⟩
+  · rw [hf.leadingCoeff]
+    exact fun hmem1 =>
+      (mem_nonunits_iff.mp ((IsLocalRing.mem_maximalIdeal _).mp hmem1)) isUnit_one
+  · intro k hk
+    rw [hdegree] at hk
+    apply (IsLocalRing.mem_maximalIdeal _).mpr
+    apply mem_nonunits_iff.mpr
+    apply Valuation.Integer.not_isUnit_iff_valuation_lt_one.mpr
+    rw [hcoeff k hk]
+    exact h1 ⟨k, hk⟩
+  · intro hc
+    rw [hϖ₀.maximalIdeal_eq, Ideal.span_singleton_pow, Ideal.mem_span_singleton] at hc
+    obtain ⟨z, hz⟩ := hc
+    have hvle : valuation K (a ⟨0, hn⟩) ≤ valuation K (ϖ₀ : K) ^ 2 := by
+      have h3 := congrArg (fun w : 𝒪[K] => (w : K)) hz
+      push_cast at h3
+      rw [hcoeff 0 hn] at h3
+      rw [h3, map_mul, map_pow]
+      exact mul_le_of_le_one_right' (((valuation K).mem_integer_iff _).mp z.2)
+    have hlb : valuation K (ϖ₀ : K) ≤ valuation K (a ⟨0, hn⟩) := by
+      have := h2 (ϖ₀ : K) hϖlt
+      rwa [toPoly_coeff_zero hn a] at this
+    have hne0 : valuation K (ϖ₀ : K) ≠ 0 :=
+      (valuation K).ne_zero_iff.mpr (by exact_mod_cast hϖ₀.ne_zero)
+    have hsq : valuation K (ϖ₀ : K) ^ 2 < valuation K (ϖ₀ : K) := by
+      calc valuation K (ϖ₀ : K) ^ 2
+          = valuation K (ϖ₀ : K) * valuation K (ϖ₀ : K) := sq _
+        _ < valuation K (ϖ₀ : K) * 1 := mul_lt_mul_of_pos_left hϖlt (zero_lt_iff.mpr hne0)
+        _ = valuation K (ϖ₀ : K) := mul_one _
+    exact (not_le_of_gt hsq) (hlb.trans hvle)
 
 omit [IsUniformAddGroup K] in
 /-- On the Eisenstein region, `toPoly a` is irreducible over `K`: its integral model is Eisenstein
@@ -699,47 +739,13 @@ private lemma irreducible_toPoly {n : ℕ} (hn : 0 < n) {a : Fin n → K}
     rw [Polynomial.map_mul, Polynomial.map_C, Polynomial.map_pow, Polynomial.map_X]
     rfl
   -- the integral model is Eisenstein at the maximal ideal
-  obtain ⟨ϖ₀, hϖ₀⟩ := IsDiscreteValuationRing.exists_irreducible 𝒪[K]
-  have hϖlt : valuation K (ϖ₀ : K) < 1 :=
-    Valuation.Integer.not_isUnit_iff_valuation_lt_one.mp hϖ₀.not_isUnit
-  have hEis : g.IsEisensteinAt (IsLocalRing.maximalIdeal 𝒪[K]) := by
-    refine ⟨?_, ?_, ?_⟩
-    · rw [hgmonic.leadingCoeff]
-      exact fun hmem1 =>
-        (mem_nonunits_iff.mp ((IsLocalRing.mem_maximalIdeal _).mp hmem1)) isUnit_one
-    · intro k hk
-      rw [hgdeg] at hk
-      rw [hg, shape_coeff _ k hk]
-      exact (IsLocalRing.mem_maximalIdeal _).mpr (mem_nonunits_iff.mpr
-        (Valuation.Integer.not_isUnit_iff_valuation_lt_one.mpr (h1 ⟨k, hk⟩)))
-    · intro hc
-      rw [hg, shape_coeff _ 0 hn] at hc
-      -- membership in `𝓂²` bounds the valuation by `v (ϖ₀)²`
-      rw [hϖ₀.maximalIdeal_eq, Ideal.span_singleton_pow, Ideal.mem_span_singleton] at hc
-      obtain ⟨z, hz⟩ := hc
-      have hvle : valuation K (a ⟨0, hn⟩) ≤ valuation K (ϖ₀ : K) ^ 2 := by
-        have h3 := congrArg (fun w : 𝒪[K] => (w : K)) hz
-        push_cast at h3
-        rw [h3, map_mul, map_pow]
-        exact mul_le_of_le_one_right' (((valuation K).mem_integer_iff _).mp z.2)
-      -- but the Eisenstein condition forces `v (ϖ₀) ≤ v (a 0)`, a contradiction
-      have hlb : valuation K (ϖ₀ : K) ≤ valuation K (a ⟨0, hn⟩) := by
-        have := h2 (ϖ₀ : K) hϖlt
-        rwa [toPoly_coeff_zero hn a] at this
-      have hne0 : valuation K (ϖ₀ : K) ≠ 0 :=
-        (valuation K).ne_zero_iff.mpr (by exact_mod_cast hϖ₀.ne_zero)
-      have hsq : valuation K (ϖ₀ : K) ^ 2 < valuation K (ϖ₀ : K) := by
-        calc valuation K (ϖ₀ : K) ^ 2
-            = valuation K (ϖ₀ : K) * valuation K (ϖ₀ : K) := sq _
-          _ < valuation K (ϖ₀ : K) * 1 := mul_lt_mul_of_pos_left hϖlt (zero_lt_iff.mpr hne0)
-          _ = valuation K (ϖ₀ : K) := mul_one _
-      exact absurd (hlb.trans (hvle.trans hsq.le))
-        (lt_irrefl _ (lt_of_le_of_lt (hlb.trans hvle) hsq)).elim
+  obtain ⟨ϖ₀, hϖ₀, hEis⟩ := exists_isEisenstein_integral_model hn ⟨h1, h2⟩
+    hgmonic hgdeg (fun k hk => by rw [hg, shape_coeff _ k hk])
   have h𝒪irr : Irreducible g :=
     hEis.irreducible (Ideal.IsMaximal.isPrime inferInstance) hgmonic.isPrimitive
       (by rw [hgdeg]; exact hn)
-  have : IsFractionRing 𝒪[K] K :=
-    inferInstanceAs (IsFractionRing (valuation K).valuationSubring K)
+  have : IsFractionRing 𝒪[K] K := by
+    as_aux_lemma => exact inferInstance
   have := (hgmonic.irreducible_iff_irreducible_map_fraction_map (K := K)).mp h𝒪irr
   rwa [hmap] at this
 
@@ -884,42 +890,8 @@ private lemma minpoly_eq_of_root {n : ℕ} (hn : 0 < n) {a : Fin n → K}
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [Polynomial.map_mul, Polynomial.map_C, Polynomial.map_pow, Polynomial.map_X]
     rfl
-  obtain ⟨ϖ₀, hϖ₀⟩ := IsDiscreteValuationRing.exists_irreducible 𝒪[K]
-  have hϖlt : valuation K (ϖ₀ : K) < 1 :=
-    Valuation.Integer.not_isUnit_iff_valuation_lt_one.mp hϖ₀.not_isUnit
-  have hEis : g.IsEisensteinAt (IsLocalRing.maximalIdeal 𝒪[K]) := by
-    refine ⟨?_, ?_, ?_⟩
-    · rw [hgmonic.leadingCoeff]
-      exact fun hmem1 =>
-        (mem_nonunits_iff.mp ((IsLocalRing.mem_maximalIdeal _).mp hmem1)) isUnit_one
-    · intro k hk
-      rw [hgdeg] at hk
-      rw [hg, shape_coeff _ k hk]
-      exact (IsLocalRing.mem_maximalIdeal _).mpr (mem_nonunits_iff.mpr
-        (Valuation.Integer.not_isUnit_iff_valuation_lt_one.mpr (h1 ⟨k, hk⟩)))
-    · intro hc
-      rw [hg, shape_coeff _ 0 hn] at hc
-      -- membership in `𝓂²` bounds the valuation by `v (ϖ₀)²`
-      rw [hϖ₀.maximalIdeal_eq, Ideal.span_singleton_pow, Ideal.mem_span_singleton] at hc
-      obtain ⟨z, hz⟩ := hc
-      have hvle : valuation K (a ⟨0, hn⟩) ≤ valuation K (ϖ₀ : K) ^ 2 := by
-        have h3 := congrArg (fun w : 𝒪[K] => (w : K)) hz
-        push_cast at h3
-        rw [h3, map_mul, map_pow]
-        exact mul_le_of_le_one_right' (((valuation K).mem_integer_iff _).mp z.2)
-      -- but the Eisenstein condition forces `v (ϖ₀) ≤ v (a 0)`, a contradiction
-      have hlb : valuation K (ϖ₀ : K) ≤ valuation K (a ⟨0, hn⟩) := by
-        have := h2 (ϖ₀ : K) hϖlt
-        rwa [toPoly_coeff_zero hn a] at this
-      have hne0 : valuation K (ϖ₀ : K) ≠ 0 :=
-        (valuation K).ne_zero_iff.mpr (by exact_mod_cast hϖ₀.ne_zero)
-      have hsq : valuation K (ϖ₀ : K) ^ 2 < valuation K (ϖ₀ : K) := by
-        calc valuation K (ϖ₀ : K) ^ 2
-            = valuation K (ϖ₀ : K) * valuation K (ϖ₀ : K) := sq _
-          _ < valuation K (ϖ₀ : K) * 1 := mul_lt_mul_of_pos_left hϖlt (zero_lt_iff.mpr hne0)
-          _ = valuation K (ϖ₀ : K) := mul_one _
-      exact absurd (hlb.trans (hvle.trans hsq.le))
-        (lt_irrefl _ (lt_of_le_of_lt (hlb.trans hvle) hsq)).elim
+  obtain ⟨ϖ₀, hϖ₀, hEis⟩ := exists_isEisenstein_integral_model hn ⟨h1, h2⟩
+    hgmonic hgdeg (fun k hk => by rw [hg, shape_coeff _ k hk])
   have h𝒪irr : Irreducible g :=
     hEis.irreducible (Ideal.IsMaximal.isPrime inferInstance) hgmonic.isPrimitive
       (by rw [hgdeg]; exact hn)
@@ -927,8 +899,8 @@ private lemma minpoly_eq_of_root {n : ℕ} (hn : 0 < n) {a : Fin n → K}
     rw [← hmap, Polynomial.aeval_map_algebraMap] at hx
     exact hx
   have hint : IsIntegral 𝒪[K] x := ⟨g, hgmonic, haevg⟩
-  have : IsFractionRing 𝒪[K] K :=
-    inferInstanceAs (IsFractionRing (valuation K).valuationSubring K)
+  have : IsFractionRing 𝒪[K] K := by
+    as_aux_lemma => exact inferInstance
   have hdvdg : minpoly 𝒪[K] x ∣ g := minpoly.isIntegrallyClosed_dvd hint haevg
   have hmineq : minpoly 𝒪[K] x = g := by
     obtain ⟨c, hc⟩ := hdvdg
@@ -1021,7 +993,7 @@ theorem rootCount_eventuallyEq (n : ℕ) (hn : 0 < n)
       rw [hπ₀.maximalIdeal_eq, Ideal.span_singleton_pow, Ideal.mem_span_singleton]
       refine Valuation.Integers.dvd_of_le (Valuation.integer.integers (valuation K)) ?_
       have h5 : ((⟨b ⟨i, hilt⟩, hbmem ⟨i, hilt⟩⟩ - ⟨a ⟨i, hilt⟩, hmem ⟨i, hilt⟩⟩ : 𝒪[K]) : K) =
-          b ⟨i, hilt⟩ - a ⟨i, hilt⟩ := by push_cast; ring
+          b ⟨i, hilt⟩ - a ⟨i, hilt⟩ := by push_cast; ac_rfl
       calc valuation K (algebraMap 𝒪[K] K
           (⟨b ⟨i, hilt⟩, hbmem ⟨i, hilt⟩⟩ - ⟨a ⟨i, hilt⟩, hmem ⟨i, hilt⟩⟩))
           = valuation K (b ⟨i, hilt⟩ - a ⟨i, hilt⟩) := by
@@ -1107,6 +1079,13 @@ theorem muCoeff_eisensteinSet (n : ℕ) (hn : 0 < n)
   have hle : (q K : ℝ≥0∞)⁻¹ ≤ 1 := ENNReal.inv_le_one.mpr (by exact_mod_cast (one_lt_q K).le)
   rw [← mul_add, tsub_add_cancel_of_le hle, mul_one]
 
+/-- Restricting a continuous function to a measurable set gives an a.e. measurable function. -/
+private lemma _root_.ContinuousOn.massFormula_aemeasurable_restrict {α β : Type*}
+    [TopologicalSpace α] [MeasurableSpace α] [OpensMeasurableSpace α] [TopologicalSpace β]
+    [MeasurableSpace β] [BorelSpace β] {f : α → β} {s : Set α} {μ : Measure α}
+    (hf : ContinuousOn f s) (hs : MeasurableSet s) : AEMeasurable f (μ.restrict s) :=
+  aemeasurable_restrict_of_measurable_subtype hs hf.domRestrict.measurable
+
 /-- Away from the measure-zero discriminant locus the root count is locally constant—Krasner's
 lemma, or continuity of the roots—hence a.e. measurable on the Eisenstein region. The local
 constancy is `rootCount_eventuallyEq`; it makes the root count continuous on the separable part of
@@ -1136,7 +1115,8 @@ theorem aemeasurable_rootCount (n : ℕ) (hn : 0 < n)
         filter_upwards [rootCount_eventuallyEq K 1 hn L hL haE hsep] with b hb
         rw [hb]
       exact hev.continuousAt.continuousWithinAt
-    exact hcont.aemeasurable (measurableSet_eisensteinSet hn)
+    exact hcont.massFormula_aemeasurable_restrict
+      (measurableSet_eisensteinSet hn)
   · -- `2 ≤ n`: off the hyperplane `a 1 = 0` the polynomial is separable and the root count locally
     -- constant, hence continuous there
     have h1n : 1 < n := by omega
@@ -1165,7 +1145,7 @@ theorem aemeasurable_rootCount (n : ℕ) (hn : 0 < n)
       rw [ae_eq_set, Set.sdiff_eq_empty.mpr hVsub]
       exact ⟨hnull, measure_empty⟩
     rw [Measure.restrict_congr_set hcongr]
-    exact hcont.aemeasurable hVmeas
+    exact hcont.massFormula_aemeasurable_restrict hVmeas
 
 /-! ## The change-of-variables core
 
@@ -1260,7 +1240,7 @@ private lemma valuation_eq_of_addVal_eq_one {π : 𝒪[K]} (hπ : Irreducible π
     (Valuation.Integers.isUnit_iff_valuation_eq_one
       (Valuation.integer.integers (valuation K))).mp u.isUnit
   have h3 := congrArg (fun w : 𝒪[K] => valuation K (w : K)) hu
-  rw [show ((z * (u : 𝒪[K]) : 𝒪[K]) : K) = (z : K) * ((u : 𝒪[K]) : K) from by push_cast; ring,
+  rw [show ((z * (u : 𝒪[K]) : 𝒪[K]) : K) = (z : K) * ((u : 𝒪[K]) : K) from by push_cast; ac_rfl,
     map_mul, hvu, mul_one] at h3
   exact h3
 
@@ -1319,7 +1299,7 @@ private lemma one_le_of_le_mul_add {n k : ℕ} (hk : k < n) {v : ℕ∞}
   rcases eq_or_ne v ⊤ with rfl | hv
   · exact le_top
   · lift v to ℕ using hv with a
-    rw [show (n : ℕ∞) * (a : ℕ∞) + (k : ℕ∞) = ((n * a + k : ℕ) : ℕ∞) from by push_cast; ring,
+    rw [show (n : ℕ∞) * (a : ℕ∞) + (k : ℕ∞) = ((n * a + k : ℕ) : ℕ∞) from by push_cast; ac_rfl,
       Nat.cast_le] at h
     rcases Nat.eq_zero_or_pos a with rfl | h1
     · omega
@@ -1490,26 +1470,11 @@ private lemma addVal_algebraMap_pow (hπ : Irreducible π) (hint : IsIntegral �
   exact (Nat.cast_mul _ _).symm
 
 omit [UniformSpace K] [IsUniformAddGroup K] [IsNonarchimedeanLocalField K] in
-/-- `ξ` is a root of the base change of its own minimal polynomial (the public re-derivation of
-`aeval_integralGen`, which is private there). -/
+/-- `ξ` is a root of the base change of its minimal polynomial, in `eval` form. -/
 private lemma eval_map_minpoly_integralGen (hint : IsIntegral 𝒪[K] x) :
     Polynomial.eval (integralGen hint) ((minpoly 𝒪[K] x).map
       (algebraMap 𝒪[K] ↥(integers (IntermediateField.adjoin K {x})))) = 0 := by
-  have hgen : Polynomial.aeval (IntermediateField.AdjoinSimple.gen K x) (minpoly 𝒪[K] x) = 0 := by
-    apply (algebraMap ↥(IntermediateField.adjoin K {x}) (SeparableClosure K)).injective
-    rw [map_zero, ← Polynomial.aeval_algebraMap_apply,
-      IntermediateField.AdjoinSimple.algebraMap_gen]
-    exact minpoly.aeval 𝒪[K] x
-  have hξaeval : Polynomial.aeval (integralGen hint) (minpoly 𝒪[K] x) = 0 := by
-    apply Subtype.val_injective
-    have h4 : ((Polynomial.aeval (integralGen hint) (minpoly 𝒪[K] x) :
-        ↥(integers (IntermediateField.adjoin K {x}))) : ↥(IntermediateField.adjoin K {x})) =
-        Polynomial.aeval (IntermediateField.AdjoinSimple.gen K x) (minpoly 𝒪[K] x) :=
-      (Polynomial.aeval_algHom_apply (Subalgebra.val _) (integralGen hint)
-        (minpoly 𝒪[K] x)).symm
-    rw [show ((0 : ↥(integers (IntermediateField.adjoin K {x}))) :
-      ↥(IntermediateField.adjoin K {x})) = 0 from rfl, h4, hgen]
-  rwa [Polynomial.aeval_def, ← Polynomial.eval_map] at hξaeval
+  simpa only [Polynomial.eval_map, Algebra.toRingHom_ofId] using eval₂_integralGen hint
 
 omit [IsUniformAddGroup K] in
 /-- The fiber exponent at every uniformizer: the derivative of the annihilator of
@@ -1748,7 +1713,7 @@ private lemma mem_boxAt_iff (hπ : Irreducible π) (hint : IsIntegral 𝒪[K] x)
     funext i
     rw [Pi.sub_apply, toCoeff_apply, Polynomial.coeff_sub, intModel_coeff a ha i]
     push_cast
-    ring
+    ac_rfl
   unfold boxAt
   rw [Set.mem_vadd_set_iff_neg_vadd_mem, vadd_eq_add, neg_add_eq_sub, hchart,
     toCoeff_mem_imageLattice_iff_addVal, addVal_boxAt_multiplier hπ hint hei hη ρ]
@@ -1901,7 +1866,7 @@ private lemma irreducible_of_eisenstein_relation {R A : Type*}
         _ ≤ ((i : ℕ) : ℕ∞) * addVal A w :=
             mul_le_mul' (by exact_mod_cast hi1) hv1
     calc ((n + 1 : ℕ) : ℕ∞)
-        = (n : ℕ∞) + 1 := by push_cast; ring
+        = (n : ℕ∞) + 1 := by push_cast; ac_rfl
       _ ≤ _ := add_le_add hA hB
   have hlt : addVal A
       (algebraMap R A
@@ -2341,8 +2306,8 @@ theorem lintegral_rootCount (n : ℕ) (hn : 0 < n)
   obtain ⟨x, π, hπ, hint, hei, hadj, hdeg⟩ := exists_eisenstein_generator K n hn L hL
   subst hadj
   subst hdeg
-  have : IsFractionRing ↥𝒪[K] K :=
-    inferInstanceAs (IsFractionRing (valuation K).valuationSubring K)
+  have : IsFractionRing ↥𝒪[K] K := by
+    as_aux_lemma => exact inferInstance
   have hLoc : IsLocalRing ↥(integers (IntermediateField.adjoin K {x})) :=
     isLocalRing_integers hπ hint hei
   have hDVR : IsDiscreteValuationRing ↥(integers (IntermediateField.adjoin K {x})) :=
@@ -2491,13 +2456,13 @@ theorem lintegral_rootCount (n : ℕ) (hn : 0 < n)
           (q K : ℝ≥0∞)⁻¹ ^ d (IntermediateField.adjoin K {x})) := by
         rw [Finset.sum_const, nsmul_eq_mul, pow_add]
     _ = ((T.card : ℝ≥0∞) * (q K : ℝ≥0∞)⁻¹ ^ ((minpoly 𝒪[K] x).natDegree * ρ)) *
-          (q K : ℝ≥0∞)⁻¹ ^ d (IntermediateField.adjoin K {x}) := by ring
+          (q K : ℝ≥0∞)⁻¹ ^ d (IntermediateField.adjoin K {x}) := by ac_rfl
     _ = ((q K : ℝ≥0∞)⁻¹ * (1 - (q K : ℝ≥0∞)⁻¹)) *
           (q K : ℝ≥0∞)⁻¹ ^ d (IntermediateField.adjoin K {x}) := by rw [hTcount]
     _ = (q K : ℝ≥0∞)⁻¹ ^ (d (IntermediateField.adjoin K {x}) + 1) *
           (1 - (q K : ℝ≥0∞)⁻¹) := by
         rw [pow_succ]
-        ring
+        ac_rfl
 
 omit [IsUniformAddGroup K] in
 /-- The ramification core: a root of an Eisenstein polynomial generates a
@@ -2681,8 +2646,8 @@ theorem countable_sigma (n : ℕ) (hn : 0 < n) : (sigma K n).Countable := by
   classical
   let : MeasurableSpace (Fin n → K) := borel _
   have : BorelSpace (Fin n → K) := ⟨rfl⟩
-  have : IsFractionRing ↥𝒪[K] K :=
-    inferInstanceAs (IsFractionRing (valuation K).valuationSubring K)
+  have : IsFractionRing ↥𝒪[K] K := by
+    as_aux_lemma => exact inferInstance
   -- each `L` gets a nonempty open subset of the region with root count `≥ 1` throughout
   have hex : ∀ L ∈ sigma K n, ∃ O : Set (Fin n → K), IsOpen O ∧ O.Nonempty ∧
       O ⊆ eisensteinSet K n ∧ ∀ b ∈ O, 1 ≤ rootCount L b := by
