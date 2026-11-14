@@ -5,7 +5,6 @@ Authors: Shawn Krisman
 -/
 module
 
-public import Mathlib.Analysis.CStarAlgebra.Classes
 public import Mathlib.Analysis.Complex.RemovableSingularity
 public import Mathlib.Tactic.Common
 public import Mathlib.Tactic.NormNum

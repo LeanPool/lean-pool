@@ -5,8 +5,9 @@ Authors: Shawn Krisman
 -/
 module
 
+public import Mathlib.Analysis.Complex.Basic
+
 public import Mathlib.Analysis.Analytic.IteratedFDeriv
-public import Mathlib.Analysis.CStarAlgebra.Classes
 public import Mathlib.Analysis.Calculus.Deriv.Mul
 public import Mathlib.Analysis.Calculus.Deriv.Pow
 public import Mathlib.Analysis.Calculus.IteratedDeriv.Defs

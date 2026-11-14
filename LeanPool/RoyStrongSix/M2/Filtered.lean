@@ -6,8 +6,6 @@ Authors: Shawn Krisman
 module
 
 public import Mathlib.LinearAlgebra.FiniteDimensional.Defs
-public import Mathlib.Order.CompletePartialOrder
-public import Mathlib.RingTheory.MvPolynomial.IrreducibleQuadratic
 public import Mathlib.Tactic.Common
 public import Mathlib.Tactic.Ext
 public import Mathlib.Tactic.Ring

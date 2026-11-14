@@ -5,16 +5,13 @@ Authors: Shawn Krisman
 -/
 module
 
-public import Mathlib.Algebra.Order.Ring.Star
-public import Mathlib.Algebra.Order.Star.Int
-public import Mathlib.Analysis.CStarAlgebra.Classes
+public import Mathlib.Analysis.Complex.Basic
+
 public import Mathlib.Data.Fin.Tuple.Sort
 public import Mathlib.Data.Sym.Card
 public import Mathlib.LinearAlgebra.Dimension.Finite
 public import Mathlib.LinearAlgebra.FiniteDimensional.Defs
 public import Mathlib.LinearAlgebra.FreeModule.StrongRankCondition
-public import Mathlib.RingTheory.Coalgebra.IsFrobenius
-public import Mathlib.RingTheory.HopfAlgebra.Basic
 public import Mathlib.Tactic.Common
 public import Mathlib.Tactic.Ext
 public import Mathlib.Tactic.Linarith

@@ -4,15 +4,13 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Shawn Krisman
 -/
 module
+
+public import Mathlib.Algebra.Group.ForwardDiff
+
+public import Mathlib.RingTheory.MvPolynomial.Homogeneous
+public import Mathlib.RingTheory.Polynomial.Basic
 public import Mathlib.LinearAlgebra.FiniteDimensional.Lemmas
 
-public import Mathlib.Algebra.AffineMonoid.UniqueSums
-public import Mathlib.Algebra.Group.ForwardDiff
-public import Mathlib.Algebra.Order.Ring.Star
-public import Mathlib.RingTheory.Henselian
-public import Mathlib.RingTheory.MvPolynomial.IrreducibleQuadratic
-public import Mathlib.RingTheory.RegularLocalRing.Defs
-public import Mathlib.RingTheory.SimpleRing.Principal
 public import Mathlib.Tactic.Common
 public import Mathlib.Tactic.Ext
 public import Mathlib.Order.Filter.Defs

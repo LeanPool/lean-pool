@@ -89,63 +89,6 @@ theorem iter_Δ_pow_zero (N n : ℕ) :
 variable {σ ι : Type*} [Fintype σ] [DecidableEq σ] [Fintype ι] [DecidableEq ι]
 variable (β : σ → ι) (D : ι → ℕ) (K : Type*) [Field K]
 
-/-! ### The step-`s` section inequality -/
-
-omit [DecidableEq σ] [Fintype ι] in
-theorem hfun_section_s [Finite ι] {J : Ideal (MvPolynomial σ K)} {P : MvPolynomial σ K} {s : ℕ}
-    (hP : P ∈ FLE K β (s • D)) (hnzd : ∀ Q, P * Q ∈ J → Q ∈ J) (t : ℕ) :
-    (hfun β D K (J ⊔ Ideal.span {P}) (t + s) : ℤ) ≤ hfun β D K J (t + s) - hfun β D K J t := by
-  classical
-  let : Fintype ι := Fintype.ofFinite ι
-  by_cases hP0 : P = 0
-  · have htop : J = ⊤ := (Ideal.eq_top_iff_one _).mpr (hnzd 1 (by simp [hP0]))
-    have h0 : ∀ t, hfun β D K (⊤ : Ideal (MvPolynomial σ K)) t = 0 := fun t => by
-      unfold hfun; rw [Submodule.restrictScalars_top, top_inf_eq, Nat.sub_self]
-    simp [htop, h0]
-  set F0 := FLE K β (t • D)
-  set F1 := FLE K β ((t + s) • D)
-  let mP : MvPolynomial σ K →ₗ[K] MvPolynomial σ K := LinearMap.mulLeft K P
-  have hinj : Function.Injective mP := fun x y hxy => mul_left_cancel₀ hP0 hxy
-  set M := F0.map mP
-  have hM : M ≤ F1 := by
-    rintro _ ⟨Q, hQ, rfl⟩
-    have := mul_mem_FLE K hP hQ
-    rwa [show s • D + t • D = (t + s) • D by rw [add_nsmul, add_comm]] at this
-  set J1 := J.restrictScalars K ⊓ F1
-  set J0 := J.restrictScalars K ⊓ F0
-  set J2 := (J ⊔ Ideal.span {P}).restrictScalars K ⊓ F1
-  have : FiniteDimensional K J1 := Submodule.finiteDimensional_of_le inf_le_right
-  have : FiniteDimensional K M := Submodule.finiteDimensional_of_le hM
-  have : FiniteDimensional K J2 := Submodule.finiteDimensional_of_le inf_le_right
-  have hsup : J1 ⊔ M ≤ J2 := by
-    apply sup_le (inf_le_inf_right _ (Submodule.restrictScalars_mono K le_sup_left))
-    intro x hx
-    refine ⟨?_, hM hx⟩
-    obtain ⟨Q, -, rfl⟩ := hx
-    exact Ideal.mem_sup_right (Ideal.mul_mem_right _ _ (Ideal.mem_span_singleton_self P))
-  have hinf : J1 ⊓ M = J0.map mP := by
-    apply le_antisymm
-    · rintro x ⟨⟨hxJ, -⟩, Q, hQ, rfl⟩
-      exact ⟨Q, ⟨hnzd Q hxJ, hQ⟩, rfl⟩
-    · rintro _ ⟨Q, ⟨hQJ, hQ⟩, rfl⟩
-      exact ⟨⟨J.mul_mem_left P hQJ, hM ⟨Q, hQ, rfl⟩⟩, Q, hQ, rfl⟩
-  have e1 : ∀ (U : Submodule K (MvPolynomial σ K)) [FiniteDimensional K U],
-      finrank K (U.map mP) = finrank K U :=
-    fun U _ => LinearEquiv.finrank_eq (Submodule.equivMapOfInjective _ hinj U).symm
-  have h1 := Submodule.finrank_sup_add_finrank_inf_eq J1 M
-  rw [hinf] at h1
-  have eM : finrank K M = finrank K F0 := e1 F0
-  have eJ0 : finrank K (J0.map mP) = finrank K J0 := e1 J0
-  have h2 := Submodule.finrank_mono hsup
-  have h3 : finrank K J2 ≤ finrank K F1 := Submodule.finrank_mono inf_le_right
-  have h4 : finrank K J0 ≤ finrank K F0 := Submodule.finrank_mono inf_le_right
-  have h5 : finrank K J1 ≤ finrank K F1 := Submodule.finrank_mono inf_le_right
-  have f1 : hfun β D K (J ⊔ Ideal.span {P}) (t + s) = finrank K F1 - finrank K J2 := rfl
-  have f2 : hfun β D K J (t + s) = finrank K F1 - finrank K J1 := rfl
-  have f3 : hfun β D K J t = finrank K F0 - finrank K J0 := rfl
-  rw [f1, f2, f3, Nat.cast_sub h3, Nat.cast_sub h4, Nat.cast_sub h5]
-  omega
-
 /-! ### Data of an ideal -/
 
 /-- The data `(dimension, degree)` of `hfun J` (junk `(0, 0)` if there is none). -/

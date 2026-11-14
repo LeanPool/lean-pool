@@ -86,30 +86,29 @@ theorem hfun_le (J : Ideal (MvPolynomial σ K)) (t : ℕ) : hfun β D K J t ≤ 
   • D)) :=
   Nat.sub_le _ _
 
+/-! ### The step-`s` section inequality -/
+
 omit [DecidableEq σ] [Fintype ι] in
-/-- **Roy, Lemma 8.5.** -/
-theorem hfun_section [Finite ι] {J : Ideal (MvPolynomial σ K)} {P : MvPolynomial σ K} (hP : P ∈
-  FLE K β D)
-    (hnzd : ∀ Q, P * Q ∈ J → Q ∈ J) (t : ℕ) :
-    (hfun β D K (J ⊔ Ideal.span {P}) (t + 1) : ℤ) ≤ hfun β D K J (t + 1) - hfun β D K J t := by
+/-- The section inequality for a polynomial whose block degree is bounded by `s • D`. -/
+theorem hfun_section_s [Finite ι] {J : Ideal (MvPolynomial σ K)} {P : MvPolynomial σ K} {s : ℕ}
+    (hP : P ∈ FLE K β (s • D)) (hnzd : ∀ Q, P * Q ∈ J → Q ∈ J) (t : ℕ) :
+    (hfun β D K (J ⊔ Ideal.span {P}) (t + s) : ℤ) ≤ hfun β D K J (t + s) - hfun β D K J t := by
   classical
   let : Fintype ι := Fintype.ofFinite ι
   by_cases hP0 : P = 0
-  · -- then `J = ⊤`
-    have htop : J = ⊤ := (Ideal.eq_top_iff_one _).mpr (hnzd 1 (by simp [hP0]))
+  · have htop : J = ⊤ := (Ideal.eq_top_iff_one _).mpr (hnzd 1 (by simp [hP0]))
     have h0 : ∀ t, hfun β D K (⊤ : Ideal (MvPolynomial σ K)) t = 0 := fun t => by
       unfold hfun; rw [Submodule.restrictScalars_top, top_inf_eq, Nat.sub_self]
-    have : J ⊔ Ideal.span {P} = ⊤ := by rw [htop, top_sup_eq]
     simp [htop, h0]
   set F0 := FLE K β (t • D)
-  set F1 := FLE K β ((t + 1) • D)
+  set F1 := FLE K β ((t + s) • D)
   let mP : MvPolynomial σ K →ₗ[K] MvPolynomial σ K := LinearMap.mulLeft K P
   have hinj : Function.Injective mP := fun x y hxy => mul_left_cancel₀ hP0 hxy
   set M := F0.map mP
   have hM : M ≤ F1 := by
     rintro _ ⟨Q, hQ, rfl⟩
     have := mul_mem_FLE K hP hQ
-    rwa [show D + t • D = (t + 1) • D by rw [succ_nsmul, add_comm]] at this
+    rwa [show s • D + t • D = (t + s) • D by rw [add_nsmul, add_comm]] at this
   set J1 := J.restrictScalars K ⊓ F1
   set J0 := J.restrictScalars K ⊓ F0
   set J2 := (J ⊔ Ideal.span {P}).restrictScalars K ⊓ F1
@@ -139,11 +138,19 @@ theorem hfun_section [Finite ι] {J : Ideal (MvPolynomial σ K)} {P : MvPolynomi
   have h3 : finrank K J2 ≤ finrank K F1 := Submodule.finrank_mono inf_le_right
   have h4 : finrank K J0 ≤ finrank K F0 := Submodule.finrank_mono inf_le_right
   have h5 : finrank K J1 ≤ finrank K F1 := Submodule.finrank_mono inf_le_right
-  have f1 : hfun β D K (J ⊔ Ideal.span {P}) (t + 1) = finrank K F1 - finrank K J2 := rfl
-  have f2 : hfun β D K J (t + 1) = finrank K F1 - finrank K J1 := rfl
+  have f1 : hfun β D K (J ⊔ Ideal.span {P}) (t + s) = finrank K F1 - finrank K J2 := rfl
+  have f2 : hfun β D K J (t + s) = finrank K F1 - finrank K J1 := rfl
   have f3 : hfun β D K J t = finrank K F0 - finrank K J0 := rfl
   rw [f1, f2, f3, Nat.cast_sub h3, Nat.cast_sub h4, Nat.cast_sub h5]
   omega
+
+omit [DecidableEq σ] [Fintype ι] in
+/-- **Roy, Lemma 8.5.** -/
+theorem hfun_section [Finite ι] {J : Ideal (MvPolynomial σ K)} {P : MvPolynomial σ K}
+    (hP : P ∈ FLE K β D) (hnzd : ∀ Q, P * Q ∈ J → Q ∈ J) (t : ℕ) :
+    (hfun β D K (J ⊔ Ideal.span {P}) (t + 1) : ℤ) ≤
+      hfun β D K J (t + 1) - hfun β D K J t := by
+  exact hfun_section_s β D K (s := 1) (by simpa only [one_nsmul] using hP) hnzd t
 
 end StrongSix.M2
 

@@ -7,7 +7,7 @@ module
 
 public import Mathlib.Tactic.Common
 public import LeanPool.RoyStrongSix.Roy.BaseChange
-public import LeanPool.RoyStrongSix.Thm1.Quot
+public import Mathlib.LinearAlgebra.Matrix.Rank
 
 /-!
 # Quotient maps with `F`-rational matrices
@@ -26,6 +26,19 @@ open Module Submodule Matrix
 open StrongSix.Roy
 
 namespace StrongSix.Thm1
+
+/-! ### Generic linear algebra -/
+
+/-- A matrix with linearly independent rows has a surjective `mulVecLin`. -/
+theorem mulVecLin_surjective {𝕜 : Type*} [Field 𝕜] {m n : ℕ} (M : Matrix (Fin m) (Fin n) 𝕜)
+    (h : LinearIndependent 𝕜 fun k => M k) : Function.Surjective M.mulVecLin := by
+  have hr : M.rank = m := by
+    rw [Matrix.rank_eq_finrank_span_row]
+    exact (finrank_span_eq_card h).trans (Fintype.card_fin m)
+  have htop : LinearMap.range M.mulVecLin = ⊤ := by
+    apply Submodule.eq_top_of_finrank_eq
+    rw [← Matrix.rank, hr, finrank_fin_fun]
+  exact LinearMap.range_eq_top.mp htop
 
 variable {F : Type*} [Field F] [Algebra F ℂ] {m : ℕ}
 
@@ -61,6 +74,23 @@ omit [Algebra F ℂ] in
 theorem qK_surjective : Function.Surjective (qK h) :=
   (LinearEquiv.surjective _).comp (Submodule.mkQ_surjective h)
 
+omit [Algebra F ℂ] in
+/-- The rows of a surjective quotient matrix are linearly independent. -/
+theorem rows_qK_linearIndependent :
+    LinearIndependent F fun k => LinearMap.toMatrix' (qK h) k := by
+  rw [Fintype.linearIndependent_iff]
+  intro c hc k0
+  obtain ⟨x, hx⟩ := qK_surjective h (Pi.single k0 1)
+  have h1 : c ⬝ᵥ (LinearMap.toMatrix' (qK h) *ᵥ x) = 0 := by
+    rw [Matrix.dotProduct_mulVec]
+    have : c ᵥ* LinearMap.toMatrix' (qK h) = 0 := by
+      funext j
+      have := congrFun hc j
+      simpa [Matrix.vecMul, dotProduct, Finset.sum_apply, mul_comm] using this
+    rw [this, zero_dotProduct]
+  rw [LinearMap.toMatrix'_mulVec, hx, dotProduct_single, mul_one] at h1
+  exact h1
+
 /-- `ℂ^m → ℂ^{m − dim h}` with `F` entries. -/
 noncomputable def qC : (Fin m → ℂ) →ₗ[ℂ] (Fin (m - finrank F h) → ℂ) :=
   ((LinearMap.toMatrix' (qK h)).map (algebraMap F ℂ)).mulVecLin
@@ -81,20 +111,8 @@ theorem qC_surjective : Function.Surjective (qC h) := by
       fun k => inclF F m (LinearMap.toMatrix' (qK h) k) := rfl
   rw [hrow]
   refine linearIndependent_of_Fpts (F := F) (fun k => inclF_mem_Fpts _) ?_
-  refine LinearIndependent.map' (v := fun k => LinearMap.toMatrix' (qK h) k) ?_ (inclF F m)
-    (LinearMap.ker_eq_bot.mpr inclF_injective)
-  rw [Fintype.linearIndependent_iff]
-  intro c hc k0
-  obtain ⟨x, hx⟩ := qK_surjective h (Pi.single k0 1)
-  have h1 : c ⬝ᵥ (LinearMap.toMatrix' (qK h) *ᵥ x) = 0 := by
-    rw [Matrix.dotProduct_mulVec]
-    have : c ᵥ* LinearMap.toMatrix' (qK h) = 0 := by
-      funext j
-      have := congrFun hc j
-      simpa [Matrix.vecMul, dotProduct, Finset.sum_apply, mul_comm] using this
-    rw [this, zero_dotProduct]
-  rw [LinearMap.toMatrix'_mulVec, hx, dotProduct_single, mul_one] at h1
-  exact h1
+  exact (rows_qK_linearIndependent h).map' (inclF F m)
+    (LinearMap.ker_eq_bot.mpr (inclF_injective (F := F) (m := m)))
 
 /-- The kernel of `qC h` is `span_ℂ h`. -/
 theorem ker_qC : LinearMap.ker (qC h) = span ℂ ((h.map (inclF F m) : Submodule F _) : Set (Fin m

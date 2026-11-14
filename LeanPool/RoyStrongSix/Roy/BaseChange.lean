@@ -5,11 +5,12 @@ Authors: Shawn Krisman
 -/
 module
 
+public import Mathlib.LinearAlgebra.FiniteDimensional.Lemmas
+public import Mathlib.LinearAlgebra.Dimension.Constructions
+public import Mathlib.LinearAlgebra.Dimension.Free
+
 public import Mathlib.Basic.Complex.Basic
-public import Mathlib.LinearAlgebra.Dimension.Localization
 public import Mathlib.LinearAlgebra.Dual.Lemmas
-public import Mathlib.LinearAlgebra.FreeModule.PID
-public import Mathlib.RingTheory.SimpleModule.Basic
 public import Mathlib.Tactic.Common
 public import Mathlib.Tactic.Ext
 

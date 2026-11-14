@@ -14,9 +14,6 @@ public import Mathlib.Tactic.Linarith
 public import Mathlib.Tactic.NormNum
 public import Mathlib.Tactic.Positivity
 public import Mathlib.Tactic.Ring
-public import Mathlib.Tactic.FieldSimp.Lemmas
-public import Mathlib.Tactic.Linarith.Preprocessing
-public import Mathlib.Tactic.Ring.Basic
 
 /-!
 # Roy's "four equivalent statements" (Roy 1992, §3) in an abstract admissible system

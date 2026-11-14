@@ -4,15 +4,16 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Shawn Krisman
 -/
 module
+public import Mathlib.LinearAlgebra.Dimension.Finite
+
+public import Mathlib.Algebra.Polynomial.Degree.Lemmas
+public import Mathlib.Algebra.Polynomial.Roots
+public import Mathlib.LinearAlgebra.Basis.VectorSpace
+
 public import Mathlib.Algebra.MvPolynomial.Polynomial
 
 public import Mathlib.Algebra.CharZero.Infinite
 public import Mathlib.Algebra.MvPolynomial.Funext
-public import Mathlib.RingTheory.Coalgebra.IsFrobenius
-public import Mathlib.RingTheory.Henselian
-public import Mathlib.RingTheory.HopfAlgebra.Basic
-public import Mathlib.RingTheory.RegularLocalRing.Defs
-public import Mathlib.RingTheory.SimpleRing.Principal
 public import Mathlib.Tactic.Common
 public import Mathlib.Tactic.Ext
 public import Mathlib.Tactic.Ring

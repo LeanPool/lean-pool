@@ -107,7 +107,12 @@ lemma Polynomial.localization_at_comap_maximal_isCM_isCM [IsNoetherianRing R]
           (Polynomial.mapRingHom (Ideal.Quotient.mk _))
         apply (Equiv.isSMulRegular_congr (r := f) (s := f)
           (e := (Ideal.polynomialQuotientEquivQuotientPolynomial (ofList rs)).toEquiv)
-          (fun x ↦ by simp [Algebra.smul_def])).mp
+          (fun x ↦ by
+            change (ofList rs).polynomialQuotientEquivQuotientPolynomial
+              (Polynomial.map (Ideal.Quotient.mk (ofList rs)) f * x) =
+                f • (ofList rs).polynomialQuotientEquivQuotientPolynomial x
+            rw [map_mul, Ideal.polynomialQuotientEquivQuotientPolynomial_map_mk]
+            rfl)).mp
         apply IsSMulRegular.of_right_eq_zero_of_smul
         simpa [Algebra.smul_def, algebraMap_def, Quotient.algebraMap_eq, coe_mapRingHom]
           using (mem_nonZeroDivisors_iff.mp

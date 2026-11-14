@@ -5,7 +5,6 @@ Authors: Shawn Krisman
 -/
 module
 
-public import Mathlib.Algebra.Order.Star.Real
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Tactic.Common
 public import Mathlib.Tactic.Linarith

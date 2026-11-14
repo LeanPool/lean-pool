@@ -4,7 +4,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Shawn Krisman
 -/
 module
-public import Mathlib.LinearAlgebra.Matrix.Rank
 public import Mathlib.Analysis.SpecialFunctions.Complex.Log
 
 public import Mathlib.Tactic.Common
@@ -16,6 +15,7 @@ public import Mathlib.Tactic.Ring
 public import LeanPool.RoyStrongSix.Roy.Subquot
 public import LeanPool.RoyStrongSix.Roy.Support
 public import LeanPool.RoyStrongSix.Thm1.MultEst
+public import LeanPool.RoyStrongSix.Thm1.QuotMap
 
 /-!
 # From the obstruction subgroup `H = h₀ × T_U` to the map `s`
@@ -46,30 +46,16 @@ open StrongSix.Roy
 
 namespace StrongSix.Thm1
 
-/-! ### Generic linear algebra -/
-
-/-- A matrix with linearly independent rows has a surjective `mulVecLin`. -/
-theorem mulVecLin_surjective {𝕜 : Type*} [Field 𝕜] {m n : ℕ} (M : Matrix (Fin m) (Fin n) 𝕜)
-    (h : LinearIndependent 𝕜 fun k => M k) : Function.Surjective M.mulVecLin := by
-  have hr : M.rank = m := by
-    rw [Matrix.rank_eq_finrank_span_row]
-    exact (finrank_span_eq_card h).trans (Fintype.card_fin m)
-  have htop : LinearMap.range M.mulVecLin = ⊤ := by
-    apply Submodule.eq_top_of_finrank_eq
-    rw [← Matrix.rank, hr, finrank_fin_fun]
-  exact LinearMap.range_eq_top.mp htop
-
 variable {d0 d1 : ℕ}
 
 /-- The inclusion `Qbar^n → ℂ^n`. -/
-noncomputable def incl (n : ℕ) : (Fin n → Qb) →ₗ[Qb] (Fin n → ℂ) :=
-  LinearMap.compLeft (Algebra.linearMap Qb ℂ) (Fin n)
+noncomputable abbrev incl (n : ℕ) : (Fin n → Qb) →ₗ[Qb] (Fin n → ℂ) :=
+  inclF Qb n
 
 theorem incl_apply {n : ℕ} (x : Fin n → Qb) (i : Fin n) : incl n x i = (x i : ℂ) := rfl
 
-theorem incl_injective (n : ℕ) : Function.Injective (incl n) := fun x y h => by
-  funext i
-  exact Subtype.val_injective (congrFun h i)
+theorem incl_injective (n : ℕ) : Function.Injective (incl n) :=
+  inclF_injective (F := Qb) (m := n)
 
 /-- The inclusion `Qbar^{d₀} × Qbar^{d₁} → E`. -/
 noncomputable def inclL (d0 d1 : ℕ) : LieG Qb d0 d1 →ₗ[Qb] E d0 d1 :=
@@ -126,50 +112,28 @@ section Build
 variable (h0 : Submodule Qb (Fin d0 → Qb)) (U : Submodule ℚ (Fin d1 → ℚ))
 
 /-- A surjection `Qbar^{d₀} → Qbar^{d₀ - dim h₀}` with kernel `h₀`. -/
-noncomputable def psiK : (Fin d0 → Qb) →ₗ[Qb] (Fin (d0 - finrank Qb h0) → Qb) :=
-  (LinearEquiv.ofFinrankEq ((Fin d0 → Qb) ⧸ h0) (Fin (d0 - finrank Qb h0) → Qb)
-    (by rw [Submodule.finrank_quotient, finrank_fin_fun, finrank_fin_fun])).toLinearMap ∘ₗ h0.mkQ
+noncomputable abbrev psiK : (Fin d0 → Qb) →ₗ[Qb] (Fin (d0 - finrank Qb h0) → Qb) :=
+  qK h0
 
-theorem ker_psiK : LinearMap.ker (psiK h0) = h0 := by
-  rw [psiK, LinearEquiv.ker_comp, Submodule.ker_mkQ]
+theorem ker_psiK : LinearMap.ker (psiK h0) = h0 := ker_qK h0
 
-theorem psiK_surjective : Function.Surjective (psiK h0) :=
-  (LinearEquiv.surjective _).comp (Submodule.mkQ_surjective h0)
+theorem psiK_surjective : Function.Surjective (psiK h0) := qK_surjective h0
 
-/-- The matrix of `ψ`. -/
-noncomputable def Mpsi : Matrix (Fin (d0 - finrank Qb h0)) (Fin d0) Qb := LinearMap.toMatrix'
-  (psiK h0)
+/-- The matrix of the quotient over the algebraic numbers. -/
+noncomputable def Mpsi : Matrix (Fin (d0 - finrank Qb h0)) (Fin d0) Qb :=
+  LinearMap.toMatrix' (psiK h0)
 
-/-- `Ψ : ℂ^{d₀} → ℂ^{d₀'}`, with `Qbar` entries. -/
-noncomputable def PsiC : (Fin d0 → ℂ) →ₗ[ℂ] (Fin (d0 - finrank Qb h0) → ℂ) :=
-  ((Mpsi h0).map (algebraMap Qb ℂ)).mulVecLin
+/-- The complex quotient map obtained from the algebraic-number quotient. -/
+noncomputable abbrev PsiC : (Fin d0 → ℂ) →ₗ[ℂ] (Fin (d0 - finrank Qb h0) → ℂ) :=
+  qC h0
 
-theorem PsiC_incl (x : Fin d0 → Qb) : PsiC h0 (incl d0 x) = incl _ (psiK h0 x) := by
-  funext k
-  rw [incl_apply, PsiC, Matrix.mulVecLin_apply, ← LinearMap.toMatrix'_mulVec (psiK h0)]
-  exact (RingHom.map_mulVec (algebraMap Qb ℂ) (Mpsi h0) x k).symm
+theorem PsiC_incl (x : Fin d0 → Qb) : PsiC h0 (incl d0 x) = incl _ (psiK h0 x) :=
+  qC_inclF h0 x
 
-theorem rows_Mpsi_linearIndependent : LinearIndependent Qb fun k => Mpsi h0 k := by
-  rw [Fintype.linearIndependent_iff]
-  intro c hc k0
-  obtain ⟨x, hx⟩ := psiK_surjective h0 (Pi.single k0 1)
-  have h1 : c ⬝ᵥ (Mpsi h0 *ᵥ x) = 0 := by
-    rw [Matrix.dotProduct_mulVec]
-    have : c ᵥ* Mpsi h0 = 0 := by
-      funext j
-      have := congrFun hc j
-      simpa [Matrix.vecMul, dotProduct, Finset.sum_apply, mul_comm] using this
-    rw [this, zero_dotProduct]
-  rw [Mpsi, LinearMap.toMatrix'_mulVec, hx, dotProduct_single, mul_one] at h1
-  exact h1
+theorem rows_Mpsi_linearIndependent : LinearIndependent Qb fun k => Mpsi h0 k :=
+  rows_qK_linearIndependent h0
 
-theorem PsiC_surjective : Function.Surjective (PsiC h0) := by
-  apply mulVecLin_surjective
-  have hrow : (fun k => (Mpsi h0).map (algebraMap Qb ℂ) k) = fun k => incl d0 (Mpsi h0 k) := rfl
-  rw [hrow]
-  refine linearIndependent_of_Fpts (F := Qb) (fun k => algVec_iff.mp (algVec_incl _)) ?_
-  exact (rows_Mpsi_linearIndependent h0).map' (incl d0)
-    (LinearMap.ker_eq_bot.mpr (incl_injective d0))
+theorem PsiC_surjective : Function.Surjective (PsiC h0) := qC_surjective h0
 
 /-! ### The multiplicative block `Φ` -/
 
@@ -190,13 +154,10 @@ theorem PhiC_apply (v : Fin d1 → ℂ) (k : Fin (finrank ℚ U)) :
     PhiC U v k = ∑ j, ((phiRow U k j : ℚ) : ℂ) * v j := rfl
 
 /-- The inclusion `ℚ^n → ℂ^n`. -/
-noncomputable def inclQ (n : ℕ) : (Fin n → ℚ) →ₗ[ℚ] (Fin n → ℂ) :=
-  LinearMap.compLeft (Algebra.linearMap ℚ ℂ) (Fin n)
+noncomputable abbrev inclQ (n : ℕ) : (Fin n → ℚ) →ₗ[ℚ] (Fin n → ℂ) := inclF ℚ n
 
-theorem inclQ_injective (n : ℕ) : Function.Injective (inclQ n) := fun x y h => by
-  funext i
-  have := congrFun h i
-  simpa [inclQ] using this
+theorem inclQ_injective (n : ℕ) : Function.Injective (inclQ n) :=
+  inclF_injective (F := ℚ) (m := n)
 
 theorem PhiC_surjective : Function.Surjective (PhiC U) := by
   apply mulVecLin_surjective
