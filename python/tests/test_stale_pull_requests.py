@@ -43,3 +43,8 @@ def test_pinned_pull_requests_are_exempt() -> None:
     """The pinned label exempts a PR from the policy."""
     assert decide(_pull_request(40, "pinned"), None, NOW) is None
     assert decide(_pull_request(40, "pinned", "stale"), None, NOW) is None
+
+
+def test_missing_label_history_never_closes_a_pull_request() -> None:
+    """A stale label without its timestamp cannot establish seven days of warning."""
+    assert decide(_pull_request(40, "stale"), None, NOW) is None

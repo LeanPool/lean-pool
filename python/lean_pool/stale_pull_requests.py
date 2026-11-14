@@ -68,7 +68,9 @@ def decide(
     age = now - pull_request.created_at
     if STALE_LABEL not in pull_request.labels:
         return "label" if age >= STALE_AFTER else None
-    labelled_long_enough = labelled_at is None or now - labelled_at >= MINIMUM_LABELLED
+    labelled_long_enough = (
+        labelled_at is not None and now - labelled_at >= MINIMUM_LABELLED
+    )
     if age >= CLOSE_AFTER and labelled_long_enough:
         return "close"
     return None

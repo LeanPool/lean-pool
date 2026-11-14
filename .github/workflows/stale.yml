@@ -15,6 +15,10 @@ concurrency:
 
 jobs:
   stale-pull-requests:
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
     runs-on: ubuntu-latest
     name: Label PRs stale at 7 days, close at 21 days
     steps:
@@ -35,6 +39,7 @@ jobs:
         with:
           days-before-pr-stale: -1
           days-before-pr-close: -1
+          remove-pr-stale-when-updated: false
           days-before-issue-stale: 90
           days-before-issue-close: 30
           stale-issue-label: stale
