@@ -953,8 +953,7 @@ private theorem hpred :
         (p.vertex j - y).2 * (p.vertex (j + 1) - p.vertex j).1) / D j)
     let U : Fin (n + 3) → (Real × Real) → Real := fun j y =>
       (((p.vertex j - y).1 * d.2 - (p.vertex j - y).2 * d.1) / D j)
-    (∀ (j : Fin (n + 3)), U j x ≠ 0) → ((∀ (j : Fin (n + 3)), U j x ≠ 1) → ((∀ (j : Fin (n + 3)),
-        (j ≠ i) → ((0 < U j x ∧ U j x < 1) → (T j x ≠ 0))) → (
+    (∀ (j : Fin (n + 3)), U j x ≠ 0) → ((∀ (j : Fin (n + 3)), U j x ≠ 1) → ((
     let V : Fin (n + 3) → Set (Real × Real) := fun j =>
       if j = i then {y | 0 < U j y ∧ U j y < 1}
       else if U j x < 0 then {y | U j y < 0}
@@ -984,8 +983,8 @@ private theorem hpred :
         (∃ t : Real, 0 < t ∧ x + t • d ∈ segment Real (p.vertex j) (p.vertex (j + 1))))))))))))
             := by
   classical
-  intro n p i x a b d D T U hUzero hUone hTne V Vall W Wall Q Qline g G Gall N rN hballN hiffX
-      hiffY y hy j hji
+  intro n p i x a b d D T U hUzero hUone V Vall W Wall Q Qline g G Gall N rN hballN hiffX hiffY
+      y hy j hji
   have hyVall : y ∈ Vall := (hballN hy).1
   have hyVj := Set.mem_iInter.mp hyVall j
   rw [hiffY y j, hiffX j]
@@ -1712,7 +1711,7 @@ theorem P3597T1SideCrossing {n : Nat} (p : P3381T1PolygonBoundary n)
       (hji : j ≠ i) :
       ((∃ t : Real, 0 < t ∧ y + t • d ∈ segment Real (p.vertex j) (p.vertex (j + 1))) ↔
         (∃ t : Real, 0 < t ∧ x + t • d ∈ segment Real (p.vertex j) (p.vertex (j + 1)))) :=
-            SideCrossingProof.hpred n p i x d hUzero hUone hTne rN hballN hiffX hiffY y hy j hji
+            SideCrossingProof.hpred n p i x d hUzero hUone rN hballN hiffX hiffY y hy j hji
   have hcardSplit (A : Fin (n + 3) → Prop) :
       Set.ncard {j | A j} = Set.ncard ({j | A j} \ {i}) + @ite Nat (A i) (Classical.propDecidable
           _) 1 0 :=

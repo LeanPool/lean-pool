@@ -729,14 +729,14 @@ private theorem hconeUV :
         let u : Real × Real := a - B
         let w : Real × Real := c - B
         let cross (x y : Real × Real) : Real := x.1 * y.2 - x.2 * y.1
-        (cross u w ≠ 0) → ((∀ z : Real × Real, IsLinearMap Real (cross z)) → (
+        ((∀ z : Real × Real, IsLinearMap Real (cross z)) → (
         let U := if 0 < cross u w then u else w
         let V := if 0 < cross u w then w else u
         (0 < cross U V) → ((∀ z : Real × Real, z = (-cross V z / cross U V) • U + (cross U z /
             cross U V) • V) → (∀ x : Real × Real, (∃ s t : Real, 0 < s ∧ 0 < t ∧ x = B + s • u +
             t • w) ↔ (0 < cross U (x - B) ∧ cross V (x - B) < 0))))) ) := by
   classical
-  intro n p v b B a c u w cross hdet hcrossLinear U V hUV hdecomp x
+  intro n p v b B a c u w cross hcrossLinear U V hUV hdecomp x
   constructor
   · rintro ⟨s, t, hs, ht, rfl⟩
     by_cases hp : 0 < cross u w
@@ -2740,7 +2740,7 @@ theorem P3650T1ExposedCornerExists {n : Nat} (p : P3381T1PolygonBoundary n) :
   let V := if 0 < cross u w then w else u
   have hUV := ExposedCornerGeometry.hUV n p b hswap hpos
   have hdecomp := ExposedCornerGeometry.hdecomp n p b hUV
-  have hconeUV := ExposedCornerGeometry.hconeUV n p b hdet hcrossLinear hUV hdecomp
+  have hconeUV := ExposedCornerGeometry.hconeUV n p b hcrossLinear hUV hdecomp
   have hconstOn := ExposedCornerGeometry.hconstOn n p hlocal
   let N0 : Set (Real × Real) := {z | z ∈ Metric.ball 0 r ∧
     0 < cross U z ∧ cross V z < 0}

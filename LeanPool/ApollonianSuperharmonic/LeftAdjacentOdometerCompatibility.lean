@@ -6,9 +6,9 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.OdometerStringSlopeTelescoping
 public import LeanPool.ApollonianSuperharmonic.BandPrototileQuarterTurn
 
-public import LeanPool.ApollonianSuperharmonic.P4261T2UnitStringTelescoping
 public import LeanPool.ApollonianSuperharmonic.P4261T2DiamondBoundary
 public import LeanPool.ApollonianSuperharmonic.P4261T2RegularEdgeReduction
 public import LeanPool.ApollonianSuperharmonic.P4261T2InterfacePropagation
@@ -288,15 +288,10 @@ private theorem compatibility :
               CircleMatrix En 0 1 * ((TileCentroid X).2 - (TileCentroid W).2) ∧
             t.2 - s.2 = CircleMatrix En 1 0 * ((TileCentroid X).1 - (TileCentroid W).1) +
               CircleMatrix En 1 1 * ((TileCentroid X).2 - (TileCentroid W).2) := by
-          by_cases hunit : En.1.1.1 = 1
-          · exact P4261T2UnitStringTelescoping En hunit pkg.orientation pkg.base
-              pkg.minus pkg.plus pkg.tiles pkg.reverseTiles pkg.functions pkg.reverseFunctions
-              pkg.forward pkg.backward pkg.hminus pkg.head_forward pkg.last_backward W X a b
-                  hWa hXb
-          · exact P4158T1StringSlopeTelescoping En (by have hp := En.2; omega)
-              pkg.orientation pkg.base pkg.minus pkg.plus pkg.tiles pkg.reverseTiles
-              pkg.functions pkg.reverseFunctions pkg.forward pkg.backward pkg.hminus
-              pkg.head_forward pkg.last_backward W X a b hWa hXb
+          exact odometerStringSlopeTelescoping En pkg.orientation pkg.base
+            pkg.minus pkg.plus pkg.tiles pkg.reverseTiles pkg.functions pkg.reverseFunctions
+            pkg.forward pkg.backward pkg.hminus pkg.head_forward pkg.last_backward W X a b
+            hWa hXb
         obtain ⟨s, t, hs, ht, h0, h1⟩ := htelescope
         have hOW := List.forall₂_zip pkg.forward.2.1 hWa
         have hOX := List.forall₂_zip pkg.backward.2.1 hXb

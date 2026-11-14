@@ -930,19 +930,6 @@ private theorem hJcard :
   rw [hJset, Finset.card_union_of_disjoint hdisj]
   simp [Finset.product_eq_sprod]
 
-private theorem hboundary_card :
-    (by
-      classical
-      exact
-        ∀ (T : ProtoTile), ∀ (p : List GaussianInt), (p.Nodup) → ((BoundaryFootprintVertices T =
-            (↑p.toFinset : Set GaussianInt)) → ((BoundaryFootprintVertices T).ncard = p.length))
-            ) := by
-  classical
-  intro T p hpnd hverts
-  rw [hverts]
-  rw [Set.ncard_coe_finset]
-  exact List.toFinset_card_of_nodup hpnd
-
 private theorem hDmem :
     (by
       classical
@@ -1036,44 +1023,14 @@ private theorem hcell_cover :
   rcases Finset.mem_image.mp hzU with ⟨a, ha, haz⟩
   exact ⟨a, ha, v, hv, haz.symm⟩
 
-private theorem hcell_residue_unique :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle),
-          ∀ (T : ProtoTile),
-            ∀ (h : PartialOdometer),
-              ∀ (g : IntegerLatticeFunction),
-                (↑h.domain : Set GaussianInt) = FootprintVertices T →
-                  ExactTileTiling (RegularTileFamily T (TilingLattice C)) →
-                    (∀ x ∈ BoundaryFootprintVertices T,
-                        FourNeighborLaplacian g x = (1 : ℤ)) →
-                      (FootprintVertices T).ncard + Finset.card T.cells =
-                          (FootprintEdges T).ncard + (1 : ℕ) →
-                        ∀ (p : List GaussianInt),
-                          ∀ (x₀ : GaussianInt),
-                            ∀ (x₁ : GaussianInt),
-                              BoundaryFootprintVertices T =
-                                (↑p.toFinset : Set GaussianInt) →
-                                (∀ (e : Finset GaussianInt),
-                                e ∈ BoundaryFootprintEdges T ↔
-                                e = { x₁, x₀ } ∨
-                                ∃ (a : GaussianInt) (b : GaussianInt) (l₁ :
-                                List GaussianInt) (l₂ : List GaussianInt),
-                                p = l₁ ++ a :: b :: l₂ ∧ e = { a, b }) →
-                                (BoundaryFootprintVertices T).ncard = p.length →
-                                (∀ (v : GaussianInt),
-                                (T.cells.image fun z => z + v) = T.cells → v = 0) →
-                                (∀ (z : GaussianInt),
-                                ∃ a ∈ T.cells, ∃ v ∈ TilingLattice C, z = a + v) →
-                                ∀ (a : GaussianInt),
-                                ∀ (a' : GaussianInt),
-                                a ∈ T.cells →
-                                a' ∈ T.cells → a - a' ∈ TilingLattice C → a = a'
-    ) := by
+private theorem cellsEqualOfSameResidue
+    (C : BandCircle) (T : ProtoTile)
+    (htile : ExactTileTiling (RegularTileFamily T (TilingLattice C)))
+    (translationRigid : ∀ v : GaussianInt,
+      (T.cells.image fun z => z + v) = T.cells → v = 0)
+    (a a' : GaussianInt) (ha : a ∈ T.cells) (ha' : a' ∈ T.cells)
+    (hres : a - a' ∈ TilingLattice C) : a = a' := by
   classical
-  intro C T h g hdom htile hweb heuler p x₀ x₁ hverts hedges hboundary_card htranslation_rigid
-      hcell_cover a a' ha ha' hres
   let v := a - a'
   have htransmem : a ∈ (TileTranslation T v).cells := by
     change a ∈ T.cells.image (fun z => z + v)
@@ -1095,7 +1052,7 @@ private theorem hcell_residue_unique :
     change T.cells.image (GaussianTranslation v) = T.cells
     exact congrArg ProtoTile.cells htilesame
   change T.cells.image (fun z => z + v) = T.cells at hcellsame
-  have hvzero : v = 0 := htranslation_rigid v hcellsame
+  have hvzero : v = 0 := translationRigid v hcellsame
   dsimp [v] at hvzero
   exact sub_eq_zero.mp hvzero
 
@@ -1882,8 +1839,6 @@ theorem PeriodicTileTotalIndegree (C : BandCircle)
         (D.filter fun z => z + 1 ∈ D).card +
         (D.filter fun z => z + (⟨0, 1⟩ : GaussianInt) ∈ D).card :=
             PeriodicCountBridge.hcountBridge C T hT hlat D hDmem hsectorAll
-  have htiles := LatticeTileGridStructure T hlat
-  have heuler := LatticeTileGridEulerCount T hlat
   let D : Finset GaussianInt := h.domain.filter
     (fun x => @decide (x ∉ BoundaryFootprintVertices T)
       (Classical.propDecidable _))
@@ -1891,16 +1846,12 @@ theorem PeriodicTileTotalIndegree (C : BandCircle)
     ((((D.product D).filter fun (e : GaussianInt × GaussianInt) =>
       @decide (FourNeighborAdjacent e.1 e.2)
         (Classical.propDecidable _)).card / 2 : ℕ) : ℤ)
-  have hcells : T.cells.Nonempty := htiles.1.1
-  rcases htiles.2.2 with ⟨p, x₀, x₁, hpnd, hplen, hhead, hlast,
-    hverts, hclose, hadj, hedges⟩
+  have hcells : T.cells.Nonempty := (LatticeTileGridStructure T hlat).1.1
   have hDmem := PeriodicIndegreeGeometry.hDmem T h hdom
   -- Exact tiling makes the cell bases a finite set of residue representatives.
   have hcell_cover := PeriodicIndegreeGeometry.hcell_cover C T htile
-  have hcell_residue_unique := PeriodicIndegreeGeometry.hcell_residue_unique C T h g hdom
-      htile hweb heuler p x₀ x₁ hverts hedges
-      (PeriodicIndegreeGeometry.hboundary_card T p hpnd hverts)
-      (PeriodicIndegreeGeometry.htranslation_rigid T hcells) hcell_cover
+  have hcell_residue_unique := PeriodicIndegreeGeometry.cellsEqualOfSameResidue C T htile
+      (PeriodicIndegreeGeometry.htranslation_rigid T hcells)
   have hfund := PeriodicIndegreeGeometry.hfund C T hcell_cover hcell_residue_unique
   obtain ⟨R, hR, hRcard⟩ := TilingLatticeIndex C
   have hcell_curv : T.cells.card = C.1.1.1.natAbs  := PeriodicIndegreeGeometry.hcell_curv C T R

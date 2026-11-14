@@ -32,27 +32,6 @@ namespace ApollonianSuperharmonic
 
 namespace SecondNewerRowsGeometry
 
-private theorem hnegativeSlope :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile),
-            ∀ (Rplus : ProtoTile), ∀ (hminus : PartialOdometer), ∀ (hplus : PartialOdometer), ∀
-            (F : P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus), ∀ (D :
-            P4458T1RestrictionFamily F),
-        ((0 < (F.q
-            F.slot.succ).1) → (∃ s, PartialOdometerSlope (D.functions F.slot false) = some s)) )
-            := by
-  classical
-  intro C orientation base Rminus Rplus hminus hplus F D hCpositive
-  rcases D.slopes F.slot false with hz | ⟨root, child, hroot, hchild, _, _⟩
-  · omega
-  · exact ⟨child, hchild⟩
-
-
-
-
-
 private theorem hyLattice :
     (by
       classical
@@ -129,26 +108,6 @@ private theorem hjoinFootEq :
   rw [hjoinCells.1]
 
 
-
-private theorem hq0 :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (orientation : Bool), ∀ (base : ProtoTile), ∀ (Rminus : ProtoTile),
-            ∀ (Rplus : ProtoTile), ∀ (hminus : PartialOdometer), ∀ (hplus : PartialOdometer), ∀
-            (F : P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus), ∀ (a : Fin
-            (3 : ℕ)), ∀ (p : Fin (4 : ℕ) → CircleCoordinates), (![F.q (0 : Fin (4 : ℕ)), F.q
-            a.succ, F.q (a + (1 : Fin (3 : ℕ))).succ, F.q (a + (2 : Fin (3 : ℕ))).succ] = ![((2 :
-            ℤ) * (p (0 : Fin (4 : ℕ))).1 + (2 : ℤ) * (p (2 : Fin (4 : ℕ))).1 + (2 : ℤ) * (p (3 :
-            Fin (4 : ℕ))).1 - (p (1 : Fin (4 : ℕ))).1, (2 : GaussianInt) * (p (0 : Fin (4 :
-            ℕ))).2 + (2 : GaussianInt) * (p (2 : Fin (4 : ℕ))).2 + (2 : GaussianInt) * (p (3 :
-            Fin (4 : ℕ))).2 - (p (1 : Fin (4 : ℕ))).2), p (0 : Fin (4 : ℕ)), p (2 : Fin (4 : ℕ)),
-            p (3 : Fin (4 : ℕ))]) → (F.q 0 = (2 * (p 0).1 + 2 * (p 2).1 + 2 * (p 3).1 - (p 1).1,
-            2 * (p 0).2 + 2 * (p 2).2 + 2 * (p 3).2 - (p 1).2)) ) := by
-  classical
-  intro C orientation base Rminus Rplus hminus hplus F a p hstep
-  have h := congrFun hstep 0
-  simpa using h
 
 private theorem hqA :
     (by
@@ -2658,163 +2617,40 @@ private theorem directParentCase :
             ∀ (Rplus : ProtoTile), ∀ (hminus : PartialOdometer), ∀ (hplus : PartialOdometer), ∀
             (F : P4458T1BoundaryFrame C orientation base Rminus Rplus hminus hplus), ∀ (D :
             P4458T1RestrictionFamily F), ∀ (a : Fin (3 : ℕ)), ∀ (p : Fin (4 : ℕ) →
-            CircleCoordinates), (ProperBandQuadruple p) → ((![F.q (0 : Fin (4 : ℕ)), F.q a.succ,
-            F.q (a + (1 : Fin (3 : ℕ))).succ, F.q (a + (2 : Fin (3 : ℕ))).succ] = ![((2 : ℤ) * (p
-            (0 : Fin (4 : ℕ))).1 + (2 : ℤ) * (p (2 : Fin (4 : ℕ))).1 + (2 : ℤ) * (p (3 : Fin (4 :
-            ℕ))).1 - (p (1 : Fin (4 : ℕ))).1, (2 : GaussianInt) * (p (0 : Fin (4 : ℕ))).2 + (2 :
-            GaussianInt) * (p (2 : Fin (4 : ℕ))).2 + (2 : GaussianInt) * (p (3 : Fin (4 : ℕ))).2
-            - (p (1 : Fin (4 : ℕ))).2), p (0 : Fin (4 : ℕ)), p (2 : Fin (4 : ℕ)), p (3 : Fin (4 :
-            ℕ))]) → ((F.slot = a + (1 : Fin (3 : ℕ)) → C.1.1.1 = (1 : ℤ) →
-            UnitOccurrenceOrientation p (1 : Fin (3 : ℕ)) orientation) → ((F.slot = a + (2 : Fin
-            (3 : ℕ)) → C.1.1.1 = (1 : ℤ) → UnitOccurrenceOrientation p (2 : Fin (3 : ℕ))
-            orientation) → ((F.slot ≠ a) → (∀ (t : Fin (4 : ℕ) → CircleCoordinates),
+            CircleCoordinates), (ProperBandQuadruple p) → (((F.slot = a + (1 : Fin (3 : ℕ)) →
+                C.1.1.1 = (1 : ℤ) →
+            UnitOccurrenceOrientation p (1 : Fin (3 : ℕ)) orientation) → (((∀ (t : Fin (4 : ℕ) →
+                CircleCoordinates),
             (ProperBandQuadruple t) → ((t (0 : Fin (4 : ℕ)) = p (2 : Fin (4 : ℕ))) → ((t (1 : Fin
-            (4 : ℕ)) = p (3 : Fin (4 : ℕ))) → ((F.slot = a + (2 : Fin (3 : ℕ)) → C.1.1.1 = (1 :
-            ℤ) → UnitOccurrenceOrientation t (0 : Fin (3 : ℕ)) orientation) → ((0 < (F.q
-            F.slot.succ).1) → (((F.q F.slot.succ).1 < (F.q 0).1) → ((AncestorOdometer (F.q
-            F.slot.succ) F.outer.1.1 (D.tiles F.slot false) F.tile (D.functions F.slot false)
-            F.odometer) → ((TileOdometer (F.q F.slot.succ) (D.tiles F.slot false) (D.functions
-            F.slot false)) → ((∃ (s : ℝ × ℝ), PartialOdometerSlope (D.functions F.slot false) =
-            some s) → (
+            (4 : ℕ)) = p (3 : Fin (4 : ℕ))) → (((((((
         let r : Fin 4 → CircleCoordinates :=
           ![F.q 0, F.q F.slot.succ, F.q ((F.slot + 1).succ),
             F.q ((F.slot + 2).succ)]
-        (ProperBandQuadruple r) → ((r 1 = C.1.1) → (
+        ((
         let I : GaussianInt := ⟨0, 1⟩
-        let w : GaussianInt := BandVectors.1 (r 3) (r 2)
         let x : GaussianInt := BandVectors.1 (r 1) (r 3)
         let y : GaussianInt := BandVectors.1 (r 2) (r 1)
         let wa : GaussianInt := BandVectors.2 (r 3) (r 2)
         let xa : GaussianInt := BandVectors.2 (r 1) (r 3)
         let ya : GaussianInt := BandVectors.2 (r 2) (r 1)
-        (w + x + y = 0) → ((wa + xa + ya = 0) → ((BandVectors.1 (r 1) (r 0) = x - I * y) →
+        ((wa + xa + ya = 0) → ((BandVectors.1 (r 1) (r 0) = x - I * y) →
             ((BandVectors.2 (r 1) (r 0) = xa + I * ya) → ((BandVectors.1 (r 0) (r 1) = I *
             BandVectors.1 (r 1) (r 0)) → ((BandVectors.2 (r 0) (r 1) = -I * BandVectors.2 (r 1)
-            (r 0)) → (((BandVectors.1 (![F.q (0 : Fin (4 : ℕ)), F.q F.slot.succ, F.q (F.slot + (1
-            : Fin (3 : ℕ))).succ, F.q (F.slot + (2 : Fin (3 : ℕ))).succ] (3 : Fin (4 : ℕ)))
-            (![F.q (0 : Fin (4 : ℕ)), F.q F.slot.succ, F.q (F.slot + (1 : Fin (3 : ℕ))).succ, F.q
-            (F.slot + (2 : Fin (3 : ℕ))).succ] (2 : Fin (4 : ℕ)))).re + (BandVectors.1 (![F.q (0
-            : Fin (4 : ℕ)), F.q F.slot.succ, F.q (F.slot + (1 : Fin (3 : ℕ))).succ, F.q (F.slot +
-            (2 : Fin (3 : ℕ))).succ] (1 : Fin (4 : ℕ))) (![F.q (0 : Fin (4 : ℕ)), F.q
-            F.slot.succ, F.q (F.slot + (1 : Fin (3 : ℕ))).succ, F.q (F.slot + (2 : Fin (3 :
-            ℕ))).succ] (3 : Fin (4 : ℕ)))).re + (BandVectors.1 (![F.q (0 : Fin (4 : ℕ)), F.q
-            F.slot.succ, F.q (F.slot + (1 : Fin (3 : ℕ))).succ, F.q (F.slot + (2 : Fin (3 :
-            ℕ))).succ] (2 : Fin (4 : ℕ))) (![F.q (0 : Fin (4 : ℕ)), F.q F.slot.succ, F.q (F.slot
-            + (1 : Fin (3 : ℕ))).succ, F.q (F.slot + (2 : Fin (3 : ℕ))).succ] (1 : Fin (4 :
-            ℕ)))).re = (0 : ℤ)) → (((BandVectors.1 (![F.q (0 : Fin (4 : ℕ)), F.q F.slot.succ, F.q
-            (F.slot + (1 : Fin (3 : ℕ))).succ, F.q (F.slot + (2 : Fin (3 : ℕ))).succ] (3 : Fin (4
-            : ℕ))) (![F.q (0 : Fin (4 : ℕ)), F.q F.slot.succ, F.q (F.slot + (1 : Fin (3 :
-            ℕ))).succ, F.q (F.slot + (2 : Fin (3 : ℕ))).succ] (2 : Fin (4 : ℕ)))).im +
-            (BandVectors.1 (![F.q (0 : Fin (4 : ℕ)), F.q F.slot.succ, F.q (F.slot + (1 : Fin (3 :
-            ℕ))).succ, F.q (F.slot + (2 : Fin (3 : ℕ))).succ] (1 : Fin (4 : ℕ))) (![F.q (0 : Fin
-            (4 : ℕ)), F.q F.slot.succ, F.q (F.slot + (1 : Fin (3 : ℕ))).succ, F.q (F.slot + (2 :
-            Fin (3 : ℕ))).succ] (3 : Fin (4 : ℕ)))).im + (BandVectors.1 (![F.q (0 : Fin (4 : ℕ)),
-            F.q F.slot.succ, F.q (F.slot + (1 : Fin (3 : ℕ))).succ, F.q (F.slot + (2 : Fin (3 :
-            ℕ))).succ] (2 : Fin (4 : ℕ))) (![F.q (0 : Fin (4 : ℕ)), F.q F.slot.succ, F.q (F.slot
-            + (1 : Fin (3 : ℕ))).succ, F.q (F.slot + (2 : Fin (3 : ℕ))).succ] (1 : Fin (4 :
-            ℕ)))).im = (0 : ℤ)) → ((BandPrototile (F.q F.slot.succ) (D.tiles F.slot false)) →
-            ((FootprintVertices (D.tiles F.slot false) ⊆ FootprintVertices F.tile) →
-            ((TileCentroid (D.tiles F.slot false) - TileCentroid F.tile = (if false = true then
-            (1 : ℝ) else (-1 : ℝ)) • (1 / 2 : ℝ) • (GaussianRealPoint (BandVectors.1 (F.q (F.slot
-            + (2 : Fin (3 : ℕ))).succ) (F.q (F.slot + (1 : Fin (3 : ℕ))).succ)) -
-            (-(GaussianRealPoint (BandVectors.1 (F.q (F.slot + (2 : Fin (3 : ℕ))).succ) (F.q
-            (F.slot + (1 : Fin (3 : ℕ))).succ))).2, (GaussianRealPoint (BandVectors.1 (F.q
-            (F.slot + (2 : Fin (3 : ℕ))).succ) (F.q (F.slot + (1 : Fin (3 : ℕ))).succ))).1))) →
-            ((TileCentroid (D.tiles F.slot false) - TileCentroid F.tile = -(1 / 2 : ℝ) •
-            (GaussianRealPoint (BandVectors.1 (![F.q (0 : Fin (4 : ℕ)), F.q F.slot.succ, F.q
-            (F.slot + (1 : Fin (3 : ℕ))).succ, F.q (F.slot + (2 : Fin (3 : ℕ))).succ] (3 : Fin (4
-            : ℕ))) (![F.q (0 : Fin (4 : ℕ)), F.q F.slot.succ, F.q (F.slot + (1 : Fin (3 :
-            ℕ))).succ, F.q (F.slot + (2 : Fin (3 : ℕ))).succ] (2 : Fin (4 : ℕ)))) -
-            (-(GaussianRealPoint (BandVectors.1 (![F.q (0 : Fin (4 : ℕ)), F.q F.slot.succ, F.q
-            (F.slot + (1 : Fin (3 : ℕ))).succ, F.q (F.slot + (2 : Fin (3 : ℕ))).succ] (3 : Fin (4
-            : ℕ))) (![F.q (0 : Fin (4 : ℕ)), F.q F.slot.succ, F.q (F.slot + (1 : Fin (3 :
-            ℕ))).succ, F.q (F.slot + (2 : Fin (3 : ℕ))).succ] (2 : Fin (4 : ℕ))))).2,
-            (GaussianRealPoint (BandVectors.1 (![F.q (0 : Fin (4 : ℕ)), F.q F.slot.succ, F.q
-            (F.slot + (1 : Fin (3 : ℕ))).succ, F.q (F.slot + (2 : Fin (3 : ℕ))).succ] (3 : Fin (4
-            : ℕ))) (![F.q (0 : Fin (4 : ℕ)), F.q F.slot.succ, F.q (F.slot + (1 : Fin (3 :
-            ℕ))).succ, F.q (F.slot + (2 : Fin (3 : ℕ))).succ] (2 : Fin (4 : ℕ))))).1))) →
-            ((TileCentroid Rminus - TileCentroid F.tile = (1 / 2 : ℝ) • GaussianRealPoint
-            (BandVectors.1 (r 1) (r 0) - BandVectors.1 (r 0) (r 1))) → ((-BandVectors.1 (![F.q (0
-            : Fin (4 : ℕ)), F.q F.slot.succ, F.q (F.slot + (1 : Fin (3 : ℕ))).succ, F.q (F.slot +
-            (2 : Fin (3 : ℕ))).succ] (3 : Fin (4 : ℕ))) (![F.q (0 : Fin (4 : ℕ)), F.q
-            F.slot.succ, F.q (F.slot + (1 : Fin (3 : ℕ))).succ, F.q (F.slot + (2 : Fin (3 :
-            ℕ))).succ] (2 : Fin (4 : ℕ))) + (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) * BandVectors.1
-            (![F.q (0 : Fin (4 : ℕ)), F.q F.slot.succ, F.q (F.slot + (1 : Fin (3 : ℕ))).succ, F.q
-            (F.slot + (2 : Fin (3 : ℕ))).succ] (3 : Fin (4 : ℕ))) (![F.q (0 : Fin (4 : ℕ)), F.q
-            F.slot.succ, F.q (F.slot + (1 : Fin (3 : ℕ))).succ, F.q (F.slot + (2 : Fin (3 :
-            ℕ))).succ] (2 : Fin (4 : ℕ))) - BandVectors.1 (![F.q (0 : Fin (4 : ℕ)), F.q
-            F.slot.succ, F.q (F.slot + (1 : Fin (3 : ℕ))).succ, F.q (F.slot + (2 : Fin (3 :
-            ℕ))).succ] (1 : Fin (4 : ℕ))) (![F.q (0 : Fin (4 : ℕ)), F.q F.slot.succ, F.q (F.slot
-            + (1 : Fin (3 : ℕ))).succ, F.q (F.slot + (2 : Fin (3 : ℕ))).succ] (0 : Fin (4 : ℕ)))
-            + BandVectors.1 (![F.q (0 : Fin (4 : ℕ)), F.q F.slot.succ, F.q (F.slot + (1 : Fin (3
-            : ℕ))).succ, F.q (F.slot + (2 : Fin (3 : ℕ))).succ] (0 : Fin (4 : ℕ))) (![F.q (0 :
-            Fin (4 : ℕ)), F.q F.slot.succ, F.q (F.slot + (1 : Fin (3 : ℕ))).succ, F.q (F.slot +
-            (2 : Fin (3 : ℕ))).succ] (1 : Fin (4 : ℕ))) = (2 : GaussianInt) * BandVectors.1
-            (![F.q (0 : Fin (4 : ℕ)), F.q F.slot.succ, F.q (F.slot + (1 : Fin (3 : ℕ))).succ, F.q
-            (F.slot + (2 : Fin (3 : ℕ))).succ] (2 : Fin (4 : ℕ))) (![F.q (0 : Fin (4 : ℕ)), F.q
-            F.slot.succ, F.q (F.slot + (1 : Fin (3 : ℕ))).succ, F.q (F.slot + (2 : Fin (3 :
-            ℕ))).succ] (1 : Fin (4 : ℕ)))) → (((↑(-BandVectors.1 (![F.q (0 : Fin (4 : ℕ)), F.q
-            F.slot.succ, F.q (F.slot + (1 : Fin (3 : ℕ))).succ, F.q (F.slot + (2 : Fin (3 :
-            ℕ))).succ] (3 : Fin (4 : ℕ))) (![F.q (0 : Fin (4 : ℕ)), F.q F.slot.succ, F.q (F.slot
-            + (1 : Fin (3 : ℕ))).succ, F.q (F.slot + (2 : Fin (3 : ℕ))).succ] (2 : Fin (4 : ℕ)))
-            + (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) * BandVectors.1 (![F.q (0 : Fin (4 : ℕ)), F.q
-            F.slot.succ, F.q (F.slot + (1 : Fin (3 : ℕ))).succ, F.q (F.slot + (2 : Fin (3 :
-            ℕ))).succ] (3 : Fin (4 : ℕ))) (![F.q (0 : Fin (4 : ℕ)), F.q F.slot.succ, F.q (F.slot
-            + (1 : Fin (3 : ℕ))).succ, F.q (F.slot + (2 : Fin (3 : ℕ))).succ] (2 : Fin (4 : ℕ)))
-            - BandVectors.1 (![F.q (0 : Fin (4 : ℕ)), F.q F.slot.succ, F.q (F.slot + (1 : Fin (3
-            : ℕ))).succ, F.q (F.slot + (2 : Fin (3 : ℕ))).succ] (1 : Fin (4 : ℕ))) (![F.q (0 :
-            Fin (4 : ℕ)), F.q F.slot.succ, F.q (F.slot + (1 : Fin (3 : ℕ))).succ, F.q (F.slot +
-            (2 : Fin (3 : ℕ))).succ] (0 : Fin (4 : ℕ))) + BandVectors.1 (![F.q (0 : Fin (4 : ℕ)),
-            F.q F.slot.succ, F.q (F.slot + (1 : Fin (3 : ℕ))).succ, F.q (F.slot + (2 : Fin (3 :
-            ℕ))).succ] (0 : Fin (4 : ℕ))) (![F.q (0 : Fin (4 : ℕ)), F.q F.slot.succ, F.q (F.slot
-            + (1 : Fin (3 : ℕ))).succ, F.q (F.slot + (2 : Fin (3 : ℕ))).succ] (1 : Fin (4 :
-            ℕ)))).re : ℝ) = (↑((2 : GaussianInt) * BandVectors.1 (![F.q (0 : Fin (4 : ℕ)), F.q
-            F.slot.succ, F.q (F.slot + (1 : Fin (3 : ℕ))).succ, F.q (F.slot + (2 : Fin (3 :
-            ℕ))).succ] (2 : Fin (4 : ℕ))) (![F.q (0 : Fin (4 : ℕ)), F.q F.slot.succ, F.q (F.slot
-            + (1 : Fin (3 : ℕ))).succ, F.q (F.slot + (2 : Fin (3 : ℕ))).succ] (1 : Fin (4 :
-            ℕ)))).re : ℝ)) → (((↑(-BandVectors.1 (![F.q (0 : Fin (4 : ℕ)), F.q F.slot.succ, F.q
-            (F.slot + (1 : Fin (3 : ℕ))).succ, F.q (F.slot + (2 : Fin (3 : ℕ))).succ] (3 : Fin (4
-            : ℕ))) (![F.q (0 : Fin (4 : ℕ)), F.q F.slot.succ, F.q (F.slot + (1 : Fin (3 :
-            ℕ))).succ, F.q (F.slot + (2 : Fin (3 : ℕ))).succ] (2 : Fin (4 : ℕ))) + (⟨(0 : ℤ), (1
-            : ℤ)⟩ : GaussianInt) * BandVectors.1 (![F.q (0 : Fin (4 : ℕ)), F.q F.slot.succ, F.q
-            (F.slot + (1 : Fin (3 : ℕ))).succ, F.q (F.slot + (2 : Fin (3 : ℕ))).succ] (3 : Fin (4
-            : ℕ))) (![F.q (0 : Fin (4 : ℕ)), F.q F.slot.succ, F.q (F.slot + (1 : Fin (3 :
-            ℕ))).succ, F.q (F.slot + (2 : Fin (3 : ℕ))).succ] (2 : Fin (4 : ℕ))) - BandVectors.1
-            (![F.q (0 : Fin (4 : ℕ)), F.q F.slot.succ, F.q (F.slot + (1 : Fin (3 : ℕ))).succ, F.q
-            (F.slot + (2 : Fin (3 : ℕ))).succ] (1 : Fin (4 : ℕ))) (![F.q (0 : Fin (4 : ℕ)), F.q
-            F.slot.succ, F.q (F.slot + (1 : Fin (3 : ℕ))).succ, F.q (F.slot + (2 : Fin (3 :
-            ℕ))).succ] (0 : Fin (4 : ℕ))) + BandVectors.1 (![F.q (0 : Fin (4 : ℕ)), F.q
-            F.slot.succ, F.q (F.slot + (1 : Fin (3 : ℕ))).succ, F.q (F.slot + (2 : Fin (3 :
-            ℕ))).succ] (0 : Fin (4 : ℕ))) (![F.q (0 : Fin (4 : ℕ)), F.q F.slot.succ, F.q (F.slot
-            + (1 : Fin (3 : ℕ))).succ, F.q (F.slot + (2 : Fin (3 : ℕ))).succ] (1 : Fin (4 :
-            ℕ)))).im : ℝ) = (↑((2 : GaussianInt) * BandVectors.1 (![F.q (0 : Fin (4 : ℕ)), F.q
-            F.slot.succ, F.q (F.slot + (1 : Fin (3 : ℕ))).succ, F.q (F.slot + (2 : Fin (3 :
-            ℕ))).succ] (2 : Fin (4 : ℕ))) (![F.q (0 : Fin (4 : ℕ)), F.q F.slot.succ, F.q (F.slot
-            + (1 : Fin (3 : ℕ))).succ, F.q (F.slot + (2 : Fin (3 : ℕ))).succ] (1 : Fin (4 :
-            ℕ)))).im : ℝ)) → ((TileCentroid (D.tiles F.slot false) - TileCentroid Rminus =
-            GaussianRealPoint y) → ((
-        let y := BandVectors.1 (![F.q (0 : Fin (4 : ℕ)), F.q F.slot.succ, F.q (F.slot + (1 : Fin
-            (3 : ℕ))).succ, F.q (F.slot + (2 : Fin (3 : ℕ))).succ] (2 : Fin (4 : ℕ))) (![F.q (0 :
-            Fin (4 : ℕ)), F.q F.slot.succ, F.q (F.slot + (1 : Fin (3 : ℕ))).succ, F.q (F.slot +
-            (2 : Fin (3 : ℕ))).succ] (1 : Fin (4 : ℕ))); y ∈ TilingLattice C) → (∀ (u :
-            ↥(TilingLattice C)), (Rminus = TileTranslation base (↑u : GaussianInt)) → (
+            (r 0)) → ((((((((TileCentroid Rminus - TileCentroid F.tile = (1 / 2 : ℝ) •
+                GaussianRealPoint
+            (BandVectors.1 (r 1) (r 0) - BandVectors.1 (r 0) (r 1))) → (((((TileCentroid (D.tiles
+                F.slot false) - TileCentroid Rminus =
+            GaussianRealPoint y) → ((∀ (u :
+            ↥(TilingLattice C)), (
         let join : ProtoTile := TileTranslation base (u + y)
-        (join = TileTranslation Rminus y) → ((BandPrototile C.1.1 join) → ((
+        (((
         let join := TileTranslation base ((↑u : GaussianInt) + BandVectors.1 (![F.q (0 : Fin (4 :
             ℕ)), F.q F.slot.succ, F.q (F.slot + (1 : Fin (3 : ℕ))).succ, F.q (F.slot + (2 : Fin
             (3 : ℕ))).succ] (2 : Fin (4 : ℕ))) (![F.q (0 : Fin (4 : ℕ)), F.q F.slot.succ, F.q
             (F.slot + (1 : Fin (3 : ℕ))).succ, F.q (F.slot + (2 : Fin (3 : ℕ))).succ] (1 : Fin (4
-            : ℕ)))); join ∈ RegularTileFamily base (TilingLattice C)) → ((TileCentroid
-            (TileTranslation base ((↑u : GaussianInt) + BandVectors.1 (![F.q (0 : Fin (4 : ℕ)),
-            F.q F.slot.succ, F.q (F.slot + (1 : Fin (3 : ℕ))).succ, F.q (F.slot + (2 : Fin (3 :
-            ℕ))).succ] (2 : Fin (4 : ℕ))) (![F.q (0 : Fin (4 : ℕ)), F.q F.slot.succ, F.q (F.slot
-            + (1 : Fin (3 : ℕ))).succ, F.q (F.slot + (2 : Fin (3 : ℕ))).succ] (1 : Fin (4 :
-            ℕ))))) = TileCentroid Rminus + GaussianRealPoint (BandVectors.1 (![F.q (0 : Fin (4 :
-            ℕ)), F.q F.slot.succ, F.q (F.slot + (1 : Fin (3 : ℕ))).succ, F.q (F.slot + (2 : Fin
-            (3 : ℕ))).succ] (2 : Fin (4 : ℕ))) (![F.q (0 : Fin (4 : ℕ)), F.q F.slot.succ, F.q
-            (F.slot + (1 : Fin (3 : ℕ))).succ, F.q (F.slot + (2 : Fin (3 : ℕ))).succ] (1 : Fin (4
-            : ℕ))))) → ((TileCentroid (D.tiles F.slot false) = TileCentroid join) →
-            ((BandPrototile C.1.1 (D.tiles F.slot false)) → (((D.tiles F.slot false).cells =
+            : ℕ)))); join ∈ RegularTileFamily base (TilingLattice C)) → (((TileCentroid (D.tiles
+                F.slot false) = TileCentroid join) →
+            ((((D.tiles F.slot false).cells =
             join.cells ∧ ((D.tiles F.slot false).cells = ∅ → (D.tiles F.slot false).anchor =
             join.anchor)) → ((TileOdometer C.1.1 (TileTranslation base ((↑u : GaussianInt) +
             BandVectors.1 (![F.q (0 : Fin (4 : ℕ)), F.q F.slot.succ, F.q (F.slot + (1 : Fin (3 :
@@ -2827,29 +2663,16 @@ private theorem directParentCase :
             (4 : ℕ)), F.q F.slot.succ, F.q (F.slot + (1 : Fin (3 : ℕ))).succ, F.q (F.slot + (2 :
             Fin (3 : ℕ))).succ] (1 : Fin (4 : ℕ))))) F.tile (D.functions F.slot false)
             F.odometer) → ((∀ (c : CircleCoordinates), ∀ (T : ProtoTile), (0 : ℤ) < c.1 →
-            BandPrototile c T → Finset.Nonempty T.cells) → (((D.tiles F.slot
-            false).cells.Nonempty) → ((join.cells.Nonempty) → ((FootprintVertices
+            BandPrototile c T → Finset.Nonempty T.cells) → ((((((BandSubtileOccurrence F.q F.tile
+                F.slot false
             (TileTranslation base ((↑u : GaussianInt) + BandVectors.1 (![F.q (0 : Fin (4 : ℕ)),
             F.q F.slot.succ, F.q (F.slot + (1 : Fin (3 : ℕ))).succ, F.q (F.slot + (2 : Fin (3 :
             ℕ))).succ] (2 : Fin (4 : ℕ))) (![F.q (0 : Fin (4 : ℕ)), F.q F.slot.succ, F.q (F.slot
             + (1 : Fin (3 : ℕ))).succ, F.q (F.slot + (2 : Fin (3 : ℕ))).succ] (1 : Fin (4 :
-            ℕ))))) = FootprintVertices (D.tiles F.slot false)) → ((FootprintVertices
-            (TileTranslation base ((↑u : GaussianInt) + BandVectors.1 (![F.q (0 : Fin (4 : ℕ)),
-            F.q F.slot.succ, F.q (F.slot + (1 : Fin (3 : ℕ))).succ, F.q (F.slot + (2 : Fin (3 :
-            ℕ))).succ] (2 : Fin (4 : ℕ))) (![F.q (0 : Fin (4 : ℕ)), F.q F.slot.succ, F.q (F.slot
-            + (1 : Fin (3 : ℕ))).succ, F.q (F.slot + (2 : Fin (3 : ℕ))).succ] (1 : Fin (4 :
-            ℕ))))) ⊆ FootprintVertices F.tile) → ((BandSubtileOccurrence F.q F.tile F.slot false
-            (TileTranslation base ((↑u : GaussianInt) + BandVectors.1 (![F.q (0 : Fin (4 : ℕ)),
-            F.q F.slot.succ, F.q (F.slot + (1 : Fin (3 : ℕ))).succ, F.q (F.slot + (2 : Fin (3 :
-            ℕ))).succ] (2 : Fin (4 : ℕ))) (![F.q (0 : Fin (4 : ℕ)), F.q F.slot.succ, F.q (F.slot
-            + (1 : Fin (3 : ℕ))).succ, F.q (F.slot + (2 : Fin (3 : ℕ))).succ] (1 : Fin (4 :
-            ℕ)))))) → ((F.q (0 : Fin (4 : ℕ)) = ((2 : ℤ) * (p (0 : Fin (4 : ℕ))).1 + (2 : ℤ) * (p
-            (2 : Fin (4 : ℕ))).1 + (2 : ℤ) * (p (3 : Fin (4 : ℕ))).1 - (p (1 : Fin (4 : ℕ))).1,
-            (2 : GaussianInt) * (p (0 : Fin (4 : ℕ))).2 + (2 : GaussianInt) * (p (2 : Fin (4 :
-            ℕ))).2 + (2 : GaussianInt) * (p (3 : Fin (4 : ℕ))).2 - (p (1 : Fin (4 : ℕ))).2)) →
-            ((F.q a.succ = p 0) → ((F.q (a + 1).succ = p 2) → ((F.q (a + 2).succ = p 3) → (∀
-            (rootNeg : ℝ × ℝ), ∀ (joinSlope : ℝ × ℝ), (PartialOdometerSlope F.odometer = some
-            rootNeg) → ((PartialOdometerSlope (D.functions F.slot false) = some joinSlope) →
+            ℕ)))))) → (((F.q a.succ = p 0) → ((F.q (a + 1).succ = p 2) → ((F.q (a + 2).succ = p 3)
+                → (∀
+            (rootNeg : ℝ × ℝ), ∀ (joinSlope : ℝ × ℝ), ((PartialOdometerSlope (D.functions F.slot
+                false) = some joinSlope) →
             ((joinSlope.1 - rootNeg.1 = -(1 / 2 : ℝ) * ((↑(BandVectors.2 (![F.q (0 : Fin (4 :
             ℕ)), F.q F.slot.succ, F.q (F.slot + (1 : Fin (3 : ℕ))).succ, F.q (F.slot + (2 : Fin
             (3 : ℕ))).succ] (3 : Fin (4 : ℕ))) (![F.q (0 : Fin (4 : ℕ)), F.q F.slot.succ, F.q
@@ -2870,14 +2693,10 @@ private theorem directParentCase :
             (P4458T1BoundaryPlacement F
             D))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))) ) := by
   classical
-  intro C orientation base Rminus Rplus hminus hplus F D a p hp hstep hB hD selected t ht ht0 ht1
-      olderChart hCpositive hstrict hselectedAnc hselectedOdo hnegativeSlope r hr hRparent I w x
-      y wa xa ya hvsum hasum hvrec harec hvflip haflip hvsumRe hvsumIm hUband hUfoot hUcent
-      hUcenter hMcenter hcenterVector hcenterRe hcenterIm hcenter hyLattice u huRminus join
-      hjoin_eq hjoinBand hjoinFamily hjoinCenter hjoinCenterEq hUbandC hjoinCells hjoinOdo
-      hjoinAncestor positiveCells hUnonempty hJoinNonemptyBase hjoinFootEq hjoinFoot
-      hjoinOccurrence hq0 hqA hqB hqD rootNeg joinSlope hrootNeg hjoinSlope hjoinSlopeRe
-      hjoinSlopeIm hrootNegEq hSB
+  intro C orientation base Rminus Rplus hminus hplus F D a p hp hB t ht ht0 ht1 r I x y wa xa ya
+      hasum hvrec harec hvflip haflip hMcenter hcenter u join hjoinFamily hjoinCenterEq
+      hjoinCells hjoinOdo hjoinAncestor positiveCells hjoinOccurrence hqA hqB hqD rootNeg
+      joinSlope hjoinSlope hjoinSlopeRe hjoinSlopeIm hrootNegEq hSB
   have hr1 : r 1 = p 2 := by
     simpa [r, hSB] using hqB
   have hr2 : r 2 = p 3 := SecondNewerRowsGeometry.hr2At377 C orientation base Rminus Rplus
@@ -3207,8 +3026,6 @@ theorem P4458T1SecondNewerRows :
     have hselectedAnc := D.ancestors F.slot false hCpositive
     have hselectedOdo := D.odometers F.slot false
     have hselectedOcc := D.occurrences F.slot false
-    have hnegativeSlope := SecondNewerRowsGeometry.hnegativeSlope C orientation base Rminus Rplus
-        hminus hplus F D hCpositive
     let r : Fin 4 → CircleCoordinates :=
       ![F.q 0, F.q F.slot.succ, F.q ((F.slot + 1).succ),
         F.q ((F.slot + 2).succ)]
@@ -3303,7 +3120,6 @@ theorem P4458T1SecondNewerRows :
         hplus F D hUfoot u hjoinFootEq
     have hjoinOccurrence := BoundaryFrameJoinGeometry.joinOccurrence C orientation base Rminus
         Rplus hminus hplus F D hUcent u hjoinBand hjoinCenterEq hjoinFoot
-    have hq0 := SecondNewerRowsGeometry.hq0 C orientation base Rminus Rplus hminus hplus F a p hstep
     have hqA : F.q a.succ = p 0 := SecondNewerRowsGeometry.hqA C orientation base Rminus Rplus
         hminus hplus F a p hstep
     have hqB : F.q (a + 1).succ = p 2 := SecondNewerRowsGeometry.hqB C orientation base Rminus
@@ -3321,12 +3137,10 @@ theorem P4458T1SecondNewerRows :
     rcases hslot with hSB | hSD
     · have directParentCase : Nonempty (P4458T1BoundaryPlacement F D) :=
         SecondParentCases.directParentCase C orientation base Rminus Rplus hminus hplus F D a p
-        hp hstep hB hD selected t ht ht0 ht1 olderChart hCpositive hstrict hselectedAnc
-        hselectedOdo hnegativeSlope hr hRparent hvsum hasum hvrec harec hvflip haflip hvsumRe
-        hvsumIm hUband hUfoot hUcent hUcenter hMcenter hcenterVector hcenterRe hcenterIm hcenter
-        hyLattice u huRminus hjoin_eq hjoinBand hjoinFamily hjoinCenter hjoinCenterEq hUbandC
-        hjoinCells hjoinOdo hjoinAncestor positiveCells hUnonempty hJoinNonemptyBase hjoinFootEq
-        hjoinFoot hjoinOccurrence hq0 hqA hqB hqD rootNeg joinSlope hrootNeg hjoinSlope
+        hp hB t ht ht0 ht1 hasum hvrec harec hvflip haflip hMcenter hcenter u hjoinFamily
+            hjoinCenterEq
+        hjoinCells hjoinOdo hjoinAncestor positiveCells hjoinOccurrence hqA hqB hqD rootNeg
+            joinSlope hjoinSlope
         hjoinSlopeRe hjoinSlopeIm hrootNegEq hSB
       exact directParentCase
     · have recursiveParentCase : Nonempty (P4458T1BoundaryPlacement F D) :=

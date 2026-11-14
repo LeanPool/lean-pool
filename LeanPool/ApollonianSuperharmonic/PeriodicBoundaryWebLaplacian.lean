@@ -1162,83 +1162,31 @@ private theorem hxM :
 private abbrev hxW :=
   ApollonianSuperharmonic.WebLaplacianGeometry.hxM
 
-private theorem hstar :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle),
-          ∀ (h : PartialOdometer),
-            ∀ (x : GaussianInt),
-              ∀ (P : PeriodicTileComplex ↥(TilingLattice C)),
-                    ∀ (a0 : ↥(TilingLattice C)),
-                      (∀ (y : ↥(TilingLattice C)),
-                          (fun (a : ↥(TilingLattice C)) => x ∈ (P.tile a).cells) y →
-                            y = a0) →
-                        ∀ (a1 : ↥(TilingLattice C)),
-                          (∀ (y : ↥(TilingLattice C)),
-                              (fun (a : ↥(TilingLattice C)) =>
-                                x - (1 : LatticeCell) ∈ (P.tile a).cells)
-                                y →
-                                y = a1) →
-                            ∀ (a2 : ↥(TilingLattice C)),
-                              (∀ (y : ↥(TilingLattice C)),
-                                (fun (a : ↥(TilingLattice C)) =>
-                                x - (1 : LatticeCell) -
-                                (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ∈
-                                (P.tile a).cells)
-                                y →
-                                y = a2) →
-                                ∀ (a3 : ↥(TilingLattice C)),
-                                (∀ (y : ↥(TilingLattice C)),
-                                (fun (a : ↥(TilingLattice C)) =>
-                                x - (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ∈ (P.tile a).cells)
-                                y →
-                                y = a3) →
-                                let owner : Fin 4 → TilingLattice C := ![a0, a1, a2, a3];
-                              ∀ (m : Fin (4 : ℕ)),
-                                ∀ (w : Fin (4 : ℕ)),
-                                let sector : Fin 4 → GaussianInt :=
-                                ![x, x - 1, x - 1 - ⟨0, 1⟩, x - ⟨0, 1⟩];
-                              (∀ (i : Fin 4),
-                                ∀ (j : Fin 4),
-                                owner i ≠ owner j → sector j ∉ (P.tile (owner i)).cells) →
-                                let u : GaussianInt := owner m;
-                              let u' : GaussianInt := owner w;
-                              ∀ (au : GaussianInt),
-                                ∀ (au' : GaussianInt),
-                                let huOdo : PartialOdometer :=
-                                PartialOdometerAffineTranslate h u au 0;
-                              let hu'Odo : PartialOdometer :=
-                                PartialOdometerAffineTranslate h u' au' 0;
-                              (∀ (i : Fin 4),
-                                ∀ (y : GaussianInt),
-                                y = sector i ∨
-                                y = sector i + 1 ∨
-                                y = sector i + ⟨0, 1⟩ ∨ y = sector i + 1 + ⟨0, 1⟩ →
-                                y ∈ FootprintVertices (P.tile (owner i))) →
-                                (∀ i : Fin 4,
-                                x = sector i ∨
-                                x = sector i + 1 ∨
-                                x = sector i + ⟨0, 1⟩ ∨ x = sector i + 1 + ⟨0, 1⟩) →
-                                (∀ (i : Fin 4),
-                                ∀ (j : Fin 4),
-                                i ≠ j →
-                                owner i = owner m ∨
-                                owner i = owner w ∨
-                                owner j = owner m ∨ owner j = owner w) →
-                                (∀ (y : GaussianInt),
-                                y ∈ FootprintVertices (P.tile (owner m)) ∨
-                                y ∈ FootprintVertices (P.tile (owner w)) →
-                                y ∈ huOdo.domain ∨ y ∈ hu'Odo.domain) →
-                                x ∈ huOdo.domain →
-                                ∀ y,
-                                y = x ∨
-                                y = x + 1 ∨ y = x - 1 ∨ y = x + ⟨0, 1⟩ ∨ y = x - ⟨0, 1⟩ →
-                                y ∈ huOdo.domain ∨ y ∈ hu'Odo.domain
-    ) := by
+private theorem neighborStarCovered :
+    ∀ (C : BandCircle) (h : PartialOdometer) (x : GaussianInt)
+      (P : PeriodicTileComplex (TilingLattice C))
+      (a0 a1 a2 a3 : TilingLattice C),
+    let owner : Fin 4 → TilingLattice C := ![a0, a1, a2, a3]
+    ∀ m w : Fin 4,
+    let sector : Fin 4 → GaussianInt := ![x, x - 1, x - 1 - ⟨0, 1⟩, x - ⟨0, 1⟩]
+    let u : GaussianInt := owner m
+    let u' : GaussianInt := owner w
+    ∀ au au' : GaussianInt,
+    let huOdo := PartialOdometerAffineTranslate h u au 0
+    let hu'Odo := PartialOdometerAffineTranslate h u' au' 0
+    (∀ i y, y = sector i ∨ y = sector i + 1 ∨
+      y = sector i + ⟨0, 1⟩ ∨ y = sector i + 1 + ⟨0, 1⟩ →
+      y ∈ FootprintVertices (P.tile (owner i))) →
+    (∀ i j, i ≠ j → owner i = owner m ∨ owner i = owner w ∨
+      owner j = owner m ∨ owner j = owner w) →
+    (∀ y, y ∈ FootprintVertices (P.tile (owner m)) ∨
+      y ∈ FootprintVertices (P.tile (owner w)) → y ∈ huOdo.domain ∨ y ∈ hu'Odo.domain) →
+    x ∈ huOdo.domain →
+    ∀ y, y = x ∨ y = x + 1 ∨ y = x - 1 ∨ y = x + ⟨0, 1⟩ ∨ y = x - ⟨0, 1⟩ →
+      y ∈ huOdo.domain ∨ y ∈ hu'Odo.domain := by
   classical
-  intro C h x P a0 hu0 a1 hu1 a2 hu2 a3 hu3 owner m w sector hsectorNot u u' au au' huOdo hu'Odo
-      cellVertex sectorCornerX pairCovered toDomains hxM y hy
+  intro C h x P a0 a1 a2 a3 owner m w sector u u' au au' huOdo hu'Odo
+      cellVertex pairCovered toDomains hxM y hy
   rcases hy with rfl | rfl | rfl | rfl | rfl
   · exact Or.inl hxM
   · have hpair : x + 1 ∈ FootprintVertices (P.tile (owner m)) ∨
@@ -1533,8 +1481,8 @@ theorem PeriodicBoundaryWebLaplacian (C : BandCircle)
         (TileTranslation T u') huOdo hu'Odo hadjOdo).1
     have hweb := (OdometerWeb).1 C (TileTranslation T u)
       (TileTranslation T u') huOdo hu'Odo g x hcompat hextu hextu' hxM hxW
-          (WebLaplacianGeometry.hstar C h x P a0 hu0 a1 hu1 a2 hu2 a3 hu3 m w hsectorNot au
-              au' cellVertex sectorCornerX (WebLaplacianGeometry.pairCovered C a0 a1
+          (WebLaplacianGeometry.neighborStarCovered C h x P a0 a1 a2 a3 m w au
+              au' cellVertex (WebLaplacianGeometry.pairCovered C a0 a1
           a2 a3 m w hcover) (WebLaplacianGeometry.toDomains C T h P a0 a1 a2 a3 m w au au' hdomu
           hdomu' tileM tileW) hxM)
     exact hweb.1 hadjOdo

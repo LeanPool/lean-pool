@@ -724,12 +724,12 @@ private theorem hbackAffineEq :
           (PartialOdometerHalfTurn hplus) centerShift a 0
         ∀ (tback : GaussianInt), ∀ (cback : GaussianInt), ∀ (eback : ℤ), (∀ x ∈ hback.domain,
             hback.value x = hminus.value (x - tback) + cback.re * x.re + cback.im * x.im + eback)
-            → ((tback = (0 : GaussianInt)) → ((∀ x, x ∈ hback.domain ↔ x ∈ hminus.domain) → (
+            → ((tback = (0 : GaussianInt)) → ((
         let hminusAffine := PartialOdometerAffineTranslate hminus 0 cback eback
         (hback.domain = hminusAffine.domain) → (hback = hminusAffine)))) ) := by
   classical
   intro q i hseed centerShift d hminus couter a hplus hback tback cback eback hbackValues
-      htbackZero hbackSameDomain hminusAffine hbackAffineDomain
+      htbackZero hminusAffine hbackAffineDomain
   have partial_ext (h k : PartialOdometer) (hd : h.domain = k.domain)
       (hv : ∀ x, h.value x = k.value x) : h = k := by
     cases h
@@ -2154,7 +2154,7 @@ theorem OpposingBoundaryOdometerStrings
       (OpposingBoundaryGeometry.haEndpoint q i p₀ couter hplusSlopeCalc)
       (OpposingBoundaryGeometry.hhalfSlopePlus q i p₀ hseed centerShift couter hsplus))
       (OpposingBoundaryGeometry.hbackAffineEq q i hseed centerShift couter tback cback eback
-      hbackValues htbackZero hbackSameDomain (OpposingBoundaryGeometry.hbackAffineDomain q i
+      hbackValues htbackZero (OpposingBoundaryGeometry.hbackAffineDomain q i
       hseed centerShift couter cback eback hbackSameDomain))) hbackBackDomain
       (OpposingBoundaryGeometry.hminusBackDomain q i hseed centerShift couter eback
       hbackSameDomain hbackBackDomain)
