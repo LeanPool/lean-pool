@@ -10,6 +10,7 @@ public import Mathlib.Algebra.Module.ZMod
 public import Mathlib.FieldTheory.Galois.Basic
 public import Mathlib.FieldTheory.Relrank
 
+import Mathlib.LinearAlgebra.FiniteDimensional.Lemmas
 import LeanPool.QuadraticIterates.Mathlib.Algebra.BigOperators
 import LeanPool.QuadraticIterates.Mathlib.GroupTheory.PGroup
 

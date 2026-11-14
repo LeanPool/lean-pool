@@ -29,10 +29,8 @@ public import LeanPool.Incompleteness.Foundation.Modal.Kripke.AxiomGrz
 public import LeanPool.Incompleteness.Foundation.Modal.Kripke.AxiomL
 public import LeanPool.Incompleteness.Foundation.Modal.Kripke.AxiomVer
 import LeanPool.Incompleteness.Foundation.Modal.Kripke.Hilbert.GL.Completeness
-import LeanPool.Incompleteness.Foundation.Modal.Kripke.Hilbert.GL.Soundness
 import LeanPool.Incompleteness.Foundation.Modal.Kripke.Hilbert.GL.Unnecessitation
 import LeanPool.Incompleteness.Foundation.Modal.Kripke.Hilbert.Grz.Completeness
-import LeanPool.Incompleteness.Foundation.Modal.Kripke.Hilbert.Grz.Soundness
 import LeanPool.Incompleteness.Foundation.Modal.Kripke.Hilbert.Ver
 
 /-! # WellKnown -/

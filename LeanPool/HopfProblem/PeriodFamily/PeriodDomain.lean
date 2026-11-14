@@ -4,16 +4,18 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Boris Alexeev
 -/
 module
+public import LeanPool.HopfProblem.PeriodFamily.PeriodPoint
+public import LeanPool.HopfProblem.Foundations.Core2
+import all Mathlib.Topology.Homotopy.Lifting
 
-public import LeanPool.HopfProblem.Prelude
+public import LeanPool.HopfProblem.InternalPrelude
 public import LeanPool.HopfProblem.HomologyTheory.FirstHurewicz3
 public import LeanPool.HopfProblem.Recognition.Smale2
-import all LeanPool.HopfProblem.HomologyTheory.SingularMayerVietoris
-import all LeanPool.HopfProblem.Lattice.Core1
+import LeanPool.HopfProblem.HomologyTheory.SingularMayerVietoris
+import LeanPool.HopfProblem.Lattice.Core1
 import all LeanPool.HopfProblem.Foundations.Core2
 import all LeanPool.HopfProblem.PeriodFamily.PeriodPoint
 import all LeanPool.HopfProblem.HomologyTheory.FirstHurewicz3
-import all LeanPool.HopfProblem.Recognition.Smale2
 
 /-!
 # Hopf problem: period family · period domain
@@ -24,10 +26,8 @@ Supporting definitions and proofs for this stage of the six-sphere construction.
 
 open Set Function Filter Manifold Topology
 
-open scoped BigOperators CategoryTheory Complex.UnitDisc ComplexConjugate ContDiff ContinuousMap
-  Convolution ENNReal EuclideanSpace Fin.NatCast InnerProductSpace Interval Matrix MatrixGroups
-  Modular NNReal Pointwise RealInnerProductSpace TensorProduct UniformConvergence Uniformity
-  UpperHalfPlane
+open scoped BigOperators ComplexConjugate ContDiff ContinuousMap ENNReal EuclideanSpace Fin.NatCast
+  InnerProductSpace Interval Matrix NNReal Pointwise RealInnerProductSpace
 
 universe u v
 
@@ -125,7 +125,7 @@ private def FullPeriodMatrix.fundamentalGroupEquiv (p : FullPeriodMatrix) :
 private theorem FullPeriodMatrix.fundamentalGroupEquiv_monodromy (p : FullPeriodMatrix)
     (γ : FundamentalGroup p.Torus 0) :
     p.periodVector (p.fundamentalGroupEquiv γ).toAdd =
-      (p.quotientCovering.isCoveringMap.monodromy γ p.zeroLift : ComplexPlane₂) := by
+      (p.quotientCovering.isCoveringMap.monodromy γ.toPath p.zeroLift : ComplexPlane₂) := by
   have h := p.quotientCovering.unop_fundamentalGroupToMulOpposite_smul (e := p.zeroLift) (γ := γ)
   change
     p.periodVector
@@ -154,7 +154,7 @@ private theorem FullPeriodMatrix.periodLoop_apply (p : FullPeriodMatrix) (c : In
     AffineMap.lineMap_apply_module, smul_zero, zero_add]
 
 private theorem FullPeriodMatrix.periodLoop_monodromy (p : FullPeriodMatrix) (c : IntegerPeriods) :
-    p.quotientCovering.isCoveringMap.monodromy (FundamentalGroup.fromPath ⟦p.periodLoop c⟧)
+    p.quotientCovering.isCoveringMap.monodromy ⟦p.periodLoop c⟧
         p.zeroLift =
       ⟨p.periodVector c, p.mkQ_periodVector c⟩ := by
   apply
@@ -256,7 +256,7 @@ private def PeriodDomain.fundamentalGroupEquiv (p : PeriodDomain) :
 private theorem PeriodDomain.fundamentalGroupEquiv_monodromy (p : PeriodDomain)
     (g : FundamentalGroup p.Torus 0) :
     p.periodVector (p.fundamentalGroupEquiv g).toAdd =
-      (p.quotientCovering.isCoveringMap.monodromy g p.zeroLift : ComplexPlane₂) := by
+      (p.quotientCovering.isCoveringMap.monodromy g.toPath p.zeroLift : ComplexPlane₂) := by
   have h := p.quotientCovering.unop_fundamentalGroupToMulOpposite_smul (e := p.zeroLift) (γ := g)
   change
     p.periodVector
@@ -284,7 +284,7 @@ private theorem PeriodDomain.periodLoop_apply (p : PeriodDomain) (c : Lattice) (
     AffineMap.lineMap_apply_module, smul_zero, zero_add]
 
 private theorem PeriodDomain.periodLoop_monodromy (p : PeriodDomain) (c : Lattice) :
-    p.quotientCovering.isCoveringMap.monodromy (FirstHurewicz.loopQuotient (p.periodLoop c))
+    p.quotientCovering.isCoveringMap.monodromy (FirstHurewicz.loopQuotient (p.periodLoop c)).toPath
         p.zeroLift =
       ⟨p.periodVector c, p.mkQ_periodVector c⟩ := by
   apply

@@ -185,11 +185,15 @@ theorem misereOutcome_h_add_g : MisereOutcome (h + g) = Outcome.N := by
   constructor <;> apply winsGoingFirst_of_moves
   · use g + g
     constructor
-    · simp_all
+    · simp_all only [
+      moves_add, moves_h, Set.image_insert_eq, moves_g, Set.mem_union, Set.mem_insert_iff,
+      Set.mem_image, true_or]
     · exact not_winsGoingFirst_of_misereOutcome_P misereOutcome_g_add_g
   · use g + g
     constructor
-    · simp_all
+    · simp_all only [
+      moves_add, moves_h, Set.image_insert_eq, moves_g, Set.mem_union, Set.mem_insert_iff,
+      Set.mem_image, true_or]
     · exact not_winsGoingFirst_of_misereOutcome_P misereOutcome_g_add_g
 
 /--

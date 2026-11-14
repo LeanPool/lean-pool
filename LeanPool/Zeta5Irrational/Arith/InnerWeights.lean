@@ -7,7 +7,7 @@ Authors: Moritz Firsching
 module
 
 public import LeanPool.Zeta5Irrational.Arith.ClassCount
-import Mathlib.Data.Rat.Star
+import Mathlib.Algebra.Order.Star.Rat
 import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring.Basic

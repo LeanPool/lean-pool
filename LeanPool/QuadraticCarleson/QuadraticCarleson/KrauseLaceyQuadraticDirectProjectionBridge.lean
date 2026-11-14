@@ -128,7 +128,7 @@ theorem directScaleOutput_eq_quadraticScaleOutput
     _ = ∫ t, κ (x - t) * directScaleInput S A scale f k s t := by
       apply integral_congr_ae
       filter_upwards [] with t
-      simp only [directScaleInput, T, Finset.mul_sum]
+      simp only [directScaleInput, Finset.mul_sum, T]
     _ = _ := by
       apply integral_congr_ae
       filter_upwards [] with t
@@ -210,7 +210,7 @@ theorem integral_unitWindow_norm_directScaleInput_le
   have hLone : 1 ≤ L := by
     dsimp [L]
     simpa only [zpow_zero] using
-      zpow_le_zpow_right₀ (by norm_num : (1 : ℝ) ≤ 2) hmindex
+      zpow_le_zpow_right₀ (by norm_num1 : (1 : ℝ) ≤ 2) hmindex
   have hpoint : ∀ t : ℝ,
       ‖directScaleInput S A scale f k s t‖ ≤
         ‖smallestScaleInput S scale f m t‖ := by
@@ -232,7 +232,7 @@ theorem integral_unitWindow_norm_directScaleInput_le
         M * ((x + 1 / 2) - (x - 1 / 2) + 2 * L) := by
     apply integral_window_norm_smallestScaleInput_le hlam scale f m
       (sameScale_carriers_pairwiseDisjoint hlam scale hscale m) hL hM
-      (by linarith)
+      (by linarith only [])
     · intro J hJ
       dsimp [L]
       rw [hscale J (Finset.mem_filter.mp hJ).1,
@@ -245,7 +245,7 @@ theorem integral_unitWindow_norm_directScaleInput_le
         ∫ t in Icc (x - 1 / 2) (x + 1 / 2),
           ‖smallestScaleInput S scale f m t‖ := hmono
     _ ≤ M * ((x + 1 / 2) - (x - 1 / 2) + 2 * L) := hwindow
-    _ ≤ 3 * M * L := by nlinarith
+    _ ≤ 3 * M * L := by nlinarith only [hM, hLone]
     _ = 3 * M * (2 : ℝ) ^ (k + 2 - s) := by
       dsimp [L, m]
       congr 2
@@ -345,7 +345,7 @@ theorem sum_range_integral_norm_directScaleInput_residue_le_root
     rw [show directScaleInput S A scale f (residueScale r n) s = 0 by
       exact directScaleInput_eq_zero_of_not_mem_image S A scale f
         (residueScale r n) s hnotK]
-    simp
+    simp only [Pi.zero_apply, norm_zero, integral_zero]
   have hrestrict :
       (∑ n ∈ Finset.range N, F (residueScale r n)) =
         ∑ n ∈ T, F (residueScale r n) := by
@@ -407,8 +407,7 @@ theorem offsetOutputScaleLp_sub_annularProjectionL2_eq_remainderOutputL2
   let w : Lp (α := ℝ) ℂ 2 volume := offsetOutputScaleLp S A scale f k s
   let F : ℝ → ℂ := directScaleInput S A scale f k s
   have hae : (fun x ↦ w x) =ᵐ[volume] quadraticScaleOutput k F := by
-    simpa only [w, F] using
-      offsetOutputScaleLp_ae_eq_quadraticScaleOutput S A scale f k s
+    exact offsetOutputScaleLp_ae_eq_quadraticScaleOutput S A scale f k s
   let hquad₂ : MemLp (quadraticScaleOutput k F) 2 volume :=
     (memLp_congr_ae hae).mp (Lp.memLp w)
   have hw : hquad₂.toLp (quadraticScaleOutput k F) = w := by

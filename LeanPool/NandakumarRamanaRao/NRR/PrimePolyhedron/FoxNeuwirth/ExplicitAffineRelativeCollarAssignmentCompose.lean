@@ -8,6 +8,8 @@ module
 
 public import LeanPool.NandakumarRamanaRao.NRR.PrimePolyhedron.FoxNeuwirth.ExplicitAffineRelativeCollarCompose
 public import LeanPool.NandakumarRamanaRao.NRR.PrimePolyhedron.FoxNeuwirth.ExplicitAffineRelativeCollarStokes
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Positivity.Finset
 /-!
 # Assignment composition for endpoint-identified relative affine collars
 

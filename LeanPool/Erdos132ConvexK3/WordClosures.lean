@@ -13,9 +13,6 @@ import LeanPool.Erdos132ConvexK3.MetricDichotomy
 import LeanPool.Erdos132ConvexK3.Penultimate
 import LeanPool.Erdos132ConvexK3.ResidualBounds
 import LeanPool.Erdos132ConvexK3.TerminalCage
-import Mathlib.Algebra.Order.Algebra
-import Mathlib.Data.EReal.Inv
-import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # Raw geometric exceptional-word closures
@@ -197,19 +194,13 @@ private theorem euclideanDist_le_sqrt_of_sqDist_le
 private theorem sqDist_lt_of_euclideanDist_lt_sqrt
     {a b : Point ℝ} {d : ℝ} (hd : 0 ≤ d)
     (h : euclideanDist a b < Real.sqrt d) : sqDist a b < d := by
-  have hsqrt := Real.sq_sqrt hd
-  have hdist := euclideanDist_sq a b
-  have hnonneg := euclideanDist_nonneg_local a b
-  have hsqrtNonneg := Real.sqrt_nonneg d
-  nlinarith
+  rw [← euclideanDist_sq, ← Real.sq_sqrt hd]
+  exact (sq_lt_sq₀ (euclideanDist_nonneg_local a b) (Real.sqrt_nonneg d)).2 h
 
 private theorem sqDist_eq_of_euclideanDist_eq_sqrt
     {a b : Point ℝ} {d : ℝ} (hd : 0 ≤ d)
     (h : euclideanDist a b = Real.sqrt d) : sqDist a b = d := by
-  have hsqrt := Real.sq_sqrt hd
-  have hdist := euclideanDist_sq a b
-  rw [h] at hdist
-  nlinarith
+  rw [← euclideanDist_sq, h, Real.sq_sqrt hd]
 
 private theorem sqrt_lt_euclideanDist_of_sqDist_lt
     {a b : Point ℝ} {d : ℝ} (hd : 0 ≤ d)

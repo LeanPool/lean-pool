@@ -95,7 +95,7 @@ theorem inverseFlow_piolaVector_contDiff_infty
     change ContDiff ℝ (⊤ : ℕ∞)
       (fun x => fderiv ℝ Y x (FaaDiBruno.coordinateVector 2 j) i)
     have hYi : ContDiff ℝ (⊤ : ℕ∞) (fun x => Y x i) :=
-      (contDiff_apply ℝ ℝ i).comp hY
+      (contDiff_apply ℝ (fun _ => ℝ) i).comp hY
     have hD := hYi.contDiff_fderiv_apply (m := ∞) (by simp)
     have hmap : ContDiff ℝ (⊤ : ℕ∞)
         (fun x : Vec 2 => (x, FaaDiBruno.coordinateVector 2 j)) := by
@@ -170,7 +170,7 @@ theorem inverseFlow_piolaVector_continuous
     change ContDiff ℝ (⊤ : ℕ∞)
       (fun x => fderiv ℝ Y x (FaaDiBruno.coordinateVector 2 j) i)
     have hYi : ContDiff ℝ (⊤ : ℕ∞) (fun x => Y x i) :=
-      (contDiff_apply ℝ ℝ i).comp hY
+      (contDiff_apply ℝ (fun _ => ℝ) i).comp hY
     have hD := hYi.contDiff_fderiv_apply (m := ∞) (by simp)
     have hmap : ContDiff ℝ (⊤ : ℕ∞)
         (fun x : Vec 2 => (x, FaaDiBruno.coordinateVector 2 j)) := by

@@ -6,10 +6,15 @@ Authors: Arseniy Akopyan
 module
 
 
-public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.FiniteSimplex
 public import LeanPool.NandakumarRamanaRao.NRR.PrimePolyhedron.FoxNeuwirth.RelativeSubdivisionCylinderCombinatorics
-public import LeanPool.NandakumarRamanaRao.NRR.PrimePolyhedron.FoxNeuwirth.RelativeCollarMiddlePrism
 public import LeanPool.NandakumarRamanaRao.NRR.PrimePolyhedron.FoxNeuwirth.SubdivisionPrismAffine
+public import LeanPool.NandakumarRamanaRao.NRR.PrimePolyhedron.FoxNeuwirth.ExplicitAffineRelativeCollar
+public import LeanPool.NandakumarRamanaRao.NRR.PrimePolyhedron.FoxNeuwirth.RelativeCollarMiddlePrism
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Basify
+import Mathlib.Tactic.ENatToNat
+import Mathlib.Tactic.Positivity.Finset
+public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.FiniteSimplex
 /-!
 # One-step relative subdivision cells over the Fox--Neuwirth cycle
 
@@ -96,10 +101,10 @@ theorem refinedChart_coordinate_eq_linear
     (hp : Nat.Prime p) (N : Nat) (q : TopCell hp N)
     (w : Delta (p - 1)) (c : BarredPermutation p) :
     RefinedAffineMap.chart hp N q w c = refinedCoordinateLinear hp N q c w.1 := by
-  simp? [refinedCoordinateLinear, RefinedAffineMap.chart,
-    Simplex.refinedContinuousMap, Simplex.realizationContinuousMap,
-    Simplex.realizationPoint,  StandardSimplex.ofDelta,
-     realizationCoordinateLinear]
+  simp only [RefinedAffineMap.chart, Simplex.refinedContinuousMap,
+    Simplex.realizationContinuousMap, Simplex.realizationPoint, StandardSimplex.ofDelta,
+    ContinuousMap.comp_apply, refinedCoordinateLinear, realizationCoordinateLinear,
+    LinearMap.coe_comp, LinearMap.coe_mk, AddHom.coe_mk, Function.comp_apply]
   change (∑ i, if (ReferenceAffineOrbitCount.topRepr hp q.1) i = c then
     (affineCompMap (p - 1) N (fun k => Simplex.refinementIndexPerm (q.2 k)) w) i else 0) = _
   apply Finset.sum_congr rfl

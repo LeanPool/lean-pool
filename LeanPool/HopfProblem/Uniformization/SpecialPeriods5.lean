@@ -4,15 +4,21 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Boris Alexeev
 -/
 module
+public import Mathlib.Tactic.NormNum.Parity
+public import Mathlib.Geometry.Manifold.Complex
+public import Mathlib.Analysis.SpecialFunctions.Pow.Integral
+public import Mathlib.Analysis.Complex.Conformal
+import all LeanPool.HopfProblem.CuspFibre.CuspCentralHomology2
 
-public import LeanPool.HopfProblem.Prelude
+public import LeanPool.HopfProblem.InternalPrelude
 public import LeanPool.HopfProblem.Threefold.SpecialPeriods5
 public import LeanPool.HopfProblem.CuspFibre.CuspCentralHomology1
-import all LeanPool.HopfProblem.Uniformization.HolomorphicCousin
+import Mathlib.Analysis.SpecialFunctions.PolarCoord
+import LeanPool.HopfProblem.Uniformization.HolomorphicCousin
 import all LeanPool.HopfProblem.Foundations.Core2
 import all LeanPool.HopfProblem.PeriodFamily.PeriodPoint
 import all LeanPool.HopfProblem.Uniformization.CuspUniformization1
-import all LeanPool.HopfProblem.Elliptic.Core1
+import LeanPool.HopfProblem.Elliptic.Core1
 import all LeanPool.HopfProblem.Uniformization.SpecialPeriods1
 import all LeanPool.HopfProblem.Foundations.LocalOrbitQuotient
 import all LeanPool.HopfProblem.Uniformization.SpecialPeriods2
@@ -20,7 +26,6 @@ import all LeanPool.HopfProblem.Uniformization.SpecialPeriods3
 import all LeanPool.HopfProblem.Threefold.SpecialPeriods4
 import all LeanPool.HopfProblem.Uniformization.SpecialPeriods4
 import all LeanPool.HopfProblem.Threefold.SpecialPeriods5
-import all LeanPool.HopfProblem.CuspFibre.CuspCentralHomology1
 
 /-!
 # Hopf problem: uniformization · special periods 5
@@ -31,9 +36,8 @@ Supporting definitions and proofs for this stage of the six-sphere construction.
 
 open Set Function Filter Manifold Topology
 
-open scoped BigOperators CategoryTheory Complex.UnitDisc ComplexConjugate ContDiff ContinuousMap
-  Convolution ENNReal EuclideanSpace Fin.NatCast InnerProductSpace Interval Matrix MatrixGroups
-  Modular NNReal Pointwise RealInnerProductSpace TensorProduct UniformConvergence Uniformity
+open scoped BigOperators ComplexConjugate ContDiff ContinuousMap Convolution ENNReal EuclideanSpace
+  Fin.NatCast InnerProductSpace Interval Matrix MatrixGroups NNReal Pointwise RealInnerProductSpace
   UpperHalfPlane
 
 universe u v
@@ -3734,7 +3738,7 @@ private theorem HolomorphicCousin.hasDerivAt_cauchyGreenInfinity {f : ℂ → �
       calc
         R * r < R * R⁻¹ := mul_lt_mul_of_pos_left hrR hR
         _ = 1 := mul_inv_cancel₀ hR.ne'
-    linarith
+    linarith only [hlt]
   have hmeas (x : ℂ) :
     MeasureTheory.AEStronglyMeasurable (fun w : ℂ => x * (1 - w * x)⁻¹ * f w)
       MeasureTheory.MeasureSpace.volume := by
@@ -5108,7 +5112,7 @@ private theorem SpecialPeriods.MuGenerator.Root.exists_cusp_root_unit {τ : ℍ 
     apply (UpperHalfPlane.atImInfty_mem _).mpr
     refine ⟨Y + 1, fun z hz => ?_⟩
     change Y < z.im
-    linarith
+    linarith only [hz]
   have hbAt : AnalyticAt ℂ b 0 := hb 0 (Metric.mem_ball_self hR)
   rcases
     (SpecialPeriods.MuGenerator.cuspHorodisc_isPreconnected Y hY).eq_or_eq_neg_of_sq_eq

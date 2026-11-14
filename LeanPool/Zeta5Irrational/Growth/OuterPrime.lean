@@ -9,8 +9,8 @@ module
 public import LeanPool.Zeta5Irrational.Growth.TailPrime
 import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Data.Rat.Star
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Rat
+import Mathlib.Algebra.Order.Star.Int
 import Std.Tactic.BVDecide.Normalize.Prop
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith

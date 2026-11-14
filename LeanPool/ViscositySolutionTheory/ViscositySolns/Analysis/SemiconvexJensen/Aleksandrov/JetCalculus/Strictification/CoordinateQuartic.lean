@@ -105,7 +105,7 @@ theorem dotProduct_self_convex_combination
     quadraticModel_scalar_identity_convex_combination
       (n := n) (lambda := 2) x y (a := a) (b := b) hab
   simp [quadraticModel, Matrix.smul_mulVec, Matrix.one_mulVec, smul_dotProduct] at h ⊢
-  nlinarith
+  nlinarith only [h]
 
 /--
 The defect in the coordinate quartic is bounded on a closed ball.
@@ -169,11 +169,11 @@ theorem coordinateQuartic_convex_combination_defect_le_closedBall
         gcongr
   have hS_le : S <= (n : Real) * r ^ 2 := by
     dsimp [S]
-    nlinarith
+    nlinarith only [ha, hb, hab, hA_nonneg, hA_le, hC_le]
   have hZ_relation : Z + a * b * D = S := by
     dsimp [Z, D, S, A, C]
     exact dotProduct_self_convex_combination (n := n) x y (a := a) (b := b) hab
-  have hZ_eq : Z = S - a * b * D := by linarith
+  have hZ_eq : Z = S - a * b * D := by linarith only [hZ_relation]
   have hAC :
       A - C = dotProduct (x + y) (x - y) := by
     dsimp [A, C]
@@ -209,7 +209,7 @@ theorem coordinateQuartic_convex_combination_defect_le_closedBall
         gcongr
   have hvariance :
       a * A ^ 2 + b * C ^ 2 - S ^ 2 = a * b * (A - C) ^ 2 := by
-    have hb_eq : b = 1 - a := by linarith
+    have hb_eq : b = 1 - a := by linarith only [hab]
     dsimp [S]
     subst b
     ring
@@ -261,7 +261,7 @@ theorem coordinateSemiconvexOn_neg_coordinateQuartic_closedBall
   have hdefect :=
     coordinateQuartic_convex_combination_defect_le_closedBall
       (n := n) hr hx hy ha hb hab
-  nlinarith
+  nlinarith only [hdefect]
 
 /--
 The coordinate quartic is smooth.
@@ -358,7 +358,7 @@ theorem hasFDerivWithinAt_coordinateQuartic (x : Point n) :
       (coordinateSquareSumFDeriv x) Set.univ x := by
     change HasFDerivWithinAt (fun y : Point n => ∑ i : Fin n, y i * y i)
       (coordinateSquareSumFDeriv x) Set.univ x
-    simpa [coordinateSquareSumFDeriv] using
+    exact
       (HasFDerivWithinAt.fun_sum (u := (Finset.univ : Finset (Fin n)))
         (A := fun i y => y i * y i)
         (A' := fun i =>

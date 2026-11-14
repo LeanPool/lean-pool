@@ -63,7 +63,8 @@ theorem compact_increment_bound (f : Space → V) (hc : HasCompactSupport f)
   have hK : IsCompact K := isCompact_closedBall _ _
   have hsupport : tsupport f ⊆ K := fun _ hx =>
     Metric.closedBall_subset_closedBall (by linarith [le_abs_self R]) (hR hx)
-  refine ⟨K.indicator (fun _ => C), memLp_indicator_const 2 hK.isClosed.measurableSet C
+  refine ⟨K.indicator (fun _ => C),
+    memLp_indicator_const 2 hK.isClosed.measurableSet.nullMeasurableSet C
     (Or.inr hK.measure_ne_top), ?_, ?_⟩
   · intro x
     exact Set.indicator_nonneg (fun _ _ => hC0) x

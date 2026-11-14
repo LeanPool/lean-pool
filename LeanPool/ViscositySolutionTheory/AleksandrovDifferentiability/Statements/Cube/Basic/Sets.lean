@@ -277,7 +277,7 @@ theorem HasSourceCubeAffineRemainderUpperBound.hasUpperContactWithSlopeOn {n : �
   intro y hy
   have hupper := h.2 y hy
   dsimp [affineRemainder] at hupper
-  linarith
+  linarith only [hupper]
 
 /-- Increment-coordinate bounds imply pointwise source-style bounds on `Q_3`. -/
 theorem HasSourceCubeIncrementQuadraticBound.affineRemainderQuadraticBound {n : ℕ}
@@ -349,7 +349,7 @@ theorem HasSourceCubeAffineRemainderQuadraticBound.openingAtMost_two_mul {n : �
   have hupper := h.2 y hy
   have hle :
       K * ‖y - x‖ ^ 2 ≤ ((2 * K + η) / 2) * ‖y - x‖ ^ 2 := by
-    have hcoeff : K ≤ (2 * K + η) / 2 := by linarith
+    have hcoeff : K ≤ (2 * K + η) / 2 := by linarith only [hη]
     exact mul_le_mul_of_nonneg_right hcoeff (sq_nonneg _)
   exact hupper.trans hle
 

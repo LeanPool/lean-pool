@@ -41,6 +41,13 @@ def StrongSSC : Prop :=
 
 variable {a}
 
+lemma SignType.natAbs_intCast_le_one (b : SignType) : (b : ℤ).natAbs ≤ 1 := by
+  cases b <;> decide
+
+lemma SignType.one_le_natAbs_intCast_sub {b₁ b₂ : SignType} (h : b₁ ≠ b₂) :
+    1 ≤ (b₁ - b₂ : ℤ).natAbs := by
+  cases b₁ <;> cases b₂ <;> simp_all
+
 lemma StrongSSC.SSC (h : StrongSSC a) : SSC a := by
   unfold _root_.SSC StrongSSC IsSubsumBlock at *
   contrapose! h

@@ -113,7 +113,7 @@ theorem belowLaterCoefficient_le_beta {M lambda sigma : ℝ}
         belowWeight M (belowTau M lambda sigma) (k + 1) ≤
       1 + lambda * sigma * belowWeight M (belowTau M lambda sigma) k := by
   rw [belowLaterCoefficient hM hlambda hsigma hk]
-  linarith
+  linarith only
 
 /-- Scalar-weighted barycenter used for both `y_k` and `x_(k+1)^a`. -/
 noncomputable def belowBarycenter {d : ℕ} (A a : ℝ)
@@ -160,8 +160,8 @@ theorem belowRegularizedMinimizer_radius {d : ℕ} {p lambda : ℝ}
   unfold belowPhi quadraticRegularizer at hphi
   have hsquares : (lpNorm p (xlambda - x0)) ^ (2 : ℕ) ≤
       (lpNorm p (xstar - x0)) ^ (2 : ℕ) := by
-    nlinarith
-  nlinarith
+    nlinarith only [hfstar, hlambda, hphi]
+  nlinarith only [hright, hsquares]
 
 /-- The source distance to a nonempty minimizer set is nonnegative. -/
 theorem minimizerDistance_nonneg_of_nonempty {d : ℕ} {p : ℝ}
@@ -187,10 +187,10 @@ theorem belowRegularizer_le_radius_budget {d : ℕ} {p sigma D R : ℝ}
   have hD : 0 ≤ D := hR.trans hDR
   unfold quadraticRegularizer
   have hsquare : (lpNorm p (x - x0)) ^ (2 : ℕ) ≤ D ^ 2 := by
-    nlinarith
+    nlinarith only [hDR, hR, hx0, hxR]
   have hsigma_ne : sigma ≠ 0 := hsigma.ne'
   field_simp [hsigma_ne]
-  nlinarith
+  linarith only [hsquare]
 
 /-- Combined version of the source radius argument and regularizer budget,
 still using the actual regularized minimizer property rather than a supplied
@@ -218,7 +218,7 @@ theorem belowPotential_to_gap {A sigma D phiXa phiXlambda psiStar h : ℝ}
     phiXa - phiXlambda ≤ D ^ 2 / (2 * sigma * A) := by
   have hden : 0 < 2 * sigma * A := mul_pos (mul_pos (by norm_num) hsigma) hA
   have hcombined : A * (phiXa - phiXlambda) ≤ h := by
-    linarith
+    linarith only [hevaluation, hinvariant]
   have hbudget : A * (phiXa - phiXlambda) ≤ D ^ 2 / (2 * sigma) :=
     hcombined.trans hh
   have hscale : 0 ≤ 2 * sigma := by positivity

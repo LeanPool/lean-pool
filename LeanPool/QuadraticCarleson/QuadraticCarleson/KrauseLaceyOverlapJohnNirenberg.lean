@@ -79,7 +79,7 @@ theorem volume_overlap_blocks_le
         ⋃ I ∈ C, {x | t * (M + 1) < overlapCount (D I) x} := by
       intro x hx
       change (t + 1) * (M + 1) < overlapCount A x at hx
-      have hxM : M < overlapCount A x := by nlinarith
+      have hxM : M < overlapCount A x := by nlinarith only [hx]
       obtain ⟨I, hI⟩ := Set.mem_iUnion.mp
         (highOverlap_subset_biUnion_overlapStoppingIntervals A M hlam hxM)
       obtain ⟨hIC, hxI⟩ := Set.mem_iUnion.mp hI
@@ -87,7 +87,7 @@ theorem volume_overlap_blocks_le
       have hc := overlapCount_le_descendants_add_of_mem_overlapStoppingIntervals hlam hIC hxI
       change t * (M + 1) < overlapCount (D I) x
       dsimp only [D]
-      nlinarith
+      linarith only [hx, hc]
     have hmass : (∑ I ∈ C, ENNReal.ofReal I.length) ≤
         (ENNReal.ofReal Λ / (M + 1 : ℝ≥0∞)) * ENNReal.ofReal K.length := by
       rw [sum_volume_overlapStoppingIntervals A M hlam]
@@ -102,7 +102,7 @@ theorem volume_overlap_blocks_le
           ENNReal.div_le_div_right (ENNReal.ofReal_le_ofReal hp) _
         _ = (ENNReal.ofReal Λ / (M + 1 : ℝ≥0∞)) * ENNReal.ofReal K.length := by
           rw [ENNReal.ofReal_mul' K.length_pos.le]
-          simp only [div_eq_mul_inv, mul_assoc, mul_comm, mul_left_comm]
+          simp only [div_eq_mul_inv, mul_comm, mul_left_comm, mul_assoc]
     calc
       volume {x | (t + 1) * (M + 1) < overlapCount A x} ≤
           volume (⋃ I ∈ C, {x | t * (M + 1) < overlapCount (D I) x}) := measure_mono hdeep
@@ -140,13 +140,13 @@ theorem volume_overlap_blocks_le_half_pow
   apply (volume_overlap_blocks_le t A K M Λ hlam hsub hpack).trans
   have hratio : ENNReal.ofReal Λ / (M + 1 : ℝ≥0∞) ≤ 1 / 2 := by
     have hpos : (0 : ℝ) < M + 1 := by positivity
-    have hr : Λ / (M + 1) ≤ 1 / 2 := (div_le_iff₀ hpos).mpr (by linarith)
+    have hr : Λ / (M + 1) ≤ 1 / 2 := (div_le_iff₀ hpos).mpr (by linarith only [hblock])
     have he : (M + 1 : ℝ≥0∞) = ENNReal.ofReal (M + 1 : ℝ) := by
-      rw [ENNReal.ofReal_add (by positivity) (by positivity),
+      rw [ENNReal.ofReal_add (by exact Nat.cast_nonneg' M) (by positivity),
         ENNReal.ofReal_natCast, ENNReal.ofReal_one]
     rw [he, ← ENNReal.ofReal_div_of_pos hpos]
     exact (ENNReal.ofReal_le_ofReal hr).trans_eq (by
-      rw [ENNReal.ofReal_div_of_pos (by norm_num)]; norm_num)
+      rw [ENNReal.ofReal_div_of_pos (by norm_num1)]; norm_num)
   exact mul_le_mul_left (pow_le_pow_left' hratio t) _
 
 

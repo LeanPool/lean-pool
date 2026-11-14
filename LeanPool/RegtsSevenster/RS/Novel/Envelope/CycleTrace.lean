@@ -45,12 +45,12 @@ theorem catTrace_powHom
     [Category.{v} A] [MonoidalCategory A] [SymmetricCategory A]
     [RigidCategory A]
     (X : A) (g : End X) :
-    ∀ n : ℕ, catTrace (powHom X g n) = catTrace g ^ n
+    ∀ n : ℕ, catTrace ((powHom X g n).asHom) = catTrace g.asHom ^ n
   | 0 => by
-      change catTrace (𝟙 (𝟙_ A)) = catTrace g ^ 0
+      change catTrace (𝟙 (𝟙_ A)) = catTrace g.asHom ^ 0
       rw [catTrace_id, catDim_unit, pow_zero]
   | n + 1 => by
-      change catTrace (powHom X g n ⊗ₘ g) = catTrace g ^ (n + 1)
+      change catTrace ((powHom X g n).asHom ⊗ₘ g.asHom) = catTrace g.asHom ^ (n + 1)
       rw [catTrace_tensorHom, catTrace_powHom X g n, pow_succ]
 
 /-! ## Bubbling one slot down -/
@@ -111,18 +111,18 @@ private theorem ptr_cycle_step_swapTop
     [RigidCategory A]
     (X : A) (g h : End X) (m : ℕ)
     (v a : tensorPow A X (m + 1) ⟶ tensorPow A X (m + 1)) :
-    ptr ((tensorPow A X (m + 1) ◁ h) ≫ swapTop X m ≫ (v ▷ X) ≫
-        (a ⊗ₘ g)) =
-      (tensorPow A X m ◁ (g ≫ h)) ≫ v ≫ a :=
-  ptr_cycle_step (tensorPow A X m) X g h v a
+    ptr ((tensorPow A X (m + 1) ◁ h.asHom) ≫ swapTop X m ≫ (v ▷ X) ≫
+        (a ⊗ₘ g.asHom)) =
+      (tensorPow A X m ◁ (g.asHom ≫ h.asHom)) ≫ v ≫ a :=
+  ptr_cycle_step (tensorPow A X m) X g.asHom h.asHom v a
 
 /-- Composing one more copy on the right of a power. -/
 private theorem pow_comp_self [Category.{v} A]
     {X : A} (g : End X) (k : ℕ) :
-    (g ^ (k + 1)) ≫ g = g ^ (k + 2) := by
-  change (g ^ (k + 1)) ≫ g = g ^ (k + 1 + 1)
+    (g ^ (k + 1)).asHom ≫ g.asHom = (g ^ (k + 2)).asHom := by
+  change (g ^ (k + 1)).asHom ≫ g.asHom = (g ^ (k + 1 + 1)).asHom
   rw [pow_succ' g (k + 1)]
-  exact (End.mul_def g (g ^ (k + 1))).symm
+  rfl
 
 /-! ## The cycle trace -/
 
@@ -136,15 +136,15 @@ theorem catTrace_insertTop_powHom
     [RigidCategory A]
     (X : A) (g : End X) :
     ∀ (k n : ℕ), k ≤ n → ∀ h : End X,
-      catTrace ((tensorPow A X n ◁ h) ≫
-          insertTop X n k ≫ powHom X g (n + 1)) =
-        catTrace g ^ (n - k) * catTrace (h ≫ (g ^ (k + 1)))
+      catTrace ((tensorPow A X n ◁ h.asHom) ≫
+          insertTop X n k ≫ (powHom X g (n + 1)).asHom) =
+        catTrace g.asHom ^ (n - k) * catTrace (h.asHom ≫ (g ^ (k + 1)).asHom)
   | 0, n, _, h => by
-      have hz : (tensorPow A X n ◁ h) ≫
-          insertTop X n 0 ≫ powHom X g (n + 1) =
-          powHom X g n ⊗ₘ (h ≫ g) := by
+      have hz : (tensorPow A X n ◁ h.asHom) ≫
+          insertTop X n 0 ≫ (powHom X g (n + 1)).asHom =
+          (powHom X g n).asHom ⊗ₘ (h.asHom ≫ g.asHom) := by
         rw [insertTop_zero]
-        change (tensorPow A X n ◁ h) ≫ 𝟙 _ ≫ (powHom X g n ⊗ₘ g) = _
+        change (tensorPow A X n ◁ h.asHom) ≫ 𝟙 _ ≫ ((powHom X g n).asHom ⊗ₘ g.asHom) = _
         rw [Category.id_comp, ← id_tensorHom,
           tensorHom_comp_tensorHom, Category.id_comp]
       refine (congrArg catTrace hz).trans ?_
@@ -152,18 +152,18 @@ theorem catTrace_insertTop_powHom
   | k + 1, n, hk, h => by
       obtain ⟨m, rfl⟩ : ∃ m, n = m + 1 := ⟨n - 1, by omega⟩
       have hkm : k ≤ m := by omega
-      have hmor : (tensorPow A X (m + 1) ◁ h) ≫
-            insertTop X (m + 1) (k + 1) ≫ powHom X g (m + 1 + 1) =
-          (tensorPow A X (m + 1) ◁ h) ≫ swapTop X m ≫
-            (insertTop X m k ▷ X) ≫ (powHom X g (m + 1) ⊗ₘ g) := by
+      have hmor : (tensorPow A X (m + 1) ◁ h.asHom) ≫
+            insertTop X (m + 1) (k + 1) ≫ (powHom X g (m + 1 + 1)).asHom =
+          (tensorPow A X (m + 1) ◁ h.asHom) ≫ swapTop X m ≫
+            (insertTop X m k ▷ X) ≫ ((powHom X g (m + 1)).asHom ⊗ₘ g.asHom) := by
         rw [insertTop_succ, powHom_succ]
-        exact congrArg (fun z => (tensorPow A X (m + 1) ◁ h) ≫ z)
+        exact congrArg (fun z => (tensorPow A X (m + 1) ◁ h.asHom) ≫ z)
           (Category.assoc _ _ _)
       refine (catTrace_ptr _).symm.trans ?_
       refine (congrArg (fun z => catTrace (ptr z)) hmor).trans ?_
       rw [ptr_cycle_step_swapTop]
-      refine (catTrace_insertTop_powHom X g k m hkm (g ≫ h)).trans ?_
-      rw [Category.assoc, catTrace_comp_comm g (h ≫ (g ^ (k + 1))),
+      refine (catTrace_insertTop_powHom X g k m hkm (End.of (g.asHom ≫ h.asHom))).trans ?_
+      rw [Category.assoc, catTrace_comp_comm g.asHom (h.asHom ≫ (g ^ (k + 1)).asHom),
         Category.assoc, pow_comp_self,
         show m + 1 - (k + 1) = m - k from by omega]
 
@@ -176,10 +176,10 @@ theorem catTrace_insertTop
     [RigidCategory A]
     (X : A) (g : End X) {k n : ℕ}
     (hk : k ≤ n) :
-    catTrace (insertTop X n k ≫ powHom X g (n + 1)) =
-      catTrace g ^ (n - k) * catTrace (g ^ (k + 1)) := by
-  have h := catTrace_insertTop_powHom X g k n hk (𝟙 X)
-  rwa [MonoidalCategory.whiskerLeft_id, Category.id_comp,
+    catTrace (insertTop X n k ≫ (powHom X g (n + 1)).asHom) =
+      catTrace g.asHom ^ (n - k) * catTrace (g ^ (k + 1)).asHom := by
+  have h := catTrace_insertTop_powHom X g k n hk 1
+  rwa [End.one_asHom, MonoidalCategory.whiskerLeft_id, Category.id_comp,
     Category.id_comp] at h
 
 end RS

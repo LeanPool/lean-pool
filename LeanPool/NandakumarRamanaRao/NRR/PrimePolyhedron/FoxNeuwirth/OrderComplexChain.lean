@@ -6,8 +6,14 @@ Authors: Arseniy Akopyan
 module
 
 
-public import LeanPool.NandakumarRamanaRao.NRR.PrimePolyhedron.FoxNeuwirth.OrderComplexRealization
 public import LeanPool.NandakumarRamanaRao.NRR.PrimePolyhedron.FoxNeuwirth.OrientedBoundary
+public import LeanPool.NandakumarRamanaRao.NRR.PrimePolyhedron.FoxNeuwirth.OrderComplex
+public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Basify
+import Mathlib.Tactic.Positivity.Finset
+import Mathlib.Tactic.ReduceModChar
+public import LeanPool.NandakumarRamanaRao.NRR.PrimePolyhedron.FoxNeuwirth.OrderComplexRealization
 /-!
 # Simplicial chains on the Fox--Neuwirth order complex
 

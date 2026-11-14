@@ -31,7 +31,7 @@ variable {R : ℕ} (f : EdgeRankParameter R)
 /-- An atom: the endomorphisms are scalars, and the identity is
 nonzero. -/
 structure IsAtom (S : Karoubi (SkeinObj f)) : Prop where
-  scalar : ∀ x : End S, ∃ c : ℂ, x = c • 𝟙 S
+  scalar : ∀ x : End S, ∃ c : ℂ, x = c • 1
   id_ne_zero : 𝟙 S ≠ 0
 
 /-- Scalars act faithfully on a nonzero identity. -/
@@ -60,7 +60,9 @@ theorem atom_iso_of_ne_zero {S T : Karoubi (SkeinObj f)}
       (fun b => hall b))
   obtain ⟨b, hb⟩ := hpartner
   -- The composite is a nonzero scalar on the source atom.
-  obtain ⟨c, hc⟩ := hS.scalar (φ ≫ b)
+  obtain ⟨c, hc⟩ := hS.scalar (End.of (φ ≫ b))
+  have hc := congrArg End.asHom hc
+  change φ ≫ b = c • 𝟙 S at hc
   have hcne : c ≠ 0 := by
     intro hc0
     rw [hc0, zero_smul] at hc
@@ -74,7 +76,9 @@ theorem atom_iso_of_ne_zero {S T : Karoubi (SkeinObj f)}
       inv_mul_cancel₀ hcne, one_smul]
   · -- The reverse composite is an idempotent scalar on the
     -- target atom; it cannot be zero, hence is the identity.
-    obtain ⟨d, hd⟩ := hT.scalar ((c⁻¹ • b) ≫ φ)
+    obtain ⟨d, hd⟩ := hT.scalar (End.of ((c⁻¹ • b) ≫ φ))
+    have hd := congrArg End.asHom hd
+    change (c⁻¹ • b) ≫ φ = d • 𝟙 T at hd
     have hidem : ((c⁻¹ • b) ≫ φ) ≫ ((c⁻¹ • b) ≫ φ) =
         (c⁻¹ • b) ≫ φ := by
       rw [show ((c⁻¹ • b) ≫ φ) ≫ ((c⁻¹ • b) ≫ φ) =
@@ -119,9 +123,9 @@ endomorphism algebra. -/
     {eK : End X} (he : IsIdempotentElem eK) :
     Karoubi (SkeinObj f) where
   X := X.X
-  p := eK.f
+  p := eK.asHom.f
   idem := by
-    have := congrArg Karoubi.Hom.f (he : eK * eK = eK)
+    have := congrArg (fun z : End X => z.asHom.f) (he : eK * eK = eK)
     exact this
 
 /-- The object cut out by an atomic idempotent is an atom. -/
@@ -130,37 +134,35 @@ theorem isAtom_cutBy (X : Karoubi (SkeinObj f))
     IsAtom f (cutBy f X he.idem) := by
   constructor
   · intro x
+    rcases x with ⟨x⟩
     -- Lift to the ambient endomorphism algebra and use the
     -- corner-scalar property.
-    have habs₁ : eK.f ≫ x.f = x.f := Karoubi.p_comp x
-    have habs₂ : x.f ≫ eK.f = x.f := Karoubi.comp_p x
+    have habs₁ : eK.asHom.f ≫ x.f = x.f := Karoubi.p_comp x
+    have habs₂ : x.f ≫ eK.asHom.f = x.f := Karoubi.comp_p x
     have hyc : X.p ≫ x.f ≫ X.p = x.f := by
       rw [show X.p ≫ x.f ≫ X.p =
-        X.p ≫ (eK.f ≫ x.f ≫ eK.f) ≫ X.p from by
-          rw [show eK.f ≫ x.f ≫ eK.f = x.f from by
+        X.p ≫ (eK.asHom.f ≫ x.f ≫ eK.asHom.f) ≫ X.p from by
+          rw [show eK.asHom.f ≫ x.f ≫ eK.asHom.f = x.f from by
             rw [habs₂, habs₁]]]
-      rw [show X.p ≫ (eK.f ≫ x.f ≫ eK.f) ≫ X.p =
-        (X.p ≫ eK.f) ≫ x.f ≫ (eK.f ≫ X.p) from by
+      rw [show X.p ≫ (eK.asHom.f ≫ x.f ≫ eK.asHom.f) ≫ X.p =
+        (X.p ≫ eK.asHom.f) ≫ x.f ≫ (eK.asHom.f ≫ X.p) from by
           simp only [Category.assoc]]
       rw [Karoubi.p_comp, Karoubi.comp_p, habs₂, habs₁]
-    obtain ⟨c, hc⟩ := he.corner_scalar ⟨x.f, hyc⟩
+    obtain ⟨c, hc⟩ := he.corner_scalar (End.of ⟨x.f, hyc⟩)
     refine ⟨c, ?_⟩
+    apply End.ext
     apply Karoubi.hom_ext
-    have hcf := congrArg Karoubi.Hom.f hc
-    rw [show (eK * ⟨x.f, hyc⟩ * eK).f =
-      eK.f ≫ x.f ≫ eK.f from by
-        show ((eK * ⟨x.f, hyc⟩) * eK).f = _
-        rw [show ((eK * ⟨x.f, hyc⟩) * eK).f =
-          eK.f ≫ (eK * ⟨x.f, hyc⟩).f from rfl]
-        rw [show (eK * ⟨x.f, hyc⟩).f = x.f ≫ eK.f from rfl]] at hcf
+    have hcf := congrArg (fun z : End X => z.asHom.f) hc
+    change eK.asHom.f ≫ x.f ≫ eK.asHom.f = c • eK.asHom.f at hcf
     rw [habs₂, habs₁] at hcf
     rw [hcf]
     rfl
   · intro h
     apply he.ne_zero
+    apply End.ext
     apply Karoubi.hom_ext
     have := congrArg Karoubi.Hom.f h
-    rw [show Karoubi.Hom.f (𝟙 (cutBy f X he.idem)) = eK.f
+    rw [show Karoubi.Hom.f (𝟙 (cutBy f X he.idem)) = eK.asHom.f
       from rfl] at this
     rw [this]
     rfl

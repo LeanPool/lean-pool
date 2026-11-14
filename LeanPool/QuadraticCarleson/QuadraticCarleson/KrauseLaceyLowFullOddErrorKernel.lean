@@ -77,9 +77,9 @@ theorem finiteLowFullPhaseErrorKernel_support_subset
     have hpow : (2 : ℝ) ^ (j + (r : ℤ) - 1) ≤ 1 / 2 := by
       calc
         (2 : ℝ) ^ (j + (r : ℤ) - 1) ≤ (2 : ℝ) ^ (-1 : ℤ) := by
-          apply (zpow_le_zpow_iff_right₀ (by norm_num : (1 : ℝ) < 2)).2
+          apply (zpow_le_zpow_iff_right₀ (by norm_num1 : (1 : ℝ) < 2)).2
           omega
-        _ = 1 / 2 := by norm_num
+        _ = 1 / 2 := by norm_num1
     exact (not_lt_of_ge habs.le) (hsupp.2.trans_le hpow)
   have hsum :
       (∑ r ∈ Finset.range n, (dyadicPsi (j + (r : ℤ)) t : ℂ)) = 0 := by
@@ -116,9 +116,8 @@ theorem finiteLowFullPhaseErrorKernel_norm_le_abs
           rw [abs_of_nonneg (dyadicCutoff_nonneg _),
             abs_of_nonneg (dyadicCutoff_nonneg _)]
         _ ≤ 2 := by
-          linarith [dyadicCutoff_le_one
-            ((2⁻¹ : ℝ) ^ (j + (n : ℤ) - 1) * t),
-            dyadicCutoff_le_one ((2⁻¹ : ℝ) ^ (j - 1) * t)]
+          linarith only [dyadicCutoff_le_one
+            ((2⁻¹ : ℝ) ^ (j + (n : ℤ) - 1) * t), dyadicCutoff_le_one ((2⁻¹ : ℝ) ^ (j - 1) * t)]
     have hphase := norm_phase_sub_one_le (t ^ 2)
     rw [abs_pow] at hphase
     have hcast :
@@ -150,7 +149,7 @@ theorem finiteLowFullPhaseErrorKernel_norm_le
       _ ≤ 4 * Real.pi := by
         have hpi : 0 ≤ 4 * Real.pi := by positivity
         exact (mul_le_mul_of_nonneg_left habs hpi).trans
-          (by nlinarith [Real.pi_pos])
+          (by linarith only [hpi, Real.pi_pos])
   · rw [notMem_support.mp ht, norm_zero]
     positivity
 
@@ -166,10 +165,10 @@ theorem finiteLowFullPhaseErrorOperator_enorm_le_maximal
     OscillatoryReduction.bounded_ball_kernel_enorm_le_maximal
       (K := finiteLowFullPhaseErrorKernel j n)
       (C := 4 * Real.pi) (ρ := 1 / 2)
-      (by positivity : 0 ≤ 4 * Real.pi) (by norm_num : (0 : ℝ) < 1 / 2)
+      (by positivity : 0 ≤ 4 * Real.pi) (by norm_num1 : (0 : ℝ) < 1 / 2)
       (fun t ↦ (finiteLowFullPhaseErrorKernel_norm_le htop t).trans (by
         norm_num [div_eq_mul_inv]
-        nlinarith [Real.pi_pos]))
+        linarith only [Real.pi_pos]))
       (finiteLowFullPhaseErrorKernel_support_subset htop) hf x
 
 

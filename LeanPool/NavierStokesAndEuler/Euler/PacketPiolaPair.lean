@@ -6,6 +6,8 @@ Authors: OpenAI
 module
 
 public import LeanPool.NavierStokesAndEuler.Euler.PacketAngularPotential
+import Mathlib.Analysis.Calculus.Deriv.Prod
+import Mathlib.Analysis.Calculus.ContDiff.WithLp
 import LeanPool.NavierStokesAndEuler.ForMathlib.SmoothnessOrder
 public import LeanPool.NavierStokesAndEuler.Euler.PacketPiolaAlgebra
 public import LeanPool.NavierStokesAndEuler.Euler.TransverseGramInverse

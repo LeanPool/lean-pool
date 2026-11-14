@@ -12,6 +12,7 @@ public import Mathlib.Analysis.Complex.CanonicalDecomposition
 import LeanPool.Odlyzko.CompletedZeta.FunctionalEquationLogDeriv
 import LeanPool.Odlyzko.ExplicitFormula.FiniteSetAvoidance
 import Mathlib.Analysis.Complex.BorelCaratheodory
+import Mathlib.Analysis.Complex.HasPrimitives
 import Mathlib.Analysis.Complex.JensenFormula
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
 import Mathlib.Tactic.ArithMult.Init

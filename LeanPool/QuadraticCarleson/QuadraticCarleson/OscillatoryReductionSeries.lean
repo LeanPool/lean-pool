@@ -42,22 +42,22 @@ theorem exists_eventually_zero_height_integrands
   obtain ⟨M, hM⟩ := exists_spatial_bound f x
   let j := oscillatoryScaleIndex lam 0 hlam
   have hp : Tendsto (fun r : ℕ ↦ (2 : ℝ) ^ r) atTop atTop :=
-    tendsto_pow_atTop_atTop_of_one_lt (by norm_num)
+    tendsto_pow_atTop_atTop_of_one_lt (by norm_num1)
   have hc : 0 < (2 : ℝ) ^ (j - 3) := by positivity
   have hscale : Tendsto (fun r : ℕ ↦ (2 : ℝ) ^ (j + (r : ℤ) - 3)) atTop atTop := by
     convert hp.const_mul_atTop hc using 1
     funext r
     rw [show j + (r : ℤ) - 3 = (j - 3) + (r : ℤ) by ring,
-      zpow_add₀ (by norm_num : (2 : ℝ) ≠ 0), zpow_natCast]
+      zpow_add₀ (by norm_num1 : (2 : ℝ) ≠ 0), zpow_natCast]
   obtain ⟨N, hN⟩ := eventually_atTop.mp (hscale.eventually_gt_atTop M)
   refine ⟨N, ?_⟩
   intro r hr y
   by_cases hy : f y = 0
-  · simp [hy]
+  · simp only [hy, mul_zero]
   · have hz : dyadicPsi (oscillatoryScaleIndex lam r hlam) (x - y) = 0 := by
       rw [oscillatoryScaleIndex_eq_add]
       exact dyadicPsi_eq_zero_of_abs_le ((hM y hy).trans (hN r hr).le)
-    simp [fixedHeightQuadraticKernel, hz]
+    simp only [fixedHeightQuadraticKernel, hz, Complex.ofReal_zero, zero_mul]
 
 theorem hasSum_oscillatoryIntegrals (lam : ℝ) (hlam : lam ≠ 0)
     (f : L0Infinity) (x : ℝ) :
@@ -76,7 +76,7 @@ theorem hasSum_oscillatoryIntegrals (lam : ℝ) (hlam : lam ≠ 0)
     by_contra h
     apply hr
     have hz : ∀ y, F r y = 0 := hN r (Nat.le_of_not_gt h)
-    simp [hz]
+    simp only [hz, norm_zero, integral_zero]
   have hs := hasSum_integral_of_summable_integral_norm hI
     (summable_of_hasFiniteSupport hn)
   have hpoint (y : ℝ) : (∑' r : ℕ, F r y) = highPassKernel lam hlam (x - y) * f y :=

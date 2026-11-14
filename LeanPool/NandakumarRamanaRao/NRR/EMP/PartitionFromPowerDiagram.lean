@@ -6,10 +6,11 @@ Authors: Arseniy Akopyan
 module
 
 
-public import Mathlib.Tactic
 public import LeanPool.NandakumarRamanaRao.NRR.Partition.ConvexPartition
-public import LeanPool.NandakumarRamanaRao.NRR.PowerDiagram.BodyCellPartition
 public import LeanPool.NandakumarRamanaRao.NRR.EMP.PowerPartitionPieces
+public import LeanPool.NandakumarRamanaRao.NRR.PowerDiagram.BodyCellPartition
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # `NRR.EMP.PartitionFromPowerDiagram` — the canonical equal‑area power partition

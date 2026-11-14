@@ -12,9 +12,16 @@ public import LeanPool.Vlasov.Base.Geometry
 public import LeanPool.Vlasov.Basic
 public import LeanPool.Vlasov.ForMathlib
 public import LeanPool.Vlasov.ForMathlib.PicardLindelof
+public import LeanPool.Vlasov.ForMathlib.VariationalEquation
 public import LeanPool.Vlasov.OT
+public import LeanPool.Vlasov.OT.CharacteristicConstruction
 public import LeanPool.Vlasov.OT.CharacteristicFlow
+public import LeanPool.Vlasov.OT.Continuation
 public import LeanPool.Vlasov.OT.Coupling
+public import LeanPool.Vlasov.OT.FlowDifferentiability
+public import LeanPool.Vlasov.OT.FrozenField
+public import LeanPool.Vlasov.OT.LocalWellPosedness
+public import LeanPool.Vlasov.OT.TestApproximation
 public import LeanPool.Vlasov.OT.Wasserstein
 public import LeanPool.Vlasov.OT.WeakToLagrangian
 public import LeanPool.Vlasov.OT.WellPosedness

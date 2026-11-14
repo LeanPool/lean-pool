@@ -7,6 +7,11 @@ module
 
 
 public import LeanPool.NandakumarRamanaRao.NRR.Multivalued.Operations
+public import LeanPool.NandakumarRamanaRao.NRR.AreaPerimeter
+public import LeanPool.NandakumarRamanaRao.NRR.BodySpace.PositiveArea
+import LeanPool.NandakumarRamanaRao.NRR.BodySpace.PerimeterContinuity
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # `NRR.Multivalued.PerimeterObservable` — normalized perimeter as a nice multivalued function

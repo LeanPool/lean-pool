@@ -6,10 +6,12 @@ Authors: Arseniy Akopyan
 module
 
 
-public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.RPnTopClassAlphaPower
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.RPnCohomologyRingBridge
-public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.ModTwoDegreeComparison
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.ConstructRPAlpha
+public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.SphereTopHomology
+public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.ModTwoDegreeComparison
+import Mathlib.Tactic.Positivity.Finset
+public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.RPnTopClassAlphaPower
 
 /-!
 # Conditional odd-map cohomological comparison

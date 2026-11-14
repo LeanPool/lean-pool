@@ -8,7 +8,6 @@ module
 public import LeanPool.Incompleteness.Arithmetization.Basic.Ind
 public import LeanPool.Incompleteness.Arithmetization.Basic.PeanoMinus
 import LeanPool.Incompleteness.Arithmetization.Definability.Init
-import Mathlib.Algebra.Order.Sub.Basic
 import Mathlib.Data.Nat.Cast.Order.Basic
 
 /-! # IOpen -/

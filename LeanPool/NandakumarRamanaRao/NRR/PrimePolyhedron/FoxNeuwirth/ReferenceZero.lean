@@ -6,8 +6,12 @@ Authors: Arseniy Akopyan
 module
 
 
-public import Mathlib.GroupTheory.SpecificGroups.Alternating
 public import LeanPool.NandakumarRamanaRao.NRR.PrimePolyhedron.FoxNeuwirth.TopCellModel
+import Mathlib.Algebra.Order.Ring.Star
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Basify
+import Mathlib.Tactic.ENatToNat
+import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # The reference zero orbit in the Fox--Neuwirth top-cell model

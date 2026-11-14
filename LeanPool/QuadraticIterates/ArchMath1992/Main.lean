@@ -16,8 +16,8 @@ import LeanPool.QuadraticIterates.Mathlib.NumberTheory.Moebius
 import Mathlib.Algebra.Order.BigOperators.Ring.Finset
 import Mathlib.Algebra.Order.Field.Power
 import Mathlib.Algebra.Order.Ring.Star
-import Mathlib.Data.Int.ConditionallyCompleteOrder
-import Mathlib.Data.Rat.Star
+import Mathlib.Order.Int.ConditionallyCompleteOrder
+import Mathlib.Algebra.Order.Star.Rat
 import Mathlib.LinearAlgebra.Dimension.OrzechProperty
 import Mathlib.RingTheory.Radical.NatInt
 

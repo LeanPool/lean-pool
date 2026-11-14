@@ -96,9 +96,9 @@ private lemma uhp_norm_one_re_zero_eq_i (p : ℍ) (hn : ‖(p : ℂ)‖ = 1) (hr
   have h_nsq : Complex.normSq (p : ℂ) = 1 := by rw [Complex.normSq_eq_norm_sq, hn, one_pow]
   rw [Complex.normSq_apply, hr] at h_nsq
   have h_im : (p : ℂ).im = 1 := by
-    have h_prod : ((p : ℂ).im - 1) * ((p : ℂ).im + 1) = 0 := by nlinarith
+    have h_prod : ((p : ℂ).im - 1) * ((p : ℂ).im + 1) = 0 := by nlinarith only [h_nsq]
     rcases mul_eq_zero.mp h_prod with h | h
-    · linarith
+    · linarith only [h]
     · exact absurd h (ne_of_gt (add_pos p.2 one_pos))
   exact Complex.ext (hr.trans Complex.I_re.symm) (h_im.trans Complex.I_im.symm)
 
@@ -113,7 +113,7 @@ private lemma case_right_vertical_via_tInv (q : NonEllOrbit) (p0 : ℍ)
     s₀_complete f hf p1 (vAdd_neg_one_mem_fd_of_right_vert p0 hp0_fd h_half) hp1_ord
   have hp1_re : (↑p1 : ℂ).re = -1/2 := by
     change (↑((-1 : ℝ) +ᵥ p0 : ℍ) : ℂ).re = -1/2
-    rw [vAdd_neg_one_coe, sub_re, one_re]; linarith
+    rw [vAdd_neg_one_coe, sub_re, one_re]; linarith only [h_half]
   have hp1_norm : ‖(↑p1 : ℂ)‖ > 1 := by
     change ‖(↑((-1 : ℝ) +ᵥ p0 : ℍ) : ℂ)‖ > 1
     rw [vAdd_neg_one_norm_eq_of_re_half p0 h_half]; exact h_gt

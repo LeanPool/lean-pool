@@ -179,11 +179,9 @@ instance instCommRing : CommRing Computableℝ := by
            mul_comm := ?_, natCast_succ := ?_, sub_eq_add_neg := ?_ }
   all_goals
     intros
-    first
-    | rfl
-    | rw [← eq_iff_eq_val]
-      simp
-      try ring_nf!
+    rw [← eq_iff_eq_val]
+    simp
+    try ring_nf!
 
 @[simp]
 theorem val_natpow (x : Computableℝ) (n : ℕ) : (x ^ n).val = x.val ^ n := by

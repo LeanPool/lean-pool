@@ -61,7 +61,7 @@ theorem dyadicFloorScale_bounds (ε : ℝ) (hε : 0 < ε) :
 
 theorem dyadicCeilRadius_pos (ε : ℝ) (hε : 0 < ε) :
     0 < dyadicCeilRadius ε hε :=
-  zpow_pos (by norm_num) _
+  zpow_pos (by norm_num1) _
 
 theorem lt_dyadicCeilRadius (ε : ℝ) (hε : 0 < ε) :
     ε < dyadicCeilRadius ε hε :=
@@ -69,8 +69,8 @@ theorem lt_dyadicCeilRadius (ε : ℝ) (hε : 0 < ε) :
 
 theorem dyadicCeilRadius_le_two_mul (ε : ℝ) (hε : 0 < ε) :
     dyadicCeilRadius ε hε ≤ 2 * ε := by
-  rw [dyadicCeilRadius, zpow_add_one₀ (by norm_num : (2 : ℝ) ≠ 0)]
-  nlinarith [dyadicFloorScale_bounds ε hε |>.1]
+  rw [dyadicCeilRadius, zpow_add_one₀ (by norm_num1 : (2 : ℝ) ≠ 0)]
+  linarith only [hε, dyadicFloorScale_bounds ε hε |>.1]
 
 /-- The rounded radius has exactly the `2^(j-3)` form used by the project's
 smooth dyadic-kernel normalization. -/
@@ -100,7 +100,7 @@ theorem radiusRoundingBoundaryKernel_eq_zero_of_rho_lt_abs
     (lam : ℝ) {ε ρ t : ℝ} (hερ : ε ≤ ρ) (ht : ρ < |t|) :
     radiusRoundingBoundaryKernel lam ε ρ t = 0 := by
   have hεt : ε < |t| := lt_of_le_of_lt hερ ht
-  simp [radiusRoundingBoundaryKernel, sharpQuadraticTailKernel, hεt, ht]
+  simp only [radiusRoundingBoundaryKernel, sharpQuadraticTailKernel, hεt, ↓reduceIte, ht, sub_self]
 
 theorem radiusRoundingBoundaryKernel_norm_le
     (lam : ℝ) {ε ρ t : ℝ} (hε : 0 < ε) (hερ : ε ≤ ρ) :
@@ -115,7 +115,7 @@ theorem radiusRoundingBoundaryKernel_norm_le
       exact one_div_le_one_div_of_le hε hεt.le
   · have htε : |t| ≤ ε := le_of_not_gt hεt
     rw [radiusRoundingBoundaryKernel_eq_zero_of_abs_le lam hερ htε]
-    simpa using one_div_nonneg.mpr hε.le
+    simpa only [norm_zero, one_div, inv_nonneg, ge_iff_le] using one_div_nonneg.mpr hε.le
 
 theorem radiusRoundingBoundaryKernel_support_subset
     (lam : ℝ) {ε ρ : ℝ} (hερ : ε ≤ ρ) :
@@ -162,7 +162,6 @@ theorem radiusRoundingBoundaryOperator_enorm_le_maximal
     (f : ℝ → ℂ) (hf : Measurable f) (x : ℝ) :
     ‖∫ y, radiusRoundingBoundaryKernel lam ε ρ (x - y) * f y‖ₑ ≤
       8 * centeredHardyLittlewoodMaximal (fun y ↦ ‖f y‖ₑ) x := by
-  have hρ : 0 < ρ := hε.trans_le hερ
   calc
     ‖∫ y, radiusRoundingBoundaryKernel lam ε ρ (x - y) * f y‖ₑ ≤
         ∫⁻ y, ‖radiusRoundingBoundaryKernel lam ε ρ (x - y) * f y‖ₑ :=
@@ -173,7 +172,7 @@ theorem radiusRoundingBoundaryOperator_enorm_le_maximal
       apply lintegral_mono
       intro y
       by_cases hy : y ∈ closedBall x (2 * ε)
-      · simp only [indicator_of_mem hy, enorm_mul]
+      · simp only [enorm_mul, indicator_of_mem hy]
         apply mul_le_mul'
         · simpa only [← ofReal_norm] using ENNReal.ofReal_le_ofReal
             (radiusRoundingBoundaryKernel_norm_le lam hε hερ)
@@ -185,13 +184,12 @@ theorem radiusRoundingBoundaryOperator_enorm_le_maximal
           apply hy
           have hs := radiusRoundingBoundaryKernel_support_subset lam hερ hmem
           have hxyρ : |x - y| ≤ ρ := by
-            simpa [mem_closedBall, Real.dist_eq, abs_sub_comm] using hs
-          simpa [mem_closedBall, Real.dist_eq, abs_sub_comm] using hxyρ.trans hρε
-        simp [hk]
+            simpa only [mem_closedBall, dist_zero_right, Real.norm_eq_abs] using hs
+          simpa only [mem_closedBall, Real.dist_eq, abs_sub_comm, ge_iff_le] using hxyρ.trans hρε
+        simp only [hk, zero_mul, enorm_zero, Std.le_refl]
     _ = 4 * centeredAverage (2 * ε) (fun y ↦ ‖f y‖ₑ) x := by
       rw [MeasureTheory.lintegral_const_mul _ hf.enorm]
       unfold centeredAverage
-      have hε0 : ε ≠ 0 := ne_of_gt hε
       rw [show ENNReal.ofReal (1 / ε) =
           4 / ENNReal.ofReal (2 * (2 * ε)) by
         rw [← ENNReal.ofReal_ofNat, ← ENNReal.ofReal_div_of_pos (by positivity)]
@@ -201,7 +199,7 @@ theorem radiusRoundingBoundaryOperator_enorm_le_maximal
       ac_rfl
     _ ≤ 8 * centeredHardyLittlewoodMaximal (fun y ↦ ‖f y‖ₑ) x := by
       have h := centeredAverage_le_two_mul_centeredHardyLittlewoodMaximal
-        (mul_pos (by norm_num : (0 : ℝ) < 2) hε) (fun y ↦ ‖f y‖ₑ) x
+        (mul_pos (by norm_num1 : (0 : ℝ) < 2) hε) (fun y ↦ ‖f y‖ₑ) x
       calc
         4 * centeredAverage (2 * ε) (fun y ↦ ‖f y‖ₑ) x ≤
             4 * (2 * centeredHardyLittlewoodMaximal (fun y ↦ ‖f y‖ₑ) x) :=
@@ -241,12 +239,12 @@ def smoothQuadraticHighPassKernel (lam ρ t : ℝ) : ℂ :=
 
 theorem dyadicHighPass_cutoff_argument (j : ℤ) (t : ℝ) :
     t / (4 * (2 : ℝ) ^ (j - 3)) = (2⁻¹ : ℝ) ^ (j - 1) * t := by
-  rw [zpow_sub₀ (by norm_num : (2 : ℝ) ≠ 0)]
+  rw [zpow_sub₀ (by norm_num1 : (2 : ℝ) ≠ 0)]
   rw [inv_zpow]
   field_simp [zpow_ne_zero]
   have hz : (2 : ℝ) ^ j = (2 : ℝ) ^ (j - 1) * 2 := by
     rw [show j = (j - 1) + 1 by ring,
-      zpow_add₀ (by norm_num : (2 : ℝ) ≠ 0)]
+      zpow_add₀ (by norm_num1 : (2 : ℝ) ≠ 0)]
     norm_num
   rw [hz]
   ring
@@ -381,7 +379,7 @@ theorem smoothQuadraticHighPass_smul
   exact Filter.Eventually.of_forall (fun y ↦ by
     change smoothQuadraticHighPassKernel lam ρ (x - y) * (c * f y) =
       c * (smoothQuadraticHighPassKernel lam ρ (x - y) * f y)
-    ring)
+    ac_rfl)
 
 theorem smoothQuadraticHighPassTestOperator_isSublinear
     (lam : ℝ) {ρ : ℝ} (hρ : 0 < ρ) :
@@ -412,7 +410,7 @@ theorem dyadicQuadraticKernel_norm_le_scale
     calc
       ‖dyadicPsi j t‖ ≤ 2 / |t| := norm_dyadicPsi_le j ht
       _ ≤ 2 / (2 : ℝ) ^ (j - 3) := by
-        exact div_le_div_of_nonneg_left (by norm_num) (zpow_pos (by norm_num) _)
+        exact div_le_div_of_nonneg_left (by norm_num1) (zpow_pos (by norm_num1) _)
           hs.1.le
 
 theorem measurable_dyadicQuadraticKernel (lam : ℝ) (j : ℤ) :
@@ -436,23 +434,23 @@ theorem exists_eventually_zero_dyadicTail_integrands
       simpa only [Real.norm_eq_abs] using hS y (subset_tsupport f hy)
     exact (abs_sub x y).trans (add_le_add le_rfl hb)
   have hp : Tendsto (fun r : ℕ ↦ (2 : ℝ) ^ r) Filter.atTop Filter.atTop :=
-    tendsto_pow_atTop_atTop_of_one_lt (by norm_num)
-  have hc : 0 < (2 : ℝ) ^ (j - 3) := zpow_pos (by norm_num) _
+    tendsto_pow_atTop_atTop_of_one_lt (by norm_num1)
+  have hc : 0 < (2 : ℝ) ^ (j - 3) := zpow_pos (by norm_num1) _
   have hscale : Tendsto
       (fun r : ℕ ↦ (2 : ℝ) ^ (j + (r : ℤ) - 3))
       Filter.atTop Filter.atTop := by
     convert hp.const_mul_atTop hc using 1
     funext r
     rw [show j + (r : ℤ) - 3 = (j - 3) + (r : ℤ) by ring,
-      zpow_add₀ (by norm_num : (2 : ℝ) ≠ 0), zpow_natCast]
+      zpow_add₀ (by norm_num1 : (2 : ℝ) ≠ 0), zpow_natCast]
   obtain ⟨N, hN⟩ := Filter.eventually_atTop.mp (hscale.eventually_gt_atTop M)
   refine ⟨N, ?_⟩
   intro r hr y
   by_cases hy : f y = 0
-  · simp [hy]
+  · simp only [hy, mul_zero]
   · have hz : dyadicPsi (j + (r : ℤ)) (x - y) = 0 :=
       dyadicPsi_eq_zero_of_abs_le ((hM y hy).trans (hN r hr).le)
-    simp [hz]
+    simp only [hz, Complex.ofReal_zero, zero_mul]
 
 /-- Operator-level completion of the kernel telescoping bridge. For a test
 input, compact support makes the sequence of integral summands eventually
@@ -478,7 +476,7 @@ theorem hasSum_dyadicQuadraticConvolutions_add_nat
     by_contra h
     apply hr
     have hz : ∀ y, F r y = 0 := hN r (Nat.le_of_not_gt h)
-    simp [hz]
+    simp only [hz, norm_zero, integral_zero]
   have hs := hasSum_integral_of_summable_integral_norm hI
     (summable_of_hasFiniteSupport hn)
   have hpoint (y : ℝ) : (∑' r : ℕ, F r y) =
@@ -516,7 +514,7 @@ theorem exists_threeShift_localizedTailActions_eq_positivePartialSum
       (2 : ℝ) ^ j ≤
         (2 : ℝ) ^ (j + (n : ℤ) - 1 - (depth : ℤ) + 2) := by
     intro depth hdepth
-    apply (zpow_le_zpow_iff_right₀ (by norm_num : (1 : ℝ) < 2)).2
+    apply (zpow_le_zpow_iff_right₀ (by norm_num1 : (1 : ℝ) < 2)).2
     have hd : depth < n := Finset.mem_range.mp hdepth
     omega
   calc
@@ -668,7 +666,7 @@ theorem finiteRadiusQuadraticHilbertMaxTestOperator_locallyIntegrable
       (finiteRadiusQuadraticHilbertMaxNNNorm lam s f x : ℝ)) := by
     unfold finiteRadiusQuadraticHilbertMaxNNNorm
     induction s using Finset.induction_on with
-    | empty => simp
+    | empty => simp only [Finset.sup_empty, bot_eq_zero', NNReal.coe_zero, measurable_const]
     | @insert ε s hε ih =>
         simp only [Finset.sup_insert, NNReal.coe_max, coe_nnnorm]
         exact (measurable_quadraticHilbertTrunc lam ε.1.1 f.measurable_toFun).norm.max ih
@@ -698,7 +696,7 @@ theorem finiteRadiusQuadraticHilbertMaxTestOperator_locallyIntegrable
               ↑(∑ ε ∈ s, ‖quadraticHilbertTrunc lam ε.1.1 f x‖₊) :=
           NNReal.coe_le_coe.mpr hsup
         rw [NNReal.coe_sum] at hcoe
-        simpa only [coe_nnnorm] using hcoe
+        exact hcoe
       _ ≤ ∑ ε ∈ s, (1 / ε.1.1) * ∫ y, ‖f y‖ := by
         apply Finset.sum_le_sum
         intro ε hεs
@@ -772,10 +770,7 @@ theorem finiteRadiusSmoothHighPassMaxTestOperator_isSublinear
 private theorem coe_nnreal_finset_sup {α : Type*}
     (s : Finset α) (u : α → NNReal) :
     (↑(s.sup u) : ℝ≥0∞) = s.sup fun a ↦ (u a : ℝ≥0∞) := by
-  classical
-  induction s using Finset.induction_on with
-  | empty => simp
-  | @insert a s ha ih => simp [Finset.sup_insert, ih]
+  exact ENNReal.coe_finset_sup
 
 /-- Finite-family form of the complete deterministic comparison. This is
 the direct bridge needed after proving a sparse theorem for the genuine
@@ -798,7 +793,7 @@ theorem finiteRadiusSharpMax_enorm_le_smoothHighPassMax_add_maximal
   calc
     (↑‖quadraticHilbertTrunc lam ε.1.1 f x‖₊ : ℝ≥0∞) =
         ‖quadraticHilbertTrunc lam ε.1.1 f x‖ₑ := by
-      simp [enorm_eq_nnnorm]
+      simp only [enorm_eq_nnnorm]
     _ ≤ ‖smoothQuadraticHighPass lam
           (dyadicCeilRadius ε.1.1 ε.1.2) f x‖ₑ +
           16 * centeredHardyLittlewoodMaximal (fun y ↦ ‖f y‖ₑ) x :=

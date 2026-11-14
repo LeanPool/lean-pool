@@ -74,13 +74,13 @@ theorem frame_wronskian_constant
   let q : ℝ → ℝ := fun r => ⟪G r v, F r w⟫_ℝ - ⟪F r v, G r w⟫_ℝ
   have hd (r : ℝ) (hr : r ∈ Icc 0 T) :
       HasDerivWithinAt q 0 (Icc 0 T) r := by
-    have hfv := (ContinuousLinearMap.apply (E := E) ℝ E v).hasFDerivAt.comp_hasDerivWithinAt r
+    have hfv := (ContinuousLinearMap.apply (E' := E) ℝ E v).hasFDerivAt.comp_hasDerivWithinAt r
       (hF r hr)
-    have hfw := (ContinuousLinearMap.apply (E := E) ℝ E w).hasFDerivAt.comp_hasDerivWithinAt r
+    have hfw := (ContinuousLinearMap.apply (E' := E) ℝ E w).hasFDerivAt.comp_hasDerivWithinAt r
       (hF r hr)
-    have hgv := (ContinuousLinearMap.apply (E := E) ℝ E v).hasFDerivAt.comp_hasDerivWithinAt r
+    have hgv := (ContinuousLinearMap.apply (E' := E) ℝ E v).hasFDerivAt.comp_hasDerivWithinAt r
       (hG r hr)
-    have hgw := (ContinuousLinearMap.apply (E := E) ℝ E w).hasFDerivAt.comp_hasDerivWithinAt r
+    have hgw := (ContinuousLinearMap.apply (E' := E) ℝ E w).hasFDerivAt.comp_hasDerivWithinAt r
       (hG r hr)
     have hh := (hgv.inner ℝ hfw).sub (hfv.inner ℝ hgw)
     convert! hh using 1

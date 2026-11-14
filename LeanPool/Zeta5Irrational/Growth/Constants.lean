@@ -7,8 +7,8 @@ Authors: Moritz Firsching
 module
 
 public import LeanPool.Zeta5Irrational.Growth.TablePrime
-import Mathlib.Data.Rat.Star
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Rat
+import Mathlib.Algebra.Order.Star.Int
 public import LeanPool.Zeta5Irrational.Growth.OuterPrime
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum.Ineq

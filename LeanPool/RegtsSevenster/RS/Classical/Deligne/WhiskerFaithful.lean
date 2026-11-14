@@ -107,8 +107,10 @@ private theorem whiskerPowAlg_ne_zero
   | zero => exact hf
   | succ k ih =>
     intro hz
-    exact ih (eq_zero_of_whiskerRight_eq_zero hs hX
-      (show (whiskerPowAlg X m k f) ▷ X = 0 from hz))
+    apply ih
+    apply End.ext
+    exact eq_zero_of_whiskerRight_eq_zero hs hX
+      (show (whiskerPowAlg X m k f).asHom ▷ X = 0 from congrArg End.asHom hz)
 
 theorem permAlg_symCast_ne_zero
     [Category.{v} A] [Abelian A] [MonoidalCategory A] [SymmetricCategory A]

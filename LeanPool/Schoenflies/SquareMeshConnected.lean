@@ -141,11 +141,15 @@ theorem isTwoConnected_of_quad {e₁ e₂ e₃ e₄ : β} {a b c d : α}
     (hV : ∀ v ∈ V(G), v = a ∨ v = b ∨ v = c ∨ v = d)
     (hab : a ≠ b) (hbc : b ≠ c) (hcd : c ≠ d) (hda : d ≠ a) (hac : a ≠ c) (hbd : b ≠ d) :
     G.IsTwoConnected := by
+  have rotateCoverage {p q r s : Prop} (h : p ∨ q ∨ r ∨ s) : q ∨ r ∨ s ∨ p := by
+    rcases h with h | h | h | h
+    exacts [Or.inr (Or.inr (Or.inr h)), Or.inl h, Or.inr (Or.inl h),
+      Or.inr (Or.inr (Or.inl h))]
   -- Deleting a vertex keeps every link neither of whose ends was the one deleted.
   have dl : ∀ {f : β} {u v x : α}, G.IsLink f u v → u ≠ x → v ≠ x →
       (G.deleteVerts {x}).IsLink f u v := by
     intro f u v x h hu hv
-    exact (deleteVerts_isLink _ _).2 ⟨h, by simpa using hu, by simpa using hv⟩
+    exact (deleteVerts_isLink _ _).2 ⟨h, by exact hu, by exact hv⟩
   -- After a deletion the three survivors form a path `p — q — r`; `q` is the hub.
   have main : ∀ (x p q r : α) (f g : β), G.IsLink f p q → G.IsLink g q r →
       p ≠ x → q ≠ x → r ≠ x → (∀ v ∈ V(G), v = x ∨ v = p ∨ v = q ∨ v = r) →
@@ -169,16 +173,16 @@ theorem isTwoConnected_of_quad {e₁ e₂ e₃ e₄ : β} {a b c d : α}
   · intro x _
     rcases em (x = a) with rfl | hxa
     · exact main x b c d e₂ e₃ h₂ h₃ (Ne.symm hab) (Ne.symm hac) hda
-        fun v hv ↦ by rcases hV v hv with h | h | h | h <;> tauto
+        hV
     rcases em (x = b) with rfl | hxb
     · exact main x c d a e₃ e₄ h₃ h₄ (Ne.symm hbc) (Ne.symm hbd) hab
-        fun v hv ↦ by rcases hV v hv with h | h | h | h <;> tauto
+        fun v hv ↦ rotateCoverage (hV v hv)
     rcases em (x = c) with rfl | hxc
     · exact main x d a b e₄ e₁ h₄ h₁ (Ne.symm hcd) hac hbc
-        fun v hv ↦ by rcases hV v hv with h | h | h | h <;> tauto
+        fun v hv ↦ rotateCoverage (rotateCoverage (hV v hv))
     rcases em (x = d) with rfl | hxd
     · exact main x a b c e₁ e₂ h₁ h₂ (Ne.symm hda) hbd hcd
-        fun v hv ↦ by rcases hV v hv with h | h | h | h <;> tauto
+        fun v hv ↦ rotateCoverage (rotateCoverage (rotateCoverage (hV v hv)))
     · -- Deleting a vertex the graph does not have changes nothing.
       refine Connected.deleteVerts_singleton_of_notMem ?_ fun hx ↦ ?_
       · refine Connected.of_hub h₁.left_mem fun v hv ↦ ?_
@@ -510,8 +514,14 @@ theorem cellGraph_isTwoConnected {xc yc : ℕ → ℝ} {i j : ℕ} (hx : xc i �
     (gridPt_ne_of_snd (Ne.symm hy)) (gridPt_ne_of_fst hx) (gridPt_ne_of_fst (Ne.symm hx))
   rintro v ⟨P, hP, hv⟩
   simp only [cellEdges, List.mem_cons, List.not_mem_nil, or_false] at hP
-  rcases hP with rfl | rfl | rfl | rfl <;> rcases hv with rfl | rfl <;>
-    simp only [gridHEdge, gridVEdge] <;> tauto
+  rcases hP with rfl | rfl | rfl | rfl <;> rcases hv with rfl | rfl
+  all_goals
+    first
+    | exact Or.inl rfl
+    | exact Or.inr (Or.inl rfl)
+    | exact Or.inr (Or.inr (Or.inl rfl))
+    | exact Or.inr (Or.inr (Or.inr rfl))
+
 
 /-! ### The strip, then the grid
 

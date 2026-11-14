@@ -6,6 +6,7 @@ Authors: OpenAI
 module
 
 public import LeanPool.NavierStokesAndEuler.NavierStokes.NominalConeAssembly
+import Mathlib.Analysis.SpecialFunctions.Sqrt
 public import LeanPool.NavierStokesAndEuler.NavierStokes.AssembledSlowBase
 public import LeanPool.NavierStokesAndEuler.NavierStokes.ParametricRadialExtension
 public import LeanPool.NavierStokesAndEuler.NavierStokes.TransportPrimitive

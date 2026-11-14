@@ -168,10 +168,8 @@ theorem
       rw [hstar_eval, show sigma - xi = (sigma - c) - (xi - c) by ring,
         star_sub, hstar_sigma, hstar_xi]
       dsimp only [factor]
-      field_simp [hsigma0, hxi0, hsigma_ne', hdiff]
-      all_goals
-        try field_simp [hcenterDiff]
-        ring
+      field_simp [hsigma0, hxi0, hsigma_ne', hdiff, hcenterDiff]
+      ring
     · exact hR.ne'
   have hqcomp := crouzeixPolynomialScalarCompanion_ball_center_eq_eval_center
     c hR q (Metric.mem_ball_self hR)

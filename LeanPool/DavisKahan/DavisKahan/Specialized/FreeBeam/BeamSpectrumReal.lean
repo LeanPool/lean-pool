@@ -8,6 +8,7 @@ module
 
 public import LeanPool.DavisKahan.DavisKahan.Specialized.FreeBeam.BeamClassicalReal
 public import LeanPool.DavisKahan.ForTauCeti.Analysis.InnerProductSpace.CompactSelfAdjointClassification
+public import Mathlib.Analysis.Normed.Operator.Compact.FredholmAlternative
 public import Mathlib.Tactic
 
 /-!
@@ -173,7 +174,8 @@ theorem exists_eigenvector_of_mem_realSpectrum_beamOperator {lam : ℝ}
     rw [hU]
     change R * ((1 : BeamL2 →L[ℝ] BeamL2) - c • R) =
       ((1 : BeamL2 →L[ℝ] BeamL2) - c • R) * R
-    rw [mul_sub, sub_mul, mul_one, one_mul, mul_smul_comm, smul_mul_assoc]
+    ext1 x
+    simp only [mul_apply_eq_comp, sub_apply, one_apply_eq_self, smul_apply, map_sub, map_smul]
   have hSU : S * ↑U = 1 := U.inv_mul
   have hUS : (↑U : BeamL2 →L[ℝ] BeamL2) * S = 1 := U.mul_inv
   refine hlam ⟨R * S, ?_, ?_⟩

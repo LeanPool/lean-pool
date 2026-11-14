@@ -4,13 +4,18 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Boris Alexeev
 -/
 module
+public import Mathlib.RingTheory.PicardGroup
+public import Mathlib.Tactic.NormNum.Parity
+public import Mathlib.Analysis.Convex.Contractible
+public import Mathlib.Algebra.Module.ZLattice.Basic
+-- Reuse Mathlib's existing congruence helper rather than realizing another copy.
+import all Mathlib.Algebra.Module.ZLattice.Summable -- shake: keep
 
-public import LeanPool.HopfProblem.Prelude
+public import LeanPool.HopfProblem.InternalPrelude
 public import LeanPool.HopfProblem.Toric.ToricSpace1
-import all LeanPool.HopfProblem.Foundations.Core1
+import LeanPool.HopfProblem.Foundations.Core1
 import all LeanPool.HopfProblem.Lattice.Core1
 import all LeanPool.HopfProblem.Foundations.Core2
-import all LeanPool.HopfProblem.Toric.ToricSpace1
 
 /-!
 # Hopf problem: period family · period point
@@ -21,10 +26,8 @@ Supporting definitions and proofs for this stage of the six-sphere construction.
 
 open Set Function Filter Manifold Topology
 
-open scoped BigOperators CategoryTheory Complex.UnitDisc ComplexConjugate ContDiff ContinuousMap
-  Convolution ENNReal EuclideanSpace Fin.NatCast InnerProductSpace Interval Matrix MatrixGroups
-  Modular NNReal Pointwise RealInnerProductSpace TensorProduct UniformConvergence Uniformity
-  UpperHalfPlane
+open scoped BigOperators ComplexConjugate ContDiff ContinuousMap ENNReal EuclideanSpace Fin.NatCast
+  InnerProductSpace Interval Matrix NNReal Pointwise RealInnerProductSpace
 
 universe u v
 

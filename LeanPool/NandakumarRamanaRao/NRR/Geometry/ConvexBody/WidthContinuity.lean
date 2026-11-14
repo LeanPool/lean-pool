@@ -8,6 +8,9 @@ module
 
 public import LeanPool.NandakumarRamanaRao.NRR.Geometry.ConvexBody.Width
 public import LeanPool.NandakumarRamanaRao.NRR.Geometry.ConvexBody.SupportFunctionContinuity
+import Mathlib.Tactic.Measurability.Init
+import Mathlib.Tactic.Polynomial.Basic
+import Mathlib.Tactic.ReduceModChar
 
 /-!
 # `NRR.Geometry.ConvexBody` — continuity of the width function

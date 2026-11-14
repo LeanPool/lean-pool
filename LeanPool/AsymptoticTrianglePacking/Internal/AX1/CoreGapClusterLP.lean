@@ -35,7 +35,6 @@ no slack anywhere.
 
 Must be sorry-free and axiom-clean `[propext, Classical.choice, Quot.sound]`.
 -/
-public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.CoreGapClusterCapacity
 public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.CoreGapBlockCover
 
 
@@ -170,7 +169,7 @@ theorem two_cover_le_sum_pairArea (G : SimpleGraph V) [DecidableRel G.Adj]
   rw [show ((G.edgeDensity X W : ℝ)) = ((G.edgeDensity W X : ℝ)) by
     rw [SimpleGraph.edgeDensity_comm]] at h6
   rw [hs6] at hsumsub
-  linarith
+  linarith only [hsumsub, h1, h2, h3, h4, h5, h6]
 
 /-- **The conservation law of the fine block-allocation residual.**  A family of block sub-triples
 whose three clusters are distinct parts of `P` and whose vertex-pair rectangles are pairwise

@@ -54,7 +54,7 @@ private def apexGraph (G : SimpleGraph V) : SimpleGraph (Option V) where
     | some _, none => True
     | none, none => False
   symm.symm := by
-    rintro (_ | a) (_ | b) h <;> first | exact h | trivial | exact G.adj_symm h
+    rintro (_ | a) (_ | b) h <;> first | exact h | exact G.adj_symm h
   loopless := by
     refine ⟨fun x hx => ?_⟩
     cases x with

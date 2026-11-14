@@ -11,9 +11,9 @@ public import LeanPool.Zeta5Irrational.Arith.InnerAlloc
 import LeanPool.Zeta5Irrational.Arith.SmallPrimeF
 import LeanPool.Zeta5Irrational.Arith.SmallPrimeTau
 public import LeanPool.Zeta5Irrational.Legendre
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Data.Nat.Prime.Factorial
-import Mathlib.Data.Rat.Star
+import Mathlib.Algebra.Order.Star.Rat
 import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Polynomial.Basic
 import Mathlib.Tactic.ReduceModChar

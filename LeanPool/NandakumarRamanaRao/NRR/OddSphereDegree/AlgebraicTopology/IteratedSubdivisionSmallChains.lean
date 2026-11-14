@@ -6,8 +6,11 @@ Authors: Arseniy Akopyan
 module
 
 
+public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.BarycentricSubdivisionIter
+public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.SmallChains
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.IteratedSubdivisionSmallSimplex
-public import Mathlib.Tactic
+import Mathlib.Data.EReal.Inv
+import Mathlib.Tactic.Measurability.Init
 
 /-! # Iterated Subdivision Small Chains -/
 

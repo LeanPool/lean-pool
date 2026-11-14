@@ -4,12 +4,16 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Boris Alexeev
 -/
 module
+public import Mathlib.Tactic.NormNum.Parity
+public import Mathlib.Analysis.CStarAlgebra.Classes
+public import Mathlib.Topology.Covering.Quotient
+public import Mathlib.Algebra.Order.Archimedean.Real.Hom
 
-public import LeanPool.HopfProblem.Prelude
+public import LeanPool.HopfProblem.InternalPrelude
 public import LeanPool.HopfProblem.Recognition.Smale1
-import all LeanPool.HopfProblem.Foundations.Core1
+import all Mathlib.Geometry.Manifold.LocalDiffeomorph
+import LeanPool.HopfProblem.Foundations.Core1
 import all LeanPool.HopfProblem.Lattice.Core1
-import all LeanPool.HopfProblem.Recognition.Smale1
 
 /-!
 # Hopf problem: foundations · core 2
@@ -20,10 +24,8 @@ Supporting definitions and proofs for this stage of the six-sphere construction.
 
 open Set Function Filter Manifold Topology
 
-open scoped BigOperators CategoryTheory Complex.UnitDisc ComplexConjugate ContDiff ContinuousMap
-  Convolution ENNReal EuclideanSpace Fin.NatCast InnerProductSpace Interval Matrix MatrixGroups
-  Modular NNReal Pointwise RealInnerProductSpace TensorProduct UniformConvergence Uniformity
-  UpperHalfPlane
+open scoped BigOperators ComplexConjugate ContDiff ContinuousMap ENNReal EuclideanSpace Fin.NatCast
+  InnerProductSpace Interval Matrix NNReal Pointwise RealInnerProductSpace
 
 universe u v
 

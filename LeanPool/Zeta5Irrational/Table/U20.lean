@@ -6,6 +6,8 @@ Authors: Moritz Firsching
 
 module
 
+import LeanPool.Zeta5Irrational.Table.RationalSeries
+
 public import LeanPool.Zeta5Irrational.Table.UpperCertificate
 
 /-! # Certified arcsine potential bounds (U20) -/
@@ -29,14 +31,17 @@ lemma U_244_1 :
             (4020910430343609 / 2500000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 11
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (4020910430343609 / 2500000000000000 : ℚ))
+             (U := (23760881016249433261 / 50000000000000000000 : ℚ))
+             11 (by decide +kernel)) :
           Real.log (4020910430343609 / 2500000000000000 : ℝ) ≤
             (23760881016249433261 / 50000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (502593700400121 / 2500000000000000 : ℝ)) (q :=
-      (4020910430343609 / 20000000000000000 : ℝ)) (by norm_num [aρ_1, bρ_1]) (by norm_num [bρ_1])
+      (4020910430343609 / 20000000000000000 : ℝ)) (aρ_lt_bρ 1 (by decide)) (by norm_num [bρ_1])
       (by norm_num) (by norm_num [aρ_1, bρ_1]) (by norm_num [aρ_1, bρ_1]) hlg
 
 lemma U_244_2 :
@@ -52,14 +57,17 @@ lemma U_244_2 :
             (397246495170123 / 250000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 11
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (397246495170123 / 250000000000000 : ℚ))
+             (U := (289435040490431565361 / 625000000000000000000 : ℚ))
+             11 (by decide +kernel)) :
           Real.log (397246495170123 / 250000000000000 : ℝ) ≤
             (289435040490431565361 / 625000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (397139667093621 / 2000000000000000 : ℝ)) (q :=
-      (397246495170123 / 2000000000000000 : ℝ)) (by norm_num [aρ_2, bρ_2]) (by norm_num [bρ_2])
+      (397246495170123 / 2000000000000000 : ℝ)) (aρ_lt_bρ 2 (by decide)) (by norm_num [bρ_2])
       (by norm_num) (by norm_num [aρ_2, bρ_2]) (by norm_num [aρ_2, bρ_2]) hlg
 
 lemma U_244_3 :
@@ -75,14 +83,17 @@ lemma U_244_3 :
             (968730644853851 / 625000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 11
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (968730644853851 / 625000000000000 : ℚ))
+             (U := (2191174756129300382723 / 5000000000000000000000 : ℚ))
+             11 (by decide +kernel)) :
           Real.log (968730644853851 / 625000000000000 : ℝ) ≤
             (2191174756129300382723 / 5000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (1935552069532279 / 10000000000000000 : ℝ)) (q :=
-      (968730644853851 / 5000000000000000 : ℝ)) (by norm_num [aρ_3, bρ_3]) (by norm_num [bρ_3])
+      (968730644853851 / 5000000000000000 : ℝ)) (aρ_lt_bρ 3 (by decide)) (by norm_num [bρ_3])
       (by norm_num) (by norm_num [aρ_3, bρ_3]) (by norm_num [aρ_3, bρ_3]) hlg
 
 lemma U_244_4 :
@@ -98,14 +109,17 @@ lemma U_244_4 :
             (1855406125778153 / 1250000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 10
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (1855406125778153 / 1250000000000000 : ℚ))
+             (U := (1974800282558609598139 / 5000000000000000000000 : ℚ))
+             10 (by decide +kernel)) :
           Real.log (1855406125778153 / 1250000000000000 : ℝ) ≤
             (1974800282558609598139 / 5000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (1849735922738181 / 10000000000000000 : ℝ)) (q :=
-      (1855406125778153 / 10000000000000000 : ℝ)) (by norm_num [aρ_4, bρ_4]) (by norm_num [bρ_4])
+      (1855406125778153 / 10000000000000000 : ℝ)) (aρ_lt_bρ 4 (by decide)) (by norm_num [bρ_4])
       (by norm_num) (by norm_num [aρ_4, bρ_4]) (by norm_num [aρ_4, bρ_4]) hlg
 
 lemma U_244_5 :
@@ -121,14 +135,17 @@ lemma U_244_5 :
             (863735860072067 / 625000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 9
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (863735860072067 / 625000000000000 : ℚ))
+             (U := (161757677408674035253 / 500000000000000000000 : ℚ))
+             9 (by decide +kernel)) :
           Real.log (863735860072067 / 625000000000000 : ℝ) ≤
             (161757677408674035253 / 500000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (1712057030805143 / 10000000000000000 : ℝ)) (q :=
-      (863735860072067 / 5000000000000000 : ℝ)) (by norm_num [aρ_5, bρ_5]) (by norm_num [bρ_5])
+      (863735860072067 / 5000000000000000 : ℝ)) (aρ_lt_bρ 5 (by decide)) (by norm_num [bρ_5])
       (by norm_num) (by norm_num [aρ_5, bρ_5]) (by norm_num [aρ_5, bρ_5]) hlg
 
 lemma U_244_6 :
@@ -144,14 +161,17 @@ lemma U_244_6 :
             (1535689301249357 / 1250000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 7
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (1535689301249357 / 1250000000000000 : ℚ))
+             (U := (514589462794752020657 / 2500000000000000000000 : ℚ))
+             7 (by decide +kernel)) :
           Real.log (1535689301249357 / 1250000000000000 : ℝ) ≤
             (514589462794752020657 / 2500000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (1495732568155589 / 10000000000000000 : ℝ)) (q :=
-      (1535689301249357 / 10000000000000000 : ℝ)) (by norm_num [aρ_6, bρ_6]) (by norm_num [bρ_6])
+      (1535689301249357 / 10000000000000000 : ℝ)) (aρ_lt_bρ 6 (by decide)) (by norm_num [bρ_6])
       (by norm_num) (by norm_num [aρ_6, bρ_6]) (by norm_num [aρ_6, bρ_6]) hlg
 
 lemma U_244_7 :
@@ -167,14 +187,17 @@ lemma U_244_7 :
             (124808527874231 / 62500000000000 : ℝ) / 2 ^ 4
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 15
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (124808527874231 / 62500000000000 : ℚ))
+             (U := (6916142291839933777921 / 10000000000000000000000 : ℚ))
+             15 (by decide +kernel)) :
           Real.log (124808527874231 / 62500000000000 : ℝ) ≤
             (6916142291839933777921 / 10000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (228837180780299 / 2000000000000000 : ℝ)) (q :=
-      (124808527874231 / 1000000000000000 : ℝ)) (by norm_num [aρ_7, bρ_7]) (by norm_num [bρ_7])
+      (124808527874231 / 1000000000000000 : ℝ)) (aρ_lt_bρ 7 (by decide)) (by norm_num [bρ_7])
       (by norm_num) (by norm_num [aρ_7, bρ_7]) (by norm_num [aρ_7, bρ_7]) hlg
 
 lemma U_244_8 :
@@ -190,14 +213,17 @@ lemma U_244_8 :
             (1432606320755581 / 1250000000000000 : ℝ) / 2 ^ 4
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 6
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (1432606320755581 / 1250000000000000 : ℚ))
+             (U := (1363518359610926768049 / 10000000000000000000000 : ℚ))
+             6 (by decide +kernel)) :
           Real.log (1432606320755581 / 1250000000000000 : ℝ) ≤
             (1363518359610926768049 / 10000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (45520414814057 / 1250000000000000 : ℝ)) (q :=
-      (1432606320755581 / 20000000000000000 : ℝ)) (by norm_num [aρ_8, bρ_8]) (by norm_num [bρ_8])
+      (1432606320755581 / 20000000000000000 : ℝ)) (aρ_lt_bρ 8 (by decide)) (by norm_num [bρ_8])
       (by norm_num) (by norm_num [aρ_8, bρ_8]) (by norm_num [aρ_8, bρ_8]) hlg
 
 lemma U_244_9 :
@@ -336,14 +362,17 @@ lemma U_245_1 :
             (8084472704020983 / 5000000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 11
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (8084472704020983 / 5000000000000000 : ℚ))
+             (U := (4805073594230916558317 / 10000000000000000000000 : ℚ))
+             11 (by decide +kernel)) :
           Real.log (8084472704020983 / 5000000000000000 : ℝ) ≤
             (4805073594230916558317 / 10000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (2021038186677679 / 10000000000000000 : ℝ)) (q :=
-      (8084472704020983 / 40000000000000000 : ℝ)) (by norm_num [aρ_1, bρ_1]) (by norm_num [bρ_1])
+      (8084472704020983 / 40000000000000000 : ℝ)) (aρ_lt_bρ 1 (by decide)) (by norm_num [bρ_1])
       (by norm_num) (by norm_num [aρ_1, bρ_1]) (by norm_num [aρ_1, bρ_1]) hlg
 
 lemma U_245_2 :
@@ -359,14 +388,17 @@ lemma U_245_2 :
             (7987591461091323 / 5000000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 11
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (7987591461091323 / 5000000000000000 : ℚ))
+             (U := (73195524645603310729 / 156250000000000000000 : ℚ))
+             11 (by decide +kernel)) :
           Real.log (7987591461091323 / 5000000000000000 : ℝ) ≤
             (73195524645603310729 / 156250000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (1996366577722849 / 10000000000000000 : ℝ)) (q :=
-      (7987591461091323 / 40000000000000000 : ℝ)) (by norm_num [aρ_2, bρ_2]) (by norm_num [bρ_2])
+      (7987591461091323 / 40000000000000000 : ℝ)) (aρ_lt_bρ 2 (by decide)) (by norm_num [bρ_2])
       (by norm_num) (by norm_num [aρ_2, bρ_2]) (by norm_num [aρ_2, bρ_2]) hlg
 
 lemma U_245_3 :
@@ -382,14 +414,17 @@ lemma U_245_3 :
             (1558507428879981 / 1000000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 11
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (1558507428879981 / 1000000000000000 : ℚ))
+             (U := (4437285868997978653973 / 10000000000000000000000 : ℚ))
+             11 (by decide +kernel)) :
           Real.log (1558507428879981 / 1000000000000000 : ℝ) ≤
             (4437285868997978653973 / 10000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (97311776286357 / 500000000000000 : ℝ)) (q :=
-      (1558507428879981 / 8000000000000000 : ℝ)) (by norm_num [aρ_3, bρ_3]) (by norm_num [bρ_3])
+      (1558507428879981 / 8000000000000000 : ℝ)) (aρ_lt_bρ 3 (by decide)) (by norm_num [bρ_3])
       (by norm_num) (by norm_num [aρ_3, bρ_3]) (by norm_num [aρ_3, bρ_3]) hlg
 
 lemma U_245_4 :
@@ -405,14 +440,17 @@ lemma U_245_4 :
             (1492880927632989 / 1000000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 10
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (1492880927632989 / 1000000000000000 : ℚ))
+             (U := (200353880807160927483 / 500000000000000000000 : ℚ))
+             10 (by decide +kernel)) :
           Real.log (1492880927632989 / 1000000000000000 : ℝ) ≤
             (200353880807160927483 / 500000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (93023172683733 / 500000000000000 : ℝ)) (q :=
-      (1492880927632989 / 8000000000000000 : ℝ)) (by norm_num [aρ_4, bρ_4]) (by norm_num [bρ_4])
+      (1492880927632989 / 8000000000000000 : ℝ)) (aρ_lt_bρ 4 (by decide)) (by norm_num [bρ_4])
       (by norm_num) (by norm_num [aρ_4, bρ_4]) (by norm_num [aρ_4, bρ_4]) hlg
 
 lemma U_245_5 :
@@ -428,14 +466,17 @@ lemma U_245_5 :
             (6952918634228077 / 5000000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 9
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (6952918634228077 / 5000000000000000 : ℚ))
+             (U := (1648618031801642413523 / 5000000000000000000000 : ℚ))
+             9 (by decide +kernel)) :
           Real.log (6952918634228077 / 5000000000000000 : ℝ) ≤
             (1648618031801642413523 / 5000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (861455185520613 / 5000000000000000 : ℝ)) (q :=
-      (6952918634228077 / 40000000000000000 : ℝ)) (by norm_num [aρ_5, bρ_5]) (by norm_num [bρ_5])
+      (6952918634228077 / 40000000000000000 : ℝ)) (aρ_lt_bρ 5 (by decide)) (by norm_num [bρ_5])
       (by norm_num) (by norm_num [aρ_5, bρ_5]) (by norm_num [aρ_5, bρ_5]) hlg
 
 lemma U_245_6 :
@@ -451,14 +492,17 @@ lemma U_245_6 :
             (6186538422931207 / 5000000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 7
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (6186538422931207 / 5000000000000000 : ℚ))
+             (U := (2129377969889268471301 / 10000000000000000000000 : ℚ))
+             7 (by decide +kernel)) :
           Real.log (6186538422931207 / 5000000000000000 : ℝ) ≤
             (2129377969889268471301 / 10000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (1506960640532791 / 10000000000000000 : ℝ)) (q :=
-      (6186538422931207 / 40000000000000000 : ℝ)) (by norm_num [aρ_6, bρ_6]) (by norm_num [bρ_6])
+      (6186538422931207 / 40000000000000000 : ℝ)) (aρ_lt_bρ 6 (by decide)) (by norm_num [bρ_6])
       (by norm_num) (by norm_num [aρ_6, bρ_6]) (by norm_num [aρ_6, bρ_6]) hlg
 
 lemma U_245_7 :
@@ -474,14 +518,17 @@ lemma U_245_7 :
             (5038825226518599 / 5000000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 3
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (5038825226518599 / 5000000000000000 : ℚ))
+             (U := (483440781438611607 / 62500000000000000000 : ℚ))
+             3 (by decide +kernel)) :
           Real.log (5038825226518599 / 5000000000000000 : ℝ) ≤
             (483440781438611607 / 62500000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (1156765423086487 / 10000000000000000 : ℝ)) (q :=
-      (5038825226518599 / 40000000000000000 : ℝ)) (by norm_num [aρ_7, bρ_7]) (by norm_num [bρ_7])
+      (5038825226518599 / 40000000000000000 : ℝ)) (aρ_lt_bρ 7 (by decide)) (by norm_num [bρ_7])
       (by norm_num) (by norm_num [aρ_7, bρ_7]) (by norm_num [aρ_7, bρ_7]) hlg
 
 lemma U_245_8 :
@@ -497,14 +544,17 @@ lemma U_245_8 :
             (117876576485053 / 100000000000000 : ℝ) / 2 ^ 4
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 7
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (117876576485053 / 100000000000000 : ℚ))
+             (U := (1644679290865140591287 / 10000000000000000000000 : ℚ))
+             7 (by decide +kernel)) :
           Real.log (117876576485053 / 100000000000000 : ℝ) ≤
             (1644679290865140591287 / 10000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (7887033344607 / 200000000000000 : ℝ)) (q :=
-      (117876576485053 / 1600000000000000 : ℝ)) (by norm_num [aρ_8, bρ_8]) (by norm_num [bρ_8])
+      (117876576485053 / 1600000000000000 : ℝ)) (aρ_lt_bρ 8 (by decide)) (by norm_num [bρ_8])
       (by norm_num) (by norm_num [aρ_8, bρ_8]) (by norm_num [aρ_8, bρ_8]) hlg
 
 lemma U_245_9 :
@@ -643,14 +693,17 @@ lemma U_246_1 :
             (812712452954231 / 500000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 11
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (812712452954231 / 500000000000000 : ℚ))
+             (U := (607211577700838902351 / 1250000000000000000000 : ℚ))
+             11 (by decide +kernel)) :
           Real.log (812712452954231 / 500000000000000 : ℝ) ≤
             (607211577700838902351 / 1250000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (406340312569731 / 2000000000000000 : ℝ)) (q :=
-      (812712452954231 / 4000000000000000 : ℝ)) (by norm_num [aρ_1, bρ_1]) (by norm_num [bρ_1])
+      (812712452954231 / 4000000000000000 : ℝ)) (aρ_lt_bρ 1 (by decide)) (by norm_num [bρ_1])
       (by norm_num) (by norm_num [aρ_1, bρ_1]) (by norm_num [aρ_1, bρ_1]) hlg
 
 lemma U_246_2 :
@@ -666,14 +719,17 @@ lemma U_246_2 :
             (4015126448750247 / 2500000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 11
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (4015126448750247 / 2500000000000000 : ℚ))
+             (U := (2368890545566928086851 / 5000000000000000000000 : ℚ))
+             11 (by decide +kernel)) :
           Real.log (4015126448750247 / 2500000000000000 : ℝ) ≤
             (2368890545566928086851 / 5000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (2007034759337747 / 10000000000000000 : ℝ)) (q :=
-      (4015126448750247 / 20000000000000000 : ℝ)) (by norm_num [aρ_2, bρ_2]) (by norm_num [bρ_2])
+      (4015126448750247 / 20000000000000000 : ℝ)) (aρ_lt_bρ 2 (by decide)) (by norm_num [bρ_2])
       (by norm_num) (by norm_num [aρ_2, bρ_2]) (by norm_num [aρ_2, bρ_2]) hlg
 
 lemma U_246_3 :
@@ -689,14 +745,17 @@ lemma U_246_3 :
             (3917614336794283 / 2500000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 11
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (3917614336794283 / 2500000000000000 : ℚ))
+             (U := (1122980372777906183719 / 2500000000000000000000 : ℚ))
+             11 (by decide +kernel)) :
           Real.log (3917614336794283 / 2500000000000000 : ℝ) ≤
             (1122980372777906183719 / 2500000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (1956918753731783 / 10000000000000000 : ℝ)) (q :=
-      (3917614336794283 / 20000000000000000 : ℝ)) (by norm_num [aρ_3, bρ_3]) (by norm_num [bρ_3])
+      (3917614336794283 / 20000000000000000 : ℝ)) (aρ_lt_bρ 3 (by decide)) (by norm_num [bρ_3])
       (by norm_num) (by norm_num [aρ_3, bρ_3]) (by norm_num [aρ_3, bρ_3]) hlg
 
 lemma U_246_4 :
@@ -712,14 +771,17 @@ lemma U_246_4 :
             (938397910910331 / 625000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 10
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (938397910910331 / 625000000000000 : ℚ))
+             (U := (4064224213752486981821 / 10000000000000000000000 : ℚ))
+             10 (by decide +kernel)) :
           Real.log (938397910910331 / 625000000000000 : ℝ) ≤
             (4064224213752486981821 / 10000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (116949390102739 / 625000000000000 : ℝ)) (q :=
-      (938397910910331 / 5000000000000000 : ℝ)) (by norm_num [aρ_4, bρ_4]) (by norm_num [bρ_4])
+      (938397910910331 / 5000000000000000 : ℝ)) (aρ_lt_bρ 4 (by decide)) (by norm_num [bρ_4])
       (by norm_num) (by norm_num [aρ_4, bρ_4]) (by norm_num [aρ_4, bρ_4]) hlg
 
 lemma U_246_5 :
@@ -735,14 +797,17 @@ lemma U_246_5 :
             (1748986413039669 / 1250000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 9
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (1748986413039669 / 1250000000000000 : ℚ))
+             (U := (1679464381378269289407 / 5000000000000000000000 : ℚ))
+             9 (by decide +kernel)) :
           Real.log (1748986413039669 / 1250000000000000 : ℝ) ≤
             (1679464381378269289407 / 5000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (866880671708419 / 5000000000000000 : ℝ)) (q :=
-      (1748986413039669 / 10000000000000000 : ℝ)) (by norm_num [aρ_5, bρ_5]) (by norm_num [bρ_5])
+      (1748986413039669 / 10000000000000000 : ℝ)) (aρ_lt_bρ 5 (by decide)) (by norm_num [bρ_5])
       (by norm_num) (by norm_num [aρ_5, bρ_5]) (by norm_num [aρ_5, bρ_5]) hlg
 
 lemma U_246_6 :
@@ -758,14 +823,17 @@ lemma U_246_6 :
             (3115151666007471 / 2500000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 7
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (3115151666007471 / 2500000000000000 : ℚ))
+             (U := (2199871081069510525483 / 10000000000000000000000 : ℚ))
+             7 (by decide +kernel)) :
           Real.log (3115151666007471 / 2500000000000000 : ℝ) ≤
             (2199871081069510525483 / 10000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (1518180558484971 / 10000000000000000 : ℝ)) (q :=
-      (3115151666007471 / 20000000000000000 : ℝ)) (by norm_num [aρ_6, bρ_6]) (by norm_num [bρ_6])
+      (3115151666007471 / 20000000000000000 : ℝ)) (aρ_lt_bρ 6 (by decide)) (by norm_num [bρ_6])
       (by norm_num) (by norm_num [aρ_6, bρ_6]) (by norm_num [aρ_6, bρ_6]) hlg
 
 lemma U_246_7 :
@@ -781,14 +849,17 @@ lemma U_246_7 :
             (2542616566211877 / 2500000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 3
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (2542616566211877 / 2500000000000000 : ℚ))
+             (U := (6761185239917941997 / 400000000000000000000 : ℚ))
+             3 (by decide +kernel)) :
           Real.log (2542616566211877 / 2500000000000000 : ℝ) ≤
             (6761185239917941997 / 400000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (1169306839449377 / 10000000000000000 : ℝ)) (q :=
-      (2542616566211877 / 20000000000000000 : ℝ)) (by norm_num [aρ_7, bρ_7]) (by norm_num [bρ_7])
+      (2542616566211877 / 20000000000000000 : ℝ)) (aρ_lt_bρ 7 (by decide)) (by norm_num [bρ_7])
       (by norm_num) (by norm_num [aρ_7, bρ_7]) (by norm_num [aρ_7, bρ_7]) hlg
 
 lemma U_246_8 :
@@ -804,14 +875,17 @@ lemma U_246_8 :
             (756212533019953 / 625000000000000 : ℝ) / 2 ^ 4
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 7
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (756212533019953 / 625000000000000 : ℚ))
+             (U := (238213519084046712887 / 1250000000000000000000 : ℚ))
+             7 (by decide +kernel)) :
           Real.log (756212533019953 / 625000000000000 : ℝ) ≤
             (238213519084046712887 / 1250000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (211328495308703 / 5000000000000000 : ℝ)) (q :=
-      (756212533019953 / 10000000000000000 : ℝ)) (by norm_num [aρ_8, bρ_8]) (by norm_num [bρ_8])
+      (756212533019953 / 10000000000000000 : ℝ)) (aρ_lt_bρ 8 (by decide)) (by norm_num [bρ_8])
       (by norm_num) (by norm_num [aρ_8, bρ_8]) (by norm_num [aρ_8, bρ_8]) hlg
 
 lemma U_246_9 :
@@ -951,14 +1025,17 @@ lemma U_247_1 :
             (8169776337530201 / 5000000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 11
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (8169776337530201 / 5000000000000000 : ℚ))
+             (U := (4910036199957849148783 / 10000000000000000000000 : ℚ))
+             11 (by decide +kernel)) :
           Real.log (8169776337530201 / 5000000000000000 : ℝ) ≤
             (4910036199957849148783 / 10000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (2042364930252913 / 10000000000000000 : ℝ)) (q :=
-      (8169776337530201 / 40000000000000000 : ℝ)) (by norm_num [aρ_1, bρ_1]) (by norm_num [bρ_1])
+      (8169776337530201 / 40000000000000000 : ℝ)) (aρ_lt_bρ 1 (by decide)) (by norm_num [bρ_1])
       (by norm_num) (by norm_num [aρ_1, bρ_1]) (by norm_num [aρ_1, bρ_1]) hlg
 
 lemma U_247_2 :
@@ -974,14 +1051,17 @@ lemma U_247_2 :
             (8072914214553699 / 5000000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 11
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (8072914214553699 / 5000000000000000 : ℚ))
+             (U := (4790766217057579353937 / 10000000000000000000000 : ℚ))
+             11 (by decide +kernel)) :
           Real.log (8072914214553699 / 5000000000000000 : ℝ) ≤
             (4790766217057579353937 / 10000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (1008851440637331 / 5000000000000000 : ℝ)) (q :=
-      (8072914214553699 / 40000000000000000 : ℝ)) (by norm_num [aρ_2, bρ_2]) (by norm_num [bρ_2])
+      (8072914214553699 / 40000000000000000 : ℝ)) (aρ_lt_bρ 2 (by decide)) (by norm_num [bρ_2])
       (by norm_num) (by norm_num [aρ_2, bρ_2]) (by norm_num [aρ_2, bρ_2]) hlg
 
 lemma U_247_3 :
@@ -997,14 +1077,17 @@ lemma U_247_3 :
             (7877919753830639 / 5000000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 11
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (7877919753830639 / 5000000000000000 : ℚ))
+             (U := (2273129829766987376399 / 5000000000000000000000 : ℚ))
+             11 (by decide +kernel)) :
           Real.log (7877919753830639 / 5000000000000000 : ℝ) ≤
             (2273129829766987376399 / 5000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (491900439315783 / 2500000000000000 : ℝ)) (q :=
-      (7877919753830639 / 40000000000000000 : ℝ)) (by norm_num [aρ_3, bρ_3]) (by norm_num [bρ_3])
+      (7877919753830639 / 40000000000000000 : ℝ)) (aρ_lt_bρ 3 (by decide)) (by norm_num [bρ_3])
       (by norm_num) (by norm_num [aρ_3, bρ_3]) (by norm_num [aρ_3, bρ_3]) hlg
 
 lemma U_247_4 :
@@ -1020,14 +1103,17 @@ lemma U_247_4 :
             (7549960475874883 / 5000000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 10
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (7549960475874883 / 5000000000000000 : ℚ))
+             (U := (4121044158296711828109 / 10000000000000000000000 : ℚ))
+             10 (by decide +kernel)) :
           Real.log (7549960475874883 / 5000000000000000 : ℝ) ≤
             (4121044158296711828109 / 10000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (940958149675127 / 5000000000000000 : ℝ)) (q :=
-      (7549960475874883 / 40000000000000000 : ℝ)) (by norm_num [aρ_4, bρ_4]) (by norm_num [bρ_4])
+      (7549960475874883 / 40000000000000000 : ℝ)) (aρ_lt_bρ 4 (by decide)) (by norm_num [bρ_4])
       (by norm_num) (by norm_num [aρ_4, bρ_4]) (by norm_num [aρ_4, bρ_4]) hlg
 
 lemma U_247_5 :
@@ -1043,14 +1129,17 @@ lemma U_247_5 :
             (7038968022732803 / 5000000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 9
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (7038968022732803 / 5000000000000000 : ℚ))
+             (U := (8550591482770676233 / 25000000000000000000 : ℚ))
+             9 (by decide +kernel)) :
           Real.log (7038968022732803 / 5000000000000000 : ℝ) ≤
             (8550591482770676233 / 25000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (872304996057107 / 5000000000000000 : ℝ)) (q :=
-      (7038968022732803 / 40000000000000000 : ℝ)) (by norm_num [aρ_5, bρ_5]) (by norm_num [bρ_5])
+      (7038968022732803 / 40000000000000000 : ℝ)) (aρ_lt_bρ 5 (by decide)) (by norm_num [bρ_5])
       (by norm_num) (by norm_num [aρ_5, bρ_5]) (by norm_num [aρ_5, bρ_5]) hlg
 
 lemma U_247_6 :
@@ -1066,14 +1155,17 @@ lemma U_247_6 :
             (6274052291183249 / 5000000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 7
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (6274052291183249 / 5000000000000000 : ℚ))
+             (U := (567461329710422194093 / 2500000000000000000000 : ℚ))
+             7 (by decide +kernel)) :
           Real.log (6274052291183249 / 5000000000000000 : ℝ) ≤
             (567461329710422194093 / 2500000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (1529392501479437 / 10000000000000000 : ℝ)) (q :=
-      (6274052291183249 / 40000000000000000 : ℝ)) (by norm_num [aρ_6, bρ_6]) (by norm_num [bρ_6])
+      (6274052291183249 / 40000000000000000 : ℝ)) (aρ_lt_bρ 6 (by decide)) (by norm_num [bρ_6])
       (by norm_num) (by norm_num [aρ_6, bρ_6]) (by norm_num [aρ_6, bρ_6]) hlg
 
 lemma U_247_7 :
@@ -1089,14 +1181,17 @@ lemma U_247_7 :
             (5131567258775443 / 5000000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 4
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (5131567258775443 / 5000000000000000 : ℚ))
+             (U := (259732086235733608659 / 10000000000000000000000 : ℚ))
+             4 (by decide +kernel)) :
           Real.log (5131567258775443 / 5000000000000000 : ℝ) ≤
             (259732086235733608659 / 10000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (590905683017767 / 5000000000000000 : ℝ)) (q :=
-      (5131567258775443 / 40000000000000000 : ℝ)) (by norm_num [aρ_7, bρ_7]) (by norm_num [bρ_7])
+      (5131567258775443 / 40000000000000000 : ℝ)) (aρ_lt_bρ 7 (by decide)) (by norm_num [bρ_7])
       (by norm_num) (by norm_num [aρ_7, bρ_7]) (by norm_num [aρ_7, bρ_7]) hlg
 
 lemma U_247_8 :
@@ -1112,14 +1207,17 @@ lemma U_247_8 :
             (3099731638180319 / 2500000000000000 : ℝ) / 2 ^ 4
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 7
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (3099731638180319 / 2500000000000000 : ℚ))
+             (U := (2150248075407620916847 / 10000000000000000000000 : ℚ))
+             7 (by decide +kernel)) :
           Real.log (3099731638180319 / 2500000000000000 : ℝ) ≤
             (2150248075407620916847 / 10000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (112358801769493 / 2500000000000000 : ℝ)) (q :=
-      (3099731638180319 / 40000000000000000 : ℝ)) (by norm_num [aρ_8, bρ_8]) (by norm_num [bρ_8])
+      (3099731638180319 / 40000000000000000 : ℝ)) (aρ_lt_bρ 8 (by decide)) (by norm_num [bρ_8])
       (by norm_num) (by norm_num [aρ_8, bρ_8]) (by norm_num [aρ_8, bρ_8]) hlg
 
 lemma U_247_9 :
@@ -1259,14 +1357,17 @@ lemma U_248_1 :
             (4106214064128931 / 2500000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 11
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (4106214064128931 / 2500000000000000 : ℚ))
+             (U := (4962107198324418834357 / 10000000000000000000000 : ℚ))
+             11 (by decide +kernel)) :
           Real.log (4106214064128931 / 2500000000000000 : ℝ) ≤
             (4962107198324418834357 / 10000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (128314268064191 / 625000000000000 : ℝ)) (q :=
-      (4106214064128931 / 20000000000000000 : ℝ)) (by norm_num [aρ_1, bρ_1]) (by norm_num [bρ_1])
+      (4106214064128931 / 20000000000000000 : ℝ)) (aρ_lt_bρ 1 (by decide)) (by norm_num [bρ_1])
       (by norm_num) (by norm_num [aρ_1, bρ_1]) (by norm_num [aρ_1, bρ_1]) hlg
 
 lemma U_248_2 :
@@ -1282,14 +1383,17 @@ lemma U_248_2 :
             (253611731691693 / 156250000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 11
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (253611731691693 / 156250000000000 : ℚ))
+             (U := (2421735967452510834593 / 5000000000000000000000 : ℚ))
+             11 (by decide +kernel)) :
           Real.log (253611731691693 / 156250000000000 : ℝ) ≤
             (2421735967452510834593 / 5000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (2028370944475213 / 10000000000000000 : ℝ)) (q :=
-      (253611731691693 / 1250000000000000 : ℝ)) (by norm_num [aρ_2, bρ_2]) (by norm_num [bρ_2])
+      (253611731691693 / 1250000000000000 : ℝ)) (aρ_lt_bρ 2 (by decide)) (by norm_num [bρ_2])
       (by norm_num) (by norm_num [aρ_2, bρ_2]) (by norm_num [aρ_2, bρ_2]) hlg
 
 lemma U_248_3 :
@@ -1305,14 +1409,17 @@ lemma U_248_3 :
             (3960305196199621 / 2500000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 11
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (3960305196199621 / 2500000000000000 : ℚ))
+             (U := (920060720339785511279 / 2000000000000000000000 : ℚ))
+             11 (by decide +kernel)) :
           Real.log (3960305196199621 / 2500000000000000 : ℝ) ≤
             (920060720339785511279 / 2000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (989142269978873 / 5000000000000000 : ℝ)) (q :=
-      (3960305196199621 / 20000000000000000 : ℝ)) (by norm_num [aρ_3, bρ_3]) (by norm_num [bρ_3])
+      (3960305196199621 / 20000000000000000 : ℝ)) (aρ_lt_bρ 3 (by decide)) (by norm_num [bρ_3])
       (by norm_num) (by norm_num [aρ_3, bρ_3]) (by norm_num [aρ_3, bρ_3]) hlg
 
 lemma U_248_4 :
@@ -1328,14 +1435,17 @@ lemma U_248_4 :
             (3796368114386551 / 2500000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 10
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (3796368114386551 / 2500000000000000 : ℚ))
+             (U := (835508236914012737971 / 2000000000000000000000 : ℚ))
+             10 (by decide +kernel)) :
           Real.log (3796368114386551 / 2500000000000000 : ℝ) ≤
             (835508236914012737971 / 2000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (473160409802419 / 2500000000000000 : ℝ)) (q :=
-      (3796368114386551 / 20000000000000000 : ℝ)) (by norm_num [aρ_4, bρ_4]) (by norm_num [bρ_4])
+      (3796368114386551 / 20000000000000000 : ℝ)) (aρ_lt_bρ 4 (by decide)) (by norm_num [bρ_4])
       (by norm_num) (by norm_num [aρ_4, bρ_4]) (by norm_num [aρ_4, bρ_4]) hlg
 
 lemma U_248_5 :
@@ -1351,14 +1461,17 @@ lemma U_248_5 :
             (3540992916055939 / 2500000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 9
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (3540992916055939 / 2500000000000000 : ℚ))
+             (U := (696232881409191661923 / 2000000000000000000000 : ℚ))
+             9 (by decide +kernel)) :
           Real.log (3540992916055939 / 2500000000000000 : ℝ) ≤
             (696232881409191661923 / 2000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (109716022513379 / 625000000000000 : ℝ)) (q :=
-      (3540992916055939 / 20000000000000000 : ℝ)) (by norm_num [aρ_5, bρ_5]) (by norm_num [bρ_5])
+      (3540992916055939 / 20000000000000000 : ℝ)) (aρ_lt_bρ 5 (by decide)) (by norm_num [bρ_5])
       (by norm_num) (by norm_num [aρ_5, bρ_5]) (by norm_num [aρ_5, bρ_5]) hlg
 
 lemma U_248_6 :
@@ -1374,14 +1487,17 @@ lemma U_248_6 :
             (631778564867047 / 500000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 8
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (631778564867047 / 500000000000000 : ℚ))
+             (U := (2339308622842276684711 / 10000000000000000000000 : ℚ))
+             8 (by decide +kernel)) :
           Real.log (631778564867047 / 500000000000000 : ℝ) ≤
             (2339308622842276684711 / 10000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (19257458045417 / 125000000000000 : ℝ)) (q :=
-      (631778564867047 / 4000000000000000 : ℝ)) (by norm_num [aρ_6, bρ_6]) (by norm_num [bρ_6])
+      (631778564867047 / 4000000000000000 : ℝ)) (aρ_lt_bρ 6 (by decide)) (by norm_num [bρ_6])
       (by norm_num) (by norm_num [aρ_6, bρ_6]) (by norm_num [aρ_6, bρ_6]) hlg
 
 lemma U_248_7 :
@@ -1397,14 +1513,17 @@ lemma U_248_7 :
             (1294457480766791 / 1250000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 4
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (1294457480766791 / 1250000000000000 : ℚ))
+             (U := (349481222892052924739 / 10000000000000000000000 : ℚ))
+             4 (by decide +kernel)) :
           Real.log (1294457480766791 / 1250000000000000 : ℝ) ≤
             (349481222892052924739 / 10000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (1194280161591707 / 10000000000000000 : ℝ)) (q :=
-      (1294457480766791 / 10000000000000000 : ℝ)) (by norm_num [aρ_7, bρ_7]) (by norm_num [bρ_7])
+      (1294457480766791 / 10000000000000000 : ℝ)) (aρ_lt_bρ 7 (by decide)) (by norm_num [bρ_7])
       (by norm_num) (by norm_num [aρ_7, bρ_7]) (by norm_num [aρ_7, bρ_7]) hlg
 
 lemma U_248_8 :
@@ -1420,14 +1539,17 @@ lemma U_248_8 :
             (396509459602709 / 312500000000000 : ℝ) / 2 ^ 4
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 8
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (396509459602709 / 312500000000000 : ℚ))
+             (U := (74404821680014463027 / 312500000000000000000 : ℚ))
+             8 (by decide +kernel)) :
           Real.log (396509459602709 / 312500000000000 : ℝ) ≤
             (74404821680014463027 / 312500000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (474944689808961 / 10000000000000000 : ℝ)) (q :=
-      (396509459602709 / 5000000000000000 : ℝ)) (by norm_num [aρ_8, bρ_8]) (by norm_num [bρ_8])
+      (396509459602709 / 5000000000000000 : ℝ)) (aρ_lt_bρ 8 (by decide)) (by norm_num [bρ_8])
       (by norm_num) (by norm_num [aρ_8, bρ_8]) (by norm_num [aρ_8, bρ_8]) hlg
 
 lemma U_248_9 :
@@ -1568,14 +1690,17 @@ lemma U_249_1 :
             (8255079901992847 / 5000000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 11
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (8255079901992847 / 5000000000000000 : ℚ))
+             (U := (2506954220574966835271 / 5000000000000000000000 : ℚ))
+             11 (by decide +kernel)) :
           Real.log (8255079901992847 / 5000000000000000 : ℝ) ≤
             (2506954220574966835271 / 5000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (2063691639304861 / 10000000000000000 : ℝ)) (q :=
-      (8255079901992847 / 40000000000000000 : ℝ)) (by norm_num [aρ_1, bρ_1]) (by norm_num [bρ_1])
+      (8255079901992847 / 40000000000000000 : ℝ)) (aρ_lt_bρ 1 (by decide)) (by norm_num [bρ_1])
       (by norm_num) (by norm_num [aρ_1, bρ_1]) (by norm_num [aρ_1, bρ_1]) hlg
 
 lemma U_249_2 :
@@ -1591,14 +1716,17 @@ lemma U_249_2 :
             (8158236498085747 / 5000000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 11
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (8158236498085747 / 5000000000000000 : ℚ))
+             (U := (979180235509884314067 / 2000000000000000000000 : ℚ))
+             11 (by decide +kernel)) :
           Real.log (8158236498085747 / 5000000000000000 : ℝ) ≤
             (979180235509884314067 / 2000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (2039038949861311 / 10000000000000000 : ℝ)) (q :=
-      (8158236498085747 / 40000000000000000 : ℝ)) (by norm_num [aρ_2, bρ_2]) (by norm_num [bρ_2])
+      (8158236498085747 / 40000000000000000 : ℝ)) (aρ_lt_bρ 2 (by decide)) (by norm_num [bρ_2])
       (by norm_num) (by norm_num [aρ_2, bρ_2]) (by norm_num [aρ_2, bρ_2]) hlg
 
 lemma U_249_3 :
@@ -1614,14 +1742,17 @@ lemma U_249_3 :
             (1592660119282217 / 1000000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 11
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (1592660119282217 / 1000000000000000 : ℚ))
+             (U := (930811298539780061613 / 2000000000000000000000 : ℚ))
+             11 (by decide +kernel)) :
           Real.log (1592660119282217 / 1000000000000000 : ℝ) ≤
             (930811298539780061613 / 2000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (99448355268699 / 500000000000000 : ℝ)) (q :=
-      (1592660119282217 / 8000000000000000 : ℝ)) (by norm_num [aρ_3, bρ_3]) (by norm_num [bρ_3])
+      (1592660119282217 / 8000000000000000 : ℝ)) (aρ_lt_bρ 3 (by decide)) (by norm_num [bρ_3])
       (by norm_num) (by norm_num [aρ_3, bρ_3]) (by norm_num [aρ_3, bρ_3]) hlg
 
 lemma U_249_4 :
@@ -1637,14 +1768,17 @@ lemma U_249_4 :
             (7635510570247419 / 5000000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 10
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (7635510570247419 / 5000000000000000 : ℚ))
+             (U := (4233718963316713810703 / 10000000000000000000000 : ℚ))
+             10 (by decide +kernel)) :
           Real.log (7635510570247419 / 5000000000000000 : ℝ) ≤
             (4233718963316713810703 / 10000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (1903366273357147 / 10000000000000000 : ℝ)) (q :=
-      (7635510570247419 / 40000000000000000 : ℝ)) (by norm_num [aρ_4, bρ_4]) (by norm_num [bρ_4])
+      (7635510570247419 / 40000000000000000 : ℝ)) (aρ_lt_bρ 4 (by decide)) (by norm_num [bρ_4])
       (by norm_num) (by norm_num [aρ_4, bρ_4]) (by norm_num [aρ_4, bρ_4]) hlg
 
 lemma U_249_5 :
@@ -1660,14 +1794,17 @@ lemma U_249_5 :
             (1424999832864611 / 1000000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 9
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (1424999832864611 / 1000000000000000 : ℚ))
+             (U := (354171696432614691003 / 1000000000000000000000 : ℚ))
+             9 (by decide +kernel)) :
           Real.log (1424999832864611 / 1000000000000000 : ℝ) ≤
             (354171696432614691003 / 1000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (353260097945993 / 2000000000000000 : ℝ)) (q :=
-      (1424999832864611 / 8000000000000000 : ℝ)) (by norm_num [aρ_5, bρ_5]) (by norm_num [bρ_5])
+      (1424999832864611 / 8000000000000000 : ℝ)) (aρ_lt_bρ 5 (by decide)) (by norm_num [bρ_5])
       (by norm_num) (by norm_num [aρ_5, bρ_5]) (by norm_num [aρ_5, bρ_5]) hlg
 
 lemma U_249_6 :
@@ -1683,14 +1820,17 @@ lemma U_249_6 :
             (1272300748482987 / 1000000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 8
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (1272300748482987 / 1000000000000000 : ℚ))
+             (U := (96330749783047163997 / 400000000000000000000 : ℚ))
+             8 (by decide +kernel)) :
           Real.log (1272300748482987 / 1000000000000000 : ℝ) ≤
             (96330749783047163997 / 400000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (310358630783181 / 2000000000000000 : ℝ)) (q :=
-      (1272300748482987 / 8000000000000000 : ℝ)) (by norm_num [aρ_6, bρ_6]) (by norm_num [bρ_6])
+      (1272300748482987 / 8000000000000000 : ℝ)) (aρ_lt_bρ 6 (by decide)) (by norm_num [bρ_6])
       (by norm_num) (by norm_num [aρ_6, bρ_6]) (by norm_num [aρ_6, bρ_6]) hlg
 
 lemma U_249_7 :
@@ -1706,14 +1846,17 @@ lemma U_249_7 :
             (5224023340519699 / 5000000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 4
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (5224023340519699 / 5000000000000000 : ℚ))
+             (U := (219149737351331900131 / 5000000000000000000000 : ℚ))
+             4 (by decide +kernel)) :
           Real.log (5224023340519699 / 5000000000000000 : ℝ) ≤
             (219149737351331900131 / 5000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (1206714333728287 / 10000000000000000 : ℝ)) (q :=
-      (5224023340519699 / 40000000000000000 : ℝ)) (by norm_num [aρ_7, bρ_7]) (by norm_num [bρ_7])
+      (5224023340519699 / 40000000000000000 : ℝ)) (aρ_lt_bρ 7 (by decide)) (by norm_num [bρ_7])
       (by norm_num) (by norm_num [aρ_7, bρ_7]) (by norm_num [aρ_7, bρ_7]) hlg
 
 lemma U_249_8 :
@@ -1729,14 +1872,17 @@ lemma U_249_8 :
             (3242271182885199 / 2500000000000000 : ℝ) / 2 ^ 4
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 8
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (3242271182885199 / 2500000000000000 : ℚ))
+             (U := (20798666778293606731 / 80000000000000000000 : ℚ))
+             8 (by decide +kernel)) :
           Real.log (3242271182885199 / 2500000000000000 : ℝ) ≤
             (20798666778293606731 / 80000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (499379906251037 / 10000000000000000 : ℝ)) (q :=
-      (3242271182885199 / 40000000000000000 : ℝ)) (by norm_num [aρ_8, bρ_8]) (by norm_num [bρ_8])
+      (3242271182885199 / 40000000000000000 : ℝ)) (aρ_lt_bρ 8 (by decide)) (by norm_num [bρ_8])
       (by norm_num) (by norm_num [aρ_8, bρ_8]) (by norm_num [aρ_8, bρ_8]) hlg
 
 lemma U_249_9 :
@@ -1875,14 +2021,17 @@ lemma U_250_1 :
             (259304114343663 / 156250000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 12
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (259304114343663 / 156250000000000 : ℚ))
+             (U := (5065442709200937737383 / 10000000000000000000000 : ℚ))
+             12 (by decide +kernel)) :
           Real.log (259304114343663 / 156250000000000 : ℝ) ≤
             (5065442709200937737383 / 10000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (1037177490608679 / 5000000000000000 : ℝ)) (q :=
-      (259304114343663 / 1250000000000000 : ℝ)) (by norm_num [aρ_1, bρ_1]) (by norm_num [bρ_1])
+      (259304114343663 / 1250000000000000 : ℝ)) (aρ_lt_bρ 1 (by decide)) (by norm_num [bρ_1])
       (by norm_num) (by norm_num [aρ_1, bρ_1]) (by norm_num [aρ_1, bρ_1]) hlg
 
 lemma U_250_2 :
@@ -1898,14 +2047,17 @@ lemma U_250_2 :
             (1025112183526729 / 625000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 11
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (1025112183526729 / 625000000000000 : ℚ))
+             (U := (2474028415951669088269 / 5000000000000000000000 : ℚ))
+             11 (by decide +kernel)) :
           Real.log (1025112183526729 / 625000000000000 : ℝ) ≤
             (2474028415951669088269 / 5000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (1024853449167833 / 5000000000000000 : ℝ)) (q :=
-      (1025112183526729 / 5000000000000000 : ℝ)) (by norm_num [aρ_2, bρ_2]) (by norm_num [bρ_2])
+      (1025112183526729 / 5000000000000000 : ℝ)) (aρ_lt_bρ 2 (by decide)) (by norm_num [bρ_2])
       (by norm_num) (by norm_num [aρ_2, bρ_2]) (by norm_num [aρ_2, bρ_2]) hlg
 
 lemma U_250_3 :
@@ -1921,14 +2073,17 @@ lemma U_250_3 :
             (400299518641533 / 250000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 11
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (400299518641533 / 250000000000000 : ℚ))
+             (U := (470752145641261726217 / 1000000000000000000000 : ℚ))
+             11 (by decide +kernel)) :
           Real.log (400299518641533 / 250000000000000 : ℝ) ≤
             (470752145641261726217 / 1000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (12497809106213 / 62500000000000 : ℝ)) (q :=
-      (400299518641533 / 2000000000000000 : ℝ)) (by norm_num [aρ_3, bρ_3]) (by norm_num [bρ_3])
+      (400299518641533 / 2000000000000000 : ℝ)) (aρ_lt_bρ 3 (by decide)) (by norm_num [bρ_3])
       (by norm_num) (by norm_num [aρ_3, bρ_3]) (by norm_num [aρ_3, bρ_3]) hlg
 
 lemma U_250_4 :
@@ -1944,14 +2099,17 @@ lemma U_250_4 :
             (239946360125701 / 156250000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 10
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (239946360125701 / 156250000000000 : ℚ))
+             (U := (4289581102695046119671 / 10000000000000000000000 : ℚ))
+             10 (by decide +kernel)) :
           Real.log (239946360125701 / 156250000000000 : ℝ) ≤
             (4289581102695046119671 / 10000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (957045106827483 / 5000000000000000 : ℝ)) (q :=
-      (239946360125701 / 1250000000000000 : ℝ)) (by norm_num [aρ_4, bρ_4]) (by norm_num [bρ_4])
+      (239946360125701 / 1250000000000000 : ℝ)) (aρ_lt_bρ 4 (by decide)) (by norm_num [bρ_4])
       (by norm_num) (by norm_num [aρ_4, bρ_4]) (by norm_num [aρ_4, bρ_4]) hlg
 
 lemma U_250_5 :
@@ -1967,14 +2125,17 @@ lemma U_250_5 :
             (3584004050662709 / 2500000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 9
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (3584004050662709 / 2500000000000000 : ℚ))
+             (U := (3601898934451193645439 / 10000000000000000000000 : ℚ))
+             9 (by decide +kernel)) :
           Real.log (3584004050662709 / 2500000000000000 : ℝ) ≤
             (3601898934451193645439 / 10000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (1777142421641459 / 10000000000000000 : ℝ)) (q :=
-      (3584004050662709 / 20000000000000000 : ℝ)) (by norm_num [aρ_5, bρ_5]) (by norm_num [bρ_5])
+      (3584004050662709 / 20000000000000000 : ℝ)) (aρ_lt_bρ 5 (by decide)) (by norm_num [bρ_5])
       (by norm_num) (by norm_num [aρ_5, bρ_5]) (by norm_num [aρ_5, bρ_5]) hlg
 
 lemma U_250_6 :
@@ -1990,14 +2151,17 @@ lemma U_250_6 :
             (3202603450222341 / 2500000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 8
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (3202603450222341 / 2500000000000000 : ℚ))
+             (U := (1238366626753318361 / 5000000000000000000 : ℚ))
+             8 (by decide +kernel)) :
           Real.log (3202603450222341 / 2500000000000000 : ℝ) ≤
             (1238366626753318361 / 5000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (1562982196341091 / 10000000000000000 : ℝ)) (q :=
-      (3202603450222341 / 20000000000000000 : ℝ)) (by norm_num [aρ_6, bρ_6]) (by norm_num [bρ_6])
+      (3202603450222341 / 20000000000000000 : ℝ)) (aρ_lt_bρ 6 (by decide)) (by norm_num [bρ_6])
       (by norm_num) (by norm_num [aρ_6, bρ_6]) (by norm_num [aρ_6, bρ_6]) hlg
 
 lemma U_250_7 :
@@ -2012,14 +2176,17 @@ lemma U_250_7 :
           (32938435187193 / 250000000000000 : ℝ) = (32938435187193 / 31250000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 5
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (32938435187193 / 31250000000000 : ℚ))
+             (U := (105241684992312728699 / 2000000000000000000000 : ℚ))
+             5 (by decide +kernel)) :
           Real.log (32938435187193 / 31250000000000 : ℝ) ≤
             (105241684992312728699 / 2000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (121911494185419 / 1000000000000000 : ℝ)) (q :=
-      (32938435187193 / 250000000000000 : ℝ)) (by norm_num [aρ_7, bρ_7]) (by norm_num [bρ_7])
+      (32938435187193 / 250000000000000 : ℝ)) (aρ_lt_bρ 7 (by decide)) (by norm_num [bρ_7])
       (by norm_num) (by norm_num [aρ_7, bρ_7]) (by norm_num [aρ_7, bρ_7]) hlg
 
 lemma U_250_8 :
@@ -2034,14 +2201,17 @@ lemma U_250_8 :
           (12932107065137 / 156250000000000 : ℝ) = (12932107065137 / 9765625000000 : ℝ) / 2 ^ 4 by
           norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 8
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (12932107065137 / 9765625000000 : ℚ))
+             (U := (2808445725379418307037 / 10000000000000000000000 : ℚ))
+             8 (by decide +kernel)) :
           Real.log (12932107065137 / 9765625000000 : ℝ) ≤
             (2808445725379418307037 / 10000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (261445741278143 / 5000000000000000 : ℝ)) (q :=
-      (12932107065137 / 156250000000000 : ℝ)) (by norm_num [aρ_8, bρ_8]) (by norm_num [bρ_8])
+      (12932107065137 / 156250000000000 : ℝ)) (aρ_lt_bρ 8 (by decide)) (by norm_num [bρ_8])
       (by norm_num) (by norm_num [aρ_8, bρ_8]) (by norm_num [aρ_8, bρ_8]) hlg
 
 lemma U_250_9 :
@@ -2181,14 +2351,17 @@ lemma U_251_1 :
             (16638115062611679 / 10000000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 12
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (16638115062611679 / 10000000000000000 : ℚ))
+             (U := (5091110584953588231213 / 10000000000000000000000 : ℚ))
+             12 (by decide +kernel)) :
           Real.log (16638115062611679 / 10000000000000000 : ℝ) ≤
             (5091110584953588231213 / 10000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (1039843324538413 / 5000000000000000 : ℝ)) (q :=
-      (16638115062611679 / 80000000000000000 : ℝ)) (by norm_num [aρ_1, bρ_1]) (by norm_num [bρ_1])
+      (16638115062611679 / 80000000000000000 : ℝ)) (aρ_lt_bρ 1 (by decide)) (by norm_num [bρ_1])
       (by norm_num) (by norm_num [aρ_1, bρ_1]) (by norm_num [aρ_1, bρ_1]) hlg
 
 lemma U_251_2 :
@@ -2204,14 +2377,17 @@ lemma U_251_2 :
             (16444455822296023 / 10000000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 11
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (16444455822296023 / 10000000000000000 : ℚ))
+             (U := (4974032953299904168859 / 10000000000000000000000 : ℚ))
+             11 (by decide +kernel)) :
           Real.log (16444455822296023 / 10000000000000000 : ℝ) ≤
             (4974032953299904168859 / 10000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (256880106438489 / 1250000000000000 : ℝ)) (q :=
-      (16444455822296023 / 80000000000000000 : ℝ)) (by norm_num [aρ_2, bρ_2]) (by norm_num [bρ_2])
+      (16444455822296023 / 80000000000000000 : ℝ)) (aρ_lt_bρ 2 (by decide)) (by norm_num [bρ_2])
       (by norm_num) (by norm_num [aρ_2, bρ_2]) (by norm_num [aρ_2, bρ_2]) hlg
 
 lemma U_251_3 :
@@ -2227,14 +2403,17 @@ lemma U_251_3 :
             (3210934041131651 / 2000000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 11
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (3210934041131651 / 2000000000000000 : ℚ))
+             (U := (2367073464008091410227 / 5000000000000000000000 : ℚ))
+             11 (by decide +kernel)) :
           Real.log (3210934041131651 / 2000000000000000 : ℝ) ≤
             (2367073464008091410227 / 5000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (200499055369847 / 1000000000000000 : ℝ)) (q :=
-      (3210934041131651 / 16000000000000000 : ℝ)) (by norm_num [aρ_3, bρ_3]) (by norm_num [bρ_3])
+      (3210934041131651 / 16000000000000000 : ℝ)) (aρ_lt_bρ 3 (by decide)) (by norm_num [bρ_3])
       (by norm_num) (by norm_num [aρ_3, bρ_3]) (by norm_num [aρ_3, bρ_3]) hlg
 
 lemma U_251_4 :
@@ -2250,14 +2429,17 @@ lemma U_251_4 :
             (15399338975582483 / 10000000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 10
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (15399338975582483 / 10000000000000000 : ℚ))
+             (U := (269837182400509911503 / 625000000000000000000 : ℚ))
+             10 (by decide +kernel)) :
           Real.log (15399338975582483 / 10000000000000000 : ℝ) ≤
             (269837182400509911503 / 625000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (1919451927244527 / 10000000000000000 : ℝ)) (q :=
-      (15399338975582483 / 80000000000000000 : ℝ)) (by norm_num [aρ_4, bρ_4]) (by norm_num [bρ_4])
+      (15399338975582483 / 80000000000000000 : ℝ)) (aρ_lt_bρ 4 (by decide)) (by norm_num [bρ_4])
       (by norm_num) (by norm_num [aρ_4, bρ_4]) (by norm_num [aρ_4, bρ_4]) hlg
 
 lemma U_251_5 :
@@ -2273,14 +2455,17 @@ lemma U_251_5 :
             (14379021893371507 / 10000000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 9
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (14379021893371507 / 10000000000000000 : ℚ))
+             (U := (3631852384438692252119 / 10000000000000000000000 : ℚ))
+             9 (by decide +kernel)) :
           Real.log (14379021893371507 / 10000000000000000 : ℝ) ≤
             (3631852384438692252119 / 10000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (1782562576026783 / 10000000000000000 : ℝ)) (q :=
-      (14379021893371507 / 80000000000000000 : ℝ)) (by norm_num [aρ_5, bρ_5]) (by norm_num [bρ_5])
+      (14379021893371507 / 80000000000000000 : ℝ)) (aρ_lt_bρ 5 (by decide)) (by norm_num [bρ_5])
       (by norm_num) (by norm_num [aρ_5, bρ_5]) (by norm_num [aρ_5, bρ_5]) hlg
 
 lemma U_251_6 :
@@ -2296,14 +2481,17 @@ lemma U_251_6 :
             (12854105956912811 / 10000000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 8
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (12854105956912811 / 10000000000000000 : ℚ))
+             (U := (2510781970292751688961 / 10000000000000000000000 : ℚ))
+             8 (by decide +kernel)) :
           Real.log (12854105956912811 / 10000000000000000 : ℝ) ≤
             (2510781970292751688961 / 10000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (1568573967052109 / 10000000000000000 : ℝ)) (q :=
-      (12854105956912811 / 80000000000000000 : ℝ)) (by norm_num [aρ_6, bρ_6]) (by norm_num [bρ_6])
+      (12854105956912811 / 80000000000000000 : ℝ)) (aρ_lt_bρ 6 (by decide)) (by norm_num [bρ_6])
       (by norm_num) (by norm_num [aρ_6, bρ_6]) (by norm_num [aρ_6, bρ_6]) hlg
 
 lemma U_251_7 :
@@ -2319,14 +2507,17 @@ lemma U_251_7 :
             (10586376477557943 / 10000000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 5
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (10586376477557943 / 10000000000000000 : ℚ))
+             (U := (113965687062157002349 / 2000000000000000000000 : ℚ))
+             5 (by decide +kernel)) :
           Real.log (10586376477557943 / 10000000000000000 : ℝ) ≤
             (113965687062157002349 / 2000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (76581436123337 / 625000000000000 : ℝ)) (q :=
-      (10586376477557943 / 80000000000000000 : ℝ)) (by norm_num [aρ_7, bρ_7]) (by norm_num [bρ_7])
+      (10586376477557943 / 80000000000000000 : ℝ)) (aρ_lt_bρ 7 (by decide)) (by norm_num [bρ_7])
       (by norm_num) (by norm_num [aρ_7, bρ_7]) (by norm_num [aρ_7, bρ_7]) hlg
 
 lemma U_251_8 :
@@ -2342,14 +2533,17 @@ lemma U_251_8 :
             (6688354741662559 / 5000000000000000 : ℝ) / 2 ^ 4
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 8
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (6688354741662559 / 5000000000000000 : ℚ))
+             (U := (2909300034581795792999 / 10000000000000000000000 : ℚ))
+             8 (by decide +kernel)) :
           Real.log (6688354741662559 / 5000000000000000 : ℝ) ≤
             (2909300034581795792999 / 10000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (267169597669773 / 5000000000000000 : ℝ)) (q :=
-      (6688354741662559 / 80000000000000000 : ℝ)) (by norm_num [aρ_8, bρ_8]) (by norm_num [bρ_8])
+      (6688354741662559 / 80000000000000000 : ℝ)) (aρ_lt_bρ 8 (by decide)) (by norm_num [bρ_8])
       (by norm_num) (by norm_num [aρ_8, bρ_8]) (by norm_num [aρ_8, bρ_8]) hlg
 
 lemma U_251_9 :
@@ -2490,14 +2684,17 @@ lemma U_252_1 :
             (8340383399527659 / 5000000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 12
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (8340383399527659 / 5000000000000000 : ℚ))
+             (U := (2558356370231496503873 / 5000000000000000000000 : ℚ))
+             12 (by decide +kernel)) :
           Real.log (8340383399527659 / 5000000000000000 : ℝ) ≤
             (2558356370231496503873 / 5000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (521254578723223 / 2500000000000000 : ℝ)) (q :=
-      (8340383399527659 / 40000000000000000 : ℝ)) (by norm_num [aρ_1, bρ_1]) (by norm_num [bρ_1])
+      (8340383399527659 / 40000000000000000 : ℝ)) (aρ_lt_bρ 1 (by decide)) (by norm_num [bρ_1])
       (by norm_num) (by norm_num [aρ_1, bρ_1]) (by norm_num [aρ_1, bρ_1]) hlg
 
 lemma U_252_2 :
@@ -2513,14 +2710,17 @@ lemma U_252_2 :
             (8243558326286459 / 5000000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 11
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (8243558326286459 / 5000000000000000 : ℚ))
+             (U := (999988347974896929069 / 2000000000000000000000 : ℚ))
+             11 (by decide +kernel)) :
           Real.log (8243558326286459 / 5000000000000000 : ℝ) ≤
             (999988347974896929069 / 2000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (515093697695573 / 2500000000000000 : ℝ)) (q :=
-      (8243558326286459 / 40000000000000000 : ℝ)) (by norm_num [aρ_2, bρ_2]) (by norm_num [bρ_2])
+      (8243558326286459 / 40000000000000000 : ℝ)) (aρ_lt_bρ 2 (by decide)) (by norm_num [bρ_2])
       (by norm_num) (by norm_num [aρ_2, bρ_2]) (by norm_num [aρ_2, bρ_2]) hlg
 
 lemma U_252_3 :
@@ -2536,14 +2736,17 @@ lemma U_252_3 :
             (8048679728474291 / 5000000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 11
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (8048679728474291 / 5000000000000000 : ℚ))
+             (U := (2380350783301312215691 / 5000000000000000000000 : ℚ))
+             11 (by decide +kernel)) :
           Real.log (8048679728474291 / 5000000000000000 : ℝ) ≤
             (2380350783301312215691 / 5000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (62822862444569 / 312500000000000 : ℝ)) (q :=
-      (8048679728474291 / 40000000000000000 : ℝ)) (by norm_num [aρ_3, bρ_3]) (by norm_num [bρ_3])
+      (8048679728474291 / 40000000000000000 : ℝ)) (aρ_lt_bρ 3 (by decide)) (by norm_num [bρ_3])
       (by norm_num) (by norm_num [aρ_3, bρ_3]) (by norm_num [aρ_3, bρ_3]) hlg
 
 lemma U_252_4 :
@@ -2559,14 +2762,17 @@ lemma U_252_4 :
             (7721055113292499 / 5000000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 10
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (7721055113292499 / 5000000000000000 : ℚ))
+             (U := (2172565574850016331833 / 5000000000000000000000 : ℚ))
+             10 (by decide +kernel)) :
           Real.log (7721055113292499 / 5000000000000000 : ℝ) ≤
             (2172565574850016331833 / 5000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (240601683962539 / 1250000000000000 : ℝ)) (q :=
-      (7721055113292499 / 40000000000000000 : ℝ)) (by norm_num [aρ_4, bρ_4]) (by norm_num [bρ_4])
+      (7721055113292499 / 40000000000000000 : ℝ)) (aρ_lt_bρ 4 (by decide)) (by norm_num [bρ_4])
       (by norm_num) (by norm_num [aρ_4, bρ_4]) (by norm_num [aρ_4, bρ_4]) hlg
 
 lemma U_252_5 :
@@ -2582,14 +2788,17 @@ lemma U_252_5 :
             (7211012723073717 / 5000000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 9
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (7211012723073717 / 5000000000000000 : ℚ))
+             (U := (732342979793858714407 / 2000000000000000000000 : ℚ))
+             9 (by decide +kernel)) :
           Real.log (7211012723073717 / 5000000000000000 : ℝ) ≤
             (732342979793858714407 / 2000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (1787982195925921 / 10000000000000000 : ℝ)) (q :=
-      (7211012723073717 / 40000000000000000 : ℝ)) (by norm_num [aρ_5, bρ_5]) (by norm_num [bρ_5])
+      (7211012723073717 / 40000000000000000 : ℝ)) (aρ_lt_bρ 5 (by decide)) (by norm_num [bρ_5])
       (by norm_num) (by norm_num [aρ_5, bρ_5]) (by norm_num [aρ_5, bρ_5]) hlg
 
 lemma U_252_6 :
@@ -2605,14 +2814,17 @@ lemma U_252_6 :
             (6448895441245641 / 5000000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 8
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (6448895441245641 / 5000000000000000 : ℚ))
+             (U := (2544709542894442239289 / 10000000000000000000000 : ℚ))
+             8 (by decide +kernel)) :
           Real.log (6448895441245641 / 5000000000000000 : ℝ) ≤
             (2544709542894442239289 / 10000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (1574163930151883 / 10000000000000000 : ℝ)) (q :=
-      (6448895441245641 / 40000000000000000 : ℝ)) (by norm_num [aρ_6, bρ_6]) (by norm_num [bρ_6])
+      (6448895441245641 / 40000000000000000 : ℝ)) (aρ_lt_bρ 6 (by decide)) (by norm_num [bρ_6])
       (by norm_num) (by norm_num [aρ_6, bρ_6]) (by norm_num [aρ_6, bρ_6]) hlg
 
 lemma U_252_7 :
@@ -2628,14 +2840,17 @@ lemma U_252_7 :
             (5316210819229457 / 5000000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 5
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (5316210819229457 / 5000000000000000 : ℚ))
+             (U := (613228851229343614237 / 10000000000000000000000 : ℚ))
+             5 (by decide +kernel)) :
           Real.log (5316210819229457 / 5000000000000000 : ℝ) ≤
             (613228851229343614237 / 10000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (1231482999903791 / 10000000000000000 : ℝ)) (q :=
-      (5316210819229457 / 40000000000000000 : ℝ)) (by norm_num [aρ_7, bρ_7]) (by norm_num [bρ_7])
+      (5316210819229457 / 40000000000000000 : ℝ)) (aρ_lt_bρ 7 (by decide)) (by norm_num [bρ_7])
       (by norm_num) (by norm_num [aρ_7, bρ_7]) (by norm_num [aρ_7, bρ_7]) hlg
 
 lemma U_252_8 :
@@ -2651,14 +2866,17 @@ lemma U_252_8 :
             (675471839149047 / 500000000000000 : ℝ) / 2 ^ 4
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 9
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (675471839149047 / 500000000000000 : ℚ))
+             (U := (752008423026328666493 / 2500000000000000000000 : ℚ))
+             9 (by decide +kernel)) :
           Real.log (675471839149047 / 500000000000000 : ℝ) ≤
             (752008423026328666493 / 2500000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (6819985493771 / 125000000000000 : ℝ)) (q :=
-      (675471839149047 / 8000000000000000 : ℝ)) (by norm_num [aρ_8, bρ_8]) (by norm_num [bρ_8])
+      (675471839149047 / 8000000000000000 : ℝ)) (aρ_lt_bρ 8 (by decide)) (by norm_num [bρ_8])
       (by norm_num) (by norm_num [aρ_8, bρ_8]) (by norm_num [aρ_8, bρ_8]) hlg
 
 lemma U_252_9 :
@@ -2798,14 +3016,17 @@ lemma U_253_1 :
             (16723418527387889 / 10000000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 12
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (16723418527387889 / 10000000000000000 : ℚ))
+             (U := (10284499022872135871 / 20000000000000000000 : ℚ))
+             12 (by decide +kernel)) :
           Real.log (16723418527387889 / 10000000000000000 : ℝ) ≤
             (10284499022872135871 / 20000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (2090349978681191 / 10000000000000000 : ℝ)) (q :=
-      (16723418527387889 / 80000000000000000 : ℝ)) (by norm_num [aρ_1, bρ_1]) (by norm_num [bρ_1])
+      (16723418527387889 / 80000000000000000 : ℝ)) (aρ_lt_bρ 1 (by decide)) (by norm_num [bρ_1])
       (by norm_num) (by norm_num [aρ_1, bρ_1]) (by norm_num [aρ_1, bρ_1]) hlg
 
 lemma U_253_2 :
@@ -2821,14 +3042,17 @@ lemma U_253_2 :
             (16529777427688981 / 10000000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 11
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (16529777427688981 / 10000000000000000 : ℚ))
+             (U := (1005156707997257303033 / 2000000000000000000000 : ℚ))
+             11 (by decide +kernel)) :
           Real.log (16529777427688981 / 10000000000000000 : ℝ) ≤
             (1005156707997257303033 / 2000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (64553397383327 / 312500000000000 : ℝ)) (q :=
-      (16529777427688981 / 80000000000000000 : ℝ)) (by norm_num [aρ_2, bρ_2]) (by norm_num [bρ_2])
+      (16529777427688981 / 80000000000000000 : ℝ)) (aρ_lt_bρ 2 (by decide)) (by norm_num [bρ_2])
       (by norm_num) (by norm_num [aρ_2, bρ_2]) (by norm_num [aρ_2, bρ_2]) hlg
 
 lemma U_253_3 :
@@ -2844,14 +3068,17 @@ lemma U_253_3 :
             (16140048501191369 / 10000000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 11
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (16140048501191369 / 10000000000000000 : ℚ))
+             (U := (4787185748736861374431 / 10000000000000000000000 : ℚ))
+             11 (by decide +kernel)) :
           Real.log (16140048501191369 / 10000000000000000 : ℝ) ≤
             (4787185748736861374431 / 10000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (2015672590992061 / 10000000000000000 : ℝ)) (q :=
-      (16140048501191369 / 80000000000000000 : ℝ)) (by norm_num [aρ_3, bρ_3]) (by norm_num [bρ_3])
+      (16140048501191369 / 80000000000000000 : ℝ)) (aρ_lt_bρ 3 (by decide)) (by norm_num [bρ_3])
       (by norm_num) (by norm_num [aρ_3, bρ_3]) (by norm_num [aρ_3, bρ_3]) hlg
 
 lemma U_253_4 :
@@ -2867,14 +3094,17 @@ lemma U_253_4 :
             (3096976161338029 / 2000000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 10
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (3096976161338029 / 2000000000000000 : ℚ))
+             (U := (1093197557653746673 / 2500000000000000000 : ℚ))
+             10 (by decide +kernel)) :
           Real.log (3096976161338029 / 2000000000000000 : ℝ) ≤
             (1093197557653746673 / 2500000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (386034969686351 / 2000000000000000 : ℝ)) (q :=
-      (3096976161338029 / 16000000000000000 : ℝ)) (by norm_num [aρ_4, bρ_4]) (by norm_num [bρ_4])
+      (3096976161338029 / 16000000000000000 : ℝ)) (aρ_lt_bρ 4 (by decide)) (by norm_num [bρ_4])
       (by norm_num) (by norm_num [aρ_4, bρ_4]) (by norm_num [aρ_4, bρ_4]) hlg
 
 lemma U_253_5 :
@@ -2890,14 +3120,17 @@ lemma U_253_5 :
             (14465026880361081 / 10000000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 10
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (14465026880361081 / 10000000000000000 : ℚ))
+             (U := (922871759339730018917 / 2500000000000000000000 : ℚ))
+             10 (by decide +kernel)) :
           Real.log (14465026880361081 / 10000000000000000 : ℝ) ≤
             (922871759339730018917 / 2500000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (1793401286184489 / 10000000000000000 : ℝ)) (q :=
-      (14465026880361081 / 80000000000000000 : ℝ)) (by norm_num [aρ_5, bρ_5]) (by norm_num [bρ_5])
+      (14465026880361081 / 80000000000000000 : ℝ)) (aρ_lt_bρ 5 (by decide)) (by norm_num [bρ_5])
       (by norm_num) (by norm_num [aρ_5, bρ_5]) (by norm_num [aρ_5, bρ_5]) hlg
 
 lemma U_253_6 :
@@ -2913,14 +3146,17 @@ lemma U_253_6 :
             (12941468654379713 / 10000000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 8
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (12941468654379713 / 10000000000000000 : ℚ))
+             (U := (1289258434428282918841 / 5000000000000000000000 : ℚ))
+             8 (by decide +kernel)) :
           Real.log (12941468654379713 / 10000000000000000 : ℝ) ≤
             (1289258434428282918841 / 5000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (1579752104829147 / 10000000000000000 : ℝ)) (q :=
-      (12941468654379713 / 80000000000000000 : ℝ)) (by norm_num [aρ_6, bρ_6]) (by norm_num [bρ_6])
+      (12941468654379713 / 80000000000000000 : ℝ)) (aρ_lt_bρ 6 (by decide)) (by norm_num [bρ_6])
       (by norm_num) (by norm_num [aρ_6, bρ_6]) (by norm_num [aρ_6, bρ_6]) hlg
 
 lemma U_253_7 :
@@ -2936,14 +3172,17 @@ lemma U_253_7 :
             (10678435222814689 / 10000000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 5
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (10678435222814689 / 10000000000000000 : ℚ))
+             (U := (65641215085947587971 / 1000000000000000000000 : ℚ))
+             5 (by decide +kernel)) :
           Real.log (10678435222814689 / 10000000000000000 : ℝ) ≤
             (65641215085947587971 / 1000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (1237655127697891 / 10000000000000000 : ℝ)) (q :=
-      (10678435222814689 / 80000000000000000 : ℝ)) (by norm_num [aρ_7, bρ_7]) (by norm_num [bρ_7])
+      (10678435222814689 / 80000000000000000 : ℝ)) (aρ_lt_bρ 7 (by decide)) (by norm_num [bρ_7])
       (by norm_num) (by norm_num [aρ_7, bρ_7]) (by norm_num [aρ_7, bρ_7]) hlg
 
 lemma U_253_8 :
@@ -2959,14 +3198,17 @@ lemma U_253_8 :
             (6820375414613733 / 5000000000000000 : ℝ) / 2 ^ 4
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 9
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (6820375414613733 / 5000000000000000 : ℚ))
+             (U := (3104766040373335754313 / 10000000000000000000000 : ℚ))
+             9 (by decide +kernel)) :
           Real.log (6820375414613733 / 5000000000000000 : ℝ) ≤
             (3104766040373335754313 / 10000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (139170456746913 / 2500000000000000 : ℝ)) (q :=
-      (6820375414613733 / 80000000000000000 : ℝ)) (by norm_num [aρ_8, bρ_8]) (by norm_num [bρ_8])
+      (6820375414613733 / 80000000000000000 : ℝ)) (aρ_lt_bρ 8 (by decide)) (by norm_num [bρ_8])
       (by norm_num) (by norm_num [aρ_8, bρ_8]) (by norm_num [aρ_8, bρ_8]) hlg
 
 lemma U_253_9 :
@@ -3105,14 +3347,17 @@ lemma U_254_1 :
             (167660702476713 / 100000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 12
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (167660702476713 / 100000000000000 : ℚ))
+             (U := (5167721231013846776899 / 10000000000000000000000 : ℚ))
+             12 (by decide +kernel)) :
           Real.log (167660702476713 / 100000000000000 : ℝ) ≤
             (5167721231013846776899 / 10000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (5239204101143 / 25000000000000 : ℝ)) (q :=
-      (167660702476713 / 800000000000000 : ℝ)) (by norm_num [aρ_1, bρ_1]) (by norm_num [bρ_1])
+      (167660702476713 / 800000000000000 : ℝ)) (aρ_lt_bρ 1 (by decide)) (by norm_num [bρ_1])
       (by norm_num) (by norm_num [aρ_1, bρ_1]) (by norm_num [aρ_1, bρ_1]) hlg
 
 lemma U_254_2 :
@@ -3128,14 +3373,17 @@ lemma U_254_2 :
             (1035777384254401 / 625000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 12
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (1035777384254401 / 625000000000000 : ℚ))
+             (U := (5051558699296787822427 / 10000000000000000000000 : ℚ))
+             12 (by decide +kernel)) :
           Real.log (1035777384254401 / 625000000000000 : ℝ) ≤
             (5051558699296787822427 / 10000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (2071042628066979 / 10000000000000000 : ℝ)) (q :=
-      (1035777384254401 / 5000000000000000 : ℝ)) (by norm_num [aρ_2, bρ_2]) (by norm_num [bρ_2])
+      (1035777384254401 / 5000000000000000 : ℝ)) (aρ_lt_bρ 2 (by decide)) (by norm_num [bρ_2])
       (by norm_num) (by norm_num [aρ_2, bρ_2]) (by norm_num [aρ_2, bρ_2]) hlg
 
 lemma U_254_3 :
@@ -3151,14 +3399,17 @@ lemma U_254_3 :
             (404568433500703 / 250000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 11
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (404568433500703 / 250000000000000 : ℚ))
+             (U := (601699980997939407243 / 1250000000000000000000 : ℚ))
+             11 (by decide +kernel)) :
           Real.log (404568433500703 / 250000000000000 : ℝ) ≤
             (601699980997939407243 / 1250000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (404202706481281 / 2000000000000000 : ℝ)) (q :=
-      (404568433500703 / 2000000000000000 : ℝ)) (by norm_num [aρ_3, bρ_3]) (by norm_num [bρ_3])
+      (404568433500703 / 2000000000000000 : ℝ)) (aρ_lt_bρ 3 (by decide)) (by norm_num [bρ_3])
       (by norm_num) (by norm_num [aρ_3, bρ_3]) (by norm_num [aρ_3, bρ_3]) hlg
 
 lemma U_254_4 :
@@ -3173,14 +3424,17 @@ lemma U_254_4 :
           (30327442815377 / 156250000000000 : ℝ) = (30327442815377 / 19531250000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 11
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (30327442815377 / 19531250000000 : ℚ))
+             (U := (1100093147886308753699 / 2500000000000000000000 : ℚ))
+             11 (by decide +kernel)) :
           Real.log (30327442815377 / 19531250000000 : ℝ) ≤
             (1100093147886308753699 / 2500000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (1935536058832631 / 10000000000000000 : ℝ)) (q :=
-      (30327442815377 / 156250000000000 : ℝ)) (by norm_num [aρ_4, bρ_4]) (by norm_num [bρ_4])
+      (30327442815377 / 156250000000000 : ℝ)) (aρ_lt_bρ 4 (by decide)) (by norm_num [bρ_4])
       (by norm_num) (by norm_num [aρ_4, bρ_4]) (by norm_num [aρ_4, bρ_4]) hlg
 
 lemma U_254_5 :
@@ -3196,14 +3450,17 @@ lemma U_254_5 :
             (1813503276894933 / 1250000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 10
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (1813503276894933 / 1250000000000000 : ℚ))
+             (U := (930292338425186246281 / 2500000000000000000000 : ℚ))
+             10 (by decide +kernel)) :
           Real.log (1813503276894933 / 1250000000000000 : ℝ) ≤
             (930292338425186246281 / 2500000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (1798819851589241 / 10000000000000000 : ℝ)) (q :=
-      (1813503276894933 / 10000000000000000 : ℝ)) (by norm_num [aρ_5, bρ_5]) (by norm_num [bρ_5])
+      (1813503276894933 / 10000000000000000 : ℝ)) (aρ_lt_bρ 5 (by decide)) (by norm_num [bρ_5])
       (by norm_num) (by norm_num [aρ_5, bρ_5]) (by norm_num [aρ_5, bρ_5]) hlg
 
 lemma U_254_6 :
@@ -3219,14 +3476,17 @@ lemma U_254_6 :
             (1623142418528303 / 1250000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 8
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (1623142418528303 / 1250000000000000 : ℚ))
+             (U := (261220483539897751827 / 1000000000000000000000 : ℚ))
+             8 (by decide +kernel)) :
           Real.log (1623142418528303 / 1250000000000000 : ℝ) ≤
             (261220483539897751827 / 1000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (1585338509995981 / 10000000000000000 : ℝ)) (q :=
-      (1623142418528303 / 10000000000000000 : ℝ)) (by norm_num [aρ_6, bρ_6]) (by norm_num [bρ_6])
+      (1623142418528303 / 10000000000000000 : ℝ)) (aρ_lt_bρ 6 (by decide)) (by norm_num [bρ_6])
       (by norm_num) (by norm_num [aρ_6, bρ_6]) (by norm_num [aρ_6, bρ_6]) hlg
 
 lemma U_254_7 :
@@ -3242,14 +3502,17 @@ lemma U_254_7 :
             (1340552212587031 / 1250000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 5
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (1340552212587031 / 1250000000000000 : ℚ))
+             (U := (349690383523532043941 / 5000000000000000000000 : ℚ))
+             5 (by decide +kernel)) :
           Real.log (1340552212587031 / 1250000000000000 : ℝ) ≤
             (349690383523532043941 / 5000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (1243819478873437 / 10000000000000000 : ℝ)) (q :=
-      (1340552212587031 / 10000000000000000 : ℝ)) (by norm_num [aρ_7, bρ_7]) (by norm_num [bρ_7])
+      (1340552212587031 / 10000000000000000 : ℝ)) (aρ_lt_bρ 7 (by decide)) (by norm_num [bρ_7])
       (by norm_num) (by norm_num [aρ_7, bρ_7]) (by norm_num [aρ_7, bρ_7]) hlg
 
 lemma U_254_8 :
@@ -3263,14 +3526,17 @@ lemma U_254_8 :
         (show (1680997852639 / 19531250000000 : ℝ) = (1680997852639 / 1220703125000 : ℝ) / 2 ^ 4
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 9
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (1680997852639 / 1220703125000 : ℚ))
+             (U := (399950690372591140797 / 1250000000000000000000 : ℚ))
+             9 (by decide +kernel)) :
           Real.log (1680997852639 / 1220703125000 : ℝ) ≤
             (399950690372591140797 / 1250000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (567598506141711 / 10000000000000000 : ℝ)) (q :=
-      (1680997852639 / 19531250000000 : ℝ)) (by norm_num [aρ_8, bρ_8]) (by norm_num [bρ_8])
+      (1680997852639 / 19531250000000 : ℝ)) (aρ_lt_bρ 8 (by decide)) (by norm_num [bρ_8])
       (by norm_num) (by norm_num [aρ_8, bρ_8]) (by norm_num [aρ_8, bρ_8]) hlg
 
 lemma U_254_9 :
@@ -3411,14 +3677,17 @@ lemma U_255_1 :
             (16808721959966827 / 10000000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 12
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (16808721959966827 / 10000000000000000 : ℚ))
+             (U := (1298282057449390171387 / 2500000000000000000000 : ℚ))
+             12 (by decide +kernel)) :
           Real.log (16808721959966827 / 10000000000000000 : ℝ) ≤
             (1298282057449390171387 / 2500000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (1050506650118119 / 5000000000000000 : ℝ)) (q :=
-      (16808721959966827 / 80000000000000000 : ℝ)) (by norm_num [aρ_1, bρ_1]) (by norm_num [bρ_1])
+      (16808721959966827 / 80000000000000000 : ℝ)) (aρ_lt_bρ 1 (by decide)) (by norm_num [bρ_1])
       (by norm_num) (by norm_num [aρ_1, bρ_1]) (by norm_num [aρ_1, bρ_1]) hlg
 
 lemma U_255_2 :
@@ -3434,14 +3703,17 @@ lemma U_255_2 :
             (3323019762827807 / 2000000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 12
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (3323019762827807 / 2000000000000000 : ℚ))
+             (U := (5077267560797522583449 / 10000000000000000000000 : ℚ))
+             12 (by decide +kernel)) :
           Real.log (3323019762827807 / 2000000000000000 : ℝ) ≤
             (5077267560797522583449 / 10000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (207637652628929 / 1000000000000000 : ℝ)) (q :=
-      (3323019762827807 / 16000000000000000 : ℝ)) (by norm_num [aρ_2, bρ_2]) (by norm_num [bρ_2])
+      (3323019762827807 / 16000000000000000 : ℝ)) (aρ_lt_bρ 2 (by decide)) (by norm_num [bρ_2])
       (by norm_num) (by norm_num [aρ_2, bρ_2]) (by norm_num [aρ_2, bρ_2]) hlg
 
 lemma U_255_3 :
@@ -3457,14 +3729,17 @@ lemma U_255_3 :
             (3245085195016607 / 2000000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 11
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (3245085195016607 / 2000000000000000 : ℚ))
+             (U := (4839944234938772748027 / 10000000000000000000000 : ℚ))
+             11 (by decide +kernel)) :
           Real.log (3245085195016607 / 2000000000000000 : ℝ) ≤
             (4839944234938772748027 / 10000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (202635442287529 / 1000000000000000 : ℝ)) (q :=
-      (3245085195016607 / 16000000000000000 : ℝ)) (by norm_num [aρ_3, bρ_3]) (by norm_num [bρ_3])
+      (3245085195016607 / 16000000000000000 : ℝ)) (aρ_lt_bρ 3 (by decide)) (by norm_num [bρ_3])
       (by norm_num) (by norm_num [aρ_3, bρ_3]) (by norm_num [aρ_3, bρ_3]) hlg
 
 lemma U_255_4 :
@@ -3480,14 +3755,17 @@ lemma U_255_4 :
             (3114083995289391 / 2000000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 11
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (3114083995289391 / 2000000000000000 : ℚ))
+             (U := (69185604051124281353 / 156250000000000000000 : ℚ))
+             11 (by decide +kernel)) :
           Real.log (3114083995289391 / 2000000000000000 : ℝ) ≤
             (69185604051124281353 / 156250000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (194089710428127 / 1000000000000000 : ℝ)) (q :=
-      (3114083995289391 / 16000000000000000 : ℝ)) (by norm_num [aρ_4, bρ_4]) (by norm_num [bρ_4])
+      (3114083995289391 / 16000000000000000 : ℝ)) (aρ_lt_bρ 4 (by decide)) (by norm_num [bρ_4])
       (by norm_num) (by norm_num [aρ_4, bρ_4]) (by norm_num [aρ_4, bρ_4]) hlg
 
 lemma U_255_5 :
@@ -3503,14 +3781,17 @@ lemma U_255_5 :
             (14551023469457759 / 10000000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 10
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (14551023469457759 / 10000000000000000 : ℚ))
+             (U := (3750762396930940660297 / 10000000000000000000000 : ℚ))
+             10 (by decide +kernel)) :
           Real.log (14551023469457759 / 10000000000000000 : ℝ) ≤
             (3750762396930940660297 / 10000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (1804237896868971 / 10000000000000000 : ℝ)) (q :=
-      (14551023469457759 / 80000000000000000 : ℝ)) (by norm_num [aρ_5, bρ_5]) (by norm_num [bρ_5])
+      (14551023469457759 / 80000000000000000 : ℝ)) (aρ_lt_bρ 5 (by decide)) (by norm_num [bρ_5])
       (by norm_num) (by norm_num [aρ_5, bρ_5]) (by norm_num [aρ_5, bρ_5]) hlg
 
 lemma U_255_6 :
@@ -3526,14 +3807,17 @@ lemma U_255_6 :
             (2605760607718687 / 2000000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 8
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (2605760607718687 / 2000000000000000 : ℚ))
+             (U := (2645774319579386361047 / 10000000000000000000000 : ℚ))
+             8 (by decide +kernel)) :
           Real.log (2605760607718687 / 2000000000000000 : ℝ) ≤
             (2645774319579386361047 / 10000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (159092316429289 / 1000000000000000 : ℝ)) (q :=
-      (2605760607718687 / 16000000000000000 : ℝ)) (by norm_num [aρ_6, bρ_6]) (by norm_num [bρ_6])
+      (2605760607718687 / 16000000000000000 : ℝ)) (aρ_lt_bρ 6 (by decide)) (by norm_num [bρ_6])
       (by norm_num) (by norm_num [aρ_6, bρ_6]) (by norm_num [aρ_6, bρ_6]) hlg
 
 lemma U_255_7 :
@@ -3549,14 +3833,17 @@ lemma U_255_7 :
             (10770369532315343 / 10000000000000000 : ℝ) / 2 ^ 3
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 5
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (10770369532315343 / 10000000000000000 : ℚ))
+             (U := (185534272124562754753 / 2500000000000000000000 : ℚ))
+             5 (by decide +kernel)) :
           Real.log (10770369532315343 / 10000000000000000 : ℝ) ≤
             (185534272124562754753 / 2500000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (1249976168483367 / 10000000000000000 : ℝ)) (q :=
-      (10770369532315343 / 80000000000000000 : ℝ)) (by norm_num [aρ_7, bρ_7]) (by norm_num [bρ_7])
+      (10770369532315343 / 80000000000000000 : ℝ)) (aρ_lt_bρ 7 (by decide)) (by norm_num [bρ_7])
       (by norm_num) (by norm_num [aρ_7, bρ_7]) (by norm_num [aρ_7, bρ_7]) hlg
 
 lemma U_255_8 :
@@ -3572,14 +3859,17 @@ lemma U_255_8 :
             (6949731430595183 / 5000000000000000 : ℝ) / 2 ^ 4
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 9
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (6949731430595183 / 5000000000000000 : ℚ))
+             (U := (823162758290268900717 / 2500000000000000000000 : ℚ))
+             9 (by decide +kernel)) :
           Real.log (6949731430595183 / 5000000000000000 : ℝ) ≤
             (823162758290268900717 / 2500000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
   exact
     Uω_le_right_certificate (s := (578358294393327 / 10000000000000000 : ℝ)) (q :=
-      (6949731430595183 / 80000000000000000 : ℝ)) (by norm_num [aρ_8, bρ_8]) (by norm_num [bρ_8])
+      (6949731430595183 / 80000000000000000 : ℝ)) (aρ_lt_bρ 8 (by decide)) (by norm_num [bρ_8])
       (by norm_num) (by norm_num [aρ_8, bρ_8]) (by norm_num [aρ_8, bρ_8]) hlg
 
 lemma U_255_9 :

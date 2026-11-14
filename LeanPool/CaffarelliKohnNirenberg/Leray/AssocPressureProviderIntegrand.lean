@@ -318,9 +318,9 @@ theorem associatedPressureMomentumProductIntegrand_add
       associatedPressureMomentumProductIntegrand u Du p φ z +
         associatedPressureMomentumProductIntegrand u Du p ψ z := by
   have hφi (i : Fin 3) : ContDiff ℝ (⊤ : ℕ∞) (fun q => φ q i) :=
-    (contDiff_apply ℝ ℝ i).comp hφ
+    (contDiff_apply ℝ (fun _ => ℝ) i).comp hφ
   have hψi (i : Fin 3) : ContDiff ℝ (⊤ : ℕ∞) (fun q => ψ q i) :=
-    (contDiff_apply ℝ ℝ i).comp hψ
+    (contDiff_apply ℝ (fun _ => ℝ) i).comp hψ
   have htime (i : Fin 3) :
       CKN.timePartialProd (fun q => φ q i + ψ q i) z =
         CKN.timePartialProd (fun q => φ q i) z +

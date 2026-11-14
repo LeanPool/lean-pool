@@ -6,9 +6,11 @@ Authors: Arseniy Akopyan
 module
 
 
-public import Mathlib.Tactic
 public import LeanPool.NandakumarRamanaRao.NRR.EMP.VariableBody.Basic
+import LeanPool.NandakumarRamanaRao.NRR.BodySpace.AreaContinuity
 public import LeanPool.NandakumarRamanaRao.NRR.EMP.VariableBody.CellAreaContinuity
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # `NRR.EMP.VariableBody.AreaVector` — the variable-body area vector

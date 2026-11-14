@@ -56,7 +56,7 @@ theorem superjet_left_of_superjet_blockFunctionToPointFunction_sub
     rw [nhdsWithin_univ, nhdsWithin_univ]
     have hcont : ContinuousAt (leftPointEmbedding (n := n)) (0 : Point n) := by
       exact continuous_leftPointEmbedding.continuousAt
-    simpa using hcont.tendsto
+    simpa only [leftPointEmbedding_zero] using hcont.tendsto
   have hb := hleftTendsto.eventually (hblock ε hε)
   filter_upwards [hb] with x hx
   have hexcess :
@@ -70,16 +70,17 @@ theorem superjet_left_of_superjet_blockFunctionToPointFunction_sub
     simp only [SuperjetExcess, blockFunctionToPointFunction,
       pointSumEquivBlockPoint_leftPointEmbedding, blockPointLeft_leftBlockPoint,
       blockPointRight_leftBlockPoint, quadraticModel_leftPointEmbedding]
-    simp [quadraticModel, blockPointLeft, blockPointRight]
+    simp only [quadraticModel, sub_zero, one_div, blockPointLeft, pointSumEquivBlockPoint_zero,
+      Pi.zero_comp, blockPointRight]
     ring
   have hnorm : ‖leftPointEmbedding (n := n) x - 0‖ <= ‖x - 0‖ := by
-    simpa using norm_leftPointEmbedding_le (n := n) x
+    simpa only [sub_zero] using norm_leftPointEmbedding_le (n := n) x
   have hsq : ‖leftPointEmbedding (n := n) x - 0‖ ^ 2 <= ‖x - 0‖ ^ 2 := by
     have hmul := mul_le_mul hnorm hnorm (norm_nonneg _) (norm_nonneg _)
-    simpa [pow_two] using hmul
+    simpa only [sub_zero, pow_two, ge_iff_le] using hmul
   have hmul : ε * ‖leftPointEmbedding (n := n) x - 0‖ ^ 2 <= ε * ‖x - 0‖ ^ 2 :=
     mul_le_mul_of_nonneg_left hsq hε.le
-  linarith
+  linarith only [hx, hexcess, hmul]
 
 /--
 Restrict a superjet of a separated difference to the right coordinate slice.
@@ -115,7 +116,7 @@ theorem subjet_right_of_superjet_blockFunctionToPointFunction_sub
       rw [nhdsWithin_univ, nhdsWithin_univ]
       have hcont : ContinuousAt (rightPointEmbedding (n := n)) (0 : Point n) := by
         exact continuous_rightPointEmbedding.continuousAt
-      simpa using hcont.tendsto
+      simpa only [rightPointEmbedding_zero] using hcont.tendsto
     have hb := hrightTendsto.eventually (hblock ε hε)
     filter_upwards [hb] with y hy
     have hexcess :
@@ -128,18 +129,19 @@ theorem subjet_right_of_superjet_blockFunctionToPointFunction_sub
       simp only [SuperjetExcess, blockFunctionToPointFunction,
         pointSumEquivBlockPoint_rightPointEmbedding, blockPointLeft_rightBlockPoint,
         blockPointRight_rightBlockPoint, quadraticModel_rightPointEmbedding]
-      simp [quadraticModel, blockPointLeft, blockPointRight, Jr]
+      simp only [quadraticModel, sub_zero, one_div, blockPointLeft, pointSumEquivBlockPoint_zero,
+        Pi.zero_comp, blockPointRight, Jr]
       ring
     have hnorm : ‖rightPointEmbedding (n := n) y - 0‖ <= ‖y - 0‖ := by
-      simpa using norm_rightPointEmbedding_le (n := n) y
+      simpa only [sub_zero] using norm_rightPointEmbedding_le (n := n) y
     have hsq : ‖rightPointEmbedding (n := n) y - 0‖ ^ 2 <= ‖y - 0‖ ^ 2 := by
       have hmul := mul_le_mul hnorm hnorm (norm_nonneg _) (norm_nonneg _)
-      simpa [pow_two] using hmul
+      simpa only [sub_zero, pow_two, ge_iff_le] using hmul
     have hmul : ε * ‖rightPointEmbedding (n := n) y - 0‖ ^ 2 <= ε * ‖y - 0‖ ^ 2 :=
       mul_le_mul_of_nonneg_left hsq hε.le
-    linarith
+    linarith only [hy, hexcess, hmul]
   change Jr.neg ∈ Subjet Set.univ H 0
-  simpa using
+  simpa only [neg_neg] using
     (superjet_neg_iff_subjet (C := Set.univ) (u := fun y : Point n => -H y)
       (x := 0) (J := Jr)).1 hsuperNeg
 
@@ -172,7 +174,7 @@ theorem subjet_left_of_subjet_blockFunctionToPointFunction_sub
     rw [nhdsWithin_univ, nhdsWithin_univ]
     have hcont : ContinuousAt (leftPointEmbedding (n := n)) (0 : Point n) := by
       exact continuous_leftPointEmbedding.continuousAt
-    simpa using hcont.tendsto
+    simpa only [leftPointEmbedding_zero] using hcont.tendsto
   have hb := hleftTendsto.eventually (hblock ε hε)
   filter_upwards [hb] with x hx
   have hexcess :
@@ -186,16 +188,17 @@ theorem subjet_left_of_subjet_blockFunctionToPointFunction_sub
     simp only [SubjetExcess, blockFunctionToPointFunction,
       pointSumEquivBlockPoint_leftPointEmbedding, blockPointLeft_leftBlockPoint,
       blockPointRight_leftBlockPoint, quadraticModel_leftPointEmbedding]
-    simp [quadraticModel, blockPointLeft, blockPointRight]
+    simp only [quadraticModel, sub_zero, one_div, blockPointLeft, pointSumEquivBlockPoint_zero,
+      Pi.zero_comp, blockPointRight]
     ring
   have hnorm : ‖leftPointEmbedding (n := n) x - 0‖ <= ‖x - 0‖ := by
-    simpa using norm_leftPointEmbedding_le (n := n) x
+    simpa only [sub_zero] using norm_leftPointEmbedding_le (n := n) x
   have hsq : ‖leftPointEmbedding (n := n) x - 0‖ ^ 2 <= ‖x - 0‖ ^ 2 := by
     have hmul := mul_le_mul hnorm hnorm (norm_nonneg _) (norm_nonneg _)
-    simpa [pow_two] using hmul
+    simpa only [sub_zero, pow_two, ge_iff_le] using hmul
   have hmul : ε * ‖leftPointEmbedding (n := n) x - 0‖ ^ 2 <= ε * ‖x - 0‖ ^ 2 :=
     mul_le_mul_of_nonneg_left hsq hε.le
-  linarith
+  linarith only [hx, hexcess, hmul]
 
 /--
 Restrict a subjet of a separated difference to the right coordinate slice.
@@ -229,7 +232,7 @@ theorem superjet_right_of_subjet_blockFunctionToPointFunction_sub
     rw [nhdsWithin_univ, nhdsWithin_univ]
     have hcont : ContinuousAt (rightPointEmbedding (n := n)) (0 : Point n) := by
       exact continuous_rightPointEmbedding.continuousAt
-    simpa using hcont.tendsto
+    simpa only [rightPointEmbedding_zero] using hcont.tendsto
   have hb := hrightTendsto.eventually (hblock ε hε)
   filter_upwards [hb] with y hy
   have hexcess :
@@ -241,17 +244,17 @@ theorem superjet_right_of_subjet_blockFunctionToPointFunction_sub
     simp only [SuperjetExcess, SubjetExcess, blockFunctionToPointFunction,
       pointSumEquivBlockPoint_rightPointEmbedding, blockPointLeft_rightBlockPoint,
       blockPointRight_rightBlockPoint, quadraticModel_rightPointEmbedding]
-    simp [quadraticModel, blockPointLeft, blockPointRight, Jr, Matrix.neg_mulVec,
-      neg_dotProduct]
+    simp only [quadraticModel, sub_zero, neg_dotProduct, one_div, Matrix.neg_mulVec, mul_neg,
+      blockPointLeft, pointSumEquivBlockPoint_zero, Pi.zero_comp, blockPointRight, Jr]
     ring
   have hnorm : ‖rightPointEmbedding (n := n) y - 0‖ <= ‖y - 0‖ := by
-    simpa using norm_rightPointEmbedding_le (n := n) y
+    simpa only [sub_zero] using norm_rightPointEmbedding_le (n := n) y
   have hsq : ‖rightPointEmbedding (n := n) y - 0‖ ^ 2 <= ‖y - 0‖ ^ 2 := by
     have hmul := mul_le_mul hnorm hnorm (norm_nonneg _) (norm_nonneg _)
-    simpa [pow_two] using hmul
+    simpa only [sub_zero, pow_two, ge_iff_le] using hmul
   have hmul : ε * ‖rightPointEmbedding (n := n) y - 0‖ ^ 2 <= ε * ‖y - 0‖ ^ 2 :=
     mul_le_mul_of_nonneg_left hsq hε.le
-  linarith
+  linarith only [hy, hexcess, hmul]
 
 /--
 Pulling a continuous function on `R^n × R^n` back to `R^(n+n)` gives a
@@ -293,7 +296,8 @@ def normalizedLeftOfBlockGradient
 theorem normalizedLeftOfBlockGradient_zero
     (u : Point n -> Real) (x0 : Point n) (P : BlockPoint n) :
     normalizedLeftOfBlockGradient (n := n) u x0 P 0 = 0 := by
-  simp [normalizedLeftOfBlockGradient, dotProduct]
+  simp only [normalizedLeftOfBlockGradient, add_zero, sub_self, dotProduct, Pi.zero_apply,
+    mul_zero, Finset.sum_const_zero]
 
 /--
 The right normalized function used after translating the doubled maximum
@@ -313,7 +317,8 @@ def normalizedRightOfBlockGradient
 theorem normalizedRightOfBlockGradient_zero
     (v : Point n -> Real) (y0 : Point n) (P : BlockPoint n) :
     normalizedRightOfBlockGradient (n := n) v y0 P 0 = 0 := by
-  simp [normalizedRightOfBlockGradient, dotProduct]
+  simp only [normalizedRightOfBlockGradient, add_zero, sub_self, dotProduct, Pi.zero_apply,
+    mul_zero, Finset.sum_const_zero]
 
 /--
 Closed superjets of the left normalized function transfer back to closed
@@ -340,7 +345,7 @@ theorem closedSuperjet_of_closedSuperjet_normalizedLeftOfBlockGradient
   have hfun :
       normalizedLeftOfBlockGradient (n := n) u x0 P = fun x => uComp x + φ x := by
     funext x
-    simp [normalizedLeftOfBlockGradient, uComp, φ, p]
+    simp only [normalizedLeftOfBlockGradient, uComp, φ, p]
     ring
   have hφ :
       ∀ y : Point n, y ∈ K -> HasSecondOrderExpansionWithin K φ y (A y) := by
@@ -352,13 +357,15 @@ theorem closedSuperjet_of_closedSuperjet_normalizedLeftOfBlockGradient
         φ =
           fun z : Point n => quadraticModel 0 (-u x0) (-p) (0 : Hessian n) z := by
       funext z
-      simp [φ, quadraticModel]
+      simp only [quadraticModel, sub_zero, neg_dotProduct, one_div, Matrix.zero_mulVec,
+        zero_dotProduct, mul_zero, add_zero, φ]
       ring
     have hA_eq :
         A y = quadraticModelJetAt 0 (-p) (0 : Hessian n) y := by
       apply (Jet.equivProd n).injective
-      simp [A, Jet.equivProd, quadraticModelJetAt]
-    simpa [hφ_eq, hA_eq] using hquad
+      simp only [Jet.equivProd, Equiv.coe_fn_mk, quadraticModelJetAt, one_div, sub_zero,
+        Matrix.zero_mulVec, Matrix.transpose_zero, add_zero, smul_zero, A]
+    simpa only [hφ_eq, hA_eq] using hquad
   have hφ_cont : Continuous φ :=
     continuous_const.sub (continuous_const.dotProduct continuous_id)
   have hA_cont : Continuous A := continuous_const
@@ -369,14 +376,16 @@ theorem closedSuperjet_of_closedSuperjet_normalizedLeftOfBlockGradient
       closedSuperjet_sub_of_add_hasSecondOrderExpansionWithin
         (C := K) (u := uComp) (φ := φ) (x := 0)
         (J := ({ gradient := 0, hessian := X } : Jet n))
-        (A := A) hφ hφ_cont hA_cont (by simpa [hfun] using hJ)
+        (A := A) hφ hφ_cont hA_cont (by simpa only [hfun] using hJ)
     have hjet :
         ({ gradient := 0, hessian := X } : Jet n) - A 0 =
           ({ gradient := blockPointLeft P, hessian := X } : Jet n) := by
       apply (Jet.equivProd n).injective
-      simp [A, p, Jet.equivProd]
-    simpa [hjet, uComp] using hshift
-  simpa [uComp] using closedSuperjet_translate_add_left (x0 := x0) (x := 0) hK
+      simp only [Jet.equivProd, Equiv.coe_fn_mk, Jet.sub_gradient, sub_neg_eq_add, zero_add,
+        Jet.sub_hessian, sub_zero, A, p]
+    simpa only [hjet] using hshift
+  simpa only [Set.image_add_left, add_zero] using closedSuperjet_translate_add_left (x0 := x0) (x
+    := 0) hK
 
 /--
 Closed subjets of the right normalized function transfer back to closed
@@ -403,7 +412,7 @@ theorem closedSubjet_of_closedSubjet_normalizedRightOfBlockGradient
   have hfun :
       normalizedRightOfBlockGradient (n := n) v y0 P = fun y => vComp y + φ y := by
     funext y
-    simp [normalizedRightOfBlockGradient, vComp, φ, p]
+    simp only [normalizedRightOfBlockGradient, vComp, φ, p]
     ring
   have hφ :
       ∀ y : Point n, y ∈ L -> HasSecondOrderExpansionWithin L φ y (A y) := by
@@ -415,12 +424,14 @@ theorem closedSubjet_of_closedSubjet_normalizedRightOfBlockGradient
         φ =
           fun z : Point n => quadraticModel 0 (-v y0) p (0 : Hessian n) z := by
       funext z
-      simp [φ, quadraticModel]
+      simp only [quadraticModel, sub_zero, one_div, Matrix.zero_mulVec, zero_dotProduct, mul_zero,
+        add_zero, φ]
     have hA_eq :
         A y = quadraticModelJetAt 0 p (0 : Hessian n) y := by
       apply (Jet.equivProd n).injective
-      simp [A, Jet.equivProd, quadraticModelJetAt]
-    simpa [hφ_eq, hA_eq] using hquad
+      simp only [Jet.equivProd, Equiv.coe_fn_mk, quadraticModelJetAt, one_div, sub_zero,
+        Matrix.zero_mulVec, Matrix.transpose_zero, add_zero, smul_zero, A]
+    simpa only [hφ_eq, hA_eq] using hquad
   have hφ_cont : Continuous φ :=
     continuous_const.add (continuous_const.dotProduct continuous_id)
   have hA_cont : Continuous A := continuous_const
@@ -431,14 +442,16 @@ theorem closedSubjet_of_closedSubjet_normalizedRightOfBlockGradient
       closedSubjet_sub_of_add_hasSecondOrderExpansionWithin
         (C := L) (u := vComp) (φ := φ) (x := 0)
         (J := ({ gradient := 0, hessian := Y } : Jet n))
-        (A := A) hφ hφ_cont hA_cont (by simpa [hfun] using hJ)
+        (A := A) hφ hφ_cont hA_cont (by simpa only [hfun] using hJ)
     have hjet :
         ({ gradient := 0, hessian := Y } : Jet n) - A 0 =
           ({ gradient := -blockPointRight P, hessian := Y } : Jet n) := by
       apply (Jet.equivProd n).injective
-      simp [A, p, Jet.equivProd]
-    simpa [hjet, vComp] using hshift
-  simpa [vComp] using closedSubjet_translate_add_left (x0 := y0) (x := 0) hL
+      simp only [Jet.equivProd, Equiv.coe_fn_mk, Jet.sub_gradient, zero_sub, Jet.sub_hessian,
+        sub_zero, A, p]
+    simpa only [hjet] using hshift
+  simpa only [Set.image_add_left, add_zero] using closedSubjet_translate_add_left (x0 := y0) (x :=
+    0) hL
 
 /--
 Upper semicontinuity is preserved by translating the argument and subtracting
@@ -455,7 +468,7 @@ theorem upperSemicontinuousOn_normalizedLeftOfBlockGradient
     exact ⟨x, hx, rfl⟩
   have hucomp :
       UpperSemicontinuousOn (fun x : Point n => u (x0 + x)) K := by
-    simpa [T, Function.comp_def] using hu.comp hTcont hTmap
+    exact hu.comp hTcont hTmap
   have haffCont :
       ContinuousOn (fun x : Point n => -u x0 - dotProduct (blockPointLeft P) x) K := by
     exact (continuous_const.sub (continuous_const.dotProduct continuous_id)).continuousOn
@@ -466,7 +479,7 @@ theorem upperSemicontinuousOn_normalizedLeftOfBlockGradient
   have hsum := hucomp.add haffUpper
   convert hsum using 1
   ext x
-  simp [normalizedLeftOfBlockGradient]
+  simp only [normalizedLeftOfBlockGradient]
   ring
 
 /--
@@ -484,7 +497,7 @@ theorem lowerSemicontinuousOn_normalizedRightOfBlockGradient
     exact ⟨y, hy, rfl⟩
   have hvcomp :
       LowerSemicontinuousOn (fun y : Point n => v (y0 + y)) L := by
-    simpa [T, Function.comp_def] using hv.comp hTcont hTmap
+    exact hv.comp hTcont hTmap
   have haffCont :
       ContinuousOn (fun y : Point n => -v y0 + dotProduct (blockPointRight P) y) L := by
     exact (continuous_const.add (continuous_const.dotProduct continuous_id)).continuousOn
@@ -495,7 +508,7 @@ theorem lowerSemicontinuousOn_normalizedRightOfBlockGradient
   have hsum := hvcomp.add haffLower
   convert hsum using 1
   ext y
-  simp [normalizedRightOfBlockGradient]
+  simp only [normalizedRightOfBlockGradient]
   ring
 
 /--
@@ -509,9 +522,9 @@ theorem normalizedLeft_sub_normalizedRight_eq
         normalizedRightOfBlockGradient (n := n) v y0 P y =
       (u (x0 + x) - v (y0 + y)) - (u x0 - v y0) -
         dotProduct P (doubledPointToBlockPoint (x, y)) := by
-  simp [normalizedLeftOfBlockGradient, normalizedRightOfBlockGradient,
-    doubledPointToBlockPoint, blockPointLeft, blockPointRight, dotProduct,
-    Fintype.sum_sum_type]
+  simp only [normalizedLeftOfBlockGradient, dotProduct, blockPointLeft, Function.comp_apply,
+    normalizedRightOfBlockGradient, blockPointRight, doubledPointToBlockPoint,
+    Fintype.sum_sum_type, Sum.elim_inl, Sum.elim_inr]
   ring
 
 /--
@@ -561,15 +574,17 @@ theorem normalized_pointwise_bound_of_isMaxOn_doubledQuadraticExpansionAt
       (u := u) (v := v) (x0 := x0) (y0 := y0) (P := P) x y
   have hbase :
       doubledQuadraticExpansionAt (n := n) x0 y0 φ0 P A (x0, y0) = φ0 := by
-    simp [doubledQuadraticExpansionAt, blockQuadraticModel, doubledPointToBlockPoint, dotProduct]
+    simp only [doubledQuadraticExpansionAt, dotProduct, doubledPointToBlockPoint, sub_self,
+      Sum.elim_zero_zero, Pi.zero_apply, mul_zero, Finset.sum_const_zero, add_zero,
+      blockQuadraticModel, one_div, Matrix.mulVec_zero]
   have hpoint :
       doubledQuadraticExpansionAt (n := n) x0 y0 φ0 P A (x0 + x, y0 + y) =
         φ0 + dotProduct P (doubledPointToBlockPoint (x, y)) +
           blockQuadraticModel A (doubledPointToBlockPoint (x, y)) := by
-    simp [doubledQuadraticExpansionAt, add_sub_cancel_left]
+    simp only [doubledQuadraticExpansionAt, add_sub_cancel_left]
   rw [hbase, hpoint] at hineq
   rw [hnorm]
-  linarith
+  linarith only [hineq]
 
 /--
 Restrict a doubled maximum to a translated product set.
@@ -655,7 +670,7 @@ theorem BlockCoordinateSemiconvexOn.continuous_univ
     continuity
   have hF : F = (blockFunctionToPointFunction (n := n) F) ∘ (pointSumEquivBlockPoint n).symm := by
     funext q
-    simp [blockFunctionToPointFunction]
+    simp only [Function.comp_apply, blockFunctionToPointFunction, Equiv.apply_symm_apply]
   rw [hF]
   exact hcoord.comp hsymm
 
@@ -696,6 +711,6 @@ theorem BlockCoordinateSemiconvexOn.left_right_add
       b * (f (blockPointLeft y) + g (blockPointRight y)) +
         lambda / 2 * a * b * dotProduct (x - y) (x - y)
   rw [hleft_combo, hright_combo, hdot]
-  nlinarith
+  nlinarith only [hleft, hright]
 
 end ViscositySolns

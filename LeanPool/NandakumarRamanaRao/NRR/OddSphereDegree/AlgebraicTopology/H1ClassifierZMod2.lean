@@ -8,8 +8,8 @@ module
 
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.CohomologyCupProduct
 public import Mathlib.Algebra.Module.Injective
-public import Mathlib.Algebra.Category.ModuleCat.Injective
-public import Mathlib.RingTheory.Ideal.Lattice
+import Mathlib.Algebra.Category.ModuleCat.Injective
+import Mathlib.RingTheory.Ideal.Lattice
 
 /-!
 # The Kronecker (evaluation) classifier `Hⁿ(X; F₂) → Hom(Hₙ(X; F₂), F₂)`

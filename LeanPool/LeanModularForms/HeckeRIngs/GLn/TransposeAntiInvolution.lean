@@ -46,7 +46,7 @@ lemma GL_transposeEquiv_val (g : GL (Fin n) ℚ) :
 
 lemma GL_transposeEquiv_involutive (g : GL (Fin n) ℚ) :
     (GLTransposeEquiv n (GLTransposeEquiv n g).unop).unop = g := by
-  ext i j; simp [GL_transposeEquiv_val]
+  ext i j; simp only [GL_transposeEquiv_val, transpose_apply]
 
 lemma SLnZ_to_GLnQ_transpose (σ : SpecialLinearGroup (Fin n) ℤ) :
     (GLTransposeEquiv n (σ : GL (Fin n) ℚ)).unop = (σ.transpose : GL (Fin n) ℚ) := by

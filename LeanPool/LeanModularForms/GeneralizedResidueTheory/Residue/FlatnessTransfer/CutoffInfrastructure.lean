@@ -11,7 +11,6 @@ import LeanPool.LeanModularForms.GeneralizedResidueTheory.WindingNumber.Crossing
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 import Mathlib.CategoryTheory.Category.Init
 import Mathlib.Combinatorics.Matroid.Init
-import Mathlib.MeasureTheory.Covering.Besicovitch
 
 /-!
 # Cutoff zpow Infrastructure
@@ -51,7 +50,9 @@ private lemma direction_rate_from_flatness_right
   have hL_pos : (0 : ℝ) < ‖L_R‖ := norm_pos_iff.mpr hL_R_ne
   have hL_ne : ‖L_R‖ ≠ 0 := ne_of_gt hL_pos
   have hv₀_norm : ‖v₀‖ = 1 := by
-    simp_all
+    simp_all only [mem_Ioo, ne_eq, norm_pos_iff, not_false_eq_true, norm_eq_zero,
+      Complex.norm_div, norm_real,
+        norm_norm, div_self]
   have h_flat_eps : (fun ε => ‖tangentDeviation (γ.toFun (σ ε) - s) L_R‖) =o[𝓝[>] 0]
       (fun ε => ε ^ m) := by
     have h1 := (h_flat.right_flat L_R hL_R_ne htend_R).congr
@@ -89,7 +90,7 @@ private lemma tangentDeviation_scale_neg_eq
     ‖tangentDeviation (w / (↑‖w‖ : ℂ)) (-L / (↑‖L‖ : ℂ))‖ =
       ‖tangentDeviation w (-L)‖ / ‖w‖ := by
   rw [show (w / (↑‖w‖ : ℂ) : ℂ) = (‖w‖⁻¹ : ℝ) • w from by
-      simp [Complex.real_smul, Complex.ofReal_inv, inv_mul_eq_div],
+      simp only [real_smul, ofReal_inv, inv_mul_eq_div],
     show -L / (↑‖L‖ : ℂ) = (‖L‖⁻¹ : ℝ) • (-L) from by
       rw [Complex.real_smul, Complex.ofReal_inv, inv_mul_eq_div, neg_div],
     tangentDeviation_real_smul_right _ (inv_ne_zero hL_ne),
@@ -113,7 +114,9 @@ private lemma direction_rate_from_flatness_left
   have hL_pos : (0 : ℝ) < ‖L_L‖ := norm_pos_iff.mpr hL_L_ne
   have hL_ne : ‖L_L‖ ≠ 0 := ne_of_gt hL_pos
   have hv₀_norm : ‖v₀‖ = 1 := by
-    simp_all
+    simp_all only [mem_Ioo, ne_eq, norm_pos_iff, not_false_eq_true, norm_eq_zero,
+      Complex.norm_div, norm_neg,
+        norm_real, norm_norm, div_self]
   have h_flat_eps : (fun ε => ‖tangentDeviation (γ.toFun (σ ε) - s) (-L_L)‖) =o[𝓝[>] 0]
       (fun ε => ε ^ m) := by
     have h1 := (h_flat.left_flat L_L hL_L_ne htend_L).congr
@@ -134,7 +137,8 @@ private lemma direction_rate_from_flatness_left
       (div_pos hc_pos (Real.sqrt_pos.mpr two_pos)), hσ_norm, h_re_pos] with
     ε h_td_bound hε_norm h_re
   set w := γ.toFun (σ ε) - s
-  have hw_ne : w ≠ 0 := by intro h; simp [h] at h_re
+  have hw_ne : w ≠ 0 := by intro h; simp only [h, map_neg, mul_neg, zero_mul, neg_zero, zero_re,
+    lt_self_iff_false] at h_re
   have hw_ne' : ‖w‖ ≠ 0 := norm_ne_zero_iff.mpr hw_ne
   have hε_pos : 0 < ε := by rw [← hε_norm]; exact norm_pos_iff.mpr hw_ne
   set u := w / (↑‖w‖ : ℂ)
@@ -262,7 +266,7 @@ private lemma cutoff_zpow_integral_eq_boundary
       hγ_diff t ⟨(hσ₁_ge.trans hσ₁_lt.le).trans ht.1.le, ht.2.le⟩ hne) h_int_r
   rw [hftc_l, hftc_r, hγ_closed]
   simp only [show (-(m : ℤ) + 1 : ℤ) = 1 - (m : ℤ) from by omega,
-    show (↑(1 - (m : ℤ)) : ℂ) = 1 - ↑↑m from by push_cast; ring, Int.cast_natCast]
+    show (↑(1 - (m : ℤ)) : ℂ) = 1 - ↑↑m from by push_cast; ac_rfl, Int.cast_natCast]
   ring
 
 private lemma exit_time_tendsto_right
@@ -467,13 +471,15 @@ private lemma cutoff_zpow_direction_and_ftc
     have hne_left : ∀ t ∈ Icc γ.a (σ₁ ε), γ.toFun t ≠ s := by
       intro t ht habs
       rcases eq_or_lt_of_le ht.2 with rfl | ht_lt
-      · rw [habs, sub_self, norm_zero] at h5; linarith [hε.1]
-      · have := h7 t ⟨ht.1, ht_lt⟩; rw [habs, sub_self, norm_zero] at this; linarith [hε.1]
+      · rw [habs, sub_self, norm_zero] at h5; linarith only [hε, h5, hε.1]
+      · have := h7 t ⟨ht.1, ht_lt⟩; rw [habs, sub_self, norm_zero] at this; linarith only [hε,
+        this, hε.1]
     have hne_right : ∀ t ∈ Icc (σ₂ ε) γ.b, γ.toFun t ≠ s := by
       intro t ht habs
       rcases eq_or_lt_of_le ht.1 with rfl | ht_gt
-      · rw [habs, sub_self, norm_zero] at h6; linarith [hε.1]
-      · have := h8 t ⟨ht_gt, ht.2⟩; rw [habs, sub_self, norm_zero] at this; linarith [hε.1]
+      · rw [habs, sub_self, norm_zero] at h6; linarith only [hε, h6, hε.1]
+      · have := h8 t ⟨ht_gt, ht.2⟩; rw [habs, sub_self, norm_zero] at this; linarith only [hε,
+        this, hε.1]
     exact cutoff_zpow_integral_eq_boundary γ s m hm hγ_closed
       (σ₁ ε) (σ₂ ε) ε h1 (lt_trans h2 h3) h4 hε.1 h5 h6 h7 h8 h9
       (zpow_mul_deriv_intervalIntegrable γ s m γ.a (σ₁ ε) h1 le_rfl
@@ -540,15 +546,18 @@ lemma cutoff_zpow_infrastructure
   · filter_upwards [hIoo_ev] with ε hε
     change γ.toFun (σ₂ ε) - s ≠ 0
     have h_norm := (hprops ε hε).2.2.2.2.2.1
-    exact sub_ne_zero.mpr (fun h => by rw [h, sub_self, norm_zero] at h_norm; linarith [hε.1])
+    exact sub_ne_zero.mpr (fun h => by rw [h, sub_self, norm_zero] at h_norm; linarith only [hε,
+      h_norm, hε.1])
   · filter_upwards [hIoo_ev] with ε hε
     change γ.toFun (σ₁ ε) - s ≠ 0
     have h_norm := (hprops ε hε).2.2.2.2.1
-    exact sub_ne_zero.mpr (fun h => by rw [h, sub_self, norm_zero] at h_norm; linarith [hε.1])
+    exact sub_ne_zero.mpr (fun h => by rw [h, sub_self, norm_zero] at h_norm; linarith only [hε,
+      h_norm, hε.1])
   · change ‖L_R / ↑‖L_R‖‖ = 1
-    simp_all
+    rw [norm_div, Complex.norm_real, norm_norm, div_self (norm_ne_zero_iff.mpr hL_R_ne)]
   · change ‖-L_L / ↑‖L_L‖‖ = 1
-    simp_all
+    rw [norm_div, norm_neg, Complex.norm_real, norm_norm,
+      div_self (norm_ne_zero_iff.mpr hL_L_ne)]
   · have h_arg_uR : uR.arg = L_R.arg := by
       change (L_R / ↑‖L_R‖).arg = L_R.arg
       rw [div_eq_inv_mul, ← Complex.ofReal_inv,

@@ -285,7 +285,7 @@ private theorem inv_le_inv_of_le {ι : Type*} [Fintype ι] [DecidableEq ι]
   rw [hD.eq] at h₁
   rw [hF.inv.isHermitian.eq] at h₂
   apply Matrix.le_iff.mpr
-  (convert h₁.add h₂ using 1; try rfl)
+  convert h₁.add h₂ using 1
   have hGiG := Matrix.nonsing_inv_mul G ((Matrix.isUnit_iff_isUnit_det G).mp hG.isUnit)
   have hGGi := Matrix.mul_nonsing_inv G ((Matrix.isUnit_iff_isUnit_det G).mp hG.isUnit)
   have hFiF := Matrix.nonsing_inv_mul F ((Matrix.isUnit_iff_isUnit_det F).mp hF.isUnit)

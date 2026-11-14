@@ -8,7 +8,8 @@ module
 public import LeanPool.ConwaySoifer.Simplified.Geometry.Midpoint
 public import LeanPool.ConwaySoifer.Simplified.Geometry.HexSymmetry
 public import LeanPool.ConwaySoifer.Geometry.SideFacts
-import Mathlib.Tactic
+import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.NormNum.Basic
 
 /-!
 # CornerAbsent

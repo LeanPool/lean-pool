@@ -7,6 +7,7 @@ Authors: OpenAI
 module
 
 public import LeanPool.NavierStokesAndEuler.NavierStokes.ActualSlowAxis
+import Mathlib.Analysis.Calculus.Deriv.Prod
 public import LeanPool.NavierStokesAndEuler.NavierStokes.SlowResidualMatching
 import LeanPool.NavierStokesAndEuler.ForMathlib.SmoothnessOrder
 

@@ -7,6 +7,7 @@ Authors: OpenAI
 module
 
 public import LeanPool.NavierStokesAndEuler.NavierStokes.SlowBaseEndpoint
+import Mathlib.Analysis.Calculus.Deriv.Prod
 
 /-!
 # A radial gauge for the actual slow-base potential

@@ -52,8 +52,7 @@ theorem quadraticHilbertMaximalTruncation_zero_dilate (a : ℝ) (ha : 0 < a)
   apply le_antisymm (quadraticHilbertMaximalTruncation_zero_dilate_le a ha f x)
   have h := quadraticHilbertMaximalTruncation_zero_dilate_le a⁻¹
     (inv_pos.mpr ha) (fun u ↦ f (u / a)) (a * x)
-  simpa only [inv_mul_cancel_left₀ ha.ne', div_inv_eq_mul,
-    mul_div_cancel_right₀ _ ha.ne'] using h
+  simpa only [div_inv_eq_mul, mul_div_cancel_right₀ _ ha.ne', inv_mul_cancel_left₀ ha.ne'] using h
 
 theorem lintegral_comp_div (a : ℝ) (ha : 0 < a) (F : ℝ → ℝ≥0∞) :
     (∫⁻ u, F (u / a)) = ENNReal.ofReal a * ∫⁻ y, F y := by
@@ -62,7 +61,7 @@ theorem lintegral_comp_div (a : ℝ) (ha : 0 < a) (F : ℝ → ℝ≥0∞) :
   simp only [Homeomorph.toMeasurableEquiv_coe, Homeomorph.coe_mulLeft₀,
     Real.map_volume_mul_left (inv_ne_zero ha.ne'), inv_inv,
     abs_of_pos ha, lintegral_smul_measure] at h
-  simpa only [div_eq_mul_inv, smul_eq_mul, mul_comm] using h.symm
+  simpa only [div_eq_mul_inv, mul_comm, smul_eq_mul] using h.symm
 
 
 end

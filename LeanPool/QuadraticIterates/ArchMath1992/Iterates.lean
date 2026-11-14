@@ -18,8 +18,8 @@ import LeanPool.QuadraticIterates.Mathlib.Algebra.BigOperators
 import LeanPool.QuadraticIterates.Mathlib.Data.Nat
 import LeanPool.QuadraticIterates.Mathlib.GroupTheory.Card
 import Mathlib.Algebra.Order.Ring.Star
-import Mathlib.Data.Int.ConditionallyCompleteOrder
-import Mathlib.Data.Int.Star
+import Mathlib.Order.Int.ConditionallyCompleteOrder
+import Mathlib.Algebra.Order.Star.Int
 import Mathlib.RingTheory.Radical.NatInt
 
 /-!

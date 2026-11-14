@@ -85,7 +85,7 @@ theorem sortedPartition_head (γ : PiecewiseC1Curve) :
   have hne := sortedPartition_nonempty γ
   have h_a_mem : γ.a ∈ γ.sortedPartition :=
     (mem_sortedPartition γ γ.a).mpr γ.endpoints_in_partition.1
-  linarith [(sortedPartition_mem_Icc γ _ (List.head_mem hne)).1,
+  linarith only [hne, h_a_mem, (sortedPartition_mem_Icc γ _ (List.head_mem hne)).1,
     (sortedPartition_sorted γ).rel_head h_a_mem]
 
 /-- Helper: in a sorted list, every element is ≤ the last element. -/
@@ -112,7 +112,7 @@ theorem sortedPartition_last (γ : PiecewiseC1Curve) :
   have hne := sortedPartition_nonempty γ
   have h_b_mem : γ.b ∈ γ.sortedPartition :=
     (mem_sortedPartition γ γ.b).mpr γ.endpoints_in_partition.2
-  linarith [(sortedPartition_mem_Icc γ _ (List.getLast_mem hne)).2,
+  linarith only [hne, h_b_mem, (sortedPartition_mem_Icc γ _ (List.getLast_mem hne)).2,
     (sortedPartition_sorted γ).rel_getLast h_b_mem]
 
 /-! ### Consecutive pairs cover `[a, b]` -/
@@ -169,7 +169,7 @@ theorem sortedPartition_tail_nonempty (γ : PiecewiseC1Curve) :
   have hlen2 : γ.sortedPartition.length ≤ 1 := by
     rcases List.exists_cons_of_ne_nil (sortedPartition_nonempty γ) with ⟨hd, tl, heq⟩
     simp_all
-  linarith
+  linarith only [hlen, hlen2]
 
 /-- The union of `Icc p.1 p.2` over all `p ∈ consecutivePairs γ` covers `[a, b]`. -/
 theorem consecutivePairs_cover (γ : PiecewiseC1Curve) :

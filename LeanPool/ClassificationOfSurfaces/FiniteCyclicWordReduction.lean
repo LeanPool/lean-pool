@@ -6,10 +6,6 @@ Authors: Ryan McCorvie, Jack McCarthy
 module
 
 public import LeanPool.ClassificationOfSurfaces.FiniteCyclicWordReductionCore
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.CategoryTheory.Category.Init
-import Mathlib.Combinatorics.SimpleGraph.Init
-import Mathlib.MeasureTheory.Covering.Besicovitch
 
 /-!
 # Marked finite cyclic word reduction
@@ -1956,7 +1952,7 @@ theorem targetTokens_isSeparated {n : ℕ}
         List.map_cons, List.map_append,
         List.mem_cons, List.mem_append,
         edgeOfDart_dart]
-      tauto
+      exact hresidual.elim (fun h ↦ Or.inl (Or.inr h)) (fun h ↦ Or.inr (Or.inr h))
     have heDisplayedProtected :
         edge ∈
           ReductionToken.protectedEdges
@@ -1969,7 +1965,7 @@ theorem targetTokens_isSeparated {n : ℕ}
         CompletedBlock.edges,
         List.nil_append, List.singleton_append,
         List.mem_cons, List.mem_append]
-      tauto
+      exact hprotected.elim (fun h ↦ Or.inl (Or.inr h)) (fun h ↦ Or.inr h)
     exact (List.disjoint_left.mp separatedDisplayed)
       heDisplayedResidual heDisplayedProtected
   rcases hresidual with rfl | hresidual

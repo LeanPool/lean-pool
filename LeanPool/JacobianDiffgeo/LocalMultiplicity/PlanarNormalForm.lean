@@ -12,7 +12,10 @@ module
 public import Mathlib.Analysis.Analytic.Order
 public import Mathlib.Analysis.InnerProductSpace.Basic
 import LeanPool.JacobianDiffgeo.LocalMultiplicity.KthRoot
+import Mathlib.Analysis.Calculus.Deriv.Mul
+import Mathlib.Analysis.Calculus.InverseFunctionTheorem.Analytic
 import Mathlib.MeasureTheory.Integral.Bochner.Basic
+import Mathlib.Topology.OpenPartialHomeomorph.IsImage
 
 /-!
 # Planar normal form (Forster Thm 2.1, planar half)

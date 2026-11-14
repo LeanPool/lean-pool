@@ -174,7 +174,7 @@ theorem norm_diffQuot_le_of_contDiff (k : Fin d) (h : ℝ) (φ : EuclideanSpace 
   have hmain : ∫ x, (φ (x + v) - φ x) ^ 2 ≤ h ^ 2 * ∫ x, (partialD k φ x) ^ 2 := by
     rw [← stepD, ← stepC, ← stepB]; exact stepA
   -- Transport `hmain` back to the `L²` classes via the a.e. representative formulas.
-  have hqmp : MeasureTheory.Measure.QuasiMeasurePreserving (· + v) volume volume :=
+  have hqmp : MeasureTheory.QuasiMeasurePreserving (· + v) volume volume :=
     (measurePreserving_add_right volume v).quasiMeasurePreserving
   have hshiftAE : (fun x => (hL2.toLp φ) (x + v)) =ᵐ[volume] (fun x => φ (x + v)) :=
     hqmp.ae_eq_comp hL2.coeFn_toLp
@@ -280,12 +280,12 @@ private theorem integrable_uncurry_transDiff {ψ : EuclideanSpace ℝ (Fin d) �
     have htnorm : ‖t • v‖ ≤ ‖v‖ := by
       rw [norm_smul]
       have htle : ‖t‖ ≤ 1 := by rw [Real.norm_eq_abs, abs_of_pos ht.1]; exact ht.2
-      nlinarith [norm_nonneg v, htle]
+      nlinarith only [htle, norm_nonneg v]
     have hψx : ψ x = 0 := by
       apply image_eq_zero_of_notMem_tsupport
       intro hmem
       have hle : ‖x‖ ≤ R := by simpa [mem_closedBall, dist_eq_norm] using hR hmem
-      nlinarith [norm_nonneg v]
+      nlinarith only [hxnorm, hle, norm_nonneg v]
     have hψxv : ψ (x + t • v) = 0 := by
       apply image_eq_zero_of_notMem_tsupport
       intro hmem
@@ -390,7 +390,7 @@ private theorem sq_norm_diffQuot_sub_le (k : Fin d) {φ : EuclideanSpace ℝ (Fi
     intro t
     rw [norm_sq_transL2_sub]
     refine integral_congr_ae ?_
-    have hqmp : MeasureTheory.Measure.QuasiMeasurePreserving (· + t • v) volume volume :=
+    have hqmp : MeasureTheory.QuasiMeasurePreserving (· + t • v) volume volume :=
       (measurePreserving_add_right volume (t • v)).quasiMeasurePreserving
     have hshiftAE : (fun x => ψLp (x + t • v)) =ᵐ[volume] fun x => ψ (x + t • v) :=
       hqmp.ae_eq_comp hL2p.coeFn_toLp
@@ -400,7 +400,7 @@ private theorem sq_norm_diffQuot_sub_le (k : Fin d) {φ : EuclideanSpace ℝ (Fi
   have hlhs : ‖diffQuot k h φLp - ψLp‖ ^ 2 = ∫ x, ((φ (x + v) - φ x) / h - ψ x) ^ 2 := by
     rw [norm_sq_eq_integral_sq]
     refine integral_congr_ae ?_
-    have hqmp : MeasureTheory.Measure.QuasiMeasurePreserving (· + v) volume volume :=
+    have hqmp : MeasureTheory.QuasiMeasurePreserving (· + v) volume volume :=
       (measurePreserving_add_right volume v).quasiMeasurePreserving
     have hshiftAE : (fun x => φLp (x + v)) =ᵐ[volume] fun x => φ (x + v) :=
       hqmp.ae_eq_comp hL2φ.coeFn_toLp
@@ -639,7 +639,7 @@ private theorem integrable_uncurry_weak (g : EucL2 d) {ψ : EuclideanSpace ℝ (
       have htnorm : ‖p.2 • v‖ ≤ ‖v‖ := by
         rw [norm_smul]
         have htle : ‖p.2‖ ≤ 1 := by rw [Real.norm_eq_abs, abs_of_pos hp.1]; exact hp.2
-        nlinarith [norm_nonneg v, htle]
+        nlinarith only [htle, norm_nonneg v]
       have hxle : ‖p.1‖ ≤ R + ‖v‖ := by
         calc ‖p.1‖ = ‖(p.1 - p.2 • v) + p.2 • v‖ := by congr 1; abel
           _ ≤ ‖p.1 - p.2 • v‖ + ‖p.2 • v‖ := norm_add_le _ _
@@ -691,7 +691,7 @@ private theorem inner_diffQuot_eq_integral_smooth (k : Fin d) (g g' : EucL2 d)
       = ∫ x, g x * (∫ t in (0 : ℝ)..1, partialD k ζ (x - t • v)) := by
     rw [L2.inner_def]
     refine integral_congr_ae ?_
-    have hqmp : MeasureTheory.Measure.QuasiMeasurePreserving (· + hshift k (-h)) volume volume :=
+    have hqmp : MeasureTheory.QuasiMeasurePreserving (· + hshift k (-h)) volume volume :=
       (measurePreserving_add_right volume _).quasiMeasurePreserving
     have hshiftAE : (fun x => ζLp (x + hshift k (-h))) =ᵐ[volume]
         fun x => ζ (x + hshift k (-h)) := hqmp.ae_eq_comp hζ.coeFn_toLp
@@ -729,7 +729,7 @@ private theorem inner_diffQuot_eq_integral_smooth (k : Fin d) (g g' : EucL2 d)
     have hR : ⟪g', transL2 (-(t • v)) ζLp⟫ = ∫ x, g' x * ζ (x - t • v) := by
       rw [L2.inner_def]
       refine integral_congr_ae ?_
-      have hqmp : MeasureTheory.Measure.QuasiMeasurePreserving
+      have hqmp : MeasureTheory.QuasiMeasurePreserving
           (· + (-(t • v))) volume volume :=
         (measurePreserving_add_right volume _).quasiMeasurePreserving
       have hae : (fun x => ζLp (x + (-(t • v)))) =ᵐ[volume]

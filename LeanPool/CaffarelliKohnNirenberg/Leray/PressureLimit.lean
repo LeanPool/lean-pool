@@ -179,7 +179,7 @@ theorem rieszPressureSpaceTime_product_memLp_of_slab
     ∀ i j, MemLp (s.indicator (fun z => v z i * w z j))
       (ENNReal.ofReal (3 / 2 : ℝ)) (volume : Measure (Vec3 × ℝ)) := by
   intro i j
-  rw [memLp_indicator_iff_restrict hs]
+  rw [memLp_indicator_iff_restrict hs.nullMeasurableSet]
   exact (hv i).mul (hw j)
 
 /-- The pressure of a tensor supported on a fixed measurable space-time set
@@ -262,7 +262,7 @@ theorem rieszPressureSpaceTime_product_tendsto_of_Lthree
       rw [show (s.indicator (fun z => vseq n z i * wseq n z j) -
           s.indicator (fun z => v z i * w z j)) =
           s.indicator (fun z => vseq n z i * wseq n z j - v z i * w z j) from hfun n]
-      exact eLpNorm_indicator_eq_eLpNorm_restrict hs
+      exact eLpNorm_indicator_eq_eLpNorm_restrict hs.nullMeasurableSet
     have hprod' : Tendsto
         (fun n => eLpNorm
           (fun z => vseq n z i * wseq n z j - v z i * w z j)

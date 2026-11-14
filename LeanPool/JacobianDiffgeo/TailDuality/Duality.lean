@@ -9,6 +9,7 @@ public import LeanPool.JacobianDiffgeo.TailDuality.Counting
 public import LeanPool.JacobianDiffgeo.TailDuality.Pairing
 import LeanPool.JacobianDiffgeo.CanonicalForms.Existence
 import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.LinearAlgebra.Dual.Lemmas
 import Mathlib.MeasureTheory.Covering.Besicovitch
 
 /-!

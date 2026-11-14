@@ -50,8 +50,8 @@ private theorem legacyProduct_apply_le {s : Set (α × β)} (hs : MeasurableSet 
     legacyProduct μ ν s ≤ ∫⁻ x, ν (Prod.mk x ⁻¹' s) ∂μ := by
   classical
   by_cases h : AEMeasurable (fun x : α => ν.map (Prod.mk x)) μ
-  · simp only [legacyProduct, h, ite_true, Measure.prod]
-    simpa only [map_apply measurable_prodMk_left hs] using bind_apply_le h hs
+  · simp only [legacyProduct, h, ite_true]
+    exact prod_apply_le hs
   · simp [legacyProduct, h]
 
 private theorem legacyProduct_rectangle_le (s : Set α) (t : Set β) :
@@ -88,9 +88,8 @@ private theorem lintegral_legacyProduct_le (f : α × β → ℝ≥0∞) :
     ∫⁻ z, f z ∂legacyProduct μ ν ≤ ∫⁻ x, ∫⁻ y, f (x, y) ∂ν ∂μ := by
   classical
   by_cases h : AEMeasurable (fun x : α => ν.map (Prod.mk x)) μ
-  · simp only [legacyProduct, h, ite_true, Measure.prod]
-    exact (lintegral_bind_le _ _ h).trans <|
-      lintegral_mono fun a => lintegral_map_le _ measurable_prodMk_left.aemeasurable
+  · simp only [legacyProduct, h, ite_true]
+    exact lintegral_prod_le f
   · simp [legacyProduct, h]
 
 /-- Products of integrable real functions are integrable for the original product convention. -/

@@ -115,7 +115,7 @@ theorem negativeEndpoint_exists_unit_modular_witness
     rw [show f = compactSchwartzToL0Infinity g hg by rfl,
       lacunaryQuadraticCarlesonL0_compactSchwartz]
   rw [← hlevel]
-  simpa only [f, compactSchwartzToL0Infinity_apply] using hbound
+  exact hbound
 
 /-- The normalized witness with the paper's printed range `0 < κ < 1`.
 The preceding theorem proves the stronger fact that the upper restriction on

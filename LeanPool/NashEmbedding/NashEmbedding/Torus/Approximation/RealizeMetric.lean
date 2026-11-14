@@ -14,7 +14,7 @@ Authors: Aristotle (Harmonic), Claude Fable 5 (Anthropic), Claude Opus 4.7 (Anth
 -/
 public import Mathlib.Algebra.Order.Archimedean.Real.Hom
 public import Mathlib.Algebra.Order.Chebyshev
-public import Mathlib.Tactic
+public import LeanPool.NashEmbedding.Tactics
 public import LeanPool.NashEmbedding.NashEmbedding.Torus.Approximation.SmoothMetricApprox
 public import LeanPool.NashEmbedding.NashEmbedding.Torus.Approximation.BumpConstruction
 
@@ -66,22 +66,7 @@ lemma exists_finset_periodicExtension {φ : (Fin n → ℝ) → ℂ} (hsupp : Ha
     obtain ⟨y, hy_ball, hy_nonzero⟩ := hk
     have h_bound : ‖y + NashEmbedding.Sobolev.periodicShift n k‖ < R := by
       exact lt_of_not_ge fun h => hy_nonzero <| hR _ h;
-    have h_bound : |(y i + 2 * Real.pi * (k i : ℝ))| ≤ R := by
-      exact le_trans ( by
-        simpa [NashEmbedding.Sobolev.periodicShift] using norm_le_pi_norm ( y +
-          NashEmbedding.Sobolev.periodicShift n k ) i ) h_bound.le;
-    have h_bound : |y i| ≤ ‖x‖ + 1 := by
-      have h_bound : |y i - x i| ≤ ‖y - x‖ := by
-        exact norm_le_pi_norm ( y - x ) i;
-      exact abs_le.mpr ⟨ by
-        linarith [ abs_le.mp h_bound, abs_le.mp ( norm_le_pi_norm x i ), abs_le.mp (
-          norm_le_pi_norm ( y - x ) i ), show ‖y - x‖ < 1 from by
-          rw [← dist_eq_norm]; exact hy_ball ], by
-        linarith [ abs_le.mp h_bound, abs_le.mp ( norm_le_pi_norm x i ), abs_le.mp (
-          norm_le_pi_norm ( y - x ) i ), show ‖y - x‖ < 1 from by
-          rw [← dist_eq_norm]; exact hy_ball ] ⟩;
-    rw [ le_div_iff₀ ] <;> cases abs_cases ( k i : ℝ ) <;> cases abs_cases ( y i + 2 * Real.pi *
-        ( k i : ℝ ) ) <;> cases abs_cases ( y i ) <;> nlinarith [ Real.pi_gt_three ];
+    exact NashEmbedding.Sobolev.periodicShift_index_le_of_mem_ball k i hy_ball h_bound.le
   have h_finite_k : Set.Finite {k : Fin n → ℤ | ∀ i : Fin n, |(k i : ℝ)| ≤ (R + ‖x‖ + 1) / (2 *
       Real.pi)} := by
     have h_finite_k : ∀ i : Fin n, Set.Finite {k : ℤ | |(k : ℝ)| ≤ (R + ‖x‖ + 1) / (2 *
@@ -641,7 +626,7 @@ theorem realize_fB (hn : 0 < n) {f : (Fin n → ℝ) → ℝ} (hf : SmoothPeriod
     rw [gram_dot_reindex e hU0_d, gram_bumpFamily hχε_sm hχε_supp hχε_cube hf0 hM_pos]
     simp only [Matrix.smul_apply, smul_eq_mul, pe]
     congr 2
-    all_goals first | rfl | ring
+    all_goals ring
   -- smoothness and periodicity of the defect function (real part)
   have hpe_sm : ContDiff ℝ ∞ (pe n χε) := pe_contDiff hχε_sm hχε_supp
   have hdef_sm : ∀ i j : Fin n, ContDiff ℝ ∞ (fun x : Fin n → ℝ =>
@@ -654,7 +639,8 @@ theorem realize_fB (hn : 0 < n) {f : (Fin n → ℝ) → ℝ} (hf : SmoothPeriod
         (NashEmbedding.Sobolev.periodicExtension_contDiff (hFε_sm i j) (hFε_supp i j))
     refine ContDiff.sub (contDiff_const.mul (ContDiff.sum fun k _ => ?_))
       (contDiff_const.mul hf.smooth)
-    exact (hpeF.comp (contDiff_pi.mpr fun l => (contDiff_apply ℝ ℝ l).sub contDiff_const)).mul
+    exact (hpeF.comp (contDiff_pi.mpr fun l =>
+      (contDiff_apply ℝ (fun _ => ℝ) l).sub contDiff_const)).mul
       contDiff_const
   have hdef_per : ∀ i j : Fin n, IsPeriodic2Pi (fun x : Fin n → ℝ =>
       (2 * π / (M : ℝ)) ^ n * ∑ k : Fin n → Fin M,
@@ -673,7 +659,7 @@ theorem realize_fB (hn : 0 < n) {f : (Fin n → ℝ) → ℝ} (hf : SmoothPeriod
   refine ⟨_, U, ?_, ?_, ?_⟩
   · -- smooth periodic
     constructor
-    · exact contDiff_pi.mpr fun m => (contDiff_apply ℝ ℝ (e.symm m)).comp hU0_sp.smooth
+    · exact contDiff_pi.mpr fun m => (contDiff_apply ℝ (fun _ => ℝ) (e.symm m)).comp hU0_sp.smooth
     · intro x k; funext m; simp only [hU]; rw [hU0_sp.periodic x k]
   · -- membership
     intro i j

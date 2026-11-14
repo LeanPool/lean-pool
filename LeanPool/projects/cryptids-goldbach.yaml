@@ -1,0 +1,43 @@
+slug: cryptids-goldbach
+title: A 21-state Turing machine for Goldbach's conjecture
+summary: A concrete 21-state binary Turing machine halts on the blank tape exactly when
+  Goldbach's conjecture is false. The proof connects it to the earlier 25-state machine,
+  verifies both machines' prime-search semantics, and preserves finite-machine execution,
+  tape-scanning and reachability infrastructure. This imports only the Goldbach dependency
+  closure of Cryptids, excluding its Riemann, ZF and Busy Beaver developments.
+branch: computability and number theory
+entry_module: LeanPool.CryptidsGoldbach
+authors:
+- Maxence Faldor
+- Moritz Firsching
+source:
+  url: https://github.com/google-deepmind/cryptids/tree/f873434871b2301d5c8c91ba6fa224f92c93c1e1
+  github_repo: google-deepmind/cryptids
+  commit: f873434871b2301d5c8c91ba6fa224f92c93c1e1
+  announcement_url: https://leanprover.zulipchat.com/#narrow/channel/579630-Project-announcements/topic/Cryptids/near/632199475
+  announcement_date: '2026-10-16'
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+- ConjectureMachines.Goldbach21.Semantics.halts_candidate_iff_not_goldbach
+main_results:
+- declaration: ConjectureMachines.Goldbach21.Semantics.halts_candidate_iff_not_goldbach
+  informal: The explicit 21-state binary Turing machine halts from the blank tape if and
+    only if some even natural number greater than two is not the sum of two primes.
+- declaration: ConjectureMachines.Goldbach21.candidate_equivalent
+  informal: The explicit 21-state and 25-state binary machines have the same blank-tape
+    halting behavior.
+- declaration: ConjectureMachines.Goldbach21.candidate_fewer_states
+  informal: The candidate machine has 21 states, strictly fewer than the reference's 25.
+- declaration: ConjectureMachines.Goldbach21.Semantics.halts_reference_iff_not_goldbach
+  informal: The 25-state reference machine halts from the blank tape exactly when
+    Goldbach's conjecture is false.
+tags:
+- computability
+- turing-machines
+- goldbach-conjecture
+- machine-simulation
+msc:
+- 03D10
+- 11P32

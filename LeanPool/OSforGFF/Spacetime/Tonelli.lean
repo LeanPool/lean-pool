@@ -6,7 +6,6 @@ Authors: Michael R. Douglas, Sarah Hoback, Anna Mei, Ron Nissim
 module
 
 public import LeanPool.OSforGFF.Spacetime.Decomposition
-import LeanPool.OSforGFF.General.FunctionalAnalysis
 import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 import Mathlib.Data.Nat.Factorial.DoubleFactorial
 
@@ -45,7 +44,7 @@ lemma spacetimeDecomp_symm_norm_ge (t : ℝ) (v : SpatialCoords) :
   have h_decomp := spacetime_norm_sq_decompose (spacetimeDecomp.symm (t, v))
   rw [h_time, h_spatial] at h_decomp
   have h_sq_ge : ‖spacetimeDecomp.symm (t, v)‖^2 ≥ ‖v‖^2 := by
-    rw [h_decomp]; nlinarith [sq_nonneg t]
+    rw [h_decomp]; linarith only [sq_nonneg t]
   have h_norm_nonneg : 0 ≤ ‖spacetimeDecomp.symm (t, v)‖ := norm_nonneg _
   exact le_of_sq_le_sq h_sq_ge h_norm_nonneg
 
@@ -61,7 +60,7 @@ lemma schwartz_slice_integrable (f : SchwartzMap SpaceTime ℂ) (t : ℝ) :
     have h_int := integrable_one_add_norm (E := SpatialCoords) (μ := volume) (r := 5) h_dim
     have h_eq : ∀ v : SpatialCoords, C / (1 + ‖v‖) ^ 5 = C * (1 + ‖v‖) ^ (-(5 : ℝ)) := by
       intro v
-      have h_pos : 0 < 1 + ‖v‖ := by linarith [norm_nonneg v]
+      have h_pos : 0 < 1 + ‖v‖ := by linarith only [norm_nonneg v]
       have h1 : ((1 + ‖v‖) ^ 5)⁻¹ = (1 + ‖v‖) ^ (-(5 : ℝ)) := by
         rw [← Real.rpow_natCast (1 + ‖v‖) 5, ← Real.rpow_neg (le_of_lt h_pos)]; simp
       rw [div_eq_mul_inv, h1]
@@ -72,9 +71,9 @@ lemma schwartz_slice_integrable (f : SchwartzMap SpaceTime ℂ) (t : ℝ) :
     have h1 := hf_decay (spacetimeDecomp.symm (t, v))
     have h_norm_ge := spacetimeDecomp_symm_norm_ge t v
     have h_bracket_ge : 1 + ‖spacetimeDecomp.symm (t, v)‖ ≥ 1 + ‖v‖ := by linarith
-    have h_bracket_pos : 0 < 1 + ‖v‖ := by linarith [norm_nonneg v]
+    have h_bracket_pos : 0 < 1 + ‖v‖ := by linarith only [norm_nonneg v]
     have h_pow_le : (1 + ‖v‖)^5 ≤ (1 + ‖spacetimeDecomp.symm (t, v)‖)^5 := by
-      apply pow_le_pow_left₀ (by linarith [norm_nonneg v]) h_bracket_ge
+      apply pow_le_pow_left₀ (by linarith only [h_bracket_pos, norm_nonneg v]) h_bracket_ge
     calc ‖f (spacetimeDecomp.symm (t, v))‖
         ≤ C / (1 + ‖spacetimeDecomp.symm (t, v)‖)^5 := h1
       _ ≤ C / (1 + ‖v‖)^5 := by

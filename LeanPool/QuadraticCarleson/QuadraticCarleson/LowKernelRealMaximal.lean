@@ -89,7 +89,7 @@ theorem lintegral_paperLowBadAtomMaximal_le_sharp
   have hA : 0 ≤ A := integral_nonneg fun _ ↦ norm_nonneg _
   have hC : 0 ≤ C := mul_nonneg lowKernelBadAtomConstant_nonneg hA
   have hell : 0 < ell := by dsimp [ell]; positivity
-  have hD : (1 : ℝ) ≤ (2 : ℝ) ^ (2 * B) := one_le_pow₀ (by norm_num)
+  have hD : (1 : ℝ) ≤ (2 : ℝ) ^ (2 * B) := one_le_pow₀ (by norm_num1)
   have hlowNonneg : ∀ x : ℝ,
       0 ≤ lowDecayMajorant ((2 : ℝ) ^ (2 * B)) ell z x := by
     intro x
@@ -100,9 +100,7 @@ theorem lintegral_paperLowBadAtomMaximal_le_sharp
   have hdecay : IntegrableOn
       (fun x ↦ lowDecayMajorant ((2 : ℝ) ^ (2 * B)) ell z x)
       (tripleCenteredInterval z R)ᶜ := by
-    simpa only [ell, tripleCenteredInterval] using
-      integrableOn_lowDecayMajorant_compl
-        ((2 : ℝ) ^ (2 * B)) ell z hD hell
+    exact integrableOn_lowDecayMajorant_compl ((2 : ℝ) ^ (2 * B)) ell z hD hell
   have hmajorantInt : IntegrableOn
       (fun x ↦ C * lowDecayMajorant ((2 : ℝ) ^ (2 * B)) ell z x)
       (tripleCenteredInterval z R)ᶜ := hdecay.const_mul C
@@ -120,11 +118,11 @@ theorem lintegral_paperLowBadAtomMaximal_le_sharp
       apply lintegral_mono_ae
       filter_upwards [ae_restrict_mem measurableSet_Icc.compl] with x hx
       have hpoint := paperLowBadAtomMaximal_le_lowDecayMajorant
-        B f hR (by simpa only [mem_compl_iff] using hx) hf
+        B f hR (by exact hx) hf
         (fun lam ↦ hKf lam x (by simpa only [mem_compl_iff] using hx)) hmean
       have hmono : lowDecayMajorant ((2 : ℝ) ^ (2 * B)) R z x ≤
           lowDecayMajorant ((2 : ℝ) ^ (2 * B)) ell z x :=
-        lowDecayMajorant_mono_length (by positivity) (by dsimp [ell]; linarith)
+        lowDecayMajorant_mono_length (by positivity) (by dsimp [ell]; linarith only [hR])
       exact hpoint.trans (ENNReal.ofReal_le_ofReal
         (mul_le_mul_of_nonneg_left hmono hC))
     _ = ENNReal.ofReal
@@ -182,7 +180,7 @@ theorem lintegral_paperLowBadAtomMaximal_levelAtom_le
           (4 * (B + 1 : ℝ) * lowKernelBadAtomConstant) *
         ENNReal.ofReal (∫ y, ‖levelAtom A f k z R y‖) := by
       have hcoef : 0 ≤ 4 * (B + 1 : ℝ) * lowKernelBadAtomConstant :=
-        mul_nonneg (mul_nonneg (by norm_num) (by positivity))
+        mul_nonneg (mul_nonneg (by norm_num1) (by positivity))
           lowKernelBadAtomConstant_nonneg
       rw [← ENNReal.ofReal_mul hcoef]
       congr 1
@@ -206,7 +204,7 @@ theorem tsum_lintegral_paperLowBadAtomMaximal_levelAtom_le
   let C : ℝ := 4 * (B + 1 : ℝ) * lowKernelBadAtomConstant
   have hC : 0 ≤ C := by
     dsimp [C]
-    exact mul_nonneg (mul_nonneg (by norm_num) (by positivity))
+    exact mul_nonneg (mul_nonneg (by norm_num1) (by positivity))
       lowKernelBadAtomConstant_nonneg
   calc
     (∑' i : ι,
@@ -217,9 +215,7 @@ theorem tsum_lintegral_paperLowBadAtomMaximal_levelAtom_le
           ENNReal.ofReal (∫ y, ‖levelAtom A f k (z i) (R i) y‖) := by
       apply ENNReal.tsum_le_tsum
       intro i
-      simpa only [C] using
-        lintegral_paperLowBadAtomMaximal_levelAtom_le
-          B hf hAk (z i) (R i) (hR i)
+      exact lintegral_paperLowBadAtomMaximal_levelAtom_le B hf hAk (z i) (R i) (hR i)
     _ = ENNReal.ofReal C *
         ∑' i : ι, ENNReal.ofReal
           (∫ y, ‖levelAtom A f k (z i) (R i) y‖) := ENNReal.tsum_mul_left

@@ -7,6 +7,9 @@ module
 
 public import LeanPool.MetricCodes.Foundations
 import all Mathlib.Analysis.SpecialFunctions.BinaryEntropy
+import Mathlib.Algebra.Order.Floor.Semifield
+import Mathlib.Algebra.Order.Ring.Star
+import Mathlib.Algebra.Order.Star.Real
 
 /-!
 # Binary-code asymptotics
@@ -421,7 +424,7 @@ theorem tendsto_logb_supportHarmonicDimension
   · have hb : 0 < b := lt_of_le_of_ne h.support_nonneg
       (Ne.symm hbzero)
     have hba : b < a := by
-      nlinarith [h.support_lt_half, h.weight_pos]
+      linarith [h.support_lt_half, h.weight_pos]
     have hhalf :
         ∀ᶠ n : ℕ in atTop,
           2 * supportDegree b n ≤ shellWeight a n :=
@@ -456,7 +459,7 @@ theorem tendsto_logb_complementHarmonicDimension
   · have hg : 0 < g := lt_of_le_of_ne h.complement_nonneg
       (Ne.symm hgzero)
     have hga : g < 1 - a := by
-      nlinarith [h.complement_lt_half, h.weight_complement_pos]
+      linarith [h.complement_lt_half, h.weight_complement_pos]
     have hhalf :
         ∀ᶠ n : ℕ in atTop,
           2 * complementDegree g n ≤ n - shellWeight a n :=
@@ -1238,7 +1241,7 @@ theorem splitTensor_pairing {n w p q : ℕ}
       rw [Finset.mul_sum]
       apply Finset.sum_congr rfl
       intro B _
-      ring
+      ac_rfl
 
 theorem splitTensor_orthonormal {n w p q r s : ℕ}
     (x : JohnsonSphere n w)
@@ -1402,7 +1405,7 @@ theorem dot_fintype_weighted_sum
       rw [Finset.mul_sum]
       apply Finset.sum_congr rfl
       intro S _
-      ring
+      ac_rfl
 
 theorem coupledTensor_dot {n w p q t : ℕ}
     (x : JohnsonSphere n w)
@@ -2110,7 +2113,7 @@ theorem coupledDegreeCoordinates_pairing {n w p q L : ℕ}
               n (p + q + i.val)))) _
           (e.repr A) (e.repr B)
       rw [PiLp.inner_apply]
-      simp only [RCLike.inner_apply, Real.ringHom_apply, mul_comm]
+      simp only [Real.inner_apply]
     _ = @inner ℝ
         (MetricCodes.Boolean.harmonicEuclideanLayer n
           (p + q + i.val)) _ A B :=
@@ -2305,9 +2308,7 @@ def johnsonUpperScale (n j : ℕ) : ℝ :=
 theorem johnsonMiddleScale_pos {n j : ℕ}
     (hj : 0 < j) (hhalf : 2 * j < n) :
     0 < johnsonMiddleScale n j := by
-  have hj' : (0 : ℝ) < (j : ℝ) := by exact_mod_cast hj
   have hn : 0 < n := by omega
-  have hn' : (0 : ℝ) < (n : ℝ) := by exact_mod_cast hn
   have hgap := johnsonHarmonicGap_pos hhalf
   have hlast : 0 < (n : ℝ) - (j : ℝ) + 1 := by
     have hcast : (j : ℝ) < (n : ℝ) := by
@@ -3144,7 +3145,7 @@ theorem johnsonMiddleChannel_isometry {n j : ℕ}
             Finset.mul_sum]
           apply Finset.sum_congr rfl
           intro a _
-          ring
+          ac_rfl
     _ = ((Real.sqrt (johnsonMiddleScale n j))⁻¹ *
           (Real.sqrt (johnsonMiddleScale n j))⁻¹) *
         (johnsonMiddleScale n j * MetricCodes.Boolean.dot f g) := by
@@ -3153,7 +3154,7 @@ theorem johnsonMiddleChannel_isometry {n j : ℕ}
           (Real.sqrt (johnsonMiddleScale n j))⁻¹ *
           johnsonMiddleScale n j) *
         MetricCodes.Boolean.dot f g := by
-          ring
+          ac_rfl
     _ = MetricCodes.Boolean.dot f g := by
           rw [hscalar, one_mul]
 
@@ -3513,7 +3514,7 @@ theorem johnsonUpperChannel_isometry {n j : ℕ}
             Finset.mul_sum]
           apply Finset.sum_congr rfl
           intro a _
-          ring
+          ac_rfl
     _ = ((Real.sqrt (johnsonUpperScale n j))⁻¹ *
           (Real.sqrt (johnsonUpperScale n j))⁻¹) *
         (johnsonUpperScale n j * MetricCodes.Boolean.dot f g) := by
@@ -3522,7 +3523,7 @@ theorem johnsonUpperChannel_isometry {n j : ℕ}
           (Real.sqrt (johnsonUpperScale n j))⁻¹ *
           johnsonUpperScale n j) *
         MetricCodes.Boolean.dot f g := by
-          ring
+          ac_rfl
     _ = MetricCodes.Boolean.dot f g := by
           rw [hscalar, one_mul]
 
@@ -3780,7 +3781,7 @@ theorem johnsonCoordinateDot_smul {n : ℕ}
     Finset.mul_sum]
   apply Finset.sum_congr rfl
   intro a _
-  ring
+  ac_rfl
 
 theorem johnsonLowerChannel_orthogonal_middleChannel {n j : ℕ}
     (f g : MetricCodes.Boolean.Function n)
@@ -4342,7 +4343,7 @@ theorem johnsonDot_axisRaise {n w : ℕ}
   intro a _
   apply Finset.sum_congr rfl
   intro S _
-  ring
+  ac_rfl
 
 theorem johnsonDot_axisLower {n w : ℕ}
     (x : JohnsonSphere n w)
@@ -4359,7 +4360,7 @@ theorem johnsonDot_axisLower {n w : ℕ}
   intro a _
   apply Finset.sum_congr rfl
   intro S _
-  ring
+  ac_rfl
 
 theorem johnsonDot_axisMembership {n w : ℕ}
     (x : JohnsonSphere n w)
@@ -4377,7 +4378,7 @@ theorem johnsonDot_axisMembership {n w : ℕ}
   intro a _
   apply Finset.sum_congr rfl
   intro S _
-  ring
+  ac_rfl
 
 theorem johnsonLowerChannel_axis_inner {n w j : ℕ}
     (x : JohnsonSphere n w)
@@ -4395,7 +4396,7 @@ theorem johnsonLowerChannel_axis_inner {n w j : ℕ}
   rw [johnsonDot_axisRaise, Finset.mul_sum]
   apply Finset.sum_congr rfl
   intro a _
-  ring
+  ac_rfl
 
 theorem johnsonUpperRaw_dot_harmonic_right {n j k : ℕ}
     (f g : MetricCodes.Boolean.Function n)
@@ -4431,7 +4432,7 @@ theorem johnsonUpperChannel_axis_inner {n w j k : ℕ}
   rw [johnsonDot_axisLower, Finset.mul_sum]
   apply Finset.sum_congr rfl
   intro a _
-  ring
+  ac_rfl
 
 theorem johnsonMiddleRaw_dot_harmonic_right {n j k : ℕ}
     (f g : MetricCodes.Boolean.Function n)
@@ -4589,7 +4590,7 @@ theorem sum_geometricAxis_on_subset {n w : ℕ}
     _ = _ := by
       rw [sum_coordinateIndicator_on_subset x S,
         MetricCodes.Boolean.sum_mem_indicator]
-      ring
+      ac_rfl
 
 theorem johnsonAxisMembership_apply {n w : ℕ}
     (x : JohnsonSphere n w)
@@ -4677,7 +4678,7 @@ theorem johnsonDot_fintype_weighted_sum_right
   intro i _
   apply Finset.sum_congr rfl
   intro S _
-  ring
+  ac_rfl
 
 theorem johnsonAxisMembership_coupledTensor {n w p q : ℕ}
     (x : JohnsonSphere n w)
@@ -4755,7 +4756,7 @@ theorem johnsonAxisMembership_coupledHarmonic_dot
   simp only [Finset.mul_sum]
   apply Finset.sum_congr rfl
   intro r _
-  ring
+  ac_rfl
 
 theorem coordinateSplitEquiv_erase_support {n w : ℕ}
     (x : JohnsonSphere n w) (i : SupportCoordinates x)
@@ -4986,7 +4987,7 @@ theorem raise_splitTensor_eq {n w p q r s : ℕ}
     complementRaisedFunction_raise x hq hcomplement]
   simp only [Pi.add_apply, Pi.smul_apply, smul_eq_mul,
     splitTensor]
-  ring
+  ac_rfl
 
 theorem johnsonHarmonic_dot_splitTensor_succ_mul
     {n w p q t r : ℕ}
@@ -5114,7 +5115,7 @@ theorem johnsonHarmonic_dot_coupledHarmonic
         clebschNormSq w (n - w) p q t =
       Real.sqrt (clebschNormSq w (n - w) p q t) := by
     field_simp [hsqrt]
-    nlinarith [hsq]
+    linarith [hsq]
   calc
     (Real.sqrt (clebschNormSq w (n - w) p q t))⁻¹ *
         (∑ r : Fin (t + 1),
@@ -6008,7 +6009,7 @@ theorem clebschFirstMoment_eq
       (((w : ℝ) - 2 * (p : ℝ)) +
         ((N : ℝ) - 2 * (q : ℝ)) - 2 * (t : ℝ) + 2) *
         clebschFirstMoment w N p q t := by
-          ring
+          ac_rfl
     _ = (t : ℝ) *
         ((N : ℝ) - 2 * (q : ℝ) - (t : ℝ) + 1) *
           clebschNormSq w N p q t :=
@@ -6357,7 +6358,7 @@ theorem clebschNormSq_succ_mul
     exact (mul_eq_zero.mp hcancel).resolve_left hpositive.ne'
   dsimp [A, B, T, M₀, Mprev] at hidentity
   push_cast at hidentity
-  nlinarith only [hidentity]
+  linear_combination hidentity
 
 theorem clebschNormSq_div_succ
     {w N p q t : ℕ}
@@ -6487,8 +6488,6 @@ theorem clebschCenteredExpectation_eq_johnsonDiagonal
   have hn : 0 < n := by omega
   have hnreal : 0 < (n : ℝ) := by exact_mod_cast hn
   have hwreal : 0 < (w : ℝ) := by exact_mod_cast h.weight_pos
-  have hNreal : 0 < ((n - w : ℕ) : ℝ) := by
-    exact_mod_cast (Nat.sub_pos_of_lt h.weight_lt)
   have hjbound := h.window_degree_le_weight source
   have hjreal :
       2 * ((p + q + source.val : ℕ) : ℝ) < (n : ℝ) := by
@@ -6498,10 +6497,6 @@ theorem clebschCenteredExpectation_eq_johnsonDiagonal
     have hs : ((2 * w : ℕ) : ℝ) < (n : ℝ) := by
       exact_mod_cast hstrict
     push_cast at hs
-    linarith
-  have hjgap :
-      0 < (n : ℝ) -
-        2 * ((p + q + source.val : ℕ) : ℝ) := by
     linarith
   have hJ :
       0 < MetricCodes.johnsonJ n (p + q + source.val) := by
@@ -6550,7 +6545,7 @@ theorem clebschCenteredExpectation_eq_johnsonDiagonal
   have hden'' :
       (n : ℝ) - 2 * (p : ℝ) - 2 * (q : ℝ) -
         2 * (source.val : ℝ) + 2 ≠ 0 := by
-    nlinarith [hden']
+    linarith [hden']
   have hJ' :
       (n : ℝ) / 2 -
         ((p : ℝ) + (q : ℝ) + (source.val : ℝ)) ≠ 0 := by
@@ -6769,7 +6764,6 @@ theorem johnsonMiddleSignedScalar_eq_sqrt_hattedDiagonal
   have hjw : j ≤ w := h.window_degree_le_weight source
   have hjhalf : 2 * j < n := by omega
   have hn : 0 < n := by omega
-  have hnreal : 0 < (n : ℝ) := by exact_mod_cast hn
   have hwreal : 0 < (w : ℝ) := by exact_mod_cast h.weight_pos
   have hcomp : 0 < ((n - w : ℕ) : ℝ) := by
     exact_mod_cast (Nat.sub_pos_of_lt h.weight_lt)
@@ -6783,13 +6777,7 @@ theorem johnsonMiddleSignedScalar_eq_sqrt_hattedDiagonal
       exact_mod_cast hstrict
     push_cast at hs
     linarith
-  have hF : 0 < F := by
-    dsimp [F]
-    positivity
   have hmiddle := johnsonMiddleScale_pos hsource hjhalf
-  have haxis : 0 < (n : ℝ) /
-      ((w : ℝ) * ((n - w : ℕ) : ℝ)) := by
-    positivity
   have hS : 0 < S := by
     dsimp [S]
     positivity
@@ -6828,8 +6816,7 @@ theorem johnsonMiddleSignedScalar_eq_sqrt_hattedDiagonal
   have heq :
       (johnsonDiagonalChannelSign n w p q j * D) * S =
         Real.sqrt (D ^ 2 / z) := by
-    nlinarith [hsquare, hsqrt,
-      Real.sqrt_nonneg (D ^ 2 / z)]
+    exact (sq_eq_sq₀ hleft (Real.sqrt_nonneg _)).mp (hsquare.trans hsqrt.symm)
   rw [clebschClosedCenteredExpectation_eq_johnsonDiagonal
     h hstrict source]
   have hhatted :
@@ -6885,7 +6872,7 @@ theorem booleanHarmonicDimension_mul_degreeComplement
       rw [Nat.cast_sub hk] at hchoose
       rw [MetricCodes.booleanHarmonicDimension_succ, Nat.cast_sub hmono]
       push_cast at hchoose ⊢
-      nlinarith [hchoose]
+      linarith [hchoose]
 
 theorem booleanHarmonicDimension_succ_div
     {n j : ℕ} (hhalf : 2 * (j + 1) ≤ n) :
@@ -7137,7 +7124,7 @@ theorem clebschSignedAdjacentCross_sum_comm
   rw [← clebschSignedAdjacentCross_sum hsupport hcomplement]
   apply Finset.sum_congr rfl
   intro r _
-  ring
+  ac_rfl
 
 theorem johnsonAxisLower_coupledHarmonic_dot_closed
     {n w p q t : ℕ}
@@ -7315,7 +7302,7 @@ theorem johnsonMiddleChannel_coupled_axis_inner_of_split_proportional
       htsupport htcomplement a)]
   rw [johnsonAxisMembership_coupledHarmonic_dot_of_split_proportional
     x hp hq htsupport htcomplement a f hpair]
-  ring
+  ac_rfl
 
 theorem johnsonMiddleChannel_coupled_axis_inner_closed
     {n w p q t : ℕ}
@@ -7935,7 +7922,6 @@ theorem johnsonAdjacentRawScalar_sq
   have hn : 0 < n := by omega
   have haxis :
       0 ≤ (n : ℝ) / ((w : ℝ) * ((n - w : ℕ) : ℝ)) := by
-    have hw' : 0 < (w : ℝ) := by exact_mod_cast hw
     have hN : 0 < ((n - w : ℕ) : ℝ) := by
       exact_mod_cast Nat.sub_pos_of_lt hwn
     positivity
@@ -7982,8 +7968,6 @@ theorem johnsonAdjacentRawScalar_pos
     (hcomplement : 2 * q + (t + 1) ≤ n - w) :
     0 < johnsonAdjacentRawScalar n w p q t := by
   have hn : 0 < n := by omega
-  have hnreal : 0 < (n : ℝ) := by exact_mod_cast hn
-  have hwreal : 0 < (w : ℝ) := by exact_mod_cast hw
   have hcomp : 0 < ((n - w : ℕ) : ℝ) := by
     exact_mod_cast Nat.sub_pos_of_lt hwn
   have hcoefficient :
@@ -8202,8 +8186,6 @@ theorem johnsonLowerOffDiagonalScalar_eq_sqrt_source
       2 * q + (target.val + 1) ≤ n - w := by omega
   have hraw := johnsonAdjacentRawScalar_pos
     h.weight_pos h.weight_lt hsupport' hcomplement'
-  have hdegree : 0 < ((p + q + (target.val + 1) : ℕ) : ℝ) := by
-    positivity
   have hleft :
       0 < johnsonLowerOffDiagonalScalar n w p q target.val := by
     unfold johnsonLowerOffDiagonalScalar
@@ -8216,12 +8198,10 @@ theorem johnsonLowerOffDiagonalScalar_eq_sqrt_source
       johnsonLowerOffDiagonalScalar n w p q target.val ^ 2 =
         johnsonSourceChannelCoefficient
           n w p q L source target := by
-    nlinarith [sq_nonneg
-      (johnsonLowerOffDiagonalScalar n w p q target.val ^ 2 -
-        johnsonSourceChannelCoefficient n w p q L source target)]
+    exact (sq_eq_sq₀ (sq_nonneg _) hright).mp
+      ((pow_mul _ 2 2).symm.trans hfourth)
   have hroot := Real.sq_sqrt hright
-  nlinarith [Real.sqrt_nonneg
-    (johnsonSourceChannelCoefficient n w p q L source target)]
+  exact (sq_eq_sq₀ hleft.le (Real.sqrt_nonneg _)).mp (hsquare.trans hroot.symm)
 
 theorem johnsonUpperOffDiagonalScalar_eq_sqrt_source
     {n w p q L : ℕ}

@@ -1235,7 +1235,7 @@ private theorem vorticityProducts_cutoff_linf_le
           mul_le_of_le_one_left hn (hχ1 x)
       · have hzero : χ x = 0 := image_eq_zero_of_notMem_tsupport fun h => hx (hχU h)
         simp [Set.indicator_of_notMem hx, hzero, vec3EuclideanNorm]
-    _ = _ := eLpNorm_indicator_eq_eLpNorm_restrict hU
+    _ = _ := eLpNorm_indicator_eq_eLpNorm_restrict hU.nullMeasurableSet
 
 private theorem vorticityProducts_local_H2_core
     {r R : ℝ} {χ₀ : Vec3 → ℝ} {L C₂ CL : ℝ}

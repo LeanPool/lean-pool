@@ -307,7 +307,7 @@ lemma integrableOn_ball_of_radial {E F : Type*}
       indicator (Ioo 0 r) (fun y => y ^ (Module.finrank ℝ E - 1) • f y) y := by
     intro y hy
     simp only [indicator, mem_Ioo, mem_Iio, mem_Ioi] at hy ⊢
-    simp_all
+    simp_all only [smul_ite, smul_zero, true_and]
   rw [integrableOn_congr_fun h_supp measurableSet_Ioi]
   -- IntegrableOn (indicator (Ioo 0 r) g) (Ioi 0) ← IntegrableOn g (Ioo 0 r) since Ioo 0 r ⊆ Ioi 0
   have : Integrable (indicator (Ioo 0 r) (fun y => y ^ (Module.finrank ℝ E - 1) • f y)) volume :=
@@ -352,14 +352,15 @@ lemma integrableOn_ball_of_rpow_decay {d : ℕ} (hd : d ≥ 1)
     -- First show the rpow part is integrable
     have h_rpow : IntegrableOn (fun y => y ^ ((d : ℝ) - 1 - α)) (Ioo 0 r) volume := by
       rw [intervalIntegral.integrableOn_Ioo_rpow_iff hr]
-      linarith
+      linarith only [hα]
     exact h_rpow.const_mul C
   -- Now use integrableOn_ball_of_radial and monotonicity
   have h_bound := integrableOn_ball_of_radial volume hr hint
   -- h_bound : IntegrableOn (fun x => C * ‖x‖^(-α)) (ball 0 r) volume
   -- Show f is dominated by the bound
   apply Integrable.mono' h_bound h_meas.restrict
-  simp_all
+  simp_all only [ge_iff_le, finrank_euclideanSpace, Fintype.card_fin, smul_eq_mul,
+    Real.norm_eq_abs, Filter.eventually_true]
 
 /-- Integrability away from the origin for bounded functions on compact sets. -/
 lemma integrableOn_compact_diff_ball {d : ℕ}
@@ -382,7 +383,8 @@ lemma integrableOn_compact_diff_ball {d : ℕ}
       intro x hx
       have hx_in_K : x ∈ K := hx.1
       have hx_norm_lower : δ ≤ ‖x‖ := by
-        simp_all
+        simp_all only [gt_iff_lt, Set.mem_sdiff, Metric.mem_ball, dist_zero_right, not_lt,
+          true_and]
       have hx_norm_upper : ‖x‖ ≤ R := hR x hx_in_K
       have hx_norm_pos : 0 < ‖x‖ := hδ.trans_le hx_norm_lower
       calc |f x| ≤ C * ‖x‖ ^ (-α) := h_decay x
@@ -401,10 +403,11 @@ lemma integrableOn_compact_diff_ball {d : ℕ}
             push Not at hα_nonneg
             have h1 : ‖x‖ ^ (-α) ≤ R ^ (-α) := by
               apply Real.rpow_le_rpow (le_of_lt hx_norm_pos) hx_norm_upper
-              linarith
+              linarith only [hα_nonneg]
             exact le_max_of_le_right h1
     have hM_bound : ∀ x ∈ K \ Metric.ball 0 δ, ‖f x‖ ≤ M := fun x hx => by
-      simp_all
+      simp_all only [gt_iff_lt, Set.mem_sdiff, Metric.mem_ball, dist_zero_right, not_lt, and_imp,
+        Real.norm_eq_abs]
     have h_const : IntegrableOn (fun _ => M) (K \ Metric.ball 0 δ) volume :=
       MeasureTheory.integrableOn_const (μ := volume) (s := K \ Metric.ball 0 δ)
         (ne_top_of_lt h_finite)
@@ -471,9 +474,10 @@ lemma polynomial_decay_integrable_3d :
   -- Convert (1 + ‖x‖)^(-4) to 1 / (1 + ‖x‖)^4
   convert h_int using 1
   ext x
-  have h_pos : 0 < 1 + ‖x‖ := by linarith [norm_nonneg x]
+  have h_pos : 0 < 1 + ‖x‖ := by linarith only [norm_nonneg x]
   simp only [Real.rpow_neg (le_of_lt h_pos), one_div]
-  simp_all
+  simp_all only [finrank_euclideanSpace, Fintype.card_fin, Nat.cast_ofNat, Real.rpow_neg_ofNat,
+    Int.reduceNeg, zpow_neg, zpow_ofNat, Real.rpow_ofNat]
 
 /-! ## Bilinear Integrability for L¹ Translation-Invariant Kernels
 
@@ -622,7 +626,7 @@ lemma SchwartzMap.integrable_conj (f : SchwartzMap E ℂ) :
   have hf_star_meas : AEStronglyMeasurable (fun y => starRingEnd ℂ (f y)) μ :=
     hf_int.aestronglyMeasurable.star
   have h_norm_eq : ∀ᵐ y ∂μ, ‖f y‖ = ‖starRingEnd ℂ (f y)‖ := by
-    simp_all
+    simp_all only [RCLike.norm_conj, Filter.eventually_true]
   exact hf_int.congr' hf_star_meas h_norm_eq
 
 end SchwartzBounded
@@ -639,7 +643,8 @@ lemma norm_exp_I_mul_real (r : ℝ) : ‖Complex.exp (Complex.I * r)‖ = 1 :=
 /-- Complex exponential of negative pure imaginary argument has norm 1. -/
 lemma norm_exp_neg_I_mul_real (r : ℝ) : ‖Complex.exp (-Complex.I * r)‖ = 1 := by
   rw [Complex.norm_exp]
-  simp_all
+  simp_all only [neg_mul, neg_re, mul_re, I_re, ofReal_re, zero_mul, I_im, ofReal_im, mul_zero,
+    sub_self, neg_zero, Real.exp_zero]
 
 /-! ## Linear Vanishing Bound for Schwartz Functions
 
@@ -670,7 +675,7 @@ theorem schwartz_vanishing_linear_bound_general
     have h := SchwartzMap.le_seminorm ℝ 0 1 f y
     simp only [pow_zero, one_mul] at h
     calc ‖iteratedFDeriv ℝ 1 (⇑f) y‖ ≤ (SchwartzMap.seminorm ℝ 0 1) f := h
-      _ ≤ (SchwartzMap.seminorm ℝ 0 1) f + 1 := by linarith
+      _ ≤ (SchwartzMap.seminorm ℝ 0 1) f + 1 := by linarith only []
       _ = C_deriv := rfl
   -- The convex set (whole space)
   have h_convex : Convex ℝ (Set.univ : Set (ℝ × E)) := convex_univ
@@ -681,7 +686,8 @@ theorem schwartz_vanishing_linear_bound_general
     exact f.differentiableAt.hasFDerivAt.hasFDerivWithinAt
   -- Connection: ‖fderiv ℝ f y‖ = ‖iteratedFDeriv ℝ 1 f y‖
   have h_fderiv_bound : ∀ y ∈ (Set.univ : Set (ℝ × E)), ‖fderiv ℝ f y‖ ≤ C_deriv := by
-    simp_all
+    simp_all only [norm_iteratedFDeriv_one, Prod.forall, Set.mem_univ, hasFDerivWithinAt_univ,
+      forall_const]
   use C_deriv
   intro t ht x
   -- 2. The reference point: (0, x) where f vanishes
@@ -702,7 +708,9 @@ theorem schwartz_vanishing_linear_bound_general
   -- Compute ‖B - A‖ = ‖(t, x) - (0, x)‖ = ‖(t, 0)‖ = |t| = t
   have h_dist : ‖B - A‖ = t := by
     simp only [B, A, Prod.mk_sub_mk, sub_zero]
-    simp_all
+    simp_all only [norm_iteratedFDeriv_one, Set.mem_univ, implies_true, hasFDerivWithinAt_univ,
+      forall_const, Prod.forall, ge_iff_le, sub_self, Prod.norm_mk, Real.norm_eq_abs, norm_zero,
+      abs_nonneg, sup_of_le_left, abs_eq_self]
   rwa [h_dist] at h_mvt
 
 end SchwartzLinearBound
@@ -785,7 +793,7 @@ theorem schwartz_integrable_decay {V : Type*} [NormedAddCommGroup V]
       · exact hC_pos k
     · use 0; simp
   · intro x
-    rw [div_eq_mul_inv, le_mul_inv_iff₀ (pow_pos (by linarith [norm_nonneg x]) _)]
+    rw [div_eq_mul_inv, le_mul_inv_iff₀ (pow_pos (by linarith only [norm_nonneg x]) _)]
     -- Expand (1 + ‖x‖)^N
     have h_binom : (1 + ‖x‖)^N = Finset.sum (Finset.range (N + 1)) (fun k => (N.choose k : ℝ) *
       ‖x‖^k) := by
@@ -852,7 +860,7 @@ lemma bumpSelfConv_integral (φ : ContDiffBump (0 : E)) :
   rw [integral_convolution (L := ContinuousLinearMap.lsmul ℝ ℝ)]
   · simp only [ContinuousLinearMap.lsmul_apply, smul_eq_mul]
     have h1 := φ.integral_normed (μ := volume)
-    simp_all
+    simp_all only [mul_one]
   · exact φ.integrable_normed
   · exact φ.integrable_normed
 
@@ -897,7 +905,8 @@ lemma bumpSelfConv_support_tendsto {ι : Type*} {l : Filter ι}
   rw [Metric.mem_ball, dist_zero_right] at hx_ball ⊢
   calc ‖x‖ < 2 * (φ i).rOut := hx_ball
     _ < 2 * (ε / 2) := by
-        simp_all
+        simp_all only [gt_iff_lt, mem_support, ne_eq, support_subset_iff, Metric.mem_ball,
+          dist_zero_right, not_false_eq_true, Nat.ofNat_pos, mul_lt_mul_iff_right₀]
     _ = ε := by ring
 
 /-- **Main theorem: Double mollifier convergence via associativity.**
@@ -1077,8 +1086,8 @@ theorem double_mollifier_convergence
                    rcases htv with ⟨ht, _⟩
                    calc ‖a‖ ≤ 2 * (φ i).rOut := ht
                         _ < 2 * (‖a‖ / 3) := mul_lt_mul_of_pos_left hr (by norm_num)
-                        _ < ‖a‖ := by linarith [norm_nonneg a]
-                linarith
+                        _ < ‖a‖ := by linarith only [hr_pos, hr, ht, norm_nonneg a]
+                linarith only [hr_pos, htv, hr]
          change Integrable F (volume.prod volume)
          rw [← MeasureTheory.integrableOn_iff_integrable_of_support_subset h_supp_F]
          exact h_cont_F.integrableOn_compact hK_compact

@@ -7,6 +7,9 @@ Authors: OpenAI, Dean Cureton
 module
 
 public import LeanPool.GapCVP.Part14A
+import Mathlib.Algebra.Order.Floor.Semifield
+import Mathlib.RingTheory.Henselian
+import Mathlib.RingTheory.RegularLocalRing.Defs
 
 /-! # GapCVP proof, part 14, continuation 02 -/
 
@@ -1404,6 +1407,28 @@ private theorem paperVariableArityPhysicalMatrixFamilyGuardCover
                 afterRefinement, ordinary,
                 afterOrdinary, decide_true, Bool.and_self, Bool.or_true]
 
+private theorem physicalMatrixGuardedFourFamilyCheck_bits
+    (global refinement ordinary shifted : List Bool → List Bool)
+    (query : List Bool) (row globalBoundary refinementBoundary ordinaryBoundary : ℕ)
+    (entry : Bool)
+    (correctGlobal : global query = [decide (row < globalBoundary) && entry])
+    (correctRefinement : refinement query =
+      [decide (globalBoundary ≤ row ∧ row < refinementBoundary) && entry])
+    (correctOrdinary : ordinary query =
+      [decide (refinementBoundary ≤ row ∧ row < ordinaryBoundary) && entry])
+    (correctShifted : shifted query = [decide (ordinaryBoundary ≤ row) && entry]) :
+    physicalMatrixGuardedFourFamilyCheck global refinement ordinary shifted query = [entry] := by
+  have last := fourFamilyBooleanOrOutput_bits ordinary shifted query _ _
+    correctOrdinary correctShifted
+  have middle := fourFamilyBooleanOrOutput_bits refinement
+    (sourceFourFamilyBooleanOrOutput ordinary shifted) query _ _ correctRefinement last
+  have complete := fourFamilyBooleanOrOutput_bits global
+    (sourceFourFamilyBooleanOrOutput refinement
+      (sourceFourFamilyBooleanOrOutput ordinary shifted)) query _ _ correctGlobal middle
+  exact complete.trans (congrArg (fun bit => [bit])
+    (paperVariableArityPhysicalMatrixFamilyGuardCover
+      row globalBoundary refinementBoundary ordinaryBoundary entry))
+
 theorem paperVariableArityPhysicalMatrixGuardedFourFamilyCheck_valid
     (global refinement ordinary shifted : List Bool → List Bool)
     (formula : ThreeCNF)
@@ -1462,63 +1487,11 @@ theorem paperVariableArityPhysicalMatrixGuardedFourFamilyCheck_valid
         ((physicalWordBinarySystem
           (encodeThreeCNF formula).length formula).check
             row column = (1 : ZMod 2))] := by
-  let query := affineCellQuery row.val column.val
-    (encodeThreeCNF formula)
-  let entry := decide
-    ((physicalWordBinarySystem
-      (encodeThreeCNF formula).length formula).check
-        row column = (1 : ZMod 2))
-  let globalBit :=
-    decide (row.val < physicalFormulaGlobalBoundary formula)
-  let refinementBit := decide
-    (physicalFormulaGlobalBoundary formula ≤ row.val ∧
-      row.val < physicalFormulaRefinementBoundary formula)
-  let ordinaryBit := decide
-    (physicalFormulaRefinementBoundary formula ≤ row.val ∧
-      row.val < physicalFormulaOrdinaryBoundary formula)
-  let shiftedBit := decide
-    (physicalFormulaOrdinaryBoundary formula ≤ row.val)
-  have globalValue : global query = [globalBit && entry] := by
-    simpa only [query, globalBit, entry] using correctGlobal
-  have refinementValue : refinement query = [refinementBit && entry] := by
-    simpa only [query, refinementBit, entry] using correctRefinement
-  have ordinaryValue : ordinary query = [ordinaryBit && entry] := by
-    simpa only [query, ordinaryBit, entry] using correctOrdinary
-  have shiftedValue : shifted query = [shiftedBit && entry] := by
-    simpa only [query, shiftedBit, entry] using correctShifted
-  have last := fourFamilyBooleanOrOutput_bits
-    ordinary shifted query
-    (ordinaryBit && entry) (shiftedBit && entry)
-    ordinaryValue shiftedValue
-  have middle := fourFamilyBooleanOrOutput_bits
-    refinement (sourceFourFamilyBooleanOrOutput ordinary shifted) query
-    (refinementBit && entry)
-    ((ordinaryBit && entry) || (shiftedBit && entry))
-    refinementValue last
-  have complete := fourFamilyBooleanOrOutput_bits
-    global
-    (sourceFourFamilyBooleanOrOutput refinement
-      (sourceFourFamilyBooleanOrOutput ordinary shifted)) query
-    (globalBit && entry)
-    ((refinementBit && entry) ||
-      ((ordinaryBit && entry) || (shiftedBit && entry)))
-    globalValue middle
-  have covered := paperVariableArityPhysicalMatrixFamilyGuardCover
-    row.val
-    (physicalFormulaGlobalBoundary formula)
-    (physicalFormulaRefinementBoundary formula)
-    (physicalFormulaOrdinaryBoundary formula)
-    entry
-  change
-    physicalMatrixGuardedFourFamilyCheck
-      global refinement ordinary shifted query = [entry]
-  change
-    sourceFourFamilyBooleanOrOutput global
-      (sourceFourFamilyBooleanOrOutput refinement
-        (sourceFourFamilyBooleanOrOutput ordinary shifted)) query =
-      [entry]
-  rw [← covered]
-  exact complete
+  apply physicalMatrixGuardedFourFamilyCheck_bits
+  · exact correctGlobal
+  · exact correctRefinement
+  · exact correctOrdinary
+  · exact correctShifted
 
 private theorem paperVariableArityPhysicalMatrixCheckEntry_transport
     (source target : GapCVP.Core.BinaryAffineSystem)
@@ -2777,8 +2750,7 @@ theorem physicalRefinementGridCard_eq
       (ExplicitGridPoint (encodeThreeCNF formula).length
         (srcFormula formula)) =
       physGridCard formula := by
-  simpa only [Fintype.card_coe, physGridCard, physFieldCard, physDegree, physicalFormulaSize,
-      physicalFormulaVariableCount] using physicalSourceGridCardinality_eq (encodeThreeCNF
+  exact physicalSourceGridCardinality_eq (encodeThreeCNF
           formula).length formula
 
 private theorem paperVariableArityPhysicalRefinementFieldCard_eq
@@ -3240,7 +3212,7 @@ private theorem paperVariableArityPhysicalRefinementDecodedFieldRowRank
     physicalRefinementDegree_pos formula
   have quotientBound : localRank / degree < grid * field := by
     apply (Nat.div_lt_iff_lt_mul degreePositive).mpr
-    simpa only [Nat.mul_assoc] using bounded
+    exact bounded
   have sourceRank :
       row.val - physicalFormulaGlobalBoundary formula =
         clause.val * (grid * field * degree) + localRank :=
@@ -4709,8 +4681,7 @@ noncomputable def
         row column formula hbound))
     (paperVariableArityPhysicalColumnGlobalTypeBit_query
       row column formula)
-    (by simpa only [physicalRefinementSourceLocalTagInRange,
-      decide_eq_true_eq] using
+    (by exact
         (paperVariableArityPhysicalRefinementLocalTagMarker_query
           row column formula hbound))
 

@@ -245,20 +245,20 @@ private lemma coefficient_X_weighted_step (n : ℕ) (hn : 1 ≤ n)
   ring
 
 private lemma pairing_add_right (x y z : Point d) :
-    O3.pairing x (y + z) = O3.pairing x y + O3.pairing x z := by
-  simp [O3.pairing, Finset.sum_add_distrib, mul_add]
+    O3.pairing x (y + z) = O3.pairing x y + O3.pairing x z :=
+  V7.ResidualAlgebra.pairing_add_right x y z
 
 private lemma pairing_add_left (x y z : Point d) :
-    O3.pairing (x + y) z = O3.pairing x z + O3.pairing y z := by
-  simp [O3.pairing, Finset.sum_add_distrib, add_mul]
+    O3.pairing (x + y) z = O3.pairing x z + O3.pairing y z :=
+  V7.ResidualAlgebra.pairing_add_left x y z
 
 private lemma pairing_sub_left (x y z : Point d) :
-    O3.pairing (x - y) z = O3.pairing x z - O3.pairing y z := by
-  simp [O3.pairing, Finset.sum_sub_distrib, sub_mul]
+    O3.pairing (x - y) z = O3.pairing x z - O3.pairing y z :=
+  V7.ResidualAlgebra.pairing_sub_left x y z
 
 private lemma pairing_sub_right (x y z : Point d) :
-    O3.pairing x (y - z) = O3.pairing x y - O3.pairing x z := by
-  simp [O3.pairing, Finset.sum_sub_distrib, mul_sub]
+    O3.pairing x (y - z) = O3.pairing x y - O3.pairing x z :=
+  V7.ResidualAlgebra.pairing_sub_right x y z
 
 private lemma pairing_smul_left (r : ℝ) (x y : Point d) :
     O3.pairing (r • x) y = r * O3.pairing x y :=
@@ -286,7 +286,7 @@ private lemma shifted_dw_pairing (n : ℕ) (dw : ScalarSeq)
   have hend : f n = 0 := by simp [f, hdwn]
   rw [Finset.sum_range_succ, hend, add_zero] at hshift
   dsimp [f] at hshift ⊢
-  linarith
+  linarith only [hshift]
 
 private lemma free_bilinear_reduction (n : ℕ) (hn : 1 ≤ n)
     (u dw : ScalarSeq) (alpha c b : ScalarMatrix)
@@ -396,11 +396,11 @@ private lemma free_primal_residual_nonneg (p : ℝ) (hp : 1 < p)
       O3.pairing (A k - A (k + 1)) (B (k + 1) - B k) := by
     have hraw := neg_le_of_abs_le hholder
     dsimp [GX, BY] at ⊢
-    nlinarith
+    linarith only [hraw]
   have hmul := mul_le_mul_of_nonneg_left hpair hd
   have hpsd : 0 ≤ u k * GX ^ (2 : ℕ) + BY ^ (2 : ℕ) -
       2 * dw k * GX * BY := by
-    nlinarith [sq_nonneg (dw k * GX - BY),
+    nlinarith only [sq_nonneg (dw k * GX - BY),
       mul_nonneg hdet (sq_nonneg GX)]
   have hnormsym : lpNorm p (B k - B (k + 1)) = BY := by
     dsimp [BY]
@@ -412,7 +412,7 @@ private lemma free_primal_residual_nonneg (p : ℝ) (hp : 1 < p)
     1 / 2 * (lpNorm p (B k - B (k + 1))) ^ (2 : ℕ) +
     dw k * O3.pairing (A k - A (k + 1)) (B (k + 1) - B k)
   rw [hnormsym]
-  nlinarith
+  linarith only [hmul, hpsd]
 
 private lemma dual_residual_nonneg (p : ℝ) (hp : 1 < p) (hp2 : p < 2)
     (n : ℕ) (hn : 1 ≤ n) (u dw : ScalarSeq)
@@ -556,7 +556,7 @@ private lemma function_block_identity (n : ℕ) (hn : 1 ≤ n)
     ring
   unfold FunctionBregman
   rw [hrem1, hrem2, hflip, hdec1, hdec2]
-  linarith
+  linarith only [hcancel]
 
 private lemma belowHstar_zero (p : ℝ) (hp : 1 < p) (d : ℕ) :
     belowHstar p (0 : Point d) = 0 := by
@@ -701,7 +701,7 @@ theorem belowTerminalGradient : BelowTerminalGradientStatement := by
     intro x y
     unfold FunctionBregman
     have h := hfirst y x
-    linarith
+    linarith only [h]
   have hwpos : ∀ k ≤ n, 0 < 1 / data.u (n - k) := by
     intro k hk
     exact one_div_pos.mpr (hu_pos (n - k) (by omega))
@@ -717,7 +717,7 @@ theorem belowTerminalGradient : BelowTerminalGradientStatement := by
     have hinv := one_div_le_one_div_of_le hpos₁ hmono
     have hden : n - (k + 1) = n - k - 1 := by omega
     rw [hden]
-    linarith
+    exact sub_nonneg.mpr hinv
   let gradBlock : ℝ :=
     ∑ k ∈ Finset.range n,
       ((1 / data.u (n - (k + 1))) / 2) *
@@ -801,7 +801,7 @@ theorem belowTerminalGradient : BelowTerminalGradientStatement := by
         ring
       rw [heq]
       exact hguard_sum
-    linarith
+    linarith only [hf, hdelta_sum, hguard_split]
   have hgeom := belowGeometry p hp hp2 d
   have hmirror_gap : 0 ≤
       ∑ k ∈ Finset.range n,
@@ -842,17 +842,16 @@ theorem belowTerminalGradient : BelowTerminalGradientStatement := by
             (data.r k) (data.r (k + 1))) - mirrorNormBlock := by
       rw [hnormdef, ← Finset.sum_sub_distrib]
       exact hmirror_gap
-    linarith
+    linarith only [hm, hgap_split, hmirror0]
   have hcore : belowHstar p (data.r n) ≤
       (1 / data.u n) *
         (data.oracle.value (data.q 0) - data.oracle.value (data.q n)) := by
-    linarith
+    linarith only [hres_blocks, hfunction_bound, hmirror_bound]
   have hsinf : sInf (Set.range data.oracle.value) ≤ data.oracle.value (data.q n) :=
     csInf_le hbdd ⟨data.q n, rfl⟩
   have hscale : 0 ≤ 1 / data.u n := le_of_lt (one_div_pos.mpr (hu_pos n le_rfl))
   have hgapscale := mul_le_mul_of_nonneg_left
-    (show data.oracle.value (data.q 0) - data.oracle.value (data.q n) ≤
-      data.oracle.value (data.q 0) - sInf (Set.range data.oracle.value) by linarith) hscale
+    (sub_le_sub_left hsinf (data.oracle.value (data.q 0))) hscale
   calc
     belowHstar p (data.oracle.gradient (data.q n)) = belowHstar p (data.r n) := by
       rw [← hG n le_rfl, hterminal]

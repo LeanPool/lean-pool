@@ -1439,7 +1439,7 @@ theorem graphCombinatorialToTopological_surjective_of_path
     (root : V) (γ : Path (graphVertex root) (graphVertex root)) :
     ∃ p : @Quiver.Path (Symmetrify V) (Quiver.symmetrifyQuiver V)
         (show Symmetrify V from root) root,
-      graphCombinatorialToTopological root (graphBaseSymPathValue p) =
+      graphCombinatorialToTopological root (.of (graphBaseSymPathValue p)) =
         FundamentalGroup.fromPath (Path.Homotopic.Quotient.mk γ) := by
   let P := graphCoverRealizationProjection root
   let cov := graphCoverRealizationProjection_isCovering root
@@ -1511,8 +1511,8 @@ theorem graphCombinatorialToTopological_surjective_of_path
     rw [← hLmap]
     exact hcast
   refine ⟨p, ?_⟩
-  change (graphFreeGroupoidToTopological (V := V)).map
-      (graphBaseSymPathValue p) = _
+  change FundamentalGroup.fromPath ((graphFreeGroupoidToTopological (V := V)).map
+      (graphBaseSymPathValue p)) = _
   rw [graphFreeGroupoidToTopological_map_path]
   apply congrArg FundamentalGroup.fromPath
   have hqmap₀ := graphCoverRealizationQuiverPath_map root q
@@ -1536,12 +1536,11 @@ theorem graphCombinatorialToTopological_surjective_of_path
 theorem graphCombinatorialToTopological_surjective
     (root : V) :
     Function.Surjective (graphCombinatorialToTopological root) := by
-  intro g
+  rintro ⟨g⟩
   refine Quotient.inductionOn g ?_
   intro γ
   obtain ⟨p, hp⟩ := graphCombinatorialToTopological_surjective_of_path root γ
-  refine ⟨graphBaseSymPathValue p, ?_⟩
-  simpa [graphCombinatorialToTopological, graphFreeGroupoidToTopological] using hp
+  exact ⟨.of (graphBaseSymPathValue p), hp⟩
 
 theorem baseSymPathValue_cast_heq
     {V : Type u} [Quiver.{u} V]
@@ -1715,7 +1714,9 @@ private theorem graphCombinatorialToTopological_injective_of_paths
 theorem graphCombinatorialToTopological_injective
     (root : V) :
     Function.Injective (graphCombinatorialToTopological root) := by
-  intro g h heq
+  rintro ⟨g⟩ ⟨h⟩ heq
+  apply End.ext
+  replace heq := congrArg End.asHom heq
   revert h
   refine Quot.inductionOn g ?_
   intro p h heq

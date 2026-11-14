@@ -99,7 +99,7 @@ lemma convexObjective_of_global_support (f : Point d → ℝ) (g : Point d → P
         Pi.zero_apply]
       have hx := congrArg (fun c : ℝ => c * x i) hab
       have hy := congrArg (fun c : ℝ => c * y i) hab
-      nlinarith
+      nlinarith only [ha, hb, hx, hy]
     rw [hvec]
     change (∑ i, g z i * (0 : Point d) i) = 0
     simp
@@ -153,7 +153,7 @@ theorem unitObjectiveData_assumptions {p : ℝ} {d T : ℕ}
       max (data.partialG t0 x / 2) (lpNorm p x - 3 / 2) := by
     rcases hsteps t0 ht0 with ⟨-, -, -, -, -, -, hH, -⟩
     exact hH
-  have hHcert := partialH_convex_oneLipschitz data (by linarith) ht0 hbasic hH
+  have hHcert := partialH_convex_oneLipschitz data (by linarith only [hp]) ht0 hbasic hH
   have hchiPos : 0 < P.chi := unitChi_pos hT
   have hsupport : ∀ x y,
       (repairSelectedOracle p d P.chi (data.partialH t0)).value x +

@@ -107,11 +107,7 @@ theorem ucFinalTimeCutoff_abs_deriv_le (s : ℝ) :
 theorem ucInitialTimeCutoff_abs_deriv_le {ε : ℝ} (hε : 0 < ε) (s : ℝ) :
     |deriv (ucInitialTimeCutoff ε) s| ≤ 8 / ε := by
   have harg : HasDerivAt (fun u : ℝ => (u - ε) / ε) (1 / ε) s := by
-    convert ((hasDerivAt_id s).sub_const ε).div_const ε using 1
-    all_goals
-      try funext u
-      try simp only [id_eq]
-      try ring
+    simpa only [id_eq] using ((hasDerivAt_id s).sub_const ε).div_const ε
   have hprofile : DifferentiableAt ℝ smoothTransitionProfile ((s - ε) / ε) :=
     smoothTransitionProfile.smooth.differentiable (by simp) _
   have hD : deriv (ucInitialTimeCutoff ε) s =

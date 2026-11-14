@@ -6,8 +6,9 @@ Authors: Arseniy Akopyan
 module
 
 
-public import Mathlib.Tactic
 public import Mathlib.Topology.Separation.Hausdorff
+import Mathlib.Tactic.Basify
+import Mathlib.Tactic.Measurability.Init
 
 /-!
 # `NRR.EMP.VariableBody.ClosedGraph` — the compact closed-graph criterion

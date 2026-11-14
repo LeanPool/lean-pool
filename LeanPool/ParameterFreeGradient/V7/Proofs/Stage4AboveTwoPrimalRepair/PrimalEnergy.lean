@@ -184,7 +184,7 @@ theorem primalPotential_le (p : ℝ) (hp : 2 < p) (n : ℕ)
         aboveUniformConstant p *
           (lpNorm p (data.v (k + 1) - data.v k)) ^ p) := by
     exact Finset.sum_nonneg fun k hk => hmirror k (Finset.mem_range.mp hk)
-  linarith [add_nonneg (add_nonneg (add_nonneg h0 hsumZ) hsumG) hsumH]
+  linarith only [add_nonneg (add_nonneg (add_nonneg h0 hsumZ) hsumG) hsumH]
 
 theorem primalResidual_lower (p : ℝ) (hp : 2 < p) (n : ℕ)
     (data : AbovePrimalPhaseData p d n)
@@ -312,7 +312,7 @@ private lemma weightedGradientPairings_telescope
   simp_rw [mul_sub]
   repeat' rw [Finset.sum_sub_distrib]
   rw [hAn, show O3.pairing (0 : Point d) (data.x n) = 0 by simp [O3.pairing]]
-  linarith [hdiag, hsumCoeff]
+  linarith only [hdiag, hsumCoeff]
 
 /-- The dual mirror-potential differences telescope from the zero initial dual vector. -/
 private lemma mirrorPotential_telescope
@@ -324,7 +324,7 @@ private lemma mirrorPotential_telescope
   have ht := sum_succ_sub n (fun k ↦ aboveHstar p (data.s k))
   have hzero : aboveHstar p (data.s 0) = 0 := by
     rw [hs0, aboveHstar]
-    have hp1 : 1 < p := by linarith
+    have hp1 : 1 < p := by linarith only [hp]
     have hqpos : 0 < O3.conjugateExponent p :=
       lt_trans zero_lt_one (O3.one_lt_conjugateExponent hp1)
     change 1 / O3.conjugateExponent p *
@@ -540,9 +540,8 @@ theorem primalPotential_identity (p : ℝ) (hp : 2 < p)
   repeat' rw [Finset.sum_add_distrib]
   repeat' rw [Finset.sum_sub_distrib]
   simp_rw [pairing_sub_right, pairing_sub_left] at hxActual habelActual
-  ring_nf at ⊢ hfun hzActual hxActual hhstar habelActual hweightSum hconst hcomm0 hcomm1
   linear_combination
-    (norm := (simp only [Finset.sum_add_distrib,
+    (norm := (ring_nf; simp only [Finset.sum_add_distrib,
       Finset.sum_sub_distrib]; ring))
     hfun + hzActual + hxActual + hhstar + habelActual -
       data.oracle.value z * hweightSum + hconst + hcomm0 - hcomm1
@@ -550,16 +549,16 @@ theorem primalPotential_identity (p : ℝ) (hp : 2 < p)
 private lemma fenchel_upper {p : ℝ} (hp : 2 < p) (s x : Point d) :
     pairing s x - aboveH p x ≤ aboveHstar p s := by
   have hholder := O3.pairing_le_lpNorm_mul
-    (O3.holderConjugate_conjugateExponent (by linarith : 1 < p)).symm s x
+    (O3.holderConjugate_conjugateExponent (by linarith only [hp] : 1 < p)).symm s x
   have hyoung := Real.young_inequality_of_nonneg
     (O3.lpNorm_nonneg (conjugateExponent p) s) (O3.lpNorm_nonneg p x)
-    (O3.holderConjugate_conjugateExponent (by linarith : 1 < p)).symm
+    (O3.holderConjugate_conjugateExponent (by linarith only [hp] : 1 < p)).symm
   unfold aboveH aboveHstar
   calc
     pairing s x - 1 / p * lpNorm p x ^ p ≤
         (lpNorm (conjugateExponent p) s ^ conjugateExponent p /
           conjugateExponent p + lpNorm p x ^ p / p) -
-          1 / p * lpNorm p x ^ p := by linarith
+          1 / p * lpNorm p x ^ p := by linarith only [hholder, hyoung]
     _ = 1 / conjugateExponent p *
         lpNorm (conjugateExponent p) s ^ conjugateExponent p := by ring
 
@@ -584,7 +583,7 @@ theorem terminalGap :
       (data.oracle.value (data.x n) - data.oracle.value z) ≤
       aboveH p z + aboveErrorSum p n data.u data.dw := by
     rw [hid] at hpot
-    linarith
+    linarith only [hfenchel, hpot, hres]
   rw [← hz]
   exact (le_div_iff₀ hunpos).2 (by simpa [mul_comm] using hscaled)
 

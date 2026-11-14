@@ -6,8 +6,12 @@ Authors: Arseniy Akopyan
 module
 
 
-public import LeanPool.NandakumarRamanaRao.NRR.Multivalued.Separator.Fibers
+public import LeanPool.NandakumarRamanaRao.NRR.Multivalued.Separator.Basic
+public import Mathlib.Topology.MetricSpace.HausdorffDistance
 public import LeanPool.NandakumarRamanaRao.NRR.Multivalued.Separator.Distance
+public import LeanPool.NandakumarRamanaRao.NRR.Multivalued.Separator.Fibers
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Positivity.Finset
 /-!
 # `NRR.Multivalued.Separator.SignedDistance` — signed distance to the carrier
 

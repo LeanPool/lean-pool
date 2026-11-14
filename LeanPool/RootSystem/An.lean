@@ -236,8 +236,11 @@ theorem pairing_formula {n : ℕ} [NeZero n] (J K : SignedInterval n) :
       aesop;
     · lia;
   rw [← Finset.mul_sum _ _ _]
+  -- Package the bounds separately to preserve the existing generated proof declarations.
+  let intervalBounds : J.i ≤ J.j ∧ K.i ≤ K.j := by
+    as_aux_lemma => exact ⟨J.hij, K.hij⟩
   simp_all +decide [Finset.sum_add_distrib, Finset.sum_sub_distrib]
-  grind +suggestions
+  grind only [Fin.le_def, Fin.lt_def]
 
 theorem pairing_self {n : ℕ} [NeZero n] (J : SignedInterval n) :
     (ZnPairing n (α J)) (αDual J) = 2 := by
@@ -254,7 +257,8 @@ theorem pairing_eq_two_iff_eq {n : ℕ} [NeZero n] (J K : SignedInterval n) :
     obtain ⟨Ki, Kj, Kh, Kε⟩ := K
     cases Jε <;> cases Kε <;> simp +decide [SignedInterval.sign] at h ⊢
     all_goals
-      split_ifs at h <;> simp_all +decide <;> omega
+      split_ifs at h <;> simp_all +decide
+    all_goals omega
   · intro h
     subst K
     exact pairing_self J

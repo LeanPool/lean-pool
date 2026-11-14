@@ -77,7 +77,7 @@ theorem blowupLimitClauses_slice_ibp
       -∫ x in C, ∑ i : Fin 3, g x i *
         ∑ j : Fin 3, spatialDeriv (fun y => spatialDeriv (fun z => w z i) j y) j x := by
   have hwi : ∀ i, ContDiff ℝ (⊤ : ℕ∞) (fun y => w y i) := fun i =>
-    (contDiff_apply ℝ ℝ i).comp hw
+    (contDiff_apply ℝ (fun _ : Fin 3 => ℝ) i).comp hw
   have hwic : ∀ i, HasCompactSupport (fun y => w y i) := fun i =>
     hwc.comp_left (g := fun v : Vec3 => v i) rfl
   have hwiC : ∀ i, tsupport (fun y => w y i) ⊆ C := fun i =>

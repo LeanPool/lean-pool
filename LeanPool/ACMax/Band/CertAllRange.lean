@@ -38,7 +38,6 @@ theorem binomial_lower_four (v t k : ℕ) :
         2 * (k + 4) * (k + 3) * (k + 2) * (k + 1) * t ^ 4 * v ^ k := by
   induction k with
   | zero =>
-      norm_num [pow_succ]
       ring_nf
       exact le_rfl
   | succ k ih =>
@@ -46,7 +45,8 @@ theorem binomial_lower_four (v t k : ℕ) :
       calc
         3 * (v + 2 * t) ^ (k + 1 + 4) =
             (v + 2 * t) * (3 * (v + 2 * t) ^ (k + 4)) := by
-              ring_nf
+              rw [Nat.add_right_comm k 1 4, pow_succ]
+              ac_rfl
         _ ≥ (v + 2 * t) *
               (3 * v ^ (k + 4) +
                 6 * (k + 4) * t * v ^ (k + 3) +
@@ -61,9 +61,8 @@ theorem binomial_lower_four (v t k : ℕ) :
                 v ^ (k + 1 + 1) +
               2 * (k + 1 + 4) * (k + 1 + 3) * (k + 1 + 2) * (k + 1 + 1) *
                 t ^ 4 * v ^ (k + 1) := by
-            simp only [pow_succ]
-            nlinarith [Nat.zero_le
-              (4 * (k + 4) * (k + 3) * (k + 2) * (k + 1) * t ^ 5 * v ^ k)]
+            convert Nat.le_add_right _
+              (4 * (k + 4) * (k + 3) * (k + 2) * (k + 1) * t ^ 5 * v ^ k) using 1; ring
 
 /-- At `t = 43`, the fourth-term inequality is minimized at `ell = 8`. -/
 theorem fourth_term_corner_t43 (v ell : ℕ) (hell8 : 8 ≤ ell)
@@ -278,8 +277,8 @@ theorem band_cert_uniform_ge_48 (n X h : ℕ)
     have hsquare : 43 * t ≤ t * t := Nat.mul_le_mul_right t ht43
     have hlinear : 10 * v + 1 + 9 * t ≤ 43 * t := by omega
     have hpoly : 10 * v + 1 + 9 * t ≤ t * t := hlinear.trans hsquare
-    have hA : t * (v - 1) + 1 ≤ (t - 10) * (v + t) := by
-      nlinarith
+    have hA : t * (v - 1) + 1 ≤ (t - 10) * (v + t) :=
+      uniform_count_bound t v ht10 hv hpoly
     change t * (v - 1) * v ^ ell <
       (v + t) * ((v + 2 * t) ^ ell - v ^ ell)
     exact sum_cert_of_power ht10 hA hpower hv

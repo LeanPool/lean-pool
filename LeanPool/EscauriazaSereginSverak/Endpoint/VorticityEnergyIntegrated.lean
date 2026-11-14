@@ -291,7 +291,7 @@ theorem smoothVorticityEnergyGronwall
   have hRcont : Continuous (Function.uncurry R) := by
     have hgcomp (i : Fin 3) : ContDiff ℝ (⊤ : ℕ∞)
         (fun w : Vec3 × ℝ => g w i) :=
-      (contDiff_apply ℝ ℝ i).comp hg
+      (contDiff_apply ℝ (fun _ : Fin 3 => ℝ) i).comp hg
     have h : ContDiff ℝ (⊤ : ℕ∞) (Function.uncurry R) := by
       simp only [R]
       apply ContDiff.sum (s := Finset.univ)

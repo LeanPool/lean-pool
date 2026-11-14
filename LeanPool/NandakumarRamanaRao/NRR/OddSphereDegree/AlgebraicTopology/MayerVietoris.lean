@@ -7,7 +7,10 @@ module
 
 
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.MayerVietorisSES
-public import Mathlib.Tactic
+public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.SmallChainsQuasiIso
+public import Mathlib.Algebra.Homology.HomologySequence
+import Mathlib.Data.EReal.Inv
+import Mathlib.Tactic.Measurability.Init
 
 /-!
 # The singular Mayer–Vietoris long exact sequence and connecting isomorphism

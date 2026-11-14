@@ -37,37 +37,37 @@ family: `tr x = ∑ₐ tr (eₐ x eₐ)`. -/
 theorem karoubiTrace_split {X : Karoubi (SkeinObj f)}
     {ι : Type} [Fintype ι] (e : ι → End X)
     (hco : CompleteOrthogonalIdempotents e) (x : End X) :
-    HomSpace.traceMap f.val X.X.arity x.f =
+    HomSpace.traceMap f.val X.X.arity x.asHom.f =
       ∑ a : ι, HomSpace.traceMap f.val X.X.arity
-        ((e a).f ≫ x.f ≫ (e a).f) := by
-  have h1 : x.f = (∑ a : ι, (e a).f) ≫ x.f := by
-    rw [show (∑ a : ι, (e a).f) = X.p from by
-      calc ∑ a : ι, (e a).f
-          = ((∑ a : ι, e a : End X)).f :=
-            (map_sum (karoubiHomAddHom X X) _ _).symm
-        _ = ((1 : End X)).f := by rw [hco.complete]
+        ((e a).asHom.f ≫ x.asHom.f ≫ (e a).asHom.f) := by
+  have h1 : x.asHom.f = (∑ a : ι, (e a).asHom.f) ≫ x.asHom.f := by
+    rw [show (∑ a : ι, (e a).asHom.f) = X.p from by
+      calc ∑ a : ι, (e a).asHom.f
+          = ((∑ a : ι, e a : End X)).asHom.f :=
+            (map_sum ((karoubiHomAddHom X X).comp End.addEquiv.toAddMonoidHom) _ _).symm
+        _ = ((1 : End X)).asHom.f := by rw [hco.complete]
         _ = X.p := rfl]
     rw [Karoubi.p_comp]
   conv_lhs => rw [h1,
-    show (∑ a : ι, (e a).f) ≫ x.f =
-      ∑ a : ι, (e a).f ≫ x.f from
+    show (∑ a : ι, (e a).asHom.f) ≫ x.asHom.f =
+      ∑ a : ι, (e a).asHom.f ≫ x.asHom.f from
         Preadditive.sum_comp _ _ _]
   rw [map_sum]
   refine Finset.sum_congr rfl fun a _ => ?_
-  have h2 : (e a).f ≫ x.f = (e a).f ≫ ((e a).f ≫ x.f) := by
-    rw [show (e a).f ≫ (e a).f ≫ x.f =
-      ((e a).f ≫ (e a).f) ≫ x.f from by
+  have h2 : (e a).asHom.f ≫ x.asHom.f = (e a).asHom.f ≫ ((e a).asHom.f ≫ x.asHom.f) := by
+    rw [show (e a).asHom.f ≫ (e a).asHom.f ≫ x.asHom.f =
+      ((e a).asHom.f ≫ (e a).asHom.f) ≫ x.asHom.f from by
         simp only [Category.assoc]]
-    rw [show ((e a).f ≫ (e a).f : X.X ⟶ X.X) =
-      (e a * e a).f from rfl]
+    rw [show ((e a).asHom.f ≫ (e a).asHom.f : X.X ⟶ X.X) =
+      (e a * e a).asHom.f from rfl]
     rw [(hco.idem a : e a * e a = e a)]
   rw [h2]
-  exact (HomSpace.traceMap_comp_comm f ((e a).f)
-      ((e a).f ≫ x.f)).trans
+  exact (HomSpace.traceMap_comp_comm f ((e a).asHom.f)
+      ((e a).asHom.f ≫ x.asHom.f)).trans
     (congrArg (HomSpace.traceMap f.val X.X.arity)
       (by
-        change ((e a).f ≫ x.f) ≫ (e a).f =
-          (e a).f ≫ x.f ≫ (e a).f
+        change ((e a).asHom.f ≫ x.asHom.f) ≫ (e a).asHom.f =
+          (e a).asHom.f ≫ x.asHom.f ≫ (e a).asHom.f
         exact Category.assoc _ _ _))
 
 /-! ### Atom resolutions -/
@@ -107,9 +107,9 @@ theorem matTrace_resolution
     (A : AtomResolution f M) (φ : End M) :
     matTrace f M φ = ∑ i : M.ι, ∑ a : A.idx i,
       HomSpace.traceMap f.val (M.X i).X.arity
-        ((A.e i a).f ≫ (φ i i).f ≫ (A.e i a).f) := by
+        ((A.e i a).asHom.f ≫ (φ.asHom i i).f ≫ (A.e i a).asHom.f) := by
   refine Finset.sum_congr rfl fun i _ => ?_
-  exact karoubiTrace_split f (A.e i) (A.complete i) (φ i i)
+  exact karoubiTrace_split f (A.e i) (A.complete i) (End.of (φ.asHom i i))
 
 /-! ### The atoms of a resolution -/
 
@@ -141,19 +141,19 @@ noncomputable def atomScalar {S : Karoubi (SkeinObj f)}
 that multiple of the identity. -/
 theorem atomScalar_spec {S : Karoubi (SkeinObj f)}
     (hS : IsAtom f S) (x : End S) :
-    x = atomScalar hS x • 𝟙 S :=
+    x = atomScalar hS x • 1 :=
   Classical.choose_spec (hS.scalar x)
 
 /-- The scalar is unique — an atom's identity is nonzero. -/
 theorem atomScalar_unique {S : Karoubi (SkeinObj f)}
     (hS : IsAtom f S) {x : End S} {c : ℂ}
-    (h : x = c • 𝟙 S) : atomScalar hS x = c := by
+    (h : x = c • 1) : atomScalar hS x = c := by
   by_contra hne
-  have hsub : (c - atomScalar hS x) • 𝟙 S = 0 := by
+  have hsub : (c - atomScalar hS x) • (1 : End S) = 0 := by
     rw [sub_smul, ← h, ← atomScalar_spec hS x, sub_self]
   rcases smul_eq_zero.mp hsub with hc | hid
   · exact hne (sub_eq_zero.mp hc).symm
-  · exact hS.id_ne_zero hid
+  · exact hS.id_ne_zero (congrArg End.asHom hid)
 
 /-- Extraction is additive. -/
 theorem atomScalar_add {S : Karoubi (SkeinObj f)}
@@ -168,15 +168,12 @@ endomorphisms is multiplication of scalars.  This is what lets the
 scalar matrix inherit nilpotency. -/
 theorem atomScalar_comp {S : Karoubi (SkeinObj f)}
     (hS : IsAtom f S) (x y : End S) :
-    atomScalar hS ((x ≫ y : End S)) =
+    atomScalar hS (End.of (x.asHom ≫ y.asHom)) =
       atomScalar hS x * atomScalar hS y := by
   refine atomScalar_unique hS ?_
-  rw [show (x ≫ y : End S) =
-    (atomScalar hS x • 𝟙 S) ≫ (atomScalar hS y • 𝟙 S)
-    from by rw [← atomScalar_spec, ← atomScalar_spec]]
-  rw [CategoryTheory.Linear.smul_comp,
-    CategoryTheory.Linear.comp_smul, Category.id_comp,
-    smul_smul]
+  change y * x = (atomScalar hS x * atomScalar hS y) • 1
+  conv_lhs => rw [atomScalar_spec hS x, atomScalar_spec hS y]
+  rw [smul_mul_assoc, mul_smul_comm, one_mul, smul_smul, mul_comm]
 
 /-! ### The class structure -/
 
@@ -261,23 +258,23 @@ noncomputable def AtomResolution.w (A : AtomResolution f M)
 /-- The matrix element of an endomorphism at a pair of atoms. -/
 noncomputable def AtomResolution.t (A : AtomResolution f M)
     (φ : End M) (p q : A.κ) : A.S p ⟶ A.S q :=
-  ⟨(A.e p.1 p.2).f ≫ (φ p.1 q.1).f ≫ (A.e q.1 q.2).f, by
-    change (A.e p.1 p.2).f ≫ ((A.e p.1 p.2).f ≫
-        (φ p.1 q.1).f ≫ (A.e q.1 q.2).f) ≫
-      (A.e q.1 q.2).f = _
-    rw [show (A.e p.1 p.2).f ≫ ((A.e p.1 p.2).f ≫
-        (φ p.1 q.1).f ≫ (A.e q.1 q.2).f) ≫
-        (A.e q.1 q.2).f =
-      ((A.e p.1 p.2).f ≫ (A.e p.1 p.2).f) ≫
-        (φ p.1 q.1).f ≫
-        ((A.e q.1 q.2).f ≫ (A.e q.1 q.2).f) from by
+  ⟨(A.e p.1 p.2).asHom.f ≫ (φ.asHom p.1 q.1).f ≫ (A.e q.1 q.2).asHom.f, by
+    change (A.e p.1 p.2).asHom.f ≫ ((A.e p.1 p.2).asHom.f ≫
+        (φ.asHom p.1 q.1).f ≫ (A.e q.1 q.2).asHom.f) ≫
+      (A.e q.1 q.2).asHom.f = _
+    rw [show (A.e p.1 p.2).asHom.f ≫ ((A.e p.1 p.2).asHom.f ≫
+        (φ.asHom p.1 q.1).f ≫ (A.e q.1 q.2).asHom.f) ≫
+        (A.e q.1 q.2).asHom.f =
+      ((A.e p.1 p.2).asHom.f ≫ (A.e p.1 p.2).asHom.f) ≫
+        (φ.asHom p.1 q.1).f ≫
+        ((A.e q.1 q.2).asHom.f ≫ (A.e q.1 q.2).asHom.f) from by
         simp only [Category.assoc]]
-    rw [show ((A.e p.1 p.2).f ≫ (A.e p.1 p.2).f :
+    rw [show ((A.e p.1 p.2).asHom.f ≫ (A.e p.1 p.2).asHom.f :
         (M.X p.1).X ⟶ (M.X p.1).X) =
-      (A.e p.1 p.2 * A.e p.1 p.2).f from rfl]
-    rw [show ((A.e q.1 q.2).f ≫ (A.e q.1 q.2).f :
+      (A.e p.1 p.2 * A.e p.1 p.2).asHom.f from rfl]
+    rw [show ((A.e q.1 q.2).asHom.f ≫ (A.e q.1 q.2).asHom.f :
         (M.X q.1).X ⟶ (M.X q.1).X) =
-      (A.e q.1 q.2 * A.e q.1 q.2).f from rfl]
+      (A.e q.1 q.2 * A.e q.1 q.2).asHom.f from rfl]
     rw [((A.complete p.1).idem p.2 :
       A.e p.1 p.2 * A.e p.1 p.2 = A.e p.1 p.2)]
     rw [((A.complete q.1).idem q.2 :
@@ -287,8 +284,8 @@ noncomputable def AtomResolution.t (A : AtomResolution f M)
 the two atoms' idempotents. -/
 theorem AtomResolution.t_f (A : AtomResolution f M)
     (φ : End M) (p q : A.κ) :
-    (A.t φ p q).f = (A.e p.1 p.2).f ≫ (φ p.1 q.1).f ≫
-      (A.e q.1 q.2).f := rfl
+    (A.t φ p q).f = (A.e p.1 p.2).asHom.f ≫ (φ.asHom p.1 q.1).f ≫
+      (A.e q.1 q.2).asHom.f := rfl
 
 /-- Cross-class matrix elements vanish (the dichotomy). -/
 theorem AtomResolution.t_eq_zero (A : AtomResolution f M)
@@ -304,7 +301,7 @@ insertion turns the composite's elements into the matrix product
 of elements. -/
 theorem AtomResolution.t_comp (A : AtomResolution f M)
     (φ ψ : End M) (p r : A.κ) :
-    A.t ((φ ≫ ψ : End M)) p r =
+    A.t ((End.of (φ.asHom ≫ ψ.asHom : M ⟶ M))) p r =
       ∑ q : A.κ, (A.t φ p q ≫ A.t ψ q r : A.S p ⟶ A.S r) := by
   apply Karoubi.hom_ext
   rw [show ((∑ q : A.κ, (A.t φ p q ≫ A.t ψ q r :
@@ -312,11 +309,11 @@ theorem AtomResolution.t_comp (A : AtomResolution f M)
     ∑ q : A.κ, ((A.t φ p q ≫ A.t ψ q r :
       A.S p ⟶ A.S r)).f from map_sum (karoubiHomAddHom _ _) _ _]
   rw [A.t_f]
-  rw [show ((φ ≫ ψ : End M) p.1 r.1) =
-    ∑ j : M.ι, φ p.1 j ≫ ψ j r.1 from rfl]
-  rw [show ((∑ j : M.ι, φ p.1 j ≫ ψ j r.1 :
+  rw [show ((End.of (φ.asHom ≫ ψ.asHom : M ⟶ M)).asHom p.1 r.1) =
+    ∑ j : M.ι, φ.asHom p.1 j ≫ ψ.asHom j r.1 from rfl]
+  rw [show ((∑ j : M.ι, φ.asHom p.1 j ≫ ψ.asHom j r.1 :
       M.X p.1 ⟶ M.X r.1)).f =
-    ∑ j : M.ι, ((φ p.1 j ≫ ψ j r.1 :
+    ∑ j : M.ι, ((φ.asHom p.1 j ≫ ψ.asHom j r.1 :
       M.X p.1 ⟶ M.X r.1)).f from map_sum (karoubiHomAddHom _ _) _ _]
   rw [Preadditive.sum_comp, Preadditive.comp_sum]
   rw [show (∑ q : A.κ, ((A.t φ p q ≫ A.t ψ q r :
@@ -331,51 +328,52 @@ theorem AtomResolution.t_comp (A : AtomResolution f M)
   have hstep : ∀ b : A.idx j,
       ((A.t φ p ⟨j, b⟩ ≫ A.t ψ ⟨j, b⟩ r :
         A.S p ⟶ A.S r)).f =
-      (A.e p.1 p.2).f ≫ (φ p.1 j).f ≫ (A.e j b).f ≫
-        (ψ j r.1).f ≫ (A.e r.1 r.2).f := by
+      (A.e p.1 p.2).asHom.f ≫ (φ.asHom p.1 j).f ≫ (A.e j b).asHom.f ≫
+        (ψ.asHom j r.1).f ≫ (A.e r.1 r.2).asHom.f := by
     intro b
     rw [show ((A.t φ p ⟨j, b⟩ ≫ A.t ψ ⟨j, b⟩ r :
         A.S p ⟶ A.S r)).f =
       (A.t φ p ⟨j, b⟩).f ≫ (A.t ψ ⟨j, b⟩ r).f from rfl]
     rw [A.t_f, A.t_f]
-    rw [show ((A.e p.1 p.2).f ≫ (φ p.1 j).f ≫
-        (A.e j b).f) ≫ ((A.e j b).f ≫ (ψ j r.1).f ≫
-        (A.e r.1 r.2).f) =
-      (A.e p.1 p.2).f ≫ (φ p.1 j).f ≫
-        ((A.e j b).f ≫ (A.e j b).f) ≫ (ψ j r.1).f ≫
-        (A.e r.1 r.2).f from by
+    rw [show ((A.e p.1 p.2).asHom.f ≫ (φ.asHom p.1 j).f ≫
+        (A.e j b).asHom.f) ≫ ((A.e j b).asHom.f ≫ (ψ.asHom j r.1).f ≫
+        (A.e r.1 r.2).asHom.f) =
+      (A.e p.1 p.2).asHom.f ≫ (φ.asHom p.1 j).f ≫
+        ((A.e j b).asHom.f ≫ (A.e j b).asHom.f) ≫ (ψ.asHom j r.1).f ≫
+        (A.e r.1 r.2).asHom.f from by
         simp only [Category.assoc]]
-    rw [show ((A.e j b).f ≫ (A.e j b).f :
+    rw [show ((A.e j b).asHom.f ≫ (A.e j b).asHom.f :
         (M.X j).X ⟶ (M.X j).X) =
-      (A.e j b * A.e j b).f from rfl]
+      (A.e j b * A.e j b).asHom.f from rfl]
     rw [((A.complete j).idem b :
       A.e j b * A.e j b = A.e j b)]
   rw [Finset.sum_congr rfl fun b _ => hstep b]
-  rw [show (∑ b : A.idx j, (A.e p.1 p.2).f ≫
-      (φ p.1 j).f ≫ (A.e j b).f ≫ (ψ j r.1).f ≫
-      (A.e r.1 r.2).f) =
-    (A.e p.1 p.2).f ≫ (φ p.1 j).f ≫
-      (∑ b : A.idx j, (A.e j b).f) ≫ (ψ j r.1).f ≫
-      (A.e r.1 r.2).f from by
+  rw [show (∑ b : A.idx j, (A.e p.1 p.2).asHom.f ≫
+      (φ.asHom p.1 j).f ≫ (A.e j b).asHom.f ≫ (ψ.asHom j r.1).f ≫
+      (A.e r.1 r.2).asHom.f) =
+    (A.e p.1 p.2).asHom.f ≫ (φ.asHom p.1 j).f ≫
+      (∑ b : A.idx j, (A.e j b).asHom.f) ≫ (ψ.asHom j r.1).f ≫
+      (A.e r.1 r.2).asHom.f from by
       rw [Preadditive.sum_comp, Preadditive.comp_sum,
         Preadditive.comp_sum]]
-  rw [show (∑ b : A.idx j, (A.e j b).f) = (M.X j).p from by
-    calc ∑ b : A.idx j, (A.e j b).f
-        = ((∑ b : A.idx j, A.e j b : End (M.X j))).f :=
-          (map_sum (karoubiHomAddHom (M.X j) (M.X j)) _ _).symm
-      _ = ((1 : End (M.X j))).f := by
+  rw [show (∑ b : A.idx j, (A.e j b).asHom.f) = (M.X j).p from by
+    calc ∑ b : A.idx j, (A.e j b).asHom.f
+        = ((∑ b : A.idx j, A.e j b : End (M.X j))).asHom.f :=
+          (map_sum ((karoubiHomAddHom (M.X j) (M.X j)).comp
+            End.addEquiv.toAddMonoidHom) _ _).symm
+      _ = ((1 : End (M.X j))).asHom.f := by
           rw [(A.complete j).complete]
       _ = (M.X j).p := rfl]
-  suffices h : ((φ p.1 j ≫ ψ j r.1 :
+  suffices h : ((φ.asHom p.1 j ≫ ψ.asHom j r.1 :
       M.X p.1 ⟶ M.X r.1)).f =
-      (φ p.1 j).f ≫ (M.X j).p ≫ (ψ j r.1).f by
+      (φ.asHom p.1 j).f ≫ (M.X j).p ≫ (ψ.asHom j r.1).f by
     rw [h]
     simp only [Category.assoc]
-  rw [show ((φ p.1 j ≫ ψ j r.1 :
+  rw [show ((φ.asHom p.1 j ≫ ψ.asHom j r.1 :
       M.X p.1 ⟶ M.X r.1)).f =
-    (φ p.1 j).f ≫ (ψ j r.1).f from rfl]
-  rw [show (φ p.1 j).f ≫ (M.X j).p ≫ (ψ j r.1).f =
-    ((φ p.1 j).f ≫ (M.X j).p) ≫ (ψ j r.1).f from
+    (φ.asHom p.1 j).f ≫ (ψ.asHom j r.1).f from rfl]
+  rw [show (φ.asHom p.1 j).f ≫ (M.X j).p ≫ (ψ.asHom j r.1).f =
+    ((φ.asHom p.1 j).f ≫ (M.X j).p) ≫ (ψ.asHom j r.1).f from
     (Category.assoc _ _ _).symm]
   rw [Karoubi.comp_p]
 
@@ -386,7 +384,7 @@ theorem atomScalar_eqToHom_conj
     {S T : Karoubi (SkeinObj f)} (h : S = T)
     (hS : IsAtom f S) (hT : IsAtom f T) (z : End T) :
     atomScalar hS
-        ((eqToHom h ≫ z ≫ eqToHom h.symm : End S)) =
+        ((End.of (eqToHom h ≫ z.asHom ≫ eqToHom h.symm : S ⟶ S))) =
       atomScalar hT z := by
   subst h
   simp only [eqToHom_refl, Category.id_comp,
@@ -400,9 +398,8 @@ noncomputable def AtomResolution.B (φ : End M) :
     Matrix A.κ A.κ ℂ := fun p q =>
   if h : A.rep p = A.rep q then
     atomScalar (A.isAtom_S (A.rep p))
-      (((A.w p).hom ≫ A.t φ p q ≫ (A.w q).inv ≫
-        eqToHom (congrArg A.S h.symm) :
-          End (A.S (A.rep p))))
+      ((End.of ((A.w p).hom ≫ A.t φ p q ≫ (A.w q).inv ≫
+        eqToHom (congrArg A.S h.symm))))
   else 0
 
 /-- **The dichotomy**: the scalar matrix vanishes off the class
@@ -420,73 +417,67 @@ theorem AtomResolution.B_zero : A.B (0 : End M) = 0 := by
   · rw [show A.t (0 : End M) p q = 0 from by
       apply Karoubi.hom_ext
       rw [A.t_f]
-      rw [show ((0 : End M) p.1 q.1) = 0 from rfl]
+      rw [show ((0 : End M).asHom p.1 q.1) = 0 from rfl]
       rw [show ((0 : M.X p.1 ⟶ M.X q.1)).f = 0 from rfl]
       rw [Limits.zero_comp, Limits.comp_zero]
       rfl]
     rw [Limits.zero_comp]
-    rw [show ((A.w p).hom ≫ (0 : A.S p ⟶ A.S (A.rep p)) :
-        A.S (A.rep p) ⟶ A.S (A.rep p)) =
-      ((A.w p).hom ≫ 0 : End (A.S (A.rep p))) from rfl]
     rw [Limits.comp_zero]
-    exact atomScalar_unique _ (by rw [zero_smul])
+    exact atomScalar_unique _ (End.ext (zero_smul ℂ (𝟙 _)).symm)
   · rfl
 
 /-- **Multiplicativity of the scalar matrix.** -/
 theorem AtomResolution.B_comp (φ ψ : End M) :
-    A.B ((φ ≫ ψ : End M)) = A.B φ * A.B ψ := by
+    A.B ((End.of (φ.asHom ≫ ψ.asHom : M ⟶ M))) = A.B φ * A.B ψ := by
   funext p r
   rw [Matrix.mul_apply]
   by_cases h : A.rep p = A.rep r
-  · rw [show A.B ((φ ≫ ψ : End M)) p r =
+  · rw [show A.B ((End.of (φ.asHom ≫ ψ.asHom : M ⟶ M))) p r =
       atomScalar (A.isAtom_S (A.rep p))
-        (((A.w p).hom ≫ A.t ((φ ≫ ψ : End M)) p r ≫
-          (A.w r).inv ≫ eqToHom (congrArg A.S h.symm) :
-            End (A.S (A.rep p)))) from dite_eq_left h]
+        ((End.of ((A.w p).hom ≫ A.t ((End.of (φ.asHom ≫ ψ.asHom : M ⟶ M))) p r ≫
+          (A.w r).inv ≫ eqToHom (congrArg A.S h.symm)))) from dite_eq_left h]
     rw [A.t_comp φ ψ p r]
-    rw [show ((A.w p).hom ≫
+    rw [show (End.of ((A.w p).hom ≫
         (∑ q : A.κ, (A.t φ p q ≫ A.t ψ q r :
           A.S p ⟶ A.S r)) ≫
-        (A.w r).inv ≫ eqToHom (congrArg A.S h.symm) :
-          End (A.S (A.rep p))) =
-      ∑ q : A.κ, ((A.w p).hom ≫
+        (A.w r).inv ≫ eqToHom (congrArg A.S h.symm))) =
+      ∑ q : A.κ, (End.of ((A.w p).hom ≫
         (A.t φ p q ≫ A.t ψ q r) ≫
-        (A.w r).inv ≫ eqToHom (congrArg A.S h.symm) :
-          End (A.S (A.rep p))) from by
+        (A.w r).inv ≫ eqToHom (congrArg A.S h.symm))) from by
+        apply End.ext
+        simp only [End.sum_asHom]
         rw [Preadditive.sum_comp, Preadditive.comp_sum]]
     refine Eq.trans (show atomScalar (A.isAtom_S (A.rep p))
-        (∑ q : A.κ, ((A.w p).hom ≫
+        (∑ q : A.κ, (End.of ((A.w p).hom ≫
           (A.t φ p q ≫ A.t ψ q r) ≫
-          (A.w r).inv ≫ eqToHom (congrArg A.S h.symm) :
-            End (A.S (A.rep p)))) =
+          (A.w r).inv ≫ eqToHom (congrArg A.S h.symm)))) =
       ∑ q : A.κ, atomScalar (A.isAtom_S (A.rep p))
-        (((A.w p).hom ≫ (A.t φ p q ≫ A.t ψ q r) ≫
-          (A.w r).inv ≫ eqToHom (congrArg A.S h.symm) :
-            End (A.S (A.rep p)))) from by
+        ((End.of ((A.w p).hom ≫ (A.t φ p q ≫ A.t ψ q r) ≫
+          (A.w r).inv ≫ eqToHom (congrArg A.S h.symm)))) from by
         classical
         induction (Finset.univ : Finset A.κ) using
           Finset.induction_on with
         | empty =>
             rw [Finset.sum_empty, Finset.sum_empty]
-            exact atomScalar_unique _ (by rw [zero_smul])
+            exact atomScalar_unique _ (End.ext (zero_smul ℂ (𝟙 _)).symm)
         | insert a s ha ih =>
             rw [Finset.sum_insert ha, Finset.sum_insert ha,
               atomScalar_add, ih]) ?_
     refine Finset.sum_congr rfl fun q _ => ?_
     by_cases hq : A.rep p = A.rep q
     · rw [show A.B φ p q = atomScalar (A.isAtom_S (A.rep p))
-        (((A.w p).hom ≫ A.t φ p q ≫ (A.w q).inv ≫
-          eqToHom (congrArg A.S hq.symm) :
-            End (A.S (A.rep p)))) from dite_eq_left hq]
+        ((End.of ((A.w p).hom ≫ A.t φ p q ≫ (A.w q).inv ≫
+          eqToHom (congrArg A.S hq.symm)))) from dite_eq_left hq]
       have hqr : A.rep q = A.rep r := hq ▸ h
       rw [show A.B ψ q r = atomScalar (A.isAtom_S (A.rep q))
-        (((A.w q).hom ≫ A.t ψ q r ≫ (A.w r).inv ≫
-          eqToHom (congrArg A.S hqr.symm) :
-            End (A.S (A.rep q)))) from dite_eq_left hqr]
+        ((End.of ((A.w q).hom ≫ A.t ψ q r ≫ (A.w r).inv ≫
+          eqToHom (congrArg A.S hqr.symm)))) from dite_eq_left hqr]
       rw [← atomScalar_eqToHom_conj (congrArg A.S hq)
         (A.isAtom_S (A.rep p)) (A.isAtom_S (A.rep q))]
       rw [← atomScalar_comp]
       congr 1
+      apply End.ext
+      dsimp only
       -- Pure composition algebra: cancel the middle iso and
       -- the transport pair.
       rw [show ((A.w p).hom ≫ A.t φ p q ≫ (A.w q).inv ≫
@@ -510,13 +501,13 @@ theorem AtomResolution.B_comp (φ ψ : End M) :
       rw [A.t_eq_zero φ (fun hrel => hq
         (A.rep_eq_of_rel hrel))]
       rw [Limits.zero_comp]
-      rw [show ((A.w p).hom ≫
+      rw [show (End.of ((A.w p).hom ≫
           ((0 : A.S p ⟶ A.S r) ≫
-            (A.w r).inv ≫ eqToHom (congrArg A.S h.symm)) :
-          End (A.S (A.rep p))) =
+            (A.w r).inv ≫ eqToHom (congrArg A.S h.symm)))) =
         0 from by
-          rw [Limits.zero_comp, Limits.comp_zero]]
-      exact atomScalar_unique _ (by rw [zero_smul])
+          rw [Limits.zero_comp, Limits.comp_zero]
+          rfl]
+      exact atomScalar_unique _ (End.ext (zero_smul ℂ (𝟙 _)).symm)
   · rw [A.B_apply_of_ne _ h]
     refine (Finset.sum_eq_zero fun q _ => ?_).symm
     by_cases hq : A.rep p = A.rep q
@@ -535,8 +526,8 @@ theorem AtomResolution.B_pow (φ : End M) (k : ℕ) :
   | zero => rw [pow_one, pow_one]
   | succ j ih =>
       rw [show (φ ^ (j + 1 + 1) : End M) =
-        ((φ ≫ φ ^ (j + 1) : End M)) from by
-          rw [show ((φ ≫ φ ^ (j + 1) : End M)) =
+        ((End.of (φ.asHom ≫ (φ ^ (j + 1)).asHom : M ⟶ M))) from by
+          rw [show ((End.of (φ.asHom ≫ (φ ^ (j + 1)).asHom : M ⟶ M))) =
             φ ^ (j + 1) * φ from rfl, ← pow_succ]]
       rw [A.B_comp, ih, ← pow_succ']
 
@@ -551,18 +542,16 @@ theorem AtomResolution.trace_t_diag (φ : End M) (p : A.κ) :
           (Karoubi.Hom.f (𝟙 (A.S (A.rep p)))) := by
   have hBpp : A.B φ p p =
       atomScalar (A.isAtom_S (A.rep p))
-        (((A.w p).hom ≫ A.t φ p p ≫ (A.w p).inv ≫
-          eqToHom (congrArg A.S (rfl : A.rep p = A.rep p).symm) :
-            End (A.S (A.rep p)))) := dite_eq_left rfl
+        ((End.of ((A.w p).hom ≫ A.t φ p p ≫ (A.w p).inv ≫
+          eqToHom (congrArg A.S (rfl : A.rep p = A.rep p).symm)))) := dite_eq_left rfl
   rw [show eqToHom (congrArg A.S
       (rfl : A.rep p = A.rep p).symm) =
     𝟙 (A.S (A.rep p)) from eqToHom_refl _ _,
     Category.comp_id] at hBpp
   -- Recover t from its scalar through the chosen iso.
   have hspec := atomScalar_spec (A.isAtom_S (A.rep p))
-    (((A.w p).hom ≫ A.t φ p p ≫ (A.w p).inv ≫
-      eqToHom (congrArg A.S (rfl : A.rep p = A.rep p).symm) :
-        End (A.S (A.rep p))))
+    ((End.of ((A.w p).hom ≫ A.t φ p p ≫ (A.w p).inv ≫
+      eqToHom (congrArg A.S (rfl : A.rep p = A.rep p).symm))))
   rw [show eqToHom (congrArg A.S
       (rfl : A.rep p = A.rep p).symm) =
     𝟙 (A.S (A.rep p)) from eqToHom_refl _ _] at hspec
@@ -570,7 +559,7 @@ theorem AtomResolution.trace_t_diag (φ : End M) (p : A.κ) :
   have ht : A.t φ p p =
       A.B φ p p • ((A.w p).inv ≫ (A.w p).hom) := by
     have h2 := congrArg
-      (fun z => (A.w p).inv ≫ z ≫ (A.w p).hom) hspec
+      (fun z => (A.w p).inv ≫ z ≫ (A.w p).hom) (congrArg End.asHom hspec)
     rw [show (A.w p).inv ≫ ((A.w p).hom ≫ A.t φ p p ≫
         (A.w p).inv) ≫ (A.w p).hom =
       ((A.w p).inv ≫ (A.w p).hom) ≫ A.t φ p p ≫
@@ -579,20 +568,13 @@ theorem AtomResolution.trace_t_diag (φ : End M) (p : A.κ) :
     rw [Iso.inv_hom_id, Category.id_comp] at h2
     rw [Category.comp_id] at h2
     rw [h2, ← hBpp]
-    rw [CategoryTheory.Linear.smul_comp,
+    rw [End.smul_asHom, End.one_asHom, CategoryTheory.Linear.smul_comp,
       CategoryTheory.Linear.comp_smul, Category.id_comp]
-  rw [show (A.t φ p p).f =
-    (A.B φ p p • ((A.w p).inv ≫ (A.w p).hom :
-      End (A.S p))).f from by rw [← ht]]
-  rw [show ((A.B φ p p • ((A.w p).inv ≫ (A.w p).hom :
-      End (A.S p)))).f =
-    A.B φ p p • (((A.w p).inv ≫ (A.w p).hom :
-      End (A.S p))).f from rfl]
+  rw [ht]
+  change HomSpace.traceMap f.val (M.X p.1).X.arity
+    (A.B φ p p • (((A.w p).inv).f ≫ ((A.w p).hom).f)) = _
   rw [map_smul, smul_eq_mul]
   congr 1
-  -- The weight is class-constant: cyclicity swaps the iso pair.
-  rw [show (((A.w p).inv ≫ (A.w p).hom : End (A.S p))).f =
-    ((A.w p).inv).f ≫ ((A.w p).hom).f from rfl]
   exact (HomSpace.traceMap_comp_comm f (((A.w p).inv).f)
       (((A.w p).hom).f)).trans
     (congrArg
@@ -719,8 +701,8 @@ theorem matTrace_eq_zero_of_isNilpotent'
       calc matTrace f M φ
           = ∑ p : A.κ,
               HomSpace.traceMap f.val (M.X p.1).X.arity
-                ((A.e p.1 p.2).f ≫ (φ p.1 p.1).f ≫
-                  (A.e p.1 p.2).f) := by
+                ((A.e p.1 p.2).asHom.f ≫ (φ.asHom p.1 p.1).f ≫
+                  (A.e p.1 p.2).asHom.f) := by
             rw [matTrace_resolution f A φ]
             rw [← Finset.univ_sigma_univ, Finset.sum_sigma]
         _ = ∑ p : A.κ, A.B φ p p * A.δ (A.rep p) := by

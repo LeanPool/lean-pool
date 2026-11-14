@@ -7,12 +7,7 @@ module
 
 
 public import Mathlib.MeasureTheory.Measure.Haar.Unique
-public import Mathlib.MeasureTheory.Group.Integral
-public import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
 public import Mathlib.Analysis.CStarAlgebra.Classes
-public import Mathlib.MeasureTheory.Integral.Bochner.Basic
-public import Mathlib.MeasureTheory.Integral.IntegrableOn
-public import Mathlib.MeasureTheory.Measure.Haar.OfBasis
 
 /-!
 # Definitions from the quadratic Carleson endpoint paper
@@ -33,7 +28,7 @@ noncomputable def phase (s : ℝ) : ℂ :=
 
 @[simp]
 theorem phase_zero : phase 0 = 1 := by
-  simp [phase]
+  simp only [phase, mul_zero, Complex.ofReal_zero, zero_mul, Complex.exp_zero]
 
 /-- The iterated logarithms from the paper, with `paperLog 1 t = log (10 + t)`. -/
 noncomputable def paperLog : ℕ → ℝ → ℝ

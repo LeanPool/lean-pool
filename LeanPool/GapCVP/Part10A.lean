@@ -7,6 +7,9 @@ Authors: OpenAI, Dean Cureton
 module
 
 public import LeanPool.GapCVP.Part09
+import Mathlib.Algebra.Order.Floor.Semifield
+import Mathlib.RingTheory.Henselian
+import Mathlib.RingTheory.RegularLocalRing.Defs
 
 /-! # GapCVP proof, part 10 -/
 
@@ -743,6 +746,15 @@ theorem adaptGapCVPInstance_gapNO400_iff_metricNo
   adaptGapCVPInstance
     (GapCVP.Core.effectiveConstructionAInstance
       H hdimension radius hradius)
+
+/-- Read the constructed basis without unfolding Gaussian elimination. -/
+theorem effectiveGapCVPInstance_basis
+    (system : GapCVP.Core.BinaryAffineSystem)
+    (positiveDimension : 0 < system.dimension)
+    (radius : ℚ) (radiusPositive : 0 < radius)
+    (row column : Fin system.dimension) :
+    (effectiveGapCVPInstance system positiveDimension radius radiusPositive).basis row column =
+      system.effectiveSquareBasisMatrix row column := rfl
 
 theorem effectiveGapCVPInstance_wellFormed
     (H : GapCVP.Core.BinaryAffineSystem)
@@ -1912,7 +1924,7 @@ private theorem runColumns_pivots_pairwise
     (runColumns columns state).pivots.Pairwise
       (fun p q => p.1 ≠ q.1) := by
   induction columns generalizing scanned state with
-  | nil => simpa only [ne_eq, runColumns, List.foldl_nil] using hunique
+  | nil => exact hunique
   | cons column rest ih =>
       change
         (runColumns rest (columnStep state column)).pivots.Pairwise
@@ -1924,7 +1936,7 @@ private theorem runColumns_pivots_pairwise
 private theorem eliminate_pivots_pairwise
     {m n : ℕ} (system : System m n) :
     (eliminate system).pivots.Pairwise (fun p q => p.1 ≠ q.1) := by
-  simpa only [ne_eq, eliminate] using
+  exact
       (runColumns_pivots_pairwise (List.finRange n) [] (initialState system)
           (initialState_prefixNormal system)
         (by simp [initialState]))
@@ -2318,7 +2330,7 @@ theorem BinaryAffineSystem.effectiveGaussian_kernel_iff_graph_of_normal
           if H.effectivePivotRowOption column = none then
             H.effectiveGaussianState.system.check
               pivotRow column * bits column
-          else 0)).mp (by simpa only [Pi.zero_apply] using hrow)
+          else 0)).mp (by exact hrow)
   · intro hgraph
     funext row
     by_cases hrow : row.val < H.effectiveGaussianState.nextPivot

@@ -7,8 +7,6 @@ module
 
 public import LeanPool.Erdos132ConvexK3.UseSite
 public import LeanPool.Erdos132ConvexK3.Geometry
-import Mathlib.Algebra.Order.Algebra
-import Mathlib.Data.EReal.Inv
 
 /-!
 # Maximal-gap tail closure

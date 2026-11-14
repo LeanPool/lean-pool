@@ -7,9 +7,8 @@ module
 
 
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.FiniteSimplex
-public import Mathlib.Analysis.Convex.StdSimplex
-public import Mathlib.Topology.Algebra.Module.Basic
-public import Mathlib.Tactic
+import Mathlib.Tactic.Measurability.Init
+import Mathlib.Tactic.ReduceModChar
 
 /-!
 # Affine barycentric subdivision maps on topological standard simplices

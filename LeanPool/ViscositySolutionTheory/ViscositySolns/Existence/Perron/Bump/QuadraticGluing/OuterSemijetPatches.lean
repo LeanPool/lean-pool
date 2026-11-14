@@ -44,7 +44,7 @@ theorem of_isOpen
   refine ⟨ε / 2, half_pos hεpos, hboundaryOutside, ?_⟩
   intro r _hrpos hrle z hzClosed
   have hr_lt_ε : r < ε := by
-    linarith
+    linarith only [_hrpos, hrle]
   exact hεC (Metric.closedBall_subset_ball hr_lt_ε hzClosed)
 
 end PerronLowerEnvelopeBentQuadraticSourceOuterClosedBallGeometricSemijetPatchAt
@@ -143,7 +143,7 @@ theorem smallRadiusSemijetPatchAt
   have hr_le_neg : r <= ρneg := hrle.trans (min_le_left ρneg ρgeom)
   have hr_le_geom : r <= ρgeom := hrle.trans (min_le_right ρneg ρgeom)
   refine ⟨hclosedBallSmall r hrpos hr_le_geom, ?_⟩
-  simpa using hstrict r hrpos hr_le_neg
+  exact hstrict r hrpos hr_le_neg
 
 end PerronLowerEnvelopeBentQuadraticSourceOuterClosedBallGeometricSemijetPatchAt
 
@@ -349,17 +349,17 @@ theorem outerClosedBallLowerEnvelopePatchAt
   let K : Set (Point n) := {z : Point n | 3 * r / 4 <= dist z x ∧ dist z x <= r}
   refine ⟨γ, r, V, hγpos, hrpos, hVopen, hV, hballV,
     hclosedBallC, hboundaryOutside, ?_, ?_, ?_, ?_⟩
-  · simpa [W, δ, q] using hWltq
-  · simpa [W, δ, q, Xb] using hqCont
-  · simpa [W, δ, q, Xb] using hneg
+  · exact hWltq
+  · exact hqCont
+  · exact hneg
   · intro z hzK
     have hzS : z ∈ S := hKS z hzK
     have hmargin :
         δ < ((1 / 4 : Real) * γ) * ‖z - x‖ ^ 2 := by
-      simpa [δ] using
+      exact
         (sourceOuterAnnulus_lift_lt_bendMargin
           (x := x) (z := z) hγpos hrpos hzK)
-    simpa [S, W, δ, q, Xb] using hzS δ hmargin
+    exact hzS δ hmargin
 
 end PerronLowerEnvelopeBentQuadraticSourceOuterClosedBallSemijetPatchAt
 
@@ -463,7 +463,7 @@ theorem PerronLowerEnvelopeBentQuadraticSourceClosedAnnulusSelectionPatchAt.annu
       let ε : Real := r / 2
       have hεpos : 0 < ε := by
         dsimp [ε]
-        linarith
+        linarith only [hrpos]
       have hball : Metric.ball z ε ∈ nhdsWithin z C :=
         mem_nhdsWithin_of_mem_nhds (Metric.ball_mem_nhds z hεpos)
       filter_upwards [hball] with y hyz
@@ -478,13 +478,13 @@ theorem PerronLowerEnvelopeBentQuadraticSourceClosedAnnulusSelectionPatchAt.annu
         have htri : dist z x <= dist z y + dist y x := dist_triangle z y x
         have hlt : r < ε + dist y x := by
           have hltAdd : dist z y + dist y x < ε + dist y x := by
-            linarith
+            linarith only [hyz']
           have hlt' : dist z x < ε + dist y x :=
             lt_of_le_of_lt htri hltAdd
           simpa [hdist_eq] using hlt'
         have hyLower : r / 2 <= dist y x := by
           dsimp [ε] at hlt
-          linarith
+          linarith only [hlt]
         exact Or.inr ⟨hyLower, hyUpper⟩
     · filter_upwards
         [eventually_not_mem_ball_of_not_mem_closedBall
@@ -722,25 +722,25 @@ theorem PerronLowerEnvelopeBentQuadraticShrinkingClosedBallAnnulusPatchAt.shrink
   · exact mem_nhdsWithin_of_mem_nhds (Metric.ball_mem_nhds x hrpos)
   · intro z hz hzP
     have hPnhds : P ∈ nhds z :=
-      Metric.isOpen_ball.mem_nhds (by simpa [P] using hzP)
+      Metric.isOpen_ball.mem_nhds (by exact hzP)
     filter_upwards [mem_nhdsWithin_of_mem_nhds hPnhds] with y hyP
     simp [patched, hyP]
   · intro z hz hzP
     by_cases hzClosed : z ∈ Metric.closedBall x r
     · filter_upwards [hannulus z hz hzP hzClosed] with y hy
       have hyq : q y <= B.lower y := by
-        simpa [q, Xb] using hy
+        exact hy
       by_cases hyP : y ∈ P
       · simp [patched, hyP, max_eq_left hyq]
       · simp [patched, hyP]
     · filter_upwards [eventually_not_mem_ball_of_not_mem_closedBall
         (C := C) (x := x) (z := z) (r := r) hzClosed] with y hyP
       have hyP' : y ∉ P := by
-        simpa [P] using hyP
+        exact hyP
       simp [patched, hyP']
   · intro z hz
     have hzP : z ∉ P := fun hzP => hboundaryAway z hz
-      (Metric.ball_subset_closedBall (by simpa [P] using hzP))
+      (Metric.ball_subset_closedBall (by exact hzP))
     simp [patched, hzP]
   · intro z hz
     apply UpperSemicontinuousOn.piecewise_max_boundary
@@ -750,7 +750,7 @@ theorem PerronLowerEnvelopeBentQuadraticShrinkingClosedBallAnnulusPatchAt.shrink
     apply Or.inl
     intro hzClosure
     exact hboundaryAway z hz
-      (Metric.closure_ball_subset_closedBall (by simpa [P] using hzClosure))
+      (Metric.closure_ball_subset_closedBall (by exact hzClosure))
   · intro z _hz
     by_cases hzP : z ∈ P
     · simp [patched, hzP]
@@ -795,14 +795,14 @@ theorem PerronLowerEnvelopeBentQuadraticSmallRadiusClosedBallAnnulusPatchAt.shri
   have hminpos : 0 < min ρV ρE := lt_min hρVpos hρEpos
   have hrpos : 0 < r := by
     dsimp [r]
-    linarith
+    linarith only [hminpos]
   have hr_le_V : r <= ρV := by
     have hhalf_le_min : min ρV ρE / 2 <= min ρV ρE := by
-      linarith
+      linarith only [hminpos]
     exact hhalf_le_min.trans (min_le_left ρV ρE)
   have hr_le_E : r <= ρE := by
     have hhalf_le_min : min ρV ρE / 2 <= min ρV ρE := by
-      linarith
+      linarith only [hminpos]
     exact hhalf_le_min.trans (min_le_right ρV ρE)
   rcases hsmall r hrpos hr_le_E with ⟨hannulus, hboundaryAway⟩
   refine ⟨r, hrpos, ?_, hannulus, hboundaryAway⟩
@@ -854,31 +854,31 @@ theorem PerronLowerEnvelopeBentQuadraticSourceClosedBallAnnulusPatchAt.chosenPat
     hneg, Metric.isOpen_ball, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · exact mem_nhdsWithin_of_mem_nhds (Metric.ball_mem_nhds x hrpos)
   · intro z hzP
-    exact hballV z (by simpa [P] using hzP)
+    exact hballV z (by exact hzP)
   · intro z hz hzP
     have hPnhds : P ∈ nhds z :=
-      Metric.isOpen_ball.mem_nhds (by simpa [P] using hzP)
+      Metric.isOpen_ball.mem_nhds (by exact hzP)
     filter_upwards [mem_nhdsWithin_of_mem_nhds hPnhds] with y hyP
     change patched y = Max.max (B.lower y) (q y)
     simp [patched, hyP]
   · intro z hz hzP
     by_cases hzClosed : z ∈ Metric.closedBall x r
     · have hzBall : z ∉ Metric.ball x r := by
-        simpa [P] using hzP
+        exact hzP
       filter_upwards [hannulus z hz hzBall hzClosed] with y hy
       have hyq : q y <= B.lower y := by
-        simpa [q, Xb, δ] using hy
+        exact hy
       by_cases hyP : y ∈ P
       · simp [patched, hyP, max_eq_left hyq]
       · simp [patched, hyP]
     · filter_upwards [eventually_not_mem_ball_of_not_mem_closedBall
         (C := C) (x := x) (z := z) (r := r) hzClosed] with y hyP
       have hyP' : y ∉ P := by
-        simpa [P] using hyP
+        exact hyP
       simp [patched, hyP']
   · intro z hz
     have hzP : z ∉ P := fun hzP => hboundaryAway z hz
-      (Metric.ball_subset_closedBall (by simpa [P] using hzP))
+      (Metric.ball_subset_closedBall (by exact hzP))
     simp [patched, hzP]
   · intro z hz
     apply UpperSemicontinuousOn.piecewise_max_boundary
@@ -888,7 +888,7 @@ theorem PerronLowerEnvelopeBentQuadraticSourceClosedBallAnnulusPatchAt.chosenPat
     apply Or.inl
     intro hzClosure
     exact hboundaryAway z hz
-      (Metric.closure_ball_subset_closedBall (by simpa [P] using hzClosure))
+      (Metric.closure_ball_subset_closedBall (by exact hzClosure))
   · intro z _hz
     by_cases hzP : z ∈ P
     · simp [patched, hzP]
@@ -956,7 +956,7 @@ theorem PerronLowerEnvelopeBentQuadraticMaxPatchAt.strictLocalPatchAt
     Filter.inter_mem hV hqAbove, ?_, hWlta, hold, ?_⟩
   · intro y hy
     exact hy.2
-  · simpa [q, Xb] using hmax
+  · exact hmax
 
 /--
 Global bent quadratic max-patch data feeds the global strict-local patch

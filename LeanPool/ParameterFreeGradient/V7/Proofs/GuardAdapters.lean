@@ -27,7 +27,7 @@ theorem upperModelGuard_of_scale_ge {p L M : ℝ} (hp : 1 < p)
     inst.coordinateGradient inst.smooth x y
   have hsq : 0 ≤ (lpNorm p (y - x)) ^ (2 : ℕ) := sq_nonneg _
   dsimp only [UpperModelGuard]
-  nlinarith
+  nlinarith only [hLM, hdes]
 
 theorem failed_upperModelGuard_lt_trueScale {p L M : ℝ} (hp : 1 < p)
     (inst : PositiveInstance p d x0) (hL : inst.L = L)
@@ -46,7 +46,7 @@ theorem gradientGuard_of_scale_ge {p L M : ℝ}
   have hsym : lpNorm (conjugateExponent p)
       (inst.oracle.gradient y - inst.oracle.gradient x) ≤
       inst.L * lpNorm p (y - x) := hs
-  nlinarith
+  nlinarith only [hLM, hn, hs]
 
 theorem failed_gradientGuard_lt_trueScale {p L M : ℝ}
     (inst : PositiveInstance p d x0) (hL : inst.L = L)

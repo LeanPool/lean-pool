@@ -8,7 +8,6 @@ module
 public import LeanPool.DomainTheory.Neighborhood.ExampleB
 public import LeanPool.DomainTheory.Neighborhood.Exercise318
 import LeanPool.DomainTheory.Neighborhood.Exercise319Sum
-import Mathlib.Order.BooleanAlgebra.Set
 import Mathlib.Tactic.Attr.Core
 
 /-!
@@ -136,9 +135,12 @@ def slotPre (i : Bool) (j : ℕ) : Str := i :: (List.replicate j true ++ [false]
 the remainder. -/
 theorem slot_list_inj : ∀ (j j' : ℕ) (u v : Str),
     List.replicate j true ++ false :: u = List.replicate j' true ++ false :: v → j = j' ∧ u = v
-  | 0, 0, u, v, h => by simpa using h
-  | 0, j' + 1, u, v, h => by simp [List.replicate_succ] at h
-  | j + 1, 0, u, v, h => by simp [List.replicate_succ] at h
+  | 0, 0, u, v, h => by simpa only [true_and, List.replicate_zero, List.nil_append,
+    List.cons.injEq] using h
+  | 0, j' + 1, u, v, h => by simp only [List.replicate_zero, List.nil_append,
+    List.replicate_succ, List.cons_append, List.cons.injEq, Bool.false_eq_true, false_and] at h
+  | j + 1, 0, u, v, h => by simp only [List.replicate_succ, List.cons_append,
+    List.replicate_zero, List.nil_append, List.cons.injEq, Bool.true_eq_false, false_and] at h
   | j + 1, j' + 1, u, v, h => by
       rw [List.replicate_succ, List.cons_append, List.replicate_succ, List.cons_append,
         List.cons.injEq] at h
@@ -289,7 +291,7 @@ theorem memA_inter (hn : 0 < n) :
   intro X hX
   induction hX with
   | univ =>
-    simp_all
+    simp_all only [Set.univ_inter, implies_true]
   | @tuple i X hX ih =>
     intro Y hY Z hZ hsub
     cases hY with
@@ -306,7 +308,7 @@ theorem memA_inter (hn : 0 < n) :
           have hZsub := embTuple_subset.mp hsub
           exact MemA.tuple i' (fun j => ih j (hX' j) (hZW j) (hZsub j))
       · rw [embTuple_inter_ne hii] at hsub ⊢
-        simp_all
+        simp_all only [Set.subset_inter_iff, and_imp, Set.subset_empty_iff]
 
 /-- **Scott's domain `A`** packaged as a neighbourhood system over `{0,1}*` (needs
 `0 < n`). -/

@@ -98,7 +98,6 @@ lemma tracePoly_natDegree : tracePoly.natDegree = 5 := by unfold tracePoly; comp
 lemma tracePoly_eval (z : ℂ) : tracePoly.eval z = traceQC z := by
   unfold tracePoly LehmerE10.traceQC
   simp
-  try ring
 
 lemma trace_root_mem {y : ℝ} (hy : traceQ y = 0) : (y : ℂ) ∈ tracePoly.roots := by
   rw [mem_roots tracePoly_monic.ne_zero, IsRoot.def, tracePoly_eval, traceQC_ofReal, hy]
@@ -228,7 +227,6 @@ lemma LC_derivative_eval (z : ℂ) :
       10 * z ^ 9 + 9 * z ^ 8 - 7 * z ^ 6 - 6 * z ^ 5 - 5 * z ^ 4 - 4 * z ^ 3 - 3 * z ^ 2 + 1 := by
   rw [LC_poly]
   simp [derivative_add, derivative_sub, derivative_X, derivative_one]
-  try push_cast
   try ring
 
 /-- **THE DERIVATIVE–TRACE IDENTITY**: differentiating `L(z) = z⁵ q(z + 1/z)` and

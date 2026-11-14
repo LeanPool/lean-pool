@@ -125,7 +125,7 @@ theorem integral_sq_localizedPiece_le_of_adjoint_bound
       rw [norm_mul, RCLike.norm_conj]
       by_cases hxI : x ∈ I.centralThird
       · exact (mul_le_mul_of_nonneg_left (hx hxI) (norm_nonneg _)).trans_eq (mul_comm _ _)
-      · simp [c, indicator_of_notMem hxI]
+      · simp only [indicator_of_notMem hxI, norm_zero, zero_mul, mul_zero, Std.le_refl, c]
     _ = _ := by
       rw [integral_const_mul]
       congr 1
@@ -154,8 +154,6 @@ theorem nonstandard_badPiece_diagonalEnergy_le
   have hb : Integrable b := integrable_badScaleInput S hf I₀ k₀ (k + 2 - s)
   have hC : 0 ≤ 1600 * positiveDyadicAmplitudeBound ^ 2 / I.length := by
     positivity [I.length_pos]
-  have hH : 0 ≤ 96000 * positiveDyadicAmplitudeBound ^ 2 * intervalL1Average f I₀ *
-      (2 : ℝ) ^ (-s) := by positivity [intervalL1Average_nonneg f I₀]
   apply integral_sq_localizedPiece_le_of_adjoint_bound k I hb
   filter_upwards [hNS] with x hx hxI
   apply (hx hxI).trans
@@ -167,8 +165,8 @@ theorem nonstandard_badPiece_diagonalEnergy_le
         (badScaleInput_unitWindowMass_le hf I₀ k₀ (k + 2 - s) hℓ hlam hparent hsub x)
     _ = _ := by
       have hpow : (2 : ℝ) ^ (k + 2 - s) = (2 : ℝ) ^ (k + 2) * (2 : ℝ) ^ (-s) := by
-        rw [show k + 2 - s = (k + 2) + (-s) by ring,
-          zpow_add₀ (by norm_num : (2 : ℝ) ≠ 0)]
+        rw [show k + 2 - s = (k + 2) + (-s) by rfl,
+          zpow_add₀ (by norm_num1 : (2 : ℝ) ≠ 0)]
       rw [hscale, hpow]
       field_simp; ring
 

@@ -7,6 +7,7 @@ module
 
 
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
+public import LeanPool.NandakumarRamanaRao.NRR.Geometry.ConvexBody.Width
 public import LeanPool.NandakumarRamanaRao.NRR.Geometry.ConvexBody.WidthContinuity
 
 /-!

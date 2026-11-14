@@ -99,7 +99,9 @@ private lemma filter_map_neg_inv (p : ℂ) (hp : p ≠ 0)
   exact (tendsto_nhdsWithin_iff.mpr
     ⟨hφ_an.continuousAt.continuousWithinAt,
       by rw [eventually_nhdsWithin_iff]
-         simp_all⟩).eventually hQ
+         simp_all only [ne_eq, mem_compl_iff, mem_singleton_iff, neg_inj, inv_inj,
+           not_false_eq_true, implies_true,
+             eventually_true]⟩).eventually hQ
 
 private lemma neg_inv_finite_order_witness (g : ℂ → ℂ) (p : ℂ) (hp : p ≠ 0)
     (n : ℤ) (h : ℂ → ℂ) (hh_an : AnalyticAt ℂ h (-p⁻¹)) (hh_ne : h (-p⁻¹) ≠ 0)
@@ -117,7 +119,7 @@ private lemma neg_inv_finite_order_witness (g : ℂ → ℂ) (p : ℂ) (hp : p �
       simp only [smul_eq_mul] at hz_eq ⊢
       rw [hz_eq, show -z⁻¹ - -p⁻¹ = (z - p) * (z * p)⁻¹ from by field_simp; ring, mul_zpow]
       calc (z - p) ^ n * (z * p)⁻¹ ^ n * h (-z⁻¹) = (z - p) ^ n * ((z * p) ^ (-n) * h (-z⁻¹)) := by
-            rw [inv_zpow, zpow_neg]; ring
+            rw [inv_zpow, zpow_neg]; ac_rfl
 
 private lemma meromorphicOrderAt_comp_neg_inv (g : ℂ → ℂ) (p : ℂ) (hp : p ≠ 0) :
     meromorphicOrderAt (fun z => g (-z⁻¹)) p = meromorphicOrderAt g (-p⁻¹) := by
@@ -140,7 +142,7 @@ lemma ord_add_one_eq (p : ℍ) :
   unfold orderOfVanishingAt'
   set G : ℂ → ℂ := fun w => if h : 0 < w.im then f ⟨w, h⟩ else 0 with hG_def
   set p_cplx : ℂ := (p : ℂ) with hp_def
-  conv_lhs => rw [show (((1 : ℝ) +ᵥ p : ℍ) : ℂ) = p_cplx + 1 by simp [hp_def]; ring]
+  conv_lhs => rw [show (((1 : ℝ) +ᵥ p : ℍ) : ℂ) = p_cplx + 1 by simp [hp_def]; ac_rfl]
   have hG_eq_near : G =ᶠ[𝓝[≠] (p_cplx + 1)] (fun w => G (w - 1)) := by
     rw [Filter.EventuallyEq, eventually_nhdsWithin_iff]
     filter_upwards [isOpen_lt continuous_const continuous_im |>.mem_nhds
@@ -150,7 +152,8 @@ lemma ord_add_one_eq (p : ℍ) :
     have h_period := SlashInvariantForm.vAdd_width_periodic 1 k 1 f.toSlashInvariantForm z₀
     have h_vadd_coe : ((1 : ℝ) +ᵥ z₀ : ℍ) = ⟨z, hz⟩ :=
       by ext; change (↑(1 : ℝ) : ℂ) + (z - 1) = z; push_cast; ring
-    simp_all
+    simp_all only [mem_compl_iff, mem_singleton_iff, Nat.cast_one, Int.cast_one, mul_one,
+        ModularForm.toSlashInvariantForm_coe]
   rw [meromorphicOrderAt_congr hG_eq_near, meromorphicOrderAt_comp_sub_const]
 
 /-- T-invariance at ρ: `ord(f, ρ+1) = ord(f, ρ)`. -/
@@ -170,7 +173,8 @@ lemma modform_comp_ofComplex_S_identity (z : ℂ) (hz : 0 < z.im) :
   have hz_ne : z ≠ 0 := by intro h; simp [h] at hz
   have h_neg_inv_im : 0 < (-(1 : ℂ)/z).im := by
     rw [show -(1 : ℂ)/z = (-z)⁻¹ from by field_simp, Complex.inv_im]
-    exact div_pos (by simp [hz]) (Complex.normSq_pos.mpr (neg_ne_zero.mpr hz_ne))
+    exact div_pos (by simp only [neg_im, neg_neg,
+      hz]) (Complex.normSq_pos.mpr (neg_ne_zero.mpr hz_ne))
   rw [UpperHalfPlane.ofComplex_apply_of_im_pos hz,
     UpperHalfPlane.ofComplex_apply_of_im_pos h_neg_inv_im]
   set z_uhp : UpperHalfPlane := ⟨z, hz⟩
@@ -192,7 +196,8 @@ private lemma modform_G_S_identity
   have hz_ne : z ≠ 0 := by intro h; simp [h] at hz
   have h_neg_inv_im : 0 < (-z⁻¹).im := by
     rw [neg_inv, Complex.inv_im]
-    exact div_pos (by simp [hz]) (Complex.normSq_pos.mpr (neg_ne_zero.mpr hz_ne))
+    exact div_pos (by simp only [neg_im, neg_neg,
+      hz]) (Complex.normSq_pos.mpr (neg_ne_zero.mpr hz_ne))
   simp only [dite_eq_left h_neg_inv_im, dite_eq_left hz]
   have h_eq := modform_comp_ofComplex_S_identity f z hz
   rw [show -(1 : ℂ)/z = -z⁻¹ from by field_simp] at h_eq
@@ -238,7 +243,7 @@ lemma ord_S_eq (p : ℍ) :
   conv_lhs => rw [h_S_coe]
   have hp_ne : p_cplx ≠ 0 := by
     intro h; have : p_cplx.im = 0 := by rw [h]; simp only [Complex.zero_im]
-    linarith [show p.im = p_cplx.im from rfl, p.im_pos]
+    linarith only [this, show p.im = p_cplx.im from rfl, p.im_pos]
   suffices h : meromorphicOrderAt G (-p_cplx⁻¹) =
       meromorphicOrderAt G p_cplx from congr_arg WithTop.untop₀ h
   calc meromorphicOrderAt G (-p_cplx⁻¹) = meromorphicOrderAt (fun z => G (-z⁻¹)) p_cplx :=
@@ -251,12 +256,14 @@ lemma ord_S_eq (p : ℍ) :
     _ = meromorphicOrderAt (fun z : ℂ => z ^ k) p_cplx + meromorphicOrderAt G p_cplx :=
         meromorphicOrderAt_mul (analyticAt_id.zpow hp_ne).meromorphicAt
           (modform_G_meromorphicAt f G hG_def p)
-    _ = meromorphicOrderAt G p_cplx := by simp [meromorphicOrderAt_zpow_eq_zero p_cplx hp_ne]
+    _ = meromorphicOrderAt G p_cplx := by simp only [meromorphicOrderAt_zpow_eq_zero p_cplx hp_ne,
+      zero_add]
 
 /-- An open box containing the truncated fundamental domain. -/
 def fdBox (M : ℝ) : Set ℂ := {z : ℂ | -1 < z.re ∧ z.re < 1 ∧ (1 : ℝ)/2 < z.im ∧ z.im < M}
 
-lemma fdBox_im_pos {M : ℝ} {z : ℂ} (hz : z ∈ fdBox M) : 0 < z.im := by linarith [hz.2.2.1]
+lemma fdBox_im_pos {M : ℝ} {z : ℂ} (hz : z ∈ fdBox M) : 0 < z.im := by
+  linarith only [hz, hz.2.2.1]
 
 /-- A nonzero modular form has finitely many zeros in `fdBox M`. -/
 theorem modularForm_finitely_many_zeros_in_fdBox (hf : f ≠ 0) {M : ℝ} (hM : (1 : ℝ) / 2 < M) :
@@ -267,15 +274,15 @@ theorem modularForm_finitely_many_zeros_in_fdBox (hf : f ≠ 0) {M : ℝ} (hM : 
   have hBdd : Bornology.IsBounded (fdBox M) :=
     isBounded_iff_forall_norm_le.mpr ⟨1 + M, fun z hz =>
       (Complex.norm_le_abs_re_add_abs_im z).trans (by
-        have : |z.re| < 1 := abs_lt.mpr ⟨by linarith [hz.1], hz.2.1⟩
-        have : |z.im| ≤ M := abs_le.mpr ⟨by linarith [hz.2.2.1], le_of_lt hz.2.2.2⟩
+        have : |z.re| < 1 := abs_lt.mpr ⟨by linarith only [hz, hz.1], hz.2.1⟩
+        have : |z.im| ≤ M := abs_le.mpr ⟨by linarith only [hM, hz, hz.2.2.1], le_of_lt hz.2.2.2⟩
         linarith)⟩
   obtain ⟨z₀, hz₀K, hz₀_acc⟩ :=
     hZ_inf.exists_accPt_of_subset_isCompact hBdd.isCompact_closure
       ((sep_subset _ _).trans subset_closure)
   have hz₀_im : (1 : ℝ)/2 ≤ z₀.im := closure_minimal (fun z hz => le_of_lt hz.2.2.1)
     (isClosed_le continuous_const Complex.continuous_im) hz₀K
-  have hz₀_pos : 0 < z₀.im := by linarith
+  have hz₀_pos : 0 < z₀.im := by linarith only [hz₀_im]
   have h_freq : ∃ᶠ y in 𝓝[≠] z₀, modularFormCompOfComplex f y = 0 :=
     (accPt_iff_frequently_nhdsNE.mp hz₀_acc).mono fun y hy => hy.2
   let U := {z : ℂ | 0 < z.im}
@@ -297,7 +304,8 @@ theorem cuspFunction_not_eventually_zero (hf : f ≠ 0) :
   have h_diff : DifferentiableOn ℂ (UpperHalfPlane.cuspFunction (1 : ℝ) (⇑f))
       (Metric.ball 0 1) := fun q hq =>
     (ModularFormClass.differentiableAt_cuspFunction f
-      (by norm_num : (0 : ℝ) < 1) (by simp)
+      (by norm_num : (0 : ℝ) < 1) (by simp only [strictPeriods_Gamma, Nat.cast_one,
+        AddSubgroup.mem_zmultiples])
       (by rwa [Metric.mem_ball, dist_zero_right] at hq)).differentiableWithinAt
   have h_anal : AnalyticOnNhd ℂ (UpperHalfPlane.cuspFunction (1 : ℝ) (⇑f))
       (Metric.ball 0 1) := h_diff.analyticOnNhd Metric.isOpen_ball
@@ -306,7 +314,8 @@ theorem cuspFunction_not_eventually_zero (hf : f ≠ 0) :
       (convex_ball 0 1).isPreconnected (Metric.mem_ball_self (by norm_num : (0 : ℝ) < 1)) h_freq
   apply hf; ext τ
   simp only [FunLike.coe_zero, Pi.zero_apply]
-  rw [← SlashInvariantFormClass.eq_cuspFunction f τ (by simp)
+  rw [← SlashInvariantFormClass.eq_cuspFunction f τ (by simp only [strictPeriods_Gamma,
+    Nat.cast_one, AddSubgroup.mem_zmultiples])
     (by norm_num : (1 : ℝ) ≠ 0)]
   have h_qmem : Function.Periodic.qParam (1 : ℝ) (↑τ : ℂ) ∈
       Metric.ball (0 : ℂ) 1 := by
@@ -320,7 +329,8 @@ theorem cuspFunction_eventually_ne_zero (hf : f ≠ 0) :
       UpperHalfPlane.cuspFunction (1 : ℝ) (⇑f) q ≠ 0 := by
   have h_anal : AnalyticAt ℂ (UpperHalfPlane.cuspFunction (1 : ℝ) (⇑f)) 0 :=
     ModularFormClass.analyticAt_cuspFunction_zero f
-      (by norm_num : (0 : ℝ) < 1) (by simp)
+      (by norm_num : (0 : ℝ) < 1) (by simp only [strictPeriods_Gamma, Nat.cast_one,
+        AddSubgroup.mem_zmultiples])
   exact h_anal.eventually_eq_zero_or_eventually_ne_zero.resolve_left
     (cuspFunction_not_eventually_zero f hf)
 
@@ -331,8 +341,8 @@ theorem exists_radius_cusp_nonvanishing (hf : f ≠ 0) :
   obtain ⟨s, hs_prop, hs_open, hs_zero⟩ := eventually_nhds_iff.mp
     (eventually_nhdsWithin_iff.mp (cuspFunction_eventually_ne_zero f hf))
   obtain ⟨r, hr_pos, hr_ball⟩ := Metric.isOpen_iff.mp hs_open 0 hs_zero
-  exact ⟨r / 2, by linarith, fun q hq hq_ne =>
-    hs_prop q (hr_ball (lt_of_le_of_lt (Metric.mem_closedBall.mp hq) (by linarith)))
+  exact ⟨r / 2, by linarith only [hr_pos], fun q hq hq_ne =>
+    hs_prop q (hr_ball (lt_of_le_of_lt (Metric.mem_closedBall.mp hq) (by linarith only [hr_pos])))
       (mem_compl_singleton_iff.mpr hq_ne)⟩
 
 /-- Convert a q-radius to a FD boundary height. -/
@@ -366,7 +376,7 @@ lemma cusp_nonvanishing_height_mono {H₁ H₂ : ℝ} (hH : H₁ ≤ H₂)
     ∀ q ∈ Metric.closedBall (0 : ℂ) (Real.exp (-2 * Real.pi * H₂)), q ≠ 0 →
       UpperHalfPlane.cuspFunction (1 : ℝ) (⇑f) q ≠ 0 :=
   fun q hq hq_ne => h q (Metric.closedBall_subset_closedBall
-    (Real.exp_le_exp.mpr (by nlinarith [Real.pi_pos])) hq) hq_ne
+    (Real.exp_le_exp.mpr (by nlinarith only [hH, Real.pi_pos])) hq) hq_ne
 
 /-- Cusp nonvanishing above any floor height. -/
 theorem exists_height_cusp_nonvanishing_above (hf : f ≠ 0) (Hmin : ℝ) :

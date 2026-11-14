@@ -84,7 +84,8 @@ theorem indicator_ae_eq_of_restrict (hs : MeasurableSet s) {f g : α → ℂ}
 the restricted measure is square-integrable for the ambient one. -/
 noncomputable def extendLpFun (μ : Measure α) (hs : MeasurableSet s)
     (F : Lp ℂ 2 (μ.restrict s)) : Lp ℂ 2 μ :=
-  ((memLp_indicator_iff_restrict hs).mpr (Lp.memLp F)).toLp (s.indicator (F : α → ℂ))
+  ((memLp_indicator_iff_restrict hs.nullMeasurableSet).mpr (Lp.memLp F)).toLp
+    (s.indicator (F : α → ℂ))
 
 /-- Extension by zero, on representatives: the class is represented by the indicator. -/
 theorem coeFn_extendLpFun (μ : Measure α) (hs : MeasurableSet s) (F : Lp ℂ 2 (μ.restrict s)) :
@@ -122,7 +123,8 @@ theorem extendLpFun_smul (μ : Measure α) (hs : MeasurableSet s) (c : ℂ)
 and it is `eLpNorm_indicator_eq_eLpNorm_restrict` in `L²` clothing. -/
 theorem norm_extendLpFun (μ : Measure α) (hs : MeasurableSet s)
     (F : Lp ℂ 2 (μ.restrict s)) : ‖extendLpFun μ hs F‖ = ‖F‖ := by
-  rw [extendLpFun, Lp.norm_toLp, eLpNorm_indicator_eq_eLpNorm_restrict hs, ← Lp.norm_def]
+  rw [extendLpFun, Lp.norm_toLp,
+    eLpNorm_indicator_eq_eLpNorm_restrict hs.nullMeasurableSet, ← Lp.norm_def]
 
 /-- **Extension by zero**, as a linear isometry `L²(μ|_s) →ₗᵢ[ℂ] L²(μ)`. -/
 noncomputable def extendLp (μ : Measure α) (hs : MeasurableSet s) :

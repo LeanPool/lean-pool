@@ -10,7 +10,7 @@ public import Mathlib.Data.ZMod.Defs
 import Mathlib.Data.ZMod.Basic
 import Mathlib.Tactic.IntervalCases
 import Mathlib.Tactic.Linarith.Frontend
-import Mathlib.Tactic.LinearCombinationPrime
+import Mathlib.Tactic.LinearCombination
 
 /-!
 # The four sets `T₁,…,T₄` and their pairwise intersections
@@ -209,7 +209,7 @@ theorem inter_T1_T3_le {m : ℕ} {B : Finset ℕ} (hB : FoldedOK m B) {α : ℕ}
     unfold T3 at hx; aesop;
   have h_mod : (b + α) % m = c % m := by
     simp_all +decide only [not_le, mem_inter, ne_eq, ← ZMod.natCast_eq_natCast_iff', Nat.cast_add];
-    linear_combination' -hb_eq;
+    linear_combination -hb_eq;
   have := hB.2 b hb α hα; simp_all +decide only [not_le, mem_inter, ne_eq] ;
   exact this ( by aesop ) |>.2
     ( by simpa [ Nat.mod_eq_of_lt ( show c < m from hB.1 c hc |>.2 ) ] using hc )
@@ -227,7 +227,7 @@ theorem inter_T2_T3_le {m : ℕ} {B : Finset ℕ} (hB : FoldedOK m B) {α : ℕ}
       grind +locals
     have h_eq : (u + b : ℕ) % m = α % m := by
       simp_all +decide only [mem_inter, ← ZMod.natCast_eq_natCast_iff', Nat.cast_add];
-      linear_combination' hu
+      linear_combination hu
     have h_eq' : (u + b : ℕ) = α ∨ (u + b : ℕ) = α + m := by
       have h_eq' : (u + b : ℕ) < 2 * m := by
         linarith [ hB.1 u huB, hB.1 b hbB ];

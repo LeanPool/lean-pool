@@ -1,0 +1,55 @@
+slug: aiyagari-equilibrium
+title: Normalized capped log-household clearing and dynamic programming
+summary: 'Proves conditional uniqueness of a rate solving the unit-wage normalized clearing
+  equation: mean household assets equal α / ((1 - α) * (r + δ)), with α = 9/25 and δ = 2/25.
+  Households have capped log utility, discount 24/25, no borrowing, and monotone finite
+  earnings transitions with positive one-step access to a lowest-income state; an explicit
+  cap-slack inequality is required. Finite Tauchen chains instantiate the household model.
+  Bisection converges to a given solution of this normalized equation along a stationary-distribution
+  selection. Equivalence to full competitive market clearing for arbitrary earnings scales
+  is not established. Preserves Bellman contraction, Berge maximum theorems, stationary
+  Markov theory, Euler inequalities, consumption concavity and marginal-propensity bounds.'
+branch: mathematical economics
+entry_module: LeanPool.AiyagariEquilibrium
+authors:
+- Robert Kirkby
+source:
+  url: https://github.com/LeanEconomics/LeanEconomics
+  github_repo: LeanEconomics/LeanEconomics
+  commit: 8295256bbd64ab488c8cb436d68e7064db560dfc
+  completion_url: https://github.com/LeanEconomics/LeanEconomics/commit/0cf50632dad6952f6feb45efec5a8fe2f3ff0876
+  completed_at: '2026-09-18T07:21:51Z'
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+- LeanEconomics.aiyagariTauchen_equilibriumRate_unique_Ioo
+main_results:
+- declaration: LeanEconomics.aiyagariTauchen_equilibriumRate_unique_Ioo
+  informal: For capped log households with discount 24/25, no borrowing and a finite Tauchen
+    chain with persistence in [0,1), two rates in (-2/25, 1/24) whose stationary household
+    distributions have mean assets equal to 9 / (16 * (r + 2/25)) coincide, provided the
+    explicit asset-cap inequality holds at their larger rate. This is the prescribed unit-wage
+    normalized clearing equation; a bridge to full competitive equilibrium for arbitrary
+    earnings scales is not supplied.
+- declaration: LeanEconomics.IncomeFluctuation.aiyagari1994_log_bisection
+  informal: Given a rate satisfying the same unit-wage normalized clearing equation in a
+    compact interval inside (-2/25, 1/24), a stationary-distribution selection and the stated
+    cap, monotonicity and reachability hypotheses, bisection on normalized excess supply
+    brackets that rate, bounds midpoint error by the initial width divided by 2^(n+1), and
+    has left endpoints converging to it. Existence of a solution to this equation is assumed.
+- declaration: LeanEconomics.continuousAt_maxValue
+  informal: A continuous objective maximized over a nonempty compact-valued correspondence
+    that is upper and lower hemicontinuous has a continuous maximum value at the parameter.
+- declaration: LeanEconomics.Blackwell.contractingWith
+  informal: A monotone operator on bounded continuous real functions that discounts constants
+    by a nonnegative factor below one is a contraction with that factor.
+tags:
+- mathematical-economics
+- dynamic-programming
+- stationary-equilibrium
+- markov-processes
+msc:
+- 91B50
+- 90C39
+- 60J05

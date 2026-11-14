@@ -81,14 +81,15 @@ lemma contDiff_negNormSq_div (T : ℝ) :
   apply ContDiff.div_const
   apply ContDiff.neg
   unfold normSq dotProduct
-  exact ContDiff.sum fun i _ => (contDiff_apply ℝ ℝ i).mul (contDiff_apply ℝ ℝ i)
+  exact ContDiff.sum fun i _ =>
+    (contDiff_apply ℝ (fun _ => ℝ) i).mul (contDiff_apply ℝ (fun _ => ℝ) i)
 
 /-- ‖iteratedFDeriv i (v_j²) v‖ ≤ 2(1+‖v‖) for i ≥ 1, via Leibniz on proj_j * proj_j. -/
 lemma norm_iteratedFDeriv_proj_sq_le (j : Fin 3) (i : ℕ) (hi : 1 ≤ i)
     (v : Fin 3 → ℝ) :
     ‖iteratedFDeriv ℝ i (fun w : Fin 3 → ℝ => w j * w j) v‖ ≤ 2 * (1 + ‖v‖) := by
   set pj := ContinuousLinearMap.proj (R := ℝ) (φ := fun _ => ℝ) j
-  have hpj : ContDiff ℝ ⊤ (fun w : Fin 3 → ℝ => w j) := contDiff_apply ℝ ℝ j
+  have hpj : ContDiff ℝ ⊤ (fun w : Fin 3 → ℝ => w j) := contDiff_apply ℝ (fun _ => ℝ) j
   have hleib := norm_iteratedFDeriv_mul_le hpj hpj v (n := i) le_top
   have hpj_le : ‖pj‖ ≤ 1 :=
     ContinuousLinearMap.opNorm_le_bound _ zero_le_one fun w => by
@@ -135,7 +136,7 @@ lemma quadratic_iteratedFDeriv_bound (T : ℝ) (hT : 0 < T) (k : ℕ) :
     ring
   have hcomp_smooth : ∀ j : Fin 3,
       ContDiff ℝ ⊤ (fun v : Fin 3 → ℝ => -(v j * v j) / (2 * T)) := fun j =>
-    ((contDiff_apply ℝ ℝ j).mul (contDiff_apply ℝ ℝ j)).neg.div_const _
+    ((contDiff_apply ℝ (fun _ => ℝ) j).mul (contDiff_apply ℝ (fun _ => ℝ) j)).neg.div_const _
   -- Each component: -(v_j²)/(2T) = (-1/(2T)) • (v_j²)
   have hcomp_eq : ∀ j : Fin 3, (fun v : Fin 3 → ℝ => -(v j * v j) / (2 * T)) =
       (-1 / (2 * T)) • (fun v : Fin 3 → ℝ => v j * v j) := by
@@ -163,7 +164,8 @@ lemma quadratic_iteratedFDeriv_bound (T : ℝ) (hT : 0 < T) (k : ℕ) :
     · rw [show (fun v : Fin 3 → ℝ => -(v j * v j) / (2 * T)) =
         ((-1 / (2 * T)) • fun v : Fin 3 → ℝ => v j * v j) from hcomp_eq j]
       rw [iteratedFDeriv_const_smul_apply
-        (((contDiff_apply ℝ ℝ j).mul (contDiff_apply ℝ ℝ j)).contDiffAt.of_le le_top),
+        (((contDiff_apply ℝ (fun _ => ℝ) j).mul
+          (contDiff_apply ℝ (fun _ => ℝ) j)).contDiffAt.of_le le_top),
         norm_smul, Real.norm_eq_abs, habs]
       calc 1 / (2 * T) * ‖iteratedFDeriv ℝ i (fun w : Fin 3 → ℝ => w j * w j) v‖
           ≤ 1 / (2 * T) * (2 * (1 + ‖v‖)) :=

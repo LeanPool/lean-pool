@@ -8,7 +8,7 @@ module
 
 public import LeanPool.TwoColoringOneRound.LowerBound.N1000000MuWitness
 public import LeanPool.TwoColoringOneRound.LowerBound.N1000000Relaxation
-import Mathlib.Data.Rat.Star
+import Mathlib.Algebra.Order.Star.Rat
 import Mathlib.GroupTheory.GroupAction.MultipleTransitivity
 import Mathlib.Tactic.Positivity.Finset
 

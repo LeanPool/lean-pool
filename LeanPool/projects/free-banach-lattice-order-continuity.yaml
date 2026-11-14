@@ -1,0 +1,65 @@
+slug: free-banach-lattice-order-continuity
+title: Order continuity of induced homomorphisms between free Banach lattices
+summary: Characterizes order continuity of the lattice homomorphism induced by a bounded
+  operator between real Banach spaces, for every free convexity exponent from one
+  to infinity. Develops concrete free p-convex Banach lattices, their universal
+  property, operator-extension criteria, compact-support witnesses, and equivalent
+  conditions for canonical inclusions between different exponents.
+branch: functional analysis
+entry_module: LeanPool.FBLOrderContinuity
+authors:
+- Raúl E. Pariente-Martín
+- Pedro Tradacete
+- David Muñoz-Lahoz
+source:
+  title: Order continuity of induced homomorphisms between free Banach lattices
+  authors:
+  - Raúl E. Pariente-Martín
+  - Pedro Tradacete
+  arxiv: '2611.00451'
+  url: https://github.com/pedrotradacete/FBLOrderContinuousLH/tree/ee3cde5070125ff2356b7144ff7a940a8dff2a54
+  github_repo: pedrotradacete/FBLOrderContinuousLH
+  commit: ee3cde5070125ff2356b7144ff7a940a8dff2a54
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+- FBLOrderContinuousLH.intro_infty
+- FBLOrderContinuousLH.intro_poe
+- FBLOrderContinuousLH.cross_parameter_inclusion
+main_results:
+- declaration: FBLOrderContinuousLH.intro_infty
+  informal: At exponent infinity, the induced lattice homomorphism is order continuous
+    exactly when the original bounded operator is zero or an isomorphic embedding.
+  source_ref: Theorem 1.1. The public manuscript was submitted on 2026-10-30 at
+    23:06:06 UTC; the completed Lean sources were committed earlier that evening
+    as 167b82ad69724d2ddb2a701fc932e52d445faecc.
+- declaration: FBLOrderContinuousLH.intro_poe
+  informal: For a finite exponent p, the induced homomorphism is order continuous
+    exactly when the original operator is zero or is an isomorphic embedding whose
+    range has the POE-p operator-extension property. Equivalently, the induced
+    homomorphism is zero or an isomorphic lattice embedding.
+  source_ref: Theorem 1.3.
+- declaration: FBLOrderContinuousLH.cross_parameter_inclusion
+  informal: For p less than q, eight conditions on the canonical inclusion between
+    the free p-convex and q-convex lattices are equivalent, including order continuity,
+    surjectivity, equivalence of norms on the algebraic core, and order density.
+  source_ref: Theorem 5.1.
+- declaration: FBLOrderContinuousLH.cross_parameter_above_two
+  informal: When p is less than q and q exceeds two, these conditions hold exactly
+    when the generating Banach space is finite dimensional.
+  source_ref: Corollary 5.3.
+- declaration: FBLOrderContinuousLH.cross_parameter_hilbert
+  informal: For the real Hilbert sequence space and one at most p less than q at
+    most two, the canonical inclusion is an order-continuous bounded lattice
+    isomorphism onto its target.
+  source_ref: Remark 5.4.
+tags:
+- banach-lattices
+- free-banach-lattices
+- order-continuity
+- operator-extensions
+msc:
+- 46B42
+- 46A40
+- 47B60

@@ -81,7 +81,7 @@ theorem singleton_mem_Ioo (t₀ : ℝ) (a b : ℝ)
 theorem singleton_at_crossing (γ : PiecewiseC1Immersion)
     (t₀ : ℝ) (z₀ : ℂ) (hcross : γ.toFun t₀ = z₀) :
     ∀ t ∈ ({t₀} : Finset ℝ), γ.toFun t = z₀ := by
-  simp_all [Finset.mem_singleton]
+  simp_all only [Finset.mem_singleton, implies_true]
 
 /-- A single smooth crossing contributes 1/2 to the winding number. -/
 theorem windingNumber_smooth_crossing
@@ -109,7 +109,7 @@ theorem windingNumber_corner_crossing
       (singleton_at_crossing γ t₀ z₀ hcross) =
     α / (2 * Real.pi) := by
   simp only [windingNumberWithAngles']
-  simp_all
+  simp_all only [Finset.univ_unique, Finset.sum_singleton, Finset.default_singleton]
 
 /-- When γ avoids z₀, the PV cutoff is trivial below minimum distance. -/
 theorem cauchyPrincipalValue_eq_classical_off_curve'

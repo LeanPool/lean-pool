@@ -56,7 +56,7 @@ theorem activeOverlapBlock_real_bound (s : ℕ) :
     rw [← Nat.cast_add_one, activeOverlapBlock_pred_add_one]
     simp only [activeOverlapBlock, Nat.cast_mul, Nat.cast_ofNat, Nat.cast_add,
       Nat.cast_one, Nat.cast_pow]
-  simpa only [zpow_natCast] using he.ge
+  exact he.ge
 
 theorem volume_active_overlap_blocks_le_half_pow_of_geometry
     {S : Finset RealInterval} (f : ℝ → ℂ) (I₀ : RealInterval) (k₀ : ℤ) (s t : ℕ)
@@ -175,7 +175,7 @@ theorem log2_activeExponentialCutoff_le (s : ℕ) :
           pow_add (2 : ℕ) 4 (2 * s + 1)]
         norm_num
   have h := Nat.log_mono_right (b := 2) hp
-  simpa only [Nat.log2_eq_log_two, Nat.log_pow (by norm_num : 1 < (2 : ℕ))] using h
+  simpa only [Nat.log2_eq_log_two, Nat.log_pow (by decide +kernel : 1 < (2 : ℕ))] using h
 
 theorem eLpNorm_exponentiallyPruned_badLengthTailMaximal_le
     {S : Finset RealInterval} {f : ℝ → ℂ} (hf : Integrable f)
@@ -195,7 +195,7 @@ theorem eLpNorm_exponentiallyPruned_badLengthTailMaximal_le
   apply ENNReal.ofReal_le_ofReal
   have hr : (Nat.log2 (activeExponentialCutoff s) : ℝ) ≤ 2 * (s : ℝ) + 5 := by
     exact_mod_cast log2_activeExponentialCutoff_le s
-  nlinarith [Real.sqrt_nonneg (nonstandardSignedEnergyBudget f I₀ s)]
+  nlinarith only [hr, Real.sqrt_nonneg (nonstandardSignedEnergyBudget f I₀ s)]
 
 end KrauseLaceyBadScale
 end QuadraticCarleson

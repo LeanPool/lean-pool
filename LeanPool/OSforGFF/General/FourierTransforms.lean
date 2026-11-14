@@ -172,7 +172,8 @@ lemma integrable_exponential_decay_fourier (μ : ℝ) (hμ : 0 < μ) (k : ℝ) :
     exact continuous_const
   · filter_upwards with x
     rw [Complex.norm_exp]
-    simp_all
+    simp_all only [neg_mul, ofReal_exp, ofReal_neg, ofReal_mul, mul_re, I_re, ofReal_re, zero_mul,
+      I_im, ofReal_im, mul_zero, sub_self, mul_im, one_mul, zero_add, Real.exp_zero, Std.le_refl]
 
 /-! ### Half-Line Integrals and Antiderivatives
 
@@ -188,7 +189,7 @@ lemma ik_add_ne_zero (α : ℝ) (hα : α ≠ 0) (k : ℝ) : Complex.I * k + (α
   have hre : (Complex.I * k + (α : ℂ)).re = 0 := by simp [h]
   simp only [Complex.add_re, Complex.mul_re, Complex.I_re, Complex.ofReal_re,
              Complex.I_im, Complex.ofReal_im, mul_zero, zero_mul, sub_zero] at hre
-  simp_all
+  simp_all only [ne_eq, zero_add]
 
 /-- The antiderivative of e^{(ik+α)x} for α ≠ 0.
     This is the indefinite integral: ∫ e^{(ik+α)x} dx = e^{(ik+α)x} / (ik + α)
@@ -218,7 +219,7 @@ lemma antideriv_exp_complex_linear (α : ℝ) (hα : α ≠ 0) (k x : ℝ) :
     by
     exact h_exp_deriv.div_const c
   -- Simplify: (e^{cx} * c)/c = e^{cx}
-  simp_all
+  simp_all only [ne_eq, not_false_eq_true, mul_div_cancel_right₀]
 
 /-- Complex exponential e^{cx} tends to 0 as x → +∞ when Re(c) < 0.
     Proof: ‖e^{cx}‖ = e^{Re(c)·x} → 0 since Re(c) < 0 and x → +∞.
@@ -232,7 +233,8 @@ theorem tendsto_cexp_atTop_zero {c : ℂ} (hc : c.re < 0) :
   have hneg : 0 < -c.re := neg_pos.mpr hc
   have h1 : Filter.Tendsto (fun x => (-c.re) * x) Filter.atTop Filter.atTop :=
     Filter.tendsto_id.const_mul_atTop hneg
-  simp_all
+  simp_all only [mul_re, ofReal_re, ofReal_im, mul_zero, sub_zero, implies_true, Left.neg_pos_iff,
+    neg_mul, Filter.tendsto_neg_atTop_iff]
 
 /-- Complex exponential e^{cx} tends to 0 as x → -∞ when Re(c) > 0.
     Proof: ‖e^{cx}‖ = e^{Re(c)·x} → 0 since Re(c) > 0 and x → -∞.
@@ -253,7 +255,8 @@ theorem integrableOn_exp_decay_Ioi (μ : ℝ) (hμ : 0 < μ) (k : ℝ) :
       (fun x : ℝ => Complex.exp ((Complex.I * k - μ) * x))
       (Set.Ioi 0) volume := by
   have hc_re : (Complex.I * k - μ).re < 0 := by
-    simp_all
+    simp_all only [sub_re, mul_re, I_re, ofReal_re, zero_mul, I_im, ofReal_im, mul_zero, sub_self,
+      zero_sub, Left.neg_neg_iff]
   exact integrableOn_exp_mul_complex_Ioi hc_re 0
 
 /-- Exponential e^{bx} is integrable on (-∞, a) when b > 0.
@@ -267,7 +270,7 @@ theorem exp_pos_integrableOn_Iio (a : ℝ) {b : ℝ} (h : 0 < b) :
   have h_eq : (fun x => Real.exp (b * x)) = (fun x => Real.exp (-b * (-x))) := by ext x; ring_nf
   rw [h_eq]
   have h_set : Set.Iio a = -Set.Ioi (-a) := by
-    simp_all
+    simp_all only [neg_mul, mul_neg, neg_neg, Set.neg_Ioi]
   rw [h_set]
   exact h_neg.comp_neg
 
@@ -286,7 +289,8 @@ theorem integrableOn_exp_growth_Iic (μ : ℝ) (hμ : 0 < μ) (k : ℝ) :
       (fun x : ℝ => Complex.exp ((Complex.I * k + μ) * x))
       (Set.Iic 0) volume := by
   have hc_re : 0 < (Complex.I * k + μ).re := by
-    simp_all
+    simp_all only [add_re, mul_re, I_re, ofReal_re, zero_mul, I_im, ofReal_im, mul_zero, sub_self,
+      zero_add]
   exact integrableOn_exp_mul_complex_Iic hc_re 0
 
 /-- ik - μ is nonzero when μ ≠ 0 (since Re(ik - μ) = -μ ≠ 0). -/
@@ -416,25 +420,25 @@ lemma fourier_exponential_decay_split (μ : ℝ) (hμ : 0 < μ) (k : ℝ) :
     have hre : ((μ : ℂ) + Complex.I * k).re = 0 := by simp [h]
     simp only [Complex.add_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re,
                Complex.ofReal_im, Complex.I_im, mul_zero, zero_mul, sub_zero] at hre
-    linarith
+    linarith only [hμ, hre]
   have hdenom_ne' : (μ : ℂ) - Complex.I * k ≠ 0 := by
     intro h
     have hre : ((μ : ℂ) - Complex.I * k).re = 0 := by simp [h]
     simp only [Complex.sub_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re,
                Complex.ofReal_im, Complex.I_im, mul_zero, zero_mul, sub_zero] at hre
-    linarith
+    linarith only [hμ, hre]
   -- Combine fractions: 1/(μ+ik) + 1/(μ-ik) = (μ-ik + μ+ik)/((μ+ik)(μ-ik)) = 2μ/(μ²+k²)
   have hdenom_prod : (μ : ℂ) + Complex.I * k ≠ 0 ∧ (μ : ℂ) - Complex.I * k ≠ 0 :=
     ⟨hdenom_ne, hdenom_ne'⟩
   have h_prod : ((μ : ℂ) + Complex.I * k) * ((μ : ℂ) - Complex.I * k) = μ^2 + k^2 := by
     ring_nf
-    simp_all
+    simp_all only [ne_eq, not_false_eq_true, I_sq, neg_mul, one_mul, sub_neg_eq_add]
   rw [add_comm, div_add_div _ _ hdenom_ne' hdenom_ne]
   congr 1
   · ring
   · rw [mul_comm]
     ring_nf
-    simp_all
+    simp_all only [ne_eq, not_false_eq_true, I_sq, neg_mul, one_mul, sub_neg_eq_add]
 
 /-! ### Fourier Transform of Exponential Decay
 
@@ -479,7 +483,8 @@ lemma fourier_exponential_decay' (μ : ℝ) (hμ : 0 < μ) (k : ℝ) :
       (∫ x : ℝ in Set.Ioi 0, Complex.exp (Complex.I * k * x) * Real.exp (-μ * |x|)) := by
     rw [← MeasureTheory.setIntegral_union₀ (Set.Iic_disjoint_Ioi (le_refl (0:ℝ))).aedisjoint
         measurableSet_Ioi.nullMeasurableSet h_int_Iic h_int_Ioi]
-    simp_all
+    simp_all only [neg_mul, ofReal_exp, ofReal_neg, ofReal_mul, Set.Iic_union_Ioi,
+      Measure.restrict_univ]
   rw [h_split, h_Iic, h_Ioi]
   exact fourier_exponential_decay_split μ hμ k
 
@@ -562,7 +567,8 @@ lemma fourierIntegral_expDecayFun_eq (μ : ℝ) (hμ : 0 < μ) (ξ : ℝ) :
   -- h: ∫ exp(I * ↑(-2πξ) * v) * ... = 2μ / (↑(-2πξ)² + μ²)
   -- goal: ∫ exp(I * (-2 * ↑π * ↑ξ) * v) * ... = 2μ / (4π²ξ² + μ²)
   convert h using 2
-  · simp_all
+  · simp_all only [RCLike.inner_apply, conj_trivial, neg_mul, ofReal_neg, ofReal_mul,
+      ofReal_ofNat, ofReal_exp, mul_neg, even_two, Even.neg_pow]
   · push_cast; ring
 
 /-- The Mathlib Fourier transform of expDecayFun is integrable. -/
@@ -596,7 +602,9 @@ lemma integrable_fourierIntegral_expDecayFun (μ : ℝ) (hμ : 0 < μ) :
   have h_int_real : Integrable (fun ξ : ℝ => 2 * μ / (4 * π^2 * ξ^2 + μ^2)) volume := by
     rw [h_eq_real]; exact h_lorentz
   convert h_int_real.ofReal using 1
-  · simp_all
+  · simp_all only [ne_eq, div_eq_zero_iff, mul_eq_zero, OfNat.ofNat_ne_zero, pi_ne_zero, or_self,
+      not_false_eq_true, map_div₀, coe_algebraMap, ofReal_mul, ofReal_ofNat, ofReal_add,
+      ofReal_pow]
 
 /-- Fourier inversion theorem for the exponential decay / Lorentzian pair.
     If FT[e^{-μ|x|}](k) = 2μ/(k² + μ²), then the inverse transform gives:
@@ -645,7 +653,9 @@ theorem fourier_inversion_exp_decay (μ : ℝ) (hμ : 0 < μ) (x : ℝ) :
   -- Key: ∫ G(2π * v) dv = |2π|⁻¹ * ∫ G(k) dk
   have h_cv : ∫ v : ℝ, G ((2 * π) * v) = |2 * π|⁻¹ * ∫ k, G k := by
     have h := MeasureTheory.Measure.integral_comp_smul volume G (2 * π)
-    simp_all
+    simp_all only [neg_mul, ofReal_exp, ofReal_neg, ofReal_mul, RCLike.inner_apply, conj_trivial,
+      ofReal_ofNat, Nat.ofNat_pos, mul_pos_iff_of_pos_left, smul_eq_mul, Module.finrank_self,
+      pow_one, mul_inv_rev, abs_mul, abs_inv, abs_pi, Nat.abs_ofNat, real_smul, ofReal_inv]
   -- Show that G(2π * v) equals the integrand in hinv
   have hG_eq : ∀ v : ℝ, G ((2 * π) * v) =
       Complex.exp (Complex.I * (2 * π * x) * v) * (2 * μ / (4 * π^2 * v^2 + μ^2)) := by
@@ -666,7 +676,9 @@ theorem fourier_inversion_exp_decay (μ : ℝ) (hμ : 0 < μ) (x : ℝ) :
   -- Simplify G to match the goal
   have hG_def : ∀ k : ℝ, G k = Complex.exp (Complex.I * k * x) * (2 * μ / (k^2 + μ^2)) := by
     intro k; rfl
-  simp_all
+  simp_all only [neg_mul, ofReal_exp, ofReal_neg, ofReal_mul, RCLike.inner_apply, conj_trivial,
+    ofReal_ofNat, Nat.ofNat_pos, mul_pos_iff_of_pos_left, mul_inv_rev, ofReal_inv, abs_mul,
+    Nat.abs_ofNat, abs_pi, one_div]
 
 /-! ### The Lorentzian Fourier Transform (Main Result)
 
@@ -706,7 +718,9 @@ theorem fourier_lorentzian_1d (μ : ℝ) (hμ : 0 < μ) (x : ℝ) :
   -- hinv : (1/2π) * (2μ * ∫ ...) = e^{-μ|x|}
   -- Rearrange: (μ/π) * ∫ ... = e^{-μ|x|}
   have hμπ_ne : (μ : ℂ) / π ≠ 0 := by
-    simp_all
+    simp_all only [ne_eq, pi_ne_zero, not_false_eq_true, mul_eq_zero, OfNat.ofNat_ne_zero,
+      or_self, one_div, mul_inv_rev, neg_mul, ofReal_exp, ofReal_neg, ofReal_mul, div_eq_zero_iff,
+      ofReal_eq_zero]
   -- Simplify coefficient: (1/2π) * (2μ * I) = (μ/π) * I
   have h_rearrange : (1 : ℂ) / (2 * π) * (2 * μ * ∫ k : ℝ,
     Complex.exp (Complex.I * k * x) / (k^2 + μ^2)) =
@@ -730,7 +744,7 @@ theorem fourier_lorentzian_1d (μ : ℝ) (hμ : 0 < μ) (x : ℝ) :
 -/
 lemma exp_factorization_reflection (μ : ℝ) (x y : ℝ) (hx : 0 ≤ x) (hy : y ≤ 0) :
     Real.exp (-μ * |x - y|) = Real.exp (-μ * x) * Real.exp (μ * y) := by
-  have h_diff : |x - y| = x - y := abs_of_nonneg (by linarith)
+  have h_diff : |x - y| = x - y := abs_of_nonneg (by linarith only [hx, hy])
   rw [h_diff, ← Real.exp_add]
   congr 1
   ring
@@ -747,7 +761,7 @@ theorem fourier_lorentzian_1d_neg (μ : ℝ) (hμ : 0 < μ) (x : ℝ) :
       (π / μ) * Real.exp (-μ * |x|) := by
   -- Use fourier_lorentzian_1d with (-x), then show exp(I * k * (-x)) = exp(-I * k * x)
   have h := fourier_lorentzian_1d μ hμ (-x)
-  simp_all
+  simp_all only [ofReal_neg, mul_neg, abs_neg, neg_mul, ofReal_exp, ofReal_mul]
 
 /-! ## Application to Free Field Propagator
 

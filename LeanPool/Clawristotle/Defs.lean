@@ -10,6 +10,7 @@ public import Mathlib.MeasureTheory.Integral.Bochner.Basic
 public import Mathlib.MeasureTheory.Measure.Haar.OfBasis
 import Mathlib.Algebra.Order.Star.Real
 import Mathlib.Analysis.Calculus.LineDeriv.IntegrationByParts
+import Mathlib.Analysis.SpecialFunctions.Log.Deriv
 
 /-!
 # Core Definitions for the Vlasov-Maxwell-Landau System
@@ -132,10 +133,11 @@ lemma _root_.VML.IsMaxwellian.contDiff (hM : IsMaxwellian f) : ContDiff ℝ ⊤ 
   rw [this]
   apply Real.contDiff_exp.comp
   have hDot : ContDiff ℝ ⊤ (fun v : Fin 3 → ℝ => dotProduct b v) :=
-    ContDiff.sum fun i _ => contDiff_const.mul (contDiff_apply ℝ ℝ i)
+    ContDiff.sum fun i _ => contDiff_const.mul (contDiff_apply ℝ (fun _ => ℝ) i)
   have hNorm : ContDiff ℝ ⊤ (fun v : Fin 3 → ℝ => normSq v) := by
     unfold normSq dotProduct
-    exact ContDiff.sum fun i _ => (contDiff_apply ℝ ℝ i).mul (contDiff_apply ℝ ℝ i)
+    exact ContDiff.sum fun i _ =>
+      (contDiff_apply ℝ (fun _ => ℝ) i).mul (contDiff_apply ℝ (fun _ => ℝ) i)
   exact (contDiff_const.add hDot).add (contDiff_const.mul hNorm)
 
 /-- The equilibrium Maxwellian (zero drift, density = ρIon):

@@ -64,6 +64,7 @@ public import LeanPool.HopfProblem.Hurewicz.HigherHurewicz2
 public import LeanPool.HopfProblem.Hurewicz.SecondHurewicz
 public import LeanPool.HopfProblem.Hurewicz.SixthHurewicz
 public import LeanPool.HopfProblem.Hurewicz.ThirdHurewicz
+public import LeanPool.HopfProblem.InternalPrelude
 public import LeanPool.HopfProblem.Lattice.Core1
 public import LeanPool.HopfProblem.Lattice.Core2
 public import LeanPool.HopfProblem.MainTheorem.Core1

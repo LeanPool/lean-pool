@@ -9,6 +9,7 @@ public import LeanPool.SpectralTheory.Spectral.Cayley.Inverse
 public import LeanPool.SpectralTheory.Spectral.PVM.Unbounded
 public import LeanPool.SpectralTheory.Spectral.Spectral.CayleyCalculus
 public import LeanPool.SpectralTheory.Spectral.Spectral.Polarization
+public import Mathlib.Analysis.CStarAlgebra.ContinuousLinearMap
 public import Mathlib.Analysis.CStarAlgebra.Spectrum
 public import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Unitary
 public import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Order

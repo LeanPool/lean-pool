@@ -12,7 +12,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Aristotle (Harmonic), Claude Fable 5 (Anthropic), Claude Opus 4.7 (Anthropic)
   — at the request of David Wiygul
 -/
-public import Mathlib.Tactic
+public import LeanPool.NashEmbedding.Tactics
 public import LeanPool.NashEmbedding.NashEmbedding.Sobolev.Periodization
 public import LeanPool.NashEmbedding.NashEmbedding.Sobolev.Mollifier
 
@@ -235,7 +235,7 @@ lemma convexComboScalar_contDiff {φ : (Fin n → ℝ) → ℂ}
       (fun x : (Fin n → ℝ) => fun j => x j - meshPoint n M k j) := by
     apply contDiff_pi.mpr
     intro j
-    exact (contDiff_apply ℝ ℝ j).sub contDiff_const
+    exact (contDiff_apply ℝ (fun _ => ℝ) j).sub contDiff_const
   have h_comp : ContDiff ℝ ∞
       (fun x : (Fin n → ℝ) =>
         periodicExtension n φ (fun j => x j - meshPoint n M k j)) :=

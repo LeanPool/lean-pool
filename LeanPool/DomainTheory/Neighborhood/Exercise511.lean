@@ -7,12 +7,8 @@ module
 
 public import LeanPool.DomainTheory.Neighborhood.Exercise316
 public import LeanPool.DomainTheory.Neighborhood.Theorem41
-import Mathlib.Data.Finset.Attr
-import Mathlib.Data.Rat.Cast.Order
-import Mathlib.Tactic.NormNum.Abs
-import Mathlib.Tactic.NormNum.DivMod
-import Mathlib.Tactic.NormNum.OfScientific
-import Mathlib.Tactic.NormNum.Pow
+
+import Mathlib.Tactic.Set -- shake: keep
 
 /-!
 # Exercise 5.11 (Scott 1981, PRG-19, §5) — `D^∞` as stacks; stack combinators

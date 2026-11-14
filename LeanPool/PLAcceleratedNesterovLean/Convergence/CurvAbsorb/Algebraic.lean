@@ -121,67 +121,52 @@ theorem curv_absorption_algebraic
     (habs : ε₁ * (C_wh / 2 + sm ^ 2 / 2 * C_h + sa * C_ge) ≤ θ * sa) :
     sm * @inner ℝ _ _ wn ξn + sm ^ 2 / 2 * ‖ξn‖ ^ 2 +
     sa * |@inner ℝ _ _ gn Pen| ≤ θ * sa * Ln := by
-  have hCS1 := real_inner_le_norm wn ξn
-  have hCS2 := abs_real_inner_le_norm gn Pen
-  have hξ_nn := norm_nonneg ξn; have hhn_nn := norm_nonneg hn
-  have hen_nn := norm_nonneg en; have hwn_nn := norm_nonneg wn; have hgn_nn := norm_nonneg gn
+  have hε₁_nn : 0 ≤ ε₁ := hε₁_pos.le
   have hsm2_nn : 0 ≤ sm ^ 2 / 2 := by positivity
-  have hε₁_nn : 0 ≤ ε₁ := le_of_lt hε₁_pos
+  have hε₁_sq : ε₁ ^ 2 ≤ ε₁ := by
+    simpa only [sq, mul_one] using mul_le_mul_of_nonneg_left hε₁_le1 hε₁_nn
   have hξ_sq : ‖ξn‖ ^ 2 ≤ ε₁ * ‖hn‖ ^ 2 := by
-    have h1 : ‖ξn‖ ≤ ε₁ * ‖hn‖ := hξ
-    have h2 : ‖ξn‖ ^ 2 ≤ (ε₁ * ‖hn‖) ^ 2 := sq_le_sq' (by linarith [hξ_nn]) h1
-    have h3 : (ε₁ * ‖hn‖) ^ 2 = ε₁ ^ 2 * ‖hn‖ ^ 2 := by ring
-    have h4 : ε₁ ^ 2 ≤ ε₁ := by
-      calc ε₁ ^ 2 = ε₁ * ε₁ := by ring
-        _ ≤ ε₁ * 1 := mul_le_mul_of_nonneg_left hε₁_le1 hε₁_nn
-        _ = ε₁ := mul_one _
-    calc ‖ξn‖ ^ 2 ≤ ε₁ ^ 2 * ‖hn‖ ^ 2 := by linarith
-      _ ≤ ε₁ * ‖hn‖ ^ 2 := mul_le_mul_of_nonneg_right h4 (sq_nonneg _)
-  -- Term 1: sm*⟨w,ξ⟩ ≤ ε₁/2 * C_wh * Ln
+    calc
+      ‖ξn‖ ^ 2 ≤ (ε₁ * ‖hn‖) ^ 2 :=
+        (sq_le_sq₀ (norm_nonneg _) (mul_nonneg hε₁_nn (norm_nonneg _))).mpr hξ
+      _ = ε₁ ^ 2 * ‖hn‖ ^ 2 := mul_pow _ _ _
+      _ ≤ ε₁ * ‖hn‖ ^ 2 := mul_le_mul_of_nonneg_right hε₁_sq (sq_nonneg _)
+  -- Young's inequality bounds the mixed term before scaling by ε₁.
+  have hyoung : 2 * (sm * ‖wn‖) * ‖hn‖ ≤ sm ^ 2 * ‖wn‖ ^ 2 + ‖hn‖ ^ 2 := by
+    simpa only [mul_pow] using two_mul_le_add_sq (sm * ‖wn‖) ‖hn‖
   have hterm1 : sm * @inner ℝ _ _ wn ξn ≤ ε₁ / 2 * (C_wh * Ln) := by
-    have h1 : sm * @inner ℝ _ _ wn ξn ≤ sm * (‖wn‖ * ‖ξn‖) :=
-      mul_le_mul_of_nonneg_left hCS1 hsm_nn
-    have h2 : ‖ξn‖ ≤ ε₁ * ‖hn‖ := hξ
-    have h3 : ‖wn‖ * ‖ξn‖ ≤ ‖wn‖ * (ε₁ * ‖hn‖) :=
-      mul_le_mul_of_nonneg_left h2 (norm_nonneg _)
-    have h5 : 2 * (sm * ‖wn‖ * ‖hn‖) ≤ sm ^ 2 * ‖wn‖ ^ 2 + ‖hn‖ ^ 2 := by
-      have := sq_nonneg (sm * ‖wn‖ - ‖hn‖)
-      have : (sm * ‖wn‖ - ‖hn‖) ^ 2 = sm^2 * ‖wn‖^2 - 2*sm*‖wn‖*‖hn‖ + ‖hn‖^2 := by ring
-      linarith
-    -- sm * (‖w‖ * ‖ξ‖) ≤ sm * ‖w‖ * (ε₁ * ‖h‖) = ε₁ * (sm*‖w‖*‖h‖) ≤ ε₁/2 * (sm²‖w‖²+‖h‖²)
-    have h6 : sm * (‖wn‖ * ‖ξn‖) ≤ ε₁ * (sm * ‖wn‖ * ‖hn‖) := by
-      calc sm * (‖wn‖ * ‖ξn‖) ≤ sm * (‖wn‖ * (ε₁ * ‖hn‖)) :=
-              mul_le_mul_of_nonneg_left h3 hsm_nn
-        _ = ε₁ * (sm * ‖wn‖ * ‖hn‖) := by ring
-    have h7 : ε₁ * (sm * ‖wn‖ * ‖hn‖) ≤ ε₁ / 2 * (sm ^ 2 * ‖wn‖ ^ 2 + ‖hn‖ ^ 2) := by
-      linarith [mul_le_mul_of_nonneg_left h5 hε₁_nn]
-    have h8 : ε₁ / 2 * (sm ^ 2 * ‖wn‖ ^ 2 + ‖hn‖ ^ 2) ≤ ε₁ / 2 * (C_wh * Ln) := by
-      apply mul_le_mul_of_nonneg_left hwh; linarith
-    linarith
-  -- Term 2: sm²/2 * ‖ξ‖² ≤ ε₁ * sm²/2 * C_h * Ln
+    calc
+      sm * @inner ℝ _ _ wn ξn ≤ sm * (‖wn‖ * ‖ξn‖) :=
+        mul_le_mul_of_nonneg_left (real_inner_le_norm _ _) hsm_nn
+      _ ≤ sm * (‖wn‖ * (ε₁ * ‖hn‖)) :=
+        mul_le_mul_of_nonneg_left
+          (mul_le_mul_of_nonneg_left hξ (norm_nonneg _)) hsm_nn
+      _ = ε₁ / 2 * (2 * (sm * ‖wn‖) * ‖hn‖) := by ring
+      _ ≤ ε₁ / 2 * (sm ^ 2 * ‖wn‖ ^ 2 + ‖hn‖ ^ 2) :=
+        mul_le_mul_of_nonneg_left hyoung (div_nonneg hε₁_nn (by norm_num))
+      _ ≤ ε₁ / 2 * (C_wh * Ln) :=
+        mul_le_mul_of_nonneg_left hwh (div_nonneg hε₁_nn (by norm_num))
   have hterm2 : sm ^ 2 / 2 * ‖ξn‖ ^ 2 ≤ ε₁ * (sm ^ 2 / 2 * (C_h * Ln)) := by
-    have h2a : sm ^ 2 / 2 * ‖ξn‖ ^ 2 ≤ sm ^ 2 / 2 * (ε₁ * ‖hn‖ ^ 2) :=
-      mul_le_mul_of_nonneg_left hξ_sq hsm2_nn
-    have h2b : sm ^ 2 / 2 * (ε₁ * ‖hn‖ ^ 2) = ε₁ * (sm ^ 2 / 2 * ‖hn‖ ^ 2) := by ring
-    have h2c : sm ^ 2 / 2 * ‖hn‖ ^ 2 ≤ sm ^ 2 / 2 * (C_h * Ln) :=
-      mul_le_mul_of_nonneg_left hh_sq hsm2_nn
-    linarith [mul_le_mul_of_nonneg_left h2c hε₁_nn]
-  -- Term 3: sa*|⟨g,Pe⟩| ≤ ε₁ * sa * C_ge * Ln
+    calc
+      sm ^ 2 / 2 * ‖ξn‖ ^ 2 ≤ sm ^ 2 / 2 * (ε₁ * ‖hn‖ ^ 2) :=
+        mul_le_mul_of_nonneg_left hξ_sq hsm2_nn
+      _ = ε₁ * (sm ^ 2 / 2 * ‖hn‖ ^ 2) := by ring
+      _ ≤ ε₁ * (sm ^ 2 / 2 * (C_h * Ln)) :=
+        mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_left hh_sq hsm2_nn) hε₁_nn
   have hterm3 : sa * |@inner ℝ _ _ gn Pen| ≤ ε₁ * (sa * (C_ge * Ln)) := by
-    have h3a : |@inner ℝ _ _ gn Pen| ≤ ‖gn‖ * (ε₁ * ‖en‖) := by
-      calc |@inner ℝ _ _ gn Pen| ≤ ‖gn‖ * ‖Pen‖ := hCS2
-        _ ≤ ‖gn‖ * (ε₁ * ‖en‖) := by
-            exact mul_le_mul_of_nonneg_left hPe hgn_nn
-    have h3d : sa * |@inner ℝ _ _ gn Pen| ≤ sa * (‖gn‖ * (ε₁ * ‖en‖)) :=
-      mul_le_mul_of_nonneg_left h3a (le_of_lt hsa_pos)
-    have h3e : sa * (‖gn‖ * (ε₁ * ‖en‖)) = ε₁ * (sa * (‖gn‖ * ‖en‖)) := by ring
-    have h3c : sa * (‖gn‖ * ‖en‖) ≤ sa * (C_ge * Ln) :=
-      mul_le_mul_of_nonneg_left hge (le_of_lt hsa_pos)
-    linarith [mul_le_mul_of_nonneg_left h3c hε₁_nn]
-  -- Assembly: total ≤ ε₁ * K * Ln ≤ θ*sa * Ln
+    calc
+      sa * |@inner ℝ _ _ gn Pen| ≤ sa * (‖gn‖ * ‖Pen‖) :=
+        mul_le_mul_of_nonneg_left (abs_real_inner_le_norm _ _) hsa_pos.le
+      _ ≤ sa * (‖gn‖ * (ε₁ * ‖en‖)) :=
+        mul_le_mul_of_nonneg_left
+          (mul_le_mul_of_nonneg_left hPe (norm_nonneg _)) hsa_pos.le
+      _ = ε₁ * (sa * (‖gn‖ * ‖en‖)) := by ring
+      _ ≤ ε₁ * (sa * (C_ge * Ln)) :=
+        mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_left hge hsa_pos.le) hε₁_nn
   have htotal : sm * @inner ℝ _ _ wn ξn + sm ^ 2 / 2 * ‖ξn‖ ^ 2 +
       sa * |@inner ℝ _ _ gn Pen| ≤
-      ε₁ * ((C_wh / 2 + sm ^ 2 / 2 * C_h + sa * C_ge) * Ln) := by linarith
-  linarith [mul_le_mul_of_nonneg_right habs hLn_nn]
+      ε₁ * ((C_wh / 2 + sm ^ 2 / 2 * C_h + sa * C_ge) * Ln) := by
+    linarith only [hterm1, hterm2, hterm3]
+  linarith only [htotal, mul_le_mul_of_nonneg_right habs hLn_nn]
 
 end PLAcceleratedNesterovLean

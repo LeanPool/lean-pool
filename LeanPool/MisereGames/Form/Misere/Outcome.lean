@@ -7,8 +7,6 @@ module
 
 public import LeanPool.MisereGames.Form.Classes
 public import LeanPool.MisereGames.Outcome
-public meta import Mathlib.Tactic.ToDual
-import LeanPool.MisereGames.Form.Birthday
 
 /-!
 Misere combinatorial games.
@@ -36,9 +34,9 @@ theorem winsGoingFirst_iff (g : G) (p : Player)
     : WinsGoingFirst p g ↔ IsEndLike p g ∨ (∃ g' ∈ moves p g, ¬WinsGoingFirst (-p) g') := by
   apply Iff.intro <;> intro h1
   · unfold WinsGoingFirst at h1
-    simp_all
+    simp_all only [exists_prop]
   · unfold WinsGoingFirst
-    simp_all
+    simp_all only [exists_prop]
 
 @[simp]
 theorem winsGoingFirst_of_isEndLike {g : G} {p : Player} (h1 : IsEndLike p g) :
@@ -62,15 +60,19 @@ theorem winsGoingFirst_neg_iff (g : G) (p : Player) :
     <;> rw [winsGoingFirst_iff] at h1
     <;> apply Or.elim h1
     <;> intro h1
-  · simp_all
+  · simp_all only [
+    moves_neg, Set.mem_neg, Set.exists_neg_mem, true_or, IsEndLike.neg_iff_neg,
+    winsGoingFirst_of_isEndLike]
   · obtain ⟨gp, h1, h2⟩ := h1
     rw [(winsGoingFirst_iff g (-p))]
     refine Or.inr ?_
     use -gp
     constructor
     · rwa [moves_neg, Set.mem_neg] at h1
-    · rwa [neg_neg, winsGoingFirst_neg_iff]
-  · simp_all
+    · have ih := winsGoingFirst_neg_iff (-gp) (-p)
+      simp only [neg_neg] at ih ⊢
+      exact ih.not.mp h2
+  · simp_all only [neg_neg, true_or, IsEndLike.neg_iff_neg, winsGoingFirst_of_isEndLike]
   · obtain ⟨gp, h1, h2⟩ := h1
     rw [neg_neg] at h2
     rw [winsGoingFirst_iff]
@@ -79,12 +81,11 @@ theorem winsGoingFirst_neg_iff (g : G) (p : Player) :
     constructor
     · rwa [moves_neg, Set.mem_neg, neg_neg]
     · rwa [winsGoingFirst_neg_iff, neg_neg]
-termination_by birthday g
+termination_by g
 decreasing_by
-  all_goals
-    first
-    | exact Form.birthday_lt_of_mem_moves h1
-    | simpa only [Form.birthday_neg] using Form.birthday_lt_of_mem_moves h1
+  · rw [moves_neg, Set.mem_neg] at h1
+    exact MisereGames.Moves.Subposition.of_mem_moves h1
+  · exact MisereGames.Moves.Subposition.of_mem_moves h1
 
 theorem not_winsGoingFirst_iff {g : G} {p : Player}
     : ¬WinsGoingFirst p g ↔ (¬Form.IsEndLike p g ∧ (∀ g' ∈ Form.moves p g,
@@ -286,7 +287,7 @@ theorem winsGoingFirst_left_of_ge_N {x : G} (h : MisereOutcome x ≥ .N) :
 
 @[simp]
 theorem miserePlayerOutcome_zero (p : Player) : MiserePlayerOutcome (0 : G) p = p := by
-  simp_all
+  simp_all only [miserePlayerOutcome_eq_iff_winsGoingFirst, isEnd_zero, winsGoingFirst_of_isEnd]
 
 @[simp]
 theorem misereOutcome_zero_N : MisereOutcome (0 : G) = .N := by
@@ -339,7 +340,7 @@ theorem miserePlayerOutcome_of_leftMoves {g gl : G} (h1 : gl ∈ moves .left g)
   apply And.intro h1
   simp only [Player.neg_left, Player.right_le, Player.le_right_eq]
   unfold MiserePlayerOutcome at h2
-  simp_all
+  simp_all only [Player.neg_right, ite_eq_right_iff, reduceCtorEq, imp_false, not_false_eq_true]
 
 theorem miserePlayerOutcome_of_rightMoves {g gr : G} (h1 : gr ∈ moves .right g)
     (h2 : MiserePlayerOutcome gr .left = .right) : MiserePlayerOutcome g .right = .right := by
@@ -348,7 +349,7 @@ theorem miserePlayerOutcome_of_rightMoves {g gr : G} (h1 : gr ∈ moves .right g
   intro h3
   have h4 : MiserePlayerOutcome gr .left = .left := by
     rwa [miserePlayerOutcome_eq_iff_winsGoingFirst]
-  simp_all
+  simp_all only [reduceCtorEq]
 
 theorem misereOutcome_ge_iff_miserePlayerOutcome_ge {g h : G}
     : MisereOutcome g ≥ MisereOutcome h ↔ (∀ p,
@@ -391,7 +392,7 @@ theorem MisereEQ.symm {A : G → Prop} {g h : G} (h1 : g =m A h) : h =m A g := b
 theorem MisereEQ.trans {A : G → Prop} {g h k : G} (h1 : g =m A h) (h2 : h =m A k) :
     g =m A k := by
   unfold MisereEQ at *
-  simp_all
+  simp_all only [implies_true]
 
 /--
 The restricted misère preorder, working modulo a set `A`.
@@ -428,13 +429,13 @@ theorem MisereGE.trans {A : G → Prop} {g h k : G} (h1 : g ≥m A h) (h2 : h �
 theorem misereGE_rw_left {A : G → Prop} {a b c : G} (h2 : b =m A c) (h1 : b ≥m A a) : c ≥m A a := by
   unfold MisereGE at h1 ⊢
   unfold MisereEQ at h2
-  simp_all
+  simp_all only [ge_iff_le, implies_true]
 
 theorem misereGE_rw_right {A : G → Prop} {a b c : G} (h2 : b =m A c) (h1 : a ≥m A c) :
     a ≥m A b := by
   unfold MisereGE at h1 ⊢
   unfold MisereEQ at h2
-  simp_all
+  simp_all only [ge_iff_le, implies_true]
 
 theorem misereGE_of_misereEQ {A : G → Prop} {g h : G} (h1 : g =m A h) : g ≥m A h := by
   intro x hx
@@ -444,7 +445,7 @@ theorem misereGE_of_misereEQ {A : G → Prop} {g h : G} (h1 : g =m A h) : g ≥m
 theorem misereGE_of_subset (U : G → Prop) {V : G → Prop}
     (h_v_subset_u : ∀ g, V g → U g) (g h : G) (h2 : g ≥m U h) : g ≥m V h := by
   unfold MisereGE at h2 ⊢
-  simp_all
+  simp_all only [ge_iff_le, implies_true]
 
 /--
 Adding a fixed element `c ∈ A` on the right preserves the restricted misère
@@ -482,7 +483,7 @@ theorem misereEQ_add_left {A : G → Prop} [ClosedUnderAdd A] {g h c : G}
 @[simp]
 theorem MisereGE.refl {A : G → Prop} (g : G) : g ≥m A g := by
   unfold MisereGE
-  simp_all
+  simp_all only [ge_iff_le, Std.le_refl, implies_true]
 
 theorem not_misereEQ_of_not_misereGE {A : G → Prop} {g h : G} (h1 : ¬(g ≥m A h)) :
     ¬(g =m A h) := by
@@ -514,7 +515,7 @@ theorem ClosedUnderNeg.neg_ge_neg_iff {A : G → Prop} [ClosedUnderNeg A]
     (g h : G) : (-h) ≥m A (-g) ↔ g ≥m A h := by
   constructor <;> intro h1
   · have h2 := not_ge_neg_iff.aux h1
-    simp_all
+    simp_all only [neg_neg]
   · exact not_ge_neg_iff.aux h1
 
 private theorem misereEQ_neg' {A : G → Prop} [ClosedUnderNeg A] {g h : G}
@@ -584,7 +585,7 @@ theorem winsGoingFirst_right_intCast_iff (n : ℤ) : WinsGoingFirst .right (n : 
   · simp_all
 
 theorem winsGoingFirst_right_natCast (n : ℕ) : WinsGoingFirst .right (n : G) := by
-  simp_all
+  simp_all only [natCast_isEndLike_iff, isEnd_right_natCast, winsGoingFirst_of_isEndLike]
 
 @[simp]
 theorem not_winsGoingFirst_left_one : ¬WinsGoingFirst .left (1 : G) := by
@@ -592,7 +593,7 @@ theorem not_winsGoingFirst_left_one : ¬WinsGoingFirst .left (1 : G) := by
   omega
 
 theorem winsGoingFirst_right_one : WinsGoingFirst .right (1 : G) := by
-  simp_all
+  simp_all only [one_isEndLike_right, winsGoingFirst_of_isEndLike]
 
 @[simp]
 theorem one_misereOutcome_R : MisereOutcome (1 : G) = .R := by
@@ -633,7 +634,8 @@ theorem misereOutcome_N_intCast_iff (n : ℤ) : MisereOutcome (n : G) = .N ↔ n
   · have h1 := (winsGoingFirst_left_intCast_iff (G := G) n).mp h.left
     have h2 := (winsGoingFirst_right_intCast_iff (G := G) n).mp h.right
     exact Eq.symm (Int.le_antisymm h2 h1)
-  · simp_all
+  · simp_all only [
+    Form.intCast_ofNat, Nat.cast_zero, isEnd_zero, winsGoingFirst_of_isEnd, and_self]
 
 @[simp]
 theorem misereOutcome_N_natCast_iff (n : ℕ) : MisereOutcome (n : G) = .N ↔ n = 0 := by
@@ -646,7 +648,8 @@ theorem misereOutcome_P_intCast (n : ℤ) : ¬MisereOutcome (n : G) = .P := by
   · rw [<-misereOutcome_L_intCast_iff (G := G)] at h
     rw [h]
     decide
-  · simp_all
+  · simp_all only [
+    Form.intCast_ofNat, Nat.cast_zero, misereOutcome_zero_N, reduceCtorEq, not_false_eq_true]
   · rw [<-misereOutcome_R_intCast_iff (G := G)] at h
     rw [h]
     decide

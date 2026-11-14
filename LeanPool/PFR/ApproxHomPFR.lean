@@ -19,6 +19,7 @@ import LeanPool.PFR.HomPFR
 import LeanPool.PFR.Main
 import LeanPool.PFR.Mathlib.Data.Finset.Basic
 import LeanPool.PFR.RhoFunctional
+import Mathlib.Algebra.Group.Pointwise.Set.Card
 import Mathlib.Algebra.Order.Star.Real
 import Mathlib.Data.FunLike.Fintype
 import Mathlib.Data.Int.Lemmas
@@ -36,6 +37,13 @@ is true for a positive proportion of x,y.
   $f(x+y)=f(x)+f(y)$ for at least $|G|/K$ values, then then there is a homomorphism $\phi: G \to G'$
   and a constant $c$ such that $f(x)=\phi(x)+c$ for a substantial set of values.
 -/
+
+-- Avoid repeated searches for empty or singleton types during simplification.
+attribute [-simp] IsEmpty.forall_iff Finset.univ_eq_empty forall_const
+  Function.const_inj Function.const_eq_zero Function.const_eq_one Set.range_const
+  exists_const IsEmpty.exists_iff add_eq_zero mul_eq_one
+  ProbabilityTheory.iIndepFun.of_subsingleton ProbabilityTheory.iIndep.of_subsingleton
+  ProbabilityTheory.iIndepSets.of_subsingleton
 
 open scoped ZhangYeungPFR
 

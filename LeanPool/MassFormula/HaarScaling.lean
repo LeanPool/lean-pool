@@ -12,7 +12,6 @@ public import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
 public import Mathlib.MeasureTheory.Group.Defs
 import Mathlib.MeasureTheory.Group.Action
 import Mathlib.RingTheory.Ideal.Norm.AbsNorm
-import Mathlib.Topology.UniformSpace.Uniformizable
 
 /-!
 # Auxiliary file: the linear Haar scaling law
@@ -381,8 +380,9 @@ theorem measure_integerBox_eq_pow_mul {n : ℕ} [MeasurableSpace (Fin n → K)]
       (Submodule.Quotient.mk_eq_zero Lat).mpr hzL,
       (Submodule.Quotient.mk_eq_zero Lat).mpr hz'L, add_zero, add_zero] at h1
   -- counting the cosets
-  have hclosed : IsClosed (imageLattice M) := (isCompact_imageLattice M).isClosed
-  rw [hdecomp, measure_iUnion hdisj fun t => (hclosed.vadd _).measurableSet]
+  rw [hdecomp, measure_iUnion hdisj fun t =>
+    ((isCompact_imageLattice M).image
+      (uniformContinuous_const.add uniformContinuous_id).continuous).measurableSet]
   have hv : ∀ t, μ (toCoeff (rep t) +ᵥ imageLattice M) = μ (imageLattice M) := fun t =>
     measure_vadd _ _ _
   simp_rw [hv]
@@ -390,7 +390,7 @@ theorem measure_integerBox_eq_pow_mul {n : ℕ} [MeasurableSpace (Fin n → K)]
   congr 1
   rw [← Nat.card_eq_fintype_card, hcardQ]
   push_cast
-  ring
+  ac_rfl
 
 /-! ## The scaling law on boxes and on balls -/
 

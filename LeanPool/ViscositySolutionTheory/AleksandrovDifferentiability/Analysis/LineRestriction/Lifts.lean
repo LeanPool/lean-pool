@@ -54,7 +54,7 @@ theorem SubgradientOn.lineSubgradientLiftsToAmbientFunctional_at
     LineSubgradientLiftsToAmbientFunctional s u x z t (inner ℝ p z) := by
   refine ⟨InnerProductSpace.toDualMap ℝ E p, ?_, ?_⟩
   · intro y hy
-    simpa [InnerProductSpace.toDualMap_apply_apply] using hp.supporting_inequality hy
+    exact hp.supporting_inequality hy
   · simp [InnerProductSpace.toDualMap_apply_apply]
 
 /-- If a scalar slope is attained by an ambient subgradient in direction `z`, then it has a
@@ -127,7 +127,7 @@ theorem exists_nonneg_add_eq_one_and_eq_combo_of_mem_Icc
       ring_nf
     · field_simp [sub_ne_zero.mpr hlt.ne.symm]
       ring_nf
-  · have hq_eq : q = l := by linarith
+  · have hq_eq : q = l := by linarith only [hlq, hqr, hlt]
     refine ⟨1, 0, by norm_num, by norm_num, by norm_num, ?_⟩
     simp [hq_eq]
 
@@ -169,8 +169,8 @@ theorem LineSubgradientLiftsToAmbient.to_lineSubgradientLiftsToAmbientFunctional
   rcases h with ⟨p, hp, hq⟩
   refine ⟨InnerProductSpace.toDualMap ℝ E p, ?_, ?_⟩
   · intro y hy
-    simpa [InnerProductSpace.toDualMap_apply_apply] using hp.supporting_inequality hy
-  · simpa [InnerProductSpace.toDualMap_apply_apply] using hq
+    exact hp.supporting_inequality hy
+  · exact hq
 
 /-- Convex combinations of vector-valued line-subgradient lifts are again vector-valued lifts.
 This records the interval-convexity of directional values of ambient subgradients. -/
@@ -204,7 +204,7 @@ theorem LineSubgradientLiftsToAmbientFunctional.smul_add_smul
       u (x + t • z) + (a • ℓ₀ + b • ℓ₁) (y - (x + t • z))
           = a * (u (x + t • z) + ℓ₀ (y - (x + t • z))) +
               b * (u (x + t • z) + ℓ₁ (y - (x + t • z))) := by
-            have hb_eq : b = 1 - a := by linarith
+            have hb_eq : b = 1 - a := by linarith only [hab]
             rw [add_apply, smul_apply,
               smul_apply, hb_eq]
             ring

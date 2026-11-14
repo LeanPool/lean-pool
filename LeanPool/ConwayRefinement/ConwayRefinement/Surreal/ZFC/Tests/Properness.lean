@@ -22,6 +22,7 @@ universe u
 noncomputable section
 
 open ZFSet
+open scoped ZFClass
 
 example : numericGameCodes ((0 : GameCode.{u}) : ZFSet.{u}) :=
   (GameCode.mem_numericGameCodes _).2 GameCode.isNumeric_zero
@@ -78,13 +79,13 @@ example (z : ZFSet.{u}) (hz : omnificGameCodes z) :
     ∃ c : OmnificCode.{u}, (c.code : ZFSet.{u}) = z :=
   (omnificGameCodes_iff_exists z).1 hz
 
-example (s : ZFSet.{u}) : numericGameCodes ≠ Class.ofSet s := numericGameCodes_ne_ofSet s
+example (s : ZFSet.{u}) : numericGameCodes ≠ (s : ZFClass.{u}) := numericGameCodes_ne_ofSet s
 
-example (s : ZFSet.{u}) : omnificGameCodes ≠ Class.ofSet s := omnificGameCodes_ne_ofSet s
+example (s : ZFSet.{u}) : omnificGameCodes ≠ (s : ZFClass.{u}) := omnificGameCodes_ne_ofSet s
 
-example : numericGameCodes ∉ Class.univ.{u} := numericGameCodes_notMem_univ
+example : numericGameCodes ᶜ∉ (Set.univ : ZFClass.{u}) := numericGameCodes_notMem_univ
 
-example : omnificGameCodes ∉ Class.univ.{u} := omnificGameCodes_notMem_univ
+example : omnificGameCodes ᶜ∉ (Set.univ : ZFClass.{u}) := omnificGameCodes_notMem_univ
 
 example : ¬Small.{u} ZFSet.Surreal.{u} := ZFSet.Surreal.not_small
 

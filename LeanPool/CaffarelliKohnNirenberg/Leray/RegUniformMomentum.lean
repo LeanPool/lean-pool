@@ -84,8 +84,8 @@ def regUniformPhysicalKernel (ρ : RegMollifierProfile)
 private theorem regUniformPhysicalKernel_smooth
     (ρ : RegMollifierProfile) (ε : ℝ) (hε : 0 < ε) :
     ContDiff ℝ (⊤ : ℕ∞) (regUniformPhysicalKernel ρ ε hε) := by
-  have hto : ContDiff ℝ (⊤ : ℕ∞) (fun x : Vec3 => WithLp.toLp 2 x) := by
-    fun_prop
+  have hto : ContDiff ℝ (⊤ : ℕ∞) (fun x : Vec3 => WithLp.toLp 2 x) :=
+    (PiLp.continuousLinearEquiv 2 ℝ (fun _ : Fin 3 => ℝ)).symm.contDiff
   change ContDiff ℝ (⊤ : ℕ∞)
     (fun x : Vec3 => (ε ^ 3)⁻¹ * ρ.rho (ε⁻¹ • WithLp.toLp 2 x))
   exact contDiff_const.mul

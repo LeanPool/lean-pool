@@ -8,7 +8,6 @@ module
 public import LeanPool.DomainTheory.Neighborhood.Product
 public import LeanPool.DomainTheory.Neighborhood.Exercise318
 import LeanPool.DomainTheory.Neighborhood.Exercise319Sum
-import Mathlib.Order.BooleanAlgebra.Set
 
 /-!
 # Example 6.1 (Scott 1981, PRG-19, §6) — the tree algebra `D^§` and the domain
@@ -115,13 +114,15 @@ theorem embPair_inter (P Q P' Q' : Set (List Bool × α)) :
   ext ⟨p, a⟩
   simp only [Set.mem_inter_iff, mem_embPair]
   rcases p with _ | ⟨b, ps⟩
-  · simp
+  · simp only [List.nil_eq, reduceCtorEq, false_and, exists_const, or_self, and_self]
   · cases b <;> simp [List.cons.injEq]
 
 theorem embZero_inter_embPair (X : Set α) (P Q : Set (List Bool × α)) :
     embZero X ∩ embPair P Q = ∅ := by
   ext ⟨p, a⟩
-  simp_all
+  simp_all only [Set.mem_inter_iff, mem_embZero, mem_embPair, Set.mem_empty_iff_false,
+    iff_false, not_and, List.nil_eq, reduceCtorEq, false_and, exists_const, or_self,
+    not_false_eq_true, implies_true]
 
 /-! ### Subset / injectivity. -/
 
@@ -140,11 +141,13 @@ theorem embPair_subset {P Q P' Q' : Set (List Bool × α)} :
     · obtain ⟨p', a⟩ := t
       have hmem : ((true :: p', a) : List Bool × α) ∈ embPair P' Q' :=
         h (Or.inl ⟨p', rfl, ht⟩)
-      simp_all
+      simp_all only [mem_embPair, List.cons.injEq, true_and, exists_eq_left',
+        Bool.true_eq_false, false_and, exists_const, or_false]
     · obtain ⟨q', a⟩ := t
       have hmem : ((false :: q', a) : List Bool × α) ∈ embPair P' Q' :=
         h (Or.inr ⟨q', rfl, ht⟩)
-      simp_all
+      simp_all only [mem_embPair, List.cons.injEq, Bool.false_eq_true, false_and, exists_const,
+        true_and, exists_eq_left', false_or]
   · rintro ⟨hP, hQ⟩ t ht
     rcases ht with ⟨p', hp', hPmem⟩ | ⟨q', hq', hQmem⟩
     · exact Or.inl ⟨p', hp', hP hPmem⟩
@@ -242,15 +245,19 @@ theorem memS_inter {D : NeighborhoodSystem α} (hD : ∀ X, D.mem X → X.Nonemp
       cases hZ with
       | gamma =>
         obtain ⟨a, ha⟩ := hD D.master D.master_mem
-        exact absurd (hsub (show ((true :: [], a) : List Bool × α) ∈ Gamma D from ha)) (by simp)
+        exact absurd (hsub (show ((true :: [], a) : List Bool × α) ∈ Gamma D from ha))
+          (by simp only [mem_embZero, List.cons_ne_self, Set.mem_inter_iff, false_and,
+            not_false_eq_true])
       | @zero C hC =>
         exact MemS.zero (D.inter_mem hA hB hC (embZero_subset.mp hsub))
       | @pair P Q hP hQ =>
         obtain ⟨t, hmem⟩ := embPair_nonempty (memS_nonempty hD hP) (Q := Q)
         have hempty : t.1 = [] := (hsub hmem).1
         rcases hmem with ⟨p', hp', -⟩ | ⟨q', hq', -⟩
-        · rw [hp'] at hempty; exact absurd hempty (by simp)
-        · rw [hq'] at hempty; exact absurd hempty (by simp)
+        · rw [hp'] at hempty; exact absurd hempty (by simp only [reduceCtorEq,
+          not_false_eq_true])
+        · rw [hq'] at hempty; exact absurd hempty (by simp only [reduceCtorEq,
+          not_false_eq_true])
     | @pair P Q _ _ =>
       rw [embZero_inter_embPair] at hsub
       obtain ⟨z, hz⟩ := memS_nonempty hD hZ
@@ -272,10 +279,14 @@ theorem memS_inter {D : NeighborhoodSystem α} (hD : ∀ X, D.mem X → X.Nonemp
       cases hZ with
       | gamma =>
         obtain ⟨a, ha⟩ := hD D.master D.master_mem
-        exact absurd (hsub (show (([], a) : List Bool × α) ∈ Gamma D from ha)) (by simp)
+        exact absurd (hsub (show (([], a) : List Bool × α) ∈ Gamma D from ha)) (by simp only [
+          mem_embPair, List.nil_eq, reduceCtorEq, Set.mem_inter_iff, false_and, exists_const,
+          or_self, not_false_eq_true])
       | @zero C hC =>
         obtain ⟨a, ha⟩ := hD C hC
-        exact absurd (hsub (show (([], a) : List Bool × α) ∈ embZero C from ⟨rfl, ha⟩)) (by simp)
+        exact absurd (hsub (show (([], a) : List Bool × α) ∈ embZero C from ⟨rfl, ha⟩))
+          (by simp only [mem_embPair, List.nil_eq, reduceCtorEq, Set.mem_inter_iff, false_and,
+            exists_const, or_self, not_false_eq_true])
       | @pair Z₀ Z₁ hZ₀ hZ₁ =>
         obtain ⟨hsub₀, hsub₁⟩ := embPair_subset.mp hsub
         exact MemS.pair (ihP hP' hZ₀ hsub₀) (ihQ hQ' hZ₁ hsub₁)
@@ -313,15 +324,15 @@ theorem memS_embZero_inv {D : NeighborhoodSystem α} (hD : ∀ X, D.mem X → X.
     exfalso
     obtain ⟨a, ha⟩ := hD D.master D.master_mem
     have h1 : ((true :: [], a) : List Bool × α) ∈ Gamma D := ha
-    rw [← hW] at h1; exact absurd h1.1 (by simp)
+    rw [← hW] at h1; exact absurd h1.1 (by simp only [List.cons_ne_self, not_false_eq_true])
   | @zero X' hX' => rw [embZero_injective hW]; exact hX'
   | @pair P Q hP hQ =>
     exfalso
     obtain ⟨t, ht⟩ := embPair_nonempty (memS_nonempty hD hP) (Q := Q)
     have hcons : t.1 ≠ [] := by
       rcases ht with ⟨p', hp', -⟩ | ⟨q', hq', -⟩
-      · simp [hp']
-      · simp [hq']
+      · simp only [hp', ne_eq, reduceCtorEq, not_false_eq_true]
+      · simp only [hq', ne_eq, reduceCtorEq, not_false_eq_true]
     have hz : t ∈ embZero X := by rw [← hW] at ht; exact ht
     exact hcons hz.1
 
@@ -335,16 +346,16 @@ theorem memS_embPair_inv {D : NeighborhoodSystem α} (hD : ∀ X, D.mem X → X.
     have h1 : (([], a) : List Bool × α) ∈ Gamma D := ha
     rw [← hW] at h1
     rcases h1 with ⟨p', hp', -⟩ | ⟨q', hq', -⟩
-    · simp at hp'
-    · simp at hq'
+    · simp only [List.nil_eq, reduceCtorEq] at hp'
+    · simp only [List.nil_eq, reduceCtorEq] at hq'
   | @zero X hX =>
     exfalso
     obtain ⟨t, ht⟩ := embZero_nonempty (hD X hX)
     have hempty : t.1 = [] := ht.1
     rw [← hW] at ht
     rcases ht with ⟨p', hp', -⟩ | ⟨q', hq', -⟩
-    · rw [hp'] at hempty; simp at hempty
-    · rw [hq'] at hempty; simp at hempty
+    · rw [hp'] at hempty; simp only [reduceCtorEq] at hempty
+    · rw [hq'] at hempty; simp only [reduceCtorEq] at hempty
   | @pair P' Q' hP' hQ' =>
     obtain ⟨hPP, hQQ⟩ := embPair_injective hW
     rw [hPP, hQQ]; exact ⟨hP', hQ'⟩
@@ -557,7 +568,7 @@ theorem embZero_ne_Gamma (X : Set α) : embZero X ≠ Gamma D := by
   intro h
   obtain ⟨a, ha⟩ := hD D.master D.master_mem
   have hmem : ((true :: [], a) : List Bool × α) ∈ Gamma D := ha
-  rw [← h] at hmem; exact absurd hmem.1 (by simp)
+  rw [← h] at hmem; exact absurd hmem.1 (by simp only [List.cons_ne_self, not_false_eq_true])
 
 theorem embPair_ne_Gamma (P Q : Set (List Bool × α)) : embPair P Q ≠ Gamma D := by
   intro h
@@ -565,15 +576,15 @@ theorem embPair_ne_Gamma (P Q : Set (List Bool × α)) : embPair P Q ≠ Gamma D
   have hmem : (([], a) : List Bool × α) ∈ Gamma D := ha
   rw [← h] at hmem
   rcases hmem with ⟨p', hp', -⟩ | ⟨q', hq', -⟩
-  · simp at hp'
-  · simp at hq'
+  · simp only [List.nil_eq, reduceCtorEq] at hp'
+  · simp only [List.nil_eq, reduceCtorEq] at hq'
 
 theorem embZero_ne_embPair {X : Set α} (hX : D.mem X) (P Q : Set (List Bool × α)) :
     embZero X ≠ embPair P Q := by
   intro h
   obtain ⟨a, ha⟩ := hD X hX
   have hmem : (([], a) : List Bool × α) ∈ embPair P Q := h ▸ (⟨rfl, ha⟩ : ([], a) ∈ embZero X)
-  simp_all
+  simp_all only [mem_embPair, List.nil_eq, reduceCtorEq, false_and, exists_const, or_self]
 
 @[simp] theorem fromS_mem_embZero {s : (sumSys D hD).Element} {X : Set α} (hX : D.mem X) :
     (fromS D hD s).mem (embZero X) ↔ s.mem (inj₀ X) := by

@@ -64,7 +64,7 @@ theorem MaterialGoalAllOrders.material_aux_mixed_velocity_word_eq
   have hb : ContDiff ℝ (⊤ : ℕ∞) (constructionJointVector b) :=
     (smoothPeriodic_streamVel (streamSeq_isAdmissible hΦ m)).smooth
   have hF : ContDiff ℝ (⊤ : ℕ∞) (constructionJointScalar F) := by
-    exact (contDiff_apply ℝ ℝ i).comp hb
+    exact (contDiff_apply ℝ (fun _ => ℝ) i).comp hb
   have hiterate := constructionMaterialIterate_joint_contDiff hb hF ell
   change amnrWord bJ (α.map some ++ List.replicate ell none)
       (fun z => F z.1 z.2) = _
@@ -222,7 +222,7 @@ theorem MaterialGoalAllOrders.p_material_goal_source_with_levels {β : ℝ}
           (constructionJointScalar (fun r z => streamVel (Φ m) r z i)) := by
         change ContDiff ℝ (⊤ : ℕ∞) (fun z : ℝ × Vec 2 =>
           (constructionJointVector (streamVel (Φ m)) z) i)
-        exact (contDiff_apply ℝ ℝ i).comp hb
+        exact (contDiff_apply ℝ (fun _ => ℝ) i).comp hb
       have hiterate := constructionMaterialIterate_joint_contDiff hb hF ell
       have hsliceMap : ContDiff ℝ (⊤ : ℕ∞) (fun y : Vec 2 => (t, y)) := by
         fun_prop
@@ -248,7 +248,7 @@ theorem MaterialGoalAllOrders.p_material_goal_source_with_levels {β : ℝ}
           (constructionJointScalar (fun r z => streamVel (Φ m) r z i)) := by
         change ContDiff ℝ (⊤ : ℕ∞) (fun z : ℝ × Vec 2 =>
           (constructionJointVector (streamVel (Φ m)) z) i)
-        exact (contDiff_apply ℝ ℝ i).comp hb
+        exact (contDiff_apply ℝ (fun _ => ℝ) i).comp hb
       have hit := constructionMaterialIterate_joint_contDiff hb hF ell
       have hsliceMap : ContDiff ℝ (⊤ : ℕ∞) (fun y : Vec 2 => (t, y)) := by
         fun_prop

@@ -54,12 +54,12 @@ theorem hasScalarUnit_of_scalarUnit
   · intro a b hab
     refine φ.injective ?_
     have h1 := (hval a).symm.trans (hab.trans (hval b))
-    exact h1
+    exact End.ext h1
   · intro f
-    refine ⟨φ.symm f, ?_⟩
-    change ((φ.symm f) • 𝟙 (𝟙_ D) : 𝟙_ D ⟶ 𝟙_ D) = f
+    refine ⟨φ.symm (End.of f), ?_⟩
+    change ((φ.symm (End.of f)) • 𝟙 (𝟙_ D) : 𝟙_ D ⟶ 𝟙_ D) = f
     rw [hval]
-    change (φ (φ.symm f) : 𝟙_ D ⟶ 𝟙_ D) = f
+    change (φ (φ.symm (End.of f))).asHom = f
     rw [RingEquiv.apply_symm_apply]
 
 end RS

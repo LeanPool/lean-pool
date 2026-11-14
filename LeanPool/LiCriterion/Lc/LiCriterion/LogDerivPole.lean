@@ -7,7 +7,9 @@ module
 
 
 public import Mathlib.Analysis.Complex.Basic
+public import Mathlib.Analysis.Analytic.Constructions
 public import Mathlib.Analysis.Analytic.IsolatedZeros
+public import Mathlib.Analysis.Calculus.FDeriv.Pow
 public import Mathlib.Analysis.Calculus.LogDeriv
 public import Mathlib.Analysis.Normed.Field.Lemmas
 public import Mathlib.Topology.NhdsWithin

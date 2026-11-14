@@ -20,8 +20,6 @@ module
 public import Mathlib.Analysis.Fourier.AddCircle
 public import Mathlib.Data.Nat.Dist
 public import Mathlib.LinearAlgebra.Complex.FiniteDimensional
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Combinatorics.Matroid.Init
 
 /-! # Definitions -/
 

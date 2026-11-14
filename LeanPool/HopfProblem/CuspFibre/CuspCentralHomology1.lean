@@ -4,12 +4,13 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Boris Alexeev
 -/
 module
+public import LeanPool.HopfProblem.HomologyTheory.SingularMayerVietoris
+public import Mathlib.Topology.Homotopy.Contractible
 
-public import LeanPool.HopfProblem.Prelude
+public import LeanPool.HopfProblem.InternalPrelude
 public import LeanPool.HopfProblem.Recognition.Smale5
-import all LeanPool.HopfProblem.HomologyTheory.SingularMayerVietoris
+import LeanPool.HopfProblem.HomologyTheory.SingularMayerVietoris
 import all LeanPool.HopfProblem.TorusHomology.PeriodTorusHigherHomology1
-import all LeanPool.HopfProblem.Recognition.Smale5
 
 /-!
 # Hopf problem: cusp fibre · cusp central homology 1
@@ -20,10 +21,8 @@ Supporting definitions and proofs for this stage of the six-sphere construction.
 
 open Set Function Filter Manifold Topology
 
-open scoped BigOperators CategoryTheory Complex.UnitDisc ComplexConjugate ContDiff ContinuousMap
-  Convolution ENNReal EuclideanSpace Fin.NatCast InnerProductSpace Interval Matrix MatrixGroups
-  Modular NNReal Pointwise RealInnerProductSpace TensorProduct UniformConvergence Uniformity
-  UpperHalfPlane
+open scoped BigOperators ComplexConjugate ContDiff ContinuousMap ENNReal EuclideanSpace Fin.NatCast
+  InnerProductSpace Interval Matrix NNReal Pointwise RealInnerProductSpace
 
 universe u v
 

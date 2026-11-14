@@ -7,8 +7,9 @@ module
 
 
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.SmallChainComplex
-public import Mathlib.Order.CompletePartialOrder
-public import Mathlib.Tactic
+import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.BarycentricBoundaryCancellation
+import Mathlib.Order.CompletePartialOrder
+import Mathlib.Tactic.Measurability.Init
 
 /-!
 # Subordinate singular chains for a single subset

@@ -177,9 +177,7 @@ private theorem lintegral_three_le_two_tenThirds {α : Type*} [MeasurableSpace �
         norm_num
   have hHolder := ENNReal.lintegral_Lp_mul_le_Lq_mul_Lr
     (p := (1 : ℝ)) (q := (4 : ℝ)) (r := (4 / 3 : ℝ))
-    (by norm_num : (0 : ℝ) < 1)
-    (by norm_num : (1 : ℝ) < 4)
-    (by norm_num : (1 : ℝ) / 1 = (1 : ℝ) / 4 + (1 : ℝ) / (4 / 3))
+    (by rw [Real.holderTriple_iff]; norm_num)
     μ hfmeas hgmeas
   have hF4 : (∫⁻ q, f q ^ (4 : ℝ) ∂μ) = ∫⁻ q, W q ^ (2 : ℝ) ∂μ :=
     lintegral_congr fun q => hf4 q
@@ -240,7 +238,7 @@ theorem lerayHopf_memLp_three_with_energy_bound
   have hNmeas : AEStronglyMeasurable
       (fun z : ParabolicPoint => vec3EuclideanNorm (u z)) μ :=
     continuous_vec3EuclideanNorm.comp_aestronglyMeasurable hQmeas
-  have hQMP : MeasureTheory.Measure.QuasiMeasurePreserving parabolicHomeomorph.symm
+  have hQMP : MeasureTheory.QuasiMeasurePreserving parabolicHomeomorph.symm
       μU μ := by
     apply parabolicHomeomorphSymm_measurePreserving.quasiMeasurePreserving.restrict
     intro q hq

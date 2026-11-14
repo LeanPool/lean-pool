@@ -6,7 +6,12 @@ Authors: Vladislav Kuznetsov
 module
 
 public import LeanPool.ConwaySoifer.Simplified.Geometry.CornerAbsent
-import Mathlib.Tactic
+import Mathlib.Tactic.Convert
+import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum.Basic
+import Mathlib.Tactic.Positivity
+import Mathlib.Tactic.Ring
 
 /-!
 # Charging

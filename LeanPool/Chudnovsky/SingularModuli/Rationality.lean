@@ -112,7 +112,7 @@ def cmGL (n : ℤ) : GL (Fin 2) ℝ :=
 
 lemma cmGL_det_pos (n : ℤ) : 0 < (cmGL n).det.val := by
   rw [Matrix.GeneralLinearGroup.val_det_apply, val_cmGL, Matrix.det_fin_two_of]
-  nlinarith [sq_nonneg (2 * (n : ℝ) + 1)]
+  linarith [sq_nonneg (2 * (n : ℝ) + 1)]
 
 /-- **`M_n` fixes `τ₁₆₃`** as a Möbius transformation. -/
 lemma cmGL_smul_eq (n : ℤ) : cmGL n • τ₁₆₃ = τ₁₆₃ := by
@@ -313,7 +313,7 @@ lemma fixes_of_coset {e f g : ℤ} (γ : SL(2, ℤ)) {Aτ τ' : ℍ}
       simp only [eq_intCast] at h0
       push_cast at h0
       obtain ⟨hc0, hd0⟩ := QF.int_lin_eq_zero Aτ h0
-      rw [hc0, hd0] at hdet; simp at hdet
+      rw [hc0, hd0] at hdet; simp only [Fin.isValue, mul_zero, sub_self, zero_ne_one] at hdet
     rw [eq_div_iff hden, hW] at hco
     simp only [eq_intCast] at hco
     simp only [QF.Fixes]
@@ -335,14 +335,14 @@ lemma exists_fixes_of_coincidence [Fact m.Prime] {τ' : ℍ} {i : Option (ZMod m
     obtain ⟨γ, hγ⟩ := j_injective_mod_Γ hj
     obtain ⟨p, q, r, s, hfix, hdet⟩ :=
       fixes_of_coset (e := (m : ℤ)) (f := 0) (g := 1) γ
-        (by rw [coe_AInf_smul]; push_cast; ring) (by norm_num) hγ.symm
+        (by rw [coe_AInf_smul]; push_cast; ring) (by norm_num only) hγ.symm
     exact ⟨p, q, r, s, hfix, by rw [hdet]; ring⟩
   | some b =>
     have hj : j (Acol m (b.val : ℤ) • τ') = j τ' := by rw [← f_some]; exact h
     obtain ⟨γ, hγ⟩ := j_injective_mod_Γ hj
     obtain ⟨p, q, r, s, hfix, hdet⟩ :=
       fixes_of_coset (e := 1) (f := (b.val : ℤ)) (g := (m : ℤ)) γ
-        (by rw [coe_Acol_smul]; push_cast; ring) (by exact_mod_cast hmpos.ne') hγ.symm
+        (by rw [coe_Acol_smul]; push_cast; ring) (by exact Nat.cast_ne_zero.mpr hmpos.ne') hγ.symm
     exact ⟨p, q, r, s, hfix, by rw [hdet]; ring⟩
 
 /-- **(C4), packaged.** A coset coincidence at `τ′` produces a positive-definite integer form

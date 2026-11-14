@@ -42,7 +42,7 @@ theorem dyadicLength_pos {L : ℝ} (hL : 0 < L) (n : ℕ) :
 
 theorem dyadicLength_succ (L : ℝ) (n : ℕ) :
     dyadicLength L (n + 1) = dyadicLength L n / 2 := by
-  simp [dyadicLength, pow_succ]
+  simp only [dyadicLength, pow_succ]
   ring
 
 @[simp] theorem volume_dyadicInterval (L : ℝ) (n : ℕ) (q : ℤ) :
@@ -63,7 +63,7 @@ theorem leftChild_subset {L : ℝ} (hL : 0 ≤ L) (n : ℕ) (q : ℤ) :
   rw [dyadicLength_succ] at hx
   have hd : 0 ≤ dyadicLength L n := div_nonneg hL (by positivity)
   push_cast at hx ⊢
-  constructor <;> nlinarith
+  constructor <;> linarith only [hx]
 
 theorem rightChild_subset {L : ℝ} (hL : 0 ≤ L) (n : ℕ) (q : ℤ) :
     dyadicInterval L (n + 1) (2 * q + 1) ⊆ dyadicInterval L n q := by
@@ -72,7 +72,7 @@ theorem rightChild_subset {L : ℝ} (hL : 0 ≤ L) (n : ℕ) (q : ℤ) :
   rw [dyadicLength_succ] at hx
   have hd : 0 ≤ dyadicLength L n := div_nonneg hL (by positivity)
   push_cast at hx ⊢
-  constructor <;> nlinarith
+  constructor <;> linarith only [hx]
 
 theorem left_right_children_disjoint {L : ℝ} (hL : 0 ≤ L) (n : ℕ) (q : ℤ) :
     Disjoint (dyadicInterval L (n + 1) (2 * q))
@@ -83,7 +83,7 @@ theorem left_right_children_disjoint {L : ℝ} (hL : 0 ≤ L) (n : ℕ) (q : ℤ
   rw [dyadicLength_succ] at hxleft hxright
   have hd : 0 ≤ dyadicLength L n := div_nonneg hL (by positivity)
   push_cast at hxleft hxright
-  linarith
+  linarith only [hxleft, hxright]
 
 /-- A coarse dyadic length is an integral power-of-two multiple of every
 finer dyadic length. -/
@@ -189,7 +189,7 @@ theorem dyadicInterval_nonempty {L : ℝ} (hL : 0 < L) (n : ℕ) (q : ℤ) :
     (dyadicInterval L n q).Nonempty := by
   rw [dyadicInterval, nonempty_Ico]
   have hd := dyadicLength_pos hL n
-  nlinarith
+  linarith only [hd]
 
 /-- The data-dependent root length. It is strictly larger than the global
 `L¹` mass, so every depth-zero cell has average at most one. -/
@@ -201,7 +201,7 @@ theorem rootLength_pos {f : ℝ → ℂ} : 0 < rootLength f := by
     integral_nonneg_of_ae (μ := volume)
       (Filter.Eventually.of_forall fun x ↦ norm_nonneg (f x))
   unfold rootLength
-  linarith
+  linarith only [hmass]
 
 /-- The scalar `‖f‖` average on a dyadic cell. -/
 def dyadicNormAverage (f : ℝ → ℂ) (L : ℝ) (n : ℕ) (q : ℤ) : ℝ :=
@@ -213,7 +213,7 @@ theorem dyadicNormAverage_eq {f : ℝ → ℂ} {L : ℝ} (hL : 0 < L)
       (∫ x in dyadicInterval L n q, ‖f x‖) / dyadicLength L n := by
   rw [dyadicNormAverage, setAverage_eq, volumeReal_dyadicInterval hL.le]
   rw [div_eq_inv_mul]
-  simp only [smul_eq_mul]
+  rfl
 
 theorem root_dyadicNormAverage_le_one {f : ℝ → ℂ} (hf : Integrable f) (q : ℤ) :
     dyadicNormAverage f (rootLength f) 0 q ≤ 1 := by
@@ -224,8 +224,8 @@ theorem root_dyadicNormAverage_le_one {f : ℝ → ℂ} (hf : Integrable f) (q :
   have hmass : 0 ≤ ∫ x, ‖f x‖ :=
     integral_nonneg_of_ae (μ := volume)
       (Filter.Eventually.of_forall fun x ↦ norm_nonneg (f x))
-  rw [div_le_one (by unfold rootLength; linarith)]
-  exact hlocal.trans (by unfold rootLength; linarith)
+  rw [div_le_one (by unfold rootLength; linarith only [hmass])]
+  exact hlocal.trans (by unfold rootLength; linarith only [])
 
 private theorem child_integral_le_parent
     {f : ℝ → ℂ} (hf : Integrable f) {L : ℝ} {n : ℕ} {q child : ℤ}
@@ -248,7 +248,7 @@ theorem leftChild_dyadicNormAverage_le_two
   have hlen : 0 < dyadicLength L n := dyadicLength_pos hL n
   rw [div_le_iff₀ (half_pos hlen)]
   rw [div_le_iff₀ hlen] at hparent
-  nlinarith
+  linarith only [hparent, hmono]
 
 /-- Quantitative stopping lemma for the right child. -/
 theorem rightChild_dyadicNormAverage_le_two
@@ -261,7 +261,7 @@ theorem rightChild_dyadicNormAverage_le_two
   have hlen : 0 < dyadicLength L n := dyadicLength_pos hL n
   rw [div_le_iff₀ (half_pos hlen)]
   rw [div_le_iff₀ hlen] at hparent
-  nlinarith
+  linarith only [hparent, hmono]
 
 /-! ## The intrinsic first-crossing stopping predicate -/
 
@@ -537,10 +537,10 @@ theorem stoppingCell_upper_average {f : ℝ → ℂ} (hf : Integrable f)
   | succ n =>
       rcases Int.even_or_odd' q with ⟨r, rfl | rfl⟩
       · apply leftChild_dyadicNormAverage_le_two hf rootLength_pos
-        apply hc.1 n r (by simp)
+        apply hc.1 n r (by simp only [lt_add_iff_pos_right, Order.lt_one_iff])
         exact leftChild_subset rootLength_pos.le n r
       · apply rightChild_dyadicNormAverage_le_two hf rootLength_pos
-        apply hc.1 n r (by simp)
+        apply hc.1 n r (by simp only [lt_add_iff_pos_right, Order.lt_one_iff])
         exact rightChild_subset rootLength_pos.le n r
 
 theorem stoppingCell_average_mem_Ioc {f : ℝ → ℂ} (hf : Integrable f)
@@ -643,13 +643,12 @@ theorem tsum_volume_stoppingCell_le_lintegral_norm {f : ℝ → ℂ}
         ∫ x in c.1.interval (rootLength f), ‖f x‖ := by
       calc
         volume.real (c.1.interval (rootLength f)) =
-            volume.real (c.1.interval (rootLength f)) * 1 := by ring
+            volume.real (c.1.interval (rootLength f)) * 1 := by ac_rfl
         _ < volume.real (c.1.interval (rootLength f)) *
             (⨍ x in c.1.interval (rootLength f), ‖f x‖) :=
           mul_lt_mul_of_pos_left havg hmpos
         _ = ∫ x in c.1.interval (rootLength f), ‖f x‖ := by
-          simpa [smul_eq_mul] using
-            (measure_smul_setAverage (f := fun x ↦ ‖f x‖) hfin)
+          exact (measure_smul_setAverage (f := fun x ↦ ‖f x‖) hfin)
     calc
       volume (c.1.interval (rootLength f)) =
           ENNReal.ofReal (volume.real (c.1.interval (rootLength f))) := by
@@ -744,7 +743,7 @@ theorem setAverage_dyadicInterval_eq_closedBall (g : ℝ → ℝ)
     (⨍ y in dyadicInterval L n (containingIndex L n x), g y) =
       ⨍ y in Metric.closedBall (containingCenter L n x) (containingRadius L n), g y := by
   rw [closedBall_containing_eq_Icc, dyadicInterval, setAverage_eq, setAverage_eq]
-  simp only [Measure.real, Real.volume_Icc, Real.volume_Ico]
+  simp only [Measure.real, Real.volume_Ico, Real.volume_Icc]
   rw [integral_Icc_eq_integral_Ico]
 
 theorem tendsto_containingRadius_nhdsGT_zero {L : ℝ} (hL : 0 < L) :
@@ -752,7 +751,7 @@ theorem tendsto_containingRadius_nhdsGT_zero {L : ℝ} (hL : 0 < L) :
   apply tendsto_nhdsWithin_iff.mpr
   constructor
   · have hp : Tendsto (fun n : ℕ ↦ (((2 : ℝ)⁻¹) ^ n)) atTop (𝓝 0) :=
-      tendsto_pow_atTop_nhds_zero_of_lt_one (by norm_num) (by norm_num)
+      tendsto_pow_atTop_nhds_zero_of_lt_one (by norm_num1) (by norm_num1)
     have hmul := hp.const_mul (L / 2)
     convert hmul using 1
     · funext n
@@ -760,7 +759,7 @@ theorem tendsto_containingRadius_nhdsGT_zero {L : ℝ} (hL : 0 < L) :
       norm_num
       rw [← inv_pow]
       norm_num
-      ring
+      ac_rfl
     · ring
   · exact Filter.Eventually.of_forall fun n ↦
       half_pos (dyadicLength_pos hL n)
@@ -861,12 +860,12 @@ private theorem tsum_stoppingPiece_eq_of_mem {f : ℝ → ℂ}
         (fun _ ↦ stoppingCellAverage f d) x) = stoppingCellAverage f c := by
   classical
   rw [tsum_eq_single c]
-  · simp [hx]
+  · simp only [hx, indicator_of_mem]
   · intro d hdc
     have hdis := stoppingCell_pairwiseDisjoint (f := f) hdc.symm
     have hxnot : x ∉ d.1.interval (rootLength f) :=
       fun hxd ↦ Set.disjoint_left.1 hdis hx hxd
-    simp [hxnot]
+    simp only [hxnot, not_false_eq_true, indicator_of_notMem]
 
 private theorem tsum_stoppingPiece_eq_zero_of_notMem {f : ℝ → ℂ} {x : ℝ}
     (hx : x ∉ stoppingBadUnion f) :
@@ -879,7 +878,7 @@ private theorem tsum_stoppingPiece_eq_zero_of_notMem {f : ℝ → ℂ} {x : ℝ}
     funext c
     have hxc : x ∉ c.1.interval (rootLength f) := fun hmem ↦
       hx (mem_iUnion.2 ⟨c, hmem⟩)
-    simp [hxc]
+    simp only [hxc, not_false_eq_true, indicator_of_notMem, Pi.zero_apply]
   rw [hzero]
   exact tsum_zero
 
@@ -887,7 +886,7 @@ theorem stoppingGoodPart_eq_average_of_mem {f : ℝ → ℂ}
     (c : stoppingCell f) {x : ℝ} (hx : x ∈ c.1.interval (rootLength f)) :
     stoppingGoodPart f x = stoppingCellAverage f c := by
   have hxu : x ∈ stoppingBadUnion f := mem_iUnion.2 ⟨c, hx⟩
-  have hxcomp : x ∉ (stoppingBadUnion f)ᶜ := by simpa
+  have hxcomp : x ∉ (stoppingBadUnion f)ᶜ := by simpa only [mem_compl_iff, not_not]
   rw [stoppingGoodPart, indicator_of_notMem hxcomp,
     tsum_stoppingPiece_eq_of_mem c hx, zero_add]
 
@@ -963,13 +962,13 @@ theorem integrable_sq_norm_stoppingGoodPart {f : ℝ → ℂ} (hf : Integrable f
     by_cases hxu : x ∈ stoppingBadUnion f
     · rcases mem_iUnion.1 hxu with ⟨c, hxc⟩
       rw [stoppingGoodPart_eq_average_of_mem c hxc]
-      simp only [majorant, indicator_of_mem hxu]
+      simp only [indicator_of_mem hxu, majorant]
       nlinarith [norm_nonneg (f x), norm_nonneg (stoppingCellAverage f c),
         norm_stoppingCellAverage_le_two hf c]
     · rw [stoppingGoodPart_eq_of_notMem hxu]
-      simp only [majorant, indicator_of_notMem hxu, add_zero]
+      simp only [indicator_of_notMem hxu, add_zero, majorant]
       have hnorm : ‖f x‖ ≤ 1 := le_of_not_gt fun hhigh ↦ hxu (hxcover hhigh)
-      nlinarith [norm_nonneg (f x)]
+      nlinarith only [hnorm, norm_nonneg (f x)]
 
 /-- A global squared-`L²` estimate for the complete good part. The constant
 five comes from the direct domination `‖g‖² ≤ ‖f‖ + 4⋅1_Ω`; it uses only
@@ -989,13 +988,13 @@ theorem integral_sq_norm_stoppingGoodPart_le_five_l1 {f : ℝ → ℂ}
     by_cases hxu : x ∈ stoppingBadUnion f
     · rcases mem_iUnion.1 hxu with ⟨c, hxc⟩
       rw [stoppingGoodPart_eq_average_of_mem c hxc]
-      simp only [majorant, indicator_of_mem hxu]
+      simp only [indicator_of_mem hxu, majorant]
       nlinarith [norm_nonneg (f x), norm_nonneg (stoppingCellAverage f c),
         norm_stoppingCellAverage_le_two hf c]
     · rw [stoppingGoodPart_eq_of_notMem hxu]
-      simp only [majorant, indicator_of_notMem hxu, add_zero]
+      simp only [indicator_of_notMem hxu, add_zero, majorant]
       have hnorm : ‖f x‖ ≤ 1 := le_of_not_gt fun hhigh ↦ hxu (hxcover hhigh)
-      nlinarith [norm_nonneg (f x)]
+      nlinarith only [hnorm, norm_nonneg (f x)]
   have hsqMeas : AEStronglyMeasurable
       (fun x ↦ ‖stoppingGoodPart f x‖ ^ 2) volume :=
     ((aestronglyMeasurable_stoppingGoodPart hf).norm.aemeasurable.pow_const 2).aestronglyMeasurable
@@ -1011,12 +1010,9 @@ theorem integral_sq_norm_stoppingGoodPart_le_five_l1 {f : ℝ → ℂ}
       rw [integral_add hf.norm hconst, integral_indicator
         (measurableSet_stoppingBadUnion f), setIntegral_const]
       simp only [smul_eq_mul]
-      ring
+      ac_rfl
     _ ≤ 5 * ∫ x, ‖f x‖ := by
-      have hmass : 0 ≤ ∫ x, ‖f x‖ :=
-        integral_nonneg_of_ae
-          (Filter.Eventually.of_forall fun x ↦ norm_nonneg (f x))
-      nlinarith [volumeReal_stoppingBadUnion_le_integral_norm hf]
+      linarith only [hf, volumeReal_stoppingBadUnion_le_integral_norm hf]
 
 
 end

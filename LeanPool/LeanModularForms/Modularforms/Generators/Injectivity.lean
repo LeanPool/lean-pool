@@ -9,7 +9,7 @@ module
 public import LeanPool.LeanModularForms.Modularforms.Generators.Defs
 public import LeanPool.LeanModularForms.Modularforms.Generators.Surjectivity
 import LeanPool.LeanModularForms.Modularforms.QExpansionLems
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 public import Mathlib.Algebra.MvPolynomial.CommRing
 
 /-!
@@ -44,7 +44,8 @@ private lemma evalE₄E₆_mono_grade (a b : ℕ) (k : ℤ)
 private lemma monomial_fin2_eq (d : Fin 2 →₀ ℕ) (c : ℂ) :
     MvPolynomial.monomial d c =
     MvPolynomial.C c * MvPolynomial.X 0 ^ d 0 * MvPolynomial.X 1 ^ d 1 := by
-  rw [MvPolynomial.monomial_eq, mul_assoc]; simp_all
+  rw [MvPolynomial.monomial_eq, mul_assoc]; simp_all only [Finsupp.prod_pow, Fin.prod_univ_two,
+    Fin.isValue]
 
 private lemma evalE₄E₆_monomial_grade (d : Fin 2 →₀ ℕ) (c : ℂ) (k : ℤ)
     (hk : k ≠ (↑(d 0) * 4 + ↑(d 1) * 6 : ℤ)) :
@@ -66,7 +67,7 @@ private lemma weight_eq_4a_6b (d : Fin 2 →₀ ℕ) :
 
 private lemma weight_fin2_cast (d : Fin 2 →₀ ℕ) :
     (Finsupp.weight E₄E₆Weight d : ℤ) = ↑(d 0) * 4 + ↑(d 1) * 6 := by
-  rw [weight_eq_4a_6b]; push_cast; ring
+  rw [weight_eq_4a_6b]; push_cast; ac_rfl
 
 private lemma evalE₄E₆_component_eq (p : MvPolynomial (Fin 2) ℂ) (n : ℕ) :
     (evalE₄E₆ (MvPolynomial.weightedHomogeneousComponent E₄E₆Weight n p)) (↑n : ℤ) =
@@ -283,8 +284,19 @@ private lemma mvpoly_support_after_reduction {σ R : Type*} [CommRing R] [Decida
     · exact absurd (hxd ▸ hx) hd_not
     · exact Finset.mem_union_left _ (Finset.mem_erase.mpr ⟨hxd, hp⟩)
   · rcases Finset.mem_union.mp (MvPolynomial.support_sub σ _ _ hdelta) with h1 | h2
-    · simp_all
-    · simp_all
+    · simp_all only [ne_eq, AddMonoidAlgebra.coeff_sub, Finsupp.coe_sub, Pi.sub_apply,
+      MvPolynomial.coeff_monomial,
+          ↓reduceIte, sub_sub_cancel, ite_eq_right_iff, MvPolynomial.mem_support_iff, ite_self,
+            sub_zero, sub_self,
+          not_true_eq_false, not_false_eq_true, not_imp, Finset.union_singleton,
+            Finset.mem_insert, Finset.mem_erase,
+          false_and, or_false, imp_false]
+    · simp_all only [ne_eq, AddMonoidAlgebra.coeff_sub, Finsupp.coe_sub, Pi.sub_apply,
+      MvPolynomial.coeff_monomial,
+          ↓reduceIte, sub_sub_cancel, ite_eq_right_iff, MvPolynomial.mem_support_iff, ite_self,
+            sub_zero, sub_self,
+          not_true_eq_false, not_false_eq_true, not_imp, Finset.union_singleton,
+            Finset.mem_insert, Finset.mem_erase, true_or]
 
 private lemma whomog_poly_Delta_decomp {n : ℕ} (hn12 : 12 ≤ n)
     (p : MvPolynomial (Fin 2) ℂ)
@@ -368,7 +380,7 @@ private lemma reduced_poly_is_scalar {n : ℕ} (_hn12 : 12 ≤ n)
   have hw2 := hr (MvPolynomial.mem_support_iff.mp hd₂)
   have h46_1 := weight_eq_4a_6b d₁; rw [hw1] at h46_1
   have h46_2 := weight_eq_4a_6b d₂; rw [hw2] at h46_2
-  have heq : d₁ 0 * 4 + d₁ 1 * 6 = d₂ 0 * 4 + d₂ 1 * 6 := by linarith
+  have heq : d₁ 0 * 4 + d₁ 1 * 6 = d₂ 0 * 4 + d₂ 1 * 6 := by linarith only [h46_1, h46_2]
   obtain ⟨hd0, hd1⟩ := unique_small_weight_soln (hr_red d₁ hd₁) (hr_red d₂ hd₂) heq
   ext i; fin_cases i <;> assumption
 

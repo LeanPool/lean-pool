@@ -5,11 +5,6 @@ Authors: Zeru Zhu, Jinzheng Li, Yuanjie Ren
 -/
 module
 
-public import Mathlib.Algebra.Order.BigOperators.Group.Finset
-public import Mathlib.Combinatorics.SimpleGraph.Finite
-public import Mathlib.Tactic.Push
-public import Mathlib.Tactic.Ring
-public import Mathlib.Tactic.Ring.Basic
 public import LeanPool.ACMax.Spectral.AlgConn
 
 /-!

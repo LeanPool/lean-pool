@@ -9,11 +9,7 @@ public import LeanPool.InfinitaryLogic.Methods.LopezEscobar.PCMem
 public import LeanPool.InfinitaryLogic.Methods.LopezEscobar.PCSentence
 public import LeanPool.InfinitaryLogic.ModelTheory.PCClass
 import LeanPool.InfinitaryLogic.Methods.ConstantSupport
-import Mathlib.Analysis.Normed.Group.Basic
-import Mathlib.Data.EReal.Inv
 import Mathlib.Tactic.Measurability.Init
-import Mathlib.Topology.Algebra.InfiniteSum.Order
-import Mathlib.Topology.MetricSpace.Bounded
 /-!
 # Tagged-expansion gluing (issue #10, Unit 4 commit 2)
 

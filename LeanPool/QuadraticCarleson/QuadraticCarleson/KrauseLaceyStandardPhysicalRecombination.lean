@@ -127,7 +127,7 @@ theorem zpow_cutoff_iff_of_mem_energyStandardIntervals
     (2 : ℝ) ^ ell ≤ I.length ↔ ell ≤ scale I + 2 := by
   have he := Finset.mem_filter.mp (Finset.mem_filter.mp hI).1
   rw [he.2.1]
-  exact zpow_le_zpow_iff_right₀ (by norm_num : (1 : ℝ) < 2)
+  exact zpow_le_zpow_iff_right₀ (by norm_num1 : (1 : ℝ) < 2)
 
 /-- Exact physical-layer recombination with a moving lower cutoff. The
 orientation is `ell ≤ j`: large spatial scales survive the tail. -/
@@ -161,7 +161,7 @@ theorem sum_energyStandardPhysicalLayer_tail_eq
       congr 1
       ext I
       have hellj := (Finset.mem_filter.mp hj).2
-      simp only [A, energyStandardPhysicalLayer, Finset.mem_filter]
+      simp only [energyStandardPhysicalLayer, Finset.mem_filter, A]
       constructor
       · rintro ⟨hI, hIj⟩
         exact ⟨⟨hI, hIj.symm ▸ hellj⟩, hIj⟩
@@ -338,7 +338,7 @@ theorem sum_badLengthTailAction_energyStandardIntervals_eq_physicalTail
           (badScaleInput S f I₀ k₀ (scale I + 2 - s)) x) = 0
       rw [energyStandardPhysicalLayer_eq_empty_of_nonneg_not_mem
         S f I₀ k₀ s j scale hs0 hsnot]
-      simp
+      simp only [Finset.sum_empty]
     _ = _ := by
       unfold energyStandardPhysicalTailAction energyStandardPhysicalLayerAction
       exact Finset.sum_congr rfl fun j _ ↦ rfl

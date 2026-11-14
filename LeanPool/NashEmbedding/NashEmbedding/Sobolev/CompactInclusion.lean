@@ -13,8 +13,9 @@ Authors: Aristotle (Harmonic), Claude Fable 5 (Anthropic), Claude Opus 4.7 (Anth
   — at the request of David Wiygul
 -/
 public import Mathlib.Algebra.Order.Ring.Star
+public import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 public import Mathlib.Data.Pi.Interval
-public import Mathlib.Tactic
+public import LeanPool.NashEmbedding.Tactics
 public import LeanPool.NashEmbedding.NashEmbedding.Sobolev.Limits
 
 /-!
@@ -173,7 +174,6 @@ theorem compactInclusion_lp_weighted {s t : ℝ} (hst : s < t)
           add_nonneg zero_le_one <| Finset.sum_nonneg fun _ _ => sq_nonneg _
         convert pow_lt_pow_left₀ hm ( Real.rpow_nonneg hX _ ) two_ne_zero using 1
         all_goals first
-        | rfl
         | (rw [Real.sq_sqrt (by positivity)])
         | (rw [← Real.rpow_natCast _ 2, ← Real.rpow_mul hX]; congr 1; push_cast; ring)
       use F;

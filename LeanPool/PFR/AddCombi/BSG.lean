@@ -17,7 +17,7 @@ import Mathlib.Algebra.BigOperators.Field
 import Mathlib.Algebra.Order.Star.Real
 import Mathlib.Analysis.Complex.Order
 import Mathlib.Analysis.RCLike.Basic
-import Mathlib.Data.Rat.Star
+import Mathlib.Algebra.Order.Star.Rat
 import Mathlib.Tactic.Positivity.Finset
 
 /-!
@@ -28,6 +28,10 @@ The converse is *almost* true, in the sense that a set of large additive energy 
 of small doubling. This is the content of the Balog-Szemerédi-Gowers theorem, which this file
 proves.
 -/
+
+-- Avoid repeated searches for empty or singleton types during simplification.
+attribute [-simp] IsEmpty.forall_iff Finset.univ_eq_empty forall_const
+  add_eq_zero mul_eq_one
 
 open Finset hiding card
 open Fintype

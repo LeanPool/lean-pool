@@ -6,10 +6,12 @@ Authors: Arseniy Akopyan
 module
 
 
-public import Mathlib.Tactic
 public import LeanPool.NandakumarRamanaRao.NRR.EMP.VariableBody.Basic
 public import LeanPool.NandakumarRamanaRao.NRR.EMP.VariableBody.CompactSiteFamily
 public import LeanPool.NandakumarRamanaRao.NRR.EMP.PowerCellPositiveArea
+import LeanPool.NandakumarRamanaRao.NRR.PowerDiagram.CellGeometry
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # `NRR.EMP.VariableBody.WeightBounds` — uniform coordinate bounds

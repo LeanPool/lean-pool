@@ -7,7 +7,7 @@ module
 
 public import LeanPool.BrillNoetherGraphs.Demazure.Utils
 public import LeanPool.BrillNoetherGraphs.Demazure.SlipFace
-public import Mathlib.Data.Int.LeastGreatest
+public import Mathlib.Order.Int.LeastGreatest
 public import Mathlib.Data.Set.Card
 public import Mathlib.Tactic.Ring
 

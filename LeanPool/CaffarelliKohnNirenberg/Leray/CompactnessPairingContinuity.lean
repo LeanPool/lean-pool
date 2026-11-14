@@ -52,7 +52,7 @@ theorem continuous_compactnessMollifiedLimit_local_pairing
     (fun a => (hK a).2.2.2) hKcover
   let ψ : Vec3 → L2Vec3 := C.indicator (fun x => w x)
   let hψ : MemLp ψ 2 (volume : Measure Vec3) :=
-    (memLp_indicator_iff_restrict hC.measurableSet).mpr (Lp.memLp w)
+    (memLp_indicator_iff_restrict hC.measurableSet.nullMeasurableSet).mpr (Lp.memLp w)
   let ψLp : Lp L2Vec3 2 (volume : Measure Vec3) := hψ.toLp ψ
   have hEq (t : I) :
       (∫ x in C, ∑ i : Fin 3,

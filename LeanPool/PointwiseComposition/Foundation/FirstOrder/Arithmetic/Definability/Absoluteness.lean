@@ -1,0 +1,147 @@
+/-
+Copyright (c) 2026 Formalized Formal Logic contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Formalized Formal Logic contributors
+-/
+
+module
+
+-- Ported and adapted for Lean Pool from the upstream revision recorded in the project card.
+
+public import LeanPool.PointwiseComposition.Foundation.FirstOrder.Arithmetic.Definability.BoundedDefinable
+
+/-!
+Supporting results for pointwise provable equality. -/
+
+namespace PointwiseComposition
+
+@[expose] public section
+
+namespace FFL
+namespace FirstOrder
+namespace Arithmetic
+
+open PeanoMinus R0
+
+lemma nat_modelsWithParam_iff_models_substs {v : Fin k → ℕ} {φ : ArithmeticSemisentence k} :
+    φ.Evalb v ↔ ℕ↓[ℒₒᵣ] ⊧ (φ ↜ (fun i ↦ Semiterm.Operator.numeral ℒₒᵣ (v i))) := by
+  simp [models_iff, Function.comp_def, Matrix.empty_eq]
+
+variable (V : Type*) [ORingStructure V] [V↓[ℒₒᵣ] ⊧* 𝐏𝐀⁻]
+
+lemma modelsWithParam_iff_models_substs {v : Fin k → ℕ} {φ : ArithmeticSemisentence k} :
+    φ.Evalb (M := V) (Nat.cast ∘ v) ↔
+      V↓[ℒₒᵣ] ⊧ (φ ↜ (fun i ↦ Semiterm.Operator.numeral ℒₒᵣ (v i))) :=
+  by simp [models_iff, Function.comp_def, Matrix.empty_eq, numeral_eq_natCast]
+
+lemma shigmaZero_absolute {k} (φ : Σ₀.Semisentence k) (v : Fin k → ℕ) :
+    φ.val.Evalb v ↔ φ.val.Evalb (M := V) (Nat.cast ∘ v) :=
+  ⟨by
+    simpa [nat_modelsWithParam_iff_models_substs, modelsWithParam_iff_models_substs] using
+      nat_extention_sigmaOne V (by simp),
+    by
+    simpa [nat_modelsWithParam_iff_models_substs, modelsWithParam_iff_models_substs] using
+      nat_extention_piOne V (by simp)⟩
+
+lemma Defined.shigmaZero_absolute {k} {R : (Fin k → ℕ) → Prop} {R' : (Fin k → V) → Prop}
+    {φ : Σ₀.Semisentence k} (hR : Σ₀.Defined R φ) (hR' : Σ₀.Defined R' φ) (v : Fin k → ℕ) :
+    R v ↔ R' (Nat.cast ∘ v) := by
+  simpa [hR.iff, hR'.iff] using Arithmetic.shigmaZero_absolute V φ v
+
+lemma DefinedFunction.shigmaZero_absolute_func {k} {f : (Fin k → ℕ) → ℕ} {f' : (Fin k → V) → V}
+    {φ : Σ₀.Semisentence (k + 1)} (hf : Σ₀.DefinedFunction f φ) (hf' : Σ₀.DefinedFunction f' φ)
+    (v : Fin k → ℕ) : (f v : V) = f' (Nat.cast ∘ v) := by
+  simpa [Function.comp_def] using Defined.shigmaZero_absolute V hf hf' (f v :> v)
+
+lemma sigmaOne_upward_absolute {k} (φ : Σ₁.Semisentence k) (v : Fin k → ℕ) :
+    φ.val.Evalb v → φ.val.Evalb (M := V) (Nat.cast ∘ v) := by
+  simpa [nat_modelsWithParam_iff_models_substs, modelsWithParam_iff_models_substs] using
+    nat_extention_sigmaOne V (by simp)
+
+lemma piOne_downward_absolute {k} (φ : Π₁.Semisentence k) (v : Fin k → ℕ) :
+    φ.val.Evalb (M := V) (Nat.cast ∘ v) → φ.val.Evalb v := by
+  simpa [nat_modelsWithParam_iff_models_substs, modelsWithParam_iff_models_substs] using
+    nat_extention_piOne V (by simp)
+
+lemma deltaOne_absolute {k} (φ : ∆₁.Semisentence k) (properNat : φ.ProperOn ℕ)
+    (proper : φ.ProperOn V) (v : Fin k → ℕ) :
+    φ.val.Evalb v ↔ φ.val.Evalb (M := V) (Nat.cast ∘ v) :=
+  ⟨by simpa [HierarchySymbol.Semiformula.val_sigma] using sigmaOne_upward_absolute V φ.sigma v,
+    by simpa [proper.iff', properNat.iff'] using piOne_downward_absolute V φ.pi v⟩
+
+lemma Defined.shigmaOne_absolute {k} {R : (Fin k → ℕ) → Prop} {R' : (Fin k → V) → Prop}
+    {φ : ∆₁.Semisentence k} (hR : ∆₁.Defined R φ) (hR' : ∆₁.Defined R' φ) (v : Fin k → ℕ) :
+    R v ↔ R' (Nat.cast ∘ v) := by simpa using deltaOne_absolute V φ hR.proper hR'.proper v
+
+lemma DefinedFunction.shigmaOne_absolute_func {k} {f : (Fin k → ℕ) → ℕ} {f' : (Fin k → V) → V}
+    {φ : Σ₁.Semisentence (k + 1)} (hf : Σ₁.DefinedFunction f φ) (hf' : Σ₁.DefinedFunction f' φ)
+    (v : Fin k → ℕ) : (f v : V) = f' (Nat.cast ∘ v) := by
+  simpa [Function.comp_def] using
+    Defined.shigmaOne_absolute V hf.graph_delta hf'.graph_delta (f v :> v)
+
+variable {V}
+
+lemma models_iff_of_Sigma0 {σ : ArithmeticSemisentence n} (hσ : Hierarchy Σ 0 σ)
+    {e : Fin n → ℕ} : σ.Evalb (M := V) (Nat.cast ∘ e) ↔ σ.Evalb e :=
+  by
+  by_cases h : σ.Evalb e <;> simp [h]
+  · have : σ.Evalb (M := V) (Nat.cast ∘ e) := by
+      simpa [numeral_eq_natCast] using
+        bold_sigma_one_completeness' (M := V) (by simp [Hierarchy.of_zero hσ]) h
+    simpa [HierarchySymbol.Semiformula.val_sigma] using this
+  · have : (∼σ).Evalb (M := ℕ) e := by simpa using h
+    have : (∼σ).Evalb (M := V) (Nat.cast ∘ e) := by
+      simpa [numeral_eq_natCast] using
+        bold_sigma_one_completeness' (M := V) (by simp [Hierarchy.of_zero hσ]) this
+    simpa using this
+
+lemma models_iff_of_Delta1 {σ : ∆₁.Semisentence n} (hσ : σ.ProperOn ℕ) (hσV : σ.ProperOn V)
+    {e : Fin n → ℕ} : σ.val.Evalb (M := V) (Nat.cast ∘ e) ↔ σ.val.Evalb e :=
+  by
+  by_cases h : σ.val.Evalb e <;> simp [h]
+  · have : σ.sigma.val.Evalb e := by simpa [HierarchySymbol.Semiformula.val_sigma] using h
+    have : σ.sigma.val.Evalb (M := V) (Nat.cast ∘ e) := by
+      simpa [numeral_eq_natCast] using bold_sigma_one_completeness' (M := V) (by simp) this
+    simpa [HierarchySymbol.Semiformula.val_sigma] using this
+  · have : (∼σ.pi.val).Evalb (M := ℕ) e := by simpa [hσ.iff'] using h
+    have : (∼σ.pi.val).Evalb (M := V) (Nat.cast ∘ e) := by
+      simpa [numeral_eq_natCast] using bold_sigma_one_completeness' (M := V) (by simp) this
+    simpa [hσV.iff'] using this
+
+variable {T : ArithmeticTheory} [𝐏𝐀⁻ ≼ T] [T.SoundOnHierarchy Σ 1]
+
+noncomputable instance : 𝐑₀ ≼ T :=
+  Entailment.WeakerThan.trans (𝓣 := 𝐏𝐀⁻) inferInstance inferInstance
+
+theorem sigma_one_completeness_iff_param {σ : ArithmeticSemisentence n} (hσ : Hierarchy Σ 1 σ)
+    {e : Fin n → ℕ} : ℕ ⊧/e σ ↔ T ⊢ (σ ↜ fun x ↦ Semiterm.Operator.numeral ℒₒᵣ (e x)) :=
+  Iff.trans (by simp [models_iff, Semiformula.eval_substs, Function.comp_def, Matrix.empty_eq])
+    (sigma_one_completeness_iff (T := T) (by simp [hσ]))
+
+lemma models_iff_provable_of_Sigma0_param {σ : ArithmeticSemisentence n} (hσ : Hierarchy Σ 0 σ)
+    {e : Fin n → ℕ} :
+    V ⊧/(Nat.cast ∘ e) σ ↔ T ⊢ (σ ↜ fun x ↦ Semiterm.Operator.numeral ℒₒᵣ (e x)) := by
+  calc
+    V ⊧/(Nat.cast ∘ e) σ ↔ ℕ ⊧/e σ := by simp [models_iff_of_Sigma0 hσ]
+    _ ↔ T ⊢ (σ ↜ fun x ↦ Semiterm.Operator.numeral ℒₒᵣ (e x)) := by
+      apply sigma_one_completeness_iff_param (by simp [Hierarchy.of_zero hσ])
+
+lemma models_iff_provable_of_Delta1_param {σ : ∆₁.Semisentence n} (hσ : σ.ProperOn ℕ)
+    (hσV : σ.ProperOn V) {e : Fin n → ℕ} :
+    V ⊧/(Nat.cast ∘ e) σ.val ↔ T ⊢ (σ.val ↜ fun x ↦ Semiterm.Operator.numeral ℒₒᵣ (e x)) := by
+  calc
+    V ⊧/(Nat.cast ∘ e) σ.val ↔ ℕ ⊧/e σ.val := by simp [models_iff_of_Delta1 hσ hσV]
+    _ ↔ ℕ ⊧/e σ.sigma.val := by simp [HierarchySymbol.Semiformula.val_sigma]
+    _ ↔ T ⊢ (σ.sigma.val ↜ fun x ↦ Semiterm.Operator.numeral ℒₒᵣ (e x)) := by
+      apply sigma_one_completeness_iff_param (by simp)
+    _ ↔ T ⊢ (σ.val ↜ fun x ↦ Semiterm.Operator.numeral ℒₒᵣ (e x)) := by
+      simp [HierarchySymbol.Semiformula.val_sigma]
+
+end Arithmetic
+
+end FirstOrder
+end FFL
+
+end
+
+end PointwiseComposition

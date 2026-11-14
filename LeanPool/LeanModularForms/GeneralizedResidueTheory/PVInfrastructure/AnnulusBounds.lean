@@ -10,7 +10,6 @@ public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 import LeanPool.LeanModularForms.GeneralizedResidueTheory.PVInfrastructure.RemainderAnalysis
 import LeanPool.LeanModularForms.GeneralizedResidueTheory.PVInfrastructure.StepBounds
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
-import Mathlib.MeasureTheory.Covering.Besicovitch
 
 /-!
 # PV Infrastructure: Annulus Bounds
@@ -171,8 +170,8 @@ lemma remainder_integral_bound_on_annulus
       have h_far : R < |t - t₀| := by
         simp only [Icontain, Set.mem_Icc, not_and_or, not_le] at ht_in
         rcases ht_in with h | h
-        · rw [abs_of_neg (by linarith)]; linarith
-        · rw [abs_of_pos (by linarith)]; linarith
+        · rw [abs_of_neg (by linarith only [hR_pos, h])]; linarith only [h]
+        · rw [abs_of_pos (by linarith only [hR_pos, h])]; linarith only [h]
       rw [remainder_annulus_zero_of_far hL hε₁_pos hε₂_pos h_lower h_loc_δ₁ hab
         t (Set.uIoc_of_le hab.le ▸ ht) h_far, norm_zero]
   calc ‖∫ t in a..b,
@@ -228,13 +227,13 @@ lemma volume_shell_le {t₀ r₁ r₂ : ℝ}
       have habs : |t - t₀| = t - t₀ :=
         abs_of_nonneg (sub_nonneg.mpr ht)
       rw [habs] at h_lower h_upper
-      exact ⟨by linarith, by linarith⟩
+      exact ⟨by linarith only [h_lower], by linarith only [h_upper]⟩
     · left
       push Not at ht
       have habs : |t - t₀| = -(t - t₀) :=
         abs_of_neg (sub_neg.mpr ht)
       rw [habs] at h_lower h_upper
-      exact ⟨by linarith, by linarith⟩
+      exact ⟨by linarith only [h_upper], by linarith only [h_lower]⟩
   calc volume {t : ℝ |
       r₁ < |t - t₀| ∧ |t - t₀| ≤ r₂}
       ≤ volume (Set.Ico (t₀ - r₂) (t₀ - r₁) ∪
@@ -249,13 +248,13 @@ lemma volume_shell_le {t₀ r₁ r₂ : ℝ}
           Real.volume_Ioc]; ring_nf
     _ = ENNReal.ofReal (2 * (r₂ - r₁)) := by
         rw [← ENNReal.ofReal_add
-          (by linarith) (by linarith)]; ring_nf
+          (by exact sub_nonneg.mpr hr) (by exact sub_nonneg.mpr hr)]; ring_nf
 
 /-- If `g` and `x` are within `e` and straddle a threshold `ε`, then `|x - ε| ≤ e`. -/
 private lemma abs_sub_threshold_le {g x ε e : ℝ} (h_approx : |g - x| ≤ e)
     (h_between : (g ≤ ε ∧ ε ≤ x) ∨ (x ≤ ε ∧ ε ≤ g)) : |x - ε| ≤ e := by
   rw [abs_le] at h_approx ⊢
-  rcases h_between with ⟨h1, h2⟩ | ⟨h1, h2⟩ <;> constructor <;> linarith
+  rcases h_between with ⟨h1, h2⟩ | ⟨h1, h2⟩ <;> constructor <;> linarith only [h_approx, h2, h1]
 
 lemma symmDiff_subset_boundaryLayers
     {g x e ε₁ ε₂ : ℝ}
@@ -268,21 +267,21 @@ lemma symmDiff_subset_boundaryLayers
     ⟨⟨hg_lower, hg_upper⟩, hnotB⟩ |
     ⟨⟨hx_lower, hx_upper⟩, hnotA⟩
   · by_cases hx_le_ε₂ : x ≤ ε₂
-    · exact Or.inl (abs_sub_threshold_le h_approx (Or.inr ⟨hx_le_ε₂, by linarith⟩))
+    · exact Or.inl (abs_sub_threshold_le h_approx (Or.inr ⟨hx_le_ε₂, by linarith only [hg_lower]⟩))
     · push Not at hx_le_ε₂
       have hx_gt_ε₁ : ε₁ < x := by
         by_contra h_not
         push Not at h_not
         exact hnotB ⟨hx_le_ε₂, h_not⟩
-      exact Or.inr (abs_sub_threshold_le h_approx (Or.inl ⟨hg_upper, by linarith⟩))
+      exact Or.inr (abs_sub_threshold_le h_approx (Or.inl ⟨hg_upper, by linarith only [hx_gt_ε₁]⟩))
   · by_cases hg_le_ε₂ : g ≤ ε₂
-    · exact Or.inl (abs_sub_threshold_le h_approx (Or.inl ⟨hg_le_ε₂, by linarith⟩))
+    · exact Or.inl (abs_sub_threshold_le h_approx (Or.inl ⟨hg_le_ε₂, by linarith only [hx_lower]⟩))
     · push Not at hg_le_ε₂
       have hg_gt_ε₁ : ε₁ < g := by
         by_contra h_not
         push Not at h_not
         exact hnotA ⟨hg_le_ε₂, h_not⟩
-      exact Or.inr (abs_sub_threshold_le h_approx (Or.inr ⟨hx_upper, by linarith⟩))
+      exact Or.inr (abs_sub_threshold_le h_approx (Or.inr ⟨hx_upper, by linarith only [hg_gt_ε₁]⟩))
 
 lemma tAnnLin_implies_r_le
     {L_norm r ε₁ : ℝ} (hL_pos : 0 < L_norm)
@@ -299,15 +298,15 @@ lemma near_threshold_implies_r_in_shell
     (ε - K₀ * R_max^2) / L_norm ≤ r ∧
     r ≤ (ε + K₀ * R_max^2) / L_norm := by
   have h_abs := abs_le.mp h_near
-  have h_lower : ε - K₀ * r^2 ≤ L_norm * r := by linarith [h_abs.1]
-  have h_upper : L_norm * r ≤ ε + K₀ * r^2 := by linarith [h_abs.2]
+  have h_lower : ε - K₀ * r^2 ≤ L_norm * r := by linarith only [h_abs, h_abs.1]
+  have h_upper : L_norm * r ≤ ε + K₀ * r^2 := by linarith only [h_abs, h_abs.2]
   have hr2_le : r^2 ≤ R_max^2 :=
-    sq_le_sq' (by linarith) hr_le
+    sq_le_sq' (by linarith only [hR_max_nonneg, hr_nonneg]) hr_le
   have hK_r2_le : K₀ * r^2 ≤ K₀ * R_max^2 :=
     mul_le_mul_of_nonneg_left hr2_le hK₀_nonneg
   refine ⟨?_, ?_⟩
-  · rw [div_le_iff₀ hL_pos]; linarith
-  · rw [le_div_iff₀ hL_pos]; linarith
+  · rw [div_le_iff₀ hL_pos]; linarith only [h_abs, hK_r2_le]
+  · rw [le_div_iff₀ hL_pos]; linarith only [h_abs, hK_r2_le]
 
 /-- When `ε ≤ Δ` (small epsilon), the shell is contained in a ball of radius `(ε+Δ)/L_norm`. -/
 private lemma shell_vol_le_of_small_eps {t₀ ε Δ L_norm : ℝ}
@@ -340,8 +339,8 @@ private lemma volume_abs_eq_null {t₀ r₁ : ℝ} (hr₁_pos : 0 < r₁) :
     intro t ht; simp only [Set.mem_ofPred_eq] at ht
     simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
     rcases (abs_eq hr₁_pos.le).mp ht with h1 | h1
-    · right; linarith
-    · left; linarith
+    · right; linarith only [h1]
+    · left; linarith only [h1]
   exact le_antisymm (le_of_le_of_eq
     (MeasureTheory.measure_mono h_sub)
     ((Set.toFinite _).measure_zero volume)) (zero_le)
@@ -407,14 +406,14 @@ private lemma annulus_lower_bound {γ : ℝ → ℂ} {t₀ : ℝ} {L : ℂ} {K�
   have h_smul_norm : ‖(t - t₀) • L‖ = |t - t₀| * ‖L‖ := norm_smul (t - t₀) L
   have h1 : ‖γ t - γ t₀‖ ≥ ‖(t - t₀) • L‖ - ‖γ t - γ t₀ - (t - t₀) • L‖ := by
     have := abs_norm_sub_norm_le (γ t - γ t₀) ((t - t₀) • L)
-    linarith [abs_le.mp this]
+    linarith only [this, abs_le.mp this]
   have h2 : ‖γ t - γ t₀‖ ≥ |t - t₀| * ‖L‖ - K₀ * |t - t₀|^2 := by
     rw [h_smul_norm] at h1
-    linarith [h_approx]
+    linarith only [h_approx, h1]
   have h4 : K₀ * |t - t₀| < ‖L‖ / 2 := by
     have : K₀ * (‖L‖ / (2 * K₀)) = ‖L‖ / 2 := by field_simp
-    linarith [mul_lt_mul_of_pos_left ht_lt_L_over_2K hK₀_pos]
-  nlinarith [h2, h4, abs_nonneg (t - t₀),
+    linarith only [hK₀_pos, ht_lt_L_over_2K, this, mul_lt_mul_of_pos_left ht_lt_L_over_2K hK₀_pos]
+  nlinarith only [h_approx, h_smul_norm, h1, h4, h2, abs_nonneg (t - t₀),
     mul_nonneg (abs_nonneg (t - t₀)) (le_of_lt (by linarith : (0 : ℝ) < ‖L‖ / 2 - K₀ * |t - t₀|))]
 
 lemma annulus_symmDiff_measure_bound

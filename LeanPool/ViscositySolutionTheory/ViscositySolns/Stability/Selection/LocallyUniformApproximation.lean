@@ -240,10 +240,10 @@ theorem tendsto_argmax_sub_of_uniformTendstoOn_of_strict
   let ε : Real := δ / 3
   have hεpos : 0 < ε := by
     dsimp [ε]
-    linarith
+    linarith only [hδpos]
   have htwice : 2 * ε < δ := by
     dsimp [ε]
-    linarith
+    linarith only [hδpos]
   have hupper := hunif.eventually_forall_le_add hεpos
   have hlower := hunif.eventually_forall_sub_le hεpos
   filter_upwards [hargmax, hupper, hlower] with i hi hle hsub
@@ -253,16 +253,16 @@ theorem tendsto_argmax_sub_of_uniformTendstoOn_of_strict
     isMaxOn_iff.mp hi.2 x₀ hx₀
   have hx₀approx : u x₀ - φ x₀ <= uᵢ i x₀ - φ x₀ + ε := by
     have hsubx₀ := hsub x₀ hx₀
-    linarith
+    linarith only [hsubx₀]
   have hxiapprox :
       uᵢ i (xᵢ i) - φ (xᵢ i) <= u (xᵢ i) - φ (xᵢ i) + ε := by
     have hlexi := hle (xᵢ i) hi.1
-    linarith
+    linarith only [hlexi]
   have hnear : u x₀ - φ x₀ <= u (xᵢ i) - φ (xᵢ i) + 2 * ε := by
-    linarith
+    linarith only [hmax, hx₀approx, hxiapprox]
   have hgapxi : u (xᵢ i) - φ (xᵢ i) <= u x₀ - φ x₀ - δ :=
     hgap (xᵢ i) hi.1 hnotV
-  linarith
+  linarith only [htwice, hmax, hx₀approx, hxiapprox, hgapxi]
 
 /--
 A strict compact minimizer of `u - φ` attracts compact minimizers of
@@ -293,10 +293,10 @@ theorem tendsto_argmin_sub_of_uniformTendstoOn_of_strict
   let ε : Real := δ / 3
   have hεpos : 0 < ε := by
     dsimp [ε]
-    linarith
+    linarith only [hδpos]
   have htwice : 2 * ε < δ := by
     dsimp [ε]
-    linarith
+    linarith only [hδpos]
   have hupper := hunif.eventually_forall_le_add hεpos
   have hlower := hunif.eventually_forall_sub_le hεpos
   filter_upwards [hargmin, hupper, hlower] with i hi hle hsub
@@ -306,16 +306,16 @@ theorem tendsto_argmin_sub_of_uniformTendstoOn_of_strict
     isMinOn_iff.mp hi.2 x₀ hx₀
   have hx₀approx : uᵢ i x₀ - φ x₀ <= u x₀ - φ x₀ + ε := by
     have hlex₀ := hle x₀ hx₀
-    linarith
+    linarith only [hlex₀]
   have hxiapprox :
       u (xᵢ i) - φ (xᵢ i) <= uᵢ i (xᵢ i) - φ (xᵢ i) + ε := by
     have hsubxi := hsub (xᵢ i) hi.1
-    linarith
+    linarith only [hsubxi]
   have hnear : u (xᵢ i) - φ (xᵢ i) <= u x₀ - φ x₀ + 2 * ε := by
-    linarith
+    linarith only [hmin, hx₀approx, hxiapprox]
   have hgapxi : u x₀ - φ x₀ + δ <= u (xᵢ i) - φ (xᵢ i) :=
     hgap (xᵢ i) hi.1 hnotV
-  linarith
+  linarith only [htwice, hmin, hx₀approx, hxiapprox, hgapxi]
 
 /--
 Compact relative neighborhood version of the strict maximum selection theorem.

@@ -47,7 +47,7 @@ theorem eLpNorm_mul_le_of_six {p h : Vec3 → ℝ} (hp : AEStronglyMeasurable p 
       exact mul_nonneg ((abs_nonneg _).trans (hM x)) (norm_nonneg _)
   have h2 : eLpNorm (K.indicator p) 2 volume ≤
       eLpNorm p (ENNReal.ofReal 6) volume * volume K ^ (1 / 3 : ℝ) := by
-    rw [eLpNorm_indicator_eq_eLpNorm_restrict hK]
+    rw [eLpNorm_indicator_eq_eLpNorm_restrict hK.nullMeasurableSet]
     have h3 := eLpNorm_le_eLpNorm_mul_rpow_measure_univ (μ := volume.restrict K)
       (p := 2) (q := ENNReal.ofReal 6) (by
         rw [show (2 : ℝ≥0∞) = ENNReal.ofReal 2 by simp]

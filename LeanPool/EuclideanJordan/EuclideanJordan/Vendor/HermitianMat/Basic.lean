@@ -258,11 +258,11 @@ theorem mat_inv : (A⁻¹).mat = A.mat⁻¹ := by
 
 @[simp]
 theorem zero_inv : ((0 : HermitianMat m α)⁻¹) = 0 := by
-  ext1; simp
+  ext1; simp only [mat_inv, mat_zero, Matrix.inv_zero]
 
 @[simp]
 theorem one_inv : ((1 : HermitianMat m α)⁻¹) = 1 := by
-  ext1; simp
+  ext1; simp only [mat_inv, mat_one, inv_one]
 
 noncomputable instance instPow : Pow (HermitianMat m α) ℕ :=
   ⟨fun x n ↦ ⟨x ^ n, x.H.pow n⟩⟩
@@ -273,15 +273,15 @@ theorem mat_pow (n : ℕ) : (A ^ n).mat = A.mat ^ n := by
 
 @[simp]
 theorem pow_zero : A ^ 0 = 1 := by
-  ext1; simp
+  ext1; simp only [mat_pow, _root_.pow_zero, mat_one]
 
 @[simp]
 theorem zero_pow (hn : n ≠ 0) : (0 : HermitianMat m α) ^ n = 0 := by
-  ext1; simp [hn]
+  ext1; simp only [mat_pow, mat_zero, ne_eq, hn, not_false_eq_true, _root_.zero_pow]
 
 @[simp]
 theorem one_pow : ((1 : HermitianMat m α) ^ n) = 1 := by
-  ext1; simp
+  ext1; simp only [mat_pow, mat_one, _root_.one_pow]
 
 noncomputable instance instZPow : Pow (HermitianMat m α) ℤ :=
   ⟨fun x z ↦ ⟨x ^ z, x.H.zpow z⟩⟩
@@ -296,15 +296,15 @@ theorem zpow_natCast : A ^ (n : ℤ) = A ^ n := by
 
 @[simp]
 theorem zpow_zero : A ^ (0 : ℤ) = 1 := by
-  ext1; simp
+  ext1; simp only [mat_zpow, zpow_ofNat, _root_.pow_zero, mat_one]
 
 @[simp]
 theorem zpow_one : A ^ (1 : ℤ) = A := by
-  ext1; simp
+  ext1; simp only [mat_zpow, zpow_ofNat, pow_one]
 
 @[simp]
 theorem one_zpow : ((1 : HermitianMat m α) ^ z) = 1 := by
-  ext1; simp
+  ext1; simp only [mat_zpow, mat_one, Matrix.one_zpow]
 
 @[simp]
 theorem zpow_neg_one : A ^ (-1 : ℤ) = A⁻¹ := by
@@ -320,8 +320,8 @@ add_aesop_rules safe norm (rule_sets := [Commutes])
 @[aesop safe apply (rule_sets := [Commutes])]
 theorem _root_.Matrix.inv_commute {α : Type*} {A : Matrix m m α} [CommRing α] : Commute A⁻¹ A := by
   rcases A.nonsing_inv_cancel_or_zero with h | h
-  · simp [Commute, SemiconjBy, h]
-  · simp [h]
+  · simp only [Commute, SemiconjBy, h]
+  · simp only [h, Commute.zero_left]
 
 @[aesop safe apply (rule_sets := [Commutes])]
 theorem commute_inv_self : Commute A⁻¹.mat A.mat := by
@@ -395,7 +395,7 @@ theorem conj_apply_mat (B : Matrix m n α) (A : HermitianMat n α) :
 theorem conj_conj {m l} [Fintype m] (B : Matrix m n α) (C : Matrix l m α) :
     (A.conj B).conj C = A.conj (C * B) := by
   ext1
-  simp [Matrix.conjTranspose_mul, Matrix.mul_assoc]
+  simp only [conj_apply_mat, Matrix.mul_assoc, Matrix.conjTranspose_mul]
 
 variable (B : HermitianMat n α)
 
@@ -415,7 +415,7 @@ lemma conj_one_unitary [DecidableEq n] (U : Matrix.unitaryGroup n α) :
     conj U.val 1 = 1 := by
   ext1
   have h : U * U.val.conjTranspose = 1 := U.prop.2
-  simp [h]
+  simp only [conj_apply_mat, mat_one, mul_one, h]
 
 variable (R : Type*) [Star R] [TrivialStar R] [CommSemiring R] [Algebra R α] [StarModule R α]
 
@@ -460,11 +460,11 @@ theorem isSymmetric : A.lin.IsSymmetric :=
 
 @[simp]
 theorem lin_zero : (0 : HermitianMat n 𝕜).lin = 0 := by
-  simp [lin]; rfl
+  simp only [lin, mat_zero, map_zero]; rfl
 
 @[simp]
 theorem lin_one : (1 : HermitianMat n 𝕜).lin = 1 := by
-  simp [lin]; rfl
+  simp only [lin, mat_one, Matrix.toLpLin_one, ContinuousLinearMap.mk_id]; rfl
 
 /-- The eigenspace of the linear endomorphism induced by a Hermitian matrix. -/
 noncomputable def eigenspace (μ : 𝕜) : Submodule 𝕜 (EuclideanSpace 𝕜 n) :=
@@ -481,18 +481,20 @@ theorem mem_ker_iff_mulVec_zero (x : EuclideanSpace 𝕜 n) : x ∈ A.ker ↔ A.
 /-- The kernel of a Hermitian matrix is its zero eigenspace. -/
 theorem ker_eq_eigenspace_zero : A.ker = A.eigenspace 0 := by
   ext
-  simp [ker, eigenspace]
+  simp only [ker, LinearMap.mem_ker, ContinuousLinearMap.coe_coe, eigenspace,
+    Module.End.eigenspace_zero]
 
 @[simp]
 theorem ker_zero : (0 : HermitianMat n 𝕜).ker = ⊤ := by
-  simp [ker]
+  simp only [ker, lin_zero, ContinuousLinearMap.toLinearMap_zero, LinearMap.ker_zero]
 
 theorem ker_one : (1 : HermitianMat n 𝕜).ker = ⊥ := by
-  simp [ker]; rfl
+  simp only [ker, lin_one, ContinuousLinearMap.toLinearMap_one]; rfl
 
 theorem ker_pos_smul {c : ℝ} (hc : c ≠ 0) : (c • A).ker = A.ker := by
   ext x
-  simp [mem_ker_iff_mulVec_zero, Matrix.smul_mulVec, hc]
+  simp only [mem_ker_iff_mulVec_zero, mat_smul, Matrix.smul_mulVec, isUnit_iff_ne_zero, ne_eq, hc,
+    not_false_eq_true, IsUnit.smul_eq_zero]
 
 /-- The support of a Hermitian matrix `A` as a submodule of Euclidean space, defined by
 `LinearMap.range A.toMat.toEuclideanLin`. Equivalently, the sum of all nonzero eigenspaces. -/
@@ -505,7 +507,7 @@ theorem support_eq_sup_eigenspace_nonzero : A.support = ⨆ μ ≠ 0, A.eigenspa
 
 @[simp]
 theorem support_zero : (0 : HermitianMat n 𝕜).support = ⊥ := by
-  simp [support]
+  simp only [support, lin_zero, ContinuousLinearMap.toLinearMap_zero, LinearMap.range_zero]
 
 theorem support_one : (1 : HermitianMat n 𝕜).support = ⊤ := by
   simpa [support] using LinearMap.ker_eq_bot_iff_range_eq_top.mp rfl
@@ -514,13 +516,14 @@ theorem support_one : (1 : HermitianMat n 𝕜).support = ⊤ := by
 theorem ker_orthogonal_eq_support : A.kerᗮ = A.support := by
   rw [ker, support]
   convert ContinuousLinearMap.orthogonal_ker A.lin
-  simp
+  simp only [isSymmetric, LinearMap.IsSymmetric.clm_adjoint_eq,
+    Submodule.topologicalClosure_eq_self]
 
 @[simp]
 theorem support_orthogonal_eq_range : A.supportᗮ = A.ker := by
   rw [ker, support]
   convert! ContinuousLinearMap.orthogonal_range A.lin
-  simp
+  simp only [isSymmetric, LinearMap.IsSymmetric.clm_adjoint_eq]
 
 end eigenspace
 
@@ -542,23 +545,25 @@ theorem diagonal_mat : (diagonal 𝕜 f).mat = Matrix.diagonal (f · : n → �
 
 @[simp]
 theorem diagonal_zero : (diagonal 𝕜 0) = (0 : HermitianMat n 𝕜) := by
-  ext1; simp
+  ext1; simp only [diagonal_mat, Pi.zero_apply, map_zero, Matrix.diagonal_zero, mat_zero]
 
 @[simp]
 theorem diagonal_one : (diagonal 𝕜 1) = (1 : HermitianMat n 𝕜) := by
-  ext; rw [diagonal_mat]; simp
+  ext; rw [diagonal_mat]; simp only [Pi.one_apply, map_one, Matrix.diagonal_one, mat_apply,
+    one_apply]
 
 lemma diagonal_add : diagonal 𝕜 (f + g) = diagonal 𝕜 f + diagonal 𝕜 g := by
-  ext1; simp
+  ext1; simp only [diagonal_mat, Pi.add_apply, map_add, mat_add, Matrix.diagonal_add]
 
 lemma diagonal_add_apply : diagonal 𝕜 (fun x ↦ f x + g x) = diagonal 𝕜 f + diagonal 𝕜 g := by
-  ext1; simp
+  ext1; simp only [diagonal_mat, map_add, mat_add, Matrix.diagonal_add]
 
 lemma diagonal_sub : diagonal 𝕜 (f - g) = diagonal 𝕜 f - diagonal 𝕜 g := by
-  ext1; simp
+  ext1; simp only [diagonal_mat, Pi.sub_apply, map_sub, mat_sub, Matrix.diagonal_sub]
 
 theorem diagonal_mul (c : ℝ) : diagonal 𝕜 (fun x ↦ c * f x) = c • diagonal 𝕜 f := by
-  ext1; simp [← Matrix.diagonal_smul]
+  ext1; simp only [diagonal_mat, map_mul, mat_smul, ← Matrix.diagonal_smul,
+    Matrix.diagonal_eq_diagonal_iff, Pi.smul_apply, RCLike.real_smul_ofReal, implies_true]
 
 theorem diagonal_conj_diagonal [Fintype n] :
     (diagonal 𝕜 f).conj (diagonal 𝕜 g) = diagonal 𝕜 (fun i ↦ f i * (g i)^2) := by
@@ -603,29 +608,30 @@ theorem kronecker_mat (A : HermitianMat m α) (B : HermitianMat n α) :
 
 @[simp]
 theorem zero_kronecker (A : HermitianMat m α) : (0 : HermitianMat n α) ⊗ₖ A = 0 := by
-  ext1; simp
+  ext1; simp only [kronecker_mat, mat_zero, zero_mul, implies_true, Matrix.kroneckerMap_zero_left]
 
 @[simp]
 theorem kronecker_zero (A : HermitianMat m α) : A ⊗ₖ (0 : HermitianMat n α) = 0 := by
-  ext1; simp
+  ext1; simp only [kronecker_mat, mat_zero, mul_zero, implies_true, Matrix.kroneckerMap_zero_right]
 
 variable [DecidableEq m] [DecidableEq n] in
 @[simp]
 theorem kronecker_one_one : (1 : HermitianMat m α) ⊗ₖ (1 : HermitianMat n α) = 1 := by
-  ext1; simp
+  ext1; simp only [kronecker_mat, mat_one, zero_mul, implies_true, mul_zero, mul_one,
+    Matrix.kroneckerMap_one_one]
 
 variable (A B : HermitianMat m α) (C : HermitianMat n α) in
 theorem add_kronecker : (A + B) ⊗ₖ C = A ⊗ₖ C + B ⊗ₖ C := by
-  ext1; simp [Matrix.add_kronecker]
+  ext1; simp only [kronecker_mat, mat_add, Matrix.add_kronecker]
 
 variable (A : HermitianMat m α) (B C : HermitianMat n α) in
 theorem kronecker_add : A ⊗ₖ (B + C) = A ⊗ₖ B + A ⊗ₖ C := by
-  ext1; simp [Matrix.kronecker_add]
+  ext1; simp only [kronecker_mat, mat_add, Matrix.kronecker_add]
 
 lemma kronecker_diagonal [DecidableEq m] [DecidableEq n] (d₁ : m → ℝ) (d₂ : n → ℝ) :
     (diagonal 𝕜 d₁ ⊗ₖ diagonal 𝕜 d₂) = diagonal 𝕜 (fun (i : m × n) => d₁ i.1 * d₂ i.2) := by
   ext1
-  simp [Matrix.diagonal_kronecker_diagonal]
+  simp only [kronecker_mat, diagonal_mat, Matrix.diagonal_kronecker_diagonal, map_mul]
 
 /--
 A ⊗ₖ B always commutes with C ⊗ₖ D if the pairs commute.
@@ -759,7 +765,9 @@ theorem conj_ne_zero [Finite d₂] {A : HermitianMat d 𝕜} {M : Matrix d₂ d 
         M.toEuclideanLin := by
       rintro x ⟨y, rfl⟩
       replace h_contra := congr($(h_contra).mat)
-      simp_all [Matrix.toLpLin_apply, Matrix.mul_assoc]
+      simp_all only [ne_eq, conj_apply_mat, Matrix.mul_assoc, mat_zero, Matrix.toLpLin_mul_same,
+        LinearMap.coe_comp, Function.comp_apply, Matrix.toLpLin_apply, Matrix.mulVec_mulVec,
+        LinearMap.mem_ker, Matrix.zero_mulVec, WithLp.toLp_zero]
     rw [← Matrix.range_mul_conjTranspose_of_ker_le_ker h]
     exact h_range.trans h
   exact hA (range_le_ker_imp_zero h_range)
@@ -797,10 +805,13 @@ theorem ne_zero_iff_ne_zero_spectrum (A : HermitianMat n 𝕜) :
     ext i j
     simp? [Matrix.mul_apply, Matrix.diagonal]
     refine Finset.sum_eq_zero fun x _ ↦ ?_
-    simp [h_nonzero _ <| A.H.spectrum_real_eq_range_eigenvalues.symm ▸ Set.mem_range_self _]
+    simp only [h_nonzero _ <| A.H.spectrum_real_eq_range_eigenvalues.symm ▸ Set.mem_range_self _,
+      map_zero, mul_zero, zero_mul]
   · rintro ⟨x, hx, hx'⟩ h
-    simp [h, spectrum, resolventSet, Algebra.algebraMap_eq_smul_one,
-      hx', Matrix.isUnit_iff_isUnit_det] at hx
+    simp only [spectrum, resolventSet, Algebra.algebraMap_eq_smul_one, h, mat_zero, sub_zero,
+      Matrix.isUnit_iff_isUnit_det, Matrix.det_smul_of_tower, Matrix.det_one, isUnit_iff_ne_zero,
+      ne_eq, smul_eq_zero, pow_eq_zero_iff', one_ne_zero, or_false, not_and, Decidable.not_not,
+      Set.mem_compl_iff, Set.mem_ofPred_eq, hx', IsEmpty.forall_iff, not_true_eq_false] at hx
 
 open scoped Pointwise in
 theorem spectrum_prod

@@ -63,7 +63,7 @@ theorem exists_orthonormal_basis
       hnd
   -- Square roots exist over ℂ (algebraically closed)
   choose s hs using fun i =>
-    IsAlgClosed.exists_eq_mul_self
+    IsAlgClosed.isSquare
       (B (b₀ i) (b₀ i))
   have hs_ne : ∀ i, s i ≠ 0 := fun i hi =>
     hdiag i (by rw [hs i, hi, mul_zero])

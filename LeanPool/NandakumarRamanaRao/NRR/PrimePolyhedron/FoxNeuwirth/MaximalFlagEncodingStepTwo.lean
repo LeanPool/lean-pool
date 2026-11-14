@@ -6,9 +6,11 @@ Authors: Arseniy Akopyan
 module
 
 
-public import LeanPool.NandakumarRamanaRao.NRR.PrimePolyhedron.FoxNeuwirth.MaximalFlagClassification
 public import LeanPool.NandakumarRamanaRao.NRR.PrimePolyhedron.FoxNeuwirth.MaximalFlagSourceCancellation
 public import Mathlib.LinearAlgebra.Matrix.Permutation
+public import LeanPool.NandakumarRamanaRao.NRR.PrimePolyhedron.FoxNeuwirth.MaximalFlagClassification
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # Step 2: the maximal-flag determinant sign

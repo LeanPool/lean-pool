@@ -6,8 +6,9 @@ Authors: Arseniy Akopyan
 module
 
 
-public import Mathlib.GroupTheory.SpecificGroups.Alternating
-public import Mathlib.LinearAlgebra.FiniteDimensional.Basic
+public import LeanPool.NandakumarRamanaRao.NRR.EMP.VariableBody.Phase1Interface
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Positivity.Finset
 public import LeanPool.NandakumarRamanaRao.NRR.BodySpace
 public import LeanPool.NandakumarRamanaRao.NRR.EMP.VariableBody
 public import LeanPool.NandakumarRamanaRao.NRR.Multivalued

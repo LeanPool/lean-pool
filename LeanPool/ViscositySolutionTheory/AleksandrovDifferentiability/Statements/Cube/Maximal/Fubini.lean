@@ -169,7 +169,7 @@ theorem coordinateLineDomain_sourceOpenCube_three_of_mem_sourceOpenCube_one {n :
       simpa [lineDomain, sourceOpenCube, sourceCoordinateVector, coordinateLineBase] using habs
     · have hxj : |x j| < 1 := by
         simpa using hx j
-      have hxj3 : |x j| < 3 := by linarith
+      have hxj3 : |x j| < 3 := by linarith only [hxj]
       simpa [lineDomain, sourceOpenCube, sourceCoordinateVector, coordinateLineBase, hji] using hxj3
 
 /-- Convexity on the source cube restricts to convexity of every coordinate slice over a base in
@@ -354,7 +354,7 @@ theorem CoordinateSliceMaximalFubiniEstimate.coordinate_bound_of_sourceMassBound
       volume (coordinateSliceBadSet (coordinateSliceMaximalBadPredicate μslice) i t) ≤
         ENNReal.ofReal (Ccoord * osc / t) :=
   hfubini fun i y hy => by
-    simpa [mul_assoc] using hmass.lineBadSet_measure_le hmax ht i hy
+    exact hmass.lineBadSet_measure_le hmax ht i hy
 
 /-- Assembly from the per-coordinate Fubini estimate to the concrete localized-maximal total
 bad-set estimate. -/

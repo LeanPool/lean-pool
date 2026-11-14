@@ -9,6 +9,7 @@ module
 public import LeanPool.DavisKahan.DavisKahan.Specialized.FreeBeam.BeamFormSpace
 public import LeanPool.DavisKahan.DavisKahan.Sources.DavisKahan1970.Section9.FreeBeamModeUniqueness
 public import LeanPool.DavisKahan.DavisKahan.Sources.DavisKahan1970.Section9.FreeBeamRootLocalization
+public import Mathlib.Analysis.Normed.Operator.Compact.FredholmAlternative
 public import Mathlib.Tactic
 
 /-!

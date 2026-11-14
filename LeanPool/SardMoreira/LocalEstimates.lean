@@ -10,7 +10,11 @@ public import Mathlib.Analysis.Calculus.LineDeriv.Basic
 public import Mathlib.MeasureTheory.Measure.Haar.OfBasis
 import LeanPool.SardMoreira.LebesgueDensity
 import LeanPool.SardMoreira.ToMathlib.PR32186
+import Mathlib.Analysis.Calculus.Deriv.Comp
+import Mathlib.Analysis.Calculus.FDeriv.Measurable
+import Mathlib.Analysis.Calculus.MeanValue
 import Mathlib.Analysis.Normed.Affine.AddTorsor
+import Mathlib.MeasureTheory.Measure.Lebesgue.EqHaar
 
 /-!
 # LeanPool.SardMoreira.LocalEstimates
@@ -148,7 +152,7 @@ theorem sub_isLittleO_norm_rpow_add_one_of_fderiv_of_density_point [FiniteDimens
       rw [EventuallyEq, eventually_nhdsWithin_iff] at hs
       rcases Metric.eventually_nhds_iff_ball.mp hs with ⟨r, hr₀, hr⟩
       filter_upwards [Ioo_mem_nhdsGT hr₀] with δ ⟨hδ₀, hδr⟩
-      rw [inter_assoc, Measure.measure_toMeasurable_inter_of_sFinite, ← inter_assoc,
+      rw [inter_assoc, Measure.measure_toMeasurable_inter_of_sfinite, ← inter_assoc,
         inter_right_comm, inter_eq_self_of_subset_left (_ : s ∩ _ ⊆ _)]
       · refine fun y hy ↦ hr _ (closedBall_subset_ball hδr hy.2) hy.1
       · exact (measurableSet_eq.preimage (measurable_fderiv _ _)).inter measurableSet_closedBall
@@ -171,8 +175,8 @@ theorem sub_isLittleO_norm_rpow_add_one_of_fderiv_of_density_point [FiniteDimens
     replace hr := ENNReal.mul_lt_of_lt_div hr
     have : μ (closedBall a r ∩ s) ≠ ∞ :=
       measure_ne_top_of_subset inter_subset_left measure_closedBall_lt_top.ne
-    rw [inter_comm, ← sdiff_eq, ← ENNReal.add_le_add_iff_left this, measure_inter_add_sdiff _ hsm,
-      ← tsub_le_iff_right, inter_comm]
+    rw [inter_comm, ← Set.sdiff_eq, ← ENNReal.add_le_add_iff_left this,
+      measure_inter_add_sdiff _ hsm, ← tsub_le_iff_right, inter_comm]
     rw [ENNReal.sub_mul, one_mul] at hr
     exacts [hr.le, fun _ _ ↦ measure_closedBall_lt_top.ne]
   rw [eventually_nhds_iff_ball]

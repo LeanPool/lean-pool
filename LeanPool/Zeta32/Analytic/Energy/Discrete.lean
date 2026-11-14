@@ -334,14 +334,14 @@ theorem nuB_fiber_null (ρ : ℝ → ℝ) (a : ℝ) (w : ℂ) : nuB ρ a {t : �
 
 /-! Pushforwards to `ℂ` -/
 
-theorem integral_prod_map {β₁ β₂ : Measure ℝ} [SFinite β₁] [SFinite β₂] {γ₁ γ₂ : ℝ → ℂ}
+theorem integral_prod_map {β₁ β₂ : Measure ℝ} [SFinite β₂] {γ₁ γ₂ : ℝ → ℂ}
     (h₁ : Measurable γ₁) (h₂ : Measurable γ₂) {f : ℂ × ℂ → ℝ} (hf : Measurable f) :
     ∫ p, f p ∂((β₁.map γ₁).prod (β₂.map γ₂)) = ∫ q, f (γ₁ q.1, γ₂ q.2) ∂(β₁.prod β₂) := by
   rw [Measure.map_prod_map _ _ h₁ h₂,
     integral_map (h₁.prodMap h₂).aemeasurable hf.aestronglyMeasurable]
   rfl
 
-theorem integrable_prod_map {β₁ β₂ : Measure ℝ} [SFinite β₁] [SFinite β₂] {γ₁ γ₂ : ℝ → ℂ}
+theorem integrable_prod_map {β₁ β₂ : Measure ℝ} [SFinite β₂] {γ₁ γ₂ : ℝ → ℂ}
     (h₁ : Measurable γ₁) (h₂ : Measurable γ₂) {f : ℂ × ℂ → ℝ} (hf : Measurable f) :
     Integrable f ((β₁.map γ₁).prod (β₂.map γ₂)) ↔
       Integrable (fun q => f (γ₁ q.1, γ₂ q.2)) (β₁.prod β₂) := by
@@ -349,7 +349,7 @@ theorem integrable_prod_map {β₁ β₂ : Measure ℝ} [SFinite β₁] [SFinite
     integrable_map_measure hf.aestronglyMeasurable (h₁.prodMap h₂).aemeasurable]
   rfl
 
-theorem ae_ne_prod_map {β₁ β₂ : Measure ℝ} [SFinite β₁] [SFinite β₂] {γ₁ γ₂ : ℝ → ℂ}
+theorem ae_ne_prod_map {β₁ β₂ : Measure ℝ} [SFinite β₂] {γ₁ γ₂ : ℝ → ℂ}
     (h₁ : Measurable γ₁) (h₂ : Measurable γ₂) :
     (∀ᵐ p ∂((β₁.map γ₁).prod (β₂.map γ₂)), p.1 ≠ p.2) ↔
       ∀ᵐ q ∂(β₁.prod β₂), γ₁ q.1 ≠ γ₂ q.2 := by

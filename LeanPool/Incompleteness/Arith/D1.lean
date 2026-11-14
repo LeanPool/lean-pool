@@ -10,7 +10,7 @@ public import LeanPool.Incompleteness.Foundation.FirstOrder.Basic.Calculus2
 public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
 import LeanPool.Incompleteness.Arithmetization.Definability.Init
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-import Mathlib.Data.Nat.SuccPred
+import Mathlib.Order.SuccPred.Nat
 
 /-! # D1 -/
 
@@ -154,7 +154,10 @@ lemma quote_derivation_def
 
 @[simp] lemma fstidx_quote
     {Γ : Finset (SyntacticFormula L)} (d : T ⊢₂ Γ) : fstIdx (⌜d⌝ : V) = ⌜Γ⌝ := by
-  induction d <;> simp [quote_derivation_def, codeIn]
+  induction d <;>
+    simp only [quote_derivation_def, codeIn, fstIdx_axL, fstIdx_root, fstIdx_verumIntro,
+      fstIdx_andIntro, fstIdx_orIntro, fstIdx_allIntro, fstIdx_exIntro, fstIdx_wkRule,
+      fstIdx_shiftRule, fstIdx_cutRule]
 
 end Derivation2
 

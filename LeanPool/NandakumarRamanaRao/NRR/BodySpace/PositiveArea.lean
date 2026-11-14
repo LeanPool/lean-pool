@@ -6,9 +6,11 @@ Authors: Arseniy Akopyan
 module
 
 
-public import Mathlib.Tactic
-public import LeanPool.NandakumarRamanaRao.NRR.BodySpace.Compactness
+public import LeanPool.NandakumarRamanaRao.NRR.BodySpace.Topology
+public import LeanPool.NandakumarRamanaRao.NRR.ConvexBody
 public import LeanPool.NandakumarRamanaRao.NRR.BodySpace.AreaContinuity
+public import LeanPool.NandakumarRamanaRao.NRR.BodySpace.Compactness
+import LeanPool.NandakumarRamanaRao.NRR.BodySpace.MembershipStability
 public import LeanPool.NandakumarRamanaRao.NRR.Geometry.ConvexBody.PositiveAreaInterior
 
 /-!

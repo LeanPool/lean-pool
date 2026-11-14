@@ -78,7 +78,7 @@ example {n : ℕ} (hn : 0 < n) :
       (fun x : Fin n → ℝ => expNegInvGlue (Real.sin (x ⟨0, hn⟩))) where
   smooth :=
     expNegInvGlue.contDiff.comp
-      (Real.contDiff_sin.comp (contDiff_apply ℝ ℝ (⟨0, hn⟩ : Fin n)))
+      (Real.contDiff_sin.comp (contDiff_apply ℝ (fun _ => ℝ) (⟨0, hn⟩ : Fin n)))
   periodic := fun x k => by
     change expNegInvGlue (Real.sin ((x + periodicShift n k) ⟨0, hn⟩)) =
          expNegInvGlue (Real.sin (x ⟨0, hn⟩))

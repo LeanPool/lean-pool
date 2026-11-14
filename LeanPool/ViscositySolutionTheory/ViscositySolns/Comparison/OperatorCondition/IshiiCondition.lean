@@ -74,7 +74,7 @@ theorem IshiiOperatorComparisonConditionOn.bound
   rcases hF with ⟨ω, hω, hbound⟩
   refine ⟨ω, hω, ?_⟩
   intro α hα x hx y hy r hr X Y hXY
-  simpa [quadraticPenaltyGradientLeft] using hbound α hα x hx y hy r hr X Y hXY
+  exact hbound α hα x hx y hy r hr X Y hXY
 
 /--
 If the operator difference in the Ishii structural condition is always
@@ -93,7 +93,7 @@ theorem IshiiOperatorComparisonConditionOn.of_nonpositive_difference
     IshiiOperatorComparisonConditionOn C R F := by
   refine OperatorComparisonConditionOn.of_nonpositive_difference ?_
   intro α hα x hx y hy r hr X Y hXY
-  simpa [quadraticPenaltyGradientLeft] using hF α hα x hx y hy r hr X Y hXY
+  exact hF α hα x hx y hy r hr X Y hXY
 
 /--
 Let `ω` be a comparison modulus which is monotone on real numbers. Suppose
@@ -119,7 +119,7 @@ theorem IshiiOperatorComparisonConditionOn.of_norm_bound
     IshiiOperatorComparisonConditionOn C R F := by
   refine OperatorComparisonConditionOn.of_norm_bound hω hmono ?_
   intro α hα x hx y hy r hr X Y hXY
-  simpa [quadraticPenaltyGradientLeft] using hbound α hα x hx y hy r hr X Y hXY
+  exact hbound α hα x hx y hy r hr X Y hXY
 
 /--
 Let `F a`, for `a` in a nonempty finite type, be operators. If every `F a`
@@ -162,7 +162,7 @@ theorem IshiiOperatorComparisonConditionOn.supOperator_of_common_modulus
   refine OperatorComparisonConditionOn.supOperator_of_common_modulus
     (F := F) (matrixRel := IshiiMatrixRelation) hω ?_
   intro a α hα x hx y hy r hr X Y hXY
-  simpa [quadraticPenaltyGradientLeft] using
+  exact
     hbound a α hα x hx y hy r hr X Y hXY
 
 /--
@@ -206,7 +206,7 @@ theorem IshiiOperatorComparisonConditionOn.infOperator_of_common_modulus
   refine OperatorComparisonConditionOn.infOperator_of_common_modulus
     (F := F) (matrixRel := IshiiMatrixRelation) hω ?_
   intro a α hα x hx y hy r hr X Y hXY
-  simpa [quadraticPenaltyGradientLeft] using
+  exact
     hbound a α hα x hx y hy r hr X Y hXY
 
 /--
@@ -274,7 +274,7 @@ theorem ishiiOperatorComparisonConditionOn_of_independent_spatial_degenerateElli
   have hmono : G r (quadraticPenaltyGradientLeft α x y) Y <=
       G r (quadraticPenaltyGradientLeft α x y) X :=
     hG r (quadraticPenaltyGradientLeft α x y) Y X hXYle
-  simpa using sub_nonpos.mpr hmono
+  exact sub_nonpos.mpr hmono
 
 /--
 Let `ω` be a monotone comparison modulus. Suppose that for every `x, y ∈ C`
@@ -371,7 +371,7 @@ theorem ishiiOperatorComparisonConditionOn_affineSecondOrderOperator_of_same_hes
     hG y hy Y X hXYle
   have hcoeff := hbound α hα x hx y hy r hr X Y hXY
   dsimp [affineSecondOrderOperator, quadraticPenaltyGradientLeft] at hcoeff ⊢
-  linarith
+  linarith only [hGYX, hcoeff]
 
 /--
 Let `A` be a positive semidefinite real matrix. Then the constant-coefficient
@@ -395,7 +395,7 @@ theorem ishiiOperatorComparisonConditionOn_const_traceSecondOrderOperator
       (by
         intro r p X Y hYX
         have htrace := trace_mul_antitone_of_posSemidef hA X Y hYX
-        linarith)
+        linarith only [htrace])
 
 /--
 Let `ω` be a comparison modulus. Suppose that:
@@ -443,8 +443,8 @@ theorem ishiiOperatorComparisonConditionOn_traceSecondOrderOperator_of_same_hess
       -Matrix.trace (A y * X) + dotProduct (b y) (α • (x - y)) + c y * r - f y -
           (-Matrix.trace (A x * X) + dotProduct (b x) (α • (x - y)) + c x * r - f x) <=
         ω (α * ‖x - y‖ ^ 2 + ‖x - y‖) := by
-    simpa [quadraticPenaltyGradientLeft] using hcoeff
+    exact hcoeff
   dsimp [traceSecondOrderOperator, affineSecondOrderOperator, traceHessianContribution]
-  linarith
+  linarith only [htrace, hcoeff']
 
 end ViscositySolns

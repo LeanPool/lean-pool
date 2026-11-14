@@ -7,6 +7,7 @@ Authors: OpenAI
 module
 
 public import LeanPool.NavierStokesAndEuler.Euler.CylinderEndpointForcing
+import Mathlib.Analysis.Calculus.ContDiff.Operations
 import LeanPool.NavierStokesAndEuler.Euler.CylinderDirichletRegularity
 import LeanPool.NavierStokesAndEuler.Euler.LpCylinderRectangularRegularity
 

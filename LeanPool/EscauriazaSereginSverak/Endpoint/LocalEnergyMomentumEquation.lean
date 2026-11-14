@@ -172,7 +172,7 @@ theorem smoothMomentumEquation_tested
     (hG i j).of_le (by norm_num)
   have hp1 : ContDiff ℝ (1 : ℕ∞) p := hp.of_le (by norm_num)
   have hφi (i : Fin 3) : ContDiff ℝ (⊤ : ℕ∞) (fun z => φ z i) :=
-    (contDiff_apply ℝ ℝ i).comp hφ
+    (contDiff_apply ℝ (fun _ : Fin 3 => ℝ) i).comp hφ
   have hφi1 (i : Fin 3) : ContDiff ℝ (1 : ℕ∞) (fun z => φ z i) :=
     (hφi i).of_le (by norm_num)
   have hφic (i : Fin 3) : HasCompactSupport (fun z => φ z i) := by

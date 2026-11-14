@@ -6,10 +6,9 @@ Authors: Arseniy Akopyan
 module
 
 
-public import Mathlib.Tactic
-public import LeanPool.NandakumarRamanaRao.NRR.ConvexBody
 public import LeanPool.NandakumarRamanaRao.NRR.PowerDiagram.Defs
 public import LeanPool.NandakumarRamanaRao.NRR.PowerDiagram.CellGeometry
+public import LeanPool.NandakumarRamanaRao.NRR.ConvexBody
 
 /-!
 # `NRR.PowerDiagram.BodyCells` — restricted power cells as sets
