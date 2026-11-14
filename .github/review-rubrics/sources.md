@@ -16,7 +16,7 @@ You usually cannot fetch the source. Judge from what the diff shows: the card's 
 
 - `pass` — citations are consistent with what the project claims, or honestly `unverifiable` with nothing suspicious.
 - `block` — the source demonstrably does not say what the PR says it says, or prior formalization work is knowingly passed off as original.
-- `discuss` — an inconsistency you can point at but not settle from the diff.
+There is no third verdict; decide. An inconsistency you can point at but not settle from the diff is a `block` that names the discrepancy and the citation change that would resolve it.
 
 ## Output
 
@@ -24,7 +24,7 @@ Return a single JSON object:
 
 ```json
 {
-  "verdict": "pass" | "block" | "discuss",
+  "verdict": "pass" | "block",
   "bottom_line": "<one sentence for the maintainer>",
   "source_match": "matches" | "mismatch" | "unverifiable" | "not_a_known_result",
   "findings": [

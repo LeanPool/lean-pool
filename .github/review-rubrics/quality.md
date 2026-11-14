@@ -24,10 +24,10 @@ Patterns that survive a green build:
 
 ## Verdict
 
-This dimension advises; it has no `block`. However bad the code, the worst you say is "a human should look."
+This dimension advises; it has no `block`. However bad the code, the worst you say is `flag`.
 
 - `pass` — competent or better; nothing a maintainer must weigh.
-- `discuss` — slop or debt bad enough that a human should look before merging.
+- `flag` — slop or debt worth fixing. It never blocks merging; the findings are the deliverable.
 
 ## Output
 
@@ -35,7 +35,7 @@ Return a single JSON object:
 
 ```json
 {
-  "verdict": "pass" | "discuss",
+  "verdict": "pass" | "flag",
   "bottom_line": "<one sentence for the maintainer>",
   "code_quality": <int 1-5>,
   "findings": [

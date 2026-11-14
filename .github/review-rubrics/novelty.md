@@ -19,7 +19,7 @@ Not every overlap is duplication. A different proof of a known theorem, a sharpe
 
 - `pass` — the headlines are not already formalized, or the overlap is a genuine extension you have named.
 - `block` — a headline result is already in Mathlib, Tau Ceti, or the pool, named declaration in hand.
-- `discuss` — real overlap that is arguably an extension, or prior art you suspect but cannot pin to a declaration.
+There is no third verdict; decide. Overlap that is arguably an extension is a `pass` when you can name what it adds, otherwise a `block`. Suspected prior art you cannot pin to a declaration is not a `block`; say what you searched.
 
 ## Output
 
@@ -27,7 +27,7 @@ Return a single JSON object:
 
 ```json
 {
-  "verdict": "pass" | "block" | "discuss",
+  "verdict": "pass" | "block",
   "bottom_line": "<one sentence for the maintainer>",
   "already_formalized": "<the Mathlib, Tau Ceti, or pool declaration that already proves a headline — a bare declaration name and nothing else; EMPTY if none found or unchecked>",
   "novelty_note": "<one sentence: what is new here relative to the closest existing work, or what duplicates what>",
