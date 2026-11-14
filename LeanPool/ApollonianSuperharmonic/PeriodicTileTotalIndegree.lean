@@ -1783,6 +1783,7 @@ private theorem hcountBridge :
   intro C T hT hlat D hDmem hsectorAll
   have htiles := LatticeTileGridStructure T hlat
   have hcells : T.cells.Nonempty := htiles.1.1
+  have heuler := LatticeTileGridEulerCount T hlat
   have hreg := LatticeEdgeRegularity C T hT hlat
   let I : GaussianInt := ⟨0, 1⟩
   let cornerBag : Multiset GaussianInt := T.cells.1.bind fun c =>
