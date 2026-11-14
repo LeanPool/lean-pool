@@ -36,7 +36,8 @@ STALE_MESSAGE = (
 )
 CLOSE_MESSAGE = (
     "Closing this PR: it has been open for 21 days. "
-    "Reopen or resubmit it if it is still wanted."
+    "Reopening keeps its age, so it would be closed again: resubmit it as a new "
+    "PR if it is still wanted, or ask a maintainer to add `pinned` before reopening."
 )
 
 
