@@ -53,7 +53,7 @@ theorem contractionStep (hd : d ≠ 0) (hn : 2 ≤ n) (p : HolderTuple n) :
       |T.form f| ≤ (A * Bridge.θu (d := d) p (B * B) + Bridge.C₁u (d := d) p (B * B)) *
         prodNorm p f := by
     intro j hj
-    rw [T.form_eq_zero_of_lpNorm_eq_zero f j (by linarith [p.one_lt j]) hj, abs_zero]
+    rw [T.form_eq_zero_of_lpNorm_eq_zero f j (by linarith only [p.one_lt j]) hj, abs_zero]
     exact hprod0
   by_cases hk : k + 1 < n
   · obtain ⟨σ, hσ, hσσ₀⟩ := hC.extension (k + 1) hk σ₀ hσ₀
@@ -341,10 +341,11 @@ theorem TestFun.exists_abs_lt_pow (f : TestFun d) :
     rw [abs_le]
     constructor
     · have e1 := mul_le_mul_of_nonneg_left (neg_abs_le (P.l i : ℝ)) hpos.le
-      linarith
+      linarith only [h1, h2, e2, e1]
     · have e3 := mul_le_mul_of_nonneg_left
-        (show (P.l i : ℝ) + 1 ≤ |(P.l i : ℝ)| + 1 by linarith [le_abs_self (P.l i : ℝ)]) hpos.le
-      linarith
+        (show (P.l i : ℝ) + 1 ≤ |(P.l i : ℝ)| + 1 by
+          linarith only [le_abs_self (P.l i : ℝ)]) hpos.le
+      linarith only [h2, e2, e3]
   · exact ⟨0, fun x hx => absurd rfl hx⟩
   · rintro g h _ _ ⟨ρ₁, h₁⟩ ⟨ρ₂, h₂⟩
     refine ⟨max ρ₁ ρ₂, fun x hx i => ?_⟩
@@ -532,8 +533,8 @@ theorem GlobalTbHypotheses.abs_form_tupQ_le {T : PerfectCZForm d n} {b : Fin n �
     |T.form (tupQ hb.loc Q k g)| ≤
       B * (3 * Ca + 1 + Ca * B) * Q.vol ^ (1 - 1 / p) * lpNorm (g : (Fin d → ℝ) → ℝ) p := by
   have hV := Q.vol_pos
-  have hp0 : 0 < p := by linarith
-  have hB0 : 0 < B := by linarith
+  have hp0 : 0 < p := by linarith only [hp]
+  have hB0 : 0 < B := zero_lt_one.trans_le hB
   have hgn := lpNorm_nonneg (g : (Fin d → ℝ) → ℝ) p
   set V1 := Q.vol ^ (1 - 1 / p) with hV1
   set Vp := Q.vol ^ (1 / p) with hVp
@@ -558,7 +559,7 @@ theorem GlobalTbHypotheses.abs_form_tupQ_le {T : PerfectCZForm d n} {b : Fin n �
         ≤ B * hardyNorm (h : (Fin d → ℝ) → ℝ) := hb.bmo K hK hrep k h (hsq Q h hs h0)
       _ ≤ B * (Ca * V1 * lpNorm (h : (Fin d → ℝ) → ℝ) p) :=
           mul_le_mul_of_nonneg_left (hatom Q h hs h0) hB0.le
-      _ = _ := by ring
+      _ = _ := by ac_rfl
   -- the decomposition `g = g₀ + [g]_Q 𝟙_Q`
   set c := avg Q (g : (Fin d → ℝ) → ℝ)
   set g₀ : TestFun d := g - c • TestFun.ind Q with hg₀
@@ -574,13 +575,14 @@ theorem GlobalTbHypotheses.abs_form_tupQ_le {T : PerfectCZForm d n} {b : Fin n �
       StoppingData.TestFun.setIntegral_ind_of_subset (subset_refl _)]
   have hg₀0 : MeanZero (g₀ : (Fin d → ℝ) → ℝ) := by
     change TestFun.integralₗ g₀ = 0
-    rw [hg₀, map_sub, map_smul, smul_eq_mul, TestFun.integralₗ_apply, TestFun.integralₗ_apply,
+    rw [hg₀, LinearMap.map_sub, LinearMap.map_smul, smul_eq_mul, TestFun.integralₗ_apply,
+      TestFun.integralₗ_apply,
       hintg, hintQ, sub_self]
   have hc' : |c| ≤ Vm * lpNorm (g : (Fin d → ℝ) → ℝ) p := abs_avg_le Q g hp.le
   have hcabs : |c| * Vp ≤ lpNorm (g : (Fin d → ℝ) → ℝ) p := by
     calc |c| * Vp ≤ Vm * lpNorm (g : (Fin d → ℝ) → ℝ) p * Vp :=
           mul_le_mul_of_nonneg_right hc' hVp0
-      _ = lpNorm (g : (Fin d → ℝ) → ℝ) p * (Vm * Vp) := by ring
+      _ = lpNorm (g : (Fin d → ℝ) → ℝ) p * (Vm * Vp) := by ac_rfl
       _ = lpNorm (g : (Fin d → ℝ) → ℝ) p := by rw [hVmp, mul_one]
   have hg₀n : lpNorm (g₀ : (Fin d → ℝ) → ℝ) p ≤ 2 * lpNorm (g : (Fin d → ℝ) → ℝ) p := by
     calc lpNorm (g₀ : (Fin d → ℝ) → ℝ) p
@@ -596,7 +598,7 @@ theorem GlobalTbHypotheses.abs_form_tupQ_le {T : PerfectCZForm d n} {b : Fin n �
   have hacc := hb.accretive Q k
   have havg0 : avg Q (b k : (Fin d → ℝ) → ℝ) ≠ 0 := fun h => by
     rw [h, abs_zero] at hacc
-    linarith
+    linarith only [hacc]
   have hck1 : |ck| ≤ 1 := by
     rw [hck, abs_inv]
     exact inv_le_one_of_one_le₀ hacc
@@ -611,7 +613,8 @@ theorem GlobalTbHypotheses.abs_form_tupQ_le {T : PerfectCZForm d n} {b : Fin n �
     rw [LocTestFun.coe_trunc, truncate, integral_indicator Q.measurableSet_toSet, avg_mul_vol]
   have hh₁0 : MeanZero (h₁ : (Fin d → ℝ) → ℝ) := by
     change TestFun.integralₗ h₁ = 0
-    rw [hh₁, map_sub, map_smul, smul_eq_mul, TestFun.integralₗ_apply, TestFun.integralₗ_apply,
+    rw [hh₁, LinearMap.map_sub, LinearMap.map_smul, smul_eq_mul, TestFun.integralₗ_apply,
+      TestFun.integralₗ_apply,
       hintQ, hintb, hck, ← mul_assoc, inv_mul_cancel₀ havg0, one_mul, sub_self]
   have hbk : lpNorm ((LocTestFun.trunc (hb.loc k) Q : TestFun d) : (Fin d → ℝ) → ℝ) p ≤ B * Vp :=
     hb.lpNorm_trunc_le hB0.le Q k hp0
@@ -642,10 +645,12 @@ theorem GlobalTbHypotheses.abs_form_tupQ_le {T : PerfectCZForm d n} {b : Fin n �
           rw [← abs_mul]
           exact abs_add_le _ _
       _ ≤ B * Ca * V1 * ((1 + B) * Vp) + 1 * (B * Q.vol) :=
-          add_le_add (h1.trans (mul_le_mul_of_nonneg_left hh₁n (by positivity)))
+          add_le_add (h1.trans (mul_le_mul_of_nonneg_left hh₁n (by
+            exact (mul_nonneg (mul_nonneg (le_of_lt (lt_of_lt_of_le (by norm_num) hB)) hCa)
+              (le_of_lt (Real.rpow_pos_of_pos hV (1 - 1 / p)))))))
             (mul_le_mul hck1 hweak (abs_nonneg _) zero_le_one)
       _ = B * (Ca * (1 + B) + 1) * Q.vol := by
-          rw [show B * Ca * V1 * ((1 + B) * Vp) = B * Ca * (1 + B) * (V1 * Vp) by ring, hV1p]
+          rw [show B * Ca * V1 * ((1 + B) * Vp) = B * Ca * (1 + B) * (V1 * Vp) by ac_rfl, hV1p]
           ring
   -- assembly
   have e : g = g₀ + c • TestFun.ind Q := by rw [hg₀, sub_add_cancel]
@@ -658,11 +663,14 @@ theorem GlobalTbHypotheses.abs_form_tupQ_le {T : PerfectCZForm d n} {b : Fin n �
         exact abs_add_le _ _
     _ ≤ B * Ca * V1 * (2 * lpNorm (g : (Fin d → ℝ) → ℝ) p) +
           (Vm * lpNorm (g : (Fin d → ℝ) → ℝ) p) * (B * (Ca * (1 + B) + 1) * Q.vol) :=
-        add_le_add (h0.trans (mul_le_mul_of_nonneg_left hg₀n (by positivity)))
-          (mul_le_mul hc' hind (abs_nonneg _) (by positivity))
+        add_le_add (h0.trans (mul_le_mul_of_nonneg_left hg₀n (by
+          exact (mul_nonneg (mul_nonneg (le_of_lt (lt_of_lt_of_le (by norm_num) hB)) hCa) (le_of_lt
+            (Real.rpow_pos_of_pos hV (1 - 1 / p)))))))
+          (mul_le_mul hc' hind (abs_nonneg _) (by
+            exact (mul_nonneg (le_of_lt (Real.rpow_pos_of_pos hV (-(1 / p)))) hgn)))
     _ = B * (3 * Ca + 1 + Ca * B) * V1 * lpNorm (g : (Fin d → ℝ) → ℝ) p := by
         rw [show (Vm * lpNorm (g : (Fin d → ℝ) → ℝ) p) * (B * (Ca * (1 + B) + 1) * Q.vol) =
-          B * (Ca * (1 + B) + 1) * lpNorm (g : (Fin d → ℝ) → ℝ) p * (Vm * Q.vol) by ring, hVmQ]
+          B * (Ca * (1 + B) + 1) * lpNorm (g : (Fin d → ℝ) → ℝ) p * (Vm * Q.vol) by ac_rfl, hVmQ]
         ring
 
 /-- **The testing family of the global/local reduction**: `b_{σ,𝐐,σ(l)} = [b_j]_{Q_j}^{-1} b_j
@@ -1045,7 +1053,7 @@ theorem integral_sqFunS (S : Finset (DyadicCube d)) (h : TestFun d) :
   refine Finset.sum_congr rfl fun P _ => ?_
   rw [map_sum]
   refine Finset.sum_congr rfl fun ε _ => ?_
-  rw [map_smul, smul_eq_mul, TestFun.integralₗ_apply,
+  rw [LinearMap.map_smul, smul_eq_mul, TestFun.integralₗ_apply,
     ← setIntegral_eq_integral_of_forall_compl_eq_zero
       (fun x hx => TestFun.ind_supportedOn (P.child ε) x hx),
     StoppingData.TestFun.setIntegral_ind_of_subset (subset_refl _)]
@@ -1301,7 +1309,7 @@ theorem sqrt_add_le' {a b : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b) :
   rw [← Real.sqrt_sq (add_nonneg (Real.sqrt_nonneg a) (Real.sqrt_nonneg b))]
   apply Real.sqrt_le_sqrt
   rw [add_sq, Real.sq_sqrt ha, Real.sq_sqrt hb]
-  nlinarith [mul_nonneg (Real.sqrt_nonneg a) (Real.sqrt_nonneg b)]
+  linarith only [mul_nonneg (Real.sqrt_nonneg a) (Real.sqrt_nonneg b)]
 
 /-- Minkowski's inequality for finite sums (the unweighted case of `sqrt_sum_sq_add_le`):
 `√(∑ (a_i + b_i)²) ≤ √(∑ a_i²) + √(∑ b_i²)`. [PROVED] -/
@@ -1358,14 +1366,14 @@ theorem volume_sqrt_sqFun_gt_le (hd : d ≠ 0) (Q : DyadicCube d) (N : ℕ) (f :
   have hfi : Integrable (f : (Fin d → ℝ) → ℝ) volume := TestFun.integrable f.2
   have hI0 : 0 ≤ ∫ x, |(f : (Fin d → ℝ) → ℝ) x| := integral_nonneg fun x => abs_nonneg _
   have h2d : (0 : ℝ) ≤ 2 ^ d := by positivity
-  have hC : (1 : ℝ) ≤ 4 * 2 ^ d + 1 := by linarith
+  have hC : (1 : ℝ) ≤ 4 * 2 ^ d + 1 := by linarith only [h2d]
   have hsubQ : {x | lam < Real.sqrt ((sqFun Q N f : (Fin d → ℝ) → ℝ) x)} ⊆ Q.toSet := by
     intro x hx
     by_contra hxQ
     have h0 : (sqFun Q N f : (Fin d → ℝ) → ℝ) x = 0 := sqFun_eq_zero hd hxQ
     have hx' : lam < Real.sqrt ((sqFun Q N f : (Fin d → ℝ) → ℝ) x) := hx
     rw [h0, Real.sqrt_zero] at hx'
-    linarith
+    linarith only [hlam, hx']
   by_cases hQ : Q ∈ badTrees (fun x => |(f : (Fin d → ℝ) → ℝ) x|) lam
   · obtain ⟨R, hR, hQR⟩ := hQ
     have hvol := vol_lt_of_mem_badCubes hfi.abs hlam hR.1
@@ -1400,7 +1408,7 @@ theorem volume_sqrt_sqFun_gt_le (hd : d ≠ 0) (Q : DyadicCube d) (N : ℕ) (f :
           ≤ 2 ^ d * lam * (∫ x in Q.toSet, |(f : (Fin d → ℝ) → ℝ) x|) -
               avg Q (f : (Fin d → ℝ) → ℝ) ^ 2 * Q.vol := h1
         _ ≤ 2 ^ d * lam * ∫ x, |(f : (Fin d → ℝ) → ℝ) x| := by
-            linarith [mul_le_mul_of_nonneg_left h2 h4]
+            linarith only [h2, h3, h4, mul_le_mul_of_nonneg_left h2 h4]
     have hG0 : ∀ x, 0 ≤ (sqFunS good f : (Fin d → ℝ) → ℝ) x := sqFunS_nonneg good f
     have hmarkov : volume {x | lam / 2 < Real.sqrt ((sqFunS good f : (Fin d → ℝ) → ℝ) x)} ≤
         ENNReal.ofReal (4 * 2 ^ d * (∫ x, |(f : (Fin d → ℝ) → ℝ) x|) / lam) := by
@@ -1432,7 +1440,7 @@ theorem volume_sqrt_sqFun_gt_le (hd : d ≠ 0) (Q : DyadicCube d) (N : ℕ) (f :
         _ ≤ ENNReal.ofReal (4 * 2 ^ d * (∫ x, |(f : (Fin d → ℝ) → ℝ) x|) / lam) := by
             apply ENNReal.ofReal_le_ofReal
             rw [div_le_div_iff₀ (by positivity) hlam]
-            linarith [mul_le_mul_of_nonneg_right hgood_int hlam.le]
+            linarith only [hlam, hgood_int, mul_le_mul_of_nonneg_right hgood_int hlam.le]
     -- the bad part is supported in the union of the maximal bad cubes
     have hbad_supp : ∀ x, (sqFunS bad f : (Fin d → ℝ) → ℝ) x ≠ 0 → ∃ P ∈ bad, x ∈ P.toSet := by
       intro x hx
@@ -1460,7 +1468,7 @@ theorem volume_sqrt_sqFun_gt_le (hd : d ≠ 0) (Q : DyadicCube d) (N : ℕ) (f :
         intro h0
         have hx' : lam / 2 < Real.sqrt ((sqFunS bad f : (Fin d → ℝ) → ℝ) x) := hx
         rw [h0, Real.sqrt_zero] at hx'
-        linarith
+        linarith only [hlam, hx']
       obtain ⟨P, hP, hxP⟩ := hbad_supp x hx0
       exact Set.mem_biUnion (Finset.mem_image_of_mem R hP) (hPR P hP hxP)
     have hvol_s : ∑ R' ∈ s, R'.vol ≤ (∫ x, |(f : (Fin d → ℝ) → ℝ) x|) / lam := by
@@ -1495,7 +1503,7 @@ theorem volume_sqrt_sqFun_gt_le (hd : d ≠ 0) (Q : DyadicCube d) (N : ℕ) (f :
         exact sqrt_add_le' (sqFunS_nonneg _ _ _) (sqFunS_nonneg _ _ _)
       by_contra hcon
       simp only [Set.mem_union, Set.mem_ofPred_eq, not_or, not_lt] at hcon
-      linarith [hcon.1, hcon.2]
+      linarith only [hx', hle, hcon, hcon.1, hcon.2]
     calc volume {x | lam < Real.sqrt ((sqFun Q N f : (Fin d → ℝ) → ℝ) x)}
         ≤ volume ({x | lam / 2 < Real.sqrt ((sqFunS good f : (Fin d → ℝ) → ℝ) x)} ∪
             {x | lam / 2 < Real.sqrt ((sqFunS bad f : (Fin d → ℝ) → ℝ) x)}) := measure_mono hsub2
@@ -1666,7 +1674,7 @@ theorem volume_sqrt_sqFun_gt_le_trunc (hd : d ≠ 0) {Q : DyadicCube d} {N : ℕ
       exact sqrt_sqFunS_add_le _ big small x
     by_contra hcon
     simp only [Set.mem_union, Set.mem_ofPred_eq, not_or, not_lt] at hcon
-    linarith [hcon.1, hcon.2]
+    linarith only [hx', hle, hcon, hcon.1, hcon.2]
   -- the big part: weak type `(1,1)`
   have hbig_int : Integrable (big : (Fin d → ℝ) → ℝ) volume := TestFun.integrable big.2
   have h1 : volume {x | t / 2 < Real.sqrt ((sqFun Q N big : (Fin d → ℝ) → ℝ) x)} ≤
@@ -1736,7 +1744,7 @@ theorem volume_sqrt_sqFun_gt_le_trunc (hd : d ≠ 0) {Q : DyadicCube d} {N : ℕ
           exact hM
       _ ≤ (∫⁻ x, {x | t < |(h : (Fin d → ℝ) → ℝ) x|}ᶜ.indicator
             (fun x => ‖(h : (Fin d → ℝ) → ℝ) x‖ₑ ^ 2) x) / ENNReal.ofReal ((t / 2) ^ 2) := by
-          gcongr
+          exact (ENNReal.div_le_div hI (le_refl (ENNReal.ofReal ((t / 2) ^ 2))))
       _ = _ := by
           rw [ENNReal.div_eq_inv_mul, ← ENNReal.ofReal_inv_of_pos (by positivity)]
           congr 2
@@ -1755,9 +1763,10 @@ noncomputable def sqConst (d : ℕ) (p : ℝ) : ℝ :=
 
 theorem sqConst_nonneg {p : ℝ} (hp1 : 1 < p) (hp2 : p < 2) : 0 ≤ sqConst d p := by
   unfold sqConst
-  have h1 : (0 : ℝ) ≤ 2 * (4 * 2 ^ d + 1) / (p - 1) := div_nonneg (by positivity) (by linarith)
-  have h2 : (0 : ℝ) ≤ 4 / (2 - p) := div_nonneg (by norm_num) (by linarith)
-  exact mul_nonneg (by linarith) (add_nonneg h1 h2)
+  have h1 : (0 : ℝ) ≤ 2 * (4 * 2 ^ d + 1) / (p - 1) :=
+    div_nonneg (by positivity) (by linarith only [hp1])
+  have h2 : (0 : ℝ) ≤ 4 / (2 - p) := div_nonneg (by norm_num) (by linarith only [hp2])
+  exact mul_nonneg (by linarith only [hp1, hp2]) (add_nonneg h1 h2)
 
 /-- The weighted tail integral used in the square-function interpolation estimate. -/
 private theorem lintegral_weighted_tail (h : (Fin d → ℝ) → ℝ) (hhm : Measurable h)
@@ -1821,25 +1830,26 @@ private theorem lintegral_weighted_tail (h : (Fin d → ℝ) → ℝ) (hhm : Mea
           lintegral_mul_const' _ _ enorm_ne_top]
         have hint : IntegrableOn (fun t : ℝ => 2 * A * t ^ (p - 2)) (Set.Ioo 0 b) volume := by
           have := (intervalIntegral.intervalIntegrable_rpow' (a := 0) (b := b)
-            (by linarith : (-1 : ℝ) < p - 2)).const_mul (2 * A)
+            (by linarith only [hp1] : (-1 : ℝ) < p - 2)).const_mul (2 * A)
           rw [intervalIntegrable_iff_integrableOn_Ioc_of_le hb] at this
           exact this.mono_set Set.Ioo_subset_Ioc_self
         have hK1 : 0 ≤ 2 * A * (b ^ (p - 2 + 1) / (p - 2 + 1)) :=
           mul_nonneg (mul_nonneg (by norm_num) hA)
-            (div_nonneg (Real.rpow_nonneg hb _) (by linarith))
+            (div_nonneg (Real.rpow_nonneg hb _) (by linarith only [hp1]))
         have hK2 : 0 ≤ 2 * A / (p - 1) := div_nonneg (mul_nonneg (by norm_num) hA) hp1'.le
         rw [← ofReal_integral_eq_lintegral_ofReal hint
             (ae_restrict_of_forall_mem measurableSet_Ioo fun t ht => by
               have : 0 < t := ht.1
-              positivity),
+              exact (mul_nonneg (mul_nonneg (by norm_num) hA) (le_of_lt (Real.rpow_pos_of_pos this
+                (p - 2))))),
           ← integral_Ioc_eq_integral_Ioo, ← intervalIntegral.integral_of_le hb,
-          intervalIntegral.integral_const_mul, integral_rpow (Or.inl (by linarith)),
-          Real.zero_rpow (by linarith), sub_zero, Real.enorm_eq_ofReal_abs, ← hb_def,
+          intervalIntegral.integral_const_mul, integral_rpow (Or.inl (by linarith only [hp1])),
+          Real.zero_rpow (by linarith only [hp1]), sub_zero, Real.enorm_eq_ofReal_abs, ← hb_def,
           ← ENNReal.ofReal_mul hK1, ENNReal.ofReal_rpow_of_nonneg hb hp0.le,
           ← ENNReal.ofReal_mul hK2]
         congr 1
         have hfp : b ^ p = b ^ (p - 1) * b := by
-          rw [← Real.rpow_add_one' hb (y := p - 1) (by linarith)]
+          rw [← Real.rpow_add_one' hb (y := p - 1) (by linarith only [hp1])]
           congr 1
           ring
         rw [show p - 2 + 1 = p - 1 by ring, hfp]
@@ -1858,9 +1868,9 @@ theorem lintegral_sqrt_sqFun_rpow_le (hd : d ≠ 0) {Q : DyadicCube d} {N : ℕ}
       ENNReal.ofReal (sqConst d p) * ∫⁻ x, ‖(h : (Fin d → ℝ) → ℝ) x‖ₑ ^ p := by
   obtain ⟨A, hA_def⟩ : ∃ A : ℝ, A = 4 * 2 ^ d + 1 := ⟨_, rfl⟩
   have hA : 0 ≤ A := by rw [hA_def]; positivity
-  have hp0 : 0 < p := by linarith
-  have hp1' : 0 < p - 1 := by linarith
-  have hp2' : 0 < 2 - p := by linarith
+  have hp0 : 0 < p := by linarith only [hp1, hp2]
+  have hp1' : 0 < p - 1 := by linarith only [hp1]
+  have hp2' : 0 < 2 - p := by linarith only [hp2]
   have hhm : Measurable (h : (Fin d → ℝ) → ℝ) := TestFun.measurable h
   have hSm : AEMeasurable (fun x => Real.sqrt ((sqFun Q N h : (Fin d → ℝ) → ℝ) x)) volume :=
     (Real.continuous_sqrt.comp_aestronglyMeasurable
@@ -1913,7 +1923,8 @@ theorem lintegral_sqrt_sqFun_rpow_le (hd : d ≠ 0) {Q : DyadicCube d} {N : ℕ}
           exact volume_sqrt_sqFun_gt_le_trunc hd hs hres ht
       _ = _ := by
           rw [add_mul, mul_right_comm (ENNReal.ofReal (2 * A / t)),
-            mul_right_comm (ENNReal.ofReal (4 / t ^ 2)), ← ENNReal.ofReal_mul (by positivity),
+            mul_right_comm (ENNReal.ofReal (4 / t ^ 2)), ← ENNReal.ofReal_mul (by
+              exact (div_nonneg (mul_nonneg (by norm_num) hA) (le_of_lt ht))),
             ← ENNReal.ofReal_mul (by positivity), e1, e2]
   have hm1 : Measurable fun t : ℝ => ENNReal.ofReal (2 * A * t ^ (p - 2)) * I₁ t :=
     (ENNReal.measurable_ofReal.comp (measurable_const.mul (measurable_id.pow_const _))).mul hmI₁
@@ -1979,7 +1990,7 @@ theorem lintegral_sqrt_sqFun_rpow_le (hd : d ≠ 0) {Q : DyadicCube d} {N : ℕ}
             rw [Set.inter_eq_left.mpr (Set.Ici_subset_Ioi.mpr hbpos),
               ← Measure.restrict_congr_set Ioi_ae_eq_Ici]
             have hint : IntegrableOn (fun t : ℝ => 4 * t ^ (p - 3)) (Set.Ioi b) volume :=
-              (integrableOn_Ioi_rpow_of_lt (by linarith) hbpos).const_mul 4
+              (integrableOn_Ioi_rpow_of_lt (by linarith only [hp2]) hbpos).const_mul 4
             have e : -b ^ (p - 3 + 1) / (p - 3 + 1) = b ^ (p - 2) / (2 - p) := by
               rw [show p - 3 + 1 = p - 2 by ring, neg_div, ← div_neg, neg_sub]
             have hK1 : 0 ≤ 4 * (b ^ (p - 2) / (2 - p)) :=
@@ -1988,8 +1999,8 @@ theorem lintegral_sqrt_sqFun_rpow_le (hd : d ≠ 0) {Q : DyadicCube d} {N : ℕ}
             rw [← ofReal_integral_eq_lintegral_ofReal hint
                 (ae_restrict_of_forall_mem measurableSet_Ioi fun t ht => by
                   have : 0 < t := hbpos.trans ht
-                  positivity),
-              integral_const_mul, integral_Ioi_rpow_of_lt (by linarith) hbpos, e,
+                  exact (le_of_lt (mul_pos (by norm_num) (Real.rpow_pos_of_pos this (p - 3))))),
+              integral_const_mul, integral_Ioi_rpow_of_lt (by linarith only [hp2]) hbpos, e,
               Real.enorm_eq_ofReal_abs, ← hb_def, ← ENNReal.ofReal_pow hb,
               ENNReal.ofReal_rpow_of_nonneg hb hp0.le, ← ENNReal.ofReal_mul hK1,
               ← ENNReal.ofReal_mul hK2]
@@ -2021,7 +2032,8 @@ theorem lintegral_sqrt_sqFun_rpow_le (hd : d ≠ 0) {Q : DyadicCube d} {N : ℕ}
         rw [hJ₁, hJ₂]
     _ = _ := by
         rw [← add_mul, ← mul_assoc,
-          ← ENNReal.ofReal_add (div_nonneg (by positivity) hp1'.le)
+          ← ENNReal.ofReal_add (div_nonneg (by
+            exact (mul_nonneg (by norm_num) hA)) hp1'.le)
             (div_nonneg (by norm_num) hp2'.le),
           ← ENNReal.ofReal_mul hp0.le, sqConst, hA_def]
 
@@ -2048,7 +2060,7 @@ theorem atomBound_of_lt_two (hd : d ≠ 0) {p : ℝ} (hp1 : 1 < p) (hp2 : p < 2)
   refine ⟨sqConst d p ^ (1 / p), Real.rpow_nonneg (sqConst_nonneg hp1 hp2) _,
     fun Q h hs h0 => ?_⟩
   obtain ⟨N, hres⟩ := Bridge.exists_resolution h Q
-  have hp0 : 0 < p := by linarith
+  have hp0 : 0 < p := zero_lt_one.trans hp1
   have hV := Q.vol_pos
   -- `S h = √G` is a dyadic test function
   obtain ⟨S, hS_def⟩ : ∃ S : TestFun d,
@@ -2107,7 +2119,7 @@ theorem atomBound_of_lt_two (hd : d ≠ 0) {p : ℝ} (hp1 : 1 < p) (hp2 : p < 2)
     _ ≤ Q.vol ^ (1 - 1 / p) * lpNorm (S : (Fin d → ℝ) → ℝ) p := hH
     _ ≤ Q.vol ^ (1 - 1 / p) * (sqConst d p ^ (1 / p) * lpNorm (h : (Fin d → ℝ) → ℝ) p) :=
         mul_le_mul_of_nonneg_left hLp (Real.rpow_nonneg hV.le _)
-    _ = sqConst d p ^ (1 / p) * Q.vol ^ (1 - 1 / p) * lpNorm (h : (Fin d → ℝ) → ℝ) p := by ring
+    _ = sqConst d p ^ (1 / p) * Q.vol ^ (1 - 1 / p) * lpNorm (h : (Fin d → ℝ) → ℝ) p := by ac_rfl
 
 /-- **The atom estimate for every `p > 1`.** [PROVED] -/
 theorem atomBound (hd : d ≠ 0) {p : ℝ} (hp : 1 < p) : AtomBound d p := by
@@ -2321,7 +2333,7 @@ theorem abs_form_le_of_constOn_children {T : PerfectCZForm d n} {p : HolderTuple
     (hconst : ∀ j ε, ConstOn (f j : (Fin d → ℝ) → ℝ) (Q.child ε)) :
     |T.form f| ≤ B * 2 ^ (d * n) * prodNorm p f := by
   have hn0 : 0 < n := p.pos
-  have hB0 : (0 : ℝ) ≤ B := by linarith
+  have hB0 : (0 : ℝ) ≤ B := zero_le_one.trans hB
   -- the common volume of the children
   obtain ⟨V, hV⟩ : ∃ V : ℝ, V = Q.vol / 2 ^ d := ⟨_, rfl⟩
   have hVpos : 0 < V := by rw [hV]; exact div_pos Q.vol_pos (by positivity)
@@ -2345,7 +2357,7 @@ theorem abs_form_le_of_constOn_children {T : PerfectCZForm d n} {p : HolderTuple
     unfold prodNorm
     have : ∀ j, lpNorm ((TestFun.ind (Q.child (r j)) : TestFun d) : (Fin d → ℝ) → ℝ) (p.p j) =
         V ^ (1 / p.p j) := fun j => by
-      rw [TestFun.lpNorm_ind _ (by linarith [p.one_lt j]), hVε]
+      rw [TestFun.lpNorm_ind _ (by linarith only [p.one_lt j]), hVε]
     rw [Finset.prod_congr rfl fun j _ => this j, ← Real.rpow_sum_of_pos hVpos, p.sum_one_div,
       Real.rpow_one]
   -- the building blocks: `|Λ(𝟙_{Q_{ε}})| ≤ B |Q_ε|`
@@ -2451,7 +2463,7 @@ theorem form_eq_of_vanishesOn (T : PerfectCZForm d n) {m m' : Fin n → TestFun 
           exact hmean
         · rw [Function.update_self, Finset.piecewise_eq_of_notMem _ _ _ hj]
           exact h j hjne
-      linarith [hsub, hzero]
+      linarith only [hsub, hzero]
   have hfull : (Finset.univ.erase j₀).piecewise m' m = m' := by
     funext j
     by_cases hj : j = j₀
@@ -2844,8 +2856,9 @@ theorem outerLpNorm_two_differences_product_le (p : HolderTuple n)
       Finset.sum_pos (fun j _ => hpos j) hJ
     have hs0 : 0 < (1 / p.p i₁ + 1 / p.p i₂)⁻¹ := inv_pos.mpr hp12
     have hs'0 : 0 < (∑ j ∈ (Finset.univ.erase i₁).erase i₂, 1 / p.p j)⁻¹ := inv_pos.mpr hJpos
-    have hlt1 : 1 / p.p i₁ + 1 / p.p i₂ < 1 := by linarith
-    have hlt2 : ∑ j ∈ (Finset.univ.erase i₁).erase i₂, 1 / p.p j < 1 := by linarith
+    have hlt1 : 1 / p.p i₁ + 1 / p.p i₂ < 1 := by linarith only [hsum_univ, hJpos]
+    have hlt2 : ∑ j ∈ (Finset.univ.erase i₁).erase i₂, 1 / p.p j < 1 := by
+      linarith only [hp12, hsum_univ]
     have hs1 : 1 < (1 / p.p i₁ + 1 / p.p i₂)⁻¹ := by
       rw [lt_inv_comm₀ one_pos hp12, inv_one]
       exact hlt1
@@ -2917,12 +2930,12 @@ theorem sum_block_le (hd : d ≠ 0) {p : HolderTuple n} {B : ℝ}
       C * prodNorm p f := by
   obtain ⟨i₁, hi₁, i₂, hi₂, hne⟩ := Finset.one_lt_card.mp (by omega : 1 < S.card)
   choose Cc hCc0 hCc using fun j => carlesonEmbedding hd (p.p j) (p.one_lt j)
-  have hB0 : (0 : ℝ) ≤ B := by linarith
+  have hB0 : (0 : ℝ) ≤ B := zero_le_one.trans hB
   have hCprod : 0 ≤ ∏ j, Cc j := Finset.prod_nonneg fun j _ => hCc0 j
   have hK₁ : (0 : ℝ) ≤ B * 2 ^ (d * n) * 2 ^ (d * n) := by positivity
   refine ⟨B * 2 ^ (d * n) * 2 ^ (d * n) * (4 * 2 * 2 * 2 ^ n) * ∏ j, Cc j, by positivity, ?_⟩
   intro T hT R N f
-  have hp : ∀ j, 0 < p.p j := fun j => by linarith [p.one_lt j]
+  have hp : ∀ j, 0 < p.p j := fun j => zero_lt_one.trans (p.one_lt j)
   have hi₂' : i₂ ∈ Finset.univ.erase i₁ := Finset.mem_erase.mpr ⟨hne.symm, Finset.mem_univ i₂⟩
   -- the functions on cubes
   set Δ : Fin n → DyadicCube d → ℝ := fun j Q => martDiff Q (f j : (Fin d → ℝ) → ℝ) with hΔ
@@ -2955,7 +2968,7 @@ theorem sum_block_le (hd : d ≠ 0) {p : HolderTuple n} {B : ℝ}
           mul_le_mul_of_nonneg_left h1 (Finset.prod_nonneg fun _ _ => abs_nonneg _)
       _ = B * 2 ^ (d * n) * 2 ^ (d * n) * Q.vol * F Q := by
           rw [← h2]
-          ring
+          ac_rfl
   -- the sum in `ℝ≥0∞` and Proposition 3.6
   have hsum : ENNReal.ofReal (∑ Q ∈ StoppingData.nonleaf N R,
       (∏ j ∈ Sᶜ, |avg Q (f j : (Fin d → ℝ) → ℝ)|) * |T.form (blockTuple Q f S)|) ≤
@@ -3027,7 +3040,7 @@ theorem sum_block_le (hd : d ≠ 0) {p : HolderTuple n} {B : ℝ}
       _ = ENNReal.ofReal (B * 2 ^ (d * n) * 2 ^ (d * n)) *
             (4 * 2 * 2 * (2 : ENNReal) ^ ((Finset.univ.erase i₁).erase i₂).card) * ∏ j, K j := by
           rw [← hprodK]
-          ring
+          ac_rfl
       _ ≤ ENNReal.ofReal (B * 2 ^ (d * n) * 2 ^ (d * n)) * (4 * 2 * 2 * (2 : ENNReal) ^ n) *
             ∏ j, K j :=
           mul_le_mul' (mul_le_mul' le_rfl (mul_le_mul' le_rfl (pow_le_pow_right₀ one_le_two hcard)))
@@ -3035,7 +3048,7 @@ theorem sum_block_le (hd : d ≠ 0) {p : HolderTuple n} {B : ℝ}
       _ = _ := by
           rw [hKprod, hc, ← ENNReal.ofReal_mul hK₁, ← ENNReal.ofReal_mul (by positivity)]
           congr 1
-          ring
+          ac_rfl
   rw [← ENNReal.ofReal_le_ofReal_iff
     (mul_nonneg (mul_nonneg (by positivity) hCprod) (prodNorm_nonneg p f))]
   exact hfinal
@@ -3121,8 +3134,9 @@ theorem psi_meanZero (T : PerfectCZForm d n) (j : Fin n) (Q : DyadicCube d) :
   have e : ∀ ε : Fin d → Bool,
       TestFun.integralₗ ((Q.vol⁻¹ * coefV T j Q ε) • TestFun.ind (Q.child ε)) =
         (Q.vol⁻¹ * (Q.vol / 2 ^ d)) * coefV T j Q ε := fun ε => by
-    rw [map_smul, smul_eq_mul, TestFun.integralₗ_apply, TestFun.integral_ind, vol_child_eq]
-    ring
+    rw [LinearMap.map_smul, smul_eq_mul, TestFun.integralₗ_apply, TestFun.integral_ind,
+      vol_child_eq]
+    ac_rfl
   rw [Finset.sum_congr rfl fun ε _ => e ε, ← Finset.mul_sum, sum_coefV, mul_zero]
 
 theorem psi_constOn_child (T : PerfectCZForm d n) (j : Fin n) (Q : DyadicCube d)
@@ -3182,10 +3196,10 @@ theorem abs_form_oneTuple_le {T : PerfectCZForm d n} {p : HolderTuple n} {B : �
   have hsum : ∑ i ∈ Finset.univ.erase j, 1 / p.p i = 1 - 1 / p.p j := by
     have := Finset.add_sum_erase Finset.univ (fun i => 1 / p.p i) (Finset.mem_univ j)
     rw [p.sum_one_div] at this
-    linarith
+    linarith only [this]
   have hprod : ∏ i ∈ Finset.univ.erase j,
       lpNorm ((TestFun.ind P : TestFun d) : (Fin d → ℝ) → ℝ) (p.p i) = P.vol ^ (1 - 1 / p.p j) := by
-    rw [Finset.prod_congr rfl fun i _ => TestFun.lpNorm_ind P (by linarith [p.one_lt i]),
+    rw [Finset.prod_congr rfl fun i _ => TestFun.lpNorm_ind P (by linarith only [p.one_lt i]),
       ← Real.rpow_sum_of_pos P.vol_pos, hsum]
   rw [hprod] at h
   calc |T.form (oneTuple P j φ)|
@@ -3304,7 +3318,8 @@ theorem integral_sq_psi (T : PerfectCZForm d n) (j : Fin n) (Q : DyadicCube d) :
   have e : ∀ ε : Fin d → Bool,
       TestFun.integralₗ ((Q.vol⁻¹ * coefV T j Q ε) ^ 2 • TestFun.ind (Q.child ε)) =
         (2 ^ d)⁻¹ * Q.vol⁻¹ * coefV T j Q ε ^ 2 := fun ε => by
-    rw [map_smul, smul_eq_mul, TestFun.integralₗ_apply, TestFun.integral_ind, vol_child_eq]
+    rw [LinearMap.map_smul, smul_eq_mul, TestFun.integralₗ_apply, TestFun.integral_ind,
+      vol_child_eq]
     calc (Q.vol⁻¹ * coefV T j Q ε) ^ 2 * (Q.vol / 2 ^ d)
         = (Q.vol⁻¹ * Q.vol) * ((2 ^ d)⁻¹ * Q.vol⁻¹ * coefV T j Q ε ^ 2) := by ring
       _ = _ := by rw [inv_mul_cancel₀ hV0, one_mul]
@@ -3530,7 +3545,8 @@ theorem abs_avg_sub_avg_parent_le {b : (Fin d → ℝ) → ℝ} (hb : b ∈ Test
       mul_zero, sub_zero]
   have hmean : MeanZero (φ : (Fin d → ℝ) → ℝ) := by
     change ∫ x, (φ : (Fin d → ℝ) → ℝ) x = 0
-    rw [← TestFun.integralₗ_apply, hφ, map_sub, map_smul, TestFun.integralₗ_apply,
+    rw [← TestFun.integralₗ_apply, hφ, LinearMap.map_sub, LinearMap.map_smul,
+      TestFun.integralₗ_apply,
       TestFun.integralₗ_apply, TestFun.integral_ind, TestFun.integral_ind, smul_eq_mul,
         Q.vol_parent,
       ← mul_assoc, inv_mul_cancel₀ h2d.ne', one_mul, sub_self]
@@ -3576,7 +3592,7 @@ theorem abs_avg_sub_avg_parent_le {b : (Fin d → ℝ) → ℝ} (hb : b ∈ Test
   have h := hdual Q.parent hQP (by rw [DyadicCube.parent_m]; omega) φ hsupp hmean hconst 1
     zero_le_one hbound
   rw [hint, abs_mul, abs_of_pos hV, mul_one, Q.vol_parent] at h
-  have h' : Q.vol * |avg Q b - avg Q.parent b| ≤ Q.vol * (2 ^ d * K) := by linarith
+  have h' : Q.vol * |avg Q b - avg Q.parent b| ≤ Q.vol * (2 ^ d * K) := by linarith only [h]
   exact le_of_mul_le_mul_left h' hV
 
 /-- Maximal bad cubes occupy at most one quarter of their parent under the dual BMO bound. -/
@@ -3628,10 +3644,11 @@ private theorem jn_stopping_volume {b : (Fin d → ℝ) → ℝ} (hb : b ∈ Tes
       rw [TestFun.coe_ind, Set.indicator_of_notMem fun h => hx (stop_sub Q hQ h), mul_zero]
   have hmean : MeanZero (φ : (Fin d → ℝ) → ℝ) := by
     change ∫ x, (φ : (Fin d → ℝ) → ℝ) x = 0
-    rw [← TestFun.integralₗ_apply, hφ, map_sub, map_sum, map_smul, TestFun.integralₗ_apply,
+    rw [← TestFun.integralₗ_apply, hφ, LinearMap.map_sub, map_sum, LinearMap.map_smul,
+      TestFun.integralₗ_apply,
       TestFun.integral_ind, smul_eq_mul]
     have e : ∀ Q ∈ stop, TestFun.integralₗ (c Q • TestFun.ind Q) = c Q * Q.vol := fun Q _ => by
-      rw [map_smul, smul_eq_mul, TestFun.integralₗ_apply, TestFun.integral_ind]
+      rw [LinearMap.map_smul, smul_eq_mul, TestFun.integralₗ_apply, TestFun.integral_ind]
     rw [Finset.sum_congr rfl e, hs, div_mul_cancel₀ _ hV.ne', sub_self]
   have hconst' : ∀ L : DyadicCube d, L.m ≤ m₀ → ConstOn (φ : (Fin d → ℝ) → ℝ) L := by
     intro L hL
@@ -3653,7 +3670,7 @@ private theorem jn_stopping_volume {b : (Fin d → ℝ) → ℝ} (hb : b ∈ Tes
       · rw [Set.indicator_of_notMem hx, abs_zero, mul_zero]
         exact zero_le_one
     rw [abs_le] at h1 h2 ⊢
-    constructor <;> linarith [h1.1, h1.2, h2.1, h2.2]
+    constructor <;> linarith only [h1, h2, h1.1, h1.2, h2.1, h2.2]
   -- the pairing with `φ` is `∑_Q |∫_Q (b − [b]_P)|`
   have hpair : ∫ x, b x * (φ : (Fin d → ℝ) → ℝ) x =
       ∑ Q ∈ stop, |(∫ x in Q.toSet, b x) - avg P b * Q.vol| := by
@@ -3663,8 +3680,8 @@ private theorem jn_stopping_volume {b : (Fin d → ℝ) → ℝ} (hb : b ∈ Tes
       intro x
       rw [hφx, mul_sub, Finset.mul_sum]
       congr 1
-      · exact Finset.sum_congr rfl fun Q _ => by ring
-      · ring
+      · exact Finset.sum_congr rfl fun Q _ => by ac_rfl
+      · ac_rfl
     have hint : ∀ Q : DyadicCube d,
         Integrable (fun x => b x * ((TestFun.ind Q : TestFun d) : (Fin d → ℝ) → ℝ) x) volume :=
       fun Q => (TestFun.memLp hb 2).integrable_mul (TestFun.memLp (TestFun.ind Q).2 2)
@@ -3678,7 +3695,7 @@ private theorem jn_stopping_volume {b : (Fin d → ℝ) → ℝ} (hb : b ∈ Tes
           = (∑ Q ∈ stop, c Q * Q.vol) * avg P b * (P.vol / P.vol) := by rw [hs]; ring
         _ = ∑ Q ∈ stop, c Q * (avg P b * Q.vol) := by
           rw [div_self hV.ne', mul_one, Finset.sum_mul]
-          exact Finset.sum_congr rfl fun Q _ => by ring
+          exact Finset.sum_congr rfl fun Q _ => by ac_rfl
     rw [e2, ← Finset.sum_sub_distrib]
     exact Finset.sum_congr rfl fun Q _ => by rw [← mul_sub, hcI]
   have hdualφ := hdual P subset_rfl hPm.le φ hsupp hmean hconst' 2 (by norm_num) hbound
@@ -3696,7 +3713,7 @@ private theorem jn_stopping_volume {b : (Fin d → ℝ) → ℝ} (hb : b ∈ Tes
   have h4 : lam * ∑ Q ∈ stop, Q.vol ≤ K * 2 * P.vol :=
     hlow.trans ((le_abs_self _).trans hdualφ)
   rw [hlam] at h4
-  have h5 : 8 * K * ∑ Q ∈ stop, Q.vol ≤ 8 * K * (P.vol / 4) := by linarith
+  have h5 : 8 * K * ∑ Q ∈ stop, Q.vol ≤ 8 * K * (P.vol / 4) := by linarith only [h4]
   exact le_of_mul_le_mul_left h5 (by positivity)
 
 /-- **The stopping-time step of John–Nirenberg**: if the bound holds on all proper subcubes of
@@ -3804,8 +3821,8 @@ theorem jn_step (hd : d ≠ 0) {b : (Fin d → ℝ) → ℝ} (hb : b ∈ TestFun
         rw [← sq_abs]
         exact pow_le_pow_left₀ (abs_nonneg _) (stop_avg Q hQ) 2
       have h3 : (b x - avg P b) ^ 2 ≤ 2 * (b x - avg Q b) ^ 2 + 2 * (avg Q b - avg P b) ^ 2 := by
-        nlinarith [sq_nonneg ((b x - avg Q b) - (avg Q b - avg P b))]
-      linarith [h1, h2, h3, sq_nonneg lam]
+        linarith only [sq_nonneg ((b x - avg Q b) - (avg Q b - avg P b))]
+      linarith only [h1, h2, h3, sq_nonneg lam]
     · have hgood : |b x - avg P b| ≤ lam := by
         obtain ⟨L, hL, hxL⟩ := StoppingData.exists_mem_level N' hx
         have hLm : L.m = m₀ := by rw [StoppingData.m_of_mem_level hL]; omega
@@ -3818,7 +3835,7 @@ theorem jn_step (hd : d ≠ 0) {b : (Fin d → ℝ) → ℝ} (hb : b ∈ TestFun
       have h1 : (b x - avg P b) ^ 2 ≤ lam ^ 2 := by
         rw [← sq_abs]
         exact pow_le_pow_left₀ (abs_nonneg _) hgood 2
-      linarith [Finset.sum_nonneg hnn]
+      linarith only [hnn, h1, Finset.sum_nonneg hnn]
   -- integrate the pointwise bound
   have hint1 : IntegrableOn (fun x => (b x - avg P b) ^ 2) P.toSet volume :=
     TestFun.integrableOn_sq_sub hb _ P
@@ -3851,11 +3868,12 @@ theorem jn_step (hd : d ≠ 0) {b : (Fin d → ℝ) → ℝ} (hb : b ∈ TestFun
       integral_const_mul, setIntegral_const, measureReal_def, Q.volume_toSet,
       ENNReal.toReal_ofReal Q.vol_pos.le, smul_eq_mul]
     have := ih Q (stop_sub Q hQ) (stop_ne Q hQ)
-    linarith
+    linarith only [this]
   have hsum := Finset.sum_le_sum hterm
   rw [← Finset.mul_sum] at hsum
   have hμ2 : (0 : ℝ) ≤ 2 * (jnC d * K ^ 2) + 2 * μ ^ 2 :=
-    add_nonneg (mul_nonneg two_pos.le (mul_nonneg (jnC_pos d).le (sq_nonneg _))) (by positivity)
+    add_nonneg (mul_nonneg two_pos.le (mul_nonneg (jnC_pos d).le (sq_nonneg _))) (by
+      exact (mul_nonneg (by norm_num) (Even.pow_nonneg (even_two_mul 1) μ)))
   calc ∫ x in P.toSet, (b x - avg P b) ^ 2
       ≤ P.vol * lam ^ 2 + ∑ Q ∈ stop,
           ∫ x in P.toSet, Q.toSet.indicator (fun y => 2 * (b y - avg Q b) ^ 2 + 2 * μ ^ 2) x := hI
@@ -4071,9 +4089,9 @@ theorem paraSymbol_jnDual (hd : d ≠ 0) {T : PerfectCZForm d n} {p : HolderTupl
     (hT : T1Testing T p B) (hB : 1 ≤ B) (j : Fin n) (P₀ : DyadicCube d) (N : ℕ) :
     JNDual (paraSymbol T j P₀ N : (Fin d → ℝ) → ℝ) (P₀.m - N) ((2 ^ d)⁻¹ * B) P₀ := by
   intro Q hQP hQm φ hφs hφ0 hφc M hM0 hM
-  have hpj : 0 < p.p j := by linarith [p.one_lt j]
+  have hpj : 0 < p.p j := by linarith only [p.one_lt j]
   have hV := Q.vol_pos
-  have hB0 : (0 : ℝ) ≤ B := by linarith
+  have hB0 : (0 : ℝ) ≤ B := zero_le_one.trans hB
   have h2d : (0 : ℝ) < 2 ^ d := by positivity
   have h1 := abs_form_oneTuple_le hT j Q φ hφs
   rw [form_oneTuple_eq_integral_paraSymbol hd T j hQP hQm hφs hφ0 hφc,
@@ -4088,7 +4106,7 @@ theorem paraSymbol_jnDual (hd : d ≠ 0) {T : PerfectCZForm d n} {p : HolderTupl
     _ ≤ (2 ^ d)⁻¹ * (B * Q.vol ^ (1 - 1 / p.p j) * (M * Q.vol ^ (1 / p.p j))) :=
         mul_le_mul_of_nonneg_left (h1.trans (mul_le_mul_of_nonneg_left h2
           (mul_nonneg hB0 (Real.rpow_nonneg hV.le _)))) (by positivity)
-    _ = (2 ^ d)⁻¹ * B * M * (Q.vol ^ (1 - 1 / p.p j) * Q.vol ^ (1 / p.p j)) := by ring
+    _ = (2 ^ d)⁻¹ * B * M * (Q.vol ^ (1 - 1 / p.p j) * Q.vol ^ (1 / p.p j)) := by ac_rfl
     _ = (2 ^ d)⁻¹ * B * M * Q.vol := by rw [h3]
 
 /-- **The Carleson condition for all exponents**: `∑_{Q ∈ nonleaf N P} β_Q² |Q| ≤ C_d B² |P|`, by
@@ -4214,13 +4232,13 @@ theorem sum_para_le (hd : d ≠ 0) {p : HolderTuple n} {B : ℝ} (hB : 1 ≤ B) 
         (∏ i ∈ ({j} : Finset (Fin n))ᶜ, |avg Q (f i : (Fin d → ℝ) → ℝ)|) *
           |T.form (blockTuple Q f {j})| ≤ C * prodNorm p f := by
   choose Cc hCc0 hCc using fun i => carlesonEmbedding hd (p.p i) (p.one_lt i)
-  have hB0 : (0 : ℝ) ≤ B := by linarith
+  have hB0 : (0 : ℝ) ≤ B := by linarith only [hB]
   have hsB : (0 : ℝ) ≤ Real.sqrt (jnC d) * B := mul_nonneg (Real.sqrt_nonneg _) hB0
   have hCprod : 0 ≤ ∏ i, Cc i := Finset.prod_nonneg fun i _ => hCc0 i
   refine ⟨Real.sqrt (jnC d) * B * (4 * 2 * 2 ^ n) * ∏ i, Cc i, by positivity, ?_⟩
   intro T hT R N f
   obtain ⟨s, hs⟩ := Bridge.exists_kernelScale T p
-  have hp : ∀ i, 0 < p.p i := fun i => by linarith [p.one_lt i]
+  have hp : ∀ i, 0 < p.p i := fun i => by linarith only [p.one_lt i]
   have hpos : ∀ i, 0 < 1 / p.p i := fun i => by have := hp i; positivity
   set E : Fin n → DyadicCube d → ℝ := fun i Q => martAvg Q (f i : (Fin d → ℝ) → ℝ) with hE
   set Δj : DyadicCube d → ℝ := fun Q => martDiff Q (f j : (Fin d → ℝ) → ℝ) with hΔ
@@ -4282,7 +4300,7 @@ theorem sum_para_le (hd : d ≠ 0) {p : HolderTuple n} {B : ℝ} (hB : 1 ≤ B) 
   have hsumJ : ∑ i ∈ Finset.univ.erase j, 1 / p.p i = 1 - 1 / p.p j := by
     have := Finset.add_sum_erase Finset.univ (fun i => 1 / p.p i) (Finset.mem_univ j)
     rw [p.sum_one_div] at this
-    linarith
+    linarith only [this]
   have hJpos : 0 < ∑ i ∈ Finset.univ.erase j, 1 / p.p i := by
     rw [hsumJ, sub_pos, div_lt_one (hp j)]
     exact p.one_lt j
@@ -4293,7 +4311,7 @@ theorem sum_para_le (hd : d ≠ 0) {p : HolderTuple n} {B : ℝ} (hB : 1 ≤ B) 
     exact lt_irrefl _ hJpos
   have hJlt : ∑ i ∈ Finset.univ.erase j, 1 / p.p i < 1 := by
     rw [hsumJ]
-    linarith [hpos j]
+    linarith only [hpos, hpos j]
   -- Hölder for `∏_{i ≠ j} E_i` in `L^·(S_∞)`
   have hBnd := outerLpNorm_prod_sizeInf_le p.p hp E K hKfin hEK _ hJne hJlt.le
   -- Hölder with the `L^∞(S₂)` factor `β`
@@ -4308,7 +4326,7 @@ theorem sum_para_le (hd : d ≠ 0) {p : HolderTuple n} {B : ℝ} (hB : 1 ≤ B) 
   have hrr : 1 / (∑ i ∈ Finset.univ.erase j, 1 / p.p i)⁻¹ + 1 / p.p j = 1 := by
     simp only [one_div, inv_inv]
     simp only [one_div] at hsumJ
-    linarith
+    linarith only [hsumJ]
   have hAfin : outerLpNorm sizeInf (∑ i ∈ Finset.univ.erase j, 1 / p.p i)⁻¹
       (∏ i ∈ Finset.univ.erase j, E i) ≠ ⊤ :=
     ne_top_of_le_ne_top (ENNReal.mul_ne_top (ENNReal.pow_ne_top ENNReal.ofNat_ne_top)
@@ -4499,7 +4517,7 @@ theorem form_eq_avg_mul_of_vanishes (T : PerfectCZForm d n) (m : Fin n → TestF
     · rw [Function.update_self]
       change ∫ x, ((m i - avg P (m i : (Fin d → ℝ) → ℝ) • TestFun.ind P : TestFun d) :
         (Fin d → ℝ) → ℝ) x = 0
-      rw [← TestFun.integralₗ_apply, map_sub, map_smul, TestFun.integralₗ_apply,
+      rw [← TestFun.integralₗ_apply, LinearMap.map_sub, LinearMap.map_smul, TestFun.integralₗ_apply,
         TestFun.integralₗ_apply, TestFun.integral_ind, smul_eq_mul,
         ← setIntegral_eq_integral_of_forall_compl_eq_zero (fun x hx => hs x hx), ← avg_mul_vol,
         sub_self]
