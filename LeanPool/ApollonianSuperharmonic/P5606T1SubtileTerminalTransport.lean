@@ -88,7 +88,7 @@ theorem P5606T1SubtileTerminalTransport
   obtain ⟨delta, b, b', sn, hphase, hsn, hTn, hUn, hpn, hp'n,
       hcn, hrn, hin, hcompatn⟩ :=
     SubtileLatticeAdjacentPackingSymmetryTransport w r hproper (i - a) s
-      (by simpa only [hri] using hpos) T U h k p p'
+      T U h k p p'
       (by simpa only [hr0] using hT) (by simpa only [hri] using hU) hp hp'
       (by simpa only [hr0, hri] using hc)
       (by simpa only [hr0, hri] using hr)

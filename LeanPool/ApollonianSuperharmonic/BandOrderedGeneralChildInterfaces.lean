@@ -196,65 +196,6 @@ private theorem τmem :
   intro τ
   simp [τ]
 
-private theorem patchFor :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C₀ :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
-            C₀ T),
-        let K : Int → Int → Finset PeriodicSubtileIndex := fun m n ↦
-          {⟨.A, m, n⟩, ⟨.B, m, n⟩, ⟨.C, m, n⟩,
-            ⟨.D, m, n⟩, ⟨.E, m, n⟩, ⟨.F, m, n⟩}
-        let τ : Finset (Int × Int) := {(0, 0), (0, 1), (1, 1)}
-        (∀ (τ : Finset (Int × Int)), τ ∈ ({{((0 : ℤ), (0 : ℤ)), ((1 : ℤ), (0 : ℤ)), ((0 : ℤ),
-            (-1 : ℤ))}, {((0 : ℤ),
-            (0 : ℤ)), ((0 : ℤ), (1 : ℤ)), ((1 : ℤ), (1 : ℤ))}, {((0 : ℤ), (0 : ℤ)), ((-1 : ℤ),
-            (-1 : ℤ)), ((-1 : ℤ), (0 : ℤ))}} : Finset (Finset (Int × Int))) → ∀ (σ : Finset (Int
-                × Int)), σ ∈ τ.powerset → σ.Nonempty → ∃ (patch :
-            FiniteInducedTilePatch cert.modified.plane cert.modified.tile), (patch.indices =
-            σ.biUnion fun (mn : ℤ × ℤ) => (K mn.1 mn.2)) ∧ ∀ (x : LatticeCell), x ∈
-                patch.unionTile.cells ↔ ∃ mn ∈ σ,
-            ∃ a ∈ (K mn.1 mn.2), x ∈ (cert.modified.tile a).cells) → ((τ ∈ ({ {(0, 0),
-            (1, 0), (0, -1)}, {(0, 0), (0, 1), (1, 1)}, {(0, 0), (-1, -1), (-1, 0)}} : Finset
-            (Finset (Int × Int)))) → (∀ (σ : Finset (Int × Int)), (σ ⊆ τ) → ((σ.Nonempty) → (∃ p
-            : FiniteInducedTilePatch cert.modified.plane cert.modified.tile, p.indices =
-            σ.biUnion (fun mn => K mn.1 mn.2) ∧ ∀ x, x ∈ p.unionTile.cells ↔ ∃ mn ∈ σ, ∃ a ∈ K
-            mn.1 mn.2, x ∈ (cert.modified.tile a).cells)))) ) := by
-  classical
-  intro q cfg C₀ T cert K τ aggregate' τmem σ hσ hne
-  exact aggregate' τ τmem σ (Finset.mem_powerset.mpr hσ) hne
-
-private theorem patchForAt :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C₀ :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
-            C₀ T),
-        let K : Int → Int → Finset PeriodicSubtileIndex := fun m n ↦
-          {⟨.A, m, n⟩, ⟨.B, m, n⟩, ⟨.C, m, n⟩,
-            ⟨.D, m, n⟩, ⟨.E, m, n⟩, ⟨.F, m, n⟩}
-        (∀ (τ : Finset (Int × Int)), τ ∈ ({{((0 : ℤ), (0 : ℤ)), ((1 : ℤ), (0 : ℤ)), ((0 : ℤ),
-            (-1 : ℤ))}, {((0 : ℤ),
-            (0 : ℤ)), ((0 : ℤ), (1 : ℤ)), ((1 : ℤ), (1 : ℤ))}, {((0 : ℤ), (0 : ℤ)), ((-1 : ℤ),
-            (-1 : ℤ)), ((-1 : ℤ), (0 : ℤ))}} : Finset (Finset (Int × Int))) → ∀ (σ : Finset (Int
-                × Int)), σ ∈ τ.powerset → σ.Nonempty → ∃ (patch :
-            FiniteInducedTilePatch cert.modified.plane cert.modified.tile), (patch.indices =
-            σ.biUnion fun (mn : ℤ × ℤ) => (K mn.1 mn.2)) ∧ ∀ (x : LatticeCell), x ∈
-                patch.unionTile.cells ↔ ∃ mn ∈ σ,
-            ∃ a ∈ (K mn.1 mn.2), x ∈ (cert.modified.tile a).cells) → (∀ (ρ : Finset
-            (Int × Int)), ∀ (σ : Finset (Int × Int)), (ρ ∈ ({
-          {(0, 0), (1, 0), (0, -1)},
-          {(0, 0), (0, 1), (1, 1)},
-          {(0, 0), (-1, -1), (-1, 0)}} : Finset (Finset (Int × Int)))) → ((σ ⊆ ρ) → ((σ.Nonempty)
-              → (∃ p : FiniteInducedTilePatch cert.modified.plane cert.modified.tile, p.indices =
-              σ.biUnion (fun mn => K mn.1 mn.2) ∧ ∀ x, x ∈ p.unionTile.cells ↔ ∃ mn ∈ σ, ∃ a ∈ K
-              mn.1 mn.2, x ∈ (cert.modified.tile a).cells)))) ) := by
-  classical
-  intro q cfg C₀ T cert K aggregate' ρ σ hρ hσ hne
-  exact aggregate' ρ hρ σ (Finset.mem_powerset.mpr hσ) hne
-
 private theorem blockEq :
     (by
       classical
@@ -1206,9 +1147,9 @@ theorem BandOrderedGeneralChildInterfaces
         p.indices = σ.biUnion (fun mn => K mn.1 mn.2) ∧
         ∀ x, x ∈ p.unionTile.cells ↔
           ∃ mn ∈ σ, ∃ a ∈ K mn.1 mn.2, x ∈ (cert.modified.tile a).cells :=
-              ChildInterfaceGeometry.patchFor q cfg C₀ T cert aggregate'
-                  (ChildInterfaceGeometry.τmem) σ hσ hne
-  have patchForAt := ChildInterfaceGeometry.patchForAt q cfg C₀ T cert aggregate'
+              aggregate' τ ChildInterfaceGeometry.τmem σ (Finset.mem_powerset.mpr hσ) hne
+  have patchForAt := fun (ρ σ : Finset (Int × Int)) hρ hσ hne =>
+    aggregate' ρ hρ σ (Finset.mem_powerset.mpr hσ) hne
   let blockTile (m n : Int) : ProtoTile :=
     ⟨(K m n).biUnion (fun a => (cert.modified.tile a).cells), 0⟩
   have blockEq (m n : Int) : (blockTile m n).cells =

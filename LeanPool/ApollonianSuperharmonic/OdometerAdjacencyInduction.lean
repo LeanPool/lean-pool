@@ -506,7 +506,7 @@ theorem OdometerAdjacencyInduction :
     rw [← hparent] at hk
     obtain ⟨g,hcanon⟩ := P5491T1ExceptionalPresentation Q hQ he
     obtain ⟨neg,r,t,s',_,_,hh',hk',hr,ht,hc',ha',hb',hcompat⟩ :=
-      SubtileLatticeAdjacentPackingSymmetryTransport g Q hQ i s hpos
+      SubtileLatticeAdjacentPackingSymmetryTransport g Q hQ i s
         T S h k p q hh hk hp hq hc ha hb
     apply hcompat.mp
     have hpos' : 0 < ((BandPackingSymmetryQuadrupleAction g Q)

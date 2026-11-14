@@ -950,8 +950,6 @@ theorem BandOrderedGeneralSubtileNormalizationCertificateExists
   rcases hadj with
     ⟨hO₀, hOᵢ, p₀', pᵢ', hp₀', hpᵢ', q', i', s', hq', hq₀', hqᵢ',
       hcentroid', hslopex', hslopey'⟩
-  have hparentPos : 0 < Cᵢ.1.1.1 := by
-    exact Cᵢ.2
   obtain ⟨r, g, hregime⟩ := BandRegimeClassification q hq
   let qrot : Fin 4 → CircleCoordinates :=
     ![q 0, q r.succ, q (r + 1).succ, q (r + 2).succ]
@@ -990,7 +988,6 @@ theorem BandOrderedGeneralSubtileNormalizationCertificateExists
       hO₀bar, hOᵢbar, hp₀bar, hpᵢbar, hcentroidBar,
       hslopexBar, hslopeyBar, hcompatBar⟩ :=
     SubtileLatticeAdjacentPackingSymmetryTransport g qrot hqrot irot s
-      (by simpa [hrotParent, hqᵢ] using hparentPos)
       T₀ Tᵢ h₀ hᵢ p₀ pᵢ hO₀rot hOᵢrot hslope₀ hslopeᵢ
       hcentroidRot hslopexRot hslopeyRot
   let reverse := BandPackingSymmetryReversesOrientation g

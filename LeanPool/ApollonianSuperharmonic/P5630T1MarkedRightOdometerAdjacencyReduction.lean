@@ -79,20 +79,6 @@ private theorem hfixedOdometer :
   rw [bundle.normalized_circle_eq, ← hfixedCircleEq]
   exact bundle.normalized_fixed_odometer
 
-private theorem hparentPositive :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (T : ProtoTile), ∀ (T₀ : ProtoTile), ∀ (h : PartialOdometer), ∀ (h₀
-            : PartialOdometer), ∀ (x : GaussianInt), ∀ (bundle :
-            BandOrderedGeneralNormalizedOccurrenceBundle C C T T₀ h h₀ x), ∀ (C' : BandCircle),
-            (bundle.normalizedPresentation bundle.selectedSlot.succ = C'.1.1) → (0 <
-            (bundle.normalizedPresentation bundle.selectedSlot.succ).1) ) := by
-  classical
-  intro C T T₀ h h₀ x bundle C' hq'
-  rw [hq']
-  exact C'.property
-
 private theorem hinverseCoordinate :
     (by
       classical
@@ -168,35 +154,13 @@ private theorem hsubInverse :
       classical
       exact
         ∀ (C : BandCircle), ∀ (T : ProtoTile), ∀ (T₀ : ProtoTile), ∀ (h : PartialOdometer), ∀ (h₀
-            : PartialOdometer), ∀ (x : GaussianInt), ((∀ (g : BandPackingSymmetry), ∀ (C :
+            : PartialOdometer), ∀ (x : GaussianInt), (∀ (g : BandPackingSymmetry), ∀ (C :
             CircleCoordinates), ∀ (C' : CircleCoordinates), ∀ (T : ProtoTile), ∀ (T' :
             ProtoTile), ∀ (h : PartialOdometer), ∀ (h' : PartialOdometer), TileSubodometer C C' T
             T' h h' ↔ TileSubodometer (BandPackingSymmetryCircleAction g C)
             (BandPackingSymmetryCircleAction g C') (BandPackingSymmetryTileAction g T)
             (BandPackingSymmetryTileAction g T') (BandPackingSymmetryPartialOdometerAction g h)
-            (BandPackingSymmetryPartialOdometerAction g h')) ∧ (∀ (g : BandPackingSymmetry), ∀ (x
-            : GaussianInt), ∀ (T : ProtoTile), ∀ (U : ProtoTile), (∀ (j : Fin (4 : ℕ)),
-            LatticeVertexIncidentCell x j ∈ T.cells ∨ LatticeVertexIncidentCell x j ∈ U.cells) ↔
-            ∀ (j : Fin (4 : ℕ)), LatticeVertexIncidentCell (BandPackingSymmetryVectorAction g x)
-            j ∈ (BandPackingSymmetryTileAction g T).cells ∨ LatticeVertexIncidentCell
-            (BandPackingSymmetryVectorAction g x) j ∈ (BandPackingSymmetryTileAction g U).cells)
-            ∧ ∀ (g : BandPackingSymmetry), ∀ (q : Fin (4 : ℕ) → CircleCoordinates),
-            ProperBandQuadruple q → ∀ (i : Fin (3 : ℕ)), ∀ (s : Fin (4 : ℕ)), ∀ (delta : Bool),
-            BandPackingSymmetryScopedPhase g q delta → ∀ (T : ProtoTile), ∀ (x : GaussianInt),
-        let q' := BandPackingSymmetryQuadrupleAction g q;
-        let sigma := fun (j : Fin (3 : ℕ)) => if BandPackingSymmetryReversesOrientation g = true
-            then -j else j;
-        let s' := if BandPackingSymmetryReversesOrientation g = true then -s - (1 : Fin (4 : ℕ))
-            + if delta = true then (2 : Fin (4 : ℕ)) else (0 : Fin (4 : ℕ)) else s + if delta =
-            true then (2 : Fin (4 : ℕ)) else (0 : Fin (4 : ℕ));
-        let oldRight := TileTranslation T ((⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ^ (↑s : ℕ) * if
-            Even (↑s : ℕ) then BandVectors.1 (q (0 : Fin (4 : ℕ))) (q i.succ) else BandVectors.1
-            (q i.succ) (q (0 : Fin (4 : ℕ))));
-        let newRight := TileTranslation (BandPackingSymmetryTileAction g T) ((⟨(0 : ℤ), (1 : ℤ)⟩
-            : GaussianInt) ^ (↑s' : ℕ) * if Even (↑s' : ℕ) then BandVectors.1 (q' (0 : Fin (4 :
-            ℕ))) (q' (sigma i).succ) else BandVectors.1 (q' (sigma i).succ) (q' (0 : Fin (4 :
-            ℕ)))); BandPackingSymmetryTileAction g oldRight = newRight ∧ (x ∈ FootprintVertices
-            oldRight ↔ BandPackingSymmetryVectorAction g x ∈ FootprintVertices newRight)) → (∀
+            (BandPackingSymmetryPartialOdometerAction g h')) → (∀
             (bundle : BandOrderedGeneralNormalizedOccurrenceBundle C C T T₀ h h₀ x), ∀ (C' :
             BandCircle), ∀ (ginv : BandPackingSymmetry), (∀ (C_1 : CircleCoordinates),
             BandPackingSymmetryCircleAction ginv (BandPackingSymmetryCircleAction bundle.symmetry
@@ -224,11 +188,11 @@ private theorem hsubInverse :
             (BandPackingSymmetryPartialOdometerAction bundle.symmetry h) selectedFunction) →
             (TileSubodometer C.1.1 inverseCircle.1.1 T T' h h')))))) ) := by
   classical
-  intro C T T₀ h h₀ x markedData bundle C' ginv hcircleL htileL hfunL inversePresentation
+  intro C T T₀ h h₀ x subodometerCovariance bundle C' ginv hcircleL htileL hfunL inversePresentation
       inverseSlot hinverseProper hinversePositive inverseCircle hinverseCircle selectedSupport
       selectedFunction T' h' hsubNormalized
   have htransport :=
-    (markedData.1 ginv (BandPackingSymmetryCircleAction bundle.symmetry C.1.1)
+    (subodometerCovariance ginv (BandPackingSymmetryCircleAction bundle.symmetry C.1.1)
       C'.1.1 (BandPackingSymmetryTileAction bundle.symmetry T) selectedSupport
       (BandPackingSymmetryPartialOdometerAction bundle.symmetry h)
       selectedFunction).mp hsubNormalized
@@ -767,7 +731,6 @@ theorem P5630T1MarkedRightOdometerAdjacencyReduction :
   have inverseAdjacency :=
     SubtileLatticeAdjacentPackingSymmetryTransport ginv
       bundle.normalizedPresentation hq bundle.selectedSlot s
-          (MarkedRightAdjacencyGeometry.hparentPositive C T T₀ h h₀ x bundle C' hq')
       bundle.normalizedFixed (bundle.pieces bundle.selectedSlot bundle.selectedSign)
       bundle.normalizedFixedFunction
       (bundle.functions bundle.selectedSlot bundle.selectedSign)
@@ -803,7 +766,8 @@ theorem P5630T1MarkedRightOdometerAdjacencyReduction :
   let selectedFunction := bundle.functions bundle.selectedSlot bundle.selectedSign
   let T' := BandPackingSymmetryTileAction ginv selectedSupport
   let h' := BandPackingSymmetryPartialOdometerAction ginv selectedFunction
-  have hsubInverse := MarkedRightAdjacencyGeometry.hsubInverse C T T₀ h h₀ x markedData bundle C'
+  have hsubInverse := MarkedRightAdjacencyGeometry.hsubInverse C T T₀ h h₀ x (markedData.1) bundle
+      C'
       ginv hcircleL htileL hfunL hinverseProper hinversePositive hinverseCircle
       (MarkedRightAdjacencyGeometry.hsubNormalized C T T₀ h h₀ x bundle C' hsub hnorm)
   have inverseDomain := MarkedRightAdjacencyGeometry.inverseDomain C T T₀ h h₀ x bundle ginv hvecL

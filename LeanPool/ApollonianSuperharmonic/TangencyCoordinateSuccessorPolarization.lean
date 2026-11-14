@@ -311,24 +311,6 @@ private theorem polarizationCase032 (q : Fin 4 → CircleCoordinates)
     SuccessorPolarization.dot, SuccessorPolarization.delta, pairPolarization,
       successorQuadruple]; ring
 
-private theorem polarizationCase102 (q : Fin 4 → CircleCoordinates)
-    (hn : TangencyCoordinateNormLaw q) (hp : TangencyCoordinatePolarizationLaw q) :
-    pairPolarization (successorQuadruple q) 1 0 2 := by
-  convert SuccessorPolarization.noncommon q hn hp 2 0 3 (by decide) (by decide) (by decide) (by
-      decide)
-    (by decide) (by decide) using 1; simp [SuccessorPolarization.c, SuccessorPolarization.w,
-    SuccessorPolarization.dot, SuccessorPolarization.delta, pairPolarization,
-      successorQuadruple]; ring
-
-private theorem polarizationCase103 (q : Fin 4 → CircleCoordinates)
-    (hn : TangencyCoordinateNormLaw q) (hp : TangencyCoordinatePolarizationLaw q) :
-    pairPolarization (successorQuadruple q) 1 0 3 := by
-  convert SuccessorPolarization.noncommon q hn hp 3 0 2 (by decide) (by decide) (by decide) (by
-      decide)
-    (by decide) (by decide) using 1; simp [SuccessorPolarization.c, SuccessorPolarization.w,
-    SuccessorPolarization.dot, SuccessorPolarization.delta, pairPolarization,
-      successorQuadruple]; ring
-
 private theorem polarizationCase120 (q : Fin 4 → CircleCoordinates)
     (hn : TangencyCoordinateNormLaw q) (hp : TangencyCoordinatePolarizationLaw q) :
     pairPolarization (successorQuadruple q) 1 2 0 := by
@@ -353,36 +335,6 @@ private theorem polarizationCase132 (q : Fin 4 → CircleCoordinates)
     pairPolarization (successorQuadruple q) 1 3 2 := by
   exact hp 0 3 2 (by decide) (by decide) (by decide)
 
-private theorem polarizationCase201 (q : Fin 4 → CircleCoordinates)
-    (hn : TangencyCoordinateNormLaw q) (hp : TangencyCoordinatePolarizationLaw q) :
-    pairPolarization (successorQuadruple q) 2 0 1 := by
-  convert SuccessorPolarization.noncommon q hn hp 0 2 3 (by decide) (by decide) (by decide) (by
-      decide)
-    (by decide) (by decide) using 1; simp [SuccessorPolarization.c, SuccessorPolarization.w,
-    SuccessorPolarization.dot, SuccessorPolarization.delta, pairPolarization,
-      successorQuadruple]; ring
-
-private theorem polarizationCase203 (q : Fin 4 → CircleCoordinates)
-    (hn : TangencyCoordinateNormLaw q) (hp : TangencyCoordinatePolarizationLaw q) :
-    pairPolarization (successorQuadruple q) 2 0 3 := by
-  convert SuccessorPolarization.noncommon q hn hp 3 2 0 (by decide) (by decide) (by decide) (by
-      decide)
-    (by decide) (by decide) using 1; simp [SuccessorPolarization.c, SuccessorPolarization.w,
-    SuccessorPolarization.dot, SuccessorPolarization.delta, pairPolarization,
-      successorQuadruple]; ring
-
-private theorem polarizationCase210 (q : Fin 4 → CircleCoordinates)
-    (hn : TangencyCoordinateNormLaw q) (hp : TangencyCoordinatePolarizationLaw q) :
-    pairPolarization (successorQuadruple q) 2 1 0 := by
-  convert SuccessorPolarization.common q hn hp 2 0 3 (by decide) (by decide) (by decide) (by decide)
-    (by decide) (by decide) using 1; (try simp [SuccessorPolarization.c, SuccessorPolarization.w,
-    SuccessorPolarization.dot, pairPolarization, successorQuadruple]); ring
-
-private theorem polarizationCase213 (q : Fin 4 → CircleCoordinates)
-    (hp : TangencyCoordinatePolarizationLaw q) :
-    pairPolarization (successorQuadruple q) 2 1 3 := by
-  exact hp 2 0 3 (by decide) (by decide) (by decide)
-
 private theorem polarizationCase230 (q : Fin 4 → CircleCoordinates)
     (hn : TangencyCoordinateNormLaw q) (hp : TangencyCoordinatePolarizationLaw q) :
     pairPolarization (successorQuadruple q) 2 3 0 := by
@@ -395,47 +347,9 @@ private theorem polarizationCase231 (q : Fin 4 → CircleCoordinates)
     pairPolarization (successorQuadruple q) 2 3 1 := by
   exact hp 2 3 0 (by decide) (by decide) (by decide)
 
-private theorem polarizationCase301 (q : Fin 4 → CircleCoordinates)
-    (hn : TangencyCoordinateNormLaw q) (hp : TangencyCoordinatePolarizationLaw q) :
-    pairPolarization (successorQuadruple q) 3 0 1 := by
-  convert SuccessorPolarization.noncommon q hn hp 0 3 2 (by decide) (by decide) (by decide) (by
-      decide)
-    (by decide) (by decide) using 1; simp [SuccessorPolarization.c, SuccessorPolarization.w,
-    SuccessorPolarization.dot, SuccessorPolarization.delta, pairPolarization,
-      successorQuadruple]; ring
-
-private theorem polarizationCase302 (q : Fin 4 → CircleCoordinates)
-    (hn : TangencyCoordinateNormLaw q) (hp : TangencyCoordinatePolarizationLaw q) :
-    pairPolarization (successorQuadruple q) 3 0 2 := by
-  convert SuccessorPolarization.noncommon q hn hp 2 3 0 (by decide) (by decide) (by decide) (by
-      decide)
-    (by decide) (by decide) using 1; simp [SuccessorPolarization.c, SuccessorPolarization.w,
-    SuccessorPolarization.dot, SuccessorPolarization.delta, pairPolarization,
-      successorQuadruple]; ring
-
-private theorem polarizationCase310 (q : Fin 4 → CircleCoordinates)
-    (hn : TangencyCoordinateNormLaw q) (hp : TangencyCoordinatePolarizationLaw q) :
-    pairPolarization (successorQuadruple q) 3 1 0 := by
-  convert SuccessorPolarization.common q hn hp 3 0 2 (by decide) (by decide) (by decide) (by decide)
-    (by decide) (by decide) using 1; (try simp [SuccessorPolarization.c, SuccessorPolarization.w,
-    SuccessorPolarization.dot, pairPolarization, successorQuadruple]); ring
-
-private theorem polarizationCase312 (q : Fin 4 → CircleCoordinates)
-    (hp : TangencyCoordinatePolarizationLaw q) :
-    pairPolarization (successorQuadruple q) 3 1 2 := by
-  exact hp 3 0 2 (by decide) (by decide) (by decide)
-
-private theorem polarizationCase320 (q : Fin 4 → CircleCoordinates)
-    (hn : TangencyCoordinateNormLaw q) (hp : TangencyCoordinatePolarizationLaw q) :
-    pairPolarization (successorQuadruple q) 3 2 0 := by
-  convert SuccessorPolarization.common q hn hp 3 2 0 (by decide) (by decide) (by decide) (by decide)
-    (by decide) (by decide) using 1; (try simp [SuccessorPolarization.c, SuccessorPolarization.w,
-    SuccessorPolarization.dot, pairPolarization, successorQuadruple]); ring
-
-private theorem polarizationCase321 (q : Fin 4 → CircleCoordinates)
-    (hp : TangencyCoordinatePolarizationLaw q) :
-    pairPolarization (successorQuadruple q) 3 2 1 := by
-  exact hp 3 2 0 (by decide) (by decide) (by decide)
+private theorem swapPairPolarization {q : Fin 4 → CircleCoordinates} {a b j : Fin 4}
+    (h : pairPolarization q a b j) : pairPolarization q b a j := by
+  simpa only [pairPolarization, mul_comm, add_comm] using h
 
 theorem TangencyCoordinateSuccessorPolarization
     (q : Fin 4 → CircleCoordinates)
@@ -456,24 +370,24 @@ theorem TangencyCoordinateSuccessorPolarization
   case «0».«2».«3» => exact polarizationCase023 q hn hp
   case «0».«3».«1» => exact polarizationCase031 q hn hp
   case «0».«3».«2» => exact polarizationCase032 q hn hp
-  case «1».«0».«2» => exact polarizationCase102 q hn hp
-  case «1».«0».«3» => exact polarizationCase103 q hn hp
+  case «1».«0».«2» => exact swapPairPolarization (polarizationCase012 q hn hp)
+  case «1».«0».«3» => exact swapPairPolarization (polarizationCase013 q hn hp)
   case «1».«2».«0» => exact polarizationCase120 q hn hp
   case «1».«2».«3» => exact polarizationCase123 q hp
   case «1».«3».«0» => exact polarizationCase130 q hn hp
   case «1».«3».«2» => exact polarizationCase132 q hp
-  case «2».«0».«1» => exact polarizationCase201 q hn hp
-  case «2».«0».«3» => exact polarizationCase203 q hn hp
-  case «2».«1».«0» => exact polarizationCase210 q hn hp
-  case «2».«1».«3» => exact polarizationCase213 q hp
+  case «2».«0».«1» => exact swapPairPolarization (polarizationCase021 q hn hp)
+  case «2».«0».«3» => exact swapPairPolarization (polarizationCase023 q hn hp)
+  case «2».«1».«0» => exact swapPairPolarization (polarizationCase120 q hn hp)
+  case «2».«1».«3» => exact swapPairPolarization (polarizationCase123 q hp)
   case «2».«3».«0» => exact polarizationCase230 q hn hp
   case «2».«3».«1» => exact polarizationCase231 q hp
-  case «3».«0».«1» => exact polarizationCase301 q hn hp
-  case «3».«0».«2» => exact polarizationCase302 q hn hp
-  case «3».«1».«0» => exact polarizationCase310 q hn hp
-  case «3».«1».«2» => exact polarizationCase312 q hp
-  case «3».«2».«0» => exact polarizationCase320 q hn hp
-  case «3».«2».«1» => exact polarizationCase321 q hp
+  case «3».«0».«1» => exact swapPairPolarization (polarizationCase031 q hn hp)
+  case «3».«0».«2» => exact swapPairPolarization (polarizationCase032 q hn hp)
+  case «3».«1».«0» => exact swapPairPolarization (polarizationCase130 q hn hp)
+  case «3».«1».«2» => exact swapPairPolarization (polarizationCase132 q hp)
+  case «3».«2».«0» => exact swapPairPolarization (polarizationCase230 q hn hp)
+  case «3».«2».«1» => exact swapPairPolarization (polarizationCase231 q hp)
 
 end ApollonianSuperharmonic
 

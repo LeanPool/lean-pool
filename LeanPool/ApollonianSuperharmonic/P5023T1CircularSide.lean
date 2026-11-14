@@ -855,150 +855,6 @@ private theorem hdotAt485 :
   dsimp [t]
   rw [hdotSigned]
 
-private theorem hn₁ :
-    (by
-      classical
-      exact
-        ∀ (L : ℝ), ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (i : Fin (3 : ℕ)),
-        let p (a : Fin 4) :
-        ℂ := (q a).2 / ((q a).1 : ℝ)
-        let rad (a : Fin 4) : ℝ := 1 / ((q a).1 : ℝ)
-        let k : Fin 3 := i + 2
-        let dot (x y : ℂ) : ℝ := x.re * y.re + x.im * y.im
-        let A : ℂ := p i.succ
-        let X : ℂ := p 0
-        let e : ℂ := (X - A) / ((rad i.succ + rad 0 : ℝ) : ℂ)
-        let v₁ : ℂ := P5023T1ContactVertices L q (i + 1)
-        let V (a : Fin 3) : ℂ :=
-        if (q a.succ).1 = 0 then
-        ⟨if (q a.succ).2 = -1 then L else L + 2, A.im⟩
-        else
-        ((q i.succ).2 + (q a.succ).2 : ℂ) /
-        (((q i.succ).1 : ℝ) + ((q a.succ).1 : ℝ))
-        (v₁ = V k) → (
-        let t : ℝ := (rad i.succ - rad 0) / (rad i.succ + rad 0)
-        ((Complex.normSq : ℂ → ℝ) ((V k - A) / (↑(rad i.succ) : ℂ)) = (1 : ℝ) ∧ t ≤ dot ((V k - A) /
-        (↑(rad i.succ) : ℂ)) e) → (Complex.normSq ((v₁ - A) / (rad i.succ : ℂ)) = 1)) ) := by
-  classical
-  intro L q i p rad k dot A X e v₁ V hv₁V t hkfacts
-  rw [hv₁V]
-  exact hkfacts.1
-
-private theorem hn₂ :
-    (by
-      classical
-      exact
-        ∀ (L : ℝ), ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (i : Fin (3 : ℕ)),
-        let p (a : Fin 4) :
-        ℂ := (q a).2 / ((q a).1 : ℝ)
-        let rad (a : Fin 4) : ℝ := 1 / ((q a).1 : ℝ)
-        let j : Fin 3 := i + 1
-        let dot (x y : ℂ) : ℝ := x.re * y.re + x.im * y.im
-        let A : ℂ := p i.succ
-        let X : ℂ := p 0
-        let e : ℂ := (X - A) / ((rad i.succ + rad 0 : ℝ) : ℂ)
-        let v₂ : ℂ := P5023T1ContactVertices L q (i + 2)
-        let V (a : Fin 3) : ℂ :=
-        if (q a.succ).1 = 0 then
-        ⟨if (q a.succ).2 = -1 then L else L + 2, A.im⟩
-        else
-        ((q i.succ).2 + (q a.succ).2 : ℂ) /
-        (((q i.succ).1 : ℝ) + ((q a.succ).1 : ℝ))
-        (v₂ = V j) → (
-        let t : ℝ := (rad i.succ - rad 0) / (rad i.succ + rad 0)
-        ((Complex.normSq : ℂ → ℝ) ((V j - A) / (↑(rad i.succ) : ℂ)) = (1 : ℝ) ∧ t ≤ dot ((V j - A) /
-        (↑(rad i.succ) : ℂ)) e) → (Complex.normSq ((v₂ - A) / (rad i.succ : ℂ)) = 1)) ) := by
-  classical
-  intro L q i p rad j dot A X e v₂ V hv₂V t hjfacts
-  rw [hv₂V]
-  exact hjfacts.1
-
-private theorem hdot₁ :
-    (by
-      classical
-      exact
-        ∀ (L : ℝ), ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (i : Fin (3 : ℕ)),
-        let p (a : Fin 4) :
-        ℂ := (q a).2 / ((q a).1 : ℝ)
-        let rad (a : Fin 4) : ℝ := 1 / ((q a).1 : ℝ)
-        let k : Fin 3 := i + 2
-        let dot (x y : ℂ) : ℝ := x.re * y.re + x.im * y.im
-        let A : ℂ := p i.succ
-        let X : ℂ := p 0
-        let e : ℂ := (X - A) / ((rad i.succ + rad 0 : ℝ) : ℂ)
-        let v₁ : ℂ := P5023T1ContactVertices L q (i + 1)
-        let V (a : Fin 3) : ℂ :=
-        if (q a.succ).1 = 0 then
-        ⟨if (q a.succ).2 = -1 then L else L + 2, A.im⟩
-        else
-        ((q i.succ).2 + (q a.succ).2 : ℂ) /
-        (((q i.succ).1 : ℝ) + ((q a.succ).1 : ℝ))
-        (v₁ = V k) → (
-        let t : ℝ := (rad i.succ - rad 0) / (rad i.succ + rad 0)
-        ((Complex.normSq : ℂ → ℝ) ((V k - A) / (↑(rad i.succ) : ℂ)) = (1 : ℝ) ∧ t ≤ dot ((V k - A) /
-        (↑(rad i.succ) : ℂ)) e) → (t ≤ dot ((v₁ - A) / (rad i.succ : ℂ)) e)) ) := by
-  classical
-  intro L q i p rad k dot A X e v₁ V hv₁V t hkfacts
-  rw [hv₁V]
-  exact hkfacts.2
-
-private theorem hdot₂ :
-    (by
-      classical
-      exact
-        ∀ (L : ℝ), ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (i : Fin (3 : ℕ)),
-        let p (a : Fin 4) :
-        ℂ := (q a).2 / ((q a).1 : ℝ)
-        let rad (a : Fin 4) : ℝ := 1 / ((q a).1 : ℝ)
-        let j : Fin 3 := i + 1
-        let dot (x y : ℂ) : ℝ := x.re * y.re + x.im * y.im
-        let A : ℂ := p i.succ
-        let X : ℂ := p 0
-        let e : ℂ := (X - A) / ((rad i.succ + rad 0 : ℝ) : ℂ)
-        let v₂ : ℂ := P5023T1ContactVertices L q (i + 2)
-        let V (a : Fin 3) : ℂ :=
-        if (q a.succ).1 = 0 then
-        ⟨if (q a.succ).2 = -1 then L else L + 2, A.im⟩
-        else
-        ((q i.succ).2 + (q a.succ).2 : ℂ) /
-        (((q i.succ).1 : ℝ) + ((q a.succ).1 : ℝ))
-        (v₂ = V j) → (
-        let t : ℝ := (rad i.succ - rad 0) / (rad i.succ + rad 0)
-        ((Complex.normSq : ℂ → ℝ) ((V j - A) / (↑(rad i.succ) : ℂ)) = (1 : ℝ) ∧ t ≤ dot ((V j - A) /
-        (↑(rad i.succ) : ℂ)) e) → (t ≤ dot ((v₂ - A) / (rad i.succ : ℂ)) e)) ) := by
-  classical
-  intro L q i p rad j dot A X e v₂ V hv₂V t hjfacts
-  rw [hv₂V]
-  exact hjfacts.2
-
-private theorem hchord :
-    (by
-      classical
-      exact
-        ∀ (L : ℝ), ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (i : Fin (3 : ℕ)),
-        let p (a : Fin 4) :
-        ℂ := (q a).2 / ((q a).1 : ℝ)
-        let rad (a : Fin 4) : ℝ := 1 / ((q a).1 : ℝ)
-        let dot (x y : ℂ) : ℝ := x.re * y.re + x.im * y.im
-        (∀ (x : ℂ), ∀ (y : ℂ), ∀ (e : ℂ), ∀ (t : ℝ), (Complex.normSq x = 1) → ((Complex.normSq y
-            = 1)
-        → ((Complex.normSq e = 1) → ((0 ≤ t) → ((t ≤ 1) → ((t ≤ dot x e) → ((t ≤ dot y e) → (‖x -
-        y‖ ≤ 2 * Real.sqrt (1 - t ^ 2))))))))) → (
-        let A : ℂ := p i.succ
-        let X : ℂ := p 0
-        let e : ℂ := (X - A) / ((rad i.succ + rad 0 : ℝ) : ℂ)
-        (Complex.normSq e = 1) → (
-        let v₁ : ℂ := P5023T1ContactVertices L q (i + 1)
-        let v₂ : ℂ := P5023T1ContactVertices L q (i + 2)
-        let t : ℝ := (rad i.succ - rad 0) / (rad i.succ + rad 0)
-        (0 ≤ t) → ((t ≤ 1) → ((Complex.normSq ((v₁ - A) / (rad i.succ : ℂ)) = 1) → ((Complex.normSq
-        ((v₂ - A) / (rad i.succ : ℂ)) = 1) → ((t ≤ dot ((v₁ - A) / (rad i.succ : ℂ)) e) → ((t ≤
-        dot ((v₂ - A) / (rad i.succ : ℂ)) e) → (‖(v₁ - A) / (rad i.succ : ℂ) - (v₂ - A) / (rad
-        i.succ : ℂ)‖ ≤ 2 * Real.sqrt (1 - t ^ 2))))))))) ) := by
-  classical
-  intro L q i p rad dot capBound A X e heSq v₁ v₂ t ht0 ht1 hn₁ hn₂ hdot₁ hdot₂
-  exact capBound _ _ e t hn₁ hn₂ heSq ht0 ht1 hdot₁ hdot₂
-
 private theorem hscale :
     (by
       classical
@@ -1198,15 +1054,20 @@ theorem P5023T1CircularSide :
         exact ⟨hunitSq, le_of_eq hdot.symm⟩
   have hjfacts := contactFacts j hji hjpos
   have hkfacts := contactFacts k hki hkpos
-  have hn₁ : Complex.normSq ((v₁ - A) / (rad i.succ : ℂ)) = 1 := CircularSideProof.hn₁ L q i hv₁V
-      hkfacts
-  have hn₂ : Complex.normSq ((v₂ - A) / (rad i.succ : ℂ)) = 1 := CircularSideProof.hn₂ L q i hv₂V
-      hjfacts
-  have hdot₁ : t ≤ dot ((v₁ - A) / (rad i.succ : ℂ)) e := CircularSideProof.hdot₁ L q i hv₁V hkfacts
-  have hdot₂ : t ≤ dot ((v₂ - A) / (rad i.succ : ℂ)) e := CircularSideProof.hdot₂ L q i hv₂V hjfacts
+  have hn₁ : Complex.normSq ((v₁ - A) / (rad i.succ : ℂ)) = 1 := by
+    rw [hv₁V]
+    exact hkfacts.1
+  have hn₂ : Complex.normSq ((v₂ - A) / (rad i.succ : ℂ)) = 1 := by
+    rw [hv₂V]
+    exact hjfacts.1
+  have hdot₁ : t ≤ dot ((v₁ - A) / (rad i.succ : ℂ)) e := by
+    rw [hv₁V]
+    exact hkfacts.2
+  have hdot₂ : t ≤ dot ((v₂ - A) / (rad i.succ : ℂ)) e := by
+    rw [hv₂V]
+    exact hjfacts.2
   have hchord : ‖(v₁ - A) / (rad i.succ : ℂ) - (v₂ - A) / (rad i.succ : ℂ)‖ ≤
-      2 * Real.sqrt (1 - t ^ 2) := CircularSideProof.hchord L q i capBound heSq ht0 ht1 hn₁ hn₂
-          hdot₁ hdot₂
+      2 * Real.sqrt (1 - t ^ 2) := capBound _ _ e t hn₁ hn₂ heSq ht0 ht1 hdot₁ hdot₂
   have cancelRadius (x : ℝ) : x / rad i.succ * rad i.succ = x :=
     div_mul_cancel₀ x (ne_of_gt hr)
   have rearrange (x y : ℝ) : x * (2 * y) = 2 * x * y := by ring

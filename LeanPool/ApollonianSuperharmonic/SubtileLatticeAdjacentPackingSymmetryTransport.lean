@@ -271,10 +271,10 @@ private theorem hp :
 
 end SubtileTransportGeometry
 
+/-- Defined slopes provide the support nonemptiness needed for transport. -/
 theorem SubtileLatticeAdjacentPackingSymmetryTransport
     (g : BandPackingSymmetry) (q : Fin 4 → CircleCoordinates)
     (hq : ProperBandQuadruple q) (i : Fin 3) (s : Fin 4)
-    (hparent : 0 < (q i.succ).1)
     (T₀ Tᵢ : ProtoTile) (h₀ hᵢ : PartialOdometer) (p₀ pᵢ : ℝ × ℝ)
     (hO₀ : TileOdometer (q 0) T₀ h₀)
     (hOᵢ : TileOdometer (q i.succ) Tᵢ hᵢ)

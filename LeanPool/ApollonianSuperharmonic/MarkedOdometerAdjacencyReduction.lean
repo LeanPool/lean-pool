@@ -28,17 +28,6 @@ namespace ApollonianSuperharmonic
 
 namespace MarkedAdjacencyGeometry
 
-private theorem hparentPositiveAt344 :
-    (by
-      classical
-      exact
-        ∀ (Cᵢ : BandCircle), ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (i : Fin (3 : ℕ)), (q
-            i.succ = Cᵢ.1.1) → (0 < (q i.succ).1) ) := by
-  classical
-  intro Cᵢ q i hqᵢ
-  rw [hqᵢ]
-  exact Cᵢ.property
-
 private theorem hO₀q :
     (by
       classical
@@ -428,35 +417,13 @@ private theorem hsubInverse :
         ∀ (C₀ : BandCircle), ∀ (Cᵢ : BandCircle), ∀ (T₀ : ProtoTile), ∀ (Tᵢ : ProtoTile), ∀ (h₀ :
             PartialOdometer), ∀ (hᵢ : PartialOdometer), ∀ (x : GaussianInt), ∀ (bundle :
             BandOrderedGeneralNormalizedOccurrenceBundle C₀ Cᵢ T₀ Tᵢ h₀ hᵢ x),
-        ((∀ (g : BandPackingSymmetry), ∀ (C : CircleCoordinates), ∀ (C' : CircleCoordinates), ∀
+        (∀ (g : BandPackingSymmetry), ∀ (C : CircleCoordinates), ∀ (C' : CircleCoordinates), ∀
             (T : ProtoTile), ∀ (T' : ProtoTile), ∀ (h : PartialOdometer), ∀ (h' :
             PartialOdometer), TileSubodometer C C' T T' h h' ↔ TileSubodometer
             (BandPackingSymmetryCircleAction g C) (BandPackingSymmetryCircleAction g C')
             (BandPackingSymmetryTileAction g T) (BandPackingSymmetryTileAction g T')
             (BandPackingSymmetryPartialOdometerAction g h)
-            (BandPackingSymmetryPartialOdometerAction g h')) ∧ (∀ (g : BandPackingSymmetry), ∀ (x
-            : GaussianInt), ∀ (T : ProtoTile), ∀ (U : ProtoTile), (∀ (j : Fin (4 : ℕ)),
-            LatticeVertexIncidentCell x j ∈ T.cells ∨ LatticeVertexIncidentCell x j ∈ U.cells) ↔
-            ∀ (j : Fin (4 : ℕ)), LatticeVertexIncidentCell (BandPackingSymmetryVectorAction g x)
-            j ∈ (BandPackingSymmetryTileAction g T).cells ∨ LatticeVertexIncidentCell
-            (BandPackingSymmetryVectorAction g x) j ∈ (BandPackingSymmetryTileAction g U).cells)
-            ∧ ∀ (g : BandPackingSymmetry), ∀ (q : Fin (4 : ℕ) → CircleCoordinates),
-            ProperBandQuadruple q → ∀ (i : Fin (3 : ℕ)), ∀ (s : Fin (4 : ℕ)), ∀ (delta : Bool),
-            BandPackingSymmetryScopedPhase g q delta → ∀ (T : ProtoTile), ∀ (x : GaussianInt),
-        let q' := BandPackingSymmetryQuadrupleAction g q;
-        let sigma := fun (j : Fin (3 : ℕ)) => if BandPackingSymmetryReversesOrientation g = true
-            then -j else j;
-        let s' := if BandPackingSymmetryReversesOrientation g = true then -s - (1 : Fin (4 : ℕ))
-            + if delta = true then (2 : Fin (4 : ℕ)) else (0 : Fin (4 : ℕ)) else s + if delta =
-            true then (2 : Fin (4 : ℕ)) else (0 : Fin (4 : ℕ));
-        let oldRight := TileTranslation T ((⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ^ (↑s : ℕ) * if
-            Even (↑s : ℕ) then BandVectors.1 (q (0 : Fin (4 : ℕ))) (q i.succ) else BandVectors.1
-            (q i.succ) (q (0 : Fin (4 : ℕ))));
-        let newRight := TileTranslation (BandPackingSymmetryTileAction g T) ((⟨(0 : ℤ), (1 : ℤ)⟩
-            : GaussianInt) ^ (↑s' : ℕ) * if Even (↑s' : ℕ) then BandVectors.1 (q' (0 : Fin (4 :
-            ℕ))) (q' (sigma i).succ) else BandVectors.1 (q' (sigma i).succ) (q' (0 : Fin (4 :
-            ℕ)))); BandPackingSymmetryTileAction g oldRight = newRight ∧ (x ∈ FootprintVertices
-            oldRight ↔ BandPackingSymmetryVectorAction g x ∈ FootprintVertices newRight)) → (∀
+            (BandPackingSymmetryPartialOdometerAction g h')) → (∀
             (C' : BandCircle), ∀ (ginv : BandPackingSymmetry), (∀ (C : CircleCoordinates),
             BandPackingSymmetryCircleAction ginv (BandPackingSymmetryCircleAction bundle.symmetry
             C) = C) → ((∀ (T : ProtoTile), BandPackingSymmetryTileAction ginv
@@ -483,10 +450,11 @@ private theorem hsubInverse :
             (BandPackingSymmetryPartialOdometerAction ginv (bundle.functions bundle.selectedSlot
             bundle.selectedSign)))))))) ) := by
   classical
-  intro C₀ Cᵢ T₀ Tᵢ h₀ hᵢ x bundle markedData C' ginv hcircleL htileL hfunL inversePresentation
+  intro C₀ Cᵢ T₀ Tᵢ h₀ hᵢ x bundle subodometerCovariance C' ginv hcircleL htileL hfunL
+      inversePresentation
       inverseSlot hinverseProper hinversePositive inverseCircle hinverseCircle hsubNormalized
   have htransport :=
-    (markedData.1 ginv
+    (subodometerCovariance ginv
       (BandPackingSymmetryCircleAction bundle.symmetry C₀.1.1) C'.1.1
       (BandPackingSymmetryTileAction bundle.symmetry T₀)
       (bundle.pieces bundle.selectedSlot bundle.selectedSign)
@@ -1525,9 +1493,6 @@ private theorem hleftInvAt1283 :
       (by simpa [T', bundle.normalized_fixed_eq, htileL] using hcentLeftInv),
       hslopeLeftReInv, hslopeLeftImInv⟩
 
-private abbrev hparentPositiveAt1298 :=
-    ApollonianSuperharmonic.MarkedAdjacencyGeometry.hparentPositiveAt344
-
 private theorem hOfixedAt1301 :
     (by
       classical
@@ -1870,21 +1835,6 @@ private theorem hmarkedOriginalAt1396 :
                   (if BandPackingSymmetryReversesOrientation ginv then -j else j).succ)
                 ((BandPackingSymmetryQuadrupleAction ginv r) 0)))) := by
         rw [hpointInv, bundle.normalized_fixed_eq, htileL]
-
-private theorem hparentPositiveAt1447 :
-    (by
-      classical
-      exact
-        ∀ (C₀ : BandCircle), ∀ (Cᵢ : BandCircle), ∀ (T₀ : ProtoTile), ∀ (Tᵢ : ProtoTile), ∀ (h₀ :
-            PartialOdometer), ∀ (hᵢ : PartialOdometer), ∀ (x : GaussianInt), ∀ (bundle :
-            BandOrderedGeneralNormalizedOccurrenceBundle C₀ Cᵢ T₀ Tᵢ h₀ hᵢ x), ∀ (r : Fin (4 : ℕ)
-            → CircleCoordinates), ∀ (j : Fin (3 : ℕ)), (r j.succ =
-            bundle.normalizedFixedCircle.1.1) → (0 < (r
-            j.succ).1) ) := by
-  classical
-  intro C₀ Cᵢ T₀ Tᵢ h₀ hᵢ x bundle r j hrj
-  rw [hrj]
-  exact bundle.normalizedFixedCircle.property
 
 private theorem hOselectedAt1450 :
     (by
@@ -2559,13 +2509,12 @@ private theorem forwardAdjacencyCase :
   rcases hforward with
     ⟨r, j, t, hr, hr0, hrj, hcent, hslopeRe, hslopeIm,
       hadj, hmarked⟩
-  have hparentPositive := MarkedAdjacencyGeometry.hparentPositiveAt1298 C' r j hrj
   have hOfixed := MarkedAdjacencyGeometry.hOfixedAt1301 C₀ Cᵢ T₀ Tᵢ h₀ hᵢ x bundle r hr0
   have hOselected := MarkedAdjacencyGeometry.hOselectedAt1305 C₀ Cᵢ T₀ Tᵢ h₀ hᵢ x bundle C'
       hC' r j hrj
   have inverseAdjacency :=
     SubtileLatticeAdjacentPackingSymmetryTransport ginv r hr j t
-      hparentPositive bundle.normalizedFixed selectedSupport
+      bundle.normalizedFixed selectedSupport
       bundle.normalizedFixedFunction selectedFunction
       bundle.normalizedFixedSlope selectedSlope
       hOfixed hOselected
@@ -2756,14 +2705,12 @@ private theorem reverseAdjacencyCase :
   rcases hreverse with
     ⟨r, j, t, hr, hr0, hrj, hcent, hslopeRe, hslopeIm,
       hadj, hmarked⟩
-  have hparentPositive := MarkedAdjacencyGeometry.hparentPositiveAt1447 C₀ Cᵢ T₀ Tᵢ h₀ hᵢ x
-      bundle r j hrj
   have hOselected := MarkedAdjacencyGeometry.hOselectedAt1450 C₀ Cᵢ T₀ Tᵢ h₀ hᵢ x bundle C'
       hC' r hr0
   have hOfixed := MarkedAdjacencyGeometry.hOfixedAt1453 C₀ Cᵢ T₀ Tᵢ h₀ hᵢ x bundle r j hrj
   have inverseAdjacency :=
     SubtileLatticeAdjacentPackingSymmetryTransport ginv r hr j t
-      hparentPositive selectedSupport bundle.normalizedFixed
+      selectedSupport bundle.normalizedFixed
       selectedFunction bundle.normalizedFixedFunction selectedSlope
       bundle.normalizedFixedSlope hOselected hOfixed hslope'
       bundle.normalized_fixed_slope hcent hslopeRe hslopeIm
@@ -2990,14 +2937,13 @@ theorem MarkedOdometerAdjacencyReduction :
     let normalizationPresentation := BandPackingSymmetryQuadrupleAction g q
     let sigma : Fin 3 → Fin 3 := fun j =>
       if BandPackingSymmetryReversesOrientation g then -j else j
-    have hparentPositive := MarkedAdjacencyGeometry.hparentPositiveAt344 Cᵢ q i hqᵢ
     have hO₀q := MarkedAdjacencyGeometry.hO₀q C₀ q T₀ h₀ hq₀ hO₀
     have hOᵢq := MarkedAdjacencyGeometry.hOᵢq Cᵢ q i Tᵢ hᵢ hqᵢ hOᵢ
     obtain ⟨delta, transportedRootSlope, transportedFixedSlope, transportedRotation,
       hphaseForward, hrotationForward, hrootOdometer, hfixedOdometer,
       hrootSlope, hfixedSlope, hcentroidForward, hslopeXForward,
       hslopeYForward, hcompatForward⟩ :=
-      SubtileLatticeAdjacentPackingSymmetryTransport g q hq i s hparentPositive
+      SubtileLatticeAdjacentPackingSymmetryTransport g q hq i s
         T₀ Tᵢ h₀ hᵢ p₀ pᵢ hO₀q hOᵢq hslope₀ hslopeᵢ
         hcentroid hslopex hslopey
     have hnorm := MarkedAdjacencyGeometry.hnormAt360 C₀ Cᵢ T₀ Tᵢ h₀ hᵢ x bundle
@@ -3070,7 +3016,7 @@ theorem MarkedOdometerAdjacencyReduction :
     have hpoint : BandPackingSymmetryVectorAction bundle.symmetry x =
         bundle.normalizedPoint := bundle.normalized_point_eq.symm
     refine ⟨inverseCircle, T', h', (MarkedAdjacencyGeometry.hsubInverse C₀ Cᵢ T₀ Tᵢ h₀ hᵢ x
-        bundle markedData C' ginv hcircleL htileL hfunL hinverseProper hinversePositive
+        bundle (markedData.1) C' ginv hcircleL htileL hfunL hinverseProper hinversePositive
         hinverseCircle (MarkedAdjacencyGeometry.hsubNormalized C₀ Cᵢ T₀ Tᵢ h₀ hᵢ x bundle hnorm
         C' hsub')), (MarkedAdjacencyGeometry.hxFixedOriginal C₀ Cᵢ T₀ Tᵢ h₀ hᵢ x bundle hxFixed'
         ginv hfunL inverseDomain hpoint),

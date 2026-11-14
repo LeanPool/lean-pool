@@ -403,94 +403,6 @@ private theorem hxb' :
   intro hh
   exact hxb ((himage x (BoundaryFootprintVertices T)).1 hh)
 
-private theorem hfp :
-    (by
-      classical
-      exact
-        ∀ (S : Fin 3 → Bool → ProtoTile), ∀ (x : GaussianInt), ∀ (a : Fin (3 : ℕ)), ∀ (s :
-            BandPackingSymmetry), ∀ (e₁ : Fin (3 : ℕ) × Bool ≃ Fin (3 : ℕ) × Bool), ∀ (S' : Fin
-            (3 : ℕ) → Bool → ProtoTile),
-        let R : BandPackingSymmetry → (Real × Real) → (Real × Real) :=
-          BandPackingSymmetry.rec (fun p => p) (fun p => (-p.2, p.1))
-            (fun p => (-p.1, p.2)) (fun _ p => p)
-            (fun _ _ f k p => f (k p))
-        (∀ (U : ProtoTile), FootprintVertices (BandPackingSymmetryTileAction s U) =
-            BandPackingSymmetryVectorAction s '' FootprintVertices U ∧ BoundaryFootprintVertices
-            (BandPackingSymmetryTileAction s U) = BandPackingSymmetryVectorAction s ''
-            BoundaryFootprintVertices U ∧ TileCentroid (BandPackingSymmetryTileAction s U) = R s
-            (TileCentroid U)) → (
-        let shift : (Fin 3 × Bool) ≃ (Fin 3 × Bool) :=
-          { toFun := fun p => (p.1 - a, p.2)
-            invFun := fun p => (p.1 + a, p.2)
-            left_inv := by
-              rintro ⟨i, t⟩
-              apply Prod.ext
-              · apply Fin.ext
-                simp
-              · rfl
-            right_inv := by
-              rintro ⟨i, t⟩
-              apply Prod.ext
-              · apply Fin.ext
-                simp
-              · rfl }
-        let e : (Fin 3 × Bool) ≃ (Fin 3 × Bool) := shift.trans e₁
-        (∀ (i : Fin 3), ∀ (t : Bool), S' (e (i, t)).1 (e (i, t)).2 =
-            BandPackingSymmetryTileAction s (S i t)) → ((∀ (z : GaussianInt), ∀ (A : Set
-            GaussianInt), (BandPackingSymmetryVectorAction s z ∈ BandPackingSymmetryVectorAction
-            s '' A) ↔ z ∈ A) → (
-        let x' := BandPackingSymmetryVectorAction s x
-        ∀ (i : Fin 3), ∀ (t : Bool), (x' ∈ FootprintVertices (S' (e (i, t)).1 (e (i, t)).2)) ↔ x
-            ∈ FootprintVertices (S i t))))) := by
-  classical
-  intro S x a s e₁ S' R hgeom shift e hSact himage x' i t
-  rw [hSact, (hgeom (S i t)).1]
-  exact himage x _
-
-private theorem hbd :
-    (by
-      classical
-      exact
-        ∀ (S : Fin 3 → Bool → ProtoTile), ∀ (x : GaussianInt), ∀ (a : Fin (3 : ℕ)), ∀ (s :
-            BandPackingSymmetry), ∀ (e₁ : Fin (3 : ℕ) × Bool ≃ Fin (3 : ℕ) × Bool), ∀ (S' : Fin
-            (3 : ℕ) → Bool → ProtoTile),
-        let R : BandPackingSymmetry → (Real × Real) → (Real × Real) :=
-          BandPackingSymmetry.rec (fun p => p) (fun p => (-p.2, p.1))
-            (fun p => (-p.1, p.2)) (fun _ p => p)
-            (fun _ _ f k p => f (k p))
-        (∀ (U : ProtoTile), FootprintVertices (BandPackingSymmetryTileAction s U) =
-            BandPackingSymmetryVectorAction s '' FootprintVertices U ∧ BoundaryFootprintVertices
-            (BandPackingSymmetryTileAction s U) = BandPackingSymmetryVectorAction s ''
-            BoundaryFootprintVertices U ∧ TileCentroid (BandPackingSymmetryTileAction s U) = R s
-            (TileCentroid U)) → (
-        let shift : (Fin 3 × Bool) ≃ (Fin 3 × Bool) :=
-          { toFun := fun p => (p.1 - a, p.2)
-            invFun := fun p => (p.1 + a, p.2)
-            left_inv := by
-              rintro ⟨i, t⟩
-              apply Prod.ext
-              · apply Fin.ext
-                simp
-              · rfl
-            right_inv := by
-              rintro ⟨i, t⟩
-              apply Prod.ext
-              · apply Fin.ext
-                simp
-              · rfl }
-        let e : (Fin 3 × Bool) ≃ (Fin 3 × Bool) := shift.trans e₁
-        (∀ (i : Fin 3), ∀ (t : Bool), S' (e (i, t)).1 (e (i, t)).2 =
-            BandPackingSymmetryTileAction s (S i t)) → ((∀ (z : GaussianInt), ∀ (A : Set
-            GaussianInt), (BandPackingSymmetryVectorAction s z ∈ BandPackingSymmetryVectorAction
-            s '' A) ↔ z ∈ A) → (
-        let x' := BandPackingSymmetryVectorAction s x
-        ∀ (i : Fin 3), ∀ (t : Bool), (x' ∈ BoundaryFootprintVertices (S' (e (i, t)).1 (e (i,
-            t)).2)) ↔ x ∈ BoundaryFootprintVertices (S i t))))) := by
-  classical
-  intro S x a s e₁ S' R hgeom shift e hSact himage x' i t
-  rw [hSact, (hgeom (S i t)).2.1]
-  exact himage x _
-
 private theorem hcent :
     (by
       classical
@@ -673,10 +585,16 @@ theorem P4120T1RootNormalization
   let x' := BandPackingSymmetryVectorAction s x
   have hx' := RootNormalizationGeometry.hx' T x hx s hgeom himage
   have hxb' := RootNormalizationGeometry.hxb' T x hxb s hgeom himage
-  have hfp (i : Fin 3) (t : Bool) := RootNormalizationGeometry.hfp S x a s e₁ S' hgeom hSact
-      himage i t
-  have hbd (i : Fin 3) (t : Bool) := RootNormalizationGeometry.hbd S x a s e₁ S' hgeom hSact
-      himage i t
+  have hfp (i : Fin 3) (t : Bool) :
+      (x' ∈ FootprintVertices (S' (e (i, t)).1 (e (i, t)).2)) ↔
+        x ∈ FootprintVertices (S i t) := by
+    rw [hSact, (hgeom (S i t)).1]
+    exact himage x _
+  have hbd (i : Fin 3) (t : Bool) :
+      (x' ∈ BoundaryFootprintVertices (S' (e (i, t)).1 (e (i, t)).2)) ↔
+        x ∈ BoundaryFootprintVertices (S i t) := by
+    rw [hSact, (hgeom (S i t)).2.1]
+    exact himage x _
   have hcent := RootNormalizationGeometry.hcent T x s hgeom rinj rpoint
   have hcard := RootNormalizationGeometry.hcard S x a s e₁ S' hbd
   refine ⟨q', T', S', h', g', x', e,

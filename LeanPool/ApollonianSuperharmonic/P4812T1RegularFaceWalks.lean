@@ -1250,33 +1250,6 @@ private theorem hcAt1662 :
   · refine ⟨1, ?_⟩
     change D.plane.faceVertex (D.faces (.inl w)) 1 = x
     exact (D.up_vertices w).2.1.trans hwx
-private theorem hwAt1679 :
-    (by
-      classical
-      exact
-        ∀ (L : AddSubgroup GaussianInt), ∀ (k : (Int × Int) ≃+ L), ∀ (D : P4812T1AffineDrawing
-            L k), ∀ (T : ProtoTile),
-        let a : L := k (1, 0);
-        let b : L := k (0, 1);
-        ∀ (ru : GaussianInt), ∀ (rd : GaussianInt),
-        (
-        let rho : D.plane.Face → GaussianInt := fun f =>
-          match D.faces.symm f with
-          | Sum.inl x => (ru : GaussianInt) + (x : GaussianInt)
-          | Sum.inr x => (rd : GaussianInt) + (x : GaussianInt);
-        ∀ (p2 : List GaussianInt), (∀ (w : L), P4733T1ContainedWalk (TileTranslation T ((w + a
-            : L) : GaussianInt)) (TileTranslation T ((w - b : L) : GaussianInt)) (rho (D.faces
-            (.inl w))) (rho (D.faces (.inr (w + a - b)))) (p2.map (fun z => z + (w :
-            GaussianInt)))) → (∀ (y : ↥L),
-        let w := y + b;
-        let fc := D.faces (.inl w);
-        let gc := D.faces (.inr (w + a - b));
-        P4733T1ContainedWalk (TileTranslation T ((w + a : L) : GaussianInt)) (TileTranslation T
-            ((w - b : L) : GaussianInt)) (rho fc) (rho gc) (p2.map (fun z => z + (w :
-            GaussianInt)))))) := by
-  classical
-  intro L k D T a b ru rd rho p2 rowWalk2 y w fc gc
-  exact rowWalk2 w
 end RegularFaceDetails
 namespace RegularFaceProperties
 private theorem rhoPeriodic :
@@ -1888,8 +1861,7 @@ private theorem thirdBackward :
   have hw : P4733T1ContainedWalk
       (TileTranslation T ((w + a : L) : GaussianInt))
       (TileTranslation T ((w - b : L) : GaussianInt)) (rho fc) (rho gc)
-      (p2.map (fun z => z + (w : GaussianInt))) := RegularFaceDetails.hwAt1679 L k D T
-          ru rd p2 rowWalk2 y
+      (p2.map (fun z => z + (w : GaussianInt))) := rowWalk2 w
   have hwxG : ((w + a : L) : GaussianInt) = (x : GaussianInt) :=
     congrArg (fun z : L => z.1) hwx
   have hwyG : ((w - b : L) : GaussianInt) = (y : GaussianInt) :=

@@ -130,9 +130,8 @@ private theorem transportS :
   rcases hadj with ⟨hf, hk, p, p', hp, hp', q, i, s, hq, hqA, hqiB, hc, hx, hy⟩
   have hfq : TileOdometer (q 0) V f := by simpa [hqA] using hf
   have hkq : TileOdometer (q i.succ) W k := by simpa [hqiB] using hk
-  have hpos : 0 < (q i.succ).1 := by simpa [hqiB] using B.2
   obtain ⟨d, r, r', s', _, _, hfg, hkg, hpr, hpr', hcg, hxg, hyg, _⟩ :=
-    SubtileLatticeAdjacentPackingSymmetryTransport g q hq i s hpos
+    SubtileLatticeAdjacentPackingSymmetryTransport g q hq i s
       V W f k p p' hfq hkq hp hp' hc hx hy
   let qg := BandPackingSymmetryQuadrupleAction g q
   let ig : Fin 3 := if BandPackingSymmetryReversesOrientation g then -i else i

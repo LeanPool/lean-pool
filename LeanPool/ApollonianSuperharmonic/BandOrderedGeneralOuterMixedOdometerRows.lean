@@ -1451,28 +1451,6 @@ private theorem star'At871 :
   intro q cfg C0 T cert h P r Q S u v g x data star
   simpa [(data.hobsP 0 true).2.1, (data.hobsP 1 false).2.1] using star
 
-private theorem compAt875 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 -> CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C0 :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
-            C0 T), ∀ (P : Fin 3 -> Bool -> ProtoTile), ∀ (x : GaussianInt), ∀ (marked : Bool), (∀
-            (i : Fin 3), ∀ (s : Bool), ∀ (d : GaussianInt), FootprintVertices (TileTranslation (P
-            i s) d) = FootprintVertices (TileTranslation (cert.P i s) d)) → ((x ∈
-            FootprintVertices (TileTranslation (cert.P (0 : Fin (3 : ℕ)) true) ((⟨(0 : ℤ), (1 :
-            ℤ)⟩ : GaussianInt) ^ (3 : ℕ) * if Even (3 : ℕ) then BandVectors.1
-            (cfg.firstPredecessor (0 : Fin (4 : ℕ))) (cfg.firstPredecessor (2 : Fin (4 : ℕ)))
-            else BandVectors.1 (cfg.firstPredecessor (2 : Fin (4 : ℕ))) (cfg.firstPredecessor (0
-            : Fin (4 : ℕ))))) ↔ marked = true) → (x ∈ FootprintVertices (TileTranslation (P 0
-            true) ((⟨0, 1⟩ : GaussianInt) ^ (3 : Nat) * (if Even (3 : Nat) then BandVectors.1
-            (cfg.firstPredecessor 0) (cfg.firstPredecessor 2) else BandVectors.1
-            (cfg.firstPredecessor 2) (cfg.firstPredecessor 0)))) ↔ marked = true)) ) := by
-  classical
-  intro q cfg C0 T cert P x marked translatedObs webCompanion
-  rw [translatedObs]
-  simpa [Even] using webCompanion
-
 private theorem star'At896 :
     (by
       classical
@@ -1493,28 +1471,6 @@ private theorem star'At896 :
   classical
   intro q cfg C0 T cert h P r Q S u v g x data star
   simpa [(data.hobsP 0 true).2.1, (data.hobsP 2 false).2.1] using star
-
-private theorem compAt900 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 -> CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C0 :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
-            C0 T), ∀ (P : Fin 3 -> Bool -> ProtoTile), ∀ (x : GaussianInt), ∀ (marked : Bool), (∀
-            (i : Fin 3), ∀ (s : Bool), ∀ (d : GaussianInt), FootprintVertices (TileTranslation (P
-            i s) d) = FootprintVertices (TileTranslation (cert.P i s) d)) → ((x ∈
-            FootprintVertices (TileTranslation (cert.P (0 : Fin (3 : ℕ)) true) ((⟨(0 : ℤ), (1 :
-            ℤ)⟩ : GaussianInt) ^ (0 : ℕ) * if Even (0 : ℕ) then BandVectors.1
-            (cfg.firstPredecessor (0 : Fin (4 : ℕ))) (cfg.firstPredecessor (3 : Fin (4 : ℕ)))
-            else BandVectors.1 (cfg.firstPredecessor (3 : Fin (4 : ℕ))) (cfg.firstPredecessor (0
-            : Fin (4 : ℕ))))) ↔ marked = true) → (x ∈ FootprintVertices (TileTranslation (P 0
-            true) ((⟨0, 1⟩ : GaussianInt) ^ (0 : Nat) * (if Even (0 : Nat) then BandVectors.1
-            (cfg.firstPredecessor 0) (cfg.firstPredecessor 3) else BandVectors.1
-            (cfg.firstPredecessor 3) (cfg.firstPredecessor 0)))) ↔ marked = true)) ) := by
-  classical
-  intro q cfg C0 T cert P x marked translatedObs webCompanion
-  rw [translatedObs]
-  simpa [Even] using webCompanion
 
 private theorem star'At922 :
     (by
@@ -1539,28 +1495,6 @@ private theorem star'At922 :
   · exact Or.inr (by simpa [(data.hobsP 1 true).2.1] using hL)
   · exact Or.inl (by simpa [(data.hobsP 0 false).2.1] using hR)
 
-private theorem compAt929 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 -> CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C0 :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
-            C0 T), ∀ (P : Fin 3 -> Bool -> ProtoTile), ∀ (x : GaussianInt), ∀ (marked : Bool), (∀
-            (i : Fin 3), ∀ (s : Bool), ∀ (d : GaussianInt), FootprintVertices (TileTranslation (P
-            i s) d) = FootprintVertices (TileTranslation (cert.P i s) d)) → ((x ∈
-            FootprintVertices (TileTranslation (cert.P (0 : Fin (3 : ℕ)) false) ((⟨(0 : ℤ), (1 :
-            ℤ)⟩ : GaussianInt) ^ (1 : ℕ) * if Even (1 : ℕ) then BandVectors.1
-            (cfg.firstPredecessor (0 : Fin (4 : ℕ))) (cfg.firstPredecessor (2 : Fin (4 : ℕ)))
-            else BandVectors.1 (cfg.firstPredecessor (2 : Fin (4 : ℕ))) (cfg.firstPredecessor (0
-            : Fin (4 : ℕ))))) ↔ marked = true) → (x ∈ FootprintVertices (TileTranslation (P 0
-            false) ((⟨0, 1⟩ : GaussianInt) ^ (1 : Nat) * (if Even (1 : Nat) then BandVectors.1
-            (cfg.firstPredecessor 0) (cfg.firstPredecessor 2) else BandVectors.1
-            (cfg.firstPredecessor 2) (cfg.firstPredecessor 0)))) ↔ marked = true)) ) := by
-  classical
-  intro q cfg C0 T cert P x marked translatedObs webCompanion
-  rw [translatedObs]
-  simpa [Even] using webCompanion
-
 private theorem star'At950 :
     (by
       classical
@@ -1584,28 +1518,6 @@ private theorem star'At950 :
   · exact Or.inr (by simpa [(data.hobsP 2 true).2.1] using hL)
   · exact Or.inl (by simpa [(data.hobsP 0 false).2.1] using hR)
 
-private theorem compAt957 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 -> CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C0 :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
-            C0 T), ∀ (P : Fin 3 -> Bool -> ProtoTile), ∀ (x : GaussianInt), ∀ (marked : Bool), (∀
-            (i : Fin 3), ∀ (s : Bool), ∀ (d : GaussianInt), FootprintVertices (TileTranslation (P
-            i s) d) = FootprintVertices (TileTranslation (cert.P i s) d)) → ((x ∈
-            FootprintVertices (TileTranslation (cert.P (0 : Fin (3 : ℕ)) false) ((⟨(0 : ℤ), (1 :
-            ℤ)⟩ : GaussianInt) ^ (2 : ℕ) * if Even (2 : ℕ) then BandVectors.1
-            (cfg.firstPredecessor (0 : Fin (4 : ℕ))) (cfg.firstPredecessor (3 : Fin (4 : ℕ)))
-            else BandVectors.1 (cfg.firstPredecessor (3 : Fin (4 : ℕ))) (cfg.firstPredecessor (0
-            : Fin (4 : ℕ))))) ↔ marked = true) → (x ∈ FootprintVertices (TileTranslation (P 0
-            false) ((⟨0, 1⟩ : GaussianInt) ^ (2 : Nat) * (if Even (2 : Nat) then BandVectors.1
-            (cfg.firstPredecessor 0) (cfg.firstPredecessor 3) else BandVectors.1
-            (cfg.firstPredecessor 3) (cfg.firstPredecessor 0)))) ↔ marked = true)) ) := by
-  classical
-  intro q cfg C0 T cert P x marked translatedObs webCompanion
-  rw [translatedObs]
-  simpa [Even] using webCompanion
-
 private theorem star'At978 :
     (by
       classical
@@ -1626,28 +1538,6 @@ private theorem star'At978 :
   classical
   intro q cfg C0 T cert h P r Q S u v g x data star
   simpa [(data.hobsP 1 true).2.1, (data.hobsP 2 false).2.1] using star
-
-private theorem compAt982 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 -> CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C0 :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
-            C0 T), ∀ (P : Fin 3 -> Bool -> ProtoTile), ∀ (x : GaussianInt), ∀ (marked : Bool), (∀
-            (i : Fin 3), ∀ (s : Bool), ∀ (d : GaussianInt), FootprintVertices (TileTranslation (P
-            i s) d) = FootprintVertices (TileTranslation (cert.P i s) d)) → ((x ∈
-            FootprintVertices (TileTranslation (cert.P (1 : Fin (3 : ℕ)) true) ((⟨(0 : ℤ), (1 :
-            ℤ)⟩ : GaussianInt) ^ (3 : ℕ) * if Even (3 : ℕ) then BandVectors.1
-            (cfg.secondPredecessor (0 : Fin (4 : ℕ))) (cfg.secondPredecessor (1 : Fin (4 : ℕ)))
-            else BandVectors.1 (cfg.secondPredecessor (1 : Fin (4 : ℕ))) (cfg.secondPredecessor
-            (0 : Fin (4 : ℕ))))) ↔ marked = true) → (x ∈ FootprintVertices (TileTranslation (P 1
-            true) ((⟨0, 1⟩ : GaussianInt) ^ (3 : Nat) * (if Even (3 : Nat) then BandVectors.1
-            (cfg.secondPredecessor 0) (cfg.secondPredecessor 1) else BandVectors.1
-            (cfg.secondPredecessor 1) (cfg.secondPredecessor 0)))) ↔ marked = true)) ) := by
-  classical
-  intro q cfg C0 T cert P x marked translatedObs webCompanion
-  rw [translatedObs]
-  simpa [Even] using webCompanion
 
 private theorem star'At1004 :
     (by
@@ -1671,28 +1561,6 @@ private theorem star'At1004 :
   rcases star y hy with hL | hR
   · exact Or.inr (by simpa [(data.hobsP 2 true).2.1] using hL)
   · exact Or.inl (by simpa [(data.hobsP 1 false).2.1] using hR)
-
-private theorem compAt1011 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 -> CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C0 :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
-            C0 T), ∀ (P : Fin 3 -> Bool -> ProtoTile), ∀ (x : GaussianInt), ∀ (marked : Bool), (∀
-            (i : Fin 3), ∀ (s : Bool), ∀ (d : GaussianInt), FootprintVertices (TileTranslation (P
-            i s) d) = FootprintVertices (TileTranslation (cert.P i s) d)) → ((x ∈
-            FootprintVertices (TileTranslation (cert.P (1 : Fin (3 : ℕ)) false) ((⟨(0 : ℤ), (1 :
-            ℤ)⟩ : GaussianInt) ^ (1 : ℕ) * if Even (1 : ℕ) then BandVectors.1
-            (cfg.secondPredecessor (0 : Fin (4 : ℕ))) (cfg.secondPredecessor (1 : Fin (4 : ℕ)))
-            else BandVectors.1 (cfg.secondPredecessor (1 : Fin (4 : ℕ))) (cfg.secondPredecessor
-            (0 : Fin (4 : ℕ))))) ↔ marked = true) → (x ∈ FootprintVertices (TileTranslation (P 1
-            false) ((⟨0, 1⟩ : GaussianInt) ^ (1 : Nat) * (if Even (1 : Nat) then BandVectors.1
-            (cfg.secondPredecessor 0) (cfg.secondPredecessor 1) else BandVectors.1
-            (cfg.secondPredecessor 1) (cfg.secondPredecessor 0)))) ↔ marked = true)) ) := by
-  classical
-  intro q cfg C0 T cert P x marked translatedObs webCompanion
-  rw [translatedObs]
-  simpa [Even] using webCompanion
 
 end OuterMixedOdometerGeometry
 
@@ -1858,15 +1726,18 @@ private theorem outerMixedConclusion :
       simpa [(data.hobsP 1 false).2.1] using right_mem
     have star' := OuterMixedOdometerGeometry.star'At871 q cfg C0 T cert h P r Q S u v g x data
         star
-    have comp := OuterMixedOdometerGeometry.compAt875 q cfg C0 T cert P x marked translatedObs
-        webCompanion
     exact finish (P 0 true) (P 1 false) (r 0 true) (r 1 false)
       C1 C2 cfg.firstPredecessor 1 3 p0leaf p1leaf cfg.firstProper
       cfg.firstChild cfg.firstParentTwo hp0leaf hp1leaf hcent12
       (congrArg Prod.fst hslope12) (congrArg Prod.snd hslope12) adj12
       (data.hextP 0 true) (data.hextP 1 false)
       (data.hcompat _ _ ⟨0, true, Or.inl rfl⟩ ⟨1, false, Or.inl rfl⟩)
-      leftMem rightMem star' comp
+      leftMem rightMem star' (show x ∈ FootprintVertices (TileTranslation (P 0 true) ((⟨0, 1⟩ :
+          GaussianInt) ^ (3 : Nat) * (if Even (3 : Nat) then BandVectors.1 (cfg.firstPredecessor
+          0) (cfg.firstPredecessor 2) else BandVectors.1 (cfg.firstPredecessor 2)
+          (cfg.firstPredecessor 0)))) ↔ marked = true from by
+        rw [translatedObs]
+        simpa [Even] using webCompanion)
   · obtain ⟨left_mem, right_mem, star, _coarse, webCompanion, _rowEq⟩ := case13
     have leftMem : x ∈ FootprintVertices (P 0 true) := by
       simpa [(data.hobsP 0 true).2.1] using left_mem
@@ -1874,8 +1745,6 @@ private theorem outerMixedConclusion :
       simpa [(data.hobsP 2 false).2.1] using right_mem
     have star' := OuterMixedOdometerGeometry.star'At896 q cfg C0 T cert h P r Q S u v g x data
         star
-    have comp := OuterMixedOdometerGeometry.compAt900 q cfg C0 T cert P x marked translatedObs
-        webCompanion
     exact finish (P 0 true) (P 2 false) (r 0 true) (r 2 false)
       C1 C3 cfg.firstPredecessor 2 0 p0leaf p2leaf cfg.firstProper
       cfg.firstChild cfg.firstParentThree hp0leaf hp2leaf (by simpa using hcent13)
@@ -1883,7 +1752,12 @@ private theorem outerMixedConclusion :
       (by simpa using congrArg Prod.snd hslope13) adj13
       (data.hextP 0 true) (data.hextP 2 false)
       (data.hcompat _ _ ⟨0, true, Or.inl rfl⟩ ⟨2, false, Or.inl rfl⟩)
-      leftMem rightMem star' comp
+      leftMem rightMem star' (show x ∈ FootprintVertices (TileTranslation (P 0 true) ((⟨0, 1⟩ :
+          GaussianInt) ^ (0 : Nat) * (if Even (0 : Nat) then BandVectors.1 (cfg.firstPredecessor
+          0) (cfg.firstPredecessor 3) else BandVectors.1 (cfg.firstPredecessor 3)
+          (cfg.firstPredecessor 0)))) ↔ marked = true from by
+        rw [translatedObs]
+        simpa [Even] using webCompanion)
   · obtain ⟨left_mem, right_mem, star, _coarse, webCompanion, _rowEq⟩ := case21
     have leftMem : x ∈ FootprintVertices (P 0 false) := by
       simpa [(data.hobsP 0 false).2.1] using right_mem
@@ -1891,15 +1765,18 @@ private theorem outerMixedConclusion :
       simpa [(data.hobsP 1 true).2.1] using left_mem
     have star' := OuterMixedOdometerGeometry.star'At922 q cfg C0 T cert h P r Q S u v g x data
         star
-    have comp := OuterMixedOdometerGeometry.compAt929 q cfg C0 T cert P x marked translatedObs
-        webCompanion
     exact finish (P 0 false) (P 1 true) (r 0 false) (r 1 true)
       C1 C2 cfg.firstPredecessor 1 1 p0mleaf p1pleaf cfg.firstProper
       cfg.firstChild cfg.firstParentTwo hp0mleaf hp1pleaf hcent21
       (congrArg Prod.fst hslope21) (congrArg Prod.snd hslope21) adj21
       (data.hextP 0 false) (data.hextP 1 true)
       (data.hcompat _ _ ⟨0, false, Or.inl rfl⟩ ⟨1, true, Or.inl rfl⟩)
-      leftMem rightMem star' comp
+      leftMem rightMem star' (show x ∈ FootprintVertices (TileTranslation (P 0 false) ((⟨0, 1⟩ :
+          GaussianInt) ^ (1 : Nat) * (if Even (1 : Nat) then BandVectors.1 (cfg.firstPredecessor
+          0) (cfg.firstPredecessor 2) else BandVectors.1 (cfg.firstPredecessor 2)
+          (cfg.firstPredecessor 0)))) ↔ marked = true from by
+        rw [translatedObs]
+        simpa [Even] using webCompanion)
   · obtain ⟨left_mem, right_mem, star, _coarse, webCompanion, _rowEq⟩ := case31
     have leftMem : x ∈ FootprintVertices (P 0 false) := by
       simpa [(data.hobsP 0 false).2.1] using right_mem
@@ -1907,15 +1784,18 @@ private theorem outerMixedConclusion :
       simpa [(data.hobsP 2 true).2.1] using left_mem
     have star' := OuterMixedOdometerGeometry.star'At950 q cfg C0 T cert h P r Q S u v g x data
         star
-    have comp := OuterMixedOdometerGeometry.compAt957 q cfg C0 T cert P x marked translatedObs
-        webCompanion
     exact finish (P 0 false) (P 2 true) (r 0 false) (r 2 true)
       C1 C3 cfg.firstPredecessor 2 2 p0mleaf p2pleaf cfg.firstProper
       cfg.firstChild cfg.firstParentThree hp0mleaf hp2pleaf hcent31
       (congrArg Prod.fst hslope31) (congrArg Prod.snd hslope31) adj31
       (data.hextP 0 false) (data.hextP 2 true)
       (data.hcompat _ _ ⟨0, false, Or.inl rfl⟩ ⟨2, true, Or.inl rfl⟩)
-      leftMem rightMem star' comp
+      leftMem rightMem star' (show x ∈ FootprintVertices (TileTranslation (P 0 false) ((⟨0, 1⟩ :
+          GaussianInt) ^ (2 : Nat) * (if Even (2 : Nat) then BandVectors.1 (cfg.firstPredecessor
+          0) (cfg.firstPredecessor 3) else BandVectors.1 (cfg.firstPredecessor 3)
+          (cfg.firstPredecessor 0)))) ↔ marked = true from by
+        rw [translatedObs]
+        simpa [Even] using webCompanion)
   · obtain ⟨left_mem, right_mem, star, _coarse, webCompanion, _rowEq⟩ := case23
     have leftMem : x ∈ FootprintVertices (P 1 true) := by
       simpa [(data.hobsP 1 true).2.1] using left_mem
@@ -1923,8 +1803,6 @@ private theorem outerMixedConclusion :
       simpa [(data.hobsP 2 false).2.1] using right_mem
     have star' := OuterMixedOdometerGeometry.star'At978 q cfg C0 T cert h P r Q S u v g x data
         star
-    have comp := OuterMixedOdometerGeometry.compAt982 q cfg C0 T cert P x marked translatedObs
-        webCompanion
     exact finish (P 1 true) (P 2 false) (r 1 true) (r 2 false)
       C2 C3 cfg.secondPredecessor 0 3 p1pleaf p2leaf cfg.secondProper
       cfg.secondChild cfg.secondParentOne hp1pleaf hp2leaf (by simpa using hcent23)
@@ -1932,7 +1810,12 @@ private theorem outerMixedConclusion :
       (by simpa using congrArg Prod.snd hslope23) adj23
       (data.hextP 1 true) (data.hextP 2 false)
       (data.hcompat _ _ ⟨1, true, Or.inl rfl⟩ ⟨2, false, Or.inl rfl⟩)
-      leftMem rightMem star' comp
+      leftMem rightMem star' (show x ∈ FootprintVertices (TileTranslation (P 1 true) ((⟨0, 1⟩ :
+          GaussianInt) ^ (3 : Nat) * (if Even (3 : Nat) then BandVectors.1 (cfg.secondPredecessor
+          0) (cfg.secondPredecessor 1) else BandVectors.1 (cfg.secondPredecessor 1)
+          (cfg.secondPredecessor 0)))) ↔ marked = true from by
+        rw [translatedObs]
+        simpa [Even] using webCompanion)
   · obtain ⟨left_mem, right_mem, star, _coarse, webCompanion, _rowEq⟩ := case32
     have leftMem : x ∈ FootprintVertices (P 1 false) := by
       simpa [(data.hobsP 1 false).2.1] using right_mem
@@ -1940,8 +1823,6 @@ private theorem outerMixedConclusion :
       simpa [(data.hobsP 2 true).2.1] using left_mem
     have star' := OuterMixedOdometerGeometry.star'At1004 q cfg C0 T cert h P r Q S u v g x data
         star
-    have comp := OuterMixedOdometerGeometry.compAt1011 q cfg C0 T cert P x marked translatedObs
-        webCompanion
     exact finish (P 1 false) (P 2 true) (r 1 false) (r 2 true)
       C2 C3 cfg.secondPredecessor 0 1 p1leaf p2pleaf cfg.secondProper
       cfg.secondChild cfg.secondParentOne hp1leaf hp2pleaf (by simpa using hcent32)
@@ -1949,7 +1830,12 @@ private theorem outerMixedConclusion :
       (by simpa using congrArg Prod.snd hslope32) adj32
       (data.hextP 1 false) (data.hextP 2 true)
       (data.hcompat _ _ ⟨1, false, Or.inl rfl⟩ ⟨2, true, Or.inl rfl⟩)
-      leftMem rightMem star' comp
+      leftMem rightMem star' (show x ∈ FootprintVertices (TileTranslation (P 1 false) ((⟨0, 1⟩ :
+          GaussianInt) ^ (1 : Nat) * (if Even (1 : Nat) then BandVectors.1 (cfg.secondPredecessor
+          0) (cfg.secondPredecessor 1) else BandVectors.1 (cfg.secondPredecessor 1)
+          (cfg.secondPredecessor 0)))) ↔ marked = true from by
+        rw [translatedObs]
+        simpa [Even] using webCompanion)
 
 end OuterMixedOdometerConclusion
 
