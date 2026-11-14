@@ -316,200 +316,6 @@ private theorem blockDisjoint :
   rw [blockEq m n, blockEq r s]
   exact (BandOrderedGeneralPeriodicBlockCells q cfg C₀ T cert).2 m n r s hne
 
-private theorem hUA :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C₀ :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
-            C₀ T),
-        let K : Int → Int → Finset PeriodicSubtileIndex := fun m n ↦
-          {⟨.A, m, n⟩, ⟨.B, m, n⟩, ⟨.C, m, n⟩,
-            ⟨.D, m, n⟩, ⟨.E, m, n⟩, ⟨.F, m, n⟩}
-        let blockTile (m n : Int) : ProtoTile :=
-          ⟨(K m n).biUnion (fun a => (cert.modified.tile a).cells), 0⟩
-        (∀ (p : FiniteInducedTilePatch cert.modified.plane cert.modified.tile), ∀ (σ : Finset
-            (Int × Int)), (p.indices = σ.biUnion (fun mn => K mn.1 mn.2)) → ((∀ x, x ∈
-            p.unionTile.cells ↔ ∃ mn ∈ σ, ∃ a ∈ K mn.1 mn.2, x ∈ (cert.modified.tile a).cells) →
-            (∀ x, x ∈ p.unionTile.cells ↔ ∃ mn ∈ σ, x ∈ (blockTile mn.1 mn.2).cells))) → (
-        let σA : Finset (Int × Int) := {(0,0)}
-        ∀ (pA : FiniteInducedTilePatch cert.modified.plane cert.modified.tile), (pA.indices =
-            σA.biUnion fun (mn : ℤ × ℤ) => K mn.1 mn.2) → ((∀ (x : LatticeCell), x ∈
-            pA.unionTile.cells ↔ ∃ mn ∈ σA, ∃ a ∈ K mn.1 mn.2, x ∈ (cert.modified.tile a).cells)
-            → (∀ x, x ∈ pA.unionTile.cells ↔ x ∈ (blockTile 0 0).cells))) ) := by
-  classical
-  intro q cfg C₀ T cert K blockTile patchUnion σA pA hpA hexA x
-  simpa [σA] using patchUnion pA σA hpA hexA x
-
-private theorem hUB :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C₀ :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
-            C₀ T),
-        let K : Int → Int → Finset PeriodicSubtileIndex := fun m n ↦
-          {⟨.A, m, n⟩, ⟨.B, m, n⟩, ⟨.C, m, n⟩,
-            ⟨.D, m, n⟩, ⟨.E, m, n⟩, ⟨.F, m, n⟩}
-        let blockTile (m n : Int) : ProtoTile :=
-          ⟨(K m n).biUnion (fun a => (cert.modified.tile a).cells), 0⟩
-        (∀ (p : FiniteInducedTilePatch cert.modified.plane cert.modified.tile), ∀ (σ : Finset
-            (Int × Int)), (p.indices = σ.biUnion (fun mn => K mn.1 mn.2)) → ((∀ x, x ∈
-            p.unionTile.cells ↔ ∃ mn ∈ σ, ∃ a ∈ K mn.1 mn.2, x ∈ (cert.modified.tile a).cells) →
-            (∀ x, x ∈ p.unionTile.cells ↔ ∃ mn ∈ σ, x ∈ (blockTile mn.1 mn.2).cells))) → (
-        let σB : Finset (Int × Int) := {(0,1)}
-        ∀ (pB : FiniteInducedTilePatch cert.modified.plane cert.modified.tile), (pB.indices =
-            σB.biUnion fun (mn : ℤ × ℤ) => K mn.1 mn.2) → ((∀ (x : LatticeCell), x ∈
-            pB.unionTile.cells ↔ ∃ mn ∈ σB, ∃ a ∈ K mn.1 mn.2, x ∈ (cert.modified.tile a).cells)
-            → (∀ x, x ∈ pB.unionTile.cells ↔ x ∈ (blockTile 0 1).cells))) ) := by
-  classical
-  intro q cfg C₀ T cert K blockTile patchUnion σB pB hpB hexB x
-  simpa [σB] using patchUnion pB σB hpB hexB x
-
-private theorem hUC :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C₀ :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
-            C₀ T),
-        let K : Int → Int → Finset PeriodicSubtileIndex := fun m n ↦
-          {⟨.A, m, n⟩, ⟨.B, m, n⟩, ⟨.C, m, n⟩,
-            ⟨.D, m, n⟩, ⟨.E, m, n⟩, ⟨.F, m, n⟩}
-        let blockTile (m n : Int) : ProtoTile :=
-          ⟨(K m n).biUnion (fun a => (cert.modified.tile a).cells), 0⟩
-        (∀ (p : FiniteInducedTilePatch cert.modified.plane cert.modified.tile), ∀ (σ : Finset
-            (Int × Int)), (p.indices = σ.biUnion (fun mn => K mn.1 mn.2)) → ((∀ x, x ∈
-            p.unionTile.cells ↔ ∃ mn ∈ σ, ∃ a ∈ K mn.1 mn.2, x ∈ (cert.modified.tile a).cells) →
-            (∀ x, x ∈ p.unionTile.cells ↔ ∃ mn ∈ σ, x ∈ (blockTile mn.1 mn.2).cells))) → (
-        let σC : Finset (Int × Int) := {(1,1)}
-        ∀ (pC : FiniteInducedTilePatch cert.modified.plane cert.modified.tile), (pC.indices =
-            σC.biUnion fun (mn : ℤ × ℤ) => K mn.1 mn.2) → ((∀ (x : LatticeCell), x ∈
-            pC.unionTile.cells ↔ ∃ mn ∈ σC, ∃ a ∈ K mn.1 mn.2, x ∈ (cert.modified.tile a).cells)
-            → (∀ x, x ∈ pC.unionTile.cells ↔ x ∈ (blockTile 1 1).cells))) ) := by
-  classical
-  intro q cfg C₀ T cert K blockTile patchUnion σC pC hpC hexC x
-  simpa [σC] using patchUnion pC σC hpC hexC x
-
-private theorem hUAB :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C₀ :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
-            C₀ T),
-        let K : Int → Int → Finset PeriodicSubtileIndex := fun m n ↦
-          {⟨.A, m, n⟩, ⟨.B, m, n⟩, ⟨.C, m, n⟩,
-            ⟨.D, m, n⟩, ⟨.E, m, n⟩, ⟨.F, m, n⟩}
-        let blockTile (m n : Int) : ProtoTile :=
-          ⟨(K m n).biUnion (fun a => (cert.modified.tile a).cells), 0⟩
-        (∀ (p : FiniteInducedTilePatch cert.modified.plane cert.modified.tile), ∀ (σ : Finset
-            (Int × Int)), (p.indices = σ.biUnion (fun mn => K mn.1 mn.2)) → ((∀ x, x ∈
-            p.unionTile.cells ↔ ∃ mn ∈ σ, ∃ a ∈ K mn.1 mn.2, x ∈ (cert.modified.tile a).cells) →
-            (∀ x, x ∈ p.unionTile.cells ↔ ∃ mn ∈ σ, x ∈ (blockTile mn.1 mn.2).cells))) → (
-        let σAB : Finset (Int × Int) := {(0,0),(0,1)}
-        ∀ (pAB : FiniteInducedTilePatch cert.modified.plane cert.modified.tile), (pAB.indices =
-            σAB.biUnion fun (mn : ℤ × ℤ) => K mn.1 mn.2) → ((∀ (x : LatticeCell), x ∈
-            pAB.unionTile.cells ↔ ∃ mn ∈ σAB, ∃ a ∈ K mn.1 mn.2, x ∈ (cert.modified.tile
-            a).cells) → (∀ x, x ∈ pAB.unionTile.cells ↔ x ∈ (blockTile 0 0).cells ∨ x ∈
-            (blockTile 0 1).cells))) ) := by
-  classical
-  intro q cfg C₀ T cert K blockTile patchUnion σAB pAB hpAB hexAB x
-  simpa [σAB] using patchUnion pAB σAB hpAB hexAB x
-
-private theorem hUBC :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C₀ :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
-            C₀ T),
-        let K : Int → Int → Finset PeriodicSubtileIndex := fun m n ↦
-          {⟨.A, m, n⟩, ⟨.B, m, n⟩, ⟨.C, m, n⟩,
-            ⟨.D, m, n⟩, ⟨.E, m, n⟩, ⟨.F, m, n⟩}
-        let blockTile (m n : Int) : ProtoTile :=
-          ⟨(K m n).biUnion (fun a => (cert.modified.tile a).cells), 0⟩
-        (∀ (p : FiniteInducedTilePatch cert.modified.plane cert.modified.tile), ∀ (σ : Finset
-            (Int × Int)), (p.indices = σ.biUnion (fun mn => K mn.1 mn.2)) → ((∀ x, x ∈
-            p.unionTile.cells ↔ ∃ mn ∈ σ, ∃ a ∈ K mn.1 mn.2, x ∈ (cert.modified.tile a).cells) →
-            (∀ x, x ∈ p.unionTile.cells ↔ ∃ mn ∈ σ, x ∈ (blockTile mn.1 mn.2).cells))) → (
-        let σBC : Finset (Int × Int) := {(0,1),(1,1)}
-        ∀ (pBC : FiniteInducedTilePatch cert.modified.plane cert.modified.tile), (pBC.indices =
-            σBC.biUnion fun (mn : ℤ × ℤ) => K mn.1 mn.2) → ((∀ (x : LatticeCell), x ∈
-            pBC.unionTile.cells ↔ ∃ mn ∈ σBC, ∃ a ∈ K mn.1 mn.2, x ∈ (cert.modified.tile
-            a).cells) → (∀ x, x ∈ pBC.unionTile.cells ↔ x ∈ (blockTile 0 1).cells ∨ x ∈
-            (blockTile 1 1).cells))) ) := by
-  classical
-  intro q cfg C₀ T cert K blockTile patchUnion σBC pBC hpBC hexBC x
-  simpa [σBC] using patchUnion pBC σBC hpBC hexBC x
-
-private theorem hUCA :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C₀ :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
-            C₀ T),
-        let K : Int → Int → Finset PeriodicSubtileIndex := fun m n ↦
-          {⟨.A, m, n⟩, ⟨.B, m, n⟩, ⟨.C, m, n⟩,
-            ⟨.D, m, n⟩, ⟨.E, m, n⟩, ⟨.F, m, n⟩}
-        let blockTile (m n : Int) : ProtoTile :=
-          ⟨(K m n).biUnion (fun a => (cert.modified.tile a).cells), 0⟩
-        (∀ (p : FiniteInducedTilePatch cert.modified.plane cert.modified.tile), ∀ (σ : Finset
-            (Int × Int)), (p.indices = σ.biUnion (fun mn => K mn.1 mn.2)) → ((∀ x, x ∈
-            p.unionTile.cells ↔ ∃ mn ∈ σ, ∃ a ∈ K mn.1 mn.2, x ∈ (cert.modified.tile a).cells) →
-            (∀ x, x ∈ p.unionTile.cells ↔ ∃ mn ∈ σ, x ∈ (blockTile mn.1 mn.2).cells))) → (
-        let σCA : Finset (Int × Int) := {(1,1),(0,0)}
-        ∀ (pCA : FiniteInducedTilePatch cert.modified.plane cert.modified.tile), (pCA.indices =
-            σCA.biUnion fun (mn : ℤ × ℤ) => K mn.1 mn.2) → ((∀ (x : LatticeCell), x ∈
-            pCA.unionTile.cells ↔ ∃ mn ∈ σCA, ∃ a ∈ K mn.1 mn.2, x ∈ (cert.modified.tile
-            a).cells) → (∀ x, x ∈ pCA.unionTile.cells ↔ x ∈ (blockTile 1 1).cells ∨ x ∈
-            (blockTile 0 0).cells))) ) := by
-  classical
-  intro q cfg C₀ T cert K blockTile patchUnion σCA pCA hpCA hexCA x
-  simpa [σCA] using patchUnion pCA σCA hpCA hexCA x
-
-private theorem hUABC :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C₀ :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
-            C₀ T),
-        let K : Int → Int → Finset PeriodicSubtileIndex := fun m n ↦
-          {⟨.A, m, n⟩, ⟨.B, m, n⟩, ⟨.C, m, n⟩,
-            ⟨.D, m, n⟩, ⟨.E, m, n⟩, ⟨.F, m, n⟩}
-        let τ : Finset (Int × Int) := {(0, 0), (0, 1), (1, 1)}
-        let blockTile (m n : Int) : ProtoTile :=
-          ⟨(K m n).biUnion (fun a => (cert.modified.tile a).cells), 0⟩
-        (∀ (p : FiniteInducedTilePatch cert.modified.plane cert.modified.tile), ∀ (σ : Finset
-            (Int × Int)), (p.indices = σ.biUnion (fun mn => K mn.1 mn.2)) → ((∀ x, x ∈
-            p.unionTile.cells ↔ ∃ mn ∈ σ, ∃ a ∈ K mn.1 mn.2, x ∈ (cert.modified.tile a).cells) →
-            (∀ x, x ∈ p.unionTile.cells ↔ ∃ mn ∈ σ, x ∈ (blockTile mn.1 mn.2).cells))) → (∀ (pABC
-            : FiniteInducedTilePatch cert.modified.plane cert.modified.tile), (pABC.indices =
-            τ.biUnion fun (mn : ℤ × ℤ) => K mn.1 mn.2) → ((∀ (x : LatticeCell), x ∈
-            pABC.unionTile.cells ↔ ∃ mn ∈ τ, ∃ a ∈ K mn.1 mn.2, x ∈ (cert.modified.tile a).cells)
-            → (∀ x, x ∈ pABC.unionTile.cells ↔ x ∈ (blockTile 0 0).cells ∨ x ∈ (blockTile 0
-            1).cells ∨ x ∈ (blockTile 1 1).cells))) ) := by
-  classical
-  intro q cfg C₀ T cert K τ blockTile patchUnion pABC hpABC hexABC x
-  constructor
-  · intro hx
-    obtain ⟨mn, hmn, hcell⟩ := (patchUnion pABC τ hpABC hexABC x).mp hx
-    simp only [τ, Finset.mem_insert, Finset.mem_singleton] at hmn
-    rcases hmn with hmn | hmn | hmn
-    · rcases hmn with rfl
-      exact Or.inl hcell
-    · rcases hmn with rfl
-      exact Or.inr (Or.inl hcell)
-    · rcases hmn with rfl
-      exact Or.inr (Or.inr hcell)
-  · intro hx
-    rcases hx with hx | hx | hx
-    · exact (patchUnion pABC τ hpABC hexABC x).mpr ⟨(0,0), by simp [τ], hx⟩
-    · exact (patchUnion pABC τ hpABC hexABC x).mpr ⟨(0,1), by simp [τ], hx⟩
-    · exact (patchUnion pABC τ hpABC hexABC x).mpr ⟨(1,1), by simp [τ], hx⟩
-
 private theorem hcommonAB :
     (by
       classical
@@ -1467,21 +1273,25 @@ theorem BandOrderedGeneralChildInterfaces
   have hdisjCA : Disjoint (blockTile 1 1).cells (blockTile 0 0).cells :=
     blockDisjoint 1 1 0 0 (by decide)
   have blockLattice := ChildInterfaceGeometry.blockLattice q cfg C₀ T cert
-  have hLA' := blockLattice 0 0 pA (ChildInterfaceGeometry.hUA q cfg C₀ T cert patchUnion pA hpA
-      hexA) hLA
-  have hLB' := blockLattice 0 1 pB (ChildInterfaceGeometry.hUB q cfg C₀ T cert patchUnion pB hpB
-      hexB) hLB
-  have hLC' := blockLattice 1 1 pC (ChildInterfaceGeometry.hUC q cfg C₀ T cert patchUnion pC hpC
-      hexC) hLC
-  have blockJunction := ChildInterfaceGeometry.blockJunction q
-          cfg C₀ T cert pAB pBC pCA pABC hLAB hLBC hLCA hLABC (ChildInterfaceGeometry.hUAB q cfg
-              C₀ T cert patchUnion pAB hpAB hexAB) (ChildInterfaceGeometry.hUBC q cfg C₀ T cert
-              patchUnion pBC hpBC hexBC) (ChildInterfaceGeometry.hUCA q cfg C₀ T cert patchUnion
-              pCA hpCA hexCA) (ChildInterfaceGeometry.hUABC q cfg C₀ T cert patchUnion pABC hpABC
-              hexABC) hdisjAB
-          hdisjBC hdisjCA (ChildInterfaceGeometry.hcommonAB q cfg C₀ T cert)
-              (ChildInterfaceGeometry.hcommonBC q cfg C₀ T cert)
-              (ChildInterfaceGeometry.hcommonCA q cfg C₀ T cert) hLA' hLB' hLC'
+  have hLA' := blockLattice 0 0 pA (by
+    intro z
+    simpa [σA, blockTile, K] using patchUnion pA σA hpA hexA z) hLA
+  have hLB' := blockLattice 0 1 pB (by
+    intro z
+    simpa [σB, blockTile, K] using patchUnion pB σB hpB hexB z) hLB
+  have hLC' := blockLattice 1 1 pC (by
+    intro z
+    simpa [σC, blockTile, K] using patchUnion pC σC hpC hexC z) hLC
+  have blockJunction := ChildInterfaceGeometry.blockJunction q cfg C₀ T cert
+      pAB pBC pCA pABC hLAB hLBC hLCA hLABC
+      (by intro z; simpa [σAB, blockTile, K] using patchUnion pAB σAB hpAB hexAB z)
+      (by intro z; simpa [σBC, blockTile, K] using patchUnion pBC σBC hpBC hexBC z)
+      (by intro z; simpa [σCA, blockTile, K] using patchUnion pCA σCA hpCA hexCA z)
+      (by intro z; simpa [τ, blockTile, K] using patchUnion pABC τ hpABC hexABC z)
+      hdisjAB hdisjBC hdisjCA
+      (ChildInterfaceGeometry.hcommonAB q cfg C₀ T cert)
+      (ChildInterfaceGeometry.hcommonBC q cfg C₀ T cert)
+      (ChildInterfaceGeometry.hcommonCA q cfg C₀ T cert) hLA' hLB' hLC'
   have hzero : (TileTranslation T 0).cells = T.cells := ChildInterfaceGeometry.hzero T
   have rootNe : T.cells.Nonempty := ChildInterfaceGeometry.rootNe q cfg C₀ T cert blockEq hLA' hzero
   have transZeroNe : (TileTranslation T 0).cells.Nonempty := by

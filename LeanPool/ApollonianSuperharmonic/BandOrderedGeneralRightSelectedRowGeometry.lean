@@ -29,6 +29,139 @@ Changes: pool module paths, public exports, project namespace and current Mathli
 
 namespace ApollonianSuperharmonic
 
+namespace SelectedRowNormalization
+
+private noncomputable def certificate
+    (C D : BandCircle) (T N : ProtoTile) (h k : PartialOdometer)
+    (x : GaussianInt)
+    (bundle : BandOrderedGeneralNormalizedOccurrenceBundle C D T N h k x)
+    (placement : BandOrderedGeneralRightPlacement bundle.normalizedPresentation
+      bundle.configuration bundle.normalizedCircle bundle.normalizedRoot
+      bundle.normalizedFixed bundle.normalizedRootFunction
+      bundle.normalizedFixedFunction bundle.normalizedPoint bundle.pieces
+      bundle.functions bundle.selectedSlot bundle.selectedSign
+      bundle.routedDirection)
+ :
+    BandOrderedGeneralRightNormalizationCertificate C T N h k x := by
+  classical
+  let q := bundle.normalizedPresentation
+  let cfg := bundle.configuration
+  let F := bundle.normalizedFixed
+  let root := bundle.normalizedRoot
+  exact {
+    presentation := bundle.presentation
+    presentation_proper := bundle.presentation_proper
+    presentation_child := bundle.presentation_child
+    parentRotation := bundle.parentRotation
+    symmetry := bundle.symmetry
+    rotatedPresentation := bundle.rotatedPresentation
+    rotated_presentation_eq := bundle.rotated_presentation_eq
+    normalizedPresentation := q
+    normalized_presentation_eq := bundle.normalized_presentation_eq
+    configuration := cfg
+    normalizedCircle := bundle.normalizedCircle
+    normalized_circle_eq := bundle.normalized_circle_eq
+    normalizedFixedCircle := bundle.normalizedCircle
+    normalized_fixed_circle_eq := by
+      calc
+        bundle.normalizedCircle.1.1 = q 0 := bundle.normalized_circle_eq.symm
+        _ = BandPackingSymmetryCircleAction bundle.symmetry C.1.1 := by
+          have hq0 := congrFun bundle.normalized_presentation_eq 0
+          calc
+            q 0 = BandPackingSymmetryCircleAction bundle.symmetry
+                (bundle.rotatedPresentation 0) := by
+                  simpa [BandPackingSymmetryQuadrupleAction] using hq0
+            _ = BandPackingSymmetryCircleAction bundle.symmetry C.1.1 := by
+                  rw [bundle.rotated_presentation_eq]
+                  simp [bundle.presentation_child]
+    normalizedRoot := root
+    normalizedFixed := F
+    normalizedRootFunction := bundle.normalizedRootFunction
+    normalizedFixedFunction := bundle.normalizedFixedFunction
+    normalizedPoint := bundle.normalizedPoint
+    normalized_root_eq := bundle.normalized_root_eq
+    normalized_fixed_eq := bundle.normalized_fixed_eq
+    normalized_root_function_eq := bundle.normalized_root_function_eq
+    normalized_fixed_function_eq := bundle.normalized_fixed_function_eq
+    normalized_point_eq := bundle.normalized_point_eq
+    normalized_point_root_domain := by
+      obtain ⟨edge, hp, he⟩ := bundle.edgeAtPoint
+      have hvert := BoundaryFootprintInclusion.edgeVertex root edge he.1 bundle.normalizedPoint hp
+      have hdom := PositiveCurvatureTileOdometerDomain (q 0) root
+        bundle.normalizedRootFunction (ProperBandCurvatureStructure q cfg.proper).1
+        bundle.normalized_root_odometer
+      exact (Set.ext_iff.mp hdom bundle.normalizedPoint).mpr hvert
+    normalized_point_fixed_domain := by
+      obtain ⟨edge, hp, he⟩ := bundle.edgeAtPoint
+      have hvert := BoundaryFootprintInclusion.edgeVertex F edge he.2 bundle.normalizedPoint hp
+      have hdom := PositiveCurvatureTileOdometerDomain
+        bundle.normalizedCircle.1.1 F bundle.normalizedFixedFunction
+        bundle.normalizedCircle.property placement.adjacency.2.1
+      exact (Set.ext_iff.mp hdom bundle.normalizedPoint).mpr hvert
+    normalized_root_odometer := bundle.normalized_root_odometer
+    normalized_fixed_odometer := placement.adjacency.2.1
+    normalized_root_lattice := bundle.root_lattice
+    normalized_fixed_lattice := bundle.fixed_lattice
+    normalizedRootSlope := bundle.normalizedRootSlope
+    normalizedFixedSlope := bundle.normalizedFixedSlope
+    normalized_root_slope := bundle.normalized_root_slope
+    normalized_fixed_slope := bundle.normalized_fixed_slope
+    pieces := bundle.pieces
+    functions := bundle.functions
+    root_band := bundle.root_band
+    piece_odometer := bundle.piece_odometer
+    piece_cell_cover := bundle.piece_cell_cover
+    piece_footprint := bundle.piece_footprint
+    piece_centroid := bundle.piece_centroid
+    function_domain_cover := bundle.function_domain_cover
+    function_restriction := bundle.function_restriction
+    function_compatibility := bundle.function_compatibility
+    piece_slope := bundle.piece_slope
+    adjacency := placement.adjacency
+    layout := placement.layout
+    fixed_quarter_turn := TileT2QuarterTurn q cfg bundle.normalizedCircle F placement.layout
+    rightFirstSlot := placement.rightFirstSlot
+    rightSecondSlot := placement.rightSecondSlot
+    rightDirectionSlot := placement.rightDirectionSlot
+    right_slots_cyclic := placement.right_slots_cyclic
+    rightNeighborPositive := placement.rightNeighborPositive
+    right_adjacency_centroid := placement.right_adjacency_centroid
+    right_adjacency_slope_real := by
+      have hroot : placement.rightRootSlope = bundle.normalizedRootSlope :=
+        Option.some.inj (placement.right_root_slope.symm.trans
+          bundle.normalized_root_slope)
+      have hf : placement.rightFixedSlope = bundle.normalizedFixedSlope :=
+        Option.some.inj (placement.right_fixed_slope.symm.trans
+          bundle.normalized_fixed_slope)
+      simpa [hroot, hf, q] using placement.right_adjacency_slope_real
+    right_adjacency_slope_imag := by
+      have hroot : placement.rightRootSlope = bundle.normalizedRootSlope :=
+        Option.some.inj (placement.right_root_slope.symm.trans
+          bundle.normalized_root_slope)
+      have hf : placement.rightFixedSlope = bundle.normalizedFixedSlope :=
+        Option.some.inj (placement.right_fixed_slope.symm.trans
+          bundle.normalized_fixed_slope)
+      simpa [hroot, hf, q] using placement.right_adjacency_slope_imag
+    rightNeighborDisplacement := placement.rightNeighborDisplacement
+    right_neighbor_displacement := placement.right_neighbor_displacement
+    right_neighbor_cells := placement.right_neighbor_cells
+    right_neighbor_empty_anchor := placement.right_neighbor_empty_anchor
+    firstBoundarySign := placement.firstBoundarySign
+    secondBoundarySign := placement.secondBoundarySign
+    boundary_signs := placement.boundary_signs
+    first_boundary_cells := placement.first_boundary_cells
+    first_boundary_empty_anchor := placement.first_boundary_empty_anchor
+    first_boundary_footprint := placement.first_boundary_footprint
+    first_boundary_domain := placement.first_boundary_domain
+    second_boundary_cells := placement.second_boundary_cells
+    second_boundary_empty_anchor := placement.second_boundary_empty_anchor
+    second_boundary_footprint := placement.second_boundary_footprint
+    second_boundary_domain := placement.second_boundary_domain
+    normalized_star := bundle.normalized_star }
+
+end SelectedRowNormalization
+
+
 namespace SelectedRowGeometry
 
 private theorem turnOutgoing :
@@ -549,7 +682,7 @@ private theorem originalSelectedPath :
     selectedOccurrenceRetarget.1] at hpath'
   exact ⟨selectedStart, selectedEnd, hpath', hedge, hx⟩
 
-private theorem canonicalFinish :
+private theorem canonicalInterfaceExists :
     (by
       classical
       exact
@@ -566,124 +699,8 @@ private theorem canonicalFinish :
             (SubtileOccurrenceInterpretation placement.layout.P placement.layout.u
             placement.layout.v placement.centralIndex)) → (
         let q := bundle.normalizedPresentation
-        let cfg := bundle.configuration
         let F := bundle.normalizedFixed
-        let root := bundle.normalizedRoot
-        ∀ (edgeVertex : ∀ (tile : ProtoTile), (tile.cells.Nonempty) → (∀ (edge : Finset
-            GaussianInt), (edge ∈ FootprintEdges tile) → (∀ (point : GaussianInt), (point ∈ edge)
-            → (point ∈ FootprintVertices tile)))),
-        let norm : BandOrderedGeneralRightNormalizationCertificate C T N h k x := {
-          presentation := bundle.presentation
-          presentation_proper := bundle.presentation_proper
-          presentation_child := bundle.presentation_child
-          parentRotation := bundle.parentRotation
-          symmetry := bundle.symmetry
-          rotatedPresentation := bundle.rotatedPresentation
-          rotated_presentation_eq := bundle.rotated_presentation_eq
-          normalizedPresentation := q
-          normalized_presentation_eq := bundle.normalized_presentation_eq
-          configuration := cfg
-          normalizedCircle := bundle.normalizedCircle
-          normalized_circle_eq := bundle.normalized_circle_eq
-          normalizedFixedCircle := bundle.normalizedCircle
-          normalized_fixed_circle_eq := by
-            calc
-              bundle.normalizedCircle.1.1 = q 0 := bundle.normalized_circle_eq.symm
-              _ = BandPackingSymmetryCircleAction bundle.symmetry C.1.1 := by
-                have hq0 := congrFun bundle.normalized_presentation_eq 0
-                calc
-                  q 0 = BandPackingSymmetryCircleAction bundle.symmetry
-                      (bundle.rotatedPresentation 0) := by
-                        simpa [BandPackingSymmetryQuadrupleAction] using hq0
-                  _ = BandPackingSymmetryCircleAction bundle.symmetry C.1.1 := by
-                        rw [bundle.rotated_presentation_eq]
-                        simp [bundle.presentation_child]
-          normalizedRoot := root
-          normalizedFixed := F
-          normalizedRootFunction := bundle.normalizedRootFunction
-          normalizedFixedFunction := bundle.normalizedFixedFunction
-          normalizedPoint := bundle.normalizedPoint
-          normalized_root_eq := bundle.normalized_root_eq
-          normalized_fixed_eq := bundle.normalized_fixed_eq
-          normalized_root_function_eq := bundle.normalized_root_function_eq
-          normalized_fixed_function_eq := bundle.normalized_fixed_function_eq
-          normalized_point_eq := bundle.normalized_point_eq
-          normalized_point_root_domain := by
-            obtain ⟨edge, hp, he⟩ := bundle.edgeAtPoint
-            have hne := (LatticeTileGridStructure root bundle.root_lattice).1.1
-            have hvert := edgeVertex root hne edge he.1 bundle.normalizedPoint hp
-            have hdom := PositiveCurvatureTileOdometerDomain (q 0) root
-              bundle.normalizedRootFunction (ProperBandCurvatureStructure q cfg.proper).1
-              bundle.normalized_root_odometer
-            exact (Set.ext_iff.mp hdom bundle.normalizedPoint).mpr hvert
-          normalized_point_fixed_domain := by
-            obtain ⟨edge, hp, he⟩ := bundle.edgeAtPoint
-            have hne := (LatticeTileGridStructure F bundle.fixed_lattice).1.1
-            have hvert := edgeVertex F hne edge he.2 bundle.normalizedPoint hp
-            have hdom := PositiveCurvatureTileOdometerDomain
-              bundle.normalizedCircle.1.1 F bundle.normalizedFixedFunction
-              bundle.normalizedCircle.property placement.adjacency.2.1
-            exact (Set.ext_iff.mp hdom bundle.normalizedPoint).mpr hvert
-          normalized_root_odometer := bundle.normalized_root_odometer
-          normalized_fixed_odometer := placement.adjacency.2.1
-          normalized_root_lattice := bundle.root_lattice
-          normalized_fixed_lattice := bundle.fixed_lattice
-          normalizedRootSlope := bundle.normalizedRootSlope
-          normalizedFixedSlope := bundle.normalizedFixedSlope
-          normalized_root_slope := bundle.normalized_root_slope
-          normalized_fixed_slope := bundle.normalized_fixed_slope
-          pieces := bundle.pieces
-          functions := bundle.functions
-          root_band := bundle.root_band
-          piece_odometer := bundle.piece_odometer
-          piece_cell_cover := bundle.piece_cell_cover
-          piece_footprint := bundle.piece_footprint
-          piece_centroid := bundle.piece_centroid
-          function_domain_cover := bundle.function_domain_cover
-          function_restriction := bundle.function_restriction
-          function_compatibility := bundle.function_compatibility
-          piece_slope := bundle.piece_slope
-          adjacency := placement.adjacency
-          layout := placement.layout
-          fixed_quarter_turn := TileT2QuarterTurn q cfg bundle.normalizedCircle F placement.layout
-          rightFirstSlot := placement.rightFirstSlot
-          rightSecondSlot := placement.rightSecondSlot
-          rightDirectionSlot := placement.rightDirectionSlot
-          right_slots_cyclic := placement.right_slots_cyclic
-          rightNeighborPositive := placement.rightNeighborPositive
-          right_adjacency_centroid := placement.right_adjacency_centroid
-          right_adjacency_slope_real := by
-            have hroot : placement.rightRootSlope = bundle.normalizedRootSlope :=
-              Option.some.inj (placement.right_root_slope.symm.trans
-                bundle.normalized_root_slope)
-            have hf : placement.rightFixedSlope = bundle.normalizedFixedSlope :=
-              Option.some.inj (placement.right_fixed_slope.symm.trans
-                bundle.normalized_fixed_slope)
-            simpa [hroot, hf, q] using placement.right_adjacency_slope_real
-          right_adjacency_slope_imag := by
-            have hroot : placement.rightRootSlope = bundle.normalizedRootSlope :=
-              Option.some.inj (placement.right_root_slope.symm.trans
-                bundle.normalized_root_slope)
-            have hf : placement.rightFixedSlope = bundle.normalizedFixedSlope :=
-              Option.some.inj (placement.right_fixed_slope.symm.trans
-                bundle.normalized_fixed_slope)
-            simpa [hroot, hf, q] using placement.right_adjacency_slope_imag
-          rightNeighborDisplacement := placement.rightNeighborDisplacement
-          right_neighbor_displacement := placement.right_neighbor_displacement
-          right_neighbor_cells := placement.right_neighbor_cells
-          right_neighbor_empty_anchor := placement.right_neighbor_empty_anchor
-          firstBoundarySign := placement.firstBoundarySign
-          secondBoundarySign := placement.secondBoundarySign
-          boundary_signs := placement.boundary_signs
-          first_boundary_cells := placement.first_boundary_cells
-          first_boundary_empty_anchor := placement.first_boundary_empty_anchor
-          first_boundary_footprint := placement.first_boundary_footprint
-          first_boundary_domain := placement.first_boundary_domain
-          second_boundary_cells := placement.second_boundary_cells
-          second_boundary_empty_anchor := placement.second_boundary_empty_anchor
-          second_boundary_footprint := placement.second_boundary_footprint
-          second_boundary_domain := placement.second_boundary_domain
-          normalized_star := bundle.normalized_star }
+        let norm := SelectedRowNormalization.certificate C D T N h k x bundle placement
         ((∀ (m : ℤ), ∀ (n : ℤ), ∀ (x_1 : LatticeCell), x_1 ∈ (TileTranslation F
             ((↑m : GaussianInt) * placement.layout.u + (↑n : GaussianInt) *
             placement.layout.v)).cells ↔ ∃ (label : SixSubtileLabel), x_1 ∈
@@ -719,9 +736,10 @@ private theorem canonicalFinish :
                 TileTranslation F uStart ∧ g.endCompanion = TileTranslation F uEnd ∧
                 g.startData.point ≠ g.endData.point)))))))))))))))))) := by
   classical
-  intro C D T N h k x bundle placement selectedEdge hedge q cfg F root edgeVertex norm blockCells
-      fixedPositive touchingRetarget uStart uEnd mR nR mS nS mE nE hR hS hE hFR hFS hFE hRS hRE
-      hSE eStart eEnd tStart tEnd
+  intro C D T N h k x bundle placement selectedEdge hedge q F norm blockCells fixedPositive
+      touchingRetarget uStart uEnd mR nR mS nS mE nE hR hS hE hFR hFS hFE hRS hRE hSE eStart
+      eEnd tStart tEnd
+  let root := bundle.normalizedRoot
   let swapExact (A B D : ProtoTile) (E : ExactTileInterfaceTriple A B D) :
       ExactTileInterfaceTriple B A D :=
     { point := E.point
@@ -825,10 +843,12 @@ private theorem canonicalFinish :
     rw [← oldCells]
     exact disjRE
   have pointRoot : bundle.normalizedPoint ∈ FootprintVertices root := by
+    change norm.normalizedPoint ∈ FootprintVertices norm.normalizedRoot
     rw [← PositiveCurvatureTileOdometerDomain _ _ _ fixedPositive
       norm.normalized_root_odometer]
     exact norm.normalized_point_root_domain
   have pointFixed : bundle.normalizedPoint ∈ FootprintVertices F := by
+    change norm.normalizedPoint ∈ FootprintVertices norm.normalizedFixed
     rw [← PositiveCurvatureTileOdometerDomain _ _ _
       norm.normalizedFixedCircle.property norm.normalized_fixed_odometer]
     exact norm.normalized_point_fixed_domain
@@ -998,7 +1018,7 @@ private theorem period2 :
   rw [hthird]
   abel
 
-private theorem geometryFields :
+private theorem interfaceFields :
     (by
       classical
       exact
@@ -1010,125 +1030,9 @@ private theorem geometryFields :
             bundle.normalizedRootFunction bundle.normalizedFixedFunction bundle.normalizedPoint
             bundle.pieces bundle.functions bundle.selectedSlot bundle.selectedSign
             bundle.routedDirection), ∀ (selectedEdge : Finset GaussianInt),
-        let q := bundle.normalizedPresentation
-        let cfg := bundle.configuration
         let F := bundle.normalizedFixed
         let root := bundle.normalizedRoot
-        ∀ (edgeVertex : ∀ (tile : ProtoTile), (tile.cells.Nonempty) → (∀ (edge : Finset
-            GaussianInt), (edge ∈ FootprintEdges tile) → (∀ (point : GaussianInt), (point ∈ edge)
-            → (point ∈ FootprintVertices tile)))),
-        let norm : BandOrderedGeneralRightNormalizationCertificate C T N h k x := {
-          presentation := bundle.presentation
-          presentation_proper := bundle.presentation_proper
-          presentation_child := bundle.presentation_child
-          parentRotation := bundle.parentRotation
-          symmetry := bundle.symmetry
-          rotatedPresentation := bundle.rotatedPresentation
-          rotated_presentation_eq := bundle.rotated_presentation_eq
-          normalizedPresentation := q
-          normalized_presentation_eq := bundle.normalized_presentation_eq
-          configuration := cfg
-          normalizedCircle := bundle.normalizedCircle
-          normalized_circle_eq := bundle.normalized_circle_eq
-          normalizedFixedCircle := bundle.normalizedCircle
-          normalized_fixed_circle_eq := by
-            calc
-              bundle.normalizedCircle.1.1 = q 0 := bundle.normalized_circle_eq.symm
-              _ = BandPackingSymmetryCircleAction bundle.symmetry C.1.1 := by
-                have hq0 := congrFun bundle.normalized_presentation_eq 0
-                calc
-                  q 0 = BandPackingSymmetryCircleAction bundle.symmetry
-                      (bundle.rotatedPresentation 0) := by
-                        simpa [BandPackingSymmetryQuadrupleAction] using hq0
-                  _ = BandPackingSymmetryCircleAction bundle.symmetry C.1.1 := by
-                        rw [bundle.rotated_presentation_eq]
-                        simp [bundle.presentation_child]
-          normalizedRoot := root
-          normalizedFixed := F
-          normalizedRootFunction := bundle.normalizedRootFunction
-          normalizedFixedFunction := bundle.normalizedFixedFunction
-          normalizedPoint := bundle.normalizedPoint
-          normalized_root_eq := bundle.normalized_root_eq
-          normalized_fixed_eq := bundle.normalized_fixed_eq
-          normalized_root_function_eq := bundle.normalized_root_function_eq
-          normalized_fixed_function_eq := bundle.normalized_fixed_function_eq
-          normalized_point_eq := bundle.normalized_point_eq
-          normalized_point_root_domain := by
-            obtain ⟨edge, hp, he⟩ := bundle.edgeAtPoint
-            have hne := (LatticeTileGridStructure root bundle.root_lattice).1.1
-            have hvert := edgeVertex root hne edge he.1 bundle.normalizedPoint hp
-            have hdom := PositiveCurvatureTileOdometerDomain (q 0) root
-              bundle.normalizedRootFunction (ProperBandCurvatureStructure q cfg.proper).1
-              bundle.normalized_root_odometer
-            exact (Set.ext_iff.mp hdom bundle.normalizedPoint).mpr hvert
-          normalized_point_fixed_domain := by
-            obtain ⟨edge, hp, he⟩ := bundle.edgeAtPoint
-            have hne := (LatticeTileGridStructure F bundle.fixed_lattice).1.1
-            have hvert := edgeVertex F hne edge he.2 bundle.normalizedPoint hp
-            have hdom := PositiveCurvatureTileOdometerDomain
-              bundle.normalizedCircle.1.1 F bundle.normalizedFixedFunction
-              bundle.normalizedCircle.property placement.adjacency.2.1
-            exact (Set.ext_iff.mp hdom bundle.normalizedPoint).mpr hvert
-          normalized_root_odometer := bundle.normalized_root_odometer
-          normalized_fixed_odometer := placement.adjacency.2.1
-          normalized_root_lattice := bundle.root_lattice
-          normalized_fixed_lattice := bundle.fixed_lattice
-          normalizedRootSlope := bundle.normalizedRootSlope
-          normalizedFixedSlope := bundle.normalizedFixedSlope
-          normalized_root_slope := bundle.normalized_root_slope
-          normalized_fixed_slope := bundle.normalized_fixed_slope
-          pieces := bundle.pieces
-          functions := bundle.functions
-          root_band := bundle.root_band
-          piece_odometer := bundle.piece_odometer
-          piece_cell_cover := bundle.piece_cell_cover
-          piece_footprint := bundle.piece_footprint
-          piece_centroid := bundle.piece_centroid
-          function_domain_cover := bundle.function_domain_cover
-          function_restriction := bundle.function_restriction
-          function_compatibility := bundle.function_compatibility
-          piece_slope := bundle.piece_slope
-          adjacency := placement.adjacency
-          layout := placement.layout
-          fixed_quarter_turn := TileT2QuarterTurn q cfg bundle.normalizedCircle F placement.layout
-          rightFirstSlot := placement.rightFirstSlot
-          rightSecondSlot := placement.rightSecondSlot
-          rightDirectionSlot := placement.rightDirectionSlot
-          right_slots_cyclic := placement.right_slots_cyclic
-          rightNeighborPositive := placement.rightNeighborPositive
-          right_adjacency_centroid := placement.right_adjacency_centroid
-          right_adjacency_slope_real := by
-            have hroot : placement.rightRootSlope = bundle.normalizedRootSlope :=
-              Option.some.inj (placement.right_root_slope.symm.trans
-                bundle.normalized_root_slope)
-            have hf : placement.rightFixedSlope = bundle.normalizedFixedSlope :=
-              Option.some.inj (placement.right_fixed_slope.symm.trans
-                bundle.normalized_fixed_slope)
-            simpa [hroot, hf, q] using placement.right_adjacency_slope_real
-          right_adjacency_slope_imag := by
-            have hroot : placement.rightRootSlope = bundle.normalizedRootSlope :=
-              Option.some.inj (placement.right_root_slope.symm.trans
-                bundle.normalized_root_slope)
-            have hf : placement.rightFixedSlope = bundle.normalizedFixedSlope :=
-              Option.some.inj (placement.right_fixed_slope.symm.trans
-                bundle.normalized_fixed_slope)
-            simpa [hroot, hf, q] using placement.right_adjacency_slope_imag
-          rightNeighborDisplacement := placement.rightNeighborDisplacement
-          right_neighbor_displacement := placement.right_neighbor_displacement
-          right_neighbor_cells := placement.right_neighbor_cells
-          right_neighbor_empty_anchor := placement.right_neighbor_empty_anchor
-          firstBoundarySign := placement.firstBoundarySign
-          secondBoundarySign := placement.secondBoundarySign
-          boundary_signs := placement.boundary_signs
-          first_boundary_cells := placement.first_boundary_cells
-          first_boundary_empty_anchor := placement.first_boundary_empty_anchor
-          first_boundary_footprint := placement.first_boundary_footprint
-          first_boundary_domain := placement.first_boundary_domain
-          second_boundary_cells := placement.second_boundary_cells
-          second_boundary_empty_anchor := placement.second_boundary_empty_anchor
-          second_boundary_footprint := placement.second_boundary_footprint
-          second_boundary_domain := placement.second_boundary_domain
-          normalized_star := bundle.normalized_star }
+        let norm := SelectedRowNormalization.certificate C D T N h k x bundle placement
         let P := placement.layout.P
         let u := placement.layout.u
         let v := placement.layout.v
@@ -1163,8 +1067,8 @@ private theorem geometryFields :
             g.startData.point ≠ g.endData.point ∧ g.endData.point = g.startData.otherAB ∧
             g.endData.otherAB = g.startData.point ∧ selectedPath)))) ) := by
   classical
-  intro C D T N h k x bundle placement selectedEdge q cfg F root edgeVertex norm P u v
-      selectedPath originalSelectedPath g W X R1 R2 hW hX hneq
+  intro C D T N h k x bundle placement selectedEdge F root norm P u v selectedPath
+      originalSelectedPath g W X R1 R2 hW hX hneq
   have hp1 := (R1.unique_common R1.point).2 rfl
   have hp2 := (R2.unique_common R2.point).2 rfl
   have hp1' : R1.point ∈ FootprintVertices F ∧
@@ -1252,7 +1156,7 @@ private theorem castRoundTrip :
   cases h
   rfl
 
-private theorem packageGeometry :
+private theorem interfaceGeometry :
     (by
       classical
       exact
@@ -1265,124 +1169,9 @@ private theorem packageGeometry :
             bundle.pieces bundle.functions bundle.selectedSlot bundle.selectedSign
             bundle.routedDirection), ∀ (selectedEdge : Finset GaussianInt),
         let q := bundle.normalizedPresentation
-        let cfg := bundle.configuration
         let F := bundle.normalizedFixed
         let root := bundle.normalizedRoot
-        ∀ (edgeVertex : ∀ (tile : ProtoTile), (tile.cells.Nonempty) → (∀ (edge : Finset
-            GaussianInt), (edge ∈ FootprintEdges tile) → (∀ (point : GaussianInt), (point ∈ edge)
-            → (point ∈ FootprintVertices tile)))),
-        let norm : BandOrderedGeneralRightNormalizationCertificate C T N h k x := {
-          presentation := bundle.presentation
-          presentation_proper := bundle.presentation_proper
-          presentation_child := bundle.presentation_child
-          parentRotation := bundle.parentRotation
-          symmetry := bundle.symmetry
-          rotatedPresentation := bundle.rotatedPresentation
-          rotated_presentation_eq := bundle.rotated_presentation_eq
-          normalizedPresentation := q
-          normalized_presentation_eq := bundle.normalized_presentation_eq
-          configuration := cfg
-          normalizedCircle := bundle.normalizedCircle
-          normalized_circle_eq := bundle.normalized_circle_eq
-          normalizedFixedCircle := bundle.normalizedCircle
-          normalized_fixed_circle_eq := by
-            calc
-              bundle.normalizedCircle.1.1 = q 0 := bundle.normalized_circle_eq.symm
-              _ = BandPackingSymmetryCircleAction bundle.symmetry C.1.1 := by
-                have hq0 := congrFun bundle.normalized_presentation_eq 0
-                calc
-                  q 0 = BandPackingSymmetryCircleAction bundle.symmetry
-                      (bundle.rotatedPresentation 0) := by
-                        simpa [BandPackingSymmetryQuadrupleAction] using hq0
-                  _ = BandPackingSymmetryCircleAction bundle.symmetry C.1.1 := by
-                        rw [bundle.rotated_presentation_eq]
-                        simp [bundle.presentation_child]
-          normalizedRoot := root
-          normalizedFixed := F
-          normalizedRootFunction := bundle.normalizedRootFunction
-          normalizedFixedFunction := bundle.normalizedFixedFunction
-          normalizedPoint := bundle.normalizedPoint
-          normalized_root_eq := bundle.normalized_root_eq
-          normalized_fixed_eq := bundle.normalized_fixed_eq
-          normalized_root_function_eq := bundle.normalized_root_function_eq
-          normalized_fixed_function_eq := bundle.normalized_fixed_function_eq
-          normalized_point_eq := bundle.normalized_point_eq
-          normalized_point_root_domain := by
-            obtain ⟨edge, hp, he⟩ := bundle.edgeAtPoint
-            have hne := (LatticeTileGridStructure root bundle.root_lattice).1.1
-            have hvert := edgeVertex root hne edge he.1 bundle.normalizedPoint hp
-            have hdom := PositiveCurvatureTileOdometerDomain (q 0) root
-              bundle.normalizedRootFunction (ProperBandCurvatureStructure q cfg.proper).1
-              bundle.normalized_root_odometer
-            exact (Set.ext_iff.mp hdom bundle.normalizedPoint).mpr hvert
-          normalized_point_fixed_domain := by
-            obtain ⟨edge, hp, he⟩ := bundle.edgeAtPoint
-            have hne := (LatticeTileGridStructure F bundle.fixed_lattice).1.1
-            have hvert := edgeVertex F hne edge he.2 bundle.normalizedPoint hp
-            have hdom := PositiveCurvatureTileOdometerDomain
-              bundle.normalizedCircle.1.1 F bundle.normalizedFixedFunction
-              bundle.normalizedCircle.property placement.adjacency.2.1
-            exact (Set.ext_iff.mp hdom bundle.normalizedPoint).mpr hvert
-          normalized_root_odometer := bundle.normalized_root_odometer
-          normalized_fixed_odometer := placement.adjacency.2.1
-          normalized_root_lattice := bundle.root_lattice
-          normalized_fixed_lattice := bundle.fixed_lattice
-          normalizedRootSlope := bundle.normalizedRootSlope
-          normalizedFixedSlope := bundle.normalizedFixedSlope
-          normalized_root_slope := bundle.normalized_root_slope
-          normalized_fixed_slope := bundle.normalized_fixed_slope
-          pieces := bundle.pieces
-          functions := bundle.functions
-          root_band := bundle.root_band
-          piece_odometer := bundle.piece_odometer
-          piece_cell_cover := bundle.piece_cell_cover
-          piece_footprint := bundle.piece_footprint
-          piece_centroid := bundle.piece_centroid
-          function_domain_cover := bundle.function_domain_cover
-          function_restriction := bundle.function_restriction
-          function_compatibility := bundle.function_compatibility
-          piece_slope := bundle.piece_slope
-          adjacency := placement.adjacency
-          layout := placement.layout
-          fixed_quarter_turn := TileT2QuarterTurn q cfg bundle.normalizedCircle F placement.layout
-          rightFirstSlot := placement.rightFirstSlot
-          rightSecondSlot := placement.rightSecondSlot
-          rightDirectionSlot := placement.rightDirectionSlot
-          right_slots_cyclic := placement.right_slots_cyclic
-          rightNeighborPositive := placement.rightNeighborPositive
-          right_adjacency_centroid := placement.right_adjacency_centroid
-          right_adjacency_slope_real := by
-            have hroot : placement.rightRootSlope = bundle.normalizedRootSlope :=
-              Option.some.inj (placement.right_root_slope.symm.trans
-                bundle.normalized_root_slope)
-            have hf : placement.rightFixedSlope = bundle.normalizedFixedSlope :=
-              Option.some.inj (placement.right_fixed_slope.symm.trans
-                bundle.normalized_fixed_slope)
-            simpa [hroot, hf, q] using placement.right_adjacency_slope_real
-          right_adjacency_slope_imag := by
-            have hroot : placement.rightRootSlope = bundle.normalizedRootSlope :=
-              Option.some.inj (placement.right_root_slope.symm.trans
-                bundle.normalized_root_slope)
-            have hf : placement.rightFixedSlope = bundle.normalizedFixedSlope :=
-              Option.some.inj (placement.right_fixed_slope.symm.trans
-                bundle.normalized_fixed_slope)
-            simpa [hroot, hf, q] using placement.right_adjacency_slope_imag
-          rightNeighborDisplacement := placement.rightNeighborDisplacement
-          right_neighbor_displacement := placement.right_neighbor_displacement
-          right_neighbor_cells := placement.right_neighbor_cells
-          right_neighbor_empty_anchor := placement.right_neighbor_empty_anchor
-          firstBoundarySign := placement.firstBoundarySign
-          secondBoundarySign := placement.secondBoundarySign
-          boundary_signs := placement.boundary_signs
-          first_boundary_cells := placement.first_boundary_cells
-          first_boundary_empty_anchor := placement.first_boundary_empty_anchor
-          first_boundary_footprint := placement.first_boundary_footprint
-          first_boundary_domain := placement.first_boundary_domain
-          second_boundary_cells := placement.second_boundary_cells
-          second_boundary_empty_anchor := placement.second_boundary_empty_anchor
-          second_boundary_footprint := placement.second_boundary_footprint
-          second_boundary_domain := placement.second_boundary_domain
-          normalized_star := bundle.normalized_star }
+        let norm := SelectedRowNormalization.certificate C D T N h k x bundle placement
         let P := placement.layout.P
         let u := placement.layout.u
         let v := placement.layout.v
@@ -1466,8 +1255,8 @@ private theorem packageGeometry :
               placement.rightNeighborDisplacement) ⊆ FootprintVertices root) → (rightGeometry i j
                   sgn s₁ s₂))))))))))) ) := by
   classical
-  intro C D T N h k x bundle placement selectedEdge q cfg F root edgeVertex norm P u v
-      selectedPath rightGeometry geometryFields castTriplePointSecond castTriplePointThird
+  intro C D T N h k x bundle placement selectedEdge q F root norm P u v selectedPath
+      rightGeometry geometryFields castTriplePointSecond castTriplePointThird
       castTripleOtherABThird i j sgn s₁ s₂ g hgs hge hneq R1 R2 hW hX
   dsimp [rightGeometry]
   let R1out : ExactTileInterfaceTriple F
@@ -1559,72 +1348,7 @@ private theorem secondBoundarySubset :
   exact bundle.piece_footprint placement.rightSecondSlot
     placement.secondBoundarySign
 
-private theorem hRAt1171 :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (D : BandCircle), ∀ (T : ProtoTile), ∀ (N : ProtoTile), ∀ (h :
-            PartialOdometer), ∀ (k : PartialOdometer), ∀ (x : GaussianInt), ∀ (bundle :
-            BandOrderedGeneralNormalizedOccurrenceBundle C D T N h k x), ∀ (placement :
-            BandOrderedGeneralRightPlacement bundle.normalizedPresentation bundle.configuration
-            bundle.normalizedCircle bundle.normalizedRoot bundle.normalizedFixed
-            bundle.normalizedRootFunction bundle.normalizedFixedFunction bundle.normalizedPoint
-            bundle.pieces bundle.functions bundle.selectedSlot bundle.selectedSign
-            bundle.routedDirection),
-        let q := bundle.normalizedPresentation
-        (placement.rightDirectionSlot = (2 : Fin (3 : ℕ))) → ((placement.rightNeighborPositive =
-            false) → (placement.rightNeighborDisplacement = -BandVectors.1 (q 0) (q 3))) ) := by
-  classical
-  intro C D T N h k x bundle placement q hk hpos
-  simpa [hpos, hk] using placement.right_neighbor_displacement
-
-private theorem tStartAt1193 :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (D : BandCircle), ∀ (T : ProtoTile), ∀ (N : ProtoTile), ∀ (h :
-            PartialOdometer), ∀ (k : PartialOdometer), ∀ (x : GaussianInt), ∀ (bundle :
-            BandOrderedGeneralNormalizedOccurrenceBundle C D T N h k x), ∀ (placement :
-            BandOrderedGeneralRightPlacement bundle.normalizedPresentation bundle.configuration
-            bundle.normalizedCircle bundle.normalizedRoot bundle.normalizedFixed
-            bundle.normalizedRootFunction bundle.normalizedFixedFunction bundle.normalizedPoint
-            bundle.pieces bundle.functions bundle.selectedSlot bundle.selectedSign
-            bundle.routedDirection),
-        let q := bundle.normalizedPresentation
-        let F := bundle.normalizedFixed
-        (∀ (ell : Fin 3), TouchingTriple F (TileTranslation F (-BandVectors.1 (q 0) (q
-            ell.succ))) (TileTranslation F (BandVectors.1 (q 0) (q (ell + 1).succ)))) →
-            ((placement.rightNeighborDisplacement = -BandVectors.1 (q 0) (q 3)) → (TouchingTriple
-            F (TileTranslation F placement.rightNeighborDisplacement) (TileTranslation F ((1 :
-            GaussianInt) * BandVectors.1 (q 0) (q 1))))) ) := by
-  classical
-  intro C D T N h k x bundle placement q F touchingMinus hR
-  simpa [hR] using touchingMinus 2
-
-private theorem tEndAt1197 :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (D : BandCircle), ∀ (T : ProtoTile), ∀ (N : ProtoTile), ∀ (h :
-            PartialOdometer), ∀ (k : PartialOdometer), ∀ (x : GaussianInt), ∀ (bundle :
-            BandOrderedGeneralNormalizedOccurrenceBundle C D T N h k x), ∀ (placement :
-            BandOrderedGeneralRightPlacement bundle.normalizedPresentation bundle.configuration
-            bundle.normalizedCircle bundle.normalizedRoot bundle.normalizedFixed
-            bundle.normalizedRootFunction bundle.normalizedFixedFunction bundle.normalizedPoint
-            bundle.pieces bundle.functions bundle.selectedSlot bundle.selectedSign
-            bundle.routedDirection),
-        let q := bundle.normalizedPresentation
-        let F := bundle.normalizedFixed
-        (∀ (ell : Fin 3), TouchingTriple F (TileTranslation F (BandVectors.1 (q 0) (q ell.succ)))
-            (TileTranslation F (-BandVectors.1 (q 0) (q (ell + 1).succ)))) →
-            ((placement.rightNeighborDisplacement = -BandVectors.1 (q 0) (q 3)) → (TouchingTriple
-            F (TileTranslation F ((1 : GaussianInt) * BandVectors.1 (q 0) (q 2)))
-            (TileTranslation F placement.rightNeighborDisplacement))) ) := by
-  classical
-  intro C D T N h k x bundle placement q F touchingPlus hR
-  simpa [hR] using touchingPlus 1
-
-private theorem geomAt1214 :
+private theorem firstForwardGeometry :
     (by
       classical
       exact
@@ -1637,125 +1361,10 @@ private theorem geomAt1214 :
             bundle.pieces bundle.functions bundle.selectedSlot bundle.selectedSign
             bundle.routedDirection), ∀ (selectedEdge : Finset GaussianInt),
         let q := bundle.normalizedPresentation;
-        let cfg := bundle.configuration;
         let F := bundle.normalizedFixed;
         let root := bundle.normalizedRoot;
-        ∀ (edgeVertex : ∀ (tile : ProtoTile), (tile.cells.Nonempty) → (∀ (edge : Finset
-            GaussianInt), (edge ∈ FootprintEdges tile) → (∀ (point : GaussianInt), (point ∈ edge)
-            → (point ∈ FootprintVertices tile)))),
-                                                                                               (
-        let norm : BandOrderedGeneralRightNormalizationCertificate C T N h k x := {
-          presentation := bundle.presentation
-          presentation_proper := bundle.presentation_proper
-          presentation_child := bundle.presentation_child
-          parentRotation := bundle.parentRotation
-          symmetry := bundle.symmetry
-          rotatedPresentation := bundle.rotatedPresentation
-          rotated_presentation_eq := bundle.rotated_presentation_eq
-          normalizedPresentation := q
-          normalized_presentation_eq := bundle.normalized_presentation_eq
-          configuration := cfg
-          normalizedCircle := bundle.normalizedCircle
-          normalized_circle_eq := bundle.normalized_circle_eq
-          normalizedFixedCircle := bundle.normalizedCircle
-          normalized_fixed_circle_eq := by
-            calc
-              bundle.normalizedCircle.1.1 = q 0 := bundle.normalized_circle_eq.symm
-              _ = BandPackingSymmetryCircleAction bundle.symmetry C.1.1 := by
-                have hq0 := congrFun bundle.normalized_presentation_eq 0
-                calc
-                  q 0 = BandPackingSymmetryCircleAction bundle.symmetry
-                      (bundle.rotatedPresentation 0) := by
-                        simpa [BandPackingSymmetryQuadrupleAction] using hq0
-                  _ = BandPackingSymmetryCircleAction bundle.symmetry C.1.1 := by
-                        rw [bundle.rotated_presentation_eq]
-                        simp [bundle.presentation_child]
-          normalizedRoot := root
-          normalizedFixed := F
-          normalizedRootFunction := bundle.normalizedRootFunction
-          normalizedFixedFunction := bundle.normalizedFixedFunction
-          normalizedPoint := bundle.normalizedPoint
-          normalized_root_eq := bundle.normalized_root_eq
-          normalized_fixed_eq := bundle.normalized_fixed_eq
-          normalized_root_function_eq := bundle.normalized_root_function_eq
-          normalized_fixed_function_eq := bundle.normalized_fixed_function_eq
-          normalized_point_eq := bundle.normalized_point_eq
-          normalized_point_root_domain := by
-            obtain ⟨edge, hp, he⟩ := bundle.edgeAtPoint
-            have hne := (LatticeTileGridStructure root bundle.root_lattice).1.1
-            have hvert := edgeVertex root hne edge he.1 bundle.normalizedPoint hp
-            have hdom := PositiveCurvatureTileOdometerDomain (q 0) root
-              bundle.normalizedRootFunction (ProperBandCurvatureStructure q cfg.proper).1
-              bundle.normalized_root_odometer
-            exact (Set.ext_iff.mp hdom bundle.normalizedPoint).mpr hvert
-          normalized_point_fixed_domain := by
-            obtain ⟨edge, hp, he⟩ := bundle.edgeAtPoint
-            have hne := (LatticeTileGridStructure F bundle.fixed_lattice).1.1
-            have hvert := edgeVertex F hne edge he.2 bundle.normalizedPoint hp
-            have hdom := PositiveCurvatureTileOdometerDomain
-              bundle.normalizedCircle.1.1 F bundle.normalizedFixedFunction
-              bundle.normalizedCircle.property placement.adjacency.2.1
-            exact (Set.ext_iff.mp hdom bundle.normalizedPoint).mpr hvert
-          normalized_root_odometer := bundle.normalized_root_odometer
-          normalized_fixed_odometer := placement.adjacency.2.1
-          normalized_root_lattice := bundle.root_lattice
-          normalized_fixed_lattice := bundle.fixed_lattice
-          normalizedRootSlope := bundle.normalizedRootSlope
-          normalizedFixedSlope := bundle.normalizedFixedSlope
-          normalized_root_slope := bundle.normalized_root_slope
-          normalized_fixed_slope := bundle.normalized_fixed_slope
-          pieces := bundle.pieces
-          functions := bundle.functions
-          root_band := bundle.root_band
-          piece_odometer := bundle.piece_odometer
-          piece_cell_cover := bundle.piece_cell_cover
-          piece_footprint := bundle.piece_footprint
-          piece_centroid := bundle.piece_centroid
-          function_domain_cover := bundle.function_domain_cover
-          function_restriction := bundle.function_restriction
-          function_compatibility := bundle.function_compatibility
-          piece_slope := bundle.piece_slope
-          adjacency := placement.adjacency
-          layout := placement.layout
-          fixed_quarter_turn := TileT2QuarterTurn q cfg bundle.normalizedCircle F placement.layout
-          rightFirstSlot := placement.rightFirstSlot
-          rightSecondSlot := placement.rightSecondSlot
-          rightDirectionSlot := placement.rightDirectionSlot
-          right_slots_cyclic := placement.right_slots_cyclic
-          rightNeighborPositive := placement.rightNeighborPositive
-          right_adjacency_centroid := placement.right_adjacency_centroid
-          right_adjacency_slope_real := by
-            have hroot : placement.rightRootSlope = bundle.normalizedRootSlope :=
-              Option.some.inj (placement.right_root_slope.symm.trans
-                bundle.normalized_root_slope)
-            have hf : placement.rightFixedSlope = bundle.normalizedFixedSlope :=
-              Option.some.inj (placement.right_fixed_slope.symm.trans
-                bundle.normalized_fixed_slope)
-            simpa [hroot, hf, q] using placement.right_adjacency_slope_real
-          right_adjacency_slope_imag := by
-            have hroot : placement.rightRootSlope = bundle.normalizedRootSlope :=
-              Option.some.inj (placement.right_root_slope.symm.trans
-                bundle.normalized_root_slope)
-            have hf : placement.rightFixedSlope = bundle.normalizedFixedSlope :=
-              Option.some.inj (placement.right_fixed_slope.symm.trans
-                bundle.normalized_fixed_slope)
-            simpa [hroot, hf, q] using placement.right_adjacency_slope_imag
-          rightNeighborDisplacement := placement.rightNeighborDisplacement
-          right_neighbor_displacement := placement.right_neighbor_displacement
-          right_neighbor_cells := placement.right_neighbor_cells
-          right_neighbor_empty_anchor := placement.right_neighbor_empty_anchor
-          firstBoundarySign := placement.firstBoundarySign
-          secondBoundarySign := placement.secondBoundarySign
-          boundary_signs := placement.boundary_signs
-          first_boundary_cells := placement.first_boundary_cells
-          first_boundary_empty_anchor := placement.first_boundary_empty_anchor
-          first_boundary_footprint := placement.first_boundary_footprint
-          first_boundary_domain := placement.first_boundary_domain
-          second_boundary_cells := placement.second_boundary_cells
-          second_boundary_empty_anchor := placement.second_boundary_empty_anchor
-          second_boundary_footprint := placement.second_boundary_footprint
-          second_boundary_domain := placement.second_boundary_domain
-          normalized_star := bundle.normalized_star }
+        (
+        let norm := SelectedRowNormalization.certificate C D T N h k x bundle placement
         let P := placement.layout.P
         let u := placement.layout.u
         let v := placement.layout.v
@@ -1839,9 +1448,9 @@ private theorem geomAt1214 :
             ((placement.secondBoundarySign = true) → (rightGeometry 0 1 1 false
                 true)))))))))))))) := by
   classical
-  intro C D T N h k x bundle placement selectedEdge q cfg F root edgeVertex norm P u v
-      selectedPath rightGeometry packageGeometry firstBoundarySubset secondBoundarySubset hi hj
-      R1 R2 g hgs hge hneq hfirst hsecond
+  intro C D T N h k x bundle placement selectedEdge q F root norm P u v selectedPath
+      rightGeometry packageGeometry firstBoundarySubset secondBoundarySubset hi hj R1 R2 g hgs
+      hge hneq hfirst hsecond
   have R1g : ExactTileInterfaceTriple F g.startCompanion
       (TileTranslation (placement.layout.P 0 false)
         placement.rightNeighborDisplacement) := by
@@ -1861,72 +1470,7 @@ private theorem geomAt1214 :
   exact packageGeometry 0 1 1 false true g hgs hge hneq
     R1g R2g hW hX
 
-private theorem hRAt1245 :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (D : BandCircle), ∀ (T : ProtoTile), ∀ (N : ProtoTile), ∀ (h :
-            PartialOdometer), ∀ (k : PartialOdometer), ∀ (x : GaussianInt), ∀ (bundle :
-            BandOrderedGeneralNormalizedOccurrenceBundle C D T N h k x), ∀ (placement :
-            BandOrderedGeneralRightPlacement bundle.normalizedPresentation bundle.configuration
-            bundle.normalizedCircle bundle.normalizedRoot bundle.normalizedFixed
-            bundle.normalizedRootFunction bundle.normalizedFixedFunction bundle.normalizedPoint
-            bundle.pieces bundle.functions bundle.selectedSlot bundle.selectedSign
-            bundle.routedDirection),
-        let q := bundle.normalizedPresentation
-        (placement.rightDirectionSlot = (2 : Fin (3 : ℕ))) → ((placement.rightNeighborPositive =
-            true) → (placement.rightNeighborDisplacement = BandVectors.1 (q 0) (q 3))) ) := by
-  classical
-  intro C D T N h k x bundle placement q hk hpos
-  simpa [hpos, hk] using placement.right_neighbor_displacement
-
-private theorem tStartAt1267 :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (D : BandCircle), ∀ (T : ProtoTile), ∀ (N : ProtoTile), ∀ (h :
-            PartialOdometer), ∀ (k : PartialOdometer), ∀ (x : GaussianInt), ∀ (bundle :
-            BandOrderedGeneralNormalizedOccurrenceBundle C D T N h k x), ∀ (placement :
-            BandOrderedGeneralRightPlacement bundle.normalizedPresentation bundle.configuration
-            bundle.normalizedCircle bundle.normalizedRoot bundle.normalizedFixed
-            bundle.normalizedRootFunction bundle.normalizedFixedFunction bundle.normalizedPoint
-            bundle.pieces bundle.functions bundle.selectedSlot bundle.selectedSign
-            bundle.routedDirection),
-        let q := bundle.normalizedPresentation
-        let F := bundle.normalizedFixed
-        (∀ (ell : Fin 3), TouchingTriple F (TileTranslation F (BandVectors.1 (q 0) (q ell.succ)))
-            (TileTranslation F (-BandVectors.1 (q 0) (q (ell + 1).succ)))) →
-            ((placement.rightNeighborDisplacement = BandVectors.1 (q 0) (q 3)) → (TouchingTriple
-            F (TileTranslation F placement.rightNeighborDisplacement) (TileTranslation F ((-1 :
-            GaussianInt) * BandVectors.1 (q 0) (q 1))))) ) := by
-  classical
-  intro C D T N h k x bundle placement q F touchingPlus hR
-  simpa [hR] using touchingPlus 2
-
-private theorem tEndAt1271 :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (D : BandCircle), ∀ (T : ProtoTile), ∀ (N : ProtoTile), ∀ (h :
-            PartialOdometer), ∀ (k : PartialOdometer), ∀ (x : GaussianInt), ∀ (bundle :
-            BandOrderedGeneralNormalizedOccurrenceBundle C D T N h k x), ∀ (placement :
-            BandOrderedGeneralRightPlacement bundle.normalizedPresentation bundle.configuration
-            bundle.normalizedCircle bundle.normalizedRoot bundle.normalizedFixed
-            bundle.normalizedRootFunction bundle.normalizedFixedFunction bundle.normalizedPoint
-            bundle.pieces bundle.functions bundle.selectedSlot bundle.selectedSign
-            bundle.routedDirection),
-        let q := bundle.normalizedPresentation
-        let F := bundle.normalizedFixed
-        (∀ (ell : Fin 3), TouchingTriple F (TileTranslation F (-BandVectors.1 (q 0) (q
-            ell.succ))) (TileTranslation F (BandVectors.1 (q 0) (q (ell + 1).succ)))) →
-            ((placement.rightNeighborDisplacement = BandVectors.1 (q 0) (q 3)) → (TouchingTriple
-            F (TileTranslation F ((-1 : GaussianInt) * BandVectors.1 (q 0) (q 2)))
-            (TileTranslation F placement.rightNeighborDisplacement))) ) := by
-  classical
-  intro C D T N h k x bundle placement q F touchingMinus hR
-  simpa [hR] using touchingMinus 1
-
-private theorem geomAt1286 :
+private theorem firstReverseGeometry :
     (by
       classical
       exact
@@ -1939,124 +1483,9 @@ private theorem geomAt1286 :
             bundle.pieces bundle.functions bundle.selectedSlot bundle.selectedSign
             bundle.routedDirection), ∀ (selectedEdge : Finset GaussianInt),
         let q := bundle.normalizedPresentation;
-        let cfg := bundle.configuration;
         let F := bundle.normalizedFixed;
         let root := bundle.normalizedRoot;
-        ∀ (edgeVertex : ∀ (tile : ProtoTile), (tile.cells.Nonempty) → (∀ (edge : Finset
-            GaussianInt), (edge ∈ FootprintEdges tile) → (∀ (point : GaussianInt), (point ∈ edge)
-            → (point ∈ FootprintVertices tile)))),
-        let norm : BandOrderedGeneralRightNormalizationCertificate C T N h k x := {
-          presentation := bundle.presentation
-          presentation_proper := bundle.presentation_proper
-          presentation_child := bundle.presentation_child
-          parentRotation := bundle.parentRotation
-          symmetry := bundle.symmetry
-          rotatedPresentation := bundle.rotatedPresentation
-          rotated_presentation_eq := bundle.rotated_presentation_eq
-          normalizedPresentation := q
-          normalized_presentation_eq := bundle.normalized_presentation_eq
-          configuration := cfg
-          normalizedCircle := bundle.normalizedCircle
-          normalized_circle_eq := bundle.normalized_circle_eq
-          normalizedFixedCircle := bundle.normalizedCircle
-          normalized_fixed_circle_eq := by
-            calc
-              bundle.normalizedCircle.1.1 = q 0 := bundle.normalized_circle_eq.symm
-              _ = BandPackingSymmetryCircleAction bundle.symmetry C.1.1 := by
-                have hq0 := congrFun bundle.normalized_presentation_eq 0
-                calc
-                  q 0 = BandPackingSymmetryCircleAction bundle.symmetry
-                      (bundle.rotatedPresentation 0) := by
-                        simpa [BandPackingSymmetryQuadrupleAction] using hq0
-                  _ = BandPackingSymmetryCircleAction bundle.symmetry C.1.1 := by
-                        rw [bundle.rotated_presentation_eq]
-                        simp [bundle.presentation_child]
-          normalizedRoot := root
-          normalizedFixed := F
-          normalizedRootFunction := bundle.normalizedRootFunction
-          normalizedFixedFunction := bundle.normalizedFixedFunction
-          normalizedPoint := bundle.normalizedPoint
-          normalized_root_eq := bundle.normalized_root_eq
-          normalized_fixed_eq := bundle.normalized_fixed_eq
-          normalized_root_function_eq := bundle.normalized_root_function_eq
-          normalized_fixed_function_eq := bundle.normalized_fixed_function_eq
-          normalized_point_eq := bundle.normalized_point_eq
-          normalized_point_root_domain := by
-            obtain ⟨edge, hp, he⟩ := bundle.edgeAtPoint
-            have hne := (LatticeTileGridStructure root bundle.root_lattice).1.1
-            have hvert := edgeVertex root hne edge he.1 bundle.normalizedPoint hp
-            have hdom := PositiveCurvatureTileOdometerDomain (q 0) root
-              bundle.normalizedRootFunction (ProperBandCurvatureStructure q cfg.proper).1
-              bundle.normalized_root_odometer
-            exact (Set.ext_iff.mp hdom bundle.normalizedPoint).mpr hvert
-          normalized_point_fixed_domain := by
-            obtain ⟨edge, hp, he⟩ := bundle.edgeAtPoint
-            have hne := (LatticeTileGridStructure F bundle.fixed_lattice).1.1
-            have hvert := edgeVertex F hne edge he.2 bundle.normalizedPoint hp
-            have hdom := PositiveCurvatureTileOdometerDomain
-              bundle.normalizedCircle.1.1 F bundle.normalizedFixedFunction
-              bundle.normalizedCircle.property placement.adjacency.2.1
-            exact (Set.ext_iff.mp hdom bundle.normalizedPoint).mpr hvert
-          normalized_root_odometer := bundle.normalized_root_odometer
-          normalized_fixed_odometer := placement.adjacency.2.1
-          normalized_root_lattice := bundle.root_lattice
-          normalized_fixed_lattice := bundle.fixed_lattice
-          normalizedRootSlope := bundle.normalizedRootSlope
-          normalizedFixedSlope := bundle.normalizedFixedSlope
-          normalized_root_slope := bundle.normalized_root_slope
-          normalized_fixed_slope := bundle.normalized_fixed_slope
-          pieces := bundle.pieces
-          functions := bundle.functions
-          root_band := bundle.root_band
-          piece_odometer := bundle.piece_odometer
-          piece_cell_cover := bundle.piece_cell_cover
-          piece_footprint := bundle.piece_footprint
-          piece_centroid := bundle.piece_centroid
-          function_domain_cover := bundle.function_domain_cover
-          function_restriction := bundle.function_restriction
-          function_compatibility := bundle.function_compatibility
-          piece_slope := bundle.piece_slope
-          adjacency := placement.adjacency
-          layout := placement.layout
-          fixed_quarter_turn := TileT2QuarterTurn q cfg bundle.normalizedCircle F placement.layout
-          rightFirstSlot := placement.rightFirstSlot
-          rightSecondSlot := placement.rightSecondSlot
-          rightDirectionSlot := placement.rightDirectionSlot
-          right_slots_cyclic := placement.right_slots_cyclic
-          rightNeighborPositive := placement.rightNeighborPositive
-          right_adjacency_centroid := placement.right_adjacency_centroid
-          right_adjacency_slope_real := by
-            have hroot : placement.rightRootSlope = bundle.normalizedRootSlope :=
-              Option.some.inj (placement.right_root_slope.symm.trans
-                bundle.normalized_root_slope)
-            have hf : placement.rightFixedSlope = bundle.normalizedFixedSlope :=
-              Option.some.inj (placement.right_fixed_slope.symm.trans
-                bundle.normalized_fixed_slope)
-            simpa [hroot, hf, q] using placement.right_adjacency_slope_real
-          right_adjacency_slope_imag := by
-            have hroot : placement.rightRootSlope = bundle.normalizedRootSlope :=
-              Option.some.inj (placement.right_root_slope.symm.trans
-                bundle.normalized_root_slope)
-            have hf : placement.rightFixedSlope = bundle.normalizedFixedSlope :=
-              Option.some.inj (placement.right_fixed_slope.symm.trans
-                bundle.normalized_fixed_slope)
-            simpa [hroot, hf, q] using placement.right_adjacency_slope_imag
-          rightNeighborDisplacement := placement.rightNeighborDisplacement
-          right_neighbor_displacement := placement.right_neighbor_displacement
-          right_neighbor_cells := placement.right_neighbor_cells
-          right_neighbor_empty_anchor := placement.right_neighbor_empty_anchor
-          firstBoundarySign := placement.firstBoundarySign
-          secondBoundarySign := placement.secondBoundarySign
-          boundary_signs := placement.boundary_signs
-          first_boundary_cells := placement.first_boundary_cells
-          first_boundary_empty_anchor := placement.first_boundary_empty_anchor
-          first_boundary_footprint := placement.first_boundary_footprint
-          first_boundary_domain := placement.first_boundary_domain
-          second_boundary_cells := placement.second_boundary_cells
-          second_boundary_empty_anchor := placement.second_boundary_empty_anchor
-          second_boundary_footprint := placement.second_boundary_footprint
-          second_boundary_domain := placement.second_boundary_domain
-          normalized_star := bundle.normalized_star }
+        let norm := SelectedRowNormalization.certificate C D T N h k x bundle placement
         let P := placement.layout.P
         let u := placement.layout.u
         let v := placement.layout.v
@@ -2140,9 +1569,9 @@ private theorem geomAt1286 :
             ((placement.secondBoundarySign = false) → (rightGeometry 0 1 (-1) true
             false)))))))))))) ) := by
   classical
-  intro C D T N h k x bundle placement selectedEdge q cfg F root edgeVertex norm P u v
-      selectedPath rightGeometry packageGeometry firstBoundarySubset secondBoundarySubset hi hj
-      R1 R2 g hgs hge hneq hfirst hsecond
+  intro C D T N h k x bundle placement selectedEdge q F root norm P u v selectedPath
+      rightGeometry packageGeometry firstBoundarySubset secondBoundarySubset hi hj R1 R2 g hgs
+      hge hneq hfirst hsecond
   have R1g : ExactTileInterfaceTriple F g.startCompanion
       (TileTranslation (placement.layout.P 0 true)
         placement.rightNeighborDisplacement) := by
@@ -2162,587 +1591,12 @@ private theorem geomAt1286 :
   exact packageGeometry 0 1 (-1) true false g hgs hge hneq
     R1g R2g hW hX
 
-private theorem hRAt1329 :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (D : BandCircle), ∀ (T : ProtoTile), ∀ (N : ProtoTile), ∀ (h :
-            PartialOdometer), ∀ (k : PartialOdometer), ∀ (x : GaussianInt), ∀ (bundle :
-            BandOrderedGeneralNormalizedOccurrenceBundle C D T N h k x), ∀ (placement :
-            BandOrderedGeneralRightPlacement bundle.normalizedPresentation bundle.configuration
-            bundle.normalizedCircle bundle.normalizedRoot bundle.normalizedFixed
-            bundle.normalizedRootFunction bundle.normalizedFixedFunction bundle.normalizedPoint
-            bundle.pieces bundle.functions bundle.selectedSlot bundle.selectedSign
-            bundle.routedDirection),
-        let q := bundle.normalizedPresentation
-        (placement.rightDirectionSlot = (0 : Fin (3 : ℕ))) → ((placement.rightNeighborPositive =
-            false) → (placement.rightNeighborDisplacement = -BandVectors.1 (q 0) (q 1))) ) := by
-  classical
-  intro C D T N h k x bundle placement q hk hpos
-  simpa [hpos, hk] using placement.right_neighbor_displacement
-
-private theorem tStartAt1341 :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (D : BandCircle), ∀ (T : ProtoTile), ∀ (N : ProtoTile), ∀ (h :
-            PartialOdometer), ∀ (k : PartialOdometer), ∀ (x : GaussianInt), ∀ (bundle :
-            BandOrderedGeneralNormalizedOccurrenceBundle C D T N h k x), ∀ (placement :
-            BandOrderedGeneralRightPlacement bundle.normalizedPresentation bundle.configuration
-            bundle.normalizedCircle bundle.normalizedRoot bundle.normalizedFixed
-            bundle.normalizedRootFunction bundle.normalizedFixedFunction bundle.normalizedPoint
-            bundle.pieces bundle.functions bundle.selectedSlot bundle.selectedSign
-            bundle.routedDirection),
-        let q := bundle.normalizedPresentation
-        let F := bundle.normalizedFixed
-        (∀ (ell : Fin 3), TouchingTriple F (TileTranslation F (-BandVectors.1 (q 0) (q
-            ell.succ))) (TileTranslation F (BandVectors.1 (q 0) (q (ell + 1).succ)))) →
-            ((placement.rightNeighborDisplacement = -BandVectors.1 (q 0) (q 1)) → (TouchingTriple
-            F (TileTranslation F placement.rightNeighborDisplacement) (TileTranslation F ((1 :
-            GaussianInt) * BandVectors.1 (q 0) (q 2))))) ) := by
-  classical
-  intro C D T N h k x bundle placement q F touchingMinus hR
-  simpa [hR] using touchingMinus 0
-
-private theorem tEndAt1345 :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (D : BandCircle), ∀ (T : ProtoTile), ∀ (N : ProtoTile), ∀ (h :
-            PartialOdometer), ∀ (k : PartialOdometer), ∀ (x : GaussianInt), ∀ (bundle :
-            BandOrderedGeneralNormalizedOccurrenceBundle C D T N h k x), ∀ (placement :
-            BandOrderedGeneralRightPlacement bundle.normalizedPresentation bundle.configuration
-            bundle.normalizedCircle bundle.normalizedRoot bundle.normalizedFixed
-            bundle.normalizedRootFunction bundle.normalizedFixedFunction bundle.normalizedPoint
-            bundle.pieces bundle.functions bundle.selectedSlot bundle.selectedSign
-            bundle.routedDirection),
-        let q := bundle.normalizedPresentation
-        let F := bundle.normalizedFixed
-        (∀ (ell : Fin 3), TouchingTriple F (TileTranslation F (BandVectors.1 (q 0) (q ell.succ)))
-            (TileTranslation F (-BandVectors.1 (q 0) (q (ell + 1).succ)))) →
-            ((placement.rightNeighborDisplacement = -BandVectors.1 (q 0) (q 1)) → (TouchingTriple
-            F (TileTranslation F ((1 : GaussianInt) * BandVectors.1 (q 0) (q 3)))
-            (TileTranslation F placement.rightNeighborDisplacement))) ) := by
-  classical
-  intro C D T N h k x bundle placement q F touchingPlus hR
-  simpa [hR] using touchingPlus 2
-
-private theorem hWAt1369 :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (D : BandCircle), ∀ (T : ProtoTile), ∀ (N : ProtoTile), ∀ (h :
-            PartialOdometer), ∀ (k : PartialOdometer), ∀ (x : GaussianInt), ∀ (bundle :
-            BandOrderedGeneralNormalizedOccurrenceBundle C D T N h k x), ∀ (placement :
-            BandOrderedGeneralRightPlacement bundle.normalizedPresentation bundle.configuration
-            bundle.normalizedCircle bundle.normalizedRoot bundle.normalizedFixed
-            bundle.normalizedRootFunction bundle.normalizedFixedFunction bundle.normalizedPoint
-            bundle.pieces bundle.functions bundle.selectedSlot bundle.selectedSign
-            bundle.routedDirection),
-        let root := bundle.normalizedRoot
-        (FootprintVertices (TileTranslation (placement.layout.P placement.rightFirstSlot
-            placement.firstBoundarySign) placement.rightNeighborDisplacement) ⊆ FootprintVertices
-            root) → ((placement.rightFirstSlot = (1 : Fin (3 : ℕ))) →
-            ((placement.firstBoundarySign = false) → (FootprintVertices (TileTranslation
-            (placement.layout.P 1 false) placement.rightNeighborDisplacement) ⊆ FootprintVertices
-            root))) ) := by
-  classical
-  intro C D T N h k x bundle placement root firstBoundarySubset hi hfirst
-  simpa [hi, hfirst] using firstBoundarySubset
-
-private theorem hXAt1373 :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (D : BandCircle), ∀ (T : ProtoTile), ∀ (N : ProtoTile), ∀ (h :
-            PartialOdometer), ∀ (k : PartialOdometer), ∀ (x : GaussianInt), ∀ (bundle :
-            BandOrderedGeneralNormalizedOccurrenceBundle C D T N h k x), ∀ (placement :
-            BandOrderedGeneralRightPlacement bundle.normalizedPresentation bundle.configuration
-            bundle.normalizedCircle bundle.normalizedRoot bundle.normalizedFixed
-            bundle.normalizedRootFunction bundle.normalizedFixedFunction bundle.normalizedPoint
-            bundle.pieces bundle.functions bundle.selectedSlot bundle.selectedSign
-            bundle.routedDirection),
-        let root := bundle.normalizedRoot
-        (FootprintVertices (TileTranslation (placement.layout.P placement.rightSecondSlot
-            placement.secondBoundarySign) placement.rightNeighborDisplacement) ⊆
-            FootprintVertices root) → ((placement.rightSecondSlot = (2 : Fin (3 : ℕ))) →
-            ((placement.secondBoundarySign = true) → (FootprintVertices (TileTranslation
-            (placement.layout.P 2 true) placement.rightNeighborDisplacement) ⊆ FootprintVertices
-            root))) ) := by
-  classical
-  intro C D T N h k x bundle placement root secondBoundarySubset hj hsecond
-  simpa [hj, hsecond] using secondBoundarySubset
-
-private theorem hRAt1390 :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (D : BandCircle), ∀ (T : ProtoTile), ∀ (N : ProtoTile), ∀ (h :
-            PartialOdometer), ∀ (k : PartialOdometer), ∀ (x : GaussianInt), ∀ (bundle :
-            BandOrderedGeneralNormalizedOccurrenceBundle C D T N h k x), ∀ (placement :
-            BandOrderedGeneralRightPlacement bundle.normalizedPresentation bundle.configuration
-            bundle.normalizedCircle bundle.normalizedRoot bundle.normalizedFixed
-            bundle.normalizedRootFunction bundle.normalizedFixedFunction bundle.normalizedPoint
-            bundle.pieces bundle.functions bundle.selectedSlot bundle.selectedSign
-            bundle.routedDirection),
-        let q := bundle.normalizedPresentation
-        (placement.rightDirectionSlot = (0 : Fin (3 : ℕ))) → ((placement.rightNeighborPositive =
-            true) → (placement.rightNeighborDisplacement = BandVectors.1 (q 0) (q 1))) ) := by
-  classical
-  intro C D T N h k x bundle placement q hk hpos
-  simpa [hpos, hk] using placement.right_neighbor_displacement
-
-private theorem tStartAt1402 :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (D : BandCircle), ∀ (T : ProtoTile), ∀ (N : ProtoTile), ∀ (h :
-            PartialOdometer), ∀ (k : PartialOdometer), ∀ (x : GaussianInt), ∀ (bundle :
-            BandOrderedGeneralNormalizedOccurrenceBundle C D T N h k x), ∀ (placement :
-            BandOrderedGeneralRightPlacement bundle.normalizedPresentation bundle.configuration
-            bundle.normalizedCircle bundle.normalizedRoot bundle.normalizedFixed
-            bundle.normalizedRootFunction bundle.normalizedFixedFunction bundle.normalizedPoint
-            bundle.pieces bundle.functions bundle.selectedSlot bundle.selectedSign
-            bundle.routedDirection),
-        let q := bundle.normalizedPresentation
-        let F := bundle.normalizedFixed
-        (∀ (ell : Fin 3), TouchingTriple F (TileTranslation F (BandVectors.1 (q 0) (q ell.succ)))
-            (TileTranslation F (-BandVectors.1 (q 0) (q (ell + 1).succ)))) →
-            ((placement.rightNeighborDisplacement = BandVectors.1 (q 0) (q 1)) → (TouchingTriple
-            F (TileTranslation F placement.rightNeighborDisplacement) (TileTranslation F ((-1 :
-            GaussianInt) * BandVectors.1 (q 0) (q 2))))) ) := by
-  classical
-  intro C D T N h k x bundle placement q F touchingPlus hR
-  simpa [hR] using touchingPlus 0
-
-private theorem tEndAt1406 :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (D : BandCircle), ∀ (T : ProtoTile), ∀ (N : ProtoTile), ∀ (h :
-            PartialOdometer), ∀ (k : PartialOdometer), ∀ (x : GaussianInt), ∀ (bundle :
-            BandOrderedGeneralNormalizedOccurrenceBundle C D T N h k x), ∀ (placement :
-            BandOrderedGeneralRightPlacement bundle.normalizedPresentation bundle.configuration
-            bundle.normalizedCircle bundle.normalizedRoot bundle.normalizedFixed
-            bundle.normalizedRootFunction bundle.normalizedFixedFunction bundle.normalizedPoint
-            bundle.pieces bundle.functions bundle.selectedSlot bundle.selectedSign
-            bundle.routedDirection),
-        let q := bundle.normalizedPresentation
-        let F := bundle.normalizedFixed
-        (∀ (ell : Fin 3), TouchingTriple F (TileTranslation F (-BandVectors.1 (q 0) (q
-            ell.succ))) (TileTranslation F (BandVectors.1 (q 0) (q (ell + 1).succ)))) →
-            ((placement.rightNeighborDisplacement = BandVectors.1 (q 0) (q 1)) → (TouchingTriple
-            F (TileTranslation F ((-1 : GaussianInt) * BandVectors.1 (q 0) (q 3)))
-            (TileTranslation F placement.rightNeighborDisplacement))) ) := by
-  classical
-  intro C D T N h k x bundle placement q F touchingMinus hR
-  simpa [hR] using touchingMinus 2
-
-private theorem hWAt1428 :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (D : BandCircle), ∀ (T : ProtoTile), ∀ (N : ProtoTile), ∀ (h :
-            PartialOdometer), ∀ (k : PartialOdometer), ∀ (x : GaussianInt), ∀ (bundle :
-            BandOrderedGeneralNormalizedOccurrenceBundle C D T N h k x), ∀ (placement :
-            BandOrderedGeneralRightPlacement bundle.normalizedPresentation bundle.configuration
-            bundle.normalizedCircle bundle.normalizedRoot bundle.normalizedFixed
-            bundle.normalizedRootFunction bundle.normalizedFixedFunction bundle.normalizedPoint
-            bundle.pieces bundle.functions bundle.selectedSlot bundle.selectedSign
-            bundle.routedDirection),
-        let root := bundle.normalizedRoot
-        (FootprintVertices (TileTranslation (placement.layout.P placement.rightFirstSlot
-            placement.firstBoundarySign) placement.rightNeighborDisplacement) ⊆ FootprintVertices
-            root) → ((placement.rightFirstSlot = (1 : Fin (3 : ℕ))) →
-            ((placement.firstBoundarySign = true) → (FootprintVertices (TileTranslation
-            (placement.layout.P 1 true) placement.rightNeighborDisplacement) ⊆ FootprintVertices
-            root))) ) := by
-  classical
-  intro C D T N h k x bundle placement root firstBoundarySubset hi hfirst
-  simpa [hi, hfirst] using firstBoundarySubset
-
-private theorem hXAt1432 :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (D : BandCircle), ∀ (T : ProtoTile), ∀ (N : ProtoTile), ∀ (h :
-            PartialOdometer), ∀ (k : PartialOdometer), ∀ (x : GaussianInt), ∀ (bundle :
-            BandOrderedGeneralNormalizedOccurrenceBundle C D T N h k x), ∀ (placement :
-            BandOrderedGeneralRightPlacement bundle.normalizedPresentation bundle.configuration
-            bundle.normalizedCircle bundle.normalizedRoot bundle.normalizedFixed
-            bundle.normalizedRootFunction bundle.normalizedFixedFunction bundle.normalizedPoint
-            bundle.pieces bundle.functions bundle.selectedSlot bundle.selectedSign
-            bundle.routedDirection),
-        let root := bundle.normalizedRoot
-        (FootprintVertices (TileTranslation (placement.layout.P placement.rightSecondSlot
-            placement.secondBoundarySign) placement.rightNeighborDisplacement) ⊆
-            FootprintVertices root) → ((placement.rightSecondSlot = (2 : Fin (3 : ℕ))) →
-            ((placement.secondBoundarySign = false) → (FootprintVertices (TileTranslation
-            (placement.layout.P 2 false) placement.rightNeighborDisplacement) ⊆ FootprintVertices
-            root))) ) := by
-  classical
-  intro C D T N h k x bundle placement root secondBoundarySubset hj hsecond
-  simpa [hj, hsecond] using secondBoundarySubset
-
-private theorem hRAt1461 :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (D : BandCircle), ∀ (T : ProtoTile), ∀ (N : ProtoTile), ∀ (h :
-            PartialOdometer), ∀ (k : PartialOdometer), ∀ (x : GaussianInt), ∀ (bundle :
-            BandOrderedGeneralNormalizedOccurrenceBundle C D T N h k x), ∀ (placement :
-            BandOrderedGeneralRightPlacement bundle.normalizedPresentation bundle.configuration
-            bundle.normalizedCircle bundle.normalizedRoot bundle.normalizedFixed
-            bundle.normalizedRootFunction bundle.normalizedFixedFunction bundle.normalizedPoint
-            bundle.pieces bundle.functions bundle.selectedSlot bundle.selectedSign
-            bundle.routedDirection),
-        let q := bundle.normalizedPresentation
-        (placement.rightDirectionSlot = (1 : Fin (3 : ℕ))) → ((placement.rightNeighborPositive =
-            false) → (placement.rightNeighborDisplacement = -BandVectors.1 (q 0) (q 2))) ) := by
-  classical
-  intro C D T N h k x bundle placement q hk hpos
-  simpa [hpos, hk] using placement.right_neighbor_displacement
-
-private theorem tStartAt1473 :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (D : BandCircle), ∀ (T : ProtoTile), ∀ (N : ProtoTile), ∀ (h :
-            PartialOdometer), ∀ (k : PartialOdometer), ∀ (x : GaussianInt), ∀ (bundle :
-            BandOrderedGeneralNormalizedOccurrenceBundle C D T N h k x), ∀ (placement :
-            BandOrderedGeneralRightPlacement bundle.normalizedPresentation bundle.configuration
-            bundle.normalizedCircle bundle.normalizedRoot bundle.normalizedFixed
-            bundle.normalizedRootFunction bundle.normalizedFixedFunction bundle.normalizedPoint
-            bundle.pieces bundle.functions bundle.selectedSlot bundle.selectedSign
-            bundle.routedDirection),
-        let q := bundle.normalizedPresentation
-        let F := bundle.normalizedFixed
-        (∀ (ell : Fin 3), TouchingTriple F (TileTranslation F (-BandVectors.1 (q 0) (q
-            ell.succ))) (TileTranslation F (BandVectors.1 (q 0) (q (ell + 1).succ)))) →
-            ((placement.rightNeighborDisplacement = -BandVectors.1 (q 0) (q 2)) → (TouchingTriple
-            F (TileTranslation F placement.rightNeighborDisplacement) (TileTranslation F ((1 :
-            GaussianInt) * BandVectors.1 (q 0) (q 3))))) ) := by
-  classical
-  intro C D T N h k x bundle placement q F touchingMinus hR
-  simpa [hR] using touchingMinus 1
-
-private theorem tEndAt1477 :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (D : BandCircle), ∀ (T : ProtoTile), ∀ (N : ProtoTile), ∀ (h :
-            PartialOdometer), ∀ (k : PartialOdometer), ∀ (x : GaussianInt), ∀ (bundle :
-            BandOrderedGeneralNormalizedOccurrenceBundle C D T N h k x), ∀ (placement :
-            BandOrderedGeneralRightPlacement bundle.normalizedPresentation bundle.configuration
-            bundle.normalizedCircle bundle.normalizedRoot bundle.normalizedFixed
-            bundle.normalizedRootFunction bundle.normalizedFixedFunction bundle.normalizedPoint
-            bundle.pieces bundle.functions bundle.selectedSlot bundle.selectedSign
-            bundle.routedDirection),
-        let q := bundle.normalizedPresentation
-        let F := bundle.normalizedFixed
-        (∀ (ell : Fin 3), TouchingTriple F (TileTranslation F (BandVectors.1 (q 0) (q ell.succ)))
-            (TileTranslation F (-BandVectors.1 (q 0) (q (ell + 1).succ)))) →
-            ((placement.rightNeighborDisplacement = -BandVectors.1 (q 0) (q 2)) → (TouchingTriple
-            F (TileTranslation F ((1 : GaussianInt) * BandVectors.1 (q 0) (q 1)))
-            (TileTranslation F placement.rightNeighborDisplacement))) ) := by
-  classical
-  intro C D T N h k x bundle placement q F touchingPlus hR
-  simpa [hR] using touchingPlus 0
-
-private theorem hWAt1501 :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (D : BandCircle), ∀ (T : ProtoTile), ∀ (N : ProtoTile), ∀ (h :
-            PartialOdometer), ∀ (k : PartialOdometer), ∀ (x : GaussianInt), ∀ (bundle :
-            BandOrderedGeneralNormalizedOccurrenceBundle C D T N h k x), ∀ (placement :
-            BandOrderedGeneralRightPlacement bundle.normalizedPresentation bundle.configuration
-            bundle.normalizedCircle bundle.normalizedRoot bundle.normalizedFixed
-            bundle.normalizedRootFunction bundle.normalizedFixedFunction bundle.normalizedPoint
-            bundle.pieces bundle.functions bundle.selectedSlot bundle.selectedSign
-            bundle.routedDirection),
-        let root := bundle.normalizedRoot
-        (FootprintVertices (TileTranslation (placement.layout.P placement.rightFirstSlot
-            placement.firstBoundarySign) placement.rightNeighborDisplacement) ⊆ FootprintVertices
-            root) → ((placement.rightFirstSlot = (2 : Fin (3 : ℕ))) →
-            ((placement.firstBoundarySign = false) → (FootprintVertices (TileTranslation
-            (placement.layout.P 2 false) placement.rightNeighborDisplacement) ⊆ FootprintVertices
-            root))) ) := by
-  classical
-  intro C D T N h k x bundle placement root firstBoundarySubset hi hfirst
-  simpa [hi, hfirst] using firstBoundarySubset
-
-private theorem hXAt1505 :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (D : BandCircle), ∀ (T : ProtoTile), ∀ (N : ProtoTile), ∀ (h :
-            PartialOdometer), ∀ (k : PartialOdometer), ∀ (x : GaussianInt), ∀ (bundle :
-            BandOrderedGeneralNormalizedOccurrenceBundle C D T N h k x), ∀ (placement :
-            BandOrderedGeneralRightPlacement bundle.normalizedPresentation bundle.configuration
-            bundle.normalizedCircle bundle.normalizedRoot bundle.normalizedFixed
-            bundle.normalizedRootFunction bundle.normalizedFixedFunction bundle.normalizedPoint
-            bundle.pieces bundle.functions bundle.selectedSlot bundle.selectedSign
-            bundle.routedDirection),
-        let root := bundle.normalizedRoot
-        (FootprintVertices (TileTranslation (placement.layout.P placement.rightSecondSlot
-            placement.secondBoundarySign) placement.rightNeighborDisplacement) ⊆
-            FootprintVertices root) → ((placement.rightSecondSlot = (0 : Fin (3 : ℕ))) →
-            ((placement.secondBoundarySign = true) → (FootprintVertices (TileTranslation
-            (placement.layout.P 0 true) placement.rightNeighborDisplacement) ⊆ FootprintVertices
-            root))) ) := by
-  classical
-  intro C D T N h k x bundle placement root secondBoundarySubset hj hsecond
-  simpa [hj, hsecond] using secondBoundarySubset
-
-private theorem hRAt1522 :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (D : BandCircle), ∀ (T : ProtoTile), ∀ (N : ProtoTile), ∀ (h :
-            PartialOdometer), ∀ (k : PartialOdometer), ∀ (x : GaussianInt), ∀ (bundle :
-            BandOrderedGeneralNormalizedOccurrenceBundle C D T N h k x), ∀ (placement :
-            BandOrderedGeneralRightPlacement bundle.normalizedPresentation bundle.configuration
-            bundle.normalizedCircle bundle.normalizedRoot bundle.normalizedFixed
-            bundle.normalizedRootFunction bundle.normalizedFixedFunction bundle.normalizedPoint
-            bundle.pieces bundle.functions bundle.selectedSlot bundle.selectedSign
-            bundle.routedDirection),
-        let q := bundle.normalizedPresentation
-        (placement.rightDirectionSlot = (1 : Fin (3 : ℕ))) → ((placement.rightNeighborPositive =
-            true) → (placement.rightNeighborDisplacement = BandVectors.1 (q 0) (q 2))) ) := by
-  classical
-  intro C D T N h k x bundle placement q hk hpos
-  simpa [hpos, hk] using placement.right_neighbor_displacement
-
-private theorem tStartAt1534 :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (D : BandCircle), ∀ (T : ProtoTile), ∀ (N : ProtoTile), ∀ (h :
-            PartialOdometer), ∀ (k : PartialOdometer), ∀ (x : GaussianInt), ∀ (bundle :
-            BandOrderedGeneralNormalizedOccurrenceBundle C D T N h k x), ∀ (placement :
-            BandOrderedGeneralRightPlacement bundle.normalizedPresentation bundle.configuration
-            bundle.normalizedCircle bundle.normalizedRoot bundle.normalizedFixed
-            bundle.normalizedRootFunction bundle.normalizedFixedFunction bundle.normalizedPoint
-            bundle.pieces bundle.functions bundle.selectedSlot bundle.selectedSign
-            bundle.routedDirection),
-        let q := bundle.normalizedPresentation
-        let F := bundle.normalizedFixed
-        (∀ (ell : Fin 3), TouchingTriple F (TileTranslation F (BandVectors.1 (q 0) (q ell.succ)))
-            (TileTranslation F (-BandVectors.1 (q 0) (q (ell + 1).succ)))) →
-            ((placement.rightNeighborDisplacement = BandVectors.1 (q 0) (q 2)) → (TouchingTriple
-            F (TileTranslation F placement.rightNeighborDisplacement) (TileTranslation F ((-1 :
-            GaussianInt) * BandVectors.1 (q 0) (q 3))))) ) := by
-  classical
-  intro C D T N h k x bundle placement q F touchingPlus hR
-  simpa [hR] using touchingPlus 1
-
-private theorem tEndAt1538 :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (D : BandCircle), ∀ (T : ProtoTile), ∀ (N : ProtoTile), ∀ (h :
-            PartialOdometer), ∀ (k : PartialOdometer), ∀ (x : GaussianInt), ∀ (bundle :
-            BandOrderedGeneralNormalizedOccurrenceBundle C D T N h k x), ∀ (placement :
-            BandOrderedGeneralRightPlacement bundle.normalizedPresentation bundle.configuration
-            bundle.normalizedCircle bundle.normalizedRoot bundle.normalizedFixed
-            bundle.normalizedRootFunction bundle.normalizedFixedFunction bundle.normalizedPoint
-            bundle.pieces bundle.functions bundle.selectedSlot bundle.selectedSign
-            bundle.routedDirection),
-        let q := bundle.normalizedPresentation
-        let F := bundle.normalizedFixed
-        (∀ (ell : Fin 3), TouchingTriple F (TileTranslation F (-BandVectors.1 (q 0) (q
-            ell.succ))) (TileTranslation F (BandVectors.1 (q 0) (q (ell + 1).succ)))) →
-            ((placement.rightNeighborDisplacement = BandVectors.1 (q 0) (q 2)) → (TouchingTriple
-            F (TileTranslation F ((-1 : GaussianInt) * BandVectors.1 (q 0) (q 1)))
-            (TileTranslation F placement.rightNeighborDisplacement))) ) := by
-  classical
-  intro C D T N h k x bundle placement q F touchingMinus hR
-  simpa [hR] using touchingMinus 0
-
-private theorem hWAt1560 :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (D : BandCircle), ∀ (T : ProtoTile), ∀ (N : ProtoTile), ∀ (h :
-            PartialOdometer), ∀ (k : PartialOdometer), ∀ (x : GaussianInt), ∀ (bundle :
-            BandOrderedGeneralNormalizedOccurrenceBundle C D T N h k x), ∀ (placement :
-            BandOrderedGeneralRightPlacement bundle.normalizedPresentation bundle.configuration
-            bundle.normalizedCircle bundle.normalizedRoot bundle.normalizedFixed
-            bundle.normalizedRootFunction bundle.normalizedFixedFunction bundle.normalizedPoint
-            bundle.pieces bundle.functions bundle.selectedSlot bundle.selectedSign
-            bundle.routedDirection),
-        let root := bundle.normalizedRoot
-        (FootprintVertices (TileTranslation (placement.layout.P placement.rightFirstSlot
-            placement.firstBoundarySign) placement.rightNeighborDisplacement) ⊆ FootprintVertices
-            root) → ((placement.rightFirstSlot = (2 : Fin (3 : ℕ))) →
-            ((placement.firstBoundarySign = true) → (FootprintVertices (TileTranslation
-            (placement.layout.P 2 true) placement.rightNeighborDisplacement) ⊆ FootprintVertices
-            root))) ) := by
-  classical
-  intro C D T N h k x bundle placement root firstBoundarySubset hi hfirst
-  simpa [hi, hfirst] using firstBoundarySubset
-
-private theorem hXAt1564 :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (D : BandCircle), ∀ (T : ProtoTile), ∀ (N : ProtoTile), ∀ (h :
-            PartialOdometer), ∀ (k : PartialOdometer), ∀ (x : GaussianInt), ∀ (bundle :
-            BandOrderedGeneralNormalizedOccurrenceBundle C D T N h k x), ∀ (placement :
-            BandOrderedGeneralRightPlacement bundle.normalizedPresentation bundle.configuration
-            bundle.normalizedCircle bundle.normalizedRoot bundle.normalizedFixed
-            bundle.normalizedRootFunction bundle.normalizedFixedFunction bundle.normalizedPoint
-            bundle.pieces bundle.functions bundle.selectedSlot bundle.selectedSign
-            bundle.routedDirection),
-        let root := bundle.normalizedRoot
-        (FootprintVertices (TileTranslation (placement.layout.P placement.rightSecondSlot
-            placement.secondBoundarySign) placement.rightNeighborDisplacement) ⊆
-            FootprintVertices root) → ((placement.rightSecondSlot = (0 : Fin (3 : ℕ))) →
-            ((placement.secondBoundarySign = false) → (FootprintVertices (TileTranslation
-            (placement.layout.P 0 false) placement.rightNeighborDisplacement) ⊆ FootprintVertices
-            root))) ) := by
-  classical
-  intro C D T N h k x bundle placement root secondBoundarySubset hj hsecond
-  simpa [hj, hsecond] using secondBoundarySubset
-
 end SelectedRowGeometry
 
-namespace SelectedRowNormalization
-
-private noncomputable def certificate
-    (C D : BandCircle) (T N : ProtoTile) (h k : PartialOdometer)
-    (x : GaussianInt)
-    (bundle : BandOrderedGeneralNormalizedOccurrenceBundle C D T N h k x)
-    (placement : BandOrderedGeneralRightPlacement bundle.normalizedPresentation
-      bundle.configuration bundle.normalizedCircle bundle.normalizedRoot
-      bundle.normalizedFixed bundle.normalizedRootFunction
-      bundle.normalizedFixedFunction bundle.normalizedPoint bundle.pieces
-      bundle.functions bundle.selectedSlot bundle.selectedSign
-      bundle.routedDirection)
- :
-    BandOrderedGeneralRightNormalizationCertificate C T N h k x := by
-  classical
-  let q := bundle.normalizedPresentation
-  let cfg := bundle.configuration
-  let F := bundle.normalizedFixed
-  let root := bundle.normalizedRoot
-  exact {
-    presentation := bundle.presentation
-    presentation_proper := bundle.presentation_proper
-    presentation_child := bundle.presentation_child
-    parentRotation := bundle.parentRotation
-    symmetry := bundle.symmetry
-    rotatedPresentation := bundle.rotatedPresentation
-    rotated_presentation_eq := bundle.rotated_presentation_eq
-    normalizedPresentation := q
-    normalized_presentation_eq := bundle.normalized_presentation_eq
-    configuration := cfg
-    normalizedCircle := bundle.normalizedCircle
-    normalized_circle_eq := bundle.normalized_circle_eq
-    normalizedFixedCircle := bundle.normalizedCircle
-    normalized_fixed_circle_eq := by
-      calc
-        bundle.normalizedCircle.1.1 = q 0 := bundle.normalized_circle_eq.symm
-        _ = BandPackingSymmetryCircleAction bundle.symmetry C.1.1 := by
-          have hq0 := congrFun bundle.normalized_presentation_eq 0
-          calc
-            q 0 = BandPackingSymmetryCircleAction bundle.symmetry
-                (bundle.rotatedPresentation 0) := by
-                  simpa [BandPackingSymmetryQuadrupleAction] using hq0
-            _ = BandPackingSymmetryCircleAction bundle.symmetry C.1.1 := by
-                  rw [bundle.rotated_presentation_eq]
-                  simp [bundle.presentation_child]
-    normalizedRoot := root
-    normalizedFixed := F
-    normalizedRootFunction := bundle.normalizedRootFunction
-    normalizedFixedFunction := bundle.normalizedFixedFunction
-    normalizedPoint := bundle.normalizedPoint
-    normalized_root_eq := bundle.normalized_root_eq
-    normalized_fixed_eq := bundle.normalized_fixed_eq
-    normalized_root_function_eq := bundle.normalized_root_function_eq
-    normalized_fixed_function_eq := bundle.normalized_fixed_function_eq
-    normalized_point_eq := bundle.normalized_point_eq
-    normalized_point_root_domain := by
-      obtain ⟨edge, hp, he⟩ := bundle.edgeAtPoint
-      have hvert := BoundaryFootprintInclusion.edgeVertex root edge he.1 bundle.normalizedPoint hp
-      have hdom := PositiveCurvatureTileOdometerDomain (q 0) root
-        bundle.normalizedRootFunction (ProperBandCurvatureStructure q cfg.proper).1
-        bundle.normalized_root_odometer
-      exact (Set.ext_iff.mp hdom bundle.normalizedPoint).mpr hvert
-    normalized_point_fixed_domain := by
-      obtain ⟨edge, hp, he⟩ := bundle.edgeAtPoint
-      have hvert := BoundaryFootprintInclusion.edgeVertex F edge he.2 bundle.normalizedPoint hp
-      have hdom := PositiveCurvatureTileOdometerDomain
-        bundle.normalizedCircle.1.1 F bundle.normalizedFixedFunction
-        bundle.normalizedCircle.property placement.adjacency.2.1
-      exact (Set.ext_iff.mp hdom bundle.normalizedPoint).mpr hvert
-    normalized_root_odometer := bundle.normalized_root_odometer
-    normalized_fixed_odometer := placement.adjacency.2.1
-    normalized_root_lattice := bundle.root_lattice
-    normalized_fixed_lattice := bundle.fixed_lattice
-    normalizedRootSlope := bundle.normalizedRootSlope
-    normalizedFixedSlope := bundle.normalizedFixedSlope
-    normalized_root_slope := bundle.normalized_root_slope
-    normalized_fixed_slope := bundle.normalized_fixed_slope
-    pieces := bundle.pieces
-    functions := bundle.functions
-    root_band := bundle.root_band
-    piece_odometer := bundle.piece_odometer
-    piece_cell_cover := bundle.piece_cell_cover
-    piece_footprint := bundle.piece_footprint
-    piece_centroid := bundle.piece_centroid
-    function_domain_cover := bundle.function_domain_cover
-    function_restriction := bundle.function_restriction
-    function_compatibility := bundle.function_compatibility
-    piece_slope := bundle.piece_slope
-    adjacency := placement.adjacency
-    layout := placement.layout
-    fixed_quarter_turn := TileT2QuarterTurn q cfg bundle.normalizedCircle F placement.layout
-    rightFirstSlot := placement.rightFirstSlot
-    rightSecondSlot := placement.rightSecondSlot
-    rightDirectionSlot := placement.rightDirectionSlot
-    right_slots_cyclic := placement.right_slots_cyclic
-    rightNeighborPositive := placement.rightNeighborPositive
-    right_adjacency_centroid := placement.right_adjacency_centroid
-    right_adjacency_slope_real := by
-      have hroot : placement.rightRootSlope = bundle.normalizedRootSlope :=
-        Option.some.inj (placement.right_root_slope.symm.trans
-          bundle.normalized_root_slope)
-      have hf : placement.rightFixedSlope = bundle.normalizedFixedSlope :=
-        Option.some.inj (placement.right_fixed_slope.symm.trans
-          bundle.normalized_fixed_slope)
-      simpa [hroot, hf, q] using placement.right_adjacency_slope_real
-    right_adjacency_slope_imag := by
-      have hroot : placement.rightRootSlope = bundle.normalizedRootSlope :=
-        Option.some.inj (placement.right_root_slope.symm.trans
-          bundle.normalized_root_slope)
-      have hf : placement.rightFixedSlope = bundle.normalizedFixedSlope :=
-        Option.some.inj (placement.right_fixed_slope.symm.trans
-          bundle.normalized_fixed_slope)
-      simpa [hroot, hf, q] using placement.right_adjacency_slope_imag
-    rightNeighborDisplacement := placement.rightNeighborDisplacement
-    right_neighbor_displacement := placement.right_neighbor_displacement
-    right_neighbor_cells := placement.right_neighbor_cells
-    right_neighbor_empty_anchor := placement.right_neighbor_empty_anchor
-    firstBoundarySign := placement.firstBoundarySign
-    secondBoundarySign := placement.secondBoundarySign
-    boundary_signs := placement.boundary_signs
-    first_boundary_cells := placement.first_boundary_cells
-    first_boundary_empty_anchor := placement.first_boundary_empty_anchor
-    first_boundary_footprint := placement.first_boundary_footprint
-    first_boundary_domain := placement.first_boundary_domain
-    second_boundary_cells := placement.second_boundary_cells
-    second_boundary_empty_anchor := placement.second_boundary_empty_anchor
-    second_boundary_footprint := placement.second_boundary_footprint
-    second_boundary_domain := placement.second_boundary_domain
-    normalized_star := bundle.normalized_star }
-
-end SelectedRowNormalization
 
 namespace SelectedRowConclusions
 
-private theorem firstCyclicCase :
+private theorem firstCyclicGeometry :
     (by
       classical
       exact
@@ -2760,9 +1614,6 @@ private theorem firstCyclicCase :
         let q := bundle.normalizedPresentation
         let F := bundle.normalizedFixed
         let root := bundle.normalizedRoot
-        ∀ (edgeVertex : ∀ (tile : ProtoTile), (tile.cells.Nonempty) → (∀ (edge : Finset
-            GaussianInt), (edge ∈ FootprintEdges tile) → (∀ (point : GaussianInt), (point ∈ edge)
-            → (point ∈ FootprintVertices tile)))),
         let norm := SelectedRowNormalization.certificate C D T N h k x bundle placement
         ∀ (childInterfaces : (∀ (i : Fin (3 : ℕ)), Nonempty (ExactTileInterfaceTriple F
             (TileTranslation F (BandVectors.1 (q i.succ) (q (0 : Fin (4 : ℕ))))) (TileTranslation
@@ -3001,7 +1852,7 @@ private theorem firstCyclicCase :
                   rightGeometry placement.rightFirstSlot placement.rightSecondSlot
                     1 false true))))))))))))) ) := by
   classical
-  intro C D T N h k x bundle placement selectedEdge chosenBoundary q F root edgeVertex norm
+  intro C D T N h k x bundle placement selectedEdge chosenBoundary q F root norm
       childInterfaces turnOutgoing turnNeg boundaryRecords centeredExactTurn tripleTurnOutgoing
       tripleTurnNegativeNext touchingPlus touchingMinus P u v selectedPath rightGeometry
       canonicalFinish coordinateFactsApos coordinateFactsAneg period0 period1 period2
@@ -3033,9 +1884,9 @@ private theorem firstCyclicCase :
         placement.rightDirectionSlot = 1) := Or.inl ⟨hi, hj, hk⟩
   have records := boundaryRecords hcyc
   cases hpos : placement.rightNeighborPositive
-  · have hR : placement.rightNeighborDisplacement =
-        -BandVectors.1 (q 0) (q 3) := SelectedRowGeometry.hRAt1171 C D T N h k x bundle
-            placement hk hpos
+  · have hR :
+        placement.rightNeighborDisplacement = -BandVectors.1 (q 0) (q 3) := by
+      simpa [hpos, hk] using placement.right_neighbor_displacement
     rcases records.2 hpos with ⟨⟨R1⟩, ⟨R2⟩⟩
     have R1' : ExactTileInterfaceTriple F
         (TileTranslation F (BandVectors.1 (q 0) (q 1)))
@@ -3055,9 +1906,14 @@ private theorem firstCyclicCase :
         (TileTranslation F ((1 : GaussianInt) * BandVectors.1 (q 0) (q 2)))
         (TileTranslation F placement.rightNeighborDisplacement) := by
       simpa [hR] using exactPlus 1
-    have tStart := SelectedRowGeometry.tStartAt1193 C D T N h k x bundle placement
-        touchingMinus hR
-    have tEnd := SelectedRowGeometry.tEndAt1197 C D T N h k x bundle placement touchingPlus hR
+    have tStart :
+        TouchingTriple F (TileTranslation F placement.rightNeighborDisplacement)
+        (TileTranslation F ((1 : GaussianInt) * BandVectors.1 (q 0) (q 1))) := by
+      simpa [hR] using touchingMinus 2
+    have tEnd :
+        TouchingTriple F (TileTranslation F ((1 : GaussianInt) * BandVectors.1 (q 0) (q 2)))
+        (TileTranslation F placement.rightNeighborDisplacement) := by
+      simpa [hR] using touchingPlus 1
     rcases canonicalFinish ((1 : GaussianInt) * BandVectors.1 (q 0) (q 1))
         ((1 : GaussianInt) * BandVectors.1 (q 0) (q 2)) 1 1 1 0 0 1
         (by rw [hR, period2]; ring)
@@ -3071,8 +1927,8 @@ private theorem firstCyclicCase :
     rcases hsigns with ⟨hp, hfirst, hsecond⟩ | ⟨hp, hfirst, hsecond⟩
     · rw [hpos] at hp
       cases hp
-    · have geom := SelectedRowGeometry.geomAt1214 C D T N h k x bundle placement selectedEdge
-        edgeVertex packageGeometry firstBoundarySubset secondBoundarySubset hi hj R1 R2 g
+    · have geom := SelectedRowGeometry.firstForwardGeometry C D T N h k x bundle placement
+        selectedEdge packageGeometry firstBoundarySubset secondBoundarySubset hi hj R1 R2 g
         hgs hge hneq hfirst hsecond
       have hgeom := (show
           rightGeometry placement.rightFirstSlot placement.rightSecondSlot 1 false
@@ -3089,9 +1945,9 @@ private theorem firstCyclicCase :
       · have hselectedSign : bundle.selectedSign = true := by
           exact hsign.trans hsecond
         exact Or.inr (Or.inr (Or.inr ⟨rfl, hs, hselectedSign, hgeom⟩))
-  · have hR : placement.rightNeighborDisplacement =
-        BandVectors.1 (q 0) (q 3) := SelectedRowGeometry.hRAt1245 C D T N h k x bundle
-            placement hk hpos
+  · have hR :
+        placement.rightNeighborDisplacement = BandVectors.1 (q 0) (q 3) := by
+      simpa [hpos, hk] using placement.right_neighbor_displacement
     rcases records.1 hpos with ⟨⟨R1⟩, ⟨R2⟩⟩
     have R1' : ExactTileInterfaceTriple F
         (TileTranslation F (-BandVectors.1 (q 0) (q 1)))
@@ -3111,9 +1967,14 @@ private theorem firstCyclicCase :
         (TileTranslation F ((-1 : GaussianInt) * BandVectors.1 (q 0) (q 2)))
         (TileTranslation F placement.rightNeighborDisplacement) := by
       simpa [hR] using exactMinus 1
-    have tStart := SelectedRowGeometry.tStartAt1267 C D T N h k x bundle placement
-        touchingPlus hR
-    have tEnd := SelectedRowGeometry.tEndAt1271 C D T N h k x bundle placement touchingMinus hR
+    have tStart :
+        TouchingTriple F (TileTranslation F placement.rightNeighborDisplacement)
+        (TileTranslation F ((-1 : GaussianInt) * BandVectors.1 (q 0) (q 1))) := by
+      simpa [hR] using touchingPlus 2
+    have tEnd :
+        TouchingTriple F (TileTranslation F ((-1 : GaussianInt) * BandVectors.1 (q 0) (q
+        2))) (TileTranslation F placement.rightNeighborDisplacement) := by
+      simpa [hR] using touchingMinus 1
     rcases canonicalFinish ((-1 : GaussianInt) * BandVectors.1 (q 0) (q 1))
         ((-1 : GaussianInt) * BandVectors.1 (q 0) (q 2)) (-1) (-1) (-1) 0 0 (-1)
         (by rw [hR, period2]; ring)
@@ -3125,8 +1986,8 @@ private theorem firstCyclicCase :
       ⟨g, hgs, hge, hneq⟩
     have hsigns := placement.boundary_signs
     rcases hsigns with ⟨hp, hfirst, hsecond⟩ | ⟨hp, hfirst, hsecond⟩
-    · have geom := SelectedRowGeometry.geomAt1286 C D T N h k x bundle placement selectedEdge
-        edgeVertex packageGeometry firstBoundarySubset secondBoundarySubset hi hj R1 R2 g
+    · have geom := SelectedRowGeometry.firstReverseGeometry C D T N h k x bundle placement
+        selectedEdge packageGeometry firstBoundarySubset secondBoundarySubset hi hj R1 R2 g
         hgs hge hneq hfirst hsecond
       have hgeom := (show
           rightGeometry placement.rightFirstSlot placement.rightSecondSlot (-1) true
@@ -3434,9 +2295,9 @@ private theorem secondCyclicCase :
         placement.rightDirectionSlot = 1) := Or.inr (Or.inl ⟨hi, hj, hk⟩)
   have records := boundaryRecords hcyc
   cases hpos : placement.rightNeighborPositive
-  · have hR : placement.rightNeighborDisplacement =
-        -BandVectors.1 (q 0) (q 1) := SelectedRowGeometry.hRAt1329 C D T N h k x bundle
-            placement hk hpos
+  · have hR :
+        placement.rightNeighborDisplacement = -BandVectors.1 (q 0) (q 1) := by
+      simpa [hpos, hk] using placement.right_neighbor_displacement
     rcases records.2 hpos with ⟨⟨R1⟩, ⟨R2⟩⟩
     have eStart : ExactTileInterfaceTriple F
         (TileTranslation F placement.rightNeighborDisplacement)
@@ -3446,9 +2307,14 @@ private theorem secondCyclicCase :
         (TileTranslation F ((1 : GaussianInt) * BandVectors.1 (q 0) (q 3)))
         (TileTranslation F placement.rightNeighborDisplacement) := by
       simpa [hR] using exactPlus 2
-    have tStart := SelectedRowGeometry.tStartAt1341 C D T N h k x bundle placement
-        touchingMinus hR
-    have tEnd := SelectedRowGeometry.tEndAt1345 C D T N h k x bundle placement touchingPlus hR
+    have tStart :
+        TouchingTriple F (TileTranslation F placement.rightNeighborDisplacement)
+        (TileTranslation F ((1 : GaussianInt) * BandVectors.1 (q 0) (q 2))) := by
+      simpa [hR] using touchingMinus 0
+    have tEnd :
+        TouchingTriple F (TileTranslation F ((1 : GaussianInt) * BandVectors.1 (q 0) (q 3)))
+        (TileTranslation F placement.rightNeighborDisplacement) := by
+      simpa [hR] using touchingPlus 2
     rcases canonicalFinish ((1 : GaussianInt) * BandVectors.1 (q 0) (q 2))
         ((1 : GaussianInt) * BandVectors.1 (q 0) (q 3)) (-1) 0 0 1 (-1) (-1)
         (by rw [hR, period0]; simp)
@@ -3469,10 +2335,14 @@ private theorem secondCyclicCase :
           (TileTranslation (placement.layout.P 2 true)
             placement.rightNeighborDisplacement) := by
         simpa [hge, hj] using R2
-      have hW := SelectedRowGeometry.hWAt1369 C D T N h k x bundle placement
-          firstBoundarySubset hi hfirst
-      have hX := SelectedRowGeometry.hXAt1373 C D T N h k x bundle placement
-          secondBoundarySubset hj hsecond
+      have hW :
+          FootprintVertices (TileTranslation (placement.layout.P 1 false)
+          placement.rightNeighborDisplacement) ⊆ FootprintVertices root := by
+        simpa [hi, hfirst] using firstBoundarySubset
+      have hX :
+          FootprintVertices (TileTranslation (placement.layout.P 2 true)
+          placement.rightNeighborDisplacement) ⊆ FootprintVertices root := by
+        simpa [hj, hsecond] using secondBoundarySubset
       have geom := packageGeometry 1 2 1 false true g hgs hge hneq R1g R2g hW hX
       have hgeom := (show
           rightGeometry placement.rightFirstSlot placement.rightSecondSlot 1 false
@@ -3489,9 +2359,9 @@ private theorem secondCyclicCase :
       · have hs' : bundle.selectedSign = true := by
           exact hsign.trans hsecond
         exact Or.inr (Or.inr (Or.inr ⟨rfl, hs, hs', hgeom⟩))
-  · have hR : placement.rightNeighborDisplacement =
-        BandVectors.1 (q 0) (q 1) := SelectedRowGeometry.hRAt1390 C D T N h k x bundle
-            placement hk hpos
+  · have hR :
+        placement.rightNeighborDisplacement = BandVectors.1 (q 0) (q 1) := by
+      simpa [hpos, hk] using placement.right_neighbor_displacement
     rcases records.1 hpos with ⟨⟨R1⟩, ⟨R2⟩⟩
     have eStart : ExactTileInterfaceTriple F
         (TileTranslation F placement.rightNeighborDisplacement)
@@ -3501,9 +2371,14 @@ private theorem secondCyclicCase :
         (TileTranslation F ((-1 : GaussianInt) * BandVectors.1 (q 0) (q 3)))
         (TileTranslation F placement.rightNeighborDisplacement) := by
       simpa [hR] using exactMinus 2
-    have tStart := SelectedRowGeometry.tStartAt1402 C D T N h k x bundle placement
-        touchingPlus hR
-    have tEnd := SelectedRowGeometry.tEndAt1406 C D T N h k x bundle placement touchingMinus hR
+    have tStart :
+        TouchingTriple F (TileTranslation F placement.rightNeighborDisplacement)
+        (TileTranslation F ((-1 : GaussianInt) * BandVectors.1 (q 0) (q 2))) := by
+      simpa [hR] using touchingPlus 0
+    have tEnd :
+        TouchingTriple F (TileTranslation F ((-1 : GaussianInt) * BandVectors.1 (q 0) (q
+        3))) (TileTranslation F placement.rightNeighborDisplacement) := by
+      simpa [hR] using touchingMinus 2
     have finishResult := canonicalFinish ((-1 : GaussianInt) * BandVectors.1 (q 0) (q 2))
         ((-1 : GaussianInt) * BandVectors.1 (q 0) (q 3)) 1 0 0 (-1) 1 1
         (by simp [hR, period0])
@@ -3522,10 +2397,14 @@ private theorem secondCyclicCase :
           (TileTranslation (placement.layout.P 2 false)
             placement.rightNeighborDisplacement) := by
         simpa [hge, hj] using R2
-      have hW := SelectedRowGeometry.hWAt1428 C D T N h k x bundle placement
-          firstBoundarySubset hi hfirst
-      have hX := SelectedRowGeometry.hXAt1432 C D T N h k x bundle placement
-          secondBoundarySubset hj hsecond
+      have hW :
+          FootprintVertices (TileTranslation (placement.layout.P 1 true)
+          placement.rightNeighborDisplacement) ⊆ FootprintVertices root := by
+        simpa [hi, hfirst] using firstBoundarySubset
+      have hX :
+          FootprintVertices (TileTranslation (placement.layout.P 2 false)
+          placement.rightNeighborDisplacement) ⊆ FootprintVertices root := by
+        simpa [hj, hsecond] using secondBoundarySubset
       have geom := packageGeometry 1 2 (-1) true false g hgs hge hneq R1g R2g hW hX
       have hgeom := (show
           rightGeometry placement.rightFirstSlot placement.rightSecondSlot (-1) true
@@ -3833,9 +2712,9 @@ private theorem thirdCyclicCase :
         placement.rightDirectionSlot = 1) := Or.inr (Or.inr ⟨hi, hj, hk⟩)
   have records := boundaryRecords hcyc
   cases hpos : placement.rightNeighborPositive
-  · have hR : placement.rightNeighborDisplacement =
-        -BandVectors.1 (q 0) (q 2) := SelectedRowGeometry.hRAt1461 C D T N h k x bundle
-            placement hk hpos
+  · have hR :
+        placement.rightNeighborDisplacement = -BandVectors.1 (q 0) (q 2) := by
+      simpa [hpos, hk] using placement.right_neighbor_displacement
     rcases records.2 hpos with ⟨⟨R1⟩, ⟨R2⟩⟩
     have eStart : ExactTileInterfaceTriple F
         (TileTranslation F placement.rightNeighborDisplacement)
@@ -3845,9 +2724,14 @@ private theorem thirdCyclicCase :
         (TileTranslation F ((1 : GaussianInt) * BandVectors.1 (q 0) (q 1)))
         (TileTranslation F placement.rightNeighborDisplacement) := by
       simpa [hR] using exactPlus 0
-    have tStart := SelectedRowGeometry.tStartAt1473 C D T N h k x bundle placement
-        touchingMinus hR
-    have tEnd := SelectedRowGeometry.tEndAt1477 C D T N h k x bundle placement touchingPlus hR
+    have tStart :
+        TouchingTriple F (TileTranslation F placement.rightNeighborDisplacement)
+        (TileTranslation F ((1 : GaussianInt) * BandVectors.1 (q 0) (q 3))) := by
+      simpa [hR] using touchingMinus 1
+    have tEnd :
+        TouchingTriple F (TileTranslation F ((1 : GaussianInt) * BandVectors.1 (q 0) (q 1)))
+        (TileTranslation F placement.rightNeighborDisplacement) := by
+      simpa [hR] using touchingPlus 0
     rcases canonicalFinish ((1 : GaussianInt) * BandVectors.1 (q 0) (q 3))
         ((1 : GaussianInt) * BandVectors.1 (q 0) (q 1)) 0 (-1) (-1) (-1) 1 0
         (by rw [hR, period1]; simp)
@@ -3868,10 +2752,14 @@ private theorem thirdCyclicCase :
           (TileTranslation (placement.layout.P 0 true)
             placement.rightNeighborDisplacement) := by
         simpa [hge, hj] using R2
-      have hW := SelectedRowGeometry.hWAt1501 C D T N h k x bundle placement
-          firstBoundarySubset hi hfirst
-      have hX := SelectedRowGeometry.hXAt1505 C D T N h k x bundle placement
-          secondBoundarySubset hj hsecond
+      have hW :
+          FootprintVertices (TileTranslation (placement.layout.P 2 false)
+          placement.rightNeighborDisplacement) ⊆ FootprintVertices root := by
+        simpa [hi, hfirst] using firstBoundarySubset
+      have hX :
+          FootprintVertices (TileTranslation (placement.layout.P 0 true)
+          placement.rightNeighborDisplacement) ⊆ FootprintVertices root := by
+        simpa [hj, hsecond] using secondBoundarySubset
       have geom := packageGeometry 2 0 1 false true g hgs hge hneq R1g R2g hW hX
       have hgeom := (show
           rightGeometry placement.rightFirstSlot placement.rightSecondSlot 1 false
@@ -3888,9 +2776,9 @@ private theorem thirdCyclicCase :
       · have hs' : bundle.selectedSign = true := by
           exact hsign.trans hsecond
         exact Or.inr (Or.inr (Or.inr ⟨rfl, hs, hs', hgeom⟩))
-  · have hR : placement.rightNeighborDisplacement =
-        BandVectors.1 (q 0) (q 2) := SelectedRowGeometry.hRAt1522 C D T N h k x bundle
-            placement hk hpos
+  · have hR :
+        placement.rightNeighborDisplacement = BandVectors.1 (q 0) (q 2) := by
+      simpa [hpos, hk] using placement.right_neighbor_displacement
     rcases records.1 hpos with ⟨⟨R1⟩, ⟨R2⟩⟩
     have eStart : ExactTileInterfaceTriple F
         (TileTranslation F placement.rightNeighborDisplacement)
@@ -3900,9 +2788,14 @@ private theorem thirdCyclicCase :
         (TileTranslation F ((-1 : GaussianInt) * BandVectors.1 (q 0) (q 1)))
         (TileTranslation F placement.rightNeighborDisplacement) := by
       simpa [hR] using exactMinus 0
-    have tStart := SelectedRowGeometry.tStartAt1534 C D T N h k x bundle placement
-        touchingPlus hR
-    have tEnd := SelectedRowGeometry.tEndAt1538 C D T N h k x bundle placement touchingMinus hR
+    have tStart :
+        TouchingTriple F (TileTranslation F placement.rightNeighborDisplacement)
+        (TileTranslation F ((-1 : GaussianInt) * BandVectors.1 (q 0) (q 3))) := by
+      simpa [hR] using touchingPlus 1
+    have tEnd :
+        TouchingTriple F (TileTranslation F ((-1 : GaussianInt) * BandVectors.1 (q 0) (q
+        1))) (TileTranslation F placement.rightNeighborDisplacement) := by
+      simpa [hR] using touchingMinus 0
     rcases canonicalFinish ((-1 : GaussianInt) * BandVectors.1 (q 0) (q 3))
         ((-1 : GaussianInt) * BandVectors.1 (q 0) (q 1)) 0 1 1 1 (-1) 0
         (by simp [hR, period1])
@@ -3921,10 +2814,14 @@ private theorem thirdCyclicCase :
           (TileTranslation (placement.layout.P 0 false)
             placement.rightNeighborDisplacement) := by
         simpa [hge, hj] using R2
-      have hW := SelectedRowGeometry.hWAt1560 C D T N h k x bundle placement
-          firstBoundarySubset hi hfirst
-      have hX := SelectedRowGeometry.hXAt1564 C D T N h k x bundle placement
-          secondBoundarySubset hj hsecond
+      have hW :
+          FootprintVertices (TileTranslation (placement.layout.P 2 true)
+          placement.rightNeighborDisplacement) ⊆ FootprintVertices root := by
+        simpa [hi, hfirst] using firstBoundarySubset
+      have hX :
+          FootprintVertices (TileTranslation (placement.layout.P 0 false)
+          placement.rightNeighborDisplacement) ⊆ FootprintVertices root := by
+        simpa [hj, hsecond] using secondBoundarySubset
       have geom := packageGeometry 2 0 (-1) true false g hgs hge hneq R1g R2g hW hX
       have hgeom := (show
           rightGeometry placement.rightFirstSlot placement.rightSecondSlot (-1) true
@@ -4047,8 +2944,6 @@ theorem BandOrderedGeneralRightSelectedRowGeometry
   let q := bundle.normalizedPresentation
   let cfg := bundle.configuration
   let F := bundle.normalizedFixed
-  have edgeVertex := fun (T : ProtoTile) (_ : T.cells.Nonempty) =>
-    BoundaryFootprintInclusion.edgeVertex T
   have childInterfaces := BandOrderedGeneralChildInterfaces q cfg
     bundle.normalizedCircle F placement.layout
       (TileT2QuarterTurn q cfg bundle.normalizedCircle F placement.layout)
@@ -4100,8 +2995,9 @@ theorem BandOrderedGeneralRightSelectedRowGeometry
     q cfg bundle.normalizedCircle F placement.layout
     placement.exteriorIndex placement.centralIndex originalAllowed
     (SelectedRowGeometry.noPairedOccurrence C D T N h k x bundle placement row)
-  have canonicalFinish := SelectedRowGeometry.canonicalFinish C D T N h k x bundle placement
-      selectedEdge hedge edgeVertex blockCells fixedPositive touchingRetarget
+  have canonicalFinish := SelectedRowGeometry.canonicalInterfaceExists C D T N h k x bundle
+      placement
+      selectedEdge hedge blockCells fixedPositive touchingRetarget
   have coordinateFactsApos := SelectedRowGeometry.coordinateFactsApos
   have coordinateFactsAneg := SelectedRowGeometry.coordinateFactsAneg
   have coordinateFactsBpos := SelectedRowGeometry.coordinateFactsBpos
@@ -4116,9 +3012,9 @@ theorem BandOrderedGeneralRightSelectedRowGeometry
           bundle placement (SelectedRowGeometry.outgoingSum C D T N h k x bundle turnOutgoing
           (SelectedRowGeometry.turnAdd) (SelectedRowGeometry.incomingSum C D T N h k x bundle))
           period0 period1
-  have packageGeometry := SelectedRowGeometry.packageGeometry C D T N h k x bundle placement
-      selectedEdge edgeVertex (SelectedRowGeometry.geometryFields C D T N h k x bundle placement
-      selectedEdge edgeVertex (SelectedRowGeometry.originalSelectedPath C D T N h k x bundle
+  have packageGeometry := SelectedRowGeometry.interfaceGeometry C D T N h k x bundle placement
+      selectedEdge (SelectedRowGeometry.interfaceFields C D T N h k x bundle placement
+      selectedEdge (SelectedRowGeometry.originalSelectedPath C D T N h k x bundle
       placement selectedEdge hx hedge (SelectedRowGeometry.modifiedPath C D T N h k x bundle
       placement indexNe (SelectedRowGeometry.modifiedEdgesNonempty C D T N h k x bundle placement
       indexNe modifiedAdjacent)) selectedOccurrenceRetarget))
@@ -4128,8 +3024,9 @@ theorem BandOrderedGeneralRightSelectedRowGeometry
   have secondBoundarySubset := SelectedRowGeometry.secondBoundarySubset C D T N h k x bundle
       placement
   rcases placement.right_slots_cyclic with hcycle | hcycle | hcycle
-  · have firstCyclicCase := SelectedRowConclusions.firstCyclicCase C D T N h k x bundle placement
-      selectedEdge chosenBoundary edgeVertex childInterfaces turnOutgoing turnNeg boundaryRecords
+  · have firstCyclicCase := SelectedRowConclusions.firstCyclicGeometry C D T N h k x bundle
+      placement
+      selectedEdge chosenBoundary childInterfaces turnOutgoing turnNeg boundaryRecords
       centeredExactTurn tripleTurnOutgoing tripleTurnNegativeNext touchingPlus touchingMinus
       canonicalFinish coordinateFactsApos coordinateFactsAneg period0 period1 period2
       packageGeometry firstBoundarySubset secondBoundarySubset hcycle

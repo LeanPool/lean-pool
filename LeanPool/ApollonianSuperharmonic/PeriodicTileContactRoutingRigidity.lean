@@ -51,6 +51,155 @@ private theorem hne :
   intro ι P D contact a b hab hn
   exact (D.port_eq_none_iff a b).mp hn (contact hab)
 
+end ContactRoutingGeometry
+
+private noncomputable def restrictContactDrawing {ι : Type} (P : PeriodicTileComplex ι)
+    (ports : P3723T1ContactPorts P) (D : P3723T1AllContactRouting P)
+    (retained_position : D.position = ports.position)
+    (contact : ∀ {a b : ι}, P.plane.adjacent a b → P3723T1EdgeContact P a b)
+    (symmetric : ∀ {a b : ι}, P.plane.adjacent a b → P.plane.adjacent b a) :
+    PeriodicTileContactRouting P := by
+  classical
+  exact {
+    position := D.position
+    portEdge := fun a b => if P.plane.adjacent a b then D.portEdge a b else ∅
+    port := fun a b => if P.plane.adjacent a b then D.port a b else none
+    halfArc := fun a b => if P.plane.adjacent a b then D.halfArc a b else ∅
+    edgeArc := fun a b => if P.plane.adjacent a b then D.edgeArc a b else ∅
+    portEdge_symmetric := by
+      intro a b
+      by_cases hab : P.plane.adjacent a b
+      · simp only [ite_eq_left hab, ite_eq_left (symmetric hab)]
+        exact D.portEdge_symmetric a b
+      · have hba : ¬ P.plane.adjacent b a := fun h => hab (symmetric h)
+        simp only [ite_eq_right hab, ite_eq_right hba]
+    port_symmetric := by
+      intro a b
+      by_cases hab : P.plane.adjacent a b
+      · simp only [ite_eq_left hab, ite_eq_left (symmetric hab)]
+        exact D.port_symmetric a b
+      · have hba : ¬ P.plane.adjacent b a := fun h => hab (symmetric h)
+        simp only [ite_eq_right hab, ite_eq_right hba]
+    portEdge_common := by
+      intro a b hab
+      simpa only [ite_eq_left hab] using D.portEdge_common a b (contact hab)
+    portEdge_two := by
+      intro a b hab
+      simpa only [ite_eq_left hab] using D.portEdge_two a b (contact hab)
+    port_midpoint := by
+      intro a b hab
+      simpa only [ite_eq_left hab] using D.port_midpoint a b (contact hab)
+    port_eq_none_iff := by
+      intro a b
+      by_cases hab : P.plane.adjacent a b
+      · have hne : D.port a b ≠ none := ContactRoutingGeometry.hne ι P D contact a b hab
+        simp only [hne, hab, not_true_eq_false, ite_true]
+      · simp only [hab, not_false_eq_true, ite_false, eq_self]
+    nonedge_has_no_portEdge := by
+      intro a b hab
+      simp only [ite_eq_right hab]
+    nonedge_has_no_halfArc := by
+      intro a b hab
+      simp only [ite_eq_right hab]
+    nonedge_has_no_edgeArc := by
+      intro a b hab
+      simp only [ite_eq_right hab]
+    position_in_tile_interior := by
+      rw [retained_position]
+      exact ports.position_in_tile_interior
+    position_injective := by
+      rw [retained_position]
+      exact ports.position_injective
+    incident_ports_distinct := by
+      intro a b c p q hp hq hbc
+      by_cases hab : P.plane.adjacent a b
+      · by_cases hac : P.plane.adjacent a c
+        · simp only [ite_eq_left hab] at hp
+          simp only [ite_eq_left hac] at hq
+          exact D.incident_ports_distinct a b c p q hp hq hbc
+        · simp only [ite_eq_right hac, reduceCtorEq] at hq
+      · simp only [ite_eq_right hab, reduceCtorEq] at hp
+    halfArc_homeomorph := by
+      intro a b p hp
+      by_cases hab : P.plane.adjacent a b
+      · simp only [ite_eq_left hab] at hp
+        rw [ite_eq_left hab]
+        exact D.halfArc_homeomorph a b p hp
+      · simp only [ite_eq_right hab, reduceCtorEq] at hp
+    halfArc_supported := by
+      intro a b p hp
+      by_cases hab : P.plane.adjacent a b
+      · simp only [ite_eq_left hab] at hp ⊢
+        exact D.halfArc_supported a b p hp
+      · simp only [ite_eq_right hab, reduceCtorEq] at hp
+    incident_halfArc_intersections := by
+      intro a b c hab hac hbc
+      simpa only [ite_eq_left hab, ite_eq_left hac] using
+        D.incident_halfArc_intersections a b c (contact hab) (contact hac) hbc
+    edgeArc_symmetric := by
+      intro a b
+      by_cases hab : P.plane.adjacent a b
+      · simp only [ite_eq_left hab, ite_eq_left (symmetric hab)]
+        exact D.edgeArc_symmetric a b
+      · have hba : ¬ P.plane.adjacent b a := fun h => hab (symmetric h)
+        simp only [ite_eq_right hab, ite_eq_right hba]
+    edgeArc_from_halfArcs := by
+      intro a b p hp
+      by_cases hab : P.plane.adjacent a b
+      · simp only [ite_eq_left hab] at hp
+        simpa only [ite_eq_left hab, ite_eq_left (symmetric hab)] using
+          D.edgeArc_from_halfArcs a b p hp
+      · simp only [ite_eq_right hab, reduceCtorEq] at hp
+    edgeArc_homeomorph := by
+      intro a b hab
+      rw [ite_eq_left hab]
+      exact D.edgeArc_homeomorph a b (contact hab)
+    edgeArc_intersections := by
+      intro a b c d hab hcd hne
+      simpa only [ite_eq_left hab, ite_eq_left hcd] using
+        D.edgeArc_intersections a b c d (contact hab) (contact hcd) hne
+    compact_local_finiteness := by
+      intro K hK
+      apply (D.compact_local_finiteness K hK).subset
+      rintro ⟨a, b⟩ ⟨hab, hmeet⟩
+      exact ⟨contact hab, by simpa only [ite_eq_left hab] using hmeet⟩
+    position_periodic := D.position_periodic
+    portEdge_periodic := by
+      intro u a b
+      by_cases hab : P.plane.adjacent a b
+      · simpa only [ite_eq_left hab, ite_eq_left ((P.edge_periodic u a b).mpr hab)] using
+          D.portEdge_periodic u a b
+      · have hn : ¬ P.plane.adjacent (P.shift u a) (P.shift u b) := by
+          simpa only [P.edge_periodic] using hab
+        simp only [ite_eq_right hab, ite_eq_right hn, Finset.image_empty]
+    port_periodic := by
+      intro u a b
+      by_cases hab : P.plane.adjacent a b
+      · simpa only [ite_eq_left hab, ite_eq_left ((P.edge_periodic u a b).mpr hab)] using
+          D.port_periodic u a b
+      · have hn : ¬ P.plane.adjacent (P.shift u a) (P.shift u b) := by
+          simpa only [P.edge_periodic] using hab
+        simp only [ite_eq_right hab, ite_eq_right hn, Option.map_none]
+    halfArc_periodic := by
+      intro u a b
+      by_cases hab : P.plane.adjacent a b
+      · simpa only [ite_eq_left hab, ite_eq_left ((P.edge_periodic u a b).mpr hab)] using
+          D.halfArc_periodic u a b
+      · have hn : ¬ P.plane.adjacent (P.shift u a) (P.shift u b) := by
+          simpa only [P.edge_periodic] using hab
+        simp only [ite_eq_right hab, ite_eq_right hn, Set.image_empty]
+    edgeArc_periodic := by
+      intro u a b
+      by_cases hab : P.plane.adjacent a b
+      · simpa only [ite_eq_left hab, ite_eq_left ((P.edge_periodic u a b).mpr hab)] using
+          D.edgeArc_periodic u a b
+      · have hn : ¬ P.plane.adjacent (P.shift u a) (P.shift u b) := by
+          simpa only [P.edge_periodic] using hab
+        simp only [ite_eq_right hab, ite_eq_right hn, Set.image_empty]
+  }
+
+namespace ContactRoutingGeometry
+
 private theorem traces :
     (by
       classical
@@ -60,145 +209,7 @@ private theorem traces :
             (contact : ∀ {a : ι}, ∀ {b : ι}, (P.plane.adjacent a b) → (P3723T1EdgeContact P a
             b)), ∀ (symmetric : ∀ {a : ι}, ∀ {b : ι}, (P.plane.adjacent a b) → (P.plane.adjacent
             b a)),
-        let R : PeriodicTileContactRouting P := {
-          position := D.position
-          portEdge := fun a b => if P.plane.adjacent a b then D.portEdge a b else ∅
-          port := fun a b => if P.plane.adjacent a b then D.port a b else none
-          halfArc := fun a b => if P.plane.adjacent a b then D.halfArc a b else ∅
-          edgeArc := fun a b => if P.plane.adjacent a b then D.edgeArc a b else ∅
-          portEdge_symmetric := by
-            intro a b
-            by_cases hab : P.plane.adjacent a b
-            · simp only [ite_eq_left hab, ite_eq_left (symmetric hab)]
-              exact D.portEdge_symmetric a b
-            · have hba : ¬ P.plane.adjacent b a := fun h => hab (symmetric h)
-              simp only [ite_eq_right hab, ite_eq_right hba]
-          port_symmetric := by
-            intro a b
-            by_cases hab : P.plane.adjacent a b
-            · simp only [ite_eq_left hab, ite_eq_left (symmetric hab)]
-              exact D.port_symmetric a b
-            · have hba : ¬ P.plane.adjacent b a := fun h => hab (symmetric h)
-              simp only [ite_eq_right hab, ite_eq_right hba]
-          portEdge_common := by
-            intro a b hab
-            simpa only [ite_eq_left hab] using D.portEdge_common a b (contact hab)
-          portEdge_two := by
-            intro a b hab
-            simpa only [ite_eq_left hab] using D.portEdge_two a b (contact hab)
-          port_midpoint := by
-            intro a b hab
-            simpa only [ite_eq_left hab] using D.port_midpoint a b (contact hab)
-          port_eq_none_iff := by
-            intro a b
-            by_cases hab : P.plane.adjacent a b
-            · have hne : D.port a b ≠ none := by
-                intro hn
-                exact (D.port_eq_none_iff a b).mp hn (contact hab)
-              simp only [hne, hab, not_true_eq_false, ite_true]
-            · simp only [hab, not_false_eq_true, ite_false, eq_self]
-          nonedge_has_no_portEdge := by
-            intro a b hab
-            simp only [ite_eq_right hab]
-          nonedge_has_no_halfArc := by
-            intro a b hab
-            simp only [ite_eq_right hab]
-          nonedge_has_no_edgeArc := by
-            intro a b hab
-            simp only [ite_eq_right hab]
-          position_in_tile_interior := by
-            rw [retained_position]
-            exact ports.position_in_tile_interior
-          position_injective := by
-            rw [retained_position]
-            exact ports.position_injective
-          incident_ports_distinct := by
-            intro a b c p q hp hq hbc
-            by_cases hab : P.plane.adjacent a b
-            · by_cases hac : P.plane.adjacent a c
-              · simp only [ite_eq_left hab] at hp
-                simp only [ite_eq_left hac] at hq
-                exact D.incident_ports_distinct a b c p q hp hq hbc
-              · simp only [ite_eq_right hac, reduceCtorEq] at hq
-            · simp only [ite_eq_right hab, reduceCtorEq] at hp
-          halfArc_homeomorph := by
-            intro a b p hp
-            by_cases hab : P.plane.adjacent a b
-            · simp only [ite_eq_left hab] at hp
-              rw [ite_eq_left hab]
-              exact D.halfArc_homeomorph a b p hp
-            · simp only [ite_eq_right hab, reduceCtorEq] at hp
-          halfArc_supported := by
-            intro a b p hp
-            by_cases hab : P.plane.adjacent a b
-            · simp only [ite_eq_left hab] at hp ⊢
-              exact D.halfArc_supported a b p hp
-            · simp only [ite_eq_right hab, reduceCtorEq] at hp
-          incident_halfArc_intersections := by
-            intro a b c hab hac hbc
-            simpa only [ite_eq_left hab, ite_eq_left hac] using
-              D.incident_halfArc_intersections a b c (contact hab) (contact hac) hbc
-          edgeArc_symmetric := by
-            intro a b
-            by_cases hab : P.plane.adjacent a b
-            · simp only [ite_eq_left hab, ite_eq_left (symmetric hab)]
-              exact D.edgeArc_symmetric a b
-            · have hba : ¬ P.plane.adjacent b a := fun h => hab (symmetric h)
-              simp only [ite_eq_right hab, ite_eq_right hba]
-          edgeArc_from_halfArcs := by
-            intro a b p hp
-            by_cases hab : P.plane.adjacent a b
-            · simp only [ite_eq_left hab] at hp
-              simpa only [ite_eq_left hab, ite_eq_left (symmetric hab)] using
-                D.edgeArc_from_halfArcs a b p hp
-            · simp only [ite_eq_right hab, reduceCtorEq] at hp
-          edgeArc_homeomorph := by
-            intro a b hab
-            rw [ite_eq_left hab]
-            exact D.edgeArc_homeomorph a b (contact hab)
-          edgeArc_intersections := by
-            intro a b c d hab hcd hne
-            simpa only [ite_eq_left hab, ite_eq_left hcd] using
-              D.edgeArc_intersections a b c d (contact hab) (contact hcd) hne
-          compact_local_finiteness := by
-            intro K hK
-            apply (D.compact_local_finiteness K hK).subset
-            rintro ⟨a, b⟩ ⟨hab, hmeet⟩
-            exact ⟨contact hab, by simpa only [ite_eq_left hab] using hmeet⟩
-          position_periodic := D.position_periodic
-          portEdge_periodic := by
-            intro u a b
-            by_cases hab : P.plane.adjacent a b
-            · simpa only [ite_eq_left hab, ite_eq_left ((P.edge_periodic u a b).mpr hab)] using
-                D.portEdge_periodic u a b
-            · have hn : ¬ P.plane.adjacent (P.shift u a) (P.shift u b) := by
-                simpa only [P.edge_periodic] using hab
-              simp only [ite_eq_right hab, ite_eq_right hn, Finset.image_empty]
-          port_periodic := by
-            intro u a b
-            by_cases hab : P.plane.adjacent a b
-            · simpa only [ite_eq_left hab, ite_eq_left ((P.edge_periodic u a b).mpr hab)] using
-                D.port_periodic u a b
-            · have hn : ¬ P.plane.adjacent (P.shift u a) (P.shift u b) := by
-                simpa only [P.edge_periodic] using hab
-              simp only [ite_eq_right hab, ite_eq_right hn, Option.map_none]
-          halfArc_periodic := by
-            intro u a b
-            by_cases hab : P.plane.adjacent a b
-            · simpa only [ite_eq_left hab, ite_eq_left ((P.edge_periodic u a b).mpr hab)] using
-                D.halfArc_periodic u a b
-            · have hn : ¬ P.plane.adjacent (P.shift u a) (P.shift u b) := by
-                simpa only [P.edge_periodic] using hab
-              simp only [ite_eq_right hab, ite_eq_right hn, Set.image_empty]
-          edgeArc_periodic := by
-            intro u a b
-            by_cases hab : P.plane.adjacent a b
-            · simpa only [ite_eq_left hab, ite_eq_left ((P.edge_periodic u a b).mpr hab)] using
-                D.edgeArc_periodic u a b
-            · have hn : ¬ P.plane.adjacent (P.shift u a) (P.shift u b) := by
-                simpa only [P.edge_periodic] using hab
-              simp only [ite_eq_right hab, ite_eq_right hn, Set.image_empty]
-        }
+        let R := restrictContactDrawing P ports D retained_position contact symmetric
         (Set.range R.position ∪ {p | ∃ a b, P.plane.adjacent a b ∧ p ∈ R.edgeArc a b}) =
             (Set.range D.position ∪ {p | ∃ a b, P.plane.adjacent a b ∧ p ∈ D.edgeArc a b}) ) := by
   classical
@@ -207,10 +218,10 @@ private theorem traces :
   constructor
   · rintro (hx | ⟨a, b, hab, hx⟩)
     · exact Or.inl hx
-    · exact Or.inr ⟨a, b, hab, by simpa only [R, ite_eq_left hab] using hx⟩
+    · exact Or.inr ⟨a, b, hab, by simpa only [R, restrictContactDrawing, ite_eq_left hab] using hx⟩
   · rintro (hx | ⟨a, b, hab, hx⟩)
     · exact Or.inl hx
-    · exact Or.inr ⟨a, b, hab, by simpa only [R, ite_eq_left hab] using hx⟩
+    · exact Or.inr ⟨a, b, hab, by simpa only [R, restrictContactDrawing, ite_eq_left hab] using hx⟩
 
 private theorem face_frontier :
     (by
@@ -362,151 +373,6 @@ private theorem hij :
   exact hab (hi.symm.trans (heq ▸ hj))
 
 end ContactRoutingGeometry
-
-private noncomputable def restrictContactDrawing {ι : Type} (P : PeriodicTileComplex ι)
-    (ports : P3723T1ContactPorts P) (D : P3723T1AllContactRouting P)
-    (retained_position : D.position = ports.position)
-    (contact : ∀ {a b : ι}, P.plane.adjacent a b → P3723T1EdgeContact P a b)
-    (symmetric : ∀ {a b : ι}, P.plane.adjacent a b → P.plane.adjacent b a) :
-    PeriodicTileContactRouting P := by
-  classical
-  exact {
-    position := D.position
-    portEdge := fun a b => if P.plane.adjacent a b then D.portEdge a b else ∅
-    port := fun a b => if P.plane.adjacent a b then D.port a b else none
-    halfArc := fun a b => if P.plane.adjacent a b then D.halfArc a b else ∅
-    edgeArc := fun a b => if P.plane.adjacent a b then D.edgeArc a b else ∅
-    portEdge_symmetric := by
-      intro a b
-      by_cases hab : P.plane.adjacent a b
-      · simp only [ite_eq_left hab, ite_eq_left (symmetric hab)]
-        exact D.portEdge_symmetric a b
-      · have hba : ¬ P.plane.adjacent b a := fun h => hab (symmetric h)
-        simp only [ite_eq_right hab, ite_eq_right hba]
-    port_symmetric := by
-      intro a b
-      by_cases hab : P.plane.adjacent a b
-      · simp only [ite_eq_left hab, ite_eq_left (symmetric hab)]
-        exact D.port_symmetric a b
-      · have hba : ¬ P.plane.adjacent b a := fun h => hab (symmetric h)
-        simp only [ite_eq_right hab, ite_eq_right hba]
-    portEdge_common := by
-      intro a b hab
-      simpa only [ite_eq_left hab] using D.portEdge_common a b (contact hab)
-    portEdge_two := by
-      intro a b hab
-      simpa only [ite_eq_left hab] using D.portEdge_two a b (contact hab)
-    port_midpoint := by
-      intro a b hab
-      simpa only [ite_eq_left hab] using D.port_midpoint a b (contact hab)
-    port_eq_none_iff := by
-      intro a b
-      by_cases hab : P.plane.adjacent a b
-      · have hne : D.port a b ≠ none := ContactRoutingGeometry.hne ι P D contact a b hab
-        simp only [hne, hab, not_true_eq_false, ite_true]
-      · simp only [hab, not_false_eq_true, ite_false, eq_self]
-    nonedge_has_no_portEdge := by
-      intro a b hab
-      simp only [ite_eq_right hab]
-    nonedge_has_no_halfArc := by
-      intro a b hab
-      simp only [ite_eq_right hab]
-    nonedge_has_no_edgeArc := by
-      intro a b hab
-      simp only [ite_eq_right hab]
-    position_in_tile_interior := by
-      rw [retained_position]
-      exact ports.position_in_tile_interior
-    position_injective := by
-      rw [retained_position]
-      exact ports.position_injective
-    incident_ports_distinct := by
-      intro a b c p q hp hq hbc
-      by_cases hab : P.plane.adjacent a b
-      · by_cases hac : P.plane.adjacent a c
-        · simp only [ite_eq_left hab] at hp
-          simp only [ite_eq_left hac] at hq
-          exact D.incident_ports_distinct a b c p q hp hq hbc
-        · simp only [ite_eq_right hac, reduceCtorEq] at hq
-      · simp only [ite_eq_right hab, reduceCtorEq] at hp
-    halfArc_homeomorph := by
-      intro a b p hp
-      by_cases hab : P.plane.adjacent a b
-      · simp only [ite_eq_left hab] at hp
-        rw [ite_eq_left hab]
-        exact D.halfArc_homeomorph a b p hp
-      · simp only [ite_eq_right hab, reduceCtorEq] at hp
-    halfArc_supported := by
-      intro a b p hp
-      by_cases hab : P.plane.adjacent a b
-      · simp only [ite_eq_left hab] at hp ⊢
-        exact D.halfArc_supported a b p hp
-      · simp only [ite_eq_right hab, reduceCtorEq] at hp
-    incident_halfArc_intersections := by
-      intro a b c hab hac hbc
-      simpa only [ite_eq_left hab, ite_eq_left hac] using
-        D.incident_halfArc_intersections a b c (contact hab) (contact hac) hbc
-    edgeArc_symmetric := by
-      intro a b
-      by_cases hab : P.plane.adjacent a b
-      · simp only [ite_eq_left hab, ite_eq_left (symmetric hab)]
-        exact D.edgeArc_symmetric a b
-      · have hba : ¬ P.plane.adjacent b a := fun h => hab (symmetric h)
-        simp only [ite_eq_right hab, ite_eq_right hba]
-    edgeArc_from_halfArcs := by
-      intro a b p hp
-      by_cases hab : P.plane.adjacent a b
-      · simp only [ite_eq_left hab] at hp
-        simpa only [ite_eq_left hab, ite_eq_left (symmetric hab)] using
-          D.edgeArc_from_halfArcs a b p hp
-      · simp only [ite_eq_right hab, reduceCtorEq] at hp
-    edgeArc_homeomorph := by
-      intro a b hab
-      rw [ite_eq_left hab]
-      exact D.edgeArc_homeomorph a b (contact hab)
-    edgeArc_intersections := by
-      intro a b c d hab hcd hne
-      simpa only [ite_eq_left hab, ite_eq_left hcd] using
-        D.edgeArc_intersections a b c d (contact hab) (contact hcd) hne
-    compact_local_finiteness := by
-      intro K hK
-      apply (D.compact_local_finiteness K hK).subset
-      rintro ⟨a, b⟩ ⟨hab, hmeet⟩
-      exact ⟨contact hab, by simpa only [ite_eq_left hab] using hmeet⟩
-    position_periodic := D.position_periodic
-    portEdge_periodic := by
-      intro u a b
-      by_cases hab : P.plane.adjacent a b
-      · simpa only [ite_eq_left hab, ite_eq_left ((P.edge_periodic u a b).mpr hab)] using
-          D.portEdge_periodic u a b
-      · have hn : ¬ P.plane.adjacent (P.shift u a) (P.shift u b) := by
-          simpa only [P.edge_periodic] using hab
-        simp only [ite_eq_right hab, ite_eq_right hn, Finset.image_empty]
-    port_periodic := by
-      intro u a b
-      by_cases hab : P.plane.adjacent a b
-      · simpa only [ite_eq_left hab, ite_eq_left ((P.edge_periodic u a b).mpr hab)] using
-          D.port_periodic u a b
-      · have hn : ¬ P.plane.adjacent (P.shift u a) (P.shift u b) := by
-          simpa only [P.edge_periodic] using hab
-        simp only [ite_eq_right hab, ite_eq_right hn, Option.map_none]
-    halfArc_periodic := by
-      intro u a b
-      by_cases hab : P.plane.adjacent a b
-      · simpa only [ite_eq_left hab, ite_eq_left ((P.edge_periodic u a b).mpr hab)] using
-          D.halfArc_periodic u a b
-      · have hn : ¬ P.plane.adjacent (P.shift u a) (P.shift u b) := by
-          simpa only [P.edge_periodic] using hab
-        simp only [ite_eq_right hab, ite_eq_right hn, Set.image_empty]
-    edgeArc_periodic := by
-      intro u a b
-      by_cases hab : P.plane.adjacent a b
-      · simpa only [ite_eq_left hab, ite_eq_left ((P.edge_periodic u a b).mpr hab)] using
-          D.edgeArc_periodic u a b
-      · have hn : ¬ P.plane.adjacent (P.shift u a) (P.shift u b) := by
-          simpa only [P.edge_periodic] using hab
-        simp only [ite_eq_right hab, ite_eq_right hn, Set.image_empty]
-  }
 
 theorem PeriodicTileContactRoutingRigidity {ι : Type}
     (P : PeriodicTileComplex ι) :

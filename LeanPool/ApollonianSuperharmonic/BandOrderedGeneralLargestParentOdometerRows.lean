@@ -212,83 +212,6 @@ private theorem hpos3 :
   have hne : (q 3).1 ≠ 0 := cfg.noLine 3
   omega
 
-private theorem hQleafAt284 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 -> CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C0 :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
-            C0 T), ∀ (h : PartialOdometer), ∀ (P : Fin 3 -> Bool -> ProtoTile), ∀ (r : Fin 3 ->
-            Bool -> PartialOdometer), ∀ (Q : Fin 3 -> Bool -> ProtoTile), ∀ (S : Fin 3 -> Bool ->
-            ProtoTile), ∀ (u : Fin 3 -> Bool -> PartialOdometer), ∀ (v : Fin 3 -> Bool ->
-            PartialOdometer), ∀ (g : IntegerLatticeFunction), (BandOrderedGeneralOdometerRowData
-            q cfg C0 T cert h P r Q S u v g) → (TileCentroid (Q 1 true) - TileCentroid (P 0 true)
-            = (1 / 2 : Real) • (GaussianRealPoint (BandVectors.1 (cfg.firstPredecessor 1)
-            (cfg.firstPredecessor 3)) - (-((GaussianRealPoint (BandVectors.1
-            (cfg.firstPredecessor 1) (cfg.firstPredecessor 3))).2), (GaussianRealPoint
-            (BandVectors.1 (cfg.firstPredecessor 1) (cfg.firstPredecessor 3))).1))) ) := by
-  classical
-  intro q cfg C0 T cert h P r Q S u v g data
-  simpa [Fin.add_def] using data.hQcent 1 true
-
-private theorem hSleafAt293 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 -> CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C0 :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
-            C0 T), ∀ (h : PartialOdometer), ∀ (P : Fin 3 -> Bool -> ProtoTile), ∀ (r : Fin 3 ->
-            Bool -> PartialOdometer), ∀ (Q : Fin 3 -> Bool -> ProtoTile), ∀ (S : Fin 3 -> Bool ->
-            ProtoTile), ∀ (u : Fin 3 -> Bool -> PartialOdometer), ∀ (v : Fin 3 -> Bool ->
-            PartialOdometer), ∀ (g : IntegerLatticeFunction), (BandOrderedGeneralOdometerRowData
-            q cfg C0 T cert h P r Q S u v g) → (TileCentroid (S 2 false) - TileCentroid (P 0
-            false) = -((1 / 2 : Real) • (GaussianRealPoint (BandVectors.1 (cfg.firstPredecessor
-            2) (cfg.firstPredecessor 1)) - (-((GaussianRealPoint (BandVectors.1
-            (cfg.firstPredecessor 2) (cfg.firstPredecessor 1))).2), (GaussianRealPoint
-            (BandVectors.1 (cfg.firstPredecessor 2) (cfg.firstPredecessor 1))).1)))) ) := by
-  classical
-  intro q cfg C0 T cert h P r Q S u v g data
-  simpa [Fin.add_def] using data.hScent 2 false
-
-private theorem hQleafOffAt302 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 -> CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (P :
-            Fin 3 -> Bool -> ProtoTile), ∀ (Q : Fin 3 -> Bool -> ProtoTile),
-        let cOff (z : GaussianInt) : Real × Real :=
-          (1 / 2 : Real) • (GaussianRealPoint z -
-            (-(GaussianRealPoint z).2, (GaussianRealPoint z).1))
-        (TileCentroid (Q 1 true) - TileCentroid (P 0 true) = (1 / 2 : Real) • (GaussianRealPoint
-            (BandVectors.1 (cfg.firstPredecessor 1) (cfg.firstPredecessor 3)) -
-            (-((GaussianRealPoint (BandVectors.1 (cfg.firstPredecessor 1) (cfg.firstPredecessor
-            3))).2), (GaussianRealPoint (BandVectors.1 (cfg.firstPredecessor 1)
-            (cfg.firstPredecessor 3))).1))) → (TileCentroid (Q 1 true) - TileCentroid (P 0 true)
-            = cOff (BandVectors.1 (cfg.firstPredecessor 1) (cfg.firstPredecessor 3))) ) := by
-  classical
-  intro q cfg P Q cOff hQleaf
-  simpa [cOff] using hQleaf
-
-private theorem hSleafOffAt305 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 -> CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (P :
-            Fin 3 -> Bool -> ProtoTile), ∀ (S : Fin 3 -> Bool -> ProtoTile),
-        let cOff (z : GaussianInt) : Real × Real :=
-          (1 / 2 : Real) • (GaussianRealPoint z -
-            (-(GaussianRealPoint z).2, (GaussianRealPoint z).1))
-        (TileCentroid (S 2 false) - TileCentroid (P 0 false) = -((1 / 2 : Real) •
-            (GaussianRealPoint (BandVectors.1 (cfg.firstPredecessor 2) (cfg.firstPredecessor 1))
-            - (-((GaussianRealPoint (BandVectors.1 (cfg.firstPredecessor 2) (cfg.firstPredecessor
-            1))).2), (GaussianRealPoint (BandVectors.1 (cfg.firstPredecessor 2)
-            (cfg.firstPredecessor 1))).1)))) → (TileCentroid (S 2 false) - TileCentroid (P 0
-            false) = -cOff (BandVectors.1 (cfg.firstPredecessor 2) (cfg.firstPredecessor 1))) )
-            := by
-  classical
-  intro q cfg P S cOff hSleaf
-  simpa [cOff] using hSleaf
-
 private theorem hcentdiffAt312 :
     (by
       classical
@@ -788,70 +711,6 @@ private theorem hadjAt550 :
   · exact congrArg Prod.fst hslopePair
   · exact congrArg Prod.snd hslopePair
 
-private theorem hxQAt573 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 -> CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C0 :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
-            C0 T), ∀ (h : PartialOdometer), ∀ (P : Fin 3 -> Bool -> ProtoTile), ∀ (r : Fin 3 ->
-            Bool -> PartialOdometer), ∀ (Q : Fin 3 -> Bool -> ProtoTile), ∀ (S : Fin 3 -> Bool ->
-            ProtoTile), ∀ (u : Fin 3 -> Bool -> PartialOdometer), ∀ (v : Fin 3 -> Bool ->
-            PartialOdometer), ∀ (g : IntegerLatticeFunction), ∀ (x : GaussianInt),
-            (BandOrderedGeneralOdometerRowData q cfg C0 T cert h P r Q S u v g) → ((x ∈
-            FootprintVertices (cert.Q (1 : Fin (3 : ℕ)) true)) → (x ∈ FootprintVertices (Q 1
-            true))) ) := by
-  classical
-  intro q cfg C0 T cert h P r Q S u v g x data left_mem
-  rw [(data.hobsQ 1 true).2.1]
-  exact left_mem
-
-private theorem hxSAt576 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 -> CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C0 :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
-            C0 T), ∀ (h : PartialOdometer), ∀ (P : Fin 3 -> Bool -> ProtoTile), ∀ (r : Fin 3 ->
-            Bool -> PartialOdometer), ∀ (Q : Fin 3 -> Bool -> ProtoTile), ∀ (S : Fin 3 -> Bool ->
-            ProtoTile), ∀ (u : Fin 3 -> Bool -> PartialOdometer), ∀ (v : Fin 3 -> Bool ->
-            PartialOdometer), ∀ (g : IntegerLatticeFunction), ∀ (x : GaussianInt),
-            (BandOrderedGeneralOdometerRowData q cfg C0 T cert h P r Q S u v g) → ((x ∈
-            FootprintVertices (cert.S (2 : Fin (3 : ℕ)) false)) → (x ∈ FootprintVertices (S 2
-            false))) ) := by
-  classical
-  intro q cfg C0 T cert h P r Q S u v g x data right_mem
-  rw [(data.hobsS 2 false).2.1]
-  exact right_mem
-
-private theorem hxUAt579 :
-    (by
-      classical
-      exact
-        ∀ (Q : Fin 3 -> Bool -> ProtoTile), ∀ (u : Fin 3 -> Bool -> PartialOdometer), ∀ (x :
-            GaussianInt), ((↑(u (1 : Fin (3 : ℕ)) true).domain : Set GaussianInt) =
-            FootprintVertices (Q (1 : Fin (3 : ℕ)) true)) → ((x ∈ FootprintVertices (Q 1 true)) →
-            (x ∈ (u 1 true).domain)) ) := by
-  classical
-  intro Q u x hQdom hxQ
-  change x ∈ ((u 1 true).domain : Set GaussianInt)
-  rw [hQdom]
-  exact hxQ
-
-private theorem hxVAt583 :
-    (by
-      classical
-      exact
-        ∀ (S : Fin 3 -> Bool -> ProtoTile), ∀ (v : Fin 3 -> Bool -> PartialOdometer), ∀ (x :
-            GaussianInt), ((↑(v (2 : Fin (3 : ℕ)) false).domain : Set GaussianInt) =
-            FootprintVertices (S (2 : Fin (3 : ℕ)) false)) → ((x ∈ FootprintVertices (S 2 false))
-            → (x ∈ (v 2 false).domain)) ) := by
-  classical
-  intro S v x hSdom hxS
-  change x ∈ ((v 2 false).domain : Set GaussianInt)
-  rw [hSdom]
-  exact hxS
-
 private theorem hstarAt587 :
     (by
       classical
@@ -884,130 +743,6 @@ private theorem hstarAt587 :
     rw [hSdom]
     rw [(data.hobsS 2 false).2.1]
     exact hs
-
-private theorem hcompFootAt618 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 -> CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C0 :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
-            C0 T), ∀ (h : PartialOdometer), ∀ (P : Fin 3 -> Bool -> ProtoTile), ∀ (r : Fin 3 ->
-            Bool -> PartialOdometer), ∀ (Q : Fin 3 -> Bool -> ProtoTile), ∀ (S : Fin 3 -> Bool ->
-            ProtoTile), ∀ (u : Fin 3 -> Bool -> PartialOdometer), ∀ (v : Fin 3 -> Bool ->
-            PartialOdometer), ∀ (g : IntegerLatticeFunction), (BandOrderedGeneralOdometerRowData
-            q cfg C0 T cert h P r Q S u v g) → (
-        let I : GaussianInt := ⟨0, 1⟩
-        let W : GaussianInt := BandVectors.1 (q 3) (q 2)
-        (FootprintVertices (TileTranslation (Q (1 : Fin (3 : ℕ)) true) (I * W)) =
-            FootprintVertices (P (1 : Fin (3 : ℕ)) true) ∧ BoundaryFootprintVertices
-            (TileTranslation (Q (1 : Fin (3 : ℕ)) true) (I * W)) = BoundaryFootprintVertices (P
-            (1 : Fin (3 : ℕ)) true) ∧ BoundaryFootprintEdges (TileTranslation (Q (1 : Fin (3 :
-            ℕ)) true) (I * W)) = BoundaryFootprintEdges (P (1 : Fin (3 : ℕ)) true) ∧
-            TileRealization (TileTranslation (Q (1 : Fin (3 : ℕ)) true) (I * W)) =
-            TileRealization (P (1 : Fin (3 : ℕ)) true) ∧ TileCentroid (TileTranslation (Q (1 :
-            Fin (3 : ℕ)) true) (I * W)) = TileCentroid (P (1 : Fin (3 : ℕ)) true)) →
-            (FootprintVertices (TileTranslation (Q 1 true) (I * W)) = FootprintVertices (cert.P 1
-            true))) ) := by
-  classical
-  intro q cfg C0 T cert h P r Q S u v g data I W hcompObs
-  calc
-    _ = FootprintVertices (P 1 true) := hcompObs.1
-    _ = FootprintVertices (cert.P 1 true) := (data.hobsP 1 true).2.1
-
-private theorem hmarkAt623 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 -> CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C0 :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
-            C0 T), ∀ (Q : Fin 3 -> Bool -> ProtoTile), ∀ (x : GaussianInt), ∀ (marked : Bool),
-        let I : GaussianInt := ⟨0, 1⟩
-        let W : GaussianInt := BandVectors.1 (q 3) (q 2)
-        (x ∈ FootprintVertices (cert.P (1 : Fin (3 : ℕ)) true) ↔ marked = true) →
-            ((FootprintVertices (TileTranslation (Q 1 true) (I * W)) = FootprintVertices (cert.P
-            1 true)) → (x ∈ FootprintVertices (TileTranslation (Q 1 true) (I * W)) ↔ marked =
-            true)) ) := by
-  classical
-  intro q cfg C0 T cert Q x marked I W companion hcompFoot
-  rw [hcompFoot]
-  exact companion
-
-private theorem hQleafAt647 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 -> CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C0 :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
-            C0 T), ∀ (h : PartialOdometer), ∀ (P : Fin 3 -> Bool -> ProtoTile), ∀ (r : Fin 3 ->
-            Bool -> PartialOdometer), ∀ (Q : Fin 3 -> Bool -> ProtoTile), ∀ (S : Fin 3 -> Bool ->
-            ProtoTile), ∀ (u : Fin 3 -> Bool -> PartialOdometer), ∀ (v : Fin 3 -> Bool ->
-            PartialOdometer), ∀ (g : IntegerLatticeFunction), (BandOrderedGeneralOdometerRowData
-            q cfg C0 T cert h P r Q S u v g) → (TileCentroid (Q 2 true) - TileCentroid (P 0 true)
-            = (1 / 2 : Real) • (GaussianRealPoint (BandVectors.1 (cfg.firstPredecessor 2)
-            (cfg.firstPredecessor 1)) - (-((GaussianRealPoint (BandVectors.1
-            (cfg.firstPredecessor 2) (cfg.firstPredecessor 1))).2), (GaussianRealPoint
-            (BandVectors.1 (cfg.firstPredecessor 2) (cfg.firstPredecessor 1))).1))) ) := by
-  classical
-  intro q cfg C0 T cert h P r Q S u v g data
-  simpa [Fin.add_def] using data.hQcent 2 true
-
-private theorem hSleafAt656 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 -> CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C0 :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
-            C0 T), ∀ (h : PartialOdometer), ∀ (P : Fin 3 -> Bool -> ProtoTile), ∀ (r : Fin 3 ->
-            Bool -> PartialOdometer), ∀ (Q : Fin 3 -> Bool -> ProtoTile), ∀ (S : Fin 3 -> Bool ->
-            ProtoTile), ∀ (u : Fin 3 -> Bool -> PartialOdometer), ∀ (v : Fin 3 -> Bool ->
-            PartialOdometer), ∀ (g : IntegerLatticeFunction), (BandOrderedGeneralOdometerRowData
-            q cfg C0 T cert h P r Q S u v g) → (TileCentroid (S 1 false) - TileCentroid (P 0
-            false) = -((1 / 2 : Real) • (GaussianRealPoint (BandVectors.1 (cfg.firstPredecessor
-            1) (cfg.firstPredecessor 3)) - (-((GaussianRealPoint (BandVectors.1
-            (cfg.firstPredecessor 1) (cfg.firstPredecessor 3))).2), (GaussianRealPoint
-            (BandVectors.1 (cfg.firstPredecessor 1) (cfg.firstPredecessor 3))).1)))) ) := by
-  classical
-  intro q cfg C0 T cert h P r Q S u v g data
-  simpa [Fin.add_def] using data.hScent 1 false
-
-private theorem hQleafOffAt665 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 -> CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (P :
-            Fin 3 -> Bool -> ProtoTile), ∀ (Q : Fin 3 -> Bool -> ProtoTile),
-        let cOff (z : GaussianInt) : Real × Real :=
-          (1 / 2 : Real) • (GaussianRealPoint z -
-            (-(GaussianRealPoint z).2, (GaussianRealPoint z).1))
-        (TileCentroid (Q 2 true) - TileCentroid (P 0 true) = (1 / 2 : Real) • (GaussianRealPoint
-            (BandVectors.1 (cfg.firstPredecessor 2) (cfg.firstPredecessor 1)) -
-            (-((GaussianRealPoint (BandVectors.1 (cfg.firstPredecessor 2) (cfg.firstPredecessor
-            1))).2), (GaussianRealPoint (BandVectors.1 (cfg.firstPredecessor 2)
-            (cfg.firstPredecessor 1))).1))) → (TileCentroid (Q 2 true) - TileCentroid (P 0 true)
-            = cOff (BandVectors.1 (cfg.firstPredecessor 2) (cfg.firstPredecessor 1))) ) := by
-  classical
-  intro q cfg P Q cOff hQleaf
-  simpa [cOff] using hQleaf
-
-private theorem hSleafOffAt669 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 -> CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (P :
-            Fin 3 -> Bool -> ProtoTile), ∀ (S : Fin 3 -> Bool -> ProtoTile),
-        let cOff (z : GaussianInt) : Real × Real :=
-          (1 / 2 : Real) • (GaussianRealPoint z -
-            (-(GaussianRealPoint z).2, (GaussianRealPoint z).1))
-        (TileCentroid (S 1 false) - TileCentroid (P 0 false) = -((1 / 2 : Real) •
-            (GaussianRealPoint (BandVectors.1 (cfg.firstPredecessor 1) (cfg.firstPredecessor 3))
-            - (-((GaussianRealPoint (BandVectors.1 (cfg.firstPredecessor 1) (cfg.firstPredecessor
-            3))).2), (GaussianRealPoint (BandVectors.1 (cfg.firstPredecessor 1)
-            (cfg.firstPredecessor 3))).1)))) → (TileCentroid (S 1 false) - TileCentroid (P 0
-            false) = -cOff (BandVectors.1 (cfg.firstPredecessor 1) (cfg.firstPredecessor 3))) )
-            := by
-  classical
-  intro q cfg P S cOff hSleaf
-  simpa [cOff] using hSleaf
 
 private theorem hcentdiffAt677 :
     (by
@@ -1419,70 +1154,6 @@ private theorem hadjAt922 :
   · exact congrArg Prod.fst hslopePair
   · exact congrArg Prod.snd hslopePair
 
-private theorem hxSAt945 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 -> CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C0 :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
-            C0 T), ∀ (h : PartialOdometer), ∀ (P : Fin 3 -> Bool -> ProtoTile), ∀ (r : Fin 3 ->
-            Bool -> PartialOdometer), ∀ (Q : Fin 3 -> Bool -> ProtoTile), ∀ (S : Fin 3 -> Bool ->
-            ProtoTile), ∀ (u : Fin 3 -> Bool -> PartialOdometer), ∀ (v : Fin 3 -> Bool ->
-            PartialOdometer), ∀ (g : IntegerLatticeFunction), ∀ (x : GaussianInt),
-            (BandOrderedGeneralOdometerRowData q cfg C0 T cert h P r Q S u v g) → ((x ∈
-            FootprintVertices (cert.S (1 : Fin (3 : ℕ)) false)) → (x ∈ FootprintVertices (S 1
-            false))) ) := by
-  classical
-  intro q cfg C0 T cert h P r Q S u v g x data right_mem
-  rw [(data.hobsS 1 false).2.1]
-  exact right_mem
-
-private theorem hxQAt948 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 -> CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C0 :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
-            C0 T), ∀ (h : PartialOdometer), ∀ (P : Fin 3 -> Bool -> ProtoTile), ∀ (r : Fin 3 ->
-            Bool -> PartialOdometer), ∀ (Q : Fin 3 -> Bool -> ProtoTile), ∀ (S : Fin 3 -> Bool ->
-            ProtoTile), ∀ (u : Fin 3 -> Bool -> PartialOdometer), ∀ (v : Fin 3 -> Bool ->
-            PartialOdometer), ∀ (g : IntegerLatticeFunction), ∀ (x : GaussianInt),
-            (BandOrderedGeneralOdometerRowData q cfg C0 T cert h P r Q S u v g) → ((x ∈
-            FootprintVertices (cert.Q (2 : Fin (3 : ℕ)) true)) → (x ∈ FootprintVertices (Q 2
-            true))) ) := by
-  classical
-  intro q cfg C0 T cert h P r Q S u v g x data left_mem
-  rw [(data.hobsQ 2 true).2.1]
-  exact left_mem
-
-private theorem hxVAt951 :
-    (by
-      classical
-      exact
-        ∀ (S : Fin 3 -> Bool -> ProtoTile), ∀ (v : Fin 3 -> Bool -> PartialOdometer), ∀ (x :
-            GaussianInt), ((↑(v (1 : Fin (3 : ℕ)) false).domain : Set GaussianInt) =
-            FootprintVertices (S (1 : Fin (3 : ℕ)) false)) → ((x ∈ FootprintVertices (S 1 false))
-            → (x ∈ (v 1 false).domain)) ) := by
-  classical
-  intro S v x hSdom hxS
-  change x ∈ ((v 1 false).domain : Set GaussianInt)
-  rw [hSdom]
-  exact hxS
-
-private theorem hxUAt955 :
-    (by
-      classical
-      exact
-        ∀ (Q : Fin 3 -> Bool -> ProtoTile), ∀ (u : Fin 3 -> Bool -> PartialOdometer), ∀ (x :
-            GaussianInt), ((↑(u (2 : Fin (3 : ℕ)) true).domain : Set GaussianInt) =
-            FootprintVertices (Q (2 : Fin (3 : ℕ)) true)) → ((x ∈ FootprintVertices (Q 2 true)) →
-            (x ∈ (u 2 true).domain)) ) := by
-  classical
-  intro Q u x hQdom hxQ
-  change x ∈ ((u 2 true).domain : Set GaussianInt)
-  rw [hQdom]
-  exact hxQ
-
 private theorem hstarAt959 :
     (by
       classical
@@ -1515,53 +1186,6 @@ private theorem hstarAt959 :
     rw [hSdom]
     rw [(data.hobsS 1 false).2.1]
     exact hs
-
-private theorem hcompFootAt990 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 -> CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C0 :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
-            C0 T), ∀ (h : PartialOdometer), ∀ (P : Fin 3 -> Bool -> ProtoTile), ∀ (r : Fin 3 ->
-            Bool -> PartialOdometer), ∀ (Q : Fin 3 -> Bool -> ProtoTile), ∀ (S : Fin 3 -> Bool ->
-            ProtoTile), ∀ (u : Fin 3 -> Bool -> PartialOdometer), ∀ (v : Fin 3 -> Bool ->
-            PartialOdometer), ∀ (g : IntegerLatticeFunction), (BandOrderedGeneralOdometerRowData
-            q cfg C0 T cert h P r Q S u v g) → (
-        let I : GaussianInt := ⟨0, 1⟩
-        let W : GaussianInt := BandVectors.1 (q 3) (q 2)
-        (FootprintVertices (TileTranslation (S (1 : Fin (3 : ℕ)) false) (I ^ (3 : ℕ) * W)) =
-            FootprintVertices (P (1 : Fin (3 : ℕ)) false) ∧ BoundaryFootprintVertices
-            (TileTranslation (S (1 : Fin (3 : ℕ)) false) (I ^ (3 : ℕ) * W)) =
-            BoundaryFootprintVertices (P (1 : Fin (3 : ℕ)) false) ∧ BoundaryFootprintEdges
-            (TileTranslation (S (1 : Fin (3 : ℕ)) false) (I ^ (3 : ℕ) * W)) =
-            BoundaryFootprintEdges (P (1 : Fin (3 : ℕ)) false) ∧ TileRealization (TileTranslation
-            (S (1 : Fin (3 : ℕ)) false) (I ^ (3 : ℕ) * W)) = TileRealization (P (1 : Fin (3 : ℕ))
-            false) ∧ TileCentroid (TileTranslation (S (1 : Fin (3 : ℕ)) false) (I ^ (3 : ℕ) * W))
-            = TileCentroid (P (1 : Fin (3 : ℕ)) false)) → (FootprintVertices (TileTranslation (S
-            1 false) (I ^ (3 : Nat) * W)) = FootprintVertices (cert.P 1 false))) ) := by
-  classical
-  intro q cfg C0 T cert h P r Q S u v g data I W hcompObs
-  calc
-    _ = FootprintVertices (P 1 false) := hcompObs.1
-    _ = FootprintVertices (cert.P 1 false) := (data.hobsP 1 false).2.1
-
-private theorem hmarkAt996 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 -> CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C0 :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
-            C0 T), ∀ (S : Fin 3 -> Bool -> ProtoTile), ∀ (x : GaussianInt), ∀ (marked : Bool),
-        let I : GaussianInt := ⟨0, 1⟩
-        let W : GaussianInt := BandVectors.1 (q 3) (q 2)
-        (x ∈ FootprintVertices (cert.P (1 : Fin (3 : ℕ)) false) ↔ marked = true) →
-            ((FootprintVertices (TileTranslation (S 1 false) (I ^ (3 : Nat) * W)) =
-            FootprintVertices (cert.P 1 false)) → (x ∈ FootprintVertices (TileTranslation (S 1
-            false) (I ^ (3 : Nat) * W)) ↔ marked = true)) ) := by
-  classical
-  intro q cfg C0 T cert S x marked I W companion hcompFoot
-  rw [hcompFoot]
-  exact companion
 
 end LargestParentOdometerGeometry
 
@@ -1645,10 +1269,12 @@ private theorem positiveLargestCase :
     band_of_odo _ _ _ (data.hQ 1 true)
   have bp : BandPrototile (q 2) (P 1 true) := by
     simpa [cfg.firstParentTwo] using band_of_odo _ _ _ (data.hP 1 true)
-  have hQleaf := LargestParentOdometerGeometry.hQleafAt284 q cfg C0 T cert h P r Q S u v g data
-  have hSleaf := LargestParentOdometerGeometry.hSleafAt293 q cfg C0 T cert h P r Q S u v g data
-  have hQleafOff := LargestParentOdometerGeometry.hQleafOffAt302 q cfg P Q hQleaf
-  have hSleafOff := LargestParentOdometerGeometry.hSleafOffAt305 q cfg P S hSleaf
+  have hQleafOff : TileCentroid (Q 1 true) - TileCentroid (P 0 true) =
+      cOff (BandVectors.1 (cfg.firstPredecessor 1) (cfg.firstPredecessor 3)) := by
+    simpa [cOff, Fin.add_def] using data.hQcent 1 true
+  have hSleafOff : TileCentroid (S 2 false) - TileCentroid (P 0 false) =
+      -cOff (BandVectors.1 (cfg.firstPredecessor 2) (cfg.firstPredecessor 1)) := by
+    simpa [cOff, Fin.add_def] using data.hScent 2 false
   have hPplus : TileCentroid (P 0 true) - TileCentroid T = cOff W := by
     simpa [cOff, Fin.add_def, W] using data.hPcent 0 true
   have hPminus : TileCentroid (P 0 false) - TileCentroid T = -cOff W := by
@@ -1718,12 +1344,20 @@ private theorem positiveLargestCase :
     (q 2) (Q 1 true) (u 1 true) hpos2 hQodo
   have hSdom := PositiveCurvatureTileOdometerDomain
     (q 3) (S 2 false) (v 2 false) hpos3 hSodo
-  have hxQ := LargestParentOdometerGeometry.hxQAt573 q cfg C0 T cert h P r Q S u v g x data
-      left_mem
-  have hxS := LargestParentOdometerGeometry.hxSAt576 q cfg C0 T cert h P r Q S u v g x data
-      right_mem
-  have hxU := LargestParentOdometerGeometry.hxUAt579 Q u x hQdom hxQ
-  have hxV := LargestParentOdometerGeometry.hxVAt583 S v x hSdom hxS
+  have hxQ : x ∈ FootprintVertices (Q 1 true) := by
+    rw [(data.hobsQ 1 true).2.1]
+    exact left_mem
+  have hxS : x ∈ FootprintVertices (S 2 false) := by
+    rw [(data.hobsS 2 false).2.1]
+    exact right_mem
+  have hxU : x ∈ (u 1 true).domain := by
+    change x ∈ ((u 1 true).domain : Set GaussianInt)
+    rw [hQdom]
+    exact hxQ
+  have hxV : x ∈ (v 2 false).domain := by
+    change x ∈ ((v 2 false).domain : Set GaussianInt)
+    rw [hSdom]
+    exact hxS
   have hstar := LargestParentOdometerGeometry.hstarAt587 q cfg C0 T cert h P r Q S u v g x data
       star hQdom hSdom
   have hweb := (OdometerWeb).2 C₂ C₃ cfg.secondPredecessor 0 1
@@ -1742,10 +1376,8 @@ private theorem positiveLargestCase :
   have hcompObs := ProtoTileObservableExtensionality
     (TileTranslation (Q 1 true) (I * W)) (P 1 true)
     hcompUnique.1 hcompUnique.2
-  have hcompFoot := LargestParentOdometerGeometry.hcompFootAt618 q cfg C0 T cert h P r Q S u v
-      g data hcompObs
-  have hmark := LargestParentOdometerGeometry.hmarkAt623 q cfg C0 T cert Q x marked companion
-      hcompFoot
+  have hcompFoot := hcompObs.1.trans (data.hobsP 1 true).2.1
+  have hmark := (Set.ext_iff.mp hcompFoot x).trans companion
   constructor
   · intro hm
     apply (by simpa [I, W, cfg.secondVectorOne] using hweb.1)
@@ -1836,10 +1468,12 @@ private theorem reflectedLargestCase :
     band_of_odo _ _ _ (data.hS 1 false)
   have bp : BandPrototile (q 2) (P 1 false) := by
     simpa [cfg.firstParentTwo] using band_of_odo _ _ _ (data.hP 1 false)
-  have hQleaf := LargestParentOdometerGeometry.hQleafAt647 q cfg C0 T cert h P r Q S u v g data
-  have hSleaf := LargestParentOdometerGeometry.hSleafAt656 q cfg C0 T cert h P r Q S u v g data
-  have hQleafOff := LargestParentOdometerGeometry.hQleafOffAt665 q cfg P Q hQleaf
-  have hSleafOff := LargestParentOdometerGeometry.hSleafOffAt669 q cfg P S hSleaf
+  have hQleafOff : TileCentroid (Q 2 true) - TileCentroid (P 0 true) =
+      cOff (BandVectors.1 (cfg.firstPredecessor 2) (cfg.firstPredecessor 1)) := by
+    simpa [cOff, Fin.add_def] using data.hQcent 2 true
+  have hSleafOff : TileCentroid (S 1 false) - TileCentroid (P 0 false) =
+      -cOff (BandVectors.1 (cfg.firstPredecessor 1) (cfg.firstPredecessor 3)) := by
+    simpa [cOff, Fin.add_def] using data.hScent 1 false
   have hPplus : TileCentroid (P 0 true) - TileCentroid T = cOff W := by
     simpa [cOff, Fin.add_def, W] using data.hPcent 0 true
   have hPminus : TileCentroid (P 0 false) - TileCentroid T = -cOff W := by
@@ -1914,12 +1548,20 @@ private theorem reflectedLargestCase :
     (q 2) (S 1 false) (v 1 false) hpos2 hSodo
   have hQdom := PositiveCurvatureTileOdometerDomain
     (q 3) (Q 2 true) (u 2 true) hpos3 hQodo
-  have hxS := LargestParentOdometerGeometry.hxSAt945 q cfg C0 T cert h P r Q S u v g x data
-      right_mem
-  have hxQ := LargestParentOdometerGeometry.hxQAt948 q cfg C0 T cert h P r Q S u v g x data
-      left_mem
-  have hxV := LargestParentOdometerGeometry.hxVAt951 S v x hSdom hxS
-  have hxU := LargestParentOdometerGeometry.hxUAt955 Q u x hQdom hxQ
+  have hxQ : x ∈ FootprintVertices (Q 2 true) := by
+    rw [(data.hobsQ 2 true).2.1]
+    exact left_mem
+  have hxS : x ∈ FootprintVertices (S 1 false) := by
+    rw [(data.hobsS 1 false).2.1]
+    exact right_mem
+  have hxU : x ∈ (u 2 true).domain := by
+    change x ∈ ((u 2 true).domain : Set GaussianInt)
+    rw [hQdom]
+    exact hxQ
+  have hxV : x ∈ (v 1 false).domain := by
+    change x ∈ ((v 1 false).domain : Set GaussianInt)
+    rw [hSdom]
+    exact hxS
   have hstar := LargestParentOdometerGeometry.hstarAt959 q cfg C0 T cert h P r Q S u v g x data
       star hSdom hQdom
   have hweb := (OdometerWeb).2 C₂ C₃ cfg.secondPredecessor 0 3
@@ -1938,10 +1580,8 @@ private theorem reflectedLargestCase :
   have hcompObs := ProtoTileObservableExtensionality
     (TileTranslation (S 1 false) (I ^ (3 : Nat) * W)) (P 1 false)
     hcompUnique.1 hcompUnique.2
-  have hcompFoot := LargestParentOdometerGeometry.hcompFootAt990 q cfg C0 T cert h P r Q S u v
-      g data hcompObs
-  have hmark := LargestParentOdometerGeometry.hmarkAt996 q cfg C0 T cert S x marked companion
-      hcompFoot
+  have hcompFoot := hcompObs.1.trans (data.hobsP 1 false).2.1
+  have hmark := (Set.ext_iff.mp hcompFoot x).trans companion
   constructor
   · intro hm
     apply (by simpa [I, W, cfg.secondVectorOne] using hweb.1)
