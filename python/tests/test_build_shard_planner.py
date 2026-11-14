@@ -8,6 +8,8 @@ from pathlib import Path
 
 import pytest
 
+from lean_pool.validation_cache import GLOBAL_INPUTS
+
 ROOT = Path(__file__).resolve().parents[2]
 PLANNER = runpy.run_path(str(ROOT / "scripts/ci/plan-build-shards.py"))
 MEASURER = runpy.run_path(str(ROOT / "scripts/ci/measure-build-costs.py"))
@@ -199,8 +201,6 @@ def test_checker_input_change_fans_validation_out_over_the_pool(
 
 def test_validation_inputs_match_the_receipt_fingerprints() -> None:
     """The planner reads the checker inputs from the validation cache itself."""
-    from lean_pool.validation_cache import GLOBAL_INPUTS
-
     assert PLANNER["validation_inputs"]() == set(GLOBAL_INPUTS)
 
 
