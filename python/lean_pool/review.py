@@ -7,8 +7,8 @@ Detects what kind of PR this is and reviews it under the matching rules:
   code quality (``.github/review-rubrics/``), each an independent model
   call on top of the shared core (``.github/REVIEW_RULES.md``). The
   overall verdict is computed from the rubric verdicts, never asked of
-  a model: any blocking ``block`` → request_changes, any ``discuss`` →
-  needs_discussion, and an elided-diff review cannot approve.
+  a model: any blocking ``block`` → request_changes, otherwise approve;
+  an elided-diff review cannot approve. There is no third verdict.
 - **refactor** — only touches projects already in the pool, the same
   added-vs-modified split ``/profile`` uses. Judged on tech debt and
   maintainability (``.github/REFACTOR_REVIEW_RULES.md``).
@@ -180,7 +180,6 @@ def pricing_rates(
 VERDICT_ICON = {
     "approve": "✅",
     "request_changes": "🛑",
-    "needs_discussion": "🤔",
 }
 # Rules document each PR kind is reviewed against, linked in the comment
 # footer and read as the model's user message.
@@ -311,8 +310,8 @@ class RubricSpec:
         key: Verdict-table identifier, also the rubric filename stem.
         title: Human-readable rubric name for the comment.
         blocking: Whether this rubric's ``block`` can force
-            ``request_changes``. An advisory rubric's ``block`` is
-            recorded as ``discuss`` — it informs, it does not veto.
+            ``request_changes``. An advisory rubric reports ``pass`` or
+            ``flag`` — it informs, it does not veto.
         wants_prior_art: Whether the pre-computed Mathlib/Tau Ceti/pool search
             evidence is included in this rubric's prompt.
     """
@@ -1213,7 +1212,7 @@ class RubricOutcome:
     Attributes:
         spec: The rubric that ran.
         result: The underlying model call.
-        verdict: Normalized to ``pass`` / ``block`` / ``discuss`` —
+        verdict: Normalized to ``pass`` / ``block`` (``flag`` for advisory) —
             see :func:`normalize_rubric_verdict`.
     """
 
@@ -1225,17 +1224,15 @@ class RubricOutcome:
 def normalize_rubric_verdict(spec: RubricSpec, payload: dict) -> str:
     """Clamp a rubric's self-reported verdict to what it may say.
 
-    An advisory rubric's ``block`` becomes ``discuss`` — it informs the
-    maintainer, it does not veto. Anything unrecognized also becomes
-    ``discuss``: a review whose verdict cannot be read is a review a
-    human should look at, never a silent pass.
+    A blocking rubric decides ``pass`` or ``block``; anything else,
+    including an unreadable verdict, fails closed as ``block``. An advisory
+    rubric decides ``pass`` or ``flag`` and never vetoes, so anything other
+    than ``pass`` becomes ``flag``.
     """
     verdict = (payload.get("verdict") or "").strip()
-    if verdict not in ("pass", "block", "discuss"):
-        return "discuss"
-    if verdict == "block" and not spec.blocking:
-        return "discuss"
-    return verdict
+    if not spec.blocking:
+        return "pass" if verdict == "pass" else "flag"
+    return "pass" if verdict == "pass" else "block"
 
 
 def aggregate_verdict(outcomes: list[RubricOutcome], truncated: bool) -> str:
@@ -1247,10 +1244,8 @@ def aggregate_verdict(outcomes: list[RubricOutcome], truncated: bool) -> str:
     enforces what a prompt can only request: a partial (elided-diff)
     review cannot approve, because nobody read the elided files.
     """
-    if any(outcome.verdict == "block" for outcome in outcomes):
+    if truncated or any(outcome.verdict == "block" for outcome in outcomes):
         return "request_changes"
-    if truncated or any(outcome.verdict == "discuss" for outcome in outcomes):
-        return "needs_discussion"
     return "approve"
 
 
@@ -1399,7 +1394,7 @@ def _prior_art_cell(value: str) -> str:
     return f"🛑 `{value}`"
 
 
-RUBRIC_VERDICT_ICON = {"pass": "✅", "block": "🛑", "discuss": "🤔"}
+RUBRIC_VERDICT_ICON = {"pass": "✅", "block": "🛑", "flag": "⚠️"}
 
 
 def _rubric_facts_table(outcomes: list[RubricOutcome]) -> str:
@@ -1652,6 +1647,9 @@ def render_comment(
     """
     summary = (payload.get("summary") or "").strip()
     verdict = (payload.get("verdict") or "").strip()
+    if verdict not in VERDICT_ICON:
+        # Only approve or request_changes exist; an unreadable verdict fails closed.
+        verdict = "request_changes"
     findings = payload.get("findings") or []
 
     headings = {
