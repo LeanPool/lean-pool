@@ -70,8 +70,7 @@ theorem P4780T1IntegerCoverage :
         -2 ≤ (u-1)+(v-0) ∧ (u-1)+(v-0) ≤ 0
       exact ⟨by linarith, by linarith, by linarith,
         by linarith, by linarith, by linarith⟩
-    · have hX : 1 < 2*u-v := by linarith
-      refine ⟨2, 1, ?_⟩
+    · refine ⟨2, 1, ?_⟩
       rw [P4780T1HullHalfspaces]
       norm_num only [Int.cast_ofNat]
       change -2 ≤ 2*(u-2)-(v-1) ∧ 2*(u-2)-(v-1) ≤ 0 ∧

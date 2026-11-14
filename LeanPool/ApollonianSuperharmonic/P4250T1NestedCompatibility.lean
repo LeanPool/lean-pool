@@ -205,16 +205,14 @@ private theorem hX :
         let w : GaussianInt := BandVectors.1 (q 3) (q 2)
         let xv : GaussianInt := BandVectors.1 (cfg.firstPredecessor 1) (q 3)
         let v21 : GaussianInt := BandVectors.1 (q 2) (q 1)
-        (BandVectors.1 (q (3 : Fin (4 : ℕ))) (q (2 : Fin (4 : ℕ))) + BandVectors.1 (q (1 : Fin (4
-            : ℕ))) (q (3 : Fin (4 : ℕ))) + BandVectors.1 (q (2 : Fin (4 : ℕ))) (q (1 : Fin (4 :
-            ℕ))) = (0 : GaussianInt)) → ((BandVectors.1 (cfg.firstPredecessor (3 : Fin (4 : ℕ)))
+        ((BandVectors.1 (cfg.firstPredecessor (3 : Fin (4 : ℕ)))
             (cfg.firstPredecessor (2 : Fin (4 : ℕ))) + BandVectors.1 (cfg.firstPredecessor (1 :
             Fin (4 : ℕ))) (cfg.firstPredecessor (3 : Fin (4 : ℕ))) + BandVectors.1
             (cfg.firstPredecessor (2 : Fin (4 : ℕ))) (cfg.firstPredecessor (1 : Fin (4 : ℕ))) =
             (0 : GaussianInt)) → ((v21 = BandVectors.1 (q 2) (cfg.firstPredecessor 1) - I * w) →
             (xv = -v21 - (1 + I) * w))) ) := by
   classical
-  intro q cfg I w xv v21 hcycV hpredV hv21
+  intro q cfg I w xv v21 hpredV hv21
   apply eq_of_sub_eq_zero
   have hpred : w + xv + BandVectors.1 (q 2) (cfg.firstPredecessor 1) = 0 := by
     simpa [w, xv, cfg.firstParentTwo, cfg.firstParentThree] using hpredV
@@ -252,16 +250,14 @@ private theorem hXalpha :
         let alpha : GaussianInt := BandVectors.2 (q 3) (q 2)
         let xa : GaussianInt := BandVectors.2 (cfg.firstPredecessor 1) (q 3)
         let a21 : GaussianInt := BandVectors.2 (q 2) (q 1)
-        (BandVectors.2 (q (3 : Fin (4 : ℕ))) (q (2 : Fin (4 : ℕ))) + BandVectors.2 (q (1 : Fin (4
-            : ℕ))) (q (3 : Fin (4 : ℕ))) + BandVectors.2 (q (2 : Fin (4 : ℕ))) (q (1 : Fin (4 :
-            ℕ))) = (0 : GaussianInt)) → ((BandVectors.2 (cfg.firstPredecessor (3 : Fin (4 : ℕ)))
+        ((BandVectors.2 (cfg.firstPredecessor (3 : Fin (4 : ℕ)))
             (cfg.firstPredecessor (2 : Fin (4 : ℕ))) + BandVectors.2 (cfg.firstPredecessor (1 :
             Fin (4 : ℕ))) (cfg.firstPredecessor (3 : Fin (4 : ℕ))) + BandVectors.2
             (cfg.firstPredecessor (2 : Fin (4 : ℕ))) (cfg.firstPredecessor (1 : Fin (4 : ℕ))) =
             (0 : GaussianInt)) → ((a21 = BandVectors.2 (q 2) (cfg.firstPredecessor 1) + I *
             alpha) → (xa = -a21 - (1 - I) * alpha))) ) := by
   classical
-  intro q cfg I alpha xa a21 hcycA hpredA ha21
+  intro q cfg I alpha xa a21 hpredA ha21
   apply eq_of_sub_eq_zero
   have hpred : alpha + xa + BandVectors.2 (q 2) (cfg.firstPredecessor 1) = 0 := by
     simpa [alpha, xa, cfg.firstParentTwo, cfg.firstParentThree] using hpredA
@@ -2847,13 +2843,13 @@ theorem P4250T1NestedCompatibility
   have hrot := VectorRecursionLaws _
     (SemiProperQuadruple.rotate cfg.firstProper.1)
   have spatialIdentity := NestedCompatibilityGeometry.spatialIdentity q cfg
-      (NestedCompatibilityGeometry.hV13 q cfg hcycV (NestedCompatibilityGeometry.hX q cfg hcycV
+      (NestedCompatibilityGeometry.hV13 q cfg hcycV (NestedCompatibilityGeometry.hX q cfg
       hpredV (by
         simpa [v21, w, I, cfg.firstChild, cfg.firstParentTwo,
           cfg.firstParentThree] using hrot.2.2.1)))
   have slopeIdentity := NestedCompatibilityGeometry.slopeIdentity q cfg
       (NestedCompatibilityGeometry.hA13 q cfg hcycA (NestedCompatibilityGeometry.hXalpha q cfg
-      hcycA hpredA (by
+          hpredA (by
         simpa [a21, alpha, I, cfg.firstChild, cfg.firstParentTwo,
           cfg.firstParentThree] using hrot.2.2.2.1)))
   have secondFlip := (VectorRecursionLaws cfg.secondPredecessor

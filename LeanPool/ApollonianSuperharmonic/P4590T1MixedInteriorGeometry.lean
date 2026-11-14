@@ -210,41 +210,38 @@ private theorem pair_cover :
       (fun h => hib h.symm) hnot
       (hthird (i, s) hia hib) ha hb hownerFoot).elim
 
-private theorem pair_result :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C
-            T), ∀ (x : GaussianInt), (∀ (i : Fin 3), ∀ (s : Bool), x ∈ FootprintVertices (cert.P
-            i s) ↔ ∃ j : Fin 4, LatticeVertexIncidentCell x j ∈ (cert.P i s).cells) → ((∀ (i :
-            Fin 3), ∀ (j : Fin 3), ∀ (s : Bool), ∀ (t : Bool), ((i, s) ≠ (j, t)) → ((¬ (i = 0 ∧ j
-            = 0)) → (Disjoint (cert.P i s).cells (cert.P j t).cells))) → ((∀ (i : Fin 3), ∀ (j :
-            Fin 3), ∀ (s : Bool), ∀ (t : Bool), ((i, s) ≠ (j, t)) → ((¬ (i = 0 ∧ j = 0)) → ((x ∈
-            FootprintVertices (cert.P i s)) → ((x ∈ FootprintVertices (cert.P j t)) → (x ∈
-            BoundaryFootprintVertices (cert.P i s) ∧ x ∈ BoundaryFootprintVertices (cert.P j
-            t)))))) → ((∀ (a : Fin 3 × Bool), ∀ (b : Fin 3 × Bool), ∀ (c : Fin 3 × Bool), (a ≠ b)
-            → ((a ≠ c) → ((b ≠ c) → ((¬ (a.1 = 0 ∧ b.1 = 0)) → ((Disjoint (cert.P a.1 a.2).cells
-            (cert.P c.1 c.2).cells ∨ Disjoint (cert.P b.1 b.2).cells (cert.P c.1 c.2).cells) →
-            ((x ∈ FootprintVertices (cert.P a.1 a.2)) → ((x ∈ FootprintVertices (cert.P b.1 b.2))
-            → (x ∉ FootprintVertices (cert.P c.1 c.2))))))))) → ((∀ (a : Fin 3 × Bool), ∀ (b :
-            Fin 3 × Bool), ∀ (c : Fin 3 × Bool), (a ≠ b) → ((a ≠ c) → ((b ≠ c) → ((¬ (a.1 = 0 ∧
-            b.1 = 0)) → ((∀ c', c' ≠ a → c' ≠ b → Disjoint (cert.P a.1 a.2).cells (cert.P c'.1
-            c'.2).cells ∨ Disjoint (cert.P b.1 b.2).cells (cert.P c'.1 c'.2).cells) → ((x ∈
-            FootprintVertices (cert.P a.1 a.2)) → ((x ∈ FootprintVertices (cert.P b.1 b.2)) → (∀
-            j : Fin 4, LatticeVertexIncidentCell x j ∈ (cert.P a.1 a.2).cells ∨
-            LatticeVertexIncidentCell x j ∈ (cert.P b.1 b.2).cells)))))))) → (∀ (a : Fin 3 ×
-            Bool), ∀ (b : Fin 3 × Bool), ∀ (k : Fin 3 × Bool), (a ≠ b) → ((a ≠ k) → ((b ≠ k) →
-            ((¬ (a.1 = 0 ∧ b.1 = 0)) → ((∀ c', c' ≠ a → c' ≠ b →
-            Disjoint (cert.P a.1 a.2).cells (cert.P c'.1 c'.2).cells ∨
-              Disjoint (cert.P b.1 b.2).cells (cert.P c'.1 c'.2).cells) → ((x ∈ FootprintVertices
-                  (cert.P a.1 a.2)) → ((x ∈ FootprintVertices (cert.P b.1 b.2)) → ((∀ y, y = x ∨
-                  y = x + 1 ∨ y = x - 1 ∨ y = x + ⟨0, 1⟩ ∨ y = x - ⟨0, 1⟩ → y ∈ FootprintVertices
-                  (cert.P a.1 a.2) ∨ y ∈ FootprintVertices (cert.P b.1 b.2)) ∧ x ∉
-                  FootprintVertices (cert.P k.1 k.2))))))))))))) ) := by
+private theorem pair_result (q : Fin 4 → CircleCoordinates)
+    (cfg : BandOrderedGeneralConfiguration q) (C : BandCircle) (T : ProtoTile)
+    (cert : BandOrderedGeneralLayoutCertificate q cfg C T) (x : GaussianInt)
+    (footprint_iff_incident : ∀ i s, x ∈ FootprintVertices (cert.P i s) ↔
+      ∃ j : Fin 4, LatticeVertexIncidentCell x j ∈ (cert.P i s).cells)
+    (selected_disjoint : ∀ i j s t, (i, s) ≠ (j, t) → ¬ (i = 0 ∧ j = 0) →
+      Disjoint (cert.P i s).cells (cert.P j t).cells)
+    (noOtherFoot : ∀ a b c : Fin 3 × Bool, a ≠ b → a ≠ c → b ≠ c →
+      ¬ (a.1 = 0 ∧ b.1 = 0) →
+      (Disjoint (cert.P a.1 a.2).cells (cert.P c.1 c.2).cells ∨
+        Disjoint (cert.P b.1 b.2).cells (cert.P c.1 c.2).cells) →
+      x ∈ FootprintVertices (cert.P a.1 a.2) → x ∈ FootprintVertices (cert.P b.1 b.2) →
+      x ∉ FootprintVertices (cert.P c.1 c.2))
+    (pair_cover : ∀ a b c : Fin 3 × Bool, a ≠ b → a ≠ c → b ≠ c →
+      ¬ (a.1 = 0 ∧ b.1 = 0) →
+      (∀ c', c' ≠ a → c' ≠ b →
+        Disjoint (cert.P a.1 a.2).cells (cert.P c'.1 c'.2).cells ∨
+          Disjoint (cert.P b.1 b.2).cells (cert.P c'.1 c'.2).cells) →
+      x ∈ FootprintVertices (cert.P a.1 a.2) → x ∈ FootprintVertices (cert.P b.1 b.2) →
+      ∀ j : Fin 4, LatticeVertexIncidentCell x j ∈ (cert.P a.1 a.2).cells ∨
+        LatticeVertexIncidentCell x j ∈ (cert.P b.1 b.2).cells)
+    (a b k : Fin 3 × Bool) (hab : a ≠ b) (hak : a ≠ k) (hbk : b ≠ k)
+    (hnot : ¬ (a.1 = 0 ∧ b.1 = 0))
+    (hthird : ∀ c', c' ≠ a → c' ≠ b →
+      Disjoint (cert.P a.1 a.2).cells (cert.P c'.1 c'.2).cells ∨
+        Disjoint (cert.P b.1 b.2).cells (cert.P c'.1 c'.2).cells)
+    (ha : x ∈ FootprintVertices (cert.P a.1 a.2))
+    (hb : x ∈ FootprintVertices (cert.P b.1 b.2)) :
+    (∀ y, y = x ∨ y = x + 1 ∨ y = x - 1 ∨ y = x + ⟨0, 1⟩ ∨ y = x - ⟨0, 1⟩ →
+      y ∈ FootprintVertices (cert.P a.1 a.2) ∨ y ∈ FootprintVertices (cert.P b.1 b.2)) ∧
+      x ∉ FootprintVertices (cert.P k.1 k.2) := by
   classical
-  intro q cfg C T cert x footprint_iff_incident selected_disjoint pair_boundary noOtherFoot
-      pair_cover a b k hab hak hbk hnot hthird ha hb
   have hdisjAB := selected_disjoint a.1 b.1 a.2 b.2 hab hnot
   have hcover := pair_cover a b k hab hak hbk hnot hthird ha hb
   have hU := (footprint_iff_incident a.1 a.2).1 ha
@@ -482,7 +479,7 @@ theorem P4590T1MixedInteriorGeometry
         y ∈ FootprintVertices (cert.P a.1 a.2) ∨
           y ∈ FootprintVertices (cert.P b.1 b.2)) ∧
         x ∉ FootprintVertices (cert.P k.1 k.2) := MixedInteriorGeometry.pair_result q cfg C T
-            cert x footprint_iff_incident selected_disjoint pair_boundary noOtherFoot pair_cover
+            cert x footprint_iff_incident selected_disjoint noOtherFoot pair_cover
             a b k hab hak hbk hnot hthird ha hb
   let A : Fin 3 × Bool := (0, true)
   let B : Fin 3 × Bool := (0, false)

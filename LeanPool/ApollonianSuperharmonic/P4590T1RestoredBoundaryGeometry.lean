@@ -461,14 +461,7 @@ private theorem hOcuts :
         let B := cert.P 0 false
         let O := cert.O
         let seg := cert.exceptionalSegments
-        (TileCentroid cert.O = TileCentroid T ∧ (cert.O.cells = ∅ ↔ (cfg.firstPredecessor (1 :
-            Fin (4 : ℕ))).1 = (0 : ℤ)) ∧ BandPrototile (cfg.firstPredecessor (1 : Fin (4 : ℕ)))
-            cert.O ∧ (Finset.Nonempty cert.O.cells → LatticeTile cert.O) ∧ Finset.Nonempty
-            (cert.Q (1 : Fin (3 : ℕ)) true).cells ∧ Finset.Nonempty (cert.S (2 : Fin (3 : ℕ))
-            false).cells ∧ (cert.P (0 : Fin (3 : ℕ)) true).cells ∩ (cert.P (0 : Fin (3 : ℕ))
-            false).cells = cert.O.cells ∧ ∀ (i : Fin (3 : ℕ)), ∀ (s : Bool), ∀ (j : Fin (3 : ℕ)),
-            ∀ (t : Bool), (i, s) ≠ (j, t) → ¬(i = (0 : Fin (3 : ℕ)) ∧ j = (0 : Fin (3 : ℕ))) →
-            Disjoint (cert.P i s).cells (cert.P j t).cells) → (((∃ j : Fin 4,
+        (((∃ j : Fin 4,
             LatticeVertexIncidentCell x j ∈ A.cells) ∧ (∃ j : Fin 4, LatticeVertexIncidentCell x
             j ∉ A.cells)) → (((∃ j : Fin 4, LatticeVertexIncidentCell x j ∈ B.cells) ∧ (∃ j : Fin
             4, LatticeVertexIncidentCell x j ∉ B.cells)) → ((∀ (U : ProtoTile), TileTranslation U
@@ -476,8 +469,8 @@ private theorem hOcuts :
             : Fin 4, LatticeVertexIncidentCell x j ∈ U.cells))) → ((x ∈ FootprintVertices O →
             O.cells.Nonempty) → (x ∈ FootprintVertices O → x = seg.a ∨ x = seg.b)))))) ) := by
   classical
-  intro q cfg C T cert x A B O seg hpre hIncidentA hIncidentB translation_zero incidentRaw
-      hOpositive hxO
+  intro q cfg C T cert x A B O seg hIncidentA hIncidentB translation_zero incidentRaw hOpositive
+      hxO
   have hOne := hOpositive hxO
   have hOneCell := incidentRaw O hOne hxO
   have isolated (j : Fin 4) :
@@ -930,7 +923,7 @@ theorem P4590T1RestoredBoundaryGeometry :
       hconnectorWalk
   have incidentRaw := RestoredBoundaryGeometry.incidentRaw q cfg C T cert x hk hnoncentral noThird
   have hOpositive := RestoredBoundaryGeometry.hOpositive q cfg C T cert x hnoncentral hOcent
-  have hOcuts := RestoredBoundaryGeometry.hOcuts q cfg C T cert x hpre hIncidentA hIncidentB
+  have hOcuts := RestoredBoundaryGeometry.hOcuts q cfg C T cert x hIncidentA hIncidentB
       translation_zero incidentRaw hOpositive
   have hQne : Q.cells.Nonempty := hpre.2.2.2.2.1
   have hSne : S.cells.Nonempty := hpre.2.2.2.2.2.1

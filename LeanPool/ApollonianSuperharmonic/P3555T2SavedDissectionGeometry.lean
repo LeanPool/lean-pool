@@ -870,11 +870,10 @@ private theorem triangleCase :
           L.get k ∈ Set.range f ∧
           L.get ⟨(k.val + 1) % L.length,
             Nat.mod_lt _ (Nat.zero_lt_of_lt k.isLt)⟩ ∈ Set.range f)
-    ∀ (a : Fin (n + (3 : ℕ))), ∀ (b : Fin (n + (3 : ℕ))), ∀ (c : Fin (n + (3 : ℕ))), ([a, b,
-        c].Nodup) → ((∃ (k : ℕ), [a, b, c].Sublist ((List.ofFn fun (i : Fin (n + (3 : ℕ))) =>
-        i).rotate k)) → (Good [a, b, c] [![a, b, c]]))) := by
+    ∀ (a : Fin (n + (3 : ℕ))), ∀ (b : Fin (n + (3 : ℕ))), ∀ (c : Fin (n + (3 : ℕ))), ((Good [a, b,
+        c] [![a, b, c]]))) := by
   classical
-  intro n q hsupport Good a b c hboundary hcyclic hnd hcyc
+  intro n q hsupport Good a b c hnd hcyc
   have hnd' : (a ≠ b ∧ a ≠ c) ∧ b ≠ c := by simpa using hnd
   let f : Fin 3 → Fin (n + 3) := ![a, b, c]
   have hfi : Function.Injective f := by
@@ -1368,7 +1367,7 @@ theorem P3555T2SavedDissectionGeometry {n : Nat}
     induction hd with
     | triangle a b c =>
       have triangleCase : Good [a, b, c] [![a, b, c]] := SavedDissectionCases.triangleCase n q
-          hsupport a b c hboundary hcyclic
+          hsupport a b c
       exact triangleCase
     | split a b u v left right hu hv hleft hright ihleft ihright =>
       intro hnd hcyc

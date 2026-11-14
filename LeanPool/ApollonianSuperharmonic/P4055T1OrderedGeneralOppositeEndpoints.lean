@@ -822,15 +822,8 @@ private theorem hstep :
     (by
       classical
       exact
-        (Fin (4 : ℕ) → CircleCoordinates) →
-          Fin (3 : ℕ) →
-            Fin (4 : ℕ) →
-              ProtoTile →
-                ProtoTile →
-                  ∀ (aU : GaussianInt),
-                    GaussianInt →
-                      GaussianInt →
-                        let f : GaussianInt → GaussianInt := fun x =>
+        ∀ (aU : GaussianInt),
+                    let f : GaussianInt → GaussianInt := fun x =>
                           GaussianQuarterTurn
                             (GaussianQuarterTurn (GaussianQuarterTurn (x - aU)));
                         ∀ a b : GaussianInt,
@@ -839,7 +832,7 @@ private theorem hstep :
                               f b = f a - 1 ∨ f b = f a + ⟨0, 1⟩ ∨ f b = f a - ⟨0, 1⟩
     ) := by
   classical
-  intro r i s W Z aU aW aZ f a b hab
+  intro aU f a b hab
   rcases hab with h | h | h | h
   · subst b
     right
@@ -1131,7 +1124,7 @@ theorem P4055T1OrderedGeneralOppositeEndpoints :
       even2 notEven1 notEven3 hq3mul
   have hdispL := OppositeEndpointGeometry.hdispL r i s hq2 hq3 hq2act even0
       even2 notEven1 notEven3 hq3mul
-  have hstep := OppositeEndpointGeometry.hstep r i s W Z aU aW aZ
+  have hstep := OppositeEndpointGeometry.hstep aU
   rcases sourceData with ⟨Rsrc, Isrc, Asrc, hRsrc, hIneq, hICA, hRCA, hAAB⟩
   have hchildVR := OppositeEndpointGeometry.hchildVR r i s U
           aU hchildV hdispR

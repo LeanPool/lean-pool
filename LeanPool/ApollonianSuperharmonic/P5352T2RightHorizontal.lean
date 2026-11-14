@@ -417,7 +417,6 @@ private theorem hLap :
                                 Q ⟨n - 1, n⟩ = (n - 1) * (n - 2) / 2 →
                                 Q ⟨n, n + 1⟩ = n * (n - 1) / 2 →
                                 Q ⟨n, n - 1⟩ = n * (n - 1) / 2 →
-                                (1 - 2 * n) ^ 2 / 4 = n ^ 2 - n →
                                 (-n - n) ^ 2 / 4 = n ^ 2 →
                                 (1 - n - n) ^ 2 / 4 = n ^ 2 - n →
                                 Q ⟨-n, n⟩ = n * (n - 1) / 2 - n ^ 2 →
@@ -427,8 +426,7 @@ private theorem hLap :
     ) := by
   classical
   intro K f B z n M Q hzc hWc hNc hSc hEc hfCenter hfWest hfNorth hfSouth hfChildCenter hfEast
-      qCenter qWest qNorth qSouth hsq1 hsq0' hsq1' qChildCenter qChildEast hChildCenter
-      hChildEast
+      qCenter qWest qNorth qSouth hsq0' hsq1' qChildCenter qChildEast hChildCenter hChildEast
   have hB : B = n-n^2 := by
     rw [hfCenter] at hfChildCenter
     rw [hChildCenter, qChildCenter] at hfChildCenter
@@ -557,7 +555,7 @@ theorem P5352T2RightHorizontal (K : DiamondParameter) (hk : 1 < K.1)
   have hChildCenter : z-M = ⟨-n,n⟩ := by rw [hzc]; ext <;> simp [M]; ring
   have hChildEast : (z+1)-M = ⟨1-n,n⟩ := by rw [hzc]; ext <;> simp [M]; ring
   have hLap := DiamondRightHorizontal.hLap K f B z hzc hWc hNc hSc hEc hfCenter hfWest
-      hfNorth hfSouth hfChildCenter hfEast qCenter qWest qNorth qSouth hsq1 hsq0' hsq1'
+      hfNorth hfSouth hfChildCenter hfEast qCenter qWest qNorth qSouth hsq0' hsq1'
       qChildCenter qChildEast hChildCenter hChildEast
   refine ⟨?_, ?_⟩
   · intro _

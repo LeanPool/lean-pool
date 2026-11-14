@@ -57,8 +57,7 @@ private theorem hr :
   · have hqnonneg : 0 ≤ (P.q : Int) := by omega
     have : P.p₁ * (P.q : Int) ≤ 0 := mul_nonpos_of_nonpos_of_nonneg hp hqnonneg
     omega
-  · have hp' : 1 ≤ P.p₁ := by omega
-    nlinarith
+  · nlinarith
 
 private theorem hrs :
     ∀ (P : FordFareyParameter), (2 < P.q) → (
@@ -407,8 +406,7 @@ private theorem natAbsDist :
     have hbc : (b.toNat : Int) = b := Int.toNat_of_nonneg hb
     simp [Nat.dist]
     omega
-  · have hba : b ≤ a := by omega
-    have habs : (a-b).natAbs = (a-b).toNat := natAbsToNat _ (by omega)
+  · have habs : (a-b).natAbs = (a-b).toNat := natAbsToNat _ (by omega)
     rw [habs]
     have hac : (a.toNat : Int) = a := Int.toNat_of_nonneg ha
     have hbc : (b.toNat : Int) = b := Int.toNat_of_nonneg hb

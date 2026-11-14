@@ -69,12 +69,12 @@ private theorem hDleft :
           {q | ∃ a : Real, 0 ≤ a ∧ q = x + a • (-d)} ∪
             {q | ∃ a : Real, 0 ≤ a ∧ q = x + a • d}
         ∀ (E : P3889T1TwoRaySectorDecomposition x r (-d) d), (∀ (y : Real × Real), (d.1 * y.2 -
-            d.2 * y.1 = 0) → (∃ c : Real, y = c • d)) → ((∀ (q : Real × Real), (q ∈ E.left) → (q
-            ∈ Metric.ball x r)) → ((∀ (q : Real × Real), (q ∈ E.left) → (q ∉ ray)) → (∀ q ∈
+            d.2 * y.1 = 0) → (∃ c : Real, y = c • d)) → (((∀ (q : Real × Real), (q ∈ E.left) → (q
+                ∉ ray)) → (∀ q ∈
             E.left, D q ≠ (0 : ℝ))))
     ) := by
   classical
-  intro x B r n d D ray E hcol hleftball hleftnotray q hq hzero
+  intro x B r n d D ray E hcol hleftnotray q hq hzero
   have hy : d.1 * (q.2 - x.2) - d.2 * (q.1 - x.1) = 0 := by
     simpa [D] using hzero
   obtain ⟨c, hc⟩ := hcol (q - x) (by simpa using hy)
@@ -105,12 +105,12 @@ private theorem hDright :
           {q | ∃ a : Real, 0 ≤ a ∧ q = x + a • (-d)} ∪
             {q | ∃ a : Real, 0 ≤ a ∧ q = x + a • d}
         ∀ (E : P3889T1TwoRaySectorDecomposition x r (-d) d), (∀ (y : Real × Real), (d.1 * y.2 -
-            d.2 * y.1 = 0) → (∃ c : Real, y = c • d)) → ((∀ (q : Real × Real), (q ∈ E.right) → (q
-            ∈ Metric.ball x r)) → ((∀ (q : Real × Real), (q ∈ E.right) → (q ∉ ray)) → (∀ q ∈
+            d.2 * y.1 = 0) → (∃ c : Real, y = c • d)) → (((∀ (q : Real × Real), (q ∈ E.right) → (q
+                ∉ ray)) → (∀ q ∈
             E.right, D q ≠ (0 : ℝ))))
     ) := by
   classical
-  intro x B r n d D ray E hcol hrightball hrightnotray q hq hzero
+  intro x B r n d D ray E hcol hrightnotray q hq hzero
   have hy : d.1 * (q.2 - x.2) - d.2 * (q.1 - x.1) = 0 := by
     simpa [D] using hzero
   obtain ⟨c, hc⟩ := hcol (q - x) (by simpa using hy)
@@ -875,9 +875,9 @@ theorem P5667T1StraightFrontierLocalSides
   have hrightnotray (q : Real × Real) (hq : q ∈ E.right) : q ∉ ray :=
       StraightFrontierDetails.hrightnotray x B r E hcover q hq
   have hDleft (q : Real × Real) (hq : q ∈ E.left) : D q ≠ 0 := StraightFrontierProof.hDleft x B r
-      E hcol hleftball hleftnotray q hq
+      E hcol hleftnotray q hq
   have hDright (q : Real × Real) (hq : q ∈ E.right) : D q ≠ 0 := StraightFrontierProof.hDright x
-      B r E hcol hrightball hrightnotray q hq
+      B r E hcol hrightnotray q hq
   let pos : Set (Real × Real) := {q | 0 < D q}
   let neg : Set (Real × Real) := {q | D q < 0}
   have hposOpen : IsOpen pos := by

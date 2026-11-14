@@ -98,9 +98,7 @@ theorem BandOdometerMaximality (C : BandCircle)
           have := he (by simp [ha0])
           exact congrArg Prod.fst this
         by_cases him : a.im = 0 ∧ b.im = 0
-        · have hre : b.re * a.re - a.re * b.re = 0 := by
-            linarith [hz]
-          have he := hu (b.re, -a.re) (0, 0)
+        · have he := hu (b.re, -a.re) (0, 0)
           have hzero : (b.re : GaussianInt) * a +
               ((-a.re : Int) : GaussianInt) * b = 0 := by
             ext <;> simp [him.1, him.2]; ring

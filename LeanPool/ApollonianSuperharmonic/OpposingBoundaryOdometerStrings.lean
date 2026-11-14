@@ -749,11 +749,7 @@ private theorem hbackAffineEq :
         hminus 0 cback eback).2.2.1 x hx
       rw [hvaff]
       simpa [sub_zero] using hv
-    · have hxₘ : x ∉ hminus.domain := by
-        intro hm
-        apply hx
-        exact (hbackAffineDomain ▸ (hbackSameDomain x).mpr hm)
-      rw [hback.value_outside x (by
+    · rw [hback.value_outside x (by
         intro hxback
         apply hx
         exact (hbackAffineDomain ▸ hxback))]
@@ -1025,19 +1021,14 @@ private theorem htilesLength :
     (by
       classical
       exact
-        ∀ (q : Fin 4 -> CircleCoordinates),
-                                                                 ∀ (Cᵢ : BandCircle), ∀ (i : Fin
-            3),
-                                    (∃ o : Bool, Cᵢ.1.1.1 = 1 →
-            UnitOccurrenceOrientation q i o) →
-                              ∀ (Rminus : ProtoTile), ∀ (Rplus : ProtoTile), ∀ (tiles : List
+        ∀ (Rminus : ProtoTile), ∀ (Rplus : ProtoTile), ∀ (tiles : List
             ProtoTile),
             (
                                                                    (
                             ((Rminus ≠ Rplus) → ((tiles.head? = some Rminus) → ((tiles.getLast? =
             some Rplus) → (2 ≤ tiles.length)))))) ) := by
   classical
-  intro q Cᵢ i horientationExists Rminus Rplus tiles hRminusNeRplus htilesHead htilesLast
+  intro Rminus Rplus tiles hRminusNeRplus htilesHead htilesLast
   cases tiles with
   | nil => simp at htilesHead
   | cons first rest =>
@@ -2176,7 +2167,7 @@ theorem OpposingBoundaryOdometerStrings
       Rplus tiles hstring
   have htilesLast := OpposingBoundaryGeometry.htilesLast q Cᵢ i horientationExists base Rminus
       Rplus tiles hstring
-  have htilesLength := OpposingBoundaryGeometry.htilesLength q Cᵢ i horientationExists
+  have htilesLength := OpposingBoundaryGeometry.htilesLength
       Rminus Rplus tiles
       (OpposingBoundaryGeometry.hRminusNeRplus i Rminus Rplus q'
       (OpposingBoundaryGeometry.hcentroidEndpoints i T₀ Rminus Rplus q' hcentroidMinus

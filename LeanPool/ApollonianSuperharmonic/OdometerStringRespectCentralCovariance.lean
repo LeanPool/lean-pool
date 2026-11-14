@@ -99,18 +99,10 @@ theorem OdometerStringRespectCentralCovariance
         rw [hct]
         ext <;> simp [GaussianRealPoint]
       · dsimp
-        have hre : (GaussianInt.toComplex v).re = (v.re : ℝ) :=
-          (GaussianInt.intCast_re v).symm
-        have him : (GaussianInt.toComplex v).im = (v.im : ℝ) :=
-          (GaussianInt.intCast_im v).symm
         simp only [Int.cast_neg]
         ring_nf
         linear_combination -hx
       · dsimp
-        have hre : (GaussianInt.toComplex v).re = (v.re : ℝ) :=
-          (GaussianInt.intCast_re v).symm
-        have him : (GaussianInt.toComplex v).im = (v.im : ℝ) :=
-          (GaussianInt.intCast_im v).symm
         simp only [Int.cast_neg]
         ring_nf
         linear_combination -hy

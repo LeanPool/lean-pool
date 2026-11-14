@@ -108,15 +108,6 @@ private theorem hzip :
   · rw [zipDropLast left hl hleftLen]
   · exact List.Forall₂.length_eq (dropLastForall₂ hleftOdo)
 
-private theorem hleftTailChain :
-    ∀ (C : BandCircle), ∀ (left : List ProtoTile), ∀ (hl : List PartialOdometer), (List.IsChain
-        (fun (X Y : ProtoTile × PartialOdometer) => LeftLatticeAdjacent C X.1 Y.1 X.2 Y.2)
-        (left.zip hl)) → ((left.zip hl).dropLast.IsChain
-      (fun X Y => LeftLatticeAdjacent C X.1 Y.1 X.2 Y.2)) := by
-  classical
-  intro C left hl hleftChain
-  exact hleftChain.dropLast
-
 private theorem hleftZipShape :
     ∀ (C : BandCircle), ∀ (J : ProtoTile), ∀ (hJ : PartialOdometer), ∀ (left : List ProtoTile), ∀
         (hl : List PartialOdometer), (List.Forall₂ (fun (T : ProtoTile) (h : PartialOdometer) =>
@@ -416,9 +407,6 @@ theorem P4458T1RespectAppend
   have hzip : (left.dropLast ++ right).zip (hl.dropLast ++ hr) =
       (left.zip hl).dropLast ++ right.zip hr := RespectAppendDetails.hzip C left right hl hr
           hleftOdo dropLastForall₂ zipDropLast hleftLen
-  have hleftTailChain : (left.zip hl).dropLast.IsChain
-      (fun X Y => LeftLatticeAdjacent C X.1 Y.1 X.2 Y.2) := RespectAppendDetails.hleftTailChain C
-          left hl hleftChain
   have hleftList : left.dropLast ++ [J] = left :=
     List.dropLast_append_getLast? J (by simp [hleftTileLast])
   have hleftFunList : hl.dropLast ++ [hJ] = hl :=

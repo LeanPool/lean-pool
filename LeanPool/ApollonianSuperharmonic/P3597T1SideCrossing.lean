@@ -1011,8 +1011,7 @@ private theorem hpred :
           exact ⟨ht, hinside.1.le, hinside.2.le⟩
         · intro h
           exact ⟨hycond.1, hycond.2.1.le, hycond.2.2.le⟩
-      · have ht' : T j x < 0 := lt_of_le_of_ne (le_of_not_gt ht) (hTne j hji hinside)
-        have hycond : T j y < 0 ∧ 0 < U j y ∧ U j y < 1 := by
+      · have hycond : T j y < 0 ∧ 0 < U j y ∧ U j y < 1 := by
           simpa [V, hji, hu0, hu1, ht] using hyVj
         constructor
         · rintro ⟨hty, _, _⟩
@@ -1358,7 +1357,7 @@ private theorem hlocal :
         t • d ∈ segment Real (p.vertex j) (p.vertex (j + 1))} % 2 = 1)))) → (
     let S : (Real × Real) → Set (Fin (n + 3)) := fun z => {j | ∃ t : Real, 0 < t ∧
       z + t • d ∈ segment Real (p.vertex j) (p.vertex (j + 1))}
-    (∀ (y : Real × Real), (y ∈ Metric.ball x rN) → ((i ∈ S y ↔ 0 < T i y))) → ((∀ (y : Real ×
+    ((∀ (y : Real ×
         Real), (y ∈ Metric.ball x rN) → ((S y).ncard = (S x).ncard + if 0 < T i y then 1 else 0))
         → ((∀ (y : Real × Real), F y = T i y * D i) → ((∀ (y : Real × Real), (0 < D i) → ((0 < T
         i y ↔ 0 < F y))) → ((∀ (y : Real × Real), (D i < 0) → ((0 < T i y ↔ F y < 0))) → ((∀ (y :
@@ -1369,8 +1368,8 @@ private theorem hlocal :
     ∀ (y : Real × Real), (y ∈ Metric.ball x rN) → ((y ∈ P3544T1RayParity p ↔ if s then 0 < F y
         else F y < 0))))))))))))) := by
   classical
-  intro n p i x a b d D T F rN hcarrier hgenericY hparity S hiY hcount hmulF hsignPosPos
-      hsignPosNeg hsignNegPos hsignNegNeg hDpositive s y hy
+  intro n p i x a b d D T F rN hcarrier hgenericY hparity S hcount hmulF hsignPosPos hsignPosNeg
+      hsignNegPos hsignNegNeg hDpositive s y hy
   by_cases hyC : y ∈ P3544T1BoundaryCarrier p
   · have hFy := (hcarrier y hy).mp hyC
     simp [P3544T1RayParity, hyC, hFy, s]
@@ -1744,7 +1743,7 @@ theorem P3597T1SideCrossing {n : Nat} (p : P3381T1PolygonBoundary n)
     if (S x).ncard % 2 = 0 then decide (0 < D i) else decide (D i < 0)
   have hlocal (y : Real × Real) (hy : y ∈ Metric.ball x rN) :
       (y ∈ P3544T1RayParity p ↔ if s then 0 < F y else F y < 0) := SideCrossingProof.hlocal n p
-          i x d rN hcarrier hgenericY hparity hiY hcount hmulF hsignPosPos hsignPosNeg
+          i x d rN hcarrier hgenericY hparity hcount hmulF hsignPosPos hsignPosNeg
           hsignNegPos hsignNegNeg hDpositive y hy
   have hnormsq : 0 < (b.1 - a.1)^2 + (b.2 - a.2)^2 := SideCrossingProof.hnormsq n p i hab
   have hnormal (h : Real) : F (x + h • (-(b.2 - a.2), b.1 - a.1)) =

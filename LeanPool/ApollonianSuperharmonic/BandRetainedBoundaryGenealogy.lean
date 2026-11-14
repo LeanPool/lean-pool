@@ -127,8 +127,7 @@ private theorem buildConfiguration :
     have hp2c := positiveLarge p hp.1 2 (by omega : (p 2).1 ≠ 0)
     have hp3c := positiveLarge p hp.1 3 (by omega : (p 3).1 ≠ 0)
     rcases hp0c with hone | hlarge
-    · have hp1z : (p 1).1 = 0 := by omega
-      rcases hp2c with hone2 | hlarge2 <;>
+    · rcases hp2c with hone2 | hlarge2 <;>
         rcases hp3c with hone3 | hlarge3 <;> omega
     · omega
   have hu2large : 4 ≤ (u 2).1 := by
@@ -169,14 +168,14 @@ private theorem buildConfiguration :
   · simp [ht0, ht1]
 
 private theorem hq0large :
-    ∀ (q : Fin 4 → CircleCoordinates), (∀ (i : Fin (4 : ℕ)), (q i).1 ≠ (0 : ℤ)) → ((∀ r : Fin 4 →
+    ∀ (q : Fin 4 → CircleCoordinates), ((∀ r : Fin 4 →
         CircleCoordinates, SemiProperQuadruple r → ∀ i : Fin 4, (r i).1 ≠ 0 → (r i).1 = 1 ∨ 4 ≤
         (r i).1) → (∀ (p : Fin (4 : ℕ) → CircleCoordinates), (ProperBandQuadruple p) → ((q =
         ![((2 : ℤ) * (p (0 : Fin (4 : ℕ))).1 + (2 : ℤ) * (p (2 : Fin (4 : ℕ))).1 + (2 : ℤ) * (p
         (3 : Fin (4 : ℕ))).1 - (p (1 : Fin (4 : ℕ))).1, (2 : GaussianInt) * (p (0 : Fin (4 :
         ℕ))).2 + (2 : GaussianInt) * (p (2 : Fin (4 : ℕ))).2 + (2 : GaussianInt) * (p (3 : Fin (4
         : ℕ))).2 - (p (1 : Fin (4 : ℕ))).2), p (0 : Fin (4 : ℕ)), p (2 : Fin (4 : ℕ)), p (3 : Fin
-        (4 : ℕ))]) → ((p (0 : Fin (4 : ℕ)) = q (1 : Fin (4 : ℕ))) → (((p (3 : Fin (4 : ℕ))).1 <
+        (4 : ℕ))]) → ((((p (3 : Fin (4 : ℕ))).1 <
         (p (2 : Fin (4 : ℕ))).1) → (((0 : ℤ) < (q (0 : Fin (4 : ℕ))).1 ∧ (∀ (i : Fin (3 : ℕ)), (0
         : ℤ) ≤ (q i.succ).1) ∧ ∀ (i : Fin (3 : ℕ)), ∀ (j : Fin (3 : ℕ)), (q i.succ).1 = (0 : ℤ) →
         (q j.succ).1 = (0 : ℤ) → i = j) → (((0 : ℤ) < (p (0 : Fin (4 : ℕ))).1 ∧ (∀ (i : Fin (3 :
@@ -184,7 +183,7 @@ private theorem hq0large :
         (0 : ℤ) → (p j.succ).1 = (0 : ℤ) → i = j) → ((0 ≤ (p 1).1) → (((p 1).1 < (p 0).1) → ((0 <
         (p 3).1) → ((0 < (p 2).1) → (4 < (q 0).1)))))))))))) := by
   classical
-  intro q hnoLine positiveLarge p hp hsucc h0 hlt cq cp hp1nonneg' hp1lt' hp3 hp2
+  intro q positiveLarge p hp hsucc hlt cq cp hp1nonneg' hp1lt' hp3 hp2
   have hqformula := congrArg
     (fun z : Fin 4 → CircleCoordinates => (z 0).1) hsucc
   simp only [Fin.isValue, Nat.succ_eq_add_one, Nat.reduceAdd, Matrix.cons_val_zero]
@@ -312,24 +311,20 @@ private theorem positiveLarge :
 
 private theorem hp3 :
     ∀ (q : Fin 4 → CircleCoordinates), (∀ (i : Fin (4 : ℕ)), (q i).1 ≠ (0 : ℤ)) → (∀ (p : Fin (4
-        : ℕ) → CircleCoordinates), (p (3 : Fin (4 : ℕ)) = q (3 : Fin (4 : ℕ))) → (((0 : ℤ) < (p
-        (0 : Fin (4 : ℕ))).1 ∧ (∀ (i : Fin (3 : ℕ)), (0 : ℤ) ≤ (p i.succ).1) ∧ ∀ (i : Fin (3 :
-        ℕ)), ∀ (j : Fin (3 : ℕ)), (p i.succ).1 = (0 : ℤ) → (p j.succ).1 = (0 : ℤ) → i = j) → ((0
+        : ℕ) → CircleCoordinates), (p (3 : Fin (4 : ℕ)) = q (3 : Fin (4 : ℕ))) → (((0
         ≤ (p 3).1) → (0 < (p 3).1)))) := by
   classical
-  intro q hnoLine p h3 cp hp3nonneg'
+  intro q hnoLine p h3 hp3nonneg'
   have hn : (p 3).1 ≠ 0 := by simpa [h3] using hnoLine 3
   omega
 
 private theorem hp2 :
-    ∀ (q : Fin 4 → CircleCoordinates), (∀ (i : Fin (4 : ℕ)), (q i).1 ≠ (0 : ℤ)) → (∀ (p : Fin (4
-        : ℕ) → CircleCoordinates), (p (2 : Fin (4 : ℕ)) = q (2 : Fin (4 : ℕ))) → (((p (3 : Fin (4
-        : ℕ))).1 < (p (2 : Fin (4 : ℕ))).1) → (((0 : ℤ) < (p (0 : Fin (4 : ℕ))).1 ∧ (∀ (i : Fin
-        (3 : ℕ)), (0 : ℤ) ≤ (p i.succ).1) ∧ ∀ (i : Fin (3 : ℕ)), ∀ (j : Fin (3 : ℕ)), (p
-        i.succ).1 = (0 : ℤ) → (p j.succ).1 = (0 : ℤ) → i = j) → ((0 ≤ (p 2).1) → ((0 < (p 3).1) →
+    (∀ (p : Fin (4
+        : ℕ) → CircleCoordinates), (((p (3 : Fin (4
+        : ℕ))).1 < (p (2 : Fin (4 : ℕ))).1) → (((0 ≤ (p 2).1) → ((0 < (p 3).1) →
         (0 < (p 2).1)))))) := by
   classical
-  intro q hnoLine p h2 hlt cp hp2nonneg' hp3
+  intro p hlt hp2nonneg' hp3
   omega
 
 private theorem hq2large :
@@ -933,10 +928,10 @@ private theorem firstParentCase :
       have hp1lt' : (p 1).1 < (p 0).1 := by simpa using hp.2 0
       have hp2nonneg' : 0 ≤ (p 2).1 := by simpa using cp.2.1 1
       have hp3nonneg' : 0 ≤ (p 3).1 := by simpa using cp.2.1 2
-      have hp3 := RetainedBoundaryDetails.hp3 q hnoLine p h3 cp hp3nonneg'
-      have hp2 := RetainedBoundaryDetails.hp2 q hnoLine p h2 hlt cp hp2nonneg' hp3
-      have hq0large := RetainedBoundaryProof.hq0large q hnoLine positiveLarge p
-          hp hsucc h0 hlt cq cp hp1nonneg' hp1lt' hp3 hp2
+      have hp3 := RetainedBoundaryDetails.hp3 q hnoLine p h3 hp3nonneg'
+      have hp2 := RetainedBoundaryDetails.hp2 p hlt hp2nonneg' hp3
+      have hq0large := RetainedBoundaryProof.hq0large q positiveLarge p
+          hp hsucc hlt cq cp hp1nonneg' hp1lt' hp3 hp2
       have hq2large := RetainedBoundaryDetails.hq2large q positiveLarge p hp h2
           hlt hp3 hp2
       have htwin := RetainedBoundaryDetails.htwin

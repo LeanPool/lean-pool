@@ -1169,9 +1169,7 @@ private theorem hstar :
         ∀ (C : BandCircle),
           ∀ (h : PartialOdometer),
             ∀ (x : GaussianInt),
-              ∀ (v : GaussianInt),
-                v ∈ TilingLattice C →
-                  ∀ (P : PeriodicTileComplex ↥(TilingLattice C)),
+              ∀ (P : PeriodicTileComplex ↥(TilingLattice C)),
                     ∀ (a0 : ↥(TilingLattice C)),
                       (∀ (y : ↥(TilingLattice C)),
                           (fun (a : ↥(TilingLattice C)) => x ∈ (P.tile a).cells) y →
@@ -1239,8 +1237,8 @@ private theorem hstar :
                                 y ∈ huOdo.domain ∨ y ∈ hu'Odo.domain
     ) := by
   classical
-  intro C h x v hv P a0 hu0 a1 hu1 a2 hu2 a3 hu3 owner m w sector hsectorNot u u' au au' huOdo
-      hu'Odo cellVertex sectorCornerX pairCovered toDomains hxM y hy
+  intro C h x P a0 hu0 a1 hu1 a2 hu2 a3 hu3 owner m w sector hsectorNot u u' au au' huOdo hu'Odo
+      cellVertex sectorCornerX pairCovered toDomains hxM y hy
   rcases hy with rfl | rfl | rfl | rfl | rfl
   · exact Or.inl hxM
   · have hpair : x + 1 ∈ FootprintVertices (P.tile (owner m)) ∨
@@ -1535,7 +1533,7 @@ theorem PeriodicBoundaryWebLaplacian (C : BandCircle)
         (TileTranslation T u') huOdo hu'Odo hadjOdo).1
     have hweb := (OdometerWeb).1 C (TileTranslation T u)
       (TileTranslation T u') huOdo hu'Odo g x hcompat hextu hextu' hxM hxW
-          (WebLaplacianGeometry.hstar C h x v hv P a0 hu0 a1 hu1 a2 hu2 a3 hu3 m w hsectorNot au
+          (WebLaplacianGeometry.hstar C h x P a0 hu0 a1 hu1 a2 hu2 a3 hu3 m w hsectorNot au
               au' cellVertex sectorCornerX (WebLaplacianGeometry.pairCovered C a0 a1
           a2 a3 m w hcover) (WebLaplacianGeometry.toDomains C T h P a0 a1 a2 a3 m w au au' hdomu
           hdomu' tileM tileW) hxM)

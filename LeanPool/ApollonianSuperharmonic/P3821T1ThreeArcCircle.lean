@@ -250,8 +250,7 @@ private theorem adjacentArcIntersection (ι : Type) (P : PlaneTriangulation ι)
 
 private theorem cross₀₁ :
     ∀ (ι : Type), ∀ (P : PlaneTriangulation ι), ∀ (a : ι), ∀ (b : ι), ∀ (c : ι), ∀ (h₀ :
-        (↑(Set.Icc (0 : ℝ) 1) : Type) ≃ₜ (↑(P.edgeArc a b) : Type)), ((↑((h₀ : (↑(Set.Icc (0 : ℝ)
-        1) : Type) → (↑(P.edgeArc a b) : Type)) ⟨1, (by norm_num)⟩) : ℝ × ℝ) = P.position b) → ∀
+        (↑(Set.Icc (0 : ℝ) 1) : Type) ≃ₜ (↑(P.edgeArc a b) : Type)), ∀
             (h₁ : (↑(Set.Icc (0 : ℝ) 1) : Type) ≃ₜ (↑(P.edgeArc b c) : Type)), ((↑((h₁ : (↑(Set.Icc
         (0 : ℝ) 1) : Type) → (↑(P.edgeArc b c) : Type)) ⟨0, (by norm_num)⟩) : ℝ × ℝ) = P.position
         b) → ∀ (h₂ : (↑(Set.Icc (0 : ℝ) 1) : Type) ≃ₜ (↑(P.edgeArc c a) : Type)),
@@ -267,7 +266,7 @@ private theorem cross₀₁ :
         linarith [h₂x]⟩⟩ : P.edgeArc b c)) → (P.edgeArc a b ∩ P.edgeArc b c = {P.position b}) → ∀
             {x : ℝ}, ∀ {y : ℝ}, (0 ≤ x) → (x ≤ 1) → (1 < y) → (y ≤ 2) → (f x = f y) → x = y := by
   classical
-  intro ι P a b c h₀ h₀b h₁ h₁b h₂ clamp q₀ q₁ q₂ mid f fseg₀ fseg₁ hint₀₁ x y hx₀ hx₁ hy₁ hy₂ hxy
+  intro ι P a b c h₀ h₁ h₁b h₂ clamp q₀ q₁ q₂ mid f fseg₀ fseg₁ hint₀₁ x y hx₀ hx₁ hy₁ hy₂ hxy
   rw [fseg₀ x hx₀ hx₁, fseg₁ y hy₁ hy₂] at hxy
   let u : Set.Icc (0 : ℝ) 1 := ⟨x, ⟨hx₀, hx₁⟩⟩
   let v : Set.Icc (0 : ℝ) 1 := ⟨y - 1, ⟨by linarith, by linarith⟩⟩
@@ -291,8 +290,7 @@ private theorem cross₀₁ :
 private theorem cross₁₂ :
     ∀ (ι : Type), ∀ (P : PlaneTriangulation ι), ∀ (a : ι), ∀ (b : ι), ∀ (c : ι), ∀ (h₀ :
         (↑(Set.Icc (0 : ℝ) 1) : Type) ≃ₜ (↑(P.edgeArc a b) : Type)), ∀ (h₁ : (↑(Set.Icc (0 : ℝ)
-        1) : Type) ≃ₜ (↑(P.edgeArc b c) : Type)), ((↑((h₁ : (↑(Set.Icc (0 : ℝ) 1) : Type) →
-        (↑(P.edgeArc b c) : Type)) ⟨1, (by norm_num)⟩) : ℝ × ℝ) = P.position c) → ∀ (h₂ :
+        1) : Type) ≃ₜ (↑(P.edgeArc b c) : Type)), ∀ (h₂ :
             (↑(Set.Icc (0 : ℝ) 1) : Type) ≃ₜ (↑(P.edgeArc c a) : Type)), ((↑((h₂ : (↑(Set.Icc (0
             : ℝ)
         1) : Type) → (↑(P.edgeArc c a) : Type)) ⟨0, (by norm_num)⟩) : ℝ × ℝ) = P.position c) →
@@ -309,7 +307,7 @@ private theorem cross₁₂ :
         P.edgeArc c a = {P.position c}) → ∀ {x : ℝ}, ∀ {y : ℝ}, (1 < x) → (x ≤ 2) → (2 < y) → (y
         < 3) → (f x = f y) → x = y := by
   classical
-  intro ι P a b c h₀ h₁ h₁c h₂ h₂c clamp q₀ q₁ q₂ mid f fseg₁ fseg₂ hint₁₂ x y hx₁ hx₂ hy₂ hy₃ hxy
+  intro ι P a b c h₀ h₁ h₂ h₂c clamp q₀ q₁ q₂ mid f fseg₁ fseg₂ hint₁₂ x y hx₁ hx₂ hy₂ hy₃ hxy
   rw [fseg₁ x hx₁ hx₂, fseg₂ y hy₂ hy₃] at hxy
   let u : Set.Icc (0 : ℝ) 1 := ⟨x - 1, ⟨by linarith, by linarith⟩⟩
   let v : Set.Icc (0 : ℝ) 1 := ⟨y - 2, ⟨by linarith, by linarith⟩⟩
@@ -332,8 +330,7 @@ private theorem cross₁₂ :
 
 private theorem cross₀₂ :
     ∀ (ι : Type), ∀ (P : PlaneTriangulation ι), ∀ (a : ι), ∀ (b : ι), ∀ (c : ι), ∀ (h₀ :
-        (↑(Set.Icc (0 : ℝ) 1) : Type) ≃ₜ (↑(P.edgeArc a b) : Type)), ((↑((h₀ : (↑(Set.Icc (0 : ℝ)
-        1) : Type) → (↑(P.edgeArc a b) : Type)) ⟨0, (by norm_num)⟩) : ℝ × ℝ) = P.position a) → ∀
+        (↑(Set.Icc (0 : ℝ) 1) : Type) ≃ₜ (↑(P.edgeArc a b) : Type)), ∀
             (h₁ : (↑(Set.Icc (0 : ℝ) 1) : Type) ≃ₜ (↑(P.edgeArc b c) : Type)), ∀ (h₂ : (↑(Set.Icc (0
         : ℝ) 1) : Type) ≃ₜ (↑(P.edgeArc c a) : Type)), ((↑((h₂ : (↑(Set.Icc (0 : ℝ) 1) : Type) →
         (↑(P.edgeArc c a) : Type)) ⟨1, (by norm_num)⟩) : ℝ × ℝ) = P.position a) →
@@ -349,7 +346,7 @@ private theorem cross₀₂ :
         linarith [h₃x]⟩⟩ : P.edgeArc c a)) → (P.edgeArc c a ∩ P.edgeArc a b = {P.position a}) → ∀
             {x : ℝ}, ∀ {y : ℝ}, (0 ≤ x) → (x ≤ 1) → (2 < y) → (y < 3) → (f x = f y) → False := by
   classical
-  intro ι P a b c h₀ h₀a h₁ h₂ h₂a clamp q₀ q₁ q₂ mid f fseg₀ fseg₂ hint₂₀ x y hx₀ hx₁ hy₂ hy₃ hxy
+  intro ι P a b c h₀ h₁ h₂ h₂a clamp q₀ q₁ q₂ mid f fseg₀ fseg₂ hint₂₀ x y hx₀ hx₁ hy₂ hy₃ hxy
   rw [fseg₀ x hx₀ hx₁, fseg₂ y hy₂ hy₃] at hxy
   let u : Set.Icc (0 : ℝ) 1 := ⟨x, ⟨hx₀, hx₁⟩⟩
   let v : Set.Icc (0 : ℝ) 1 := ⟨y - 2, ⟨by linarith, by linarith⟩⟩
@@ -619,13 +616,13 @@ theorem P3821T1ThreeArcCircle {ι : Type} (P : PlaneTriangulation ι)
     ThreeArcCircleLemmas.adjacentArcIntersection ι P c a b hca hbc eca eab
   have cross₀₁ {x y : ℝ} (hx₀ : 0 ≤ x) (hx₁ : x ≤ 1)
       (hy₁ : 1 < y) (hy₂ : y ≤ 2) (hxy : f x = f y) : x = y := ThreeArcCircleLemmas.cross₀₁ ι P a
-          b c h₀ h₀b h₁ h₁b h₂ fseg₀ fseg₁ hint₀₁ (x := x) (y := y) hx₀ hx₁ hy₁ hy₂ hxy
+          b c h₀ h₁ h₁b h₂ fseg₀ fseg₁ hint₀₁ (x := x) (y := y) hx₀ hx₁ hy₁ hy₂ hxy
   have cross₁₂ {x y : ℝ} (hx₁ : 1 < x) (hx₂ : x ≤ 2)
       (hy₂ : 2 < y) (hy₃ : y < 3) (hxy : f x = f y) : x = y := ThreeArcCircleLemmas.cross₁₂ ι P a
-          b c h₀ h₁ h₁c h₂ h₂c fseg₁ fseg₂ hint₁₂ (x := x) (y := y) hx₁ hx₂ hy₂ hy₃ hxy
+          b c h₀ h₁ h₂ h₂c fseg₁ fseg₂ hint₁₂ (x := x) (y := y) hx₁ hx₂ hy₂ hy₃ hxy
   have cross₀₂ {x y : ℝ} (hx₀ : 0 ≤ x) (hx₁ : x ≤ 1)
       (hy₂ : 2 < y) (hy₃ : y < 3) (hxy : f x = f y) : False := ThreeArcCircleLemmas.cross₀₂ ι P a
-          b c h₀ h₀a h₁ h₂ h₂a fseg₀ fseg₂ hint₂₀ (x := x) (y := y) hx₀ hx₁ hy₂ hy₃ hxy
+          b c h₀ h₁ h₂ h₂a fseg₀ fseg₂ hint₂₀ (x := x) (y := y) hx₀ hx₁ hy₂ hy₃ hxy
   have hf_inj : ∀ x y : ℝ, x ∈ Set.Ico (0 : ℝ) 3 → y ∈ Set.Ico 0 3 →
       f x = f y → x = y := ThreeArcCircleLemmas.hf_inj ι P a b c h₀ h₁ h₂ fseg₀ fseg₁ fseg₂
           cross₀₁ cross₁₂ cross₀₂

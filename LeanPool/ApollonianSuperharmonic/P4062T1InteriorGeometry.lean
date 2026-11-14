@@ -42,8 +42,7 @@ private theorem hq1pos :
   · have hqnonneg : 0 ≤ (P.q : Int) := by omega
     have : P.p₁ * (P.q : Int) ≤ 0 := mul_nonpos_of_nonpos_of_nonneg hp hqnonneg
     omega
-  · have hp' : 1 ≤ P.p₁ := by omega
-    nlinarith
+  · nlinarith
 
 
 private theorem coord0 :
@@ -232,8 +231,7 @@ private theorem separate01 :
     exact hyn ((mem0 y).mpr h)
   by_cases hle : P.q₁ ≤ P.q₂
   · rcases adjacentCoordinates x y hxy with ⟨hre, hs⟩ | ⟨him, hs⟩ <;> omega
-  · have hgt : P.q₂ < P.q₁ := by omega
-    have hxsmall : x.re ≤ P.q₂ ∨ x.im ≤ P.q₂ := by
+  · have hxsmall : x.re ≤ P.q₂ ∨ x.im ≤ P.q₂ := by
       by_contra h
       push Not at h
       apply hn1
@@ -271,8 +269,7 @@ private theorem separate23 :
     exact hyn ((mem2 y).mpr h)
   by_cases hle : P.q₂ ≤ P.q₁
   · rcases adjacentCoordinates x y hxy with ⟨hre, hs⟩ | ⟨him, hs⟩ <;> omega
-  · have hgt : P.q₁ < P.q₂ := by omega
-    have hxout : P.q₂ ≤ x.re ∨ x.im ≤ P.q₁ := by
+  · have hxout : P.q₂ ≤ x.re ∨ x.im ≤ P.q₁ := by
       by_contra h
       push Not at h
       apply hn3

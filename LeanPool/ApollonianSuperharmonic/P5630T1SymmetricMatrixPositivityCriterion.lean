@@ -65,8 +65,7 @@ theorem P5630T1SymmetricMatrixPositivityCriterion (s u v : Real) :
           have hv0 : v = 0 := by
             have hprod : 0 ≤ s * v ^ 2 := mul_nonneg hs0 (sq_nonneg v)
             rcases eq_zero_or_eq_zero_of_mul_eq_zero hsprod with hs | hv
-            · have hp' : 0 ≤ v := by nlinarith [hp]
-              linarith
+            · linarith
             · exact (sq_eq_zero_iff.mp hv)
           rw [hv0]
           nlinarith

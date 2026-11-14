@@ -195,7 +195,7 @@ private theorem hxBoundary :
             j ∉ T.cells) → (x ∈ BoundaryFootprintVertices T)))) → (∀ (X : ProtoTile), ∀ (Y :
             ProtoTile), ∀ (Z : ProtoTile), ∀ (x : GaussianInt), (X.cells.Nonempty) →
             ((Y.cells.Nonempty) → ((Z.cells.Nonempty) → ((Disjoint X.cells Y.cells) → ((Disjoint
-            Y.cells Z.cells) → ((Disjoint Z.cells X.cells) → (∀ (jX : Fin (4 : ℕ)),
+            Y.cells Z.cells) → ((∀ (jX : Fin (4 : ℕ)),
             (LatticeVertexIncidentCell x jX ∈ X.cells) → (∀ (jY : Fin (4 : ℕ)),
             (LatticeVertexIncidentCell x jY ∈ Y.cells) → (∀ (jZ : Fin (4 : ℕ)),
             (LatticeVertexIncidentCell x jZ ∈ Z.cells) → (x ∈ BoundaryFootprintVertices X ∩
@@ -203,8 +203,7 @@ private theorem hxBoundary :
             BoundaryFootprintVertices Z ∧ x ∈ BoundaryFootprintVertices Z ∩
             BoundaryFootprintVertices X)))))))))) ) := by
   classical
-  intro incident_boundary X Y Z x hXne hYne hZne hXYdisjoint hYZdisjoint hZXdisjoint jX hjX jY
-      hjY jZ hjZ
+  intro incident_boundary X Y Z x hXne hYne hZne hXYdisjoint hYZdisjoint jX hjX jY hjY jZ hjZ
   have hXY := Finset.disjoint_left.mp hXYdisjoint
   have hYZ := Finset.disjoint_left.mp hYZdisjoint
   have hxXB : x ∈ BoundaryFootprintVertices X :=
@@ -223,8 +222,7 @@ private theorem hXY_YZ :
           ∀ (Y : ProtoTile),
             ∀ (Z : ProtoTile),
               ∀ (x : GaussianInt),
-                Finset GaussianInt →
-                  ∀ (jXY : Fin (4 : ℕ)),
+                ∀ (jXY : Fin (4 : ℕ)),
                     LatticeVertexIncidentCell x jXY ∈ X.cells ∧
                           LatticeVertexIncidentCell x (jXY + (1 : Fin (4 : ℕ))) ∈
                             Y.cells ∨
@@ -242,7 +240,7 @@ private theorem hXY_YZ :
                             (∀ ⦃a : LatticeCell⦄, a ∈ Z.cells → a ∉ X.cells) → jXY ≠ jYZ
     ) := by
   classical
-  intro X Y Z x eYZ jXY htXY jYZ htYZ hYZd hZXd h
+  intro X Y Z x jXY htXY jYZ htYZ hYZd hZXd h
   subst jYZ
   rcases htXY with htXY | htXY <;> rcases htYZ with htYZ | htYZ
   · exact hYZd htXY.2 htYZ.2
@@ -258,8 +256,7 @@ private theorem hYZ_ZX :
           ∀ (Y : ProtoTile),
             ∀ (Z : ProtoTile),
               ∀ (x : GaussianInt),
-                Finset GaussianInt →
-                  ∀ (jYZ : Fin (4 : ℕ)),
+                ∀ (jYZ : Fin (4 : ℕ)),
                     LatticeVertexIncidentCell x jYZ ∈ Y.cells ∧
                           LatticeVertexIncidentCell x (jYZ + (1 : Fin (4 : ℕ))) ∈
                             Z.cells ∨
@@ -278,7 +275,7 @@ private theorem hYZ_ZX :
                               (∀ ⦃a : LatticeCell⦄, a ∈ Z.cells → a ∉ X.cells) → jYZ ≠ jZX
     ) := by
   classical
-  intro X Y Z x eZX jYZ htYZ jZX htZX hXYd hYZd hZXd h
+  intro X Y Z x jYZ htYZ jZX htZX hXYd hYZd hZXd h
   subst jZX
   rcases htYZ with htYZ | htYZ <;> rcases htZX with htZX | htZX
   · exact hYZd htYZ.1 htZX.1
@@ -294,8 +291,7 @@ private theorem hZX_XY :
           ∀ (Y : ProtoTile),
             ∀ (Z : ProtoTile),
               ∀ (x : GaussianInt),
-                Finset GaussianInt →
-                  ∀ (jXY : Fin (4 : ℕ)),
+                ∀ (jXY : Fin (4 : ℕ)),
                     LatticeVertexIncidentCell x jXY ∈ X.cells ∧
                           LatticeVertexIncidentCell x (jXY + (1 : Fin (4 : ℕ))) ∈
                             Y.cells ∨
@@ -316,7 +312,7 @@ private theorem hZX_XY :
                                 jXY ≠ jYZ → jZX ≠ jXY
     ) := by
   classical
-  intro X Y Z x eXY jXY htXY jYZ jZX htZX hXYd hYZd hZXd hXY_YZ h
+  intro X Y Z x jXY htXY jYZ jZX htZX hXYd hYZd hZXd hXY_YZ h
   subst jXY
   rcases htZX with htZX | htZX <;> rcases htXY with htXY | htXY
   · exact hZXd htZX.1 htXY.1
@@ -328,11 +324,7 @@ private theorem hexhaust :
     (by
       classical
       exact
-        ∀ (X : ProtoTile), ∀ (Y : ProtoTile), ∀ (Z : ProtoTile), ∀ (x : GaussianInt), (Finset
-            GaussianInt) →
-                                 (Finset GaussianInt) →
-                                                               (Finset GaussianInt) →
-                                                                                             ∀
+        ∀ (X : ProtoTile), ∀ (Y : ProtoTile), ∀ (Z : ProtoTile), ∀ (x : GaussianInt), ∀
             (jXY : Fin (4 : ℕ)),
                                                         ((LatticeVertexIncidentCell x jXY ∈
             X.cells ∧ LatticeVertexIncidentCell x (jXY + (1 : Fin (4 : ℕ))) ∈ Y.cells ∨
@@ -349,7 +341,7 @@ private theorem hexhaust :
             Fin 4, LatticeVertexIncidentCell x j ∈ X.cells ∨ LatticeVertexIncidentCell x j ∈
             Y.cells ∨ LatticeVertexIncidentCell x j ∈ Z.cells))))))))) ) := by
   classical
-  intro X Y Z x eXY eYZ eZX jXY htXY jYZ htYZ jZX htZX hXY_YZ hYZ_ZX hZX_XY j
+  intro X Y Z x jXY htXY jYZ htYZ jZX htZX hXY_YZ hYZ_ZX hZX_XY j
   have hendpoint :
       (j = jXY ∨ j = jXY + 1) ∨
       (j = jYZ ∨ j = jYZ + 1) ∨
@@ -567,7 +559,7 @@ theorem LocalLatticeInterfaceSectors :
     obtain ⟨jY, hjY⟩ := raw_incident Y x hYne hxY
     obtain ⟨jZ, hjZ⟩ := raw_incident Z x hZne hxZ
     have hxBoundary := InterfaceSectorGeometry.hxBoundary incident_boundary X Y Z x hXne hYne
-        hZne hXYdisjoint hYZdisjoint hZXdisjoint jX hjX jY hjY jZ hjZ
+        hZne hXYdisjoint hYZdisjoint jX hjX jY hjY jZ hjZ
     obtain ⟨eXY, hxeXY, heXY⟩ :=
       SimpleGridPathVertexIncidentEdge _ _ hXYpath x hxBoundary.1
     obtain ⟨eYZ, hxeYZ, heYZ⟩ :=
@@ -583,12 +575,12 @@ theorem LocalLatticeInterfaceSectors :
     have hXYd := Finset.disjoint_left.mp hXYdisjoint
     have hYZd := Finset.disjoint_left.mp hYZdisjoint
     have hZXd := Finset.disjoint_left.mp hZXdisjoint
-    have hXY_YZ := InterfaceSectorGeometry.hXY_YZ X Y Z x eYZ jXY htXY jYZ htYZ hYZd hZXd
-    have hYZ_ZX := InterfaceSectorGeometry.hYZ_ZX X Y Z x eZX jYZ htYZ jZX htZX hXYd hYZd
+    have hXY_YZ := InterfaceSectorGeometry.hXY_YZ X Y Z x jXY htXY jYZ htYZ hYZd hZXd
+    have hYZ_ZX := InterfaceSectorGeometry.hYZ_ZX X Y Z x jYZ htYZ jZX htZX hXYd hYZd
         hZXd
-    have hZX_XY := InterfaceSectorGeometry.hZX_XY X Y Z x eXY jXY htXY jYZ jZX htZX hXYd
+    have hZX_XY := InterfaceSectorGeometry.hZX_XY X Y Z x jXY htXY jYZ jZX htZX hXYd
         hYZd hZXd hXY_YZ
-    have hexhaust := InterfaceSectorGeometry.hexhaust X Y Z x eXY eYZ eZX jXY htXY jYZ htYZ jZX
+    have hexhaust := InterfaceSectorGeometry.hexhaust X Y Z x jXY htXY jYZ htYZ jZX
         htZX hXY_YZ hYZ_ZX hZX_XY
     have hopposite := InterfaceSectorGeometry.hopposite X Y Z x jX hjX jY hjY jZ hjZ hXYd hYZd hZXd
     exact ⟨hexhaust, ⟨jX, hjX⟩, ⟨jY, hjY⟩, ⟨jZ, hjZ⟩, hopposite⟩

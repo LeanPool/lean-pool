@@ -803,10 +803,7 @@ private theorem htransverse :
         rw [ite_eq_right hsL]
         rw [hshiftV, hxdet]
         simpa [neg_mul] using (neg_pos.mpr (mul_neg_of_neg_of_pos hdxneg hdelta))
-  · have hdx0 : dx = 0 := by
-      by_contra h
-      exact hdx h
-    have hdy : dy ≠ 0 := hcoord.resolve_left hdx
+  · have hdy : dy ≠ 0 := hcoord.resolve_left hdx
     by_cases hsL : sL
     · by_cases hdypos : 0 < dy
       · refine ⟨(x.1 + delta, x.2), hballH delta hballDelta, ?_⟩

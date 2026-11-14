@@ -463,13 +463,11 @@ private theorem hnadj :
           ∀ (i : Fin (3 : ℕ)),
             ProperBandQuadruple q →
               (q i.succ).1 = (1 : ℤ) →
-                0 < (q i.succ).1 →
-                  ∀ (U : ProtoTile),
+                ∀ (U : ProtoTile),
                     ∀ (orientation : Bool),
                       ∀ (Rminus : ProtoTile),
                         ∀ (Rplus : ProtoTile),
-                          (Fin (4 : ℕ) → CircleCoordinates) →
-                            TileCentroid Rminus - TileCentroid U =
+                          TileCentroid Rminus - TileCentroid U =
                                 (1 / 2 : ℝ) •
                                 GaussianRealPoint
                                 (BandVectors.1 (q i.succ) (q (0 : Fin (4 : ℕ))) -
@@ -487,7 +485,7 @@ private theorem hnadj :
                                 GaussianRealPoint v
     ) := by
   classical
-  intro q i hq hunit hpos U orientation Rminus Rplus r hcminus hcplus hnorm
+  intro q i hq hunit U orientation Rminus Rplus hcminus hcplus hnorm
   rintro ⟨v,hv,hcv⟩
   have hveq : v = BandVectors.1 (q 0) (q i.succ) := by
     apply Zsqrtd.ext
@@ -757,8 +755,8 @@ private theorem positiveStep :
       (q 0).1+1 := LeftWebGeometry.hnorm q i hq hunit
   have hnadj : ¬ ∃ v : GaussianInt, UnitTriangularStep orientation v ∧
       TileCentroid Rplus - TileCentroid Rminus = GaussianRealPoint v :=
-          LeftWebGeometry.hnadj q i hq hunit hpos U orientation Rminus
-          Rplus r hcminus hcplus hnorm
+          LeftWebGeometry.hnadj q i hq hunit U orientation Rminus
+          Rplus hcminus hcplus hnorm
   have hUn : U.cells.Nonempty := by
     apply Finset.card_pos.mp
     change 0 < TileArea U

@@ -193,13 +193,13 @@ private theorem hheightlt :
       classical
       exact
         ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (E : P3650T1ExposedCorner p), ∀ (d :
-            Fin (n + (3 : ℕ))), ∀ (A : AffineBasis (Fin (3 : ℕ)) ℝ (ℝ × ℝ)), (∀ i, 0 ≤ A.coord i
-            (p.vertex d)) → ((A.coord 0 (p.vertex d) + A.coord 1 (p.vertex d) + A.coord 2
+            Fin (n + (3 : ℕ))), ∀ (A : AffineBasis (Fin (3 : ℕ)) ℝ (ℝ × ℝ)), ((A.coord 0 (p.vertex
+                d) + A.coord 1 (p.vertex d) + A.coord 2
             (p.vertex d) = 1) → ((E.height (p.vertex d) = A.coord 1 (p.vertex d)) → ((0 < A.coord
             0 (p.vertex d)) → ((0 < A.coord 2 (p.vertex d)) → (E.height (p.vertex d) < 1))))) )
             := by
   classical
-  intro n p E d A hcoord_nonneg hsum hheightd hcoord0 hcoord2
+  intro n p E d A hsum hheightd hcoord0 hcoord2
   rw [hheightd]
   linarith
 
@@ -798,7 +798,7 @@ theorem P3650T1MaximalHeightDiagonal {n : Nat} (p : P3381T1PolygonBoundary n)
   have hcoord0 := MaximalHeightGeometry.hcoord0 n p E d hdb hdnext A hA1 hA2 hcoord_nonneg hsum
   have hcoord2 := MaximalHeightGeometry.hcoord2 n p E d hdprev hdb A hA0 hA1 hcoord_nonneg hsum
       hcoord0
-  have hheightlt := MaximalHeightGeometry.hheightlt n p E d A hcoord_nonneg hsum hheightd hcoord0
+  have hheightlt := MaximalHeightGeometry.hheightlt n p E d A hsum hheightd hcoord0
       hcoord2
   let B := p.vertex E.b
   let P := p.vertex d

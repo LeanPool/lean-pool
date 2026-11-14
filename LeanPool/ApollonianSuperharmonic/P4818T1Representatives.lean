@@ -542,8 +542,7 @@ private theorem hex :
       · rw [hxrep, h'b]
         simp only [add_zsmul, one_zsmul]
         abel
-    · have hlow : s < k := by omega
-      have hdiff : 1 < r - s := by omega
+    · have hdiff : 1 < r - s := by omega
       let h' : GaussianInt := ⟨r - k - 1, s + k⟩
       have h'T : h' ∈ DiamondVertexDomains K false := by
         apply (hmem h').2

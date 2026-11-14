@@ -552,8 +552,7 @@ private theorem q_step :
       · simpa [b0] using q0 r
       · rw [hindex]
         simpa [b0, htime] using q0 r'
-    · have hlt : r.val < m0 := by simp [m0]
-      have hr' : r.val + 1 = m0 := by omega
+    · have hr' : r.val + 1 = m0 := by omega
       let j : Fin m1 := ⟨0, (s 1).positive⟩
       have hindex : ⟨(b0 r).val + 1, ha⟩ = b1 j := by
         apply Fin.ext

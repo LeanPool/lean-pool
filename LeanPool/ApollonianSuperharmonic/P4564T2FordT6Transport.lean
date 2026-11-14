@@ -38,12 +38,10 @@ private theorem hlineq :
             BandPackingSymmetry), ∀ (F : FordFareyParameter), (BandPackingSymmetryQuadrupleAction
             g ![q (0 : Fin (4 : ℕ)), q a.succ, q (a + (1 : Fin (3 : ℕ))).succ, q (a + (2 : Fin (3
             : ℕ))).succ] = FordRecursiveQuadruple F) → (((q (2 : Fin (4 : ℕ))).1 ≤ (q (1 : Fin (4
-            : ℕ))).1) → (((1 : ℤ) < (q (2 : Fin (4 : ℕ))).1) → (((0 : ℤ) < (q (0 : Fin (4 :
-            ℕ))).1 ∧ (∀ (i : Fin (3 : ℕ)), (0 : ℤ) ≤ (q i.succ).1) ∧ ∀ (i : Fin (3 : ℕ)), ∀ (j :
-            Fin (3 : ℕ)), (q i.succ).1 = (0 : ℤ) → (q j.succ).1 = (0 : ℤ) → i = j) → (∃ i : Fin
+            : ℕ))).1) → (((1 : ℤ) < (q (2 : Fin (4 : ℕ))).1) → ((∃ i : Fin
             4, (q i).1 = 0))))) ) := by
   classical
-  intro q hq a g F hnormal h12 hlarge qcur
+  intro q hq a g F hnormal h12 hlarge
   have hzero : ((FordRecursiveQuadruple F) 3).1 = 0 := by
     simp [FordRecursiveQuadruple]
   have hval := congrArg (fun t : Fin 4 → CircleCoordinates => (t 3).1) hnormal
@@ -984,7 +982,7 @@ theorem P4564T2FordT6Transport :
   intro q hq T hT a g F hF hnormal r hr hr0 hr2 hr3 h12 h23 hlarge
       P Q S hP hcells hQ hQcells hS hScells hclaim
   have qcur := ProperBandCurvatureStructure q hq
-  have hlineq := FordT6Geometry.hlineq q hq a g F hnormal h12 hlarge qcur
+  have hlineq := FordT6Geometry.hlineq q hq a g F hnormal h12 hlarge
   obtain ⟨b, h, F', hF', hrev, hword, hzero, hnorm⟩ :=
     FordRegimeConverse q hq hlineq
   have hb := FordT6Geometry.hb q h12 hlarge qcur hlineq b hzero

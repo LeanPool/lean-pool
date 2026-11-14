@@ -411,13 +411,12 @@ private theorem hxNotTail :
   exact (List.nodup_cons.mp this).1
 
 private theorem hzx :
-    Set GaussianInt →
-      ∀ (p₂ : List GaussianInt),
+    ∀ (p₂ : List GaussianInt),
         ∀ (x : GaussianInt),
           let c₂ := p₂.rotate (p₂.idxOf x);
-          ∀ (z : GaussianInt), List GaussianInt → z ∈ c₂.tail → x ∉ c₂.tail → z ≠ x := by
+          ∀ (z : GaussianInt), z ∈ c₂.tail → x ∉ c₂.tail → z ≠ x := by
   classical
-  intro V₁ p₂ x c₂ z zs hzTail hxNotTail h
+  intro p₂ x c₂ z hzTail hxNotTail h
   subst z
   exact hxNotTail hzTail
 
@@ -473,20 +472,6 @@ private theorem hwx :
   have hnot := List.dropWhile_get_zero_not good₁ c₁.tail (by simpa [rest₁] using hlenrest)
   have hwgood : ¬ good₁ w := by simpa [rest₁, hrest₁] using hnot
   simpa [good₁] using hwgood
-
-private theorem hRlast :
-    ∀ (p₁ : List GaussianInt),
-      ∀ (x : GaussianInt),
-        ∀ (z : GaussianInt),
-          let c₁ := p₁.rotate (p₁.idxOf z);
-          let good₁ (w : GaussianInt) : Bool := decide (w ≠ x);
-          let R := z :: (c₁.tail.takeWhile good₁ ++ [x])
-          R.getLast? = some x := by
-  classical
-  intro p₁ x z c₁ good₁ R
-  apply List.getLast?_eq_some_iff.mpr
-  refine ⟨z :: c₁.tail.takeWhile good₁, ?_⟩
-  simp [R]
 
 private theorem hc₂shape :
     ∀ (p₂ : List GaussianInt), ∀ (x : GaussianInt), ((p₂.rotate (p₂.idxOf x)).head? = some x) → (
@@ -1167,9 +1152,7 @@ theorem P3963T1MixedBoundaryCycle
   have hx₁ := MixedCycleDetails.hx₁ V₁ V₂ p₁ hV₁ x hx
   have hx₂ := MixedCycleDetails.hx₂ V₁ V₂ p₂ hV₂ x hx
   have hy₂ := MixedCycleDetails.hy₂ V₁ V₂ p₂ hV₂ y hy
-  have hidx₁x : p₁.idxOf x < p₁.length := List.idxOf_lt_length_iff.mpr hx₁
   have hidx₂x : p₂.idxOf x < p₂.length := List.idxOf_lt_length_iff.mpr hx₂
-  have hrot₁x := MixedCycleDetails.hrot₁x p₁ x hx₁ hidx₁x
   have hrot₂x := MixedCycleDetails.hrot₂x p₂ x hx₂ hidx₂x
   have cycle_chain (p : List GaussianInt) (a b : GaussianInt)
       (hh : p.head? = some a) (ht : p.getLast? = some b)
@@ -1212,8 +1195,7 @@ theorem P3963T1MixedBoundaryCycle
     List.takeWhile_append_dropWhile
   have hzTail := MixedCycleDetails.hzTail V₁ p₂ x z zs hrest₂
   have hxNotTail := MixedCycleDetails.hxNotTail p₂ x hrot₂x hc₂nodup
-  have hzx := MixedCycleDetails.hzx V₁ p₂ x z zs hzTail hxNotTail
-  have hq2head : (x :: (c₂.tail.takeWhile good ++ [z])).head? = some x := by simp
+  have hzx := MixedCycleDetails.hzx p₂ x z hzTail hxNotTail
   let c₁ := p₁.rotate (p₁.idxOf z)
   have hidx₁z : p₁.idxOf z < p₁.length :=
     List.idxOf_lt_length_iff.mpr (by rw [hV₁] at hzV₁; exact List.mem_toFinset.mp hzV₁)
@@ -1231,10 +1213,7 @@ theorem P3963T1MixedBoundaryCycle
   have hwx := MixedCycleDetails.hwx p₁ x z w ws hrest₁
   have hdecomp₁ : c₁.tail.takeWhile good₁ ++ rest₁ = c₁.tail :=
     List.takeWhile_append_dropWhile
-  have hxR : x ∈ (z :: (c₁.tail.takeWhile good₁ ++ [x])).toFinset := by simp
   let R := z :: (c₁.tail.takeWhile good₁ ++ [x])
-  have hRhead : R.head? = some z := by simp [R]
-  have hRlast := MixedCycleDetails.hRlast p₁ x z
   let prefix₂ := c₂.tail.takeWhile good
   have hc₂shape := MixedCycleDetails.hc₂shape p₂ x hrot₂x
   have hdecomp₂' := MixedCycleDetails.hdecomp₂' V₁ p₂ x z zs

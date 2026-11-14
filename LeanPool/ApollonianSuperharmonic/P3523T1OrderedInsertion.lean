@@ -737,14 +737,13 @@ private theorem boundaryCardUpdate :
               ∀ (b : Fin (n + 3)),
                 a ≠ b →
                   a ∈ V →
-                    b ∈ V →
-                      d ∉ V →
+                    d ∉ V →
                         (∀ P ∈ B, ∀ x ∈ P, x ∈ V) →
                           { a, b } ∈ B →
                             (insert { a, d } (insert { d, b } (B.erase { a, b }))).card =
                             B.card + 1 := by
   classical
-  intro n B V a d b hab ha hb hd hend herase
+  intro n B V a d b hab ha hd hend herase
   have had : a ≠ d := by
     intro h
     exact hd (h ▸ ha)
@@ -1424,7 +1423,7 @@ private theorem hboundary :
       (hend : ∀ P ∈ B, ∀ x ∈ P, x ∈ V)
       (herase : {a, b} ∈ B) :
       (insert {a, d} (insert {d, b} (B.erase {a, b}))).card = B.card + 1 :=
-          OrderedInsertionGeometry.boundaryCardUpdate n B V a d b hab ha hb hd hend
+          OrderedInsertionGeometry.boundaryCardUpdate n B V a d b hab ha hd hend
           herase
   have hstate : ∀ h : Nat, h ≤ c.steps.length →
       (∀ P ∈ c.boundary h, ∀ x ∈ P, x ∈ c.vertices h) ∧

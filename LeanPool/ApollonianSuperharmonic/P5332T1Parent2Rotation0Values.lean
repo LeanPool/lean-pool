@@ -35,8 +35,7 @@ private theorem rpos :
   by_cases hp : P.p₁ ≤ 0
   · have hq2 : 2 ≤ (P.q : Int) := hq'
     nlinarith
-  · have hp' : 1 ≤ P.p₁ := by omega
-    have hq2 : 2 ≤ (P.q : Int) := hq'
+  · have hq2 : 2 ≤ (P.q : Int) := hq'
     nlinarith
 
 private theorem hcenterB :
@@ -181,16 +180,14 @@ private theorem values :
 
 private theorem companion :
     ∀ (P : FordFareyParameter),
-      (P.q : Int) = (P.q₁ : Int) + (P.q₂ : Int) →
-        ∀ (Y : ℤ),
-          (0 : ℤ) ≤ (0 : ℤ) ∧ (0 : ℤ) ≤ (↑P.q : ℤ) ∧ (0 : ℤ) ≤ Y ∧ Y ≤ (↑P.q : ℤ) →
-            1 ≤ Y →
+      ∀ (Y : ℤ),
+          1 ≤ Y →
               let t : Int := (P.q₂ : Int) - Y
               (⟨0, Y⟩ : GaussianInt) - (P5332T1ParentRows P 1 0 0).companion ∈
                   FordVertexDomain P.q ↔
                 t = 0 ∧ Even (0 + 1 : Nat) := by
   classical
-  intro P qsum Y hx0 hlow t
+  intro P Y hlow t
   have hn : ¬ Even (0+1 : Nat) := by norm_num
   have hcomp : (P5332T1ParentRows P 1 0 0).companion =
       ⟨-(P.q₂ : Int),-(P.q : Int)⟩ := by rfl
@@ -300,7 +297,7 @@ theorem P5332T1Parent2Rotation0Values (P A : FordFareyParameter) (hq : 1 < P.q)
             qsum rpos spos hsn Y hAqInt hdisp hx0 hx'0 hY hlow valLeft valChildEast valA hother
   have companion : (⟨0,Y⟩ : GaussianInt) -
       (P5332T1ParentRows P 1 0 0).companion ∈ FordVertexDomain P.q ↔
-        t = 0 ∧ Even (0+1 : Nat) := Parent2Rotation0Proof.companion P qsum Y hx0 hlow
+        t = 0 ∧ Even (0+1 : Nat) := Parent2Rotation0Proof.companion P Y hlow
   refine ⟨t, ht0, hts, hxcenter, rfl, ?_, companion⟩
   intro l
   exact values l

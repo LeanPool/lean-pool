@@ -154,11 +154,7 @@ private theorem ht0 :
     have hzge : a.im ≤ z.im := by
       simpa [min_eq_left habh.le] using hm.1
     exact div_nonneg (sub_nonneg.mpr hzge) hdb.le
-  · have hdvals : b.im ≠ a.im := by
-      intro hh
-      apply hdne
-      linarith
-    have hdb' : b.im - a.im < 0 := lt_of_le_of_ne (le_of_not_gt hdb) hdne
+  · have hdb' : b.im - a.im < 0 := lt_of_le_of_ne (le_of_not_gt hdb) hdne
     have hzle : z.im ≤ a.im := by
       rcases le_max_iff.mp hm.2.1 with hza | hzb
       · exact hza
@@ -181,11 +177,7 @@ private theorem ht1 :
       · linarith
       · exact hzb
     exact (div_le_one₀ hdb).2 (by linarith)
-  · have hdvals : b.im ≠ a.im := by
-      intro hh
-      apply hdne
-      linarith
-    have hdb' : b.im - a.im < 0 := lt_of_le_of_ne (le_of_not_gt hdb) hdne
+  · have hdb' : b.im - a.im < 0 := lt_of_le_of_ne (le_of_not_gt hdb) hdne
     have hzge : b.im ≤ z.im := by
       rcases min_le_iff.mp hm.1 with hza | hzb
       · exact (sub_nonpos.mp hdb'.le).trans hza

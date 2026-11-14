@@ -78,8 +78,7 @@ private theorem hWest :
   classical
   intro P hq f hqn top X hsum hq₂pos hx hx' t hother hbaseval
   by_cases htz : t = 0
-  · have hXzero : X = 0 := by simpa [t] using htz
-    have hmem : (⟨-1,0⟩ : GaussianInt) - (P5332T1RightRows P 1 0).displacement ∈
+  · have hmem : (⟨-1,0⟩ : GaussianInt) - (P5332T1RightRows P 1 0).displacement ∈
         FordVertexDomain P.q := by
       dsimp [P5332T1RightRows]
       change 0 ≤ -1 - (-(P.q₂ : Int)) ∧ -1 - (-(P.q₂ : Int)) ≤ P.q ∧
@@ -104,7 +103,7 @@ private theorem hSouth :
         : Int) ≠ 0), (∀ (u : Int), ∀ (v : Int), (0 ≤ u) → ((u ≤ P.q) → ((0 ≤ v) → ((v ≤ P.q) →
         ((u ≤ 1 ∨ (P.q : Int)-1 ≤ u ∨ v ≤ 1 ∨ (P.q : Int)-1 ≤ v) → (FordOdometer P ⟨u,v⟩ =
         IntegerCeilDiv (P.p*u*v) P.q hqn)))))) → (∀ (X : ℤ), ((P.q : Int) = (P.q₁ : Int) + P.q₂)
-        → ((0 < (P.q₁ : Int)) → (((0 : ℤ) ≤ X - -(↑P.q₂ : ℤ) ∧ X - -(↑P.q₂ : ℤ) ≤ (↑P.q : ℤ) ∧ (0
+        → ((((0 : ℤ) ≤ X - -(↑P.q₂ : ℤ) ∧ X - -(↑P.q₂ : ℤ) ≤ (↑P.q : ℤ) ∧ (0
         : ℤ) ≤ (0 : ℤ) - -(↑P.q : ℤ) ∧ (0 : ℤ) - -(↑P.q : ℤ) ≤ (↑P.q : ℤ)) → (
     let t : Int := X
     (∀ (y : GaussianInt), y - (P5332T1RightRows P (1 : Fin (3 : ℕ)) (0 : ℤ)).displacement ∈
@@ -113,7 +112,7 @@ private theorem hSouth :
         y.re + (P5332T1RightRows P (1 : Fin (3 : ℕ)) (0 : ℤ)).linear.im * y.im + -P.p * (↑P.q₂
         : ℤ)) → (f ((⟨t,0⟩ : GaussianInt)+(-⟨0,1⟩)) = -((P.p*t+1)/P.q))))))) := by
   classical
-  intro P hq f hqn boundary X hsum hq₁pos hx' t hother
+  intro P hq f hqn boundary X hsum hx' t hother
   have hdom : (⟨t,-1⟩ : GaussianInt) - (P5332T1RightRows P 1 0).displacement ∈ FordVertexDomain
       P.q := by
     dsimp [P5332T1RightRows]
@@ -276,9 +275,6 @@ theorem P5332T1RightSecondValues (P : FordFareyParameter) (hq : 1 < P.q)
     Zsqrtd.im_sub] at hx'
   have hsum : (P.q : Int) = (P.q₁ : Int) + P.q₂ := by exact_mod_cast P.sum_q
   have hq₂pos : 0 < (P.q₂ : Int) := by exact_mod_cast P.q₂_pos
-  have hq₁pos : 0 < (P.q₁ : Int) := by
-    have hp := (P5130T5ParentArithmetic P hq).1
-    exact_mod_cast hp
   have hgeom : Y = 0 ∧ 0 ≤ X ∧ X ≤ P.q₁ := by omega
   rcases hgeom with ⟨rfl, hX, hXr⟩
   let t : Int := X
@@ -307,7 +303,7 @@ theorem P5332T1RightSecondValues (P : FordFareyParameter) (hq : 1 < P.q)
     rw [hp, hbaseval t 1 ht (by omega) (by omega) (by omega) (by omega)]
     norm_num [IntegerCeilDiv]
   have hSouth : f ((⟨t,0⟩ : GaussianInt)+(-⟨0,1⟩)) = -((P.p*t+1)/P.q) :=
-      RightSecondValuesProof.hSouth P hq f hqn boundary X hsum hq₁pos hx' hother
+      RightSecondValuesProof.hSouth P hq f hqn boundary X hsum hx' hother
   refine ⟨t, ht, htr, ?_, ?_, ?_, ?_⟩
   · simp [t, P5332T1RightRows]
   · rfl
@@ -318,8 +314,7 @@ theorem P5332T1RightSecondValues (P : FordFareyParameter) (hq : 1 < P.q)
     · simpa [P5332T1RightRows, t, sub_eq_add_neg] using hWest
     · simpa [P5332T1RightRows, t, IntegerCeilDiv] using hNorth
     · simpa [P5332T1RightRows, t] using hSouth
-  · have hq1lt : (P.q₁ : Int) < P.q := by exact_mod_cast P.q₁_lt
-    have dval : (P5332T1RightRows P 1 0).displacement =
+  · have dval : (P5332T1RightRows P 1 0).displacement =
         (⟨-(P.q₂ : Int),-(P.q : Int)⟩ : GaussianInt) := by
       simp [P5332T1RightRows]
     have rect (u v : Int) :

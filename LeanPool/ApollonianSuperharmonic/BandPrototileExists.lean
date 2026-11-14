@@ -61,17 +61,6 @@ private theorem hcurvAt165 :
   have hpos : 0 < C.1.1.1 := C.2
   omega
 
-private theorem hgt :
-    (by
-      classical
-      exact
-        ∀ (n : ℕ), ∀ (C : BandCircle), (C.1.1.1.toNat = n) → ((¬n = (1 : ℕ)) → (1 < n)) ) := by
-  classical
-  intro n C hc hone
-  have hpos : 0 < C.1.1.1 := C.2
-  have : 0 < n := by omega
-  omega
-
 private theorem hproper :
     (by
       classical
@@ -1762,8 +1751,7 @@ private theorem existence :
     intro C hc
     by_cases hone : n = 1
     · exact unitExists C (PrototileConstruction.hcurvAt165 n C hc hone)
-    · have hgt := PrototileConstruction.hgt n C hc hone
-      obtain hunit | ⟨q, hq, hchild, hless, _⟩ := BandGenealogy C
+    · obtain hunit | ⟨q, hq, hchild, hless, _⟩ := BandGenealogy C
       · have hcurvature : n = 1 := by simpa only [hunit, Int.toNat_one] using hc.symm
         exact (hone hcurvature).elim
       · have hroot : q 0 = C.1.1 := by simpa using hchild

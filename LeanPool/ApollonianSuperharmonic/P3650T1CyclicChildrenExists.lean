@@ -1824,8 +1824,7 @@ private theorem hcarrier_union (n : Nat) (p : P3381T1PolygonBoundary n) (a : Fin
         have hxi : x ∈ segment Real (p.vertex (il i)) (p.vertex (il (i + 1))) := by
           simpa only [hil, hilnext] using hj
         exact Or.inl ((hleft_mem x).mpr ⟨i, hxi⟩)
-      · have htge : k ≤ t.val := by omega
-        have hti : t.val - k < N - k := by omega
+      · have hti : t.val - k < N - k := by omega
         let i : Fin (rightN + 3) := ⟨t.val - k, by rw [hrightLen]; omega⟩
         have hir : ir i = j := by
           have hpos : posR ⟨t.val - k, by rw [hrightLen]; omega⟩ = t.val := by
@@ -1918,7 +1917,6 @@ private theorem hcarrier_intersection (n : Nat) (p : P3381T1PolygonBoundary n) (
   let ir : Fin (rightN + 3) → Fin N := fun i => rot ⟨posR i, hposRlt i⟩
   have hleft_inj : Function.Injective il := hleft_inj n a b hab hnext hprev
   have hright_inj : Function.Injective ir := hright_inj n a b hab hnext hprev
-  have hAil : il 0 = a := hAil n a b hab hnext hprev
   have hik : k < leftN + 3 := hik n a b hab hnext hprev
   let ik : Fin (leftN + 3) := ⟨k, hik⟩
   have hBil : il ik = b := hBil n a b hab hnext hprev
@@ -2003,8 +2001,7 @@ private theorem hcarrier_intersection (n : Nat) (p : P3381T1PolygonBoundary n) (
           have habidx : il i = a ∨ il i = b := by
             simpa only [Set.mem_insert_iff, Set.mem_singleton_iff] using habmem
           rcases habidx with hia | hib
-          · have hi0 : i = 0 := hleft_inj (hia.trans hAil.symm)
-            have hjlast : j = lastR := hright_inj (by
+          · have hjlast : j = lastR := hright_inj (by
               calc
                 ir j = il i := hq.symm
                 _ = a := hia

@@ -175,8 +175,7 @@ private theorem hrestrict :
         have hfp : FootprintVertices (S a s) = FootprintVertices X.2 := by
           rcases huniq with ⟨heq, hempty⟩
           by_cases hn : (S a s).cells.Nonempty
-          · have hn' : X.2.cells.Nonempty := by simpa [heq] using hn
-            simp [FootprintVertices, hn, heq]
+          · simp [FootprintVertices, hn, heq]
           · have he : (S a s).cells = ∅ := Finset.not_nonempty_iff_eq_empty.mp hn
             have he' : X.2.cells = ∅ := by simpa [heq] using he
             have ha := hempty he'

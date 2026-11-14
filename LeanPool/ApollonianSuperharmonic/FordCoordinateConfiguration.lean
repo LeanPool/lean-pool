@@ -771,10 +771,7 @@ private theorem circleExists :
   classical
   intro P claim
   by_cases hu : P.q = 1
-  · have hp1 : P.q₁ = 0 := by
-      have h := P.q₁_lt
-      omega
-    let z : GaussianInt := ⟨0, P.p - 1⟩
+  · let z : GaussianInt := ⟨0, P.p - 1⟩
     have hs : SemiProperQuadruple
         ![(1, 1 + 2 * z), (1, 1 + 2 * z + 2 * (⟨0, 1⟩ : GaussianInt)),
           (0, 1), (0, -1)] := SemiProperQuadruple.base z

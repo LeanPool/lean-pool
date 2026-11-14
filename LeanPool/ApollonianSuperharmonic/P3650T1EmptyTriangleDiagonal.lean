@@ -343,8 +343,7 @@ private theorem hintAvoid :
                 Fin.val_add_eq_of_add_lt (by simpa using hjlt)
               rw [hadd] at hjv
               simp at hjv
-            · have hjval' : j.val + 1 = n + 3 := by omega
-              simp [Fin.val_last]
+            · simp [Fin.val_last]
               omega
           rw [hjlast]
           simp []

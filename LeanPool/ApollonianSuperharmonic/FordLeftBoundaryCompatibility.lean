@@ -487,9 +487,7 @@ private theorem hcoc :
     (by
       classical
       exact
-        (Fin (4 : ℕ) → CircleCoordinates) →
-          Fin (3 : ℕ) →
-            ∀ (P2 : FordFareyParameter),
+        ∀ (P2 : FordFareyParameter),
               ∀ (t : Fin (3 : ℕ)),
                 BandVectors.1 (FordRecursiveQuadruple P2 (1 : Fin (4 : ℕ)))
                       (FordRecursiveQuadruple P2 (0 : Fin (4 : ℕ))) =
@@ -525,7 +523,7 @@ private theorem hcoc :
                               else if t = 1 then -(P2.q * P2.p₂) else 0
     ) := by
   classical
-  intro w r2 P2 t hv2 hv3 ha1 ha2 ha3 ha4 y
+  intro P2 t hv2 hv3 ha1 ha2 ha3 ha4 y
   fin_cases t
   · change FordOdometer P2 (y + BandVectors.1 (FordRecursiveQuadruple P2 1)
       (FordRecursiveQuadruple P2 0)) - FordOdometer P2 y = _
@@ -742,8 +740,8 @@ theorem FordLeftBoundaryCompatibility
               (BandVectors.2 (FordRecursiveQuadruple P2 t.succ)
                 (FordRecursiveQuadruple P2 0)).im * y.im +
               (if t = 0 then P2.q₁ * P2.p else
-               if t = 1 then -(P2.q * P2.p₂) else 0) := FordBoundaryCompatibilityGeometry.hcoc w
-                   r2 P2 t hv2 hv3 ha1 ha2 ha3 ha4
+               if t = 1 then -(P2.q * P2.p₂) else 0) := FordBoundaryCompatibilityGeometry.hcoc P2
+                   t hv2 hv3 ha1 ha2 ha3 ha4
       by_cases hdj : Disjoint
           ((BandPackingSymmetryPartialOdometerAction g2 h).domain : Set GaussianInt)
           ((BandPackingSymmetryPartialOdometerAction g2 h').domain : Set GaussianInt)

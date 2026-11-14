@@ -1150,8 +1150,7 @@ private theorem hzeroK :
                               let f0 := first en
                               let f1 := second en
                               let g := if f = f0 then f1 else f0
-                              (∃ j, P.plane.faceVertex g j = e) →
-                                ∀ (j : Fin (3 : ℕ)),
+                              ∀ (j : Fin (3 : ℕ)),
                                 P.plane.faceVertex g j = a →
                                 ∀ (δ₁ : ℝ),
                                 ∀ (δ₂ : ℝ),
@@ -1163,7 +1162,7 @@ private theorem hzeroK :
     ) := by
   classical
   intro ι P D F a r u hunit x B hincidentSectorData I Nsub first second faceOtherMatch f K z i
-      hi e he hea hae t hzeq en f0 f1 g hgE j hj δ₁ δ₂ eps hepst hball₁' q hq hdet
+      hi e he hea hae t hzeq en f0 f1 g j hj δ₁ δ₂ eps hepst hball₁' q hq hdet
   have hu : u e ≠ 0 := by
     intro heq
     have := hunit e hae
@@ -1766,8 +1765,8 @@ private theorem hKlocal :
       have heps₁ := FaceGapProof.heps₁ t δ₁ hδ₁ δ₂
       have heps₂ := FaceGapProof.heps₂ t δ₁ δ₂ hδ₂
       have hzeroK := FaceGapProof.hzeroK ι P
-              D F a r u hunit hincidentSectorData faceOtherMatch f z i hi e he hea hae t hzeq
-              hgE j hj δ₁ δ₂ (FaceGapProof.hepst t ht δ₁ δ₂) (FaceGapProof.hball₁' ι P D a r z
+              D F a r u hunit hincidentSectorData faceOtherMatch f z i hi e he hea hae t hzeq j hj
+                  δ₁ δ₂ (FaceGapProof.hepst t ht δ₁ δ₂) (FaceGapProof.hball₁' ι P D a r z
                   t δ₁ hball₁ δ₂ heps₁)
       have memK (g : P.plane.Face) (j : Fin 3)
           (hj : P.plane.faceVertex g j = a) (q : Real × Real)

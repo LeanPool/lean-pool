@@ -407,12 +407,12 @@ private theorem translatedFootprint :
     (by
       classical
       exact
-        ∀ (P : FordFareyParameter), ((FordTile P.q).cells.Nonempty) → ((FootprintVertices
+        ∀ (P : FordFareyParameter), ((FootprintVertices
             (FordTile P.q) = FordVertexDomain P.q) → (∀ (w : GaussianInt), FootprintVertices
             (TileTranslation (FordTile P.q) w) = GaussianTranslation w '' FordVertexDomain P.q))
             ) := by
   classical
-  intro P hFnon hFfoot w
+  intro P hFfoot w
   calc
     FootprintVertices (TileTranslation (FordTile P.q) w) =
         GaussianTranslation w '' FootprintVertices (FordTile P.q) :=
@@ -597,7 +597,7 @@ theorem P4158T1MatchedFordPair
   have translatedFootprint (w : GaussianInt) :
       FootprintVertices (TileTranslation (FordTile P.q) w) =
         GaussianTranslation w '' FordVertexDomain P.q := MatchedFordGeometry.translatedFootprint
-            P hFnon hFfoot w
+            P hFfoot w
   have footprintCoord (w z : GaussianInt) :
       z ∈ FootprintVertices (TileTranslation (FordTile P.q) w) ↔
         0 ≤ (z-w).re ∧ (z-w).re ≤ (P.q : Int) ∧

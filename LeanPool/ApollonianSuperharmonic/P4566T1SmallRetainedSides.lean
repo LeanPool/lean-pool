@@ -64,7 +64,7 @@ private theorem unit :
   | retainThirdOther _ _ _ ih => exact ih
 
 private theorem rootValues :
-    (Fin 4 → CircleCoordinates) → (
+    (
     let I : GaussianInt := ⟨0, 1⟩
     (∀ (z : GaussianInt), have q := ![((1 : ℤ), (1 : GaussianInt) + (2 : GaussianInt) * z), ((1 :
         ℤ), (1 : GaussianInt) + (2 : GaussianInt) * z + (2 : GaussianInt) * ⟨(0 : ℤ), (1 : ℤ)⟩),
@@ -99,7 +99,7 @@ private theorem rootValues :
         : ℤ), (1 : GaussianInt)) = -I ∧ BandVectors.1 ((0 : ℤ), (1 : GaussianInt)) ((1 : ℤ), (1 :
         GaussianInt) + (2 : GaussianInt) * z + (2 : GaussianInt) * I) = (-1 : GaussianInt))))) := by
   classical
-  intro p I baseLaw stepLaw flipLaw z
+  intro I baseLaw stepLaw flipLaw z
   let b : Fin 4 → CircleCoordinates :=
     ![(1, 1 + 2 * z), (1, 1 + 2 * z + 2 * I), (0, 1), (0, -1)]
   have hb : SemiProperQuadruple b := SemiProperQuadruple.base z
@@ -301,7 +301,7 @@ theorem P4566T1SmallRetainedSides
       BandVectors.1 (1, 1 + 2 * z + 2 * I) (0, -1) = 1 ∧
       BandVectors.1 (1, 1 + 2 * z + 2 * I) (1, 1 + 2 * z) = 1 + I ∧
       BandVectors.1 (1, 1 + 2 * z) (0, 1) = -I ∧
-      BandVectors.1 (0, 1) (1, 1 + 2 * z + 2 * I) = -1 := SmallRetainedSidesProof.rootValues p
+      BandVectors.1 (0, 1) (1, 1 + 2 * z + 2 * I) = -1 := SmallRetainedSidesProof.rootValues
           baseLaw stepLaw flipLaw z
   have data :
       (PrimitiveVectorOrientation (p 2) (p 3) ∧

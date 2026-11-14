@@ -127,7 +127,6 @@ theorem SemiProperForestClassification (q : Fin 4 → CircleCoordinates)
           change SemiProperQuadruple _ ∧ _
           refine ⟨SemiProperQuadruple.successor proper.1, ?_⟩
           have h0 : (r 1).1 < (r 0).1 := by simpa using proper.2 0
-          have h2 : (r 3).1 < (r 0).1 := by simpa using proper.2 2
           intro j
           fin_cases j
           · dsimp

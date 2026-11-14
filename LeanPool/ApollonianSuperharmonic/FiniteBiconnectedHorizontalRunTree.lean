@@ -372,9 +372,7 @@ private theorem hdownJ :
   · rcases h with h | h
     · have hr := congrArg Zsqrtd.re h
       simp [I] at hr
-    · have heq : (v.1 - I : GaussianInt) + I = v.1 := by
-        ext <;> simp [I]
-      exact h.2
+    · exact h.2
 
 private theorem path_zip :
     ∀ (S : Finset GaussianInt),

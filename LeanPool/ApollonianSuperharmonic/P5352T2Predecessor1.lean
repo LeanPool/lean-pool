@@ -441,13 +441,12 @@ private theorem hPcenterQ :
                   let Q (a b : Int) : Int :=
                     (Int.natAbs a : Int) * ((Int.natAbs a : Int) - 1) / 2 -
                       (a - b) ^ 2 / 4;
-                  (Int.natAbs (p - 1) : Int) = p - 1 →
-                    ∀ (absKm : (Int.natAbs (p - k) : Int) = k - p),
+                  ∀ (absKm : (Int.natAbs (p - k) : Int) = k - p),
                       DiamondOdometer ⟨K.1 - 1, by omega⟩ ⟨p - k, k - p⟩ =
                         Q (p - k) (k - p)
     ) := by
   classical
-  intro K hk k d pred p hcast hpz Q absPm absKm
+  intro K hk k d pred p hcast hpz Q absKm
   have he : (⟨p,2*k+1-p⟩:GaussianInt)-d=⟨p-k,k-p⟩ := by ext <;> simp [d]; ring
   have hm : (⟨p-k,k-p⟩:GaussianInt) ∈ FootprintVertices (DiamondTile (K.1-1)) := by
     have hh := hpz
@@ -832,7 +831,7 @@ theorem P5352T2Predecessor1 (K : DiamondParameter) (hk : 1 < K.1)
         rw [Int.natCast_natAbs,abs_of_nonpos (by omega)]; omega
       have qpc := FirstPredecessorProof.qpc K p sqEven absKm
       have hPcenterQ : DiamondOdometer (⟨K.1-1,by omega⟩) ⟨p-k,k-p⟩=Q (p-k) (k-p) :=
-          FirstPredecessorProof.hPcenterQ K hk p hcast hpz absPm absKm
+          FirstPredecessorProof.hPcenterQ K hk p hcast hpz absKm
       have hPcval : f ⟨p,2*k+1-p⟩=Q (p-k) (k-p)+k*p+B := by
         rw [hPcenter,hPcenterQ]
       have absKme := FirstPredecessorProof.absKme p k hpk

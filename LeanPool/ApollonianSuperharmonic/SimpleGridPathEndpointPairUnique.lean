@@ -305,7 +305,6 @@ theorem SimpleGridPathEndpointPairUnique
 -- BODY
   rcases h with ⟨p, hp, hlen, hx, hy, hV, hstep, hE⟩
   rcases h' with ⟨q, hq, hqlen, hx', hy', hV', hstep', hE'⟩
-  have hpne : p ≠ [] := List.ne_nil_of_length_pos (by omega)
   have hqne : q ≠ [] := List.ne_nil_of_length_pos (by omega)
   have hpform : ∃ r, p = x :: r := List.head?_eq_some_iff.mp hx
   have hqform : ∃ r, q = x' :: r := List.head?_eq_some_iff.mp hx'

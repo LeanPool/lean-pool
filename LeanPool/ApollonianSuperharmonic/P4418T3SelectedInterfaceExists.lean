@@ -705,45 +705,6 @@ private theorem modifiedEdges :
   have := (hclass.1 a b hne).1.mpr hadj
   simpa only [cert.modified_tile] using this
 
-private theorem modifiedPath :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C
-            T), ∀ (a : PeriodicSubtileIndex), ∀ (b : PeriodicSubtileIndex),
-        let P := cert.P
-        let O := cert.O
-        let u := cert.u
-        let v := cert.v
-        (a ≠ b) → (((FootprintEdges (ModifiedSubtileOccurrenceInterpretation P O u v a) ∩
-            FootprintEdges (ModifiedSubtileOccurrenceInterpretation P O u v b)).Nonempty) → (∃ x
-            y : GaussianInt, SimpleGridPathBetween (FootprintVertices
-            (ModifiedSubtileOccurrenceInterpretation P O u v a) ∩ FootprintVertices
-            (ModifiedSubtileOccurrenceInterpretation P O u v b)) (FootprintEdges
-            (ModifiedSubtileOccurrenceInterpretation P O u v a) ∩ FootprintEdges
-            (ModifiedSubtileOccurrenceInterpretation P O u v b)) x y)) ) := by
-  classical
-  intro q cfg C T cert a b P O u v hne modifiedEdges
-  have hclass := PeriodicTileIntersectionClassification cert.modified
-  have hpaths := PeriodicTileIntersectionPaths cert.modified hclass.2 a b hne
-  have modifiedEdges' :
-      (FootprintEdges (cert.modified.tile a) ∩
-        FootprintEdges (cert.modified.tile b)).Nonempty := by
-    simpa only [cert.modified_tile] using modifiedEdges
-  rcases hpaths.1.mpr modifiedEdges' with ⟨hadj, f, g, hfg, hf, hg, hfaces, hpath⟩
-  have hraw := (hclass.1 a b hne).2.1 modifiedEdges'
-  rw [← hraw.2] at hpath
-  have hpath' :
-      SimpleGridPathBetween
-        (FootprintVertices (ModifiedSubtileOccurrenceInterpretation P O u v a) ∩
-          FootprintVertices (ModifiedSubtileOccurrenceInterpretation P O u v b))
-        (FootprintEdges (ModifiedSubtileOccurrenceInterpretation P O u v a) ∩
-          FootprintEdges (ModifiedSubtileOccurrenceInterpretation P O u v b))
-        (cert.modified.rho f) (cert.modified.rho g) := by
-    simpa only [cert.modified_tile] using hpath
-  exact ⟨_, _, hpath'⟩
-
 private theorem headLastNe :
     (by
       classical
@@ -1229,18 +1190,11 @@ private theorem selectedCertificate :
         let face1 : PeriodicSubtileFaceIndex := selectedSecondFace q cfg C T cert a b row
         let F0 := cert.modifiedFaceEquivalence.symm face0
         let F1 := cert.modifiedFaceEquivalence.symm face1
-        (F0 ≠ F1) → (((∃ iA iB iO : Fin 3, cert.modified.plane.faceVertex F0 iA = a ∧
+        (((∃ iA iB iO : Fin 3, cert.modified.plane.faceVertex F0 iA = a ∧
             cert.modified.plane.faceVertex F0 iB = b ∧ cert.modified.plane.faceVertex F0 iO =
             owners.1) ∧ (∃ jA jB jO : Fin 3, cert.modified.plane.faceVertex F1 jA = a ∧
             cert.modified.plane.faceVertex F1 jB = b ∧ cert.modified.plane.faceVertex F1 jO =
-            owners.2)) → ((a ≠ b) → ((AllowedSubtileIncidence a b) → (((FootprintEdges
-            (ModifiedSubtileOccurrenceInterpretation P O u v a) ∩ FootprintEdges
-            (ModifiedSubtileOccurrenceInterpretation P O u v b)).Nonempty) → ((∃ x y :
-            GaussianInt, SimpleGridPathBetween (FootprintVertices
-            (ModifiedSubtileOccurrenceInterpretation P O u v a) ∩ FootprintVertices
-            (ModifiedSubtileOccurrenceInterpretation P O u v b)) (FootprintEdges
-            (ModifiedSubtileOccurrenceInterpretation P O u v a) ∩ FootprintEdges
-            (ModifiedSubtileOccurrenceInterpretation P O u v b)) x y) → ((SimpleGridPathBetween
+            owners.2)) → ((((((SimpleGridPathBetween
             (FootprintVertices (occurrence a) ∩ FootprintVertices (occurrence b)) (FootprintEdges
             (occurrence a) ∩ FootprintEdges (occurrence b)) (cert.modified.rho F0)
             (cert.modified.rho F1)) → ((cert.modified.rho F0 ≠ cert.modified.rho F1) → (
@@ -1250,8 +1204,7 @@ private theorem selectedCertificate :
           (occurrence owners.1) (occurrence owners.2))))))))))))) ) := by
   classical
   intro q cfg C T cert a b row P O u v pairCells modifiedFootSubset retargeted occurrence owners
-      face0 face1 F0 F1 faceDistinct faceTable hne allowed modifiedEdges modifiedPath
-      pathAtOwners endpointsDistinct
+      face0 face1 F0 F1 faceTable pathAtOwners endpointsDistinct
   rcases faceTable with ⟨⟨iA,iB,iO,ha0,hb0,ho0⟩,
     ⟨jA,jB,jO,ha1,hb1,ho1⟩⟩
   have commonPair0 :
@@ -1482,13 +1435,6 @@ theorem P4418T3SelectedInterfaceExists
       (FootprintEdges (ModifiedSubtileOccurrenceInterpretation P O u v a) ∩
         FootprintEdges (ModifiedSubtileOccurrenceInterpretation P O u v b)).Nonempty :=
             SelectedInterfaceGeometry.modifiedEdges q cfg C T cert a b hne allowed
-  have modifiedPath : ∃ x y : GaussianInt,
-      SimpleGridPathBetween
-        (FootprintVertices (ModifiedSubtileOccurrenceInterpretation P O u v a) ∩
-          FootprintVertices (ModifiedSubtileOccurrenceInterpretation P O u v b))
-        (FootprintEdges (ModifiedSubtileOccurrenceInterpretation P O u v a) ∩
-          FootprintEdges (ModifiedSubtileOccurrenceInterpretation P O u v b)) x y :=
-              SelectedInterfaceGeometry.modifiedPath q cfg C T cert a b hne modifiedEdges
   have headLastNe (p : List GaussianInt) (hnd : p.Nodup)
       (hlen : 2 ≤ p.length) : p.head? ≠ p.getLast? := SelectedInterfaceGeometry.headLastNe p hnd
           hlen
@@ -1507,8 +1453,7 @@ theorem P4418T3SelectedInterfaceExists
     Nonempty (P4418T3SelectedInterfaceData (occurrence a) (occurrence b)
       (occurrence owners.1) (occurrence owners.2)) :=
           SelectedInterfaceCertificate.selectedCertificate q cfg C T cert a b row pairCells
-          modifiedFootSubset retargeted faceDistinct faceTable hne allowed modifiedEdges
-          modifiedPath pathAtOwners endpointsDistinct
+          modifiedFootSubset retargeted faceTable pathAtOwners endpointsDistinct
   exact selectedCertificate
 
 

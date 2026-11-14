@@ -30,9 +30,9 @@ namespace ApollonianSuperharmonic
 namespace ParentalRestrictionProof
 
 private theorem hparent₁pos :
-    ∀ (P : FordFareyParameter), ((2 : ℕ) < P.q) → ((P.q = P.q₁ + P.q₂) → (1 < P.q → 0 < P.q₁)) := by
+    ∀ (P : FordFareyParameter), ((2 : ℕ) < P.q) → ((P.q = P.q₁ + P.q₂) → (0 < P.q₁)) := by
   classical
-  intro P hP hsum hbig
+  intro P hP hsum
   by_contra hn
   have hz : P.q₁ = 0 := by omega
   have hdvd : (P.q : Int) ∣ (1 : Int) := by
@@ -309,7 +309,7 @@ theorem P4062T1ParentalRestriction (P : FordFareyParameter)
     have hsumI : (P.q : Int) = P.q₁ + P.q₂ := by exact_mod_cast P.sum_q
     rw [hsumI, P.sum_p] at hdet
     nlinarith only [hdet]
-  have hparent₁pos : 1 < P.q → 0 < P.q₁ := ParentalRestrictionProof.hparent₁pos P hP hsum
+  have hparent₁pos : 1 < P.q → 0 < P.q₁ := (fun _ => ParentalRestrictionProof.hparent₁pos P hP hsum)
   have hparent₂lt : 1 < P.q → P.q₂ < P.q := by
     intro hbig
     have hpos := hparent₁pos hbig

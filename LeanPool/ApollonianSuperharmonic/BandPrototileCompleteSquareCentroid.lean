@@ -543,9 +543,6 @@ theorem BandPrototileCompleteSquareCentroid
     exact Finset.image_nonempty.mpr hne
   have hcentral : CentrallyReflectedAt c T T :=
     BandPrototileCentralSymmetry C T hT
-  have hboundRe : ∀ p ∈ TileRealization T,
-      (↑(reCells.min' reNe) : Real) ≤ p.1 ∧
-        p.1 ≤ (↑(reCells.max' reNe) : Real) + 1 := BandPrototileCentroidBounds.realBounds T reNe
   have reflect_mem : ∀ p ∈ TileRealization T,
       (2 * c.1 - p.1, 2 * c.2 - p.2) ∈ TileRealization T := by
     intro p hp
@@ -553,14 +550,6 @@ theorem BandPrototileCompleteSquareCentroid
     exact ⟨p, hp, rfl⟩
   let mRe := reCells.min' reNe
   let MRe := reCells.max' reNe
-  have minReCell : ∃ x ∈ T.cells, x.re = mRe := by
-    have hm := Finset.min'_mem reCells reNe
-    rcases Finset.mem_image.mp hm with ⟨x, hx, he⟩
-    exact ⟨x, hx, he⟩
-  have maxReCell : ∃ x ∈ T.cells, x.re = MRe := by
-    have hm := Finset.max'_mem reCells reNe
-    rcases Finset.mem_image.mp hm with ⟨x, hx, he⟩
-    exact ⟨x, hx, he⟩
   have centerRe : 2 * c.1 = (mRe : Real) + MRe + 1 :=
       BandPrototileCentroidBounds.realCoordinateCenter T reNe reflect_mem
   have boundIm : ∀ p ∈ TileRealization T,

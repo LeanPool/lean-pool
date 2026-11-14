@@ -1045,8 +1045,7 @@ private theorem noBoundaryFour :
       classical
       exact
         ∀ (T : ProtoTile),
-          GaussianInt →
-            ∀ (x : GaussianInt),
+          ∀ (x : GaussianInt),
               x ∈ FootprintVertices T →
                 (∀ j : Fin 4, LatticeVertexIncidentCell x j ∈ T.cells) →
                   ∀ (R : ProtoTile),
@@ -1054,7 +1053,7 @@ private theorem noBoundaryFour :
                       x ∉ BoundaryFootprintVertices R
     ) := by
   classical
-  intro T u x hx cells R hall
+  intro T x hx cells R hall
   have hneR : R.cells.Nonempty := ⟨_, hall 0⟩
   intro hx
   simp only [BoundaryFootprintVertices, ite_eq_left hneR,
@@ -1370,7 +1369,7 @@ theorem P4120T1FordGeometry
       (hc : LatticeVertexIncidentCell x j ∈ R.cells) := FordTileGeometry.incidentFootprint x R j hc
   have noBoundaryFour (R : ProtoTile)
       (hall : ∀ j : Fin 4, LatticeVertexIncidentCell x j ∈ R.cells) :=
-          FordTileGeometry.noBoundaryFour T u x hx cells R hall
+          FordTileGeometry.noBoundaryFour T x hx cells R hall
   have incidentOwner (j : Fin 4) := FordTileGeometry.incidentOwner P T S u x cells cellCanonical
       Sc hcover hparentCells j
   have twoBoundaryCount (a b : Fin 3 × Bool) (hab : a ≠ b)

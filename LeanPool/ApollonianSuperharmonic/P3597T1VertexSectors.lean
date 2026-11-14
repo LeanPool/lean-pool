@@ -2464,12 +2464,7 @@ private theorem hsectorOpp :
     have hwp : cross w (yp-v) < 0 := by simpa [w, hab] using hbp
     exact ⟨yp, ⟨hyball, hApluspos, hwp⟩, ym,
       ⟨hmball, Or.inl hAminusneg⟩, hOpp⟩
-  · have habneg : cross a b < 0 := by
-      have hba : 0 < cross b a := by simpa [u, w, hab] using hD
-      have hswap : cross b a = -cross a b := by dsimp [cross]; ring
-      rw [hswap] at hba
-      linarith
-    have hbp : 0 < cross b (yp-v) := by
+  · have hbp : 0 < cross b (yp-v) := by
       have ht := hypU
       simp only [U, ite_eq_right hab, Set.mem_inter_iff, Set.mem_ofPred_eq] at ht
       exact ht.2
@@ -2572,29 +2567,6 @@ private theorem hOoffAt2413 :
   intro n p O C x hx
   change x ∉ C ∧ _ at hx
   exact hx.1
-
-private theorem habzero :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (i : Fin (n + 3)),
-        let v := p.vertex i
-        let prev : Fin (n + 3) :=
-          if i.val = 0 then ⟨n + 2, by omega⟩ else ⟨i.val - 1, by omega⟩
-        let a := p.vertex (i + 1) - v
-        let b := p.vertex prev - v
-        let cross (u z : Real × Real) : Real := u.1 * z.2 - u.2 * z.1
-        let u := if 0 < cross a b then a else b
-        let w := if 0 < cross a b then b else a
-        (cross u w = (0 : ℝ)) → (cross a b = 0) ) := by
-  classical
-  intro n p i v prev a b cross u w hDzero
-  by_cases hab : 0 < cross a b
-  · simpa [u, w, hab] using hDzero
-  · have hba : cross b a = 0 := by simpa [u, w, hab] using hDzero
-    have hswap : cross b a = -cross a b := by dsimp [cross]; ring
-    rw [hswap] at hba
-    linarith
 
 private theorem hcne :
     (by
@@ -3215,8 +3187,7 @@ theorem P3597T1VertexSectors {n : Nat} (p : P3381T1PolygonBoundary n)
         exact hWpath
       · rw [hEvenEq]
         exact hNpath
-  · have habzero : cross a b = 0 := VertexSectorDetails.habzero n p i hDzero
-    obtain ⟨c, hcw⟩ := hcrosszero u w hu0 hDzero
+  · obtain ⟨c, hcw⟩ := hcrosszero u w hu0 hDzero
     have hcne := VertexSectorDetails.hcne n p i hw0 c hcw
     have hcarrierZero := VertexSectorProof.hcarrierZero n p i rK hcrossLinear hcarrierUW
             hcrossSelf c hcw

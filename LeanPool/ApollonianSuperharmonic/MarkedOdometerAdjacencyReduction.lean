@@ -2230,9 +2230,8 @@ private theorem leftAdjacencyCase :
             i).succ) else BandVectors.1 (BandPackingSymmetryQuadrupleAction bundle.symmetry q
             ((fun (j : Fin (3 : ℕ)) => if BandPackingSymmetryReversesOrientation bundle.symmetry
             = true then -j else j) i).succ) (BandPackingSymmetryQuadrupleAction bundle.symmetry q
-            (0 : Fin (4 : ℕ)))))) → (∀ (C' : BandCircle), ∀ (selectedSlope : ℝ × ℝ),
-            (PartialOdometerSlope (bundle.functions bundle.selectedSlot bundle.selectedSign) =
-            some selectedSlope) → (∀ (ginv : BandPackingSymmetry), (∀ (C : CircleCoordinates),
+            (0 : Fin (4 : ℕ)))))) → (∀ (C' : BandCircle), (∀ (ginv : BandPackingSymmetry), (∀ (C :
+                CircleCoordinates),
             BandPackingSymmetryCircleAction ginv (BandPackingSymmetryCircleAction bundle.symmetry
             C) = C) → ((∀ (T : ProtoTile), BandPackingSymmetryTileAction ginv
             (BandPackingSymmetryTileAction bundle.symmetry T) = T) → ((∀ (h : PartialOdometer),
@@ -2292,9 +2291,9 @@ private theorem leftAdjacencyCase :
             else BandVectors.1 (r j.succ) (r 0))))))))))))))) ) := by
   classical
   intro C₀ Cᵢ q i s T₀ Tᵢ h₀ hᵢ x bundle g normalizationPresentation sigma transportedRotation
-      oldUR hmarkedOld C' selectedSlope hslope' ginv hcircleL htileL hfunL actionCurvature
-      inversePresentation inverseSlot hinverseProper hinversePositive inverseCircle
-      hinverseCircle selectedSupport selectedFunction T' h' hleft
+      oldUR hmarkedOld C' ginv hcircleL htileL hfunL actionCurvature inversePresentation
+      inverseSlot hinverseProper hinversePositive inverseCircle hinverseCircle selectedSupport
+      selectedFunction T' h' hleft
   rcases hleft with ⟨hCfixed, hleftAdj, hnotMarked⟩
   have hinverseCircleFixed := MarkedAdjacencyGeometry.hinverseCircleFixed C₀ Cᵢ T₀ Tᵢ h₀ hᵢ x
       bundle C' ginv hcircleL hinverseProper hinversePositive hinverseCircle hCfixed
@@ -3083,7 +3082,7 @@ theorem MarkedOdometerAdjacencyReduction :
           actionCurvature hinverseProper hinversePositive hinverseCircle), ?_⟩
     rcases hrowOutput with hleft | hforward | hreverse
     · have leftAdjacencyCase := MarkedAdjacencyConclusions.leftAdjacencyCase C₀ Cᵢ q i s T₀ Tᵢ h₀
-        hᵢ x bundle transportedRotation hmarkedOld C' selectedSlope hslope' ginv hcircleL htileL
+        hᵢ x bundle transportedRotation hmarkedOld C' ginv hcircleL htileL
         hfunL actionCurvature hinverseProper hinversePositive hinverseCircle hleft
       exact leftAdjacencyCase
     · have forwardAdjacencyCase := MarkedAdjacencyConclusions.forwardAdjacencyCase C₀ Cᵢ q i s T₀

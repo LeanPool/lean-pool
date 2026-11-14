@@ -146,19 +146,6 @@ private theorem hrec0Member :
     0 ≤ z.im ∧ z.im ≤ (P.q₁ : Int)
   exact ⟨a, b, c, d⟩
 
-private theorem hrec1Member :
-    (by
-      classical
-      exact
-        ∀ (P : FordFareyParameter), ∀ (z : GaussianInt), (↑P.q₂ : ℤ) ≤ z.re → z.re ≤ (↑P.q : ℤ) →
-            (↑P.q₂ : ℤ) ≤ z.im → z.im ≤ (↑P.q : ℤ) → z ∈ FordRecursiveVertexDomains P (1 : Fin (4
-            : ℕ)) ) := by
-  classical
-  intro P z a b c d
-  change (P.q₂ : Int) ≤ z.re ∧ z.re ≤ (P.q : Int) ∧
-    (P.q₂ : Int) ≤ z.im ∧ z.im ≤ (P.q : Int)
-  exact ⟨a, b, c, d⟩
-
 private theorem hrec2Member :
     (by
       classical
@@ -282,9 +269,7 @@ private theorem htargetAt327 :
                      ((P₁.q = P.q₁) → (∀ (hsum : P.q = P.q₁ + P.q₂), ∀ (hcrossdet : P.p₁ * (P.q₂
             : Int) - P.p₂ * (P.q₁ : Int) = 1), ∀ (hpos₁ : 0 < P.q₁), ∀ (hpos₂ : 0 < P.q₂), (∀ x,
             x ∈ FordRecursiveVertexDomains P 0 →
-            FordOdometer P x = FordOdometer P₁ x) → ((∀ x, x ∈
-            FordRecursiveVertexDomains P 1 → FordOdometer P x = FordOdometer P₁ (x - ⟨(P.q₂ :
-            Int), (P.q₂ : Int)⟩) + P.p₂ * x.re + P.p₂ * x.im - P.p₂ * (P.q₂ : Int) + 1) → ((∀ (f
+            FordOdometer P x = FordOdometer P₁ x) → (((∀ (f
                 : GaussianInt → Int), ∀ (f' : GaussianInt → Int), ∀ (x : GaussianInt), ∀ (t :
                 GaussianInt), ∀ (A : Int), ∀ (B : Int), ∀ (C : Int), (f x = f'
             (x - t) + A * x.re + B * x.im + C) → ((f (x - 1) = f' ((x - t) - 1) + A * (x - 1).re
@@ -294,9 +279,7 @@ private theorem htargetAt327 :
             B * (x + ⟨0, 1⟩).im + C) → (FourNeighborLaplacian f x = FourNeighborLaplacian f' (x -
             t))))))) → ((∀ (z : GaussianInt), (0 ≤ z.re) → ((z.re ≤ (P.q₁ : Int)) →
             ((0 ≤ z.im) → ((z.im ≤ (P.q₁ : Int)) → (z ∈ FordRecursiveVertexDomains P 0))))) → ((∀
-                (z : GaussianInt), ((P.q₂ : Int) ≤ z.re) → ((z.re ≤ (P.q : Int)) →
-            (((P.q₂ : Int) ≤ z.im) → ((z.im ≤ (P.q : Int)) → (z ∈ FordRecursiveVertexDomains P
-            1))))) → (∀ (hr : Fin (4 : ℕ) → Finset GaussianInt), ∀ (horder : P.q₂ < P.q₁), ∀
+                (hr : Fin (4 : ℕ) → Finset GaussianInt), ∀ (horder : P.q₂ < P.q₁), ∀
                 (hdlt : P.q₁ - P.q₂ < P.q), ∀ (hdetdiff : (P.p₁-P.p₂) * (P.q₁ : Int) -
                 ((P.q₁-P.q₂ : Nat) :
             Int) * P.p₁ = 1), ∀ (H : FordFareyParameter), ∀ (hHq : H.q = P.q₁ - P.q₂), ∀
@@ -315,10 +298,9 @@ private theorem htargetAt327 :
           · intro hu
             have : P.q₁ = 1 := by simpa using hu
             omega
-        ∀ (R : FordFareyParameter), (R.p = P.p₁ ∧ R.q = P.q₁) → ((Q.p₁ = P.p₁-P.p₂ ∧ Q.q₁ =
+        ((Q.p₁ = P.p₁-P.p₂ ∧ Q.q₁ =
             P.q₁-P.q₂ ∧ Q.p₂ = P.p₂ ∧ Q.q₂ = P.q₂) → ((P₁.p₁ = P.p₁-P.p₂ ∧ P₁.q₁ = P.q₁-P.q₂ ∧
-            P₁.p₂ = P.p₂ ∧ P₁.q₂ = P.q₂) → ((∀ y, y ∈ FordRecursiveVertexDomains P₁ 0 →
-            FordOdometer P₁ y = FordOdometer H y) → ((∀ z, z ∈ FordRecursiveVertexDomains P₁ 1 →
+            P₁.p₂ = P.p₂ ∧ P₁.q₂ = P.q₂) → (((∀ z, z ∈ FordRecursiveVertexDomains P₁ 1 →
             FordOdometer P₁ z = FordOdometer H (z-⟨(P₁.q₂ : Int), (P₁.q₂ : Int)⟩) + P₁.p₂*z.re +
             P₁.p₂*z.im - P₁.p₂*(P₁.q₂ : Int)+1) → ((∀ (x : GaussianInt), (x ∈ hr 0 ∩ hr 1) →
             ((P.q₂ : Int)+1 ≤ x.re ∧ x.re ≤ (P.q₁ : Int)-1 ∧ (P.q₂ : Int)+1 ≤ x.im ∧ x.im ≤ (P.q₁
@@ -326,8 +308,8 @@ private theorem htargetAt327 :
             FourNeighborLaplacian (FordOdometer H) (x-⟨(P.q₂ : Int), (P.q₂ :
                 Int)⟩)))))))))))))))) := by
   classical
-  intro P P₁ hq₁ hsum hcrossdet hpos₁ hpos₂ hrec₀' hrec₁' hlapAffine hrec0Member hrec1Member hr
-      horder hdlt hdetdiff H hHq hredParent Q R hR hpar hparP hch₀' hch₁' hcoords x hx
+  intro P P₁ hq₁ hsum hcrossdet hpos₁ hpos₂ hrec₀' hlapAffine hrec0Member hr horder hdlt
+      hdetdiff H hHq hredParent Q hpar hparP hch₁' hcoords x hx
   have hb := hcoords x hx
   have hpt (z : GaussianInt) (hzr : (P.q₂ : Int) ≤ z.re)
       (hzr' : z.re ≤ (P.q₁ : Int)) (hzi : (P.q₂ : Int) ≤ z.im)
@@ -548,8 +530,7 @@ private theorem htargetAt542 :
           P.p₁*z.re + P.p₁*z.im - P.p₁*(P.q₁ : Int) := by
     have hz2 : z ∈ FordRecursiveVertexDomains P 2 := by
       apply hrec2Member z hzr ?_ ?_ hzi'
-      · have hs : (P.q₁ : Int)+P.q₂=P.q := by exact_mod_cast P.sum_q.symm
-        omega
+      · omega
       · omega
     have hv2 : z-⟨(P.q₁ : Int),0⟩ ∈ FordRecursiveVertexDomains P₂ 3 := by
       change 0 ≤ (z-⟨(P.q₁ : Int),0⟩).re ∧
@@ -739,8 +720,6 @@ theorem P4062T1OverlapDescent (P P₁ P₂ : FordFareyParameter)
   have hrec := hfamilyRec P P₁ P₂ (by omega) hp₁ hq₁ hp₂ hq₂
   rcases hrec with ⟨hrec₀, hrec₁, hrec₂, hrec₃⟩
   have hrec₀' := OverlapDescentDetails.hrec₀' P P₁ hrec₀
-  have hrec₁' := OverlapDescentDetails.hrec₁' P
-              P₁ hrec₁
   have hrec₂' := OverlapDescentDetails.hrec₂' P P₂ hrec₂
   have hlapAffine (f f' : GaussianInt → Int) (x t : GaussianInt)
       (A B C : Int)
@@ -757,10 +736,6 @@ theorem P4062T1OverlapDescent (P P₁ P₂ : FordFareyParameter)
   have hrec0Member (z : GaussianInt)
       (a : 0 ≤ z.re) (b : z.re ≤ (P.q₁ : Int))
       (c : 0 ≤ z.im) (d : z.im ≤ (P.q₁ : Int)) := OverlapDescentDetails.hrec0Member P z a b c d
-  have hrec1Member (z : GaussianInt)
-      (a : (P.q₂ : Int) ≤ z.re) (b : z.re ≤ (P.q : Int))
-      (c : (P.q₂ : Int) ≤ z.im) (d : z.im ≤ (P.q : Int)) := OverlapDescentDetails.hrec1Member P z
-          a b c d
   have hrec2Member (z : GaussianInt)
       (a : (P.q₁ : Int) ≤ z.re) (b : z.re ≤ (P.q : Int))
       (c : 0 ≤ z.im) (d : z.im ≤ (P.q₂ : Int)) := OverlapDescentDetails.hrec2Member P z a b c d
@@ -809,13 +784,12 @@ theorem P4062T1OverlapDescent (P P₁ P₂ : FordFareyParameter)
       (hHp.trans hparP.1.symm) (hHq.trans hparP.2.1.symm)
       (hp₂.trans hparP.2.2.1.symm) (hq₂.trans hparP.2.2.2.symm)
     rcases hchildRec with ⟨hch₀, hch₁, _, _⟩
-    have hch₀' := OverlapDescentDetails.hch₀' P₁ H hch₀
     have hch₁' := OverlapDescentDetails.hch₁' P₁ H hch₁
     have hcoords (x : GaussianInt) (hx : x ∈ hr 0 ∩ hr 1) := OverlapDescentDetails.hcoordsAt312
         P squareCoordinates hr hA0 hA1 x hx
     have htarget := OverlapDescentDetails.htargetAt327 P P₁ hq₁
-                hsum hcrossdet hpos₁ hpos₂ hrec₀' hrec₁' hlapAffine hrec0Member hrec1Member hr
-                horder hdlt hdetdiff H hHq hredParent R hR hpar hparP hch₀' hch₁' hcoords
+                hsum hcrossdet hpos₁ hpos₂ hrec₀' hlapAffine hrec0Member hr
+                horder hdlt hdetdiff H hHq hredParent hpar hparP hch₁' hcoords
     refine ⟨H, hHp, hHq, by simpa [hHq] using hdlt, hparP.1, hparP.2.1,
       hparP.2.2.1, hparP.2.2.2, ?_, htarget⟩
     ext x

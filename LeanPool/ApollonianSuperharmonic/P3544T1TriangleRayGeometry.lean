@@ -191,16 +191,7 @@ private theorem hDne :
       · exact hac h.symm
       · exact hbc h.symm
     · exact (ht1 hteq).elim
-    · have hbetween : b ∈ segment Real a c := by
-        rw [segment_eq_image]
-        refine ⟨1 / t, ?_, ?_⟩
-        · constructor
-          · exact le_of_lt (div_pos (by norm_num) htpos)
-          · rw [div_le_one htpos]
-            linarith
-        · rw [hcform]
-          ext <;> simp [smul_eq_mul] <;> field_simp <;> ring
-      have hpair := p.edge_intersection 0 2 (by decide)
+    · have hpair := p.edge_intersection 0 2 (by decide)
       have hpair' : segment Real a b ∩ segment Real c a =
           {x | (x = a ∨ x = b) ∧ (x = c ∨ x = a)} := by
         simpa [a, b, c] using hpair
@@ -1708,8 +1699,7 @@ theorem P3544T1TriangleRayGeometry (p : P3381T1PolygonBoundary 0) :
     have hxS : x ∉ S := by simpa [hKS] using hxK
     change ¬ (0 ≤ alpha x ∧ 0 ≤ beta x ∧ 0 ≤ gamma x) at hxS
     rcases not_and_or.mp hxS with hαneg | hrest
-    · have hαlt : alpha x < 0 := lt_of_not_ge hαneg
-      obtain ⟨d, hdv, hde⟩ := hgeneric x hxC
+    · obtain ⟨d, hdv, hde⟩ := hgeneric x hxC
       have hcross : d.1 * (c - b).2 - d.2 * (c - b).1 ≠ 0 := by
         simpa [a, b, c] using hde 1
       have hmu := TriangleRayIntersections.hmuAt597 p hDneq d hcross
@@ -1725,8 +1715,7 @@ theorem P3544T1TriangleRayGeometry (p : P3381T1PolygonBoundary 0) :
       rw [hcount0] at hodd
       norm_num at hodd
     · rcases not_and_or.mp hrest with hβneg | hγneg
-      · have hβlt : beta x < 0 := lt_of_not_ge hβneg
-        obtain ⟨d, hdv, hde⟩ := hgeneric x hxC
+      · obtain ⟨d, hdv, hde⟩ := hgeneric x hxC
         have hcross : d.1 * (a - c).2 - d.2 * (a - c).1 ≠ 0 := by
           simpa [a, b, c] using hde 2
         have hmu := TriangleRayIntersections.hmuAt678 p hDneq d hcross
@@ -1741,8 +1730,7 @@ theorem P3544T1TriangleRayGeometry (p : P3381T1PolygonBoundary 0) :
         have hodd := (hchar x d' hxC hdv' hde').mp hxO
         rw [hcount0] at hodd
         norm_num at hodd
-      · have hγlt : gamma x < 0 := lt_of_not_ge hγneg
-        obtain ⟨d, hdv, hde⟩ := hgeneric x hxC
+      · obtain ⟨d, hdv, hde⟩ := hgeneric x hxC
         have hcross : d.1 * (b - a).2 - d.2 * (b - a).1 ≠ 0 := by
           simpa [a, b, c] using hde 0
         have hmu := TriangleRayIntersections.hmuAt761 p hDneq d hcross

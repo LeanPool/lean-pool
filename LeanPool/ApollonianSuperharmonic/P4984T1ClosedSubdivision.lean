@@ -465,12 +465,12 @@ private theorem makeChild :
     let child (b : Fin 3) := P4984T1ClosedGap L (s b)
     let F (b : Fin 3) := P4909T1ParentPolygon L (s b)
     let idx (b j : Fin 3) : Fin 4 := ![0, (b + 1).succ, (b + 2).succ] j
-    (∀ (b : Fin 3), ∀ (j : Fin 3), s b j.succ = q (idx b j)) → ((∀ (b : Fin 3), ∀ (j : Fin 3),
-        idx b j ≠ b.succ) → (∀ (b : Fin 3), ∀ (z : ℂ), (z ∈ F b) → ((r 0 ≤ dist z (p 0)) → ((∀ j
+    (∀ (b : Fin 3), ∀ (j : Fin 3), s b j.succ = q (idx b j)) → ((∀ (b : Fin 3), ∀ (z : ℂ), (z ∈ F
+        b) → ((r 0 ≤ dist z (p 0)) → ((∀ j
         : Fin 3, 0 < (q j.succ).1 →
         r j.succ ≤ dist z (p j.succ)) → (z ∈ child b))))) := by
   classical
-  intro L q p r s child F idx parent idx_ne b z hzF hinsert hold
+  intro L q p r s child F idx parent b z hzF hinsert hold
   change z ∈ F b ∧ ∀ k : Fin 3, 0 < (s b k.succ).1 →
     1 / ((s b k.succ).1 : ℝ) ≤
       dist z (((s b k.succ).2 : ℂ) / ((s b k.succ).1 : ℝ))
@@ -664,7 +664,7 @@ theorem P4984T1ClosedSubdivision (L : Real)
       (hinsert : r 0 ≤ dist z (p 0))
       (hold : ∀ j : Fin 3, 0 < (q j.succ).1 →
         r j.succ ≤ dist z (p j.succ)) := ClosedSubdivisionProof.makeChild L q
-            parent idx_ne b z hzF hinsert hold
+            parent b z hzF hinsert hold
   have rootConstraints (z : ℂ) (hz : z ∈ H) :
       ∀ j : Fin 3, 0 < (q j.succ).1 → r j.succ ≤ dist z (p j.succ) := by
     change z ∈ P ∧ ∀ j : Fin 3, 0 < (q j.succ).1 →

@@ -140,8 +140,7 @@ private theorem D_closure :
       · constructor
         · have : 0 < r * (1/3) := mul_pos hr0 (by norm_num)
           nlinarith [mul_nonneg h1r hzw.2.1]
-        · have hsum : z.1+z.2 ≤ 1 := hzw.2.2
-          nlinarith [mul_nonneg h1r (by linarith : 0 ≤ 1-(z.1+z.2))]
+        · nlinarith [mul_nonneg h1r (by linarith : 0 ≤ 1-(z.1+z.2))]
     have hcoord1 : dist y.1 z.1 ≤ r := by
       rw [Real.dist_eq]
       have heq : ((1-r) • z + r • c).1 - z.1 = r * (1/3-z.1) := by dsimp [c]; ring

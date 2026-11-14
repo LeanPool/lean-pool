@@ -761,8 +761,7 @@ private theorem hconeUV :
       · have hpoint : B + s • u + t • w - B = s • u + t • w := by abel
         rw [hpoint, hB]
         exact neg_neg_of_pos (mul_pos hs hUV)
-    · have hn : cross u w < 0 := lt_of_le_of_ne (le_of_not_gt hp) hdet
-      have hA : cross U (t • w + s • u) = s * cross U V := by
+    · have hA : cross U (t • w + s • u) = s * cross U V := by
         rw [show U = w by simp [U, hp], show V = u by simp [V, hp]]
         rw [(hcrossLinear w).map_add, (hcrossLinear w).map_smul,
           (hcrossLinear w).map_smul]
@@ -1721,9 +1720,9 @@ private theorem hellD :
           ((v ij.2).1 - (v ij.1).1) / ((v ij.1).2 - (v ij.2).2)
         ∀ (hqexists : ∃ q : Real, q ∉ Set.range f),
         let q := Classical.choose hqexists
-        (Fin (n + (3 : ℕ))) → (
+        (
         let e : Real × Real := (1, 0)
-        (ℝ) → (
+        (
         let ell : (Real × Real) →ₗ[Real] Real :=
           { toFun := fun x => x.1 + q * x.2
             map_add' := by intro x y; simp; ring
@@ -1734,7 +1733,7 @@ private theorem hellD :
         let d := d0 + κ • e
         0 < ell d)))) := by
   classical
-  intro n p v f hqexists q b e ε ell d0 T κ hκT d
+  intro n p v f hqexists q e ell d0 T κ hκT d
   have heval : ell d = ell d0 + κ := by simp [d, e, ell]; ring
   have hκlarge : -ell d0 + 1 < κ := lt_of_le_of_lt (le_max_right _ _) hκT
   rw [heval]
@@ -2451,7 +2450,7 @@ private theorem hWeven :
   have hyEven := ExposedCornerGeometry.hyEven n p b hparity ε hynotC d0 κ
       (ExposedCornerGeometry.hdv n p b ε d0 hdv0 κ hκbad) (ExposedCornerGeometry.hde n p b ε d0
       hde0 κ hκbad) (ExposedCornerGeometry.hhitsEmpty n p hqexists b ε hsegmentHeight hyheight d0
-      κ (ExposedCornerGeometry.hellD n p hqexists b ε d0 κ hκT))
+      κ (ExposedCornerGeometry.hellD n p hqexists d0 κ hκT))
   intro x hx hxO
   exact hyEven ((hconstOn W hWpc.isConnected hWoff y hyW x hx).mpr hxO)
 

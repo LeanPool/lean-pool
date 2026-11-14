@@ -56,13 +56,12 @@ private theorem overlap :
         P.q → 1 < R.q → A.p = R.p₁ → A.q = R.q₁ → B.p = R.p₂ → B.q = R.q₂ → ∀ i x, x ∈
         FordRecursiveVertexDomains R i → G R x = P5130T5Prescription R (G A) (G B) i x) → ((0 :
         ℕ) < P.q₁) → ((0 : ℕ) < P.q₂) → (P.p₁ * (↑P.q₂ : ℤ) - P.p₂ * (↑P.q₁ : ℤ) = (1 : ℤ)) →
-        (P₁.q < P.q) → (P₂.q <
-        P.q) → ∀ x,
+        (P₁.q < P.q) → ∀ x,
       x ∈ FordRecursiveVertexDomains P 0 → x ∈ FordRecursiveVertexDomains P 1 →
       P5130T5Prescription P (G P₁) (G P₂) 0 x =
         P5130T5Prescription P (G P₁) (G P₂) 1 x := by
   classical
-  intro P P₁ P₂ hp₁ hq₁ hp₂ hq₂ G hB hR hq1pos hq2pos hcross hq1lt' hq2lt' x hx0 hx1
+  intro P P₁ P₂ hp₁ hq₁ hp₂ hq₂ G hB hR hq1pos hq2pos hcross hq1lt' x hx0 hx1
   by_cases hgt : P.q₁ > P.q₂
   · have hqdiff : P.q₂ + (P.q₁ - P.q₂) = P.q₁ := Nat.add_sub_of_le hgt.le
     let q3 : Nat := P.q₁ - P.q₂
@@ -233,7 +232,7 @@ theorem P5130T5SameParentOverlaps (P P₁ P₂ : FordFareyParameter)
       x ∈ FordRecursiveVertexDomains P 0 → x ∈ FordRecursiveVertexDomains P 1 →
       P5130T5Prescription P (G P₁) (G P₂) 0 x =
         P5130T5Prescription P (G P₁) (G P₂) 1 x := FirstParentOverlap.overlap P P₁
-            P₂ hp₁ hq₁ hp₂ hq₂ G hB hR hq1pos hq2pos hcross hq1lt' hq2lt'
+            P₂ hp₁ hq₁ hp₂ hq₂ G hB hR hq1pos hq2pos hcross hq1lt'
   refine ⟨first_parent_overlap, ?_⟩
   intro x hx2 hx3
   by_cases hlt : P.q₂ > P.q₁

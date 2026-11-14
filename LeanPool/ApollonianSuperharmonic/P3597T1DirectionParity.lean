@@ -45,10 +45,10 @@ private theorem coordA_swap :
     let det2 (v w : Real × Real) : Real := v.1 * w.2 - v.2 * w.1
     let coordA (d e : Real × Real) (v : Real × Real) : Real := det2 v e / det2 d e
     let coordB (d e : Real × Real) (v : Real × Real) : Real := det2 d v / det2 d e
-    ∀ (d : Real × Real), ∀ (e : Real × Real), ∀ (v : Real × Real), (det2 d e ≠ 0) → (coordA e d v
+    ∀ (d : Real × Real), ∀ (e : Real × Real), ∀ (v : Real × Real), (coordA e d v
         = coordB d e v) := by
   classical
-  intro det2 coordA coordB d e v hD
+  intro det2 coordA coordB d e v
   have hnum : det2 v d = -det2 d v := by dsimp [det2]; ring
   have hden : det2 e d = -det2 d e := by dsimp [det2]; ring
   dsimp [coordA, coordB]
@@ -59,10 +59,10 @@ private theorem coordB_swap :
     let det2 (v w : Real × Real) : Real := v.1 * w.2 - v.2 * w.1
     let coordA (d e : Real × Real) (v : Real × Real) : Real := det2 v e / det2 d e
     let coordB (d e : Real × Real) (v : Real × Real) : Real := det2 d v / det2 d e
-    ∀ (d : Real × Real), ∀ (e : Real × Real), ∀ (v : Real × Real), (det2 d e ≠ 0) → (coordB e d v
+    ∀ (d : Real × Real), ∀ (e : Real × Real), ∀ (v : Real × Real), (coordB e d v
         = coordA d e v) := by
   classical
-  intro det2 coordA coordB d e v hD
+  intro det2 coordA coordB d e v
   have hnum : det2 e v = -det2 v e := by dsimp [det2]; ring
   have hden : det2 e d = -det2 d e := by dsimp [det2]; ring
   dsimp [coordA, coordB]
@@ -922,9 +922,9 @@ theorem P3597T1DirectionParity {n : Nat} (p : P3381T1PolygonBoundary n)
   let basis_coordinates (d e v : Real × Real) (hD : det2 d e ≠ 0) :
       v = coordA d e v • d + coordB d e v • e := DirectionParityLemmas.basis_coordinates d e v hD
   let coordA_swap (d e v : Real × Real) (hD : det2 d e ≠ 0) :
-      coordA e d v = coordB d e v := DirectionParityLemmas.coordA_swap d e v hD
+      coordA e d v = coordB d e v := DirectionParityLemmas.coordA_swap d e v
   let coordB_swap (d e v : Real × Real) (hD : det2 d e ≠ 0) :
-      coordB e d v = coordA d e v := DirectionParityLemmas.coordB_swap d e v hD
+      coordB e d v = coordA d e v := DirectionParityLemmas.coordB_swap d e v
   let coordA_affine (d e v w : Real × Real) (u : Real) :
       coordA d e (v + u • (w-v)) = (1-u) * coordA d e v + u * coordA d e w :=
           DirectionParityLemmas.coordA_affine d e v w u

@@ -251,8 +251,7 @@ private theorem hword :
     (by
       classical
       exact
-        (Fin 4 → CircleCoordinates) →
-          ∀ (g₀ : BandPackingSymmetry),
+        ∀ (g₀ : BandPackingSymmetry),
             (∃ (w : GaussianInt),
                 g₀ = BandPackingSymmetry.shift w ∨
                   g₀ = (BandPackingSymmetry.shift w).comp BandPackingSymmetry.negate) →
@@ -285,7 +284,7 @@ private theorem hword :
                           ∀ z, BandPackingSymmetryVectorAction g z = VP k z
     ) := by
   classical
-  intro r g₀ hw₀ g hg horientg hgfalse TP VP
+  intro g₀ hw₀ g hg horientg hgfalse TP VP
   rcases hw₀ with ⟨w, hw₀⟩
   rcases hg with hsame | hadapt
   · subst g
@@ -823,7 +822,7 @@ theorem P4638T1EmptyFordLocalization (r : Fin 4 → CircleCoordinates)
     if k = 0 then z else if k = 1 then GaussianQuarterTurn z else
       if k = 2 then GaussianQuarterTurn (GaussianQuarterTurn z) else
         GaussianQuarterTurn (GaussianQuarterTurn (GaussianQuarterTurn z))
-  have hword := EmptyFordGeometry.hword r g₀ hw₀ g hg horientg hgfalse
+  have hword := EmptyFordGeometry.hword g₀ hw₀ g hg horientg hgfalse
   obtain ⟨k, htilepow, hvecpow⟩ := hword
   have hcellpow := EmptyFordGeometry.hcellpow g cellTurn_bij k htilepow
   have hanchorpow := EmptyFordGeometry.hanchorpow g k htilepow

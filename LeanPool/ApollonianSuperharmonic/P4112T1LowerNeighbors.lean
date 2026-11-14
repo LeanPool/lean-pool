@@ -78,8 +78,7 @@ private theorem hq1pos :
   · have hqnonneg : 0 ≤ (P.q : Int) := by omega
     have : P.p₁ * (P.q : Int) ≤ 0 := mul_nonpos_of_nonpos_of_nonneg hp hqnonneg
     omega
-  · have hp' : 1 ≤ P.p₁ := by omega
-    nlinarith
+  · nlinarith
 
 private theorem hneq :
     (by

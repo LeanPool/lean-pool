@@ -54,8 +54,7 @@ theorem P5332T1Parent1Rotation3Values (P A : FordFareyParameter) (hq : 1 < P.q)
       simpa [hz] using P.det₁
     by_cases hp : P.p₁ ≤ 0
     · nlinarith
-    · have hp1 : 1 ≤ P.p₁ := by omega
-      have hprod : 0 ≤ (P.p₁ - 1) * ((P.q : Int) - 1) :=
+    · have hprod : 0 ≤ (P.p₁ - 1) * ((P.q : Int) - 1) :=
         mul_nonneg (by omega) (by omega)
       nlinarith
   have hA : (A.q : Int) = (P.q₁ : Int) := by exact_mod_cast hAq
