@@ -456,102 +456,6 @@ private theorem hlm :
       by simpa [LatticeVertexIncidentCell] using hnK,
       by simpa [LatticeVertexIncidentCell] using hnJ⟩
 
-private theorem hjlO :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C₀ :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
-            C₀ T),
-        let P := cert.modified
-        ∀ (hindexed : ∀ (x : LatticeCell), ∃! a : PeriodicSubtileIndex, x ∈ (P.tile a).cells), ∀
-            (a : PeriodicSubtileIndex), ∀ (x : GaussianInt), ∀ (j : Fin (4 : ℕ)),
-        let owner : Fin 4 → PeriodicSubtileIndex := fun r =>
-          (hindexed (LatticeVertexIncidentCell x r)).choose
-        (owner j = a) → (
-        let l := j + 1
-        (owner l ≠ a) → (owner j ≠ owner l)) ) := by
-  classical
-  intro q cfg C₀ T cert P hindexed a x j owner hja' l hlA heq
-  exact hlA (heq.symm.trans hja')
-
-private theorem hjkO :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C₀ :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
-            C₀ T),
-        let P := cert.modified
-        ∀ (hindexed : ∀ (x : LatticeCell), ∃! a : PeriodicSubtileIndex, x ∈ (P.tile a).cells), ∀
-            (a : PeriodicSubtileIndex), ∀ (b : PeriodicSubtileIndex), (a ≠ b) → (∀ (x :
-            GaussianInt), ∀ (j : Fin (4 : ℕ)), ∀ (k : Fin (4 : ℕ)),
-        let owner : Fin 4 → PeriodicSubtileIndex := fun r =>
-          (hindexed (LatticeVertexIncidentCell x r)).choose
-        (owner j = a) → ((owner k = b) → (owner j ≠ owner k))) ) := by
-  classical
-  intro q cfg C₀ T cert P hindexed a b hab x j k owner hja' hkb' heq
-  exact hab (hja'.symm.trans (heq.trans hkb'))
-
-private theorem hjmO :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C₀ :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
-            C₀ T),
-        let P := cert.modified
-        ∀ (hindexed : ∀ (x : LatticeCell), ∃! a : PeriodicSubtileIndex, x ∈ (P.tile a).cells), ∀
-            (a : PeriodicSubtileIndex), ∀ (x : GaussianInt), ∀ (j : Fin (4 : ℕ)),
-        let owner : Fin 4 → PeriodicSubtileIndex := fun r =>
-          (hindexed (LatticeVertexIncidentCell x r)).choose
-        (owner j = a) → (
-        let m := j + 3
-        (owner m ≠ a) → (owner j ≠ owner m)) ) := by
-  classical
-  intro q cfg C₀ T cert P hindexed a x j owner hja' m hmA heq
-  exact hmA (heq.symm.trans hja')
-
-private theorem hlkO :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C₀ :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
-            C₀ T),
-        let P := cert.modified
-        ∀ (hindexed : ∀ (x : LatticeCell), ∃! a : PeriodicSubtileIndex, x ∈ (P.tile a).cells), ∀
-            (b : PeriodicSubtileIndex), ∀ (x : GaussianInt), ∀ (j : Fin (4 : ℕ)), ∀ (k : Fin (4 :
-            ℕ)),
-        let owner : Fin 4 → PeriodicSubtileIndex := fun r =>
-          (hindexed (LatticeVertexIncidentCell x r)).choose
-        (owner k = b) → (
-        let l := j + 1
-        (owner l ≠ b) → (owner l ≠ owner k)) ) := by
-  classical
-  intro q cfg C₀ T cert P hindexed b x j k owner hkb' l hlB heq
-  exact hlB (heq.trans hkb')
-
-private theorem hkmO :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C₀ :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
-            C₀ T),
-        let P := cert.modified
-        ∀ (hindexed : ∀ (x : LatticeCell), ∃! a : PeriodicSubtileIndex, x ∈ (P.tile a).cells), ∀
-            (b : PeriodicSubtileIndex), ∀ (x : GaussianInt), ∀ (j : Fin (4 : ℕ)), ∀ (k : Fin (4 :
-            ℕ)),
-        let owner : Fin 4 → PeriodicSubtileIndex := fun r =>
-          (hindexed (LatticeVertexIncidentCell x r)).choose
-        (owner k = b) → (
-        let m := j + 3
-        (owner m ≠ b) → (owner k ≠ owner m)) ) := by
-  classical
-  intro q cfg C₀ T cert P hindexed b x j k owner hkb' m hmB heq
-  exact hmB (heq.symm.trans hkb')
-
 private theorem injectiveOfSectorValues {α : Type*} (owner : Fin 4 → α)
     (j k : Fin 4) (hop : k = j + 2)
     (hlm : owner (j + 1) ≠ owner (j + 3))
@@ -1072,16 +976,11 @@ private theorem hnoPinch :
             radialMembers a b hnoedge x j ho hja' hmj
         have hlm : owner l ≠ owner m := GeometricSectorGeometry.hlm q cfg C₀ T cert hindexed
             htiles a b x j k ho hja' hkb' hjk hnotconsecutive hop hpos hlk hkm hmj hlA hlB
-        have hjlO : owner j ≠ owner l := GeometricSectorGeometry.hjlO q cfg C₀ T cert hindexed
-            a x j hja' hlA
-        have hjkO : owner j ≠ owner k := GeometricSectorGeometry.hjkO q cfg C₀ T cert hindexed
-            a b hab x j k hja' hkb'
-        have hjmO : owner j ≠ owner m := GeometricSectorGeometry.hjmO q cfg C₀ T cert hindexed
-            a x j hja' hmA
-        have hlkO : owner l ≠ owner k := GeometricSectorGeometry.hlkO q cfg C₀ T cert hindexed
-            b x j k hkb' hlB
-        have hkmO : owner k ≠ owner m := GeometricSectorGeometry.hkmO q cfg C₀ T cert hindexed
-            b x j k hkb' hmB
+        have hjlO : owner j ≠ owner l := fun heq => hlA (heq.symm.trans hja')
+        have hjkO : owner j ≠ owner k := fun heq => hab (hja'.symm.trans (heq.trans hkb'))
+        have hjmO : owner j ≠ owner m := fun heq => hmA (heq.symm.trans hja')
+        have hlkO : owner l ≠ owner k := fun heq => hlB (heq.trans hkb')
+        have hkmO : owner k ≠ owner m := fun heq => hmB (heq.symm.trans hkb')
         have hinj : Function.Injective owner :=
           GeometricSectorGeometry.injectiveOfSectorValues owner j k hop
             hlm hjlO hjkO hjmO hlkO hkmO

@@ -144,31 +144,23 @@ private theorem contains :
     rw [hzd] at hz0
     linarith
 
-private theorem hhalf :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (X : Set (Real × Real)), ∀ (K : Set
-            (Real × Real)), ∀ (t : P3475T1TriangleTree p X K), ∀ (u : ℝ), (0 < u) → ((u < 1) →
-            (∀ (b : Fin t.count → ℝ × ℝ → Fin (3 : ℕ) → ℝ), (∀ (k : Fin t.count), ∀ (x : Real ×
-            Real), ∀ (y : Real × Real), ∀ (a : Real), ∀ (d : Real), (a + d = 1) → (∀ (j : Fin 3),
-            b k (a • x + d • y) j = a * b k x j + d * b k y j)) → (∀ (k : Fin t.count), ∀ (c :
-            Fin (3 : ℕ)), Convex Real {y : Real × Real | b k y c < 0})))
-    ) := by
-  classical
-  intro n p X K t u hu0' hu1' b blinear k c x hx y hy a' d' ha' hd' had'
-  change b k (a' • x + d' • y) c < 0
-  rw [blinear k x y a' d' had' c]
+private theorem negativeHalfspaceConvex {E : Type*} [AddCommMonoid E] [Module Real E]
+    (f : E → Real)
+    (hf : ∀ x y : E, ∀ a b : Real, a + b = 1 →
+      f (a • x + b • y) = a * f x + b * f y) : Convex Real {x | f x < 0} := by
+  intro x hx y hy a' d' ha' hd' had'
+  change f (a' • x + d' • y) < 0
+  rw [hf x y a' d' had']
   by_contra hnot
-  have hnonneg : 0 ≤ a' * b k x c + d' * b k y c := le_of_not_gt hnot
+  have hnonneg : 0 ≤ a' * f x + d' * f y := le_of_not_gt hnot
   by_cases ha0 : a' = 0
   · have hdpos : 0 < d' := by rw [ha0, zero_add] at had'; linarith
-    have hterm : d' * b k y c < 0 := mul_neg_of_pos_of_neg hdpos hy
+    have hterm : d' * f y < 0 := mul_neg_of_pos_of_neg hdpos hy
     simp [ha0] at hnonneg
     linarith
   · have hapos : 0 < a' := lt_of_le_of_ne ha' (Ne.symm ha0)
-    have hterm : a' * b k x c < 0 := mul_neg_of_pos_of_neg hapos hx
-    have hother : d' * b k y c ≤ 0 := mul_nonpos_of_nonneg_of_nonpos hd' hy.le
+    have hterm : a' * f x < 0 := mul_neg_of_pos_of_neg hapos hx
+    have hother : d' * f y ≤ 0 := mul_nonpos_of_nonneg_of_nonpos hd' hy.le
     linarith
 
 private theorem hCpre :
@@ -637,7 +629,8 @@ private theorem hlocalAll :
           · exact hpos.2.le
           · exact hyc
       have hhalf : Convex Real {y : Real × Real | b k y c < 0} :=
-          PolygonalSeparationProof.hhalf n p X K t u hu0' hu1' b blinear k c
+          PolygonalSeparationProof.negativeHalfspaceConvex (fun x => b k x c)
+            (fun x y a d had => blinear k x y a d had c)
       have hlocalEq : Metric.ball z r \ X =
           Metric.ball z r ∩ {y : Real × Real | b k y c < 0} := by
         ext y
