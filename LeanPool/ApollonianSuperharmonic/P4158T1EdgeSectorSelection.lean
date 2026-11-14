@@ -1572,13 +1572,12 @@ private theorem he_ne_aAt984 :
       exact
         ∀ (Ci : BandCircle), ∀ (T : ProtoTile), ∀ (Rplus : ProtoTile), ∀ (PP :
             PeriodicTileComplex ↥(TilingLattice Ci)), ∀ (x : GaussianInt), ∀ (U : ProtoTile), ∀
-            (a : ↥(TilingLattice Ci)), (PP.tile a = U) → ((U.cells ⊆ T.cells) → (∀ (cf :
-            LatticeCell), (
+            (a : ↥(TilingLattice Ci)), (PP.tile a = U) → ((U.cells ⊆ T.cells) → ( (
         let n : GaussianInt := x - 1
         ∀ (e : ↥(TilingLattice Ci)), ((n ∈ Rplus.cells) → ((n ∈ (PP.tile
             e).cells) → ((Disjoint T.cells Rplus.cells) → (e ≠ a))))))) ) := by
   classical
-  intro Ci T Rplus PP x U a hUa U_in_T cf n e hEcell hEidx hdisET heq
+  intro Ci T Rplus PP x U a hUa U_in_T n e hEcell hEidx hdisET heq
   have hnA : n ∈ (PP.tile a).cells := by simpa [heq] using hEidx
   have hnU : n ∈ U.cells := by simpa [hUa] using hnA
   exact (Finset.disjoint_left.mp hdisET) (U_in_T hnU) hEcell
@@ -1589,13 +1588,12 @@ private theorem he_ne_bAt993 :
       exact
         ∀ (Ci : BandCircle), ∀ (T' : ProtoTile), ∀ (Rplus : ProtoTile), ∀ (PP :
             PeriodicTileComplex ↥(TilingLattice Ci)), ∀ (x : GaussianInt), ∀ (V : ProtoTile), ∀
-            (b : ↥(TilingLattice Ci)), (PP.tile b = V) → ((V.cells ⊆ T'.cells) → (∀ (cb :
-            LatticeCell), (
+            (b : ↥(TilingLattice Ci)), (PP.tile b = V) → ((V.cells ⊆ T'.cells) → ( (
         let n : GaussianInt := x - 1
         ∀ (e : ↥(TilingLattice Ci)), ((n ∈ Rplus.cells) → ((n ∈ (PP.tile
             e).cells) → ((Disjoint Rplus.cells T'.cells) → (e ≠ b))))))) ) := by
   classical
-  intro Ci T' Rplus PP x V b hVb V_in_T' cb n e hEcell hEidx hdisET' heq
+  intro Ci T' Rplus PP x V b hVb V_in_T' n e hEcell hEidx hdisET' heq
   have hnB : n ∈ (PP.tile b).cells := by simpa [heq] using hEidx
   have hnV : n ∈ V.cells := by simpa [hVb] using hnB
   exact (Finset.disjoint_left.mp hdisET') hEcell (V_in_T' hnV)
@@ -2372,9 +2370,9 @@ theorem P4158T1EdgeSectorSelection :
           have ht_ne_e := EdgeSectorGeometry.ht_ne_eAt974 Ci T' Rplus PP x e he hdisET' hxT' t ht
           have ht_ne_a := EdgeSectorGeometry.ht_ne_aAt979 C0 Ci T T' h hdis tiles hs hcontain PP
               x g a hAzip hAanc hxT' t ht
-          have he_ne_a := EdgeSectorGeometry.he_ne_aAt984 Ci T Rplus PP x U a hUa U_in_T cf e
+          have he_ne_a := EdgeSectorGeometry.he_ne_aAt984 Ci T Rplus PP x U a hUa U_in_T e
               hEcell hEidx hdisET
-          have he_ne_b := EdgeSectorGeometry.he_ne_bAt993 Ci T' Rplus PP x V b hVb V_in_T' cb
+          have he_ne_b := EdgeSectorGeometry.he_ne_bAt993 Ci T' Rplus PP x V b hVb V_in_T'
               e hEcell hEidx hdisET'
           have hxa := EdgeSectorGeometry.hxaAt1002 P Ci u PP x U a hUa cf hcf z_other hcfSide hlow
           have hxb : x - ⟨0,1⟩ ∈ (PP.tile b).cells := EdgeSectorGeometry.hxbAt1009 P Ci u PP x V
