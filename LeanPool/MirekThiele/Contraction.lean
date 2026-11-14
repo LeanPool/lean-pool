@@ -62,6 +62,14 @@ theorem sqrt_dsq_eq (T : DyadicCube d) (f : (Fin d → ℝ) → ℝ) :
   rw [← martDiff_sq_mul_vol, abs_of_nonneg (martDiff_nonneg T f), Real.sqrt_mul (sq_nonneg _),
     Real.sqrt_sq (martDiff_nonneg T f)]
 
+/-- A denominator bounded away from zero gives a uniform division bound. -/
+theorem abs_div_le_eight_mul_abs {x z : ℝ} (hz : 1 / 8 < |z|) :
+    |x / z| ≤ 8 * |x| := by
+  rw [abs_div, div_le_iff₀ ((by norm_num : (0 : ℝ) < 1 / 8).trans hz)]
+  calc |x| = 8 * |x| * (1 / 8) := by ring
+    _ ≤ 8 * |x| * |z| :=
+      mul_le_mul_of_nonneg_left hz.le (mul_nonneg (by norm_num) (abs_nonneg x))
+
 /-- The elementary estimate behind (2.61): for `|z|, |z'| > 1/8` and `|z|, |z'| ≤ M`,
 `|x/z − x'/z'| ≤ (8 + 128 M)|x' − x| + 64 |x| |z' − z|`. [PROVED] -/
 theorem abs_div_sub_div_le {x x' z z' M : ℝ} (hz : 1 / 8 < |z|) (hz' : 1 / 8 < |z'|)
@@ -69,47 +77,39 @@ theorem abs_div_sub_div_le {x x' z z' M : ℝ} (hz : 1 / 8 < |z|) (hz' : 1 / 8 <
     |x / z - x' / z'| ≤ (8 + 128 * M) * |x' - x| + 64 * |x| * |z' - z| := by
   have hz0 : z ≠ 0 := fun h => by rw [h, abs_zero] at hz; norm_num at hz
   have hz'0 : z' ≠ 0 := fun h => by rw [h, abs_zero] at hz'; norm_num at hz'
-  have e : x / z - x' / z' = (x - x') / z + x' * (z' - z) / (z * z') := by
-    field_simp
+  have e : x / z - x' / z' = (x - x') / z' + x * (z' - z) / (z * z') := by
+    field_simp [hz0, hz'0]
     ring
-  have h1 : |(x - x') / z| ≤ 8 * |x' - x| := by
-    rw [abs_div, div_le_iff₀ (by linarith), abs_sub_comm]
-    nlinarith [abs_nonneg (x' - x)]
-  have h2 : |x' * (z' - z) / (z * z')| ≤ 64 * |x'| * |z' - z| := by
-    rw [abs_div, abs_mul, abs_mul, div_le_iff₀ (by positivity)]
-    have h3 : 1 ≤ 64 * (|z| * |z'|) := by nlinarith [mul_pos (sub_pos.mpr hz) (sub_pos.mpr hz')]
-    calc |x'| * |z' - z| = |x'| * |z' - z| * 1 := by ring
-      _ ≤ |x'| * |z' - z| * (64 * (|z| * |z'|)) :=
-          mul_le_mul_of_nonneg_left h3 (by positivity)
-      _ = 64 * |x'| * |z' - z| * (|z| * |z'|) := by ring
-  have h4 : |x'| ≤ |x| + |x' - x| := by
-    have := abs_add_le x (x' - x)
-    rwa [add_sub_cancel] at this
-  have h5 : |z' - z| ≤ 2 * M := by
-    have := abs_sub z' z
-    linarith
-  have h6 : |x'| * |z' - z| ≤ (|x| + |x' - x|) * |z' - z| :=
-    mul_le_mul_of_nonneg_right h4 (abs_nonneg _)
-  have h7 : |x' - x| * |z' - z| ≤ |x' - x| * (2 * M) :=
-    mul_le_mul_of_nonneg_left h5 (abs_nonneg _)
-  calc |x / z - x' / z'| = |(x - x') / z + x' * (z' - z) / (z * z')| := by rw [e]
-    _ ≤ |(x - x') / z| + |x' * (z' - z) / (z * z')| := abs_add_le _ _
-    _ ≤ 8 * |x' - x| + 64 * |x'| * |z' - z| := add_le_add h1 h2
-    _ ≤ (8 + 128 * M) * |x' - x| + 64 * |x| * |z' - z| := by nlinarith
+  have h1 : |(x - x') / z'| ≤ 8 * |x' - x| := by
+    simpa only [abs_sub_comm x x'] using abs_div_le_eight_mul_abs (x := x - x') hz'
+  have h2 : |x * (z' - z) / (z * z')| ≤ 64 * |x| * |z' - z| := by
+    rw [← div_mul_div_comm, abs_mul]
+    calc |x / z| * |(z' - z) / z'| ≤ (8 * |x|) * (8 * |z' - z|) :=
+          mul_le_mul (abs_div_le_eight_mul_abs hz) (abs_div_le_eight_mul_abs hz')
+            (abs_nonneg _) (mul_nonneg (by norm_num) (abs_nonneg x))
+      _ = 64 * |x| * |z' - z| := by ring
+  have hM : 0 ≤ M := (le_max_of_le_left (abs_nonneg z)).trans (max_le hzM hz'M)
+  have hcoefficient : (8 : ℝ) ≤ 8 + 128 * M :=
+    le_add_of_nonneg_right (mul_nonneg (by norm_num) hM)
+  calc |x / z - x' / z'| = |(x - x') / z' + x * (z' - z) / (z * z')| := by rw [e]
+    _ ≤ |(x - x') / z'| + |x * (z' - z) / (z * z')| := abs_add_le _ _
+    _ ≤ 8 * |x' - x| + 64 * |x| * |z' - z| := add_le_add h1 h2
+    _ ≤ (8 + 128 * M) * |x' - x| + 64 * |x| * |z' - z| :=
+      add_le_add (mul_le_mul_of_nonneg_right hcoefficient (abs_nonneg _)) le_rfl
 
 /-- The companion estimate: `|y' − (y/z) z'| ≤ |y' − y| + 8 |y| |z' − z|` for `|z| > 1/8`. [PROVED]
 -/
 theorem abs_sub_div_mul_le {y y' z z' : ℝ} (hz : 1 / 8 < |z|) :
     |y' - y / z * z'| ≤ |y' - y| + 8 * |y| * |z' - z| := by
   have hz0 : z ≠ 0 := fun h => by rw [h, abs_zero] at hz; norm_num at hz
-  have e : y' - y / z * z' = (y' - y) + y * (z - z') / z := by
-    field_simp
+  have e : y' - y / z * z' = (y' - y) + (y / z) * (z - z') := by
+    field_simp [hz0]
     ring
-  have h1 : |y * (z - z') / z| ≤ 8 * |y| * |z' - z| := by
-    rw [abs_div, abs_mul, div_le_iff₀ (by linarith), abs_sub_comm z z']
-    nlinarith [abs_nonneg y, abs_nonneg (z' - z), mul_nonneg (abs_nonneg y) (abs_nonneg (z' - z))]
-  calc |y' - y / z * z'| = |(y' - y) + y * (z - z') / z| := by rw [e]
-    _ ≤ |y' - y| + |y * (z - z') / z| := abs_add_le _ _
+  have h1 : |(y / z) * (z - z')| ≤ 8 * |y| * |z' - z| := by
+    rw [abs_mul, abs_sub_comm z z']
+    exact mul_le_mul_of_nonneg_right (abs_div_le_eight_mul_abs hz) (abs_nonneg _)
+  calc |y' - y / z * z'| = |(y' - y) + (y / z) * (z - z')| := by rw [e]
+    _ ≤ |y' - y| + |(y / z) * (z - z')| := abs_add_le _ _
     _ ≤ |y' - y| + 8 * |y| * |z' - z| := add_le_add le_rfl h1
 
 /-- **The martingale estimate (2.62)** for one cube `T`: with `x = [f]`, `y = [w]`, `z = [v]` on `T`
@@ -480,7 +480,7 @@ theorem ThetaT_supportedOn : SupportedOn (D.ThetaT hR hRs hFR) R := fun x hx => 
 theorem lpNorm_ThetaP_le (hG : D.GBound) :
     lpNorm (D.ThetaP hR hRs hFR : (Fin d → ℝ) → ℝ) D.r ≤
       2 * D.CφT * D.Cψ hR hRs hFR * (2 ^ d / D.ε) * D.KQ * R.vol ^ (1 / D.r) := by
-  have hr0 : 0 < D.r := by linarith [D.hr]
+  have hr0 : 0 < D.r := zero_lt_one.trans D.hr
   have hε := D.ε_pos
   have hM0 : 0 ≤ 2 * (D.CφT * D.KQ) * D.Cψ hR hRs hFR * (2 ^ d / D.ε) :=
     mul_nonneg (mul_nonneg (mul_nonneg (by norm_num) (mul_nonneg D.CφT_nonneg D.KQ_nonneg))
@@ -488,7 +488,7 @@ theorem lpNorm_ThetaP_le (hG : D.GBound) :
   have h := TestFun.lpNorm_le_of_abs_le (D.ThetaP hR hRs hFR) (D.ThetaP_supportedOn hR hRs hFR)
     hM0 (D.abs_ThetaP_apply_le hR hRs hFR hG) hr0
   refine h.trans (le_of_eq ?_)
-  ring
+  ac_rfl
 
 end ThetaSplit
 
@@ -535,7 +535,7 @@ theorem Mv_nonneg : 0 ≤ D.Mv := D.Mv_pos.le
 [PROVED] -/
 theorem abs_avg_vP_le_Mv {P : DyadicCube d} (hP : (D.second R hR hRs hFR).Good P) :
     |avg P (D.vP R)| ≤ D.Mv := by
-  have hr0 : 0 < D.r := by linarith [D.hr]
+  have hr0 : 0 < D.r := zero_lt_one.trans D.hr
   have hP0 := P.vol_pos
   have hR0 := R.vol_pos
   have hε := D.ε_pos
@@ -548,7 +548,7 @@ theorem abs_avg_vP_le_Mv {P : DyadicCube d} (hP : (D.second R hR hRs hFR).Good P
       TestFun.lpNorm_truncateₗ_rpow P _ hr0]
     refine (D.setIntegral_vP_rpow_le hR hRs hFR hP).trans (le_of_eq ?_)
     calc 2 ^ d / D.ε * (P.vol / R.vol) * (D.B * R.vol)
-        = 2 ^ d / D.ε * D.B * (P.vol / R.vol * R.vol) := by ring
+        = 2 ^ d / D.ε * D.B * (P.vol / R.vol * R.vol) := by ac_rfl
       _ = 2 ^ d * D.B / D.ε * P.vol := by
           rw [div_mul_cancel₀ _ hR0.ne']
           ring
@@ -585,14 +585,15 @@ theorem avg_vhat_eq {T : DyadicCube d}
           (fun x hx => TestFun.ind_supportedOn P x fun h => hx (hsub h)),
         TestFun.truncateₗ_of_supportedOn
           (fun x hx => TestFun.truncateₗ_supportedOn P (D.vP R) x fun h => hx (hsub h)),
-        map_smul, TestFun.integralₗ_truncateₗ, TestFun.integralₗ_apply, TestFun.integral_ind,
+        LinearMap.map_smul, TestFun.integralₗ_truncateₗ, TestFun.integralₗ_apply,
+        TestFun.integral_ind,
         smul_eq_mul]
     · rw [← TestFun.truncateₗ_ind P, TestFun.truncateₗ_truncateₗ_of_disjoint hdis.symm,
         TestFun.truncateₗ_truncateₗ_of_disjoint hdis.symm, smul_zero]
   have e : TestFun.truncateₗ T (D.vhat hR hRs hFR) =
       ∑ P ∈ D.partR hR hRs hFR, avg P (D.vP R) • TestFun.truncateₗ T (TestFun.ind P) := by
     rw [vhat, map_sum]
-    simp only [map_smul]
+    simp only [LinearMap.map_smul]
   have h1 := TestFun.integralₗ_truncateₗ T (D.vhat hR hRs hFR)
   have h2 := TestFun.integralₗ_truncateₗ T (D.vP R)
   rw [e, map_sum, Finset.sum_congr rfl key, ← map_sum TestFun.integralₗ,
@@ -1105,7 +1106,7 @@ theorem abs_mul_abs_rpow_rpow_eq {c r r' : ℝ} (hr : 1 < r) (hr' : 0 < r')
 theorem integral_ThetaT_mul_wdual :
     ∫ x, (D.ThetaT hR hRs hFR : (Fin d → ℝ) → ℝ) x * (D.wdual hR hRs hFR : (Fin d → ℝ) → ℝ) x =
       ∑ P ∈ D.partR hR hRs hFR, |D.cT hR hRs hFR P| ^ D.r * P.vol := by
-  have hr0 : 0 < D.r := by linarith [D.hr]
+  have hr0 : 0 < D.r := zero_lt_one.trans D.hr
   rw [D.integral_eq_sum_partR hR hRs hFR (f := fun x =>
       (D.ThetaT hR hRs hFR : (Fin d → ℝ) → ℝ) x * (D.wdual hR hRs hFR : (Fin d → ℝ) → ℝ) x)
     ((TestFun.memLp (D.ThetaT hR hRs hFR).2 2).integrable_mul
@@ -1127,7 +1128,7 @@ theorem integral_ThetaT_mul_wdual :
 theorem lpNorm_ThetaT_rpow_eq :
     lpNorm (D.ThetaT hR hRs hFR : (Fin d → ℝ) → ℝ) D.r ^ D.r =
       ∑ P ∈ D.partR hR hRs hFR, |D.cT hR hRs hFR P| ^ D.r * P.vol := by
-  have hr0 : 0 < D.r := by linarith [D.hr]
+  have hr0 : 0 < D.r := zero_lt_one.trans D.hr
   rw [lpNorm_rpow_eq_integral hr0 (TestFun.memLp (D.ThetaT hR hRs hFR).2 _),
     D.integral_abs_rpow_eq_sum_partR hR hRs hFR (D.ThetaT_supportedOn hR hRs hFR) hr0]
   refine Finset.sum_congr rfl fun P hP => ?_
@@ -1168,7 +1169,7 @@ theorem lpNorm_ThetaT_le (hG : D.GBound) :
     lpNorm (D.ThetaT hR hRs hFR : (Fin d → ℝ) → ℝ) D.r ≤
       D.C271 * (D.CφT * D.KQ * D.Cmart) *
         ((D.second R hR hRs hFR).pruneConst * R.vol ^ (1 / D.r)) := by
-  have hr0 : 0 < D.r := by linarith [D.hr]
+  have hr0 : 0 < D.r := zero_lt_one.trans D.hr
   have hr'0 := D.r'_pos
   have hK₁ : 0 ≤ D.C271 * (D.CφT * D.KQ * D.Cmart) :=
     mul_nonneg D.C271_nonneg (mul_nonneg (mul_nonneg D.CφT_nonneg D.KQ_nonneg) D.Cmart_nonneg)
@@ -1245,8 +1246,8 @@ noncomputable def C₅₈ : ℝ :=
 reduction `‖θ‖_r ≤ (2^d B/ε)^{1/r} ‖Θ‖_r` and the bound on `‖Θ‖_r`. [PROVED] -/
 theorem abs_form2_theta_le_E (hG : D.GBound) :
     |twoSlotForm D.T D.a D.b D.g R (D.theta hR hRs hFR) D.u| ≤ D.C₅₈ hR hRs hFR * D.E R := by
-  have hr0 : 0 < D.r := by linarith [D.hr]
-  have hq0 : 0 < D.q := by linarith [D.hq]
+  have hr0 : 0 < D.r := zero_lt_one.trans D.hr
+  have hq0 : 0 < D.q := zero_lt_one.trans D.hq
   have hε := D.ε_pos
   have hB : 0 ≤ D.B := by linarith [D.hB]
   have hV := D.Q.vol_pos
@@ -1265,14 +1266,18 @@ theorem abs_form2_theta_le_E (hG : D.GBound) :
       _ = D.B ^ (1 / D.q) := by
           rw [Real.mul_rpow hB hV.le, mul_assoc, ← Real.rpow_add hV, add_neg_cancel,
             Real.rpow_zero, mul_one]
-  have hMv : 0 ≤ (2 ^ d * D.B / D.ε) ^ (1 / D.r) := by positivity
+  have hMv : 0 ≤ (2 ^ d * D.B / D.ε) ^ (1 / D.r) := by
+    exact (Real.rpow_nonneg (div_nonneg (mul_nonneg (le_of_lt (pow_pos (by norm_num) d)) hB)
+      (le_of_lt hε)) (1 / D.r))
   have hθ : lpNorm (D.theta hR hRs hFR : (Fin d → ℝ) → ℝ) D.r ≤
       (2 ^ d * D.B / D.ε) ^ (1 / D.r) * (D.CΘ hR hRs hFR * D.KQ * R.vol ^ (1 / D.r)) :=
     h2.trans (mul_le_mul_of_nonneg_left h3 hMv)
   have hX : 0 ≤ 2 ^ d * D.B * D.ε⁻¹ * (2 ^ d * D.B / D.ε) ^ (1 / D.r) * D.CΘ hR hRs hFR := by
     positivity
   have hY : 0 ≤ D.F * lpNorm (D.G : (Fin d → ℝ) → ℝ) D.q *
-      ((R.vol / D.Q.vol) ^ (1 - 1 / D.r) * R.vol ^ (1 / D.r)) := by positivity
+      ((R.vol / D.Q.vol) ^ (1 - 1 / D.r) * R.vol ^ (1 / D.r)) := by
+        exact (mul_nonneg (mul_nonneg (le_of_lt hF) hG0) (le_of_lt (mul_pos (Real.rpow_pos_of_pos
+          (div_pos hR0 hV) (1 - 1 / D.r)) (Real.rpow_pos_of_pos hR0 (1 / D.r)))))
   calc |twoSlotForm D.T D.a D.b D.g R (D.theta hR hRs hFR) D.u|
       ≤ 2 ^ d * (D.B * D.F * lpNorm (D.u : (Fin d → ℝ) → ℝ) D.q * D.ε⁻¹) *
           (R.vol / D.Q.vol) ^ (1 - 1 / D.r) *
@@ -1286,7 +1291,7 @@ theorem abs_form2_theta_le_E (hG : D.GBound) :
           (D.F * lpNorm (D.G : (Fin d → ℝ) → ℝ) D.q *
             ((R.vol / D.Q.vol) ^ (1 - 1 / D.r) * R.vol ^ (1 / D.r))) := by
         unfold KQ
-        ring
+        ac_rfl
     _ ≤ 2 ^ d * D.B * D.ε⁻¹ * (2 ^ d * D.B / D.ε) ^ (1 / D.r) * D.CΘ hR hRs hFR *
           D.B ^ (1 / D.q) *
           (D.F * lpNorm (D.G : (Fin d → ℝ) → ℝ) D.q *
@@ -1295,7 +1300,7 @@ theorem abs_form2_theta_le_E (hG : D.GBound) :
     _ = D.C₅₈ hR hRs hFR * D.E R := by
         unfold C₅₈ E
         rw [rpow_fact1 hR0 hV]
-        ring
+        ac_rfl
 
 end ThetaTPortion
 
@@ -1675,7 +1680,7 @@ theorem lpNorm_thetaG_rpow_le :
 theorem lpNorm_thetaG_le :
     lpNorm (D.thetaG hR hRs hFR : (Fin d → ℝ) → ℝ) D.q ≤
       (2 ^ d * D.B / D.ε) ^ (1 / D.q) * lpNorm (D.ThetaG hR hRs hFR : (Fin d → ℝ) → ℝ) D.q := by
-  have hq0 : 0 < D.q := by linarith [D.hq]
+  have hq0 : 0 < D.q := zero_lt_one.trans D.hq
   have hε := D.ε_pos
   have hB : 0 ≤ D.B := by linarith [D.hB]
   have hC : 0 ≤ 2 ^ d * D.B / D.ε := by positivity
@@ -1792,7 +1797,7 @@ theorem ThetaGT_supportedOn : SupportedOn (D.ThetaGT hR hRs hFR) R := fun x hx =
 theorem lpNorm_ThetaGP_le (hG : D.GBound) :
     lpNorm (D.ThetaGP hR hRs hFR : (Fin d → ℝ) → ℝ) D.q ≤
       2 * D.Cψ hR hRs hFR * D.CφT * (2 ^ d / D.ε) * D.KQ * R.vol ^ (1 / D.q) := by
-  have hq0 : 0 < D.q := by linarith [D.hq]
+  have hq0 : 0 < D.q := zero_lt_one.trans D.hq
   have hε := D.ε_pos
   have hM0 : 0 ≤ 2 * D.Cψ hR hRs hFR * (D.CφT * D.KQ) * (2 ^ d / D.ε) :=
     mul_nonneg (mul_nonneg (mul_nonneg (by norm_num) (D.Cψ_nonneg hR hRs hFR))
@@ -1800,7 +1805,7 @@ theorem lpNorm_ThetaGP_le (hG : D.GBound) :
   have h := TestFun.lpNorm_le_of_abs_le (D.ThetaGP hR hRs hFR) (D.ThetaGP_supportedOn hR hRs hFR)
     hM0 (D.abs_ThetaGP_apply_le hR hRs hFR hG) hq0
   refine h.trans (le_of_eq ?_)
-  ring
+  ac_rfl
 
 /-! The `𝐓'`-portion of `Θ'`: the martingale estimate with the bounded function `û`, Lemma 2.71 for
 the exponents `q`, `q'`, and the explicit duality. -/
@@ -1881,14 +1886,15 @@ theorem avg_uhat_eq {T : DyadicCube d} (hTR : T.toSet ⊆ R.toSet)
           (fun x hx => TestFun.ind_supportedOn P x fun h => hx (hsub h)),
         TestFun.truncateₗ_of_supportedOn
           (fun x hx => TestFun.truncateₗ_supportedOn P D.u x fun h => hx (hsub h)),
-        map_smul, TestFun.integralₗ_truncateₗ, TestFun.integralₗ_apply, TestFun.integral_ind,
+        LinearMap.map_smul, TestFun.integralₗ_truncateₗ, TestFun.integralₗ_apply,
+        TestFun.integral_ind,
         smul_eq_mul]
     · rw [← TestFun.truncateₗ_ind P, TestFun.truncateₗ_truncateₗ_of_disjoint hdis.symm,
         TestFun.truncateₗ_truncateₗ_of_disjoint hdis.symm, smul_zero]
   have e : TestFun.truncateₗ T (D.uhat hR hRs hFR) =
       ∑ P ∈ D.partRG hR hRs hFR, avg P D.u • TestFun.truncateₗ T (TestFun.ind P) := by
     rw [uhat, map_sum]
-    simp only [map_smul]
+    simp only [LinearMap.map_smul]
   have h1 := TestFun.integralₗ_truncateₗ T (D.uhat hR hRs hFR)
   have h2 := TestFun.integralₗ_truncateₗ T D.u
   rw [e, map_sum, Finset.sum_congr rfl key, ← map_sum TestFun.integralₗ,
@@ -2262,7 +2268,7 @@ theorem wdualG_supportedOn : SupportedOn (D.wdualG hR hRs hFR) R := fun x hx => 
 theorem integral_ThetaGT_mul_wdualG :
     ∫ x, (D.ThetaGT hR hRs hFR : (Fin d → ℝ) → ℝ) x * (D.wdualG hR hRs hFR : (Fin d → ℝ) → ℝ) x =
       ∑ P ∈ D.partRG hR hRs hFR, |D.cTG hR hRs hFR P| ^ D.q * P.vol := by
-  have hq0 : 0 < D.q := by linarith [D.hq]
+  have hq0 : 0 < D.q := zero_lt_one.trans D.hq
   rw [D.integral_eq_sum_partRG hR hRs hFR (f := fun x =>
       (D.ThetaGT hR hRs hFR : (Fin d → ℝ) → ℝ) x * (D.wdualG hR hRs hFR : (Fin d → ℝ) → ℝ) x)
     ((TestFun.memLp (D.ThetaGT hR hRs hFR).2 2).integrable_mul
@@ -2286,7 +2292,7 @@ theorem integral_ThetaGT_mul_wdualG :
 theorem lpNorm_ThetaGT_rpow_eq :
     lpNorm (D.ThetaGT hR hRs hFR : (Fin d → ℝ) → ℝ) D.q ^ D.q =
       ∑ P ∈ D.partRG hR hRs hFR, |D.cTG hR hRs hFR P| ^ D.q * P.vol := by
-  have hq0 : 0 < D.q := by linarith [D.hq]
+  have hq0 : 0 < D.q := zero_lt_one.trans D.hq
   rw [lpNorm_rpow_eq_integral hq0 (TestFun.memLp (D.ThetaGT hR hRs hFR).2 _),
     D.integral_abs_rpow_eq_sum_partRG hR hRs hFR (D.ThetaGT_supportedOn hR hRs hFR) hq0]
   refine Finset.sum_congr rfl fun P hP => ?_
@@ -2328,7 +2334,7 @@ theorem lpNorm_ghat_le (hG : D.GBound) :
 theorem lpNorm_ThetaGT_le (hG : D.GBound) :
     lpNorm (D.ThetaGT hR hRs hFR : (Fin d → ℝ) → ℝ) D.q ≤
       D.C271q * (D.Cψ hR hRs hFR * D.CmartG) * (D.psiConst * D.KQ * R.vol ^ (1 / D.q)) := by
-  have hq0 : 0 < D.q := by linarith [D.hq]
+  have hq0 : 0 < D.q := zero_lt_one.trans D.hq
   have hq'0 := D.q'_pos
   have hK₁ : 0 ≤ D.C271q * (D.Cψ hR hRs hFR * D.CmartG) :=
     mul_nonneg D.C271q_nonneg (mul_nonneg (D.Cψ_nonneg hR hRs hFR) D.CmartG_nonneg)
@@ -2397,7 +2403,7 @@ theorem rpow_fact3 {s V r q : ℝ} (hs : 0 < s) (hV : 0 < V) :
   rw [Real.div_rpow hs.le hV.le, div_eq_mul_inv, ← Real.rpow_neg hV.le,
     show s ^ (1 - 1 / r - 1 / q) * V ^ (-(1 - 1 / r - 1 / q)) * s ^ (1 / r) * s ^ (1 / q) *
       V ^ (-(1 / q)) = (s ^ (1 - 1 / r - 1 / q) * s ^ (1 / r) * s ^ (1 / q)) *
-      (V ^ (-(1 - 1 / r - 1 / q)) * V ^ (-(1 / q))) by ring,
+      (V ^ (-(1 - 1 / r - 1 / q)) * V ^ (-(1 / q))) by ac_rfl,
     ← Real.rpow_add hs, ← Real.rpow_add hs, ← Real.rpow_add hV]
   congr 1
   · rw [show 1 - 1 / r - 1 / q + 1 / r + 1 / q = (1 : ℝ) by ring, Real.rpow_one]
@@ -2418,8 +2424,8 @@ reduction `‖θ'‖_q ≤ (2^d B/ε)^{1/q} ‖Θ'‖_q` and the bound on `‖Θ
 theorem abs_form2_vP_thetaG_le_E (hG : D.GBound) :
     |twoSlotForm D.T D.a D.b D.g R (D.vP R) (D.thetaG hR hRs hFR)| ≤
       D.C₅₉ hR hRs hFR * D.E R := by
-  have hr0 : 0 < D.r := by linarith [D.hr]
-  have hq0 : 0 < D.q := by linarith [D.hq]
+  have hr0 : 0 < D.r := zero_lt_one.trans D.hr
+  have hq0 : 0 < D.q := zero_lt_one.trans D.hq
   have hε := D.ε_pos
   have hB : 0 ≤ D.B := by linarith [D.hB]
   have hV := D.Q.vol_pos
@@ -2431,11 +2437,14 @@ theorem abs_form2_vP_thetaG_le_E (hG : D.GBound) :
   have hθ0 := lpNorm_nonneg (D.thetaG hR hRs hFR : (Fin d → ℝ) → ℝ) D.q
   have hFP0 := D.FP_nonneg R
   have hCΘ0 := D.CΘG_nonneg hR hRs hFR
-  have hdiv : 0 ≤ R.vol / D.Q.vol := by positivity
+  have hdiv : 0 ≤ R.vol / D.Q.vol := by
+    exact (le_of_lt (div_pos hR0 hV))
   have h1 := D.abs_form2_vP_thetaG_le hR hRs hFR
   have hFP := D.FP_le (D.good_of_notInStopping hR hRs)
   have hv := D.lpNorm_vP_le hR.1
-  have hMu : 0 ≤ (2 ^ d * D.B / D.ε) ^ (1 / D.q) := by positivity
+  have hMu : 0 ≤ (2 ^ d * D.B / D.ε) ^ (1 / D.q) := by
+    exact (Real.rpow_nonneg (div_nonneg (mul_nonneg (le_of_lt (pow_pos (by norm_num) d)) hB)
+      (le_of_lt hε)) (1 / D.q))
   have hθ : lpNorm (D.thetaG hR hRs hFR : (Fin d → ℝ) → ℝ) D.q ≤
       (2 ^ d * D.B / D.ε) ^ (1 / D.q) * (D.CΘG hR hRs hFR * D.KQ * R.vol ^ (1 / D.q)) :=
     (D.lpNorm_thetaG_le hR hRs hFR).trans
@@ -2454,11 +2463,11 @@ theorem abs_form2_vP_thetaG_le_E (hG : D.GBound) :
             D.Q.vol ^ (-(1 / D.q))) := by
         rw [Real.mul_rpow hCG.le hdiv, Real.mul_rpow hB hR0.le]
         unfold KQ
-        ring
+        ac_rfl
     _ = D.C₅₉ hR hRs hFR * D.E R := by
         rw [hexp]
         unfold C₅₉ E
-        ring
+        ac_rfl
 
 end Term259
 
@@ -2585,7 +2594,7 @@ theorem sum_abs_sub_avg_le (T : DyadicCube d) (f : (Fin d → ℝ) → ℝ) :
     rw [Finset.sum_congr rfl fun ε _ => h1 ε, Finset.sum_const, Finset.card_univ, Fintype.card_fun,
       Fintype.card_bool, Fintype.card_fin, nsmul_eq_mul]
     push_cast
-    ring
+    rfl
   simp only [e1] at h
   rw [e2] at h
   refine h.trans (le_of_eq ?_)
@@ -2709,7 +2718,9 @@ theorem abs_form2_XY_le_of (T : DyadicCube d) {K : ℝ}
           (TestFun.truncateₗ (T.child ε) (D.vP R)) (TestFun.truncateₗ (T.child ε') D.u)|
       ≤ |D.psiT hR hRs hFR T - D.psiT hR hRs hFR (T.child ε)| *
         |D.phiT R T - D.phiT R (T.child ε')| * K :=
-        mul_le_mul_of_nonneg_left (hK ε ε') (by positivity)
+        mul_le_mul_of_nonneg_left (hK ε ε') (by
+          exact (mul_nonneg (abs_nonneg (D.psiT hR hRs hFR T - D.psiT hR hRs hFR (T.child ε)))
+            (abs_nonneg (D.phiT R T - D.phiT R (T.child ε')))))
     _ = _ := by ring
 
 /-! The per-cube bound `|Λ_T(v 𝟙_{T_ε}, u 𝟙_{T_{ε'}})| ≤ C_diag F |Q|^{-a} |T|` for `T ∈ setF2`. -/
@@ -2734,14 +2745,14 @@ theorem FP_le' {P : DyadicCube d} (hP : D.Good P) :
 theorem lpNorm_truncateₗ_vP_le {P : DyadicCube d} (hP : (D.second R hR hRs hFR).Good P) :
     lpNorm (TestFun.truncateₗ P (D.vP R) : (Fin d → ℝ) → ℝ) D.r ≤
       (2 ^ d * D.B / D.ε * P.vol) ^ (1 / D.r) := by
-  have hr0 : 0 < D.r := by linarith [D.hr]
+  have hr0 : 0 < D.r := zero_lt_one.trans D.hr
   have hR0 := R.vol_pos
   refine TestFun.lpNorm_le_rpow_of_integral_le _ hr0 ?_
   rw [← lpNorm_rpow_eq_integral hr0 (TestFun.memLp (TestFun.truncateₗ P (D.vP R)).2 _),
     TestFun.lpNorm_truncateₗ_rpow P _ hr0]
   refine (D.setIntegral_vP_rpow_le hR hRs hFR hP).trans (le_of_eq ?_)
   calc 2 ^ d / D.ε * (P.vol / R.vol) * (D.B * R.vol)
-      = 2 ^ d / D.ε * D.B * (P.vol / R.vol * R.vol) := by ring
+      = 2 ^ d / D.ε * D.B * (P.vol / R.vol * R.vol) := by ac_rfl
     _ = 2 ^ d * D.B / D.ε * P.vol := by
         rw [div_mul_cancel₀ _ hR0.ne']
         ring
@@ -2793,7 +2804,7 @@ noncomputable def UT (T : DyadicCube d) : ℝ :=
 theorem Cdec_nonneg : 0 ≤ D.Cdec := by
   have := D.CG_pos
   have := D.ε_pos
-  have : 0 ≤ D.B := by linarith [D.hB]
+  have : 0 ≤ D.B := zero_le_one.trans D.hB
   unfold Cdec
   positivity
 
@@ -2801,14 +2812,14 @@ theorem Ctest_nonneg : 0 ≤ D.Ctest := by
   have := D.CG_pos
   have := D.ε_pos
   have := D.Mv_nonneg
-  have : 0 ≤ D.B := by linarith [D.hB]
+  have : 0 ≤ D.B := zero_le_one.trans D.hB
   unfold Ctest
   positivity
 
 theorem C210_nonneg : 0 ≤ D.C210 := by
   have := D.ε_pos
   have := D.Mv_nonneg
-  have : 0 ≤ D.B := by linarith [D.hB]
+  have : 0 ≤ D.B := zero_le_one.trans D.hB
   unfold C210
   positivity
 
@@ -2868,7 +2879,8 @@ theorem local_bounds_setF2 {T : DyadicCube d} (hT : T ∈ D.setF2 hR hRs hFR) (�
     gcongr
   · refine (D.lpNorm_vP_le hcQ).trans ?_
     rw [Real.mul_rpow hB hc0.le]
-    gcongr
+    exact (mul_le_mul_of_nonneg_left (Real.rpow_le_rpow (le_of_lt hc0) hcT (le_of_lt (div_pos (by
+      norm_num) hr0))) (Real.rpow_nonneg hB (1 / D.r)))
 
 /-- The off-diagonal terms of (2.64): `|Λ_T(v 𝟙_{T_ε}, u 𝟙_{T_{ε'}})| ≤ C_dec U_T` for `ε ≠ ε'`, by
 the decay condition (1.1). [PROVED] -/
@@ -2894,7 +2906,7 @@ theorem abs_form2_offdiag_le {T : DyadicCube d} (hT : T ∈ D.setF2 hR hRs hFR)
     have := D.CG_pos; have := D.Fpos'; have := T.vol_pos; have := D.Q.vol_pos
     positivity
   have hB0 : 0 ≤ (2 ^ d * D.B / D.ε) ^ (1 / D.r) * T.vol ^ (1 / D.r) := by
-    have := D.ε_pos; have : 0 ≤ D.B := by linarith [D.hB]
+    have := D.ε_pos; have : 0 ≤ D.B := zero_le_one.trans D.hB
     have := T.vol_pos
     positivity
   calc |twoSlotForm D.T D.a D.b D.g T (TestFun.truncateₗ (T.child ε) (D.vP R))
@@ -2909,11 +2921,11 @@ theorem abs_form2_offdiag_le {T : DyadicCube d} (hT : T ∈ D.setF2 hR hRs hFR)
     _ = D.Cdec * (D.F * D.Q.vol ^ (-(1 - 1 / D.r - 1 / D.q))) *
           (T.vol ^ (1 - 1 / D.r - 1 / D.q) * T.vol ^ (1 / D.r) * T.vol ^ (1 / D.q)) := by
         unfold Cdec
-        ring
+        ac_rfl
     _ = D.Cdec * D.UT T := by
         rw [D.vol_rpow_split T]
         unfold UT
-        ring
+        ac_rfl
 
 /-- Moving `Λ_T` to `Λ_{T_ε}` in the diagonal terms of (2.64): the residual is bounded by
 `n 2^d C_dec U_T`, by decay. [PROVED] -/
@@ -2941,7 +2953,7 @@ theorem abs_form2_resid_le {T : DyadicCube d} (hT : T ∈ D.setF2 hR hRs hFR) (�
     have := D.CG_pos; have := D.Fpos'; have := T.vol_pos; have := D.Q.vol_pos
     positivity
   have hB0 : 0 ≤ (2 ^ d * D.B / D.ε) ^ (1 / D.r) * T.vol ^ (1 / D.r) := by
-    have := D.ε_pos; have : 0 ≤ D.B := by linarith [D.hB]
+    have := D.ε_pos; have : 0 ≤ D.B := zero_le_one.trans D.hB
     have := T.vol_pos
     positivity
   have hn : (0 : ℝ) ≤ n * 2 ^ d := by positivity
@@ -2957,11 +2969,11 @@ theorem abs_form2_resid_le {T : DyadicCube d} (hT : T ∈ D.setF2 hR hRs hFR) (�
     _ = n * 2 ^ d * D.Cdec * (D.F * D.Q.vol ^ (-(1 - 1 / D.r - 1 / D.q))) *
           (T.vol ^ (1 - 1 / D.r - 1 / D.q) * T.vol ^ (1 / D.r) * T.vol ^ (1 / D.q)) := by
         unfold Cdec
-        ring
+        ac_rfl
     _ = n * 2 ^ d * D.Cdec * D.UT T := by
         rw [D.vol_rpow_split T]
         unfold UT
-        ring
+        ac_rfl
 
 /-- **(2.66)**: the diagonal terms at the child, `|Λ_{T_ε}(v 𝟙_{T_ε}, u 𝟙_{T_ε})| ≤ (C_test +
 C_{2.10}) U_T`:
@@ -2970,8 +2982,8 @@ the testing condition (1.9) for `τ`, the mean-zero second part by (2.10). [PROV
 theorem abs_form2_child_le {T : DyadicCube d} (hT : T ∈ D.setF2 hR hRs hFR) (ε : Fin d → Bool) :
     |twoSlotForm D.T D.a D.b D.g (T.child ε) (TestFun.truncateₗ (T.child ε) (D.vP R))
       (TestFun.truncateₗ (T.child ε) D.u)| ≤ (D.Ctest + D.C210) * D.UT T := by
-  have hr0 : 0 < D.r := by linarith [D.hr]
-  have hq0 : 0 < D.q := by linarith [D.hq]
+  have hr0 : 0 < D.r := zero_lt_one.trans D.hr
+  have hq0 : 0 < D.q := zero_lt_one.trans D.hq
   have hε := D.ε_pos
   have hB : 0 ≤ D.B := by linarith [D.hB]
   have hCG := D.CG_pos
@@ -2997,7 +3009,8 @@ theorem abs_form2_child_le {T : DyadicCube d} (hT : T ∈ D.setF2 hR hRs hFR) (�
       rw [Submodule.coe_smul, Pi.smul_apply, D.vP_supp c hcQ x hx, smul_zero]
   have hmean : MeanZero (ρ₀ : (Fin d → ℝ) → ℝ) := by
     change TestFun.integralₗ ρ₀ = 0
-    rw [hρ₀, map_sub, map_smul, TestFun.integralₗ_truncateₗ, TestFun.integralₗ_apply,
+    rw [hρ₀, LinearMap.map_sub, LinearMap.map_smul, TestFun.integralₗ_truncateₗ,
+      TestFun.integralₗ_apply,
       D.vP_mean c hcQ, smul_eq_mul, sub_self]
   have hρ₀ : lpNorm (ρ₀ : (Fin d → ℝ) → ℝ) D.r ≤
       ((2 ^ d * D.B / D.ε) ^ (1 / D.r) + D.Mv * D.B ^ (1 / D.r)) * T.vol ^ (1 / D.r) := by
@@ -3057,11 +3070,11 @@ theorem abs_form2_child_le {T : DyadicCube d} (hT : T ∈ D.setF2 hR hRs hFR) (�
       _ = D.Ctest * (D.F * D.Q.vol ^ (-(1 - 1 / D.r - 1 / D.q))) *
             (T.vol ^ (1 - 1 / D.r - 1 / D.q) * T.vol ^ (1 / D.r) * T.vol ^ (1 / D.q)) := by
           unfold Ctest
-          ring
+          ac_rfl
       _ = D.Ctest * D.UT T := by
           rw [D.vol_rpow_split T]
           unfold UT
-          ring
+          ac_rfl
   have hQsplit : D.Q.vol ^ (1 / D.q) * D.Q.vol ^ (-(1 - 1 / D.r)) =
       D.Q.vol ^ (-(1 - 1 / D.r - 1 / D.q)) := by
     rw [← Real.rpow_add hV]
@@ -3085,7 +3098,7 @@ theorem abs_form2_child_le {T : DyadicCube d} (hT : T ∈ D.setF2 hR hRs hFR) (�
       _ = D.C210 * D.UT T := by
           rw [hQsplit, hTsplit]
           unfold UT
-          ring
+          ac_rfl
   rw [hdec, twoSlotForm_add_left D.T D.hab, twoSlotForm_smul_left D.T D.hab]
   calc |avg c (D.vP R) * twoSlotForm D.T D.a D.b D.g c (D.vP c) (TestFun.truncateₗ c D.u) +
         twoSlotForm D.T D.a D.b D.g c ρ₀ (TestFun.truncateₗ c D.u)|
@@ -3120,11 +3133,11 @@ theorem abs_form2_child_child_le {T : DyadicCube d} (hT : T ∈ D.setF2 hR hRs h
       _ ≤ n * 2 ^ d * D.Cdec * D.UT T + (D.Ctest + D.C210) * D.UT T := add_le_add h1 h2
       _ ≤ D.Cdiag * D.UT T := by
           unfold Cdiag
-          nlinarith [mul_nonneg hCdec hU]
+          linarith only [hU, hCdec, mul_nonneg hCdec hU]
   · refine (D.abs_form2_offdiag_le hR hRs hFR hT hne).trans ?_
     refine mul_le_mul_of_nonneg_right ?_ hU
     unfold Cdiag
-    nlinarith [mul_nonneg hn hCdec]
+    linarith only [hCdec, hCtest, hC210, hn, mul_nonneg hn hCdec]
 
 /-- **The per-cube bound for (2.60)**: `|Λ_T(X_T, Y_T)| ≤ C_diag U_T (∑_ε |ψ_T − ψ_{T_ε}|)(∑_{ε'}
 |φ_T − φ_{T_{ε'}}|)`
@@ -3149,7 +3162,7 @@ theorem sum_le_two_pow_mul {f : (Fin d → Bool) → ℝ} {c : ℝ} (h : ∀ ε,
         rw [Finset.sum_const, Finset.card_univ, Fintype.card_fun, Fintype.card_bool,
           Fintype.card_fin, nsmul_eq_mul]
         push_cast
-        ring
+        rfl
 
 /-- The cubes of `setF2` which are parents of cubes of `𝐏 ∩ 𝐏₄` or of `𝐒 ∩ 𝐒₄`. -/
 noncomputable def setP2 : Finset (DyadicCube d) :=
@@ -3195,14 +3208,15 @@ theorem A_le_crude (hG : D.GBound) {T : DyadicCube d}
       2 * D.Cψ hR hRs hFR := fun ε => by
     have h1 := D.abs_psiT_le hR hRs hFR hT'
     have h2 := D.abs_psiT_le hR hRs hFR (D.child_mem_second_tree_of_mem_nonleaf hR hRs hFR hT ε)
-    linarith [abs_sub (D.psiT hR hRs hFR T) (D.psiT hR hRs hFR (T.child ε))]
+    linarith only [hR, hRs, hFR, h1, h2,
+      abs_sub (D.psiT hR hRs hFR T) (D.psiT hR hRs hFR (T.child ε))]
   have hφ : ∀ ε, |D.phiT R T - D.phiT R (T.child ε)| ≤ 2 * (D.CφT * D.KQ) := fun ε => by
     have h1 : |D.phiT R T| ≤ D.CφT * D.KQ :=
       D.abs_phiT_le hR hRs hG (D.second_tree_subset hR hRs hFR hT') hTR
     have h2 : |D.phiT R (T.child ε)| ≤ D.CφT * D.KQ :=
       D.abs_phiT_le hR hRs hG (D.second_tree_subset hR hRs hFR
         (D.child_mem_second_tree_of_mem_nonleaf hR hRs hFR hT ε)) ((T.child_subset ε).trans hTR)
-    linarith [abs_sub (D.phiT R T) (D.phiT R (T.child ε))]
+    linarith only [h1, h2, abs_sub (D.phiT R T) (D.phiT R (T.child ε))]
   exact mul_le_mul (sum_le_two_pow_mul hψ) (sum_le_two_pow_mul hφ)
     (Finset.sum_nonneg fun _ _ => abs_nonneg _)
     (mul_nonneg (by positivity) (mul_nonneg (by norm_num) (D.Cψ_nonneg hR hRs hFR)))
@@ -3235,7 +3249,7 @@ theorem sum_vol_setP2_le : ∑ T ∈ D.setP2 hR hRs hFR, T.vol ≤ 2 * (2 ^ d / 
       ≤ ∑ T ∈ D.Pbar4.filter (fun T => T.toSet ⊆ R.toSet) ∪ (D.second R hR hRs hFR).Pbar4,
           T.vol := Finset.sum_le_sum_of_subset_of_nonneg hsub fun T _ _ => T.vol_pos.le
     _ ≤ ∑ T ∈ D.Pbar4.filter (fun T => T.toSet ⊆ R.toSet), T.vol +
-          ∑ T ∈ (D.second R hR hRs hFR).Pbar4, T.vol := by linarith
+          ∑ T ∈ (D.second R hR hRs hFR).Pbar4, T.vol := by linarith only [hR, hRs, hFR, h0, hui]
     _ ≤ 2 ^ d / D.ε * R.vol + 2 ^ d / D.ε * R.vol := add_le_add h1 h2
     _ = 2 * (2 ^ d / D.ε) * R.vol := by ring
 
@@ -3532,7 +3546,7 @@ theorem inv_s'_eq (hlt : 1 / D.r + 1 / D.q < 1) :
     1 / ((D.r * D.q / (D.r + D.q)) / (D.r * D.q / (D.r + D.q) - 1)) = 1 - 1 / D.r - 1 / D.q ∧
       1 < (D.r * D.q / (D.r + D.q)) / (D.r * D.q / (D.r + D.q) - 1) := by
   obtain ⟨_, _, h1, h2, h3⟩ := holder_exponents D.hr D.hq hlt rfl
-  exact ⟨by linarith, h2⟩
+  exact ⟨by linarith only [h1, h3], h2⟩
 
 /-- The constant of the `𝐓`-portion of (2.60):
 `C₆₀T = C_{2.72} C_diag 2^d 2^d C_co · pruneConst' · C_ψ'`. -/
@@ -3548,8 +3562,8 @@ theorem sum_setT2_le (hG : D.GBound) (hrq : 1 / D.r + 1 / D.q ≤ 1) :
         (D.xT hR hRs hFR T - ∑ T' ∈ children T, D.xT hR hRs hFR T')
         (D.yT R T - ∑ T' ∈ children T, D.yT R T')| ≤ D.C₆₀T hR hRs hFR hrq * D.E R := by
   classical
-  have hr0 : 0 < D.r := by linarith [D.hr]
-  have hq0 : 0 < D.q := by linarith [D.hq]
+  have hr0 : 0 < D.r := by linarith only [D.hr]
+  have hq0 : 0 < D.q := by linarith only [D.hq]
   have hF := D.Fpos'
   have hV := D.Q.vol_pos
   have hR0 := R.vol_pos
@@ -3604,7 +3618,7 @@ theorem sum_setT2_le (hG : D.GBound) (hrq : 1 / D.r + 1 / D.q ≤ 1) :
     by_cases hlt : 1 / D.r + 1 / D.q < 1
     · obtain ⟨hs'inv, hs'1⟩ := D.inv_s'_eq hlt
       set s' : ℝ := (D.r * D.q / (D.r + D.q)) / (D.r * D.q / (D.r + D.q) - 1) with hs'
-      have hs'0 : 0 < s' := by linarith
+      have hs'0 : 0 < s' := by linarith only [hs'1]
       have h272 := D.C272_spec hrq hlt C₀ R (D.prunedH hR hRs hFR) (D.ghat R) (TestFun.ind R)
         (D.fthreeG hR hRs hFR) (D.fthree hR hRs hFR) α hC₀
         (TestFun.memLp (D.prunedH hR hRs hFR).2 _)
@@ -3665,7 +3679,7 @@ theorem sum_setT2_le (hG : D.GBound) (hrq : 1 / D.r + 1 / D.q ≤ 1) :
       rw [ENNReal.toReal_sum (fun T _ => enorm_ne_top), ENNReal.toReal_mul, ENNReal.toReal_mul,
         ENNReal.toReal_ofReal (mul_nonneg (D.C272_nonneg hrq) hC₀)] at h3
       simp only [toReal_enorm, Real.norm_eq_abs] at h3
-      have hexp : (1 : ℝ) - 1 / D.r - 1 / D.q = 0 := by linarith
+      have hexp : (1 : ℝ) - 1 / D.r - 1 / D.q = 0 := by linarith only [hrq, hlt]
       rw [hexp, Real.rpow_zero, mul_one]
       calc ∑ T ∈ D.setT2 hR hRs hFR, |α T|
           ≤ D.C272 hrq * C₀ * (lpNorm (truncate R (D.prunedH hR hRs hFR : (Fin d → ℝ) → ℝ)) D.r *
@@ -3983,8 +3997,8 @@ theorem Q_notMem_P2 : D.Q ∉ D.P2 := by
     rw [D.Q.volume_toSet, ← ENNReal.ofReal_inv_of_pos hV,
       ENNReal.ofReal_lt_ofReal_iff (div_pos one_pos (mul_pos hε hV)), inv_eq_one_div,
       div_lt_div_iff₀ hV (mul_pos hε hV), one_mul, one_mul]
-    have := mul_lt_mul_of_pos_right (show D.ε < 1 by linarith) hV
-    linarith
+    have := mul_lt_mul_of_pos_right (show D.ε < 1 by linarith only [hε, hεle]) hV
+    linarith only [this]
   exact D.not_le_of_inv_vol_lt hlt (D.lintegral_ne_zero_of_pos (j := D.b) D.lpNorm_u_pos)
     (D.lintegral_ne_top D.b) hle
 
@@ -3993,7 +4007,7 @@ theorem Q_notMem_P2 : D.Q ∉ D.P2 := by
 theorem Q_notMem_P3 : D.Q ∉ D.P3 := by
   intro h
   have hε := D.ε_pos
-  have hεinv : 1 < D.ε⁻¹ := (one_lt_inv₀ hε).mpr (by linarith [D.ε_le])
+  have hεinv : 1 < D.ε⁻¹ := (one_lt_inv₀ hε).mpr (by linarith only [hε, D.ε_le])
   have hQQ : ∀ s : ℝ, (D.Q.vol / D.Q.vol) ^ s = 1 := fun s => by
     rw [div_self D.Q.vol_pos.ne', Real.one_rpow]
   rcases prop_of_mem_maximal_sep h with ⟨ρ, hρ, -, hρr, hle⟩ | ⟨ρ, hρ, hρ0, hρq, hle⟩
@@ -4001,7 +4015,7 @@ theorem Q_notMem_P3 : D.Q ∉ D.P3 := by
     change |slotForm D.T D.a D.g D.Q ρ| ≤ D.B * D.F * lpNorm (D.u : (Fin d → ℝ) → ℝ) D.q *
       lpNorm (ρ : (Fin d → ℝ) → ℝ) D.r at ht
     rw [hQQ, mul_one] at hle
-    have hB : 0 < D.B := by linarith [D.hB]
+    have hB : 0 < D.B := zero_lt_one.trans_le D.hB
     have hpos : 0 < D.B * D.F * lpNorm (D.u : (Fin d → ℝ) → ℝ) D.q *
         lpNorm (ρ : (Fin d → ℝ) → ℝ) D.r :=
       mul_pos (mul_pos (mul_pos hB D.Fpos') D.lpNorm_u_pos) hρr
@@ -4009,15 +4023,15 @@ theorem Q_notMem_P3 : D.Q ∉ D.P3 := by
     have e : D.B * D.F * lpNorm (D.u : (Fin d → ℝ) → ℝ) D.q * D.ε⁻¹ *
         lpNorm (ρ : (Fin d → ℝ) → ℝ) D.r =
         D.B * D.F * lpNorm (D.u : (Fin d → ℝ) → ℝ) D.q * lpNorm (ρ : (Fin d → ℝ) → ℝ) D.r *
-          D.ε⁻¹ := by ring
-    linarith
+          D.ε⁻¹ := by ac_rfl
+    linarith only [hle, ht, this]
   · have ht := D.w_test ρ hρ hρ0
     rw [hQQ, mul_one] at hle
     have hpos : 0 < D.K * lpNorm (ρ : (Fin d → ℝ) → ℝ) D.q := mul_pos D.hK hρq
     have := lt_mul_right hpos hεinv
     have e : D.K * D.ε⁻¹ * lpNorm (ρ : (Fin d → ℝ) → ℝ) D.q =
-        D.K * lpNorm (ρ : (Fin d → ℝ) → ℝ) D.q * D.ε⁻¹ := by ring
-    linarith
+        D.K * lpNorm (ρ : (Fin d → ℝ) → ℝ) D.q * D.ε⁻¹ := by ac_rfl
+    linarith only [hle, ht, this]
 
 /-- `Q ∉ 𝐏₅`: the only dyadic cubes containing `Q` which are parents of cubes `P' ⊆ Q` are `Q` and
 its parent, and `2 < 2^d/ε`. [PROVED] -/
@@ -4041,8 +4055,8 @@ theorem Q_notMem_P5 : D.Q ∉ D.P5 := by
   have h8 : (8 : ℝ) ≤ 2 ^ d / D.ε := by
     rw [le_div_iff₀ hε]
     have : (1 : ℝ) ≤ 2 ^ d := one_le_pow₀ (by norm_num)
-    linarith [D.ε_le]
-  linarith
+    linarith only [this, D.ε_le]
+  linarith only [hcard, h2, h8]
 
 /-- **`Q` is admissible**: `Q` lies in no first stopping cube, since a stopping cube containing
 `Q` would be `Q` itself, and `Q ∉ 𝐏₁ ∪ ⋯ ∪ 𝐏₅`. [PROVED] -/
@@ -4076,7 +4090,7 @@ theorem A'_le_C (hG : D.GBound) (hrq : 1 / D.r + 1 / D.q ≤ 1) (hLC : D.LeafCon
       rw [form2, D.twoSlotForm_eq_zero_of_FP_eq_zero h0, abs_zero]
       exact mul_nonneg hc0 (D.E_pos R).le
   rw [le_div_iff₀ hε]
-  linarith
+  linarith only [hrq, hA]
 
 /-- `ψ_Q = 𝔤`: the mean `[𝔤]_Q` vanishes, so the correction term of (2.23) at `R = Q` is zero.
 [PROVED] -/
@@ -4133,7 +4147,7 @@ theorem θc_lt_one : D.θc < 1 :=
     [D.hr]))
 
 theorem C₁₃_nonneg : 0 ≤ D.C₁₃ := by
-  have hB0 : 0 ≤ D.B := by linarith [D.hB]
+  have hB0 : 0 ≤ D.B := zero_le_one.trans D.hB
   have hε := D.ε_pos
   have := D.K₁_nonneg
   have := D.K₂_nonneg
@@ -4714,7 +4728,7 @@ theorem coarsen_integral' (P : DyadicCube d) (N : ℕ) (f : TestFun d) :
       ∑ L ∈ StoppingData.level N P, ∫ x, (TestFun.truncateₗ L f : (Fin d → ℝ) → ℝ) x := by
     rw [← TestFun.integralₗ_apply, coarsen, map_sum]
     refine Finset.sum_congr rfl fun L _ => ?_
-    rw [map_smul, smul_eq_mul, TestFun.integralₗ_apply, TestFun.integral_ind,
+    rw [LinearMap.map_smul, smul_eq_mul, TestFun.integralₗ_apply, TestFun.integral_ind,
       TestFun.coe_truncateₗ, truncate, integral_indicator L.measurableSet_toSet, avg_mul_vol]
   have h2 : ∑ L ∈ StoppingData.level N P, ∫ x, (TestFun.truncateₗ L f : (Fin d → ℝ) → ℝ) x =
       ∑ L ∈ StoppingData.level N P, TestFun.integralₗ (TestFun.truncateₗ L f) :=
@@ -4765,7 +4779,7 @@ theorem setIntegral_eq_sum_level {g : (Fin d → ℝ) → ℝ} (hg : Integrable 
 /-- **Jensen's inequality for the coarsening**: `∫ |E_N f|^q ≤ ∫ |f|^q` for `q ≥ 1`. [PROVED] -/
 theorem coarsen_norm_le (P : DyadicCube d) (N : ℕ) (f : TestFun d) {q : ℝ} (hq : 1 ≤ q) :
     ∫ x, |(coarsen P N f : (Fin d → ℝ) → ℝ) x| ^ q ≤ ∫ x, |(f : (Fin d → ℝ) → ℝ) x| ^ q := by
-  have hq0 : 0 < q := by linarith
+  have hq0 : 0 < q := by linarith only [hq]
   have hint : Integrable (fun x => |(f : (Fin d → ℝ) → ℝ) x| ^ q) volume :=
     TestFun.integrable_abs_rpow f hq0
   -- `|E_N f|^q = ∑_L |[f]_L|^q 𝟙_L`
@@ -4798,7 +4812,7 @@ theorem coarsen_norm_le (P : DyadicCube d) (N : ℕ) (f : TestFun d) {q : ℝ} (
       = ∑ L ∈ StoppingData.level N P, |avg L (f : (Fin d → ℝ) → ℝ)| ^ q * L.vol := by
         rw [integral_congr_ae (ae_of_all _ hpt), ← TestFun.integralₗ_apply, map_sum]
         exact Finset.sum_congr rfl fun L _ => by
-          rw [map_smul, smul_eq_mul, TestFun.integralₗ_apply, TestFun.integral_ind]
+          rw [LinearMap.map_smul, smul_eq_mul, TestFun.integralₗ_apply, TestFun.integral_ind]
     _ ≤ ∑ L ∈ StoppingData.level N P, ∫ x in L.toSet, |(f : (Fin d → ℝ) → ℝ) x| ^ q :=
         Finset.sum_le_sum fun L _ => abs_avg_rpow_mul_vol_le L f hq
     _ = ∫ x in P.toSet, |(f : (Fin d → ℝ) → ℝ) x| ^ q := (setIntegral_eq_sum_level hint N P).symm
@@ -5193,7 +5207,7 @@ theorem estimateA {P : DyadicCube d} (hP : P.toSet ⊆ I.Q₀.toSet) (ρ : TestF
     (by rw [hbot]; exact TestFun.truncateₗ_supportedOn _ _) (I.tup P (TestFun.ind P) ρ)
     (I.tup_b₀ _ _ _) h2 h3
   rw [I.prodNorm_tup, TestFun.truncateₗ_of_supportedOn hρ, TestFun.truncateₗ_ind,
-    TestFun.lpNorm_ind P (by linarith [p.one_lt I.a])] at h
+    TestFun.lpNorm_ind P (by linarith only [p.one_lt I.a])] at h
   exact h.trans (le_of_eq (by ring))
 
 /-- **The testing condition (1.9) for `σ`, `𝐐`** in the form of the field `testing`. [PROVED] -/
@@ -5344,19 +5358,19 @@ theorem testing_bPc {P : DyadicCube d} (hP : P.toSet ⊆ I.Q₀.toSet) (ρ : Tes
           lpNorm (TestFun.truncateₗ P (I.frozen j) : (Fin d → ℝ) → ℝ) (p.p j)) *
         lpNorm (I.bPc P : (Fin d → ℝ) → ℝ) (p.p I.b₀) * lpNorm (ρ : (Fin d → ℝ) → ℝ) (p.p I.a) := by
   rw [I.twoSlotForm_bPc hP]
-  have hB0 : (0 : ℝ) ≤ B := by linarith [I.hB]
+  have hB0 : (0 : ℝ) ≤ B := by linarith only [I.hB]
   have hq1 : 1 ≤ p.p I.b₀ := (p.one_lt I.b₀).le
   have hF0 : 0 ≤ ∏ j ∈ (Finset.univ.erase I.a).erase I.b₀,
       lpNorm (TestFun.truncateₗ P (I.frozen j) : (Fin d → ℝ) → ℝ) (p.p j) :=
     Finset.prod_nonneg fun _ _ => lpNorm_nonneg _ _
   have h1 : lpNorm (I.bP P : (Fin d → ℝ) → ℝ) (p.p I.b₀) ≤ (B * P.vol) ^ (1 / p.p I.b₀) :=
-    TestFun.lpNorm_le_rpow_of_integral_le _ (by linarith) (I.bP_norm hP)
+    TestFun.lpNorm_le_rpow_of_integral_le _ (by linarith only [hq1]) (I.bP_norm hP)
   have h2 : (B * P.vol) ^ (1 / p.p I.b₀) ≤ B * lpNorm (I.bPc P : (Fin d → ℝ) → ℝ) (p.p I.b₀) := by
     rw [Real.mul_rpow hB0 P.vol_pos.le]
     refine mul_le_mul ?_ (vol_rpow_le_lpNorm (I.bPc_supp P) (I.bPc_mean hP) hq1)
       (Real.rpow_nonneg P.vol_pos.le _) hB0
     calc B ^ (1 / p.p I.b₀) ≤ B ^ (1 : ℝ) :=
-          Real.rpow_le_rpow_of_exponent_le I.hB ((div_le_one (by linarith)).mpr hq1)
+          Real.rpow_le_rpow_of_exponent_le I.hB ((div_le_one (by linarith only [hq1])).mpr hq1)
       _ = B := Real.rpow_one B
   calc |twoSlotForm T I.a I.b₀ I.frozen P ρ (I.bP P)|
       ≤ B * (∏ j ∈ (Finset.univ.erase I.a).erase I.b₀,
@@ -5379,19 +5393,19 @@ theorem testing_vPc {P : DyadicCube d} (hP : P.toSet ⊆ I.Q₀.toSet) (ρ : Tes
           lpNorm (TestFun.truncateₗ P (I.frozen j) : (Fin d → ℝ) → ℝ) (p.p j)) *
         lpNorm (I.vPc P : (Fin d → ℝ) → ℝ) (p.p I.a) * lpNorm (ρ : (Fin d → ℝ) → ℝ) (p.p I.b₀) := by
   rw [I.twoSlotForm_vPc hP]
-  have hB0 : (0 : ℝ) ≤ B := by linarith [I.hB]
+  have hB0 : (0 : ℝ) ≤ B := by linarith only [I.hB]
   have hq1 : 1 ≤ p.p I.a := (p.one_lt I.a).le
   have hF0 : 0 ≤ ∏ j ∈ (Finset.univ.erase I.a).erase I.b₀,
       lpNorm (TestFun.truncateₗ P (I.frozen j) : (Fin d → ℝ) → ℝ) (p.p j) :=
     Finset.prod_nonneg fun _ _ => lpNorm_nonneg _ _
   have h1 : lpNorm (I.vP P : (Fin d → ℝ) → ℝ) (p.p I.a) ≤ (B * P.vol) ^ (1 / p.p I.a) :=
-    TestFun.lpNorm_le_rpow_of_integral_le _ (by linarith) (I.vP_norm hP)
+    TestFun.lpNorm_le_rpow_of_integral_le _ (by linarith only [hq1]) (I.vP_norm hP)
   have h2 : (B * P.vol) ^ (1 / p.p I.a) ≤ B * lpNorm (I.vPc P : (Fin d → ℝ) → ℝ) (p.p I.a) := by
     rw [Real.mul_rpow hB0 P.vol_pos.le]
     refine mul_le_mul ?_ (vol_rpow_le_lpNorm (I.vPc_supp P) (I.vPc_mean hP) hq1)
       (Real.rpow_nonneg P.vol_pos.le _) hB0
     calc B ^ (1 / p.p I.a) ≤ B ^ (1 : ℝ) :=
-          Real.rpow_le_rpow_of_exponent_le I.hB ((div_le_one (by linarith)).mpr hq1)
+          Real.rpow_le_rpow_of_exponent_le I.hB ((div_le_one (by linarith only [hq1])).mpr hq1)
       _ = B := Real.rpow_one B
   calc |twoSlotForm T I.a I.b₀ I.frozen P (I.vP P) ρ|
       ≤ B * (∏ j ∈ (Finset.univ.erase I.a).erase I.b₀,
@@ -5585,7 +5599,7 @@ theorem exists_superset_of_m_eq_add (T : DyadicCube d) (j : ℕ) :
     refine ⟨T'.parent, hT.trans T'.subset_parent, ?_⟩
     rw [DyadicCube.parent_m, hm]
     push_cast
-    ring
+    ac_rfl
 
 /-- **The ancestor at a given scale**: a cube `T ⊆ Q₀` lies in a cube `T' ⊆ Q₀` of any scale
 between `ℓ(T)` and `ℓ(Q₀)`. [PROVED] -/
@@ -5734,9 +5748,9 @@ theorem holder_pair_le_one (p : HolderTuple n) {a b : Fin n} (hab : a ≠ b) :
   rw [← Finset.add_sum_erase Finset.univ _ (Finset.mem_univ a), ← Finset.add_sum_erase _ _ hb']
     at hsum
   have hnn : 0 ≤ ∑ j ∈ (Finset.univ.erase a).erase b, (p.p j)⁻¹ :=
-    Finset.sum_nonneg fun j _ => inv_nonneg.mpr (by linarith [p.one_lt j])
+    Finset.sum_nonneg fun j _ => inv_nonneg.mpr (by linarith only [p.one_lt j])
   rw [one_div, one_div]
-  linarith
+  linarith only [hsum, hnn]
 
 end Bridge
 
