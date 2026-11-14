@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.FootprintFiniteness
 public import LeanPool.ApollonianSuperharmonic.GaussianRealPointProperties
 public import LeanPool.ApollonianSuperharmonic.PeriodicEdgeContactSymmetry
 
@@ -344,22 +345,6 @@ private theorem common_frontier :
     exact ⟨hm.1, fun h => Set.disjoint_left.mp (interior_disjoint a b hab) h hm.2⟩
   · rw [(realization_closed (P.tile b)).frontier_eq]
     exact ⟨hm.2, fun h => Set.disjoint_left.mp (interior_disjoint b a hab.symm) h hm.1⟩
-
-private theorem footprint_finite :
-    (by
-      classical
-      exact
-        ∀ (T : ProtoTile), (FootprintEdges T).Finite ) := by
-  classical
-  intro T
-  let es : Finset (Finset GaussianInt) := T.cells.biUnion fun x =>
-    {{x, x + 1}, {x, x + ⟨0, 1⟩}, {x + 1, x + 1 + ⟨0, 1⟩},
-      {x + ⟨0, 1⟩, x + 1 + ⟨0, 1⟩}}
-  apply es.finite_toSet.subset
-  rintro e ⟨x, hx, he⟩
-  apply Finset.mem_biUnion.mpr
-  refine ⟨x, hx, ?_⟩
-  simpa only [Finset.mem_insert, Finset.mem_singleton] using he
 
 private theorem finite_degree :
     (by
@@ -1246,7 +1231,7 @@ theorem P3723T1ContactPortsExist {ι : Type} (P : PeriodicTileComplex ι) :
       midpoint_two_cells
   have common_frontier := ContactPortGeometry.common_frontier ι P realization_closed
       interior_disjoint common_midpoint
-  have footprint_finite := ContactPortGeometry.footprint_finite
+  have footprint_finite := FootprintEdges.finite
   have finite_degree := ContactPortGeometry.finite_degree ι P midpoint_cell common_midpoint
       footprint_finite
   have cells_nonempty (a : ι) : (P.tile a).cells.Nonempty :=

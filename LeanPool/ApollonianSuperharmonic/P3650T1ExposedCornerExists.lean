@@ -1906,39 +1906,6 @@ private theorem hyEven :
   have hpar' : hits.ncard % 2 = 1 := by simpa [hits, v] using hpar
   simp [hhitsEmpty] at hpar'
 
-private theorem hWeven :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n),
-        let v := p.vertex
-        ∀ (b : Fin (n + (3 : ℕ))),
-        let B := v b
-        let a := v (b - 1)
-        let c := v (b + 1)
-        let u : Real × Real := a - B
-        let w : Real × Real := c - B
-        let cross (x y : Real × Real) : Real := x.1 * y.2 - x.2 * y.1
-        let O := P3544T1RayParity p
-        let C := P3544T1BoundaryCarrier p
-        ∀ (rK : ℝ),
-        let r := min rK (min (dist B a / 2) (dist B c / 2))
-        let U := if 0 < cross u w then u else w
-        let V := if 0 < cross u w then w else u
-        (∀ S : Set (Real × Real), IsConnected S → (∀ x, x ∈ S → x ∉ C) → ∀ x, x ∈ S → ∀ y, y ∈ S
-            → (x ∈ O ↔ y ∈ O)) → (
-        let W : Set (Real × Real) := {x | x ∈ Metric.ball B r ∧
-          (cross U (x - B) < 0 ∨ 0 < cross V (x - B))}
-        (IsPathConnected W) → ((∀ x, x ∈ W → x ∉ C) → (
-        let e : Real × Real := (1, 0)
-        ∀ (ε : ℝ),
-        let y : Real × Real := B + ε • e
-        (y ∈ W) → ((y ∉ O) → (∀ x, x ∈ W → x ∉ O))))) ) := by
-  classical
-  intro n p v b B a c u w cross O C rK r U V hconstOn W hWpc hWoff e ε y hYclass hyEven x hx hxO
-  have hsame := hconstOn W hWpc.isConnected hWoff y hYclass x hx
-  exact hyEven (hsame.mpr hxO)
-
 private theorem hdistx0 :
     (by
       classical
@@ -2470,21 +2437,23 @@ private theorem hWeven :
   intro n p v f hqexists q b c B e ε y ell a u w hellu hellw cross hdet hparity rK r
       hcarrierLocal hsegParam hcrossLinear hcrossSelf hswap U V hconeUV hconstOn W hWpc
       hsegmentHeight hcover hyball hyheight hynotC d0 hdv0 hde0 badV badE T κ hκT hκbad
-  exact ExposedCornerGeometry.hWeven n p b rK hconstOn hWpc ((show
-      ∀ x, x ∈ W → x ∉ (P3544T1BoundaryCarrier p)
-    from by
-      classical
-      intro x hx hc
-      have hs := ((ExposedCornerGeometry.hcarrierSigns n p b hdet rK hcarrierLocal hsegParam
-            hcrossLinear hcrossSelf hswap)) x hx.1 hc
-      rcases hx.2 with hn | hp
-      · exact (not_lt_of_ge hs.1) hn
-      · exact (not_lt_of_ge hs.2) hp)) ε (ExposedCornerGeometry.hYclass n p hqexists b ε rK
+  have hWoff : ∀ x, x ∈ W → x ∉ P3544T1BoundaryCarrier p := by
+    classical
+    intro x hx hc
+    have hs := ((ExposedCornerGeometry.hcarrierSigns n p b hdet rK hcarrierLocal hsegParam
+          hcrossLinear hcrossSelf hswap)) x hx.1 hc
+    rcases hx.2 with hn | hp
+    · exact (not_lt_of_ge hs.1) hn
+    · exact (not_lt_of_ge hs.2) hp
+  have hyW := ExposedCornerGeometry.hYclass n p hqexists b ε rK
       hconeUV hcover (ExposedCornerGeometry.hconeHeight n p hqexists b hellu hellw) hyball
-      hyheight hynotC) (ExposedCornerGeometry.hyEven n p b hparity ε hynotC d0 κ
+      hyheight hynotC
+  have hyEven := ExposedCornerGeometry.hyEven n p b hparity ε hynotC d0 κ
       (ExposedCornerGeometry.hdv n p b ε d0 hdv0 κ hκbad) (ExposedCornerGeometry.hde n p b ε d0
       hde0 κ hκbad) (ExposedCornerGeometry.hhitsEmpty n p hqexists b ε hsegmentHeight hyheight d0
-      κ (ExposedCornerGeometry.hellD n p hqexists b ε d0 κ hκT)))
+      κ (ExposedCornerGeometry.hellD n p hqexists b ε d0 κ hκT))
+  intro x hx hxO
+  exact hyEven ((hconstOn W hWpc.isConnected hWoff y hyW x hx).mpr hxO)
 
 private theorem hLocalCone :
     (by

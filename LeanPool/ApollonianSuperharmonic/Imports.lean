@@ -266,6 +266,7 @@ public import LeanPool.ApollonianSuperharmonic.FiniteSquareIncidenceIdentities
 public import LeanPool.ApollonianSuperharmonic.FiniteTile
 public import LeanPool.ApollonianSuperharmonic.FootprintDeletionRetention
 public import LeanPool.ApollonianSuperharmonic.FootprintEdges
+public import LeanPool.ApollonianSuperharmonic.FootprintFiniteness
 public import LeanPool.ApollonianSuperharmonic.FootprintVertices
 public import LeanPool.ApollonianSuperharmonic.FordBaseT1
 public import LeanPool.ApollonianSuperharmonic.FordBaseT2
@@ -351,6 +352,7 @@ public import LeanPool.ApollonianSuperharmonic.LatticeEdgeRegularity
 public import LeanPool.ApollonianSuperharmonic.LatticeFootprintIncidence
 public import LeanPool.ApollonianSuperharmonic.LatticeFundamentalSet
 public import LeanPool.ApollonianSuperharmonic.LatticeQuadraticForm
+public import LeanPool.ApollonianSuperharmonic.LatticeRectangleBoundary
 public import LeanPool.ApollonianSuperharmonic.LatticeTile
 public import LeanPool.ApollonianSuperharmonic.LatticeTileBoundarySimpleGridCycle
 public import LeanPool.ApollonianSuperharmonic.LatticeTileComplementGridConnected

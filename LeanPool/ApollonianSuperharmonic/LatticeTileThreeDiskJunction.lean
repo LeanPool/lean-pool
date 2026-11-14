@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.FootprintFiniteness
 public import LeanPool.ApollonianSuperharmonic.SimpleGridPathBetween
 
 public import LeanPool.ApollonianSuperharmonic.ExactTileInterfaceTriple
@@ -69,44 +70,6 @@ private theorem edge_union :
   · rintro (⟨x, hx, he⟩ | ⟨x, hx, he⟩)
     · exact ⟨x, (hunion x).2 (Or.inl hx), he⟩
     · exact ⟨x, (hunion x).2 (Or.inr hx), he⟩
-
-private theorem vertex_finite :
-    (by
-      classical
-      exact
-        ∀ (T : ProtoTile), (FootprintVertices T).Finite ) := by
-  classical
-  intro T
-  by_cases hne : T.cells.Nonempty
-  · let K : Finset GaussianInt := T.cells.biUnion (fun x =>
-      {x, x + 1, x + ⟨0, 1⟩, x + 1 + ⟨0, 1⟩})
-    have hK : (K : Set GaussianInt) = FootprintVertices T := by
-      ext z
-      simp [K, FootprintVertices, hne]
-    rw [← hK]
-    exact K.finite_toSet
-  · simp [FootprintVertices, hne]
-
-private theorem edge_finite :
-    (by
-      classical
-      exact
-        ∀ (T : ProtoTile), (FootprintEdges T).Finite ) := by
-  classical
-  intro T
-  let I : GaussianInt := ⟨0, 1⟩
-  let edge : T.cells × (Bool × Bool) → Finset GaussianInt := fun q =>
-    match q.2 with
-    | (false, false) => {q.1.1, q.1.1 + 1}
-    | (false, true) => {q.1.1, q.1.1 + I}
-    | (true, false) => {q.1.1 + 1, q.1.1 + 1 + I}
-    | (true, true) => {q.1.1 + I, q.1.1 + 1 + I}
-  apply (Set.finite_range edge).subset
-  rintro e ⟨c, hc, h | h | h | h⟩
-  · exact ⟨(⟨c, hc⟩, false, false), by simpa [edge] using h.symm⟩
-  · exact ⟨(⟨c, hc⟩, false, true), by simpa [edge, I] using h.symm⟩
-  · exact ⟨(⟨c, hc⟩, true, false), by simpa [edge, I] using h.symm⟩
-  · exact ⟨(⟨c, hc⟩, true, true), by simpa [edge, I] using h.symm⟩
 
 private theorem hunionAB_C (A B C AB ABC : ProtoTile)
     (hunionAB : ∀ z : LatticeCell, z ∈ AB.cells ↔ z ∈ A.cells ∨ z ∈ B.cells)
@@ -648,8 +611,8 @@ theorem LatticeTileThreeDiskJunction
       (hunion : forall z : LatticeCell,
         z ∈ W.cells ↔ z ∈ U.cells ∨ z ∈ V.cells) := ThreeDiskJunctionGeometry.edge_union U V W
             hunion
-  have vertex_finite (T : ProtoTile) := ThreeDiskJunctionGeometry.vertex_finite T
-  have edge_finite (T : ProtoTile) := ThreeDiskJunctionGeometry.edge_finite T
+  have vertex_finite (T : ProtoTile) := FootprintVertices.finite T
+  have edge_finite (T : ProtoTile) := FootprintEdges.finite T
   have hVAB := vertex_union A B AB hAne hBne hABne hunionAB
   have hVBC := vertex_union B C BC hBne hCne hBCne hunionBC
   have hVCA := vertex_union C A CA hCne hAne hCAne hunionCA

@@ -552,51 +552,15 @@ private theorem hkmO :
   intro q cfg C₀ T cert P hindexed b x j k owner hkb' m hmB heq
   exact hmB (heq.symm.trans hkb')
 
-private theorem hinj :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates),
-          ∀ (cfg : BandOrderedGeneralConfiguration q),
-            ∀ (C₀ : BandCircle),
-              ∀ (T : ProtoTile),
-                ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C₀ T),
-                  let P := cert.modified;
-                  ∀
-                    (hindexed :
-                      ∀ (x : LatticeCell),
-                        ∃! a : PeriodicSubtileIndex, x ∈ (P.tile a).cells),
-                    ∀ (a : PeriodicSubtileIndex),
-                      ∀ (b : PeriodicSubtileIndex),
-                        ∀ (x : GaussianInt),
-                          ∀ (j : Fin (4 : ℕ)),
-                            ∀ (k : Fin (4 : ℕ)),
-                              let owner : Fin 4 → PeriodicSubtileIndex := fun r =>
-                                (hindexed (LatticeVertexIncidentCell x r)).choose
-                              owner j = a →
-                                j ≠ k →
-                                ¬(k = j + 1 ∨ j = k + 1) →
-                                k = j + 2 →
-                                let l := j + 1
-                              let m := j + 3
-                              j ≠ l ∧ j ≠ k ∧ j ≠ m ∧ l ≠ k ∧ l ≠ m ∧ k ≠ m →
-                                l + 1 = k →
-                                k + 1 = m →
-                                m + 1 = j →
-                                owner l ≠ a →
-                                owner l ≠ b →
-                                owner m ≠ a →
-                                owner m ≠ b →
-                                owner l ≠ owner m →
-                                owner j ≠ owner l →
-                                owner j ≠ owner k →
-                                owner j ≠ owner m →
-                                owner l ≠ owner k →
-                                owner k ≠ owner m → Function.Injective owner
-    ) := by
-  classical
-  intro q cfg C₀ T cert P hindexed a b x j k owner hja' hjk hnotconsecutive hop l m hpos hlk hkm
-      hmj hlA hlB hmA hmB hlm hjlO hjkO hjmO hlkO hkmO r s hrs
+private theorem injectiveOfSectorValues {α : Type*} (owner : Fin 4 → α)
+    (j k : Fin 4) (hop : k = j + 2)
+    (hlm : owner (j + 1) ≠ owner (j + 3))
+    (hjlO : owner j ≠ owner (j + 1)) (hjkO : owner j ≠ owner k)
+    (hjmO : owner j ≠ owner (j + 3)) (hlkO : owner (j + 1) ≠ owner k)
+    (hkmO : owner k ≠ owner (j + 3)) : Function.Injective owner := by
+  let l := j + 1
+  let m := j + 3
+  intro r s hrs
   have positions (t : Fin 4) : t = j ∨ t = l ∨ t = k ∨ t = m := by
     rw [hop]
     fin_cases j <;> fin_cases t <;> simp [l, m]
@@ -1118,9 +1082,9 @@ private theorem hnoPinch :
             b x j k hkb' hlB
         have hkmO : owner k ≠ owner m := GeometricSectorGeometry.hkmO q cfg C₀ T cert hindexed
             b x j k hkb' hmB
-        have hinj : Function.Injective owner := GeometricSectorGeometry.hinj q cfg C₀ T cert
-            hindexed a b x j k hja' hjk hnotconsecutive hop hpos hlk hkm hmj hlA hlB hmA
-            hmB hlm hjlO hjkO hjmO hlkO hkmO
+        have hinj : Function.Injective owner :=
+          GeometricSectorGeometry.injectiveOfSectorValues owner j k hop
+            hlm hjlO hjkO hjmO hlkO hkmO
         have edgeAdjacent (u v : PeriodicSubtileIndex) (huv : u ≠ v)
             (hedge : (FootprintEdges (P.tile u) ∩
               FootprintEdges (P.tile v)).Nonempty) :

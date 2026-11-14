@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.FordInteriorSquareCoordinates
 
 public import LeanPool.ApollonianSuperharmonic.FiniteAcyclicOrientationObstruction
 public import LeanPool.ApollonianSuperharmonic.FordExceptionalLattice
@@ -132,20 +133,7 @@ theorem FordExceptionalMaximality (P : FordFareyParameter) :
     ext x
     simp only [Finset.mem_filter, decide_eq_true_eq, hmem, hs.2,
       FordVertexDomain, Set.mem_ofPred_eq]
-    have square : x ∈ P4062T1InteriorSquare P.q ↔
-        1 ≤ x.re ∧ x.re ≤ (P.q : Int) - 1 ∧
-        1 ≤ x.im ∧ x.im ≤ (P.q : Int) - 1 := by
-      constructor
-      · intro hx
-        obtain ⟨⟨a, b⟩, hab, rfl⟩ := Finset.mem_image.mp hx
-        obtain ⟨ha, hb⟩ := Finset.mem_product.mp hab
-        exact ⟨(Finset.mem_Icc.mp ha).1, (Finset.mem_Icc.mp ha).2,
-          (Finset.mem_Icc.mp hb).1, (Finset.mem_Icc.mp hb).2⟩
-      · intro hx
-        exact Finset.mem_image.mpr ⟨(x.re, x.im), Finset.mem_product.mpr
-          ⟨Finset.mem_Icc.mpr ⟨hx.1, hx.2.1⟩,
-            Finset.mem_Icc.mpr hx.2.2⟩, by cases x; rfl⟩
-    rw [square]
+    rw [FordInteriorSquareCoordinates.membership]
     omega
   have ho := FordTileAcyclicIndegree P (FordTile P.q) h g
     (FordTileRecursiveIdentification P).1 hodo hfoot hext

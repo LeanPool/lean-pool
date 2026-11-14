@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.LatticeRectangleBoundary
 
 public import LeanPool.ApollonianSuperharmonic.P4062T1RemainderPaths
 public import LeanPool.ApollonianSuperharmonic.FordBoundaryMultiplicity
@@ -31,27 +32,6 @@ theorem P4112T1BoundaryMultiplicity (P : FordFareyParameter) (hP : 2 < P.q) :
       FordBoundaryMultiplicity P x = (if x = (B j).2 then 3 else 2) := by
 -- BODY
   classical
-  have rectangle_boundary (l r b t : Int) (z : GaussianInt) :
-      z ∈ LatticeVertexBoundary {w : GaussianInt |
-        l ≤ w.re ∧ w.re ≤ r ∧ b ≤ w.im ∧ w.im ≤ t} ↔
-      (l ≤ z.re ∧ z.re ≤ r ∧ b ≤ z.im ∧ z.im ≤ t) ∧
-        (z.re = l ∨ z.re = r ∨ z.im = b ∨ z.im = t) := by
-    constructor
-    · rintro ⟨hz, y, hy, hyr, hyi⟩
-      change l ≤ z.re ∧ z.re ≤ r ∧ b ≤ z.im ∧ z.im ≤ t at hz
-      change ¬ (l ≤ y.re ∧ y.re ≤ r ∧ b ≤ y.im ∧ y.im ≤ t) at hy
-      exact ⟨hz, by omega⟩
-    · rintro ⟨hz, he⟩
-      refine ⟨hz, ?_⟩
-      rcases he with he | he | he | he
-      · refine ⟨⟨z.re - 1, z.im⟩, ?_, ?_, ?_⟩ <;>
-          simp only [Set.mem_ofPred_eq] <;> omega
-      · refine ⟨⟨z.re + 1, z.im⟩, ?_, ?_, ?_⟩ <;>
-          simp only [Set.mem_ofPred_eq] <;> omega
-      · refine ⟨⟨z.re, z.im - 1⟩, ?_, ?_, ?_⟩ <;>
-          simp only [Set.mem_ofPred_eq] <;> omega
-      · refine ⟨⟨z.re, z.im + 1⟩, ?_, ?_, ?_⟩ <;>
-          simp only [Set.mem_ofPred_eq] <;> omega
   intro B j x hx
   change x ∈ (P4062T1RemainderPaths P j).1 at hx
   change FordBoundaryMultiplicity P x =
@@ -102,28 +82,28 @@ theorem P4112T1BoundaryMultiplicity (P : FordFareyParameter) (hP : 2 < P.q) :
         (x.re = 0 ∨ x.re = P.q₁ ∨ x.im = 0 ∨ x.im = P.q₁) := by
     change x ∈ LatticeVertexBoundary {z : GaussianInt |
       0 ≤ z.re ∧ z.re ≤ P.q₁ ∧ 0 ≤ z.im ∧ z.im ≤ P.q₁} ↔ _
-    rw [rectangle_boundary]
+    rw [LatticeVertexBoundary.rectangle]
     simp only [and_assoc]
   have b1 : x ∈ LatticeVertexBoundary (FordRecursiveVertexDomains P 1) ↔
       (P.q₂ : Int) ≤ x.re ∧ x.re ≤ P.q ∧ P.q₂ ≤ x.im ∧ x.im ≤ P.q ∧
         (x.re = P.q₂ ∨ x.re = P.q ∨ x.im = P.q₂ ∨ x.im = P.q) := by
     change x ∈ LatticeVertexBoundary {z : GaussianInt |
       P.q₂ ≤ z.re ∧ z.re ≤ P.q ∧ P.q₂ ≤ z.im ∧ z.im ≤ P.q} ↔ _
-    rw [rectangle_boundary]
+    rw [LatticeVertexBoundary.rectangle]
     simp only [and_assoc]
   have b2 : x ∈ LatticeVertexBoundary (FordRecursiveVertexDomains P 2) ↔
       (P.q₁ : Int) ≤ x.re ∧ x.re ≤ P.q ∧ (0 : Int) ≤ x.im ∧ x.im ≤ P.q₂ ∧
         (x.re = P.q₁ ∨ x.re = P.q ∨ x.im = 0 ∨ x.im = P.q₂) := by
     change x ∈ LatticeVertexBoundary {z : GaussianInt |
       P.q₁ ≤ z.re ∧ z.re ≤ P.q ∧ 0 ≤ z.im ∧ z.im ≤ P.q₂} ↔ _
-    rw [rectangle_boundary]
+    rw [LatticeVertexBoundary.rectangle]
     simp only [and_assoc]
   have b3 : x ∈ LatticeVertexBoundary (FordRecursiveVertexDomains P 3) ↔
       (0 : Int) ≤ x.re ∧ x.re ≤ P.q₂ ∧ P.q₁ ≤ x.im ∧ x.im ≤ P.q ∧
         (x.re = 0 ∨ x.re = P.q₂ ∨ x.im = P.q₁ ∨ x.im = P.q) := by
     change x ∈ LatticeVertexBoundary {z : GaussianInt |
       0 ≤ z.re ∧ z.re ≤ P.q₂ ∧ P.q₁ ≤ z.im ∧ z.im ≤ P.q} ↔ _
-    rw [rectangle_boundary]
+    rw [LatticeVertexBoundary.rectangle]
     simp only [and_assoc]
   have count : FordBoundaryMultiplicity P x =
       (if (0 : Int) ≤ x.re ∧ x.re ≤ P.q₁ ∧ 0 ≤ x.im ∧ x.im ≤ P.q₁ ∧

@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.LatticeRectangleBoundary
 public import LeanPool.ApollonianSuperharmonic.FordTileCellMembership
 public import LeanPool.ApollonianSuperharmonic.InteriorFootprintIncidence
 
@@ -269,41 +270,6 @@ private theorem hrpos :
   have hu := Int.eq_one_of_dvd_one (by omega : (0 : Int) ≤ P.q) hdiv
   have : P.q = 1 := by exact_mod_cast hu
   omega
-
-private theorem rectBoundary :
-    (by
-      classical
-      exact
-        ∀ (l : ℤ),
-          ∀ (r : ℤ),
-            ∀ (b : ℤ),
-              ∀ (t : ℤ),
-                ∀ (z : GaussianInt),
-                  z ∈
-                      LatticeVertexBoundary
-                        {w : GaussianInt | l ≤ w.re ∧ w.re ≤ r ∧ b ≤ w.im ∧ w.im ≤ t} ↔
-                    (l ≤ z.re ∧ z.re ≤ r ∧ b ≤ z.im ∧ z.im ≤ t) ∧
-                      (z.re = l ∨ z.re = r ∨ z.im = b ∨ z.im = t)
-    ) := by
-  classical
-  intro l r b t z
-  constructor
-  · rintro ⟨hz, w, hw, hre, him⟩
-    refine ⟨hz, ?_⟩
-    change l ≤ z.re ∧ z.re ≤ r ∧ b ≤ z.im ∧ z.im ≤ t at hz
-    change ¬(l ≤ w.re ∧ w.re ≤ r ∧ b ≤ w.im ∧ w.im ≤ t) at hw
-    omega
-  · rintro ⟨hz, he⟩
-    refine ⟨hz, ?_⟩
-    rcases he with he | he | he | he
-    · refine ⟨⟨z.re - 1, z.im⟩, ?_, ?_, ?_⟩ <;>
-        simp only [Set.mem_ofPred_eq] <;> omega
-    · refine ⟨⟨z.re + 1, z.im⟩, ?_, ?_, ?_⟩ <;>
-        simp only [Set.mem_ofPred_eq] <;> omega
-    · refine ⟨⟨z.re, z.im - 1⟩, ?_, ?_, ?_⟩ <;>
-        simp only [Set.mem_ofPred_eq] <;> omega
-    · refine ⟨⟨z.re, z.im + 1⟩, ?_, ?_, ?_⟩ <;>
-        simp only [Set.mem_ofPred_eq] <;> omega
 
 private theorem boundaryTranslation :
     (by
@@ -1358,7 +1324,7 @@ theorem P4120T1FordGeometry
   have hrpos := FordTileGeometry.hrpos P hP
   have ht : (P.q₂ : Int) > 0 := by exact_mod_cast P.q₂_pos
   have hqsum : (P.q : Int) = P.q₁ + P.q₂ := by exact_mod_cast P.sum_q
-  have rectBoundary (l r b t : Int) (z : GaussianInt) := FordTileGeometry.rectBoundary l r
+  have rectBoundary (l r b t : Int) (z : GaussianInt) := LatticeVertexBoundary.rectangle l r
       b t z
   have boundaryTranslation (A : ProtoTile) (v z : GaussianInt) :=
       FordTileGeometry.boundaryTranslation A v z

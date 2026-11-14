@@ -144,60 +144,6 @@ private theorem contains :
     rw [hzd] at hz0
     linarith
 
-private theorem hlocalchar :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (X : Set (Real × Real)), ∀ (K : Set
-            (Real × Real)), ∀ (t : P3475T1TriangleTree p X K), ∀ (i : Fin (n + (3 : ℕ))), ∀ (u
-            : ℝ), ∀ (b : Fin t.count → ℝ × ℝ → Fin (3 : ℕ) → ℝ), (∀ (k : Fin t.count), ∀ (z : ℝ ×
-            ℝ), z ∈ (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ)) (Set.range (p.vertex ∘ t.face k))
-            ↔ ∀ (j : Fin (3 : ℕ)), (0 : ℝ) ≤ b k z j) → (
-        let D (k : Fin t.count) :=
-          convexHull Real (Set.range (p.vertex ∘ t.face k))
-        (∀ (a : Fin 3), ∀ (d : Fin 3), ∀ (c : Fin 3), (a ≠ d) → ((a ≠ c) → ((d ≠ c) → (∀ (j : Fin
-            3), j = a ∨ j = d ∨ j = c)))) → (∀ (k : Fin t.count), ∀ (a : Fin (3 : ℕ)), (t.face k
-            a = i) → (∀ (d : Fin (3 : ℕ)), (t.face k d = i + (1 : Fin (n + (3 : ℕ)))) → ((a ≠ d)
-            → (∀ (c : Fin (3 : ℕ)), (a ≠ c) → ((d ≠ c) → ((p.vertex i = p.vertex (t.face k a)) →
-            ((p.vertex (i + 1) = p.vertex (t.face k d)) → (((1 - u) • p.vertex i + u • p.vertex
-            (i + 1) = (1 - u) • p.vertex (t.face k a) + u • p.vertex (t.face k d)) → ((b k ((1 -
-            u) • p.vertex i + u • p.vertex (i + 1)) a = 1 - u) → ((b k ((1 - u) • p.vertex i + u
-            • p.vertex (i + 1)) d = u) → ((b k ((1 - u) • p.vertex i + u • p.vertex (i + 1)) c =
-            0) → (
-        let z : Real × Real := (1 - u) • p.vertex i + u • p.vertex (i + 1)
-        (b k z a = 1 - u) → ((b k z d = u) → ((b k z c = 0) → (
-        let N : Set (Real × Real) := ⋂ l,
-          if l = k then Set.univ else (D l)ᶜ
-        let Q : Set (Real × Real) := N ∩ {y | 0 < b k y a ∧ 0 < b k y d}
-        (IsOpen Q) → ((z ∈ Q) → (∀ (r : ℝ), (Metric.ball z r ⊆ Q) → (∀ y ∈ Metric.ball z r, y ∈ X
-            ↔ (0 : ℝ) ≤ b k y c)))))))))))))))))))
-    ) := by
-  classical
-  intro n p X K t i u b bhull D indices k a ha d hd had c hac hdc hvA hvD hpoint hzcoordA
-      hzcoordD hzcoordC z hza hzd hzc N Q hQopen hzQ r hball y hy
-  have hyQ := hball hy
-  constructor
-  · intro hyX
-    rw [t.source_cover] at hyX
-    obtain ⟨l, hyl⟩ := Set.mem_iUnion.mp hyX
-    have hlk : l = k := by
-      by_contra hl
-      have hnot := (Set.mem_iInter.mp hyQ.1) l
-      simp only [hl, ite_false] at hnot
-      exact hnot hyl
-    have hyk : y ∈ D k := by simpa [D, hlk] using hyl
-    exact (bhull k y).mp hyk c
-  · intro hyc
-    rw [t.source_cover]
-    refine Set.mem_iUnion.mpr ⟨k, ?_⟩
-    apply (bhull k y).mpr
-    intro j
-    have hpos := hyQ.2
-    rcases indices a d c had hac hdc j with rfl | rfl | rfl
-    · exact hpos.1.le
-    · exact hpos.2.le
-    · exact hyc
-
 private theorem hhalf :
     (by
       classical
@@ -667,9 +613,29 @@ private theorem hlocalAll :
         exact ⟨sub_pos.mpr hu1', hu0'⟩
       obtain ⟨r, hr, hball⟩ := Metric.isOpen_iff.mp hQopen z hzQ
       have hlocalchar (y : Real × Real) (hy : y ∈ Metric.ball z r) :
-          y ∈ X ↔ 0 ≤ b k y c := PolygonalSeparationProof.hlocalchar n p X K t i u b bhull
-              indices k a ha d hd had c hac hdc hvA hvD hpoint hzcoordA hzcoordD hzcoordC hza
-              hzd hzc hQopen hzQ r hball y hy
+          y ∈ X ↔ 0 ≤ b k y c := by
+        have hyQ := hball hy
+        constructor
+        · intro hyX
+          rw [t.source_cover] at hyX
+          obtain ⟨l, hyl⟩ := Set.mem_iUnion.mp hyX
+          have hlk : l = k := by
+            by_contra hl
+            have hnot := (Set.mem_iInter.mp hyQ.1) l
+            simp only [hl, ite_false] at hnot
+            exact hnot hyl
+          have hyk : y ∈ D k := by simpa [D, hlk] using hyl
+          exact (bhull k y).mp hyk c
+        · intro hyc
+          rw [t.source_cover]
+          refine Set.mem_iUnion.mpr ⟨k, ?_⟩
+          apply (bhull k y).mpr
+          intro j
+          have hpos := hyQ.2
+          rcases indices a d c had hac hdc j with rfl | rfl | rfl
+          · exact hpos.1.le
+          · exact hpos.2.le
+          · exact hyc
       have hhalf : Convex Real {y : Real × Real | b k y c < 0} :=
           PolygonalSeparationProof.hhalf n p X K t u hu0' hu1' b blinear k c
       have hlocalEq : Metric.ball z r \ X =

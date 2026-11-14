@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.FootprintFiniteness
 
 public import LeanPool.ApollonianSuperharmonic.BoundaryFootprintVertices
 public import LeanPool.ApollonianSuperharmonic.FiniteCycleComponentList
@@ -25,29 +26,6 @@ Changes: pool module paths, public exports, project namespace and current Mathli
 namespace ApollonianSuperharmonic
 
 namespace BoundaryComponentCycle
-
-private theorem boundary_vertices_finite (T : ProtoTile) (cells_nonempty : T.cells.Nonempty) :
-    (BoundaryFootprintVertices T).Finite := by
-  classical
-  let boundaryUniverse : Finset GaussianInt :=
-    T.cells.biUnion fun z => {z, z + 1, z + ⟨0, 1⟩, z + 1 + ⟨0, 1⟩}
-  refine boundaryUniverse.finite_toSet.subset ?_
-  intro v hv
-  rw [BoundaryFootprintVertices, ite_eq_left cells_nonempty] at hv
-  rcases hv with ⟨e, he, hve⟩
-  rcases he with ⟨z, (⟨rfl, hocc⟩ | ⟨rfl, hocc⟩)⟩
-  · simp only [Finset.mem_insert, Finset.mem_singleton] at hve
-    rcases hocc with ⟨hz, _⟩ | ⟨_, hz⟩
-    · refine Finset.mem_coe.2 (Finset.mem_biUnion.2 ⟨z, hz, ?_⟩)
-      rcases hve with rfl | rfl <;> simp
-    · refine Finset.mem_coe.2 (Finset.mem_biUnion.2 ⟨z - ⟨0, 1⟩, hz, ?_⟩)
-      rcases hve with rfl | rfl <;> simp [Zsqrtd.ext_iff]
-  · simp only [Finset.mem_insert, Finset.mem_singleton] at hve
-    rcases hocc with ⟨hz, _⟩ | ⟨_, hz⟩
-    · refine Finset.mem_coe.2 (Finset.mem_biUnion.2 ⟨z, hz, ?_⟩)
-      rcases hve with rfl | rfl <;> simp
-    · refine Finset.mem_coe.2 (Finset.mem_biUnion.2 ⟨z - 1, hz, ?_⟩)
-      rcases hve with rfl | rfl <;> simp [Zsqrtd.ext_iff]
 
 private noncomputable def BV (T : ProtoTile) := {v : GaussianInt // v ∈ BoundaryFootprintVertices T}
 
@@ -209,7 +187,7 @@ theorem P5620T1BoundaryComponentCycle (T : ProtoTile)
 -- BODY
   classical
   have boundary_vertices_finite : (BoundaryFootprintVertices T).Finite :=
-      BoundaryComponentCycle.boundary_vertices_finite T cells_nonempty
+      BoundaryFootprintVertices.finite T
   let BV := {v : GaussianInt // v ∈ BoundaryFootprintVertices T}
   let : Fintype BV := boundary_vertices_finite.fintype
   let G : SimpleGraph BV := SimpleGraph.fromRel fun a b =>

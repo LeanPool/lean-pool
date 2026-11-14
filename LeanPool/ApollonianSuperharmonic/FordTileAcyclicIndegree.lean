@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.FordInteriorSquareCoordinates
 
 public import LeanPool.ApollonianSuperharmonic.P4062T1LiteralReduction
 public import LeanPool.ApollonianSuperharmonic.P4062T1OrientationTransport
@@ -40,21 +41,6 @@ theorem FordTileAcyclicIndegree (P : FordFareyParameter)
       (fun x => 2 + FourNeighborLaplacian g x)) := by
 -- BODY
   classical
-  have squareCoordinates (q : Nat) (x : GaussianInt) :
-      x ∈ P4062T1InteriorSquare q ↔
-        1 ≤ x.re ∧ x.re ≤ (q : Int) - 1 ∧
-        1 ≤ x.im ∧ x.im ≤ (q : Int) - 1 := by
-    unfold P4062T1InteriorSquare
-    constructor
-    · intro hx
-      obtain ⟨⟨a, b⟩, hab, rfl⟩ := Finset.mem_image.mp hx
-      obtain ⟨ha, hb⟩ := Finset.mem_product.mp hab
-      exact ⟨(Finset.mem_Icc.mp ha).1, (Finset.mem_Icc.mp ha).2,
-        (Finset.mem_Icc.mp hb).1, (Finset.mem_Icc.mp hb).2⟩
-    · intro h
-      exact Finset.mem_image.mpr ⟨(x.re, x.im),
-        Finset.mem_product.mpr ⟨Finset.mem_Icc.mpr ⟨h.1, h.2.1⟩,
-          Finset.mem_Icc.mpr h.2.2⟩, by cases x; rfl⟩
   have main : ∀ n, ∀ P : FordFareyParameter, P.q = n →
       Nonempty (AcyclicIndegreeOrientation (P4062T1InteriorSquare P.q)
         (fun x => 2 + FourNeighborLaplacian (FordOdometer P) x)) := by
@@ -77,7 +63,7 @@ theorem FordTileAcyclicIndegree (P : FordFareyParameter)
       by_cases h1 : P.q = 1
       · apply empty
         ext x
-        simp only [squareCoordinates, h1, Finset.notMem_empty, iff_false]
+        simp only [FordInteriorSquareCoordinates.membership, h1, Finset.notMem_empty, iff_false]
         omega
       by_cases h2 : P.q = 2
       · have htwo_data : P.q₁ = 1 ∧ P.q₂ = 1 := by
@@ -94,7 +80,7 @@ theorem FordTileAcyclicIndegree (P : FordFareyParameter)
         let x₀ : GaussianInt := ⟨1, 1⟩
         have hunit : P4062T1InteriorSquare P.q = {x₀} := by
           ext x
-          rw [squareCoordinates, Finset.mem_singleton]
+          rw [FordInteriorSquareCoordinates.membership, Finset.mem_singleton]
           constructor
           · intro hx
             ext <;> dsimp [x₀] <;> omega

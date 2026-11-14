@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.FootprintFiniteness
 
 public import LeanPool.ApollonianSuperharmonic.CellDisjointCommonEdgesBoundary
 public import LeanPool.ApollonianSuperharmonic.CommonFootprintEdgeVertices
@@ -72,40 +73,11 @@ theorem LatticeDiskUnionIntersectionConnected (U V W : ProtoTile)
     · rintro (⟨x, hx, he⟩ | ⟨x, hx, he⟩)
       · exact ⟨x, (hunion x).2 (Or.inl hx), he⟩
       · exact ⟨x, (hunion x).2 (Or.inr hx), he⟩
-  have vertex_finite (T : ProtoTile) : (FootprintVertices T).Finite := by
-    simp only [FootprintVertices]
-    split_ifs
-    · let corner : T.cells × (Bool × Bool) → GaussianInt := fun q =>
-        match q.2 with
-        | (false, false) => q.1.1
-        | (false, true) => q.1.1 + 1
-        | (true, false) => q.1.1 + ⟨0, 1⟩
-        | (true, true) => q.1.1 + 1 + ⟨0, 1⟩
-      apply (Set.finite_range corner).subset
-      rintro z ⟨x, hx, hz⟩
-      rcases hz with hz | hz | hz | hz
-      · exact ⟨(⟨x, hx⟩, false, false), by simpa [corner] using hz.symm⟩
-      · exact ⟨(⟨x, hx⟩, false, true), by simpa [corner] using hz.symm⟩
-      · exact ⟨(⟨x, hx⟩, true, false), by simpa [corner] using hz.symm⟩
-      · exact ⟨(⟨x, hx⟩, true, true), by simpa [corner] using hz.symm⟩
-    · exact Set.finite_singleton T.anchor
-  have edge_finite (T : ProtoTile) : (FootprintEdges T).Finite := by
-    let edge : T.cells × (Bool × Bool) → Finset GaussianInt := fun q =>
-      match q.2 with
-      | (false, false) => {q.1.1, q.1.1 + 1}
-      | (false, true) => {q.1.1, q.1.1 + ⟨0, 1⟩}
-      | (true, false) => {q.1.1 + 1, q.1.1 + 1 + ⟨0, 1⟩}
-      | (true, true) => {q.1.1 + ⟨0, 1⟩, q.1.1 + 1 + ⟨0, 1⟩}
-    apply (Set.finite_range edge).subset
-    rintro e ⟨c, hc, h | h | h | h⟩
-    · exact ⟨(⟨c, hc⟩, false, false), by simpa [edge] using h.symm⟩
-    · exact ⟨(⟨c, hc⟩, false, true), by simpa [edge] using h.symm⟩
-    · exact ⟨(⟨c, hc⟩, true, false), by simpa [edge] using h.symm⟩
-    · exact ⟨(⟨c, hc⟩, true, true), by simpa [edge] using h.symm⟩
   have hvertexIE := Set.ncard_union_add_ncard_inter
-    (FootprintVertices U) (FootprintVertices V) (vertex_finite U) (vertex_finite V)
+    (FootprintVertices U) (FootprintVertices V)
+    (FootprintVertices.finite U) (FootprintVertices.finite V)
   have hedgeIE := Set.ncard_union_add_ncard_inter
-    (FootprintEdges U) (FootprintEdges V) (edge_finite U) (edge_finite V)
+    (FootprintEdges U) (FootprintEdges V) (FootprintEdges.finite U) (FootprintEdges.finite V)
   have hcellcard : W.cells.card = U.cells.card + V.cells.card := by
     have hfin : W.cells = U.cells ∪ V.cells := by
       ext z
@@ -119,7 +91,7 @@ theorem LatticeDiskUnionIntersectionConnected (U V W : ProtoTile)
     rw [← hvertices] at hvertexIE
     rw [← hedges] at hedgeIE
     omega
-  have hXfinite : X.Finite := (vertex_finite U).inter_of_left (FootprintVertices V)
+  have hXfinite : X.Finite := (FootprintVertices.finite U).inter_of_left (FootprintVertices V)
   have hgrid : ∀ e ∈ E, ∃ a b : GaussianInt,
       e = {a, b} ∧ FourNeighborAdjacent a b := by
     intro e he

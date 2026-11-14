@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.FordInteriorSquareCoordinates
 
 public import LeanPool.ApollonianSuperharmonic.P4062T1RemainderPaths
 public import LeanPool.ApollonianSuperharmonic.P4062T1InteriorGeometry
@@ -124,20 +125,12 @@ theorem P4062T1RemainderGeometry (P : FordFareyParameter) (hP : 2 < P.q) :
       exact ⟨same_path j x hx y hy hadj, hadj, hd⟩
     · rintro ⟨hy, hadj, hd⟩
       exact ⟨path_subset j hy, hadj, hd⟩
-  have square_bounds (x : GaussianInt) (hx : x ∈ P4062T1InteriorSquare P.q) :
-      1 ≤ x.re ∧ x.re ≤ (P.q : Int) - 1 ∧
-      1 ≤ x.im ∧ x.im ≤ (P.q : Int) - 1 := by
-    unfold P4062T1InteriorSquare at hx
-    obtain ⟨⟨u, v⟩, huv, rfl⟩ := Finset.mem_image.mp hx
-    obtain ⟨hu, hv⟩ := Finset.mem_product.mp huv
-    exact ⟨(Finset.mem_Icc.mp hu).1, (Finset.mem_Icc.mp hu).2,
-      (Finset.mem_Icc.mp hv).1, (Finset.mem_Icc.mp hv).2⟩
   refine ⟨hE, hW, hdisjoint, hcross, hedge, ?_, ?_, ?_⟩
   · intro j x hx
     exact ⟨hparent j x hx, hboundary j x hx, hlower j x hx⟩
   · intro x hx
     obtain ⟨j, hxj⟩ := select_path x hx
-    have hb := square_bounds x (Finset.mem_sdiff.mp hx).1
+    have hb := (FordInteriorSquareCoordinates.membership P.q x).mp (Finset.mem_sdiff.mp hx).1
     have ht := (FordLaplacianTable P).2.2 (by omega) x
       hb.1 hb.2.1 hb.2.2.1 hb.2.2.2
     have hm := hboundary j x hxj

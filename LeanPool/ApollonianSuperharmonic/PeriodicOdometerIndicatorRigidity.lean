@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.FootprintFiniteness
 
 public import LeanPool.ApollonianSuperharmonic.BandTileAcyclicIndegree
 public import LeanPool.ApollonianSuperharmonic.FiniteAcyclicOrientationObstruction
@@ -25,23 +26,6 @@ Changes: pool module paths, public exports, project namespace and current Mathli
 namespace ApollonianSuperharmonic
 
 namespace PeriodicIndicatorGeometry
-
-private theorem finiteFoot :
-    (by
-      classical
-      exact
-        ∀ (U : ProtoTile), (FootprintVertices U).Finite ) := by
-  classical
-  intro U
-  by_cases hu : U.cells.Nonempty
-  · let K : Finset GaussianInt := U.cells.biUnion (fun x =>
-      {x, x + 1, x + ⟨0, 1⟩, x + 1 + ⟨0, 1⟩})
-    have hk : (K : Set GaussianInt) = FootprintVertices U := by
-      ext z
-      simp [K, FootprintVertices, hu]
-    rw [← hk]
-    exact K.finite_toSet
-  · simp [FootprintVertices, hu]
 
 private theorem hmeet :
     (by
@@ -606,7 +590,7 @@ theorem PeriodicOdometerIndicatorRigidity (C : BandCircle)
   have web := PeriodicBoundaryWebConnected C T hT hlat htile
   dsimp at web
   obtain ⟨hWconn, hWcontain⟩ := web
-  have finiteFoot := PeriodicIndicatorGeometry.finiteFoot
+  have finiteFoot := FootprintVertices.finite
   apply Set.eq_univ_of_forall
   intro x
   by_contra hxX

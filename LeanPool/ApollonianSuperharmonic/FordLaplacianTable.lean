@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.LatticeRectangleBoundary
 
 public import LeanPool.ApollonianSuperharmonic.FordOdometer
 public import LeanPool.ApollonianSuperharmonic.FordBoundaryMultiplicity
@@ -663,30 +664,6 @@ private theorem roundArm :
   dsimp [k]
   ring
 
-private theorem rectBoundary :
-    ∀ (l : ℤ), ∀ (r : ℤ), ∀ (d : ℤ), ∀ (u : ℤ), ∀ (z : GaussianInt), z ∈ LatticeVertexBoundary {w
-        : GaussianInt | l ≤ w.re ∧ w.re ≤ r ∧ d ≤ w.im ∧ w.im ≤ u} ↔ (l ≤ z.re ∧ z.re ≤ r ∧ d ≤
-        z.im ∧ z.im ≤ u) ∧ (z.re = l ∨ z.re = r ∨ z.im = d ∨ z.im = u) := by
-  classical
-  intro l r d u z
-  constructor
-  · rintro ⟨hz, y, hy, hyr, hyi⟩
-    refine ⟨hz, ?_⟩
-    change l ≤ z.re ∧ z.re ≤ r ∧ d ≤ z.im ∧ z.im ≤ u at hz
-    change ¬(l ≤ y.re ∧ y.re ≤ r ∧ d ≤ y.im ∧ y.im ≤ u) at hy
-    omega
-  · rintro ⟨hz, he⟩
-    refine ⟨hz, ?_⟩
-    rcases he with he | he | he | he
-    · refine ⟨⟨z.re - 1, z.im⟩, ?_, ?_, ?_⟩ <;>
-        simp only [Set.mem_ofPred_eq] <;> omega
-    · refine ⟨⟨z.re + 1, z.im⟩, ?_, ?_, ?_⟩ <;>
-        simp only [Set.mem_ofPred_eq] <;> omega
-    · refine ⟨⟨z.re, z.im - 1⟩, ?_, ?_, ?_⟩ <;>
-        simp only [Set.mem_ofPred_eq] <;> omega
-    · refine ⟨⟨z.re, z.im + 1⟩, ?_, ?_, ?_⟩ <;>
-        simp only [Set.mem_ofPred_eq] <;> omega
-
 private theorem count :
     ∀ (P : FordFareyParameter),
       ∀ (x : GaussianInt),
@@ -1256,7 +1233,7 @@ private theorem interiorLaplacian :
       z ∈ LatticeVertexBoundary {w : GaussianInt |
         l ≤ w.re ∧ w.re ≤ r ∧ d ≤ w.im ∧ w.im ≤ u} ↔
       (l ≤ z.re ∧ z.re ≤ r ∧ d ≤ z.im ∧ z.im ≤ u) ∧
-        (z.re = l ∨ z.re = r ∨ z.im = d ∨ z.im = u) := FordLaplacianProof.rectBoundary l r d u z
+        (z.re = l ∨ z.re = r ∨ z.im = d ∨ z.im = u) := LatticeVertexBoundary.rectangle l r d u z
   have count : FordBoundaryMultiplicity P x =
       (if x.re ≤ a ∧ x.im ≤ a ∧ (x.re = a ∨ x.im = a) then 1 else 0) +
       (if b ≤ x.re ∧ b ≤ x.im ∧ (x.re = b ∨ x.im = b) then 1 else 0) +

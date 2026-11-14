@@ -6,6 +6,8 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.LatticeRectangleBoundary
+public import LeanPool.ApollonianSuperharmonic.FordInteriorSquareCoordinates
 
 public import LeanPool.ApollonianSuperharmonic.P5442T1Cocycle
 public import LeanPool.ApollonianSuperharmonic.P4062T1InteriorSquare
@@ -26,67 +28,6 @@ Changes: pool module paths, public exports, project namespace and current Mathli
 namespace ApollonianSuperharmonic
 
 namespace FordWebGeometryProof
-
-private theorem boundary :
-    (by
-      classical
-      exact
-        ∀ (P : FordFareyParameter), ∀ (x : GaussianInt), x ∈ LatticeVertexBoundary
-            (FordVertexDomain P.q) ↔ (0 : ℤ) ≤ x.re ∧ x.re ≤ (↑P.q : ℤ) ∧ (0 : ℤ) ≤ x.im ∧ x.im ≤
-            (↑P.q : ℤ) ∧ (x.re = (0 : ℤ) ∨ x.re = (↑P.q : ℤ) ∨ x.im = (0 : ℤ) ∨ x.im = (↑P.q : ℤ))
-    ) := by
-  classical
-  intro P x
-  constructor
-  · rintro ⟨hx, y, hy, hr, hi⟩
-    refine ⟨hx.1, hx.2.1, hx.2.2.1, hx.2.2.2, ?_⟩
-    have hr' : |x.re - y.re| ≤ (1 : Int) := by
-      rw [← Int.natCast_natAbs]; exact_mod_cast hr
-    have hi' : |x.im - y.im| ≤ (1 : Int) := by
-      rw [← Int.natCast_natAbs]; exact_mod_cast hi
-    have hrb := abs_le.mp hr'
-    have hib := abs_le.mp hi'
-    change ¬(0 ≤ y.re ∧ y.re ≤ (P.q : Int) ∧
-      0 ≤ y.im ∧ y.im ≤ (P.q : Int)) at hy
-    change 0 ≤ x.re ∧ x.re ≤ (P.q : Int) ∧
-      0 ≤ x.im ∧ x.im ≤ (P.q : Int) at hx
-    omega
-  · rintro ⟨hr, hr', hi, hi', he⟩
-    refine ⟨⟨hr, hr', hi, hi'⟩, ?_⟩
-    rcases he with he | he | he | he
-    · refine ⟨x-1, ?_, ?_, ?_⟩
-      all_goals simp [FordVertexDomain, he]
-    · refine ⟨x+1, ?_, ?_, ?_⟩
-      · simp only [FordVertexDomain, Set.mem_ofPred_eq, Zsqrtd.re_add,
-          Zsqrtd.im_add, Zsqrtd.re_one, Zsqrtd.im_one, he]
-        omega
-      all_goals simp
-    · refine ⟨x-⟨0,1⟩, ?_, ?_, ?_⟩
-      all_goals simp [FordVertexDomain, he]
-    · refine ⟨x+⟨0,1⟩, ?_, ?_, ?_⟩
-      · simp only [FordVertexDomain, Set.mem_ofPred_eq, Zsqrtd.re_add, Zsqrtd.im_add, he]
-        omega
-      all_goals simp
-
-private theorem coords :
-    (by
-      classical
-      exact
-        ∀ (P : FordFareyParameter), ∀ (x : GaussianInt), x ∈ P4062T1InteriorSquare P.q ↔ (1 :
-            ℤ) ≤ x.re ∧ x.re ≤ (↑P.q : ℤ) - (1 : ℤ) ∧ (1 : ℤ) ≤ x.im ∧ x.im ≤ (↑P.q : ℤ) - (1 : ℤ)
-    ) := by
-  classical
-  intro P x
-  constructor
-  · intro hx
-    obtain ⟨⟨a, b⟩, hab, rfl⟩ := Finset.mem_image.mp hx
-    obtain ⟨ha, hb⟩ := Finset.mem_product.mp hab
-    exact ⟨(Finset.mem_Icc.mp ha).1, (Finset.mem_Icc.mp ha).2,
-      (Finset.mem_Icc.mp hb).1, (Finset.mem_Icc.mp hb).2⟩
-  · intro hx
-    exact Finset.mem_image.mpr ⟨(x.re, x.im), Finset.mem_product.mpr
-      ⟨Finset.mem_Icc.mpr ⟨hx.1, hx.2.1⟩,
-        Finset.mem_Icc.mpr hx.2.2⟩, by cases x; rfl⟩
 
 private theorem periods :
     (by
@@ -327,10 +268,11 @@ theorem P5442T1WebGeometry (P : FordFareyParameter) :
         0 ≤ x.re ∧ x.re ≤ (P.q : Int) ∧
         0 ≤ x.im ∧ x.im ≤ (P.q : Int) ∧
         (x.re = 0 ∨ x.re = (P.q : Int) ∨ x.im = 0 ∨ x.im = (P.q : Int)) :=
-            FordWebGeometryProof.boundary P x
+            by simpa only [FordVertexDomain, and_assoc] using
+              LatticeVertexBoundary.rectangle 0 P.q 0 P.q x
   have coords (x : GaussianInt) : x ∈ P4062T1InteriorSquare P.q ↔
       1 ≤ x.re ∧ x.re ≤ (P.q : Int) - 1 ∧
-      1 ≤ x.im ∧ x.im ≤ (P.q : Int) - 1 := FordWebGeometryProof.coords P x
+      1 ≤ x.im ∧ x.im ≤ (P.q : Int) - 1 := FordInteriorSquareCoordinates.membership P.q x
   have periods : ∀ m n, t m n ∈ FordExceptionalLattice P ∧
       ∀ x, FourNeighborLaplacian (FordOdometer P) (x+t m n) =
         FourNeighborLaplacian (FordOdometer P) x := FordWebGeometryProof.periods P

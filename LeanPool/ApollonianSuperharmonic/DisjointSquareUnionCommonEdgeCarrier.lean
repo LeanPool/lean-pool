@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.FootprintFiniteness
 
 public import LeanPool.ApollonianSuperharmonic.CommonFootprintEdgeVertices
 public import LeanPool.ApollonianSuperharmonic.FootprintVertices
@@ -30,22 +31,6 @@ namespace SquareUnionCommonCarrierConstruction
 private noncomputable abbrev I : GaussianInt := by
   classical
   exact ⟨0, 1⟩
-
-private theorem footprint_finite (T : ProtoTile) : (FootprintEdges T).Finite := by
-  classical
-  let I : GaussianInt := ⟨0, 1⟩
-  let edge : T.cells × (Bool × Bool) → Finset GaussianInt := fun q =>
-    match q.2 with
-    | (false, false) => {q.1.1, q.1.1 + 1}
-    | (false, true) => {q.1.1, q.1.1 + I}
-    | (true, false) => {q.1.1 + 1, q.1.1 + 1 + I}
-    | (true, true) => {q.1.1 + I, q.1.1 + 1 + I}
-  apply (Set.finite_range edge).subset
-  rintro e ⟨c, hc, h | h | h | h⟩
-  · exact ⟨(⟨c, hc⟩, false, false), by simpa [edge] using h.symm⟩
-  · exact ⟨(⟨c, hc⟩, false, true), by simpa [edge, I] using h.symm⟩
-  · exact ⟨(⟨c, hc⟩, true, false), by simpa [edge, I] using h.symm⟩
-  · exact ⟨(⟨c, hc⟩, true, true), by simpa [edge, I] using h.symm⟩
 
 private theorem edge_endpoint_square (c : LatticeCell) (e : Finset GaussianInt)
       (he : e = {c, c + 1} ∨ e = {c, c + I} ∨
@@ -98,7 +83,7 @@ theorem DisjointSquareUnionCommonEdgeCarrier (U V : ProtoTile)
   classical
   let I : GaussianInt := ⟨0, 1⟩
   have footprint_finite (T : ProtoTile) : (FootprintEdges T).Finite :=
-      SquareUnionCommonCarrierConstruction.footprint_finite T
+      FootprintEdges.finite T
   have edge_carrier_subset (T : ProtoTile) (e : Finset GaussianInt)
       (he : e ∈ FootprintEdges T) : GridEdgeCarrier e ⊆ TileRealization T :=
           SquareUnionCommonCarrierConstruction.edge_carrier_subset T e he

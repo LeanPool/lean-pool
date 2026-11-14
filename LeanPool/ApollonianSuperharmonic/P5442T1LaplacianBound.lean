@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.FordInteriorSquareCoordinates
 
 public import LeanPool.ApollonianSuperharmonic.P5442T1WebGeometry
 public import LeanPool.ApollonianSuperharmonic.P4062T1ParentalRestriction
@@ -29,20 +30,6 @@ theorem P5442T1LaplacianBound (P : FordFareyParameter) :
     ∀ x, FourNeighborLaplacian (FordOdometer P) x ≤ 1 := by
 -- BODY
   classical
-  have coords (q : Nat) (x : GaussianInt) :
-      x ∈ P4062T1InteriorSquare q ↔
-        1 ≤ x.re ∧ x.re ≤ (q : Int) - 1 ∧
-        1 ≤ x.im ∧ x.im ≤ (q : Int) - 1 := by
-    constructor
-    · intro hx
-      obtain ⟨⟨a, b⟩, hab, rfl⟩ := Finset.mem_image.mp hx
-      obtain ⟨ha, hb⟩ := Finset.mem_product.mp hab
-      exact ⟨(Finset.mem_Icc.mp ha).1, (Finset.mem_Icc.mp ha).2,
-        (Finset.mem_Icc.mp hb).1, (Finset.mem_Icc.mp hb).2⟩
-    · intro hx
-      exact Finset.mem_image.mpr ⟨(x.re, x.im), Finset.mem_product.mpr
-        ⟨Finset.mem_Icc.mpr ⟨hx.1, hx.2.1⟩,
-          Finset.mem_Icc.mpr hx.2.2⟩, by cases x; rfl⟩
   have main : ∀ n, ∀ P : FordFareyParameter, P.q = n →
       ∀ x, FourNeighborLaplacian (FordOdometer P) x ≤ 1 := by
     intro n
@@ -65,7 +52,7 @@ theorem P5442T1LaplacianBound (P : FordFareyParameter) :
         have he := (hp m k).2 y
         simpa only [y, t, sub_add_cancel] using he
       rw [he]
-      have hyc := (coords P.q y).mp hy
+      have hyc := (FordInteriorSquareCoordinates.membership P.q y).mp hy
       by_cases h1 : P.q = 1
       · omega
       by_cases h2 : P.q = 2
