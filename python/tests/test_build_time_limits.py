@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import hashlib
 import os
-import shutil
 import signal
 import subprocess
 import sys
@@ -162,9 +161,10 @@ def _alive(pid: int) -> bool:
 
 def test_watch_stops_a_lean_process_past_the_limit(tmp_path: Path) -> None:
     """A Lean process past the hard limit is stopped and the build fails."""
-    fake_lean = tmp_path / "lean"
-    fake_lean.symlink_to(shutil.which("sleep") or "/bin/sleep")
-    build = ["/bin/sh", "-c", f"'{fake_lean}' 60; exit 0"]
+    # Not a symlink to `sleep`: a multicall coreutils binary (uutils) invoked
+    # as `lean` exits at once instead of sleeping.
+    fake_lean, script = _fake_lean(tmp_path, "import time\ntime.sleep(60)\n")
+    build = ["/bin/sh", "-c", f"'{fake_lean}' '{script}'; exit 0"]
     started = time.monotonic()
     assert limits.watch(build, limit=1, poll=0.2, grace=0.5) == 124
     assert time.monotonic() - started < 30
