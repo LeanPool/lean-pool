@@ -505,27 +505,6 @@ private theorem hxFixedOriginal :
     (by simpa [hpoint] using hmem)
   simpa [hfunL] using hback
 
-private theorem hxSelectedOriginal :
-    (by
-      classical
-      exact
-        ∀ (C₀ : BandCircle), ∀ (Cᵢ : BandCircle), ∀ (T₀ : ProtoTile), ∀ (Tᵢ : ProtoTile), ∀ (h₀ :
-            PartialOdometer), ∀ (hᵢ : PartialOdometer), ∀ (x : GaussianInt), ∀ (bundle :
-            BandOrderedGeneralNormalizedOccurrenceBundle C₀ Cᵢ T₀ Tᵢ h₀ hᵢ x),
-            (bundle.normalizedPoint ∈ (bundle.functions bundle.selectedSlot
-            bundle.selectedSign).domain) → (∀ (ginv : BandPackingSymmetry),
-        let selectedFunction := bundle.functions bundle.selectedSlot bundle.selectedSign
-        let h' := BandPackingSymmetryPartialOdometerAction ginv selectedFunction
-        (∀ (f : PartialOdometer), ∀ (y : GaussianInt), (BandPackingSymmetryVectorAction
-            bundle.symmetry y ∈ f.domain) → (y ∈ (BandPackingSymmetryPartialOdometerAction ginv
-            f).domain)) → ((BandPackingSymmetryVectorAction bundle.symmetry x =
-            bundle.normalizedPoint) → (x ∈ h'.domain))) ) := by
-  classical
-  intro C₀ Cᵢ T₀ Tᵢ h₀ hᵢ x bundle hxSelected' ginv selectedFunction h' inverseDomain hpoint
-  have hmem : bundle.normalizedPoint ∈ selectedFunction.domain := hxSelected'
-  have hback := inverseDomain selectedFunction x (by simpa [hpoint] using hmem)
-  simpa [h'] using hback
-
 private theorem hstarOriginal :
     (by
       classical
@@ -3020,8 +2999,9 @@ theorem MarkedOdometerAdjacencyReduction :
         hinverseCircle (MarkedAdjacencyGeometry.hsubNormalized C₀ Cᵢ T₀ Tᵢ h₀ hᵢ x bundle hnorm
         C' hsub')), (MarkedAdjacencyGeometry.hxFixedOriginal C₀ Cᵢ T₀ Tᵢ h₀ hᵢ x bundle hxFixed'
         ginv hfunL inverseDomain hpoint),
-      (MarkedAdjacencyGeometry.hxSelectedOriginal C₀ Cᵢ T₀ Tᵢ h₀ hᵢ x bundle hxSelected' ginv
-          inverseDomain hpoint), (MarkedAdjacencyGeometry.hstarOriginal C₀ Cᵢ T₀ Tᵢ h₀ hᵢ x
+      (inverseDomain (bundle.functions bundle.selectedSlot bundle.selectedSign) x
+        (by simpa [hpoint] using hxSelected')),
+      (MarkedAdjacencyGeometry.hstarOriginal C₀ Cᵢ T₀ Tᵢ h₀ hᵢ x
           bundle hstar' ginv hfunL inverseDomain hpoint
           (BandPackingSymmetryVectorAction.neighborStar)),
           (MarkedAdjacencyGeometry.hsizeOriginal C₀ Cᵢ T₀ Tᵢ h₀ hᵢ x bundle hnorm C' hsize' ginv

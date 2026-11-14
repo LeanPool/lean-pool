@@ -905,29 +905,6 @@ private theorem another_parent :
   exact all_incident_not_boundary
     (cert.P (parentOwner 0).1 (parentOwner 0).2) hall (parentOwner_boundary 0)
 
-private theorem hp0j :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C
-            T), ∀ (x : GaussianInt), ∀ (sourceParent : ∀ (j : Fin 4), ∃ i : Fin 3, ∃ s : Bool,
-            LatticeVertexIncidentCell x j ∈ (cert.P i s).cells),
-        let parentOwner : Fin 4 → Fin 3 × Bool := fun j =>
-          (Classical.choose (sourceParent j),
-            Classical.choose (Classical.choose_spec (sourceParent j)))
-        ∀ (parentOwner_boundary : ∀ (j : Fin 4), x ∈ BoundaryFootprintVertices (cert.P
-            (parentOwner j).1 (parentOwner j).2)), ∀ (j : Fin (4 : ℕ)), (parentOwner j ≠
-            parentOwner (0 : Fin (4 : ℕ))) → (
-        let BoundaryParents := {a : Fin 3 × Bool //
-          x ∈ BoundaryFootprintVertices (cert.P a.1 a.2)}
-        let p0 : BoundaryParents := ⟨parentOwner 0, parentOwner_boundary 0⟩
-        let pj : BoundaryParents := ⟨parentOwner j, parentOwner_boundary j⟩
-        p0 ≠ pj) ) := by
-  classical
-  intro q cfg C T cert x sourceParent parentOwner parentOwner_boundary j hj BoundaryParents p0 pj h
-  exact hj (congrArg Subtype.val h).symm
-
 private theorem chooseTwo_injective :
     (by
       classical
@@ -1507,8 +1484,8 @@ theorem P4120T1GeneralDescent
       x ∈ BoundaryFootprintVertices (cert.P a.1 a.2)}
     have two_le_card : 2 ≤ Nat.card BoundaryParents  := GeneralDescentGeometry.two_le_card q cfg C
         T cert x sourceParent parentOwner_boundary j (GeneralDescentGeometry.chooseTwo_injective
-            q cfg C T cert x sourceParent parentOwner_boundary j (GeneralDescentGeometry.hp0j q
-            cfg C T cert x sourceParent parentOwner_boundary j hj))
+            q cfg C T cert x sourceParent parentOwner_boundary j
+              (fun h => hj (congrArg Subtype.val h).symm))
     have hseparation := BandOriginalPairSeparation cert.P cert.O cert.u cert.v
       (GeneralDescentGeometry.hOA q cfg C T cert) hOsub cert.partition
     let parentOfLabel : SixSubtileLabel → Fin 3 × Bool

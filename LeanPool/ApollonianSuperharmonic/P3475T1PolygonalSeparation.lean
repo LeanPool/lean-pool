@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.P3381T1AffineTriangleMap
 
 public import LeanPool.ApollonianSuperharmonic.P3475T1TriangleTree
 public import LeanPool.ApollonianSuperharmonic.P3381T1PiecewiseAffinePolygonModel
@@ -71,36 +72,6 @@ private theorem hintpath :
   rw [← himg]
   exact (Topology.IsInducing.isPathConnected_iff (f := Subtype.val)
     (hf := Topology.IsInducing.subtypeVal) (F := S)).mp hSp
-
-private theorem bcombo :
-    (by
-      classical
-      exact
-        ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (X : Set (Real × Real)), ∀ (K : Set
-            (Real × Real)), ∀ (t : P3475T1TriangleTree p X K), ∀ (b : Fin t.count → ℝ × ℝ → Fin
-            (3 : ℕ) → ℝ), (∀ (k : Fin t.count), ∀ (z : ℝ × ℝ), ∑ j : Fin (3 : ℕ), b k z j = (1 :
-            ℝ)) → ((∀ (k : Fin t.count), ∀ (z : ℝ × ℝ), ∑ j : Fin (3 : ℕ), b k z j • p.vertex
-            (t.face k j) = z) → ((∀ (k : Fin t.count), ∀ (w : Fin (3 : ℕ) → ℝ), ∑ j : Fin (3 :
-            ℕ), w j = (1 : ℝ) → b k (∑ j : Fin (3 : ℕ), w j • p.vertex (t.face k j)) = w) → (∀
-            {ι : Type}, ∀ [inst : Fintype ι], ∀ (k : Fin t.count), ∀ (w : ι → ℝ), ∀ (f : ι → ℝ ×
-            ℝ), ∑ r : ι, w r = (1 : ℝ) → ∀ (j : Fin (3 : ℕ)), b k (∑ r : ι, w r • f r) j = ∑ r :
-            ι, w r * b k (f r) j)))
-    ) := by
-  classical
-  intro n p X K t b bsum breconstruct bunique ι typeclassInstance0 k w f hw j
-  let W : Fin 3 → Real := fun j => ∑ r, w r * b k (f r) j
-  have hW : (∑ j, W j) = 1 := by
-    simp only [W]
-    rw [Finset.sum_comm]
-    simp_rw [← Finset.mul_sum, bsum, mul_one]
-    exact hw
-  have hWz : (∑ j, W j • p.vertex (t.face k j)) = ∑ r, w r • f r := by
-    simp only [W, Finset.sum_smul]
-    rw [Finset.sum_comm]
-    simp_rw [mul_smul, ← Finset.smul_sum, breconstruct]
-  have h := bunique k W hW
-  rw [hWz] at h
-  exact congrFun h j
 
 private theorem contains :
     (by
@@ -516,8 +487,9 @@ private theorem hlocalAll :
       have bcombo {ι : Type} [Fintype ι] (k : Fin t.count)
           (w : ι → Real) (f : ι → Real × Real) (hw : (∑ r, w r) = 1)
           (j : Fin 3) :
-          b k (∑ r, w r • f r) j = ∑ r, w r * b k (f r) j := PolygonalSeparationProof.bcombo n
-              p X K t b bsum breconstruct bunique (ι := ι) k w f hw j
+          b k (∑ r, w r • f r) j = ∑ r, w r * b k (f r) j :=
+            barycentricCoordinates_weighted_sum (p.vertex ∘ t.face k) (b k)
+              (bsum k) (breconstruct k) (bunique k) w f hw j
       have blinear (k : Fin t.count) (x y : Real × Real) (a d : Real)
           (had : a + d = 1) (j : Fin 3) :
           b k (a • x + d • y) j = a * b k x j + d * b k y j := by

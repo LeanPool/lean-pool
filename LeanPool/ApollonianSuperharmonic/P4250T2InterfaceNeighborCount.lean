@@ -583,25 +583,6 @@ private theorem neighbor_count :
     exact ⟨j, Finset.mem_filter.mpr ⟨Finset.mem_univ _,
       (neighbor_bridge j).mp (Finset.mem_filter.mp hy).1⟩, rfl⟩
 
-private theorem hnoO :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (cfg :
-            BandOrderedGeneralConfiguration q), ∀ (T : ProtoTile), ∀ (cert :
-            BandOrderedGeneralLayoutCertificate q cfg C T), ∀ (D : Finset GaussianInt), ∀ (P :
-            Finset GaussianInt), (∀ x ∈ D \ P, x ∈ FootprintVertices cert.O ↔ x ∈
-            ({cert.precursorBoundary.a, cert.precursorBoundary.b} : Finset GaussianInt)) → ((∀
-                (U : ProtoTile), ∀ (z :
-            GaussianInt), ∀ (j : Fin 4), (LatticeVertexIncidentCell z j ∈ U.cells) → (z ∈
-            FootprintVertices U)) → (∀ (x : GaussianInt), (x ∈ D \ P) → ((x ∉
-            ({cert.precursorBoundary.a, cert.precursorBoundary.b} : Finset GaussianInt)) → (∀
-                (j : Fin 4),
-            LatticeVertexIncidentCell x j ∉ cert.O.cells)))) ) := by
-  classical
-  intro C q cfg T cert D P hprecursor incident_foot x hx hnotR j hj
-  exact hnotR ((hprecursor x hx).mp (incident_foot cert.O x j hj))
-
 private theorem owner_exists :
     (by
       classical
@@ -1540,7 +1521,7 @@ theorem P4250T2InterfaceNeighborCount :
         Classical.choose_spec (owner_exists j)
       have owner_iff := InterfaceNeighborGeometry.owner_iff C q cfg T cert
           (InterfaceNeighborGeometry.parent_unique C q cfg T cert hAB parent_disjoint) x
-          (InterfaceNeighborGeometry.hnoO C q cfg T cert D P hprecursor incident_foot x hx hnotR)
+          (fun j hj => hnotR ((hprecursor x hx).mp (incident_foot cert.O x j hj)))
           owner_exists owner_spec
       have hdiag := no_diagonal (fun a : Fin 3 × Bool => cert.P a.1 a.2)
         (fun a => cert.parent_lattice a.1 a.2) owner owner_iff

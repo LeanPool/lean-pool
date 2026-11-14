@@ -470,28 +470,6 @@ private theorem hneAt542 :
   rw [he] at hh
   simp at hh
 
-private theorem hfgAt566 :
-    ∀ (ι : Type), ∀ (P : PeriodicTileCore ι), ∀ (a : ι), ∀ (b : ι), ∀ (hab : P.plane.adjacent a b),
-    let first (a b : ι) (hab : P.plane.adjacent a b) : P.plane.Face :=
-      Classical.choose (P.plane.every_edge_two_faces a b hab)
-    let second (a b : ι) (hab : P.plane.adjacent a b) : P.plane.Face :=
-      Classical.choose (Classical.choose_spec (P.plane.every_edge_two_faces a b hab))
-    (∀ (u : P.lattice), Function.Injective (P.faceShift u)) → (∀ (u : ↥P.lattice), (first a b hab
-        ≠ second a b hab ∧ (∃ (i : Fin (3 : ℕ)), P.plane.faceVertex (first a b hab) i = a) ∧ (∃
-        (i : Fin (3 : ℕ)), P.plane.faceVertex (first a b hab) i = b) ∧ (∃ (i : Fin (3 : ℕ)),
-        P.plane.faceVertex (second a b hab) i = a) ∧ (∃ (i : Fin (3 : ℕ)), P.plane.faceVertex
-        (second a b hab) i = b) ∧ ∀ (h : P.plane.Face), ((∃ (i : Fin (3 : ℕ)), P.plane.faceVertex
-        h i = a) ∧ ∃ (i : Fin (3 : ℕ)), P.plane.faceVertex h i = b) → h = first a b hab ∨ h =
-        second a b hab) → (
-    let f := first a b hab
-    let g := second a b hab
-    let f' := P.faceShift u f
-    let g' := P.faceShift u g
-    f' ≠ g')) := by
-  classical
-  intro ι P a b hab first second faceShift_injective u hp f g f' g' h
-  exact hp.1 (faceShift_injective u h)
-
 private theorem hpneAt583 :
     ∀ (ι : Type), ∀ (P : PeriodicTileCore ι), ∀ (a : ι), ∀ (b : ι), ∀ (hab : P.plane.adjacent a b),
     let first (a b : ι) (hab : P.plane.adjacent a b) : P.plane.Face :=
@@ -596,26 +574,6 @@ private theorem hparam :
   classical
   apply Subtype.ext
   norm_num
-
-private theorem hfgAt699 :
-    ∀ (ι : Type), ∀ (P : PeriodicTileCore ι), ∀ (a : ι), ∀ (b : ι), ∀ (hab : P.plane.adjacent a b),
-    let first (a b : ι) (hab : P.plane.adjacent a b) : P.plane.Face :=
-      Classical.choose (P.plane.every_edge_two_faces a b hab)
-    let second (a b : ι) (hab : P.plane.adjacent a b) : P.plane.Face :=
-      Classical.choose (Classical.choose_spec (P.plane.every_edge_two_faces a b hab))
-    ∀ (f : P.plane.Face),
-    let other (f : P.plane.Face) (a b : ι) (hab : P.plane.adjacent a b) :=
-      @ite P.plane.Face (f = first a b hab) (Classical.propDecidable _)
-          (second a b hab) (first a b hab)
-    (∀ (u : P.lattice), Function.Injective (P.faceShift u)) → (∀ (u : ↥P.lattice),
-    let g := other f a b hab
-    let f' := P.faceShift u f
-    let g' := P.faceShift u g
-    (other f a b hab ≠ f ∧ (∃ (i : Fin (3 : ℕ)), P.plane.faceVertex (other f a b hab) i = a) ∧ ∃
-        (i : Fin (3 : ℕ)), P.plane.faceVertex (other f a b hab) i = b) → (f' ≠ g')) := by
-  classical
-  intro ι P a b hab first second f other faceShift_injective u g f' g' hother h
-  exact hother.1 (faceShift_injective u h).symm
 
 private theorem hpneAt718 :
     ∀ (ι : Type), ∀ (P : PeriodicTileCore ι), ∀ (a : ι), ∀ (b : ι), ∀ (hab : P.plane.adjacent a b),
@@ -887,7 +845,7 @@ theorem P3776T1DualEdgesExist {ι : Type} (P : PeriodicTileCore ι) :
     let g := second a b hab
     let f' := P.faceShift u f
     let g' := P.faceShift u g
-    have hfg : f' ≠ g' := DualEdgeDetails.hfgAt566 ι P a b hab faceShift_injective u hp
+    have hfg : f' ≠ g' := fun h => hp.1 (faceShift_injective u h)
     have hfirst : first (P.shift u a) (P.shift u b) hab' = f' ∨
         first (P.shift u a) (P.shift u b) hab' = g' := DualEdgesProof.hfirstAt289 ι P a b hab
             unshifted_incidence faceShift_cancel u hab' hp hq
@@ -933,7 +891,7 @@ theorem P3776T1DualEdgesExist {ι : Type} (P : PeriodicTileCore ι) :
     let f' := P.faceShift u f
     let g' := P.faceShift u g
     have hother := other_spec f a b hab hfa hfb
-    have hfg : f' ≠ g' := DualEdgeDetails.hfgAt699 ι P a b hab f faceShift_injective u hother
+    have hfg : f' ≠ g' := fun h => hother.1 (faceShift_injective u h).symm
     have hf'a := shifted_incidence u f a hfa
     have hf'b := shifted_incidence u f b hfb
     have hg'a := shifted_incidence u g a hother.2.1

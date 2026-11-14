@@ -313,65 +313,14 @@ private theorem hRsub :
   rw [← S.cover]
   exact Set.subset_union_right
 
-private theorem hLavoid :
-    (by
-      classical
-      exact
-        ∀ (ι : Type), ∀ (P : PeriodicTileComplex ι), ∀ (D : P3723T1AllContactRouting P), ∀ (F :
-            P3861T1FacialDomains P D), ∀ (a : ι), ∀ (r : ℝ), ∀ (u : ι → ℝ × ℝ),
-        let x := D.position a
-        let B := Metric.ball x r
-        ∀ (f : P.plane.Face), ∀ (c : ι), ∀ (d : ι), (frontier (F.region f) ∩ B = B ∩ {q : ℝ × ℝ |
-            ∃ (t : ℝ), (0 : ℝ) ≤ t ∧ q = x + t • u c} ∪ B ∩ {q : ℝ × ℝ | ∃ (t : ℝ), (0 : ℝ) ≤ t ∧
-            q = x + t • u d}) → (∀ (S : P3889T1TwoRaySectorDecomposition x r (u c) (u d)),
-        let U := F.region f
-        (S.left ⊆ B \ ({q | ∃ t : Real, 0 ≤ t ∧ q = x + t • u c} ∪ {q | ∃ t : Real, 0 ≤ t ∧ q = x
-            + t • u d})) → (Disjoint S.left (frontier U))) ) := by
-  classical
-  intro ι P D F a r u x B f c d hfront S U hLsub
+private theorem disjoint_of_frontier_partition {α : Type} {A B F R S : Set α}
+    (partition : F ∩ B = B ∩ R ∪ B ∩ S) (subset : A ⊆ B \ (R ∪ S)) : Disjoint A F := by
   apply Set.disjoint_left.mpr
-  intro q hq hqf
-  have hqB := (hLsub hq).1
-  have hqRay : q ∈ ({q | ∃ t : Real, 0 ≤ t ∧ q = x + t • u c} ∪
-      {q | ∃ t : Real, 0 ≤ t ∧ q = x + t • u d}) := by
-    have hq' : (q ∈ B ∩ {q | ∃ t : Real, 0 ≤ t ∧ q = x + t • u c}) ∨
-        (q ∈ B ∩ {q | ∃ t : Real, 0 ≤ t ∧ q = x + t • u d}) := by
-      have heq := congrArg (fun s : Set (Real × Real) => q ∈ s) hfront
-      simpa only [Set.mem_union, Set.mem_inter_iff] using heq.mp ⟨hqf, hqB⟩
-    rcases hq' with hq' | hq'
-    · exact Or.inl hq'.2
-    · exact Or.inr hq'.2
-  exact (hLsub hq).2 hqRay
-
-private theorem hRavoid :
-    (by
-      classical
-      exact
-        ∀ (ι : Type), ∀ (P : PeriodicTileComplex ι), ∀ (D : P3723T1AllContactRouting P), ∀ (F :
-            P3861T1FacialDomains P D), ∀ (a : ι), ∀ (r : ℝ), ∀ (u : ι → ℝ × ℝ),
-        let x := D.position a
-        let B := Metric.ball x r
-        ∀ (f : P.plane.Face), ∀ (c : ι), ∀ (d : ι), (frontier (F.region f) ∩ B = B ∩ {q : ℝ × ℝ |
-            ∃ (t : ℝ), (0 : ℝ) ≤ t ∧ q = x + t • u c} ∪ B ∩ {q : ℝ × ℝ | ∃ (t : ℝ), (0 : ℝ) ≤ t ∧
-            q = x + t • u d}) → (∀ (S : P3889T1TwoRaySectorDecomposition x r (u c) (u d)),
-        let U := F.region f
-        (S.right ⊆ B \ ({q | ∃ t : Real, 0 ≤ t ∧ q = x + t • u c} ∪ {q | ∃ t : Real, 0 ≤ t ∧ q =
-            x + t • u d})) → (Disjoint S.right (frontier U))) ) := by
-  classical
-  intro ι P D F a r u x B f c d hfront S U hRsub
-  apply Set.disjoint_left.mpr
-  intro q hq hqf
-  have hqB := (hRsub hq).1
-  have hqRay : q ∈ ({q | ∃ t : Real, 0 ≤ t ∧ q = x + t • u c} ∪
-      {q | ∃ t : Real, 0 ≤ t ∧ q = x + t • u d}) := by
-    have hq' : (q ∈ B ∩ {q | ∃ t : Real, 0 ≤ t ∧ q = x + t • u c}) ∨
-        (q ∈ B ∩ {q | ∃ t : Real, 0 ≤ t ∧ q = x + t • u d}) := by
-      have heq := congrArg (fun s : Set (Real × Real) => q ∈ s) hfront
-      simpa only [Set.mem_union, Set.mem_inter_iff] using heq.mp ⟨hqf, hqB⟩
-    rcases hq' with hq' | hq'
-    · exact Or.inl hq'.2
-    · exact Or.inr hq'.2
-  exact (hRsub hq).2 hqRay
+  intro q hq hfront
+  have membership : q ∈ B ∩ R ∪ B ∩ S := partition ▸ ⟨hfront, (subset hq).1⟩
+  rcases membership with membership | membership
+  · exact (subset hq).2 (Or.inl membership.2)
+  · exact (subset hq).2 (Or.inr membership.2)
 
 private theorem hLavoidV :
     (by
@@ -1636,10 +1585,8 @@ private theorem hfaceFillsSector :
             P D F a r u f c d hfront q hqB hqRay
   have hLsub := FaceGapProof.hLsub ι P D a r u c d S
   have hRsub := FaceGapProof.hRsub ι P D a r u c d S
-  have hLavoid := FaceGapProof.hLavoid ι P D F a r u f c d
-      hfront S hLsub
-  have hRavoid := FaceGapProof.hRavoid ι P D F a r u f c d
-      hfront S hRsub
+  have hLavoid := FaceGapProof.disjoint_of_frontier_partition hfront hLsub
+  have hRavoid := FaceGapProof.disjoint_of_frontier_partition hfront hRsub
   have hUopen : IsOpen U := F.region_open f
   have hUV := FaceGapProof.hUV ι P D F f
   have hfill := FaceGapProof.hfill ι P D F a r u f c d S (FaceGapProof.hLchoice ι P D F a r u f

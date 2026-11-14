@@ -28,35 +28,6 @@ namespace ApollonianSuperharmonic
 
 namespace DiamondRightSecond
 
-private theorem fourCells :
-    (by
-      classical
-      exact
-        ∀ (K : DiamondParameter),
-        let k : Int := K.1
-        let rho : GaussianInt := ⟨-k, -k-1⟩
-        let covered (x : GaussianInt) : Prop :=
-          ∀ y, y=x ∨ y=x-1 ∨ y=x-⟨0,1⟩ ∨ y=x-1-⟨0,1⟩ →
-            y ∈ DiamondCellDomain K.1 ∨ y-rho ∈ DiamondCellDomain K.1
-        ∀ (x : GaussianInt), covered x ↔ (x ∈ DiamondCellDomain K.1 ∨ x - rho ∈ DiamondCellDomain
-            K.1) ∧ (x - (1 : GaussianInt) ∈ DiamondCellDomain K.1 ∨ x - (1 : GaussianInt) - rho ∈
-            DiamondCellDomain K.1) ∧ (x - ⟨(0 : ℤ), (1 : ℤ)⟩ ∈ DiamondCellDomain K.1 ∨ x - ⟨(0 :
-            ℤ), (1 : ℤ)⟩ - rho ∈ DiamondCellDomain K.1) ∧ (x - (1 : GaussianInt) - ⟨(0 : ℤ), (1 :
-            ℤ)⟩ ∈ DiamondCellDomain K.1 ∨ x - (1 : GaussianInt) - ⟨(0 : ℤ), (1 : ℤ)⟩ - rho ∈
-            DiamondCellDomain K.1) ) := by
-  classical
-  intro K k rho covered x
-  constructor
-  · intro h
-    exact ⟨h x (Or.inl rfl), h (x-1) (Or.inr (Or.inl rfl)),
-      h (x-⟨0,1⟩) (Or.inr (Or.inr (Or.inl rfl))),
-      h (x-1-⟨0,1⟩) (Or.inr (Or.inr (Or.inr rfl)))⟩
-  · rintro ⟨h0,h1,h2,h3⟩ y (rfl | rfl | rfl | rfl)
-    · exact h0
-    · exact h1
-    · exact h2
-    · exact h3
-
 private theorem contact :
     (by
       classical
@@ -609,7 +580,13 @@ theorem P5352T2RightSecond (K : DiamondParameter) (hk : 1 < K.1)
         0 ≤ x.im ∧ x.im < 2*k ∧ -(x.im+1) ≤ x.re ∧ x.re < x.im+1 ∧
         -(2*k-x.im) ≤ x.re ∧ x.re < 2*k-x.im :=
       (P4194T1DiamondCellRows K.1 x).1
-    have fourCells (x : GaussianInt) := DiamondRightSecond.fourCells K x
+    have fourCells (x : GaussianInt) : covered x ↔
+        (x ∈ DiamondCellDomain K.1 ∨ x - rho ∈ DiamondCellDomain K.1) ∧
+        (x - 1 ∈ DiamondCellDomain K.1 ∨ x - 1 - rho ∈ DiamondCellDomain K.1) ∧
+        (x - ⟨0, 1⟩ ∈ DiamondCellDomain K.1 ∨ x - ⟨0, 1⟩ - rho ∈ DiamondCellDomain K.1) ∧
+        (x - 1 - ⟨0, 1⟩ ∈ DiamondCellDomain K.1 ∨
+          x - 1 - ⟨0, 1⟩ - rho ∈ DiamondCellDomain K.1) := by
+      simp only [covered, or_imp, forall_and, forall_eq]
     -- Classify the common footprint before evaluating either formula.
     have contact := DiamondRightSecond.contact K z hz hzR foot
     -- These cell tests are independent of the star's footprint coverage.

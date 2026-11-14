@@ -1363,26 +1363,6 @@ end TileOdometerSymmetryProof
 
 namespace TileOdometerAssembly
 
-private theorem hcentroid' :
-    (by
-      classical
-      exact
-        ∀ (U : ProtoTile), ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (a : BandPackingSymmetry),
-        let Q := BandPackingSymmetryQuadrupleAction
-        let B := BandPackingSymmetryTileAction
-        let q' := Q a q
-        ∀ (S' : Fin (3 : ℕ) → Bool → ProtoTile), (∀ (i : Fin (3 : ℕ)), ∀ (s : Bool),
-            BandSubtileOccurrence (BandPackingSymmetryQuadrupleAction a q)
-            (BandPackingSymmetryTileAction a U) i s (S' i s)) → (∀ i, ∀ s, TileCentroid (S' i s)
-            - TileCentroid (B a U) = (if s = true then (1 : Real) else -1) • ((1 / 2 : Real) •
-            (GaussianRealPoint (BandVectors.1 (q' ((i + 2).succ)) (q' ((i + 1).succ))) -
-            (-((GaussianRealPoint (BandVectors.1 (q' ((i + 2).succ)) (q' ((i + 1).succ)))).2),
-            (GaussianRealPoint (BandVectors.1 (q' ((i + 2).succ)) (q' ((i + 1).succ)))).1)))) )
-            := by
-  classical
-  intro U q a Q B q' S' hocc'
-  exact fun i s => (hocc' i s).2.2
-
 private theorem hphaseEq :
     (by
       classical
@@ -1606,7 +1586,7 @@ theorem BandPackingSymmetryTileOdometerCovariance
         have hcompat' := TileOdometerSymmetryProof.hcompat' hs hcompat a e
         have hfoot' : ∀ i s, FootprintVertices (S' i s) ⊆
             FootprintVertices (B a U) := fun i s => (hocc' i s).2.1
-        have hcentroid' := TileOdometerAssembly.hcentroid' U q a S' hocc'
+        have hcentroid' := fun i s => (hocc' i s).2.2
         obtain ⟨negative, hphaseAffine, hvecAffine⟩ :=
           BandPackingSymmetryAffineVectorCovariance a q hq
         have hphaseEq := TileOdometerAssembly.hphaseEq q hq a delta hphase negative hphaseAffine

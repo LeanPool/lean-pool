@@ -124,15 +124,14 @@ private theorem rectHull :
     exact mem_convexHull_of_exists_fintype w c hw hsum
       (by intro i; exact ⟨i, rfl⟩) heq
 
-private theorem hpolyMinus :
-    ∀ (a : GaussianInt), P4909T1ParentPolygon (2 * (a.re : ℝ)) (P4828T1Root a false) =
-        convexHull ℝ (Set.range (fun i : Fin 4 =>
-          ![⟨2 * (a.re : ℝ), 2 * (a.im : ℝ)⟩,
-            ⟨2 * (a.re : ℝ) + 1, 2 * (a.im : ℝ)⟩,
-            ⟨2 * (a.re : ℝ), 2 * (a.im : ℝ) + 2⟩,
-            ⟨2 * (a.re : ℝ) + 1, 2 * (a.im : ℝ) + 2⟩] i)) := by
+private theorem rootPolygon (a : GaussianInt) (positive : Bool) :
+    P4909T1ParentPolygon (2 * (a.re : ℝ)) (P4828T1Root a positive) =
+      convexHull ℝ (Set.range (fun i : Fin 4 =>
+        ![⟨2 * (a.re : ℝ) + (if positive then 1 else 0), 2 * (a.im : ℝ)⟩,
+          ⟨(2 * (a.re : ℝ) + (if positive then 1 else 0)) + 1, 2 * (a.im : ℝ)⟩,
+          ⟨2 * (a.re : ℝ) + (if positive then 1 else 0), 2 * (a.im : ℝ) + 2⟩,
+          ⟨(2 * (a.re : ℝ) + (if positive then 1 else 0)) + 1, 2 * (a.im : ℝ) + 2⟩] i)) := by
   classical
-  intro a
   have h2 : GaussianInt.toComplex 2 = (2 : ℂ) := by
     rw [GaussianInt.toComplex_def₂]
     apply Complex.ext <;> norm_num
@@ -152,43 +151,9 @@ private theorem hpolyMinus :
     simpa [h2] using hA
   apply congrArg (convexHull ℝ)
   ext z
-  simp [P4828T1Root, Fin.exists_fin_succ]
-  simp only [h2, hI, hA']
-  simp only [Complex.ext_iff, Complex.add_re, Complex.add_im, Complex.mul_re,
-    Complex.mul_im, Complex.I_re, Complex.I_im, haRe, haIm]
-  all_goals norm_num; ring_nf; tauto
-
-private theorem hpolyPlus :
-    ∀ (a : GaussianInt), P4909T1ParentPolygon (2 * (a.re : ℝ)) (P4828T1Root a true) =
-        convexHull ℝ (Set.range (fun i : Fin 4 =>
-          ![⟨2 * (a.re : ℝ) + 1, 2 * (a.im : ℝ)⟩,
-            ⟨(2 * (a.re : ℝ) + 1) + 1, 2 * (a.im : ℝ)⟩,
-            ⟨2 * (a.re : ℝ) + 1, 2 * (a.im : ℝ) + 2⟩,
-            ⟨(2 * (a.re : ℝ) + 1) + 1, 2 * (a.im : ℝ) + 2⟩] i)) := by
-  classical
-  intro a
-  have h2 : GaussianInt.toComplex 2 = (2 : ℂ) := by
-    rw [GaussianInt.toComplex_def₂]
-    apply Complex.ext <;> norm_num
-  have haRe : (GaussianInt.toComplex a).re = (a.re : ℝ) :=
-    (GaussianInt.intCast_re a).symm
-  have haIm : (GaussianInt.toComplex a).im = (a.im : ℝ) :=
-    (GaussianInt.intCast_im a).symm
-  have hA : 1 + GaussianInt.toComplex 2 * GaussianInt.toComplex a =
-      ⟨2 * (a.re : ℝ) + 1, 2 * (a.im : ℝ)⟩ := by
-    rw [h2, GaussianInt.toComplex_def₂ a]
-    apply Complex.ext <;> simp; ring
-  have hI : GaussianInt.toComplex (⟨0, 1⟩ : GaussianInt) = Complex.I := by
-    rw [GaussianInt.toComplex_def₂]
-    apply Complex.ext <;> simp
-  have hA' : 1 + 2 * (a : ℂ) =
-      ⟨2 * (a.re : ℝ) + 1, 2 * (a.im : ℝ)⟩ := by
-    simpa [h2] using hA
-  apply congrArg (convexHull ℝ)
-  ext z
-  simp [P4828T1Root, Fin.exists_fin_succ]
-  simp only [h2, hI, hA']
-  simp only [Complex.ext_iff, Complex.add_re, Complex.add_im, Complex.mul_re,
+  cases positive <;> simp [P4828T1Root, Fin.exists_fin_succ]
+  all_goals simp only [h2, hI, hA']
+  all_goals simp only [Complex.ext_iff, Complex.add_re, Complex.add_im, Complex.mul_re,
     Complex.mul_im, Complex.I_re, Complex.I_im, haRe, haIm]
   all_goals norm_num; ring_nf; tauto
 
@@ -322,14 +287,16 @@ theorem P4984T1RootGaps :
           ![⟨2 * (a.re : ℝ), 2 * (a.im : ℝ)⟩,
             ⟨2 * (a.re : ℝ) + 1, 2 * (a.im : ℝ)⟩,
             ⟨2 * (a.re : ℝ), 2 * (a.im : ℝ) + 2⟩,
-            ⟨2 * (a.re : ℝ) + 1, 2 * (a.im : ℝ) + 2⟩] i)) := RootGapLemmas.hpolyMinus a
+            ⟨2 * (a.re : ℝ) + 1, 2 * (a.im : ℝ) + 2⟩] i)) := by
+    simpa using RootGapLemmas.rootPolygon a false
   have hpolyPlus (a : GaussianInt) :
       P4909T1ParentPolygon (2 * (a.re : ℝ)) (P4828T1Root a true) =
         convexHull ℝ (Set.range (fun i : Fin 4 =>
           ![⟨2 * (a.re : ℝ) + 1, 2 * (a.im : ℝ)⟩,
             ⟨(2 * (a.re : ℝ) + 1) + 1, 2 * (a.im : ℝ)⟩,
             ⟨2 * (a.re : ℝ) + 1, 2 * (a.im : ℝ) + 2⟩,
-            ⟨(2 * (a.re : ℝ) + 1) + 1, 2 * (a.im : ℝ) + 2⟩] i)) := RootGapLemmas.hpolyPlus a
+            ⟨(2 * (a.re : ℝ) + 1) + 1, 2 * (a.im : ℝ) + 2⟩] i)) := by
+    simpa using RootGapLemmas.rootPolygon a true
   have hdistMinus (a : GaussianInt) (z : ℂ) :
       (∀ j : Fin 3, 0 < (P4828T1Root a false j.succ).1 →
         (1 / ((P4828T1Root a false j.succ).1 : ℝ)) ≤

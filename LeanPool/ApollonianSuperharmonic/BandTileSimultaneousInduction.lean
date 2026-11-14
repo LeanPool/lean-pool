@@ -167,80 +167,6 @@ private theorem smallT2 :
     exact (ih _ hlt p hp U
       (BandPrototile.decompose hp hS hcells hfoot hcent) rfl).2.2.2.1
 
-private theorem smallT4 :
-    (by
-      classical
-      exact
-        ∀ (n : ℕ), tileInductionHypothesis n →
-                                                                          (∀ (p : Fin 4 →
-                                                                          CircleCoordinates), ∀
-                                                                          (U : ProtoTile), ∀ (V :
-                                                                          ProtoTile),
-                                                                          ProperBandQuadruple p →
-                                                                          BandPrototile (p 0) U →
-                                                                          Int.toNat (p 0).1 < n →
-                                                                          1 < (p 0).1 → ∀ i : Fin
-                                                                          3, BandPrototile (p
-                                                                          i.succ) V →
-                                                                          TileCentroid V -
-                                                                          TileCentroid U = (1 / 2
-                                                                          : Real) •
-                                                                          (GaussianRealPoint
-                                                                          (BandVectors.1 (p
-                                                                          i.succ) (p 0)) +
-                                                                          GaussianRealPoint
-                                                                          (BandVectors.1 (p 0) (p
-                                                                          i.succ))) →
-                                                                          TouchingTriple U
-                                                                          (TileTranslation U
-                                                                          (BandVectors.1 (p
-                                                                          i.succ) (p 0))) V) ) := by
-  classical
-  intro n ih p U V hp hU hlt hc i hV hcent
-  exact (ih _ hlt p hp U hU rfl).2.2.2.2.2.1 hc i V hV hcent
-
-private theorem smallT5 :
-    (by
-      classical
-      exact
-        ∀ (n : ℕ), tileInductionHypothesis n →
-                                                                          (∀ (p : Fin 4 →
-                                                                          CircleCoordinates), ∀
-                                                                          (U : ProtoTile), ∀ (V :
-                                                                          ProtoTile), ∀ (W :
-                                                                          ProtoTile),
-                                                                          ProperBandQuadruple p →
-                                                                          BandPrototile (p 0) U →
-                                                                          Int.toNat (p 0).1 < n →
-                                                                          ∀ i : Fin 3,
-                                                                          BandPrototile (p
-                                                                          i.succ) V →
-                                                                          BandPrototile (p ((i +
-                                                                          1).succ)) W →
-                                                                          TileCentroid V -
-                                                                          TileCentroid U = (1 / 2
-                                                                          : Real) •
-                                                                          (GaussianRealPoint
-                                                                          (BandVectors.1 (p
-                                                                          i.succ) (p 0)) +
-                                                                          GaussianRealPoint
-                                                                          (BandVectors.1 (p 0) (p
-                                                                          i.succ))) →
-                                                                          TileCentroid W -
-                                                                          TileCentroid U = (1 / 2
-                                                                          : Real) •
-                                                                          (GaussianRealPoint
-                                                                          (BandVectors.1 (p ((i +
-                                                                          1).succ)) (p 0)) -
-                                                                          GaussianRealPoint
-                                                                          (BandVectors.1 (p 0) (p
-                                                                          ((i + 1).succ)))) →
-                                                                          TouchingTriple U V W) )
-                                                                          := by
-  classical
-  intro n ih p U V W hp hU hlt i hV hW hcV hcW
-  exact (ih _ hlt p hp U hU rfl).2.2.2.2.2.2.1 i V W hV hW hcV hcW
-
 private theorem hqa :
     (by
       classical
@@ -601,8 +527,9 @@ theorem BandTileSimultaneousInduction (q : Fin 4 → CircleCoordinates)
           (GaussianRealPoint (BandVectors.1 (p i.succ) (p 0)) +
             GaussianRealPoint (BandVectors.1 (p 0) (p i.succ))) →
         TouchingTriple U
-          (TileTranslation U (BandVectors.1 (p i.succ) (p 0))) V := TileInductionGeometry.smallT4
-              n ih
+          (TileTranslation U (BandVectors.1 (p i.succ) (p 0))) V := by
+      intro p U V hp hU hlt hc i hV hcent
+      exact (ih (p 0).1.toNat hlt p hp U hU rfl).2.2.2.2.2.1 hc i V hV hcent
     have smallT5 : ∀ (p : Fin 4 → CircleCoordinates)
         (U V W : ProtoTile), ProperBandQuadruple p →
         BandPrototile (p 0) U → Int.toNat (p 0).1 < n →
@@ -614,7 +541,9 @@ theorem BandTileSimultaneousInduction (q : Fin 4 → CircleCoordinates)
         TileCentroid W - TileCentroid U = (1 / 2 : Real) •
           (GaussianRealPoint (BandVectors.1 (p ((i + 1).succ)) (p 0)) -
             GaussianRealPoint (BandVectors.1 (p 0) (p ((i + 1).succ)))) →
-        TouchingTriple U V W := TileInductionGeometry.smallT5 n ih
+        TouchingTriple U V W := by
+      intro p U V W hp hU hlt i hV hW hcV hcW
+      exact (ih (p 0).1.toNat hlt p hp U hU rfl).2.2.2.2.2.2.1 i V W hV hW hcV hcW
     obtain ⟨a, raw, regimes⟩ := BandRegimeClassification q hq
     let qa : Fin 4 → CircleCoordinates :=
       ![q 0, q a.succ, q (a + 1).succ, q (a + 2).succ]

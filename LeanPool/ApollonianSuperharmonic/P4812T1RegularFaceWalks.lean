@@ -547,71 +547,6 @@ private theorem row1CanonicalForward :
   simp only [path, RegularFaceWalkProof.regularFacePath, D.faces.symm_apply_apply, ite_eq_right hn,
     rowPath]
   simp
-private theorem row1CanonicalBackward :
-    (by
-      classical
-      exact
-        ∀ (L : AddSubgroup GaussianInt), ∀ (k : (Int × Int) ≃+ L), ∀ (D : P4812T1AffineDrawing
-            L k),
-        let a : L := k (1, 0)
-        let b : L := k (0, 1)
-        ∀ (p0 : List GaussianInt), ∀ (p1 : List GaussianInt), ∀ (p2 : List GaussianInt),
-        let rowPath : Fin 3 → List GaussianInt := fun r =>
-          if r = 0 then p0 else if r = 1 then p1 else p2
-        let path : D.plane.Face → D.plane.Face → List GaussianInt :=
-          RegularFaceWalkProof.regularFacePath
-          L k D a b rowPath
-        (a ≠ -b) → (∀ (w : ↥L), path ((D.faces : ↥L ⊕ ↥L → D.plane.Face) (Sum.inr (w - b)))
-            ((D.faces : ↥L ⊕ ↥L → D.plane.Face) (Sum.inl w)) = (List.map (fun (z : GaussianInt)
-            => z + (↑w : GaussianInt)) p1).reverse)
-    ) := by
-  classical
-  intro L k D a b p0 p1 p2 rowPath path aNeNegB w
-  have hn : w - b ≠ w + a := by
-    intro hh
-    apply aNeNegB
-    have h' : w + (-b) = w + a := by simpa [sub_eq_add_neg] using hh
-    exact (add_left_cancel h').symm
-  simp only [path, RegularFaceWalkProof.regularFacePath, D.faces.symm_apply_apply, ite_eq_right hn,
-    rowPath]
-  simp
-private theorem row2CanonicalBackward :
-    (by
-      classical
-      exact
-        ∀ (L : AddSubgroup GaussianInt), ∀ (k : (Int × Int) ≃+ L), ∀ (D : P4812T1AffineDrawing
-            L k),
-        let a : L := k (1, 0)
-        let b : L := k (0, 1)
-        ∀ (p0 : List GaussianInt), ∀ (p1 : List GaussianInt), ∀ (p2 : List GaussianInt),
-        let rowPath : Fin 3 → List GaussianInt := fun r =>
-          if r = 0 then p0 else if r = 1 then p1 else p2
-        let path : D.plane.Face → D.plane.Face → List GaussianInt :=
-          RegularFaceWalkProof.regularFacePath
-          L k D a b rowPath
-        (a ≠ a - b) → ((-b ≠ a - b) → (∀ (w : ↥L), path ((D.faces : ↥L ⊕ ↥L → D.plane.Face)
-            (Sum.inr (w + a - b))) ((D.faces : ↥L ⊕ ↥L → D.plane.Face) (Sum.inl w)) = (List.map
-            (fun (z : GaussianInt) => z + (↑w : GaussianInt)) p2).reverse))
-    ) := by
-  classical
-  intro L k D a b p0 p1 p2 rowPath path aNeAmB negBNeAmB w
-  have hn1 : w + a - b ≠ w + a := by
-    intro hh
-    apply aNeAmB
-    have h' : w + (a - b) = w + a := by
-      simpa [sub_eq_add_neg, add_assoc] using hh
-    exact (add_left_cancel h').symm
-  have hn2 : w + a - b ≠ w - b := by
-    intro hh
-    apply negBNeAmB
-    have h' : w + (a - b) = w + (-b) := by
-      simpa [sub_eq_add_neg, add_assoc] using hh
-    exact (add_left_cancel h').symm
-  have ht : w + a - b = w + (a - b) := by abel
-  simp only [path, RegularFaceWalkProof.regularFacePath,
-     D.faces.symm_apply_apply, ite_eq_right hn1, ite_eq_right hn2,
-    ite_eq_left ht, rowPath]
-  simp
 private theorem walkClaims :
     (by
       classical
@@ -1109,26 +1044,6 @@ private theorem row0CanonicalForward :
         ∀ (w : ↥L), path ((D.faces : ↥L ⊕ ↥L → D.plane.Face) (Sum.inl w)) ((D.faces : ↥L ⊕ ↥L →
             D.plane.Face) (Sum.inr (w + a))) = List.map (fun (z : GaussianInt) => z + (↑w :
             GaussianInt)) p0 ) := by
-  classical
-  intro L k D a b p0 p1 p2 rowPath path w
-  simp [path, RegularFaceWalkProof.regularFacePath, rowPath, D.faces.symm_apply_apply]
-private theorem row0CanonicalBackward :
-    (by
-      classical
-      exact
-        ∀ (L : AddSubgroup GaussianInt), ∀ (k : (Int × Int) ≃+ L), ∀ (D : P4812T1AffineDrawing
-            L k),
-        let a : L := k (1, 0)
-        let b : L := k (0, 1)
-        ∀ (p0 : List GaussianInt), ∀ (p1 : List GaussianInt), ∀ (p2 : List GaussianInt),
-        let rowPath : Fin 3 → List GaussianInt := fun r =>
-          if r = 0 then p0 else if r = 1 then p1 else p2
-        let path : D.plane.Face → D.plane.Face → List GaussianInt :=
-          RegularFaceWalkProof.regularFacePath
-          L k D a b rowPath
-        ∀ (w : ↥L), path ((D.faces : ↥L ⊕ ↥L → D.plane.Face) (Sum.inr (w + a))) ((D.faces : ↥L ⊕
-            ↥L → D.plane.Face) (Sum.inl w)) = (List.map (fun (z : GaussianInt) => z + (↑w :
-            GaussianInt)) p0).reverse ) := by
   classical
   intro L k D a b p0 p1 p2 rowPath path w
   simp [path, RegularFaceWalkProof.regularFacePath, rowPath, D.faces.symm_apply_apply]
@@ -2146,6 +2061,10 @@ theorem P4812T1RegularFaceWalks
       have aNeNegB := RegularFaceDetails.aNeNegB L k
       have aNeAmB := RegularFaceDetails.aNeAmB L k
       have negBNeAmB := RegularFaceDetails.negBNeAmB L k
+      have reverse_eq {f g : D.plane.Face} {vertices : List GaussianInt}
+          (forward : path f g = vertices) : path g f = vertices.reverse :=
+        (RegularFaceProperties.pathReverse L k D p0 p1 p2 f g).trans
+          (congrArg List.reverse forward)
       refine ⟨rho, ?_, (RegularFaceProperties.rhoPeriodic L k D ru rd), path,
           (RegularFaceProperties.pathReverse L k D p0 p1 p2), (RegularFaceProperties.pathPeriodic
           L k D p0 p1 p2 (RegularFaceDetails.shiftEq L) mapTranslate
@@ -2159,10 +2078,13 @@ theorem P4812T1RegularFaceWalks
           (RegularFaceDetails.faceTagsNe L k D) (RegularFaceWalkProof.row0Inc L k D)
           (RegularFaceWalkProof.row1Inc L k D) (RegularFaceWalkProof.row2CanonicalForward L k D
           p0 p1 p2 aNeAmB negBNeAmB) (RegularFaceWalkProof.row1CanonicalForward L k D p0 p1 p2
-          aNeNegB) (RegularFaceWalkProof.row1CanonicalBackward L k D p0 p1 p2 aNeNegB)
+          aNeNegB) (fun w => reverse_eq
+            (RegularFaceWalkProof.row1CanonicalForward L k D p0 p1 p2 aNeNegB w))
           (RegularFaceDetails.row0CanonicalForward L k D p0 p1 p2)
-          (RegularFaceDetails.row0CanonicalBackward L k D p0 p1 p2)
-          (RegularFaceWalkProof.row2CanonicalBackward L k D p0 p1 p2 aNeAmB negBNeAmB)
+          (fun w => reverse_eq
+            (RegularFaceDetails.row0CanonicalForward L k D p0 p1 p2 w))
+          (fun w => reverse_eq
+            (RegularFaceWalkProof.row2CanonicalForward L k D p0 p1 p2 aNeAmB negBNeAmB w))
           (RegularFaceWalkProof.walkClaims L k D ru rd p0 p1 p2)
           (RegularFaceDetails.transportContainedWalk)), ?_,
         (RegularFaceProperties.pathDiagonal L k D p0 p1 p2)⟩

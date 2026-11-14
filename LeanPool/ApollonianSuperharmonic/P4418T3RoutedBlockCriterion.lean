@@ -191,48 +191,6 @@ private theorem root_cells :
       exact (hbase c).mpr ⟨.F, by
         simpa [ModifiedSubtileOccurrenceInterpretation, hl] using hc'⟩
 
-private theorem hG₀root :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C
-            T), ∀ (a : PeriodicSubtileIndex), ∀ (b : PeriodicSubtileIndex), ∀ (row :
-            BandOrderedGeneralSelectedContactRow q cfg C T cert a b),
-        let G₀ := SubtileOccurrenceInterpretation cert.P cert.u cert.v
-          (P4418T3EndpointOwnerIndices q cfg C T cert a b row).1
-        (∀ (o : PeriodicSubtileIndex), ∀ (c : LatticeCell), (c ∈ (SubtileOccurrenceInterpretation
-            cert.P cert.u cert.v o).cells) → (c ∈ (TileTranslation T ((o.first : GaussianInt) *
-            cert.u + (o.second : GaussianInt) * cert.v)).cells)) → (∀ c : LatticeCell, c ∈
-            G₀.cells → c ∈ (TileTranslation T (((P4418T3EndpointOwnerIndices q cfg C T cert a b
-            row).1.first : GaussianInt) * cert.u + ((P4418T3EndpointOwnerIndices q cfg C T cert
-            a b row).1.second : GaussianInt) * cert.v)).cells) ) := by
-  classical
-  intro q cfg C T cert a b row G₀ root_cells c hc
-  let o := (P4418T3EndpointOwnerIndices q cfg C T cert a b row).1
-  exact root_cells o c (by simpa [G₀, o] using hc)
-
-private theorem hG₁root :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C
-            T), ∀ (a : PeriodicSubtileIndex), ∀ (b : PeriodicSubtileIndex), ∀ (row :
-            BandOrderedGeneralSelectedContactRow q cfg C T cert a b),
-        let G₁ := SubtileOccurrenceInterpretation cert.P cert.u cert.v
-          (P4418T3EndpointOwnerIndices q cfg C T cert a b row).2
-        (∀ (o : PeriodicSubtileIndex), ∀ (c : LatticeCell), (c ∈ (SubtileOccurrenceInterpretation
-            cert.P cert.u cert.v o).cells) → (c ∈ (TileTranslation T ((o.first : GaussianInt) *
-            cert.u + (o.second : GaussianInt) * cert.v)).cells)) → (∀ c : LatticeCell, c ∈
-            G₁.cells → c ∈ (TileTranslation T (((P4418T3EndpointOwnerIndices q cfg C T cert a b
-            row).2.first : GaussianInt) * cert.u + ((P4418T3EndpointOwnerIndices q cfg C T cert
-            a b row).2.second : GaussianInt) * cert.v)).cells) ) := by
-  classical
-  intro q cfg C T cert a b row G₁ root_cells c hc
-  let o := (P4418T3EndpointOwnerIndices q cfg C T cert a b row).2
-  exact root_cells o c (by simpa [G₁, o] using hc)
-
 private theorem hVold :
     (by
       classical
@@ -936,8 +894,8 @@ theorem P4418T3RoutedBlockCriterion
           RoutedBlockGeometry.root_cells q cfg C T cert o c hc
   have hVroot := root_cells a
   have hWroot := root_cells b
-  have hG₀root := RoutedBlockGeometry.hG₀root q cfg C T cert a b row root_cells
-  have hG₁root := RoutedBlockGeometry.hG₁root q cfg C T cert a b row root_cells
+  have hG₀root := root_cells (P4418T3EndpointOwnerIndices q cfg C T cert a b row).1
+  have hG₁root := root_cells (P4418T3EndpointOwnerIndices q cfg C T cert a b row).2
   have hVold := RoutedBlockGeometry.hVold q cfg C T cert a b row hshift
       a_coord_ne root_disjoint hVroot
   have hWold := RoutedBlockGeometry.hWold q cfg C T cert a b row hshift

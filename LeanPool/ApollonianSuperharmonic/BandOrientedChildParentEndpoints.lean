@@ -19,24 +19,6 @@ Changes: pool module paths, public exports, project namespace and current Mathli
 @[expose] public section
 namespace ApollonianSuperharmonic
 namespace OrientedEndpointGeometry
-private theorem hregimeNormalized :
-    (by
-      classical
-      exact
-        ∀ (r : Fin 4 → CircleCoordinates), ∀ (a : Fin (3 : ℕ)), ∀ (g' : BandPackingSymmetry),
-        let p : Fin 4 → CircleCoordinates :=
-          ![r 0, r a.succ, r (a + 1).succ, r (a + 2).succ]
-        let qg := BandPackingSymmetryQuadrupleAction g' p
-        (Xor (∃ (P : FordFareyParameter), (1 : ℕ) < P.q ∧ BandPackingSymmetryQuadrupleAction g' p
-            = FordRecursiveQuadruple P) (Xor (∃ (K : DiamondParameter), (1 : ℕ) < K.1 ∧
-            BandPackingSymmetryQuadrupleAction g' p = DiamondRecursiveQuadruple K) (Nonempty
-            (BandOrderedGeneralConfiguration (BandPackingSymmetryQuadrupleAction g' p))))) → (Xor
-            (∃ P, 1 < P.q ∧ qg = FordRecursiveQuadruple P) (Xor (∃ K : DiamondParameter, 1 < K.1
-            ∧ qg = DiamondRecursiveQuadruple K) (Nonempty (BandOrderedGeneralConfiguration qg))))
-            ) := by
-  classical
-  intro r a g' p qg hregimeQ
-  simpa [qg] using hregimeQ
 private theorem normalized :
     (by
       classical
@@ -362,7 +344,7 @@ theorem BandOrientedChildParentEndpoints
       (Xor
         (∃ K : DiamondParameter, 1 < K.1 ∧ qg = DiamondRecursiveQuadruple K)
         (Nonempty (BandOrderedGeneralConfiguration qg))) :=
-            OrientedEndpointGeometry.hregimeNormalized r a g' hregimeQ
+            hregimeQ
   have normalized :
     let uR := (⟨0, 1⟩ : GaussianInt) ^ t.val *
       (if Even t.val then BandVectors.1 (qg 0) (qg k.succ)

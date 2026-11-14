@@ -813,101 +813,6 @@ private theorem hincAt777 :
     chart.up_vertices, chart.down_vertices, Finset.image_insert,
     Finset.image_singleton]
 
-private theorem hadjXiAt795 :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle),
-          ∀ (base : ProtoTile),
-            ∀ (q : Fin (4 : ℕ) → CircleCoordinates),
-              ∀ (P : PeriodicTileComplex ↥(TilingLattice C)),
-                ∀
-                  (chart :
-                    AffineTriangularComplexChart P fun (mn : ℤ × ℤ) =>
-                      TileTranslation base
-                        ((↑mn.1 : GaussianInt) *
-                            BandVectors.1 (q (1 : Fin (4 : ℕ))) (q (0 : Fin (4 : ℕ))) +
-                          (↑mn.2 : GaussianInt) *
-                            BandVectors.1 (q (2 : Fin (4 : ℕ))) (q (0 : Fin (4 : ℕ))))),
-                  ((∀ (x : ℤ × ℤ),
-                        ∀ (y : ℤ × ℤ),
-                          TriangularLatticeAdjacent x.swap y.swap ↔
-                            TriangularLatticeAdjacent x y) ∧
-                      (∀ (f : AffineTriangularFace),
-                          Finset.image Prod.swap (AffineTriangularFaceVertices f) =
-                            AffineTriangularFaceVertices
-                              (AffineTriangularFaceCoordinateSwap f)) ∧
-                        (∀ (z : ℤ × ℤ),
-                            TileTranslation base
-                                ((↑z.1 : GaussianInt) *
-                                BandVectors.1 (q (2 : Fin (4 : ℕ)))
-                                (q (0 : Fin (4 : ℕ))) +
-                                (↑z.2 : GaussianInt) *
-                                BandVectors.1 (q (1 : Fin (4 : ℕ)))
-                                (q (0 : Fin (4 : ℕ)))) =
-                              P.tile
-                                ((chart.vertexEquiv : ℤ × ℤ → ↥(TilingLattice C))
-                                z.swap)) ∧
-                          ∀ (f : AffineTriangularFace),
-                            let F :=
-                              match AffineTriangularFaceCoordinateSwap f with
-                              | AffineTriangularFace.up z => chart.up z
-                              | AffineTriangularFace.down z => chart.down z;
-                            Finset.image
-                                (fun (z : ℤ × ℤ) =>
-                                (chart.vertexEquiv : ℤ × ℤ → ↥(TilingLattice C)) z.swap)
-                                (AffineTriangularFaceVertices f) =
-                              {P.plane.faceVertex F (0 : Fin (3 : ℕ)),
-                                P.plane.faceVertex F (1 : Fin (3 : ℕ)),
-                                P.plane.faceVertex F (2 : Fin (3 : ℕ))}) →
-                    let xi := fun z : Int × Int => chart.vertexEquiv (Prod.swap z)
-                    ∀ (u : Int × Int),
-                      ∀ (v : Int × Int),
-                        TriangularLatticeAdjacent u v ↔ P.plane.adjacent (xi u) (xi v)
-    ) := by
-  classical
-  intro C base q P chart halign xi u v
-  change TriangularLatticeAdjacent u v ↔
-    P.plane.adjacent (chart.vertexEquiv (Prod.swap u))
-      (chart.vertexEquiv (Prod.swap v))
-  exact (halign.1 u v).symm.trans
-    (chart.adjacent_iff (Prod.swap u) (Prod.swap v)).symm
-
-private theorem htileXi :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (base : ProtoTile), ∀ (a : GaussianInt), ∀ (b : GaussianInt),
-        let tileAt : Int × Int → ProtoTile := fun z =>
-          TileTranslation base ((z.1 : GaussianInt) * a + (z.2 : GaussianInt) * b);
-        (∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (P : PeriodicTileComplex
-            ↥(TilingLattice C)), ∀ (chart : AffineTriangularComplexChart P fun (mn : ℤ × ℤ) =>
-            TileTranslation base ((↑mn.1 : GaussianInt) * BandVectors.1 (q (1 : Fin (4 : ℕ))) (q
-            (0 : Fin (4 : ℕ))) + (↑mn.2 : GaussianInt) * BandVectors.1 (q (2 : Fin (4 : ℕ))) (q
-            (0 : Fin (4 : ℕ))))), (a = BandVectors.1 (q (2 : Fin (4 : ℕ))) (q (0 : Fin (4 : ℕ))))
-            → ((b = BandVectors.1 (q (1 : Fin (4 : ℕ))) (q (0 : Fin (4 : ℕ)))) → (((∀ (x : ℤ ×
-            ℤ), ∀ (y : ℤ × ℤ), TriangularLatticeAdjacent x.swap y.swap ↔
-            TriangularLatticeAdjacent x y) ∧ (∀ (f : AffineTriangularFace), Finset.image
-            Prod.swap (AffineTriangularFaceVertices f) = AffineTriangularFaceVertices
-            (AffineTriangularFaceCoordinateSwap f)) ∧ (∀ (z : ℤ × ℤ), TileTranslation base ((↑z.1
-            : GaussianInt) * BandVectors.1 (q (2 : Fin (4 : ℕ))) (q (0 : Fin (4 : ℕ))) + (↑z.2 :
-            GaussianInt) * BandVectors.1 (q (1 : Fin (4 : ℕ))) (q (0 : Fin (4 : ℕ)))) = P.tile
-            ((chart.vertexEquiv : ℤ × ℤ → ↥(TilingLattice C)) z.swap)) ∧ ∀ (f :
-                AffineTriangularFace),
-        let F := (match AffineTriangularFaceCoordinateSwap f with
-          | AffineTriangularFace.up z => chart.up z
-          | AffineTriangularFace.down z => chart.down z); Finset.image (fun (z : ℤ ×
-            ℤ) => (chart.vertexEquiv : ℤ × ℤ → ↥(TilingLattice C)) z.swap)
-            (AffineTriangularFaceVertices f) = {P.plane.faceVertex F (0 : Fin (3 : ℕ)),
-            P.plane.faceVertex F (1 : Fin (3 : ℕ)), P.plane.faceVertex F (2 : Fin (3 : ℕ))}) → (
-        let xi := fun z : Int × Int =>
-          chart.vertexEquiv (Prod.swap z);
-        ∀ (z : Int × Int), P.tile (xi z) = tileAt z))))) := by
-  classical
-  intro C base a b tileAt q P chart haV hbV halign xi z
-  change P.tile (chart.vertexEquiv (Prod.swap z)) = tileAt z
-  simpa [tileAt, haV, hbV, add_comm] using (halign.2.2.1 z).symm
-
 private theorem hinjFaceAt805 :
     (by
       classical
@@ -943,45 +848,6 @@ private theorem hinjFaceAt805 :
       change chart.up (Prod.swap u) = chart.up (Prod.swap v) at h
       have hv := chart.up_injective h
       exact congrArg AffineTriangularFace.down (Prod.swap_injective hv)
-
-private theorem hincAt826 :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (base : ProtoTile),
-        (∀ (q : Fin (4 : ℕ) →
-            CircleCoordinates), ∀ (P : PeriodicTileComplex ↥(TilingLattice C)), ∀ (chart :
-                AffineTriangularComplexChart P fun (mn : ℤ × ℤ) => TileTranslation base ((↑mn.1 :
-            GaussianInt) * BandVectors.1 (q (1 : Fin (4 : ℕ))) (q (0 : Fin (4 : ℕ))) + (↑mn.2 :
-            GaussianInt) * BandVectors.1 (q (2 : Fin (4 : ℕ))) (q (0 : Fin (4 : ℕ))))), ((∀ (x :
-                ℤ × ℤ), ∀ (y : ℤ × ℤ), TriangularLatticeAdjacent x.swap y.swap ↔
-            TriangularLatticeAdjacent x y) ∧ (∀ (f : AffineTriangularFace), Finset.image
-            Prod.swap (AffineTriangularFaceVertices f) = AffineTriangularFaceVertices
-            (AffineTriangularFaceCoordinateSwap f)) ∧ (∀ (z : ℤ × ℤ), TileTranslation base ((↑z.1
-            : GaussianInt) * BandVectors.1 (q (2 : Fin (4 : ℕ))) (q (0 : Fin (4 : ℕ))) + (↑z.2 :
-            GaussianInt) * BandVectors.1 (q (1 : Fin (4 : ℕ))) (q (0 : Fin (4 : ℕ)))) = P.tile
-            ((chart.vertexEquiv : ℤ × ℤ → ↥(TilingLattice C)) z.swap)) ∧ ∀ (f :
-                AffineTriangularFace),
-        let F := (match AffineTriangularFaceCoordinateSwap f with
-          | AffineTriangularFace.up z => chart.up z
-          | AffineTriangularFace.down z => chart.down z); Finset.image (fun (z : ℤ ×
-            ℤ) => (chart.vertexEquiv : ℤ × ℤ → ↥(TilingLattice C)) z.swap)
-            (AffineTriangularFaceVertices f) = {P.plane.faceVertex F (0 : Fin (3 : ℕ)),
-            P.plane.faceVertex F (1 : Fin (3 : ℕ)), P.plane.faceVertex F (2 : Fin (3 : ℕ))}) → (
-        let xi := fun z : Int × Int =>
-          chart.vertexEquiv (Prod.swap z);
-        let faceAt : AffineTriangularFace → P.plane.Face := fun f =>
-          match AffineTriangularFaceCoordinateSwap f with
-          | .up z => chart.up z
-          | .down z => chart.down z;
-        ∀ (f : AffineTriangularFace), (AffineTriangularFaceVertices f).image xi =
-            {P.plane.faceVertex (faceAt f) 0, P.plane.faceVertex (faceAt f) 1,
-            P.plane.faceVertex (faceAt f) 2}))) := by
-  classical
-  intro C base q P chart halign xi faceAt f
-  change (AffineTriangularFaceVertices f).image
-      (fun z => chart.vertexEquiv (Prod.swap z)) = _
-  exact halign.2.2.2 f
 
 end OpposingInterfaceGeometry
 
@@ -1422,10 +1288,14 @@ theorem OpposingStringInterfacePath
         match AffineTriangularFaceCoordinateSwap f with
         | .up z => chart.up z
         | .down z => chart.down z
-      have hadjXi := OpposingInterfaceGeometry.hadjXiAt795 C base q P chart halign
-      have htileXi := OpposingInterfaceGeometry.htileXi C base a b q P chart haV hbV halign
+      have hadjXi (u v : Int × Int) : TriangularLatticeAdjacent u v ↔
+          P.plane.adjacent (xi u) (xi v) :=
+        (halign.1 u v).symm.trans
+          (chart.adjacent_iff (Prod.swap u) (Prod.swap v)).symm
+      have htileXi (z : Int × Int) : P.tile (xi z) = tileAt z := by
+        simpa [tileAt, haV, hbV, add_comm] using (halign.2.2.1 z).symm
       have hinjFace := OpposingInterfaceGeometry.hinjFaceAt805 C base q P chart
-      have hinc := OpposingInterfaceGeometry.hincAt826 C base q P chart halign
+      have hinc := halign.2.2.2
       exact finish P xi faceAt hadjXi htileXi hinjFace hinc
 
 end ApollonianSuperharmonic

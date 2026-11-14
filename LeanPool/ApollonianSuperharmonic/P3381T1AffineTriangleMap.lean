@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import Mathlib.Algebra.Module.BigOperators
 public import Mathlib.Topology.MetricSpace.Pseudo.Real
 
 public import LeanPool.ApollonianSuperharmonic.P3381T1TriangleDeterminant
@@ -77,6 +78,31 @@ theorem P3381T1AffineTriangleMap (p q : Fin 3 → Real × Real)
     rw [hw0] <;>
     field_simp <;>
     simp only [P3381T1TriangleDeterminant, Prod.fst_sub, Prod.snd_sub] <;> ring
+
+/-- Coordinates with normalized weights, reconstruction, and uniqueness preserve affine sums. -/
+theorem barycentricCoordinates_weighted_sum {ι κ E : Type} [Fintype ι] [Fintype κ]
+    [AddCommMonoid E] [Module Real E]
+    (vertices : κ → E) (coordinates : E → κ → Real)
+    (sum_coordinates : ∀ z, ∑ j, coordinates z j = 1)
+    (reconstruct : ∀ z, ∑ j, coordinates z j • vertices j = z)
+    (unique_coordinates : ∀ w, ∑ j, w j = 1 → coordinates (∑ j, w j • vertices j) = w)
+    (weights : ι → Real) (points : ι → E) (sum_weights : ∑ r, weights r = 1)
+    (j : κ) :
+    coordinates (∑ r, weights r • points r) j = ∑ r, weights r * coordinates (points r) j := by
+  classical
+  let combined : κ → Real := fun j => ∑ r, weights r * coordinates (points r) j
+  have sum_combined : (∑ j, combined j) = 1 := by
+    simp only [combined]
+    rw [Finset.sum_comm]
+    simp_rw [← Finset.mul_sum, sum_coordinates, mul_one]
+    exact sum_weights
+  have reconstruct_combined : (∑ j, combined j • vertices j) = ∑ r, weights r • points r := by
+    simp only [combined, Finset.sum_smul]
+    rw [Finset.sum_comm]
+    simp_rw [mul_smul, ← Finset.smul_sum, reconstruct]
+  have result := unique_coordinates combined sum_combined
+  rw [reconstruct_combined] at result
+  exact congrFun result j
 
 end ApollonianSuperharmonic
 

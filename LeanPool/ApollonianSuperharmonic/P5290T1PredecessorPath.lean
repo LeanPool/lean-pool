@@ -90,46 +90,21 @@ private theorem hRimage :
   intro a ha
   apply Zsqrtd.ext <;> simp [K, GaussianTranslation]; ring
 
-private theorem hRedges :
-    ∀ (k : Nat),
-    let E : ProtoTile := TileTranslation (DiamondTile (k - 1))
-      ⟨(k : Int), 1 - (k : Int)⟩
-    let R : ProtoTile := TileTranslation (TileReflection E) ⟨0, 2 * (k : Int)⟩
-    let J : GaussianInt → GaussianInt := fun z => ⟨z.re, 2 * (k : Int) - z.im⟩
-    BoundaryFootprintEdges R =
-      (fun e : Finset GaussianInt => e.image J) '' BoundaryFootprintEdges E := by
+private theorem reflectedBoundaryEdges (T : ProtoTile) (height : Int) :
+    BoundaryFootprintEdges (TileTranslation (TileReflection T) ⟨0, height⟩) =
+      (fun e : Finset GaussianInt => e.image (fun z => ⟨z.re, height - z.im⟩)) ''
+        BoundaryFootprintEdges T := by
   classical
-  intro k E R J
-  rcases TileReflectionFormulas E with ⟨_, _, _, _, _, _, _, hrv, hre⟩
-  rcases TileTranslationFormulas (TileReflection E) ⟨0, 2 * (k : Int)⟩ with
-    ⟨_, _, _, _, _, _, _, htv, hte⟩
-  rw [hte, hre, Set.image_image]
+  rcases TileReflectionFormulas T with ⟨_, _, _, _, _, _, _, _, reflection_edges⟩
+  rcases TileTranslationFormulas (TileReflection T) ⟨0, height⟩ with
+    ⟨_, _, _, _, _, _, _, _, translation_edges⟩
+  rw [translation_edges, reflection_edges, Set.image_image]
   apply Set.image_congr
-  intro e he
+  intro e _
   rw [Finset.image_image]
   apply Finset.image_congr
-  intro z hz
-  apply Zsqrtd.ext <;> simp [J, GaussianTranslation, GaussianReflection]; ring
-
-private theorem hSedges :
-    ∀ (k : Nat),
-    let D : ProtoTile := DiamondTile k
-    let S : ProtoTile := TileTranslation (TileReflection D) ⟨0, 2 * (k : Int)⟩
-    let J : GaussianInt → GaussianInt := fun z => ⟨z.re, 2 * (k : Int) - z.im⟩
-    BoundaryFootprintEdges S =
-      (fun e : Finset GaussianInt => e.image J) '' BoundaryFootprintEdges D := by
-  classical
-  intro k D S J
-  rcases TileReflectionFormulas D with ⟨_, _, _, _, _, _, _, hrv, hre⟩
-  rcases TileTranslationFormulas (TileReflection D) ⟨0, 2 * (k : Int)⟩ with
-    ⟨_, _, _, _, _, _, _, htv, hte⟩
-  rw [hte, hre, Set.image_image]
-  apply Set.image_congr
-  intro e he
-  rw [Finset.image_image]
-  apply Finset.image_congr
-  intro z hz
-  apply Zsqrtd.ext <;> simp [J, GaussianTranslation, GaussianReflection]; ring
+  intro z _
+  apply Zsqrtd.ext <;> simp [GaussianTranslation, GaussianReflection]; ring
 
 private theorem hJEinj :
     ∀ (k : Nat),
@@ -809,10 +784,10 @@ theorem P5290T1PredecessorPath (k : Nat) (hk : 1 < k) :
   have hJinj : Function.Injective J := PredecessorPathDetails.hJinj k
   have hRvertices : BoundaryFootprintVertices R = J '' BoundaryFootprintVertices E :=
       PredecessorPathDetails.hRvertices k
-  have hRedges := PredecessorPathProof.hRedges k
+  have hRedges := PredecessorPathProof.reflectedBoundaryEdges E (2 * (k : Int))
   have hSvertices : BoundaryFootprintVertices S = J '' BoundaryFootprintVertices D :=
       PredecessorPathDetails.hSvertices k
-  have hSedges := PredecessorPathProof.hSedges k
+  have hSedges := PredecessorPathProof.reflectedBoundaryEdges D (2 * (k : Int))
   have hBoundaryE (T U : ProtoTile) (hc : T.cells = U.cells) :
       BoundaryFootprintEdges T = BoundaryFootprintEdges U := PredecessorPathDetails.hBoundaryE T
           U hc

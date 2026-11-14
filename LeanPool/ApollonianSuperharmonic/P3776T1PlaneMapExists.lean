@@ -462,38 +462,6 @@ private theorem htranslated :
   rw [hcl]
   exact ⟨x, hg, rfl⟩
 
-private theorem hleft' :
-    (by
-      classical
-      exact
-        ∀ (ι : Type), ∀ (P : PeriodicTileCore ι), ∀ (W : P3776T1StarWeights P), ∀ (H :
-            P3776T1TileContractions P), ∀ (E : P3776T1DualEdges P), ∀ (M :
-            P3776T1SectorMaps P H E), ∀ (hcover : ∀ x : Real × Real, ∃ g, x ∈ closure
-            (P.plane.faceRegion g)),
-        let pick (x : Real × Real) : P.plane.Face := Classical.choose (hcover x)
-        ∀ (hpick : ∀ (x : Real × Real), x ∈ closure (P.plane.faceRegion (pick x))),
-        let coordinates (x : Real × Real) : StandardSimplex (Fin 3) :=
-          ⟨fun i => W.weight (P.plane.faceVertex (pick x) i) x,
-            W.face_simplex (pick x) x (hpick x)⟩
-        let f (x : Real × Real) : Real × Real := M.faceMap (pick x) (coordinates x)
-        let faceCoords (g : P.plane.Face) (x : ↥(closure (P.plane.faceRegion g))) :
-            StandardSimplex (Fin 3) :=
-          ⟨fun i => W.weight (P.plane.faceVertex g i) x.1,
-            W.face_simplex g x.1 x.2⟩
-        let faceValue (g : P.plane.Face) (x : ↥(closure (P.plane.faceRegion g))) :
-            Real × Real := M.faceMap g (faceCoords g x)
-        ∀ (u : ↥P.lattice), ∀ (x : ℝ × ℝ),
-        let g := pick x
-        ∀ (htranslated : x + GaussianRealPoint u ∈ closure (P.plane.faceRegion (P.faceShift u
-            g))), (faceValue (pick (x + GaussianRealPoint (↑u : GaussianInt))) ⟨x +
-            GaussianRealPoint (↑u : GaussianInt), hpick (x + GaussianRealPoint u)⟩ = faceValue
-                (P.faceShift u g) ⟨x +
-            GaussianRealPoint (↑u : GaussianInt), htranslated⟩) → (f (x + GaussianRealPoint u) =
-            faceValue (P.faceShift u g) ⟨x + GaussianRealPoint u, htranslated⟩) ) := by
-  classical
-  intro ι P W H E M hcover pick hpick coordinates f faceCoords faceValue u x g htranslated hleft
-  simpa [f, coordinates, faceValue, faceCoords] using hleft
-
 end PlaneMapConstruction
 
 theorem P3776T1PlaneMapExists {ι : Type} (P : PeriodicTileCore ι) :
@@ -564,7 +532,7 @@ theorem P3776T1PlaneMapExists {ι : Type} (P : PeriodicTileCore ι) :
     have hright := hAgree (pick x) g x (hpick x) hg
     have hleft' : f (x + GaussianRealPoint u) =
         faceValue (P.faceShift u g) ⟨x + GaussianRealPoint u, htranslated⟩ :=
-            PlaneMapConstruction.hleft' ι P W H E M hcover hpick u x htranslated hleft
+            hleft
     have hright' : f x = faceValue g ⟨x, hg⟩ := by
       simpa [f, coordinates, faceValue, faceCoords] using hright.symm
     rw [hleft', hright']

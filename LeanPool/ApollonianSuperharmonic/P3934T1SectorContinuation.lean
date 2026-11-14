@@ -778,59 +778,25 @@ private theorem hform :
     dsimp [A, det]
     ring
 
-private theorem hlocalP :
-    ∀ (x : Real × Real), ∀ (r : Real), ∀ (u : Real × Real), ∀ (v : Real × Real),
-    let det : (Real
-        × Real) → (Real × Real) → Real :=
-      fun a b => a.1 * b.2 - a.2 * b.1
-    let A : (Real × Real) → Real := fun p => det u (p - x)
-    let P : Set (Real × Real) := Metric.ball x r ∩ {p | 0 < A p}
-    (∀ (w : Real × Real), (w = u ∨ w = v) → (∀ (t : Real), ∀ (q : Real × Real), -u.1 * (q.2 -
-        (x.2 + t * w.2)) - -u.2 * (q.1 - (x.1 + t * w.1)) = -A q)) → ((∀ (t : Real), (t < r) → (0
-        < r - t)) → ((∀ (w : Real × Real), (‖w‖ = 1) → (∀ (t : Real), (0 < t) → ((t < r) →
-        (Metric.ball (x + t • w) (r - t) ⊆ Metric.ball x r)))) → (∀ (w : Real × Real), (w = u ∨ w
-        = v) → ((‖w‖ = 1) → (∀ (t : Real), (0 < t) → ((t < r) → (P3934T1LocalSide P (x + t • w)
-        (-u) false))))))) := by
-  classical
-  intro x r u v det A P hform hdelta hball w hw hwNorm t ht htr
-  refine ⟨r - t, hdelta t htr, ?_⟩
-  dsimp [P]
-  ext q
-  simp only [Set.mem_inter_iff, Set.mem_ofPred_eq]
-  constructor
-  · rintro ⟨⟨hbx, hA⟩, hq⟩
-    exact ⟨hq, by rw [hform w hw t q]; linarith⟩
-  · rintro ⟨hq, hformq⟩
-    exact ⟨⟨hball w hwNorm t ht htr hq, by
-      rw [hform w hw t q] at hformq
-      linarith⟩, hq⟩
-
-private theorem hlocalN :
-    ∀ (x : Real × Real), ∀ (r : Real), ∀ (u : Real × Real), ∀ (v : Real × Real),
-    let det : (Real
-        × Real) → (Real × Real) → Real :=
-      fun a b => a.1 * b.2 - a.2 * b.1
-    let A : (Real × Real) → Real := fun p => det u (p - x)
-    let N : Set (Real × Real) := Metric.ball x r ∩ {p | A p < 0}
-    (∀ (w : Real × Real), (w = u ∨ w = v) → (∀ (t : Real), ∀ (q : Real × Real), -u.1 * (q.2 -
-        (x.2 + t * w.2)) - -u.2 * (q.1 - (x.1 + t * w.1)) = -A q)) → ((∀ (t : Real), (t < r) → (0
-        < r - t)) → ((∀ (w : Real × Real), (‖w‖ = 1) → (∀ (t : Real), (0 < t) → ((t < r) →
-        (Metric.ball (x + t • w) (r - t) ⊆ Metric.ball x r)))) → (∀ (w : Real × Real), (w = u ∨ w
-        = v) → ((‖w‖ = 1) → (∀ (t : Real), (0 < t) → ((t < r) → (P3934T1LocalSide N (x + t • w)
-        (-u) true))))))) := by
-  classical
-  intro x r u v det A N hform hdelta hball w hw hwNorm t ht htr
-  refine ⟨r - t, hdelta t htr, ?_⟩
-  dsimp [N]
-  ext q
-  simp only [Set.mem_inter_iff, Set.mem_ofPred_eq]
-  constructor
-  · rintro ⟨⟨hbx, hA⟩, hq⟩
-    exact ⟨hq, by rw [hform w hw t q]; linarith⟩
-  · rintro ⟨hq, hformq⟩
-    exact ⟨⟨hball w hwNorm t ht htr hq, by
-      rw [hform w hw t q] at hformq
-      linarith⟩, hq⟩
+private theorem localSide_of_affine_form (positive : Bool)
+    (A : (Real × Real) → Real) (x z d : Real × Real) (r delta : Real)
+    (delta_positive : 0 < delta) (ball_subset : Metric.ball z delta ⊆ Metric.ball x r)
+    (form : ∀ q : Real × Real, d.1 * (q.2 - z.2) - d.2 * (q.1 - z.1) = -A q) :
+    P3934T1LocalSide (Metric.ball x r ∩ {q | if positive then A q < 0 else 0 < A q})
+      z d positive := by
+  refine ⟨delta, delta_positive, ?_⟩
+  cases positive <;> ext q <;>
+    simp only [Set.mem_inter_iff, Set.mem_ofPred_eq, Bool.false_eq_true, ↓reduceIte]
+  all_goals
+    constructor
+    · rintro ⟨⟨_, hA⟩, hq⟩
+      refine ⟨hq, ?_⟩
+      rw [form]
+      linarith
+    · rintro ⟨hq, hform⟩
+      refine ⟨⟨ball_subset hq, ?_⟩, hq⟩
+      rw [form] at hform
+      linarith
 
 private theorem hcol :
     ∀ (u : Real × Real),
@@ -2061,12 +2027,16 @@ private theorem oppositeContinuation :
         hdist w hw t ht
   have hlocalP (w : Real × Real) (hw : w = u ∨ w = v)
   (hwNorm : ‖w‖ = 1) (t : Real) (ht : 0 < t) (htr : t < r) :
-  P3934T1LocalSide P (x + t • w) (-u) false := SectorContinuationGeometry.hlocalP x r u v
-      hform hdelta hball w hw hwNorm t ht htr
+  P3934T1LocalSide P (x + t • w) (-u) false :=
+    SectorContinuationGeometry.localSide_of_affine_form false A
+      x (x + t • w) (-u) r (r - t) (hdelta t htr)
+      (hball w hwNorm t ht htr) (hform w hw t)
   have hlocalN (w : Real × Real) (hw : w = u ∨ w = v)
   (hwNorm : ‖w‖ = 1) (t : Real) (ht : 0 < t) (htr : t < r) :
-  P3934T1LocalSide N (x + t • w) (-u) true := SectorContinuationGeometry.hlocalN x r u v
-      hform hdelta hball w hw hwNorm t ht htr
+  P3934T1LocalSide N (x + t • w) (-u) true :=
+    SectorContinuationGeometry.localSide_of_affine_form true A
+      x (x + t • w) (-u) r (r - t) (hdelta t htr)
+      (hball w hwNorm t ht htr) (hform w hw t)
   have hAcont := SectorContinuationFacts.hAcontAt1604 x u
   have hPopen := SectorContinuationFacts.hPopen x r u hAcont
   have hNopen := SectorContinuationFacts.hNopen x r u hAcont

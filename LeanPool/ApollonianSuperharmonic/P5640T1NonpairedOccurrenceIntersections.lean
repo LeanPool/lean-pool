@@ -37,34 +37,6 @@ private abbrev precursorInPlus :=
 private abbrev precursorInMinus :=
     ApollonianSuperharmonic.BandOriginalParentContainment.negativeParent
 
-private theorem pairCells :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C₀ :
-            BandCircle), ∀ (T : ProtoTile), ∀ (layout : BandOrderedGeneralLayoutCertificate q cfg
-            C₀ T),
-        let P := layout.P
-        let O := layout.O
-        let u := layout.u
-        let v := layout.v
-        ((∀ (m : ℤ), ∀ (n : ℤ), (SubtileOccurrenceInterpretation P u v ⟨SixSubtileLabel.A, m,
-            n⟩).cells ∩ (SubtileOccurrenceInterpretation P u v ⟨SixSubtileLabel.B, m, n⟩).cells =
-            (TileTranslation O ((↑m : GaussianInt) * u + (↑n : GaussianInt) * v)).cells) ∧ ∀ (a :
-            PeriodicSubtileIndex), ∀ (b : PeriodicSubtileIndex), a ≠ b → ¬((a.label =
-            SixSubtileLabel.A ∧ b.label = SixSubtileLabel.B ∨ a.label = SixSubtileLabel.B ∧
-            b.label = SixSubtileLabel.A) ∧ a.first = b.first ∧ a.second = b.second) → Disjoint
-            (SubtileOccurrenceInterpretation P u v a).cells (SubtileOccurrenceInterpretation P u
-            v b).cells) → (∀ (a : PeriodicSubtileIndex), ∀ (b : PeriodicSubtileIndex), (a ≠ b) →
-            ((¬ ((a.label = .A ∧ b.label = .B ∨
-            a.label = .B ∧ b.label = .A) ∧ a.first = b.first ∧ a.second = b.second)) → (Disjoint
-                (SubtileOccurrenceInterpretation P u v a).cells (SubtileOccurrenceInterpretation
-                P u v b).cells))) ) := by
-  classical
-  intro q cfg C₀ T layout P O u v separation a b hab hnot
-  exact separation.2 a b hab hnot
-
-
 private theorem isolatedPrecursor :
     (by
       classical
@@ -559,7 +531,7 @@ theorem P5640T1NonpairedOccurrenceIntersections
   have pairCells (a b : PeriodicSubtileIndex) (hab : a ≠ b)
       (hnot : ¬ ((a.label = .A ∧ b.label = .B ∨
         a.label = .B ∧ b.label = .A) ∧ a.first = b.first ∧ a.second = b.second)) :=
-            NonpairedOccurrenceGeometry.pairCells q cfg C₀ T layout separation a b hab hnot
+            separation.2 a b hab hnot
   have translationCells (X : ProtoTile) (d : GaussianInt) :=
       TileTranslationProperties.cells X d
   have cellInclusion (X Y : ProtoTile) (hXY : X.cells ⊆ Y.cells)

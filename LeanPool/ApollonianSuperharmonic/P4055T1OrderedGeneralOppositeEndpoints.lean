@@ -860,114 +860,6 @@ private theorem hstep :
     rcases aU with ⟨ur, ui⟩
     ext <;> simp [f, GaussianQuarterTurn]; omega
 
-private theorem hchildVR :
-    (by
-      classical
-      exact
-        ∀ (r : Fin (4 : ℕ) → CircleCoordinates), ∀ (i : Fin (3 : ℕ)), ∀ (s : Fin (4 : ℕ)), ∀ (U :
-            ProtoTile),
-        let q : GaussianInt := ⟨0, 1⟩
-        ∀ (aU : GaussianInt),
-        let t : Fin 4 := s + 1
-        let f : GaussianInt → GaussianInt := fun x =>
-          GaussianQuarterTurn (GaussianQuarterTurn (GaussianQuarterTurn (x - aU)))
-        let q3 : GaussianInt → GaussianInt := fun x =>
-          GaussianQuarterTurn (GaussianQuarterTurn (GaussianQuarterTurn x))
-        (∀ (v : GaussianInt), FootprintVertices (TileTranslation U (q3 v)) = f ''
-            FootprintVertices (TileTranslation U v)) → (
-        let vR : GaussianInt := q ^ t.val *
-          (if Even t.val then BandVectors.1 (r 0) (r i.succ)
-            else BandVectors.1 (r i.succ) (r 0))
-        let uL : GaussianInt := q ^ s.val *
-          (if Even s.val then BandVectors.1 (r i.succ) (r 0)
-            else BandVectors.1 (r 0) (r i.succ))
-        (q3 vR = uL) → (FootprintVertices (TileTranslation U uL) = f '' FootprintVertices
-            (TileTranslation U vR))) ) := by
-  classical
-  intro r i s U q aU t f q3 hchildV vR uL hdispR
-  simpa [hdispR] using hchildV vR
-
-private theorem hchildER :
-    (by
-      classical
-      exact
-        ∀ (r : Fin (4 : ℕ) → CircleCoordinates), ∀ (i : Fin (3 : ℕ)), ∀ (s : Fin (4 : ℕ)), ∀ (U :
-            ProtoTile),
-        let q : GaussianInt := ⟨0, 1⟩
-        ∀ (aU : GaussianInt),
-        let t : Fin 4 := s + 1
-        let f : GaussianInt → GaussianInt := fun x =>
-          GaussianQuarterTurn (GaussianQuarterTurn (GaussianQuarterTurn (x - aU)))
-        let q3 : GaussianInt → GaussianInt := fun x =>
-          GaussianQuarterTurn (GaussianQuarterTurn (GaussianQuarterTurn x))
-        (∀ (v : GaussianInt), FootprintEdges (TileTranslation U (q3 v)) = (fun e : Finset
-            GaussianInt => e.image f) '' FootprintEdges (TileTranslation U v)) → (
-        let vR : GaussianInt := q ^ t.val *
-          (if Even t.val then BandVectors.1 (r 0) (r i.succ)
-            else BandVectors.1 (r i.succ) (r 0))
-        let uL : GaussianInt := q ^ s.val *
-          (if Even s.val then BandVectors.1 (r i.succ) (r 0)
-            else BandVectors.1 (r 0) (r i.succ))
-        (q3 vR = uL) → (FootprintEdges (TileTranslation U uL) = (fun e : Finset GaussianInt =>
-            e.image f) '' FootprintEdges (TileTranslation U vR))) ) := by
-  classical
-  intro r i s U q aU t f q3 hchildE vR uL hdispR
-  simpa [hdispR] using hchildE vR
-
-private theorem hchildVI :
-    (by
-      classical
-      exact
-        ∀ (r : Fin (4 : ℕ) → CircleCoordinates), ∀ (i : Fin (3 : ℕ)), ∀ (s : Fin (4 : ℕ)), ∀ (U :
-            ProtoTile),
-        let q : GaussianInt := ⟨0, 1⟩
-        ∀ (aU : GaussianInt),
-        let t : Fin 4 := s + 1
-        let f : GaussianInt → GaussianInt := fun x =>
-          GaussianQuarterTurn (GaussianQuarterTurn (GaussianQuarterTurn (x - aU)))
-        let q3 : GaussianInt → GaussianInt := fun x =>
-          GaussianQuarterTurn (GaussianQuarterTurn (GaussianQuarterTurn x))
-        (∀ (v : GaussianInt), FootprintVertices (TileTranslation U (q3 v)) = f ''
-            FootprintVertices (TileTranslation U v)) → (
-        let vL : GaussianInt := q ^ t.val *
-          (if Even t.val then BandVectors.1 (r i.succ) (r 0)
-            else BandVectors.1 (r 0) (r i.succ))
-        let uR : GaussianInt := q ^ s.val *
-          (if Even s.val then BandVectors.1 (r 0) (r i.succ)
-            else BandVectors.1 (r i.succ) (r 0))
-        (q3 vL = uR) → (FootprintVertices (TileTranslation U uR) = f '' FootprintVertices
-            (TileTranslation U vL))) ) := by
-  classical
-  intro r i s U q aU t f q3 hchildV vL uR hdispL
-  simpa [hdispL] using hchildV vL
-
-private theorem hchildEI :
-    (by
-      classical
-      exact
-        ∀ (r : Fin (4 : ℕ) → CircleCoordinates), ∀ (i : Fin (3 : ℕ)), ∀ (s : Fin (4 : ℕ)), ∀ (U :
-            ProtoTile),
-        let q : GaussianInt := ⟨0, 1⟩
-        ∀ (aU : GaussianInt),
-        let t : Fin 4 := s + 1
-        let f : GaussianInt → GaussianInt := fun x =>
-          GaussianQuarterTurn (GaussianQuarterTurn (GaussianQuarterTurn (x - aU)))
-        let q3 : GaussianInt → GaussianInt := fun x =>
-          GaussianQuarterTurn (GaussianQuarterTurn (GaussianQuarterTurn x))
-        (∀ (v : GaussianInt), FootprintEdges (TileTranslation U (q3 v)) = (fun e : Finset
-            GaussianInt => e.image f) '' FootprintEdges (TileTranslation U v)) → (
-        let vL : GaussianInt := q ^ t.val *
-          (if Even t.val then BandVectors.1 (r i.succ) (r 0)
-            else BandVectors.1 (r 0) (r i.succ))
-        let uR : GaussianInt := q ^ s.val *
-          (if Even s.val then BandVectors.1 (r 0) (r i.succ)
-            else BandVectors.1 (r i.succ) (r 0))
-        (q3 vL = uR) → (FootprintEdges (TileTranslation U uR) = (fun e : Finset GaussianInt =>
-            e.image f) '' FootprintEdges (TileTranslation U vL))) ) := by
-  classical
-  intro r i s U q aU t f q3 hchildE vL uR hdispL
-  simpa [hdispL] using hchildE vL
-
 end OppositeEndpointGeometry
 
 theorem P4055T1OrderedGeneralOppositeEndpoints :
@@ -1120,20 +1012,30 @@ theorem P4055T1OrderedGeneralOppositeEndpoints :
   have notEven1 := OppositeEndpointGeometry.notEven1
   have notEven3 := OppositeEndpointGeometry.notEven3
   have hq3mul := OppositeEndpointGeometry.hq3mul hq3
-  have hdispR := OppositeEndpointGeometry.hdispR r i s hq2 hq3 hq2act even0
+  let q3 : GaussianInt → GaussianInt := fun z =>
+    GaussianQuarterTurn (GaussianQuarterTurn (GaussianQuarterTurn z))
+  have hdispR : q3 vR = uL := OppositeEndpointGeometry.hdispR r i s hq2 hq3 hq2act even0
       even2 notEven1 notEven3 hq3mul
-  have hdispL := OppositeEndpointGeometry.hdispL r i s hq2 hq3 hq2act even0
+  have hdispL : q3 vL = uR := OppositeEndpointGeometry.hdispL r i s hq2 hq3 hq2act even0
       even2 notEven1 notEven3 hq3mul
   have hstep := OppositeEndpointGeometry.hstep aU
   rcases sourceData with ⟨Rsrc, Isrc, Asrc, hRsrc, hIneq, hICA, hRCA, hAAB⟩
-  have hchildVR := OppositeEndpointGeometry.hchildVR r i s U
-          aU hchildV hdispR
-  have hchildER := OppositeEndpointGeometry.hchildER r i s U aU
-            hchildE hdispR
-  have hchildVI := OppositeEndpointGeometry.hchildVI r i s U
-          aU hchildV hdispL
-  have hchildEI := OppositeEndpointGeometry.hchildEI r i s U aU
-            hchildE hdispL
+  have hchildVR : FootprintVertices (TileTranslation U uL) =
+      f '' FootprintVertices (TileTranslation U vR) := by
+    rw [← hdispR]
+    exact hchildV vR
+  have hchildER : FootprintEdges (TileTranslation U uL) =
+      (fun e : Finset GaussianInt => e.image f) '' FootprintEdges (TileTranslation U vR) := by
+    rw [← hdispR]
+    exact hchildE vR
+  have hchildVI : FootprintVertices (TileTranslation U uR) =
+      f '' FootprintVertices (TileTranslation U vL) := by
+    rw [← hdispL]
+    exact hchildV vL
+  have hchildEI : FootprintEdges (TileTranslation U uR) =
+      (fun e : Finset GaussianInt => e.image f) '' FootprintEdges (TileTranslation U vL) := by
+    rw [← hdispL]
+    exact hchildE vL
   obtain ⟨R, hRpoint, _, _, hRca⟩ := P4055T1ExactTripleImage
     f hf hstep U (TileTranslation U vL) Wp U (TileTranslation U uR) W
     hbaseV hchildVI hparentWV hbaseE hchildEI hparentWE Isrc

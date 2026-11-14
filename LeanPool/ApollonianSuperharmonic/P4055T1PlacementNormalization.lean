@@ -750,25 +750,6 @@ private theorem hZlabel :
   rw [actionParent]
   rw [hZcircle]
 
-private theorem hZrel :
-    (by
-      classical
-      exact
-        ∀ (i : Fin 3), ∀ (s : Fin 4), ∀ (a : Fin 3), ∀ (g' : BandPackingSymmetry),
-        let k : Fin 3 := if BandPackingSymmetryReversesOrientation g'
-          then -(i - a) else i - a
-        let t : Fin 4 := if BandPackingSymmetryReversesOrientation g'
-          then -s - 1 else s
-        let j : Fin 3 := if Even t.val then k - 1 else k + 1
-        ((if BandPackingSymmetryReversesOrientation g' then -j else j) = (if Even s.val then i -
-            1 else i + 1) - a) → (
-        let adj : Fin 3 := if Even s.val then i - 1 else i + 1
-        let mZ : Fin 3 := adj - a
-        (if BandPackingSymmetryReversesOrientation g' then -j else j) = mZ) ) := by
-  classical
-  intro i s a g' k t j hZparentIndex adj mZ
-  simpa [mZ, adj] using hZparentIndex
-
 private theorem hZsigma :
     (by
       classical
@@ -1199,32 +1180,6 @@ private theorem hZcent' :
   intro r i s U Z hZcent g' R rsub rsmul rpoint rcentroid
   rw [rcentroid, rcentroid, ← rsub, ← rpoint, ← rsmul]
   exact congrArg (R g') hZcent
-
-private theorem hWvec :
-    (by
-      classical
-      exact
-        ∀ (r : Fin 4 → CircleCoordinates), ∀ (i : Fin 3), ∀ (s : Fin 4), ∀ (a : Fin 3),
-        let q : Fin 4 → CircleCoordinates :=
-          ![r 0, r a.succ, r (a + 1).succ, r (a + 2).succ]
-        ∀ (g' : BandPackingSymmetry),
-        let qg := BandPackingSymmetryQuadrupleAction g' q
-        let k : Fin 3 := if BandPackingSymmetryReversesOrientation g'
-          then -(i - a) else i - a
-        let ii : GaussianInt := ⟨0, 1⟩
-        let vR := BandVectors.1 (r i.succ) (r 0)
-        let vL := BandVectors.1 (r 0) (r i.succ)
-        let vR' := BandVectors.1 (qg k.succ) (qg 0)
-        let vL' := BandVectors.1 (qg 0) (qg k.succ)
-        let t : Fin 4 := if BandPackingSymmetryReversesOrientation g'
-          then -s - 1 else s
-        (BandPackingSymmetryVectorAction g' (ii ^ s.val * (vR + vL)) = ii ^ t.val * (vR' + vL'))
-            → (BandPackingSymmetryVectorAction g' ((⟨0, 1⟩ : GaussianInt) ^ s.val *
-            (BandVectors.1 (r i.succ) (r 0) + BandVectors.1 (r 0) (r i.succ))) = ii ^ t.val *
-            (BandVectors.1 (qg k.succ) (qg 0) + BandVectors.1 (qg 0) (qg k.succ))) ) := by
-  classical
-  intro r i s a q g' qg k ii vR vL vR' vL' t hdispW
-  simpa [ii, vR, vL, vR', vL'] using hdispW
 
 private theorem hWcentNorm :
     (by
@@ -1671,7 +1626,7 @@ theorem P4055T1PlacementNormalization
   have hZlabel := PlacementNormalizationProof.hZlabel r i s a g' actionParent hZcircle
   let adj : Fin 3 := if Even s.val then i - 1 else i + 1
   let mZ : Fin 3 := adj - a
-  have hZrel := PlacementNormalizationProof.hZrel i s a g' hZparentIndex
+  have hZrel := hZparentIndex
   have hZsigma :
       (if BandPackingSymmetryReversesOrientation g' then -mZ else mZ) = j :=
           PlacementNormalizationProof.hZsigma i s a g' hZrel
@@ -1716,7 +1671,7 @@ theorem P4055T1PlacementNormalization
       rcentroid
   have hZcent' := PlacementNormalizationProof.hZcent' r i s U Z hZcent g' rsub rsmul rpoint
       rcentroid
-  have hWvec := PlacementNormalizationProof.hWvec r i s a g' hdispW
+  have hWvec := hdispW
   have hWcentNorm := PlacementNormalizationProof.hWcentNorm r i s U W a g' hWcent' hWvec
   have hZcentNorm := PlacementNormalizationProof.hZcentNorm r i s U Z a g' hZvec hZcent'
   have hvR : BandPackingSymmetryVectorAction g' vR = vR' := by

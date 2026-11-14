@@ -56,77 +56,30 @@ private theorem hcol :
       nlinarith [hy]
     · simp [h2]
 
-private theorem hDleft :
-    (by
-      classical
-      exact
-        ∀ (x : Real × Real), ∀ (B : Real × Real), ∀ (r : Real),
-        let n : Real := ‖B‖
-        let d : Real × Real := n⁻¹ • B
-        let D : (Real × Real) → Real := fun q =>
-          d.1 * (q.2 - x.2) - d.2 * (q.1 - x.1)
-        let ray : Set (Real × Real) :=
-          {q | ∃ a : Real, 0 ≤ a ∧ q = x + a • (-d)} ∪
-            {q | ∃ a : Real, 0 ≤ a ∧ q = x + a • d}
-        ∀ (E : P3889T1TwoRaySectorDecomposition x r (-d) d), (∀ (y : Real × Real), (d.1 * y.2 -
-            d.2 * y.1 = 0) → (∃ c : Real, y = c • d)) → (((∀ (q : Real × Real), (q ∈ E.left) → (q
-                ∉ ray)) → (∀ q ∈
-            E.left, D q ≠ (0 : ℝ))))
-    ) := by
-  classical
-  intro x B r n d D ray E hcol hleftnotray q hq hzero
-  have hy : d.1 * (q.2 - x.2) - d.2 * (q.1 - x.1) = 0 := by
-    simpa [D] using hzero
+private theorem determinant_ne_zero (x d q : Real × Real)
+    (hcol : ∀ y : Real × Real, d.1 * y.2 - d.2 * y.1 = 0 → ∃ c : Real, y = c • d)
+    (hnotray : q ∉ ({p | ∃ a : Real, 0 ≤ a ∧ p = x + a • (-d)} ∪
+      {p | ∃ a : Real, 0 ≤ a ∧ p = x + a • d} : Set (Real × Real))) :
+    d.1 * (q.2 - x.2) - d.2 * (q.1 - x.1) ≠ 0 := by
+  intro hzero
+  have hy : d.1 * (q.2 - x.2) - d.2 * (q.1 - x.1) = 0 := hzero
   obtain ⟨c, hc⟩ := hcol (q - x) (by simpa using hy)
   have hqline : q = x + c • d := by
     calc q = x + (q - x) := by simp
       _ = x + c • d := by rw [hc]
   by_cases h : 0 ≤ c
-  · have : q ∈ ray := Or.inr ⟨c, h, hqline⟩
-    exact hleftnotray q hq this
+  · have : q ∈ ({p | ∃ a : Real, 0 ≤ a ∧ p = x + a • (-d)} ∪
+        {p | ∃ a : Real, 0 ≤ a ∧ p = x + a • d} : Set (Real × Real)) := Or.inr ⟨c, h, hqline⟩
+    exact hnotray this
   · have hqline' : q = x + (-c) • (-d) := by
       have hvec : (-c) • (-d) = c • d := by simp [neg_smul]
       calc
         q = x + c • d := hqline
         _ = x + (-c) • (-d) := by rw [← hvec]
-    have : q ∈ ray := Or.inl ⟨-c, neg_nonneg.mpr (le_of_lt (lt_of_not_ge h)), hqline'⟩
-    exact hleftnotray q hq this
-
-private theorem hDright :
-    (by
-      classical
-      exact
-        ∀ (x : Real × Real), ∀ (B : Real × Real), ∀ (r : Real),
-        let n : Real := ‖B‖
-        let d : Real × Real := n⁻¹ • B
-        let D : (Real × Real) → Real := fun q =>
-          d.1 * (q.2 - x.2) - d.2 * (q.1 - x.1)
-        let ray : Set (Real × Real) :=
-          {q | ∃ a : Real, 0 ≤ a ∧ q = x + a • (-d)} ∪
-            {q | ∃ a : Real, 0 ≤ a ∧ q = x + a • d}
-        ∀ (E : P3889T1TwoRaySectorDecomposition x r (-d) d), (∀ (y : Real × Real), (d.1 * y.2 -
-            d.2 * y.1 = 0) → (∃ c : Real, y = c • d)) → (((∀ (q : Real × Real), (q ∈ E.right) → (q
-                ∉ ray)) → (∀ q ∈
-            E.right, D q ≠ (0 : ℝ))))
-    ) := by
-  classical
-  intro x B r n d D ray E hcol hrightnotray q hq hzero
-  have hy : d.1 * (q.2 - x.2) - d.2 * (q.1 - x.1) = 0 := by
-    simpa [D] using hzero
-  obtain ⟨c, hc⟩ := hcol (q - x) (by simpa using hy)
-  have hqline : q = x + c • d := by
-    calc q = x + (q - x) := by simp
-      _ = x + c • d := by rw [hc]
-  by_cases h : 0 ≤ c
-  · have : q ∈ ray := Or.inr ⟨c, h, hqline⟩
-    exact hrightnotray q hq this
-  · have hqline' : q = x + (-c) • (-d) := by
-      have hvec : (-c) • (-d) = c • d := by simp [neg_smul]
-      calc
-        q = x + c • d := hqline
-        _ = x + (-c) • (-d) := by rw [← hvec]
-    have : q ∈ ray := Or.inl ⟨-c, neg_nonneg.mpr (le_of_lt (lt_of_not_ge h)), hqline'⟩
-    exact hrightnotray q hq this
+    have : q ∈ ({p | ∃ a : Real, 0 ≤ a ∧ p = x + a • (-d)} ∪
+        {p | ∃ a : Real, 0 ≤ a ∧ p = x + a • d} : Set (Real × Real)) :=
+      Or.inl ⟨-c, neg_nonneg.mpr (le_of_lt (lt_of_not_ge h)), hqline'⟩
+    exact hnotray this
 
 private theorem hsectorSign :
     (by
@@ -874,10 +827,10 @@ theorem P5667T1StraightFrontierLocalSides
       StraightFrontierDetails.hleftnotray x B r E hcover q hq
   have hrightnotray (q : Real × Real) (hq : q ∈ E.right) : q ∉ ray :=
       StraightFrontierDetails.hrightnotray x B r E hcover q hq
-  have hDleft (q : Real × Real) (hq : q ∈ E.left) : D q ≠ 0 := StraightFrontierProof.hDleft x B r
-      E hcol hleftnotray q hq
-  have hDright (q : Real × Real) (hq : q ∈ E.right) : D q ≠ 0 := StraightFrontierProof.hDright x
-      B r E hcol hrightnotray q hq
+  have hDleft (q : Real × Real) (hq : q ∈ E.left) : D q ≠ 0 :=
+      StraightFrontierProof.determinant_ne_zero x d q hcol (hleftnotray q hq)
+  have hDright (q : Real × Real) (hq : q ∈ E.right) : D q ≠ 0 :=
+      StraightFrontierProof.determinant_ne_zero x d q hcol (hrightnotray q hq)
   let pos : Set (Real × Real) := {q | 0 < D q}
   let neg : Set (Real × Real) := {q | D q < 0}
   have hposOpen : IsOpen pos := by

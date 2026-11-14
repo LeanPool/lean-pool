@@ -886,60 +886,6 @@ private theorem hparamY :
   intro n p d D hD y j
   exact (P3597T1GenericRayStability p).2.2 y d j (hD j)
 
-private theorem hiffX :
-    ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (x : Real × Real), ∀ (d : ℝ × ℝ),
-    let D : Fin (n + 3) → Real := fun j =>
-      d.1 * (p.vertex (j + 1) - p.vertex j).2 -
-        d.2 * (p.vertex (j + 1) - p.vertex j).1
-    let T : Fin (n + 3) → (Real × Real) → Real := fun j y =>
-      (((p.vertex j - y).1 * (p.vertex (j + 1) - p.vertex j).2 -
-        (p.vertex j - y).2 * (p.vertex (j + 1) - p.vertex j).1) / D j)
-    let U : Fin (n + 3) → (Real × Real) → Real := fun j y =>
-      (((p.vertex j - y).1 * d.2 - (p.vertex j - y).2 * d.1) / D j)
-    (∀ (j : Fin (n + (3 : ℕ))), have t := ((p.vertex j - x).1 * (p.vertex (j + (1 : Fin (n + (3 :
-        ℕ)))) - p.vertex j).2 - (p.vertex j - x).2 * (p.vertex (j + (1 : Fin (n + (3 : ℕ)))) -
-        p.vertex j).1) / (d.1 * (p.vertex (j + (1 : Fin (n + (3 : ℕ)))) - p.vertex j).2 - d.2 *
-        (p.vertex (j + (1 : Fin (n + (3 : ℕ)))) - p.vertex j).1); have u := ((p.vertex j - x).1 *
-        d.2 - (p.vertex j - x).2 * d.1) / (d.1 * (p.vertex (j + (1 : Fin (n + (3 : ℕ)))) -
-        p.vertex j).2 - d.2 * (p.vertex (j + (1 : Fin (n + (3 : ℕ)))) - p.vertex j).1); x + t • d
-        = p.vertex j + u • (p.vertex (j + (1 : Fin (n + (3 : ℕ)))) - p.vertex j) ∧ (∀ (t' : ℝ), ∀
-        (u' : ℝ), x + t' • d = p.vertex j + u' • (p.vertex (j + (1 : Fin (n + (3 : ℕ)))) -
-        p.vertex j) → t' = t ∧ u' = u) ∧ ((∃ (t' : ℝ), (0 : ℝ) < t' ∧ x + t' • d ∈ segment ℝ
-        (p.vertex j) (p.vertex (j + (1 : Fin (n + (3 : ℕ)))))) ↔ (0 : ℝ) < t ∧ (0 : ℝ) ≤ u ∧ u ≤
-        (1 : ℝ))) → (∀ (j : Fin (n + 3)), (∃ t : Real, 0 < t ∧ x + t • d ∈ segment Real (p.vertex
-        j) (p.vertex (j + 1))) ↔
-        0 < T j x ∧ 0 ≤ U j x ∧ U j x ≤ 1) := by
-  classical
-  intro n p x d D T U hparam j
-  simpa [T, U, D] using (hparam j).2.2
-
-private theorem hiffY :
-    ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (d : ℝ × ℝ),
-    let D : Fin (n + 3) → Real := fun j =>
-      d.1 * (p.vertex (j + 1) - p.vertex j).2 -
-        d.2 * (p.vertex (j + 1) - p.vertex j).1
-    let T : Fin (n + 3) → (Real × Real) → Real := fun j y =>
-      (((p.vertex j - y).1 * (p.vertex (j + 1) - p.vertex j).2 -
-        (p.vertex j - y).2 * (p.vertex (j + 1) - p.vertex j).1) / D j)
-    let U : Fin (n + 3) → (Real × Real) → Real := fun j y =>
-      (((p.vertex j - y).1 * d.2 - (p.vertex j - y).2 * d.1) / D j)
-    (∀ (y : ℝ × ℝ), ∀ (j : Fin (n + (3 : ℕ))), have t := ((p.vertex j - y).1 * (p.vertex (j + (1
-        : Fin (n + (3 : ℕ)))) - p.vertex j).2 - (p.vertex j - y).2 * (p.vertex (j + (1 : Fin (n +
-        (3 : ℕ)))) - p.vertex j).1) / (d.1 * (p.vertex (j + (1 : Fin (n + (3 : ℕ)))) - p.vertex
-        j).2 - d.2 * (p.vertex (j + (1 : Fin (n + (3 : ℕ)))) - p.vertex j).1); have u :=
-        ((p.vertex j - y).1 * d.2 - (p.vertex j - y).2 * d.1) / (d.1 * (p.vertex (j + (1 : Fin (n
-        + (3 : ℕ)))) - p.vertex j).2 - d.2 * (p.vertex (j + (1 : Fin (n + (3 : ℕ)))) - p.vertex
-        j).1); y + t • d = p.vertex j + u • (p.vertex (j + (1 : Fin (n + (3 : ℕ)))) - p.vertex j)
-        ∧ (∀ (t' : ℝ), ∀ (u' : ℝ), y + t' • d = p.vertex j + u' • (p.vertex (j + (1 : Fin (n + (3
-        : ℕ)))) - p.vertex j) → t' = t ∧ u' = u) ∧ ((∃ (t' : ℝ), (0 : ℝ) < t' ∧ y + t' • d ∈
-        segment ℝ (p.vertex j) (p.vertex (j + (1 : Fin (n + (3 : ℕ)))))) ↔ (0 : ℝ) < t ∧ (0 : ℝ)
-        ≤ u ∧ u ≤ (1 : ℝ))) → (∀ (y : Real × Real), ∀ (j : Fin (n + 3)), (∃ t : Real, 0 < t ∧ y +
-        t • d ∈ segment Real (p.vertex j) (p.vertex (j + 1))) ↔
-        0 < T j y ∧ 0 ≤ U j y ∧ U j y ≤ 1) := by
-  classical
-  intro n p d D T U hparamY y j
-  simpa [T, U, D] using (hparamY y j).2.2
-
 private theorem hpred :
     ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (i : Fin (n + 3)), ∀ (x : Real × Real),
     let a := p.vertex i
@@ -1703,10 +1649,10 @@ theorem P3597T1SideCrossing {n : Nat} (p : P3381T1PolygonBoundary n)
   have hparamY (y : Real × Real) (j : Fin (n + 3)) := SideCrossingProof.hparamY n p d hD y j
   have hiffX (j : Fin (n + 3)) :
       (∃ t : Real, 0 < t ∧ x + t • d ∈ segment Real (p.vertex j) (p.vertex (j + 1))) ↔
-        0 < T j x ∧ 0 ≤ U j x ∧ U j x ≤ 1 := SideCrossingProof.hiffX n p x d hparam j
+        0 < T j x ∧ 0 ≤ U j x ∧ U j x ≤ 1 := (hparam j).2.2
   have hiffY (y : Real × Real) (j : Fin (n + 3)) :
       (∃ t : Real, 0 < t ∧ y + t • d ∈ segment Real (p.vertex j) (p.vertex (j + 1))) ↔
-        0 < T j y ∧ 0 ≤ U j y ∧ U j y ≤ 1 := SideCrossingProof.hiffY n p d hparamY y j
+        0 < T j y ∧ 0 ≤ U j y ∧ U j y ≤ 1 := (hparamY y j).2.2
   have hpred (y : Real × Real) (hy : y ∈ Metric.ball x rN) (j : Fin (n + 3))
       (hji : j ≠ i) :
       ((∃ t : Real, 0 < t ∧ y + t • d ∈ segment Real (p.vertex j) (p.vertex (j + 1))) ↔

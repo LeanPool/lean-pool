@@ -652,39 +652,6 @@ private theorem hcutBpositive :
     exact hempty_anchor hOempty
   exact hnoncentral hcen
 
-private theorem hCnone :
-    (by
-      classical
-      exact
-        ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀
-            (C : BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q
-            cfg C T), ∀ (x : GaussianInt),
-        let Ctile := cert.P 1 true
-        let O := cert.O
-        let seg := cert.exceptionalSegments
-        (ExceptionalRestorationSectorData (cert.P (0 : Fin (3 : ℕ)) true) (cert.P (0 : Fin (3 :
-            ℕ)) false) cert.O (cert.Q (1 : Fin (3 : ℕ)) true) (cert.S (2 : Fin (3 : ℕ)) false)
-            (cert.Q (2 : Fin (3 : ℕ)) true) (cert.S (1 : Fin (3 : ℕ)) false) (cert.P (1 : Fin (3
-            : ℕ)) true) (cert.P (1 : Fin (3 : ℕ)) false) (cert.unmodified.core.rho
-            ((cert.unmodified.faceEquiv.symm : PeriodicSubtileFaceIndex →
-            cert.unmodified.core.plane.Face) (⟨SixSubtileFaceLabel.I1, (0 : ℤ), (0 : ℤ)⟩ :
-            PeriodicSubtileFaceIndex))) (cert.unmodified.core.rho
-            ((cert.unmodified.faceEquiv.symm : PeriodicSubtileFaceIndex →
-            cert.unmodified.core.plane.Face) (⟨SixSubtileFaceLabel.I2, (0 : ℤ), (0 : ℤ)⟩ :
-            PeriodicSubtileFaceIndex))) cert.exceptionalSegments) → ((O.cells.Nonempty ∨ x ≠
-            seg.a) → (
-        let p1 := cert.unmodified.core.rho
-          (cert.unmodified.faceEquiv.symm ⟨.I1, 0, 0⟩)
-        (x ≠ p1) → ((x ∈ seg.left) → (∀ j : Fin 4, LatticeVertexIncidentCell x j ∉
-            Ctile.cells)))) ) := by
-  classical
-  intro q cfg C T cert x Ctile O seg sec hnonemptyO p1 hp1_not hleft j hj
-  have hc : ∃ k : Fin 4, LatticeVertexIncidentCell x k ∈ Ctile.cells := ⟨j, hj⟩
-  have hxP := (sec.left_companion x hleft hnonemptyO).mp hc
-  exact hp1_not (by
-    have hendpoint : x = p1 := hxP
-    simpa [p1] using hendpoint)
-
 private theorem hOnoneAt589 :
     (by
       classical
@@ -728,36 +695,6 @@ private theorem hguardR :
   by_cases hO : O.cells.Nonempty
   · exact Or.inl hO
   · exact Or.inr hxb
-
-private theorem hDnone :
-    (by
-      classical
-      exact
-        ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀
-            (C : BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q
-            cfg C T), ∀ (x : GaussianInt),
-        let Dtile := cert.P 1 false
-        let O := cert.O
-        let seg := cert.exceptionalSegments
-        (ExceptionalRestorationSectorData (cert.P (0 : Fin (3 : ℕ)) true) (cert.P (0 : Fin (3 :
-            ℕ)) false) cert.O (cert.Q (1 : Fin (3 : ℕ)) true) (cert.S (2 : Fin (3 : ℕ)) false)
-            (cert.Q (2 : Fin (3 : ℕ)) true) (cert.S (1 : Fin (3 : ℕ)) false) (cert.P (1 : Fin (3
-            : ℕ)) true) (cert.P (1 : Fin (3 : ℕ)) false) (cert.unmodified.core.rho
-            ((cert.unmodified.faceEquiv.symm : PeriodicSubtileFaceIndex →
-            cert.unmodified.core.plane.Face) (⟨SixSubtileFaceLabel.I1, (0 : ℤ), (0 : ℤ)⟩ :
-            PeriodicSubtileFaceIndex))) (cert.unmodified.core.rho
-            ((cert.unmodified.faceEquiv.symm : PeriodicSubtileFaceIndex →
-            cert.unmodified.core.plane.Face) (⟨SixSubtileFaceLabel.I2, (0 : ℤ), (0 : ℤ)⟩ :
-            PeriodicSubtileFaceIndex))) cert.exceptionalSegments) → (
-        let p2 := cert.unmodified.core.rho
-          (cert.unmodified.faceEquiv.symm ⟨.I2, 0, 0⟩)
-        (x ≠ p2) → ((x ∈ seg.right) → ((O.cells.Nonempty ∨ x ≠ seg.b) → (∀ j : Fin 4,
-            LatticeVertexIncidentCell x j ∉ Dtile.cells)))) ) := by
-  classical
-  intro q cfg C T cert x Dtile O seg sec p2 hp2_not hright hguardR j hj
-  have hd : ∃ k : Fin 4, LatticeVertexIncidentCell x k ∈ Dtile.cells := ⟨j, hj⟩
-  have hxP := (sec.right_companion x hright hguardR).mp hd
-  exact hp2_not (by simpa [p2] using hxP)
 
 private theorem hOnoneAt624 :
     (by
@@ -934,8 +871,8 @@ theorem P4590T1RestoredBoundaryGeometry :
       · exact Or.inr (Or.inr (Or.inl ⟨hxa, hcutApositive hxa⟩))
       · by_cases hxb : x = seg.b
         · exact Or.inr (Or.inr (Or.inr ⟨hxb, hcutBpositive hxb⟩))
-        · have hCnone := RestoredBoundaryGeometry.hCnone q cfg C T cert x sec hnonemptyO hp1_not
-            hleft
+        · have hCnone := fun j hj =>
+            hp1_not ((sec.left_companion x hleft hnonemptyO).mp ⟨j, hj⟩)
           have hOnone := RestoredBoundaryGeometry.hOnoneAt589 q cfg C T cert x sec hleft hxa
           have hopp := sec.left_opposite x hleft hnonemptyO hCnone hOnone
           have hvertices := seg.left_vertices x hleft
@@ -957,7 +894,8 @@ theorem P4590T1RestoredBoundaryGeometry :
       · by_cases hxb : x = seg.b
         · exact Or.inr (Or.inr (Or.inr ⟨hxb, hcutBpositive hxb⟩))
         · have hguardR := RestoredBoundaryGeometry.hguardR q cfg C T cert x hxb
-          have hDnone := RestoredBoundaryGeometry.hDnone q cfg C T cert x sec hp2_not hright hguardR
+          have hDnone := fun j hj =>
+            hp2_not ((sec.right_companion x hright hguardR).mp ⟨j, hj⟩)
           have hOnone := RestoredBoundaryGeometry.hOnoneAt624 q cfg C T cert x hxb sec hright
           have hopp := sec.right_opposite x hright hguardR hDnone hOnone
           have hvertices := seg.right_vertices x hright

@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.P3381T1AffineTriangleMap
 
 public import LeanPool.ApollonianSuperharmonic.P3381T1PairedTriangulation
 public import LeanPool.ApollonianSuperharmonic.P5662T1TriangulationBarycentricCoordinates
@@ -164,32 +165,6 @@ private theorem local_cones :
       · simpa [q, d, Pi.single_apply, hja] using hw j
     rw [t.source_cover]
     exact Set.mem_iUnion.mpr ⟨k, (bhull k z).mpr (hbq ▸ hqnonneg)⟩
-
-private theorem bcombo :
-    ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (X : Set (Real × Real)), ∀ (K : Set (Real
-        × Real)), ∀ (t : P3381T1PairedTriangulation p X K), ∀ (b : Fin t.count → ℝ × ℝ → Fin (3
-        : ℕ) → ℝ), (∀ (k : Fin t.count), ∀ (z : ℝ × ℝ), ∑ j : Fin (3 : ℕ), b k z j = (1 : ℝ)) →
-        ((∀ (k : Fin t.count), ∀ (z : ℝ × ℝ), ∑ j : Fin (3 : ℕ), b k z j • p.vertex (t.face k j)
-        = z) → ((∀ (k : Fin t.count), ∀ (w : Fin (3 : ℕ) → ℝ), ∑ j : Fin (3 : ℕ), w j = (1 : ℝ) →
-        b k (∑ j : Fin (3 : ℕ), w j • p.vertex (t.face k j)) = w) → (∀ {ι : Type}, ∀ [Fintype ι],
-            ∀ (k : Fin t.count), ∀ (a : ι → ℝ), ∀ (f : ι → ℝ × ℝ), ∑ r : ι, a r = (1
-            : ℝ)
-        → ∀ (j : Fin (3 : ℕ)), b k (∑ r : ι, a r • f r) j = ∑ r : ι, a r * b k (f r) j))) := by
-  classical
-  intro n p X K t b bsum breconstruct bunique ι typeclassInstance0 k a f ha j
-  let W : Fin 3 → Real := fun j => ∑ r, a r * b k (f r) j
-  have hW : (∑ j, W j) = 1 := by
-    simp only [W]
-    rw [Finset.sum_comm]
-    simp_rw [← Finset.mul_sum, bsum, mul_one]
-    exact ha
-  have hWz : (∑ j, W j • p.vertex (t.face k j)) = ∑ r, a r • f r := by
-    simp only [W, Finset.sum_smul]
-    rw [Finset.sum_comm]
-    simp_rw [mul_smul, ← Finset.smul_sum, breconstruct]
-  have h := bunique k W hW
-  rw [hWz] at h
-  exact congrFun h j
 
 private theorem hdisjoint :
     ∀ (n : Nat), ∀ (p : P3381T1PolygonBoundary n), ∀ (X : Set (Real × Real)), ∀ (K : Set (Real
@@ -1353,8 +1328,8 @@ theorem P3381T1TriangulationBoundary {n : Nat}
         | exact (hbc rfl).elim
         | decide
     have bcombo {ι : Type} [Fintype ι] k (a : ι → Real) (f : ι → Real × Real)
-        (ha : (∑ r, a r) = 1) j := TriangulationBoundaryProof.bcombo n p
-            X K t b bsum breconstruct bunique (ι := ι) k a f ha j
+        (ha : (∑ r, a r) = 1) j := barycentricCoordinates_weighted_sum (p.vertex ∘ t.face k) (b k)
+              (bsum k) (breconstruct k) (bunique k) a f ha j
     have blinear k (x y : Real × Real) (a c : Real) (hac : a + c = 1) j :
         b k (a • x + c • y) j = a * b k x j + c * b k y j := by
       let w : Fin 2 → Real := ![a, c]

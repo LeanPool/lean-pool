@@ -2061,39 +2061,6 @@ private theorem core_cells :
   simp [unionOf,mixedBlock,original,SubtileOccurrenceInterpretation,
     TileTranslation,GaussianTranslation]
 
-private theorem component_zero :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C₀ :
-            BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
-            C₀ T),
-        let mixedBlock (m n : Int) : Finset PeriodicSubtileIndex :=
-          {⟨.A,m,n⟩,⟨.B,m,n⟩,⟨.C,m,n⟩,⟨.D,m,n⟩,⟨.E,m,n⟩,⟨.F,m,n⟩}
-        let mixedComponents (r : Nat) : Finset PeriodicSubtileIndex ×
-            Finset PeriodicSubtileIndex × Finset PeriodicSubtileIndex :=
-          (mixedBlock 0 0, match r with
-            | 0 => (mixedBlock 1 0, {⟨.B,1,1⟩})
-            | 1 => (mixedBlock 0 1, {⟨.D,-1,0⟩})
-            | 2 => (mixedBlock (-1) (-1), {⟨.F,0,-1⟩})
-            | 3 => ({⟨.A,0,-1⟩}, {⟨.C,1,0⟩})
-            | 4 => ({⟨.C,1,1⟩}, {⟨.E,0,1⟩})
-            | _ => ({⟨.E,-1,0⟩}, {⟨.A,-1,-1⟩}))
-        let original := SubtileOccurrenceInterpretation cert.P cert.u cert.v
-        let componentIndices (r : Fin 6) (s : Fin 3) :=
-          let c := mixedComponents r.val
-          if s = 0 then c.1 else if s = 1 then c.2.1 else c.2.2
-        let unionOf (D : Finset PeriodicSubtileIndex) : ProtoTile :=
-          ⟨D.biUnion (fun a => (original a).cells),0⟩
-        let component (r : Fin 6) (s : Fin 3) := unionOf (componentIndices r s)
-        ((unionOf (mixedBlock 0 0)).cells = T.cells) → (∀ (r : Fin 6), (component r 0).cells =
-            T.cells) ) := by
-  classical
-  intro q cfg C₀ T cert mixedBlock mixedComponents original componentIndices unionOf component
-      core_cells r
-  change (unionOf (mixedBlock 0 0)).cells = T.cells
-  exact core_cells
-
 private theorem shifted_core :
     (by
       classical
@@ -2649,7 +2616,7 @@ theorem P1BandOrderedGeneralMixedAggregateJunctionData
       (MixedAggregateGeometry.back_congr)
   have core_cells := MixedAggregateGeometry.core_cells q cfg C₀ T cert
       (MixedAggregateGeometry.outer_cells q cfg C₀ T cert)
-  have component_zero := MixedAggregateGeometry.component_zero q cfg C₀ T cert core_cells
+  have component_zero := fun _ : Fin 6 => core_cells
   let plusRepresentative (i : Fin 3) : ProtoTile := match i.val with
     | 0 => TileTranslation (cert.P 0 true) (-cert.v)
     | 1 => TileTranslation (cert.P 1 true) (cert.u + cert.v)

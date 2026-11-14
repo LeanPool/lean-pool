@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.GaussianRealPointProperties
 
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralOdometerRowData
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryTileOdometerCovariance
@@ -398,73 +399,14 @@ private theorem hVnon :
   rw [hu₀]
   exact hFordCells.image _
 
-private theorem huPlusEq :
-    (by
-      classical
-      exact
-        ∀ (P : Fin 3 → Bool → ProtoTile), ∀ (x : GaussianInt), ∀ (F : FordFareyParameter), ∀ (s :
-            BandPackingSymmetry), ∀ (delta : Bool),
-        let c := BandPackingSymmetryVectorAction s x
-        let U := TileTranslation (BandPackingSymmetryTileAction s (P 0 (!delta))) (-c)
-        ((F.q : Real) = (F.q₁ : Real) + F.q₂) → ((TileCentroid U = (((F.q₂ : Real) - F.q₁) / 2,
-            (F.q : Real) / 2)) → ((TileCentroid (FordTile F.q) = ((↑F.q : ℝ) / (2 : ℝ), (↑F.q :
-            ℝ) / (2 : ℝ))) → (∀ (uPlus : GaussianInt), (FootprintVertices U = FootprintVertices
-            (TileTranslation (FordTile F.q) uPlus) ∧ BoundaryFootprintVertices U =
-            BoundaryFootprintVertices (TileTranslation (FordTile F.q) uPlus) ∧
-            BoundaryFootprintEdges U = BoundaryFootprintEdges (TileTranslation (FordTile F.q)
-            uPlus) ∧ TileRealization U = TileRealization (TileTranslation (FordTile F.q) uPlus) ∧
-            TileCentroid U = TileCentroid (TileTranslation (FordTile F.q) uPlus)) → (uPlus =
-            ⟨-(F.q₁ : Int), 0⟩)))) ) := by
-  classical
-  intro P x F s delta c U hsumReal hUcent hFordCent uPlus hobsPlus
-  have hh := hobsPlus.2.2.2.2
-  rw [(TileTranslationFormulas (FordTile F.q) uPlus).2.2.2.2.1,
-    hFordCent, hUcent] at hh
-  apply Zsqrtd.ext
-  · have h := congrArg Prod.fst hh
-    apply Int.cast_injective (α := Real)
-    dsimp at h ⊢
-    push_cast at h ⊢
-    linarith [F.sum_q]
-  · have h := congrArg Prod.snd hh
-    apply Int.cast_injective (α := Real)
-    dsimp at h ⊢
-    push_cast at h ⊢
-    linarith
-
-private theorem huMinusEq :
-    (by
-      classical
-      exact
-        ∀ (P : Fin 3 → Bool → ProtoTile), ∀ (x : GaussianInt), ∀ (F : FordFareyParameter), ∀ (s :
-            BandPackingSymmetry), ∀ (delta : Bool),
-        let c := BandPackingSymmetryVectorAction s x
-        let V := TileTranslation (BandPackingSymmetryTileAction s (P 0 delta)) (-c)
-        ((F.q : Real) = (F.q₁ : Real) + F.q₂) → ((TileCentroid V = (-((F.q₂ : Real) - F.q₁) / 2,
-            -(F.q : Real) / 2)) → ((TileCentroid (FordTile F.q) = ((↑F.q : ℝ) / (2 : ℝ), (↑F.q :
-            ℝ) / (2 : ℝ))) → (∀ (uMinus : GaussianInt), (FootprintVertices V = FootprintVertices
-            (TileTranslation (FordTile F.q) uMinus) ∧ BoundaryFootprintVertices V =
-            BoundaryFootprintVertices (TileTranslation (FordTile F.q) uMinus) ∧
-            BoundaryFootprintEdges V = BoundaryFootprintEdges (TileTranslation (FordTile F.q)
-            uMinus) ∧ TileRealization V = TileRealization (TileTranslation (FordTile F.q) uMinus)
-            ∧ TileCentroid V = TileCentroid (TileTranslation (FordTile F.q) uMinus)) → (uMinus =
-            ⟨-(F.q₂ : Int), -(F.q : Int)⟩)))) ) := by
-  classical
-  intro P x F s delta c V hsumReal hVcent hFordCent uMinus hobsMinus
-  have hh := hobsMinus.2.2.2.2
-  rw [(TileTranslationFormulas (FordTile F.q) uMinus).2.2.2.2.1,
-    hFordCent, hVcent] at hh
-  apply Zsqrtd.ext
-  · have h := congrArg Prod.fst hh
-    apply Int.cast_injective (α := Real)
-    dsimp at h ⊢
-    push_cast at h ⊢
-    linarith [F.sum_q]
-  · have h := congrArg Prod.snd hh
-    apply Int.cast_injective (α := Real)
-    dsimp at h ⊢
-    push_cast at h ⊢
-    linarith
+private theorem translation_eq_of_centroid (T : ProtoTile) (u v : GaussianInt)
+    (centroid : TileCentroid (TileTranslation T u) = TileCentroid T + GaussianRealPoint v) :
+    u = v := by
+  apply GaussianRealPointProperties.injective
+  have formula : TileCentroid (TileTranslation T u) = TileCentroid T + GaussianRealPoint u :=
+    (TileTranslationFormulas T u).2.2.2.2.1
+  rw [formula] at centroid
+  exact add_left_cancel centroid
 
 private theorem hcellsPlus :
     (by
@@ -692,10 +634,14 @@ theorem P5472T1LiteralFordPlacement
       have hne := hVnon
       rw [hempty] at hne
       simp at hne)
-  have huPlusEq := LiteralFordPlacementGeometry.huPlusEq P x F s delta hsumReal hUcent hFordCent
-      uPlus hobsPlus
-  have huMinusEq := LiteralFordPlacementGeometry.huMinusEq P x F s delta hsumReal hVcent
-      hFordCent uMinus hobsMinus
+  have huPlusEq : uPlus = ⟨-(F.q₁ : Int), 0⟩ := by
+    apply LiteralFordPlacementGeometry.translation_eq_of_centroid (FordTile F.q)
+    rw [← hobsPlus.2.2.2.2, hUcent, hFordCent]
+    ext <;> dsimp [GaussianRealPoint] <;> push_cast <;> linarith
+  have huMinusEq : uMinus = ⟨-(F.q₂ : Int), -(F.q : Int)⟩ := by
+    apply LiteralFordPlacementGeometry.translation_eq_of_centroid (FordTile F.q)
+    rw [← hobsMinus.2.2.2.2, hVcent, hFordCent]
+    ext <;> dsimp [GaussianRealPoint] <;> push_cast <;> linarith
   have hcellsPlus := LiteralFordPlacementGeometry.hcellsPlus P x F s delta uPlus huPlus huPlusEq
   have hcellsMinus := LiteralFordPlacementGeometry.hcellsMinus P x F s delta uMinus huMinus
       huMinusEq

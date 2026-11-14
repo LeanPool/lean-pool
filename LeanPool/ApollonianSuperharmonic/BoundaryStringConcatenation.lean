@@ -691,28 +691,6 @@ private theorem appendForall₂ :
       intro htail
       exact List.Forall₂.cons hxy (ih htail)
 
-private theorem hcorrespondence :
-    (by
-      classical
-      exact
-        ∀ (base : ProtoTile), ∀ (left : List ProtoTile), ∀ (right : List ProtoTile), ∀ (e :
-            GaussianInt), ∀ (f : GaussianInt), ∀ (r : ℤ × ℤ), ∀ (m : ℤ × ℤ), ∀ (s : ℤ × ℤ), ∀ (P
-            : List (ℤ × ℤ)), (List.Forall₂ (fun (T : ProtoTile) (z : ℤ × ℤ) => T =
-            TileTranslation base ((↑z.1 : GaussianInt) * e + (↑z.2 : GaussianInt) * f)) left P ∧
-            TriangularStripSegment r m P) → (∀ (Q : List (ℤ × ℤ)), (List.Forall₂ (fun (T :
-            ProtoTile) (z : ℤ × ℤ) => T = TileTranslation base ((↑z.1 : GaussianInt) * e + (↑z.2
-            : GaussianInt) * f)) right Q ∧ TriangularStripSegment m s Q) → ((∀ {α : Type}, ∀
-            {β : Type}, ∀ {R : α → β → Prop}, ∀ {xs : List α}, ∀ {ys : List β}, List.Forall₂ R xs
-            ys → List.Forall₂ R xs.dropLast ys.dropLast) → ((∀ {α : Type}, ∀ {β : Type}, ∀
-            {R : α → β → Prop}, ∀ {xs : List α}, ∀ {ys : List β}, ∀ {us : List α}, ∀
-            {vs : List β}, List.Forall₂ R xs ys → List.Forall₂ R us vs → List.Forall₂ R (xs ++
-            us) (ys ++ vs)) → (List.Forall₂ (fun T z => T = TileTranslation base ((z.1 :
-            GaussianInt) * e + (z.2 : GaussianInt) * f)) (left.dropLast ++ right) (P.dropLast ++
-            Q))))) ) := by
-  classical
-  intro base left right e f r m s P hP Q hQ dropLastForall₂ appendForall₂
-  exact appendForall₂ (dropLastForall₂ hP.1) hQ.1
-
 private theorem htiles :
     (by
       classical
@@ -921,9 +899,10 @@ theorem BoundaryStringConcatenation
     ⟨q, hq, hC₀, hCᵢ, hT₀', (BoundaryConcatenationGeometry.horientation' q Cᵢ i hCᵢ orientation
         horientation), (BoundaryConcatenationGeometry.htiles Cᵢ orientation base Rminus Rplus
         left right e f htransport r hr s hs P Q (BoundaryConcatenationGeometry.hcoordSegment' r s
-        P Q σ a b c d htotal hcoordSegment) (BoundaryConcatenationGeometry.hcorrespondence base
-        left right e f r m s P hP Q hQ (BoundaryConcatenationGeometry.dropLastForall₂)
-        (BoundaryConcatenationGeometry.appendForall₂))), hRminus, hRplus⟩⟩
+        P Q σ a b c d htotal hcoordSegment)
+          (BoundaryConcatenationGeometry.appendForall₂
+            (BoundaryConcatenationGeometry.dropLastForall₂ hP.1) hQ.1)),
+      hRminus, hRplus⟩⟩
 
 end ApollonianSuperharmonic
 

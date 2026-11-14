@@ -898,73 +898,14 @@ private theorem hmu'At610 :
   · have hneg : muA d < 0 := lt_of_le_of_ne (le_of_not_gt hpos) hmu
     simpa [d', hpos] using hneg
 
-private theorem hdv'At617 :
-    (by
-      classical
-      exact
-        ∀ (p : P3381T1PolygonBoundary 0),
-        let a : Real × Real := p.vertex 0
-        let b : Real × Real := p.vertex 1
-        let c : Real × Real := p.vertex 2
-        let D : Real := (b - a).1 * (c - a).2 - (c - a).1 * (b - a).2
-        let muB : (Real × Real) → Real := fun d =>
-          (d.1 * (c - a).2 - d.2 * (c - a).1) / D
-        let muC : (Real × Real) → Real := fun d =>
-          -(d.1 * (b - a).2 - d.2 * (b - a).1) / D
-        let muA : (Real × Real) → Real := fun d => -(muB d + muC d)
-        ∀ (x : ℝ × ℝ), ∀ (d : ℝ × ℝ), (∀ (i : Fin ((0 : ℕ) + (3 : ℕ))), d.1 * (p.vertex i - x).2
-            - d.2 * (p.vertex i - x).1 ≠ (0 : ℝ)) → (
-        let d' : Real × Real := if 0 < muA d then -d else d
-        ∀ i, d'.1 * (p.vertex i - x).2 - d'.2 * (p.vertex i - x).1 ≠ 0) ) := by
-  classical
-  intro p a b c D muB muC muA x d hdv d' i
-  by_cases hpos : 0 < muA d
-  · have heq : d'.1 * (p.vertex i - x).2 - d'.2 * (p.vertex i - x).1 =
-        -(d.1 * (p.vertex i - x).2 - d.2 * (p.vertex i - x).1) := by
-      simp only [d', ite_eq_left hpos]
-      change (-d.1) * (p.vertex i - x).2 - (-d.2) * (p.vertex i - x).1 =
-        -(d.1 * (p.vertex i - x).2 - d.2 * (p.vertex i - x).1)
-      ring
-    rw [heq]
-    exact fun hz => hdv i (by linarith [hz])
-  · simpa [d', hpos] using hdv i
-
-private theorem hde'At630 :
-    (by
-      classical
-      exact
-        ∀ (p : P3381T1PolygonBoundary 0),
-        let a : Real × Real := p.vertex 0
-        let b : Real × Real := p.vertex 1
-        let c : Real × Real := p.vertex 2
-        let D : Real := (b - a).1 * (c - a).2 - (c - a).1 * (b - a).2
-        let muB : (Real × Real) → Real := fun d =>
-          (d.1 * (c - a).2 - d.2 * (c - a).1) / D
-        let muC : (Real × Real) → Real := fun d =>
-          -(d.1 * (b - a).2 - d.2 * (b - a).1) / D
-        let muA : (Real × Real) → Real := fun d => -(muB d + muC d)
-        ∀ (d : ℝ × ℝ), (∀ (i : Fin ((0 : ℕ) + (3 : ℕ))), d.1 * (p.vertex (i + (1 : Fin ((0 : ℕ) +
-            (3 : ℕ)))) - p.vertex i).2 - d.2 * (p.vertex (i + (1 : Fin ((0 : ℕ) + (3 : ℕ)))) -
-            p.vertex i).1 ≠ (0 : ℝ)) → (
-        let d' : Real × Real := if 0 < muA d then -d else d
-        ∀ i, d'.1 * (p.vertex (i + 1) - p.vertex i).2 - d'.2 * (p.vertex (i + 1) - p.vertex i).1
-            ≠ 0) ) := by
-  classical
-  intro p a b c D muB muC muA d hde d' i
-  by_cases hpos : 0 < muA d
-  · have heq : d'.1 * (p.vertex (i + 1) - p.vertex i).2 -
-        d'.2 * (p.vertex (i + 1) - p.vertex i).1 =
-        -(d.1 * (p.vertex (i + 1) - p.vertex i).2 -
-          d.2 * (p.vertex (i + 1) - p.vertex i).1) := by
-      simp only [d', ite_eq_left hpos]
-      change (-d.1) * (p.vertex (i + 1) - p.vertex i).2 -
-        (-d.2) * (p.vertex (i + 1) - p.vertex i).1 =
-        -(d.1 * (p.vertex (i + 1) - p.vertex i).2 -
-          d.2 * (p.vertex (i + 1) - p.vertex i).1)
-      ring
-    rw [heq]
-    exact fun hz => hde i (by linarith [hz])
-  · simpa [d', hpos] using hde i
+private theorem determinant_ite_neg_ne_zero (d w : Real × Real)
+    (negate : Prop) [Decidable negate] (nonzero : d.1 * w.2 - d.2 * w.1 ≠ 0) :
+    (if negate then -d else d).1 * w.2 - (if negate then -d else d).2 * w.1 ≠ 0 := by
+  split_ifs
+  · change (-d.1) * w.2 - (-d.2) * w.1 ≠ 0
+    have opposite : (-d.1) * w.2 - (-d.2) * w.1 = -(d.1 * w.2 - d.2 * w.1) := by ring
+    rwa [opposite, neg_ne_zero]
+  · exact nonzero
 
 private theorem hnoAt647 :
     (by
@@ -1089,68 +1030,6 @@ private theorem hmu'At694 :
   · have hneg : muB d < 0 := lt_of_le_of_ne (le_of_not_gt hpos) hmu
     simpa [d', hpos] using hneg
 
-private theorem hdv'At701 :
-    (by
-      classical
-      exact
-        ∀ (p : P3381T1PolygonBoundary 0),
-        let a : Real × Real := p.vertex 0
-        let b : Real × Real := p.vertex 1
-        let c : Real × Real := p.vertex 2
-        let D : Real := (b - a).1 * (c - a).2 - (c - a).1 * (b - a).2
-        let muB : (Real × Real) → Real := fun d =>
-          (d.1 * (c - a).2 - d.2 * (c - a).1) / D
-        ∀ (x : ℝ × ℝ), ∀ (d : ℝ × ℝ), (∀ (i : Fin ((0 : ℕ) + (3 : ℕ))), d.1 * (p.vertex i - x).2
-            - d.2 * (p.vertex i - x).1 ≠ (0 : ℝ)) → (
-        let d' : Real × Real := if 0 < muB d then -d else d
-        ∀ i, d'.1 * (p.vertex i - x).2 - d'.2 * (p.vertex i - x).1 ≠ 0) ) := by
-  classical
-  intro p a b c D muB x d hdv d' i
-  by_cases hpos : 0 < muB d
-  · have heq : d'.1 * (p.vertex i - x).2 - d'.2 * (p.vertex i - x).1 =
-        -(d.1 * (p.vertex i - x).2 - d.2 * (p.vertex i - x).1) := by
-      simp only [d', ite_eq_left hpos]
-      change (-d.1) * (p.vertex i - x).2 - (-d.2) * (p.vertex i - x).1 =
-        -(d.1 * (p.vertex i - x).2 - d.2 * (p.vertex i - x).1)
-      ring
-    rw [heq]
-    exact fun hz => hdv i (by linarith [hz])
-  · simpa [d', hpos] using hdv i
-
-private theorem hde'At714 :
-    (by
-      classical
-      exact
-        ∀ (p : P3381T1PolygonBoundary 0),
-        let a : Real × Real := p.vertex 0
-        let b : Real × Real := p.vertex 1
-        let c : Real × Real := p.vertex 2
-        let D : Real := (b - a).1 * (c - a).2 - (c - a).1 * (b - a).2
-        let muB : (Real × Real) → Real := fun d =>
-          (d.1 * (c - a).2 - d.2 * (c - a).1) / D
-        ∀ (d : ℝ × ℝ), (∀ (i : Fin ((0 : ℕ) + (3 : ℕ))), d.1 * (p.vertex (i + (1 : Fin ((0 : ℕ) +
-            (3 : ℕ)))) - p.vertex i).2 - d.2 * (p.vertex (i + (1 : Fin ((0 : ℕ) + (3 : ℕ)))) -
-            p.vertex i).1 ≠ (0 : ℝ)) → (
-        let d' : Real × Real := if 0 < muB d then -d else d
-        ∀ i, d'.1 * (p.vertex (i + 1) - p.vertex i).2 - d'.2 * (p.vertex (i + 1) - p.vertex i).1
-            ≠ 0) ) := by
-  classical
-  intro p a b c D muB d hde d' i
-  by_cases hpos : 0 < muB d
-  · have heq : d'.1 * (p.vertex (i + 1) - p.vertex i).2 -
-        d'.2 * (p.vertex (i + 1) - p.vertex i).1 =
-        -(d.1 * (p.vertex (i + 1) - p.vertex i).2 -
-          d.2 * (p.vertex (i + 1) - p.vertex i).1) := by
-      simp only [d', ite_eq_left hpos]
-      change (-d.1) * (p.vertex (i + 1) - p.vertex i).2 -
-        (-d.2) * (p.vertex (i + 1) - p.vertex i).1 =
-        -(d.1 * (p.vertex (i + 1) - p.vertex i).2 -
-          d.2 * (p.vertex (i + 1) - p.vertex i).1)
-      ring
-    rw [heq]
-    exact fun hz => hde i (by linarith [hz])
-  · simpa [d', hpos] using hde i
-
 private theorem hnoAt731 :
     (by
       classical
@@ -1261,68 +1140,6 @@ private theorem hmu'At771 :
     linarith
   · have hneg : muC d < 0 := lt_of_le_of_ne (le_of_not_gt hpos) hmu
     simpa [d', hpos] using hneg
-
-private theorem hdv'At778 :
-    (by
-      classical
-      exact
-        ∀ (p : P3381T1PolygonBoundary 0),
-        let a : Real × Real := p.vertex 0
-        let b : Real × Real := p.vertex 1
-        let c : Real × Real := p.vertex 2
-        let D : Real := (b - a).1 * (c - a).2 - (c - a).1 * (b - a).2
-        let muC : (Real × Real) → Real := fun d =>
-          -(d.1 * (b - a).2 - d.2 * (b - a).1) / D
-        ∀ (x : ℝ × ℝ), ∀ (d : ℝ × ℝ), (∀ (i : Fin ((0 : ℕ) + (3 : ℕ))), d.1 * (p.vertex i - x).2
-            - d.2 * (p.vertex i - x).1 ≠ (0 : ℝ)) → (
-        let d' : Real × Real := if 0 < muC d then -d else d
-        ∀ i, d'.1 * (p.vertex i - x).2 - d'.2 * (p.vertex i - x).1 ≠ 0) ) := by
-  classical
-  intro p a b c D muC x d hdv d' i
-  by_cases hpos : 0 < muC d
-  · have heq : d'.1 * (p.vertex i - x).2 - d'.2 * (p.vertex i - x).1 =
-        -(d.1 * (p.vertex i - x).2 - d.2 * (p.vertex i - x).1) := by
-      simp only [d', ite_eq_left hpos]
-      change (-d.1) * (p.vertex i - x).2 - (-d.2) * (p.vertex i - x).1 =
-        -(d.1 * (p.vertex i - x).2 - d.2 * (p.vertex i - x).1)
-      ring
-    rw [heq]
-    exact fun hz => hdv i (by linarith [hz])
-  · simpa [d', hpos] using hdv i
-
-private theorem hde'At791 :
-    (by
-      classical
-      exact
-        ∀ (p : P3381T1PolygonBoundary 0),
-        let a : Real × Real := p.vertex 0
-        let b : Real × Real := p.vertex 1
-        let c : Real × Real := p.vertex 2
-        let D : Real := (b - a).1 * (c - a).2 - (c - a).1 * (b - a).2
-        let muC : (Real × Real) → Real := fun d =>
-          -(d.1 * (b - a).2 - d.2 * (b - a).1) / D
-        ∀ (d : ℝ × ℝ), (∀ (i : Fin ((0 : ℕ) + (3 : ℕ))), d.1 * (p.vertex (i + (1 : Fin ((0 : ℕ) +
-            (3 : ℕ)))) - p.vertex i).2 - d.2 * (p.vertex (i + (1 : Fin ((0 : ℕ) + (3 : ℕ)))) -
-            p.vertex i).1 ≠ (0 : ℝ)) → (
-        let d' : Real × Real := if 0 < muC d then -d else d
-        ∀ i, d'.1 * (p.vertex (i + 1) - p.vertex i).2 - d'.2 * (p.vertex (i + 1) - p.vertex i).1
-            ≠ 0) ) := by
-  classical
-  intro p a b c D muC d hde d' i
-  by_cases hpos : 0 < muC d
-  · have heq : d'.1 * (p.vertex (i + 1) - p.vertex i).2 -
-        d'.2 * (p.vertex (i + 1) - p.vertex i).1 =
-        -(d.1 * (p.vertex (i + 1) - p.vertex i).2 -
-          d.2 * (p.vertex (i + 1) - p.vertex i).1) := by
-      simp only [d', ite_eq_left hpos]
-      change (-d.1) * (p.vertex (i + 1) - p.vertex i).2 -
-        (-d.2) * (p.vertex (i + 1) - p.vertex i).1 =
-        -(d.1 * (p.vertex (i + 1) - p.vertex i).2 -
-          d.2 * (p.vertex (i + 1) - p.vertex i).1)
-      ring
-    rw [heq]
-    exact fun hz => hde i (by linarith [hz])
-  · simpa [d', hpos] using hde i
 
 private theorem hnoAt808 :
     (by
@@ -1705,8 +1522,10 @@ theorem P3544T1TriangleRayGeometry (p : P3381T1PolygonBoundary 0) :
       have hmu := TriangleRayIntersections.hmuAt597 p hDneq d hcross
       let d' : Real × Real := if 0 < muA d then -d else d
       have hmu' := TriangleRayIntersections.hmu'At610 p hmuA_neg d hmu
-      have hdv' := TriangleRayIntersections.hdv'At617 p x d hdv
-      have hde' := TriangleRayIntersections.hde'At630 p d hde
+      have hdv' := (fun i => TriangleRayIntersections.determinant_ite_neg_ne_zero
+          d (p.vertex i - x) (0 < muA d) (hdv i))
+      have hde' := (fun i => TriangleRayIntersections.determinant_ite_neg_ne_zero
+          d (p.vertex (i + 1) - p.vertex i) (0 < muA d) (hde i))
       have hno := TriangleRayIntersections.hnoAt647 p hCsubset hKsubS halpha_ray x hαneg d hmu'
       have hcount0 : Set.ncard {i : Fin 3 | ∃ t : Real, 0 < t ∧
           x + t • d' ∈ segment Real (p.vertex i) (p.vertex (i + 1))} = 0 :=
@@ -1721,8 +1540,10 @@ theorem P3544T1TriangleRayGeometry (p : P3381T1PolygonBoundary 0) :
         have hmu := TriangleRayIntersections.hmuAt678 p hDneq d hcross
         let d' : Real × Real := if 0 < muB d then -d else d
         have hmu' := TriangleRayIntersections.hmu'At694 p hmuB_neg d hmu
-        have hdv' := TriangleRayIntersections.hdv'At701 p x d hdv
-        have hde' := TriangleRayIntersections.hde'At714 p d hde
+        have hdv' := (fun i => TriangleRayIntersections.determinant_ite_neg_ne_zero
+          d (p.vertex i - x) (0 < muB d) (hdv i))
+        have hde' := (fun i => TriangleRayIntersections.determinant_ite_neg_ne_zero
+          d (p.vertex (i + 1) - p.vertex i) (0 < muB d) (hde i))
         have hno := TriangleRayIntersections.hnoAt731 p hCsubset hKsubS hbeta_ray x hβneg d hmu'
         have hcount0 : Set.ncard {i : Fin 3 | ∃ t : Real, 0 < t ∧
             x + t • d' ∈ segment Real (p.vertex i) (p.vertex (i + 1))} = 0 :=
@@ -1736,8 +1557,10 @@ theorem P3544T1TriangleRayGeometry (p : P3381T1PolygonBoundary 0) :
         have hmu := TriangleRayIntersections.hmuAt761 p hDneq d hcross
         let d' : Real × Real := if 0 < muC d then -d else d
         have hmu' := TriangleRayIntersections.hmu'At771 p hmuC_neg d hmu
-        have hdv' := TriangleRayIntersections.hdv'At778 p x d hdv
-        have hde' := TriangleRayIntersections.hde'At791 p d hde
+        have hdv' := (fun i => TriangleRayIntersections.determinant_ite_neg_ne_zero
+          d (p.vertex i - x) (0 < muC d) (hdv i))
+        have hde' := (fun i => TriangleRayIntersections.determinant_ite_neg_ne_zero
+          d (p.vertex (i + 1) - p.vertex i) (0 < muC d) (hde i))
         have hno := TriangleRayIntersections.hnoAt808 p hCsubset hKsubS hgamma_ray x hγneg d hmu'
         have hcount0 : Set.ncard {i : Fin 3 | ∃ t : Real, 0 < t ∧
             x + t • d' ∈ segment Real (p.vertex i) (p.vertex (i + 1))} = 0 :=

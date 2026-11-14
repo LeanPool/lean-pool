@@ -245,31 +245,6 @@ private theorem positive :
   rw [hC]
   exact C.2
 
-private theorem determinant_value :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates),
-        let successorQuad : Fin 4 → CircleCoordinates :=
-          ![(2 * (q 0).1 + 2 * (q 2).1 + 2 * (q 3).1 - (q 1).1,
-            2 * (q 0).2 + 2 * (q 2).2 + 2 * (q 3).2 - (q 1).2), q 0, q 2, q 3]
-        (star (BandVectors.1 (successorQuad (1 : Fin (4 : ℕ))) (successorQuad (3 : Fin (4 : ℕ))))
-            * BandVectors.1 (successorQuad (2 : Fin (4 : ℕ))) (successorQuad (1 : Fin (4 : ℕ))) +
-            BandVectors.1 (successorQuad (1 : Fin (4 : ℕ))) (successorQuad (3 : Fin (4 : ℕ))) *
-            star (BandVectors.1 (successorQuad (2 : Fin (4 : ℕ))) (successorQuad (1 : Fin (4 :
-            ℕ)))) = (↑((-2 : ℤ) * (successorQuad (1 : Fin (4 : ℕ))).1) : GaussianInt) ∧
-            ((BandVectors.1 (successorQuad (3 : Fin (4 : ℕ))) (successorQuad (1 : Fin (4 :
-            ℕ)))).re * (BandVectors.1 (successorQuad (2 : Fin (4 : ℕ))) (successorQuad (1 : Fin
-            (4 : ℕ)))).im - (BandVectors.1 (successorQuad (3 : Fin (4 : ℕ))) (successorQuad (1 :
-            Fin (4 : ℕ)))).im * (BandVectors.1 (successorQuad (2 : Fin (4 : ℕ))) (successorQuad
-            (1 : Fin (4 : ℕ)))).re).natAbs = (successorQuad (1 : Fin (4 : ℕ))).1.natAbs) →
-            (Int.natAbs ((BandVectors.1 (q 3) (q 0)).re * (BandVectors.1 (q 2) (q 0)).im -
-            (BandVectors.1 (q 3) (q 0)).im * (BandVectors.1 (q 2) (q 0)).re) = (q 0).1.natAbs) )
-            := by
-  classical
-  intro q successorQuad determinant
-  simpa [successorQuad] using determinant.2
-
 private theorem determinant_nonzero :
     (by
       classical
@@ -715,7 +690,7 @@ theorem TilingLatticeBasis (C : BandCircle)
       2 * (q 0).2 + 2 * (q 2).2 + 2 * (q 3).2 - (q 1).2), q 0, q 2, q 3]
   have determinant := VectorDeterminant successorQuad
     (SemiProperQuadruple.successor hq.1) (by simpa [successorQuad] using positive)
-  have determinant_value := TilingBasisProof.determinant_value q determinant
+  have determinant_value := determinant.2
   have determinant_nonzero := TilingBasisProof.determinant_nonzero q relation positive
       determinant_value
   have coordinate_for := TilingBasisProof.coordinate_for q

@@ -313,27 +313,6 @@ private theorem hmodzero :
     simp [P, V, label, ModifiedSubtileOccurrenceInterpretation,
       TileCellComplement, hc, trans0]
 
-private theorem unique_owner :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C :
-            BandCircle), ∀ (T : ProtoTile), ∀ (layout : BandOrderedGeneralLayoutCertificate q cfg
-            C T),
-        let V : Fin 6 → Fin 3 × Bool :=
-          ![(0, true), (2, false), (1, true), (0, false), (2, true), (1, false)]
-        let P : Fin 6 → ProtoTile := fun j => layout.P (V j).1 (V j).2
-        let label : Fin 6 → SixSubtileLabel := ![.A, .F, .C, .B, .E, .D]
-        (∀ j, ∀ c, c ∉ layout.O.cells → (c ∈ (P j).cells ↔ c ∈
-            (ModifiedSubtileOccurrenceInterpretation layout.P layout.O layout.u layout.v ⟨label
-            j, 0, 0⟩).cells)) → ((Function.Injective label) → (∀ c, c ∉ layout.O.cells → ∀ i j :
-            Fin 6, c ∈ (P i).cells → c ∈ (P j).cells → i = j)) ) := by
-  classical
-  intro q cfg C T layout V P label hmodzero hlabel_inj c hc i j hi hj
-  have heq := (layout.partition c).unique
-    ((hmodzero i c hc).mp hi) ((hmodzero j c hc).mp hj)
-  exact hlabel_inj (congrArg PeriodicSubtileIndex.label heq)
-
 private theorem cover :
     (by
       classical
@@ -522,7 +501,9 @@ theorem P4456T2OrderedNoChord
     let label : Fin 6 → SixSubtileLabel := ![.A, .F, .C, .B, .E, .D]
     have hmodzero := OrderedNoChordGeometry.hmodzero q cfg C T layout trans0
     have hlabel_inj : Function.Injective label := by decide
-    have unique_owner := OrderedNoChordGeometry.unique_owner q cfg C T layout hmodzero hlabel_inj
+    have unique_owner := fun c hc i j hi hj =>
+      hlabel_inj (congrArg PeriodicSubtileIndex.label
+        ((layout.partition c).unique ((hmodzero i c hc).mp hi) ((hmodzero j c hc).mp hj)))
     have cover := OrderedNoChordGeometry.cover q cfg C T layout
     obtain ⟨ia, hia⟩ := cover a ha
     obtain ⟨ib, hib⟩ := cover b hb

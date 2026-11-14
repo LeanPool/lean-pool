@@ -617,285 +617,6 @@ private theorem childPositive :
   · exact hpos
   · exact (cfg.noLine i.succ (by simpa [q] using hzero.symm)).elim
 
-private theorem hJprev :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (D : BandCircle), ∀ (T : ProtoTile), ∀ (N : ProtoTile), ∀ (h :
-            PartialOdometer), ∀ (k : PartialOdometer), ∀ (x : GaussianInt), ∀ (bundle :
-            BandOrderedGeneralNormalizedOccurrenceBundle C D T N h k x), ∀ (placement :
-            BandOrderedGeneralRightPlacement bundle.normalizedPresentation bundle.configuration
-            bundle.normalizedCircle bundle.normalizedRoot bundle.normalizedFixed
-            bundle.normalizedRootFunction bundle.normalizedFixedFunction bundle.normalizedPoint
-            bundle.pieces bundle.functions bundle.selectedSlot bundle.selectedSign
-            bundle.routedDirection), (placement.rightFirstSlot = (0 : Fin (3 : ℕ)) ∧
-            placement.rightSecondSlot = (1 : Fin (3 : ℕ)) ∧ placement.rightDirectionSlot = (2 :
-            Fin (3 : ℕ)) ∨ placement.rightFirstSlot = (1 : Fin (3 : ℕ)) ∧
-            placement.rightSecondSlot = (2 : Fin (3 : ℕ)) ∧ placement.rightDirectionSlot = (0 :
-            Fin (3 : ℕ)) ∨ placement.rightFirstSlot = (2 : Fin (3 : ℕ)) ∧
-            placement.rightSecondSlot = (0 : Fin (3 : ℕ)) ∧ placement.rightDirectionSlot = (1 :
-            Fin (3 : ℕ))) → (
-        let i := placement.rightFirstSlot
-        let j := placement.rightSecondSlot
-        j - 1 = i) ) := by
-  classical
-  intro C D T N h k x bundle placement hcyc i j
-  rcases hcyc with ⟨hi0, hj0, hk0⟩ | ⟨hi0, hj0, hk0⟩ |
-    ⟨hi0, hj0, hk0⟩
-  all_goals
-    apply Fin.ext
-    simp [i, j, hi0, hj0]
-
-private theorem hZ1' :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (D : BandCircle), ∀ (T : ProtoTile), ∀ (N : ProtoTile), ∀ (h :
-            PartialOdometer), ∀ (k : PartialOdometer), ∀ (x : GaussianInt), ∀ (bundle :
-            BandOrderedGeneralNormalizedOccurrenceBundle C D T N h k x), ∀ (placement :
-            BandOrderedGeneralRightPlacement bundle.normalizedPresentation bundle.configuration
-            bundle.normalizedCircle bundle.normalizedRoot bundle.normalizedFixed
-            bundle.normalizedRootFunction bundle.normalizedFixedFunction bundle.normalizedPoint
-            bundle.pieces bundle.functions bundle.selectedSlot bundle.selectedSign
-            bundle.routedDirection), (placement.rightFirstSlot = (0 : Fin (3 : ℕ)) ∧
-            placement.rightSecondSlot = (1 : Fin (3 : ℕ)) ∧ placement.rightDirectionSlot = (2 :
-            Fin (3 : ℕ)) ∨ placement.rightFirstSlot = (1 : Fin (3 : ℕ)) ∧
-            placement.rightSecondSlot = (2 : Fin (3 : ℕ)) ∧ placement.rightDirectionSlot = (0 :
-            Fin (3 : ℕ)) ∨ placement.rightFirstSlot = (2 : Fin (3 : ℕ)) ∧
-            placement.rightSecondSlot = (0 : Fin (3 : ℕ)) ∧ placement.rightDirectionSlot = (1 :
-            Fin (3 : ℕ))) → (
-        let q := bundle.normalizedPresentation
-        (¬ Even (3 : Nat)) → (
-        let i := placement.rightFirstSlot
-        let j := placement.rightSecondSlot
-        let c := BandVectors.1 (q j.succ) (q i.succ)
-        (BandPrototile (q j.succ) (TileTranslation (placement.layout.P j true) (-((⟨0, 1⟩ :
-            GaussianInt) * c)))) → (BandPrototile (q (if Even (3 : Nat) then i - 1 else i +
-            1).succ) (TileTranslation (placement.layout.P j true) (-((⟨0, 1⟩ : GaussianInt) *
-            c)))))) ) := by
-  classical
-  intro C D T N h k x bundle placement hcyc q hEven3 i j c hZ1
-  rcases hcyc with ⟨hi0, hj0, hk0⟩ | ⟨hi0, hj0, hk0⟩ |
-    ⟨hi0, hj0, hk0⟩ <;>
-    simpa [i, j, hi0, hj0, hEven3] using hZ1
-
-private theorem hZ2' :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (D : BandCircle), ∀ (T : ProtoTile), ∀ (N : ProtoTile), ∀ (h :
-            PartialOdometer), ∀ (k : PartialOdometer), ∀ (x : GaussianInt), ∀ (bundle :
-            BandOrderedGeneralNormalizedOccurrenceBundle C D T N h k x), ∀ (placement :
-            BandOrderedGeneralRightPlacement bundle.normalizedPresentation bundle.configuration
-            bundle.normalizedCircle bundle.normalizedRoot bundle.normalizedFixed
-            bundle.normalizedRootFunction bundle.normalizedFixedFunction bundle.normalizedPoint
-            bundle.pieces bundle.functions bundle.selectedSlot bundle.selectedSign
-            bundle.routedDirection),
-        let q := bundle.normalizedPresentation
-        (Even (2 : Nat)) → (
-        let i := placement.rightFirstSlot
-        let j := placement.rightSecondSlot
-        let c := BandVectors.1 (q j.succ) (q i.succ)
-        (j - 1 = i) → ((BandPrototile (q i.succ) (TileTranslation (placement.layout.P i false)
-            (-c))) → (BandPrototile (q (if Even (2 : Nat) then j - 1 else j + 1).succ)
-            (TileTranslation (placement.layout.P i false) (-c))))) ) := by
-  classical
-  intro C D T N h k x bundle placement q hEven2 i j c hJprev hZ2
-  simpa [hEven2, hJprev] using hZ2
-
-private theorem hZ3' :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (D : BandCircle), ∀ (T : ProtoTile), ∀ (N : ProtoTile), ∀ (h :
-            PartialOdometer), ∀ (k : PartialOdometer), ∀ (x : GaussianInt), ∀ (bundle :
-            BandOrderedGeneralNormalizedOccurrenceBundle C D T N h k x), ∀ (placement :
-            BandOrderedGeneralRightPlacement bundle.normalizedPresentation bundle.configuration
-            bundle.normalizedCircle bundle.normalizedRoot bundle.normalizedFixed
-            bundle.normalizedRootFunction bundle.normalizedFixedFunction bundle.normalizedPoint
-            bundle.pieces bundle.functions bundle.selectedSlot bundle.selectedSign
-            bundle.routedDirection), (placement.rightFirstSlot = (0 : Fin (3 : ℕ)) ∧
-            placement.rightSecondSlot = (1 : Fin (3 : ℕ)) ∧ placement.rightDirectionSlot = (2 :
-            Fin (3 : ℕ)) ∨ placement.rightFirstSlot = (1 : Fin (3 : ℕ)) ∧
-            placement.rightSecondSlot = (2 : Fin (3 : ℕ)) ∧ placement.rightDirectionSlot = (0 :
-            Fin (3 : ℕ)) ∨ placement.rightFirstSlot = (2 : Fin (3 : ℕ)) ∧
-            placement.rightSecondSlot = (0 : Fin (3 : ℕ)) ∧ placement.rightDirectionSlot = (1 :
-            Fin (3 : ℕ))) → (
-        let q := bundle.normalizedPresentation
-        (¬ Even (1 : Nat)) → (
-        let i := placement.rightFirstSlot
-        let j := placement.rightSecondSlot
-        let c := BandVectors.1 (q j.succ) (q i.succ)
-        (BandPrototile (q j.succ) (TileTranslation (placement.layout.P j false) ((⟨0, 1⟩ :
-            GaussianInt) * c))) → (BandPrototile (q (if Even (1 : Nat) then i - 1 else i +
-            1).succ) (TileTranslation (placement.layout.P j false) ((⟨0, 1⟩ : GaussianInt) *
-            c))))) ) := by
-  classical
-  intro C D T N h k x bundle placement hcyc q hEven1 i j c hZ3
-  rcases hcyc with ⟨hi0, hj0, hk0⟩ | ⟨hi0, hj0, hk0⟩ |
-    ⟨hi0, hj0, hk0⟩ <;>
-    simpa [i, j, hi0, hj0, hEven1] using hZ3
-
-private theorem hZ4' :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (D : BandCircle), ∀ (T : ProtoTile), ∀ (N : ProtoTile), ∀ (h :
-            PartialOdometer), ∀ (k : PartialOdometer), ∀ (x : GaussianInt), ∀ (bundle :
-            BandOrderedGeneralNormalizedOccurrenceBundle C D T N h k x), ∀ (placement :
-            BandOrderedGeneralRightPlacement bundle.normalizedPresentation bundle.configuration
-            bundle.normalizedCircle bundle.normalizedRoot bundle.normalizedFixed
-            bundle.normalizedRootFunction bundle.normalizedFixedFunction bundle.normalizedPoint
-            bundle.pieces bundle.functions bundle.selectedSlot bundle.selectedSign
-            bundle.routedDirection),
-        let q := bundle.normalizedPresentation
-        (Even (0 : Nat)) → (
-        let i := placement.rightFirstSlot
-        let j := placement.rightSecondSlot
-        let c := BandVectors.1 (q j.succ) (q i.succ)
-        (j - 1 = i) → ((BandPrototile (q i.succ) (TileTranslation (placement.layout.P i true) c))
-            → (BandPrototile (q (if Even (0 : Nat) then j - 1 else j + 1).succ) (TileTranslation
-            (placement.layout.P i true) c)))) ) := by
-  classical
-  intro C D T N h k x bundle placement q hEven0 i j c hJprev hZ4
-  simpa [hEven0, hJprev] using hZ4
-
-private theorem hZcent1' :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (D : BandCircle), ∀ (T : ProtoTile), ∀ (N : ProtoTile), ∀ (h :
-            PartialOdometer), ∀ (k : PartialOdometer), ∀ (x : GaussianInt), ∀ (bundle :
-            BandOrderedGeneralNormalizedOccurrenceBundle C D T N h k x), ∀ (placement :
-            BandOrderedGeneralRightPlacement bundle.normalizedPresentation bundle.configuration
-            bundle.normalizedCircle bundle.normalizedRoot bundle.normalizedFixed
-            bundle.normalizedRootFunction bundle.normalizedFixedFunction bundle.normalizedPoint
-            bundle.pieces bundle.functions bundle.selectedSlot bundle.selectedSign
-            bundle.routedDirection), (placement.rightFirstSlot = (0 : Fin (3 : ℕ)) ∧
-            placement.rightSecondSlot = (1 : Fin (3 : ℕ)) ∧ placement.rightDirectionSlot = (2 :
-            Fin (3 : ℕ)) ∨ placement.rightFirstSlot = (1 : Fin (3 : ℕ)) ∧
-            placement.rightSecondSlot = (2 : Fin (3 : ℕ)) ∧ placement.rightDirectionSlot = (0 :
-            Fin (3 : ℕ)) ∨ placement.rightFirstSlot = (2 : Fin (3 : ℕ)) ∧
-            placement.rightSecondSlot = (0 : Fin (3 : ℕ)) ∧ placement.rightDirectionSlot = (1 :
-            Fin (3 : ℕ))) → (
-        let q := bundle.normalizedPresentation
-        let F := bundle.normalizedFixed
-        (¬ Even (3 : Nat)) → (
-        let i := placement.rightFirstSlot
-        let j := placement.rightSecondSlot
-        let c := BandVectors.1 (q j.succ) (q i.succ)
-        (TileCentroid (TileTranslation (placement.layout.P j true) (-((⟨0, 1⟩ : GaussianInt) *
-            c))) - TileCentroid F = (1 / 2 : Real) • GaussianRealPoint ((⟨0, 1⟩ : GaussianInt) ^
-            (3 : Nat) * (BandVectors.1 (q j.succ) (q 0) - BandVectors.1 (q 0) (q j.succ)))) →
-            (TileCentroid (TileTranslation (placement.layout.P j true) (-((⟨0, 1⟩ : GaussianInt)
-            * c))) - TileCentroid F = (1 / 2 : Real) • GaussianRealPoint ((⟨0, 1⟩ : GaussianInt)
-            ^ (3 : Nat) * (if Even (3 : Nat) then BandVectors.1 (q 0) (q (i - 1).succ) -
-            BandVectors.1 (q (i - 1).succ) (q 0) else BandVectors.1 (q (i + 1).succ) (q 0) -
-            BandVectors.1 (q 0) (q (i + 1).succ)))))) ) := by
-  classical
-  intro C D T N h k x bundle placement hcyc q F hEven3 i j c hZcent1
-  rcases hcyc with ⟨hi0, hj0, hk0⟩ | ⟨hi0, hj0, hk0⟩ |
-    ⟨hi0, hj0, hk0⟩ <;>
-    simpa [i, j, hi0, hj0, hEven3] using hZcent1
-
-private theorem hZcent2' :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (D : BandCircle), ∀ (T : ProtoTile), ∀ (N : ProtoTile), ∀ (h :
-            PartialOdometer), ∀ (k : PartialOdometer), ∀ (x : GaussianInt), ∀ (bundle :
-            BandOrderedGeneralNormalizedOccurrenceBundle C D T N h k x), ∀ (placement :
-            BandOrderedGeneralRightPlacement bundle.normalizedPresentation bundle.configuration
-            bundle.normalizedCircle bundle.normalizedRoot bundle.normalizedFixed
-            bundle.normalizedRootFunction bundle.normalizedFixedFunction bundle.normalizedPoint
-            bundle.pieces bundle.functions bundle.selectedSlot bundle.selectedSign
-            bundle.routedDirection),
-        let q := bundle.normalizedPresentation
-        let F := bundle.normalizedFixed
-        (Even (2 : Nat)) → (
-        let i := placement.rightFirstSlot
-        let j := placement.rightSecondSlot
-        let c := BandVectors.1 (q j.succ) (q i.succ)
-        (j - 1 = i) → ((TileCentroid (TileTranslation (placement.layout.P i false) (-c)) -
-            TileCentroid F = (1 / 2 : Real) • GaussianRealPoint ((⟨0, 1⟩ : GaussianInt) ^ (2 :
-            Nat) * (BandVectors.1 (q 0) (q i.succ) - BandVectors.1 (q i.succ) (q 0)))) →
-            (TileCentroid (TileTranslation (placement.layout.P i false) (-c)) - TileCentroid F =
-            (1 / 2 : Real) • GaussianRealPoint ((⟨0, 1⟩ : GaussianInt) ^ (2 : Nat) * (if Even (2
-            : Nat) then BandVectors.1 (q 0) (q (j - 1).succ) - BandVectors.1 (q (j - 1).succ) (q
-            0) else BandVectors.1 (q (j + 1).succ) (q 0) - BandVectors.1 (q 0) (q (j +
-            1).succ)))))) ) := by
-  classical
-  intro C D T N h k x bundle placement q F hEven2 i j c hJprev hZcent2
-  simpa [hEven2, hJprev] using hZcent2
-
-private theorem hZcent3' :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (D : BandCircle), ∀ (T : ProtoTile), ∀ (N : ProtoTile), ∀ (h :
-            PartialOdometer), ∀ (k : PartialOdometer), ∀ (x : GaussianInt), ∀ (bundle :
-            BandOrderedGeneralNormalizedOccurrenceBundle C D T N h k x), ∀ (placement :
-            BandOrderedGeneralRightPlacement bundle.normalizedPresentation bundle.configuration
-            bundle.normalizedCircle bundle.normalizedRoot bundle.normalizedFixed
-            bundle.normalizedRootFunction bundle.normalizedFixedFunction bundle.normalizedPoint
-            bundle.pieces bundle.functions bundle.selectedSlot bundle.selectedSign
-            bundle.routedDirection), (placement.rightFirstSlot = (0 : Fin (3 : ℕ)) ∧
-            placement.rightSecondSlot = (1 : Fin (3 : ℕ)) ∧ placement.rightDirectionSlot = (2 :
-            Fin (3 : ℕ)) ∨ placement.rightFirstSlot = (1 : Fin (3 : ℕ)) ∧
-            placement.rightSecondSlot = (2 : Fin (3 : ℕ)) ∧ placement.rightDirectionSlot = (0 :
-            Fin (3 : ℕ)) ∨ placement.rightFirstSlot = (2 : Fin (3 : ℕ)) ∧
-            placement.rightSecondSlot = (0 : Fin (3 : ℕ)) ∧ placement.rightDirectionSlot = (1 :
-            Fin (3 : ℕ))) → (
-        let q := bundle.normalizedPresentation
-        let F := bundle.normalizedFixed
-        (¬ Even (1 : Nat)) → (
-        let i := placement.rightFirstSlot
-        let j := placement.rightSecondSlot
-        let c := BandVectors.1 (q j.succ) (q i.succ)
-        (TileCentroid (TileTranslation (placement.layout.P j false) ((⟨0, 1⟩ : GaussianInt) * c))
-            - TileCentroid F = (1 / 2 : Real) • GaussianRealPoint ((⟨0, 1⟩ : GaussianInt) ^ (1 :
-            Nat) * (BandVectors.1 (q j.succ) (q 0) - BandVectors.1 (q 0) (q j.succ)))) →
-            (TileCentroid (TileTranslation (placement.layout.P j false) ((⟨0, 1⟩ : GaussianInt) *
-            c)) - TileCentroid F = (1 / 2 : Real) • GaussianRealPoint ((⟨0, 1⟩ : GaussianInt) ^
-            (1 : Nat) * (if Even (1 : Nat) then BandVectors.1 (q 0) (q (i - 1).succ) -
-            BandVectors.1 (q (i - 1).succ) (q 0) else BandVectors.1 (q (i + 1).succ) (q 0) -
-            BandVectors.1 (q 0) (q (i + 1).succ)))))) ) := by
-  classical
-  intro C D T N h k x bundle placement hcyc q F hEven1 i j c hZcent3
-  rcases hcyc with ⟨hi0, hj0, hk0⟩ | ⟨hi0, hj0, hk0⟩ |
-    ⟨hi0, hj0, hk0⟩ <;>
-    simpa [i, j, hi0, hj0, hEven1] using hZcent3
-
-private theorem hZcent4' :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (D : BandCircle), ∀ (T : ProtoTile), ∀ (N : ProtoTile), ∀ (h :
-            PartialOdometer), ∀ (k : PartialOdometer), ∀ (x : GaussianInt), ∀ (bundle :
-            BandOrderedGeneralNormalizedOccurrenceBundle C D T N h k x), ∀ (placement :
-            BandOrderedGeneralRightPlacement bundle.normalizedPresentation bundle.configuration
-            bundle.normalizedCircle bundle.normalizedRoot bundle.normalizedFixed
-            bundle.normalizedRootFunction bundle.normalizedFixedFunction bundle.normalizedPoint
-            bundle.pieces bundle.functions bundle.selectedSlot bundle.selectedSign
-            bundle.routedDirection),
-        let q := bundle.normalizedPresentation
-        let F := bundle.normalizedFixed
-        (Even (0 : Nat)) → (
-        let i := placement.rightFirstSlot
-        let j := placement.rightSecondSlot
-        let c := BandVectors.1 (q j.succ) (q i.succ)
-        (j - 1 = i) → ((TileCentroid (TileTranslation (placement.layout.P i true) c) -
-            TileCentroid F = (1 / 2 : Real) • GaussianRealPoint ((⟨0, 1⟩ : GaussianInt) ^ (0 :
-            Nat) * (BandVectors.1 (q 0) (q i.succ) - BandVectors.1 (q i.succ) (q 0)))) →
-            (TileCentroid (TileTranslation (placement.layout.P i true) c) - TileCentroid F = (1 /
-            2 : Real) • GaussianRealPoint ((⟨0, 1⟩ : GaussianInt) ^ (0 : Nat) * (if Even (0 :
-            Nat) then BandVectors.1 (q 0) (q (j - 1).succ) - BandVectors.1 (q (j - 1).succ) (q 0)
-            else BandVectors.1 (q (j + 1).succ) (q 0) - BandVectors.1 (q 0) (q (j + 1).succ))))))
-            ) := by
-  classical
-  intro C D T N h k x bundle placement q F hEven0 i j c hJprev hZcent4
-  simpa [hEven0, hJprev] using hZcent4
-
 end RightBoundaryRecordsGeometry
 
 theorem P5635T1RightBoundaryInterfaceRecords
@@ -1015,7 +736,10 @@ theorem P5635T1RightBoundaryInterfaceRecords
   obtain ⟨hsum, hi, hj, hk⟩ := cyclicVectorRecurrence i j directionSlot hcyc
   let c := BandVectors.1 (q j.succ) (q i.succ)
   have aux := auxiliaryDisplacements i j directionSlot hcyc
-  have hJprev := RightBoundaryRecordsGeometry.hJprev C D T N h k x bundle placement hcyc
+  have hJnext : j = i + 1 := by
+    rcases hcyc with ⟨hi0, hj0, _⟩ | ⟨hi0, hj0, _⟩ | ⟨hi0, hj0, _⟩ <;>
+      simp [i, j, hi0, hj0]
+  have hJprev : j - 1 = i := by rw [hJnext]; simp
   have hBi : BandPrototile (q i.succ) (placement.layout.P i true) :=
     (placement.layout.outer_occurrence i true).1
   have hBj : BandPrototile (q j.succ) (placement.layout.P j true) :=
@@ -1094,18 +818,15 @@ theorem P5635T1RightBoundaryInterfaceRecords
         (TileTranslation (placement.layout.P i true)
           placement.rightNeighborDisplacement)
         (TileTranslation (placement.layout.P j true)
-        (-((⟨0, 1⟩ : GaussianInt) * c))) fixedBand hWi (RightBoundaryRecordsGeometry.hZ1' C D T N
-            h k x bundle placement hcyc hEven3 hZ1)
-        hUpos (childPositive i) hWcent1 (RightBoundaryRecordsGeometry.hZcent1' C D T N h k x
-            bundle placement hcyc hEven3 hZcent1)
+        (-((⟨0, 1⟩ : GaussianInt) * c))) fixedBand hWi (by simpa [hEven3, ← hJnext] using hZ1)
+        hUpos (childPositive i) hWcent1 (by simpa [hEven3, ← hJnext] using hZcent1)
       simpa [i, j, directionSlot, hI2, hI3, hEven3, (turnFlip i).1] using E
     · have E := BandOrientedChildParentRightEndpoint q cfg.proper j 2 F
         (TileTranslation (placement.layout.P j false)
           placement.rightNeighborDisplacement)
         (TileTranslation (placement.layout.P i false) (-c)) fixedBand hWj
-            (RightBoundaryRecordsGeometry.hZ2' C D T N h k x bundle placement hEven2 hJprev hZ2)
-        hUpos (childPositive j) hWcent2 (RightBoundaryRecordsGeometry.hZcent2' C D T N h k x
-            bundle placement hEven2 hJprev hZcent2)
+            (by simpa [hEven2, hJprev] using hZ2)
+        hUpos (childPositive j) hWcent2 (by simpa [hEven2, hJprev] using hZcent2)
       simpa [i, j, directionSlot, hI2, hEven2, (turnFlip j).1] using E
   · intro hneg
     have hWcent3 := firstReflectedCentroid hneg
@@ -1115,18 +836,15 @@ theorem P5635T1RightBoundaryInterfaceRecords
         (TileTranslation (placement.layout.P i false)
           placement.rightNeighborDisplacement)
         (TileTranslation (placement.layout.P j false)
-        ((⟨0, 1⟩ : GaussianInt) * c)) fixedBand hWi' (RightBoundaryRecordsGeometry.hZ3' C D T N h
-            k x bundle placement hcyc hEven1 hZ3)
-        hUpos (childPositive i) hWcent3 (RightBoundaryRecordsGeometry.hZcent3' C D T N h k x
-            bundle placement hcyc hEven1 hZcent3)
+        ((⟨0, 1⟩ : GaussianInt) * c)) fixedBand hWi' (by simpa [hEven1, ← hJnext] using hZ3)
+        hUpos (childPositive i) hWcent3 (by simpa [hEven1, ← hJnext] using hZcent3)
       simpa [i, j, directionSlot, hI1, hI2, hEven1, (turnFlip i).1] using E
     · have E := BandOrientedChildParentRightEndpoint q cfg.proper j 0 F
         (TileTranslation (placement.layout.P j true)
           placement.rightNeighborDisplacement)
         (TileTranslation (placement.layout.P i true) c) fixedBand hWj'
-            (RightBoundaryRecordsGeometry.hZ4' C D T N h k x bundle placement hEven0 hJprev hZ4)
-        hUpos (childPositive j) hWcent4 (RightBoundaryRecordsGeometry.hZcent4' C D T N h k x
-            bundle placement hEven0 hJprev hZcent4)
+            (by simpa [hEven0, hJprev] using hZ4)
+        hUpos (childPositive j) hWcent4 (by simpa [hEven0, hJprev] using hZcent4)
       simpa [i, j, directionSlot, hI0, hEven0, (turnFlip j).1] using E
 
 end ApollonianSuperharmonic

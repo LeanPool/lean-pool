@@ -996,48 +996,6 @@ private theorem hlabelsAB :
   · exact Or.inr ⟨label_T0' x jAB h.1,
       label_T0 x (jAB + 1) h.2⟩
 
-private theorem hownerAligned' :
-    (by
-      classical
-      exact
-        ∀ (ι : Type), ∀ (owner : GaussianInt → ι), ∀ (T0 : ProtoTile), ∀ (T0' : ProtoTile), ∀ (ia
-            : ι), ∀ (ib : ι), ∀ (x : GaussianInt),
-        let outerLabel : GaussianInt → Fin 4 → Fin 3 := fun x j =>
-          if LatticeVertexIncidentCell x j ∈ T0.cells then 0
-          else if LatticeVertexIncidentCell x j ∈ T0'.cells then 1 else 2
-        ∀ (jAB : Fin (4 : ℕ)), ((outerLabel x jAB = 0 ∧ owner (LatticeVertexIncidentCell x jAB) =
-            ia ∧ owner (LatticeVertexIncidentCell x (jAB + 1)) = ib) ∨ (outerLabel x jAB = 1 ∧
-            owner (LatticeVertexIncidentCell x jAB) = ib ∧ owner (LatticeVertexIncidentCell x
-            (jAB + 1)) = ia)) → (
-        let o0 := owner (LatticeVertexIncidentCell x jAB)
-        let o1 := owner (LatticeVertexIncidentCell x (jAB + 1))
-        (outerLabel x jAB = 0 ∧ o0 = ia ∧ o1 = ib) ∨ (outerLabel x jAB = 1 ∧ o0 = ib ∧ o1 = ia))
-            ) := by
-  classical
-  intro ι owner T0 T0' ia ib x outerLabel jAB hownerAligned o0 o1
-  simpa [o0, o1] using hownerAligned
-
-private theorem hownerRepeat :
-    (by
-      classical
-      exact
-        ∀ (ι : Type), ∀ (owner : GaussianInt → ι), ∀ (x : GaussianInt), (∀ (x : GaussianInt), ∀
-            (j : Fin 4), owner (LatticeVertexIncidentCell x j) = owner (LatticeVertexIncidentCell
-            x (j + 1)) ∨ owner (LatticeVertexIncidentCell x j) = owner (LatticeVertexIncidentCell
-            x (j + 2)) ∨ owner (LatticeVertexIncidentCell x j) = owner (LatticeVertexIncidentCell
-            x (j + 3)) ∨ owner (LatticeVertexIncidentCell x (j + 1)) = owner
-            (LatticeVertexIncidentCell x (j + 2)) ∨ owner (LatticeVertexIncidentCell x (j + 1)) =
-            owner (LatticeVertexIncidentCell x (j + 3)) ∨ owner (LatticeVertexIncidentCell x (j +
-            2)) = owner (LatticeVertexIncidentCell x (j + 3))) → (∀ (jAB : Fin (4 : ℕ)),
-        let o0 := owner (LatticeVertexIncidentCell x jAB)
-        let o1 := owner (LatticeVertexIncidentCell x (jAB + 1))
-        let o2 := owner (LatticeVertexIncidentCell x (jAB + 2))
-        let o3 := owner (LatticeVertexIncidentCell x (jAB + 3))
-        o0 = o1 ∨ o0 = o2 ∨ o0 = o3 ∨ o1 = o2 ∨ o1 = o3 ∨ o2 = o3) ) := by
-  classical
-  intro ι owner x owner_repeat_at jAB o0 o1 o2 o3
-  simpa [o0, o1, o2, o3] using owner_repeat_at x jAB
-
 private theorem hcell3side :
     (by
       classical
@@ -1708,9 +1666,8 @@ theorem P5635T1EndpointDiagonalOwnership {ι : Type}
   have hlabelsAB := EndpointDiagonalGeometry.hlabelsAB T0 T0' x label_T0 label_T0' jAB htransABx
   let o2 := owner (LatticeVertexIncidentCell x (jAB + 2))
   let o3 := owner (LatticeVertexIncidentCell x (jAB + 3))
-  have hownerAligned' := EndpointDiagonalGeometry.hownerAligned' ι owner T0 T0' ia ib x jAB
-      hownerAligned
-  have hownerRepeat := EndpointDiagonalGeometry.hownerRepeat ι owner x owner_repeat_at jAB
+  have hownerAligned' := hownerAligned
+  have hownerRepeat := owner_repeat_at x jAB
   rcases hlabelGood with hGood | hGood
   · have hcell2 : LatticeVertexIncidentCell x (jAB + 2) ∈ R.cells :=
       label_eq_two_mem R x hsectorCover (jAB + 2) hGood.1

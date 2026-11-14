@@ -478,26 +478,6 @@ private theorem hboundary :
       (LatticeTileGridStructure _ (cert.parent_lattice i s)).1.1 hb
     exact (other_absent x hxR i s hi j hj).elim
 
-private theorem endpoint_inD :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg :
-            BandOrderedGeneralConfiguration q), ∀ (T : ProtoTile), ∀ (cert :
-            BandOrderedGeneralLayoutCertificate q cfg C T), ∀ (D : Finset GaussianInt),
-            (Finset.Nonempty cert.O.cells) → ((∀ (x : GaussianInt), (x ∈ FootprintVertices
-            cert.O) → (x ∈ D)) → ((∀ (U : ProtoTile), ∀ (x : GaussianInt), (U.cells.Nonempty) →
-            ((x ∈ BoundaryFootprintVertices U) → (x ∈ FootprintVertices U))) → ((∀ (x :
-            GaussianInt), (x ∈ ({cert.precursorBoundary.a, cert.precursorBoundary.b} : Finset
-            GaussianInt)) → (x ∈ BoundaryFootprintVertices (TileCellComplement (cert.P 0 true)
-            cert.O) ∧ x ∈ BoundaryFootprintVertices (TileCellComplement (cert.P 0 false) cert.O)
-            ∧ x ∈ BoundaryFootprintVertices cert.O)) → (∀ (x : GaussianInt), (x ∈
-            ({cert.precursorBoundary.a, cert.precursorBoundary.b} : Finset GaussianInt)) → (x ∈
-            D))))) ) := by
-  classical
-  intro C q cfg T cert D hO inD boundary_footprint endpoint_boundaries x hxR
-  exact inD x (boundary_footprint cert.O x hO (endpoint_boundaries x hxR).2.2)
-
 private theorem endpoint_notP :
     (by
       classical
@@ -813,8 +793,8 @@ theorem P4339T1PositivePrecursorRoots
         boundary_incident boundary_footprint endpoint_boundaries hcompA_nonempty hcompB_nonempty)
         (PositivePrecursorGeometry.hboundaryB C q cfg T cert hpair boundary_incident
         endpoint_boundaries hcompA_nonempty hcompB_nonempty) other_absent
-    have endpoint_inD := PositivePrecursorGeometry.endpoint_inD C q cfg T cert D hO inD
-        boundary_footprint endpoint_boundaries
+    have endpoint_inD := fun x hxR =>
+      inD x (boundary_footprint cert.O x hO (endpoint_boundaries x hxR).2.2)
     have hcount := PositivePrecursorGeometry.hcount C q cfg T cert hboundary
     refine ⟨(PositivePrecursorGeometry.hRsubset C q cfg T cert D P endpoint_inD
         (PositivePrecursorGeometry.endpoint_notP C q cfg T cert D P hP raw_incident other_absent
