@@ -399,51 +399,6 @@ private theorem hVcCentroid :
   simp [GaussianInt.intCast_re, GaussianInt.intCast_im]
   constructor <;> linarith
 
-private theorem hQbase :
-    (by
-      classical
-      exact
-        ∀ (P : FordFareyParameter), ∀ (Ci : BandCircle), ∀ (horder : P.q₁ < P.q₂), ∀ (hcurv : 1 <
-            P.q₂), ∀ (hcross : P.p₁ * (P.q₂ : Int) - (P.q₁ : Int) * P.p₂ = 1), ∀ (hcross2 : (P.p₂
-            - P.p₁) * (P.q₂ : Int) - ((P.q₂ - P.q₁ : Nat) : Int) * P.p₂ = -1), ∀ (hredchild :
-            Nat.Coprime P.q₂ P.p₂.natAbs),
-        let Q : FordFareyParameter := {
-          p := P.p₂
-          q := P.q₂
-          q_pos := by omega
-          reduced := hredchild
-          p₁ := P.p₁
-          q₁ := P.q₁
-          p₂ := P.p₂ - P.p₁
-          q₂ := P.q₂ - P.q₁
-          sum_p := by ring
-          sum_q := by omega
-          det₁ := by simpa using hcross
-          det₂ := hcross2
-          q₁_lt := horder
-          q₂_pos := by omega
-          unit_case := by intro hu; omega
-        }
-        (BandPrototile (FordCircleCoordinate Q.p Q.q) (FordTile Q.q) ∧ (Q.q = (1 : ℕ) → FordTile
-            Q.q = (⟨{(0 : LatticeCell)}, (0 : GaussianInt)⟩ : ProtoTile)) ∧ ((1 : ℕ) < Q.q
-            → ProperBandQuadruple (FordRecursiveQuadruple Q) ∧ ∃ (S : Fin (3 : ℕ) → Bool →
-            ProtoTile), (∀ (i : Fin (3 : ℕ)), ∀ (s : Bool), BandSubtileOccurrence
-            (FordRecursiveQuadruple Q) (FordTile Q.q) i s (S i s)) ∧ (∀ (x : LatticeCell), x ∈
-            (FordTile Q.q).cells ↔ ∃ (i : Fin (3 : ℕ)) (s : Bool), x ∈ (S i s).cells) ∧ (S (0 :
-            Fin (3 : ℕ)) true).cells = (FordTile Q.q₁).cells ∧ (S (0 : Fin (3 : ℕ)) false).cells
-            = (TileTranslation (FordTile Q.q₁) ⟨(↑Q.q₂ : ℤ), (↑Q.q₂ : ℤ)⟩).cells ∧ (S (1 : Fin (3
-            : ℕ)) true).cells = (TileTranslation (FordTile Q.q₂) ⟨(↑Q.q₁ : ℤ), (0 : ℤ)⟩).cells ∧
-            (S (1 : Fin (3 : ℕ)) false).cells = (TileTranslation (FordTile Q.q₂) ⟨(0 : ℤ), (↑Q.q₁
-            : ℤ)⟩).cells ∧ (S (2 : Fin (3 : ℕ)) true).cells = ∅ ∧ (S (2 : Fin (3 : ℕ))
-            true).anchor = ⟨(↑Q.q₂ : ℤ), (↑Q.q : ℤ)⟩ ∧ (S (2 : Fin (3 : ℕ)) false).cells = ∅ ∧ (S
-            (2 : Fin (3 : ℕ)) false).anchor = ⟨(↑Q.q₁ : ℤ), (0 : ℤ)⟩)) → ((FordCircleCoordinate
-            Q.p Q.q = Ci.1.1) → (BandPrototile Ci.1.1 (FordTile P.q₂))) ) := by
-  classical
-  intro P Ci horder hcurv hcross hcross2 hredchild Q hQrec hQcircle
-  have hbase := hQrec.1
-  rw [hQcircle] at hbase
-  simpa [Q] using hbase
-
 private theorem hUcBand :
     (by
       classical
@@ -826,8 +781,10 @@ theorem P4158T1LargeSecondRestrictions
   have hQrec := FordTileRecursiveIdentification Q
   have hQcircle : FordCircleCoordinate Q.p Q.q = Ci.1.1 := by
     simpa [FordRecursiveQuadruple, Q] using hCi
-  have hQbase := LargeSecondRestrictions.hQbase P Ci horder hcurv hcross hcross2 hredchild hQrec
-      hQcircle
+  have hQbase : BandPrototile Ci.1.1 (FordTile P.q₂) := by
+    have hbase := hQrec.1
+    rw [hQcircle] at hbase
+    simpa [Q] using hbase
   have hUcBand := LargeSecondRestrictions.hUcBand P Ci u hQbase
   have hVcBand := LargeSecondRestrictions.hVcBand P Ci u hQbase
   have hUcells : U.cells = Uc.cells :=

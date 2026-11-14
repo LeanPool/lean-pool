@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.BandPrototileCentroidBounds
 
 public import LeanPool.ApollonianSuperharmonic.P4250T1SlopeOffset
 public import LeanPool.ApollonianSuperharmonic.P4250T1DefinedHalfIntegralSlope
@@ -103,107 +104,8 @@ private theorem hcenterIntegral :
   have hrootne : T.cells.Nonempty := by
     obtain ⟨z, hz⟩ := hcells
     exact ⟨z, (cert.outer_union z).2 ⟨0, true, hz⟩⟩
-  let c := TileCentroid T
-  let reCells : Finset Int := T.cells.image (fun x => x.re)
-  let imCells : Finset Int := T.cells.image (fun x => x.im)
-  have reNe : reCells.Nonempty := Finset.image_nonempty.mpr hrootne
-  have imNe : imCells.Nonempty := Finset.image_nonempty.mpr hrootne
-  have hcentral : CentrallyReflectedAt c T T :=
-    BandPrototileCentralSymmetry (q 0) T hroot
-  have reflect_mem : ∀ p ∈ TileRealization T,
-      (2 * c.1 - p.1, 2 * c.2 - p.2) ∈ TileRealization T := by
-    intro p hp
-    rw [hcentral]
-    exact ⟨p, hp, rfl⟩
-  have hboundRe : ∀ p ∈ TileRealization T,
-      (↑(reCells.min' reNe) : Real) ≤ p.1 ∧
-        p.1 ≤ (↑(reCells.max' reNe) : Real) + 1 := by
-    intro p hp
-    simp only [TileRealization, Set.mem_iUnion] at hp
-    rcases hp with ⟨x, hx, hpx⟩
-    simp only [ClosedSquareRealization, Set.mem_Icc, Prod.le_def] at hpx
-    constructor
-    · have hm := Finset.min'_le reCells x.re
-        (Finset.mem_image.mpr ⟨x, hx, rfl⟩)
-      exact le_trans (by exact_mod_cast hm) hpx.1.1
-    · have hm := Finset.le_max' reCells x.re
-        (Finset.mem_image.mpr ⟨x, hx, rfl⟩)
-      have hm' : (x.re : Real) ≤ (reCells.max' reNe : Real) := by exact_mod_cast hm
-      linarith [hpx.2.1, hm']
-  have hboundIm : ∀ p ∈ TileRealization T,
-      (imCells.min' imNe : Real) ≤ p.2 ∧
-        p.2 ≤ (imCells.max' imNe : Real) + 1 := by
-    intro p hp
-    simp only [TileRealization, Set.mem_iUnion] at hp
-    rcases hp with ⟨x, hx, hpx⟩
-    simp only [ClosedSquareRealization, Set.mem_Icc, Prod.le_def] at hpx
-    constructor
-    · exact le_trans (Int.cast_le.mpr (Finset.min'_le imCells x.im
-        (Finset.mem_image.mpr ⟨x, hx, rfl⟩))) hpx.1.2
-    · have hm := Finset.le_max' imCells x.im
-        (Finset.mem_image.mpr ⟨x, hx, rfl⟩)
-      have hm' : (x.im : Real) ≤ (imCells.max' imNe : Real) := by exact_mod_cast hm
-      linarith [hpx.2.2, hm']
-  let mIm := imCells.min' imNe
-  let MIm := imCells.max' imNe
-  have centerRe : 2 * c.1 = (reCells.min' reNe : Real) + reCells.max' reNe + 1 := by
-    have hmin : ∃ x, x ∈ T.cells ∧ x.re = reCells.min' reNe := by
-      rcases Finset.mem_image.mp (Finset.min'_mem reCells reNe) with ⟨x, hx, he⟩
-      exact ⟨x, hx, he⟩
-    have hmax' : ∃ x, x ∈ T.cells ∧ x.re = reCells.max' reNe := by
-      rcases Finset.mem_image.mp (Finset.max'_mem reCells reNe) with ⟨x, hx, he⟩
-      exact ⟨x, hx, he⟩
-    obtain ⟨xmin, hxmin, hxminre⟩ := hmin
-    obtain ⟨xmax, hmax, hmaxre⟩ := hmax'
-    have pmin : ((reCells.min' reNe : Real), (xmin.im : Real)) ∈ TileRealization T := by
-      simp only [TileRealization, Set.mem_iUnion]
-      refine ⟨xmin, hxmin, ?_⟩
-      simp only [ClosedSquareRealization, Set.mem_Icc, Prod.le_def]
-      exact ⟨⟨by simp [hxminre], by simp []⟩,
-        ⟨by simp [hxminre], by simp⟩⟩
-    have pmax : (((reCells.max' reNe : Int) : Real) + 1, (xmax.im : Real)) ∈ TileRealization T
-        := by
-      simp only [TileRealization, Set.mem_iUnion]
-      refine ⟨xmax, hmax, ?_⟩
-      simp only [ClosedSquareRealization, Set.mem_Icc, Prod.le_def]
-      exact ⟨⟨by simp [hmaxre], by simp⟩,
-        ⟨by simp [hmaxre], by simp⟩⟩
-    have bmin := hboundRe _ (reflect_mem _ pmin)
-    have bmax := hboundRe _ (reflect_mem _ pmax)
-    dsimp at bmin bmax
-    norm_num at bmin bmax ⊢
-    linarith
-  have centerIm : 2 * c.2 = (mIm : Real) + MIm + 1 := by
-    have hmin : ∃ x, x ∈ T.cells ∧ x.im = mIm := by
-      rcases Finset.mem_image.mp (Finset.min'_mem imCells imNe) with ⟨x, hx, he⟩
-      exact ⟨x, hx, he⟩
-    have hmax' : ∃ x, x ∈ T.cells ∧ x.im = MIm := by
-      rcases Finset.mem_image.mp (Finset.max'_mem imCells imNe) with ⟨x, hx, he⟩
-      exact ⟨x, hx, he⟩
-    obtain ⟨xmin, hxmin, hxminim⟩ := hmin
-    obtain ⟨xmax, hmax, hmaxim⟩ := hmax'
-    have pmin : ((xmin.re : Real), (mIm : Real)) ∈ TileRealization T := by
-      simp only [TileRealization, Set.mem_iUnion]
-      refine ⟨xmin, hxmin, ?_⟩
-      simp only [ClosedSquareRealization, Set.mem_Icc, Prod.le_def]
-      refine ⟨⟨by simp, ?_⟩, ⟨by simp, ?_⟩⟩
-      · simp [hxminim]
-      · simp [hxminim]
-    have pmax : ((xmax.re : Real), (MIm : Real) + 1) ∈ TileRealization T := by
-      simp only [TileRealization, Set.mem_iUnion]
-      refine ⟨xmax, hmax, ?_⟩
-      simp only [ClosedSquareRealization, Set.mem_Icc, Prod.le_def]
-      refine ⟨⟨by simp, ?_⟩, ⟨by simp, ?_⟩⟩
-      · simp [hmaxim]
-      · simp [hmaxim]
-    have bmin := hboundIm _ (reflect_mem _ pmin)
-    have bmax := hboundIm _ (reflect_mem _ pmax)
-    dsimp at bmin bmax
-    norm_num at bmin bmax ⊢
-    linarith
-  refine ⟨⟨reCells.min' reNe + reCells.max' reNe + 1,
-    mIm + MIm + 1⟩, ?_⟩
-  apply Prod.ext <;> simp [GaussianRealPoint] <;> linarith [centerRe, centerIm]
+  exact BandPrototileCentroidBounds.integralDoubleCenter T hrootne
+    (BandPrototileCentralSymmetry (q 0) T hroot)
 
 private theorem positive :
     (by

@@ -26,94 +26,6 @@ namespace ApollonianSuperharmonic
 
 namespace CompleteSquareProof
 
-private theorem hboundRe :
-    (by
-      classical
-      exact
-        ∀ (T : ProtoTile),
-        let reCells : Finset Int := T.cells.image (fun x => x.re)
-        ∀ (reNe : reCells.Nonempty), ∀ p ∈ TileRealization T, (↑(reCells.min' reNe) : Real) ≤ p.1
-            ∧ p.1 ≤ (↑(reCells.max' reNe) : Real) + 1
-    ) := by
-  classical
-  intro T reCells reNe p hp
-  simp only [TileRealization, Set.mem_iUnion] at hp
-  rcases hp with ⟨x, hx, hpx⟩
-  simp only [ClosedSquareRealization, Set.mem_Icc, Prod.le_def] at hpx
-  constructor
-  · have hm := Finset.min'_le (T.cells.image (fun x => x.re)) x.re
-        (Finset.mem_image.mpr ⟨x, hx, rfl⟩)
-    exact le_trans (by exact_mod_cast hm) hpx.1.1
-  · have hh := Finset.le_max' (T.cells.image (fun x => x.re))
-        (x.re) (Finset.mem_image.mpr ⟨x, hx, rfl⟩)
-    have hhreal : (x.re : Real) ≤
-        (reCells.max' reNe : Real) := by
-      exact_mod_cast hh
-    linarith [hhreal, hpx.2.1]
-
-private theorem centerRe :
-    (by
-      classical
-      exact
-        ∀ (T : ProtoTile),
-        let c := TileCentroid T
-        let reCells : Finset Int := T.cells.image (fun x => x.re)
-        ∀ (reNe : reCells.Nonempty), (∀ p ∈ TileRealization T, (↑(reCells.min' reNe) : Real) ≤
-            p.1 ∧ p.1 ≤ (↑(reCells.max' reNe) : Real) + 1) → ((∀ p ∈ TileRealization T, (2 * c.1
-            - p.1, 2 * c.2 - p.2) ∈ TileRealization T) → (
-        let mRe := reCells.min' reNe
-        let MRe := reCells.max' reNe
-        (∃ x ∈ T.cells, x.re = mRe) → ((∃ x ∈ T.cells, x.re = MRe) → (2 * c.1 = (mRe : Real) +
-            MRe + 1))))
-    ) := by
-  classical
-  intro T c reCells reNe hboundRe reflect_mem mRe MRe minReCell maxReCell
-  rcases minReCell with ⟨xmin, hxmin, hxminre⟩
-  rcases maxReCell with ⟨xmax, hmax, hmaxre⟩
-  have pmin : ((mRe : Real), (xmin.im : Real)) ∈ TileRealization T := by
-    simp only [TileRealization, Set.mem_iUnion]
-    refine ⟨xmin, hxmin, ?_⟩
-    simp only [ClosedSquareRealization, Set.mem_Icc, Prod.le_def]
-    exact ⟨⟨by simp [hxminre], by simp []⟩,
-      ⟨by simp [hxminre], by simp⟩⟩
-  have pmax : (((MRe : Real) + 1), (xmax.im : Real)) ∈ TileRealization T := by
-    simp only [TileRealization, Set.mem_iUnion]
-    refine ⟨xmax, hmax, ?_⟩
-    simp only [ClosedSquareRealization, Set.mem_Icc, Prod.le_def]
-    exact ⟨⟨by simp [hmaxre], by simp⟩,
-      ⟨by simp [hmaxre], by simp⟩⟩
-  have qmin := reflect_mem _ pmin
-  have qmax := reflect_mem _ pmax
-  have bmin := hboundRe _ qmin
-  have bmax := hboundRe _ qmax
-  dsimp at bmin bmax
-  norm_num at bmin bmax ⊢
-  linarith [bmin.2, bmax.1]
-
-private theorem boundIm :
-    (by
-      classical
-      exact
-        ∀ (T : ProtoTile),
-        let imCells : Finset Int := T.cells.image (fun x => x.im)
-        ∀ (imNe : imCells.Nonempty), ∀ p ∈ TileRealization T, (imCells.min' imNe : Real) ≤ p.2 ∧
-            p.2 ≤ (imCells.max' imNe : Real) + 1
-    ) := by
-  classical
-  intro T imCells imNe p hp
-  simp only [TileRealization, Set.mem_iUnion] at hp
-  rcases hp with ⟨x, hx, hpx⟩
-  simp only [ClosedSquareRealization, Set.mem_Icc, Prod.le_def] at hpx
-  constructor
-  · exact le_trans (Int.cast_le.mpr (Finset.min'_le _ x.im
-        (Finset.mem_image.mpr ⟨x, hx, rfl⟩))) hpx.1.2
-  · have hh := Finset.le_max' (T.cells.image (fun x => x.im))
-        x.im (Finset.mem_image.mpr ⟨x, hx, rfl⟩)
-    have hhreal : (x.im : Real) ≤
-        ((imCells.max' imNe : Int) : Real) := by
-      exact_mod_cast hh
-    linarith [hpx.2.2]
-
 private abbrev centerIm :=
   BandPrototileCentroidBounds.imaginaryCenter
 
@@ -633,7 +545,7 @@ theorem BandPrototileCompleteSquareCentroid
     BandPrototileCentralSymmetry C T hT
   have hboundRe : ∀ p ∈ TileRealization T,
       (↑(reCells.min' reNe) : Real) ≤ p.1 ∧
-        p.1 ≤ (↑(reCells.max' reNe) : Real) + 1 := CompleteSquareProof.hboundRe T reNe
+        p.1 ≤ (↑(reCells.max' reNe) : Real) + 1 := BandPrototileCentroidBounds.realBounds T reNe
   have reflect_mem : ∀ p ∈ TileRealization T,
       (2 * c.1 - p.1, 2 * c.2 - p.2) ∈ TileRealization T := by
     intro p hp
@@ -649,11 +561,11 @@ theorem BandPrototileCompleteSquareCentroid
     have hm := Finset.max'_mem reCells reNe
     rcases Finset.mem_image.mp hm with ⟨x, hx, he⟩
     exact ⟨x, hx, he⟩
-  have centerRe : 2 * c.1 = (mRe : Real) + MRe + 1 := CompleteSquareProof.centerRe T reNe
-      hboundRe reflect_mem minReCell maxReCell
+  have centerRe : 2 * c.1 = (mRe : Real) + MRe + 1 :=
+      BandPrototileCentroidBounds.realCoordinateCenter T reNe reflect_mem
   have boundIm : ∀ p ∈ TileRealization T,
       (imCells.min' imNe : Real) ≤ p.2 ∧ p.2 ≤ (imCells.max' imNe : Real) + 1 :=
-          CompleteSquareProof.boundIm T imNe
+          BandPrototileCentroidBounds.imaginaryBounds T imNe
   let mIm := imCells.min' imNe
   let MIm := imCells.max' imNe
   have minImCell : ∃ x ∈ T.cells, x.im = mIm := by

@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.ZippedChainInvariant
 
 public import LeanPool.ApollonianSuperharmonic.P4261T2AdjacentMatrixSlope
 public import LeanPool.ApollonianSuperharmonic.P4250T1DefinedHalfIntegralSlope
@@ -60,36 +61,9 @@ theorem P4261T2UnitStringTelescoping
     apply Prod.ext <;> simp only [invariant, hp, hr, Option.getD_some]
     · linear_combination -h0
     · linear_combination -h1
-  have hfirstChain : (tiles.zip hs).IsChain invRel := hf.2.2.imp invStep
-  have hsecondChain : (reverseTiles.zip reverseHs).IsChain invRel := hr.2.2.imp invStep
-  let : Trans invRel invRel invRel := ⟨by
-    intro a b c hab hbc
-    exact hab.trans hbc⟩
-  let : Std.Refl invRel := ⟨fun _ => rfl⟩
-  have hfirstPairwise := List.isChain_iff_pairwise.mp hfirstChain
-  have hsecondPairwise := List.isChain_iff_pairwise.mp hsecondChain
-  obtain ⟨postTiles, hpostTiles⟩ := List.head?_eq_some_iff.mp hf.1.2.1
-  obtain ⟨postHs, hpostHs⟩ := List.head?_eq_some_iff.mp hh
-  have hzipHead : tiles.zip hs = (R, hendpoint) :: postTiles.zip postHs := by
-    rw [hpostTiles, hpostHs]
-    rfl
-  obtain ⟨preTiles, hpreTiles⟩ := List.getLast?_eq_some_iff.mp hr.1.2.2.1
-  obtain ⟨preHs, hpreHs⟩ := List.getLast?_eq_some_iff.mp hh'
-  have hlenPre : preTiles.length = preHs.length := by
-    have hlen := List.Forall₂.length_eq hr.2.1
-    rw [hpreTiles, hpreHs, List.length_append, List.length_singleton,
-      List.length_append, List.length_singleton] at hlen
-    omega
-  have hzipLast : reverseTiles.zip reverseHs = preTiles.zip preHs ++ [(R, hendpoint)] := by
-    rw [hpreTiles, hpreHs, List.zip_append hlenPre]
-    simp
-  have hInvU : invariant (R, hendpoint) = invariant (U, g) := by
-    rw [hzipHead] at hfirstPairwise hU
-    simpa using hfirstPairwise.rel_head hU
-  have hInvV : invariant (V, k) = invariant (R, hendpoint) := by
-    rw [hzipLast] at hsecondPairwise hV
-    simpa using hsecondPairwise.rel_getLast hV
-  have hInvUV := hInvU.symm.trans hInvV.symm
+  have hInvUV := zippedChainInvariant invariant tiles reverseTiles hs reverseHs R hendpoint
+    hf.1.2.1 hh hr.1.2.2.1 hh' (List.Forall₂.length_eq hr.2.1)
+    (hf.2.2.imp invStep) (hr.2.2.imp invStep) U V g k hU hV
   refine ⟨s, t, hsg, htk, ?_, ?_⟩
   · have heq := congrArg Prod.fst hInvUV
     simp only [invariant, hsg, htk, Option.getD_some] at heq

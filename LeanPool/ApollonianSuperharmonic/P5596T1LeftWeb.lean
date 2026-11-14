@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.UnitQuadraticTranslation
 public import LeanPool.ApollonianSuperharmonic.LatticeTileNonempty
 
 public import LeanPool.ApollonianSuperharmonic.CurvatureOneBandCircleClassification
@@ -225,70 +226,6 @@ private theorem hvalues :
     ring
   · rw [hg₂ y hy₂, hval₂ y hy₂]
     omega
-
-private theorem translationAt244 :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle),
-          ∀ (x : GaussianInt),
-            C.1.1.1 = (1 : ℤ) →
-              ∀ (z : GaussianInt),
-                CircleMatrix C =
-                    ![![(↑((1 : ℤ) + z.re) : ℝ), (↑z.im : ℝ)],
-                      ![(↑z.im : ℝ), -(↑z.re : ℝ)]] →
-                  (let g := fun (x : GaussianInt) =>
-                      ((1 : ℤ) + z.re) * (x.re * (x.re - (1 : ℤ)) / (2 : ℤ)) -
-                          z.re * (x.im * (x.im - (1 : ℤ)) / (2 : ℤ)) +
-                        z.im * x.re * x.im;
-                    let T := (⟨{(0 : LatticeCell)}, (0 : GaussianInt)⟩ : ProtoTile);
-                    let h := CurvatureOneOdometer z;
-                    BandPrototile C.1.1 T ∧
-                      TileOdometer C.1.1 T h ∧
-                        (↑h.domain : Set GaussianInt) = FootprintVertices T ∧
-                          (∀ x ∈ h.domain, g x = h.value x) ∧
-                            GlobalOdometerExtends g h ∧
-                              IntegerSuperharmonicRepresentative (CircleMatrix C) g ∧
-                                (∀ v ∈ TilingLattice C,
-                                ∃ (a : GaussianInt),
-                                (CircleMatrix C).mulVec ![(↑v.re : ℝ), (↑v.im : ℝ)] =
-                                ![(↑a.re : ℝ), (↑a.im : ℝ)] ∧
-                                ∀ (x : GaussianInt),
-                                g (x + v) = g x + x.re * a.re + x.im * a.im + g v) ∧
-                                ∃ (b : ℝ × ℝ),
-                                ∀ v ∈ TilingLattice C,
-                                ∀ (x : GaussianInt),
-                                (↑(g (x + v)) : ℝ) -
-                                LatticeQuadraticForm (CircleMatrix C) (x + v) -
-                                (b.1 * (↑(x + v).re : ℝ) + b.2 * (↑(x + v).im : ℝ)) =
-                                (↑(g x) : ℝ) - LatticeQuadraticForm (CircleMatrix C) x -
-                                (b.1 * (↑x.re : ℝ) + b.2 * (↑x.im : ℝ))) →
-                    ∀ (v : GaussianInt),
-                      P5570T1UnitQuadratic z (x + v) =
-                        P5570T1UnitQuadratic z x + P5570T1UnitQuadratic z v +
-                            ((1 + z.re) * v.re + z.im * v.im) * x.re +
-                          (z.im * v.re - z.re * v.im) * x.im
-    ) := by
-  classical
-  intro C x hc z hmatrix hperiodic v
-  obtain ⟨w, hw, hshift⟩ := hperiodic.2.2.2.2.2.2.1 v
-    (by simp [TilingLattice, hc])
-  have hr : (1+z.re)*v.re+z.im*v.im = w.re := by
-    have he := congrFun hw 0
-    simp only [hmatrix, Matrix.mulVec, dotProduct, Fin.sum_univ_two,
-      Matrix.cons_val_zero, Matrix.cons_val_one] at he
-    exact_mod_cast he
-  have hi : z.im*v.re-z.re*v.im = w.im := by
-    have he := congrFun hw 1
-    simp only [hmatrix, Matrix.mulVec, dotProduct, Fin.sum_univ_two,
-      Matrix.cons_val_zero, Matrix.cons_val_one] at he
-    have he' : z.im*v.re + -z.re*v.im = w.im := by exact_mod_cast he
-    linear_combination he'
-  have he : P5570T1UnitQuadratic z (x+v) =
-      P5570T1UnitQuadratic z x + x.re*w.re + x.im*w.im +
-        P5570T1UnitQuadratic z v := hshift x
-  rw [← hr, ← hi] at he
-  linear_combination he
 
 private theorem hq :
     (by
@@ -603,75 +540,6 @@ private theorem hmatrixAt529 :
   all_goals norm_num
   all_goals ring
 
-private theorem translationAt543 :
-    (by
-      classical
-      exact
-        ∀ (x : GaussianInt),
-          ∀ (q : Fin (4 : ℕ) → CircleCoordinates),
-            ∀ (i : Fin (3 : ℕ)),
-              ∀ (hq : ProperBandQuadruple q),
-                ∀ (hpos : 0 < (q i.succ).1),
-                  let Ci : BandCircle :=
-                    ⟨⟨q i.succ, Or.inl hpos, q, hq.1, i.succ, rfl⟩, hpos⟩
-                  ∀ (z : GaussianInt),
-                    Ci.1.1.1 = 1 →
-                      CircleMatrix Ci =
-                          ![![((1 + z.re : ℤ) : ℝ), (z.im : ℝ)],
-                            ![(z.im : ℝ), (-z.re : ℝ)]] →
-                        (let g := fun (x : GaussianInt) =>
-                            ((1 : ℤ) + z.re) * (x.re * (x.re - (1 : ℤ)) / (2 : ℤ)) -
-                                z.re * (x.im * (x.im - (1 : ℤ)) / (2 : ℤ)) +
-                              z.im * x.re * x.im;
-                          let T := (⟨{(0 : LatticeCell)}, (0 : GaussianInt)⟩ : ProtoTile);
-                          let h := CurvatureOneOdometer z;
-                          BandPrototile Ci.1.1 T ∧
-                            TileOdometer Ci.1.1 T h ∧
-                              (↑h.domain : Set GaussianInt) = FootprintVertices T ∧
-                                (∀ x ∈ h.domain, g x = h.value x) ∧
-                                GlobalOdometerExtends g h ∧
-                                IntegerSuperharmonicRepresentative (CircleMatrix Ci) g ∧
-                                (∀ v ∈ TilingLattice Ci,
-                                ∃ (a : GaussianInt),
-                                (CircleMatrix Ci).mulVec ![(↑v.re : ℝ), (↑v.im : ℝ)] =
-                                ![(↑a.re : ℝ), (↑a.im : ℝ)] ∧
-                                ∀ (x : GaussianInt),
-                                g (x + v) = g x + x.re * a.re + x.im * a.im + g v) ∧
-                                ∃ (b : ℝ × ℝ),
-                                ∀ v ∈ TilingLattice Ci,
-                                ∀ (x : GaussianInt),
-                                (↑(g (x + v)) : ℝ) -
-                                LatticeQuadraticForm (CircleMatrix Ci) (x + v) -
-                                (b.1 * (↑(x + v).re : ℝ) + b.2 * (↑(x + v).im : ℝ)) =
-                                (↑(g x) : ℝ) - LatticeQuadraticForm (CircleMatrix Ci) x -
-                                (b.1 * (↑x.re : ℝ) + b.2 * (↑x.im : ℝ))) →
-                          ∀ (v : GaussianInt),
-                            P5570T1UnitQuadratic z (x + v) =
-                              P5570T1UnitQuadratic z x + P5570T1UnitQuadratic z v +
-                                ((1 + z.re) * v.re + z.im * v.im) * x.re +
-                                (z.im * v.re - z.re * v.im) * x.im
-    ) := by
-  classical
-  intro x q i hq hpos Ci z hCiunit hmatrix hperiodic v
-  obtain ⟨w,hw,hshift⟩ := hperiodic.2.2.2.2.2.2.1 v
-    (by simp [TilingLattice, hCiunit])
-  have hr : (1+z.re)*v.re+z.im*v.im = w.re := by
-    have he := congrFun hw 0
-    simp only [hmatrix, Matrix.mulVec, dotProduct, Fin.sum_univ_two,
-      Matrix.cons_val_zero, Matrix.cons_val_one] at he
-    exact_mod_cast he
-  have hi : z.im*v.re-z.re*v.im = w.im := by
-    have he := congrFun hw 1
-    simp only [hmatrix, Matrix.mulVec, dotProduct, Fin.sum_univ_two,
-      Matrix.cons_val_zero, Matrix.cons_val_one] at he
-    have he' : z.im*v.re + -z.re*v.im = w.im := by exact_mod_cast he
-    linear_combination he'
-  have he : P5570T1UnitQuadratic z (x+v) =
-      P5570T1UnitQuadratic z x + x.re*w.re + x.im*w.im +
-        P5570T1UnitQuadratic z v := hshift x
-  rw [← hr, ← hi] at he
-  linear_combination he
-
 private theorem hquad :
     (by
       classical
@@ -918,8 +786,8 @@ private theorem positiveStep :
       P5570T1UnitQuadratic z (x+v) =
         P5570T1UnitQuadratic z x + P5570T1UnitQuadratic z v +
         ((1+z.re)*v.re+z.im*v.im)*x.re +
-        (z.im*v.re-z.re*v.im)*x.im := LeftWebGeometry.translationAt543 x q i hq
-            hpos z hCiunit hmatrix hperiodic v
+        (z.im*v.re-z.re*v.im)*x.im := unitQuadraticTranslation z x v (CircleMatrix Ci) hmatrix
+          (hperiodic.2.2.2.2.2.2.1 v (by simp [TilingLattice, hCiunit]))
   have hquad : FourNeighborLaplacian
       (fun y => P5570T1UnitQuadratic z y + A.re*y.re + A.im*y.im + B) x = 1 :=
           LeftWebGeometry.hquad x z A B translation
@@ -1002,7 +870,8 @@ theorem P5596T1LeftWeb
         have hq : FourNeighborLaplacian
             (fun y => P5570T1UnitQuadratic z y +
               a₁.re * y.re + a₁.im * y.im + (b₁ + c₁)) x = 1 := LeftWebGeometry.hq x z a₁ b₁ c₁
-                  (LeftWebGeometry.translationAt244 C x hc z hmatrix hperiodic)
+                  (fun v => unitQuadraticTranslation z x v (CircleMatrix C) hmatrix
+                    (hperiodic.2.2.2.2.2.2.1 v (by simp [TilingLattice, hc])))
         simpa only [FourNeighborLaplacian,
           hvalues x (Or.inl rfl),
           hvalues (x + 1) (Or.inr (Or.inl rfl)),

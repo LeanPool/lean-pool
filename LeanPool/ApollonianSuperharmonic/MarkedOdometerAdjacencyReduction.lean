@@ -1078,49 +1078,6 @@ private theorem hdiffUnit :
         simp [matrixVector]
         ring
 
-private theorem hdiffUnitInv' :
-    (by
-      classical
-      exact
-        ∀ (C₀ : BandCircle), ∀ (Cᵢ : BandCircle), ∀ (T₀ : ProtoTile), ∀ (Tᵢ : ProtoTile), ∀ (h₀ :
-            PartialOdometer), ∀ (hᵢ : PartialOdometer), ∀ (x : GaussianInt), ∀ (bundle :
-            BandOrderedGeneralNormalizedOccurrenceBundle C₀ Cᵢ T₀ Tᵢ h₀ hᵢ x), ∀ (ginv :
-            BandPackingSymmetry),
-        let selectedSupport := bundle.pieces bundle.selectedSlot bundle.selectedSign
-        ∀ (pFixed : ℝ × ℝ), ∀ (pSelected : ℝ × ℝ), (bundle.normalizedFixedCircle.1.1.1 = (1 : ℤ))
-            → (∀ (v : GaussianInt),
-        let matrixVector (c : CircleCoordinates) (w : GaussianInt) : ℝ × ℝ :=
-          (((1 + (c.2.re : ℝ)) * (w.re : ℝ) +
-              (c.2.im : ℝ) * (w.im : ℝ)) / 2,
-            ((c.2.im : ℝ) * (w.re : ℝ) +
-              (1 - (c.2.re : ℝ)) * (w.im : ℝ)) / 2)
-        let slopeDifferenceAction : BandPackingSymmetry → GaussianInt →
-            (ℝ × ℝ) → ℝ × ℝ :=
-          BandPackingSymmetry.rec
-            (fun _ d => d)
-            (fun _ d => (-d.2, d.1))
-            (fun _ d => (-d.1, d.2))
-            (fun z w d =>
-              (d.1 + (z.re : ℝ) * (w.re : ℝ) + (z.im : ℝ) * (w.im : ℝ),
-                d.2 + (z.im : ℝ) * (w.re : ℝ) - (z.re : ℝ) * (w.im : ℝ)))
-            (fun _ b iha ihb w d =>
-              iha (BandPackingSymmetryVectorAction b w) (ihb w d))
-        (∀ (a : BandPackingSymmetry), ∀ (c : CircleCoordinates), ∀ (w : GaussianInt), c.1 = 1 →
-            matrixVector (BandPackingSymmetryCircleAction a c) (BandPackingSymmetryVectorAction a
-            w) = slopeDifferenceAction a w (matrixVector c w)) → ((BandPackingSymmetrySlopeAction
-            ginv selectedSupport pSelected - BandPackingSymmetrySlopeAction ginv
-            bundle.normalizedFixed pFixed = slopeDifferenceAction ginv v (matrixVector
-            bundle.normalizedFixedCircle.1.1 v)) →
-            (BandPackingSymmetrySlopeAction ginv selectedSupport pSelected -
-            BandPackingSymmetrySlopeAction ginv bundle.normalizedFixed pFixed = matrixVector
-            (BandPackingSymmetryCircleAction ginv bundle.normalizedFixedCircle.1.1)
-            (BandPackingSymmetryVectorAction ginv v)))) ) := by
-  classical
-  intro C₀ Cᵢ T₀ Tᵢ h₀ hᵢ x bundle ginv selectedSupport pFixed pSelected hcurvUnit v matrixVector
-      slopeDifferenceAction matrixCov hdiffUnitInv
-  exact hdiffUnitInv.trans (matrixCov ginv
-    bundle.normalizedFixedCircle.1.1 v hcurvUnit).symm
-
 private theorem htargetMatrix :
     (by
       classical
@@ -1146,43 +1103,6 @@ private theorem htargetMatrix :
     ring
   · simp [matrixVector, hmatrixInv2, hmatrixInv3]
     ring
-
-private theorem hdiffUnitInvFinal :
-    (by
-      classical
-      exact
-        ∀ (C₀ : BandCircle), ∀ (Cᵢ : BandCircle), ∀ (T₀ : ProtoTile), ∀ (Tᵢ : ProtoTile), ∀ (h₀ :
-            PartialOdometer), ∀ (hᵢ : PartialOdometer), ∀ (x : GaussianInt), ∀ (bundle :
-            BandOrderedGeneralNormalizedOccurrenceBundle C₀ Cᵢ T₀ Tᵢ h₀ hᵢ x), ∀ (ginv :
-            BandPackingSymmetry),
-        let selectedSupport := bundle.pieces bundle.selectedSlot bundle.selectedSign
-        ∀ (pFixed : ℝ × ℝ), ∀ (pSelected : ℝ × ℝ), ∀ (v : GaussianInt),
-        let matrixVector (c : CircleCoordinates) (w : GaussianInt) : ℝ × ℝ :=
-          (((1 + (c.2.re : ℝ)) * (w.re : ℝ) +
-              (c.2.im : ℝ) * (w.im : ℝ)) / 2,
-            ((c.2.im : ℝ) * (w.re : ℝ) +
-              (1 - (c.2.re : ℝ)) * (w.im : ℝ)) / 2)
-        (BandPackingSymmetryCircleAction ginv bundle.normalizedFixedCircle.1.1 = Cᵢ.1.1) →
-            ((BandPackingSymmetrySlopeAction ginv selectedSupport pSelected -
-            BandPackingSymmetrySlopeAction ginv bundle.normalizedFixed pFixed = matrixVector
-            (BandPackingSymmetryCircleAction ginv bundle.normalizedFixedCircle.1.1)
-            (BandPackingSymmetryVectorAction ginv v)) → ((matrixVector Cᵢ.1.1
-            (BandPackingSymmetryVectorAction ginv v) = (CircleMatrix Cᵢ 0 0 *
-            (BandPackingSymmetryVectorAction ginv v).re + CircleMatrix Cᵢ 0 1 *
-            (BandPackingSymmetryVectorAction ginv v).im, CircleMatrix Cᵢ 1 0 *
-            (BandPackingSymmetryVectorAction ginv v).re + CircleMatrix Cᵢ 1 1 *
-            (BandPackingSymmetryVectorAction ginv v).im)) → (BandPackingSymmetrySlopeAction ginv
-            selectedSupport pSelected - BandPackingSymmetrySlopeAction ginv
-            bundle.normalizedFixed pFixed = (CircleMatrix Cᵢ 0 0 *
-            (BandPackingSymmetryVectorAction ginv v).re + CircleMatrix Cᵢ 0 1 *
-            (BandPackingSymmetryVectorAction ginv v).im, CircleMatrix Cᵢ 1 0 *
-            (BandPackingSymmetryVectorAction ginv v).re + CircleMatrix Cᵢ 1 1 *
-            (BandPackingSymmetryVectorAction ginv v).im)))) ) := by
-  classical
-  intro C₀ Cᵢ T₀ Tᵢ h₀ hᵢ x bundle ginv selectedSupport pFixed pSelected v matrixVector
-      hinverseFixedCircleCoord hdiffUnitInv' htargetMatrix
-  rw [hinverseFixedCircleCoord] at hdiffUnitInv'
-  exact hdiffUnitInv'.trans htargetMatrix
 
 private theorem fixedCells :
     (by
@@ -2456,13 +2376,15 @@ private theorem leftAdjacencyCase :
       simpa [bundle.normalized_fixed_function_eq, hfunL] using hslopeFixedInv
     have hslopeSelectedOriginal : PartialOdometerSlope h' = some pSelectedInv := by
       simpa [h', hfunL] using hslopeSelectedInv
+    have hdiffUnitTransport := hdiffUnitInv.trans
+      (matrixCov ginv bundle.normalizedFixedCircle.1.1 v hcurvUnit).symm
+    rw [hinverseFixedCircleCoord] at hdiffUnitTransport
+    have hdiffUnitFinal := hdiffUnitTransport.trans
+      (MarkedAdjacencyGeometry.htargetMatrix Cᵢ ginv v hmatrixInv0 hmatrixInv1 hmatrixInv2
+        hmatrixInv3)
     have hleftInv := MarkedAdjacencyGeometry.hleftInvAt1222 C₀ Cᵢ T₀ Tᵢ h₀ hᵢ x bundle ginv
         pFixed pSelected v hinverseUnitCurv hcentUnitInv orientationInv hunitStepInv
-        (MarkedAdjacencyGeometry.hdiffUnitInvFinal C₀ Cᵢ T₀ Tᵢ h₀ hᵢ x bundle ginv pFixed
-        pSelected v hinverseFixedCircleCoord (MarkedAdjacencyGeometry.hdiffUnitInv' C₀ Cᵢ T₀
-        Tᵢ h₀ hᵢ x bundle ginv pFixed pSelected hcurvUnit v matrixCov hdiffUnitInv)
-        (MarkedAdjacencyGeometry.htargetMatrix Cᵢ ginv v hmatrixInv0 hmatrixInv1 hmatrixInv2
-        hmatrixInv3)) hOFixedOriginal hOSelectedOriginal hslopeFixedOriginal
+        hdiffUnitFinal hOFixedOriginal hOSelectedOriginal hslopeFixedOriginal
         hslopeSelectedOriginal
     exact Or.inl ⟨hinverseCircleFixed, hleftInv, hnotOriginal⟩
   · rcases hpresented with

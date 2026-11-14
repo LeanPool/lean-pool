@@ -882,176 +882,6 @@ private theorem endpointsDistinct :
   apply headLastNe p hnd hlen
   rw [hh, hl, heq]
 
-private theorem commonPair0 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin (4 : ℕ) → CircleCoordinates)
-          (cfg : BandOrderedGeneralConfiguration q)
-          (C : BandCircle)
-          (T : ProtoTile)
-          (cert : BandOrderedGeneralLayoutCertificate q cfg C T)
-          (a b : PeriodicSubtileIndex)
-          (row :
-            BandOrderedGeneralSelectedContactRow q cfg C T cert
-              a b),
-          let P := cert.P;
-          let O := cert.O;
-          let u := cert.u;
-          let v := cert.v;
-          let face0 :=
-            selectedFirstFace q cfg C T cert a b row;
-          let F0 :=
-            (cert.modifiedFaceEquivalence.symm :
-                PeriodicSubtileFaceIndex →
-                  cert.modified.plane.Face)
-              face0;
-          ∀ (iA iB : Fin (3 : ℕ)),
-            cert.modified.plane.faceVertex F0 iA = a →
-              cert.modified.plane.faceVertex F0 iB = b →
-                cert.modified.rho F0 ∈
-                  FootprintVertices
-                      (ModifiedSubtileOccurrenceInterpretation P
-                        O u v a) ∩
-                    FootprintVertices
-                      (ModifiedSubtileOccurrenceInterpretation P
-                        O u v b)) := by
-  classical
-  intro q cfg C T cert a b row P O u v face0 F0 iA iB ha0 hb0
-  exact ⟨by simpa only [ha0, cert.modified_tile] using cert.modified.rho_common F0 iA,
-    by simpa only [hb0, cert.modified_tile] using cert.modified.rho_common F0 iB⟩
-
-private theorem commonPair1 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin (4 : ℕ) → CircleCoordinates)
-          (cfg : BandOrderedGeneralConfiguration q)
-          (C : BandCircle)
-          (T : ProtoTile)
-          (cert : BandOrderedGeneralLayoutCertificate q cfg C T)
-          (a b : PeriodicSubtileIndex)
-          (row :
-            BandOrderedGeneralSelectedContactRow q cfg C T cert
-              a b),
-          let P := cert.P;
-          let O := cert.O;
-          let u := cert.u;
-          let v := cert.v;
-          let face1 :=
-            selectedSecondFace q cfg C T cert a b row;
-          let F1 :=
-            (cert.modifiedFaceEquivalence.symm :
-                PeriodicSubtileFaceIndex →
-                  cert.modified.plane.Face)
-              face1;
-          ∀ (jA jB : Fin (3 : ℕ)),
-            cert.modified.plane.faceVertex F1 jA = a →
-              cert.modified.plane.faceVertex F1 jB = b →
-                cert.modified.rho F1 ∈
-                  FootprintVertices
-                      (ModifiedSubtileOccurrenceInterpretation P
-                        O u v a) ∩
-                    FootprintVertices
-                      (ModifiedSubtileOccurrenceInterpretation P
-                        O u v b)) := by
-  classical
-  intro q cfg C T cert a b row P O u v face1 F1 jA jB ha1 hb1
-  exact ⟨by simpa only [ha1, cert.modified_tile] using cert.modified.rho_common F1 jA,
-    by simpa only [hb1, cert.modified_tile] using cert.modified.rho_common F1 jB⟩
-
-private theorem ownerPoint0 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin (4 : ℕ) → CircleCoordinates)
-          (cfg : BandOrderedGeneralConfiguration q)
-          (C : BandCircle)
-          (T : ProtoTile)
-          (cert : BandOrderedGeneralLayoutCertificate q cfg C T)
-          (a b : PeriodicSubtileIndex)
-          (row :
-            BandOrderedGeneralSelectedContactRow q cfg C T cert
-              a b),
-          let P := cert.P;
-          let O := cert.O;
-          let u := cert.u;
-          let v := cert.v;
-          (∀ (x : PeriodicSubtileIndex),
-              FootprintVertices
-                  (ModifiedSubtileOccurrenceInterpretation P O u
-                    v x) ⊆
-                FootprintVertices
-                  (SubtileOccurrenceInterpretation P u v x)) →
-            let occurrence :=
-              SubtileOccurrenceInterpretation cert.P cert.u
-                cert.v;
-            let owners :=
-              P4418T3EndpointOwnerIndices q cfg C T cert a b
-                row;
-            let face0 :=
-              selectedFirstFace q cfg C T cert a b row;
-            let F0 :=
-              (cert.modifiedFaceEquivalence.symm :
-                  PeriodicSubtileFaceIndex →
-                    cert.modified.plane.Face)
-                face0;
-            ∀ (iO : Fin (3 : ℕ)),
-              cert.modified.plane.faceVertex F0 iO = owners.1 →
-                cert.modified.rho F0 ∈
-                  FootprintVertices (occurrence owners.1)) := by
-  classical
-  intro q cfg C T cert a b row P O u v modifiedFootSubset occurrence owners face0 F0 iO ho0
-  have h := cert.modified.rho_common F0 iO
-  rw [ho0, cert.modified_tile] at h
-  exact modifiedFootSubset owners.1 h
-
-private theorem ownerPoint1 :
-    (by
-      classical
-      exact
-        ∀ (q : Fin (4 : ℕ) → CircleCoordinates)
-          (cfg : BandOrderedGeneralConfiguration q)
-          (C : BandCircle)
-          (T : ProtoTile)
-          (cert : BandOrderedGeneralLayoutCertificate q cfg C T)
-          (a b : PeriodicSubtileIndex)
-          (row :
-            BandOrderedGeneralSelectedContactRow q cfg C T cert
-              a b),
-          let P := cert.P;
-          let O := cert.O;
-          let u := cert.u;
-          let v := cert.v;
-          (∀ (x : PeriodicSubtileIndex),
-              FootprintVertices
-                  (ModifiedSubtileOccurrenceInterpretation P O u
-                    v x) ⊆
-                FootprintVertices
-                  (SubtileOccurrenceInterpretation P u v x)) →
-            let occurrence :=
-              SubtileOccurrenceInterpretation cert.P cert.u
-                cert.v;
-            let owners :=
-              P4418T3EndpointOwnerIndices q cfg C T cert a b
-                row;
-            let face1 :=
-              selectedSecondFace q cfg C T cert a b row;
-            let F1 :=
-              (cert.modifiedFaceEquivalence.symm :
-                  PeriodicSubtileFaceIndex →
-                    cert.modified.plane.Face)
-                face1;
-            ∀ (jO : Fin (3 : ℕ)),
-              cert.modified.plane.faceVertex F1 jO = owners.2 →
-                cert.modified.rho F1 ∈
-                  FootprintVertices (occurrence owners.2)) := by
-  classical
-  intro q cfg C T cert a b row P O u v modifiedFootSubset occurrence owners face1 F1 jO ho1
-  have h := cert.modified.rho_common F1 jO
-  rw [ho1, cert.modified_tile] at h
-  exact modifiedFootSubset owners.2 h
-
 private theorem latticeOccurrence :
     (by
       classical
@@ -1427,19 +1257,21 @@ private theorem selectedCertificate :
   have commonPair0 :
       cert.modified.rho F0 ∈
         FootprintVertices (ModifiedSubtileOccurrenceInterpretation P O u v a) ∩
-          FootprintVertices (ModifiedSubtileOccurrenceInterpretation P O u v b) :=
-              SelectedInterfaceGeometry.commonPair0 q cfg C T cert a b row iA iB ha0 hb0
+          FootprintVertices (ModifiedSubtileOccurrenceInterpretation P O u v b) := by
+    exact ⟨by simpa only [ha0, cert.modified_tile] using cert.modified.rho_common F0 iA,
+      by simpa only [hb0, cert.modified_tile] using cert.modified.rho_common F0 iB⟩
   have commonPair1 :
       cert.modified.rho F1 ∈
         FootprintVertices (ModifiedSubtileOccurrenceInterpretation P O u v a) ∩
-          FootprintVertices (ModifiedSubtileOccurrenceInterpretation P O u v b) :=
-              SelectedInterfaceGeometry.commonPair1 q cfg C T cert a b row jA jB ha1 hb1
-  have ownerPoint0 : cert.modified.rho F0 ∈ FootprintVertices (occurrence owners.1) :=
-      SelectedInterfaceGeometry.ownerPoint0 q cfg C T cert a b row modifiedFootSubset
-      iO ho0
-  have ownerPoint1 : cert.modified.rho F1 ∈ FootprintVertices (occurrence owners.2) :=
-      SelectedInterfaceGeometry.ownerPoint1 q cfg C T cert a b row modifiedFootSubset
-      jO ho1
+          FootprintVertices (ModifiedSubtileOccurrenceInterpretation P O u v b) := by
+    exact ⟨by simpa only [ha1, cert.modified_tile] using cert.modified.rho_common F1 jA,
+      by simpa only [hb1, cert.modified_tile] using cert.modified.rho_common F1 jB⟩
+  have ownerPoint0 : cert.modified.rho F0 ∈ FootprintVertices (occurrence owners.1) := by
+    apply modifiedFootSubset owners.1
+    simpa only [ho0, cert.modified_tile] using cert.modified.rho_common F0 iO
+  have ownerPoint1 : cert.modified.rho F1 ∈ FootprintVertices (occurrence owners.2) := by
+    apply modifiedFootSubset owners.2
+    simpa only [ho1, cert.modified_tile] using cert.modified.rho_common F1 jO
   have originalPair0 : cert.modified.rho F0 ∈
       FootprintVertices (occurrence a) ∩ FootprintVertices (occurrence b) := by
     simpa only [retargeted.2] using commonPair0

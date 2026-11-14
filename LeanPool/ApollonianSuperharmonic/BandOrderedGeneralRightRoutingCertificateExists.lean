@@ -355,86 +355,6 @@ private theorem hcentroidAlign :
       (TileCentroid normalization.normalizedFixed).2 + _ at hr2
     linarith
 
-private theorem hselectedCells :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (T : ProtoTile), ∀ (N : ProtoTile), ∀ (h : PartialOdometer), ∀ (k :
-            PartialOdometer), ∀ (x : GaussianInt), ∀ (normalization :
-            BandOrderedGeneralRightNormalizationCertificate C T N h k x), ∀ (selectedSlot : Fin
-            (3 : ℕ)), ∀ (selectedSign : Bool),
-        let m : Int := if normalization.rightDirectionSlot = 0 then
-            (if normalization.rightNeighborPositive = true then 1 else -1)
-          else if normalization.rightDirectionSlot = 1 then 0
-          else if normalization.rightNeighborPositive = true then -1 else 1
-        let n : Int := if normalization.rightDirectionSlot = 0 then 0
-          else if normalization.rightDirectionSlot = 1 then
-            (if normalization.rightNeighborPositive = true then 1 else -1)
-          else if normalization.rightNeighborPositive = true then -1 else 1
-        let labelOf : Fin 3 → Bool → SixSubtileLabel := fun i s =>
-          if i = 0 then (if s = true then .A else .B)
-          else if i = 1 then (if s = true then .C else .D)
-          else (if s = true then .E else .F)
-        let exteriorIndex : PeriodicSubtileIndex :=
-          ⟨labelOf selectedSlot selectedSign, m, n⟩
-        (SubtileOccurrenceInterpretation normalization.layout.P normalization.layout.u
-            normalization.layout.v exteriorIndex = TileTranslation (normalization.layout.P
-            selectedSlot selectedSign) normalization.rightNeighborDisplacement) →
-            (((normalization.pieces selectedSlot selectedSign).cells = (TileTranslation
-            (normalization.layout.P selectedSlot selectedSign)
-            normalization.rightNeighborDisplacement).cells ∧ ((normalization.pieces selectedSlot
-            selectedSign).cells = ∅ → (normalization.pieces selectedSlot selectedSign).anchor =
-            (TileTranslation (normalization.layout.P selectedSlot selectedSign)
-            normalization.rightNeighborDisplacement).anchor)) → ((normalization.pieces
-            selectedSlot selectedSign).cells = (SubtileOccurrenceInterpretation
-            normalization.layout.P normalization.layout.u normalization.layout.v
-            exteriorIndex).cells)) ) := by
-  classical
-  intro C T N h k x normalization selectedSlot selectedSign m n labelOf exteriorIndex
-      hexteriorOccurrence hselectedUnique
-  rw [hexteriorOccurrence]
-  exact hselectedUnique.1
-
-private theorem hselectedAnchor :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (T : ProtoTile), ∀ (N : ProtoTile), ∀ (h : PartialOdometer), ∀ (k :
-            PartialOdometer), ∀ (x : GaussianInt), ∀ (normalization :
-            BandOrderedGeneralRightNormalizationCertificate C T N h k x), ∀ (selectedSlot : Fin
-            (3 : ℕ)), ∀ (selectedSign : Bool),
-        let m : Int := if normalization.rightDirectionSlot = 0 then
-            (if normalization.rightNeighborPositive = true then 1 else -1)
-          else if normalization.rightDirectionSlot = 1 then 0
-          else if normalization.rightNeighborPositive = true then -1 else 1
-        let n : Int := if normalization.rightDirectionSlot = 0 then 0
-          else if normalization.rightDirectionSlot = 1 then
-            (if normalization.rightNeighborPositive = true then 1 else -1)
-          else if normalization.rightNeighborPositive = true then -1 else 1
-        let labelOf : Fin 3 → Bool → SixSubtileLabel := fun i s =>
-          if i = 0 then (if s = true then .A else .B)
-          else if i = 1 then (if s = true then .C else .D)
-          else (if s = true then .E else .F)
-        let exteriorIndex : PeriodicSubtileIndex :=
-          ⟨labelOf selectedSlot selectedSign, m, n⟩
-        (SubtileOccurrenceInterpretation normalization.layout.P normalization.layout.u
-            normalization.layout.v exteriorIndex = TileTranslation (normalization.layout.P
-            selectedSlot selectedSign) normalization.rightNeighborDisplacement) →
-            (((normalization.pieces selectedSlot selectedSign).cells = (TileTranslation
-            (normalization.layout.P selectedSlot selectedSign)
-            normalization.rightNeighborDisplacement).cells ∧ ((normalization.pieces selectedSlot
-            selectedSign).cells = ∅ → (normalization.pieces selectedSlot selectedSign).anchor =
-            (TileTranslation (normalization.layout.P selectedSlot selectedSign)
-            normalization.rightNeighborDisplacement).anchor)) → ((normalization.pieces
-            selectedSlot selectedSign).cells = ∅ → (normalization.pieces selectedSlot
-            selectedSign).anchor = (SubtileOccurrenceInterpretation normalization.layout.P
-            normalization.layout.u normalization.layout.v exteriorIndex).anchor)) ) := by
-  classical
-  intro C T N h k x normalization selectedSlot selectedSign m n labelOf exteriorIndex
-      hexteriorOccurrence hselectedUnique
-  rw [hexteriorOccurrence]
-  exact hselectedUnique.2
-
 private theorem hparentPositive :
     (by
       classical
@@ -872,10 +792,17 @@ theorem BandOrderedGeneralRightRoutingCertificateExists
     (TileTranslation (normalization.layout.P selectedSlot selectedSign)
       normalization.rightNeighborDisplacement)
     hselectedUnique.1 hselectedUnique.2
-  have hselectedCells := RightRoutingGeometry.hselectedCells C T N h k x normalization
-      selectedSlot selectedSign hexteriorOccurrence hselectedUnique
-  have hselectedAnchor := RightRoutingGeometry.hselectedAnchor C T N h k x normalization
-      selectedSlot selectedSign hexteriorOccurrence hselectedUnique
+  have hselectedCells : (normalization.pieces selectedSlot selectedSign).cells =
+      (SubtileOccurrenceInterpretation normalization.layout.P normalization.layout.u
+        normalization.layout.v exteriorIndex).cells := by
+    rw [hexteriorOccurrence]
+    exact hselectedUnique.1
+  have hselectedAnchor : (normalization.pieces selectedSlot selectedSign).cells = ∅ →
+      (normalization.pieces selectedSlot selectedSign).anchor =
+        (SubtileOccurrenceInterpretation normalization.layout.P normalization.layout.u
+          normalization.layout.v exteriorIndex).anchor := by
+    rw [hexteriorOccurrence]
+    exact hselectedUnique.2
   have hselectedFootprint :
       FootprintVertices (normalization.pieces selectedSlot selectedSign) =
         FootprintVertices (SubtileOccurrenceInterpretation normalization.layout.P
