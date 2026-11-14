@@ -8,13 +8,21 @@ Two limits apply, following Tau Ceti's CI performance gate:
   took longer than the per-file limit (600 seconds) to build.
 
 Existing files are only checked once a PR changes them. Times are the wall-clock
-times Lake reports for each module on the CI runner. Standard library only, so CI
-can run it with the runner's ``python3`` before ``uv`` is installed.
+times Lake reports for each module on the CI runner.
+
+``check`` records each changed module's time in a receipt beside its compiled
+output, bound to the hash of that output. ``prepare`` forces a rebuild of every
+changed module whose output carries no matching receipt, so a file compiled
+without being timed can never pass; a later run that restores the same output
+reuses the recorded time instead of compiling the file again. Standard library
+only, so CI can run it with the runner's ``python3`` before ``uv`` is installed.
 """
 
 from __future__ import annotations
 
 import argparse
+import hashlib
+import json
 import logging
 import os
 import re
@@ -32,6 +40,10 @@ PROCESS_LIMIT_SECONDS = 3600
 FILE_LIMIT_SECONDS = 600
 POLL_SECONDS = 15
 TERMINATE_GRACE_SECONDS = 30
+RECEIPT_VERSION = 1
+RECEIPT_SUFFIX = ".timing.json"
+# Every compiled output Lean loads for a module; a rebuild rewrites them all.
+TIMED_OUTPUT_SUFFIXES = (".olean", ".olean.private", ".olean.server")
 _BUILT_LINE = re.compile(
     r"Built (?P<module>LeanPool(?:\.[^\s:()]+)+) "
     r"\((?P<value>\d+(?:\.\d+)?)(?P<unit>ms|s)\)"
@@ -506,32 +518,114 @@ def _selected_changed_modules(
     }
 
 
+def _output_stem(root: Path, path: str) -> Path:
+    """``LeanPool/A/B.lean`` -> ``<root>/.lake/build/lib/lean/LeanPool/A/B``."""
+    return root / ".lake/build/lib/lean" / Path(path).with_suffix("")
+
+
+def output_digest(root: Path, path: str) -> str | None:
+    """Hash a module's compiled outputs; ``None`` when it has not been compiled."""
+    stem = _output_stem(root, path)
+    digest = hashlib.sha256()
+    for suffix in TIMED_OUTPUT_SUFFIXES:
+        output = stem.with_name(stem.name + suffix)
+        try:
+            content = output.read_bytes()
+        except OSError:
+            if suffix == ".olean":
+                return None
+            continue
+        digest.update(f"{suffix}:{len(content)}:".encode())
+        digest.update(content)
+    return digest.hexdigest()
+
+
+def recorded_seconds(root: Path, path: str) -> float | None:
+    """The build time recorded for the module's current outputs, if any."""
+    stem = _output_stem(root, path)
+    try:
+        receipt = json.loads(stem.with_name(stem.name + RECEIPT_SUFFIX).read_text())
+        seconds = receipt["seconds"]
+        valid = (
+            receipt["version"] == RECEIPT_VERSION
+            and isinstance(seconds, int | float)
+            and not isinstance(seconds, bool)
+            and seconds >= 0
+            and receipt["outputs"] == output_digest(root, path)
+        )
+    except (OSError, ValueError, KeyError, TypeError):
+        return None
+    return float(seconds) if valid else None
+
+
+def record_seconds(root: Path, path: str, seconds: float) -> None:
+    """Bind a freshly measured build time to the outputs that build produced."""
+    digest = output_digest(root, path)
+    if digest is None:
+        return
+    stem = _output_stem(root, path)
+    receipt = {"version": RECEIPT_VERSION, "seconds": seconds, "outputs": digest}
+    temporary = stem.with_name(stem.name + RECEIPT_SUFFIX + ".tmp")
+    temporary.write_text(json.dumps(receipt, sort_keys=True) + "\n")
+    temporary.replace(stem.with_name(stem.name + RECEIPT_SUFFIX))
+
+
+def _invalidate(root: Path, path: str) -> int:
+    """Remove every artifact of one module, including its timing receipt."""
+    stem = Path(path).with_suffix("")
+    removed = 0
+    for directory in ("lib/lean", "ir"):
+        target = root / ".lake/build" / directory / stem
+        if not target.parent.is_dir():
+            continue
+        for artifact in target.parent.iterdir():
+            if artifact.name.startswith(target.name + ".") and (
+                artifact.is_file() or artifact.is_symlink()
+            ):
+                artifact.unlink()
+                removed += 1
+    return removed
+
+
 def prepare(
     base: str,
     root: Path,
     modules: list[str] | None = None,
     exclude_projects: list[str] | None = None,
 ) -> int:
-    """Invalidate changed-module artifacts so their build must record new timings."""
+    """Invalidate changed modules whose compiled outputs have no recorded time."""
     changed = _selected_changed_modules(base, root, modules, exclude_projects)
-    removed = 0
-    for path in changed.values():
-        stem = Path(path).with_suffix("")
-        for directory in ("lib/lean", "ir"):
-            target = root / ".lake/build" / directory / stem
-            if not target.parent.is_dir():
-                continue
-            for artifact in target.parent.iterdir():
-                if artifact.name.startswith(target.name + ".") and (
-                    artifact.is_file() or artifact.is_symlink()
-                ):
-                    artifact.unlink()
-                    removed += 1
+    untimed = [
+        path for path in changed.values() if recorded_seconds(root, path) is None
+    ]
+    removed = sum(_invalidate(root, path) for path in untimed)
     print(
-        f"Fresh build timings: invalidated {removed} artifacts for "
-        f"{len(changed)} added or modified pool files."
+        f"Build timings: {len(changed)} added or modified pool files, "
+        f"{len(changed) - len(untimed)} with a recorded time for their compiled "
+        f"output; invalidated {removed} artifacts of the other {len(untimed)}."
     )
     return 0
+
+
+def changed_times(
+    times: dict[str, float], changed: dict[str, str], root: Path
+) -> tuple[dict[str, float], int]:
+    """Each changed module's time: measured in this job, else recorded earlier.
+
+    Returns the times and how many came from this job's build.
+    """
+    result = {}
+    fresh = 0
+    for module, path in changed.items():
+        if module in times:
+            record_seconds(root, path, times[module])
+            result[module] = times[module]
+            fresh += 1
+            continue
+        seconds = recorded_seconds(root, path)
+        if seconds is not None:
+            result[module] = seconds
+    return result, fresh
 
 
 def check(
@@ -544,21 +638,23 @@ def check(
     exclude_projects: list[str] | None = None,
 ) -> int:
     """Report changed files over the per-file limit; return the exit status."""
-    times = module_times(log_path.read_text(errors="replace"))
+    built = module_times(log_path.read_text(errors="replace"))
     changed = _selected_changed_modules(base, root, modules, exclude_projects)
-    built = [module for module in changed if module in times]
+    times, fresh = changed_times(built, changed, root)
     print(
         f"Per-file build-time limit {limit} s: {len(changed)} added or modified "
-        f"pool files, {len(built)} compiled in this job."
+        f"pool files, {fresh} compiled in this job, {len(times) - fresh} with a "
+        "time recorded when their current output was compiled."
     )
-    for module in sorted(built, key=lambda name: -times[name])[:10]:
+    for module in sorted(times, key=lambda name: -times[name])[:10]:
         print(f"  {times[module]:8.1f} s  {changed[module]}")
     found = violations(times, changed, limit)
     missing = sorted(set(changed) - times.keys())
     for module in missing:
         print(
-            f"::error file={changed[module]}::No fresh successful build timing for "
-            f"{changed[module]}; added or modified files must compile in this job."
+            f"::error file={changed[module]}::No successful build timing for "
+            f"{changed[module]}; added or modified files must be compiled and "
+            "timed in CI."
         )
     for violation in found:
         print(
@@ -578,7 +674,7 @@ def main(arguments: list[str] | None = None) -> int:
     watch_parser.add_argument("--limit", type=int, default=PROCESS_LIMIT_SECONDS)
     watch_parser.add_argument("build", nargs=argparse.REMAINDER)
     prepare_parser = commands.add_parser(
-        "prepare", help="force changed files to rebuild"
+        "prepare", help="force untimed changed files to rebuild"
     )
     prepare_parser.add_argument("--base", required=True)
     prepare_parser.add_argument("--root", type=Path, default=Path.cwd())

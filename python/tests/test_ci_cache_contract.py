@@ -267,11 +267,16 @@ def test_minimal_verifier_pr_has_an_explicit_project_build_producer(tmp_path):
 
 
 def test_assembly_restores_projects_once_and_main_owns_full_cache():
-    """Assembly recovers PR outputs once before fresh shard files are applied."""
+    """Shards and assembly recover PR outputs before fresh shard files are applied."""
     jobs = yaml.safe_load((WORKFLOWS / "lean_action_ci.yml").read_text())["jobs"]
+    shard = [step.get("name") for step in jobs["shard"]["steps"]]
+    # A shard compiles only what a later push edited, so it needs the PR's
+    # earlier outputs (and their recorded build times) before it builds.
+    assert shard.index(
+        "Reuse compiled files from this PR's successful runs"
+    ) < shard.index("Build this shard's projects")
     assert not any(
-        "lean_pool.ci_pr_build" in step.get("run", "")
-        or "lean_pool.queue_build" in step.get("run", "")
+        "lean_pool.queue_build" in step.get("run", "")
         for step in jobs["shard"]["steps"]
     )
     steps = jobs["finalize"]["steps"]

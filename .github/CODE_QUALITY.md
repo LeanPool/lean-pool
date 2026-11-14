@@ -32,20 +32,29 @@ After the build, it reads Lake's per-module times from the log and fails when a 
 the PR adds or modifies took more than 600 s. Times are Lake's wall-clock times on
 GitHub's 4-vCPU runners. Existing files are checked only once a PR changes them.
 
-After all cache and artifact restores, `prepare` removes the compiled outputs
-of the added or modified modules that job is responsible for timing. This happens
-even for a cache produced under the same policy: an untouched file in that cache
-need not have passed the changed-file limit. Each changed module must emit a
-fresh successful build timing in its responsible job; missing timings and cache
-replays fail that check.
+`check` records each changed module's time in a receipt next to its compiled
+output (`<Module>.timing.json`), bound to a hash of that output's `.olean` files.
+After all cache and artifact restores, `prepare` removes the compiled outputs of
+every added or modified module the job is responsible for whose output has no
+matching receipt. So output that was compiled without being timed is always
+rebuilt, even from a cache produced under the same policy: an untouched file in
+that cache need not have passed the changed-file limit. Each changed module must
+then have either a fresh successful build timing from its responsible job or the
+recorded time of the exact output being reused; that time is checked against the
+limit either way, and a module with neither fails the check.
 
 Shards check their assigned modules. Assembly excludes projects listed in the
 same run's shard matrix and checks all remaining changed modules; the canonical
 gate requires every shard and assembly to succeed. Single and rebased root builds
 check all changed modules. Untouched modules can still reuse compiled output.
 
+"Changed" is measured from the main commit the run is tested against: the tested
+merge commit's first parent for a PR, not the event's `base.sha`, which can trail
+main and would count projects merged since as the PR's own.
+
+A later push to a PR restores the outputs of modules whose own source is unchanged
+from that PR's newest successful run; Lake's traces decide which are still valid.
 Reused PR, rebase and queue artifacts must still match `build_time_limits.py`.
-That match does not replace the fresh timing required for a changed module.
 
 The Lean workflow runs on Lean, Lake, project metadata, quality-checker, and workflow changes. It restores and saves Lake caches and pulls Mathlib oleans with `lake exe cache get` when the cache is cold.
 

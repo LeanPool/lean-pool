@@ -37,6 +37,25 @@ checkout, never the artifact paths. So every CI build step is followed by
 artifact lists, and preserves
 modification times, so shard packaging still ships only fresh files.
 
+### Incremental PR pushes
+
+Until November 2026 every run recompiled every file a PR changed relative to
+main, to time it against the 600 s limit. A PR that adds a 1,300-file project
+therefore recompiled all of it (about 38 minutes on a 4-vCPU runner) on each
+push, in the merge queue, and again on main, even when a push edited a handful
+of files.
+
+Now `build_time_limits check` writes a `<Module>.timing.json` receipt beside each
+changed module's output, bound to a hash of its `.olean` files, and `prepare`
+only invalidates changed modules without a matching receipt. Receipts travel
+with every artifact that carries the outputs themselves. `ci_pr_build` restores
+the unchanged-source modules of the PR's newest successful run, so a later push
+compiles only what it edited and whatever Lake's traces say depends on it.
+
+The plan and the build-time gate also measure a PR's changes from the tested
+merge commit's first parent. The event's `base.sha` can trail main by days,
+which made every project merged since look changed and be rebuilt.
+
 Documentation retains its separate, integrity-checked SQLite checkpoints. They
 still depend on available cache capacity; this change reduces duplicate data
 instead of changing the repository's paid storage limit.

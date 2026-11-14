@@ -97,6 +97,7 @@ jobs:
       reuse_run_id: ${{ steps.plan.outputs.reuse_run_id }}
       previous_head: ${{ steps.plan.outputs.previous_head }}
       queue_build: ${{ steps.plan.outputs.queue_build }}
+      diff_base: ${{ steps.plan.outputs.diff_base }}
     steps:
       - name: Checkout project
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
@@ -162,14 +163,24 @@ jobs:
           # exceeds the kernel's 128 KiB limit on a single environment string.
           changed_files="$RUNNER_TEMP/changed-files.txt"
           : > "$changed_files"
+          # The revision this run's own changes are measured from, for the plan
+          # and for every job's build-time gate.
+          diff_base="$BASE_SHA"
           case "$EVENT_NAME" in
             merge_group)
               git diff --name-only --no-renames "$BASE_SHA"..HEAD > "$changed_files"
               ;;
             pull_request)
-              git diff --name-only --no-renames "$BASE_SHA"...HEAD > "$changed_files"
+              # The event's base.sha can trail main by days, which would count
+              # everything main merged since as this PR's change. The tested
+              # merge commit's first parent is the main tip it merges into.
+              if [ "$(git rev-parse -q --verify 'HEAD^2' || true)" = "$PR_HEAD" ]; then
+                diff_base=$(git rev-parse 'HEAD^1')
+              fi
+              git diff --name-only --no-renames "$diff_base"...HEAD > "$changed_files"
               ;;
             push)
+              diff_base="$BEFORE_SHA"
               if [ -n "$BEFORE_SHA" ] \
                  && ! printf '%s' "$BEFORE_SHA" | grep -q '^0*$' \
                  && git cat-file -e "$BEFORE_SHA" 2>/dev/null; then
@@ -182,6 +193,7 @@ jobs:
               diff_available=false
               ;;
           esac
+          echo "diff_base=$diff_base" >> "$GITHUB_OUTPUT"
           minimal_build=false
           if [ "$EVENT_NAME" = pull_request ] && grep -Eq '^(python/lean_pool/(exposition/|ci_artifacts.py$)|scripts/exposition/|.github/workflows/exposition-verify.yml$)' "$changed_files"; then
             minimal_build=true
@@ -382,12 +394,13 @@ jobs:
       - name: Build project
         id: compilation
         env:
-          BUILD_TIME_BASE: ${{ github.event.merge_group.base_sha || github.event.pull_request.base.sha || github.event.before }}
+          BUILD_TIME_BASE: ${{ needs.plan.outputs.diff_base }}
         run: |
           set -euo pipefail
-          # Always rebuild this job's changed files after every cache/artifact
-          # restore. A same-policy cache need not have timed them while changed.
-          # `check` requires fresh timings; `watch` retains the 60-minute limit.
+          # After every cache/artifact restore, `prepare` forces a rebuild of
+          # each changed file whose restored output has no recorded build time,
+          # so `check` judges a time measured in CI for every changed file.
+          # `watch` retains the 60-minute limit.
           time_base=""
           if [ -n "$BUILD_TIME_BASE" ] && ! printf '%s' "$BUILD_TIME_BASE" | grep -q '^0*$' \
              && git cat-file -e "$BUILD_TIME_BASE" 2>/dev/null; then
@@ -615,10 +628,31 @@ jobs:
             echo "Mathlib already present from cache"
           fi
 
+      - name: Install uv
+        if: github.event_name == 'pull_request'
+        uses: astral-sh/setup-uv@d0d8abe699bfb85fec6de9f7adb5ae17292296ff
+        with:
+          enable-cache: true
+
+      - name: Reuse compiled files from this PR's successful runs
+        if: github.event_name == 'pull_request' && steps.cache.outputs.cache-hit != 'true'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_BRANCH: ${{ github.head_ref }}
+          PR_HEAD: ${{ github.event.pull_request.head.sha }}
+          PR_BASE: ${{ github.event.pull_request.base.sha }}
+          CURRENT_RUN: ${{ github.run_id }}
+        run: >-
+          PYTHONPATH=python uv run --project python --locked python -m lean_pool.ci_pr_build
+          --number "$PR_NUMBER" --branch "$PR_BRANCH"
+          --head "$PR_HEAD" --base "$PR_BASE" --current-run "$CURRENT_RUN"
+
       - name: Build this shard's projects
         env:
           PROJECTS: ${{ matrix.projects }}
-          BUILD_TIME_BASE: ${{ github.event.merge_group.base_sha || github.event.pull_request.base.sha || github.event.before }}
+          BUILD_TIME_BASE: ${{ needs.plan.outputs.diff_base }}
         run: |
           set -euo pipefail
           touch "$RUNNER_TEMP/build-stamp"
@@ -631,9 +665,10 @@ jobs:
               | tr '\n' ' ')
             modules="$modules $project_modules"
           done
-          # Always rebuild this job's changed files after every cache/artifact
-          # restore. A same-policy cache need not have timed them while changed.
-          # `check` requires fresh timings; `watch` retains the 60-minute limit.
+          # After every cache/artifact restore, `prepare` forces a rebuild of
+          # each changed file whose restored output has no recorded build time,
+          # so `check` judges a time measured in CI for every changed file.
+          # `watch` retains the 60-minute limit.
           time_base=""
           if [ -n "$BUILD_TIME_BASE" ] && ! printf '%s' "$BUILD_TIME_BASE" | grep -q '^0*$' \
              && git cat-file -e "$BUILD_TIME_BASE" 2>/dev/null; then
@@ -817,15 +852,16 @@ jobs:
       - name: Build project
         id: compilation
         env:
-          BUILD_TIME_BASE: ${{ github.event.merge_group.base_sha || github.event.pull_request.base.sha || github.event.before }}
+          BUILD_TIME_BASE: ${{ needs.plan.outputs.diff_base }}
           # This run's shards already compiled and timed these projects'
           # changed files, so assembly neither rebuilds nor re-times them.
           SHARD_PROJECTS: ${{ join(fromJSON(needs.plan.outputs.matrix).include.*.projects, ' ') }}
         run: |
           set -euo pipefail
-          # Always rebuild this job's changed files after every cache/artifact
-          # restore. A same-policy cache need not have timed them while changed.
-          # `check` requires fresh timings; `watch` retains the 60-minute limit.
+          # After every cache/artifact restore, `prepare` forces a rebuild of
+          # each changed file whose restored output has no recorded build time,
+          # so `check` judges a time measured in CI for every changed file.
+          # `watch` retains the 60-minute limit.
           time_base=""
           if [ -n "$BUILD_TIME_BASE" ] && ! printf '%s' "$BUILD_TIME_BASE" | grep -q '^0*$' \
              && git cat-file -e "$BUILD_TIME_BASE" 2>/dev/null; then
@@ -1092,12 +1128,13 @@ jobs:
 
       - name: Build combined Lean root
         env:
-          BUILD_TIME_BASE: ${{ github.event.merge_group.base_sha || github.event.pull_request.base.sha || github.event.before }}
+          BUILD_TIME_BASE: ${{ needs.plan.outputs.diff_base }}
         run: |
           set -euo pipefail
-          # Always rebuild this job's changed files after every cache/artifact
-          # restore. A same-policy cache need not have timed them while changed.
-          # `check` requires fresh timings; `watch` retains the 60-minute limit.
+          # After every cache/artifact restore, `prepare` forces a rebuild of
+          # each changed file whose restored output has no recorded build time,
+          # so `check` judges a time measured in CI for every changed file.
+          # `watch` retains the 60-minute limit.
           time_base=""
           if [ -n "$BUILD_TIME_BASE" ] && ! printf '%s' "$BUILD_TIME_BASE" | grep -q '^0*$' \
              && git cat-file -e "$BUILD_TIME_BASE" 2>/dev/null; then
