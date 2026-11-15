@@ -296,25 +296,6 @@ private theorem northAt311 :
   simp (disch := omega) only [abs_of_nonneg] at h
   nlinarith only [h]
 
-private theorem htAt324 :
-    (by
-      classical
-      exact
-        ∀ (K : DiamondParameter), ∀ (f : IntegerLatticeFunction),
-        let k : Int := K.1
-        let rho : GaussianInt := ⟨-k, k+1⟩
-        let covered (x : GaussianInt) : Prop :=
-          ∀ y, y=x ∨ y=x-1 ∨ y=x-⟨0,1⟩ ∨ y=x-1-⟨0,1⟩ →
-            y ∈ DiamondCellDomain K.1 ∨ y-rho ∈ DiamondCellDomain K.1
-        ∀ (t : ℤ), ((0 : ℤ) ≤ t) → ((covered ⟨-k+t,k+t+1⟩ ↔ 0 < t) → ((f ((⟨-k+t,k+t+1⟩ :
-            GaussianInt)+1)-f ⟨-k+t,k+t+1⟩ = t+1) → ((f ((⟨-k+t,k+t+1⟩ : GaussianInt)-1)-f
-            ⟨-k+t,k+t+1⟩ = if t=0 then -1 else -t) → ((¬covered ⟨-k + t, k + t + (1 : ℤ)⟩) → (t =
-            0))))) ) := by
-  classical
-  intro K f k rho covered t ht0 cells east west hc
-  have : ¬ 0 < t := fun ht => hc (cells.mpr ht)
-  omega
-
 private theorem cellsAt329 :
     (by
       classical
@@ -505,26 +486,6 @@ private theorem northAt379 :
   simp (disch := omega) only [abs_of_nonneg] at h
   nlinarith only [h]
 
-private theorem htAt392 :
-    (by
-      classical
-      exact
-        ∀ (K : DiamondParameter), ∀ (f : IntegerLatticeFunction),
-        let k : Int := K.1
-        let rho : GaussianInt := ⟨-k, k+1⟩
-        let covered (x : GaussianInt) : Prop :=
-          ∀ y, y=x ∨ y=x-1 ∨ y=x-⟨0,1⟩ ∨ y=x-1-⟨0,1⟩ →
-            y ∈ DiamondCellDomain K.1 ∨ y-rho ∈ DiamondCellDomain K.1
-        ∀ (t : ℤ), (t < k) → ((covered ⟨-k+t+1,k+t+1⟩ ↔ t+1 < k) → ((f ((⟨-k+t+1,k+t+1⟩ :
-            GaussianInt)-1)-f ⟨-k+t+1,k+t+1⟩ = -t-1) → ((f ((⟨-k+t+1,k+t+1⟩ :
-            GaussianInt)-⟨0,1⟩)-f ⟨-k+t+1,k+t+1⟩ = k) → ((f ((⟨-k+t+1,k+t+1⟩ :
-            GaussianInt)+⟨0,1⟩)-f ⟨-k+t+1,k+t+1⟩ = -k) → ((¬covered ⟨-k + t + (1 : ℤ), k + t + (1
-            : ℤ)⟩) → (t+1 = k)))))) ) := by
-  classical
-  intro K f k rho covered t htk cells west south north hc
-  have : ¬ t+1 < k := fun ht => hc (cells.mpr ht)
-  omega
-
 end DiamondRightFirst
 
 theorem P5352T2RightFirst (K : DiamondParameter) (hk : 1 < K.1)
@@ -631,7 +592,8 @@ theorem P5352T2RightFirst (K : DiamondParameter) (hk : 1 < K.1)
         rw [ite_eq_right ht]
         ring
       · intro hc
-        have ht : t = 0 := DiamondRightFirst.htAt324 K f t ht0 cells east west hc
+        have ht : t = 0 := le_antisymm
+          (not_lt.mp (fun h => hc (cells.mpr h))) ht0
         rw [ite_eq_left ht, ht]
         ring
     · have cells : covered ⟨-k+t+1,k+t+1⟩ ↔ t+1 < k := DiamondRightFirst.cellsAt329 K hk cell
@@ -655,7 +617,8 @@ theorem P5352T2RightFirst (K : DiamondParameter) (hk : 1 < K.1)
         rw [ite_eq_right ht]
         ring
       · intro hc
-        have ht : t+1 = k := DiamondRightFirst.htAt392 K f t htk cells west south north hc
+        have ht : t+1 = k := le_antisymm (Int.add_one_le_iff.mpr htk)
+          (not_lt.mp (fun h => hc (cells.mpr h)))
         rw [ite_eq_left ht]
         omega
   )

@@ -6,14 +6,11 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.P3381T1TriangulationBoundary
+public import LeanPool.ApollonianSuperharmonic.P3381T1PiecewiseAffinePolygonModel
+public import LeanPool.ApollonianSuperharmonic.FinitePolyominoPairedTriangulation
 
 public import LeanPool.ApollonianSuperharmonic.LatticeTileComplementGridConnected
-public import LeanPool.ApollonianSuperharmonic.P3475T1GridBoundary
-public import LeanPool.ApollonianSuperharmonic.P3475T1BoundaryReduction
-public import LeanPool.ApollonianSuperharmonic.P3475T1PolygonTriangleConstruction
-public import LeanPool.ApollonianSuperharmonic.P3475T1PolygonalSeparation
-public import LeanPool.ApollonianSuperharmonic.P3475T1SquareUnionIdentification
-public import LeanPool.ApollonianSuperharmonic.P3475T1BoundaryRestoration
 
 -- [TABLET NODE: P3723T1GridDiskPairedModel]
 
@@ -51,31 +48,8 @@ theorem P3723T1GridDiskPairedModel (T : ProtoTile) (hT : LatticeTile T) :
 -- BODY
   obtain ⟨hinside, hchecker, _hcycle⟩ := LatticeTileGridStructure T hT
   have houtside := LatticeTileComplementGridConnected T hT
-  obtain ⟨n, p, v, hvertex, _hadj, _hvertices, hedges⟩ :=
-    P3475T1GridBoundary T hinside houtside hchecker
-  obtain ⟨r, q, ⟨s⟩, hcorner⟩ := P3475T1BoundaryReduction p
-  obtain ⟨X, K, ⟨tree⟩⟩ := P3475T1PolygonTriangleConstruction q hcorner
-  obtain ⟨U, V, hUopen, hUconn, hUb, hVopen, hVconn, hVub,
-    hdisj, hcover, hfrontU, hfrontV, hX⟩ :=
-      P3475T1PolygonalSeparation q X K tree
-  have hcoverP : U ∪ V =
-      (⋃ i, segment Real (p.vertex i) (p.vertex (i + 1)))ᶜ := by
-    rw [s.carrier_eq]
-    exact hcover
-  have hfrontUP : frontier U =
-      ⋃ i, segment Real (p.vertex i) (p.vertex (i + 1)) :=
-    hfrontU.trans s.carrier_eq.symm
-  have hfrontVP : frontier V =
-      ⋃ i, segment Real (p.vertex i) (p.vertex (i + 1)) :=
-    hfrontV.trans s.carrier_eq.symm
-  have htile := P3475T1SquareUnionIdentification T hinside houtside
-    p v hvertex hedges U V hUopen hUconn hUb hVopen hVconn hVub
-    hdisj hcoverP hfrontUP hfrontVP
-  have hsource : X = TileRealization T := by
-    rw [htile, s.carrier_eq]
-    exact hX
-  obtain ⟨t⟩ := P3475T1BoundaryRestoration q p s X K tree
-  rw [hsource] at t
+  obtain ⟨n, p, v, K, ⟨t⟩, hvertex, hedges⟩ :=
+    FinitePolyominoPairedTriangulation T hinside houtside hchecker
   obtain ⟨h, hboundary, haffine⟩ :=
     P3381T1PiecewiseAffinePolygonModel p (TileRealization T) K t
   have hfrontier :=

@@ -391,25 +391,6 @@ private theorem southAt341 :
   simp (disch := omega) only [abs_of_nonneg] at h
   nlinarith only [h]
 
-private theorem htAt355 :
-    (by
-      classical
-      exact
-        ∀ (K : DiamondParameter), ∀ (f : IntegerLatticeFunction),
-        let k : Int := K.1
-        let rho : GaussianInt := ⟨-k, -k-1⟩
-        let covered (x : GaussianInt) : Prop :=
-          ∀ y, y=x ∨ y=x-1 ∨ y=x-⟨0,1⟩ ∨ y=x-1-⟨0,1⟩ →
-            y ∈ DiamondCellDomain K.1 ∨ y-rho ∈ DiamondCellDomain K.1
-        ∀ (t : ℤ), (t < k) → ((covered ⟨(-1 : ℤ) - t, t⟩ ↔ t + (1 : ℤ) < k) → ((f ((⟨-1-t,t⟩ :
-            GaussianInt)+⟨0,1⟩)-f ⟨-1-t,t⟩ = -t-1) → ((f ((⟨-1-t,t⟩ : GaussianInt)-1)-f ⟨-1-t,t⟩
-            = if t+1=k then 0 else 1) → ((f ((⟨-1-t,t⟩ : GaussianInt)-⟨0,1⟩)-f ⟨-1-t,t⟩ = t+1) →
-            ((¬covered ⟨(-1 : ℤ) - t, t⟩) → (t+1 = k)))))) ) := by
-  classical
-  intro K f k rho covered t htk cells north west south hc
-  have : ¬ t+1 < k := fun ht => hc (cells.mpr ht)
-  omega
-
 private theorem eastAt361 :
     (by
       classical
@@ -511,25 +492,6 @@ private theorem southAt385 :
   simp only [rho, Zsqrtd.re_sub] at h
   simp (disch := omega) only [abs_of_nonneg] at h
   nlinarith only [h]
-
-private theorem htAt399 :
-    (by
-      classical
-      exact
-        ∀ (K : DiamondParameter), ∀ (f : IntegerLatticeFunction),
-        let k : Int := K.1;
-        let rho : GaussianInt := ⟨-k, -k-1⟩;
-        let covered (x : GaussianInt) : Prop :=
-          ∀ y, y=x ∨ y=x-1 ∨ y=x-⟨0,1⟩ ∨ y=x-1-⟨0,1⟩ →
-            y ∈ DiamondCellDomain K.1 ∨ y-rho ∈ DiamondCellDomain K.1;
-        ∀ (t : ℤ), ((0 : ℤ) ≤ t) → ((covered ⟨-t, t⟩ ↔ (0 : ℤ) < t) → (
-        ((f ((⟨-t,t⟩ : GaussianInt)+⟨0,1⟩)-f ⟨-t,t⟩ = -t) →
-            ((f ((⟨-t,t⟩ : GaussianInt)-⟨0,1⟩)-f ⟨-t,t⟩ = t) → ((¬covered ⟨-t, t⟩) → (t=0)))))) )
-            := by
-  classical
-  intro K f k rho covered t ht0 cells north south hc
-  have : ¬ 0 < t := fun ht => hc (cells.mpr ht)
-  omega
 
 end DiamondRightSecond
 
@@ -652,7 +614,8 @@ theorem P5352T2RightSecond (K : DiamondParameter) (hk : 1 < K.1)
         rw [ite_eq_right ht]
         ring
       · intro hc
-        have ht : t+1 = k := DiamondRightSecond.htAt355 K f t htk cells north west south hc
+        have ht : t+1 = k := le_antisymm (Int.add_one_le_iff.mpr htk)
+          (not_lt.mp (fun h => hc (cells.mpr h)))
         rw [ite_eq_left ht]
         ring
     · have cells := cellsB t ht0 htk
@@ -672,7 +635,8 @@ theorem P5352T2RightSecond (K : DiamondParameter) (hk : 1 < K.1)
         rw [ite_eq_right ht]
         ring
       · intro hc
-        have ht : t=0 := DiamondRightSecond.htAt399 K f t ht0 cells north south hc
+        have ht : t=0 := le_antisymm
+          (not_lt.mp (fun h => hc (cells.mpr h))) ht0
         rw [ite_eq_left ht]
         ring
   )

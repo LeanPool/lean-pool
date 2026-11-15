@@ -341,32 +341,14 @@ private theorem hq0 :
   simpa [q', BandPackingSymmetryQuadrupleAction] using
     congrArg (BandPackingSymmetryCircleAction g) hqC
 
-private theorem hqi :
-    (by
-      classical
-      exact
-        ∀ (g : BandPackingSymmetry), ∀ (C' : CircleCoordinates), ∀ (T : ProtoTile), ∀ (T' :
-            ProtoTile), ∀ (h : PartialOdometer), ∀ (h' : PartialOdometer), ∀ (q : Fin (4 : ℕ) →
-            CircleCoordinates), ∀ (i : Fin (3 : ℕ)), (q i.succ = C') → (∀ (e : Bool),
-            (TileCentroid T' - TileCentroid T = (if e = true then (1 : ℝ) else (-1 : ℝ)) • (1 / 2
-            : ℝ) • (GaussianRealPoint (BandVectors.1 (q (i + (2 : Fin (3 : ℕ))).succ) (q (i + (1
-            : Fin (3 : ℕ))).succ)) - (-(GaussianRealPoint (BandVectors.1 (q (i + (2 : Fin (3 :
-            ℕ))).succ) (q (i + (1 : Fin (3 : ℕ))).succ))).2, (GaussianRealPoint (BandVectors.1 (q
-            (i + (2 : Fin (3 : ℕ))).succ) (q (i + (1 : Fin (3 : ℕ))).succ))).1))) → ((C'.1 = (0 :
-            ℤ) ∨ ∃ (p : ℝ × ℝ) (p' : ℝ × ℝ), PartialOdometerSlope h = some p ∧
-            PartialOdometerSlope h' = some p' ∧ p'.1 - p.1 = (if e = true then (1 : ℝ) else (-1 :
-            ℝ)) * (1 / 2 : ℝ) * ((↑(BandVectors.2 (q (i + (2 : Fin (3 : ℕ))).succ) (q (i + (1 :
-            Fin (3 : ℕ))).succ)).re : ℝ) - (↑(BandVectors.2 (q (i + (2 : Fin (3 : ℕ))).succ) (q
-            (i + (1 : Fin (3 : ℕ))).succ)).im : ℝ)) ∧ p'.2 - p.2 = (if e = true then (1 : ℝ) else
-            (-1 : ℝ)) * (1 / 2 : ℝ) * ((↑(BandVectors.2 (q (i + (2 : Fin (3 : ℕ))).succ) (q (i +
-            (1 : Fin (3 : ℕ))).succ)).im : ℝ) + (↑(BandVectors.2 (q (i + (2 : Fin (3 : ℕ))).succ)
-            (q (i + (1 : Fin (3 : ℕ))).succ)).re : ℝ))) → (
-        let q' := BandPackingSymmetryQuadrupleAction g q
-        let sigma : Fin 3 → Fin 3 := fun j =>
-          if BandPackingSymmetryReversesOrientation g then -j else j
-        q' (sigma i).succ = BandPackingSymmetryCircleAction g C'))) ) := by
+private theorem hqi (g : BandPackingSymmetry) (C' : CircleCoordinates)
+    (q : Fin 4 → CircleCoordinates) (i : Fin 3) (hqC' : q i.succ = C') :
+    let q' := BandPackingSymmetryQuadrupleAction g q
+    let sigma : Fin 3 → Fin 3 := fun j =>
+      if BandPackingSymmetryReversesOrientation g then -j else j
+    q' (sigma i).succ = BandPackingSymmetryCircleAction g C' := by
   classical
-  intro g C' T T' h h' q i hqC' e hcent hslope q' sigma
+  intro q' sigma
   have hidx : q' (sigma i).succ =
       BandPackingSymmetryCircleAction g (q i.succ) := by
     cases hor : BandPackingSymmetryReversesOrientation g <;> fin_cases i <;>
@@ -993,7 +975,7 @@ private theorem forwardSub :
     have hq' : ProperBandQuadruple q' :=
       BandPackingSymmetryProperCovariance g q hq
     have hq0 := MarkedCovarianceGeometry.hq0 g C q hqC
-    have hqi := MarkedCovarianceGeometry.hqi g C' T T' h h' q i hqC' e hcent hslope
+    have hqi := MarkedCovarianceGeometry.hqi g C' q i hqC'
     let W := BandVectors.1 (q ((i + 2).succ)) (q ((i + 1).succ))
     let A := BandVectors.2 (q ((i + 2).succ)) (q ((i + 1).succ))
     let Z : GaussianInt × GaussianInt := (W, A)
