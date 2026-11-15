@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.ApollonianSuperharmonic.ProperBandCircleCenterDistance
+
 public import Mathlib.Init
 
 public import LeanPool.ApollonianSuperharmonic.P4828T1Gap
@@ -59,48 +61,6 @@ private noncomputable abbrev center (q : Fin 4 → CircleCoordinates) (k : Fin 4
   classical
   exact ((q k).2 : ℂ) / ((q k).1 : ℝ)
 
-private theorem centerDistance (q : Fin 4 → CircleCoordinates) (hq : ProperBandQuadruple q) : ∀ i
-    j : Fin 4, i ≠ j → 0 < (q i).1 → 0 < (q j).1 →
-      dist ((center q) i) ((center q) j) = 1 / (q i).1 + 1 / (q j).1 := by
-  classical
-  let center (k : Fin 4) : ℂ := ((q k).2 : ℂ) / ((q k).1 : ℝ)
-  change (∀ i j : Fin 4, i ≠ j → 0 < (q i).1 → 0 < (q j).1 →
-      dist (center i) (center j) = 1 / (q i).1 + 1 / (q j).1)
-  as_aux_lemma =>
-    intro i j hij hi hj
-    let a : ℝ := (q i).1
-    let b : ℝ := (q j).1
-    let x : ℂ := (q i).2
-    let y : ℂ := (q j).2
-    change dist (x / a) (y / b) = 1 / a + 1 / b
-    have hh := TangencyCoordinateIdentity q hq.1 i j hij
-    have hn : (Zsqrtd.norm ((q j).1 • (q i).2 - (q i).1 • (q j).2) : ℝ) =
-        ((q i).1 + (q j).1 : ℤ) ^ 2 := by exact_mod_cast hh
-    have hns : Complex.normSq ((b : ℝ) * x - a * y) = (a + b)^2 := by
-      dsimp [a, b, x, y]
-      norm_num [Complex.normSq_apply, Zsqrtd.norm] at hn ⊢
-      nlinarith
-    have haPos : 0 < a := by simpa [a] using hi
-    have hbPos : 0 < b := by simpa [b] using hj
-    have ha : a ≠ 0 := ne_of_gt haPos
-    have hb : b ≠ 0 := ne_of_gt hbPos
-    have hdiv : (x / a - y / b) * (a * b) = (b : ℂ) * x - a * y := by
-      field_simp [ha, hb]
-    have hratio : x / a - y / b = ((b : ℂ) * x - a * y) / (a * b) := by
-      rw [← hdiv]
-      field_simp [ha, hb]
-    have hnumNorm : ‖(b : ℝ) * x - a * y‖ = a + b := by
-      rw [← sq_eq_sq₀ (norm_nonneg _) (add_pos haPos hbPos).le]
-      rw [← Complex.normSq_eq_norm_sq]
-      exact hns
-    have hA : ‖(a : ℂ)‖ = a := by
-      simp [Complex.norm_real, abs_of_pos haPos]
-    have hB : ‖(b : ℂ)‖ = b := by
-      simp [Complex.norm_real, abs_of_pos hbPos]
-    rw [dist_eq_norm, hratio, Complex.norm_div, hnumNorm,
-      Complex.norm_mul, hA, hB]
-    field_simp [ha, hb]; ring
-
 private theorem hsupport (L : ℝ) (q : Fin 4 → CircleCoordinates) (hs : P4828T1LineSupport L q)
     (j : Fin 3) (hj : (q j.succ).1 = 0) : ∃ n b : ℝ, n^2 = 1 ∧
       (∀ k : Fin 4, 0 < (q k).1 →
@@ -153,7 +113,7 @@ private theorem centerCoordSq (q : Fin 4 → CircleCoordinates) (hq : ProperBand
   classical
   let center (k : Fin 4) : ℂ := ((q k).2 : ℂ) / ((q k).1 : ℝ)
   have centerDistance : ∀ i j : Fin 4, i ≠ j → 0 < (q i).1 → 0 < (q j).1 →
-      dist (center i) (center j) = 1 / (q i).1 + 1 / (q j).1 := centerDistance q hq
+      dist (center i) (center j) = 1 / (q i).1 + 1 / (q j).1 := ProperBandCircleCenterDistance q hq
   change (∀ u v : Fin 4, u ≠ v → 0 < (q u).1 → 0 < (q v).1 →
       ((center u).re - (center v).re)^2 + ((center u).im - (center v).im)^2 =
         (1 / (q u).1 + 1 / (q v).1)^2)
@@ -218,7 +178,7 @@ theorem P4828T1LinePlacement (L : Real)
   let center (k : Fin 4) : ℂ := ((q k).2 : ℂ) / ((q k).1 : ℝ)
   have centerDistance : ∀ i j : Fin 4, i ≠ j → 0 < (q i).1 → 0 < (q j).1 →
       dist (center i) (center j) = 1 / (q i).1 + 1 / (q j).1 :=
-          LinePlacementConstruction.centerDistance q hq
+          ProperBandCircleCenterDistance q hq
   have hsupport : ∃ n b : ℝ, n^2 = 1 ∧
       (∀ k : Fin 4, 0 < (q k).1 →
         -n * ((center k).re - b) = 1 / (q k).1) ∧

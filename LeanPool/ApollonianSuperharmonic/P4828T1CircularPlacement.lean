@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.ApollonianSuperharmonic.ProperBandCircleCenterDistance
+
 public import Mathlib.Init
 public import Mathlib.Tactic.Positivity
 
@@ -46,56 +48,6 @@ private theorem hcpos (q : Fin 4 → CircleCoordinates) (hq : ProperBandQuadrupl
   · exact hpositive 1
   · exact hpositive 2
 
-private theorem normCast (w : GaussianInt) :
-      Complex.normSq (w : Complex) = (Zsqrtd.norm w : Real) := by
-  classical
-  simp [Complex.normSq, Zsqrtd.norm_def]
-
-private theorem circleDist (q : Fin 4 → CircleCoordinates) (hq : ProperBandQuadruple q) (i j :
-    Fin 4) (hij : i ≠ j)
-      (hi : 0 < (q i).1) (hj : 0 < (q j).1) :
-      dist (((q i).2 : Complex) / (q i).1)
-          (((q j).2 : Complex) / (q j).1) =
-        1 / (q i).1 + 1 / (q j).1 := by
-  classical
-  have normCast (w : GaussianInt) :
-      Complex.normSq (w : Complex) = (Zsqrtd.norm w : Real) := normCast w
-  let v : GaussianInt := (q j).1 • (q i).2 - (q i).1 • (q j).2
-  have ht := TangencyCoordinateIdentity q hq.1 i j hij
-  have hn : Complex.normSq (v : Complex) =
-      (((q i).1 + (q j).1 : ℤ) ^ 2 : Real) := by
-    change Complex.normSq
-        (((q j).1 • (q i).2 - (q i).1 • (q j).2 : GaussianInt) : Complex) = _
-    rw [normCast]
-    exact_mod_cast ht
-  have hnsq : ‖(v : Complex)‖ ^ 2 =
-      (((q i).1 + (q j).1 : ℤ) : Real) ^ 2 := by
-    rw [← Complex.normSq_eq_norm_sq, hn]
-  have hnorm : ‖(v : Complex)‖ =
-      (((q i).1 + (q j).1 : ℤ) : Real) := by
-    have hnonneg := norm_nonneg (v : Complex)
-    have hsum : 0 ≤ (((q i).1 + (q j).1 : ℤ) : Real) := by positivity
-    nlinarith
-  have hdiff :
-      ((q i).2 : Complex) / (q i).1 - ((q j).2 : Complex) / (q j).1 =
-        (v : Complex) / (((q i).1 * (q j).1 : ℤ) : Complex) := by
-    dsimp [v]
-    push_cast
-    simp only [map_sub, map_zsmul]
-    have hia : (q i).1 ≠ 0 := ne_of_gt hi
-    have hjb : (q j).1 ≠ 0 := ne_of_gt hj
-    field_simp [hia, hjb]
-    ring
-  rw [Complex.dist_eq, hdiff, Complex.norm_div, Complex.norm_intCast, hnorm]
-  have ha : 0 < ((q i).1 : Real) := by exact_mod_cast hi
-  have hb : 0 < ((q j).1 : Real) := by exact_mod_cast hj
-  have hab : 0 < (((q i).1 * (q j).1 : ℤ) : Real) := by
-    exact_mod_cast mul_pos hi hj
-  rw [abs_of_pos hab]
-  push_cast
-  field_simp [ne_of_gt ha, ne_of_gt hb]
-  ring
-
 private noncomputable abbrev ctr (q : Fin 4 → CircleCoordinates) (i : Fin 4) : Complex := by
   classical
   exact ((q i).2 : Complex) / (q i).1
@@ -123,7 +75,7 @@ private theorem ctrDist (q : Fin 4 → CircleCoordinates) (hq : ProperBandQuadru
       (hi : 0 < (q i).1) (hj : 0 < (q j).1) :
       dist (((q i).2 : Complex) / (q i).1)
           (((q j).2 : Complex) / (q j).1) =
-        1 / (q i).1 + 1 / (q j).1 := circleDist q hq i j hij hi hj
+        1 / (q i).1 + 1 / (q j).1 := ProperBandCircleCenterDistance q hq i j hij hi hj
   let ctr (i : Fin 4) : Complex := ((q i).2 : Complex) / (q i).1
   let rad (i : Fin 4) : Real := 1 / (q i).1
   change (dist (ctr i) (ctr j) = rad i + rad j)
@@ -881,7 +833,7 @@ theorem P4828T1CircularPlacement (L : Real)
       (hi : 0 < (q i).1) (hj : 0 < (q j).1) :
       dist (((q i).2 : Complex) / (q i).1)
           (((q j).2 : Complex) / (q j).1) =
-        1 / (q i).1 + 1 / (q j).1 := CircularPlacementConstruction.circleDist q hq i j hij hi hj
+        1 / (q i).1 + 1 / (q j).1 := ProperBandCircleCenterDistance q hq i j hij hi hj
   let ctr (i : Fin 4) : Complex := ((q i).2 : Complex) / (q i).1
   let rad (i : Fin 4) : Real := 1 / (q i).1
   let crossC : Complex → Complex → Real := fun z w => z.re * w.im - z.im * w.re

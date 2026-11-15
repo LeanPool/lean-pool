@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.ApollonianSuperharmonic.ProperBandCircleCenterDistance
+
 public import Mathlib.Init
 public import Mathlib.Tactic.Positivity
 
@@ -95,49 +97,6 @@ private theorem hkpos :
   rcases lt_or_eq_of_le h with hp | hz
   · exact Or.inl hp
   · exact Or.inr hz.symm
-
-private theorem centerDistance :
-    (by
-      classical
-      exact
-        ∀ (q : Fin (4 : ℕ) → CircleCoordinates), (ProperBandQuadruple q) → (
-        let p (a : Fin 4) : ℂ :=
-        (q a).2 / ((q a).1 : ℝ)
-        let rad (a : Fin 4) : ℝ := 1 / ((q a).1 : ℝ)
-        ∀ (a : Fin (4 : ℕ)), ∀ (b : Fin (4 : ℕ)), a ≠ b → (0 : ℤ) < (q a).1 → (0 : ℤ) < (q b).1 →
-        dist (p a) (p b) = rad a + rad b) ) := by
-  classical
-  intro q hq p rad a b hab ha hb
-  let w : GaussianInt := (q b).1 • (q a).2 - (q a).1 • (q b).2
-  have ht := TangencyCoordinateIdentity q hq.1 a b hab
-  have normCast (z : GaussianInt) : Complex.normSq (z : ℂ) = (Zsqrtd.norm z : ℝ) := by
-    simp [Complex.normSq, Zsqrtd.norm_def]
-  have hn : Complex.normSq (w : ℂ) = (((q a).1 + (q b).1 : ℤ) ^ 2 : ℝ) := by
-    change Complex.normSq (((q b).1 • (q a).2 - (q a).1 • (q b).2 : GaussianInt) : ℂ) = _
-    rw [normCast]
-    exact_mod_cast ht
-  have hnsq : ‖(w : ℂ)‖ ^ 2 = (((q a).1 + (q b).1 : ℤ) : ℝ) ^ 2 := by
-    rw [← Complex.normSq_eq_norm_sq, hn]
-  have hsum : 0 ≤ (((q a).1 + (q b).1 : ℤ) : ℝ) := by positivity
-  have hnorm : ‖(w : ℂ)‖ = (((q a).1 + (q b).1 : ℤ) : ℝ) := by
-    have := norm_nonneg (w : ℂ)
-    nlinarith
-  have hdiff : p a - p b =
-      (w : ℂ) / (((q a).1 * (q b).1 : ℤ) : ℂ) := by
-    dsimp [p, w]
-    push_cast
-    simp only [map_sub, map_zsmul]
-    field_simp [ne_of_gt ha, ne_of_gt hb]
-    ring
-  rw [Complex.dist_eq, hdiff, Complex.norm_div, Complex.norm_intCast, hnorm]
-  have haR : 0 < ((q a).1 : ℝ) := by exact_mod_cast ha
-  have hbR : 0 < ((q b).1 : ℝ) := by exact_mod_cast hb
-  have habR : 0 < (((q a).1 * (q b).1 : ℤ) : ℝ) := by exact_mod_cast mul_pos ha hb
-  rw [abs_of_pos habR]
-  push_cast
-  dsimp [rad]
-  field_simp [ne_of_gt haR, ne_of_gt hbR]
-  ring
 
 private theorem hchild_parent :
     (by
@@ -924,7 +883,7 @@ theorem P5023T1CircularSide :
   have hkpos : 0 < (q k.succ).1 ∨ (q k.succ).1 = 0 := CircularSideProof.hkpos q i other_nonneg
   have centerDistance (a b : Fin 4) (hab : a ≠ b)
       (ha : 0 < (q a).1) (hb : 0 < (q b).1) : dist (p a) (p b) = rad a + rad b :=
-          CircularSideProof.centerDistance q hq a b hab ha hb
+          ProperBandCircleCenterDistance q hq a b hab ha hb
   have hchild_parent : dist (p 0) (p i.succ) = rad 0 + rad i.succ :=
       CircularSideProof.hchild_parent q i hchild hparent centerDistance
   let dot (x y : ℂ) : ℝ := x.re * y.re + x.im * y.im

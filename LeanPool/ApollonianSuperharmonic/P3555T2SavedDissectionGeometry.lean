@@ -25,6 +25,30 @@ Changes: pool module paths, public exports, project namespace and current Mathli
 
 namespace ApollonianSuperharmonic
 
+private abbrev savedDissectionInvariant {n : Nat}
+    (q : Fin (n + 3) → Real × Real) :
+    List (Fin (n + 3)) → List (Fin 3 → Fin (n + 3)) → Prop :=
+  fun L F =>
+  L.Nodup →
+  (∃ k : Nat, L.Sublist
+    ((List.ofFn (fun i : Fin (n + 3) => i)).rotate k)) →
+  (∀ f ∈ F, Function.Injective f ∧
+    Set.range f ⊆ {i | i ∈ L} ∧
+    P3381T1TriangleDeterminant (q ∘ f) ≠ 0) ∧
+  F.Pairwise (fun f g => Set.range f ≠ Set.range g) ∧
+  convexHull Real (q '' {i | i ∈ L}) =
+    ⋃ (f : Fin 3 → Fin (n + 3)) (_ : f ∈ F),
+      convexHull Real (Set.range (q ∘ f)) ∧
+  (∀ f ∈ F, ∀ g ∈ F,
+    convexHull Real (Set.range (q ∘ f)) ∩
+      convexHull Real (Set.range (q ∘ g)) =
+      convexHull Real (q '' (Set.range f ∩ Set.range g))) ∧
+  (∀ k : Fin L.length,
+    ∃! f : Fin 3 → Fin (n + 3), f ∈ F ∧
+      L.get k ∈ Set.range f ∧
+      L.get ⟨(k.val + 1) % L.length,
+        Nat.mod_lt _ (Nat.zero_lt_of_lt k.isLt)⟩ ∈ Set.range f)
+
 namespace SavedDissectionProof
 
 private theorem hsetAt164 :
@@ -850,26 +874,7 @@ private theorem triangleCase :
         ℝ)) ∧ ∀ (i : Fin (n + (3 : ℕ))), ∀ (j : Fin (n + (3 : ℕ))), j ≠ i → j ≠ i + (1 : Fin (n +
         (3 : ℕ))) → (0 : ℝ) < P3381T1TriangleDeterminant ![q i, q (i + (1 : Fin (n + (3 :
         ℕ)))), q j]) → (
-    let Good : List (Fin (n + 3)) → List (Fin 3 → Fin (n + 3)) → Prop := fun L F =>
-      L.Nodup →
-      (∃ k : Nat, L.Sublist
-        ((List.ofFn (fun i : Fin (n + 3) => i)).rotate k)) →
-      (∀ f ∈ F, Function.Injective f ∧
-        Set.range f ⊆ {i | i ∈ L} ∧
-        P3381T1TriangleDeterminant (q ∘ f) ≠ 0) ∧
-      F.Pairwise (fun f g => Set.range f ≠ Set.range g) ∧
-      convexHull Real (q '' {i | i ∈ L}) =
-        ⋃ (f : Fin 3 → Fin (n + 3)) (_ : f ∈ F),
-          convexHull Real (Set.range (q ∘ f)) ∧
-      (∀ f ∈ F, ∀ g ∈ F,
-        convexHull Real (Set.range (q ∘ f)) ∩
-          convexHull Real (Set.range (q ∘ g)) =
-          convexHull Real (q '' (Set.range f ∩ Set.range g))) ∧
-      (∀ k : Fin L.length,
-        ∃! f : Fin 3 → Fin (n + 3), f ∈ F ∧
-          L.get k ∈ Set.range f ∧
-          L.get ⟨(k.val + 1) % L.length,
-            Nat.mod_lt _ (Nat.zero_lt_of_lt k.isLt)⟩ ∈ Set.range f)
+    let Good : List (Fin (n + 3)) → List (Fin 3 → Fin (n + 3)) → Prop := savedDissectionInvariant q
     ∀ (a : Fin (n + (3 : ℕ))), ∀ (b : Fin (n + (3 : ℕ))), ∀ (c : Fin (n + (3 : ℕ))), ((Good [a, b,
         c] [![a, b, c]]))) := by
   classical
@@ -917,26 +922,7 @@ private theorem triangleCase :
 
 private theorem leftBoundaryCase :
     ∀ (n : Nat), ∀ (q : Fin (n + 3) → Real × Real),
-    let Good : List (Fin (n + 3)) → List (Fin 3 → Fin (n + 3)) → Prop := fun L F =>
-      L.Nodup →
-      (∃ k : Nat, L.Sublist
-        ((List.ofFn (fun i : Fin (n + 3) => i)).rotate k)) →
-      (∀ f ∈ F, Function.Injective f ∧
-        Set.range f ⊆ {i | i ∈ L} ∧
-        P3381T1TriangleDeterminant (q ∘ f) ≠ 0) ∧
-      F.Pairwise (fun f g => Set.range f ≠ Set.range g) ∧
-      convexHull Real (q '' {i | i ∈ L}) =
-        ⋃ (f : Fin 3 → Fin (n + 3)) (_ : f ∈ F),
-          convexHull Real (Set.range (q ∘ f)) ∧
-      (∀ f ∈ F, ∀ g ∈ F,
-        convexHull Real (Set.range (q ∘ f)) ∩
-          convexHull Real (Set.range (q ∘ g)) =
-          convexHull Real (q '' (Set.range f ∩ Set.range g))) ∧
-      (∀ k : Fin L.length,
-        ∃! f : Fin 3 → Fin (n + 3), f ∈ F ∧
-          L.get k ∈ Set.range f ∧
-          L.get ⟨(k.val + 1) % L.length,
-            Nat.mod_lt _ (Nat.zero_lt_of_lt k.isLt)⟩ ∈ Set.range f)
+    let Good : List (Fin (n + 3)) → List (Fin 3 → Fin (n + 3)) → Prop := savedDissectionInvariant q
     ∀ (a : Fin (n + (3 : ℕ))), ∀ (b : Fin (n + (3 : ℕ))), ∀ (u : List (Fin (n + (3 : ℕ)))), ∀ (v
         : List (Fin (n + (3 : ℕ)))), ∀ (left : List (Fin (3 : ℕ) → Fin (n + (3 : ℕ)))), ∀ (right
         : List (Fin (3 : ℕ) → Fin (n + (3 : ℕ)))), ∀ (hv : (0 : ℕ) < v.length), ∀ (hndA : (a ::
@@ -1025,26 +1011,7 @@ private theorem leftBoundaryCase :
 
 private theorem rightBoundaryCase :
     ∀ (n : Nat), ∀ (q : Fin (n + 3) → Real × Real),
-    let Good : List (Fin (n + 3)) → List (Fin 3 → Fin (n + 3)) → Prop := fun L F =>
-      L.Nodup →
-      (∃ k : Nat, L.Sublist
-        ((List.ofFn (fun i : Fin (n + 3) => i)).rotate k)) →
-      (∀ f ∈ F, Function.Injective f ∧
-        Set.range f ⊆ {i | i ∈ L} ∧
-        P3381T1TriangleDeterminant (q ∘ f) ≠ 0) ∧
-      F.Pairwise (fun f g => Set.range f ≠ Set.range g) ∧
-      convexHull Real (q '' {i | i ∈ L}) =
-        ⋃ (f : Fin 3 → Fin (n + 3)) (_ : f ∈ F),
-          convexHull Real (Set.range (q ∘ f)) ∧
-      (∀ f ∈ F, ∀ g ∈ F,
-        convexHull Real (Set.range (q ∘ f)) ∩
-          convexHull Real (Set.range (q ∘ g)) =
-          convexHull Real (q '' (Set.range f ∩ Set.range g))) ∧
-      (∀ k : Fin L.length,
-        ∃! f : Fin 3 → Fin (n + 3), f ∈ F ∧
-          L.get k ∈ Set.range f ∧
-          L.get ⟨(k.val + 1) % L.length,
-            Nat.mod_lt _ (Nat.zero_lt_of_lt k.isLt)⟩ ∈ Set.range f)
+    let Good : List (Fin (n + 3)) → List (Fin 3 → Fin (n + 3)) → Prop := savedDissectionInvariant q
     ∀ (a : Fin (n + (3 : ℕ))), ∀ (b : Fin (n + (3 : ℕ))), ∀ (u : List (Fin (n + (3 : ℕ)))), ∀ (v
         : List (Fin (n + (3 : ℕ)))), ∀ (left : List (Fin (3 : ℕ) → Fin (n + (3 : ℕ)))), ∀ (right
         : List (Fin (3 : ℕ) → Fin (n + (3 : ℕ)))), ∀ (hv : (0 : ℕ) < v.length), ∀ (hndB : (b ::
@@ -1203,29 +1170,8 @@ private theorem rightBoundaryCase :
 private theorem rotationCase :
     ∀ (n : Nat),
       ∀ (q : Fin (n + 3) → Real × Real),
-        let Good : List (Fin (n + 3)) → List (Fin 3 → Fin (n + 3)) → Prop := fun L F =>
-          L.Nodup →
-            (∃ k : Nat, L.Sublist ((List.ofFn fun i : Fin (n + 3) => i).rotate k)) →
-              (∀ f ∈ F,
-                  Function.Injective f ∧
-                    Set.range f ⊆ {i | i ∈ L} ∧ P3381T1TriangleDeterminant (q ∘ f) ≠ 0) ∧
-                (F.Pairwise fun f g => Set.range f ≠ Set.range g) ∧
-                  convexHull Real (q '' {i | i ∈ L}) =
-                      ⋃ (f : Fin 3 → Fin (n + 3)) (_ : f ∈ F),
-                        convexHull Real (Set.range (q ∘ f)) ∧
-                    (∀ f ∈ F,
-                        ∀ g ∈ F,
-                          convexHull Real (Set.range (q ∘ f)) ∩
-                            convexHull Real (Set.range (q ∘ g)) =
-                            convexHull Real (q '' (Set.range f ∩ Set.range g))) ∧
-                      ∀ k : Fin L.length,
-                        ∃! f : Fin 3 → Fin (n + 3),
-                          f ∈ F ∧
-                            L.get k ∈ Set.range f ∧
-                            L.get
-                            ⟨(k.val + 1) % L.length,
-                            Nat.mod_lt _ (Nat.zero_lt_of_lt k.isLt)⟩ ∈
-                            Set.range f;
+        let Good : List (Fin (n + 3)) → List (Fin 3 → Fin (n + 3)) → Prop :=
+          savedDissectionInvariant q;
         ∀ (L : List (Fin (n + (3 : ℕ)))),
           ∀ (F : List (Fin (3 : ℕ) → Fin (n + (3 : ℕ)))),
             ∀ (k : ℕ),
@@ -1343,26 +1289,7 @@ theorem P3555T2SavedDissectionGeometry {n : Nat}
 -- BODY
   classical
   have hsupport := P3555T2ParabolaSupporting q hq
-  let Good : List (Fin (n + 3)) → List (Fin 3 → Fin (n + 3)) → Prop := fun L F =>
-    L.Nodup →
-    (∃ k : Nat, L.Sublist
-      ((List.ofFn (fun i : Fin (n + 3) => i)).rotate k)) →
-    (∀ f ∈ F, Function.Injective f ∧
-      Set.range f ⊆ {i | i ∈ L} ∧
-      P3381T1TriangleDeterminant (q ∘ f) ≠ 0) ∧
-    F.Pairwise (fun f g => Set.range f ≠ Set.range g) ∧
-    convexHull Real (q '' {i | i ∈ L}) =
-      ⋃ (f : Fin 3 → Fin (n + 3)) (_ : f ∈ F),
-        convexHull Real (Set.range (q ∘ f)) ∧
-    (∀ f ∈ F, ∀ g ∈ F,
-      convexHull Real (Set.range (q ∘ f)) ∩
-        convexHull Real (Set.range (q ∘ g)) =
-        convexHull Real (q '' (Set.range f ∩ Set.range g))) ∧
-    (∀ k : Fin L.length,
-      ∃! f : Fin 3 → Fin (n + 3), f ∈ F ∧
-        L.get k ∈ Set.range f ∧
-        L.get ⟨(k.val + 1) % L.length,
-          Nat.mod_lt _ (Nat.zero_lt_of_lt k.isLt)⟩ ∈ Set.range f)
+  let Good : List (Fin (n + 3)) → List (Fin 3 → Fin (n + 3)) → Prop := savedDissectionInvariant q
   have hgood : Good boundary faces := by
     induction hd with
     | triangle a b c =>

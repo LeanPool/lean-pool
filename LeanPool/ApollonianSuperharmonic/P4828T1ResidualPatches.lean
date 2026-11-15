@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.ApollonianSuperharmonic.ProperBandCircleCenterDistance
+
 public import Mathlib.Init
 
 public import LeanPool.ApollonianSuperharmonic.P4828T1Gap
@@ -227,46 +229,6 @@ private theorem line_dist (L : Real) (q : Fin 4 → CircleCoordinates) (hs : P48
     rw [heq, abs_of_pos (rpos i hi)] at hab
     exact hab
 
-private theorem center_dist (q : Fin 4 → CircleCoordinates) (hq : ProperBandQuadruple q) (i j :
-    Fin 4) (hij : i ≠ j)
-      (hi : 0 < (q i).1) (hj : 0 < (q j).1) :
-      dist ((p q) i) ((p q) j) = (r q) i + (r q) j := by
-  classical
-  let p (i : Fin 4) : ℂ := (q i).2 / ((q i).1 : ℝ)
-  let r (i : Fin 4) : ℝ := 1 / ((q i).1 : ℝ)
-  change (dist (p i) (p j) = r i + r j)
-  let v : GaussianInt := (q j).1 • (q i).2 - (q i).1 • (q j).2
-  have ht := TangencyCoordinateIdentity q hq.1 i j hij
-  have hn : Complex.normSq (v : ℂ) = (((q i).1 + (q j).1 : ℤ)^2 : ℝ) := by
-    have normCast (w : GaussianInt) :
-        Complex.normSq (w : ℂ) = (Zsqrtd.norm w : ℝ) := by
-      simp [Complex.normSq, Zsqrtd.norm_def]
-    rw [normCast]
-    exact_mod_cast ht
-  have hnsq : ‖(v : ℂ)‖ ^ 2 = (((q i).1 + (q j).1 : ℤ) : ℝ) ^ 2 := by
-    rw [← Complex.normSq_eq_norm_sq, hn]
-  have hnorm : ‖(v : ℂ)‖ = (((q i).1 + (q j).1 : ℤ) : ℝ) := by
-    have hnonneg := norm_nonneg (v : ℂ)
-    have hsum : 0 ≤ (((q i).1 + (q j).1 : ℤ) : ℝ) := by positivity
-    nlinarith
-  have hdiff : p i - p j =
-      (v : ℂ) / (((q i).1 * (q j).1 : ℤ) : ℂ) := by
-    dsimp [p, v]
-    push_cast
-    simp only [map_sub, map_zsmul]
-    field_simp [ne_of_gt hi, ne_of_gt hj]
-    ring
-  rw [Complex.dist_eq, hdiff, Complex.norm_div, Complex.norm_intCast, hnorm]
-  have ha : 0 < ((q i).1 : ℝ) := by exact_mod_cast hi
-  have hb : 0 < ((q j).1 : ℝ) := by exact_mod_cast hj
-  have hab : 0 < (((q i).1 * (q j).1 : ℤ) : ℝ) := by
-    exact_mod_cast mul_pos hi hj
-  rw [abs_of_pos hab]
-  dsimp [r]
-  push_cast
-  field_simp [ne_of_gt ha, ne_of_gt hb]
-  ring
-
 private theorem geometry (L : Real) (q : Fin 4 → CircleCoordinates) (hq : ProperBandQuadruple q)
     (hs : P4828T1LineSupport L q) (hinside : P4828T1Disk (q 0) ⊆ P4828T1Gap L q) :
       (∀ b, (F L q) b ⊆ (P L q) ∧ (0 < (q b.succ).1 → (p q) b.succ ∉ (F L q) b) ∧
@@ -344,7 +306,7 @@ private theorem omitted (L : Real) (q : Fin 4 → CircleCoordinates) (hq : Prope
       r i ≤ dist z (p i) := line_dist L q hs k i hk hi z hz
   have center_dist (i j : Fin 4) (hij : i ≠ j)
       (hi : 0 < (q i).1) (hj : 0 < (q j).1) :
-      dist (p i) (p j) = r i + r j := center_dist q hq i j hij hi hj
+      dist (p i) (p j) = r i + r j := ProperBandCircleCenterDistance q hq i j hij hi hj
   have geometry :
       (∀ b, F b ⊆ P ∧ (0 < (q b.succ).1 → p b.succ ∉ F b) ∧
         frontier (F b) ⊆ P4909T1ParentEdges L (s b)) ∧
@@ -497,7 +459,7 @@ theorem P4828T1ResidualPatches (L : Real)
   -- External tangency is obtained directly from the registered norm identity.
   have center_dist (i j : Fin 4) (hij : i ≠ j)
       (hi : 0 < (q i).1) (hj : 0 < (q j).1) :
-      dist (p i) (p j) = r i + r j := ResidualGapConstruction.center_dist q hq i j hij hi hj
+      dist (p i) (p j) = r i + r j := ProperBandCircleCenterDistance q hq i j hij hi hj
   have geometry :
       (∀ b, F b ⊆ P ∧ (0 < (q b.succ).1 → p b.succ ∉ F b) ∧
         frontier (F b) ⊆ P4909T1ParentEdges L (s b)) ∧

@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.ApollonianSuperharmonic.ProperBandCircleCenterDistance
+
 public import Mathlib.Init
 
 public import LeanPool.ApollonianSuperharmonic.P4984T1ClosedGap
@@ -280,47 +282,6 @@ private theorem lineDist :
     have heq : L + 2 - (p i).re = r i := by linarith
     rw [heq, abs_of_pos (rpos i hi)] at hab
     exact hab
-
-private theorem hdist :
-    ∀ (t : Fin 4 → CircleCoordinates), (SemiProperQuadruple t) → (∀ (i : Fin 4), ∀ (j : Fin 4),
-        (i ≠ j) → ((0 < (t i).1) → ((0 < (t j).1) → (dist (((t i).2 : ℂ) / ((t i).1 : ℝ)) (((t
-        j).2 : ℂ) / ((t j).1 : ℝ)) =
-        1 / ((t i).1 : ℝ) + 1 / ((t j).1 : ℝ))))) := by
-  classical
-  intro t ht i j hij hi hj
-  let a : ℝ := (t i).1
-  let b : ℝ := (t j).1
-  let x : ℂ := (t i).2
-  let y : ℂ := (t j).2
-  change dist (((t i).2 : ℂ) / ((t i).1 : ℝ))
-    (((t j).2 : ℂ) / ((t j).1 : ℝ)) =
-      1 / ((t i).1 : ℝ) + 1 / ((t j).1 : ℝ)
-  change dist (x / a) (y / b) = 1 / a + 1 / b
-  have hh := TangencyCoordinateIdentity t ht i j hij
-  have hn : (Zsqrtd.norm ((t j).1 • (t i).2 - (t i).1 • (t j).2) : ℝ) =
-      ((t i).1 + (t j).1 : ℤ) ^ 2 := by exact_mod_cast hh
-  have hns : Complex.normSq ((b : ℝ) * x - a * y) = (a + b)^2 := by
-    dsimp [a, b, x, y]
-    norm_num [Complex.normSq_apply, Zsqrtd.norm] at hn ⊢
-    nlinarith
-  have haPos : 0 < a := by simpa [a] using hi
-  have hbPos : 0 < b := by simpa [b] using hj
-  have ha : a ≠ 0 := ne_of_gt haPos
-  have hb : b ≠ 0 := ne_of_gt hbPos
-  have hdiv : (x / a - y / b) * (a * b) = (b : ℂ) * x - a * y := by
-    field_simp [ha, hb]
-  have hratio : x / a - y / b = ((b : ℂ) * x - a * y) / (a * b) := by
-    rw [← hdiv]
-    field_simp [ha, hb]
-  have hnumNorm : ‖(b : ℝ) * x - a * y‖ = a + b := by
-    rw [← sq_eq_sq₀ (norm_nonneg _) (add_pos haPos hbPos).le]
-    rw [← Complex.normSq_eq_norm_sq]
-    exact hns
-  have hA : ‖(a : ℂ)‖ = a := by simp [Complex.norm_real, abs_of_pos haPos]
-  have hB : ‖(b : ℂ)‖ = b := by simp [Complex.norm_real, abs_of_pos hbPos]
-  rw [dist_eq_norm, hratio, Complex.norm_div, hnumNorm,
-    Complex.norm_mul, hA, hB]
-  field_simp [ha, hb]; ring
 
 private theorem boundaryAvoid :
     ∀ (L : Real), ∀ (q : Fin 4 → CircleCoordinates), (ProperBandQuadruple q) → (
@@ -634,7 +595,7 @@ theorem P4984T1ClosedSubdivision (L : Real)
           L q rpos support k i hk hi z hz
   have hdist (t : Fin 4 → CircleCoordinates) (ht : SemiProperQuadruple t)
       (i j : Fin 4) (hij : i ≠ j) (hi : 0 < (t i).1) (hj : 0 < (t j).1) :=
-          ClosedSubdivisionProof.hdist t ht i j hij hi hj
+          SemiProperCircleCenterDistance t ht i j hij hi hj
   have boundaryAvoid (b : Fin 3) (hb : 0 < (q b.succ).1) := ClosedSubdivisionProof.boundaryAvoid
       L q hq fan parent idx_inj idx_ne footCover
           lineDist hdist b hb
