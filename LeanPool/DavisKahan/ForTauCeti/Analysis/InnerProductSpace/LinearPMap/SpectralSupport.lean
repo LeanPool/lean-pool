@@ -87,7 +87,7 @@ theorem specProjection_eq_zero_of_norm_resolvent_mul_lt_one
   have hx0 : ‖x‖ = 0 := by
     by_contra hne
     have hpos : 0 < ‖x‖ := lt_of_le_of_ne (norm_nonneg _) (Ne.symm hne)
-    nlinarith [norm_nonneg (resolvent A (c : ℂ))]
+    nlinarith only [hsmall, hnx, hpos, norm_nonneg (resolvent A (c : ℂ))]
   simpa [hxdef] using norm_eq_zero.mp hx0
 
 /-- **The diagonal measures are supported on the spectrum.**  A Borel set of
@@ -122,8 +122,8 @@ theorem diag_eq_zero_of_subset_resolventSet
     · have h := hs.2
       rw [abs_le]
       constructor
-      · nlinarith [neg_abs_le lam, h.1]
-      · nlinarith [le_abs_self lam, h.2]
+      · nlinarith only [h, neg_abs_le lam, h.1]
+      · nlinarith only [h, le_abs_self lam, h.2]
     · have h := hs.2
       rw [abs_le]
       exact ⟨by linarith [h.1], by linarith [h.2]⟩

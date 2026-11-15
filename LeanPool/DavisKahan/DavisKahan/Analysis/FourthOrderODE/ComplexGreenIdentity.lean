@@ -5,12 +5,11 @@ Authors: Jon Crall, OpenAI GPT-5.6 Thinking
 -/
 module
 
-
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 public import Mathlib.Analysis.Calculus.Deriv.Mul
 public import Mathlib.Analysis.Calculus.Deriv.Star
 public import Mathlib.Analysis.Complex.Basic
-public import Mathlib.Tactic
+import Mathlib.Tactic.Ring -- shake: keep
 
 /-!
 # Complex smooth-core Green identities for the free--free beam

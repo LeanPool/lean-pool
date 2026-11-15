@@ -5,6 +5,8 @@ Authors: Jon Crall, GPT 5.6 High
 -/
 module
 
+import Mathlib.Analysis.Matrix.Hermitian
+
 public import LeanPool.DavisKahan.DavisKahan.Sources.Davis1963.RotationEnergy
 public import LeanPool.DavisKahan.ForTauCeti.Analysis.InnerProductSpace.AngleGeometry
 public import LeanPool.DavisKahan.DavisKahan.FiniteDimensional.Core.AngleOperatorBlockSum
@@ -490,8 +492,6 @@ private theorem modelSinThetaPerturbation_sq (a b θ : ℝ) :
       | linear_combination ((((b : 𝕜) - (a : 𝕜)) ^ 2 *
           ((Real.sin θ : 𝕜)) ^ 2 * x.ofLp 1) * hpy)
 
--- Elaboration got slower across the Mathlib bump and this proof no longer fits the default
--- budget.  Raised to the same level the three declarations lower in this file already use.
 private theorem singularValues_sinThetaMap_model
     {θ : ℝ} (hθ0 : 0 ≤ θ) (hθ1 : θ ≤ Real.pi / 2) :
     (sinThetaMap (modelSubspace (𝕜 := 𝕜))
@@ -502,32 +502,28 @@ private theorem singularValues_sinThetaMap_model
     have h := congrArg (fun r : ℝ => (r : 𝕜)) (Real.sin_sq_add_cos_sq θ)
     push_cast at h
     exact h
-  rw [sinThetaMap_model_eq_matrix]
-  apply singularValues_eq_pair_of_gram_eq finrank_euclideanSpace_fin
-    (EuclideanSpace.basisFun (Fin 2) 𝕜) _ hsin (by norm_num) hsin
-  -- compute the adjoint as a matrix; `adjoint_inner_left` cannot reduce an
-  -- adjoint *composition* into matrix form
-  have hadj : (Matrix.toEuclideanLin
-      !![((Real.sin θ ^ 2 : ℝ) : 𝕜), 0;
-         ((-Real.sin θ * Real.cos θ : ℝ) : 𝕜), 0]).adjoint =
-      Matrix.toEuclideanLin
-      !![((Real.sin θ ^ 2 : ℝ) : 𝕜), ((-Real.sin θ * Real.cos θ : ℝ) : 𝕜);
-         0, 0] := by
-    rw [← Matrix.toEuclideanLin_conjTranspose_eq_adjoint]
-    congr 1
+  let A : Matrix (Fin 2) (Fin 2) 𝕜 :=
+    !![((Real.sin θ ^ 2 : ℝ) : 𝕜), 0; ((-Real.sin θ * Real.cos θ : ℝ) : 𝕜), 0]
+  let B : Matrix (Fin 2) (Fin 2) 𝕜 := !![0, 0; (Real.sin θ : 𝕜), 0]
+  have hmatrix : A.conjTranspose * A = B.conjTranspose * B := by
     ext i j
     fin_cases i <;> fin_cases j <;>
-      simp [Matrix.conjTranspose_apply, RCLike.conj_ofReal]
-  rw [hadj]
-  refine (EuclideanSpace.basisFun (Fin 2) 𝕜).toBasis.ext fun i => ?_
-  rw [OrthonormalBasis.coe_toBasis]
-  fin_cases i <;>
-    rw [diagOp_apply_basis] <;>
-    ext j <;> fin_cases j <;>
-    simp [LinearMap.comp_apply, Matrix.toLpLin_apply,
-      Matrix.vecHead, Matrix.vecTail, EuclideanSpace.basisFun_apply]
-  ring_nf
-  linear_combination (((Real.sin θ : 𝕜)) ^ 2) * hpy
+      simp [A, B, Matrix.mul_apply, Fin.sum_univ_two,
+        Matrix.conjTranspose_apply, RCLike.conj_ofReal]
+    linear_combination ((Real.sin θ : 𝕜) ^ 2) * hpy
+  have hgram : (Matrix.toEuclideanLin A).adjoint ∘ₗ Matrix.toEuclideanLin A =
+      (Matrix.toEuclideanLin B).adjoint ∘ₗ Matrix.toEuclideanLin B := by
+    rw [← Matrix.toEuclideanLin_conjTranspose_eq_adjoint,
+      ← Matrix.toEuclideanLin_conjTranspose_eq_adjoint]
+    simpa only [Matrix.toLpLin_mul_same] using
+      congrArg (Matrix.toLpLin 2 2) hmatrix
+  rw [sinThetaMap_model_eq_matrix]
+  calc
+    (Matrix.toEuclideanLin A).singularValues = (Matrix.toEuclideanLin B).singularValues :=
+      singularValues_eq_of_gram_eq hgram
+    _ = pairSingularValues (Real.sin θ) 0 := by
+      simpa only [B, abs_of_nonneg hsin] using
+        singularValues_lowerLeft_two_by_two (𝕜 := 𝕜) (Real.sin θ)
 
 private theorem singularValues_projection_sub_model
     {θ : ℝ} (hθ0 : 0 ≤ θ) (hθ1 : θ ≤ Real.pi / 2) :

@@ -895,3 +895,14 @@ def test_workflow_rebuilds_changed_modules_after_all_compiled_restores() -> None
                 assert restore_index < index, (name, step.get("name"))
             if "-m lean_pool.queue_build" in run and "--receipts" in run:
                 assert restore_index > index
+
+
+@pytest.mark.parametrize("reader", [limits._process_identity, limits._process_state])
+def test_a_process_reaped_mid_read_counts_as_gone(monkeypatch, reader) -> None:
+    """Reading /proc/PID/stat of a just-reaped process raises ESRCH, not ENOENT."""
+
+    def reaped(self, *args, **kwargs):
+        raise ProcessLookupError(3, "No such process")
+
+    monkeypatch.setattr(limits.Path, "read_text", reaped)
+    assert reader(os.getpid()) is None

@@ -66,10 +66,10 @@ theorem pairwise_disjoint_gridCell (hε : 0 < ε) :
   rintro x hxk hxl
   rcases lt_or_gt_of_ne hkl with h | h
   · have hkl' : ((k : ℝ) + 1) ≤ (l : ℝ) := by exact_mod_cast Int.add_one_le_iff.mpr h
-    have : ((k : ℝ) + 1) * ε ≤ (l : ℝ) * ε := by nlinarith [hε.le]
+    have : ((k : ℝ) + 1) * ε ≤ (l : ℝ) * ε := by nlinarith only [hε, hkl', hε.le]
     exact absurd (lt_of_lt_of_le hxk.2 this) (not_lt.mpr hxl.1)
   · have hlk' : ((l : ℝ) + 1) ≤ (k : ℝ) := by exact_mod_cast Int.add_one_le_iff.mpr h
-    have : ((l : ℝ) + 1) * ε ≤ (k : ℝ) * ε := by nlinarith [hε.le]
+    have : ((l : ℝ) + 1) * ε ≤ (k : ℝ) * ε := by nlinarith only [hε, hlk', hε.le]
     exact absurd (lt_of_lt_of_le hxl.2 this) (not_lt.mpr hxk.1)
 
 /-- The cells cover the line. -/

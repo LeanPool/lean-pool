@@ -5,8 +5,8 @@ Authors: Jon Crall, GPT 5.6 High
 -/
 module
 
-public import Mathlib.Analysis.Fourier.PoissonSummation
-public import Mathlib.Analysis.PSeries
+import Mathlib.Analysis.Fourier.PoissonSummation
+import Mathlib.Analysis.PSeries
 public import LeanPool.DavisKahan.ForTauCeti.Analysis.Fourier.ExponentialAbs
 public import LeanPool.DavisKahan.ForTauCeti.Analysis.Fourier.HaagerupZsido.Defs
 
@@ -209,7 +209,7 @@ private theorem tsum_int_inv_sq_add_sq
         intro n
         norm_cast
         have hden : y ^ 2 + (n : ℝ) ^ 2 ≠ 0 := by
-          nlinarith [sq_nonneg (n : ℝ)]
+          nlinarith only [hy, sq_nonneg (n : ℝ)]
         field_simp [Real.pi_ne_zero, hden]
       _ = ((y / Real.pi : ℝ) : ℂ) *
           ∑' n : ℤ, (((y ^ 2 + (n : ℝ) ^ 2)⁻¹ : ℝ) : ℂ) := tsum_mul_left
@@ -242,7 +242,7 @@ private theorem summable_nat_inv_sq_add_sq (y : ℝ) :
     · intro n
       have hbase : 0 < (((n + 1 : ℕ) : ℝ) ^ 2) := by positivity
       have hden : 0 < y ^ 2 + ((n + 1 : ℕ) : ℝ) ^ 2 := by positivity
-      exact (inv_le_inv₀ hden hbase).2 (by nlinarith [sq_nonneg y])
+      exact (inv_le_inv₀ hden hbase).2 (by nlinarith only [sq_nonneg y])
     · exact hmajor
   apply (summable_nat_add_iff 1).mp
   exact htail
@@ -276,7 +276,7 @@ private theorem tsum_nat_inv_sq_add_sq
   simp only [fNat, Nat.cast_zero, Nat.cast_add, Nat.cast_one] at hNatSplit
   have hzero : (y ^ 2 + (0 : ℝ) ^ 2)⁻¹ = y⁻¹ ^ 2 := by simp [inv_pow]
   rw [hzero] at hIntSplit hNatSplit
-  nlinarith
+  nlinarith only [hLattice, hIntSplit, hNatSplit]
 
 /-- The positive odd part of the Cauchy lattice. -/
 private theorem tsum_odd_inv_sq_add_sq
@@ -299,9 +299,9 @@ private theorem tsum_odd_inv_sq_add_sq
     intro n
     dsimp only [f]
     have hdenLeft : y ^ 2 + ((2 * n : ℕ) : ℝ) ^ 2 ≠ 0 := by
-      nlinarith [sq_nonneg (((2 * n : ℕ) : ℝ))]
+      nlinarith only [hy, sq_nonneg (((2 * n : ℕ) : ℝ))]
     have hdenRight : (y / 2) ^ 2 + (n : ℝ) ^ 2 ≠ 0 := by
-      nlinarith [sq_nonneg (n : ℝ)]
+      nlinarith only [hy, sq_nonneg (n : ℝ)]
     field_simp [hdenLeft, hdenRight]
     norm_num
     ring
@@ -316,7 +316,7 @@ private theorem tsum_odd_inv_sq_add_sq
   rw [hAllValue, hHalfValue] at hOddEq
   let r : ℝ := Real.exp (-(Real.pi * y))
   have hrpos : 0 < r := Real.exp_pos _
-  have hrlt : r < 1 := Real.exp_lt_one_iff.mpr (by nlinarith [Real.pi_pos])
+  have hrlt : r < 1 := Real.exp_lt_one_iff.mpr (by nlinarith only [hy, Real.pi_pos])
   have hFullExp : Real.exp (-(2 * Real.pi * y)) = r ^ 2 := by
     rw [← Real.exp_nat_mul]
     congr 1
@@ -345,7 +345,7 @@ private theorem tsum_odd_inv_sq_add_sq
         hInvHalf]
       have hOneSub : 1 - r ≠ 0 := by linarith
       have hOneAdd : 1 + r ≠ 0 := by positivity
-      have hSq : 1 - r ^ 2 ≠ 0 := by nlinarith
+      have hSq : 1 - r ^ 2 ≠ 0 := by nlinarith only [hrpos, hrlt]
       field_simp [hy.ne', hOneSub, hOneAdd, hSq]
       ring
 

@@ -4,8 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Jon Crall, GPT 5.6 High
 -/
 module
+public import Mathlib.Analysis.InnerProductSpace.Projection.Basic
 
-public import Mathlib.Analysis.InnerProductSpace.Projection.Submodule
+import Mathlib.Analysis.InnerProductSpace.Projection.Submodule
 
 /-!
 # Reducing subspaces for bounded operators

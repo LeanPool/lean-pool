@@ -203,7 +203,8 @@ def _process_identity(pid: int) -> tuple[int, int, int] | None:
     """Read kernel start ticks, current parent and group for a candidate PID."""
     try:
         stat = Path(f"/proc/{pid}/stat").read_text()
-    except FileNotFoundError:
+    except (FileNotFoundError, ProcessLookupError):
+        # ProcessLookupError: the process was reaped between open and read.
         return None
     fields = stat.rsplit(")", 1)[1].split()
     return int(fields[19]), int(fields[1]), int(fields[2])
@@ -334,7 +335,7 @@ def _process_state(pid: int) -> str | None:
     """Read the leader state without reaping its PID or releasing its group ID."""
     try:
         stat = Path(f"/proc/{pid}/stat").read_text()
-    except FileNotFoundError:
+    except (FileNotFoundError, ProcessLookupError):
         return None
     return stat.rsplit(")", 1)[1].split()[0]
 

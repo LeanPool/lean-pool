@@ -6,7 +6,7 @@ Authors: Jon Crall, GPT-5.6 Thinking
 module
 
 public import Mathlib.Analysis.InnerProductSpace.Positive
-public import Mathlib.Analysis.InnerProductSpace.Spectrum
+import Mathlib.Analysis.InnerProductSpace.Spectrum
 public import LeanPool.DavisKahan.ForTauCeti.Analysis.InnerProductSpace.CourantFischer
 
 
