@@ -49,7 +49,7 @@ theorem measure_diff_quadraticEstimateSet_preimage_linearIsometryEquiv_eq_zero
       e ⁻¹' Ω \ e ⁻¹' quadraticEstimateSet u =
         e ⁻¹' (Ω \ quadraticEstimateSet u) := by
     ext x
-    simp
+    simp only [Set.mem_sdiff, Set.mem_preimage, mem_quadraticEstimateSet, Set.preimage_sdiff]
   rw [hset]
   exact measure_preimage_linearIsometryEquiv_eq_zero e hnull
 
@@ -66,7 +66,8 @@ theorem measure_diff_quadraticQuotientEstimateSet_preimage_linearIsometryEquiv_e
       e ⁻¹' Ω \ e ⁻¹' quadraticQuotientEstimateSet u =
         e ⁻¹' (Ω \ quadraticQuotientEstimateSet u) := by
     ext x
-    simp
+    simp only [Set.mem_sdiff, Set.mem_preimage, mem_quadraticQuotientEstimateSet,
+      Set.preimage_sdiff]
   rw [hset]
   exact measure_preimage_linearIsometryEquiv_eq_zero e hnull
 
@@ -83,7 +84,7 @@ theorem measure_diff_quadraticEstimateSet_image_linearIsometryEquiv_eq_zero
       (e := e) (Ω := e '' Ω) (u := u ∘ e.symm) hnull
   have hfun : (u ∘ e.symm) ∘ e = u := by
     funext x
-    simp
+    simp only [Function.comp_apply, LinearIsometryEquiv.symm_apply_apply]
   have hpreimage : e ⁻¹' (e '' Ω) = Ω := by
     ext x
     constructor
@@ -91,11 +92,11 @@ theorem measure_diff_quadraticEstimateSet_image_linearIsometryEquiv_eq_zero
       rcases hx with ⟨y, hy, hxy⟩
       have hxy' : x = y := by
         have hsymm := congrArg e.symm hxy
-        simpa using hsymm.symm
-      simpa [hxy'] using hy
+        simpa only [LinearIsometryEquiv.symm_apply_apply] using hsymm.symm
+      simpa only [hxy'] using hy
     · intro hx
       exact ⟨x, hx, rfl⟩
-  simpa [hfun, hpreimage] using hpre
+  simpa only [hpreimage, hfun] using hpre
 
 /-- Quotient-estimate version of
 `measure_diff_quadraticEstimateSet_image_linearIsometryEquiv_eq_zero`. -/
@@ -110,7 +111,7 @@ theorem measure_diff_quadraticQuotientEstimateSet_image_linearIsometryEquiv_eq_z
       (e := e) (Ω := e '' Ω) (u := u ∘ e.symm) hnull
   have hfun : (u ∘ e.symm) ∘ e = u := by
     funext x
-    simp
+    simp only [Function.comp_apply, LinearIsometryEquiv.symm_apply_apply]
   have hpreimage : e ⁻¹' (e '' Ω) = Ω := by
     ext x
     constructor
@@ -118,11 +119,11 @@ theorem measure_diff_quadraticQuotientEstimateSet_image_linearIsometryEquiv_eq_z
       rcases hx with ⟨y, hy, hxy⟩
       have hxy' : x = y := by
         have hsymm := congrArg e.symm hxy
-        simpa using hsymm.symm
-      simpa [hxy'] using hy
+        simpa only [LinearIsometryEquiv.symm_apply_apply] using hsymm.symm
+      simpa only [hxy'] using hy
     · intro hx
       exact ⟨x, hx, rfl⟩
-  simpa [hfun, hpreimage] using hpre
+  simpa only [hpreimage, hfun] using hpre
 
 /-- Pull back full-measure mixed-directional estimate goodness through a linear isometry
 equivalence. -/
@@ -138,7 +139,8 @@ theorem measure_diff_mixedDirectionalQuadraticEstimateSet_preimage_linearIsometr
       e ⁻¹' Ω \ e ⁻¹' mixedDirectionalQuadraticEstimateSet D (fun i ↦ e (v i)) u =
         e ⁻¹' (Ω \ mixedDirectionalQuadraticEstimateSet D (fun i ↦ e (v i)) u) := by
     ext x
-    simp
+    simp only [Set.mem_sdiff, Set.mem_preimage, mem_mixedDirectionalQuadraticEstimateSet,
+      Set.preimage_sdiff]
   rw [hset]
   exact measure_preimage_linearIsometryEquiv_eq_zero e hnull
 
@@ -157,7 +159,8 @@ theorem measure_diff_mixedDirectionalQuadraticQuotientSet_preimage_linearIsometr
       e ⁻¹' Ω \ e ⁻¹' mixedDirectionalQuadraticQuotientEstimateSet D (fun i ↦ e (v i)) u =
         e ⁻¹' (Ω \ mixedDirectionalQuadraticQuotientEstimateSet D (fun i ↦ e (v i)) u) := by
     ext x
-    simp
+    simp only [Set.mem_sdiff, Set.mem_preimage, mem_mixedDirectionalQuadraticQuotientEstimateSet,
+      Set.preimage_sdiff]
   rw [hset]
   exact measure_preimage_linearIsometryEquiv_eq_zero e hnull
 
@@ -177,7 +180,8 @@ theorem measure_diff_polarizedMixedDirectionalQuadraticSet_preimage_linearIsomet
           e ⁻¹' polarizedMixedDirectionalQuadraticEstimateSet D (fun i ↦ e (v i)) u =
         e ⁻¹' (Ω \ polarizedMixedDirectionalQuadraticEstimateSet D (fun i ↦ e (v i)) u) := by
     ext x
-    simp
+    simp only [Set.mem_sdiff, Set.mem_preimage, mem_polarizedMixedDirectionalQuadraticEstimateSet,
+      Set.preimage_sdiff]
   rw [hset]
   exact measure_preimage_linearIsometryEquiv_eq_zero e hnull
 
@@ -204,7 +208,8 @@ theorem measure_diff_polarizedMixedDirectionalQuotientSet_preimage_linearIsometr
           (Ω \ polarizedMixedDirectionalQuadraticQuotientEstimateSet D
             (fun i ↦ e (v i)) u) := by
     ext x
-    simp
+    simp only [Set.mem_sdiff, Set.mem_preimage,
+      mem_polarizedMixedDirectionalQuadraticQuotientEstimateSet, Set.preimage_sdiff]
   rw [hset]
   exact measure_preimage_linearIsometryEquiv_eq_zero e hnull
 
@@ -225,8 +230,11 @@ theorem measure_diff_mixedDirectionalQuadraticEstimateSet_image_linearIsometryEq
       e ⁻¹' (e '' Ω) \ mixedDirectionalQuadraticEstimateSet D v ((u ∘ e.symm) ∘ e) =
         Ω \ mixedDirectionalQuadraticEstimateSet D v u := by
     ext x
-    simp [mixedDirectionalQuadraticEstimateSet, MixedDirectionalQuadraticEstimateAt,
-      Function.comp_def]
+    simp only [mixedDirectionalQuadraticEstimateSet, MixedDirectionalQuadraticEstimateAt,
+      Function.comp_def, LinearIsometryEquiv.symm_apply_apply, one_div, Real.norm_eq_abs,
+      Set.mem_sdiff, Set.mem_preimage, Set.mem_image, EmbeddingLike.apply_eq_iff_eq,
+      exists_eq_right, Set.mem_ofPred_eq, not_exists, not_forall, Filter.not_eventually,
+      not_le]
   rwa [hset] at hpre
 
 /-- Quotient-estimate version of
@@ -248,8 +256,11 @@ theorem measure_diff_mixedDirectionalQuadraticQuotientSet_image_linearIsometryEq
           mixedDirectionalQuadraticQuotientEstimateSet D v ((u ∘ e.symm) ∘ e) =
         Ω \ mixedDirectionalQuadraticQuotientEstimateSet D v u := by
     ext x
-    simp [mixedDirectionalQuadraticQuotientEstimateSet,
-      MixedDirectionalQuadraticQuotientEstimateAt, Function.comp_def]
+    simp only [mixedDirectionalQuadraticQuotientEstimateSet,
+      MixedDirectionalQuadraticQuotientEstimateAt, Function.comp_def,
+      LinearIsometryEquiv.symm_apply_apply, one_div, Real.norm_eq_abs, ne_eq, Set.mem_sdiff,
+      Set.mem_preimage, Set.mem_image, EmbeddingLike.apply_eq_iff_eq, exists_eq_right,
+      Set.mem_ofPred_eq, not_exists, not_forall, Filter.not_eventually, not_le]
   rwa [hset] at hpre
 
 /-- Pull back full-measure polarized mixed-directional estimate goodness from the image domain of
@@ -271,8 +282,12 @@ theorem measure_diff_polarizedMixedDirectionalQuadraticSet_image_linearIsometryE
           polarizedMixedDirectionalQuadraticEstimateSet D v ((u ∘ e.symm) ∘ e) =
         Ω \ polarizedMixedDirectionalQuadraticEstimateSet D v u := by
     ext x
-    simp [polarizedMixedDirectionalQuadraticEstimateSet,
-      PolarizedMixedDirectionalQuadraticEstimateAt, Function.comp_def]
+    simp only [polarizedMixedDirectionalQuadraticEstimateSet,
+      PolarizedMixedDirectionalQuadraticEstimateAt, Function.comp_def,
+      LinearIsometryEquiv.symm_apply_apply, one_div, polarizedMixedQuadraticSum_eq,
+      Real.norm_eq_abs, Set.mem_sdiff, Set.mem_preimage, Set.mem_image,
+      EmbeddingLike.apply_eq_iff_eq, exists_eq_right, Set.mem_ofPred_eq, not_exists, not_forall,
+      Filter.not_eventually, not_le]
   rwa [hset] at hpre
 
 /-- Quotient-estimate version of
@@ -294,8 +309,12 @@ theorem measure_diff_polarizedMixedDirectionalQuotientSet_image_linearIsometryEq
           polarizedMixedDirectionalQuadraticQuotientEstimateSet D v ((u ∘ e.symm) ∘ e) =
         Ω \ polarizedMixedDirectionalQuadraticQuotientEstimateSet D v u := by
     ext x
-    simp [polarizedMixedDirectionalQuadraticQuotientEstimateSet,
-      PolarizedMixedDirectionalQuadraticQuotientEstimateAt, Function.comp_def]
+    simp only [polarizedMixedDirectionalQuadraticQuotientEstimateSet,
+      PolarizedMixedDirectionalQuadraticQuotientEstimateAt, Function.comp_def,
+      LinearIsometryEquiv.symm_apply_apply, one_div, polarizedMixedQuadraticSum_eq,
+      Real.norm_eq_abs, ne_eq, Set.mem_sdiff, Set.mem_preimage, Set.mem_image,
+      EmbeddingLike.apply_eq_iff_eq, exists_eq_right, Set.mem_ofPred_eq, not_exists, not_forall,
+      Filter.not_eventually, not_le]
   rwa [hset] at hpre
 
 

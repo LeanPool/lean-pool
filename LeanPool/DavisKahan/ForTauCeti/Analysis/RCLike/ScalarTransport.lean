@@ -15,12 +15,12 @@ Transport of Hilbert-space structure along an isomorphism of `RCLike` fields.
 -/
 module
 
-public import Mathlib.Analysis.Complex.Basic
-public import Mathlib.Analysis.InnerProductSpace.Adjoint
+import Mathlib.Analysis.Complex.Basic
+import Mathlib.Analysis.InnerProductSpace.Adjoint
 public import Mathlib.Analysis.InnerProductSpace.LinearPMap
-public import Mathlib.Analysis.InnerProductSpace.Projection.Basic
-public import Mathlib.Analysis.RCLike.Basic
-public import Mathlib.LinearAlgebra.Dimension.Basic
+import Mathlib.Analysis.InnerProductSpace.Projection.Basic
+import Mathlib.Analysis.RCLike.Basic
+import Mathlib.LinearAlgebra.Dimension.Basic
 
 /-! # Transport of a Hilbert space along an isomorphism of `RCLike` fields
 
@@ -154,7 +154,7 @@ theorem im_I_map (e : RCLikeIso 𝕜 𝕂) :
 @[simp] theorem norm_map (e : RCLikeIso 𝕜 𝕂) (x : 𝕜) : ‖e x‖ = ‖x‖ := by
   have h1 : ‖e x‖ ^ 2 = ‖x‖ ^ 2 := by
     rw [RCLike.norm_sq_eq_def, RCLike.norm_sq_eq_def, e.re_map, e.im_map]
-  nlinarith [norm_nonneg (e x), norm_nonneg x, h1]
+  exact (sq_eq_sq₀ (norm_nonneg _) (norm_nonneg _)).mp h1
 
 /-- The isomorphism commutes with conjugation. -/
 @[simp] theorem map_conj (e : RCLikeIso 𝕜 𝕂) (x : 𝕜) :

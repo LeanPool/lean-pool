@@ -44,7 +44,7 @@ theorem dotProduct_mulVec_comm_of_isHermitian
       dotProduct (Matrix.mulVec A y) x := by
   have htranspose : A.transpose = A := by
     ext i j
-    simpa using hA.apply i j
+    exact hA.apply i j
   calc
     dotProduct (Matrix.mulVec A x) y = dotProduct y (Matrix.mulVec A x) :=
       dotProduct_comm _ _
@@ -126,7 +126,7 @@ theorem blockQuadraticModel_le_of_le_smul_identity
     simp [blockDiagonalIdentity_eq_one, Matrix.smul_mulVec]
   rw [hleft, hright] at hquad
   dsimp [blockQuadraticModel]
-  linarith
+  linarith only [hquad]
 
 /--
 The CIL quadratic comparison estimate, separated from the scalar inequalities
@@ -179,7 +179,7 @@ theorem blockQuadraticModel_le_add_smul_mul_self_add_of_bounds
   have hdot : dotProduct h h = dotProduct (z - ξ) (z - ξ) := rfl
   rw [hexpand, hAeps]
   rw [← hdot]
-  linarith
+  linarith only [hbound_h, hyoung_h]
 
 /--
 The CIL quadratic comparison estimate obtained from a Loewner upper bound
@@ -301,7 +301,7 @@ theorem comparisonPenaltyBlock_le_two_smul_blockDiagonalIdentity
             dotProduct q (Matrix.mulVec (comparisonPenaltyBlock (n := n) α) q) := by
         exact dotProduct_comm _ _
       rw [blockQuadraticModel, hdot] at h
-      nlinarith
+      nlinarith only [h]
     have hself :
         dotProduct q q =
           dotProduct x x + dotProduct y y := by
@@ -386,7 +386,7 @@ theorem blockQuadraticModel_ishiiUpperBlock_doubledPoint
     blockQuadraticModel_comparisonPenaltyBlock_doubledPoint (n := n) α q
   dsimp [blockQuadraticModel] at hpen ⊢
   simp [ishiiUpperBlock, Matrix.smul_mulVec, smul_dotProduct] at hpen ⊢
-  nlinarith
+  nlinarith only [hpen]
 
 /--
 For every vector `z : Fin n -> Real`, the Hessian matrix of
@@ -420,7 +420,7 @@ theorem IshiiMatrixRelation.quadraticForm_left_le_right {α : Real} {x y : Point
   have hupper := h.quadraticForm_upper (doubledSameVector z)
   rw [comparisonBlockDiagonal_quadratic_doubledSameVector,
     ishiiUpperBlock_quadratic_doubledSameVector] at hupper
-  linarith
+  linarith only [hupper]
 
 /--
 If `X` and `Y` satisfy `IshiiMatrixRelation α x y X Y`, then `X ≤ Y` in
@@ -452,7 +452,7 @@ theorem IshiiMatrixRelation.left_le_right {α : Real} {x y : Point n}
   have hYHerm : Y.IsHermitian := by
     have hnegYHerm : (-Y).IsHermitian :=
       (Matrix.isHermitian_fromBlocks_iff.mp hmiddleHerm).2.2.2
-    simpa using Matrix.isHermitian_neg_iff.mp hnegYHerm
+    exact Matrix.isHermitian_neg_iff.mp hnegYHerm
   refine Matrix.le_iff.mpr ?_
   refine Matrix.PosSemidef.of_dotProduct_mulVec_nonneg (hYHerm.sub hXHerm) ?_
   intro z
@@ -462,7 +462,7 @@ theorem IshiiMatrixRelation.left_le_right {α : Real} {x y : Point n}
         dotProduct z (Matrix.mulVec Y z) - dotProduct z (Matrix.mulVec X z) := by
     simp [Matrix.sub_mulVec, dotProduct_sub]
   rw [hdiffQuad]
-  linarith
+  linarith only [hquad]
 
 /--
 The lower Ishii block bound implies `-(3 * α) I ≤ X`.
@@ -481,7 +481,7 @@ theorem IshiiMatrixRelation.left_lower_bound {α : Real} {x y : Point n}
       Matrix.submatrix (comparisonBlockDiagonal X Y) Sum.inl Sum.inl = X := by
     ext i j
     simp [comparisonBlockDiagonal]
-  simpa [hlower, hmiddle] using hsub
+  exact hsub
 
 /--
 The upper Ishii block bound implies `X ≤ 3α I`.

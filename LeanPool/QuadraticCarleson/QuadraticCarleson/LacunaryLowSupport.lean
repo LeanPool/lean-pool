@@ -41,12 +41,12 @@ theorem two_mul_length_lt_distance
   rw [centeredInterval] at hx hy
   simp only [mem_Ico, not_and_or] at hx
   rcases hx with hx | hx
-  · have hxy : x - y < 0 := by linarith [hy.1]
+  · have hxy : x - y < 0 := by linarith only [hR, hy, hx, hy.1]
     rw [abs_of_neg hxy]
-    linarith [hy.1]
-  · have hxy : 0 < x - y := by linarith [hy.2]
+    linarith only [hy, hx, hy.1]
+  · have hxy : 0 < x - y := by linarith only [hR, hy, hx, hy.2]
     rw [abs_of_pos hxy]
-    linarith [hy.2]
+    linarith only [hy, hx, hy.2]
 
 /-- The fivefold complement is contained in the complement of the closed
 triple interval. Positivity is needed only because the fivefold interval is
@@ -59,7 +59,7 @@ theorem not_mem_triple_of_not_mem_fivefold
   apply hx
   rw [centeredInterval]
   rw [tripleCenteredInterval, mem_Icc] at hx3
-  constructor <;> linarith
+  constructor <;> linarith only [hR, hx3]
 
 /-- The cancellation-relevant Lipschitz estimate uses the first member
 `|lambda|` of the paper's derivative minimum. -/
@@ -86,7 +86,7 @@ theorem paperLowCZKernel_sub_center_norm_le_abs_lam
       intro heu
       subst u
       simp only [abs_zero] at huabs
-      linarith
+      linarith only [hxy, huabs]
     exact (hasDerivAt_paperLowOscillatoryKernel hlam B hu0).differentiableAt
   have hderiv : ∀ u ∈ uIcc a b,
       ‖deriv F u‖ ≤ lowKernelDerivativeConstant * |lam| := by
@@ -100,7 +100,7 @@ theorem paperLowCZKernel_sub_center_norm_le_abs_lam
       intro heu
       subst u
       simp only [abs_zero] at huabs
-      linarith
+      linarith only [hxy, huabs]
     rw [paperLowOscillatoryKernel_deriv hlam B hu0]
     exact paperLowOscillatoryKernelDerivative_norm_le_abs_lam hlam B hu0
   have hmv := (convex_uIcc a b).norm_image_sub_le_of_norm_deriv_le
@@ -110,7 +110,7 @@ theorem paperLowCZKernel_sub_center_norm_le_abs_lam
   calc
     ‖F a - F b‖ ≤ (lowKernelDerivativeConstant * |lam|) * ‖a - b‖ := hmv
     _ = lowKernelDerivativeConstant * |lam| * |y - z| := by
-      simp only [a, b, Real.norm_eq_abs]
+      simp only [Real.norm_eq_abs, a, b]
       rw [show x - y - (x - z) = -(y - z) by ring, abs_neg]
 
 /-- Mean-zero cancellation therefore gives the paper's pointwise
@@ -181,7 +181,7 @@ theorem four_mul_abs_mul_length_sq_lt
   have hmain : 2 * R * Real.sqrt |lam| < (2 : ℝ) ^ B := hlower.trans hs
   have hnonneg : 0 ≤ 2 * R * Real.sqrt |lam| := by positivity
   have hsquare := (sq_lt_sq₀ hnonneg (by positivity : 0 ≤ (2 : ℝ) ^ B)).2 hmain
-  nlinarith [Real.sq_sqrt (abs_nonneg lam)]
+  nlinarith only [hsquare, Real.sq_sqrt (abs_nonneg lam)]
 
 /-- The too-large alternative in the paper's frozen-range error is genuinely
 zero off the fivefold exceptional interval. -/
@@ -258,7 +258,7 @@ theorem integral_paperLowCZKernel_mul_levelAtom_eq_zero_of_tooLarge
     · rw [paperLowCZKernel_eq_zero_of_tooLarge B c m j hlarge hR hscale hx hy,
         zero_mul]
     · rw [CalderonZygmundLevelAtoms.levelAtom_eq_zero_of_not_mem hy, mul_zero]
-  simp [hzero]
+  simp only [hzero, MeasureTheory.integral_zero]
 
 end LacunaryLowSupport
 end QuadraticCarleson

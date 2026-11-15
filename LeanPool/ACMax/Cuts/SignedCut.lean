@@ -97,7 +97,7 @@ theorem algConn_le_two_of_signed {V : Type*} [Fintype V] [Nonempty V]
     refine Finset.sum_congr rfl (fun i _ => Finset.sum_congr rfl (fun j _ => ?_))
     refine if_congr ?_ rfl rfl
     rw [SimpleGraph.adj_comm]
-    tauto
+    exact and_congr_right fun _ => and_comm
   -- Count lemma `P → Z`: ordered adjacent pairs `(i ∈ P, j ∉ P ∪ N)` total `ePZ`.
   have hPZ :
       (∑ i, ∑ j, if (G.Adj i j ∧ i ∈ P ∧ j ∉ P ∪ N) then (1 : ℝ) else 0) = (ePZ : ℝ) := by
@@ -122,7 +122,7 @@ theorem algConn_le_two_of_signed {V : Type*} [Fintype V] [Nonempty V]
     refine Finset.sum_congr rfl (fun i _ => Finset.sum_congr rfl (fun j _ => ?_))
     refine if_congr ?_ rfl rfl
     rw [SimpleGraph.adj_comm]
-    tauto
+    exact and_congr_right fun _ => and_comm
   -- Count lemma `N → Z`: ordered adjacent pairs `(i ∈ N, j ∉ P ∪ N)` total `eNZ`.
   have hNZ :
       (∑ i, ∑ j, if (G.Adj i j ∧ i ∈ N ∧ j ∉ P ∪ N) then (1 : ℝ) else 0) = (eNZ : ℝ) := by
@@ -147,7 +147,7 @@ theorem algConn_le_two_of_signed {V : Type*} [Fintype V] [Nonempty V]
     refine Finset.sum_congr rfl (fun i _ => Finset.sum_congr rfl (fun j _ => ?_))
     refine if_congr ?_ rfl rfl
     rw [SimpleGraph.adj_comm]
-    tauto
+    exact and_congr_right fun _ => and_comm
   -- Quadratic form equals `4·ePN + ePZ + eNZ`.
   have hquad : dotProduct x ((G.lapMatrix ℝ).mulVec x) =
       4 * (ePN : ℝ) + (ePZ : ℝ) + (eNZ : ℝ) := by

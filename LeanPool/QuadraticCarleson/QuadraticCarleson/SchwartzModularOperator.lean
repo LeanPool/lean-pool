@@ -53,7 +53,7 @@ theorem measurable_lacunaryQuadraticCarlesonSchwartz (f : 𝓢(ℝ, ℂ)) :
 theorem schwartzFlipTranslate_real_smul (a : ℝ) (f : 𝓢(ℝ, ℂ)) (x : ℝ) :
     schwartzFlipTranslate (a • f) x = a • schwartzFlipTranslate f x := by
   ext y
-  simp only [schwartzFlipTranslate_apply, smul_apply]
+  rfl
 
 theorem quadraticHilbertSchwartz_real_smul (modulation a : ℝ) (f : 𝓢(ℝ, ℂ)) (x : ℝ) :
     quadraticHilbertSchwartz modulation (a • f) x =
@@ -178,7 +178,7 @@ theorem not_hasSchwartzPhiModularEstimate_of_sequence (Φ : YoungFunction)
       (ENNReal.ofReal_le_ofReal_iff hmass).mp (hl.trans (hest (f N) (hf N) (α N) hαN))
     rw [Real.norm_eq_abs, abs_of_nonneg hmass, Real.norm_eq_abs,
       abs_of_pos hNpos] at hs
-    nlinarith [mul_pos hδ hNpos]
+    linarith only [hδ, hs, hNpos, hlreal, mul_pos hδ hNpos]
   obtain ⟨N, hN⟩ := hfalse.exists
   exact hN
 
@@ -250,7 +250,7 @@ theorem exists_unit_schwartz_modular_witness_of_sequence (Φ : YoungFunction)
     ENNReal.ofReal (schwartzModularMass Φ (f N) (α N)) <
         ENNReal.ofReal (κ * (δ * (N : ℝ))) := by
       apply (ENNReal.ofReal_lt_ofReal_iff (by positivity)).mpr
-      nlinarith [mul_pos (mul_pos hκ hδ) hNpos]
+      linarith only [hδ, hκ, hs, hNpos, mul_pos (mul_pos hκ hδ) hNpos]
     _ = ENNReal.ofReal κ * ENNReal.ofReal (δ * (N : ℝ)) := ENNReal.ofReal_mul hκ.le
     _ ≤ ENNReal.ofReal κ * volume (schwartzOperatorLevelSet T (f N) (α N)) := by gcongr
 
@@ -284,7 +284,7 @@ theorem not_hasSchwartzPhiModularEstimate_lacunary_of_counterexample_lower_bound
     unfold counterexampleHeight
     ring
   rw [heq]
-  linarith
+  linarith only [hN]
 
 /-- The paper's witnesses are normalized members of the actual
 `counterexampleSchwartz` family. Halving the given analytic height ensures
@@ -317,7 +317,7 @@ theorem exists_normalized_counterexampleSchwartz_modular_witness
       unfold counterexampleHeight
       ring
     rw [heq]
-    linarith
+    linarith only [hN]
   simpa only [schwartzOperatorLevelSet, ENNReal.ofReal_one, lacunarySchwartzOperator] using
     exists_unit_schwartz_modular_witness_of_sequence Φ lacunarySchwartzOperator
       lacunarySchwartzOperator_positivelyHomogeneous

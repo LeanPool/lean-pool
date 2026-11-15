@@ -37,21 +37,8 @@ The construction, at a regularity scale `ε₁` and a relative block size `α` c
 Must be sorry-free and axiom-clean `[propext, Classical.choice, Quot.sound]`.
 -/
 public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.BoxAllocationSpec
-public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.YusterFracUpper
-public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.CoreGapRectPack
-public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.GridLineDesign
-public import Mathlib.Algebra.Field.ZMod
-public import Mathlib.Tactic.Bound
-public import Mathlib.Tactic.LinearCombination
-public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.CoreGapBlockShape
+import LeanPool.AsymptoticTrianglePacking.Internal.AX1.BlockEstimates
 public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.CoreGapClusterHost
-public import Mathlib.Data.List.GetD
-public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.BlockSplit
-public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.CoreGapClusterLP
-public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.CoreGapClusterCapacity
-public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.CoreGapGridLocalResidual
-public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.TripleEdgesThree
-public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.CoreGapBlockCover
 
 
 /-! # CoreGapBlockCoverCoupled -/
@@ -65,18 +52,14 @@ namespace Nibble.AX1
 /-! ### The arithmetic of the construction
 
 The block scale `τ` is large (`8 ≤ τ·δ`), the blocks have size between `¾τδ` and `⁵⁄₄τ`, and the
-regularity scale `ε₁` is small compared with `δ`, `μ₂` and `η`.  The four lemmas below are the only
-computations the reduction needs; they are stated in isolation to keep the context small. -/
+regularity scale `ε₁` is small compared with `δ`, `μ₂` and `η`.  The estimates below use the shared
+`BlockEstimates` proofs, keeping the two reductions in sync. -/
 
 /-- The blocks have size between `¾·τδ` and `⁵⁄₄·τ`. -/
 private theorem block_size_bounds {τ δ s dens : ℝ} (hτ : 0 < τ) (_hδ : 0 < δ) (_hδ1 : δ ≤ 1)
     (hτδ : 8 ≤ τ * δ) (h1 : δ ≤ dens) (h2 : dens ≤ 1) (habs : |s - τ * dens| ≤ 1) :
     3 / 4 * (τ * δ) ≤ s ∧ s ≤ 5 / 4 * τ := by
-  rw [abs_le] at habs
-  have h3 : τ * δ ≤ τ * dens := mul_le_mul_of_nonneg_left h1 hτ.le
-  have h4 : τ * dens ≤ τ := mul_le_of_le_one_right hτ.le h2
-  have h6 : τ * δ ≤ τ := h3.trans h4
-  exact ⟨by linarith [habs.1], by linarith [habs.2]⟩
+  exact @BlockEstimates.block_size_bounds τ δ s dens hτ hτδ h1 h2 habs
 
 /-- The area and the support of a sub-triple, in terms of the scale. -/
 private theorem area_bounds {τ δ a b c : ℝ} (hτ : 0 < τ) (_hδ : 0 < δ) (hτδ : 8 ≤ τ * δ)
@@ -85,16 +68,7 @@ private theorem area_bounds {τ δ a b c : ℝ} (hτ : 0 < τ) (_hδ : 0 < δ) (
     (hc : 3 / 4 * (τ * δ) ≤ c) (hc' : c ≤ 5 / 4 * τ) :
     0 ≤ a ∧ 0 ≤ b ∧ 0 ≤ c ∧ a * b + a * c + b * c ≤ 5 * τ ^ 2 ∧
       0 ≤ a * b + a * c + b * c ∧ a + b + c ≤ 4 * τ ∧ 0 ≤ a + b + c := by
-  have hbase : 0 ≤ 3 / 4 * (τ * δ) := by linarith only [hτδ]
-  have ha0 : 0 ≤ a := hbase.trans ha
-  have hb0 : 0 ≤ b := hbase.trans hb
-  have hc0 : 0 ≤ c := hbase.trans hc
-  have hab := mul_le_mul ha' hb' hb0 (by positivity : (0 : ℝ) ≤ 5 / 4 * τ)
-  have hac := mul_le_mul ha' hc' hc0 (by positivity : (0 : ℝ) ≤ 5 / 4 * τ)
-  have hbc := mul_le_mul hb' hc' hc0 (by positivity : (0 : ℝ) ≤ 5 / 4 * τ)
-  refine ⟨ha0, hb0, hc0, ?_, by positivity, ?_, add_nonneg (add_nonneg ha0 hb0) hc0⟩
-  · linarith only [hab, hac, hbc, sq_nonneg τ]
-  · linarith only [ha', hb', hc', hτ]
+  exact @BlockEstimates.area_bounds τ δ a b c hτ hτδ ha ha' hb hb' hc hc'
 
 /-- The `Elo` of a sub-triple is at least a quarter of `τ²δ³`. -/
 private theorem elo_lower {τ δ ε₁ a b c dAB dAC dBC : ℝ} (hτ : 0 < τ) (hδ : 0 < δ) (_hδ1 : δ ≤ 1)
@@ -103,61 +77,40 @@ private theorem elo_lower {τ δ ε₁ a b c dAB dAC dBC : ℝ} (hτ : 0 < τ) (
     (ha : 3 / 4 * (τ * δ) ≤ a) (hb : 3 / 4 * (τ * δ) ≤ b) (hc0 : 0 ≤ c) (ha0 : 0 ≤ a)
     (hb0 : 0 ≤ b) :
     1 / 4 * (τ ^ 2 * δ ^ 3) ≤ dAB * a * b + dAC * a * c + dBC * b * c := by
-  have hAB : 15 / 16 * δ ≤ dAB := by linarith
-  have hnn : (0:ℝ) ≤ 3 / 4 * (τ * δ) := by positivity
-  have hab : 9 / 16 * (τ ^ 2 * δ ^ 2) ≤ a * b := by
-    linarith only [mul_le_mul ha hb hnn ha0]
-  have hmain : 1 / 4 * (τ ^ 2 * δ ^ 3) ≤ dAB * a * b := by
-    have h1 : (15 / 16 * δ) * (9 / 16 * (τ ^ 2 * δ ^ 2)) ≤ dAB * (a * b) :=
-      mul_le_mul hAB hab (by positivity) (le_trans (by positivity) hAB)
-    have h2 : dAB * a * b = dAB * (a * b) := by ring
-    have h3 : (15 / 16 * δ) * (9 / 16 * (τ ^ 2 * δ ^ 2)) = 135 / 256 * (τ ^ 2 * δ ^ 3) := by ring
-    have h4 : (0:ℝ) ≤ τ ^ 2 * δ ^ 3 := by positivity
-    rw [h2]
-    rw [h3] at h1
-    linarith only [h1, h4]
-  have h2 : 0 ≤ dAC * a * c := by positivity
-  have h3 : 0 ≤ dBC * b * c := by positivity
-  linarith only [hmain, h2, h3]
+  exact @BlockEstimates.edge_count_lower_bound τ δ ε₁ a b c dAB dAC dBC hτ hδ hε₁b hx
+    hAC0 hBC0 ha
+    hb hc0 ha0 hb0
 
 /-- The product of three densities at least `δ` is at least `δ³`. -/
 private theorem dens_prod_lower {δ x y z : ℝ} (hδ : 0 < δ) (hx : δ ≤ x) (hy : δ ≤ y) (hz : δ ≤ z) :
     δ ^ 3 ≤ x * y * z := by
-  have h1 : δ * δ ≤ x * y := mul_le_mul hx hy hδ.le (by linarith)
-  have h2 : (δ * δ) * δ ≤ (x * y) * z :=
-    mul_le_mul h1 hz hδ.le (le_trans (by positivity : (0:ℝ) ≤ δ * δ) h1)
-  linarith only [h2]
+  exact @BlockEstimates.density_product_lower_bound δ x y z hδ hx hy hz
 
 /-- The triangle-degree scale of a sub-triple is above the floor `d₀`. -/
 private theorem d_lower {τ δ d₀ x y z : ℝ} (hτ : 0 < τ) (hδ : 0 < δ) (hx : δ ≤ x) (hy : δ ≤ y)
-    (hz : δ ≤ z) (hd₀ : d₀ ≤ τ * δ ^ 3) : d₀ ≤ τ * (x * y * z) :=
-  le_trans hd₀ (mul_le_mul_of_nonneg_left (dens_prod_lower hδ hx hy hz) hτ.le)
+    (hz : δ ≤ z) (hd₀ : d₀ ≤ τ * δ ^ 3) : d₀ ≤ τ * (x * y * z) := by
+  exact @BlockEstimates.degree_scale_lower_bound τ δ d₀ x y z hτ hδ hx hy hz hd₀
 
 /-- The triangle-degree scale of a sub-triple is nonnegative. -/
 private theorem d_nonneg {τ δ x y z : ℝ} (hτ : 0 < τ) (hδ : 0 < δ) (hx : δ ≤ x) (hy : δ ≤ y)
     (hz : δ ≤ z) : 0 ≤ τ * (x * y * z) := by
-  have h := dens_prod_lower hδ hx hy hz
-  have h0 : (0:ℝ) < δ ^ 3 := by positivity
-  exact mul_nonneg hτ.le (by linarith)
+  exact @BlockEstimates.degree_scale_nonnegative τ δ x y z hτ hδ hx hy hz
 
 /-- The pruning slack `t` is at most half of `(μ - μ₂)` times the triangle-degree scale. -/
 private theorem slack_bound {μ μ₂ τ δ x y z : ℝ} (hτ : 0 < τ) (hδ : 0 < δ)
     (hx : δ ≤ x) (hy : δ ≤ y) (hz : δ ≤ z) (hμ₂ : 2 * μ₂ ≤ μ) (hμ₂'₀ : 0 < μ₂) :
     2 * ((μ - μ₂) * τ * δ ^ 3 / 2) ≤ (μ - μ₂) * (τ * (x * y * z)) := by
-  have h : τ * δ ^ 3 ≤ τ * (x * y * z) :=
-    mul_le_mul_of_nonneg_left (dens_prod_lower hδ hx hy hz) hτ.le
-  have hd : (0:ℝ) ≤ μ - μ₂ := by linarith
-  linarith only [mul_le_mul_of_nonneg_left h hd]
+  exact @BlockEstimates.slack_bound μ μ₂ τ δ x y z hτ hδ hx hy hz hμ₂ hμ₂'₀
 
 /-- The pruning slack `t = (μ - μ₂)τδ³/2` is positive. -/
 private theorem t_pos {μ μ₂ τ δ : ℝ} (hτ : 0 < τ) (hδ3 : 0 < δ ^ 3) (hμ₂ : 0 < μ₂)
     (h : 2 * μ₂ ≤ μ) : 0 < (μ - μ₂) * τ * δ ^ 3 / 2 := by
-  nlinarith [mul_pos hτ hδ3]
+  exact @BlockEstimates.pruning_slack_pos μ μ₂ τ δ hτ hδ3 hμ₂ h
 
 /-- The pruning slack `t = (μ - μ₂)τδ³/2` is at least `μ₂τδ³/2`. -/
 private theorem t_lower {μ μ₂ τ δ : ℝ} (hτ : 0 < τ) (hδ3 : 0 < δ ^ 3) (h : 2 * μ₂ ≤ μ) :
     μ₂ * τ * δ ^ 3 / 2 ≤ (μ - μ₂) * τ * δ ^ 3 / 2 := by
-  nlinarith [mul_pos hτ hδ3]
+  exact @BlockEstimates.pruning_slack_lower_bound μ μ₂ τ δ hτ hδ3 h
 
 /-- One term of the covering estimate: replacing the cluster densities by the block densities and
 subtracting the exceptional budget costs at most `17ε₁/24` times the area. -/
@@ -168,46 +121,30 @@ private theorem cover_step {ε₁ ε₂ dAB dAC dBC eAB eAC eBC a b c : ℝ}
         - (ε₁ / 8 + 4 * ε₂) / 3 * (a * b + a * c + b * c)
       ≤ (eAB * a * b + eAC * a * c + eBC * b * c
           - 4 * ε₂ * (a * b + a * c + b * c)) / 3 := by
-  have k1 : -(ε₁ / 8) ≤ eAB - dAB := by linarith only [(abs_le.mp h1).1]
-  have k2 : -(ε₁ / 8) ≤ eAC - dAC := by linarith only [(abs_le.mp h2).1]
-  have k3 : -(ε₁ / 8) ≤ eBC - dBC := by linarith only [(abs_le.mp h3).1]
-  have hab : (0:ℝ) ≤ a * b := mul_nonneg ha0 hb0
-  have hac : (0:ℝ) ≤ a * c := mul_nonneg ha0 hc0
-  have hbc : (0:ℝ) ≤ b * c := mul_nonneg hb0 hc0
-  have m1 : -(ε₁ / 8) * (a * b) ≤ (eAB - dAB) * (a * b) :=
-    mul_le_mul_of_nonneg_right k1 hab
-  have m2 : -(ε₁ / 8) * (a * c) ≤ (eAC - dAC) * (a * c) :=
-    mul_le_mul_of_nonneg_right k2 hac
-  have m3 : -(ε₁ / 8) * (b * c) ≤ (eBC - dBC) * (b * c) :=
-    mul_le_mul_of_nonneg_right k3 hbc
-  linarith only [m1, m2, m3]
+  exact @BlockEstimates.cover_step ε₁ ε₂ dAB dAC dBC eAB eAC eBC a b c h1 h2 h3 ha0 hb0 hc0
 
 /-- The accumulated covering loss is absorbed by half of the accuracy. -/
 private theorem cover_tail {ε K N : ℝ} (h : K ≤ ε) (hN : 0 ≤ N) :
     K * (N / 2) ≤ ε / 2 * N := by
-  have := mul_le_mul_of_nonneg_right h hN
-  linarith only [this]
+  exact @BlockEstimates.cover_tail ε K N h hN
 
 /-- The block uniformity scale `ε₂ = (ε₁/8)/α` at `α = δ/2`, bounded from a bound on `ε₁`. -/
 private theorem eps2_bound {x δ B : ℝ} (hδ : 0 < δ) (h : x ≤ B * δ) : x / (4 * δ) ≤ B / 4 := by
-  rw [div_le_iff₀ (by positivity)]
-  nlinarith
+  exact @BlockEstimates.uniformity_bound x δ B hδ h
 
 /-- Multiplying a nonnegative quantity by `δ ≤ 1` only decreases it. -/
 private theorem mul_delta_le {B δ : ℝ} (hB : 0 ≤ B) (hδ1 : δ ≤ 1) (_hδ0 : 0 ≤ δ) : B * δ ≤ B := by
-  nlinarith
+  exact @BlockEstimates.mul_density_le B δ hB hδ1
 
 /-- The block scale is large: `2 ≤ τ·μ₂δ³` and `μ₂ ≤ 1` give `2 ≤ τδ³`. -/
 private theorem tau_delta3_lower {τ δ μ₂ : ℝ} (hτ : 0 < τ) (hδ3 : 0 < δ ^ 3) (hμ₂1 : μ₂ ≤ 1)
     (h : 2 ≤ τ * (μ₂ * δ ^ 3)) : 2 ≤ τ * δ ^ 3 := by
-  nlinarith [mul_le_mul_of_nonneg_left hμ₂1 (le_of_lt (mul_pos hτ hδ3))]
+  exact @BlockEstimates.scale_density_cube_lower_bound τ δ μ₂ hτ hδ3 hμ₂1 h
 
 /-- The block scale is large: `2 ≤ τδ³` and `δ ≤ 1/2` give `8 ≤ τδ`. -/
 private theorem tau_delta_lower {τ δ : ℝ} (hτ : 0 < τ) (hδ : 0 < δ) (hδhalf : δ ≤ 1 / 2)
     (h : 2 ≤ τ * δ ^ 3) : 8 ≤ τ * δ := by
-  have hsq : δ ^ 2 ≤ 1 / 4 := by nlinarith
-  have hnn : 0 ≤ τ * δ := mul_nonneg hτ.le hδ.le
-  nlinarith only [h, hsq, hnn]
+  exact @BlockEstimates.scale_density_lower_bound τ δ hτ hδ hδhalf h
 
 /-- The exceptional-edge clause of the design, as an inequality between real numbers. -/
 private theorem exc_bound {ε₂ δ μ₂ η τ t S sup Elo : ℝ}
@@ -216,30 +153,10 @@ private theorem exc_bound {ε₂ δ μ₂ η τ t S sup Elo : ℝ}
     (hS : S ≤ 5 * τ ^ 2) (hsup : sup ≤ 4 * τ) (hsup0 : 0 ≤ sup)
     (hElo : 1 / 4 * (τ ^ 2 * δ ^ 3) ≤ Elo) (ht : μ₂ * τ * δ ^ 3 / 2 ≤ t) (ht0 : 0 < t) :
     2 * (4 * ε₂ * S) / t * sup ≤ η * (Elo - 4 * ε₂ * S) := by
-  rw [div_mul_eq_mul_div, div_le_iff₀ ht0]
-  have hτ3 : (0:ℝ) < τ ^ 3 := by positivity
-  have h1 : 2 * (4 * ε₂ * S) * sup ≤ 160 * ε₂ * τ ^ 3 := by
-    have hSs : S * sup ≤ (5 * τ ^ 2) * (4 * τ) := mul_le_mul hS hsup hsup0 (by positivity)
-    linarith only [mul_le_mul_of_nonneg_left hSs (show 0 ≤ 8 * ε₂ by positivity)]
-  have hbr : 1 / 8 * (τ ^ 2 * δ ^ 3) ≤ Elo - 4 * ε₂ * S := by
-    have hεS : 4 * ε₂ * S ≤ 4 * (δ ^ 3 / 160) * (5 * τ ^ 2) := by
-      calc 4 * ε₂ * S ≤ 4 * ε₂ * (5 * τ ^ 2) :=
-              mul_le_mul_of_nonneg_left hS (by positivity)
-        _ ≤ 4 * (δ ^ 3 / 160) * (5 * τ ^ 2) :=
-              mul_le_mul_of_nonneg_right
-                (mul_le_mul_of_nonneg_left hε₂d (by norm_num)) (by positivity)
-    linarith only [hεS, hElo]
-  have h2 : η * (1 / 8 * (τ ^ 2 * δ ^ 3)) * (μ₂ * τ * δ ^ 3 / 2)
-      ≤ η * (Elo - 4 * ε₂ * S) * t := by
-    have hle1 : η * (1 / 8 * (τ ^ 2 * δ ^ 3)) ≤ η * (Elo - 4 * ε₂ * S) :=
-      mul_le_mul_of_nonneg_left hbr hη.le
-    have hnn : (0:ℝ) ≤ η * (1 / 8 * (τ ^ 2 * δ ^ 3)) := by positivity
-    have hnn2 : (0:ℝ) ≤ μ₂ * τ * δ ^ 3 / 2 := by positivity
-    exact mul_le_mul hle1 ht hnn2 (le_trans hnn hle1)
-  have h3 : 160 * ε₂ * τ ^ 3 ≤ η * (1 / 8 * (τ ^ 2 * δ ^ 3)) * (μ₂ * τ * δ ^ 3 / 2) := by
-    have hkey : 160 * ε₂ ≤ η * μ₂ * δ ^ 6 / 16 := by linarith only [hε₂c]
-    linarith only [mul_le_mul_of_nonneg_right hkey hτ3.le]
-  linarith only [h1, h2, h3]
+  exact @BlockEstimates.exceptional_budget_bound ε₂ δ μ₂ η τ t S sup Elo hτ hδ hμ₂0 hη hε₂0 hε₂c
+    hε₂d hS hsup
+    hsup0 hElo ht ht0
+
 /-- **The coupled block-allocation residual.**  Given the accuracy `ε`, a density threshold
 `δ ≤ ε`, the block uniformity scale `ε₂` that the caller needs and a scale floor `T₀`, the residual
 names a regularity window `ε₁₀ > 0`; for every regularity scale `ε₁ ≤ ε₁₀` it then names a relative
@@ -285,25 +202,20 @@ theorem subTripleDesignLocalResidual_of_blockCoverCoupled (h : BlockCoverResidua
   obtain ⟨μ₂, hμ₂0, hμ₂1, hμ₂μ, hμ₂half⟩ :
       ∃ m : ℝ, 0 < m ∧ m ≤ 1 ∧ m ≤ μ ∧ 2 * m ≤ μ := by
     refine ⟨min μ 1 / 2, ?_, ?_, ?_, ?_⟩
-    · have : 0 < min μ 1 := lt_min hμ one_pos; linarith
-    · have : min μ 1 ≤ 1 := min_le_right _ _; linarith
-    · have : min μ 1 ≤ μ := min_le_left _ _; linarith
-    · have : min μ 1 ≤ μ := min_le_left _ _; linarith
-  obtain ⟨δ, hδ0, hδhalf, hδε, hδsq⟩ :
-      ∃ d : ℝ, 0 < d ∧ d ≤ 1 / 2 ∧ d ≤ ε / 2 ∧ d / 2 ≤ (ε / 2) ^ 2 := by
-    have h0 : 0 < min 1 ε := lt_min one_pos hε
-    have h1 : min 1 ε ≤ 1 := min_le_left _ _
-    have h2 : min 1 ε ≤ ε := min_le_right _ _
-    refine ⟨min 1 ε * min 1 ε / 8, by positivity, by nlinarith, by nlinarith, by nlinarith⟩
-  have hδ1 : δ ≤ 1 := by linarith
+    · have : 0 < min μ 1 := lt_min hμ one_pos; linarith only [this]
+    · have : min μ 1 ≤ 1 := min_le_right _ _; linarith only [this]
+    · have : min μ 1 ≤ μ := min_le_left _ _; linarith only [this, hμ]
+    · have : min μ 1 ≤ μ := min_le_left _ _; linarith only [this]
+  obtain ⟨δ, hδ0, hδhalf, hδε, hδsq⟩ := BlockEstimates.exists_small_density hε
+  have hδ1 : δ ≤ 1 := by linarith only [hδhalf]
   have hδ3 : (0:ℝ) < δ ^ 3 := by positivity
   obtain ⟨T₀, hT₀0, hT₀1, hT₀2⟩ :
       ∃ T : ℝ, 0 < T ∧ 2 / (μ₂ * δ ^ 3) ≤ T ∧ d₀ / δ ^ 3 ≤ T := by
     refine ⟨2 / (μ₂ * δ ^ 3) + d₀ / δ ^ 3, by positivity, ?_, ?_⟩
     · have : (0:ℝ) ≤ d₀ / δ ^ 3 := by positivity
-      linarith
+      linarith only [this]
     · have : (0:ℝ) < 2 / (μ₂ * δ ^ 3) := by positivity
-      linarith
+      linarith only [this]
   -- ### the block uniformity scale the reduction needs
   obtain ⟨ε₂, hε₂0', hε₂1', hε₂A', hε₂C', hε₂D', hε₂E'⟩ :
       ∃ e : ℝ, 0 < e ∧ e ≤ 1 ∧ e ≤ μ₂ * δ ^ 3 / 96 ∧ e ≤ η * μ₂ * δ ^ 6 / 2560 ∧
@@ -319,7 +231,7 @@ theorem subTripleDesignLocalResidual_of_blockCoverCoupled (h : BlockCoverResidua
     · exact le_trans (min_le_right _ _) (le_trans (min_le_right _ _)
         (le_trans (min_le_right _ _) (min_le_right _ _)))
   -- ### the coupling: the residual names the regularity window it can serve
-  obtain ⟨ε₁₀, hε₁₀0, hcoup⟩ := h (ε / 2) δ ε₂ T₀ (by linarith) hδ0 hδ1 hδε hε₂0' hT₀0
+  obtain ⟨ε₁₀, hε₁₀0, hcoup⟩ := h (ε / 2) δ ε₂ T₀ (by linarith only [hε]) hδ0 hδ1 hδε hε₂0' hT₀0
   obtain ⟨ε₁, hε₁0, hε₁1, hε₁b, hε₁ε, hε₁A, hε₁10⟩ :
       ∃ e : ℝ, 0 < e ∧ e ≤ 1 ∧ e ≤ δ / 2 ∧ e ≤ ε ∧ e ≤ μ₂ * δ ^ 3 / 12 ∧ e ≤ ε₁₀ := by
     refine ⟨min 1 (min (δ / 2) (min ε (min (μ₂ * δ ^ 3 / 12) ε₁₀))), ?_, min_le_left _ _,
@@ -362,12 +274,12 @@ theorem subTripleDesignLocalResidual_of_blockCoverCoupled (h : BlockCoverResidua
   have hμδpos : (0:ℝ) ≤ μ₂ * δ ^ 3 := by positivity
   have hErr : ε₁ / 8 + 2 * (ε₁ / 8 / α) ≤ μ₂ * δ ^ 3 / 12 := by
     have h1 : ε₁ / 8 ≤ μ₂ * δ ^ 3 / 96 := by linarith only [hε₁A]
-    linarith
+    linarith only [h1, hε₂A, hμδpos]
   have hdense : 2 * (ε₁ / 8 / α) + ε₁ / 8 ≤ δ := by
     have h1 : ε₁ / 8 ≤ δ / 16 := by linarith only [hε₁b]
     have h2 : δ ^ 3 / 80 ≤ δ / 80 := by linarith only [hδ3le]
-    linarith
-  have hde : ε₁ / 4 ≤ δ := by linarith
+    linarith only [h1, h2, hε₂D, hδ0]
+  have hde : ε₁ / 4 ≤ δ := by linarith only [hε₁b, hδ0]
   have hshape := subTripleShape_of_gridSubTriples G P U W X A B C hε₁0 hαε (by linarith only [hα2])
     hδ0 hδ1 hμ₂0 hμ₂1 hde hErr hdense hτ2 hgrid hdisj
   -- ### the numerical data of each sub-triple
@@ -407,7 +319,7 @@ theorem subTripleDesignLocalResidual_of_blockCoverCoupled (h : BlockCoverResidua
       * (#(A i) : ℝ) * (#(C i) : ℝ)
       + ((G.regularityReduced P (ε₁ / 8) (ε₁ / 4)).edgeDensity (B i) (C i) : ℝ)
       * (#(B i) : ℝ) * (#(C i) : ℝ),
-    hshape, by positivity, by linarith, ?_, hη.le, hμ₂μ, ?_, ?_, ?_, ?_, ?_, ?_⟩
+    hshape, by positivity, hε₂1, ?_, hη.le, hμ₂μ, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · -- `0 < t`
     exact t_pos hτpos hδ3 hμ₂0 hμ₂half
   · -- `d₀ ≤ d i`
@@ -477,7 +389,8 @@ theorem subTripleDesignLocalResidual_of_blockCoverCoupled (h : BlockCoverResidua
     have hcoef : (0:ℝ) ≤ (ε₁ / 8 + 4 * (ε₁ / 8 / α)) / 3 := by positivity
     have h2 := mul_le_mul_of_nonneg_left hSsum hcoef
     have hV2 : (0:ℝ) ≤ (Fintype.card V : ℝ) ^ 2 := by positivity
-    have hK : (ε₁ / 8 + 4 * (ε₁ / 8 / α)) / 3 ≤ ε := by linarith
+    have hK : (ε₁ / 8 + 4 * (ε₁ / 8 / α)) / 3 ≤ ε := by
+      linarith only [hε₁ε, hε₂E, hε]
     have h3 : (ε₁ / 8 + 4 * (ε₁ / 8 / α)) / 3 * ((Fintype.card V : ℝ) ^ 2 / 2)
         ≤ ε / 2 * (Fintype.card V : ℝ) ^ 2 := cover_tail hK hV2
     simp only [designBad]
@@ -3253,7 +3166,7 @@ theorem blockCoverResidualCoupled_of_boxAllocation (hbox : BoxAllocationResidual
     intro th hth a
     have h1 : τ * δ ≤ τ * dOpp G Pp th a := mul_le_mul_of_nonneg_left (hdOppδ th hth a) hτ0.le
     have h2 := hbsLB th a
-    exact bs_ge_alpha hlLB hK1R (by linarith [hτδ ▸ h1]) hmmax0R.le hα0.le
+    exact bs_ge_alpha hlLB hK1R (by linarith only [hτδ ▸ h1, h2]) hmmax0R.le hα0.le
   -- ### the copies
   obtain ⟨clf, hclfdef⟩ :
       ∃ f : {p // p ∈ copySet Gd nc} → ZMod 3 → {S : Finset V // S ∈ Pp.parts},

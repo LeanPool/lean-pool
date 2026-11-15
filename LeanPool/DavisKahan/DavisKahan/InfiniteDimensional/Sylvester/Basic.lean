@@ -5,6 +5,8 @@ Authors: Jon Crall, OpenAI GPT-5.6 Thinking
 -/
 module
 
+import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
+
 public import LeanPool.DavisKahan.DavisKahan.InfiniteDimensional.Ideals.Symmetric
 public import LeanPool.DavisKahan.DavisKahan.InfiniteDimensional.Ideals.CompactIntegral
 public import LeanPool.DavisKahan.DavisKahan.InfiniteDimensional.Sylvester.FourierSemigroup

@@ -137,36 +137,37 @@ theorem algConn_le_two_of_two_vertex_cut_general {V : Type*} [Fintype V]
       rcases tri i with hi | hi | hi <;> rcases tri j with hj | hj | hj
       · -- A–A : difference vanishes
         rw [hxA i hi, hxA j hj]
-        nlinarith [mul_nonneg (sq_nonneg β) (hcnn j),
-          mul_nonneg (hcnn i) (sq_nonneg β)]
+        rw [sub_self, zero_pow two_ne_zero]
+        exact add_nonneg (mul_nonneg (sq_nonneg β) (hcnn j))
+          (mul_nonneg (hcnn i) (sq_nonneg β))
       · -- A–B : excluded by separation
         exact absurd hadj (hsep i hi j hj)
       · -- A–cut : contributes exactly `β² = (x i)²`
         rw [hxA i hi, hxOut j hj, hcOut j hj, hcIn i (Finset.mem_union_left B hi)]
-        ring_nf
-        nlinarith [sq_nonneg β]
+        simp only [sub_zero, mul_one, zero_mul, add_zero]
+        exact le_refl _
       · -- B–A : excluded by separation
         exact absurd hadj.symm (hsep j hj i hi)
       · -- B–B : difference vanishes
         rw [hxB i hi, hxB j hj]
-        nlinarith [mul_nonneg (sq_nonneg (-α)) (hcnn j),
-          mul_nonneg (hcnn i) (sq_nonneg (-α))]
+        rw [sub_self, zero_pow two_ne_zero]
+        exact add_nonneg (mul_nonneg (sq_nonneg (-α)) (hcnn j))
+          (mul_nonneg (hcnn i) (sq_nonneg (-α)))
       · -- B–cut : contributes exactly `α² = (x i)²`
         rw [hxB i hi, hxOut j hj, hcOut j hj, hcIn i (Finset.mem_union_right A hi)]
-        ring_nf
-        nlinarith [sq_nonneg α]
+        simp only [sub_zero, mul_one, zero_mul, add_zero]
+        exact le_refl _
       · -- cut–A
         rw [hxOut i hi, hxA j hj, hcOut i hi, hcIn j (Finset.mem_union_left B hj)]
-        ring_nf
-        nlinarith [sq_nonneg β]
+        simp only [zero_sub, neg_sq, mul_zero, one_mul, zero_add]
+        exact le_refl _
       · -- cut–B
         rw [hxOut i hi, hxB j hj, hcOut i hi, hcIn j (Finset.mem_union_right A hj)]
-        ring_nf
-        nlinarith [sq_nonneg α]
+        simp only [zero_sub, neg_neg, neg_sq, mul_zero, one_mul, zero_add]
+        exact le_refl _
       · -- cut–cut : both coordinates vanish
         rw [hxOut i hi, hxOut j hj]
-        nlinarith [mul_nonneg (sq_nonneg (0 : ℝ)) (hcnn j),
-          mul_nonneg (hcnn i) (sq_nonneg (0 : ℝ))]
+        rw [sub_self, zero_pow two_ne_zero, zero_mul, mul_zero, add_zero]
     · rw [ite_eq_right hadj]
       exact hgnn
   -- Assemble: the ordered quadratic form is at most `4 ∑ x²`.

@@ -55,9 +55,8 @@ theorem stationaryKernelMain_eq_phase_mul_conj_harmonicPhaseSum
       phase ((2 ^ n : ℝ) * x ^ 2) *
         conj (harmonicPhaseSum N k.toNat ((2 ^ n : ℕ) : ℤ) (x - k)) := by
   rw [harmonicPhaseSum_paperMainTerm_eq hN hk]
-  simp only [map_mul, map_div₀, map_sum, Complex.conj_ofReal,
-    conj_phase, one_div]
-  have hconjN : conj ((N : ℂ)⁻¹) = (N : ℂ)⁻¹ := by simp
+  simp only [one_div, map_mul, map_sum, map_div₀, conj_phase, Complex.conj_ofReal]
+  have hconjN : conj ((N : ℂ)⁻¹) = (N : ℂ)⁻¹ := by simp only [map_inv₀, map_natCast]
   rw [hconjN, ← mul_assoc]
   rw [Finset.mul_sum]
   rw [Finset.mul_sum]

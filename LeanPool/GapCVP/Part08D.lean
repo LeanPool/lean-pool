@@ -401,8 +401,7 @@ private noncomputable def flatIndexedSourceORPaddingDescriptorComputable
       flatSignedLiteralDescriptor
         (if negated then negate literal else literal) := by
   rcases literal with ⟨index, sign⟩
-  cases negated <;> cases sign <;>
-    simp [flatIndexedGadgetSourceDescriptorWord,
+  cases negated <;> simp [flatIndexedGadgetSourceDescriptorWord,
       flatIndexedGadgetSourcePayloadWord,
       flatIndexedGadgetNegateLeadingBitWord,
       flatAnnotatedSourceFieldAt, flatAnnotatedSourceFieldTail,
@@ -1132,8 +1131,7 @@ private theorem flatIndexedPairedAccumulatorDescriptorWord_length_le
                         false :: (List.replicate second true ++ [false])) =
                     flatSignedLiteralDescriptor
                       (accumulatorVariable first second, sign) := by
-                simpa only [unarySourcePairWord]
-                    using (pairedAccumulatorSignedLiteralDescriptorWord_pair first second sign)
+                exact (pairedAccumulatorSignedLiteralDescriptorWord_pair first second sign)
               rw [pair]
               simp only [List.length_append, List.length_replicate,
                 List.length_cons, List.length_nil]
@@ -1786,10 +1784,7 @@ private theorem flatAnnotatedIndexedORGadgetStartState_valid
           (flatThreeClauseLiterals
             (paddedUnary
               (accumulatorLiteral clauseIndex 0 true))) := by
-    simpa only [orGadgetIdleState, orGadgetPhysicalState,
-        CNFFiveFamilySourceIndexedORGadgetFoldCoreTM.flatAnnotatedIndexedORGadgetState,
-            List.append_assoc,
-        CNFFiveFamilySourceIndexedORGadgetRecordWorkerTM.flatAnnotatedIndexedORGadgetState] using
+    exact
         flatIndexedSourceORPaddingDescriptorWord_valid_initial clauseIndex true
           (flatAnnotatedBundledClauseStream (clause :: remaining)) []
           (flatSignedLiteralDescriptorStream (flatThreeClauseLiterals emitted)) (List.replicate
@@ -1846,11 +1841,7 @@ private theorem flatAnnotatedIndexedORGadgetGateState_valid
             (orGate (sourceLiteral literal)
               (accumulatorLiteral clauseIndex (prefixIndex + 1) true)
               (accumulatorLiteral clauseIndex prefixIndex true))) := by
-    simpa only [orGadgetActiveState, orGadgetPhysicalState,
-        CNFFiveFamilySourceIndexedORGadgetFoldCoreTM.flatAnnotatedIndexedORGadgetState,
-            List.append_assoc,
-        flatSignedLiteralDescriptorStream, List.map_cons, List.flatMap_cons,
-        CNFFiveFamilySourceIndexedORGadgetRecordWorkerTM.flatAnnotatedIndexedORGadgetState] using
+    exact
         flatIndexedSourceORGadgetDescriptorWord_valid clauseIndex prefixIndex (sourceLiteral
             literal)
           (flatAnnotatedBundledClauseStream pending) (flatSignedLiteralDescriptorStream
@@ -1919,11 +1910,7 @@ private theorem flatAnnotatedIndexedORGadgetFinishState_valid
           (flatThreeClauseLiterals
             (paddedUnary
               (accumulatorLiteral clauseIndex prefixIndex false))) := by
-    simpa only [orGadgetActiveState, orGadgetPhysicalState,
-        CNFFiveFamilySourceIndexedORGadgetFoldCoreTM.flatAnnotatedIndexedORGadgetState,
-            List.append_assoc,
-        flatSignedLiteralDescriptorStream, List.map_nil, List.flatMap_nil,
-        CNFFiveFamilySourceIndexedORGadgetRecordWorkerTM.flatAnnotatedIndexedORGadgetState] using
+    exact
         flatIndexedSourceORPaddingDescriptorWord_valid clauseIndex prefixIndex false
           (flatAnnotatedBundledClauseStream pending) []
           (flatSignedLiteralDescriptorStream (flatThreeClauseLiterals emitted)) (List.replicate
@@ -4353,7 +4340,7 @@ private theorem hankel_eq_vandermonde_transpose_mul {R : Type*} [CommRing R]
     (Matrix.of fun i j : Fin n => ∑ k : Fin n, v k ^ (i.val + j.val)) =
       (Matrix.vandermonde v)ᵀ * Matrix.vandermonde v := by
   ext i j
-  simpa only [of_apply] using (Matrix.vandermonde_transpose_mul_vandermonde v i j).symm
+  exact (Matrix.vandermonde_transpose_mul_vandermonde v i j).symm
 
 theorem hankel_det_eq_vandermonde_det_sq {R : Type*} [CommRing R]
     {n : ℕ} (v : Fin n → R) :
@@ -4536,7 +4523,7 @@ private theorem exists_mem_of_mem_paritySupport
           a ∈ s ∧ a ∉ paritySupport supports ∨
           a ∈ paritySupport supports ∧ a ∉ s := by
         apply Finset.mem_symmDiff.mp
-        simpa only [paritySupport] using ha
+        exact ha
       rcases hcases with ⟨has, _⟩ | ⟨haparity, _⟩
       · exact ⟨s, by simp only [List.mem_cons, true_or], has⟩
       · obtain ⟨t, ht, hat⟩ := ih haparity

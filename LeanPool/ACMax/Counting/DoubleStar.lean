@@ -120,7 +120,11 @@ theorem sharedTwins_spec {G : SimpleGraph V} {g h t : V} :
   unfold sharedTwins hubTwins deg3Set
   simp only [Finset.mem_inter, Finset.mem_filter, Finset.mem_univ, true_and,
     SimpleGraph.mem_neighborFinset]
-  tauto
+  constructor
+  · rintro ⟨⟨hgt, ht⟩, hht, _⟩
+    exact ⟨hgt, hht, ht⟩
+  · rintro ⟨hgt, hht, ht⟩
+    exact ⟨⟨hgt, ht⟩, hht, ht⟩
 
 open Classical in
 theorem sharedTwins_comm (G : SimpleGraph V) (g h : V) :

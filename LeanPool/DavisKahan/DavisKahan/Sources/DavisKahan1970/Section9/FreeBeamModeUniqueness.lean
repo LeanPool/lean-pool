@@ -5,11 +5,12 @@ Authors: Jon Crall, Claude Fable 5
 -/
 module
 
-
 public import LeanPool.DavisKahan.DavisKahan.Sources.DavisKahan1970.Section9.FreeBeamCharacteristic
 public import Mathlib.Analysis.ODE.ExistUnique
 public import Mathlib.Analysis.Calculus.Deriv.Prod
-public import Mathlib.Tactic
+import Mathlib.Tactic.FieldSimp -- shake: keep
+import Mathlib.Tactic.Positivity -- shake: keep
+import Mathlib.Tactic.Ring -- shake: keep
 
 /-!
 # Every solution of the free-beam ODE is a classical mode

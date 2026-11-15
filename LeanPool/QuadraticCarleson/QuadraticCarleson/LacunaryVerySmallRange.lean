@@ -7,10 +7,8 @@ module
 
 
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
-public import Mathlib.Analysis.SpecificLimits.Normed
 public import LeanPool.QuadraticCarleson.QuadraticCarleson.LacunaryMiddleRange
 public import LeanPool.QuadraticCarleson.QuadraticCarleson.DyadicAtomScales
-public import Mathlib.Topology.Algebra.InfiniteSum.ENNReal
 
 /-!
 # Geometric summation in the lacunary very-small range
@@ -58,8 +56,8 @@ theorem modulationWeight_mul_atomLength_le_two_mul_verySmallWeight
       (2 : ℝ) ^ ((B : ℝ) + (m : ℝ) / 2) * (2 : ℝ) ^ j := by
     unfold verySmallWeight
     rw [show (B : ℝ) + (m : ℝ) / 2 + (j : ℝ) =
-      ((B : ℝ) + (m : ℝ) / 2) + (j : ℝ) by ring]
-    rw [Real.rpow_add (by norm_num : (0 : ℝ) < 2), Real.rpow_intCast]
+      ((B : ℝ) + (m : ℝ) / 2) + (j : ℝ) by rfl]
+    rw [Real.rpow_add (by norm_num1 : (0 : ℝ) < 2), Real.rpow_intCast]
   calc
     (2 : ℝ) ^ ((B : ℝ) + (m : ℝ) / 2) * length I ≤
         (2 : ℝ) ^ ((B : ℝ) + (m : ℝ) / 2) *
@@ -77,7 +75,7 @@ def verySmallCutoff (B c : ℕ) (j : ℤ) : ℤ :=
 
 theorem mem_verySmallModulations_iff {B c : ℕ} {j m : ℤ} :
     m ∈ verySmallModulations B c j ↔ m ≤ verySmallCutoff B c j := by
-  simp only [verySmallModulations, mem_ofPred_eq, mem_L, verySmallCutoff]
+  simp only [verySmallModulations, mem_L, mem_ofPred_eq, verySmallCutoff]
   omega
 
 /-- Reindex the integral half-line of admissible modulations by its distance
@@ -113,7 +111,7 @@ theorem verySmallGeometricRatio_nonneg :
 theorem verySmallGeometricRatio_lt_one :
     verySmallGeometricRatio < 1 := by
   unfold verySmallGeometricRatio
-  exact Real.rpow_lt_one_of_one_lt_of_neg (by norm_num) (by norm_num)
+  exact Real.rpow_lt_one_of_one_lt_of_neg (by norm_num1) (by norm_num1)
 
 /-- Explicit absolute sum of the geometric ratio. -/
 noncomputable def verySmallGeometricConstant : ℝ :=
@@ -136,7 +134,7 @@ theorem verySmallSupportSlack_pos (c : ℕ) :
 theorem verySmallSupportSlack_le_one (c : ℕ) :
     verySmallSupportSlack c ≤ 1 := by
   unfold verySmallSupportSlack
-  apply Real.rpow_le_one_of_one_le_of_nonpos (by norm_num)
+  apply Real.rpow_le_one_of_one_le_of_nonpos (by norm_num1)
   have hc : 0 ≤ (c : ℝ) := Nat.cast_nonneg c
   linarith
 
@@ -154,10 +152,10 @@ theorem verySmallWeight_cutoff_sub (B c : ℕ) (j : ℤ) (n : ℕ) :
         -(c : ℝ) / 2 + (-(1 : ℝ) / 2) * (n : ℝ) := by
     push_cast
     ring
-  rw [hexp, Real.rpow_add (by norm_num : (0 : ℝ) < 2)]
+  rw [hexp, Real.rpow_add (by norm_num1 : (0 : ℝ) < 2)]
   congr 1
   rw [← Real.rpow_natCast]
-  rw [← Real.rpow_mul (by norm_num : (0 : ℝ) ≤ 2)]
+  rw [← Real.rpow_mul (by norm_num1 : (0 : ℝ) ≤ 2)]
 
 /-- The very-small weight, extended by zero away from the admissible
 modulation half-line. -/
@@ -167,8 +165,8 @@ noncomputable def restrictedVerySmallWeight (B c : ℕ) (j m : ℤ) : ℝ :=
 theorem restrictedVerySmallWeight_nonneg (B c : ℕ) (j m : ℤ) :
     0 ≤ restrictedVerySmallWeight B c j m := by
   by_cases hm : m ∈ verySmallModulations B c j
-  · simp [restrictedVerySmallWeight, hm, (verySmallWeight_pos B m j).le]
-  · simp [restrictedVerySmallWeight, hm]
+  · simp only [restrictedVerySmallWeight, hm, indicator_of_mem, (verySmallWeight_pos B m j).le]
+  · simp only [restrictedVerySmallWeight, hm, not_false_eq_true, indicator_of_notMem, Std.le_refl]
 
 theorem summable_restrictedVerySmallWeight (B c : ℕ) (j : ℤ) :
     Summable (restrictedVerySmallWeight B c j) := by

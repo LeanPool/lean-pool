@@ -5,11 +5,11 @@ Authors: Jon Crall, OpenAI GPT-5.6 Thinking
 -/
 module
 
-
 public import LeanPool.DavisKahan.DavisKahan.Analysis.FourthOrderODE.SmoothGreenIdentity
 public import LeanPool.DavisKahan.DavisKahan.Analysis.FourthOrderODE.ComplexGreenIdentity
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
-public import Mathlib.Tactic
+import Mathlib.Tactic.Abel -- shake: keep
+import Mathlib.Tactic.Ring -- shake: keep
 
 /-!
 # The smooth kernel of the free--free fourth derivative

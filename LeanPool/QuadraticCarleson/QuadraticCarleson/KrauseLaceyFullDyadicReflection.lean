@@ -106,7 +106,7 @@ theorem hasCompactSupport_positiveDyadicQuadraticKernel (lam : ℝ) (j : ℤ) :
   intro t ht
   apply positiveDyadicAmplitude_support_subset j
   intro hz
-  exact ht (by simp [annularQuadraticKernel, hz])
+  exact ht (by simp only [annularQuadraticKernel, hz, zero_mul])
 
 /-- The phase is even, so the odd dyadic amplitude is literally the positive
 kernel minus its spatial reflection. -/

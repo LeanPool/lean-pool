@@ -6,7 +6,7 @@ Authors: Jon Crall, Claude Opus 5
 module
 
 public import LeanPool.DavisKahan.ForTauCeti.Analysis.InnerProductSpace.Complexification.Spectrum
-public import Mathlib.Analysis.InnerProductSpace.StarOrder
+import Mathlib.Analysis.InnerProductSpace.StarOrder
 
 /-!
 # Continuous functional calculus over `ℝ` for a real Hilbert space

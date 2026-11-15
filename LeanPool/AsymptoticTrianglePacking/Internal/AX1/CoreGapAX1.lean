@@ -52,16 +52,7 @@ So the *only* open instances are `CoreGapAt ε δ` with `ε < 1/3` and `0 < δ <
 
 Must be sorry-free and axiom-clean `[propext, Classical.choice, Quot.sound]`.
 -/
-public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.YusterEdgeType
-public import LeanPool.AsymptoticTrianglePacking.Internal.RegularMost
-public import Mathlib.Analysis.RCLike.Basic
-public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.YusterEdge
-public import Mathlib.Algebra.Order.Ring.Star
-public import LeanPool.AsymptoticTrianglePacking.Internal.TightSchedule
 public import LeanPool.AsymptoticTrianglePacking.Internal.NearRegularNibble
-public import LeanPool.AsymptoticTrianglePacking.Internal.Tight.SharpRoundAssembly
-public import Mathlib.Analysis.Real.Sqrt
-public import Mathlib.Tactic.ContinuousFunctionalCalculus
 public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.YusterFracUpper
 public import Mathlib.Analysis.Convex.Cone.InnerDual
 

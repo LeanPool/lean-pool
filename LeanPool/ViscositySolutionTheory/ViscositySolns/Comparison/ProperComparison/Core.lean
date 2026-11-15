@@ -175,7 +175,7 @@ theorem BoundaryComparisonOn.sub_const_lt_on_frontier
     ∀ x : Point n, x ∈ frontier C -> u x - δ < v x := by
   intro x hx
   have huv : u x <= v x := hboundary x hx
-  linarith
+  linarith only [hδ, huv]
 
 /--
 If `x ∈ closure C` and `x ∉ frontier C`, then `x ∈ interior C`.
@@ -209,7 +209,7 @@ theorem BoundaryComparisonOn.mem_of_mem_closure_of_shifted_gap
   intro hxfrontier
   have hlt : u x - δ < v x :=
     hboundary.sub_const_lt_on_frontier hδ x hxfrontier
-  linarith
+  linarith only [hgap, hlt]
 
 /--
 If `x0 ∈ interior C` and `x i -> x0`, then `x i ∈ C` for all `i` in a set
@@ -257,7 +257,7 @@ theorem BoundaryComparisonOn.eventually_pair_mem_of_tendsto_of_shifted_gap
       exact ⟨hx0closure, hx0not⟩
     have hlt : u x0 - δ < v x0 :=
       hboundary.sub_const_lt_on_frontier hδ x0 hx0frontier
-    linarith
+    linarith only [hgap, hlt]
   exact eventually_pair_mem_of_tendsto_of_mem_interior hx0interior hx hy
 
 /--
@@ -393,9 +393,9 @@ In quantified mathematical form, if `r ≤ a` and `0 ≤ δ`, then `r - δ ≤ a
 theorem ClosedUnderSubNonneg.Iic (a : Real) :
     ClosedUnderSubNonneg (Set.Iic a) := by
   intro r hr δ hδ
-  have hrle : r <= a := by simpa using hr
-  have hle : r - δ <= a := by linarith
-  simpa using hle
+  have hrle : r <= a := by exact hr
+  have hle : r - δ <= a := by linarith only [hδ, hrle]
+  exact hle
 
 /--
 An upper open ray is closed under subtracting nonnegative constants.
@@ -405,9 +405,9 @@ In quantified mathematical form, if `r < a` and `0 ≤ δ`, then `r - δ < a`.
 theorem ClosedUnderSubNonneg.Iio (a : Real) :
     ClosedUnderSubNonneg (Set.Iio a) := by
   intro r hr δ hδ
-  have hrlt : r < a := by simpa using hr
-  have hlt : r - δ < a := by linarith
-  simpa using hlt
+  have hrlt : r < a := by exact hr
+  have hlt : r - δ < a := by linarith only [hδ, hrlt]
+  exact hlt
 
 /--
 If the scalar set is closed under subtracting nonnegative constants, then

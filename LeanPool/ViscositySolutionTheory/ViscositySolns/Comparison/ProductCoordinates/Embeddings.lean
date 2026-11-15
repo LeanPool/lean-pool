@@ -108,11 +108,12 @@ theorem continuous_leftPointEmbedding :
   intro i
   cases hsplit : finSumFinEquiv.symm i with
   | inl j =>
-      simpa [leftPointEmbedding, leftBlockPoint, pointSumEquivBlockPoint_symm_apply,
-        hsplit] using (continuous_apply j : Continuous fun x : Point n => x j)
+      simpa only [leftPointEmbedding, leftBlockPoint, pointSumEquivBlockPoint_symm_apply, hsplit,
+        Sum.elim_inl] using (continuous_apply j : Continuous fun x : Point n => x j)
   | inr j =>
-      simpa [leftPointEmbedding, leftBlockPoint, pointSumEquivBlockPoint_symm_apply,
-        hsplit] using (continuous_const : Continuous fun _x : Point n => (0 : Real))
+      simpa only [leftPointEmbedding, leftBlockPoint, pointSumEquivBlockPoint_symm_apply, hsplit,
+        Sum.elim_inr, Pi.zero_apply] using (continuous_const : Continuous fun _x : Point n => (0 :
+          Real))
 
 theorem continuous_rightPointEmbedding :
     Continuous (rightPointEmbedding (n := n)) := by
@@ -120,24 +121,27 @@ theorem continuous_rightPointEmbedding :
   intro i
   cases hsplit : finSumFinEquiv.symm i with
   | inl j =>
-      simpa [rightPointEmbedding, rightBlockPoint, pointSumEquivBlockPoint_symm_apply,
-        hsplit] using (continuous_const : Continuous fun _y : Point n => (0 : Real))
+      simpa only [rightPointEmbedding, rightBlockPoint, pointSumEquivBlockPoint_symm_apply,
+        hsplit, Sum.elim_inl, Pi.zero_apply] using (continuous_const : Continuous fun _y : Point n
+          => (0 : Real))
   | inr j =>
-      simpa [rightPointEmbedding, rightBlockPoint, pointSumEquivBlockPoint_symm_apply,
-        hsplit] using (continuous_apply j : Continuous fun y : Point n => y j)
+      simpa only [rightPointEmbedding, rightBlockPoint, pointSumEquivBlockPoint_symm_apply,
+        hsplit, Sum.elim_inr] using (continuous_apply j : Continuous fun y : Point n => y j)
 
 theorem continuous_pointLeft :
     Continuous (pointLeft (n := n)) := by
   refine continuous_pi ?_
   intro i
-  simpa [pointLeft, blockPointLeft, pointSumEquivBlockPoint_apply_inl] using
+  simpa only [pointLeft, blockPointLeft, Function.comp_apply, pointSumEquivBlockPoint_apply_inl]
+    using
     (continuous_apply (Fin.castAdd n i) : Continuous fun z : Point (n + n) => z (Fin.castAdd n i))
 
 theorem continuous_pointRight :
     Continuous (pointRight (n := n)) := by
   refine continuous_pi ?_
   intro i
-  simpa [pointRight, blockPointRight, pointSumEquivBlockPoint_apply_inr] using
+  simpa only [pointRight, blockPointRight, Function.comp_apply, pointSumEquivBlockPoint_apply_inr,
+    Fin.natAdd_eq_addNat] using
     (continuous_apply (Fin.natAdd n i) : Continuous fun z : Point (n + n) => z (Fin.natAdd n i))
 
 theorem continuous_pointWithLeft (z : Point (n + n)) :
@@ -146,11 +150,13 @@ theorem continuous_pointWithLeft (z : Point (n + n)) :
   intro i
   cases hsplit : finSumFinEquiv.symm i with
   | inl j =>
-      simpa [pointWithLeft, pointRight, blockPointRight, pointSumEquivBlockPoint_symm_apply,
-        hsplit] using (continuous_apply j : Continuous fun x : Point n => x j)
+      simpa only [pointWithLeft, pointRight, blockPointRight, pointSumEquivBlockPoint_symm_apply,
+        hsplit, Sum.elim_inl] using (continuous_apply j : Continuous fun x : Point n => x j)
   | inr j =>
-      simpa [pointWithLeft, pointRight, blockPointRight, pointSumEquivBlockPoint_symm_apply,
-        hsplit] using (continuous_const : Continuous fun _x : Point n => pointRight (n := n) z j)
+      simpa only [pointWithLeft, pointRight, blockPointRight, pointSumEquivBlockPoint_symm_apply,
+        hsplit, Sum.elim_inr, Function.comp_apply, pointSumEquivBlockPoint_apply_inr,
+        Fin.natAdd_eq_addNat] using (continuous_const : Continuous fun _x : Point n => pointRight
+          (n := n) z j)
 
 theorem continuous_pointWithRight (z : Point (n + n)) :
     Continuous (pointWithRight (n := n) z) := by
@@ -158,11 +164,12 @@ theorem continuous_pointWithRight (z : Point (n + n)) :
   intro i
   cases hsplit : finSumFinEquiv.symm i with
   | inl j =>
-      simpa [pointWithRight, pointLeft, blockPointLeft, pointSumEquivBlockPoint_symm_apply,
-        hsplit] using (continuous_const : Continuous fun _y : Point n => pointLeft (n := n) z j)
+      simpa only [pointWithRight, pointLeft, blockPointLeft, pointSumEquivBlockPoint_symm_apply,
+        hsplit, Sum.elim_inl, Function.comp_apply, pointSumEquivBlockPoint_apply_inl] using
+          (continuous_const : Continuous fun _y : Point n => pointLeft (n := n) z j)
   | inr j =>
-      simpa [pointWithRight, pointLeft, blockPointLeft, pointSumEquivBlockPoint_symm_apply,
-        hsplit] using (continuous_apply j : Continuous fun y : Point n => y j)
+      simpa only [pointWithRight, pointLeft, blockPointLeft, pointSumEquivBlockPoint_symm_apply,
+        hsplit, Sum.elim_inr] using (continuous_apply j : Continuous fun y : Point n => y j)
 
 /-- The left `R^n` component of a vector written in `R^(n+n)` coordinates. -/
 def leftPointGradient (p : Point (n + n)) : Point n :=
@@ -286,12 +293,12 @@ theorem tendsto_rightPointJet_neg_of_tendsto
 @[simp]
 theorem pointSumEquivBlockPoint_leftPointEmbedding (x : Point n) :
     pointSumEquivBlockPoint n (leftPointEmbedding (n := n) x) = leftBlockPoint x := by
-  simp [leftPointEmbedding]
+  simp only [leftPointEmbedding, Equiv.apply_symm_apply]
 
 @[simp]
 theorem pointSumEquivBlockPoint_rightPointEmbedding (y : Point n) :
     pointSumEquivBlockPoint n (rightPointEmbedding (n := n) y) = rightBlockPoint y := by
-  simp [rightPointEmbedding]
+  simp only [rightPointEmbedding, Equiv.apply_symm_apply]
 
 @[simp]
 theorem leftBlockPoint_smul (a : Real) (x : Point n) :
@@ -347,13 +354,15 @@ theorem leftBlockPoint_single (i : Fin n) :
   | inl k =>
       by_cases h : k = i
       · subst h
-        simp [leftBlockPoint]
+        simp only [leftBlockPoint, Sum.elim_inl, Pi.single_eq_same]
       · have hsum : Sum.inl k ≠ (Sum.inl i : Fin n ⊕ Fin n) := by
           intro hs
           exact h (Sum.inl.inj hs)
-        simp [leftBlockPoint, Pi.single, h, hsum]
+        simp only [leftBlockPoint, Pi.single, Sum.elim_inl, ne_eq, h, not_false_eq_true,
+          Function.update_of_ne, Pi.zero_apply, hsum]
   | inr k =>
-      simp [leftBlockPoint, Pi.single]
+      simp only [leftBlockPoint, Pi.single, Sum.elim_inr, Pi.zero_apply, ne_eq, reduceCtorEq,
+        not_false_eq_true, Function.update_of_ne]
 
 @[simp]
 theorem rightBlockPoint_single (j : Fin n) :
@@ -361,15 +370,17 @@ theorem rightBlockPoint_single (j : Fin n) :
   ext c
   cases c with
   | inl k =>
-      simp [rightBlockPoint, Pi.single]
+      simp only [rightBlockPoint, Pi.single, Sum.elim_inl, Pi.zero_apply, ne_eq, reduceCtorEq,
+        not_false_eq_true, Function.update_of_ne]
   | inr k =>
       by_cases h : k = j
       · subst h
-        simp [rightBlockPoint]
+        simp only [rightBlockPoint, Sum.elim_inr, Pi.single_eq_same]
       · have hsum : Sum.inr k ≠ (Sum.inr j : Fin n ⊕ Fin n) := by
           intro hs
           exact h (Sum.inr.inj hs)
-        simp [rightBlockPoint, Pi.single, h, hsum]
+        simp only [rightBlockPoint, Pi.single, Sum.elim_inr, ne_eq, h, not_false_eq_true,
+          Function.update_of_ne, Pi.zero_apply, hsum]
 
 theorem finSumFinEquiv_symm_castAdd (i : Fin n) :
     finSumFinEquiv.symm (Fin.castAdd n i) = Sum.inl i := by
@@ -388,92 +399,106 @@ theorem finSumFinEquiv_symm_addNat (i : Fin n) :
 @[simp]
 theorem pointLeft_zero :
     pointLeft (n := n) 0 = 0 := by
-  simp [pointLeft, blockPointLeft, pointSumEquivBlockPoint_zero]
+  simp only [pointLeft, blockPointLeft, pointSumEquivBlockPoint_zero, Pi.zero_comp]
 
 @[simp]
 theorem pointRight_zero :
     pointRight (n := n) 0 = 0 := by
-  simp [pointRight, blockPointRight, pointSumEquivBlockPoint_zero]
+  simp only [pointRight, blockPointRight, pointSumEquivBlockPoint_zero, Pi.zero_comp]
 
 @[simp]
 theorem pointLeft_leftPointEmbedding (x : Point n) :
     pointLeft (n := n) (leftPointEmbedding (n := n) x) = x := by
-  simp [pointLeft]
+  simp only [pointLeft, pointSumEquivBlockPoint_leftPointEmbedding, blockPointLeft_leftBlockPoint]
 
 @[simp]
 theorem pointRight_leftPointEmbedding (x : Point n) :
     pointRight (n := n) (leftPointEmbedding (n := n) x) = 0 := by
-  simp [pointRight]
+  simp only [pointRight, pointSumEquivBlockPoint_leftPointEmbedding,
+    blockPointRight_leftBlockPoint]
 
 @[simp]
 theorem pointLeft_rightPointEmbedding (y : Point n) :
     pointLeft (n := n) (rightPointEmbedding (n := n) y) = 0 := by
-  simp [pointLeft]
+  simp only [pointLeft, pointSumEquivBlockPoint_rightPointEmbedding,
+    blockPointLeft_rightBlockPoint]
 
 @[simp]
 theorem pointRight_rightPointEmbedding (y : Point n) :
     pointRight (n := n) (rightPointEmbedding (n := n) y) = y := by
-  simp [pointRight]
+  simp only [pointRight, pointSumEquivBlockPoint_rightPointEmbedding,
+    blockPointRight_rightBlockPoint]
 
 @[simp]
 theorem pointLeft_add_leftPointEmbedding (z : Point (n + n)) (x : Point n) :
     pointLeft (n := n) (z + leftPointEmbedding (n := n) x) =
       pointLeft (n := n) z + x := by
   ext i
-  simp [pointLeft, blockPointLeft, leftBlockPoint, pointSumEquivBlockPoint_add]
+  simp only [pointLeft, blockPointLeft, pointSumEquivBlockPoint_add,
+    pointSumEquivBlockPoint_leftPointEmbedding, leftBlockPoint, Function.comp_apply, Pi.add_apply,
+    pointSumEquivBlockPoint_apply_inl, Sum.elim_inl]
 
 @[simp]
 theorem pointRight_add_leftPointEmbedding (z : Point (n + n)) (x : Point n) :
     pointRight (n := n) (z + leftPointEmbedding (n := n) x) =
       pointRight (n := n) z := by
   ext i
-  simp [pointRight, blockPointRight, leftBlockPoint, pointSumEquivBlockPoint_add]
+  simp only [pointRight, blockPointRight, pointSumEquivBlockPoint_add,
+    pointSumEquivBlockPoint_leftPointEmbedding, leftBlockPoint, Function.comp_apply, Pi.add_apply,
+    pointSumEquivBlockPoint_apply_inr, Fin.natAdd_eq_addNat, Sum.elim_inr, Pi.zero_apply,
+    add_zero]
 
 @[simp]
 theorem pointLeft_add_rightPointEmbedding (z : Point (n + n)) (y : Point n) :
     pointLeft (n := n) (z + rightPointEmbedding (n := n) y) =
       pointLeft (n := n) z := by
   ext i
-  simp [pointLeft, blockPointLeft, rightBlockPoint, pointSumEquivBlockPoint_add]
+  simp only [pointLeft, blockPointLeft, pointSumEquivBlockPoint_add,
+    pointSumEquivBlockPoint_rightPointEmbedding, rightBlockPoint, Function.comp_apply,
+    Pi.add_apply, pointSumEquivBlockPoint_apply_inl, Sum.elim_inl, Pi.zero_apply, add_zero]
 
 @[simp]
 theorem pointRight_add_rightPointEmbedding (z : Point (n + n)) (y : Point n) :
     pointRight (n := n) (z + rightPointEmbedding (n := n) y) =
       pointRight (n := n) z + y := by
   ext i
-  simp [pointRight, blockPointRight, rightBlockPoint, pointSumEquivBlockPoint_add]
+  simp only [pointRight, blockPointRight, pointSumEquivBlockPoint_add,
+    pointSumEquivBlockPoint_rightPointEmbedding, rightBlockPoint, Function.comp_apply,
+    Pi.add_apply, pointSumEquivBlockPoint_apply_inr, Fin.natAdd_eq_addNat, Sum.elim_inr]
 
 @[simp]
 theorem pointSumEquivBlockPoint_pointWithLeft (z : Point (n + n)) (x : Point n) :
     pointSumEquivBlockPoint n (pointWithLeft (n := n) z x) =
       Sum.elim x (pointRight (n := n) z) := by
-  simp [pointWithLeft]
+  simp only [pointWithLeft, Equiv.apply_symm_apply]
 
 @[simp]
 theorem pointSumEquivBlockPoint_pointWithRight (z : Point (n + n)) (y : Point n) :
     pointSumEquivBlockPoint n (pointWithRight (n := n) z y) =
       Sum.elim (pointLeft (n := n) z) y := by
-  simp [pointWithRight]
+  simp only [pointWithRight, Equiv.apply_symm_apply]
 
 @[simp]
 theorem pointLeft_pointWithLeft (z : Point (n + n)) (x : Point n) :
     pointLeft (n := n) (pointWithLeft (n := n) z x) = x := by
-  simp [pointLeft, blockPointLeft]
+  simp only [pointLeft, blockPointLeft, pointSumEquivBlockPoint_pointWithLeft, Sum.elim_comp_inl]
 
 @[simp]
 theorem pointRight_pointWithLeft (z : Point (n + n)) (x : Point n) :
     pointRight (n := n) (pointWithLeft (n := n) z x) = pointRight (n := n) z := by
-  simp [pointRight, blockPointRight]
+  simp only [pointRight, blockPointRight, pointSumEquivBlockPoint_pointWithLeft,
+    Sum.elim_comp_inr]
 
 @[simp]
 theorem pointLeft_pointWithRight (z : Point (n + n)) (y : Point n) :
     pointLeft (n := n) (pointWithRight (n := n) z y) = pointLeft (n := n) z := by
-  simp [pointLeft, blockPointLeft]
+  simp only [pointLeft, blockPointLeft, pointSumEquivBlockPoint_pointWithRight, Sum.elim_comp_inl]
 
 @[simp]
 theorem pointRight_pointWithRight (z : Point (n + n)) (y : Point n) :
     pointRight (n := n) (pointWithRight (n := n) z y) = y := by
-  simp [pointRight, blockPointRight]
+  simp only [pointRight, blockPointRight, pointSumEquivBlockPoint_pointWithRight,
+    Sum.elim_comp_inr]
 
 @[simp]
 theorem pointWithLeft_self (z : Point (n + n)) :
@@ -481,7 +506,8 @@ theorem pointWithLeft_self (z : Point (n + n)) :
   apply (pointSumEquivBlockPoint n).injective
   have h :=
     doubledPointToBlockPoint_left_right (n := n) (pointSumEquivBlockPoint n z)
-  simpa [pointWithLeft, pointLeft, pointRight, doubledPointToBlockPoint] using h
+  simpa only [pointWithLeft, pointLeft, pointRight, Equiv.apply_symm_apply,
+    doubledPointToBlockPoint] using h
 
 @[simp]
 theorem pointWithRight_self (z : Point (n + n)) :
@@ -489,7 +515,8 @@ theorem pointWithRight_self (z : Point (n + n)) :
   apply (pointSumEquivBlockPoint n).injective
   have h :=
     doubledPointToBlockPoint_left_right (n := n) (pointSumEquivBlockPoint n z)
-  simpa [pointWithRight, pointLeft, pointRight, doubledPointToBlockPoint] using h
+  simpa only [pointWithRight, pointLeft, pointRight, Equiv.apply_symm_apply,
+    doubledPointToBlockPoint] using h
 
 theorem pointWithLeft_sub_self (z : Point (n + n)) (x : Point n) :
     pointWithLeft (n := n) z x - z =
@@ -504,8 +531,10 @@ theorem pointWithLeft_sub_self (z : Point (n + n)) (x : Point n) :
           _ = finSumFinEquiv (Sum.inl j) := congrArg finSumFinEquiv hsplit
           _ = Fin.castAdd n j := rfl
       rw [hi]
-      simp [pointWithLeft, leftPointEmbedding, leftBlockPoint, pointLeft, pointRight,
-        blockPointLeft, blockPointRight, pointSumEquivBlockPoint_symm_apply]
+      simp only [pointWithLeft, pointRight, blockPointRight, Pi.sub_apply,
+        pointSumEquivBlockPoint_symm_apply, finSumFinEquiv_symm_apply_castAdd, Sum.elim_inl,
+        leftPointEmbedding, leftBlockPoint, pointLeft, blockPointLeft, Function.comp_apply,
+        pointSumEquivBlockPoint_apply_inl]
   | inr j =>
       have hi : i = Fin.natAdd n j := by
         calc
@@ -514,8 +543,10 @@ theorem pointWithLeft_sub_self (z : Point (n + n)) (x : Point n) :
           _ = finSumFinEquiv (Sum.inr j) := congrArg finSumFinEquiv hsplit
           _ = Fin.natAdd n j := rfl
       rw [hi]
-      simp [pointWithLeft, leftPointEmbedding, leftBlockPoint, pointLeft, pointRight,
-        blockPointLeft, blockPointRight, pointSumEquivBlockPoint_symm_apply]
+      simp only [pointWithLeft, pointRight, blockPointRight, Fin.natAdd_eq_addNat, Pi.sub_apply,
+        pointSumEquivBlockPoint_symm_apply, finSumFinEquiv_symm_addNat, Sum.elim_inr,
+        Function.comp_apply, pointSumEquivBlockPoint_apply_inr, sub_self, leftPointEmbedding,
+        leftBlockPoint, pointLeft, blockPointLeft, Pi.zero_apply]
 
 theorem pointWithRight_sub_self (z : Point (n + n)) (y : Point n) :
     pointWithRight (n := n) z y - z =
@@ -530,8 +561,10 @@ theorem pointWithRight_sub_self (z : Point (n + n)) (y : Point n) :
           _ = finSumFinEquiv (Sum.inl j) := congrArg finSumFinEquiv hsplit
           _ = Fin.castAdd n j := rfl
       rw [hi]
-      simp [pointWithRight, rightPointEmbedding, rightBlockPoint, pointLeft, pointRight,
-        blockPointLeft, blockPointRight, pointSumEquivBlockPoint_symm_apply]
+      simp only [pointWithRight, pointLeft, blockPointLeft, Pi.sub_apply,
+        pointSumEquivBlockPoint_symm_apply, finSumFinEquiv_symm_apply_castAdd, Sum.elim_inl,
+        Function.comp_apply, pointSumEquivBlockPoint_apply_inl, sub_self, rightPointEmbedding,
+        rightBlockPoint, pointRight, blockPointRight, Pi.zero_apply]
   | inr j =>
       have hi : i = Fin.natAdd n j := by
         calc
@@ -540,42 +573,49 @@ theorem pointWithRight_sub_self (z : Point (n + n)) (y : Point n) :
           _ = finSumFinEquiv (Sum.inr j) := congrArg finSumFinEquiv hsplit
           _ = Fin.natAdd n j := rfl
       rw [hi]
-      simp [pointWithRight, rightPointEmbedding, rightBlockPoint, pointLeft, pointRight,
-        blockPointLeft, blockPointRight, pointSumEquivBlockPoint_symm_apply]
+      simp only [pointWithRight, pointLeft, blockPointLeft, Fin.natAdd_eq_addNat, Pi.sub_apply,
+        pointSumEquivBlockPoint_symm_apply, finSumFinEquiv_symm_addNat, Sum.elim_inr,
+        rightPointEmbedding, rightBlockPoint, pointRight, blockPointRight, Function.comp_apply,
+        pointSumEquivBlockPoint_apply_inr]
 
 @[simp]
 theorem leftPointEmbedding_zero :
     leftPointEmbedding (n := n) 0 = 0 := by
   apply (pointSumEquivBlockPoint n).injective
-  simp [leftPointEmbedding, leftBlockPoint]
+  simp only [leftPointEmbedding, leftBlockPoint, Sum.elim_zero_zero, Equiv.apply_symm_apply,
+    pointSumEquivBlockPoint_zero]
 
 @[simp]
 theorem rightPointEmbedding_zero :
     rightPointEmbedding (n := n) 0 = 0 := by
   apply (pointSumEquivBlockPoint n).injective
-  simp [rightPointEmbedding, rightBlockPoint]
+  simp only [rightPointEmbedding, rightBlockPoint, Sum.elim_zero_zero, Equiv.apply_symm_apply,
+    pointSumEquivBlockPoint_zero]
 
 @[simp]
 theorem leftPointEmbedding_apply_castAdd (x : Point n) (i : Fin n) :
     leftPointEmbedding (n := n) x (Fin.castAdd n i) = x i := by
   have h := congr_fun (pointSumEquivBlockPoint_leftPointEmbedding (n := n) x) (Sum.inl i)
-  simpa [leftBlockPoint] using h
+  simpa only [pointSumEquivBlockPoint_apply_inl, leftBlockPoint, Sum.elim_inl] using h
 
 theorem leftPointEmbedding_apply_natAdd (x : Point n) (i : Fin n) :
     leftPointEmbedding (n := n) x (Fin.natAdd n i) = 0 := by
   have h := congr_fun (pointSumEquivBlockPoint_leftPointEmbedding (n := n) x) (Sum.inr i)
-  simpa [leftBlockPoint] using h
+  simpa only [Fin.natAdd_eq_addNat, pointSumEquivBlockPoint_apply_inr, leftBlockPoint,
+    Sum.elim_inr, Pi.zero_apply] using h
 
 @[simp]
 theorem rightPointEmbedding_apply_castAdd (y : Point n) (i : Fin n) :
     rightPointEmbedding (n := n) y (Fin.castAdd n i) = 0 := by
   have h := congr_fun (pointSumEquivBlockPoint_rightPointEmbedding (n := n) y) (Sum.inl i)
-  simpa [rightBlockPoint] using h
+  simpa only [pointSumEquivBlockPoint_apply_inl, rightBlockPoint, Sum.elim_inl, Pi.zero_apply]
+    using h
 
 theorem rightPointEmbedding_apply_natAdd (y : Point n) (i : Fin n) :
     rightPointEmbedding (n := n) y (Fin.natAdd n i) = y i := by
   have h := congr_fun (pointSumEquivBlockPoint_rightPointEmbedding (n := n) y) (Sum.inr i)
-  simpa [rightBlockPoint] using h
+  simpa only [Fin.natAdd_eq_addNat, pointSumEquivBlockPoint_apply_inr, rightBlockPoint,
+    Sum.elim_inr] using h
 
 /-- The left embedding vanishes on the right coordinate block. -/
 @[simp]
@@ -595,7 +635,10 @@ theorem dotProduct_leftPointGradient (p : Point (n + n)) (x : Point n) :
       dotProduct (leftPointGradient (n := n) p) x := by
   rw [← dotProduct_pointSumEquivBlockPoint
     (n := n) p (leftPointEmbedding (n := n) x)]
-  simp [leftPointGradient, leftBlockPoint, dotProduct, Fintype.sum_sum_type]
+  simp only [dotProduct, pointSumEquivBlockPoint_leftPointEmbedding, leftBlockPoint,
+    Fintype.sum_sum_type, pointSumEquivBlockPoint_apply_inl, Sum.elim_inl,
+    pointSumEquivBlockPoint_apply_inr, Fin.natAdd_eq_addNat, Sum.elim_inr, Pi.zero_apply,
+    mul_zero, Finset.sum_const_zero, add_zero, leftPointGradient]
 
 @[simp]
 theorem dotProduct_rightPointGradient (p : Point (n + n)) (y : Point n) :
@@ -603,7 +646,10 @@ theorem dotProduct_rightPointGradient (p : Point (n + n)) (y : Point n) :
       dotProduct (rightPointGradient (n := n) p) y := by
   rw [← dotProduct_pointSumEquivBlockPoint
     (n := n) p (rightPointEmbedding (n := n) y)]
-  simp [rightPointGradient, rightBlockPoint, dotProduct, Fintype.sum_sum_type]
+  simp only [dotProduct, pointSumEquivBlockPoint_rightPointEmbedding, rightBlockPoint,
+    Fintype.sum_sum_type, pointSumEquivBlockPoint_apply_inl, Sum.elim_inl, Pi.zero_apply,
+    mul_zero, Finset.sum_const_zero, pointSumEquivBlockPoint_apply_inr, Fin.natAdd_eq_addNat,
+    Sum.elim_inr, zero_add, rightPointGradient]
 
 theorem norm_leftPointEmbedding_le (x : Point n) :
     ‖leftPointEmbedding (n := n) x‖ <= ‖x‖ := by
@@ -633,7 +679,7 @@ theorem norm_leftPointEmbedding_le (x : Point n) :
         rw [hi]
         exact leftPointEmbedding_apply_natAdd (n := n) x j
       rw [hcoord]
-      simp
+      simp only [norm_zero, norm_nonneg]
 
 theorem norm_rightPointEmbedding_le (y : Point n) :
     ‖rightPointEmbedding (n := n) y‖ <= ‖y‖ := by
@@ -651,7 +697,7 @@ theorem norm_rightPointEmbedding_le (y : Point n) :
         rw [hi]
         exact rightPointEmbedding_apply_castAdd (n := n) y j
       rw [hcoord]
-      simp
+      simp only [norm_zero, norm_nonneg]
   | inr j =>
       have hi : i = Fin.natAdd n j := by
         calc
@@ -692,8 +738,12 @@ theorem quadraticModel_leftPointEmbedding
     rw [dotProduct_comm (Matrix.mulVec X (leftPointEmbedding (n := n) x))
       (leftPointEmbedding (n := n) x)]
     rw [← h]
-    simp [leftPointHessian, leftBlockPoint, Matrix.mulVec, dotProduct, Finset.sum_mul]
-  simp [quadraticModel, hquad]
+    simp only [dotProduct, Matrix.mulVec, pointHessianToBlockHessian_apply,
+      pointSumEquivBlockPoint_leftPointEmbedding, leftBlockPoint, Fintype.sum_sum_type,
+      finSumFinEquiv_apply_left, Sum.elim_inl, finSumFinEquiv_apply_right, Fin.natAdd_eq_addNat,
+      Sum.elim_inr, Pi.zero_apply, mul_zero, Finset.sum_const_zero, add_zero, Finset.sum_mul,
+      leftPointHessian, Matrix.submatrix_apply]
+  simp only [quadraticModel, sub_zero, dotProduct_leftPointGradient, one_div, hquad]
 
 @[simp]
 theorem quadraticModel_rightPointEmbedding
@@ -712,8 +762,12 @@ theorem quadraticModel_rightPointEmbedding
     rw [dotProduct_comm (Matrix.mulVec X (rightPointEmbedding (n := n) y))
       (rightPointEmbedding (n := n) y)]
     rw [← h]
-    simp [rightPointHessian, rightBlockPoint, Matrix.mulVec, dotProduct, Finset.sum_mul]
-  simp [quadraticModel, hquad]
+    simp only [dotProduct, Matrix.mulVec, pointHessianToBlockHessian_apply,
+      pointSumEquivBlockPoint_rightPointEmbedding, rightBlockPoint, Fintype.sum_sum_type,
+      finSumFinEquiv_apply_left, Sum.elim_inl, Pi.zero_apply, mul_zero, Finset.sum_const_zero,
+      finSumFinEquiv_apply_right, Fin.natAdd_eq_addNat, Sum.elim_inr, zero_add, Finset.sum_mul,
+      rightPointHessian, Matrix.submatrix_apply]
+  simp only [quadraticModel, sub_zero, dotProduct_rightPointGradient, one_div, hquad]
 
 @[simp]
 theorem quadraticModel_pointWithLeft
@@ -725,7 +779,7 @@ theorem quadraticModel_pointWithLeft
   let dx : Point n := x - pointLeft (n := n) z
   have hdiff :
       pointWithLeft (n := n) z x - z = leftPointEmbedding (n := n) dx := by
-    simpa [dx] using pointWithLeft_sub_self (n := n) z x
+    exact pointWithLeft_sub_self (n := n) z x
   have hquad :
       dotProduct (Matrix.mulVec X (leftPointEmbedding (n := n) dx))
           (leftPointEmbedding (n := n) dx) =
@@ -737,8 +791,13 @@ theorem quadraticModel_pointWithLeft
     rw [dotProduct_comm (Matrix.mulVec X (leftPointEmbedding (n := n) dx))
       (leftPointEmbedding (n := n) dx)]
     rw [← h]
-    simp [leftPointHessian, leftBlockPoint, Matrix.mulVec, dotProduct, Finset.sum_mul]
-  simp [quadraticModel, hdiff, dx, hquad]
+    simp only [dotProduct, Matrix.mulVec, pointHessianToBlockHessian_apply,
+      pointSumEquivBlockPoint_leftPointEmbedding, leftBlockPoint, Fintype.sum_sum_type,
+      finSumFinEquiv_apply_left, Sum.elim_inl, finSumFinEquiv_apply_right, Fin.natAdd_eq_addNat,
+      Sum.elim_inr, Pi.zero_apply, mul_zero, Finset.sum_const_zero, add_zero, Finset.sum_mul,
+      leftPointHessian, Matrix.submatrix_apply]
+  simp only [quadraticModel, hdiff, dotProduct_leftPointGradient, dotProduct_sub, one_div, hquad,
+    dx]
 
 @[simp]
 theorem quadraticModel_pointWithRight
@@ -750,7 +809,7 @@ theorem quadraticModel_pointWithRight
   let dy : Point n := y - pointRight (n := n) z
   have hdiff :
       pointWithRight (n := n) z y - z = rightPointEmbedding (n := n) dy := by
-    simpa [dy] using pointWithRight_sub_self (n := n) z y
+    exact pointWithRight_sub_self (n := n) z y
   have hquad :
       dotProduct (Matrix.mulVec X (rightPointEmbedding (n := n) dy))
           (rightPointEmbedding (n := n) dy) =
@@ -762,8 +821,13 @@ theorem quadraticModel_pointWithRight
     rw [dotProduct_comm (Matrix.mulVec X (rightPointEmbedding (n := n) dy))
       (rightPointEmbedding (n := n) dy)]
     rw [← h]
-    simp [rightPointHessian, rightBlockPoint, Matrix.mulVec, dotProduct, Finset.sum_mul]
-  simp [quadraticModel, hdiff, dy, hquad]
+    simp only [dotProduct, Matrix.mulVec, pointHessianToBlockHessian_apply,
+      pointSumEquivBlockPoint_rightPointEmbedding, rightBlockPoint, Fintype.sum_sum_type,
+      finSumFinEquiv_apply_left, Sum.elim_inl, Pi.zero_apply, mul_zero, Finset.sum_const_zero,
+      finSumFinEquiv_apply_right, Fin.natAdd_eq_addNat, Sum.elim_inr, zero_add, Finset.sum_mul,
+      rightPointHessian, Matrix.submatrix_apply]
+  simp only [quadraticModel, hdiff, dotProduct_rightPointGradient, dotProduct_sub, one_div, hquad,
+    dy]
 
 /--
 The mixed second difference of a quadratic model in a left direction and a
@@ -791,7 +855,7 @@ theorem quadraticModel_mixed_second_difference_left_right
             (rightPointEmbedding (n := n) y) +
           dotProduct (Matrix.mulVec X (rightPointEmbedding (n := n) y))
             (leftPointEmbedding (n := n) x)) := by
-  simpa [add_assoc] using
+  exact
     quadraticModel_mixed_second_difference (n := n + n) z r p X
       (leftPointEmbedding (n := n) x) (rightPointEmbedding (n := n) y)
 
@@ -813,7 +877,7 @@ theorem dotProduct_mulVec_leftPointEmbedding_rightPointEmbedding
   rw [← dotProduct_pointSumEquivBlockPoint]
   conv_rhs => rw [← pointSumEquivBlockPoint_leftPointEmbedding (n := n) x]
   rw [pointHessianToBlockHessian_mulVec_pointSumEquivBlockPoint]
-  simp
+  simp only [pointSumEquivBlockPoint_rightPointEmbedding]
 
 /--
 The cross term between a right increment and a left increment may be computed
@@ -833,7 +897,7 @@ theorem dotProduct_mulVec_rightPointEmbedding_leftPointEmbedding
   rw [← dotProduct_pointSumEquivBlockPoint]
   conv_rhs => rw [← pointSumEquivBlockPoint_rightPointEmbedding (n := n) y]
   rw [pointHessianToBlockHessian_mulVec_pointSumEquivBlockPoint]
-  simp
+  simp only [pointSumEquivBlockPoint_leftPointEmbedding]
 
 /--
 The left-right cross term against coordinate basis vectors is the corresponding
@@ -849,7 +913,7 @@ theorem dotProduct_mulVec_leftBlockPoint_single_rightBlockPoint_single
         (Pi.single (Sum.inr j) (1 : Real)) =
       A (Sum.inr j) (Sum.inl i) := by
   rw [dotProduct_single_one]
-  simp [Matrix.mulVec]
+  simp only [Matrix.mulVec, dotProduct_single, mul_one]
 
 /--
 The right-left cross term against coordinate basis vectors is the corresponding
@@ -865,6 +929,6 @@ theorem dotProduct_mulVec_rightBlockPoint_single_leftBlockPoint_single
         (Pi.single (Sum.inl i) (1 : Real)) =
       A (Sum.inl i) (Sum.inr j) := by
   rw [dotProduct_single_one]
-  simp [Matrix.mulVec]
+  simp only [Matrix.mulVec, dotProduct_single, mul_one]
 
 end ViscositySolns

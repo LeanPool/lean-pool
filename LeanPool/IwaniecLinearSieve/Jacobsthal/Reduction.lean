@@ -44,7 +44,7 @@ theorem exists_covering_length_le (hL : LinearSieveEstimate)
   refine ⟨K / (c * c'), max z₀ 2, fun z hz S hS hcard x m hm ↦ ?_⟩
   have hz0 : z₀ ≤ z := (le_max_left _ _).trans hz
   have hz2 : 2 ≤ z := (le_max_right _ _).trans hz
-  have hlog : 0 < log z := log_pos (by linarith)
+  have hlog : 0 < log z := log_pos (by linarith only [hz2])
   have hRz := R_pos z
   set M := rosserMain true (C₀ * z ^ 2) z
   obtain ⟨hmain, hcount⟩ := hL z hz0
@@ -56,7 +56,7 @@ theorem exists_covering_length_le (hL : LinearSieveEstimate)
     exact h q hq hqk
   rw [hzero, card_empty, Nat.cast_zero] at hsieve
   -- `M ≥ R(z) c / log z`
-  have hM : R z * (c / log z) ≤ M := by nlinarith
+  have hM : R z * (c / log z) ≤ M := by nlinarith only [hmain]
   have hM0 : 0 ≤ M := (mul_nonneg hRz.le (div_pos hc hlog).le).trans hM
   have hprod := R_le_prod_of_card_eq hS hcard
   have h1 : (m : ℝ) * M ≤ #(rosserSet true (C₀ * z ^ 2) z) := by
@@ -65,7 +65,7 @@ theorem exists_covering_length_le (hL : LinearSieveEstimate)
       refine mul_le_mul_of_nonneg_left ?_ m.cast_nonneg
       calc M = R z * (M / R z) := by field_simp
         _ ≤ _ := mul_le_mul_of_nonneg_right hprod (div_nonneg hM0 hRz.le)
-    linarith
+    linarith only [hsieve, this]
   have hRlog : c' ≤ R z * log z := by
     have := hR z hz2
     rwa [div_le_iff₀ hlog] at this
@@ -82,9 +82,9 @@ theorem exists_covering_length_le (hL : LinearSieveEstimate)
       exact (mul_le_mul_of_nonneg_left hM hm0).trans (h1.trans hcount)
     have e3 : K * z ^ 2 / log z ^ 2 * log z ^ 2 = K * z ^ 2 := by
       field_simp
-    linarith
+    linarith only [e1, e2, e3]
   rw [div_mul_eq_mul_div, le_div_iff₀ (mul_pos hc hc')]
-  linarith
+  linarith only [h2]
 
 
 /-- The primes below `p_N + 1`, where `p_N = Nat.nth Nat.Prime (N - 1)` is the `N`-th prime, are

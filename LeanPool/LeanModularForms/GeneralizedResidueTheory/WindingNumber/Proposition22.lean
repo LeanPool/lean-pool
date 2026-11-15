@@ -15,7 +15,6 @@ import Mathlib.Analysis.Calculus.Deriv.MeanValue
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 import Mathlib.CategoryTheory.Category.Init
 import Mathlib.Combinatorics.Matroid.Init
-import Mathlib.MeasureTheory.Covering.Besicovitch
 
 /-!
 # Proposition 2.2: Finite Crossings and Isolated Crossing Intervals
@@ -101,7 +100,7 @@ theorem PiecewiseC1Immersion.eventually_ne_at_smooth_crossing
 private lemma eventually_conj_deriv_re_pos (γ : PiecewiseC1Immersion) {L : ℂ}
     (hL_ne : L ≠ 0) {l : Filter ℝ} (hL_tendsto : Tendsto (deriv γ.toFun) l (𝓝 L)) :
     ∀ᶠ t in l, (starRingEnd ℂ L * deriv γ.toFun t).re > 0 := by
-  have hL_sq_pos : (0 : ℝ) < ‖L‖ ^ 2 := by positivity
+  have hL_sq_pos : (0 : ℝ) < ‖L‖ ^ 2 := by exact pow_pos (norm_pos_iff.mpr hL_ne) 2
   have h_lim_val : (starRingEnd ℂ L * L).re = ‖L‖ ^ 2 := by
     rw [Complex.conj_mul' L, sq, ← Complex.ofReal_mul, Complex.ofReal_re, sq]
   refine (Tendsto.eventually ?_ (Ioi_mem_nhds hL_sq_pos))
@@ -154,7 +153,7 @@ theorem PiecewiseC1Immersion.eventually_ne_left_of_partition
   exact ⟨q, hq_lt_p, fun t ht hγt => by
     have hht : h t = 0 := by simp only [hh_def, hγt, sub_self, mul_zero, Complex.zero_re]
     have : h t < h p := hh_mono (Ioo_subset_Icc_self ht) (right_mem_Icc.mpr hq_lt_p.le) ht.2
-    linarith⟩
+    linarith only [hh_p, hht, this]⟩
 
 /-- At a partition point p with p < b, the right-sided derivative limit is nonzero,
 so γ(t) ≠ γ(p) for t sufficiently close to p from the right. -/
@@ -202,7 +201,7 @@ theorem PiecewiseC1Immersion.eventually_ne_right_of_partition
   exact ⟨r, hr_gt_p, fun t ht hγt => by
     have hht : h t = 0 := by simp only [hh_def, hγt, sub_self, mul_zero, Complex.zero_re]
     have : h p < h t := hh_mono (left_mem_Icc.mpr hr_gt_p.le) (Ioo_subset_Icc_self ht) ht.1
-    linarith⟩
+    linarith only [hh_p, hht, this]⟩
 
 /-! ### Crossings are isolated -/
 
@@ -224,7 +223,7 @@ theorem PiecewiseC1Immersion.crossing_isolated_nhds
           (eventually_nhdsWithin_of_forall (fun t (ht : t < t₀) => ht))
         intro t ht; right
         simp only [mem_Icc, not_and_or, not_le]
-        left; linarith
+        left; linarith only [hap, ht]
     · by_cases hpb : t₀ < γ.b
       · exact (γ.eventually_ne_right_of_partition z₀ t₀ hpart ht₀.1 hpb hcross).mono
           (fun t ht => Or.inl ht)
@@ -233,7 +232,7 @@ theorem PiecewiseC1Immersion.crossing_isolated_nhds
           (eventually_nhdsWithin_of_forall (fun t (ht : t₀ < t) => ht))
         intro t ht; right
         simp only [mem_Icc, not_and_or, not_le]
-        right; linarith
+        right; linarith only [hpb, ht]
   · exact (γ.eventually_ne_at_smooth_crossing z₀ t₀ ht₀ hcross hpart).mono
       (fun t ht => Or.inl ht)
 
@@ -253,7 +252,7 @@ theorem PiecewiseC1Immersion.crossing_not_accPt
 theorem crossing_set_isClosed (γ : PiecewiseC1Immersion) (z₀ : ℂ) :
     IsClosed {t ∈ Icc γ.a γ.b | γ.toFun t = z₀} := by
   have : {t ∈ Icc γ.a γ.b | γ.toFun t = z₀} = Icc γ.a γ.b ∩ γ.toFun ⁻¹' {z₀} := by
-    ext t; simp_all
+    ext t; simp_all only [mem_Icc, mem_ofPred_eq, mem_inter_iff, mem_preimage, mem_singleton_iff]
   rw [this]
   exact γ.continuous_toFun.preimage_isClosed_of_isClosed isClosed_Icc isClosed_singleton
 

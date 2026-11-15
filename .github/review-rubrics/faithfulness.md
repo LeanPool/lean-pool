@@ -29,7 +29,7 @@ Overclaiming usually lives in the *prose*, not the Lean: the theorem is honest, 
 
 - `pass` — each headline proves its informal statement, and anything assumed is disclosed in the card. "Proves X conditional on Y and Z, both stated in the summary" is a pass.
 - `block` — a headline proves something weaker or different from what the card claims, content is postulated undisclosed, or a statement is vacuous. Say exactly what an honest card would claim instead — a corrected summary usually makes the PR mergeable.
-- `discuss` — a formalization choice that is defensible but debatable, or disclosure that is arguable.
+There is no third verdict; decide. A defensible but debatable formalization choice is a `pass` when the card discloses it, and a `block` naming the exact card wording that would make it honest when it does not.
 
 ## Output
 
@@ -37,7 +37,7 @@ Return a single JSON object:
 
 ```json
 {
-  "verdict": "pass" | "block" | "discuss",
+  "verdict": "pass" | "block",
   "bottom_line": "<one sentence for the maintainer>",
   "proves_the_claim": "proves_it" | "weaker_than_claimed" | "mismatch" | "unverifiable",
   "claim_note": "<one sentence: what the main theorem actually says, especially where it is narrower than the card's prose>",

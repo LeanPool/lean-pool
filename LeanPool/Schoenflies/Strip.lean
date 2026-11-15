@@ -110,7 +110,7 @@ theorem germs_split' (h : det r₁ r₂ ≠ 0) (hs : 0 < s)
     rw [real_inner_comm]; exact hle
   rcases lt_or_gt_of_ne h with hneg | hpos
   · -- The turn is the other way: exchange the roles of the two rays in `germs_split`.
-    have h' : 0 < det r₂ r₁ := by rw [det_comm r₂ r₁]; linarith
+    have h' : 0 < det r₂ r₁ := by rw [det_comm r₂ r₁]; linarith only [hneg]
     have habs : |det r₁ r₂| = det r₂ r₁ := by rw [abs_of_neg hneg, det_comm r₁ r₂]; ring
     have hsmall' : s * inner ℝ r₂ r₁ < t * det r₂ r₁ := by
       rw [habs] at hsmall
@@ -128,7 +128,7 @@ theorem germs_split' (h : det r₁ r₂ ≠ 0) (hs : 0 < s)
 /-- The two arcs bounded by a pair of rays are disjoint, whichever the sign of `det r₁ r₂`. -/
 theorem arcCCW_disjoint' (h : det r₁ r₂ ≠ 0) : Disjoint (arcCCW r₁ r₂) (arcCCW r₂ r₁) := by
   rcases lt_or_gt_of_ne h with hneg | hpos
-  · have h' : 0 < det r₂ r₁ := by rw [det_comm r₂ r₁]; linarith
+  · have h' : 0 < det r₂ r₁ := by rw [det_comm r₂ r₁]; linarith only [hneg]
     exact (arcCCW_disjoint h').symm
   · exact arcCCW_disjoint hpos
 
@@ -138,7 +138,7 @@ theorem mem_ray_or_mem_arcCCW' (h : det r₁ r₂ ≠ 0) (hd : d ≠ 0) :
     (∃ c : ℝ, 0 < c ∧ d = c • r₁) ∨ (∃ c : ℝ, 0 < c ∧ d = c • r₂) ∨
       d ∈ arcCCW r₁ r₂ ∨ d ∈ arcCCW r₂ r₁ := by
   rcases lt_or_gt_of_ne h with hneg | hpos
-  · have h' : 0 < det r₂ r₁ := by rw [det_comm r₂ r₁]; linarith
+  · have h' : 0 < det r₂ r₁ := by rw [det_comm r₂ r₁]; linarith only [hneg]
     rcases mem_ray_or_mem_arcCCW h' hd with h1 | h1 | h1 | h1
     · exact Or.inr (Or.inl h1)
     · exact Or.inl h1
@@ -198,16 +198,16 @@ theorem isConnected_arcCCW_ball (h : det u w ≠ 0) (hρ : 0 < ρ) :
     exact h rfl
   have hnpos : 0 < ‖u + w‖ := norm_pos_iff.2 hne
   obtain ⟨ε, hε, hεball⟩ : ∃ ε : ℝ, 0 < ε ∧ ε * ‖u + w‖ < ρ := by
-    refine ⟨ρ / (2 * ‖u + w‖), by positivity, ?_⟩
-    have : ρ / (2 * ‖u + w‖) * ‖u + w‖ = ρ / 2 := by field_simp
-    rw [this]; linarith
+    refine ⟨ρ / (2 * ‖u + w‖), div_pos hρ (mul_pos zero_lt_two hnpos), ?_⟩
+    rw [div_mul_eq_mul_div, mul_div_mul_right _ _ hnpos.ne']
+    exact half_lt_self hρ
   have hball : ∀ σ : ℝ, |σ| = ε → σ • (u + w) ∈ ball (0 : Plane) ρ := by
     intro σ hσ
     rw [mem_ball, dist_zero_right, norm_smul, Real.norm_eq_abs, hσ]
     exact hεball
   rcases lt_or_gt_of_ne h with hneg | hpos
   · -- The long arc: `{det w d < 0} ∪ {det d u < 0}`, glued at `-(u + w)`.
-    have h' : 0 < det w u := by rw [det_comm w u]; linarith
+    have h' : 0 < det w u := by rw [det_comm w u]; exact neg_pos.mpr hneg
     have harc : arcCCW u w = {d : Plane | det w d < 0} ∪ {d : Plane | det d u < 0} := by
       ext d
       rw [mem_arcCCW_rev_iff h']
@@ -217,11 +217,11 @@ theorem isConnected_arcCCW_ball (h : det u w ≠ 0) (hρ : 0 < ρ) :
     have hA : (-ε) • (u + w) ∈ {d : Plane | det w d < 0} := by
       change det w ((-ε) • (u + w)) < 0
       rw [det_smul_right, det_add_right, det_self, add_zero]
-      nlinarith
+      exact mul_neg_of_neg_of_pos (neg_neg_iff_pos.2 hε) h'
     have hB : (-ε) • (u + w) ∈ {d : Plane | det d u < 0} := by
       change det ((-ε) • (u + w)) u < 0
       rw [det_smul_left, det_add_left, det_self, zero_add]
-      nlinarith
+      exact mul_neg_of_neg_of_pos (neg_neg_iff_pos.2 hε) h'
     refine ⟨⟨_, by rw [harc]; exact ⟨Or.inl hA, hd0⟩⟩, ?_⟩
     rw [harc, union_inter_distrib_right]
     exact IsPreconnected.union _ ⟨hA, hd0⟩ ⟨hB, hd0⟩
@@ -238,10 +238,10 @@ theorem isConnected_arcCCW_ball (h : det u w ≠ 0) (hρ : 0 < ρ) :
       constructor
       · change 0 < det u (ε • (u + w))
         rw [det_smul_right, det_add_right, det_self, zero_add]
-        positivity
+        exact mul_pos hε hpos
       · change 0 < det (ε • (u + w)) w
         rw [det_smul_left, det_add_left, det_self, add_zero]
-        positivity
+        exact mul_pos hε hpos
     refine ⟨⟨_, hmem⟩, ?_⟩
     rw [harc]
     exact (((convex_det_right_pos u).inter (convex_det_left_pos w)).inter
@@ -276,9 +276,9 @@ theorem cone_eq_image (v : Plane) (A : Set Plane) (ρ : ℝ) :
     · rw [mem_ball, dist_zero_right, ← dist_eq_norm]
       exact hb
     · change v + (y - v) = y
-      module
+      exact add_sub_cancel _ _
   · rintro ⟨d, ⟨hd, hb⟩, rfl⟩
-    have he : v + d - v = d := by module
+    have he : v + d - v = d := by exact add_sub_cancel_left _ _
     refine ⟨by rw [Set.mem_ofPred_eq, he]; exact hd, ?_⟩
     rw [mem_ball, dist_eq_norm, he]
     rw [mem_ball, dist_zero_right] at hb
@@ -316,14 +316,14 @@ theorem abs_det_le (u v : Plane) : |det u v| ≤ ‖u‖ * ‖v‖ := by
 
 @[simp] theorem coordAlong_param (hu : IsDirection u) (a : Plane) (t s : ℝ) :
     coordAlong a u (a + t • u + s • perp u) = t := by
-  have h : a + t • u + s • perp u - a = t • u + s • perp u := by module
+  have h : a + t • u + s • perp u - a = t • u + s • perp u := by abel
   rw [coordAlong, h, inner_add_right, real_inner_smul_right, real_inner_smul_right,
     real_inner_self_eq_norm_sq, inner_perp_self, hu.norm]
   ring
 
 @[simp] theorem coordAcross_param (hu : IsDirection u) (a : Plane) (t s : ℝ) :
     coordAcross a u (a + t • u + s • perp u) = s := by
-  have h : a + t • u + s • perp u - a = t • u + s • perp u := by module
+  have h : a + t • u + s • perp u - a = t • u + s • perp u := by abel
   rw [coordAcross, h, det_germ_self, hu.norm]
   ring
 
@@ -334,19 +334,21 @@ theorem frame_decomp (hu : IsDirection u) (a x : Plane) :
     have := hu.norm
     rw [EuclideanSpace.norm_eq] at this
     have h2 : Real.sqrt (∑ i, ‖u i‖ ^ 2) ^ 2 = 1 ^ 2 := by rw [this]
-    rw [Real.sq_sqrt (Finset.sum_nonneg fun i _ => by positivity)] at h2
-    simpa [Fin.sum_univ_two, sq_abs] using h2
+    rw [Real.sq_sqrt (Finset.sum_nonneg fun i _ => sq_nonneg ‖u.ofLp i‖)] at h2
+    simpa only [Fin.isValue, Real.norm_eq_abs, sq_abs, Fin.sum_univ_two, one_pow] using h2
   have hal : coordAlong a u x = u 0 * (x 0 - a 0) + u 1 * (x 1 - a 1) := by
-    rw [coordAlong, inner_eq]; simp
+    rw [coordAlong, inner_eq]; simp only [Fin.isValue, PiLp.sub_apply]
   have hac : coordAcross a u x = u 0 * (x 1 - a 1) - u 1 * (x 0 - a 0) := by
-    rw [coordAcross, det]; simp
+    rw [coordAcross, det]; simp only [Fin.isValue, PiLp.sub_apply]
   ext i
   fin_cases i
   · simp only [hal, hac]
-    simp [perp]
+    simp only [Fin.zero_eta, Fin.isValue, perp, PiLp.add_apply, PiLp.smul_apply,
+  smul_eq_mul, Matrix.cons_val_zero, mul_neg]
     linear_combination (a 0 - x 0) * hnorm
   · simp only [hal, hac]
-    simp [perp]
+    simp only [Fin.mk_one, Fin.isValue, perp, PiLp.add_apply, PiLp.smul_apply,
+  smul_eq_mul, Matrix.cons_val_one, Matrix.cons_val_fin_one]
     linear_combination (a 1 - x 1) * hnorm
 
 /-- Both coordinates are `1`-Lipschitz, which is how a small ball about a point of the edge
@@ -356,7 +358,7 @@ theorem abs_coordAlong_sub_le (hu : IsDirection u) (a x y : Plane) :
   have h : coordAlong a u x - coordAlong a u y = inner ℝ u (x - y) := by
     rw [coordAlong, coordAlong, ← inner_sub_right]
     congr 1
-    module
+    exact sub_sub_sub_cancel_right _ _ _
   rw [h, dist_eq_norm]
   calc |inner ℝ u (x - y)| ≤ ‖u‖ * ‖x - y‖ := abs_real_inner_le_norm _ _
     _ = ‖x - y‖ := by rw [hu.norm, one_mul]
@@ -413,8 +415,10 @@ theorem convex_strip (a u : Plane) (t₁ t₂ s₁ s₂ : ℝ) : Convex ℝ (str
       ring
     simp only [mem_strip_iff, mem_inter_iff, Set.mem_ofPred_eq, h1, h2]
     constructor
-    · rintro ⟨a1, a2, a3, a4⟩; exact ⟨⟨by linarith, by linarith⟩, ⟨by linarith, by linarith⟩⟩
-    · rintro ⟨⟨a1, a2⟩, ⟨a3, a4⟩⟩; exact ⟨by linarith, by linarith, by linarith, by linarith⟩
+    · rintro ⟨a1, a2, a3, a4⟩; exact ⟨⟨by linarith only [a1], by linarith only [a2]⟩,
+      ⟨by linarith only [a3], by linarith only [a4]⟩⟩
+    · rintro ⟨⟨a1, a2⟩, ⟨a3, a4⟩⟩; exact ⟨by linarith only [a1], by linarith only [a2],
+      by linarith only [a3], by linarith only [a4]⟩
   rw [key]
   have hlin : IsLinearMap ℝ fun x : Plane => inner ℝ u x :=
     ⟨fun x y => inner_add_right _ _ _, fun c x => by rw [real_inner_smul_right, smul_eq_mul]⟩
@@ -434,7 +438,7 @@ theorem dist_foot (hu : IsDirection u) (a x : Plane) :
   rw [dist_eq_norm]
   have hx : x - (a + (coordAlong a u x) • u) = (coordAcross a u x) • perp u := by
     nth_rewrite 1 [h]
-    module
+    exact add_sub_cancel_left _ _
   rw [hx, norm_smul, Real.norm_eq_abs, norm_perp, hu.norm, mul_one]
 
 end Plane
@@ -515,16 +519,16 @@ theorem len_smul_tang : (P.len i) • P.tang i = P.vertex (i + 1) - P.vertex i :
   rw [tang, dir, smul_smul, len, mul_inv_cancel₀ (norm_ne_zero_iff.2 sub_ne_zero_of_edge),
     one_smul]
 
-theorem off_zero_zero : P.off i 0 0 = P.vertex i := by rw [off]; module
+theorem off_zero_zero : P.off i 0 0 = P.vertex i := by
+  simp only [off, zero_smul, add_zero]
 
 theorem pt_zero : P.pt i 0 = P.vertex i := off_zero_zero
 
 theorem pt_len : P.pt i (P.len i) = P.vertex (i + 1) := by
-  rw [pt, off, zero_smul, add_zero, len_smul_tang]
-  module
+  rw [pt, off, zero_smul, add_zero, len_smul_tang, add_sub_cancel]
 
 theorem off_sub_vertex : P.off i t s - P.vertex i = t • P.tang i + s • perp (P.tang i) := by
-  rw [off]; module
+  rw [off, add_assoc, add_sub_cancel_left]
 
 theorem pt_sub_vertex : P.pt i c - P.vertex i = c • P.tang i := by
   rw [pt, off_sub_vertex, zero_smul, add_zero]
@@ -564,7 +568,7 @@ theorem mem_edge_iff {x : Plane} :
   constructor
   · rintro ⟨θ, ⟨hθ0, hθ1⟩, rfl⟩
     refine ⟨θ * P.len i, ⟨mul_nonneg hθ0 len_pos.le, ?_⟩, ?_⟩
-    · nlinarith [len_pos (P := P) (i := i)]
+    · exact mul_le_of_le_one_left len_pos.le hθ1
     · rw [pt, off, zero_smul, add_zero, ← len_smul_tang]
       simp [smul_smul]
   · rintro ⟨c, ⟨hc0, hc1⟩, rfl⟩
@@ -607,14 +611,14 @@ theorem mem_edge_pred_sub {x : Plane} (hx : x ∈ P.edge (i - 1)) :
     ∃ c : ℝ, 0 ≤ c ∧ x - P.vertex i = c • P.rayIn i := by
   rw [mem_edge_iff] at hx
   obtain ⟨c, ⟨hc0, hc1⟩, rfl⟩ := hx
-  refine ⟨P.len (i - 1) - c, by linarith, ?_⟩
+  refine ⟨P.len (i - 1) - c, by linarith only [hc1], ?_⟩
   have hsucc : i - 1 + 1 = i := sub_add_cancel i 1
   have hr : P.rayIn i = -P.tang (i - 1) := by
     have := rayIn_succ (P := P) (i := i - 1)
     rwa [hsucc] at this
   have hv : P.vertex i = P.vertex (i - 1 + 1) := by rw [hsucc]
   have hlen : P.vertex (i - 1 + 1) = P.vertex (i - 1) + (P.len (i - 1)) • P.tang (i - 1) := by
-    rw [len_smul_tang]; module
+    rw [len_smul_tang]; exact (add_sub_cancel _ _).symm
   rw [pt, off, zero_smul, add_zero, hr, hv, hlen]
   module
 
@@ -671,7 +675,7 @@ variable {P : ClosedPolygon m} (D : StripData P) {i j : ZMod (m + 3)} {x : Plane
 
 theorem lam_pos : 0 < D.lam := lt_trans D.rho_pos D.rho_lt_lam
 
-theorem R_pos : 0 < D.R := by have := D.lam_pos; linarith [D.two_lam_lt_R]
+theorem R_pos : 0 < D.R := by have := D.lam_pos; linarith only [D.two_lam_lt_R, this]
 
 theorem rho_lt_R : D.rho < D.R := by
   have := D.lam_pos; have := D.rho_lt_lam; linarith [D.two_lam_lt_R]
@@ -776,7 +780,7 @@ theorem germ_ineq {t s : ℝ} (ht : D.lam < t) (hs0 : 0 < s) (hs : s < D.rho) :
   have hd : 0 < |det (P.rayIn i) (P.tang i)| := abs_pos.2 ClosedPolygon.det_rays_ne_zero
   have habs : (0 : ℝ) ≤ |inner ℝ (P.rayIn i) (P.tang i)| := abs_nonneg _
   have h1 : s * |inner ℝ (P.rayIn i) (P.tang i)| ≤ s * (1 + |inner ℝ (P.rayIn i) (P.tang i)|) := by
-    nlinarith
+    nlinarith only [hs0]
   have h2 : s * (1 + |inner ℝ (P.rayIn i) (P.tang i)|) <
       D.rho * (1 + |inner ℝ (P.rayIn i) (P.tang i)|) := by nlinarith
   have h3 := D.germ i
@@ -802,7 +806,7 @@ theorem blockL_sub_mem_arcL_finish (h : x ∈ D.blockL i) :
   have hkey : x - P.vertex (i + 1) =
       (P.len i - t) • P.rayIn (i + 1) - s • perp (P.rayIn (i + 1)) := by
     have hv : P.vertex (i + 1) = P.vertex i + (P.len i) • P.tang i := by
-      rw [ClosedPolygon.len_smul_tang]; module
+      rw [ClosedPolygon.len_smul_tang]; exact (add_sub_cancel _ _).symm
     rw [hx, ClosedPolygon.off, hv, hr]
     have hp : perp (-P.tang i) = -perp (P.tang i) := by
       ext k; fin_cases k <;> simp [perp]
@@ -823,8 +827,8 @@ theorem blockR_sub_mem_arcR_start (h : x ∈ D.blockR i) :
   have hkey : x - P.vertex i = t • P.tang i - (-s) • perp (P.tang i) := by
     rw [hx, ClosedPolygon.off_sub_vertex]; module
   rw [hkey]
-  exact (germs_split' ClosedPolygon.det_rays_ne_zero (by linarith)
-    (D.germ_ineq h1 (by linarith) (by linarith))).2.2
+  exact (germs_split' ClosedPolygon.det_rays_ne_zero (by linarith only [h4])
+    (D.germ_ineq h1 (by linarith only [h4]) (by linarith only [h3]))).2.2
 
 /-- The same point, seen from the vertex it arrives at, is the incoming right germ. -/
 theorem blockR_sub_mem_arcR_finish (h : x ∈ D.blockR i) :
@@ -837,15 +841,16 @@ theorem blockR_sub_mem_arcR_finish (h : x ∈ D.blockR i) :
   have hkey : x - P.vertex (i + 1) =
       (P.len i - t) • P.rayIn (i + 1) + (-s) • perp (P.rayIn (i + 1)) := by
     have hv : P.vertex (i + 1) = P.vertex i + (P.len i) • P.tang i := by
-      rw [ClosedPolygon.len_smul_tang]; module
+      rw [ClosedPolygon.len_smul_tang]; exact (add_sub_cancel _ _).symm
     rw [hx, ClosedPolygon.off, hv, hr]
     have hp : perp (-P.tang i) = -perp (P.tang i) := by
       ext k; fin_cases k <;> simp [perp]
     rw [hp]
     module
   rw [hkey]
-  exact (germs_split' ClosedPolygon.det_rays_ne_zero (by linarith)
-    (D.germ_ineq (i := i + 1) (by linarith) (by linarith) (by linarith))).2.1
+  exact (germs_split' ClosedPolygon.det_rays_ne_zero (by linarith only [h4])
+    (D.germ_ineq (i := i + 1) (by linarith only [h2])
+      (by linarith only [h4]) (by linarith only [h3]))).2.1
 
 /-! ### Nonadjacent blocks are disjoint
 
@@ -862,7 +867,7 @@ theorem block_notMem_edge (h : x ∈ D.blockL i ∪ D.blockR i) (hj : j ≠ i) :
   obtain ⟨c, hc, hd⟩ := D.exists_foot h
   have := D.sep_trim_edge i j hj c hc x hx
   rw [dist_comm] at hd
-  linarith [D.rho_pos]
+  linarith only [hd, this, D.rho_pos]
 
 /-- A block misses its own edge, because its points have nonzero offset. -/
 theorem block_notMem_own_edge (h : x ∈ D.blockL i ∪ D.blockR i) : x ∉ P.edge i := by
@@ -905,7 +910,7 @@ theorem sector_notMem_far_edge (h : x ∈ ball (P.vertex i) D.R) (hj1 : j ≠ i 
   intro hx
   have := D.sep_vertex_edge i j hj1 hj2 x hx
   rw [mem_ball, dist_comm] at h
-  linarith [D.R_pos]
+  linarith only [h, this, R_pos D]
 
 /-- A sector misses the two edges incident to its vertex: their points lie on the two bounding
 rays, and the arcs are open. -/
@@ -966,7 +971,7 @@ theorem blockL_disjoint_blockR (hL : x ∈ D.blockL i) (hR : x ∈ D.blockR j) :
     have h1 : dist (P.pt i c) (P.pt j c') ≤ dist (P.pt i c) x + dist x (P.pt j c') :=
       dist_triangle _ _ _
     rw [dist_comm] at hd
-    linarith
+    linarith only [hd, hc', hd', hsep, h1]
 
 theorem blockL_disjoint_sectorR (hL : x ∈ D.blockL i) (hR : x ∈ D.sectorR j) : False := by
   by_cases hij : j = i
@@ -1001,7 +1006,7 @@ theorem sectorL_disjoint_sectorR (hL : x ∈ D.sectorL i) (hR : x ∈ D.sectorR 
     have h1 : dist (P.vertex i) (P.vertex j) ≤ dist (P.vertex i) x + dist x (P.vertex j) :=
       dist_triangle _ _ _
     rw [dist_comm (P.vertex i) x] at h1
-    linarith
+    linarith only [hij, hsep, hdL, hdR, h1]
 
 theorem sideL_disjoint_sideR : Disjoint D.sideL D.sideR := by
   rw [Set.disjoint_left]

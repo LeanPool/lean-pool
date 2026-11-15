@@ -38,6 +38,13 @@ is true for a positive proportion of x,y.
   and a constant $c$ such that $f(x)=\phi(x)+c$ for a substantial set of values.
 -/
 
+-- Avoid repeated searches for empty or singleton types during simplification.
+attribute [-simp] IsEmpty.forall_iff Finset.univ_eq_empty forall_const
+  Function.const_inj Function.const_eq_zero Function.const_eq_one Set.range_const
+  exists_const IsEmpty.exists_iff add_eq_zero mul_eq_one
+  ProbabilityTheory.iIndepFun.of_subsingleton ProbabilityTheory.iIndep.of_subsingleton
+  ProbabilityTheory.iIndepSets.of_subsingleton
+
 open scoped ZhangYeungPFR
 
 

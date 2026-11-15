@@ -43,12 +43,8 @@ theorem localizedEnergy_le_of_localUnitMass_and_localMass
   let m : ℝ := ∫ x in I.centralThird, ‖b x‖
   let A : ℝ := 16 * positiveDyadicAmplitudeBound ^ 2 / I.length
   let B : ℝ := 128 * positiveDyadicAmplitudeBound ^ 2 / I.length ^ 2
-  have hm : 0 ≤ m := integral_nonneg (fun _ ↦ norm_nonneg _)
   have hA : 0 ≤ A := by
     dsimp [A]
-    positivity [I.length_pos]
-  have hB : 0 ≤ B := by
-    dsimp [B]
     positivity [I.length_pos]
   have hwindow :
       (∫ x, ‖I.centralThird.indicator b x‖ * localUnitMass I b x) ≤ M * m := by
@@ -66,7 +62,7 @@ theorem localizedEnergy_le_of_localUnitMass_and_localMass
   have hnear : nearEnergy I b ≤ A * M * m := by
     unfold nearEnergy
     change A * (∫ x, ‖I.centralThird.indicator b x‖ * localUnitMass I b x) ≤ _
-    exact (mul_le_mul_of_nonneg_left hwindow hA).trans_eq (by ring)
+    exact (mul_le_mul_of_nonneg_left hwindow hA).trans_eq (by ac_rfl)
   have hfar : farEnergy I b ≤ B * M * I.length * m := by
     unfold farEnergy
     change B * m ^ 2 ≤ _
@@ -74,7 +70,7 @@ theorem localizedEnergy_le_of_localUnitMass_and_localMass
       B * m ^ 2 = B * (m * m) := by ring
       _ ≤ B * ((M * I.length) * m) := by
         gcongr
-      _ = B * M * I.length * m := by ring
+      _ = B * M * I.length * m := by ac_rfl
   calc
     localizedEnergy k I b ≤ nearEnergy I b + farEnergy I b :=
       localizedEnergy_le_near_add_far k I hscale hb
@@ -107,8 +103,8 @@ theorem localizedEnergy_le_of_gap_localMass
   have hratio : M / I.length = A * (2 : ℝ) ^ (-s) := by
     have hpow : (2 : ℝ) ^ (k + 2 - s) =
         (2 : ℝ) ^ (k + 2) * (2 : ℝ) ^ (-s) := by
-      rw [show k + 2 - s = (k + 2) + (-s) by ring,
-        zpow_add₀ (by norm_num : (2 : ℝ) ≠ 0)]
+      rw [show k + 2 - s = (k + 2) + (-s) by rfl,
+        zpow_add₀ (by norm_num1 : (2 : ℝ) ≠ 0)]
     dsimp [M]
     rw [hscale, hpow]
     field_simp
@@ -119,7 +115,7 @@ theorem localizedEnergy_le_of_gap_localMass
     _ = _ := by
       rw [show 144 * positiveDyadicAmplitudeBound ^ 2 * M / I.length =
         144 * positiveDyadicAmplitudeBound ^ 2 * (M / I.length) by ring, hratio]
-      ring
+      ac_rfl
 
 
 end KrauseLaceyBadScale

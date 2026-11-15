@@ -5,12 +5,17 @@ Authors: Jon Crall, Claude Fable 5
 -/
 module
 
-
 public import LeanPool.DavisKahan.DavisKahan.Specialized.FreeBeam.BeamFormSpace
 public import LeanPool.DavisKahan.DavisKahan.Sources.DavisKahan1970.Section9.FreeBeamModeUniqueness
 public import LeanPool.DavisKahan.DavisKahan.Sources.DavisKahan1970.Section9.FreeBeamRootLocalization
 public import Mathlib.Analysis.Normed.Operator.Compact.FredholmAlternative
-public import Mathlib.Tactic
+import Mathlib.Tactic.Abel -- shake: keep
+import Mathlib.Tactic.FunProp -- shake: keep
+import Mathlib.Tactic.Linarith -- shake: keep
+import Mathlib.Tactic.LinearCombination -- shake: keep
+import Mathlib.Tactic.NormNum -- shake: keep
+import Mathlib.Tactic.Positivity -- shake: keep
+import Mathlib.Tactic.Ring -- shake: keep
 
 /-!
 # Kernel and eigenfunctions of the free-beam operator

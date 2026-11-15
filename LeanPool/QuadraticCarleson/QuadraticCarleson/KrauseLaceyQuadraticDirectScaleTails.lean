@@ -263,7 +263,7 @@ theorem length_threshold_iff_scale_cutoff_of_geometry
     (hq : (q : ℤ) = max 0 (ell - 2)) (hI : I ∈ A) :
     (2 : ℝ) ^ ell ≤ I.length ↔ (q : ℤ) ≤ scale I := by
   rw [hscale I (hA hI)]
-  rw [zpow_le_zpow_iff_right₀ (by norm_num : (1 : ℝ) < 2)]
+  rw [zpow_le_zpow_iff_right₀ (by norm_num1 : (1 : ℝ) < 2)]
   rw [hq]
   have hI0 := hnonneg I hI
   omega
@@ -293,9 +293,9 @@ theorem directScaleOutputAtThreshold_eq_directScaleOutput_of_geometry
       refine ⟨⟨hI.1, ?_⟩, hI.2⟩
       have hcut := (length_threshold_iff_scale_cutoff_of_geometry
         S A scale ell q hA hscale hnonneg hq hI.1).mpr
-        (by simpa [hI.2] using hk)
+        (by simpa only [hI.2] using hk)
       exact hcut
-  simp only [directScaleOutputAtThreshold, directScaleOutput, hfilter]
+  simp only [directScaleOutputAtThreshold, hfilter, directScaleOutput]
 
 /-- A thresholded scale absent from the image of the retained threshold
 family contributes zero. -/
@@ -346,8 +346,7 @@ theorem offsetLocalizedActionOn_eq_sum_range_scaleOutputs_of_geometry
     offsetLocalizedActionOn S A scale f ell s x =
         ∑ k ∈ T.image scale,
           directScaleOutputAtThreshold S A scale f ell k s x := by
-      simpa only [T] using
-        (offsetLocalizedActionOn_eq_sum_scaleOutputs S A scale f ell s x)
+      exact (offsetLocalizedActionOn_eq_sum_scaleOutputs S A scale f ell s x)
     _ = ∑ k ∈ U, directScaleOutputAtThreshold S A scale f ell k s x := by
       apply Finset.sum_subset himage
       intro k hkU hkimage

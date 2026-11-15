@@ -13,7 +13,7 @@ from pathlib import Path
 
 import pytest
 
-from lean_pool import ci_artifacts, ci_pr_build, rebase_fastpath
+from lean_pool import ci_artifacts, ci_pr_build, rebase_fastpath, slim_setup
 
 TOOLCHAIN = (Path(__file__).resolve().parents[2] / "lean-toolchain").read_text().strip()
 
@@ -57,6 +57,8 @@ def repository(tmp_path: Path) -> tuple[Path, str, str]:
         'name = "fixture"\nrequiresModuleSystem = true\n'
         '\n[[lean_lib]]\nname = "LeanPool"\n'
     )
+    (root / "python/lean_pool").mkdir(parents=True)
+    (root / "python/lean_pool/build_time_limits.py").write_text("LIMIT = 600\n")
     (root / "lake-manifest.json").write_text(
         json.dumps(
             {
@@ -181,6 +183,7 @@ def test_metadata_edit_reuses_build_without_skipping_validation(
         "lean-toolchain",
         "lake-manifest.json",
         "lakefile.toml",
+        "python/lean_pool/build_time_limits.py",
     ],
 )
 def test_changed_source_or_settings_avoid_download(repository, monkeypatch, path):
@@ -326,6 +329,33 @@ def test_lake_rebuilds_changed_dependency_and_rejects_invalid_proof(
     )
     assert result.returncode != 0
     assert "LeanPool.B" in result.stdout + result.stderr
+    assert "rfl" in result.stdout + result.stderr
+
+
+def test_lake_replays_and_rebuilds_after_setup_files_are_slimmed(repository):
+    """Slimmed compiler inputs neither force rebuilds nor hide a changed import."""
+    root, _, _ = repository
+    lake = _lake()
+    subprocess.run(
+        [str(lake), "build", "LeanPool.B"], cwd=root, check=True, capture_output=True
+    )
+    assert any(outcome.rewritten for outcome in slim_setup.slim_build(root, 1))
+    setup = json.loads((root / ".lake/build/ir/LeanPool/B.setup.json").read_text())
+    assert setup["importArts"] == {"LeanPool.A": []}
+    replay = subprocess.run(
+        [str(lake), "build", "--no-build", "LeanPool.B"],
+        cwd=root,
+        capture_output=True,
+        text=True,
+    )
+    assert replay.returncode == 0, replay.stdout + replay.stderr
+    (root / "LeanPool/A.lean").write_text(
+        "module\n@[expose] public def value : Nat := 2\n"
+    )
+    result = subprocess.run(
+        [str(lake), "build", "LeanPool.B"], cwd=root, capture_output=True, text=True
+    )
+    assert result.returncode != 0
     assert "rfl" in result.stdout + result.stderr
 
 

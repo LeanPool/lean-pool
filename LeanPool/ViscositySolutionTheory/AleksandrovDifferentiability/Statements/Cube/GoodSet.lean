@@ -59,23 +59,16 @@ theorem cubeGoodSet_affineRemainder_trap_frechetGradient
     0 ≤ affineRemainder u x (frechetGradient u x) y ∧
       affineRemainder u x (frechetGradient u x) y ≤
         ((A + η) / 2) * ‖y - x‖ ^ 2 := by
-  rcases (mem_cubeGoodSet.mp hxgood) with ⟨hxQ, _hdiff, hopening⟩
+  rcases (mem_cubeGoodSet.mp hxgood) with ⟨hxQ, _hdiff, _hopening⟩
   have hxInterior : x ∈ interior (sourceOpenCube n 3) :=
     sourceOpenCube_one_subset_interior_three hxQ
   have hopeningGradient :
       HasSourceCubeAffineRemainderOpeningAtMost n u x (frechetGradient u x) A :=
     cubeGoodSet_hasSourceCubeAffineRemainderOpeningAtMost_frechetGradient hu hxgood
   have hsubgradient :
-      SubgradientOn (sourceOpenCube n 3) u x (frechetGradient u x) := by
-    rcases exists_uniform_affineRemainder_trap_of_upperContactOpening_of_convex_of_mem_interior
-        hopening hu hxInterior with ⟨p, hp, _hfixed, _htrap⟩
-    have hdiff : DifferentiableAt ℝ u x := (mem_cubeGoodSet.mp hxgood).2.1
-    have hp_eq : p = frechetGradient u x := by
-      have hs : sourceOpenCube n 3 ∈ 𝓝 x :=
-        (isOpen_sourceOpenCube (n := n) 3).mem_nhds (interior_subset hxInterior)
-      change p = gradient u x
-      exact hp.eq_gradient_of_differentiableAt hs hdiff
-    simpa [hp_eq] using hp
+      SubgradientOn (sourceOpenCube n 3) u x (frechetGradient u x) :=
+    AleksandrovDifferentiability.ConvexOn.sourceCube_subgradientOn_frechetGradient
+      hu hxInterior (mem_cubeGoodSet.mp hxgood).2.1
   exact affineRemainder_nonneg_and_le_of_subgradient_of_upperContactOpening hsubgradient
     hopeningGradient.hasUpperContactWithSlopeOpeningAtMostOn hη hy
 
@@ -190,7 +183,7 @@ theorem cubeGoodSet_inner_gradient_sub_le
         _ = δ := by ring
     have htwo : ‖x1 - x0‖ + ‖δ • v‖ ≤ 2 * δ := by
       dsimp [δ]
-      linarith
+      linarith only [hsmul]
     exact htri.trans (htwo.trans hsmall)
   have hy : x1 + δ • v ∈ sourceOpenCube n 3 := by
     have hy' :
@@ -216,12 +209,12 @@ theorem cubeGoodSet_inner_gradient_sub_le
         _ = δ := by ring
     have htwo : ‖x1 - x0‖ + ‖δ • v‖ ≤ 2 * δ := by
       dsimp [δ]
-      linarith
+      linarith only [hsmul]
     exact htri.trans htwo
   have hquad :
       ((A + η) / 2) * ‖x1 + δ • v - x0‖ ^ 2 ≤
         2 * (A + η) * δ ^ 2 := by
-    have hcoeff : 0 ≤ (A + η) / 2 := by linarith
+    have hcoeff : 0 ≤ (A + η) / 2 := by linarith only [hAη]
     have hsq :
         ‖x1 + δ • v - x0‖ ^ 2 ≤ (2 * δ) ^ 2 :=
       sq_le_sq.mpr (by
@@ -239,7 +232,7 @@ theorem cubeGoodSet_inner_gradient_sub_le
         δ * (2 * (A + η) * δ) := by
     have hbound := hmain.trans hquad
     simpa [pow_two, mul_assoc, mul_left_comm, mul_comm] using hbound
-  nlinarith
+  nlinarith only [hδ_pos, hmain, hquad]
 
 /-- Norm form of the local gradient control near a source good point. -/
 theorem cubeGoodSet_norm_gradient_sub_le
@@ -311,9 +304,9 @@ theorem cubeGoodSet_inner_gradient_sub_le_three_halves
         _ = δ := by ring
     have htwo : ‖x1 - x0‖ + ‖δ • v‖ ≤ 2 * δ := by
       dsimp [δ]
-      linarith
+      linarith only [hsmul]
     have hδ_le : δ ≤ 1 := by simpa [δ] using hsmall
-    exact htri.trans (htwo.trans (by linarith))
+    exact htri.trans (htwo.trans (by linarith only [hsmall]))
   have hy : x1 + δ • v ∈ sourceOpenCube n 3 := by
     have hy' :
         x0 + ((x1 - x0) + δ • v) ∈ sourceOpenCube n 3 :=
@@ -343,12 +336,12 @@ theorem cubeGoodSet_inner_gradient_sub_le_three_halves
         _ = δ := by ring
     have htwo : ‖x1 - x0‖ + ‖δ • v‖ ≤ 2 * δ := by
       dsimp [δ]
-      linarith
+      linarith only [hsmul]
     exact htri.trans htwo
   have hquad :
       ((A + η) / 2) * ‖x1 + δ • v - x0‖ ^ 2 ≤
         2 * (A + η) * δ ^ 2 := by
-    have hcoeff : 0 ≤ (A + η) / 2 := by linarith
+    have hcoeff : 0 ≤ (A + η) / 2 := by linarith only [hAη]
     have hsq :
         ‖x1 + δ • v - x0‖ ^ 2 ≤ (2 * δ) ^ 2 :=
       sq_le_sq.mpr (by
@@ -366,7 +359,7 @@ theorem cubeGoodSet_inner_gradient_sub_le_three_halves
         δ * (2 * (A + η) * δ) := by
     have hbound := hmain.trans hquad
     simpa [pow_two, mul_assoc, mul_left_comm, mul_comm] using hbound
-  nlinarith
+  nlinarith only [hδ_pos, hmain, hquad]
 
 /-- Norm form of the local gradient control for differentiability points in `Q_{3/2}`. -/
 theorem cubeGoodSet_norm_gradient_sub_le_three_halves
@@ -428,7 +421,7 @@ theorem cubeGoodSet_nat_norm_gradient_sub_le_three_halves_global
     have hmono :
         2 * ((m : ℝ) + 1) * ‖x1 - x0‖ ≤
           2 * (((m : ℝ) + 1) + sourceCubeOscillation n u) * ‖x1 - x0‖ := by
-      nlinarith [hm_nonneg, hosc_nonneg, norm_nonneg (x1 - x0)]
+      nlinarith only [hosc_nonneg, hm_nonneg, hosc_nonneg, norm_nonneg (x1 - x0)]
     exact hsmall_bound.trans hmono
   · have hlarge : 1 < ‖x1 - x0‖ := lt_of_not_ge hsmall
     rcases (mem_cubeGoodSet.mp hx0good) with ⟨hx0Q, hd0, _hopening⟩
@@ -453,13 +446,13 @@ theorem cubeGoodSet_nat_norm_gradient_sub_le_three_halves_global
         2 * sourceCubeOscillation n u ≤
           2 * (((m : ℝ) + 1) + sourceCubeOscillation n u) * ‖x1 - x0‖ := by
       have hcoeff_nonneg : 0 ≤ 2 * (((m : ℝ) + 1) + sourceCubeOscillation n u) := by
-        nlinarith
+        nlinarith only [hosc_nonneg]
       have hone_le : (1 : ℝ) ≤ ‖x1 - x0‖ := hlarge.le
       have hmul :
           2 * (((m : ℝ) + 1) + sourceCubeOscillation n u) * 1 ≤
             2 * (((m : ℝ) + 1) + sourceCubeOscillation n u) * ‖x1 - x0‖ :=
         mul_le_mul_of_nonneg_left hone_le hcoeff_nonneg
-      nlinarith [hmul, hm_nonneg, hosc_nonneg]
+      nlinarith only [hmul, hmul, hm_nonneg, hosc_nonneg]
     exact hdiff_le.trans htarget
 
 /-- Coordinate form of the global `Q_{3/2}` gradient-control estimate. This is the exact
@@ -476,7 +469,7 @@ theorem cubeGoodSet_nat_abs_gradient_coord_sub_le_three_halves_global
   have hcoord :
       |frechetGradient u x1 i - frechetGradient u x0 i| ≤
         ‖frechetGradient u x1 - frechetGradient u x0‖ := by
-    simpa using abs_sourceCoordinate_le_norm (frechetGradient u x1 - frechetGradient u x0) i
+    exact abs_sourceCoordinate_le_norm (frechetGradient u x1 - frechetGradient u x0) i
   exact hcoord.trans
     (cubeGoodSet_nat_norm_gradient_sub_le_three_halves_global
       hu hbounded hx0good hx1Q hd1)
@@ -496,7 +489,7 @@ theorem cubeGoodSet_nat_norm_gradient_sub_le
   rcases (mem_cubeGoodSet.mp hx1good) with ⟨hx1Q, hd1, _hopening⟩
   have hm_nonneg : 0 ≤ (m : ℝ) + 1 :=
     add_nonneg (Nat.cast_nonneg m) zero_le_one
-  simpa using
+  exact
     cubeGoodSet_norm_gradient_sub_le
       (A := (m : ℝ)) (η := 1) hu hx0good hx1Q hd1 (by norm_num) hm_nonneg hsmall
 
@@ -519,11 +512,11 @@ theorem cubeGoodSet_nat_norm_gradient_sub_le_of_mem_closedBall
   have hdist : dist x1 x0 ≤ (1 / 2 : ℝ) := by
     have htri : dist x1 x0 ≤ dist x1 c + dist c x0 :=
       dist_triangle x1 c x0
-    linarith
+    linarith only [hdist_x1, hdist_x0, htri]
   have hnorm : ‖x1 - x0‖ ≤ (1 / 2 : ℝ) := by
     simpa [dist_eq_norm] using hdist
   have hsmall : 2 * ‖x1 - x0‖ ≤ 1 := by
-    linarith
+    linarith only [hnorm]
   exact cubeGoodSet_nat_norm_gradient_sub_le hu hx0.1 hx1.1 hsmall
 
 /-- The Fréchet-gradient map is Lipschitz on each localized integer good set.
@@ -540,7 +533,7 @@ theorem cubeGoodSet_nat_lipschitzOnWith_frechetGradient_inter_closedBall
       ‖frechetGradient u x - frechetGradient u y‖ ≤
         2 * ((m : ℝ) + 1) * ‖x - y‖ :=
     cubeGoodSet_nat_norm_gradient_sub_le_of_mem_closedBall (c := c) hu hy hx
-  simpa [dist_eq_norm] using hnorm
+  exact hnorm
 
 /-- Rademacher bridge for the localized integer good set.
 
@@ -753,7 +746,7 @@ theorem ae_restrict_sourceOpenCube_exists_local_goodSet_frechetGradient_diffWith
   let G : Set (SourceCubeSpace n) := ⋃ m : ℕ, cubeGoodSet n u (m : ℝ)
   have hGnull :
       volume (sourceOpenCube n 1 \ G) = 0 := by
-    simpa [G] using
+    exact
       volume_sourceOpenCube_diff_iUnion_cubeGoodSet_eq_zero_of_convex
         hfiniteStatement hn hbounded hconvex
   have hGae : ∀ᵐ x ∂(volume.restrict (sourceOpenCube n 1)), x ∈ G := by
@@ -808,7 +801,7 @@ theorem ae_restrict_sourceOpenCube_exists_goodSet_frechetGradient_diffWithin
   let G : Set (SourceCubeSpace n) := ⋃ m : ℕ, cubeGoodSet n u (m : ℝ)
   have hGnull :
       volume (sourceOpenCube n 1 \ G) = 0 := by
-    simpa [G] using
+    exact
       volume_sourceOpenCube_diff_iUnion_cubeGoodSet_eq_zero_of_convex
         hfiniteStatement hn hbounded hconvex
   have hGae : ∀ᵐ x ∂(volume.restrict (sourceOpenCube n 1)), x ∈ G := by
@@ -875,7 +868,7 @@ theorem cubeGoodSet_hasFDerivWithinAt_frechetGradient_isLittleO
         frechetGradient u y - frechetGradient u x - B (y - x))
       =o[𝓝[cubeGoodSet n u (m : ℝ)] x]
         (fun y : SourceCubeSpace n => y - x) := by
-  simpa using hB.isLittleO
+  exact hB.isLittleO
 
 /-- Existential linearization form of differentiability of the Fréchet-gradient map within a
 good set. This avoids committing later arguments to a particular representative such as

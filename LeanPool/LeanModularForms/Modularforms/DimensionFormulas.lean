@@ -162,7 +162,7 @@ lemma Delta_E4_E6_aux_q_one_term : (qExpansion 1 DeltaE4E6Aux).coeff 1 = 1 := by
     apply qExpansion_ext2 DeltaE4E6Aux (ModFormMk Γ(1) 12 DeltaE4E6Aux) ?_
     ext z
     rw [DeltaE4E6Aux, ModFormMk]
-    simp
+    simp only [one_div, DirectSum.sub_apply]
     rfl
   rw [h1, Delta_E4_E6_eq]
   simp only [one_div, DirectSum.sub_apply]
@@ -175,7 +175,8 @@ lemma Delta_E4_E6_aux_q_one_term : (qExpansion 1 DeltaE4E6Aux).coeff 1 = 1 := by
   have hsub1 : qExpansion 1 ⇑(A - B) = qExpansion 1 (⇑A - ⇑B) := by rfl
   have hsub2 : qExpansion 1 (⇑A - ⇑B) = qExpansion 1 ⇑A - qExpansion 1 ⇑B := by
     simpa using (ModularForm.qExpansion_sub (h := (1 : ℕ))
-      (hh := by positivity) (hΓ := by simp) (f := A) (g := B))
+      (hh := by positivity) (hΓ := by simp only [CongruenceSubgroup.strictPeriods_Gamma,
+        Nat.cast_one, AddSubgroup.mem_zmultiples]) (f := A) (g := B))
   have hmain : (PowerSeries.coeff 1) ((1728⁻¹ : ℂ) • (qExpansion 1 ⇑A - qExpansion 1 ⇑B)) = 1 := by
     have h4 := qExpansion_pow E₄ 3
     have h6 := qExpansion_pow E₆ 2
@@ -234,7 +235,8 @@ theorem Delta_E4_eqn : Delta = DeltaE4E6Aux := by
     have h2 := Delta_E4_E6_aux_q_one_term
     rw [← H] at h2
     have hs := (ModularForm.qExpansion_smul (h := (1 : ℕ))
-      (hh := by positivity) (hΓ := by simp) c Delta).symm
+      (hh := by positivity) (hΓ := by simp only [CongruenceSubgroup.strictPeriods_Gamma,
+        Nat.cast_one, AddSubgroup.mem_zmultiples]) c Delta).symm
     have hsmul : qExpansion 1 ⇑(c • Delta) = qExpansion 1 (c • ⇑Delta) := by rfl
     rw [hsmul, ← Nat.cast_one (R := ℝ), ← hs] at h2
     simp_all only [Nat.cast_one, map_smul, smul_eq_mul, mul_one, one_smul]
@@ -263,9 +265,11 @@ private lemma rank_one_of_qExpansion_coeff_zero_eq_one {k : ℤ} (hk : k < 12)
     have hcusp : IsCuspForm Γ(1) k (g - c⁻¹• f) := by
       rw [IsCuspForm_iff_coeffZero_eq_zero]
       rw [← Nat.cast_one (R := ℝ), qExpansion_coe_sub,
-        ModularForm.qExpansion_sub (h := (1 : ℕ)) (hh := by positivity) (hΓ := by simp)]
+        ModularForm.qExpansion_sub (h := (1 : ℕ)) (hh := by positivity) (hΓ := by simp only [
+          CongruenceSubgroup.strictPeriods_Gamma, Nat.cast_one, AddSubgroup.mem_zmultiples])]
       have hnorm0 := modularForm_normalise f hf2
-      simp_all
+      simp_all only [ne_eq, PowerSeries.coeff_zero_eq_constantCoeff, Nat.cast_one, FunLike.coe_smul,
+        map_sub, sub_self]
     have := IsCuspForm_weight_lt_eq_zero k hk (g - c⁻¹• f) hcusp
     have hfc := hf c
     rw [@sub_eq_zero] at this
@@ -367,7 +371,9 @@ f^3 = a^3 E₆, but now this would mean that Δ = 0 or a = 0, which is a contrad
       simp only [one_div, _root_.smul_apply, sub_apply, smul_eq_mul, zero_apply, mul_eq_zero,
         inv_eq_zero, OfNat.ofNat_ne_zero, false_or, F]
       ring_nf
-    simp_all
+    simp_all only [PowerSeries.coeff_zero_eq_constantCoeff, ne_eq, Int.reduceAdd, one_div,
+      isUnit_iff_ne_zero, OfNat.ofNat_ne_zero, not_false_eq_true, pow_eq_zero_iff,
+      IsUnit.smul_eq_zero]
 
 lemma dim_modforms_eq_one_add_dim_cuspforms (k : ℕ) (hk : 3 ≤ (k : ℤ)) (hk2 : Even k) :
     Module.rank ℂ (ModularForm (CongruenceSubgroup.Gamma 1) k) =
@@ -394,7 +400,8 @@ lemma dim_modforms_eq_one_add_dim_cuspforms (k : ℕ) (hk : 3 ≤ (k : ℤ)) (hk
         qExpansion 1 ⇑(c • E k hk - f) =
           qExpansion 1 ⇑(c • E k hk) - qExpansion 1 ⇑f := by
       simpa using
-        (ModularForm.qExpansion_sub (h := (1 : ℕ)) (hh := by positivity) (hΓ := by simp)
+        (ModularForm.qExpansion_sub (h := (1 : ℕ)) (hh := by positivity) (hΓ := by simp only [
+          CongruenceSubgroup.strictPeriods_Gamma, Nat.cast_one, AddSubgroup.mem_zmultiples])
           (f := c • E k hk) (g := f))
     have hsmul : qExpansion 1 ⇑(c • E k hk) = c • qExpansion 1 (E k hk) := by
       calc

@@ -104,7 +104,7 @@ lemma physicalOracle_smooth {p : ℝ} {d : ℕ} (hp : 2 < p) (x0 : Point d)
   intro x y
   let B := L * R / rT
   have hB : 0 < B := by dsimp [B]; positivity
-  have hq := O3.one_lt_conjugateExponent (by linarith : 1 < p)
+  have hq := O3.one_lt_conjugateExponent (by linarith only [hp] : 1 < p)
   change lpNorm (conjugateExponent p)
       (B • bar.gradient (physicalBackward x0 R rT x) -
         B • bar.gradient (physicalBackward x0 R rT y)) ≤ L * lpNorm p (x - y)
@@ -117,7 +117,7 @@ lemma physicalOracle_smooth {p : ℝ} {d : ℕ} (hp : 2 < p) (x0 : Point d)
   have hb := hsmooth (physicalBackward x0 R rT x)
     (physicalBackward x0 R rT y)
   rw [one_mul, physicalBackward_sub,
-    O3.Stage2RouteC.lpNorm_smul (by linarith : 1 ≤ p),
+    O3.Stage2RouteC.lpNorm_smul (by linarith only [hp] : 1 ≤ p),
     abs_of_pos (div_pos hrT hR)] at hb
   calc
     B * lpNorm (conjugateExponent p)
@@ -144,12 +144,12 @@ lemma physical_minimizer_iff (x0 : Point d) {L R rT : ℝ}
       A * bar.value (physicalBackward x0 R rT
         (physicalForward x0 R rT z)) at h
     rw [physicalBackward_forward x0 hR hrT] at h
-    nlinarith
+    nlinarith only [h, hA]
   · intro hx y
     change A * bar.value (physicalBackward x0 R rT x) ≤
       A * bar.value (physicalBackward x0 R rT y)
     have h := hx (physicalBackward x0 R rT y)
-    nlinarith
+    nlinarith only [h, hA]
 
 lemma physical_minimizerNonempty (x0 : Point d) {L R rT : ℝ}
     (hL : 0 < L) (hR : 0 < R) (hrT : 0 < rT)
@@ -182,7 +182,7 @@ lemma physical_minimizerDistance {p : ℝ} (hp : 2 < p) (x0 : Point d)
         have hscale : (R / rT) * (rT / R) = 1 := by field_simp
         rw [smul_smul, hscale, one_smul]]
       have hn := O3.Stage2RouteC.lpNorm_smul (d := d)
-        (by linarith : 1 ≤ p) (R / rT) z
+        (by linarith only [hp] : 1 ≤ p) (R / rT) z
       change (R / rT) * O3.lpNorm p (z - 0) =
         O3.lpNorm p ((R / rT) • z)
       rw [hn, abs_of_pos (div_pos hR hrT)]

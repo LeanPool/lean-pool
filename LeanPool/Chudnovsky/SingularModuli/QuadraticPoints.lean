@@ -153,7 +153,7 @@ lemma int_lin_eq_zero (τ : ℍ) {α β : ℤ} (h : (α : ℂ) * (τ : ℂ) + (�
 lemma IsPosDef.c_pos {f : BQF} (hf : IsPosDef f) : 0 < f.c := by
   obtain ⟨ha, hd⟩ := hf
   simp only [disc] at hd
-  nlinarith [sq_nonneg f.b, hd, ha]
+  nlinarith only [ha, hd]
 
 /-- The square-completion identity `(2aτ + b)² = disc f` for a root `τ` of `f`. -/
 lemma sq_two_a_root {f : BQF} {τ : ℍ} (h : IsRoot f τ) :

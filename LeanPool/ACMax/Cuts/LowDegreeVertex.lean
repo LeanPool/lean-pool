@@ -161,7 +161,7 @@ theorem algConn_le_two_of_low_degree_vertex {V : Type*} [Fintype V] [Nonempty V]
   have hQ : dotProduct x ((G.lapMatrix ℝ).mulVec x) ≤ 2 * ∑ i, (x i) ^ 2 := by
     rw [hsq, hexp]
     have hdu : (G.degree u : ℝ) ≤ 2 := by exact_mod_cast hdeg
-    nlinarith [hTbound, mul_le_mul_of_nonneg_right hdu (sq_nonneg (t : ℝ))]
+    nlinarith only [hTbound, mul_le_mul_of_nonneg_right hdu (sq_nonneg (t : ℝ))]
   exact algConn_le_two_of_testvector G x hx0 hxne hQ
 
 open Classical in

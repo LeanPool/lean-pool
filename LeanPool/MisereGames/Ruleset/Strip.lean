@@ -338,7 +338,9 @@ theorem rightmost_of_stride_pos {p : Player} {s : Board}
     (hs : s.stride p ≠ 0) :
     s.board s.rightmostPos = .ofPlayer p ∧ s.rightmostPos + 1 = s.stride p := by
   unfold Strip.Board.stride at ⊢ hs
-  simp_all
+  simp_all only [
+    ne_eq, ite_eq_right_iff, Nat.add_eq_zero_iff, one_ne_zero, and_false, imp_false,
+    Decidable.not_not, ↓reduceIte, and_self]
 
 theorem neg_push_below_rightmost {s : Board} {p : Player} {m : ℕ}
     (hrm : s.board s.rightmostPos = .ofPlayer p)
@@ -628,7 +630,7 @@ theorem stride_neg_zero_of_p_move {s : R} (p : Player) {m : ℕ}
   have h_rightmost : m ≤ (‹Strip R›.rightmostPos s) := by
     rw [rightmostPos_def]
     refine Board.rightmostPos_greatest ?_
-    simp_all
+    simp_all only [board_def, ne_eq, Piece.ofPlayer_ne_none, not_false_eq_true]
   cases lt_or_eq_of_le h_rightmost <;> simp_all +decide only [board_def]
   · apply Board.stride_neg_eq_zero
     have h_rightmost :
@@ -689,7 +691,7 @@ theorem stride_zero_of_push {s : R} {p : Player} {m : ℕ}
     (hs : stride s p = 0) (hm : board s m ≠ .none) :
     stride (push s m) p = 0 := by
   have := stride_push_le p hm
-  simp_all
+  simp_all only [board_def, ne_eq, nonpos_iff_eq_zero]
 
 theorem push_to_empty_is_neg {s : R} {p : Player} {m : ℕ}
     (hs : stride s p = 0)

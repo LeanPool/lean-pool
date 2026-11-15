@@ -109,8 +109,8 @@ theorem exists_sourceCubeDifferentiabilitySet_one_norm_sub_ray_lt_sq_of_mem
     ⟨w, hw, hdist⟩
   refine ⟨w, hw, ?_⟩
   have hdist' : dist w (y + ε • normal) < ε ^ 2 := by
-    simpa [dist_comm] using hdist
-  simpa [dist_eq_norm] using hdist'
+    simpa only [dist_comm] using hdist
+  simpa only [gt_iff_lt, dist_eq_norm] using hdist'
 
 /-- Filter-level choice of Rockafellar differentiability samples near an exposing ray.
 
@@ -141,11 +141,11 @@ theorem exists_sourceCubeDifferentiabilitySet_one_ray_samples
   · filter_upwards [hεpos, hray] with a hpos hmem
     have hgood : a ∈ good := ⟨hpos, hmem⟩
     have hspec := Classical.choose_spec (hexists a hgood)
-    simpa [φ, hgood] using hspec.1
+    simpa only [φ, hgood, ↓reduceDIte] using hspec.1
   · filter_upwards [hεpos, hray] with a hpos hmem
     have hgood : a ∈ good := ⟨hpos, hmem⟩
     have hspec := Classical.choose_spec (hexists a hgood)
-    exact le_of_lt (by simpa [φ, hgood] using hspec.2)
+    exact le_of_lt (by simpa only [hgood, ↓reduceDIte, φ] using hspec.2)
 
 /-- Rockafellar differentiability samples along sufficiently small positive ray parameters.
 
@@ -280,11 +280,11 @@ theorem SourceCubeSubgradientClusterDensity.of_bounded_straszewiczClosure_outer_
   refine SourceCubeSubgradientClusterDensity.of_bounded_straszewiczClosure_outer
     hbounded hstrasz ?_ ?_
   · intro y hy
-    simpa [differentiabilitySetOn, sourceCubeDifferentiabilitySet,
+    simpa only [differentiabilitySetOn, sourceCubeDifferentiabilitySet,
       firstOrderDifferentiabilitySet] using hne hy
   · intro y p normal hy hexposed ε hε
-    simpa [differentiabilitySetOn, sourceCubeDifferentiabilitySet,
-      firstOrderDifferentiabilitySet, frechetGradient, gradient] using
+    simpa only [gradient, differentiabilitySetOn, frechetGradient, sourceCubeDifferentiabilitySet,
+      firstOrderDifferentiabilitySet] using
       houter hy hexposed ε hε
 
 /-- Source-cube cluster density from the bounded Rockafellar assembly theorem, using the
@@ -329,11 +329,10 @@ theorem SourceCubeSubgradientClusterDensity.of_bounded_straszewiczClosure_direct
   · intro y p normal hy hexposed
     rcases houter hy hexposed with ⟨ι, l, φ, hne, hφ, hthickening⟩
     refine ⟨ι, l, φ, hne, ?_, ?_⟩
-    · simpa [differentiabilitySetOn, sourceCubeDifferentiabilitySet,
-        firstOrderDifferentiabilitySet] using hφ
+    · simpa only [differentiabilitySetOn, sourceCubeDifferentiabilitySet,
+      firstOrderDifferentiabilitySet] using hφ
     · intro ε hε
-      simpa [differentiabilitySetOn, sourceCubeDifferentiabilitySet,
-        firstOrderDifferentiabilitySet, frechetGradient, gradient] using
+      simpa only [gradient, frechetGradient] using
         hthickening ε hε
 
 /-- Source-cube cluster density from the bounded Rockafellar assembly theorem, using the
@@ -389,11 +388,11 @@ theorem SourceCubeSubgradientClusterDensity.of_bounded_straszewiczClosure_ray_so
     rcases houter hy hp with
       ⟨normal, hnormal, hexposed, ι, l, φ, ε, hne, hε, hεpos, hmem, hclose, hthickening⟩
     refine ⟨normal, hnormal, hexposed, ι, l, φ, ε, hne, hε, hεpos, ?_, hclose, ?_⟩
-    · simpa [differentiabilitySetOn, sourceCubeDifferentiabilitySet,
-        firstOrderDifferentiabilitySet] using hmem
+    · simpa only [differentiabilitySetOn, Set.mem_inter_iff, mem_sourceOpenCube,
+      Set.mem_ofPred_eq, Filter.eventually_and, Filter.eventually_all,
+      sourceCubeDifferentiabilitySet, firstOrderDifferentiabilitySet] using hmem
     · intro hdir δ hδ
-      simpa [differentiabilitySetOn, sourceCubeDifferentiabilitySet,
-        firstOrderDifferentiabilitySet, frechetGradient, gradient] using
+      simpa only [gradient, frechetGradient] using
         hthickening hdir δ hδ
 
 /-- Source-cube cluster density from the bounded Rockafellar assembly theorem, with cube-local
@@ -426,11 +425,11 @@ theorem SourceCubeSubgradientClusterDensity.of_bounded_mathlibStraszewicz_outer_
   refine SourceCubeSubgradientClusterDensity.of_bounded_mathlibStraszewicz_outer
     hbounded hstrasz ?_ ?_
   · intro y hy
-    simpa [differentiabilitySetOn, sourceCubeDifferentiabilitySet,
+    simpa only [differentiabilitySetOn, sourceCubeDifferentiabilitySet,
       firstOrderDifferentiabilitySet] using hne hy
   · intro y p normal hy hexposed ε hε
-    simpa [differentiabilitySetOn, sourceCubeDifferentiabilitySet,
-      firstOrderDifferentiabilitySet, frechetGradient, gradient] using
+    simpa only [gradient, differentiabilitySetOn, frechetGradient, sourceCubeDifferentiabilitySet,
+      firstOrderDifferentiabilitySet] using
       houter hy hexposed ε hε
 
 /-- Source-cube cluster density from the bounded Rockafellar assembly theorem, using only the
@@ -475,13 +474,13 @@ theorem SourceCubeSubgradientClusterDensity.of_bounded_straszewiczClosure_outer_
         (sourceOpenCube_subset_of_le (n := n) (r := 1) (R := (3 / 2 : ℝ))
           (by norm_num) hy)
     · intro y hy
-      simpa [differentiabilitySetOn, sourceCubeDifferentiabilitySet,
+      simpa only [differentiabilitySetOn, sourceCubeDifferentiabilitySet,
         firstOrderDifferentiabilitySet] using
         sourceOpenCube_one_nhdsWithin_sourceCubeDifferentiabilitySet_one_neBot_of_convex
           hconvex hy
     · intro y p normal hy hexposed ε hε
-      simpa [differentiabilitySetOn, sourceCubeDifferentiabilitySet,
-        firstOrderDifferentiabilitySet, frechetGradient, gradient] using
+      simpa only [gradient, differentiabilitySetOn, frechetGradient,
+        sourceCubeDifferentiabilitySet, firstOrderDifferentiabilitySet] using
         houter hy hexposed ε hε
   intro x m hxgood
   have hxQ1 : x ∈ sourceOpenCube n 1 :=
@@ -555,11 +554,10 @@ theorem SourceCubeSubgradientClusterDensity.of_bounded_straszewiczClosure_direct
     · intro y p normal hy hexposed
       rcases houter hy hexposed with ⟨ι, l, φ, hne, hφ, hthickening⟩
       refine ⟨ι, l, φ, hne, ?_, ?_⟩
-      · simpa [differentiabilitySetOn, sourceCubeDifferentiabilitySet,
-          firstOrderDifferentiabilitySet] using hφ
+      · simpa only [differentiabilitySetOn, sourceCubeDifferentiabilitySet,
+        firstOrderDifferentiabilitySet] using hφ
       · intro ε hε
-        simpa [differentiabilitySetOn, sourceCubeDifferentiabilitySet,
-          firstOrderDifferentiabilitySet, frechetGradient, gradient] using
+        simpa only [gradient, frechetGradient] using
           hthickening ε hε
   intro x m hxgood
   have hxQ1 : x ∈ sourceOpenCube n 1 :=
@@ -644,11 +642,11 @@ theorem SourceCubeSubgradientClusterDensity.of_bounded_straszewiczClosure_ray_so
       rcases houter hy hp with
         ⟨normal, hnormal, hexposed, ι, l, φ, ε, hne, hε, hεpos, hmem, hclose, hthickening⟩
       refine ⟨normal, hnormal, hexposed, ι, l, φ, ε, hne, hε, hεpos, ?_, hclose, ?_⟩
-      · simpa [differentiabilitySetOn, sourceCubeDifferentiabilitySet,
-          firstOrderDifferentiabilitySet] using hmem
+      · simpa only [differentiabilitySetOn, Set.mem_inter_iff, mem_sourceOpenCube,
+        Set.mem_ofPred_eq, Filter.eventually_and, Filter.eventually_all,
+        sourceCubeDifferentiabilitySet, firstOrderDifferentiabilitySet] using hmem
       · intro hdir δ hδ
-        simpa [differentiabilitySetOn, sourceCubeDifferentiabilitySet,
-          firstOrderDifferentiabilitySet, frechetGradient, gradient] using
+        simpa only [gradient, frechetGradient] using
           hthickening hdir δ hδ
   intro x m hxgood
   have hxQ1 : x ∈ sourceOpenCube n 1 :=
@@ -877,12 +875,12 @@ theorem SourceCubeSubgradientClusterDensity.of_bounded_mathlibStraszewicz_ray_on
   SourceCubeSubgradientClusterDensity.of_bounded_straszewiczClosure_ray_one_unitOuter
     hn hbounded
     (fun {y} hy => by
-      simpa [exposedPoints_eq_mathlib_exposedPoints] using hstrasz hy)
+      simpa only [exposedPoints_eq_mathlib_exposedPoints] using hstrasz hy)
     (fun {y p normal} hy hp hnormal hexposed => by
       have hp_mathlib :
           p ∈ Set.exposedPoints ℝ
             {q : SourceCubeSpace n | SubgradientOn (sourceOpenCube n 3) u y q} := by
-        simpa [exposedPoints_eq_mathlib_exposedPoints] using hp
+        simpa only [exposedPoints_eq_mathlib_exposedPoints] using hp
       exact houter hy hp_mathlib hnormal hexposed)
 
 /-- Inner-cube source-cube cluster density from the canonical ray sequence, with Mathlib's
@@ -929,12 +927,12 @@ theorem SourceCubeSubgradientClusterDensity.of_bounded_mathlibStraszewicz_ray_on
   SourceCubeSubgradientClusterDensity.of_bounded_straszewiczClosure_ray_one_unitOuter_seq
     hn hbounded hconvex
     (fun {y} hy => by
-      simpa [exposedPoints_eq_mathlib_exposedPoints] using hstrasz hy)
+      simpa only [exposedPoints_eq_mathlib_exposedPoints] using hstrasz hy)
     (fun {y p normal} hy hp hnormal hexposed => by
       have hp_mathlib :
           p ∈ Set.exposedPoints ℝ
             {q : SourceCubeSpace n | SubgradientOn (sourceOpenCube n 3) u y q} := by
-        simpa [exposedPoints_eq_mathlib_exposedPoints] using hp
+        simpa only [exposedPoints_eq_mathlib_exposedPoints] using hp
       exact houter hy hp_mathlib hnormal hexposed)
 
 end AleksandrovDifferentiability

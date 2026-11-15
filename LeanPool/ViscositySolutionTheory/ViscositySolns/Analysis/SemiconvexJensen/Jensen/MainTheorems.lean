@@ -160,7 +160,7 @@ theorem JensenSmoothConvexApproximationOnInteriorClosedBallTheorem.of_smoothConv
     exact hstrict x hx (fun hx0 => by
       subst x
       simp [dist_self] at hdist
-      linarith)
+      linarith only [hr, hdist])
   rcases exists_pos_boundary_gap_of_coordinateSemiconvexOn_larger_closedBall
       (n := n) (f := f) (x0 := x0) (r := r) (R := R)
       (lambda := lambda) hsemi hrR hboundaryStrict with
@@ -488,11 +488,11 @@ theorem JensenContactSetPositiveMeasureOnClosedBallTheorem.of_interior_global_li
     (happrox : JensenGlobalContactSetInteriorLimsupApproximationPrincipleOnClosedBall n) :
     JensenContactSetPositiveMeasureOnClosedBallTheorem n := by
   intro f x0 R hR hsemi hstrict delta hdelta
-  have hR_half_pos : 0 < R / 2 := by linarith
+  have hR_half_pos : 0 < R / 2 := by linarith only [hR]
   rcases hstrict.exists_closedBall_strict hR_half_pos with
     ⟨r, hr_pos, hr_le_half, hstrict_ball⟩
-  have hr_lt_R : r < R := by linarith
-  have hr_le_R : r <= R := by linarith
+  have hr_lt_R : r < R := by linarith only [hr_pos, hr_le_half]
+  have hr_le_R : r <= R := by linarith only [hr_pos, hr_le_half]
   rcases happrox f x0 R r hr_pos hr_lt_R hsemi hstrict_ball delta hdelta with
     ⟨fseq, c, hc, hmeas, hlimsup, hlower⟩
   have hpos_r : 0 < volume (JensenContactSet f x0 r delta) := by

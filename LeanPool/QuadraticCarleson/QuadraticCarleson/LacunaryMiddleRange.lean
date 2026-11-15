@@ -10,7 +10,6 @@ public import Mathlib.Algebra.Order.Field.Basic
 public import Mathlib.Data.Int.Interval
 public import Mathlib.Data.Int.ModEq
 public import Mathlib.Tactic.Linarith
-public import Mathlib.Tactic.NormNum
 public import Mathlib.Tactic.Ring
 
 /-!
@@ -70,7 +69,7 @@ theorem mem_S {B c : ℕ} {m j : ℤ} :
 theorem mem_Q {B : ℕ} {τ m : ℤ} :
     m ∈ Q B τ ↔
       τ * (B : ℤ) ≤ m ∧ m < τ * (B : ℤ) + (B : ℤ) := by
-  simp only [Q, Finset.mem_Ico, add_mul, one_mul]
+  simp only [Q, add_mul, one_mul, Finset.mem_Ico]
 
 /-- The complement of the middle range is exactly the very-small range or the
 too-large range occurring in the paper's error term. -/
@@ -140,17 +139,16 @@ theorem exists_unique_mem_Q (B : ℕ) (m : ℤ) (hB : 0 < B) :
       have hlt : m / (B : ℤ) < τ := lt_of_not_ge hnot
       have hupper := (Int.ediv_le_iff_le_mul hb).mp
         (show m / (B : ℤ) ≤ m / (B : ℤ) from le_rfl)
-      nlinarith
+      nlinarith only [hτ, hnot, hupper]
     · by_contra hnot
-      have hlt : τ < m / (B : ℤ) := lt_of_not_ge hnot
       have hlower := Int.ediv_mul_le m (ne_of_gt hb)
-      nlinarith
+      nlinarith only [hτ, hnot, hlower]
 
 theorem card_Q (B : ℕ) (τ : ℤ) : (Q B τ).card = B := by
   rw [Q, Int.card_Ico]
   have : (τ + 1) * (B : ℤ) - τ * (B : ℤ) = B := by ring
   rw [this]
-  simp
+  simp only [Int.toNat_natCast]
 
 /-- The explicit upper half of the paper's `2B + O(1)` assertion. -/
 theorem card_S_le (B c : ℕ) (m : ℤ) :
@@ -209,7 +207,7 @@ theorem center4_separated {B : ℕ} {τ τ' : ℤ}
     ring
   rw [heq, abs_mul, abs_mul]
   norm_num
-  nlinarith [abs_nonneg (τ - τ')]
+  nlinarith only [hτ, abs_nonneg (τ - τ')]
 
 /-- The actual (rational) center corresponding to `center4`. -/
 def center (B : ℕ) (τ : ℤ) : ℚ :=
@@ -227,7 +225,7 @@ theorem center_separated_one_hundred {B : ℕ} {τ τ' : ℤ}
   simp only [center]
   rw [div_sub_div_same, abs_div]
   norm_num at hcast ⊢
-  linarith
+  linarith only [hcast]
 
 theorem R_disjoint_of_index_separation {B c : ℕ} {τ τ' : ℤ}
     (hB : 0 < B) (hc : 2 * c ≤ 5 * B) (hτ : 200 ≤ |τ - τ'|) :
@@ -255,7 +253,7 @@ theorem abs_sub_ge_sparseModulus {τ τ' : ℤ} (hne : τ ≠ τ')
   have hq0 : q ≠ 0 := by
     intro hzero
     subst q
-    simp at hq
+    simp only [mul_zero] at hq
     omega
   have hqabs : 1 ≤ |q| := by
     have := abs_pos.mpr hq0

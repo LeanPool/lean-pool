@@ -32,10 +32,6 @@ the tripartite graph a cluster triple carries, which is the shape required by
 Must be sorry-free and axiom-clean `[propext, Classical.choice, Quot.sound]`.
 -/
 public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.CoreGapRegularFamily
-public import Mathlib.Analysis.RCLike.Basic
-public import Mathlib.Combinatorics.SimpleGraph.Regularity.Uniform
-public import Mathlib.Analysis.Real.Sqrt
-public import Mathlib.Tactic.ContinuousFunctionalCalculus
 
 
 /-! # CoreGapUniformCodegree -/

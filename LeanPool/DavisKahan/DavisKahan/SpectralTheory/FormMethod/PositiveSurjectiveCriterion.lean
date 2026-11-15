@@ -5,7 +5,6 @@ Authors: Jon Crall, OpenAI GPT-5.6 Thinking
 -/
 module
 
-
 /-
 The proof architecture of the self-adjointness criterion below is adapted from
 Adam Bornemann's proof of `Spectra.TomitaTakesaki.modularOp_isSelfAdjoint` in
@@ -19,7 +18,9 @@ public import LeanPool.DavisKahan.ForTauCeti.Analysis.InnerProductSpace.LinearPM
 public import LeanPool.DavisKahan.ForTauCeti.Analysis.InnerProductSpace.LinearPMap.Constructions
 public import LeanPool.DavisKahan.DavisKahan.BoundedOperator.Problem
 public import LeanPool.DavisKahan.DavisKahan.SpectralTheory.AbstractSpectrum
-public import Mathlib.Tactic
+import Mathlib.Tactic.Abel -- shake: keep
+import Mathlib.Tactic.Linarith -- shake: keep
+import Mathlib.Tactic.Ring -- shake: keep
 
 /-!
 # A positive-surjective self-adjointness criterion

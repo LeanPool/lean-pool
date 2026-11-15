@@ -103,7 +103,7 @@ theorem hasSparseOnePBound_scaleOffset_of_native_and_comparison
     simpa [mul_assoc] using hh
   have hpos : 0 < holderConjugate p := (holderConjugate_spec hp).symm.pos
   have hsum := hasSparseOnePBound_of_pairing_le_add
-    (mul_nonneg (mul_nonneg (by norm_num) hC.1) hpos.le)
+    (mul_nonneg (mul_nonneg (by norm_num1) hC.1) hpos.le)
       (mul_nonneg hD.1 hpos.le) hdyadic
     (hD.2 a ha s p hp hp2)
     (U := finiteSmoothMaxOperator 1 (scaleRadii a ha (roundedRadii s)))
@@ -121,7 +121,7 @@ theorem hasUnitScaleOffsetSmoothSparseBound_of_native_and_comparison
     (hD : HasComparisonFamilySparseBound D V)
     (hcompare : HasScaleOffsetAnnularComparison V) :
     HasUnitScaleOffsetSmoothSparseBound (2 * C + D) := by
-  refine ⟨add_nonneg (mul_nonneg (by norm_num) hC.1) hD.1, ?_⟩
+  refine ⟨add_nonneg (mul_nonneg (by norm_num1) hC.1) hD.1, ?_⟩
   intro a ha s p hp hp2
   exact hasSparseOnePBound_scaleOffset_of_native_and_comparison
     hC hD hcompare a ha s p hp hp2

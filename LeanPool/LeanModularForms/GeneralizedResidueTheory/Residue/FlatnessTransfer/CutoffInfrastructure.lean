@@ -11,7 +11,6 @@ import LeanPool.LeanModularForms.GeneralizedResidueTheory.WindingNumber.Crossing
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 import Mathlib.CategoryTheory.Category.Init
 import Mathlib.Combinatorics.Matroid.Init
-import Mathlib.MeasureTheory.Covering.Besicovitch
 
 /-!
 # Cutoff zpow Infrastructure
@@ -91,7 +90,7 @@ private lemma tangentDeviation_scale_neg_eq
     ‖tangentDeviation (w / (↑‖w‖ : ℂ)) (-L / (↑‖L‖ : ℂ))‖ =
       ‖tangentDeviation w (-L)‖ / ‖w‖ := by
   rw [show (w / (↑‖w‖ : ℂ) : ℂ) = (‖w‖⁻¹ : ℝ) • w from by
-      simp [Complex.real_smul, Complex.ofReal_inv, inv_mul_eq_div],
+      simp only [real_smul, ofReal_inv, inv_mul_eq_div],
     show -L / (↑‖L‖ : ℂ) = (‖L‖⁻¹ : ℝ) • (-L) from by
       rw [Complex.real_smul, Complex.ofReal_inv, inv_mul_eq_div, neg_div],
     tangentDeviation_real_smul_right _ (inv_ne_zero hL_ne),
@@ -138,7 +137,8 @@ private lemma direction_rate_from_flatness_left
       (div_pos hc_pos (Real.sqrt_pos.mpr two_pos)), hσ_norm, h_re_pos] with
     ε h_td_bound hε_norm h_re
   set w := γ.toFun (σ ε) - s
-  have hw_ne : w ≠ 0 := by intro h; simp [h] at h_re
+  have hw_ne : w ≠ 0 := by intro h; simp only [h, map_neg, mul_neg, zero_mul, neg_zero, zero_re,
+    lt_self_iff_false] at h_re
   have hw_ne' : ‖w‖ ≠ 0 := norm_ne_zero_iff.mpr hw_ne
   have hε_pos : 0 < ε := by rw [← hε_norm]; exact norm_pos_iff.mpr hw_ne
   set u := w / (↑‖w‖ : ℂ)
@@ -266,7 +266,7 @@ private lemma cutoff_zpow_integral_eq_boundary
       hγ_diff t ⟨(hσ₁_ge.trans hσ₁_lt.le).trans ht.1.le, ht.2.le⟩ hne) h_int_r
   rw [hftc_l, hftc_r, hγ_closed]
   simp only [show (-(m : ℤ) + 1 : ℤ) = 1 - (m : ℤ) from by omega,
-    show (↑(1 - (m : ℤ)) : ℂ) = 1 - ↑↑m from by push_cast; ring, Int.cast_natCast]
+    show (↑(1 - (m : ℤ)) : ℂ) = 1 - ↑↑m from by push_cast; ac_rfl, Int.cast_natCast]
   ring
 
 private lemma exit_time_tendsto_right

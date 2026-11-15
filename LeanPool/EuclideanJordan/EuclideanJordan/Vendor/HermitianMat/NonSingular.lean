@@ -129,7 +129,7 @@ theorem nonSingular_iff_support_top : NonSingular A ↔ A.support = ⊤ := by
       obtain ⟨x, hx⟩ := hA (WithLp.toLp 2 y)
       exact ⟨x.ofLp, by
         have := congr_arg WithLp.ofLp hx
-        simp? [lin, Matrix.toLpLin_apply] at this
+        simp only [lin, Matrix.toLpLin_apply] at this
         exact this⟩
     exact Matrix.mulVec_surjective_iff_isUnit.mp this
 

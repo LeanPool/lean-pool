@@ -8,9 +8,6 @@ module
 public import LeanPool.Erdos132ConvexK3.GlobalAssembly
 import LeanPool.Erdos132ConvexK3.Penultimate
 import LeanPool.Erdos132ConvexK3.TailClosure
-import Mathlib.Algebra.Order.Algebra
-import Mathlib.Data.EReal.Inv
-import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # Geometric closure of the thirteen global cover words
@@ -166,10 +163,7 @@ private theorem euclideanDist_le_sqrt_of_sqDist_le_global
 private theorem sqDist_eq_of_euclideanDist_eq_sqrt_global
     {a b : Point ℝ} {d : ℝ} (hd : 0 ≤ d)
     (h : euclideanDist a b = Real.sqrt d) : sqDist a b = d := by
-  have hsqrt := Real.sq_sqrt hd
-  have hdist := euclideanDist_sq a b
-  rw [h] at hdist
-  nlinarith
+  rw [← euclideanDist_sq, h, Real.sq_sqrt hd]
 
 /-- Squared-distance form of red-blue forcing, with the two diagonal class
 splits discharged from the global top-three hypothesis. -/

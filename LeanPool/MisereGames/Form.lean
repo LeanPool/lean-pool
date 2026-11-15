@@ -202,7 +202,7 @@ theorem ofSets_inj' {st₁ st₂ : Player → Set G}
 
 theorem ofSets_inj {s₁ s₂ t₁ t₂ : Set G} [Small s₁] [Small s₂] [Small t₁] [Small t₂] :
     !{s₁ | t₁} = !{s₂ | t₂} ↔ s₁ = s₂ ∧ t₁ = t₂ := by
-  simp
+  simp only [ofSets_inj', Player.cases_inj]
 
 instance : Zero G := ⟨!{fun _ ↦ ∅}⟩
 
@@ -278,7 +278,7 @@ theorem mem_moves_ne_zero {g gl : G} {p : Player} (h1 : gl ∈ moves p g) : g �
 
 theorem not_isEnd_ne_zero {g : G} {p : Player} (h1 : ¬(IsEnd p g)) : g ≠ 0 := by
   intro h2
-  simp_all
+  simp_all only [isEnd_zero, not_true_eq_false]
 
 theorem not_isEnd_exists_move {g : G} {p : Player}
     (h1 : ¬IsEnd p g) :
@@ -380,8 +380,8 @@ theorem isOption_not_mem {p : Player} {g g' : G}
   simp only [isOption_iff_mem_moves] at h_isOption
   obtain ⟨q, h_q⟩ := h_isOption
   by_cases h_pq : p = q
-  · simp_all
-  · simp_all
+  · simp_all only [not_true_eq_false]
+  · simp_all only [Player.ne_iff_eq_neg, neg_neg]
 
 theorem isOption_not_mem_neg {p : Player} {g g' : G}
     (h_isOption : IsOption g' g) (h_mem : g' ∉ moves (-p) g) :
@@ -392,10 +392,12 @@ theorem isOption_not_mem_neg {p : Player} {g g' : G}
 -- Casts
 
 theorem leftMoves_natCast_succ' : ∀ n : ℕ, moves .left (n.succ : G) = {(n : G)}
-  | 0 => by simp
+  | 0 => by simp only [
+    Nat.succ_eq_add_one, Nat.zero_add, Nat.cast_one, leftMoves_one, Nat.cast_zero]
   | n + 1 => by
     rw [Nat.cast_succ, moves_add, leftMoves_natCast_succ']
-    simp
+    simp only [
+      Set.image_singleton, Nat.cast_add, Nat.cast_one, leftMoves_one, add_zero, Set.union_self]
 
 @[simp 1100]
 theorem leftMoves_natCast_succ (n : ℕ) : moves .left ((n + 1) : G) = {(n : G)} := by
@@ -407,14 +409,14 @@ theorem rightMoves_natCast : ∀ n : ℕ, moves .right (n : G) = ∅
   | 0 => by simp [moves_zero]
   | n + 1 => by
     rw [Nat.cast_succ, moves_add, rightMoves_natCast]
-    simp
+    simp only [Set.image_empty, rightMoves_one, Set.union_self]
 
 @[simp 1100]
 theorem leftMoves_ofNat (n : ℕ) [n.AtLeastTwo] : moves .left (ofNat(n) : G) = {((n - 1 : ℕ) :
     G)} := by
   change moves .left (n : G) = _
   rw [← Nat.succ_pred (NeZero.out (n := n)), leftMoves_natCast_succ']
-  simp
+  simp only [Nat.pred_eq_sub_one, Nat.succ_eq_add_one, Nat.add_one_sub_one]
 
 @[simp 1100]
 theorem rightMoves_ofNat (n : ℕ) [n.AtLeastTwo] : moves .right (ofNat(n) : G) = ∅ :=
@@ -435,23 +437,27 @@ protected theorem intCast_ofNat (n : ℕ) : ((ofNat(n) : ℤ) : G) = n := rfl
 protected theorem intCast_negSucc (n : ℕ) : (Int.negSucc n : G) = -(n + 1) := rfl
 
 @[norm_cast]
-protected theorem intCast_zero : ((0 : ℤ) : G) = 0 := by simp
+protected theorem intCast_zero : ((0 : ℤ) : G) = 0 := by simp only [
+  Form.intCast_ofNat, Nat.cast_zero]
 
 @[norm_cast]
-protected theorem intCast_one : ((1 : ℤ) : G) = 1 := by simp
+protected theorem intCast_one : ((1 : ℤ) : G) = 1 := by simp only [
+  Form.intCast_ofNat, Nat.cast_one]
 
 @[norm_cast]
-protected theorem natCast_zero : ((0 : ℕ) : G) = 0 := by simp
+protected theorem natCast_zero : ((0 : ℕ) : G) = 0 := by simp only [Nat.cast_zero]
 
 @[norm_cast]
-protected theorem natCast_one : ((1 : ℕ) : G) = 1 := by simp
+protected theorem natCast_one : ((1 : ℕ) : G) = 1 := by simp only [Nat.cast_one]
 
 @[simp, norm_cast]
 protected theorem intCast_neg (n : ℤ) : ((-n : ℤ) : G) = -(n : G) := by
   cases n with
   | ofNat n =>
     induction n with
-    | zero => simp
+    | zero => simp only [
+      Int.ofNat_eq_natCast, Int.cast_ofNat_Int, Int.neg_zero, Form.intCast_ofNat, Nat.cast_zero,
+      neg_zero]
     | succ k ih => rfl
   | negSucc n =>
     simp only [Form.intCast_negSucc, neg_neg, Int.neg_negSucc]
@@ -471,8 +477,11 @@ theorem leftMoves_natCast_zero_lt {a : ℕ} (h1 : 0 < a)
 @[simp 1100] -- This should trigger before `leftMoves_add`.
 theorem leftMoves_intCast_succ {n : ℤ} (h1 : 0 ≤ n) : moves .left ((n + 1) : G) = {(n : G)} := by
   match n with
-  | Int.ofNat n => simp
-  | Int.negSucc k => simp
+  | Int.ofNat n => simp only [Int.ofNat_eq_natCast, Form.intCast_nat, leftMoves_natCast_succ]
+  | Int.negSucc k => simp only [
+    Form.intCast_negSucc, moves_add, moves_neg, Player.neg_left, rightMoves_natCast,
+    Set.image_empty, rightMoves_one, Set.union_self, Set.neg_empty, leftMoves_one,
+    Set.image_singleton, add_zero, Set.union_singleton, insert_empty_eq]
 
 @[simp]
 theorem leftMoves_intCast {a : ℤ} (h1 : 0 < a)
@@ -483,7 +492,9 @@ theorem leftMoves_intCast {a : ℤ} (h1 : 0 < a)
   obtain ⟨x, h2⟩ := this
   rw [<-h2]
   norm_cast
-  simp
+  simp only [
+    Nat.cast_add, Nat.cast_one, leftMoves_natCast_succ, Int.natCast_add, Int.cast_ofNat_Int,
+    Int.add_sub_cancel, Form.intCast_nat]
 
 theorem leftMoves_intCast_zero_lt {a : ℤ} (h1 : 0 < a)
     : ((a - 1 : ℤ) : G) ∈ moves .left (a : G) := by
@@ -492,19 +503,19 @@ theorem leftMoves_intCast_zero_lt {a : ℤ} (h1 : 0 < a)
 theorem leftMoves_intCast_zero_le_succ {a : ℤ} (h1 : 0 ≤ a)
     : ((a : ℤ) : G) ∈ moves .left (((a + 1) : ℤ) : G) := by
   have := leftMoves_intCast_zero_lt (G := G) (Int.le_iff_lt_add_one.mp h1)
-  simp_all
+  simp_all only [Int.add_sub_cancel]
 
 theorem leftMoves_intCast_le_zero_of_empty {k : ℤ} (h1 : 0 ≤ k) (h2 : moves .left (k : G) = ∅)
     : k = 0 := by
   obtain h_lt | h_eq := lt_or_eq_of_le h1
-  · simp_all
+  · simp_all only [leftMoves_intCast, Set.singleton_ne_empty]
   · exact h_eq.symm
 
 theorem leftMoves_intCast_le_one_eq {a : ℤ} (h1 : 1 ≤ a)
     : moves .left ((a : ℤ) : G) = {((a - 1 : ℤ) : G)} := by
   obtain ⟨x, h2⟩ := Int.le.dest h1
   rw [<-h2, Int.add_comm 1 _]
-  simp
+  simp only [Int.succ_ofNat_pos, leftMoves_intCast, Int.add_sub_cancel, Form.intCast_nat]
 
 @[simp]
 theorem leftMoves_intCast_le_one_ne_empty {a : ℤ} (h1 : 1 ≤ a)
@@ -527,7 +538,7 @@ private protected theorem natCast_eq_zero_iff {n : ℕ} : (n : G) = 0 ↔ n = 0 
       exfalso
       have := moves_zero (G := G) .left
       simp [<-h] at this
-  · simp_all
+  · simp_all only [Nat.cast_zero, implies_true]
 
 theorem mem_moves_add_one_iff_mem_moves {g : G} {p : Player} {n : ℕ}
     : (g + 1 ∈ moves p (n + 1 : G)) ↔ (g ∈ moves p (n : G)) := by
@@ -536,7 +547,9 @@ theorem mem_moves_add_one_iff_mem_moves {g : G} {p : Player} {n : ℕ}
     · simp only [leftMoves_natCast_succ, Set.mem_singleton_iff] at h1
       simp [<-h1]
     · exact add_right_mem_moves_add h1 1
-  · simp
+  · simp only [
+    moves_add, rightMoves_natCast, Set.image_empty, rightMoves_one, Set.union_self,
+    Set.mem_empty_iff_false]
 
 @[simp]
 theorem one_isEnd_right : IsEnd .right (1 : G) := by
@@ -549,7 +562,8 @@ theorem not_isEnd_left_one : ¬IsEnd Player.left (1 : G) := by
 theorem natCast_isEnd_right (n : ℕ) : IsEnd .right (n : G) := by
   induction n with
   | zero => simp only [Nat.cast_zero, isEnd_zero]
-  | succ k ih => simp_all
+  | succ k ih => simp_all only [
+    Nat.cast_add, Nat.cast_one, IsEnd.add_iff, one_isEnd_right, and_self]
 
 @[simp]
 theorem ofSets_isEndLike_iff {p : Player} {s t : Set G} [Small s] [Small t]
@@ -591,7 +605,7 @@ theorem natCast_isEndLike_iff {p : Player} {n : ℕ}
     exact isEnd_zero
   | m + 1 =>
     rw [natCast_add_one_ofSets]
-    simp
+    simp only [ofSets_isEndLike_iff]
 
 @[simp]
 theorem one_isEndLike_right : IsEndLike .right (1 : G) := by
@@ -623,7 +637,9 @@ theorem isEnd_left_natCast_iff {n : ℕ} : IsEnd .left (n : G) ↔ n = 0 := by
   apply Iff.intro <;> intro h1
   · rw [<-Form.natCast_eq_zero_iff (G := G), <-Nat.cast_zero]
     apply natCast_ext
-    simp_all
+    simp_all only [
+      Nat.cast_zero, moves_zero, Set.mem_empty_iff_false, iff_false, Player.forall,
+      not_mem_moves_of_isEnd, not_false_eq_true, implies_true, rightMoves_natCast, and_self]
   · simp [h1, isEnd_def]
 
 @[simp]
@@ -679,8 +695,12 @@ theorem eq_sub_one_of_mem_leftMoves_intCast {n : ℤ} {x : G} (hx : x ∈ moves 
   obtain ⟨n, rfl | rfl⟩ := n.eq_nat_or_neg
   · cases n
     · simp [moves_zero] at hx
-    · simp_all
-  · simp_all
+    · simp_all only [
+      Int.natCast_add, Int.cast_ofNat_Int, Int.succ_ofNat_pos, leftMoves_intCast,
+      Int.add_sub_cancel, Form.intCast_nat, Set.mem_singleton_iff]
+  · simp_all only [
+    Form.intCast_neg, Form.intCast_nat, moves_neg, Player.neg_left, rightMoves_natCast,
+    Set.neg_empty, Set.mem_empty_iff_false]
 
 theorem eq_add_one_of_mem_rightMoves_intCast {n : ℤ} {x : G} (hx : x ∈ moves .right (n : G)) :
     x = (n + 1 : ℤ) := by
@@ -718,8 +738,13 @@ only such option).
 theorem nat_forall_moves {n : ℕ} {P : G → Prop} (h1 : P n)
     : ∀ (p : Player), ∀ gp ∈ moves p (n.succ : G), P gp := by
   intro p; cases p
-  · simp_all
-  · simp_all
+  · simp_all only [
+    Nat.succ_eq_add_one, Nat.cast_add, Nat.cast_one, leftMoves_natCast_succ,
+    Set.mem_singleton_iff, implies_true]
+  · simp_all only [
+    Nat.succ_eq_add_one, Nat.cast_add, Nat.cast_one, moves_add, rightMoves_natCast,
+    Set.image_empty, rightMoves_one, Set.union_self, Set.mem_empty_iff_false,
+    IsEmpty.forall_iff, implies_true]
 
 @[simp]
 theorem add_eq_zero_iff {x y : G} : x + y = 0 ↔ x = 0 ∧ y = 0 := by
@@ -752,7 +777,9 @@ theorem mem_rightMoves_natSub_add {a b : ℕ} {y g' : G} :
     · cases b <;> simp_all [leftMoves_natCast_succ]
     · exact Or.inr ⟨x, hx, rfl⟩
   · rintro (⟨b', rfl, rfl⟩ | ⟨yr, hyr, rfl⟩)
-    · simp
+    · simp only [
+      Nat.cast_add, Nat.cast_one, leftMoves_natCast_succ, Set.mem_singleton_iff, exists_eq_left,
+      neg_add_rev, true_or]
     · exact Or.inr ⟨yr, hyr, rfl⟩
 
 end Form

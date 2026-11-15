@@ -165,7 +165,7 @@ private lemma primalPotential_le (p : ℝ) (hp : 1 < p) (hp2 : p < 2)
               (data.s k) (data.s (k + 1)) -
             (1 / 2) * (lpNorm p (data.v k - data.v (k + 1))) ^ (2 : ℕ))) := by
     exact add_nonneg (add_nonneg (add_nonneg h0 hsumZ) hsumG) hsumH
-  linarith
+  linarith only [hall]
 
 private lemma primalResidual_nonneg (p : ℝ) (hp : 1 < p)
     (n : ℕ) (data : BelowPrimalData p d n)
@@ -198,11 +198,11 @@ private lemma primalResidual_nonneg (p : ℝ) (hp : 1 < p)
       (data.v (k + 1) - data.v k) := by
     have hraw := neg_le_of_abs_le hholder
     dsimp [X, Y] at ⊢
-    nlinarith
+    linarith only [hraw]
   have hmul := mul_le_mul_of_nonneg_left hpair hd
   have hpsd : 0 ≤ data.u k * X ^ (2 : ℕ) + Y ^ (2 : ℕ) -
       2 * data.dw k * X * Y := by
-    nlinarith [sq_nonneg (data.dw k * X - Y),
+    nlinarith only [sq_nonneg (data.dw k * X - Y),
       mul_nonneg hdet (sq_nonneg X)]
   have hnormsym : O3.lpNorm p (data.v k - data.v (k + 1)) = Y := by
     dsimp [Y]
@@ -215,7 +215,7 @@ private lemma primalResidual_nonneg (p : ℝ) (hp : 1 < p)
       (data.oracle.gradient (data.x k) - data.oracle.gradient (data.x (k + 1)))
       (data.v (k + 1) - data.v k)
   rw [hnormsym]
-  nlinarith
+  linarith only [hmul, hpsd]
 
 /-- Weighted oracle values telescope when increments are successive weight differences. -/
 private lemma weightedOracleValues_telescope
@@ -321,7 +321,7 @@ private lemma weightedGradientPairings_telescope
   simp_rw [mul_sub]
   repeat' rw [Finset.sum_sub_distrib]
   rw [hAn, show O3.pairing (0 : Point d) (data.x n) = 0 by simp [O3.pairing]]
-  linarith [hdiag, hsumCoeff]
+  linarith only [hdiag, hsumCoeff]
 
 /-- The dual mirror-potential differences telescope from the zero initial dual vector. -/
 private lemma mirrorPotential_telescope
@@ -542,9 +542,8 @@ private lemma primalPotential_identity (p : ℝ) (hp : 1 < p) (_hp2 : p < 2)
   repeat' rw [Finset.sum_add_distrib]
   repeat' rw [Finset.sum_sub_distrib]
   simp_rw [pairing_sub_right, pairing_sub_left] at hxActual habelActual
-  ring_nf at ⊢ hfun hzActual hxActual hhstar habelActual hweightSum hconst hcomm0 hcomm1
   linear_combination
-    (norm := (simp only [Finset.sum_add_distrib,
+    (norm := (ring_nf; simp only [Finset.sum_add_distrib,
       Finset.sum_sub_distrib]; ring))
     hfun + hzActual + hxActual + hhstar + habelActual -
       data.oracle.value data.z * hweightSum + hconst + hcomm0 - hcomm1
@@ -566,10 +565,9 @@ theorem belowPrimal : V7.BelowPrimalStatement := by
       (data.oracle.value (data.x n) - data.oracle.value data.z) ≤
       belowH p data.z := by
     rw [hid] at hpot
-    linarith
+    linarith only [hpot, hres, hfenchel]
   rw [hfstar]
-  exact (le_div_iff₀ hunpos).2 (by
-    nlinarith)
+  exact (le_div_iff₀ hunpos).2 (by simpa only [mul_comm] using hscaled)
 
 end V7.Stage3BelowTwo
 

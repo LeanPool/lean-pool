@@ -39,10 +39,7 @@ This file mirrors `Nibble.CoreGapGridResidual` for that local bridge:
 
 Must be sorry-free and axiom-clean `[propext, Classical.choice, Quot.sound]`.
 -/
-public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.CoreGapDesign
-public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.GridDesign
 public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.CoreGapTripleShape
-public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.CoreGapPrune
 
 
 

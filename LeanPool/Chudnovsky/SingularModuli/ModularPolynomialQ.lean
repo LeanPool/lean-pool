@@ -125,7 +125,7 @@ lemma sum_zetaM_zpow_mul [NeZero m] (n : ℤ) :
   rw [sum_zmod_eq_range m (fun k ↦ (zetaM m ^ n) ^ k)]
   by_cases hdvd : (m : ℤ) ∣ n
   · rw [ite_eq_left hdvd, (zetaM_zpow_eq_one_iff n).mpr hdvd]
-    simp
+    simp only [one_pow, sum_const, card_range, nsmul_eq_mul, mul_one]
   · rw [ite_eq_right hdvd]
     have hx1 : zetaM m ^ n ≠ 1 := fun h ↦ hdvd ((zetaM_zpow_eq_one_iff n).mp h)
     rw [geom_sum_eq hx1]
@@ -191,7 +191,8 @@ lemma powerSum_smul [Fact m.Prime] (k : ℕ) (γ : SL(2, ℤ)) (τ : ℍ) :
 /-- Each power sum is holomorphic on `ℍ`. -/
 lemma mdifferentiable_powerSum [NeZero m] (k : ℕ) : MDiff (powerSum m k) := by
   have heq : powerSum m k = ∑ i : Option (ZMod m), (fun τ : ℍ ↦ (f m i τ) ^ k) := by
-    funext τ; simp [powerSum, Finset.sum_apply]
+    funext τ; simp only [powerSum, Fintype.sum_option, f_none, j_def, f_some, ZMod.natCast_val,
+      Finset.sum_apply]
   rw [heq]
   exact MDifferentiable.sum (fun i _ ↦ (mdifferentiable_f i).pow k)
 
@@ -246,7 +247,7 @@ lemma mdifferentiable_coeff_prod_X_sub_C {ι : Type*} (a : ι → ℍ → ℂ)
     intro n
     have hconst : (fun τ : ℍ ↦ ((∏ i ∈ (∅ : Finset ι), (X - C (a i τ))).coeff n : ℂ))
         = fun _ : ℍ ↦ (if n = 0 then (1 : ℂ) else 0) := by
-      funext τ; simp [coeff_one]
+      funext τ; simp only [prod_empty, coeff_one]
     rw [hconst]
     exact mdifferentiable_const
   | insert j s hj ih =>
@@ -590,15 +591,17 @@ lemma qExpansion_coeff_unique_raw {F : ℍ → ℂ} {c : ℕ → ℂ}
   have hball2 := hasFPowerSeriesOnBall_cuspFunction one_pos hFan hsum2
   have heq := hball1.hasFPowerSeriesAt.eq_formalMultilinearSeries hball2.hasFPowerSeriesAt
   have hcoeff := congr_arg (fun p : FormalMultilinearSeries ℂ ℂ ℂ ↦ p.coeff n) heq
-  simpa [FormalMultilinearSeries.coeff_ofScalars] using hcoeff
+  simpa only [FormalMultilinearSeries.coeff_ofScalars] using hcoeff
 
 /-- The cusp function of the constant function `1` is the constant function `1`. -/
 lemma cuspFunction_one_eq : cuspFunction 1 (1 : ℍ → ℂ) = 1 := by
   ext w
   rcases eq_or_ne w 0 with rfl | hw
-  · simpa [cuspFunction, Function.Periodic.cuspFunction]
+  · simpa only [cuspFunction, Function.Periodic.cuspFunction, Pi.one_comp, Function.update_self,
+    Pi.one_apply]
       using! tendsto_const_nhds.limUnder_eq
-  · simp [cuspFunction, Function.Periodic.cuspFunction_eq_of_nonzero 1 _ hw]
+  · simp only [cuspFunction, Pi.one_comp, Function.Periodic.cuspFunction_eq_of_nonzero 1 _ hw,
+    Pi.one_apply]
 
 /-- Powers preserve cusp-analyticity, and the `q`-expansion of a power is the power of the
 `q`-expansion. -/
@@ -662,7 +665,8 @@ lemma divByQ {F G : ℍ → ℂ}
     intro τ
     have h1 : HasSum (fun k ↦ (qExpansion 1 F).coeff (k + 1) • q τ ^ (k + 1)) (F τ) := by
       have hraw := (hasSum_nat_add_iff' 1).mpr (hFsum τ)
-      simpa [Finset.sum_range_one, hF0] using hraw
+      simpa only [smul_eq_mul, range_one, sum_singleton, hF0, pow_zero, mul_one,
+        sub_zero] using hraw
     have h2 := h1.mul_right (q τ)⁻¹
     have hsimp : (fun k ↦ ((qExpansion 1 F).coeff (k + 1) • q τ ^ (k + 1)) * (q τ)⁻¹)
         = fun k ↦ (qExpansion 1 F).coeff (k + 1) • q τ ^ k := by
@@ -696,7 +700,7 @@ private lemma isBoundedAtImInfty_jq_recon : IsBoundedAtImInfty (fun τ : ℍ ↦
   have hE : IsBoundedAtImInfty ⇑E₄ := ModularFormClass.bdd_at_infty E₄
   have hPinv : Filter.Tendsto (fun τ : ℍ ↦ (∏' n : ℕ, (1 - eta_q n ↑τ) ^ 24)⁻¹)
       atImInfty (nhds 1) := by
-    simpa using tendsto_atImInfty_tprod_one_sub_eta_q_pow.inv₀ one_ne_zero
+    simpa only [inv_one] using tendsto_atImInfty_tprod_one_sub_eta_q_pow.inv₀ one_ne_zero
   have hPb : IsBoundedAtImInfty (fun τ : ℍ ↦ (∏' n : ℕ, (1 - eta_q n ↑τ) ^ 24)⁻¹) :=
     hPinv.isBigO_one ℝ
   exact Filter.BoundedAtFilter.mul hE (Filter.BoundedAtFilter.mul hE
@@ -917,7 +921,7 @@ lemma Fi_some_eq [NeZero m] (k : ℕ) (b : ZMod m) (τ : ℍ) :
 /-- A function bounded by `1` in norm is bounded at `i∞`. -/
 lemma isBoundedAtImInfty_of_norm_le_one {g : ℍ → ℂ} (hg : ∀ τ, ‖g τ‖ ≤ 1) :
     IsBoundedAtImInfty g :=
-  Asymptotics.isBigO_of_le atImInfty (fun τ ↦ by simpa using hg τ)
+  Asymptotics.isBigO_of_le atImInfty (fun τ ↦ by simpa only [Pi.one_apply, norm_one] using hg τ)
 
 /-- `(j·q)ᵏ` composed with an upper-triangular isogeny `A` (lower-left entry `0`) is bounded at
 `i∞`, since the isogeny pushes towards the cusp. -/
@@ -943,7 +947,8 @@ lemma isBoundedAtImInfty_powerSum_mul_qpow [Fact m.Prime] (k : ℕ) :
   | none =>
     change IsBoundedAtImInfty (fun τ : ℍ ↦ (f m none τ) ^ k * q τ ^ (m * k))
     rw [funext (fun τ ↦ Fi_none_eq k τ)]
-    have hAI : (AInf m) 1 0 = 0 := by simp [val_AInf]
+    have hAI : (AInf m) 1 0 = 0 := by simp only [Fin.isValue, val_AInf, Matrix.of_apply,
+      Matrix.cons_val', Matrix.cons_val_zero, Matrix.cons_val_fin_one, Matrix.cons_val_one]
     exact isBoundedAtImInfty_jqPow_comp k (AInf m) hAI
   | some b =>
     change IsBoundedAtImInfty (fun τ : ℍ ↦ (f m (some b) τ) ^ k * q τ ^ (m * k))
@@ -1039,7 +1044,7 @@ lemma cast_c [NeZero m] (k : ℕ) :
     (((m ^ 2 - 1) * k : ℕ) : ℤ) = (m : ℤ) ^ 2 * (k : ℤ) - (k : ℤ) := by
   have hkle : k ≤ m ^ 2 * k :=
     Nat.le_mul_of_pos_left k (pow_pos (Nat.pos_of_ne_zero (NeZero.ne m)) 2)
-  rw [Nat.sub_one_mul, Nat.cast_sub hkle]; push_cast; ring
+  rw [Nat.sub_one_mul, Nat.cast_sub hkle]; push_cast; ac_rfl
 
 /-- **`q`-expansion of the averaged coset contribution `∑_b (f_b)ᵏ·q^{mk}`.** The root-of-unity
 average `sum_zetaM_zpow_mul` collapses the `b`-dependence, leaving an honest `q`-series with
@@ -1180,7 +1185,7 @@ def polyJ : Subalgebra ℚ (ℍ → ℂ) := (Polynomial.aeval (fun τ : ℍ ↦ 
 lemma aeval_j_apply (Q : Polynomial ℚ) (τ : ℍ) :
     (Polynomial.aeval (fun τ : ℍ ↦ j τ) Q) τ = Polynomial.aeval (j τ) Q := by
   have := Polynomial.aeval_algHom_apply (Pi.evalAlgHom ℚ (fun _ : ℍ ↦ ℂ) τ) (fun τ : ℍ ↦ j τ) Q
-  simpa using this.symm
+  simpa only [j_def, Pi.evalAlgHom_apply] using this.symm
 
 lemma mem_polyJ_iff {g : ℍ → ℂ} :
     g ∈ polyJ ↔ ∃ Q : Polynomial ℚ, ∀ τ, g τ = Polynomial.aeval (j τ) Q := by

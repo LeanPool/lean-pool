@@ -29,7 +29,7 @@ theorem trialConstant_pos (p : ℝ) (hp : 2 < p) : 0 < trialConstant p := by
     Real.rpow_nonneg (Stage4AboveTwo.hpConstant_pos hp).le _
   have hJ : 0 ≤ aboveJp p ^ (p / (p + 2)) :=
     Real.rpow_nonneg (Stage4AboveTwo.jpConstant_pos hp).le _
-  linarith
+  linarith only [hH, hJ]
 
 theorem calls_current_bound (hp : 2 < p) (heps : 0 < eps)
     (hM : 0 < M) (hD : 0 < D)
@@ -74,13 +74,13 @@ theorem calls_current_bound (hp : 2 < p) (heps : 0 < eps)
       (aboveHp p ^ beta + aboveJp p ^ beta + 2) * kappa ^ beta := by
     have hrough : (report.calls : ℝ) ≤
         (aboveHp p ^ beta + aboveJp p ^ beta) * kappa ^ beta + 2 := by
-      linarith
+      linarith only [hcallsReal, hnd, hnf]
     have hcoeff : 0 ≤ aboveHp p ^ beta + aboveJp p ^ beta := by positivity
     calc
       (report.calls : ℝ) ≤
           (aboveHp p ^ beta + aboveJp p ^ beta) * kappa ^ beta + 2 := hrough
       _ ≤ (aboveHp p ^ beta + aboveJp p ^ beta) * kappa ^ beta +
-          2 * kappa ^ beta := by linarith
+          2 * kappa ^ beta := by linarith only [hkappapow]
       _ = _ := by ring
   simpa [trialConstant, beta, kappa] using hsum
 

@@ -7,8 +7,6 @@ module
 
 public import LeanPool.PoincareThreeBody.NormalizationInduction
 import LeanPool.PoincareThreeBody.PoissonNormalization
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
-import Mathlib.MeasureTheory.Covering.Besicovitch
 
 /-!
 # Closing the normalization induction from one step

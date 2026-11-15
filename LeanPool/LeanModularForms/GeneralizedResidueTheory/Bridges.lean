@@ -38,11 +38,11 @@ private theorem rescale_mem_Icc (γ : PiecewiseC1Curve) (t : I) :
 
 private theorem rescale_zero (γ : PiecewiseC1Curve) :
     (γ.rescale ⟨0, left_mem_Icc.mpr zero_le_one⟩ : ℝ) = γ.a := by
-  simp [rescale, iccHomeoI_symm_apply_coe]
+  simp only [rescale, Icc.mk_zero, iccHomeoI_symm_apply_coe, Icc.coe_zero, mul_zero, zero_add]
 
 private theorem rescale_one (γ : PiecewiseC1Curve) :
     (γ.rescale ⟨1, right_mem_Icc.mpr zero_le_one⟩ : ℝ) = γ.b := by
-  simp [rescale, iccHomeoI_symm_apply_coe]
+  simp only [rescale, Icc.mk_one, iccHomeoI_symm_apply_coe, Icc.coe_one, mul_one, sub_add_cancel]
 
 /-- Convert a `PiecewiseC1Curve` to a mathlib `Path` by rescaling `[a,b]` to `[0,1]`.
 The path goes from `γ(a)` to `γ(b)`. -/

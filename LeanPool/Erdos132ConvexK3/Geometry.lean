@@ -504,28 +504,23 @@ theorem diameter_lens_abscissa
     (hneLeft : (X, Y) ≠ (0, 0))
     (hneRight : (X, Y) ≠ (2 * c, 0)) :
     0 < X ∧ X < 2 * c := by
-  have hxNonneg : 0 ≤ X := by
-    simp [sqDist] at hright
-    nlinarith [sq_nonneg X, sq_nonneg Y]
+  simp only [sqDist, sub_zero] at hleft hright
+  have hcNonneg : 0 ≤ 2 * c := mul_nonneg (by norm_num) hc.le
+  have hrightSq : (X - 2 * c) ^ 2 ≤ (2 * c) ^ 2 :=
+    (le_add_of_nonneg_right (sq_nonneg Y)).trans hright
+  have hleftSq : X ^ 2 ≤ (2 * c) ^ 2 :=
+    (le_add_of_nonneg_right (sq_nonneg Y)).trans hleft
+  have hxLower := (abs_le_of_sq_le_sq' hrightSq hcNonneg).1
+  have hxNonneg : 0 ≤ X := by linarith only [hxLower]
+  have hxUpper := (abs_le_of_sq_le_sq' hleftSq hcNonneg).2
   have hxNe : X ≠ 0 := by
     intro hx
-    apply hneLeft
-    apply Prod.ext
-    · exact hx
-    · simp [sqDist, hx] at hright
-      have hy : Y = 0 := by nlinarith [sq_nonneg Y]
-      exact hy
-  have hxUpper : X ≤ 2 * c := by
-    simp [sqDist] at hleft
-    nlinarith [sq_nonneg X, sq_nonneg Y]
+    rw [hx, zero_sub, neg_sq, add_le_iff_nonpos_right] at hright
+    exact hneLeft (Prod.ext hx ((sq_nonpos_iff Y).mp hright))
   have hxUpperNe : X ≠ 2 * c := by
     intro hx
-    apply hneRight
-    apply Prod.ext
-    · exact hx
-    · simp [sqDist, hx] at hleft
-      have hy : Y = 0 := by nlinarith [sq_nonneg Y]
-      exact hy
+    rw [hx, add_le_iff_nonpos_right] at hleft
+    exact hneRight (Prod.ext hx ((sq_nonpos_iff Y).mp hleft))
   exact ⟨lt_of_le_of_ne hxNonneg hxNe.symm, lt_of_le_of_ne hxUpper hxUpperNe⟩
 
 /-- The exact algebra behind draft equation (5.5).  The displayed constraint
@@ -536,7 +531,7 @@ theorem two_rung_sum_identity
     sqDist (X, Y) (c + d, H - Δ) + sqDist (X, Y) (c - d, H - Δ) -
         2 * sqDist (X, Y) (c, H) = -4 * c * d + 4 * Δ * Y := by
   simp only [sqDist]
-  nlinarith [hconstraint]
+  linear_combination 2 * hconstraint
 
 /-- Draft equation (5.5), with `B - A = -4cd` made explicit. -/
 theorem two_rung_sum_identity_with_classes

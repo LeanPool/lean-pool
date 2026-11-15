@@ -31,14 +31,7 @@ triangle-degree scales are equalised by `Nibble.AX1.scale_window`.
 
 Must be sorry-free and axiom-clean `[propext, Classical.choice, Quot.sound]`.
 -/
-public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.CoreGapDesign
 public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.BlockSplit
-public import Mathlib.Analysis.RCLike.Basic
-public import Mathlib.Combinatorics.SimpleGraph.Regularity.Uniform
-public import Mathlib.Analysis.Real.Sqrt
-public import Mathlib.Tactic.ContinuousFunctionalCalculus
-public import Mathlib.Tactic.Bound
-public import Mathlib.Tactic.Positivity
 public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.GridDesign
 
 

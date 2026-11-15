@@ -35,7 +35,6 @@ no slack anywhere.
 
 Must be sorry-free and axiom-clean `[propext, Classical.choice, Quot.sound]`.
 -/
-public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.CoreGapClusterCapacity
 public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.CoreGapBlockCover
 
 

@@ -42,13 +42,12 @@ theorem innerRadius_phase_bound (lam : ℝ) (hlam : lam ≠ 0) :
   have hsqrt := Real.sqrt_nonneg |lam|
   have heq : (2 : ℝ) ^ oscillatoryScaleIndex lam 0 hlam = 8 * innerRadius lam hlam := by
     unfold innerRadius
-    rw [zpow_sub₀ (by norm_num : (2 : ℝ) ≠ 0)]
+    rw [zpow_sub₀ (by norm_num1 : (2 : ℝ) ≠ 0)]
     norm_num
     ring
   rw [heq] at hs
   norm_num at hs
   have hsqr := Real.sq_sqrt (abs_nonneg lam)
-  have hsmall : innerRadius lam hlam * Real.sqrt |lam| < 1 := by nlinarith
   have hprod : 0 ≤ innerRadius lam hlam * Real.sqrt |lam| := mul_nonneg hr.le hsqrt
   nlinarith [sq_nonneg (innerRadius lam hlam * Real.sqrt |lam| - 1)]
 
@@ -66,9 +65,9 @@ theorem highPassKernel_eq_cutoff (lam : ℝ) (hlam : lam ≠ 0) {t : ℝ} (ht : 
     unfold innerRadius
     rw [show oscillatoryScaleIndex lam 0 hlam - 3 =
       (oscillatoryScaleIndex lam 0 hlam - 1) - 2 by ring,
-      zpow_sub₀ (by norm_num : (2 : ℝ) ≠ 0)]
+      zpow_sub₀ (by norm_num1 : (2 : ℝ) ≠ 0)]
     norm_num
-    rw [show (1 / 2 : ℝ) = (2 : ℝ)⁻¹ by norm_num, inv_zpow]
+    rw [show (1 / 2 : ℝ) = (2 : ℝ)⁻¹ by norm_num1, inv_zpow]
     field_simp [zpow_ne_zero]
   rw [hscale]
   unfold highPassKernel sharpQuadraticTailKernel cutoffBoundaryKernel
@@ -126,7 +125,7 @@ theorem smallPhaseKernel_support_subset (lam ε ρ : ℝ) :
   intro t ht
   have h : ε < |t| ∧ |t| ≤ ρ := by
     by_contra hn
-    exact ht (by simp [smallPhaseKernel, hn])
+    exact ht (by simp only [smallPhaseKernel, hn, ↓reduceIte])
   simpa only [Metric.mem_closedBall, Real.dist_eq, sub_zero] using h.2
 
 theorem smallPhaseKernel_norm_le (lam ε : ℝ) (hlam : lam ≠ 0) (t : ℝ) :
@@ -143,7 +142,6 @@ theorem smallPhaseKernel_norm_le (lam ε : ℝ) (hlam : lam ≠ 0) (t : ℝ) :
       rw [abs_mul, abs_pow] at hp
       have hprod : |lam| * |t| * innerRadius lam hlam ≤ 1 := by
         have hm := mul_le_mul_of_nonneg_left ht.2 (abs_nonneg lam)
-        have hm2 := mul_le_mul_of_nonneg_right hm hr.le
         nlinarith [innerRadius_phase_bound lam hlam]
       apply (div_le_iff₀ htp).mpr
       apply le_trans hp
@@ -167,10 +165,10 @@ theorem sharpQuadraticTailKernel_eq_oscillatory_reduction
   by_cases hεt : ε < |t|
   · by_cases hρt : innerRadius lam hlam < |t|
     · simp [hεt, hρt, not_le.mpr hρt]
-    · simp [hεt, hρt, le_of_not_gt hρt]
+    · simp only [hεt, ↓reduceIte, hρt, one_div, zero_add, sub_zero, le_of_not_gt hρt, and_self]
       ring
   · have hρt : ¬ innerRadius lam hlam < |t| := fun h ↦ hεt (hερ.trans_lt h)
-    simp [hεt, hρt]
+    simp only [hεt, ↓reduceIte, hρt, add_zero, sub_self, false_and]
 
 end OscillatoryReduction
 end QuadraticCarleson

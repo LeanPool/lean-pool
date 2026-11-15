@@ -16,7 +16,6 @@ import Mathlib.Analysis.Normed.Module.Connected
 import Mathlib.CategoryTheory.Category.Init
 import Mathlib.Combinatorics.Matroid.Init
 import Mathlib.LinearAlgebra.Complex.FiniteDimensional
-import Mathlib.MeasureTheory.Covering.Besicovitch
 import Mathlib.Topology.MetricSpace.HausdorffDimension
 
 /-!
@@ -146,7 +145,7 @@ theorem dixonH1_eq (hU : IsOpen U) (hf : DifferentiableOn ℂ f U)
       (fun t => f w / (γ.toFun t - w) * deriv γ.toFun t) volume γ.a γ.b := by
     rw [show (fun t => f w / (γ.toFun t - w) * deriv γ.toFun t) =
         (fun t => f w * ((γ.toFun t - w)⁻¹ * deriv γ.toFun t)) from by
-      ext t; rw [div_eq_mul_inv]; ring]
+      ext t; rw [div_eq_mul_inv]; ac_rfl]
     exact h_base_int.const_mul _
   rw [intervalIntegral.integral_sub
     (dixonH1_cauchyIntegrand_integrable hU hf γ hγ_in_U w hoff) h_fw_int]
@@ -218,12 +217,12 @@ private lemma dixonH2_deriv_bound (f : ℂ → ℂ) (γ : PiecewiseC1Immersion)
         apply mul_le_mul
         · apply mul_le_mul
           · exact hM_f t ht
-          · exact pow_le_pow_left₀ (by positivity)
+          · exact pow_le_pow_left₀ (by exact inv_nonneg_of_nonneg (norm_nonneg (γ.toFun t - x)))
               (inv_anti₀ hε_pos (hdist_lb x hx_ball t ht)) 2
-          · positivity
+          · exact Even.pow_nonneg (even_two_mul 1) ‖γ.toFun t - x‖⁻¹
           · exact hM_f_nn
         · exact hM_d t ht
-        · positivity
+        · exact norm_nonneg (deriv γ.toFun t)
         · simp_all only [mem_Icc, and_imp, Metric.mem_ball, uIoc_of_le, mem_Ioc, and_true,
           inv_pow, inv_pos,
               pow_succ_pos, mul_nonneg_iff_of_pos_right]
@@ -280,8 +279,8 @@ private lemma dixonH2_hasDerivAt (f : ℂ → ℂ) (γ : PiecewiseC1Immersion)
       exact mul_le_mul
         (mul_le_mul (hM_f t ht)
           (pow_le_pow_left₀ (by positivity) (inv_anti₀ hε_pos (_hdist_lb_w t ht)) 2)
-          (by positivity) _hM_f_nn)
-        (hM_d t ht) (by positivity) (mul_nonneg _hM_f_nn (by positivity))
+          (by exact Even.pow_nonneg (even_two_mul 1) ‖γ.toFun t - w‖⁻¹) _hM_f_nn)
+        (hM_d t ht) (by exact norm_nonneg (deriv γ.toFun t)) (mul_nonneg _hM_f_nn (by positivity))
   have hF'_meas : AEStronglyMeasurable (dixonH2_F' f γ w)
       (volume.restrict (Set.uIoc γ.a γ.b)) := hF'_int.def'.aestronglyMeasurable
   have h_bound : ∀ᵐ t ∂volume, t ∈ Set.uIoc γ.a γ.b →
@@ -516,7 +515,7 @@ private theorem dixonH1_F'_aestronglyMeasurable {M_d C_b δ₀ : ℝ}
         have hC : Filter.Tendsto (fun n : ℕ => (1 : ℂ) / ((n : ℂ) + 1)) Filter.atTop (𝓝 0) := by
           have := Complex.continuous_ofReal.continuousAt.tendsto.comp hR
           simp only [Function.comp_def] at this
-          exact this.congr (fun n => by push_cast; ring)
+          exact this.congr (fun n => by push_cast; ac_rfl)
         exact hC
       · exact Filter.Eventually.of_forall (fun n => by
           apply div_ne_zero one_ne_zero
@@ -527,7 +526,8 @@ private theorem dixonH1_F'_aestronglyMeasurable {M_d C_b δ₀ : ℝ}
         ((1 : ℂ) / (↑n + 1))⁻¹ •
           (dslope f (γ.toFun t) (w₀ + 1 / (↑n + 1)) - dslope f (γ.toFun t) w₀) *
         deriv γ.toFun t := by
-      simp_all
+      simp_all only [mem_Icc, and_imp, mem_image, Metric.mem_ball, forall_exists_index, mem_Ioc,
+        and_true, hasDerivAt_deriv_iff, one_div, inv_inv, smul_eq_mul, implies_true]
     simp_rw [hGn_eq]
     exact (hderiv.tendsto_slope_zero.comp h_tendsto_zero).mul_const _
 
@@ -590,7 +590,7 @@ theorem dixonH1_differentiableOn (hU : IsOpen U) (hf : DifferentiableOn ℂ f U)
     apply Filter.eventually_of_mem (Metric.ball_mem_nhds w₀ hε_pos)
     intro x hx
     exact (dixonH1_dslope_intervalIntegrable hU hf γ hγ_in_U x C M_d hC_pos
-      (fun c hc => hBd c hc x (Metric.ball_subset_ball (by linarith) hx))
+      (fun c hc => hBd c hc x (Metric.ball_subset_ball (by linarith only [hε_pos, h2ε_le_δ₀]) hx))
       hM_d).def'.aestronglyMeasurable
   have hF'_meas := dixonH1_F'_aestronglyMeasurable hU hf γ hγ_in_U w₀ hw₀
     hdslope_diff hM_d hδ₀_pos hBd hC_pos
@@ -717,7 +717,7 @@ theorem dixonFunction_differentiable (hU : IsOpen U) (hf : DifferentiableOn ℂ 
         obtain ⟨n2, hn2⟩ := hwn_int w'' hw''
         have hm : generalizedWindingNumber' γ.toFun γ.a γ.b w''' -
             generalizedWindingNumber' γ.toFun γ.a γ.b w'' = (n1 - n2 : ℤ) := by
-          push_cast [hn1, hn2]; ring
+          push_cast [hn1, hn2]; ac_rfl
         have h_norm_m : ‖((n1 - n2 : ℤ) : ℂ)‖ < 1 / 2 := hm ▸ h_lt
         rw [Complex.norm_intCast] at h_norm_m
         have h_zero : n1 - n2 = 0 := by
@@ -793,9 +793,9 @@ private lemma windingNumber_norm_lt_one (γ : PiecewiseC1Immersion) {R M_d : ℝ
     (hw : M_d * (γ.b - γ.a) / (2 * Real.pi) < ‖w‖ - R) :
     ‖generalizedWindingNumber' γ.toFun γ.a γ.b w‖ < 1 := by
   have hab : γ.a ≤ γ.b := le_of_lt γ.hab
-  have hba_nn : 0 ≤ γ.b - γ.a := by linarith
+  have hba_nn : 0 ≤ γ.b - γ.a := by exact sub_nonneg.mpr hab
   have h2pi_pos : 0 < 2 * Real.pi := Real.two_pi_pos
-  have hpos : 0 < ‖w‖ - R := by linarith
+  have hpos : 0 < ‖w‖ - R := by exact sub_pos.mpr hR_lt
   rw [generalizedWindingNumber_eq_classical_away γ.toPiecewiseC1Curve w hoff, norm_mul,
     norm_inv, norm_mul, norm_mul, Complex.norm_two, Complex.norm_real,
     Real.norm_of_nonneg Real.pi_pos.le, Complex.norm_I, mul_one]
@@ -956,9 +956,9 @@ lemma piecewiseC1_image_interior_empty (γ : PiecewiseC1Immersion) :
         hLip.mono Set.inter_subset_right⟩
     · apply lt_of_le_of_lt (dimH_mono (Set.subset_univ _))
       simp only [Real.dimH_univ]
-      simp_all
+      simp_all only [finrank_real_complex, Nat.cast_ofNat, Nat.one_lt_ofNat]
   · rw [(γ.partition.finite_toSet.image γ.toFun).dimH_zero]
-    simp_all
+    simp_all only [finrank_real_complex, Nat.cast_ofNat, Nat.ofNat_pos]
 
 theorem contourIntegral_eq_zero_of_nullHomologous (hU : IsOpen U) (hf : DifferentiableOn ℂ f U)
     (γ : PiecewiseC1Immersion) (h_null : IsNullHomologous γ U) :

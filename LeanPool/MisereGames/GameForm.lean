@@ -357,17 +357,25 @@ private theorem add_comm' (x y : GameForm) : x + y = y + x := by
   · refine and_congr_right_iff.2 fun h ↦ ?_
     rw [add_comm']
 termination_by (x, y)
-decreasing_by form_wf
+decreasing_by
+  · exact Prod.Lex.left _ _ (MisereGames.Moves.Subposition.of_mem_moves (by assumption))
+  · exact Prod.Lex.right _ (MisereGames.Moves.Subposition.of_mem_moves (by assumption))
 
 private theorem add_assoc' (x y z : GameForm) : x + y + z = x + (y + z) := by
-  ext1
+  apply ext
+  intro p
   simp only [moves_add', Set.image_union, Set.image_image, Set.union_assoc]
-  refine congrArg₂ _ ?_ (congrArg₂ _ ?_ ?_) <;>
-  · ext
-    congr! 2
-    rw [add_assoc']
+  refine congrArg₂ _ ?_ (congrArg₂ _ ?_ ?_)
+  · exact Set.image_congr fun a ha => add_assoc' a y z
+  · exact Set.image_congr fun a ha => add_assoc' x a z
+  · exact Set.image_congr fun a ha => add_assoc' x y a
 termination_by (x, y, z)
-decreasing_by form_wf
+decreasing_by
+  · exact Prod.Lex.left _ _ (MisereGames.Moves.Subposition.of_mem_moves (by assumption))
+  · exact Prod.Lex.right _
+      (Prod.Lex.left _ _ (MisereGames.Moves.Subposition.of_mem_moves (by assumption)))
+  · exact Prod.Lex.right _
+      (Prod.Lex.right _ (MisereGames.Moves.Subposition.of_mem_moves (by assumption)))
 
 private theorem neg_add' (x y : GameForm) : -(x + y) = -x + -y := by
   ext
@@ -377,7 +385,9 @@ private theorem neg_add' (x y : GameForm) : -(x + y) = -x + -y := by
   · refine and_congr_right_iff.2 fun _ ↦ ?_
     rw [← neg_inj, neg_add', neg_neg]
 termination_by (x, y)
-decreasing_by form_wf
+decreasing_by
+  · exact Prod.Lex.left _ _ (MisereGames.Moves.Subposition.of_mem_moves (by assumption))
+  · exact Prod.Lex.right _ (MisereGames.Moves.Subposition.of_mem_moves (by assumption))
 
 instance : AddCommSemigroup GameForm where
   add_assoc := private add_assoc'
@@ -433,8 +443,8 @@ theorem leftEnd_rightEnd_eq_zero {g : GameForm} (h1 : IsEnd .left g) (h2 : IsEnd
   rw [zero_def]
   ext p
   cases p
-  · simp_all
-  · simp_all
+  · simp_all only [Set.mem_empty_iff_false, Form.moves_ofSets]
+  · simp_all only [Set.mem_empty_iff_false, Form.moves_ofSets]
 
 theorem both_ends_eq_zero {g : GameForm} {p : Player} (h1 : IsEnd p g) (h2 : IsEnd (-p) g) :
     g = 0 := by
@@ -462,10 +472,17 @@ theorem isOption_zero_add_iff {g h : GameForm} :
     apply Or.elim3 h1
     · intro h2
       apply Or.elim h2
-      · simp_all
-      · simp_all
-    · simp_all
-    · simp_all
+      · simp_all only [
+        true_or, and_self, moves_zero, Set.mem_empty_iff_false, or_self, false_and, or_false,
+        implies_true]
+      · simp_all only [
+        true_or, moves_zero, Set.mem_empty_iff_false, or_self, false_and, and_self, or_true,
+        implies_true]
+    · simp_all only [
+      or_true, and_self, moves_zero, Set.mem_empty_iff_false, or_self, false_and, or_false,
+      implies_true]
+    · simp_all only [
+      moves_zero, Set.mem_empty_iff_false, or_self, false_and, or_true, and_self, implies_true]
   · rintro (⟨h_isOption_zero_g, h_h_zero⟩ | ⟨h_isOption_zero_h, h_g_zero⟩)
     · rwa [h_h_zero, add_zero]
     · rwa [h_g_zero, zero_add]

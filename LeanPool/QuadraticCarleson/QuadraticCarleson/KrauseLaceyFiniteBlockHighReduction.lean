@@ -54,7 +54,7 @@ theorem normalizedHighBlock_eq_physicalSmoothDifference
         smoothQuadraticHighPass (a ^ 2) ((2 : ℝ) ^ ((B : ℤ) - 1) / a) f x := by
   rw [finiteQuadraticDyadicBlock_eq_smoothHighPass_sub 1 1 B
     (L0Infinity.dilate a ha f).integrable]
-  have hlo : (2 : ℝ) ^ ((1 : ℤ) - 3) = 1 / 4 := by norm_num
+  have hlo : (2 : ℝ) ^ ((1 : ℤ) - 3) = 1 / 4 := by norm_num1
   have hhi : (1 : ℤ) + (B : ℤ) - 2 = (B : ℤ) - 1 := by omega
   rw [hlo, hhi, smoothHighPass_square_div, smoothHighPass_square_div]
 
@@ -87,9 +87,9 @@ theorem enorm_block_sub_normalizedHighBlock_le
         24 * centeredHardyLittlewoodMaximal (fun y ↦ ‖f y‖ₑ) x :=
       add_le_add
         (enorm_smoothHighPass_sub_le_maximal (a ^ 2)
-          (zpow_pos (by norm_num) _) hlo.1 hlo.2 f.measurable_toFun f.integrable x)
+          (zpow_pos (by norm_num1) _) hlo.1 hlo.2 f.measurable_toFun f.integrable x)
         (enorm_smoothHighPass_sub_le_maximal (a ^ 2)
-          (zpow_pos (by norm_num) _) hhi.1 hhi.2 f.measurable_toFun f.integrable x)
+          (zpow_pos (by norm_num1) _) hhi.1 hhi.2 f.measurable_toFun f.integrable x)
     _ = _ := by ring
 
 /-- Every complete finite block is the zero-cutoff member of its suffix maximum. -/

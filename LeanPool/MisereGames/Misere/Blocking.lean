@@ -78,7 +78,15 @@ protected theorem IsBlockedEnd.add {g h : G} {p : Player}
     · exact Or.inl (IsBlockedEnd.add h1 hbe)
     · exact Or.inr ⟨g + hrl, add_left_mem_moves_add hhrl g, IsBlockedEnd.add h1 hbhrl⟩
 termination_by (g, h)
-decreasing_by form_wf
+decreasing_by
+  · exact Prod.Lex.left _ _ (MisereGames.Moves.Subposition.of_mem_moves hg')
+  · exact Prod.Lex.left _ _
+      (MisereGames.Moves.Subposition.trans (MisereGames.Moves.Subposition.of_mem_moves hgrl)
+        (MisereGames.Moves.Subposition.of_mem_moves hg'))
+  · exact Prod.Lex.right _ (MisereGames.Moves.Subposition.of_mem_moves hh')
+  · exact Prod.Lex.right _
+      (MisereGames.Moves.Subposition.trans (MisereGames.Moves.Subposition.of_mem_moves hhrl)
+        (MisereGames.Moves.Subposition.of_mem_moves hh'))
 
 private protected theorem IsBlockedEnd.neg {g : G} {p : Player} (h1 : IsBlockedEnd p (-g)) :
     IsBlockedEnd (-p) g := by
@@ -154,7 +162,7 @@ theorem isBlocking_of_isDeadEnding {g : G} (h1 : IsDeadEnding g) : IsBlocking g 
     fun p gp hgp => ?_⟩
   exact isBlocking_of_isDeadEnding (isDeadEnding_of_mem_moves h1 hgp)
 termination_by g
-decreasing_by form_wf
+decreasing_by exact MisereGames.Moves.Subposition.of_mem_moves hgp
 
 @[simp]
 theorem IsBlocking.add {g h : G} (h1 : IsBlocking g) (h2 : IsBlocking h) :
@@ -170,7 +178,9 @@ theorem IsBlocking.add {g h : G} (h1 : IsBlocking g) (h2 : IsBlocking h) :
     · exact IsBlocking.add (isBlocking_of_mem_moves h1 h3) h2
     · exact IsBlocking.add h1 (isBlocking_of_mem_moves h2 h3)
 termination_by (g, h)
-decreasing_by form_wf
+decreasing_by
+  · exact Prod.Lex.left _ _ (MisereGames.Moves.Subposition.of_mem_moves (by assumption))
+  · exact Prod.Lex.right _ (MisereGames.Moves.Subposition.of_mem_moves (by assumption))
 
 instance : ClosedUnderAdd (IsBlocking (G := G)) where
   has_add _ _ h_g h_h := IsBlocking.add h_g h_h
@@ -187,7 +197,7 @@ private protected theorem IsBlocking.neg {g : G} (h1 : IsBlocking (-g)) : IsBloc
     have h4 := h2 (-p) (-gp) (by simp only [moves_neg, neg_neg, Set.mem_neg, h3])
     exact IsBlocking.neg h4
 termination_by g
-decreasing_by form_wf
+decreasing_by exact MisereGames.Moves.Subposition.of_mem_moves h3
 
 instance : ClosedUnderNeg (IsBlocking (G := G)) where
   neg_of {g} h := by

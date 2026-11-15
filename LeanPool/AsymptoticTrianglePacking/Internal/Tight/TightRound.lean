@@ -6,10 +6,8 @@ Authors: Juan Pablo Traverso Gianini, Aristotle
 
 module
 
-public import LeanPool.AsymptoticTrianglePacking.Internal.Tight.CoverWeight
 public import LeanPool.AsymptoticTrianglePacking.Internal.Tight.CoverWeightMoments
 public import LeanPool.AsymptoticTrianglePacking.Internal.Tight.Selection
-public import LeanPool.AsymptoticTrianglePacking.Internal.Prelude
 
 
 /-!

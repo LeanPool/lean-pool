@@ -41,4 +41,4 @@ lemma exp_periodo (z : ℍ) (n : ℕ) :
   have ht := (exp_periodic.nat_mul n) (2 * π * Complex.I * n * z)
   rw [← ht]
   congr 1
-  ring
+  ac_rfl

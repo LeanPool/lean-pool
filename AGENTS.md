@@ -9,6 +9,7 @@ This file is a concatenation of README.md and CONTRIBUTING.md.
 [![Lean Action CI](https://github.com/LeanPool/lean-pool/actions/workflows/lean_action_ci.yml/badge.svg)](https://github.com/LeanPool/lean-pool/actions/workflows/lean_action_ci.yml)
 [![Documentation](https://img.shields.io/badge/docs-online-blue)](https://leanpool.github.io/lean-pool/)
 [![Exposition](https://img.shields.io/badge/exposition-online-8a4fff)](https://leanpool.github.io/lean-pool/exposition/)
+[![Source profile](https://img.shields.io/endpoint?url=https%3A%2F%2Fvilin97.github.io%2Flean-source-profiler%2Fpool%2Fbadge.json)](https://vilin97.github.io/lean-source-profiler/pool/)
 [![Zulip](https://img.shields.io/badge/Zulip-Lean_Pool-6492FE?logo=zulip&logoColor=white)](https://leanprover.zulipchat.com/#narrow/channel/619231-Lean-Pool)
 [![Semantic Search](https://img.shields.io/badge/semantic_search-Octo-2f80ed)](https://octo.axiomatic-ai.com/search?scopes=repo%3ALeanPool%2Flean-pool)
 [![License](https://img.shields.io/github/license/LeanPool/lean-pool)](LICENSE)
@@ -19,17 +20,16 @@ Lean Pool sits between [`mathlib`](https://github.com/leanprover-community/mathl
 
 Semantic search is also available via the [API](https://search.octo.axiomatic-ai.com/api/search).
 
+Explore compile costs in the [LeanPool source profile](https://vilin97.github.io/lean-source-profiler/pool/),
+from projects and files down to declarations and source lines.
+
 <!-- BEGIN STATS -->
-**289** formalization projects · **9,933,135** lines of Lean
+**341** formalization projects · **12,878,818** lines of Lean
 <!-- END STATS -->
 
-<sub>(stats above are refreshed automatically by the [generated-metadata workflow](.github/workflows/notice.yml) — edit [`python/lean_pool/stats.py`](python/lean_pool/stats.py), not the numbers)</sub>
+<sub>(stats above are refreshed daily by the [Daily documentation workflow](.github/workflows/docs-publish.yml) — edit [`python/lean_pool/stats.py`](python/lean_pool/stats.py), not the numbers)</sub>
 
 So far, projects have been added by hand: each is a suitable, permissively licensed (Apache-2.0 or MIT) Lean repository, bumped to the latest Lean and Mathlib, made to pass [CI](.github/workflows/lean_action_ci.yml) — it builds warning-free and clears Mathlib's linters, the style checker, and the repository quality gates (no `sorry`/`admit`, no axioms beyond `Classical.choice`/`propext`/`Quot.sound`, no `unsafe`/`partial`, file headers, size limits) — and an [LLM review](.github/REVIEW_RULES.md) of fit and significance, then merged.
-
-LLM reviews use GPT-6-Astra at `xhigh` reasoning effort through a privately operated Codex worker, without paid OpenAI API requests or an API fallback. Reviews also show an estimated dollar cost at official Standard API token rates, labeled separately from Codex quota billing. See [review operations](python/review-operations.md) for deployment and diagnostics.
-
-Project PRs also receive an advisory Greptile review, configured in [`.greptile/`](.greptile/), for cross-file integration, reusable abstractions, completeness, maintainability, and measured cost. It supplements rather than replaces the independent LLM verdict.
 
 ### Getting started
 
@@ -42,18 +42,14 @@ make setup    # pull Mathlib oleans, build the whole pool (~1.5h), install Pytho
 To work on a single project you don't need the whole pool built — see the
 [fast per-project build](CONTRIBUTING.md#dev-setup) in `CONTRIBUTING.md`.
 
-To regenerate the preserved Zeta5 numerical certificates, see the
-[certificate reproduction guide](scripts/zeta5-certificates/README.md).
-
-The [moving-sofa certificate recipe](python/lean_pool/sofa_certificates/README.md)
-regenerates its optimized certificate modules from pinned public inputs.
-
 ### Contributing
 
 See [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
-The PR author or a maintainer can comment `/profile` to request an advisory
-compile-cost report. Failed or zero-phase timed runs show unavailable timing
+Every PR, including drafts, gets an advisory compile-cost comment, refreshed
+after pushes. PRs without added or modified Lean files get a no-files report.
+The PR author or a maintainer can also comment `/profile` to rerun it.
+Failed or zero-phase timed runs show unavailable timing
 and are excluded from totals; errors and any successfully measured heartbeat
 counts remain visible.
 
@@ -117,7 +113,7 @@ There are two paths:
 - **Propose a repo.** Open an issue with the GitHub URL and a maintainer can import it. Repos that Reservoir does not index can be added to [`candidates/manual.txt`](candidates/manual.txt).
 - **Open a content PR.** Add your project under `LeanPool/<YourProject>/`, register it in [`LeanPool/projects/<slug>.yaml`](LeanPool/projects/) — the card must declare `provenance` (`human`, `AI`, or `mix`; see below) — and regenerate the indexes with `lake exe mk_all`. Commit `LeanPool/<YourProject>/Imports.lean`, which publicly imports every project source. Lake discovers all pool modules automatically; keep `LeanPool.lean` unchanged. To use a project, import `LeanPool.<YourProject>.Imports`.
 
-Either way the result must pass CI (build, linters, and quality checks — see [Linting and testing](#linting-and-testing)) and an [LLM review](.github/REVIEW_RULES.md) of fit and significance. Accepted projects must be `sorry`-free, introduce no axioms beyond `Classical.choice`/`propext`/`Quot.sound`, and avoid `unsafe`/`partial`. Each project card must also declare its **provenance** — who wrote the Lean proofs — as `human` (written by people), `AI` (mostly produced by an AI system), or `mix` (both contributed substantially). (Proof profiling via `/profile` is available but informational, not a gate: added files get an absolute profile, while modified files get a base→head compile-cost comparison — useful for checking that a refactor doesn't regress compile time.)
+Either way the result must pass CI (build, linters, and quality checks — see [Linting and testing](#linting-and-testing)) and an [LLM review](.github/REVIEW_RULES.md) of fit and significance. Accepted projects must be `sorry`-free, introduce no axioms beyond `Classical.choice`/`propext`/`Quot.sound`, and avoid `unsafe`/`partial`. Each project card must also declare its **provenance** — who wrote the Lean proofs — as `human` (written by people), `AI` (mostly produced by an AI system), or `mix` (both contributed substantially). (Every PR gets an automatic proof-profile comment, refreshed after pushes and available on demand via `/profile`. It is informational, not a gate: added files get an absolute profile, while modified files get a base→head compile-cost comparison — useful for checking that a refactor doesn't regress compile time.)
 
 ## Dev setup
 
@@ -143,12 +139,15 @@ The whole-library checks (`lake exe runLinter LeanPool`, `lake exe lint-style Le
 - **Don't mix content and non-content changes.** A content PR may modify **only** `LeanPool/**/*.lean` and `LeanPool/projects/<slug>.yaml`. Infra / CI / tooling / doc changes may touch other files, but must not be bundled with content. This is enforced by [`content-pr-guard.yml`](.github/workflows/content-pr-guard.yml).
 - **Never change the checks or gates.** Do not modify `.github/workflows/`, `.github/CODE_QUALITY.md`, `python/lean_pool/quality.py`, `scripts/nolints-style.txt`, the `[leanOptions]`/lint settings in `lakefile.toml`, or any other CI step or linter config — and do not add a waiver of any kind (a `size-limit-ok` comment, a `nolints-style.txt` entry, `set_option linter.X false`, etc.) — unless explicitly asked. If a check fails, fix the code, not the check. This applies to everyone, and especially to AI agents.
 - **Branches.** `yourname/description` for solo work; `feature/`/`fix/` prefixes when shared. Open PRs early (draft + `WIP` is fine) and use `Closes #123` to link issues.
+- **Stale PRs.** A PR open for 7 days is labelled `stale`; one open for 21 days (and labelled for at least 7) is closed automatically by [`stale.yml`](.github/workflows/stale.yml). The `pinned` label exempts a PR.
 
 ## Linting and testing
 
 **Lean.** CI runs `lake exe mk_all --check`, `lake build LeanPool`, `lake exe runLinter` and `lake exe lint-style` on `LeanPool`, the quality checker (see [`lean_action_ci.yml`](.github/workflows/lean_action_ci.yml)). Conventions live in [`.github/CODE_QUALITY.md`](.github/CODE_QUALITY.md).
 
 Warnings are not allowed. `lakefile.toml` sets `warningAsError = true`, so any warning (an unused variable, a deprecated lemma, a linter hit) fails `lake build` on your machine just as it does in CI. Fix the code; suppressing the warning is not allowed either.
+
+Every file has a build-time budget. Any file you add or modify must build in under 600 seconds on CI, and CI stops any single Lean process after 60 minutes. Split slow files or make their proofs cheaper; the advisory `/profile` report shows where the time goes.
 
 **Python.** From `python/`: `uv run ruff check`, `uv run ruff format`, and `uv run --group test pytest`.
 

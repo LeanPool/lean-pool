@@ -126,7 +126,9 @@ theorem _root_.ContDiff.laplacian_comp_norm_sq {ρ : ℝ → ℝ} (hρ : ContDif
     rw [iteratedFDeriv_two_apply, hfst, fderiv_fun_smul hc hi, hcd, hid]
     have hself : (innerSL ℝ (b i)) (b i) = (1 : ℝ) := by
       rw [innerSL_apply_apply, real_inner_self_eq_norm_sq, b.orthonormal.norm_eq_one, one_pow]
-    simp [hself]
+    simp only [Fin.isValue, Matrix.cons_val_zero, add_apply, smul_apply,
+      ContinuousLinearMap.smulRight_apply, coe_innerSL_apply, nsmul_eq_mul, Nat.cast_ofNat,
+      smul_eq_mul, Matrix.cons_val_one, Matrix.cons_val_fin_one, hself, mul_one]
     ring
   rw [Finset.sum_congr rfl fun i _ => hterm i, Finset.sum_add_distrib, ← Finset.mul_sum,
     b.sum_sq_inner_left x]
@@ -140,7 +142,7 @@ theorem tsupport_laplacian_subset (f : E → F) : tsupport (Δ f) ⊆ tsupport f
   by_contra hxf
   have h0 : Δ f =ᶠ[𝓝 x] Δ (fun _ : E => (0 : F)) :=
     laplacian_congr_nhds (notMem_tsupport_iff_eventuallyEq.mp hxf)
-  exact hx (by simpa using h0.eq_of_nhds)
+  exact hx (by simpa only [laplacian_const, Pi.zero_apply] using h0.eq_of_nhds)
 
 end Analysis
 

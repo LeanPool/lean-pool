@@ -13,7 +13,6 @@ public import LeanPool.SpherePacking.Foundations
 public import Mathlib.Analysis.Distribution.SchwartzSpace.Fourier
 public import Mathlib.Analysis.SpecialFunctions.Log.Base
 import Mathlib.Analysis.CStarAlgebra.Matrix
-import Mathlib.Analysis.Calculus.FDeriv.ContinuousMultilinearMap
 import Mathlib.LinearAlgebra.Matrix.FiniteDimensional
 import Mathlib.Topology.Algebra.Star.Unitary
 
@@ -22,6 +21,140 @@ import Mathlib.Topology.Algebra.Star.Unitary
 
 Sharp radial and unrestricted sphere-packing conclusions.
 -/
+
+namespace SpherePackingAuxiliary
+open Filter MeasureTheory Set
+open scoped ContDiff Real Topology SchwartzMap
+
+section ProbabilityAverage
+
+variable {α : Type*} [MeasurableSpace α]
+variable (μ : Measure α) [IsProbabilityMeasure μ]
+variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+variable (g : α → 𝓢(E, ℂ)) (C : ℕ → ℕ → ℝ)
+
+/-- Uniform Schwartz seminorm bounds make every pointwise derivative integrable. -/
+private theorem schwartzFamilyDerivativeIntegrable
+    (hmeas : ∀ (n : ℕ) (x : E),
+      AEStronglyMeasurable
+        (fun a : α ↦ iteratedFDeriv ℝ n
+          (g a : E → ℂ) x) μ)
+    (hbound : ∀ (a : α) (k n : ℕ),
+      SchwartzMap.seminorm ℂ k n (g a) ≤ C k n)
+    (n : ℕ) (x : E) :
+    Integrable
+      (fun a : α ↦ iteratedFDeriv ℝ n
+        (g a : E → ℂ) x) μ := by
+  apply Integrable.of_bound (hmeas n x) (C 0 n)
+  filter_upwards [] with a
+  exact
+    (SchwartzMap.norm_iteratedFDeriv_le_seminorm ℂ (g a) n x).trans
+      (hbound a 0 n)
+
+/-- Differentiate the integral of a uniformly seminorm-bounded Schwartz family. -/
+private theorem schwartzFamilyHasFDerivAtIteratedIntegral
+    (hmeas : ∀ (n : ℕ) (x : E),
+      AEStronglyMeasurable
+        (fun a : α ↦ iteratedFDeriv ℝ n
+          (g a : E → ℂ) x) μ)
+    (hbound : ∀ (a : α) (k n : ℕ),
+      SchwartzMap.seminorm ℂ k n (g a) ≤ C k n)
+    (n : ℕ) (x : E) :
+    HasFDerivAt
+      (fun y : E ↦
+        ∫ a : α, iteratedFDeriv ℝ n
+          (g a : E → ℂ) y ∂μ)
+      (∫ a : α, fderiv ℝ
+        (iteratedFDeriv ℝ n (g a : E → ℂ)) x ∂μ)
+      x := by
+  have hderiv_meas :
+      AEStronglyMeasurable
+        (fun a : α ↦
+          fderiv ℝ
+            (iteratedFDeriv ℝ n (g a : E → ℂ)) x) μ := by
+    have h :=
+      (continuousMultilinearCurryLeftEquiv ℝ
+        (fun _ : Fin (n + 1) ↦ E) ℂ).continuous.comp_aestronglyMeasurable
+          (hmeas (n + 1) x)
+    simpa only [fderiv_iteratedFDeriv, Function.comp_apply] using h
+  apply hasFDerivAt_integral_of_dominated_of_fderiv_le
+    (𝕜 := ℝ)
+    (F := fun y : E ↦ fun a : α ↦
+      iteratedFDeriv ℝ n (g a : E → ℂ) y)
+    (F' := fun y : E ↦ fun a : α ↦
+      fderiv ℝ (iteratedFDeriv ℝ n (g a : E → ℂ)) y)
+    (bound := fun _ : α ↦ C 0 (n + 1))
+    (s := Set.univ)
+    Filter.univ_mem
+    (Filter.Eventually.of_forall (fun y ↦ hmeas n y))
+    (schwartzFamilyDerivativeIntegrable μ g C
+      hmeas hbound n x)
+    hderiv_meas
+    (by
+      filter_upwards [] with a y _
+      calc
+        ‖fderiv ℝ
+          (iteratedFDeriv ℝ n (g a : E → ℂ)) y‖ =
+          ‖iteratedFDeriv ℝ (n + 1)
+            (g a : E → ℂ) y‖ :=
+            norm_fderiv_iteratedFDeriv
+        _ ≤ SchwartzMap.seminorm ℂ 0 (n + 1) (g a) :=
+          SchwartzMap.norm_iteratedFDeriv_le_seminorm ℂ
+            (g a) (n + 1) y
+        _ ≤ C 0 (n + 1) := hbound a 0 (n + 1))
+    (integrable_const (C 0 (n + 1)))
+  filter_upwards [] with a y _
+  exact
+    (((g a).smooth ⊤).differentiable_iteratedFDeriv
+      (ENat.natCast_lt_of_coe_top_le_withTop
+        (le_refl _) n)).differentiableAt.hasFDerivAt
+
+/-- Integration commutes with every iterated derivative of a uniformly bounded Schwartz family. -/
+private theorem schwartzFamilyIteratedFDerivIntegral
+    (hmeas : ∀ (n : ℕ) (x : E),
+      AEStronglyMeasurable
+        (fun a : α ↦ iteratedFDeriv ℝ n
+          (g a : E → ℂ) x) μ)
+    (hbound : ∀ (a : α) (k n : ℕ),
+      SchwartzMap.seminorm ℂ k n (g a) ≤ C k n)
+    (n : ℕ) (x : E) :
+    iteratedFDeriv ℝ n
+        (fun y : E ↦ ∫ a : α, (g a) y ∂μ) x =
+      ∫ a : α, iteratedFDeriv ℝ n
+        (g a : E → ℂ) x ∂μ := by
+  induction n generalizing x with
+  | zero =>
+      ext v
+      rw [ContinuousMultilinearMap.integral_apply
+        (schwartzFamilyDerivativeIntegrable μ g C
+          hmeas hbound 0 x)]
+      simp only [iteratedFDeriv_zero_apply]
+  | succ n ih =>
+      rw [iteratedFDeriv_succ_eq_comp_left, Function.comp_apply]
+      have hprevious :
+          iteratedFDeriv ℝ n
+              (fun y : E ↦ ∫ a : α, (g a) y ∂μ) =
+            fun y : E ↦
+              ∫ a : α, iteratedFDeriv ℝ n
+                (g a : E → ℂ) y ∂μ := by
+        funext y
+        exact ih y
+      rw [hprevious,
+        (schwartzFamilyHasFDerivAtIteratedIntegral
+          μ g C hmeas hbound n x).fderiv]
+      simp_rw [iteratedFDeriv_succ_eq_comp_left, Function.comp_apply]
+      exact
+        (LinearIsometry.integral_comp_comm
+          (𝕜 := ℝ)
+          (LinearIsometryEquiv.toLinearIsometry
+            ((continuousMultilinearCurryLeftEquiv ℝ
+              (fun _ : Fin (n + 1) ↦ E) ℂ).symm))
+          (fun a : α ↦ fderiv ℝ
+            (iteratedFDeriv ℝ n (g a : E → ℂ)) x)).symm
+
+end ProbabilityAverage
+
+end SpherePackingAuxiliary
 
 section
 
@@ -142,7 +275,7 @@ private theorem volume_half_ball {d : ℕ} (hd : 0 < d) :
   rw [← ENNReal.ofReal_pow (by positivity), ← ENNReal.ofReal_mul (by positivity)]
   congr 1
   simp only [one_div, inv_pow, CohnElkies.unitBallVolume]
-  ring
+  (symm; apply mul_comm)
 
 private theorem sphere_packing_le_admissible
     {d : ℕ} (hd : 0 < d) (f : CohnElkies.Admissible d) :
@@ -658,9 +791,10 @@ private theorem orthogonalSchwartzIteratedFDeriv_continuous
               (fun _ : Fin n => Ambient d) ℂ ×
             (Fin n → Ambient d →L[ℝ] Ambient d) =>
           p.1.compContinuousLinearMap p.2) := by
-    exact continuous_iff_continuousAt.2 fun p =>
-      (ContinuousMultilinearMap.hasStrictFDerivAt_compContinuousLinearMap
-        p).continuousAt
+    exact
+      ((ContinuousMultilinearMap.compContinuousLinearMapContinuousMultilinear ℝ
+        (fun _ : Fin n => Ambient d) (fun _ : Fin n => Ambient d) ℂ).cont.comp
+          continuous_snd).clm_apply continuous_fst
   have h := hcomp.comp (hderiv.prodMk hmaps)
   simpa only [radialIsometrySchwartzOrbit_iteratedFDeriv, orthogonalLinearIsometry_apply,
     Function.comp_def] using h
@@ -705,11 +839,7 @@ private theorem radialSchwartzParametricDerivativeIntegrable
     Integrable
       (fun a : α ↦ iteratedFDeriv ℝ n
         (g a : Ambient d → ℂ) x) μ := by
-  apply Integrable.of_bound (hmeas n x) (C 0 n)
-  filter_upwards [] with a
-  exact
-    (SchwartzMap.norm_iteratedFDeriv_le_seminorm ℂ (g a) n x).trans
-      (hbound a 0 n)
+  exact SpherePackingAuxiliary.schwartzFamilyDerivativeIntegrable μ g C hmeas hbound n x
 
 private theorem radialSchwartzParametric_hasFDerivAt_iteratedIntegral
     (hmeas : ∀ (n : ℕ) (x : Ambient d),
@@ -726,47 +856,7 @@ private theorem radialSchwartzParametric_hasFDerivAt_iteratedIntegral
       (∫ a : α, fderiv ℝ
         (iteratedFDeriv ℝ n (g a : Ambient d → ℂ)) x ∂μ)
       x := by
-  have hderiv_meas :
-      AEStronglyMeasurable
-        (fun a : α ↦
-          fderiv ℝ
-            (iteratedFDeriv ℝ n (g a : Ambient d → ℂ)) x) μ := by
-    have h :=
-      (continuousMultilinearCurryLeftEquiv ℝ
-        (fun _ : Fin (n + 1) ↦ Ambient d) ℂ).continuous.comp_aestronglyMeasurable
-          (hmeas (n + 1) x)
-    simpa only [fderiv_iteratedFDeriv, Function.comp_apply] using h
-  apply hasFDerivAt_integral_of_dominated_of_fderiv_le
-    (𝕜 := ℝ)
-    (F := fun y : Ambient d ↦ fun a : α ↦
-      iteratedFDeriv ℝ n (g a : Ambient d → ℂ) y)
-    (F' := fun y : Ambient d ↦ fun a : α ↦
-      fderiv ℝ (iteratedFDeriv ℝ n (g a : Ambient d → ℂ)) y)
-    (bound := fun _ : α ↦ C 0 (n + 1))
-    (s := Set.univ)
-    Filter.univ_mem
-    (Filter.Eventually.of_forall (fun y ↦ hmeas n y))
-    (radialSchwartzParametricDerivativeIntegrable μ g C
-      hmeas hbound n x)
-    hderiv_meas
-    (by
-      filter_upwards [] with a y _
-      calc
-        ‖fderiv ℝ
-          (iteratedFDeriv ℝ n (g a : Ambient d → ℂ)) y‖ =
-          ‖iteratedFDeriv ℝ (n + 1)
-            (g a : Ambient d → ℂ) y‖ :=
-            norm_fderiv_iteratedFDeriv
-        _ ≤ SchwartzMap.seminorm ℂ 0 (n + 1) (g a) :=
-          SchwartzMap.norm_iteratedFDeriv_le_seminorm ℂ
-            (g a) (n + 1) y
-        _ ≤ C 0 (n + 1) := hbound a 0 (n + 1))
-    (integrable_const (C 0 (n + 1)))
-  filter_upwards [] with a y _
-  exact
-    (((g a).smooth ⊤).differentiable_iteratedFDeriv
-      (ENat.natCast_lt_of_coe_top_le_withTop
-        (le_refl _) n)).differentiableAt.hasFDerivAt
+  exact SpherePackingAuxiliary.schwartzFamilyHasFDerivAtIteratedIntegral μ g C hmeas hbound n x
 
 private theorem radialSchwartzParametric_iteratedFDeriv_integral
     (hmeas : ∀ (n : ℕ) (x : Ambient d),
@@ -780,35 +870,7 @@ private theorem radialSchwartzParametric_iteratedFDeriv_integral
         (fun y : Ambient d ↦ ∫ a : α, (g a) y ∂μ) x =
       ∫ a : α, iteratedFDeriv ℝ n
         (g a : Ambient d → ℂ) x ∂μ := by
-  induction n generalizing x with
-  | zero =>
-      ext v
-      rw [ContinuousMultilinearMap.integral_apply
-        (radialSchwartzParametricDerivativeIntegrable μ g C
-          hmeas hbound 0 x)]
-      simp only [iteratedFDeriv_zero_apply]
-  | succ n ih =>
-      rw [iteratedFDeriv_succ_eq_comp_left, Function.comp_apply]
-      have hprevious :
-          iteratedFDeriv ℝ n
-              (fun y : Ambient d ↦ ∫ a : α, (g a) y ∂μ) =
-            fun y : Ambient d ↦
-              ∫ a : α, iteratedFDeriv ℝ n
-                (g a : Ambient d → ℂ) y ∂μ := by
-        funext y
-        exact ih y
-      rw [hprevious,
-        (radialSchwartzParametric_hasFDerivAt_iteratedIntegral
-          μ g C hmeas hbound n x).fderiv]
-      simp_rw [iteratedFDeriv_succ_eq_comp_left, Function.comp_apply]
-      exact
-        (LinearIsometry.integral_comp_comm
-          (𝕜 := ℝ)
-          (LinearIsometryEquiv.toLinearIsometry
-            ((continuousMultilinearCurryLeftEquiv ℝ
-              (fun _ : Fin (n + 1) ↦ Ambient d) ℂ).symm))
-          (fun a : α ↦ fderiv ℝ
-            (iteratedFDeriv ℝ n (g a : Ambient d → ℂ)) x)).symm
+  exact SpherePackingAuxiliary.schwartzFamilyIteratedFDerivIntegral μ g C hmeas hbound n x
 
 end ProbabilityAverage
 
@@ -1581,8 +1643,6 @@ private theorem criticalBinaryExponent_eq_log_div :
       Real.log (2 * Real.pi / Real.exp 1) /
         (2 * Real.log 2) := by
   unfold criticalBinaryExponent Real.logb
-  have hlog : Real.log (2 : ℝ) ≠ 0 :=
-    (Real.log_pos (by norm_num : (1 : ℝ) < 2)).ne'
   field_simp
 
 private theorem criticalBinaryExponent_eq_three_halves_sub_logFourDivPi :
@@ -1648,7 +1708,7 @@ private theorem baseTwo_log_four_div_pi_gt_d36 :
         (by norm_num :
           (0 : ℝ) < 3.1415926535897932384626433832795028841972)
         Real.pi_pos).2
-      linarith [manuscript_pi_lt_d40]
+      linear_combination (4 * manuscript_pi_lt_d40)
 
 private theorem baseTwo_log_four_div_pi_lt_d36 :
     Real.log (4 / Real.pi) <
@@ -1671,7 +1731,7 @@ private theorem baseTwo_log_four_div_pi_lt_d36 :
       apply (div_lt_div_iff₀ Real.pi_pos
         (by norm_num :
           (0 : ℝ) < 3.1415926535897932384626433832795028841971)).2
-      linarith [manuscript_pi_gt_d40]
+      linear_combination (4 * manuscript_pi_gt_d40)
     _ < (0.241564475270490444691036891563294425 : ℝ) := hs
 
 private theorem criticalBinaryExponent_gt_d33 :
@@ -1704,12 +1764,12 @@ private theorem criticalBinaryExponent_lt_d33 :
 private theorem criticalBinaryExponent_gt_d30 :
     (0.604400544291677695341677307053 : ℝ) <
       criticalBinaryExponent := by
-  linarith [criticalBinaryExponent_gt_d33]
+  linear_combination (criticalBinaryExponent_gt_d33)
 
 private theorem criticalBinaryExponent_lt_d30 :
     criticalBinaryExponent <
       (0.604400544291677695341677307054 : ℝ) := by
-  linarith [criticalBinaryExponent_lt_d33]
+  linear_combination (criticalBinaryExponent_lt_d33)
 
 private theorem criticalBinaryExponent_mem_Ioo_d30 :
     criticalBinaryExponent ∈ Set.Ioo

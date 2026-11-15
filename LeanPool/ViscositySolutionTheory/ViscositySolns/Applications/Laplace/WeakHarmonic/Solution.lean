@@ -88,7 +88,7 @@ theorem integral_lapTrace_mul_nonpos_of_viscositySupersolution_laplace
   have h := integral_lapTrace_mul_nonneg_of_viscositySubsolution_laplace hC hneg hcont.neg
     hχ hχc hχC hχ0
   simp only [mul_neg, integral_neg] at h
-  linarith
+  linarith only [h]
 
 /--
 A continuous viscosity solution of `-Δu = 0` annihilates `Δχ` for every
@@ -173,7 +173,7 @@ theorem integral_lapTrace_mul_eq_zero_of_viscositySolution_laplace
       simp only [χ₁, hθ1 x hx, mul_one]
       have := neg_abs_le (χ x)
       change 0 ≤ χ x + M
-      linarith
+      linarith only [hb, this]
     · simp only [χ₁, image_eq_zero_of_notMem_tsupport hx, zero_add]
       exact mul_nonneg hM (hθ0 x)
   have hdecomp : χ = fun x => χ₁ x - χ₂ x := by

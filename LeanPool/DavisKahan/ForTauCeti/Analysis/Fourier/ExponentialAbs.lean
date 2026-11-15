@@ -4,8 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Jon Crall, GPT 5.6 High
 -/
 module
+public import Mathlib.Analysis.Fourier.FourierTransform
 
-public import Mathlib.Analysis.Fourier.Inversion
+import Mathlib.Analysis.Fourier.Inversion
 
 /-!
 # The exponential Fourier transform of the two-sided absolute exponential
@@ -115,7 +116,7 @@ theorem integral_cexp_neg_mul_abs_mul_cexp
       ring
     _ = ((2 * y) / (y ^ 2 + x ^ 2) : ℝ) := by
       have hden : y ^ 2 + x ^ 2 ≠ 0 := by
-        nlinarith [sq_nonneg x]
+        nlinarith only [hy, sq_nonneg x]
       apply Complex.ext
       · rw [Complex.sub_re, Complex.div_re, Complex.div_re, Complex.ofReal_re]
         simp only [aNeg, aPos, Complex.normSq_apply, Complex.one_re, Complex.one_im,
@@ -162,7 +163,7 @@ theorem fourier_cexp_neg_two_pi_mul_abs
       norm_cast
       have hpi : Real.pi ≠ 0 := Real.pi_ne_zero
       have hden : y ^ 2 + x ^ 2 ≠ 0 := by
-        nlinarith [sq_nonneg x]
+        nlinarith only [hy, sq_nonneg x]
       field_simp [hpi, hden]
       norm_num
       ring
@@ -205,7 +206,7 @@ theorem cauchy_fourier_isBigO_rpow_neg_two
     subst x
     norm_num at hxabs
   have hsum_pos : 0 < y ^ 2 + x ^ 2 := by
-    nlinarith [sq_pos_of_ne_zero hx0, sq_nonneg y]
+    nlinarith only [hx0, sq_pos_of_ne_zero hx0, sq_nonneg y]
   have hquot_nonneg : 0 ≤ y / (Real.pi * (y ^ 2 + x ^ 2)) := by positivity
   rw [Complex.norm_real, Real.norm_eq_abs, abs_of_nonneg hquot_nonneg,
     Real.norm_eq_abs, abs_of_nonneg (Real.rpow_nonneg (abs_nonneg x) _)]
@@ -217,7 +218,7 @@ theorem cauchy_fourier_isBigO_rpow_neg_two
       field_simp [Real.pi_ne_zero]
     _ ≤ (y / Real.pi) / x ^ 2 := by
       exact div_le_div_of_nonneg_left (by positivity) (sq_pos_of_ne_zero hx0)
-        (by nlinarith [sq_nonneg y])
+        (by nlinarith only [sq_nonneg y])
     _ = (y / Real.pi) * (x ^ 2)⁻¹ := div_eq_mul_inv _ _
 
 /-- Two-sided integrability of a symmetric exponential. -/

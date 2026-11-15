@@ -103,7 +103,7 @@ def ringPieces (r : ℝ) : List Piece :=
    (Plane.mk r (-r), Plane.mk r r)]
 
 theorem segment_symm_Icc {r : ℝ} (hr : 0 ≤ r) :
-    segment ℝ (-r) r = Icc (-r) r := segment_eq_Icc (by linarith)
+    segment ℝ (-r) r = Icc (-r) r := segment_eq_Icc (by linarith only [hr])
 
 theorem segment_symm_Icc' {r : ℝ} (hr : 0 ≤ r) :
     segment ℝ r (-r) = Icc (-r) r := by
@@ -146,7 +146,7 @@ theorem mk_ne_mk_of_snd {a b c d : ℝ} (h : b ≠ d) : Plane.mk a b ≠ Plane.m
 
 /-- A ring of positive radius has nondegenerate sides. -/
 theorem ringPieces_nondeg {r : ℝ} (hr : 0 < r) : ∀ P ∈ ringPieces r, P.Nondeg := by
-  have hne : (r : ℝ) ≠ -r := by intro h; linarith
+  have hne : (r : ℝ) ≠ -r := by intro h; linarith only [h, hr]
   intro P hP
   simp only [ringPieces, List.mem_cons, List.not_mem_nil, or_false] at hP
   rcases hP with rfl | rfl | rfl | rfl
@@ -185,10 +185,10 @@ theorem mem_smul_segment {a b : ℝ} {z x : Plane} :
   constructor
   · rintro ⟨p, q, hp, hq, hpq, rfl⟩
     refine ⟨p * a + q * b, ⟨p, q, hp, hq, hpq, rfl⟩, ?_⟩
-    module
+    simp only [add_smul, smul_smul]
   · rintro ⟨t, ⟨p, q, hp, hq, hpq, rfl⟩, rfl⟩
     refine ⟨p, q, hp, hq, hpq, ?_⟩
-    module
+    simp only [add_smul, smul_smul, smul_eq_mul]
 
 /-- The radial segment from `a • z` to `b • z`, as a set of multiples of `z`. -/
 theorem smul_segment_eq_image {a b : ℝ} (hab : a ≤ b) (z : Plane) :
@@ -243,7 +243,7 @@ theorem spokePiece_nondeg {N : ℕ} (hN : 2 ≤ N) {z : Plane} (hz : z ∈ model
     supNorm_smul_of_mem_modelCurve (inv_cast_pos hN).le hz
   rw [show (((N : ℝ)⁻¹) • z) = z from h.symm, show Plane.supNorm z = 1 from hz] at h2
   have := inv_cast_lt_one hN
-  linarith
+  linarith only [this, h2]
 
 /-! ### Two more facts about `subdivide`
 
@@ -261,15 +261,25 @@ source. That is what makes a prescribed point a vertex of the overlay graph. -/
 
 theorem cover_map {α : Type*} (f : α → Piece) (l : List α) :
     cover (l.map f) = ⋃ a ∈ l, (f a).seg := by
-  induction l with
-  | nil => simp
-  | cons a l ih => rw [List.map_cons, cover_cons, ih]; simp
+  ext x
+  simp only [cover, mem_iUnion, exists_prop]
+  constructor
+  · rintro ⟨P, hP, hx⟩
+    obtain ⟨a, ha, rfl⟩ := List.mem_map.1 hP
+    exact ⟨a, ha, hx⟩
+  · rintro ⟨a, ha, hx⟩
+    exact ⟨f a, List.mem_map.2 ⟨a, ha, rfl⟩, hx⟩
 
 theorem cover_flatMap' {α : Type*} (f : α → List Piece) (l : List α) :
     cover (l.flatMap f) = ⋃ a ∈ l, cover (f a) := by
-  induction l with
-  | nil => simp
-  | cons a l ih => rw [List.flatMap_cons, cover_append, ih]; simp
+  ext x
+  simp only [cover, mem_iUnion, exists_prop]
+  constructor
+  · rintro ⟨P, hP, hx⟩
+    obtain ⟨a, ha, hP⟩ := List.mem_flatMap.1 hP
+    exact ⟨a, ha, P, hP, hx⟩
+  · rintro ⟨a, ha, P, hP, hx⟩
+    exact ⟨P, List.mem_flatMap.2 ⟨a, ha, hP⟩, hx⟩
 
 theorem mem_cover_iff {x : Plane} {l : List Piece} : x ∈ cover l ↔ ∃ P ∈ l, x ∈ P.seg := by
   simp only [cover, mem_iUnion, exists_prop]
@@ -394,7 +404,7 @@ theorem meshRadii_le_one {N : ℕ} (hN : 2 ≤ N) {r : ℝ} (hr : r ∈ meshRadi
   have hN0 : (0 : ℝ) < N := by exact_mod_cast Nat.lt_of_lt_of_le two_pos hN
   rw [div_le_one hN0]
   have : (j : ℝ) + 1 ≤ N := by exact_mod_cast hj
-  linarith
+  exact this
 
 theorem one_mem_meshRadii {N : ℕ} (hN : 2 ≤ N) : (1 : ℝ) ∈ meshRadii N := by
   have hN0 : (0 : ℝ) < N := by exact_mod_cast Nat.lt_of_lt_of_le two_pos hN
@@ -618,10 +628,10 @@ theorem mem_smul_openSegment {a b : ℝ} {z x : Plane} :
   constructor
   · rintro ⟨p, q, hp, hq, hpq, rfl⟩
     refine ⟨p * a + q * b, ⟨p, q, hp, hq, hpq, rfl⟩, ?_⟩
-    module
+    simp only [add_smul, smul_smul]
   · rintro ⟨t, ⟨p, q, hp, hq, hpq, rfl⟩, rfl⟩
     refine ⟨p, q, hp, hq, hpq, ?_⟩
-    module
+    simp only [add_smul, smul_smul, smul_eq_mul]
 
 theorem smul_openSegment_eq_image {a b : ℝ} (hab : a < b) (z : Plane) :
     openSegment ℝ (a • z) (b • z) = (fun t : ℝ => t • z) '' Ioo a b := by
@@ -704,14 +714,15 @@ theorem inner_edge_at_fresh_unique {N : ℕ} (hN : 2 ≤ N) {fresh : List Plane}
   set s : ℝ := (max tP tQ + 1) / 2 with hs
   have hs1 : s < 1 := by
     rw [hs]
-    rcases max_cases tP tQ with ⟨h, -⟩ | ⟨h, -⟩ <;> rw [h] <;> linarith
+    rcases max_cases tP tQ with ⟨h, -⟩ | ⟨h, -⟩ <;> rw [h] <;>
+      linarith only [hltP, hltQ]
   have hsP : tP < s := by
     rw [hs]; have : tP ≤ max tP tQ := le_max_left _ _
     have : max tP tQ < 1 := max_lt hltP hltQ
     linarith [le_max_left tP tQ]
   have hsQ : tQ < s := by
     rw [hs]; have : max tP tQ < 1 := max_lt hltP hltQ
-    linarith [le_max_right tP tQ]
+    linarith only [this, le_max_right tP tQ]
   refine overlayPieces_disjoint_interiors (meshSegments_nondeg hN hfresh)
     (meshPoints_endsAreCut N fresh anchors) (meshPoints_meetsAreCut N fresh anchors) hP hQ hne
     (x := s • z) ?_ ?_
@@ -852,7 +863,7 @@ theorem radial_diam_bound {N : ℕ} (hN : 2 ≤ N) {fresh : List Plane} {δ : �
       _ ≤ Real.sqrt 2 * (1 / (N : ℝ) + 1 / (N : ℝ)) :=
           mul_le_mul_of_nonneg_left (add_le_add (hsmall x hx).le (hsmall y hy).le) hsqrt.le
       _ = Real.sqrt 2 / N + Real.sqrt 2 / N := by ring
-      _ ≤ δ / 2 + Real.sqrt 2 / N := by linarith
+      _ ≤ δ / 2 + Real.sqrt 2 / N := by linarith only [hba, hup, hlow, hthin]
   · -- the annulus between two rings: project radially onto `S`
     have hainv : (N : ℝ)⁻¹ ≤ a := by
       rw [ha, inv_eq_one_div, div_le_div_iff_of_pos_right hNR0]
@@ -894,7 +905,8 @@ theorem radial_diam_bound {N : ℕ} (hN : 2 ≤ N) {fresh : List Plane} {δ : �
       rwa [show Plane.supNorm (g y) = 1 from hgS y hy, mul_one] at this
     have hts : |Plane.supNorm x - Plane.supNorm y| ≤ 1 / (N : ℝ) := by
       rw [← hba]
-      exact abs_le.2 ⟨by linarith [hlow x hx, hup y hy], by linarith [hup x hx, hlow y hy]⟩
+      exact abs_le.2 ⟨by linarith only [hlow x hx, hup y hy],
+        by linarith only [hup x hx, hlow y hy]⟩
     have hx1 : Plane.supNorm x ≤ 1 := le_of_lt (lt_of_lt_of_le (hup x hx) hb1)
     calc dist x y = ‖Plane.supNorm x • (g x - g y)
           + (Plane.supNorm x - Plane.supNorm y) • g y‖ := by rw [dist_eq_norm, hsplit]
@@ -956,7 +968,7 @@ theorem meshGraph_face_small {N : ℕ} (hN : 2 ≤ N) {fresh : List Plane}
   have hthin : Real.sqrt 2 / (N : ℝ) < δ / 2 := by
     rw [div_lt_div_iff₀ hNR0 two_pos]; linarith
   refine lt_of_le_of_lt (Metric.diam_le_of_forall_dist_le (by positivity) hdist) ?_
-  linarith
+  linarith only [hthin]
 
 /-! ### Clause 5: the mesh minus `S` is connected
 
@@ -1040,7 +1052,7 @@ theorem isConnected_cover_diff_modelCurve {N : ℕ} (hN : 2 ≤ N) {fresh : List
       obtain ⟨j, hj, rfl⟩ := mem_meshRadii.1 hr
       have hNR0 : (0 : ℝ) < N := by exact_mod_cast Nat.lt_of_lt_of_le two_pos hN
       rw [inv_eq_one_div, div_le_div_iff_of_pos_right hNR0]
-      linarith [Nat.cast_nonneg (α := ℝ) j]
+      linarith only [hrpos]
     refine ⟨ringSet r ∪ halfSpoke N z₀, union_subset (hringsub r hr hr1) (hhalfsub z₀ hz₀),
       Or.inr hphalf, Or.inl hyr, ?_⟩
     exact ((isConnected_ringSet hrpos.le).union
@@ -1075,10 +1087,10 @@ theorem two_le_meshCount (δ : ℝ) : 2 ≤ meshCount δ := le_max_left _ _
 theorem meshCount_spec {δ : ℝ} (hδ : 0 < δ) : 2 * Real.sqrt 2 < δ * meshCount δ := by
   have h1 : 2 * Real.sqrt 2 / δ < (meshCount δ : ℝ) := by
     calc 2 * Real.sqrt 2 / δ ≤ (⌈2 * Real.sqrt 2 / δ⌉₊ : ℝ) := Nat.le_ceil _
-      _ < (⌈2 * Real.sqrt 2 / δ⌉₊ : ℝ) + 1 := by linarith
+      _ < (⌈2 * Real.sqrt 2 / δ⌉₊ : ℝ) + 1 := by linarith only []
       _ ≤ (meshCount δ : ℝ) := by exact_mod_cast le_max_right 2 (⌈2 * Real.sqrt 2 / δ⌉₊ + 1)
   rw [div_lt_iff₀ hδ] at h1
-  linarith
+  linarith only [h1]
 
 /-- **The anchored square mesh**: `meshCount δ` concentric ring frames inside `Q = [-1,1]²`,
 one radial spoke at each fresh boundary point, and the anchors inserted as extra vertices of

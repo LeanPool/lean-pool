@@ -14,7 +14,6 @@ import LeanPool.LeanModularForms.ValenceFormula.TrigLemmas
 import LeanPool.LeanModularForms.ValenceFormula.WindingWeights.Common
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Bounds
 import Mathlib.CategoryTheory.Category.Init
-import Mathlib.NumberTheory.ArithmeticFunction.Misc
 
 /-!
 # Winding Number Weight at ρ
@@ -115,7 +114,7 @@ theorem fdBoundary_H_sub_rho_seg1_re (H : ℝ) {t : ℝ} (ht1 : 1 < t) (ht2 : t 
   simp only [ellipticPointRho, ellipticPointRho', UpperHalfPlane.coe_mk]
   set θ : ℝ := Real.pi / 3 + (t - 1) * (Real.pi / 2 - Real.pi / 3) with hθ_def
   rw [show (↑Real.pi / 3 + (↑t - 1) * (↑Real.pi / 2 - ↑Real.pi / 3)) * I =
-    (↑θ : ℂ) * I from by simp only [hθ_def]; push_cast; ring, exp_real_angle_I]
+    (↑θ : ℂ) * I from by simp only [hθ_def]; push_cast; ac_rfl, exp_real_angle_I]
   simp only [Complex.add_re, Complex.sub_re, Complex.ofReal_re, Complex.mul_re,
     Complex.I_re, Complex.I_im, Complex.ofReal_im, Complex.neg_re, Complex.one_re,
     Complex.div_ofNat_re, Complex.div_ofNat_im, zero_div]
@@ -132,7 +131,7 @@ theorem fdBoundary_H_sub_rho_seg2_re (H : ℝ) {t : ℝ} (ht2 : 2 < t) (ht3 : t 
   simp only [ellipticPointRho, ellipticPointRho', UpperHalfPlane.coe_mk]
   set θ : ℝ := Real.pi / 2 + (t - 2) * (2 * Real.pi / 3 - Real.pi / 2) with hθ_def
   rw [show (↑Real.pi / 2 + (↑t - 2) * (2 * ↑Real.pi / 3 - ↑Real.pi / 2)) * I =
-    (↑θ : ℂ) * I from by simp only [hθ_def]; push_cast; ring, exp_real_angle_I]
+    (↑θ : ℂ) * I from by simp only [hθ_def]; push_cast; ac_rfl, exp_real_angle_I]
   have hre : (↑(Real.cos θ) + ↑(Real.sin θ) * I -
       (-1 / 2 + ↑(Real.sqrt 3) / 2 * I)).re = Real.cos θ + 1 / 2 := by
     simp only [Complex.add_re, Complex.sub_re, Complex.ofReal_re, Complex.mul_re,
@@ -743,7 +742,7 @@ private lemma pv_log_limit_at_rho (H : ℝ) (hH : Real.sqrt 3 / 2 < H) :
     intro ε hε_pos hε_lt
     have hε_lt_gap : ε < H - Real.sqrt 3 / 2 := lt_of_lt_of_le hε_lt (min_le_left _ _)
     have hε_lt_2sin : ε < 2 * Real.sin (Real.pi / 12) := lt_of_lt_of_le hε_lt (min_le_right _ _)
-    refine ⟨by linarith, ?_, by linarith, Real.arcsin_pos.mpr (by linarith), ?_⟩
+    refine ⟨by linarith only [hε_pos], ?_, by linarith, Real.arcsin_pos.mpr (by linarith), ?_⟩
     · have hsin_le : Real.sin (Real.pi / 12) ≤ 1 := Real.sin_le_one _; linarith
     · exact arcsin_eps_div_two_lt_pi_12 hε_pos hε_lt_2sin
   have hδL_pos : ∀ ε : ℝ, 0 < ε → ε < threshold → 0 < δ_L ε := by
@@ -810,7 +809,7 @@ private lemma pv_log_limit_at_rho (H : ℝ) (hH : Real.sqrt 3 / 2 < H) :
       have : x < Real.pi / 12 := by nlinarith only [harcsin_lt, hδL_angle]
       linarith [Real.pi_le_four]
     nlinarith [Real.sin_gt_sub_cube hx_pos, sq_nonneg x, sq_nonneg (1 - x)]
-  linarith
+  linarith only [hε_lt_r, h_angle_bound]
 
 /-- The PV integral of `(γ-ρ)⁻¹ γ'` over `[0,5]` with ε-ball cutoff tends to `-iπ/3`. -/
 theorem pv_integral_at_rho_tendsto (H : ℝ) (hH : Real.sqrt 3 / 2 < H) :
@@ -884,7 +883,7 @@ theorem gWN_fdBoundary_H_at_rho (H : ℝ) (hH : Real.sqrt 3 / 2 < H) :
     generalizedWindingNumber' (fdBoundaryH H) 0 5 ellipticPointRho = -1/6 := by
   apply ContourIntegral.gWN_eq_neg_sixth_of_pv_tendsto
   convert pv_integral_at_rho_tendsto H hH using 2
-  · simp [sub_zero, gt_iff_lt]
+  · simp only [sub_zero, deriv_sub_const_fun, gt_iff_lt]
   · ring
 
 end

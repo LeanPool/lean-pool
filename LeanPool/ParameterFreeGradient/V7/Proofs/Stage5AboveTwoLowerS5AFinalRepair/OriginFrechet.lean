@@ -41,8 +41,8 @@ lemma lpNorm_powerDualityMap {r : ℝ} (hr : 1 < r) {d : ℕ} (x : Point d) :
   unfold O3.lpNorm
   rw [hpower]
   have hbase : 0 ≤ O3.lpPower r x := O3.lpPower_nonneg r x
-  have hr0 : r ≠ 0 := by linarith
-  have hr10 : r - 1 ≠ 0 := by linarith
+  have hr0 : r ≠ 0 := by linarith only [hr]
+  have hr10 : r - 1 ≠ 0 := by linarith only [hr]
   rw [show 1 / O3.conjugateExponent r = (r - 1) / r by
     rw [O3.conjugateExponent_eq]
     field_simp [hr0, hr10]]
@@ -111,9 +111,9 @@ lemma lpNorm_kernelGradientVector {r theta : ℝ} (hr : 2 < r)
       simp [O3.powerDualityMap]
     rw [kernelGradientVector, hJ, smul_zero]
     rw [O3.lpNorm_zero (lt_trans zero_lt_one
-      (O3.one_lt_conjugateExponent (by linarith : 1 < r)))]
-    rw [O3.lpNorm_zero (by linarith : 0 < r)]
-    rw [Real.zero_rpow (by linarith : 2 * theta - 1 ≠ 0)]
+      (O3.one_lt_conjugateExponent (by linarith only [hr] : 1 < r)))]
+    rw [O3.lpNorm_zero (by linarith only [hr] : 0 < r)]
+    rw [Real.zero_rpow (by linarith only [htheta] : 2 * theta - 1 ≠ 0)]
     ring
   · have hn : 0 < O3.lpNorm r x := O3.lpNorm_pos_of_ne_zero hx
     have hpow := O3.Stage2RouteB.lpNorm_rpow_eq_lpPower
@@ -124,7 +124,7 @@ lemma lpNorm_kernelGradientVector {r theta : ℝ} (hr : 2 < r)
     rw [O3.Stage2RouteB.lpNorm_scalar_mul
       (O3.one_lt_conjugateExponent (by linarith : 1 < r) |>.trans' zero_lt_one)]
     rw [lpNorm_powerDualityMap (by linarith : 1 < r)]
-    rw [abs_mul, abs_of_pos (mul_pos (by positivity) (by linarith : 0 < theta))]
+    rw [abs_mul, abs_of_pos (mul_pos (by positivity) (by linarith only [htheta] : 0 < theta))]
     rw [abs_of_nonneg (Real.rpow_nonneg (O3.lpPower_nonneg r x) _)]
     rw [← hpow]
     rw [← Real.rpow_mul hn.le]
@@ -172,17 +172,17 @@ theorem hasFDerivAt_kernelGradientVector_zero {r theta : ℝ}
     (hr : 2 < r) (htheta : 1 < theta) (htr : 2 * theta < r) {d : ℕ} :
     HasFDerivAt (kernelGradientVector (d := d) r theta)
       (kernelHessian (d := d) r theta 0) 0 := by
-  have ha : 1 < 2 * theta - 1 := by linarith
+  have ha : 1 < 2 * theta - 1 := by linarith only [htheta]
   have hzeroG : kernelGradientVector r theta (0 : Point d) = 0 := by
     have he : 2 * theta / r - 1 ≠ 0 := by
-      have hr0 : 0 < r := by linarith
+      have hr0 : 0 < r := by linarith only [htheta, htr]
       rw [ne_eq, sub_eq_zero, div_eq_one_iff_eq (ne_of_gt hr0)]
-      linarith
+      linarith only [htr]
     simp [kernelGradientVector,
-      O3.lpPower_zero (by linarith : r ≠ 0), Real.zero_rpow he]
+      O3.lpPower_zero (by linarith only [htheta, htr] : r ≠ 0), Real.zero_rpow he]
   have hzeroH : kernelHessian r theta (0 : Point d) = 0 := by
     have he1 : 2 * theta / r - 1 ≠ 0 := by
-      have hr0 : 0 < r := by linarith
+      have hr0 : 0 < r := by linarith only [htheta, htr]
       rw [ne_eq, sub_eq_zero, div_eq_one_iff_eq (ne_of_gt hr0)]
       linarith
     have he2 : r - 2 ≠ 0 := by linarith

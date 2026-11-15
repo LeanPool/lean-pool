@@ -79,7 +79,7 @@ theorem eLpNorm_le_rpow_mul_rpow {r s q : ℝ≥0∞} (hr : r ≠ 0) (hr' : r �
     rw [hainv, hbinv, ← ENNReal.ofReal_add (by positivity) (by positivity), inv_one]
     rw [show q.toReal * θ / r.toReal + q.toReal * (1 - θ) / s.toReal = 1 by
       field_simp at hqrs ⊢
-      nlinarith [hqrs, hQ, hR, hS]]
+      nlinarith only [hqrs, hQ, hR, hS]]
     simp
   -- The two factors of the splitting.
   have hg : AEStronglyMeasurable (fun x => ‖f x‖ ^ (q.toReal * θ)) μ :=
@@ -89,7 +89,7 @@ theorem eLpNorm_le_rpow_mul_rpow {r s q : ℝ≥0∞} (hr : r ≠ 0) (hr' : r �
   have hsplit : ∀ x, ‖f x‖ ^ q.toReal
       = ‖f x‖ ^ (q.toReal * θ) * ‖f x‖ ^ (q.toReal * (1 - θ)) := by
     intro x
-    rw [← Real.rpow_add' (norm_nonneg _) (by nlinarith)]
+    rw [← Real.rpow_add' (norm_nonneg _) (by nlinarith only [hQθ, hQθ'])]
     ring_nf
   -- Hölder against that pair.
   have hHolder := eLpNorm_le_eLpNorm_mul_eLpNorm (μ := μ) (p := ea) (q := eb) (r := 1)

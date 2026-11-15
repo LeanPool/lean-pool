@@ -106,7 +106,7 @@ theorem strictHard_coercive {eps H : ℝ} (x0 : StrictPoint)
   intro B
   let g : ℝ := 2 * eps
   let R : ℝ := |x0 0| + 4 * H + |B| / g + 1
-  have hg : 0 < g := by dsimp [g]; linarith
+  have hg : 0 < g := by dsimp [g]; linarith only [heps]
   have hR : 0 ≤ R := by
     dsimp [R]
     positivity
@@ -116,12 +116,12 @@ theorem strictHard_coercive {eps H : ℝ} (x0 : StrictPoint)
     exact abs_sub_abs_le_abs_sub _ _
   have hlarge : 4 * H + |B| / g + 1 ≤ |x 0 - x0 0| := by
     dsimp [R] at hx
-    linarith
+    linarith only [htriangle, hx]
   have hmul := mul_le_mul_of_nonneg_left hlarge hg.le
   have hcancel : g * (|B| / g) = |B| := by field_simp [ne_of_gt hg]
   have hB : B ≤ g * |x 0 - x0 0| - 4 * g * H := by
     have hBabs : B ≤ |B| := le_abs_self B
-    nlinarith
+    linarith only [hBabs, hcancel, heps, hmul]
   rw [strictHardFamily_eq_hardValue]
   exact hB.trans (by simpa [g] using hardValue_linear_lower heps hH (x 0 - x0 0))
 
@@ -142,7 +142,7 @@ theorem strictHard_uniqueMinimizer {eps H : ℝ} (x0 : StrictPoint)
     have hz := (hardValue_eq_minimizer_iff heps hH (x 0 - x0 0)).mp hscalar
     apply strictPoint_ext
     simp [hardMinimizer]
-    linarith
+    linarith only [hz]
 
 theorem strictHard_exactLipschitz {eps H : ℝ} (x0 : StrictPoint)
     (heps : 0 < eps) (hH : 0 < H) :
@@ -159,7 +159,7 @@ theorem strictHard_exactLipschitz {eps H : ℝ} (x0 : StrictPoint)
     have hb := hL' xH x2H
     have hsH : hardSlope eps H H = -(2 * eps) := hardSlope_of_le le_rfl
     have hs2H : hardSlope eps H (2 * H) = 0 := by
-      rw [hardSlope_of_middle (by linarith : H < 2 * H) (by linarith : 2 * H ≤ 3 * H)]
+      rw [hardSlope_of_middle (by linarith only [hH] : H < 2 * H) (by linarith : 2 * H ≤ 3 * H)]
       field_simp [ne_of_gt hH]
       ring
     have hbound0 : 2 * eps ≤ L' * |H - 2 * H| := by
@@ -173,7 +173,7 @@ theorem strictHard_exactLipschitz {eps H : ℝ} (x0 : StrictPoint)
 
 theorem strictHard_radius (x0 : StrictPoint) {H : ℝ} (hH : 0 < H) :
     |hardMinimizer x0 H 0 - x0 0| = 2 * H := by
-  simp [hardMinimizer, abs_of_pos (by linarith : 0 < 2 * H)]
+  simp [hardMinimizer, abs_of_pos (by linarith only [hH] : 0 < 2 * H)]
 
 /-- Full frozen hard-instance package with the exact choices `L=2 eps/H`,
 `R=2H`, and normalization four. -/
@@ -185,7 +185,7 @@ theorem strictHardInstance (eps : ℝ) (x0 : StrictPoint) (H : ℝ)
     strictHard_coercive x0 heps hH, strictHard_coordinateGradient x0 hH,
     strictHard_uniqueMinimizer x0 heps hH,
     strictHard_exactLipschitz x0 heps hH, ?_, ?_, ?_⟩
-  · exact div_pos (by linarith) hH
+  · exact div_pos (by linarith only [heps]) hH
   · exact (strictHard_radius x0 hH).symm
   · field_simp [ne_of_gt heps, ne_of_gt hH]
     ring

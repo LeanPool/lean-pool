@@ -568,7 +568,7 @@ private theorem Smale.NativeEuclideanEmbedding.normalDisplacement_zero {E M : Ty
     [NormedAddCommGroup E] [NormedSpace ℝ E] [TopologicalSpace M] [ChartedSpace E M]
     (e : Smale.NativeEuclideanEmbedding E M) (x : M) :
     e.normalDisplacement (Bundle.zeroSection e.NormalModel e.NormalSpace x) = e.toFun x := by
-  simp [normalDisplacement, normalVector, Bundle.zeroSection]
+  simp only [normalDisplacement, Bundle.zeroSection, normalVector, ZeroMemClass.coe_zero, add_zero]
 
 private noncomputable def Smale.NativeEuclideanEmbedding.localNormalDisplacement {E M : Type*}
     [NormedAddCommGroup E] [NormedSpace ℝ E] [TopologicalSpace M] [ChartedSpace E M]
@@ -593,7 +593,8 @@ private theorem Smale.NativeEuclideanEmbedding.contMDiff_localNormalDisplacement
 private theorem Smale.NativeEuclideanEmbedding.localNormalDisplacement_zero {E M : Type*}
     [NormedAddCommGroup E] [NormedSpace ℝ E] [TopologicalSpace M] [ChartedSpace E M]
     (e : Smale.NativeEuclideanEmbedding E M) (x₀ x : M) :
-    e.localNormalDisplacement x₀ (x, 0) = e.toFun x := by simp [localNormalDisplacement]
+    e.localNormalDisplacement x₀ (x, 0) = e.toFun x := by simp only [localNormalDisplacement,
+      map_zero, add_zero]
 
 private theorem Smale.NativeEuclideanEmbedding.ambientNormalCoordinates_self {E M : Type*}
     [NormedAddCommGroup E] [NormedSpace ℝ E] [TopologicalSpace M] [ChartedSpace E M]
@@ -623,7 +624,8 @@ private theorem Smale.NativeEuclideanEmbedding.mvfderiv_localNormalDisplacement_
       (e.normalLinearSplitting x).toContinuousLinearMap := by
   apply ContinuousLinearMap.ext
   intro v
-  have hd := (e.contMDiff_localNormalDisplacement x).mdifferentiable (by simp) (x, 0)
+  have hd := (e.contMDiff_localNormalDisplacement x).mdifferentiable (by simp only [ne_eq,
+    WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]) (x, 0)
   have hprod :=
     mfderiv_prod_eq_add_apply (I := 𝓘(ℝ, E)) (I' := 𝓘(ℝ, e.NormalModel)) (I'' :=
       𝓡 e.ambientDimension) (v := v) hd
@@ -941,8 +943,9 @@ private theorem Smale.NativeEuclideanEmbedding.SmoothRetraction.mfderiv_retract_
   have hd :=
     mfderiv_comp x
       ((r.smooth.contMDiffAt (r.open_domain.mem_nhds (r.contains ⟨x, rfl⟩))).mdifferentiableAt
-        (by simp))
-      (e.smooth.mdifferentiableAt (by simp))
+        (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
+      (e.smooth.mdifferentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
+        not_false_eq_true]))
   rw [hr, mfderiv_id] at hd
   exact hd.symm
 
@@ -964,7 +967,8 @@ private theorem Smale.NativeEuclideanEmbedding.contMDiff_embeddedField {E M : Ty
     {V : (x : M) → TangentSpace 𝓘(ℝ, E) x}
     (hV : ContMDiff 𝓘(ℝ, E) (𝓘(ℝ, E).tangent) ∞ (fun x => (⟨x, V x⟩ : TangentBundle 𝓘(ℝ, E) M))) :
     ContMDiff 𝓘(ℝ, E) (𝓡 e.ambientDimension) ∞ (fun x => mvfderiv 𝓘(ℝ, E) e.toFun x (V x)) := by
-  have ht := (e.smooth.contMDiff_tangentMap (m := ∞) (by simp)).comp hV
+  have ht := (e.smooth.contMDiff_tangentMap (m := ∞) (by simp only [ENat.coe_top_add_one,
+    Std.le_refl])).comp hV
   have hp :=
     (contMDiff_tangentBundleModelSpaceHomeomorph (I := 𝓡 e.ambientDimension) (n := ∞)).comp ht
   rw [← modelWithCornersSelf_prod] at hp
@@ -1065,12 +1069,12 @@ private theorem Smale.RegularLevel.mfderiv_transverseCoordinates_time_zero {E M 
   let line : ℝ → EuclideanSpace ℝ (Fin e.ambientDimension) := fun t => e.toFun x + t • A
   have hline : HasFDerivAt line ((ContinuousLinearMap.id ℝ ℝ).smulRight A) 0 :=
     ((ContinuousLinearMap.id ℝ ℝ).smulRight A).hasFDerivAt.const_add (e.toFun x)
-  have hzero : line 0 = e.toFun x := by simp [line]
+  have hzero : line 0 = e.toFun x := by simp only [zero_smul, add_zero, line]
   have hr : MDifferentiableAt (𝓡 e.ambientDimension) 𝓘(ℝ, E) r.toFun (line 0) := by
     rw [hzero]
     exact
       (r.smooth.contMDiffAt (r.open_domain.mem_nhds (r.contains ⟨x, rfl⟩))).mdifferentiableAt
-        (by simp)
+        (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
   change mfderiv 𝓘(ℝ, ℝ) 𝓘(ℝ, E) (r.toFun ∘ line) 0 = _
   rw [mfderiv_comp 0 hr hline.differentiableAt.mdifferentiableAt, mfderiv_eq_fderiv, hline.fderiv,
     hzero]
@@ -1105,7 +1109,8 @@ private theorem
     funext (transverseCoordinates_zero r V)
   apply ContinuousLinearMap.ext
   intro w
-  rw [mfderiv_prod_eq_add_apply (hs.mdifferentiableAt (by simp)), hbase,
+  rw [mfderiv_prod_eq_add_apply (hs.mdifferentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
+    ENat.top_ne_zero, not_false_eq_true])), hbase,
     mfderiv_transverseCoordinates_time_zero r V x]
   rfl
 
@@ -1153,12 +1158,14 @@ private theorem Smale.RegularLevel.hasDerivAt_height_transverseCoordinates_zero 
         (zero_mem_transverseCoordinateDomain r V x))
   have hpair : ContMDiffAt 𝓘(ℝ, ℝ) (𝓘(ℝ, Model E).prod 𝓘(ℝ, ℝ)) ∞ (fun t : ℝ => (x, t)) 0 :=
     contMDiffAt_const.prodMk contMDiffAt_id
-  have hcurve := ((hs.comp 0 hpair).mdifferentiableAt (by simp)).hasMFDerivAt
+  have hcurve := ((hs.comp 0 hpair).mdifferentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
+    ENat.top_ne_zero, not_false_eq_true])).hasMFDerivAt
   change
     HasMFDerivAt 𝓘(ℝ, ℝ) 𝓘(ℝ, E) (fun t : ℝ => transverseCoordinates r V (x, t)) 0
       (mfderiv 𝓘(ℝ, ℝ) 𝓘(ℝ, E) (fun t : ℝ => transverseCoordinates r V (x, t)) 0) at hcurve
   rw [mfderiv_transverseCoordinates_time_zero r V x] at hcurve
-  have hc := (hf.mdifferentiableAt (by simp)).hasMFDerivAt.comp 0 hcurve
+  have hc := (hf.mdifferentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
+    not_false_eq_true])).hasMFDerivAt.comp 0 hcurve
   rw [hasDerivAt_iff_hasFDerivAt]
   apply hasMFDerivAt_iff_hasFDerivAt.mp
   apply hc.congr_mfderiv
@@ -1217,8 +1224,10 @@ private theorem Smale.NativeEuclideanEmbedding.fderiv_comp_eq {E M D : Type*} [N
     fderiv ℝ (e.toFun ∘ f) x =
       (mvfderiv 𝓘(ℝ, E) e.toFun (f x)).comp (mfderiv 𝓘(ℝ, D) 𝓘(ℝ, E) f x) := by
   simpa only [mvfderiv_eq_fderiv] using!
-    (mvfderiv_comp x (e.smooth.mdifferentiableAt (by simp))
-      (hf.mdifferentiableAt (by simp)))
+    (mvfderiv_comp x (e.smooth.mdifferentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
+      ENat.top_ne_zero, not_false_eq_true]))
+      (hf.mdifferentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
+        not_false_eq_true])))
 
 private theorem
     Smale.NativeEuclideanEmbedding.diskTangentImage_le {E M D : Type*} [NormedAddCommGroup E]
@@ -1585,10 +1594,11 @@ private theorem Smale.DiskFraming.exists_smooth_frame_on_neighborhood_closedBall
     (ProperSpace.isCompact_closedBall (0 : E) 1).exists_cthickening_subset_open hU hballU
   have hbU : Metric.closedBall (0 : E) (δ + 1) ⊆ U := by
     simpa only [cthickening_closedBall hδ.le zero_le_one] using hthick
-  have hr : 1 < δ + 1 := by linarith
+  have hr : 1 < δ + 1 := by linarith only [hδ]
   obtain ⟨W, hW, hbW, A, hA, hArange⟩ :=
     exists_smooth_frame_near_starConvex (ProperSpace.isCompact_closedBall (0 : E) (δ + 1))
-      ((convex_closedBall (0 : E) (δ + 1)).starConvex (Metric.mem_closedBall_self (by linarith)))
+      ((convex_closedBall (0 : E) (δ + 1)).starConvex (Metric.mem_closedBall_self (by linarith
+        only [hδ])))
       hU hbU P (fun x hx => hP x (hbU hx)) hs
   refine
     ⟨W ∩ Metric.ball 0 (δ + 1), hW.inter Metric.isOpen_ball, ?_, ?_, A,
@@ -1687,7 +1697,7 @@ private def Smale.DiskFraming.displacement {D Z F : Type*} [NormedAddCommGroup Z
 
 private theorem Smale.DiskFraming.displacement_zero {D Z F : Type*} [NormedAddCommGroup Z]
     [NormedSpace ℝ Z] [NormedAddCommGroup F] [NormedSpace ℝ F] (H : D → F) (A : D → Z →L[ℝ] F)
-    (x : D) : displacement H A (x, 0) = H x := by simp [displacement]
+    (x : D) : displacement H A (x, 0) = H x := by simp only [displacement, map_zero, add_zero]
 
 private theorem Smale.DiskFraming.contDiffOn_displacement {D Z F : Type*} [NormedAddCommGroup D]
     [NormedSpace ℝ D] [NormedAddCommGroup Z] [NormedSpace ℝ Z] [NormedAddCommGroup F]
@@ -1709,11 +1719,13 @@ private theorem
   have h₁ :
     HasFDerivAt (fun p : D × Z => H p.1) ((fderiv ℝ H x).comp (ContinuousLinearMap.fst ℝ D Z))
       (x, 0) :=
-    (hH.differentiableAt (by simp)).hasFDerivAt.comp (x, 0) hfst
+    (hH.differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
+      not_false_eq_true])).hasFDerivAt.comp (x, 0) hfst
   have h₂ :
     HasFDerivAt (fun p : D × Z => A p.1) ((fderiv ℝ A x).comp (ContinuousLinearMap.fst ℝ D Z))
       (x, 0) :=
-    (hA.differentiableAt (by simp)).hasFDerivAt.comp (x, 0) hfst
+    (hA.differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
+      not_false_eq_true])).hasFDerivAt.comp (x, 0) hfst
   have h := h₁.add (h₂.clm_apply hsnd)
   apply h.congr_fderiv
   apply ContinuousLinearMap.ext
@@ -1796,7 +1808,7 @@ private theorem Smale.NativeEuclideanEmbedding.SmoothRetraction.mfderiv_diskCoor
     rw [Smale.DiskFraming.displacement_zero]
     exact
       (r.smooth.contMDiffAt (r.open_domain.mem_nhds (r.contains ⟨f x, rfl⟩))).mdifferentiableAt
-        (by simp)
+        (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
   rw [diskCoordinates, mfderiv_comp (x, 0) hr hd.differentiableAt.mdifferentiableAt,
     mfderiv_eq_fderiv, hd.fderiv, Smale.DiskFraming.displacement_zero]
   rfl
@@ -2153,7 +2165,8 @@ private theorem
   have hi : Function.Injective (ContinuousLinearMap.id ℝ E + fderiv ℝ u x) :=
     injective_id_add (fderiv ℝ u x).lipschitzWith hnn
   have hd : fderiv ℝ (fun y => y + u y) x = ContinuousLinearMap.id ℝ E + fderiv ℝ u x :=
-    ((hasFDerivAt_id x).add (hs.contDiffAt.differentiableAt (by simp)).hasFDerivAt).fderiv
+    ((hasFDerivAt_id x).add (hs.contDiffAt.differentiableAt (by simp only [ne_eq,
+      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])).hasFDerivAt).fderiv
   rw [hd]
   let L :=
     (LinearEquiv.ofInjectiveEndo (ContinuousLinearMap.id ℝ E + fderiv ℝ u x).toLinearMap
@@ -2215,7 +2228,8 @@ private theorem
           ‖a‖ < ε →
             ∃ d : Diffeomorph 𝓘(ℝ, E) 𝓘(ℝ, E) E E ∞,
               (∀ x, d x = x + β x • a) ∧ ∀ x ∉ tsupport β, d x = x := by
-  obtain ⟨k, hk⟩ := ContDiff.lipschitzWith_of_hasCompactSupport hcompact hs (by simp)
+  obtain ⟨k, hk⟩ := ContDiff.lipschitzWith_of_hasCompactSupport hcompact hs (by simp only [ne_eq,
+    WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
   have hkpos : 0 < (k : ℝ) + 1 := by positivity
   refine ⟨((k : ℝ) + 1)⁻¹, inv_pos.mpr hkpos, ?_⟩
   intro a ha
@@ -2224,7 +2238,7 @@ private theorem
       ((k : ℝ) + 1) * ‖a‖ < ((k : ℝ) + 1) * ((k : ℝ) + 1)⁻¹ := mul_lt_mul_of_pos_left ha hkpos
       _ = 1 := mul_inv_cancel₀ hkpos.ne'
   have hsmall : k * ‖a‖₊ < 1 := by
-    have hreal : (k : ℝ) * ‖a‖ < 1 := by nlinarith [norm_nonneg a]
+    have hreal : (k : ℝ) * ‖a‖ < 1 := by linarith only [hmul, norm_nonneg a]
     exact hreal
   refine ⟨bumpTranslation hs hk a hsmall, fun _ => rfl, ?_⟩
   intro x hx
@@ -2405,7 +2419,7 @@ private theorem Smale.RegularLevel.le_shift_iff_of_abs_sub_ge {u b t ε : ℝ} (
     (hu : ε ≤ |u - b|) : u ≤ b + t ↔ u ≤ b := by
   by_cases hbelow : u ≤ b
   · rw [abs_of_nonpos (sub_nonpos.mpr hbelow)] at hu
-    exact ⟨fun _ => hbelow, fun _ => by linarith [(abs_lt.mp ht).1]⟩
+    exact ⟨fun _ => hbelow, fun _ => by linarith only [ht, hu, (abs_lt.mp ht).1]⟩
   · have habove : b ≤ u := le_of_not_ge hbelow
     rw [abs_of_nonneg (sub_nonneg.mpr habove)] at hu
     constructor <;> intro hh <;> exfalso <;> linarith [(abs_lt.mp ht).2]
@@ -2468,7 +2482,7 @@ private theorem Smale.RegularLevel.exists_ambientTransport_of_heightCollar {E M 
   obtain ⟨d, hd, hdfix⟩ := htranslations t htη
   have hd0 : d 0 = t := by
     rw [hd 0, hβ0]
-    simp
+    simp only [smul_eq_mul, one_mul, zero_add]
   have hdfar (s : ℝ) (hs : ε ≤ s) : d s = s := by
     apply hdfix
     intro hsupps
@@ -2479,9 +2493,9 @@ private theorem Smale.RegularLevel.exists_ambientTransport_of_heightCollar {E M 
   have hdmono : StrictMono d := by
     rcases d.contMDiff.continuous.strictMono_of_inj d.injective with hm | ha
     · exact hm
-    · have hh := ha (show ε < ε + 1 by linarith)
-      rw [hdfar ε le_rfl, hdfar (ε + 1) (by linarith)] at hh
-      linarith
+    · have hh := ha (show ε < ε + 1 by linarith only [])
+      rw [hdfar ε le_rfl, hdfar (ε + 1) (by linarith only [])] at hh
+      linarith only [hh]
   let P := (Diffeomorph.refl 𝓘(ℝ, Model E) { x : M // f x = b } ∞).prodCongr d
   have hPfix : ∀ z, z ∉ C → P z = z := by
     intro z hz
@@ -2544,11 +2558,11 @@ private theorem Smale.RegularLevel.exists_ambientTransport_of_heightCollar {E M 
         rw [hfd, hfy]
         constructor
         · intro hh
-          have hz0 := horder.mp (by linarith)
-          linarith
+          have hz0 := horder.mp (by linarith only [hh])
+          linarith only [hz0]
         · intro hh
-          have hdz := horder.mpr (by linarith)
-          linarith
+          have hdz := horder.mpr (by linarith only [hh])
+          linarith only [hdz]
       · have hDy : D y = y :=
           Smale.SupportedDiffeomorph.extension_eq_of_notMem_target Ψ P hC hCsource hPfix hy
         rw [hDy]
@@ -2907,7 +2921,7 @@ private theorem
     (S : Smale.ManifoldMorse.SurgeryWindows E f) (p : Smale.ManifoldMorse.criticalPoints E f) :
     S.lower p < f p := by
   dsimp [Smale.ManifoldMorse.SurgeryWindows.lower]
-  nlinarith [(S.data p).radius_pos]
+  nlinarith only [(S.data p).radius_pos]
 
 private theorem
     Smale.ManifoldMorse.SurgeryWindows.value_lt_upper {E M : Type*} [NormedAddCommGroup E]
@@ -2915,7 +2929,7 @@ private theorem
     (S : Smale.ManifoldMorse.SurgeryWindows E f) (p : Smale.ManifoldMorse.criticalPoints E f) :
     f p < S.upper p := by
   dsimp [Smale.ManifoldMorse.SurgeryWindows.upper]
-  nlinarith [(S.data p).radius_pos]
+  nlinarith only [(S.data p).radius_pos]
 
 private theorem
     Smale.ManifoldMorse.SurgeryWindows.upper_lt_lower {E M : Type*} [NormedAddCommGroup E]
@@ -2980,11 +2994,11 @@ private theorem Smale.ManifoldMorse.nonempty_surgeryWindows {E M : Type*} [Norme
   intro p q hpq
   have hp : (d p).radius ^ 2 < (r p) ^ 2 := by
     have h := mul_pos (sub_pos.mpr (hd p)) (add_pos (hr p) (d p).radius_pos)
-    nlinarith
+    linarith only [h]
   have hq : (d q).radius ^ 2 < (r q) ^ 2 := by
     have h := mul_pos (sub_pos.mpr (hd q)) (add_pos (hr q) (d q).radius_pos)
-    nlinarith
-  linarith [hgap p q hpq]
+    linarith only [h]
+  linarith only [hgap, hpq, hp, hq, hgap p q hpq]
 
 attribute [local instance 100] Classical.propDecidable in
 private structure AdaptedWindows (E : Type*) [NormedAddCommGroup E] [NormedSpace ℝ E] {M : Type*}
@@ -3026,13 +3040,13 @@ private theorem MorseCancel.nonempty_adaptedSurgeryWindows {E M : Type*} [Normed
         (fun x hx hfx => hinj hx p.property hfx) (div_pos (hr p) (by norm_num))
   choose d hd hisolated using hex
   have hsq (p : Smale.ManifoldMorse.criticalPoints E f) : 9 * (d p).radius ^ 2 < (r p) ^ 2 := by
-    have hsmall : 3 * (d p).radius < r p := by linarith [hd p]
+    have hsmall : 3 * (d p).radius < r p := by linarith only [hd, hd p]
     have hsum : 0 < r p + 3 * (d p).radius :=
       add_pos (hr p) (mul_pos (by norm_num) (d p).radius_pos)
-    nlinarith [mul_pos (sub_pos.mpr hsmall) hsum]
+    linarith only [hsmall, hsum, mul_pos (sub_pos.mpr hsmall) hsum]
   have hwide (p q : Smale.ManifoldMorse.criticalPoints E f) (hpq : f p < f q) :
     f p + 9 * (d p).radius ^ 2 < f q - 9 * (d q).radius ^ 2 := by
-    linarith [hgap p q hpq, hsq p, hsq q]
+    linarith only [hgap, hsq, hpq, hgap p q hpq, hsq p, hsq q]
   have hintervals :
     Pairwise
       (fun p q : Smale.ManifoldMorse.criticalPoints E f =>
@@ -3043,8 +3057,8 @@ private theorem MorseCancel.nonempty_adaptedSurgeryWindows {E M : Type*} [Normed
     apply Set.disjoint_left.mpr
     intro x hx hy
     rcases lt_or_gt_of_ne hne with hlt | hgt
-    · linarith [hwide p q hlt, hx.2, hy.1]
-    · linarith [hwide q p hgt, hy.2, hx.1]
+    · linarith only [hwide, hx, hy, hlt, hwide p q hlt, hx.2, hy.1]
+    · linarith only [hwide, hx, hy, hgt, hwide q p hgt, hy.2, hx.1]
   obtain ⟨V, F, hV, hF, hzero, hdesc, hmodel⟩ :=
     exists_disjoint_surgery_block_field hf hm
       (fun p : Smale.ManifoldMorse.criticalPoints E f => p.val) (fun p => p.property)
@@ -3064,7 +3078,7 @@ private theorem MorseCancel.nonempty_adaptedSurgeryWindows {E M : Type*} [Normed
         descent := hdesc
         model_germ := hmodel }⟩
   intro p q hpq
-  nlinarith [hwide p q hpq, sq_nonneg (d p).radius, sq_nonneg (d q).radius]
+  linarith only [hwide, hpq, hwide p q hpq, sq_nonneg (d p).radius, sq_nonneg (d q).radius]
 
 private theorem MorseCancel.exists_forward_morse_model_exit {N P : Type*} [NormedAddCommGroup N]
     [NormedSpace ℝ N] [NormedAddCommGroup P] [NormedSpace ℝ P] {r : ℝ} (hr : 0 < r) {z : N × P}
@@ -3101,7 +3115,7 @@ private theorem MorseCancel.exists_forward_morse_model_exit {N P : Type*} [Norme
         0
     rw [hnorm]
     have hs := (sq_lt_sq₀ (norm_nonneg _) hr.le).mpr hsmall
-    linarith
+    linarith only [hs]
 
 private theorem MorseCancel.exists_backward_morse_model_exit {N P : Type*} [NormedAddCommGroup N]
     [NormedSpace ℝ N] [NormedAddCommGroup P] [NormedSpace ℝ P] {r : ℝ} (hr : 0 < r) {z : N × P}
@@ -3139,7 +3153,7 @@ private theorem MorseCancel.exists_backward_morse_model_exit {N P : Type*} [Norm
         -‖(Smale.MorseHandle.descentFlow T z).1‖ ^ 2 + ‖(Smale.MorseHandle.descentFlow T z).2‖ ^ 2
     rw [hnorm]
     have hs := (sq_lt_sq₀ (norm_nonneg _) hr.le).mpr (hsmall T hT.le)
-    linarith
+    linarith only [hs]
 
 attribute [local instance 100] Classical.propDecidable in
 private theorem MorseCancel.exists_native_morse_field_block {E M : Type*} [NormedAddCommGroup E]
@@ -3223,7 +3237,7 @@ private theorem MorseCancel.exists_native_forward_morse_exit {E M : Type*} [Norm
     -‖(Smale.MorseHandle.descentFlow T (c.splitChart x)).1‖ ^ 2 +
         ‖(Smale.MorseHandle.descentFlow T (c.splitChart x)).2‖ ^ 2 <
       0 at hheight
-  linarith
+  linarith only [hheight]
 
 attribute [local instance 100] Classical.propDecidable in
 private theorem MorseCancel.exists_native_backward_morse_exit {E M : Type*} [NormedAddCommGroup E]
@@ -3260,7 +3274,7 @@ private theorem MorseCancel.exists_native_backward_morse_exit {E M : Type*} [Nor
     0 <
       -‖(Smale.MorseHandle.descentFlow T (c.splitChart x)).1‖ ^ 2 +
         ‖(Smale.MorseHandle.descentFlow T (c.splitChart x)).2‖ ^ 2 at hheight
-  linarith
+  linarith only [hheight]
 
 attribute [local instance 100] Classical.propDecidable in
 private theorem MorseCancel.native_morse_positive_plane_limit {E M : Type*} [NormedAddCommGroup E]
@@ -3475,7 +3489,7 @@ private theorem
     apply hblock
     constructor
     · rw [mem_closedBall_zero_iff, hn]
-      linarith
+      linarith only [hr]
     · rw [mem_closedBall_zero_iff, norm_zero]
       positivity
   have hcoord :
@@ -3487,7 +3501,8 @@ private theorem
     native_morse_negative_plane_limit c hV F hF (x :=
       c.splitChart.symm (r • (u : c.NegativeCoordinates), (0 : c.PositiveCoordinates)))
       (show 0 < 2 * r by positivity) hblock hfield (c.splitChart.map_target' hcoords)
-      (by rw [hcoord]; change ‖r • (u : c.NegativeCoordinates)‖ < 2 * r; rw [hn]; linarith)
+      (by rw [hcoord]; change ‖r • (u : c.NegativeCoordinates)‖ < 2 * r; rw [hn]; linarith only
+        [hr])
       (by rw [hcoord])
   simpa only [c.attachingCoreMap_coe] using hh
 
@@ -3520,7 +3535,7 @@ private theorem MorseCancel.native_belt_core_forward_limit {E M : Type*} [Normed
     · rw [mem_closedBall_zero_iff, norm_zero]
       positivity
     · rw [mem_closedBall_zero_iff, hn]
-      linarith
+      linarith only [hr]
   have hcoord :
     c.splitChart
         (c.splitChart.symm ((0 : c.NegativeCoordinates), r • (v : c.PositiveCoordinates))) =
@@ -3530,7 +3545,8 @@ private theorem MorseCancel.native_belt_core_forward_limit {E M : Type*} [Normed
     native_morse_positive_plane_limit c hV F hF (x :=
       c.splitChart.symm ((0 : c.NegativeCoordinates), r • (v : c.PositiveCoordinates)))
       (show 0 < 2 * r by positivity) hblock hfield (c.splitChart.map_target' hcoords)
-      (by rw [hcoord]; change ‖r • (v : c.PositiveCoordinates)‖ < 2 * r; rw [hn]; linarith)
+      (by rw [hcoord]; change ‖r • (v : c.PositiveCoordinates)‖ < 2 * r; rw [hn]; linarith only
+        [hr])
       (by rw [hcoord])
   simpa only [c.beltCoreMap_coe] using hh
 
@@ -3566,7 +3582,7 @@ private theorem MorseCancel.native_attaching_core_flow {E M : Type*} [NormedAddC
     constructor
     · rw [mem_closedBall_zero_iff, Smale.MorseHandle.norm_descentFlow_fst, hn]
       have hh := mul_le_mul_of_nonneg_right (Real.exp_le_one_iff.mpr hs) hr.le
-      nlinarith
+      linarith only [hr, hh]
     · rw [mem_closedBall_zero_iff, Smale.MorseHandle.norm_descentFlow_snd]
       change Real.exp (-s) * ‖(0 : c.PositiveCoordinates)‖ ≤ 2 * r
       simp only [norm_zero, MulZeroClass.mul_zero]
@@ -3620,7 +3636,7 @@ private theorem
       positivity
     · rw [mem_closedBall_zero_iff, Smale.MorseHandle.norm_descentFlow_snd, hn]
       have hh := mul_le_mul_of_nonneg_right (Real.exp_le_one_iff.mpr (neg_nonpos.mpr hs)) hr.le
-      nlinarith
+      linarith only [hr, hh]
   have hz : z ∈ c.splitChart.target := by
     have hh := hblock (hstay 0 le_rfl)
     simpa only [Flow.map_zero_apply] using hh
@@ -3675,7 +3691,7 @@ private theorem
   apply hball
   rw [Real.dist_eq, sub_zero, abs_lt]
   have ht' := interior_subset ht
-  constructor <;> linarith [ht'.1, ht'.2]
+  constructor <;> linarith only [hr, ht', ht'.1, ht'.2]
 
 private theorem Degree.FlowCancellation.exists_local_strict_sublevel_entry {X : Type*}
     [TopologicalSpace X] (F : Flow ℝ X) {f D : X → ℝ} (hf : Continuous f) (hD : Continuous D)
@@ -3693,13 +3709,13 @@ private theorem Degree.FlowCancellation.exists_local_strict_sublevel_entry {X : 
     intro t ht
     apply hball
     rw [Real.dist_eq, sub_zero, abs_of_pos ht.1]
-    linarith [ht.2]
+    linarith only [hr, ht, ht.2]
   · obtain ⟨ε, hε, hanti⟩ := exists_local_strict_flow_descent F hf hD hder (hboundary x hx)
     refine ⟨ε, hε, ?_⟩
     intro t ht
     have hh :=
-      hanti (show (0 : ℝ) ∈ Set.Icc (-ε) ε from ⟨by linarith, hε.le⟩)
-        (show t ∈ Set.Icc (-ε) ε from ⟨by linarith [ht.1], ht.2⟩) ht.1
+      hanti (show (0 : ℝ) ∈ Set.Icc (-ε) ε from ⟨by linarith only [hε], hε.le⟩)
+        (show t ∈ Set.Icc (-ε) ε from ⟨by linarith only [hε, ht, ht.1], ht.2⟩) ht.1
     simpa only [F.map_zero_apply, hx] using hh
 
 private theorem Degree.FlowCancellation.forwardInvariant_sublevel_of_boundary {X : Type*}
@@ -3843,19 +3859,22 @@ private theorem Smale.FlowConstruction.scalar_height_translation {φ γ : ℝ �
   let V : (x : ℝ) → TangentSpace 𝓘(ℝ, ℝ) x := fun x => (NormedSpace.fromTangentSpace x).symm (φ x)
   have hV :
     ContMDiff 𝓘(ℝ, ℝ) (𝓘(ℝ, ℝ).tangent) 1 (fun x => (⟨x, V x⟩ : TangentBundle 𝓘(ℝ, ℝ) ℝ)) :=
-    contMDiff_vectorSpace_iff_contDiff.mpr (hφ.of_le (by simp))
+    contMDiff_vectorSpace_iff_contDiff.mpr (hφ.of_le (by simp only [WithTop.le_coe_top, ne_eq,
+      WithTop.one_ne_top, not_false_eq_true]))
   have hactual : IsMIntegralCurveOn γ V (Set.Ioo (l - c) (u - c)) := by
     intro s hs
     exact (hγ s).hasFDerivAt.hasMFDerivAt.hasMFDerivWithinAt
   have hlinear : IsMIntegralCurveOn (fun s => c + s) V (Set.Ioo (l - c) (u - c)) := by
     intro s hs
-    have hcs : c + s ∈ W := hlu ⟨by linarith [hs.1], by linarith [hs.2]⟩
+    have hcs : c + s ∈ W := hlu ⟨by linarith only [hs, hs.1], by linarith only [hs, hs.2]⟩
     have hd : HasDerivAt (fun r => c + r) (φ (c + s)) s := by
       rw [hφW hcs]
       exact (hasDerivAt_id s).const_add c
     exact hd.hasFDerivAt.hasMFDerivAt.hasMFDerivWithinAt
-  have hzero : (0 : ℝ) ∈ Set.Ioo (l - c) (u - c) := ⟨by linarith [hc.1], by linarith [hc.2]⟩
-  have htime : t ∈ Set.Ioo (l - c) (u - c) := ⟨by linarith [ht.1], by linarith [ht.2]⟩
+  have hzero : (0 : ℝ) ∈ Set.Ioo (l - c) (u - c) := ⟨by linarith only [hc, hl, hc.1],
+    by linarith only [hc, hu, hc.2]⟩
+  have htime : t ∈ Set.Ioo (l - c) (u - c) := ⟨by linarith only [ht, hl, ht.1],
+    by linarith only [ht, hu, ht.2]⟩
   exact
     isMIntegralCurveOn_Ioo_eqOn_of_contMDiff_boundaryless hzero hV hactual hlinear
       (by simpa only [add_zero] using hγ₀) htime
@@ -3877,7 +3896,8 @@ private theorem MorseCancel.contMDiff_directionalDerivative {E M : Type*} [Norme
     {V : (x : M) → TangentSpace 𝓘(ℝ, E) x} (hf : ContMDiff 𝓘(ℝ, E) 𝓘(ℝ, ℝ) ∞ f)
     (hV : ContMDiff 𝓘(ℝ, E) (𝓘(ℝ, E).tangent) ∞ (fun x => (⟨x, V x⟩ : TangentBundle 𝓘(ℝ, E) M))) :
     ContMDiff 𝓘(ℝ, E) 𝓘(ℝ, ℝ) ∞ (fun x => mvfderiv 𝓘(ℝ, E) f x (V x)) := by
-  have ht := (hf.contMDiff_tangentMap (m := ∞) (by simp)).comp hV
+  have ht := (hf.contMDiff_tangentMap (m := ∞) (by simp only [ENat.coe_top_add_one,
+    Std.le_refl])).comp hV
   exact (contMDiff_snd_tangentBundle_modelSpace ℝ 𝓘(ℝ, ℝ)).comp ht
 
 private theorem MorseCancel.contMDiff_supported_division {E M : Type*} [NormedAddCommGroup E]
@@ -3928,7 +3948,9 @@ private def
 
 private theorem MorseCancel.differential_apply {m : ℕ} (σ : Fin m → ℝ) (t : ℝ) (p v : Model m) :
     differential σ t p v = (p.1 ^ 2 + t) * v.1 + ∑ i, 2 * σ i * p.2 i * v.2 i := by
-  simp [differential]
+  simp only [differential, add_apply, smul_apply, ContinuousLinearMap.coe_fst', smul_eq_mul,
+    sum_apply,
+      ContinuousLinearMap.comp_apply, ContinuousLinearMap.coe_snd', ContinuousLinearMap.proj_apply]
 
 private theorem MorseCancel.contDiff_cubic_family {m : ℕ} (σ : Fin m → ℝ) :
     ContDiff ℝ ∞ (fun p : ℝ × Model m => cubic σ p.1 p.2) := by
@@ -3948,7 +3970,9 @@ private theorem MorseCancel.hasFDerivAt_cubic {m : ℕ} (σ : Fin m → ℝ) (t 
   have hq := HasFDerivAt.fun_sum (u := Finset.univ) (fun i _ => ((hy i).pow 2).const_mul (σ i))
   convert! (((hx.pow 3).mul_const (1 / 3)).add (hx.const_mul t)).add hq using 1
   · funext q
-    simp [cubic, div_eq_mul_inv]
+    simp only [cubic, div_eq_mul_inv, ContinuousLinearMap.coe_fst', one_mul,
+      ContinuousLinearMap.comp_apply,
+        ContinuousLinearMap.coe_snd', ContinuousLinearMap.proj_apply, Pi.add_apply]
   · apply ContinuousLinearMap.ext
     intro v
     simp [differential]
@@ -3973,24 +3997,28 @@ private theorem MorseCancel.critical_iff {m : ℕ} (σ : Fin m → ℝ) (hσ : �
   · rintro ⟨hx, hy⟩
     apply ContinuousLinearMap.ext
     intro v
-    simp [differential_apply, hx, hy]
+    simp only [differential_apply, hx, zero_mul, hy, Pi.zero_apply, mul_zero,
+      Finset.sum_const_zero, add_zero,
+        zero_apply]
 
 private theorem MorseCancel.cubic_zero_unique_critical {m : ℕ} (σ : Fin m → ℝ) (hσ : ∀ i, σ i ≠ 0)
     (p : Model m) : fderiv ℝ (cubic σ 0) p = 0 ↔ p = 0 := by
   rw [critical_iff σ hσ]
   constructor
   · rintro ⟨hx, hy⟩
-    have hx' : p.1 = 0 := by nlinarith [sq_nonneg p.1]
+    have hx' : p.1 = 0 := by nlinarith only [hx, sq_nonneg p.1]
     exact Prod.ext hx' hy
   · rintro rfl
-    simp
+    simp only [Prod.fst_zero, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow, add_zero,
+      Prod.snd_zero,
+        and_self]
 
 private theorem
     MorseCancel.positive_parameter_no_critical {m : ℕ} (σ : Fin m → ℝ) (hσ : ∀ i, σ i ≠ 0)
     {t : ℝ} (ht : 0 < t) (p : Model m) : fderiv ℝ (cubic σ t) p ≠ 0 := by
   intro h
   have hx := ((critical_iff σ hσ t p).mp h).1
-  nlinarith [sq_nonneg p.1]
+  linarith only [ht, hx, sq_nonneg p.1]
 
 private theorem
     MorseCancel.negative_parameter_critical_iff {m : ℕ} (σ : Fin m → ℝ) (hσ : ∀ i, σ i ≠ 0)
@@ -3999,10 +4027,10 @@ private theorem
   constructor
   · rintro ⟨hx, hy⟩
     have hs : p.1 = a ∨ p.1 = -a := by
-      have he : (p.1 - a) * (p.1 + a) = 0 := by nlinarith
+      have he : (p.1 - a) * (p.1 + a) = 0 := by linarith only [hx]
       rcases mul_eq_zero.mp he with h | h
-      · exact Or.inl (by linarith)
-      · exact Or.inr (by linarith)
+      · exact Or.inl (by linarith only [h])
+      · exact Or.inr (by linarith only [h])
     exact hs.elim (fun h => Or.inl (Prod.ext h hy)) (fun h => Or.inr (Prod.ext h hy))
   · rintro (rfl | rfl) <;> simp
 
@@ -4025,7 +4053,7 @@ private theorem MorseCancel.endpoint_mem_domain {a : ℝ} (ha : 0 < a) (e : ℝ)
 
 private theorem
     MorseCancel.endpointCoordinate_center (a e : ℝ) : endpointCoordinate a e (e * a) = 0 := by
-  simp [endpointCoordinate]
+  simp only [endpointCoordinate, sub_self, mul_zero, zero_div, add_zero, zero_mul]
 
 private theorem MorseCancel.contDiffOn_endpointCoordinate (a e : ℝ) :
     ContDiffOn ℝ ∞ (endpointCoordinate a e) (endpointDomain a e) := by
@@ -4043,7 +4071,8 @@ private theorem MorseCancel.hasDerivAt_endpointCoordinate {a : ℝ} (ha : 0 < a)
       ((((hasDerivAt_id (e * a)).sub_const (e * a)).const_mul e).div_const 3 |>.const_add
           a |>.sqrt
         (by simpa using ha.ne'))
-  convert! hd using 1; simp []
+  convert! hd using 1; simp only [id_eq, sub_self, mul_zero, zero_div, add_zero, one_mul, mul_one,
+    zero_mul]
 
 private theorem MorseCancel.cubic_endpoint_square {m : ℕ} (σ : Fin m → ℝ) (a e : ℝ) (he : e ^ 2 = 1)
     {p : Model m} (hp : p.1 ∈ endpointDomain a e) :
@@ -4122,14 +4151,15 @@ private theorem
     [NormedSpace ℝ E] [NormedAddCommGroup B] [NormedSpace ℝ B] [TopologicalSpace H]
     {I : ModelWithCorners ℝ B H} [TopologicalSpace M] [ChartedSpace H M]
     (Φ : PartialDiffeomorph 𝓘(ℝ, E) I E M ∞) (f : M → ℝ) (b : E → ℝ) {y : M} (hy : y ∈ Φ.target) :
-    replace Φ f b y = b (Φ.symm y) := by simp [replace, hy]
+    replace Φ f b y = b (Φ.symm y) := by simp only [replace, hy, ↓reduceIte,
+      PartialDiffeomorph.symm_toPartialEquiv]
 
 private theorem
     Degree.LocalFunctionReplacement.replace_of_notMem {E B H M : Type*} [NormedAddCommGroup E]
     [NormedSpace ℝ E] [NormedAddCommGroup B] [NormedSpace ℝ B] [TopologicalSpace H]
     {I : ModelWithCorners ℝ B H} [TopologicalSpace M] [ChartedSpace H M]
     (Φ : PartialDiffeomorph 𝓘(ℝ, E) I E M ∞) (f : M → ℝ) (b : E → ℝ) {y : M} (hy : y ∉ Φ.target) :
-    replace Φ f b y = f y := by simp [replace, hy]
+    replace Φ f b y = f y := by simp only [replace, hy, ↓reduceIte]
 
 private theorem
     Degree.LocalFunctionReplacement.replace_chart {E B H M : Type*} [NormedAddCommGroup E]
@@ -4209,10 +4239,13 @@ private theorem Degree.LocalFunctionReplacement.replace_critical_iff {E B H M : 
     (Φ : PartialDiffeomorph 𝓘(ℝ, E) I E M ∞) (f : M → ℝ) {b : E → ℝ} (hb : ContDiff ℝ ∞ b) {y : M}
     (hy : y ∈ Φ.target) : mfderiv I 𝓘(ℝ, ℝ) (replace Φ f b) y = 0 ↔ fderiv ℝ b (Φ.symm y) = 0 := by
   have hΦ : IsLocalDiffeomorphAt I 𝓘(ℝ, E) ∞ Φ.symm y := ⟨Φ.symm, hy, fun _ _ => rfl⟩
-  have hsurj := (hΦ.mfderivToContinuousLinearEquiv (by simp)).surjective
+  have hsurj := (hΦ.mfderivToContinuousLinearEquiv (by simp only [ne_eq, WithTop.coe_eq_zero,
+    ENat.top_ne_zero, not_false_eq_true])).surjective
   rw [(replace_germ_chart Φ f b hy).mfderiv_eq',
-    mfderiv_comp y (hb.contMDiff.mdifferentiableAt (by simp))
-      (Φ.symm.mdifferentiableAt (by simp) hy),
+    mfderiv_comp y (hb.contMDiff.mdifferentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
+      ENat.top_ne_zero, not_false_eq_true]))
+      (Φ.symm.mdifferentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
+        not_false_eq_true]) hy),
     mfderiv_eq_fderiv]
   constructor
   · intro h
@@ -4248,11 +4281,11 @@ private theorem MorseCancel.cubicDescent_strict {m : ℕ} (σ : Fin m → ℝ) {
   rw [fderiv_cubic, differential_cubicDescent]
   by_contra hh
   have hsum : 0 ≤ ∑ i, (σ i * p.2 i) ^ 2 := Finset.sum_nonneg (fun _ _ => sq_nonneg _)
-  have hx : p.1 ^ 2 + t = 0 := by nlinarith [sq_nonneg (p.1 ^ 2 + t)]
+  have hx : p.1 ^ 2 + t = 0 := by nlinarith only [hh, hsum, sq_nonneg (p.1 ^ 2 + t)]
   have hz : (∑ i, (σ i * p.2 i) ^ 2) = 0 := by
     have hle := le_of_not_gt hh
     rw [hx] at hle
-    linarith
+    linarith only [hsum, hle]
   have hy (i : Fin m) : σ i * p.2 i = 0 := by
     have hi :=
       (Finset.sum_eq_zero_iff_of_nonneg (fun i _ => sq_nonneg (σ i * p.2 i))).mp hz i
@@ -4282,7 +4315,7 @@ private theorem
     have hi := congrArg (fun L : Model m →L[ℝ] ℝ => L (0, Pi.single i 1)) hp
     have hi' : 2 * σ i * p.2 i = 0 := by simpa [differential_apply, Pi.single_apply] using hi
     change -σ i * p.2 i = 0
-    nlinarith
+    linarith only [hi']
 
 private def
     MorseCancel.nativeCubicDescent {m : ℕ} (σ : Fin m → ℝ) {B M : Type*} [NormedAddCommGroup B]
@@ -4307,10 +4340,11 @@ private theorem MorseCancel.endpointField_mem_domain {a : ℝ} (ha : 0 < a) {e :
   change 0 < a + e * (e * a)
   have h : e * (e * a) = a := by rw [← mul_assoc, ← pow_two, he, one_mul]
   rw [h]
-  linarith
+  linarith only [ha]
 
 private theorem MorseCancel.endpointFieldCoordinate_center (a e : ℝ) :
-    endpointFieldCoordinate a e (e * a) = 0 := by simp [endpointFieldCoordinate]
+    endpointFieldCoordinate a e (e * a) = 0 := by simp only [endpointFieldCoordinate, sub_self,
+      zero_div]
 
 private theorem MorseCancel.contDiffOn_endpointFieldCoordinate (a e : ℝ) :
     ContDiffOn ℝ ∞ (endpointFieldCoordinate a e) (endpointFieldDomain a e) := by
@@ -4407,7 +4441,7 @@ private theorem MorseCancel.exists_endpoint_field_product_chart {m : ℕ} (σ : 
     exact Prod.ext (congrFun hQ p.1) rfl
   refine ⟨P, ⟨hq, Set.mem_univ _⟩, ?_, hP, ?_⟩
   · rw [hP]
-    simp [endpointFieldProduct, endpointFieldCoordinate_center]
+    simp only [endpointFieldProduct, endpointFieldCoordinate_center, Prod.mk_eq_zero, and_self]
   · intro p hp
     rw [hP]
     exact fderiv_endpointFieldProduct_cubic σ a he (hsub hp.1)
@@ -4424,7 +4458,9 @@ private theorem
   have hxQ : x ∈ Q.target := hx.1
   have hxP : Q.symm x ∈ P.target := hx.2
   have hdiff : P.symm.toOpenPartialHomeomorph.MDifferentiable 𝓘(ℝ, F) 𝓘(ℝ, D) :=
-    ⟨P.symm.mdifferentiableOn (by simp), P.mdifferentiableOn (by simp)⟩
+    ⟨P.symm.mdifferentiableOn (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
+      not_false_eq_true]), P.mdifferentiableOn (by simp only [ne_eq, WithTop.coe_eq_zero,
+      ENat.top_ne_zero, not_false_eq_true])⟩
   have hinv : (mfderivWithin 𝓘(ℝ, F) 𝓘(ℝ, D) P.symm Set.univ (Q.symm x)).IsInvertible := by
     rw [mfderivWithin_univ]
     exact ⟨hdiff.mfderiv hxP, rfl⟩
@@ -4432,7 +4468,8 @@ private theorem
     VectorField.mpullbackWithin_comp_of_left (I := 𝓘(ℝ, E)) (I' := 𝓘(ℝ, F)) (I'' := 𝓘(ℝ, D)) (f :=
       (Q.symm : M → F)) (g := (P.symm : F → D)) (V := fun y =>
       (NormedSpace.fromTangentSpace y).symm (W y)) (s := Set.univ) (t := Set.univ)
-      (Q.symm.mdifferentiableAt (by simp) hxQ).mdifferentiableWithinAt (Set.mapsTo_univ _ _)
+      (Q.symm.mdifferentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
+        not_false_eq_true]) hxQ).mdifferentiableWithinAt (Set.mapsTo_univ _ _)
       (uniqueMDiffWithinAt_univ 𝓘(ℝ, E)) hinv
   simp only [VectorField.mpullbackWithin_univ] at hh
   have hv :
@@ -4518,13 +4555,13 @@ private theorem
     MorseCancel.splitEquiv_apply_none {m n : ℕ} (ρ : Option (Fin m) ≃ Fin n) (p : Model m) :
     splitEquiv ρ p (ρ Option.none) = p.1 := by
   change (ρ.symm (ρ Option.none)).elim p.1 p.2 = p.1
-  simp
+  simp only [Equiv.symm_apply_apply, Option.elim_none]
 
 private theorem
     MorseCancel.splitEquiv_apply_some {m n : ℕ} (ρ : Option (Fin m) ≃ Fin n) (p : Model m)
     (i : Fin m) : splitEquiv ρ p (ρ (Option.some i)) = p.2 i := by
   change (ρ.symm (ρ (Option.some i))).elim p.1 p.2 = p.2 i
-  simp
+  simp only [Equiv.symm_apply_apply, Option.elim_some]
 
 private theorem MorseCancel.split_signed_sum {m n : ℕ} (ρ : Option (Fin m) ≃ Fin n) (w : Fin n → ℝ)
     (p : Model m) :
@@ -4674,7 +4711,9 @@ private theorem
   have hw :
     endpointLinearField (fun i => c.weights (ρ (Option.some i))) (1 / 2)
         (c.weights (ρ Option.none)) (1, (0 : Fin m → ℝ)) =
-      (1, 0) := by ext i <;> simp [endpointLinearField, he]
+      (1, 0) := by ext i <;> simp only [endpointLinearField, he, mul_neg, mul_one, neg_neg,
+        one_div, ne_eq, OfNat.ofNat_ne_zero,
+          not_false_eq_true, mul_inv_cancel₀, Pi.zero_apply, mul_zero]
   have hh := selectedMorseFieldEquiv_descent c ρ (1, (0 : Fin m → ℝ))
   rw [hw] at hh
   have h2 : z.2 = -z.2 := congrArg Prod.snd hh
@@ -4698,7 +4737,9 @@ private theorem
   have hw :
     endpointLinearField (fun i => c.weights (ρ (Option.some i))) (1 / 2)
         (c.weights (ρ Option.none)) (1, (0 : Fin m → ℝ)) =
-      -(1, 0) := by ext i <;> simp [endpointLinearField, he]
+      -(1, 0) := by ext i <;> simp only [endpointLinearField, he, mul_one, one_div, neg_mul,
+        ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true,
+          mul_inv_cancel₀, Pi.zero_apply, mul_zero, Prod.neg_mk, neg_zero]
   have hh := selectedMorseFieldEquiv_descent c ρ (1, (0 : Fin m → ℝ))
   rw [hw, map_neg] at hh
   have h1 : z.1 = -z.1 := (congrArg Prod.fst hh).symm
@@ -4731,7 +4772,8 @@ private theorem MorseCancel.exists_selected_outgoing_axis {E M : Type*} [NormedA
     A.toContinuousLinearEquiv.prodCongr (ContinuousLinearEquiv.refl ℝ c.PositiveCoordinates)
   let L := L₀.trans B
   refine ⟨r, L, hr, ?_, ?_⟩
-  · have hp : (r, (0 : Fin m → ℝ)) = r • (1, 0) := by simp
+  · have hp : (r, (0 : Fin m → ℝ)) = r • (1, 0) := by simp only [Prod.smul_mk, smul_eq_mul,
+    mul_one, smul_zero]
     rw [hp, L.map_smul]
     apply Prod.ext
     · change r • A ((L₀ (1, 0)).1) = v
@@ -4765,7 +4807,8 @@ private theorem MorseCancel.exists_selected_incoming_axis {E M : Type*} [NormedA
     (ContinuousLinearEquiv.refl ℝ c.NegativeCoordinates).prodCongr A.toContinuousLinearEquiv
   let L := L₀.trans B
   refine ⟨r, L, hr, ?_, ?_⟩
-  · have hp : (-r, (0 : Fin m → ℝ)) = (-r) • (1, 0) := by simp
+  · have hp : (-r, (0 : Fin m → ℝ)) = (-r) • (1, 0) := by simp only [neg_smul, Prod.smul_mk,
+    smul_eq_mul, mul_one, smul_zero, Prod.neg_mk, neg_zero]
     rw [hp, L.map_smul]
     apply Prod.ext
     · change (-r) • (L₀ (1, 0)).1 = 0
@@ -4851,13 +4894,13 @@ private theorem
     have hd : 0 < a + s := by simpa [endpointFieldDomain] using hs
     have hy : (s - a) / (a + s) < 0 := by simpa [endpointFieldCoordinate] using hdir
     have hn : s - a < 0 := by simpa using (div_lt_iff₀ hd).mp hy
-    exact ⟨by linarith, by linarith⟩
+    exact ⟨by linarith only [hd], by linarith only [hn]⟩
   · subst e
     have hd : 0 < a - s := by simpa [endpointFieldDomain] using hs
     have hy : 0 < (s + a) / (a - s) := by
       simpa [endpointFieldCoordinate, sub_eq_add_neg] using hdir
     have hn : 0 < s + a := by simpa using (lt_div_iff₀ hd).mp hy
-    exact ⟨by linarith, by linarith⟩
+    exact ⟨by linarith only [hn], by linarith only [hd]⟩
 
 attribute [local instance 100] Classical.propDecidable in
 private theorem
@@ -4892,7 +4935,9 @@ private theorem
         ring
       · rfl
     rw [hq']
-    simp [endpointFieldProduct, endpointFieldCoordinate_center]
+    simp only [endpointFieldProduct, one_div, endpointFieldCoordinate_center,
+      EmbeddingLike.map_eq_zero_iff,
+        Prod.mk_eq_zero, and_self]
   have hct : ContinuousAt (fun p : Model m => L (endpointFieldProduct (1 / 2) e p)) q :=
     L.continuous.continuousAt.comp hprod
   have htarget0 : (0 : c.NegativeCoordinates × c.PositiveCoordinates) ∈ c.splitChart.target := by
@@ -4926,10 +4971,10 @@ private theorem
     apply Prod.ext
     · change r * Real.exp t = Real.exp t * r
       ring
-    · simp
+    · simp only [Prod.smul_mk, smul_eq_mul, smul_zero]
   rw [he, L.map_smul, hL]
   change (Real.exp t • v, Real.exp (-t) • (0 : P)) = (Real.exp t • v, Real.exp t • (0 : P))
-  simp
+  simp only [smul_zero]
 
 private theorem
     MorseCancel.descentFlow_incoming_aligned_ray {m : ℕ} {N P : Type*} [NormedAddCommGroup N]
@@ -4940,10 +4985,10 @@ private theorem
     apply Prod.ext
     · change -r * Real.exp (-t) = Real.exp (-t) * -r
       ring
-    · simp
+    · simp only [Prod.smul_mk, smul_eq_mul, mul_neg, smul_zero]
   rw [he, L.map_smul, hL]
   change (Real.exp t • (0 : N), Real.exp (-t) • v) = (Real.exp (-t) • (0 : N), Real.exp (-t) • v)
-  simp
+  simp only [smul_zero]
 
 private theorem
     MorseCancel.cubic_axis_of_aligned_morse_ray {m : ℕ} {N P : Type*} [NormedAddCommGroup N]
@@ -5125,7 +5170,7 @@ private theorem MorseCancel.exists_outgoing_morse_tail {E M : Type*} [NormedAddC
   have hbound : ∀ᶠ s in Filter.atBot, ‖(c.splitChart (F t x)).2‖ ≤ ‖(c.splitChart (F s x)).2‖ := by
     filter_upwards [Filter.eventually_le_atBot T, Filter.eventually_le_atBot t] with s hs hst
     rw [hformula t ht s hs, Smale.MorseHandle.norm_descentFlow_snd]
-    exact le_mul_of_one_le_left (norm_nonneg _) (Real.one_le_exp_iff.mpr (by linarith))
+    exact le_mul_of_one_le_left (norm_nonneg _) (Real.one_le_exp_iff.mpr (by linarith only [hst]))
   exact norm_eq_zero.mp (le_antisymm (ge_of_tendsto hnorm hbound) (norm_nonneg _))
 
 attribute [local instance 100] Classical.propDecidable in
@@ -5326,7 +5371,9 @@ private theorem
     (hlevel : f x = f p - r ^ 2) (hlim : Filter.Tendsto (fun t => F t x) Filter.atBot (𝓝 p)) :
     ∃ u : Smale.PuncturedHandle.UnitSphere c.NegativeCoordinates,
       (c.attachingCoreMap r hr hblock u : M) = x := by
-  have hV₁ := hV.of_le (show (1 : WithTop ℕ∞) ≤ (↑(⊤ : ℕ∞) : ℕ∞ω) by simp)
+  have hV₁ :=
+    hV.of_le (show (1 : WithTop ℕ∞) ≤ (↑(⊤ : ℕ∞) : ℕ∞ω) by simp only [WithTop.le_coe_top, ne_eq,
+    WithTop.one_ne_top, not_false_eq_true])
   have hcenter : c.splitChart.symm (0 : c.NegativeCoordinates × c.PositiveCoordinates) = p := by
     rw [← c.splitChart_center]
     exact c.splitChart.left_inv' c.splitChart_mem_source
@@ -5345,7 +5392,7 @@ private theorem
   have hxp : x ≠ p := by
     intro hh
     rw [hh] at hlevel
-    nlinarith [sq_pos_of_pos hr]
+    linarith only [hr, hlevel, sq_pos_of_pos hr]
   have hnonzero :=
     morse_coordinates_nonzero_on_nonstationary_orbit c hV₁ F hF hxp heq (hsource s hs)
   have hn : (c.splitChart (F s x)).1 ≠ 0 := fun hz => hnonzero (Prod.ext hz (hplane s hs))
@@ -5393,7 +5440,8 @@ private theorem MorseCancel.native_attaching_core_basin_iff {E M : Type*} [Norme
   · exact
       native_backward_basin_mem_attaching_core c hf hV F hF r hr hblock hfield hboundary hlevel
   · rintro ⟨u, rfl⟩
-    exact native_attaching_core_backward_limit c (hV.of_le (by simp)) F hF r hr hblock hfield u
+    exact native_attaching_core_backward_limit c (hV.of_le (by simp only [WithTop.le_coe_top,
+      ne_eq, WithTop.one_ne_top, not_false_eq_true])) F hF r hr hblock hfield u
 
 attribute [local instance 100] Classical.propDecidable in
 private theorem MorseCancel.native_forward_basin_mem_belt_core {E M : Type*} [NormedAddCommGroup E]
@@ -5416,7 +5464,9 @@ private theorem MorseCancel.native_forward_basin_mem_belt_core {E M : Type*} [No
     (hlevel : f x = f p + r ^ 2) (hlim : Filter.Tendsto (fun t => F t x) Filter.atTop (𝓝 p)) :
     ∃ u : Smale.PuncturedHandle.UnitSphere c.PositiveCoordinates,
       (c.beltCoreMap r hr hblock u : M) = x := by
-  have hV₁ := hV.of_le (show (1 : WithTop ℕ∞) ≤ (↑(⊤ : ℕ∞) : ℕ∞ω) by simp)
+  have hV₁ :=
+    hV.of_le (show (1 : WithTop ℕ∞) ≤ (↑(⊤ : ℕ∞) : ℕ∞ω) by simp only [WithTop.le_coe_top, ne_eq,
+    WithTop.one_ne_top, not_false_eq_true])
   have hcenter : c.splitChart.symm (0 : c.NegativeCoordinates × c.PositiveCoordinates) = p := by
     rw [← c.splitChart_center]
     exact c.splitChart.left_inv' c.splitChart_mem_source
@@ -5435,7 +5485,7 @@ private theorem MorseCancel.native_forward_basin_mem_belt_core {E M : Type*} [No
   have hxp : x ≠ p := by
     intro hh
     rw [hh] at hlevel
-    nlinarith [sq_pos_of_pos hr]
+    linarith only [hr, hlevel, sq_pos_of_pos hr]
   have hnonzero :=
     morse_coordinates_nonzero_on_nonstationary_orbit c hV₁ F hF hxp heq (hsource s hs)
   have hn : (c.splitChart (F s x)).2 ≠ 0 := fun hz => hnonzero (Prod.ext (hplane s hs) hz)
@@ -5482,7 +5532,8 @@ private theorem MorseCancel.native_belt_core_basin_iff {E M : Type*} [NormedAddC
   constructor
   · exact native_forward_basin_mem_belt_core c hf hV F hF r hr hblock hfield hboundary hlevel
   · rintro ⟨u, rfl⟩
-    exact native_belt_core_forward_limit c (hV.of_le (by simp)) F hF r hr hblock hfield u
+    exact native_belt_core_forward_limit c (hV.of_le (by simp only [WithTop.le_coe_top, ne_eq,
+      WithTop.one_ne_top, not_false_eq_true])) F hF r hr hblock hfield u
 
 attribute [local instance 100] Classical.propDecidable in
 private theorem
@@ -5621,7 +5672,8 @@ private def MorseCancel.cubicModelOrbit {m : ℕ} (a t : ℝ) : Model m :=
 
 private theorem
     MorseCancel.cubicModelOrbit_zero {m : ℕ} (a : ℝ) : cubicModelOrbit (m := m) a 0 = 0 := by
-  simp [cubicModelOrbit, cubicAxisParameter, Real.tanh_zero]
+  simp only [cubicModelOrbit, cubicAxisParameter, mul_zero, Real.tanh_zero, Prod.mk_eq_zero,
+    and_self]
 
 private theorem MorseCancel.hasDerivAt_cubicModelOrbit {m : ℕ} (σ : Fin m → ℝ) (a t : ℝ) :
     HasDerivAt (cubicModelOrbit a) (cubicDescent σ (-(a ^ 2)) (cubicModelOrbit a t)) t := by
@@ -5655,10 +5707,11 @@ private theorem MorseCancel.tendsto_cubicModelOrbit_atBot {m : ℕ} {a : ℝ} (h
 
 private theorem MorseCancel.contDiffAt_artanh {x : ℝ} (hx : x ∈ Set.Ioo (-1 : ℝ) 1) :
     ContDiffAt ℝ ∞ Real.artanh x := by
-  have hp : 0 < (1 + x) / (1 - x) := div_pos (by linarith [hx.1]) (by linarith [hx.2])
+  have hp : 0 < (1 + x) / (1 - x) := div_pos (by linarith only [hx, hx.1]) (by linarith only [hx,
+    hx.2])
   have hr : ContDiffAt ℝ ∞ (fun y : ℝ => (1 + y) / (1 - y)) x :=
     (contDiffAt_const.add contDiffAt_id).div (contDiffAt_const.sub contDiffAt_id)
-      (by linarith [hx.2])
+      (by linarith only [hx, hx.2])
   exact (hr.sqrt hp.ne').log (Real.sqrt_pos.mpr hp).ne'
 
 end Mathoverflow1973

@@ -199,7 +199,9 @@ lemma m_support (g₁ g₂ : P.Δ) :
 
 /-- The multiplicity `heckeMultiplicity` is nonneg since it is a natural number cast to `ℤ`. -/
 lemma heckeMultiplicity_nonneg (g₁ g₂ d : P.Δ) :
-    0 ≤ heckeMultiplicity P g₁ g₂ d := by simp [heckeMultiplicity]
+    0 ≤ heckeMultiplicity P g₁ g₂ d := by simp only [heckeMultiplicity, mul_singleton,
+      image_singleton, singleton_mul, image_mul_left, mul_inv_rev, Nat.card_eq_fintype_card,
+      Fintype.card_ofFinset, mem_ofPred_eq, Nat.cast_nonneg]
 
 /-- Extensionality for Hecke ring elements. -/
 @[ext] lemma ext_𝕋 {f g : 𝕋 P ℤ}
