@@ -5,10 +5,8 @@ Authors: Jon Crall, OpenAI GPT-5.6 Thinking
 -/
 module
 
-
 public import LeanPool.DavisKahan.DavisKahan.Analysis.FourthOrderODE.SmoothKernel
 public import Mathlib.Analysis.Complex.RealDeriv
-public import Mathlib.Tactic
 
 /-!
 # Explicit affine zero modes of the free--free beam

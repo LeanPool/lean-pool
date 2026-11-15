@@ -197,15 +197,10 @@ theorem l2Column_gram_le_id_of_norm_le_one (a : E →L[ℂ] F) (b : E →L[ℂ] 
       inner_self_eq_norm_sq (𝕜 := ℂ) x, inner_self_eq_norm_sq (𝕜 := ℂ) (a x),
       inner_self_eq_norm_sq (𝕜 := ℂ) (b x)]
   have hcol : ‖a x‖ ^ 2 + ‖b x‖ ^ 2 ≤ ‖x‖ ^ 2 := by
-    rw [← norm_l2Column_apply_sq]
     have hle : ‖l2Column a b x‖ ≤ ‖x‖ := by
-      calc ‖l2Column a b x‖ ≤ ‖l2Column a b‖ * ‖x‖ :=
-          ContinuousLinearMap.le_opNorm _ _
-        _ ≤ 1 * ‖x‖ := by
-            have := norm_nonneg x
-            nlinarith
-        _ = ‖x‖ := one_mul _
-    nlinarith [norm_nonneg (l2Column a b x), norm_nonneg x]
+      simpa only [one_mul] using (l2Column a b).le_of_opNorm_le h x
+    simpa only [norm_l2Column_apply_sq] using
+      pow_le_pow_left₀ (norm_nonneg _) hle 2
   change 0 ≤ RCLike.re ⟪(ContinuousLinearMap.id ℂ E -
     (ContinuousLinearMap.adjoint a ∘L a +
       ContinuousLinearMap.adjoint b ∘L b)) x, x⟫_ℂ
@@ -304,10 +299,10 @@ theorem norm_l2Block_le_one_of_diag (a : E →L[𝕜] G) (d : F →L[𝕜] H)
     ‖l2Block a (0 : F →L[𝕜] G) (0 : E →L[𝕜] H) d‖ ≤ 1 := by
   refine ContinuousLinearMap.opNorm_le_bound _ zero_le_one fun z => ?_
   rw [one_mul]
-  have ha' : ‖a z.fst‖ ≤ ‖z.fst‖ :=
-    (a.le_opNorm z.fst).trans (by nlinarith [norm_nonneg z.fst])
-  have hd' : ‖d z.snd‖ ≤ ‖z.snd‖ :=
-    (d.le_opNorm z.snd).trans (by nlinarith [norm_nonneg z.snd])
+  have ha' : ‖a z.fst‖ ≤ ‖z.fst‖ := by
+    simpa only [one_mul] using a.le_of_opNorm_le ha z.fst
+  have hd' : ‖d z.snd‖ ≤ ‖z.snd‖ := by
+    simpa only [one_mul] using d.le_of_opNorm_le hd z.snd
   have h₁ : ‖l2Block a (0 : F →L[𝕜] G) (0 : E →L[𝕜] H) d z‖ ^ 2
       = ‖a z.fst‖ ^ 2 + ‖d z.snd‖ ^ 2 := by
     rw [WithLp.prod_norm_sq_eq_of_L2]
@@ -317,8 +312,9 @@ theorem norm_l2Block_le_one_of_diag (a : E →L[𝕜] G) (d : F →L[𝕜] H)
     mul_self_le_mul_self (norm_nonneg _) ha'
   have k₂ : ‖d z.snd‖ * ‖d z.snd‖ ≤ ‖z.snd‖ * ‖z.snd‖ :=
     mul_self_le_mul_self (norm_nonneg _) hd'
-  refine nonneg_le_nonneg_of_sq_le_sq (norm_nonneg _) ?_
-  nlinarith [h₁, h₂, k₁, k₂]
+  apply (sq_le_sq₀ (norm_nonneg _) (norm_nonneg _)).mp
+  rw [h₁, h₂]
+  simpa only [pow_two] using add_le_add k₁ k₂
 
 end Block
 
@@ -479,7 +475,9 @@ theorem exists_selfAdjoint_contraction_extension_of_column_gram_le
     rw [hJadj, hJinvol] at h
     have hid : ‖ContinuousLinearMap.id ℂ (WithLp 2 (E × E))‖ ≤ 1 :=
       ContinuousLinearMap.norm_id_le
-    nlinarith [norm_nonneg J]
+    apply (sq_le_one_iff₀ (norm_nonneg J)).mp
+    rw [pow_two, ← h]
+    exact hid
   -- Step 9: the block-diagonal damping.
   set L : WithLp 2 (E × E) →L[ℂ] WithLp 2 (E × F) :=
     l2Block (ContinuousLinearMap.id ℂ E) (0 : E →L[ℂ] E) (0 : E →L[ℂ] F) Γ with hLdef

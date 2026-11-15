@@ -4,12 +4,13 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Jon Crall, Claude Fable 5
 -/
 module
+public import Mathlib.Analysis.InnerProductSpace.SingularValues
 
 public import LeanPool.DavisKahan.ForTauCeti.Analysis.InnerProductSpace.KyFan
-public import Mathlib.Algebra.Order.Algebra
-public import Mathlib.Analysis.Normed.Group.Basic
-public import Mathlib.Data.EReal.Operations
-public import Mathlib.Analysis.Convex.Caratheodory
+import Mathlib.Algebra.Order.Algebra
+import Mathlib.Analysis.Normed.Group.Basic
+import Mathlib.Data.EReal.Operations
+import Mathlib.Analysis.Convex.Caratheodory
 
 /-!
 # Unitarily invariant seminorms on rectangular linear maps

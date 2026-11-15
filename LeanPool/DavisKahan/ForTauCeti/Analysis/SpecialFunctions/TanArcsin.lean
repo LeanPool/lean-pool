@@ -40,8 +40,8 @@ theorem tanArcsin_le_tanArcsin {a b : ℝ} (ha : 0 ≤ a) (hab : a ≤ b) (hb : 
     Real.tan (Real.arcsin a) ≤ Real.tan (Real.arcsin b) := by
   rw [Real.tan_arcsin, Real.tan_arcsin]
   have hb0 : 0 ≤ b := ha.trans hab
-  have hbsq : b ^ 2 < 1 := by nlinarith
-  have hasq : a ^ 2 ≤ b ^ 2 := by nlinarith
+  have hbsq : b ^ 2 < 1 := by nlinarith only [ha, hab, hb]
+  have hasq : a ^ 2 ≤ b ^ 2 := by nlinarith only [ha, hab]
   have hbpos : 0 < Real.sqrt (1 - b ^ 2) := Real.sqrt_pos.mpr (by linarith)
   have hapos : 0 < Real.sqrt (1 - a ^ 2) := by
     have : a ^ 2 < 1 := lt_of_le_of_lt hasq hbsq
@@ -67,14 +67,14 @@ theorem sin_arctan_lt_one (C : ℝ) : Real.sin (Real.arctan C) < 1 := by
   rw [div_lt_one hpos]
   rcases le_or_gt C 0 with hC | hC
   · exact lt_of_le_of_lt hC hpos
-  · exact (Real.lt_sqrt hC.le).mpr (by nlinarith)
+  · exact (Real.lt_sqrt hC.le).mpr (by nlinarith only [])
 
 /-- The sine-to-tangent transfer is continuous at every point of `[0, 1)`. -/
 theorem continuousAt_tanArcsin {t : ℝ} (h0 : 0 ≤ t) (h1 : t < 1) :
     ContinuousAt (fun s => Real.tan (Real.arcsin s)) t := by
   have hcos : Real.cos (Real.arcsin t) ≠ 0 := by
     rw [Real.cos_arcsin]
-    have : (0 : ℝ) < 1 - t ^ 2 := by nlinarith
+    have : (0 : ℝ) < 1 - t ^ 2 := by nlinarith only [h0, h1]
     exact (Real.sqrt_pos.mpr this).ne'
   exact (Real.continuousAt_tan.mpr hcos).comp Real.continuous_arcsin.continuousAt
 

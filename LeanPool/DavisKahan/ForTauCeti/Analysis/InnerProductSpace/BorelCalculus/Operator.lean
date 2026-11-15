@@ -273,7 +273,7 @@ theorem norm_pair_le_crude (hfm : Measurable f) {M : ℝ} (hM : 0 ≤ M)
     linarith
   have hgoal : M * ‖ξ + ψ‖ ^ 2 + M * ‖ξ + Complex.I • ψ‖ ^ 2
       + M * ‖ξ - ψ‖ ^ 2 + M * ‖ξ - Complex.I • ψ‖ ^ 2
-      = 4 * (M * (‖ψ‖ ^ 2 + ‖ξ‖ ^ 2)) := by nlinarith [hpar1, hpar2]
+      = 4 * (M * (‖ψ‖ ^ 2 + ‖ξ‖ ^ 2)) := by nlinarith only [hM, hpar1, hpar2, hpar1, hpar2]
   calc 1 / 4 * _ ≤ 1 / 4 * (4 * (M * (‖ψ‖ ^ 2 + ‖ξ‖ ^ 2))) := by
         rw [← hgoal]; gcongr
     _ = M * (‖ψ‖ ^ 2 + ‖ξ‖ ^ 2) := by ring

@@ -5,13 +5,14 @@ Authors: Jon Crall, OpenAI GPT-5.6 Sol
 -/
 module
 
-
 public import LeanPool.DavisKahan.DavisKahan.Specialized.FreeBeam.BeamSpectrumReal
 public import LeanPool.DavisKahan.DavisKahan.Sources.DavisKahan1970.Section9.ExactData
 public import LeanPool.DavisKahan.DavisKahan.Sources.DavisKahan1970.Section9.TrialSubspace
 public import LeanPool.DavisKahan.DavisKahan.SinTheta.BoundedPerturbation
 public import LeanPool.DavisKahan.ForTauCeti.MeasureTheory.RadonNikodymL2
-public import Mathlib.Tactic
+import Mathlib.Tactic.FunProp -- shake: keep
+import Mathlib.Tactic.NormNum -- shake: keep
+import Mathlib.Tactic.Ring -- shake: keep
 
 /-! # Beam Trial Real -/
 

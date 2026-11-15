@@ -126,7 +126,7 @@ lemma inv_sqrt_three_eq : (Real.sqrt 3)⁻¹ = Real.sqrt 3 / 3 := by
   have hn : Real.sqrt (3 : ℝ) ≠ 0 := ne_of_gt (Real.sqrt_pos.2 (by norm_num))
   apply (eq_div_iff (by norm_num : (3 : ℝ) ≠ 0)).2
   field_simp [hn]
-  nlinarith
+  nlinarith only [hs]
 
 /-- The two Ritz values sum to `ε`: the pair is centred on `ε / 2`. -/
 lemma ritzLow_add_ritzHigh (ε : ℝ) : ritzLow ε + ritzHigh ε = ε := by
@@ -203,7 +203,7 @@ lemma orthogonalResidualGram_nonzero_charAt (ε : ℝ) :
 /-- `√76 ≤ 11`.  This keeps `11 - √76` nonnegative, which is what makes the lower
 residual Gram eigenvalue nonnegative. -/
 lemma sqrt76_le_eleven : Real.sqrt 76 ≤ 11 := by
-  nlinarith [Real.sqrt_nonneg (76 : ℝ), Real.sq_sqrt (by norm_num : (0 : ℝ) ≤ 76)]
+  nlinarith only [Real.sqrt_nonneg (76 : ℝ), Real.sq_sqrt (by norm_num : (0 : ℝ) ≤ 76)]
 
 /-- The lower residual Gram eigenvalue is nonnegative, so it is the square of a real
 singular value. -/
@@ -244,7 +244,7 @@ lemma orthogonalResidualSingularValue_sq (ε : ℝ) :
   have hs : Real.sqrt (15 : ℝ) ^ 2 = 15 := Real.sq_sqrt (by norm_num)
   unfold orthogonalResidualSingularValue
   rw [mul_pow, sq_abs]
-  nlinarith
+  nlinarith only [hs]
 
 /-- Each orthogonal-residual column has squared norm `ε² / 30` — half the nonzero
 singular value squared, the two columns splitting it evenly. -/
@@ -253,7 +253,7 @@ lemma orthogonalResidualColumnNorm_sq (ε : ℝ) :
   have hs : Real.sqrt (30 : ℝ) ^ 2 = 30 := Real.sq_sqrt (by norm_num)
   unfold orthogonalResidualColumnNorm
   rw [mul_pow, sq_abs]
-  nlinarith
+  nlinarith only [hs]
 
 end
 

@@ -172,7 +172,7 @@ theorem norm_lower_coordinate_le {b w y : F} {lam β : ℝ}
   · rw [← hy0, mul_zero]
     exact norm_nonneg b
   · have : (β - lam) * ‖y‖ ^ 2 ≤ ‖b‖ * ‖y‖ := le_trans h1 h2
-    nlinarith
+    nlinarith only [h1, h2, hypos]
 
 /-- **The Schur coefficient is nonnegative.**  The scalar that the substituted
 upper block contributes, `-re ⟪B x, y⟫`, is the value of the positive form
@@ -199,7 +199,7 @@ theorem schurCoefficient_le {b w y : F} {lam β : ℝ}
   obtain ⟨-, h2⟩ := lower_block_test (𝕜 := 𝕜) hbottom hform
   have hy := norm_lower_coordinate_le (𝕜 := 𝕜) hbottom hform hlt
   have hb0 : 0 ≤ ‖b‖ := norm_nonneg b
-  nlinarith
+  nlinarith only [hlt, h2, hy, hb0]
 
 /-- **Nondegeneracy: the trial coordinate of a block eigenvector cannot
 vanish.**  If `B x = 0` — in particular if `x = 0` — then the complementary
@@ -213,7 +213,7 @@ theorem lower_coordinate_eq_zero_of_residual_eq_zero {b w y : F} {lam β : ℝ}
     y = 0 := by
   have h := norm_lower_coordinate_le (𝕜 := 𝕜) hbottom hform hlt
   rw [hb, norm_zero] at h
-  have : ‖y‖ ≤ 0 := by nlinarith [norm_nonneg y]
+  have : ‖y‖ ≤ 0 := by nlinarith only [hlt, h, norm_nonneg y]
   exact norm_eq_zero.1 (le_antisymm this (norm_nonneg y))
 
 end BlockEstimates

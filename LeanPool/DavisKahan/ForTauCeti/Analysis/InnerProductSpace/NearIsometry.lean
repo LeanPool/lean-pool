@@ -197,7 +197,7 @@ private theorem norm_diagonal_apply_le (b : OrthonormalBasis (Fin d) ℝ E) (c :
     rw [repr_diagonal, mul_pow]
     refine mul_le_mul_of_nonneg_right ?_ (sq_nonneg _)
     have := hc k
-    nlinarith [abs_nonneg (c k), abs_le.mp (hc k), sq_abs (c k)]
+    nlinarith only [hδ0, this, abs_nonneg (c k), abs_le.mp (hc k), sq_abs (c k)]
   nlinarith [hbnd, norm_nonneg (diagonal b c x), mul_nonneg hδ0 (norm_nonneg x),
     sq_nonneg (‖diagonal b c x‖ - δ * ‖x‖)]
 
@@ -460,7 +460,7 @@ theorem exists_linearIsometryEquiv_norm_sub_le (M : E →ₗ[ℝ] E) {δ : ℝ} 
       exact nonneg_of_mul_nonneg_left
         (le_trans (abs_nonneg (⟪M v, M v⟫_ℝ - ⟪v, v⟫_ℝ)) (hM v)) hvpos
     have := norm_nonneg x
-    nlinarith
+    nlinarith only [hδ0, this]
 
 end LinearMap
 
