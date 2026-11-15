@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryAffineVectorLaws
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryCurvature
 public import LeanPool.ApollonianSuperharmonic.LatticeAdjacentPackingSymmetryFacts
 public import LeanPool.ApollonianSuperharmonic.TileOdometerSlopeNonempty
@@ -322,98 +323,6 @@ private theorem partialValueCov :
           (BandPackingSymmetryPartialOdometerAction b k)).value
           (BandPackingSymmetryVectorAction a (BandPackingSymmetryVectorAction b x))
       exact iha _ _ _ hxb hkb hb
-
-private theorem affineFacts :
-    (by
-      classical
-      exact
-        let affineQuarter : GaussianInt × GaussianInt → GaussianInt × GaussianInt :=
-          fun z => (GaussianQuarterTurn z.1, -GaussianQuarterTurn z.2)
-        ∀ k : BandPackingSymmetry, (∀ y, ∀ z, BandPackingSymmetryAffineVectorAction k (y + z) =
-            BandPackingSymmetryAffineVectorAction k y + BandPackingSymmetryAffineVectorAction k
-            z) ∧ (∀ y, BandPackingSymmetryAffineVectorAction k (-y) =
-            -BandPackingSymmetryAffineVectorAction k y) ∧ (∀ y,
-            BandPackingSymmetryAffineVectorAction k (affineQuarter y) = if
-            BandPackingSymmetryReversesOrientation k then -affineQuarter
-            (BandPackingSymmetryAffineVectorAction k y) else affineQuarter
-            (BandPackingSymmetryAffineVectorAction k y)) ) := by
-  classical
-  intro affineQuarter k
-  induction k with
-  | identity => exact ⟨fun _ _ => rfl, fun _ => rfl, fun _ => rfl⟩
-  | shift w =>
-      rcases w with ⟨wr, wi⟩
-      refine ⟨?_, ?_, ?_⟩
-      · rintro ⟨⟨vr, vi⟩, ⟨ar, ai⟩⟩ ⟨⟨ur, ui⟩, ⟨br, bi⟩⟩
-        ext <;> simp [BandPackingSymmetryAffineVectorAction, GaussianReflection] <;> ring
-      · rintro ⟨⟨vr, vi⟩, ⟨ar, ai⟩⟩
-        ext <;> simp [BandPackingSymmetryAffineVectorAction, GaussianReflection] <;> ring
-      · rintro ⟨⟨vr, vi⟩, ⟨ar, ai⟩⟩
-        ext <;> simp [BandPackingSymmetryAffineVectorAction, GaussianReflection,
-          BandPackingSymmetryReversesOrientation, affineQuarter,
-          GaussianQuarterTurn]; ring
-  | negate =>
-      refine ⟨?_, ?_, ?_⟩
-      · intro y z
-        ext <;> simp [BandPackingSymmetryAffineVectorAction, GaussianQuarterTurn] <;> ring
-      · intro y
-        ext <;> simp [BandPackingSymmetryAffineVectorAction, GaussianQuarterTurn]
-      · intro y
-        ext <;> simp [BandPackingSymmetryAffineVectorAction, GaussianQuarterTurn,
-          BandPackingSymmetryReversesOrientation, affineQuarter]
-  | conjugate =>
-      refine ⟨?_, ?_, ?_⟩
-      · intro y z
-        ext <;> simp [BandPackingSymmetryAffineVectorAction, GaussianReflection] <;> ring
-      · intro y
-        ext <;> simp [BandPackingSymmetryAffineVectorAction, GaussianReflection]
-      · intro y
-        ext <;> simp [BandPackingSymmetryAffineVectorAction, GaussianReflection,
-          BandPackingSymmetryReversesOrientation, affineQuarter,
-          GaussianQuarterTurn]
-  | comp a b iha ihb =>
-      refine ⟨?_, ?_, ?_⟩
-      · intro y z
-        change BandPackingSymmetryAffineVectorAction a
-          (BandPackingSymmetryAffineVectorAction b (y + z)) = _
-        rw [ihb.1, iha.1]
-        rfl
-      · intro y
-        change BandPackingSymmetryAffineVectorAction a
-          (BandPackingSymmetryAffineVectorAction b (-y)) = _
-        rw [ihb.2.1, iha.2.1]
-        rfl
-      · intro y
-        change BandPackingSymmetryAffineVectorAction a
-          (BandPackingSymmetryAffineVectorAction b (affineQuarter y)) = _
-        rw [ihb.2.2]
-        cases ha : BandPackingSymmetryReversesOrientation a <;>
-          cases hb : BandPackingSymmetryReversesOrientation b <;>
-          simp [ha, hb, iha.2.1, iha.2.2,
-            BandPackingSymmetryReversesOrientation,
-            BandPackingSymmetryAffineVectorAction]
-
-private theorem affineFirst :
-    (by
-      classical
-      exact
-        ∀ (k : BandPackingSymmetry), ∀ (z : GaussianInt × GaussianInt),
-            (BandPackingSymmetryAffineVectorAction k z).1 = BandPackingSymmetryVectorAction k z.1
-            ) := by
-  classical
-  intro k
-  induction k with
-  | identity => intro z; rfl
-  | negate => intro z; rfl
-  | conjugate => intro z; rfl
-  | shift w => intro z; rfl
-  | comp a b iha ihb =>
-      intro z
-      change (BandPackingSymmetryAffineVectorAction a
-        (BandPackingSymmetryAffineVectorAction b z)).1 =
-        BandPackingSymmetryVectorAction a
-          (BandPackingSymmetryVectorAction b z.1)
-      rw [iha, ihb]
 
 private abbrev circleCurvature := ApollonianSuperharmonic.BandPackingSymmetryCurvature.preserved
 
@@ -1216,8 +1125,8 @@ theorem BandPackingSymmetryMarkedDataCovariance :
   have starCov := MarkedCovarianceGeometry.starCov negStar conjugateStar
   have partialValueCov := MarkedCovarianceGeometry.partialValueCov
   have differenceTransport := P5625T1CentroidSlopeDifferenceCovariance.2
-  have affineFacts := MarkedCovarianceGeometry.affineFacts
-  have affineFirst := MarkedCovarianceGeometry.affineFirst
+  have affineFacts := BandPackingSymmetryAffineVectorLaws
+  have affineFirst := P5625T1CentroidSlopeDifferenceCovariance.1
   have circleCurvature := MarkedCovarianceGeometry.circleCurvature
   have positiveSupport := MarkedCovarianceGeometry.positiveSupport
   have forwardSub := MarkedCovarianceAssembly.forwardSub partialValueCov differenceTransport

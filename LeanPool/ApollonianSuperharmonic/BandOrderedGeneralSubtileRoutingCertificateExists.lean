@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.P4590T1OppositeCellsStar
 
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralSubtileRoutingCertificate
 public import LeanPool.ApollonianSuperharmonic.CoveredInterfaceOppositeIncidentCells
@@ -106,40 +107,13 @@ theorem BandOrderedGeneralSubtileRoutingCertificateExists
       y ∈ FootprintVertices
         (SubtileOccurrenceInterpretation normalization.layout.P
           normalization.layout.u normalization.layout.v centralIndex) := by
-    have cell_corner (T : ProtoTile) (c : GaussianInt) (hc : c ∈ T.cells) :
-        ∀ y, y = c ∨ y = c + 1 ∨ y = c + ⟨0, 1⟩ ∨
-          y = c + 1 + ⟨0, 1⟩ → y ∈ FootprintVertices T := by
-      intro y hy
-      have hn : T.cells.Nonempty := ⟨c, hc⟩
-      simp only [FootprintVertices, ite_eq_left hn, Set.mem_ofPred_eq]
-      rcases hy with h | h | h | h
-      · exact ⟨c, hc, Or.inl h⟩
-      · exact ⟨c, hc, Or.inr (Or.inl h)⟩
-      · exact ⟨c, hc, Or.inr (Or.inr (Or.inl h))⟩
-      · exact ⟨c, hc, Or.inr (Or.inr (Or.inr h))⟩
-    let centralTile := SubtileOccurrenceInterpretation normalization.layout.P
-      normalization.layout.u normalization.layout.v centralIndex
-    let exteriorTile := SubtileOccurrenceInterpretation normalization.layout.P
-      normalization.layout.u normalization.layout.v normalization.exteriorIndex
-    have centralCorners := cell_corner centralTile
-      (LatticeVertexIncidentCell normalization.normalizedPoint direction) hcentralCell
-    have exteriorCorners := cell_corner exteriorTile
-      (LatticeVertexIncidentCell normalization.normalizedPoint (direction + 2)) hexteriorCell
     intro y hy
-    fin_cases direction <;>
-    simp only [LatticeVertexIncidentCell, Int.reduceNeg, Fin.mk_one, Fin.isValue,
-        Matrix.cons_val_one, Matrix.cons_val_zero, Fin.reduceAdd, Matrix.cons_val,
-        Fin.reduceFinMk, Fin.zero_eta, zero_add] at hcentralCell hexteriorCell ⊢ <;>
-    rcases hy with rfl | rfl | rfl | rfl | rfl <;>
-    solve
-    | apply Or.inr
-      apply centralCorners
-      simp [LatticeVertexIncidentCell, sub_eq_add_neg, add_assoc, add_comm, add_left_comm,
-        Zsqrtd.ext_iff]
-    | apply Or.inl
-      apply exteriorCorners
-      simp [LatticeVertexIncidentCell, sub_eq_add_neg, add_assoc, add_comm, add_left_comm,
-        Zsqrtd.ext_iff]
+    exact (P4590T1OppositeCellsStar
+      (SubtileOccurrenceInterpretation normalization.layout.P normalization.layout.u
+        normalization.layout.v centralIndex)
+      (SubtileOccurrenceInterpretation normalization.layout.P normalization.layout.u
+        normalization.layout.v normalization.exteriorIndex)
+      normalization.normalizedPoint ⟨direction, hcentralCell, hexteriorCell⟩ y hy).symm
   exact ⟨
     { edgeAtPoint := hedge
       root_induced := hrootRegular.2.1

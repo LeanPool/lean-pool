@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.P4590T1OppositeCellsStar
 public import LeanPool.ApollonianSuperharmonic.BandParentVectorQuarterTurn
 public import LeanPool.ApollonianSuperharmonic.BandVectorParentSums
 
@@ -267,21 +268,7 @@ private theorem hexteriorOccurrence :
                                 if i = 1 then if s = true then .C else .D
                               else if s = true then .E else .F
                             let exteriorIndex : PeriodicSubtileIndex :=
-                              ⟨labelOf selectedSlot selectedSign, m, n⟩
-                            normalization.rightNeighborPositive = true ∧
-                                (normalization.rightDirectionSlot = 0 ∧
-                                exteriorIndex.first = 1 ∧ exteriorIndex.second = 0 ∨
-                                normalization.rightDirectionSlot = 1 ∧
-                                exteriorIndex.first = 0 ∧ exteriorIndex.second = 1 ∨
-                                normalization.rightDirectionSlot = 2 ∧
-                                exteriorIndex.first = -1 ∧ exteriorIndex.second = -1) ∨
-                                normalization.rightNeighborPositive = false ∧
-                                (normalization.rightDirectionSlot = 0 ∧
-                                exteriorIndex.first = -1 ∧ exteriorIndex.second = 0 ∨
-                                normalization.rightDirectionSlot = 1 ∧
-                                exteriorIndex.first = 0 ∧ exteriorIndex.second = -1 ∨
-                                normalization.rightDirectionSlot = 2 ∧
-                                exteriorIndex.first = 1 ∧ exteriorIndex.second = 1) →
+                              ⟨labelOf selectedSlot selectedSign, m, n⟩;
                               SubtileOccurrenceInterpretation normalization.layout.P
                                 normalization.layout.u normalization.layout.v
                                 exteriorIndex =
@@ -291,7 +278,7 @@ private theorem hexteriorOccurrence :
     ) := by
   classical
   intro C T N h k x normalization selectedSlot selectedSign m n hdisplacement labelOf
-      exteriorIndex hshift
+      exteriorIndex
   rw [hdisplacement]
   fin_cases selectedSlot <;> cases selectedSign <;>
     simp [exteriorIndex, labelOf, SubtileOccurrenceInterpretation]
@@ -472,122 +459,6 @@ private theorem hcentralCell :
   rw [hcentralOccurrence]
   exact hcentral
 
-private theorem footprint_of_cell :
-    (by
-      classical
-      exact
-        ∀ (U : ProtoTile), ∀ (c : GaussianInt), (c ∈ U.cells) → (c ∈ FootprintVertices U ∧ c + 1
-            ∈ FootprintVertices U ∧ c + ⟨0, 1⟩ ∈ FootprintVertices U ∧ c + 1 + ⟨0, 1⟩ ∈
-            FootprintVertices U) ) := by
-  classical
-  intro U c hc
-  have hne : U.cells.Nonempty := ⟨c, hc⟩
-  simp only [FootprintVertices, ite_eq_left hne, Set.mem_ofPred_eq]
-  exact ⟨⟨c, hc, Or.inl rfl⟩,
-    ⟨c, hc, Or.inr (Or.inl rfl)⟩,
-    ⟨c, hc, Or.inr (Or.inr (Or.inl rfl))⟩,
-    ⟨c, hc, Or.inr (Or.inr (Or.inr rfl))⟩⟩
-
-private theorem hstar :
-    (by
-      classical
-      exact
-        ∀ (C : BandCircle), ∀ (T : ProtoTile), ∀ (N : ProtoTile), ∀ (h : PartialOdometer), ∀ (k :
-            PartialOdometer), ∀ (x : GaussianInt), ∀ (normalization :
-            BandOrderedGeneralRightNormalizationCertificate C T N h k x), ∀ (j : Fin (4 : ℕ)),
-                                                  (
-                                                   (∀ (selectedSlot : Fin (3 : ℕ)), ∀
-            (selectedSign : Bool),
-                                                                      (∀ (centralSlot : Fin (3 :
-            ℕ)), ∀ (centralSign : Bool),
-                                                                                                (
-        let m : Int := if normalization.rightDirectionSlot = 0 then
-            (if normalization.rightNeighborPositive = true then 1 else -1)
-          else if normalization.rightDirectionSlot = 1 then 0
-          else if normalization.rightNeighborPositive = true then -1 else 1
-        let n : Int := if normalization.rightDirectionSlot = 0 then 0
-          else if normalization.rightDirectionSlot = 1 then
-            (if normalization.rightNeighborPositive = true then 1 else -1)
-          else if normalization.rightNeighborPositive = true then -1 else 1
-        let labelOf : Fin 3 → Bool → SixSubtileLabel := fun i s =>
-          if i = 0 then (if s = true then .A else .B)
-          else if i = 1 then (if s = true then .C else .D)
-          else (if s = true then .E else .F)
-        let exteriorIndex : PeriodicSubtileIndex :=
-          ⟨labelOf selectedSlot selectedSign, m, n⟩
-        let centralIndex : PeriodicSubtileIndex :=
-          ⟨labelOf centralSlot centralSign, 0, 0⟩
-        (LatticeVertexIncidentCell normalization.normalizedPoint j ∈
-            (SubtileOccurrenceInterpretation normalization.layout.P normalization.layout.u
-            normalization.layout.v exteriorIndex).cells) → ((LatticeVertexIncidentCell
-            normalization.normalizedPoint (j + 2) ∈ (SubtileOccurrenceInterpretation
-            normalization.layout.P normalization.layout.u normalization.layout.v
-            centralIndex).cells) → ((LatticeVertexIncidentCell normalization.normalizedPoint j ∈
-            FootprintVertices (SubtileOccurrenceInterpretation normalization.layout.P
-            normalization.layout.u normalization.layout.v exteriorIndex) ∧
-            LatticeVertexIncidentCell normalization.normalizedPoint j + (1 : GaussianInt) ∈
-            FootprintVertices (SubtileOccurrenceInterpretation normalization.layout.P
-            normalization.layout.u normalization.layout.v exteriorIndex) ∧
-            LatticeVertexIncidentCell normalization.normalizedPoint j + (⟨(0 : ℤ), (1 : ℤ)⟩ :
-            GaussianInt) ∈ FootprintVertices (SubtileOccurrenceInterpretation
-            normalization.layout.P normalization.layout.u normalization.layout.v exteriorIndex) ∧
-            LatticeVertexIncidentCell normalization.normalizedPoint j + (1 : GaussianInt) + (⟨(0
-            : ℤ), (1 : ℤ)⟩ : GaussianInt) ∈ FootprintVertices (SubtileOccurrenceInterpretation
-            normalization.layout.P normalization.layout.u normalization.layout.v exteriorIndex))
-            → ((LatticeVertexIncidentCell normalization.normalizedPoint (j + (2 : Fin (4 : ℕ))) ∈
-            FootprintVertices (SubtileOccurrenceInterpretation normalization.layout.P
-            normalization.layout.u normalization.layout.v centralIndex) ∧
-            LatticeVertexIncidentCell normalization.normalizedPoint (j + (2 : Fin (4 : ℕ))) + (1
-            : GaussianInt) ∈ FootprintVertices (SubtileOccurrenceInterpretation
-            normalization.layout.P normalization.layout.u normalization.layout.v centralIndex) ∧
-            LatticeVertexIncidentCell normalization.normalizedPoint (j + (2 : Fin (4 : ℕ))) +
-            (⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) ∈ FootprintVertices
-            (SubtileOccurrenceInterpretation normalization.layout.P normalization.layout.u
-            normalization.layout.v centralIndex) ∧ LatticeVertexIncidentCell
-            normalization.normalizedPoint (j + (2 : Fin (4 : ℕ))) + (1 : GaussianInt) + (⟨(0 :
-            ℤ), (1 : ℤ)⟩ : GaussianInt) ∈ FootprintVertices (SubtileOccurrenceInterpretation
-            normalization.layout.P normalization.layout.u normalization.layout.v centralIndex)) →
-            (forall y, y = normalization.normalizedPoint ∨ y = normalization.normalizedPoint + 1
-            ∨ y = normalization.normalizedPoint - 1 ∨ y = normalization.normalizedPoint + ⟨0, 1⟩
-            ∨ y = normalization.normalizedPoint - ⟨0, 1⟩ -> y ∈ FootprintVertices
-            (SubtileOccurrenceInterpretation normalization.layout.P normalization.layout.u
-            normalization.layout.v exteriorIndex) ∨ y ∈ FootprintVertices
-            (SubtileOccurrenceInterpretation normalization.layout.P normalization.layout.u
-            normalization.layout.v centralIndex))))))))) ) := by
-  classical
-  intro C T N h k x normalization j selectedSlot selectedSign centralSlot centralSign m n
-      labelOf exteriorIndex centralIndex hexteriorCell hcentralCell exteriorCorners
-      centralCorners y hy
-  fin_cases j <;>
-    simp only [LatticeVertexIncidentCell, sub_eq_add_neg, Int.reduceNeg, add_assoc,
-        Fin.mk_one, Fin.isValue, Matrix.cons_val_one, Matrix.cons_val_zero, add_comm,
-        add_left_comm, add_neg_cancel, add_zero, Fin.reduceAdd, Matrix.cons_val, zero_add,
-        Fin.reduceFinMk, add_neg_cancel_left, Fin.zero_eta] at exteriorCorners centralCorners
-  · rcases hy with rfl | rfl | rfl | rfl | rfl
-    · exact Or.inl exteriorCorners.1
-    · exact Or.inl exteriorCorners.2.1
-    · exact Or.inr centralCorners.2.2.1
-    · exact Or.inl exteriorCorners.2.2.1
-    · exact Or.inr centralCorners.2.1
-  · rcases hy with rfl | rfl | rfl | rfl | rfl
-    · exact Or.inl exteriorCorners.2.1
-    · exact Or.inr centralCorners.2.2.2
-    · exact Or.inl exteriorCorners.1
-    · exact Or.inl exteriorCorners.2.2.2
-    · exact Or.inr centralCorners.1
-  · rcases hy with rfl | rfl | rfl | rfl | rfl
-    · exact Or.inr centralCorners.1
-    · exact Or.inr centralCorners.2.1
-    · exact Or.inl exteriorCorners.2.2.1
-    · exact Or.inr centralCorners.2.2.1
-    · exact Or.inl exteriorCorners.2.1
-  · rcases hy with rfl | rfl | rfl | rfl | rfl
-    · exact Or.inl exteriorCorners.2.2.1
-    · exact Or.inl exteriorCorners.2.2.2
-    · exact Or.inr centralCorners.1
-    · exact Or.inr centralCorners.2.2.2
-    · exact Or.inl exteriorCorners.1
-
 private theorem hexteriorIndex :
     (by
       classical
@@ -763,7 +634,6 @@ theorem BandOrderedGeneralRightRoutingCertificateExists
       selectedSlot selectedSign (RightRoutingGeometry.hdisplacement C T N h k x
       normalization period0 period1 (RightRoutingGeometry.period2 C T N h k x normalization
       (BandVectorOutgoingSum q normalization.configuration.proper) period0 period1))
-      hshift
   have houterObservables := ProtoTileObservableExtensionality
     normalization.normalizedRoot
     (TileTranslation normalization.normalizedFixed
@@ -821,12 +691,12 @@ theorem BandOrderedGeneralRightRoutingCertificateExists
   have hcentralCell := RightRoutingGeometry.hcentralCell C T N h k x normalization j centralSlot
       centralSign hcentral (RightRoutingGeometry.hcentralOccurrence C T N h k x normalization
       centralSlot centralSign (TileTranslationProperties.zero))
-  have footprint_of_cell := RightRoutingGeometry.footprint_of_cell
-  have exteriorCorners := footprint_of_cell _ _ hexteriorCell
-  have centralCorners := footprint_of_cell _ _ hcentralCell
-  have hstar := RightRoutingGeometry.hstar C T N h k x normalization j
-      selectedSlot selectedSign centralSlot centralSign hexteriorCell
-      hcentralCell exteriorCorners centralCorners
+  have hstar := P4590T1OppositeCellsStar
+    (SubtileOccurrenceInterpretation normalization.layout.P normalization.layout.u
+      normalization.layout.v exteriorIndex)
+    (SubtileOccurrenceInterpretation normalization.layout.P normalization.layout.u
+      normalization.layout.v centralIndex)
+    normalization.normalizedPoint ⟨j, hexteriorCell, hcentralCell⟩
   obtain ⟨localizedEdge, hlocalizedPoint, hlocalizedCommon,
       hclassification, hcontact⟩ :=
     BandOrderedGeneralShiftedRoutedBoundaryLocalization q

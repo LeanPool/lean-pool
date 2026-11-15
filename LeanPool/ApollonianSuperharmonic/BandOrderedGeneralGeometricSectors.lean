@@ -626,143 +626,41 @@ private theorem hunion :
         exact (Finset.mem_sdiff.mp hzr).1
       exact hwholeCells.symm ▸ hzT
 
-private theorem hdn :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates),
-          ∀ (cfg : BandOrderedGeneralConfiguration q),
-            ∀ (C₀ : BandCircle),
-              ∀ (T : ProtoTile),
-                ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C₀ T),
-                  let P := cert.modified;
-                  (∀ (whole : FiniteInducedTilePatch P.plane P.tile),
-                      whole.indices =
-                          ({⟨.A, 0, 0⟩, ⟨.B, 0, 0⟩, ⟨.C, 0, 0⟩, ⟨.D, 0, 0⟩, ⟨.E, 0, 0⟩,
-                              ⟨.F, 0, 0⟩} :
-                            Finset PeriodicSubtileIndex) →
-                        ∀ (a : PeriodicSubtileIndex),
-                          a ∈ whole.indices → a.first = 0 ∧ a.second = 0) →
-                    ∀
-                      (whole :
-                        FiniteInducedTilePatch cert.modified.plane cert.modified.tile),
-                      whole.indices =
-                          {(⟨SixSubtileLabel.A, (0 : ℤ), (0 : ℤ)⟩ : PeriodicSubtileIndex),
-                            (⟨SixSubtileLabel.B, (0 : ℤ), (0 : ℤ)⟩ :
-                              PeriodicSubtileIndex),
-                            (⟨SixSubtileLabel.C, (0 : ℤ), (0 : ℤ)⟩ :
-                              PeriodicSubtileIndex),
-                            (⟨SixSubtileLabel.D, (0 : ℤ), (0 : ℤ)⟩ :
-                              PeriodicSubtileIndex),
-                            (⟨SixSubtileLabel.E, (0 : ℤ), (0 : ℤ)⟩ :
-                              PeriodicSubtileIndex),
-                            (⟨SixSubtileLabel.F, (0 : ℤ), (0 : ℤ)⟩ :
-                              PeriodicSubtileIndex)} →
-                        ∀ (d : PeriodicSubtileIndex),
-                          d ∈ whole.indices →
-                            ∀
-                              (rest :
-                                FiniteInducedTilePatch cert.modified.plane
-                                cert.modified.tile),
-                              rest.indices = whole.indices.erase d →
-                                rest.unionTile =
-                                TileCellComplement T (cert.modified.tile d) →
-                                (∀ z : LatticeCell,
-                                z ∈ whole.unionTile.cells ↔
-                                z ∈ (P.tile d).cells ∨ z ∈ rest.unionTile.cells) →
-                                let n : PeriodicSubtileIndex :=
-                                match d.label with
-                              | .A => ⟨.B, 0, 0⟩
-                              | .B => ⟨.A, 0, 0⟩
-                              | .C => ⟨.A, 0, 0⟩
-                              | .D => ⟨.A, 0, 0⟩
-                              | .E => ⟨.B, 0, 0⟩
-                              | .F => ⟨.A, 0, 0⟩
-                              AllowedSubtileIncidence d n
-    ) := by
-  classical
-  intro q cfg C₀ T cert P hzero whole hidx d hd rest hrestIdx hrestUnion hunion n
-  cases d with
-  | mk lab i j =>
-    have hz := hzero whole hidx ⟨lab, i, j⟩ hd
-    rcases hz with ⟨hi, hj⟩
-    change i = 0 at hi
-    change j = 0 at hj
-    subst i
-    subst j
-    cases lab
-    · exact AllowedSubtileIncidence.AB 0 0
-    · exact AllowedSubtileIncidence.symm (AllowedSubtileIncidence.AB 0 0)
-    · exact AllowedSubtileIncidence.symm (AllowedSubtileIncidence.AC 0 0)
-    · exact AllowedSubtileIncidence.symm (AllowedSubtileIncidence.AD 0 0)
-    · exact AllowedSubtileIncidence.symm (AllowedSubtileIncidence.BE 0 0)
-    · exact AllowedSubtileIncidence.symm (AllowedSubtileIncidence.AF 0 0)
+private theorem hdn (d : PeriodicSubtileIndex)
+    (hfirst : d.first = 0) (hsecond : d.second = 0) :
+    let n : PeriodicSubtileIndex := match d.label with
+      | .A => ⟨.B, 0, 0⟩
+      | .B => ⟨.A, 0, 0⟩
+      | .C => ⟨.A, 0, 0⟩
+      | .D => ⟨.A, 0, 0⟩
+      | .E => ⟨.B, 0, 0⟩
+      | .F => ⟨.A, 0, 0⟩
+    AllowedSubtileIncidence d n := by
+  rcases d with ⟨label, first, second⟩
+  change first = 0 at hfirst
+  change second = 0 at hsecond
+  subst first
+  subst second
+  cases label
+  · exact AllowedSubtileIncidence.AB 0 0
+  · exact AllowedSubtileIncidence.symm (AllowedSubtileIncidence.AB 0 0)
+  · exact AllowedSubtileIncidence.symm (AllowedSubtileIncidence.AC 0 0)
+  · exact AllowedSubtileIncidence.symm (AllowedSubtileIncidence.AD 0 0)
+  · exact AllowedSubtileIncidence.symm (AllowedSubtileIncidence.BE 0 0)
+  · exact AllowedSubtileIncidence.symm (AllowedSubtileIncidence.AF 0 0)
 
-private theorem hnd :
-    (by
-      classical
-      exact
-        ∀ (q : Fin 4 → CircleCoordinates),
-          ∀ (cfg : BandOrderedGeneralConfiguration q),
-            ∀ (C₀ : BandCircle),
-              ∀ (T : ProtoTile),
-                ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg C₀ T),
-                  let P := cert.modified;
-                  (∀ (whole : FiniteInducedTilePatch P.plane P.tile),
-                      whole.indices =
-                          ({⟨.A, 0, 0⟩, ⟨.B, 0, 0⟩, ⟨.C, 0, 0⟩, ⟨.D, 0, 0⟩, ⟨.E, 0, 0⟩,
-                              ⟨.F, 0, 0⟩} :
-                            Finset PeriodicSubtileIndex) →
-                        ∀ (a : PeriodicSubtileIndex),
-                          a ∈ whole.indices → a.first = 0 ∧ a.second = 0) →
-                    ∀
-                      (whole :
-                        FiniteInducedTilePatch cert.modified.plane cert.modified.tile),
-                      whole.indices =
-                          {(⟨SixSubtileLabel.A, (0 : ℤ), (0 : ℤ)⟩ : PeriodicSubtileIndex),
-                            (⟨SixSubtileLabel.B, (0 : ℤ), (0 : ℤ)⟩ :
-                              PeriodicSubtileIndex),
-                            (⟨SixSubtileLabel.C, (0 : ℤ), (0 : ℤ)⟩ :
-                              PeriodicSubtileIndex),
-                            (⟨SixSubtileLabel.D, (0 : ℤ), (0 : ℤ)⟩ :
-                              PeriodicSubtileIndex),
-                            (⟨SixSubtileLabel.E, (0 : ℤ), (0 : ℤ)⟩ :
-                              PeriodicSubtileIndex),
-                            (⟨SixSubtileLabel.F, (0 : ℤ), (0 : ℤ)⟩ :
-                              PeriodicSubtileIndex)} →
-                        ∀ (d : PeriodicSubtileIndex),
-                          d ∈ whole.indices →
-                            ∀
-                              (rest :
-                                FiniteInducedTilePatch cert.modified.plane
-                                cert.modified.tile),
-                              rest.indices = whole.indices.erase d →
-                                rest.unionTile =
-                                TileCellComplement T (cert.modified.tile d) →
-                                (∀ z : LatticeCell,
-                                z ∈ whole.unionTile.cells ↔
-                                z ∈ (P.tile d).cells ∨ z ∈ rest.unionTile.cells) →
-                                let n : PeriodicSubtileIndex :=
-                                match d.label with
-                              | .A => ⟨.B, 0, 0⟩
-                              | .B => ⟨.A, 0, 0⟩
-                              | .C => ⟨.A, 0, 0⟩
-                              | .D => ⟨.A, 0, 0⟩
-                              | .E => ⟨.B, 0, 0⟩
-                              | .F => ⟨.A, 0, 0⟩;
-                              n ≠ d
-    ) := by
-  classical
-  intro q cfg C₀ T cert P hzero whole hidx d hd rest hrestIdx hrestUnion hunion n
-  cases d with
-  | mk lab i j =>
-    have hz := hzero whole hidx ⟨lab, i, j⟩ hd
-    rcases hz with ⟨hi, hj⟩
-    change i = 0 at hi
-    change j = 0 at hj
-    subst i
-    subst j
-    cases lab <;> decide
+private theorem hnd (d : PeriodicSubtileIndex) :
+    let n : PeriodicSubtileIndex := match d.label with
+      | .A => ⟨.B, 0, 0⟩
+      | .B => ⟨.A, 0, 0⟩
+      | .C => ⟨.A, 0, 0⟩
+      | .D => ⟨.A, 0, 0⟩
+      | .E => ⟨.B, 0, 0⟩
+      | .F => ⟨.A, 0, 0⟩
+    n ≠ d := by
+  rcases d with ⟨label, first, second⟩
+  dsimp only
+  cases label <;> intro h <;> cases (congrArg PeriodicSubtileIndex.label h)
 
 private theorem hnWhole :
     (by
@@ -1144,10 +1042,9 @@ theorem BandOrderedGeneralGeometricSectors
       | .D => ⟨.A, 0, 0⟩
       | .E => ⟨.B, 0, 0⟩
       | .F => ⟨.A, 0, 0⟩
-    have hdn : AllowedSubtileIncidence d n := GeometricSectorGeometry.hdn q cfg C₀ T cert hzero
-        whole hidx d hd rest hrestIdx hrestUnion hunion
-    have hnd : n ≠ d := GeometricSectorGeometry.hnd q cfg C₀ T cert hzero whole hidx d hd rest
-        hrestIdx hrestUnion hunion
+    obtain ⟨hfirst, hsecond⟩ := hzero whole hidx d hd
+    have hdn : AllowedSubtileIncidence d n := GeometricSectorGeometry.hdn d hfirst hsecond
+    have hnd : n ≠ d := GeometricSectorGeometry.hnd d
     have hnWhole : n ∈ whole.indices := GeometricSectorGeometry.hnWhole q cfg C₀ T cert hzero
         whole hidx d hd
     have hnrest : n ∈ rest.indices := GeometricSectorGeometry.hnrest q cfg C₀ T cert whole d rest
