@@ -4,13 +4,17 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Jon Crall, GPT 5.6 High
 -/
 module
+public import Mathlib.Analysis.CStarAlgebra.Classes
+public import Mathlib.MeasureTheory.Measure.Haar.OfBasis
+public import Mathlib.MeasureTheory.Integral.Average
 
 public import LeanPool.DavisKahan.ForTauCeti.Analysis.InnerProductSpace.Sylvester.Internal.ReciprocalMultiplier.OrbitAction
 public import LeanPool.DavisKahan.ForTauCeti.Analysis.Fourier.HaagerupZsido.Kernel
-public import Mathlib.Analysis.Convex.Integral
-public import Mathlib.Analysis.Real.Pi.Bounds
-public import Mathlib.MeasureTheory.SpecificCodomains.Pi
-public import Mathlib.LinearAlgebra.Lagrange
+import Mathlib.Analysis.SpecialFunctions.Complex.Circle
+import Mathlib.Analysis.Convex.Integral
+import Mathlib.Analysis.Real.Pi.Bounds
+import Mathlib.MeasureTheory.SpecificCodomains.Pi
+import Mathlib.LinearAlgebra.Lagrange
 
 /-!
 # Finite Fourier interpolation of the reciprocal

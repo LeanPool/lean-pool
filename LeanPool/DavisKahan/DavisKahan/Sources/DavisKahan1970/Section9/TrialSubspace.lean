@@ -85,7 +85,7 @@ private lemma sqrt75_eq_five_mul_sqrt3 :
   have h3 : Real.sqrt (3 : ℝ) ^ 2 = 3 := Real.sq_sqrt (by norm_num)
   have h75nonneg := Real.sqrt_nonneg (75 : ℝ)
   have h3nonneg := Real.sqrt_nonneg (3 : ℝ)
-  nlinarith [sq_nonneg (Real.sqrt 75 - 5 * Real.sqrt 3)]
+  nlinarith only [h75, h3, h75nonneg, h3nonneg, sq_nonneg (Real.sqrt 75 - 5 * Real.sqrt 3)]
 
 /-- The first trial function is a unit vector in `L²(0,1)`. -/
 lemma trialOne_norm_sq : CenteredAffine.inner trialOne trialOne = 1 := by
@@ -93,7 +93,7 @@ lemma trialOne_norm_sq : CenteredAffine.inner trialOne trialOne = 1 := by
   have h3 : Real.sqrt (3 : ℝ) ^ 2 = 3 := Real.sq_sqrt (by norm_num)
   unfold CenteredAffine.inner trialOne
   dsimp
-  nlinarith
+  nlinarith only [h2, h3]
 
 /-- The second trial function is a unit vector in `L²(0,1)`. -/
 lemma trialTwo_norm_sq : CenteredAffine.inner trialTwo trialTwo = 1 := by
@@ -101,16 +101,15 @@ lemma trialTwo_norm_sq : CenteredAffine.inner trialTwo trialTwo = 1 := by
   have h3 : Real.sqrt (3 : ℝ) ^ 2 = 3 := Real.sq_sqrt (by norm_num)
   unfold CenteredAffine.inner trialTwo
   dsimp
-  nlinarith
+  nlinarith only [h2, h3]
 
 /-- The two trial functions are orthogonal, so together they form an orthonormal
 basis of the trial subspace. -/
 lemma trialOne_inner_trialTwo : CenteredAffine.inner trialOne trialTwo = 0 := by
-  have h2 : Real.sqrt (2 : ℝ) ^ 2 = 2 := Real.sq_sqrt (by norm_num)
   have h3 : Real.sqrt (3 : ℝ) ^ 2 = 3 := Real.sq_sqrt (by norm_num)
   unfold CenteredAffine.inner trialOne trialTwo
   dsimp
-  nlinarith
+  linear_combination -(Real.sqrt 2 ^ 2 / 12) * h3
 
 /-- The `t`-form is diagonalised by the trial pair, and its first diagonal entry is
 the lower Ritz coefficient — this is where the Ritz value of equation (9.5)
@@ -140,11 +139,10 @@ lemma trialTwo_tInner_trialTwo :
 trial pair a Ritz basis. -/
 lemma trialOne_tInner_trialTwo :
     CenteredAffine.tInner trialOne trialTwo = 0 := by
-  have h2 : Real.sqrt (2 : ℝ) ^ 2 = 2 := Real.sq_sqrt (by norm_num)
   have h3 : Real.sqrt (3 : ℝ) ^ 2 = 3 := Real.sq_sqrt (by norm_num)
   unfold CenteredAffine.tInner trialOne trialTwo
   dsimp
-  nlinarith
+  linear_combination -(Real.sqrt 2 ^ 2 / 24) * h3
 
 /-- First diagonal entry of the `t²`-form: `(11 - √75) / 30`. -/
 lemma trialOne_tSqInner_trialOne :
@@ -178,7 +176,7 @@ lemma trialOne_tSqInner_trialTwo :
   have h3 : Real.sqrt (3 : ℝ) ^ 2 = 3 := Real.sq_sqrt (by norm_num)
   unfold CenteredAffine.tSqInner trialOne trialTwo
   dsimp
-  nlinarith
+  nlinarith only [h2, h3]
 
 /-- The multiplication-by-`epsilon t` compression is the diagonal Ritz matrix
 from equation (9.5). -/

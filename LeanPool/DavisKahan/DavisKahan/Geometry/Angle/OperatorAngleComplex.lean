@@ -555,7 +555,7 @@ theorem norm_cosAngleExtendedC_apply_ge (U V : Submodule ℂ E)
         (mul_nonneg hc0 (norm_nonneg _)) hlow1
       rw [sq, sq]
       exact h
-    have h2 : c ^ 2 ≤ 1 := by nlinarith
+    have h2 : c ^ 2 ≤ 1 := by nlinarith only [hc0, hc1]
     have hb2 : (0:ℝ) ≤ ‖Uᗮ.starProjection x‖ ^ 2 := sq_nonneg _
     nlinarith [h1, h2, hb2, hsq2, sq_nonneg ‖x‖,
       sq_nonneg ‖U.starProjection x‖]
@@ -588,7 +588,7 @@ theorem cosAngleExtendedC_ker_bot_range_top (U V : Submodule ℂ E)
     have hx0 : cosAngleExtendedC U V x = 0 := hx
     have h := hlow x
     rw [hx0, norm_zero] at h
-    have : ‖x‖ ≤ 0 := by nlinarith
+    have : ‖x‖ ≤ 0 := by nlinarith only [hcpos, h]
     exact norm_eq_zero.mp (le_antisymm this (norm_nonneg x))
   refine ⟨hker, ?_⟩
   -- closed range from the antilipschitz bound
@@ -633,7 +633,7 @@ theorem cosAngleExtendedC_ker_bot_range_top (U V : Submodule ℂ E)
     exact inner_self_eq_zero.mp h
   have h := hlow y
   rw [hTy, norm_zero] at h
-  have : ‖y‖ ≤ 0 := by nlinarith
+  have : ‖y‖ ≤ 0 := by nlinarith only [hcpos, h]
   exact norm_eq_zero.mp (le_antisymm this (norm_nonneg y))
 
 /-- The extended cosine as a continuous linear equivalence, in the acute
@@ -683,7 +683,7 @@ theorem ker_bot_range_top_of_isSelfAdjoint_of_bounded_below
     have hx0 : T x = 0 := hx
     have h := hlow x
     rw [hx0, norm_zero] at h
-    have : ‖x‖ ≤ 0 := by nlinarith
+    have : ‖x‖ ≤ 0 := by nlinarith only [hcpos, h]
     exact norm_eq_zero.mp (le_antisymm this (norm_nonneg x))
   refine ⟨hker, ?_⟩
   have hanti : AntilipschitzWith (⟨c, hcpos.le⟩ : NNReal)⁻¹ T := by
@@ -719,7 +719,7 @@ theorem ker_bot_range_top_of_isSelfAdjoint_of_bounded_below
     exact inner_self_eq_zero.mp h
   have h := hlow y
   rw [hTy, norm_zero] at h
-  have : ‖y‖ ≤ 0 := by nlinarith
+  have : ‖y‖ ≤ 0 := by nlinarith only [hcpos, h]
   exact norm_eq_zero.mp (le_antisymm this (norm_nonneg y))
 
 omit [CompleteSpace E] in
@@ -767,7 +767,7 @@ theorem norm_add_starProjection_orthogonal_apply_ge
         (mul_nonneg hc0 (norm_nonneg _)) hlow1
       rw [sq, sq]
       exact h
-    have h2 : c ^ 2 ≤ 1 := by nlinarith
+    have h2 : c ^ 2 ≤ 1 := by nlinarith only [hc0, hc1]
     have hb2 : (0:ℝ) ≤ ‖Uᗮ.starProjection x‖ ^ 2 := sq_nonneg _
     nlinarith [h1, h2, hb2, hsq2, sq_nonneg ‖x‖,
       sq_nonneg ‖U.starProjection x‖]

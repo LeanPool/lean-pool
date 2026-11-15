@@ -8,7 +8,7 @@ module
 public import LeanPool.DavisKahan.ForTauCeti.Analysis.InnerProductSpace.DiagonalOperator
 public import LeanPool.DavisKahan.ForTauCeti.Analysis.InnerProductSpace.UnitarilyInvariantSeminorm.Basic
 public import LeanPool.DavisKahan.ForTauCeti.Analysis.Convex.Majorization
-public import Mathlib.Analysis.InnerProductSpace.Projection.Reflection
+import Mathlib.Analysis.InnerProductSpace.Projection.Reflection
 
 /-!
 # Symmetric gauges of square specializations

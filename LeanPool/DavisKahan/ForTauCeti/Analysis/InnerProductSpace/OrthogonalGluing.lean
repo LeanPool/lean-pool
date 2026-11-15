@@ -104,9 +104,7 @@ theorem norm_orthogonalGlueMap (f : A ≃ₗᵢ[𝕜] A') (g : Aᗮ ≃ₗᵢ[�
       rw [Submodule.norm_coe, g.norm_map, ← Submodule.norm_coe,
         Submodule.coe_orthogonalProjectionOnto_apply]
     rw [h1, h2]
-  have h1 : (0 : ℝ) ≤ ‖orthogonalGlueMap f g x‖ := norm_nonneg _
-  have h2 : (0 : ℝ) ≤ ‖x‖ := norm_nonneg _
-  nlinarith
+  exact (sq_eq_sq₀ (norm_nonneg _) (norm_nonneg _)).mp hsq
 
 /-- The glue as a linear isometry. -/
 noncomputable def orthogonalGlueIsometry (f : A ≃ₗᵢ[𝕜] A') (g : Aᗮ ≃ₗᵢ[𝕜] A'ᗮ) :
@@ -314,9 +312,7 @@ theorem norm_supGlueAmbient_of_mem_sup (hAB : A ≤ Bᗮ) (hAB' : A' ≤ B'ᗮ)
     rw [Submodule.norm_coe, g.norm_map, ← Submodule.norm_coe]
   have hsq : ‖(f ⟨a, ha⟩ : H') + (g ⟨b, hb⟩ : H')‖ ^ 2 = ‖a + b‖ ^ 2 := by
     rw [@norm_add_sq 𝕜, @norm_add_sq 𝕜, hperp', hperp, hfa, hgb]
-  have h1 : (0 : ℝ) ≤ ‖(f ⟨a, ha⟩ : H') + (g ⟨b, hb⟩ : H')‖ := norm_nonneg _
-  have h2 : (0 : ℝ) ≤ ‖a + b‖ := norm_nonneg _
-  nlinarith
+  exact (sq_eq_sq₀ (norm_nonneg _) (norm_nonneg _)).mp hsq
 
 omit [A'.HasOrthogonalProjection] [B'.HasOrthogonalProjection] in
 /-- The ambient map sends `A ⊔ B` into `A' ⊔ B'`. -/
