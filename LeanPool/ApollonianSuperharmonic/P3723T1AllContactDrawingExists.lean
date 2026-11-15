@@ -28,6 +28,20 @@ open Set
 -- [TABLET NODE: P3723T1AllContactDrawingExists]
 namespace ContactDrawingGeometry
 
+private noncomputable abbrev transportedArc {ι : Type} (P : PeriodicTileComplex ι)
+    (positions : ι → Real × Real)
+    (localStar : (a : ι) → {b : ι // P3723T1EdgeContact P a b} → Icc (0 : Real) 1 → Real × Real)
+    (representative : ι → ι) (period : ι → P.lattice)
+    (pull : ∀ a b, P3723T1EdgeContact P a b →
+      P3723T1EdgeContact P (representative a) (P.shift (-period a) b))
+    (a b : ι) (s : Icc (0 : Real) 1) : Real × Real := by
+  classical
+  exact if hab : P3723T1EdgeContact P a b then
+    localStar (representative a) ⟨P.shift (-period a) b, pull a b hab⟩ s +
+      GaussianRealPoint (period a)
+  else positions a
+
+
 
 private theorem present :
     (by
@@ -121,10 +135,8 @@ private theorem gproperties :
             (P3723T1EdgeContact P a b) → (P3723T1EdgeContact P (rep a)
             (P.shift (-period a) b))),
         let g (a b : ι) (s : Icc (0 : Real) 1) : Real × Real :=
-          if hab : P3723T1EdgeContact P a b then
-            localStar (rep a) ⟨P.shift (-period a) b, pulled_contact a b hab⟩ s +
-              GaussianRealPoint (period a)
-          else D.position a
+          ContactDrawingGeometry.transportedArc P D.position localStar rep period
+            pulled_contact a b s
         ∀ a, ∀ b, P3723T1EdgeContact P a b →
           Continuous (g a b) ∧ Function.Injective (g a b) ∧
           g a b ⟨0, by norm_num⟩ = D.position a ∧
@@ -214,10 +226,8 @@ private theorem range_form :
         ∀ (pulled_contact : ∀ (a : ι), ∀ (b : ι), (P3723T1EdgeContact P a b) →
             (P3723T1EdgeContact P (rep a) (P.shift (-period a) b))),
         let g (a b : ι) (s : Icc (0 : Real) 1) : Real × Real :=
-          if hab : P3723T1EdgeContact P a b then
-            localStar (rep a) ⟨P.shift (-period a) b, pulled_contact a b hab⟩ s +
-              GaussianRealPoint (period a)
-          else D.position a
+          ContactDrawingGeometry.transportedArc P D.position localStar rep period
+            pulled_contact a b s
         ∀ (a : ι), ∀ (b : ι), ∀ (hab : P3723T1EdgeContact P a b), Set.range (g a b) = (fun p =>
             p + GaussianRealPoint (period a)) '' Set.range (localStar (rep a) ⟨P.shift (-period
             a) b, pulled_contact a b hab⟩) ) := by
@@ -250,10 +260,8 @@ private theorem gintersections :
             (P3723T1EdgeContact P a b) → (P3723T1EdgeContact P (rep a) (P.shift (-period a)
             b))),
         let g (a b : ι) (s : Icc (0 : Real) 1) : Real × Real :=
-          if hab : P3723T1EdgeContact P a b then
-            localStar (rep a) ⟨P.shift (-period a) b, pulled_contact a b hab⟩ s +
-              GaussianRealPoint (period a)
-          else D.position a
+          ContactDrawingGeometry.transportedArc P D.position localStar rep period
+            pulled_contact a b s
         (∀ (a : ι), ∀ (b : ι), ∀ (hab : P3723T1EdgeContact P a b), Set.range (g a b) = (fun p
             => p + GaussianRealPoint (period a)) '' Set.range (localStar (rep a) ⟨P.shift
             (-period a) b, pulled_contact a b hab⟩)) → (∀ a, ∀ b, ∀ c, P3723T1EdgeContact P a b
@@ -294,10 +302,8 @@ private theorem gperiodic :
             (P3723T1EdgeContact P a b) → (P3723T1EdgeContact P (rep a) (P.shift (-period a)
             b))),
         let g (a b : ι) (s : Icc (0 : Real) 1) : Real × Real :=
-          if hab : P3723T1EdgeContact P a b then
-            localStar (rep a) ⟨P.shift (-period a) b, pulled_contact a b hab⟩ s +
-              GaussianRealPoint (period a)
-          else D.position a
+          ContactDrawingGeometry.transportedArc P D.position localStar rep period
+            pulled_contact a b s
         ∀ u : P.lattice, ∀ a, ∀ b, P3723T1EdgeContact P a b → ∀ s, g (P.shift u a) (P.shift u
             b) s = g a b s + GaussianRealPoint u) ) := by
   classical
@@ -391,10 +397,8 @@ private theorem half_parameters :
         ∀ (pulled_contact : ∀ (a : ι), ∀ (b : ι), (P3723T1EdgeContact P a b) →
             (P3723T1EdgeContact P (rep a) (P.shift (-period a) b))),
         let g (a b : ι) (s : Icc (0 : Real) 1) : Real × Real :=
-          if hab : P3723T1EdgeContact P a b then
-            localStar (rep a) ⟨P.shift (-period a) b, pulled_contact a b hab⟩ s +
-              GaussianRealPoint (period a)
-          else D.position a
+          ContactDrawingGeometry.transportedArc P D.position localStar rep period
+            pulled_contact a b s
         (∀ a, ∀ b, P3723T1EdgeContact P a b →
           Continuous (g a b) ∧ Function.Injective (g a b) ∧
           g a b ⟨0, by norm_num⟩ = D.position a ∧
@@ -457,11 +461,8 @@ private theorem hmeet :
                               P3723T1EdgeContact P a b →
                                 P3723T1EdgeContact P (rep a) (P.shift (-period a) b)),
                         let g (a b : ι) (s : Icc (0 : Real) 1) : Real × Real :=
-                          if hab : P3723T1EdgeContact P a b then
-                            localStar (rep a)
-                                ⟨P.shift (-period a) b, pulled_contact a b hab⟩ s +
-                              GaussianRealPoint (period a)
-                          else D.position a
+                          ContactDrawingGeometry.transportedArc P D.position localStar rep period
+                            pulled_contact a b s
                         ∀ (hg1ab : D.port a b = some (g a b ⟨(1 : ℝ), by norm_num⟩)),
                           ∀ (hg1ba : D.port b a = some (g b a ⟨(1 : ℝ), by norm_num⟩)),
                             let clip (x : Real) : Icc (0 : Real) 1 :=
@@ -559,10 +560,8 @@ private theorem hf0 :
             (P3723T1EdgeContact P (rep a) (P.shift (-period a) b))), ∀ (hab :
             P3723T1EdgeContact P a b),
         let g (a b : ι) (s : Icc (0 : Real) 1) : Real × Real :=
-          if hab : P3723T1EdgeContact P a b then
-            localStar (rep a) ⟨P.shift (-period a) b, pulled_contact a b hab⟩ s +
-              GaussianRealPoint (period a)
-          else D.position a
+          ContactDrawingGeometry.transportedArc P D.position localStar rep period
+            pulled_contact a b s
         ∀ (hg0ab : g a b ⟨(0 : ℝ), by norm_num⟩ = D.position a),
         let clip (x : Real) : Icc (0 : Real) 1 :=
           ⟨max 0 (min 1 x), le_max_left _ _, max_le (by norm_num) (min_le_left _ _)⟩
@@ -613,11 +612,8 @@ private theorem hf1 :
                               P3723T1EdgeContact P a b →
                                 P3723T1EdgeContact P (rep a) (P.shift (-period a) b)),
                         let g (a b : ι) (s : Icc (0 : Real) 1) : Real × Real :=
-                          if hab : P3723T1EdgeContact P a b then
-                            localStar (rep a)
-                                ⟨P.shift (-period a) b, pulled_contact a b hab⟩ s +
-                              GaussianRealPoint (period a)
-                          else D.position a
+                          ContactDrawingGeometry.transportedArc P D.position localStar rep period
+                            pulled_contact a b s
                         ∀ (hba : P3723T1EdgeContact P b a),
                           ∀ (hg0ba : g b a ⟨(0 : ℝ), by norm_num⟩ = D.position b),
                             let clip (x : Real) : Icc (0 : Real) 1 :=
@@ -660,10 +656,8 @@ private theorem hendab :
             (P3723T1EdgeContact P (rep a) (P.shift (-period a) b))), (P3723T1EdgeContact P a
                 b) → (
         let g (a b : ι) (s : Icc (0 : Real) 1) : Real × Real :=
-          if hab : P3723T1EdgeContact P a b then
-            localStar (rep a) ⟨P.shift (-period a) b, pulled_contact a b hab⟩ s +
-              GaussianRealPoint (period a)
-          else D.position a
+          ContactDrawingGeometry.transportedArc P D.position localStar rep period
+            pulled_contact a b s
         (∀ a, ∀ b, P3723T1EdgeContact P a b →
           Continuous (g a b) ∧ Function.Injective (g a b) ∧
           g a b ⟨0, by norm_num⟩ = D.position a ∧
@@ -692,10 +686,8 @@ private theorem hendba :
             (P3723T1EdgeContact P (rep a) (P.shift (-period a) b))),
         (
         let g (a b : ι) (s : Icc (0 : Real) 1) : Real × Real :=
-          if hab : P3723T1EdgeContact P a b then
-            localStar (rep a) ⟨P.shift (-period a) b, pulled_contact a b hab⟩ s +
-              GaussianRealPoint (period a)
-          else D.position a;
+          ContactDrawingGeometry.transportedArc P D.position localStar rep period
+            pulled_contact a b s;
         (∀ a, ∀ b, P3723T1EdgeContact P a b →
           Continuous (g a b) ∧ Function.Injective (g a b) ∧
           g a b ⟨0, by norm_num⟩ = D.position a ∧
@@ -724,10 +716,8 @@ private theorem hcross :
             (P3723T1EdgeContact P (rep a) (P.shift (-period a) b))), (P3723T1EdgeContact P a
                 b) → (
         let g (a b : ι) (s : Icc (0 : Real) 1) : Real × Real :=
-          if hab : P3723T1EdgeContact P a b then
-            localStar (rep a) ⟨P.shift (-period a) b, pulled_contact a b hab⟩ s +
-              GaussianRealPoint (period a)
-          else D.position a
+          ContactDrawingGeometry.transportedArc P D.position localStar rep period
+            pulled_contact a b s
         (range (g a b) ⊆ interior (TileRealization (P.tile a)) ∪ {g a b ⟨(1 : ℝ),
             by norm_num⟩}) → ((range (g b a) ⊆ interior (TileRealization (P.tile b)) ∪ {g b a ⟨(1
                 : ℝ),
@@ -788,11 +778,8 @@ private theorem hfinj :
                               P3723T1EdgeContact P a b →
                                 P3723T1EdgeContact P (rep a) (P.shift (-period a) b)),
                         let g (a b : ι) (s : Icc (0 : Real) 1) : Real × Real :=
-                          if hab : P3723T1EdgeContact P a b then
-                            localStar (rep a)
-                                ⟨P.shift (-period a) b, pulled_contact a b hab⟩ s +
-                              GaussianRealPoint (period a)
-                          else D.position a
+                          ContactDrawingGeometry.transportedArc P D.position localStar rep period
+                            pulled_contact a b s
                         ∀ (higab : Function.Injective (g a b)),
                           ∀ (higba : Function.Injective (g b a)),
                             let clip (x : Real) : Icc (0 : Real) 1 :=
@@ -897,10 +884,8 @@ private theorem hrange :
             (P3723T1EdgeContact P (rep a) (P.shift (-period a) b))), ∀ (hab :
                 P3723T1EdgeContact P a b),
         let g (a b : ι) (s : Icc (0 : Real) 1) : Real × Real :=
-          if hab : P3723T1EdgeContact P a b then
-            localStar (rep a) ⟨P.shift (-period a) b, pulled_contact a b hab⟩ s +
-              GaussianRealPoint (period a)
-          else D.position a
+          ContactDrawingGeometry.transportedArc P D.position localStar rep period
+            pulled_contact a b s
         let halfArc (a b : ι) : Set (Real × Real) :=
           if P3723T1EdgeContact P a b then Set.range (g a b) else ∅
         let edgeArc (a b : ι) : Set (Real × Real) := halfArc a b ∪ halfArc b a
@@ -992,10 +977,8 @@ private theorem right_eval :
         ∀ (pulled_contact : ∀ (a : ι), ∀ (b : ι), (P3723T1EdgeContact P a b) →
             (P3723T1EdgeContact P (rep a) (P.shift (-period a) b))),
         let g (a b : ι) (s : Icc (0 : Real) 1) : Real × Real :=
-          if hab : P3723T1EdgeContact P a b then
-            localStar (rep a) ⟨P.shift (-period a) b, pulled_contact a b hab⟩ s +
-              GaussianRealPoint (period a)
-          else D.position a;
+          ContactDrawingGeometry.transportedArc P D.position localStar rep period
+            pulled_contact a b s;
         ∀ (polyab : P3723T1PolygonalParameterization (g a b)), ∀ (polyba :
             P3723T1PolygonalParameterization (g b a)),
         let m := polyab.count;
@@ -1047,11 +1030,8 @@ private theorem htm_strict :
                               P3723T1EdgeContact P a b →
                                 P3723T1EdgeContact P (rep a) (P.shift (-period a) b)),
                         let g (a b : ι) (s : Icc (0 : Real) 1) : Real × Real :=
-                          if hab : P3723T1EdgeContact P a b then
-                            localStar (rep a)
-                                ⟨P.shift (-period a) b, pulled_contact a b hab⟩ s +
-                              GaussianRealPoint (period a)
-                          else D.position a
+                          ContactDrawingGeometry.transportedArc P D.position localStar rep period
+                            pulled_contact a b s
                         ∀ (polyab : P3723T1PolygonalParameterization (g a b)),
                           ∀ (polyba : P3723T1PolygonalParameterization (g b a)),
                             let m := polyab.count
@@ -1178,11 +1158,8 @@ private theorem htm_finish :
                               P3723T1EdgeContact P a b →
                                 P3723T1EdgeContact P (rep a) (P.shift (-period a) b)),
                         let g (a b : ι) (s : Icc (0 : Real) 1) : Real × Real :=
-                          if hab : P3723T1EdgeContact P a b then
-                            localStar (rep a)
-                                ⟨P.shift (-period a) b, pulled_contact a b hab⟩ s +
-                              GaussianRealPoint (period a)
-                          else D.position a
+                          ContactDrawingGeometry.transportedArc P D.position localStar rep period
+                            pulled_contact a b s
                         ∀ (polyab : P3723T1PolygonalParameterization (g a b)),
                           ∀ (polyba : P3723T1PolygonalParameterization (g b a)),
                             let m := polyab.count
@@ -1243,11 +1220,8 @@ private theorem hstartAt848 :
                               P3723T1EdgeContact P a b →
                                 P3723T1EdgeContact P (rep a) (P.shift (-period a) b)),
                         let g (a b : ι) (s : Icc (0 : Real) 1) : Real × Real :=
-                          if hab : P3723T1EdgeContact P a b then
-                            localStar (rep a)
-                                ⟨P.shift (-period a) b, pulled_contact a b hab⟩ s +
-                              GaussianRealPoint (period a)
-                          else D.position a
+                          ContactDrawingGeometry.transportedArc P D.position localStar rep period
+                            pulled_contact a b s
                         ∀ (polyab : P3723T1PolygonalParameterization (g a b)),
                           ∀ (polyba : P3723T1PolygonalParameterization (g b a)),
                             let m := polyab.count
@@ -1334,11 +1308,8 @@ private theorem hendAt880 :
                                 (P3723T1EdgeContact P (rep a)
                                   (P.shift (-period a) b))),
                         let g (a b : ι) (s : Icc (0 : Real) 1) : Real × Real :=
-                          if hab : P3723T1EdgeContact P a b then
-                            localStar (rep a)
-                                ⟨P.shift (-period a) b, pulled_contact a b hab⟩ s +
-                              GaussianRealPoint (period a)
-                          else D.position a;
+                          ContactDrawingGeometry.transportedArc P D.position localStar rep period
+                            pulled_contact a b s;
                         ∀ (polyab : P3723T1PolygonalParameterization (g a b)),
                           ∀ (polyba : P3723T1PolygonalParameterization (g b a)),
                             let m := polyab.count;
@@ -1403,11 +1374,8 @@ private theorem hA_imp_mid :
                               P3723T1EdgeContact P a b →
                                 P3723T1EdgeContact P (rep a) (P.shift (-period a) b)),
                         let g (a b : ι) (s : Icc (0 : Real) 1) : Real × Real :=
-                          if hab : P3723T1EdgeContact P a b then
-                            localStar (rep a)
-                                ⟨P.shift (-period a) b, pulled_contact a b hab⟩ s +
-                              GaussianRealPoint (period a)
-                          else D.position a;
+                          ContactDrawingGeometry.transportedArc P D.position localStar rep period
+                            pulled_contact a b s;
                         ∀ (polyab : P3723T1PolygonalParameterization (g a b)),
                           ∀ (polyba : P3723T1PolygonalParameterization (g b a)),
                             let A : Set (Icc (0 : Real) 1) := {s | (s : Real) ≤ 1 / 2};
@@ -1480,11 +1448,8 @@ private theorem hsRight :
                                 (P3723T1EdgeContact P (rep a)
                                   (P.shift (-period a) b))),
                         (let g (a b : ι) (s : Icc (0 : Real) 1) : Real × Real :=
-                          if hab : P3723T1EdgeContact P a b then
-                            localStar (rep a)
-                                ⟨P.shift (-period a) b, pulled_contact a b hab⟩ s +
-                              GaussianRealPoint (period a)
-                          else D.position a;
+                          ContactDrawingGeometry.transportedArc P D.position localStar rep period
+                            pulled_contact a b s;
                         ∀ (polyab : P3723T1PolygonalParameterization (g a b)),
                           ∀ (polyba : P3723T1PolygonalParameterization (g b a)),
                             let clip (x : Real) : Icc (0 : Real) 1 :=
@@ -1565,10 +1530,8 @@ private theorem half_periodic :
         ∀ (pulled_contact : ∀ (a : ι), ∀ (b : ι), (P3723T1EdgeContact P a b) →
             (P3723T1EdgeContact P (rep a) (P.shift (-period a) b))),
         let g (a b : ι) (s : Icc (0 : Real) 1) : Real × Real :=
-          if hab : P3723T1EdgeContact P a b then
-            localStar (rep a) ⟨P.shift (-period a) b, pulled_contact a b hab⟩ s +
-              GaussianRealPoint (period a)
-          else D.position a
+          ContactDrawingGeometry.transportedArc P D.position localStar rep period
+            pulled_contact a b s
         (∀ u : P.lattice, ∀ a, ∀ b, P3723T1EdgeContact P a b → ∀ s, g (P.shift u a) (P.shift u
             b) s = g a b s + GaussianRealPoint u) → (
         let halfArc (a b : ι) : Set (Real × Real) :=
@@ -1693,10 +1656,8 @@ private theorem half_range_in_tile :
         ∀ (pulled_contact : ∀ (a : ι), ∀ (b : ι), (P3723T1EdgeContact P a b) →
             (P3723T1EdgeContact P (rep a) (P.shift (-period a) b))),
         let g (a b : ι) (s : Icc (0 : Real) 1) : Real × Real :=
-          if hab : P3723T1EdgeContact P a b then
-            localStar (rep a) ⟨P.shift (-period a) b, pulled_contact a b hab⟩ s +
-              GaussianRealPoint (period a)
-          else D.position a
+          ContactDrawingGeometry.transportedArc P D.position localStar rep period
+            pulled_contact a b s
         (∀ a, ∀ b, P3723T1EdgeContact P a b →
           Continuous (g a b) ∧ Function.Injective (g a b) ∧
           g a b ⟨0, by norm_num⟩ = D.position a ∧
@@ -1745,10 +1706,8 @@ private theorem half_disjoint :
         ∀ (pulled_contact : ∀ (a : ι), ∀ (b : ι), (P3723T1EdgeContact P a b) →
             (P3723T1EdgeContact P (rep a) (P.shift (-period a) b))),
         let g (a b : ι) (s : Icc (0 : Real) 1) : Real × Real :=
-          if hab : P3723T1EdgeContact P a b then
-            localStar (rep a) ⟨P.shift (-period a) b, pulled_contact a b hab⟩ s +
-              GaussianRealPoint (period a)
-          else D.position a
+          ContactDrawingGeometry.transportedArc P D.position localStar rep period
+            pulled_contact a b s
         (∀ a, ∀ b, P3723T1EdgeContact P a b →
           Continuous (g a b) ∧ Function.Injective (g a b) ∧
           g a b ⟨0, by norm_num⟩ = D.position a ∧
@@ -1828,11 +1787,8 @@ private theorem half_subset :
                           P3723T1EdgeContact P a b →
                             P3723T1EdgeContact P (rep a) (P.shift (-period a) b)),
                     let g (a b : ι) (s : Icc (0 : Real) 1) : Real × Real :=
-                      if hab : P3723T1EdgeContact P a b then
-                        localStar (rep a) ⟨P.shift (-period a) b, pulled_contact a b hab⟩
-                            s +
-                          GaussianRealPoint (period a)
-                      else D.position a
+                      ContactDrawingGeometry.transportedArc P D.position localStar rep period
+                        pulled_contact a b s
                     (∀ a,
                         ∀ b,
                           ∀ c,
@@ -1895,10 +1851,8 @@ private theorem hendAt1222 :
             (P3723T1EdgeContact P (rep a) (P.shift (-period a) b))),
         (
         let g (a b : ι) (s : Icc (0 : Real) 1) : Real × Real :=
-          if hab : P3723T1EdgeContact P a b then
-            localStar (rep a) ⟨P.shift (-period a) b, pulled_contact a b hab⟩ s +
-              GaussianRealPoint (period a)
-          else D.position a;
+          ContactDrawingGeometry.transportedArc P D.position localStar rep period
+            pulled_contact a b s;
         (∀ a, ∀ b, P3723T1EdgeContact P a b →
           Continuous (g a b) ∧ Function.Injective (g a b) ∧
           g a b ⟨0, by norm_num⟩ = D.position a ∧
@@ -1950,12 +1904,8 @@ private theorem hab_mem :
                                   (P.shift (-period a) b))),
                         (P3723T1EdgeContact P a b) →
                           (let g (a b : ι) (s : Icc (0 : Real) 1) : Real × Real :=
-                            if hab : P3723T1EdgeContact P a b then
-                              localStar (rep a)
-                                  ⟨P.shift (-period a) b, pulled_contact a b hab⟩
-                                  s +
-                                GaussianRealPoint (period a)
-                            else D.position a;
+                            ContactDrawingGeometry.transportedArc P D.position localStar rep period
+                              pulled_contact a b s;
                           (∀ a,
                               ∀ b,
                                 P3723T1EdgeContact P a b →
@@ -2021,11 +1971,8 @@ private theorem hcd_mem :
                                 (P3723T1EdgeContact P (rep a)
                                   (P.shift (-period a) b))),
                         (let g (a b : ι) (s : Icc (0 : Real) 1) : Real × Real :=
-                          if hab : P3723T1EdgeContact P a b then
-                            localStar (rep a)
-                                ⟨P.shift (-period a) b, pulled_contact a b hab⟩ s +
-                              GaussianRealPoint (period a)
-                          else D.position a;
+                          ContactDrawingGeometry.transportedArc P D.position localStar rep period
+                            pulled_contact a b s;
                         (∀ a,
                             ∀ b,
                               P3723T1EdgeContact P a b →
@@ -2088,10 +2035,8 @@ private theorem arc_endpoint_owner :
         ∀ (pulled_contact : ∀ (a : ι), ∀ (b : ι), (P3723T1EdgeContact P a b) →
             (P3723T1EdgeContact P (rep a) (P.shift (-period a) b))),
         let g (a b : ι) (s : Icc (0 : Real) 1) : Real × Real :=
-          if hab : P3723T1EdgeContact P a b then
-            localStar (rep a) ⟨P.shift (-period a) b, pulled_contact a b hab⟩ s +
-              GaussianRealPoint (period a)
-          else D.position a
+          ContactDrawingGeometry.transportedArc P D.position localStar rep period
+            pulled_contact a b s
         let halfArc (a b : ι) : Set (Real × Real) :=
           if P3723T1EdgeContact P a b then Set.range (g a b) else ∅
         let edgeArc (a b : ι) : Set (Real × Real) := halfArc a b ∪ halfArc b a
@@ -2222,11 +2167,8 @@ private theorem hpoly :
                               P3723T1EdgeContact P a b →
                                 P3723T1EdgeContact P (rep a) (P.shift (-period a) b)),
                         let g (a b : ι) (s : Icc (0 : Real) 1) : Real × Real :=
-                          if hab : P3723T1EdgeContact P a b then
-                            localStar (rep a)
-                                ⟨P.shift (-period a) b, pulled_contact a b hab⟩ s +
-                              GaussianRealPoint (period a)
-                          else D.position a
+                          ContactDrawingGeometry.transportedArc P D.position localStar rep period
+                            pulled_contact a b s
                         ∀ (polyab : P3723T1PolygonalParameterization (g a b)),
                           ∀ (polyba : P3723T1PolygonalParameterization (g b a)),
                             let clip (x : Real) : Icc (0 : Real) 1 :=
@@ -2451,10 +2393,8 @@ private theorem full_parameters :
         ∀ (pulled_contact : ∀ (a : ι), ∀ (b : ι), (P3723T1EdgeContact P a b) →
             (P3723T1EdgeContact P (rep a) (P.shift (-period a) b))),
         let g (a b : ι) (s : Icc (0 : Real) 1) : Real × Real :=
-          if hab : P3723T1EdgeContact P a b then
-            localStar (rep a) ⟨P.shift (-period a) b, pulled_contact a b hab⟩ s +
-              GaussianRealPoint (period a)
-          else D.position a
+          ContactDrawingGeometry.transportedArc P D.position localStar rep period
+            pulled_contact a b s
         (∀ a, ∀ b, P3723T1EdgeContact P a b →
           Continuous (g a b) ∧ Function.Injective (g a b) ∧
           g a b ⟨0, by norm_num⟩ = D.position a ∧
@@ -2542,10 +2482,8 @@ private theorem drawingCertificate :
         ∀ (pulled_contact : ∀ (a : ι), ∀ (b : ι), (P3723T1EdgeContact P a b) →
             (P3723T1EdgeContact P (rep a) (P.shift (-period a) b))),
         let g (a b : ι) (s : Icc (0 : Real) 1) : Real × Real :=
-          if hab : P3723T1EdgeContact P a b then
-            localStar (rep a) ⟨P.shift (-period a) b, pulled_contact a b hab⟩ s +
-              GaussianRealPoint (period a)
-          else D.position a
+          ContactDrawingGeometry.transportedArc P D.position localStar rep period
+            pulled_contact a b s
         (∀ a, ∀ b, P3723T1EdgeContact P a b →
           Continuous (g a b) ∧ Function.Injective (g a b) ∧
           g a b ⟨0, by norm_num⟩ = D.position a ∧
@@ -2740,10 +2678,8 @@ theorem P3723T1AllContactDrawingExists {ι : Type} (P : PeriodicTileComplex ι)
   have pulled_contact (a b : ι) (hab : P3723T1EdgeContact P a b) :=
       ContactDrawingGeometry.pulled_contact ι P D rep_spec period_spec a b hab
   let g (a b : ι) (s : Icc (0 : Real) 1) : Real × Real :=
-    if hab : P3723T1EdgeContact P a b then
-      localStar (rep a) ⟨P.shift (-period a) b, pulled_contact a b hab⟩ s +
-        GaussianRealPoint (period a)
-    else D.position a
+    ContactDrawingGeometry.transportedArc P D.position localStar rep period
+      pulled_contact a b s
   have gproperties : ∀ a b, P3723T1EdgeContact P a b →
       Continuous (g a b) ∧ Function.Injective (g a b) ∧
       g a b ⟨0, by norm_num⟩ = D.position a ∧

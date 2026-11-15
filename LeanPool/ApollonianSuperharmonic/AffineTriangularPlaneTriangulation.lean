@@ -18,6 +18,17 @@ Changes: pool module paths, public exports, project namespace and current Mathli
 @[expose] public section
 namespace ApollonianSuperharmonic
 namespace AffineTriangulationLemmas
+
+/-- The fixed plane shear taking triangular lattice coordinates to horizontal rows. -/
+noncomputable abbrev coordinateShear : (Real × Real) ≃ₜ (Real × Real) :=
+  {
+    toFun p := (p.1 - p.2 / 2, p.2)
+    invFun p := (p.1 + p.2 / 2, p.2)
+    left_inv p := by ext <;> simp
+    right_inv p := by ext <;> simp
+    continuous_toFun := by fun_prop
+    continuous_invFun := by fun_prop }
+
 private theorem symm_adj :
     ∀ (a : (Int × Int)), ∀ (b : (Int × Int)), TriangularLatticeAdjacent a b ↔
         TriangularLatticeAdjacent b a := by
@@ -299,13 +310,7 @@ private theorem segment_homeo :
     simp
 private theorem arc_homeo :
     let coord (x : (Int × Int)) : (Real × Real) := (x.1, x.2)
-    let shear : (Real × Real) ≃ₜ (Real × Real) := {
-      toFun p := (p.1 - p.2 / 2, p.2)
-      invFun p := (p.1 + p.2 / 2, p.2)
-      left_inv p := by ext <;> simp
-      right_inv p := by ext <;> simp
-      continuous_toFun := by fun_prop
-      continuous_invFun := by fun_prop }
+    let shear : (Real × Real) ≃ₜ (Real × Real) := AffineTriangulationLemmas.coordinateShear
     (Function.Injective coord) → (
     let arc (a b : (Int × Int)) : Set (Real × Real) := shear '' segment Real (coord a) (coord b)
     (∀ (a : (Real × Real)), ∀ (b : (Real × Real)), (a ≠ b) → (∃ h : (Set.Icc (0 : Real) 1) ≃ₜ
@@ -462,13 +467,7 @@ private theorem boundary_region :
       | Sum.inl x => ![x, x + (1, 0), x - (0, 1)]
       | Sum.inr x => ![x, x - (1, 0), x + (0, 1)]
     let coord (x : (Int × Int)) : (Real × Real) := (x.1, x.2)
-    let shear : (Real × Real) ≃ₜ (Real × Real) := {
-      toFun p := (p.1 - p.2 / 2, p.2)
-      invFun p := (p.1 + p.2 / 2, p.2)
-      left_inv p := by ext <;> simp
-      right_inv p := by ext <;> simp
-      continuous_toFun := by fun_prop
-      continuous_invFun := by fun_prop }
+    let shear : (Real × Real) ≃ₜ (Real × Real) := AffineTriangulationLemmas.coordinateShear
     let arc (a b : (Int × Int)) : Set (Real × Real) := shear '' segment Real (coord a) (coord b)
     let T : Set (Real × Real) := {p | 0 < p.1 ∧ 0 < p.2 ∧ p.1 + p.2 < 1}
     (frontier T = segment Real ((0, 0) : (Real × Real)) (1, 0) ∪ segment Real ((1, 0) : (Real ×
@@ -488,13 +487,7 @@ private theorem boundary_region :
   simp only [Set.image_union, tile_segment]
   rw [(tile_vertices f).1, (tile_vertices f).2.1, (tile_vertices f).2.2]
 private theorem open_region :
-    let shear : (Real × Real) ≃ₜ (Real × Real) := {
-      toFun p := (p.1 - p.2 / 2, p.2)
-      invFun p := (p.1 + p.2 / 2, p.2)
-      left_inv p := by ext <;> simp
-      right_inv p := by ext <;> simp
-      continuous_toFun := by fun_prop
-      continuous_invFun := by fun_prop }
+    let shear : (Real × Real) ≃ₜ (Real × Real) := AffineTriangulationLemmas.coordinateShear
     let T : Set (Real × Real) := {p | 0 < p.1 ∧ 0 < p.2 ∧ p.1 + p.2 < 1}
     (IsOpen T) → (
     let tile : (Sum (Int × Int) (Int × Int)) → (Real × Real) ≃ₜ (Real × Real) :=
@@ -505,13 +498,7 @@ private theorem open_region :
   intro shear T open_T tile region f
   exact shear.isOpenMap _ ((tile f).isOpenMap _ open_T)
 private theorem connected_region :
-    let shear : (Real × Real) ≃ₜ (Real × Real) := {
-      toFun p := (p.1 - p.2 / 2, p.2)
-      invFun p := (p.1 + p.2 / 2, p.2)
-      left_inv p := by ext <;> simp
-      right_inv p := by ext <;> simp
-      continuous_toFun := by fun_prop
-      continuous_invFun := by fun_prop }
+    let shear : (Real × Real) ≃ₜ (Real × Real) := AffineTriangulationLemmas.coordinateShear
     let T : Set (Real × Real) := {p | 0 < p.1 ∧ 0 < p.2 ∧ p.1 + p.2 < 1}
     (IsConnected T) → (
     let tile : (Sum (Int × Int) (Int × Int)) → (Real × Real) ≃ₜ (Real × Real) :=
@@ -619,13 +606,7 @@ private theorem tiles_disjoint :
         ⟨by linarith [hu.2.1], by linarith⟩ ⟨by linarith [hv.2.1, heq.2], by linarith [heq.2]⟩
       exact hfg (congrArg Sum.inr (Prod.ext (by omega) hy))
 private theorem regions_disjoint :
-    let shear : (Real × Real) ≃ₜ (Real × Real) := {
-      toFun p := (p.1 - p.2 / 2, p.2)
-      invFun p := (p.1 + p.2 / 2, p.2)
-      left_inv p := by ext <;> simp
-      right_inv p := by ext <;> simp
-      continuous_toFun := by fun_prop
-      continuous_invFun := by fun_prop }
+    let shear : (Real × Real) ≃ₜ (Real × Real) := AffineTriangulationLemmas.coordinateShear
     let T : Set (Real × Real) := {p | 0 < p.1 ∧ 0 < p.2 ∧ p.1 + p.2 < 1}
     let tile : (Sum (Int × Int) (Int × Int)) → (Real × Real) ≃ₜ (Real × Real) :=
       AffineTriangulationLemmas.tile
@@ -643,13 +624,7 @@ private theorem plane_cover :
     (∀ (f : (Sum (Int × Int) (Int × Int))), ∀ (i : Fin 3), ∀ (j : Fin 3), (i ≠ j) →
         (TriangularLatticeAdjacent (fv f i) (fv f j))) → (
     let coord (x : (Int × Int)) : (Real × Real) := (x.1, x.2)
-    let shear : (Real × Real) ≃ₜ (Real × Real) := {
-      toFun p := (p.1 - p.2 / 2, p.2)
-      invFun p := (p.1 + p.2 / 2, p.2)
-      left_inv p := by ext <;> simp
-      right_inv p := by ext <;> simp
-      continuous_toFun := by fun_prop
-      continuous_invFun := by fun_prop }
+    let shear : (Real × Real) ≃ₜ (Real × Real) := AffineTriangulationLemmas.coordinateShear
     let arc (a b : (Int × Int)) : Set (Real × Real) := shear '' segment Real (coord a) (coord b)
     let T : Set (Real × Real) := {p | 0 < p.1 ∧ 0 < p.2 ∧ p.1 + p.2 < 1}
     let C : Set (Real × Real) := {p | 0 ≤ p.1 ∧ 0 ≤ p.2 ∧ p.1 + p.2 ≤ 1}
@@ -860,13 +835,7 @@ private theorem segment_intersections :
   exact canonical_intersection x y k l hne
 private theorem arc_symmetric :
     let coord (x : (Int × Int)) : (Real × Real) := (x.1, x.2)
-    let shear : (Real × Real) ≃ₜ (Real × Real) := {
-      toFun p := (p.1 - p.2 / 2, p.2)
-      invFun p := (p.1 + p.2 / 2, p.2)
-      left_inv p := by ext <;> simp
-      right_inv p := by ext <;> simp
-      continuous_toFun := by fun_prop
-      continuous_invFun := by fun_prop }
+    let shear : (Real × Real) ≃ₜ (Real × Real) := AffineTriangulationLemmas.coordinateShear
     let arc (a b : (Int × Int)) : Set (Real × Real) := shear '' segment Real (coord a) (coord b)
     ∀ (a : Int × Int), ∀ (b : Int × Int), arc a b = arc b a := by
   classical
@@ -875,13 +844,7 @@ private theorem arc_symmetric :
   rw [segment_symm]
 private theorem arc_intersections :
     let coord (x : (Int × Int)) : (Real × Real) := (x.1, x.2)
-    let shear : (Real × Real) ≃ₜ (Real × Real) := {
-      toFun p := (p.1 - p.2 / 2, p.2)
-      invFun p := (p.1 + p.2 / 2, p.2)
-      left_inv p := by ext <;> simp
-      right_inv p := by ext <;> simp
-      continuous_toFun := by fun_prop
-      continuous_invFun := by fun_prop }
+    let shear : (Real × Real) ≃ₜ (Real × Real) := AffineTriangulationLemmas.coordinateShear
     let arc (a b : (Int × Int)) : Set (Real × Real) := shear '' segment Real (coord a) (coord b)
     (∀ (a : (Int × Int)), ∀ (b : (Int × Int)), ∀ (c : (Int × Int)), ∀ (d : (Int × Int)),
         (TriangularLatticeAdjacent a b) → ((TriangularLatticeAdjacent c d) → ((({a, b} : Set (Int
@@ -951,13 +914,7 @@ theorem AffineTriangularPlaneTriangulation :
           symm_adj int_walk D hD a b ha hb
   -- Construct the geometry before applying the invertible shear.
   let coord (x : (Int × Int)) : (Real × Real) := (x.1, x.2)
-  let shear : (Real × Real) ≃ₜ (Real × Real) := {
-    toFun p := (p.1 - p.2 / 2, p.2)
-    invFun p := (p.1 + p.2 / 2, p.2)
-    left_inv p := by ext <;> simp
-    right_inv p := by ext <;> simp
-    continuous_toFun := by fun_prop
-    continuous_invFun := by fun_prop }
+  let shear : (Real × Real) ≃ₜ (Real × Real) := AffineTriangulationLemmas.coordinateShear
   have coord_injective := AffineTriangulationLemmas.coord_injective
   let arc (a b : (Int × Int)) : Set (Real × Real) := shear '' segment Real (coord a) (coord b)
   have segment_homeo (a b : (Real × Real)) (hne : a ≠ b) :=
@@ -1073,7 +1030,8 @@ theorem AffineTriangularPlaneTriangulation :
     rw [segment_eq_image' Real, segment_eq_image' Real, Set.image_image]
     congr 1
     funext t
-    ext <;> simp [shear, Prod.smul_fst, Prod.smul_snd, smul_eq_mul]; ring
+    ext <;> simp [shear, Prod.smul_fst, Prod.smul_snd, smul_eq_mul,
+        AffineTriangulationLemmas.coordinateShear]; ring
   · intro x
     change shear '' tile (Sum.inl x) '' T = _
     rw [Set.image_image]

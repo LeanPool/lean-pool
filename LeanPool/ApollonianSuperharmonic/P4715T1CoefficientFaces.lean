@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.PlaneAffineCoordinates
 public import Mathlib.Tactic.Positivity
 
 public import LeanPool.ApollonianSuperharmonic.P4715T1HexagonSubdivision
@@ -318,30 +319,9 @@ private theorem region_image :
                     (P4715T1Position (SixSubtileFaceVertices f 2) -
                         P4715T1Position (SixSubtileFaceVertices f 0)).1 ≠
                 0),
-          let lin (v w x : ℝ × ℝ) : ℝ × ℝ :=
-            (x.1 * v.1 + x.2 * w.1, x.1 * v.2 + x.2 * w.2);
-          let invlin (v w x : ℝ × ℝ) : ℝ × ℝ :=
-            let d := v.1 * w.2 - v.2 * w.1
-            ((x.1 * w.2 - x.2 * w.1) / d, (v.1 * x.2 - v.2 * x.1) / d);
-          ∀
-            (inv_right :
-              ∀ (v : ℝ × ℝ),
-                ∀ (w : ℝ × ℝ),
-                  ∀ (x : ℝ × ℝ), v.1 * w.2 - v.2 * w.1 ≠ 0 → lin v w (invlin v w x) = x),
-            ∀
-              (inv_left :
-                ∀ (v : ℝ × ℝ),
-                  ∀ (w : ℝ × ℝ),
-                    ∀ (x : ℝ × ℝ),
-                      v.1 * w.2 - v.2 * w.1 ≠ 0 → invlin v w (lin v w x) = x),
               let affineHomeo (q v w : ℝ × ℝ) (hd : v.1 * w.2 - v.2 * w.1 ≠ 0) :
                 Homeomorph (ℝ × ℝ) (ℝ × ℝ) :=
-                { toFun := fun x => q + lin v w x
-                  invFun := fun y => invlin v w (y - q)
-                  left_inv := fun x => by simp [inv_left, hd]
-                  right_inv := fun y => by simp [inv_right, hd]
-                  continuous_toFun := by dsimp [lin]; fun_prop
-                  continuous_invFun := by dsimp [invlin]; fun_prop };
+                PlaneAffineCoordinates.homeomorphism q v w hd;
               let D : Set (ℝ × ℝ) := {x | 0 < x.1 ∧ 0 < x.2 ∧ x.1 + x.2 < 1};
               ∀ (f : PeriodicSubtileFaceIndex),
                 P4715T1Region f =
@@ -354,12 +334,13 @@ private theorem region_image :
                     D
     ) := by
   classical
-  intro delta_nonzero lin invlin inv_right inv_left affineHomeo D f
+  intro delta_nonzero affineHomeo D f
   ext z
   constructor
   · rintro ⟨s,t,hs,ht,hst,rfl⟩
     refine ⟨(s,t), ⟨hs,ht,hst⟩, ?_⟩
-    ext <;> simp [affineHomeo, lin] <;> ring
+    ext <;> simp [affineHomeo, PlaneAffineCoordinates.linear,
+        PlaneAffineCoordinates.homeomorphism] <;> ring
   · rintro ⟨⟨s,t⟩, ⟨hs,ht,hst⟩, hz⟩
     refine ⟨s,t,hs,ht,hst, ?_⟩
     calc
@@ -370,7 +351,8 @@ private theorem region_image :
           (P4715T1Position (SixSubtileFaceVertices f 2) - P4715T1Position
               (SixSubtileFaceVertices f 0))
           (delta_nonzero f) (s,t) := hz.symm
-      _ = _ := by ext <;> simp [affineHomeo, lin] <;> ring
+      _ = _ := by ext <;> simp [affineHomeo, PlaneAffineCoordinates.linear,
+          PlaneAffineCoordinates.homeomorphism] <;> ring
 
 private theorem W_decomp :
     (by
@@ -403,34 +385,19 @@ private theorem triangle_image :
             (SixSubtileFaceVertices f 0)).2 - (P4715T1Position (SixSubtileFaceVertices f 1) -
             P4715T1Position (SixSubtileFaceVertices f 0)).2 * (P4715T1Position
             (SixSubtileFaceVertices f 2) - P4715T1Position (SixSubtileFaceVertices f 0)).1 ≠ 0),
-        let lin (v w x : ℝ × ℝ) : ℝ × ℝ :=
-          (x.1 * v.1 + x.2 * w.1, x.1 * v.2 + x.2 * w.2)
-        let invlin (v w x : ℝ × ℝ) : ℝ × ℝ :=
-          let d := v.1 * w.2 - v.2 * w.1
-          ((x.1 * w.2 - x.2 * w.1) / d, (v.1 * x.2 - v.2 * x.1) / d)
-        ∀ (inv_right : ∀ (v : ℝ × ℝ), ∀ (w : ℝ × ℝ), ∀ (x : ℝ × ℝ), (v.1 * w.2 - v.2 * w.1 ≠ 0) →
-            (lin v w (invlin v w x) = x)), ∀ (inv_left : ∀ (v : ℝ × ℝ), ∀ (w : ℝ × ℝ), ∀ (x : ℝ ×
-            ℝ), (v.1 * w.2 - v.2 * w.1 ≠ 0) → (invlin v w (lin v w x) = x)),
         let affineHomeo (q v w : ℝ × ℝ) (hd : v.1 * w.2 - v.2 * w.1 ≠ 0) :
-            Homeomorph (ℝ × ℝ) (ℝ × ℝ) := {
-          toFun := fun x => q + lin v w x
-          invFun := fun y => invlin v w (y - q)
-          left_inv := fun x => by simp [inv_left, hd]
-          right_inv := fun y => by simp [inv_right, hd]
-          continuous_toFun := by dsimp [lin]; fun_prop
-          continuous_invFun := by dsimp [invlin]; fun_prop
-        }
+            Homeomorph (ℝ × ℝ) (ℝ × ℝ) := PlaneAffineCoordinates.homeomorphism q v w hd
         let W : Set (ℝ × ℝ) := {z | 0 ≤ z.1 ∧ 0 ≤ z.2 ∧ z.1+z.2 ≤ 1}
         let stdPts : Fin 3 → ℝ×ℝ := ![(0,0),(1,0),(0,1)]
         let affineLin (v w : ℝ×ℝ) : (ℝ×ℝ) →ₗ[ℝ] (ℝ×ℝ) := {
-          toFun := lin v w
-          map_add' := by intro x y; ext <;> simp [lin] <;> ring
-          map_smul' := by intro c x; ext <;> simp [lin] <;> ring
+          toFun := PlaneAffineCoordinates.linear v w
+          map_add' := by intro x y; ext <;> simp [PlaneAffineCoordinates.linear] <;> ring
+          map_smul' := by intro c x; ext <;> simp [PlaneAffineCoordinates.linear] <;> ring
         }
         let affineMapTri (q v w : ℝ×ℝ) : AffineMap ℝ (ℝ×ℝ) (ℝ×ℝ) := {
-          toFun := fun x => q + lin v w x
+          toFun := fun x => q + PlaneAffineCoordinates.linear v w x
           linear := affineLin v w
-          map_vadd' := by intro x y; ext <;> simp [affineLin,lin] <;> ring
+          map_vadd' := by intro x y; ext <;> simp [affineLin,PlaneAffineCoordinates.linear] <;> ring
         }
         (∀ (q : ℝ×ℝ), ∀ (v : ℝ×ℝ), ∀ (w : ℝ×ℝ), convexHull ℝ (affineMapTri q v w '' Set.range
             stdPts) = affineMapTri q v w '' W) → (∀ (f : PeriodicSubtileFaceIndex), convexHull ℝ
@@ -440,14 +407,15 @@ private theorem triangle_image :
             (P4715T1Position (SixSubtileFaceVertices f 2) - P4715T1Position
             (SixSubtileFaceVertices f 0)) (delta_nonzero f) '' W) ) := by
   classical
-  intro delta_nonzero lin invlin inv_right inv_left affineHomeo W stdPts affineLin affineMapTri
+  intro delta_nonzero affineHomeo W stdPts affineLin affineMapTri
       hull_affine f
   let q := P4715T1Position (SixSubtileFaceVertices f 0)
   let v := P4715T1Position (SixSubtileFaceVertices f 1) - q
   let w := P4715T1Position (SixSubtileFaceVertices f 2) - q
   have hv (i : Fin 3) : affineMapTri q v w (stdPts i) =
       P4715T1Position (SixSubtileFaceVertices f i) := by
-    fin_cases i <;> ext <;> simp [affineMapTri, affineLin, lin, stdPts, q, v, w]
+    fin_cases i <;> ext <;> simp [affineMapTri, affineLin, PlaneAffineCoordinates.linear,
+        stdPts, q, v, w]
   have himage : affineMapTri q v w '' Set.range stdPts =
       P4715T1Position '' Set.range (SixSubtileFaceVertices f) := by
     ext z
@@ -480,23 +448,8 @@ private theorem hconnected :
             (P4715T1Position (SixSubtileFaceVertices f 1) - P4715T1Position
             (SixSubtileFaceVertices f 0)).2 * (P4715T1Position (SixSubtileFaceVertices f 2) -
             P4715T1Position (SixSubtileFaceVertices f 0)).1 ≠ 0),
-        let lin (v w x : ℝ × ℝ) : ℝ × ℝ :=
-          (x.1 * v.1 + x.2 * w.1, x.1 * v.2 + x.2 * w.2)
-        let invlin (v w x : ℝ × ℝ) : ℝ × ℝ :=
-          let d := v.1 * w.2 - v.2 * w.1
-          ((x.1 * w.2 - x.2 * w.1) / d, (v.1 * x.2 - v.2 * x.1) / d)
-        ∀ (inv_right : ∀ (v : ℝ × ℝ), ∀ (w : ℝ × ℝ), ∀ (x : ℝ × ℝ), (v.1 * w.2 - v.2 * w.1 ≠ 0) →
-            (lin v w (invlin v w x) = x)), ∀ (inv_left : ∀ (v : ℝ × ℝ), ∀ (w : ℝ × ℝ), ∀ (x : ℝ ×
-            ℝ), (v.1 * w.2 - v.2 * w.1 ≠ 0) → (invlin v w (lin v w x) = x)),
         let affineHomeo (q v w : ℝ × ℝ) (hd : v.1 * w.2 - v.2 * w.1 ≠ 0) :
-            Homeomorph (ℝ × ℝ) (ℝ × ℝ) := {
-          toFun := fun x => q + lin v w x
-          invFun := fun y => invlin v w (y - q)
-          left_inv := fun x => by simp [inv_left, hd]
-          right_inv := fun y => by simp [inv_right, hd]
-          continuous_toFun := by dsimp [lin]; fun_prop
-          continuous_invFun := by dsimp [invlin]; fun_prop
-        }
+            Homeomorph (ℝ × ℝ) (ℝ × ℝ) := PlaneAffineCoordinates.homeomorphism q v w hd
         let D : Set (ℝ × ℝ) := {x | 0 < x.1 ∧ 0 < x.2 ∧ x.1 + x.2 < 1}
         (Convex ℝ D) → ((D.Nonempty) → ((∀ (f : PeriodicSubtileFaceIndex), (faceDet f ≠ 0) →
             (P4715T1Region f = affineHomeo (P4715T1Position (SixSubtileFaceVertices f 0))
@@ -505,7 +458,7 @@ private theorem hconnected :
             P4715T1Position (SixSubtileFaceVertices f 0)) (delta_nonzero f) '' D)) → (∀ f,
                 IsConnected (P4715T1Region f)))))) := by
   classical
-  intro faceDet faceDet_nonzero delta_nonzero lin invlin inv_right inv_left affineHomeo D Dconvex
+  intro faceDet faceDet_nonzero delta_nonzero affineHomeo D Dconvex
       D_nonempty region_image f
   rw [region_image f (faceDet_nonzero f)]
   exact (Dconvex.isConnected D_nonempty).image _
@@ -533,23 +486,8 @@ private theorem triangle_decomp :
             (P4715T1Position (SixSubtileFaceVertices f 1) - P4715T1Position
             (SixSubtileFaceVertices f 0)).2 * (P4715T1Position (SixSubtileFaceVertices f 2) -
             P4715T1Position (SixSubtileFaceVertices f 0)).1 ≠ 0),
-        let lin (v w x : ℝ × ℝ) : ℝ × ℝ :=
-          (x.1 * v.1 + x.2 * w.1, x.1 * v.2 + x.2 * w.2)
-        let invlin (v w x : ℝ × ℝ) : ℝ × ℝ :=
-          let d := v.1 * w.2 - v.2 * w.1
-          ((x.1 * w.2 - x.2 * w.1) / d, (v.1 * x.2 - v.2 * x.1) / d)
-        ∀ (inv_right : ∀ (v : ℝ × ℝ), ∀ (w : ℝ × ℝ), ∀ (x : ℝ × ℝ), (v.1 * w.2 - v.2 * w.1 ≠ 0) →
-            (lin v w (invlin v w x) = x)), ∀ (inv_left : ∀ (v : ℝ × ℝ), ∀ (w : ℝ × ℝ), ∀ (x : ℝ ×
-            ℝ), (v.1 * w.2 - v.2 * w.1 ≠ 0) → (invlin v w (lin v w x) = x)),
         let affineHomeo (q v w : ℝ × ℝ) (hd : v.1 * w.2 - v.2 * w.1 ≠ 0) :
-            Homeomorph (ℝ × ℝ) (ℝ × ℝ) := {
-          toFun := fun x => q + lin v w x
-          invFun := fun y => invlin v w (y - q)
-          left_inv := fun x => by simp [inv_left, hd]
-          right_inv := fun y => by simp [inv_right, hd]
-          continuous_toFun := by dsimp [lin]; fun_prop
-          continuous_invFun := by dsimp [invlin]; fun_prop
-        }
+            Homeomorph (ℝ × ℝ) (ℝ × ℝ) := PlaneAffineCoordinates.homeomorphism q v w hd
         let D : Set (ℝ × ℝ) := {x | 0 < x.1 ∧ 0 < x.2 ∧ x.1 + x.2 < 1}
         let W : Set (ℝ × ℝ) := {z | 0 ≤ z.1 ∧ 0 ≤ z.2 ∧ z.1+z.2 ≤ 1}
         (frontier D = segment ℝ (0,0) (1,0) ∪ segment ℝ (1,0) (0,1) ∪ segment ℝ (0,0) (0,1)) →
@@ -574,7 +512,7 @@ private theorem triangle_decomp :
             (SixSubtileFaceVertices f (2 : Fin (3 : ℕ))) (SixSubtileFaceVertices f (0 : Fin (3 :
             ℕ))))))))))) := by
   classical
-  intro faceDet faceDet_nonzero delta_nonzero lin invlin inv_right inv_left affineHomeo D W
+  intro faceDet faceDet_nonzero delta_nonzero affineHomeo D W
       D_frontier image_segment region_image W_decomp triangle_image f
   let q := P4715T1Position (SixSubtileFaceVertices f 0)
   let v := P4715T1Position (SixSubtileFaceVertices f 1) - q
@@ -586,11 +524,13 @@ private theorem triangle_decomp :
   rw [image_segment q v w (delta_nonzero f), image_segment q v w (delta_nonzero f),
     image_segment q v w (delta_nonzero f)]
   have e0 : E (0,0) = P4715T1Position (SixSubtileFaceVertices f 0) := by
-    simp [E, affineHomeo, lin, q]
+    simp [E, affineHomeo, PlaneAffineCoordinates.linear, q, PlaneAffineCoordinates.homeomorphism]
   have e1 : E (1,0) = P4715T1Position (SixSubtileFaceVertices f 1) := by
-    ext <;> simp [E, affineHomeo, lin, q, v]
+    ext <;> simp [E, affineHomeo, PlaneAffineCoordinates.linear, q, v,
+        PlaneAffineCoordinates.homeomorphism]
   have e2 : E (0,1) = P4715T1Position (SixSubtileFaceVertices f 2) := by
-    ext <;> simp [E, affineHomeo, lin, q, w]
+    ext <;> simp [E, affineHomeo, PlaneAffineCoordinates.linear, q, w,
+        PlaneAffineCoordinates.homeomorphism]
   simp only [P4715T1Arc]
   rw [e0, e1, e2]
   rw [segment_symm ℝ (P4715T1Position (SixSubtileFaceVertices f 2))
@@ -645,23 +585,8 @@ private theorem region_disjoint_arc :
             (P4715T1Position (SixSubtileFaceVertices f 1) - P4715T1Position
             (SixSubtileFaceVertices f 0)).2 * (P4715T1Position (SixSubtileFaceVertices f 2) -
             P4715T1Position (SixSubtileFaceVertices f 0)).1 ≠ 0),
-        let lin (v w x : ℝ × ℝ) : ℝ × ℝ :=
-          (x.1 * v.1 + x.2 * w.1, x.1 * v.2 + x.2 * w.2)
-        let invlin (v w x : ℝ × ℝ) : ℝ × ℝ :=
-          let d := v.1 * w.2 - v.2 * w.1
-          ((x.1 * w.2 - x.2 * w.1) / d, (v.1 * x.2 - v.2 * x.1) / d)
-        ∀ (inv_right : ∀ (v : ℝ × ℝ), ∀ (w : ℝ × ℝ), ∀ (x : ℝ × ℝ), (v.1 * w.2 - v.2 * w.1 ≠ 0) →
-            (lin v w (invlin v w x) = x)), ∀ (inv_left : ∀ (v : ℝ × ℝ), ∀ (w : ℝ × ℝ), ∀ (x : ℝ ×
-            ℝ), (v.1 * w.2 - v.2 * w.1 ≠ 0) → (invlin v w (lin v w x) = x)),
         let affineHomeo (q v w : ℝ × ℝ) (hd : v.1 * w.2 - v.2 * w.1 ≠ 0) :
-            Homeomorph (ℝ × ℝ) (ℝ × ℝ) := {
-          toFun := fun x => q + lin v w x
-          invFun := fun y => invlin v w (y - q)
-          left_inv := fun x => by simp [inv_left, hd]
-          right_inv := fun y => by simp [inv_right, hd]
-          continuous_toFun := by dsimp [lin]; fun_prop
-          continuous_invFun := by dsimp [invlin]; fun_prop
-        }
+            Homeomorph (ℝ × ℝ) (ℝ × ℝ) := PlaneAffineCoordinates.homeomorphism q v w hd
         let D : Set (ℝ × ℝ) := {x | 0 < x.1 ∧ 0 < x.2 ∧ x.1 + x.2 < 1}
         (∀ (q : ℝ×ℝ), ∀ (v : ℝ×ℝ), ∀ (w : ℝ×ℝ), ∀ (hd : v.1*w.2-v.2*w.1≠0), ∀ (x : ℝ×ℝ), ∀ (y :
             ℝ×ℝ), affineHomeo q v w hd '' segment ℝ x y = segment ℝ (affineHomeo q v w hd x)
@@ -678,7 +603,7 @@ private theorem region_disjoint_arc :
             (P4715T1Region f) (P4715T1Arc (SixSubtileFaceVertices f i)
             (SixSubtileFaceVertices f j))))))) := by
   classical
-  intro faceDet faceDet_nonzero delta_nonzero lin invlin inv_right inv_left affineHomeo D
+  intro faceDet faceDet_nonzero delta_nonzero affineHomeo D
       image_segment stdPts region_image std_edge_disjoint f i j hij
   let q := P4715T1Position (SixSubtileFaceVertices f 0)
   let v := P4715T1Position (SixSubtileFaceVertices f 1) - q
@@ -686,7 +611,8 @@ private theorem region_disjoint_arc :
   let E := affineHomeo q v w (delta_nonzero f)
   have hstd (r : Fin 3) : E (stdPts r) =
       P4715T1Position (SixSubtileFaceVertices f r) := by
-    fin_cases r <;> ext <;> simp [stdPts, E, affineHomeo, lin, q, v, w]
+    fin_cases r <;> ext <;> simp [stdPts, E, affineHomeo, PlaneAffineCoordinates.linear, q, v,
+        w, PlaneAffineCoordinates.homeomorphism]
   rw [Set.disjoint_left]
   intro z hzR hzA
   rw [region_image f (faceDet_nonzero f)] at hzR
@@ -1030,40 +956,6 @@ private theorem faceDet_nonzero :
   cases l <;> simp [faceDet, P4715T1Position, P4715T1Offsets,
     SixSubtileFaceVertices] <;> ring_nf <;> norm_num
 
-private theorem inv_right :
-    (by
-      classical
-      exact
-        let lin (v w x : ℝ × ℝ) : ℝ × ℝ :=
-          (x.1 * v.1 + x.2 * w.1, x.1 * v.2 + x.2 * w.2)
-        let invlin (v w x : ℝ × ℝ) : ℝ × ℝ :=
-          let d := v.1 * w.2 - v.2 * w.1
-          ((x.1 * w.2 - x.2 * w.1) / d, (v.1 * x.2 - v.2 * x.1) / d)
-        ∀ (v : ℝ × ℝ), ∀ (w : ℝ × ℝ), ∀ (x : ℝ × ℝ), v.1 * w.2 - v.2 * w.1 ≠ (0 : ℝ) → lin v w
-            (invlin v w x) = x ) := by
-  classical
-  intro lin invlin v w x hd
-  dsimp [lin, invlin]
-  have hd' : w.2 * v.1 - w.1 * v.2 ≠ 0 := by simpa [mul_comm] using hd
-  apply Prod.ext <;> field_simp [hd'] <;> ring
-
-private theorem inv_left :
-    (by
-      classical
-      exact
-        let lin (v w x : ℝ × ℝ) : ℝ × ℝ :=
-          (x.1 * v.1 + x.2 * w.1, x.1 * v.2 + x.2 * w.2)
-        let invlin (v w x : ℝ × ℝ) : ℝ × ℝ :=
-          let d := v.1 * w.2 - v.2 * w.1
-          ((x.1 * w.2 - x.2 * w.1) / d, (v.1 * x.2 - v.2 * x.1) / d)
-        ∀ (v : ℝ × ℝ), ∀ (w : ℝ × ℝ), ∀ (x : ℝ × ℝ), v.1 * w.2 - v.2 * w.1 ≠ (0 : ℝ) → invlin v w
-            (lin v w x) = x ) := by
-  classical
-  intro lin invlin v w x hd
-  dsimp [lin, invlin]
-  have hd' : v.1 * w.2 - w.1 * v.2 ≠ 0 := by simpa [mul_comm] using hd
-  apply Prod.ext <;> field_simp [hd'] <;> ring
-
 private theorem Dopen :
     (by
       classical
@@ -1118,34 +1010,20 @@ private theorem image_segment :
     (by
       classical
       exact
-        let lin (v w x : ℝ × ℝ) : ℝ × ℝ :=
-          (x.1 * v.1 + x.2 * w.1, x.1 * v.2 + x.2 * w.2)
-        let invlin (v w x : ℝ × ℝ) : ℝ × ℝ :=
-          let d := v.1 * w.2 - v.2 * w.1
-          ((x.1 * w.2 - x.2 * w.1) / d, (v.1 * x.2 - v.2 * x.1) / d)
-        ∀ (inv_right : ∀ (v : ℝ × ℝ), ∀ (w : ℝ × ℝ), ∀ (x : ℝ × ℝ), (v.1 * w.2 - v.2 * w.1 ≠ 0) →
-            (lin v w (invlin v w x) = x)), ∀ (inv_left : ∀ (v : ℝ × ℝ), ∀ (w : ℝ × ℝ), ∀ (x : ℝ ×
-            ℝ), (v.1 * w.2 - v.2 * w.1 ≠ 0) → (invlin v w (lin v w x) = x)),
         let affineHomeo (q v w : ℝ × ℝ) (hd : v.1 * w.2 - v.2 * w.1 ≠ 0) :
-            Homeomorph (ℝ × ℝ) (ℝ × ℝ) := {
-          toFun := fun x => q + lin v w x
-          invFun := fun y => invlin v w (y - q)
-          left_inv := fun x => by simp [inv_left, hd]
-          right_inv := fun y => by simp [inv_right, hd]
-          continuous_toFun := by dsimp [lin]; fun_prop
-          continuous_invFun := by dsimp [invlin]; fun_prop
-        }
+            Homeomorph (ℝ × ℝ) (ℝ × ℝ) := PlaneAffineCoordinates.homeomorphism q v w hd
         ∀ (q : ℝ × ℝ), ∀ (v : ℝ × ℝ), ∀ (w : ℝ × ℝ), ∀ (hd : v.1 * w.2 - v.2 * w.1 ≠ (0 : ℝ)), ∀
             (x : ℝ × ℝ), ∀ (y : ℝ × ℝ), (⇑(affineHomeo q v w hd) : ℝ × ℝ → ℝ × ℝ) '' segment ℝ x
             y = segment ℝ ((affineHomeo q v w hd : ℝ × ℝ → ℝ × ℝ) x) ((affineHomeo q v w hd : ℝ ×
             ℝ → ℝ × ℝ) y) ) := by
   classical
-  intro lin invlin inv_right inv_left affineHomeo q v w hd x y
+  intro affineHomeo q v w hd x y
   rw [segment_eq_image_lineMap, segment_eq_image_lineMap]
   simp only [Set.image_image]
   congr 1
   funext t
-  ext <;> simp [affineHomeo, lin, AffineMap.lineMap_apply] <;> ring
+  ext <;> simp [affineHomeo, PlaneAffineCoordinates.linear, AffineMap.lineMap_apply,
+      PlaneAffineCoordinates.homeomorphism] <;> ring
 
 private theorem W_convex :
     (by
@@ -1167,26 +1045,24 @@ private theorem hull_affine :
     (by
       classical
       exact
-        let lin (v w x : ℝ × ℝ) : ℝ × ℝ :=
-          (x.1 * v.1 + x.2 * w.1, x.1 * v.2 + x.2 * w.2)
         let W : Set (ℝ × ℝ) := {z | 0 ≤ z.1 ∧ 0 ≤ z.2 ∧ z.1+z.2 ≤ 1}
         let stdPts : Fin 3 → ℝ×ℝ := ![(0,0),(1,0),(0,1)]
         (W = convexHull ℝ (Set.range stdPts)) → (
         let affineLin (v w : ℝ×ℝ) : (ℝ×ℝ) →ₗ[ℝ] (ℝ×ℝ) := {
-          toFun := lin v w
-          map_add' := by intro x y; ext <;> simp [lin] <;> ring
-          map_smul' := by intro c x; ext <;> simp [lin] <;> ring
+          toFun := PlaneAffineCoordinates.linear v w
+          map_add' := by intro x y; ext <;> simp [PlaneAffineCoordinates.linear] <;> ring
+          map_smul' := by intro c x; ext <;> simp [PlaneAffineCoordinates.linear] <;> ring
         }
         let affineMapTri (q v w : ℝ×ℝ) : AffineMap ℝ (ℝ×ℝ) (ℝ×ℝ) := {
-          toFun := fun x => q + lin v w x
+          toFun := fun x => q + PlaneAffineCoordinates.linear v w x
           linear := affineLin v w
-          map_vadd' := by intro x y; ext <;> simp [affineLin,lin] <;> ring
+          map_vadd' := by intro x y; ext <;> simp [affineLin,PlaneAffineCoordinates.linear] <;> ring
         }
         ∀ (q : ℝ × ℝ), ∀ (v : ℝ × ℝ), ∀ (w : ℝ × ℝ), (convexHull ℝ : Set (ℝ × ℝ) → Set (ℝ × ℝ))
             ((⇑(affineMapTri q v w) : ℝ × ℝ → ℝ × ℝ) '' Set.range stdPts) = (⇑(affineMapTri q v
             w) : ℝ × ℝ → ℝ × ℝ) '' W)) := by
   classical
-  intro lin W stdPts W_eq_stdHull affineLin affineMapTri q v w
+  intro W stdPts W_eq_stdHull affineLin affineMapTri q v w
   rw [W_eq_stdHull, AffineMap.image_convexHull]
 
 private theorem hopen :
@@ -1206,23 +1082,8 @@ private theorem hopen :
             (P4715T1Position (SixSubtileFaceVertices f 1) - P4715T1Position
             (SixSubtileFaceVertices f 0)).2 * (P4715T1Position (SixSubtileFaceVertices f 2) -
             P4715T1Position (SixSubtileFaceVertices f 0)).1 ≠ 0),
-        let lin (v w x : ℝ × ℝ) : ℝ × ℝ :=
-          (x.1 * v.1 + x.2 * w.1, x.1 * v.2 + x.2 * w.2)
-        let invlin (v w x : ℝ × ℝ) : ℝ × ℝ :=
-          let d := v.1 * w.2 - v.2 * w.1
-          ((x.1 * w.2 - x.2 * w.1) / d, (v.1 * x.2 - v.2 * x.1) / d)
-        ∀ (inv_right : ∀ (v : ℝ × ℝ), ∀ (w : ℝ × ℝ), ∀ (x : ℝ × ℝ), (v.1 * w.2 - v.2 * w.1 ≠ 0) →
-            (lin v w (invlin v w x) = x)), ∀ (inv_left : ∀ (v : ℝ × ℝ), ∀ (w : ℝ × ℝ), ∀ (x : ℝ ×
-            ℝ), (v.1 * w.2 - v.2 * w.1 ≠ 0) → (invlin v w (lin v w x) = x)),
         let affineHomeo (q v w : ℝ × ℝ) (hd : v.1 * w.2 - v.2 * w.1 ≠ 0) :
-            Homeomorph (ℝ × ℝ) (ℝ × ℝ) := {
-          toFun := fun x => q + lin v w x
-          invFun := fun y => invlin v w (y - q)
-          left_inv := fun x => by simp [inv_left, hd]
-          right_inv := fun y => by simp [inv_right, hd]
-          continuous_toFun := by dsimp [lin]; fun_prop
-          continuous_invFun := by dsimp [invlin]; fun_prop
-        }
+            Homeomorph (ℝ × ℝ) (ℝ × ℝ) := PlaneAffineCoordinates.homeomorphism q v w hd
         let D : Set (ℝ × ℝ) := {x | 0 < x.1 ∧ 0 < x.2 ∧ x.1 + x.2 < 1}
         (IsOpen D) → ((∀ (f : PeriodicSubtileFaceIndex), (faceDet f ≠ 0) → (P4715T1Region f =
             affineHomeo (P4715T1Position (SixSubtileFaceVertices f 0)) (P4715T1Position
@@ -1231,7 +1092,7 @@ private theorem hopen :
             (SixSubtileFaceVertices f 0)) (delta_nonzero f) '' D)) → (∀ f, IsOpen
             (P4715T1Region f))))) := by
   classical
-  intro faceDet faceDet_nonzero delta_nonzero lin invlin inv_right inv_left affineHomeo D Dopen
+  intro faceDet faceDet_nonzero delta_nonzero affineHomeo D Dopen
       region_image f
   rw [region_image f (faceDet_nonzero f)]
   exact (affineHomeo (P4715T1Position (SixSubtileFaceVertices f 0))
@@ -1333,24 +1194,8 @@ theorem P4715T1CoefficientFaces :
   have faceDet_eq_delta (f : PeriodicSubtileFaceIndex) := CoefficientFaceProof.faceDet_eq_delta f
   have delta_nonzero (f : PeriodicSubtileFaceIndex) := CoefficientFaceProof.delta_nonzero
                   faceDet_nonzero faceDet_eq_delta f
-  let lin (v w x : ℝ × ℝ) : ℝ × ℝ :=
-    (x.1 * v.1 + x.2 * w.1, x.1 * v.2 + x.2 * w.2)
-  let invlin (v w x : ℝ × ℝ) : ℝ × ℝ :=
-    let d := v.1 * w.2 - v.2 * w.1
-    ((x.1 * w.2 - x.2 * w.1) / d, (v.1 * x.2 - v.2 * x.1) / d)
-  have inv_right (v w x : ℝ × ℝ) (hd : v.1 * w.2 - v.2 * w.1 ≠ 0) :
-      lin v w (invlin v w x) = x := CoefficientFaceTopology.inv_right v w x hd
-  have inv_left (v w x : ℝ × ℝ) (hd : v.1 * w.2 - v.2 * w.1 ≠ 0) :
-      invlin v w (lin v w x) = x := CoefficientFaceTopology.inv_left v w x hd
   let affineHomeo (q v w : ℝ × ℝ) (hd : v.1 * w.2 - v.2 * w.1 ≠ 0) :
-      Homeomorph (ℝ × ℝ) (ℝ × ℝ) := {
-    toFun := fun x => q + lin v w x
-    invFun := fun y => invlin v w (y - q)
-    left_inv := fun x => by simp [inv_left, hd]
-    right_inv := fun y => by simp [inv_right, hd]
-    continuous_toFun := by dsimp [lin]; fun_prop
-    continuous_invFun := by dsimp [invlin]; fun_prop
-  }
+      Homeomorph (ℝ × ℝ) (ℝ × ℝ) := PlaneAffineCoordinates.homeomorphism q v w hd
   let D : Set (ℝ × ℝ) := {x | 0 < x.1 ∧ 0 < x.2 ∧ x.1 + x.2 < 1}
   have Dopen := CoefficientFaceTopology.Dopen
   have Dconvex := CoefficientFaceProof.Dconvex
@@ -1364,34 +1209,29 @@ theorem P4715T1CoefficientFaces :
   have D_frontier := CoefficientFaceProof.D_frontier Dopen
           D_closure mem_bottom_segment mem_diagonal_segment mem_left_segment
   have image_segment (q v w : ℝ×ℝ)
-      (hd : v.1*w.2-v.2*w.1≠0) (x y : ℝ×ℝ) := CoefficientFaceTopology.image_segment inv_right
-          inv_left q v w hd x y
+      (hd : v.1*w.2-v.2*w.1≠0) (x y : ℝ×ℝ) := CoefficientFaceTopology.image_segment  q v w hd x y
   have W_convex := CoefficientFaceTopology.W_convex
   have W_eq_stdHull := CoefficientFaceProof.W_eq_stdHull
       W_convex
   have hull_affine (q v w : ℝ×ℝ) := CoefficientFaceTopology.hull_affine W_eq_stdHull q v w
   have region_image (f : PeriodicSubtileFaceIndex) (hd : faceDet f ≠ 0) :=
-      CoefficientFaceProof.region_image delta_nonzero inv_right
-              inv_left f
+      CoefficientFaceProof.region_image delta_nonzero  f
   have W_decomp := CoefficientFaceProof.W_decomp Dopen D_subset_W D_closure
   have triangle_image (f : PeriodicSubtileFaceIndex) := CoefficientFaceProof.triangle_image
-      delta_nonzero inv_right
-              inv_left hull_affine f
+      delta_nonzero  hull_affine f
   have hopen := CoefficientFaceTopology.hopen faceDet_nonzero
-      delta_nonzero inv_right inv_left Dopen region_image
+      delta_nonzero  Dopen region_image
   have hconnected := CoefficientFaceProof.hconnected
-      faceDet_nonzero delta_nonzero inv_right inv_left Dconvex D_nonempty region_image
+      faceDet_nonzero delta_nonzero  Dconvex D_nonempty region_image
   have triangle_decomp (f : PeriodicSubtileFaceIndex) := CoefficientFaceProof.triangle_decomp
-      faceDet_nonzero delta_nonzero inv_right
-              inv_left D_frontier image_segment region_image W_decomp triangle_image f
+      faceDet_nonzero delta_nonzero  D_frontier image_segment region_image W_decomp triangle_image f
   have region_subset_triangle (f : PeriodicSubtileFaceIndex) :=
       CoefficientFaceTopology.region_subset_triangle triangle_decomp f
   have std_edge_disjoint (i j : Fin 3) (hij : i ≠ j) := CoefficientFaceProof.std_edge_disjoint
           mem_bottom_segment mem_diagonal_segment mem_left_segment i j hij
   have region_disjoint_arc (f : PeriodicSubtileFaceIndex) (i j : Fin 3)
       (hij : i ≠ j) := CoefficientFaceProof.region_disjoint_arc faceDet_nonzero delta_nonzero
-          inv_right
-            inv_left image_segment region_image std_edge_disjoint f i j hij
+           image_segment region_image std_edge_disjoint f i j hij
   have bary_shift (k : Int × Int) (j : Fin 12) (s t : Real) := CoefficientFaceTopology.bary_shift
             position_shift face_vertex_shift k j s t
   have region_shift (k : Int × Int) (j : Fin 12) := CoefficientFaceProof.region_shift bary_shift k j
@@ -1434,11 +1274,14 @@ theorem P4715T1CoefficientFaces :
         rw [image_segment q v w (delta_nonzero f), image_segment q v w (delta_nonzero f),
           image_segment q v w (delta_nonzero f)]
         have e0 : E (0,0) = P4715T1Position (SixSubtileFaceVertices f 0) := by
-          simp [E, affineHomeo, lin, q]
+          simp [E, affineHomeo, PlaneAffineCoordinates.linear, q,
+              PlaneAffineCoordinates.homeomorphism]
         have e1 : E (1,0) = P4715T1Position (SixSubtileFaceVertices f 1) := by
-          ext <;> simp [E, affineHomeo, lin, q, v]
+          ext <;> simp [E, affineHomeo, PlaneAffineCoordinates.linear, q, v,
+              PlaneAffineCoordinates.homeomorphism]
         have e2 : E (0,1) = P4715T1Position (SixSubtileFaceVertices f 2) := by
-          ext <;> simp [E, affineHomeo, lin, q, w]
+          ext <;> simp [E, affineHomeo, PlaneAffineCoordinates.linear, q, w,
+              PlaneAffineCoordinates.homeomorphism]
         simp only [P4715T1Arc]
         rw [e0, e1, e2]
         rw [segment_symm ℝ (P4715T1Position (SixSubtileFaceVertices f 2))

@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.SubtileRowIndices
 public import LeanPool.ApollonianSuperharmonic.BandLayoutParentNonempty
 
 public import LeanPool.ApollonianSuperharmonic.P4261T1PlacedOdometer
@@ -83,23 +84,8 @@ private theorem tableFacts :
     (by
       classical
       exact
-        let makeIndex : Fin 3 → Fin 4 → PeriodicSubtileIndex := fun k t =>
-          if k = 0 then
-            if t = 0 then ⟨.A, 0, -1⟩ else if t = 1 then ⟨.B, 1, 1⟩
-              else if t = 2 then ⟨.B, 0, 1⟩ else ⟨.A, -1, -1⟩
-          else if k = 1 then
-            if t = 0 then ⟨.C, 1, 1⟩ else if t = 1 then ⟨.D, -1, 0⟩
-              else if t = 2 then ⟨.D, -1, -1⟩ else ⟨.C, 1, 0⟩
-          else
-            if t = 0 then ⟨.E, -1, 0⟩ else if t = 1 then ⟨.F, 0, -1⟩
-              else if t = 2 then ⟨.F, 1, 0⟩ else ⟨.E, 0, 1⟩
-        let slot : SixSubtileLabel → Fin 3 × Bool := fun l => match l with
-          | .A => (0, true)
-          | .B => (0, false)
-          | .C => (1, true)
-          | .D => (1, false)
-          | .E => (2, true)
-          | .F => (2, false)
+        let makeIndex : Fin 3 → Fin 4 → PeriodicSubtileIndex := SubtileRowIndices.source
+        let slot : SixSubtileLabel → Fin 3 × Bool := SubtileRowIndices.labelSlot
         ∀ (k : Fin 3), ∀ (t : Fin 4), ∀ (b : PeriodicSubtileIndex), (b = makeIndex k t) → (b ∈
             P4261T1ExteriorIndices ∧ (slot b.label).1 = k ∧ (slot b.label).2 = (if b.label = .A
             ∨ b.label = .C ∨ b.label = .E then true else false)) ) := by
@@ -107,7 +93,8 @@ private theorem tableFacts :
   intro makeIndex slot k t b hb
   subst b
   fin_cases k <;> fin_cases t <;>
-    simp [makeIndex, slot, P4261T1ExteriorIndices]
+    simp [makeIndex, slot, P4261T1ExteriorIndices, SubtileRowIndices.source,
+        SubtileRowIndices.labelSlot]
 
 private theorem hsuppliedCentroid :
     (by
@@ -126,16 +113,7 @@ private theorem hsuppliedCentroid :
           BandVectors.1 (q k.succ) (q 0)
         let outgoing : Fin 3 → GaussianInt := fun k =>
           BandVectors.1 (q 0) (q k.succ)
-        let makeIndex : Fin 3 → Fin 4 → PeriodicSubtileIndex := fun k t =>
-          if k = 0 then
-            if t = 0 then ⟨.A, 0, -1⟩ else if t = 1 then ⟨.B, 1, 1⟩
-              else if t = 2 then ⟨.B, 0, 1⟩ else ⟨.A, -1, -1⟩
-          else if k = 1 then
-            if t = 0 then ⟨.C, 1, 1⟩ else if t = 1 then ⟨.D, -1, 0⟩
-              else if t = 2 then ⟨.D, -1, -1⟩ else ⟨.C, 1, 0⟩
-          else
-            if t = 0 then ⟨.E, -1, 0⟩ else if t = 1 then ⟨.F, 0, -1⟩
-              else if t = 2 then ⟨.F, 1, 0⟩ else ⟨.E, 0, 1⟩
+        let makeIndex : Fin 3 → Fin 4 → PeriodicSubtileIndex := SubtileRowIndices.source
         let a : PeriodicSubtileIndex := makeIndex j s
         (TileCentroid (SubtileOccurrenceInterpretation cert.P cert.u cert.v a) - TileCentroid T₀
             = (1 / 2 : ℝ) • GaussianRealPoint ((⟨0, 1⟩ : GaussianInt) ^ s.val * (incoming j +
@@ -172,32 +150,9 @@ private theorem hbandOcc :
                       ∀ (r : Fin (3 : ℕ)),
                         let j : Fin 3 := i' + r;
                         let makeIndex : Fin 3 → Fin 4 → PeriodicSubtileIndex :=
-                          fun k t =>
-                          if k = 0 then
-                            if t = 0 then ⟨.A, 0, -1⟩
-                            else
-                              if t = 1 then ⟨.B, 1, 1⟩
-                              else if t = 2 then ⟨.B, 0, 1⟩ else ⟨.A, -1, -1⟩
-                          else
-                            if k = 1 then
-                              if t = 0 then ⟨.C, 1, 1⟩
-                              else
-                                if t = 1 then ⟨.D, -1, 0⟩
-                                else if t = 2 then ⟨.D, -1, -1⟩ else ⟨.C, 1, 0⟩
-                            else
-                              if t = 0 then ⟨.E, -1, 0⟩
-                              else
-                                if t = 1 then ⟨.F, 0, -1⟩
-                                else if t = 2 then ⟨.F, 1, 0⟩ else ⟨.E, 0, 1⟩;
+                          SubtileRowIndices.source;
                         let a : PeriodicSubtileIndex := makeIndex j s;
-                        let slot : SixSubtileLabel → Fin 3 × Bool := fun l =>
-                          match l with
-                          | .A => (0, true)
-                          | .B => (0, false)
-                          | .C => (1, true)
-                          | .D => (1, false)
-                          | .E => (2, true)
-                          | .F => (2, false);
+                        let slot : SixSubtileLabel → Fin 3 × Bool := SubtileRowIndices.labelSlot;
                         (BandPrototile (q (slot a.label).1.succ)
                           (SubtileOccurrenceInterpretation cert.P cert.u cert.v a))) := by
   classical
@@ -230,24 +185,9 @@ private theorem hcells :
             C₀ T₀), ∀ (T : ProtoTile), ∀ (i' : Fin (3 : ℕ)), ∀ (s : Fin (4 : ℕ)), ∀ (r : Fin (3 :
             ℕ)),
         let j : Fin 3 := i' + r
-        let makeIndex : Fin 3 → Fin 4 → PeriodicSubtileIndex := fun k t =>
-          if k = 0 then
-            if t = 0 then ⟨.A, 0, -1⟩ else if t = 1 then ⟨.B, 1, 1⟩
-              else if t = 2 then ⟨.B, 0, 1⟩ else ⟨.A, -1, -1⟩
-          else if k = 1 then
-            if t = 0 then ⟨.C, 1, 1⟩ else if t = 1 then ⟨.D, -1, 0⟩
-              else if t = 2 then ⟨.D, -1, -1⟩ else ⟨.C, 1, 0⟩
-          else
-            if t = 0 then ⟨.E, -1, 0⟩ else if t = 1 then ⟨.F, 0, -1⟩
-              else if t = 2 then ⟨.F, 1, 0⟩ else ⟨.E, 0, 1⟩
+        let makeIndex : Fin 3 → Fin 4 → PeriodicSubtileIndex := SubtileRowIndices.source
         let a : PeriodicSubtileIndex := makeIndex j s
-        let slot : SixSubtileLabel → Fin 3 × Bool := fun l => match l with
-          | .A => (0, true)
-          | .B => (0, false)
-          | .C => (1, true)
-          | .D => (1, false)
-          | .E => (2, true)
-          | .F => (2, false)
+        let slot : SixSubtileLabel → Fin 3 × Bool := SubtileRowIndices.labelSlot
         ((slot a.label).1 = j ∧ (slot a.label).2 = (if a.label = .A ∨ a.label = .C ∨ a.label = .E
             then true else false)) → ((TileCentroid T = TileCentroid
             (SubtileOccurrenceInterpretation cert.P cert.u cert.v a)) → ((BandPrototile (q (slot
@@ -273,23 +213,7 @@ private theorem hoccNonempty :
                       ∀ (r : Fin (3 : ℕ)),
                         let j : Fin 3 := i' + r;
                         let makeIndex : Fin 3 → Fin 4 → PeriodicSubtileIndex :=
-                          fun k t =>
-                          if k = 0 then
-                            if t = 0 then ⟨.A, 0, -1⟩
-                            else
-                              if t = 1 then ⟨.B, 1, 1⟩
-                              else if t = 2 then ⟨.B, 0, 1⟩ else ⟨.A, -1, -1⟩
-                          else
-                            if k = 1 then
-                              if t = 0 then ⟨.C, 1, 1⟩
-                              else
-                                if t = 1 then ⟨.D, -1, 0⟩
-                                else if t = 2 then ⟨.D, -1, -1⟩ else ⟨.C, 1, 0⟩
-                            else
-                              if t = 0 then ⟨.E, -1, 0⟩
-                              else
-                                if t = 1 then ⟨.F, 0, -1⟩
-                                else if t = 2 then ⟨.F, 1, 0⟩ else ⟨.E, 0, 1⟩;
+                          SubtileRowIndices.source;
                         let a : PeriodicSubtileIndex := makeIndex j s;
                         ((∀ k, ∀ e, (cert.P k e).cells.Nonempty) →
                           ((SubtileOccurrenceInterpretation cert.P cert.u cert.v
@@ -316,16 +240,7 @@ private theorem hfoot :
             C₀ T₀), ∀ (T : ProtoTile), ∀ (i' : Fin (3 : ℕ)), ∀ (s : Fin (4 : ℕ)), ∀ (r : Fin (3 :
             ℕ)),
         let j : Fin 3 := i' + r
-        let makeIndex : Fin 3 → Fin 4 → PeriodicSubtileIndex := fun k t =>
-          if k = 0 then
-            if t = 0 then ⟨.A, 0, -1⟩ else if t = 1 then ⟨.B, 1, 1⟩
-              else if t = 2 then ⟨.B, 0, 1⟩ else ⟨.A, -1, -1⟩
-          else if k = 1 then
-            if t = 0 then ⟨.C, 1, 1⟩ else if t = 1 then ⟨.D, -1, 0⟩
-              else if t = 2 then ⟨.D, -1, -1⟩ else ⟨.C, 1, 0⟩
-          else
-            if t = 0 then ⟨.E, -1, 0⟩ else if t = 1 then ⟨.F, 0, -1⟩
-              else if t = 2 then ⟨.F, 1, 0⟩ else ⟨.E, 0, 1⟩
+        let makeIndex : Fin 3 → Fin 4 → PeriodicSubtileIndex := SubtileRowIndices.source
         let a : PeriodicSubtileIndex := makeIndex j s
         (T.cells = (SubtileOccurrenceInterpretation cert.P cert.u cert.v a).cells) →
             (((SubtileOccurrenceInterpretation cert.P cert.u cert.v a).cells.Nonempty) →
@@ -345,16 +260,7 @@ private theorem hdomain :
             C₀ T₀), ∀ (C : BandCircle), ∀ (T : ProtoTile), ∀ (h : PartialOdometer), (TileOdometer
             C.1.1 T h) → (∀ (i' : Fin (3 : ℕ)), ∀ (s : Fin (4 : ℕ)), ∀ (r : Fin (3 : ℕ)),
         let j : Fin 3 := i' + r
-        let makeIndex : Fin 3 → Fin 4 → PeriodicSubtileIndex := fun k t =>
-          if k = 0 then
-            if t = 0 then ⟨.A, 0, -1⟩ else if t = 1 then ⟨.B, 1, 1⟩
-              else if t = 2 then ⟨.B, 0, 1⟩ else ⟨.A, -1, -1⟩
-          else if k = 1 then
-            if t = 0 then ⟨.C, 1, 1⟩ else if t = 1 then ⟨.D, -1, 0⟩
-              else if t = 2 then ⟨.D, -1, -1⟩ else ⟨.C, 1, 0⟩
-          else
-            if t = 0 then ⟨.E, -1, 0⟩ else if t = 1 then ⟨.F, 0, -1⟩
-              else if t = 2 then ⟨.F, 1, 0⟩ else ⟨.E, 0, 1⟩
+        let makeIndex : Fin 3 → Fin 4 → PeriodicSubtileIndex := SubtileRowIndices.source
         let a : PeriodicSubtileIndex := makeIndex j s
         (FootprintVertices T = FootprintVertices (SubtileOccurrenceInterpretation cert.P cert.u
             cert.v a)) → ((h.domain : Set GaussianInt) = FootprintVertices
@@ -375,24 +281,9 @@ private theorem hcircle :
             (∀ (r : Fin (3 : ℕ)),
         let j : Fin 3 := i' + r
         (q' i'.succ = q j.succ) → (
-        let makeIndex : Fin 3 → Fin 4 → PeriodicSubtileIndex := fun k t =>
-          if k = 0 then
-            if t = 0 then ⟨.A, 0, -1⟩ else if t = 1 then ⟨.B, 1, 1⟩
-              else if t = 2 then ⟨.B, 0, 1⟩ else ⟨.A, -1, -1⟩
-          else if k = 1 then
-            if t = 0 then ⟨.C, 1, 1⟩ else if t = 1 then ⟨.D, -1, 0⟩
-              else if t = 2 then ⟨.D, -1, -1⟩ else ⟨.C, 1, 0⟩
-          else
-            if t = 0 then ⟨.E, -1, 0⟩ else if t = 1 then ⟨.F, 0, -1⟩
-              else if t = 2 then ⟨.F, 1, 0⟩ else ⟨.E, 0, 1⟩
+        let makeIndex : Fin 3 → Fin 4 → PeriodicSubtileIndex := SubtileRowIndices.source
         let a : PeriodicSubtileIndex := makeIndex j s
-        let slot : SixSubtileLabel → Fin 3 × Bool := fun l => match l with
-          | .A => (0, true)
-          | .B => (0, false)
-          | .C => (1, true)
-          | .D => (1, false)
-          | .E => (2, true)
-          | .F => (2, false)
+        let slot : SixSubtileLabel → Fin 3 × Bool := SubtileRowIndices.labelSlot
         ((slot a.label).1 = j ∧ (slot a.label).2 = (if a.label = .A ∨ a.label = .C ∨ a.label = .E
             then true else false)) → (C.1.1 = q (slot a.label).1.succ))) ) := by
   classical
@@ -434,23 +325,8 @@ private theorem hrowPointAux :
       classical
       exact
         ∀ (q : Fin 4 → CircleCoordinates),
-        let makeIndex : Fin 3 → Fin 4 → PeriodicSubtileIndex := fun k t =>
-          if k = 0 then
-            if t = 0 then ⟨.A, 0, -1⟩ else if t = 1 then ⟨.B, 1, 1⟩
-              else if t = 2 then ⟨.B, 0, 1⟩ else ⟨.A, -1, -1⟩
-          else if k = 1 then
-            if t = 0 then ⟨.C, 1, 1⟩ else if t = 1 then ⟨.D, -1, 0⟩
-              else if t = 2 then ⟨.D, -1, -1⟩ else ⟨.C, 1, 0⟩
-          else
-            if t = 0 then ⟨.E, -1, 0⟩ else if t = 1 then ⟨.F, 0, -1⟩
-              else if t = 2 then ⟨.F, 1, 0⟩ else ⟨.E, 0, 1⟩
-        let slot : SixSubtileLabel → Fin 3 × Bool := fun l => match l with
-          | .A => (0, true)
-          | .B => (0, false)
-          | .C => (1, true)
-          | .D => (1, false)
-          | .E => (2, true)
-          | .F => (2, false)
+        let makeIndex : Fin 3 → Fin 4 → PeriodicSubtileIndex := SubtileRowIndices.source
+        let slot : SixSubtileLabel → Fin 3 × Bool := SubtileRowIndices.labelSlot
         let I : GaussianInt := ⟨0, 1⟩
         let A : GaussianInt := BandVectors.2 (q 2) (q 1)
         let B : GaussianInt := BandVectors.2 (q 3) (q 2)
@@ -470,7 +346,8 @@ private theorem hrowPointAux :
   fin_cases k <;> fin_cases t <;>
     simp [makeIndex, slot, A, B, I, GaussianRealPoint, pow_succ,
       P4250T1SlopeOffset, -GaussianInt.intCast_re,
-      -GaussianInt.intCast_im] <;> ring_nf <;> trivial
+      -GaussianInt.intCast_im, SubtileRowIndices.source,
+          SubtileRowIndices.labelSlot] <;> ring_nf <;> trivial
 
 private theorem hslopePair :
     (by
@@ -543,24 +420,9 @@ theorem P4261T1SubtileCoordinates
     have rows := BandOrderedGeneralSubtileCanonicalRows
       cert.P T₀ cert.u cert.v j s edge incoming outgoing hsuper hin0 hin1 hin2
       hflip hu hv hcentroidRows
-    let makeIndex : Fin 3 → Fin 4 → PeriodicSubtileIndex := fun k t =>
-      if k = 0 then
-        if t = 0 then ⟨.A, 0, -1⟩ else if t = 1 then ⟨.B, 1, 1⟩
-          else if t = 2 then ⟨.B, 0, 1⟩ else ⟨.A, -1, -1⟩
-      else if k = 1 then
-        if t = 0 then ⟨.C, 1, 1⟩ else if t = 1 then ⟨.D, -1, 0⟩
-          else if t = 2 then ⟨.D, -1, -1⟩ else ⟨.C, 1, 0⟩
-      else
-        if t = 0 then ⟨.E, -1, 0⟩ else if t = 1 then ⟨.F, 0, -1⟩
-          else if t = 2 then ⟨.F, 1, 0⟩ else ⟨.E, 0, 1⟩
+    let makeIndex : Fin 3 → Fin 4 → PeriodicSubtileIndex := SubtileRowIndices.source
     let a : PeriodicSubtileIndex := makeIndex j s
-    let slot : SixSubtileLabel → Fin 3 × Bool := fun l => match l with
-      | .A => (0, true)
-      | .B => (0, false)
-      | .C => (1, true)
-      | .D => (1, false)
-      | .E => (2, true)
-      | .F => (2, false)
+    let slot : SixSubtileLabel → Fin 3 × Bool := SubtileRowIndices.labelSlot
     have tableFacts := SubtileCoordinateGeometry.tableFacts
     have htable := tableFacts j s a rfl
     have ha := htable.1

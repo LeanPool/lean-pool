@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.SubtileRowIndices
 public import LeanPool.ApollonianSuperharmonic.PartialOdometerEquality
 public import LeanPool.ApollonianSuperharmonic.BandLayoutParentNonempty
 public import LeanPool.ApollonianSuperharmonic.BandParentCentroidComparison
@@ -728,13 +729,7 @@ private theorem labelExists :
         let m : Int := if k = 0 then μ else if k = 2 then -μ else 0
         let n : Int := if k = 1 then μ else if k = 2 then -μ else 0
         let shift : GaussianInt := (m : GaussianInt) * cert.u + (n : GaussianInt) * cert.v
-        let slot : SixSubtileLabel → Fin 3 × Bool := fun l => match l with
-          | .A => (0, true)
-          | .B => (0, false)
-          | .C => (1, true)
-          | .D => (1, false)
-          | .E => (2, true)
-          | .F => (2, false)
+        let slot : SixSubtileLabel → Fin 3 × Bool := SubtileRowIndices.labelSlot
         ∀ (kk : Fin 3), ∀ (t : Bool), ∃ l : SixSubtileLabel, slot l = (kk, t) ∧
             SubtileOccurrenceInterpretation cert.P cert.u cert.v ⟨l, m, n⟩ = TileTranslation
             (cert.P kk t) shift ) := by
@@ -912,13 +907,7 @@ theorem P4261T1RightCoordinates
       GaussianRealPoint ((m : GaussianInt) * BandVectors.2 (q 0) (q 1) +
         (n : GaussianInt) * BandVectors.2 (q 0) (q 2)) := RightCoordinateGeometry.hslopeFinal q
             pN p0 i' e' i'' s r ra hSlopeShift ps hslopeOffset
-  let slot : SixSubtileLabel → Fin 3 × Bool := fun l => match l with
-    | .A => (0, true)
-    | .B => (0, false)
-    | .C => (1, true)
-    | .D => (1, false)
-    | .E => (2, true)
-    | .F => (2, false)
+  let slot : SixSubtileLabel → Fin 3 × Bool := SubtileRowIndices.labelSlot
   have labelExists : ∀ (kk : Fin 3) (t : Bool),
       ∃ l : SixSubtileLabel,
         slot l = (kk, t) ∧

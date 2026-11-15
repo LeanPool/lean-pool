@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.ThreeTileUnionJunction
 public import LeanPool.ApollonianSuperharmonic.GaussianRealPointProperties
 
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralLayoutCertificate
@@ -33,6 +34,39 @@ Changes: pool module paths, public exports, project namespace and current Mathli
 namespace ApollonianSuperharmonic
 
 namespace MixedAggregateGeometry
+
+/-- Neighbor indices for the mixed periodic subtile pattern. -/
+noncomputable abbrev mixedNeighborIndices (a : PeriodicSubtileIndex) :
+    Finset PeriodicSubtileIndex := by
+  classical
+  exact
+    let m := a.first
+    let n := a.second
+    match a.label with
+    | .A => {⟨.B,m,n⟩, ⟨.B,m,n+1⟩, ⟨.B,m+1,n+1⟩, ⟨.C,m,n⟩,
+        ⟨.C,m+1,n+1⟩, ⟨.D,m,n⟩, ⟨.E,m,n+1⟩, ⟨.F,m,n⟩}
+    | .B => {⟨.A,m,n⟩, ⟨.A,m,n-1⟩, ⟨.A,m-1,n-1⟩, ⟨.C,m,n⟩,
+        ⟨.D,m-1,n-1⟩, ⟨.D,m,n⟩, ⟨.E,m,n⟩, ⟨.F,m,n-1⟩}
+    | .C => {⟨.A,m,n⟩, ⟨.A,m-1,n-1⟩, ⟨.B,m,n⟩, ⟨.D,m-1,n⟩,
+        ⟨.E,m-1,n⟩, ⟨.F,m,n⟩}
+    | .D => {⟨.A,m,n⟩, ⟨.B,m+1,n+1⟩, ⟨.B,m,n⟩, ⟨.C,m+1,n⟩,
+        ⟨.E,m,n⟩, ⟨.F,m+1,n⟩}
+    | .E => {⟨.A,m,n-1⟩, ⟨.B,m,n⟩, ⟨.C,m+1,n⟩, ⟨.D,m,n⟩}
+    | .F => {⟨.A,m,n⟩, ⟨.B,m,n+1⟩, ⟨.C,m,n⟩, ⟨.D,m-1,n⟩}
+
+/-- The three index components in a mixed aggregate junction row. -/
+noncomputable abbrev mixedComponentIndices (mixedBlock : Int → Int → Finset PeriodicSubtileIndex)
+    (r : Nat) : Finset PeriodicSubtileIndex ×
+      Finset PeriodicSubtileIndex × Finset PeriodicSubtileIndex := by
+  classical
+  exact
+    (mixedBlock 0 0, match r with
+      | 0 => (mixedBlock 1 0, {⟨.B,1,1⟩})
+      | 1 => (mixedBlock 0 1, {⟨.D,-1,0⟩})
+      | 2 => (mixedBlock (-1) (-1), {⟨.F,0,-1⟩})
+      | 3 => ({⟨.A,0,-1⟩}, {⟨.C,1,0⟩})
+      | 4 => ({⟨.C,1,1⟩}, {⟨.E,0,1⟩})
+      | _ => ({⟨.E,-1,0⟩}, {⟨.A,-1,-1⟩}))
 
 private def incomingCertificateTrees : List (List (Nat × Nat)) :=
   [
@@ -212,152 +246,141 @@ private theorem mixedNeighbors_symmetric :
       classical
       exact
         let mixedNeighbors (a : PeriodicSubtileIndex) : Finset PeriodicSubtileIndex :=
-          let m := a.first
-          let n := a.second
-          match a.label with
-          | .A => {⟨.B,m,n⟩, ⟨.B,m,n+1⟩, ⟨.B,m+1,n+1⟩, ⟨.C,m,n⟩,
-              ⟨.C,m+1,n+1⟩, ⟨.D,m,n⟩, ⟨.E,m,n+1⟩, ⟨.F,m,n⟩}
-          | .B => {⟨.A,m,n⟩, ⟨.A,m,n-1⟩, ⟨.A,m-1,n-1⟩, ⟨.C,m,n⟩,
-              ⟨.D,m-1,n-1⟩, ⟨.D,m,n⟩, ⟨.E,m,n⟩, ⟨.F,m,n-1⟩}
-          | .C => {⟨.A,m,n⟩, ⟨.A,m-1,n-1⟩, ⟨.B,m,n⟩, ⟨.D,m-1,n⟩,
-              ⟨.E,m-1,n⟩, ⟨.F,m,n⟩}
-          | .D => {⟨.A,m,n⟩, ⟨.B,m+1,n+1⟩, ⟨.B,m,n⟩, ⟨.C,m+1,n⟩,
-              ⟨.E,m,n⟩, ⟨.F,m+1,n⟩}
-          | .E => {⟨.A,m,n-1⟩, ⟨.B,m,n⟩, ⟨.C,m+1,n⟩, ⟨.D,m,n⟩}
-          | .F => {⟨.A,m,n⟩, ⟨.B,m,n+1⟩, ⟨.C,m,n⟩, ⟨.D,m-1,n⟩}
+          MixedAggregateGeometry.mixedNeighborIndices a
         ∀ {a : PeriodicSubtileIndex}, ∀ {b : PeriodicSubtileIndex}, (b ∈ mixedNeighbors a) → (a ∈
             mixedNeighbors b) ) := by
   classical
   intro mixedNeighbors a b h
   rcases a with ⟨l,m,n⟩
   cases l
-  all_goals simp only [mixedNeighbors, Finset.mem_insert, Finset.mem_singleton] at h
+  all_goals simp only [mixedNeighbors, Finset.mem_insert, Finset.mem_singleton,
+      MixedAggregateGeometry.mixedNeighborIndices] at h
   case A =>
     rcases h with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl
     · simp only [mixedNeighbors,
-        Finset.mem_insert, Finset.mem_singleton]
+        Finset.mem_insert, Finset.mem_singleton, MixedAggregateGeometry.mixedNeighborIndices]
       exact Or.inl (by simp only [])
     · simp only [mixedNeighbors, add_sub_cancel_right,
-        Finset.mem_insert, Finset.mem_singleton]
+        Finset.mem_insert, Finset.mem_singleton, MixedAggregateGeometry.mixedNeighborIndices]
       exact Or.inr (Or.inl (by simp only []))
     · simp only [mixedNeighbors, add_sub_cancel_right,
-        Finset.mem_insert, Finset.mem_singleton]
+        Finset.mem_insert, Finset.mem_singleton, MixedAggregateGeometry.mixedNeighborIndices]
       exact Or.inr (Or.inr (Or.inl (by simp only [])))
     · simp only [mixedNeighbors,
-        Finset.mem_insert, Finset.mem_singleton]
+        Finset.mem_insert, Finset.mem_singleton, MixedAggregateGeometry.mixedNeighborIndices]
       exact Or.inl (by simp only [])
     · simp only [mixedNeighbors, add_sub_cancel_right,
-        Finset.mem_insert, Finset.mem_singleton]
+        Finset.mem_insert, Finset.mem_singleton, MixedAggregateGeometry.mixedNeighborIndices]
       exact Or.inr (Or.inl (by simp only []))
     · simp only [mixedNeighbors,
-        Finset.mem_insert, Finset.mem_singleton]
+        Finset.mem_insert, Finset.mem_singleton, MixedAggregateGeometry.mixedNeighborIndices]
       exact Or.inl (by simp only [])
     · simp only [mixedNeighbors, add_sub_cancel_right,
-        Finset.mem_insert, Finset.mem_singleton]
+        Finset.mem_insert, Finset.mem_singleton, MixedAggregateGeometry.mixedNeighborIndices]
       exact Or.inl (by simp only [])
     · simp only [mixedNeighbors,
-        Finset.mem_insert, Finset.mem_singleton]
+        Finset.mem_insert, Finset.mem_singleton, MixedAggregateGeometry.mixedNeighborIndices]
       exact Or.inl (by simp only [])
   case B =>
     rcases h with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl
     · simp only [mixedNeighbors,
-        Finset.mem_insert, Finset.mem_singleton]
+        Finset.mem_insert, Finset.mem_singleton, MixedAggregateGeometry.mixedNeighborIndices]
       exact Or.inl (by simp only [])
     · simp only [mixedNeighbors, sub_add_cancel,
-        Finset.mem_insert, Finset.mem_singleton]
+        Finset.mem_insert, Finset.mem_singleton, MixedAggregateGeometry.mixedNeighborIndices]
       exact Or.inr (Or.inl (by simp only []))
     · simp only [mixedNeighbors, sub_add_cancel,
-        Finset.mem_insert, Finset.mem_singleton]
+        Finset.mem_insert, Finset.mem_singleton, MixedAggregateGeometry.mixedNeighborIndices]
       exact Or.inr (Or.inr (Or.inl (by simp only [])))
     · simp only [mixedNeighbors,
-        Finset.mem_insert, Finset.mem_singleton]
+        Finset.mem_insert, Finset.mem_singleton, MixedAggregateGeometry.mixedNeighborIndices]
       exact Or.inr (Or.inr (Or.inl (by simp only [])))
     · simp only [mixedNeighbors, sub_add_cancel,
-        Finset.mem_insert, Finset.mem_singleton]
+        Finset.mem_insert, Finset.mem_singleton, MixedAggregateGeometry.mixedNeighborIndices]
       exact Or.inr (Or.inl (by simp only []))
     · simp only [mixedNeighbors,
-        Finset.mem_insert, Finset.mem_singleton]
+        Finset.mem_insert, Finset.mem_singleton, MixedAggregateGeometry.mixedNeighborIndices]
       exact Or.inr (Or.inr (Or.inl (by simp only [])))
     · simp only [mixedNeighbors,
-        Finset.mem_insert, Finset.mem_singleton]
+        Finset.mem_insert, Finset.mem_singleton, MixedAggregateGeometry.mixedNeighborIndices]
       exact Or.inr (Or.inl (by simp only []))
     · simp only [mixedNeighbors, sub_add_cancel,
-        Finset.mem_insert, Finset.mem_singleton]
+        Finset.mem_insert, Finset.mem_singleton, MixedAggregateGeometry.mixedNeighborIndices]
       exact Or.inr (Or.inl (by simp only []))
   case C =>
     rcases h with rfl | rfl | rfl | rfl | rfl | rfl
     · simp only [mixedNeighbors,
-        Finset.mem_insert, Finset.mem_singleton]
+        Finset.mem_insert, Finset.mem_singleton, MixedAggregateGeometry.mixedNeighborIndices]
       exact Or.inr (Or.inr (Or.inr (Or.inl (by simp only []))))
     · simp only [mixedNeighbors, sub_add_cancel,
-        Finset.mem_insert, Finset.mem_singleton]
+        Finset.mem_insert, Finset.mem_singleton, MixedAggregateGeometry.mixedNeighborIndices]
       exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inl (by simp only [])))))
     · simp only [mixedNeighbors,
-        Finset.mem_insert, Finset.mem_singleton]
+        Finset.mem_insert, Finset.mem_singleton, MixedAggregateGeometry.mixedNeighborIndices]
       exact Or.inr (Or.inr (Or.inr (Or.inl (by simp only []))))
     · simp only [mixedNeighbors, sub_add_cancel,
-        Finset.mem_insert, Finset.mem_singleton]
+        Finset.mem_insert, Finset.mem_singleton, MixedAggregateGeometry.mixedNeighborIndices]
       exact Or.inr (Or.inr (Or.inr (Or.inl (by simp only []))))
     · simp only [mixedNeighbors, sub_add_cancel,
-        Finset.mem_insert, Finset.mem_singleton]
+        Finset.mem_insert, Finset.mem_singleton, MixedAggregateGeometry.mixedNeighborIndices]
       exact Or.inr (Or.inr (Or.inl (by simp only [])))
     · simp only [mixedNeighbors,
-        Finset.mem_insert, Finset.mem_singleton]
+        Finset.mem_insert, Finset.mem_singleton, MixedAggregateGeometry.mixedNeighborIndices]
       exact Or.inr (Or.inr (Or.inl (by simp only [])))
   case D =>
     rcases h with rfl | rfl | rfl | rfl | rfl | rfl
     · simp only [mixedNeighbors,
-        Finset.mem_insert, Finset.mem_singleton]
+        Finset.mem_insert, Finset.mem_singleton, MixedAggregateGeometry.mixedNeighborIndices]
       exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl (by simp only []))))))
     · simp only [mixedNeighbors, add_sub_cancel_right,
-        Finset.mem_insert, Finset.mem_singleton]
+        Finset.mem_insert, Finset.mem_singleton, MixedAggregateGeometry.mixedNeighborIndices]
       exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inl (by simp only [])))))
     · simp only [mixedNeighbors,
-        Finset.mem_insert, Finset.mem_singleton]
+        Finset.mem_insert, Finset.mem_singleton, MixedAggregateGeometry.mixedNeighborIndices]
       exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl (by simp only []))))))
     · simp only [mixedNeighbors, add_sub_cancel_right,
-        Finset.mem_insert, Finset.mem_singleton]
+        Finset.mem_insert, Finset.mem_singleton, MixedAggregateGeometry.mixedNeighborIndices]
       exact Or.inr (Or.inr (Or.inr (Or.inl (by simp only []))))
     · simp only [mixedNeighbors,
-        Finset.mem_insert, Finset.mem_singleton]
+        Finset.mem_insert, Finset.mem_singleton, MixedAggregateGeometry.mixedNeighborIndices]
       exact Or.inr (Or.inr (Or.inr ((by simp only []))))
     · simp only [mixedNeighbors, add_sub_cancel_right,
-        Finset.mem_insert, Finset.mem_singleton]
+        Finset.mem_insert, Finset.mem_singleton, MixedAggregateGeometry.mixedNeighborIndices]
       exact Or.inr (Or.inr (Or.inr ((by simp only []))))
   case E =>
     rcases h with rfl | rfl | rfl | rfl
     · simp only [mixedNeighbors, sub_add_cancel,
-        Finset.mem_insert, Finset.mem_singleton]
+        Finset.mem_insert, Finset.mem_singleton, MixedAggregateGeometry.mixedNeighborIndices]
       exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl (by simp only
           [])))))))
     · simp only [mixedNeighbors,
-        Finset.mem_insert, Finset.mem_singleton]
+        Finset.mem_insert, Finset.mem_singleton, MixedAggregateGeometry.mixedNeighborIndices]
       exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl (by simp only
           [])))))))
     · simp only [mixedNeighbors, add_sub_cancel_right,
-        Finset.mem_insert, Finset.mem_singleton]
+        Finset.mem_insert, Finset.mem_singleton, MixedAggregateGeometry.mixedNeighborIndices]
       exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inl (by simp only
           [])))))
     · simp only [mixedNeighbors,
-        Finset.mem_insert, Finset.mem_singleton]
+        Finset.mem_insert, Finset.mem_singleton, MixedAggregateGeometry.mixedNeighborIndices]
       exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inl (by simp only
           [])))))
   case F =>
     rcases h with rfl | rfl | rfl | rfl
     · simp only [mixedNeighbors,
-        Finset.mem_insert, Finset.mem_singleton]
+        Finset.mem_insert, Finset.mem_singleton, MixedAggregateGeometry.mixedNeighborIndices]
       exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ((by simp only
           []))))))))
     · simp only [mixedNeighbors, add_sub_cancel_right,
-        Finset.mem_insert, Finset.mem_singleton]
+        Finset.mem_insert, Finset.mem_singleton, MixedAggregateGeometry.mixedNeighborIndices]
       exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ((by simp only
           []))))))))
     · simp only [mixedNeighbors,
-        Finset.mem_insert, Finset.mem_singleton]
+        Finset.mem_insert, Finset.mem_singleton, MixedAggregateGeometry.mixedNeighborIndices]
       exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ((by simp only
           []))))))
     · simp only [mixedNeighbors, sub_add_cancel,
-        Finset.mem_insert, Finset.mem_singleton]
+        Finset.mem_insert, Finset.mem_singleton, MixedAggregateGeometry.mixedNeighborIndices]
       exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ((by simp only
           []))))))
 
@@ -366,19 +389,7 @@ private theorem mixedNeighbors_iff :
       classical
       exact
         let mixedNeighbors (a : PeriodicSubtileIndex) : Finset PeriodicSubtileIndex :=
-          let m := a.first
-          let n := a.second
-          match a.label with
-          | .A => {⟨.B,m,n⟩, ⟨.B,m,n+1⟩, ⟨.B,m+1,n+1⟩, ⟨.C,m,n⟩,
-              ⟨.C,m+1,n+1⟩, ⟨.D,m,n⟩, ⟨.E,m,n+1⟩, ⟨.F,m,n⟩}
-          | .B => {⟨.A,m,n⟩, ⟨.A,m,n-1⟩, ⟨.A,m-1,n-1⟩, ⟨.C,m,n⟩,
-              ⟨.D,m-1,n-1⟩, ⟨.D,m,n⟩, ⟨.E,m,n⟩, ⟨.F,m,n-1⟩}
-          | .C => {⟨.A,m,n⟩, ⟨.A,m-1,n-1⟩, ⟨.B,m,n⟩, ⟨.D,m-1,n⟩,
-              ⟨.E,m-1,n⟩, ⟨.F,m,n⟩}
-          | .D => {⟨.A,m,n⟩, ⟨.B,m+1,n+1⟩, ⟨.B,m,n⟩, ⟨.C,m+1,n⟩,
-              ⟨.E,m,n⟩, ⟨.F,m+1,n⟩}
-          | .E => {⟨.A,m,n-1⟩, ⟨.B,m,n⟩, ⟨.C,m+1,n⟩, ⟨.D,m,n⟩}
-          | .F => {⟨.A,m,n⟩, ⟨.B,m,n+1⟩, ⟨.C,m,n⟩, ⟨.D,m-1,n⟩}
+          MixedAggregateGeometry.mixedNeighborIndices a
         (∀ {a : PeriodicSubtileIndex}, ∀ {b : PeriodicSubtileIndex}, (b ∈ mixedNeighbors a) → (a
             ∈ mixedNeighbors b)) → (∀ (a : PeriodicSubtileIndex), ∀ (b : PeriodicSubtileIndex),
             AllowedSubtileIncidence a b ↔ b ∈ mixedNeighbors a) ) := by
@@ -389,10 +400,11 @@ private theorem mixedNeighbors_iff :
     induction h with
     | symm h ih => exact mixedNeighbors_symmetric ih
     | _ => simp only [mixedNeighbors,Finset.mem_insert,Finset.mem_singleton,
-        ]; tauto
+        MixedAggregateGeometry.mixedNeighborIndices]; tauto
   · rcases a with ⟨l,m,n⟩
     cases l
-    all_goals simp only [mixedNeighbors, Finset.mem_insert, Finset.mem_singleton]; intro h
+    all_goals simp only [mixedNeighbors, Finset.mem_insert, Finset.mem_singleton,
+        MixedAggregateGeometry.mixedNeighborIndices]; intro h
     case A =>
       rcases h with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl
       · simpa only [sub_add_cancel,add_sub_cancel_right] using AllowedSubtileIncidence.AB m n
@@ -508,19 +520,7 @@ private theorem mixed_boundary_detour :
       classical
       exact
         let mixedNeighbors (a : PeriodicSubtileIndex) : Finset PeriodicSubtileIndex :=
-          let m := a.first
-          let n := a.second
-          match a.label with
-          | .A => {⟨.B,m,n⟩, ⟨.B,m,n+1⟩, ⟨.B,m+1,n+1⟩, ⟨.C,m,n⟩,
-              ⟨.C,m+1,n+1⟩, ⟨.D,m,n⟩, ⟨.E,m,n+1⟩, ⟨.F,m,n⟩}
-          | .B => {⟨.A,m,n⟩, ⟨.A,m,n-1⟩, ⟨.A,m-1,n-1⟩, ⟨.C,m,n⟩,
-              ⟨.D,m-1,n-1⟩, ⟨.D,m,n⟩, ⟨.E,m,n⟩, ⟨.F,m,n-1⟩}
-          | .C => {⟨.A,m,n⟩, ⟨.A,m-1,n-1⟩, ⟨.B,m,n⟩, ⟨.D,m-1,n⟩,
-              ⟨.E,m-1,n⟩, ⟨.F,m,n⟩}
-          | .D => {⟨.A,m,n⟩, ⟨.B,m+1,n+1⟩, ⟨.B,m,n⟩, ⟨.C,m+1,n⟩,
-              ⟨.E,m,n⟩, ⟨.F,m+1,n⟩}
-          | .E => {⟨.A,m,n-1⟩, ⟨.B,m,n⟩, ⟨.C,m+1,n⟩, ⟨.D,m,n⟩}
-          | .F => {⟨.A,m,n⟩, ⟨.B,m,n+1⟩, ⟨.C,m,n⟩, ⟨.D,m-1,n⟩}
+          MixedAggregateGeometry.mixedNeighborIndices a
         (∀ {α : Type}, ∀ (r : α → α → Prop), ∀ (S : α → Prop), ∀ (p : List α), ∀ (a : α), ∀ (b :
             α), (p.head? = some a) → ((p.getLast? = some b) → ((∀ x ∈ p, S x) → ((p.IsChain r) →
             (Relation.ReflTransGen (fun x y => r x y ∧ S x ∧ S y) a b))))) → (∀ (G :
@@ -566,19 +566,7 @@ private theorem mixedTree_sound :
       classical
       exact
         let mixedNeighbors (a : PeriodicSubtileIndex) : Finset PeriodicSubtileIndex :=
-          let m := a.first
-          let n := a.second
-          match a.label with
-          | .A => {⟨.B,m,n⟩, ⟨.B,m,n+1⟩, ⟨.B,m+1,n+1⟩, ⟨.C,m,n⟩,
-              ⟨.C,m+1,n+1⟩, ⟨.D,m,n⟩, ⟨.E,m,n+1⟩, ⟨.F,m,n⟩}
-          | .B => {⟨.A,m,n⟩, ⟨.A,m,n-1⟩, ⟨.A,m-1,n-1⟩, ⟨.C,m,n⟩,
-              ⟨.D,m-1,n-1⟩, ⟨.D,m,n⟩, ⟨.E,m,n⟩, ⟨.F,m,n-1⟩}
-          | .C => {⟨.A,m,n⟩, ⟨.A,m-1,n-1⟩, ⟨.B,m,n⟩, ⟨.D,m-1,n⟩,
-              ⟨.E,m-1,n⟩, ⟨.F,m,n⟩}
-          | .D => {⟨.A,m,n⟩, ⟨.B,m+1,n+1⟩, ⟨.B,m,n⟩, ⟨.C,m+1,n⟩,
-              ⟨.E,m,n⟩, ⟨.F,m+1,n⟩}
-          | .E => {⟨.A,m,n-1⟩, ⟨.B,m,n⟩, ⟨.C,m+1,n⟩, ⟨.D,m,n⟩}
-          | .F => {⟨.A,m,n⟩, ⟨.B,m,n+1⟩, ⟨.C,m,n⟩, ⟨.D,m-1,n⟩}
+          MixedAggregateGeometry.mixedNeighborIndices a
         let mixedDecode (k : Nat) : PeriodicSubtileIndex :=
           ⟨match k % 6 with | 0 => .A | 1 => .B | 2 => .C | 3 => .D | 4 => .E | _ => .F,
             (k / 6 / 7 : Int) - 3, (k / 6 % 7 : Int) - 3⟩
@@ -627,19 +615,7 @@ private theorem mixed_certificates :
       classical
       exact
         let mixedNeighbors (a : PeriodicSubtileIndex) : Finset PeriodicSubtileIndex :=
-          let m := a.first
-          let n := a.second
-          match a.label with
-          | .A => {⟨.B,m,n⟩, ⟨.B,m,n+1⟩, ⟨.B,m+1,n+1⟩, ⟨.C,m,n⟩,
-              ⟨.C,m+1,n+1⟩, ⟨.D,m,n⟩, ⟨.E,m,n+1⟩, ⟨.F,m,n⟩}
-          | .B => {⟨.A,m,n⟩, ⟨.A,m,n-1⟩, ⟨.A,m-1,n-1⟩, ⟨.C,m,n⟩,
-              ⟨.D,m-1,n-1⟩, ⟨.D,m,n⟩, ⟨.E,m,n⟩, ⟨.F,m,n-1⟩}
-          | .C => {⟨.A,m,n⟩, ⟨.A,m-1,n-1⟩, ⟨.B,m,n⟩, ⟨.D,m-1,n⟩,
-              ⟨.E,m-1,n⟩, ⟨.F,m,n⟩}
-          | .D => {⟨.A,m,n⟩, ⟨.B,m+1,n+1⟩, ⟨.B,m,n⟩, ⟨.C,m+1,n⟩,
-              ⟨.E,m,n⟩, ⟨.F,m+1,n⟩}
-          | .E => {⟨.A,m,n-1⟩, ⟨.B,m,n⟩, ⟨.C,m+1,n⟩, ⟨.D,m,n⟩}
-          | .F => {⟨.A,m,n⟩, ⟨.B,m,n+1⟩, ⟨.C,m,n⟩, ⟨.D,m-1,n⟩}
+          MixedAggregateGeometry.mixedNeighborIndices a
         let mixedDecode (k : Nat) : PeriodicSubtileIndex :=
           ⟨match k % 6 with | 0 => .A | 1 => .B | 2 => .C | 3 => .D | 4 => .E | _ => .F,
             (k / 6 / 7 : Int) - 3, (k / 6 % 7 : Int) - 3⟩
@@ -647,13 +623,7 @@ private theorem mixed_certificates :
           {⟨.A,m,n⟩,⟨.B,m,n⟩,⟨.C,m,n⟩,⟨.D,m,n⟩,⟨.E,m,n⟩,⟨.F,m,n⟩}
         let mixedComponents (r : Nat) : Finset PeriodicSubtileIndex ×
             Finset PeriodicSubtileIndex × Finset PeriodicSubtileIndex :=
-          (mixedBlock 0 0, match r with
-            | 0 => (mixedBlock 1 0, {⟨.B,1,1⟩})
-            | 1 => (mixedBlock 0 1, {⟨.D,-1,0⟩})
-            | 2 => (mixedBlock (-1) (-1), {⟨.F,0,-1⟩})
-            | 3 => ({⟨.A,0,-1⟩}, {⟨.C,1,0⟩})
-            | 4 => ({⟨.C,1,1⟩}, {⟨.E,0,1⟩})
-            | _ => ({⟨.E,-1,0⟩}, {⟨.A,-1,-1⟩}))
+          MixedAggregateGeometry.mixedComponentIndices mixedBlock r
         let mixedSelection (j : Fin 42) : Finset PeriodicSubtileIndex :=
           let c := mixedComponents (j.val / 7)
           let k := j.val % 7 + 1
@@ -699,19 +669,7 @@ private theorem mixed_patches :
       classical
       exact
         let mixedNeighbors (a : PeriodicSubtileIndex) : Finset PeriodicSubtileIndex :=
-          let m := a.first
-          let n := a.second
-          match a.label with
-          | .A => {⟨.B,m,n⟩, ⟨.B,m,n+1⟩, ⟨.B,m+1,n+1⟩, ⟨.C,m,n⟩,
-              ⟨.C,m+1,n+1⟩, ⟨.D,m,n⟩, ⟨.E,m,n+1⟩, ⟨.F,m,n⟩}
-          | .B => {⟨.A,m,n⟩, ⟨.A,m,n-1⟩, ⟨.A,m-1,n-1⟩, ⟨.C,m,n⟩,
-              ⟨.D,m-1,n-1⟩, ⟨.D,m,n⟩, ⟨.E,m,n⟩, ⟨.F,m,n-1⟩}
-          | .C => {⟨.A,m,n⟩, ⟨.A,m-1,n-1⟩, ⟨.B,m,n⟩, ⟨.D,m-1,n⟩,
-              ⟨.E,m-1,n⟩, ⟨.F,m,n⟩}
-          | .D => {⟨.A,m,n⟩, ⟨.B,m+1,n+1⟩, ⟨.B,m,n⟩, ⟨.C,m+1,n⟩,
-              ⟨.E,m,n⟩, ⟨.F,m+1,n⟩}
-          | .E => {⟨.A,m,n-1⟩, ⟨.B,m,n⟩, ⟨.C,m+1,n⟩, ⟨.D,m,n⟩}
-          | .F => {⟨.A,m,n⟩, ⟨.B,m,n+1⟩, ⟨.C,m,n⟩, ⟨.D,m-1,n⟩}
+          MixedAggregateGeometry.mixedNeighborIndices a
         (∀ (a : PeriodicSubtileIndex), ∀ (b : PeriodicSubtileIndex), AllowedSubtileIncidence a b
             ↔ b ∈ mixedNeighbors a) → ((∀ {α : Type}, ∀ (r : α → α → Prop), ∀ (S : α → Prop), ∀
             (a : α), ∀ (b : α), (S a) → ((Relation.ReflTransGen (fun x y => r x y ∧ S x ∧ S y) a
@@ -728,13 +686,7 @@ private theorem mixed_patches :
           {⟨.A,m,n⟩,⟨.B,m,n⟩,⟨.C,m,n⟩,⟨.D,m,n⟩,⟨.E,m,n⟩,⟨.F,m,n⟩}
         let mixedComponents (r : Nat) : Finset PeriodicSubtileIndex ×
             Finset PeriodicSubtileIndex × Finset PeriodicSubtileIndex :=
-          (mixedBlock 0 0, match r with
-            | 0 => (mixedBlock 1 0, {⟨.B,1,1⟩})
-            | 1 => (mixedBlock 0 1, {⟨.D,-1,0⟩})
-            | 2 => (mixedBlock (-1) (-1), {⟨.F,0,-1⟩})
-            | 3 => ({⟨.A,0,-1⟩}, {⟨.C,1,0⟩})
-            | 4 => ({⟨.C,1,1⟩}, {⟨.E,0,1⟩})
-            | _ => ({⟨.E,-1,0⟩}, {⟨.A,-1,-1⟩}))
+          MixedAggregateGeometry.mixedComponentIndices mixedBlock r
         let mixedSelection (j : Fin 42) : Finset PeriodicSubtileIndex :=
           let c := mixedComponents (j.val / 7)
           let k := j.val % 7 + 1
@@ -1159,13 +1111,7 @@ private theorem exception_certificate :
           {⟨.A,m,n⟩,⟨.B,m,n⟩,⟨.C,m,n⟩,⟨.D,m,n⟩,⟨.E,m,n⟩,⟨.F,m,n⟩}
         let mixedComponents (r : Nat) : Finset PeriodicSubtileIndex ×
             Finset PeriodicSubtileIndex × Finset PeriodicSubtileIndex :=
-          (mixedBlock 0 0, match r with
-            | 0 => (mixedBlock 1 0, {⟨.B,1,1⟩})
-            | 1 => (mixedBlock 0 1, {⟨.D,-1,0⟩})
-            | 2 => (mixedBlock (-1) (-1), {⟨.F,0,-1⟩})
-            | 3 => ({⟨.A,0,-1⟩}, {⟨.C,1,0⟩})
-            | 4 => ({⟨.C,1,1⟩}, {⟨.E,0,1⟩})
-            | _ => ({⟨.E,-1,0⟩}, {⟨.A,-1,-1⟩}))
+          MixedAggregateGeometry.mixedComponentIndices mixedBlock r
         let mixedSelection (j : Fin 42) : Finset PeriodicSubtileIndex :=
           let c := mixedComponents (j.val / 7)
           let k := j.val % 7 + 1
@@ -1239,13 +1185,7 @@ private theorem original_patches :
           {⟨.A,m,n⟩,⟨.B,m,n⟩,⟨.C,m,n⟩,⟨.D,m,n⟩,⟨.E,m,n⟩,⟨.F,m,n⟩}
         let mixedComponents (r : Nat) : Finset PeriodicSubtileIndex ×
             Finset PeriodicSubtileIndex × Finset PeriodicSubtileIndex :=
-          (mixedBlock 0 0, match r with
-            | 0 => (mixedBlock 1 0, {⟨.B,1,1⟩})
-            | 1 => (mixedBlock 0 1, {⟨.D,-1,0⟩})
-            | 2 => (mixedBlock (-1) (-1), {⟨.F,0,-1⟩})
-            | 3 => ({⟨.A,0,-1⟩}, {⟨.C,1,0⟩})
-            | 4 => ({⟨.C,1,1⟩}, {⟨.E,0,1⟩})
-            | _ => ({⟨.E,-1,0⟩}, {⟨.A,-1,-1⟩}))
+          MixedAggregateGeometry.mixedComponentIndices mixedBlock r
         let mixedSelection (j : Fin 42) : Finset PeriodicSubtileIndex :=
           let c := mixedComponents (j.val / 7)
           let k := j.val % 7 + 1
@@ -1390,13 +1330,7 @@ private theorem selection_certificate :
           {⟨.A,m,n⟩,⟨.B,m,n⟩,⟨.C,m,n⟩,⟨.D,m,n⟩,⟨.E,m,n⟩,⟨.F,m,n⟩}
         let mixedComponents (r : Nat) : Finset PeriodicSubtileIndex ×
             Finset PeriodicSubtileIndex × Finset PeriodicSubtileIndex :=
-          (mixedBlock 0 0, match r with
-            | 0 => (mixedBlock 1 0, {⟨.B,1,1⟩})
-            | 1 => (mixedBlock 0 1, {⟨.D,-1,0⟩})
-            | 2 => (mixedBlock (-1) (-1), {⟨.F,0,-1⟩})
-            | 3 => ({⟨.A,0,-1⟩}, {⟨.C,1,0⟩})
-            | 4 => ({⟨.C,1,1⟩}, {⟨.E,0,1⟩})
-            | _ => ({⟨.E,-1,0⟩}, {⟨.A,-1,-1⟩}))
+          MixedAggregateGeometry.mixedComponentIndices mixedBlock r
         let mixedSelection (j : Fin 42) : Finset PeriodicSubtileIndex :=
           let c := mixedComponents (j.val / 7)
           let k := j.val % 7 + 1
@@ -1427,13 +1361,7 @@ private theorem owner_certificate :
           {⟨.A,m,n⟩,⟨.B,m,n⟩,⟨.C,m,n⟩,⟨.D,m,n⟩,⟨.E,m,n⟩,⟨.F,m,n⟩}
         let mixedComponents (r : Nat) : Finset PeriodicSubtileIndex ×
             Finset PeriodicSubtileIndex × Finset PeriodicSubtileIndex :=
-          (mixedBlock 0 0, match r with
-            | 0 => (mixedBlock 1 0, {⟨.B,1,1⟩})
-            | 1 => (mixedBlock 0 1, {⟨.D,-1,0⟩})
-            | 2 => (mixedBlock (-1) (-1), {⟨.F,0,-1⟩})
-            | 3 => ({⟨.A,0,-1⟩}, {⟨.C,1,0⟩})
-            | 4 => ({⟨.C,1,1⟩}, {⟨.E,0,1⟩})
-            | _ => ({⟨.E,-1,0⟩}, {⟨.A,-1,-1⟩}))
+          MixedAggregateGeometry.mixedComponentIndices mixedBlock r
         let paired (a : PeriodicSubtileIndex) : PeriodicSubtileIndex := ⟨.B,a.first,a.second⟩
         let componentIndices (r : Fin 6) (s : Fin 3) :=
           let c := mixedComponents r.val
@@ -1454,30 +1382,12 @@ private theorem edge_certificate :
       classical
       exact
         let mixedNeighbors (a : PeriodicSubtileIndex) : Finset PeriodicSubtileIndex :=
-          let m := a.first
-          let n := a.second
-          match a.label with
-          | .A => {⟨.B,m,n⟩, ⟨.B,m,n+1⟩, ⟨.B,m+1,n+1⟩, ⟨.C,m,n⟩,
-              ⟨.C,m+1,n+1⟩, ⟨.D,m,n⟩, ⟨.E,m,n+1⟩, ⟨.F,m,n⟩}
-          | .B => {⟨.A,m,n⟩, ⟨.A,m,n-1⟩, ⟨.A,m-1,n-1⟩, ⟨.C,m,n⟩,
-              ⟨.D,m-1,n-1⟩, ⟨.D,m,n⟩, ⟨.E,m,n⟩, ⟨.F,m,n-1⟩}
-          | .C => {⟨.A,m,n⟩, ⟨.A,m-1,n-1⟩, ⟨.B,m,n⟩, ⟨.D,m-1,n⟩,
-              ⟨.E,m-1,n⟩, ⟨.F,m,n⟩}
-          | .D => {⟨.A,m,n⟩, ⟨.B,m+1,n+1⟩, ⟨.B,m,n⟩, ⟨.C,m+1,n⟩,
-              ⟨.E,m,n⟩, ⟨.F,m+1,n⟩}
-          | .E => {⟨.A,m,n-1⟩, ⟨.B,m,n⟩, ⟨.C,m+1,n⟩, ⟨.D,m,n⟩}
-          | .F => {⟨.A,m,n⟩, ⟨.B,m,n+1⟩, ⟨.C,m,n⟩, ⟨.D,m-1,n⟩}
+          MixedAggregateGeometry.mixedNeighborIndices a
         let mixedBlock (m n : Int) : Finset PeriodicSubtileIndex :=
           {⟨.A,m,n⟩,⟨.B,m,n⟩,⟨.C,m,n⟩,⟨.D,m,n⟩,⟨.E,m,n⟩,⟨.F,m,n⟩}
         let mixedComponents (r : Nat) : Finset PeriodicSubtileIndex ×
             Finset PeriodicSubtileIndex × Finset PeriodicSubtileIndex :=
-          (mixedBlock 0 0, match r with
-            | 0 => (mixedBlock 1 0, {⟨.B,1,1⟩})
-            | 1 => (mixedBlock 0 1, {⟨.D,-1,0⟩})
-            | 2 => (mixedBlock (-1) (-1), {⟨.F,0,-1⟩})
-            | 3 => ({⟨.A,0,-1⟩}, {⟨.C,1,0⟩})
-            | 4 => ({⟨.C,1,1⟩}, {⟨.E,0,1⟩})
-            | _ => ({⟨.E,-1,0⟩}, {⟨.A,-1,-1⟩}))
+          MixedAggregateGeometry.mixedComponentIndices mixedBlock r
         let componentIndices (r : Fin 6) (s : Fin 3) :=
           let c := mixedComponents r.val
           if s = 0 then c.1 else if s = 1 then c.2.1 else c.2.2
@@ -1535,13 +1445,7 @@ private theorem component_disjoint :
           {⟨.A,m,n⟩,⟨.B,m,n⟩,⟨.C,m,n⟩,⟨.D,m,n⟩,⟨.E,m,n⟩,⟨.F,m,n⟩}
         let mixedComponents (r : Nat) : Finset PeriodicSubtileIndex ×
             Finset PeriodicSubtileIndex × Finset PeriodicSubtileIndex :=
-          (mixedBlock 0 0, match r with
-            | 0 => (mixedBlock 1 0, {⟨.B,1,1⟩})
-            | 1 => (mixedBlock 0 1, {⟨.D,-1,0⟩})
-            | 2 => (mixedBlock (-1) (-1), {⟨.F,0,-1⟩})
-            | 3 => ({⟨.A,0,-1⟩}, {⟨.C,1,0⟩})
-            | 4 => ({⟨.C,1,1⟩}, {⟨.E,0,1⟩})
-            | _ => ({⟨.E,-1,0⟩}, {⟨.A,-1,-1⟩}))
+          MixedAggregateGeometry.mixedComponentIndices mixedBlock r
         let original := SubtileOccurrenceInterpretation cert.P cert.u cert.v
         let paired (a : PeriodicSubtileIndex) : PeriodicSubtileIndex := ⟨.B,a.first,a.second⟩
         let componentIndices (r : Fin 6) (s : Fin 3) :=
@@ -1593,32 +1497,14 @@ private theorem component_edges :
             BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
             C₀ T),
         let mixedNeighbors (a : PeriodicSubtileIndex) : Finset PeriodicSubtileIndex :=
-          let m := a.first
-          let n := a.second
-          match a.label with
-          | .A => {⟨.B,m,n⟩, ⟨.B,m,n+1⟩, ⟨.B,m+1,n+1⟩, ⟨.C,m,n⟩,
-              ⟨.C,m+1,n+1⟩, ⟨.D,m,n⟩, ⟨.E,m,n+1⟩, ⟨.F,m,n⟩}
-          | .B => {⟨.A,m,n⟩, ⟨.A,m,n-1⟩, ⟨.A,m-1,n-1⟩, ⟨.C,m,n⟩,
-              ⟨.D,m-1,n-1⟩, ⟨.D,m,n⟩, ⟨.E,m,n⟩, ⟨.F,m,n-1⟩}
-          | .C => {⟨.A,m,n⟩, ⟨.A,m-1,n-1⟩, ⟨.B,m,n⟩, ⟨.D,m-1,n⟩,
-              ⟨.E,m-1,n⟩, ⟨.F,m,n⟩}
-          | .D => {⟨.A,m,n⟩, ⟨.B,m+1,n+1⟩, ⟨.B,m,n⟩, ⟨.C,m+1,n⟩,
-              ⟨.E,m,n⟩, ⟨.F,m+1,n⟩}
-          | .E => {⟨.A,m,n-1⟩, ⟨.B,m,n⟩, ⟨.C,m+1,n⟩, ⟨.D,m,n⟩}
-          | .F => {⟨.A,m,n⟩, ⟨.B,m,n+1⟩, ⟨.C,m,n⟩, ⟨.D,m-1,n⟩}
+          MixedAggregateGeometry.mixedNeighborIndices a
         (∀ (a : PeriodicSubtileIndex), ∀ (b : PeriodicSubtileIndex), AllowedSubtileIncidence a b
             ↔ b ∈ mixedNeighbors a) → (
         let mixedBlock (m n : Int) : Finset PeriodicSubtileIndex :=
           {⟨.A,m,n⟩,⟨.B,m,n⟩,⟨.C,m,n⟩,⟨.D,m,n⟩,⟨.E,m,n⟩,⟨.F,m,n⟩}
         let mixedComponents (r : Nat) : Finset PeriodicSubtileIndex ×
             Finset PeriodicSubtileIndex × Finset PeriodicSubtileIndex :=
-          (mixedBlock 0 0, match r with
-            | 0 => (mixedBlock 1 0, {⟨.B,1,1⟩})
-            | 1 => (mixedBlock 0 1, {⟨.D,-1,0⟩})
-            | 2 => (mixedBlock (-1) (-1), {⟨.F,0,-1⟩})
-            | 3 => ({⟨.A,0,-1⟩}, {⟨.C,1,0⟩})
-            | 4 => ({⟨.C,1,1⟩}, {⟨.E,0,1⟩})
-            | _ => ({⟨.E,-1,0⟩}, {⟨.A,-1,-1⟩}))
+          MixedAggregateGeometry.mixedComponentIndices mixedBlock r
         let original := SubtileOccurrenceInterpretation cert.P cert.u cert.v
         (∀ (a : PeriodicSubtileIndex), (cert.modified.tile a).cells ⊆ (original a).cells) → (
         let componentIndices (r : Fin 6) (s : Fin 3) :=
@@ -1657,13 +1543,7 @@ private theorem literal_junctions :
           {⟨.A,m,n⟩,⟨.B,m,n⟩,⟨.C,m,n⟩,⟨.D,m,n⟩,⟨.E,m,n⟩,⟨.F,m,n⟩}
         let mixedComponents (r : Nat) : Finset PeriodicSubtileIndex ×
             Finset PeriodicSubtileIndex × Finset PeriodicSubtileIndex :=
-          (mixedBlock 0 0, match r with
-            | 0 => (mixedBlock 1 0, {⟨.B,1,1⟩})
-            | 1 => (mixedBlock 0 1, {⟨.D,-1,0⟩})
-            | 2 => (mixedBlock (-1) (-1), {⟨.F,0,-1⟩})
-            | 3 => ({⟨.A,0,-1⟩}, {⟨.C,1,0⟩})
-            | 4 => ({⟨.C,1,1⟩}, {⟨.E,0,1⟩})
-            | _ => ({⟨.E,-1,0⟩}, {⟨.A,-1,-1⟩}))
+          MixedAggregateGeometry.mixedComponentIndices mixedBlock r
         let mixedSelection (j : Fin 42) : Finset PeriodicSubtileIndex :=
           let c := mixedComponents (j.val / 7)
           let k := j.val % 7 + 1
@@ -1673,18 +1553,7 @@ private theorem literal_junctions :
         let original := SubtileOccurrenceInterpretation cert.P cert.u cert.v
         ∀ (original_patches : ∀ j : Fin 42, LatticeTile (⟨(mixedSelection j).biUnion (fun a =>
             (original a).cells),0⟩ : ProtoTile)),
-        let J : ProtoTile → ProtoTile → ProtoTile → Prop := fun A B C =>
-          ∃ AB BC CA ABC : ProtoTile,
-            LatticeTile A ∧ LatticeTile B ∧ LatticeTile C ∧
-            LatticeTile AB ∧ LatticeTile BC ∧ LatticeTile CA ∧ LatticeTile ABC ∧
-            Disjoint A.cells B.cells ∧ Disjoint B.cells C.cells ∧ Disjoint C.cells A.cells ∧
-            (∀ z : LatticeCell, z ∈ AB.cells ↔ z ∈ A.cells ∨ z ∈ B.cells) ∧
-            (∀ z : LatticeCell, z ∈ BC.cells ↔ z ∈ B.cells ∨ z ∈ C.cells) ∧
-            (∀ z : LatticeCell, z ∈ CA.cells ↔ z ∈ C.cells ∨ z ∈ A.cells) ∧
-            (∀ z : LatticeCell, z ∈ ABC.cells ↔ z ∈ A.cells ∨ z ∈ B.cells ∨ z ∈ C.cells) ∧
-            (FootprintEdges A ∩ FootprintEdges B).Nonempty ∧
-            (FootprintEdges B ∩ FootprintEdges C).Nonempty ∧
-            (FootprintEdges C ∩ FootprintEdges A).Nonempty
+        let J : ProtoTile → ProtoTile → ProtoTile → Prop := ThreeTileUnionJunction
         let componentIndices (r : Fin 6) (s : Fin 3) :=
           let c := mixedComponents r.val
           if s = 0 then c.1 else if s = 1 then c.2.1 else c.2.2
@@ -1735,18 +1604,7 @@ private theorem retarget :
       exact
         (∀ (X : ProtoTile), ∀ (Y : ProtoTile), (X.cells = Y.cells) → (LatticeTile X ↔ LatticeTile
             Y)) → (
-        let J : ProtoTile → ProtoTile → ProtoTile → Prop := fun A B C =>
-          ∃ AB BC CA ABC : ProtoTile,
-            LatticeTile A ∧ LatticeTile B ∧ LatticeTile C ∧
-            LatticeTile AB ∧ LatticeTile BC ∧ LatticeTile CA ∧ LatticeTile ABC ∧
-            Disjoint A.cells B.cells ∧ Disjoint B.cells C.cells ∧ Disjoint C.cells A.cells ∧
-            (∀ z : LatticeCell, z ∈ AB.cells ↔ z ∈ A.cells ∨ z ∈ B.cells) ∧
-            (∀ z : LatticeCell, z ∈ BC.cells ↔ z ∈ B.cells ∨ z ∈ C.cells) ∧
-            (∀ z : LatticeCell, z ∈ CA.cells ↔ z ∈ C.cells ∨ z ∈ A.cells) ∧
-            (∀ z : LatticeCell, z ∈ ABC.cells ↔ z ∈ A.cells ∨ z ∈ B.cells ∨ z ∈ C.cells) ∧
-            (FootprintEdges A ∩ FootprintEdges B).Nonempty ∧
-            (FootprintEdges B ∩ FootprintEdges C).Nonempty ∧
-            (FootprintEdges C ∩ FootprintEdges A).Nonempty
+        let J : ProtoTile → ProtoTile → ProtoTile → Prop := ThreeTileUnionJunction
         ∀ (A : ProtoTile), ∀ (B : ProtoTile), ∀ (C : ProtoTile), ∀ (A' : ProtoTile), ∀ (B' :
             ProtoTile), ∀ (C' : ProtoTile), (A.cells = A'.cells) → ((B.cells = B'.cells) →
             ((C.cells = C'.cells) → ((J A B C) → (J A' B' C'))))) ) := by
@@ -1755,24 +1613,14 @@ private theorem retarget :
   have eA : FootprintEdges A = FootprintEdges A' := by simp only [FootprintEdges,hA]
   have eB : FootprintEdges B = FootprintEdges B' := by simp only [FootprintEdges,hB]
   have eC : FootprintEdges C = FootprintEdges C' := by simp only [FootprintEdges,hC]
-  simpa only [J,hA,hB,hC,eA,eB,eC,cellDisk A A' hA,cellDisk B B' hB,cellDisk C C' hC] using h
+  simpa only [J,hA,hB,hC,eA,eB,eC,cellDisk A A' hA,cellDisk B B' hB,cellDisk C C' hC,
+      ThreeTileUnionJunction] using h
 
 private theorem imageJ :
     (by
       classical
       exact
-        let J : ProtoTile → ProtoTile → ProtoTile → Prop := fun A B C =>
-          ∃ AB BC CA ABC : ProtoTile,
-            LatticeTile A ∧ LatticeTile B ∧ LatticeTile C ∧
-            LatticeTile AB ∧ LatticeTile BC ∧ LatticeTile CA ∧ LatticeTile ABC ∧
-            Disjoint A.cells B.cells ∧ Disjoint B.cells C.cells ∧ Disjoint C.cells A.cells ∧
-            (∀ z : LatticeCell, z ∈ AB.cells ↔ z ∈ A.cells ∨ z ∈ B.cells) ∧
-            (∀ z : LatticeCell, z ∈ BC.cells ↔ z ∈ B.cells ∨ z ∈ C.cells) ∧
-            (∀ z : LatticeCell, z ∈ CA.cells ↔ z ∈ C.cells ∨ z ∈ A.cells) ∧
-            (∀ z : LatticeCell, z ∈ ABC.cells ↔ z ∈ A.cells ∨ z ∈ B.cells ∨ z ∈ C.cells) ∧
-            (FootprintEdges A ∩ FootprintEdges B).Nonempty ∧
-            (FootprintEdges B ∩ FootprintEdges C).Nonempty ∧
-            (FootprintEdges C ∩ FootprintEdges A).Nonempty
+        let J : ProtoTile → ProtoTile → ProtoTile → Prop := ThreeTileUnionJunction
         ∀ (F : ProtoTile → ProtoTile), ∀ (f : GaussianInt → GaussianInt), ∀ (g : GaussianInt →
             GaussianInt), (Function.Injective f) → ((∀ S, (F S).cells = S.cells.image f) → ((∀ S,
             LatticeTile S → LatticeTile (F S)) → ((∀ S, FootprintEdges (F S) =
@@ -1825,18 +1673,7 @@ private theorem quarterJ :
     (by
       classical
       exact
-        let J : ProtoTile → ProtoTile → ProtoTile → Prop := fun A B C =>
-          ∃ AB BC CA ABC : ProtoTile,
-            LatticeTile A ∧ LatticeTile B ∧ LatticeTile C ∧
-            LatticeTile AB ∧ LatticeTile BC ∧ LatticeTile CA ∧ LatticeTile ABC ∧
-            Disjoint A.cells B.cells ∧ Disjoint B.cells C.cells ∧ Disjoint C.cells A.cells ∧
-            (∀ z : LatticeCell, z ∈ AB.cells ↔ z ∈ A.cells ∨ z ∈ B.cells) ∧
-            (∀ z : LatticeCell, z ∈ BC.cells ↔ z ∈ B.cells ∨ z ∈ C.cells) ∧
-            (∀ z : LatticeCell, z ∈ CA.cells ↔ z ∈ C.cells ∨ z ∈ A.cells) ∧
-            (∀ z : LatticeCell, z ∈ ABC.cells ↔ z ∈ A.cells ∨ z ∈ B.cells ∨ z ∈ C.cells) ∧
-            (FootprintEdges A ∩ FootprintEdges B).Nonempty ∧
-            (FootprintEdges B ∩ FootprintEdges C).Nonempty ∧
-            (FootprintEdges C ∩ FootprintEdges A).Nonempty
+        let J : ProtoTile → ProtoTile → ProtoTile → Prop := ThreeTileUnionJunction
         (∀ (F : ProtoTile → ProtoTile), ∀ (f : GaussianInt → GaussianInt), ∀ (g : GaussianInt →
             GaussianInt), (Function.Injective f) → ((∀ S, (F S).cells = S.cells.image f) → ((∀ S,
             LatticeTile S → LatticeTile (F S)) → ((∀ S, FootprintEdges (F S) = (fun e : Finset
@@ -1860,18 +1697,7 @@ private theorem translateJ :
     (by
       classical
       exact
-        let J : ProtoTile → ProtoTile → ProtoTile → Prop := fun A B C =>
-          ∃ AB BC CA ABC : ProtoTile,
-            LatticeTile A ∧ LatticeTile B ∧ LatticeTile C ∧
-            LatticeTile AB ∧ LatticeTile BC ∧ LatticeTile CA ∧ LatticeTile ABC ∧
-            Disjoint A.cells B.cells ∧ Disjoint B.cells C.cells ∧ Disjoint C.cells A.cells ∧
-            (∀ z : LatticeCell, z ∈ AB.cells ↔ z ∈ A.cells ∨ z ∈ B.cells) ∧
-            (∀ z : LatticeCell, z ∈ BC.cells ↔ z ∈ B.cells ∨ z ∈ C.cells) ∧
-            (∀ z : LatticeCell, z ∈ CA.cells ↔ z ∈ C.cells ∨ z ∈ A.cells) ∧
-            (∀ z : LatticeCell, z ∈ ABC.cells ↔ z ∈ A.cells ∨ z ∈ B.cells ∨ z ∈ C.cells) ∧
-            (FootprintEdges A ∩ FootprintEdges B).Nonempty ∧
-            (FootprintEdges B ∩ FootprintEdges C).Nonempty ∧
-            (FootprintEdges C ∩ FootprintEdges A).Nonempty
+        let J : ProtoTile → ProtoTile → ProtoTile → Prop := ThreeTileUnionJunction
         (∀ (F : ProtoTile → ProtoTile), ∀ (f : GaussianInt → GaussianInt), ∀ (g : GaussianInt →
             GaussianInt), (Function.Injective f) → ((∀ S, (F S).cells = S.cells.image f) → ((∀ S,
             LatticeTile S → LatticeTile (F S)) → ((∀ S, FootprintEdges (F S) = (fun e : Finset
@@ -1949,18 +1775,7 @@ private theorem backJ :
     (by
       classical
       exact
-        let J : ProtoTile → ProtoTile → ProtoTile → Prop := fun A B C =>
-          ∃ AB BC CA ABC : ProtoTile,
-            LatticeTile A ∧ LatticeTile B ∧ LatticeTile C ∧
-            LatticeTile AB ∧ LatticeTile BC ∧ LatticeTile CA ∧ LatticeTile ABC ∧
-            Disjoint A.cells B.cells ∧ Disjoint B.cells C.cells ∧ Disjoint C.cells A.cells ∧
-            (∀ z : LatticeCell, z ∈ AB.cells ↔ z ∈ A.cells ∨ z ∈ B.cells) ∧
-            (∀ z : LatticeCell, z ∈ BC.cells ↔ z ∈ B.cells ∨ z ∈ C.cells) ∧
-            (∀ z : LatticeCell, z ∈ CA.cells ↔ z ∈ C.cells ∨ z ∈ A.cells) ∧
-            (∀ z : LatticeCell, z ∈ ABC.cells ↔ z ∈ A.cells ∨ z ∈ B.cells ∨ z ∈ C.cells) ∧
-            (FootprintEdges A ∩ FootprintEdges B).Nonempty ∧
-            (FootprintEdges B ∩ FootprintEdges C).Nonempty ∧
-            (FootprintEdges C ∩ FootprintEdges A).Nonempty
+        let J : ProtoTile → ProtoTile → ProtoTile → Prop := ThreeTileUnionJunction
         (∀ (A : ProtoTile), ∀ (B : ProtoTile), ∀ (C : ProtoTile), (J A B C) → (J (TileQuarterTurn
             A) (TileQuarterTurn B) (TileQuarterTurn C))) → ((∀ (u : GaussianInt), ∀ (A :
             ProtoTile), ∀ (B : ProtoTile), ∀ (C : ProtoTile), (J A B C) → (J (TileTranslation A
@@ -2099,26 +1914,9 @@ private theorem first_canonical :
           {⟨.A,m,n⟩,⟨.B,m,n⟩,⟨.C,m,n⟩,⟨.D,m,n⟩,⟨.E,m,n⟩,⟨.F,m,n⟩}
         let mixedComponents (r : Nat) : Finset PeriodicSubtileIndex ×
             Finset PeriodicSubtileIndex × Finset PeriodicSubtileIndex :=
-          (mixedBlock 0 0, match r with
-            | 0 => (mixedBlock 1 0, {⟨.B,1,1⟩})
-            | 1 => (mixedBlock 0 1, {⟨.D,-1,0⟩})
-            | 2 => (mixedBlock (-1) (-1), {⟨.F,0,-1⟩})
-            | 3 => ({⟨.A,0,-1⟩}, {⟨.C,1,0⟩})
-            | 4 => ({⟨.C,1,1⟩}, {⟨.E,0,1⟩})
-            | _ => ({⟨.E,-1,0⟩}, {⟨.A,-1,-1⟩}))
+          MixedAggregateGeometry.mixedComponentIndices mixedBlock r
         let original := SubtileOccurrenceInterpretation cert.P cert.u cert.v
-        let J : ProtoTile → ProtoTile → ProtoTile → Prop := fun A B C =>
-          ∃ AB BC CA ABC : ProtoTile,
-            LatticeTile A ∧ LatticeTile B ∧ LatticeTile C ∧
-            LatticeTile AB ∧ LatticeTile BC ∧ LatticeTile CA ∧ LatticeTile ABC ∧
-            Disjoint A.cells B.cells ∧ Disjoint B.cells C.cells ∧ Disjoint C.cells A.cells ∧
-            (∀ z : LatticeCell, z ∈ AB.cells ↔ z ∈ A.cells ∨ z ∈ B.cells) ∧
-            (∀ z : LatticeCell, z ∈ BC.cells ↔ z ∈ B.cells ∨ z ∈ C.cells) ∧
-            (∀ z : LatticeCell, z ∈ CA.cells ↔ z ∈ C.cells ∨ z ∈ A.cells) ∧
-            (∀ z : LatticeCell, z ∈ ABC.cells ↔ z ∈ A.cells ∨ z ∈ B.cells ∨ z ∈ C.cells) ∧
-            (FootprintEdges A ∩ FootprintEdges B).Nonempty ∧
-            (FootprintEdges B ∩ FootprintEdges C).Nonempty ∧
-            (FootprintEdges C ∩ FootprintEdges A).Nonempty
+        let J : ProtoTile → ProtoTile → ProtoTile → Prop := ThreeTileUnionJunction
         let componentIndices (r : Fin 6) (s : Fin 3) :=
           let c := mixedComponents r.val
           if s = 0 then c.1 else if s = 1 then c.2.1 else c.2.2
@@ -2301,26 +2099,9 @@ private theorem second_canonical :
           {⟨.A,m,n⟩,⟨.B,m,n⟩,⟨.C,m,n⟩,⟨.D,m,n⟩,⟨.E,m,n⟩,⟨.F,m,n⟩}
         let mixedComponents (r : Nat) : Finset PeriodicSubtileIndex ×
             Finset PeriodicSubtileIndex × Finset PeriodicSubtileIndex :=
-          (mixedBlock 0 0, match r with
-            | 0 => (mixedBlock 1 0, {⟨.B,1,1⟩})
-            | 1 => (mixedBlock 0 1, {⟨.D,-1,0⟩})
-            | 2 => (mixedBlock (-1) (-1), {⟨.F,0,-1⟩})
-            | 3 => ({⟨.A,0,-1⟩}, {⟨.C,1,0⟩})
-            | 4 => ({⟨.C,1,1⟩}, {⟨.E,0,1⟩})
-            | _ => ({⟨.E,-1,0⟩}, {⟨.A,-1,-1⟩}))
+          MixedAggregateGeometry.mixedComponentIndices mixedBlock r
         let original := SubtileOccurrenceInterpretation cert.P cert.u cert.v
-        let J : ProtoTile → ProtoTile → ProtoTile → Prop := fun A B C =>
-          ∃ AB BC CA ABC : ProtoTile,
-            LatticeTile A ∧ LatticeTile B ∧ LatticeTile C ∧
-            LatticeTile AB ∧ LatticeTile BC ∧ LatticeTile CA ∧ LatticeTile ABC ∧
-            Disjoint A.cells B.cells ∧ Disjoint B.cells C.cells ∧ Disjoint C.cells A.cells ∧
-            (∀ z : LatticeCell, z ∈ AB.cells ↔ z ∈ A.cells ∨ z ∈ B.cells) ∧
-            (∀ z : LatticeCell, z ∈ BC.cells ↔ z ∈ B.cells ∨ z ∈ C.cells) ∧
-            (∀ z : LatticeCell, z ∈ CA.cells ↔ z ∈ C.cells ∨ z ∈ A.cells) ∧
-            (∀ z : LatticeCell, z ∈ ABC.cells ↔ z ∈ A.cells ∨ z ∈ B.cells ∨ z ∈ C.cells) ∧
-            (FootprintEdges A ∩ FootprintEdges B).Nonempty ∧
-            (FootprintEdges B ∩ FootprintEdges C).Nonempty ∧
-            (FootprintEdges C ∩ FootprintEdges A).Nonempty
+        let J : ProtoTile → ProtoTile → ProtoTile → Prop := ThreeTileUnionJunction
         let componentIndices (r : Fin 6) (s : Fin 3) :=
           let c := mixedComponents r.val
           if s = 0 then c.1 else if s = 1 then c.2.1 else c.2.2
@@ -2442,18 +2223,7 @@ private theorem first_requested :
         ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C₀ :
             BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
             C₀ T), (QuarterTurnSymmetric T) → (
-        let J : ProtoTile → ProtoTile → ProtoTile → Prop := fun A B C =>
-          ∃ AB BC CA ABC : ProtoTile,
-            LatticeTile A ∧ LatticeTile B ∧ LatticeTile C ∧
-            LatticeTile AB ∧ LatticeTile BC ∧ LatticeTile CA ∧ LatticeTile ABC ∧
-            Disjoint A.cells B.cells ∧ Disjoint B.cells C.cells ∧ Disjoint C.cells A.cells ∧
-            (∀ z : LatticeCell, z ∈ AB.cells ↔ z ∈ A.cells ∨ z ∈ B.cells) ∧
-            (∀ z : LatticeCell, z ∈ BC.cells ↔ z ∈ B.cells ∨ z ∈ C.cells) ∧
-            (∀ z : LatticeCell, z ∈ CA.cells ↔ z ∈ C.cells ∨ z ∈ A.cells) ∧
-            (∀ z : LatticeCell, z ∈ ABC.cells ↔ z ∈ A.cells ∨ z ∈ B.cells ∨ z ∈ C.cells) ∧
-            (FootprintEdges A ∩ FootprintEdges B).Nonempty ∧
-            (FootprintEdges B ∩ FootprintEdges C).Nonempty ∧
-            (FootprintEdges C ∩ FootprintEdges A).Nonempty
+        let J : ProtoTile → ProtoTile → ProtoTile → Prop := ThreeTileUnionJunction
         (∀ (A : ProtoTile), ∀ (B : ProtoTile), ∀ (C : ProtoTile), ∀ (A' : ProtoTile), ∀ (B' :
             ProtoTile), ∀ (C' : ProtoTile), (A.cells = A'.cells) → ((B.cells = B'.cells) →
             ((C.cells = C'.cells) → ((J A B C) → (J A' B' C'))))) → (

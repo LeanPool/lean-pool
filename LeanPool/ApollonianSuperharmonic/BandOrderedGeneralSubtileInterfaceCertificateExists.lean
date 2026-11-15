@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.SubtileRowIndices
 public import LeanPool.ApollonianSuperharmonic.TileQuarterTurnTranslation
 
 public import LeanPool.ApollonianSuperharmonic.BandOrderedGeneralSubtileInterfaceCertificate
@@ -399,20 +400,9 @@ private theorem hUBand :
             BandOrderedGeneralSubtileNormalizationCertificate C₀ Cᵢ q i T₀ Tᵢ h₀ hᵢ x),
         let Q := normalization.normalizedPresentation
         let uIndex : PeriodicSubtileIndex :=
-          if normalization.normalizedParentSlot = 0 then
-            if normalization.normalizedQuarterTurn = 0 then ⟨.A, 0, -1⟩
-            else if normalization.normalizedQuarterTurn = 1 then ⟨.B, 1, 1⟩
-            else if normalization.normalizedQuarterTurn = 2 then ⟨.B, 0, 1⟩
-            else ⟨.A, -1, -1⟩
-          else if normalization.normalizedParentSlot = 1 then
-            if normalization.normalizedQuarterTurn = 0 then ⟨.C, 1, 1⟩
-            else if normalization.normalizedQuarterTurn = 1 then ⟨.D, -1, 0⟩
-            else if normalization.normalizedQuarterTurn = 2 then ⟨.D, -1, -1⟩
-            else ⟨.C, 1, 0⟩
-          else if normalization.normalizedQuarterTurn = 0 then ⟨.E, -1, 0⟩
-          else if normalization.normalizedQuarterTurn = 1 then ⟨.F, 0, -1⟩
-          else if normalization.normalizedQuarterTurn = 2 then ⟨.F, 1, 0⟩
-          else ⟨.E, 0, 1⟩
+          SubtileRowIndices.source
+            normalization.normalizedParentSlot
+            normalization.normalizedQuarterTurn
         let U := SubtileOccurrenceInterpretation normalization.layout.P
           normalization.layout.u normalization.layout.v uIndex
         BandPrototile (Q normalization.normalizedParentSlot.succ) U ) := by
@@ -424,7 +414,7 @@ private theorem hUBand :
     simp only [Fin.mk_one, Fin.isValue, Fin.succ_one_eq_two, SubtileOccurrenceInterpretation,
         hp, one_ne_zero, ↓reduceIte, ht, Fin.reduceFinMk, Fin.reduceEq, Int.cast_one, one_mul,
         Int.cast_zero, zero_mul, add_zero, Q, U, uIndex, Int.reduceNeg, Int.cast_neg, neg_mul,
-        Fin.zero_eta, Fin.reduceSucc, zero_add, Fin.succ_zero_eq_one]
+        Fin.zero_eta, Fin.reduceSucc, zero_add, Fin.succ_zero_eq_one, SubtileRowIndices.source]
   all_goals first
     | exact BandPrototileTranslation _ _ _
         (normalization.layout.outer_occurrence 0 true).1
@@ -449,20 +439,9 @@ private theorem hVBand :
             BandOrderedGeneralSubtileNormalizationCertificate C₀ Cᵢ q i T₀ Tᵢ h₀ hᵢ x),
         let Q := normalization.normalizedPresentation
         let vIndex : PeriodicSubtileIndex :=
-          if normalization.normalizedParentSlot = 0 then
-            if normalization.normalizedQuarterTurn = 0 then ⟨.C, 1, 0⟩
-            else if normalization.normalizedQuarterTurn = 1 then ⟨.F, 1, 0⟩
-            else if normalization.normalizedQuarterTurn = 2 then ⟨.D, -1, 0⟩
-            else ⟨.E, -1, 0⟩
-          else if normalization.normalizedParentSlot = 1 then
-            if normalization.normalizedQuarterTurn = 0 then ⟨.E, 0, 1⟩
-            else if normalization.normalizedQuarterTurn = 1 then ⟨.B, 0, 1⟩
-            else if normalization.normalizedQuarterTurn = 2 then ⟨.F, 0, -1⟩
-            else ⟨.A, 0, -1⟩
-          else if normalization.normalizedQuarterTurn = 0 then ⟨.A, -1, -1⟩
-          else if normalization.normalizedQuarterTurn = 1 then ⟨.D, -1, -1⟩
-          else if normalization.normalizedQuarterTurn = 2 then ⟨.B, 1, 1⟩
-          else ⟨.C, 1, 1⟩
+          SubtileRowIndices.target
+            normalization.normalizedParentSlot
+            normalization.normalizedQuarterTurn
         let V := SubtileOccurrenceInterpretation normalization.layout.P
           normalization.layout.u normalization.layout.v vIndex
         BandPrototile (Q ((if Even normalization.normalizedQuarterTurn.val then
@@ -478,7 +457,7 @@ private theorem hVBand :
         zero_mul, Int.cast_one, one_mul, zero_add, V, vIndex, Fin.reduceFinMk,
         Fin.succ_zero_eq_one, Fin.reduceEq, Int.reduceNeg, Int.cast_neg, neg_mul,
         Fin.succ_one_eq_two, add_zero, sub_self, Fin.reduceSub, zero_sub, Nat.not_even_one,
-        even_two] <;>
+        even_two, SubtileRowIndices.target] <;>
     first
     | exact BandPrototileTranslation _ _ _
         (normalization.layout.outer_occurrence 0 true).1
@@ -504,20 +483,9 @@ private theorem hUSym :
             ProtoTile), ∀ (d : GaussianInt), (QuarterTurnSymmetric A) → (QuarterTurnSymmetric
             (TileTranslation A d))) → (
         let uIndex : PeriodicSubtileIndex :=
-          if normalization.normalizedParentSlot = 0 then
-            if normalization.normalizedQuarterTurn = 0 then ⟨.A, 0, -1⟩
-            else if normalization.normalizedQuarterTurn = 1 then ⟨.B, 1, 1⟩
-            else if normalization.normalizedQuarterTurn = 2 then ⟨.B, 0, 1⟩
-            else ⟨.A, -1, -1⟩
-          else if normalization.normalizedParentSlot = 1 then
-            if normalization.normalizedQuarterTurn = 0 then ⟨.C, 1, 1⟩
-            else if normalization.normalizedQuarterTurn = 1 then ⟨.D, -1, 0⟩
-            else if normalization.normalizedQuarterTurn = 2 then ⟨.D, -1, -1⟩
-            else ⟨.C, 1, 0⟩
-          else if normalization.normalizedQuarterTurn = 0 then ⟨.E, -1, 0⟩
-          else if normalization.normalizedQuarterTurn = 1 then ⟨.F, 0, -1⟩
-          else if normalization.normalizedQuarterTurn = 2 then ⟨.F, 1, 0⟩
-          else ⟨.E, 0, 1⟩
+          SubtileRowIndices.source
+            normalization.normalizedParentSlot
+            normalization.normalizedQuarterTurn
         let U := SubtileOccurrenceInterpretation normalization.layout.P
           normalization.layout.u normalization.layout.v uIndex
         QuarterTurnSymmetric U) ) := by
@@ -529,7 +497,7 @@ private theorem hUSym :
     simp only [SubtileOccurrenceInterpretation, hp, Fin.mk_one, Fin.isValue, one_ne_zero,
         ↓reduceIte, ht, Fin.reduceFinMk, Fin.reduceEq, Int.cast_one, one_mul, Int.cast_zero,
         zero_mul, add_zero, U, uIndex, Int.reduceNeg, Int.cast_neg, neg_mul, Fin.zero_eta,
-        zero_add] <;>
+        zero_add, SubtileRowIndices.source] <;>
     apply quarterSymmetricTranslation <;>
     first
     | exact normalization.layout.parent_quarter_turn 0 true
@@ -588,74 +556,25 @@ private theorem hrow' :
             PartialOdometer), ∀ (x : GaussianInt), ∀ (normalization :
             BandOrderedGeneralSubtileNormalizationCertificate C₀ Cᵢ q i T₀ Tᵢ h₀ hᵢ x),
         let uIndex : PeriodicSubtileIndex :=
-          if normalization.normalizedParentSlot = 0 then
-            if normalization.normalizedQuarterTurn = 0 then ⟨.A, 0, -1⟩
-            else if normalization.normalizedQuarterTurn = 1 then ⟨.B, 1, 1⟩
-            else if normalization.normalizedQuarterTurn = 2 then ⟨.B, 0, 1⟩
-            else ⟨.A, -1, -1⟩
-          else if normalization.normalizedParentSlot = 1 then
-            if normalization.normalizedQuarterTurn = 0 then ⟨.C, 1, 1⟩
-            else if normalization.normalizedQuarterTurn = 1 then ⟨.D, -1, 0⟩
-            else if normalization.normalizedQuarterTurn = 2 then ⟨.D, -1, -1⟩
-            else ⟨.C, 1, 0⟩
-          else if normalization.normalizedQuarterTurn = 0 then ⟨.E, -1, 0⟩
-          else if normalization.normalizedQuarterTurn = 1 then ⟨.F, 0, -1⟩
-          else if normalization.normalizedQuarterTurn = 2 then ⟨.F, 1, 0⟩
-          else ⟨.E, 0, 1⟩
+          SubtileRowIndices.source
+            normalization.normalizedParentSlot
+            normalization.normalizedQuarterTurn
         let vIndex : PeriodicSubtileIndex :=
-          if normalization.normalizedParentSlot = 0 then
-            if normalization.normalizedQuarterTurn = 0 then ⟨.C, 1, 0⟩
-            else if normalization.normalizedQuarterTurn = 1 then ⟨.F, 1, 0⟩
-            else if normalization.normalizedQuarterTurn = 2 then ⟨.D, -1, 0⟩
-            else ⟨.E, -1, 0⟩
-          else if normalization.normalizedParentSlot = 1 then
-            if normalization.normalizedQuarterTurn = 0 then ⟨.E, 0, 1⟩
-            else if normalization.normalizedQuarterTurn = 1 then ⟨.B, 0, 1⟩
-            else if normalization.normalizedQuarterTurn = 2 then ⟨.F, 0, -1⟩
-            else ⟨.A, 0, -1⟩
-          else if normalization.normalizedQuarterTurn = 0 then ⟨.A, -1, -1⟩
-          else if normalization.normalizedQuarterTurn = 1 then ⟨.D, -1, -1⟩
-          else if normalization.normalizedQuarterTurn = 2 then ⟨.B, 1, 1⟩
-          else ⟨.C, 1, 1⟩
+          SubtileRowIndices.target
+            normalization.normalizedParentSlot
+            normalization.normalizedQuarterTurn
         let uBar : PeriodicSubtileIndex :=
-          if normalization.normalizedParentSlot = 0 then
-            if normalization.normalizedQuarterTurn = 0 then ⟨.B, 1, 1⟩
-            else if normalization.normalizedQuarterTurn = 1 then ⟨.B, 0, 1⟩
-            else if normalization.normalizedQuarterTurn = 2 then ⟨.A, -1, -1⟩
-            else ⟨.A, 0, -1⟩
-          else if normalization.normalizedParentSlot = 1 then
-            if normalization.normalizedQuarterTurn = 0 then ⟨.D, -1, 0⟩
-            else if normalization.normalizedQuarterTurn = 1 then ⟨.D, -1, -1⟩
-            else if normalization.normalizedQuarterTurn = 2 then ⟨.C, 1, 0⟩
-            else ⟨.C, 1, 1⟩
-          else if normalization.normalizedQuarterTurn = 0 then ⟨.F, 0, -1⟩
-          else if normalization.normalizedQuarterTurn = 1 then ⟨.F, 1, 0⟩
-          else if normalization.normalizedQuarterTurn = 2 then ⟨.E, 0, 1⟩
-          else ⟨.E, -1, 0⟩
+          SubtileRowIndices.sourcePartner
+            normalization.normalizedParentSlot
+            normalization.normalizedQuarterTurn
         let vBar : PeriodicSubtileIndex :=
-          if normalization.normalizedParentSlot = 0 then
-            if normalization.normalizedQuarterTurn = 0 then ⟨.C, 1, 1⟩
-            else if normalization.normalizedQuarterTurn = 1 then ⟨.E, 0, 1⟩
-            else if normalization.normalizedQuarterTurn = 2 then ⟨.D, -1, -1⟩
-            else ⟨.F, 0, -1⟩
-          else if normalization.normalizedParentSlot = 1 then
-            if normalization.normalizedQuarterTurn = 0 then ⟨.E, -1, 0⟩
-            else if normalization.normalizedQuarterTurn = 1 then ⟨.A, -1, -1⟩
-            else if normalization.normalizedQuarterTurn = 2 then ⟨.F, 1, 0⟩
-            else ⟨.B, 1, 1⟩
-          else if normalization.normalizedQuarterTurn = 0 then ⟨.A, 0, -1⟩
-          else if normalization.normalizedQuarterTurn = 1 then ⟨.C, 1, 0⟩
-          else if normalization.normalizedQuarterTurn = 2 then ⟨.B, 0, 1⟩
-          else ⟨.D, -1, 0⟩
+          SubtileRowIndices.targetPartner
+            normalization.normalizedParentSlot
+            normalization.normalizedQuarterTurn
         let wBlock : Int × Int :=
-          if normalization.normalizedParentSlot = 0 then
-            if normalization.normalizedQuarterTurn = 0 ∨
-                normalization.normalizedQuarterTurn = 3 then (1, 0) else (-1, 0)
-          else if normalization.normalizedParentSlot = 1 then
-            if normalization.normalizedQuarterTurn = 0 ∨
-                normalization.normalizedQuarterTurn = 3 then (0, 1) else (0, -1)
-          else if normalization.normalizedQuarterTurn = 0 ∨
-              normalization.normalizedQuarterTurn = 3 then (-1, -1) else (1, 1)
+          SubtileRowIndices.blockOffset
+            normalization.normalizedParentSlot
+            normalization.normalizedQuarterTurn
         ((normalization.normalizedParentSlot = 0 ∧ normalization.normalizedQuarterTurn = 0 ∧
             uIndex = ⟨.A, 0, -1⟩ ∧ uBar = ⟨.B, 1, 1⟩ ∧ wBlock = (1, 0) ∧ vIndex = ⟨.C, 1, 0⟩ ∧
             vBar = ⟨.C, 1, 1⟩) ∨ (normalization.normalizedParentSlot = 0 ∧
@@ -691,7 +610,9 @@ private theorem hrow' :
   generalize hp : normalization.normalizedParentSlot = p
   generalize ht : normalization.normalizedQuarterTurn = t
   fin_cases p <;> fin_cases t <;>
-    simp [uIndex, uBar, vIndex, vBar, wBlock, hp, ht]
+    simp [uIndex, uBar, vIndex, vBar, wBlock, hp, ht, SubtileRowIndices.source,
+        SubtileRowIndices.target, SubtileRowIndices.sourcePartner,
+        SubtileRowIndices.targetPartner, SubtileRowIndices.blockOffset]
 
 private theorem hUbarBand :
     (by
@@ -703,20 +624,9 @@ private theorem hUbarBand :
             BandOrderedGeneralSubtileNormalizationCertificate C₀ Cᵢ q i T₀ Tᵢ h₀ hᵢ x),
         let Q := normalization.normalizedPresentation
         let uBar : PeriodicSubtileIndex :=
-          if normalization.normalizedParentSlot = 0 then
-            if normalization.normalizedQuarterTurn = 0 then ⟨.B, 1, 1⟩
-            else if normalization.normalizedQuarterTurn = 1 then ⟨.B, 0, 1⟩
-            else if normalization.normalizedQuarterTurn = 2 then ⟨.A, -1, -1⟩
-            else ⟨.A, 0, -1⟩
-          else if normalization.normalizedParentSlot = 1 then
-            if normalization.normalizedQuarterTurn = 0 then ⟨.D, -1, 0⟩
-            else if normalization.normalizedQuarterTurn = 1 then ⟨.D, -1, -1⟩
-            else if normalization.normalizedQuarterTurn = 2 then ⟨.C, 1, 0⟩
-            else ⟨.C, 1, 1⟩
-          else if normalization.normalizedQuarterTurn = 0 then ⟨.F, 0, -1⟩
-          else if normalization.normalizedQuarterTurn = 1 then ⟨.F, 1, 0⟩
-          else if normalization.normalizedQuarterTurn = 2 then ⟨.E, 0, 1⟩
-          else ⟨.E, -1, 0⟩
+          SubtileRowIndices.sourcePartner
+            normalization.normalizedParentSlot
+            normalization.normalizedQuarterTurn
         let Ubar := SubtileOccurrenceInterpretation normalization.layout.P
           normalization.layout.u normalization.layout.v uBar
         BandPrototile (Q normalization.normalizedParentSlot.succ) Ubar ) := by
@@ -728,7 +638,8 @@ private theorem hUbarBand :
     simp only [Fin.mk_one, Fin.isValue, Fin.succ_one_eq_two, SubtileOccurrenceInterpretation,
         hp, one_ne_zero, ↓reduceIte, ht, Fin.reduceFinMk, Fin.reduceEq, Int.cast_one, one_mul,
         Int.cast_zero, zero_mul, add_zero, Q, Ubar, uBar, Fin.zero_eta, Int.reduceNeg,
-        Int.cast_neg, neg_mul, Fin.reduceSucc, zero_add, Fin.succ_zero_eq_one]
+        Int.cast_neg, neg_mul, Fin.reduceSucc, zero_add, Fin.succ_zero_eq_one,
+            SubtileRowIndices.sourcePartner]
   all_goals first
     | exact BandPrototileTranslation _ _ _
         (normalization.layout.outer_occurrence 0 true).1
@@ -757,51 +668,12 @@ private theorem hUbarCent :
         let outgoing : Fin 3 → GaussianInt := fun j =>
           BandVectors.1 (Q 0) (Q j.succ)
         let uBar : PeriodicSubtileIndex :=
-          if normalization.normalizedParentSlot = 0 then
-            if normalization.normalizedQuarterTurn = 0 then ⟨.B, 1, 1⟩
-            else if normalization.normalizedQuarterTurn = 1 then ⟨.B, 0, 1⟩
-            else if normalization.normalizedQuarterTurn = 2 then ⟨.A, -1, -1⟩
-            else ⟨.A, 0, -1⟩
-          else if normalization.normalizedParentSlot = 1 then
-            if normalization.normalizedQuarterTurn = 0 then ⟨.D, -1, 0⟩
-            else if normalization.normalizedQuarterTurn = 1 then ⟨.D, -1, -1⟩
-            else if normalization.normalizedQuarterTurn = 2 then ⟨.C, 1, 0⟩
-            else ⟨.C, 1, 1⟩
-          else if normalization.normalizedQuarterTurn = 0 then ⟨.F, 0, -1⟩
-          else if normalization.normalizedQuarterTurn = 1 then ⟨.F, 1, 0⟩
-          else if normalization.normalizedQuarterTurn = 2 then ⟨.E, 0, 1⟩
-          else ⟨.E, -1, 0⟩
+          SubtileRowIndices.sourcePartner
+            normalization.normalizedParentSlot
+            normalization.normalizedQuarterTurn
         (∀ (p : Fin (3 : ℕ)), ∀ (t : Fin (4 : ℕ)),
-        let uIndex := if p = (0 : Fin (3 : ℕ)) then if t = (0 : Fin (4 : ℕ)) then
-            (⟨SixSubtileLabel.A, (0 : ℤ), (-1 : ℤ)⟩ : PeriodicSubtileIndex) else if t = (1 : Fin
-            (4 : ℕ)) then (⟨SixSubtileLabel.B, (1 : ℤ), (1 : ℤ)⟩ : PeriodicSubtileIndex) else if
-            t = (2 : Fin (4 : ℕ)) then (⟨SixSubtileLabel.B, (0 : ℤ), (1 : ℤ)⟩ :
-            PeriodicSubtileIndex) else (⟨SixSubtileLabel.A, (-1 : ℤ), (-1 : ℤ)⟩ :
-            PeriodicSubtileIndex) else if p = (1 : Fin (3 : ℕ)) then if t = (0 : Fin (4 : ℕ))
-            then (⟨SixSubtileLabel.C, (1 : ℤ), (1 : ℤ)⟩ : PeriodicSubtileIndex) else if t = (1 :
-            Fin (4 : ℕ)) then (⟨SixSubtileLabel.D, (-1 : ℤ), (0 : ℤ)⟩ : PeriodicSubtileIndex)
-            else if t = (2 : Fin (4 : ℕ)) then (⟨SixSubtileLabel.D, (-1 : ℤ), (-1 : ℤ)⟩ :
-            PeriodicSubtileIndex) else (⟨SixSubtileLabel.C, (1 : ℤ), (0 : ℤ)⟩ :
-            PeriodicSubtileIndex) else if t = (0 : Fin (4 : ℕ)) then (⟨SixSubtileLabel.E, (-1 :
-            ℤ), (0 : ℤ)⟩ : PeriodicSubtileIndex) else if t = (1 : Fin (4 : ℕ)) then
-            (⟨SixSubtileLabel.F, (0 : ℤ), (-1 : ℤ)⟩ : PeriodicSubtileIndex) else if t = (2 : Fin
-            (4 : ℕ)) then (⟨SixSubtileLabel.F, (1 : ℤ), (0 : ℤ)⟩ : PeriodicSubtileIndex) else
-            (⟨SixSubtileLabel.E, (0 : ℤ), (1 : ℤ)⟩ : PeriodicSubtileIndex);
-        let vIndex := if p = (0 : Fin (3 : ℕ)) then if t = (0 : Fin (4 : ℕ)) then
-            (⟨SixSubtileLabel.C, (1 : ℤ), (0 : ℤ)⟩ : PeriodicSubtileIndex) else if t = (1 : Fin
-            (4 : ℕ)) then (⟨SixSubtileLabel.F, (1 : ℤ), (0 : ℤ)⟩ : PeriodicSubtileIndex) else if
-            t = (2 : Fin (4 : ℕ)) then (⟨SixSubtileLabel.D, (-1 : ℤ), (0 : ℤ)⟩ :
-            PeriodicSubtileIndex) else (⟨SixSubtileLabel.E, (-1 : ℤ), (0 : ℤ)⟩ :
-            PeriodicSubtileIndex) else if p = (1 : Fin (3 : ℕ)) then if t = (0 : Fin (4 : ℕ))
-            then (⟨SixSubtileLabel.E, (0 : ℤ), (1 : ℤ)⟩ : PeriodicSubtileIndex) else if t = (1 :
-            Fin (4 : ℕ)) then (⟨SixSubtileLabel.B, (0 : ℤ), (1 : ℤ)⟩ : PeriodicSubtileIndex) else
-            if t = (2 : Fin (4 : ℕ)) then (⟨SixSubtileLabel.F, (0 : ℤ), (-1 : ℤ)⟩ :
-            PeriodicSubtileIndex) else (⟨SixSubtileLabel.A, (0 : ℤ), (-1 : ℤ)⟩ :
-            PeriodicSubtileIndex) else if t = (0 : Fin (4 : ℕ)) then (⟨SixSubtileLabel.A, (-1 :
-            ℤ), (-1 : ℤ)⟩ : PeriodicSubtileIndex) else if t = (1 : Fin (4 : ℕ)) then
-            (⟨SixSubtileLabel.D, (-1 : ℤ), (-1 : ℤ)⟩ : PeriodicSubtileIndex) else if t = (2 : Fin
-            (4 : ℕ)) then (⟨SixSubtileLabel.B, (1 : ℤ), (1 : ℤ)⟩ : PeriodicSubtileIndex) else
-            (⟨SixSubtileLabel.C, (1 : ℤ), (1 : ℤ)⟩ : PeriodicSubtileIndex);
+        let uIndex := SubtileRowIndices.source p t;
+        let vIndex := SubtileRowIndices.target p t;
         let U := SubtileOccurrenceInterpretation normalization.layout.P normalization.layout.u
             normalization.layout.v uIndex;
         let V := SubtileOccurrenceInterpretation normalization.layout.P normalization.layout.u
@@ -822,24 +694,25 @@ private theorem hUbarCent :
             ) := by
   classical
   intro C₀ Cᵢ q i T₀ Tᵢ h₀ hᵢ x normalization Q incoming outgoing uBar rowsAt quarterPower Ubar
+  dsimp only [SubtileRowIndices.source, SubtileRowIndices.target] at rowsAt
   rw [← quarterPower normalization.normalizedQuarterTurn
     (incoming normalization.normalizedParentSlot +
       outgoing normalization.normalizedParentSlot)]
   generalize hp : normalization.normalizedParentSlot = p
   generalize ht : normalization.normalizedQuarterTurn = t
   fin_cases p <;> fin_cases t
-  · simpa [Ubar, uBar, hp, ht, Fin.add_def] using (rowsAt 0 1).1
-  · simpa [Ubar, uBar, hp, ht, Fin.add_def] using (rowsAt 0 2).1
-  · simpa [Ubar, uBar, hp, ht, Fin.add_def] using (rowsAt 0 3).1
-  · simpa [Ubar, uBar, hp, ht, Fin.add_def] using (rowsAt 0 0).1
-  · simpa [Ubar, uBar, hp, ht, Fin.add_def] using (rowsAt 1 1).1
-  · simpa [Ubar, uBar, hp, ht, Fin.add_def] using (rowsAt 1 2).1
-  · simpa [Ubar, uBar, hp, ht, Fin.add_def] using (rowsAt 1 3).1
-  · simpa [Ubar, uBar, hp, ht, Fin.add_def] using (rowsAt 1 0).1
-  · simpa [Ubar, uBar, hp, ht, Fin.add_def] using (rowsAt 2 1).1
-  · simpa [Ubar, uBar, hp, ht, Fin.add_def] using (rowsAt 2 2).1
-  · simpa [Ubar, uBar, hp, ht, Fin.add_def] using (rowsAt 2 3).1
-  · simpa [Ubar, uBar, hp, ht, Fin.add_def] using (rowsAt 2 0).1
+  · simpa [Ubar, uBar, hp, ht, Fin.add_def, SubtileRowIndices.sourcePartner] using (rowsAt 0 1).1
+  · simpa [Ubar, uBar, hp, ht, Fin.add_def, SubtileRowIndices.sourcePartner] using (rowsAt 0 2).1
+  · simpa [Ubar, uBar, hp, ht, Fin.add_def, SubtileRowIndices.sourcePartner] using (rowsAt 0 3).1
+  · simpa [Ubar, uBar, hp, ht, Fin.add_def, SubtileRowIndices.sourcePartner] using (rowsAt 0 0).1
+  · simpa [Ubar, uBar, hp, ht, Fin.add_def, SubtileRowIndices.sourcePartner] using (rowsAt 1 1).1
+  · simpa [Ubar, uBar, hp, ht, Fin.add_def, SubtileRowIndices.sourcePartner] using (rowsAt 1 2).1
+  · simpa [Ubar, uBar, hp, ht, Fin.add_def, SubtileRowIndices.sourcePartner] using (rowsAt 1 3).1
+  · simpa [Ubar, uBar, hp, ht, Fin.add_def, SubtileRowIndices.sourcePartner] using (rowsAt 1 0).1
+  · simpa [Ubar, uBar, hp, ht, Fin.add_def, SubtileRowIndices.sourcePartner] using (rowsAt 2 1).1
+  · simpa [Ubar, uBar, hp, ht, Fin.add_def, SubtileRowIndices.sourcePartner] using (rowsAt 2 2).1
+  · simpa [Ubar, uBar, hp, ht, Fin.add_def, SubtileRowIndices.sourcePartner] using (rowsAt 2 3).1
+  · simpa [Ubar, uBar, hp, ht, Fin.add_def, SubtileRowIndices.sourcePartner] using (rowsAt 2 0).1
 
 private theorem hshift :
     (by
@@ -859,14 +732,9 @@ private theorem hshift :
             (Q (0 : Fin (4 : ℕ))) (Q j.succ) = -(⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) *
             BandVectors.2 (Q j.succ) (Q (0 : Fin (4 : ℕ)))) → (
         let wBlock : Int × Int :=
-          if normalization.normalizedParentSlot = 0 then
-            if normalization.normalizedQuarterTurn = 0 ∨
-                normalization.normalizedQuarterTurn = 3 then (1, 0) else (-1, 0)
-          else if normalization.normalizedParentSlot = 1 then
-            if normalization.normalizedQuarterTurn = 0 ∨
-                normalization.normalizedQuarterTurn = 3 then (0, 1) else (0, -1)
-          else if normalization.normalizedQuarterTurn = 0 ∨
-              normalization.normalizedQuarterTurn = 3 then (-1, -1) else (1, 1)
+          SubtileRowIndices.blockOffset
+            normalization.normalizedParentSlot
+            normalization.normalizedQuarterTurn
         let wShift : GaussianInt :=
           (⟨0, 1⟩ : GaussianInt) ^ normalization.normalizedQuarterTurn.val *
             (if Even normalization.normalizedQuarterTurn.val then
@@ -916,7 +784,7 @@ private theorem hshift :
       ] at h0re h0im h1re h1im h2re h2im hf0re hf0im hf1re hf1im hf2re hf2im
   all_goals
     simp [wShift, wBlock, hp, ht, even0, notEven1, even2, notEven3,
-      pow_succ]; omega
+      pow_succ, SubtileRowIndices.blockOffset]; omega
 
 private theorem hVbarBand :
     (by
@@ -931,20 +799,9 @@ private theorem hVbarBand :
             (SubtileOccurrenceInterpretation normalization.layout.P normalization.layout.u
             normalization.layout.v ⟨subtileOccurrenceLabel j e, m, n⟩)) → (
         let vBar : PeriodicSubtileIndex :=
-          if normalization.normalizedParentSlot = 0 then
-            if normalization.normalizedQuarterTurn = 0 then ⟨.C, 1, 1⟩
-            else if normalization.normalizedQuarterTurn = 1 then ⟨.E, 0, 1⟩
-            else if normalization.normalizedQuarterTurn = 2 then ⟨.D, -1, -1⟩
-            else ⟨.F, 0, -1⟩
-          else if normalization.normalizedParentSlot = 1 then
-            if normalization.normalizedQuarterTurn = 0 then ⟨.E, -1, 0⟩
-            else if normalization.normalizedQuarterTurn = 1 then ⟨.A, -1, -1⟩
-            else if normalization.normalizedQuarterTurn = 2 then ⟨.F, 1, 0⟩
-            else ⟨.B, 1, 1⟩
-          else if normalization.normalizedQuarterTurn = 0 then ⟨.A, 0, -1⟩
-          else if normalization.normalizedQuarterTurn = 1 then ⟨.C, 1, 0⟩
-          else if normalization.normalizedQuarterTurn = 2 then ⟨.B, 0, 1⟩
-          else ⟨.D, -1, 0⟩
+          SubtileRowIndices.targetPartner
+            normalization.normalizedParentSlot
+            normalization.normalizedQuarterTurn
         let Vbar := SubtileOccurrenceInterpretation normalization.layout.P
           normalization.layout.u normalization.layout.v vBar
         BandPrototile (Q ((if Even normalization.normalizedQuarterTurn.val then
@@ -958,7 +815,7 @@ private theorem hVbarBand :
     simp only [Even.zero, ↓reduceIte, Fin.mk_one, Fin.isValue, Fin.reduceAdd, Fin.reduceSucc,
         hp, one_ne_zero, ht, Fin.zero_eta, Int.reduceNeg, Vbar, vBar, Fin.reduceFinMk,
         Fin.succ_zero_eq_one, Fin.reduceEq, zero_add, Fin.succ_one_eq_two, sub_self,
-        Fin.reduceSub, zero_sub, Nat.not_even_one, even_two] <;>
+        Fin.reduceSub, zero_sub, Nat.not_even_one, even_two, SubtileRowIndices.targetPartner] <;>
     first
     | exact occurrenceBand 0 true _ _
     | exact occurrenceBand 0 false _ _
@@ -978,20 +835,9 @@ private theorem hVSym :
             ProtoTile), ∀ (d : GaussianInt), (QuarterTurnSymmetric A) → (QuarterTurnSymmetric
             (TileTranslation A d))) → (
         let vIndex : PeriodicSubtileIndex :=
-          if normalization.normalizedParentSlot = 0 then
-            if normalization.normalizedQuarterTurn = 0 then ⟨.C, 1, 0⟩
-            else if normalization.normalizedQuarterTurn = 1 then ⟨.F, 1, 0⟩
-            else if normalization.normalizedQuarterTurn = 2 then ⟨.D, -1, 0⟩
-            else ⟨.E, -1, 0⟩
-          else if normalization.normalizedParentSlot = 1 then
-            if normalization.normalizedQuarterTurn = 0 then ⟨.E, 0, 1⟩
-            else if normalization.normalizedQuarterTurn = 1 then ⟨.B, 0, 1⟩
-            else if normalization.normalizedQuarterTurn = 2 then ⟨.F, 0, -1⟩
-            else ⟨.A, 0, -1⟩
-          else if normalization.normalizedQuarterTurn = 0 then ⟨.A, -1, -1⟩
-          else if normalization.normalizedQuarterTurn = 1 then ⟨.D, -1, -1⟩
-          else if normalization.normalizedQuarterTurn = 2 then ⟨.B, 1, 1⟩
-          else ⟨.C, 1, 1⟩
+          SubtileRowIndices.target
+            normalization.normalizedParentSlot
+            normalization.normalizedQuarterTurn
         let V := SubtileOccurrenceInterpretation normalization.layout.P
           normalization.layout.u normalization.layout.v vIndex
         QuarterTurnSymmetric V) ) := by
@@ -1003,7 +849,7 @@ private theorem hVSym :
     simp only [SubtileOccurrenceInterpretation, hp, Fin.mk_one, Fin.isValue, one_ne_zero,
         ↓reduceIte, ht, Fin.reduceFinMk, Fin.reduceEq, Int.reduceNeg, Int.cast_zero, zero_mul,
         Int.cast_neg, Int.cast_one, neg_mul, one_mul, zero_add, V, vIndex, Fin.zero_eta,
-        add_zero] <;>
+        add_zero, SubtileRowIndices.target] <;>
     apply quarterSymmetricTranslation <;>
     first
     | exact normalization.layout.parent_quarter_turn 0 true
@@ -1031,51 +877,12 @@ private theorem hVbarCent :
             (Q (0 : Fin (4 : ℕ))) (Q j.succ) = -(⟨(0 : ℤ), (1 : ℤ)⟩ : GaussianInt) *
             BandVectors.2 (Q j.succ) (Q (0 : Fin (4 : ℕ)))) → (
         let vBar : PeriodicSubtileIndex :=
-          if normalization.normalizedParentSlot = 0 then
-            if normalization.normalizedQuarterTurn = 0 then ⟨.C, 1, 1⟩
-            else if normalization.normalizedQuarterTurn = 1 then ⟨.E, 0, 1⟩
-            else if normalization.normalizedQuarterTurn = 2 then ⟨.D, -1, -1⟩
-            else ⟨.F, 0, -1⟩
-          else if normalization.normalizedParentSlot = 1 then
-            if normalization.normalizedQuarterTurn = 0 then ⟨.E, -1, 0⟩
-            else if normalization.normalizedQuarterTurn = 1 then ⟨.A, -1, -1⟩
-            else if normalization.normalizedQuarterTurn = 2 then ⟨.F, 1, 0⟩
-            else ⟨.B, 1, 1⟩
-          else if normalization.normalizedQuarterTurn = 0 then ⟨.A, 0, -1⟩
-          else if normalization.normalizedQuarterTurn = 1 then ⟨.C, 1, 0⟩
-          else if normalization.normalizedQuarterTurn = 2 then ⟨.B, 0, 1⟩
-          else ⟨.D, -1, 0⟩
+          SubtileRowIndices.targetPartner
+            normalization.normalizedParentSlot
+            normalization.normalizedQuarterTurn
         (∀ (p : Fin (3 : ℕ)), ∀ (t : Fin (4 : ℕ)),
-        let uIndex := if p = (0 : Fin (3 : ℕ)) then if t = (0 : Fin (4 : ℕ)) then
-            (⟨SixSubtileLabel.A, (0 : ℤ), (-1 : ℤ)⟩ : PeriodicSubtileIndex) else if t = (1 : Fin
-            (4 : ℕ)) then (⟨SixSubtileLabel.B, (1 : ℤ), (1 : ℤ)⟩ : PeriodicSubtileIndex) else if
-            t = (2 : Fin (4 : ℕ)) then (⟨SixSubtileLabel.B, (0 : ℤ), (1 : ℤ)⟩ :
-            PeriodicSubtileIndex) else (⟨SixSubtileLabel.A, (-1 : ℤ), (-1 : ℤ)⟩ :
-            PeriodicSubtileIndex) else if p = (1 : Fin (3 : ℕ)) then if t = (0 : Fin (4 : ℕ))
-            then (⟨SixSubtileLabel.C, (1 : ℤ), (1 : ℤ)⟩ : PeriodicSubtileIndex) else if t = (1 :
-            Fin (4 : ℕ)) then (⟨SixSubtileLabel.D, (-1 : ℤ), (0 : ℤ)⟩ : PeriodicSubtileIndex)
-            else if t = (2 : Fin (4 : ℕ)) then (⟨SixSubtileLabel.D, (-1 : ℤ), (-1 : ℤ)⟩ :
-            PeriodicSubtileIndex) else (⟨SixSubtileLabel.C, (1 : ℤ), (0 : ℤ)⟩ :
-            PeriodicSubtileIndex) else if t = (0 : Fin (4 : ℕ)) then (⟨SixSubtileLabel.E, (-1 :
-            ℤ), (0 : ℤ)⟩ : PeriodicSubtileIndex) else if t = (1 : Fin (4 : ℕ)) then
-            (⟨SixSubtileLabel.F, (0 : ℤ), (-1 : ℤ)⟩ : PeriodicSubtileIndex) else if t = (2 : Fin
-            (4 : ℕ)) then (⟨SixSubtileLabel.F, (1 : ℤ), (0 : ℤ)⟩ : PeriodicSubtileIndex) else
-            (⟨SixSubtileLabel.E, (0 : ℤ), (1 : ℤ)⟩ : PeriodicSubtileIndex);
-        let vIndex := if p = (0 : Fin (3 : ℕ)) then if t = (0 : Fin (4 : ℕ)) then
-            (⟨SixSubtileLabel.C, (1 : ℤ), (0 : ℤ)⟩ : PeriodicSubtileIndex) else if t = (1 : Fin
-            (4 : ℕ)) then (⟨SixSubtileLabel.F, (1 : ℤ), (0 : ℤ)⟩ : PeriodicSubtileIndex) else if
-            t = (2 : Fin (4 : ℕ)) then (⟨SixSubtileLabel.D, (-1 : ℤ), (0 : ℤ)⟩ :
-            PeriodicSubtileIndex) else (⟨SixSubtileLabel.E, (-1 : ℤ), (0 : ℤ)⟩ :
-            PeriodicSubtileIndex) else if p = (1 : Fin (3 : ℕ)) then if t = (0 : Fin (4 : ℕ))
-            then (⟨SixSubtileLabel.E, (0 : ℤ), (1 : ℤ)⟩ : PeriodicSubtileIndex) else if t = (1 :
-            Fin (4 : ℕ)) then (⟨SixSubtileLabel.B, (0 : ℤ), (1 : ℤ)⟩ : PeriodicSubtileIndex) else
-            if t = (2 : Fin (4 : ℕ)) then (⟨SixSubtileLabel.F, (0 : ℤ), (-1 : ℤ)⟩ :
-            PeriodicSubtileIndex) else (⟨SixSubtileLabel.A, (0 : ℤ), (-1 : ℤ)⟩ :
-            PeriodicSubtileIndex) else if t = (0 : Fin (4 : ℕ)) then (⟨SixSubtileLabel.A, (-1 :
-            ℤ), (-1 : ℤ)⟩ : PeriodicSubtileIndex) else if t = (1 : Fin (4 : ℕ)) then
-            (⟨SixSubtileLabel.D, (-1 : ℤ), (-1 : ℤ)⟩ : PeriodicSubtileIndex) else if t = (2 : Fin
-            (4 : ℕ)) then (⟨SixSubtileLabel.B, (1 : ℤ), (1 : ℤ)⟩ : PeriodicSubtileIndex) else
-            (⟨SixSubtileLabel.C, (1 : ℤ), (1 : ℤ)⟩ : PeriodicSubtileIndex);
+        let uIndex := SubtileRowIndices.source p t;
+        let vIndex := SubtileRowIndices.target p t;
         let U := SubtileOccurrenceInterpretation normalization.layout.P normalization.layout.u
             normalization.layout.v uIndex;
         let V := SubtileOccurrenceInterpretation normalization.layout.P normalization.layout.u
@@ -1098,6 +905,7 @@ private theorem hVbarCent :
             (normalization.normalizedParentSlot - 1)))))) ) := by
   classical
   intro C₀ Cᵢ q i T₀ Tᵢ h₀ hᵢ x normalization Q incoming outgoing hflips vBar rowsAt Vbar
+  dsimp only [SubtileRowIndices.source, SubtileRowIndices.target] at rowsAt
   have hf0 : outgoing 0 = (⟨0, 1⟩ : GaussianInt) * incoming 0 := by
     simpa [outgoing, incoming] using (hflips 0).1
   have hf1 : outgoing 1 = (⟨0, 1⟩ : GaussianInt) * incoming 1 := by
@@ -1113,56 +921,56 @@ private theorem hVbarCent :
   generalize ht : normalization.normalizedQuarterTurn = t
   fin_cases p <;> fin_cases t
   · convert (rowsAt 1 0).1 using 1
-    · simp [Vbar, vBar, hp, ht]
+    · simp [Vbar, vBar, hp, ht, SubtileRowIndices.targetPartner]
     · congr 2
       apply Zsqrtd.ext <;> simp [hf1, even0] <;> ring
   · convert (rowsAt 2 3).1 using 1
-    · simp [Vbar, vBar, hp, ht]
+    · simp [Vbar, vBar, hp, ht, SubtileRowIndices.targetPartner]
     · congr 2
       apply Zsqrtd.ext <;>
         simp [hf2, notEven1, zeroSubOne, pow_succ] <;> ring
   · convert (rowsAt 1 2).1 using 1
-    · simp [Vbar, vBar, hp, ht]
+    · simp [Vbar, vBar, hp, ht, SubtileRowIndices.targetPartner]
     · congr 2
       apply Zsqrtd.ext <;> simp [hf1, even2, pow_succ] <;> ring
   · convert (rowsAt 2 1).1 using 1
-    · simp [Vbar, vBar, hp, ht]
+    · simp [Vbar, vBar, hp, ht, SubtileRowIndices.targetPartner]
     · congr 2
       apply Zsqrtd.ext <;>
         simp [hf2, notEven3, zeroSubOne, pow_succ] <;> ring
   · convert (rowsAt 2 0).1 using 1
-    · simp [Vbar, vBar, hp, ht]
+    · simp [Vbar, vBar, hp, ht, SubtileRowIndices.targetPartner]
     · congr 2
       apply Zsqrtd.ext <;> simp [hf2, even0] <;> ring
   · convert (rowsAt 0 3).1 using 1
-    · simp [Vbar, vBar, hp, ht]
+    · simp [Vbar, vBar, hp, ht, SubtileRowIndices.targetPartner]
     · congr 2
       apply Zsqrtd.ext <;>
         simp [hf0, notEven1, pow_succ] <;> ring
   · convert (rowsAt 2 2).1 using 1
-    · simp [Vbar, vBar, hp, ht]
+    · simp [Vbar, vBar, hp, ht, SubtileRowIndices.targetPartner]
     · congr 2
       apply Zsqrtd.ext <;> simp [hf2, even2, pow_succ] <;> ring
   · convert (rowsAt 0 1).1 using 1
-    · simp [Vbar, vBar, hp, ht]
+    · simp [Vbar, vBar, hp, ht, SubtileRowIndices.targetPartner]
     · congr 2
       apply Zsqrtd.ext <;>
         simp [hf0, notEven3, pow_succ] <;> ring
   · convert (rowsAt 0 0).1 using 1
-    · simp [Vbar, vBar, hp, ht]
+    · simp [Vbar, vBar, hp, ht, SubtileRowIndices.targetPartner]
     · congr 2
       apply Zsqrtd.ext <;> simp [hf0, even0] <;> ring
   · convert (rowsAt 1 3).1 using 1
-    · simp [Vbar, vBar, hp, ht]
+    · simp [Vbar, vBar, hp, ht, SubtileRowIndices.targetPartner]
     · congr 2
       apply Zsqrtd.ext <;>
         simp [hf1, notEven1, Fin.sub_def, pow_succ] <;> ring
   · convert (rowsAt 0 2).1 using 1
-    · simp [Vbar, vBar, hp, ht]
+    · simp [Vbar, vBar, hp, ht, SubtileRowIndices.targetPartner]
     · congr 2
       apply Zsqrtd.ext <;> simp [hf0, even2, pow_succ] <;> ring
   · convert (rowsAt 1 1).1 using 1
-    · simp [Vbar, vBar, hp, ht]
+    · simp [Vbar, vBar, hp, ht, SubtileRowIndices.targetPartner]
     · congr 2
       apply Zsqrtd.ext <;>
         simp [hf1, notEven3, Fin.sub_def, pow_succ] <;> ring
@@ -1274,36 +1082,8 @@ private theorem rowPackage :
             (normalization.normalizedPresentation j.succ) (normalization.normalizedPresentation
             (0 : Fin (4 : ℕ)))) (1 : Fin (3 : ℕ)) = normalization.layout.v) → ((∀ (p : Fin (3 :
             ℕ)), ∀ (t : Fin (4 : ℕ)),
-        let uIndex := if p = (0 : Fin (3 : ℕ)) then if t = (0 : Fin (4 : ℕ)) then
-            (⟨SixSubtileLabel.A, (0 : ℤ), (-1 : ℤ)⟩ : PeriodicSubtileIndex) else if t = (1 : Fin
-            (4 : ℕ)) then (⟨SixSubtileLabel.B, (1 : ℤ), (1 : ℤ)⟩ : PeriodicSubtileIndex) else if
-            t = (2 : Fin (4 : ℕ)) then (⟨SixSubtileLabel.B, (0 : ℤ), (1 : ℤ)⟩ :
-            PeriodicSubtileIndex) else (⟨SixSubtileLabel.A, (-1 : ℤ), (-1 : ℤ)⟩ :
-            PeriodicSubtileIndex) else if p = (1 : Fin (3 : ℕ)) then if t = (0 : Fin (4 : ℕ))
-            then (⟨SixSubtileLabel.C, (1 : ℤ), (1 : ℤ)⟩ : PeriodicSubtileIndex) else if t = (1 :
-            Fin (4 : ℕ)) then (⟨SixSubtileLabel.D, (-1 : ℤ), (0 : ℤ)⟩ : PeriodicSubtileIndex)
-            else if t = (2 : Fin (4 : ℕ)) then (⟨SixSubtileLabel.D, (-1 : ℤ), (-1 : ℤ)⟩ :
-            PeriodicSubtileIndex) else (⟨SixSubtileLabel.C, (1 : ℤ), (0 : ℤ)⟩ :
-            PeriodicSubtileIndex) else if t = (0 : Fin (4 : ℕ)) then (⟨SixSubtileLabel.E, (-1 :
-            ℤ), (0 : ℤ)⟩ : PeriodicSubtileIndex) else if t = (1 : Fin (4 : ℕ)) then
-            (⟨SixSubtileLabel.F, (0 : ℤ), (-1 : ℤ)⟩ : PeriodicSubtileIndex) else if t = (2 : Fin
-            (4 : ℕ)) then (⟨SixSubtileLabel.F, (1 : ℤ), (0 : ℤ)⟩ : PeriodicSubtileIndex) else
-            (⟨SixSubtileLabel.E, (0 : ℤ), (1 : ℤ)⟩ : PeriodicSubtileIndex);
-        let vIndex := if p = (0 : Fin (3 : ℕ)) then if t = (0 : Fin (4 : ℕ)) then
-            (⟨SixSubtileLabel.C, (1 : ℤ), (0 : ℤ)⟩ : PeriodicSubtileIndex) else if t = (1 : Fin
-            (4 : ℕ)) then (⟨SixSubtileLabel.F, (1 : ℤ), (0 : ℤ)⟩ : PeriodicSubtileIndex) else if
-            t = (2 : Fin (4 : ℕ)) then (⟨SixSubtileLabel.D, (-1 : ℤ), (0 : ℤ)⟩ :
-            PeriodicSubtileIndex) else (⟨SixSubtileLabel.E, (-1 : ℤ), (0 : ℤ)⟩ :
-            PeriodicSubtileIndex) else if p = (1 : Fin (3 : ℕ)) then if t = (0 : Fin (4 : ℕ))
-            then (⟨SixSubtileLabel.E, (0 : ℤ), (1 : ℤ)⟩ : PeriodicSubtileIndex) else if t = (1 :
-            Fin (4 : ℕ)) then (⟨SixSubtileLabel.B, (0 : ℤ), (1 : ℤ)⟩ : PeriodicSubtileIndex) else
-            if t = (2 : Fin (4 : ℕ)) then (⟨SixSubtileLabel.F, (0 : ℤ), (-1 : ℤ)⟩ :
-            PeriodicSubtileIndex) else (⟨SixSubtileLabel.A, (0 : ℤ), (-1 : ℤ)⟩ :
-            PeriodicSubtileIndex) else if t = (0 : Fin (4 : ℕ)) then (⟨SixSubtileLabel.A, (-1 :
-            ℤ), (-1 : ℤ)⟩ : PeriodicSubtileIndex) else if t = (1 : Fin (4 : ℕ)) then
-            (⟨SixSubtileLabel.D, (-1 : ℤ), (-1 : ℤ)⟩ : PeriodicSubtileIndex) else if t = (2 : Fin
-            (4 : ℕ)) then (⟨SixSubtileLabel.B, (1 : ℤ), (1 : ℤ)⟩ : PeriodicSubtileIndex) else
-            (⟨SixSubtileLabel.C, (1 : ℤ), (1 : ℤ)⟩ : PeriodicSubtileIndex);
+        let uIndex := SubtileRowIndices.source p t;
+        let vIndex := SubtileRowIndices.target p t;
         let U := SubtileOccurrenceInterpretation normalization.layout.P normalization.layout.u
             normalization.layout.v uIndex;
         let V := SubtileOccurrenceInterpretation normalization.layout.P normalization.layout.u
@@ -1387,79 +1167,30 @@ private theorem rowPackage :
       hin2 hUcentroid hVcentroid occurrenceBand quarterSymmetricTranslation g hrootBar
       rotatedCentroid centeredCompare quarterTranslate hout0 hout1 rowsAt
   let uIndex : PeriodicSubtileIndex :=
-    if normalization.normalizedParentSlot = 0 then
-      if normalization.normalizedQuarterTurn = 0 then ⟨.A, 0, -1⟩
-      else if normalization.normalizedQuarterTurn = 1 then ⟨.B, 1, 1⟩
-      else if normalization.normalizedQuarterTurn = 2 then ⟨.B, 0, 1⟩
-      else ⟨.A, -1, -1⟩
-    else if normalization.normalizedParentSlot = 1 then
-      if normalization.normalizedQuarterTurn = 0 then ⟨.C, 1, 1⟩
-      else if normalization.normalizedQuarterTurn = 1 then ⟨.D, -1, 0⟩
-      else if normalization.normalizedQuarterTurn = 2 then ⟨.D, -1, -1⟩
-      else ⟨.C, 1, 0⟩
-    else if normalization.normalizedQuarterTurn = 0 then ⟨.E, -1, 0⟩
-    else if normalization.normalizedQuarterTurn = 1 then ⟨.F, 0, -1⟩
-    else if normalization.normalizedQuarterTurn = 2 then ⟨.F, 1, 0⟩
-    else ⟨.E, 0, 1⟩
+    SubtileRowIndices.source
+      normalization.normalizedParentSlot
+      normalization.normalizedQuarterTurn
   let vIndex : PeriodicSubtileIndex :=
-    if normalization.normalizedParentSlot = 0 then
-      if normalization.normalizedQuarterTurn = 0 then ⟨.C, 1, 0⟩
-      else if normalization.normalizedQuarterTurn = 1 then ⟨.F, 1, 0⟩
-      else if normalization.normalizedQuarterTurn = 2 then ⟨.D, -1, 0⟩
-      else ⟨.E, -1, 0⟩
-    else if normalization.normalizedParentSlot = 1 then
-      if normalization.normalizedQuarterTurn = 0 then ⟨.E, 0, 1⟩
-      else if normalization.normalizedQuarterTurn = 1 then ⟨.B, 0, 1⟩
-      else if normalization.normalizedQuarterTurn = 2 then ⟨.F, 0, -1⟩
-      else ⟨.A, 0, -1⟩
-    else if normalization.normalizedQuarterTurn = 0 then ⟨.A, -1, -1⟩
-    else if normalization.normalizedQuarterTurn = 1 then ⟨.D, -1, -1⟩
-    else if normalization.normalizedQuarterTurn = 2 then ⟨.B, 1, 1⟩
-    else ⟨.C, 1, 1⟩
+    SubtileRowIndices.target
+      normalization.normalizedParentSlot
+      normalization.normalizedQuarterTurn
   let wShift : GaussianInt :=
     (⟨0, 1⟩ : GaussianInt) ^ normalization.normalizedQuarterTurn.val *
       (if Even normalization.normalizedQuarterTurn.val then
         incoming normalization.normalizedParentSlot
       else outgoing normalization.normalizedParentSlot)
   let uBar : PeriodicSubtileIndex :=
-    if normalization.normalizedParentSlot = 0 then
-      if normalization.normalizedQuarterTurn = 0 then ⟨.B, 1, 1⟩
-      else if normalization.normalizedQuarterTurn = 1 then ⟨.B, 0, 1⟩
-      else if normalization.normalizedQuarterTurn = 2 then ⟨.A, -1, -1⟩
-      else ⟨.A, 0, -1⟩
-    else if normalization.normalizedParentSlot = 1 then
-      if normalization.normalizedQuarterTurn = 0 then ⟨.D, -1, 0⟩
-      else if normalization.normalizedQuarterTurn = 1 then ⟨.D, -1, -1⟩
-      else if normalization.normalizedQuarterTurn = 2 then ⟨.C, 1, 0⟩
-      else ⟨.C, 1, 1⟩
-    else if normalization.normalizedQuarterTurn = 0 then ⟨.F, 0, -1⟩
-    else if normalization.normalizedQuarterTurn = 1 then ⟨.F, 1, 0⟩
-    else if normalization.normalizedQuarterTurn = 2 then ⟨.E, 0, 1⟩
-    else ⟨.E, -1, 0⟩
+    SubtileRowIndices.sourcePartner
+      normalization.normalizedParentSlot
+      normalization.normalizedQuarterTurn
   let vBar : PeriodicSubtileIndex :=
-    if normalization.normalizedParentSlot = 0 then
-      if normalization.normalizedQuarterTurn = 0 then ⟨.C, 1, 1⟩
-      else if normalization.normalizedQuarterTurn = 1 then ⟨.E, 0, 1⟩
-      else if normalization.normalizedQuarterTurn = 2 then ⟨.D, -1, -1⟩
-      else ⟨.F, 0, -1⟩
-    else if normalization.normalizedParentSlot = 1 then
-      if normalization.normalizedQuarterTurn = 0 then ⟨.E, -1, 0⟩
-      else if normalization.normalizedQuarterTurn = 1 then ⟨.A, -1, -1⟩
-      else if normalization.normalizedQuarterTurn = 2 then ⟨.F, 1, 0⟩
-      else ⟨.B, 1, 1⟩
-    else if normalization.normalizedQuarterTurn = 0 then ⟨.A, 0, -1⟩
-    else if normalization.normalizedQuarterTurn = 1 then ⟨.C, 1, 0⟩
-    else if normalization.normalizedQuarterTurn = 2 then ⟨.B, 0, 1⟩
-    else ⟨.D, -1, 0⟩
+    SubtileRowIndices.targetPartner
+      normalization.normalizedParentSlot
+      normalization.normalizedQuarterTurn
   let wBlock : Int × Int :=
-    if normalization.normalizedParentSlot = 0 then
-      if normalization.normalizedQuarterTurn = 0 ∨
-          normalization.normalizedQuarterTurn = 3 then (1, 0) else (-1, 0)
-    else if normalization.normalizedParentSlot = 1 then
-      if normalization.normalizedQuarterTurn = 0 ∨
-          normalization.normalizedQuarterTurn = 3 then (0, 1) else (0, -1)
-    else if normalization.normalizedQuarterTurn = 0 ∨
-        normalization.normalizedQuarterTurn = 3 then (-1, -1) else (1, 1)
+    SubtileRowIndices.blockOffset
+      normalization.normalizedParentSlot
+      normalization.normalizedQuarterTurn
   let U := SubtileOccurrenceInterpretation normalization.layout.P
     normalization.layout.u normalization.layout.v uIndex
   let V := SubtileOccurrenceInterpretation normalization.layout.P
@@ -1499,12 +1230,13 @@ private theorem rowPackage :
       (TileTranslationFormulas normalization.normalizedRoot _).1, hrootBar]
   · let Vbar := SubtileOccurrenceInterpretation normalization.layout.P
       normalization.layout.u normalization.layout.v vBar
-    have hrot := rotatedCentroid V Vbar _ (by simpa [V, vIndex] using hVcentroid)
+    have hrot := rotatedCentroid V Vbar _ (by simpa [V, vIndex,
+        SubtileRowIndices.target] using hVcentroid)
       (SubtileInterfaceAssembly.hVbarCent C₀ Cᵢ q i T₀ Tᵢ h₀ hᵢ x normalization hflips rowsAt)
     exact (centeredCompare _ V Vbar hVBand (SubtileInterfaceAssembly.hVbarBand C₀ Cᵢ q i T₀ Tᵢ
         h₀ hᵢ x normalization occurrenceBand) (SubtileInterfaceAssembly.hVSym C₀ Cᵢ q i T₀ Tᵢ
         h₀ hᵢ x normalization quarterSymmetricTranslation) hrot).1
-  · simpa [V, vIndex] using hVcentroid
+  · simpa [V, vIndex, SubtileRowIndices.target] using hVcentroid
 
 end SubtileInterfaceRowPackage
 
@@ -1831,83 +1563,6 @@ theorem BandOrderedGeneralSubtileInterfaceCertificateExists
   obtain ⟨g, hg, hrootBar, hrootAnchor, hrootFoot, hrootCentroid⟩ :=
     QuarterTurnSymmetricCenteredTransport normalization.normalizedRoot
       normalization.root_quarter_turn
-  let uIndex : PeriodicSubtileIndex :=
-    if normalization.normalizedParentSlot = 0 then
-      if normalization.normalizedQuarterTurn = 0 then ⟨.A, 0, -1⟩
-      else if normalization.normalizedQuarterTurn = 1 then ⟨.B, 1, 1⟩
-      else if normalization.normalizedQuarterTurn = 2 then ⟨.B, 0, 1⟩
-      else ⟨.A, -1, -1⟩
-    else if normalization.normalizedParentSlot = 1 then
-      if normalization.normalizedQuarterTurn = 0 then ⟨.C, 1, 1⟩
-      else if normalization.normalizedQuarterTurn = 1 then ⟨.D, -1, 0⟩
-      else if normalization.normalizedQuarterTurn = 2 then ⟨.D, -1, -1⟩
-      else ⟨.C, 1, 0⟩
-    else if normalization.normalizedQuarterTurn = 0 then ⟨.E, -1, 0⟩
-    else if normalization.normalizedQuarterTurn = 1 then ⟨.F, 0, -1⟩
-    else if normalization.normalizedQuarterTurn = 2 then ⟨.F, 1, 0⟩
-    else ⟨.E, 0, 1⟩
-  let vIndex : PeriodicSubtileIndex :=
-    if normalization.normalizedParentSlot = 0 then
-      if normalization.normalizedQuarterTurn = 0 then ⟨.C, 1, 0⟩
-      else if normalization.normalizedQuarterTurn = 1 then ⟨.F, 1, 0⟩
-      else if normalization.normalizedQuarterTurn = 2 then ⟨.D, -1, 0⟩
-      else ⟨.E, -1, 0⟩
-    else if normalization.normalizedParentSlot = 1 then
-      if normalization.normalizedQuarterTurn = 0 then ⟨.E, 0, 1⟩
-      else if normalization.normalizedQuarterTurn = 1 then ⟨.B, 0, 1⟩
-      else if normalization.normalizedQuarterTurn = 2 then ⟨.F, 0, -1⟩
-      else ⟨.A, 0, -1⟩
-    else if normalization.normalizedQuarterTurn = 0 then ⟨.A, -1, -1⟩
-    else if normalization.normalizedQuarterTurn = 1 then ⟨.D, -1, -1⟩
-    else if normalization.normalizedQuarterTurn = 2 then ⟨.B, 1, 1⟩
-    else ⟨.C, 1, 1⟩
-  let uBar : PeriodicSubtileIndex :=
-    if normalization.normalizedParentSlot = 0 then
-      if normalization.normalizedQuarterTurn = 0 then ⟨.B, 1, 1⟩
-      else if normalization.normalizedQuarterTurn = 1 then ⟨.B, 0, 1⟩
-      else if normalization.normalizedQuarterTurn = 2 then ⟨.A, -1, -1⟩
-      else ⟨.A, 0, -1⟩
-    else if normalization.normalizedParentSlot = 1 then
-      if normalization.normalizedQuarterTurn = 0 then ⟨.D, -1, 0⟩
-      else if normalization.normalizedQuarterTurn = 1 then ⟨.D, -1, -1⟩
-      else if normalization.normalizedQuarterTurn = 2 then ⟨.C, 1, 0⟩
-      else ⟨.C, 1, 1⟩
-    else if normalization.normalizedQuarterTurn = 0 then ⟨.F, 0, -1⟩
-    else if normalization.normalizedQuarterTurn = 1 then ⟨.F, 1, 0⟩
-    else if normalization.normalizedQuarterTurn = 2 then ⟨.E, 0, 1⟩
-    else ⟨.E, -1, 0⟩
-  let vBar : PeriodicSubtileIndex :=
-    if normalization.normalizedParentSlot = 0 then
-      if normalization.normalizedQuarterTurn = 0 then ⟨.C, 1, 1⟩
-      else if normalization.normalizedQuarterTurn = 1 then ⟨.E, 0, 1⟩
-      else if normalization.normalizedQuarterTurn = 2 then ⟨.D, -1, -1⟩
-      else ⟨.F, 0, -1⟩
-    else if normalization.normalizedParentSlot = 1 then
-      if normalization.normalizedQuarterTurn = 0 then ⟨.E, -1, 0⟩
-      else if normalization.normalizedQuarterTurn = 1 then ⟨.A, -1, -1⟩
-      else if normalization.normalizedQuarterTurn = 2 then ⟨.F, 1, 0⟩
-      else ⟨.B, 1, 1⟩
-    else if normalization.normalizedQuarterTurn = 0 then ⟨.A, 0, -1⟩
-    else if normalization.normalizedQuarterTurn = 1 then ⟨.C, 1, 0⟩
-    else if normalization.normalizedQuarterTurn = 2 then ⟨.B, 0, 1⟩
-    else ⟨.D, -1, 0⟩
-  let wBlock : Int × Int :=
-    if normalization.normalizedParentSlot = 0 then
-      if normalization.normalizedQuarterTurn = 0 ∨
-          normalization.normalizedQuarterTurn = 3 then (1, 0) else (-1, 0)
-    else if normalization.normalizedParentSlot = 1 then
-      if normalization.normalizedQuarterTurn = 0 ∨
-          normalization.normalizedQuarterTurn = 3 then (0, 1) else (0, -1)
-    else if normalization.normalizedQuarterTurn = 0 ∨
-        normalization.normalizedQuarterTurn = 3 then (-1, -1) else (1, 1)
-  let wShift : GaussianInt :=
-    (⟨0, 1⟩ : GaussianInt) ^ normalization.normalizedQuarterTurn.val *
-      (if Even normalization.normalizedQuarterTurn.val then
-        incoming normalization.normalizedParentSlot
-      else outgoing normalization.normalizedParentSlot)
-  let V := SubtileOccurrenceInterpretation normalization.layout.P
-    normalization.layout.u normalization.layout.v vIndex
-  let W := TileTranslation normalization.normalizedRoot wShift
   have rowsAt (p : Fin 3) (t : Fin 4) :=
     BandOrderedGeneralSubtileCanonicalRows
       normalization.layout.P normalization.normalizedRoot

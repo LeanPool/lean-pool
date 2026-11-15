@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.SubtileRowIndices
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.Tactic.FinCases
 public import Mathlib.Tactic.Linarith
@@ -47,37 +48,9 @@ theorem BandOrderedGeneralSubtileCanonicalRows
               (-((GaussianRealPoint (edge j)).2),
                 (GaussianRealPoint (edge j)).1)))) :
     let uIndex : PeriodicSubtileIndex :=
-      if parentSlot = 0 then
-        if turn = 0 then ⟨.A, 0, -1⟩
-        else if turn = 1 then ⟨.B, 1, 1⟩
-        else if turn = 2 then ⟨.B, 0, 1⟩
-        else ⟨.A, -1, -1⟩
-      else if parentSlot = 1 then
-        if turn = 0 then ⟨.C, 1, 1⟩
-        else if turn = 1 then ⟨.D, -1, 0⟩
-        else if turn = 2 then ⟨.D, -1, -1⟩
-        else ⟨.C, 1, 0⟩
-      else
-        if turn = 0 then ⟨.E, -1, 0⟩
-        else if turn = 1 then ⟨.F, 0, -1⟩
-        else if turn = 2 then ⟨.F, 1, 0⟩
-        else ⟨.E, 0, 1⟩
+      SubtileRowIndices.source parentSlot turn
     let vIndex : PeriodicSubtileIndex :=
-      if parentSlot = 0 then
-        if turn = 0 then ⟨.C, 1, 0⟩
-        else if turn = 1 then ⟨.F, 1, 0⟩
-        else if turn = 2 then ⟨.D, -1, 0⟩
-        else ⟨.E, -1, 0⟩
-      else if parentSlot = 1 then
-        if turn = 0 then ⟨.E, 0, 1⟩
-        else if turn = 1 then ⟨.B, 0, 1⟩
-        else if turn = 2 then ⟨.F, 0, -1⟩
-        else ⟨.A, 0, -1⟩
-      else
-        if turn = 0 then ⟨.A, -1, -1⟩
-        else if turn = 1 then ⟨.D, -1, -1⟩
-        else if turn = 2 then ⟨.B, 1, 1⟩
-        else ⟨.C, 1, 1⟩
+      SubtileRowIndices.target parentSlot turn
     let U := SubtileOccurrenceInterpretation P u v uIndex
     let V := SubtileOccurrenceInterpretation P u v vIndex
     TileCentroid U - TileCentroid T = (1 / 2 : ℝ) •
@@ -92,6 +65,7 @@ theorem BandOrderedGeneralSubtileCanonicalRows
           else
             outgoing (parentSlot - 1) - incoming (parentSlot - 1))) := by
 -- BODY
+  dsimp only [SubtileRowIndices.source, SubtileRowIndices.target]
   have hf0 := hflip 0
   have hf1 := hflip 1
   have hf2 := hflip 2

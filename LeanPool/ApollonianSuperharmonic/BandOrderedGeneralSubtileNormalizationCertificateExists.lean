@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.SubtileRowIndices
 public import LeanPool.ApollonianSuperharmonic.BandPrototileQuarterTurn
 public import LeanPool.ApollonianSuperharmonic.BandPackingSymmetryDomainTransport
 public import LeanPool.ApollonianSuperharmonic.BandQuadrupleCyclicRotation
@@ -491,21 +492,7 @@ private theorem hexteriorIndex :
         let reverse := BandPackingSymmetryReversesOrientation g
         let ibar : Fin 3 := if reverse then -irot else irot
         let exteriorIndex : PeriodicSubtileIndex :=
-          if ibar = 0 then
-            if sbar = 0 then ⟨.A, 0, -1⟩
-            else if sbar = 1 then ⟨.B, 1, 1⟩
-            else if sbar = 2 then ⟨.B, 0, 1⟩
-            else ⟨.A, -1, -1⟩
-          else if ibar = 1 then
-            if sbar = 0 then ⟨.C, 1, 1⟩
-            else if sbar = 1 then ⟨.D, -1, 0⟩
-            else if sbar = 2 then ⟨.D, -1, -1⟩
-            else ⟨.C, 1, 0⟩
-          else
-            if sbar = 0 then ⟨.E, -1, 0⟩
-            else if sbar = 1 then ⟨.F, 0, -1⟩
-            else if sbar = 2 then ⟨.F, 1, 0⟩
-            else ⟨.E, 0, 1⟩
+          SubtileRowIndices.source ibar sbar
         exteriorIndex = ⟨.A, -1, -1⟩ ∨ exteriorIndex = ⟨.A, 0, -1⟩ ∨ exteriorIndex = ⟨.C, 1, 0⟩ ∨
             exteriorIndex = ⟨.C, 1, 1⟩ ∨ exteriorIndex = ⟨.E, 0, 1⟩ ∨ exteriorIndex = ⟨.E, -1, 0⟩
             ∨ exteriorIndex = ⟨.B, 1, 1⟩ ∨ exteriorIndex = ⟨.B, 0, 1⟩ ∨ exteriorIndex = ⟨.D, -1,
@@ -515,7 +502,7 @@ private theorem hexteriorIndex :
   intro i r g irot sbar reverse ibar exteriorIndex
   generalize hi : ibar = j at ⊢
   generalize hs : sbar = t at ⊢
-  fin_cases j <;> fin_cases t <;> simp [exteriorIndex, hi, hs]
+  fin_cases j <;> fin_cases t <;> simp [exteriorIndex, hi, hs, SubtileRowIndices.source]
 
 private theorem hexteriorBand :
     (by
@@ -537,21 +524,7 @@ private theorem hexteriorBand :
           ⟨⟨qbar 0, ⟨Or.inl hqbar₀Pos, ⟨qbar, hqbar.1, ⟨0, rfl⟩⟩⟩⟩, hqbar₀Pos⟩
         ∀ (layout : BandOrderedGeneralLayoutCertificate qbar cfg C₀bar T₀bar),
         let exteriorIndex : PeriodicSubtileIndex :=
-          if ibar = 0 then
-            if sbar = 0 then ⟨.A, 0, -1⟩
-            else if sbar = 1 then ⟨.B, 1, 1⟩
-            else if sbar = 2 then ⟨.B, 0, 1⟩
-            else ⟨.A, -1, -1⟩
-          else if ibar = 1 then
-            if sbar = 0 then ⟨.C, 1, 1⟩
-            else if sbar = 1 then ⟨.D, -1, 0⟩
-            else if sbar = 2 then ⟨.D, -1, -1⟩
-            else ⟨.C, 1, 0⟩
-          else
-            if sbar = 0 then ⟨.E, -1, 0⟩
-            else if sbar = 1 then ⟨.F, 0, -1⟩
-            else if sbar = 2 then ⟨.F, 1, 0⟩
-            else ⟨.E, 0, 1⟩
+          SubtileRowIndices.source ibar sbar
         BandPrototile (qbar ibar.succ) (SubtileOccurrenceInterpretation layout.P layout.u
             layout.v exteriorIndex) ) := by
   classical
@@ -563,7 +536,8 @@ private theorem hexteriorBand :
     simp only [Fin.mk_one, Fin.isValue, Fin.succ_one_eq_two, SubtileOccurrenceInterpretation,
         hi, one_ne_zero, ↓reduceIte, hs, Fin.reduceFinMk, Fin.reduceEq, Int.cast_one, one_mul,
         Int.cast_zero, zero_mul, add_zero, exteriorIndex, Int.reduceNeg, Int.cast_neg,
-        neg_mul, Fin.zero_eta, Fin.reduceSucc, zero_add, Fin.succ_zero_eq_one]
+        neg_mul, Fin.zero_eta, Fin.reduceSucc, zero_add, Fin.succ_zero_eq_one,
+            SubtileRowIndices.source]
   all_goals first
     | exact BandPrototileTranslation _ _ _ (layout.outer_occurrence 0 false).1
     | exact BandPrototileTranslation _ _ _ (layout.outer_occurrence 0 true).1
@@ -605,21 +579,7 @@ private theorem hfixedCentroid :
         let outgoing : Fin 3 → GaussianInt := fun j =>
           BandVectors.1 (qbar 0) (qbar j.succ)
         let exteriorIndex : PeriodicSubtileIndex :=
-          if ibar = 0 then
-            if sbar = 0 then ⟨.A, 0, -1⟩
-            else if sbar = 1 then ⟨.B, 1, 1⟩
-            else if sbar = 2 then ⟨.B, 0, 1⟩
-            else ⟨.A, -1, -1⟩
-          else if ibar = 1 then
-            if sbar = 0 then ⟨.C, 1, 1⟩
-            else if sbar = 1 then ⟨.D, -1, 0⟩
-            else if sbar = 2 then ⟨.D, -1, -1⟩
-            else ⟨.C, 1, 0⟩
-          else
-            if sbar = 0 then ⟨.E, -1, 0⟩
-            else if sbar = 1 then ⟨.F, 0, -1⟩
-            else if sbar = 2 then ⟨.F, 1, 0⟩
-            else ⟨.E, 0, 1⟩
+          SubtileRowIndices.source ibar sbar
         (TileCentroid (SubtileOccurrenceInterpretation layout.P layout.u layout.v exteriorIndex)
             - TileCentroid T₀bar = (1 / 2 : ℝ) • GaussianRealPoint ((⟨0, 1⟩ : GaussianInt) ^
             sbar.val * (incoming ibar + outgoing ibar))) → (TileCentroid
@@ -784,21 +744,7 @@ private theorem subtileNormalizationCertificate :
   have hin2 : incoming 2 =
       edge 0 - (⟨0, 1⟩ : GaussianInt) * edge 1 := SubtileNormalizationGeometry.hin2 q r g hS
   let exteriorIndex : PeriodicSubtileIndex :=
-    if ibar = 0 then
-      if sbar = 0 then ⟨.A, 0, -1⟩
-      else if sbar = 1 then ⟨.B, 1, 1⟩
-      else if sbar = 2 then ⟨.B, 0, 1⟩
-      else ⟨.A, -1, -1⟩
-    else if ibar = 1 then
-      if sbar = 0 then ⟨.C, 1, 1⟩
-      else if sbar = 1 then ⟨.D, -1, 0⟩
-      else if sbar = 2 then ⟨.D, -1, -1⟩
-      else ⟨.C, 1, 0⟩
-    else
-      if sbar = 0 then ⟨.E, -1, 0⟩
-      else if sbar = 1 then ⟨.F, 0, -1⟩
-      else if sbar = 2 then ⟨.F, 1, 0⟩
-      else ⟨.E, 0, 1⟩
+    SubtileRowIndices.source ibar sbar
   have hexteriorIndex :
       exteriorIndex = ⟨.A, -1, -1⟩ ∨ exteriorIndex = ⟨.A, 0, -1⟩ ∨
       exteriorIndex = ⟨.C, 1, 0⟩ ∨ exteriorIndex = ⟨.C, 1, 1⟩ ∨
@@ -826,7 +772,7 @@ private theorem subtileNormalizationCertificate :
         (1 / 2 : ℝ) • GaussianRealPoint
           ((⟨0, 1⟩ : GaussianInt) ^ sbar.val *
             (incoming ibar + outgoing ibar)) := by
-    simpa [exteriorIndex] using hrows.1
+    simpa [exteriorIndex, SubtileRowIndices.source] using hrows.1
   have hexteriorBand : BandPrototile (qbar ibar.succ)
       (SubtileOccurrenceInterpretation layout.P layout.u layout.v
         exteriorIndex) := SubtileNormalizationGeometry.hexteriorBand q i T₀ r g hqbar cfg sbar

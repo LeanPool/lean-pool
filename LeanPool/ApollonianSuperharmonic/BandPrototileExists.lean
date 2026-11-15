@@ -35,6 +35,18 @@ namespace ApollonianSuperharmonic
 
 namespace PrototileConstruction
 
+private abbrev parentPieces (first : ProtoTile) (subpieces : Fin 3 → Bool → ProtoTile)
+    (displacement : GaussianInt) : Fin 3 → Bool → ProtoTile :=
+  fun i s =>
+    if i = 0 then
+      if s then TileTranslation first (displacement - ⟨0, 1⟩ * displacement) else first
+    else if i = 1 then
+      if s then TileTranslation (subpieces 1 s) displacement
+      else TileTranslation (subpieces 1 s) (-⟨0, 1⟩ * displacement)
+    else if s then TileTranslation (subpieces 2 s) (-⟨0, 1⟩ * displacement)
+      else TileTranslation (subpieces 2 s) displacement
+
+
 private abbrev emptyCurv := ApollonianSuperharmonic.P4638T1EmptyCurvature
 
 private theorem positiveNonempty :
@@ -214,36 +226,30 @@ private theorem hparents :
             (∀ (i : Fin (3 : ℕ)), ∀ (s : Bool), BandSubtileOccurrence cfg.firstPredecessor T1 i s
             (S i s)) → (
         let a : GaussianInt := BandVectors.1 (q' 3) (q' 2)
-        let U : Fin 3 → Bool → ProtoTile := fun i s =>
-          if i = 0 then
-            if s then TileTranslation T1 (a - ⟨0, 1⟩ * a) else T1
-          else if i = 1 then
-            if s then TileTranslation (S 1 s) a
-            else TileTranslation (S 1 s) (-⟨0, 1⟩ * a)
-          else if s then TileTranslation (S 2 s) (-⟨0, 1⟩ * a)
-            else TileTranslation (S 2 s) a
+        let U : Fin 3 → Bool → ProtoTile := PrototileConstruction.parentPieces T1 S a
         ∀ i, ∀ s, BandPrototile (q' i.succ) (U i s))) ) := by
   classical
   intro q r g q' hq' cfg hpos1 C1 T1 hT1 S hocc a U i s
   fin_cases i <;> cases s
-  · simpa [U, C1] using hT1
-  · simpa [U, C1] using BandPrototileTranslation _ _ (a - ⟨0, 1⟩ * a) hT1
+  · simpa [U, PrototileConstruction.parentPieces, C1] using hT1
+  · simpa [U, PrototileConstruction.parentPieces, C1] using
+      BandPrototileTranslation _ _ (a - ⟨0, 1⟩ * a) hT1
   · have h := (hocc 1 false).1
     change BandPrototile (cfg.firstPredecessor 2) _ at h
     rw [cfg.firstParentTwo] at h
-    simpa [U] using BandPrototileTranslation _ _ (-⟨0, 1⟩ * a) h
+    simpa [U, PrototileConstruction.parentPieces] using BandPrototileTranslation _ _ (-⟨0, 1⟩ * a) h
   · have h := (hocc 1 true).1
     change BandPrototile (cfg.firstPredecessor 2) _ at h
     rw [cfg.firstParentTwo] at h
-    simpa [U] using BandPrototileTranslation _ _ a h
+    simpa [U, PrototileConstruction.parentPieces] using BandPrototileTranslation _ _ a h
   · have h := (hocc 2 false).1
     change BandPrototile (cfg.firstPredecessor 3) _ at h
     rw [cfg.firstParentThree] at h
-    simpa [U] using BandPrototileTranslation _ _ a h
+    simpa [U, PrototileConstruction.parentPieces] using BandPrototileTranslation _ _ a h
   · have h := (hocc 2 true).1
     change BandPrototile (cfg.firstPredecessor 3) _ at h
     rw [cfg.firstParentThree] at h
-    simpa [U] using BandPrototileTranslation _ _ (-⟨0, 1⟩ * a) h
+    simpa [U, PrototileConstruction.parentPieces] using BandPrototileTranslation _ _ (-⟨0, 1⟩ * a) h
 
 private theorem hcells0 :
     (by
@@ -255,14 +261,7 @@ private theorem hcells0 :
             ![q 0, q r.succ, q (r + 1).succ, q (r + 2).succ]
         ∀ (T1 : ProtoTile), ∀ (S : Fin (3 : ℕ) → Bool → ProtoTile),
         let a : GaussianInt := BandVectors.1 (q' 3) (q' 2)
-        let U : Fin 3 → Bool → ProtoTile := fun i s =>
-          if i = 0 then
-            if s then TileTranslation T1 (a - ⟨0, 1⟩ * a) else T1
-          else if i = 1 then
-            if s then TileTranslation (S 1 s) a
-            else TileTranslation (S 1 s) (-⟨0, 1⟩ * a)
-          else if s then TileTranslation (S 2 s) (-⟨0, 1⟩ * a)
-            else TileTranslation (S 2 s) a
+        let U : Fin 3 → Bool → ProtoTile := PrototileConstruction.parentPieces T1 S a
         let T0 : ProtoTile :=
           ⟨Finset.univ.biUnion (fun i : Fin 3 =>
             Finset.univ.biUnion (fun s : Bool => (U i s).cells)), T1.anchor⟩
@@ -294,14 +293,7 @@ private theorem hfoot :
             ((∀ (k : Fin (4 : ℕ)), (0 : ℤ) ≤ (q' k).1) → (∀ (T1 : ProtoTile), (T1.cells.Nonempty)
             → (∀ (S : Fin (3 : ℕ) → Bool → ProtoTile),
         let a : GaussianInt := BandVectors.1 (q' 3) (q' 2)
-        let U : Fin 3 → Bool → ProtoTile := fun i s =>
-          if i = 0 then
-            if s then TileTranslation T1 (a - ⟨0, 1⟩ * a) else T1
-          else if i = 1 then
-            if s then TileTranslation (S 1 s) a
-            else TileTranslation (S 1 s) (-⟨0, 1⟩ * a)
-          else if s then TileTranslation (S 2 s) (-⟨0, 1⟩ * a)
-            else TileTranslation (S 2 s) a
+        let U : Fin 3 → Bool → ProtoTile := PrototileConstruction.parentPieces T1 S a
         (∀ i, ∀ s, BandPrototile (q' i.succ) (U i s)) → (
         let T0 : ProtoTile :=
           ⟨Finset.univ.biUnion (fun i : Fin 3 =>
@@ -321,7 +313,7 @@ private theorem hfoot :
   have hT0ne : T0.cells.Nonempty := by
     rcases hT1ne with ⟨x, hx⟩
     refine ⟨x, ?_⟩
-    exact (hcells0 x).2 ⟨0, false, by simpa [U] using hx⟩
+    exact (hcells0 x).2 ⟨0, false, by simpa [U, PrototileConstruction.parentPieces] using hx⟩
   simp only [FootprintVertices, ite_eq_left hUne, ite_eq_left hT0ne,
     Set.mem_ofPred_eq] at hv ⊢
   obtain ⟨x, hx, hvertex⟩ := hv
@@ -630,14 +622,7 @@ private theorem hcent' :
             Fin (4 : ℕ)), q r.succ, q (r + (1 : Fin (3 : ℕ))).succ, q (r + (2 : Fin (3 :
             ℕ))).succ])), ∀ (T1 : ProtoTile), ∀ (S : Fin (3 : ℕ) → Bool → ProtoTile),
         let a : GaussianInt := BandVectors.1 (q' 3) (q' 2)
-        let U : Fin 3 → Bool → ProtoTile := fun i s =>
-          if i = 0 then
-            if s then TileTranslation T1 (a - ⟨0, 1⟩ * a) else T1
-          else if i = 1 then
-            if s then TileTranslation (S 1 s) a
-            else TileTranslation (S 1 s) (-⟨0, 1⟩ * a)
-          else if s then TileTranslation (S 2 s) (-⟨0, 1⟩ * a)
-            else TileTranslation (S 2 s) a
+        let U : Fin 3 → Bool → ProtoTile := PrototileConstruction.parentPieces T1 S a
         let I : GaussianInt := ⟨0, 1⟩
         let d : GaussianInt → Real × Real := fun z =>
           (1 / 2 : Real) • (GaussianRealPoint z -
@@ -668,9 +653,9 @@ private theorem hcent' :
   intro q r g q' cfg T1 S a U I d pointNeg pointI v dIdent1 dIdent2 dIdent3 dIdent4 p0 hs1m hs1p
       hs2m hs2p transCent i s
   fin_cases i <;> cases s
-  · simp [U, p0, a]
-  · simp only [Fin.isValue, Int.reduceNeg, neg_mul, Fin.zero_eta, ↓reduceIte, zero_add,
-      Fin.reduceSucc, Fin.succ_one_eq_two, one_smul, U, p0]
+  · simp [U, PrototileConstruction.parentPieces, p0, a]
+  · simp only [Fin.isValue, Int.reduceNeg, Fin.zero_eta, ↓reduceIte, zero_add,
+      Fin.reduceSucc, Fin.succ_one_eq_two, one_smul, U, PrototileConstruction.parentPieces, p0]
     change TileCentroid (TileTranslation T1 (a - I * a)) -
       p0 = d a
     rw [transCent]
@@ -678,7 +663,7 @@ private theorem hcent' :
     ext <;> simp [d, I, GaussianRealPoint] <;> ring
   · simp only [Fin.isValue, Int.reduceNeg, neg_mul, Fin.mk_one, one_ne_zero, ↓reduceIte,
       Bool.false_eq_true, Fin.reduceAdd, Fin.succ_zero_eq_one, Fin.reduceSucc, neg_smul,
-      one_smul, U, p0]
+      one_smul, U, PrototileConstruction.parentPieces, p0]
     change TileCentroid (TileTranslation (S 1 false) (-((⟨0, 1⟩ : GaussianInt) *
         a))) -
       p0 = -d (BandVectors.1 (q' 1) (q' 3))
@@ -698,8 +683,9 @@ private theorem hcent' :
       rw [pointI] at hd
       dsimp [d] at hh hd ⊢
       linarith
-  · simp only [Fin.isValue, Int.reduceNeg, neg_mul, Fin.mk_one, one_ne_zero, ↓reduceIte,
-      Fin.reduceAdd, Fin.succ_zero_eq_one, Fin.reduceSucc, one_smul, U, p0]
+  · simp only [Fin.isValue, Fin.mk_one, one_ne_zero, ↓reduceIte,
+      Fin.reduceAdd, Fin.succ_zero_eq_one, Fin.reduceSucc, one_smul, U,
+          PrototileConstruction.parentPieces, p0]
     change TileCentroid (TileTranslation (S 1 true) a) -
       p0 = d (BandVectors.1 (q' 1) (q' 3))
     rw [transCent]
@@ -713,9 +699,9 @@ private theorem hcent' :
       have hd := congrArg Prod.snd dIdent1
       simp [GaussianRealPoint] at hh hd ⊢
       linarith
-  · simp only [Fin.isValue, Int.reduceNeg, neg_mul, Fin.reduceFinMk, Fin.reduceEq, ↓reduceIte,
+  · simp only [Fin.isValue, Fin.reduceFinMk, Fin.reduceEq, ↓reduceIte,
       Bool.false_eq_true, Fin.reduceAdd, Fin.succ_one_eq_two, Fin.succ_zero_eq_one, neg_smul,
-      one_smul, U, p0]
+      one_smul, U, PrototileConstruction.parentPieces, p0]
     change TileCentroid (TileTranslation (S 2 false) a) -
       p0 = -d v
     rw [transCent]
@@ -730,7 +716,8 @@ private theorem hcent' :
       simp [GaussianRealPoint] at hh hd ⊢
       linarith
   · simp only [Fin.isValue, Int.reduceNeg, neg_mul, Fin.reduceFinMk, Fin.reduceEq, ↓reduceIte,
-      Fin.reduceAdd, Fin.succ_one_eq_two, Fin.succ_zero_eq_one, one_smul, U, p0]
+      Fin.reduceAdd, Fin.succ_one_eq_two, Fin.succ_zero_eq_one, one_smul, U,
+          PrototileConstruction.parentPieces, p0]
     change TileCentroid (TileTranslation (S 2 true) (-((⟨0, 1⟩ : GaussianInt) *
         a))) -
       p0 = d v
@@ -897,14 +884,7 @@ private theorem hsigned :
             ![q 0, q r.succ, q (r + 1).succ, q (r + 2).succ]
         ∀ (T1 : ProtoTile), ∀ (S : Fin (3 : ℕ) → Bool → ProtoTile),
         let a : GaussianInt := BandVectors.1 (q' 3) (q' 2)
-        let U : Fin 3 → Bool → ProtoTile := fun i s =>
-          if i = 0 then
-            if s then TileTranslation T1 (a - ⟨0, 1⟩ * a) else T1
-          else if i = 1 then
-            if s then TileTranslation (S 1 s) a
-            else TileTranslation (S 1 s) (-⟨0, 1⟩ * a)
-          else if s then TileTranslation (S 2 s) (-⟨0, 1⟩ * a)
-            else TileTranslation (S 2 s) a
+        let U : Fin 3 → Bool → ProtoTile := PrototileConstruction.parentPieces T1 S a
         (∀ i, ∀ s, BandPrototile (q' i.succ) (U i s)) → (
         let d : GaussianInt → Real × Real := fun z =>
           (1 / 2 : Real) • (GaussianRealPoint z -
@@ -935,14 +915,7 @@ private theorem pairMem :
             ![q 0, q r.succ, q (r + 1).succ, q (r + 2).succ]
         ∀ (T1 : ProtoTile), ∀ (S : Fin (3 : ℕ) → Bool → ProtoTile),
         let a : GaussianInt := BandVectors.1 (q' 3) (q' 2)
-        let U : Fin 3 → Bool → ProtoTile := fun i s =>
-          if i = 0 then
-            if s then TileTranslation T1 (a - ⟨0, 1⟩ * a) else T1
-          else if i = 1 then
-            if s then TileTranslation (S 1 s) a
-            else TileTranslation (S 1 s) (-⟨0, 1⟩ * a)
-          else if s then TileTranslation (S 2 s) (-⟨0, 1⟩ * a)
-            else TileTranslation (S 2 s) a
+        let U : Fin 3 → Bool → ProtoTile := PrototileConstruction.parentPieces T1 S a
         let d : GaussianInt → Real × Real := fun z =>
           (1 / 2 : Real) • (GaussianRealPoint z -
             (-(GaussianRealPoint z).2, (GaussianRealPoint z).1))
@@ -979,14 +952,7 @@ private theorem realization0 :
             ![q 0, q r.succ, q (r + 1).succ, q (r + 2).succ]
         ∀ (T1 : ProtoTile), ∀ (S : Fin (3 : ℕ) → Bool → ProtoTile),
         let a : GaussianInt := BandVectors.1 (q' 3) (q' 2)
-        let U : Fin 3 → Bool → ProtoTile := fun i s =>
-          if i = 0 then
-            if s then TileTranslation T1 (a - ⟨0, 1⟩ * a) else T1
-          else if i = 1 then
-            if s then TileTranslation (S 1 s) a
-            else TileTranslation (S 1 s) (-⟨0, 1⟩ * a)
-          else if s then TileTranslation (S 2 s) (-⟨0, 1⟩ * a)
-            else TileTranslation (S 2 s) a
+        let U : Fin 3 → Bool → ProtoTile := PrototileConstruction.parentPieces T1 S a
         let T0 : ProtoTile :=
           ⟨Finset.univ.biUnion (fun i : Fin 3 =>
             Finset.univ.biUnion (fun s : Bool => (U i s).cells)), T1.anchor⟩
@@ -1013,14 +979,7 @@ private theorem hcentral0 :
             ![q 0, q r.succ, q (r + 1).succ, q (r + 2).succ]
         ∀ (T1 : ProtoTile), ∀ (S : Fin (3 : ℕ) → Bool → ProtoTile),
         let a : GaussianInt := BandVectors.1 (q' 3) (q' 2)
-        let U : Fin 3 → Bool → ProtoTile := fun i s =>
-          if i = 0 then
-            if s then TileTranslation T1 (a - ⟨0, 1⟩ * a) else T1
-          else if i = 1 then
-            if s then TileTranslation (S 1 s) a
-            else TileTranslation (S 1 s) (-⟨0, 1⟩ * a)
-          else if s then TileTranslation (S 2 s) (-⟨0, 1⟩ * a)
-            else TileTranslation (S 2 s) a
+        let U : Fin 3 → Bool → ProtoTile := PrototileConstruction.parentPieces T1 S a
         let T0 : ProtoTile :=
           ⟨Finset.univ.biUnion (fun i : Fin 3 =>
             Finset.univ.biUnion (fun s : Bool => (U i s).cells)), T1.anchor⟩
@@ -1072,16 +1031,7 @@ private theorem gridCenter :
               ∀ (T1 : ProtoTile),
                 ∀ (S : Fin (3 : ℕ) → Bool → ProtoTile),
                   let a : GaussianInt := BandVectors.1 (q' 3) (q' 2);
-                  let U : Fin 3 → Bool → ProtoTile := fun i s =>
-                    if i = 0 then
-                      if s then TileTranslation T1 (a - ⟨0, 1⟩ * a) else T1
-                    else
-                      if i = 1 then
-                        if s then TileTranslation (S 1 s) a
-                        else TileTranslation (S 1 s) (-⟨0, 1⟩ * a)
-                      else
-                        if s then TileTranslation (S 2 s) (-⟨0, 1⟩ * a)
-                        else TileTranslation (S 2 s) a;
+                  let U : Fin 3 → Bool → ProtoTile := PrototileConstruction.parentPieces T1 S a;
                   let T0 : ProtoTile :=
                     ⟨Finset.univ.biUnion
                         (fun i : Fin 3 =>
@@ -1180,14 +1130,7 @@ private theorem tau_cells :
             ![q 0, q r.succ, q (r + 1).succ, q (r + 2).succ]
         ∀ (T1 : ProtoTile), ∀ (S : Fin (3 : ℕ) → Bool → ProtoTile),
         let a : GaussianInt := BandVectors.1 (q' 3) (q' 2)
-        let U : Fin 3 → Bool → ProtoTile := fun i s =>
-          if i = 0 then
-            if s then TileTranslation T1 (a - ⟨0, 1⟩ * a) else T1
-          else if i = 1 then
-            if s then TileTranslation (S 1 s) a
-            else TileTranslation (S 1 s) (-⟨0, 1⟩ * a)
-          else if s then TileTranslation (S 2 s) (-⟨0, 1⟩ * a)
-            else TileTranslation (S 2 s) a
+        let U : Fin 3 → Bool → ProtoTile := PrototileConstruction.parentPieces T1 S a
         let T0 : ProtoTile :=
           ⟨Finset.univ.biUnion (fun i : Fin 3 =>
             Finset.univ.biUnion (fun s : Bool => (U i s).cells)), T1.anchor⟩
@@ -1236,14 +1179,7 @@ private theorem hT0neAt738 :
             ![q 0, q r.succ, q (r + 1).succ, q (r + 2).succ]
         ∀ (T1 : ProtoTile), (T1.cells.Nonempty) → (∀ (S : Fin (3 : ℕ) → Bool → ProtoTile),
         let a : GaussianInt := BandVectors.1 (q' 3) (q' 2)
-        let U : Fin 3 → Bool → ProtoTile := fun i s =>
-          if i = 0 then
-            if s then TileTranslation T1 (a - ⟨0, 1⟩ * a) else T1
-          else if i = 1 then
-            if s then TileTranslation (S 1 s) a
-            else TileTranslation (S 1 s) (-⟨0, 1⟩ * a)
-          else if s then TileTranslation (S 2 s) (-⟨0, 1⟩ * a)
-            else TileTranslation (S 2 s) a
+        let U : Fin 3 → Bool → ProtoTile := PrototileConstruction.parentPieces T1 S a
         let T0 : ProtoTile :=
           ⟨Finset.univ.biUnion (fun i : Fin 3 =>
             Finset.univ.biUnion (fun s : Bool => (U i s).cells)), T1.anchor⟩
@@ -1255,7 +1191,7 @@ private theorem hT0neAt738 :
   refine ⟨x, ?_⟩
   apply (hcells0 x).mpr
   refine ⟨0, false, ?_⟩
-  simpa [U] using hx
+  simpa [U, PrototileConstruction.parentPieces] using hx
 
 private theorem sumRe :
     (by
@@ -1267,14 +1203,7 @@ private theorem sumRe :
             ![q 0, q r.succ, q (r + 1).succ, q (r + 2).succ]
         ∀ (T1 : ProtoTile), ∀ (S : Fin (3 : ℕ) → Bool → ProtoTile),
         let a : GaussianInt := BandVectors.1 (q' 3) (q' 2)
-        let U : Fin 3 → Bool → ProtoTile := fun i s =>
-          if i = 0 then
-            if s then TileTranslation T1 (a - ⟨0, 1⟩ * a) else T1
-          else if i = 1 then
-            if s then TileTranslation (S 1 s) a
-            else TileTranslation (S 1 s) (-⟨0, 1⟩ * a)
-          else if s then TileTranslation (S 2 s) (-⟨0, 1⟩ * a)
-            else TileTranslation (S 2 s) a
+        let U : Fin 3 → Bool → ProtoTile := PrototileConstruction.parentPieces T1 S a
         let T0 : ProtoTile :=
           ⟨Finset.univ.biUnion (fun i : Fin 3 =>
             Finset.univ.biUnion (fun s : Bool => (U i s).cells)), T1.anchor⟩
@@ -1316,14 +1245,7 @@ private theorem sumIm :
             ![q 0, q r.succ, q (r + 1).succ, q (r + 2).succ]
         ∀ (T1 : ProtoTile), ∀ (S : Fin (3 : ℕ) → Bool → ProtoTile),
         let a : GaussianInt := BandVectors.1 (q' 3) (q' 2)
-        let U : Fin 3 → Bool → ProtoTile := fun i s =>
-          if i = 0 then
-            if s then TileTranslation T1 (a - ⟨0, 1⟩ * a) else T1
-          else if i = 1 then
-            if s then TileTranslation (S 1 s) a
-            else TileTranslation (S 1 s) (-⟨0, 1⟩ * a)
-          else if s then TileTranslation (S 2 s) (-⟨0, 1⟩ * a)
-            else TileTranslation (S 2 s) a
+        let U : Fin 3 → Bool → ProtoTile := PrototileConstruction.parentPieces T1 S a
         let T0 : ProtoTile :=
           ⟨Finset.univ.biUnion (fun i : Fin 3 =>
             Finset.univ.biUnion (fun s : Bool => (U i s).cells)), T1.anchor⟩
@@ -1365,14 +1287,7 @@ private theorem sRe :
             ![q 0, q r.succ, q (r + 1).succ, q (r + 2).succ]
         ∀ (T1 : ProtoTile), ∀ (S : Fin (3 : ℕ) → Bool → ProtoTile),
         let a : GaussianInt := BandVectors.1 (q' 3) (q' 2)
-        let U : Fin 3 → Bool → ProtoTile := fun i s =>
-          if i = 0 then
-            if s then TileTranslation T1 (a - ⟨0, 1⟩ * a) else T1
-          else if i = 1 then
-            if s then TileTranslation (S 1 s) a
-            else TileTranslation (S 1 s) (-⟨0, 1⟩ * a)
-          else if s then TileTranslation (S 2 s) (-⟨0, 1⟩ * a)
-            else TileTranslation (S 2 s) a
+        let U : Fin 3 → Bool → ProtoTile := PrototileConstruction.parentPieces T1 S a
         let T0 : ProtoTile :=
           ⟨Finset.univ.biUnion (fun i : Fin 3 =>
             Finset.univ.biUnion (fun s : Bool => (U i s).cells)), T1.anchor⟩
@@ -1422,14 +1337,7 @@ private theorem sIm :
             ![q 0, q r.succ, q (r + 1).succ, q (r + 2).succ]
         ∀ (T1 : ProtoTile), ∀ (S : Fin (3 : ℕ) → Bool → ProtoTile),
         let a : GaussianInt := BandVectors.1 (q' 3) (q' 2)
-        let U : Fin 3 → Bool → ProtoTile := fun i s =>
-          if i = 0 then
-            if s then TileTranslation T1 (a - ⟨0, 1⟩ * a) else T1
-          else if i = 1 then
-            if s then TileTranslation (S 1 s) a
-            else TileTranslation (S 1 s) (-⟨0, 1⟩ * a)
-          else if s then TileTranslation (S 2 s) (-⟨0, 1⟩ * a)
-            else TileTranslation (S 2 s) a
+        let U : Fin 3 → Bool → ProtoTile := PrototileConstruction.parentPieces T1 S a
         let T0 : ProtoTile :=
           ⟨Finset.univ.biUnion (fun i : Fin 3 =>
             Finset.univ.biUnion (fun s : Bool => (U i s).cells)), T1.anchor⟩
@@ -1479,14 +1387,7 @@ private theorem hcentroid0 :
             ![q 0, q r.succ, q (r + 1).succ, q (r + 2).succ]
         ∀ (T1 : ProtoTile), ∀ (S : Fin (3 : ℕ) → Bool → ProtoTile),
         let a : GaussianInt := BandVectors.1 (q' 3) (q' 2)
-        let U : Fin 3 → Bool → ProtoTile := fun i s =>
-          if i = 0 then
-            if s then TileTranslation T1 (a - ⟨0, 1⟩ * a) else T1
-          else if i = 1 then
-            if s then TileTranslation (S 1 s) a
-            else TileTranslation (S 1 s) (-⟨0, 1⟩ * a)
-          else if s then TileTranslation (S 2 s) (-⟨0, 1⟩ * a)
-            else TileTranslation (S 2 s) a
+        let U : Fin 3 → Bool → ProtoTile := PrototileConstruction.parentPieces T1 S a
         let T0 : ProtoTile :=
           ⟨Finset.univ.biUnion (fun i : Fin 3 =>
             Finset.univ.biUnion (fun s : Bool => (U i s).cells)), T1.anchor⟩
@@ -1507,14 +1408,7 @@ private theorem hcent :
             ![q 0, q r.succ, q (r + 1).succ, q (r + 2).succ]
         ∀ (T1 : ProtoTile), ∀ (S : Fin (3 : ℕ) → Bool → ProtoTile),
         let a : GaussianInt := BandVectors.1 (q' 3) (q' 2)
-        let U : Fin 3 → Bool → ProtoTile := fun i s =>
-          if i = 0 then
-            if s then TileTranslation T1 (a - ⟨0, 1⟩ * a) else T1
-          else if i = 1 then
-            if s then TileTranslation (S 1 s) a
-            else TileTranslation (S 1 s) (-⟨0, 1⟩ * a)
-          else if s then TileTranslation (S 2 s) (-⟨0, 1⟩ * a)
-            else TileTranslation (S 2 s) a
+        let U : Fin 3 → Bool → ProtoTile := PrototileConstruction.parentPieces T1 S a
         let T0 : ProtoTile :=
           ⟨Finset.univ.biUnion (fun i : Fin 3 =>
             Finset.univ.biUnion (fun s : Bool => (U i s).cells)), T1.anchor⟩
@@ -1589,15 +1483,7 @@ private theorem hrootCent :
                 T1.cells.Nonempty →
                   ∀ (S : Fin (3 : ℕ) → Bool → ProtoTile),
                     let a : GaussianInt := BandVectors.1 (q' 3) (q' 2)
-                    let U : Fin 3 → Bool → ProtoTile := fun i s =>
-                      if i = 0 then if s then TileTranslation T1 (a - ⟨0, 1⟩ * a) else T1
-                      else
-                        if i = 1 then
-                          if s then TileTranslation (S 1 s) a
-                          else TileTranslation (S 1 s) (-⟨0, 1⟩ * a)
-                        else
-                          if s then TileTranslation (S 2 s) (-⟨0, 1⟩ * a)
-                          else TileTranslation (S 2 s) a
+                    let U : Fin 3 → Bool → ProtoTile := PrototileConstruction.parentPieces T1 S a
                     (∀ i, ∀ s, BandPrototile (q' i.succ) (U i s)) →
                       let T0 : ProtoTile :=
                         ⟨Finset.univ.biUnion fun i : Fin 3 =>
@@ -1793,14 +1679,7 @@ private theorem existence :
               obtain ⟨S, hocc, hcells⟩ := BandPrototileReindexedDecomposition
                 cfg.firstPredecessor cfg.firstProper T1 hT1'
               let a : GaussianInt := BandVectors.1 (q' 3) (q' 2)
-              let U : Fin 3 → Bool → ProtoTile := fun i s =>
-                if i = 0 then
-                  if s then TileTranslation T1 (a - ⟨0, 1⟩ * a) else T1
-                else if i = 1 then
-                  if s then TileTranslation (S 1 s) a
-                  else TileTranslation (S 1 s) (-⟨0, 1⟩ * a)
-                else if s then TileTranslation (S 2 s) (-⟨0, 1⟩ * a)
-                  else TileTranslation (S 2 s) a
+              let U : Fin 3 → Bool → ProtoTile := PrototileConstruction.parentPieces T1 S a
               have hparents : ∀ i s, BandPrototile (q' i.succ) (U i s) :=
                   PrototileConstruction.hparents q r g hq' cfg hpos1 T1 hT1 S hocc
               let T0 : ProtoTile :=

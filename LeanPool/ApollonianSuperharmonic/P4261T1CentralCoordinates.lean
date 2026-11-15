@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.SubtileRowIndices
 public import LeanPool.ApollonianSuperharmonic.PartialOdometerEquality
 public import LeanPool.ApollonianSuperharmonic.BandLayoutParentNonempty
 public import LeanPool.ApollonianSuperharmonic.BandParentCentroidComparison
@@ -299,13 +300,7 @@ private theorem centralLabel :
         ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C₀ :
             BandCircle), ∀ (T₀ : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
             C₀ T₀),
-        let slot : SixSubtileLabel → Fin 3 × Bool := fun l => match l with
-          | .A => (0, true)
-          | .B => (0, false)
-          | .C => (1, true)
-          | .D => (1, false)
-          | .E => (2, true)
-          | .F => (2, false)
+        let slot : SixSubtileLabel → Fin 3 × Bool := SubtileRowIndices.labelSlot
         ∀ (k : Fin 3), ∀ (t : Bool), ∃ l : SixSubtileLabel, slot l = (k, t) ∧
             SubtileOccurrenceInterpretation cert.P cert.u cert.v ⟨l, 0, 0⟩ = TileTranslation
             (cert.P k t) 0 ) := by
@@ -491,13 +486,7 @@ theorem P4261T1CentralCoordinates
       hvalue' hselectedDomain hselectedValue rH hrootValue r hdomainSuppliedFresh
   have hfunEq : h = rH j hs := PartialOdometerEquality.extensionality h (rH (i' + r) hs)
       hdomainSuppliedFresh hvalueSuppliedFresh
-  let slot : SixSubtileLabel → Fin 3 × Bool := fun l => match l with
-    | .A => (0, true)
-    | .B => (0, false)
-    | .C => (1, true)
-    | .D => (1, false)
-    | .E => (2, true)
-    | .F => (2, false)
+  let slot : SixSubtileLabel → Fin 3 × Bool := SubtileRowIndices.labelSlot
   have centralLabel := CentralCoordinateGeometry.centralLabel q cfg C₀ T₀ cert
   obtain ⟨l, hl, hocc⟩ := centralLabel j hs
   let b : PeriodicSubtileIndex := ⟨l, 0, 0⟩

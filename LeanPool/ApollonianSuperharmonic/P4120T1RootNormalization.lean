@@ -27,6 +27,23 @@ namespace ApollonianSuperharmonic
 
 namespace RootNormalizationGeometry
 
+private abbrev parentSlotTranslation (offset : Fin 3) : (Fin 3 × Bool) ≃ (Fin 3 × Bool) :=
+  { toFun := fun p => (p.1 - offset, p.2)
+    invFun := fun p => (p.1 + offset, p.2)
+    left_inv := by
+      rintro ⟨i, t⟩
+      apply Prod.ext
+      · apply Fin.ext
+        simp
+      · rfl
+    right_inv := by
+      rintro ⟨i, t⟩
+      apply Prod.ext
+      · apply Fin.ext
+        simp
+      · rfl }
+
+
 private theorem hroot' :
     (by
       classical
@@ -223,26 +240,13 @@ private theorem he :
             (3 : ℕ) × Bool → Fin (3 : ℕ) × Bool) (i, s_1) = ((fun (i : Fin (3 : ℕ)) => if
             BandPackingSymmetryReversesOrientation s = true then -i else i) i, s_1 ^^ d)) → (
         let shift : (Fin 3 × Bool) ≃ (Fin 3 × Bool) :=
-          { toFun := fun p => (p.1 - a, p.2)
-            invFun := fun p => (p.1 + a, p.2)
-            left_inv := by
-              rintro ⟨i, t⟩
-              apply Prod.ext
-              · apply Fin.ext
-                simp
-              · rfl
-            right_inv := by
-              rintro ⟨i, t⟩
-              apply Prod.ext
-              · apply Fin.ext
-                simp
-              · rfl }
+          RootNormalizationGeometry.parentSlotTranslation a
         let e : (Fin 3 × Bool) ≃ (Fin 3 × Bool) := shift.trans e₁
         ∀ (i : Fin 3), ∀ (t : Bool), e (i, t) = ((if BandPackingSymmetryReversesOrientation s
             then -(i - a) else i - a), xor t d))) := by
   classical
   intro a s d e₁ he₁ shift e i t
-  simp [e, shift, Equiv.trans_apply, he₁]
+  simp [e, shift, Equiv.trans_apply, he₁, RootNormalizationGeometry.parentSlotTranslation]
 
 private theorem hSact :
     (by
@@ -255,20 +259,7 @@ private theorem hSact :
             Bool → Fin (3 : ℕ) × Bool) (i, s_1)).1 ((e₁ : Fin (3 : ℕ) × Bool → Fin (3 : ℕ) ×
             Bool) (i, s_1)).2 = BandPackingSymmetryTileAction s (Sa i s_1)) → (
         let shift : (Fin 3 × Bool) ≃ (Fin 3 × Bool) :=
-          { toFun := fun p => (p.1 - a, p.2)
-            invFun := fun p => (p.1 + a, p.2)
-            left_inv := by
-              rintro ⟨i, t⟩
-              apply Prod.ext
-              · apply Fin.ext
-                simp
-              · rfl
-            right_inv := by
-              rintro ⟨i, t⟩
-              apply Prod.ext
-              · apply Fin.ext
-                simp
-              · rfl }
+          RootNormalizationGeometry.parentSlotTranslation a
         let e : (Fin 3 × Bool) ≃ (Fin 3 × Bool) := shift.trans e₁
         (∀ (i : Fin 3), a + (i - a) = i) → (∀ (i : Fin 3), ∀ (t : Bool), S' (e (i, t)).1 (e (i,
             t)).2 = BandPackingSymmetryTileAction s (S i t)))) := by
@@ -309,20 +300,7 @@ private theorem hcurvature :
         let q' := BandPackingSymmetryQuadrupleAction s qa
         ∀ (d : Bool), ∀ (e₁ : Fin (3 : ℕ) × Bool ≃ Fin (3 : ℕ) × Bool),
         let shift : (Fin 3 × Bool) ≃ (Fin 3 × Bool) :=
-          { toFun := fun p => (p.1 - a, p.2)
-            invFun := fun p => (p.1 + a, p.2)
-            left_inv := by
-              rintro ⟨i, t⟩
-              apply Prod.ext
-              · apply Fin.ext
-                simp
-              · rfl
-            right_inv := by
-              rintro ⟨i, t⟩
-              apply Prod.ext
-              · apply Fin.ext
-                simp
-              · rfl }
+          RootNormalizationGeometry.parentSlotTranslation a
         let e : (Fin 3 × Bool) ≃ (Fin 3 × Bool) := shift.trans e₁
         (∀ (i : Fin 3), a + (i - a) = i) → ((∀ (i : Fin 3), ∀ (t : Bool), e (i, t) = ((if
             BandPackingSymmetryReversesOrientation s then -(i - a) else i - a), xor t d)) → ((∀
@@ -441,20 +419,7 @@ private theorem hcard :
             BandPackingSymmetry), ∀ (e₁ : Fin (3 : ℕ) × Bool ≃ Fin (3 : ℕ) × Bool), ∀ (S' : Fin
             (3 : ℕ) → Bool → ProtoTile),
         let shift : (Fin 3 × Bool) ≃ (Fin 3 × Bool) :=
-          { toFun := fun p => (p.1 - a, p.2)
-            invFun := fun p => (p.1 + a, p.2)
-            left_inv := by
-              rintro ⟨i, t⟩
-              apply Prod.ext
-              · apply Fin.ext
-                simp
-              · rfl
-            right_inv := by
-              rintro ⟨i, t⟩
-              apply Prod.ext
-              · apply Fin.ext
-                simp
-              · rfl }
+          RootNormalizationGeometry.parentSlotTranslation a
         let e : (Fin 3 × Bool) ≃ (Fin 3 × Bool) := shift.trans e₁
         let x' := BandPackingSymmetryVectorAction s x
         (∀ (i : Fin 3), ∀ (t : Bool), (x' ∈ BoundaryFootprintVertices (S' (e (i, t)).1 (e (i,
@@ -558,20 +523,7 @@ theorem P4120T1RootNormalization
   have rinj (r : BandPackingSymmetry) := RootNormalizationGeometry.rinj r
   have rpoint (r : BandPackingSymmetry) (z : GaussianInt) := RootNormalizationGeometry.rpoint r z
   let shift : (Fin 3 × Bool) ≃ (Fin 3 × Bool) :=
-    { toFun := fun p => (p.1 - a, p.2)
-      invFun := fun p => (p.1 + a, p.2)
-      left_inv := by
-        rintro ⟨i, t⟩
-        apply Prod.ext
-        · apply Fin.ext
-          simp
-        · rfl
-      right_inv := by
-        rintro ⟨i, t⟩
-        apply Prod.ext
-        · apply Fin.ext
-          simp
-        · rfl }
+    RootNormalizationGeometry.parentSlotTranslation a
   let e : (Fin 3 × Bool) ≃ (Fin 3 × Bool) := shift.trans e₁
   have hidx (i : Fin 3) := RootNormalizationGeometry.hidx a i
   have he (i : Fin 3) (t : Bool) := RootNormalizationGeometry.he a s d e₁ he₁ i t

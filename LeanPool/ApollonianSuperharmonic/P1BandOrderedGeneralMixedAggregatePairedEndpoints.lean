@@ -7,6 +7,7 @@ module
 
 public import LeanPool.ApollonianSuperharmonic.LatticeFootprintIncidence
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.ThreeTileUnionJunction
 public import LeanPool.ApollonianSuperharmonic.P4055T1GridPathImage
 public import LeanPool.ApollonianSuperharmonic.TileTranslationProperties
 public import LeanPool.ApollonianSuperharmonic.GaussianRealPointProperties
@@ -38,15 +39,7 @@ private theorem incoming :
       classical
       exact
         ∀ (q : Fin 4 → CircleCoordinates), ∀ (T : ProtoTile), (
-        let junctionData := fun (A B C : ProtoTile) => ∃ (AB : ProtoTile) (BC : ProtoTile) (CA :
-            ProtoTile) (ABC : ProtoTile), LatticeTile A ∧ LatticeTile B ∧ LatticeTile C ∧
-            LatticeTile AB ∧ LatticeTile BC ∧ LatticeTile CA ∧ LatticeTile ABC ∧ Disjoint A.cells
-            B.cells ∧ Disjoint B.cells C.cells ∧ Disjoint C.cells A.cells ∧ (∀ (z : LatticeCell),
-            z ∈ AB.cells ↔ z ∈ A.cells ∨ z ∈ B.cells) ∧ (∀ (z : LatticeCell), z ∈ BC.cells ↔ z ∈
-            B.cells ∨ z ∈ C.cells) ∧ (∀ (z : LatticeCell), z ∈ CA.cells ↔ z ∈ C.cells ∨ z ∈
-            A.cells) ∧ (∀ (z : LatticeCell), z ∈ ABC.cells ↔ z ∈ A.cells ∨ z ∈ B.cells ∨ z ∈
-            C.cells) ∧ (FootprintEdges A ∩ FootprintEdges B).Nonempty ∧ (FootprintEdges B ∩
-            FootprintEdges C).Nonempty ∧ (FootprintEdges C ∩ FootprintEdges A).Nonempty; (∀ (i :
+        let junctionData := ThreeTileUnionJunction; (∀ (i :
             Fin (3 : ℕ)), ∀ (U : ProtoTile), BandPrototile (q i.succ) U → TileCentroid U -
             TileCentroid T = (1 / 2 : ℝ) • (GaussianRealPoint (BandVectors.1 (q i.succ) (q (0 :
             Fin (4 : ℕ)))) + GaussianRealPoint (BandVectors.1 (q (0 : Fin (4 : ℕ))) (q i.succ)))
@@ -79,15 +72,7 @@ private theorem evenT5 :
       classical
       exact
         ∀ (q : Fin 4 → CircleCoordinates), ∀ (T : ProtoTile), (
-        let junctionData := fun (A B C : ProtoTile) => ∃ (AB : ProtoTile) (BC : ProtoTile) (CA :
-            ProtoTile) (ABC : ProtoTile), LatticeTile A ∧ LatticeTile B ∧ LatticeTile C ∧
-            LatticeTile AB ∧ LatticeTile BC ∧ LatticeTile CA ∧ LatticeTile ABC ∧ Disjoint A.cells
-            B.cells ∧ Disjoint B.cells C.cells ∧ Disjoint C.cells A.cells ∧ (∀ (z : LatticeCell),
-            z ∈ AB.cells ↔ z ∈ A.cells ∨ z ∈ B.cells) ∧ (∀ (z : LatticeCell), z ∈ BC.cells ↔ z ∈
-            B.cells ∨ z ∈ C.cells) ∧ (∀ (z : LatticeCell), z ∈ CA.cells ↔ z ∈ C.cells ∨ z ∈
-            A.cells) ∧ (∀ (z : LatticeCell), z ∈ ABC.cells ↔ z ∈ A.cells ∨ z ∈ B.cells ∨ z ∈
-            C.cells) ∧ (FootprintEdges A ∩ FootprintEdges B).Nonempty ∧ (FootprintEdges B ∩
-            FootprintEdges C).Nonempty ∧ (FootprintEdges C ∩ FootprintEdges A).Nonempty; (∀ (i :
+        let junctionData := ThreeTileUnionJunction; (∀ (i :
             Fin (3 : ℕ)), ∀ (U : ProtoTile), BandPrototile (q i.succ) U → TileCentroid U -
             TileCentroid T = (1 / 2 : ℝ) • (GaussianRealPoint (BandVectors.1 (q i.succ) (q (0 :
             Fin (4 : ℕ)))) + GaussianRealPoint (BandVectors.1 (q (0 : Fin (4 : ℕ))) (q i.succ)))
@@ -1320,15 +1305,7 @@ private theorem evenPackage :
         ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C₀ :
             BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
             C₀ T), (QuarterTurnSymmetric T) → ((
-        let junctionData := fun (A B C : ProtoTile) => ∃ (AB : ProtoTile) (BC : ProtoTile) (CA :
-            ProtoTile) (ABC : ProtoTile), LatticeTile A ∧ LatticeTile B ∧ LatticeTile C ∧
-            LatticeTile AB ∧ LatticeTile BC ∧ LatticeTile CA ∧ LatticeTile ABC ∧ Disjoint A.cells
-            B.cells ∧ Disjoint B.cells C.cells ∧ Disjoint C.cells A.cells ∧ (∀ (z : LatticeCell),
-            z ∈ AB.cells ↔ z ∈ A.cells ∨ z ∈ B.cells) ∧ (∀ (z : LatticeCell), z ∈ BC.cells ↔ z ∈
-            B.cells ∨ z ∈ C.cells) ∧ (∀ (z : LatticeCell), z ∈ CA.cells ↔ z ∈ C.cells ∨ z ∈
-            A.cells) ∧ (∀ (z : LatticeCell), z ∈ ABC.cells ↔ z ∈ A.cells ∨ z ∈ B.cells ∨ z ∈
-            C.cells) ∧ (FootprintEdges A ∩ FootprintEdges B).Nonempty ∧ (FootprintEdges B ∩
-            FootprintEdges C).Nonempty ∧ (FootprintEdges C ∩ FootprintEdges A).Nonempty; (∀ (i :
+        let junctionData := ThreeTileUnionJunction; (∀ (i :
             Fin (3 : ℕ)), ∀ (U : ProtoTile), BandPrototile (q i.succ) U → TileCentroid U -
             TileCentroid T = (1 / 2 : ℝ) • (GaussianRealPoint (BandVectors.1 (q i.succ) (q (0 :
             Fin (4 : ℕ)))) + GaussianRealPoint (BandVectors.1 (q (0 : Fin (4 : ℕ))) (q i.succ)))
@@ -1425,15 +1402,7 @@ private theorem oddPackage :
         ∀ (q : Fin 4 → CircleCoordinates), ∀ (cfg : BandOrderedGeneralConfiguration q), ∀ (C₀ :
             BandCircle), ∀ (T : ProtoTile), ∀ (cert : BandOrderedGeneralLayoutCertificate q cfg
             C₀ T), (QuarterTurnSymmetric T) → ((
-        let junctionData := fun (A B C : ProtoTile) => ∃ (AB : ProtoTile) (BC : ProtoTile) (CA :
-            ProtoTile) (ABC : ProtoTile), LatticeTile A ∧ LatticeTile B ∧ LatticeTile C ∧
-            LatticeTile AB ∧ LatticeTile BC ∧ LatticeTile CA ∧ LatticeTile ABC ∧ Disjoint A.cells
-            B.cells ∧ Disjoint B.cells C.cells ∧ Disjoint C.cells A.cells ∧ (∀ (z : LatticeCell),
-            z ∈ AB.cells ↔ z ∈ A.cells ∨ z ∈ B.cells) ∧ (∀ (z : LatticeCell), z ∈ BC.cells ↔ z ∈
-            B.cells ∨ z ∈ C.cells) ∧ (∀ (z : LatticeCell), z ∈ CA.cells ↔ z ∈ C.cells ∨ z ∈
-            A.cells) ∧ (∀ (z : LatticeCell), z ∈ ABC.cells ↔ z ∈ A.cells ∨ z ∈ B.cells ∨ z ∈
-            C.cells) ∧ (FootprintEdges A ∩ FootprintEdges B).Nonempty ∧ (FootprintEdges B ∩
-            FootprintEdges C).Nonempty ∧ (FootprintEdges C ∩ FootprintEdges A).Nonempty; (∀ (i :
+        let junctionData := ThreeTileUnionJunction; (∀ (i :
             Fin (3 : ℕ)), ∀ (U : ProtoTile), BandPrototile (q i.succ) U → TileCentroid U -
             TileCentroid T = (1 / 2 : ℝ) • (GaussianRealPoint (BandVectors.1 (q i.succ) (q (0 :
             Fin (4 : ℕ)))) + GaussianRealPoint (BandVectors.1 (q (0 : Fin (4 : ℕ))) (q i.succ)))

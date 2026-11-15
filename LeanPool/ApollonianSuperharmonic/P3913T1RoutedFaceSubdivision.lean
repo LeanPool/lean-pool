@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Init
+public import LeanPool.ApollonianSuperharmonic.P3723T1PolygonalParameterization
 
 public import LeanPool.ApollonianSuperharmonic.P3723T1AllContactRouting
 public import Mathlib.Analysis.Convex.Segment
@@ -33,14 +34,7 @@ private theorem piece_range :
             Function.Injective (g k)) → (∀ (s : (k : Fin (3 : ℕ)) →
             P3723T1PolygonalParameterization (g k)),
         let τ (k : Fin 3) (i : Fin ((s k).count + 1)) : Set.Icc (0 : Real) 1 :=
-          ⟨(s k).time i, by
-            constructor
-            · let hi := (s k).strict.monotone (Fin.zero_le i)
-              rw [(s k).start] at hi
-              exact hi
-            · let hi := (s k).strict.monotone (Fin.le_last i)
-              rw [(s k).finish] at hi
-              exact hi⟩
+          P3723T1PolygonalParameterization.timeInUnitInterval (s k) i
         let w (k : Fin 3) (i : Fin ((s k).count + 1)) := g k (τ k i)
         ∀ (k : Fin 3), ∀ (r : Fin ((s k).count)), Set.range (fun t : Set.Icc ((s k).time
             r.castSucc) ((s k).time r.succ) =>
@@ -125,14 +119,7 @@ private theorem join :
              (1 : Fin (3 : ℕ))))) → (∀ (s : (k : Fin (3 : ℕ)) → P3723T1PolygonalParameterization
              (g k)),
         let τ (k : Fin 3) (i : Fin ((s k).count + 1)) : Set.Icc (0 : Real) 1 :=
-          ⟨(s k).time i, by
-            constructor
-            · let hi := (s k).strict.monotone (Fin.zero_le i)
-              rw [(s k).start] at hi
-              exact hi
-            · let hi := (s k).strict.monotone (Fin.le_last i)
-              rw [(s k).finish] at hi
-              exact hi⟩;
+          P3723T1PolygonalParameterization.timeInUnitInterval (s k) i;
         let w (k : Fin 3) (i : Fin ((s k).count + 1)) := g k (τ k i);
         ∀ (k : Fin (3 : ℕ)), w k (Fin.last (s k).count) = w (k + (1 : Fin (3 : ℕ))) (0 : Fin ((s
             (k + (1 : Fin (3 : ℕ)))).count + (1 : ℕ))))))) := by
@@ -160,14 +147,7 @@ private theorem retained :
             let n := M - 3
             ∀ (hM : n + 3 = M),
               let τ (k : Fin 3) (i : Fin ((s k).count + 1)) : Set.Icc (0 : Real) 1 :=
-                ⟨(s k).time i, by
-                  constructor
-                  · let hi := (s k).strict.monotone (Fin.zero_le i)
-                    rw [(s k).start] at hi
-                    exact hi
-                  · let hi := (s k).strict.monotone (Fin.le_last i)
-                    rw [(s k).finish] at hi
-                    exact hi⟩
+                P3723T1PolygonalParameterization.timeInUnitInterval (s k) i
               let w (k : Fin 3) (i : Fin ((s k).count + 1)) := g k (τ k i)
               let q : Fin M → Real × Real :=
                 Fin.addCases (fun i : Fin m0 => w 0 i.castSucc)
@@ -258,14 +238,7 @@ private theorem w_ne_finish :
             (k : Fin (3 : ℕ)), Function.Injective (g k)) → (∀ (s : (k : Fin (3 : ℕ)) →
             P3723T1PolygonalParameterization (g k)),
         let τ (k : Fin 3) (i : Fin ((s k).count + 1)) : Set.Icc (0 : Real) 1 :=
-          ⟨(s k).time i, by
-            constructor
-            · let hi := (s k).strict.monotone (Fin.zero_le i)
-              rw [(s k).start] at hi
-              exact hi
-            · let hi := (s k).strict.monotone (Fin.le_last i)
-              rw [(s k).finish] at hi
-              exact hi⟩
+          P3723T1PolygonalParameterization.timeInUnitInterval (s k) i
         let w (k : Fin 3) (i : Fin ((s k).count + 1)) := g k (τ k i)
         let v : Fin 3 → ι := P.plane.faceVertex f
         (∀ (k : Fin 3), w k (Fin.last (s k).count) = D.position (v (k + 1))) → (∀ (k : Fin (3 :
@@ -293,14 +266,7 @@ private theorem q_injective :
             let m2 := (s 2).count
             let M := m0 + (m1 + m2)
             let τ (k : Fin 3) (i : Fin ((s k).count + 1)) : Set.Icc (0 : Real) 1 :=
-              ⟨(s k).time i, by
-                constructor
-                · let hi := (s k).strict.monotone (Fin.zero_le i)
-                  rw [(s k).start] at hi
-                  exact hi
-                · let hi := (s k).strict.monotone (Fin.le_last i)
-                  rw [(s k).finish] at hi
-                  exact hi⟩
+              P3723T1PolygonalParameterization.timeInUnitInterval (s k) i
             let w (k : Fin 3) (i : Fin ((s k).count + 1)) := g k (τ k i)
             let q : Fin M → Real × Real :=
               Fin.addCases (fun i : Fin m0 => w 0 i.castSucc)
@@ -438,14 +404,7 @@ private theorem arc_covered :
                     ∀ (s : (k : Fin (3 : ℕ)) → P3723T1PolygonalParameterization (g k)),
                       let τ (k : Fin 3) (i : Fin ((s k).count + 1)) :
                         Set.Icc (0 : Real) 1 :=
-                        ⟨(s k).time i, by
-                          constructor
-                          · let hi := (s k).strict.monotone (Fin.zero_le i)
-                            rw [(s k).start] at hi
-                            exact hi
-                          · let hi := (s k).strict.monotone (Fin.le_last i)
-                            rw [(s k).finish] at hi
-                            exact hi⟩
+                        P3723T1PolygonalParameterization.timeInUnitInterval (s k) i
                       let w (k : Fin 3) (i : Fin ((s k).count + 1)) := g k (τ k i)
                       (∀ (k : Fin 3),
                           ∀ (r : Fin (s k).count),
@@ -509,14 +468,7 @@ private theorem q_step :
             let m2 := (s 2).count;
             let M := m0 + (m1 + m2);
             let τ (k : Fin 3) (i : Fin ((s k).count + 1)) : Set.Icc (0 : Real) 1 :=
-              ⟨(s k).time i, by
-                constructor
-                · let hi := (s k).strict.monotone (Fin.zero_le i)
-                  rw [(s k).start] at hi
-                  exact hi
-                · let hi := (s k).strict.monotone (Fin.le_last i)
-                  rw [(s k).finish] at hi
-                  exact hi⟩
+              P3723T1PolygonalParameterization.timeInUnitInterval (s k) i
             let w (k : Fin 3) (i : Fin ((s k).count + 1)) := g k (τ k i)
             let q : Fin M → Real × Real :=
               Fin.addCases (fun i : Fin m0 => w 0 i.castSucc)
@@ -629,14 +581,7 @@ private theorem p_edge_piece :
             let n := M - 3
             ∀ (hM : n + 3 = M),
               let τ (k : Fin 3) (i : Fin ((s k).count + 1)) : Set.Icc (0 : Real) 1 :=
-                ⟨(s k).time i, by
-                  constructor
-                  · let hi := (s k).strict.monotone (Fin.zero_le i)
-                    rw [(s k).start] at hi
-                    exact hi
-                  · let hi := (s k).strict.monotone (Fin.le_last i)
-                    rw [(s k).finish] at hi
-                    exact hi⟩
+                P3723T1PolygonalParameterization.timeInUnitInterval (s k) i
               let w (k : Fin 3) (i : Fin ((s k).count + 1)) := g k (τ k i)
               let q : Fin M → Real × Real :=
                 Fin.addCases (fun i : Fin m0 => w 0 i.castSucc)
@@ -726,14 +671,7 @@ private theorem block_edge :
             let n := M - 3
             ∀ (hM : n + 3 = M),
               let τ (k : Fin 3) (i : Fin ((s k).count + 1)) : Set.Icc (0 : Real) 1 :=
-                ⟨(s k).time i, by
-                  constructor
-                  · let hi := (s k).strict.monotone (Fin.zero_le i)
-                    rw [(s k).start] at hi
-                    exact hi
-                  · let hi := (s k).strict.monotone (Fin.le_last i)
-                    rw [(s k).finish] at hi
-                    exact hi⟩
+                P3723T1PolygonalParameterization.timeInUnitInterval (s k) i
               let w (k : Fin 3) (i : Fin ((s k).count + 1)) := g k (τ k i)
               let q : Fin M → Real × Real :=
                 Fin.addCases (fun i : Fin m0 => w 0 i.castSucc)
@@ -916,14 +854,7 @@ private theorem edge_union :
             let n := M - 3
             ∀ (hM : n + 3 = M),
               let τ (k : Fin 3) (i : Fin ((s k).count + 1)) : Set.Icc (0 : Real) 1 :=
-                ⟨(s k).time i, by
-                  constructor
-                  · let hi := (s k).strict.monotone (Fin.zero_le i)
-                    rw [(s k).start] at hi
-                    exact hi
-                  · let hi := (s k).strict.monotone (Fin.le_last i)
-                    rw [(s k).finish] at hi
-                    exact hi⟩
+                P3723T1PolygonalParameterization.timeInUnitInterval (s k) i
               let w (k : Fin 3) (i : Fin ((s k).count + 1)) := g k (τ k i)
               let q : Fin M → Real × Real :=
                 Fin.addCases (fun i : Fin m0 => w 0 i.castSucc)
@@ -965,14 +896,7 @@ private theorem piece_arc_union :
                   ∀ (s : (k : Fin (3 : ℕ)) → P3723T1PolygonalParameterization (g k)),
                     let τ (k : Fin 3) (i : Fin ((s k).count + 1)) :
                       Set.Icc (0 : Real) 1 :=
-                      ⟨(s k).time i, by
-                        constructor
-                        · let hi := (s k).strict.monotone (Fin.zero_le i)
-                          rw [(s k).start] at hi
-                          exact hi
-                        · let hi := (s k).strict.monotone (Fin.le_last i)
-                          rw [(s k).finish] at hi
-                          exact hi⟩
+                      P3723T1PolygonalParameterization.timeInUnitInterval (s k) i
                     let w (k : Fin 3) (i : Fin ((s k).count + 1)) := g k (τ k i)
                     let v : Fin 3 → ι := P.plane.faceVertex f
                     (∀ (k : Fin 3),
@@ -1033,14 +957,7 @@ private theorem piece_start_corner :
              ℝ), (by norm_num)⟩ = D.position (P.plane.faceVertex f k)) → (∀ (s : (k : Fin
              (3 : ℕ)) → P3723T1PolygonalParameterization (g k)),
         let τ (k : Fin 3) (i : Fin ((s k).count + 1)) : Set.Icc (0 : Real) 1 :=
-          ⟨(s k).time i, by
-            constructor
-            · let hi := (s k).strict.monotone (Fin.zero_le i)
-              rw [(s k).start] at hi
-              exact hi
-            · let hi := (s k).strict.monotone (Fin.le_last i)
-              rw [(s k).finish] at hi
-              exact hi⟩
+          P3723T1PolygonalParameterization.timeInUnitInterval (s k) i
         let w (k : Fin 3) (i : Fin ((s k).count + 1)) := g k (τ k i)
         (∀ (k : Fin 3), ∀ (r : Fin ((s k).count)), Set.range (fun t : Set.Icc ((s k).time
             r.castSucc) ((s k).time r.succ) =>
@@ -1091,14 +1008,7 @@ private theorem piece_finish_corner :
              ℝ), (by norm_num)⟩ = D.position (P.plane.faceVertex f (k + (1 : Fin (3 :
              ℕ))))) → (∀ (s : (k : Fin (3 : ℕ)) → P3723T1PolygonalParameterization (g k)),
         let τ (k : Fin 3) (i : Fin ((s k).count + 1)) : Set.Icc (0 : Real) 1 :=
-          ⟨(s k).time i, by
-            constructor
-            · let hi := (s k).strict.monotone (Fin.zero_le i)
-              rw [(s k).start] at hi
-              exact hi
-            · let hi := (s k).strict.monotone (Fin.le_last i)
-              rw [(s k).finish] at hi
-              exact hi⟩
+          P3723T1PolygonalParameterization.timeInUnitInterval (s k) i
         let w (k : Fin 3) (i : Fin ((s k).count + 1)) := g k (τ k i)
         (∀ (k : Fin 3), ∀ (r : Fin ((s k).count)), Set.range (fun t : Set.Icc ((s k).time
             r.castSucc) ((s k).time r.succ) =>
@@ -1147,14 +1057,7 @@ private theorem piece_overlap_forward :
             Function.Injective (g k)) → (∀ (s : (k : Fin (3 : ℕ)) →
             P3723T1PolygonalParameterization (g k)),
         let τ (k : Fin 3) (i : Fin ((s k).count + 1)) : Set.Icc (0 : Real) 1 :=
-          ⟨(s k).time i, by
-            constructor
-            · let hi := (s k).strict.monotone (Fin.zero_le i)
-              rw [(s k).start] at hi
-              exact hi
-            · let hi := (s k).strict.monotone (Fin.le_last i)
-              rw [(s k).finish] at hi
-              exact hi⟩
+          P3723T1PolygonalParameterization.timeInUnitInterval (s k) i
         let w (k : Fin 3) (i : Fin ((s k).count + 1)) := g k (τ k i)
         (∀ (k : Fin 3), ∀ (r : Fin ((s k).count)), Set.range (fun t : Set.Icc ((s k).time
             r.castSucc) ((s k).time r.succ) =>
@@ -1221,14 +1124,7 @@ private theorem piece_overlap :
         ∀ (g : Fin (3 : ℕ) → (↑(Set.Icc (0 : ℝ) (1 : ℝ)) : Type) → ℝ × ℝ),
           ∀ (s : (k : Fin (3 : ℕ)) → P3723T1PolygonalParameterization (g k)),
             let τ (k : Fin 3) (i : Fin ((s k).count + 1)) : Set.Icc (0 : Real) 1 :=
-              ⟨(s k).time i, by
-                constructor
-                · let hi := (s k).strict.monotone (Fin.zero_le i)
-                  rw [(s k).start] at hi
-                  exact hi
-                · let hi := (s k).strict.monotone (Fin.le_last i)
-                  rw [(s k).finish] at hi
-                  exact hi⟩
+              P3723T1PolygonalParameterization.timeInUnitInterval (s k) i
             let w (k : Fin 3) (i : Fin ((s k).count + 1)) := g k (τ k i)
             (∀ (k : Fin 3),
                 ∀ (r : Fin (s k).count),
@@ -1385,14 +1281,7 @@ private theorem w_arc :
             = D.edgeArc (P.plane.faceVertex f k) (P.plane.faceVertex f (k + (1 :
             Fin (3 : ℕ))))) → (∀ (s : (k : Fin (3 : ℕ)) → P3723T1PolygonalParameterization (g k)),
         let τ (k : Fin 3) (i : Fin ((s k).count + 1)) : Set.Icc (0 : Real) 1 :=
-          ⟨(s k).time i, by
-            constructor
-            · have hi := (s k).strict.monotone (Fin.zero_le i)
-              rw [(s k).start] at hi
-              exact hi
-            · have hi := (s k).strict.monotone (Fin.le_last i)
-              rw [(s k).finish] at hi
-              exact hi⟩;
+          P3723T1PolygonalParameterization.timeInUnitInterval (s k) i;
         let w (k : Fin 3) (i : Fin ((s k).count + 1)) := g k (τ k i);
         let v : Fin 3 → ι := P.plane.faceVertex f;
         ∀ (k : Fin (3 : ℕ)), ∀ (i : Fin ((s k).count + (1 : ℕ))), w k i ∈ D.edgeArc (v k) (v (k +
@@ -1413,14 +1302,7 @@ private theorem w_finish :
             f (k + (1 : Fin (3 : ℕ))))) → (∀ (s : (k : Fin (3 : ℕ)) →
             P3723T1PolygonalParameterization (g k)),
         let τ (k : Fin 3) (i : Fin ((s k).count + 1)) : Set.Icc (0 : Real) 1 :=
-          ⟨(s k).time i, by
-            constructor
-            · have hi := (s k).strict.monotone (Fin.zero_le i)
-              rw [(s k).start] at hi
-              exact hi
-            · have hi := (s k).strict.monotone (Fin.le_last i)
-              rw [(s k).finish] at hi
-              exact hi⟩;
+          P3723T1PolygonalParameterization.timeInUnitInterval (s k) i;
         let w (k : Fin 3) (i : Fin ((s k).count + 1)) := g k (τ k i);
         let v : Fin 3 → ι := P.plane.faceVertex f;
         ∀ (k : Fin (3 : ℕ)), w k (Fin.last (s k).count) = D.position (v (k + (1 : Fin (3 :
@@ -1485,14 +1367,7 @@ private theorem no_cross01 :
         let m0 := (s 0).count
         let m1 := (s 1).count
         let τ (k : Fin 3) (i : Fin ((s k).count + 1)) : Set.Icc (0 : Real) 1 :=
-          ⟨(s k).time i, by
-            constructor
-            · have hi := (s k).strict.monotone (Fin.zero_le i)
-              rw [(s k).start] at hi
-              exact hi
-            · have hi := (s k).strict.monotone (Fin.le_last i)
-              rw [(s k).finish] at hi
-              exact hi⟩
+          P3723T1PolygonalParameterization.timeInUnitInterval (s k) i
         let w (k : Fin 3) (i : Fin ((s k).count + 1)) := g k (τ k i)
         let v : Fin 3 → ι := P.plane.faceVertex f
         (∀ (k : Fin 3), ∀ (i : Fin ((s k).count + 1)), w k i ∈ D.edgeArc (v k) (v (k + 1))) → ((∀
@@ -1519,14 +1394,7 @@ private theorem no_cross12 :
         let m1 := (s 1).count
         let m2 := (s 2).count
         let τ (k : Fin 3) (i : Fin ((s k).count + 1)) : Set.Icc (0 : Real) 1 :=
-          ⟨(s k).time i, by
-            constructor
-            · have hi := (s k).strict.monotone (Fin.zero_le i)
-              rw [(s k).start] at hi
-              exact hi
-            · have hi := (s k).strict.monotone (Fin.le_last i)
-              rw [(s k).finish] at hi
-              exact hi⟩
+          P3723T1PolygonalParameterization.timeInUnitInterval (s k) i
         let w (k : Fin 3) (i : Fin ((s k).count + 1)) := g k (τ k i)
         let v : Fin 3 → ι := P.plane.faceVertex f
         (∀ (k : Fin 3), ∀ (i : Fin ((s k).count + 1)), w k i ∈ D.edgeArc (v k) (v (k + 1))) → ((∀
@@ -1553,14 +1421,7 @@ private theorem no_cross02 :
         let m0 := (s 0).count
         let m2 := (s 2).count
         let τ (k : Fin 3) (i : Fin ((s k).count + 1)) : Set.Icc (0 : Real) 1 :=
-          ⟨(s k).time i, by
-            constructor
-            · have hi := (s k).strict.monotone (Fin.zero_le i)
-              rw [(s k).start] at hi
-              exact hi
-            · have hi := (s k).strict.monotone (Fin.le_last i)
-              rw [(s k).finish] at hi
-              exact hi⟩
+          P3723T1PolygonalParameterization.timeInUnitInterval (s k) i
         let w (k : Fin 3) (i : Fin ((s k).count + 1)) := g k (τ k i)
         let v : Fin 3 → ι := P.plane.faceVertex f
         (∀ (k : Fin 3), ∀ (i : Fin ((s k).count + 1)), w k i ∈ D.edgeArc (v k) (v (k + 1))) → ((∀
@@ -1584,14 +1445,7 @@ private theorem w_block_injective :
             : ℕ)), Function.Injective (g k)) → (∀ (s : (k : Fin (3 : ℕ)) →
             P3723T1PolygonalParameterization (g k)),
         let τ (k : Fin 3) (i : Fin ((s k).count + 1)) : Set.Icc (0 : Real) 1 :=
-          ⟨(s k).time i, by
-            constructor
-            · have hi := (s k).strict.monotone (Fin.zero_le i)
-              rw [(s k).start] at hi
-              exact hi
-            · have hi := (s k).strict.monotone (Fin.le_last i)
-              rw [(s k).finish] at hi
-              exact hi⟩
+          P3723T1PolygonalParameterization.timeInUnitInterval (s k) i
         let w (k : Fin 3) (i : Fin ((s k).count + 1)) := g k (τ k i)
         ∀ (k : Fin (3 : ℕ)), Function.Injective fun (i : Fin (s k).count) => w k i.castSucc)) := by
   classical
@@ -1657,14 +1511,7 @@ private theorem hxi :
         (∀ (k : Fin (3 : ℕ)), ∀ (s : (k
             : Fin (3 : ℕ)) → P3723T1PolygonalParameterization (g k)),
         let τ (k : Fin 3) (i : Fin ((s k).count + 1)) : Set.Icc (0 : Real) 1 :=
-          ⟨(s k).time i, by
-            constructor
-            · have hi := (s k).strict.monotone (Fin.zero_le i)
-              rw [(s k).start] at hi
-              exact hi
-            · have hi := (s k).strict.monotone (Fin.le_last i)
-              rw [(s k).finish] at hi
-              exact hi⟩;
+          P3723T1PolygonalParameterization.timeInUnitInterval (s k) i;
         let w (k : Fin 3) (i : Fin ((s k).count + 1)) := g k (τ k i);
         let v : Fin 3 → ι := P.plane.faceVertex f;
         (∀ (k : Fin 3), ∀ (r : Fin (s k).count), ∀ (x : Real × Real), (x ∈ segment Real (w k
@@ -1696,14 +1543,7 @@ private theorem hxj :
                       (k : Fin (3 : ℕ)) → P3723T1PolygonalParameterization (g k)),
                     let τ (k : Fin 3) (i : Fin ((s k).count + 1)) :
                       Set.Icc (0 : Real) 1 :=
-                      ⟨(s k).time i, by
-                        constructor
-                        · have hi := (s k).strict.monotone (Fin.zero_le i)
-                          rw [(s k).start] at hi
-                          exact hi
-                        · have hi := (s k).strict.monotone (Fin.le_last i)
-                          rw [(s k).finish] at hi
-                          exact hi⟩;
+                      P3723T1PolygonalParameterization.timeInUnitInterval (s k) i;
                     let w (k : Fin 3) (i : Fin ((s k).count + 1)) := g k (τ k i);
                     let v : Fin 3 → ι := P.plane.faceVertex f;
                     (∀ (k : Fin 3),
@@ -1769,14 +1609,7 @@ theorem P3913T1RoutedFaceSubdivision :
   let n := M - 3
   have hM := RoutedFaceDetails.hM g s hsum
   let τ (k : Fin 3) (i : Fin ((s k).count + 1)) : Set.Icc (0 : Real) 1 :=
-    ⟨(s k).time i, by
-      constructor
-      · have hi := (s k).strict.monotone (Fin.zero_le i)
-        rw [(s k).start] at hi
-        exact hi
-      · have hi := (s k).strict.monotone (Fin.le_last i)
-        rw [(s k).finish] at hi
-        exact hi⟩
+    P3723T1PolygonalParameterization.timeInUnitInterval (s k) i
   let w (k : Fin 3) (i : Fin ((s k).count + 1)) := g k (τ k i)
   let q : Fin M → Real × Real :=
     Fin.addCases

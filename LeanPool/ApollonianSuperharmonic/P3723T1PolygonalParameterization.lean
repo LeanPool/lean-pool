@@ -50,6 +50,23 @@ structure P3723T1PolygonalParameterization
       time i.castSucc ≤ (s : Real) → (s : Real) ≤ time i.succ →
         g s = A + (s : Real) • B
 
+namespace P3723T1PolygonalParameterization
+
+/-- A subdivision time, viewed in the closed unit parameter interval. -/
+abbrev timeInUnitInterval {g : Set.Icc (0 : Real) 1 → Real × Real}
+    (parameterization : P3723T1PolygonalParameterization g)
+    (index : Fin (parameterization.count + 1)) : Set.Icc (0 : Real) 1 :=
+  ⟨parameterization.time index, by
+    constructor
+    · have bound := parameterization.strict.monotone (Fin.zero_le index)
+      rw [parameterization.start] at bound
+      exact bound
+    · have bound := parameterization.strict.monotone (Fin.le_last index)
+      rw [parameterization.finish] at bound
+      exact bound⟩
+
+end P3723T1PolygonalParameterization
+
 end ApollonianSuperharmonic
 
 end
