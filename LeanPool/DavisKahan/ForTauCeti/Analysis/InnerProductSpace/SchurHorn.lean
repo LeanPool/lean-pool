@@ -25,9 +25,10 @@ declared upstream).  Independently re-derived here on this project's existing
 `LinearMap.IsSymmetric.re_inner_apply_self_eq_sum_eigenvalues_mul_sq`.
 -/
 module
+public import Mathlib.Analysis.InnerProductSpace.Spectrum
 
-public import Mathlib.Analysis.Convex.Jensen
-public import Mathlib.Analysis.Convex.Mul
+import Mathlib.Analysis.Convex.Jensen
+import Mathlib.Analysis.Convex.Mul
 public import LeanPool.DavisKahan.ForTauCeti.Analysis.InnerProductSpace.CourantFischer
 
 

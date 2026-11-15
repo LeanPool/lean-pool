@@ -5,7 +5,7 @@ Authors: Jon Crall, GPT 5.6 High
 -/
 module
 
-public import Mathlib.Analysis.InnerProductSpace.Adjoint
+import Mathlib.Analysis.InnerProductSpace.Adjoint
 public import Mathlib.Analysis.InnerProductSpace.Positive
 
 /-!

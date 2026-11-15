@@ -4,6 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Jon Crall, GPT 5.6 High
 -/
 module
+import Mathlib.MeasureTheory.Integral.ExpDecay
+import Mathlib.MeasureTheory.Measure.Lebesgue.Integral
 
 public import LeanPool.DavisKahan.ForTauCeti.Analysis.Fourier.ExponentialAbs
 

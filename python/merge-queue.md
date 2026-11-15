@@ -22,14 +22,17 @@ from a project aggregate; the index and quality checks also reject incomplete
 aggregates. Historical tools can still read the previous monolithic registry,
 but mixed old and new layouts are rejected.
 
-Generated README statistics and NOTICE are committed directly to `main` by the
-generated-metadata workflow, using `REBASE_TOKEN`, which acts as `Vilin97` (the
+Generated README statistics and NOTICE are committed directly to `main` once a
+day by the `metadata` job of the Daily documentation workflow
+(`docs-publish.yml`), using `REBASE_TOKEN`, which acts as `Vilin97` (the
 author of the workflow's metadata PRs). That account has an `always` bypass in
 the active `Validated merge queue` ruleset; classic branch protection does not
 enforce its rules for administrators. Other contributors still use the merge queue.
-The workflow only commits README.md and NOTICE, skips unchanged output, and
+Because each direct push makes GitHub rebuild every queued group, the job first
+waits up to three hours for the merge queue to empty. It only commits README.md
+and NOTICE, skips unchanged output, and
 regenerates from the latest main if a concurrent merge rejects its push. It never
-force-pushes; after five attempts it fails for the next scheduled run to retry.
+force-pushes; after five attempts it fails for the next daily run to retry.
 For PRs and groups combining metadata and content, Python CI verifies each
 authored NOTICE against its own immutable PR registry before regenerating the
 combined checkout view for the ordinary generator tests. An inherited stale

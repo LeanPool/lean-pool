@@ -345,14 +345,14 @@ theorem eigenvalue_notMem_gap_of_diagonal_form (hS : S.IsSymmetric)
     have hle := hUa x hxU
     rw [hval x, inner_self_eq_norm_sq] at hle
     have hxpos : (0 : ℝ) < ‖x‖ ^ 2 := pow_pos (norm_pos_iff.mpr hx) 2
-    nlinarith [hle, hxpos]
+    nlinarith only [hle, hxpos, hle, hxpos]
   rcases eq_or_ne m 0 with hm0 | hm0n
   · right
     have hxU : x ∈ U := by rw [hsplit, hm0, add_zero]; exact hpU
     have hle := hUb x hxU
     rw [hval x, inner_self_eq_norm_sq] at hle
     have hxpos : (0 : ℝ) < ‖x‖ ^ 2 := pow_pos (norm_pos_iff.mpr hx) 2
-    nlinarith [hle, hxpos]
+    nlinarith only [hle, hxpos, hle, hxpos]
   -- Both blocks nonzero.
   have hp2 : (0 : ℝ) < ‖p‖ ^ 2 := pow_pos (norm_pos_iff.mpr hp0n) 2
   have hq2 : (0 : ℝ) < ‖m‖ ^ 2 := pow_pos (norm_pos_iff.mpr hm0n) 2
@@ -377,9 +377,9 @@ theorem eigenvalue_notMem_gap_of_diagonal_form (hS : S.IsSymmetric)
   have heq_m : μ * ‖m‖ ^ 2 = RCLike.re ⟪S p, m⟫_𝕜 + RCLike.re ⟪S m, m⟫_𝕜 := by
     rw [← decomp_m, hval_m]
   have hr_le : RCLike.re ⟪S p, m⟫_𝕜 ≤ (μ - b) * ‖p‖ ^ 2 := by
-    nlinarith [hUb p hpU, heq_p]
+    nlinarith only [hUb, hpU, hval_p, decomp_p, hUb p hpU, heq_p]
   have hr_ge : (μ - a) * ‖m‖ ^ 2 ≤ RCLike.re ⟪S p, m⟫_𝕜 := by
-    nlinarith [hUa m hmU, heq_m]
+    nlinarith only [hUa, hmU, hval_m, decomp_m, hUa m hmU, heq_m]
   by_contra hc
   push Not at hc
   nlinarith [hr_le, hr_ge, mul_pos (show (0 : ℝ) < μ - a by linarith [hc.1]) hq2,
@@ -1068,7 +1068,7 @@ theorem tan_two_theta_norm_sub_le (hT : T.IsSymmetric) (hS : S.IsSymmetric)
       have h0 : (0:ℝ) ≤ 2 * ε * (1 - 2 * (0:ℝ) ^ 2) := by
         norm_num
         positivity
-      nlinarith [h0]
+      nlinarith only [hε0, h0]
   · -- spectral apparatus for `Y := X ∘ X`
     have hXsym' : ∀ v w, ⟪X v, w⟫_𝕜 = ⟪v, X w⟫_𝕜 := by
       intro v w

@@ -27,57 +27,50 @@ namespace Section9
 
 private lemma sqrt76_lt_4359_div_500 :
     Real.sqrt 76 < (4359 : ℝ) / 500 := by
-  nlinarith [Real.sqrt_nonneg (76 : ℝ),
-    Real.sq_sqrt (by norm_num : (0 : ℝ) ≤ 76)]
+  nlinarith only [Real.sqrt_nonneg (76 : ℝ), Real.sq_sqrt (by norm_num : (0 : ℝ) ≤ 76)]
 
 private lemma sqrt76_gt_87_div_10 :
     (87 : ℝ) / 10 < Real.sqrt 76 := by
-  nlinarith [Real.sqrt_nonneg (76 : ℝ),
-    Real.sq_sqrt (by norm_num : (0 : ℝ) ≤ 76)]
+  nlinarith only [Real.sqrt_nonneg (76 : ℝ), Real.sq_sqrt (by norm_num : (0 : ℝ) ≤ 76)]
 
 private lemma sqrt3_lt_8661_div_5000 :
     Real.sqrt 3 < (8661 : ℝ) / 5000 := by
-  nlinarith [Real.sqrt_nonneg (3 : ℝ),
-    Real.sq_sqrt (by norm_num : (0 : ℝ) ≤ 3)]
+  nlinarith only [Real.sqrt_nonneg (3 : ℝ), Real.sq_sqrt (by norm_num : (0 : ℝ) ≤ 3)]
 
 private lemma sqrt3_gt_17319_div_10000 :
     (17319 : ℝ) / 10000 < Real.sqrt 3 := by
-  nlinarith [Real.sqrt_nonneg (3 : ℝ),
-    Real.sq_sqrt (by norm_num : (0 : ℝ) ≤ 3)]
+  nlinarith only [Real.sqrt_nonneg (3 : ℝ), Real.sq_sqrt (by norm_num : (0 : ℝ) ≤ 3)]
 
 private lemma sqrt15_lt_3873_div_1000 :
     Real.sqrt 15 < (3873 : ℝ) / 1000 := by
-  nlinarith [Real.sqrt_nonneg (15 : ℝ),
-    Real.sq_sqrt (by norm_num : (0 : ℝ) ≤ 15)]
+  nlinarith only [Real.sqrt_nonneg (15 : ℝ), Real.sq_sqrt (by norm_num : (0 : ℝ) ≤ 15)]
 
 private lemma sqrt30_lt_2739_div_500 :
     Real.sqrt 30 < (2739 : ℝ) / 500 := by
-  nlinarith [Real.sqrt_nonneg (30 : ℝ),
-    Real.sq_sqrt (by norm_num : (0 : ℝ) ≤ 30)]
+  nlinarith only [Real.sqrt_nonneg (30 : ℝ), Real.sq_sqrt (by norm_num : (0 : ℝ) ≤ 30)]
 
 private lemma sqrt7_lt_53_div_20 :
     Real.sqrt 7 < (53 : ℝ) / 20 := by
-  nlinarith [Real.sqrt_nonneg (7 : ℝ),
-    Real.sq_sqrt (by norm_num : (0 : ℝ) ≤ 7)]
+  nlinarith only [Real.sqrt_nonneg (7 : ℝ), Real.sq_sqrt (by norm_num : (0 : ℝ) ≤ 7)]
 
 /-- The upper Ritz coefficient is below the printed `0.7887`. -/
 lemma ritzHighCoefficient_lt_printed :
     ritzHighCoefficient < (7887 : ℝ) / 10000 := by
   unfold ritzHighCoefficient
-  nlinarith [sqrt3_lt_8661_div_5000]
+  nlinarith only [sqrt3_lt_8661_div_5000]
 
 /-- The lower Ritz coefficient is below the printed `0.21135`. -/
 lemma ritzLowCoefficient_lt_printed :
     ritzLowCoefficient < (4227 : ℝ) / 20000 := by
   unfold ritzLowCoefficient
-  nlinarith [sqrt3_gt_17319_div_10000]
+  nlinarith only [sqrt3_gt_17319_div_10000]
 
 /-- The top residual root `√((11 + √76)/30)` is below the printed `0.811`. -/
 lemma residualTopRoot_lt_printed :
     Real.sqrt ((11 + Real.sqrt 76) / 30) < (811 : ℝ) / 1000 := by
   have hq : 0 ≤ (11 + Real.sqrt 76) / 30 := by positivity
   have hs := Real.sq_sqrt hq
-  nlinarith [sqrt76_lt_4359_div_500, Real.sqrt_nonneg ((11 + Real.sqrt 76) / 30)]
+  nlinarith only [hs, sqrt76_lt_4359_div_500, Real.sqrt_nonneg ((11 + Real.sqrt 76) / 30)]
 
 /-- The bottom residual root `√((11 - √76)/30)` is below the printed `0.279`. -/
 lemma residualBottomRoot_lt_printed :
@@ -85,13 +78,13 @@ lemma residualBottomRoot_lt_printed :
   have h76 := sqrt76_le_eleven
   have hq : 0 ≤ (11 - Real.sqrt 76) / 30 := by positivity
   have hs := Real.sq_sqrt hq
-  nlinarith [sqrt76_gt_87_div_10, Real.sqrt_nonneg ((11 - Real.sqrt 76) / 30)]
+  nlinarith only [hs, sqrt76_gt_87_div_10, Real.sqrt_nonneg ((11 - Real.sqrt 76) / 30)]
 
 /-- The initial `sin Θ` estimate is below the printed decimal, for every `ε > 0`. -/
 lemma initial_sin_exact_lt_printed (ε : ℝ) (hε : 0 < ε) :
     residualTopSingularValue ε / 500 < (811 : ℝ) / 500000 * ε := by
   rw [residualTopSingularValue, abs_of_pos hε]
-  nlinarith [residualTopRoot_lt_printed]
+  nlinarith only [hε, residualTopRoot_lt_printed]
 
 /-- The initial Ky Fan 2-norm estimate is below the printed decimal, for every
 `ε > 0`. -/
@@ -99,7 +92,7 @@ lemma initial_kyFanTwo_exact_lt_printed (ε : ℝ) (hε : 0 < ε) :
     residualKyFanTwo ε / 500 < (109 : ℝ) / 50000 * ε := by
   rw [residualKyFanTwo, residualTopSingularValue, residualBottomSingularValue,
     abs_of_pos hε]
-  nlinarith [residualTopRoot_lt_printed, residualBottomRoot_lt_printed]
+  nlinarith only [hε, residualTopRoot_lt_printed, residualBottomRoot_lt_printed]
 
 /-- Exact normalized tangent bound obtained from the recentered residual. -/
 noncomputable def tangentThetaExactBound (ε : ℝ) : ℝ :=
@@ -138,14 +131,14 @@ private theorem ratio_strict_mono
     (hc : c ≤ C) (hC : C * ε < 1) :
     (a * ε) / (1 - c * ε) < (A * ε) / (1 - C * ε) := by
   have hdC : 0 < 1 - C * ε := by linarith
-  have hdc : 0 < 1 - c * ε := by nlinarith
+  have hdc : 0 < 1 - c * ε := by nlinarith only [hε, hc, hC]
   have hnum : a * ε < A * ε := mul_lt_mul_of_pos_right ha hε
   have hfirst : (a * ε) / (1 - c * ε) < (A * ε) / (1 - c * ε) :=
     div_lt_div_of_pos_right hnum hdc
   have hA0 : 0 ≤ A * ε := by
     have hA : 0 < A := lt_of_le_of_lt ha0 ha
     exact (mul_pos hA hε).le
-  have hden : 1 - C * ε ≤ 1 - c * ε := by nlinarith
+  have hden : 1 - C * ε ≤ 1 - c * ε := by nlinarith only [hε, hc]
   have hsecond : (A * ε) / (1 - c * ε) ≤ (A * ε) / (1 - C * ε) := by
     apply (div_le_div_iff₀ hdc hdC).2
     exact mul_le_mul_of_nonneg_left hden hA0
@@ -160,9 +153,9 @@ lemma tangentThetaExactBound_lt_printed (ε : ℝ)
         (1 - (7887 : ℝ) / 5000000 * ε) := by
   unfold tangentThetaExactBound
   apply ratio_strict_mono hε (by positivity)
-  · nlinarith [sqrt15_lt_3873_div_1000]
-  · nlinarith [ritzHighCoefficient_lt_printed]
-  · nlinarith
+  · nlinarith only [sqrt15_lt_3873_div_1000]
+  · nlinarith only [ritzHighCoefficient_lt_printed]
+  · nlinarith only [hε100]
 
 /-- The exact `tan 2Θ` bound is below the printed rational bound — twice the
 `tan Θ` numerator over the same denominator, so it needs the same `ε < 100`. -/
@@ -173,9 +166,9 @@ lemma tangentTwoThetaExactBound_lt_printed (ε : ℝ)
         (1 - (7887 : ℝ) / 5000000 * ε) := by
   unfold tangentTwoThetaExactBound
   apply ratio_strict_mono hε (by positivity)
-  · nlinarith [sqrt15_lt_3873_div_1000]
-  · nlinarith [ritzHighCoefficient_lt_printed]
-  · nlinarith
+  · nlinarith only [sqrt15_lt_3873_div_1000]
+  · nlinarith only [ritzHighCoefficient_lt_printed]
+  · nlinarith only [hε100]
 
 /-- The exact lower individual-angle tangent bound is below its printed rational
 bound, on `0 < ε < 100`. -/
@@ -186,9 +179,9 @@ lemma lowerIndividualTangentExactBound_lt_printed (ε : ℝ)
         (1 - (4227 : ℝ) / 10000000 * ε) := by
   unfold lowerIndividualTangentExactBound
   apply ratio_strict_mono hε (by positivity)
-  · nlinarith [sqrt30_lt_2739_div_500]
-  · nlinarith [ritzLowCoefficient_lt_printed]
-  · nlinarith
+  · nlinarith only [sqrt30_lt_2739_div_500]
+  · nlinarith only [ritzLowCoefficient_lt_printed]
+  · nlinarith only [hε100]
 
 /-- The exact upper individual-angle tangent bound is below its printed rational
 bound, on `0 < ε < 100`. -/
@@ -199,9 +192,9 @@ lemma upperIndividualTangentExactBound_lt_printed (ε : ℝ)
         (1 - (7887 : ℝ) / 5000000 * ε) := by
   unfold upperIndividualTangentExactBound
   apply ratio_strict_mono hε (by positivity)
-  · nlinarith [sqrt30_lt_2739_div_500]
-  · nlinarith [ritzHighCoefficient_lt_printed]
-  · nlinarith
+  · nlinarith only [sqrt30_lt_2739_div_500]
+  · nlinarith only [ritzHighCoefficient_lt_printed]
+  · nlinarith only [hε100]
 
 /-- The exact lower individual-angle bound is below its printed rational bound, on
 `0 < ε < 100`. -/
@@ -212,9 +205,9 @@ lemma lowerIndividualAngleExactBound_lt_printed (ε : ℝ)
         (1 - (43 : ℝ) / 100000 * ε) := by
   unfold lowerIndividualAngleExactBound
   apply ratio_strict_mono hε (by positivity)
-  · nlinarith [sqrt7_lt_53_div_20]
-  · nlinarith [ritzLowCoefficient_lt_printed]
-  · nlinarith
+  · nlinarith only [sqrt7_lt_53_div_20]
+  · nlinarith only [ritzLowCoefficient_lt_printed]
+  · nlinarith only [hε100]
 
 /-- The exact upper individual-angle bound is below its printed rational bound, on
 `0 < ε < 100`. -/
@@ -225,9 +218,9 @@ lemma upperIndividualAngleExactBound_lt_printed (ε : ℝ)
         (1 - (1 : ℝ) / 625 * ε) := by
   unfold upperIndividualAngleExactBound
   apply ratio_strict_mono hε (by positivity)
-  · nlinarith [sqrt7_lt_53_div_20]
-  · nlinarith [ritzHighCoefficient_lt_printed]
-  · nlinarith
+  · nlinarith only [sqrt7_lt_53_div_20]
+  · nlinarith only [ritzHighCoefficient_lt_printed]
+  · nlinarith only [hε100]
 
 /-! ## Printed equations as consequences of exact theorem outputs -/
 

@@ -5,12 +5,10 @@ Authors: Jon Crall, OpenAI GPT-5.6 Thinking
 -/
 module
 
-
 public import LeanPool.DavisKahan.ForTauCeti.Analysis.InnerProductSpace.LinearPMap.Closed
 public import LeanPool.DavisKahan.ForTauCeti.Analysis.InnerProductSpace.LinearPMap.Constructions
 public import LeanPool.DavisKahan.DavisKahan.BoundedOperator.Problem
 public import LeanPool.DavisKahan.DavisKahan.SpectralTheory.AbstractSpectrum
-public import Mathlib.Tactic
 
 /-!
 # A graph-Hilbert model for fourth-order endpoint traces

@@ -218,13 +218,13 @@ private theorem sum_mul_le_sum_top {n k : ℕ} (hk : k ≤ n) {lam c : Fin n →
       intro j hj
       have hjk : (j : ℕ) < k := (Finset.mem_filter.mp hj).2
       have hle : t ≤ lam j := hlam (Fin.le_def.mpr hjk.le)
-      nlinarith [mul_nonneg (sub_nonneg.mpr hle) (sub_nonneg.mpr (h1 j))]
+      nlinarith only [h1, hle, mul_nonneg (sub_nonneg.mpr hle) (sub_nonneg.mpr (h1 j))]
     have htail : ∀ j ∈ Finset.univ.filter (fun j : Fin n => ¬ (j : ℕ) < k),
         lam j * c j ≤ t * c j := by
       intro j hj
       have hjk : ¬ (j : ℕ) < k := (Finset.mem_filter.mp hj).2
       have hle : lam j ≤ t := hlam (Fin.le_def.mpr (Nat.le_of_not_lt hjk))
-      nlinarith [mul_nonneg (sub_nonneg.mpr hle) (h0 j)]
+      nlinarith only [h0, hle, mul_nonneg (sub_nonneg.mpr hle) (h0 j)]
     have hsplit := (Finset.sum_filter_add_sum_filter_not Finset.univ
       (fun j : Fin n => (j : ℕ) < k) (fun j => lam j * c j)).symm
     have hhead_eq : ∑ j ∈ Finset.univ.filter (fun j : Fin n => (j : ℕ) < k),
@@ -363,7 +363,7 @@ private theorem re_sum_inner_map_le_sum_singularValues_square {A : E →ₗ[𝕜
     rw [hterm i, ← hquad, ← hquad]
     have h1 : RCLike.re ⟪R (W.symm (u i)), R (v i)⟫_𝕜 ≤ ‖R (W.symm (u i))‖ * ‖R (v i)‖ :=
       (RCLike.re_le_norm _).trans (norm_inner_le_norm _ _)
-    nlinarith [sq_nonneg (‖R (W.symm (u i))‖ - ‖R (v i)‖)]
+    nlinarith only [h1, sq_nonneg (‖R (W.symm (u i))‖ - ‖R (v i)‖)]
   have hu' : Orthonormal 𝕜 (fun i => W.symm (u i)) := by
     rw [orthonormal_iff_ite] at hu ⊢
     intro i j

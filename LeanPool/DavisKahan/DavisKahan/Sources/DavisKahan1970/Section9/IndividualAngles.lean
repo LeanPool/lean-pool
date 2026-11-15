@@ -47,7 +47,7 @@ lemma combined_individual_coefficient_sq :
   have h3 : Real.sqrt (3 : ℝ) ^ 2 = 3 := Real.sq_sqrt (by norm_num)
   have h15 : Real.sqrt (15 : ℝ) ^ 2 = 15 := Real.sq_sqrt (by norm_num)
   unfold halfTanTwoPsiCoefficient tanEtaCoefficient
-  nlinarith
+  nlinarith only [h3, h15]
 
 /-- The combined coefficient itself, the nonnegative square root of the previous. -/
 lemma combined_individual_coefficient :
@@ -81,10 +81,10 @@ theorem individual_angle_le_exact_envelope
     positivity
   have hpsq : psi ^ 2 ≤
       (halfTanTwoPsiCoefficient * ε / denominator) ^ 2 := by
-    nlinarith
+    nlinarith only [hpsi0, hpsi]
   have hetasq : eta ^ 2 ≤
       (tanEtaCoefficient * ε / denominator) ^ 2 := by
-    nlinarith
+    nlinarith only [heta0, heta]
   have hcoeff := combined_individual_coefficient_sq
   have htargetsq : omega ^ 2 ≤
       ((Real.sqrt 7 / 10) * ε / denominator) ^ 2 := by
@@ -95,9 +95,9 @@ theorem individual_angle_le_exact_envelope
       _ = ((Real.sqrt 7 / 10) * ε / denominator) ^ 2 := by
         have h7 : Real.sqrt (7 : ℝ) ^ 2 = 7 := Real.sq_sqrt (by norm_num)
         field_simp [ne_of_gt hden]
-        nlinarith
+        nlinarith only [hcoeff, h7]
   have hright0 : 0 ≤ (Real.sqrt 7 / 10) * ε / denominator := by positivity
-  nlinarith
+  nlinarith only [htargetsq, hright0]
 
 /-! ## The two angles are controlled by their tangents
 
@@ -146,11 +146,11 @@ theorem arccos_ratio_lt_pi_div_four {p q : ℝ} (hq : 0 ≤ q) (hqp : q < p) :
       sq_nonneg (Real.sqrt 2 * Real.sqrt (p ^ 2 + q ^ 2) - 2 * p)]
   have hle : p / Real.sqrt (p ^ 2 + q ^ 2) ≤ 1 := by
     rw [div_le_one hs]
-    nlinarith [hsq, Real.sqrt_nonneg (p ^ 2 + q ^ 2)]
+    nlinarith only [hq, hqp, hs, hsq, hsq, Real.sqrt_nonneg (p ^ 2 + q ^ 2)]
   have h4 : Real.arccos (Real.sqrt 2 / 2) = Real.pi / 4 := by
     rw [← Real.cos_pi_div_four, Real.arccos_cos (by positivity) (by linarith [Real.pi_pos])]
   rw [← h4]
-  exact Real.arccos_lt_arccos (by nlinarith [Real.sqrt_nonneg 2]) hkey hle
+  exact Real.arccos_lt_arccos (by nlinarith only [Real.sqrt_nonneg 2]) hkey hle
 
 /-- Half the tangent of the doubled angle, in the two coordinates.  This is the
 exact `tan (2 psi) / 2` the Schur-complement reduction has to bound. -/
@@ -166,11 +166,11 @@ theorem half_tan_two_arccos_ratio {p q : ℝ} (hq : 0 ≤ q) (hqp : q < p) :
     have h1 : 1 - (p / Real.sqrt (p ^ 2 + q ^ 2)) ^ 2
         = (q / Real.sqrt (p ^ 2 + q ^ 2)) ^ 2 := by
       field_simp
-      nlinarith [hsq]
+      nlinarith only [hsq, hsq]
     rw [h1, Real.sqrt_sq (by positivity)]
     field_simp
   rw [Real.tan_two_mul, htan]
-  have hne : p ^ 2 - q ^ 2 ≠ 0 := by nlinarith
+  have hne : p ^ 2 - q ^ 2 ≠ 0 := by nlinarith only [hq, hqp]
   field_simp
 
 /-- **The individual-eigenvector envelope, from the spherical identity and the
