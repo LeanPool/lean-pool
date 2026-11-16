@@ -10,10 +10,10 @@ summary: A collection of general results in commutative algebra and neighbouring
   field with the same trace function are isomorphic, in any characteristic; that in prime
   characteristic p the Hasse derivatives of orders 0 < k < p^e vanish exactly on
   polynomials in X^(p^e); that tensoring with a finitely presented module commutes with
-  arbitrary products; that semilocal rings have stable range one; and that associated
+  arbitrary products; and that associated
   primes of F/N lie over p when F is flat and N lies over pF. Smaller results cover flat
   products, adic completeness along nilpotent ideals, Baer's criterion for I-primary
-  modules, Noetherian quasi-sober spaces, derivations, the group completion of a
+  modules, stable range one for semilocal rings, Noetherian quasi-sober spaces, derivations, the group completion of a
   commutative monoid, resultants of split polynomials, and the image of Frobenius in a
   normed field of characteristic p.
 branch: commutative algebra
@@ -35,7 +35,6 @@ main_declarations:
 - IsSimpleModule.nonempty_linearEquiv_of_trace_eq
 - Polynomial.forall_hasseDeriv_eq_zero_iff_exists_expand
 - Module.FinitePresentation.piRightHom_bijective
-- IsCoprime.exists_isUnit_add_mul
 - Submodule.IsAssociatedPrime.comap_eq_of_flat
 main_results:
 - declaration: Polynomial.intValuedBasis
@@ -67,10 +66,6 @@ main_results:
   informal: For a finitely presented R-module M and any family of R-modules P i, the
     canonical map from M ⊗ (Π i, P i) to Π i, M ⊗ P i is bijective.
   source_ref: The Stacks Project, Tag 059K, implication (1) ⇒ (2).
-- declaration: IsCoprime.exists_isUnit_add_mul
-  informal: In a commutative ring with finitely many maximal ideals, if a and b generate
-    the unit ideal then a + t b is a unit for some t; that is, semilocal rings have stable
-    range one.
 - declaration: Submodule.IsAssociatedPrime.comap_eq_of_flat
   informal: Let B be an A-algebra, F a B-module that is flat over A, p a prime of A and N
     a B-submodule of F whose underlying A-submodule is pF. Then every associated prime of

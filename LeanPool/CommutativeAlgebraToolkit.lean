@@ -40,8 +40,7 @@ Main declarations: `Polynomial.intValuedBasis`, `Polynomial.exists_eq_sum_intCas
   `isNoetherianRing_iff_forall_finitePresentation`, `Module.injective_iff_smul_surjective`,
   `IsSimpleModule.nonempty_linearEquiv_of_trace_eq`,
   `Polynomial.forall_hasseDeriv_eq_zero_iff_exists_expand`,
-  `Module.FinitePresentation.piRightHom_bijective`, `IsCoprime.exists_isUnit_add_mul`,
-  `Submodule.IsAssociatedPrime.comap_eq_of_flat`
+  `Module.FinitePresentation.piRightHom_bijective`, `Submodule.IsAssociatedPrime.comap_eq_of_flat`
 Tags: commutative-algebra, integer-valued-polynomials, injective-modules, hasse-derivatives
 MSC: 13C11, 13E05, 13F20, 13N15, 11C08
 -/
