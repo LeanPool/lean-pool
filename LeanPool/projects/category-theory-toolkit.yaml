@@ -14,7 +14,7 @@ summary: A collection of general results in category theory. Any adjunction rest
   are characterized by exactness and as composites of a pushout and a pullback square.
   Finally, a category with zero morphisms and binary biproducts in which every morphism
   with zero kernel and zero cokernel is invertible is preadditive. Two supporting files
-  package results Mathlib already proves in other forms, for use by these statements:
+  package results Mathlib already proves in other forms, for use by these statements,
   Beck's monadicity and comonadicity theorems as equivalences (a variant of Mac Lane,
   Theorem VI.7.1, for an equivalence rather than an isomorphism of categories), and the
   exactness criteria for pullback and pushout squares in abelian categories.
