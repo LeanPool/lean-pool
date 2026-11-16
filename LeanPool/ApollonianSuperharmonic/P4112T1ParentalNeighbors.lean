@@ -259,34 +259,28 @@ private theorem transpose_candidate :
         Zsqrtd.ext_iff]
       omega
 
-private theorem transpose_filter_card :
-    ∀ (P : FordFareyParameter),
-    let A := P4062T1RecursiveInteriors P
-    let E := (A 0 ∪ A 1) ∪ (A 2 ∪ A 3)
-    let candidate (z : GaussianInt) : Finset GaussianInt :=
-      {z + 1, z - 1, z + ⟨0, 1⟩, z - ⟨0, 1⟩}
-    let transpose (z : GaussianInt) : GaussianInt := ⟨z.im, z.re⟩
-    (∀ (z : GaussianInt), transpose (transpose z) = z) → ((∀ (z : GaussianInt), z ∈ E ↔ transpose
-        z ∈ E) → ((∀ (x : GaussianInt), ∀ (z : GaussianInt), z ∈ candidate x ↔ transpose z ∈
-        candidate (transpose x)) → (∀ (x : GaussianInt), (Finset.filter (fun z => z ∈ E)
-        (candidate x)).card =
-        (Finset.filter (fun z => z ∈ E) (candidate (transpose x))).card))) := by
+private theorem filter_card_of_involution {α : Type*} [DecidableEq α]
+    (E : Finset α) (candidate : α → Finset α) (f : α → α)
+    (hinvolutive : ∀ z, f (f z) = z)
+    (hmem : ∀ z, z ∈ E ↔ f z ∈ E)
+    (hcandidate : ∀ x z, z ∈ candidate x ↔ f z ∈ candidate (f x)) (x : α) :
+    (Finset.filter (fun z => z ∈ E) (candidate x)).card =
+      (Finset.filter (fun z => z ∈ E) (candidate (f x))).card := by
   classical
-  intro P A E candidate transpose transpose_involutive transpose_mem transpose_candidate x
-  apply Finset.card_bij (fun z hz => transpose z)
+  apply Finset.card_bij (fun z _ => f z)
   · intro z hz
     rcases Finset.mem_filter.mp hz with ⟨hzC, hzE⟩
     exact Finset.mem_filter.mpr
-      ⟨(transpose_candidate x z).mp hzC, (transpose_mem z).mp hzE⟩
+      ⟨(hcandidate x z).mp hzC, (hmem z).mp hzE⟩
   · intro z hz w hw h
-    have := congrArg transpose h
-    simpa [transpose_involutive] using this
+    have := congrArg f h
+    simpa only [hinvolutive] using this
   · intro z hz
     rcases Finset.mem_filter.mp hz with ⟨hzC, hzE⟩
-    refine ⟨transpose z, Finset.mem_filter.mpr ⟨?_, ?_⟩, ?_⟩
-    · exact (transpose_candidate (transpose x) z).mp hzC
-    · exact (transpose_mem z).mp hzE
-    · simp [transpose_involutive]
+    refine ⟨f z, Finset.mem_filter.mpr ⟨?_, ?_⟩, ?_⟩
+    · simpa only [hinvolutive] using (hcandidate (f x) z).mp hzC
+    · exact (hmem z).mp hzE
+    · exact hinvolutive z
 
 private theorem rowRVertical :
     ∀ (P : FordFareyParameter), (2 < P.q) → (
@@ -421,58 +415,7 @@ private theorem rowR :
   · exact rowRVertical P hP q1pos q2posI hsumN hmem _ v hb ⟨rfl, hv⟩ ho
   · by_cases hroot : u = P.q₁
     · subst u
-      have hleft0 : (⟨(P.q₁ : Int)-1, (P.q₂ : Int)⟩ : GaussianInt) ∈ E := by
-        apply (hmem _ _).2
-        left
-        constructor <;> omega
-      have hup0 : (⟨(P.q₁ : Int), (P.q₂ : Int)+1⟩ : GaussianInt) ∈ E := by
-        apply (hmem _ _).2
-        right
-        left
-        constructor <;> omega
-      have hright0 : (⟨(P.q₁ : Int)+1, (P.q₂ : Int)⟩ : GaussianInt) ∉ E := by
-        intro hz
-        have hz' := (hmem _ _).1 hz
-        omega
-      have hdown0 : (⟨(P.q₁ : Int), (P.q₂ : Int)-1⟩ : GaussianInt) ∉ E := by
-        intro hz
-        have hz' := (hmem _ _).1 hz
-        omega
-      have hleft : ((⟨(P.q₁ : Int), (P.q₂ : Int)⟩ : GaussianInt) - 1) ∈ E := by
-        rw [show (⟨(P.q₁ : Int), (P.q₂ : Int)⟩ : GaussianInt) - 1 =
-          ⟨(P.q₁ : Int)-1, (P.q₂ : Int)⟩ by ext <;> simp [Zsqrtd.re_sub, Zsqrtd.im_sub]]
-        exact hleft0
-      have hup : ((⟨(P.q₁ : Int), (P.q₂ : Int)⟩ : GaussianInt) + ⟨0, 1⟩) ∈ E := by
-        rw [show (⟨(P.q₁ : Int), (P.q₂ : Int)⟩ : GaussianInt) + ⟨0, 1⟩ =
-          ⟨(P.q₁ : Int), (P.q₂ : Int)+1⟩ by ext <;> simp []]
-        exact hup0
-      have hright : ((⟨(P.q₁ : Int), (P.q₂ : Int)⟩ : GaussianInt) + 1) ∉ E := by
-        rw [show (⟨(P.q₁ : Int), (P.q₂ : Int)⟩ : GaussianInt) + 1 =
-          ⟨(P.q₁ : Int)+1, (P.q₂ : Int)⟩ by ext <;> simp [Zsqrtd.re_add, Zsqrtd.im_add]]
-        exact hright0
-      have hdown : ((⟨(P.q₁ : Int), (P.q₂ : Int)⟩ : GaussianInt) - ⟨0, 1⟩) ∉ E := by
-        rw [show (⟨(P.q₁ : Int), (P.q₂ : Int)⟩ : GaussianInt) - ⟨0, 1⟩ =
-          ⟨(P.q₁ : Int), (P.q₂ : Int)-1⟩ by ext <;> simp [Zsqrtd.re_sub, Zsqrtd.im_sub]]
-        exact hdown0
-      have hne : ((⟨(P.q₁ : Int), (P.q₂ : Int)⟩ : GaussianInt) - 1) ≠
-          (⟨(P.q₁ : Int), (P.q₂ : Int)⟩ + ⟨0, 1⟩) := by
-        intro he
-        have hr := congrArg (fun z : GaussianInt => z.re) he
-        simp only [Zsqrtd.re_sub, Zsqrtd.re_add, Zsqrtd.re_one] at hr
-        omega
-      have hne' : (⟨(P.q₁ : Int)-1, (P.q₂ : Int)⟩ : GaussianInt) ≠
-          ⟨(P.q₁ : Int), (P.q₂ : Int)+1⟩ := by
-        intro he
-        have hr := congrArg (fun z : GaussianInt => z.re) he
-        simp at hr
-      have hneDirect : ((⟨(P.q₁ : Int), (P.q₂ : Int)⟩ : GaussianInt) - 1) ≠
-          ⟨(P.q₁ : Int), (P.q₂ : Int)+1⟩ := by
-        intro he
-        have hr := congrArg (fun z : GaussianInt => z.re) he
-        simp at hr
-      simp [Finset.filter_insert, Finset.filter_singleton,
-        hleft, hright, hdown, hup0,
-        hneDirect]
+      exact rowRVertical P hP q1pos q2posI hsumN hmem _ _ hb ⟨rfl, le_rfl⟩ ho
     · have hult : P.q₁ < u := by omega
       have hdown0 : (⟨u, (P.q₂ : Int)-1⟩ : GaussianInt) ∈ E := by
         apply (hmem _ _).2
@@ -750,35 +693,6 @@ private theorem reflect_candidate :
         Zsqrtd.ext_iff]
       omega
 
-private theorem reflect_filter_card :
-    ∀ (P : FordFareyParameter),
-    let A := P4062T1RecursiveInteriors P
-    let E := (A 0 ∪ A 1) ∪ (A 2 ∪ A 3)
-    let candidate (z : GaussianInt) : Finset GaussianInt :=
-      {z + 1, z - 1, z + ⟨0, 1⟩, z - ⟨0, 1⟩}
-    let reflect (z : GaussianInt) : GaussianInt :=
-      ⟨(P.q : Int) - z.re, (P.q : Int) - z.im⟩
-    (∀ (z : GaussianInt), reflect (reflect z) = z) → ((∀ (z : GaussianInt), z ∈ E ↔ reflect z ∈
-        E) → ((∀ (x : GaussianInt), ∀ (z : GaussianInt), z ∈ candidate x ↔ reflect z ∈ candidate
-        (reflect x)) → (∀ (x : GaussianInt), (Finset.filter (fun z => z ∈ E) (candidate x)).card =
-        (Finset.filter (fun z => z ∈ E) (candidate (reflect x))).card))) := by
-  classical
-  intro P A E candidate reflect reflect_involutive reflect_mem reflect_candidate x
-  apply Finset.card_bij (fun z hz => reflect z)
-  · intro z hz
-    rcases Finset.mem_filter.mp hz with ⟨hzC, hzE⟩
-    exact Finset.mem_filter.mpr
-      ⟨(reflect_candidate x z).mp hzC, (reflect_mem z).mp hzE⟩
-  · intro z hz w hw h
-    have := congrArg reflect h
-    simpa [reflect_involutive] using this
-  · intro z hz
-    rcases Finset.mem_filter.mp hz with ⟨hzC, hzE⟩
-    refine ⟨reflect z, Finset.mem_filter.mpr ⟨?_, ?_⟩, ?_⟩
-    · simpa [reflect_involutive] using (reflect_candidate (reflect x) z).mp hzC
-    · exact (reflect_mem z).mp hzE
-    · simp [reflect_involutive]
-
 end ParentalNeighborLemmas
 
 theorem P4112T1ParentalNeighbors (P : FordFareyParameter) (hP : 2 < P.q) :
@@ -846,8 +760,8 @@ theorem P4112T1ParentalNeighbors (P : FordFareyParameter) (hP : 2 < P.q) :
   have transpose_filter_card (x : GaussianInt) :
       (Finset.filter (fun z => z ∈ E) (candidate x)).card =
         (Finset.filter (fun z => z ∈ E) (candidate (transpose x))).card :=
-            ParentalNeighborLemmas.transpose_filter_card P transpose_involutive transpose_mem
-            transpose_candidate x
+    ParentalNeighborLemmas.filter_card_of_involution E candidate transpose
+      transpose_involutive transpose_mem transpose_candidate x
   have rowR (u v : Int) (hb : 1 ≤ u ∧ u ≤ (P.q : Int)-1 ∧
       1 ≤ v ∧ v ≤ (P.q : Int)-1)
       (hl : (u = P.q₁ ∧ v ≤ P.q₂) ∨ (v = P.q₂ ∧ P.q₁ ≤ u))
@@ -877,8 +791,8 @@ theorem P4112T1ParentalNeighbors (P : FordFareyParameter) (hP : 2 < P.q) :
   have reflect_filter_card (x : GaussianInt) :
       (Finset.filter (fun z => z ∈ E) (candidate x)).card =
         (Finset.filter (fun z => z ∈ E) (candidate (reflect x))).card :=
-            ParentalNeighborLemmas.reflect_filter_card P reflect_involutive reflect_mem
-            reflect_candidate x
+    ParentalNeighborLemmas.filter_card_of_involution E candidate reflect
+      reflect_involutive reflect_mem reflect_candidate x
   dsimp [B] at hx
   fin_cases j
   · rcases x with ⟨u, v⟩

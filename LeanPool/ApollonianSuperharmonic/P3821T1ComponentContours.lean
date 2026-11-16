@@ -1517,30 +1517,6 @@ private theorem hpgrid :
 private abbrev hqgrid :=
   ApollonianSuperharmonic.ComponentContourDetails.hpgrid
 
-private theorem hpoint :
-    let corner (u : GaussianInt) : Fin 4 → GaussianInt :=
-      ![u, u + 1, u + 1 + ⟨0, 1⟩, u + ⟨0, 1⟩]
-    ∀ (η : ℝ), ∀ (εp : ℝ), ∀ (εq : ℝ),
-    let h : ℝ := min η (min εp εq) / 10
-    ∀ (s : ℝ), ∀ (t : ℝ),
-    let o : ℂ := (h * s : ℝ) + (h * t : ℝ) * Complex.I
-    ∀ (n : ℕ), ∀ (loops : Fin n → C(Circle, ℂ)),
-    let g : Fin n → C(Circle, ℂ) := fun j =>
-      ⟨fun z => (h : ℂ) * loops j z + o, (continuous_const.mul (loops j).continuous).add
-          continuous_const⟩
-    ∀ (j : Fin n), ∀ (z : Circle), ∀ (a : GaussianInt), ∀ (k : Fin (4 : ℕ)), ∀ (t₀ :
-        (↑unitInterval : Type)), ((loops j : Circle → ℂ) z = (Path.segment
-        ((GaussianInt.toComplex : GaussianInt → ℂ) ((fun (u : GaussianInt) => ![u, u + (1 :
-        GaussianInt), u + (1 : GaussianInt) + ⟨(0 : ℤ), (1 : ℤ)⟩, u + ⟨(0 : ℤ), (1 : ℤ)⟩]) a k))
-        ((GaussianInt.toComplex : GaussianInt → ℂ) ((fun (u : GaussianInt) => ![u, u + (1 :
-        GaussianInt), u + (1 : GaussianInt) + ⟨(0 : ℤ), (1 : ℤ)⟩, u + ⟨(0 : ℤ), (1 : ℤ)⟩]) a (k +
-        (1 : Fin (4 : ℕ))))) : (↑unitInterval : Type) → ℂ) t₀) → (g j z = (h : ℂ) * Path.segment
-        (corner a k : ℂ) (corner a (k + 1) : ℂ) t₀ + o) := by
-  classical
-  intro corner η εp εq h s t o n loops g j z a k t₀ ht
-  dsimp [g]
-  rw [ht]
-
 end ComponentContourDetails
 
 theorem P3821T1ComponentContours (K N : Set ℂ) (hK : IsCompact K)
@@ -1698,8 +1674,10 @@ theorem P3821T1ComponentContours (K N : Set ℂ) (hK : IsCompact K)
     obtain ⟨a, ha, k, hk, t₀, ht⟩ := htrace j z
     have hVx : (h : ℂ) * Path.segment (corner a k : ℂ) (corner a (k + 1) : ℂ) t₀ + o ∈ V :=
       scaled_edge_in_V a k t₀ ha hk
-    have hpoint : g j z = (h : ℂ) * Path.segment (corner a k : ℂ) (corner a (k + 1) : ℂ) t₀ + o
-        := ComponentContourDetails.hpoint η εp εq s t n loops j z a k t₀ ht
+    have hpoint :
+        g j z = (h : ℂ) * Path.segment (corner a k : ℂ) (corner a (k + 1) : ℂ) t₀ + o := by
+      dsimp [g]
+      rw [ht]
     rw [hpoint]
     have hnot := hVx.2
     simp only [Set.mem_compl_iff, Set.mem_insert_iff, Set.mem_singleton_iff, not_or] at hnot

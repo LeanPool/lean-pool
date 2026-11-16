@@ -1795,60 +1795,6 @@ private theorem siblingsPair :
       rw [hcommon, himage]
       exact (convexHull_pair (v e.2.1) (v z)).symm
 
-private theorem hnotGactual :
-    (by
-      classical
-      exact
-        ∀ (r : Nat), ∀ (n : Nat), ∀ (q : P3381T1PolygonBoundary r), ∀ (p :
-            P3381T1PolygonBoundary n), ∀ (s : P3475T1BoundarySubdivision q p), ∀ (X : Set
-            (Real × Real)), ∀ (K : Set (Real × Real)), ∀ (t : P3475T1TriangleTree q X K),
-        let c := P3523T1InsertionConstruction s t
-        ∀ (h : ℕ), ∀ (G : Finset (Fin (n + (3 : ℕ)))), ∀ (hh : h < c.steps.length),
-        let e := c.steps.get ⟨h, hh⟩
-        ∀ (G₀ : Finset (Fin (n + (3 : ℕ)))), (¬(e.1 ∈ G₀ ∧ e.2.2 ∈ G₀)) → ((G = G₀) → (¬ (e.1 ∈ G
-            ∧ e.2.2 ∈ G))) ) := by
-  classical
-  intro r n q p s X K t c h G hh e G₀ hnotG hGsame hit
-  exact hnotG ⟨hGsame ▸ hit.1, hGsame ▸ hit.2⟩
-
-private theorem hdG :
-    (by
-      classical
-      exact
-        ∀ (r : Nat), ∀ (n : Nat), ∀ (q : P3381T1PolygonBoundary r), ∀ (p :
-            P3381T1PolygonBoundary n), ∀ (s : P3475T1BoundarySubdivision q p), ∀ (X : Set
-            (Real × Real)), ∀ (K : Set (Real × Real)), ∀ (t : P3475T1TriangleTree q X K),
-        let c := P3523T1InsertionConstruction s t
-        ∀ (h : ℕ), ∀ (hh : h < c.steps.length),
-        let e := c.steps.get ⟨h, hh⟩
-        (((P3523T1InsertionConstruction s t).steps.get ⟨h, hh⟩).2.1 ∉
-            (P3523T1InsertionConstruction s t).vertices h) → (∀ (G₀ : Finset (Fin (n + (3 :
-            ℕ)))), (G₀ ⊆ (P3523T1InsertionConstruction s t).vertices h) → (e.2.1 ∉ G₀)) ) := by
-  classical
-  intro r n q p s X K t c h hh e hdV G₀ hG₀subset hd
-  exact hdV (hG₀subset hd)
-
-private theorem hdGactual :
-    (by
-      classical
-      exact
-        ∀ (r : Nat), ∀ (n : Nat), ∀ (q : P3381T1PolygonBoundary r), ∀ (p :
-            P3381T1PolygonBoundary n), ∀ (s : P3475T1BoundarySubdivision q p), ∀ (X : Set
-            (Real × Real)), ∀ (K : Set (Real × Real)), ∀ (t : P3475T1TriangleTree q X K),
-        let c := P3523T1InsertionConstruction s t
-        ∀ (h : ℕ), ∀ (G : Finset (Fin (n + (3 : ℕ)))), ∀ (hh : h < c.steps.length),
-        let e := c.steps.get ⟨h, hh⟩
-        ∀ (G₀ : Finset (Fin (n + (3 : ℕ)))), (G = G₀) → ((e.2.1 ∉ G₀) → (e.2.1 ∉ G)) ) := by
-  classical
-  intro r n q p s X K t c h G hh e G₀ hGsame hdG hd
-  exact hdG (hGsame ▸ hd)
-
-private abbrev hnotFactual := ApollonianSuperharmonic.FacialInsertionGeometry.hnotGactual
-
-private abbrev hdF := ApollonianSuperharmonic.FacialInsertionGeometry.hdG
-
-private abbrev hdFactual := ApollonianSuperharmonic.FacialInsertionGeometry.hdGactual
-
 private theorem enumUnion :
     (by
       classical
@@ -2422,12 +2368,14 @@ private theorem pairState :
           have hparentG := ih hleFace F₀ hF₀ G hGparent
           obtain ⟨z, haz, hbz, hFeq, hleftFace, hrightFace,
               u, hu0, hu1, hvalue, hgeo⟩ := splitFacts F₀ hF₀ hhitF
+          have hdG : e.2.1 ∉ G := by
+            intro hd
+            exact hdV (hG₀subset (hGsame ▸ hd))
+          have hnotGactual : ¬ (e.1 ∈ G ∧ e.2.2 ∈ G) := by
+            intro hit
+            exact hnotG ⟨hGsame ▸ hit.1, hGsame ▸ hit.2⟩
           have hmixed := mixedPair v vinj e.1 e.2.1 e.2.2 z
-            hab haz hbz F₀ G hFeq hleftFace hrightFace (FacialInsertionGeometry.hdGactual r n q
-                p s X K t h G hh G₀ hGsame (FacialInsertionGeometry.hdG r n q p s X K t h hh
-                hdV G₀ hG₀subset)) (FacialInsertionGeometry.hnotGactual r n q p s X K t h G hh
-                G₀ hnotG hGsame)
-              hparentG hgeo
+            hab haz hbz F₀ G hFeq hleftFace hrightFace hdG hnotGactual hparentG hgeo
           rcases hchildrenF with hFL | hFR
           · rw [hFL]
             exact hmixed.1
@@ -2440,12 +2388,14 @@ private theorem pairState :
           have hparentF := ih hleFace G₀ hG₀ F hFparent
           obtain ⟨z, haz, hbz, hFeq, hleftFace, hrightFace,
               u, hu0, hu1, hvalue, hgeo⟩ := splitFacts G₀ hG₀ hhitG
+          have hdF : e.2.1 ∉ F := by
+            intro hd
+            exact hdV (hF₀subset (hFsame ▸ hd))
+          have hnotFactual : ¬ (e.1 ∈ F ∧ e.2.2 ∈ F) := by
+            intro hit
+            exact hnotF ⟨hFsame ▸ hit.1, hFsame ▸ hit.2⟩
           have hmixed := mixedPair v vinj e.1 e.2.1 e.2.2 z
-            hab haz hbz G₀ F hFeq hleftFace hrightFace (FacialInsertionGeometry.hdFactual r n q
-                p s X K t h F hh F₀ hFsame (FacialInsertionGeometry.hdF r n q p s X K t h hh
-                hdV F₀ hF₀subset)) (FacialInsertionGeometry.hnotFactual r n q p s X K t h F hh
-                F₀ hnotF hFsame)
-              hparentF hgeo
+            hab haz hbz G₀ F hFeq hleftFace hrightFace hdF hnotFactual hparentF hgeo
           rcases hchildrenG with hGL | hGR
           · rw [hGL]
             exact hmixed.2.2.1

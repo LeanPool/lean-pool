@@ -774,35 +774,6 @@ private theorem hdisp :
     (BandPackingSymmetryReversesOrientation g) delta s a a'
     linNeg linQuarter hphase
 
-private theorem htile :
-    (by
-      classical
-      exact
-        ∀ (g : BandPackingSymmetry), ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (i : Fin (3 :
-            ℕ)), ∀ (s : Fin (4 : ℕ)), ∀ (delta : Bool), ∀ (T : ProtoTile),
-        let q' := BandPackingSymmetryQuadrupleAction g q
-        let sigma : Fin 3 → Fin 3 := fun j =>
-          if BandPackingSymmetryReversesOrientation g then -j else j
-        let s' : Fin 4 := if BandPackingSymmetryReversesOrientation g then
-          -s - 1 + (if delta then 2 else 0) else s + (if delta then 2 else 0)
-        let a := BandVectors.1 (q i.succ) (q 0)
-        let b := BandVectors.1 (q 0) (q i.succ)
-        let a' := BandVectors.1 (q' (sigma i).succ) (q' 0)
-        let b' := BandVectors.1 (q' 0) (q' (sigma i).succ)
-        let d := (⟨0, 1⟩ : GaussianInt)^s.val * (if Even s.val then b else a)
-        let d' := (⟨0, 1⟩ : GaussianInt)^s'.val *
-          (if Even s'.val then b' else a')
-        let oldRight := TileTranslation T d
-        let newRight := TileTranslation (BandPackingSymmetryTileAction g T) d'
-        (BandPackingSymmetryVectorAction g d = d') → ((∀ (T : ProtoTile), ∀ (v : GaussianInt),
-            BandPackingSymmetryTileAction g (TileTranslation T v) = TileTranslation
-            (BandPackingSymmetryTileAction g T) (BandPackingSymmetryVectorAction g v)) →
-            (BandPackingSymmetryTileAction g oldRight = newRight)) ) := by
-  classical
-  intro g q i s delta T q' sigma s' a b a' b' d d' oldRight newRight hdisp htranslation
-  dsimp [oldRight, newRight]
-  rw [htranslation T d, hdisp]
-
 private theorem hinjAt948 :
     (by
       classical
@@ -819,38 +790,6 @@ private theorem hinjAt948 :
     _ = BandPackingSymmetryVectorAction inv
         (BandPackingSymmetryVectorAction g v) := congrArg _ huv
     _ = v := hleft v
-
-private theorem hfoot :
-    (by
-      classical
-      exact
-        ∀ (g : BandPackingSymmetry), ∀ (q : Fin (4 : ℕ) → CircleCoordinates), ∀ (i : Fin (3 :
-            ℕ)), ∀ (s : Fin (4 : ℕ)), ∀ (delta : Bool), ∀ (T : ProtoTile),
-        let q' := BandPackingSymmetryQuadrupleAction g q
-        let sigma : Fin 3 → Fin 3 := fun j =>
-          if BandPackingSymmetryReversesOrientation g then -j else j
-        let s' : Fin 4 := if BandPackingSymmetryReversesOrientation g then
-          -s - 1 + (if delta then 2 else 0) else s + (if delta then 2 else 0)
-        let a := BandVectors.1 (q i.succ) (q 0)
-        let b := BandVectors.1 (q 0) (q i.succ)
-        let a' := BandVectors.1 (q' (sigma i).succ) (q' 0)
-        let b' := BandVectors.1 (q' 0) (q' (sigma i).succ)
-        let d := (⟨0, 1⟩ : GaussianInt)^s.val * (if Even s.val then b else a)
-        let d' := (⟨0, 1⟩ : GaussianInt)^s'.val *
-          (if Even s'.val then b' else a')
-        let oldRight := TileTranslation T d
-        let newRight := TileTranslation (BandPackingSymmetryTileAction g T) d'
-        (∀ (T : ProtoTile), FootprintVertices (BandPackingSymmetryTileAction g T) =
-            BandPackingSymmetryVectorAction g '' FootprintVertices T) →
-            ((BandPackingSymmetryTileAction g oldRight = newRight) → (FootprintVertices newRight
-            = BandPackingSymmetryVectorAction g '' FootprintVertices oldRight)) ) := by
-  classical
-  intro g q i s delta T q' sigma s' a b a' b' d d' oldRight newRight hfootprint htile
-  calc
-    FootprintVertices newRight =
-        FootprintVertices (BandPackingSymmetryTileAction g oldRight) :=
-      congrArg FootprintVertices htile.symm
-    _ = BandPackingSymmetryVectorAction g '' FootprintVertices oldRight := hfootprint oldRight
 
 end MarkedCovarianceGeometry
 
@@ -1161,12 +1100,19 @@ theorem BandPackingSymmetryMarkedDataCovariance :
         hphase (allNeg g) (allQuarter g)
     rcases BandPackingSymmetryTilingTransport g with
       ⟨_, _, _, _, _, _, htranslation, hfootprint, _, _, _⟩
-    have htile := MarkedCovarianceGeometry.htile g q i s delta T hdisp htranslation
+    have htile : BandPackingSymmetryTileAction g oldRight = newRight := by
+      dsimp [oldRight, newRight]
+      rw [htranslation T d, hdisp]
     refine ⟨htile, ?_⟩
     have hinj := MarkedCovarianceGeometry.hinjAt948 g
     have hfoot : FootprintVertices newRight =
-        BandPackingSymmetryVectorAction g '' FootprintVertices oldRight :=
-            MarkedCovarianceGeometry.hfoot g q i s delta T hfootprint htile
+        BandPackingSymmetryVectorAction g '' FootprintVertices oldRight := by
+      calc
+        FootprintVertices newRight =
+            FootprintVertices (BandPackingSymmetryTileAction g oldRight) :=
+          congrArg FootprintVertices htile.symm
+        _ = BandPackingSymmetryVectorAction g '' FootprintVertices oldRight :=
+          hfootprint oldRight
     rw [hfoot]
     change x ∈ FootprintVertices oldRight ↔
       BandPackingSymmetryVectorAction g x ∈
