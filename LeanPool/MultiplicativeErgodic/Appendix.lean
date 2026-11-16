@@ -1168,11 +1168,13 @@ instance : SeparableSpace Y := by
   rw [← isSeparable_univ_iff]
   exact hsep.closure.mono fun f _ => hdense f
 
-/-- **Example \ref{measdisaster}** (Horan's counterexample, from J. A. Horan's PhD thesis,
-University of Victoria, 2020, to the measurability claim of González-Tokman and Quas). On the
-separable Banach space `ℓ¹(ℤ)`, every `V_ω = ker φ_ω` is a closed complemented subspace, but no
-measurable map into `𝒢X` takes the value `V_ω` at every `ω ∈ {±1}^ℤ`: separability of `X`
-alone does not make the slow spaces measurable. -/
+/-- **Example \ref{measdisaster}.** A Boolean, `ℤ`-indexed adaptation of the static
+kernel-family argument in George Lee, *Constructing the Oseledets decomposition with subspace
+growth estimates* (2024), Appendix, Example 35, p. 418 (DOI: 10.1090/btran/146), and
+*Some results on linear dynamical systems* (2023), §6.1.5, Lemma 65, pp. 57–58.
+Lee's preceding discussion credits Horan's thesis for the slow-space measurability issue.
+On `ℓ¹(ℤ)`, every `V ω` is closed complemented, but no Grassmannian-valued map measurable
+for the product measurable space on `ℤ → Bool` agrees with this kernel family everywhere. -/
 theorem measdisaster :
     SeparableSpace Y ∧ (∀ ω, (V ω).ClosedComplemented) ∧
       ¬ ∃ W : (ℤ → Bool) → Grassmannian Y, Measurable W ∧ ∀ ω, (W ω).1 = V ω := by
