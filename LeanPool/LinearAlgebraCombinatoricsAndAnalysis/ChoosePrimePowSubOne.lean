@@ -23,7 +23,7 @@ congruent to `(-1) ^ k` modulo `p`; in particular `p` does not divide it.
 public section
 
 open Finset hiding choose
-open Nat Polynomial
+open Nat
 namespace Choose
 variable {n k a b p : ℕ} [Fact p.Prime]
 /-- For primes `p` and `k ≤ p ^ a - 1`, `choose (p ^ a - 1) k` is congruent to `(-1) ^ k`

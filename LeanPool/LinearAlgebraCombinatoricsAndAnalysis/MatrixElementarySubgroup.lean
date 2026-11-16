@@ -10,6 +10,8 @@ public import Mathlib.Data.Matrix.Block
 public import Mathlib.GroupTheory.IsPerfect
 public import Mathlib.GroupTheory.Commutator.Basic
 public import Mathlib.Algebra.Group.Commutator
+public import Mathlib.Tactic.NoncommRing
+public import Mathlib.Tactic.Abel
 
 /-!
 # Elementary matrices over a noncommutative ring: perfectness and the Whitehead lemma
@@ -81,7 +83,7 @@ def transvectionUnit {i j : n} (h : i ≠ j) (a : A) : (Matrix n n A)ˣ where
 
 @[simp] theorem transvectionUnit_inv_val {i j : n} (h : i ≠ j) (a : A) :
     (((transvectionUnit h a)⁻¹ : (Matrix n n A)ˣ) : Matrix n n A) = 1 - single i j a := by
-  show 1 + single i j (-a) = _
+  change 1 + single i j (-a) = _
   rw [← single_neg, ← sub_eq_add_neg]
 
 /-- The commutator formula: for `i, k, j` pairwise distinct,
