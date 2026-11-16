@@ -26,33 +26,40 @@ production `LeanPool.lean` or loads an import-all Lean environment. After local
 analysis, it records external names from dependency environments and renders all
 local module records directly from the database.
 
-Four sequential analysis stages each allow 90 minutes of analysis. They restore
-the newest checkpoint compatible with the toolchain, dependency and doc-gen pins,
-then process modules in dependency order in batches of 128. The checkpoint
-records each completed project with a fingerprint of its sources and Lake's
-content hashes of its compiled modules, including modules it imports from
-other projects (read from Lake's per-module import inventories). Unchanged
-projects are not handed to Lake again, so a merge re-analyzes only the projects
-it touched and their importers, and a pool option change re-analyzes only
-projects whose compiled modules changed. Changes
-to the toolchain, dependency pins, doc-gen or linking policy restart every
-project; Lake's per-module traces still apply to every project it is given.
-Modules deleted from the pool are removed from the database together with
-their markers before analysis.
+Four sequential analysis stages each allow 150 minutes, including any
+compilation, and are skipped once analysis is complete. They restore the newest checkpoint compatible
+with the toolchain, dependency and doc-gen pins. Lake first brings the compiled
+pool and doc-gen's prerequisites up to date. Each module is then analyzed by its
+own doc-gen process, four at a time, one project after another. doc-gen's
+`docInfo` Lake facet is not used: Lake does not bound the analyzers it starts at
+once, and every invocation reloads the pool's import graph.
 
-Before each batch, the runner snapshots the database and its markers. If the
-batch times out, its process group is stopped and that pair is restored before
-the completed work is saved. A build error fails the stage and does not publish
-a checkpoint from the failed batch. Every saved database passes SQLite integrity
-and WAL checks. Checkpoint keys include the run, attempt and stage; cache
-maintenance retains the latest saved main checkpoint.
+The checkpoint records each completed project with a fingerprint of its sources
+and Lake's content hashes of its compiled modules, including modules it imports
+from other projects (read from Lake's per-module import inventories). For an
+unfinished project it records the modules already analyzed. Unchanged projects
+are not analyzed again, so a merge re-analyzes only the projects it touched and
+their importers, and a pool option change re-analyzes only projects whose
+compiled modules changed. Changes to the toolchain, dependency pins, doc-gen or
+linking policy restart every project. Modules deleted from the pool are removed
+from the database before analysis.
+
+doc-gen replaces a module's records in one SQLite transaction, so an interrupted
+analysis leaves that module's previous records and the database needs no
+rollback. A stage withdraws the saved progress record before it prepares or
+analyzes anything and rewrites it without the changed projects, so a failed
+stage cannot leave an old completion record beside newer records. When its
+allowance ends, it starts no further analyses and saves what finished. An analysis error, or one analysis running for 30 minutes, fails
+the stage, which then saves no checkpoint. Every saved database passes SQLite
+integrity and WAL checks. Checkpoint keys include the run, attempt and stage;
+cache maintenance retains the latest saved main checkpoint.
 
 If all four allowances are used, the run reports failure and leaves the site
 unchanged. The next daily or manually dispatched run resumes saved progress.
 Repeated no-progress failures require diagnosis rather than repeated retries.
 
-HTML rendering has its own job budget and requires complete analysis for the
-same snapshot. Validation requires a page for every local module, rejects
+HTML rendering has its own job budget. It compiles the pool the same way first
+and requires complete analysis for the same snapshot. Validation requires a page for every local module, rejects
 accidentally rendered dependency trees and verifies the source marker when the
 two sites are assembled. Announcement jobs continue to defer projects whose
 published documentation is unavailable.
@@ -71,6 +78,6 @@ PYTHONPATH=python python3 -m lean_pool.documentation render
 ```
 
 Repeat `batch` until complete before running `render`. Preserve the whole
-`docbuild/.lake/build` tree together: a marker alone does not contain its SQLite
-documentation data. Workflow artifacts retain analysis progress for diagnosis;
+`docbuild/.lake/build` tree together: the progress file describes the SQLite
+database beside it. Workflow artifacts retain analysis progress for diagnosis;
 GitHub Actions reports publishing failures separately from PR validation.

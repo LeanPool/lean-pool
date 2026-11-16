@@ -21,9 +21,6 @@ permissions:
   contents: read
   actions: write
 env:
-  # Limit ordinary Lake workers and inherited Lean threads. Dependency waits
-  # can temporarily exceed this, so documentation.py also bounds target batches.
-  LEAN_NUM_THREADS: '2'
   DOCGEN_LOCAL_MODULE_ROOTS: LeanPool
   DOCGEN_DEPS_DOCS_URL: https://leanprover-community.github.io/mathlib4_docs
   DOCGEN_DEPS_DOCS_URLS: TauCeti=https://taucetiproject.github.io/TauCeti/docs
@@ -110,7 +107,10 @@ jobs:
     - name: Analyze a bounded batch
       id: analysis
       if: inputs.phase == 'analysis'
-      run: PYTHONPATH=python python3 -m lean_pool.documentation batch --seconds 5400 --lake /home/runner/.elan/bin/lake
+      # Complete stages are skipped, so a long allowance only costs time when a
+      # toolchain change restarts every project. Four stages then cover the pool
+      # with room to grow; progress is saved after each.
+      run: PYTHONPATH=python python3 -m lean_pool.documentation batch --seconds 9000 --lake /home/runner/.elan/bin/lake
     - name: Save completed analysis batches
       if: inputs.phase == 'analysis'
       uses: actions/cache/save@27d5ce7f107fe9357f9df03efb73ab90386fccae
