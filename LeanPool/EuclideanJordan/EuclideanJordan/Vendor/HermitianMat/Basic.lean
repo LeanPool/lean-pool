@@ -803,7 +803,10 @@ theorem ne_zero_iff_ne_zero_spectrum (A : HermitianMat n 𝕜) :
     simp only [HermitianMat.ext_iff, mat_zero]
     rw [A.H.spectral_theorem]
     ext i j
-    simp? [Matrix.mul_apply, Matrix.diagonal]
+    simp only [Matrix.diagonal, Function.comp_apply, Unitary.conjStarAlgAut_apply, Matrix.mul_apply,
+        Matrix.IsHermitian.eigenvectorUnitary_apply, Matrix.of_apply, mul_ite, mul_zero,
+        Finset.sum_ite_eq', Finset.mem_univ, ↓reduceIte, Matrix.star_apply, RCLike.star_def,
+        Matrix.zero_apply]
     refine Finset.sum_eq_zero fun x _ ↦ ?_
     simp only [h_nonzero _ <| A.H.spectrum_real_eq_range_eigenvalues.symm ▸ Set.mem_range_self _,
       map_zero, mul_zero, zero_mul]
