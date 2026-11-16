@@ -102,7 +102,7 @@ at most `periodBound l`. A ray of a coordinate with a long periodic suffix keeps
 the whole original word and its periodic cover at level `l - 1`; any other ray carries a cover
 of the tail before its factor. The rays make no new comparison with themselves, and their
 difference system has no positive cycle. -/
-structure RayFamily [DecidableEq α] [Fintype S] [DecidableEq S] {σ : ℕ}
+structure RayFamily [DecidableEq α] [Fintype S] {σ : ℕ}
     (C : LevelBounds σ k (Fintype.card S)) (M : StructuralReader α S k) (W : Fin k → List α) where
   /-- Common hierarchy level of the family. -/
   level : ℕ
