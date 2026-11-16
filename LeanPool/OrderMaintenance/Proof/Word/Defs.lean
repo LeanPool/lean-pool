@@ -177,25 +177,11 @@ theorem HC_le (N : Nat) : HC (proofParams N) ≤ 30 * pL N + 64 := by
   generalize pL N = L at hL
   have hg : (2 * L - 2) / 2 = L - 1 := by omega
   rw [hg]
-  have hq : 3 * L * L / (L - 1) ≤ 3 * L + 4 := by
-    apply Nat.div_le_of_le_mul
-    have : (L - 1) * (3 * L + 4) = 3 * (L * L) + L - 4 := by
-      cases L with
-      | zero => omega
-      | succ k => simp only [Nat.add_sub_cancel]; ring_nf; omega
-    rw [this]; ring_nf; omega
+  have hq := costParameterQuotient_le hL
   generalize hu : 3 * L * L / (L - 1) = q at hq
-  have hk : (q + 1) / 3 + 1 ≤ L + 3 := by omega
+  have hk := chunkParameterIndex_le hq
   generalize (q + 1) / 3 + 1 = k at hk
-  have hcs : (3 * L * L + 2 * k) / (L - 1) ≤ 3 * L + 7 := by
-    apply Nat.div_le_of_le_mul
-    have : (L - 1) * (3 * L + 7) = 3 * (L * L) + 4 * L - 7 := by
-      cases L with
-      | zero => omega
-      | succ j => simp only [Nat.add_sub_cancel]; ring_nf; omega
-    rw [this]
-    have : 3 * L * L = 3 * (L * L) := by ring
-    omega
+  have hcs := chunkParameterSplit_le hL hk
   generalize (3 * L * L + 2 * k) / (L - 1) = cs at hcs
   omega
 
@@ -205,25 +191,11 @@ theorem PC_le (N : Nat) : PC (proofParams N) ≤ 27 * pL N + 56 := by
   generalize pL N = L at hL
   have hg : (2 * L - 2) / 2 = L - 1 := by omega
   rw [hg]
-  have hq : 3 * L * L / (L - 1) ≤ 3 * L + 4 := by
-    apply Nat.div_le_of_le_mul
-    have : (L - 1) * (3 * L + 4) = 3 * (L * L) + L - 4 := by
-      cases L with
-      | zero => omega
-      | succ k => simp only [Nat.add_sub_cancel]; ring_nf; omega
-    rw [this]; ring_nf; omega
+  have hq := costParameterQuotient_le hL
   generalize 3 * L * L / (L - 1) = q at hq
-  have hk : (q + 1) / 3 + 1 ≤ L + 3 := by omega
+  have hk := chunkParameterIndex_le hq
   generalize (q + 1) / 3 + 1 = k at hk
-  have hcs : (3 * L * L + 2 * k) / (L - 1) ≤ 3 * L + 7 := by
-    apply Nat.div_le_of_le_mul
-    have : (L - 1) * (3 * L + 7) = 3 * (L * L) + 4 * L - 7 := by
-      cases L with
-      | zero => omega
-      | succ j => simp only [Nat.add_sub_cancel]; ring_nf; omega
-    rw [this]
-    have : 3 * L * L = 3 * (L * L) := by ring
-    omega
+  have hcs := chunkParameterSplit_le hL hk
   generalize (3 * L * L + 2 * k) / (L - 1) = cs at hcs
   omega
 

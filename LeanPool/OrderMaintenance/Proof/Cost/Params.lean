@@ -97,6 +97,33 @@ theorem gparams_proof (N : Nat) : GParams (proofParams N) := by
     simpa [Nat.mul_comm] using this
   · simp only [proofParams, UG, kG, gmin]; exact le_rfl
 
+/-- The quadratic workload divided by the minimum group size is linear in `L`. -/
+theorem costParameterQuotient_le {L : Nat} (hL : 8 ≤ L) :
+    3 * L * L / (L - 1) ≤ 3 * L + 4 := by
+  apply Nat.div_le_of_le_mul
+  have : (L - 1) * (3 * L + 4) = 3 * (L * L) + L - 4 := by
+    cases L with
+    | zero => omega
+    | succ k => simp only [Nat.add_sub_cancel]; ring_nf; omega
+  rw [this]; ring_nf; omega
+
+/-- The third-share chunk index inherits the linear workload bound. -/
+theorem chunkParameterIndex_le {L q : Nat} (hq : q ≤ 3 * L + 4) :
+    (q + 1) / 3 + 1 ≤ L + 3 := by
+  omega
+
+/-- The split workload remains linear after adding the two chunk-index contributions. -/
+theorem chunkParameterSplit_le {L k : Nat} (hL : 8 ≤ L) (hk : k ≤ L + 3) :
+    (3 * L * L + 2 * k) / (L - 1) ≤ 3 * L + 7 := by
+  apply Nat.div_le_of_le_mul
+  have : (L - 1) * (3 * L + 7) = 3 * (L * L) + 4 * L - 7 := by
+    cases L with
+    | zero => omega
+    | succ j => simp only [Nat.add_sub_cancel]; ring_nf; omega
+  rw [this]
+  have : 3 * L * L = 3 * (L * L) := by ring
+  omega
+
 /-- **The chunk-level conditions**: `c_max ≤ θ`. -/
 theorem cparams_proof (N : Nat) : CParams (proofParams N) := by
   have hL := pL_ge N
@@ -106,13 +133,7 @@ theorem cparams_proof (N : Nat) : CParams (proofParams N) := by
   have hg : (2 * L - 2) / 2 = L - 1 := by omega
   rw [hg]
   have hM : 8 * L ≤ L * L := Nat.mul_le_mul_right L hL
-  have hq : 3 * L * L / (L - 1) ≤ 3 * L + 4 := by
-    apply Nat.div_le_of_le_mul
-    have : (L - 1) * (3 * L + 4) = 3 * (L * L) + L - 4 := by
-      cases L with
-      | zero => omega
-      | succ k => simp only [Nat.add_sub_cancel]; ring_nf; omega
-    rw [this]; ring_nf; omega
+  have hq := costParameterQuotient_le hL
   generalize 3 * L * L / (L - 1) = q at hq
   generalize hMM : L * L = M at hM
   have h3 : 3 * L * L = 3 * M := by rw [← hMM]; ring

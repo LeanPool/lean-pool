@@ -62,8 +62,8 @@ def tableInsertP : Proc where
       if f then call ‹assocSetP .side›(t, w, x) else fail } }
 
 theorem getX_size_le {α : Type} [Inhabited α] {a : Array α} {i : Nat} (h : a.size ≤ i) : a.getX
-  i = default := by
-  simp [Array.getX, Array.getD, show ¬i < a.size by omega]
+  i = default :=
+  OrderMaintenance.Proof.Array.getX_ge a h
 
 /-- **`tableInsertP` runs `tableInsert`.** -/
 theorem tableInsertP_agree (κ : Caps) (σ : Core) (L : Loc) {t e w lab : Nat} {before : Bool} (ht

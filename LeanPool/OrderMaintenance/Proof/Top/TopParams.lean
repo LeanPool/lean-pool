@@ -108,9 +108,9 @@ theorem Dmax_le (k : Nat) : Dmax P (k + 4) ≤ 58 := by
   generalize Pid P (k + 4) / gamd P (k + 3) = r at hr
   omega
 
-theorem room_8 (hb : P.beta = 64) (h : Nat) (h1 : 1 ≤ h) : 2 ^ Dmax P h * (n0max P h + 1) ≤ 2 ^
-  P.beta := by
-  rw [hb]
+/-- Uniform bounds for the top workload and drain budget, including the three small heights. -/
+theorem topHeightBounds_8 (h : Nat) (h1 : 1 ≤ h) :
+    n0max P h ≤ 27 ∧ Dmax P h ≤ 58 := by
   have hP1 : Pid P 1 = 24 := by rw [Pid_eq ha hs]; norm_num
   have hP2 : Pid P 2 = 160 := by rw [Pid_eq ha hs]; norm_num
   have hP3 : Pid P 3 = 1256 := by rw [Pid_eq ha hs]; norm_num
@@ -125,54 +125,31 @@ theorem room_8 (hb : P.beta = 64) (h : Nat) (h1 : 1 ≤ h) : 2 ^ Dmax P h * (n0m
   rcases k with _ | _ | _ | k
   · have hn : n0max P 1 = 9 := by unfold n0max; rw [ite_eq_left le_rfl, ha]
     have hd : Dmax P 1 = 12 := by unfold Dmax; rw [ite_eq_left le_rfl, hP1]
-    rw [hn, hd]; norm_num
+    rw [hn, hd]; omega
   · have hn : n0max P 2 = 18 := by unfold n0max; rw [ite_eq_right (by omega), ht2,
-    show 2 - 1 = 1 from rfl, hl1]
+      show 2 - 1 = 1 from rfl, hl1]
     have hd : Dmax P 2 = 39 := by
       unfold Dmax; rw [ite_eq_right (by omega), hn, hP2, show 2 - 1 = 1 from rfl, hg1]
-    rw [show 0 + 1 + 1 = 2 from rfl, hn, hd]; norm_num
+    rw [show 0 + 1 + 1 = 2 from rfl, hn, hd]; omega
   · have hn : n0max P 3 = 25 := by unfold n0max; rw [ite_eq_right (by omega), ht3,
-    show 3 - 1 = 2 from rfl, hl2]
+      show 3 - 1 = 2 from rfl, hl2]
     have hd : Dmax P 3 = 57 := by
       unfold Dmax; rw [ite_eq_right (by omega), hn, hP3, show 3 - 1 = 2 from rfl, hg2]
-    rw [show 0 + 1 + 1 + 1 = 3 from rfl, hn, hd]; norm_num
+    rw [show 0 + 1 + 1 + 1 = 3 from rfl, hn, hd]; omega
   · rw [show k + 1 + 1 + 1 + 1 = k + 4 from rfl]
-    have hn := n0max_le ha hs k
-    have hd := Dmax_le ha hs k
-    calc 2 ^ Dmax P (k + 4) * (n0max P (k + 4) + 1) ≤ 2 ^ 58 * 28 :=
-          Nat.mul_le_mul (Nat.pow_le_pow_right (by norm_num) hd) (by omega)
-      _ ≤ 2 ^ 64 := by norm_num
+    exact ⟨n0max_le ha hs k, Dmax_le ha hs k⟩
+
+theorem room_8 (hb : P.beta = 64) (h : Nat) (h1 : 1 ≤ h) :
+    2 ^ Dmax P h * (n0max P h + 1) ≤ 2 ^ P.beta := by
+  rw [hb]
+  obtain ⟨hn, hd⟩ := topHeightBounds_8 ha hs h h1
+  calc 2 ^ Dmax P h * (n0max P h + 1) ≤ 2 ^ 58 * 28 :=
+        Nat.mul_le_mul (Nat.pow_le_pow_right (by norm_num) hd) (by omega)
+    _ ≤ 2 ^ 64 := by norm_num
 
 theorem tab_8 (h : Nat) (h1 : 1 ≤ h) : n0max P h + 2 * Dmax P h ≤ 160 := by
-  have hP1 : Pid P 1 = 24 := by rw [Pid_eq ha hs]; norm_num
-  have hP2 : Pid P 2 = 160 := by rw [Pid_eq ha hs]; norm_num
-  have hP3 : Pid P 3 = 1256 := by rw [Pid_eq ha hs]; norm_num
-  have ht1 : taud P 1 = 9 := by change P.a + 1 = 9; rw [ha]
-  have hl1 : lamd P 1 = 8 := by change P.a = 8; rw [ha]
-  have ht2 : taud P 2 = 89 := by rw [show 2 = 0 + 2 from rfl, taud_eq ha, hP1]; norm_num
-  have hl2 : lamd P 2 = 41 := by rw [show 2 = 0 + 2 from rfl, lamd_eq ha, hP1]; norm_num
-  have ht3 : taud P 3 = 673 := by rw [show 3 = 1 + 2 from rfl, taud_eq ha, hP2]; norm_num
-  have hg1 : gamd P 1 = 8 := by unfold gamd; rw [Wd_eq ha, ht1]; norm_num
-  have hg2 : gamd P 2 = 40 := by unfold gamd; rw [Wd_eq ha, ht2]; norm_num
-  obtain ⟨k, rfl⟩ : ∃ k, h = k + 1 := ⟨h - 1, by omega⟩
-  rcases k with _ | _ | _ | k
-  · have hn : n0max P 1 = 9 := by unfold n0max; rw [ite_eq_left le_rfl, ha]
-    have hd : Dmax P 1 = 12 := by unfold Dmax; rw [ite_eq_left le_rfl, hP1]
-    rw [hn, hd]; norm_num
-  · have hn : n0max P 2 = 18 := by unfold n0max; rw [ite_eq_right (by omega), ht2,
-    show 2 - 1 = 1 from rfl, hl1]
-    have hd : Dmax P 2 = 39 := by
-      unfold Dmax; rw [ite_eq_right (by omega), hn, hP2, show 2 - 1 = 1 from rfl, hg1]
-    rw [show 0 + 1 + 1 = 2 from rfl, hn, hd]; norm_num
-  · have hn : n0max P 3 = 25 := by unfold n0max; rw [ite_eq_right (by omega), ht3,
-    show 3 - 1 = 2 from rfl, hl2]
-    have hd : Dmax P 3 = 57 := by
-      unfold Dmax; rw [ite_eq_right (by omega), hn, hP3, show 3 - 1 = 2 from rfl, hg2]
-    rw [show 0 + 1 + 1 + 1 = 3 from rfl, hn, hd]; norm_num
-  · rw [show k + 1 + 1 + 1 + 1 = k + 4 from rfl]
-    have hn := n0max_le ha hs k
-    have hd := Dmax_le ha hs k
-    omega
+  obtain ⟨hn, hd⟩ := topHeightBounds_8 ha hs h h1
+  omega
 
 /-- **The top structure's parameter conditions** for `a = 8`, `s = 11`, `β = 64`. -/
 theorem topParams_8 (hb : P.beta = 64) : TopParams P :=

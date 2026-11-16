@@ -45,8 +45,8 @@ def jcopyS : Stm := cm{
   if ja < P.H then pcSet(0, ja + 1, 0, 0, 0) else pcSet(1, 0, 0, 0, 0) }
 
 theorem getX_default_of_le {α : Type} [Inhabited α] {a : Array α} {i : Nat} (h : a.size ≤ i) :
-  a.getX i = default := by
-  simp [Array.getX, Array.getD, show ¬i < a.size by omega]
+  a.getX i = default :=
+  OrderMaintenance.Proof.Array.getX_ge a h
 
 theorem jcopyS_ok {κ : Caps} {s : Core} {L : Loc} {j : Job} {l : Nat} (hjob : s.resJob = some j)
     (hx : L "jx" = j.x) (hy : L "jy" = j.y) (hz : L "jz" = j.z) (hl : L "ja" = l)
