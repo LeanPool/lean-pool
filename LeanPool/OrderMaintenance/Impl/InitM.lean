@@ -74,6 +74,7 @@ theorem eager_M {s s' : Core} (hPP : topPP s.P) (hN : 1 ≤ s.P.N) (h : (initCor
 
 /-! ### An eagerly built core -/
 
+/-- Compute parameters, allocate slot `q`, and initialize its core with lazy mode disabled. -/
 def eagerCoreS (q : Nat) : Stmt :=
   .seq (paramsS q) (.seq (allocSlot q)
     (.call "initCore" ["lz"] (initCoreS.compile q κ₀) [] [.lit 0] []))
