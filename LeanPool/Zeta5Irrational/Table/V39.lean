@@ -7,6 +7,7 @@ Authors: Moritz Firsching
 module
 
 import LeanPool.Zeta5Irrational.Table.RationalSeries
+import LeanPool.Zeta5Irrational.Table.LowerCertificate
 
 public import LeanPool.Zeta5Irrational.Energy
 import LeanPool.Zeta5Irrational.Certificates
@@ -38,15 +39,6 @@ lemma V_469 :
                 (Real.pi / 2 - (2 * (1565355854444793571363 / 5000000000000000000000 : ℝ))) -
               6 * (258332775384579108939 / 2500000000000000000000 : ℝ)))) ≤
       Vfield (16737641334457 / 32000000000000 : ℝ) := by
-  rw [Vfield_eq (by norm_num)]
-  have e1 :
-    Real.log (1 + (16737641334457 / 32000000000000 : ℝ)) =
-      Real.log (48737641334457 / 32000000000000 : ℝ) :=
-    by norm_num
-  have e2 :
-    Real.log ((16737641334457 / 32000000000000 : ℝ) + (3 / 40) ^ 2) =
-      Real.log (16917641334457 / 32000000000000 : ℝ) :=
-    by norm_num
   have hL1 :
     (841431502833399730677 / 2000000000000000000000 : ℝ) ≤
       Real.log (48737641334457 / 32000000000000 : ℝ) :=
@@ -72,15 +64,6 @@ lemma V_469 :
           Real.log (16917641334457 / 16000000000000 : ℝ) ≤
             (557682211842480469201 / 10000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
-  have hs_lo :
-    (904028563312041 / 1250000000000000 : ℝ) ≤ Real.sqrt (16737641334457 / 32000000000000 : ℝ) :=
-    le_sqrt_of_sq_le (by norm_num) (by norm_num)
-  have hs_hi :
-    Real.sqrt (16737641334457 / 32000000000000 : ℝ) ≤
-      (7232228506496331 / 10000000000000000 : ℝ) :=
-    sqrt_le_of_sq_le (by norm_num) (by norm_num)
-  have hspos : 0 < Real.sqrt (16737641334457 / 32000000000000 : ℝ) :=
-    Real.sqrt_pos.mpr (by norm_num)
   have hau710 :
     Real.arctan (556325269730487 / 1718553571059557 : ℝ) ≤
       (1565355854444793571363 / 5000000000000000000000 : ℝ) :=
@@ -115,16 +98,6 @@ lemma V_469 :
             by
         norm_num];
         exact hau709)
-  have hz1 :
-    (10000000000000000 / 7232228506496331 : ℝ) ≤
-      1 / Real.sqrt (16737641334457 / 32000000000000 : ℝ) := by
-    rw [show
-        (10000000000000000 / 7232228506496331 : ℝ) =
-          1 / (7232228506496331 / 10000000000000000 : ℝ)
-        by
-    norm_num];
-    exact one_div_le_one_div_of_le hspos hs_hi
-  have hA1 := arctan_ge_of_le hz1 hat1
   have hat2 :
     Real.arctan (31250000000000 / 301342854437347 : ℝ) ≤
       (258332775384579108939 / 2500000000000000000000 : ℝ) :=
@@ -133,31 +106,24 @@ lemma V_469 :
         (z := (31250000000000 / 301342854437347 : ℚ))
         (U := (258332775384579108939 / 2500000000000000000000 : ℚ))
         4 (by decide +kernel))
-  have hz2 :
-    (3 / 40) / Real.sqrt (16737641334457 / 32000000000000 : ℝ) ≤
-      (31250000000000 / 301342854437347 : ℝ) := by
-    rw [show
-        (31250000000000 / 301342854437347 : ℝ) =
-          (3 / 40) / (904028563312041 / 1250000000000000 : ℝ)
-        by
-    norm_num];
-    exact div_le_div_of_nonneg_left (by norm_num) (by norm_num) hs_lo
-  have hA2 := arctan_le_of_ge hz2 hat2
-  have hP :
-    (Real.pi + (Real.pi / 2 - (2 * (1565355854444793571363 / 5000000000000000000000 : ℝ))) -
-        6 * (258332775384579108939 / 2500000000000000000000 : ℝ)) ≤
-      (Real.pi + Real.arctan (1 / Real.sqrt (16737641334457 / 32000000000000 : ℝ)) -
-        6 * Real.arctan ((3 / 40) / Real.sqrt (16737641334457 / 32000000000000 : ℝ))) :=
-    by linarith only [hA1, hA2]
-  have hprod :
-    ((904028563312041 / 1250000000000000 : ℝ) *
-        (Real.pi + (Real.pi / 2 - (2 * (1565355854444793571363 / 5000000000000000000000 : ℝ))) -
-          6 * (258332775384579108939 / 2500000000000000000000 : ℝ))) ≤
-      Real.sqrt (16737641334457 / 32000000000000 : ℝ) *
-        (Real.pi + Real.arctan (1 / Real.sqrt (16737641334457 / 32000000000000 : ℝ)) -
-          6 * Real.arctan ((3 / 40) / Real.sqrt (16737641334457 / 32000000000000 : ℝ))) :=
-    mul_le_mul hs_lo hP (by linarith only [Real.pi_gt_d20, Real.pi_lt_d20]) (Real.sqrt_nonneg _)
-  linarith only [e1, e2, hL1, hU2, hprod]
+  simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using
+    Vfield_lower_certificate
+      (t := (16737641334457 / 32000000000000 : ℚ))
+      (lo := (904028563312041 / 1250000000000000 : ℚ))
+      (hi := (7232228506496331 / 10000000000000000 : ℚ))
+      (s := (904028563312041 / 1250000000000000 : ℚ))
+      (r₁ := (48737641334457 / 32000000000000 : ℚ))
+      (r₂ := (16917641334457 / 32000000000000 : ℚ))
+      (z₁ := (10000000000000000 / 7232228506496331 : ℚ))
+      (z₂ := (31250000000000 / 301342854437347 : ℚ))
+      (L := (841431502833399730677 / 2000000000000000000000 : ℚ))
+      (U := (-(6373789591157519530799 / 10000000000000000000000 : ℚ)))
+      (by decide +kernel)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using hL1)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using hU2)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using hat1)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using hat2)
+      (Or.inl ⟨rfl, by linarith only [Real.pi_gt_d20, Real.pi_lt_d20]⟩)
 
 lemma V_470 :
     ((1053837440410898379117 / 2500000000000000000000 : ℝ) -
@@ -170,15 +136,6 @@ lemma V_470 :
                 (Real.pi / 2 - (2 * (3133541876096710658859 / 10000000000000000000000 : ℝ))) -
               6 * (1032109037888209828613 / 10000000000000000000000 : ℝ)))) ≤
       Vfield (33555169550949 / 64000000000000 : ℝ) := by
-  rw [Vfield_eq (by norm_num)]
-  have e1 :
-    Real.log (1 + (33555169550949 / 64000000000000 : ℝ)) =
-      Real.log (97555169550949 / 64000000000000 : ℝ) :=
-    by norm_num
-  have e2 :
-    Real.log ((33555169550949 / 64000000000000 : ℝ) + (3 / 40) ^ 2) =
-      Real.log (33915169550949 / 64000000000000 : ℝ) :=
-    by norm_num
   have hL1 :
     (1053837440410898379117 / 2500000000000000000000 : ℝ) ≤
       Real.log (97555169550949 / 64000000000000 : ℝ) :=
@@ -204,15 +161,6 @@ lemma V_470 :
           Real.log (33915169550949 / 32000000000000 : ℝ) ≤
             (581264908766646583499 / 10000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
-  have hs_lo :
-    (7240853017660129 / 10000000000000000 : ℝ) ≤
-      Real.sqrt (33555169550949 / 64000000000000 : ℝ) :=
-    le_sqrt_of_sq_le (by norm_num) (by norm_num)
-  have hs_hi :
-    Real.sqrt (33555169550949 / 64000000000000 : ℝ) ≤ (1810213254415033 / 2500000000000000 : ℝ) :=
-    sqrt_le_of_sq_le (by norm_num) (by norm_num)
-  have hspos : 0 < Real.sqrt (33555169550949 / 64000000000000 : ℝ) :=
-    Real.sqrt_pos.mpr (by norm_num)
   have hau712 :
     Real.arctan (7240853017660132 / 22346252565995797 : ℝ) ≤
       (3133541876096710658859 / 10000000000000000000000 : ℝ) :=
@@ -247,15 +195,6 @@ lemma V_470 :
             by
         norm_num];
         exact hau711)
-  have hz1 :
-    (2500000000000000 / 1810213254415033 : ℝ) ≤
-      1 / Real.sqrt (33555169550949 / 64000000000000 : ℝ) := by
-    rw [show
-        (2500000000000000 / 1810213254415033 : ℝ) = 1 / (1810213254415033 / 2500000000000000 : ℝ)
-        by
-    norm_num];
-    exact one_div_le_one_div_of_le hspos hs_hi
-  have hA1 := arctan_ge_of_le hz1 hat1
   have hat2 :
     Real.arctan (750000000000000 / 7240853017660129 : ℝ) ≤
       (1032109037888209828613 / 10000000000000000000000 : ℝ) :=
@@ -264,31 +203,24 @@ lemma V_470 :
         (z := (750000000000000 / 7240853017660129 : ℚ))
         (U := (1032109037888209828613 / 10000000000000000000000 : ℚ))
         4 (by decide +kernel))
-  have hz2 :
-    (3 / 40) / Real.sqrt (33555169550949 / 64000000000000 : ℝ) ≤
-      (750000000000000 / 7240853017660129 : ℝ) := by
-    rw [show
-        (750000000000000 / 7240853017660129 : ℝ) =
-          (3 / 40) / (7240853017660129 / 10000000000000000 : ℝ)
-        by
-    norm_num];
-    exact div_le_div_of_nonneg_left (by norm_num) (by norm_num) hs_lo
-  have hA2 := arctan_le_of_ge hz2 hat2
-  have hP :
-    (Real.pi + (Real.pi / 2 - (2 * (3133541876096710658859 / 10000000000000000000000 : ℝ))) -
-        6 * (1032109037888209828613 / 10000000000000000000000 : ℝ)) ≤
-      (Real.pi + Real.arctan (1 / Real.sqrt (33555169550949 / 64000000000000 : ℝ)) -
-        6 * Real.arctan ((3 / 40) / Real.sqrt (33555169550949 / 64000000000000 : ℝ))) :=
-    by linarith only [hA1, hA2]
-  have hprod :
-    ((7240853017660129 / 10000000000000000 : ℝ) *
-        (Real.pi + (Real.pi / 2 - (2 * (3133541876096710658859 / 10000000000000000000000 : ℝ))) -
-          6 * (1032109037888209828613 / 10000000000000000000000 : ℝ))) ≤
-      Real.sqrt (33555169550949 / 64000000000000 : ℝ) *
-        (Real.pi + Real.arctan (1 / Real.sqrt (33555169550949 / 64000000000000 : ℝ)) -
-          6 * Real.arctan ((3 / 40) / Real.sqrt (33555169550949 / 64000000000000 : ℝ))) :=
-    mul_le_mul hs_lo hP (by linarith only [Real.pi_gt_d20, Real.pi_lt_d20]) (Real.sqrt_nonneg _)
-  linarith only [e1, e2, hL1, hU2, hprod]
+  simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using
+    Vfield_lower_certificate
+      (t := (33555169550949 / 64000000000000 : ℚ))
+      (lo := (7240853017660129 / 10000000000000000 : ℚ))
+      (hi := (1810213254415033 / 2500000000000000 : ℚ))
+      (s := (7240853017660129 / 10000000000000000 : ℚ))
+      (r₁ := (97555169550949 / 64000000000000 : ℚ))
+      (r₂ := (33915169550949 / 64000000000000 : ℚ))
+      (z₁ := (2500000000000000 / 1810213254415033 : ℚ))
+      (z₂ := (750000000000000 / 7240853017660129 : ℚ))
+      (L := (1053837440410898379117 / 2500000000000000000000 : ℚ))
+      (U := (-(6350206894233353416501 / 10000000000000000000000 : ℚ)))
+      (by decide +kernel)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using hL1)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using hU2)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using hat1)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using hat2)
+      (Or.inl ⟨rfl, by linarith only [Real.pi_gt_d20, Real.pi_lt_d20]⟩)
 
 lemma V_471 :
     ((422353530332149810381 / 1000000000000000000000 : ℝ) -
@@ -301,15 +233,6 @@ lemma V_471 :
                 (Real.pi / 2 - (2 * (784091590609151552069 / 2500000000000000000000 : ℝ))) -
               6 * (1030891299853228078583 / 10000000000000000000000 : ℝ)))) ≤
       Vfield (4204382054123 / 8000000000000 : ℝ) := by
-  rw [Vfield_eq (by norm_num)]
-  have e1 :
-    Real.log (1 + (4204382054123 / 8000000000000 : ℝ)) =
-      Real.log (12204382054123 / 8000000000000 : ℝ) :=
-    by norm_num
-  have e2 :
-    Real.log ((4204382054123 / 8000000000000 : ℝ) + (3 / 40) ^ 2) =
-      Real.log (4249382054123 / 8000000000000 : ℝ) :=
-    by norm_num
   have hL1 :
     (422353530332149810381 / 1000000000000000000000 : ℝ) ≤
       Real.log (12204382054123 / 8000000000000 : ℝ) :=
@@ -334,14 +257,6 @@ lemma V_471 :
           Real.log (4249382054123 / 4000000000000 : ℝ) ≤
             (604792122150888114827 / 10000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
-  have hs_lo :
-    (3624733634232227 / 5000000000000000 : ℝ) ≤ Real.sqrt (4204382054123 / 8000000000000 : ℝ) :=
-    le_sqrt_of_sq_le (by norm_num) (by norm_num)
-  have hs_hi :
-    Real.sqrt (4204382054123 / 8000000000000 : ℝ) ≤ (7249467268464457 / 10000000000000000 : ℝ) :=
-    sqrt_le_of_sq_le (by norm_num) (by norm_num)
-  have hspos : 0 < Real.sqrt (4204382054123 / 8000000000000 : ℝ) :=
-    Real.sqrt_pos.mpr (by norm_num)
   have hau714 :
     Real.arctan (7249467268464457 / 22351306638430506 : ℝ) ≤
       (784091590609151552069 / 2500000000000000000000 : ℝ) :=
@@ -376,16 +291,6 @@ lemma V_471 :
             by
         norm_num];
         exact hau713)
-  have hz1 :
-    (10000000000000000 / 7249467268464457 : ℝ) ≤
-      1 / Real.sqrt (4204382054123 / 8000000000000 : ℝ) := by
-    rw [show
-        (10000000000000000 / 7249467268464457 : ℝ) =
-          1 / (7249467268464457 / 10000000000000000 : ℝ)
-        by
-    norm_num];
-    exact one_div_le_one_div_of_le hspos hs_hi
-  have hA1 := arctan_ge_of_le hz1 hat1
   have hat2 :
     Real.arctan (375000000000000 / 3624733634232227 : ℝ) ≤
       (1030891299853228078583 / 10000000000000000000000 : ℝ) :=
@@ -394,31 +299,24 @@ lemma V_471 :
         (z := (375000000000000 / 3624733634232227 : ℚ))
         (U := (1030891299853228078583 / 10000000000000000000000 : ℚ))
         4 (by decide +kernel))
-  have hz2 :
-    (3 / 40) / Real.sqrt (4204382054123 / 8000000000000 : ℝ) ≤
-      (375000000000000 / 3624733634232227 : ℝ) := by
-    rw [show
-        (375000000000000 / 3624733634232227 : ℝ) =
-          (3 / 40) / (3624733634232227 / 5000000000000000 : ℝ)
-        by
-    norm_num];
-    exact div_le_div_of_nonneg_left (by norm_num) (by norm_num) hs_lo
-  have hA2 := arctan_le_of_ge hz2 hat2
-  have hP :
-    (Real.pi + (Real.pi / 2 - (2 * (784091590609151552069 / 2500000000000000000000 : ℝ))) -
-        6 * (1030891299853228078583 / 10000000000000000000000 : ℝ)) ≤
-      (Real.pi + Real.arctan (1 / Real.sqrt (4204382054123 / 8000000000000 : ℝ)) -
-        6 * Real.arctan ((3 / 40) / Real.sqrt (4204382054123 / 8000000000000 : ℝ))) :=
-    by linarith only [hA1, hA2]
-  have hprod :
-    ((3624733634232227 / 5000000000000000 : ℝ) *
-        (Real.pi + (Real.pi / 2 - (2 * (784091590609151552069 / 2500000000000000000000 : ℝ))) -
-          6 * (1030891299853228078583 / 10000000000000000000000 : ℝ))) ≤
-      Real.sqrt (4204382054123 / 8000000000000 : ℝ) *
-        (Real.pi + Real.arctan (1 / Real.sqrt (4204382054123 / 8000000000000 : ℝ)) -
-          6 * Real.arctan ((3 / 40) / Real.sqrt (4204382054123 / 8000000000000 : ℝ))) :=
-    mul_le_mul hs_lo hP (by linarith only [Real.pi_gt_d20, Real.pi_lt_d20]) (Real.sqrt_nonneg _)
-  linarith only [e1, e2, hL1, hU2, hprod]
+  simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using
+    Vfield_lower_certificate
+      (t := (4204382054123 / 8000000000000 : ℚ))
+      (lo := (3624733634232227 / 5000000000000000 : ℚ))
+      (hi := (7249467268464457 / 10000000000000000 : ℚ))
+      (s := (3624733634232227 / 5000000000000000 : ℚ))
+      (r₁ := (12204382054123 / 8000000000000 : ℚ))
+      (r₂ := (4249382054123 / 8000000000000 : ℚ))
+      (z₁ := (10000000000000000 / 7249467268464457 : ℚ))
+      (z₂ := (375000000000000 / 3624733634232227 : ℚ))
+      (L := (422353530332149810381 / 1000000000000000000000 : ℚ))
+      (U := (-(6326679680849111885173 / 10000000000000000000000 : ℚ)))
+      (by decide +kernel)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using hL1)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using hU2)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using hat1)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using hat2)
+      (Or.inl ⟨rfl, by linarith only [Real.pi_gt_d20, Real.pi_lt_d20]⟩)
 
 lemma V_472 :
     ((846342830033970747269 / 2000000000000000000000 : ℝ) -
@@ -431,15 +329,6 @@ lemma V_472 :
                 (Real.pi / 2 - (2 * (3139185189170562755643 / 10000000000000000000000 : ℝ))) -
               6 * (1029677861974945545847 / 10000000000000000000000 : ℝ)))) ≤
       Vfield (33714943315019 / 64000000000000 : ℝ) := by
-  rw [Vfield_eq (by norm_num)]
-  have e1 :
-    Real.log (1 + (33714943315019 / 64000000000000 : ℝ)) =
-      Real.log (97714943315019 / 64000000000000 : ℝ) :=
-    by norm_num
-  have e2 :
-    Real.log ((33714943315019 / 64000000000000 : ℝ) + (3 / 40) ^ 2) =
-      Real.log (34074943315019 / 64000000000000 : ℝ) :=
-    by norm_num
   have hL1 :
     (846342830033970747269 / 2000000000000000000000 : ℝ) ≤
       Real.log (97714943315019 / 64000000000000 : ℝ) :=
@@ -465,15 +354,6 @@ lemma V_472 :
           Real.log (34074943315019 / 32000000000000 : ℝ) ≤
             (39266507028579207847 / 625000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
-  have hs_lo :
-    (3629035647720933 / 5000000000000000 : ℝ) ≤ Real.sqrt (33714943315019 / 64000000000000 : ℝ) :=
-    le_sqrt_of_sq_le (by norm_num) (by norm_num)
-  have hs_hi :
-    Real.sqrt (33714943315019 / 64000000000000 : ℝ) ≤
-      (7258071295441869 / 10000000000000000 : ℝ) :=
-    sqrt_le_of_sq_le (by norm_num) (by norm_num)
-  have hspos : 0 < Real.sqrt (33714943315019 / 64000000000000 : ℝ) :=
-    Real.sqrt_pos.mpr (by norm_num)
   have hau716 :
     Real.arctan (7258071295441869 / 22356358643618158 : ℝ) ≤
       (3139185189170562755643 / 10000000000000000000000 : ℝ) :=
@@ -508,16 +388,6 @@ lemma V_472 :
             by
         norm_num];
         exact hau715)
-  have hz1 :
-    (10000000000000000 / 7258071295441869 : ℝ) ≤
-      1 / Real.sqrt (33714943315019 / 64000000000000 : ℝ) := by
-    rw [show
-        (10000000000000000 / 7258071295441869 : ℝ) =
-          1 / (7258071295441869 / 10000000000000000 : ℝ)
-        by
-    norm_num];
-    exact one_div_le_one_div_of_le hspos hs_hi
-  have hA1 := arctan_ge_of_le hz1 hat1
   have hat2 :
     Real.arctan (125000000000000 / 1209678549240311 : ℝ) ≤
       (1029677861974945545847 / 10000000000000000000000 : ℝ) :=
@@ -526,31 +396,24 @@ lemma V_472 :
         (z := (125000000000000 / 1209678549240311 : ℚ))
         (U := (1029677861974945545847 / 10000000000000000000000 : ℚ))
         4 (by decide +kernel))
-  have hz2 :
-    (3 / 40) / Real.sqrt (33714943315019 / 64000000000000 : ℝ) ≤
-      (125000000000000 / 1209678549240311 : ℝ) := by
-    rw [show
-        (125000000000000 / 1209678549240311 : ℝ) =
-          (3 / 40) / (3629035647720933 / 5000000000000000 : ℝ)
-        by
-    norm_num];
-    exact div_le_div_of_nonneg_left (by norm_num) (by norm_num) hs_lo
-  have hA2 := arctan_le_of_ge hz2 hat2
-  have hP :
-    (Real.pi + (Real.pi / 2 - (2 * (3139185189170562755643 / 10000000000000000000000 : ℝ))) -
-        6 * (1029677861974945545847 / 10000000000000000000000 : ℝ)) ≤
-      (Real.pi + Real.arctan (1 / Real.sqrt (33714943315019 / 64000000000000 : ℝ)) -
-        6 * Real.arctan ((3 / 40) / Real.sqrt (33714943315019 / 64000000000000 : ℝ))) :=
-    by linarith only [hA1, hA2]
-  have hprod :
-    ((3629035647720933 / 5000000000000000 : ℝ) *
-        (Real.pi + (Real.pi / 2 - (2 * (3139185189170562755643 / 10000000000000000000000 : ℝ))) -
-          6 * (1029677861974945545847 / 10000000000000000000000 : ℝ))) ≤
-      Real.sqrt (33714943315019 / 64000000000000 : ℝ) *
-        (Real.pi + Real.arctan (1 / Real.sqrt (33714943315019 / 64000000000000 : ℝ)) -
-          6 * Real.arctan ((3 / 40) / Real.sqrt (33714943315019 / 64000000000000 : ℝ))) :=
-    mul_le_mul hs_lo hP (by linarith only [Real.pi_gt_d20, Real.pi_lt_d20]) (Real.sqrt_nonneg _)
-  linarith only [e1, e2, hL1, hU2, hprod]
+  simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using
+    Vfield_lower_certificate
+      (t := (33714943315019 / 64000000000000 : ℚ))
+      (lo := (3629035647720933 / 5000000000000000 : ℚ))
+      (hi := (7258071295441869 / 10000000000000000 : ℚ))
+      (s := (3629035647720933 / 5000000000000000 : ℚ))
+      (r₁ := (97714943315019 / 64000000000000 : ℚ))
+      (r₂ := (34074943315019 / 64000000000000 : ℚ))
+      (z₁ := (10000000000000000 / 7258071295441869 : ℚ))
+      (z₂ := (125000000000000 / 1209678549240311 : ℚ))
+      (L := (846342830033970747269 / 2000000000000000000000 : ℚ))
+      (U := (-(393950480658920792153 / 625000000000000000000 : ℚ)))
+      (by decide +kernel)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using hL1)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using hU2)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using hat1)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using hat2)
+      (Or.inl ⟨rfl, by linarith only [Real.pi_gt_d20, Real.pi_lt_d20]⟩)
 
 lemma V_473 :
     ((33919090505047273979 / 80000000000000000000 : ℝ) -
@@ -563,15 +426,6 @@ lemma V_473 :
                 (Real.pi / 2 - (2 * (1570999188718471372011 / 5000000000000000000000 : ℝ))) -
               6 * (102846869900421664989 / 1000000000000000000000 : ℝ)))) ≤
       Vfield (16897415098527 / 32000000000000 : ℝ) := by
-  rw [Vfield_eq (by norm_num)]
-  have e1 :
-    Real.log (1 + (16897415098527 / 32000000000000 : ℝ)) =
-      Real.log (48897415098527 / 32000000000000 : ℝ) :=
-    by norm_num
-  have e2 :
-    Real.log ((16897415098527 / 32000000000000 : ℝ) + (3 / 40) ^ 2) =
-      Real.log (17077415098527 / 32000000000000 : ℝ) :=
-    by norm_num
   have hL1 :
     (33919090505047273979 / 80000000000000000000 : ℝ) ≤
       Real.log (48897415098527 / 32000000000000 : ℝ) :=
@@ -597,15 +451,6 @@ lemma V_473 :
           Real.log (17077415098527 / 16000000000000 : ℝ) ≤
             (651681138318069903477 / 10000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
-  have hs_lo :
-    (7266665134908643 / 10000000000000000 : ℝ) ≤
-      Real.sqrt (16897415098527 / 32000000000000 : ℝ) :=
-    le_sqrt_of_sq_le (by norm_num) (by norm_num)
-  have hs_hi :
-    Real.sqrt (16897415098527 / 32000000000000 : ℝ) ≤ (3633332567454323 / 5000000000000000 : ℝ) :=
-    sqrt_le_of_sq_le (by norm_num) (by norm_num)
-  have hspos : 0 < Real.sqrt (16897415098527 / 32000000000000 : ℝ) :=
-    Real.sqrt_pos.mpr (by norm_num)
   have hau718 :
     Real.arctan (3633332567454323 / 11180704292046677 : ℝ) ≤
       (1570999188718471372011 / 5000000000000000000000 : ℝ) :=
@@ -640,15 +485,6 @@ lemma V_473 :
             by
         norm_num];
         exact hau717)
-  have hz1 :
-    (5000000000000000 / 3633332567454323 : ℝ) ≤
-      1 / Real.sqrt (16897415098527 / 32000000000000 : ℝ) := by
-    rw [show
-        (5000000000000000 / 3633332567454323 : ℝ) = 1 / (3633332567454323 / 5000000000000000 : ℝ)
-        by
-    norm_num];
-    exact one_div_le_one_div_of_le hspos hs_hi
-  have hA1 := arctan_ge_of_le hz1 hat1
   have hat2 :
     Real.arctan (750000000000000 / 7266665134908643 : ℝ) ≤
       (102846869900421664989 / 1000000000000000000000 : ℝ) :=
@@ -657,31 +493,24 @@ lemma V_473 :
         (z := (750000000000000 / 7266665134908643 : ℚ))
         (U := (102846869900421664989 / 1000000000000000000000 : ℚ))
         4 (by decide +kernel))
-  have hz2 :
-    (3 / 40) / Real.sqrt (16897415098527 / 32000000000000 : ℝ) ≤
-      (750000000000000 / 7266665134908643 : ℝ) := by
-    rw [show
-        (750000000000000 / 7266665134908643 : ℝ) =
-          (3 / 40) / (7266665134908643 / 10000000000000000 : ℝ)
-        by
-    norm_num];
-    exact div_le_div_of_nonneg_left (by norm_num) (by norm_num) hs_lo
-  have hA2 := arctan_le_of_ge hz2 hat2
-  have hP :
-    (Real.pi + (Real.pi / 2 - (2 * (1570999188718471372011 / 5000000000000000000000 : ℝ))) -
-        6 * (102846869900421664989 / 1000000000000000000000 : ℝ)) ≤
-      (Real.pi + Real.arctan (1 / Real.sqrt (16897415098527 / 32000000000000 : ℝ)) -
-        6 * Real.arctan ((3 / 40) / Real.sqrt (16897415098527 / 32000000000000 : ℝ))) :=
-    by linarith only [hA1, hA2]
-  have hprod :
-    ((7266665134908643 / 10000000000000000 : ℝ) *
-        (Real.pi + (Real.pi / 2 - (2 * (1570999188718471372011 / 5000000000000000000000 : ℝ))) -
-          6 * (102846869900421664989 / 1000000000000000000000 : ℝ))) ≤
-      Real.sqrt (16897415098527 / 32000000000000 : ℝ) *
-        (Real.pi + Real.arctan (1 / Real.sqrt (16897415098527 / 32000000000000 : ℝ)) -
-          6 * Real.arctan ((3 / 40) / Real.sqrt (16897415098527 / 32000000000000 : ℝ))) :=
-    mul_le_mul hs_lo hP (by linarith only [Real.pi_gt_d20, Real.pi_lt_d20]) (Real.sqrt_nonneg _)
-  linarith only [e1, e2, hL1, hU2, hprod]
+  simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using
+    Vfield_lower_certificate
+      (t := (16897415098527 / 32000000000000 : ℚ))
+      (lo := (7266665134908643 / 10000000000000000 : ℚ))
+      (hi := (3633332567454323 / 5000000000000000 : ℚ))
+      (s := (7266665134908643 / 10000000000000000 : ℚ))
+      (r₁ := (48897415098527 / 32000000000000 : ℚ))
+      (r₂ := (17077415098527 / 32000000000000 : ℚ))
+      (z₁ := (5000000000000000 / 3633332567454323 : ℚ))
+      (z₂ := (750000000000000 / 7266665134908643 : ℚ))
+      (L := (33919090505047273979 / 80000000000000000000 : ℚ))
+      (U := (-(6279790664681930096523 / 10000000000000000000000 : ℚ)))
+      (by decide +kernel)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using hL1)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using hU2)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using hat1)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using hat2)
+      (Or.inl ⟨rfl, by linarith only [Real.pi_gt_d20, Real.pi_lt_d20]⟩)
 
 lemma V_474 :
     ((531006475390013602341 / 1250000000000000000000 : ℝ) -
@@ -694,15 +523,6 @@ lemma V_474 :
                 (Real.pi / 2 - (2 * (3144805948252172401271 / 10000000000000000000000 : ℝ))) -
               6 * (1027263785898967908693 / 10000000000000000000000 : ℝ)))) ≤
       Vfield (33874717079089 / 64000000000000 : ℝ) := by
-  rw [Vfield_eq (by norm_num)]
-  have e1 :
-    Real.log (1 + (33874717079089 / 64000000000000 : ℝ)) =
-      Real.log (97874717079089 / 64000000000000 : ℝ) :=
-    by norm_num
-  have e2 :
-    Real.log ((33874717079089 / 64000000000000 : ℝ) + (3 / 40) ^ 2) =
-      Real.log (34234717079089 / 64000000000000 : ℝ) :=
-    by norm_num
   have hL1 :
     (531006475390013602341 / 1250000000000000000000 : ℝ) ≤
       Real.log (97874717079089 / 64000000000000 : ℝ) :=
@@ -728,14 +548,6 @@ lemma V_474 :
           Real.log (34234717079089 / 32000000000000 : ℝ) ≤
             (84380432069113015273 / 1250000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
-  have hs_lo :
-    (291009952918663 / 400000000000000 : ℝ) ≤ Real.sqrt (33874717079089 / 64000000000000 : ℝ) :=
-    le_sqrt_of_sq_le (by norm_num) (by norm_num)
-  have hs_hi :
-    Real.sqrt (33874717079089 / 64000000000000 : ℝ) ≤ (3637624411483289 / 5000000000000000 : ℝ) :=
-    sqrt_le_of_sq_le (by norm_num) (by norm_num)
-  have hspos : 0 < Real.sqrt (33874717079089 / 64000000000000 : ℝ) :=
-    Real.sqrt_pos.mpr (by norm_num)
   have hau720 :
     Real.arctan (3637624411483289 / 11183228231192759 : ℝ) ≤
       (3144805948252172401271 / 10000000000000000000000 : ℝ) :=
@@ -770,15 +582,6 @@ lemma V_474 :
             by
         norm_num];
         exact hau719)
-  have hz1 :
-    (5000000000000000 / 3637624411483289 : ℝ) ≤
-      1 / Real.sqrt (33874717079089 / 64000000000000 : ℝ) := by
-    rw [show
-        (5000000000000000 / 3637624411483289 : ℝ) = 1 / (3637624411483289 / 5000000000000000 : ℝ)
-        by
-    norm_num];
-    exact one_div_le_one_div_of_le hspos hs_hi
-  have hA1 := arctan_ge_of_le hz1 hat1
   have hat2 :
     Real.arctan (30000000000000 / 291009952918663 : ℝ) ≤
       (1027263785898967908693 / 10000000000000000000000 : ℝ) :=
@@ -787,31 +590,24 @@ lemma V_474 :
         (z := (30000000000000 / 291009952918663 : ℚ))
         (U := (1027263785898967908693 / 10000000000000000000000 : ℚ))
         4 (by decide +kernel))
-  have hz2 :
-    (3 / 40) / Real.sqrt (33874717079089 / 64000000000000 : ℝ) ≤
-      (30000000000000 / 291009952918663 : ℝ) := by
-    rw [show
-        (30000000000000 / 291009952918663 : ℝ) =
-          (3 / 40) / (291009952918663 / 400000000000000 : ℝ)
-        by
-    norm_num];
-    exact div_le_div_of_nonneg_left (by norm_num) (by norm_num) hs_lo
-  have hA2 := arctan_le_of_ge hz2 hat2
-  have hP :
-    (Real.pi + (Real.pi / 2 - (2 * (3144805948252172401271 / 10000000000000000000000 : ℝ))) -
-        6 * (1027263785898967908693 / 10000000000000000000000 : ℝ)) ≤
-      (Real.pi + Real.arctan (1 / Real.sqrt (33874717079089 / 64000000000000 : ℝ)) -
-        6 * Real.arctan ((3 / 40) / Real.sqrt (33874717079089 / 64000000000000 : ℝ))) :=
-    by linarith only [hA1, hA2]
-  have hprod :
-    ((291009952918663 / 400000000000000 : ℝ) *
-        (Real.pi + (Real.pi / 2 - (2 * (3144805948252172401271 / 10000000000000000000000 : ℝ))) -
-          6 * (1027263785898967908693 / 10000000000000000000000 : ℝ))) ≤
-      Real.sqrt (33874717079089 / 64000000000000 : ℝ) *
-        (Real.pi + Real.arctan (1 / Real.sqrt (33874717079089 / 64000000000000 : ℝ)) -
-          6 * Real.arctan ((3 / 40) / Real.sqrt (33874717079089 / 64000000000000 : ℝ))) :=
-    mul_le_mul hs_lo hP (by linarith only [Real.pi_gt_d20, Real.pi_lt_d20]) (Real.sqrt_nonneg _)
-  linarith only [e1, e2, hL1, hU2, hprod]
+  simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using
+    Vfield_lower_certificate
+      (t := (33874717079089 / 64000000000000 : ℚ))
+      (lo := (291009952918663 / 400000000000000 : ℚ))
+      (hi := (3637624411483289 / 5000000000000000 : ℚ))
+      (s := (291009952918663 / 400000000000000 : ℚ))
+      (r₁ := (97874717079089 / 64000000000000 : ℚ))
+      (r₂ := (34234717079089 / 64000000000000 : ℚ))
+      (z₁ := (5000000000000000 / 3637624411483289 : ℚ))
+      (z₂ := (30000000000000 / 291009952918663 : ℚ))
+      (L := (531006475390013602341 / 1250000000000000000000 : ℚ))
+      (U := (-(782053543305886984727 / 1250000000000000000000 : ℚ)))
+      (by decide +kernel)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using hL1)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using hU2)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using hat1)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using hat2)
+      (Or.inl ⟨rfl, by linarith only [Real.pi_gt_d20, Real.pi_lt_d20]⟩)
 
 lemma V_475 :
     ((425621063102617945859 / 1000000000000000000000 : ℝ) -
@@ -824,15 +620,6 @@ lemma V_475 :
                 (Real.pi / 2 - (2 * (629521584502343043317 / 2000000000000000000000 : ℝ))) -
               6 * (513031548911010165729 / 5000000000000000000000 : ℝ)))) ≤
       Vfield (8488650990281 / 16000000000000 : ℝ) := by
-  rw [Vfield_eq (by norm_num)]
-  have e1 :
-    Real.log (1 + (8488650990281 / 16000000000000 : ℝ)) =
-      Real.log (24488650990281 / 16000000000000 : ℝ) :=
-    by norm_num
-  have e2 :
-    Real.log ((8488650990281 / 16000000000000 : ℝ) + (3 / 40) ^ 2) =
-      Real.log (8578650990281 / 16000000000000 : ℝ) :=
-    by norm_num
   have hL1 :
     (425621063102617945859 / 1000000000000000000000 : ℝ) ≤
       Real.log (24488650990281 / 16000000000000 : ℝ) :=
@@ -857,14 +644,6 @@ lemma V_475 :
           Real.log (8578650990281 / 8000000000000 : ℝ) ≤
             (139670264437120145693 / 2000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
-  have hs_lo :
-    (910477799438091 / 1250000000000000 : ℝ) ≤ Real.sqrt (8488650990281 / 16000000000000 : ℝ) :=
-    le_sqrt_of_sq_le (by norm_num) (by norm_num)
-  have hs_hi :
-    Real.sqrt (8488650990281 / 16000000000000 : ℝ) ≤ (7283822395504731 / 10000000000000000 : ℝ) :=
-    sqrt_le_of_sq_le (by norm_num) (by norm_num)
-  have hspos : 0 < Real.sqrt (8488650990281 / 16000000000000 : ℝ) :=
-    Real.sqrt_pos.mpr (by norm_num)
   have hau722 :
     Real.arctan (7283822395504731 / 22371502281018916 : ℝ) ≤
       (629521584502343043317 / 2000000000000000000000 : ℝ) :=
@@ -899,16 +678,6 @@ lemma V_475 :
             by
         norm_num];
         exact hau721)
-  have hz1 :
-    (10000000000000000 / 7283822395504731 : ℝ) ≤
-      1 / Real.sqrt (8488650990281 / 16000000000000 : ℝ) := by
-    rw [show
-        (10000000000000000 / 7283822395504731 : ℝ) =
-          1 / (7283822395504731 / 10000000000000000 : ℝ)
-        by
-    norm_num];
-    exact one_div_le_one_div_of_le hspos hs_hi
-  have hA1 := arctan_ge_of_le hz1 hat1
   have hat2 :
     Real.arctan (31250000000000 / 303492599812697 : ℝ) ≤
       (513031548911010165729 / 5000000000000000000000 : ℝ) :=
@@ -917,31 +686,24 @@ lemma V_475 :
         (z := (31250000000000 / 303492599812697 : ℚ))
         (U := (513031548911010165729 / 5000000000000000000000 : ℚ))
         4 (by decide +kernel))
-  have hz2 :
-    (3 / 40) / Real.sqrt (8488650990281 / 16000000000000 : ℝ) ≤
-      (31250000000000 / 303492599812697 : ℝ) := by
-    rw [show
-        (31250000000000 / 303492599812697 : ℝ) =
-          (3 / 40) / (910477799438091 / 1250000000000000 : ℝ)
-        by
-    norm_num];
-    exact div_le_div_of_nonneg_left (by norm_num) (by norm_num) hs_lo
-  have hA2 := arctan_le_of_ge hz2 hat2
-  have hP :
-    (Real.pi + (Real.pi / 2 - (2 * (629521584502343043317 / 2000000000000000000000 : ℝ))) -
-        6 * (513031548911010165729 / 5000000000000000000000 : ℝ)) ≤
-      (Real.pi + Real.arctan (1 / Real.sqrt (8488650990281 / 16000000000000 : ℝ)) -
-        6 * Real.arctan ((3 / 40) / Real.sqrt (8488650990281 / 16000000000000 : ℝ))) :=
-    by linarith only [hA1, hA2]
-  have hprod :
-    ((910477799438091 / 1250000000000000 : ℝ) *
-        (Real.pi + (Real.pi / 2 - (2 * (629521584502343043317 / 2000000000000000000000 : ℝ))) -
-          6 * (513031548911010165729 / 5000000000000000000000 : ℝ))) ≤
-      Real.sqrt (8488650990281 / 16000000000000 : ℝ) *
-        (Real.pi + Real.arctan (1 / Real.sqrt (8488650990281 / 16000000000000 : ℝ)) -
-          6 * Real.arctan ((3 / 40) / Real.sqrt (8488650990281 / 16000000000000 : ℝ))) :=
-    mul_le_mul hs_lo hP (by linarith only [Real.pi_gt_d20, Real.pi_lt_d20]) (Real.sqrt_nonneg _)
-  linarith only [e1, e2, hL1, hU2, hprod]
+  simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using
+    Vfield_lower_certificate
+      (t := (8488650990281 / 16000000000000 : ℚ))
+      (lo := (910477799438091 / 1250000000000000 : ℚ))
+      (hi := (7283822395504731 / 10000000000000000 : ℚ))
+      (s := (910477799438091 / 1250000000000000 : ℚ))
+      (r₁ := (24488650990281 / 16000000000000 : ℚ))
+      (r₂ := (8578650990281 / 16000000000000 : ℚ))
+      (z₁ := (10000000000000000 / 7283822395504731 : ℚ))
+      (z₂ := (31250000000000 / 303492599812697 : ℚ))
+      (L := (425621063102617945859 / 1000000000000000000000 : ℚ))
+      (U := (-(1246624096162879854307 / 2000000000000000000000 : ℚ)))
+      (by decide +kernel)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using hL1)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using hU2)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using hat1)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using hat2)
+      (Or.inl ⟨rfl, by linarith only [Real.pi_gt_d20, Real.pi_lt_d20]⟩)
 
 lemma V_476 :
     ((4264362807711218122773 / 10000000000000000000000 : ℝ) -
@@ -953,15 +715,6 @@ lemma V_476 :
             (Real.pi + (Real.pi / 2 - (2 * (157520216049551920661 / 500000000000000000000 : ℝ))) -
               6 * (512433305069469542579 / 5000000000000000000000 : ℝ)))) ≤
       Vfield (34034490843159 / 64000000000000 : ℝ) := by
-  rw [Vfield_eq (by norm_num)]
-  have e1 :
-    Real.log (1 + (34034490843159 / 64000000000000 : ℝ)) =
-      Real.log (98034490843159 / 64000000000000 : ℝ) :=
-    by norm_num
-  have e2 :
-    Real.log ((34034490843159 / 64000000000000 : ℝ) + (3 / 40) ^ 2) =
-      Real.log (34394490843159 / 64000000000000 : ℝ) :=
-    by norm_num
   have hL1 :
     (4264362807711218122773 / 10000000000000000000000 : ℝ) ≤
       Real.log (98034490843159 / 64000000000000 : ℝ) :=
@@ -987,15 +740,6 @@ lemma V_476 :
           Real.log (34394490843159 / 32000000000000 : ℝ) ≤
             (90200623557614542141 / 1250000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
-  have hs_lo :
-    (3646192944100597 / 5000000000000000 : ℝ) ≤ Real.sqrt (34034490843159 / 64000000000000 : ℝ) :=
-    le_sqrt_of_sq_le (by norm_num) (by norm_num)
-  have hs_hi :
-    Real.sqrt (34034490843159 / 64000000000000 : ℝ) ≤
-      (7292385888201197 / 10000000000000000 : ℝ) :=
-    sqrt_le_of_sq_le (by norm_num) (by norm_num)
-  have hspos : 0 < Real.sqrt (34034490843159 / 64000000000000 : ℝ) :=
-    Real.sqrt_pos.mpr (by norm_num)
   have hau724 :
     Real.arctan (7292385888201197 / 22376546042512666 : ℝ) ≤
       (157520216049551920661 / 500000000000000000000 : ℝ) :=
@@ -1030,16 +774,6 @@ lemma V_476 :
             by
         norm_num];
         exact hau723)
-  have hz1 :
-    (10000000000000000 / 7292385888201197 : ℝ) ≤
-      1 / Real.sqrt (34034490843159 / 64000000000000 : ℝ) := by
-    rw [show
-        (10000000000000000 / 7292385888201197 : ℝ) =
-          1 / (7292385888201197 / 10000000000000000 : ℝ)
-        by
-    norm_num];
-    exact one_div_le_one_div_of_le hspos hs_hi
-  have hA1 := arctan_ge_of_le hz1 hat1
   have hat2 :
     Real.arctan (375000000000000 / 3646192944100597 : ℝ) ≤
       (512433305069469542579 / 5000000000000000000000 : ℝ) :=
@@ -1048,31 +782,24 @@ lemma V_476 :
         (z := (375000000000000 / 3646192944100597 : ℚ))
         (U := (512433305069469542579 / 5000000000000000000000 : ℚ))
         4 (by decide +kernel))
-  have hz2 :
-    (3 / 40) / Real.sqrt (34034490843159 / 64000000000000 : ℝ) ≤
-      (375000000000000 / 3646192944100597 : ℝ) := by
-    rw [show
-        (375000000000000 / 3646192944100597 : ℝ) =
-          (3 / 40) / (3646192944100597 / 5000000000000000 : ℝ)
-        by
-    norm_num];
-    exact div_le_div_of_nonneg_left (by norm_num) (by norm_num) hs_lo
-  have hA2 := arctan_le_of_ge hz2 hat2
-  have hP :
-    (Real.pi + (Real.pi / 2 - (2 * (157520216049551920661 / 500000000000000000000 : ℝ))) -
-        6 * (512433305069469542579 / 5000000000000000000000 : ℝ)) ≤
-      (Real.pi + Real.arctan (1 / Real.sqrt (34034490843159 / 64000000000000 : ℝ)) -
-        6 * Real.arctan ((3 / 40) / Real.sqrt (34034490843159 / 64000000000000 : ℝ))) :=
-    by linarith only [hA1, hA2]
-  have hprod :
-    ((3646192944100597 / 5000000000000000 : ℝ) *
-        (Real.pi + (Real.pi / 2 - (2 * (157520216049551920661 / 500000000000000000000 : ℝ))) -
-          6 * (512433305069469542579 / 5000000000000000000000 : ℝ))) ≤
-      Real.sqrt (34034490843159 / 64000000000000 : ℝ) *
-        (Real.pi + Real.arctan (1 / Real.sqrt (34034490843159 / 64000000000000 : ℝ)) -
-          6 * Real.arctan ((3 / 40) / Real.sqrt (34034490843159 / 64000000000000 : ℝ))) :=
-    mul_le_mul hs_lo hP (by linarith only [Real.pi_gt_d20, Real.pi_lt_d20]) (Real.sqrt_nonneg _)
-  linarith only [e1, e2, hL1, hU2, hprod]
+  simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using
+    Vfield_lower_certificate
+      (t := (34034490843159 / 64000000000000 : ℚ))
+      (lo := (3646192944100597 / 5000000000000000 : ℚ))
+      (hi := (7292385888201197 / 10000000000000000 : ℚ))
+      (s := (3646192944100597 / 5000000000000000 : ℚ))
+      (r₁ := (98034490843159 / 64000000000000 : ℚ))
+      (r₂ := (34394490843159 / 64000000000000 : ℚ))
+      (z₁ := (10000000000000000 / 7292385888201197 : ℚ))
+      (z₂ := (375000000000000 / 3646192944100597 : ℚ))
+      (L := (4264362807711218122773 / 10000000000000000000000 : ℚ))
+      (U := (-(776233351817385457859 / 1250000000000000000000 : ℚ)))
+      (by decide +kernel)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using hL1)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using hU2)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using hat1)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using hat2)
+      (Or.inl ⟨rfl, by linarith only [Real.pi_gt_d20, Real.pi_lt_d20]⟩)
 
 lemma V_477 :
     ((2136254172005389240579 / 5000000000000000000000 : ℝ) -
@@ -1085,15 +812,6 @@ lemma V_477 :
                 (Real.pi / 2 - (2 * (3153195164346571015303 / 10000000000000000000000 : ℝ))) -
               6 * (1023674298415909778301 / 10000000000000000000000 : ℝ)))) ≤
       Vfield (17057188862597 / 32000000000000 : ℝ) := by
-  rw [Vfield_eq (by norm_num)]
-  have e1 :
-    Real.log (1 + (17057188862597 / 32000000000000 : ℝ)) =
-      Real.log (49057188862597 / 32000000000000 : ℝ) :=
-    by norm_num
-  have e2 :
-    Real.log ((17057188862597 / 32000000000000 : ℝ) + (3 / 40) ^ 2) =
-      Real.log (17237188862597 / 32000000000000 : ℝ) :=
-    by norm_num
   have hL1 :
     (2136254172005389240579 / 5000000000000000000000 : ℝ) ≤
       Real.log (49057188862597 / 32000000000000 : ℝ) :=
@@ -1119,15 +837,6 @@ lemma V_477 :
           Real.log (17237188862597 / 16000000000000 : ℝ) ≤
             (744804706861043068337 / 10000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
-  have hs_lo :
-    (7300939336524829 / 10000000000000000 : ℝ) ≤
-      Real.sqrt (17057188862597 / 32000000000000 : ℝ) :=
-    le_sqrt_of_sq_le (by norm_num) (by norm_num)
-  have hs_hi :
-    Real.sqrt (17057188862597 / 32000000000000 : ℝ) ≤ (228154354266401 / 312500000000000 : ℝ) :=
-    sqrt_le_of_sq_le (by norm_num) (by norm_num)
-  have hspos : 0 < Real.sqrt (17057188862597 / 32000000000000 : ℝ) :=
-    Real.sqrt_pos.mpr (by norm_num)
   have hau726 :
     Real.arctan (1825234834131208 / 5595396937345189 : ℝ) ≤
       (3153195164346571015303 / 10000000000000000000000 : ℝ) :=
@@ -1162,14 +871,6 @@ lemma V_477 :
             by
         norm_num];
         exact hau725)
-  have hz1 :
-    (312500000000000 / 228154354266401 : ℝ) ≤
-      1 / Real.sqrt (17057188862597 / 32000000000000 : ℝ) := by
-    rw [show (312500000000000 / 228154354266401 : ℝ) = 1 / (228154354266401 / 312500000000000 : ℝ)
-        by
-    norm_num];
-    exact one_div_le_one_div_of_le hspos hs_hi
-  have hA1 := arctan_ge_of_le hz1 hat1
   have hat2 :
     Real.arctan (750000000000000 / 7300939336524829 : ℝ) ≤
       (1023674298415909778301 / 10000000000000000000000 : ℝ) :=
@@ -1178,31 +879,24 @@ lemma V_477 :
         (z := (750000000000000 / 7300939336524829 : ℚ))
         (U := (1023674298415909778301 / 10000000000000000000000 : ℚ))
         4 (by decide +kernel))
-  have hz2 :
-    (3 / 40) / Real.sqrt (17057188862597 / 32000000000000 : ℝ) ≤
-      (750000000000000 / 7300939336524829 : ℝ) := by
-    rw [show
-        (750000000000000 / 7300939336524829 : ℝ) =
-          (3 / 40) / (7300939336524829 / 10000000000000000 : ℝ)
-        by
-    norm_num];
-    exact div_le_div_of_nonneg_left (by norm_num) (by norm_num) hs_lo
-  have hA2 := arctan_le_of_ge hz2 hat2
-  have hP :
-    (Real.pi + (Real.pi / 2 - (2 * (3153195164346571015303 / 10000000000000000000000 : ℝ))) -
-        6 * (1023674298415909778301 / 10000000000000000000000 : ℝ)) ≤
-      (Real.pi + Real.arctan (1 / Real.sqrt (17057188862597 / 32000000000000 : ℝ)) -
-        6 * Real.arctan ((3 / 40) / Real.sqrt (17057188862597 / 32000000000000 : ℝ))) :=
-    by linarith only [hA1, hA2]
-  have hprod :
-    ((7300939336524829 / 10000000000000000 : ℝ) *
-        (Real.pi + (Real.pi / 2 - (2 * (3153195164346571015303 / 10000000000000000000000 : ℝ))) -
-          6 * (1023674298415909778301 / 10000000000000000000000 : ℝ))) ≤
-      Real.sqrt (17057188862597 / 32000000000000 : ℝ) *
-        (Real.pi + Real.arctan (1 / Real.sqrt (17057188862597 / 32000000000000 : ℝ)) -
-          6 * Real.arctan ((3 / 40) / Real.sqrt (17057188862597 / 32000000000000 : ℝ))) :=
-    mul_le_mul hs_lo hP (by linarith only [Real.pi_gt_d20, Real.pi_lt_d20]) (Real.sqrt_nonneg _)
-  linarith only [e1, e2, hL1, hU2, hprod]
+  simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using
+    Vfield_lower_certificate
+      (t := (17057188862597 / 32000000000000 : ℚ))
+      (lo := (7300939336524829 / 10000000000000000 : ℚ))
+      (hi := (228154354266401 / 312500000000000 : ℚ))
+      (s := (7300939336524829 / 10000000000000000 : ℚ))
+      (r₁ := (49057188862597 / 32000000000000 : ℚ))
+      (r₂ := (17237188862597 / 32000000000000 : ℚ))
+      (z₁ := (312500000000000 / 228154354266401 : ℚ))
+      (z₂ := (750000000000000 / 7300939336524829 : ℚ))
+      (L := (2136254172005389240579 / 5000000000000000000000 : ℚ))
+      (U := (-(6186667096138956931663 / 10000000000000000000000 : ℚ)))
+      (by decide +kernel)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using hL1)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using hU2)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using hat1)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using hat2)
+      (Or.inl ⟨rfl, by linarith only [Real.pi_gt_d20, Real.pi_lt_d20]⟩)
 
 lemma V_478 :
     ((4280647250733957331043 / 10000000000000000000000 : ℝ) -
@@ -1215,15 +909,6 @@ lemma V_478 :
                 (Real.pi / 2 - (2 * (3155980473116647307711 / 10000000000000000000000 : ℝ))) -
               6 * (127810767302205454203 / 1250000000000000000000 : ℝ)))) ≤
       Vfield (34194264607229 / 64000000000000 : ℝ) := by
-  rw [Vfield_eq (by norm_num)]
-  have e1 :
-    Real.log (1 + (34194264607229 / 64000000000000 : ℝ)) =
-      Real.log (98194264607229 / 64000000000000 : ℝ) :=
-    by norm_num
-  have e2 :
-    Real.log ((34194264607229 / 64000000000000 : ℝ) + (3 / 40) ^ 2) =
-      Real.log (34554264607229 / 64000000000000 : ℝ) :=
-    by norm_num
   have hL1 :
     (4280647250733957331043 / 10000000000000000000000 : ℝ) ≤
       Real.log (98194264607229 / 64000000000000 : ℝ) :=
@@ -1249,15 +934,6 @@ lemma V_478 :
           Real.log (34554264607229 / 32000000000000 : ℝ) ≤
             (95993840890240889791 / 1250000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
-  have hs_lo :
-    (11421066837089 / 15625000000000 : ℝ) ≤ Real.sqrt (34194264607229 / 64000000000000 : ℝ) :=
-    le_sqrt_of_sq_le (by norm_num) (by norm_num)
-  have hs_hi :
-    Real.sqrt (34194264607229 / 64000000000000 : ℝ) ≤
-      (7309482775736963 / 10000000000000000 : ℝ) :=
-    sqrt_le_of_sq_le (by norm_num) (by norm_num)
-  have hspos : 0 < Real.sqrt (34194264607229 / 64000000000000 : ℝ) :=
-    Real.sqrt_pos.mpr (by norm_num)
   have hau728 :
     Real.arctan (7309482775736963 / 22386627404132059 : ℝ) ≤
       (3155980473116647307711 / 10000000000000000000000 : ℝ) :=
@@ -1292,16 +968,6 @@ lemma V_478 :
             by
         norm_num];
         exact hau727)
-  have hz1 :
-    (10000000000000000 / 7309482775736963 : ℝ) ≤
-      1 / Real.sqrt (34194264607229 / 64000000000000 : ℝ) := by
-    rw [show
-        (10000000000000000 / 7309482775736963 : ℝ) =
-          1 / (7309482775736963 / 10000000000000000 : ℝ)
-        by
-    norm_num];
-    exact one_div_le_one_div_of_le hspos hs_hi
-  have hA1 := arctan_ge_of_le hz1 hat1
   have hat2 :
     Real.arctan (1171875000000 / 11421066837089 : ℝ) ≤
       (127810767302205454203 / 1250000000000000000000 : ℝ) :=
@@ -1310,29 +976,24 @@ lemma V_478 :
         (z := (1171875000000 / 11421066837089 : ℚ))
         (U := (127810767302205454203 / 1250000000000000000000 : ℚ))
         4 (by decide +kernel))
-  have hz2 :
-    (3 / 40) / Real.sqrt (34194264607229 / 64000000000000 : ℝ) ≤
-      (1171875000000 / 11421066837089 : ℝ) := by
-    rw [show
-        (1171875000000 / 11421066837089 : ℝ) = (3 / 40) / (11421066837089 / 15625000000000 : ℝ) by
-        norm_num];
-    exact div_le_div_of_nonneg_left (by norm_num) (by norm_num) hs_lo
-  have hA2 := arctan_le_of_ge hz2 hat2
-  have hP :
-    (Real.pi + (Real.pi / 2 - (2 * (3155980473116647307711 / 10000000000000000000000 : ℝ))) -
-        6 * (127810767302205454203 / 1250000000000000000000 : ℝ)) ≤
-      (Real.pi + Real.arctan (1 / Real.sqrt (34194264607229 / 64000000000000 : ℝ)) -
-        6 * Real.arctan ((3 / 40) / Real.sqrt (34194264607229 / 64000000000000 : ℝ))) :=
-    by linarith only [hA1, hA2]
-  have hprod :
-    ((11421066837089 / 15625000000000 : ℝ) *
-        (Real.pi + (Real.pi / 2 - (2 * (3155980473116647307711 / 10000000000000000000000 : ℝ))) -
-          6 * (127810767302205454203 / 1250000000000000000000 : ℝ))) ≤
-      Real.sqrt (34194264607229 / 64000000000000 : ℝ) *
-        (Real.pi + Real.arctan (1 / Real.sqrt (34194264607229 / 64000000000000 : ℝ)) -
-          6 * Real.arctan ((3 / 40) / Real.sqrt (34194264607229 / 64000000000000 : ℝ))) :=
-    mul_le_mul hs_lo hP (by linarith only [Real.pi_gt_d20, Real.pi_lt_d20]) (Real.sqrt_nonneg _)
-  linarith only [e1, e2, hL1, hU2, hprod]
+  simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using
+    Vfield_lower_certificate
+      (t := (34194264607229 / 64000000000000 : ℚ))
+      (lo := (11421066837089 / 15625000000000 : ℚ))
+      (hi := (7309482775736963 / 10000000000000000 : ℚ))
+      (s := (11421066837089 / 15625000000000 : ℚ))
+      (r₁ := (98194264607229 / 64000000000000 : ℚ))
+      (r₂ := (34554264607229 / 64000000000000 : ℚ))
+      (z₁ := (10000000000000000 / 7309482775736963 : ℚ))
+      (z₂ := (1171875000000 / 11421066837089 : ℚ))
+      (L := (4280647250733957331043 / 10000000000000000000000 : ℚ))
+      (U := (-(770440134484759110209 / 1250000000000000000000 : ℚ)))
+      (by decide +kernel)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using hL1)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using hU2)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using hat1)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using hat2)
+      (Or.inl ⟨rfl, by linarith only [Real.pi_gt_d20, Real.pi_lt_d20]⟩)
 
 lemma V_479 :
     ((4284714221375033324851 / 10000000000000000000000 : ℝ) -
@@ -1345,15 +1006,6 @@ lemma V_479 :
                 (Real.pi / 2 - (2 * (631474211683661753521 / 2000000000000000000000 : ℝ))) -
               6 * (1021893607795543436653 / 10000000000000000000000 : ℝ)))) ≤
       Vfield (68468416096493 / 128000000000000 : ℝ) := by
-  rw [Vfield_eq (by norm_num)]
-  have e1 :
-    Real.log (1 + (68468416096493 / 128000000000000 : ℝ)) =
-      Real.log (196468416096493 / 128000000000000 : ℝ) :=
-    by norm_num
-  have e2 :
-    Real.log ((68468416096493 / 128000000000000 : ℝ) + (3 / 40) ^ 2) =
-      Real.log (69188416096493 / 128000000000000 : ℝ) :=
-    by norm_num
   have hL1 :
     (4284714221375033324851 / 10000000000000000000000 : ℝ) ≤
       Real.log (196468416096493 / 128000000000000 : ℝ) :=
@@ -1379,16 +1031,6 @@ lemma V_479 :
           Real.log (69188416096493 / 64000000000000 : ℝ) ≤
             (779503678019120555789 / 10000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
-  have hs_lo :
-    (7313750752889049 / 10000000000000000 : ℝ) ≤
-      Real.sqrt (68468416096493 / 128000000000000 : ℝ) :=
-    le_sqrt_of_sq_le (by norm_num) (by norm_num)
-  have hs_hi :
-    Real.sqrt (68468416096493 / 128000000000000 : ℝ) ≤
-      (1828437688222263 / 2500000000000000 : ℝ) :=
-    sqrt_le_of_sq_le (by norm_num) (by norm_num)
-  have hspos : 0 < Real.sqrt (68468416096493 / 128000000000000 : ℝ) :=
-    Real.sqrt_pos.mpr (by norm_num)
   have hau730 :
     Real.arctan (7313750752889052 / 22389146462746541 : ℝ) ≤
       (631474211683661753521 / 2000000000000000000000 : ℝ) :=
@@ -1423,15 +1065,6 @@ lemma V_479 :
             by
         norm_num];
         exact hau729)
-  have hz1 :
-    (2500000000000000 / 1828437688222263 : ℝ) ≤
-      1 / Real.sqrt (68468416096493 / 128000000000000 : ℝ) := by
-    rw [show
-        (2500000000000000 / 1828437688222263 : ℝ) = 1 / (1828437688222263 / 2500000000000000 : ℝ)
-        by
-    norm_num];
-    exact one_div_le_one_div_of_le hspos hs_hi
-  have hA1 := arctan_ge_of_le hz1 hat1
   have hat2 :
     Real.arctan (250000000000000 / 2437916917629683 : ℝ) ≤
       (1021893607795543436653 / 10000000000000000000000 : ℝ) :=
@@ -1440,31 +1073,24 @@ lemma V_479 :
         (z := (250000000000000 / 2437916917629683 : ℚ))
         (U := (1021893607795543436653 / 10000000000000000000000 : ℚ))
         4 (by decide +kernel))
-  have hz2 :
-    (3 / 40) / Real.sqrt (68468416096493 / 128000000000000 : ℝ) ≤
-      (250000000000000 / 2437916917629683 : ℝ) := by
-    rw [show
-        (250000000000000 / 2437916917629683 : ℝ) =
-          (3 / 40) / (7313750752889049 / 10000000000000000 : ℝ)
-        by
-    norm_num];
-    exact div_le_div_of_nonneg_left (by norm_num) (by norm_num) hs_lo
-  have hA2 := arctan_le_of_ge hz2 hat2
-  have hP :
-    (Real.pi + (Real.pi / 2 - (2 * (631474211683661753521 / 2000000000000000000000 : ℝ))) -
-        6 * (1021893607795543436653 / 10000000000000000000000 : ℝ)) ≤
-      (Real.pi + Real.arctan (1 / Real.sqrt (68468416096493 / 128000000000000 : ℝ)) -
-        6 * Real.arctan ((3 / 40) / Real.sqrt (68468416096493 / 128000000000000 : ℝ))) :=
-    by linarith only [hA1, hA2]
-  have hprod :
-    ((7313750752889049 / 10000000000000000 : ℝ) *
-        (Real.pi + (Real.pi / 2 - (2 * (631474211683661753521 / 2000000000000000000000 : ℝ))) -
-          6 * (1021893607795543436653 / 10000000000000000000000 : ℝ))) ≤
-      Real.sqrt (68468416096493 / 128000000000000 : ℝ) *
-        (Real.pi + Real.arctan (1 / Real.sqrt (68468416096493 / 128000000000000 : ℝ)) -
-          6 * Real.arctan ((3 / 40) / Real.sqrt (68468416096493 / 128000000000000 : ℝ))) :=
-    mul_le_mul hs_lo hP (by linarith only [Real.pi_gt_d20, Real.pi_lt_d20]) (Real.sqrt_nonneg _)
-  linarith only [e1, e2, hL1, hU2, hprod]
+  simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using
+    Vfield_lower_certificate
+      (t := (68468416096493 / 128000000000000 : ℚ))
+      (lo := (7313750752889049 / 10000000000000000 : ℚ))
+      (hi := (1828437688222263 / 2500000000000000 : ℚ))
+      (s := (7313750752889049 / 10000000000000000 : ℚ))
+      (r₁ := (196468416096493 / 128000000000000 : ℚ))
+      (r₂ := (69188416096493 / 128000000000000 : ℚ))
+      (z₁ := (2500000000000000 / 1828437688222263 : ℚ))
+      (z₂ := (250000000000000 / 2437916917629683 : ℚ))
+      (L := (4284714221375033324851 / 10000000000000000000000 : ℚ))
+      (U := (-(6151968124980879444211 / 10000000000000000000000 : ℚ)))
+      (by decide +kernel)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using hL1)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using hU2)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using hat1)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using hat2)
+      (Or.inl ⟨rfl, by linarith only [Real.pi_gt_d20, Real.pi_lt_d20]⟩)
 
 lemma V_480 :
     ((4288779538663480659127 / 10000000000000000000000 : ℝ) -
@@ -1477,15 +1103,6 @@ lemma V_480 :
                 (Real.pi / 2 - (2 * (1579380133861223043083 / 5000000000000000000000 : ℝ))) -
               6 * (127662763263163460067 / 1250000000000000000000 : ℝ)))) ≤
       Vfield (2142134468079 / 4000000000000 : ℝ) := by
-  rw [Vfield_eq (by norm_num)]
-  have e1 :
-    Real.log (1 + (2142134468079 / 4000000000000 : ℝ)) =
-      Real.log (6142134468079 / 4000000000000 : ℝ) :=
-    by norm_num
-  have e2 :
-    Real.log ((2142134468079 / 4000000000000 : ℝ) + (3 / 40) ^ 2) =
-      Real.log (2164634468079 / 4000000000000 : ℝ) :=
-    by norm_num
   have hL1 :
     (4288779538663480659127 / 10000000000000000000000 : ℝ) ≤
       Real.log (6142134468079 / 4000000000000 : ℝ) :=
@@ -1510,14 +1127,6 @@ lemma V_480 :
           Real.log (2164634468079 / 2000000000000 : ℝ) ≤
             (49440206078087431927 / 625000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
-  have hs_lo :
-    (3659008120446543 / 5000000000000000 : ℝ) ≤ Real.sqrt (2142134468079 / 4000000000000 : ℝ) :=
-    le_sqrt_of_sq_le (by norm_num) (by norm_num)
-  have hs_hi :
-    Real.sqrt (2142134468079 / 4000000000000 : ℝ) ≤ (7318016240893089 / 10000000000000000 : ℝ) :=
-    sqrt_le_of_sq_le (by norm_num) (by norm_num)
-  have hspos : 0 < Real.sqrt (2142134468079 / 4000000000000 : ℝ) :=
-    Real.sqrt_pos.mpr (by norm_num)
   have hau732 :
     Real.arctan (7318016240893089 / 22391665009270343 : ℝ) ≤
       (1579380133861223043083 / 5000000000000000000000 : ℝ) :=
@@ -1552,16 +1161,6 @@ lemma V_480 :
             by
         norm_num];
         exact hau731)
-  have hz1 :
-    (10000000000000000 / 7318016240893089 : ℝ) ≤
-      1 / Real.sqrt (2142134468079 / 4000000000000 : ℝ) := by
-    rw [show
-        (10000000000000000 / 7318016240893089 : ℝ) =
-          1 / (7318016240893089 / 10000000000000000 : ℝ)
-        by
-    norm_num];
-    exact one_div_le_one_div_of_le hspos hs_hi
-  have hA1 := arctan_ge_of_le hz1 hat1
   have hat2 :
     Real.arctan (125000000000000 / 1219669373482181 : ℝ) ≤
       (127662763263163460067 / 1250000000000000000000 : ℝ) :=
@@ -1570,30 +1169,23 @@ lemma V_480 :
         (z := (125000000000000 / 1219669373482181 : ℚ))
         (U := (127662763263163460067 / 1250000000000000000000 : ℚ))
         4 (by decide +kernel))
-  have hz2 :
-    (3 / 40) / Real.sqrt (2142134468079 / 4000000000000 : ℝ) ≤
-      (125000000000000 / 1219669373482181 : ℝ) := by
-    rw [show
-        (125000000000000 / 1219669373482181 : ℝ) =
-          (3 / 40) / (3659008120446543 / 5000000000000000 : ℝ)
-        by
-    norm_num];
-    exact div_le_div_of_nonneg_left (by norm_num) (by norm_num) hs_lo
-  have hA2 := arctan_le_of_ge hz2 hat2
-  have hP :
-    (Real.pi + (Real.pi / 2 - (2 * (1579380133861223043083 / 5000000000000000000000 : ℝ))) -
-        6 * (127662763263163460067 / 1250000000000000000000 : ℝ)) ≤
-      (Real.pi + Real.arctan (1 / Real.sqrt (2142134468079 / 4000000000000 : ℝ)) -
-        6 * Real.arctan ((3 / 40) / Real.sqrt (2142134468079 / 4000000000000 : ℝ))) :=
-    by linarith only [hA1, hA2]
-  have hprod :
-    ((3659008120446543 / 5000000000000000 : ℝ) *
-        (Real.pi + (Real.pi / 2 - (2 * (1579380133861223043083 / 5000000000000000000000 : ℝ))) -
-          6 * (127662763263163460067 / 1250000000000000000000 : ℝ))) ≤
-      Real.sqrt (2142134468079 / 4000000000000 : ℝ) *
-        (Real.pi + Real.arctan (1 / Real.sqrt (2142134468079 / 4000000000000 : ℝ)) -
-          6 * Real.arctan ((3 / 40) / Real.sqrt (2142134468079 / 4000000000000 : ℝ))) :=
-    mul_le_mul hs_lo hP (by linarith only [Real.pi_gt_d20, Real.pi_lt_d20]) (Real.sqrt_nonneg _)
-  linarith only [e1, e2, hL1, hU2, hprod]
+  simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using
+    Vfield_lower_certificate
+      (t := (2142134468079 / 4000000000000 : ℚ))
+      (lo := (3659008120446543 / 5000000000000000 : ℚ))
+      (hi := (7318016240893089 / 10000000000000000 : ℚ))
+      (s := (3659008120446543 / 5000000000000000 : ℚ))
+      (r₁ := (6142134468079 / 4000000000000 : ℚ))
+      (r₂ := (2164634468079 / 4000000000000 : ℚ))
+      (z₁ := (10000000000000000 / 7318016240893089 : ℚ))
+      (z₂ := (125000000000000 / 1219669373482181 : ℚ))
+      (L := (4288779538663480659127 / 10000000000000000000000 : ℚ))
+      (U := (-(383776781609412568073 / 625000000000000000000 : ℚ)))
+      (by decide +kernel)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using hL1)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using hU2)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using hat1)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using hat2)
+      (Or.inl ⟨rfl, by linarith only [Real.pi_gt_d20, Real.pi_lt_d20]⟩)
 
 end Zeta5Irrational
