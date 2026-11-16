@@ -22,6 +22,8 @@ authors:
 - Michel Hua
 source:
   url: https://stacks.math.columbia.edu
+  github_repo: mycaule/lean-pool
+  commit: b3b0193d76e054318747eff01ad9c1f4c0b509a8
 license: Apache-2.0
 status: verified
 provenance: mix
