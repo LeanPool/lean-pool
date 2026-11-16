@@ -9,6 +9,7 @@ Authors: Denis Firsov
 module
 
 public import LeanPool.OrderMaintenance.Model
+public import LeanPool.OrderMaintenance.ArrayLemmas
 
 
 /-!
@@ -18,7 +19,7 @@ public import LeanPool.OrderMaintenance.Model
 * `Pres R m`: every run of `m` ends in a state related to its start state by `R`. For a
   reflexive, transitive `R` this composes through the whole `do`-notation; the tactic `pres`
   decomposes a computation into its primitive state updates.
-* Array lemmas for the total-map view (`getX`).
+* Shared total-map array facts are reexported from `ArrayLemmas`.
 -/
 
 
@@ -188,57 +189,6 @@ macro_rules
       | (dsimp only; done)
       | dsimp only))
 
-/-! ### Arrays as total maps -/
-
-section arrays
-variable {α : Type} [Inhabited α]
-
-theorem Array.getX_def (a : Array α) (i : Nat) : a.getX i = a.getD i default := rfl
-
-@[simp] theorem Array.getX_modify (a : Array α) (i j : Nat) (f : α → α) :
-    (a.modify i f).getX j = if i = j ∧ i < a.size then f (a.getX j) else a.getX j := by
-  simp only [Array.getX, Array.getD_eq_getD_getElem?, Array.getElem?_modify]
-  by_cases hij : i = j
-  · subst hij
-    by_cases hi : i < a.size <;> simp [hi]
-  · simp [hij]
-
-omit [Inhabited α] in
-theorem Array.size_modify' (a : Array α) (i : Nat) (f : α → α) :
-    (a.modify i f).size = a.size := Array.size_modify
-
-@[simp] theorem Array.getX_push (a : Array α) (v : α) (j : Nat) :
-    (a.push v).getX j = if j = a.size then v else a.getX j := by
-  simp only [Array.getX, Array.getD_eq_getD_getElem?, Array.getElem?_push]
-  by_cases h : j = a.size <;> simp [h]
-
-theorem Array.getX_set! (a : Array α) (i j : Nat) (v : α) :
-    (a.set! i v).getX j = if i = j ∧ i < a.size then v else a.getX j := by
-  simp only [Array.getX, Array.getD_eq_getD_getElem?, Array.set!_eq_setIfInBounds,
-    Array.getElem?_setIfInBounds]
-  by_cases hij : i = j
-  · subst hij; by_cases hi : i < a.size <;> simp [hi]
-  · simp [hij]
-
-@[simp] theorem Array.getX_setIfInBounds (a : Array α) (i j : Nat) (v : α) :
-    (a.setIfInBounds i v).getX j = if i = j ∧ i < a.size then v else a.getX j := by
-  rw [← Array.set!_eq_setIfInBounds]; exact Array.getX_set! a i j v
-
-omit [Inhabited α] in
-theorem Array.size_set!' (a : Array α) (i : Nat) (v : α) :
-    (a.set! i v).size = a.size := by simp
-
-@[simp] theorem Array.getX_ite {c : Prop} [Decidable c] (a b : Array α) (i : Nat) :
-    (if c then a else b).getX i = if c then a.getX i else b.getX i := by split <;> rfl
-
-omit [Inhabited α] in
-@[simp] theorem Array.size_ite {c : Prop} [Decidable c] (a b : Array α) :
-    (if c then a else b).size = if c then a.size else b.size := by split <;> rfl
-
-theorem Array.getX_ge (a : Array α) {j : Nat} (h : a.size ≤ j) : a.getX j = default := by
-  simp [Array.getX, Array.getD_eq_getD_getElem?, Array.getElem?_eq_none h]
-
-end arrays
 
 end OrderMaintenance.Proof
 

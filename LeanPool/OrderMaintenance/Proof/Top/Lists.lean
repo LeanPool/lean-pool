@@ -28,11 +28,8 @@ namespace OrderMaintenance.Proof.Top
 
 open OrderMaintenance.Model OrderMaintenance.Proof
 theorem Array.size_setX {α : Type} [Inhabited α] (a : Array α) (i : Nat) (v : α) :
-    (a.setX i v).size = if i < a.size then a.size else i + 1 := by
-  unfold Array.setX
-  split
-  · simp only [Array.set!_eq_setIfInBounds, Array.size_setIfInBounds]
-  · simp only [Array.push_append, Array.size_append, Array.size_push, Array.size_replicate]; omega
+    (a.setX i v).size = if i < a.size then a.size else i + 1 :=
+  OrderMaintenance.Proof.Array.size_setX a i v
 
 /-! ### Filters changed at one element -/
 

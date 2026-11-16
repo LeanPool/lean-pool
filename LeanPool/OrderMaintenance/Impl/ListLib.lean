@@ -175,8 +175,8 @@ theorem Array.ext_getX {α : Type} [Inhabited α] {a b : Array α} (h : a.size =
   exact this
 
 theorem size_setX {α : Type} [Inhabited α] (a : Array α) (i : Nat) (v : α) :
-    (a.setX i v).size = if i < a.size then a.size else i + 1 := by
-  unfold Array.setX; split <;> simp ; omega
+    (a.setX i v).size = if i < a.size then a.size else i + 1 :=
+  OrderMaintenance.Proof.Array.size_setX a i v
 
 theorem setX_setX {α : Type} [Inhabited α] (a : Array α) (i : Nat) (u v : α) :
     (a.setX i u).setX i v = a.setX i v := by

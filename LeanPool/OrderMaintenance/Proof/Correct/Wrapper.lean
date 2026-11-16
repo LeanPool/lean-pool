@@ -26,26 +26,6 @@ before the cursor, with `nxtIdx` mapping them; mirrored operations keep this.
 namespace OrderMaintenance.Proof
 
 open OrderMaintenance.Model
-theorem Array.getX_setX {α : Type} [Inhabited α] (a : Array α) (i j : Nat) (v : α) :
-    (a.setX i v).getX j = if j = i then v else a.getX j := by
-  unfold Array.setX Array.getX
-  split
-  · simp only [Array.getD_eq_getD_getElem?, Array.set!_eq_setIfInBounds,
-    Array.getElem?_setIfInBounds]
-    by_cases h : j = i
-    · subst h; simp [*]
-    · simp [Ne.symm h, h]
-  · rename_i hi
-    have hs : (a ++ Array.replicate (i - a.size) (default : α)).size = i := by simp; omega
-    simp only [Array.getD_eq_getD_getElem?, Array.getElem?_push, hs]
-    by_cases h : j = i
-    · simp [h]
-    · rw [ite_eq_right h, ite_eq_right h, Array.getElem?_append]
-      by_cases hj : j < a.size
-      · rw [ite_eq_left hj]
-      · rw [ite_eq_right hj, Array.getElem?_eq_none (by omega : a.size ≤ j),
-        Array.getElem?_replicate]
-        split <;> rfl
 
 theorem runCore_ok {α : Type} {c : Core} {act : CM α} {a : α} {s : Core} (h : act.run c = .ok a s) :
     runCore c act = .ok (a, s) := by

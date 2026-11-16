@@ -11,6 +11,7 @@ module
 public import Mathlib.Algebra.Order.Ring.Nat
 
 public import LeanPool.OrderMaintenance.ArrayLemmas
+public import LeanPool.OrderMaintenance.Proof.Correct.Monad
 public import LeanPool.OrderMaintenance.Impl.Compile
 
 
