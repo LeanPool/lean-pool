@@ -9,6 +9,10 @@ public import LeanPool.AutoconvolutionSharpness.Step
 public import LeanPool.AutoconvolutionSharpness.Interpolation
 public import Mathlib.MeasureTheory.Function.L2Space
 
+import Mathlib.MeasureTheory.Function.LpSeminorm.LpNorm
+import Mathlib.Tactic.Positivity
+import Mathlib.Tactic.NormNum
+
 /-!
 # Norm estimates from coefficient plateaus
 -/
@@ -79,13 +83,14 @@ theorem plateau_energy_le (d : ℕ) (p : Fin (d + 1) → ℝ) (S : Finset ℤ)
   have hi := (auto_step_memLp d p 2).integrable_sq
   have disj : Set.Pairwise (↑S) (fun i j => Disjoint (I i) (I j)) := by
     intro i _ j _ hij
-    apply Set.disjoint_left.mpr
-    rintro x ⟨hx₁,hx₂⟩ ⟨hy₁,hy₂⟩
+    apply Set.Ico_disjoint_Ico.mpr
     rcases lt_or_gt_of_ne hij with h | h
-    · have : (i : ℝ) + 1 ≤ j := by exact_mod_cast (show i + 1 ≤ j by omega)
-      linarith
-    · have : (j : ℝ) + 1 ≤ i := by exact_mod_cast (show j + 1 ≤ i by omega)
-      linarith
+    · apply (min_le_left _ _).trans
+      apply le_trans _ (le_max_right _ _)
+      exact_mod_cast (show i + 2 ≤ j + 1 by omega)
+    · apply (min_le_right _ _).trans
+      apply le_trans _ (le_max_left _ _)
+      exact_mod_cast (show j + 2 ≤ i + 1 by omega)
   have unit (k : ℤ) (hk : k ∈ S) : (∫ x in I k, auto (step d p) x ^ 2) = (H k) ^ 2 := by
     calc
       _ = ∫ _ in I k, (H k) ^ 2 := by

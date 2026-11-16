@@ -8,7 +8,6 @@ module
 public import LeanPool.AutoconvolutionSharpness.BlockExpansion
 public import LeanPool.AutoconvolutionSharpness.Estimate
 public import LeanPool.AutoconvolutionSharpness.Flat
-public import LeanPool.AutoconvolutionSharpness.PolyStep
 
 /-!
 # The polynomial witness for autoconvolution sharpness

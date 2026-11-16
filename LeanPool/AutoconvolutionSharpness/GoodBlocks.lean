@@ -25,6 +25,7 @@ open scoped BigOperators
 
 namespace Autoconvolutions.Blocks
 
+/-- A plateau level together with its two zero-one multiplicity vectors. -/
 abbrev Peak (m : ℕ) := Σ _s : ℕ, (Fin m → ℕ) × (Fin m → ℕ)
 
 /-- For each plateau use its level and the two zero / one multiplicity vectors. -/

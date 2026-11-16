@@ -9,7 +9,7 @@ public import Mathlib.Data.Nat.Digits.Defs
 public import Mathlib.Data.List.OfFn
 public import Mathlib.Data.Nat.Choose.Multinomial
 public import Mathlib.Algebra.BigOperators.Fin
-public import Mathlib.Tactic.Ring
+import Mathlib.Tactic.Ring
 
 /-!
 # Block indices
@@ -29,15 +29,19 @@ open Finset
 def code {m : ℕ} (D : ℕ) (a : Fin m → ℕ) : ℕ :=
   ∑ i, a i * D ^ i.val
 
+/-- The exponent formed by a low digit and two high-digit multiplicity vectors. -/
 def key {m : ℕ} (D : ℕ) (a b : Fin m → ℕ) (h : ℕ) : ℕ :=
   h + D * (code D a + code D b)
 
+/-- Two multiplicity vectors together with a low digit. -/
 abbrev Row (m : ℕ) := ((Fin m → ℕ) × (Fin m → ℕ)) × ℕ
 
+/-- The finite rows with prescribed multiplicity totals and a low digit below the base. -/
 noncomputable def rows {m : ℕ} (I J : Finset (Fin m)) (u v D : ℕ) : Finset (Row m) := by
   classical
   exact ((I.piAntidiag u) ×ˢ (J.piAntidiag v)) ×ˢ range D
 
+/-- The exponent encoded by a row. -/
 def rowKey {m : ℕ} (D : ℕ) (t : Row m) : ℕ := key D t.1.1 t.1.2 t.2
 
 theorem mem_rows {m u v D : ℕ} {I J : Finset (Fin m)} {t : Row m} :

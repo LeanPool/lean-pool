@@ -11,7 +11,7 @@ public import Mathlib.Data.Nat.Choose.Multinomial
 public import Mathlib.Algebra.Polynomial.Degree.Support
 public import Mathlib.Algebra.Polynomial.Eval.Defs
 public import Mathlib.Algebra.Polynomial.Coeff
-public import Mathlib.Tactic.Ring
+import Mathlib.Tactic.Ring
 
 /-!
 # Polynomial expansion at one level

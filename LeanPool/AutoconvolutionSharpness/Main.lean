@@ -9,6 +9,7 @@ public import LeanPool.AutoconvolutionSharpness.Witness
 public import LeanPool.AutoconvolutionSharpness.Coefficients
 public import LeanPool.AutoconvolutionSharpness.GoodBlocks
 public import LeanPool.AutoconvolutionSharpness.Bounds
+public import LeanPool.AutoconvolutionSharpness.PolyStep
 public import Mathlib.Analysis.SpecificLimits.Normed
 
 /-!

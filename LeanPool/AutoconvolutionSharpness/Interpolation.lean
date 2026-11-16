@@ -6,12 +6,10 @@ Authors: Tonći Crmarić, Vjekoslav Kovač, Jelena Rupčić
 module
 
 public import LeanPool.AutoconvolutionSharpness.Definitions
-public import Mathlib.Analysis.Convolution
-public import Mathlib.MeasureTheory.Function.LpSeminorm.LpNorm
-public import Mathlib.MeasureTheory.Function.LpSpace.Indicator
-public import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
-public import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
-public import Mathlib.Tactic
+public import Mathlib.MeasureTheory.Integral.Bochner.Set
+import Mathlib.Tactic.FunProp
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.Ring
 
 /-!
 # Tent expansions and interpolation of step-function autoconvolution
@@ -61,8 +59,19 @@ theorem integral_cell_mul_cell (a b v w x : ℝ) :
   rw [integral_congr_ae (cellProduct_ae a b v w x), integral_indicator measurableSet_Icc,
     setIntegral_const, Real.volume_real_Icc, smul_eq_mul]
   have hlength : max (min (a + 1) (x - b) - max a (x - b - 1)) 0 = tent (x - a - b) := by
-    simp only [tent, max_def, min_def]
-    split_ifs <;> linarith
+    by_cases h : x - a - b ≤ 1
+    · rw [min_eq_right (by linarith : x - b ≤ a + 1),
+        max_eq_left (by linarith : x - b - 1 ≤ a), tent,
+        min_eq_left (by linarith : x - a - b ≤ 2 - (x - a - b))]
+      rw [max_comm]
+      congr 1
+      ring
+    · rw [min_eq_left (by linarith : a + 1 ≤ x - b),
+        max_eq_right (by linarith : a ≤ x - b - 1), tent,
+        min_eq_right (by linarith : 2 - (x - a - b) ≤ x - a - b)]
+      rw [max_comm]
+      congr 1
+      ring
   rw [hlength]
   ring
 

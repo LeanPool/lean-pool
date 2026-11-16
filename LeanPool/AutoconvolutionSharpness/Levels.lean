@@ -8,9 +8,9 @@ module
 public import Mathlib.Algebra.Polynomial.Eval.Defs
 public import Mathlib.Algebra.Polynomial.Coeff
 public import Mathlib.Algebra.BigOperators.Group.Finset.Sigma
-public import Mathlib.Tactic.FieldSimp
-public import Mathlib.Tactic.Ring
-public import Mathlib.Tactic.LinearCombination
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.Ring
+import Mathlib.Tactic.LinearCombination
 public import Mathlib.Basic.Real.Basic
 
 /-!

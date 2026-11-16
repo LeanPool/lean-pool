@@ -5,10 +5,11 @@ Authors: Tonći Crmarić, Vjekoslav Kovač, Jelena Rupčić
 -/
 module
 
-public import LeanPool.AutoconvolutionSharpness.Definitions
 public import LeanPool.AutoconvolutionSharpness.Parameters
 public import LeanPool.AutoconvolutionSharpness.Digits
 public import LeanPool.AutoconvolutionSharpness.Levels
+
+import Mathlib.Tactic.Positivity
 
 /-!
 # Summing the extremal blocks
@@ -139,11 +140,12 @@ theorem norm_ratio_lower {r b n K : ℕ} (hn : 0 < n) (hK : K ≤ n)
     positivity
   have hApos := height_pos n (2 * K)
   calc
-    _ ≤ (1 - 1 / (n : ℝ)) * (height n 0 / height n (2 * K)) * (T / S ^ 2) * (one * height n (2 *
-        K)) := by gcongr
+    _ ≤ (1 - 1 / (n : ℝ)) * (height n 0 / height n (2 * K)) * (T / S ^ 2) *
+        (one * height n (2 * K)) :=
+      mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_left hPeak hOnePos.le) hE
     _ = height n 0 * (1 - 1 / (n : ℝ)) * ((r : ℝ) * b) ^ (2 * n) * T := by
       rw [hOne', show ((r : ℝ) * b) ^ (2 * n) = C ^ 2 by rw [Nat.mul_comm, pow_mul]]
-      field_simp
+      field_simp [hS.ne', hApos.ne']
     _ ≤ _ := (plateau_sum_lower hn hK hb hbr).trans hSq
 
 /-- A version for the geometric block lemma: the right - hand side here is its
