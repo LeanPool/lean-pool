@@ -45,7 +45,6 @@ private lemma homQueries_membership : ∀ {N0 q0 : ℕ} (z : Fin N0 → Fin q0)
 
 private lemma edgeMoments_hbound1 :
     ∀ (N0 q0 r0 : ℕ) (x y : Fin N0 → Fin q0),
-      dHam x y = r0 →
         (∀ (z : Fin N0 → Fin q0), {v ∈ disagreeSet x y | z v = y v} ⊆ disagreeSet x z) →
           ∀ b ≤ r0,
             let B_of : (Fin N0 → Fin q0) → Finset (Fin N0) := fun (z : Fin N0 → Fin q0) => {v ∈
@@ -56,7 +55,7 @@ private lemma edgeMoments_hbound1 :
             ∀ B ∈ S₁, {z ∈ F_b | B_of z = B}.card ≤ (N0 - b).choose (r0 - b) * (q0 - (1 : ℕ)) ^
                 (r0 - b) := by
   classical
-  intro N0 q0 r0 x y hdxy hB_sub_xz b hb B_of F_b S₁ B hB
+  intro N0 q0 r0 x y hB_sub_xz b hb B_of F_b S₁ B hB
   let T_of : (Fin N0 → Fin q0) → Finset (Fin N0) := fun (z : Fin N0 → Fin q0) => disagreeSet x z
       \ B_of z
   have hB_card : B.card = b := (Finset.mem_powersetCard.mp hB).2
@@ -213,7 +212,7 @@ private lemma queryTripleCardinalityAndFibers : ∀ (N0 q0 r0 : ℕ) (x y : Fin 
       simp_rw [Finset.card_eq_sum_ones]
       exact (Finset.sum_fiberwise_of_maps_to hmaps1 _).symm
     have hbound1 :=
-      @edgeMoments_hbound1 N0 q0 r0 x y hdxy hB_sub_xz b hb
+      @edgeMoments_hbound1 N0 q0 r0 x y hB_sub_xz b hb
     change F_b.card ≤ _
     rw [hfib1, mul_assoc]
     calc

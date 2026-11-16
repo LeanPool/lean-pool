@@ -563,7 +563,7 @@ private lemma witnessMoments_h_xw_bound :
                 σ * (↑r_star : ℝ) / (2 : ℝ) ≤ (10001 / 10000 : ℝ) * (↑(cspBeta0 C₁) : ℝ) →
                   (0 : ℝ) < p_keep →
                     ∀ (a₀ b₀ : Fin N → Fin q),
-                      ∀ m < cspKMom C₁,
+                      ∀ (m : ℕ),
                         ∀ (z_prev : Fin m → Fin N → Fin q),
                           (3000 : ℕ) ≤ cspLam0 C₁ →
                             (↑(cspBeta0 C₁) : ℝ) = (6 : ℝ) * (↑(cspLam0 C₁) : ℝ) →
@@ -581,7 +581,7 @@ private lemma witnessMoments_h_xw_bound :
                                         ((346 / 100 : ℝ) * (↑(cspLam0 C₁) : ℝ) * (↑(candMFresh
                                             a₀ b₀ m z_prev x).card : ℝ)) := by
   classical
-  intro C₁ hC₁ r_star hr N q σ p_keep hσ_pos_loc hσ_up_loc hp_keep_pos_loc a₀ b₀ m hm z_prev
+  intro C₁ hC₁ r_star hr N q σ p_keep hσ_pos_loc hσ_up_loc hp_keep_pos_loc a₀ b₀ m z_prev
       hlam_ge hbeta_eq p_edge P_rem x hx w hw
   have hx_pool := (Finset.mem_sdiff.mp hx).1
   simp only [cspPoolCand, Finset.mem_filter, Finset.mem_univ, true_and] at hx_pool
@@ -836,7 +836,7 @@ by
     let P_rem := cspPoolCand C₁ r_star a₀ b₀ \ Finset.univ.image z_prev
     have h_xw_bound :=
       @witnessMoments_h_xw_bound C₁ hC₁ r_star hr N q σ p_keep hσ_pos_loc hσ_up_loc
-          hp_keep_pos_loc a₀ b₀ m hm z_prev hlam_ge hbeta_eq
+          hp_keep_pos_loc a₀ b₀ m z_prev hlam_ge hbeta_eq
     let C_fixed : ℝ := (2 : ℝ) ^ (3 * (r_star : ℝ)) * p_keep
     have hC_nn : 0 ≤ C_fixed := by positivity
     have h_x_bound : ∀ x ∈ P_rem,

@@ -763,37 +763,25 @@ private lemma hamming_hsum_choose (r d : ℕ) (hr : 4 ≤ r) :
           Real.rpow_le_rpow_of_exponent_le (by norm_num) hexp_prod_le
 
 open Classical in
-private lemma hamming_hpairs_real :
-    ∀ (r d : ℕ),
-      (4 : ℕ) ≤ r →
-        (1 : ℕ) ≤ d →
-          let b_r : ℝ := (2 : ℝ) ^ r - (1 : ℝ);
-          let ρ_r : ℝ := (1 : ℝ) / ((64 : ℝ) * b_r);
-          ∀ (P : Finset (Fin d → Bool)),
-            (2 : ℝ) ^ (((1 : ℝ) - (↑r : ℝ) / ((2 : ℝ) * b_r)) * (↑d : ℝ)) ≤ (↑P.card : ℝ) →
-              let bNat : ℕ := (2 : ℕ) ^ r - (1 : ℕ);
-              (15 : ℕ) ≤ bNat →
-                (↑bNat : ℝ) = b_r →
-                  (15 : ℝ) ≤ b_r →
-                    (0 : ℝ) < b_r →
-                      (0 : ℝ) < ρ_r →
-                        (28 : ℝ) * b_r < (↑d : ℝ) →
-                          let C_r : Finset (Fin d → Bool) := blockCode r d;
-                          let S_r : Finset (Fin d → Bool) := C_r \ P;
-                          P ⊆ P ∪ S_r →
-                            C_r ⊆ P ∪ S_r →
-                              let k : ℕ := ⌊(27 / 4 : ℝ) * ρ_r * (↑d : ℝ)⌋₊;
-                              let pairs_C : Finset ((Fin d → Bool) × (Fin d → Bool)) :=
-                                {cc' ∈ C_r ×ˢ C_r | (1 : ℕ) ≤ hammingDist cc'.1 cc'.2 ∧
-                                    hammingDist cc'.1 cc'.2 ≤ k};
-                              let α : ℝ := (7 : ℝ) * ρ_r;
-                              α < (1 : ℝ) →
-                                ∑ j ∈ Finset.Icc (1 : ℕ) k, (↑(d.choose j) : ℝ) ≤
-                                    (2 : ℝ) ^ ((↑r : ℝ) / ((4 : ℝ) * b_r) * (↑d : ℝ)) →
-                                  (↑pairs_C.card : ℝ) ≤ (2 : ℝ) * (↑P.card : ℝ) := by
+private lemma blockCode_closePair_cardinality_bound (r d k : ℕ)
+    (P : Finset (Fin d → Bool)) (hr : 0 < r) :
+    let b_r : ℝ := (2 : ℝ) ^ r - 1;
+    0 < b_r → 28 * b_r < (d : ℝ) →
+    (2 : ℝ) ^ ((1 - (r : ℝ) / (2 * b_r)) * (d : ℝ)) ≤ (P.card : ℝ) →
+    (∑ j ∈ Finset.Icc 1 k, (d.choose j : ℝ)) ≤
+      (2 : ℝ) ^ ((r : ℝ) / (4 * b_r) * (d : ℝ)) →
+    let C_r := blockCode r d;
+    let pairs_C := {cc' ∈ C_r ×ˢ C_r | 1 ≤ hammingDist cc'.1 cc'.2 ∧
+      hammingDist cc'.1 cc'.2 ≤ k};
+    (pairs_C.card : ℝ) ≤ 2 * (P.card : ℝ) := by
   classical
-  intro r d hr hd b_r ρ_r P hP_rate bNat hbNat_ge15 hbNat_cast hbr_ge15 hbr_pos hρ_pos hd_gt_28b
-      C_r S_r hP_sub hC_sub k pairs_C α hα_lt1 hsum_choose
+  intro b_r hbr_pos hd_gt_28b hP_rate hsum_choose C_r pairs_C
+  let bNat : ℕ := 2 ^ r - 1
+  have hbNat_cast : (bNat : ℝ) = b_r := by
+    dsimp [bNat, b_r]
+    rw [Nat.cast_sub (Nat.one_le_two_pow), Nat.cast_pow, Nat.cast_ofNat, Nat.cast_one]
+  have hbNat_pos : 0 < bNat := by
+    exact_mod_cast (show (0 : ℝ) < (bNat : ℝ) by rwa [hbNat_cast])
   let M := d / bNat
   have hcard_Cr : (C_r.card : ℝ) = (2 : ℝ) ^ ((d - M * r : ℕ) : ℝ) := by
     have hc := card_blockCode r d
@@ -810,7 +798,7 @@ private lemma hamming_hpairs_real :
   have hsub_cast : ((d - M * r : ℕ) : ℝ) = (d : ℝ) - (M : ℝ) * (r : ℝ) := by
     rw [Nat.cast_sub hMr_le_d, Nat.cast_mul]
   have hM_gt : (d : ℝ) / b_r - 1 < (M : ℝ) := by
-    have hmod_lt : d % bNat < bNat := Nat.mod_lt d (by omega)
+    have hmod_lt : d % bNat < bNat := Nat.mod_lt d hbNat_pos
     have hdiv_eq : bNat * M + d % bNat = d := Nat.div_add_mod d bNat
     have hd_lt : (d : ℝ) < b_r * ((M : ℝ) + 1) := by
       have hnat : d < bNat * (M + 1) := by nlinarith only [hmod_lt, hdiv_eq]
@@ -1006,8 +994,8 @@ lemma lem_3_3_proof :
         @hamming_hsum_choose r d hr hbr_ge15 hα_pos hα_lt1
             hk_le_αd hk_lt_d
       have hpairs_real : (pairs_C.card : ℝ) ≤ 2 * (P.card : ℝ) :=
-        @hamming_hpairs_real r d hr hd P hP_rate hbNat_ge15 hbNat_cast hbr_ge15 hbr_pos hρ_pos
-            hd_gt_28b hP_sub hC_sub hα_lt1 hsum_choose
+        blockCode_closePair_cardinality_bound r d k P (by omega) hbr_pos hd_gt_28b
+          hP_rate hsum_choose
       have hpairs_nat : pairs_C.card ≤ 2 * P.card := by exact_mod_cast hpairs_real
       omega
     · -- Non-contraction

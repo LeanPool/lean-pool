@@ -71,7 +71,6 @@ private lemma closePairs_hterm_le :
                                 sigma_edge * (↑(s.choose (2 : ℕ)) : ℝ))) →
                         p_keep ≤ (2 : ℝ) ^ (-(747 / 1000 : ℝ) * (↑lam0 : ℝ) * (↑r_star : ℝ)) →
                           (0 : ℝ) < n_0 →
-                            (0 : ℝ) < (↑r_star : ℝ) →
                               (1000 : ℝ) ≤ (↑lam0 : ℝ) →
                                 (↑beta0 : ℝ) = (6 : ℝ) * (↑lam0 : ℝ) →
                                   (↑gamma0 : ℝ) = (5 : ℝ) * (↑lam0 : ℝ) →
@@ -94,7 +93,7 @@ private lemma closePairs_hterm_le :
                                             B_close := by
   classical
   intro r_star hr_ge N q lam0 beta0 gamma0 sigma_edge p_edge p_keep n_0 d_omega hlam0_ge hN_gt_r
-      hσ0 hp_edge0 hσ_up0 hdomega_def hDOm_s0 hp_keep_up0 hn0_pos0 hr_pos hlam0_real hbeta_real
+      hσ0 hp_edge0 hσ_up0 hdomega_def hDOm_s0 hp_keep_up0 hn0_pos0 hlam0_real hbeta_real
           hgam_real h_choose2_nat PairSphere h_sphere_sum B_close s hs
   rw [Finset.mem_Icc] at hs
   rw [h_sphere_sum s hs.2]
@@ -130,7 +129,8 @@ private lemma closePairs_hterm_le :
         (2 * (r_star : ℝ) - (gamma0 : ℝ) * (s : ℝ) + sigma_edge * (s.choose 2 : ℝ)) ≤
         - (74 / 100 : ℝ) * (lam0 : ℝ) * (r_star : ℝ) := by
       have h2r_le : 2 * (r_star : ℝ) ≤ (2 / 1000 : ℝ) * (lam0 : ℝ) * (r_star : ℝ) := by
-        nlinarith only [hlam0_real, hr_pos]
+        have hscaled := mul_le_mul_of_nonneg_right hlam0_real (Nat.cast_nonneg r_star)
+        nlinarith only [hscaled]
       have hprod_nn : (0 : ℝ) ≤ (lam0 : ℝ) * (r_star : ℝ) := by positivity
       linarith only [hsig_sc2, h2r_le, hprod_nn]
     exact le_trans hm (Real.rpow_le_rpow_of_exponent_le (by norm_num) hexp)
@@ -229,7 +229,7 @@ private lemma closePair_core (r_star : ℕ) (hr_ge : 3001 ≤ r_star) : ∀ (N q
       ∑ xy ∈ PairSphere s,
         p_keep ^ 2 * p_edge ^ (homQueries xy.1 ∪ homQueries xy.2).card ≤ B_close :=
     @closePairs_hterm_le r_star hr_ge N q lam0 beta0 gamma0 sigma_edge p_edge p_keep n_0 d_omega
-        hlam0_ge hN_gt_r hσ0 hp_edge0 hσ_up0 hdomega_def hDOm_s0 hp_keep_up0 hn0_pos0 hr_pos
+        hlam0_ge hN_gt_r hσ0 hp_edge0 hσ_up0 hdomega_def hDOm_s0 hp_keep_up0 hn0_pos0
             hlam0_real hbeta_real hgam_real h_choose2_nat h_sphere_sum
   have hsum_le1 : ∑ s ∈ Finset.Icc 1 (r_star / 2), ∑ xy ∈ PairSphere s,
       p_keep ^ 2 * p_edge ^ (homQueries xy.1 ∪ homQueries xy.2).card ≤

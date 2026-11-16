@@ -465,19 +465,16 @@ private lemma calibration_h_env_diag_low :
 open Classical in
 private lemma calibration_h_cal :
     ∀ (r_star gamma0 L eq q : ℕ) (sigma_edge p_edge : ℝ),
-      (20 : ℕ) ≤ L →
         sigma_edge = (↑(eq + L + gamma0 + (2 : ℕ)) : ℝ) / (↑((2 : ℕ) ^ L * r_star - (1 : ℕ)) : ℝ) →
           q - (1 : ℕ) = (2 : ℕ) ^ eq →
             let N : ℕ := (2 : ℕ) ^ L * r_star;
             N = (2 : ℕ) ^ L * r_star →
-              (0 : ℕ) < N - (1 : ℕ) →
                 (0 : ℝ) < (↑(N - (1 : ℕ)) : ℝ) →
                   (∀ (k : ℕ), p_edge ^ k = (2 : ℝ) ^ (-sigma_edge * (↑k : ℝ))) →
                     (4 : ℝ) * (2 : ℝ) ^ L * (↑(q - (1 : ℕ)) : ℝ) * p_edge ^ (N - (1 : ℕ)) = (2 :
                         ℝ) ^ (-(↑gamma0 : ℝ)) := by
   classical
-  intro r_star gamma0 L eq q sigma_edge p_edge hL_ge20 hsigma_def hq_sub1 N hN_def hN1_pos_nat
-      hN1_pos hp_edge_pow
+  intro r_star gamma0 L eq q sigma_edge p_edge hsigma_def hq_sub1 N hN_def hN1_pos hp_edge_pow
   have hq1_real : ((q - 1 : ℕ) : ℝ) = (2 : ℝ) ^ eq := by
     rw [hq_sub1, Nat.cast_pow, Nat.cast_ofNat]
   have hlhs1 : (4 : ℝ) * (2 : ℝ) ^ L * ((q - 1 : ℕ) : ℝ) =
@@ -574,7 +571,6 @@ private lemma calibration_hσ_up :
 open Classical in
 private lemma calibration_h_qp_eq :
     ∀ (r_star gamma0 L q : ℕ) (p_edge : ℝ),
-      (3001 : ℕ) ≤ r_star →
         (0 : ℝ) < (↑r_star : ℝ) →
           let N : ℕ := (2 : ℕ) ^ L * r_star;
           N = (2 : ℕ) ^ L * r_star →
@@ -583,7 +579,7 @@ private lemma calibration_h_qp_eq :
               (↑(q - (1 : ℕ)) : ℝ) * p_edge ^ (N - (1 : ℕ)) =
                 (↑r_star : ℝ) / ((4 : ℝ) * (↑N : ℝ)) * (2 : ℝ) ^ (-(↑gamma0 : ℝ)) := by
   classical
-  intro r_star gamma0 L q p_edge hr_3001 hr_real_pos N hN_def h_cal
+  intro r_star gamma0 L q p_edge hr_real_pos N hN_def h_cal
   have h42L_pos : (0 : ℝ) < (4 : ℝ) * (2 : ℝ) ^ L := by positivity
   have hN_cast : (N : ℝ) = (2 : ℝ) ^ L * (r_star : ℝ) := by
     rw [hN_def]; push_cast; rfl
@@ -859,19 +855,15 @@ private lemma calibration_hp_keep_low :
 open Classical in
 private lemma calibration_hp_edge_Nchoose2 :
     ∀ (r_star gamma0 L eq : ℕ) (sigma_edge p_edge : ℝ),
-      (20 : ℕ) ≤ L →
         sigma_edge = (↑(eq + L + gamma0 + (2 : ℕ)) : ℝ) / (↑((2 : ℕ) ^ L * r_star - (1 : ℕ)) : ℝ) →
           let N : ℕ := (2 : ℕ) ^ L * r_star;
           N = (2 : ℕ) ^ L * r_star →
-            (3001 : ℕ) ≤ N →
-              (0 : ℕ) < N - (1 : ℕ) →
                 (0 : ℝ) < (↑(N - (1 : ℕ)) : ℝ) →
                   (∀ (k : ℕ), p_edge ^ k = (2 : ℝ) ^ (-sigma_edge * (↑k : ℝ))) →
                     p_edge ^ N.choose (2 : ℕ) = (2 : ℝ) ^ (-((↑N : ℝ) * (↑(eq + L + gamma0 + (2
                         : ℕ)) : ℝ) / (2 : ℝ))) := by
   classical
-  intro r_star gamma0 L eq sigma_edge p_edge hL_ge20 hsigma_def N hN_def hN_ge3001 hN1_pos_nat
-      hN1_pos hp_edge_pow
+  intro r_star gamma0 L eq sigma_edge p_edge hsigma_def N hN_def hN1_pos hp_edge_pow
   rw [hp_edge_pow (N.choose 2), hsigma_def, ← hN_def]
   congr 1
   have h2N : (2 : ℝ) * (N.choose 2 : ℝ) = (N : ℝ) * ((N - 1 : ℕ) : ℝ) := by
@@ -1456,8 +1448,8 @@ private lemma dyadicCalibration_core (C₁ : ℕ) (hC₁ : 3 ≤ C₁)
     intro k
     rw [hpedge_def, ← Real.rpow_natCast _ k, ← Real.rpow_mul (by norm_num : (0 : ℝ) ≤ 2)]
   have h_cal :=
-    @calibration_h_cal r_star gamma0 L eq q sigma_edge p_edge hL_ge20 hsigma_def hq_sub1
-        hN_def hN1_pos_nat hN1_pos hp_edge_pow
+    @calibration_h_cal r_star gamma0 L eq q sigma_edge p_edge hsigma_def hq_sub1
+        hN_def hN1_pos hp_edge_pow
   have hσ_low :=
     @calibration_hσ_low r_star lam0 beta0 gamma0 L eq sigma_edge hbeta0_def hgamma0_def
         hL_ge20 heq_def hsigma_def hr_pos hbeta0_ge hN_def hN1_pos
@@ -1465,7 +1457,7 @@ private lemma dyadicCalibration_core (C₁ : ℕ) (hC₁ : 3 ≤ C₁)
     @calibration_hσ_up r_star lam0 beta0 gamma0 L eq sigma_edge hbeta0_def heq_def hsigma_def
         hr_3001 hbeta0_ge h2L_lg h2L_mil hN_def hN_ge1 hN1_pos
   have h_qp_eq :=
-    @calibration_h_qp_eq r_star gamma0 L q p_edge hr_3001 hr_real_pos hN_def h_cal
+    @calibration_h_qp_eq r_star gamma0 L q p_edge hr_real_pos hN_def h_cal
   have h_base_s :=
     @calibration_h_base_s r_star gamma0 L q p_edge h_qp_eq
   have h_binom_edge :=
@@ -1495,8 +1487,8 @@ private lemma dyadicCalibration_core (C₁ : ℕ) (hC₁ : 3 ≤ C₁)
     @calibration_hp_keep_low r_star lam0 d_star p_keep d_omega hdstar_def hpkeep_def h_DOm_up
         hDOm_r_pos
   have hp_edge_Nchoose2 :=
-    @calibration_hp_edge_Nchoose2 r_star gamma0 L eq sigma_edge p_edge hL_ge20 hsigma_def
-        hN_def hN_ge3001 hN1_pos_nat hN1_pos hp_edge_pow
+    @calibration_hp_edge_Nchoose2 r_star gamma0 L eq sigma_edge p_edge hsigma_def
+        hN_def hN1_pos hp_edge_pow
   have hNeq_half :=
     @calibration_hNeq_half r_star beta0 L eq heq_def hN_def
   have hn0_low :=

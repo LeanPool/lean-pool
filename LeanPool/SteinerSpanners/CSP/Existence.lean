@@ -1014,6 +1014,28 @@ private lemma existence_hBD3_exp :
   rw [hsum_bi] at hstep1
   linarith only [hstep1, hstep2, hstep3]
 
+private lemma exponentialMomentEstimate (A τ n₀ : ℝ) (order : ℕ)
+    (hA : 9 ≤ A) (hτ : 1 ≤ τ) (horder : 20 * A ≤ (order : ℝ)) (hn₀ : 0 ≤ n₀) :
+    n₀ * (2 : ℝ) ^ (7 * A * τ) * ((2 : ℝ) ^ (-(72 / 100 : ℝ) * τ)) ^ order ≤
+      (1 / 4 : ℝ) * (2 : ℝ) ^ (-(6 / 10 : ℝ) * τ) * n₀ := by
+  have hcomb : (2 : ℝ) ^ (7 * A * τ) * ((2 : ℝ) ^ (-(72 / 100 : ℝ) * τ)) ^ order ≤
+      (1 / 4 : ℝ) * (2 : ℝ) ^ (-(6 / 10 : ℝ) * τ) := by
+    have hquarter : (1 / 4 : ℝ) = (2 : ℝ) ^ (-(2 : ℝ)) := by norm_num
+    rw [← Real.rpow_natCast, ← Real.rpow_mul (by norm_num : (0 : ℝ) ≤ 2),
+      ← Real.rpow_add (by norm_num : (0 : ℝ) < 2), hquarter,
+      ← Real.rpow_add (by norm_num : (0 : ℝ) < 2)]
+    apply Real.rpow_le_rpow_of_exponent_le (by norm_num)
+    have hτ_nonneg : 0 ≤ τ := by linarith only [hτ]
+    have hscaled := mul_le_mul_of_nonneg_right horder hτ_nonneg
+    have hA_scaled := mul_le_mul_of_nonneg_right hA hτ_nonneg
+    nlinarith only [hscaled, hA_scaled, hτ]
+  calc
+    _ = n₀ * ((2 : ℝ) ^ (7 * A * τ) * ((2 : ℝ) ^ (-(72 / 100 : ℝ) * τ)) ^ order) := by
+      ring
+    _ ≤ n₀ * ((1 / 4 : ℝ) * (2 : ℝ) ^ (-(6 / 10 : ℝ) * τ)) :=
+      mul_le_mul_of_nonneg_left hcomb hn₀
+    _ = _ := by ring
+
 open Classical in
 private lemma existence_hBch_exp :
     ∀ (C₁ r_star : ℕ),
@@ -1198,31 +1220,11 @@ private lemma existence_hBch_exp :
       (2 : ℝ) ^ ((7 * (C₁ ^ 2 : ℕ) : ℝ) * (cspLam0 C₁ : ℝ) * (r_star : ℝ)) *
       α_ch ^ cspKCh C₁ ≤
     (1 / 4 : ℝ) * cspDeltaBad C₁ r_star * cspN0 C₁ r_star := by
-    have hKch_cast : (cspKCh C₁ : ℝ) = 20 * ((C₁ ^ 2 : ℕ) : ℝ) := by
-      unfold cspKCh
-      push_cast
-      ring
-    have hcomb : (2 : ℝ) ^ ((7 * (C₁ ^ 2 : ℕ) : ℝ) * (cspLam0 C₁ : ℝ) * (r_star : ℝ)) *
-        α_ch ^ cspKCh C₁ ≤
-        (1 / 4 : ℝ) * cspDeltaBad C₁ r_star := by
-      change (2 : ℝ) ^ ((7 * (C₁ ^ 2 : ℕ) : ℝ) * (cspLam0 C₁ : ℝ) * (r_star : ℝ)) *
-        ((2 : ℝ) ^ (- (72 / 100 : ℝ) * (cspLam0 C₁ : ℝ) * (r_star : ℝ))) ^ cspKCh C₁ ≤
-        (1 / 4 : ℝ) * (2 : ℝ) ^ (- (6 / 10 : ℝ) * (cspLam0 C₁ : ℝ) * (r_star : ℝ))
-      have hquarter : (1 / 4 : ℝ) = (2 : ℝ) ^ (- (2 : ℝ)) := by norm_num
-      rw [← Real.rpow_natCast, ← Real.rpow_mul (by norm_num : (0 : ℝ) ≤ 2),
-        ← Real.rpow_add (by norm_num : (0 : ℝ) < 2), hquarter,
-        ← Real.rpow_add (by norm_num : (0 : ℝ) < 2), hKch_cast]
-      apply Real.rpow_le_rpow_of_exponent_le (by norm_num)
-      have hprod_ge : (1 : ℝ) ≤ (cspLam0 C₁ : ℝ) * (r_star : ℝ) := by
-        nlinarith only [hlam0_real, hr_ge3001_real]
-      nlinarith only [hC₁_sq_real, hprod_ge]
-    have hm := mul_le_mul_of_nonneg_left hcomb (le_of_lt hn0_pos)
-    linarith [hm,
-      show cspN0 C₁ r_star * ((1 / 4 : ℝ) * cspDeltaBad C₁ r_star) =
-        (1 / 4 : ℝ) * cspDeltaBad C₁ r_star * cspN0 C₁ r_star by ring,
-      mul_assoc (cspN0 C₁ r_star)
-        ((2 : ℝ) ^ ((7 * (C₁ ^ 2 : ℕ) : ℝ) * (cspLam0 C₁ : ℝ) * (r_star : ℝ)))
-        (α_ch ^ cspKCh C₁)]
+    simpa only [α_ch, cspDeltaBad, Nat.cast_mul, Nat.cast_ofNat, mul_assoc] using
+      exponentialMomentEstimate ((C₁ ^ 2 : ℕ) : ℝ)
+        ((cspLam0 C₁ : ℝ) * (r_star : ℝ)) (cspN0 C₁ r_star) (cspKCh C₁)
+        hC₁_sq_real (by nlinarith only [hlam0_real, hr_ge3001_real])
+        (by simp [cspKCh]) (le_of_lt hn0_pos)
   linarith only [hstep1, hstep2, hstep3]
 
 open Classical in
@@ -1430,31 +1432,11 @@ private lemma existence_hBcand_exp :
       (2 : ℝ) ^ ((7 * (C₁ ^ 2 : ℕ) : ℝ) * (cspLam0 C₁ : ℝ) * (r_star : ℝ)) *
       α_cand ^ cspKMom C₁ ≤
     (1 / 4 : ℝ) * cspDeltaBad C₁ r_star * cspN0 C₁ r_star := by
-    have hKmom_cast : (cspKMom C₁ : ℝ) = 20 * ((C₁ ^ 2 : ℕ) : ℝ) := by
-      unfold cspKMom
-      push_cast
-      ring
-    have hcomb : (2 : ℝ) ^ ((7 * (C₁ ^ 2 : ℕ) : ℝ) * (cspLam0 C₁ : ℝ) * (r_star : ℝ)) *
-        α_cand ^ cspKMom C₁ ≤
-        (1 / 4 : ℝ) * cspDeltaBad C₁ r_star := by
-      change (2 : ℝ) ^ ((7 * (C₁ ^ 2 : ℕ) : ℝ) * (cspLam0 C₁ : ℝ) * (r_star : ℝ)) *
-        ((2 : ℝ) ^ (- (72 / 100 : ℝ) * (cspLam0 C₁ : ℝ) * (r_star : ℝ))) ^ cspKMom C₁ ≤
-        (1 / 4 : ℝ) * (2 : ℝ) ^ (- (6 / 10 : ℝ) * (cspLam0 C₁ : ℝ) * (r_star : ℝ))
-      have hquarter : (1 / 4 : ℝ) = (2 : ℝ) ^ (- (2 : ℝ)) := by norm_num
-      rw [← Real.rpow_natCast, ← Real.rpow_mul (by norm_num : (0 : ℝ) ≤ 2),
-        ← Real.rpow_add (by norm_num : (0 : ℝ) < 2), hquarter,
-        ← Real.rpow_add (by norm_num : (0 : ℝ) < 2), hKmom_cast]
-      apply Real.rpow_le_rpow_of_exponent_le (by norm_num)
-      have hprod_ge : (1 : ℝ) ≤ (cspLam0 C₁ : ℝ) * (r_star : ℝ) := by
-        nlinarith only [hlam0_real, hr_ge3001_real]
-      nlinarith only [hC₁_sq_real, hprod_ge]
-    have hm := mul_le_mul_of_nonneg_left hcomb (le_of_lt hn0_pos)
-    linarith [hm,
-      show cspN0 C₁ r_star * ((1 / 4 : ℝ) * cspDeltaBad C₁ r_star) =
-        (1 / 4 : ℝ) * cspDeltaBad C₁ r_star * cspN0 C₁ r_star by ring,
-      mul_assoc (cspN0 C₁ r_star)
-        ((2 : ℝ) ^ ((7 * (C₁ ^ 2 : ℕ) : ℝ) * (cspLam0 C₁ : ℝ) * (r_star : ℝ)))
-        (α_cand ^ cspKMom C₁)]
+    simpa only [α_cand, cspDeltaBad, Nat.cast_mul, Nat.cast_ofNat, mul_assoc] using
+      exponentialMomentEstimate ((C₁ ^ 2 : ℕ) : ℝ)
+        ((cspLam0 C₁ : ℝ) * (r_star : ℝ)) (cspN0 C₁ r_star) (cspKMom C₁)
+        hC₁_sq_real (by nlinarith only [hlam0_real, hr_ge3001_real])
+        (by simp [cspKMom]) (le_of_lt hn0_pos)
   linarith only [hstep1, hstep2, hstep3]
 
 open Classical in
@@ -1590,7 +1572,6 @@ private lemma existence_hBad :
 open Classical in
 private lemma existence_h_margin :
     ∀ (C₁ r_star : ℕ),
-    (0 : ℝ) < (↑r_star : ℝ) →
     (3001 : ℝ) ≤ (↑r_star : ℝ) →
     (1000 : ℝ) ≤ (↑(cspLam0 C₁) : ℝ) →
     (∀ c ≤ (4 : ℝ), c * (↑r_star : ℝ) / (2 : ℝ) ^ (998 : ℕ) ≤ (↑r_star : ℝ)) →
@@ -1599,7 +1580,7 @@ private lemma existence_h_margin :
     (72 : ℝ) * (144 : ℝ) * cspGamma r_star ^ (3 : ℕ) * cspDeltaBad C₁ r_star ≤ (1 / 256 : ℝ) :=
       by
   classical
-  intro C₁ r_star hr_pos_real hr_ge3001_real hlam0_real hdiv998 hγ_ge1 hδ_pos
+  intro C₁ r_star hr_ge3001_real hlam0_real hdiv998 hγ_ge1 hδ_pos
   have hconst : (72 * 144 : ℝ) ≤ (2 : ℝ) ^ (14 : ℝ) := by norm_num
   have hγ3 : (cspGamma r_star) ^ 3 = (2 : ℝ) ^ (3 * (r_star : ℝ) / ((2 : ℝ) ^ (998 : ℕ))) := by
     unfold cspGamma
@@ -1632,7 +1613,8 @@ private lemma existence_h_margin :
     have hdiv_le : d998 ≤ (r_star : ℝ) := hdiv998 3 (by norm_num)
     clear_value d998
     have hlam_r : 600 * (r_star : ℝ) ≤ (6 / 10 : ℝ) * (cspLam0 C₁ : ℝ) * (r_star : ℝ) := by
-      nlinarith only [hlam0_real, hr_pos_real]
+      have hscaled := mul_le_mul_of_nonneg_right hlam0_real (Nat.cast_nonneg r_star)
+      nlinarith only [hscaled]
     linarith only [hdiv_le, hlam_r, hr_ge3001_real]
   exact le_trans h1 h2
 
@@ -2008,7 +1990,7 @@ by
   have hBad :=
     @existence_hBad C₁ r_star hW_nn hBD3_exp hBch_exp hBcand_exp hBDist_exp
   have h_margin :=
-    @existence_h_margin C₁ r_star hr_pos_real hr_ge3001_real hlam0_real hdiv998 hγ_ge1 hδ_pos
+    @existence_h_margin C₁ r_star hr_ge3001_real hlam0_real hdiv998 hγ_ge1 hδ_pos
   obtain ⟨ω₀, hX_low_raw, hX_up_raw, hE_dense_raw⟩ :=
     paley_zygmund_markov_expurgation (Ω := cspIota (2 ^ cspL C₁ * r_star) (cspQ C₁) → Bool) (V
       := Fin (2 ^ cspL C₁ * r_star) → Fin (cspQ C₁)) (bernWeight (cspPIota C₁ r_star)) hW_nn

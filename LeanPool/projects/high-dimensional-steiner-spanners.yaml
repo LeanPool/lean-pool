@@ -25,9 +25,9 @@ source:
     Paper section 1.6 credits Goran Zuzic, David P. Woodruff, and Vahab Mirrokni
     with preparing the Lean verification. It separately credits Gemini 4 Carbon
     with discovering the mathematical proof with minimal human steering. The
-    public source does not quantify generated versus handwritten Lean proof
-    bodies. Human is a provisional classification based on the explicit Lean
-    preparation credit, not a claim that every proof body was handwritten.
+    human provenance category follows the explicit Lean-preparation credit;
+    model-based statement auditing and faithfulness assessment are credited
+    separately in the Lean appendix.
     The paper authors are Rajesh Jayaram, Vahab Mirrokni, Erik Waingarten,
     David P. Woodruff, and Goran Zuzic.
 status: verified

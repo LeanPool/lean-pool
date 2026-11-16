@@ -988,15 +988,13 @@ private lemma cherryMoments_hy_eval :
                 ∏ i ∈ (Finset.image Sum.inr {y} ∪ Finset.image Sum.inl (homQueries y)) \ cspUCh
                     x w₀ m y_prev,
                   cspPIota C₁ r_star i;
-              R_old.card ≤ (C₁ + cspKCh C₁) * r_star →
-                R_old.card ≤ (21 : ℕ) * C₁ ^ (2 : ℕ) * r_star →
                   ∀ y ∈ P_rem,
                     g_y y = cspPKeep C₁ r_star * cspPEdge C₁ r_star ^ (homQueries y \
                         S_old.biUnion homQueries).card ∧
                       (80 : ℕ) * (F_fresh y).card ≤ (61 : ℕ) * r_star ∧ (F_fresh y).card <
                           r_star + (1 : ℕ) := by
   classical
-  intro C₁ r_star x w₀ hd_xw₀ m y_prev hpool P_rem S_old R_old F_fresh g_y hR_card hR_card21 y hy
+  intro C₁ r_star x w₀ hd_xw₀ m y_prev hpool P_rem S_old R_old F_fresh g_y y hy
   rcases Finset.mem_sdiff.mp hy with ⟨hy_pool, hy_not_img⟩
   simp only [cspPoolCh, Finset.mem_filter, Finset.mem_univ, true_and] at hy_pool
   rcases hy_pool with ⟨hy_ne_x, hy_ne_w0, hd_xy, hov_xy, hd3_xy⟩
@@ -1256,7 +1254,7 @@ by
         g_y y = cspPKeep C₁ r_star *
           (cspPEdge C₁ r_star) ^ (homQueries y \ S_old.biUnion homQueries).card ∧
         80 * (F_fresh y).card ≤ 61 * r_star ∧ (F_fresh y).card < r_star + 1 :=
-      @cherryMoments_hy_eval C₁ r_star x w₀ hd_xw₀ m y_prev hpool hR_card hR_card21
+      @cherryMoments_hy_eval C₁ r_star x w₀ hd_xw₀ m y_prev hpool
     have hg_bound : ∀ y ∈ P_rem,
         g_y y ≤ cspPKeep C₁ r_star *
           (cspPEdge C₁ r_star) ^
