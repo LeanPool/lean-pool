@@ -80,17 +80,17 @@ theorem edist_le_of_modulus {T d : ℝ≥0} (hd : 0 < d) {rho : ℝ≥0∞} {f :
     push_cast [hu]
     rw [div_le_iff₀ hKpos]
     have hkK : (k : ℝ) ≤ (K : ℝ) := by exact_mod_cast hk
-    nlinarith [t.coe_nonneg, hkK]
+    exact mul_le_mul_of_nonneg_left hkK t.coe_nonneg
   have hTK : (T : ℝ) / K < (d : ℝ) := by
     have hdpos : (0 : ℝ) < (d : ℝ) := hd
     have hceil : (T : ℝ) / d ≤ (⌈(T : ℝ) / d⌉₊ : ℝ) := Nat.le_ceil _
     have hlt : (T : ℝ) / d < (K : ℝ) := by
       rw [hK]
       push_cast
-      linarith
+      exact hceil.trans_lt (lt_add_one _)
     rw [div_lt_iff₀ hKpos]
     rw [div_lt_iff₀ hdpos] at hlt
-    linarith
+    simpa only [mul_comm] using hlt
   have hstep : ∀ k : ℕ, edist (u k) (u (k + 1)) ≤ (d : ℝ≥0∞) := by
     intro k
     have hexp : ((u k : ℝ≥0) : ℝ) - ((u (k + 1) : ℝ≥0) : ℝ) = -((t : ℝ) / K) := by
@@ -102,7 +102,7 @@ theorem edist_le_of_modulus {T d : ℝ≥0} (hd : 0 < d) {rho : ℝ≥0∞} {f :
       rw [NNReal.dist_eq, hexp, abs_neg, abs_of_nonneg (by positivity)]
     have htK : (t : ℝ) / K ≤ (d : ℝ) := by
       have hmono : (t : ℝ) / K ≤ (T : ℝ) / K := by gcongr
-      linarith [hTK]
+      exact hmono.trans hTK.le
     rw [edist_dist, hval, ← ENNReal.ofReal_coe_nnreal]
     exact ENNReal.ofReal_le_ofReal htK
   have hchain : edist (f (u 0)) (f (u K)) ≤ ∑ _i ∈ Finset.Ico 0 K, rho :=

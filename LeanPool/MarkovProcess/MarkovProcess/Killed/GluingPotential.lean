@@ -247,6 +247,7 @@ variable (U : Set alpha) (hU : IsOpen U)
 theorem IsConservative.measurable_killedKernel_toNNReal (x : alpha) :
     Measurable fun t : ℝ ↦ IsConservative.killedKernel P hP U hU (Real.toNNReal t) x :=
   (IsConservative.measurable_killedKernel P hP U hU).comp
+      (f := fun t : ℝ ↦ (Real.toNNReal t, x))
     (measurable_real_toNNReal.prodMk measurable_const)
 
 /-- The `lam`-potential measure of the process killed at the exit of `U`, started at `x`. -/

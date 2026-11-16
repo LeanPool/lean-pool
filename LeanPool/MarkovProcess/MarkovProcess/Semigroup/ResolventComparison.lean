@@ -78,7 +78,9 @@ private theorem hasDerivWithinAt_comparison
         S' (Real.toNNReal (t - y)) (S'.generator ⟨S'.resolvent μ z, hwmem⟩)))
       (Set.Ioi y) y :=
     ((S.resolvent μ).hasFDerivAt.comp_hasDerivAt y h3).hasDerivWithinAt
-  refine (S.hasDerivWithinAt_operator_apply hy0 hmem hd).congr_deriv ?_
+  refine (S.hasDerivWithinAt_operator_apply
+    (v := fun u : ℝ ↦ S.resolvent μ
+      (S' (Real.toNNReal (t - u)) (S'.resolvent μ z))) hy0 hmem hd).congr_deriv ?_
   have hgen1 : S.generator ⟨S.resolvent μ (S' (Real.toNNReal (t - y)) (S'.resolvent μ z)),
       hmem⟩ =
       (μ : ℝ) • S.resolvent μ (S' (Real.toNNReal (t - y)) (S'.resolvent μ z)) -
