@@ -376,6 +376,16 @@ class Analyzer:
             raise subprocess.CalledProcessError(result.returncode, command)
 
 
+def compile_pool(root: Path, lake: str) -> None:
+    """Let Lake bring every compiled module up to date before it is fingerprinted.
+
+    Analysis and rendering restore the same build cache separately. Both
+    compile first, so a module only the analysis stage had to compile cannot
+    make rendering see a different snapshot.
+    """
+    subprocess.run([lake, "build", "LeanPool"], cwd=root, check=True)
+
+
 def prepare_analysis(root: Path, lake: str) -> Analyzer:
     """Let Lake bring every analysis input up to date, then capture how to analyze.
 
@@ -384,7 +394,7 @@ def prepare_analysis(root: Path, lake: str) -> Analyzer:
     per group of targets reloaded the import graph and did not bound memory.
     """
     docbuild = root / "docbuild"
-    subprocess.run([lake, "build", "LeanPool"], cwd=root, check=True)
+    compile_pool(root, lake)
     subprocess.run([lake, "build", *PREREQUISITES], cwd=docbuild, check=True)
     sources = subprocess.check_output(
         [lake, "query", SOURCE_TARGET], cwd=docbuild, text=True
@@ -442,6 +452,8 @@ def build_batches(
     if seconds <= 0 or batch_size <= 0 or workers <= 0:
         raise ValueError("batch size, workers and time allowance must be positive")
     build = root / "docbuild" / ".lake" / "build"
+    # Compilation counts against the allowance, so the stage ends on schedule.
+    deadline = time.monotonic() + seconds
     previous = read_state(build, input_identity(root))
     # Prerequisites and analyzers may replace rows before a later failure.
     # Keep the reusable snapshot in memory, never as an on-disk certificate.
@@ -466,7 +478,6 @@ def build_batches(
         len(fingerprints),
         len(pending),
     )
-    deadline = time.monotonic() + seconds
     analyzed = 0
     for position in range(0, len(pending), batch_size):
         if time.monotonic() >= deadline:
@@ -520,6 +531,7 @@ def require_complete(root: Path) -> None:
 
 def render(root: Path, lake: str) -> None:
     """Render fresh local pages from the complete analysis checkpoint."""
+    compile_pool(root, lake)
     require_complete(root)
     build = root / "docbuild" / ".lake" / "build"
     shutil.rmtree(build / "doc" / "LeanPool", ignore_errors=True)

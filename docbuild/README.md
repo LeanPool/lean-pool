@@ -26,8 +26,8 @@ production `LeanPool.lean` or loads an import-all Lean environment. After local
 analysis, it records external names from dependency environments and renders all
 local module records directly from the database.
 
-Four sequential analysis stages each allow 150 minutes of analysis and are
-skipped once analysis is complete. They restore the newest checkpoint compatible
+Four sequential analysis stages each allow 150 minutes, including any
+compilation, and are skipped once analysis is complete. They restore the newest checkpoint compatible
 with the toolchain, dependency and doc-gen pins. Lake first brings the compiled
 pool and doc-gen's prerequisites up to date. Each module is then analyzed by its
 own doc-gen process, four at a time, one project after another. doc-gen's
@@ -46,8 +46,10 @@ from the database before analysis.
 
 doc-gen replaces a module's records in one SQLite transaction, so an interrupted
 analysis leaves that module's previous records and the database needs no
-rollback. When its allowance ends, a stage starts no further analyses and saves
-what finished. An analysis error, or one analysis running for 30 minutes, fails
+rollback. A stage withdraws the saved progress record before it prepares or
+analyzes anything and rewrites it without the changed projects, so a failed
+stage cannot leave an old completion record beside newer records. When its
+allowance ends, it starts no further analyses and saves what finished. An analysis error, or one analysis running for 30 minutes, fails
 the stage, which then saves no checkpoint. Every saved database passes SQLite
 integrity and WAL checks. Checkpoint keys include the run, attempt and stage;
 cache maintenance retains the latest saved main checkpoint.
@@ -56,8 +58,8 @@ If all four allowances are used, the run reports failure and leaves the site
 unchanged. The next daily or manually dispatched run resumes saved progress.
 Repeated no-progress failures require diagnosis rather than repeated retries.
 
-HTML rendering has its own job budget and requires complete analysis for the
-same snapshot. Validation requires a page for every local module, rejects
+HTML rendering has its own job budget. It compiles the pool the same way first
+and requires complete analysis for the same snapshot. Validation requires a page for every local module, rejects
 accidentally rendered dependency trees and verifies the source marker when the
 two sites are assembled. Announcement jobs continue to defer projects whose
 published documentation is unavailable.

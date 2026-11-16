@@ -196,19 +196,40 @@ def test_cli_default_bounds_simultaneous_analyzers(
     assert 1 < analyzer.peak <= documentation.ANALYZERS
 
 
+@pytest.mark.parametrize("workers", [1, 4])
 def test_failed_analyzer_starts_no_further_work_and_fails_the_stage(
-    repository: Path, monkeypatch
+    repository: Path, monkeypatch, workers: int
 ) -> None:
-    """An analysis error must surface instead of being recorded as progress."""
+    """An analysis error must surface, with no writer left running behind it."""
     for number in range(20):
         (repository / "LeanPool" / f"Independent{number}.lean").write_text("module\n")
     recorder = RecordingAnalyzer(repository, fail="LeanPool.Independent3")
     monkeypatch.setattr(documentation, "prepare_analysis", lambda root, lake: recorder)
     with pytest.raises(subprocess.CalledProcessError):
-        documentation.build_batches(repository, "lake", 60, 128, workers=1)
-    assert recorder.modules.index("LeanPool.Independent3") == len(recorder.modules) - 1
+        documentation.build_batches(repository, "lake", 60, 128, workers=workers)
+    assert recorder.running == 0
+    assert "LeanPool.Independent3" in recorder.modules
+    if workers == 1:
+        assert recorder.modules[-1] == "LeanPool.Independent3"
+    assert len(recorder.modules) < 23
     with pytest.raises(ValueError, match="incomplete"):
         documentation.require_complete(repository)
+
+
+def test_checkpoint_without_partial_records_is_still_reused(
+    repository: Path, analyzer: RecordingAnalyzer
+) -> None:
+    """A checkpoint that only lists completed projects has no unfinished ones."""
+    build = repository / "docbuild" / ".lake" / "build"
+    populate(build, modules=tuple(documentation.module_sources(repository)))
+    state = {
+        "identity": documentation.input_identity(repository),
+        "projects": documentation.project_fingerprints(repository),
+    }
+    (build / documentation.STATE).write_text(json.dumps(state) + "\n")
+    assert documentation.build_batches(repository, "lake", 60, 128)
+    assert analyzer.modules == []
+    documentation.require_complete(repository)
 
 
 def test_failed_reanalysis_rejects_reverted_completion(
@@ -365,14 +386,31 @@ def test_lake_prepares_every_input_before_direct_analysis(tmp_path: Path) -> Non
     assert [(directory, command[:2]) for directory, command in recorded] == [
         (str(tmp_path), ["build", "LeanPool"]),
         (docbuild, ["build", "doc-gen4"]),
-        (docbuild, ["query", documentation.SOURCE_TARGET]),
+        (docbuild, ["query", "lean-pool/LeanPool:srcUri"]),
         (docbuild, ["env", sys.executable]),
     ]
-    assert recorded[1][1][1:] == list(documentation.PREREQUISITES)
+    assert recorded[1][1][1:] == [
+        "doc-gen4",
+        "doc-gen4/bibPrepass",
+        "doc-gen4/coreDocs",
+    ]
     assert analyzer.executable == str(tmp_path / "tools" / "doc-gen4")
     assert analyzer.environment["LEAN_PATH"] == "compiled"
     assert analyzer.build == tmp_path / "docbuild" / ".lake" / "build"
     assert analyzer.sources == "https://example.com/pool/blob/commit"
+
+
+def test_render_compiles_the_pool_before_checking_completeness(
+    repository: Path,
+) -> None:
+    """Rendering must fingerprint the same compiled snapshot that analysis recorded."""
+    calls = repository / "calls.jsonl"
+    lake = write_fake_lake(repository, calls)
+    with pytest.raises(ValueError, match="incomplete"):
+        documentation.render(repository, str(lake))
+    assert [json.loads(line) for line in calls.read_text().splitlines()] == [
+        [str(repository), ["build", "LeanPool"]]
+    ]
 
 
 def test_render_builds_uncached_dependencies(repository: Path) -> None:
