@@ -9,11 +9,6 @@ module
 public import LeanPool.DeciSigma1.Full.Closure.Basic
 public import LeanPool.DeciSigma1.Semantics.Classes
 import Mathlib.Basic.Finite.Prod
-import Mathlib.Tactic.NormNum.OfScientific
-import Mathlib.Tactic.NormNum.DivMod
-import Mathlib.Tactic.NormNum.Abs
-import Mathlib.Data.Rat.Cast.Order
-import Mathlib.Tactic.NormNum.Pow
 
 /-! Ported to Lean Pool’s module system and pinned Lean and Mathlib.
 

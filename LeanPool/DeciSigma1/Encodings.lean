@@ -8,13 +8,6 @@ module
 
 public import LeanPool.DeciSigma1.Entailment.Logic
 public import LeanPool.DeciSigma1.Full.Logic
-import Mathlib.Tactic.Positivity.Finset
-import Mathlib.Algebra.Order.Field.Basic
-import Mathlib.Tactic.NormNum.OfScientific
-import Mathlib.Tactic.NormNum.DivMod
-import Mathlib.Tactic.NormNum.Abs
-import Mathlib.Data.Rat.Cast.Order
-import Mathlib.Tactic.NormNum.Pow
 
 /-! Ported to Lean Pool’s module system and pinned Lean and Mathlib.
 
