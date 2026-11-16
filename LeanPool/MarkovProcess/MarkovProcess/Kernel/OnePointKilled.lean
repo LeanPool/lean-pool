@@ -262,62 +262,57 @@ theorem onePointKernelSemigroup_apply_coe
     R.onePointKernelSemigroup t (x : OnePoint X) =
       (R.kernelSemigroup t x).map ((↑) : X → OnePoint X) +
         (1 - R.kernelSemigroup t x Set.univ) • Measure.dirac OnePoint.infty := by
-  let : (R.kernelSemigroup t x).Regular := by
-    rw [PositiveC0ContractiveResolvent.kernelSemigroup,
-      PositiveC0SemigroupKernel.kernelSemigroup_apply,
-      PositiveC0OperatorKernel.kernel_apply]
-    infer_instance
-  let : IsFiniteMeasure (R.kernelSemigroup t x) :=
+  -- Cache these instances to avoid repeating their synthesis for each measure.
+  have : TopologicalSpace.PseudoMetrizableSpace (OnePoint X) := inferInstance
+  have : SigmaCompactSpace (OnePoint X) := inferInstance
+  have : IsFiniteMeasure (R.kernelSemigroup t x) :=
     ⟨lt_of_le_of_lt (R.kernelSemigroup.measure_univ_le_one t x) ENNReal.one_lt_top⟩
-  let : Measure.InnerRegularCompactLTTop
-      ((R.kernelSemigroup t x).map ((↑) : X → OnePoint X)) :=
-    Measure.InnerRegularCompactLTTop.map_of_continuous OnePoint.continuous_coe
-  let : IsFiniteMeasure
-      ((R.kernelSemigroup t x).map ((↑) : X → OnePoint X)) := inferInstance
+  have : IsFiniteMeasure (R.onePointKernelSemigroup t (x : OnePoint X)) :=
+    ⟨lt_of_le_of_lt
+      (R.onePointKernelSemigroup.measure_univ_le_one t (x : OnePoint X)) ENNReal.one_lt_top⟩
   have hmissing_ne_top : 1 - R.kernelSemigroup t x Set.univ ≠ ⊤ :=
     ne_top_of_le_ne_top ENNReal.one_ne_top tsub_le_self
-  let : IsFiniteMeasure
+  have : IsFiniteMeasure
       ((1 - R.kernelSemigroup t x Set.univ) •
         Measure.dirac (OnePoint.infty : OnePoint X)) :=
     Measure.smul_finite _ hmissing_ne_top
-  let : IsFiniteMeasure
+  have : IsFiniteMeasure
+      ((R.kernelSemigroup t x).map ((↑) : X → OnePoint X)) := inferInstance
+  have : IsFiniteMeasure
       ((R.kernelSemigroup t x).map ((↑) : X → OnePoint X) +
         (1 - R.kernelSemigroup t x Set.univ) • Measure.dirac OnePoint.infty) :=
     ⟨(ENNReal.add_lt_top).2 ⟨measure_lt_top _ _, measure_lt_top _ _⟩⟩
-  let : (R.onePointKernelSemigroup t (x : OnePoint X)).Regular := by
-    rw [onePointKernelSemigroup, PositiveC0ContractiveResolvent.kernelSemigroup,
-      PositiveC0SemigroupKernel.kernelSemigroup_apply,
-      PositiveC0OperatorKernel.kernel_apply]
-    infer_instance
-  apply Measure.ext_of_integral_eq_on_compactlySupported
-  intro f
-  let g : C₀(OnePoint X, ℝ) :=
-    PositiveC0OperatorMeasure.compactlySupportedToC0LinearMap f
-  have hmain := R.integral_onePointKernelSemigroup t g (x : OnePoint X)
-  rw [onePointSemigroup_apply, R.onePointSemigroupAction_coe] at hmain
-  have hmap :
-      ∫ z, f z ∂(R.kernelSemigroup t x).map ((↑) : X → OnePoint X) =
-        ∫ y, f (y : OnePoint X) ∂R.kernelSemigroup t x := by
-    simpa only using! integral_map OnePoint.continuous_coe.aemeasurable
-      f.continuous.aestronglyMeasurable
-  have hmass : R.kernelSemigroup t x Set.univ ≠ ⊤ :=
-    (lt_of_le_of_lt (R.kernelSemigroup.measure_univ_le_one t x) ENNReal.one_lt_top).ne
+  have : IsLocallyFiniteMeasure
+      ((R.kernelSemigroup t x).map ((↑) : X → OnePoint X) +
+        (1 - R.kernelSemigroup t x Set.univ) • Measure.dirac OnePoint.infty) :=
+    IsFiniteMeasure.toIsLocallyFiniteMeasure _
+  have : (R.onePointKernelSemigroup t (x : OnePoint X)).Regular :=
+    Measure.Regular.of_sigmaCompactSpace_of_isLocallyFiniteMeasure _
+  have : ((R.kernelSemigroup t x).map ((↑) : X → OnePoint X) +
+      (1 - R.kernelSemigroup t x Set.univ) • Measure.dirac OnePoint.infty).Regular :=
+    Measure.Regular.of_sigmaCompactSpace_of_isLocallyFiniteMeasure _
+  have hIntegrals (f : CompactlySupportedContinuousMap (OnePoint X) ℝ) :
+      (∫ z, f z ∂R.onePointKernelSemigroup t (x : OnePoint X)) =
+        (∫ y, f (y : OnePoint X) ∂R.kernelSemigroup t x) +
+          (1 - (R.kernelSemigroup t x).real Set.univ) * f OnePoint.infty := by
+    let g : C₀(OnePoint X, ℝ) :=
+      PositiveC0OperatorMeasure.compactlySupportedToC0LinearMap f
+    have hmain := R.integral_onePointKernelSemigroup t g (x : OnePoint X)
+    rw [onePointSemigroup_apply, R.onePointSemigroupAction_coe] at hmain
+    exact hmain
   have hmissing :
       (1 - R.kernelSemigroup t x Set.univ).toReal =
         1 - (R.kernelSemigroup t x).real Set.univ := by
     rw [ENNReal.toReal_sub_of_le (R.kernelSemigroup.measure_univ_le_one t x)
         ENNReal.one_ne_top,
       ENNReal.toReal_one, measureReal_def]
-  have hleft : ∫ z, f z ∂R.onePointKernelSemigroup t (x : OnePoint X) =
-      ∫ z, g z ∂R.onePointKernelSemigroup t (x : OnePoint X) := by
-    apply integral_congr_ae
-    filter_upwards with z
-    exact (PositiveC0OperatorMeasure.compactlySupportedToC0LinearMap_apply f z).symm
-  rw [integral_add_measure]
-  · rw [hleft, hmain, hmap, integral_smul_measure, integral_dirac, hmissing, smul_eq_mul]
-    congr 2
-  · exact f.integrable
-  · exact f.integrable
+  apply Measure.ext_of_integral_eq_on_compactlySupported
+  intro f
+  rw [integral_add_measure f.integrable f.integrable,
+    integral_map (f := fun z : OnePoint X ↦ f z) OnePoint.continuous_coe.aemeasurable
+      f.continuous.aestronglyMeasurable,
+    integral_smul_measure, integral_dirac, hmissing, smul_eq_mul]
+  exact hIntegrals f
 
 /-- A tail estimate in the original metric and the explicit cemetery-mass identity give a
 whole-space tail estimate for the one-point extension. -/
