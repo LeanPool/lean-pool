@@ -73,6 +73,55 @@ LEAN_IDENT = r"[^\W\d][\w'.]*"
 FORBIDDEN_DIAGNOSTICS = re.compile(
     r"^\s*#(?:check|print|eval!?|reduce|guard_msgs|lint)\b"
 )
+# Suggestion tactics and the `?` variants of commands and attributes print what
+# to write instead ("Try this", generated declarations). They are interactive
+# tools: a terminal `simp?` passes every linter while leaving an unreviewed
+# search in the proof and a message on every build. `try?` is also the monadic
+# combinator `try? action`, so only its argument-free tactic form is matched.
+SUGGESTION_KEYWORDS = (
+    "aesop",
+    "apply",
+    "arith_mult",
+    "bv_decide",
+    "by",
+    "calc",
+    "cases",
+    "change",
+    "closedness",
+    "compactness",
+    "congrm",
+    "continuity",
+    "conv",
+    "dsimp",
+    "exact",
+    "finish",
+    "finiteness",
+    "forward",
+    "gcongr",
+    "grind",
+    "initialize_simps_projections",
+    "lia",
+    "linarith",
+    "measurability",
+    "mvcgen",
+    "observe",
+    "rcases",
+    "rintro",
+    "rw",
+    "saturate",
+    "simp",
+    "simp_all",
+    "simpa",
+    "simps",
+    "termination_by",
+    "to_additive",
+    "to_dual",
+    "variable",
+)
+FORBIDDEN_SUGGESTIONS = re.compile(
+    r"(?<![\w.'!?«])(?:" + "|".join(SUGGESTION_KEYWORDS) + r")\?\??!?(?![\w'?!])"
+    r"|(?<![\w.'!?«])try\?(?=\s*(?:$|[;)\]]|<;>))"
+)
 # Programmatic option manipulation is semantically `set_option` (banned below)
 # but invisible to that textual gate: PR #278 raised `maxRecDepth` from a
 # custom elaborator via `withOptions (fun options => options.set `maxRecDepth
@@ -105,6 +154,10 @@ FORBIDDEN_TEXT_RULES = (
     (re.compile(r"\b(?:admit|sorry)\b"), None),
     (FORBIDDEN_SOUNDNESS, "unchecked declaration is forbidden"),
     (FORBIDDEN_DIAGNOSTICS, "diagnostic command is forbidden"),
+    (
+        FORBIDDEN_SUGGESTIONS,
+        "suggestion tactic is forbidden; write the tactic it suggests",
+    ),
 )
 FORBIDDEN_TEXT_CANDIDATES = re.compile(
     "|".join(pattern.pattern for pattern, _ in FORBIDDEN_TEXT_RULES)

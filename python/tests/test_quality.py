@@ -196,6 +196,54 @@ def test_quality_check_rejects_set_option(tmp_path: Path) -> None:
     assert any("set_option is forbidden" in error.message for error in errors)
 
 
+@pytest.mark.parametrize(
+    "line",
+    [
+        "  simp? [foo]",
+        "  refine le_antisymm ?_ ?_ <;> simp_all? +decide [Finset.max']",
+        "  · simpa?! using h",
+        "  rw?",
+        "  rw??",
+        "  exact?",
+        "  cases h <;> (aesop?)",
+        "  intro x; try?",
+        "  all_goals (try?)",
+        "  grind? [foo]",
+        "@[simps?] def f : Nat ≃ Nat := Equiv.refl _",
+        "@[to_additive?] theorem foo : True := trivial",
+        "termination_by? ",
+    ],
+)
+def test_quality_check_rejects_suggestion_tactics(tmp_path: Path, line: str) -> None:
+    """A call that prints its own replacement is not a finished proof."""
+    _write_minimal_repo(tmp_path, basic_body=f"theorem t : True := by\n{line}\n")
+    errors = run_checks(tmp_path, skip_lean_axioms=True)
+    assert [
+        error.message for error in errors if "suggestion tactic" in error.message
+    ] == ["suggestion tactic is forbidden; write the tactic it suggests"]
+
+
+@pytest.mark.parametrize(
+    "line",
+    [
+        "  simp only [foo]",
+        "  exact xs.find? p",
+        "  exact (l.get? i).isSome_iff.mp h",
+        "  match ← try? (synthInstance type) with",
+        "  let x? := xs[i]?",
+        "  aesop_div? ",
+        "  have h := List.head? xs",
+        "  refine ?_",
+        "  -- simp? was used to find this lemma list",
+    ],
+)
+def test_quality_check_accepts_question_mark_names(tmp_path: Path, line: str) -> None:
+    """Optional-valued names and the monadic `try?` are ordinary Lean."""
+    _write_minimal_repo(tmp_path, basic_body=f"theorem t : True := by\n{line}\n")
+    errors = run_checks(tmp_path, skip_lean_axioms=True)
+    assert not [error for error in errors if "suggestion tactic" in error.message]
+
+
 def test_quality_check_rejects_programmatic_option_manipulation(
     tmp_path: Path,
 ) -> None:
