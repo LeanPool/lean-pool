@@ -8,6 +8,7 @@ module
 
 public import LeanPool.MarkoffModP.BGS.NumberTheory.PreliminaryDivisorBound
 public import Mathlib.Tactic.IntervalCases
+import LeanPool.MarkoffModP.BGS.NumberTheory.PrimeBlockSums
 
 /-!
 # A weighted twentieth-moment divisor bound
@@ -580,69 +581,86 @@ private theorem factorization_succ_pow_twenty_le
 private def weightedPrimePenaltyTwentyBlock (k : ℕ) : ℕ :=
   ∑ p ∈ Finset.range 64,
     if Nat.Prime (k * 64 + p) then weightedPrimePenaltyTwenty (k * 64 + p) else 0
+-- Preserve the existing auxiliary certificates while sharing the primality calculations.
 private theorem weightedPrimePenaltyTwentyBlock_value_0 :
     weightedPrimePenaltyTwentyBlock 0 = 320 := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (sum_prime_block_0 weightedPrimePenaltyTwenty).trans rfl
 
 private theorem weightedPrimePenaltyTwentyBlock_value_1 :
     weightedPrimePenaltyTwentyBlock 1 = 97 := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (sum_prime_block_1 weightedPrimePenaltyTwenty).trans rfl
 
 private theorem weightedPrimePenaltyTwentyBlock_value_2 :
     weightedPrimePenaltyTwentyBlock 2 = 71 := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (sum_prime_block_2 weightedPrimePenaltyTwenty).trans rfl
 
 private theorem weightedPrimePenaltyTwentyBlock_value_3 :
     weightedPrimePenaltyTwentyBlock 3 = 55 := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (sum_prime_block_3 weightedPrimePenaltyTwenty).trans rfl
 
 private theorem weightedPrimePenaltyTwentyBlock_value_4 :
     weightedPrimePenaltyTwentyBlock 4 = 48 := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (sum_prime_block_4 weightedPrimePenaltyTwenty).trans rfl
 
 private theorem weightedPrimePenaltyTwentyBlock_value_5 :
     weightedPrimePenaltyTwentyBlock 5 = 36 := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (sum_prime_block_5 weightedPrimePenaltyTwenty).trans rfl
 
 private theorem weightedPrimePenaltyTwentyBlock_value_6 :
     weightedPrimePenaltyTwentyBlock 6 = 30 := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (sum_prime_block_6 weightedPrimePenaltyTwenty).trans rfl
 
 private theorem weightedPrimePenaltyTwentyBlock_value_7 :
     weightedPrimePenaltyTwentyBlock 7 = 33 := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (sum_prime_block_7 weightedPrimePenaltyTwenty).trans rfl
 
 private theorem weightedPrimePenaltyTwentyBlock_value_8 :
     weightedPrimePenaltyTwentyBlock 8 = 16 := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (sum_prime_block_8 weightedPrimePenaltyTwenty).trans rfl
 
 private theorem weightedPrimePenaltyTwentyBlock_value_9 :
     weightedPrimePenaltyTwentyBlock 9 = 20 := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (sum_prime_block_9 weightedPrimePenaltyTwenty).trans rfl
 
 private theorem weightedPrimePenaltyTwentyBlock_value_10 :
     weightedPrimePenaltyTwentyBlock 10 = 22 := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (sum_prime_block_10 weightedPrimePenaltyTwenty).trans rfl
 
 private theorem weightedPrimePenaltyTwentyBlock_value_11 :
     weightedPrimePenaltyTwentyBlock 11 = 11 := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (sum_prime_block_11 weightedPrimePenaltyTwenty).trans rfl
 
 private theorem weightedPrimePenaltyTwentyBlock_value_12 :
     weightedPrimePenaltyTwentyBlock 12 = 10 := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (sum_prime_block_12 weightedPrimePenaltyTwenty).trans rfl
 
 private theorem weightedPrimePenaltyTwentyBlock_value_13 :
     weightedPrimePenaltyTwentyBlock 13 = 9 := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (sum_prime_block_13 weightedPrimePenaltyTwenty).trans rfl
 
 private theorem weightedPrimePenaltyTwentyBlock_value_14 :
     weightedPrimePenaltyTwentyBlock 14 = 8 := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (sum_prime_block_14 weightedPrimePenaltyTwenty).trans rfl
 
 private theorem weightedPrimePenaltyTwentyBlock_value_15 :
     weightedPrimePenaltyTwentyBlock 15 = 10 := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (sum_prime_block_15 weightedPrimePenaltyTwenty).trans rfl
 
 private theorem sum_weightedPrimePenaltyTwenty_blocks (k : ℕ) :
     (∑ p ∈ Finset.range (k * 64), if Nat.Prime p then weightedPrimePenaltyTwenty p else 0) =
