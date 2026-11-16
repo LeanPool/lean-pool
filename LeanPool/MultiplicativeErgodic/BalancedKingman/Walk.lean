@@ -91,17 +91,8 @@ theorem measurable_rPlus {σ : Ω → Ω} (hσm : Measurable σ) {Λm Λp : Set 
     (hm : MeasurableSet Λm) (hp : MeasurableSet Λp) : Measurable (rPlus σ Λm Λp) := by
   have h1 : Measurable (rMinus σ Λm) := measurable_rMinus hσm hm
   have h2 : Measurable (fun x => hitTime σ Λp (σ^[rMinus σ Λm x + 1] x)) := by
-    refine measurable_to_countable' (fun n => ?_)
-    have : (fun x => hitTime σ Λp (σ^[rMinus σ Λm x + 1] x)) ⁻¹' {n}
-        = ⋃ m : ℕ, ((rMinus σ Λm) ⁻¹' {m}) ∩ ((fun x => hitTime σ Λp (σ^[m + 1] x)) ⁻¹' {n}) := by
-      ext x
-      simp only [Set.mem_preimage, Set.mem_singleton_iff, Set.mem_iUnion, Set.mem_inter_iff]
-      constructor
-      · intro h; exact ⟨rMinus σ Λm x, rfl, h⟩
-      · rintro ⟨m, hm', hn⟩; rw [hm']; exact hn
-    rw [this]
-    refine MeasurableSet.iUnion (fun m => (h1 (measurableSet_singleton m)).inter ?_)
-    exact (measurable_hitTime hσm hp).comp (hσm.iterate (m + 1)) (measurableSet_singleton n)
+    exact measurable_glue h1 (fun m =>
+      (measurable_hitTime hσm hp).comp (hσm.iterate (m + 1)))
   exact (h1.add measurable_const).add h2
 
 theorem measurable_bWalk {σ : Ω → Ω} (hσm : Measurable σ) {Λm Λp : Set Ω}
@@ -111,18 +102,7 @@ theorem measurable_bWalk {σ : Ω → Ω} (hσm : Measurable σ) {Λm Λp : Set 
   | zero => simp [bWalk]
   | succ i ih =>
     have hcomp : Measurable (fun ω => rPlus σ Λm Λp (σ^[bWalk σ Λm Λp i ω] ω)) := by
-      refine measurable_to_countable' (fun n => ?_)
-      have : (fun ω => rPlus σ Λm Λp (σ^[bWalk σ Λm Λp i ω] ω)) ⁻¹' {n}
-          = ⋃ m : ℕ, ((bWalk σ Λm Λp i) ⁻¹' {m})
-              ∩ ((fun ω => rPlus σ Λm Λp (σ^[m] ω)) ⁻¹' {n}) := by
-        ext ω
-        simp only [Set.mem_preimage, Set.mem_singleton_iff, Set.mem_iUnion, Set.mem_inter_iff]
-        constructor
-        · intro h; exact ⟨bWalk σ Λm Λp i ω, rfl, h⟩
-        · rintro ⟨m, hm', hn⟩; rw [hm']; exact hn
-      rw [this]
-      refine MeasurableSet.iUnion (fun m => (ih (measurableSet_singleton m)).inter ?_)
-      exact ((measurable_rPlus hσm hm hp).comp (hσm.iterate m)) (measurableSet_singleton n)
+      exact measurable_glue ih (fun m => (measurable_rPlus hσm hm hp).comp (hσm.iterate m))
     change Measurable (fun ω => bWalk σ Λm Λp i ω + rPlus σ Λm Λp (σ^[bWalk σ Λm Λp i ω] ω))
     exact ih.add hcomp
 

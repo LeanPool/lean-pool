@@ -366,30 +366,11 @@ theorem covering_pointwise {σ : Ω ≃ᵐ Ω} {A : Set Ω} {jω : Ω → ℕ} {
   rw [hqsum] at hM2
   linarith
 
-/-- **The union of the windows is measurable.** It is an uncountable union, but recasting
-membership in forward terms (`mem_iUnion_windows_iff`) turns it into a *countable* union of
-Lusin–Souslin images: one for each forward offset `m` from a left endpoint. -/
-theorem measurableSet_iUnion_windows [StandardBorelSpace Ω] {σ : Ω ≃ᵐ Ω} {A : Set Ω}
-    (hA : MeasurableSet A) {jω : Ω → ℕ} (hj : Measurable jω)
-    (hdisj : A.PairwiseDisjoint fun ω => (fun i => zIter σ i ω) '' Set.Icc (-(jω ω : ℤ)) (jω ω)) :
-    MeasurableSet (⋃ ω' ∈ A, (fun i => zIter σ i ω') '' Set.Icc (-(jω ω' : ℤ)) (jω ω')) := by
-  classical
-  have hEq : (⋃ ω' ∈ A, (fun i => zIter σ i ω') '' Set.Icc (-(jω ω' : ℤ)) (jω ω'))
-      = ⋃ m : ℕ, zIter σ (m : ℤ) '' (leftEnd σ jω '' (A ∩ {ω' | m ≤ 2 * jω ω'})) := by
-    ext x
-    rw [mem_iUnion_windows_iff]
-    constructor
-    · rintro ⟨ω', hω', m, hm, rfl⟩
-      exact Set.mem_iUnion.mpr ⟨m, ⟨leftEnd σ jω ω', ⟨ω', ⟨hω', hm⟩, rfl⟩, by rw [zIter_natCast]⟩⟩
-    · intro hx
-      obtain ⟨m, hm⟩ := Set.mem_iUnion.mp hx
-      obtain ⟨y, ⟨ω', ⟨hω'A, hω'm⟩, rfl⟩, rfl⟩ := hm
-      exact ⟨ω', hω'A, m, hω'm, by rw [zIter_natCast]⟩
-  rw [hEq]
-  refine MeasurableSet.iUnion (fun m => measurableSet_zIter_image σ (m : ℤ) ?_)
-  refine measurableSet_leftEnd_image
-    (hA.inter (measurableSet_le measurable_const (measurable_const.mul hj))) hj
-    (hdisj.subset Set.inter_subset_left)
+/-- The union of variable-radius orbit windows is a countable union of measurable pieces. -/
+theorem measurableSet_iUnion_windows {σ : Ω ≃ᵐ Ω} {A : Set Ω}
+    (hA : MeasurableSet A) {jω : Ω → ℕ} (hj : Measurable jω) :
+    MeasurableSet (⋃ ω' ∈ A, (fun i => zIter σ i ω') '' Set.Icc (-(jω ω' : ℤ)) (jω ω')) :=
+  measurableSet_iUnion_win σ hA jω hj
 
 /-- If the centres carry positive measure then so does any set of endpoints they are orbit
 translates of. Used to know `μ Λ± > 0`, which is what makes the hitting times a.e. finite. -/
@@ -420,33 +401,12 @@ theorem measurable_firstGap {σ : Ω ≃ᵐ Ω} {A : Set Ω} {jω : Ω → ℕ}
   rw [h]
   exact (measurable_rMinus σ.measurable hm).min measurable_const
 
-/-- Measurability of `b_{t_n}`: the walk position is a measurable function of `ω` for each fixed
-index, the index `t_n` is measurable, and `t_n ≤ n`, so the composite is a countable case split. -/
+/-- The walk at its measurable last-block index is measurable by countable gluing. -/
 theorem measurable_lastBlock {σ : Ω ≃ᵐ Ω} {A : Set Ω} {jω : Ω → ℕ}
     (hm : MeasurableSet (leftEnd σ jω '' A)) (hp : MeasurableSet (rightEnd σ jω '' A)) (n : ℕ) :
-    Measurable (fun ω => lastBlock σ jω A n ω) := by
-  classical
-  refine measurable_to_countable' (fun c => ?_)
-  have hEq : (fun ω => lastBlock σ jω A n ω) ⁻¹' {c}
-      = ⋃ t ∈ Finset.range (n + 1),
-        ({ω | windowBlockCount σ jω A n ω = t}
-          ∩ {ω | windowGapStart σ jω A t ω = c}) := by
-    ext ω
-    simp only [Set.mem_preimage, Set.mem_singleton_iff, Set.mem_iUnion, Set.mem_inter_iff,
-      Set.mem_ofPred_eq, Finset.mem_range, exists_prop]
-    constructor
-    · intro h
-      exact ⟨windowBlockCount σ jω A n ω,
-        Nat.lt_succ_of_le (Nat.findGreatest_le n), rfl, h⟩
-    · rintro ⟨t, _, ht, hb⟩
-      change blockCount (σ : Ω → Ω) (leftEnd σ jω '' A)
-        (rightEnd σ jω '' A) n ω = t at ht
-      rw [lastBlock, ht]
-      exact hb
-  rw [hEq]
-  refine MeasurableSet.biUnion (Finset.range (n + 1)).countable_toSet (fun t _ => ?_)
-  exact (measurable_blockCount σ.measurable hm hp n (measurableSet_singleton t)).inter
-    (measurable_bWalk σ.measurable hm hp t (measurableSet_singleton c))
+    Measurable (fun ω => lastBlock σ jω A n ω) :=
+  measurable_glue (measurable_blockCount σ.measurable hm hp n)
+    (fun t => measurable_bWalk σ.measurable hm hp t)
 
 /-- The cutoff exceptional set: the initial gap or the trailing segment is longer than `M`.
 Its measure is small *uniformly in `n`* — that is the point of `sub_bWalk_le_hitBack`. -/

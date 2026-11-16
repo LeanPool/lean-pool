@@ -306,7 +306,7 @@ theorem covering_bound [StandardBorelSpace Ω] (μ : Measure Ω) [IsProbabilityM
   have hpos : ∀ ω' ∈ A, 1 ≤ jω ω' := fun ω' h => (hgood ω' h).1
   -- **The uncovered set `B`, and the two endpoint sets.**
   have hUm : MeasurableSet (⋃ ω' ∈ A, (fun i => zIter σ i ω') '' Set.Icc (-(jω ω' : ℤ)) (jω ω')) :=
-    measurableSet_iUnion_windows hAm hjm hdisj
+    measurableSet_iUnion_windows hAm hjm
   have hBm : MeasurableSet (uncovered σ jω A) := hUm.compl
   have hΛmm : MeasurableSet (leftEnd σ jω '' A) := measurableSet_leftEnd_image hAm hjm hdisj
   have hΛpm : MeasurableSet (rightEnd σ jω '' A) := measurableSet_rightEnd_image hAm hjm hdisj

@@ -616,18 +616,6 @@ theorem measurable_sphereSel {k : ℕ} [NeZero k] [CompleteSpace X] [MeasurableS
   · rw [tendsto_pi_nhds]
     exact fun V => sphereSel_tendsto hu V
 
-/-- Gluing countably many measurable maps along a measurable index. -/
-theorem measurable_glue {Ω Y : Type*} [MeasurableSpace Ω] [MeasurableSpace Y] {N : Ω → ℕ}
-    (hN : Measurable N) {W : ℕ → Ω → Y} (hW : ∀ i, Measurable (W i)) :
-    Measurable fun ω => W (N ω) ω := by
-  intro B hB
-  have hset : (fun ω => W (N ω) ω) ⁻¹' B = ⋃ i, (N ⁻¹' {i}) ∩ (W i ⁻¹' B) := by
-    ext ω
-    simp only [Set.mem_preimage, Set.mem_iUnion, Set.mem_inter_iff, Set.mem_singleton_iff]
-    exact ⟨fun h => ⟨N ω, rfl, h⟩, fun ⟨i, hi, h⟩ => by subst hi; exact h⟩
-  rw [hset]
-  exact MeasurableSet.iUnion fun i => (hN (measurableSet_singleton i)).inter (hW i hB)
-
 /-- A countable family of continuous functionals separating the points of a separable space:
 Hahn--Banach norming functionals at a dense sequence. -/
 theorem exists_separating_dual_seq [SeparableSpace X] :

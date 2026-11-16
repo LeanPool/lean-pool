@@ -896,337 +896,6 @@ theorem tendsto_atBot_of_tendsto_coe_bot {u : ℕ → ℝ}
   filter_upwards [hev] with n hn
   exact le_of_lt (EReal.coe_lt_coe_iff.1 hn)
 
-/-- The difference of two sequences whose `EReal` limits exist, the subtrahend's being finite,
-converges in `EReal`. -/
-theorem exists_tendsto_coe_sub {u v : ℕ → ℝ} {A B : EReal} (hAtop : A < ⊤)
-    (hBtop : B < ⊤) (hBbot : B ≠ ⊥)
-    (hu : Tendsto (fun n : ℕ => ((u n : ℝ) : EReal)) atTop (nhds A))
-    (hv : Tendsto (fun n : ℕ => ((v n : ℝ) : EReal)) atTop (nhds B)) :
-    ∃ L : EReal, Tendsto (fun n : ℕ => ((u n - v n : ℝ) : EReal)) atTop (nhds L) := by
-  obtain ⟨r, hr⟩ : ∃ r : ℝ, B = (r : EReal) := ⟨B.toReal, (EReal.coe_toReal hBtop.ne hBbot).symm⟩
-  rw [hr] at hv
-  have hvr : Tendsto v atTop (nhds r) := EReal.tendsto_coe.1 hv
-  rcases eq_or_ne A ⊥ with hAbot | hAbot
-  · refine ⟨⊥, ?_⟩
-    rw [hAbot] at hu
-    have hub : Tendsto u atTop atBot := tendsto_atBot_of_tendsto_coe_bot hu
-    have hsub : Tendsto (fun n : ℕ => u n - v n) atTop atBot := by
-      have : Tendsto (fun n : ℕ => -v n) atTop (nhds (-r)) := hvr.neg
-      simpa [sub_eq_add_neg] using hub.atBot_add this
-    exact EReal.tendsto_coe_atBot.comp hsub
-  · obtain ⟨s, hs⟩ : ∃ s : ℝ, A = (s : EReal) := ⟨A.toReal, (EReal.coe_toReal hAtop.ne hAbot).symm⟩
-    rw [hs] at hu
-    have hus : Tendsto u atTop (nhds s) := EReal.tendsto_coe.1 hu
-    exact ⟨((s - r : ℝ) : EReal), EReal.tendsto_coe.2 (hus.sub hvr)⟩
-
-/-- Degeneracy at a lower index forces it at a higher one, `ρ` being antitone. -/
-theorem Cocycle.degenerate_mono (R : Cocycle Ω X) {p q : ℕ} (hp : 1 ≤ p) (hpq : p ≤ q) :
-    R.degenerate p ⊆ R.degenerate q := by
-  rintro ω ⟨n, hn, h0⟩
-  refine ⟨n, hn, le_antisymm ?_ (bernsteinNumber_nonneg _ _)⟩
-  rw [← h0]
-  exact bernsteinNumber_antitone (R.iterate n ω) hp hpq
-
-/-- The `⊥`-limit of the Bernstein product at index `j` drags `ρ_{j+1}` down with it. -/
-theorem Cocycle.log_bernstein_le_of_prod (R : Cocycle Ω X) (j n : ℕ) (ω : Ω)
-    (hpos : 0 < bernsteinNumber (R.iterate n ω) (j + 1)) :
-    (j : ℝ) * Real.log (bernsteinNumber (R.iterate n ω) (j + 1))
-      ≤ Real.log (R.prodBern j n ω) := by
-  have hle := pow_bernstein_le_prod (R.iterate n ω) j
-  have hppos : (0 : ℝ) < bernsteinNumber (R.iterate n ω) (j + 1) ^ j := pow_pos hpos j
-  calc (j : ℝ) * Real.log (bernsteinNumber (R.iterate n ω) (j + 1))
-      = Real.log (bernsteinNumber (R.iterate n ω) (j + 1) ^ j) := by
-        rw [Real.log_pow]
-    _ ≤ Real.log (R.prodBern j n ω) := Real.log_le_log hppos hle
-
-/-- **Lemma `chi-converges`.** `(1/n) log ρ_k(𝓛^{(n)}_ω) → χ_k` almost surely: the `limsup`
-defining `χ_k` is attained as a limit.
-
-**This is not `Cocycle.exists_chi_ae_const`, and §5 needs both.** `chi` is a `limsup`, and a.e.
-*constancy* of a `limsup` follows from ergodicity alone — that is how `exists_chi_ae_const` is
-proved, with no Kingman anywhere. But the proof of `Cocycle.exists_topFastSpace` uses
-"`(1/n) log ρ_{m₁}(𝓛^{(n)}_ω) → λ₁`" as a genuine convergence, three times over (forward,
-backward via `σ⁻¹`, and balanced). Convergence is what Kingman supplies and what a `limsup` does
-not, so it is its own blueprint node, `lem:chi-converges`.
-
-**Route.** `ρ_k` is not submultiplicative, but the products are: `volumeGrowth_comparable` and
-`volumeGrowth_submultiplicative` give a `K` with
-`∏_{i≤k} ρ_i(S∘T) ≤ K ∏_{i≤k} ρ_i(S) ∏_{i≤k} ρ_i(T)`, so
-`F^k_n(ω) = log ∏_{i≤k} ρ_i(𝓛^{(n)}_ω)` is a weakly subadditive family and `kingman` gives
-`F^k_n/n → A_k`. Then `log ρ_k = F^k_n - F^{k-1}_n`, and `χ_k = A_k - A_{k-1}` is `kingsyn` with
-`t = -1`.
-
-**The one obstruction, and how far it is dealt with here.** `kingman` is stated for `ℝ`-valued
-families, while `log ∏ρ_i` is `-∞` as soon as some `ρ_i` vanishes — and `kingsyn` excludes
-exactly `A_k = A_{k-1} = -∞`. The degenerate set `Cocycle.degenerate` is backward-invariant
-(`preimage_degenerate_subset`), hence null or conull by ergodicity
-(`measure_degenerate_eq_zero_or_one`), which splits the problem:
-
-* *conull* — **done**: `tendsto_chi_of_degenerate` gives the convergence outright, the sequence
-  being eventually `⊥`, and `χ_k = ⊥`;
-* *null* — open. On the complement every `∏_{i≤k} ρ_i(𝓛^{(n)}_ω)` is strictly positive and the
-  family is genuinely real, but `SubadditiveFamily` is a *pointwise* hypothesis and the
-  complement, though forward-invariant and conull, is not all of `Ω`; patching the family on the
-  degenerate set does not work, because `ω ∈ Z` does not force `σⁿω ∈ Z`.
-
-  The way through is the truncated family `f_M n ω = log (max (∏_{i≤k} ρ_i(𝓛^{(n)}_ω)) e^{-M})`,
-  which is real-valued *everywhere* and still weakly subadditive: from `P ≤ K Q R`,
-  `max(P, e^{-M}) ≤ max(K,1) · e^{M} · max(Q,e^{-M}) · max(R,e^{-M})`, so the slack constant is
-  `log max(K,1) + M`. Kingman applies to each `f_M`, and the `M → ∞` limit is the same move
-  `kingman` already performs internally (`SubadditiveFamily.truncate`,
-  `exists_truncation_limits`, `ae_tendsto_of_ae_tendsto_max`) — so the missing piece is really an
-  `EReal`-valued Kingman assembled from those parts, which the blueprint note on `lem:kingsyn`
-  already identifies as the honest fix. -/
-theorem Cocycle.ae_tendsto_chi (R : Cocycle Ω X) [SeparableSpace X] [BorelSpace X] (k : ℕ)
-    [NeZero k] :
-    ∀ᵐ ω ∂(R.μ), Tendsto (fun n : ℕ =>
-      logEReal (bernsteinNumber (R.iterate n ω) k) / (n : EReal)) atTop (nhds (R.chi k ω)) := by
-  have hk : 1 ≤ k := Nat.pos_of_ne_zero (NeZero.ne k)
-  obtain ⟨j, rfl⟩ : ∃ j, k = j + 1 := ⟨k - 1, by omega⟩
-  rcases R.measure_degenerate_eq_zero_or_one (j + 1) with hZ | hZ
-  · obtain ⟨Ak, hAktop, hAk⟩ := R.ae_tendsto_logProd (k := j + 1) (by omega) hZ
-    obtain ⟨Aj, hAjtop, hAj⟩ : ∃ Aj : EReal, Aj < ⊤ ∧ ∀ᵐ ω ∂(R.μ),
-        Tendsto (fun n : ℕ => ((Real.log (R.prodBern j n ω) / n : ℝ) : EReal))
-          atTop (nhds Aj) := by
-      rcases Nat.eq_zero_or_pos j with rfl | hj
-      · refine ⟨0, by simp, ?_⟩
-        filter_upwards with ω
-        have hz : ∀ n : ℕ, ((Real.log (R.prodBern 0 n ω) / n : ℝ) : EReal) = 0 := by
-          intro n
-          simp [Cocycle.prodBern]
-        simp_rw [hz]
-        exact tendsto_const_nhds
-      · have : NeZero j := ⟨by omega⟩
-        have hsub := measure_mono (μ := R.μ)
-          (R.degenerate_mono (p := j) (q := j + 1) (by omega) (by omega))
-        rw [hZ] at hsub
-        exact R.ae_tendsto_logProd (k := j) (by omega) (nonpos_iff_eq_zero.1 hsub)
-    have hnd : ∀ᵐ ω ∂(R.μ), ω ∉ R.degenerate (j + 1) := by
-      rw [ae_iff]; simpa using hZ
-    filter_upwards [hAk, hAj, hnd] with ω hu hv hnondeg
-    -- positivity off the degenerate set
-    have hrho : ∀ n : ℕ, 1 ≤ n → 0 < bernsteinNumber (R.iterate n ω) (j + 1) := by
-      intro n hn
-      rcases (bernsteinNumber_nonneg (R.iterate n ω) (j + 1)).lt_or_eq with h | h
-      · exact h
-      · exact absurd ⟨n, hn, h.symm⟩ hnondeg
-    have hPj : ∀ n : ℕ, 1 ≤ n → 0 < R.prodBern j n ω := by
-      intro n hn
-      rcases (R.prodBern_nonneg j n ω).lt_or_eq with h | h
-      · exact h
-      · exfalso
-        rcases Nat.eq_zero_or_pos j with rfl | hj
-        · simp [Cocycle.prodBern] at h
-        · have hdeg : ω ∈ R.degenerate j :=
-            ⟨n, hn, (prod_bernstein_eq_zero_iff (R.iterate n ω) (by omega)).1 h.symm⟩
-          exact hnondeg (R.degenerate_mono (p := j) (q := j + 1) (by omega) (by omega) hdeg)
-    -- the goal sequence is the coerced real difference
-    have hterm : ∀ᶠ n : ℕ in atTop,
-        ((Real.log (R.prodBern (j + 1) n ω) / n - Real.log (R.prodBern j n ω) / n : ℝ) : EReal)
-          = logEReal (bernsteinNumber (R.iterate n ω) (j + 1)) / (n : EReal) := by
-      filter_upwards [eventually_ge_atTop 1] with n hn
-      have hr := hrho n hn
-      have hp := hPj n hn
-      have hsplit : R.prodBern (j + 1) n ω
-          = R.prodBern j n ω * bernsteinNumber (R.iterate n ω) (j + 1) := by
-        change ∏ i ∈ Finset.range (j + 1), bernsteinNumber (R.iterate n ω) (i + 1) = _
-        rw [Finset.prod_range_succ]
-        rfl
-      have hlog : Real.log (R.prodBern (j + 1) n ω)
-          = Real.log (R.prodBern j n ω) + Real.log (bernsteinNumber (R.iterate n ω) (j + 1)) := by
-        rw [hsplit, Real.log_mul (ne_of_gt hp) (ne_of_gt hr)]
-      rw [logEReal_of_pos hr]
-      change _ = ((Real.log (bernsteinNumber (R.iterate n ω) (j + 1)) / n : ℝ) : EReal)
-      congr 1
-      rw [hlog]
-      ring
-    suffices h : ∃ L : EReal, Tendsto (fun n : ℕ =>
-        ((Real.log (R.prodBern (j + 1) n ω) / n - Real.log (R.prodBern j n ω) / n : ℝ) : EReal))
-        atTop (nhds L) by
-      obtain ⟨L, hL⟩ := h
-      have hgoal : Tendsto (fun n : ℕ =>
-          logEReal (bernsteinNumber (R.iterate n ω) (j + 1)) / (n : EReal)) atTop (nhds L) :=
-        Tendsto.congr' hterm hL
-      have hchi : R.chi (j + 1) ω = L := hgoal.limsup_eq
-      rw [hchi]
-      exact hgoal
-    rcases eq_or_ne Aj ⊥ with hAjbot | hAjbot
-    · -- the lower product already tends to `-∞`, so `ρ_{j+1}` does too
-      refine ⟨⊥, ?_⟩
-      have hj1 : 1 ≤ j := by
-        by_contra hcon
-        have hj0 : j = 0 := by omega
-        subst hj0
-        have hz : ∀ n : ℕ, ((Real.log (R.prodBern 0 n ω) / n : ℝ) : EReal) = 0 := by
-          intro n; simp [Cocycle.prodBern]
-        simp_rw [hz] at hv
-        have := tendsto_nhds_unique hv tendsto_const_nhds
-        rw [hAjbot] at this
-        exact absurd this.symm (by simp)
-      rw [hAjbot] at hv
-      have hvbot : Tendsto (fun n : ℕ => Real.log (R.prodBern j n ω) / n) atTop atBot :=
-        tendsto_atBot_of_tendsto_coe_bot hv
-      have hjpos : (0 : ℝ) < (j : ℝ) := by exact_mod_cast hj1
-      have hdiv : Tendsto (fun n : ℕ => (Real.log (R.prodBern j n ω) / n) / (j : ℝ))
-          atTop atBot := hvbot.atBot_div_const hjpos
-      have hmono : ∀ᶠ n : ℕ in atTop,
-          Real.log (R.prodBern (j + 1) n ω) / n - Real.log (R.prodBern j n ω) / n
-            ≤ (Real.log (R.prodBern j n ω) / n) / (j : ℝ) := by
-        filter_upwards [eventually_ge_atTop 1] with n hn
-        have hr := hrho n hn
-        have hp := hPj n hn
-        have hnpos : (0 : ℝ) < (n : ℝ) := by exact_mod_cast hn
-        have hsplit : R.prodBern (j + 1) n ω
-            = R.prodBern j n ω * bernsteinNumber (R.iterate n ω) (j + 1) := by
-          change ∏ i ∈ Finset.range (j + 1), bernsteinNumber (R.iterate n ω) (i + 1) = _
-          rw [Finset.prod_range_succ]
-          rfl
-        have hlog : Real.log (R.prodBern (j + 1) n ω)
-            = Real.log (R.prodBern j n ω)
-              + Real.log (bernsteinNumber (R.iterate n ω) (j + 1)) := by
-          rw [hsplit, Real.log_mul (ne_of_gt hp) (ne_of_gt hr)]
-        have hkey := R.log_bernstein_le_of_prod j n ω hr
-        have hlr : Real.log (bernsteinNumber (R.iterate n ω) (j + 1))
-            ≤ Real.log (R.prodBern j n ω) / (j : ℝ) := by
-          rw [le_div_iff₀ hjpos]
-          nlinarith [hkey]
-        rw [hlog]
-        have hstep : (Real.log (R.prodBern j n ω)
-              + Real.log (bernsteinNumber (R.iterate n ω) (j + 1))) / (n : ℝ)
-            - Real.log (R.prodBern j n ω) / (n : ℝ)
-            = Real.log (bernsteinNumber (R.iterate n ω) (j + 1)) / (n : ℝ) := by
-          rw [div_sub_div_same]
-          congr 1
-          ring
-        rw [hstep]
-        calc Real.log (bernsteinNumber (R.iterate n ω) (j + 1)) / (n : ℝ)
-            ≤ (Real.log (R.prodBern j n ω) / (j : ℝ)) / (n : ℝ) :=
-              div_le_div_of_nonneg_right hlr hnpos.le
-          _ = (Real.log (R.prodBern j n ω) / (n : ℝ)) / (j : ℝ) := by ring
-      exact EReal.tendsto_coe_atBot.comp (tendsto_atBot_mono' atTop hmono hdiv)
-    · exact exists_tendsto_coe_sub hAktop hAjtop hAjbot hu hv
-  · -- the degenerate set is conull
-    have hae : ∀ᵐ ω ∂(R.μ), ω ∈ R.degenerate (j + 1) := by
-      rw [ae_iff]
-      have hc : R.μ (R.degenerate (j + 1))ᶜ = 0 := by
-        rw [measure_compl (R.measurableSet_degenerate (j + 1)) (measure_ne_top _ _), hZ,
-          measure_univ, tsub_self]
-      exact hc
-    filter_upwards [hae] with ω hω
-    obtain ⟨htend, hchi⟩ := R.tendsto_chi_of_degenerate (j + 1) hω
-    rw [hchi]
-    exact htend
-
-/-- **Lemma.** `χ_k` is almost-everywhere constant. This is where ergodicity enters: it is the
-cocycle application of Kingman's subadditive theorem to the family
-`f^k_n(ω) = log ∏_{i≤k} ρ_i(𝓛^{(n)}_ω) − log ∏_{i<k} ρ_i(𝓛^{(n)}_ω)`, via `kingsyn`.
-
-The `EReal` value is what makes this statement dischargeable for finite-rank cocycles, where
-the constant is `⊥`. -/
-theorem Cocycle.exists_chi_ae_const (R : Cocycle Ω X) [SeparableSpace X] [BorelSpace X]
-    (k : ℕ) : ∃ c : EReal, ∀ᵐ ω ∂(R.μ), R.chi k ω = c := by
-  rcases Nat.eq_zero_or_pos k with rfl | hk
-  · exact ⟨⊥, Filter.Eventually.of_forall fun ω => R.chi_zero ω⟩
-  · have : NeZero k := ⟨hk.ne'⟩
-    exact exists_ae_const_of_le_comp R.ergodic (R.measurable_chi k) (R.chi_le_chi_shift k)
-
-/-- The `χ_k` are (weakly) decreasing in `k`, since `ρ_k` is. Pointwise in `ω`: no ergodicity
-needed. Shifted by one to skip the junk index `χ_0 = ⊥`. -/
-theorem Cocycle.chi_antitone (R : Cocycle Ω X) (ω : Ω) :
-    Antitone fun k : ℕ => R.chi (k + 1) ω := by
-  refine antitone_nat_of_succ_le fun k => ?_
-  refine Filter.limsup_le_limsup ?_
-  filter_upwards with n
-  have hn : (0 : EReal) ≤ (n : ℕ) := by
-    rw [← EReal.coe_coe_eq_natCast]
-    exact EReal.coe_nonneg.2 (Nat.cast_nonneg n)
-  exact EReal.div_le_div_right_of_nonneg hn
-    (ChiOrder.logEReal_mono (ChiOrder.bernsteinNumber_succ_le (R.iterate n ω) k))
-
-/-- `χ_{k+1}(ω) ↓ ν(ω)`, pointwise in `ω`, by antitonicity. -/
-theorem Cocycle.nu_isLimit (R : Cocycle Ω X) (ω : Ω) :
-    Filter.Tendsto (fun k : ℕ => R.chi (k + 1) ω) atTop (nhds (R.nu ω)) := by
-  change Filter.Tendsto (fun k : ℕ => R.chi (k + 1) ω) atTop (nhds (⨅ k : ℕ, R.chi (k + 1) ω))
-  exact tendsto_atTop_iInf (R.chi_antitone ω)
-
-/-- `ν ≤ χ_k` for every `k ≥ 1`: `ν` is the infimum of exactly those `χ_k`. -/
-theorem Cocycle.nu_le_chi (R : Cocycle Ω X) (ω : Ω) {k : ℕ} (hk : 1 ≤ k) :
-    R.nu ω ≤ R.chi k ω := by
-  have h1 : R.nu ω ≤ R.chi (k - 1 + 1) ω := by
-    change (⨅ j : ℕ, R.chi (j + 1) ω) ≤ _
-    exact iInf_le _ (k - 1)
-  rwa [Nat.sub_add_cancel hk] at h1
-
-/-- **Lemma** (`proof_met.tex`, "Further, `λ₂` exists if and only if `λ₁ > ν`", proved there
-from `ν = lim χ_n` and `λ₂ = χ_{min{t : χ_t < χ₁}}`).
-
-"`λ₂` exists" is precisely "the set `{t ≥ 1 : χ_t < χ₁}` defining it is nonempty" — the paper
-claims nothing about where `λ₂` sits relative to `ν`, and `λ₂ = ν` is a genuine possibility
-(see the note on `Cocycle.lambda2_exists_iff`). In that form the equivalence is a consequence
-of the definitions alone. -/
-theorem Cocycle.exists_chi_lt_chi_one_iff_isQuasicompact (R : Cocycle Ω X) :
-    (∀ᵐ ω ∂(R.μ), ∃ k, 1 ≤ k ∧ R.chi k ω < R.chi 1 ω) ↔ R.IsQuasicompact := by
-  constructor
-  · intro h
-    filter_upwards [h] with ω hω
-    obtain ⟨k, hk1, hk2⟩ := hω
-    exact lt_of_le_of_lt (R.nu_le_chi ω hk1) hk2
-  · intro h
-    filter_upwards [h] with ω hω
-    have hlt : (⨅ j : ℕ, R.chi (j + 1) ω) < R.chi 1 ω := hω
-    obtain ⟨j, hj⟩ := iInf_lt_iff.1 hlt
-    exact ⟨j + 1, Nat.succ_le_succ (Nat.zero_le j), hj⟩
-
-/-- **Lemma.** A second distinct Lyapunov exponent `λ₂` exists — i.e. the set
-`{t ≥ 1 : χ_t < χ₁}` defining it is nonempty — if and only if `𝓛` is quasicompact.
-
-**Statement corrected.** This previously read `∃ k, 1 ≤ k ∧ χ_k < χ₁ ∧ ν < χ_k`, and the extra
-conjunct `ν < χ_k` made the `←` direction *false*, not merely unproved. Counterexample: take
-`X = ℓ²(ℕ)`, any ergodic base, and the constant cocycle `𝓛_ω = A = diag(2, 1, 1, 1, …)`. Then
-`ρ₁(Aⁿ) = 2ⁿ`, while `ρ_k(Aⁿ) = 1` for every `k ≥ 2` — a `k`-dimensional subspace with `k ≥ 2`
-meets `{x₁ = 0}` in dimension `≥ 1`, so contains a unit vector fixed by `Aⁿ` and its growth is
-`≤ 1`; and `Aⁿ` is expansive, so it is `≥ 1`. Hence `χ₁ = log 2`, `χ_k = 0` for `k ≥ 2`, and
-`ν = 0`. This cocycle is quasicompact (`0 < log 2`), yet no `k` satisfies the old left-hand
-side: `k = 1` fails `χ_k < χ₁`, and every `k ≥ 2` has `χ_k = 0 = ν`, failing `ν < χ_k`.
-
-The paper never claims `ν < λ₂`: `proof_met.tex` l.645 asserts only that `λ₂` exists iff
-`λ₁ > ν`, and `λ₂ = ν` is explicitly one of the three cases listed at l.150. `ν ≤ χ_k` does
-hold for every `k ≥ 1` — that is `Cocycle.nu_le_chi` — and is all the argument ever needed. -/
-theorem Cocycle.lambda2_exists_iff (R : Cocycle Ω X) :
-    (∀ᵐ ω ∂(R.μ), ∃ k, 1 ≤ k ∧ R.chi k ω < R.chi 1 ω) ↔ R.IsQuasicompact :=
-  R.exists_chi_lt_chi_one_iff_isQuasicompact
-
-/-- **A quasicompact cocycle has a genuine top multiplicity `m_1 ≥ 1`.** Quasicompactness gives
-some `χ_k < χ_1`, so the defining set of `lambdaIdx 1` is nonempty and its infimum is at least
-`2` (the value `1` is excluded because `χ_1 < χ_1` is false). -/
-theorem Cocycle.mult_zero_pos (R : Cocycle Ω X) (hqc : R.IsQuasicompact) :
-    ∀ᵐ ω ∂(R.μ), 0 < R.mult 0 ω := by
-  have hex := R.lambda2_exists_iff.2 hqc
-  filter_upwards [hex] with ω hω
-  obtain ⟨k, hk1, hklt⟩ := hω
-  set S : Set ℕ := {t : ℕ | 1 ≤ t ∧ R.chi t ω < R.chi (R.lambdaIdx 0 ω) ω} with hS
-  have hkS : k ∈ S := ⟨hk1, hklt⟩
-  have hmem : sInf S ∈ S := Nat.sInf_mem ⟨k, hkS⟩
-  have h1le : 1 ≤ sInf S := hmem.1
-  have hne1 : sInf S ≠ 1 := by
-    intro h1
-    have hlt := hmem.2
-    rw [h1] at hlt
-    exact lt_irrefl _ hlt
-  change 0 < R.lambdaIdx 1 ω - R.lambdaIdx 0 ω
-  change 0 < sInf S - 1
-  omega
-
-/-- **Predicate.** `E` is a (the) top fast space of multiplicity `k` growing at rate `lam`:
-measurable, equivariant, and every nonzero vector in `E(ω)` grows at exactly rate `lam`,
-uniformly. Corresponds to the three bullet points of the first Lemma of Section 5. -/
-def Cocycle.IsFastSpace (R : Cocycle Ω X) (k : ℕ) [NeZero k] (lam : ℝ)
-    (E : Ω → GrassmannianFin X k) : Prop :=
-  Measurable E ∧
-  (∀ᵐ ω ∂(R.μ), ∀ x ∈ (E ω).1, x ≠ 0 → R.lambdaAt ω x = (lam : EReal)) ∧
-  (∀ᵐ ω ∂(R.μ), (E ω).1.map (R.L ω : X →ₗ[ℝ] X) = (E (R.σ ω)).1) ∧
-  (∀ᵐ ω ∂(R.μ), Tendsto (fun n => Real.log (growth (R.iterate n ω) (E ω).1) / n) atTop (nhds lam))
-
 /-- The `EReal` limit of a difference of coerced real sequences, named rather than merely
 asserted to exist, so that two applications with the same `A`, `B` give the *same* limit. -/
 theorem tendsto_coe_sub_spec {u v : ℕ → ℝ} {A B : EReal} (hAtop : A < ⊤) (hBtop : B < ⊤)
@@ -1358,6 +1027,210 @@ theorem tendsto_logEReal_bernstein_of_prod_limits {T : ℕ → (X →L[ℝ] X)} 
     exact EReal.tendsto_coe_atBot.comp (tendsto_atBot_mono' atTop hmono hdiv)
   · rw [ite_eq_right hAj]
     exact tendsto_coe_sub_spec hAktop hAjtop hAj hu hv
+
+/-- The difference of two sequences whose `EReal` limits exist, the subtrahend's being finite,
+converges in `EReal`. -/
+theorem exists_tendsto_coe_sub {u v : ℕ → ℝ} {A B : EReal} (hAtop : A < ⊤)
+    (hBtop : B < ⊤) (hBbot : B ≠ ⊥)
+    (hu : Tendsto (fun n : ℕ => ((u n : ℝ) : EReal)) atTop (nhds A))
+    (hv : Tendsto (fun n : ℕ => ((v n : ℝ) : EReal)) atTop (nhds B)) :
+    ∃ L : EReal, Tendsto (fun n : ℕ => ((u n - v n : ℝ) : EReal)) atTop (nhds L) := by
+  exact ⟨_, tendsto_coe_sub_spec hAtop hBtop hBbot hu hv⟩
+
+/-- Degeneracy at a lower index forces it at a higher one, `ρ` being antitone. -/
+theorem Cocycle.degenerate_mono (R : Cocycle Ω X) {p q : ℕ} (hp : 1 ≤ p) (hpq : p ≤ q) :
+    R.degenerate p ⊆ R.degenerate q := by
+  rintro ω ⟨n, hn, h0⟩
+  refine ⟨n, hn, le_antisymm ?_ (bernsteinNumber_nonneg _ _)⟩
+  rw [← h0]
+  exact bernsteinNumber_antitone (R.iterate n ω) hp hpq
+
+/-- The `⊥`-limit of the Bernstein product at index `j` drags `ρ_{j+1}` down with it. -/
+theorem Cocycle.log_bernstein_le_of_prod (R : Cocycle Ω X) (j n : ℕ) (ω : Ω)
+    (hpos : 0 < bernsteinNumber (R.iterate n ω) (j + 1)) :
+    (j : ℝ) * Real.log (bernsteinNumber (R.iterate n ω) (j + 1))
+      ≤ Real.log (R.prodBern j n ω) := by
+  have hle := pow_bernstein_le_prod (R.iterate n ω) j
+  have hppos : (0 : ℝ) < bernsteinNumber (R.iterate n ω) (j + 1) ^ j := pow_pos hpos j
+  calc (j : ℝ) * Real.log (bernsteinNumber (R.iterate n ω) (j + 1))
+      = Real.log (bernsteinNumber (R.iterate n ω) (j + 1) ^ j) := by
+        rw [Real.log_pow]
+    _ ≤ Real.log (R.prodBern j n ω) := Real.log_le_log hppos hle
+
+/-- **Lemma `chi-converges`.** The normalized logarithms of the Bernstein numbers converge
+almost surely to the `limsup` defining `χ_k`.
+
+Ergodicity makes the backward-invariant degeneracy set null or conull. In the conull case the
+sequence is eventually `⊥`. In the null case, truncated product families give the two adjacent
+product limits. `tendsto_logEReal_bernstein_of_prod_limits` recovers the individual Bernstein
+rate: it subtracts a finite predecessor limit and uses the Bernstein-number ordering to squeeze
+the rate to `⊥` when the predecessor limit is `⊥`. This also covers `k = 1`, whose predecessor
+product is the constant `1`.
+
+Convergence is separate from almost-everywhere constancy of `chi`: the latter follows from
+its shift inequality and ergodicity, whereas this statement uses Kingman's theorem. -/
+theorem Cocycle.ae_tendsto_chi (R : Cocycle Ω X) [SeparableSpace X] [BorelSpace X] (k : ℕ)
+    [NeZero k] :
+    ∀ᵐ ω ∂(R.μ), Tendsto (fun n : ℕ =>
+      logEReal (bernsteinNumber (R.iterate n ω) k) / (n : EReal)) atTop (nhds (R.chi k ω)) := by
+  have hk : 1 ≤ k := Nat.pos_of_ne_zero (NeZero.ne k)
+  obtain ⟨j, rfl⟩ : ∃ j, k = j + 1 := ⟨k - 1, by omega⟩
+  rcases R.measure_degenerate_eq_zero_or_one (j + 1) with hZ | hZ
+  · obtain ⟨Ak, hAktop, hAk⟩ := R.ae_tendsto_logProd (k := j + 1) (by omega) hZ
+    obtain ⟨Aj, hAjtop, hAj⟩ : ∃ Aj : EReal, Aj < ⊤ ∧ ∀ᵐ ω ∂(R.μ),
+        Tendsto (fun n : ℕ => ((Real.log (R.prodBern j n ω) / n : ℝ) : EReal))
+          atTop (nhds Aj) := by
+      rcases Nat.eq_zero_or_pos j with rfl | hj
+      · refine ⟨0, by simp, ?_⟩
+        filter_upwards with ω
+        have hz : ∀ n : ℕ, ((Real.log (R.prodBern 0 n ω) / n : ℝ) : EReal) = 0 := by
+          intro n
+          simp [Cocycle.prodBern]
+        simp_rw [hz]
+        exact tendsto_const_nhds
+      · have : NeZero j := ⟨by omega⟩
+        have hsub := measure_mono (μ := R.μ)
+          (R.degenerate_mono (p := j) (q := j + 1) (by omega) (by omega))
+        rw [hZ] at hsub
+        exact R.ae_tendsto_logProd (k := j) (by omega) (nonpos_iff_eq_zero.1 hsub)
+    have hnd : ∀ᵐ ω ∂(R.μ), ω ∉ R.degenerate (j + 1) := by
+      rw [ae_iff]; simpa using hZ
+    filter_upwards [hAk, hAj, hnd] with ω hu hv hnondeg
+    have hev : ∀ᶠ n : ℕ in atTop, 1 ≤ n ∧
+        0 < ∏ i ∈ Finset.range (j + 1), bernsteinNumber (R.iterate n ω) (i + 1) := by
+      filter_upwards [eventually_ge_atTop 1] with n hn
+      refine ⟨hn, ?_⟩
+      change 0 < R.prodBern (j + 1) n ω
+      rcases (R.prodBern_nonneg (j + 1) n ω).lt_or_eq with hp | hp
+      · exact hp
+      · exact False.elim (hnondeg ⟨n, hn,
+          (prod_bernstein_eq_zero_iff (R.iterate n ω) (by omega)).1 hp.symm⟩)
+    have hgoal := tendsto_logEReal_bernstein_of_prod_limits
+      (T := fun n => R.iterate n ω) (m := fun n => n) hAktop hAjtop hev
+      (by simpa only [Cocycle.prodBern] using hu)
+      (by simpa only [Cocycle.prodBern] using hv)
+    have hchi : R.chi (j + 1) ω = _ := hgoal.limsup_eq
+    rw [hchi]
+    exact hgoal
+  · -- the degenerate set is conull
+    have hae : ∀ᵐ ω ∂(R.μ), ω ∈ R.degenerate (j + 1) := by
+      rw [ae_iff]
+      have hc : R.μ (R.degenerate (j + 1))ᶜ = 0 := by
+        rw [measure_compl (R.measurableSet_degenerate (j + 1)) (measure_ne_top _ _), hZ,
+          measure_univ, tsub_self]
+      exact hc
+    filter_upwards [hae] with ω hω
+    obtain ⟨htend, hchi⟩ := R.tendsto_chi_of_degenerate (j + 1) hω
+    rw [hchi]
+    exact htend
+
+/-- **Lemma.** `χ_k` is almost-everywhere constant: its measurable shift inequality and
+ergodicity imply constancy, independently of the convergence theorem above.
+
+The `EReal` value includes finite-rank cocycles, where the constant can be `⊥`. -/
+theorem Cocycle.exists_chi_ae_const (R : Cocycle Ω X) [SeparableSpace X] [BorelSpace X]
+    (k : ℕ) : ∃ c : EReal, ∀ᵐ ω ∂(R.μ), R.chi k ω = c := by
+  rcases Nat.eq_zero_or_pos k with rfl | hk
+  · exact ⟨⊥, Filter.Eventually.of_forall fun ω => R.chi_zero ω⟩
+  · have : NeZero k := ⟨hk.ne'⟩
+    exact exists_ae_const_of_le_comp R.ergodic (R.measurable_chi k) (R.chi_le_chi_shift k)
+
+/-- The `χ_k` are (weakly) decreasing in `k`, since `ρ_k` is. Pointwise in `ω`: no ergodicity
+needed. Shifted by one to skip the junk index `χ_0 = ⊥`. -/
+theorem Cocycle.chi_antitone (R : Cocycle Ω X) (ω : Ω) :
+    Antitone fun k : ℕ => R.chi (k + 1) ω := by
+  refine antitone_nat_of_succ_le fun k => ?_
+  refine Filter.limsup_le_limsup ?_
+  filter_upwards with n
+  have hn : (0 : EReal) ≤ (n : ℕ) := by
+    rw [← EReal.coe_coe_eq_natCast]
+    exact EReal.coe_nonneg.2 (Nat.cast_nonneg n)
+  exact EReal.div_le_div_right_of_nonneg hn
+    (ChiOrder.logEReal_mono (ChiOrder.bernsteinNumber_succ_le (R.iterate n ω) k))
+
+/-- `χ_{k+1}(ω) ↓ ν(ω)`, pointwise in `ω`, by antitonicity. -/
+theorem Cocycle.nu_isLimit (R : Cocycle Ω X) (ω : Ω) :
+    Filter.Tendsto (fun k : ℕ => R.chi (k + 1) ω) atTop (nhds (R.nu ω)) := by
+  change Filter.Tendsto (fun k : ℕ => R.chi (k + 1) ω) atTop (nhds (⨅ k : ℕ, R.chi (k + 1) ω))
+  exact tendsto_atTop_iInf (R.chi_antitone ω)
+
+/-- `ν ≤ χ_k` for every `k ≥ 1`: `ν` is the infimum of exactly those `χ_k`. -/
+theorem Cocycle.nu_le_chi (R : Cocycle Ω X) (ω : Ω) {k : ℕ} (hk : 1 ≤ k) :
+    R.nu ω ≤ R.chi k ω := by
+  have h1 : R.nu ω ≤ R.chi (k - 1 + 1) ω := by
+    change (⨅ j : ℕ, R.chi (j + 1) ω) ≤ _
+    exact iInf_le _ (k - 1)
+  rwa [Nat.sub_add_cancel hk] at h1
+
+/-- **Lemma** (`proof_met.tex`, "Further, `λ₂` exists if and only if `λ₁ > ν`", proved there
+from `ν = lim χ_n` and `λ₂ = χ_{min{t : χ_t < χ₁}}`).
+
+"`λ₂` exists" is precisely "the set `{t ≥ 1 : χ_t < χ₁}` defining it is nonempty" — the paper
+claims nothing about where `λ₂` sits relative to `ν`, and `λ₂ = ν` is a genuine possibility
+(see the note on `Cocycle.lambda2_exists_iff`). In that form the equivalence is a consequence
+of the definitions alone. -/
+theorem Cocycle.exists_chi_lt_chi_one_iff_isQuasicompact (R : Cocycle Ω X) :
+    (∀ᵐ ω ∂(R.μ), ∃ k, 1 ≤ k ∧ R.chi k ω < R.chi 1 ω) ↔ R.IsQuasicompact := by
+  constructor
+  · intro h
+    filter_upwards [h] with ω hω
+    obtain ⟨k, hk1, hk2⟩ := hω
+    exact lt_of_le_of_lt (R.nu_le_chi ω hk1) hk2
+  · intro h
+    filter_upwards [h] with ω hω
+    have hlt : (⨅ j : ℕ, R.chi (j + 1) ω) < R.chi 1 ω := hω
+    obtain ⟨j, hj⟩ := iInf_lt_iff.1 hlt
+    exact ⟨j + 1, Nat.succ_le_succ (Nat.zero_le j), hj⟩
+
+/-- **Lemma.** A second distinct Lyapunov exponent `λ₂` exists — i.e. the set
+`{t ≥ 1 : χ_t < χ₁}` defining it is nonempty — if and only if `𝓛` is quasicompact.
+
+**Statement corrected.** This previously read `∃ k, 1 ≤ k ∧ χ_k < χ₁ ∧ ν < χ_k`, and the extra
+conjunct `ν < χ_k` made the `←` direction *false*, not merely unproved. Counterexample: take
+`X = ℓ²(ℕ)`, any ergodic base, and the constant cocycle `𝓛_ω = A = diag(2, 1, 1, 1, …)`. Then
+`ρ₁(Aⁿ) = 2ⁿ`, while `ρ_k(Aⁿ) = 1` for every `k ≥ 2` — a `k`-dimensional subspace with `k ≥ 2`
+meets `{x₁ = 0}` in dimension `≥ 1`, so contains a unit vector fixed by `Aⁿ` and its growth is
+`≤ 1`; and `Aⁿ` is expansive, so it is `≥ 1`. Hence `χ₁ = log 2`, `χ_k = 0` for `k ≥ 2`, and
+`ν = 0`. This cocycle is quasicompact (`0 < log 2`), yet no `k` satisfies the old left-hand
+side: `k = 1` fails `χ_k < χ₁`, and every `k ≥ 2` has `χ_k = 0 = ν`, failing `ν < χ_k`.
+
+The paper never claims `ν < λ₂`: `proof_met.tex` l.645 asserts only that `λ₂` exists iff
+`λ₁ > ν`, and `λ₂ = ν` is explicitly one of the three cases listed at l.150. `ν ≤ χ_k` does
+hold for every `k ≥ 1` — that is `Cocycle.nu_le_chi` — and is all the argument ever needed. -/
+theorem Cocycle.lambda2_exists_iff (R : Cocycle Ω X) :
+    (∀ᵐ ω ∂(R.μ), ∃ k, 1 ≤ k ∧ R.chi k ω < R.chi 1 ω) ↔ R.IsQuasicompact :=
+  R.exists_chi_lt_chi_one_iff_isQuasicompact
+
+/-- **A quasicompact cocycle has a genuine top multiplicity `m_1 ≥ 1`.** Quasicompactness gives
+some `χ_k < χ_1`, so the defining set of `lambdaIdx 1` is nonempty and its infimum is at least
+`2` (the value `1` is excluded because `χ_1 < χ_1` is false). -/
+theorem Cocycle.mult_zero_pos (R : Cocycle Ω X) (hqc : R.IsQuasicompact) :
+    ∀ᵐ ω ∂(R.μ), 0 < R.mult 0 ω := by
+  have hex := R.lambda2_exists_iff.2 hqc
+  filter_upwards [hex] with ω hω
+  obtain ⟨k, hk1, hklt⟩ := hω
+  set S : Set ℕ := {t : ℕ | 1 ≤ t ∧ R.chi t ω < R.chi (R.lambdaIdx 0 ω) ω} with hS
+  have hkS : k ∈ S := ⟨hk1, hklt⟩
+  have hmem : sInf S ∈ S := Nat.sInf_mem ⟨k, hkS⟩
+  have h1le : 1 ≤ sInf S := hmem.1
+  have hne1 : sInf S ≠ 1 := by
+    intro h1
+    have hlt := hmem.2
+    rw [h1] at hlt
+    exact lt_irrefl _ hlt
+  change 0 < R.lambdaIdx 1 ω - R.lambdaIdx 0 ω
+  change 0 < sInf S - 1
+  omega
+
+/-- **Predicate.** `E` is a (the) top fast space of multiplicity `k` growing at rate `lam`:
+measurable, equivariant, and every nonzero vector in `E(ω)` grows at exactly rate `lam`,
+uniformly. Corresponds to the three bullet points of the first Lemma of Section 5. -/
+def Cocycle.IsFastSpace (R : Cocycle Ω X) (k : ℕ) [NeZero k] (lam : ℝ)
+    (E : Ω → GrassmannianFin X k) : Prop :=
+  Measurable E ∧
+  (∀ᵐ ω ∂(R.μ), ∀ x ∈ (E ω).1, x ≠ 0 → R.lambdaAt ω x = (lam : EReal)) ∧
+  (∀ᵐ ω ∂(R.μ), (E ω).1.map (R.L ω : X →ₗ[ℝ] X) = (E (R.σ ω)).1) ∧
+  (∀ᵐ ω ∂(R.μ), Tendsto (fun n => Real.log (growth (R.iterate n ω) (E ω).1) / n) atTop (nhds lam))
 
 /-- `𝓛^{(2n)}_{σ^{-n}ω} = 𝓛^{(n)}_ω ∘ 𝓛^{(n)}_{σ^{-n}ω}`: the balanced window splits at time `0`. -/
 theorem Cocycle.iterate_two_mul_shift (R : Cocycle Ω X) (n : ℕ) (ω : Ω) :

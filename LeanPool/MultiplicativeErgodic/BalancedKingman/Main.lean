@@ -352,47 +352,11 @@ theorem balancedKingman [StandardBorelSpace Ω] (μ : Measure Ω) [IsProbability
   exact ⟨⨅ M : ℕ, (c M : EReal), lt_of_le_of_lt (iInf_le _ 0) (EReal.coe_lt_top _),
     ae_tendsto_of_ae_tendsto_max hcanti hstep, hmean⟩
 
-/-- **All three convergence types, from the forward one alone.**
-
-If a subadditive family with `∫ (f 1)⁺ < ∞` has `f_n/n → C` almost everywhere for a *real* `C`,
-then the shifted and balanced averages converge a.e. to the same `C`. The three general theorems
-each produce their own constant, but all three also converge to it in the mean
-(`lowerIntegral`), so uniqueness of limits identifies them with each other and — via the given
-forward convergence — with `C`.
-
-Packaged because `kingsyn` needs exactly this, for two families at once. -/
-theorem SubadditiveFamily.three_limits [StandardBorelSpace Ω] {μ : Measure Ω}
-    [IsProbabilityMeasure μ] [NullSingletonClass μ] {σ : Ω ≃ᵐ Ω} (hσ : Ergodic (⇑σ) μ)
-    {f : ℕ → Ω → ℝ} (hf : SubadditiveFamily (⇑σ) f)
-    (h1 : Integrable (fun ω => max (f 1 ω) 0) μ) (C : ℝ)
-    (hC : ∀ᵐ ω ∂μ, Tendsto (fun n : ℕ => f n ω / n) atTop (nhds C)) :
-    (∀ᵐ ω ∂μ, Tendsto (fun n : ℕ => f n (σ^[n] ω) / n) atTop (nhds C)) ∧
-      (∀ᵐ ω ∂μ, Tendsto (fun n : ℕ => f (2 * n) (zIter σ (-n) ω) / (2 * n)) atTop (nhds C)) := by
-  obtain ⟨C1, -, hae1, -, hm1⟩ := kingman μ (⇑σ) hσ f hf h1
-  obtain ⟨C2, -, hae2, hm2⟩ := easyking μ (⇑σ) hσ f hf h1
-  obtain ⟨C3, -, hae3, hm3⟩ := balancedKingman μ σ hσ f hf h1
-  -- all three constants are the limit of the same sequence of means
-  have h12 : C1 = C2 := tendsto_nhds_unique hm1 hm2
-  have h13 : C1 = C3 := tendsto_nhds_unique hm1 hm3
-  -- and the forward clause identifies `C1` with `C`
-  have hCC : C1 = (C : EReal) := by
-    obtain ⟨ω, hω1, hωC⟩ := (hae1.and hC).exists
-    exact tendsto_nhds_unique hω1 (EReal.tendsto_coe.2 hωC)
-  rw [hCC] at h12 h13
-  constructor
-  · filter_upwards [hae2] with ω hω
-    rw [← h12] at hω
-    exact EReal.tendsto_coe.1 hω
-  · filter_upwards [hae3] with ω hω
-    rw [← h13] at hω
-    exact EReal.tendsto_coe.1 hω
-
 /-- **The three limits agree, with an `EReal` constant** -- so the case `C = -∞` is covered.
 
-This is the form `kingman`, `easyking` and `balancedKingman` actually produce, and it is strictly
-more general than `three_limits` above, which requires the constant to be finite. It is also
-shorter: the real version has to coerce in and out of `EReal` at both ends, whereas here the three
-constants supplied by the three theorems are compared directly. -/
+This is the form `kingman`, `easyking` and `balancedKingman` produce. Their constants agree by
+uniqueness of the limit of the common sequence of means. `three_limits` specializes this result
+to a finite constant and converts the two conclusions back to real convergence. -/
 theorem SubadditiveFamily.three_limits_ereal [StandardBorelSpace Ω] {μ : Measure Ω}
     [IsProbabilityMeasure μ] [NullSingletonClass μ] {σ : Ω ≃ᵐ Ω} (hσ : Ergodic (⇑σ) μ)
     {f : ℕ → Ω → ℝ} (hf : SubadditiveFamily (⇑σ) f)
@@ -414,6 +378,30 @@ theorem SubadditiveFamily.three_limits_ereal [StandardBorelSpace Ω] {μ : Measu
   · filter_upwards [hae2] with ω hω; rwa [h12]
   · filter_upwards [hae3] with ω hω; rwa [h13]
 
+/-- **All three convergence types, from the forward one alone.**
+
+If a subadditive family with `∫ (f 1)⁺ < ∞` has `f_n/n → C` almost everywhere for a *real* `C`,
+then the shifted and balanced averages converge a.e. to the same `C`. The three general theorems
+each produce their own constant, but all three also converge to it in the mean
+(`lowerIntegral`), so uniqueness of limits identifies them with each other and — via the given
+forward convergence — with `C`.
+
+This is the real-valued specialization of `three_limits_ereal`. -/
+theorem SubadditiveFamily.three_limits [StandardBorelSpace Ω] {μ : Measure Ω}
+    [IsProbabilityMeasure μ] [NullSingletonClass μ] {σ : Ω ≃ᵐ Ω} (hσ : Ergodic (⇑σ) μ)
+    {f : ℕ → Ω → ℝ} (hf : SubadditiveFamily (⇑σ) f)
+    (h1 : Integrable (fun ω => max (f 1 ω) 0) μ) (C : ℝ)
+    (hC : ∀ᵐ ω ∂μ, Tendsto (fun n : ℕ => f n ω / n) atTop (nhds C)) :
+    (∀ᵐ ω ∂μ, Tendsto (fun n : ℕ => f n (σ^[n] ω) / n) atTop (nhds C)) ∧
+      (∀ᵐ ω ∂μ, Tendsto (fun n : ℕ => f (2 * n) (zIter σ (-n) ω) / (2 * n)) atTop (nhds C)) := by
+  have hCe : ∀ᵐ ω ∂μ,
+      Tendsto (fun n : ℕ => (f n ω / n : EReal)) atTop (nhds (C : EReal)) := by
+    filter_upwards [hC] with ω hω using EReal.tendsto_coe.2 hω
+  obtain ⟨heasy, hbalanced⟩ := hf.three_limits_ereal hσ h1 (C : EReal) hCe
+  constructor
+  · filter_upwards [heasy] with ω hω using EReal.tendsto_coe.1 hω
+  · filter_upwards [hbalanced] with ω hω using EReal.tendsto_coe.1 hω
+
 /-- A finite constant shift preserves integrability of the positive part. -/
 private theorem integrable_posPart_add_const {μ : Measure Ω} [IsFiniteMeasure μ]
     (u : Ω → ℝ) (c : ℝ) (hum : Measurable u)
@@ -432,118 +420,6 @@ private theorem integrable_posPart_add_const {μ : Measure Ω} [IsFiniteMeasure 
     rw [abs_of_nonneg hge]
     simp only [Pi.add_apply]; linarith
   · simp only [Pi.add_apply, abs_zero]; linarith
-
-/-- **Synthesis for weakly subadditive families, under the general hypothesis.**
-
-There is no `L¹` sibling: `f` and `g` need only `∫ (f 1)⁺ < ∞` and `∫ (g 1)⁺ < ∞` — the same
-condition as `kingman` — so for an `L¹` family just invoke this and discharge those from `f 1`,
-`g 1`. The flat additive slop `Cconst`, `Dconst` is absorbed exactly as before, since
-`max (u + c) 0 ≤ max u 0 + |c|`. (`kingsyn`, below, drops this theorem's restriction to *finite*
-`Cf`, `Cg`.)
-
-**The constants are given by their almost-everywhere limits, not their means.** An `L¹` version
-would take `hCf : (1/n) ∫ f_n → Cf`; off `L¹` that would have to be read through `lowerIntegral`,
-and
-relating `lowerIntegral (f_n + c)` to `lowerIntegral f_n` needs `⨅`-arithmetic in `EReal` that
-Mathlib does not provide. Taking the hypothesis as `f_n/n → Cf` almost everywhere avoids it
-entirely: the shift by `Cconst/n → 0` is then visible pointwise. It is also the form the cocycle
-application has to hand, since that is what `kingman` produces. `Cf`, `Cg` are real, which is
-exactly the assumption that the two constants are finite — needed anyway, since `Cf + t * Cg` is
-not well defined in `EReal` for `t < 0`. -/
-theorem kingsyn_real [StandardBorelSpace Ω] (μ : Measure Ω) [IsProbabilityMeasure μ]
-    [NullSingletonClass μ] (σ : Ω ≃ᵐ Ω) (hσ : Ergodic σ μ)
-    (f g : ℕ → Ω → ℝ) (Cconst Dconst : ℝ)
-    (hf : (∀ n, Measurable (f n)) ∧ ∀ m n ω, f (m + n) ω ≤ f m (σ^[n] ω) + f n ω + Cconst)
-    (hg : (∀ n, Measurable (g n)) ∧ ∀ m n ω, g (m + n) ω ≤ g m (σ^[n] ω) + g n ω + Dconst)
-    (hf1 : Integrable (fun ω => max (f 1 ω) 0) μ)
-    (hg1 : Integrable (fun ω => max (g 1 ω) 0) μ)
-    (t : ℝ) (Cf Cg : ℝ)
-    (hCf : ∀ᵐ ω ∂μ, Tendsto (fun n : ℕ => f n ω / n) atTop (nhds Cf))
-    (hCg : ∀ᵐ ω ∂μ, Tendsto (fun n : ℕ => g n ω / n) atTop (nhds Cg)) :
-    let h : ℕ → Ω → ℝ := fun n ω => f n ω + t * g n ω
-    ∀ᵐ ω ∂μ, Tendsto (fun n => h n (σ^[n] ω) / n) atTop (nhds (Cf + t * Cg)) ∧
-      Tendsto (fun n => h (2 * n) (zIter σ (-n) ω) / (2 * n)) atTop (nhds (Cf + t * Cg)) ∧
-      Tendsto (fun n => h n ω / n) atTop (nhds (Cf + t * Cg)) := by
-  change ∀ᵐ ω ∂μ,
-      Tendsto (fun n => (f n (σ^[n] ω) + t * g n (σ^[n] ω)) / n) atTop (nhds (Cf + t * Cg)) ∧
-      Tendsto (fun n => (f (2 * n) (zIter σ (-n) ω) + t * g (2 * n) (zIter σ (-n) ω)) / (2 * n))
-        atTop (nhds (Cf + t * Cg)) ∧
-      Tendsto (fun n => (f n ω + t * g n ω) / n) atTop (nhds (Cf + t * Cg))
-  set f' : ℕ → Ω → ℝ := fun n ω => f n ω + Cconst with hf'def
-  set g' : ℕ → Ω → ℝ := fun n ω => g n ω + Dconst with hg'def
-  have hf'sub : SubadditiveFamily (⇑σ) f' := by
-    refine ⟨fun n => (hf.1 n).add_const Cconst, fun m n ω => ?_⟩
-    have := hf.2 m n ω
-    simp only [hf'def]
-    linarith
-  have hg'sub : SubadditiveFamily (⇑σ) g' := by
-    refine ⟨fun n => (hg.1 n).add_const Dconst, fun m n ω => ?_⟩
-    have := hg.2 m n ω
-    simp only [hg'def]
-    linarith
-  -- the positive-part hypothesis survives the flat shift
-  have hf'1 : Integrable (fun ω => max (f' 1 ω) 0) μ :=
-    integrable_posPart_add_const (f 1) Cconst (hf.1 1) hf1
-  have hg'1 : Integrable (fun ω => max (g' 1 ω) 0) μ :=
-    integrable_posPart_add_const (g 1) Dconst (hg.1 1) hg1
-  -- the shift does not move the a.e. constant, since `Cconst / n → 0`
-  have hshiftlim : ∀ (u : ℕ → Ω → ℝ) (c C : ℝ),
-      (∀ᵐ ω ∂μ, Tendsto (fun n : ℕ => u n ω / n) atTop (nhds C)) →
-      ∀ᵐ ω ∂μ, Tendsto (fun n : ℕ => (u n ω + c) / n) atTop (nhds C) := by
-    intro u c C hu
-    filter_upwards [hu] with ω hω
-    have := hω.add (tendsto_const_div_atTop_nhds_zero_nat c)
-    rw [add_zero] at this
-    refine this.congr (fun n => ?_)
-    ring
-  have hCf' : ∀ᵐ ω ∂μ, Tendsto (fun n : ℕ => f' n ω / n) atTop (nhds Cf) := hshiftlim f Cconst
-    Cf hCf
-  have hCg' : ∀ᵐ ω ∂μ, Tendsto (fun n : ℕ => g' n ω / n) atTop (nhds Cg) := hshiftlim g Dconst
-    Cg hCg
-  obtain ⟨hf'easy, hf'bal⟩ := hf'sub.three_limits hσ hf'1 Cf hCf'
-  obtain ⟨hg'easy, hg'bal⟩ := hg'sub.three_limits hσ hg'1 Cg hCg'
-  have hf'plain := hCf'
-  have hg'plain := hCg'
-  -- Recombine: `h_n = f'_n + t g'_n - (Cconst + t Dconst)` pointwise, and the correction term
-  -- vanishes in the limit after dividing by `n` (or `2n`).
-  filter_upwards [hf'plain, hg'plain, hf'easy, hg'easy, hf'bal, hg'bal]
-    with ω hf'p hg'p hf'e hg'e hf'b hg'b
-  refine ⟨?_, ?_, ?_⟩
-  · have hsum : Tendsto
-        (fun n => f' n (σ^[n] ω) / (n : ℝ) + t * (g' n (σ^[n] ω) / (n : ℝ))
-          - (Cconst + t * Dconst) / n) atTop (nhds (Cf + t * Cg - 0)) :=
-      (hf'e.add (hg'e.const_mul t)).sub (tendsto_const_div_atTop_nhds_zero_nat (Cconst + t *
-        Dconst))
-    rw [sub_zero] at hsum
-    refine hsum.congr (fun n => ?_)
-    simp only [hf'def, hg'def]
-    ring
-  · have h2 : Tendsto (fun n : ℕ => 2 * n) atTop atTop :=
-      tendsto_atTop_mono (fun n => by change n ≤ 2 * n; omega) tendsto_id
-    have hvanish : Tendsto (fun n : ℕ => (Cconst + t * Dconst) / (2 * (n : ℝ)))
-        atTop (nhds 0) := by
-      have := (tendsto_const_div_atTop_nhds_zero_nat (Cconst + t * Dconst)).comp h2
-      refine this.congr' ?_
-      filter_upwards [eventually_gt_atTop (0 : ℕ)] with n _
-      simp
-    have hsum : Tendsto
-        (fun n => f' (2 * n) (zIter σ (-n) ω) / (2 * (n : ℝ))
-          + t * (g' (2 * n) (zIter σ (-n) ω) / (2 * (n : ℝ)))
-          - (Cconst + t * Dconst) / (2 * (n : ℝ))) atTop (nhds (Cf + t * Cg - 0)) :=
-      (hf'b.add (hg'b.const_mul t)).sub hvanish
-    rw [sub_zero] at hsum
-    refine hsum.congr (fun n => ?_)
-    simp only [hf'def, hg'def]
-    ring
-  · have hsum : Tendsto
-        (fun n => f' n ω / (n : ℝ) + t * (g' n ω / (n : ℝ)) - (Cconst + t * Dconst) / n)
-        atTop (nhds (Cf + t * Cg - 0)) :=
-      (hf'p.add (hg'p.const_mul t)).sub (tendsto_const_div_atTop_nhds_zero_nat (Cconst + t *
-        Dconst))
-    rw [sub_zero] at hsum
-    refine hsum.congr (fun n => ?_)
-    simp only [hf'def, hg'def]
-    ring
 
 theorem tendsto_atBot_add_nhds {u w : ℕ → ℝ} {c : ℝ}
     (hu : Tendsto u atTop atBot) (hw : Tendsto w atTop (nhds c)) :
@@ -747,5 +623,41 @@ theorem kingsyn [StandardBorelSpace Ω] (μ : Measure Ω) [IsProbabilityMeasure 
   · exact combine (fun n => f' n ω) (fun n => g' n ω) (fun n => f n ω + t * g n ω)
       (fun n => (n : ℝ)) h1 h2 (tendsto_const_div_atTop_nhds_zero_nat _)
       (fun n => by simp only [hf'def, hg'def]; ring)
+
+/-- **Synthesis for weakly subadditive families with finite limit constants.**
+
+This specializes `kingsyn` by coercing the given almost-everywhere limits to `EReal` and
+converting each conclusion back. Finite constants make the exceptional bottom-limit case
+vacuous, so the coefficient `t` can be any real number. Only integrability of the positive parts
+is required; additive subadditivity errors are absorbed by the general theorem. -/
+theorem kingsyn_real [StandardBorelSpace Ω] (μ : Measure Ω) [IsProbabilityMeasure μ]
+    [NullSingletonClass μ] (σ : Ω ≃ᵐ Ω) (hσ : Ergodic σ μ)
+    (f g : ℕ → Ω → ℝ) (Cconst Dconst : ℝ)
+    (hf : (∀ n, Measurable (f n)) ∧ ∀ m n ω, f (m + n) ω ≤ f m (σ^[n] ω) + f n ω + Cconst)
+    (hg : (∀ n, Measurable (g n)) ∧ ∀ m n ω, g (m + n) ω ≤ g m (σ^[n] ω) + g n ω + Dconst)
+    (hf1 : Integrable (fun ω => max (f 1 ω) 0) μ)
+    (hg1 : Integrable (fun ω => max (g 1 ω) 0) μ)
+    (t : ℝ) (Cf Cg : ℝ)
+    (hCf : ∀ᵐ ω ∂μ, Tendsto (fun n : ℕ => f n ω / n) atTop (nhds Cf))
+    (hCg : ∀ᵐ ω ∂μ, Tendsto (fun n : ℕ => g n ω / n) atTop (nhds Cg)) :
+    let h : ℕ → Ω → ℝ := fun n ω => f n ω + t * g n ω
+    ∀ᵐ ω ∂μ, Tendsto (fun n => h n (σ^[n] ω) / n) atTop (nhds (Cf + t * Cg)) ∧
+      Tendsto (fun n => h (2 * n) (zIter σ (-n) ω) / (2 * n)) atTop (nhds (Cf + t * Cg)) ∧
+      Tendsto (fun n => h n ω / n) atTop (nhds (Cf + t * Cg)) := by
+  have hCfe : ∀ᵐ ω ∂μ,
+      Tendsto (fun n : ℕ => (f n ω / n : EReal)) atTop (nhds (Cf : EReal)) := by
+    filter_upwards [hCf] with ω hω using EReal.tendsto_coe.2 hω
+  have hCge : ∀ᵐ ω ∂μ,
+      Tendsto (fun n : ℕ => (g n ω / n : EReal)) atTop (nhds (Cg : EReal)) := by
+    filter_upwards [hCg] with ω hω using EReal.tendsto_coe.2 hω
+  have hout := kingsyn μ σ hσ f g Cconst Dconst hf hg hf1 hg1 t (Cf : EReal) (Cg : EReal)
+    (EReal.coe_ne_top _) (EReal.coe_ne_top _)
+    (fun hbot _ => False.elim ((EReal.coe_ne_bot Cf) hbot)) hCfe hCge
+  have hlimit : (Cf : EReal) + (t : EReal) * (Cg : EReal) = ((Cf + t * Cg : ℝ) : EReal) := by
+    rw [EReal.coe_add, EReal.coe_mul]
+  rw [hlimit] at hout
+  filter_upwards [hout] with ω ⟨heasy, hbalanced, hforward⟩
+  exact ⟨EReal.tendsto_coe.1 heasy, EReal.tendsto_coe.1 hbalanced,
+    EReal.tendsto_coe.1 hforward⟩
 
 end MultiplicativeErgodic

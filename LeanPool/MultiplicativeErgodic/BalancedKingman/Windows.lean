@@ -9,6 +9,7 @@ Authors: George Lee
 module
 
 public import LeanPool.MultiplicativeErgodic.BalancedKingman.Vitali
+public import LeanPool.MultiplicativeErgodic.MeasurableSelection
 public import Mathlib.MeasureTheory.Function.UniformIntegrable
 
 /-!
@@ -232,16 +233,8 @@ the windows -- each endpoint lies in its own window. This is the second place
 Used repeatedly: the greedy walk, the hitting times, and the window endpoints all have the shape
 `ω ↦ g (k ω) ω` with `k` measurable and `ℕ`-valued. -/
 theorem measurable_natIndex {β : Type*} [MeasurableSpace β] {k : Ω → ℕ} (hk : Measurable k)
-    {g : ℕ → Ω → β} (hg : ∀ m, Measurable (g m)) : Measurable (fun ω => g (k ω) ω) := by
-  intro t ht
-  have hchar : (fun ω => g (k ω) ω) ⁻¹' t = ⋃ m : ℕ, (k ⁻¹' {m}) ∩ ((g m) ⁻¹' t) := by
-    ext ω
-    simp only [Set.mem_preimage, Set.mem_iUnion, Set.mem_inter_iff, Set.mem_singleton_iff]
-    constructor
-    · intro h; exact ⟨k ω, rfl, h⟩
-    · rintro ⟨m, hm, hgm⟩; rw [hm]; exact hgm
-  rw [hchar]
-  exact MeasurableSet.iUnion fun m => (hk (measurableSet_singleton m)).inter (hg m ht)
+    {g : ℕ → Ω → β} (hg : ∀ m, Measurable (g m)) : Measurable (fun ω => g (k ω) ω) :=
+  measurable_glue hk hg
 
 /-- The left and right endpoints of the Vitali windows, as maps. -/
 noncomputable def leftEnd (σ : Ω ≃ᵐ Ω) (jω : Ω → ℕ) (ω : Ω) : Ω := zIter σ (-(jω ω : ℤ)) ω
