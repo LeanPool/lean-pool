@@ -201,10 +201,15 @@ def read_progress(build: Path, identity: str) -> dict[str, str]:
 
 
 def restore_progress(
-    build: Path, identity: str, fingerprints: dict[str, str]
+    build: Path,
+    identity: str,
+    fingerprints: dict[str, str],
+    state: dict | None = None,
 ) -> tuple[dict[str, str], dict[str, set[str]]]:
     """Return unchanged completed projects, and analyzed modules of unfinished ones."""
-    state = read_state(build, identity)
+    state = read_state(build, identity) if state is None else state
+    if state.get("identity") != identity:
+        return {}, {}
     done = {
         project: value
         for project, value in state.get("projects", {}).items()
@@ -437,10 +442,15 @@ def build_batches(
     if seconds <= 0 or batch_size <= 0 or workers <= 0:
         raise ValueError("batch size, workers and time allowance must be positive")
     build = root / "docbuild" / ".lake" / "build"
+    previous = read_state(build, input_identity(root))
+    # Prerequisites and analyzers may replace rows before a later failure.
+    # Keep the reusable snapshot in memory, never as an on-disk certificate.
+    write_progress(build, "", {}, {}, {})
     analyzer = prepare_analysis(root, lake)
     identity = input_identity(root)
     fingerprints = project_fingerprints(root)
-    done, partial = restore_progress(build, identity, fingerprints)
+    done, partial = restore_progress(build, identity, fingerprints, previous)
+    write_progress(build, identity, done, partial, fingerprints)
     clean_checkpoint(build, set(module_sources(root)))
     pending = [
         module

@@ -211,6 +211,81 @@ def test_failed_analyzer_starts_no_further_work_and_fails_the_stage(
         documentation.require_complete(repository)
 
 
+def test_failed_reanalysis_rejects_reverted_completion(
+    repository: Path, analyzer: RecordingAnalyzer, monkeypatch
+) -> None:
+    """Committed replacement rows cannot retain the previous completion certificate."""
+    paths = [repository / "LeanPool" / f"{name}.lean" for name in ("A", "Z")]
+    original = [path.read_text() for path in paths]
+    assert documentation.build_batches(repository, "lake", 60, 8, workers=1)
+    for path, text in zip(paths, original, strict=True):
+        path.write_text(text + "-- changed documentation\n")
+    analyze = analyzer.analyze
+
+    def replace(module: str) -> None:
+        analyze(module)
+        populate(analyzer.build, value="changed")
+
+    monkeypatch.setattr(analyzer, "analyze", replace)
+    analyzer.fail = "LeanPool.Z"
+    with pytest.raises(subprocess.CalledProcessError):
+        documentation.build_batches(repository, "lake", 60, 8, workers=1)
+    with sqlite3.connect(analyzer.build / "api-docs.db") as connection:
+        assert connection.execute("SELECT value FROM contents").fetchone() == (
+            "changed",
+        )
+    for path, text in zip(paths, original, strict=True):
+        path.write_text(text)
+    with pytest.raises(ValueError, match="incomplete"):
+        documentation.require_complete(repository)
+    analyzer.fail = None
+    analyzer.modules.clear()
+    assert documentation.build_batches(repository, "lake", 60, 8, workers=1)
+    assert set(analyzer.modules) == {"LeanPool.A", "LeanPool.Z"}
+    documentation.require_complete(repository)
+
+
+def test_failed_preparation_invalidates_completion(
+    repository: Path, analyzer: RecordingAnalyzer, monkeypatch
+) -> None:
+    """A prerequisite can commit database rows before preparation fails."""
+    assert documentation.build_batches(repository, "lake", 60, 8, workers=1)
+
+    def fail_after_write(root: Path, lake: str) -> None:
+        populate(analyzer.build, value="changed by prerequisite")
+        raise RuntimeError("prerequisite failed after writing")
+
+    monkeypatch.setattr(documentation, "prepare_analysis", fail_after_write)
+    with pytest.raises(RuntimeError, match="prerequisite failed"):
+        documentation.build_batches(repository, "lake", 60, 8, workers=1)
+    with pytest.raises(ValueError, match="incomplete"):
+        documentation.require_complete(repository)
+
+
+def test_failed_pruning_rejects_restored_modules(
+    repository: Path, analyzer: RecordingAnalyzer, monkeypatch
+) -> None:
+    """Restoring a removed source must not certify its pruned database rows."""
+    assert documentation.build_batches(repository, "lake", 60, 8, workers=1)
+    path = repository / "LeanPool" / "A.lean"
+    original = path.read_text()
+    path.unlink()
+
+    def fail_after_pruning(root: Path, projects: set[str]) -> list[str]:
+        raise RuntimeError("failed after pruning")
+
+    monkeypatch.setattr(documentation, "ordered_modules", fail_after_pruning)
+    with pytest.raises(RuntimeError, match="failed after pruning"):
+        documentation.build_batches(repository, "lake", 60, 8, workers=1)
+    with sqlite3.connect(analyzer.build / "api-docs.db") as connection:
+        assert connection.execute(
+            "SELECT COUNT(*) FROM modules WHERE name = 'LeanPool.A'"
+        ).fetchone() == (0,)
+    path.write_text(original)
+    with pytest.raises(ValueError, match="incomplete"):
+        documentation.require_complete(repository)
+
+
 def test_analyzer_runs_doc_gen_like_its_lake_facet(tmp_path: Path, caplog) -> None:
     """The direct command must match the facet's arguments and environment."""
     build = tmp_path / "docbuild" / ".lake" / "build"
