@@ -26,7 +26,8 @@ dual for comonads. This file adds the converse, so that both theorems read as eq
 
 ## References
 
-* Saunders Mac Lane, *Categories for the Working Mathematician*, 2nd ed., Theorem VI.7.1
+* Saunders Mac Lane, *Categories for the Working Mathematician*, 2nd ed., §VI.7: a variant of
+  Theorem VI.7.1, stated for an equivalence rather than an isomorphism of categories
 -/
 
 public section

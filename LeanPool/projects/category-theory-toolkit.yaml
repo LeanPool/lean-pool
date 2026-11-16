@@ -3,19 +3,21 @@ title: Category theory toolkit
 summary: A collection of general results in category theory. Any adjunction restricts to
   an equivalence between the objects fixed by its unit and those fixed by its counit;
   the four usual conditions defining an idempotent adjunction are equivalent, and then
-  the fixed objects form a reflective and a coreflective subcategory. Beck's monadicity
-  and comonadicity theorems are stated as equivalences. Additive functors out of the
+  the fixed objects form a reflective and a coreflective subcategory. Additive functors out of the
   Karoubi envelope into an idempotent complete category are equivalent to additive
   functors out of the original category. A category is direct exactly when the relation
   "there is a non-identity morphism" is well-founded, and the semi-simplex category is
   direct. Restriction of representations along a group homomorphism is full iff the
   homomorphism is surjective, and an equivalence iff it is bijective. In abelian
-  categories, a square is a pullback (pushout) iff its biproduct sequence is left
-  (right) exact, a pullback with an epimorphism opposite is a pushout, and
-  semi-cartesian squares (pushout-to-corner mono, equivalently corner-to-pullback epi)
+  categories, a pullback with an epimorphism opposite is a pushout, and semi-cartesian
+  squares (pushout-to-corner mono, equivalently corner-to-pullback epi)
   are characterized by exactness and as composites of a pushout and a pullback square.
   Finally, a category with zero morphisms and binary biproducts in which every morphism
-  with zero kernel and zero cokernel is invertible is preadditive.
+  with zero kernel and zero cokernel is invertible is preadditive. Two supporting files
+  package results Mathlib already proves in other forms, for use by these statements:
+  Beck's monadicity and comonadicity theorems as equivalences (a variant of Mac Lane,
+  Theorem VI.7.1, for an equivalence rather than an isomorphism of categories), and the
+  exactness criteria for pullback and pushout squares in abelian categories.
 branch: category theory
 entry_module: LeanPool.CategoryTheoryToolkit
 authors:
@@ -31,7 +33,6 @@ main_declarations:
 - CategoryTheory.Adjunction.fixedEquiv
 - CategoryTheory.Adjunction.idempotent_tfae
 - CategoryTheory.Adjunction.fixedLeftReflective
-- CategoryTheory.Monad.isEquivalence_comparison_iff
 - CategoryTheory.Idempotents.karoubiUniversalAdditive
 - Rep.isEquivalence_resFunctor_iff
 - CategoryTheory.CommSq.isSemiCartesian_iff_exists_factorisation
@@ -50,13 +51,6 @@ main_results:
   informal: For an idempotent adjunction L ⊣ R, the objects at which the unit is an
     isomorphism form a reflective subcategory with reflector L ⋙ R (and dually the
     objects at which the counit is an isomorphism form a coreflective subcategory).
-- declaration: CategoryTheory.Monad.isEquivalence_comparison_iff
-  informal: For an adjunction F ⊣ G, the comparison functor into the category of
-    algebras of the induced monad is an equivalence iff G reflects isomorphisms and
-    every G-split pair has a coequalizer preserved by G (Beck's monadicity theorem as an
-    equivalence; the dual statement for comonads is also proved).
-  source_ref: S. Mac Lane, Categories for the Working Mathematician, 2nd ed. (1998),
-    Theorem VI.7.1.
 - declaration: CategoryTheory.Idempotents.karoubiUniversalAdditive
   informal: For preadditive C and idempotent complete preadditive D, precomposition
     with C → Karoubi C is an equivalence between additive functors Karoubi C ⥤ D and

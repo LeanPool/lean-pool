@@ -22,7 +22,6 @@ Authors: Michel Hua
 Status: verified
 Main declarations: `CategoryTheory.Adjunction.fixedEquiv`,
   `CategoryTheory.Adjunction.idempotent_tfae`, `CategoryTheory.Adjunction.fixedLeftReflective`,
-  `CategoryTheory.Monad.isEquivalence_comparison_iff`,
   `CategoryTheory.Idempotents.karoubiUniversalAdditive`, `Rep.isEquivalence_resFunctor_iff`,
   `CategoryTheory.CommSq.isSemiCartesian_iff_exists_factorisation`,
   `CategoryTheory.SemiadditiveOfBinaryBiproducts.preadditiveOfWeakMonoEpiInvertible`
