@@ -59,7 +59,9 @@ References: E. Knill, R. Laflamme, *Theory of quantum error-correcting codes*, P
 
 *Provenance:* copied from csd-lean4 (`zblore/csd-lean4`, commit `db586e88`), file
 `CsdLean4/Mathlib/QuantumInfo/KnillLaflamme.lean`, with imports renamed from `CsdLean4.Mathlib` to
-`KnillLaflammeLean`. The code is unchanged. The comments were edited for this repository to
+`KnillLaflammeLean`. The Lean Pool port removes redundant instances and shares
+the scalar-Kraus reconstruction.
+The upstream comments were edited to
 remove csd-lean4's internal notes and references to files that are not here.
 -/
 
@@ -690,17 +692,12 @@ theorem exists_kraus_mul_mul_eq_smul (hP : IsCodeProjector P) {κ : Type*} [Fint
   simp only [Matrix.mul_assoc]
 
 omit [Fintype ι] [DecidableEq ι] in
-/-- **The Knill–Laflamme theorem (the condition is necessary).** If a channel `R` corrects the
-errors `E` on the code `P` up to scalars — `R (E i ρ E iᴴ) = λ i • ρ` on code states — then the
-errors satisfy the Knill–Laflamme condition. -/
-theorem knillLaflamme_of_recovery (hP : IsCodeProjector P) {κ : Type*} [Fintype κ]
-    (R : Channel n n κ) (lam : ι → ℂ)
-    (h : ∀ i, ∀ ρ : Matrix n n ℂ, ρ = P * ρ * P → R.apply (E i * ρ * (E i)ᴴ) = lam i • ρ) :
-    ∃ c : Matrix ι ι ℂ, KnillLaflamme P E c := by
-  have hscal : ∀ i k, ∃ μ : ℂ, R.kraus k * E i * P = μ • P := fun i k =>
-    exists_kraus_mul_mul_eq_smul hP R (h i) k
-  choose μ hμ using hscal
-  refine ⟨fun i j => ∑ k, star (μ i k) * μ j k, fun i j => ?_⟩
+/-- Scalar Kraus actions on the code determine its Knill–Laflamme matrix. -/
+theorem knillLaflamme_of_kraus_scalars (hP : IsCodeProjector P)
+    {κ : Type*} [Fintype κ] (R : Channel n n κ) (μ : ι → κ → ℂ)
+    (hμ : ∀ i k, R.kraus k * E i * P = μ i k • P) :
+    KnillLaflamme P E (fun i j => ∑ k, star (μ i k) * μ j k) := by
+  intro i j
   calc P * (E i)ᴴ * E j * P
       = P * (E i)ᴴ * (∑ k, (R.kraus k)ᴴ * R.kraus k) * E j * P := by
         rw [R.tp, Matrix.mul_one]
@@ -712,6 +709,19 @@ theorem knillLaflamme_of_recovery (hP : IsCodeProjector P) {κ : Type*} [Fintype
         rw [hμ i k, hμ j k, conjTranspose_smul, hP.conjTranspose_eq, Matrix.smul_mul,
           Matrix.mul_smul, smul_smul, hP.mul_self]
     _ = (∑ k, star (μ i k) * μ j k) • P := by rw [Finset.sum_smul]
+
+omit [Fintype ι] [DecidableEq ι] in
+/-- **The Knill–Laflamme theorem (the condition is necessary).** If a channel `R` corrects the
+errors `E` on the code `P` up to scalars — `R (E i ρ E iᴴ) = λ i • ρ` on code states — then the
+errors satisfy the Knill–Laflamme condition. -/
+theorem knillLaflamme_of_recovery (hP : IsCodeProjector P) {κ : Type*} [Fintype κ]
+    (R : Channel n n κ) (lam : ι → ℂ)
+    (h : ∀ i, ∀ ρ : Matrix n n ℂ, ρ = P * ρ * P → R.apply (E i * ρ * (E i)ᴴ) = lam i • ρ) :
+    ∃ c : Matrix ι ι ℂ, KnillLaflamme P E c := by
+  have hscal : ∀ i k, ∃ μ : ℂ, R.kraus k * E i * P = μ • P := fun i k =>
+    exists_kraus_mul_mul_eq_smul hP R (h i) k
+  choose μ hμ using hscal
+  exact ⟨_, knillLaflamme_of_kraus_scalars hP R μ hμ⟩
 
 omit [DecidableEq ι] in
 /-- **The Knill–Laflamme theorem**: the errors `E` are correctable on the nonzero code `P` — some
@@ -788,13 +798,9 @@ theorem encoder_of_knillLaflamme (hP : IsCodeProjector P) (hV : Vᴴ * V = 1) (h
   have hVP : Vᴴ * P = Vᴴ := by
     conv_lhs => rw [← hP.conjTranspose_eq]
     rw [← conjTranspose_mul, hPV]
-  calc Vᴴ * (E i)ᴴ * E j * V
-      = Vᴴ * P * (E i)ᴴ * E j * (P * V) := by rw [hVP, hPV]
-    _ = Vᴴ * (P * (E i)ᴴ * E j * P) * V := by simp only [Matrix.mul_assoc]
-    _ = Vᴴ * (c i j • P) * V := by rw [hc i j]
-    _ = c i j • (Vᴴ * P * V) := by
-        simp only [Matrix.mul_smul, Matrix.smul_mul, Matrix.mul_assoc]
-    _ = c i j • 1 := by rw [hVP, hV]
+  have h := congrArg (fun M : Matrix n n ℂ => Vᴴ * M * V) (hc i j)
+  simp only [← Matrix.mul_assoc, hVP] at h
+  simpa only [Matrix.smul_mul, Matrix.mul_assoc, hPV, Matrix.mul_smul, hV] using h
 
 omit [Fintype ι] [DecidableEq ι] [Fintype L] in
 /-- The logical action of a single error, for a family containing the identity: the identity's row

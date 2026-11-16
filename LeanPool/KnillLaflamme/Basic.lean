@@ -78,18 +78,7 @@ theorem knillLaflamme_of_recovery_sum {P : Matrix n n ℂ} {E : ι → Matrix n 
     rw [conjTranspose_mul, conjTranspose_mul, hP.conjTranspose_eq]
     simp only [Matrix.mul_assoc]
   choose μ hμ using hscal
-  refine ⟨fun i j => ∑ k, star (μ i k) * μ j k, fun i j => ?_⟩
-  calc P * (E i)ᴴ * E j * P
-      = P * (E i)ᴴ * (∑ k, (R.kraus k)ᴴ * R.kraus k) * E j * P := by
-        rw [R.tp, Matrix.mul_one]
-    _ = ∑ k, (R.kraus k * E i * P)ᴴ * (R.kraus k * E j * P) := by
-        simp only [Matrix.mul_sum, Matrix.sum_mul, conjTranspose_mul, hP.conjTranspose_eq,
-          Matrix.mul_assoc]
-    _ = ∑ k, (star (μ i k) * μ j k) • P := by
-        refine Finset.sum_congr rfl fun k _ => ?_
-        rw [hμ i k, hμ j k, conjTranspose_smul, hP.conjTranspose_eq, Matrix.smul_mul,
-          Matrix.mul_smul, smul_smul, hP.mul_self]
-    _ = (∑ k, star (μ i k) * μ j k) • P := by rw [Finset.sum_smul]
+  exact ⟨_, knillLaflamme_of_kraus_scalars hP R μ hμ⟩
 
 omit [Fintype ι] [DecidableEq ι] in
 /-- **The Knill–Laflamme theorem.** On a nonzero code `P`, the errors `E` satisfy the

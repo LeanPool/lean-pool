@@ -29,7 +29,7 @@ The Kraus index `ι` is an arbitrary `Fintype`.
 
 *Provenance:* copied from csd-lean4 (`zblore/csd-lean4`, commit `db586e88`), file
 `CsdLean4/Mathlib/QuantumInfo/Channel.lean`. It imports only Mathlib, so no import changed. The
-code is unchanged. The comments were edited for this repository to remove csd-lean4's internal
+Lean Pool port simplifies trace duality. The upstream comments were edited to remove internal
 notes and references to files that are not here. The adjoint lemmas and `Channel.id` are not used
 by the theorem.
 -/
@@ -156,14 +156,10 @@ lemma adjoint_le_one [DecidableEq m] (Φ : Channel n m ι) {P : Matrix m m ℂ}
 adjoint, via trace cyclicity rotating `Kᵢᴴ` to the front of each summand. -/
 lemma adjoint_trace_mul (Φ : Channel n m ι) (P : Matrix m m ℂ) (ρ : Matrix n n ℂ) :
     (P * Φ.apply ρ).trace = (Φ.adjoint P * ρ).trace := by
-  rw [apply, Finset.mul_sum, Matrix.trace_sum, adjoint, Finset.sum_mul, Matrix.trace_sum]
+  simp only [apply, adjoint, Matrix.mul_sum, Matrix.sum_mul, Matrix.trace_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
-  -- Tr(P · (Kᵢ ρ) · Kᵢᴴ) = Tr(Kᵢᴴ · P · (Kᵢ ρ)): rotate Kᵢᴴ to the front (cyclicity).
-  rw [show P * (Φ.kraus i * ρ * (Φ.kraus i)ᴴ) = P * (Φ.kraus i * ρ) * (Φ.kraus i)ᴴ by
-        rw [Matrix.mul_assoc, Matrix.mul_assoc, Matrix.mul_assoc],
-    Matrix.trace_mul_cycle P (Φ.kraus i * ρ) (Φ.kraus i)ᴴ,
-    show (Φ.kraus i)ᴴ * P * (Φ.kraus i) * ρ
-        = (Φ.kraus i)ᴴ * P * (Φ.kraus i * ρ) by rw [Matrix.mul_assoc]]
+  rw [← Matrix.mul_assoc P, Matrix.trace_mul_cycle]
+  simp only [Matrix.mul_assoc]
 
 /-- The **identity channel** (a single Kraus operator `1`). -/
 def id (n : Type*) [Fintype n] [DecidableEq n] : Channel n n PUnit where
