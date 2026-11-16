@@ -5,6 +5,9 @@ Authors: Dawid Trela
 -/
 module
 
+import LeanPool.MovingSofa.KernelCertificate
+public meta import LeanPool.MovingSofa.KernelCertificate
+
 public import LeanPool.MovingSofa.GerverSofa.KernelOnly.Core.Bundle005
 /-!
 # Gerver sofa: related certificate and semantic modules
@@ -4051,184 +4054,184 @@ open CertificateCells018fd5e668
 namespace CoverCertificate276a139af5
 
 private theorem checked000 : adaptiveCoverCheck 4 cell000 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell000 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell000 (by certificate_kernel)
 
 private theorem checked001 : adaptiveCoverCheck 4 cell001 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell001 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell001 (by certificate_kernel)
 
 private theorem checked002 : adaptiveCoverCheck 4 cell002 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell002 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell002 (by certificate_kernel)
 
 private theorem checked003 : adaptiveCoverCheck 4 cell003 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell003 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell003 (by certificate_kernel)
 
 private theorem checked010 : adaptiveCoverCheck 4 cell010 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell010 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell010 (by certificate_kernel)
 
 private theorem checked011 : adaptiveCoverCheck 4 cell011 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell011 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell011 (by certificate_kernel)
 
 private theorem checked012 : adaptiveCoverCheck 4 cell012 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell012 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell012 (by certificate_kernel)
 
 private theorem checked013 : adaptiveCoverCheck 4 cell013 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell013 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell013 (by certificate_kernel)
 
 private theorem checked020 : adaptiveCoverCheck 4 cell020 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell020 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell020 (by certificate_kernel)
 
 private theorem checked021 : adaptiveCoverCheck 4 cell021 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell021 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell021 (by certificate_kernel)
 
 private theorem checked022 : adaptiveCoverCheck 4 cell022 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell022 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell022 (by certificate_kernel)
 
 private theorem checked023 : adaptiveCoverCheck 4 cell023 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell023 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell023 (by certificate_kernel)
 
 private theorem checked030 : adaptiveCoverCheck 4 cell030 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell030 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell030 (by certificate_kernel)
 
 private theorem checked031 : adaptiveCoverCheck 4 cell031 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell031 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell031 (by certificate_kernel)
 
 private theorem checked032 : adaptiveCoverCheck 4 cell032 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell032 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell032 (by certificate_kernel)
 
 private theorem checked033 : adaptiveCoverCheck 4 cell033 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell033 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell033 (by certificate_kernel)
 
 private theorem checked100 : adaptiveCoverCheck 4 cell100 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell100 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell100 (by certificate_kernel)
 
 private theorem checked101 : adaptiveCoverCheck 4 cell101 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell101 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell101 (by certificate_kernel)
 
 private theorem checked102 : adaptiveCoverCheck 4 cell102 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell102 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell102 (by certificate_kernel)
 
 private theorem checked103 : adaptiveCoverCheck 4 cell103 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell103 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell103 (by certificate_kernel)
 
 private theorem checked120 : adaptiveCoverCheck 4 cell120 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell120 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell120 (by certificate_kernel)
 
 private theorem checked121 : adaptiveCoverCheck 4 cell121 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell121 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell121 (by certificate_kernel)
 
 private theorem checked122 : adaptiveCoverCheck 4 cell122 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell122 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell122 (by certificate_kernel)
 
 private theorem checked123 : adaptiveCoverCheck 4 cell123 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell123 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell123 (by certificate_kernel)
 
 private theorem checked130 : adaptiveCoverCheck 4 cell130 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell130 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell130 (by certificate_kernel)
 
 private theorem checked131 : adaptiveCoverCheck 4 cell131 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell131 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell131 (by certificate_kernel)
 
 private theorem checked132 : adaptiveCoverCheck 4 cell132 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell132 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell132 (by certificate_kernel)
 
 private theorem checked133 : adaptiveCoverCheck 4 cell133 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell133 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell133 (by certificate_kernel)
 
 private theorem checked200 : adaptiveCoverCheck 4 cell200 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell200 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell200 (by certificate_kernel)
 
 private theorem checked201 : adaptiveCoverCheck 4 cell201 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell201 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell201 (by certificate_kernel)
 
 private theorem checked202 : adaptiveCoverCheck 4 cell202 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell202 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell202 (by certificate_kernel)
 
 private theorem checked203 : adaptiveCoverCheck 4 cell203 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell203 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell203 (by certificate_kernel)
 
 private theorem checked210 : adaptiveCoverCheck 4 cell210 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell210 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell210 (by certificate_kernel)
 
 private theorem checked211 : adaptiveCoverCheck 4 cell211 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell211 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell211 (by certificate_kernel)
 
 private theorem checked212 : adaptiveCoverCheck 4 cell212 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell212 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell212 (by certificate_kernel)
 
 private theorem checked213 : adaptiveCoverCheck 4 cell213 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell213 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell213 (by certificate_kernel)
 
 private theorem checked220 : adaptiveCoverCheck 4 cell220 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell220 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell220 (by certificate_kernel)
 
 private theorem checked221 : adaptiveCoverCheck 4 cell221 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell221 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell221 (by certificate_kernel)
 
 private theorem checked222 : adaptiveCoverCheck 4 cell222 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell222 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell222 (by certificate_kernel)
 
 private theorem checked223 : adaptiveCoverCheck 4 cell223 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell223 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell223 (by certificate_kernel)
 
 private theorem checked230 : adaptiveCoverCheck 4 cell230 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell230 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell230 (by certificate_kernel)
 
 private theorem checked231 : adaptiveCoverCheck 4 cell231 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell231 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell231 (by certificate_kernel)
 
 private theorem checked232 : adaptiveCoverCheck 4 cell232 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell232 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell232 (by certificate_kernel)
 
 private theorem checked233 : adaptiveCoverCheck 4 cell233 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell233 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell233 (by certificate_kernel)
 
 private theorem checked300 : adaptiveCoverCheck 4 cell300 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell300 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell300 (by certificate_kernel)
 
 private theorem checked301 : adaptiveCoverCheck 4 cell301 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell301 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell301 (by certificate_kernel)
 
 private theorem checked302 : adaptiveCoverCheck 4 cell302 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell302 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell302 (by certificate_kernel)
 
 private theorem checked303 : adaptiveCoverCheck 4 cell303 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell303 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell303 (by certificate_kernel)
 
 private theorem checked310 : adaptiveCoverCheck 4 cell310 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell310 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell310 (by certificate_kernel)
 
 private theorem checked311 : adaptiveCoverCheck 4 cell311 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell311 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell311 (by certificate_kernel)
 
 private theorem checked312 : adaptiveCoverCheck 4 cell312 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell312 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell312 (by certificate_kernel)
 
 private theorem checked313 : adaptiveCoverCheck 4 cell313 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell313 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell313 (by certificate_kernel)
 
 private theorem checked320 : adaptiveCoverCheck 4 cell320 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell320 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell320 (by certificate_kernel)
 
 private theorem checked321 : adaptiveCoverCheck 4 cell321 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell321 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell321 (by certificate_kernel)
 
 private theorem checked322 : adaptiveCoverCheck 4 cell322 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell322 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell322 (by certificate_kernel)
 
 private theorem checked323 : adaptiveCoverCheck 4 cell323 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell323 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell323 (by certificate_kernel)
 
 private theorem checked330 : adaptiveCoverCheck 4 cell330 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell330 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell330 (by certificate_kernel)
 
 private theorem checked331 : adaptiveCoverCheck 4 cell331 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell331 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell331 (by certificate_kernel)
 
 private theorem checked332 : adaptiveCoverCheck 4 cell332 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell332 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell332 (by certificate_kernel)
 
 private theorem checked333 : adaptiveCoverCheck 4 cell333 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell333 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell333 (by certificate_kernel)
 
 private theorem checked00 : adaptiveCoverCheck 5 cell00 = true := by
   exact adaptiveCoverCheck_succ_of_children 4 cell00
@@ -4251,7 +4254,7 @@ private theorem checked10 : adaptiveCoverCheck 5 cell10 = true := by
     checked100 checked101 checked102 checked103
 
 private theorem checked11 : adaptiveCoverCheck 5 cell11 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell11 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell11 (by certificate_kernel)
 
 private theorem checked12 : adaptiveCoverCheck 5 cell12 = true := by
   exact adaptiveCoverCheck_succ_of_children 4 cell12
@@ -4351,154 +4354,154 @@ open CertificateCells63f0679649
 namespace CoverCertificatee02eecb06a
 
 private theorem checked020 : adaptiveCoverCheck 4 cell020 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell020 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell020 (by certificate_kernel)
 
 private theorem checked021 : adaptiveCoverCheck 4 cell021 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell021 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell021 (by certificate_kernel)
 
 private theorem checked022 : adaptiveCoverCheck 4 cell022 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell022 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell022 (by certificate_kernel)
 
 private theorem checked023 : adaptiveCoverCheck 4 cell023 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell023 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell023 (by certificate_kernel)
 
 private theorem checked030 : adaptiveCoverCheck 4 cell030 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell030 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell030 (by certificate_kernel)
 
 private theorem checked031 : adaptiveCoverCheck 4 cell031 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell031 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell031 (by certificate_kernel)
 
 private theorem checked032 : adaptiveCoverCheck 4 cell032 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell032 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell032 (by certificate_kernel)
 
 private theorem checked033 : adaptiveCoverCheck 4 cell033 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell033 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell033 (by certificate_kernel)
 
 private theorem checked120 : adaptiveCoverCheck 4 cell120 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell120 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell120 (by certificate_kernel)
 
 private theorem checked121 : adaptiveCoverCheck 4 cell121 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell121 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell121 (by certificate_kernel)
 
 private theorem checked122 : adaptiveCoverCheck 4 cell122 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell122 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell122 (by certificate_kernel)
 
 private theorem checked123 : adaptiveCoverCheck 4 cell123 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell123 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell123 (by certificate_kernel)
 
 private theorem checked130 : adaptiveCoverCheck 4 cell130 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell130 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell130 (by certificate_kernel)
 
 private theorem checked131 : adaptiveCoverCheck 4 cell131 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell131 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell131 (by certificate_kernel)
 
 private theorem checked132 : adaptiveCoverCheck 4 cell132 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell132 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell132 (by certificate_kernel)
 
 private theorem checked133 : adaptiveCoverCheck 4 cell133 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell133 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell133 (by certificate_kernel)
 
 private theorem checked200 : adaptiveCoverCheck 4 cell200 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell200 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell200 (by certificate_kernel)
 
 private theorem checked201 : adaptiveCoverCheck 4 cell201 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell201 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell201 (by certificate_kernel)
 
 private theorem checked202 : adaptiveCoverCheck 4 cell202 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell202 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell202 (by certificate_kernel)
 
 private theorem checked203 : adaptiveCoverCheck 4 cell203 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell203 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell203 (by certificate_kernel)
 
 private theorem checked210 : adaptiveCoverCheck 4 cell210 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell210 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell210 (by certificate_kernel)
 
 private theorem checked211 : adaptiveCoverCheck 4 cell211 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell211 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell211 (by certificate_kernel)
 
 private theorem checked212 : adaptiveCoverCheck 4 cell212 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell212 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell212 (by certificate_kernel)
 
 private theorem checked213 : adaptiveCoverCheck 4 cell213 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell213 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell213 (by certificate_kernel)
 
 private theorem checked220 : adaptiveCoverCheck 4 cell220 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell220 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell220 (by certificate_kernel)
 
 private theorem checked221 : adaptiveCoverCheck 4 cell221 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell221 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell221 (by certificate_kernel)
 
 private theorem checked222 : adaptiveCoverCheck 4 cell222 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell222 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell222 (by certificate_kernel)
 
 private theorem checked223 : adaptiveCoverCheck 4 cell223 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell223 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell223 (by certificate_kernel)
 
 private theorem checked230 : adaptiveCoverCheck 4 cell230 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell230 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell230 (by certificate_kernel)
 
 private theorem checked231 : adaptiveCoverCheck 4 cell231 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell231 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell231 (by certificate_kernel)
 
 private theorem checked232 : adaptiveCoverCheck 4 cell232 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell232 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell232 (by certificate_kernel)
 
 private theorem checked233 : adaptiveCoverCheck 4 cell233 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell233 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell233 (by certificate_kernel)
 
 private theorem checked300 : adaptiveCoverCheck 4 cell300 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell300 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell300 (by certificate_kernel)
 
 private theorem checked301 : adaptiveCoverCheck 4 cell301 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell301 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell301 (by certificate_kernel)
 
 private theorem checked302 : adaptiveCoverCheck 4 cell302 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell302 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell302 (by certificate_kernel)
 
 private theorem checked303 : adaptiveCoverCheck 4 cell303 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell303 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell303 (by certificate_kernel)
 
 private theorem checked310 : adaptiveCoverCheck 4 cell310 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell310 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell310 (by certificate_kernel)
 
 private theorem checked311 : adaptiveCoverCheck 4 cell311 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell311 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell311 (by certificate_kernel)
 
 private theorem checked312 : adaptiveCoverCheck 4 cell312 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell312 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell312 (by certificate_kernel)
 
 private theorem checked313 : adaptiveCoverCheck 4 cell313 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell313 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell313 (by certificate_kernel)
 
 private theorem checked320 : adaptiveCoverCheck 4 cell320 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell320 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell320 (by certificate_kernel)
 
 private theorem checked321 : adaptiveCoverCheck 4 cell321 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell321 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell321 (by certificate_kernel)
 
 private theorem checked322 : adaptiveCoverCheck 4 cell322 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell322 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell322 (by certificate_kernel)
 
 private theorem checked323 : adaptiveCoverCheck 4 cell323 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell323 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell323 (by certificate_kernel)
 
 private theorem checked330 : adaptiveCoverCheck 4 cell330 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell330 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell330 (by certificate_kernel)
 
 private theorem checked331 : adaptiveCoverCheck 4 cell331 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell331 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell331 (by certificate_kernel)
 
 private theorem checked332 : adaptiveCoverCheck 4 cell332 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell332 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell332 (by certificate_kernel)
 
 private theorem checked333 : adaptiveCoverCheck 4 cell333 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell333 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell333 (by certificate_kernel)
 
 private theorem checked00 : adaptiveCoverCheck 5 cell00 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell00 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell00 (by certificate_kernel)
 
 private theorem checked01 : adaptiveCoverCheck 5 cell01 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell01 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell01 (by certificate_kernel)
 
 private theorem checked02 : adaptiveCoverCheck 5 cell02 = true := by
   exact adaptiveCoverCheck_succ_of_children 4 cell02
@@ -4509,10 +4512,10 @@ private theorem checked03 : adaptiveCoverCheck 5 cell03 = true := by
     checked030 checked031 checked032 checked033
 
 private theorem checked10 : adaptiveCoverCheck 5 cell10 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell10 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell10 (by certificate_kernel)
 
 private theorem checked11 : adaptiveCoverCheck 5 cell11 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell11 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell11 (by certificate_kernel)
 
 private theorem checked12 : adaptiveCoverCheck 5 cell12 = true := by
   exact adaptiveCoverCheck_succ_of_children 4 cell12
@@ -4612,28 +4615,28 @@ open CertificateCellsa5edf5ee06
 namespace CoverCertificate783b4cee82
 
 private theorem checked00 : adaptiveCoverCheck 5 cell00 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell00 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell00 (by certificate_kernel)
 
 private theorem checked01 : adaptiveCoverCheck 5 cell01 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell01 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell01 (by certificate_kernel)
 
 private theorem checked02 : adaptiveCoverCheck 5 cell02 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell02 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell02 (by certificate_kernel)
 
 private theorem checked03 : adaptiveCoverCheck 5 cell03 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell03 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell03 (by certificate_kernel)
 
 private theorem checked10 : adaptiveCoverCheck 5 cell10 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell10 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell10 (by certificate_kernel)
 
 private theorem checked11 : adaptiveCoverCheck 5 cell11 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell11 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell11 (by certificate_kernel)
 
 private theorem checked12 : adaptiveCoverCheck 5 cell12 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell12 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell12 (by certificate_kernel)
 
 private theorem checked13 : adaptiveCoverCheck 5 cell13 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell13 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell13 (by certificate_kernel)
 
 private theorem checked0 : adaptiveCoverCheck 6 cell0 = true := by
   exact adaptiveCoverCheck_succ_of_children 5 cell0
@@ -4644,10 +4647,10 @@ private theorem checked1 : adaptiveCoverCheck 6 cell1 = true := by
     checked10 checked11 checked12 checked13
 
 private theorem checked2 : adaptiveCoverCheck 6 cell2 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell2 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell2 (by certificate_kernel)
 
 private theorem checked3 : adaptiveCoverCheck 6 cell3 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell3 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell3 (by certificate_kernel)
 
 private theorem checkedRoot : adaptiveCoverCheck 7 cellRoot = true := by
   exact adaptiveCoverCheck_succ_of_children 6 cellRoot
@@ -4691,28 +4694,28 @@ open CertificateCellsd0bb651e18
 namespace CoverCertificate90fa7d5883
 
 private theorem checked00 : adaptiveCoverCheck 5 cell00 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell00 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell00 (by certificate_kernel)
 
 private theorem checked01 : adaptiveCoverCheck 5 cell01 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell01 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell01 (by certificate_kernel)
 
 private theorem checked02 : adaptiveCoverCheck 5 cell02 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell02 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell02 (by certificate_kernel)
 
 private theorem checked03 : adaptiveCoverCheck 5 cell03 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell03 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell03 (by certificate_kernel)
 
 private theorem checked10 : adaptiveCoverCheck 5 cell10 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell10 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell10 (by certificate_kernel)
 
 private theorem checked11 : adaptiveCoverCheck 5 cell11 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell11 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell11 (by certificate_kernel)
 
 private theorem checked12 : adaptiveCoverCheck 5 cell12 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell12 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell12 (by certificate_kernel)
 
 private theorem checked13 : adaptiveCoverCheck 5 cell13 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell13 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell13 (by certificate_kernel)
 
 private theorem checked0 : adaptiveCoverCheck 6 cell0 = true := by
   exact adaptiveCoverCheck_succ_of_children 5 cell0
@@ -4723,10 +4726,10 @@ private theorem checked1 : adaptiveCoverCheck 6 cell1 = true := by
     checked10 checked11 checked12 checked13
 
 private theorem checked2 : adaptiveCoverCheck 6 cell2 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell2 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell2 (by certificate_kernel)
 
 private theorem checked3 : adaptiveCoverCheck 6 cell3 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell3 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell3 (by certificate_kernel)
 
 private theorem checkedRoot : adaptiveCoverCheck 7 cellRoot = true := by
   exact adaptiveCoverCheck_succ_of_children 6 cellRoot
@@ -4770,16 +4773,16 @@ open CertificateCells347e84a45d
 namespace CoverCertificate0133fea31e
 
 private theorem checked0 : adaptiveCoverCheck 7 cell0 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 7 cell0 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 7 cell0 (by certificate_kernel)
 
 private theorem checked1 : adaptiveCoverCheck 7 cell1 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 7 cell1 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 7 cell1 (by certificate_kernel)
 
 private theorem checked2 : adaptiveCoverCheck 7 cell2 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 7 cell2 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 7 cell2 (by certificate_kernel)
 
 private theorem checked3 : adaptiveCoverCheck 7 cell3 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 7 cell3 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 7 cell3 (by certificate_kernel)
 
 private theorem checkedRoot : adaptiveCoverCheck 8 cellRoot = true := by
   exact adaptiveCoverCheck_succ_of_children 7 cellRoot
@@ -4823,16 +4826,16 @@ open CertificateCells06372696b5
 namespace CoverCertificate3a1ac6bacd
 
 private theorem checked0 : adaptiveCoverCheck 7 cell0 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 7 cell0 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 7 cell0 (by certificate_kernel)
 
 private theorem checked1 : adaptiveCoverCheck 7 cell1 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 7 cell1 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 7 cell1 (by certificate_kernel)
 
 private theorem checked2 : adaptiveCoverCheck 7 cell2 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 7 cell2 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 7 cell2 (by certificate_kernel)
 
 private theorem checked3 : adaptiveCoverCheck 7 cell3 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 7 cell3 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 7 cell3 (by certificate_kernel)
 
 private theorem checkedRoot : adaptiveCoverCheck 8 cellRoot = true := by
   exact adaptiveCoverCheck_succ_of_children 7 cellRoot
@@ -4876,82 +4879,82 @@ open CertificateCellsdc3bb009fb
 namespace CoverCertificateff206b6a85
 
 private theorem checked020 : adaptiveCoverCheck 4 cell020 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell020 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell020 (by certificate_kernel)
 
 private theorem checked021 : adaptiveCoverCheck 4 cell021 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell021 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell021 (by certificate_kernel)
 
 private theorem checked022 : adaptiveCoverCheck 4 cell022 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell022 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell022 (by certificate_kernel)
 
 private theorem checked023 : adaptiveCoverCheck 4 cell023 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell023 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell023 (by certificate_kernel)
 
 private theorem checked030 : adaptiveCoverCheck 4 cell030 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell030 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell030 (by certificate_kernel)
 
 private theorem checked031 : adaptiveCoverCheck 4 cell031 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell031 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell031 (by certificate_kernel)
 
 private theorem checked032 : adaptiveCoverCheck 4 cell032 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell032 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell032 (by certificate_kernel)
 
 private theorem checked033 : adaptiveCoverCheck 4 cell033 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell033 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell033 (by certificate_kernel)
 
 private theorem checked120 : adaptiveCoverCheck 4 cell120 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell120 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell120 (by certificate_kernel)
 
 private theorem checked121 : adaptiveCoverCheck 4 cell121 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell121 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell121 (by certificate_kernel)
 
 private theorem checked122 : adaptiveCoverCheck 4 cell122 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell122 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell122 (by certificate_kernel)
 
 private theorem checked123 : adaptiveCoverCheck 4 cell123 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell123 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell123 (by certificate_kernel)
 
 private theorem checked130 : adaptiveCoverCheck 4 cell130 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell130 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell130 (by certificate_kernel)
 
 private theorem checked131 : adaptiveCoverCheck 4 cell131 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell131 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell131 (by certificate_kernel)
 
 private theorem checked132 : adaptiveCoverCheck 4 cell132 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell132 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell132 (by certificate_kernel)
 
 private theorem checked133 : adaptiveCoverCheck 4 cell133 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell133 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell133 (by certificate_kernel)
 
 private theorem checked200 : adaptiveCoverCheck 4 cell200 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell200 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell200 (by certificate_kernel)
 
 private theorem checked201 : adaptiveCoverCheck 4 cell201 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell201 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell201 (by certificate_kernel)
 
 private theorem checked202 : adaptiveCoverCheck 4 cell202 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell202 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell202 (by certificate_kernel)
 
 private theorem checked203 : adaptiveCoverCheck 4 cell203 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell203 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell203 (by certificate_kernel)
 
 private theorem checked210 : adaptiveCoverCheck 4 cell210 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell210 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell210 (by certificate_kernel)
 
 private theorem checked211 : adaptiveCoverCheck 4 cell211 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell211 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell211 (by certificate_kernel)
 
 private theorem checked212 : adaptiveCoverCheck 4 cell212 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell212 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell212 (by certificate_kernel)
 
 private theorem checked213 : adaptiveCoverCheck 4 cell213 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell213 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell213 (by certificate_kernel)
 
 private theorem checked00 : adaptiveCoverCheck 5 cell00 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell00 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell00 (by certificate_kernel)
 
 private theorem checked01 : adaptiveCoverCheck 5 cell01 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell01 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell01 (by certificate_kernel)
 
 private theorem checked02 : adaptiveCoverCheck 5 cell02 = true := by
   exact adaptiveCoverCheck_succ_of_children 4 cell02
@@ -4962,10 +4965,10 @@ private theorem checked03 : adaptiveCoverCheck 5 cell03 = true := by
     checked030 checked031 checked032 checked033
 
 private theorem checked10 : adaptiveCoverCheck 5 cell10 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell10 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell10 (by certificate_kernel)
 
 private theorem checked11 : adaptiveCoverCheck 5 cell11 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell11 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell11 (by certificate_kernel)
 
 private theorem checked12 : adaptiveCoverCheck 5 cell12 = true := by
   exact adaptiveCoverCheck_succ_of_children 4 cell12
@@ -4984,22 +4987,22 @@ private theorem checked21 : adaptiveCoverCheck 5 cell21 = true := by
     checked210 checked211 checked212 checked213
 
 private theorem checked22 : adaptiveCoverCheck 5 cell22 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell22 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell22 (by certificate_kernel)
 
 private theorem checked23 : adaptiveCoverCheck 5 cell23 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell23 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell23 (by certificate_kernel)
 
 private theorem checked30 : adaptiveCoverCheck 5 cell30 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell30 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell30 (by certificate_kernel)
 
 private theorem checked31 : adaptiveCoverCheck 5 cell31 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell31 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell31 (by certificate_kernel)
 
 private theorem checked32 : adaptiveCoverCheck 5 cell32 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell32 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell32 (by certificate_kernel)
 
 private theorem checked33 : adaptiveCoverCheck 5 cell33 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell33 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell33 (by certificate_kernel)
 
 private theorem checked0 : adaptiveCoverCheck 6 cell0 = true := by
   exact adaptiveCoverCheck_succ_of_children 5 cell0
@@ -5059,52 +5062,52 @@ open CertificateCellsa17c45a931
 namespace CoverCertificate71299415d1
 
 private theorem checked00 : adaptiveCoverCheck 5 cell00 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell00 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell00 (by certificate_kernel)
 
 private theorem checked01 : adaptiveCoverCheck 5 cell01 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell01 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell01 (by certificate_kernel)
 
 private theorem checked02 : adaptiveCoverCheck 5 cell02 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell02 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell02 (by certificate_kernel)
 
 private theorem checked03 : adaptiveCoverCheck 5 cell03 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell03 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell03 (by certificate_kernel)
 
 private theorem checked10 : adaptiveCoverCheck 5 cell10 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell10 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell10 (by certificate_kernel)
 
 private theorem checked11 : adaptiveCoverCheck 5 cell11 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell11 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell11 (by certificate_kernel)
 
 private theorem checked12 : adaptiveCoverCheck 5 cell12 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell12 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell12 (by certificate_kernel)
 
 private theorem checked13 : adaptiveCoverCheck 5 cell13 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell13 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell13 (by certificate_kernel)
 
 private theorem checked20 : adaptiveCoverCheck 5 cell20 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell20 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell20 (by certificate_kernel)
 
 private theorem checked21 : adaptiveCoverCheck 5 cell21 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell21 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell21 (by certificate_kernel)
 
 private theorem checked22 : adaptiveCoverCheck 5 cell22 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell22 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell22 (by certificate_kernel)
 
 private theorem checked23 : adaptiveCoverCheck 5 cell23 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell23 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell23 (by certificate_kernel)
 
 private theorem checked30 : adaptiveCoverCheck 5 cell30 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell30 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell30 (by certificate_kernel)
 
 private theorem checked31 : adaptiveCoverCheck 5 cell31 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell31 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell31 (by certificate_kernel)
 
 private theorem checked32 : adaptiveCoverCheck 5 cell32 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell32 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell32 (by certificate_kernel)
 
 private theorem checked33 : adaptiveCoverCheck 5 cell33 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell33 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell33 (by certificate_kernel)
 
 private theorem checked0 : adaptiveCoverCheck 6 cell0 = true := by
   exact adaptiveCoverCheck_succ_of_children 5 cell0
@@ -5164,28 +5167,28 @@ open CertificateCells11ac46d6b2
 namespace CoverCertificate176775891f
 
 private theorem checked00 : adaptiveCoverCheck 5 cell00 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell00 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell00 (by certificate_kernel)
 
 private theorem checked01 : adaptiveCoverCheck 5 cell01 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell01 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell01 (by certificate_kernel)
 
 private theorem checked02 : adaptiveCoverCheck 5 cell02 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell02 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell02 (by certificate_kernel)
 
 private theorem checked03 : adaptiveCoverCheck 5 cell03 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell03 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell03 (by certificate_kernel)
 
 private theorem checked10 : adaptiveCoverCheck 5 cell10 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell10 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell10 (by certificate_kernel)
 
 private theorem checked11 : adaptiveCoverCheck 5 cell11 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell11 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell11 (by certificate_kernel)
 
 private theorem checked12 : adaptiveCoverCheck 5 cell12 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell12 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell12 (by certificate_kernel)
 
 private theorem checked13 : adaptiveCoverCheck 5 cell13 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell13 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell13 (by certificate_kernel)
 
 private theorem checked0 : adaptiveCoverCheck 6 cell0 = true := by
   exact adaptiveCoverCheck_succ_of_children 5 cell0
@@ -5196,10 +5199,10 @@ private theorem checked1 : adaptiveCoverCheck 6 cell1 = true := by
     checked10 checked11 checked12 checked13
 
 private theorem checked2 : adaptiveCoverCheck 6 cell2 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell2 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell2 (by certificate_kernel)
 
 private theorem checked3 : adaptiveCoverCheck 6 cell3 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell3 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell3 (by certificate_kernel)
 
 private theorem checkedRoot : adaptiveCoverCheck 7 cellRoot = true := by
   exact adaptiveCoverCheck_succ_of_children 6 cellRoot
@@ -5243,28 +5246,28 @@ open CertificateCells4bb3cae3bb
 namespace CoverCertificate09737eefc3
 
 private theorem checked00 : adaptiveCoverCheck 5 cell00 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell00 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell00 (by certificate_kernel)
 
 private theorem checked01 : adaptiveCoverCheck 5 cell01 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell01 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell01 (by certificate_kernel)
 
 private theorem checked02 : adaptiveCoverCheck 5 cell02 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell02 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell02 (by certificate_kernel)
 
 private theorem checked03 : adaptiveCoverCheck 5 cell03 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell03 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell03 (by certificate_kernel)
 
 private theorem checked10 : adaptiveCoverCheck 5 cell10 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell10 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell10 (by certificate_kernel)
 
 private theorem checked11 : adaptiveCoverCheck 5 cell11 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell11 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell11 (by certificate_kernel)
 
 private theorem checked12 : adaptiveCoverCheck 5 cell12 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell12 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell12 (by certificate_kernel)
 
 private theorem checked13 : adaptiveCoverCheck 5 cell13 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell13 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell13 (by certificate_kernel)
 
 private theorem checked0 : adaptiveCoverCheck 6 cell0 = true := by
   exact adaptiveCoverCheck_succ_of_children 5 cell0
@@ -5275,10 +5278,10 @@ private theorem checked1 : adaptiveCoverCheck 6 cell1 = true := by
     checked10 checked11 checked12 checked13
 
 private theorem checked2 : adaptiveCoverCheck 6 cell2 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell2 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell2 (by certificate_kernel)
 
 private theorem checked3 : adaptiveCoverCheck 6 cell3 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell3 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell3 (by certificate_kernel)
 
 private theorem checkedRoot : adaptiveCoverCheck 7 cellRoot = true := by
   exact adaptiveCoverCheck_succ_of_children 6 cellRoot
@@ -5322,148 +5325,148 @@ open CertificateCells517a8caf86
 namespace CoverCertificatea812690e7e
 
 private theorem checked000 : adaptiveCoverCheck 5 cell000 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell000 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell000 (by certificate_kernel)
 
 private theorem checked001 : adaptiveCoverCheck 5 cell001 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell001 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell001 (by certificate_kernel)
 
 private theorem checked002 : adaptiveCoverCheck 5 cell002 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell002 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell002 (by certificate_kernel)
 
 private theorem checked003 : adaptiveCoverCheck 5 cell003 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell003 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell003 (by certificate_kernel)
 
 private theorem checked010 : adaptiveCoverCheck 5 cell010 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell010 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell010 (by certificate_kernel)
 
 private theorem checked011 : adaptiveCoverCheck 5 cell011 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell011 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell011 (by certificate_kernel)
 
 private theorem checked012 : adaptiveCoverCheck 5 cell012 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell012 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell012 (by certificate_kernel)
 
 private theorem checked013 : adaptiveCoverCheck 5 cell013 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell013 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell013 (by certificate_kernel)
 
 private theorem checked020 : adaptiveCoverCheck 5 cell020 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell020 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell020 (by certificate_kernel)
 
 private theorem checked021 : adaptiveCoverCheck 5 cell021 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell021 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell021 (by certificate_kernel)
 
 private theorem checked022 : adaptiveCoverCheck 5 cell022 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell022 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell022 (by certificate_kernel)
 
 private theorem checked023 : adaptiveCoverCheck 5 cell023 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell023 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell023 (by certificate_kernel)
 
 private theorem checked030 : adaptiveCoverCheck 5 cell030 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell030 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell030 (by certificate_kernel)
 
 private theorem checked031 : adaptiveCoverCheck 5 cell031 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell031 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell031 (by certificate_kernel)
 
 private theorem checked032 : adaptiveCoverCheck 5 cell032 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell032 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell032 (by certificate_kernel)
 
 private theorem checked033 : adaptiveCoverCheck 5 cell033 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell033 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell033 (by certificate_kernel)
 
 private theorem checked100 : adaptiveCoverCheck 5 cell100 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell100 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell100 (by certificate_kernel)
 
 private theorem checked101 : adaptiveCoverCheck 5 cell101 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell101 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell101 (by certificate_kernel)
 
 private theorem checked102 : adaptiveCoverCheck 5 cell102 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell102 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell102 (by certificate_kernel)
 
 private theorem checked103 : adaptiveCoverCheck 5 cell103 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell103 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell103 (by certificate_kernel)
 
 private theorem checked110 : adaptiveCoverCheck 5 cell110 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell110 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell110 (by certificate_kernel)
 
 private theorem checked111 : adaptiveCoverCheck 5 cell111 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell111 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell111 (by certificate_kernel)
 
 private theorem checked112 : adaptiveCoverCheck 5 cell112 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell112 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell112 (by certificate_kernel)
 
 private theorem checked113 : adaptiveCoverCheck 5 cell113 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell113 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell113 (by certificate_kernel)
 
 private theorem checked120 : adaptiveCoverCheck 5 cell120 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell120 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell120 (by certificate_kernel)
 
 private theorem checked121 : adaptiveCoverCheck 5 cell121 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell121 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell121 (by certificate_kernel)
 
 private theorem checked122 : adaptiveCoverCheck 5 cell122 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell122 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell122 (by certificate_kernel)
 
 private theorem checked123 : adaptiveCoverCheck 5 cell123 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell123 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell123 (by certificate_kernel)
 
 private theorem checked130 : adaptiveCoverCheck 5 cell130 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell130 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell130 (by certificate_kernel)
 
 private theorem checked131 : adaptiveCoverCheck 5 cell131 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell131 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell131 (by certificate_kernel)
 
 private theorem checked132 : adaptiveCoverCheck 5 cell132 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell132 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell132 (by certificate_kernel)
 
 private theorem checked133 : adaptiveCoverCheck 5 cell133 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell133 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell133 (by certificate_kernel)
 
 private theorem checked200 : adaptiveCoverCheck 5 cell200 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell200 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell200 (by certificate_kernel)
 
 private theorem checked201 : adaptiveCoverCheck 5 cell201 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell201 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell201 (by certificate_kernel)
 
 private theorem checked202 : adaptiveCoverCheck 5 cell202 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell202 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell202 (by certificate_kernel)
 
 private theorem checked203 : adaptiveCoverCheck 5 cell203 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell203 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell203 (by certificate_kernel)
 
 private theorem checked210 : adaptiveCoverCheck 5 cell210 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell210 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell210 (by certificate_kernel)
 
 private theorem checked211 : adaptiveCoverCheck 5 cell211 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell211 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell211 (by certificate_kernel)
 
 private theorem checked212 : adaptiveCoverCheck 5 cell212 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell212 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell212 (by certificate_kernel)
 
 private theorem checked213 : adaptiveCoverCheck 5 cell213 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell213 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell213 (by certificate_kernel)
 
 private theorem checked300 : adaptiveCoverCheck 5 cell300 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell300 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell300 (by certificate_kernel)
 
 private theorem checked301 : adaptiveCoverCheck 5 cell301 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell301 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell301 (by certificate_kernel)
 
 private theorem checked302 : adaptiveCoverCheck 5 cell302 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell302 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell302 (by certificate_kernel)
 
 private theorem checked303 : adaptiveCoverCheck 5 cell303 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell303 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell303 (by certificate_kernel)
 
 private theorem checked310 : adaptiveCoverCheck 5 cell310 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell310 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell310 (by certificate_kernel)
 
 private theorem checked311 : adaptiveCoverCheck 5 cell311 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell311 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell311 (by certificate_kernel)
 
 private theorem checked312 : adaptiveCoverCheck 5 cell312 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell312 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell312 (by certificate_kernel)
 
 private theorem checked313 : adaptiveCoverCheck 5 cell313 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell313 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell313 (by certificate_kernel)
 
 private theorem checked00 : adaptiveCoverCheck 6 cell00 = true := by
   exact adaptiveCoverCheck_succ_of_children 5 cell00
@@ -5506,10 +5509,10 @@ private theorem checked21 : adaptiveCoverCheck 6 cell21 = true := by
     checked210 checked211 checked212 checked213
 
 private theorem checked22 : adaptiveCoverCheck 6 cell22 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell22 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell22 (by certificate_kernel)
 
 private theorem checked23 : adaptiveCoverCheck 6 cell23 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell23 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell23 (by certificate_kernel)
 
 private theorem checked30 : adaptiveCoverCheck 6 cell30 = true := by
   exact adaptiveCoverCheck_succ_of_children 5 cell30
@@ -5520,10 +5523,10 @@ private theorem checked31 : adaptiveCoverCheck 6 cell31 = true := by
     checked310 checked311 checked312 checked313
 
 private theorem checked32 : adaptiveCoverCheck 6 cell32 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell32 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell32 (by certificate_kernel)
 
 private theorem checked33 : adaptiveCoverCheck 6 cell33 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell33 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell33 (by certificate_kernel)
 
 private theorem checked0 : adaptiveCoverCheck 7 cell0 = true := by
   exact adaptiveCoverCheck_succ_of_children 6 cell0
@@ -5583,16 +5586,16 @@ open CertificateCells5795a3d5ea
 namespace CoverCertificate35de9fca65
 
 private theorem checked0 : adaptiveCoverCheck 7 cell0 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 7 cell0 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 7 cell0 (by certificate_kernel)
 
 private theorem checked1 : adaptiveCoverCheck 7 cell1 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 7 cell1 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 7 cell1 (by certificate_kernel)
 
 private theorem checked2 : adaptiveCoverCheck 7 cell2 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 7 cell2 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 7 cell2 (by certificate_kernel)
 
 private theorem checked3 : adaptiveCoverCheck 7 cell3 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 7 cell3 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 7 cell3 (by certificate_kernel)
 
 private theorem checkedRoot : adaptiveCoverCheck 8 cellRoot = true := by
   exact adaptiveCoverCheck_succ_of_children 7 cellRoot
@@ -5636,16 +5639,16 @@ open CertificateCellsa32d189193
 namespace CoverCertificatee6cd0593fa
 
 private theorem checked0 : adaptiveCoverCheck 7 cell0 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 7 cell0 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 7 cell0 (by certificate_kernel)
 
 private theorem checked1 : adaptiveCoverCheck 7 cell1 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 7 cell1 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 7 cell1 (by certificate_kernel)
 
 private theorem checked2 : adaptiveCoverCheck 7 cell2 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 7 cell2 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 7 cell2 (by certificate_kernel)
 
 private theorem checked3 : adaptiveCoverCheck 7 cell3 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 7 cell3 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 7 cell3 (by certificate_kernel)
 
 private theorem checkedRoot : adaptiveCoverCheck 8 cellRoot = true := by
   exact adaptiveCoverCheck_succ_of_children 7 cellRoot
@@ -5689,160 +5692,160 @@ open CertificateCellsf628113fc1
 namespace CoverCertificate30c4e37720
 
 private theorem checked000 : adaptiveCoverCheck 5 cell000 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell000 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell000 (by certificate_kernel)
 
 private theorem checked001 : adaptiveCoverCheck 5 cell001 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell001 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell001 (by certificate_kernel)
 
 private theorem checked002 : adaptiveCoverCheck 5 cell002 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell002 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell002 (by certificate_kernel)
 
 private theorem checked003 : adaptiveCoverCheck 5 cell003 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell003 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell003 (by certificate_kernel)
 
 private theorem checked010 : adaptiveCoverCheck 5 cell010 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell010 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell010 (by certificate_kernel)
 
 private theorem checked011 : adaptiveCoverCheck 5 cell011 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell011 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell011 (by certificate_kernel)
 
 private theorem checked012 : adaptiveCoverCheck 5 cell012 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell012 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell012 (by certificate_kernel)
 
 private theorem checked013 : adaptiveCoverCheck 5 cell013 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell013 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell013 (by certificate_kernel)
 
 private theorem checked020 : adaptiveCoverCheck 5 cell020 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell020 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell020 (by certificate_kernel)
 
 private theorem checked021 : adaptiveCoverCheck 5 cell021 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell021 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell021 (by certificate_kernel)
 
 private theorem checked022 : adaptiveCoverCheck 5 cell022 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell022 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell022 (by certificate_kernel)
 
 private theorem checked023 : adaptiveCoverCheck 5 cell023 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell023 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell023 (by certificate_kernel)
 
 private theorem checked030 : adaptiveCoverCheck 5 cell030 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell030 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell030 (by certificate_kernel)
 
 private theorem checked031 : adaptiveCoverCheck 5 cell031 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell031 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell031 (by certificate_kernel)
 
 private theorem checked032 : adaptiveCoverCheck 5 cell032 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell032 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell032 (by certificate_kernel)
 
 private theorem checked033 : adaptiveCoverCheck 5 cell033 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell033 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell033 (by certificate_kernel)
 
 private theorem checked100 : adaptiveCoverCheck 5 cell100 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell100 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell100 (by certificate_kernel)
 
 private theorem checked101 : adaptiveCoverCheck 5 cell101 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell101 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell101 (by certificate_kernel)
 
 private theorem checked102 : adaptiveCoverCheck 5 cell102 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell102 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell102 (by certificate_kernel)
 
 private theorem checked103 : adaptiveCoverCheck 5 cell103 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell103 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell103 (by certificate_kernel)
 
 private theorem checked110 : adaptiveCoverCheck 5 cell110 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell110 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell110 (by certificate_kernel)
 
 private theorem checked111 : adaptiveCoverCheck 5 cell111 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell111 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell111 (by certificate_kernel)
 
 private theorem checked112 : adaptiveCoverCheck 5 cell112 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell112 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell112 (by certificate_kernel)
 
 private theorem checked113 : adaptiveCoverCheck 5 cell113 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell113 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell113 (by certificate_kernel)
 
 private theorem checked120 : adaptiveCoverCheck 5 cell120 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell120 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell120 (by certificate_kernel)
 
 private theorem checked121 : adaptiveCoverCheck 5 cell121 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell121 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell121 (by certificate_kernel)
 
 private theorem checked122 : adaptiveCoverCheck 5 cell122 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell122 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell122 (by certificate_kernel)
 
 private theorem checked123 : adaptiveCoverCheck 5 cell123 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell123 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell123 (by certificate_kernel)
 
 private theorem checked130 : adaptiveCoverCheck 5 cell130 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell130 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell130 (by certificate_kernel)
 
 private theorem checked131 : adaptiveCoverCheck 5 cell131 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell131 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell131 (by certificate_kernel)
 
 private theorem checked132 : adaptiveCoverCheck 5 cell132 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell132 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell132 (by certificate_kernel)
 
 private theorem checked133 : adaptiveCoverCheck 5 cell133 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell133 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell133 (by certificate_kernel)
 
 private theorem checked200 : adaptiveCoverCheck 5 cell200 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell200 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell200 (by certificate_kernel)
 
 private theorem checked201 : adaptiveCoverCheck 5 cell201 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell201 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell201 (by certificate_kernel)
 
 private theorem checked202 : adaptiveCoverCheck 5 cell202 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell202 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell202 (by certificate_kernel)
 
 private theorem checked203 : adaptiveCoverCheck 5 cell203 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell203 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell203 (by certificate_kernel)
 
 private theorem checked210 : adaptiveCoverCheck 5 cell210 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell210 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell210 (by certificate_kernel)
 
 private theorem checked211 : adaptiveCoverCheck 5 cell211 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell211 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell211 (by certificate_kernel)
 
 private theorem checked212 : adaptiveCoverCheck 5 cell212 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell212 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell212 (by certificate_kernel)
 
 private theorem checked213 : adaptiveCoverCheck 5 cell213 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell213 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell213 (by certificate_kernel)
 
 private theorem checked300 : adaptiveCoverCheck 5 cell300 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell300 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell300 (by certificate_kernel)
 
 private theorem checked301 : adaptiveCoverCheck 5 cell301 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell301 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell301 (by certificate_kernel)
 
 private theorem checked302 : adaptiveCoverCheck 5 cell302 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell302 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell302 (by certificate_kernel)
 
 private theorem checked303 : adaptiveCoverCheck 5 cell303 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell303 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell303 (by certificate_kernel)
 
 private theorem checked310 : adaptiveCoverCheck 5 cell310 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell310 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell310 (by certificate_kernel)
 
 private theorem checked311 : adaptiveCoverCheck 5 cell311 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell311 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell311 (by certificate_kernel)
 
 private theorem checked312 : adaptiveCoverCheck 5 cell312 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell312 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell312 (by certificate_kernel)
 
 private theorem checked313 : adaptiveCoverCheck 5 cell313 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell313 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell313 (by certificate_kernel)
 
 private theorem checked330 : adaptiveCoverCheck 5 cell330 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell330 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell330 (by certificate_kernel)
 
 private theorem checked331 : adaptiveCoverCheck 5 cell331 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell331 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell331 (by certificate_kernel)
 
 private theorem checked332 : adaptiveCoverCheck 5 cell332 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell332 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell332 (by certificate_kernel)
 
 private theorem checked333 : adaptiveCoverCheck 5 cell333 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell333 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell333 (by certificate_kernel)
 
 private theorem checked00 : adaptiveCoverCheck 6 cell00 = true := by
   exact adaptiveCoverCheck_succ_of_children 5 cell00
@@ -5885,10 +5888,10 @@ private theorem checked21 : adaptiveCoverCheck 6 cell21 = true := by
     checked210 checked211 checked212 checked213
 
 private theorem checked22 : adaptiveCoverCheck 6 cell22 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell22 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell22 (by certificate_kernel)
 
 private theorem checked23 : adaptiveCoverCheck 6 cell23 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell23 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell23 (by certificate_kernel)
 
 private theorem checked30 : adaptiveCoverCheck 6 cell30 = true := by
   exact adaptiveCoverCheck_succ_of_children 5 cell30
@@ -5899,7 +5902,7 @@ private theorem checked31 : adaptiveCoverCheck 6 cell31 = true := by
     checked310 checked311 checked312 checked313
 
 private theorem checked32 : adaptiveCoverCheck 6 cell32 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell32 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell32 (by certificate_kernel)
 
 private theorem checked33 : adaptiveCoverCheck 6 cell33 = true := by
   exact adaptiveCoverCheck_succ_of_children 5 cell33
@@ -5963,196 +5966,196 @@ open CertificateCells740eeaba32
 namespace CoverCertificatedfaf53edbb
 
 private theorem checked000 : adaptiveCoverCheck 5 cell000 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell000 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell000 (by certificate_kernel)
 
 private theorem checked001 : adaptiveCoverCheck 5 cell001 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell001 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell001 (by certificate_kernel)
 
 private theorem checked002 : adaptiveCoverCheck 5 cell002 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell002 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell002 (by certificate_kernel)
 
 private theorem checked003 : adaptiveCoverCheck 5 cell003 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell003 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell003 (by certificate_kernel)
 
 private theorem checked010 : adaptiveCoverCheck 5 cell010 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell010 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell010 (by certificate_kernel)
 
 private theorem checked011 : adaptiveCoverCheck 5 cell011 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell011 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell011 (by certificate_kernel)
 
 private theorem checked012 : adaptiveCoverCheck 5 cell012 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell012 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell012 (by certificate_kernel)
 
 private theorem checked013 : adaptiveCoverCheck 5 cell013 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell013 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell013 (by certificate_kernel)
 
 private theorem checked020 : adaptiveCoverCheck 5 cell020 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell020 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell020 (by certificate_kernel)
 
 private theorem checked021 : adaptiveCoverCheck 5 cell021 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell021 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell021 (by certificate_kernel)
 
 private theorem checked022 : adaptiveCoverCheck 5 cell022 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell022 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell022 (by certificate_kernel)
 
 private theorem checked023 : adaptiveCoverCheck 5 cell023 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell023 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell023 (by certificate_kernel)
 
 private theorem checked030 : adaptiveCoverCheck 5 cell030 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell030 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell030 (by certificate_kernel)
 
 private theorem checked031 : adaptiveCoverCheck 5 cell031 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell031 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell031 (by certificate_kernel)
 
 private theorem checked032 : adaptiveCoverCheck 5 cell032 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell032 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell032 (by certificate_kernel)
 
 private theorem checked033 : adaptiveCoverCheck 5 cell033 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell033 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell033 (by certificate_kernel)
 
 private theorem checked100 : adaptiveCoverCheck 5 cell100 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell100 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell100 (by certificate_kernel)
 
 private theorem checked101 : adaptiveCoverCheck 5 cell101 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell101 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell101 (by certificate_kernel)
 
 private theorem checked102 : adaptiveCoverCheck 5 cell102 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell102 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell102 (by certificate_kernel)
 
 private theorem checked103 : adaptiveCoverCheck 5 cell103 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell103 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell103 (by certificate_kernel)
 
 private theorem checked110 : adaptiveCoverCheck 5 cell110 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell110 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell110 (by certificate_kernel)
 
 private theorem checked111 : adaptiveCoverCheck 5 cell111 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell111 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell111 (by certificate_kernel)
 
 private theorem checked112 : adaptiveCoverCheck 5 cell112 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell112 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell112 (by certificate_kernel)
 
 private theorem checked113 : adaptiveCoverCheck 5 cell113 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell113 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell113 (by certificate_kernel)
 
 private theorem checked120 : adaptiveCoverCheck 5 cell120 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell120 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell120 (by certificate_kernel)
 
 private theorem checked121 : adaptiveCoverCheck 5 cell121 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell121 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell121 (by certificate_kernel)
 
 private theorem checked122 : adaptiveCoverCheck 5 cell122 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell122 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell122 (by certificate_kernel)
 
 private theorem checked123 : adaptiveCoverCheck 5 cell123 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell123 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell123 (by certificate_kernel)
 
 private theorem checked130 : adaptiveCoverCheck 5 cell130 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell130 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell130 (by certificate_kernel)
 
 private theorem checked131 : adaptiveCoverCheck 5 cell131 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell131 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell131 (by certificate_kernel)
 
 private theorem checked132 : adaptiveCoverCheck 5 cell132 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell132 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell132 (by certificate_kernel)
 
 private theorem checked133 : adaptiveCoverCheck 5 cell133 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell133 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell133 (by certificate_kernel)
 
 private theorem checked200 : adaptiveCoverCheck 5 cell200 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell200 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell200 (by certificate_kernel)
 
 private theorem checked201 : adaptiveCoverCheck 5 cell201 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell201 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell201 (by certificate_kernel)
 
 private theorem checked202 : adaptiveCoverCheck 5 cell202 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell202 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell202 (by certificate_kernel)
 
 private theorem checked203 : adaptiveCoverCheck 5 cell203 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell203 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell203 (by certificate_kernel)
 
 private theorem checked210 : adaptiveCoverCheck 5 cell210 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell210 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell210 (by certificate_kernel)
 
 private theorem checked211 : adaptiveCoverCheck 5 cell211 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell211 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell211 (by certificate_kernel)
 
 private theorem checked212 : adaptiveCoverCheck 5 cell212 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell212 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell212 (by certificate_kernel)
 
 private theorem checked213 : adaptiveCoverCheck 5 cell213 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell213 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell213 (by certificate_kernel)
 
 private theorem checked220 : adaptiveCoverCheck 5 cell220 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell220 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell220 (by certificate_kernel)
 
 private theorem checked221 : adaptiveCoverCheck 5 cell221 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell221 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell221 (by certificate_kernel)
 
 private theorem checked222 : adaptiveCoverCheck 5 cell222 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell222 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell222 (by certificate_kernel)
 
 private theorem checked223 : adaptiveCoverCheck 5 cell223 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell223 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell223 (by certificate_kernel)
 
 private theorem checked230 : adaptiveCoverCheck 5 cell230 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell230 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell230 (by certificate_kernel)
 
 private theorem checked231 : adaptiveCoverCheck 5 cell231 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell231 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell231 (by certificate_kernel)
 
 private theorem checked232 : adaptiveCoverCheck 5 cell232 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell232 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell232 (by certificate_kernel)
 
 private theorem checked233 : adaptiveCoverCheck 5 cell233 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell233 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell233 (by certificate_kernel)
 
 private theorem checked300 : adaptiveCoverCheck 5 cell300 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell300 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell300 (by certificate_kernel)
 
 private theorem checked301 : adaptiveCoverCheck 5 cell301 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell301 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell301 (by certificate_kernel)
 
 private theorem checked302 : adaptiveCoverCheck 5 cell302 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell302 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell302 (by certificate_kernel)
 
 private theorem checked303 : adaptiveCoverCheck 5 cell303 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell303 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell303 (by certificate_kernel)
 
 private theorem checked310 : adaptiveCoverCheck 5 cell310 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell310 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell310 (by certificate_kernel)
 
 private theorem checked311 : adaptiveCoverCheck 5 cell311 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell311 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell311 (by certificate_kernel)
 
 private theorem checked312 : adaptiveCoverCheck 5 cell312 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell312 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell312 (by certificate_kernel)
 
 private theorem checked313 : adaptiveCoverCheck 5 cell313 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell313 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell313 (by certificate_kernel)
 
 private theorem checked320 : adaptiveCoverCheck 5 cell320 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell320 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell320 (by certificate_kernel)
 
 private theorem checked321 : adaptiveCoverCheck 5 cell321 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell321 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell321 (by certificate_kernel)
 
 private theorem checked322 : adaptiveCoverCheck 5 cell322 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell322 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell322 (by certificate_kernel)
 
 private theorem checked323 : adaptiveCoverCheck 5 cell323 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell323 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell323 (by certificate_kernel)
 
 private theorem checked330 : adaptiveCoverCheck 5 cell330 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell330 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell330 (by certificate_kernel)
 
 private theorem checked331 : adaptiveCoverCheck 5 cell331 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell331 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell331 (by certificate_kernel)
 
 private theorem checked332 : adaptiveCoverCheck 5 cell332 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell332 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell332 (by certificate_kernel)
 
 private theorem checked333 : adaptiveCoverCheck 5 cell333 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell333 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell333 (by certificate_kernel)
 
 private theorem checked00 : adaptiveCoverCheck 6 cell00 = true := by
   exact adaptiveCoverCheck_succ_of_children 5 cell00
@@ -6276,28 +6279,28 @@ open CertificateCells626f3fc028
 namespace CoverCertificatea7d865eaeb
 
 private theorem checked00 : adaptiveCoverCheck 6 cell00 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell00 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell00 (by certificate_kernel)
 
 private theorem checked01 : adaptiveCoverCheck 6 cell01 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell01 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell01 (by certificate_kernel)
 
 private theorem checked02 : adaptiveCoverCheck 6 cell02 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell02 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell02 (by certificate_kernel)
 
 private theorem checked03 : adaptiveCoverCheck 6 cell03 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell03 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell03 (by certificate_kernel)
 
 private theorem checked10 : adaptiveCoverCheck 6 cell10 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell10 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell10 (by certificate_kernel)
 
 private theorem checked11 : adaptiveCoverCheck 6 cell11 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell11 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell11 (by certificate_kernel)
 
 private theorem checked12 : adaptiveCoverCheck 6 cell12 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell12 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell12 (by certificate_kernel)
 
 private theorem checked13 : adaptiveCoverCheck 6 cell13 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell13 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell13 (by certificate_kernel)
 
 private theorem checked0 : adaptiveCoverCheck 7 cell0 = true := by
   exact adaptiveCoverCheck_succ_of_children 6 cell0
@@ -6308,10 +6311,10 @@ private theorem checked1 : adaptiveCoverCheck 7 cell1 = true := by
     checked10 checked11 checked12 checked13
 
 private theorem checked2 : adaptiveCoverCheck 7 cell2 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 7 cell2 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 7 cell2 (by certificate_kernel)
 
 private theorem checked3 : adaptiveCoverCheck 7 cell3 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 7 cell3 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 7 cell3 (by certificate_kernel)
 
 private theorem checkedRoot : adaptiveCoverCheck 8 cellRoot = true := by
   exact adaptiveCoverCheck_succ_of_children 7 cellRoot
@@ -6355,28 +6358,28 @@ open CertificateCells15f9582e4b
 namespace CoverCertificate59a502ab21
 
 private theorem checked00 : adaptiveCoverCheck 6 cell00 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell00 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell00 (by certificate_kernel)
 
 private theorem checked01 : adaptiveCoverCheck 6 cell01 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell01 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell01 (by certificate_kernel)
 
 private theorem checked02 : adaptiveCoverCheck 6 cell02 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell02 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell02 (by certificate_kernel)
 
 private theorem checked03 : adaptiveCoverCheck 6 cell03 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell03 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell03 (by certificate_kernel)
 
 private theorem checked10 : adaptiveCoverCheck 6 cell10 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell10 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell10 (by certificate_kernel)
 
 private theorem checked11 : adaptiveCoverCheck 6 cell11 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell11 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell11 (by certificate_kernel)
 
 private theorem checked12 : adaptiveCoverCheck 6 cell12 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell12 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell12 (by certificate_kernel)
 
 private theorem checked13 : adaptiveCoverCheck 6 cell13 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell13 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell13 (by certificate_kernel)
 
 private theorem checked0 : adaptiveCoverCheck 7 cell0 = true := by
   exact adaptiveCoverCheck_succ_of_children 6 cell0
@@ -6387,10 +6390,10 @@ private theorem checked1 : adaptiveCoverCheck 7 cell1 = true := by
     checked10 checked11 checked12 checked13
 
 private theorem checked2 : adaptiveCoverCheck 7 cell2 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 7 cell2 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 7 cell2 (by certificate_kernel)
 
 private theorem checked3 : adaptiveCoverCheck 7 cell3 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 7 cell3 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 7 cell3 (by certificate_kernel)
 
 private theorem checkedRoot : adaptiveCoverCheck 8 cellRoot = true := by
   exact adaptiveCoverCheck_succ_of_children 7 cellRoot
@@ -6434,172 +6437,172 @@ open CertificateCellsc156062d1b
 namespace CoverCertificatedb9da39caf
 
 private theorem checked000 : adaptiveCoverCheck 5 cell000 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell000 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell000 (by certificate_kernel)
 
 private theorem checked001 : adaptiveCoverCheck 5 cell001 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell001 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell001 (by certificate_kernel)
 
 private theorem checked002 : adaptiveCoverCheck 5 cell002 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell002 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell002 (by certificate_kernel)
 
 private theorem checked003 : adaptiveCoverCheck 5 cell003 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell003 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell003 (by certificate_kernel)
 
 private theorem checked010 : adaptiveCoverCheck 5 cell010 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell010 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell010 (by certificate_kernel)
 
 private theorem checked011 : adaptiveCoverCheck 5 cell011 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell011 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell011 (by certificate_kernel)
 
 private theorem checked012 : adaptiveCoverCheck 5 cell012 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell012 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell012 (by certificate_kernel)
 
 private theorem checked013 : adaptiveCoverCheck 5 cell013 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell013 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell013 (by certificate_kernel)
 
 private theorem checked020 : adaptiveCoverCheck 5 cell020 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell020 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell020 (by certificate_kernel)
 
 private theorem checked021 : adaptiveCoverCheck 5 cell021 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell021 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell021 (by certificate_kernel)
 
 private theorem checked022 : adaptiveCoverCheck 5 cell022 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell022 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell022 (by certificate_kernel)
 
 private theorem checked023 : adaptiveCoverCheck 5 cell023 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell023 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell023 (by certificate_kernel)
 
 private theorem checked030 : adaptiveCoverCheck 5 cell030 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell030 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell030 (by certificate_kernel)
 
 private theorem checked031 : adaptiveCoverCheck 5 cell031 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell031 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell031 (by certificate_kernel)
 
 private theorem checked032 : adaptiveCoverCheck 5 cell032 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell032 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell032 (by certificate_kernel)
 
 private theorem checked033 : adaptiveCoverCheck 5 cell033 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell033 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell033 (by certificate_kernel)
 
 private theorem checked120 : adaptiveCoverCheck 5 cell120 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell120 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell120 (by certificate_kernel)
 
 private theorem checked121 : adaptiveCoverCheck 5 cell121 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell121 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell121 (by certificate_kernel)
 
 private theorem checked122 : adaptiveCoverCheck 5 cell122 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell122 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell122 (by certificate_kernel)
 
 private theorem checked123 : adaptiveCoverCheck 5 cell123 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell123 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell123 (by certificate_kernel)
 
 private theorem checked130 : adaptiveCoverCheck 5 cell130 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell130 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell130 (by certificate_kernel)
 
 private theorem checked131 : adaptiveCoverCheck 5 cell131 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell131 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell131 (by certificate_kernel)
 
 private theorem checked132 : adaptiveCoverCheck 5 cell132 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell132 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell132 (by certificate_kernel)
 
 private theorem checked133 : adaptiveCoverCheck 5 cell133 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell133 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell133 (by certificate_kernel)
 
 private theorem checked200 : adaptiveCoverCheck 5 cell200 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell200 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell200 (by certificate_kernel)
 
 private theorem checked201 : adaptiveCoverCheck 5 cell201 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell201 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell201 (by certificate_kernel)
 
 private theorem checked202 : adaptiveCoverCheck 5 cell202 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell202 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell202 (by certificate_kernel)
 
 private theorem checked203 : adaptiveCoverCheck 5 cell203 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell203 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell203 (by certificate_kernel)
 
 private theorem checked210 : adaptiveCoverCheck 5 cell210 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell210 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell210 (by certificate_kernel)
 
 private theorem checked211 : adaptiveCoverCheck 5 cell211 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell211 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell211 (by certificate_kernel)
 
 private theorem checked212 : adaptiveCoverCheck 5 cell212 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell212 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell212 (by certificate_kernel)
 
 private theorem checked213 : adaptiveCoverCheck 5 cell213 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell213 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell213 (by certificate_kernel)
 
 private theorem checked220 : adaptiveCoverCheck 5 cell220 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell220 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell220 (by certificate_kernel)
 
 private theorem checked221 : adaptiveCoverCheck 5 cell221 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell221 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell221 (by certificate_kernel)
 
 private theorem checked222 : adaptiveCoverCheck 5 cell222 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell222 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell222 (by certificate_kernel)
 
 private theorem checked223 : adaptiveCoverCheck 5 cell223 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell223 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell223 (by certificate_kernel)
 
 private theorem checked230 : adaptiveCoverCheck 5 cell230 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell230 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell230 (by certificate_kernel)
 
 private theorem checked231 : adaptiveCoverCheck 5 cell231 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell231 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell231 (by certificate_kernel)
 
 private theorem checked232 : adaptiveCoverCheck 5 cell232 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell232 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell232 (by certificate_kernel)
 
 private theorem checked233 : adaptiveCoverCheck 5 cell233 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell233 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell233 (by certificate_kernel)
 
 private theorem checked300 : adaptiveCoverCheck 5 cell300 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell300 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell300 (by certificate_kernel)
 
 private theorem checked301 : adaptiveCoverCheck 5 cell301 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell301 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell301 (by certificate_kernel)
 
 private theorem checked302 : adaptiveCoverCheck 5 cell302 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell302 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell302 (by certificate_kernel)
 
 private theorem checked303 : adaptiveCoverCheck 5 cell303 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell303 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell303 (by certificate_kernel)
 
 private theorem checked310 : adaptiveCoverCheck 5 cell310 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell310 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell310 (by certificate_kernel)
 
 private theorem checked311 : adaptiveCoverCheck 5 cell311 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell311 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell311 (by certificate_kernel)
 
 private theorem checked312 : adaptiveCoverCheck 5 cell312 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell312 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell312 (by certificate_kernel)
 
 private theorem checked313 : adaptiveCoverCheck 5 cell313 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell313 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell313 (by certificate_kernel)
 
 private theorem checked320 : adaptiveCoverCheck 5 cell320 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell320 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell320 (by certificate_kernel)
 
 private theorem checked321 : adaptiveCoverCheck 5 cell321 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell321 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell321 (by certificate_kernel)
 
 private theorem checked322 : adaptiveCoverCheck 5 cell322 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell322 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell322 (by certificate_kernel)
 
 private theorem checked323 : adaptiveCoverCheck 5 cell323 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell323 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell323 (by certificate_kernel)
 
 private theorem checked330 : adaptiveCoverCheck 5 cell330 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell330 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell330 (by certificate_kernel)
 
 private theorem checked331 : adaptiveCoverCheck 5 cell331 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell331 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell331 (by certificate_kernel)
 
 private theorem checked332 : adaptiveCoverCheck 5 cell332 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell332 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell332 (by certificate_kernel)
 
 private theorem checked333 : adaptiveCoverCheck 5 cell333 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell333 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell333 (by certificate_kernel)
 
 private theorem checked00 : adaptiveCoverCheck 6 cell00 = true := by
   exact adaptiveCoverCheck_succ_of_children 5 cell00
@@ -6618,10 +6621,10 @@ private theorem checked03 : adaptiveCoverCheck 6 cell03 = true := by
     checked030 checked031 checked032 checked033
 
 private theorem checked10 : adaptiveCoverCheck 6 cell10 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell10 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell10 (by certificate_kernel)
 
 private theorem checked11 : adaptiveCoverCheck 6 cell11 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell11 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell11 (by certificate_kernel)
 
 private theorem checked12 : adaptiveCoverCheck 6 cell12 = true := by
   exact adaptiveCoverCheck_succ_of_children 5 cell12
@@ -6721,154 +6724,154 @@ open CertificateCellsdb4a23ce5a
 namespace CoverCertificateefd199c221
 
 private theorem checked020 : adaptiveCoverCheck 5 cell020 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell020 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell020 (by certificate_kernel)
 
 private theorem checked021 : adaptiveCoverCheck 5 cell021 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell021 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell021 (by certificate_kernel)
 
 private theorem checked022 : adaptiveCoverCheck 5 cell022 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell022 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell022 (by certificate_kernel)
 
 private theorem checked023 : adaptiveCoverCheck 5 cell023 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell023 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell023 (by certificate_kernel)
 
 private theorem checked030 : adaptiveCoverCheck 5 cell030 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell030 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell030 (by certificate_kernel)
 
 private theorem checked031 : adaptiveCoverCheck 5 cell031 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell031 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell031 (by certificate_kernel)
 
 private theorem checked032 : adaptiveCoverCheck 5 cell032 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell032 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell032 (by certificate_kernel)
 
 private theorem checked033 : adaptiveCoverCheck 5 cell033 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell033 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell033 (by certificate_kernel)
 
 private theorem checked120 : adaptiveCoverCheck 5 cell120 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell120 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell120 (by certificate_kernel)
 
 private theorem checked121 : adaptiveCoverCheck 5 cell121 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell121 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell121 (by certificate_kernel)
 
 private theorem checked122 : adaptiveCoverCheck 5 cell122 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell122 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell122 (by certificate_kernel)
 
 private theorem checked123 : adaptiveCoverCheck 5 cell123 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell123 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell123 (by certificate_kernel)
 
 private theorem checked130 : adaptiveCoverCheck 5 cell130 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell130 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell130 (by certificate_kernel)
 
 private theorem checked131 : adaptiveCoverCheck 5 cell131 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell131 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell131 (by certificate_kernel)
 
 private theorem checked132 : adaptiveCoverCheck 5 cell132 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell132 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell132 (by certificate_kernel)
 
 private theorem checked133 : adaptiveCoverCheck 5 cell133 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell133 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell133 (by certificate_kernel)
 
 private theorem checked200 : adaptiveCoverCheck 5 cell200 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell200 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell200 (by certificate_kernel)
 
 private theorem checked201 : adaptiveCoverCheck 5 cell201 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell201 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell201 (by certificate_kernel)
 
 private theorem checked202 : adaptiveCoverCheck 5 cell202 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell202 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell202 (by certificate_kernel)
 
 private theorem checked203 : adaptiveCoverCheck 5 cell203 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell203 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell203 (by certificate_kernel)
 
 private theorem checked210 : adaptiveCoverCheck 5 cell210 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell210 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell210 (by certificate_kernel)
 
 private theorem checked211 : adaptiveCoverCheck 5 cell211 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell211 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell211 (by certificate_kernel)
 
 private theorem checked212 : adaptiveCoverCheck 5 cell212 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell212 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell212 (by certificate_kernel)
 
 private theorem checked213 : adaptiveCoverCheck 5 cell213 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell213 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell213 (by certificate_kernel)
 
 private theorem checked220 : adaptiveCoverCheck 5 cell220 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell220 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell220 (by certificate_kernel)
 
 private theorem checked221 : adaptiveCoverCheck 5 cell221 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell221 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell221 (by certificate_kernel)
 
 private theorem checked222 : adaptiveCoverCheck 5 cell222 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell222 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell222 (by certificate_kernel)
 
 private theorem checked223 : adaptiveCoverCheck 5 cell223 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell223 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell223 (by certificate_kernel)
 
 private theorem checked230 : adaptiveCoverCheck 5 cell230 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell230 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell230 (by certificate_kernel)
 
 private theorem checked231 : adaptiveCoverCheck 5 cell231 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell231 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell231 (by certificate_kernel)
 
 private theorem checked232 : adaptiveCoverCheck 5 cell232 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell232 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell232 (by certificate_kernel)
 
 private theorem checked233 : adaptiveCoverCheck 5 cell233 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell233 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell233 (by certificate_kernel)
 
 private theorem checked300 : adaptiveCoverCheck 5 cell300 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell300 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell300 (by certificate_kernel)
 
 private theorem checked301 : adaptiveCoverCheck 5 cell301 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell301 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell301 (by certificate_kernel)
 
 private theorem checked302 : adaptiveCoverCheck 5 cell302 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell302 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell302 (by certificate_kernel)
 
 private theorem checked303 : adaptiveCoverCheck 5 cell303 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell303 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell303 (by certificate_kernel)
 
 private theorem checked310 : adaptiveCoverCheck 5 cell310 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell310 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell310 (by certificate_kernel)
 
 private theorem checked311 : adaptiveCoverCheck 5 cell311 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell311 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell311 (by certificate_kernel)
 
 private theorem checked312 : adaptiveCoverCheck 5 cell312 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell312 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell312 (by certificate_kernel)
 
 private theorem checked313 : adaptiveCoverCheck 5 cell313 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell313 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell313 (by certificate_kernel)
 
 private theorem checked320 : adaptiveCoverCheck 5 cell320 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell320 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell320 (by certificate_kernel)
 
 private theorem checked321 : adaptiveCoverCheck 5 cell321 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell321 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell321 (by certificate_kernel)
 
 private theorem checked322 : adaptiveCoverCheck 5 cell322 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell322 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell322 (by certificate_kernel)
 
 private theorem checked323 : adaptiveCoverCheck 5 cell323 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell323 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell323 (by certificate_kernel)
 
 private theorem checked330 : adaptiveCoverCheck 5 cell330 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell330 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell330 (by certificate_kernel)
 
 private theorem checked331 : adaptiveCoverCheck 5 cell331 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell331 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell331 (by certificate_kernel)
 
 private theorem checked332 : adaptiveCoverCheck 5 cell332 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell332 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell332 (by certificate_kernel)
 
 private theorem checked333 : adaptiveCoverCheck 5 cell333 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell333 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell333 (by certificate_kernel)
 
 private theorem checked00 : adaptiveCoverCheck 6 cell00 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell00 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell00 (by certificate_kernel)
 
 private theorem checked01 : adaptiveCoverCheck 6 cell01 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell01 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell01 (by certificate_kernel)
 
 private theorem checked02 : adaptiveCoverCheck 6 cell02 = true := by
   exact adaptiveCoverCheck_succ_of_children 5 cell02
@@ -6879,10 +6882,10 @@ private theorem checked03 : adaptiveCoverCheck 6 cell03 = true := by
     checked030 checked031 checked032 checked033
 
 private theorem checked10 : adaptiveCoverCheck 6 cell10 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell10 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell10 (by certificate_kernel)
 
 private theorem checked11 : adaptiveCoverCheck 6 cell11 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell11 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell11 (by certificate_kernel)
 
 private theorem checked12 : adaptiveCoverCheck 6 cell12 = true := by
   exact adaptiveCoverCheck_succ_of_children 5 cell12
@@ -6982,28 +6985,28 @@ open CertificateCells8ced9a3143
 namespace CoverCertificatedb27ad4afe
 
 private theorem checked00 : adaptiveCoverCheck 6 cell00 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell00 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell00 (by certificate_kernel)
 
 private theorem checked01 : adaptiveCoverCheck 6 cell01 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell01 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell01 (by certificate_kernel)
 
 private theorem checked02 : adaptiveCoverCheck 6 cell02 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell02 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell02 (by certificate_kernel)
 
 private theorem checked03 : adaptiveCoverCheck 6 cell03 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell03 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell03 (by certificate_kernel)
 
 private theorem checked10 : adaptiveCoverCheck 6 cell10 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell10 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell10 (by certificate_kernel)
 
 private theorem checked11 : adaptiveCoverCheck 6 cell11 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell11 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell11 (by certificate_kernel)
 
 private theorem checked12 : adaptiveCoverCheck 6 cell12 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell12 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell12 (by certificate_kernel)
 
 private theorem checked13 : adaptiveCoverCheck 6 cell13 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell13 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell13 (by certificate_kernel)
 
 private theorem checked0 : adaptiveCoverCheck 7 cell0 = true := by
   exact adaptiveCoverCheck_succ_of_children 6 cell0
@@ -7014,10 +7017,10 @@ private theorem checked1 : adaptiveCoverCheck 7 cell1 = true := by
     checked10 checked11 checked12 checked13
 
 private theorem checked2 : adaptiveCoverCheck 7 cell2 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 7 cell2 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 7 cell2 (by certificate_kernel)
 
 private theorem checked3 : adaptiveCoverCheck 7 cell3 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 7 cell3 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 7 cell3 (by certificate_kernel)
 
 private theorem checkedRoot : adaptiveCoverCheck 8 cellRoot = true := by
   exact adaptiveCoverCheck_succ_of_children 7 cellRoot
@@ -7061,28 +7064,28 @@ open CertificateCells1c46ec9a00
 namespace CoverCertificate05565992a9
 
 private theorem checked00 : adaptiveCoverCheck 6 cell00 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell00 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell00 (by certificate_kernel)
 
 private theorem checked01 : adaptiveCoverCheck 6 cell01 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell01 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell01 (by certificate_kernel)
 
 private theorem checked02 : adaptiveCoverCheck 6 cell02 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell02 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell02 (by certificate_kernel)
 
 private theorem checked03 : adaptiveCoverCheck 6 cell03 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell03 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell03 (by certificate_kernel)
 
 private theorem checked10 : adaptiveCoverCheck 6 cell10 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell10 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell10 (by certificate_kernel)
 
 private theorem checked11 : adaptiveCoverCheck 6 cell11 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell11 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell11 (by certificate_kernel)
 
 private theorem checked12 : adaptiveCoverCheck 6 cell12 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell12 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell12 (by certificate_kernel)
 
 private theorem checked13 : adaptiveCoverCheck 6 cell13 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell13 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell13 (by certificate_kernel)
 
 private theorem checked0 : adaptiveCoverCheck 7 cell0 = true := by
   exact adaptiveCoverCheck_succ_of_children 6 cell0
@@ -7093,10 +7096,10 @@ private theorem checked1 : adaptiveCoverCheck 7 cell1 = true := by
     checked10 checked11 checked12 checked13
 
 private theorem checked2 : adaptiveCoverCheck 7 cell2 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 7 cell2 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 7 cell2 (by certificate_kernel)
 
 private theorem checked3 : adaptiveCoverCheck 7 cell3 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 7 cell3 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 7 cell3 (by certificate_kernel)
 
 private theorem checkedRoot : adaptiveCoverCheck 8 cellRoot = true := by
   exact adaptiveCoverCheck_succ_of_children 7 cellRoot
@@ -7140,154 +7143,154 @@ open CertificateCellsc9ea34c02b
 namespace CoverCertificatec7fa9ff5d0
 
 private theorem checked020 : adaptiveCoverCheck 5 cell020 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell020 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell020 (by certificate_kernel)
 
 private theorem checked021 : adaptiveCoverCheck 5 cell021 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell021 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell021 (by certificate_kernel)
 
 private theorem checked022 : adaptiveCoverCheck 5 cell022 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell022 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell022 (by certificate_kernel)
 
 private theorem checked023 : adaptiveCoverCheck 5 cell023 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell023 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell023 (by certificate_kernel)
 
 private theorem checked030 : adaptiveCoverCheck 5 cell030 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell030 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell030 (by certificate_kernel)
 
 private theorem checked031 : adaptiveCoverCheck 5 cell031 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell031 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell031 (by certificate_kernel)
 
 private theorem checked032 : adaptiveCoverCheck 5 cell032 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell032 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell032 (by certificate_kernel)
 
 private theorem checked033 : adaptiveCoverCheck 5 cell033 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell033 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell033 (by certificate_kernel)
 
 private theorem checked120 : adaptiveCoverCheck 5 cell120 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell120 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell120 (by certificate_kernel)
 
 private theorem checked121 : adaptiveCoverCheck 5 cell121 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell121 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell121 (by certificate_kernel)
 
 private theorem checked122 : adaptiveCoverCheck 5 cell122 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell122 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell122 (by certificate_kernel)
 
 private theorem checked123 : adaptiveCoverCheck 5 cell123 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell123 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell123 (by certificate_kernel)
 
 private theorem checked130 : adaptiveCoverCheck 5 cell130 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell130 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell130 (by certificate_kernel)
 
 private theorem checked131 : adaptiveCoverCheck 5 cell131 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell131 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell131 (by certificate_kernel)
 
 private theorem checked132 : adaptiveCoverCheck 5 cell132 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell132 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell132 (by certificate_kernel)
 
 private theorem checked133 : adaptiveCoverCheck 5 cell133 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell133 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell133 (by certificate_kernel)
 
 private theorem checked200 : adaptiveCoverCheck 5 cell200 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell200 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell200 (by certificate_kernel)
 
 private theorem checked201 : adaptiveCoverCheck 5 cell201 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell201 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell201 (by certificate_kernel)
 
 private theorem checked202 : adaptiveCoverCheck 5 cell202 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell202 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell202 (by certificate_kernel)
 
 private theorem checked203 : adaptiveCoverCheck 5 cell203 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell203 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell203 (by certificate_kernel)
 
 private theorem checked210 : adaptiveCoverCheck 5 cell210 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell210 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell210 (by certificate_kernel)
 
 private theorem checked211 : adaptiveCoverCheck 5 cell211 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell211 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell211 (by certificate_kernel)
 
 private theorem checked212 : adaptiveCoverCheck 5 cell212 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell212 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell212 (by certificate_kernel)
 
 private theorem checked213 : adaptiveCoverCheck 5 cell213 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell213 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell213 (by certificate_kernel)
 
 private theorem checked220 : adaptiveCoverCheck 5 cell220 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell220 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell220 (by certificate_kernel)
 
 private theorem checked221 : adaptiveCoverCheck 5 cell221 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell221 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell221 (by certificate_kernel)
 
 private theorem checked222 : adaptiveCoverCheck 5 cell222 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell222 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell222 (by certificate_kernel)
 
 private theorem checked223 : adaptiveCoverCheck 5 cell223 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell223 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell223 (by certificate_kernel)
 
 private theorem checked230 : adaptiveCoverCheck 5 cell230 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell230 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell230 (by certificate_kernel)
 
 private theorem checked231 : adaptiveCoverCheck 5 cell231 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell231 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell231 (by certificate_kernel)
 
 private theorem checked232 : adaptiveCoverCheck 5 cell232 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell232 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell232 (by certificate_kernel)
 
 private theorem checked233 : adaptiveCoverCheck 5 cell233 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell233 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell233 (by certificate_kernel)
 
 private theorem checked300 : adaptiveCoverCheck 5 cell300 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell300 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell300 (by certificate_kernel)
 
 private theorem checked301 : adaptiveCoverCheck 5 cell301 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell301 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell301 (by certificate_kernel)
 
 private theorem checked302 : adaptiveCoverCheck 5 cell302 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell302 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell302 (by certificate_kernel)
 
 private theorem checked303 : adaptiveCoverCheck 5 cell303 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell303 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell303 (by certificate_kernel)
 
 private theorem checked310 : adaptiveCoverCheck 5 cell310 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell310 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell310 (by certificate_kernel)
 
 private theorem checked311 : adaptiveCoverCheck 5 cell311 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell311 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell311 (by certificate_kernel)
 
 private theorem checked312 : adaptiveCoverCheck 5 cell312 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell312 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell312 (by certificate_kernel)
 
 private theorem checked313 : adaptiveCoverCheck 5 cell313 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell313 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell313 (by certificate_kernel)
 
 private theorem checked320 : adaptiveCoverCheck 5 cell320 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell320 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell320 (by certificate_kernel)
 
 private theorem checked321 : adaptiveCoverCheck 5 cell321 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell321 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell321 (by certificate_kernel)
 
 private theorem checked322 : adaptiveCoverCheck 5 cell322 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell322 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell322 (by certificate_kernel)
 
 private theorem checked323 : adaptiveCoverCheck 5 cell323 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell323 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell323 (by certificate_kernel)
 
 private theorem checked330 : adaptiveCoverCheck 5 cell330 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell330 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell330 (by certificate_kernel)
 
 private theorem checked331 : adaptiveCoverCheck 5 cell331 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell331 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell331 (by certificate_kernel)
 
 private theorem checked332 : adaptiveCoverCheck 5 cell332 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell332 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell332 (by certificate_kernel)
 
 private theorem checked333 : adaptiveCoverCheck 5 cell333 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell333 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell333 (by certificate_kernel)
 
 private theorem checked00 : adaptiveCoverCheck 6 cell00 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell00 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell00 (by certificate_kernel)
 
 private theorem checked01 : adaptiveCoverCheck 6 cell01 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell01 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell01 (by certificate_kernel)
 
 private theorem checked02 : adaptiveCoverCheck 6 cell02 = true := by
   exact adaptiveCoverCheck_succ_of_children 5 cell02
@@ -7298,10 +7301,10 @@ private theorem checked03 : adaptiveCoverCheck 6 cell03 = true := by
     checked030 checked031 checked032 checked033
 
 private theorem checked10 : adaptiveCoverCheck 6 cell10 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell10 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell10 (by certificate_kernel)
 
 private theorem checked11 : adaptiveCoverCheck 6 cell11 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell11 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell11 (by certificate_kernel)
 
 private theorem checked12 : adaptiveCoverCheck 6 cell12 = true := by
   exact adaptiveCoverCheck_succ_of_children 5 cell12
@@ -7401,82 +7404,82 @@ open CertificateCells7575776df3
 namespace CoverCertificatef60369d605
 
 private theorem checked020 : adaptiveCoverCheck 5 cell020 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell020 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell020 (by certificate_kernel)
 
 private theorem checked021 : adaptiveCoverCheck 5 cell021 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell021 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell021 (by certificate_kernel)
 
 private theorem checked022 : adaptiveCoverCheck 5 cell022 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell022 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell022 (by certificate_kernel)
 
 private theorem checked023 : adaptiveCoverCheck 5 cell023 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell023 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell023 (by certificate_kernel)
 
 private theorem checked030 : adaptiveCoverCheck 5 cell030 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell030 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell030 (by certificate_kernel)
 
 private theorem checked031 : adaptiveCoverCheck 5 cell031 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell031 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell031 (by certificate_kernel)
 
 private theorem checked032 : adaptiveCoverCheck 5 cell032 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell032 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell032 (by certificate_kernel)
 
 private theorem checked033 : adaptiveCoverCheck 5 cell033 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell033 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell033 (by certificate_kernel)
 
 private theorem checked120 : adaptiveCoverCheck 5 cell120 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell120 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell120 (by certificate_kernel)
 
 private theorem checked121 : adaptiveCoverCheck 5 cell121 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell121 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell121 (by certificate_kernel)
 
 private theorem checked122 : adaptiveCoverCheck 5 cell122 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell122 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell122 (by certificate_kernel)
 
 private theorem checked123 : adaptiveCoverCheck 5 cell123 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell123 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell123 (by certificate_kernel)
 
 private theorem checked130 : adaptiveCoverCheck 5 cell130 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell130 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell130 (by certificate_kernel)
 
 private theorem checked131 : adaptiveCoverCheck 5 cell131 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell131 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell131 (by certificate_kernel)
 
 private theorem checked132 : adaptiveCoverCheck 5 cell132 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell132 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell132 (by certificate_kernel)
 
 private theorem checked133 : adaptiveCoverCheck 5 cell133 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell133 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell133 (by certificate_kernel)
 
 private theorem checked200 : adaptiveCoverCheck 5 cell200 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell200 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell200 (by certificate_kernel)
 
 private theorem checked201 : adaptiveCoverCheck 5 cell201 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell201 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell201 (by certificate_kernel)
 
 private theorem checked202 : adaptiveCoverCheck 5 cell202 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell202 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell202 (by certificate_kernel)
 
 private theorem checked203 : adaptiveCoverCheck 5 cell203 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell203 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell203 (by certificate_kernel)
 
 private theorem checked210 : adaptiveCoverCheck 5 cell210 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell210 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell210 (by certificate_kernel)
 
 private theorem checked211 : adaptiveCoverCheck 5 cell211 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell211 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell211 (by certificate_kernel)
 
 private theorem checked212 : adaptiveCoverCheck 5 cell212 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell212 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell212 (by certificate_kernel)
 
 private theorem checked213 : adaptiveCoverCheck 5 cell213 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell213 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell213 (by certificate_kernel)
 
 private theorem checked00 : adaptiveCoverCheck 6 cell00 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell00 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell00 (by certificate_kernel)
 
 private theorem checked01 : adaptiveCoverCheck 6 cell01 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell01 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell01 (by certificate_kernel)
 
 private theorem checked02 : adaptiveCoverCheck 6 cell02 = true := by
   exact adaptiveCoverCheck_succ_of_children 5 cell02
@@ -7487,10 +7490,10 @@ private theorem checked03 : adaptiveCoverCheck 6 cell03 = true := by
     checked030 checked031 checked032 checked033
 
 private theorem checked10 : adaptiveCoverCheck 6 cell10 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell10 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell10 (by certificate_kernel)
 
 private theorem checked11 : adaptiveCoverCheck 6 cell11 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell11 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell11 (by certificate_kernel)
 
 private theorem checked12 : adaptiveCoverCheck 6 cell12 = true := by
   exact adaptiveCoverCheck_succ_of_children 5 cell12
@@ -7509,22 +7512,22 @@ private theorem checked21 : adaptiveCoverCheck 6 cell21 = true := by
     checked210 checked211 checked212 checked213
 
 private theorem checked22 : adaptiveCoverCheck 6 cell22 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell22 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell22 (by certificate_kernel)
 
 private theorem checked23 : adaptiveCoverCheck 6 cell23 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell23 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell23 (by certificate_kernel)
 
 private theorem checked30 : adaptiveCoverCheck 6 cell30 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell30 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell30 (by certificate_kernel)
 
 private theorem checked31 : adaptiveCoverCheck 6 cell31 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell31 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell31 (by certificate_kernel)
 
 private theorem checked32 : adaptiveCoverCheck 6 cell32 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell32 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell32 (by certificate_kernel)
 
 private theorem checked33 : adaptiveCoverCheck 6 cell33 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell33 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell33 (by certificate_kernel)
 
 private theorem checked0 : adaptiveCoverCheck 7 cell0 = true := by
   exact adaptiveCoverCheck_succ_of_children 6 cell0
@@ -7584,28 +7587,28 @@ open CertificateCells8b638b7054
 namespace CoverCertificate5759c94c52
 
 private theorem checked00 : adaptiveCoverCheck 6 cell00 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell00 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell00 (by certificate_kernel)
 
 private theorem checked01 : adaptiveCoverCheck 6 cell01 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell01 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell01 (by certificate_kernel)
 
 private theorem checked02 : adaptiveCoverCheck 6 cell02 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell02 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell02 (by certificate_kernel)
 
 private theorem checked03 : adaptiveCoverCheck 6 cell03 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell03 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell03 (by certificate_kernel)
 
 private theorem checked10 : adaptiveCoverCheck 6 cell10 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell10 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell10 (by certificate_kernel)
 
 private theorem checked11 : adaptiveCoverCheck 6 cell11 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell11 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell11 (by certificate_kernel)
 
 private theorem checked12 : adaptiveCoverCheck 6 cell12 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell12 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell12 (by certificate_kernel)
 
 private theorem checked13 : adaptiveCoverCheck 6 cell13 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell13 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell13 (by certificate_kernel)
 
 private theorem checked0 : adaptiveCoverCheck 7 cell0 = true := by
   exact adaptiveCoverCheck_succ_of_children 6 cell0
@@ -7616,10 +7619,10 @@ private theorem checked1 : adaptiveCoverCheck 7 cell1 = true := by
     checked10 checked11 checked12 checked13
 
 private theorem checked2 : adaptiveCoverCheck 7 cell2 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 7 cell2 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 7 cell2 (by certificate_kernel)
 
 private theorem checked3 : adaptiveCoverCheck 7 cell3 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 7 cell3 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 7 cell3 (by certificate_kernel)
 
 private theorem checkedRoot : adaptiveCoverCheck 8 cellRoot = true := by
   exact adaptiveCoverCheck_succ_of_children 7 cellRoot
@@ -7663,28 +7666,28 @@ open CertificateCells3bd9cbb8df
 namespace CoverCertificate03a553a361
 
 private theorem checked00 : adaptiveCoverCheck 6 cell00 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell00 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell00 (by certificate_kernel)
 
 private theorem checked01 : adaptiveCoverCheck 6 cell01 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell01 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell01 (by certificate_kernel)
 
 private theorem checked02 : adaptiveCoverCheck 6 cell02 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell02 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell02 (by certificate_kernel)
 
 private theorem checked03 : adaptiveCoverCheck 6 cell03 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell03 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell03 (by certificate_kernel)
 
 private theorem checked10 : adaptiveCoverCheck 6 cell10 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell10 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell10 (by certificate_kernel)
 
 private theorem checked11 : adaptiveCoverCheck 6 cell11 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell11 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell11 (by certificate_kernel)
 
 private theorem checked12 : adaptiveCoverCheck 6 cell12 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell12 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell12 (by certificate_kernel)
 
 private theorem checked13 : adaptiveCoverCheck 6 cell13 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell13 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell13 (by certificate_kernel)
 
 private theorem checked0 : adaptiveCoverCheck 7 cell0 = true := by
   exact adaptiveCoverCheck_succ_of_children 6 cell0
@@ -7695,10 +7698,10 @@ private theorem checked1 : adaptiveCoverCheck 7 cell1 = true := by
     checked10 checked11 checked12 checked13
 
 private theorem checked2 : adaptiveCoverCheck 7 cell2 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 7 cell2 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 7 cell2 (by certificate_kernel)
 
 private theorem checked3 : adaptiveCoverCheck 7 cell3 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 7 cell3 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 7 cell3 (by certificate_kernel)
 
 private theorem checkedRoot : adaptiveCoverCheck 8 cellRoot = true := by
   exact adaptiveCoverCheck_succ_of_children 7 cellRoot
@@ -7742,52 +7745,52 @@ open CertificateCells41c704a1f1
 namespace CoverCertificated3212f4a8b
 
 private theorem checked00 : adaptiveCoverCheck 6 cell00 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell00 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell00 (by certificate_kernel)
 
 private theorem checked01 : adaptiveCoverCheck 6 cell01 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell01 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell01 (by certificate_kernel)
 
 private theorem checked02 : adaptiveCoverCheck 6 cell02 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell02 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell02 (by certificate_kernel)
 
 private theorem checked03 : adaptiveCoverCheck 6 cell03 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell03 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell03 (by certificate_kernel)
 
 private theorem checked10 : adaptiveCoverCheck 6 cell10 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell10 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell10 (by certificate_kernel)
 
 private theorem checked11 : adaptiveCoverCheck 6 cell11 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell11 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell11 (by certificate_kernel)
 
 private theorem checked12 : adaptiveCoverCheck 6 cell12 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell12 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell12 (by certificate_kernel)
 
 private theorem checked13 : adaptiveCoverCheck 6 cell13 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell13 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell13 (by certificate_kernel)
 
 private theorem checked20 : adaptiveCoverCheck 6 cell20 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell20 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell20 (by certificate_kernel)
 
 private theorem checked21 : adaptiveCoverCheck 6 cell21 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell21 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell21 (by certificate_kernel)
 
 private theorem checked22 : adaptiveCoverCheck 6 cell22 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell22 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell22 (by certificate_kernel)
 
 private theorem checked23 : adaptiveCoverCheck 6 cell23 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell23 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell23 (by certificate_kernel)
 
 private theorem checked30 : adaptiveCoverCheck 6 cell30 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell30 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell30 (by certificate_kernel)
 
 private theorem checked31 : adaptiveCoverCheck 6 cell31 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell31 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell31 (by certificate_kernel)
 
 private theorem checked32 : adaptiveCoverCheck 6 cell32 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell32 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell32 (by certificate_kernel)
 
 private theorem checked33 : adaptiveCoverCheck 6 cell33 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell33 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell33 (by certificate_kernel)
 
 private theorem checked0 : adaptiveCoverCheck 7 cell0 = true := by
   exact adaptiveCoverCheck_succ_of_children 6 cell0
@@ -7847,83 +7850,83 @@ open CertificateCells67d940c92a
 namespace CoverCertificate92ae3ca2d2
 
 private theorem checked300 : adaptiveCoverCheck 5 cell300 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell300 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell300 (by certificate_kernel)
 
 private theorem checked301 : adaptiveCoverCheck 5 cell301 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell301 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell301 (by certificate_kernel)
 
 private theorem checked302 : adaptiveCoverCheck 5 cell302 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell302 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell302 (by certificate_kernel)
 
 private theorem checked303 : adaptiveCoverCheck 5 cell303 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell303 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell303 (by certificate_kernel)
 
 private theorem checked320 : adaptiveCoverCheck 5 cell320 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell320 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell320 (by certificate_kernel)
 
 private theorem checked321 : adaptiveCoverCheck 5 cell321 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell321 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell321 (by certificate_kernel)
 
 private theorem checked322 : adaptiveCoverCheck 5 cell322 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell322 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell322 (by certificate_kernel)
 
 private theorem checked323 : adaptiveCoverCheck 5 cell323 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell323 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell323 (by certificate_kernel)
 
 private theorem checked330 : adaptiveCoverCheck 5 cell330 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell330 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell330 (by certificate_kernel)
 
 private theorem checked331 : adaptiveCoverCheck 5 cell331 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell331 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell331 (by certificate_kernel)
 
 private theorem checked332 : adaptiveCoverCheck 5 cell332 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell332 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell332 (by certificate_kernel)
 
 private theorem checked333 : adaptiveCoverCheck 5 cell333 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell333 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell333 (by certificate_kernel)
 
 private theorem checked00 : adaptiveCoverCheck 6 cell00 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell00 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell00 (by certificate_kernel)
 
 private theorem checked01 : adaptiveCoverCheck 6 cell01 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell01 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell01 (by certificate_kernel)
 
 private theorem checked02 : adaptiveCoverCheck 6 cell02 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell02 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell02 (by certificate_kernel)
 
 private theorem checked03 : adaptiveCoverCheck 6 cell03 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell03 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell03 (by certificate_kernel)
 
 private theorem checked10 : adaptiveCoverCheck 6 cell10 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell10 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell10 (by certificate_kernel)
 
 private theorem checked11 : adaptiveCoverCheck 6 cell11 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell11 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell11 (by certificate_kernel)
 
 private theorem checked12 : adaptiveCoverCheck 6 cell12 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell12 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell12 (by certificate_kernel)
 
 private theorem checked13 : adaptiveCoverCheck 6 cell13 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell13 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell13 (by certificate_kernel)
 
 private theorem checked20 : adaptiveCoverCheck 6 cell20 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell20 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell20 (by certificate_kernel)
 
 private theorem checked21 : adaptiveCoverCheck 6 cell21 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell21 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell21 (by certificate_kernel)
 
 private theorem checked22 : adaptiveCoverCheck 6 cell22 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell22 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell22 (by certificate_kernel)
 
 private theorem checked23 : adaptiveCoverCheck 6 cell23 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell23 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell23 (by certificate_kernel)
 
 private theorem checked30 : adaptiveCoverCheck 6 cell30 = true := by
   exact adaptiveCoverCheck_succ_of_children 5 cell30
     checked300 checked301 checked302 checked303
 
 private theorem checked31 : adaptiveCoverCheck 6 cell31 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell31 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell31 (by certificate_kernel)
 
 private theorem checked32 : adaptiveCoverCheck 6 cell32 = true := by
   exact adaptiveCoverCheck_succ_of_children 5 cell32
@@ -7991,52 +7994,52 @@ open CertificateCells8d68909634
 namespace CoverCertificate126af0396e
 
 private theorem checked00 : adaptiveCoverCheck 6 cell00 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell00 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell00 (by certificate_kernel)
 
 private theorem checked01 : adaptiveCoverCheck 6 cell01 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell01 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell01 (by certificate_kernel)
 
 private theorem checked02 : adaptiveCoverCheck 6 cell02 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell02 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell02 (by certificate_kernel)
 
 private theorem checked03 : adaptiveCoverCheck 6 cell03 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell03 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell03 (by certificate_kernel)
 
 private theorem checked10 : adaptiveCoverCheck 6 cell10 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell10 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell10 (by certificate_kernel)
 
 private theorem checked11 : adaptiveCoverCheck 6 cell11 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell11 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell11 (by certificate_kernel)
 
 private theorem checked12 : adaptiveCoverCheck 6 cell12 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell12 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell12 (by certificate_kernel)
 
 private theorem checked13 : adaptiveCoverCheck 6 cell13 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell13 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell13 (by certificate_kernel)
 
 private theorem checked20 : adaptiveCoverCheck 6 cell20 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell20 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell20 (by certificate_kernel)
 
 private theorem checked21 : adaptiveCoverCheck 6 cell21 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell21 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell21 (by certificate_kernel)
 
 private theorem checked22 : adaptiveCoverCheck 6 cell22 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell22 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell22 (by certificate_kernel)
 
 private theorem checked23 : adaptiveCoverCheck 6 cell23 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell23 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell23 (by certificate_kernel)
 
 private theorem checked30 : adaptiveCoverCheck 6 cell30 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell30 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell30 (by certificate_kernel)
 
 private theorem checked31 : adaptiveCoverCheck 6 cell31 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell31 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell31 (by certificate_kernel)
 
 private theorem checked32 : adaptiveCoverCheck 6 cell32 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell32 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell32 (by certificate_kernel)
 
 private theorem checked33 : adaptiveCoverCheck 6 cell33 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell33 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell33 (by certificate_kernel)
 
 private theorem checked0 : adaptiveCoverCheck 7 cell0 = true := by
   exact adaptiveCoverCheck_succ_of_children 6 cell0
@@ -8096,112 +8099,112 @@ open CertificateCellsc208943a95
 namespace CoverCertificate7a0799a8ec
 
 private theorem checked100 : adaptiveCoverCheck 5 cell100 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell100 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell100 (by certificate_kernel)
 
 private theorem checked101 : adaptiveCoverCheck 5 cell101 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell101 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell101 (by certificate_kernel)
 
 private theorem checked102 : adaptiveCoverCheck 5 cell102 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell102 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell102 (by certificate_kernel)
 
 private theorem checked103 : adaptiveCoverCheck 5 cell103 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell103 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell103 (by certificate_kernel)
 
 private theorem checked110 : adaptiveCoverCheck 5 cell110 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell110 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell110 (by certificate_kernel)
 
 private theorem checked111 : adaptiveCoverCheck 5 cell111 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell111 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell111 (by certificate_kernel)
 
 private theorem checked112 : adaptiveCoverCheck 5 cell112 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell112 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell112 (by certificate_kernel)
 
 private theorem checked113 : adaptiveCoverCheck 5 cell113 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell113 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell113 (by certificate_kernel)
 
 private theorem checked120 : adaptiveCoverCheck 5 cell120 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell120 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell120 (by certificate_kernel)
 
 private theorem checked121 : adaptiveCoverCheck 5 cell121 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell121 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell121 (by certificate_kernel)
 
 private theorem checked122 : adaptiveCoverCheck 5 cell122 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell122 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell122 (by certificate_kernel)
 
 private theorem checked123 : adaptiveCoverCheck 5 cell123 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell123 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell123 (by certificate_kernel)
 
 private theorem checked130 : adaptiveCoverCheck 5 cell130 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell130 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell130 (by certificate_kernel)
 
 private theorem checked131 : adaptiveCoverCheck 5 cell131 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell131 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell131 (by certificate_kernel)
 
 private theorem checked132 : adaptiveCoverCheck 5 cell132 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell132 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell132 (by certificate_kernel)
 
 private theorem checked133 : adaptiveCoverCheck 5 cell133 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell133 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell133 (by certificate_kernel)
 
 private theorem checked300 : adaptiveCoverCheck 5 cell300 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell300 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell300 (by certificate_kernel)
 
 private theorem checked301 : adaptiveCoverCheck 5 cell301 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell301 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell301 (by certificate_kernel)
 
 private theorem checked302 : adaptiveCoverCheck 5 cell302 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell302 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell302 (by certificate_kernel)
 
 private theorem checked303 : adaptiveCoverCheck 5 cell303 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell303 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell303 (by certificate_kernel)
 
 private theorem checked310 : adaptiveCoverCheck 5 cell310 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell310 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell310 (by certificate_kernel)
 
 private theorem checked311 : adaptiveCoverCheck 5 cell311 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell311 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell311 (by certificate_kernel)
 
 private theorem checked312 : adaptiveCoverCheck 5 cell312 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell312 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell312 (by certificate_kernel)
 
 private theorem checked313 : adaptiveCoverCheck 5 cell313 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell313 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell313 (by certificate_kernel)
 
 private theorem checked320 : adaptiveCoverCheck 5 cell320 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell320 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell320 (by certificate_kernel)
 
 private theorem checked321 : adaptiveCoverCheck 5 cell321 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell321 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell321 (by certificate_kernel)
 
 private theorem checked322 : adaptiveCoverCheck 5 cell322 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell322 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell322 (by certificate_kernel)
 
 private theorem checked323 : adaptiveCoverCheck 5 cell323 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell323 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell323 (by certificate_kernel)
 
 private theorem checked330 : adaptiveCoverCheck 5 cell330 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell330 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell330 (by certificate_kernel)
 
 private theorem checked331 : adaptiveCoverCheck 5 cell331 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell331 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell331 (by certificate_kernel)
 
 private theorem checked332 : adaptiveCoverCheck 5 cell332 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell332 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell332 (by certificate_kernel)
 
 private theorem checked333 : adaptiveCoverCheck 5 cell333 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell333 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell333 (by certificate_kernel)
 
 private theorem checked00 : adaptiveCoverCheck 6 cell00 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell00 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell00 (by certificate_kernel)
 
 private theorem checked01 : adaptiveCoverCheck 6 cell01 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell01 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell01 (by certificate_kernel)
 
 private theorem checked02 : adaptiveCoverCheck 6 cell02 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell02 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell02 (by certificate_kernel)
 
 private theorem checked03 : adaptiveCoverCheck 6 cell03 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell03 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell03 (by certificate_kernel)
 
 private theorem checked10 : adaptiveCoverCheck 6 cell10 = true := by
   exact adaptiveCoverCheck_succ_of_children 5 cell10
@@ -8220,16 +8223,16 @@ private theorem checked13 : adaptiveCoverCheck 6 cell13 = true := by
     checked130 checked131 checked132 checked133
 
 private theorem checked20 : adaptiveCoverCheck 6 cell20 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell20 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell20 (by certificate_kernel)
 
 private theorem checked21 : adaptiveCoverCheck 6 cell21 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell21 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell21 (by certificate_kernel)
 
 private theorem checked22 : adaptiveCoverCheck 6 cell22 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell22 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell22 (by certificate_kernel)
 
 private theorem checked23 : adaptiveCoverCheck 6 cell23 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell23 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell23 (by certificate_kernel)
 
 private theorem checked30 : adaptiveCoverCheck 6 cell30 = true := by
   exact adaptiveCoverCheck_succ_of_children 5 cell30
@@ -8305,52 +8308,52 @@ open CertificateCells42a66228ec
 namespace CoverCertificate0c897fb4ca
 
 private theorem checked00 : adaptiveCoverCheck 6 cell00 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell00 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell00 (by certificate_kernel)
 
 private theorem checked01 : adaptiveCoverCheck 6 cell01 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell01 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell01 (by certificate_kernel)
 
 private theorem checked02 : adaptiveCoverCheck 6 cell02 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell02 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell02 (by certificate_kernel)
 
 private theorem checked03 : adaptiveCoverCheck 6 cell03 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell03 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell03 (by certificate_kernel)
 
 private theorem checked10 : adaptiveCoverCheck 6 cell10 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell10 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell10 (by certificate_kernel)
 
 private theorem checked11 : adaptiveCoverCheck 6 cell11 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell11 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell11 (by certificate_kernel)
 
 private theorem checked12 : adaptiveCoverCheck 6 cell12 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell12 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell12 (by certificate_kernel)
 
 private theorem checked13 : adaptiveCoverCheck 6 cell13 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell13 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell13 (by certificate_kernel)
 
 private theorem checked20 : adaptiveCoverCheck 6 cell20 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell20 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell20 (by certificate_kernel)
 
 private theorem checked21 : adaptiveCoverCheck 6 cell21 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell21 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell21 (by certificate_kernel)
 
 private theorem checked22 : adaptiveCoverCheck 6 cell22 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell22 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell22 (by certificate_kernel)
 
 private theorem checked23 : adaptiveCoverCheck 6 cell23 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell23 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell23 (by certificate_kernel)
 
 private theorem checked30 : adaptiveCoverCheck 6 cell30 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell30 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell30 (by certificate_kernel)
 
 private theorem checked31 : adaptiveCoverCheck 6 cell31 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell31 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell31 (by certificate_kernel)
 
 private theorem checked32 : adaptiveCoverCheck 6 cell32 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell32 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell32 (by certificate_kernel)
 
 private theorem checked33 : adaptiveCoverCheck 6 cell33 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell33 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell33 (by certificate_kernel)
 
 private theorem checked0 : adaptiveCoverCheck 7 cell0 = true := by
   exact adaptiveCoverCheck_succ_of_children 6 cell0
@@ -8410,136 +8413,136 @@ open CertificateCells67af310b24
 namespace CoverCertificateac87260947
 
 private theorem checked100 : adaptiveCoverCheck 5 cell100 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell100 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell100 (by certificate_kernel)
 
 private theorem checked101 : adaptiveCoverCheck 5 cell101 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell101 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell101 (by certificate_kernel)
 
 private theorem checked102 : adaptiveCoverCheck 5 cell102 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell102 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell102 (by certificate_kernel)
 
 private theorem checked103 : adaptiveCoverCheck 5 cell103 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell103 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell103 (by certificate_kernel)
 
 private theorem checked110 : adaptiveCoverCheck 5 cell110 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell110 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell110 (by certificate_kernel)
 
 private theorem checked111 : adaptiveCoverCheck 5 cell111 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell111 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell111 (by certificate_kernel)
 
 private theorem checked112 : adaptiveCoverCheck 5 cell112 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell112 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell112 (by certificate_kernel)
 
 private theorem checked113 : adaptiveCoverCheck 5 cell113 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell113 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell113 (by certificate_kernel)
 
 private theorem checked120 : adaptiveCoverCheck 5 cell120 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell120 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell120 (by certificate_kernel)
 
 private theorem checked121 : adaptiveCoverCheck 5 cell121 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell121 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell121 (by certificate_kernel)
 
 private theorem checked122 : adaptiveCoverCheck 5 cell122 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell122 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell122 (by certificate_kernel)
 
 private theorem checked123 : adaptiveCoverCheck 5 cell123 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell123 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell123 (by certificate_kernel)
 
 private theorem checked130 : adaptiveCoverCheck 5 cell130 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell130 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell130 (by certificate_kernel)
 
 private theorem checked131 : adaptiveCoverCheck 5 cell131 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell131 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell131 (by certificate_kernel)
 
 private theorem checked132 : adaptiveCoverCheck 5 cell132 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell132 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell132 (by certificate_kernel)
 
 private theorem checked133 : adaptiveCoverCheck 5 cell133 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell133 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell133 (by certificate_kernel)
 
 private theorem checked210 : adaptiveCoverCheck 5 cell210 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell210 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell210 (by certificate_kernel)
 
 private theorem checked211 : adaptiveCoverCheck 5 cell211 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell211 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell211 (by certificate_kernel)
 
 private theorem checked212 : adaptiveCoverCheck 5 cell212 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell212 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell212 (by certificate_kernel)
 
 private theorem checked213 : adaptiveCoverCheck 5 cell213 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell213 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell213 (by certificate_kernel)
 
 private theorem checked230 : adaptiveCoverCheck 5 cell230 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell230 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell230 (by certificate_kernel)
 
 private theorem checked231 : adaptiveCoverCheck 5 cell231 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell231 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell231 (by certificate_kernel)
 
 private theorem checked232 : adaptiveCoverCheck 5 cell232 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell232 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell232 (by certificate_kernel)
 
 private theorem checked233 : adaptiveCoverCheck 5 cell233 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell233 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell233 (by certificate_kernel)
 
 private theorem checked300 : adaptiveCoverCheck 5 cell300 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell300 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell300 (by certificate_kernel)
 
 private theorem checked301 : adaptiveCoverCheck 5 cell301 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell301 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell301 (by certificate_kernel)
 
 private theorem checked302 : adaptiveCoverCheck 5 cell302 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell302 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell302 (by certificate_kernel)
 
 private theorem checked303 : adaptiveCoverCheck 5 cell303 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell303 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell303 (by certificate_kernel)
 
 private theorem checked310 : adaptiveCoverCheck 5 cell310 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell310 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell310 (by certificate_kernel)
 
 private theorem checked311 : adaptiveCoverCheck 5 cell311 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell311 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell311 (by certificate_kernel)
 
 private theorem checked312 : adaptiveCoverCheck 5 cell312 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell312 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell312 (by certificate_kernel)
 
 private theorem checked313 : adaptiveCoverCheck 5 cell313 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell313 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell313 (by certificate_kernel)
 
 private theorem checked320 : adaptiveCoverCheck 5 cell320 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell320 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell320 (by certificate_kernel)
 
 private theorem checked321 : adaptiveCoverCheck 5 cell321 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell321 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell321 (by certificate_kernel)
 
 private theorem checked322 : adaptiveCoverCheck 5 cell322 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell322 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell322 (by certificate_kernel)
 
 private theorem checked323 : adaptiveCoverCheck 5 cell323 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell323 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell323 (by certificate_kernel)
 
 private theorem checked330 : adaptiveCoverCheck 5 cell330 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell330 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell330 (by certificate_kernel)
 
 private theorem checked331 : adaptiveCoverCheck 5 cell331 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell331 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell331 (by certificate_kernel)
 
 private theorem checked332 : adaptiveCoverCheck 5 cell332 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell332 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell332 (by certificate_kernel)
 
 private theorem checked333 : adaptiveCoverCheck 5 cell333 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell333 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell333 (by certificate_kernel)
 
 private theorem checked00 : adaptiveCoverCheck 6 cell00 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell00 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell00 (by certificate_kernel)
 
 private theorem checked01 : adaptiveCoverCheck 6 cell01 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell01 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell01 (by certificate_kernel)
 
 private theorem checked02 : adaptiveCoverCheck 6 cell02 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell02 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell02 (by certificate_kernel)
 
 private theorem checked03 : adaptiveCoverCheck 6 cell03 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell03 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell03 (by certificate_kernel)
 
 private theorem checked10 : adaptiveCoverCheck 6 cell10 = true := by
   exact adaptiveCoverCheck_succ_of_children 5 cell10
@@ -8558,14 +8561,14 @@ private theorem checked13 : adaptiveCoverCheck 6 cell13 = true := by
     checked130 checked131 checked132 checked133
 
 private theorem checked20 : adaptiveCoverCheck 6 cell20 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell20 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell20 (by certificate_kernel)
 
 private theorem checked21 : adaptiveCoverCheck 6 cell21 = true := by
   exact adaptiveCoverCheck_succ_of_children 5 cell21
     checked210 checked211 checked212 checked213
 
 private theorem checked22 : adaptiveCoverCheck 6 cell22 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell22 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell22 (by certificate_kernel)
 
 private theorem checked23 : adaptiveCoverCheck 6 cell23 = true := by
   exact adaptiveCoverCheck_succ_of_children 5 cell23
@@ -8645,52 +8648,52 @@ open CertificateCells9b91503b21
 namespace CoverCertificatee4e72882c5
 
 private theorem checked00 : adaptiveCoverCheck 6 cell00 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell00 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell00 (by certificate_kernel)
 
 private theorem checked01 : adaptiveCoverCheck 6 cell01 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell01 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell01 (by certificate_kernel)
 
 private theorem checked02 : adaptiveCoverCheck 6 cell02 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell02 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell02 (by certificate_kernel)
 
 private theorem checked03 : adaptiveCoverCheck 6 cell03 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell03 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell03 (by certificate_kernel)
 
 private theorem checked10 : adaptiveCoverCheck 6 cell10 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell10 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell10 (by certificate_kernel)
 
 private theorem checked11 : adaptiveCoverCheck 6 cell11 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell11 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell11 (by certificate_kernel)
 
 private theorem checked12 : adaptiveCoverCheck 6 cell12 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell12 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell12 (by certificate_kernel)
 
 private theorem checked13 : adaptiveCoverCheck 6 cell13 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell13 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell13 (by certificate_kernel)
 
 private theorem checked20 : adaptiveCoverCheck 6 cell20 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell20 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell20 (by certificate_kernel)
 
 private theorem checked21 : adaptiveCoverCheck 6 cell21 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell21 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell21 (by certificate_kernel)
 
 private theorem checked22 : adaptiveCoverCheck 6 cell22 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell22 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell22 (by certificate_kernel)
 
 private theorem checked23 : adaptiveCoverCheck 6 cell23 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell23 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell23 (by certificate_kernel)
 
 private theorem checked30 : adaptiveCoverCheck 6 cell30 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell30 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell30 (by certificate_kernel)
 
 private theorem checked31 : adaptiveCoverCheck 6 cell31 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell31 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell31 (by certificate_kernel)
 
 private theorem checked32 : adaptiveCoverCheck 6 cell32 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell32 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell32 (by certificate_kernel)
 
 private theorem checked33 : adaptiveCoverCheck 6 cell33 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell33 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell33 (by certificate_kernel)
 
 private theorem checked0 : adaptiveCoverCheck 7 cell0 = true := by
   exact adaptiveCoverCheck_succ_of_children 6 cell0
@@ -8750,158 +8753,158 @@ open CertificateCellsb36cfca8f0
 namespace CoverCertificateeab8fed9d7
 
 private theorem checked010 : adaptiveCoverCheck 5 cell010 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell010 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell010 (by certificate_kernel)
 
 private theorem checked011 : adaptiveCoverCheck 5 cell011 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell011 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell011 (by certificate_kernel)
 
 private theorem checked012 : adaptiveCoverCheck 5 cell012 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell012 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell012 (by certificate_kernel)
 
 private theorem checked013 : adaptiveCoverCheck 5 cell013 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell013 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell013 (by certificate_kernel)
 
 private theorem checked030 : adaptiveCoverCheck 5 cell030 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell030 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell030 (by certificate_kernel)
 
 private theorem checked031 : adaptiveCoverCheck 5 cell031 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell031 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell031 (by certificate_kernel)
 
 private theorem checked032 : adaptiveCoverCheck 5 cell032 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell032 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell032 (by certificate_kernel)
 
 private theorem checked033 : adaptiveCoverCheck 5 cell033 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell033 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell033 (by certificate_kernel)
 
 private theorem checked100 : adaptiveCoverCheck 5 cell100 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell100 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell100 (by certificate_kernel)
 
 private theorem checked101 : adaptiveCoverCheck 5 cell101 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell101 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell101 (by certificate_kernel)
 
 private theorem checked102 : adaptiveCoverCheck 5 cell102 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell102 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell102 (by certificate_kernel)
 
 private theorem checked103 : adaptiveCoverCheck 5 cell103 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell103 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell103 (by certificate_kernel)
 
 private theorem checked110 : adaptiveCoverCheck 5 cell110 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell110 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell110 (by certificate_kernel)
 
 private theorem checked111 : adaptiveCoverCheck 5 cell111 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell111 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell111 (by certificate_kernel)
 
 private theorem checked112 : adaptiveCoverCheck 5 cell112 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell112 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell112 (by certificate_kernel)
 
 private theorem checked113 : adaptiveCoverCheck 5 cell113 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell113 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell113 (by certificate_kernel)
 
 private theorem checked120 : adaptiveCoverCheck 5 cell120 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell120 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell120 (by certificate_kernel)
 
 private theorem checked121 : adaptiveCoverCheck 5 cell121 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell121 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell121 (by certificate_kernel)
 
 private theorem checked122 : adaptiveCoverCheck 5 cell122 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell122 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell122 (by certificate_kernel)
 
 private theorem checked123 : adaptiveCoverCheck 5 cell123 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell123 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell123 (by certificate_kernel)
 
 private theorem checked130 : adaptiveCoverCheck 5 cell130 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell130 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell130 (by certificate_kernel)
 
 private theorem checked131 : adaptiveCoverCheck 5 cell131 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell131 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell131 (by certificate_kernel)
 
 private theorem checked132 : adaptiveCoverCheck 5 cell132 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell132 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell132 (by certificate_kernel)
 
 private theorem checked133 : adaptiveCoverCheck 5 cell133 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell133 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell133 (by certificate_kernel)
 
 private theorem checked210 : adaptiveCoverCheck 5 cell210 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell210 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell210 (by certificate_kernel)
 
 private theorem checked211 : adaptiveCoverCheck 5 cell211 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell211 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell211 (by certificate_kernel)
 
 private theorem checked212 : adaptiveCoverCheck 5 cell212 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell212 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell212 (by certificate_kernel)
 
 private theorem checked213 : adaptiveCoverCheck 5 cell213 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell213 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell213 (by certificate_kernel)
 
 private theorem checked230 : adaptiveCoverCheck 5 cell230 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell230 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell230 (by certificate_kernel)
 
 private theorem checked231 : adaptiveCoverCheck 5 cell231 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell231 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell231 (by certificate_kernel)
 
 private theorem checked232 : adaptiveCoverCheck 5 cell232 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell232 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell232 (by certificate_kernel)
 
 private theorem checked233 : adaptiveCoverCheck 5 cell233 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell233 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell233 (by certificate_kernel)
 
 private theorem checked300 : adaptiveCoverCheck 5 cell300 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell300 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell300 (by certificate_kernel)
 
 private theorem checked301 : adaptiveCoverCheck 5 cell301 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell301 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell301 (by certificate_kernel)
 
 private theorem checked302 : adaptiveCoverCheck 5 cell302 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell302 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell302 (by certificate_kernel)
 
 private theorem checked303 : adaptiveCoverCheck 5 cell303 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell303 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell303 (by certificate_kernel)
 
 private theorem checked310 : adaptiveCoverCheck 5 cell310 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell310 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell310 (by certificate_kernel)
 
 private theorem checked311 : adaptiveCoverCheck 5 cell311 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell311 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell311 (by certificate_kernel)
 
 private theorem checked312 : adaptiveCoverCheck 5 cell312 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell312 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell312 (by certificate_kernel)
 
 private theorem checked313 : adaptiveCoverCheck 5 cell313 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell313 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell313 (by certificate_kernel)
 
 private theorem checked320 : adaptiveCoverCheck 5 cell320 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell320 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell320 (by certificate_kernel)
 
 private theorem checked321 : adaptiveCoverCheck 5 cell321 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell321 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell321 (by certificate_kernel)
 
 private theorem checked322 : adaptiveCoverCheck 5 cell322 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell322 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell322 (by certificate_kernel)
 
 private theorem checked323 : adaptiveCoverCheck 5 cell323 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell323 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell323 (by certificate_kernel)
 
 private theorem checked330 : adaptiveCoverCheck 5 cell330 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell330 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell330 (by certificate_kernel)
 
 private theorem checked331 : adaptiveCoverCheck 5 cell331 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell331 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell331 (by certificate_kernel)
 
 private theorem checked332 : adaptiveCoverCheck 5 cell332 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell332 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell332 (by certificate_kernel)
 
 private theorem checked333 : adaptiveCoverCheck 5 cell333 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell333 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell333 (by certificate_kernel)
 
 private theorem checked00 : adaptiveCoverCheck 6 cell00 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell00 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell00 (by certificate_kernel)
 
 private theorem checked01 : adaptiveCoverCheck 6 cell01 = true := by
   exact adaptiveCoverCheck_succ_of_children 5 cell01
     checked010 checked011 checked012 checked013
 
 private theorem checked02 : adaptiveCoverCheck 6 cell02 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell02 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell02 (by certificate_kernel)
 
 private theorem checked03 : adaptiveCoverCheck 6 cell03 = true := by
   exact adaptiveCoverCheck_succ_of_children 5 cell03
@@ -8924,14 +8927,14 @@ private theorem checked13 : adaptiveCoverCheck 6 cell13 = true := by
     checked130 checked131 checked132 checked133
 
 private theorem checked20 : adaptiveCoverCheck 6 cell20 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell20 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell20 (by certificate_kernel)
 
 private theorem checked21 : adaptiveCoverCheck 6 cell21 = true := by
   exact adaptiveCoverCheck_succ_of_children 5 cell21
     checked210 checked211 checked212 checked213
 
 private theorem checked22 : adaptiveCoverCheck 6 cell22 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell22 (by decide +kernel)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell22 (by certificate_kernel)
 
 private theorem checked23 : adaptiveCoverCheck 6 cell23 = true := by
   exact adaptiveCoverCheck_succ_of_children 5 cell23

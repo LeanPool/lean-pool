@@ -3814,9 +3814,7 @@ theorem gerverOuterCap_area_certified_lower_bound :
   rw [hS] at hfan
   rw [hS, hz] at hlo
   have hOK : 2 * 28609 * M ≤ 10000 * capDoubledZ.lo := by
-    have h := capOK_true
-    unfold capOK at h
-    exact of_decide_eq_true h
+    exact cap_integer_lower_bound
   rw [hz] at hOK
   have hOK' : (2 * 28609 * (M : ℝ)) ≤ 10000 * (z : ℝ) := by exact_mod_cast hOK
   have hM : (0 : ℝ) < (M : ℝ) := SI.Mpos
@@ -4255,12 +4253,9 @@ theorem gerverNicheRect_volume_sum_le :
       ENNReal.ofReal ((3301 : ℝ) / 5000) := by
   have hM := SI.Mpos
   have hQ : (0 : ℝ) < (M : ℝ) * (M : ℝ) := mul_pos hM hM
-  -- `unfold` rather than a type ascription: matching `nicheOK` against `decide _` by
-  -- unification would force the elaborator to evaluate the whole certificate.
+  -- Reuse the integer certificate rather than normalize the Boolean check again.
   have hcert : 5000 * nicheSumZ ≤ 3301 * M * M := by
-    have h := nicheOK_true
-    unfold nicheOK at h
-    exact of_decide_eq_true h
+    exact niche_integer_upper_bound
   have harea : ∀ r j : ℕ,
       rectAreaZ r j = max 0 (rectHiZ r j - rectLoZ r j) * max 0 (rectHZ r j) := by
     intro r j

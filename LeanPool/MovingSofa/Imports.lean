@@ -7,6 +7,9 @@ module  -- shake: keep-all --deprecated_module: ignore
 
 -- Generated project imports; run `lake exe mk_all`.
 public import LeanPool.MovingSofa
+public import LeanPool.MovingSofa.CertificateCache
+public import LeanPool.MovingSofa.CertificateDecide
+public import LeanPool.MovingSofa.CertificateEvaluation
 public import LeanPool.MovingSofa.Development.Geometry.Applications.Development001
 public import LeanPool.MovingSofa.Development.Geometry.Applications.Development002
 public import LeanPool.MovingSofa.Development.Geometry.Applications.Development003
@@ -60,3 +63,4 @@ public import LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Bundl
 public import LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Bundle030
 public import LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Bundle031
 public import LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Bundle032
+public import LeanPool.MovingSofa.KernelCertificate

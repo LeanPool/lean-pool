@@ -5,6 +5,7 @@ Authors: Dean Cureton, The Moving Sofa contributors
 -/
 module
 
+import LeanPool.MovingSofa.KernelCertificate
 public import LeanPool.MovingSofa.GerverSofa.KernelOnly.Core.Bundle005
 public import LeanPool.MovingSofa.Development.Geometry.Foundations.Development001
 /-!
@@ -53,9 +54,9 @@ the twenty-two direct parameters and of `π`, interval sine and cosine by the Ta
 recurrence, the grid of rotation angles, the five phase formulas, the support-contact fan
 of the cap and the rectangle cover of the niche.
 
-Everything here is computable and `decide +kernel`-checkable; the two closed numeric
-conclusions `capOK_true` and `nicheOK_true` are the only facts the analytic layer in
-`MovingSofa.Gerver.Area` needs from this module.
+Everything here is computable and kernel-checkable. The closed numeric conclusions are
+available in Boolean and integer forms, so the analytic layer in `MovingSofa.Gerver.Area`
+can reuse the checked bounds without repeating their finite reductions.
 -/
 
 /-! ### Integer interval arithmetic at scale `10 ^ 30`
@@ -651,10 +652,19 @@ def capOK : Bool := 2 * 28609 * M ≤ 10000 * capDoubledZ.lo
 def nicheOK : Bool := 5000 * nicheSumZ ≤ 3301 * M * M
 
 /-- The niche check passes, by kernel reduction. -/
-theorem nicheOK_true : nicheOK = true := by decide +kernel
+theorem nicheOK_true : nicheOK = true := by certificate_kernel
 
 /-- The cap check passes, by kernel reduction. -/
-theorem capOK_true : capOK = true := by decide +kernel
+theorem capOK_true : capOK = true := by certificate_kernel
+
+/-- The integer certificate underlying the cap area lower bound. Checking it here keeps
+large finite reductions out of geometric proofs with larger imported environments. -/
+theorem cap_integer_lower_bound : 2 * 28609 * M ≤ 10000 * capDoubledZ.lo := by
+  certificate_kernel
+
+/-- The integer certificate underlying the rectangle area upper bound. -/
+theorem niche_integer_upper_bound : 5000 * nicheSumZ ≤ 3301 * M * M := by
+  certificate_kernel
 
 end MovingSofa.GerverAreaCert
 
