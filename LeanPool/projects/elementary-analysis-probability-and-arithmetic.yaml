@@ -1,0 +1,94 @@
+slug: elementary-analysis-probability-and-arithmetic
+title: Classical results of elementary analysis, probability and arithmetic
+summary: A collection of classical results from undergraduate analysis, probability and
+  arithmetic. Proves the de Moivre–Laplace theorem (the standardised binomial distribution
+  converges in distribution to the standard Gaussian, also in terms of cumulative distribution
+  functions), after showing that a sum of independent Bernoulli variables is binomial. Proves
+  the variation of constants formula for the linear ODE y' = A y + F(t) with A in a complete
+  normed real algebra, with uniqueness of the solution. Computes the volume of a solid of
+  revolution, π ∫ f², via Cavalieri's principle, and the volume of a cone over a measurable base
+  in any dimension, hence π R² H / 3. Shows that adjacent sequences converge to a common limit,
+  that a nonnegative real is rational exactly when its digits in base b are eventually periodic,
+  that n is squarefree exactly when a^(λ(n)+1) = a in ZMod n for the Carmichael function λ (so a
+  Carmichael number n satisfies a^n = a for every residue), and gives the distance from a point
+  to a hyperplane through its normal vector.
+branch: analysis
+entry_module: LeanPool.ElementaryAnalysisProbabilityAndArithmetic
+authors:
+- Michel Hua
+source:
+  url: https://github.com/leanprover-community/mathlib4/pull/44770
+  github_repo: mycaule/mathlib4
+  commit: 1f4079deafd103dca9a5fbc72ed06d9f592854d5
+license: Apache-2.0
+status: verified
+provenance: mix
+main_declarations:
+- ProbabilityTheory.tendstoInDistribution_binomial
+- ProbabilityTheory.tendsto_binomial_real_setOf_le
+- eq_exp_smul_mul_integral_of_hasDerivAt
+- EuclideanSpace.volume_solidOfRevolution
+- MeasureTheory.Measure.volume_prod_convexJoin_singleton_prod
+- Monotone.exists_tendsto_of_antitone_of_tendsto_sub
+- Real.exists_ratCast_eq_iff_digits_eventually_periodic
+- Nat.squarefree_iff_forall_zmod_pow_carmichael_add_one
+- EuclideanGeometry.dist_orthogonalProjection_eq_abs_inner_div_norm
+main_results:
+- declaration: ProbabilityTheory.tendstoInDistribution_binomial
+  informal: For 0 < p < 1, the image of the binomial distribution Bin(n, p) under
+    x ↦ (x − n p) / √(n p (1 − p)) converges in distribution to the standard Gaussian as
+    n → ∞ (de Moivre–Laplace theorem).
+  source_ref: W. Feller, An Introduction to Probability Theory and Its Applications, Vol. I,
+    3rd ed., Wiley (1968), Chapter VII, §3.
+- declaration: ProbabilityTheory.tendsto_binomial_real_setOf_le
+  informal: For 0 < p < 1 and every real x, the probability that a Bin(n, p) variable k
+    satisfies (k − n p) / √(n p (1 − p)) ≤ x tends to Φ(x), the cumulative distribution
+    function of the standard Gaussian.
+  source_ref: W. Feller, An Introduction to Probability Theory and Its Applications, Vol. I,
+    3rd ed., Wiley (1968), Chapter VII, §3.
+- declaration: ProbabilityTheory.hasLaw_sum_of_iIndepFun_bernoulli
+  informal: The sum of n independent Bernoulli variables of parameter p with values in {1, 0}
+    has the binomial law Bin(n, p).
+- declaration: eq_exp_smul_mul_integral_of_hasDerivAt
+  informal: For A in a complete normed real algebra and F continuous, every solution of
+    y' = A y + F(t) with y(t₀) = y₀ is
+    y(t) = exp((t − t₀) A) (y₀ + ∫_{t₀}^t exp((t₀ − s) A) F(s) ds) (variation of constants).
+- declaration: EuclideanSpace.volume_solidOfRevolution
+  informal: For f continuous and nonnegative on [a, b], the solid in ℝ × ℝ² obtained by
+    rotating the region below the graph of f around the first axis has volume π ∫_a^b f(x)² dx.
+- declaration: MeasureTheory.Measure.volume_prod_convexJoin_singleton_prod
+  informal: In ℝ × F, with F a finite-dimensional real normed space with an additive Haar
+    measure μ, the cone with apex a over the base {c} × B, B measurable, has measure
+    μ(B) |c − a₁| / n, where n = dim F + 1.
+- declaration: EuclideanSpace.volume_cone
+  informal: A cone of radius R and height H in ℝ × ℝ² has volume π R² H / 3.
+- declaration: Monotone.exists_tendsto_of_antitone_of_tendsto_sub
+  informal: In a conditionally complete linearly ordered commutative additive group with the
+    order topology, if u is monotone, v is antitone and v − u tends to zero, then u and v
+    converge to the same limit.
+- declaration: Real.exists_ratCast_eq_iff_digits_eventually_periodic
+  informal: For a base b > 1, a nonnegative real number is rational if and only if the sequence
+    of its digits in base b is eventually periodic.
+- declaration: Nat.squarefree_iff_forall_zmod_pow_carmichael_add_one
+  informal: A positive integer n is squarefree if and only if a^(λ(n)+1) = a for every residue
+    a modulo n, where λ is the Carmichael function.
+- declaration: Nat.IsCarmichael.zmod_pow_eq_self
+  informal: A Carmichael number n satisfies a^n = a for every residue a modulo n, including
+    those not coprime to n.
+- declaration: EuclideanGeometry.dist_orthogonalProjection_eq_abs_inner_div_norm
+  informal: In a real Euclidean affine space, if the orthogonal complement of the direction of an
+    affine subspace s is spanned by n and q lies in s, the distance from p to its orthogonal
+    projection on s is |⟪n, p − q⟫| / ‖n‖.
+tags:
+- de-moivre-laplace
+- variation-of-constants
+- solid-of-revolution
+- periodic-digits
+msc:
+- 60F05
+- 34A30
+- 28A75
+- 40A05
+- 11A63
+- 11A07
+- 51N20
