@@ -7,7 +7,7 @@ module
 
 
 public import LeanPool.BeyondBethe.BeyondBethe.SourceStableEncoding
-public import Mathlib.Tactic
+import Mathlib.Tactic.Convert -- shake: keep
 
 /-! # Source Stable Reindex -/
 

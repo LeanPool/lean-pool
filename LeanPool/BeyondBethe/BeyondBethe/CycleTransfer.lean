@@ -9,7 +9,13 @@ module
 public import LeanPool.BeyondBethe.BeyondBethe.RobustCycle
 public import LeanPool.BeyondBethe.BeyondBethe.Optimizer
 public import LeanPool.BeyondBethe.BeyondBethe.ExcursionTransfer
-public import Mathlib.Tactic
+import Mathlib.Tactic.Convert -- shake: keep
+import Mathlib.Tactic.Ext -- shake: keep
+import Mathlib.Tactic.FieldSimp -- shake: keep
+import Mathlib.Tactic.Linarith -- shake: keep
+import Mathlib.Tactic.NormNum -- shake: keep
+import Mathlib.Tactic.Ring -- shake: keep
+import Mathlib.Tactic.SimpRw -- shake: keep
 
 /-! # Cycle Transfer -/
 

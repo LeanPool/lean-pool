@@ -8,7 +8,11 @@ module
 
 public import LeanPool.BeyondBethe.BeyondBethe.ExecutableTransfer
 public import LeanPool.BeyondBethe.BeyondBethe.DirectedPairCost
-public import Mathlib.Tactic
+import Mathlib.Tactic.Linarith -- shake: keep
+import Mathlib.Tactic.NormNum -- shake: keep
+import Mathlib.Tactic.Positivity -- shake: keep
+import Mathlib.Tactic.Ring -- shake: keep
+import Mathlib.Tactic.SimpRw -- shake: keep
 
 /-! # Directed Certificate Value -/
 

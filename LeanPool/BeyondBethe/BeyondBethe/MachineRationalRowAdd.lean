@@ -9,7 +9,7 @@ module
 public import LeanPool.BeyondBethe.BeyondBethe.MachineListReverse
 public import LeanPool.BeyondBethe.BeyondBethe.MachineMatrixSum
 public import LeanPool.BeyondBethe.BeyondBethe.MachineRationalArithmetic
-public import Mathlib.Tactic
+import Mathlib.Tactic.Linarith -- shake: keep
 
 /-!
 # Adding every entry of a rational row by one raw rational

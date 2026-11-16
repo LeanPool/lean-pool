@@ -7,7 +7,7 @@ module
 
 
 public import LeanPool.BeyondBethe.BeyondBethe.MachineKuhnRunner
-public import Mathlib.Tactic
+import Mathlib.Tactic.Linarith -- shake: keep
 
 /-!
 # Testing whether the final mate table is total

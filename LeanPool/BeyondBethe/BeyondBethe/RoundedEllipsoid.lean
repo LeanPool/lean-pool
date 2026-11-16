@@ -7,7 +7,14 @@ module
 
 
 public import LeanPool.BeyondBethe.BeyondBethe.MatrixPerturbation
-public import Mathlib.Tactic
+import Mathlib.Tactic.Convert -- shake: keep
+import Mathlib.Tactic.Ext -- shake: keep
+import Mathlib.Tactic.FieldSimp -- shake: keep
+import Mathlib.Tactic.GCongr -- shake: keep
+import Mathlib.Tactic.Linarith -- shake: keep
+import Mathlib.Tactic.Positivity -- shake: keep
+import Mathlib.Tactic.Ring -- shake: keep
+import Mathlib.Tactic.SimpRw -- shake: keep
 
 /-! # Rounded Ellipsoid -/
 

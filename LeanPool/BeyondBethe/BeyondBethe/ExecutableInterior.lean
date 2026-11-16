@@ -9,7 +9,9 @@ module
 public import LeanPool.BeyondBethe.BeyondBethe.NumericalInterior
 public import LeanPool.BeyondBethe.BeyondBethe.NumericalScales
 public import LeanPool.BeyondBethe.BeyondBethe.DirectedElementary
-public import Mathlib.Tactic
+import Mathlib.Tactic.Linarith -- shake: keep
+import Mathlib.Tactic.NormNum -- shake: keep
+import Mathlib.Tactic.Positivity -- shake: keep
 
 /-! # Executable Interior -/
 

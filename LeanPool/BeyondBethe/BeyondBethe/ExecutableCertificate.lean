@@ -8,7 +8,9 @@ module
 
 public import LeanPool.BeyondBethe.BeyondBethe.ExplicitScales
 public import LeanPool.BeyondBethe.BeyondBethe.NumericalNearby
-public import Mathlib.Tactic
+import Mathlib.Tactic.Linarith -- shake: keep
+import Mathlib.Tactic.NormNum -- shake: keep
+import Mathlib.Tactic.Positivity -- shake: keep
 
 /-! # Executable Certificate -/
 

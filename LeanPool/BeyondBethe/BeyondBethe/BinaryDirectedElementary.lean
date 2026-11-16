@@ -9,7 +9,6 @@ module
 public import LeanPool.BeyondBethe.BeyondBethe.BinaryRationalFloor
 public import LeanPool.BeyondBethe.BeyondBethe.BinaryRationalComparison
 public import LeanPool.BeyondBethe.BeyondBethe.DirectedElementary
-public import Mathlib.Tactic
 
 /-! # Binary Directed Elementary -/
 
