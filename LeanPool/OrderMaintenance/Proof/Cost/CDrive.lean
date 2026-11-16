@@ -291,6 +291,31 @@ end OrderMaintenance.Proof
 namespace OrderMaintenance.Proof
 
 open OrderMaintenance.Model
+/-- An empty source leaves both siblings within the common chunk and threshold bounds. -/
+theorem CDriveInv.removal_bounds {X : Core → Prop} {s : Core} {L : List Nat}
+    {δ δu s₀ : Nat → Nat} {x y z a b c u₀ j : Nat} {t : Core}
+    (hD : CDriveInv X s L δ δu s₀ x y z a b c u₀ j t) (hCP : CParams t.P)
+    (hThi : a + b + c ≤ t.P.T + kC t.P t.P.T)
+    (hbal0 : a ≤ c + umax t.P + 1 ∧ c ≤ a + umax t.P + 1) (he : cF t x = NIL) :
+    cSz t (cLl t x) ≤ cmax t.P ∧ cSz t (cRr t x) ≤ cmax t.P ∧
+      cSz t (cLl t x) ≤ t.P.theta ∧ cSz t (cRr t x) ≤ t.P.theta := by
+  obtain ⟨A, hI, hel⟩ := hD.inv
+  subst hel
+  have hcx : cSz t x = 0 := by
+    rw [hD.cinv.csz x hD.live, hI.celts_empty hD.live he]
+    rfl
+  have hsum := hD.sum
+  have hbal := hD.bal
+  rw [← hD.ll, ← hD.rr] at hsum hbal
+  rw [← hD.P] at hbal
+  have hl : cSz t (cLl t x) ≤ cmax t.P := by
+    unfold cmax
+    rcases hbal with ⟨-, h1, h2⟩ | ⟨-, h1, h2⟩ <;> omega
+  have hr : cSz t (cRr t x) ≤ cmax t.P := by
+    unfold cmax
+    rcases hbal with ⟨-, h1, h2⟩ | ⟨-, h1, h2⟩ <;> omega
+  exact ⟨hl, hr, hl.trans hCP.I4, hr.trans hCP.I4⟩
+
 theorem CDriveInv.step {X Y : Core → Prop} {s : Core} {L : List Nat} {δ δu s₀ : Nat → Nat}
     {x y z a b c u₀ j : Nat} {t : Core} (hXs : CXSteps X Y L δ δu s₀ x) (hP : GParams s.P)
     (hCP : CParams s.P) (hδ : ∀ c', c' ≠ y → c' ≠ x → c' ≠ z → δ c' = 0)
@@ -318,19 +343,9 @@ theorem CDriveInv.step {X Y : Core → Prop} {s : Core} {L : List Nat} {δ δu s
   rw [← hD.ll, ← hD.rr] at hsum hbal hδ hfam0 hδs
   rw [← hPt] at hbal
   have hFB : FamBound t δ s₀ x := ⟨by omega, hδs, hs0T⟩
-  have hI4 := hCP.I4
-  unfold cmax at hI4
   by_cases he : cF t x = NIL
   · -- removal
-    have hcx : cSz t x = 0 := by rw [hC.csz x hD.live, hI'.celts_empty hD.live he]; rfl
-    have hszy' : cSz t (cLl t x) ≤ cmax t.P := by
-      unfold cmax; rcases hbal with ⟨-, h1, h2⟩ | ⟨-, h1, h2⟩ <;> omega
-    have hszz' : cSz t (cRr t x) ≤ cmax t.P := by
-      unfold cmax; rcases hbal with ⟨-, h1, h2⟩ | ⟨-, h1, h2⟩ <;> omega
-    have hszy : cSz t (cLl t x) ≤ t.P.theta := by
-      rcases hbal with ⟨-, h1, h2⟩ | ⟨-, h1, h2⟩ <;> omega
-    have hszz : cSz t (cRr t x) ≤ t.P.theta := by
-      rcases hbal with ⟨-, h1, h2⟩ | ⟨-, h1, h2⟩ <;> omega
+    obtain ⟨hszy', hszz', hszy, hszz⟩ := hD.removal_bounds hCP hThi hbal0 he
     have hrun := chunkSplitStep_remove he hyz hxy hxz hD.live.2 ⟨Fx.lSt, Fx.lSrc⟩ ⟨Fx.rSt, Fx.rSrc⟩
       hszy hszz
     obtain ⟨hef, A'', hI'', hel''⟩ := Good.ok_inv (good_chunkSplitStep x) hI' hrun

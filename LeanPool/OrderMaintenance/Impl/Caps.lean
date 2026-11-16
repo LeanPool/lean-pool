@@ -529,9 +529,6 @@ theorem walk_pz {s : Core} {cl : List Nat} {ord : Nat → List Nat} {dr n0 : Nat
         simp only [walkNext]; rw [ite_eq_right]; intro e
         rw [hsrc, e] at hne; exact absurd hne (by decide)
       rw [hn] at hI'
-      have hlp : ((wiC s v).nodes.getX v).livePar = (nd (ts s) v).livePar := by
-        change ((s.nodes.modify v _).getX v).livePar = _
-        rw [Array.getX_modify]; split <;> rfl
       rw [hsrc] at h
       obtain ⟨a, b⟩ := fund_pz hcl' hI' h
       exact ⟨a, fun hz => b (hz.of_frame le_rfl fun _ _ => rfl)⟩

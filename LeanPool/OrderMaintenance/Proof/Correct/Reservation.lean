@@ -88,9 +88,7 @@ theorem LinkCOK.cN' (h : LinkCOK s x y z) (w : Nat) :
   generalize hn : (s.C.getX x).next = n at *
   simp only [linkChunkPair, hp, hn, Array.getX_modify, Array.getX_ite, Array.size_modify',
     Array.size_ite, apply_ite (f := Chunk.next)]
-  have e1 := Ne.symm d1; have e2 := Ne.symm d2; have e3 := Ne.symm d3; have e4 := Ne.symm d4
-  have e5 := Ne.symm d5; have e6 := Ne.symm d6; have e7 := Ne.symm d7; have e8 := Ne.symm d8
-  have e9 := Ne.symm d9
+  have e1 := Ne.symm d1; have e2 := Ne.symm d2; have e3 := Ne.symm d3
   by_cases hwx : w = x
   · simp [hwx, szx,       ]
   · have hwx' := Ne.symm hwx
@@ -118,9 +116,7 @@ theorem LinkCOK.cP' (h : LinkCOK s x y z) (w : Nat) :
   generalize hn : (s.C.getX x).next = n at *
   simp only [linkChunkPair, hp, hn, Array.getX_modify, Array.getX_ite, Array.size_modify',
     Array.size_ite, apply_ite (f := Chunk.prev)]
-  have e1 := Ne.symm d1; have e2 := Ne.symm d2; have e3 := Ne.symm d3; have e4 := Ne.symm d4
-  have e5 := Ne.symm d5; have e6 := Ne.symm d6; have e7 := Ne.symm d7; have e8 := Ne.symm d8
-  have e9 := Ne.symm d9
+  have e1 := Ne.symm d1; have e2 := Ne.symm d2; have e3 := Ne.symm d3
   by_cases hwx : w = x
   · simp [hwx, szx,       ]
   · have hwx' := Ne.symm hwx

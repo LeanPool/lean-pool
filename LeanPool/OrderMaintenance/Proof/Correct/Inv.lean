@@ -306,7 +306,6 @@ theorem order_iff {s : Core} {A : Abs} (h : INV s A) {x y : Nat} (hx : x ∈ A.e
     (hy : y ∈ A.elist) :
     KeyLt (keyOf s x) (keyOf s y) ↔ A.elist.idxOf x < A.elist.idxOf y := by
   have hp := keys_sorted h
-  have hnd := h.eList.nodup
   constructor
   · intro hk
     rcases Nat.lt_trichotomy (A.elist.idxOf x) (A.elist.idxOf y) with hlt | heq | hgt

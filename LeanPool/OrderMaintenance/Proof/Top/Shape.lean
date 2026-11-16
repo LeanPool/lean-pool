@@ -93,4 +93,17 @@ structure Shape (s : TS) (cl : List Nat) (ord : Nat → List Nat) : Prop extends
     (nd s u).last = (rng s cl u).getLastD NIL
   tags : ∀ c ∈ cl, s.tag c = tagF s c
 
+theorem len_le_two_of {l : List Nat} {a b : Nat} (hnd : l.Nodup) (h : ∀ x ∈ l, x = a ∨ x = b) :
+  l.length ≤ 2 := by
+  have hs : l.toFinset ⊆ {a, b} := fun x hx => by
+    rcases h x (List.mem_toFinset.mp hx) with e | e <;> simp [e]
+  rw [← List.toFinset_card_of_nodup hnd]
+  exact (Finset.card_le_card hs).trans (Finset.card_le_two)
+
+/-- An entry lies in at most two tables (invariant Q). -/
+theorem Shape.tabs_len {t : TS} {cl : List Nat} {ord : Nat → List Nat} (S : Shape t cl ord) {h e
+  : Nat}
+    (he : Ent ord h e) : (tabs t h e).length ≤ 2 :=
+  len_le_two_of (S.tabsNodup h e he) (fun X hX => S.Q h e X he hX)
+
 end OrderMaintenance.Proof.Top

@@ -297,9 +297,7 @@ theorem LinkOK.gN' (h : LinkOK s g gl gr) (z : Nat) :
   generalize hn : (s.Gs.getX g).next = n at *
   simp only [linkGroupPair, hp, hn, Array.getX_modify, Array.getX_ite, Array.size_modify',
     Array.size_ite, apply_ite (f := Group.next)]
-  have e1 := Ne.symm d1; have e2 := Ne.symm d2; have e3 := Ne.symm d3; have e4 := Ne.symm d4
-  have e5 := Ne.symm d5; have e6 := Ne.symm d6; have e7 := Ne.symm d7; have e8 := Ne.symm d8
-  have e9 := Ne.symm d9
+  have e1 := Ne.symm d1; have e2 := Ne.symm d2; have e3 := Ne.symm d3
   by_cases hzg : z = g
   · simp [hzg, szg,       ]
   · have hzg' := Ne.symm hzg
@@ -327,9 +325,7 @@ theorem LinkOK.gP' (h : LinkOK s g gl gr) (z : Nat) :
   generalize hn : (s.Gs.getX g).next = n at *
   simp only [linkGroupPair, hp, hn, Array.getX_modify, Array.getX_ite, Array.size_modify',
     Array.size_ite, apply_ite (f := Group.prev)]
-  have e1 := Ne.symm d1; have e2 := Ne.symm d2; have e3 := Ne.symm d3; have e4 := Ne.symm d4
-  have e5 := Ne.symm d5; have e6 := Ne.symm d6; have e7 := Ne.symm d7; have e8 := Ne.symm d8
-  have e9 := Ne.symm d9
+  have e1 := Ne.symm d1; have e2 := Ne.symm d2; have e3 := Ne.symm d3
   by_cases hzg : z = g
   · simp [hzg, szg,      ]
   · have hzg' := Ne.symm hzg

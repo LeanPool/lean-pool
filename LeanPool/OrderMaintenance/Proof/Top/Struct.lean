@@ -135,6 +135,52 @@ theorem Shape.mem_children (S : Shape s cl ord) {u : Nat} (hu : liveN s u) {e : 
       rw [par_live (Or.inr hl), ite_eq_right (by omega)] at hp
       have := (S.up e hl (by omega)).2.2; rw [hp] at this; exact this
 
+/-- **A live node's children are entries of its table.** -/
+theorem Shape.kid_mem {s : TS} {cl : List Nat} {ord : Nat → List Nat} {oj : Option Job} (S :
+  Shape s cl ord)
+    (Ti : Timing s cl oj) {u e : Nat} (hu : liveN s u) (he : e ∈ (nd s u).children) : e ∈ order
+      s u := by
+  obtain ⟨h1, hH⟩ := S.htN u hu.1
+  have hm := (S.mem_children hu).mp he
+  by_cases hh1 : ht s u = 1
+  · rw [ite_eq_left hh1] at hm
+    obtain ⟨hc, hp⟩ := hm
+    rw [hh1, Nat.sub_self, par_live (Or.inl rfl), ite_eq_left rfl] at hp
+    have h3 := S.H3
+    rcases S.P e hc 1 le_rfl (by omega) with e1 | ⟨hg, -⟩
+    · have := S.W3 e hc 1 le_rfl (by omega)
+      rw [e1] at this; change e ∈ order s u; rw [← hp]; exact this
+    · have := S.Sr e hc 1 le_rfl (by omega) hg
+      change e ∈ order s u; rw [← hp]; exact this
+  · rw [ite_eq_right hh1] at hm
+    obtain ⟨⟨hel, heh⟩, hp⟩ := hm
+    rw [par_live (Or.inr hel), ite_eq_right (by omega)] at hp
+    -- a chunk below `e`
+    have htw := Ti.tw1 e hel
+    unfold tw at htw
+    obtain ⟨c, hcm⟩ := List.exists_mem_of_length_pos (by omega : 0 < (cl.filter fun c => anc s c
+      (ht s e) = e).length)
+    obtain ⟨hc, hce⟩ := List.mem_filter.mp hcm
+    simp only [decide_eq_true_eq] at hce
+    rw [heh] at hce
+    have hcu : anc s c (ht s u) = u := by
+      rw [show ht s u = ht s u - 1 + 1 by omega, anc_succ c _ (by omega), hce, hp]
+    -- the path entry below `u`
+    have hx : pp s c (ht s u - 1) ∈ order s u := by
+      rcases S.P c hc (ht s u) h1 hH with e1 | ⟨hg, -⟩
+      · have := S.W3 c hc (ht s u) h1 hH; rw [e1, hcu] at this; exact this
+      · have := S.Sr c hc (ht s u) h1 hH hg; rw [hcu] at this; exact this
+    rcases S.P c hc (ht s u - 1) (by omega) (by omega) with e1 | ⟨hg, ht'⟩
+    · rw [e1, hce] at hx; exact hx
+    · have hent := S.pathEnt c hc (ht s u - 1) (by omega)
+      have hxh := ((S.ordMem _ (by omega) (by omega) _).mp hent).2
+      have hT : u ∈ tabs s (ht s (pp s c (ht s u - 1))) (pp s c (ht s u - 1)) := by
+        rw [hxh]
+        exact (S.tabsIff _ _ u hent).mpr ⟨hu.1, by omega, hx⟩
+      have hw := (S.W1 _ hg u hT).subset
+      rw [hce] at ht'
+      rcases ht' with e2 | e2 <;> rw [e2] <;> exact hw (by simp)
+
 /-! ### Weights -/
 
 /-- A chunk is below a live node of height `h ≥ 2` iff it is below one of its children. -/

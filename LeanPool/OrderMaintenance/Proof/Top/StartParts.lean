@@ -25,32 +25,6 @@ namespace OrderMaintenance.Proof.Top
 open OrderMaintenance.Model OrderMaintenance.Proof
 /-! ### Lists -/
 
-/-- Two sublists of a list of distinct elements: inclusion is a sublist. -/
-theorem sublist_of_subset_common : ∀ {A B L : List Nat}, A.Sublist L → B.Sublist L → L.Nodup → A
-  ⊆ B →
-    A.Sublist B
-  | A, B, [], hA, hB, _, _ => by rw [List.sublist_nil.mp hA]; exact List.nil_sublist _
-  | A, B, x :: L, hA, hB, hL, hsub => by
-    have hx := List.nodup_cons.mp hL
-    rcases List.sublist_cons_iff.mp hA with hA' | ⟨A', rfl, hA'⟩ <;>
-      rcases List.sublist_cons_iff.mp hB with hB' | ⟨B', rfl, hB'⟩
-    · exact sublist_of_subset_common hA' hB' hx.2 hsub
-    · have hxA : x ∉ A := fun h => hx.1 (hA'.subset h)
-      have : A ⊆ B' := fun a ha => by
-        have := hsub ha; simp only [List.mem_cons] at this
-        rcases this with e | e
-        · subst e; exact absurd ha hxA
-        · exact e
-      exact (sublist_of_subset_common hA' hB' hx.2 this).cons x
-    · exact absurd (hB'.subset (hsub (by simp))) hx.1
-    · have hxA : x ∉ A' := fun h => hx.1 (hA'.subset h)
-      have : A' ⊆ B' := fun a ha => by
-        have := hsub (List.mem_cons_of_mem _ ha); simp only [List.mem_cons] at this
-        rcases this with e | e
-        · subst e; exact absurd ha hxA
-        · exact e
-      exact (sublist_of_subset_common hA' hB' hx.2 this).cons_cons x
-
 theorem mem_left_iff_before {P Q : List Nat} {b e : Nat} (hnd : (P ++ b :: Q).Nodup) :
     e ∈ P ↔ Before (P ++ b :: Q) e b := by
   constructor

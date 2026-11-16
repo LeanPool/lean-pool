@@ -2322,8 +2322,6 @@ theorem stage8S_ok {κ : Caps} {t : Core} {L : Loc} {v : Nat} {side : List (Nat 
   rw [sdS_eq]
   generalize sd11 t v side = X at hvs ⊢
   set N := t.nodes.size
-  have hs : ∀ (Y : Core) (f : Node → Node), (Y.nodes.modify v f).size = Y.nodes.size := fun _ _
-    => by simp
   have w1 := evalF_wrN_ok (κ := κ) (s := phiS v side X) (L := L) (k := .draining) (i := .var
     "v") (e := (1 : Exp))
     (j := v) (w := 1) (by simp [Exp.ev, hLv]) rfl (by simp [phiS, hvs])  rfl

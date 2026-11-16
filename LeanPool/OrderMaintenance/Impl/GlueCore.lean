@@ -139,9 +139,6 @@ theorem _root_.OrderMaintenance.Proof.DriveInv.stepAgree {X Y : Core → Prop} {
   have hI1 := hP.I1
   generalize hq : t.P.G / (t.P.groupBudget - 1) = q at hThi hI1
   have hkG : kG t.P = q + 1 := by unfold kG; rw [hq]
-  have hcE := hP.push
-  rw [hkG] at hcE
-  have hD0 := hP.De
   by_cases hz : gSz t p = 0
   · -- removal
     have he : gF t p = NIL := by
@@ -203,23 +200,9 @@ theorem _root_.OrderMaintenance.Proof.DriveInv.stepAgree {X Y : Core → Prop} {
     have heLS : gLs t p < t.E.size := ((hI'.eAlloc _).mp heL).2
     by_cases hdir : gSz t l ≤ gSz t r
     · -- move to the left sibling
-      have hlst : gSt t l = .overflow := hD.ll ▸ Fp.lSt
-      obtain ⟨-, hpush⟩ := hG.ghO l hlL hlst
       have hlsz : gSz t l + 1 ≤ t.P.G + q + 1 := by omega
-      have hroom : gF t l ≠ NIL → eL t (gLs t l) + t.P.elementSpacing < 1 <<< t.P.elementBits := by
-        intro hfl
-        obtain ⟨fr, hfr⟩ := hI'.run_last hl' hfl
-        obtain ⟨-, h2⟩ := hG.range l hlL (gLs t l) (by
-          rw [hfr]
-          simp)
-        rw [cE_two _ hP.Be]
-        have : (gh.pb l + 1) * t.P.elementSpacing ≤ (t.P.G + (q + 1)) * t.P.elementSpacing :=
-          Nat.mul_le_mul_right _ (by omega)
-        have : (gh.pb l + 1) * t.P.elementSpacing = gh.pb l * t.P.elementSpacing +
-          t.P.elementSpacing := by ring
-        omega
-      have hok : MoveLOK t p := ⟨hp, hne, by rw [hD.ll, hD.rr]; exact hdir,
-        Fp.lAdj, by rw [hD.ll]; exact hroom, by omega, Fp.lC⟩
+      have hok := hG.move_left_ok hI' hP hp hs hne
+        (by rw [hD.ll, hD.rr]; exact hdir) (by rw [hD.ll, hkG]; exact hlsz)
       have hrun2 := groupSplitStep_left hok
       refine ⟨true, _, hrun2, fun Lc hLc => ?_, moveLState_sizes⟩
       obtain ⟨L', n, e, hok', -, hn⟩ := groupSplitStepS_left κ t Lc hLc hok (by
@@ -237,26 +220,9 @@ theorem _root_.OrderMaintenance.Proof.DriveInv.stepAgree {X Y : Core → Prop} {
             omega)
       exact ⟨L', n, e, by rw [hok']; rfl, by omega⟩
     · -- move to the right sibling
-      have hrst : gSt t r = .overflow := hD.rr ▸ Fp.rSt
-      obtain ⟨-, hpush⟩ := hG.ghO r hrL hrst
       have hrsz : gSz t r + 1 ≤ t.P.G + q + 1 := by omega
-      have hroom : gF t r ≠ NIL → t.P.elementSpacing ≤ eL t (gF t r) := by
-        intro hfr
-        obtain ⟨rs, hrs⟩ := hI'.run_head hr' hfr
-        obtain ⟨h1, -⟩ := hG.range r hrL (gF t r) (by
-          rw [hrs]
-          simp)
-        have : (gh.pf r + 1) * t.P.elementSpacing ≤ (t.P.G + (q + 1)) * t.P.elementSpacing :=
-          Nat.mul_le_mul_right _ (by omega)
-        have : (gh.pf r + 1) * t.P.elementSpacing = gh.pf r * t.P.elementSpacing +
-          t.P.elementSpacing := by ring
-        omega
-      have hadjR : gP t (gRr t p) = p := by
-        rw [← Fp.rAdj]; exact hI'.gP_gN hp' (by
-          rw [Fp.rAdj, hD.rr]
-          exact hrL.1)
-      have hok : MoveROK t p := ⟨hp, hne, by rw [hD.ll, hD.rr]; omega, hadjR,
-        by rw [hD.rr]; exact hroom, by omega, Fp.rC⟩
+      have hok := hG.move_right_ok hI' hP hp hs hne
+        (by rw [hD.ll, hD.rr]; omega) (by rw [hD.rr, hkG]; exact hrsz)
       have hrun2 := groupSplitStep_right hok
       refine ⟨true, _, hrun2, fun Lc hLc => ?_, moveRState_sizes⟩
       obtain ⟨L', n, e, hok', -, hn⟩ := groupSplitStepS_right κ t Lc hLc hok (by
@@ -552,19 +518,9 @@ theorem _root_.OrderMaintenance.Proof.CDriveInv.stepAgree {X Y : Core → Prop} 
   rw [← hD.ll, ← hD.rr] at hsum hbal hfam0 hδs
   rw [← hPt] at hbal
   have hFB : FamBound t δ s₀ x := ⟨by omega, hδs, hs0T⟩
-  have hI4 := hCP.I4
-  unfold cmax at hI4
   by_cases he : cF t x = NIL
   · -- removal
-    have hcx : cSz t x = 0 := by rw [hC.csz x hD.live, hI'.celts_empty hD.live he]; rfl
-    have hszy' : cSz t (cLl t x) ≤ cmax t.P := by
-      unfold cmax; rcases hbal with ⟨-, h1, h2⟩ | ⟨-, h1, h2⟩ <;> omega
-    have hszz' : cSz t (cRr t x) ≤ cmax t.P := by
-      unfold cmax; rcases hbal with ⟨-, h1, h2⟩ | ⟨-, h1, h2⟩ <;> omega
-    have hszy : cSz t (cLl t x) ≤ t.P.theta := by
-      rcases hbal with ⟨-, h1, h2⟩ | ⟨-, h1, h2⟩ <;> omega
-    have hszz : cSz t (cRr t x) ≤ t.P.theta := by
-      rcases hbal with ⟨-, h1, h2⟩ | ⟨-, h1, h2⟩ <;> omega
+    obtain ⟨-, -, hszy, hszz⟩ := hD.removal_bounds hCP hThi hbal0 he
     have hrun := chunkSplitStep_remove he hyz hxy hxz hD.live.2 ⟨Fx.lSt, Fx.lSrc⟩ ⟨Fx.rSt, Fx.rSrc⟩
       hszy hszz
     refine ⟨false, _, hrun, fun Lc hLc => ?_, cremoveState_sizes⟩

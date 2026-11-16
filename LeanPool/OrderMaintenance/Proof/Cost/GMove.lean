@@ -1304,6 +1304,52 @@ structure XSteps (X Y : Core → Prop) (L : List Nat) (δ : Nat → Nat) (p c : 
     gmin t.P ≤ gSz t (gLl t p) → gmin t.P ≤ gSz t (gRr t p) →
     gC t p = c → X t → Y (removeState t p)
 
+/-- Overflow label bounds supply every guard for a left move into the lighter sibling. -/
+theorem GInvE.move_left_ok {s : Core} {A : Abs} {gh : GGh} {δ : Nat → Nat} {p : Nat}
+    (hG : GInvE s A.elist gh δ p) (hI : INV s A) (hP : GParams s.P)
+    (hp : LiveG s p) (hs : gSt s p = .splitting) (hne : gF s p ≠ NIL)
+    (hdir : gSz s (gLl s p) ≤ gSz s (gRr s p))
+    (hsize : gSz s (gLl s p) + 1 ≤ s.P.G + kG s.P) : MoveLOK s p := by
+  have Fp := hG.fam p hp hs
+  have hlL := Fp.lLive
+  have hl' := hI.mem_glist_iff.mpr hlL
+  obtain ⟨-, hpush⟩ := hG.ghO _ hlL Fp.lSt
+  have hcE := hP.push
+  refine ⟨hp, hne, hdir, Fp.lAdj, ?_, by have := hP.De; omega, Fp.lC⟩
+  intro hfl
+  obtain ⟨fr, hfr⟩ := hI.run_last hl' hfl
+  obtain ⟨-, h2⟩ := hG.range _ hlL (gLs s (gLl s p)) (by rw [hfr]; simp)
+  rw [cE_two _ hP.Be]
+  have : (gh.pb (gLl s p) + 1) * s.P.elementSpacing ≤
+      (s.P.G + kG s.P) * s.P.elementSpacing := Nat.mul_le_mul_right _ (by omega)
+  have : (gh.pb (gLl s p) + 1) * s.P.elementSpacing =
+      gh.pb (gLl s p) * s.P.elementSpacing + s.P.elementSpacing := by ring
+  omega
+
+/-- Overflow label bounds supply every guard for a right move into the strictly lighter sibling. -/
+theorem GInvE.move_right_ok {s : Core} {A : Abs} {gh : GGh} {δ : Nat → Nat} {p : Nat}
+    (hG : GInvE s A.elist gh δ p) (hI : INV s A) (hP : GParams s.P)
+    (hp : LiveG s p) (hs : gSt s p = .splitting) (hne : gF s p ≠ NIL)
+    (hdir : gSz s (gRr s p) < gSz s (gLl s p))
+    (hsize : gSz s (gRr s p) + 1 ≤ s.P.G + kG s.P) : MoveROK s p := by
+  have Fp := hG.fam p hp hs
+  have hrL := Fp.rLive
+  have hr' := hI.mem_glist_iff.mpr hrL
+  obtain ⟨-, hpush⟩ := hG.ghO _ hrL Fp.rSt
+  have hcE := hP.push
+  have hadj : gP s (gRr s p) = p := by
+    rw [← Fp.rAdj]
+    exact hI.gP_gN (hI.mem_glist_iff.mpr hp) (by rw [Fp.rAdj]; exact hrL.1)
+  refine ⟨hp, hne, hdir, hadj, ?_, by have := hP.De; omega, Fp.rC⟩
+  intro hfr
+  obtain ⟨rs, hrs⟩ := hI.run_head hr' hfr
+  obtain ⟨h1, -⟩ := hG.range _ hrL (gF s (gRr s p)) (by rw [hrs]; simp)
+  have : (gh.pf (gRr s p) + 1) * s.P.elementSpacing ≤
+      (s.P.G + kG s.P) * s.P.elementSpacing := Nat.mul_le_mul_right _ (by omega)
+  have : (gh.pf (gRr s p) + 1) * s.P.elementSpacing =
+      gh.pf (gRr s p) * s.P.elementSpacing + s.P.elementSpacing := by ring
+  omega
+
 theorem DriveInv.step {X Y : Core → Prop} {s : Core} {L : List Nat} {δ : Nat → Nat}
     {p l r a b c j : Nat} {t : Core} (hXs : XSteps X Y L δ p (gC s p))
     (hP : GParams s.P) (hδ : ∀ z, z ≠ l → z ≠ p → z ≠ r → δ z = 0)
@@ -1335,9 +1381,6 @@ theorem DriveInv.step {X Y : Core → Prop} {s : Core} {L : List Nat} {δ : Nat 
   have hI1 := hP.I1
   generalize hq : t.P.G / (t.P.groupBudget - 1) = q at hThi hI1
   have hkG : kG t.P = q + 1 := by unfold kG; rw [hq]
-  have hcE := hP.push
-  rw [hkG] at hcE
-  have hD0 := hP.De
   by_cases hz : gSz t p = 0
   · -- removal
     have he : gF t p = NIL := by
@@ -1375,21 +1418,9 @@ theorem DriveInv.step {X Y : Core → Prop} {s : Core} {L : List Nat} {δ : Nat 
     have heLS : gLs t p < t.E.size := ((hI'.eAlloc _).mp heL).2
     by_cases hdir : gSz t l ≤ gSz t r
     · -- move to the left sibling
-      have hlst : gSt t l = .overflow := hD.ll ▸ Fp.lSt
-      obtain ⟨-, hpush⟩ := hG.ghO l hlL hlst
       have hlsz : gSz t l + 1 ≤ t.P.G + q + 1 := by omega
-      have hroom : gF t l ≠ NIL → eL t (gLs t l) + t.P.elementSpacing < 1 <<< t.P.elementBits := by
-        intro hfl
-        obtain ⟨fr, hfr⟩ := hI'.run_last hl' hfl
-        obtain ⟨-, h2⟩ := hG.range l hlL (gLs t l) (by rw [hfr]; simp)
-        rw [cE_two _ hP.Be]
-        have : (gh.pb l + 1) * t.P.elementSpacing ≤ (t.P.G + (q + 1)) * t.P.elementSpacing :=
-          Nat.mul_le_mul_right _ (by omega)
-        have : (gh.pb l + 1) * t.P.elementSpacing = gh.pb l * t.P.elementSpacing +
-          t.P.elementSpacing := by ring
-        omega
-      have hok : MoveLOK t p := ⟨hp, hne, by rw [hD.ll, hD.rr]; exact hdir,
-        Fp.lAdj, by rw [hD.ll]; exact hroom, by omega, Fp.lC⟩
+      have hok := hG.move_left_ok hI' hP hp hs hne
+        (by rw [hD.ll, hD.rr]; exact hdir) (by rw [hD.ll, hkG]; exact hlsz)
       have hrun2 := groupSplitStep_left hok
       obtain ⟨hef, A'', hI'', hel''⟩ := Good.ok_inv (good_groupSplitStep p) hI' hrun2
       have M := moveLState_spec (s := t) (p := p) (hD.ll ▸ hlp) hp.2.1 (hD.ll ▸ hlL.2.1) heS
@@ -1414,27 +1445,14 @@ theorem DriveInv.step {X Y : Core → Prop} {s : Core} {L : List Nat} {δ : Nat 
         refine ⟨by omega, ?_, ?_⟩ <;> rcases hbal with ⟨-, h1, h2⟩ | ⟨-, h1, h2⟩ <;> omega
       · rw [hK.chk]; exact hD.chk
     · -- move to the right sibling
-      have hrst : gSt t r = .overflow := hD.rr ▸ Fp.rSt
-      obtain ⟨-, hpush⟩ := hG.ghO r hrL hrst
       have hrsz : gSz t r + 1 ≤ t.P.G + q + 1 := by omega
-      have hroom : gF t r ≠ NIL → t.P.elementSpacing ≤ eL t (gF t r) := by
-        intro hfr
-        obtain ⟨rs, hrs⟩ := hI'.run_head hr' hfr
-        obtain ⟨h1, -⟩ := hG.range r hrL (gF t r) (by rw [hrs]; simp)
-        have : (gh.pf r + 1) * t.P.elementSpacing ≤ (t.P.G + (q + 1)) * t.P.elementSpacing :=
-          Nat.mul_le_mul_right _ (by omega)
-        have : (gh.pf r + 1) * t.P.elementSpacing = gh.pf r * t.P.elementSpacing +
-          t.P.elementSpacing := by ring
-        omega
-      have hadjR : gP t (gRr t p) = p := by
-        rw [← Fp.rAdj]; exact hI'.gP_gN hp' (by rw [Fp.rAdj, hD.rr]; exact hrL.1)
-      have hok : MoveROK t p := ⟨hp, hne, by rw [hD.ll, hD.rr]; omega, hadjR,
-        by rw [hD.rr]; exact hroom, by omega, Fp.rC⟩
+      have hok := hG.move_right_ok hI' hP hp hs hne
+        (by rw [hD.ll, hD.rr]; omega) (by rw [hD.rr, hkG]; exact hrsz)
       have hrun2 := groupSplitStep_right hok
       obtain ⟨hef, A'', hI'', hel''⟩ := Good.ok_inv (good_groupSplitStep p) hI' hrun2
       have M := moveRState_spec (s := t) (p := p) (hD.rr ▸ hrp) hp.2.1 (hD.rr ▸ hrL.2.1) heLS
       rw [hD.rr] at M
-      have hG' := ginv_moveR hI' hG hp hs hne (by rw [hD.rr]; exact hroom)
+      have hG' := ginv_moveR hI' hG hp hs hne hok.room
       rw [hD.rr] at hG'
       have hK := M.links
       refine ⟨_, Or.inl ⟨hrun2, ?_⟩⟩
