@@ -1,0 +1,53 @@
+slug: multiplicative-ergodic
+title: Oseledets decomposition by subspace growth estimates
+summary: Constructs and proves uniqueness of a semi-invertible Oseledets decomposition on nontrivial
+  separable real Banach spaces over nonatomic standard-Borel invertible ergodic probability bases, using Bernstein
+  growth indices. Includes backward-history characterization, tempered slow projections, a compactness-index
+  restatement conditional on its rate limit, and reusable Grassmannian and ergodic-theorem infrastructure.
+branch: dynamical systems
+entry_module: LeanPool.MultiplicativeErgodic
+authors:
+- George Lee
+source:
+  title: Constructing the Oseledets decomposition with subspace growth estimates
+  authors:
+  - George Lee
+  doi: 10.1090/btran/146
+  url: https://gitlab.com/georgelee/vibemet
+  commit: e3e79344f52493a71eb31e0daad1be21a8c4da4c
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+- MultiplicativeErgodic.mainres
+- MultiplicativeErgodic.mainres_compactnessIndex
+- MultiplicativeErgodic.kingman
+- MultiplicativeErgodic.grassmannianFin_complete
+main_results:
+- declaration: MultiplicativeErgodic.mainres
+  informal: For a forward-integrable strongly measurable cocycle on a nontrivial separable real Banach space
+    over a nonatomic standard-Borel invertible ergodic probability base, constructs measurable finite-dimensional
+    fast spaces and invariant slow spaces with tempered slow projections, pins exponents and multiplicities
+    to Bernstein growth indices, characterizes fast sums by backward histories and slow spaces by
+    vector-growth limsups, and proves uniqueness on the spectral index range.
+- declaration: MultiplicativeErgodic.mainres_compactnessIndex
+  informal: Assuming an almost-everywhere limit for the normalized extended logarithm of the distance
+    of cocycle iterates to compact operators, restates the decomposition, backward characterization
+    and uniqueness with the nontriviality criterion that this compactness rate differs from the top
+    Lyapunov exponent.
+- declaration: MultiplicativeErgodic.kingman
+  informal: Proves the subadditive ergodic theorem for measurable real subadditive families with
+    integrable positive part, allowing an extended-real limiting constant.
+- declaration: MultiplicativeErgodic.grassmannianFin_complete
+  informal: The Grassmannian of a fixed positive finite dimension in a complete real normed space
+    is complete for the Hausdorff distance between unit spheres.
+tags:
+- ergodic-theory
+- lyapunov-exponents
+- banach-spaces
+- grassmannians
+- subadditivity
+msc:
+- 37H15
+- 37A30
+- 46B20
