@@ -95,7 +95,7 @@ structure LevelBounds (σ k N : ℕ) where
   comparisonWindow : ℕ → ℕ
   /-- Initial suffix window at each level. -/
   startWindow : ℕ → ℕ
-  /-- Level-independent suffix-chain budget. -/
+  /-- Suffix-chain budget at each level. -/
   fixedChainBudget : ℕ → ℕ
   pieceCountBase_eq : pieceCountBase = 4 + 2 * (k - 1) * (N - 1)
   periodBound_mono : Monotone periodBound

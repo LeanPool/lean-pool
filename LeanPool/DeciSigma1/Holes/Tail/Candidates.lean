@@ -60,7 +60,7 @@ variable {α S : Type} {k : ℕ}
 `windowLength` and closed for the suffix dictionary of `ts` at window `windowLength`. -/
 structure RayCandidate [DecidableEq α] (M : StructuralReader α S k) (W : Fin k → List α)
     (ts : List (List α)) (v : Fin k) where
-  /-- Length of the suffix dictionary used to read this ray. -/
+  /-- Maximum suffix length in the ray's dictionary. -/
   windowLength : ℕ
   /-- Cut where the ray segment starts. -/
   startCut : ℕ

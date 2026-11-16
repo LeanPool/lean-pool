@@ -117,4 +117,3 @@ over arbitrary, regular and finite trees. Satisfiability and entailment are spec
 -/
 
 @[expose] public section
-
