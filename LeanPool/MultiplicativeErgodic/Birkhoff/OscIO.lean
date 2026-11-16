@@ -132,10 +132,10 @@ theorem measurableSet_oscIO (hσ : Measurable σ) (hfm : Measurable f) (ε : ℝ
 `μ(oscIO f 3ε) ≤ ‖f - f'‖₁ / ε`.
 
 This is the `ε/3` estimate of `dyn.tex` stage 4, and it is what lets a.e. convergence be
-transported along an `L¹`-dense set. It is used twice in the proof of Birkhoff: once to pass
-from exact coboundaries to `closure H`, and once to pass from `L²` to `L¹`. -/
+transported along an `L¹`-dense set. The retained independent `L²` proof uses it to pass
+from exact coboundaries to `closure H`. The general `L¹` endpoint reuses the pool theorem. -/
 theorem measureReal_oscIO_le [IsFiniteMeasure μ] (hmp : MeasurePreserving σ μ μ)
-    (hσ : Measurable σ) (f f' : Ω → ℝ) (hfm : Measurable f) (hf'm : Measurable f')
+    (f f' : Ω → ℝ) (hfm : Measurable f) (hf'm : Measurable f')
     (hdiff : Integrable (fun x => |f x - f' x|) μ) {ε : ℝ} (hε : 0 < ε)
     (hconv : μ.real (oscIO σ f' ε) = 0) :
     ε * μ.real (oscIO σ f (3 * ε)) ≤ ∫ x, |f x - f' x| ∂μ := by
@@ -145,21 +145,6 @@ theorem measureReal_oscIO_le [IsFiniteMeasure μ] (hmp : MeasurePreserving σ μ
   -- The maximal set on the right of `oscIO_subset`.
   set M : Set Ω := {x | ∃ j, 1 ≤ j ∧ ε * j < birkhoffSum σ D j x} with hMdef
   have hsub := oscIO_subset σ f f' (ε := ε)
-  have hmeasM : MeasurableSet M := by
-    have hbs : ∀ k : ℕ, Measurable (birkhoffSum σ D k) := by
-      intro k
-      change Measurable fun x => ∑ i ∈ Finset.range k, D (σ^[i] x)
-      exact Finset.measurable_sum _ (fun i _ => hDm.comp (hσ.iterate i))
-    rw [hMdef]
-    have : {x | ∃ j, 1 ≤ j ∧ ε * j < birkhoffSum σ D j x}
-        = ⋃ j : ℕ, ⋃ _ : 1 ≤ j, {x | ε * j < birkhoffSum σ D j x} := by
-      ext x; simp only [Set.mem_ofPred_eq, Set.mem_iUnion]
-      constructor
-      · rintro ⟨j, hj, hlt⟩; exact ⟨j, hj, hlt⟩
-      · rintro ⟨j, hj, hlt⟩; exact ⟨j, hj, hlt⟩
-    rw [this]
-    exact MeasurableSet.iUnion fun j => MeasurableSet.iUnion fun _ =>
-      measurableSet_lt measurable_const (hbs j)
   -- `μ(oscIO f 3ε) ≤ μ(oscIO f' ε) + μ(M) = μ(M)`.
   have hle : μ.real (oscIO σ f (3 * ε)) ≤ μ.real M := by
     have h1 : μ.real (oscIO σ f (3 * ε)) ≤ μ.real (oscIO σ f' ε ∪ M) :=
@@ -203,10 +188,10 @@ theorem tendsto_of_notMem_oscIO (σ : Ω → Ω) (f : Ω → ℝ) (x : Ω)
 convergent Birkhoff averages, and `f` can be approximated in `L¹` by members of `D` to arbitrary
 accuracy, then `f` has a.e. convergent Birkhoff averages.
 
-This is stage 4's workhorse, applied twice in the proof of Birkhoff: once to pass from exact
-coboundaries to `closure H`, once to pass from `L²` to `L¹`. -/
+The independent `L²` proof applies this to pass from exact coboundaries to `closure H`.
+The general `L¹` endpoint is supplied by the pool's existing theorem. -/
 theorem ae_tendsto_birkhoffAverage_of_dense [IsFiniteMeasure μ] (hmp : MeasurePreserving σ μ μ)
-    (hσ : Measurable σ) (f : Ω → ℝ) (hfm : Measurable f)
+    (f : Ω → ℝ) (hfm : Measurable f)
     (happrox : ∀ η : ℝ, 0 < η → ∃ f' : Ω → ℝ, Measurable f' ∧
       Integrable (fun x => |f x - f' x|) μ ∧ (∫ x, |f x - f' x| ∂μ) < η ∧
       ∀ᵐ x ∂μ, ∃ L : ℝ, Filter.Tendsto
@@ -245,7 +230,7 @@ theorem ae_tendsto_birkhoffAverage_of_dense [IsFiniteMeasure μ] (hmp : MeasureP
                       by linarith [hA.1, hA.2, hB.1, hB.2]⟩
         linarith
       simp [measureReal_def, measure_eq_zero_iff_ae_notMem.mpr this]
-    have hkey := measureReal_oscIO_le hmp hσ f f' hfm hf'm hdiff hε hf'null
+    have hkey := measureReal_oscIO_le hmp f f' hfm hf'm hdiff hε hf'null
     rw [h3] at hkey
     -- `ε · μ(oscIO f c) ≤ ‖f - f'‖₁ < ε · r`, so `μ(oscIO f c) < r`.
     have hlt : ε * μ.real (oscIO σ f c) < ε * r := lt_of_le_of_lt hkey hsmall

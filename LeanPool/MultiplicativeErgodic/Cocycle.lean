@@ -1616,6 +1616,41 @@ theorem Cocycle.measure_degenerateBack_eq_one (R : Cocycle Ω X) [SeparableSpace
         (hmp.measure_preimage hmeas.nullMeasurableSet).symm
     _ ≤ R.μ (R.degenerateBack k) := measure_mono hsub
 
+/-- The preceding product has all three limits, including the empty product at index zero. -/
+private theorem Cocycle.ae_tendsto_logProd_predecessor (R : Cocycle Ω X)
+    [SeparableSpace X] [BorelSpace X] (j : ℕ)
+    (hZ : R.μ (R.degenerate (j + 1)) = 0) :
+    ∃ Aj : EReal, Aj < ⊤ ∧
+        (∀ᵐ ω ∂(R.μ), Tendsto (fun n : ℕ =>
+          ((Real.log (R.prodBern j n ω) / n : ℝ) : EReal)) atTop (nhds Aj)) ∧
+        (∀ᵐ ω ∂(R.μ), Tendsto (fun n : ℕ =>
+          ((Real.log (R.prodBern j (2 * n) (zIter R.σ (-(n : ℤ)) ω)) / (2 * n) : ℝ) : EReal))
+          atTop (nhds Aj)) ∧
+        (∀ᵐ ω ∂(R.μ), Tendsto (fun n : ℕ =>
+          ((Real.log (R.prodBern j n (zIter R.σ (-(n : ℤ)) ω)) / n : ℝ) : EReal))
+          atTop (nhds Aj)) := by
+  rcases Nat.eq_zero_or_pos j with rfl | hj
+  · refine ⟨0, by simp, ?_, ?_, ?_⟩
+    · filter_upwards with ω
+      have hz : ∀ n : ℕ, ((Real.log (R.prodBern 0 n ω) / n : ℝ) : EReal) = 0 := by
+        intro n; simp [Cocycle.prodBern]
+      simp_rw [hz]; exact tendsto_const_nhds
+    · filter_upwards with ω
+      have hz : ∀ n : ℕ, ((Real.log
+          (R.prodBern 0 (2 * n) (zIter R.σ (-(n : ℤ)) ω)) / (2 * n) : ℝ) : EReal) = 0 := by
+        intro n; simp [Cocycle.prodBern]
+      simp_rw [hz]; exact tendsto_const_nhds
+    · filter_upwards with ω
+      have hz : ∀ n : ℕ, ((Real.log
+          (R.prodBern 0 n (zIter R.σ (-(n : ℤ)) ω)) / n : ℝ) : EReal) = 0 := by
+        intro n; simp [Cocycle.prodBern]
+      simp_rw [hz]; exact tendsto_const_nhds
+  · have : NeZero j := ⟨by omega⟩
+    have hsub := measure_mono (μ := R.μ)
+      (R.degenerate_mono (p := j) (q := j + 1) (by omega) (by omega))
+    rw [hZ] at hsub
+    exact R.ae_tendsto_logProd_balanced (k := j) (by omega) (nonpos_iff_eq_zero.1 hsub)
+
 /-- **The balanced exponent.** `(1/2n) log ρ_k(𝓛^{(2n)}_{σ^{-n}ω}) → χ_k` almost surely --- the
 third of the three limits opening `proof_met.tex` l.695--700, and the one the equivariance step
 of `Cocycle.exists_topFastSpace` runs on. It comes from the same truncated families as
@@ -1629,36 +1664,7 @@ theorem Cocycle.ae_tendsto_chi_balanced (R : Cocycle Ω X) [SeparableSpace X] [B
   obtain ⟨j, rfl⟩ : ∃ j, k = j + 1 := ⟨k - 1, by omega⟩
   rcases R.measure_degenerate_eq_zero_or_one (j + 1) with hZ | hZ
   · obtain ⟨Ak, hAktop, hAkf, hAkb, -⟩ := R.ae_tendsto_logProd_balanced (k := j + 1) (by omega) hZ
-    obtain ⟨Aj, hAjtop, hAjf, hAjb, -⟩ : ∃ Aj : EReal, Aj < ⊤ ∧
-        (∀ᵐ ω ∂(R.μ), Tendsto (fun n : ℕ =>
-          ((Real.log (R.prodBern j n ω) / n : ℝ) : EReal)) atTop (nhds Aj)) ∧
-        (∀ᵐ ω ∂(R.μ), Tendsto (fun n : ℕ =>
-          ((Real.log (R.prodBern j (2 * n) (zIter R.σ (-(n : ℤ)) ω)) / (2 * n) : ℝ) : EReal))
-          atTop (nhds Aj)) ∧
-        (∀ᵐ ω ∂(R.μ), Tendsto (fun n : ℕ =>
-          ((Real.log (R.prodBern j n (zIter R.σ (-(n : ℤ)) ω)) / n : ℝ) : EReal))
-          atTop (nhds Aj)) := by
-      rcases Nat.eq_zero_or_pos j with rfl | hj
-      · refine ⟨0, by simp, ?_, ?_, ?_⟩
-        · filter_upwards with ω
-          have hz : ∀ n : ℕ, ((Real.log (R.prodBern 0 n ω) / n : ℝ) : EReal) = 0 := by
-            intro n; simp [Cocycle.prodBern]
-          simp_rw [hz]; exact tendsto_const_nhds
-        · filter_upwards with ω
-          have hz : ∀ n : ℕ, ((Real.log
-              (R.prodBern 0 (2 * n) (zIter R.σ (-(n : ℤ)) ω)) / (2 * n) : ℝ) : EReal) = 0 := by
-            intro n; simp [Cocycle.prodBern]
-          simp_rw [hz]; exact tendsto_const_nhds
-        · filter_upwards with ω
-          have hz : ∀ n : ℕ, ((Real.log
-              (R.prodBern 0 n (zIter R.σ (-(n : ℤ)) ω)) / n : ℝ) : EReal) = 0 := by
-            intro n; simp [Cocycle.prodBern]
-          simp_rw [hz]; exact tendsto_const_nhds
-      · have : NeZero j := ⟨by omega⟩
-        have hsub := measure_mono (μ := R.μ)
-          (R.degenerate_mono (p := j) (q := j + 1) (by omega) (by omega))
-        rw [hZ] at hsub
-        exact R.ae_tendsto_logProd_balanced (k := j) (by omega) (nonpos_iff_eq_zero.1 hsub)
+    obtain ⟨Aj, hAjtop, hAjf, hAjb, -⟩ := R.ae_tendsto_logProd_predecessor j hZ
     have hnd : ∀ᵐ ω ∂(R.μ), ω ∉ R.degenerate (j + 1) := by rw [ae_iff]; simpa using hZ
     have hshiftnd := R.ae_all_shift_notMem_degenerate (j + 1) hZ
     filter_upwards [hAkf, hAkb, hAjf, hAjb, hnd, hshiftnd] with ω h1 h2 h3 h4 h5 h6
@@ -1724,36 +1730,7 @@ theorem Cocycle.ae_tendsto_chi_backward (R : Cocycle Ω X) [SeparableSpace X] [B
   rcases R.measure_degenerate_eq_zero_or_one (j + 1) with hZ | hZ
   · obtain ⟨Ak, hAktop, hAkf, -, hAkbk⟩ :=
       R.ae_tendsto_logProd_balanced (k := j + 1) (by omega) hZ
-    obtain ⟨Aj, hAjtop, hAjf, -, hAjbk⟩ : ∃ Aj : EReal, Aj < ⊤ ∧
-        (∀ᵐ ω ∂(R.μ), Tendsto (fun n : ℕ =>
-          ((Real.log (R.prodBern j n ω) / n : ℝ) : EReal)) atTop (nhds Aj)) ∧
-        (∀ᵐ ω ∂(R.μ), Tendsto (fun n : ℕ =>
-          ((Real.log (R.prodBern j (2 * n) (zIter R.σ (-(n : ℤ)) ω)) / (2 * n) : ℝ) : EReal))
-          atTop (nhds Aj)) ∧
-        (∀ᵐ ω ∂(R.μ), Tendsto (fun n : ℕ =>
-          ((Real.log (R.prodBern j n (zIter R.σ (-(n : ℤ)) ω)) / n : ℝ) : EReal))
-          atTop (nhds Aj)) := by
-      rcases Nat.eq_zero_or_pos j with rfl | hj
-      · refine ⟨0, by simp, ?_, ?_, ?_⟩
-        · filter_upwards with ω
-          have hz : ∀ n : ℕ, ((Real.log (R.prodBern 0 n ω) / n : ℝ) : EReal) = 0 := by
-            intro n; simp [Cocycle.prodBern]
-          simp_rw [hz]; exact tendsto_const_nhds
-        · filter_upwards with ω
-          have hz : ∀ n : ℕ, ((Real.log
-              (R.prodBern 0 (2 * n) (zIter R.σ (-(n : ℤ)) ω)) / (2 * n) : ℝ) : EReal) = 0 := by
-            intro n; simp [Cocycle.prodBern]
-          simp_rw [hz]; exact tendsto_const_nhds
-        · filter_upwards with ω
-          have hz : ∀ n : ℕ, ((Real.log
-              (R.prodBern 0 n (zIter R.σ (-(n : ℤ)) ω)) / n : ℝ) : EReal) = 0 := by
-            intro n; simp [Cocycle.prodBern]
-          simp_rw [hz]; exact tendsto_const_nhds
-      · have : NeZero j := ⟨by omega⟩
-        have hsub := measure_mono (μ := R.μ)
-          (R.degenerate_mono (p := j) (q := j + 1) (by omega) (by omega))
-        rw [hZ] at hsub
-        exact R.ae_tendsto_logProd_balanced (k := j) (by omega) (nonpos_iff_eq_zero.1 hsub)
+    obtain ⟨Aj, hAjtop, hAjf, -, hAjbk⟩ := R.ae_tendsto_logProd_predecessor j hZ
     have hnd : ∀ᵐ ω ∂(R.μ), ω ∉ R.degenerate (j + 1) := by rw [ae_iff]; simpa using hZ
     have hshiftnd := R.ae_all_shift_notMem_degenerate (j + 1) hZ
     filter_upwards [hAkf, hAkbk, hAjf, hAjbk, hnd, hshiftnd] with ω h1 h2 h3 h4 h5 h6

@@ -87,30 +87,9 @@ theorem bernsteinNumber_comp_le_norm_mul (S T : X →L[ℝ] X) (k : ℕ) :
   rintro _ ⟨V, rfl⟩
   have hTle : growth T (V.1 : Submodule ℝ X) ≤ bernsteinNumber T k :=
     le_csSup ⟨‖T‖, by rintro _ ⟨U, rfl⟩; exact growth_le_opNorm T _⟩ ⟨V, rfl⟩
-  have hle : growth (S.comp T) (V.1 : Submodule ℝ X) ≤ ‖S‖ * growth T (V.1 : Submodule ℝ X) := by
-    rcases (Metric.sphere (0 : X) 1 ∩ ((V.1 : Submodule ℝ X) : Set X)).eq_empty_or_nonempty with
-      he | hne
-    · change sInf _ ≤ _
-      rw [he, Set.image_empty, Real.sInf_empty]
-      exact mul_nonneg (norm_nonneg S) (growth_nonneg T _)
-    · refine le_of_forall_pos_le_add fun ε hε => ?_
-      have hSpos : (0 : ℝ) < ‖S‖ + 1 := by positivity
-      have hlt : growth T (V.1 : Submodule ℝ X)
-          < growth T (V.1 : Submodule ℝ X) + ε / (‖S‖ + 1) := by
-        have : (0 : ℝ) < ε / (‖S‖ + 1) := by positivity
-        linarith
-      obtain ⟨_, ⟨x, hx, rfl⟩, hxlt⟩ := exists_lt_of_csInf_lt (hne.image _) hlt
-      have h1 : growth (S.comp T) (V.1 : Submodule ℝ X) ≤ ‖S (T x)‖ :=
-        csInf_le ⟨0, by rintro _ ⟨z, -, rfl⟩; exact norm_nonneg _⟩ ⟨x, hx, rfl⟩
-      have h2 : ‖S (T x)‖ ≤ ‖S‖ * ‖T x‖ := S.le_opNorm _
-      have h3 : ‖S‖ * ‖T x‖
-          ≤ ‖S‖ * (growth T (V.1 : Submodule ℝ X) + ε / (‖S‖ + 1)) :=
-        mul_le_mul_of_nonneg_left hxlt.le (norm_nonneg S)
-      have h4 : ‖S‖ * (ε / (‖S‖ + 1)) ≤ ε := by
-        rw [mul_div_assoc'] at *
-        rw [div_le_iff₀ hSpos]
-        nlinarith [norm_nonneg S, hε.le]
-      nlinarith [h1, h2, h3, h4]
+  have hle : growth (S.comp T) (V.1 : Submodule ℝ X) ≤
+      ‖S‖ * growth T (V.1 : Submodule ℝ X) := by
+    simpa only [mul_comm] using (growth_ineq T S (V.1 : Submodule ℝ X)).2.trans (min_le_right _ _)
   refine hle.trans (mul_le_mul_of_nonneg_left hTle (norm_nonneg S))
 
 /-- `g_T(V)` is already determined by a dense subset of the unit sphere of `V`: `x ↦ ‖Tx‖` is

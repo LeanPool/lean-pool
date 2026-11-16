@@ -486,16 +486,7 @@ theorem Cocycle.IsLevel.eq_zero_of_mem_backwardSpace (R : Cocycle Ω X) [Separab
   obtain ⟨A, C, hA, hApos, hC⟩ := R.exists_bounded_set hD.Q_meas
   let R' : Cocycle Ω X := R.modify D.Q hD.Q_meas A hA C hC
   obtain ⟨lamL, hlamL⟩ := hD.lam_real
-  have hgapR : ∀ᵐ ω ∂(R.μ), ∀ᶠ n : ℕ in atTop, ‖(R.iterate n ω).comp (D.Q ω)‖ <
-      growth (R.iterate n ω) ((D.F ω).1 : Submodule ℝ X) := by
-    obtain ⟨b1, hb1, hb1'⟩ := EReal.lt_iff_exists_real_btwn.1 hD.lam_gap
-    obtain ⟨b2, hb2, hb2'⟩ := EReal.lt_iff_exists_real_btwn.1 hb1'
-    have hb12 : b1 < b2 := by exact_mod_cast hb2
-    filter_upwards [hD.slow_rate, hD.F_growth] with ω hs hF
-    filter_upwards [eventually_lt_exp_of_tendsto hb1 hs, hF b2 hb2'] with n h1 h2
-    refine lt_of_lt_of_le h1 (le_trans ?_ h2)
-    rw [mul_comm]
-    exact Real.exp_le_exp.2 (mul_le_mul_of_nonneg_left hb12.le (Nat.cast_nonneg _))
+  have hgapR := Cocycle.IsLevel.ae_eventually_norm_comp_lt_growth R hD
   have hχ := R.chi_modify (fun ω => ((D.F ω).1 : Submodule ℝ X)) D.V D.Q hD.Q_meas hA hApos hC
     hD.Q_idem hD.Q_range hD.Q_ker hD.Q_equiv hD.Q_temp hgapR
   -- the top exponent of `𝓛'` is `λ_{l+2}`

@@ -414,6 +414,25 @@ theorem SubadditiveFamily.three_limits_ereal [StandardBorelSpace Ω] {μ : Measu
   · filter_upwards [hae2] with ω hω; rwa [h12]
   · filter_upwards [hae3] with ω hω; rwa [h13]
 
+/-- A finite constant shift preserves integrability of the positive part. -/
+private theorem integrable_posPart_add_const {μ : Measure Ω} [IsFiniteMeasure μ]
+    (u : Ω → ℝ) (c : ℝ) (hum : Measurable u)
+    (hu : Integrable (fun ω => max (u ω) 0) μ) :
+    Integrable (fun ω => max (u ω + c) 0) μ := by
+  refine Integrable.mono' (hu.add (integrable_const |c|))
+    ((hum.add_const c).max measurable_const).aestronglyMeasurable ?_
+  filter_upwards with ω
+  rw [Real.norm_eq_abs]
+  have h1 : u ω ≤ max (u ω) 0 := le_max_left _ _
+  have h2 : (0 : ℝ) ≤ max (u ω) 0 := le_max_right _ _
+  have h3 : c ≤ |c| := le_abs_self c
+  have h5 : (0 : ℝ) ≤ |c| := abs_nonneg c
+  rcases max_choice (u ω + c) 0 with h | h <;> rw [h]
+  · have hge : (0 : ℝ) ≤ u ω + c := by rw [← h]; exact le_max_right _ _
+    rw [abs_of_nonneg hge]
+    simp only [Pi.add_apply]; linarith
+  · simp only [Pi.add_apply, abs_zero]; linarith
+
 /-- **Synthesis for weakly subadditive families, under the general hypothesis.**
 
 There is no `L¹` sibling: `f` and `g` need only `∫ (f 1)⁺ < ∞` and `∫ (g 1)⁺ < ∞` — the same
@@ -463,24 +482,10 @@ theorem kingsyn_real [StandardBorelSpace Ω] (μ : Measure Ω) [IsProbabilityMea
     simp only [hg'def]
     linarith
   -- the positive-part hypothesis survives the flat shift
-  have hshift : ∀ (u : Ω → ℝ) (c : ℝ), Measurable u → Integrable (fun ω => max (u ω) 0) μ →
-      Integrable (fun ω => max (u ω + c) 0) μ := by
-    intro u c hum hu
-    refine Integrable.mono' (hu.add (integrable_const |c|))
-      ((hum.add_const c).max measurable_const).aestronglyMeasurable ?_
-    filter_upwards with ω
-    rw [Real.norm_eq_abs]
-    have h1 : u ω ≤ max (u ω) 0 := le_max_left _ _
-    have h2 : (0 : ℝ) ≤ max (u ω) 0 := le_max_right _ _
-    have h3 : c ≤ |c| := le_abs_self c
-    have h5 : (0 : ℝ) ≤ |c| := abs_nonneg c
-    rcases max_choice (u ω + c) 0 with h | h <;> rw [h]
-    · have hge : (0 : ℝ) ≤ u ω + c := by rw [← h]; exact le_max_right _ _
-      rw [abs_of_nonneg hge]
-      simp only [Pi.add_apply]; linarith
-    · simp only [Pi.add_apply, abs_zero]; linarith
-  have hf'1 : Integrable (fun ω => max (f' 1 ω) 0) μ := hshift (f 1) Cconst (hf.1 1) hf1
-  have hg'1 : Integrable (fun ω => max (g' 1 ω) 0) μ := hshift (g 1) Dconst (hg.1 1) hg1
+  have hf'1 : Integrable (fun ω => max (f' 1 ω) 0) μ :=
+    integrable_posPart_add_const (f 1) Cconst (hf.1 1) hf1
+  have hg'1 : Integrable (fun ω => max (g' 1 ω) 0) μ :=
+    integrable_posPart_add_const (g 1) Dconst (hg.1 1) hg1
   -- the shift does not move the a.e. constant, since `Cconst / n → 0`
   have hshiftlim : ∀ (u : ℕ → Ω → ℝ) (c C : ℝ),
       (∀ᵐ ω ∂μ, Tendsto (fun n : ℕ => u n ω / n) atTop (nhds C)) →
@@ -685,23 +690,10 @@ theorem kingsyn [StandardBorelSpace Ω] (μ : Measure Ω) [IsProbabilityMeasure 
   have hg'sub : SubadditiveFamily (⇑σ) g' := by
     refine ⟨fun n => (hg.1 n).add_const Dconst, fun m n ω => ?_⟩
     have := hg.2 m n ω; simp only [hg'def]; linarith
-  have hshift : ∀ (u : Ω → ℝ) (c : ℝ), Measurable u → Integrable (fun ω => max (u ω) 0) μ →
-      Integrable (fun ω => max (u ω + c) 0) μ := by
-    intro u c hum hu
-    refine Integrable.mono' (hu.add (integrable_const |c|))
-      ((hum.add_const c).max measurable_const).aestronglyMeasurable ?_
-    filter_upwards with ω
-    rw [Real.norm_eq_abs]
-    have h1 : u ω ≤ max (u ω) 0 := le_max_left _ _
-    have h2 : (0 : ℝ) ≤ max (u ω) 0 := le_max_right _ _
-    have h3 : c ≤ |c| := le_abs_self c
-    have h5 : (0 : ℝ) ≤ |c| := abs_nonneg c
-    rcases max_choice (u ω + c) 0 with h | h <;> rw [h]
-    · have hge : (0 : ℝ) ≤ u ω + c := by rw [← h]; exact le_max_right _ _
-      rw [abs_of_nonneg hge]; simp only [Pi.add_apply]; linarith
-    · simp only [Pi.add_apply, abs_zero]; linarith
-  have hf'1 : Integrable (fun ω => max (f' 1 ω) 0) μ := hshift (f 1) Cconst (hf.1 1) hf1
-  have hg'1 : Integrable (fun ω => max (g' 1 ω) 0) μ := hshift (g 1) Dconst (hg.1 1) hg1
+  have hf'1 : Integrable (fun ω => max (f' 1 ω) 0) μ :=
+    integrable_posPart_add_const (f 1) Cconst (hf.1 1) hf1
+  have hg'1 : Integrable (fun ω => max (g' 1 ω) 0) μ :=
+    integrable_posPart_add_const (g 1) Dconst (hg.1 1) hg1
   -- the flat shift does not move the constant
   have hshiftlim : ∀ (u : ℕ → Ω → ℝ) (c : ℝ) (C : EReal) (ω : Ω),
       Tendsto (fun n : ℕ => (u n ω / n : EReal)) atTop (nhds C) →

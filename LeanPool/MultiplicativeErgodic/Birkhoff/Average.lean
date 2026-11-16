@@ -43,7 +43,7 @@ This is where the whole stage-4 apparatus meets: `exists_orthogonal_decompositio
 `ae_tendsto_birkhoffAverage_add` recombines them, with `ae_tendsto_birkhoffAverage_congr` moving
 between `Lp` elements and their representatives. -/
 theorem ae_tendsto_birkhoffAverage_of_memLp_two [IsProbabilityMeasure μ]
-    (hmp : MeasurePreserving σ μ μ) (hσ : Measurable σ) (F : Lp ℝ 2 μ) :
+    (hmp : MeasurePreserving σ μ μ) (F : Lp ℝ 2 μ) :
     ∀ᵐ x ∂μ, ∃ L : ℝ, Filter.Tendsto
       (fun n : ℕ => birkhoffAverage ℝ σ (F : Ω → ℝ) n x) Filter.atTop (nhds L) := by
   obtain ⟨y, z, hy, hz, hF⟩ := exists_orthogonal_decomposition (koopman hmp) F
@@ -56,7 +56,7 @@ theorem ae_tendsto_birkhoffAverage_of_memLp_two [IsProbabilityMeasure μ]
   -- The coboundary summand: approximate `z` by exact coboundaries in `L²`, hence in `L¹`.
   have hzconv : ∀ᵐ x ∂μ, ∃ L : ℝ, Filter.Tendsto
       (fun n : ℕ => birkhoffAverage ℝ σ (z : Ω → ℝ) n x) Filter.atTop (nhds L) := by
-    refine ae_tendsto_birkhoffAverage_of_dense hmp hσ (z : Ω → ℝ)
+    refine ae_tendsto_birkhoffAverage_of_dense hmp (z : Ω → ℝ)
       (Lp.stronglyMeasurable z).measurable ?_
     intro η hη
     -- Pick a coboundary within `η` of `z` in the `L²` norm.
