@@ -24,6 +24,7 @@ public import LeanPool.SteinerSpanners.CSP.WitnessProjection
 public import LeanPool.SteinerSpanners.Combinatorics
 public import LeanPool.SteinerSpanners.Defs
 public import LeanPool.SteinerSpanners.Dvoretzky
+public import LeanPool.SteinerSpanners.Geometry
 public import LeanPool.SteinerSpanners.Glue
 public import LeanPool.SteinerSpanners.Hamming
 public import LeanPool.SteinerSpanners.Projection

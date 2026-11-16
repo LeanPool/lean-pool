@@ -15,6 +15,7 @@ public import Mathlib.Analysis.SpecialFunctions.Log.Base
 public import Mathlib.Analysis.Normed.Lp.PiLp
 
 public import LeanPool.SteinerSpanners.Defs
+public import LeanPool.SteinerSpanners.Geometry
 
 /-! # Projection infrastructure for Steiner spanners
 
@@ -652,20 +653,6 @@ theorem thm_1_2_from_1_3
   obtain ⟨M₁, c, c₀, β₁, β₂, A, hM₁_pos, h_consts, h_main⟩ := h_1_3
   refine ⟨81 * M₁, by positivity, ?_⟩
   intro p hp C hC
-  have : Fact (1 ≤ ENNReal.ofReal p) := ⟨ENNReal.one_le_ofReal.mpr hp⟩
-  have hlp_nonneg : ∀ {d : ℕ} (x y : Fin d → ℝ), 0 ≤ lpDist p x y := by
-    intro d x y
-    rw [h_lp p hp x y]
-    exact dist_nonneg
-  have hlp_self : ∀ {d : ℕ} (x : Fin d → ℝ), lpDist p x x = 0 := by
-    intro d x
-    rw [h_lp p hp x x]
-    exact dist_self _
-  have hlp_tri : ∀ {d : ℕ} (x y z : Fin d → ℝ),
-      lpDist p x z ≤ lpDist p x y + lpDist p y z := by
-    intro d x y z
-    rw [h_lp p hp x z, h_lp p hp x y, h_lp p hp y z]
-    exact dist_triangle _ _ _
   let C₁ : ℕ := max 3 ⌈C ^ p⌉₊
   obtain ⟨_, hc₀_pos, hβ₁_pos, hβ₁_le, hA_pos⟩ := h_consts C₁ (le_max_left 3 _)
   obtain ⟨hc_4p, hc_3p, nSeq, hn_strict, hn_ge2, h_inst⟩ := h_main p hp C hC
@@ -675,70 +662,8 @@ theorem thm_1_2_from_1_3
   obtain ⟨d, P, hd_pos, hd_lo, hd_hi, hP_bool, hP_inj, hP_ar, h_span⟩ := h_inst j
   refine ⟨d, P, hd_pos, hd_lo, hd_hi, hP_bool, hP_inj, hP_ar, ?_⟩
   intro G hGeom
-  let proj : Fin (nSeq j) ⊕ PEmpty → Fin (nSeq j) := Sum.elim id PEmpty.elim
-  let wG : Sym2 (Fin (nSeq j)) → ℝ :=
-    Sym2.lift ⟨fun u v => lpDist p (P u) (P v), fun u v => by
-      simp only [lpDist, abs_sub_comm]⟩
-  let H : SimpleGraph (Fin (nSeq j) ⊕ PEmpty) :=
-    { Adj := fun x y => G.Adj (proj x) (proj y)
-      symm := ⟨fun _ _ h => G.adj_symm h⟩
-      loopless := ⟨fun x h => G.irrefl h⟩ }
-  let w : Sym2 (Fin (nSeq j) ⊕ PEmpty) → ℝ := fun s => wG (Sym2.map proj s)
-  have hSpan : IsNonMetricSteinerSpanner p P C H w := by
-    refine ⟨?_, ?_, ?_⟩
-    · intro s _
-      revert s
-      refine Sym2.ind (fun x y _ => ?_)
-      simpa [w, wG] using hlp_nonneg (P (proj x)) (P (proj y))
-    · intro i₁ i₂
-      have hwalk_lb : ∀ {u v : Fin (nSeq j) ⊕ PEmpty} (q : H.Walk u v),
-          lpDist p (P (proj u)) (P (proj v)) ≤ walkWeight w q := by
-        intro u v q
-        induction q with
-        | @nil u =>
-          simp [walkWeight, hlp_self]
-        | @cons u b v _ q' ih =>
-          have htri := hlp_tri (P (proj u)) (P (proj b)) (P (proj v))
-          have hw_eq : w s(u, b) = lpDist p (P (proj u)) (P (proj b)) := by
-            simp [w, wG]
-          simp only [walkWeight, hw_eq]
-          linarith
-      refine le_iInf (fun q => ?_)
-      exact ENNReal.ofReal_le_ofReal (hwalk_lb q)
-    · intro i₁ i₂
-      let emb : G →g H := ⟨Sum.inl, fun h => h⟩
-      have hww_map : ∀ {u v : Fin (nSeq j)} (q : G.Walk u v),
-          walkWeight w (q.map emb) = walkWeight wG q := by
-        intro u v q
-        induction q with
-        | nil => simp [walkWeight]
-        | @cons u b v _ q' ih =>
-          simp only [SimpleGraph.Walk.map_cons, walkWeight, ih]
-          rfl
-      have hle_gd : graphDist H w (.inl i₁) (.inl i₂) ≤ graphDist G wG i₁ i₂ := by
-        unfold graphDist
-        refine le_iInf (fun q => ?_)
-        calc
-          (⨅ p_w : H.Walk (.inl i₁) (.inl i₂), ENNReal.ofReal (walkWeight w p_w))
-            ≤ ENNReal.ofReal (walkWeight w (q.map emb)) := iInf_le _ (q.map emb)
-          _ = ENNReal.ofReal (walkWeight wG q) := by rw [hww_map]
-      exact le_trans hle_gd (hGeom i₁ i₂)
-  have hproj_inj : Function.Injective proj := by
-    rintro (u | s) (v | s) h
-    · exact congrArg Sum.inl h
-    · exact PEmpty.elim s
-    · exact PEmpty.elim s
-    · exact PEmpty.elim s
-  let f_edge : H.edgeSet → G.edgeSet := fun s =>
-    ⟨Sym2.map proj s.1, by
-      rcases s with ⟨s, hs⟩
-      revert hs
-      refine Sym2.ind (fun x y hs => ?_) s
-      simpa [SimpleGraph.mem_edgeSet] using hs⟩
-  have hf_inj : Function.Injective f_edge := fun e₁ e₂ heq =>
-    Subtype.ext (Sym2.map.injective hproj_inj (Subtype.mk.inj heq))
-  have hEdge_le : (Nat.card H.edgeSet : ℝ) ≤ (Nat.card G.edgeSet : ℝ) := by
-    exact_mod_cast Nat.card_le_card_of_injective f_edge hf_inj
+  obtain ⟨H, w, hSpan, hEdge_le⟩ :=
+    Geometry.geometric_spanner_to_steiner h_lp hp P C G hGeom
   exact le_trans (h_span PEmpty H w hSpan) hEdge_le
 
 end HighDimSteinerSpanners.Proofs.Projection
