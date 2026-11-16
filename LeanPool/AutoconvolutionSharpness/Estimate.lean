@@ -99,6 +99,12 @@ theorem plateau_sum_lower {r b n K : ℕ} (hn : 0 < n) (hK : K ≤ n)
       mul_le_mul_of_nonneg_left hmin (by positivity)
     _ = _ := by ring
 
+private theorem scaled_ratio_mul_mass (factor lower upper mass scale weight : ℝ)
+    (hupper : upper ≠ 0) (hmass : mass ≠ 0) :
+    factor * (lower / upper) * (weight / mass ^ 2) * ((scale * mass) ^ 2 * upper) =
+      lower * factor * scale ^ 2 * weight := by
+  field_simp
+
 /-- Equation (lower) from the actual three norm bounds.
 `square` denotes the square of the L² norm, `one` the L¹ norm,
 and `peak` the L∞ norm. All assumptions are explicit. -/
@@ -145,7 +151,7 @@ theorem norm_ratio_lower {r b n K : ℕ} (hn : 0 < n) (hK : K ≤ n)
       mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_left hPeak hOnePos.le) hE
     _ = height n 0 * (1 - 1 / (n : ℝ)) * ((r : ℝ) * b) ^ (2 * n) * T := by
       rw [hOne', show ((r : ℝ) * b) ^ (2 * n) = C ^ 2 by rw [Nat.mul_comm, pow_mul]]
-      field_simp [hS.ne', hApos.ne']
+      exact scaled_ratio_mul_mass _ _ _ _ _ _ hApos.ne' hS.ne'
     _ ≤ _ := (plateau_sum_lower hn hK hb hbr).trans hSq
 
 /-- A version for the geometric block lemma: the right - hand side here is its
