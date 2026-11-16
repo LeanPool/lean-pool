@@ -66,10 +66,10 @@ boundedness" step used repeatedly in Rudolph's proof of the backward Vitali theo
 `ε/2^{u+1}` in measure of `A_{u-1}` to obtain `A_u` on which the relevant index is bounded). Any
 measurable `h : Ω → ℕ` is, trivially, everywhere
 finite, so the "overflow" sets `{x ∈ A | N < h x}` shrink (as `N → ∞`) to `∅`; continuity of `μ`
-from above (available since `μ A ≤ 1 < ∞`) then makes their measure `→ 0`, giving a single
+from above (available since `μ A < ∞`) then makes their measure `→ 0`, giving a single
 threshold `N` whose overflow has measure `< δ`. The mechanism is
 `tendsto_measure_iInter_atTop`-style continuity from above. -/
-theorem exists_meas_bound_sliver {μ : Measure Ω} [IsProbabilityMeasure μ]
+theorem exists_meas_bound_sliver {μ : Measure Ω} [IsFiniteMeasure μ]
     {A : Set Ω} (hA : MeasurableSet A) (h : Ω → ℕ) (hh : Measurable h)
     {δ : ℝ≥0∞} (hδ : 0 < δ) :
     ∃ N : ℕ, μ (A ∩ {x | N < h x}) < δ := by
@@ -108,7 +108,7 @@ theorem exists_meas_dominating_index (j : ℕ → Ω → ℕ) (hj : ∀ k, Measu
   exact measurable_find hex (fun n => measurableSet_le hb (hj n))
 
 /-- Repeated measurable truncation gives nested domains with a bounded loss at each step. -/
-private theorem exists_truncation_ladder {μ : Measure Ω} [IsProbabilityMeasure μ]
+private theorem exists_truncation_ladder {μ : Measure Ω} [IsFiniteMeasure μ]
     (radius : ℕ → Ω → ℕ) (hrad : ∀ b, Measurable (radius b))
     {δ : ℝ≥0∞} (hδpos : 0 < δ) :
     ∃ (A : ℕ → Set Ω) (Bnd : ℕ → ℕ), A 0 = Set.univ ∧

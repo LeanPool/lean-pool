@@ -2177,6 +2177,51 @@ theorem Cocycle.ae_eventually_estimates (R : Cocycle Ω X) [SeparableSpace X] [B
     eventually_lt_exp_of_tendsto h2 hback2
   filter_upwards [e1, e2, e3, e4, e5] with n h h' h'' h''' h'''' using ⟨h, h', h'', h''', h''''⟩
 
+/-- The exponential ratio for two length-`n` factors of a length-`2n` window. -/
+theorem exp_two_window_ratio (lam eps : ℝ) (n : ℕ) :
+    Real.exp (-eps) * Real.exp ((lam - eps) * ((2 * n : ℕ) : ℝ))
+      / Real.exp ((lam + eps) * n) = Real.exp (-eps + (n : ℝ) * (lam - 3 * eps)) := by
+  rw [← Real.exp_add, ← Real.exp_sub]
+  congr 1
+  push_cast
+  ring
+
+/-- **`proof_met.tex` l.710.** The selected space `E_tilde^{(n)}(ω)` grows fast under the *backward*
+window `𝓛^{(n)}_{σ^{-n}ω}`. This is the first half of the Cauchy step, isolated because the
+equivariance step needs it at `σω` as well. -/
+theorem Cocycle.eventually_growth_etil_ge (R : Cocycle Ω X) (m : ℕ)
+    {lam lam2 eps : ℝ}
+    (Etil E : ℕ → Ω → GrassmannianFin X m) (ω : Ω)
+    (hnear : ∀ n : ℕ, bernsteinNumber (R.iterate (2 * n) (zIter R.σ (-(n : ℤ)) ω)) m ≠ 0 →
+        (Real.exp (-eps) * bernsteinNumber (R.iterate (2 * n) (zIter R.σ (-(n : ℤ)) ω)) m
+            < growth (R.iterate (2 * n) (zIter R.σ (-(n : ℤ)) ω)) ((Etil n ω).1 : Submodule ℝ X)) ∧
+        (((E n ω).1 : Submodule ℝ X)
+            = Submodule.map ((R.iterate n (zIter R.σ (-(n : ℤ)) ω) : X →ₗ[ℝ] X))
+              ((Etil n ω).1 : Submodule ℝ X)))
+    (hest : ∀ᶠ n : ℕ in atTop,
+      Real.exp ((lam - eps) * ((2 * n : ℕ) : ℝ))
+          < bernsteinNumber (R.iterate (2 * n) (zIter R.σ (-(n : ℤ)) ω)) m ∧
+      ‖R.iterate n ω‖ < Real.exp ((lam + eps) * n) ∧
+      ‖R.iterate n (zIter R.σ (-(n : ℤ)) ω)‖ < Real.exp ((lam + eps) * n) ∧
+      max ‖R.L (zIter R.σ (-((n + 1 : ℕ) : ℤ)) ω)‖ 1 < Real.exp (eps * ((n : ℝ) + 1)) ∧
+      bernsteinNumber (R.iterate n (zIter R.σ (-(n : ℤ)) ω)) (m + 1) < Real.exp (lam2 * n)) :
+    ∀ᶠ n : ℕ in atTop, Real.exp (-eps + (n : ℝ) * (lam - 3 * eps))
+        < growth (R.iterate n (zIter R.σ (-(n : ℤ)) ω)) ((Etil n ω).1 : Submodule ℝ X) := by
+  filter_upwards [hest] with n hn
+  obtain ⟨hbal, hfwd, -, -, -⟩ := hn
+  have hne : bernsteinNumber (R.iterate (2 * n) (zIter R.σ (-(n : ℤ)) ω)) m ≠ 0 :=
+    ne_of_gt ((Real.exp_pos _).trans hbal)
+  obtain ⟨hnearn, -⟩ := hnear n hne
+  have hWsplit := R.iterate_two_mul_shift n ω
+  have hA1 : Real.exp (-eps) * Real.exp ((lam - eps) * ((2 * n : ℕ) : ℝ))
+      < growth ((R.iterate n ω).comp (R.iterate n (zIter R.σ (-(n : ℤ)) ω)))
+          ((Etil n ω).1 : Submodule ℝ X) := by
+    rw [← hWsplit]
+    exact lt_trans (by gcongr) hnearn
+  have hA2 := lt_growth_of_lt_comp (b := Real.exp ((lam + eps) * n)) (Real.exp_pos _)
+    hfwd.le hA1
+  rwa [exp_two_window_ratio] at hA2
+
 /-- **The Cauchy step of `proof_met.tex` l.710--735, at one `ω`.** -/
 theorem Cocycle.eventually_dist_approx_le (R : Cocycle Ω X) (m : ℕ) [NeZero m]
     {lam lam2 eps : ℝ} (heps : 0 < eps) (hgap : lam2 + 6 * eps < lam)
@@ -2202,8 +2247,10 @@ theorem Cocycle.eventually_dist_approx_le (R : Cocycle Ω X) (m : ℕ) [NeZero m
   have hest1 := (tendsto_add_atTop_nat 1).eventually hest
   have hhalf := eventually_exp_le_half (lam := lam) (lam2 := lam2) (eps := eps)
     (C0 := Real.exp (-eps) * min 1 (Real.exp (lam - 4 * eps))) hC0pos heps hgap
-  filter_upwards [hest, hest1, hhalf, eventually_ge_atTop 1] with n hn hn1 hhn hn0
-  obtain ⟨hbal, hfwd, -, htemp, hgapn⟩ := hn
+  have hgrowth := R.eventually_growth_etil_ge m Etil E ω hnear hest
+  filter_upwards [hest, hest1, hhalf, eventually_ge_atTop 1, hgrowth]
+    with n hn hn1 hhn hn0 hgrowthn
+  obtain ⟨hbal, -, -, htemp, hgapn⟩ := hn
   obtain ⟨hbal1, hfwd1, -, -, -⟩ := hn1
   set T : X →L[ℝ] X := R.iterate n (zIter R.σ (-(n : ℤ)) ω) with hTdef
   set S : X →L[ℝ] X := R.L (zIter R.σ (-((n + 1 : ℕ) : ℤ)) ω) with hSdef
@@ -2216,25 +2263,12 @@ theorem Cocycle.eventually_dist_approx_le (R : Cocycle Ω X) (m : ℕ) [NeZero m
   -- the near-optimal choices at `n` and at `n+1`
   have hne : bernsteinNumber (R.iterate (2 * n) (zIter R.σ (-(n : ℤ)) ω)) m ≠ 0 :=
     ne_of_gt ((Real.exp_pos _).trans hbal)
-  obtain ⟨hnearn, hEeq⟩ := hnear n hne
+  obtain ⟨-, hEeq⟩ := hnear n hne
   have hne1 : bernsteinNumber (R.iterate (2 * (n + 1)) (zIter R.σ (-((n + 1 : ℕ) : ℤ)) ω)) m ≠ 0 :=
     ne_of_gt ((Real.exp_pos _).trans hbal1)
   obtain ⟨hnear1, hEeq1⟩ := hnear (n + 1) hne1
   -- Step A: `E_tilde^{(n)}` grows fast under the backward window `T`
-  have hWsplit := R.iterate_two_mul_shift n ω
-  have hA1 : Real.exp (-eps) * Real.exp ((lam - eps) * ((2 * n : ℕ) : ℝ))
-      < growth ((R.iterate n ω).comp T) V := by
-    rw [← hWsplit]
-    exact lt_trans (by gcongr) hnearn
-  have hA2 := lt_growth_of_lt_comp (b := Real.exp ((lam + eps) * n)) (Real.exp_pos _)
-    hfwd.le hA1
-  have hAval : Real.exp (-eps) * Real.exp ((lam - eps) * ((2 * n : ℕ) : ℝ))
-      / Real.exp ((lam + eps) * n) = Real.exp (-eps + (n : ℝ) * (lam - 3 * eps)) := by
-    rw [← Real.exp_add, ← Real.exp_sub]
-    congr 1
-    push_cast
-    ring
-  rw [hAval] at hA2
+  have hA2 : Real.exp (-eps + (n : ℝ) * (lam - 3 * eps)) < growth T V := hgrowthn
   have hVgrow : Θ < growth T V := by
     refine lt_of_le_of_lt ?_ hA2
     rw [hΘdef, hC0def, mul_assoc]
@@ -2408,13 +2442,7 @@ theorem Cocycle.eventually_growth_approx_ge (R : Cocycle Ω X) (m : ℕ)
     exact lt_trans (by gcongr) hnearn
   have hA2 := lt_growth_map_of_lt_comp (b := Real.exp ((lam + eps) * n)) (Real.exp_pos _)
     hback.le hA1
-  have hAval : Real.exp (-eps) * Real.exp ((lam - eps) * ((2 * n : ℕ) : ℝ))
-      / Real.exp ((lam + eps) * n) = Real.exp (-eps + (n : ℝ) * (lam - 3 * eps)) := by
-    rw [← Real.exp_add, ← Real.exp_sub]
-    congr 1
-    push_cast
-    ring
-  rw [hAval, ← hEeq] at hA2
+  rw [exp_two_window_ratio, ← hEeq] at hA2
   exact hA2
 
 /-- A strictly slower exponential is eventually dominated, whatever the constants. -/
@@ -2528,48 +2556,6 @@ theorem infDist_map_le (T : X →L[ℝ] X) (V : Submodule ℝ X) (x : X) :
         exact mul_le_mul_of_nonneg_left hy.le (norm_nonneg T)
     _ = ‖T‖ * Metric.infDist x (V : Set X) + ‖T‖ * (ε / (‖T‖ + 1)) := by ring
     _ ≤ ‖T‖ * Metric.infDist x (V : Set X) + ε := by linarith
-
-/-- **`proof_met.tex` l.710.** The selected space `E_tilde^{(n)}(ω)` grows fast under the *backward*
-window `𝓛^{(n)}_{σ^{-n}ω}`. This is the first half of the Cauchy step, isolated because the
-equivariance step needs it at `σω` as well. -/
-theorem Cocycle.eventually_growth_etil_ge (R : Cocycle Ω X) (m : ℕ)
-    {lam lam2 eps : ℝ}
-    (Etil E : ℕ → Ω → GrassmannianFin X m) (ω : Ω)
-    (hnear : ∀ n : ℕ, bernsteinNumber (R.iterate (2 * n) (zIter R.σ (-(n : ℤ)) ω)) m ≠ 0 →
-        (Real.exp (-eps) * bernsteinNumber (R.iterate (2 * n) (zIter R.σ (-(n : ℤ)) ω)) m
-            < growth (R.iterate (2 * n) (zIter R.σ (-(n : ℤ)) ω)) ((Etil n ω).1 : Submodule ℝ X)) ∧
-        (((E n ω).1 : Submodule ℝ X)
-            = Submodule.map ((R.iterate n (zIter R.σ (-(n : ℤ)) ω) : X →ₗ[ℝ] X))
-              ((Etil n ω).1 : Submodule ℝ X)))
-    (hest : ∀ᶠ n : ℕ in atTop,
-      Real.exp ((lam - eps) * ((2 * n : ℕ) : ℝ))
-          < bernsteinNumber (R.iterate (2 * n) (zIter R.σ (-(n : ℤ)) ω)) m ∧
-      ‖R.iterate n ω‖ < Real.exp ((lam + eps) * n) ∧
-      ‖R.iterate n (zIter R.σ (-(n : ℤ)) ω)‖ < Real.exp ((lam + eps) * n) ∧
-      max ‖R.L (zIter R.σ (-((n + 1 : ℕ) : ℤ)) ω)‖ 1 < Real.exp (eps * ((n : ℝ) + 1)) ∧
-      bernsteinNumber (R.iterate n (zIter R.σ (-(n : ℤ)) ω)) (m + 1) < Real.exp (lam2 * n)) :
-    ∀ᶠ n : ℕ in atTop, Real.exp (-eps + (n : ℝ) * (lam - 3 * eps))
-        < growth (R.iterate n (zIter R.σ (-(n : ℤ)) ω)) ((Etil n ω).1 : Submodule ℝ X) := by
-  filter_upwards [hest] with n hn
-  obtain ⟨hbal, hfwd, -, -, -⟩ := hn
-  have hne : bernsteinNumber (R.iterate (2 * n) (zIter R.σ (-(n : ℤ)) ω)) m ≠ 0 :=
-    ne_of_gt ((Real.exp_pos _).trans hbal)
-  obtain ⟨hnearn, -⟩ := hnear n hne
-  have hWsplit := R.iterate_two_mul_shift n ω
-  have hA1 : Real.exp (-eps) * Real.exp ((lam - eps) * ((2 * n : ℕ) : ℝ))
-      < growth ((R.iterate n ω).comp (R.iterate n (zIter R.σ (-(n : ℤ)) ω)))
-          ((Etil n ω).1 : Submodule ℝ X) := by
-    rw [← hWsplit]
-    exact lt_trans (by gcongr) hnearn
-  have hA2 := lt_growth_of_lt_comp (b := Real.exp ((lam + eps) * n)) (Real.exp_pos _)
-    hfwd.le hA1
-  have hAval : Real.exp (-eps) * Real.exp ((lam - eps) * ((2 * n : ℕ) : ℝ))
-      / Real.exp ((lam + eps) * n) = Real.exp (-eps + (n : ℝ) * (lam - 3 * eps)) := by
-    rw [← Real.exp_add, ← Real.exp_sub]
-    congr 1
-    push_cast
-    ring
-  rwa [hAval] at hA2
 
 /-- **`proof_met.tex` l.740--748: the equivariance estimate.**
 

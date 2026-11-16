@@ -337,7 +337,7 @@ theorem SubadditiveFamily.update_zero_apply (f : ℕ → Ω → ℝ) {n : ℕ} (
 squeezed between the constant `-(M n)` and `(f n)⁺`, and `(f n)⁺` is dominated by the Birkhoff
 sum of `(f 1)⁺` (`SubadditiveFamily.integrable_posPart`). -/
 theorem SubadditiveFamily.truncate_integrable_of_posPart {σ : Ω → Ω} {f : ℕ → Ω → ℝ}
-    {μ : Measure Ω} [IsProbabilityMeasure μ] (hmp : MeasurePreserving σ μ μ)
+    {μ : Measure Ω} [IsFiniteMeasure μ] (hmp : MeasurePreserving σ μ μ)
     (hf : SubadditiveFamily σ f) (h1 : Integrable (fun ω => max (f 1 ω) 0) μ)
     (M : ℝ) (hM : 0 ≤ M) {n : ℕ} (hn : 1 ≤ n) :
     Integrable (SubadditiveFamily.truncate f M n) μ := by
@@ -359,7 +359,7 @@ theorem SubadditiveFamily.truncate_integrable_of_posPart {σ : Ω → Ω} {f : �
 
 /-- All truncations of the zeroed family are integrable, now at *every* index. -/
 theorem SubadditiveFamily.truncate_integrable_update {σ : Ω → Ω} {f : ℕ → Ω → ℝ}
-    {μ : Measure Ω} [IsProbabilityMeasure μ] (hmp : MeasurePreserving σ μ μ)
+    {μ : Measure Ω} [IsFiniteMeasure μ] (hmp : MeasurePreserving σ μ μ)
     (hf : SubadditiveFamily σ f) (h1 : Integrable (fun ω => max (f 1 ω) 0) μ)
     (M : ℝ) (hM : 0 ≤ M) (n : ℕ) :
     Integrable (SubadditiveFamily.truncate (Function.update f 0 0) M n) μ := by

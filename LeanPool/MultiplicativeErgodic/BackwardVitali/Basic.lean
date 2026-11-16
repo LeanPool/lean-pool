@@ -32,14 +32,13 @@ variable {Ω : Type*} [MeasurableSpace Ω]
 Proof: push `μ` forward along the measurable embedding `embeddingReal Ω`, apply the `ℝ`-version,
 and pull the witness back. -/
 theorem exists_ssubset_measure_pos_lt_omega [StandardBorelSpace Ω] (μ : Measure Ω)
-    [IsProbabilityMeasure μ] [NullSingletonClass μ]
+    [IsFiniteMeasure μ] [NullSingletonClass μ]
     {P : Set Ω} (hP : MeasurableSet P) (hPpos : 0 < μ P) :
     ∃ V ⊆ P, MeasurableSet V ∧ 0 < μ V ∧ μ V < μ P := by
   set e := embeddingReal Ω with he_def
   have he : MeasurableEmbedding e := measurableEmbedding_embeddingReal Ω
   set κ : Measure ℝ := μ.map e with hκ_def
-  have : IsProbabilityMeasure κ :=
-    by dsimp [κ]; infer_instance
+  have : IsFiniteMeasure κ := by dsimp [κ]; infer_instance
   have : NullSingletonClass κ := by
     refine ⟨fun r => ?_⟩
     rw [hκ_def, Measure.map_apply he.measurable (measurableSet_singleton r)]
@@ -66,7 +65,7 @@ all of them. Proved by induction on `m`, peeling off one strictly-smaller positi
 at each step via `exists_ssubset_measure_pos_lt_omega`. Only the finitely many indices `< m` are
 guaranteed positive; the rest are `∅`. -/
 theorem exists_disjoint_pos_family [StandardBorelSpace Ω] (μ : Measure Ω)
-    [IsProbabilityMeasure μ] [NullSingletonClass μ]
+    [IsFiniteMeasure μ] [NullSingletonClass μ]
     {P : Set Ω} (hP : MeasurableSet P) (hPpos : 0 < μ P) (m : ℕ) :
     ∃ (F : ℕ → Set Ω) (R : Set Ω), (∀ i, MeasurableSet (F i)) ∧ (∀ i, F i ⊆ P) ∧
       (∀ i j, i ≠ j → Disjoint (F i) (F j)) ∧ (∀ i, i < m → 0 < μ (F i)) ∧
