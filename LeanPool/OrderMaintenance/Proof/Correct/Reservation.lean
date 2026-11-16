@@ -512,11 +512,6 @@ theorem inv_splitChunk {s : Core} {A : Abs} (hI : INV s A) {x ty tz : Nat}
   have hzA : y + 1 ∉ A.chunks := fun h => absurd (hmem_lt (y + 1) h) (by omega)
   have hmem' : ∀ c, c ∈ (A.splitChunk x y (y + 1)).chunks ↔ c = y ∨ c = y + 1 ∨ c ∈ A.chunks := by
     intro c; rw [hch', hcsplit]; exact mem_around_iff
-  have hgo : ∀ c ∈ A.chunks, (A.splitChunk x y (y + 1)).grps c = A.grps c := by
-    intro c hc
-    have h1 : c ≠ y := fun e => hyA (e ▸ hc)
-    have h2 : c ≠ y + 1 := fun e => hzA (e ▸ hc)
-    simp only [Abs.splitChunk, h1, h2, or_self, ite_false]
   have hgl' : (A.splitChunk x y (y + 1)).glist = A.glist :=
     Abs.splitChunk_glist hx hcnd hyA hzA (by omega) (by omega)
   have hel' : (A.splitChunk x y (y + 1)).elist = A.elist := by

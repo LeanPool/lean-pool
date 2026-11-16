@@ -24,140 +24,6 @@ proof is followed, and its run lemma is paired with the Level M lemma for the sa
 
 @[expose] public section
 
-namespace OrderMaintenance.Proof
-
-open OrderMaintenance.Model OrderMaintenance.Zeroing
-/-- The iteration step of `reservation_cost` (its proof, as a lemma). -/
-theorem resInv_step {TI : Core → Prop} {μ : Core → Nat} {J k n R : Nat} {cap : Params → Nat} {L
-  : List Nat}
-    {s : Core} (hTC : TopContract TI μ J cap) (hn : 1 ≤ n)
-    (hsize : 2 + 2 * (s.count / (s.P.theta + 1 - cmax s.P)) ≤ n + 1)
-    (hcap : 2 + 2 * (s.count / (s.P.theta + 1 - cmax s.P)) ≤ cap s.P)
-    (hI5 : (s.P.theta : ℝ) + R * (Hn (n - 1) + 1) ≤ s.P.T) :
-    ∀ j t, ResInv TI k J n R μ L s j t → j < k →
-      (t.resJob = none → (t.pqHi = 0 ∧ (LowInv t L ∧ TI t ∧ t.count = s.count ∧ t.P = s.P ∧
-          t.resJob = none ∧ ∀ c, gval t c = 0)) ∨
-        (t.pqHi ≠ 0 ∧ ∃ c t1 t2, pqPopMax.run t = .ok c t1 ∧ (splitChunkStart c).run t1 = .ok ()
-          t2 ∧
-          ResInv TI k J n R μ L s (j + 1) t2)) ∧
-      (∀ job, t.resJob = some job → ∃ r t1, (jobStep job).run t = .ok r t1 ∧
-        ResInv TI k J n R μ L s (j + 1) {
-          t1 with
-          resJob := r
-        }) := by
-    intro j t hI hj
-    obtain ⟨hL, hT, hc, hP, y, i, a, ip, js, hG, hR⟩ := hI
-    refine ⟨fun hnone => ?_, fun job hjob => ?_⟩
-    · by_cases hq0 : t.pqHi = 0
-      · exact Or.inl ⟨hq0, hL, hT, hc, hP, hnone, gval_zero_of_empty hL.pq hq0⟩
-      · right
-        refine ⟨hq0, ?_⟩
-        obtain ⟨bl, nb, hQ⟩ := hL.pq
-        obtain ⟨c, hpop, hcin, hmax⟩ := pqPopMax_ok hQ hq0
-        have hcq := hcin
-        unfold inQC at hcq; simp only [decide_eq_true_eq] at hcq
-        obtain ⟨hcL, hcQ, hθ⟩ := hcq
-        obtain ⟨A, hIA, hel⟩ := hL.inv
-        obtain ⟨e, pops, hN⟩ := hL.cnt
-        have hI4 := hL.cp.I4
-        have hd : 1 ≤ t.P.theta + 1 - cmax t.P := by omega
-        -- the chunks fit
-        have hpops : pops + 1 ≤ t.count / (t.P.theta + 1 - cmax t.P) := by
-          rw [Nat.le_div_iff_mul_le hd]
-          have hb := hN.bound
-          have hcQs : c ∈ quietSet t := mem_quietSet.mpr ⟨hcL, hcQ⟩
-          have hterm : cSz t c - e c ≤ ∑ d ∈ quietSet t, (cSz t d - e d) :=
-            Finset.single_le_sum (f := fun d => cSz t d - e d) (fun _ _ => Nat.zero_le _) hcQs
-          have he := hN.e_le c hcL hcQ
-          rw [Nat.add_mul, Nat.one_mul]; omega
-        have hsz := hN.size
-        rw [hc, hP] at hpops
-        have hcn : c - 1 < n := by have := hcL.2; omega
-        have hT5 := cSz_le_T hG (by
-          rw [hP]
-          exact hI5) hcL.1 hcn ⟨hcL, hcQ⟩
-        -- start the split of `c`
-        have hD := delSt_only t c
-        have hI1 : INV (delSt t c) A := hIA.of_sameLinks hD.sameLinks (fun d => by simp only
-          [cT, hD.C])
-        have hTI1 : TI (delSt t c) := hTC.frame _ _ hD.topSame hT
-        have hsz1 : (delSt t c).C.size = t.C.size := by rw [hD.C]
-        have hQS := hD.lowSame.qsame
-        have hcL1 : LiveC (delSt t c) c := by simp only [LiveC, hsz1]; exact hcL
-        have hcq1 : cSt (delSt t c) c = .quiet := (hQS.q c hcL).mpr hcQ
-        have hnone1 : (delSt t c).resJob = none := by rw [hD.rest.2.2.2.2.2.2.2.2.1]; exact hnone
-        obtain ⟨job, s2, hj, hμ1, hμJ, hTI2⟩ :=
-          hTC.start (delSt t c) A c hI1 hTI1 hnone1 hcL1 hcq1 (by
-            rw [hsz1, hD.P, hP]
-            omega)
-        have hrun := splitChunkStart_ok (by
-          unfold NIL
-          have := hcL.1
-          omega) hcL1.2 hj
-        have hs2 : TopRel (linkChunkPair (push2 (delSt t c)) c (delSt t c).C.size
-            ((delSt t c).C.size + 1)) s2 := by
-          have := top_insertAround c (delSt t c).C.size ((delSt t c).C.size + 1)
-            (linkChunkPair (push2 (delSt t c)) c (delSt t c).C.size ((delSt t c).C.size + 1))
-          rw [hj] at this; exact this
-        refine ⟨c, delSt t c, _, hpop, hrun, ?_⟩
-        have hGP : GParams t.P := hL.cinv.choose_spec.2.2.2
-        have hL2 := lowinv_pop hL hGP hcin hT5 hs2 hrun
-        have hcA : c ∈ A.chunks := (hI1.cAlloc c).mpr hcL1
-        have RS := resSpec_run (job := job) hI1 hcA hs2
-        obtain ⟨rE, rcnt, rhead, rP⟩ := split_rest (job := job) hs2
-        have hjm : (⟨c - 1, hcn⟩ : Fin n).val + 1 = c := by simp only; have := hcL.1; omega
-        refine ⟨hL2, hTI2, rcnt.trans (hD.rest.2.1.trans hc), rP.trans (hD.P.trans hP),
-          gvec n t, ⟨c - 1, hcn⟩, fun _ => 0, 0, 0, hG.pop ⟨c - 1, hcn⟩ (fun jj => ?_) (fun jj
-            => ?_),
-          ?_⟩
-        · unfold gvec; rw [hjm]; exact_mod_cast gval_max hcin hmax _
-        · unfold gvec
-          have hp := gval_pop RS (jj.val + 1)
-          by_cases hjj : jj = ⟨c - 1, hcn⟩
-          · rw [ite_eq_left hjj]; rw [ite_eq_left (by rw [hjj, hjm])] at hp; exact_mod_cast hp
-          · rw [ite_eq_right hjj]
-            have hne : jj.val + 1 ≠ c := by
-              intro e; apply hjj; ext; simp only; omega
-            rw [ite_eq_right hne] at hp
-            exact_mod_cast hp
-        · change RoundAt k J (μ (markState s2 c (delSt t c).C.size ((delSt t c).C.size + 1) job))
-            (some job) 0 0 (j + 1)
-          exact ⟨by simp, by omega, hμ1⟩
-    · obtain ⟨A, hIA, hel⟩ := hL.inv
-      obtain ⟨r, t1, hj1, hTI1, hμ⟩ := hTC.step t A job hIA hT hjob
-      have hTR : TopRel t t1 := by have := top_jobStep job t; rw [hj1] at this; exact this
-      have hSafe : Safe t t1 := by have := pres_jobStep job t; rw [hj1] at this; exact this
-      have hI1 := hSafe.2 A hIA
-      have hTR' : TopRel t {
-        t1 with
-        resJob := r
-      } :=
-        hTR.trans ⟨rfl, rfl, rfl, fun _ => rfl, ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩,
-          ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩⟩
-      have hI1' : INV {
-        t1 with
-        resJob := r
-      } A :=
-        hI1.of_sameLinks (by
-          constructor <;> intros <;> rfl) (fun _ => rfl)
-      refine ⟨r, t1, hj1, hL.top hTR' ⟨A, hI1', hel⟩, hTI1, hTR'.rest.2.1.trans hc,
-        hTR'.rest.1.trans hP, y, i, a, ip, js + 1,
-        hG.mono (fun jj => le_of_eq (by rw [hTR'.qsame.gvec])), ?_⟩
-      unfold RoundAt at hR
-      rw [hjob] at hR
-      obtain ⟨h1, h2, h3⟩ := hR
-      change RoundAt k J (μ {
-        t1 with
-        resJob := r
-      }) r ip (js + 1) (j + 1)
-      cases r with
-      | none => change ip * k ≤ J + (k - (j + 1)); omega
-      | some j' =>
-        obtain ⟨hm1, hm2⟩ := hμ j' rfl
-        exact ⟨by omega, by omega, hm1⟩
-
-end OrderMaintenance.Proof
-
 namespace OrderMaintenance.Impl
 
 open OrderMaintenance.Model OrderMaintenance.Proof
@@ -419,27 +285,13 @@ theorem ginv_driveAgree {X Y : Core → Prop} {s : Core} {A : Abs} {gh : GGh} {�
     {κ : Caps} (hXc : ∀ t, X t → ∀ g, LiveG t g → gC t g < t.C.size) (K : GCaps κ s) :
     ∃ s', DriveAgree κ p s s' ∧ s'.Gs.size = s.Gs.size ∧ s'.C.size = s.C.size ∧ s'.E.size =
       s.E.size := by
+  have hBounds := hG1.drive_bounds hP.K2 hδs hδle
   generalize hl : gLl s p = l at *
   generalize hr : gRr s p = r at *
   generalize ha : gSz s l = a at *
   generalize hb : gSz s p = b at *
   generalize hc : gSz s r = c at *
-  have hK2 := hP.K2
-  have hI1 := hP.I1
-  unfold G1 at hG1
-  rw [hl, hr, ha, hb, hc] at hG1
-  obtain ⟨g1, g2, g3, g4⟩ := hG1
-  generalize hm : s.P.groupBudget - 1 = m at g2 hI1
-  have hm1 : 1 ≤ m := by omega
-  generalize hq : s.P.G / m = q at hI1
-  -- the size before the undriven insertions exceeds `G` by at most `q`
-  have hXq : (a - δ l) + (b - δ p) + (c - δ r) - s.P.G ≤ q := by
-    rw [← hq, Nat.le_div_iff_mul_le (by omega), Nat.mul_comm]
-    have := Nat.le_add_left (m * ((a - δ l) + (b - δ p) + (c - δ r) - s.P.G)) (b - δ p)
-    omega
-  have hTlo : s.P.G ≤ a + b + c := by omega
-  have hThi : a + b + c ≤ s.P.G + s.P.G / (s.P.groupBudget - 1) + 1 := by rw [hm, hq]; omega
-  have hbal0 : a ≤ c + 2 ∧ c ≤ a + 2 := by omega
+  obtain ⟨hTlo, hThi, hbal0⟩ := hBounds
   let I' := fun j t => DriveInv X s A.elist δ p l r a b c j t ∧ t.Gs.size = s.Gs.size ∧ t.C.size
     = s.C.size
   have h0 : I' 0 s := ⟨⟨hX, rfl, EFrame.refl s, ⟨A, hI, rfl⟩, ⟨gh, hG⟩, hp, hs, hl, hr, by
@@ -814,36 +666,19 @@ theorem cinv_driveAgree {X Y : Core → Prop} {s : Core} {A : Abs} {gh : GGh} {�
     {κ : Caps} (K : GCaps κ s) :
     ∃ s', CDriveAgree κ x s s' ∧ s'.Gs.size = s.Gs.size ∧ s'.C.size = s.C.size ∧ s'.E.size =
       s.E.size := by
-  have Fx := hC.cfam x hxL hst
+  have hBounds := hC1.drive_bounds hCP.K2 hδs hδle
   generalize hl : cLl s x = y at *
   generalize hr : cRr s x = z at *
   generalize ha : cSz s y = a at *
   generalize hb : cSz s x = b at *
   generalize hc : cSz s z = c at *
-  have hK2 := hCP.K2
-  unfold C1 at hC1
-  rw [hl, hr, ha, hb, hc] at hC1
-  obtain ⟨hs0T, g1, g2, g3, g4⟩ := hC1
-  generalize hσ : s₀ x = σ at hs0T g1 g2
-  generalize hm : s.P.chunkBudget - 1 = m at g2
-  have hm1 : 1 ≤ m := by omega
-  generalize hX0 : (a - δ y) + (b - δ x) + (c - δ z) - σ = Xs at g2
-  have hXq : Xs ≤ unitsOf s.P σ / m := by
-    rw [Nat.le_div_iff_mul_le (by omega), Nat.mul_comm]
-    have := Nat.le_add_left (m * Xs) (units s x - δu x); omega
-  have hU := unitsOf_mono s.P hs0T
-  have hUd : unitsOf s.P σ / m ≤ unitsOf s.P s.P.T / m := Nat.div_le_div_right hU
-  have hkC : kC s.P s.P.T = unitsOf s.P s.P.T / m + 1 := by unfold kC; rw [hm]
-  have hThi : a + b + c ≤ s.P.T + kC s.P s.P.T := by rw [hkC]; omega
-  have hbal0 : a ≤ c + umax s.P + 1 ∧ c ≤ a + umax s.P + 1 := by omega
-  have hfam0 : a + b + c ≤ δ y + δ x + δ z + s₀ x + unitsOf s.P (s₀ x) / (s.P.chunkBudget - 1) := by
-    rw [hσ, hm]; omega
+  obtain ⟨hThi, hbal0, hfam0⟩ := hBounds
+  have hs0 : s₀ x ≤ s.P.T := hC1.1
   let I' := fun j t => CDriveInv X s A.elist δ δu s₀ x y z a b c (units s x) j t ∧
     t.Gs.size = s.Gs.size ∧ t.C.size = s.C.size
   have h0 : I' 0 s := ⟨⟨hX, rfl, EFrame.refl s, ⟨A, hI, rfl⟩, ⟨gh, hG⟩, hC, hxL, hst, hl, hr, by
     omega, by omega,
       Or.inl ⟨rfl, ha, hc⟩⟩, rfl, rfl⟩
-  have hs0 : s₀ x ≤ s.P.T := by rw [hσ]; exact hs0T
   have hstepM : ∀ j t, I' j t → ∃ bb t', (chunkSplitStep x).run t = .ok bb t' ∧ (bb = true → I'
     (j + 1) t') ∧
       CStepAgree κ x t t' bb ∧ t'.Gs.size = s.Gs.size ∧ t'.C.size = s.C.size ∧ t'.E.size =

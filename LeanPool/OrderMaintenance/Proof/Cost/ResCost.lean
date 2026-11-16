@@ -66,19 +66,24 @@ end OrderMaintenance.Proof
 namespace OrderMaintenance.Proof
 
 open OrderMaintenance.Model OrderMaintenance.Zeroing
-/-- **The reservation of one insertion** succeeds, keeps the lower invariants and the top
-structure's invariant, and carries the zeroing game and its round accounting. -/
-theorem reservation_cost {TI : Core → Prop} {μ : Core → Nat} {J k n R : Nat} {cap : Params →
-  Nat} {L : List Nat}
-    {s : Core} (hTC : TopContract TI μ J cap) (h0 : ResInv TI k J n R μ L s 0 s) (hn : 1 ≤ n)
+/-- The iteration step of `reservation_cost` (its proof, as a lemma). -/
+theorem resInv_step {TI : Core → Prop} {μ : Core → Nat} {J k n R : Nat} {cap : Params → Nat} {L
+  : List Nat}
+    {s : Core} (hTC : TopContract TI μ J cap) (hn : 1 ≤ n)
     (hsize : 2 + 2 * (s.count / (s.P.theta + 1 - cmax s.P)) ≤ n + 1)
     (hcap : 2 + 2 * (s.count / (s.P.theta + 1 - cmax s.P)) ≤ cap s.P)
     (hI5 : (s.P.theta : ℝ) + R * (Hn (n - 1) + 1) ≤ s.P.T) :
-    ∃ t', (reservation k).run s = .ok () t' ∧ LowInv t' L ∧ TI t' ∧ t'.count = s.count ∧
-      t'.P = s.P ∧ ∃ y i a ip js, GameInv n R t' y i a ip ∧ RoundOK k J μ t' ip js := by
-  obtain ⟨t', hrun, hres⟩ := reservation_ok (ResInv TI k J n R μ L s)
-    (fun t => LowInv t L ∧ TI t ∧ t.count = s.count ∧ t.P = s.P ∧ t.resJob = none ∧
-      ∀ c, gval t c = 0) h0 (by
+    ∀ j t, ResInv TI k J n R μ L s j t → j < k →
+      (t.resJob = none → (t.pqHi = 0 ∧ (LowInv t L ∧ TI t ∧ t.count = s.count ∧ t.P = s.P ∧
+          t.resJob = none ∧ ∀ c, gval t c = 0)) ∨
+        (t.pqHi ≠ 0 ∧ ∃ c t1 t2, pqPopMax.run t = .ok c t1 ∧ (splitChunkStart c).run t1 = .ok ()
+          t2 ∧
+          ResInv TI k J n R μ L s (j + 1) t2)) ∧
+      (∀ job, t.resJob = some job → ∃ r t1, (jobStep job).run t = .ok r t1 ∧
+        ResInv TI k J n R μ L s (j + 1) {
+          t1 with
+          resJob := r
+        }) := by
     intro j t hI hj
     obtain ⟨hL, hT, hc, hP, y, i, a, ip, js, hG, hR⟩ := hI
     refine ⟨fun hnone => ?_, fun job hjob => ?_⟩
@@ -107,7 +112,9 @@ theorem reservation_cost {TI : Core → Prop} {μ : Core → Nat} {J k n R : Nat
         have hsz := hN.size
         rw [hc, hP] at hpops
         have hcn : c - 1 < n := by have := hcL.2; omega
-        have hT5 := cSz_le_T hG (by rw [hP]; exact hI5) hcL.1 hcn ⟨hcL, hcQ⟩
+        have hT5 := cSz_le_T hG (by
+          rw [hP]
+          exact hI5) hcL.1 hcn ⟨hcL, hcQ⟩
         -- start the split of `c`
         have hD := delSt_only t c
         have hI1 : INV (delSt t c) A := hIA.of_sameLinks hD.sameLinks (fun d => by simp only
@@ -119,8 +126,13 @@ theorem reservation_cost {TI : Core → Prop} {μ : Core → Nat} {J k n R : Nat
         have hcq1 : cSt (delSt t c) c = .quiet := (hQS.q c hcL).mpr hcQ
         have hnone1 : (delSt t c).resJob = none := by rw [hD.rest.2.2.2.2.2.2.2.2.1]; exact hnone
         obtain ⟨job, s2, hj, hμ1, hμJ, hTI2⟩ :=
-          hTC.start (delSt t c) A c hI1 hTI1 hnone1 hcL1 hcq1 (by rw [hsz1, hD.P, hP]; omega)
-        have hrun := splitChunkStart_ok (by unfold NIL; have := hcL.1; omega) hcL1.2 hj
+          hTC.start (delSt t c) A c hI1 hTI1 hnone1 hcL1 hcq1 (by
+            rw [hsz1, hD.P, hP]
+            omega)
+        have hrun := splitChunkStart_ok (by
+          unfold NIL
+          have := hcL.1
+          omega) hcL1.2 hj
         have hs2 : TopRel (linkChunkPair (push2 (delSt t c)) c (delSt t c).C.size
             ((delSt t c).C.size + 1)) s2 := by
           have := top_insertAround c (delSt t c).C.size ((delSt t c).C.size + 1)
@@ -147,31 +159,56 @@ theorem reservation_cost {TI : Core → Prop} {μ : Core → Nat} {J k n R : Nat
               intro e; apply hjj; ext; simp only; omega
             rw [ite_eq_right hne] at hp
             exact_mod_cast hp
-        · change RoundAt k J (μ (markState s2 c (delSt t c).C.size ((delSt t c).C.size + 1)
-          job)) (some job) 0 0 (j + 1)
+        · change RoundAt k J (μ (markState s2 c (delSt t c).C.size ((delSt t c).C.size + 1) job))
+            (some job) 0 0 (j + 1)
           exact ⟨by simp, by omega, hμ1⟩
     · obtain ⟨A, hIA, hel⟩ := hL.inv
       obtain ⟨r, t1, hj1, hTI1, hμ⟩ := hTC.step t A job hIA hT hjob
       have hTR : TopRel t t1 := by have := top_jobStep job t; rw [hj1] at this; exact this
       have hSafe : Safe t t1 := by have := pres_jobStep job t; rw [hj1] at this; exact this
       have hI1 := hSafe.2 A hIA
-      have hTR' : TopRel t { t1 with resJob := r } :=
+      have hTR' : TopRel t {
+        t1 with
+        resJob := r
+      } :=
         hTR.trans ⟨rfl, rfl, rfl, fun _ => rfl, ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩,
           ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩⟩
-      have hI1' : INV { t1 with resJob := r } A :=
-        hI1.of_sameLinks (by constructor <;> intros <;> rfl) (fun _ => rfl)
+      have hI1' : INV {
+        t1 with
+        resJob := r
+      } A :=
+        hI1.of_sameLinks (by
+          constructor <;> intros <;> rfl) (fun _ => rfl)
       refine ⟨r, t1, hj1, hL.top hTR' ⟨A, hI1', hel⟩, hTI1, hTR'.rest.2.1.trans hc,
         hTR'.rest.1.trans hP, y, i, a, ip, js + 1,
         hG.mono (fun jj => le_of_eq (by rw [hTR'.qsame.gvec])), ?_⟩
       unfold RoundAt at hR
       rw [hjob] at hR
       obtain ⟨h1, h2, h3⟩ := hR
-      change RoundAt k J (μ { t1 with resJob := r }) r ip (js + 1) (j + 1)
+      change RoundAt k J (μ {
+        t1 with
+        resJob := r
+      }) r ip (js + 1) (j + 1)
       cases r with
       | none => change ip * k ≤ J + (k - (j + 1)); omega
       | some j' =>
         obtain ⟨hm1, hm2⟩ := hμ j' rfl
-        exact ⟨by omega, by omega, hm1⟩)
+        exact ⟨by omega, by omega, hm1⟩
+
+
+/-- **The reservation of one insertion** succeeds, keeps the lower invariants and the top
+structure's invariant, and carries the zeroing game and its round accounting. -/
+theorem reservation_cost {TI : Core → Prop} {μ : Core → Nat} {J k n R : Nat} {cap : Params →
+  Nat} {L : List Nat}
+    {s : Core} (hTC : TopContract TI μ J cap) (h0 : ResInv TI k J n R μ L s 0 s) (hn : 1 ≤ n)
+    (hsize : 2 + 2 * (s.count / (s.P.theta + 1 - cmax s.P)) ≤ n + 1)
+    (hcap : 2 + 2 * (s.count / (s.P.theta + 1 - cmax s.P)) ≤ cap s.P)
+    (hI5 : (s.P.theta : ℝ) + R * (Hn (n - 1) + 1) ≤ s.P.T) :
+    ∃ t', (reservation k).run s = .ok () t' ∧ LowInv t' L ∧ TI t' ∧ t'.count = s.count ∧
+      t'.P = s.P ∧ ∃ y i a ip js, GameInv n R t' y i a ip ∧ RoundOK k J μ t' ip js := by
+  obtain ⟨t', hrun, hres⟩ := reservation_ok (ResInv TI k J n R μ L s)
+    (fun t => LowInv t L ∧ TI t ∧ t.count = s.count ∧ t.P = s.P ∧ t.resJob = none ∧
+      ∀ c, gval t c = 0) h0 (resInv_step hTC hn hsize hcap hI5)
   refine ⟨t', hrun, ?_⟩
   rcases hres with ⟨hL, hT, hc, hP, y, i, a, ip, js, hG, hR⟩ | ⟨hL, hT, hc, hP, hnone, hz⟩
   · refine ⟨hL, hT, hc, hP, y, i, a, ip, js, hG, ?_⟩

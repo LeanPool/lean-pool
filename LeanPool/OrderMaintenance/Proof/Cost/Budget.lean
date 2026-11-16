@@ -32,18 +32,16 @@ theorem C1.fam_le {s : Core} {δ δu s₀ : Nat → Nat} {x : Nat} (h : C1 s δ 
       s₀ x ≤ (cSz s (cLl s x) - δ (cLl s x)) + (cSz s x - δ x) + (cSz s (cRr s x) - δ (cRr s x)) ∧
       (cSz s (cLl s x) - δ (cLl s x)) + (cSz s x - δ x) + (cSz s (cRr s x) - δ (cRr s x)) - s₀ x ≤
         kC s.P s.P.T - 1 := by
+  have hq := h.excess_le hK
   obtain ⟨hT, h1, h2, -, -⟩ := h
   have hU := unitsOf_mono s.P hT
   have hfam : famC s x ≤ ((cSz s (cLl s x) - δ (cLl s x)) + (cSz s x - δ x) +
       (cSz s (cRr s x) - δ (cRr s x))) + (δ (cLl s x) + δ x + δ (cRr s x)) := by
     unfold famC; omega
-  generalize hm : s.P.chunkBudget - 1 = m at h2
+  generalize hm : s.P.chunkBudget - 1 = m at h2 hq
   have hm1 : 1 ≤ m := by omega
   generalize (cSz s (cLl s x) - δ (cLl s x)) + (cSz s x - δ x) + (cSz s (cRr s x) - δ (cRr s x)) = S
-    at h1 h2 hfam ⊢
-  have hq : S - s₀ x ≤ unitsOf s.P (s₀ x) / m := by
-    rw [Nat.le_div_iff_mul_le (by omega), Nat.mul_comm]
-    have := Nat.le_add_left (m * (S - s₀ x)) (units s x - δu x); omega
+    at h1 h2 hfam hq ⊢
   have hq2 : unitsOf s.P (s₀ x) / m ≤ unitsOf s.P s.P.T / m := Nat.div_le_div_right hU
   have hk : kC s.P s.P.T = unitsOf s.P s.P.T / m + 1 := by unfold kC; rw [hm]
   refine ⟨?_, h1, by omega⟩

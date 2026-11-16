@@ -45,26 +45,13 @@ theorem ginv_drivePeak (hC : CapsW K κ) (hK : 8 ≤ K) (hW : 2 * K + 4 ≤ W)
     (hXc : ∀ t, X t → ∀ g, LiveG t g → gC t g < t.C.size) (Kc : GCaps κ s)
     (hlen : A.elist.length + 2 ≤ 2 ^ K) {L : Loc} (hg : L "g" = p) (hGd : Gd K KH κ (ΓK K) s L) :
     PKok K KH κ (ΓK K) W driveGroupFromS s L := by
+  have hBounds := hG1.drive_bounds hP.K2 hδs hδle
   generalize hl : gLl s p = l at *
   generalize hr : gRr s p = r at *
   generalize ha : gSz s l = a at *
   generalize hb : gSz s p = b at *
   generalize hc : gSz s r = c at *
-  have hK2 := hP.K2
-  have hI1 := hP.I1
-  unfold G1 at hG1
-  rw [hl, hr, ha, hb, hc] at hG1
-  obtain ⟨g1, g2, g3, g4⟩ := hG1
-  generalize hm : s.P.groupBudget - 1 = m at g2 hI1
-  have hm1 : 1 ≤ m := by omega
-  generalize hq : s.P.G / m = q at hI1
-  have hXq : (a - δ l) + (b - δ p) + (c - δ r) - s.P.G ≤ q := by
-    rw [← hq, Nat.le_div_iff_mul_le (by omega), Nat.mul_comm]
-    have := Nat.le_add_left (m * ((a - δ l) + (b - δ p) + (c - δ r) - s.P.G)) (b - δ p)
-    omega
-  have hTlo : s.P.G ≤ a + b + c := by omega
-  have hThi : a + b + c ≤ s.P.G + s.P.G / (s.P.groupBudget - 1) + 1 := by rw [hm, hq]; omega
-  have hbal0 : a ≤ c + 2 ∧ c ≤ a + 2 := by omega
+  obtain ⟨hTlo, hThi, hbal0⟩ := hBounds
   let I' := fun j t => DriveInv X s A.elist δ p l r a b c j t ∧ t.Gs.size = s.Gs.size ∧ t.C.size
     = s.C.size
   have h0 : I' 0 s := ⟨⟨hX, rfl, EFrame.refl s, ⟨A, hI, rfl⟩, ⟨gh, hG⟩, hp, hs, hl, hr, by
@@ -280,36 +267,19 @@ theorem cinv_drivePeak (hC : CapsW K κ) (hK : 8 ≤ K) (hW : 2 * K + 4 ≤ W)
       .size) t)
     {L : Loc} (hgL : L "x" = x) (hGd : Gd K KH κ (ΓK K) s L) :
     PKok K KH κ (ΓK K) W driveChunkFromS s L := by
-  have Fx := hCi.cfam x hxL hst
+  have hBounds := hC1.drive_bounds hCP.K2 hδs hδle
   generalize hl : cLl s x = y at *
   generalize hr : cRr s x = z at *
   generalize ha : cSz s y = a at *
   generalize hb : cSz s x = b at *
   generalize hc : cSz s z = c at *
-  have hK2 := hCP.K2
-  unfold C1 at hC1
-  rw [hl, hr, ha, hb, hc] at hC1
-  obtain ⟨hs0T, g1, g2, g3, g4⟩ := hC1
-  generalize hσ : s₀ x = σ at hs0T g1 g2
-  generalize hm : s.P.chunkBudget - 1 = m at g2
-  have hm1 : 1 ≤ m := by omega
-  generalize hX0 : (a - δ y) + (b - δ x) + (c - δ z) - σ = Xs at g2
-  have hXq : Xs ≤ unitsOf s.P σ / m := by
-    rw [Nat.le_div_iff_mul_le (by omega), Nat.mul_comm]
-    have := Nat.le_add_left (m * Xs) (units s x - δu x); omega
-  have hU := unitsOf_mono s.P hs0T
-  have hUd : unitsOf s.P σ / m ≤ unitsOf s.P s.P.T / m := Nat.div_le_div_right hU
-  have hkC : kC s.P s.P.T = unitsOf s.P s.P.T / m + 1 := by unfold kC; rw [hm]
-  have hThi : a + b + c ≤ s.P.T + kC s.P s.P.T := by rw [hkC]; omega
-  have hbal0 : a ≤ c + umax s.P + 1 ∧ c ≤ a + umax s.P + 1 := by omega
-  have hfam0 : a + b + c ≤ δ y + δ x + δ z + s₀ x + unitsOf s.P (s₀ x) / (s.P.chunkBudget - 1) := by
-    rw [hσ, hm]; omega
+  obtain ⟨hThi, hbal0, hfam0⟩ := hBounds
+  have hs0 : s₀ x ≤ s.P.T := hC1.1
   let I' := fun j t => CDriveInv X s A.elist δ δu s₀ x y z a b c (units s x) j t ∧
     t.Gs.size = s.Gs.size ∧ t.C.size = s.C.size
   have h0 : I' 0 s := ⟨⟨hX, rfl, EFrame.refl s, ⟨A, hI, rfl⟩, ⟨gh, hG⟩, hCi, hxL, hst, hl, hr,
     by omega, by omega,
       Or.inl ⟨rfl, ha, hc⟩⟩, rfl, rfl⟩
-  have hs0 : s₀ x ≤ s.P.T := by rw [hσ]; exact hs0T
   refine driveChunkFrom_pk hC hK hW I' h0 (fun j t ⟨hD, hGs, hCs⟩ hj => ?_) hGd hgL
   have K' : GCaps κ t := Kc.of_sizes hGs hD.ef.size hCs
   obtain ⟨bb, t', hrun, hA, hG', hC', -⟩ := hD.stepAgree hXs hP hCP hThi hbal0 hfam0 hδs hs0 K'

@@ -243,30 +243,9 @@ theorem insert_safe (S : CostSetup mk TI PI μ ν PP Jf capf nf Rf) {om : OrderM
   have hL' : liveH c' A'.elist = (OrderMaintenance.Spec.step Sp (insOp hx)).1.list := by
     rw [hA']
     exact inserted_live_handles hR hf hL hnd hxi hxn hxs hrec hly hhy hyA
-  have hmem := step_ins_mem Sp hx hv
-  have hyA' : om.cur.E.size ∈ A'.elist := by
-    rw [hA']; exact (OrderMaintenance.Spec.mem_insertAfterL hxi).mpr (Or.inl rfl)
-  have hW3 : WInv { om2 with live := om2.live + 1 } (OrderMaintenance.Spec.step Sp (insOp hx)).1
-    := by
-    refine ⟨OrderMaintenance.Spec.step_inv hS hv, ?_, A', ?_, ?_, ?_, ?_⟩
-    · change om2.nextHandle = _
-      rw [e3]; cases hx <;> simp [OrderMaintenance.Spec.step, insOp, hf]
-    · change CoreR om2.cur A'; rw [e1]; exact hR'
-    · change liveH om2.cur A'.elist = _; rw [e1]; exact hL'
-    · change IdxOK om2.cur A' om2.curIdx _
-      rw [e1, e2]
-      intro z hz
-      simp only [Array.getX_setX]
-      rcases (hmem z).mp hz with rfl | hz'
-      · rw [ite_eq_left hf.symm]; exact ⟨hyA', hly, hhy.trans hf⟩
-      · have hzy : z ≠ om.nextHandle := fun e => Nat.lt_irrefl z (by
-          have := hS.2 z hz'; rw [← hf, ← e] at this; exact this)
-        rw [ite_eq_right hzy]
-        obtain ⟨h1, h2, h3⟩ := hI z hz'
-        refine ⟨?_, by rw [(hrec _ h1).1]; exact h2, by rw [(hrec _ h1).2]; exact h3⟩
-        rw [hA']; exact (OrderMaintenance.Spec.mem_insertAfterL hxi).mpr (Or.inr h1)
-    · change NxtR om2.cur A' { om2 with live := om2.live + 1 }
-      rw [e1]; exact hN2
+  have hW3 : WInv { om2 with live := om2.live + 1 }
+      (OrderMaintenance.Spec.step Sp (insOp hx)).1 :=
+    WInv.insert_after_mirror hS hf hI hv hR' hL' hA' hxi hrec hly hhy e1 e2 e3 hN2
   -- the cost side of the mirroring
   have hm2 : ∀ om', ({
     om with
@@ -286,22 +265,6 @@ theorem insert_safe (S : CostSetup mk TI PI μ ν PP Jf capf nf Rf) {om : OrderM
   have hbig3 : 64 ≤ om2.cur.P.N := by rw [e1, hPc']; exact hW.big
   have hcp : om.cur.count + 1 ≤ om.cur.P.N := hW.cur_room S
   have hkb3 : 4 ≤ om2.KB := by rw [e5]; exact hW.kb
-  -- the run, once the rebuild step is known
-  have finish : ∀ om4, ({ om2 with live := om2.live + 1 } : OrderMaintenance).rebuildStep mk =
-    .ok om4 →
-      om.insert mk hx = .ok (Sp.fresh, om4) := by
-    intro om4 hrb
-    unfold OrderMaintenance.insert
-    cases hx <;>
-    · simp only at hxeq
-      subst hxeq
-      dsimp only
-      rw [onCur_ok hr]
-      simp only [bind, Except.bind]
-      rw [hm]
-      simp only
-      rw [hrb, hf]
-      rfl
   have hmi_none : om.nxt = none → om2.nxt = none := by
     intro hn
     have : ({
@@ -450,34 +413,10 @@ theorem delete_safe (S : CostSetup mk TI PI μ ν PP Jf capf nf Rf) {om : OrderM
   obtain ⟨om2, hm, e1, e2, e3, e4, e5, hN2⟩ := mirrorDelete_ok (om := { om with
       cur := c'
       curIdx := om.curIdx.setX x 0 }) (c' := c') hN hR hnd hxi hlx hhx hrec hhdl hdead
-  have hW3 : WInv { om2 with live := om2.live - 1 } (OrderMaintenance.Spec.step Sp (.delete
-    x)).1 := by
-    refine ⟨OrderMaintenance.Spec.step_inv hS hv, by change om2.nextHandle = _; rw [e3]; exact
-      hf, A, ?_, ?_, ?_, ?_⟩
-    · change CoreR om2.cur A; rw [e1]; exact hR'
-    · change liveH om2.cur A.elist = Sp.list.erase x; rw [e1]; change liveH c' A.elist = _
-      rw [hL', hhx, hL]
-    · change IdxOK om2.cur A om2.curIdx (Sp.list.erase x)
-      rw [e1, e2]
-      intro z hz
-      have hzx : z ≠ x := fun e => by subst e; exact (List.Nodup.not_mem_erase hS.1) hz
-      have hz' := List.mem_of_mem_erase hz
-      simp only [Array.getX_setX, ite_eq_right hzx]
-      obtain ⟨h1, h2, h3⟩ := hI z hz'
-      have hne : om.curIdx.getX z ≠ om.curIdx.getX x := fun e => hzx (by rw [← h3, e, hhx])
-      exact ⟨h1, by show live c' _ = true; rw [hrec _ hne]; exact h2,
-        by show hdl c' _ = z; rw [hhdl]; exact h3⟩
-    · change NxtR om2.cur A { om2 with live := om2.live - 1 }
-      rw [e1]; exact hN2
-  have finish : ∀ om4, ({ om2 with live := om2.live - 1 } : OrderMaintenance).rebuildStep mk =
-    .ok om4 →
-      om.delete mk x = .ok om4 := by
-    intro om4 hrb
-    unfold OrderMaintenance.delete
-    rw [onCur_ok hr]
-    simp only [bind, Except.bind]
-    rw [hm]
-    exact hrb
+  have hW3 : WInv { om2 with live := om2.live - 1 }
+      (OrderMaintenance.Spec.step Sp (.delete x)).1 :=
+    WInv.delete_after_mirror hS hf hI hv hR' (by rw [hL', hhx, hL]) hhx hrec hhdl
+      e1 e2 e3 hN2
   have hm2 : ∀ om', ({
     om with
     cur := c'

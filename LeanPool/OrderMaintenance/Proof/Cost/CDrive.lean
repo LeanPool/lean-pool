@@ -448,9 +448,6 @@ theorem CInvE.close {s : Core} {L : List Nat} {δ δu s₀ : Nat → Nat} {x : N
     rw [hδ _ d5 d3 d6, hδy, hδ _ d7 d4 d8, hδu] at this
     simpa using this
 
-theorem unitsOf_mono (P : Params) {a b : Nat} (h : a ≤ b) : unitsOf P a ≤ unitsOf P b := by
-  unfold unitsOf; have := Nat.div_le_div_right (c := gmin P) h; omega
-
 /-- **Lemmas C1 and C2 for one chunk drive.** Driving the family of `x` after at most one undriven
 insertion into it ends with the chunk invariant restored (no undriven insertion): either `x` has
 made `chunkBudget` moves and C1 holds again, or `x` was removed and its siblings are quiet
@@ -465,30 +462,20 @@ theorem cinv_drive {X Y : Core → Prop} {s : Core} {A : Abs} {gh : GGh} {δ δu
     (hδs : δ (cLl s x) + δ x + δ (cRr s x) ≤ 1)
     (hδle : δ (cLl s x) ≤ cSz s (cLl s x) ∧ δ x ≤ cSz s x ∧ δ (cRr s x) ≤ cSz s (cRr s x)) :
     ∃ s', (driveChunkFrom x).run s = .ok () s' ∧ CDriveDone X Y s A.elist δ δu s₀ x s' := by
-  have Fx := hC.cfam x hxL hst
+  have hBounds := hC1.drive_bounds hCP.K2 hδs hδle
   generalize hl : cLl s x = y at *
   generalize hr : cRr s x = z at *
   generalize ha : cSz s y = a at *
   generalize hb : cSz s x = b at *
   generalize hc : cSz s z = c at *
+  obtain ⟨hThi, hbal0, hfam0⟩ := hBounds
   have hK2 := hCP.K2
   unfold C1 at hC1
   rw [hl, hr, ha, hb, hc] at hC1
   obtain ⟨hs0T, g1, g2, g3, g4⟩ := hC1
   generalize hσ : s₀ x = σ at hs0T g1 g2
   generalize hm : s.P.chunkBudget - 1 = m at g2
-  have hm1 : 1 ≤ m := by omega
   generalize hX0 : (a - δ y) + (b - δ x) + (c - δ z) - σ = Xs at g2
-  have hXq : Xs ≤ unitsOf s.P σ / m := by
-    rw [Nat.le_div_iff_mul_le (by omega), Nat.mul_comm]
-    have := Nat.le_add_left (m * Xs) (units s x - δu x); omega
-  have hU := unitsOf_mono s.P hs0T
-  have hUd : unitsOf s.P σ / m ≤ unitsOf s.P s.P.T / m := Nat.div_le_div_right hU
-  have hkC : kC s.P s.P.T = unitsOf s.P s.P.T / m + 1 := by unfold kC; rw [hm]
-  have hThi : a + b + c ≤ s.P.T + kC s.P s.P.T := by rw [hkC]; omega
-  have hbal0 : a ≤ c + umax s.P + 1 ∧ c ≤ a + umax s.P + 1 := by omega
-  have hfam0 : a + b + c ≤ δ y + δ x + δ z + s₀ x + unitsOf s.P (s₀ x) / (s.P.chunkBudget - 1) := by
-    rw [hσ, hm]; omega
   obtain ⟨t, hrun, hres⟩ := driveChunkFrom_ok (s := s) (x := x)
     (fun j t => CDriveInv X s A.elist δ δu s₀ x y z a b c (units s x) j t)
     (CDriveDone X Y s A.elist δ δu s₀ x)

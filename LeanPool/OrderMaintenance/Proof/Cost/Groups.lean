@@ -124,6 +124,29 @@ def G1 (s : Core) (δ : Nat → Nat) (g : Nat) : Prop :=
   gSz s (gLl s g) - δ (gLl s g) ≤ gSz s (gRr s g) - δ (gRr s g) + 1 ∧
   gSz s (gRr s g) - δ (gRr s g) ≤ gSz s (gLl s g) - δ (gLl s g) + 1
 
+/-- G1 bounds the excess family size by the quotient of its split budget. -/
+theorem G1.excess_le {s : Core} {δ : Nat → Nat} {g : Nat} (h : G1 s δ g)
+    (hK : 2 ≤ s.P.groupBudget) :
+    (gSz s (gLl s g) - δ (gLl s g)) + (gSz s g - δ g) +
+      (gSz s (gRr s g) - δ (gRr s g)) - s.P.G ≤ s.P.G / (s.P.groupBudget - 1) := by
+  have hm : 0 < s.P.groupBudget - 1 := by omega
+  rw [Nat.le_div_iff_mul_le hm, Nat.mul_comm]
+  exact (Nat.le_add_left _ (gSz s g - δ g)).trans h.2.1
+
+/-- The common size and balance bounds used by every group-drive simulation. -/
+theorem G1.drive_bounds {s : Core} {δ : Nat → Nat} {g : Nat} (h : G1 s δ g)
+    (hK : 2 ≤ s.P.groupBudget) (hδs : δ (gLl s g) + δ g + δ (gRr s g) ≤ 1)
+    (hδle : δ (gLl s g) ≤ gSz s (gLl s g) ∧ δ g ≤ gSz s g ∧
+      δ (gRr s g) ≤ gSz s (gRr s g)) :
+    s.P.G ≤ gSz s (gLl s g) + gSz s g + gSz s (gRr s g) ∧
+    gSz s (gLl s g) + gSz s g + gSz s (gRr s g) ≤
+      s.P.G + s.P.G / (s.P.groupBudget - 1) + 1 ∧
+    (gSz s (gLl s g) ≤ gSz s (gRr s g) + 2 ∧
+      gSz s (gRr s g) ≤ gSz s (gLl s g) + 2) := by
+  have hq := h.excess_le hK
+  obtain ⟨h1, h2, h3, h4⟩ := h
+  omega
+
 /-- The group-level invariant, exempting the size conditions of the family of `x` (a family
 being driven). -/
 structure GInvE (s : Core) (L : List Nat) (gh : GGh) (δ : Nat → Nat) (x : Nat) : Prop where

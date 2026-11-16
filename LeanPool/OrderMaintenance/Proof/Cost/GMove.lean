@@ -1470,27 +1470,18 @@ theorem ginv_drive {X Y : Core → Prop} {s : Core} {A : Abs} {gh : GGh} {δ : N
     (hδs : δ (gLl s p) + δ p + δ (gRr s p) ≤ 1)
     (hδle : δ (gLl s p) ≤ gSz s (gLl s p) ∧ δ p ≤ gSz s p ∧ δ (gRr s p) ≤ gSz s (gRr s p)) :
     ∃ s', (driveGroupFrom p).run s = .ok () s' ∧ DriveDone X Y s A.elist s' := by
+  have hBounds := hG1.drive_bounds hP.K2 hδs hδle
   generalize hl : gLl s p = l at *
   generalize hr : gRr s p = r at *
   generalize ha : gSz s l = a at *
   generalize hb : gSz s p = b at *
   generalize hc : gSz s r = c at *
+  obtain ⟨hTlo, hThi, hbal0⟩ := hBounds
   have hK2 := hP.K2
-  have hI1 := hP.I1
   unfold G1 at hG1
   rw [hl, hr, ha, hb, hc] at hG1
   obtain ⟨g1, g2, g3, g4⟩ := hG1
-  generalize hm : s.P.groupBudget - 1 = m at g2 hI1
-  have hm1 : 1 ≤ m := by omega
-  generalize hq : s.P.G / m = q at hI1
-  -- the size before the undriven insertions exceeds `G` by at most `q`
-  have hXq : (a - δ l) + (b - δ p) + (c - δ r) - s.P.G ≤ q := by
-    rw [← hq, Nat.le_div_iff_mul_le (by omega), Nat.mul_comm]
-    have := Nat.le_add_left (m * ((a - δ l) + (b - δ p) + (c - δ r) - s.P.G)) (b - δ p)
-    omega
-  have hTlo : s.P.G ≤ a + b + c := by omega
-  have hThi : a + b + c ≤ s.P.G + s.P.G / (s.P.groupBudget - 1) + 1 := by rw [hm, hq]; omega
-  have hbal0 : a ≤ c + 2 ∧ c ≤ a + 2 := by omega
+  generalize hm : s.P.groupBudget - 1 = m at g2
   obtain ⟨t, hrun, hres⟩ := driveGroupFrom_ok (s := s) (p := p)
     (fun j t => DriveInv X s A.elist δ p l r a b c j t) (DriveDone X Y s A.elist)
     ⟨hX, rfl, EFrame.refl s, ⟨A, hI, rfl⟩, ⟨gh, hG⟩, hp, hs, hl, hr, by omega, by omega,
@@ -1517,7 +1508,7 @@ theorem ginv_drive {X Y : Core → Prop} {s : Core} {A : Abs} {gh : GGh} {δ : N
       -- `b - K + m (T - G) ≤ G`
       have hKm : s.P.groupBudget = m + 1 := by omega
       rw [hKm] at hcnt
-      generalize hX0 : (a - δ l) + (b - δ p) + (c - δ r) - s.P.G = Xs at g2 hXq
+      generalize hX0 : (a - δ l) + (b - δ p) + (c - δ r) - s.P.G = Xs at g2
       have hT : gSz t l + gSz t p + gSz t r - s.P.G = Xs + (δ l + δ p + δ r) := by omega
       rw [hT, Nat.mul_add]
       rcases Nat.le_one_iff_eq_zero_or_eq_one.mp hδs with h0 | h1

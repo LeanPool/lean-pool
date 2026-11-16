@@ -111,6 +111,37 @@ def C1 (s : Core) (δ δu s₀ : Nat → Nat) (x : Nat) : Prop :=
     cSz s (cLl s x) - δ (cLl s x) ≤ cSz s (cRr s x) - δ (cRr s x) + umax s.P ∧
     cSz s (cRr s x) - δ (cRr s x) ≤ cSz s (cLl s x) - δ (cLl s x) + umax s.P
 
+theorem unitsOf_mono (P : Params) {a b : Nat} (h : a ≤ b) : unitsOf P a ≤ unitsOf P b := by
+  unfold unitsOf; have := Nat.div_le_div_right (c := gmin P) h; omega
+
+/-- C1 bounds the family-size excess by its initial unit budget. -/
+theorem C1.excess_le {s : Core} {δ δu s₀ : Nat → Nat} {x : Nat} (h : C1 s δ δu s₀ x)
+    (hK : 2 ≤ s.P.chunkBudget) :
+    (cSz s (cLl s x) - δ (cLl s x)) + (cSz s x - δ x) +
+      (cSz s (cRr s x) - δ (cRr s x)) - s₀ x ≤ unitsOf s.P (s₀ x) / (s.P.chunkBudget - 1) := by
+  have hm : 0 < s.P.chunkBudget - 1 := by omega
+  rw [Nat.le_div_iff_mul_le hm, Nat.mul_comm]
+  exact (Nat.le_add_left _ (units s x - δu x)).trans h.2.2.1
+
+/-- The common family size and balance bounds used by every chunk-drive simulation. -/
+theorem C1.drive_bounds {s : Core} {δ δu s₀ : Nat → Nat} {x : Nat} (h : C1 s δ δu s₀ x)
+    (hK : 2 ≤ s.P.chunkBudget) (hδs : δ (cLl s x) + δ x + δ (cRr s x) ≤ 1)
+    (hδle : δ (cLl s x) ≤ cSz s (cLl s x) ∧ δ x ≤ cSz s x ∧
+      δ (cRr s x) ≤ cSz s (cRr s x)) :
+    cSz s (cLl s x) + cSz s x + cSz s (cRr s x) ≤ s.P.T + kC s.P s.P.T ∧
+    (cSz s (cLl s x) ≤ cSz s (cRr s x) + umax s.P + 1 ∧
+      cSz s (cRr s x) ≤ cSz s (cLl s x) + umax s.P + 1) ∧
+    cSz s (cLl s x) + cSz s x + cSz s (cRr s x) ≤
+      δ (cLl s x) + δ x + δ (cRr s x) + s₀ x +
+        unitsOf s.P (s₀ x) / (s.P.chunkBudget - 1) := by
+  have hq := h.excess_le hK
+  have hU := unitsOf_mono s.P h.1
+  have hq2 : unitsOf s.P (s₀ x) / (s.P.chunkBudget - 1) ≤
+      unitsOf s.P s.P.T / (s.P.chunkBudget - 1) := Nat.div_le_div_right hU
+  have hk : kC s.P s.P.T = unitsOf s.P s.P.T / (s.P.chunkBudget - 1) + 1 := rfl
+  obtain ⟨hT, h1, h2, h3, h4⟩ := h
+  omega
+
 /-- The chunk-level invariant, exempting the C1 conditions of the family of `ex`. -/
 structure CInvE (s : Core) (L : List Nat) (δ δu s₀ : Nat → Nat) (ex : Nat) : Prop where
   csz : ∀ c, LiveC s c → cSz s c = (celts s L c).length
