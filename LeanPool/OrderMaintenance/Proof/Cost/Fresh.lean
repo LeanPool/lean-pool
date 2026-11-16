@@ -44,7 +44,6 @@ theorem TopRelR.pqsame {s s' : Core} (h : TopRelR s s') : PQSame s s' := by
 theorem TopRelR.trans {a b c : Core} (h1 : TopRelR a b) (h2 : TopRelR b c) : TopRelR a c := by
   unfold TopRelR at *
   have h1' : TopRel a { b with ready := a.ready } := h1
-  have hr : b.ready = b.ready := rfl
   obtain ⟨e2, g2, s2, c2, ⟨q1, q2, q3, q4, q5, q6, q7, q8⟩, ⟨r1, r2, r3, r4, r5, r6, r7, r8, -⟩⟩
     := h2
   obtain ⟨e1, g1, s1, c1, ⟨p1, p2, p3, p4, p5, p6, p7, p8⟩, ⟨t1, t2, t3, t4, t5, t6, t7, t8, -⟩⟩

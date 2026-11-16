@@ -1007,21 +1007,7 @@ theorem bgAgree {TI : Core → Prop} {μ : Core → Nat} {J k n R : Nat} {cap : 
       simp)).and (xgroup_linv (L := A.elist) (s₀ := s₀) (δ := δ1 c)
       (δu := fun _ => 0) (c := c))).and (xgroup_frame (L := A.elist) (c := c) s2)).and
     (xgroup_track (L := A.elist) (c' := c) y c hy)
-  have hroom : gSt s2 g = .quiet → s2.P.G ≤ gSz s2 g → SplitRoom s2 g := by
-    intro hq hge
-    have hq0 := (hG.quiet g hgL hq).1
-    unfold δ1 at hq0; rw [ite_eq_left rfl] at hq0
-    have hcl : LiveC s2 (gC s2 g) := by rw [hgc]; exact hPost.cL
-    have hδ1 : ∀ x, LiveC s2 x → cSt s2 x = .splitting →
-        δ1 c (cLl s2 x) + δ1 c x + δ1 c (cRr s2 x) ≤ 1 := by
-      intro x hx hxs
-      have Fx := hC.cfam x hx hxs
-      have h1 := Fx.lx hI hx; have h2 := Fx.rx hI hx; have h3 := Fx.lr hI hx
-      unfold δ1; split_ifs <;> simp_all
-    have hnd : cSt s2 c ≠ .dead := by rw [← hgc]; exact (hC.gchk g hgL).2
-    obtain ⟨harr, hins⟩ := chunk_budget hC hLi hPost.cp hPost.cL hnd hδ1 hPost.quiet
-    rw [← hgc] at harr hins
-    exact split_room hI hLi hLP hGP hgL hq (by omega) hcl harr hins
+  have hroom := hPost.split_room
   have hX0 : (((CInv s2 A.elist (δ1 c) (fun _ => 0) s₀ ∧ LX s₀ (δ1 c) (fun _ => 0) s2) ∧
       CFrame s2 s2) ∧ gC s2 (eG s2 y) = c) :=
     ⟨⟨⟨hC, ⟨lg, hLi⟩, hLP, hGP⟩, CFrame.refl s2⟩, by rw [heg2, hgc]⟩
@@ -1089,14 +1075,9 @@ theorem bgAgree {TI : Core → Prop} {μ : Core → Nat} {J k n R : Nat} {cap : 
     hcsz3 K3 hdc
   have hD : DFrame s2 t4 := hCF.dframe.trans hCP4.fr
   -- the reservation
-  obtain ⟨yg, ig, ag, ipg, jsg, hGm, hRA⟩ := hPost.game
   have hk2 : s1.P.reservationBudget = k := by rw [hP1]; exact hkP
   have hP4 : t4.P = s0.P := hD.P.trans hP2
-  have h0 : ResInv TI k J n R μ A.elist t4 0 t4 := by
-    refine ⟨⟨hCP4.inv, hCP4.ginv, ⟨s₀, hCP4.cinv, hCP4.lx⟩, hPost.pq.dframe hD, hCP4.cnt,
-      by rw [hP4, ← hP2]; exact hPost.cp⟩, hTC.frame _ _ hD.topSame hPost.ti, rfl, rfl,
-      yg, ig, ag, ipg, jsg, hGm.mono (fun j => le_of_eq (by rw [hD.gvec])), ?_⟩
-    rw [hD.top.2.2.2.2.1, hTC.mframe _ _ hD.topSame]; exact hRA
+  have h0 := hCP4.reservation_invariant hTC hPost hD
   -- chunkSize at Level M
   have hcs1 : c < s1.C.size := by have := hPost.cL.2; rw [hS12.1.Csize] at this; exact this
   obtain ⟨⟨L1, n1, e1, hn1⟩, hq2⟩ := csP_agree (κ := κ) (L := Machine.State.setLocs (fun _ => 0)

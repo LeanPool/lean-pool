@@ -356,7 +356,6 @@ theorem isPre_ok {κ : Caps} {s : Core} {L : Loc} {pr : Prep} (hp : s.prep = som
   have b4 := evalF_assign_ok (κ := κ) (s := s) (L := upd (upd (upd L "c" pr.chunk) "h" pr.h)
     "bl" pr.below)
     (x := "tg") (e := .opt .prepTag) (v := pr.tag) (by simp [Exp.ev, OF.get, hp])
-  have hr := evalF_seq_ok2 b1 (evalF_seq_ok2 b2 (evalF_seq_ok2 b3 b4))
   by_cases h1 : pr.h = 1
   · have e5 : evalF κ (.ite ("h" =ₑ 1) (.lclear .cin "c") .skip) s (isL L pr) =
         .ok {

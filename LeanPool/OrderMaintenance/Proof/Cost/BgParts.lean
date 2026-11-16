@@ -214,6 +214,19 @@ structure CPost (L : List Nat) (s₀ : Nat → Nat) (t3 t4 : Core) : Prop where
   cnt : ∃ e pops, CountInv t4 e pops
   fr : DFrame t3 t4
 
+/-- The chunk phase's lower invariant and frame initialize the common reservation invariant. -/
+theorem CPost.reservation_invariant {TI : Core → Prop} {μ : Core → Nat} {J k n R : Nat}
+    {cap : Params → Nat} {L : List Nat} {s₀ : Nat → Nat} {s0 s2 s3 t4 : Core} {g c : Nat}
+    (hCP : CPost L s₀ s3 t4) (hTC : TopContract TI μ J cap)
+    (hPost : InsPost TI k J n R μ L s0 g c s2) (hD : DFrame s2 t4) :
+    ResInv TI k J n R μ L t4 0 t4 := by
+  obtain ⟨yg, ig, ag, ipg, jsg, hGm, hRA⟩ := hPost.game
+  refine ⟨⟨hCP.inv, hCP.ginv, ⟨s₀, hCP.cinv, hCP.lx⟩, hPost.pq.dframe hD, hCP.cnt,
+    by rw [hD.P]; exact hPost.cp⟩, hTC.frame _ _ hD.topSame hPost.ti, rfl, rfl,
+    yg, ig, ag, ipg, jsg, hGm.mono (fun j => le_of_eq (by rw [hD.gvec])), ?_⟩
+  rw [hD.top.2.2.2.2.1, hTC.mframe _ _ hD.topSame]
+  exact hRA
+
 /-- **The chunk phase** after an insertion into chunk `c`. -/
 theorem driveChunk_ok {t : Core} {A : Abs} {L : List Nat} {gh : GGh} {s₀ δu : Nat → Nat}
     {e : Nat → Nat} {pops c : Nat} (hI : INV t A) (hel : A.elist = L)

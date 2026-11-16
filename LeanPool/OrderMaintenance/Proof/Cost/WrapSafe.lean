@@ -262,9 +262,6 @@ theorem insert_safe (S : CostSetup mk TI PI μ ν PP Jf capf nf Rf) {om : OrderM
   have hcur3 : ∀ A'', INV om2.cur A'' → CoreOK mk TI μ Jf nf Rf om2.cur A''.elist := by
     intro A'' hA''; rw [e1] at hA'' ⊢
     rw [INV.elist_unique hA'' hR'.inv, hA']; exact hok'
-  have hbig3 : 64 ≤ om2.cur.P.N := by rw [e1, hPc']; exact hW.big
-  have hcp : om.cur.count + 1 ≤ om.cur.P.N := hW.cur_room S
-  have hkb3 : 4 ≤ om2.KB := by rw [e5]; exact hW.kb
   have hmi_none : om.nxt = none → om2.nxt = none := by
     intro hn
     have : ({
@@ -410,9 +407,6 @@ theorem delete_safe (S : CostSetup mk TI PI μ ν PP Jf capf nf Rf) {om : OrderM
   have hcur3 : ∀ A'', INV om2.cur A'' → CoreOK mk TI μ Jf nf Rf om2.cur A''.elist := by
     intro A'' hA''; rw [e1] at hA'' ⊢; rw [INV.elist_unique hA'' hR'.inv]; exact hok'
   have hPc' : c'.P = om.cur.P := hP2
-  have hbig3 : 64 ≤ om2.cur.P.N := by rw [e1, hPc']; exact hW.big
-  have hkb3 : 4 ≤ om2.KB := by rw [e5]; exact hW.kb
-  have hlv0 : om.live = Sp.list.length := hW.live
   refine ⟨c', om2, hr, hm, ?_⟩
   cases hn : om.nxt with
   | none =>

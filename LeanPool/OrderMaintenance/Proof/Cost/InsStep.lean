@@ -144,6 +144,34 @@ structure InsPost (TI : Core → Prop) (k J n R : Nat) (μ : Core → Nat) (L : 
   quiet : cSt s2 c = .quiet → cSz s2 c ≤ s2.P.T + 1
   cL : LiveC s2 c
 
+
+/-- An inserted element's pending chunk budget supplies room for the group split. -/
+theorem InsPost.split_room {TI : Core → Prop} {μ : Core → Nat} {k J n R : Nat}
+    {L : List Nat} {s0 s2 : Core} {g c : Nat}
+    (hPost : InsPost TI k J n R μ L s0 g c s2) :
+    gSt s2 g = .quiet → s2.P.G ≤ gSz s2 g → SplitRoom s2 g := by
+  obtain ⟨A, hI, hel⟩ := hPost.inv
+  obtain ⟨gh, hG⟩ := hPost.ginv
+  obtain ⟨s₀, hC, ⟨lg, hLi⟩, hLP, hGP⟩ := hPost.cinv
+  obtain ⟨hgL, hgc, -⟩ := hPost.grp
+  subst hel
+  intro hq hge
+  have hq0 := (hG.quiet g hgL hq).1
+  unfold δ1 at hq0; rw [ite_eq_left rfl] at hq0
+  have hcl : LiveC s2 (gC s2 g) := by rw [hgc]; exact hPost.cL
+  have hδ1 : ∀ x, LiveC s2 x → cSt s2 x = .splitting →
+      δ1 c (cLl s2 x) + δ1 c x + δ1 c (cRr s2 x) ≤ 1 := by
+    intro x hx hxs
+    have Fx := hC.cfam x hx hxs
+    have h1 := Fx.lx hI hx
+    have h2 := Fx.rx hI hx
+    have h3 := Fx.lr hI hx
+    unfold δ1; split_ifs <;> simp_all
+  have hnd : cSt s2 c ≠ .dead := by rw [← hgc]; exact (hC.gchk g hgL).2
+  obtain ⟨harr, hins⟩ := chunk_budget hC hLi hPost.cp hPost.cL hnd hδ1 hPost.quiet
+  rw [← hgc] at harr hins
+  exact OrderMaintenance.Proof.split_room hI hLi hLP hGP hgL hq (by omega) hcl harr hins
+
 end OrderMaintenance.Proof
 
 namespace OrderMaintenance.Proof

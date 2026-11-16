@@ -1117,7 +1117,6 @@ theorem newGroupS_agree (κ : Caps) (σ : Core) (L : Loc) {c : Nat} (hc : L "c" 
     have a1 := evalF_assign_ok (κ := κ) (s := σ) (L := L) (x := "nf") (e := .llen .freeG 0) (v := 0)
       (by simp [Exp.ev, hF0, LK.view, hf])
     set L1 := upd L "nf" 0
-    have p1 := evalF_pushN_ok (κ := κ) (s := σ) (L := L1) (x := "gn")
     have hp : evalF κ (.push .G "gn") σ L1 = .ok {
       σ with
       Gs := σ.Gs.push default
