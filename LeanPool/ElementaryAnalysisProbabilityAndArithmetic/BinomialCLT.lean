@@ -78,10 +78,8 @@ the binomial distribution `Bin(n, p)`. -/
 theorem hasLaw_sum_of_iIndepFun_bernoulli {X : ℕ → Ω → ℝ}
     (hX : ∀ i, HasLaw (X i) Ber(1, 0, p) P) (hind : iIndepFun X P) (n : ℕ) :
     HasLaw (fun ω ↦ ∑ k ∈ Finset.range n, X k ω) Bin(ℝ, n, p) P := by
-  have hae : AEMeasurable (fun ω i ↦ X i ω) P := by
-    first
-      | exact aemeasurable_pi_lambda _ fun i ↦ (hX i).aemeasurable
-      | exact aemeasurable_pi_iff.2 fun i ↦ (hX i).aemeasurable
+  have hae : AEMeasurable (fun ω i ↦ X i ω) P :=
+    aemeasurable_pi_iff.2 fun i ↦ (hX i).aemeasurable
   have hpi := hind.hasLaw_infinitePi hX hae
   have hsum : HasLaw (fun x : ℕ → ℝ ↦ ∑ k ∈ Finset.range n, x k) Bin(ℝ, n, p)
       (Measure.infinitePi fun _ : ℕ ↦ Ber((1 : ℝ), 0, p)) :=
