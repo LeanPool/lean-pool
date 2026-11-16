@@ -190,13 +190,10 @@ theorem cover_expect_ne_none (i : Fin k) (a : ℕ) : Cover.expect M W L i a ≠ 
 
 /-- If the immortal rejected tails of a hole have length at most `L`, every coordinate of the
 hole is fresh in its cover. -/
-theorem cover_fresh [Finite α] [Finite S] (hW : M.IsHole W)
+theorem cover_fresh (hW : M.IsHole W)
   (hL : ∀ i, M.Immortal (M.endState W i) → M.rejectedTailLength W i ≤ L) (i : Fin k) :
   (cover M W L).Fresh W i := by
   classical
-  let := Fintype.ofFinite S
-  classical
-  let := Fintype.ofFinite α
   rw [fresh_iff]
   intro a ha
   simp only [endState]
@@ -333,14 +330,13 @@ omit [Fintype α] in
 /-- A hole whose immortal rejected tails have length at most `L` gives a hole of total length
 at most `freshTupleBound k (k · (N + L + 1) + 1)`: a fresh dominator of the hole in its
 cover. -/
-theorem exists_hole_totalLength_le_of_tails [Finite α] (M : StructuralReader α S k)
+theorem exists_hole_totalLength_le_of_tails (M : StructuralReader α S k)
     {W : Fin k → List α}
     (hW : M.IsHole W) {L : ℕ}
     (hL : ∀ i, M.Immortal (M.endState W i) → M.rejectedTailLength W i ≤ L) :
     ∃ U, M.IsHole U ∧
       totalLength U ≤ Fresh.freshTupleBound k (k * (Fintype.card S + L + 1) + 1) := by
   classical
-  let := Fintype.ofFinite α
   obtain ⟨U, hU, hb⟩ := Fresh.exists_freshDominates_totalLength_le (cover_fresh hW hL)
   rw [cover_card] at hb
   exact ⟨U, (cover_project hW hU).1, hb⟩
