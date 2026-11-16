@@ -569,14 +569,16 @@ theorem thm_1_3_from_modules
         have hd_eq : (d : ℝ) = (2 : ℝ) ^ L * (q : ℝ) * (rStar : ℝ) := by
           dsimp [d, N]; push_cast; ring
         rw [hd_eq, div_mul_eq_mul_div, div_le_iff₀ (by positivity)]
-        have : (0 : ℝ) ≤ (2 : ℝ) ^ L * (q : ℝ) := by positivity
-        nlinarith
+        have hscale : (0 : ℝ) ≤ (2 : ℝ) ^ L * (q : ℝ) := by positivity
+        have hscaled := mul_le_mul_of_nonneg_left hlog_hi hscale
+        nlinarith only [hscaled]
       · simp only [beta2_fn, dite_eq_left hC₁]
         have hd_eq : (d : ℝ) = (2 : ℝ) ^ L * (q : ℝ) * (rStar : ℝ) := by
           dsimp [d, N]; push_cast; ring
         rw [hd_eq, div_mul_eq_mul_div, le_div_iff₀ (by positivity)]
-        have : (0 : ℝ) ≤ (2 : ℝ) ^ L * (q : ℝ) := by positivity
-        nlinarith
+        have hscale : (0 : ℝ) ≤ (2 : ℝ) ^ L * (q : ℝ) := by positivity
+        have hscaled := mul_le_mul_of_nonneg_left hlog_lo hscale
+        nlinarith only [hscaled]
       · simp only [A_fn, dite_eq_left hC₁]
         exact hP_ar
       · intro S _ H w hH
