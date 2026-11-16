@@ -44,18 +44,26 @@ theorem initStep_pk_stage {P : Params} {h : Nat} {s : Core} {L : Loc} (S : Stage
   rw [hp] at hp'; cases hp'
   have hP := S.P
   refine ⟨?_, h1⟩
-  show chainTag P (h - 1) < 2 ^ ((h - 1) * s.P.beta)
+  change chainTag P (h - 1) < 2 ^ ((h - 1) * s.P.beta)
   rw [hP] at hb ⊢; exact chainTag_lt hb _
 
 /-- **The eager construction loop**, along the stages (the context of `initCoreS_eager`). -/
 theorem initLoop_pkok_stage {P : Params} (hH : 1 ≤ P.H) (hK2 : InitCaps κ P) {L : Loc}
-    (hG : Gd K KH κ (ΓK K) (prepStart P true) L) : PKok K KH κ (ΓK K) W initLoopS (prepStart P true) L := by
+    (hG : Gd K KH κ (ΓK K) (prepStart P true) L) : PKok K KH κ (ΓK K) W initLoopS (prepStart P
+      true) L := by
   have hb := hG.vb.room.beta1
   have hPP : (prepStart P true).P = P := rfl
   rw [hPP] at hb
   have S1 := stage_one (initState P) true
-  have hs0 : prepStart P true = { initState (initState P).P with
-      prep := some { chunk := 1, below := 1, path := Array.replicate ((initState P).P.H + 1) NIL }, ready := true } :=
+  have hs0 : prepStart P true = {
+    initState (initState P).P with
+    prep := some {
+      chunk := 1
+      below := 1
+      path := Array.replicate ((initState P).P.H + 1) NIL
+    }
+    ready := true
+  } :=
     rfl
   refine initLoop_pk hC hK hW (fun j t => Stage P (j + 1) t ∧ (j = 0 → t = prepStart P true))
     ⟨by rw [hs0]; exact S1, fun _ => rfl⟩ (fun j t ⟨St, h0⟩ hj => ?_) hG
@@ -76,20 +84,28 @@ theorem initLoop_pkok_stage {P : Params} (hH : 1 ≤ P.H) (hK2 : InitCaps κ P) 
       fun hG0 => PK.ok (initStep_pk_stage hC hK hW St (by omega) hG0)⟩
 
 /-- **The construction of a core** (`initCore`, lazy or eager) from the fresh core. -/
-theorem initCore_pkok {P : Params} (hH : 1 ≤ P.H) (hK2 : InitCaps κ P) (hE : 2 ≤ κ.tbl .E) (hG2 : 2 ≤ κ.tbl .G)
-    {L : Loc} (hG : Gd K KH κ (ΓK K) (freshC P) L) : PKok K KH κ (ΓK K) W initCoreS (freshC P) L := by
+theorem initCore_pkok {P : Params} (hH : 1 ≤ P.H) (hK2 : InitCaps κ P) (hE : 2 ≤ κ.tbl .E) (hG2
+  : 2 ≤ κ.tbl .G)
+    {L : Loc} (hG : Gd K KH κ (ΓK K) (freshC P) L) : PKok K KH κ (ΓK K) W initCoreS (freshC P) L
+      := by
   have hR := hG.vb.room
   unfold initCoreS
   refine PKok.seq (PK.ok (initState_pk hC hK hW hG)) (fun s1 L1 n1 h1 hG1 => ?_)
   obtain ⟨L1', c1, e1, -, -⟩ := initStateS_ok (κ := κ) (P := P) (L := L) hR.Be1 hR.Bg1 hE hG2
-    (by have := hK2.C; omega) (by have := hK2.N; omega)
+    (by
+      have := hK2.C
+      omega) (by
+      have := hK2.N
+      omega)
   rw [e1] at h1; injection h1 with es eL; subst es eL
-  refine PKok.seq (PK.ok (PK.of_safe hC (by omega) (by omega) (by safe_tac) hG1)) (fun s2 L2 n2 h2 hG2' => ?_)
+  refine PKok.seq (PK.ok (PK.of_safe hC (by omega) (by omega) (by proveSafe) hG1)) (fun s2 L2 n2
+    h2 hG2' => ?_)
   rw [prepInit_ok hK2] at h2; injection h2 with es eL; subst es eL
-  refine PKok.ite_ok hC hK hW hG2' (by safe_tac) (fun _ _ _ => PK.ok (PK.of_safe hC (by omega) (by omega)
-    (by safe_tac) hG2')) (fun _ => ?_)
+  refine PKok.ite_ok hC hG2' (by proveSafe) (fun _ _ _ => PK.ok (PK.of_safe hC (by omega)
+    (by omega)
+    (by proveSafe) hG2')) (fun _ => ?_)
   exact PKok.seq (initLoop_pkok_stage hC hK hW hH hK2 hG2')
-    (fun _ _ _ _ hG3 => PK.ok (PK.of_safe hC (by omega) (by omega) (by safe_tac) hG3))
+    (fun _ _ _ _ hG3 => PK.ok (PK.of_safe hC (by omega) (by omega) (by proveSafe) hG3))
 
 /-- **A preparation step** of a core being built (`PrepM`, the context of `prepAgreeM`). -/
 theorem prepP_pkok {s : Core} {L : Loc} (hM : PrepM s) (hG : Gd K KH κ (ΓK K) s L) :

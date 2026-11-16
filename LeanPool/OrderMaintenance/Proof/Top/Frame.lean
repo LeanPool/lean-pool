@@ -26,6 +26,7 @@ are then the same (`SameTree.*`), and so are the parts of the invariant that rea
 namespace OrderMaintenance.Proof.Top
 
 open OrderMaintenance.Model OrderMaintenance.Proof
+/-- Equality of the node records and ancestor data observed by the top-tree proofs. -/
 structure SameTree (s s' : TS) : Prop where
   P : s'.P = s.P
   size : s'.nodes.size = s.nodes.size

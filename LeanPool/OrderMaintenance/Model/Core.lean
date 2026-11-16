@@ -145,7 +145,8 @@ def unlinkGroup (s : Core) (g : Nat) : Core :=
   let A2 := if G.next != NIL then A1.modify G.next (fun X => { X with prev := G.prev }) else A1
   { s with
     Gs := A2.modify g fun X => { X with alive := false, next := NIL, prev := NIL }
-    C := if C.first == g && C.last == g then s.C.modify c (fun X => { X with first := NIL, last := NIL })
+    C := if C.first == g && C.last == g then
+      s.C.modify c (fun X => { X with first := NIL, last := NIL })
       else if C.first == g then s.C.modify c (fun X => { X with first := G.next })
       else if C.last == g then s.C.modify c (fun X => { X with last := G.prev })
       else s.C
@@ -343,8 +344,13 @@ def moveGroupsLeft (s : Core) (x y : Nat) (u labs : List Nat) : Core :=
     if X.last == last then { Z with first := NIL, last := NIL }
     else { Z with first := (s.Gs.getX last).next }
   { s with
-    C := C1.modify y fun Z => { Z with first := if Z.first == NIL then first else Z.first, last := last }
-    Gs := (u.zip labs).foldl (fun a p => a.modify p.1 fun G => { G with chk := y, lab := p.2 }) s.Gs }
+    C := C1.modify y fun Z => {
+      Z with
+      first := if Z.first == NIL then first else Z.first,
+      last := last
+    }
+    Gs := (u.zip labs).foldl
+      (fun a p => a.modify p.1 fun G => { G with chk := y, lab := p.2 }) s.Gs }
 
 /-- Move the groups `u`, a suffix of chunk `x`, to the front of chunk `z`, with labels `labs`. -/
 def moveGroupsRight (s : Core) (x z : Nat) (u labs : List Nat) : Core :=
@@ -355,8 +361,13 @@ def moveGroupsRight (s : Core) (x z : Nat) (u labs : List Nat) : Core :=
     if X.first == first then { Z with first := NIL, last := NIL }
     else { Z with last := (s.Gs.getX first).prev }
   { s with
-    C := C1.modify z fun Z => { Z with last := if Z.first == NIL then last else Z.last, first := first }
-    Gs := (u.zip labs).foldl (fun a p => a.modify p.1 fun G => { G with chk := z, lab := p.2 }) s.Gs }
+    C := C1.modify z fun Z => {
+      Z with
+      last := if Z.first == NIL then last else Z.last,
+      first := first
+    }
+    Gs := (u.zip labs).foldl
+      (fun a p => a.modify p.1 fun G => { G with chk := z, lab := p.2 }) s.Gs }
 
 /-- Chunk sizes after moving the groups `u` from `x` to `dst`. -/
 def moveSizes (x dst : Nat) (u : List Nat) : CM Unit := do

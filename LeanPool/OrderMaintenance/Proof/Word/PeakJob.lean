@@ -59,10 +59,12 @@ theorem ΓS_ge (K : Nat) : ∀ x, K ≤ ΓS K x := by intro x; simp only [ΓS]; 
 theorem ΓJ_ge (K : Nat) : ∀ x, K ≤ ΓJ K x := by intro x; simp only [ΓJ]; split <;> omega
 theorem ΓT_ge (K : Nat) : ∀ x, K ≤ ΓT K x := by intro x; simp only [ΓT]; split_ifs <;> omega
 
-/-- `safe_tac` with the locals of this file. -/
+/-- `proveSafe` with the locals of this file. -/
 macro "jsafe" : tactic => `(tactic| (simp [Stm.Safe, Exp.OK, Exp.wq, Exp.vw, Exp.noShl, Fld.wd,
-    OrderMaintenance.Machine.BinOp.vw, OrderMaintenance.Machine.BinOp.wd, OrderMaintenance.Machine.UnOp.wd, Exp.maxShape, Exp.isCmp, Exp.isBool, Exp.monus, Exp.max,
-    Exp.ifz, Exp.ar, Stm.war, Exp.sc, Stm.wsc, Exp.eF, Exp.gF, Exp.cF, Stm.weF, Stm.wgF, Stm.wcF, Proc.call,
+    Machine.BinOp.vw, Machine.BinOp.wd, Machine.UnOp.wd, Exp.maxShape, Exp.isCmp, Exp.isBool,
+      Exp.monus, Exp.max,
+    Exp.ifz, Exp.ar, Stm.war, Exp.sc, Stm.wsc, Exp.eF, Exp.gF, Exp.cF, Stm.weF, Stm.wgF,
+      Stm.wcF, Proc.call,
     ΓK, ΓV, ΓM, ΓH, ΓR, ΓD, ΓJ, ΓT, ΓG, ΓD2, ΓS] <;>
     omega))
 
@@ -81,15 +83,18 @@ theorem Fin.mono {Q Q' : Core → Prop} {c : Stm} (h : Fin (κ := κ) Q c s L) (
 
 theorem FB.at' {f : Fld} {t : Core} (j : Nat) (h : FB K KH κ f t) : FBat K KH κ f j t := h j
 
-theorem Gd.of_loc (hG : Gd K KH κ Γ s L) {Γ' : Reg → Nat} (h : ∀ x, L x < 2 ^ Γ' x) : Gd K KH κ Γ' s L :=
+theorem Gd.of_loc (hG : Gd K KH κ Γ s L) {Γ' : Reg → Nat} (h : ∀ x, L x < 2 ^ Γ' x) : Gd K KH κ
+  Γ' s L :=
   ⟨hG.enc, hG.vb, h⟩
 
 /-- A sequence whose rest does not write `f`: the first statement may assume the bound of `f`
 at its own end. -/
-theorem PKok.seq_fb {Γ' : Reg → Nat} {c d : Stm} {f : Fld} (hF : Fin (κ := κ) (FB K KH κ f) (c;; d) s L)
+theorem PKok.seq_fb {Γ' : Reg → Nat} {c d : Stm} {f : Fld} (hF : Fin (κ := κ) (FB K KH κ f) (c;;
+  d) s L)
     (hd0 : d.wf f = false)
     (hc : Fin (κ := κ) (FB K KH κ f) c s L → PKok K KH κ Γ' W c s L)
-    (hd : ∀ s1 L1 n1, evalF κ c s L = .ok s1 L1 n1 → Gd K KH κ Γ' s1 L1 → Fin (κ := κ) (FB K KH κ f) d s1 L1 →
+    (hd : ∀ s1 L1 n1, evalF κ c s L = .ok s1 L1 n1 → Gd K KH κ Γ' s1 L1 → Fin (κ := κ) (FB K KH
+      κ f) d s1 L1 →
       PKok K KH κ Γ W d s1 L1) :
     PKok K KH κ Γ W (c;; d) s L :=
   PKok.seq_fin hF (fun _ _ _ _ _ _ _ h2 hq => FB.back hd0 h2 hq) hc hd
@@ -109,7 +114,8 @@ theorem PK.pcSetV {t a b c d : Exp} {vs : List Nat} (hG : Gd K KH κ Γ s L)
     split at h
     · next pc hpc =>
       cases h
-      exact ⟨hG.enc.of_ok h', hG.vb.pcSet hj hpc (hvs _ (by simp)) (hvs _ (by simp)) (hvs _ (by simp))
+      exact ⟨hG.enc.of_ok h', hG.vb.pcSet hj hpc (hvs _ (by simp)) (hvs _ (by simp)) (hvs _ (by
+        simp))
         (hvs _ (by simp)) (hvs _ (by simp)), hG.loc⟩
     · cases h
 
@@ -123,15 +129,17 @@ theorem PK.callV {q : Proc} {args : List Exp} {ds : List Reg} {vs : List Nat} {�
   PK.call hG ha hpa (hb ⟨hG.enc, hG.vb, setLocs_lt (zero_locs _) (fun x _ => hps x) hvs⟩) hr hd
 
 /-- A call (normal runs) whose callee may assume the call's end-state bound. -/
-theorem PKok.callF {Γc Γe : Reg → Nat} {q : Proc} {args : List Exp} {ds : List Reg} {Q : Core → Prop}
-    (hC : CapsW K κ) (hK : 8 ≤ K) (hW : 2 * K + 4 ≤ W) (hG : Gd K KH κ Γ s L)
+theorem PKok.callF {Γc Γe : Reg → Nat} {q : Proc} {args : List Exp} {ds : List Reg} {Q : Core →
+  Prop}
+    (hC : CapsW K κ) (hG : Gd K KH κ Γ s L)
     (ha : ∀ e ∈ args, e.OK Γ K KH W ∧ e.vw Γ K KH K ≤ K)
     (hps : ∀ x, K ≤ Γe x) (hF : Fin (κ := κ) Q (q.call args ds) s L)
-    (hb : ∀ vs, evList κ s L args = some vs → Gd K KH κ Γe s (State.setLocs (fun _ => 0) q.params vs) →
+    (hb : ∀ vs, evList κ s L args = some vs → Gd K KH κ Γe s (State.setLocs (fun _ => 0)
+      q.params vs) →
       Fin (κ := κ) Q q.body s (State.setLocs (fun _ => 0) q.params vs) →
       PKok K KH κ Γc W q.body s (State.setLocs (fun _ => 0) q.params vs))
     (hr : ∀ r ∈ q.rets, Γc r ≤ K) (hd : ∀ d ∈ ds, K ≤ Γ d) : PKok K KH κ Γ W (q.call args ds) s L :=
-  PKok.callS hC hK hW hG ha hps (fun vs hvs hG0 => hb vs hvs hG0 (hF.call hvs)) hr hd
+  PKok.callS hC hG ha hps (fun vs hvs hG0 => hb vs hvs hG0 (hF.call hvs)) hr hd
 
 /-- The value of a read of a field at the index held by a local. -/
 theorem Exp.ev_rdv {f : Fld} {x : Reg} {w : Nat} (h : (Exp.rd f (.var x)).ev κ s L = some w) :
@@ -169,30 +177,39 @@ theorem shDigit_pk {Γ : Reg → Nat} {d : Stm} {x : Reg} {a : Exp} (hG : Gd K K
     have h1 : (h' + 1) * s.P.beta ≤ (s.P.H + 1) * s.P.beta := Nat.mul_le_mul_right _ (by omega)
     rw [Nat.add_mul] at h1; omega
   have hv : (Exp.bin .shl 1 (a * .prm .beta)).ev κ s L = some (2 ^ (h' * s.P.beta)) := by
-    simp [Exp.ev, OrderMaintenance.Machine.BinOp.eval, PF.get, ha]
+    simp [Exp.ev, Machine.BinOp.eval, PF.get, ha]
   have hs : (Exp.bin .shl 1 (a * .prm .beta)).ShOK κ s L K :=
     ⟨trivial, Exp.shOK_of_noShl _ _ _ _ _ (by simp [Exp.noShl, hna]), fun _ => by
-      simp [Exp.val, Exp.ev, OrderMaintenance.Machine.BinOp.eval, PF.get, ha]; omega⟩
+      simp [Exp.val, Exp.ev, Machine.BinOp.eval, PF.get, ha]; omega⟩
   refine PK.assign_seq hG hv (hG.pkS hC hs hv hwa) ?_ (hd h' ha) hnb
   exact lt_of_lt_of_le (Nat.pow_lt_pow_right (by norm_num) hle) (pow_le_pow' hx)
 
 /-- **The labels and tag fields of a sweep step.** -/
 theorem dsLab_pk (hG : Gd K KH κ (ΓT K) s L) : PK K KH κ (ΓT K) W dsLabS s L := by
   unfold dsLabS
-  refine PK.seq_g (Γ' := ΓT K) (PK.of_safe hC (by omega) (by omega) (by jsafe) hG) (fun s1 L1 n1 h1 hG1 => ?_)
+  refine PK.seq_g (Γ' := ΓT K) (PK.of_safe hC (by omega) (by omega) (by jsafe) hG) (fun s1 L1 n1
+    h1 hG1 => ?_)
   obtain ⟨c, hc, hc0, e1, e2⟩ := guard_ok' h1
   subst e1 e2
   have hH : L "h" < s.P.H := by
-    simp [Exp.ev, OrderMaintenance.Machine.BinOp.eval, PF.get] at hc
+    simp [Exp.ev, Machine.BinOp.eval, PF.get] at hc
     by_contra hh; simp [hh] at hc; exact hc0 hc.symm
   refine PK.safe_seq' hC (by omega) (by omega) (by jsafe) hG (fun s2 L2 n2 h2 hG2 => ?_)
-  refine PK.safe_seq' hC (by omega) (by omega) (by simp only [labS, lookupP, findP]; jsafe) hG2
+  refine PK.safe_seq' hC (by omega) (by omega) (by
+    simp only [labS, lookupP, findP]
+    jsafe) hG2
     (fun s3 L3 n3 h3 hG3 => ?_)
-  refine PK.safe_seq' hC (by omega) (by omega) (by simp only [labS, lookupP, findP]; jsafe) hG3
+  refine PK.safe_seq' hC (by omega) (by omega) (by
+    simp only [labS, lookupP, findP]
+    jsafe) hG3
     (fun s4 L4 n4 h4 hG4 => ?_)
-  refine PK.safe_seq' hC (by omega) (by omega) (by simp only [labS, lookupP, findP]; jsafe) hG4
+  refine PK.safe_seq' hC (by omega) (by omega) (by
+    simp only [labS, lookupP, findP]
+    jsafe) hG4
     (fun s5 L5 n5 h5 hG5 => ?_)
-  refine PK.safe_seq' hC (by omega) (by omega) (by simp only [labS, lookupP, findP]; jsafe) hG5
+  refine PK.safe_seq' hC (by omega) (by omega) (by
+    simp only [labS, lookupP, findP]
+    jsafe) hG5
     (fun s6 L6 n6 h6 hG6 => ?_)
   have hh6 : L6 "h" = L "h" := by
     rw [evalF_frame_loc (by decide) h6, evalF_frame_loc (by decide) h5,
@@ -201,60 +218,74 @@ theorem dsLab_pk (hG : Gd K KH κ (ΓT K) s L) : PK K KH κ (ΓT K) W dsLabS s L
   have hP6 : s6.P = s.P := by
     rw [evalF_P h6, evalF_P h5, evalF_P h4, evalF_P h3, evalF_P h2]
   refine shDigit_pk hC hG6 (a := "h") rfl (by jsafe)
-    (fun h' e => by simp [Exp.ev] at e; rw [hP6, ← e, hh6]; exact hH)
+    (fun h' e => by simp only [Exp.ev, Option.some.injEq] at e; rw [hP6, ← e, hh6]; exact hH)
     (by simp [ΓT]) (fun _ _ hG7 => ?_)
   refine shDigit_pk hC hG7 (a := Exp.var "h" - 1) rfl (by jsafe)
     (fun h' e => by
-      simp [Exp.ev, OrderMaintenance.Machine.BinOp.eval, OrderMaintenance.Machine.State.upd,
+      simp [Exp.ev, Machine.BinOp.eval, Machine.State.upd,
         hh6] at e
       rw [hP6]; omega) (by simp [ΓT]) (fun _ _ hG8 => ?_)
   exact PK.of_safe hC (by omega) (by omega) (by jsafe) hG8
 
 /-- **The tag of a sweep step**, bounded by the end state's tag at the moved chunk `y`. -/
-theorem dsTag_pkok (hG : Gd K KH κ (ΓT K) s L) (hF : Fin (κ := κ) (FBat K KH κ (.c .tag) (L "y")) dsTagS s L) :
+theorem dsTag_pkok (hG : Gd K KH κ (ΓT K) s L) (hF : Fin (κ := κ) (FBat K KH κ (.c .tag) (L
+  "y")) dsTagS s L) :
     PKok K KH κ (ΓT K) W dsTagS s L := by
   unfold dsTagS at hF ⊢
   refine PKok.safe_seq_fin hC (by omega) (by omega) (by jsafe) hG hF (fun s1 L1 n1 h1 hG1 hF1 => ?_)
-  refine PKok.safe_seq_fin hC (by omega) (by omega) (by jsafe) hG1 hF1 (fun s2 L2 n2 h2 hG2 hF2 => ?_)
-  refine PKok.safe_seq_fin hC (by omega) (by omega) (by jsafe) hG2 hF2 (fun s3 L3 n3 h3 hG3 hF3 => ?_)
+  refine PKok.safe_seq_fin hC (by omega) (by omega) (by jsafe) hG1 hF1 (fun s2 L2 n2 h2 hG2 hF2
+    => ?_)
+  refine PKok.safe_seq_fin hC (by omega) (by omega) (by jsafe) hG2 hF2 (fun s3 L3 n3 h3 hG3 hF3
+    => ?_)
   have hy : L3 "y" = L "y" := by
     rw [evalF_frame_loc (by decide) h3, evalF_frame_loc (by decide) h2,
       evalF_frame_loc (by decide) h1]
   have hyK : L3 "y" < 2 ^ K := by simpa [ΓT] using hG3.loc "y"
   have htg : L3 "tg" < 2 ^ (2 * K + 2) := by simpa [ΓT] using hG3.loc "tg"
-  exact gstCall_pk hC hK hW hG3 (a := .var "y") (b := .var "tg") (by simp [Exp.ev]) (by simp [Exp.ev]) hyK htg
+  exact gstCall_pk hC hK hW hG3 (a := .var "y") (b := .var "tg") (by simp [Exp.ev]) (by
+    simp [Exp.ev]) hyK htg
     (by simp only [Exp.pk]; exact pow_mono_lt hyK (by omega))
-    (by simp only [Exp.pk]; exact pow_mono_lt htg (by omega)) (by rw [hy]; exact hF3)
+    (by simp only [Exp.pk]; exact pow_mono_lt htg (by omega)) (by
+      rw [hy]
+      exact hF3)
 
 /-- **A sweep move** (`dsMoveS`), its tag bounded by the end state. -/
-theorem dsMove_pkok (hG : Gd K KH κ (ΓT K) s L) (hF : Fin (κ := κ) (FB K KH κ (.c .tag)) dsMoveS s L) :
+theorem dsMove_pkok (hG : Gd K KH κ (ΓT K) s L) (hF : Fin (κ := κ) (FB K KH κ (.c .tag)) dsMoveS
+  s L) :
     PKok K KH κ (ΓT K) W dsMoveS s L := by
   unfold dsMoveS at hF ⊢
   refine PKok.safe_seq_fin hC (by omega) (by omega)
-    (by simp only [dsPickS, belowS, dsLeftS, dsRightS, lookupP, findP]; jsafe) hG hF
+    (by
+      simp only [dsPickS, belowS, dsLeftS, dsRightS, lookupP, findP]
+      jsafe) hG hF
     (fun s1 L1 n1 h1 hG1 hF1 => ?_)
   refine PKok.seq (PK.ok (dsLab_pk hC hK hW hG1)) (fun s2 L2 n2 h2 hG2 => ?_)
   have hF2 := hF1.seq_right h2
   exact dsMut_fin (hF2.mono (fun t h => h.at' (L2 "y"))) (fun hT => dsTag_pkok hC hK hW hG2 hT)
-    (fun s3 L3 n3 h3 hG3 => PK.ok (PK.of_safe hC (by omega) (by omega) (by simp only [dsRangeS, dsTgtS]; jsafe) hG3))
+    (fun s3 L3 n3 h3 hG3 => PK.ok (PK.of_safe hC (by omega) (by omega) (by
+      simp only [dsRangeS, dsTgtS]
+      jsafe) hG3))
 
 /-- **`drainStep`**, its tag bounded by the end state. -/
 theorem dsP_pkok (hG : Gd K KH κ (ΓT K) s L) (hL : ∀ x, L x < 2 ^ K)
     (hF : Fin (κ := κ) (FB K KH κ (.c .tag)) dsP.body s L) : PKok K KH κ (ΓT K) W dsP.body s L := by
   simp only [dsP] at hF ⊢
-  refine PKok.ite_ok hC hK hW hG (by jsafe) (fun _ _ _ => PK.ok (PK.of_safe hC (by omega) (by omega) (by jsafe) hG))
+  refine PKok.ite_ok hC hG (by jsafe) (fun _ _ _ => PK.ok (PK.of_safe hC (by omega) (by
+    omega) (by jsafe) hG))
     (fun hv => ?_)
   have hF1 := hF.ite_f hv
-  refine PKok.safe_seq_fin hC (by omega) (by omega) (by jsafe) hG hF1 (fun s1 L1 n1 h1 hG1 hF2 => ?_)
+  refine PKok.safe_seq_fin hC (by omega) (by omega) (by jsafe) hG hF1 (fun s1 L1 n1 h1 hG1 hF2
+    => ?_)
   obtain ⟨u, hu, e1, e2⟩ := evalF_assign_inv h1
   subst e1 e2
   have huK : u < 2 ^ K := by simpa [ΓT] using hG1.loc "h"
-  have hL1 : ∀ x, OrderMaintenance.Machine.State.upd L "h" u x < 2 ^ K := fun x => by
+  have hL1 : ∀ x, Machine.State.upd L "h" u x < 2 ^ K := fun x => by
     by_cases hx : x = "h"
     · subst hx; rw [upd_eq]; exact huK
     · rw [upd_ne _ _ hx]; exact hL x
-  refine PKok.ite_ok hC hK hW hG1 (by jsafe) (fun _ _ _ => ?_) (fun hv2 => ?_)
-  · refine PKok.seq (Γ' := ΓK K) (PK.ok (finishDrain_pk hC hK hW (hG1.of_loc hL1))) (fun s3 L3 n3 h3 hG3 => ?_)
+  refine PKok.ite_ok hC hG1 (by jsafe) (fun _ _ _ => ?_) (fun hv2 => ?_)
+  · refine PKok.seq (Γ' := ΓK K) (PK.ok (finishDrain_pk hC hK hW (hG1.of_loc hL1))) (fun s3 L3
+      n3 h3 hG3 => ?_)
     exact PK.ok (PK.of_safe hC (by omega) (by omega) (by jsafe) (hG3.mono (ΓT_ge K)))
   · have hF3 := (hF2.ite_f hv2).seq_assign (fun _ _ => rfl)
     exact PKok.seq (dsMove_pkok hC hK hW hG1 hF3)
@@ -265,31 +296,34 @@ end state. -/
 theorem fund_pkok (hG : Gd K KH κ (ΓJ K) s L) (hF : Fin (κ := κ) (FB K KH κ (.c .tag)) fundS s L) :
     PKok K KH κ (ΓJ K) W fundS s L := by
   unfold fundS at hF ⊢
-  refine PKok.ite_ok hC hK hW hG (by jsafe) (fun c hc hc0 => ?_)
+  refine PKok.ite_ok hC hG (by jsafe) (fun c hc hc0 => ?_)
     (fun _ => PK.ok (PK.of_safe hC (by omega) (by omega) (by jsafe) hG))
   have hds : L "jd" < s.P.s := by
-    simp [Exp.ev, OrderMaintenance.Machine.BinOp.eval, PF.get] at hc
+    simp [Exp.ev, Machine.BinOp.eval, PF.get] at hc
     by_contra hh; simp [hh] at hc; exact hc0 hc.symm
   have hF1 := hF.ite_t hc hc0
   refine PKok.seq_fb (Γ' := ΓJ K) hF1 (by decide) (fun hF2 => ?_) (fun s1 L1 n1 h1 hG1 _ => ?_)
-  · refine PKok.callF (Γc := ΓT K) (Γe := ΓT K) hC hK hW hG (by jsafe) (ΓT_ge K) hF2 (fun vs hvs hG0 hF0 => ?_)
+  · refine PKok.callF (Γc := ΓT K) (Γe := ΓT K) hC hG (by jsafe) (ΓT_ge K) hF2 (fun vs hvs
+      hG0 hF0 => ?_)
       (by simp [dsP, ΓT]) (by simp [ΓJ])
     refine dsP_pkok hC hK hW hG0 (fun x => ?_) hF0
-    simp [evList, Exp.ev] at hvs
+    simp only [evList, List.mapM_cons, Exp.ev, List.mapM_nil, Option.pure_def,
+        Option.bind_eq_bind, Option.bind_some, Option.some.injEq] at hvs
     subst hvs
     have hjc : L "jc" < 2 ^ K := by simpa [ΓJ] using hG.loc "jc"
-    simp only [dsP, OrderMaintenance.Machine.State.setLocs, OrderMaintenance.Machine.State.upd]
+    simp only [dsP, Machine.State.setLocs, Machine.State.upd]
     split
     · exact hjc
     · exact Nat.two_pow_pos _
   · have hjd : L1 "jd" = L "jd" := evalF_frame_loc (by decide) h1
     have hP1 : s1.P = s.P := evalF_P h1
-    refine PKok.ite_ok hC hK hW hG1 (by jsafe) (fun _ _ _ => ?_)
+    refine PKok.ite_ok hC hG1 (by jsafe) (fun _ _ _ => ?_)
       (fun _ => PK.ok (PK.of_safe hC (by omega) (by omega) (by jsafe) hG1))
     have hsK : s.P.s < 2 ^ K := by have := hG.vb.prm .s; simpa [PF.get] using this
     have hk : ∀ x, x ≠ "pw" → L1 x < 2 ^ K := fun x hx => by simpa [ΓJ, hx] using hG1.loc x
-    have hev : evList κ s1 L1 [4, "ja", "jb", "jc", "jd" + 1] = some [4, L1 "ja", L1 "jb", L1 "jc", L1 "jd" + 1] := by
-      simp [evList, Exp.ev, OrderMaintenance.Machine.BinOp.eval]
+    have hev : evList κ s1 L1 [4, "ja", "jb", "jc", "jd" + 1] = some [4, L1 "ja", L1 "jb", L1
+      "jc", L1 "jd" + 1] := by
+      simp [evList, Exp.ev, Machine.BinOp.eval]
     refine PK.ok (PK.pcSetV hG1 hev ?_ ?_)
     · refine hG1.pkList hC (fun e he => ?_) hev
       simp only [List.mem_cons, List.not_mem_nil, or_false] at he

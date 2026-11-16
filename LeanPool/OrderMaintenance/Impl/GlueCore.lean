@@ -10,6 +10,7 @@ module
 
 public import LeanPool.OrderMaintenance.Impl.GlueTop
 public import LeanPool.OrderMaintenance.Impl.Background
+public import Mathlib.Order.Interval.Finset.Nat
 
 
 /-!
@@ -27,7 +28,8 @@ namespace OrderMaintenance.Proof
 
 open OrderMaintenance.Model OrderMaintenance.Zeroing
 /-- The iteration step of `reservation_cost` (its proof, as a lemma). -/
-theorem resInv_step {TI : Core → Prop} {μ : Core → Nat} {J k n R : Nat} {cap : Params → Nat} {L : List Nat}
+theorem resInv_step {TI : Core → Prop} {μ : Core → Nat} {J k n R : Nat} {cap : Params → Nat} {L
+  : List Nat}
     {s : Core} (hTC : TopContract TI μ J cap) (hn : 1 ≤ n)
     (hsize : 2 + 2 * (s.count / (s.P.theta + 1 - cmax s.P)) ≤ n + 1)
     (hcap : 2 + 2 * (s.count / (s.P.theta + 1 - cmax s.P)) ≤ cap s.P)
@@ -35,10 +37,14 @@ theorem resInv_step {TI : Core → Prop} {μ : Core → Nat} {J k n R : Nat} {ca
     ∀ j t, ResInv TI k J n R μ L s j t → j < k →
       (t.resJob = none → (t.pqHi = 0 ∧ (LowInv t L ∧ TI t ∧ t.count = s.count ∧ t.P = s.P ∧
           t.resJob = none ∧ ∀ c, gval t c = 0)) ∨
-        (t.pqHi ≠ 0 ∧ ∃ c t1 t2, pqPopMax.run t = .ok c t1 ∧ (splitChunkStart c).run t1 = .ok () t2 ∧
+        (t.pqHi ≠ 0 ∧ ∃ c t1 t2, pqPopMax.run t = .ok c t1 ∧ (splitChunkStart c).run t1 = .ok ()
+          t2 ∧
           ResInv TI k J n R μ L s (j + 1) t2)) ∧
       (∀ job, t.resJob = some job → ∃ r t1, (jobStep job).run t = .ok r t1 ∧
-        ResInv TI k J n R μ L s (j + 1) { t1 with resJob := r }) := by
+        ResInv TI k J n R μ L s (j + 1) {
+          t1 with
+          resJob := r
+        }) := by
     intro j t hI hj
     obtain ⟨hL, hT, hc, hP, y, i, a, ip, js, hG, hR⟩ := hI
     refine ⟨fun hnone => ?_, fun job hjob => ?_⟩
@@ -67,10 +73,13 @@ theorem resInv_step {TI : Core → Prop} {μ : Core → Nat} {J k n R : Nat} {ca
         have hsz := hN.size
         rw [hc, hP] at hpops
         have hcn : c - 1 < n := by have := hcL.2; omega
-        have hT5 := cSz_le_T hG (by rw [hP]; exact hI5) hcL.1 hcn ⟨hcL, hcQ⟩
+        have hT5 := cSz_le_T hG (by
+          rw [hP]
+          exact hI5) hcL.1 hcn ⟨hcL, hcQ⟩
         -- start the split of `c`
         have hD := delSt_only t c
-        have hI1 : INV (delSt t c) A := hIA.of_sameLinks hD.sameLinks (fun d => by simp only [cT, hD.C])
+        have hI1 : INV (delSt t c) A := hIA.of_sameLinks hD.sameLinks (fun d => by simp only
+          [cT, hD.C])
         have hTI1 : TI (delSt t c) := hTC.frame _ _ hD.topSame hT
         have hsz1 : (delSt t c).C.size = t.C.size := by rw [hD.C]
         have hQS := hD.lowSame.qsame
@@ -78,8 +87,13 @@ theorem resInv_step {TI : Core → Prop} {μ : Core → Nat} {J k n R : Nat} {ca
         have hcq1 : cSt (delSt t c) c = .quiet := (hQS.q c hcL).mpr hcQ
         have hnone1 : (delSt t c).resJob = none := by rw [hD.rest.2.2.2.2.2.2.2.2.1]; exact hnone
         obtain ⟨job, s2, hj, hμ1, hμJ, hTI2⟩ :=
-          hTC.start (delSt t c) A c hI1 hTI1 hnone1 hcL1 hcq1 (by rw [hsz1, hD.P, hP]; omega)
-        have hrun := splitChunkStart_ok (by unfold NIL; have := hcL.1; omega) hcL1.2 hj
+          hTC.start (delSt t c) A c hI1 hTI1 hnone1 hcL1 hcq1 (by
+            rw [hsz1, hD.P, hP]
+            omega)
+        have hrun := splitChunkStart_ok (by
+          unfold NIL
+          have := hcL.1
+          omega) hcL1.2 hj
         have hs2 : TopRel (linkChunkPair (push2 (delSt t c)) c (delSt t c).C.size
             ((delSt t c).C.size + 1)) s2 := by
           have := top_insertAround c (delSt t c).C.size ((delSt t c).C.size + 1)
@@ -93,7 +107,8 @@ theorem resInv_step {TI : Core → Prop} {μ : Core → Nat} {J k n R : Nat} {ca
         obtain ⟨rE, rcnt, rhead, rP⟩ := split_rest (job := job) hs2
         have hjm : (⟨c - 1, hcn⟩ : Fin n).val + 1 = c := by simp only; have := hcL.1; omega
         refine ⟨hL2, hTI2, rcnt.trans (hD.rest.2.1.trans hc), rP.trans (hD.P.trans hP),
-          gvec n t, ⟨c - 1, hcn⟩, fun _ => 0, 0, 0, hG.pop ⟨c - 1, hcn⟩ (fun jj => ?_) (fun jj => ?_),
+          gvec n t, ⟨c - 1, hcn⟩, fun _ => 0, 0, 0, hG.pop ⟨c - 1, hcn⟩ (fun jj => ?_) (fun jj
+            => ?_),
           ?_⟩
         · unfold gvec; rw [hjm]; exact_mod_cast gval_max hcin hmax _
         · unfold gvec
@@ -105,27 +120,38 @@ theorem resInv_step {TI : Core → Prop} {μ : Core → Nat} {J k n R : Nat} {ca
               intro e; apply hjj; ext; simp only; omega
             rw [ite_eq_right hne] at hp
             exact_mod_cast hp
-        · show RoundAt k J (μ (markState s2 c (delSt t c).C.size ((delSt t c).C.size + 1) job)) (some job) 0 0 (j + 1)
+        · change RoundAt k J (μ (markState s2 c (delSt t c).C.size ((delSt t c).C.size + 1) job))
+            (some job) 0 0 (j + 1)
           exact ⟨by simp, by omega, hμ1⟩
     · obtain ⟨A, hIA, hel⟩ := hL.inv
       obtain ⟨r, t1, hj1, hTI1, hμ⟩ := hTC.step t A job hIA hT hjob
       have hTR : TopRel t t1 := by have := top_jobStep job t; rw [hj1] at this; exact this
       have hSafe : Safe t t1 := by have := pres_jobStep job t; rw [hj1] at this; exact this
       have hI1 := hSafe.2 A hIA
-      have hTR' : TopRel t { t1 with resJob := r } :=
+      have hTR' : TopRel t {
+        t1 with
+        resJob := r
+      } :=
         hTR.trans ⟨rfl, rfl, rfl, fun _ => rfl, ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩,
           ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩⟩
-      have hI1' : INV { t1 with resJob := r } A :=
-        hI1.of_sameLinks (by constructor <;> intros <;> rfl) (fun _ => rfl)
+      have hI1' : INV {
+        t1 with
+        resJob := r
+      } A :=
+        hI1.of_sameLinks (by
+          constructor <;> intros <;> rfl) (fun _ => rfl)
       refine ⟨r, t1, hj1, hL.top hTR' ⟨A, hI1', hel⟩, hTI1, hTR'.rest.2.1.trans hc,
         hTR'.rest.1.trans hP, y, i, a, ip, js + 1,
         hG.mono (fun jj => le_of_eq (by rw [hTR'.qsame.gvec])), ?_⟩
       unfold RoundAt at hR
       rw [hjob] at hR
       obtain ⟨h1, h2, h3⟩ := hR
-      show RoundAt k J (μ { t1 with resJob := r }) r ip (js + 1) (j + 1)
+      change RoundAt k J (μ {
+        t1 with
+        resJob := r
+      }) r ip (js + 1) (j + 1)
       cases r with
-      | none => show ip * k ≤ J + (k - (j + 1)); omega
+      | none => change ip * k ≤ J + (k - (j + 1)); omega
       | some j' =>
         obtain ⟨hm1, hm2⟩ := hμ j' rfl
         exact ⟨by omega, by omega, hm1⟩
@@ -143,19 +169,31 @@ structure GCaps (κ : Caps) (s : Core) : Prop where
   fl : κ.tbl .G ≤ κ.lcap .freeG
   f0 : 0 < κ.lrec .freeG
 
-theorem _root_.OrderMaintenance.Proof.INV.gN_lt {s : Core} {A : Abs} (hI : INV s A) {g : Nat} (hg : g ∈ A.glist) : gN s g < s.Gs.size := by
+/-- Transport capacity bounds across changes that preserve the three array sizes. -/
+theorem GCaps.of_sizes {κ : Caps} {s t : Core} (K : GCaps κ s)
+    (groups : t.Gs.size = s.Gs.size) (elements : t.E.size = s.E.size)
+    (chunks : t.C.size = s.C.size) : GCaps κ t := by
+  refine ⟨?_, ?_, ?_, K.fl, K.f0⟩
+  · rw [groups]; exact K.G
+  · rw [elements]; exact K.E
+  · rw [chunks]; exact K.C
+
+theorem _root_.OrderMaintenance.Proof.INV.gN_lt {s : Core} {A : Abs} (hI : INV s A) {g : Nat}
+  (hg : g ∈ A.glist) : gN s g < s.Gs.size := by
   rw [hI.gList.next g hg]
   rcases succOf_mem_or (l := A.glist) (x := g) with h | h
   · exact hI.gAlloc _ h
   · rw [h]; have := hI.gPos; unfold NIL; omega
 
-theorem _root_.OrderMaintenance.Proof.INV.gP_lt {s : Core} {A : Abs} (hI : INV s A) {g : Nat} (hg : g ∈ A.glist) : gP s g < s.Gs.size := by
+theorem _root_.OrderMaintenance.Proof.INV.gP_lt {s : Core} {A : Abs} (hI : INV s A) {g : Nat}
+  (hg : g ∈ A.glist) : gP s g < s.Gs.size := by
   rw [hI.gList.prev g hg]
   rcases predOf_mem_or (l := A.glist) (x := g) with h | h
   · exact hI.gAlloc _ h
   · rw [h]; have := hI.gPos; unfold NIL; omega
 
-theorem _root_.OrderMaintenance.Proof.INV.gF_lt {s : Core} {A : Abs} (hI : INV s A) {g : Nat} (hg : g ∈ A.glist) :
+theorem _root_.OrderMaintenance.Proof.INV.gF_lt {s : Core} {A : Abs} (hI : INV s A) {g : Nat}
+  (hg : g ∈ A.glist) :
     gF s g = NIL ∨ gF s g < s.E.size := by
   by_cases h : gF s g = NIL
   · exact Or.inl h
@@ -163,7 +201,8 @@ theorem _root_.OrderMaintenance.Proof.INV.gF_lt {s : Core} {A : Abs} (hI : INV s
     have : gF s g ∈ A.elist := (mem_runOf.mp (hr ▸ (by simp : gF s g ∈ gF s g :: rest))).1
     exact Or.inr ((hI.eAlloc _).mp this).2
 
-theorem _root_.OrderMaintenance.Proof.INV.gLs_lt {s : Core} {A : Abs} (hI : INV s A) {g : Nat} (hg : g ∈ A.glist) :
+theorem _root_.OrderMaintenance.Proof.INV.gLs_lt {s : Core} {A : Abs} (hI : INV s A) {g : Nat}
+  (hg : g ∈ A.glist) :
     gLs s g = NIL ∨ gLs s g < s.E.size := by
   by_cases h : gF s g = NIL
   · left
@@ -176,7 +215,8 @@ theorem _root_.OrderMaintenance.Proof.INV.gLs_lt {s : Core} {A : Abs} (hI : INV 
     exact Or.inr ((hI.eAlloc _).mp this).2
 
 /-- The free groups are distinct groups below `Gs.size`, other than `NIL`. -/
-theorem _root_.OrderMaintenance.Proof.INV.freeG_len {s : Core} {A : Abs} (hI : INV s A) : s.freeG.length + 1 ≤ s.Gs.size := by
+theorem _root_.OrderMaintenance.Proof.INV.freeG_len {s : Core} {A : Abs} (hI : INV s A) :
+  s.freeG.length + 1 ≤ s.Gs.size := by
   have hs : s.freeG.toFinset ⊆ Finset.Ico 1 s.Gs.size := fun g hg => by
     obtain ⟨a, b, -⟩ := hI.free g (List.mem_toFinset.mp hg); simp [Finset.mem_Ico]; omega
   have := Finset.card_le_card hs
@@ -184,22 +224,26 @@ theorem _root_.OrderMaintenance.Proof.INV.freeG_len {s : Core} {A : Abs} (hI : I
   have := hI.gPos; omega
 
 theorem moveLState_sizes {t : Core} {p : Nat} :
-    (moveLState t p).Gs.size = t.Gs.size ∧ (moveLState t p).C.size = t.C.size ∧ (moveLState t p).E.size = t.E.size := by
+    (moveLState t p).Gs.size = t.Gs.size ∧ (moveLState t p).C.size = t.C.size ∧ (moveLState t
+      p).E.size = t.E.size := by
   simp [moveLState, sizeAdj, moveFirstLeft]
 
 theorem moveRState_sizes {t : Core} {p : Nat} :
-    (moveRState t p).Gs.size = t.Gs.size ∧ (moveRState t p).C.size = t.C.size ∧ (moveRState t p).E.size = t.E.size := by
+    (moveRState t p).Gs.size = t.Gs.size ∧ (moveRState t p).C.size = t.C.size ∧ (moveRState t
+      p).E.size = t.E.size := by
   simp [moveRState, sizeAdj, moveLastRight]
 
 theorem removeState_sizes {t : Core} {p : Nat} :
     (removeState t p).Gs.size = t.Gs.size ∧ (removeState t p).C.size = t.C.size ∧
       (removeState t p).E.size = t.E.size := by
-  refine ⟨?_, ?_, ?_⟩ <;> simp only [removeState, unlinkGroup, Array.size_modify] <;> split_ifs <;> simp
+  refine ⟨?_, ?_, ?_⟩ <;> simp only [removeState, unlinkGroup, Array.size_modify] <;> split_ifs
+    <;> simp
 
 /-- **A group split step of a drive agrees** (the cases of `DriveInv.step`). -/
-theorem _root_.OrderMaintenance.Proof.DriveInv.stepAgree {X Y : Core → Prop} {s : Core} {L : List Nat} {δ : Nat → Nat}
+theorem _root_.OrderMaintenance.Proof.DriveInv.stepAgree {X Y : Core → Prop} {s : Core} {L :
+  List Nat} {δ : Nat → Nat}
     {p l r a b c j : Nat} {t : Core} (hXs : XSteps X Y L δ p (gC s p))
-    (hP : GParams s.P) (hδ : ∀ z, z ≠ l → z ≠ p → z ≠ r → δ z = 0)
+    (hP : GParams s.P)
     (hTlo : s.P.G ≤ a + b + c) (hThi : a + b + c ≤ s.P.G + s.P.G / (s.P.groupBudget - 1) + 1)
     (hbal0 : a ≤ c + 2 ∧ c ≤ a + 2)
     (hD : DriveInv X s L δ p l r a b c j t) {κ : Caps} (hcg : ∀ g, LiveG t g → gC t g < t.C.size)
@@ -245,17 +289,41 @@ theorem _root_.OrderMaintenance.Proof.DriveInv.stepAgree {X Y : Core → Prop} {
     have hfam : famT t p ≤ t.P.G + kG t.P := by
       unfold famT; rw [hD.ll, hD.rr, hkG]; omega
     have hg1 : 1 ≤ gmin t.P := by unfold gmin; have := hP.G4; omega
-    have hrun := groupSplitStep_remove hp he (by rw [hD.ll, hD.rr]; exact hlr)
+    have hrun := groupSplitStep_remove hp he (by
+      rw [hD.ll, hD.rr]
+      exact hlr)
       ⟨by rw [hD.ll]; exact Fp.lSt ▸ hD.ll ▸ rfl, by rw [hD.ll]; exact hD.ll ▸ Fp.lSrc⟩
       ⟨by rw [hD.rr]; exact hD.rr ▸ Fp.rSt, by rw [hD.rr]; exact hD.rr ▸ Fp.rSrc⟩
-      (by rw [hD.ll]; exact hszl) (by rw [hD.rr]; exact hszr)
+      (by
+        rw [hD.ll]
+        exact hszl) (by
+        rw [hD.rr]
+        exact hszr)
     refine ⟨false, _, hrun, fun Lc hLc => ?_, removeState_sizes⟩
-    obtain ⟨L', n, e, hok, hn⟩ := groupSplitStepS_remove κ t Lc hLc hp he (by rw [hD.ll, hD.rr]; exact hlr)
+    obtain ⟨L', n, e, hok, hn⟩ := groupSplitStepS_remove κ t Lc hLc hp he (by
+      rw [hD.ll, hD.rr]
+      exact hlr)
       ⟨by rw [hD.ll]; exact Fp.lSt ▸ hD.ll ▸ rfl, by rw [hD.ll]; exact hD.ll ▸ Fp.lSrc⟩
       ⟨by rw [hD.rr]; exact hD.rr ▸ Fp.rSt, by rw [hD.rr]; exact hD.rr ▸ Fp.rSrc⟩
-      (by rw [hD.ll]; exact hszl) (by rw [hD.rr]; exact hszr) (by rw [hD.ll]; exact hlL.2.1)
-      (by rw [hD.rr]; exact hrL.2.1) (hI'.gP_lt hp') (hI'.gN_lt hp') (hcg p hp) (by have := K.G; omega)
-      (by have := K.C; omega) (by have := hI'.freeG_len; have := K.G; have := K.fl; omega) K.f0
+      (by
+        rw [hD.ll]
+        exact hszl) (by
+        rw [hD.rr]
+        exact hszr) (by
+        rw [hD.ll]
+        exact hlL.2.1)
+      (by
+        rw [hD.rr]
+        exact hrL.2.1) (hI'.gP_lt hp') (hI'.gN_lt hp') (hcg p hp) (by
+        have := K.G
+        omega)
+      (by
+        have := K.C
+        omega) (by
+        have := hI'.freeG_len
+        have := K.G
+        have := K.fl
+        omega) K.f0
     exact ⟨L', n, e, by rw [hok]; rfl, hn⟩
   · have hne : gF t p ≠ NIL := by
       intro h; apply hz
@@ -275,7 +343,9 @@ theorem _root_.OrderMaintenance.Proof.DriveInv.stepAgree {X Y : Core → Prop} {
       have hroom : gF t l ≠ NIL → eL t (gLs t l) + t.P.elementSpacing < 1 <<< t.P.elementBits := by
         intro hfl
         obtain ⟨fr, hfr⟩ := hI'.run_last hl' hfl
-        obtain ⟨-, h2⟩ := hG.range l hlL (gLs t l) (by rw [hfr]; simp)
+        obtain ⟨-, h2⟩ := hG.range l hlL (gLs t l) (by
+          rw [hfr]
+          simp)
         rw [cE_two _ hP.Be]
         have : (gh.pb l + 1) * t.P.elementSpacing ≤ (t.P.G + (q + 1)) * t.P.elementSpacing :=
           Nat.mul_le_mul_right _ (by omega)
@@ -286,11 +356,19 @@ theorem _root_.OrderMaintenance.Proof.DriveInv.stepAgree {X Y : Core → Prop} {
         Fp.lAdj, by rw [hD.ll]; exact hroom, by omega, Fp.lC⟩
       have hrun2 := groupSplitStep_left hok
       refine ⟨true, _, hrun2, fun Lc hLc => ?_, moveLState_sizes⟩
-      obtain ⟨L', n, e, hok', -, hn⟩ := groupSplitStepS_left κ t Lc hLc hok (by rw [hD.ll]; exact hlL.2.1)
-        (by rw [hD.rr]; exact hrL.2.1) heS (by
+      obtain ⟨L', n, e, hok', -, hn⟩ := groupSplitStepS_left κ t Lc hLc hok (by
+        rw [hD.ll]
+        exact hlL.2.1)
+        (by
+          rw [hD.rr]
+          exact hrL.2.1) heS (by
           rcases hI'.gLs_lt (hD.ll ▸ hl') with h | h
           · rw [h]; have := K.E; unfold NIL; omega
-          · have := K.E; omega) (by have := K.G; omega) (by have := K.E; omega)
+          · have := K.E; omega) (by
+            have := K.G
+            omega) (by
+            have := K.E
+            omega)
       exact ⟨L', n, e, by rw [hok']; rfl, by omega⟩
     · -- move to the right sibling
       have hrst : gSt t r = .overflow := hD.rr ▸ Fp.rSt
@@ -299,26 +377,39 @@ theorem _root_.OrderMaintenance.Proof.DriveInv.stepAgree {X Y : Core → Prop} {
       have hroom : gF t r ≠ NIL → t.P.elementSpacing ≤ eL t (gF t r) := by
         intro hfr
         obtain ⟨rs, hrs⟩ := hI'.run_head hr' hfr
-        obtain ⟨h1, -⟩ := hG.range r hrL (gF t r) (by rw [hrs]; simp)
+        obtain ⟨h1, -⟩ := hG.range r hrL (gF t r) (by
+          rw [hrs]
+          simp)
         have : (gh.pf r + 1) * t.P.elementSpacing ≤ (t.P.G + (q + 1)) * t.P.elementSpacing :=
           Nat.mul_le_mul_right _ (by omega)
         have : (gh.pf r + 1) * t.P.elementSpacing = gh.pf r * t.P.elementSpacing +
           t.P.elementSpacing := by ring
         omega
       have hadjR : gP t (gRr t p) = p := by
-        rw [← Fp.rAdj]; exact hI'.gP_gN hp' (by rw [Fp.rAdj, hD.rr]; exact hrL.1)
+        rw [← Fp.rAdj]; exact hI'.gP_gN hp' (by
+          rw [Fp.rAdj, hD.rr]
+          exact hrL.1)
       have hok : MoveROK t p := ⟨hp, hne, by rw [hD.ll, hD.rr]; omega, hadjR,
         by rw [hD.rr]; exact hroom, by omega, Fp.rC⟩
       have hrun2 := groupSplitStep_right hok
       refine ⟨true, _, hrun2, fun Lc hLc => ?_, moveRState_sizes⟩
-      obtain ⟨L', n, e, hok', -, hn⟩ := groupSplitStepS_right κ t Lc hLc hok (by rw [hD.ll]; exact hlL.2.1)
-        (by rw [hD.rr]; exact hrL.2.1) heLS (by
+      obtain ⟨L', n, e, hok', -, hn⟩ := groupSplitStepS_right κ t Lc hLc hok (by
+        rw [hD.ll]
+        exact hlL.2.1)
+        (by
+          rw [hD.rr]
+          exact hrL.2.1) heLS (by
           rcases hI'.gF_lt (hD.rr ▸ hr') with h | h
           · rw [h]; have := K.E; unfold NIL; omega
-          · have := K.E; omega) (by have := K.G; omega) (by have := K.E; omega)
+          · have := K.E; omega) (by
+            have := K.G
+            omega) (by
+            have := K.E
+            omega)
       exact ⟨L', n, e, by rw [hok']; rfl, by omega⟩
 /-- **The drive of a splitting group agrees** (the context of `ginv_drive`). -/
-theorem ginv_driveAgree {X Y : Core → Prop} {s : Core} {A : Abs} {gh : GGh} {δ : Nat → Nat} {p : Nat}
+theorem ginv_driveAgree {X Y : Core → Prop} {s : Core} {A : Abs} {gh : GGh} {δ : Nat → Nat} {p :
+  Nat}
     (hI : INV s A) (hXs : XSteps X Y A.elist δ p (gC s p)) (hX : X s)
     (hG : GInvE s A.elist gh δ p) (hP : GParams s.P) (hp : LiveG s p) (hs : gSt s p = .splitting)
     (hG1 : G1 s δ p)
@@ -326,7 +417,8 @@ theorem ginv_driveAgree {X Y : Core → Prop} {s : Core} {A : Abs} {gh : GGh} {�
     (hδs : δ (gLl s p) + δ p + δ (gRr s p) ≤ 1)
     (hδle : δ (gLl s p) ≤ gSz s (gLl s p) ∧ δ p ≤ gSz s p ∧ δ (gRr s p) ≤ gSz s (gRr s p))
     {κ : Caps} (hXc : ∀ t, X t → ∀ g, LiveG t g → gC t g < t.C.size) (K : GCaps κ s) :
-    ∃ s', DriveAgree κ p s s' ∧ s'.Gs.size = s.Gs.size ∧ s'.C.size = s.C.size ∧ s'.E.size = s.E.size := by
+    ∃ s', DriveAgree κ p s s' ∧ s'.Gs.size = s.Gs.size ∧ s'.C.size = s.C.size ∧ s'.E.size =
+      s.E.size := by
   generalize hl : gLl s p = l at *
   generalize hr : gRr s p = r at *
   generalize ha : gSz s l = a at *
@@ -348,25 +440,32 @@ theorem ginv_driveAgree {X Y : Core → Prop} {s : Core} {A : Abs} {gh : GGh} {�
   have hTlo : s.P.G ≤ a + b + c := by omega
   have hThi : a + b + c ≤ s.P.G + s.P.G / (s.P.groupBudget - 1) + 1 := by rw [hm, hq]; omega
   have hbal0 : a ≤ c + 2 ∧ c ≤ a + 2 := by omega
-  let I' := fun j t => DriveInv X s A.elist δ p l r a b c j t ∧ t.Gs.size = s.Gs.size ∧ t.C.size = s.C.size
-  have h0 : I' 0 s := ⟨⟨hX, rfl, EFrame.refl s, ⟨A, hI, rfl⟩, ⟨gh, hG⟩, hp, hs, hl, hr, by omega, by omega,
+  let I' := fun j t => DriveInv X s A.elist δ p l r a b c j t ∧ t.Gs.size = s.Gs.size ∧ t.C.size
+    = s.C.size
+  have h0 : I' 0 s := ⟨⟨hX, rfl, EFrame.refl s, ⟨A, hI, rfl⟩, ⟨gh, hG⟩, hp, hs, hl, hr, by
+    omega, by omega,
       Or.inl ⟨rfl, ha, hc⟩, rfl⟩, rfl, rfl⟩
-  have hstepM : ∀ j t, I' j t → ∃ bb t', (groupSplitStep p).run t = .ok bb t' ∧ (bb = true → I' (j + 1) t') ∧
-      StepAgree κ p t t' bb ∧ t'.Gs.size = s.Gs.size ∧ t'.C.size = s.C.size ∧ t'.E.size = s.E.size := by
+  have hstepM : ∀ j t, I' j t → ∃ bb t', (groupSplitStep p).run t = .ok bb t' ∧ (bb = true → I'
+    (j + 1) t') ∧
+      StepAgree κ p t t' bb ∧ t'.Gs.size = s.Gs.size ∧ t'.C.size = s.C.size ∧ t'.E.size =
+        s.E.size := by
     intro j t ⟨hD, hGs, hCs⟩
-    have K' : GCaps κ t := ⟨by rw [hGs]; exact K.G, by rw [hD.ef.size]; exact K.E, by rw [hCs]; exact K.C, K.fl, K.f0⟩
-    obtain ⟨bb, t', hrun, hA, hG', hC', hE'⟩ := hD.stepAgree hXs hP (by intro z h1 h2 h3; exact hδ z h1 h2 h3) hTlo
+    have K' : GCaps κ t := K.of_sizes hGs hD.ef.size hCs
+    obtain ⟨bb, t', hrun, hA, hG', hC', hE'⟩ := hD.stepAgree hXs hP hTlo
       hThi hbal0 (hXc t hD.x) K'
     refine ⟨bb, t', hrun, fun hb => ?_, hA, hG'.trans hGs, hC'.trans hCs, hE'.trans hD.ef.size⟩
     subst hb
-    obtain ⟨t1, h1 | h1⟩ := hD.step hXs hP (by intro z h1 h2 h3; exact hδ z h1 h2 h3) hTlo hThi hbal0
+    obtain ⟨t1, h1 | h1⟩ := hD.step hXs hP (by
+      intro z h1 h2 h3
+      exact hδ z h1 h2 h3) hTlo hThi hbal0
     · rw [h1.1] at hrun; injection hrun with _ e; subst e
       exact ⟨h1.2, hG'.trans hGs, hC'.trans hCs⟩
     · rw [h1.1] at hrun; injection hrun with e; cases e
   obtain ⟨s', hA⟩ := driveGroupFromS_agree' κ s I' h0 (fun j t h _ => by
     obtain ⟨bb, t', a1, a2, a3, -⟩ := hstepM j t h; exact ⟨bb, t', a1, a2, a3⟩)
   obtain ⟨t, hrun, hres⟩ := driveGroupFrom_ok (s := s) (p := p) I'
-    (fun t => t.Gs.size = s.Gs.size ∧ t.C.size = s.C.size ∧ t.E.size = s.E.size) h0 (fun j t h _ => by
+    (fun t => t.Gs.size = s.Gs.size ∧ t.C.size = s.C.size ∧ t.E.size = s.E.size) h0 (fun j t h _
+      => by
       obtain ⟨bb, t', a1, a2, -, a4, a5, a6⟩ := hstepM j t h
       cases bb
       · exact ⟨t', Or.inr ⟨a1, a4, a5, a6⟩⟩
@@ -384,7 +483,8 @@ theorem linkGroupPair_size (s : Core) (g gl gr labL labR : Nat) :
     (linkGroupPair s g gl gr labL labR).Gs.size = s.Gs.size := by
   unfold linkGroupPair; dsimp only; split_ifs <;> simp
 
-theorem splitState_size (s : Core) (g labL labR : Nat) : (splitState s g labL labR).Gs.size ≤ s.Gs.size + 2 := by
+theorem splitState_size (s : Core) (g labL labR : Nat) : (splitState s g labL labR).Gs.size ≤
+  s.Gs.size + 2 := by
   unfold splitState; rw [linkGroupPair_size]
   have := allocGroup_size (allocGroup s (gC s g)).2 (gC s g)
   have := allocGroup_size s (gC s g)
@@ -413,25 +513,29 @@ theorem groupPhaseAgree {X Y : Core → Prop} {s : Core} {A : Abs} {gh : GGh} {g
       startGroupSplit g else pure ()).run s = .ok () s1)
     (h2 : (driveGroup g).run s1 = .ok () s') :
     (((s.Gs.getX g).st == St.quiet && decide ((s.Gs.getX g).size ≥ s.P.G)) = true →
-      ∃ L' n, evalF κ startGroupSplitS s (OrderMaintenance.Machine.State.setLocs (fun _ => 0) ["g"] [g]) = .ok s1 L' n ∧
+      ∃ L' n, evalF κ startGroupSplitS s (Machine.State.setLocs (fun _ => 0) ["g"] [g]) = .ok s1
+        L' n ∧
         n ≤ 600) ∧
-    (∃ L' n, evalF κ driveGroupS s1 (OrderMaintenance.Machine.State.setLocs (fun _ => 0) ["g"] [g]) = .ok s' L' n ∧
+    (∃ L' n, evalF κ driveGroupS s1 (Machine.State.setLocs (fun _ => 0) ["g"] [g]) = .ok s' L' n ∧
       n ≤ 30 + s1.P.groupBudget * 401) ∧
-    s'.Gs.size ≤ s.Gs.size + 2 ∧ s'.C.size = s.C.size ∧ s'.E.size = s.E.size ∧ s1.E = s.E ∧ s1.P = s.P := by
+    s'.Gs.size ≤ s.Gs.size + 2 ∧ s'.C.size = s.C.size ∧ s'.E.size = s.E.size ∧ s1.E = s.E ∧ s1.P
+      = s.P := by
   have hgl := hI.mem_glist_iff.mpr hg
   have hgT : g < κ.tbl .G := by have := hg.2.1; have := K.G; omega
-  have hLg : OrderMaintenance.Machine.State.setLocs (fun _ => 0) ["g"] [g] "g" = g := by
-    simp [OrderMaintenance.Machine.State.setLocs, OrderMaintenance.Machine.State.upd]
+  have hLg : Machine.State.setLocs (fun _ => 0) ["g"] [g] "g" = g := by
+    simp [Machine.State.setLocs, Machine.State.upd]
   have hδle : ∀ p, (fun b => if b = g then 1 else 0) p ≤ gSz s p := by
     intro p; by_cases h : p = g
     · subst h; simp [hpos]
     · simp [h]
   suffices hD : (∀ q, ((s1.Gs.getX g).st = .splitting ∧ q = g ∨
       (s1.Gs.getX g).st = .overflow ∧ q = (s1.Gs.getX g).src) → DriveAgree κ q s1 s') ∧
-      s'.Gs.size ≤ s.Gs.size + 2 ∧ s'.C.size = s.C.size ∧ s'.E.size = s.E.size ∧ s1.E = s.E ∧ s1.P = s.P by
+      s'.Gs.size ≤ s.Gs.size + 2 ∧ s'.C.size = s.C.size ∧ s'.E.size = s.E.size ∧ s1.E = s.E ∧
+        s1.P = s.P by
     refine ⟨fun hc => ?_, driveGroupS_agree κ s1 _ hLg hgT h2 hD.1, hD.2⟩
     rw [ite_eq_left hc] at h1
-    exact startGroupSplitS_agree κ s _ hLg (by omega) K.C (hI.gP_lt hgl) (hI.gN_lt hgl) (hXc s hX g hg)
+    exact startGroupSplitS_agree κ s _ hLg (by omega) K.C (hI.gP_lt hgl) (hI.gN_lt hgl) (hXc s
+      hX g hg)
       (fun x hx => (hI.free x hx).2.1) hF0 hF h1
   · cases hst : gSt s g with
     | quiet =>
@@ -457,7 +561,8 @@ theorem groupPhaseAgree {X Y : Core → Prop} {s : Core} {A : Abs} {gh : GGh} {g
         have hP1 : GParams s1.P := by rw [S.P]; exact hP
         have hXd : XSteps X Y A1.elist (fun _ => 0) g (gC s1 g) := by
           rw [hel1, S.chk, ite_eq_right (not_or.mpr ⟨S.ggl, S.ggr⟩)]; exact hXg.drive _ g
-        have K1 : GCaps κ s1 := ⟨by omega, by rw [S.E]; exact K.E, by rw [S.Csize]; exact K.C, K.fl, K.f0⟩
+        have K1 : GCaps κ s1 := ⟨by omega, by rw [S.E]; exact K.E, by rw [S.Csize]; exact K.C,
+          K.fl, K.f0⟩
         obtain ⟨s2, hA, hsz⟩ := ginv_driveAgree hI1 hXd hX1 (hG1.weaken g) hP1 hg1 hs1
           (hG1.split g hg1 hs1 hg1.1) (fun _ _ _ _ => rfl) (by simp) (by simp) hXc K1
         have hs1' : (s1.Gs.getX g).st = .splitting := hs1
@@ -467,7 +572,8 @@ theorem groupPhaseAgree {X Y : Core → Prop} {s : Core} {A : Abs} {gh : GGh} {g
         rcases hq with ⟨-, rfl⟩ | ⟨h, -⟩
         · exact hA
         · rw [hs1'] at h; cases h
-      · have hc : ¬ ((s.Gs.getX g).st == St.quiet && decide ((s.Gs.getX g).size ≥ s.P.G)) = true := by
+      · have hc : ¬ ((s.Gs.getX g).st == St.quiet && decide ((s.Gs.getX g).size ≥ s.P.G)) = true
+          := by
           simp only [gSt, gSz] at hst hsz; simp [hst]; omega
         rw [ite_eq_right hc] at h1
         injection h1 with _ e; subst e
@@ -492,7 +598,8 @@ theorem groupPhaseAgree {X Y : Core → Prop} {s : Core} {A : Abs} {gh : GGh} {g
           simp [e, hgp, this]
         · have : gLl s (gSrc s g) ≠ g := fun h => hlr0 (h.trans e.symm)
           simp [e, hgp, this]
-      have hXd : XSteps X Y A.elist (fun b => if b = g then 1 else 0) (gSrc s g) (gC s (gSrc s g)) := by
+      have hXd : XSteps X Y A.elist (fun b => if b = g then 1 else 0) (gSrc s g) (gC s (gSrc s
+        g)) := by
         rcases hlr with e | e
         · rw [← Fp.lC, e]; exact hXg.drive _ _
         · rw [← Fp.rC, e]; exact hXg.drive _ _
@@ -518,7 +625,9 @@ theorem groupPhaseAgree {X Y : Core → Prop} {s : Core} {A : Abs} {gh : GGh} {g
       have hl0 : gLl s g ≠ g := Fp.lp hI hg
       have hr0 : gRr s g ≠ g := Fp.rp hI hg
       obtain ⟨s2, hA, hsz⟩ := ginv_driveAgree hI (hXg.drive _ _) hX (hG.weaken g) hP hg hst
-        (hG.split g hg hst hg.1) (by intro z _ h2 _; simp [h2]) (by simp [hl0, hr0])
+        (hG.split g hg hst hg.1) (by
+          intro z _ h2 _
+          simp [h2]) (by simp [hl0, hr0])
         ⟨hδle _, hδle _, hδle _⟩ hXc K
       have hst' : (s.Gs.getX g).st = .splitting := hst
       rw [driveGroup_split hst'] at h2
@@ -534,35 +643,46 @@ theorem cremoveState_sizes {t : Core} {x : Nat} :
       (cremoveState t x).E.size = t.E.size := by
   simp [cremoveState]
 
-theorem _root_.OrderMaintenance.Proof.INV.mem_chunks {s : Core} {A : Abs} (hI : INV s A) {c : Nat} (hc : LiveC s c) :
+theorem _root_.OrderMaintenance.Proof.INV.mem_chunks {s : Core} {A : Abs} (hI : INV s A) {c :
+  Nat} (hc : LiveC s c) :
     c ∈ A.chunks := (hI.cAlloc c).mpr hc
 
-theorem _root_.OrderMaintenance.Proof.INV.cF_lt {s : Core} {A : Abs} (hI : INV s A) {c : Nat} (hc : c ∈ A.chunks) :
+theorem _root_.OrderMaintenance.Proof.INV.cF_lt {s : Core} {A : Abs} (hI : INV s A) {c : Nat}
+  (hc : c ∈ A.chunks) :
     cF s c = NIL ∨ cF s c < s.Gs.size := by
   have hE := (hI.cEnds c hc).1
   rcases h : A.grps c with _ | ⟨g, gs⟩
   · rw [h] at hE; exact Or.inl hE
   · rw [h] at hE; simp only [List.headD_cons] at hE
-    exact Or.inr (by rw [hE]; exact hI.gAlloc _ (A.grps_sub_glist hc (by rw [h]; simp)))
+    exact Or.inr (by rw [hE]; exact hI.gAlloc _ (A.grps_sub_glist hc (by
+      rw [h]
+      simp)))
 
-theorem _root_.OrderMaintenance.Proof.INV.cLs_lt {s : Core} {A : Abs} (hI : INV s A) {c : Nat} (hc : c ∈ A.chunks) :
+theorem _root_.OrderMaintenance.Proof.INV.cLs_lt {s : Core} {A : Abs} (hI : INV s A) {c : Nat}
+  (hc : c ∈ A.chunks) :
     cLs s c = NIL ∨ cLs s c < s.Gs.size := by
   have hE := (hI.cEnds c hc).2
   rcases (A.grps c).eq_nil_or_concat with h | ⟨l, g, h⟩
   · rw [h] at hE; exact Or.inl hE
-  · rw [h] at hE; simp at hE
-    exact Or.inr (by rw [hE]; exact hI.gAlloc _ (A.grps_sub_glist hc (by rw [h]; simp)))
+  · rw [h] at hE; simp only [List.concat_eq_append, List.getLastD_eq_getLast?,
+      List.getLast?_append, List.getLast?_singleton, Option.some_or,
+      Option.getD_some] at hE
+    exact Or.inr (by rw [hE]; exact hI.gAlloc _ (A.grps_sub_glist hc (by
+      rw [h]
+      simp)))
 
 /-- **A chunk split step of a drive agrees** (the cases of `CDriveInv.step`). -/
-theorem _root_.OrderMaintenance.Proof.CDriveInv.stepAgree {X Y : Core → Prop} {s : Core} {L : List Nat} {δ δu s₀ : Nat → Nat}
+theorem _root_.OrderMaintenance.Proof.CDriveInv.stepAgree {X Y : Core → Prop} {s : Core} {L :
+  List Nat} {δ δu s₀ : Nat → Nat}
     {x y z a b c u₀ j : Nat} {t : Core} (hXs : CXSteps X Y L δ δu s₀ x) (hP : GParams s.P)
-    (hCP : CParams s.P) (hδ : ∀ c', c' ≠ y → c' ≠ x → c' ≠ z → δ c' = 0)
+    (hCP : CParams s.P)
     (hThi : a + b + c ≤ s.P.T + kC s.P s.P.T)
     (hbal0 : a ≤ c + umax s.P + 1 ∧ c ≤ a + umax s.P + 1)
     (hfam0 : a + b + c ≤ δ y + δ x + δ z + s₀ x + unitsOf s.P (s₀ x) / (s.P.chunkBudget - 1))
     (hδs : δ y + δ x + δ z ≤ 1) (hs0T : s₀ x ≤ s.P.T)
     (hD : CDriveInv X s L δ δu s₀ x y z a b c u₀ j t) {κ : Caps} (K : GCaps κ t) :
-    ∃ bb t', (chunkSplitStep x).run t = .ok bb t' ∧ CStepAgree κ x t t' bb ∧ t'.Gs.size = t.Gs.size ∧
+    ∃ bb t', (chunkSplitStep x).run t = .ok bb t' ∧ CStepAgree κ x t t' bb ∧ t'.Gs.size =
+      t.Gs.size ∧
       t'.C.size = t.C.size ∧ t'.E.size = t.E.size := by
   obtain ⟨A', hI', hel⟩ := hD.inv
   obtain ⟨gh, hG⟩ := hD.ginv
@@ -577,7 +697,7 @@ theorem _root_.OrderMaintenance.Proof.CDriveInv.stepAgree {X Y : Core → Prop} 
   have hsum := hD.sum
   have hcnt := hD.cnt
   have hbal := hD.bal
-  rw [← hD.ll, ← hD.rr] at hsum hbal hδ hfam0 hδs
+  rw [← hD.ll, ← hD.rr] at hsum hbal hfam0 hδs
   rw [← hPt] at hbal
   have hFB : FamBound t δ s₀ x := ⟨by omega, hδs, hs0T⟩
   have hI4 := hCP.I4
@@ -596,14 +716,19 @@ theorem _root_.OrderMaintenance.Proof.CDriveInv.stepAgree {X Y : Core → Prop} 
     have hrun := chunkSplitStep_remove he hyz hxy hxz hD.live.2 ⟨Fx.lSt, Fx.lSrc⟩ ⟨Fx.rSt, Fx.rSrc⟩
       hszy hszz
     refine ⟨false, _, hrun, fun Lc hLc => ?_, cremoveState_sizes⟩
-    obtain ⟨L', n, e, hok, hn⟩ := chunkSplitStepS_remove κ t Lc hLc he hyz hxy hxz hD.live.2 ⟨Fx.lSt, Fx.lSrc⟩
+    obtain ⟨L', n, e, hok, hn⟩ := chunkSplitStepS_remove κ t Lc hLc he hyz hxy hxz hD.live.2
+      ⟨Fx.lSt, Fx.lSrc⟩
       ⟨Fx.rSt, Fx.rSrc⟩ hszy hszz Fx.lLive.2 Fx.rLive.2 K.C
     exact ⟨L', n, e, by rw [hok]; rfl, by omega⟩
   · -- a move
     obtain ⟨hxc, t0, ht0⟩ := hI'.run_ne_nil he
-    have hg0 : cF t x ∈ A'.glist := A'.grps_sub_glist hxc (by rw [ht0]; simp)
+    have hg0 : cF t x ∈ A'.glist := A'.grps_sub_glist hxc (by
+      rw [ht0]
+      simp)
     have hg0L := hI'.mem_glist_iff.mp hg0
-    have hg0x : gC t (cF t x) = x := hI'.chk x hxc _ (by rw [ht0]; simp)
+    have hg0x : gC t (cF t x) = x := hI'.chk x hxc _ (by
+      rw [ht0]
+      simp)
     by_cases hdir : cSz t (cLl t x) ≤ cSz t (cRr t x)
     · have lu := left_unit hI' hG he
       have hu : (unitCand t x true).length = 1 ∨ unitOK t x (unitCand t x true) = true := by
@@ -623,9 +748,16 @@ theorem _root_.OrderMaintenance.Proof.CDriveInv.stepAgree {X Y : Core → Prop} 
       have M := cmoveL_spec (s := t) (x := x) (u := unitCand t x true) (labs := labs)
         (Ne.symm hxy) hD.live.2 Fx.lLive.2 hnd hlen (fun g hg => (hmem g hg).1.2.1)
       refine ⟨true, _, hrun, fun Lc hLc => ?_, M.Gsize, M.Csize, by rw [M.E]⟩
-      obtain ⟨L', n, e, hok, -, hn⟩ := chunkSplitStepS_left κ t Lc hLc he hdir hlabs hD.live.2 Fx.lLive.2 Fx.rLive.2
-        (Ne.symm hxy) K.C K.G (fun g hg => (hmem g hg).1.2.1) (by have := hg0L.2.1; have := K.G; omega)
-        (fun hov => by have h2 : gSrc t (cF t x) < t.Gs.size := (hG.ovf _ hg0L hov).1.2.1; have := K.G; exact lt_of_lt_of_le h2 (by omega))
+      obtain ⟨L', n, e, hok, -, hn⟩ := chunkSplitStepS_left κ t Lc hLc he hdir hlabs hD.live.2
+        Fx.lLive.2 Fx.rLive.2
+        (Ne.symm hxy) K.C K.G (fun g hg => (hmem g hg).1.2.1) (by
+          have := hg0L.2.1
+          have := K.G
+          omega)
+        (fun hov => by
+          have h2 : gSrc t (cF t x) < t.Gs.size := (hG.ovf _ hg0L hov).1.2.1
+          have := K.G
+          exact lt_of_lt_of_le h2 (by omega))
         (by rcases hI'.cLs_lt (hI'.mem_chunks Fx.lLive) with h | h
             · rw [h]; have := hg0L.2.1; have := K.G; unfold NIL; omega
             · have := K.G; omega)
@@ -655,16 +787,24 @@ theorem _root_.OrderMaintenance.Proof.CDriveInv.stepAgree {X Y : Core → Prop} 
         (Ne.symm hxz) hD.live.2 Fx.rLive.2 hnd hlen (fun g hg => (hmem g hg).1.2.1)
       have hglL := hI'.mem_glist_iff.mp hgl
       refine ⟨true, _, hrun, fun Lc hLc => ?_, M.Gsize, M.Csize, by rw [M.E]⟩
-      obtain ⟨L', n, e, hok, -, hn⟩ := chunkSplitStepS_right κ t Lc hLc he hdir' hlabs hD.live.2 Fx.lLive.2 Fx.rLive.2
-        (Ne.symm hxz) K.C K.G (fun g hg => (hmem g hg).1.2.1) (by have := hglL.2.1; have := K.G; omega)
-        (fun hov => by have h2 : gSrc t (cLs t x) < t.Gs.size := (hG.ovf _ hglL hov).1.2.1; have := K.G; exact lt_of_lt_of_le h2 (by omega))
+      obtain ⟨L', n, e, hok, -, hn⟩ := chunkSplitStepS_right κ t Lc hLc he hdir' hlabs hD.live.2
+        Fx.lLive.2 Fx.rLive.2
+        (Ne.symm hxz) K.C K.G (fun g hg => (hmem g hg).1.2.1) (by
+          have := hglL.2.1
+          have := K.G
+          omega)
+        (fun hov => by
+          have h2 : gSrc t (cLs t x) < t.Gs.size := (hG.ovf _ hglL hov).1.2.1
+          have := K.G
+          exact lt_of_lt_of_le h2 (by omega))
         (by rcases hI'.cF_lt (hI'.mem_chunks Fx.rLive) with h | h
             · rw [h]; have := hglL.2.1; have := K.G; unfold NIL; omega
             · have := K.G; omega)
       exact ⟨L', n, e, by rw [hok]; rfl, by omega⟩
 
 /-- **The drive of a splitting chunk agrees** (the context of `cinv_drive`). -/
-theorem cinv_driveAgree {X Y : Core → Prop} {s : Core} {A : Abs} {gh : GGh} {δ δu s₀ : Nat → Nat} {x : Nat}
+theorem cinv_driveAgree {X Y : Core → Prop} {s : Core} {A : Abs} {gh : GGh} {δ δu s₀ : Nat →
+  Nat} {x : Nat}
     (hI : INV s A) (hG : GInv s A.elist gh (fun _ => 0)) (hC : CInvE s A.elist δ δu s₀ x)
     (hC1 : C1 s δ δu s₀ x) (hXs : CXSteps X Y A.elist δ δu s₀ x) (hX : X s) (hP : GParams s.P)
     (hCP : CParams s.P) (hxL : LiveC s x) (hst : cSt s x = .splitting)
@@ -672,7 +812,8 @@ theorem cinv_driveAgree {X Y : Core → Prop} {s : Core} {A : Abs} {gh : GGh} {�
     (hδs : δ (cLl s x) + δ x + δ (cRr s x) ≤ 1)
     (hδle : δ (cLl s x) ≤ cSz s (cLl s x) ∧ δ x ≤ cSz s x ∧ δ (cRr s x) ≤ cSz s (cRr s x))
     {κ : Caps} (K : GCaps κ s) :
-    ∃ s', CDriveAgree κ x s s' ∧ s'.Gs.size = s.Gs.size ∧ s'.C.size = s.C.size ∧ s'.E.size = s.E.size := by
+    ∃ s', CDriveAgree κ x s s' ∧ s'.Gs.size = s.Gs.size ∧ s'.C.size = s.C.size ∧ s'.E.size =
+      s.E.size := by
   have Fx := hC.cfam x hxL hst
   generalize hl : cLl s x = y at *
   generalize hr : cRr s x = z at *
@@ -699,25 +840,30 @@ theorem cinv_driveAgree {X Y : Core → Prop} {s : Core} {A : Abs} {gh : GGh} {�
     rw [hσ, hm]; omega
   let I' := fun j t => CDriveInv X s A.elist δ δu s₀ x y z a b c (units s x) j t ∧
     t.Gs.size = s.Gs.size ∧ t.C.size = s.C.size
-  have h0 : I' 0 s := ⟨⟨hX, rfl, EFrame.refl s, ⟨A, hI, rfl⟩, ⟨gh, hG⟩, hC, hxL, hst, hl, hr, by omega, by omega,
+  have h0 : I' 0 s := ⟨⟨hX, rfl, EFrame.refl s, ⟨A, hI, rfl⟩, ⟨gh, hG⟩, hC, hxL, hst, hl, hr, by
+    omega, by omega,
       Or.inl ⟨rfl, ha, hc⟩⟩, rfl, rfl⟩
   have hs0 : s₀ x ≤ s.P.T := by rw [hσ]; exact hs0T
-  have hstepM : ∀ j t, I' j t → ∃ bb t', (chunkSplitStep x).run t = .ok bb t' ∧ (bb = true → I' (j + 1) t') ∧
-      CStepAgree κ x t t' bb ∧ t'.Gs.size = s.Gs.size ∧ t'.C.size = s.C.size ∧ t'.E.size = s.E.size := by
+  have hstepM : ∀ j t, I' j t → ∃ bb t', (chunkSplitStep x).run t = .ok bb t' ∧ (bb = true → I'
+    (j + 1) t') ∧
+      CStepAgree κ x t t' bb ∧ t'.Gs.size = s.Gs.size ∧ t'.C.size = s.C.size ∧ t'.E.size =
+        s.E.size := by
     intro j t ⟨hD, hGs, hCs⟩
-    have K' : GCaps κ t := ⟨by rw [hGs]; exact K.G, by rw [hD.ef.size]; exact K.E, by rw [hCs]; exact K.C, K.fl, K.f0⟩
-    obtain ⟨bb, t', hrun, hA, hG', hC', hE'⟩ := hD.stepAgree hXs hP hCP (by intro c' h1 h2 h3; exact hδ c' h1 h2 h3)
-      hThi hbal0 hfam0 hδs hs0 K'
+    have K' : GCaps κ t := K.of_sizes hGs hD.ef.size hCs
+    obtain ⟨bb, t', hrun, hA, hG', hC', hE'⟩ := hD.stepAgree hXs hP hCP hThi hbal0 hfam0 hδs hs0 K'
     refine ⟨bb, t', hrun, fun hb => ?_, hA, hG'.trans hGs, hC'.trans hCs, hE'.trans hD.ef.size⟩
     subst hb
-    obtain ⟨t1, h1 | h1⟩ := hD.step hXs hP hCP (by intro c' h1 h2 h3; exact hδ c' h1 h2 h3) hThi hbal0 hfam0 hδs hs0
+    obtain ⟨t1, h1 | h1⟩ := hD.step hXs hP hCP (by
+      intro c' h1 h2 h3
+      exact hδ c' h1 h2 h3) hThi hbal0 hfam0 hδs hs0
     · rw [h1.1] at hrun; injection hrun with _ e; subst e
       exact ⟨h1.2, hG'.trans hGs, hC'.trans hCs⟩
     · rw [h1.1] at hrun; injection hrun with e; cases e
   obtain ⟨s', hA⟩ := driveChunkFromS_agree' κ s I' h0 (fun j t h _ => by
     obtain ⟨bb, t', a1, a2, a3, -⟩ := hstepM j t h; exact ⟨bb, t', a1, a2, a3⟩)
   obtain ⟨t, hrun, hres⟩ := driveChunkFrom_ok (s := s) (x := x) I'
-    (fun t => t.Gs.size = s.Gs.size ∧ t.C.size = s.C.size ∧ t.E.size = s.E.size) h0 (fun j t h _ => by
+    (fun t => t.Gs.size = s.Gs.size ∧ t.C.size = s.C.size ∧ t.E.size = s.E.size) h0 (fun j t h _
+      => by
       obtain ⟨bb, t', a1, a2, -, a4, a5, a6⟩ := hstepM j t h
       cases bb
       · exact ⟨t', Or.inr ⟨a1, a4, a5, a6⟩⟩
@@ -739,8 +885,9 @@ theorem driveChunkAgree {t : Core} {A : Abs} {L : List Nat} {gh : GGh} {s₀ δu
     (hN : CountInv t e pops) (hGP : GParams t.P) (hCP : CParams t.P) (hcL : LiveC t c)
     (hcnd : cSt t c ≠ .dead) (hcsz : 1 ≤ cSz t c) {κ : Caps} (K : GCaps κ t) {t4 : Core}
     (h : (driveChunk c).run t = .ok () t4) :
-    (∃ L' n, evalF κ driveChunkS t (OrderMaintenance.Machine.State.setLocs (fun _ => 0) ["x"] [c]) = .ok t4 L' n ∧
-      n ≤ 30 + t.P.chunkBudget * 751) ∧ t4.Gs.size = t.Gs.size ∧ t4.C.size = t.C.size ∧ t4.E.size = t.E.size := by
+    (∃ L' n, evalF κ driveChunkS t (Machine.State.setLocs (fun _ => 0) ["x"] [c]) = .ok t4 L' n ∧
+      n ≤ 30 + t.P.chunkBudget * 751) ∧ t4.Gs.size = t.Gs.size ∧ t4.C.size = t.C.size ∧
+        t4.E.size = t.E.size := by
   have hδu := hC.δu
   have hcθ : cmax t.P ≤ t.P.theta := hCP.I4
   have drive : ∀ x, LiveC t x → cSt t x = .splitting →
@@ -753,28 +900,38 @@ theorem driveChunkAgree {t : Core} {A : Abs} {L : List Nat} {gh : GGh} {s₀ δu
     have hrx := Fx.rx hI hxL
     have hlr := Fx.lr hI hxL
     have hCx : CInvE t A.elist (δ1 c) δu s₀ x :=
-      { hC with c1 := fun z hz hzs _ => hC.c1 z hz hzs (by unfold NIL; have := hz.1; omega) }
-    have hC1 := hC.c1 x hxL hxs (by unfold NIL; have := hxL.1; omega)
+      { hC with c1 := fun z hz hzs _ => hC.c1 z hz hzs (by
+        unfold NIL
+        have := hz.1
+        omega) }
+    have hC1 := hC.c1 x hxL hxs (by
+      unfold NIL
+      have := hxL.1
+      omega)
     have hXs := cxsteps_count (cxsteps_dframe (cxsteps_linv (L := A.elist) (δ := δ1 c) (δu := δu)
       (s₀ := s₀) (x := x)) t hcθ)
     exact cinv_driveAgree hI hG hCx hC1 hXs ⟨⟨hLX, DFrame.refl t⟩, e, pops, hN⟩ hGP hCP
       hxL hxs (fun c' h1 h2 h3 => by
         unfold δ1; rw [ite_eq_right]; rintro rfl; rcases hcx with h | h | h <;> contradiction)
-      (by unfold δ1; rcases hcx with rfl | rfl | rfl <;> simp [hlx, hrx, hlr, Ne.symm hlx,
-        Ne.symm hrx, Ne.symm hlr])
+      (by
+        unfold δ1
+        rcases hcx with rfl | rfl | rfl <;> simp [hlx, hrx, hlr, Ne.symm hlx, Ne.symm hrx,
+          Ne.symm hlr])
       (by
         unfold δ1
         refine ⟨?_, ?_, ?_⟩ <;> split <;> first | omega | (subst_vars; exact hcsz)) K
   have hxT : c < κ.tbl .C := by have := hcL.2; have := K.C; omega
-  have hLx : OrderMaintenance.Machine.State.setLocs (fun _ => 0) ["x"] [c] "x" = c := by
-    simp [OrderMaintenance.Machine.State.setLocs, OrderMaintenance.Machine.State.upd]
+  have hLx : Machine.State.setLocs (fun _ => 0) ["x"] [c] "x" = c := by
+    simp [Machine.State.setLocs, Machine.State.upd]
   cases hs : cSt t c with
   | splitting =>
     have hs' : (t.C.getX c).st = .splitting := hs
     obtain ⟨t5, hA, hsz⟩ := drive c hcL hs (Or.inr (Or.inl rfl))
     rw [driveChunk_split hs'] at h
     have e := hA.eq_of_run h; subst e
-    refine ⟨driveChunkS_agree κ t _ hLx hxT (by rw [driveChunk_split hs']; exact h) (fun q hq => ?_), hsz⟩
+    refine ⟨driveChunkS_agree κ t _ hLx hxT (by
+      rw [driveChunk_split hs']
+      exact h) (fun q hq => ?_), hsz⟩
     rcases hq with ⟨-, rfl⟩ | ⟨h', -⟩
     · exact hA
     · rw [hs'] at h'; cases h'
@@ -782,10 +939,15 @@ theorem driveChunkAgree {t : Core} {A : Abs} {L : List Nat} {gh : GGh} {s₀ δu
     have hs' : (t.C.getX c).st = .overflow := hs
     obtain ⟨hxL, hxs, hlr⟩ := hC.covf c hcL hs
     obtain ⟨t5, hA, hsz⟩ := drive _ hxL hxs
-      (by rcases hlr with h | h; exact Or.inl h.symm; exact Or.inr (Or.inr h.symm))
+      (by
+        rcases hlr with h | h
+        · exact Or.inl h.symm
+        · exact Or.inr (Or.inr h.symm))
     rw [driveChunk_ovf hs'] at h
     have e := hA.eq_of_run h; subst e
-    refine ⟨driveChunkS_agree κ t _ hLx hxT (by rw [driveChunk_ovf hs']; exact h) (fun q hq => ?_), hsz⟩
+    refine ⟨driveChunkS_agree κ t _ hLx hxT (by
+      rw [driveChunk_ovf hs']
+      exact h) (fun q hq => ?_), hsz⟩
     rcases hq with ⟨h', -⟩ | ⟨-, rfl⟩
     · rw [hs'] at h'; cases h'
     · exact hA
@@ -797,7 +959,8 @@ theorem driveChunkAgree {t : Core} {A : Abs} {L : List Nat} {gh : GGh} {s₀ δu
     rcases hq with ⟨h', -⟩ | ⟨h', -⟩ <;> rw [hs'] at h' <;> cases h'
   | dead => exact absurd hs hcnd
 
-theorem ResAgree.mono {κ : Caps} {t t' : Core} {stop : Bool} {D D' : Nat} (h : ResAgree κ t t' stop D)
+theorem ResAgree.mono {κ : Caps} {t t' : Core} {stop : Bool} {D D' : Nat} (h : ResAgree κ t t'
+  stop D)
     (hD : D ≤ D') : ResAgree κ t t' stop D' := fun L hdn => by
   obtain ⟨L', n, e, h1, h2⟩ := h L hdn; exact ⟨L', n, e, h1, by omega⟩
 
@@ -807,12 +970,17 @@ theorem reservationAgreeOf {κ : Caps} {s : Core} (L : Loc) (I : Nat → Core �
     {DJ DS : Nat} (h0 : I 0 s)
     (hstep : ∀ j t, I j t → j < s.P.reservationBudget →
       (t.resJob = none → (t.pqHi = 0 ∧ Q t) ∨
-        (t.pqHi ≠ 0 ∧ ∃ c t1 t2, pqPopMax.run t = .ok c t1 ∧ (splitChunkStart c).run t1 = .ok () t2 ∧
+        (t.pqHi ≠ 0 ∧ ∃ c t1 t2, pqPopMax.run t = .ok c t1 ∧ (splitChunkStart c).run t1 = .ok ()
+          t2 ∧
           I (j + 1) t2)) ∧
       (∀ job, t.resJob = some job → ∃ r t1, (jobStep job).run t = .ok r t1 ∧
-        I (j + 1) { t1 with resJob := r }))
+        I (j + 1) {
+          t1 with
+          resJob := r
+        }))
     (hJ : ∀ j t job, I j t → j < s.P.reservationBudget → t.resJob = some job → JobAgree κ t job DJ)
-    (hS : ∀ j t c t1, I j t → j < s.P.reservationBudget → t.resJob = none → t.pqHi ≠ 0 → pqPopMax.run t = .ok c t1 →
+    (hS : ∀ j t c t1, I j t → j < s.P.reservationBudget → t.resJob = none → t.pqHi ≠ 0 →
+      pqPopMax.run t = .ok c t1 →
       PQCaps κ t ∧ SplitAgree κ t1 c DS) :
     ∃ t' L' n, (reservation s.P.reservationBudget).run s = .ok () t' ∧ evalF κ reservationS s L
       = .ok t' L' n ∧
@@ -822,13 +990,15 @@ theorem reservationAgreeOf {κ : Caps} {s : Core} (L : Loc) (I : Nat → Core �
   cases hjob : t.resJob with
   | none =>
     rcases hn hjob with ⟨hq0, -⟩ | ⟨hq0, c, t1, t2, hp, hsc, hI'⟩
-    · exact ⟨true, t, resF_empty hjob hq0, (fun h => absurd h (by decide)), (resAgree_empty hjob hq0).mono (by omega)⟩
+    · exact ⟨true, t, resF_empty hjob hq0, (fun h => absurd h (by decide)), (resAgree_empty hjob
+        hq0).mono (by omega)⟩
     · obtain ⟨hq, hA⟩ := hS j t c t1 hI hj hjob hq0 hp
       exact ⟨false, t2, resF_split hjob hq0 hp hsc, fun _ => hI',
         (resAgree_split hjob hq hq0 hp hA hsc).mono (by omega)⟩
   | some job =>
     obtain ⟨r, t1, hr, hI'⟩ := hs job hjob
-    exact ⟨false, _, resF_job hjob hr, fun _ => hI', (resAgree_job hjob (hJ j t job hI hj hjob) hr).mono (by omega)⟩
+    exact ⟨false, _, resF_job hjob hr, fun _ => hI', (resAgree_job hjob (hJ j t job hI hj hjob)
+      hr).mono (by omega)⟩
 
 /-- The cost bound of the reservation loop of one insertion, from the bounds of a job step and a
 split start. -/
@@ -838,7 +1008,8 @@ def resBound (reservationBudget : Nat) : Nat := 5 + reservationBudget * (jobBoun
 /-- **The reservation agrees** (the context of `reservation_cost`), relative to a predicate `Mc`
 on cores that gives the Level M side conditions and that the rounds keep. -/
 theorem reservationAgree_top {TI : Core → Prop} {μ : Core → Nat} {J n R : Nat} {cap : Params → Nat}
-    {L : List Nat} {s : Core} {κ : Caps} (Lc : Loc) (hTC : TopContract TI μ J cap) (hTI : ∀ t, TI t → OrderMaintenance.Proof.Top.TopInv t)
+    {L : List Nat} {s : Core} {κ : Caps} (Lc : Loc) (hTC : TopContract TI μ J cap) (hTI : ∀ t,
+      TI t → OrderMaintenance.Proof.Top.TopInv t)
     (h0 : ResInv TI s.P.reservationBudget J n R μ L s 0 s) (hn : 1 ≤ n)
     (hsize : 2 + 2 * (s.count / (s.P.theta + 1 - cmax s.P)) ≤ n + 1)
     (hcap : 2 + 2 * (s.count / (s.P.theta + 1 - cmax s.P)) ≤ cap s.P)
@@ -850,9 +1021,16 @@ theorem reservationAgree_top {TI : Core → Prop} {μ : Core → Nat} {J n R : N
     (hMpop : ∀ t c t1, Mc t → pqPopMax.run t = .ok c t1 → Mc t1)
     (hMjob : ∀ j t job r t1, ResInv TI s.P.reservationBudget J n R μ L s j t → Mc t → t.resJob
       = some job →
-      (jobStep job).run t = .ok r t1 → ResInv TI s.P.reservationBudget J n R μ L s (j + 1) { t1 with resJob := r } →
-      Mc { t1 with resJob := r })
-    (hMsplit : ∀ j t c t1 t2, ResInv TI s.P.reservationBudget J n R μ L s j t → Mc t → t.resJob = none → pqPopMax.run t = .ok c t1 →
+      (jobStep job).run t = .ok r t1 → ResInv TI s.P.reservationBudget J n R μ L s (j + 1) {
+        t1 with
+        resJob := r
+      } →
+      Mc {
+        t1 with
+        resJob := r
+      })
+    (hMsplit : ∀ j t c t1 t2, ResInv TI s.P.reservationBudget J n R μ L s j t → Mc t → t.resJob
+      = none → pqPopMax.run t = .ok c t1 →
       (splitChunkStart c).run t1 = .ok () t2 → ResInv TI s.P.reservationBudget J n R μ L s (j +
         1) t2 → Mc t2) :
     ∃ t' L' m, (reservation s.P.reservationBudget).run s = .ok () t' ∧ evalF κ reservationS s
@@ -862,10 +1040,17 @@ theorem reservationAgree_top {TI : Core → Prop} {μ : Core → Nat} {J n R : N
   have hstepI : ∀ j t, (ResInv TI s.P.reservationBudget J n R μ L s j t ∧ Mc t) → j <
     s.P.reservationBudget →
       (t.resJob = none → (t.pqHi = 0 ∧ Mc t) ∨
-        (t.pqHi ≠ 0 ∧ ∃ c t1 t2, pqPopMax.run t = .ok c t1 ∧ (splitChunkStart c).run t1 = .ok () t2 ∧
+        (t.pqHi ≠ 0 ∧ ∃ c t1 t2, pqPopMax.run t = .ok c t1 ∧ (splitChunkStart c).run t1 = .ok ()
+          t2 ∧
           (ResInv TI s.P.reservationBudget J n R μ L s (j + 1) t2 ∧ Mc t2))) ∧
       (∀ job, t.resJob = some job → ∃ r t1, (jobStep job).run t = .ok r t1 ∧
-        (ResInv TI s.P.reservationBudget J n R μ L s (j + 1) { t1 with resJob := r } ∧ Mc { t1 with resJob := r })) := by
+        (ResInv TI s.P.reservationBudget J n R μ L s (j + 1) {
+          t1 with
+          resJob := r
+        } ∧ Mc {
+          t1 with
+          resJob := r
+        })) := by
     intro j t ⟨hI, hM⟩ hj
     obtain ⟨hn', hs'⟩ := hstep j t hI hj
     refine ⟨fun hnone => ?_, fun job hjob => ?_⟩
@@ -874,9 +1059,11 @@ theorem reservationAgree_top {TI : Core → Prop} {μ : Core → Nat} {J n R : N
       · exact Or.inr ⟨h0, c, t1, t2, hp, hsc, hI', hMsplit j t c t1 t2 hI hM hnone hp hsc hI'⟩
     · obtain ⟨r, t1, hr, hI'⟩ := hs' job hjob
       exact ⟨r, t1, hr, hI', hMjob j t job r t1 hI hM hjob hr hI'⟩
-  obtain ⟨tF, hrunF, hF⟩ := reservation_ok (fun j t => ResInv TI s.P.reservationBudget J n R μ L s j t ∧ Mc t) Mc ⟨h0, hM0⟩ hstepI
+  obtain ⟨tF, hrunF, hF⟩ := reservation_ok (fun j t => ResInv TI s.P.reservationBudget J n R μ L
+    s j t ∧ Mc t) Mc ⟨h0, hM0⟩ hstepI
   obtain ⟨t', L', m, hrun, he, hm⟩ := reservationAgreeOf (κ := κ) (s := s) Lc
-    (fun j t => ResInv TI s.P.reservationBudget J n R μ L s j t ∧ Mc t) (fun _ => True) (DJ := jobBound) (DS := splitBound)
+    (fun j t => ResInv TI s.P.reservationBudget J n R μ L s j t ∧ Mc t) (fun _ => True) (DJ :=
+      jobBound) (DS := splitBound)
     ⟨h0, hM0⟩
     (fun j t hIM hj => by
       obtain ⟨a, b⟩ := hstepI j t hIM hj
@@ -887,7 +1074,9 @@ theorem reservationAgree_top {TI : Core → Prop} {μ : Core → Nat} {J n R : N
     (fun j t job ⟨hI, hM⟩ _ hjob => by
       obtain ⟨hT, -, hpr, -⟩ := hMc t hM
       obtain ⟨-, hTt, -, hPt, -⟩ := hI
-      exact jobAgree (hTI t hTt) hjob hpr (by rw [hPt]; exact hpow) hT)
+      exact jobAgree (hTI t hTt) hjob hpr (by
+        rw [hPt]
+        exact hpow) hT)
     (fun j t c t1 ⟨hI, hM⟩ _ hnone hq0 hp => by
       obtain ⟨hL, hTt, -, -, -⟩ := hI
       obtain ⟨-, hPQ, -⟩ := hMc t hM
@@ -901,20 +1090,27 @@ theorem reservationAgree_top {TI : Core → Prop} {μ : Core → Nat} {J n R : N
       obtain ⟨hcL, -, -⟩ := hcq
       obtain ⟨A, hIA, -⟩ := hL.inv
       have hD := delSt_only t c'
-      have hI1 : INV (delSt t c') A := hIA.of_sameLinks hD.sameLinks (fun d => by simp only [cT, hD.C])
+      have hI1 : INV (delSt t c') A := hIA.of_sameLinks hD.sameLinks (fun d => by
+        simp only [cT, hD.C])
       have hT1 : TI (delSt t c') := hTC.frame _ _ hD.topSame hTt
       have hcL1 : LiveC (delSt t c') c' := by simp only [LiveC, hD.C]; exact hcL
       obtain ⟨hTC1, -, hpr1, hrow1⟩ := hMc _ hM1
-      obtain ⟨D, hD', hA⟩ := splitAgree_top hI1 (hTI _ hT1) (by rw [hD.rest.2.2.2.2.2.2.2.2.1]; exact hnone) hcL1
+      obtain ⟨D, hD', hA⟩ := splitAgree_top hI1 (hTI _ hT1) (by
+        rw [hD.rest.2.2.2.2.2.2.2.2.1]
+        exact hnone) hcL1
         hpr1 hrow1 hTC1
       exact fun t2 h => by
         obtain ⟨L', m, e, hm⟩ := hA t2 h
         exact ⟨L', m, e, by omega⟩)
   rw [hrunF] at hrun; injection hrun with _ e; subst e
-  exact ⟨tF, L', m, hrunF, he, by unfold resBound; omega, by rcases hF with h | h; exact h.2; exact h⟩
+  exact ⟨tF, L', m, hrunF, he, by unfold resBound; omega, by
+    rcases hF with h | h
+    · exact h.2
+    · exact h⟩
 
 theorem PQCaps.of_same {κ : Caps} {s s' : Core} (h : PQCaps κ s) (S : PQSame s s') : PQCaps κ s' :=
-  ⟨h.cC, h.cB, by rw [S.next]; exact h.next, by rw [S.prev]; exact h.prev, by rw [S.head]; exact h.head,
+  ⟨h.cC, h.cB, by rw [S.next]; exact h.next, by rw [S.prev]; exact h.prev, by rw [S.head]; exact
+    h.head,
     by rw [S.where_]; exact h.where_, by rw [S.nbn]; exact h.nbN, by rw [S.nbp]; exact h.nbP,
     by rw [S.lo]; exact h.lo, by rw [S.hi]; exact h.hi⟩
 
@@ -925,8 +1121,10 @@ def bgBound (P : Params) : Nat :=
 
 /-- **The background work agrees** (the context of `background_ok`), relative to a predicate `Mc`
 on cores that gives the Level M side conditions of the reservation and that its rounds keep. -/
-theorem bgAgree {TI : Core → Prop} {μ : Core → Nat} {J k n R : Nat} {cap : Params → Nat} {L : List Nat}
-    {s0 s1 s2 : Core} {y g c : Nat} (hTC : TopContract TI μ J cap) (hTI : ∀ t, TI t → OrderMaintenance.Proof.Top.TopInv t)
+theorem bgAgree {TI : Core → Prop} {μ : Core → Nat} {J k n R : Nat} {cap : Params → Nat} {L :
+  List Nat}
+    {s0 s1 s2 : Core} {y g c : Nat} (hTC : TopContract TI μ J cap) (hTI : ∀ t, TI t →
+      OrderMaintenance.Proof.Top.TopInv t)
     (hPost : InsPost TI k J n R μ L s0 g c s2) (hy : y ∈ L) (heg1 : eG s1 y = g)
     (hgc1 : gC s1 g = c) (hchunk : (chunkSize c true).run s1 = .ok () s2)
     (hE12 : s2.E = s1.E) (hP1 : s1.P = s0.P) (hkP : s0.P.reservationBudget = k) (hn : 1 ≤ n)
@@ -943,9 +1141,16 @@ theorem bgAgree {TI : Core → Prop} {μ : Core → Nat} {J k n R : Nat} {cap : 
     (hMpop : ∀ t c t1, Mc t → pqPopMax.run t = .ok c t1 → Mc t1)
     (hMjob : ∀ s j t job r t1, ResInv TI s.P.reservationBudget J n R μ L s j t → Mc t →
       t.resJob = some job →
-      (jobStep job).run t = .ok r t1 → ResInv TI s.P.reservationBudget J n R μ L s (j + 1) { t1 with resJob := r } →
-      Mc { t1 with resJob := r })
-    (hMsplit : ∀ s j t c t1 t2, ResInv TI s.P.reservationBudget J n R μ L s j t → Mc t → t.resJob = none → pqPopMax.run t = .ok c t1 →
+      (jobStep job).run t = .ok r t1 → ResInv TI s.P.reservationBudget J n R μ L s (j + 1) {
+        t1 with
+        resJob := r
+      } →
+      Mc {
+        t1 with
+        resJob := r
+      })
+    (hMsplit : ∀ s j t c t1 t2, ResInv TI s.P.reservationBudget J n R μ L s j t → Mc t →
+      t.resJob = none → pqPopMax.run t = .ok c t1 →
       (splitChunkStart c).run t1 = .ok () t2 → ResInv TI s.P.reservationBudget J n R μ L s (j +
         1) t2 → Mc t2) :
     ∃ s', (background y).run s1 = .ok () s' ∧
@@ -962,7 +1167,9 @@ theorem bgAgree {TI : Core → Prop} {μ : Core → Nat} {J k n R : Nat} {cap : 
   subst hel
   -- the group phase
   have hXg := (((xgroup_cinv (L := A.elist) (δ := δ1 c) (δu := fun _ => 0) (s₀ := s₀) (c := c)
-    (by unfold δ1; simp)).and (xgroup_linv (L := A.elist) (s₀ := s₀) (δ := δ1 c)
+    (by
+      unfold δ1
+      simp)).and (xgroup_linv (L := A.elist) (s₀ := s₀) (δ := δ1 c)
       (δu := fun _ => 0) (c := c))).and (xgroup_frame (L := A.elist) (c := c) s2)).and
     (xgroup_track (L := A.elist) (c' := c) y c hy)
   have hroom : gSt s2 g = .quiet → s2.P.G ≤ gSz s2 g → SplitRoom s2 g := by
@@ -983,9 +1190,12 @@ theorem bgAgree {TI : Core → Prop} {μ : Core → Nat} {J k n R : Nat} {cap : 
   have hX0 : (((CInv s2 A.elist (δ1 c) (fun _ => 0) s₀ ∧ LX s₀ (δ1 c) (fun _ => 0) s2) ∧
       CFrame s2 s2) ∧ gC s2 (eG s2 y) = c) :=
     ⟨⟨⟨hC, ⟨lg, hLi⟩, hLP, hGP⟩, CFrame.refl s2⟩, by rw [heg2, hgc]⟩
-  obtain ⟨s3, hgp, hDD⟩ := groupPhase_ok hI (by rw [hgc]; exact hXg) hX0 hG hGP hgL hpos hroom
+  obtain ⟨s3, hgp, hDD⟩ := groupPhase_ok hI (by
+    rw [hgc]
+    exact hXg) hX0 hG hGP hgL hpos hroom
   -- the state after the split start
-  have hsplit : ∃ s2', (if ((s2.Gs.getX g).st == St.quiet && decide ((s2.Gs.getX g).size ≥ s2.P.G)) = true then
+  have hsplit : ∃ s2', (if ((s2.Gs.getX g).st == St.quiet && decide ((s2.Gs.getX g).size ≥
+    s2.P.G)) = true then
       startGroupSplit g else pure ()).run s2 = .ok () s2' ∧ (driveGroup g).run s2' = .ok () s3 := by
     by_cases hcond : ((s2.Gs.getX g).st == St.quiet && decide ((s2.Gs.getX g).size ≥ s2.P.G)) = true
     · rw [ite_eq_left hcond] at hgp ⊢
@@ -999,8 +1209,14 @@ theorem bgAgree {TI : Core → Prop} {μ : Core → Nat} {J k n R : Nat} {cap : 
   have hXc : ∀ t, (((CInv t A.elist (δ1 c) (fun _ => 0) s₀ ∧ LX s₀ (δ1 c) (fun _ => 0) t) ∧
       CFrame s2 t) ∧ gC t (eG t y) = c) → ∀ g, LiveG t g → gC t g < t.C.size :=
     fun t hx g hg => (hx.1.1.1.gchk g hg).1.2
-  obtain ⟨mG2, ⟨L3, n3, e3, hn3⟩, hsz3⟩ := groupPhaseAgree hI (by rw [hgc]; exact hXg) hX0 hG hGP hgL hpos hroom
-    hXc K2 (by rw [hS12.1.Gsize]; exact hG2) hF0 (by rw [hS12.1.freeG]; exact hF) h2a h2b
+  obtain ⟨mG2, ⟨L3, n3, e3, hn3⟩, hsz3⟩ := groupPhaseAgree hI (by
+    rw [hgc]
+    exact hXg) hX0 hG hGP hgL hpos hroom
+    hXc K2 (by
+      rw [hS12.1.Gsize]
+      exact hG2) hF0 (by
+      rw [hS12.1.freeG]
+      exact hF) h2a h2b
   obtain ⟨hGs3, hCs3, hEs3, hE2', hP2'⟩ := hsz3
   -- the state after the group phase
   obtain ⟨A3, hI3, hel3⟩ := hDD.inv
@@ -1018,12 +1234,23 @@ theorem bgAgree {TI : Core → Prop} {μ : Core → Nat} {J k n R : Nat} {cap : 
   have hcsz3 : 1 ≤ cSz s3 c := by rw [(hCF.C c).1]; exact hPost.csz
   -- the chunk phase
   obtain ⟨t4, hdc, hCP4⟩ := driveChunk_ok hI3 hel3 hG3 (hel3 ▸ hC3) hLX3
-    (hN.frame hQS hCF.count) (by rw [hP3]; exact hGP) (by rw [hP3]; exact hPost.cp) hcL3 hcnd3
+    (hN.frame hQS hCF.count) (by
+      rw [hP3]
+      exact hGP) (by
+      rw [hP3]
+      exact hPost.cp) hcL3 hcnd3
     hcsz3
-  have K3 : GCaps κ s3 := ⟨by have := hS12.1.Gsize; have := K1.G; omega, by rw [hEs3, hS12.1.Esize]; exact K1.E,
-    by rw [hCs3, hS12.1.Csize]; exact K1.C, K1.fl, K1.f0⟩
+  have K3 : GCaps κ s3 := by
+    refine ⟨?_, ?_, ?_, K1.fl, K1.f0⟩
+    · have := hS12.1.Gsize; have := K1.G; omega
+    · rw [hEs3, hS12.1.Esize]; exact K1.E
+    · rw [hCs3, hS12.1.Csize]; exact K1.C
   obtain ⟨⟨L4, n4, e4, hn4⟩, hGs4, -⟩ := driveChunkAgree hI3 hel3 hG3 (hel3 ▸ hC3) hLX3
-    (hN.frame hQS hCF.count) (by rw [hP3]; exact hGP) (by rw [hP3]; exact hPost.cp) hcL3 hcnd3
+    (hN.frame hQS hCF.count) (by
+      rw [hP3]
+      exact hGP) (by
+      rw [hP3]
+      exact hPost.cp) hcL3 hcnd3
     hcsz3 K3 hdc
   have hD : DFrame s2 t4 := hCF.dframe.trans hCP4.fr
   -- the reservation
@@ -1037,29 +1264,58 @@ theorem bgAgree {TI : Core → Prop} {μ : Core → Nat} {J k n R : Nat} {cap : 
     rw [hD.top.2.2.2.2.1, hTC.mframe _ _ hD.topSame]; exact hRA
   -- chunkSize at Level M
   have hcs1 : c < s1.C.size := by have := hPost.cL.2; rw [hS12.1.Csize] at this; exact this
-  obtain ⟨⟨L1, n1, e1, hn1⟩, hq2⟩ := csP_agree (κ := κ) (L := OrderMaintenance.Machine.State.setLocs (fun _ => 0) ["c"] [c])
-    (by simp [OrderMaintenance.Machine.State.setLocs,
-      OrderMaintenance.Machine.State.upd]) hcs1 (by have := K1.C; omega) hq1 hcC hcB hchunk
+  obtain ⟨⟨L1, n1, e1, hn1⟩, hq2⟩ := csP_agree (κ := κ) (L := Machine.State.setLocs (fun _ => 0)
+    ["c"] [c])
+    (by
+      simp [Machine.State.setLocs, Machine.State.upd]) hcs1 (by
+        have := K1.C
+        omega) hq1 hcC hcB hchunk
   have hq4 : PQCaps κ t4 := hq2.of_same hD.pq
   have hkt : t4.P.reservationBudget = k := by rw [hP4]; exact hkP
-  obtain ⟨s', L5, n5, hres, e5, hn5, hMs⟩ := reservationAgree_top (κ := κ) (OrderMaintenance.Machine.State.setLocs (fun _ => 0) [] [])
-    hTC hTI (by rw [hkt]; exact h0) hn (by rw [hD.count, hP4]; exact hsize) (by rw [hD.count, hP4]; exact hcap)
-    (by rw [hP4]; exact hI5) (by rw [hP4]; exact hpow) Mc (hM4 t4 hD hq4 (by rw [hGs4]; have := hS12.1.Gsize; omega)) hMc hMpop
+  obtain ⟨s', L5, n5, hres, e5, hn5, hMs⟩ := reservationAgree_top (κ := κ)
+    (Machine.State.setLocs (fun _ => 0) [] [])
+    hTC hTI (by
+      rw [hkt]
+      exact h0) hn (by
+      rw [hD.count, hP4]
+      exact hsize) (by
+      rw [hD.count, hP4]
+      exact hcap)
+    (by
+      rw [hP4]
+      exact hI5) (by
+      rw [hP4]
+      exact hpow) Mc (hM4 t4 hD hq4 (by
+      rw [hGs4]
+      have := hS12.1.Gsize
+      omega)) hMc hMpop
     (fun j t job r t1 => hMjob t4 j t job r t1) (fun j t c t1 t2 => hMsplit t4 j t c t1 t2)
   rw [hkt] at hres
   -- assembly
   have hgo1 : gOf s1 y = g := heg1
-  have hco1 : cOf s1 y = c := by show gC s1 (eG s1 y) = c; rw [heg1, hgc1]
+  have hco1 : cOf s1 y = c := by change gC s1 (eG s1 y) = c; rw [heg1, hgc1]
   have hgo2 : gOf s2 y = g := heg2
-  have hgo2' : gOf s2' y = g := by show (s2'.E.getX y).grp = g; rw [hE2']; exact heg2
+  have hgo2' : gOf s2' y = g := by change (s2'.E.getX y).grp = g; rw [hE2']; exact heg2
   have hgo3 : gOf s3 y < s3.Gs.size := by
     have := (hI3.mem_glist_iff.mp (hI3.eG_mem (hel3 ▸ hy))).2.1; exact this
   have hco3 : cOf s3 y = c := htr
-  have hb : bgSplit s2 y s1.P = ((s2.Gs.getX g).st == St.quiet && decide ((s2.Gs.getX g).size ≥ s2.P.G)) := by
+  have hb : bgSplit s2 y s1.P = ((s2.Gs.getX g).st == St.quiet && decide ((s2.Gs.getX g).size ≥
+    s2.P.G)) := by
     simp only [bgSplit, hgo2, hP1, hP2]
-  obtain ⟨hrun, L', m, e, hm⟩ := backgroundS_agree (κ := κ) (L := Ly) (s0 := s1) (s1 := s2) (s2 := s2') (s3 := s3)
-    (s4 := t4) (s5 := s') hLy (by rw [hco1]; exact hchunk) (by rw [hb, hgo2]; exact h2a) (by rw [hgo2']; exact h2b)
-    (by rw [hco3]; exact hdc) (by rw [hk2]; exact hres)
+  obtain ⟨hrun, L', m, e, hm⟩ := backgroundS_agree (κ := κ) (L := Ly) (s0 := s1) (s1 := s2) (s2
+    := s2') (s3 := s3)
+    (s4 := t4) (s5 := s') hLy (by
+      rw [hco1]
+      exact hchunk) (by
+      rw [hb, hgo2]
+      exact h2a) (by
+      rw [hgo2']
+      exact h2b)
+    (by
+      rw [hco3]
+      exact hdc) (by
+      rw [hk2]
+      exact hres)
     ⟨L1, n1, by rw [hco1]; exact e1, hn1⟩
     (fun hc => by
       rw [hb] at hc
@@ -1068,10 +1324,21 @@ theorem bgAgree {TI : Core → Prop} {μ : Core → Nat} {J k n R : Nat} {cap : 
     ⟨L3, n3, by rw [hgo2']; exact e3, hn3⟩
     ⟨L4, n4, by rw [hco3]; exact e4, hn4⟩
     ⟨L5, n5, e5, hn5⟩
-    (by rw [hP1,
-      hP2]) hyE (by rw [hgo1]; have := hgL.2.1; rw [hS12.1.Gsize] at this; have := K1.G; omega)
-    (by rw [hgo2]; have := hgL.2.1; have := K2.G; omega) (by rw [hgo2']; have := hgL.2.1; have := K2.G; omega)
-    (by have := K3.G; omega)
+    (by
+      rw [hP1, hP2]) hyE (by
+        rw [hgo1]
+        have := hgL.2.1
+        rw [hS12.1.Gsize] at this
+        have := K1.G
+        omega)
+    (by
+      rw [hgo2]
+      have := hgL.2.1
+      have := K2.G
+      omega)
+    (by
+      have := K3.G
+      omega)
   refine ⟨s', hrun, ⟨L', m, e, ?_⟩, hMs⟩
   have hP2'' : s2'.P = s0.P := by rw [hP2', hP2]
   have hP3' : s3.P = s0.P := by rw [hP3, hP2]
@@ -1099,15 +1366,18 @@ theorem linkElem_frame (s : Core) (x y lab h : Nat) :
     (linkElem s x y lab h).path = s.path ∧ (linkElem s x y lab h).prep = s.prep ∧
     (linkElem s x y lab h).P = s.P := by
   unfold linkElem; dsimp only
-  refine ⟨by simp, rfl, rfl, by split_ifs <;> simp, ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩, rfl, rfl, rfl, rfl⟩
+  refine ⟨by simp, rfl, rfl, by split_ifs <;> simp, ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl,
+    rfl⟩, rfl, rfl, rfl, rfl⟩
 
 /-- The cost bound of an insertion at Level M. -/
 def insBound (P : Params) : Nat := bgBound P + 220
 
 /-- **An insertion agrees** (the context of `insertAfter_cost`), relative to a predicate `Mc` on
 cores that gives the Level M side conditions of the reservation and that its rounds keep. -/
-theorem insertAgree {TI : Core → Prop} {μ : Core → Nat} {J n R : Nat} {cap : Params → Nat} {L : List Nat}
-    {s : Core} {x : Nat} (hTC : TopContract TI μ J cap) (hTI : ∀ t, TI t → OrderMaintenance.Proof.Top.TopInv t)
+theorem insertAgree {TI : Core → Prop} {μ : Core → Nat} {J n R : Nat} {cap : Params → Nat} {L :
+  List Nat}
+    {s : Core} {x : Nat} (hTC : TopContract TI μ J cap) (hTI : ∀ t, TI t →
+      OrderMaintenance.Proof.Top.TopInv t)
     (hC : CostInv TI μ J n R L s)
     (hx : x ∈ L) (hk : 1 ≤ s.P.reservationBudget) (hR : J / s.P.reservationBudget + 1 ≤ R) (hn
       : 1 ≤ n)
@@ -1116,27 +1386,38 @@ theorem insertAgree {TI : Core → Prop} {μ : Core → Nat} {J n R : Nat} {cap 
     (hI5 : (s.P.theta : ℝ) + R * (OrderMaintenance.Zeroing.Hn (n - 1) + 1) ≤ s.P.T) (hh : Nat)
     {κ : Caps} (Lx : Loc) (hLx : Lx "x" = x) (hLh : Lx "h" = hh) (hpow : s.P.a = 2 ^ Nat.log2 s.P.a)
     (K : InsCaps κ s) (Mc : Core → Prop)
-    (hM4 : ∀ t, OrderMaintenance.Proof.Top.ts t = OrderMaintenance.Proof.Top.ts s → t.resJob = s.resJob → t.prep = s.prep →
+    (hM4 : ∀ t, OrderMaintenance.Proof.Top.ts t = OrderMaintenance.Proof.Top.ts s → t.resJob =
+      s.resJob → t.prep = s.prep →
       t.C.size = s.C.size → t.count = s.count + 1 → t.Gs.size ≤ s.Gs.size + 2 → PQCaps κ t → Mc t)
     (hMc : ∀ t, Mc t → TopCaps κ t ∧ PQCaps κ t ∧ t.prep = none ∧
       ∀ c, t.C.size ≤ c → ∀ j, (t.path.getX c).getX j = 0)
     (hMpop : ∀ t c t1, Mc t → pqPopMax.run t = .ok c t1 → Mc t1)
     (hMjob : ∀ L s j t job r t1, ResInv TI s.P.reservationBudget J n R μ L s j t → Mc t →
       t.resJob = some job →
-      (jobStep job).run t = .ok r t1 → ResInv TI s.P.reservationBudget J n R μ L s (j + 1) { t1 with resJob := r } →
-      Mc { t1 with resJob := r })
-    (hMsplit : ∀ L s j t c t1 t2, ResInv TI s.P.reservationBudget J n R μ L s j t → Mc t → t.resJob = none → pqPopMax.run t = .ok c t1 →
+      (jobStep job).run t = .ok r t1 → ResInv TI s.P.reservationBudget J n R μ L s (j + 1) {
+        t1 with
+        resJob := r
+      } →
+      Mc {
+        t1 with
+        resJob := r
+      })
+    (hMsplit : ∀ L s j t c t1 t2, ResInv TI s.P.reservationBudget J n R μ L s j t → Mc t →
+      t.resJob = none → pqPopMax.run t = .ok c t1 →
       (splitChunkStart c).run t1 = .ok () t2 → ResInv TI s.P.reservationBudget J n R μ L s (j +
         1) t2 → Mc t2) :
     ∃ s', (insertAfter x hh).run s = .ok s.E.size s' ∧
-      (∃ L' m, evalF κ insertAfterP.body s Lx = .ok s' L' m ∧ L' "y" = s.E.size ∧ m ≤ insBound s.P) ∧
-      CostInv TI μ J n R (OrderMaintenance.Spec.insertAfterL x s.E.size L) s' ∧ s'.count = s.count + 1 ∧
+      (∃ L' m, evalF κ insertAfterP.body s Lx = .ok s' L' m ∧ L' "y" = s.E.size ∧ m ≤ insBound
+        s.P) ∧
+      CostInv TI μ J n R (OrderMaintenance.Spec.insertAfterL x s.E.size L) s' ∧ s'.count =
+        s.count + 1 ∧
       s'.P = s.P ∧ Mc s' := by
   obtain ⟨y, i, a, ip, js, hG, hRO⟩ := hC.game
   have hdiv : s.count / (s.P.theta + 1 - cmax s.P) ≤ (s.count + 1) / (s.P.theta + 1 - cmax s.P) :=
     Nat.div_le_div_right (Nat.le_succ s.count)
   have hcnt0 : 2 + 2 * (s.count / (s.P.theta + 1 - cmax s.P)) ≤ n + 1 := by omega
-  obtain ⟨s1, s2, hrun1, hrun2, hPost, heG, hgC, hE12, hP1⟩ := insert_step hTC hC.low hC.ti hG hRO hx
+  obtain ⟨s1, s2, hrun1, hrun2, hPost, heG, hgC, hE12, hP1⟩ := insert_step hTC hC.low hC.ti hG
+    hRO hx
     hk hR hn hcnt0 hI5 hh
   have hyL : s.E.size ∈ OrderMaintenance.Spec.insertAfterL x s.E.size L :=
     (OrderMaintenance.Spec.mem_insertAfterL hx).mpr (Or.inl rfl)
@@ -1150,7 +1431,8 @@ theorem insertAgree {TI : Core → Prop} {μ : Core → Nat} {J n R : Nat} {cap 
   obtain ⟨fG, fC, fF, fE, fPQ, fN, fPa, fPr, fP⟩ := linkElem_frame s x s.E.size lab hh
   set s1 := linkElem s x s.E.size lab hh
   rw [heG, hgC] at hrun2
-  have hS12 : Same s1 s2 := by have := pres_chunkSize (gC s (eG s x)) true s1; rw [hrun2] at this; exact this
+  have hS12 : Same s1 s2 := by
+    have := pres_chunkSize (gC s (eG s x)) true s1; rw [hrun2] at this; exact this
   have hgL : LiveG s (eG s x) := hI.mem_glist_iff.mp (hI.eG_mem hx)
   obtain ⟨s₀', hCI, -⟩ := hC.low.cinv
   have hcL : LiveC s (gC s (eG s x)) := (hCI.gchk _ hgL).1
@@ -1162,14 +1444,36 @@ theorem insertAgree {TI : Core → Prop} {μ : Core → Nat} {J n R : Nat} {cap 
   have hsN : (sizeState s1 (gC s (eG s x))).nodes = s1.nodes := rfl
   have hsPa : (sizeState s1 (gC s (eG s x))).path = s1.path := rfl
   have hsPr : (sizeState s1 (gC s (eG s x))).prep = s1.prep := rfl
-  obtain ⟨s', hbg, ⟨Lb, mb, eb, hmb⟩, hMs⟩ := bgAgree hTC hTI hPost hyL heG hgC hrun2 hE12 hP1 rfl hn
-    (by rw [hPost.count]; exact hsize) (by rw [hPost.count]; exact hcap) hI5
-    (OrderMaintenance.Machine.State.setLocs (fun _ => 0) ["y"] [s.E.size]) (by simp [OrderMaintenance.Machine.State.setLocs, OrderMaintenance.Machine.State.upd])
-    hpow (K.pq.of_same fPQ) (by have := hcL.2; have := K.cC; omega)
-    (by rw [fC]; have := K.cB (gC s (eG s x)) hcL; omega)
-    ⟨by rw [fG]; have := K.G; omega, by rw [fE]; have := K.E; omega, by rw [fC]; exact K.C, K.fl, K.f0⟩
-    (by rw [fG]; exact K.G) K.f0 (by rw [fF]; have := hI.freeG_len; have := K.G; have := K.fl; omega)
-    (by have := K.E; omega) Mc
+  obtain ⟨s', hbg, ⟨Lb, mb, eb, hmb⟩, hMs⟩ := bgAgree hTC hTI hPost hyL heG hgC hrun2 hE12 hP1
+    rfl hn
+    (by
+      rw [hPost.count]
+      exact hsize) (by
+      rw [hPost.count]
+      exact hcap) hI5
+    (Machine.State.setLocs (fun _ => 0) ["y"] [s.E.size]) (by
+      simp [Machine.State.setLocs, Machine.State.upd])
+    hpow (K.pq.of_same fPQ) (by
+      have := hcL.2
+      have := K.cC
+      omega)
+    (by
+      rw [fC]
+      have := K.cB (gC s (eG s x)) hcL
+      omega)
+    ⟨by rw [fG]; have := K.G; omega, by rw [fE]; have := K.E; omega, by rw [fC]; exact K.C,
+      K.fl, K.f0⟩
+    (by
+      rw [fG]
+      exact K.G) K.f0 (by
+      rw [fF]
+      have := hI.freeG_len
+      have := K.G
+      have := K.fl
+      omega)
+    (by
+      have := K.E
+      omega) Mc
     (fun t hD hq hGt => hM4 t (by
         have hPt : t.P = s.P := by rw [hD.P, hPost.P]
         have hNt : t.nodes = s.nodes := by rw [hD.top.1, hN2, hsN, fN]
@@ -1178,22 +1482,32 @@ theorem insertAgree {TI : Core → Prop} {μ : Core → Nat} {J n R : Nat} {cap 
         have hlt : t.lpar = s.lpar := by rw [hD.top.2.2.2.1, hlp2]; rfl
         have htag : ∀ c, (t.C.getX c).tag = (s.C.getX c).tag := fun c => by
           have := (hD.links c).2.2
-          show cT t c = cT s c
-          rw [this]; show (s2.C.getX c).tag = _
+          change cT t c = cT s c
+          rw [this]; change (s2.C.getX c).tag = _
           rw [hC2]; simp only [sizeState, Array.getX_modify]; rw [fC]; split <;> rfl
         unfold OrderMaintenance.Proof.Top.ts; rw [hPt, hNt, hPat, hct, hlt]; simp only [htag])
-      (by rw [hD.top.2.2.2.2.1, hjb2]; rfl)
+      (by
+        rw [hD.top.2.2.2.2.1, hjb2]
+        rfl)
       (by rw [hD.top.2.2.2.2.2.1, hpr2, hsPr, fPr]) (by rw [hD.Csize, hC2, hsC, fC])
-      (by rw [hD.count, hPost.count]) (by rw [fG] at hGt; exact hGt) hq)
+      (by rw [hD.count, hPost.count]) (by
+        rw [fG] at hGt
+        exact hGt) hq)
     hMc hMpop (hMjob _) (hMsplit _)
   have hxs := hI.size_pos hx
-  obtain ⟨hrunI, Li, mi, ei, hyi, hmi⟩ := insertAfterP_agree (κ := κ) (L := Lx) hLx hLh hxs.2 hgL.2.1
+  obtain ⟨hrunI, Li, mi, ei, hyi, hmi⟩ := insertAfterP_agree (κ := κ) (L := Lx) hLx hLh hxs.2
+    hgL.2.1
     (by rcases hI.eN_mem hx with h | h
         · left; exact h
         · right; exact (hI.size_pos h).2)
-    (by have := K.E; omega) (by have := K.G; omega) hrunE hbg
+    (by
+      have := K.E
+      omega) (by
+      have := K.G
+      omega) hrunE hbg
     ⟨Lb, mb, eb, hmb⟩
-  obtain ⟨s'', hrun'', -, hCI', hcnt', hP''⟩ := insertAfter_cost hTC hC hx hk hR hn hsize hcap hI5 hh
+  obtain ⟨s'', hrun'', -, hCI', hcnt', hP''⟩ := insertAfter_cost hTC hC hx hk hR hn hsize hcap
+    hI5 hh
   rw [hrunI] at hrun''; injection hrun'' with _ e; subst e
   exact ⟨s', hrunI, ⟨Li, mi, ei, hyi, by unfold insBound; omega⟩, hCI', hcnt', hP'', hMs⟩
 

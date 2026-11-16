@@ -26,7 +26,8 @@ provides these bounds in the form stage A2 needs, for the top-level tree.
   `wb_markState`). Theorem A's agreement lemmas (`jobAgree`, `splitAgree_top`) give the Level F run
   of `jobStepS` / `splitChunkStartS` ending in exactly that state, and `evalF` is a function, so
   `Fin (WB K)` holds for the whole step: `fin_jobStep`, `fin_split`.
-* **From the step's end back to the write.** `Fin.call` (into a callee: its end state is the call's),
+* **From the step's end back to the write.** `Fin.call` (into a callee: its end state is the
+  call's),
   `PKok.seq_fin` (the first statement may assume a bound of its own end state that follows from
   `Q` at the end of the rest, typically because the rest does not write the field), with the
   frames `FBat.back` (the rest writes no `f`) and `FBat.backAt` (the rest writes `f` only at the
@@ -74,7 +75,8 @@ theorem Fin.call {q : Proc} {args : List Exp} {ds : List Reg} {vs : List Nat}
 own end state, where `Q'` follows from `Q` at the end of the rest (e.g. the rest does not write
 the field, `FBat.back`). -/
 theorem PKok.seq_fin {Γ Γ' : Reg → Nat} {c d : Stm} (hF : Fin (κ := κ) Q (c;; d) s L)
-    (hQ : ∀ s1 L1 n1 s' L' n, evalF κ c s L = .ok s1 L1 n1 → evalF κ d s1 L1 = .ok s' L' n → Q s' → Q' s1)
+    (hQ : ∀ s1 L1 n1 s' L' n, evalF κ c s L = .ok s1 L1 n1 → evalF κ d s1 L1 = .ok s' L' n → Q
+      s' → Q' s1)
     (hc : Fin (κ := κ) Q' c s L → PKok K KH κ Γ' W c s L)
     (hd : ∀ s1 L1 n1, evalF κ c s L = .ok s1 L1 n1 → Gd K KH κ Γ' s1 L1 → Fin (κ := κ) Q d s1 L1 →
       PKok K KH κ Γ W d s1 L1) :
@@ -85,7 +87,8 @@ theorem PKok.seq_fin {Γ Γ' : Reg → Nat} {c d : Stm} (hF : Fin (κ := κ) Q (
   exact PKok.seq hc' (fun s2 L2 n3 h3 hG2 => hd s2 L2 n3 h3 hG2 (hF.seq_right h3)) _ _ _ h
 
 /-- A call whose callee may assume the call's end-state bound. -/
-theorem PKok.call_fin {Γ Γc : Reg → Nat} {q : Proc} {args : List Exp} {ds : List Reg} {vs : List Nat}
+theorem PKok.call_fin {Γ Γc : Reg → Nat} {q : Proc} {args : List Exp} {ds : List Reg} {vs : List
+  Nat}
     (hG : Gd K KH κ Γ s L) (ha : evList κ s L args = some vs) (hpa : pkList κ s L args < 2 ^ W)
     (hF : Fin (κ := κ) Q (q.call args ds) s L)
     (hb : Fin (κ := κ) Q q.body s (State.setLocs (fun _ => 0) q.params vs) →
@@ -107,20 +110,24 @@ section frames
 variable {s s' : Core} {L L' : Loc} {n : Nat}
 
 /-- The rest does not write `f`: the bound at its end is the bound at its start. -/
-theorem FBat.back {c : Stm} {f : Fld} {j : Nat} (hf : c.wf f = false) (h : evalF κ c s L = .ok s' L' n)
+theorem FBat.back {c : Stm} {f : Fld} {j : Nat} (hf : c.wf f = false) (h : evalF κ c s L = .ok
+  s' L' n)
     (hb : FBat K KH κ f j s') : FBat K KH κ f j s := fun hj => by
   rw [← evalF_frame_fld hf h hj]; exact hb hj
 
 /-- The rest writes `f` only at the index held by local `x`, and `j` is another one. -/
-theorem FBat.backAt {c : Stm} {f : Fld} {x : Reg} {j : Nat} (hw : c.wfAt f x = true) (hx : c.asg x = false)
-    (h : evalF κ c s L = .ok s' L' n) (hne : j ≠ L x) (hb : FBat K KH κ f j s') : FBat K KH κ f j s :=
+theorem FBat.backAt {c : Stm} {f : Fld} {x : Reg} {j : Nat} (hw : c.wfAt f x = true) (hx : c.asg
+  x = false)
+    (h : evalF κ c s L = .ok s' L' n) (hne : j ≠ L x) (hb : FBat K KH κ f j s') : FBat K KH κ f
+      j s :=
   fun hj => by rw [← evalF_frame_fldAt hw hx h hj hne]; exact hb hj
 
 end frames
 
 /-- **The last write to index `j` of `f`** (`PK.wr_fin` for one index): its value is the end
 state's. -/
-theorem PK.wr_finAt (hC : CapsW K κ) {Γ : Reg → Nat} {s : Core} {L : Loc} {f : Fld} {i e : Exp} {j : Nat}
+theorem PK.wr_finAt (hC : CapsW K κ) {Γ : Reg → Nat} {s : Core} {L : Loc} {f : Fld} {i e : Exp}
+  {j : Nat}
     (hG : Gd K KH κ Γ s L) (hi : i.OK Γ K KH W) (he : e.OK Γ K KH W) (hj : i.ev κ s L = some j)
     (hF : Fin (κ := κ) (FBat K KH κ f j) (.wr f i e) s L) : PK K KH κ Γ W (.wr f i e) s L := by
   intro hnb
@@ -171,9 +178,10 @@ variable {s : Core} {L : Loc}
 variable (hC : CapsW K κ) (hK : 8 ≤ K) (hW : 2 * K + 4 ≤ W)
 include hC hK hW
 
-/-- `safe_tac` with the locals of `guardedSetTag`. -/
+/-- `proveSafe` with the locals of `guardedSetTag`. -/
 macro "gsafe" : tactic => `(tactic| (simp [Stm.Safe, Exp.OK, Exp.wq, Exp.vw, Exp.noShl, Fld.wd,
-    OrderMaintenance.Machine.BinOp.vw, OrderMaintenance.Machine.BinOp.wd, OrderMaintenance.Machine.UnOp.wd, Exp.maxShape, Exp.isCmp, Exp.isBool, Exp.monus,
+    Machine.BinOp.vw, Machine.BinOp.wd, Machine.UnOp.wd, Exp.maxShape, Exp.isCmp, Exp.isBool,
+      Exp.monus,
     Exp.max, Exp.ifz, Exp.cF, ΓG] <;> omega))
 
 /-- **`guardedSetTag c t`**, the value `t` bounded by the end state's tag at `c`. -/
@@ -199,7 +207,8 @@ theorem gst_pk (hG : Gd K KH κ (ΓG K) s L)
 /-- **The call `guardedSetTag a b`**, its value of width at most `2K + 2`, bounded by the end
 state's tag at index `a`. -/
 theorem gstCall_pk {Γ : Reg → Nat} {a b : Exp} {ja vb : Nat} (hG : Gd K KH κ Γ s L)
-    (ha : a.ev κ s L = some ja) (hb : b.ev κ s L = some vb) (hja : ja < 2 ^ K) (hvb : vb < 2 ^ (2 * K + 2))
+    (ha : a.ev κ s L = some ja) (hb : b.ev κ s L = some vb) (hja : ja < 2 ^ K) (hvb : vb < 2 ^
+      (2 * K + 2))
     (hpa : a.pk κ s L < 2 ^ W) (hpb : b.pk κ s L < 2 ^ W)
     (hF : Fin (κ := κ) (FBat K KH κ (.c .tag) ja) (gstP.call [a, b] []) s L) :
     PKok K KH κ Γ W (gstP.call [a, b] []) s L := by
@@ -210,14 +219,14 @@ theorem gstCall_pk {Γ : Reg → Nat} {a b : Exp} {ja vb : Nat} (hG : Gd K KH κ
   refine PKok.call_fin (Γc := ΓG K) hG hev hpk hF (fun hF0 => ?_) (by simp [gstP]) (by simp)
   have hL0 : ∀ x, State.setLocs (fun _ => 0) gstP.params [ja, vb] x < 2 ^ ΓG K x := by
     intro x
-    simp only [gstP, ΓG, OrderMaintenance.Machine.State.setLocs, OrderMaintenance.Machine.State.upd]
+    simp only [gstP, ΓG, Machine.State.setLocs, Machine.State.upd]
     by_cases h1 : x = "t"
-    · subst h1; simp; exact hvb
+    · subst h1; simp only [↓reduceIte]; exact hvb
     · by_cases h2 : x = "c"
-      · subst h2; simp; exact hja
+      · subst h2; simp only [String.reduceEq, ↓reduceIte]; exact hja
       · simp [h1, h2]
   have hc : State.setLocs (fun _ => 0) gstP.params [ja, vb] "c" = ja := by
-    simp [gstP, OrderMaintenance.Machine.State.setLocs, OrderMaintenance.Machine.State.upd]
+    simp [gstP, Machine.State.setLocs, Machine.State.upd]
   exact gst_pk hC hK hW ⟨hG.enc, hG.vb, hL0⟩ (hc ▸ hF0)
 
 end gst
@@ -232,12 +241,22 @@ theorem gstCall_frame {s s' : Core} {L L' : Loc} {n : Nat} {a b : Exp} {ja : Nat
     have hev : evList κ s L [a, b] = some [ja, vb] := by simp [evList, ha, hb]
     simp only [Proc.call, evalF, hev] at h
     revert h
-    cases h2 : evalF κ gstP.body s (State.setLocs (fun _ => 0) gstP.params [ja, vb]) <;> simp
+    cases h2 : evalF κ gstP.body s (State.setLocs (fun _ => 0) gstP.params [ja, vb]) <;> simp only [
+        State.setLocs,
+        List.length_nil,
+        add_zero,
+        Res.ok.injEq,
+        and_imp,
+        reduceCtorEq,
+        IsEmpty.forall_iff]
     intro e1 _ _; subst e1
     have hc : State.setLocs (fun _ => 0) gstP.params [ja, vb] "c" = ja := by
-      simp [gstP, OrderMaintenance.Machine.State.setLocs, OrderMaintenance.Machine.State.upd]
-    exact evalF_frame_fldAt frame_split.1 frame_split.2.1 h2 (f := .c .tag) (by simpa [Fld.cap] using hj)
-      (by rw [hc]; exact hne)
+      simp [gstP, Machine.State.setLocs, Machine.State.upd]
+    exact evalF_frame_fldAt frame_split.1 frame_split.2.1 h2 (f := .c .tag) (by
+      simpa [Fld.cap] using hj)
+      (by
+        rw [hc]
+        exact hne)
 
 /-- **The composition, at the sweep** (`dsMutS = dsTagS;; rest`): the rest writes no tag, so the
 tag write may assume the bound that holds at the end of the move. -/
@@ -260,19 +279,21 @@ theorem powS_pk {Γ : Reg → Nat} {s : Core} {L : Loc} (hC : CapsW K κ) (hW : 
     PK K KH κ Γ W powS s L := by
   have hR := hG.vb.room
   have hle : Nat.log2 s.P.a * L "ht" ≤ K := le_trans (Nat.mul_le_mul_left _ hht) hR.aH
-  have hv : (Exp.bin .shl 1 (.un .msb (.prm .a) * "ht")).ev κ s L = some (1 * 2 ^ (Nat.log2 s.P.a * L "ht")) := by
-    simp [Exp.ev, OrderMaintenance.Machine.BinOp.eval, OrderMaintenance.Machine.UnOp.eval, PF.get]
+  have hv : (Exp.bin .shl 1 (.un .msb (.prm .a) * "ht")).ev κ s L = some (1 * 2 ^ (Nat.log2
+    s.P.a * L "ht")) := by
+    simp [Exp.ev, Machine.BinOp.eval, Machine.UnOp.eval, PF.get]
   have hs : (Exp.bin .shl 1 (.un .msb (.prm .a) * "ht")).ShOK κ s L K :=
     ⟨trivial, Exp.shOK_of_noShl _ _ _ _ _ (by simp [Exp.noShl]), fun _ => by
-      simp [Exp.val, Exp.ev, OrderMaintenance.Machine.BinOp.eval,
-        OrderMaintenance.Machine.UnOp.eval, PF.get]; exact hle⟩
+      simp only [Exp.val, Exp.ev, PF.get, Option.map_some, UnOp.eval, BinOp.eval,
+          Option.bind_some, Option.getD_some]; exact hle⟩
   refine PK.assign hG hv (hG.pkS hC hs hv ?_) ?_
-  · simp [Exp.wq, Exp.vw, OrderMaintenance.Machine.BinOp.vw, OrderMaintenance.Machine.BinOp.wd,
-    OrderMaintenance.Machine.UnOp.wd,
+  · simp [Exp.wq, Exp.vw, Machine.BinOp.vw, Machine.BinOp.wd,
+    Machine.UnOp.wd,
       Exp.isCmp, Exp.isBool]
     omega
   · rw [one_mul]
-    exact lt_of_le_of_lt (Nat.pow_le_pow_right (by norm_num) hle) (Nat.pow_lt_pow_right (by norm_num) (by omega))
+    exact lt_of_le_of_lt (Nat.pow_le_pow_right (by norm_num) hle) (Nat.pow_lt_pow_right (by
+      norm_num) (by omega))
 
 end OrderMaintenance.Impl
 
@@ -285,65 +306,80 @@ variable {K KH : Nat} {κ : Caps}
 /-! ### Option (B)'s bounds as `Fin` of the reservation's steps -/
 
 /-- The node fields of a core with `WB` are below `2^K`. -/
-theorem fld_n_of_WB {s : Core} (hW : WB K s) (hK : 3 ≤ K) (k : NF) (j : Nat) : (Fld.n k).get s j < 2 ^ K := by
+theorem fld_n_of_WB {s : Core} (hW : WB K s) (hK : 3 ≤ K) (k : NF) (j : Nat) : (Fld.n k).get s j
+  < 2 ^ K := by
   have hK1 : 1 ≤ K := by omega
   obtain ⟨h1, h2, h3', h4, h5, h6, h7, h8, -⟩ := hW.nodes j
   cases k <;> simp only [Fld.get, NF.get] <;> first | assumption | exact b2n_lt hK1 _
 
 /-- The chunk fields of a core with `WB` are below `2^K`. -/
-theorem fld_c_of_WB {s : Core} (hW : WB K s) (hK : 3 ≤ K) (k : CF) (j : Nat) : (Fld.c k).get s j < 2 ^ K := by
+theorem fld_c_of_WB {s : Core} (hW : WB K s) (hK : 3 ≤ K) (k : CF) (j : Nat) : (Fld.c k).get s j
+  < 2 ^ K := by
   have hK1 : 1 ≤ K := by omega
   have h3 : ∀ x : St, x.toN < 2 ^ K := fun x => small_lt hK (le_trans (St.toN_le x) (by norm_num))
   obtain ⟨h1, h2, h3', h4, h5, h6, h7, h8, h9⟩ := hW.C j
   cases k <;> simp only [Fld.get, CF.get] <;> first | assumption | exact b2n_lt hK1 _ | exact h3 _
 
-theorem fbAt_n_of_WB {s : Core} (hW : WB K s) (hK : 3 ≤ K) (k : NF) (j : Nat) : FBat K KH κ (.n k) j s :=
+theorem fbAt_n_of_WB {s : Core} (hW : WB K s) (hK : 3 ≤ K) (k : NF) (j : Nat) : FBat K KH κ (.n
+  k) j s :=
   fun _ => by simpa [Fld.wd] using fld_n_of_WB hW hK k j
 
-theorem fbAt_c_of_WB {s : Core} (hW : WB K s) (hK : 3 ≤ K) (k : CF) (j : Nat) : FBat K KH κ (.c k) j s :=
+theorem fbAt_c_of_WB {s : Core} (hW : WB K s) (hK : 3 ≤ K) (k : CF) (j : Nat) : FBat K KH κ (.c
+  k) j s :=
   fun _ => by simpa [Fld.wd] using fld_c_of_WB hW hK k j
 
-theorem fld_g_of_WB {s : Core} (hW : WB K s) (hK : 3 ≤ K) (k : GF) (j : Nat) : (Fld.g k).get s j < 2 ^ K := by
+theorem fld_g_of_WB {s : Core} (hW : WB K s) (hK : 3 ≤ K) (k : GF) (j : Nat) : (Fld.g k).get s j
+  < 2 ^ K := by
   have hK1 : 1 ≤ K := by omega
   have h3 : ∀ x : St, x.toN < 2 ^ K := fun x => small_lt hK (le_trans (St.toN_le x) (by norm_num))
   obtain ⟨h1, h2, h3', h4, h5, h6, h7, h8, h9, h10⟩ := hW.Gs j
   cases k <;> simp only [Fld.get, GF.get] <;> first | assumption | exact b2n_lt hK1 _ | exact h3 _
 
-theorem fld_s_of_WB {s : Core} (hW : WB K s) (hK : 3 ≤ K) (k : SF) (j : Nat) : (Fld.s k).get s j < 2 ^ K := by
+theorem fld_s_of_WB {s : Core} (hW : WB K s) (hK : 3 ≤ K) (k : SF) (j : Nat) : (Fld.s k).get s j
+  < 2 ^ K := by
   have hK1 : 1 ≤ K := by omega
   obtain ⟨h1, h2, h3', h4, h5, h6, h7, h8⟩ := hW.scalars
   cases k <;> simp only [Fld.get, SF.get] <;> first | assumption | exact b2n_lt hK1 _
 
 /-- **The element insertion ends with small sizes** (`Fin` of `insertElem_pkok`): Theorem A's
 `insertElem_agree` gives the run, option (B)'s `insertElem_wb` its end state's bound. -/
-theorem fin_insertElem {s s' : Core} {x hh y : Nat} (hK : 3 ≤ K) (hrun : (insertElem x hh).run s = .ok y s')
+theorem fin_insertElem {s s' : Core} {x hh y : Nat} (hK : 3 ≤ K) (hrun : (insertElem x hh).run s
+  = .ok y s')
     (hxE : x < s.E.size) (hgG : (s.E.getX x).grp < s.Gs.size)
     (hnE : (s.E.getX x).next = 0 ∨ (s.E.getX x).next < s.E.size) (hE : s.E.size < κ.tbl .E)
-    (hG : s.Gs.size ≤ κ.tbl .G) (hW : WB K s) (hL : LabRoom K s.P) (hx : x < 2 ^ K) (hy : s.E.size < 2 ^ K)
+    (hG : s.Gs.size ≤ κ.tbl .G) (hW : WB K s) (hL : LabRoom K s.P) (hx : x < 2 ^ K) (hy :
+      s.E.size < 2 ^ K)
     (hg : (s.Gs.getX (s.E.getX x).grp).size + 1 < 2 ^ K) (hc : s.count + 1 < 2 ^ K) :
-    OrderMaintenance.Impl.Fin (κ := κ) (fun t => FB K KH κ (.g .size) t ∧ FB K KH κ (.s .count) t) insertElemP.body s
+    OrderMaintenance.Impl.Fin (κ := κ) (fun t => FB K KH κ (.g .size) t ∧ FB K KH κ (.s .count)
+      t) insertElemP.body s
       (State.setLocs (fun _ => 0) ["x", "h"] [x, hh]) := by
   obtain ⟨L', n, e, -, -⟩ := insertElem_agree κ s (State.setLocs (fun _ => 0) ["x", "h"] [x, hh])
-    (by simp [OrderMaintenance.Machine.State.setLocs,
-      OrderMaintenance.Machine.State.upd]) (by simp [OrderMaintenance.Machine.State.setLocs,
-      OrderMaintenance.Machine.State.upd]) hxE hgG hnE hE hG hrun
+    (by
+      simp [Machine.State.setLocs, Machine.State.upd]) (by
+        simp [Machine.State.setLocs, Machine.State.upd]) hxE hgG hnE hE hG hrun
   obtain ⟨-, hW', -⟩ := insertElem_wb hW hL hrun hx hy hg hc
-  exact OrderMaintenance.Impl.Fin.of_run e ⟨fun j _ => by simpa [Fld.wd] using fld_g_of_WB hW' hK .size j,
+  exact OrderMaintenance.Impl.Fin.of_run e ⟨fun j _ => by
+      simpa [Fld.wd] using fld_g_of_WB hW' hK .size j,
     fun j _ => by simpa [Fld.wd] using fld_s_of_WB hW' hK .count j⟩
 
 /-- **A job step ends with small stored values** (`Fin (WB K)` of `jobStepS`, at the locals of
 `jobP.call`): Theorem A's `jobAgree` gives the run, option (B)'s `jobStep_wb` its end state's
 bound. The hypotheses are those `reservation_wb` and `reservationAgree_top` hold at each round. -/
-theorem fin_jobStep {t t1 : Core} {job : Job} {r : Option Job} (hT : TopInv t) (hres : t.resJob = some job)
+theorem fin_jobStep {t t1 : Core} {job : Job} {r : Option Job} (hT : TopInv t) (hres : t.resJob
+  = some job)
     (hpr : t.prep = none) (hpow : t.P.a = 2 ^ Nat.log2 t.P.a) (hTC : TopCaps κ t) (hW : WB K t)
     (hR : TopRoom K t.P) (hN : t.nodes.size + 2 ≤ 2 ^ K) (hC : t.C.size ≤ 2 ^ K)
-    (hr : (jobStep job).run t = .ok r t1) (hT' : TopInv { t1 with resJob := r }) :
+    (hr : (jobStep job).run t = .ok r t1) (hT' : TopInv {
+      t1 with
+      resJob := r
+    }) :
     OrderMaintenance.Impl.Fin (κ := κ) (WB K) jobStepS t (State.setLocs (fun _ => 0) [] []) := by
   obtain ⟨L', c, e, -⟩ := jobAgree hT hres hpr hpow hTC r t1 hr
   exact OrderMaintenance.Impl.Fin.of_run e (jobStep_wb hT hres hW hR hN hC hr hT')
 
 /-- **A split start ends with small stored values** (the split branch of `reservation_wb`). -/
-theorem split_wb {TI : Core → Prop} {μ : Core → Nat} (hT : TopWB K TI μ) {t t2 : Core} {A : Abs} {c : Nat}
+theorem split_wb {TI : Core → Prop} {μ : Core → Nat} (hT : TopWB K TI μ) {t t2 : Core} {A : Abs}
+  {c : Nat}
     (hI : INV t A) (hTI : TI t) (hnone : t.resJob = none) (hcL : LiveC t c) (hcq : cSt t c = .quiet)
     (hroom : t.C.size + 2 ≤ 2 ^ K) (hW : WB K t) (hc : c < 2 ^ K)
     (hsc : (splitChunkStart c).run t = .ok () t2) (hTI2 : TI t2) : WB K t2 := by
@@ -354,13 +390,16 @@ theorem split_wb {TI : Core → Prop} {μ : Core → Nat} (hT : TopWB K TI μ) {
 
 /-- **`Fin (WB K)` of `splitChunkStartS`** (at the locals of `splitP.call`), from Theorem A's
 `splitAgree_top` and `split_wb`. -/
-theorem fin_split {TI : Core → Prop} {μ : Core → Nat} (hT : TopWB K TI μ) (hTI' : ∀ u, TI u → TopInv u)
+theorem fin_split {TI : Core → Prop} {μ : Core → Nat} (hT : TopWB K TI μ) (hTI' : ∀ u, TI u →
+  TopInv u)
     {t t2 : Core} {A : Abs} {c : Nat}
     (hI : INV t A) (hTI : TI t) (hnone : t.resJob = none) (hcL : LiveC t c) (hcq : cSt t c = .quiet)
-    (hpr : t.prep = none) (hrow : ∀ c, t.C.size ≤ c → ∀ j, (t.path.getX c).getX j = 0) (hTC : TopCaps κ t)
+    (hpr : t.prep = none) (hrow : ∀ c, t.C.size ≤ c → ∀ j, (t.path.getX c).getX j = 0) (hTC :
+      TopCaps κ t)
     (hroom : t.C.size + 2 ≤ 2 ^ K) (hW : WB K t) (hc : c < 2 ^ K)
     (hsc : (splitChunkStart c).run t = .ok () t2) (hTI2 : TI t2) :
-    OrderMaintenance.Impl.Fin (κ := κ) (WB K) splitChunkStartS t (State.setLocs (fun _ => 0) ["x"] [c]) := by
+    OrderMaintenance.Impl.Fin (κ := κ) (WB K) splitChunkStartS t (State.setLocs (fun _ => 0)
+      ["x"] [c]) := by
   obtain ⟨D, -, hA⟩ := splitAgree_top hI (hTI' t hTI) hnone hcL hpr hrow hTC
   obtain ⟨L', n, e, -⟩ := hA t2 hsc
   exact OrderMaintenance.Impl.Fin.of_run e (split_wb hT hI hTI hnone hcL hcq hroom hW hc hsc hTI2)
@@ -404,12 +443,13 @@ theorem proom_wK (N : Nat) : PRoom (wK (proofParams N)) (proofParams N) := by
   have hb : (proofParams N).beta = 64 := rfl
   have hH : (proofParams N).H = pL N / 3 + 1 := rfl
   have ha : (proofParams N).a = 8 := rfl
-  have hBe1 : 1 ≤ (proofParams N).elementBits := by show 1 ≤ _ + (Nat.log2 _ + 2); omega
-  have hBg1 : 1 ≤ (proofParams N).groupBits := by show 1 ≤ _ + (Nat.log2 _ + 2); omega
+  have hBe1 : 1 ≤ (proofParams N).elementBits := by change 1 ≤ _ + (Nat.log2 _ + 2); omega
+  have hBg1 : 1 ≤ (proofParams N).groupBits := by change 1 ≤ _ + (Nat.log2 _ + 2); omega
   have hlog : Nat.log2 8 = 3 := by decide
   refine ⟨by omega, by omega, by rw [hb, hK]; omega, by rw [hb, hK]; omega, ?_, hBe1, hBg1,
     by rw [hb]; omega, ?_⟩
-  · have : ((proofParams N).H + 1) * (proofParams N).beta ≤ ((proofParams N).H + 2) * (proofParams N).beta :=
+  · have : ((proofParams N).H + 1) * (proofParams N).beta ≤ ((proofParams N).H + 2) *
+      (proofParams N).beta :=
       Nat.mul_le_mul_right _ (by omega)
     omega
   · rw [ha, hlog, hH, hK]; omega

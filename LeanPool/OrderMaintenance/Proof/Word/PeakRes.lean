@@ -35,7 +35,8 @@ Nothing here is used by Theorems A and B.
 
 namespace OrderMaintenance.Proof.Word
 
-open OrderMaintenance.Model OrderMaintenance.Proof OrderMaintenance.Proof.Top OrderMaintenance.Impl OrderMaintenance.Zeroing
+open OrderMaintenance.Model OrderMaintenance.Proof OrderMaintenance.Proof.Top
+  OrderMaintenance.Impl OrderMaintenance.Zeroing
 open OrderMaintenance.Machine (Reg State)
 variable {K KH W : Nat} {κ : Caps}
 
@@ -52,9 +53,11 @@ theorem fb_c_of_WB {t : Core} (hW : WB K t) (hK : 3 ≤ K) (k : CF) : FB K KH κ
   fun j _ => by simpa [Fld.wd] using fld_c_of_WB hW hK k j
 
 section round
-variable {TI : Core → Prop} {μ : Core → Nat} {J k n R NB0 : Nat} {cap : Params → Nat} {L : List Nat} {s : Core}
+variable {TI : Core → Prop} {μ : Core → Nat} {J k n R NB0 : Nat} {cap : Params → Nat} {L : List
+  Nat} {s : Core}
   {Mc : Core → Prop}
-variable (hTC : TopContract TI μ J cap) (hT : TopWB K TI μ) (hTI : ∀ t, TI t → TopInv t) (hn : 1 ≤ n)
+variable (hTC : TopContract TI μ J cap) (hT : TopWB K TI μ) (hTI : ∀ t, TI t → TopInv t) (hn : 1
+  ≤ n)
   (hsize : 2 + 2 * (s.count / (s.P.theta + 1 - cmax s.P)) ≤ n + 1)
   (hcap : 2 + 2 * (s.count / (s.P.theta + 1 - cmax s.P)) ≤ cap s.P)
   (hI5 : (s.P.theta : ℝ) + R * (Hn (n - 1) + 1) ≤ s.P.T)
@@ -63,18 +66,32 @@ variable (hTC : TopContract TI μ J cap) (hT : TopWB K TI μ) (hTI : ∀ t, TI t
       ∀ c, t.C.size ≤ c → ∀ j, (t.path.getX c).getX j = 0)
   (hMpop : ∀ t c t1, Mc t → pqPopMax.run t = .ok c t1 → Mc t1)
   (hMjob : ∀ j t job r t1, ResInv TI k J n R μ L s j t → Mc t → t.resJob = some job →
-      (jobStep job).run t = .ok r t1 → ResInv TI k J n R μ L s (j + 1) { t1 with resJob := r } →
-      Mc { t1 with resJob := r })
-  (hMsplit : ∀ j t c t1 t2, ResInv TI k J n R μ L s j t → Mc t → t.resJob = none → pqPopMax.run t = .ok c t1 →
+      (jobStep job).run t = .ok r t1 → ResInv TI k J n R μ L s (j + 1) {
+        t1 with
+        resJob := r
+      } →
+      Mc {
+        t1 with
+        resJob := r
+      })
+  (hMsplit : ∀ j t c t1 t2, ResInv TI k J n R μ L s j t → Mc t → t.resJob = none → pqPopMax.run
+    t = .ok c t1 →
       (splitChunkStart c).run t1 = .ok () t2 → ResInv TI k J n R μ L s (j + 1) t2 → Mc t2)
 include hTC hT hTI hn hsize hcap hI5 hcnt hNK hMc hMpop hMjob hMsplit
 
+omit hMc hMpop hMsplit in
 /-- **A job round of the joint invariant**: the step's run, the invariant after it, and the facts
 the peak proof needs. -/
 theorem rj_job {j : Nat} {t : Core} {job : Job} (hj : j < k) (hJ : RJ K TI μ J k n R NB0 L s Mc j t)
     (hjob : t.resJob = some job) :
-    ∃ r t1, (jobStep job).run t = .ok r t1 ∧ RJ K TI μ J k n R NB0 L s Mc (j + 1) { t1 with resJob := r } ∧
-      TopInv t ∧ TopInv { t1 with resJob := r } ∧ t.nodes.size + 2 ≤ 2 ^ K ∧ t.C.size ≤ 2 ^ K := by
+    ∃ r t1, (jobStep job).run t = .ok r t1 ∧ RJ K TI μ J k n R NB0 L s Mc (j + 1) {
+      t1 with
+      resJob := r
+    } ∧
+      TopInv t ∧ TopInv {
+        t1 with
+        resJob := r
+      } ∧ t.nodes.size + 2 ≤ 2 ^ K ∧ t.C.size ≤ 2 ^ K := by
   obtain ⟨hI, hWt, hNBt, hM⟩ := hJ
   have step := resInv_step (L := L) (k := k) hTC hn hsize hcap hI5
   obtain ⟨-, hs'⟩ := step j t hI hj
@@ -85,20 +102,25 @@ theorem rj_job {j : Nat} {t : Core} {job : Job} (hj : j < k) (hJ : RJ K TI μ J 
   obtain ⟨hL, hTt, -⟩ := id hI
   obtain ⟨A, hIA, -⟩ := hL.inv
   obtain ⟨hW1, hN1⟩ := hT.step t A job r t1 hIA hTt hjob hWt (by omega) (by omega) hj1 hI'.2.1
-  have hCs : ({ t1 with resJob := r } : Core).C.size = t.C.size := by
+  have hCs : ({
+    t1 with
+    resJob := r
+  } : Core).C.size = t.C.size := by
     have := top_jobStep job t; rw [hj1] at this; exact this.Csize
   refine ⟨hI', hW1, ?_, hMjob j t job r t1 hI hM hjob hj1 hI'⟩
   rw [hCs]
-  show t1.nodes.size + _ ≤ _
+  change t1.nodes.size + _ ≤ _
   omega
 
+omit hNK hMjob in
 /-- **A split round of the joint invariant**: the pop and the split start, the invariant after them,
 and `Fin (WB K)` of the split start at the state after the pop. -/
 theorem rj_split {j : Nat} {t : Core} (hj : j < k) (hJ : RJ K TI μ J k n R NB0 L s Mc j t)
     (hnone : t.resJob = none) (hq0 : t.pqHi ≠ 0) :
     ∃ c t1 t2, pqPopMax.run t = .ok c t1 ∧ (splitChunkStart c).run t1 = .ok () t2 ∧
       RJ K TI μ J k n R NB0 L s Mc (j + 1) t2 ∧
-      OrderMaintenance.Impl.Fin (κ := κ) (WB K) splitChunkStartS t1 (State.setLocs (fun _ => 0) ["x"] [c]) ∧
+      OrderMaintenance.Impl.Fin (κ := κ) (WB K) splitChunkStartS t1 (State.setLocs (fun _ => 0)
+        ["x"] [c]) ∧
       ∃ D, SplitAgree κ t1 c D := by
   obtain ⟨hI, hWt, hNBt, hM⟩ := hJ
   have step := resInv_step (L := L) (k := k) hTC hn hsize hcap hI5
@@ -154,12 +176,13 @@ theorem rj_split {j : Nat} {t : Core} (hj : j < k) (hJ : RJ K TI μ J k n R NB0 
   -- the node budget: a job of measure at most `J`, and two more chunks
   have hmu : μ (markState s2 c (delSt t c).C.size ((delSt t c).C.size + 1) job) ≤ J := by
     unfold RoundAt at hRA
-    have e : (markState s2 c (delSt t c).C.size ((delSt t c).C.size + 1) job).resJob = some job := rfl
+    have e : (markState s2 c (delSt t c).C.size ((delSt t c).C.size + 1) job).resJob = some job
+      := rfl
     rw [e] at hRA
     omega
   have hn2 : (markState s2 c (delSt t c).C.size ((delSt t c).C.size + 1) job).nodes.size =
       t.nodes.size := by
-    show s2.nodes.size = _; rw [hN2, hD.rest.2.2.2.2.2.2.2.2.2.2.1]
+    change s2.nodes.size = _; rw [hN2, hD.rest.2.2.2.2.2.2.2.2.2.2.1]
   rw [hn2, h2]
   have e1 : J * ((delSt t c).C.size + 2) = J * t.C.size + 2 * J := by rw [hsz1]; ring
   rw [e1]
@@ -168,7 +191,8 @@ theorem rj_split {j : Nat} {t : Core} (hj : j < k) (hJ : RJ K TI μ J k n R NB0 
 /-- **A round of the reservation** (`resBody`, at `dn = 0`): its peak, and the invariant after it
 (unless it stopped the loop). -/
 theorem resRound_peak (hC : CapsW K κ) (hK : 8 ≤ K) (hW : 2 * K + 4 ≤ W)
-    (hcapC : κ.lcap .children < 512) (hcapT : κ.lcap .table < 512) (hpow : s.P.a = 2 ^ Nat.log2 s.P.a)
+    (hcapC : κ.lcap .children < 512) (hcapT : κ.lcap .table < 512) (hpow : s.P.a = 2 ^ Nat.log2
+      s.P.a)
     (hRm : TopRoom K s.P)
     {j : Nat} {t : Core} {Lr : Loc} (hj : j < k) (hJ : RJ K TI μ J k n R NB0 L s Mc j t)
     (hG : Gd K KH κ (ΓK K) t Lr) (hdn : Lr "dn" = 0) :
@@ -177,25 +201,33 @@ theorem resRound_peak (hC : CapsW K κ) (hK : 8 ≤ K) (hW : 2 * K + 4 ≤ W)
   have hM := hJ.2.2.2
   obtain ⟨hTCt, hPQ, hpr, hrow⟩ := hMc t hM
   have hP : t.P = s.P := hJ.1.2.2.2.1
-  have hdn0 : ("dn" =ₑ 0 : Exp).ev κ t Lr = some 1 := by simp [Exp.ev, OrderMaintenance.Machine.BinOp.eval, hdn]
+  have hdn0 : ("dn" =ₑ 0 : Exp).ev κ t Lr = some 1 := by simp [Exp.ev, Machine.BinOp.eval, hdn]
   constructor
   · -- the peak
     unfold resBody
-    refine PKok.ite_ok hC hK hW hG (by jsafe) (fun _ _ _ => ?_) (fun hv => by rw [hdn0] at hv; cases hv)
-    refine PKok.ite_ok hC hK hW hG (by jsafe) (fun c hc hc0 => ?_) (fun hc => ?_)
+    refine PKok.ite_ok hC hG (by jsafe) (fun _ _ _ => ?_) (fun hv => by
+      rw [hdn0] at hv
+      cases hv)
+    refine PKok.ite_ok hC hG (by jsafe) (fun c hc hc0 => ?_) (fun hc => ?_)
     · -- a job step
       cases hjob : t.resJob with
       | none => simp [Exp.ev, OF.get, hjob, b2n] at hc; exact absurd hc.symm hc0
       | some job =>
-        obtain ⟨r, t1, hrun, -, hT0, hT1, hN, hCs⟩ := rj_job hTC hT hTI hn hsize hcap hI5 hcnt hNK hMc hMpop hMjob
-          hMsplit hj hJ hjob
-        have hFin := fin_jobStep (κ := κ) hT0 hjob hpr (by rw [hP]; exact hpow) hTCt hJ.2.1 (by rw [hP]; exact hRm)
+        obtain ⟨r, t1, hrun, -, hT0, hT1, hN, hCs⟩ :=
+          rj_job hTC hT hTI hn hsize hcap hI5 hcnt hNK hMjob hj hJ hjob
+        have hFin := fin_jobStep (κ := κ) hT0 hjob hpr (by
+          rw [hP]
+          exact hpow) hTCt hJ.2.1 (by
+          rw [hP]
+          exact hRm)
           hN hCs hrun hT1
-        refine PKok.callS hC hK hW (Γc := ΓJ K) (Γe := ΓJ K) hG (by jsafe) (ΓJ_ge K) (fun vs hvs hG0 => ?_)
+        refine PKok.callS hC (Γc := ΓJ K) (Γe := ΓJ K) hG (by jsafe) (ΓJ_ge K) (fun vs hvs
+          hG0 => ?_)
           (by simp [jobP]) (by simp)
         simp only [evList, List.mapM_nil] at hvs
         cases hvs
-        exact jobStep_pkok hC hK hW hcapC hcapT hG0 hjob (fun v hv hv0 => walk_lt hT0 hjob hv hv0 hCs)
+        exact jobStep_pkok hC hK hW hcapC hcapT hG0 hjob (fun v hv hv0 => walk_lt hT0 hjob hv
+          hv0 hCs)
           (hFin.mono (fun u hu => fb_n_of_WB hu (by omega) .weight))
           (hFin.mono (fun u hu => fb_c_of_WB hu (by omega) .tag))
     · -- no job
@@ -203,47 +235,62 @@ theorem resRound_peak (hC : CapsW K κ) (hK : 8 ≤ K) (hW : 2 * K + 4 ≤ W)
         cases hjob : t.resJob with
         | none => rfl
         | some _ => simp [Exp.ev, OF.get, hjob, b2n] at hc
-      refine PKok.seq (PK.ok (PK.of_safe hC (by omega) (by omega) (by simp only [pqEmptyP]; jsafe) hG))
+      refine PKok.seq (PK.ok (PK.of_safe hC (by omega) (by omega) (by
+        simp only [pqEmptyP]
+        jsafe) hG))
         (fun s1 L1 n1 h1 hG1 => ?_)
       by_cases h0 : t.pqHi = 0
       · obtain ⟨Le, ce, ee, her, -⟩ := pqEmpty_agree κ t (State.setLocs (fun _ => 0) [] [])
-          (b := true) (σ' := t) (by simp [pqEmpty, h0])
-        have e1 := evalF_call_ok (q := pqEmptyP) (args := []) (ds := ["em"]) (L := Lr) (by simp [evList]) ee
+          (b := true) (σ' := t) (by
+            change EStateM.Result.ok (t.pqHi == 0) t = .ok true t
+            simp [h0])
+        have e1 := evalF_call_ok (q := pqEmptyP) (args := []) (ds := ["em"]) (L := Lr) (by
+          simp [evList]) ee
         rw [e1] at h1
         injection h1 with e2 e3; subst e2 e3
-        refine PKok.ite_ok hC hK hW hG1 (by jsafe)
+        refine PKok.ite_ok hC hG1 (by jsafe)
           (fun _ _ _ => PK.ok (PK.of_safe hC (by omega) (by omega) (by jsafe) hG1)) (fun hv => ?_)
-        simp [Exp.ev, OrderMaintenance.Machine.State.setLocs, OrderMaintenance.Machine.State.upd,
+        simp [Exp.ev, Machine.State.setLocs, Machine.State.upd,
           pqEmptyP, her, b2n] at hv
       · obtain ⟨Le, ce, ee, her, -⟩ := pqEmpty_agree κ t (State.setLocs (fun _ => 0) [] [])
-          (b := false) (σ' := t) (by simp [pqEmpty, h0])
-        have e1 := evalF_call_ok (q := pqEmptyP) (args := []) (ds := ["em"]) (L := Lr) (by simp [evList]) ee
+          (b := false) (σ' := t) (by
+            change EStateM.Result.ok (t.pqHi == 0) t = .ok false t
+            simp [h0])
+        have e1 := evalF_call_ok (q := pqEmptyP) (args := []) (ds := ["em"]) (L := Lr) (by
+          simp [evList]) ee
         rw [e1] at h1
         injection h1 with e2 e3; subst e2 e3
-        refine PKok.ite_ok hC hK hW hG1 (by jsafe) (fun c hc hc0 => ?_) (fun _ => ?_)
-        · simp [Exp.ev, OrderMaintenance.Machine.State.setLocs,
-          OrderMaintenance.Machine.State.upd, pqEmptyP, her, b2n] at hc
+        refine PKok.ite_ok hC hG1 (by jsafe) (fun c hc hc0 => ?_) (fun _ => ?_)
+        · simp [Exp.ev, Machine.State.setLocs,
+          Machine.State.upd, pqEmptyP, her, b2n] at hc
           exact absurd hc.symm hc0
-        obtain ⟨c, t1, t2, hpop, hsc, -, hFin, -⟩ := rj_split hTC hT hTI hn hsize hcap hI5 hcnt hNK hMc hMpop hMjob
-          hMsplit hj hJ hnone h0
-        refine PKok.seq (PK.ok (PK.of_safe hC (by omega) (by omega) (by simp only [pqPopMaxP, pqDelP]; jsafe) hG1))
+        obtain ⟨c, t1, t2, hpop, hsc, -, hFin, -⟩ :=
+          rj_split hTC hT hTI hn hsize hcap hI5 hcnt hMc hMpop hMsplit hj hJ hnone h0
+        refine PKok.seq (PK.ok (PK.of_safe hC (by omega) (by omega) (by
+          simp only [pqPopMaxP, pqDelP]
+          jsafe) hG1))
           (fun s2 L2 n2 h2 hG2 => ?_)
-        obtain ⟨⟨Lp, cp, ep, hcp, -⟩, -⟩ := pqPopMax_agree κ t (State.setLocs (fun _ => 0) [] []) hPQ hpop
+        obtain ⟨⟨Lp, cp, ep, hcp, -⟩, -⟩ := pqPopMax_agree κ t (State.setLocs (fun _ => 0) []
+          []) hPQ hpop
         rw [evalF_call_ok (q := pqPopMaxP) (args := []) (ds := ["x"]) (by simp [evList]) ep] at h2
         injection h2 with e5 e6; subst e5 e6
-        refine PKok.callS hC hK hW (Γc := ΓS K) (Γe := ΓS K) hG2 (by jsafe) (ΓS_ge K) (fun vs hvs hG0 => ?_)
+        refine PKok.callS hC (Γc := ΓS K) (Γe := ΓS K) hG2 (by jsafe) (ΓS_ge K) (fun vs
+          hvs hG0 => ?_)
           (by simp [splitP]) (by simp)
-        simp [evList, Exp.ev, OrderMaintenance.Machine.State.setLocs,
-          OrderMaintenance.Machine.State.upd, pqPopMaxP, hcp] at hvs
+        simp only [evList, pqPopMaxP, Exp.ofNat_def, List.map_cons, hcp, List.map_nil,
+            State.setLocs, List.mapM_cons, Exp.ev, State.upd, ↓reduceIte, List.mapM_nil,
+            Option.pure_def, Option.bind_eq_bind, Option.bind_some, Option.some.injEq] at hvs
         subst hvs
         exact split_pkok hC hK hW hG0 (hFin.mono (fun u hu => fb_c_of_WB hu (by omega) .tag))
   · -- the invariant after the round
     intro t' L' m he
     cases hjob : t.resJob with
     | some job =>
-      obtain ⟨r, t1, hrun, hJ', hT0, -, -, -⟩ := rj_job hTC hT hTI hn hsize hcap hI5 hcnt hNK hMc hMpop hMjob
-        hMsplit hj hJ hjob
-      have hA := jobAgree hT0 hjob hpr (by rw [hP]; exact hpow) hTCt
+      obtain ⟨r, t1, hrun, hJ', hT0, -, -, -⟩ :=
+        rj_job hTC hT hTI hn hsize hcap hI5 hcnt hNK hMjob hj hJ hjob
+      have hA := jobAgree hT0 hjob hpr (by
+        rw [hP]
+        exact hpow) hTCt
       obtain ⟨L2, m2, e2, hdn2, -⟩ := resAgree_job hjob hA hrun Lr hdn
       rw [e2] at he
       injection he with e3 e4; subst e3 e4
@@ -254,8 +301,8 @@ theorem resRound_peak (hC : CapsW K κ) (hK : 8 ≤ K) (hW : 2 * K + 4 ≤ W)
         rw [e2] at he
         injection he with e3 e4; subst e3 e4
         exact Or.inr (by simpa [b2n] using hdn2)
-      · obtain ⟨c, t1, t2, hpop, hsc, hJ', -, D, hSA⟩ := rj_split hTC hT hTI hn hsize hcap hI5 hcnt hNK hMc hMpop
-          hMjob hMsplit hj hJ hjob h0
+      · obtain ⟨c, t1, t2, hpop, hsc, hJ', -, D, hSA⟩ :=
+        rj_split hTC hT hTI hn hsize hcap hI5 hcnt hMc hMpop hMsplit hj hJ hjob h0
         obtain ⟨L2, m2, e2, hdn2, -⟩ := resAgree_split hjob hPQ h0 hpop hSA hsc Lr hdn
         rw [e2] at he
         injection he with e3 e4; subst e3 e4
@@ -264,36 +311,45 @@ theorem resRound_peak (hC : CapsW K κ) (hK : 8 ≤ K) (hW : 2 * K + 4 ≤ W)
 /-- **The reservation loop** (`reservationS`, `reservationBudget` rounds): its peak, along the
   joint invariant. -/
 theorem reservation_peak (hC : CapsW K κ) (hK : 8 ≤ K) (hW : 2 * K + 4 ≤ W)
-    (hcapC : κ.lcap .children < 512) (hcapT : κ.lcap .table < 512) (hpow : s.P.a = 2 ^ Nat.log2 s.P.a)
+    (hcapC : κ.lcap .children < 512) (hcapT : κ.lcap .table < 512) (hpow : s.P.a = 2 ^ Nat.log2
+      s.P.a)
     (hRm : TopRoom K s.P) (hk : k = s.P.reservationBudget) (h0 : RJ K TI μ J k n R NB0 L s Mc 0 s)
     {Lr : Loc} (hG : Gd K KH κ (ΓK K) s Lr) : PKok K KH κ (ΓK K) W reservationS s Lr := by
   unfold reservationS
-  refine PKok.seq (PK.ok (PK.of_safe hC (by omega) (by omega) (by jsafe) hG)) (fun s1 L1 n1 h1 hG1 => ?_)
+  refine PKok.seq (PK.ok (PK.of_safe hC (by omega) (by omega) (by jsafe) hG)) (fun s1 L1 n1 h1
+    hG1 => ?_)
   obtain ⟨v, hv, e1, e2⟩ := evalF_assign_inv h1
   subst e1 e2
-  simp only [Exp.ofNat_def, Exp.ev, Option.some.injEq] at hv
+  simp only [Exp.ev, Option.some.injEq] at hv
   subst hv
   have hKR : s.P.reservationBudget < 2 ^ K := by simpa [PF.get] using hG.vb.prm .KR
   have hn0 : (Exp.prm .KR).ev κ s (State.upd Lr "dn" 0) = some s.P.reservationBudget := by simp
     [Exp.ev, PF.get]
   refine PKok.loop hn0 (hG1.pk hC (by jsafe) hn0)
-    (fun j S L' => Gd K KH κ (ΓK K) S L' ∧ ((L' "dn" = 0 ∧ RJ K TI μ J k n R NB0 L s Mc j S) ∨ L' "dn" = 1))
-    ⟨hG1, Or.inl ⟨upd_eq _ _ _, h0⟩⟩ (fun _ _ _ h => h.1) (fun j S L' hj ⟨hGS, hcase⟩ s' L'' c he => ?_)
-  have hGS' : Gd K KH κ (ΓK K) S (State.upd L' "ri" j) := ⟨hGS.enc, hGS.vb, upd_lt hGS.loc (by simp only [ΓK]; omega)⟩
+    (fun j S L' => Gd K KH κ (ΓK K) S L' ∧ ((L' "dn" = 0 ∧ RJ K TI μ J k n R NB0 L s Mc j S) ∨
+      L' "dn" = 1))
+    ⟨hG1, Or.inl ⟨upd_eq _ _ _, h0⟩⟩ (fun _ _ _ h => h.1) (fun j S L' hj ⟨hGS, hcase⟩ s' L'' c
+      he => ?_)
+  have hGS' : Gd K KH κ (ΓK K) S (State.upd L' "ri" j) := ⟨hGS.enc, hGS.vb, upd_lt hGS.loc (by
+    simp only [ΓK]
+    omega)⟩
   rcases hcase with ⟨hdn, hJ⟩ | hdn
   · have hdn' : State.upd L' "ri" j "dn" = 0 := by rw [upd_ne _ _ (by decide)]; exact hdn
-    obtain ⟨hpk, hpost⟩ := resRound_peak hTC hT hTI hn hsize hcap hI5 hcnt hNK hMc hMpop hMjob hMsplit hC hK hW
-      hcapC hcapT hpow hRm (by rw [hk]; exact hj) hJ hGS' hdn'
+    obtain ⟨hpk, hpost⟩ := resRound_peak hTC hT hTI hn hsize hcap hI5 hcnt hNK hMc hMpop hMjob
+      hMsplit hC hK hW
+      hcapC hcapT hpow hRm (by
+        rw [hk]
+        exact hj) hJ hGS' hdn'
     obtain ⟨p1, g1⟩ := hpk _ _ _ he
     exact ⟨p1, g1, hpost _ _ _ he⟩
   · have hdn' : State.upd L' "ri" j "dn" = 1 := by rw [upd_ne _ _ (by decide)]; exact hdn
     have hc1 : ("dn" =ₑ 0 : Exp).ev κ S (State.upd L' "ri" j) = some 0 := by
-      simp [Exp.ev, OrderMaintenance.Machine.BinOp.eval, hdn]
+      simp [Exp.ev, Machine.BinOp.eval, hdn]
     have he' := he
     unfold resBody at he'
     obtain ⟨v, hv, m, hm⟩ := evalF_ite_inv he'
     rw [hc1] at hv; cases hv
-    simp [evalF] at hm
+    simp only [ne_eq, not_true_eq_false, ↓reduceIte, evalF, Res.ok.injEq] at hm
     obtain ⟨e1, e2, -⟩ := hm
     subst e1 e2
     refine ⟨?_, hGS', Or.inr hdn'⟩

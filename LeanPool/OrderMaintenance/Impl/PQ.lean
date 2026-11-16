@@ -30,9 +30,12 @@ or by bucket (`pqHead`, `nbNext`, `nbPrev`: capacity `κ.arr .pqHead`), and hold
 buckets. `PQCaps` says every stored value fits.
 -/
 
+/-- Capacity shared by the priority queue's chunk-indexed arrays. -/
 abbrev Ccap (κ : Caps) : Nat := κ.arr .pqNext
+/-- Capacity shared by the priority queue's bucket-indexed arrays. -/
 abbrev Bcap (κ : Caps) : Nat := κ.arr .pqHead
 
+/-- Compatible queue-array capacities covering every allocated chunk and bucket. -/
 structure PQCaps (κ : Caps) (σ : Core) : Prop where
   cC : κ.arr .pqPrev = Ccap κ ∧ κ.arr .pqWhere = Ccap κ
   cB : κ.arr .nbNext = Bcap κ ∧ κ.arr .nbPrev = Bcap κ
@@ -87,6 +90,7 @@ macro "pq_caps " hq:term : tactic => `(tactic| (
   | exact ($hq).hi
   | omega))
 
+/-- Procedure linking a newly nonempty bucket after its predecessor. -/
 def pqLinkAfterP : Proc where
   name := "pqLinkAfter"
   params := ["s", "p"]
@@ -156,6 +160,7 @@ theorem pqLinkAfter_agree (κ : Caps) (σ : Core) (L : Loc) {s p : Nat} (hs : L 
       exact ⟨by rfl, by
         pq_caps hq⟩
 
+/-- Procedure inserting a chunk at the head of a size bucket. -/
 def pqAddP : Proc where
   name := "pqAdd"
   params := ["c", "s", "p"]
@@ -219,6 +224,7 @@ theorem pqAdd_agree (κ : Caps) (σ : Core) (L : Loc) {c s p : Nat} (hc : L "c" 
         hcc.2.2, Res.ok.injEq, true_and, ↓existsAndEq, and_true, Nat.reduceLeDiff,
         exists_eq']
 
+/-- Procedure removing a chunk and unlinking its bucket when it becomes empty. -/
 def pqDelP : Proc where
   name := "pqDel"
   params := ["c"]
@@ -367,6 +373,7 @@ theorem pqInsertScan_agree (κ : Caps) (σ : Core) (L : Loc) {c s : Nat} (hc : L
 @[simp] theorem pqInsertScanP_params : pqInsertScanP.params = ["c", "s"] := rfl
 @[simp] theorem pqInsertScanP_rets : pqInsertScanP.rets = [] := rfl
 
+/-- Procedure transferring a queued chunk after its size changes. -/
 def pqAdjustP : Proc where
   name := "pqAdjust"
   params := ["c", "old", "new"]
@@ -506,6 +513,7 @@ theorem pqAdjust_agree (κ : Caps) (σ : Core) (L : Loc) {c old : Nat} (hc : L "
           ge_iff_le]
         omega
 
+/-- Procedure queuing a chunk when its size exceeds the quiet threshold. -/
 def pqEnterIfAboveP : Proc where
   name := "pqEnterIfAbove"
   params := ["c"]
@@ -537,6 +545,7 @@ theorem pqEnterIfAbove_agree (κ : Caps) (σ : Core) (L : Loc) {c : Nat} (hc : L
       Machine.State.upd, BinOp.eval, this, ne_eq, not_true_eq_false, Res.ok.injEq, true_and,
       ↓existsAndEq, and_true, Nat.reduceLeDiff, exists_eq']
 
+/-- Procedure removing and returning a chunk from the largest nonempty bucket. -/
 def pqPopMaxP : Proc where
   name := "pqPopMax"
   params := []
@@ -585,6 +594,7 @@ theorem pqPopMax_agree (κ : Caps) (σ : Core) (L : Loc) (hq : PQCaps κ σ) {c 
          and_true, exists_eq_left']
     omega
 
+/-- Procedure reporting whether every priority-queue bucket is empty. -/
 def pqEmptyP : Proc where
   name := "pqEmpty"
   params := []

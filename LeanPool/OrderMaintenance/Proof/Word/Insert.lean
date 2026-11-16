@@ -41,13 +41,23 @@ budget, as in `NodeB`). -/
 structure TopWB (K : Nat) (TI : Core → Prop) (μ : Core → Nat) : Prop where
   start : ∀ s A x job s2, INV s A → TI s → s.resJob = none → LiveC s x → cSt s x = .quiet →
     s.C.size + 2 ≤ 2 ^ K → WB K (linkChunkPair (push2 s) x s.C.size (s.C.size + 1)) →
-    (insertAround x s.C.size (s.C.size + 1)).run (linkChunkPair (push2 s) x s.C.size (s.C.size + 1)) =
+    (insertAround x s.C.size (s.C.size + 1)).run (linkChunkPair (push2 s) x s.C.size (s.C.size +
+      1)) =
       .ok job s2 → TI (markState s2 x s.C.size (s.C.size + 1) job) →
     WB K s2 ∧ JobB K job ∧ s2.nodes.size = s.nodes.size
   step : ∀ s A job r s', INV s A → TI s → s.resJob = some job → WB K s →
     s.nodes.size + 2 ≤ 2 ^ K → s.C.size ≤ 2 ^ K → (jobStep job).run s = .ok r s' →
-    TI { s' with resJob := r } →
-    WB K { s' with resJob := r } ∧ s'.nodes.size + μ { s' with resJob := r } ≤ s.nodes.size + μ s
+    TI {
+      s' with
+      resJob := r
+    } →
+    WB K {
+      s' with
+      resJob := r
+    } ∧ s'.nodes.size + μ {
+      s' with
+      resJob := r
+    } ≤ s.nodes.size + μ s
 
 /-! ### What an insertion leaves of the top structure -/
 
@@ -90,7 +100,13 @@ theorem splitChunkStart_dec {t t2 : Core} {x : Nat} (h : (splitChunkStart x).run
   simp only [run_get_bind, run_require_bind] at h
   split at h
   · simp only [run_newChunk_bind, run_modify_bind, Array.size_push] at h
-    have hps : ({ ({ t with C := t.C.push {} } : Core) with C := (t.C.push {}).push {} } : Core) =
+    have hps : ({
+      ({
+        t with
+        C := t.C.push {}
+      } : Core) with
+      C := (t.C.push {}).push {}
+    } : Core) =
         push2 t := rfl
     rw [hps, run_bind] at h
     rcases hj : (insertAround x t.C.size (t.C.size + 1)).run
@@ -103,9 +119,12 @@ theorem splitChunkStart_dec {t t2 : Core} {x : Nat} (h : (splitChunkStart x).run
   · simp at h
 
 /-- The chunk count of a state of the low invariant is at most `2 + 2·count` (`CountInv`). -/
-theorem _root_.OrderMaintenance.Proof.LowInv.Csize {t : Core} {L : List Nat} (hL : LowInv t L) : t.C.size ≤ 2 + 2 * t.count := by
+theorem _root_.OrderMaintenance.Proof.LowInv.Csize {t : Core} {L : List Nat} (hL : LowInv t L) :
+  t.C.size ≤ 2 + 2 * t.count := by
   obtain ⟨e, pops, hN⟩ := hL.cnt
-  have h1 := hN.chunks (by have := hL.cp.I4; omega)
+  have h1 := hN.chunks (by
+    have := hL.cp.I4
+    omega)
   have h2 : t.count / (t.P.theta + 1 - cmax t.P) ≤ t.count := Nat.div_le_self _ _
   omega
 
@@ -141,13 +160,13 @@ theorem reservation_wb {TI : Core → Prop} {μ : Core → Nat} {J k n R NB0 : N
         obtain ⟨e1, e2⟩ := EStateM.Result.ok.inj hpop
         subst e2
         subst c'
-
         have hcq := hcin
         unfold inQC at hcq; simp only [decide_eq_true_eq] at hcq
         obtain ⟨hcL, hcQ, -⟩ := hcq
         obtain ⟨A, hIA, -⟩ := hL.inv
         have hD := delSt_only t c
-        have hI1 : INV (delSt t c) A := hIA.of_sameLinks hD.sameLinks (fun d => by simp only [cT, hD.C])
+        have hI1 : INV (delSt t c) A := hIA.of_sameLinks hD.sameLinks (fun d => by simp only
+          [cT, hD.C])
         have hTI1 : TI (delSt t c) := hTC.frame _ _ hD.topSame hTt
         have hsz1 : (delSt t c).C.size = t.C.size := by rw [hD.C]
         have hQS := hD.lowSame.qsame
@@ -179,12 +198,13 @@ theorem reservation_wb {TI : Core → Prop} {μ : Core → Nat} {J k n R NB0 : N
         -- the node budget: a job of measure at most `J`, and two more chunks
         have hmu : μ (markState s2 c (delSt t c).C.size ((delSt t c).C.size + 1) job) ≤ J := by
           unfold RoundAt at hRA
-          have e : (markState s2 c (delSt t c).C.size ((delSt t c).C.size + 1) job).resJob = some job := rfl
+          have e : (markState s2 c (delSt t c).C.size ((delSt t c).C.size + 1) job).resJob =
+            some job := rfl
           rw [e] at hRA
           omega
         have hn2 : (markState s2 c (delSt t c).C.size ((delSt t c).C.size + 1) job).nodes.size =
             t.nodes.size := by
-          show s2.nodes.size = _; rw [hN2, hD.rest.2.2.2.2.2.2.2.2.2.2.1]
+          change s2.nodes.size = _; rw [hN2, hD.rest.2.2.2.2.2.2.2.2.2.2.1]
         rw [hn2, h2]
         have e1 : J * ((delSt t c).C.size + 2) = J * t.C.size + 2 * J := by rw [hsz1]; ring
         rw [e1]
@@ -196,11 +216,14 @@ theorem reservation_wb {TI : Core → Prop} {μ : Core → Nat} {J k n R NB0 : N
       obtain ⟨hL, hTt, -⟩ := hI
       obtain ⟨A, hIA, -⟩ := hL.inv
       obtain ⟨hW1, hN1⟩ := hT.step t A job r t1 hIA hTt hjob hWt (by omega) (by omega) hj1 hI'.2.1
-      have hCs : ({ t1 with resJob := r } : Core).C.size = t.C.size := by
+      have hCs : ({
+        t1 with
+        resJob := r
+      } : Core).C.size = t.C.size := by
         have := top_jobStep job t; rw [hj1] at this; exact this.Csize
       refine ⟨hW1, ?_⟩
       rw [hCs]
-      show t1.nodes.size + _ ≤ _
+      change t1.nodes.size + _ ≤ _
       omega)
   refine ⟨t', hrun, ?_⟩
   rcases hres with h | h
@@ -227,15 +250,23 @@ theorem driveChunk_wb {t : Core} {A : Abs} {L : List Nat} {gh : GGh} {s₀ δu :
     have hrx := Fx.rx hI hxL
     have hlr := Fx.lr hI hxL
     have hCx : CInvE t A.elist (δ1 c) δu s₀ x :=
-      { hC with c1 := fun z hz hzs _ => hC.c1 z hz hzs (by unfold NIL; have := hz.1; omega) }
-    have hC1 := hC.c1 x hxL hxs (by unfold NIL; have := hxL.1; omega)
+      { hC with c1 := fun z hz hzs _ => hC.c1 z hz hzs (by
+        unfold NIL
+        have := hz.1
+        omega) }
+    have hC1 := hC.c1 x hxL hxs (by
+      unfold NIL
+      have := hxL.1
+      omega)
     have hXs := cxsteps_wb (cxsteps_linv (L := A.elist) (δ := δ1 c) (δu := δu) (s₀ := s₀) (x := x))
       hL hlen
     obtain ⟨t4, hrun, hD⟩ := cinv_drive hI hG hCx hC1 hXs ⟨hLX, hW, rfl⟩ hGP hCP
       hxL hxs (fun c' h1 h2 h3 => by
         unfold δ1; rw [ite_eq_right]; rintro rfl; rcases hcx with h | h | h <;> contradiction)
-      (by unfold δ1; rcases hcx with rfl | rfl | rfl <;> simp [hlx, hrx, hlr, Ne.symm hlx,
-        Ne.symm hrx, Ne.symm hlr])
+      (by
+        unfold δ1
+        rcases hcx with rfl | rfl | rfl <;> simp [hlx, hrx, hlr, Ne.symm hlx, Ne.symm hrx,
+          Ne.symm hlr])
       (by
         unfold δ1
         refine ⟨?_, ?_, ?_⟩ <;> split <;> first | omega | (subst_vars; exact hcsz))
@@ -250,7 +281,10 @@ theorem driveChunk_wb {t : Core} {A : Abs} {L : List Nat} {gh : GGh} {s₀ δu :
   | overflow =>
     rw [driveChunk_run_ovf hst]
     obtain ⟨hxL, hxs, hlr⟩ := hC.covf c hcL hst
-    exact drive _ hxL hxs (by rcases hlr with h | h; exact Or.inl h.symm; exact Or.inr (Or.inr h.symm))
+    exact drive _ hxL hxs (by
+      rcases hlr with h | h
+      · exact Or.inl h.symm
+      · exact Or.inr (Or.inr h.symm))
   | quiet =>
     rw [driveChunk_run_quiet hst]
     exact ⟨t, rfl, hW⟩
@@ -261,7 +295,8 @@ theorem driveChunk_wb {t : Core} {A : Abs} {L : List Nat} {gh : GGh} {s₀ δu :
 /-- **The background work of an insertion keeps the stored-value bound** (the context of
 `background_ok`). -/
 theorem background_wb {TI : Core → Prop} {μ : Core → Nat} {J k n R NB0 : Nat} {cap : Params → Nat}
-    {L : List Nat} {s0 s1 s2 : Core} {y g c : Nat} (hTC : TopContract TI μ J cap) (hT : TopWB K TI μ)
+    {L : List Nat} {s0 s1 s2 : Core} {y g c : Nat} (hTC : TopContract TI μ J cap) (hT : TopWB K
+      TI μ)
     (hPost : InsPost TI k J n R μ L s0 g c s2) (hy : y ∈ L) (heg1 : eG s1 y = g)
     (hgc1 : gC s1 g = c) (hchunk : (chunkSize c true).run s1 = .ok () s2)
     (hE12 : s2.E = s1.E) (hP1 : s1.P = s0.P) (hkP : s0.P.reservationBudget = k) (hn : 1 ≤ n)
@@ -270,7 +305,8 @@ theorem background_wb {TI : Core → Prop} {μ : Core → Nat} {J k n R NB0 : Na
     (hI5 : (s0.P.theta : ℝ) + R * (Hn (n - 1) + 1) ≤ s0.P.T)
     (hW2 : WB K s2) (hL : LabRoom K s0.P) (hlen : 4 * L.length + 4 ≤ 2 ^ K)
     (hG2 : s2.Gs.size + 2 ≤ 2 ^ K) (hcnt : 2 * s2.count + 2 ≤ 2 ^ K)
-    (hNB : s2.nodes.size + μ s2 ≤ NB0 + J * s2.C.size) (hNK : NB0 + J * (2 + 2 * s2.count) + 2 ≤ 2 ^ K) :
+    (hNB : s2.nodes.size + μ s2 ≤ NB0 + J * s2.C.size) (hNK : NB0 + J * (2 + 2 * s2.count) + 2 ≤
+      2 ^ K) :
     ∃ s', (background y).run s1 = .ok () s' ∧ WB K s' := by
   obtain ⟨A, hI, hel⟩ := hPost.inv
   obtain ⟨gh, hG⟩ := hPost.ginv
@@ -283,7 +319,9 @@ theorem background_wb {TI : Core → Prop} {μ : Core → Nat} {J k n R NB0 : Na
   subst hel
   -- the group phase, with the stored-value bound added to its hooks
   have hXg := ((((xgroup_cinv (L := A.elist) (δ := δ1 c) (δu := fun _ => 0) (s₀ := s₀) (c := c)
-    (by unfold δ1; simp)).and (xgroup_linv (L := A.elist) (s₀ := s₀) (δ := δ1 c)
+    (by
+      unfold δ1
+      simp)).and (xgroup_linv (L := A.elist) (s₀ := s₀) (δ := δ1 c)
       (δu := fun _ => 0) (c := c))).and (xgroup_frame (L := A.elist) (c := c) s2)).and
     (xgroup_track (L := A.elist) (c' := c) y c hy)).and
     (xgroup_wb (K := K) (P := s0.P) (G0 := s2.Gs.size) (L := A.elist) (c := c) hL hG2 (by omega))
@@ -306,7 +344,9 @@ theorem background_wb {TI : Core → Prop} {μ : Core → Nat} {J k n R NB0 : Na
       CFrame s2 s2) ∧ gC s2 (eG s2 y) = c) ∧ XG K s0.P s2.Gs.size s2) :=
     ⟨⟨⟨⟨hC, ⟨lg, hLi⟩, hLP, hGP⟩, CFrame.refl s2⟩, by rw [heg2, hgc]⟩,
       hW2, hP2, by omega, Or.inl le_rfl⟩
-  obtain ⟨s3, hgp, hDD⟩ := groupPhase_ok hI (by rw [hgc]; exact hXg) hX0 hG hGP hgL hpos hroom
+  obtain ⟨s3, hgp, hDD⟩ := groupPhase_ok hI (by
+    rw [hgc]
+    exact hXg) hX0 hG hGP hgL hpos hroom
   -- the state after the group phase
   obtain ⟨A3, hI3, hel3⟩ := hDD.inv
   obtain ⟨gh3, hG3⟩ := hDD.ginv
@@ -323,10 +363,20 @@ theorem background_wb {TI : Core → Prop} {μ : Core → Nat} {J k n R NB0 : Na
   have hcsz3 : 1 ≤ cSz s3 c := by rw [(hCF.C c).1]; exact hPost.csz
   -- the chunk phase
   obtain ⟨t4, hdc, hCP4⟩ := driveChunk_ok hI3 hel3 hG3 (hel3 ▸ hC3) hLX3
-    (hN.frame hQS hCF.count) (by rw [hP3]; exact hGP) (by rw [hP3]; exact hPost.cp) hcL3 hcnd3
+    (hN.frame hQS hCF.count) (by
+      rw [hP3]
+      exact hGP) (by
+      rw [hP3]
+      exact hPost.cp) hcL3 hcnd3
     hcsz3
-  obtain ⟨t4', hdc', hW4⟩ := driveChunk_wb hI3 hel3 hG3 (hel3 ▸ hC3) hLX3 (by rw [hP3]; exact hGP)
-    (by rw [hP3]; exact hPost.cp) hcL3 hcnd3 hcsz3 hW3 (by rw [hP3, hP2]; exact hL) (by omega)
+  obtain ⟨t4', hdc', hW4⟩ := driveChunk_wb hI3 hel3 hG3 (hel3 ▸ hC3) hLX3 (by
+    rw [hP3]
+    exact hGP)
+    (by
+      rw [hP3]
+      exact hPost.cp) hcL3 hcnd3 hcsz3 hW3 (by
+      rw [hP3, hP2]
+      exact hL) (by omega)
   rw [hdc] at hdc'
   obtain ⟨-, rfl⟩ := EStateM.Result.ok.inj hdc'
   have hD : DFrame s2 t4 := hCF.dframe.trans hCP4.fr
@@ -340,16 +390,28 @@ theorem background_wb {TI : Core → Prop} {μ : Core → Nat} {J k n R NB0 : Na
       yg, ig, ag, ipg, jsg, hGm.mono (fun j => le_of_eq (by rw [hD.gvec])), ?_⟩
     rw [hD.top.2.2.2.2.1, hTC.mframe _ _ hD.topSame]; exact hRA
   obtain ⟨s', hres, hW'⟩ := reservation_wb hTC hT h0 hn
-    (by rw [hD.count, hP4]; exact hsize) (by rw [hD.count, hP4]; exact hcap)
-    (by rw [hP4]; exact hI5) hW4 (by rw [hD.count]; exact hcnt)
-    (by rw [hD.topSame.top.1, hD.topSame.Csize, hTC.mframe _ _ hD.topSame]; exact hNB)
-    (by rw [hD.count]; exact hNK)
+    (by
+      rw [hD.count, hP4]
+      exact hsize) (by
+      rw [hD.count, hP4]
+      exact hcap)
+    (by
+      rw [hP4]
+      exact hI5) hW4 (by
+      rw [hD.count]
+      exact hcnt)
+    (by
+      rw [hD.topSame.top.1, hD.topSame.Csize, hTC.mframe _ _ hD.topSame]
+      exact hNB)
+    (by
+      rw [hD.count]
+      exact hNK)
   refine ⟨s', ?_, hW'⟩
   -- the run of `background`
   unfold background
   rw [run_getP_bind, run_getE_bind, run_getG_bind]
   have e1 : (s1.Gs.getX (s1.E.getX y).grp).chk = c := by
-    show gC s1 (eG s1 y) = c; rw [heg1, hgc1]
+    change gC s1 (eG s1 y) = c; rw [heg1, hgc1]
   rw [e1, run_bind, hchunk]
   dsimp only
   rw [run_getE_bind, run_getG_bind]
@@ -368,7 +430,9 @@ theorem background_wb {TI : Core → Prop} {μ : Core → Nat} {J k n R NB0 : Na
     dsimp only at hgp ⊢
     have hEu : (splitState s2 g labL labR).E = s2.E :=
       (splitSpec hI (hI.mem_glist_iff.mpr hgL) labL labR).E
-    exact bg_rest_run (by simp only [eG, hEu]; exact heg2) hgp htr hdc hres
+    exact bg_rest_run (by
+      simp only [eG, hEu]
+      exact heg2) hgp htr hdc hres
   · rw [ite_eq_right hcond]
     rw [ite_eq_right hcond] at hgp
     exact bg_rest_run heg2 hgp htr hdc hres
@@ -376,9 +440,12 @@ theorem background_wb {TI : Core → Prop} {μ : Core → Nat} {J k n R NB0 : Na
 /-! ### A core insertion -/
 
 /-- The element list has at most `E.size - 1` entries (indices `1 … E.size - 1`). -/
-theorem _root_.OrderMaintenance.Proof.INV.len_lt {s : Core} {A : Abs} (hI : INV s A) : A.elist.length + 1 ≤ max 1 s.E.size := by
+theorem _root_.OrderMaintenance.Proof.INV.len_lt {s : Core} {A : Abs} (hI : INV s A) :
+  A.elist.length + 1 ≤ max 1 s.E.size := by
   have h := (hI.eList.nodup.subperm (l₂ := List.range' 1 (s.E.size - 1))
-    (fun e he => List.mem_range'_1.mpr (by have := (hI.eAlloc e).mp he; omega))).length_le
+    (fun e he => List.mem_range'_1.mpr (by
+      have := (hI.eAlloc e).mp he
+      omega))).length_le
   simp only [List.length_range'] at h
   omega
 
@@ -402,7 +469,8 @@ theorem insertAfter_wb {TI : Core → Prop} {μ : Core → Nat} {J n R NB0 : Nat
   have hdiv : s.count / (s.P.theta + 1 - cmax s.P) ≤ (s.count + 1) / (s.P.theta + 1 - cmax s.P) :=
     Nat.div_le_div_right (Nat.le_succ s.count)
   have hcnt0 : 2 + 2 * (s.count / (s.P.theta + 1 - cmax s.P)) ≤ n + 1 := by omega
-  obtain ⟨s1, s2, hrun1, hrun2, hPost, heG, hgC, hE12, hP1⟩ := insert_step hTC hC.low hC.ti hGm hRO hx
+  obtain ⟨s1, s2, hrun1, hrun2, hPost, heG, hgC, hE12, hP1⟩ := insert_step hTC hC.low hC.ti hGm
+    hRO hx
     hk hR hn hcnt0 hI5 hh
   have hyL : s.E.size ∈ OrderMaintenance.Spec.insertAfterL x s.E.size L :=
     (OrderMaintenance.Spec.mem_insertAfterL hx).mpr (Or.inl rfl)
@@ -421,7 +489,8 @@ theorem insertAfter_wb {TI : Core → Prop} {μ : Core → Nat} {J n R NB0 : Nat
   have hcL : LiveC s (gC s (eG s x)) := (hCI.gchk _ hgL).1
   have hcsz : cSz s (gC s (eG s x)) ≤ A.elist.length := by
     rw [hCI.csz _ hcL]; exact celts_len_le _ _ _
-  have hrun2' : (chunkSize (gC s (eG s x)) true).run (linkElem s x s.E.size lab hh) = .ok () s2 := by
+  have hrun2' : (chunkSize (gC s (eG s x)) true).run (linkElem s x s.E.size lab hh) = .ok () s2
+    := by
     rw [← hgC, ← heG]; exact hrun2
   have hW2 : WB K s2 := by
     have := wb_chunkSize hW1 (c := gC s (eG s x)) (inc := true) (hW.gChk _)
@@ -439,9 +508,19 @@ theorem insertAfter_wb {TI : Core → Prop} {μ : Core → Nat} {J n R NB0 : Nat
     have := ts_chunkSize (gC s (eG s x)) true (linkElem s x s.E.size lab hh)
     rw [hrun2'] at this; exact this)
   obtain ⟨s', hbg, hW'⟩ := background_wb hTC hT hPost hyL heG hgC hrun2' hE12 hP1 rfl hn
-    (by rw [hPost.count]; exact hsize) (by rw [hPost.count]; exact hcap) hI5 hW2 hL
-    (by omega) (by omega) (by rw [hPost.count]; omega)
-    (by rw [hTS.top.1, hTS.Csize, hTC.mframe _ _ hTS]; exact hNB) (by rw [hPost.count]; exact hNK)
+    (by
+      rw [hPost.count]
+      exact hsize) (by
+      rw [hPost.count]
+      exact hcap) hI5 hW2 hL
+    (by omega) (by omega) (by
+      rw [hPost.count]
+      omega)
+    (by
+      rw [hTS.top.1, hTS.Csize, hTC.mframe _ _ hTS]
+      exact hNB) (by
+      rw [hPost.count]
+      exact hNK)
   refine ⟨s', ?_, hW'⟩
   unfold insertAfter
   rw [run_bind, run_onGuard_ok hrun1]
@@ -450,7 +529,8 @@ theorem insertAfter_wb {TI : Core → Prop} {μ : Core → Nat} {J n R NB0 : Nat
   rfl
 
 /-- **A deletion keeps the stored-value bound.** -/
-theorem markDead_wb {s : Core} (hW : WB K s) (x : Nat) {s' : Core} (h : (markDead x).run s = .ok () s') :
+theorem markDead_wb {s : Core} (hW : WB K s) (x : Nat) {s' : Core} (h : (markDead x).run s = .ok
+  () s') :
     WB K s' := ((ht_markDead (P0 := s.P) x).ok hW rfl h).1.1
 
 /-- **An order query** changes nothing. -/

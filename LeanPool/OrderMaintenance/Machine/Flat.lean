@@ -128,7 +128,8 @@ theorem flattenE_maxArr : ∀ e : Expr, (flattenE e).maxArr = 0
 
 theorem flattenL_maxArr : ∀ es : List Expr, ((es.map flattenE).map Expr.maxArr).foldr max 0 = 0
   | [] => rfl
-  | e :: es => by simp only [List.map_cons, List.foldr_cons, flattenE_maxArr e, flattenL_maxArr es]; rfl
+  | e :: es => by
+    simp only [List.map_cons, List.foldr_cons, flattenE_maxArr e, flattenL_maxArr es]; rfl
 
 /-- **The flat program uses only array 0.** -/
 theorem flatten_maxArr : ∀ c : Stmt, (flatten c).maxArr = 0
@@ -137,7 +138,8 @@ theorem flatten_maxArr : ∀ c : Stmt, (flatten c).maxArr = 0
   | .store _ i e => by simp [flatten, Stmt.maxArr, addrE, Expr.maxArr, flattenE_maxArr]
   | .alloc _ n => by simp [flatten, Stmt.maxArr, Expr.maxArr, flattenE_maxArr]
   | .seq c d => by simp [flatten, Stmt.maxArr, flatten_maxArr c, flatten_maxArr d]
-  | .ite e c d => by simp [flatten, Stmt.maxArr, flattenE_maxArr, flatten_maxArr c, flatten_maxArr d]
+  | .ite e c d => by
+    simp [flatten, Stmt.maxArr, flattenE_maxArr, flatten_maxArr c, flatten_maxArr d]
   | .loop _ n b => by simp [flatten, Stmt.maxArr, flattenE_maxArr, flatten_maxArr b]
   | .call _ _ b _ args _ => by
     simp only [flatten, Stmt.maxArr, flatten_maxArr b, flattenL_maxArr]; rfl
@@ -192,7 +194,8 @@ structure FRel (A M : Nat) (s f : State) : Prop where
 /-- The relation reads only the original memory, capacities and locals, and the flat array 0
 and locals. -/
 theorem FRel.congr {A M : Nat} {s f s' f' : State} (h : FRel A M s f) (hsm : s'.mem = s.mem)
-    (hsc : s'.cap = s.cap) (hfm : f'.mem 0 = f.mem 0) (hfc : f'.cap 0 = f.cap 0) (hl : f'.loc = s'.loc) :
+    (hsc : s'.cap = s.cap) (hfm : f'.mem 0 = f.mem 0) (hfc : f'.cap 0 = f.cap 0) (hl : f'.loc =
+      s'.loc) :
     FRel A M s' f' := by
   have hp : heapPtr f' = heapPtr f := by simp only [heapPtr, hfm]
   have hb : ∀ a, base f' a = base f a := fun a => by simp only [base, hfm]
@@ -203,7 +206,8 @@ theorem FRel.congr {A M : Nat} {s f s' f' : State} (h : FRel A M s f) (hsm : s'.
   · rw [hsc] at hj hk; rw [hb, hb]; exact h.disj a ha b hb' hab j hj k hk
   · rw [hp] at h2; rw [hfm]; exact h.zero i h1 h2
 
-theorem upd_same {α : Type} [DecidableEq α] (g : α → Nat) (a : α) (v : Nat) : State.upd g a v a = v := by
+theorem upd_same {α : Type} [DecidableEq α] (g : α → Nat) (a : α) (v : Nat) : State.upd g a v a
+  = v := by
   simp [State.upd]
 
 theorem upd_other {α : Type} [DecidableEq α] (g : α → Nat) {a b : α} (v : Nat) (h : b ≠ a) :
@@ -213,14 +217,19 @@ theorem upd_other {α : Type} [DecidableEq α] (g : α → Nat) {a b : α} (v : 
 /-- A store to a cell of array `a`: the flat store to its address. -/
 theorem FRel.store {A M : Nat} {s f s' f' : State} (h : FRel A M s f) {a j v : Nat} (ha : a ≤ A)
     (hj : j < s.cap a) (hsm : s'.mem = (s.write a j v).mem) (hsc : s'.cap = s.cap)
-    (hfm : f'.mem 0 = State.upd (f.mem 0) (base f a + j) v) (hfc : f'.cap 0 = M) (hl : f'.loc = s'.loc) :
+    (hfm : f'.mem 0 = State.upd (f.mem 0) (base f a + j) v) (hfc : f'.cap 0 = M) (hl : f'.loc =
+      s'.loc) :
     FRel A M s' f' := by
   obtain ⟨h1, h2⟩ := h.inR a ha j hj
   have hlo := h.lo
   have hp : heapPtr f' = heapPtr f := by
-    unfold heapPtr; rw [hfm, upd_other _ _ (by unfold heapPtr at h1 hlo; omega)]
+    unfold heapPtr; rw [hfm, upd_other _ _ (by
+      unfold heapPtr at h1 hlo
+      omega)]
   have hb : ∀ b ≤ A, base f' b = base f b := fun b hb => by
-    unfold base; rw [hfm, upd_other _ _ (by unfold heapPtr base at *; omega)]
+    unfold base; rw [hfm, upd_other _ _ (by
+      unfold heapPtr base at *
+      omega)]
   refine ⟨hl, hfc, hp ▸ h.lo, hp ▸ h.hi, fun b hb' k hk => ?_, fun b hb' k hk => ?_,
     fun b hb' c hc hbc k hk l hl' => ?_, fun i i1 i2 => ?_⟩
   · rw [hsc] at hk; rw [hp, hb b hb']; exact h.inR b hb' k hk
@@ -239,7 +248,8 @@ theorem FRel.store {A M : Nat} {s f s' f' : State} (h : FRel A M s f) {a j v : N
 
 /-- An allocation of `k` cells for array `a`: the region just below the heap pointer. -/
 theorem FRel.alloc {A M : Nat} {s f s' f' : State} (h : FRel A M s f) {a k : Nat} (ha : a ≤ A)
-    (hk : A + 2 + k ≤ heapPtr f) (hsm : s'.mem = (s.alloc a k).mem) (hsc : s'.cap = (s.alloc a k).cap)
+    (hk : A + 2 + k ≤ heapPtr f) (hsm : s'.mem = (s.alloc a k).mem) (hsc : s'.cap = (s.alloc a
+      k).cap)
     (hfm : f'.mem 0 = State.upd (State.upd (f.mem 0) 0 (heapPtr f - k)) (a + 1) (heapPtr f - k))
     (hfc : f'.cap 0 = M) (hl : f'.loc = s'.loc) : FRel A M s' f' := by
   have hhi := h.hi
@@ -251,7 +261,8 @@ theorem FRel.alloc {A M : Nat} {s f s' f' : State} (h : FRel A M s f) {a k : Nat
   have hm : ∀ i, A + 2 ≤ i → f'.mem 0 i = f.mem 0 i := fun i hi => by
     rw [hfm, upd_other _ _ (by omega), upd_other _ _ (by omega)]
   have hca : s'.cap a = k := by rw [hsc]; simp [State.alloc, State.upd]
-  have hcb : ∀ b, b ≠ a → s'.cap b = s.cap b := fun b hb => by rw [hsc]; simp [State.alloc, State.upd, hb]
+  have hcb : ∀ b, b ≠ a → s'.cap b = s.cap b := fun b hb => by rw [hsc]; simp [State.alloc,
+    State.upd, hb]
   refine ⟨hl, hfc, by rw [hp]; omega, by rw [hp]; omega, fun b hb' j hj => ?_, fun b hb' j hj => ?_,
     fun b hb' c hc hbc j hj l hl' => ?_, fun i i1 i2 => ?_⟩
   · by_cases e : b = a
@@ -285,7 +296,8 @@ theorem Expr.le_maxv {s : State} : ∀ {e : Expr} {v : Nat}, e.eval s = some v �
   | .un _ _, v, h => by simp only [Expr.maxv]; rw [h]; exact le_max_right _ _
 
 /-- The address of a cell of a stored array. -/
-theorem addrE_eval {A M : Nat} {s f : State} (h : FRel A M s f) {a : Nat} (ha : a ≤ A) {i : Expr} {j : Nat}
+theorem addrE_eval {A M : Nat} {s f : State} (h : FRel A M s f) {a : Nat} (ha : a ≤ A) {i :
+  Expr} {j : Nat}
     (hi : i.eval f = some j) :
     (addrE a i).eval f = some (base f a + j) ∧
       (addrE a i).maxv f = max (max (max (a + 1) (base f a)) (i.maxv f)) (base f a + j) := by
@@ -297,7 +309,8 @@ theorem addrE_eval {A M : Nat} {s f : State} (h : FRel A M s f) {a : Nat} (ha : 
     simp only [addrE, Expr.eval] at e1 ⊢; rw [e1, hi]; rfl
   refine ⟨e2, ?_⟩
   have m0 : (addrE a i).maxv f =
-      max (max ((Expr.load 0 (.lit (a + 1))).maxv f) (i.maxv f)) (((addrE a i).eval f).getD 0) := rfl
+      max (max ((Expr.load 0 (.lit (a + 1))).maxv f) (i.maxv f)) (((addrE a i).eval f).getD 0)
+        := rfl
   have e3 : (Expr.load 0 (.lit (a + 1))).maxv f = max (a + 1) (base f a) := by
     simp only [Expr.maxv]; rw [e1]; rfl
   rw [m0, e2, e3]; rfl
@@ -357,7 +370,8 @@ theorem flattenE_eval {A M : Nat} {s f : State} (h : FRel A M s f) :
         have hm0 : (Expr.bin op e₁ e₂).maxv s =
             max (max (e₁.maxv s) (e₂.maxv s)) (((Expr.bin op e₁ e₂).eval s).getD 0) := rfl
         have hm1 : (flattenE (.bin op e₁ e₂)).maxv f =
-            max (max ((flattenE e₁).maxv f) ((flattenE e₂).maxv f)) (((flattenE (.bin op e₁ e₂)).eval f).getD 0) := rfl
+            max (max ((flattenE e₁).maxv f) ((flattenE e₂).maxv f)) (((flattenE (.bin op e₁
+              e₂)).eval f).getD 0) := rfl
         rw [hv] at hm0; rw [ev] at hm1
         rw [hm0, hm1]; simp only [Option.getD_some]; omega
   | .un op e, hA, v, hv => by
@@ -376,7 +390,8 @@ theorem flattenE_eval {A M : Nat} {s f : State} (h : FRel A M s f) :
       rw [hv] at hm0; rw [ev] at hm1
       rw [hm0, hm1]; simp only [Option.getD_some]; omega
 
-theorem maxArrL_le {A : Nat} : ∀ {es : List Expr}, (es.map Expr.maxArr).foldr max 0 ≤ A → ∀ e ∈ es, e.maxArr ≤ A
+theorem maxArrL_le {A : Nat} : ∀ {es : List Expr}, (es.map Expr.maxArr).foldr max 0 ≤ A → ∀ e ∈
+  es, e.maxArr ≤ A
   | [], _, _, he => by cases he
   | e :: es, h, e', he => by
     simp only [List.map_cons, List.foldr_cons] at h
@@ -403,7 +418,8 @@ theorem flattenL_eval {A M : Nat} {s f : State} (h : FRel A M s f) :
           Option.some.injEq] at hv
         subst hv
         obtain ⟨f1, m1⟩ := flattenE_eval h e (hA e (List.mem_cons_self ..)) v h1
-        obtain ⟨f2, m2⟩ := flattenL_eval h es (fun e' he' => hA e' (List.mem_cons_of_mem _ he')) ws h2
+        obtain ⟨f2, m2⟩ := flattenL_eval h es (fun e' he' => hA e' (List.mem_cons_of_mem _ he'))
+          ws h2
         simp only [evalList] at f2
         refine ⟨?_, ?_⟩
         · simp only [evalList, List.map_cons, List.mapM_cons, f1, f2, Option.bind_eq_bind,
@@ -437,7 +453,8 @@ theorem SimO.of_eq {A M P : Nat} {f f' : State} {o o' : Out} (h : SimO A M P f o
   obtain ⟨a, b, c, d, e⟩ := h h1 h2 (hh ▸ h3)
   exact ⟨a, b, c, hh ▸ d, hp ▸ e⟩
 
-theorem heapPtr_write (f : State) {p : Nat} (v : Nat) (h : p ≠ 0) : heapPtr (f.write 0 p v) = heapPtr f := by
+theorem heapPtr_write (f : State) {p : Nat} (v : Nat) (h : p ≠ 0) : heapPtr (f.write 0 p v) =
+  heapPtr f := by
   simp [heapPtr, State.write, State.upd, Ne.symm h]
 
 theorem simO_ok {A M P : Nat} {f s' f' : State} {c c' : Nat} (hR : FRel A M s' f') (hc : c' ≤ 5 * c)
@@ -450,7 +467,8 @@ theorem Out.cost_le_bind (o : Out) (g : State → Out) : o.cost ≤ (o.bind g).c
   · exact Nat.le_add_right _ _
   · exact le_refl _
 
-theorem Out.ne_err_of_bind {o : Out} {g : State → Out} (h : (o.bind g).status ≠ .err) : o.status ≠ .err := by
+theorem Out.ne_err_of_bind {o : Out} {g : State → Out} (h : (o.bind g).status ≠ .err) : o.status
+  ≠ .err := by
   unfold Out.bind at h; split at h
   · next hs => rw [hs]; simp
   · exact h
@@ -461,7 +479,9 @@ theorem simO_bind {A M P : Nat} {f : State} {o o' : Out} {g g' : State → Out}
     SimO A M P f (o.bind g) (o'.bind g') := by
   intro herr hpk hvol
   have h1 := h (Out.ne_err_of_bind herr) (le_trans (Out.bind_peak_le hm) hpk)
-    (le_trans (by have := Nat.mul_le_mul_right P (Out.cost_le_bind o g); omega) hvol)
+    (le_trans (by
+      have := Nat.mul_le_mul_right P (Out.cost_le_bind o g)
+      omega) hvol)
   cases hs : o.status with
   | ok =>
     have hs' : o'.status = .ok := h1.status.trans hs
@@ -483,11 +503,13 @@ theorem simO_bind {A M P : Nat} {f : State} {o o' : Out} {g g' : State → Out}
   | err => exact absurd hs (Out.ne_err_of_bind herr)
 
 /-- **Loops.** -/
-theorem sims_runFor {A M : Nat} {b b' : State → Out} (hb : Sims A M b b') (hm : ∀ s, s.peak ≤ (b s).st.peak)
+theorem sims_runFor {A M : Nat} {b b' : State → Out} (hb : Sims A M b b') (hm : ∀ s, s.peak ≤ (b
+  s).st.peak)
     (x : Reg) : ∀ n k, Sims A M (runFor b x k n) (runFor b' x k n)
   | 0, _ => fun _ _ _ hR => simO_ok hR (le_refl _) (Nat.le_add_right _ _) (le_max_left _ _)
   | n + 1, k => fun s f P hR => by
-    show SimO A M P f ((Out.bind ⟨s, 1, .ok⟩ fun s => b (s.setLoc x k)).bind (runFor b x (k + 1) n))
+    change SimO A M P f
+      ((Out.bind ⟨s, 1, .ok⟩ fun s => b (s.setLoc x k)).bind (runFor b x (k + 1) n))
       ((Out.bind ⟨f, 1, .ok⟩ fun s => b' (s.setLoc x k)).bind (runFor b' x (k + 1) n))
     refine simO_bind (simO_bind (simO_ok hR (by omega) (Nat.le_add_right _ _) (le_max_left _ _))
       (fun s f P hR => (hb (s.setLoc x k) (f.setLoc x k) P
@@ -498,7 +520,8 @@ theorem sims_runFor {A M : Nat} {b b' : State → Out} (hb : Sims A M b b') (hm 
 
 theorem exec_store_some {s : State} {a : Arr} {i e : Expr} {j v : Nat} (hi : i.eval s = some j)
     (he : e.eval s = some v) (hj : j < s.cap a) :
-    exec (.store a i e) s = ⟨((s.bump (i.maxv s)).bump (e.maxv s)).write a j v, 1 + i.cost + e.cost, .ok⟩ := by
+    exec (.store a i e) s = ⟨((s.bump (i.maxv s)).bump (e.maxv s)).write a j v, 1 + i.cost +
+      e.cost, .ok⟩ := by
   simp only [exec, hi, he, hj, ↓reduceIte]
 
 /-- An allocation: a fresh region just below the heap pointer, which reads 0. -/
@@ -523,7 +546,7 @@ theorem sims_alloc {A M : Nat} {a : Nat} {n : Expr} (ha : a ≤ A) (hA : n.maxAr
     -- the first store: `heapPtr := heapPtr - n`
     have e0 : (Expr.load 0 (.lit 0)).eval f = some (heapPtr f) := by simp [Expr.eval, hc0, heapPtr]
     have ev1 : (Expr.bin .sub (.load 0 (.lit 0)) (flattenE n)).eval f = some (heapPtr f - k) := by
-      show ((Expr.load 0 (.lit 0)).eval f).bind
+      change ((Expr.load 0 (.lit 0)).eval f).bind
         (fun x => ((flattenE n).eval f).bind fun y => BinOp.sub.eval x y) = _
       rw [e0, hn']; simp [BinOp.eval, hk]
     have mv1 : (Expr.bin .sub (.load 0 (.lit 0)) (flattenE n)).maxv f =
@@ -531,18 +554,22 @@ theorem sims_alloc {A M : Nat} {a : Nat} {n : Expr} (ha : a ≤ A) (hA : n.maxAr
       have m0 : (Expr.bin .sub (.load 0 (.lit 0)) (flattenE n)).maxv f =
           max (max ((Expr.load 0 (.lit 0)).maxv f) ((flattenE n).maxv f))
             (((Expr.bin .sub (.load 0 (.lit 0)) (flattenE n)).eval f).getD 0) := rfl
-      have m1 : (Expr.load 0 (.lit 0)).maxv f = max 0 (((Expr.load 0 (.lit 0)).eval f).getD 0) := rfl
+      have m1 : (Expr.load 0 (.lit 0)).maxv f = max 0 (((Expr.load 0 (.lit 0)).eval f).getD 0)
+        := rfl
       rw [m0, m1, e0, ev1]; rfl
-    have x1 := exec_store_some (a := 0) (e := Expr.bin .sub (.load 0 (.lit 0)) (flattenE n)) (s := f)
+    have x1 := exec_store_some (a := 0) (e := Expr.bin .sub (.load 0 (.lit 0)) (flattenE n)) (s
+      := f)
       (i := .lit 0) rfl ev1 hc0
     rw [mv1] at x1
     generalize hf1 : ((f.bump ((Expr.lit 0).maxv f)).bump
-      (max (max (max 0 (heapPtr f)) ((flattenE n).maxv f)) (heapPtr f - k))).write 0 0 (heapPtr f - k) = f1 at x1
+      (max (max (max 0 (heapPtr f)) ((flattenE n).maxv f)) (heapPtr f - k))).write 0 0 (heapPtr
+        f - k) = f1 at x1
     have hm1 : f1.mem 0 = State.upd (f.mem 0) 0 (heapPtr f - k) := by
       rw [← hf1]; simp [State.write, State.bump]
     have hp1 : f1.mem 0 0 = heapPtr f - k := by rw [hm1, upd_same]
     have hc1 : f1.cap 0 = f.cap 0 := by rw [← hf1]; rfl
-    have hpk1 : f1.peak = max (max f.peak 0) (max (max (max 0 (heapPtr f)) ((flattenE n).maxv f)) (heapPtr f - k)) := by
+    have hpk1 : f1.peak = max (max f.peak 0) (max (max (max 0 (heapPtr f)) ((flattenE n).maxv
+      f)) (heapPtr f - k)) := by
       rw [← hf1]; rfl
     have hl1 : f1.loc = f.loc := by rw [← hf1]; rfl
     -- the second store: `base a := heapPtr`
@@ -550,34 +577,46 @@ theorem sims_alloc {A M : Nat} {a : Nat} {n : Expr} (ha : a ≤ A) (hA : n.maxAr
       simp [Expr.eval, hc1, hc0, hp1]
     have x2 := exec_store_some (a := 0) (s := f1) (i := .lit (a + 1)) rfl e2 (hc1 ▸ hca)
     have mv2 : (Expr.load 0 (.lit 0)).maxv f1 = max 0 (heapPtr f - k) := by
-      have m1 : (Expr.load 0 (.lit 0)).maxv f1 = max 0 (((Expr.load 0 (.lit 0)).eval f1).getD 0) := rfl
+      have m1 : (Expr.load 0 (.lit 0)).maxv f1 = max 0 (((Expr.load 0 (.lit 0)).eval f1).getD 0)
+        := rfl
       rw [m1, e2]; rfl
     rw [mv2] at x2
-    have xf : exec (flatten (.alloc a n)) f = (exec (.store 0 (.lit 0) (.bin .sub (.load 0 (.lit 0)) (flattenE n))) f).bind
+    have xf : exec (flatten (.alloc a n)) f = (exec (.store 0 (.lit 0) (.bin .sub (.load 0 (.lit
+      0)) (flattenE n))) f).bind
         (exec (.store 0 (.lit (a + 1)) (.load 0 (.lit 0)))) := rfl
     rw [xf, x1, Out.bind_ok rfl, x2]
-    generalize hf2 : ((f1.bump ((Expr.lit (a + 1)).maxv f1)).bump (max 0 (heapPtr f - k))).write 0 (a + 1)
+    generalize hf2 : ((f1.bump ((Expr.lit (a + 1)).maxv f1)).bump (max 0 (heapPtr f - k))).write
+      0 (a + 1)
       (heapPtr f - k) = f2
-    have hfm : f2.mem 0 = State.upd (State.upd (f.mem 0) 0 (heapPtr f - k)) (a + 1) (heapPtr f - k) := by
+    have hfm : f2.mem 0 = State.upd (State.upd (f.mem 0) 0 (heapPtr f - k)) (a + 1) (heapPtr f -
+      k) := by
       rw [← hf2, ← hm1]; simp [State.write, State.bump]
     have hp2 : heapPtr f2 = heapPtr f - k := by
       unfold heapPtr; rw [hfm, upd_other _ _ (by omega), upd_same]; rfl
     have hpk2 : f2.peak = max (max f1.peak (a + 1)) (max 0 (heapPtr f - k)) := by rw [← hf2]; rfl
-    refine ⟨rfl, hR.alloc ha (by omega) rfl rfl hfm (by rw [← hf2]; exact hc1.trans hR.cap)
-      (by rw [← hf2]; simp [State.write, State.bump, State.alloc, hl1, hR.loc]), ?_, ?_, ?_⟩
+    refine ⟨rfl, hR.alloc ha (by omega) rfl rfl hfm (by
+      rw [← hf2]
+      exact hc1.trans hR.cap)
+      (by
+        rw [← hf2]
+        simp [State.write, State.bump, State.alloc, hl1, hR.loc]), ?_, ?_, ?_⟩
     · simp only [Expr.cost]; omega
-    · show heapPtr f ≤ heapPtr f2 + (1 + n.cost) * P
+    · change heapPtr f ≤ heapPtr f2 + (1 + n.cost) * P
       rw [hp2]; omega
     · rw [hpk2, hpk1]; simp only [State.alloc, State.bump]
       have := hR.cap; omega
 
 /-- An evaluated expression, recorded in the peak: the first outcome of `ite`, `loop`. -/
-theorem simO_expr {A M P : Nat} {s f : State} (hR : FRel A M s f) {e : Expr} (hA : e.maxArr ≤ A) {v : Nat}
+theorem simO_expr {A M P : Nat} {s f : State} (hR : FRel A M s f) {e : Expr} (hA : e.maxArr ≤ A)
+  {v : Nat}
     (hv : e.eval s = some v) :
-    SimO A M P f ⟨s.bump (e.maxv s), 1 + e.cost, .ok⟩ ⟨f.bump ((flattenE e).maxv f), 1 + (flattenE e).cost, .ok⟩ := by
+    SimO A M P f ⟨s.bump (e.maxv s), 1 + e.cost, .ok⟩ ⟨f.bump ((flattenE e).maxv f), 1 +
+      (flattenE e).cost, .ok⟩ := by
   obtain ⟨-, hm⟩ := flattenE_eval hR e hA v hv
   have := flattenE_cost e
-  refine simO_ok (hR.congr rfl rfl rfl rfl hR.loc) (by omega) (by simp only [heapPtr, State.bump]; omega) ?_
+  refine simO_ok (hR.congr rfl rfl rfl rfl hR.loc) (by omega) (by
+    simp only [heapPtr, State.bump]
+    omega) ?_
   simp only [State.bump]; omega
 
 theorem flatten_sims {A M : Nat} : ∀ c : Stmt, c.maxArr ≤ A → Sims A M (exec c) (exec (flatten c))
@@ -591,7 +630,9 @@ theorem flatten_sims {A M : Nat} : ∀ c : Stmt, c.maxArr ≤ A → Sims A M (ex
       have := flattenE_cost e
       simp only [flatten, exec, he, he']
       refine simO_ok (hR.congr rfl rfl rfl rfl (by simp [State.setLoc, State.bump, hR.loc]))
-        (by omega) (by simp only [heapPtr, State.setLoc, State.bump]; omega) ?_
+        (by omega) (by
+          simp only [heapPtr, State.setLoc, State.bump]
+          omega) ?_
       simp only [State.setLoc, State.bump]; omega
   | .store a i e, hA => fun s f P hR => by
     simp only [Stmt.maxArr] at hA
@@ -611,7 +652,9 @@ theorem flatten_sims {A M : Nat} : ∀ c : Stmt, c.maxArr ≤ A → Sims A M (ex
           have := flattenE_cost i; have := flattenE_cost e
           have hlo := hR.lo
           simp only [flatten, exec, hi, he, hj, ea, he', hc]
-          refine simO_ok ?_ (by simp only [addrE, Expr.cost]; omega)
+          refine simO_ok ?_ (by
+            simp only [addrE, Expr.cost]
+            omega)
             (by rw [heapPtr_write _ _ (by omega)]; exact Nat.le_add_right _ _) ?_
           · exact hR.store ha hj rfl rfl (by simp [State.write, State.bump]) hR.cap
               (by simp [State.write, State.bump, hR.loc])
@@ -622,7 +665,8 @@ theorem flatten_sims {A M : Nat} : ∀ c : Stmt, c.maxArr ≤ A → Sims A M (ex
     exact sims_alloc (le_trans (le_max_left _ _) hA) (le_trans (le_max_right _ _) hA)
   | .seq c d, hA => fun s f P hR => by
     simp only [Stmt.maxArr] at hA
-    exact simO_bind (flatten_sims c (by omega) s f P hR) (flatten_sims d (by omega)) (peak_le_exec d)
+    exact simO_bind (flatten_sims c (by omega) s f P hR) (flatten_sims d (by omega))
+      (peak_le_exec d)
   | .ite e c d, hA => fun s f P hR => by
     simp only [Stmt.maxArr] at hA
     cases he : e.eval s with
@@ -652,7 +696,8 @@ theorem flatten_sims {A M : Nat} : ∀ c : Stmt, c.maxArr ≤ A → Sims A M (ex
     cases ha : evalList s args with
     | none =>
       intro herr
-      have : exec (.call nm ps b rs args ds) s = ⟨s, 1 + costList args, .err⟩ := by simp only [exec, ha]
+      have : exec (.call nm ps b rs args ds) s = ⟨s, 1 + costList args, .err⟩ := by
+        simp only [exec, ha]
       rw [this] at herr; exact absurd rfl herr
     | some vs =>
       obtain ⟨ha', hmv⟩ := flattenL_eval hR args (maxArrL_le (by omega)) vs ha
@@ -661,7 +706,8 @@ theorem flatten_sims {A M : Nat} : ∀ c : Stmt, c.maxArr ≤ A → Sims A M (ex
           ((f.bump (maxvList f (args.map flattenE))).enter ps vs) :=
         hR.congr rfl rfl rfl rfl (by simp [State.enter, State.bump])
       have ih := flatten_sims b (by omega) _ _ P hR1
-      have hpe : max s.peak (maxvList s args) ≤ (exec b ((s.bump (maxvList s args)).enter ps vs)).st.peak :=
+      have hpe : max s.peak (maxvList s args) ≤ (exec b ((s.bump (maxvList s args)).enter ps
+        vs)).st.peak :=
         peak_le_exec b ((s.bump (maxvList s args)).enter ps vs)
       simp only [flatten, exec, ha, ha']
       intro herr hpk hvol
@@ -673,16 +719,27 @@ theorem flatten_sims {A M : Nat} : ∀ c : Stmt, c.maxArr ≤ A → Sims A M (ex
       cases hs : o.status with
       | ok =>
         simp only [hs] at herr hpk hvol
-        have h1 := ih (by rw [hs]; simp) hpk (by rw [hp0]; simp only [Nat.add_mul] at hvol; omega)
+        have h1 := ih (by
+          rw [hs]
+          simp) hpk (by
+          rw [hp0]
+          simp only [Nat.add_mul] at hvol
+          omega)
         simp only [h1.status, hs]
         have := h1.heap; have := h1.cost; have := h1.peak
-        refine ⟨rfl, h1.rel.congr rfl rfl rfl rfl (by simp [State.leave, h1.rel.loc, hR.loc]), ?_, ?_, ?_⟩
+        refine ⟨rfl, h1.rel.congr rfl rfl rfl rfl (by simp [State.leave, h1.rel.loc, hR.loc]),
+          ?_, ?_, ?_⟩
         · simp only; omega
         · simp only [heapPtr, State.leave, Nat.add_mul] at *; omega
         · simp only [State.leave] at *; omega
       | fail =>
         simp only [hs] at herr hpk hvol
-        have h1 := ih (by rw [hs]; simp) hpk (by rw [hp0]; simp only [Nat.add_mul] at hvol; omega)
+        have h1 := ih (by
+          rw [hs]
+          simp) hpk (by
+          rw [hp0]
+          simp only [Nat.add_mul] at hvol
+          omega)
         simp only [h1.status, hs]
         have := h1.heap; have := h1.cost; have := h1.peak
         refine ⟨rfl, h1.rel.congr rfl rfl rfl rfl (by simp [hR.loc]), ?_, ?_, ?_⟩
@@ -701,19 +758,31 @@ theorem flatten_sims {A M : Nat} : ∀ c : Stmt, c.maxArr ≤ A → Sims A M (ex
     cases hs : (exec c s).status with
     | fail =>
       simp only [hs] at herr hpk hvol
-      have h1 := ihc (by rw [hs]; simp) (le_trans hpc hpk)
-        (by simp only [Nat.add_mul] at hvol; omega)
+      have h1 := ihc (by
+        rw [hs]
+        simp) (le_trans hpc hpk)
+        (by
+          simp only [Nat.add_mul] at hvol
+          omega)
       simp only [h1.status, hs]
       have h2 := flatten_sims h (by omega) _ _ P h1.rel herr hpk
-        (by have := h1.heap; simp only [Nat.add_mul] at hvol; omega)
-      have := h1.heap; have := h1.cost; have := h1.peak; have := h2.heap; have := h2.cost; have := h2.peak
+        (by
+          have := h1.heap
+          simp only [Nat.add_mul] at hvol
+          omega)
+      have := h1.heap; have := h1.cost; have := h1.peak; have := h2.heap; have := h2.cost; have
+        := h2.peak
       refine ⟨h2.status, h2.rel, ?_, ?_, ?_⟩
       · simp only; omega
       · simp only [Nat.add_mul]; omega
       · simp only; omega
     | ok =>
       simp only [hs] at herr hpk hvol
-      have h1 := ihc (by rw [hs]; simp) hpk (by simp only [Nat.add_mul] at hvol; omega)
+      have h1 := ihc (by
+        rw [hs]
+        simp) hpk (by
+        simp only [Nat.add_mul] at hvol
+        omega)
       simp only [h1.status, hs]
       have := h1.heap; have := h1.cost; have := h1.peak
       refine ⟨rfl, h1.rel, ?_, ?_, ?_⟩
@@ -732,10 +801,12 @@ the run of `flatten c` from `f`
 * moves the heap pointer down by at most `cost × P` cells (each allocation costs at least one
   step, and its size is a value the run computes, so at most `P`);
 * computes no value above `f`'s peak, the original run's peak, or `M`. -/
-theorem flatten_sim {A M : Nat} {c : Stmt} (hA : c.maxArr ≤ A) {s f : State} (hR : FRel A M s f) {P : Nat}
+theorem flatten_sim {A M : Nat} {c : Stmt} (hA : c.maxArr ≤ A) {s f : State} (hR : FRel A M s f)
+  {P : Nat}
     (herr : (exec c s).status ≠ .err) (hP : (exec c s).st.peak ≤ P)
     (hmem : A + 2 + (exec c s).cost * P ≤ heapPtr f) :
-    (exec (flatten c) f).status = (exec c s).status ∧ FRel A M (exec c s).st (exec (flatten c) f).st ∧
+    (exec (flatten c) f).status = (exec c s).status ∧ FRel A M (exec c s).st (exec (flatten c)
+      f).st ∧
     (exec (flatten c) f).cost ≤ 5 * (exec c s).cost ∧
     heapPtr f ≤ heapPtr (exec (flatten c) f).st + (exec c s).cost * P ∧
     (exec (flatten c) f).st.peak ≤ max f.peak (max (exec c s).st.peak M) := by
@@ -744,12 +815,24 @@ theorem flatten_sim {A M : Nat} {c : Stmt} (hA : c.maxArr ≤ A) {s f : State} (
 
 /-- **The values the flat run computes** (`dpk`: its peak from a reset peak): none above the
 original run's or `M`. -/
-theorem flatten_dpk {A M : Nat} {c : Stmt} (hA : c.maxArr ≤ A) {s f : State} (hR : FRel A M s f) {P : Nat}
-    (herr : (exec c s).status ≠ .err) (hP : dpk c s ≤ P) (hmem : A + 2 + (exec c s).cost * P ≤ heapPtr f) :
+theorem flatten_dpk {A M : Nat} {c : Stmt} (hA : c.maxArr ≤ A) {s f : State} (hR : FRel A M s f)
+  {P : Nat}
+    (herr : (exec c s).status ≠ .err) (hP : dpk c s ≤ P) (hmem : A + 2 + (exec c s).cost * P ≤
+      heapPtr f) :
     dpk (flatten c) f ≤ max (dpk c s) M := by
   obtain ⟨-, -, -, eco, est⟩ := exec_reset c s
-  obtain ⟨-, -, -, -, h5⟩ := flatten_sim hA (s := { s with peak := 0 }) (f := { f with peak := 0 })
-    (hR.congr rfl rfl rfl rfl hR.loc) (by rw [← est]; exact herr) hP (by rw [← eco]; exact hmem)
+  obtain ⟨-, -, -, -, h5⟩ := flatten_sim hA (s := {
+    s with
+    peak := 0
+  }) (f := {
+    f with
+    peak := 0
+  })
+    (hR.congr rfl rfl rfl rfl hR.loc) (by
+      rw [← est]
+      exact herr) hP (by
+      rw [← eco]
+      exact hmem)
   exact le_trans h5 (max_le (Nat.zero_le _) (le_refl _))
 
 end OrderMaintenance.Machine

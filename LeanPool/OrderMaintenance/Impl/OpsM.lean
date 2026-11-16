@@ -36,10 +36,12 @@ def NxtM (om : OrderMaintenance) (n : Core) : Prop :=
   (om.cursorSet = false → PrepM n) ∧ (om.cursorSet = true → Mc (capsOf n.P) n.P n)
 
 /-- **The Level M side conditions of the wrapper state.** -/
-def MX (om : OrderMaintenance) : Prop := Mc (capsOf om.cur.P) om.cur.P om.cur ∧ ∀ n, om.nxt = some n → NxtM om n
+def MX (om : OrderMaintenance) : Prop := Mc (capsOf om.cur.P) om.cur.P om.cur ∧ ∀ n, om.nxt =
+  some n → NxtM om n
 
 /-- A copy step keeps the capacities of `nxt`. -/
-theorem copy_M {om : OrderMaintenance} {n : Core} (hC : CopyOK om n) (hM : Mc (capsOf n.P) n.P n) {om' : OrderMaintenance} {n' : Core}
+theorem copy_M {om : OrderMaintenance} {n : Core} (hC : CopyOK om n) (hM : Mc (capsOf n.P) n.P
+  n) {om' : OrderMaintenance} {n' : Core}
     (hcp : copyAtCursor om n = .ok (om', n')) :
     om'.cursorSet = om.cursorSet ∧ om'.cur = om.cur ∧ Mc (capsOf n'.P) n'.P n' := by
   unfold copyAtCursor at hcp
@@ -59,7 +61,8 @@ theorem copy_M {om : OrderMaintenance} {n : Core} (hC : CopyOK om n) (hM : Mc (c
 /-- **Along the rebuild loop**: Level F's safety facts and the side conditions give what the machine
 iterations need, and the side conditions hold at the end. -/
 theorem loop_M : ∀ f b (om : OrderMaintenance) (n : Core), RLSafeP om n f b → NxtM om n →
-    Mc (capsOf om.cur.P) om.cur.P om.cur → RLSafe om n f b ∧ ∀ R, rebuildLoop om n f b = .ok R → MX R := by
+    Mc (capsOf om.cur.P) om.cur.P om.cur → RLSafe om n f b ∧ ∀ R, rebuildLoop om n f b = .ok R →
+      MX R := by
   intro f
   induction f with
   | zero =>
@@ -78,17 +81,27 @@ theorem loop_M : ∀ f b (om : OrderMaintenance) (n : Core), RLSafeP om n f b �
     -- the prepare step
     have hprep : om.cursorSet = false → PrepM n ∧ 1 ≤ n.P.N ∧ om.cur.head < om.cur.E.size ∧
         ∀ r n', prepareStep.run n = .ok r n' → n'.count = n.count ∧
-          (r = true → RLSafe { om with cursor := (om.cur.E.getX om.cur.head).next, cursorSet := true } n' f b ∧
-            ∀ R, rebuildLoop { om with cursor := (om.cur.E.getX om.cur.head).next, cursorSet := true } n' f b = .ok R →
+          (r = true → RLSafe {
+            om with
+            cursor := (om.cur.E.getX om.cur.head).next
+            cursorSet := true
+          } n' f b ∧
+            ∀ R, rebuildLoop {
+              om with
+              cursor := (om.cur.E.getX om.cur.head).next
+              cursorSet := true
+            } n' f b = .ok R →
               MX R) ∧
-          (r = false → RLSafe om n' f (b - 1) ∧ ∀ R, rebuildLoop om n' f (b - 1) = .ok R → MX R) := by
+          (r = false → RLSafe om n' f (b - 1) ∧ ∀ R, rebuildLoop om n' f (b - 1) = .ok R → MX R)
+            := by
       intro hcs
       obtain ⟨hN1, hhd, hst⟩ := hF'.1 hcs
       refine ⟨hN.1 hcs, hN1, hhd, fun r n' hr => ?_⟩
       obtain ⟨hcnt, hT, hFl⟩ := hst r n' hr
       obtain ⟨-, hP', hF2, hT2⟩ := prepAgreeM (hN.1 hcs) hN1 hr (fun _ => 0)
       refine ⟨hcnt, fun hrt => ih _ _ _ (hT hrt) ⟨(fun h => by simp at h), fun _ => by
-        rw [hP']; exact (hT2 hrt).1⟩ hMc, fun hrf => ih _ _ _ (hFl hrf) ⟨fun _ => hF2 hrf, fun h => by
+        rw [hP']; exact (hT2 hrt).1⟩ hMc, fun hrf => ih _ _ _ (hFl hrf) ⟨fun _ => hF2 hrf, fun h
+          => by
         rw [hcs] at h; cases h⟩ hMc⟩
     -- the copy step
     have hcopy : om.cursorSet = true → om.cursor ≠ NIL → CopyOK om n ∧
@@ -101,8 +114,12 @@ theorem loop_M : ∀ f b (om : OrderMaintenance) (n : Core), RLSafeP om n f b �
         exact ⟨L, ⟨hok, hroom, hN.2 hcs⟩, htail, hh⟩⟩
       refine ⟨hCO, fun om' n' hcp => ?_⟩
       obtain ⟨e1, e2, hM'⟩ := copy_M hCO (hN.2 hcs) hcp
-      refine ⟨hM', fun hc' => ih _ _ _ (hnext om' n' hcp hc') ⟨(fun h => by rw [e1, hcs] at h; cases h),
-        fun _ => hM'⟩ (by rw [e2]; exact hMc)⟩
+      refine ⟨hM', fun hc' => ih _ _ _ (hnext om' n' hcp hc') ⟨(fun h => by
+        rw [e1, hcs] at h
+        cases h),
+        fun _ => hM'⟩ (by
+          rw [e2]
+          exact hMc)⟩
     refine ⟨fun _ => ⟨fun hcs => ?_, fun hcs hc => ?_⟩, fun R hR => ?_⟩
     · obtain ⟨h1, h2, h3, h4⟩ := hprep hcs
       exact ⟨h1, h2, h3, fun r n' hr => ⟨(h4 r n' hr).1, fun hrt => ((h4 r n' hr).2.1 hrt).1,
@@ -122,7 +139,8 @@ theorem loop_M : ∀ f b (om : OrderMaintenance) (n : Core), RLSafeP om n f b �
           simp only [bind, Except.bind, hrc] at hR
           cases r with
           | true => simp only [ite_true] at hR; exact ((h4 true n' hpr).2.1 rfl).2 R hR
-          | false => simp only [Bool.false_eq_true, ite_false] at hR; exact ((h4 false n' hpr).2.2 rfl).2 R hR
+          | false => simp only [Bool.false_eq_true, ite_false] at hR; exact ((h4 false n'
+            hpr).2.2 rfl).2 R hR
       | true =>
         rw [ite_eq_right (by simp [hcs])] at hR
         by_cases hc : om.cursor = NIL
@@ -159,7 +177,10 @@ theorem pp_topPP (N : Nat) : topPP (proofParams N) := pp_proof N
 
 /-- **The rebuild step keeps the side conditions.** -/
 theorem rebuild_MX {om : OrderMaintenance} (hX : MX om)
-    (hF : ∀ n, om.nxt = some n → RLSafeP { om with nxt := none } n (om.KB + 1) om.KB)
+    (hF : ∀ n, om.nxt = some n → RLSafeP {
+      om with
+      nxt := none
+    } n (om.KB + 1) om.KB)
     {R : OrderMaintenance} (hr : om.rebuildStep proofParams = .ok R) : MX R := by
   cases hn : om.nxt with
   | none =>
@@ -176,14 +197,21 @@ theorem rebuild_MX {om : OrderMaintenance} (hX : MX om)
         cases hn'
         exact ⟨fun _ => prepM_start _ (pp_topPP _), fun h => by simp [startOM] at h⟩⟩
   | some n0 =>
-    have hr' : rebuildLoop { om with nxt := none } n0 (om.KB + 1) om.KB = .ok R := by
+    have hr' : rebuildLoop {
+      om with
+      nxt := none
+    } n0 (om.KB + 1) om.KB = .ok R := by
       unfold OrderMaintenance.rebuildStep at hr; rw [hn] at hr; exact hr
     exact (loop_M _ _ _ _ (hF n0 hn) (hX.2 n0 hn) hX.1).2 R hr'
 
 /-- **The rebuild step**: the machine ends holding Level F's result (in one slot or the other),
 which satisfies the side conditions. -/
-theorem rebuildW_ok {om : OrderMaintenance} {m : State} {p : Nat} (h : WEnc om m p) (hX : MX om) (hkb : 1 ≤ om.KB)
-    (hF : ∀ n, om.nxt = some n → RLSafeP { om with nxt := none } n (om.KB + 1) om.KB)
+theorem rebuildW_ok {om : OrderMaintenance} {m : State} {p : Nat} (h : WEnc om m p) (hX : MX om)
+  (hkb : 1 ≤ om.KB)
+    (hF : ∀ n, om.nxt = some n → RLSafeP {
+      om with
+      nxt := none
+    } n (om.KB + 1) om.KB)
     {R : OrderMaintenance} (hr : om.rebuildStep proofParams = .ok R) :
     MX R ∧ wp (rebuildC p) (fun m' k => (WEnc R m' p ∨ WEnc R m' (1 - p)) ∧
       (∀ x, RbLoc x → m'.loc x = m.loc x) ∧ k ≤ rebB om.KB) m := by
@@ -194,30 +222,49 @@ theorem rebuildW_ok {om : OrderMaintenance} {m : State} {p : Nat} (h : WEnc om m
       refine wp_ite_g 1 (by simp [Expr.eval, BinOp.eval, h.scap 1 (by decide), h.nxtOn, hn, b2n])
         (fun s1 hl1 hm1 hc1 => ?_)
       simp only [ne_eq, one_ne_zero, not_false_eq_true, ite_true]
-      refine OrderMaintenance.Machine.wp_mono (fun s2 k2 ⟨h2, hl2, hk2⟩ => ⟨Or.inl h2, fun x hx => ?_, ?_⟩)
+      refine Machine.wp_mono (fun s2 k2 ⟨h2, hl2, hk2⟩ => ⟨Or.inl h2, fun x hx => ?_, ?_⟩)
         (startW_ok (h.congr hm1 hc1) hn hkb hr)
       · rw [hl2 x hx.1, hl1]
       · unfold rebB; simp only [Expr.cost] at hk2 ⊢; omega
   | some n0 =>
-    have hr' : rebuildLoop { om with nxt := none } n0 (om.KB + 1) om.KB = .ok R := by
+    have hr' : rebuildLoop {
+      om with
+      nxt := none
+    } n0 (om.KB + 1) om.KB = .ok R := by
       unfold OrderMaintenance.rebuildStep at hr; rw [hn] at hr; exact hr
     obtain ⟨hS, hXR⟩ := loop_M _ _ _ _ (hF n0 hn) (hX.2 n0 hn) hX.1
     refine ⟨hXR R hr', ?_⟩
-    have hom : ({ ({ om with nxt := none } : OrderMaintenance) with nxt := some n0 } : OrderMaintenance) = om := by
+    have hom : ({
+      ({
+        om with
+        nxt := none
+      } : OrderMaintenance) with
+      nxt := some n0
+    } :
+      OrderMaintenance) = om := by
       cases om; simp only at hn; subst hn; rfl
     unfold rebuildC
     refine wp_ite_g 0 (by simp [Expr.eval, BinOp.eval, h.scap 1 (by decide), h.nxtOn, hn, b2n])
       (fun s1 hl1 hm1 hc1 => ?_)
     simp only [ne_eq, not_true_eq_false, ite_false]
-    have h1 : WEnc ({ ({ om with nxt := none } : OrderMaintenance) with nxt := some n0 } : OrderMaintenance) s1 p := by
+    have h1 : WEnc ({
+      ({
+        om with
+        nxt := none
+      } : OrderMaintenance) with
+      nxt := some n0
+    } :
+      OrderMaintenance) s1 p := by
       rw [hom]; exact h.congr hm1 hc1
-    refine OrderMaintenance.Machine.wp_mono (fun s2 k2 ⟨h2, hl2, hk2⟩ => ⟨h2, fun x hx => ?_, ?_⟩) (loopW_ok h1 hr' hS)
+    refine Machine.wp_mono (fun s2 k2 ⟨h2, hl2, hk2⟩ => ⟨h2, fun x hx => ?_, ?_⟩) (loopW_ok h1
+      hr' hS)
     · rw [hl2 x hx.2.1 hx.2.2, hl1]
     · unfold rebB; simp only [Expr.cost] at hk2 ⊢; omega
 
 /-! ### `K_B` never changes -/
 
-theorem copy_KB {om : OrderMaintenance} {n : Core} {om' : OrderMaintenance} {n' : Core} (hcp : copyAtCursor om n = .ok (om', n')) :
+theorem copy_KB {om : OrderMaintenance} {n : Core} {om' : OrderMaintenance} {n' : Core} (hcp :
+  copyAtCursor om n = .ok (om', n')) :
     om'.KB = om.KB := by
   unfold copyAtCursor at hcp
   cases hl : (om.cur.E.getX om.cursor).live with
@@ -230,7 +277,8 @@ theorem copy_KB {om : OrderMaintenance} {n : Core} {om' : OrderMaintenance} {n' 
     · cases hcp
     · injection hcp with hcp; injection hcp with h1 h2; subst h1; rfl
 
-theorem rebuildLoop_KB : ∀ f b (om : OrderMaintenance) (n : Core) (R : OrderMaintenance), rebuildLoop om n f b = .ok R → R.KB = om.KB := by
+theorem rebuildLoop_KB : ∀ f b (om : OrderMaintenance) (n : Core) (R : OrderMaintenance),
+  rebuildLoop om n f b = .ok R → R.KB = om.KB := by
   intro f
   induction f with
   | zero => intro b om n R h; cases h; rfl
@@ -259,7 +307,8 @@ theorem rebuildLoop_KB : ∀ f b (om : OrderMaintenance) (n : Core) (R : OrderMa
         · cases h; exact this
         · rw [ih _ _ _ _ h]; exact this
 
-theorem rebuildStep_KB {om R : OrderMaintenance} (h : om.rebuildStep proofParams = .ok R) : R.KB = om.KB := by
+theorem rebuildStep_KB {om R : OrderMaintenance} (h : om.rebuildStep proofParams = .ok R) : R.KB
+  = om.KB := by
   unfold OrderMaintenance.rebuildStep at h
   split at h
   · simp only at h
@@ -271,26 +320,31 @@ theorem rebuildStep_KB {om R : OrderMaintenance} (h : om.rebuildStep proofParams
 /-! ### The wrapper invariant at Level M -/
 
 /-- Level F's cost invariant at the proof parameters. -/
-abbrev WCP (om : OrderMaintenance) (Sp : OrderMaintenance.Spec.State) : Prop := WC proofParams TopInv topPI topMu topNu topJ nfP RfP om Sp
+abbrev WCP (om : OrderMaintenance) (Sp : OrderMaintenance.Spec.State) : Prop := WC proofParams
+  TopInv topPI topMu topNu topJ nfP RfP om Sp
 
 /-- **The wrapper invariant at Level M**: Level F's, with the side conditions. -/
 def MInv (om : OrderMaintenance) (Sp : OrderMaintenance.Spec.State) : Prop := WCP om Sp ∧ MX om
 
 /-- `cur` is in service. -/
-theorem MInv.cur {om : OrderMaintenance} {Sp : OrderMaintenance.Spec.State} (hI : MInv om Sp) {A : Abs} (hA : INV om.cur A) :
+theorem MInv.cur {om : OrderMaintenance} {Sp : OrderMaintenance.Spec.State} (hI : MInv om Sp) {A
+  : Abs} (hA : INV om.cur A) :
     InService om.cur A.elist :=
   ⟨hI.1.cur A hA, hI.1.cur_room costSetup, hI.2.1⟩
 
 /-- What mirroring an insertion needs. -/
-theorem MInv.mirror {om : OrderMaintenance} {Sp : OrderMaintenance.Spec.State} (hI : MInv om Sp) (hx : Option Nat) :
+theorem MInv.mirror {om : OrderMaintenance} {Sp : OrderMaintenance.Spec.State} (hI : MInv om Sp)
+  (hx : Option Nat) :
     ∀ n, om.nxt = some n → om.cursorSet = true →
-      (hx = none ∨ ∃ x, hx = some x ∧ om.nxtIdx.getX x ≠ 0) → ∃ B, InService n B ∧ mirAnchor om n hx ∈ B := by
+      (hx = none ∨ ∃ x, hx = some x ∧ om.nxtIdx.getX x ≠ 0) → ∃ B, InService n B ∧ mirAnchor om
+        n hx ∈ B := by
   intro n hn hs hc
   obtain ⟨-, -, A, -, -, -, hN⟩ := hI.1.w
   unfold NxtR at hN; rw [hn] at hN
   obtain ⟨B, hRB, hIB, hzB, -⟩ := hN
   obtain ⟨c₀, live₀, I, D, hRW⟩ := hI.1.busy n hn
-  refine ⟨B.elist, ⟨((hRW.serve hs).1 B hRB.inv).1, hI.1.nxt_room costSetup hn hs, (hI.2.2 n hn).2 hs⟩, ?_⟩
+  refine ⟨B.elist, ⟨((hRW.serve hs).1 B hRB.inv).1, hI.1.nxt_room costSetup hn hs, (hI.2.2 n
+    hn).2 hs⟩, ?_⟩
   rcases hc with rfl | ⟨x, rfl, hx0⟩
   · exact hRB.head
   · exact (hIB x (hzB x hx0)).1
@@ -299,21 +353,29 @@ theorem MInv.mirror {om : OrderMaintenance} {Sp : OrderMaintenance.Spec.State} (
 theorem mirrorInsert_M {om : OrderMaintenance} {hx : Option Nat} {hy : Nat}
     (hX : ∀ n, om.nxt = some n → NxtM om n)
     (hN : ∀ n, om.nxt = some n → om.cursorSet = true →
-      (hx = none ∨ ∃ x, hx = some x ∧ om.nxtIdx.getX x ≠ 0) → ∃ B, InService n B ∧ mirAnchor om n hx ∈ B)
+      (hx = none ∨ ∃ x, hx = some x ∧ om.nxtIdx.getX x ≠ 0) → ∃ B, InService n B ∧ mirAnchor om
+        n hx ∈ B)
     {om2 : OrderMaintenance} (hm : om.mirrorInsert hx hy = .ok om2) :
     om2.cur = om.cur ∧ om2.KB = om.KB ∧ ∀ n, om2.nxt = some n → NxtM om2 n := by
   unfold OrderMaintenance.mirrorInsert at hm
   cases hn : om.nxt with
-  | none => rw [hn] at hm; injection hm with hm; subst hm; exact ⟨rfl, rfl, fun n h => by rw [hn] at h; cases h⟩
+  | none => rw [hn] at hm; injection hm with hm; subst hm; exact ⟨rfl, rfl, fun n h => by
+    rw [hn] at h; cases h⟩
   | some n =>
     rw [hn] at hm
     simp only at hm
-    have hkeep : om2 = om → om2.cur = om.cur ∧ om2.KB = om.KB ∧ ∀ n, om2.nxt = some n → NxtM om2 n := by
+    have hkeep : om2 = om → om2.cur = om.cur ∧ om2.KB = om.KB ∧ ∀ n, om2.nxt = some n → NxtM om2
+      n := by
       rintro rfl; exact ⟨rfl, rfl, fun n2 h2 => hX n2 h2⟩
     have hmir : ∀ xn, om.cursorSet = true → (hx = none ∨ ∃ x, hx = some x ∧ om.nxtIdx.getX x ≠ 0) →
         xn = mirAnchor om n hx →
         (do let r ← runCore n (insertAfter xn hy)
-            pure ({ om with nxt := some r.2, nxtIdx := om.nxtIdx.setX hy r.1, cursorSet := true } : OrderMaintenance)) = .ok om2 →
+            pure ({
+              om with
+              nxt := some r.2
+              nxtIdx := om.nxtIdx.setX hy r.1
+              cursorSet := true
+            } : OrderMaintenance)) = .ok om2 →
         om2.cur = om.cur ∧ om2.KB = om.KB ∧ ∀ n, om2.nxt = some n → NxtM om2 n := by
       intro xn hs hcp hxn hm
       obtain ⟨B, hS, hB⟩ := hN n hn hs hcp
@@ -324,7 +386,7 @@ theorem mirrorInsert_M {om : OrderMaintenance} {hx : Option Nat} {hy : Nat}
       injection hm with hm; subst hm
       refine ⟨rfl, rfl, fun n2 h2 => ?_⟩
       cases h2
-      exact ⟨fun h => by simp [hs] at h, fun _ => by rw [hP']; exact hM'⟩
+      exact ⟨fun h => by simp [] at h, fun _ => by rw [hP']; exact hM'⟩
     by_cases hs : om.cursorSet = true
     · cases hx with
       | none =>
@@ -345,12 +407,25 @@ theorem mirrorInsert_M {om : OrderMaintenance} {hx : Option Nat} {hy : Nat}
 
 /-- **Level F's insertion, step by step**: the insertion into `cur`, its mirroring, and the
 rebuild step. -/
-theorem insert_eq {mk : Nat → Params} {om : OrderMaintenance} {hx : Option Nat} {c' : Core} {om2 : OrderMaintenance}
+theorem insert_eq {mk : Nat → Params} {om : OrderMaintenance} {hx : Option Nat} {c' : Core} {om2
+  : OrderMaintenance}
     (hr : (insertAfter (insXi om hx) om.nextHandle).run om.cur = .ok om.cur.E.size c')
-    (hm : ({ om with cur := c', nextHandle := om.nextHandle + 1, curIdx := om.curIdx.setX om.nextHandle om.cur.E.size } : OrderMaintenance).mirrorInsert hx om.nextHandle = .ok om2)
+    (hm : ({
+      om with
+      cur := c'
+      nextHandle := om.nextHandle + 1
+      curIdx := om.curIdx.setX om.nextHandle om.cur.E.size
+    } : OrderMaintenance).mirrorInsert hx om.nextHandle = .ok om2)
     (R : OrderMaintenance) : om.insert mk hx = .ok (om.nextHandle, R) ↔
-      ({ om2 with live := om2.live + 1 } : OrderMaintenance).rebuildStep mk = .ok R := by
-  have e : om.insert mk hx = (({ om2 with live := om2.live + 1 } : OrderMaintenance).rebuildStep mk).bind
+      ({
+        om2 with
+        live := om2.live + 1
+      } : OrderMaintenance).rebuildStep mk = .ok R := by
+  have e : om.insert mk hx = (({
+    om2 with
+    live := om2.live + 1
+  } : OrderMaintenance).rebuildStep
+    mk).bind
       fun R => .ok (om.nextHandle, R) := by
     unfold OrderMaintenance.insert
     cases hx <;>
@@ -361,16 +436,24 @@ theorem insert_eq {mk : Nat → Params} {om : OrderMaintenance} {hx : Option Nat
       rw [hm]
       rfl
   rw [e]
-  cases ({ om2 with live := om2.live + 1 } : OrderMaintenance).rebuildStep mk with
+  cases ({
+    om2 with
+    live := om2.live + 1
+  } : OrderMaintenance).rebuildStep mk with
   | error e => simp [Except.bind]
   | ok a => simp [Except.bind]
 
 /-! ### Insertion -/
 
+/-- Increment the wrapper's live-handle counter. -/
 def liveIncC : Stmt := .store (wa 4) (.lit 0) (.bin .add (.load (wa 4) (.lit 0)) (.lit 1))
 
 theorem liveIncW_ok {om : OrderMaintenance} {m : State} {p : Nat} (h : WEnc om m p) :
-    wp liveIncC (fun m' k => WEnc { om with live := om.live + 1 } m' p ∧ m'.loc = m.loc ∧ k ≤ 10) m :=
+    wp liveIncC (fun m' k => WEnc {
+      om with
+      live := om.live + 1
+    } m' p ∧ m'.loc = m.loc ∧ k ≤
+      10) m :=
   wp_store_g 0 (om.live + 1) rfl (by simp [Expr.eval, BinOp.eval, h.scap 4 (by decide), h.live])
     (by rw [h.scap 4 (by decide)]; decide)
     (fun s' hl hm hc => ⟨(h.writeLive _).congr hm hc, hl, by simp [Expr.cost]⟩)
@@ -387,7 +470,8 @@ def insW (KB : Nat) : Nat := 2 * insB + 400 + rebB KB
 theorem insBound_of {P : Params} (h : P = proofParams P.N) : insBound P = insB := by
   rw [h]; exact insBound_proof _
 
-theorem wp_par_or {om : OrderMaintenance} {m : State} {p : Nat} (hp : p < 2) (h : WEnc om m p ∨ WEnc om m (1 - p)) :
+theorem wp_par_or {om : OrderMaintenance} {m : State} {p : Nat} (hp : p < 2) (h : WEnc om m p ∨
+  WEnc om m (1 - p)) :
     WEnc om m 0 ∨ WEnc om m 1 := by
   have : p = 0 ∨ p = 1 := by omega
   rcases h with h | h
@@ -400,18 +484,25 @@ theorem wp_par_or {om : OrderMaintenance} {m : State} {p : Nat} (hp : p < 2) (h 
 
 /-- **An insertion at Level M**: it answers Level F's handle, keeps the invariant, and the machine
 code runs in at most `insW K_B` steps. -/
-theorem insertW_ok {om : OrderMaintenance} {m : State} {p : Nat} {Sp : OrderMaintenance.Spec.State} (h : WEnc om m p) (hI : MInv om Sp)
+theorem insertW_ok {om : OrderMaintenance} {m : State} {p : Nat} {Sp :
+  OrderMaintenance.Spec.State} (h : WEnc om m p) (hI : MInv om Sp)
     {hx : Option Nat} (hv : (insOp hx).Valid Sp) (hhx : m.loc "hx" = b2n hx.isSome)
     (hxl : ∀ x, hx = some x → m.loc "x" = x) :
-    ∃ om', om.insert proofParams hx = .ok (Sp.fresh, om') ∧ MInv om' (OrderMaintenance.Spec.step Sp (insOp hx)).1 ∧
-      om'.KB = om.KB ∧ wp insertWS (fun m' k => (WEnc om' m' 0 ∨ WEnc om' m' 1) ∧ m'.loc "hy" = Sp.fresh ∧
+    ∃ om', om.insert proofParams hx = .ok (Sp.fresh, om') ∧ MInv om' (OrderMaintenance.Spec.step
+      Sp (insOp hx)).1 ∧
+      om'.KB = om.KB ∧ wp insertWS (fun m' k => (WEnc om' m' 0 ∨ WEnc om' m' 1) ∧ m'.loc "hy" =
+        Sp.fresh ∧
         k ≤ insW om.KB) m := by
   have hp := h.p2
   have hW := hI.1
   obtain ⟨hS, hf, A, hR, hL, hIdx, hN⟩ := hW.w
   obtain ⟨om', hins, hW'⟩ := insert_cost costSetup hW hx hv
   obtain ⟨c', om2, hr1, hm2, hsafe⟩ := insert_safe costSetup hW hx hv
-  have hR' : ({ om2 with live := om2.live + 1 } : OrderMaintenance).rebuildStep proofParams = .ok om' := by
+  have hR' : ({
+    om2 with
+    live := om2.live + 1
+  } : OrderMaintenance).rebuildStep proofParams =
+    .ok om' := by
     rw [← insert_eq hr1 hm2, hf]; exact hins
   -- the anchor, and `cur` in service
   have hxS : ∀ x, hx = some x → x ∈ Sp.list := fun x e => by subst e; exact hv
@@ -427,17 +518,22 @@ theorem insertW_ok {om : OrderMaintenance} {m : State} {p : Nat} {Sp : OrderMain
   have hr1' : (insertAfter (insAnchor om hx) om.nextHandle).run om.cur = .ok om.cur.E.size c' := hr1
   rw [hr1'] at hr''
   injection hr'' with _ hcc; subst hcc
-  obtain ⟨e1, e2, hX2⟩ := mirrorInsert_M (om := insOM om c' om.cur.E.size) (hx := hx) (hy := om.nextHandle)
+  obtain ⟨e1, e2, hX2⟩ := mirrorInsert_M (om := insOM om c' om.cur.E.size) (hx := hx) (hy :=
+    om.nextHandle)
     (fun n hn => hI.2.2 n hn) (fun n hn hs hc => hI.mirror hx n hn hs hc) hm2
-  have hX3 : MX ({ om2 with live := om2.live + 1 } : OrderMaintenance) :=
-    ⟨by show Mc (capsOf om2.cur.P) om2.cur.P om2.cur; rw [e1]; show Mc (capsOf c'.P) c'.P c'; rw [hP'']; exact hM'',
+  have hX3 : MX ({
+    om2 with
+    live := om2.live + 1
+  } : OrderMaintenance) :=
+    ⟨by change Mc (capsOf om2.cur.P) om2.cur.P om2.cur; rw [e1]; change Mc (capsOf c'.P) c'.P c'; rw
+      [hP'']; exact hM'',
       fun n hn => hX2 n hn⟩
   refine ⟨om', hins, ⟨hW', rebuild_MX hX3 hsafe hR'⟩, (rebuildStep_KB hR').trans e2, ?_⟩
   -- the machine
   refine wp_byPar h ?_
   have h0 := h.bump (parE.maxv m)
   unfold insC
-  rw [OrderMaintenance.Machine.wp_seq]
+  rw [Machine.wp_seq]
   have hxc : ∀ x, hx = some x → x < om.nextHandle := fun x e => by
     have := hS.2 x (hxS x e); rw [hf]; exact this
   obtain ⟨c3, y, hr3, -, -, -, -, hy, hwp1⟩ := curInsW_ok h0 (by simpa using hhx)
@@ -445,9 +541,10 @@ theorem insertW_ok {om : OrderMaintenance} {m : State} {p : Nat} {Sp : OrderMain
     hS0.ok.cost rfl hxL hS0.ok.cnt hS0.room hS0.mc hk hRf hn1 hsize hcap hI5 hpow
   rw [hr1'] at hr3
   injection hr3 with hyy hcc; subst hcc; subst hyy
-  refine OrderMaintenance.Machine.wp_mono (fun m1 k1 ⟨h1, hy1, hyy1, hhx1, hx1, hk1⟩ => ?_) hwp1
-  rw [OrderMaintenance.Machine.wp_seq]
-  have hib : insBound ((insOM om c' om.cur.E.size).nxt.map (·.P) |>.getD (insOM om c' om.cur.E.size).cur.P) = insB := by
+  refine Machine.wp_mono (fun m1 k1 ⟨h1, hy1, hyy1, hhx1, hx1, hk1⟩ => ?_) hwp1
+  rw [Machine.wp_seq]
+  have hib : insBound ((insOM om c' om.cur.E.size).nxt.map (·.P) |>.getD (insOM om c'
+    om.cur.E.size).cur.P) = insB := by
     cases hn : om.nxt with
     | none => simp only [insOM, hn, Option.map_none, Option.getD_none]; rw [hP'']; exact hS0.insB
     | some n =>
@@ -455,7 +552,9 @@ theorem insertW_ok {om : OrderMaintenance} {m : State} {p : Nat} {Sp : OrderMain
       obtain ⟨c₀, live₀, I, D, hRW⟩ := hW.busy n hn
       rw [hRW.nP]; exact insBound_proof _
   have hmir := mirrorInsW_ok (om := insOM om c' om.cur.E.size) h1 (hx := hx) (hy := om.nextHandle)
-    (by rw [hhx1]; simpa using hhx)
+    (by
+      rw [hhx1]
+      simpa using hhx)
     (fun x e => ⟨by rw [hx1]; simpa using hxl x e, fun hs => by
       obtain ⟨n, hn⟩ := Option.isSome_iff_exists.mp hs
       have h5 := h1.roomN n hn; have h6 := hxc x e
@@ -466,16 +565,22 @@ theorem insertW_ok {om : OrderMaintenance} {m : State} {p : Nat} {Sp : OrderMain
       have h5 := h1.roomN n hn
       simp only [insOM] at h5; omega)
     (fun n hn hs hc => hI.mirror hx n hn hs hc) hm2
-  refine OrderMaintenance.Machine.wp_mono (fun m2 k2 ⟨h2, hl2, hk2⟩ => ?_) hmir
-  rw [OrderMaintenance.Machine.wp_seq]
-  refine OrderMaintenance.Machine.wp_mono (fun m3 k3 ⟨h3, hl3, hk3⟩ => ?_) (liveIncW_ok h2)
-  have hkb : 1 ≤ ({ om2 with live := om2.live + 1 } : OrderMaintenance).KB := by
-    show 1 ≤ om2.KB; rw [e2]; have := hW.kb; show 1 ≤ om.KB; omega
+  refine Machine.wp_mono (fun m2 k2 ⟨h2, hl2, hk2⟩ => ?_) hmir
+  rw [Machine.wp_seq]
+  refine Machine.wp_mono (fun m3 k3 ⟨h3, hl3, hk3⟩ => ?_) (liveIncW_ok h2)
+  have hkb : 1 ≤ ({
+    om2 with
+    live := om2.live + 1
+  } : OrderMaintenance).KB := by
+    change 1 ≤ om2.KB; rw [e2]; have := hW.kb; change 1 ≤ om.KB; omega
   obtain ⟨-, hwp4⟩ := rebuildW_ok h3 hX3 hkb hsafe hR'
-  refine OrderMaintenance.Machine.wp_mono (fun m4 k4 ⟨h4, hl4, hk4⟩ => ⟨wp_par_or hp h4, ?_, ?_⟩) hwp4
+  refine Machine.wp_mono (fun m4 k4 ⟨h4, hl4, hk4⟩ => ⟨wp_par_or hp h4, ?_, ?_⟩) hwp4
   · rw [hl4 "hy" (by simp [RbLoc, StLoc, ItLoc, pLocs]), hl3,
     hl2 "hy" (by decide) (by decide) (by decide), hy1, hf]
-  · have hKB : ({ om2 with live := om2.live + 1 } : OrderMaintenance).KB = om.KB := e2
+  · have hKB : ({
+    om2 with
+    live := om2.live + 1
+  } : OrderMaintenance).KB = om.KB := e2
     rw [hKB] at hk4
     rw [hib] at hk2
     have := hS0.insB
@@ -486,8 +591,10 @@ theorem insertW_ok {om : OrderMaintenance} {m : State} {p : Nat} {Sp : OrderMain
 /-! ### Deletion -/
 
 /-- What mirroring a deletion needs: an element copied into `nxt` is in service there. -/
-theorem MInv.mirrorDel {om : OrderMaintenance} {Sp : OrderMaintenance.Spec.State} (hI : MInv om Sp) (x : Nat) :
-    ∀ n, om.nxt = some n → om.nxtIdx.getX x ≠ 0 → om.cursorSet = true ∧ DelOK n (om.nxtIdx.getX x) := by
+theorem MInv.mirrorDel {om : OrderMaintenance} {Sp : OrderMaintenance.Spec.State} (hI : MInv om
+  Sp) (x : Nat) :
+    ∀ n, om.nxt = some n → om.nxtIdx.getX x ≠ 0 → om.cursorSet = true ∧ DelOK n (om.nxtIdx.getX
+      x) := by
   intro n hn hx0
   obtain ⟨-, -, A, -, -, -, hN⟩ := hI.1.w
   unfold NxtR at hN; rw [hn] at hN
@@ -504,9 +611,11 @@ theorem MInv.mirrorDel {om : OrderMaintenance} {Sp : OrderMaintenance.Spec.State
 
 /-- Mirroring a deletion keeps the side conditions of `nxt`. -/
 theorem mirrorDelete_M {om : OrderMaintenance} {x : Nat} (hX : ∀ n, om.nxt = some n → NxtM om n)
-    (hN : ∀ n, om.nxt = some n → om.nxtIdx.getX x ≠ 0 → om.cursorSet = true ∧ DelOK n (om.nxtIdx.getX x))
+    (hN : ∀ n, om.nxt = some n → om.nxtIdx.getX x ≠ 0 → om.cursorSet = true ∧ DelOK n
+      (om.nxtIdx.getX x))
     {om2 : OrderMaintenance} (hm : om.mirrorDelete x = .ok om2) :
-    om2.cur = om.cur ∧ om2.KB = om.KB ∧ om2.live = om.live ∧ ∀ n, om2.nxt = some n → NxtM om2 n := by
+    om2.cur = om.cur ∧ om2.KB = om.KB ∧ om2.live = om.live ∧ ∀ n, om2.nxt = some n → NxtM om2 n
+      := by
   unfold OrderMaintenance.mirrorDelete at hm
   cases hn : om.nxt with
   | none =>
@@ -531,21 +640,40 @@ theorem mirrorDelete_M {om : OrderMaintenance} {x : Nat} (hX : ∀ n, om.nxt = s
       exact ⟨fun h => by simp [hs] at h, fun _ => by rw [hP', hP]; exact hM'⟩
 
 /-- **Level F's deletion, step by step.** -/
-theorem delete_eq {mk : Nat → Params} {om : OrderMaintenance} {x : Nat} {c' : Core} {om2 : OrderMaintenance}
+theorem delete_eq {mk : Nat → Params} {om : OrderMaintenance} {x : Nat} {c' : Core} {om2 :
+  OrderMaintenance}
     (hr : (markDead (om.curIdx.getX x)).run om.cur = .ok () c')
-    (hm : ({ om with cur := c', curIdx := om.curIdx.setX x 0 } : OrderMaintenance).mirrorDelete x = .ok om2)
-    (R : OrderMaintenance) : om.delete mk x = .ok R ↔ ({ om2 with live := om2.live - 1 } : OrderMaintenance).rebuildStep mk = .ok R := by
-  have e : om.delete mk x = ({ om2 with live := om2.live - 1 } : OrderMaintenance).rebuildStep mk := by
+    (hm : ({
+      om with
+      cur := c'
+      curIdx := om.curIdx.setX x 0
+    } : OrderMaintenance).mirrorDelete
+      x = .ok om2)
+    (R : OrderMaintenance) : om.delete mk x = .ok R ↔ ({
+      om2 with
+      live := om2.live - 1
+    } :
+      OrderMaintenance).rebuildStep mk = .ok R := by
+  have e : om.delete mk x = ({
+    om2 with
+    live := om2.live - 1
+  } : OrderMaintenance).rebuildStep
+    mk := by
     unfold OrderMaintenance.delete
     rw [onCur_ok hr]
     simp only [bind, Except.bind]
     rw [hm]
   rw [e]
 
+/-- Decrement the wrapper's live-handle counter with truncated subtraction. -/
 def liveDecC : Stmt := .store (wa 4) (.lit 0) (tsubE (.load (wa 4) (.lit 0)) (.lit 1))
 
 theorem liveDecW_ok {om : OrderMaintenance} {m : State} {p : Nat} (h : WEnc om m p) :
-    wp liveDecC (fun m' k => WEnc { om with live := om.live - 1 } m' p ∧ m'.loc = m.loc ∧ k ≤ 20) m :=
+    wp liveDecC (fun m' k => WEnc {
+      om with
+      live := om.live - 1
+    } m' p ∧ m'.loc = m.loc ∧ k ≤
+      20) m :=
   wp_store_g 0 (om.live - 1) rfl
     (tsubE_eval (eval_load_lit (by rw [h.scap 4 (by decide)]; decide) h.live) rfl)
     (by rw [h.scap 4 (by decide)]; decide)
@@ -562,49 +690,74 @@ def delW (KB : Nat) : Nat := 200 + rebB KB
 
 /-- **A deletion at Level M**: it keeps the invariant, and the machine code runs in at most
 `delW K_B` steps. -/
-theorem deleteW_ok {om : OrderMaintenance} {m : State} {p : Nat} {Sp : OrderMaintenance.Spec.State} (h : WEnc om m p) (hI : MInv om Sp)
+theorem deleteW_ok {om : OrderMaintenance} {m : State} {p : Nat} {Sp :
+  OrderMaintenance.Spec.State} (h : WEnc om m p) (hI : MInv om Sp)
     {x : Nat} (hv : x ∈ Sp.list) (hxl : m.loc "x" = x) :
-    ∃ om', om.delete proofParams x = .ok om' ∧ MInv om' (OrderMaintenance.Spec.step Sp (.delete x)).1 ∧
-      om'.KB = om.KB ∧ wp deleteWS (fun m' k => (WEnc om' m' 0 ∨ WEnc om' m' 1) ∧ k ≤ delW om.KB) m := by
+    ∃ om', om.delete proofParams x = .ok om' ∧ MInv om' (OrderMaintenance.Spec.step Sp (.delete
+      x)).1 ∧
+      om'.KB = om.KB ∧ wp deleteWS (fun m' k => (WEnc om' m' 0 ∨ WEnc om' m' 1) ∧ k ≤ delW
+        om.KB) m := by
   have hp := h.p2
   have hW := hI.1
   obtain ⟨hS, hf, A, hR, hL, hIdx, hN⟩ := hW.w
   obtain ⟨om', hdel, hW'⟩ := delete_cost costSetup hW hv
   obtain ⟨c', om2, hr1, hm2, hsafe⟩ := delete_safe costSetup hW hv
-  have hR' : ({ om2 with live := om2.live - 1 } : OrderMaintenance).rebuildStep proofParams = .ok om' := by
+  have hR' : ({
+    om2 with
+    live := om2.live - 1
+  } : OrderMaintenance).rebuildStep proofParams =
+    .ok om' := by
     rw [← delete_eq hr1 hm2]; exact hdel
   have hxL : om.curIdx.getX x ∈ A.elist := (hIdx x hv).1
   have hS0 := hI.cur hR.inv
-  obtain ⟨c'', hr'', -, -, -, hP'', hM''⟩ := markDeadAgreeM hS0.ok.cost rfl hxL (κ := capsOf om.cur.P)
+  obtain ⟨c'', hr'', -, -, -, hP'', hM''⟩ := markDeadAgreeM hS0.ok.cost rfl hxL (κ := capsOf
+    om.cur.P)
     (fun _ => om.curIdx.getX x) rfl (capsOf_ok _) hS0.ok.cnt hS0.mc
   rw [hr1] at hr''
   injection hr'' with _ hcc; subst hcc
-  obtain ⟨e1, e2, -, hX2⟩ := mirrorDelete_M (om := { om with cur := c', curIdx := om.curIdx.setX x 0 }) (x := x)
+  obtain ⟨e1, e2, -, hX2⟩ := mirrorDelete_M (om := {
+    om with
+    cur := c'
+    curIdx := om.curIdx.setX x 0
+  }) (x := x)
     (fun n hn => hI.2.2 n hn) (fun n hn hx0 => hI.mirrorDel x n hn hx0) hm2
-  have hX3 : MX ({ om2 with live := om2.live - 1 } : OrderMaintenance) :=
-    ⟨by show Mc (capsOf om2.cur.P) om2.cur.P om2.cur; rw [e1]; show Mc (capsOf c'.P) c'.P c'; rw [hP'']; exact hM'',
+  have hX3 : MX ({
+    om2 with
+    live := om2.live - 1
+  } : OrderMaintenance) :=
+    ⟨by change Mc (capsOf om2.cur.P) om2.cur.P om2.cur; rw [e1]; change Mc (capsOf c'.P) c'.P c'; rw
+      [hP'']; exact hM'',
       fun n hn => hX2 n hn⟩
   refine ⟨om', hdel, ⟨hW', rebuild_MX hX3 hsafe hR'⟩, (rebuildStep_KB hR').trans e2, ?_⟩
   refine wp_byPar h ?_
   have h0 := h.bump (parE.maxv m)
   have hxc : x < om.nextHandle := by have := hS.2 x hv; rw [hf]; exact this
   unfold delC
-  rw [OrderMaintenance.Machine.wp_seq]
-  refine OrderMaintenance.Machine.wp_mono (fun m1 k1 ⟨h1, hl1, hk1⟩ => ?_)
-    (curDelW_ok h0 (by simpa using hxl) (by have := h0.roomC; omega) hS0.ok.cost rfl hxL hS0.ok.cnt hS0.mc hr1)
-  rw [OrderMaintenance.Machine.wp_seq]
-  have hx1 : m1.loc "x" = x := by rw [hl1]; simp [OrderMaintenance.Machine.State.upd, hxl]
-  refine OrderMaintenance.Machine.wp_mono (fun m2 k2 ⟨h2, hl2, hk2⟩ => ?_)
+  rw [Machine.wp_seq]
+  refine Machine.wp_mono (fun m1 k1 ⟨h1, hl1, hk1⟩ => ?_)
+    (curDelW_ok h0 (by simpa using hxl) (by
+      have := h0.roomC
+      omega) hS0.ok.cost rfl hxL hS0.ok.cnt hS0.mc hr1)
+  rw [Machine.wp_seq]
+  have hx1 : m1.loc "x" = x := by rw [hl1]; simp [Machine.State.upd, hxl]
+  refine Machine.wp_mono (fun m2 k2 ⟨h2, hl2, hk2⟩ => ?_)
     (mirrorDelW_ok h1 hx1 (fun hs => by
       obtain ⟨n, hn⟩ := Option.isSome_iff_exists.mp hs
-      have h5 := h1.roomN n hn; simp only at h5; omega) (fun n hn hx0 => (hI.mirrorDel x n hn hx0).2) hm2)
-  rw [OrderMaintenance.Machine.wp_seq]
-  refine OrderMaintenance.Machine.wp_mono (fun m3 k3 ⟨h3, hl3, hk3⟩ => ?_) (liveDecW_ok h2)
-  have hkb : 1 ≤ ({ om2 with live := om2.live - 1 } : OrderMaintenance).KB := by
-    show 1 ≤ om2.KB; rw [e2]; have := hW.kb; show 1 ≤ om.KB; omega
+      have h5 := h1.roomN n hn; simp only at h5; omega) (fun n hn hx0 => (hI.mirrorDel x n hn
+        hx0).2) hm2)
+  rw [Machine.wp_seq]
+  refine Machine.wp_mono (fun m3 k3 ⟨h3, hl3, hk3⟩ => ?_) (liveDecW_ok h2)
+  have hkb : 1 ≤ ({
+    om2 with
+    live := om2.live - 1
+  } : OrderMaintenance).KB := by
+    change 1 ≤ om2.KB; rw [e2]; have := hW.kb; change 1 ≤ om.KB; omega
   obtain ⟨-, hwp4⟩ := rebuildW_ok h3 hX3 hkb hsafe hR'
-  refine OrderMaintenance.Machine.wp_mono (fun m4 k4 ⟨h4, hl4, hk4⟩ => ⟨wp_par_or hp h4, ?_⟩) hwp4
-  have hKB : ({ om2 with live := om2.live - 1 } : OrderMaintenance).KB = om.KB := e2
+  refine Machine.wp_mono (fun m4 k4 ⟨h4, hl4, hk4⟩ => ⟨wp_par_or hp h4, ?_⟩) hwp4
+  have hKB : ({
+    om2 with
+    live := om2.live - 1
+  } : OrderMaintenance).KB = om.KB := e2
   rw [hKB] at hk4
   unfold delW
   simp only [Expr.cost, parE] at hk1 hk2 hk3 hk4 ⊢
@@ -614,10 +767,13 @@ theorem deleteW_ok {om : OrderMaintenance} {m : State} {p : Nat} {Sp : OrderMain
 
 /-- **An order query at Level M**: the specification's answer in local `r`, the state unchanged,
 at most 100 steps. -/
-theorem orderW_okM {om : OrderMaintenance} {m : State} {p : Nat} {Sp : OrderMaintenance.Spec.State} (h : WEnc om m p) (hI : MInv om Sp)
-    {x y : Nat} (hxv : x ∈ Sp.list) (hyv : y ∈ Sp.list) (hxl : m.loc "x" = x) (hyl : m.loc "y" = y) :
+theorem orderW_okM {om : OrderMaintenance} {m : State} {p : Nat} {Sp :
+  OrderMaintenance.Spec.State} (h : WEnc om m p) (hI : MInv om Sp)
+    {x y : Nat} (hxv : x ∈ Sp.list) (hyv : y ∈ Sp.list) (hxl : m.loc "x" = x) (hyl : m.loc "y" =
+      y) :
     om.order x y = .ok (OrderMaintenance.Spec.precedes Sp.list x y) ∧
-      wp orderWS (fun m' k => WEnc om m' p ∧ m'.loc "r" = b2n (OrderMaintenance.Spec.precedes Sp.list x y) ∧ k ≤ 100) m := by
+      wp orderWS (fun m' k => WEnc om m' p ∧ m'.loc "r" = b2n (OrderMaintenance.Spec.precedes
+        Sp.list x y) ∧ k ≤ 100) m := by
   have hW := hI.1
   obtain ⟨hS, hf, A, hR, hL, hIdx, hN⟩ := hW.w
   have ho := order_ok hW.w hxv hyv
@@ -625,13 +781,18 @@ theorem orderW_okM {om : OrderMaintenance} {m : State} {p : Nat} {Sp : OrderMain
   obtain ⟨hx1, -, -⟩ := hIdx x hxv
   obtain ⟨hy1, -, -⟩ := hIdx y hyv
   have hrun := order_correct hR.inv hx1 hy1
-  have hb : OrderMaintenance.Spec.precedes A.elist (om.curIdx.getX x) (om.curIdx.getX y) = OrderMaintenance.Spec.precedes Sp.list x y := by
+  have hb : OrderMaintenance.Spec.precedes A.elist (om.curIdx.getX x) (om.curIdx.getX y) =
+    OrderMaintenance.Spec.precedes Sp.list x y := by
     unfold OrderMaintenance.order at ho; rw [runCore_ok hrun] at ho; injection ho
   rw [hb] at hrun
   have hS0 := hI.cur hR.inv
   have hxc : x < om.nextHandle := by have := hS.2 x hxv; rw [hf]; exact this
   have hyc : y < om.nextHandle := by have := hS.2 y hyv; rw [hf]; exact this
-  exact orderW_ok h hxl hyl (by have := h.roomC; omega) (by have := h.roomC; omega) hS0.ok.cost rfl hx1 hy1
+  exact orderW_ok h hxl hyl (by
+    have := h.roomC
+    omega) (by
+    have := h.roomC
+    omega) hS0.ok.cost rfl hx1 hy1
     hS0.ok.cnt hS0.mc hrun
 
 end OrderMaintenance.Impl

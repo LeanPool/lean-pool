@@ -49,6 +49,7 @@ structure ShapeT (s : TS) (cl : List Nat) (ord : Nat → List Nat) : Prop where
   O1 : ∀ X, isN s X → (order s X).Sublist (ord (ht s X - 1))
   labsOk : ∀ X, isN s X → GapsGe s.P.beta 1 (labs s X)
 
+/-- Structural, nesting, membership, endpoint and path invariants of the top tree. -/
 structure Shape (s : TS) (cl : List Nat) (ord : Nat → List Nat) : Prop extends ShapeT s cl ord where
   -- the live tree
   up : ∀ v, liveN s v → ht s v < s.P.H →

@@ -45,18 +45,22 @@ theorem ElemB.mono {e : Elem} (h : ElemB K e) : ElemB K' e := by
 
 theorem GroupB.mono {g : Group} (h : GroupB K g) : GroupB K' g := by
   obtain ⟨a, b, c, d, e, f, g, i, j, l⟩ := h
-  exact ⟨lt_mono hK a, lt_mono hK b, lt_mono hK c, lt_mono hK d, lt_mono hK e, lt_mono hK f, lt_mono hK g,
+  exact ⟨lt_mono hK a, lt_mono hK b, lt_mono hK c, lt_mono hK d, lt_mono hK e, lt_mono hK f,
+    lt_mono hK g,
     lt_mono hK i, lt_mono hK j, lt_mono hK l⟩
 
 theorem ChunkB.mono {c : Chunk} (h : ChunkB K c) : ChunkB K' c := by
   obtain ⟨a, b, c, d, e, f, g, i, j⟩ := h
-  exact ⟨lt_mono hK a, lt_mono hK b, lt_mono hK c, lt_mono hK d, lt_mono hK e, lt_mono hK f, lt_mono hK g,
+  exact ⟨lt_mono hK a, lt_mono hK b, lt_mono hK c, lt_mono hK d, lt_mono hK e, lt_mono hK f,
+    lt_mono hK g,
     lt_mono hK i, lt_mono hK j⟩
 
 theorem NodeB.mono {n : Node} (h : NodeB K n) : NodeB K' n := by
   obtain ⟨a, b, c, d, e, f, g, i, j, l, m, o⟩ := h
-  exact ⟨lt_mono hK a, lt_mono hK b, lt_mono hK c, lt_mono hK d, lt_mono hK e, lt_mono hK f, lt_mono hK g,
-    lt_mono hK i, fun x hx => lt_mono hK (j x hx), fun p hp => ⟨lt_mono hK (l p hp).1, lt_mono hK (l p hp).2⟩,
+  exact ⟨lt_mono hK a, lt_mono hK b, lt_mono hK c, lt_mono hK d, lt_mono hK e, lt_mono hK f,
+    lt_mono hK g,
+    lt_mono hK i, fun x hx => lt_mono hK (j x hx), fun p hp => ⟨lt_mono hK (l p hp).1, lt_mono
+      hK (l p hp).2⟩,
     fun x hx => lt_mono hK (m x hx), fun p hp => lt_mono hK (o p hp)⟩
 
 theorem JobB.mono {j : Job} (h : JobB K j) : JobB K' j := by
@@ -110,14 +114,18 @@ theorem topJ_le (N : Nat) : topJ (proofParams N) ≤ 16 * pL N := by
 
 /-- Everything below `2^(2L + 8)` is below `2^wK`. -/
 theorem lt_wK (N : Nat) {x : Nat} (hx : x < 2 ^ (2 * pL N + 8)) : x < 2 ^ wK (proofParams N) :=
-  lt_pow_mono hx (by have := pL_ge N; show _ ≤ 64 * pL N; omega)
+  lt_pow_mono hx (by
+    have := pL_ge N
+    change _ ≤ 64 * pL N
+    omega)
 
 /-- **The numeric conditions of `insertAfter_wb_top`** at `wK`, for a core of capacity `N` with
 `count + 1 ≤ N`, `E.size ≤ count + 1`, `Gs.size ≤ 2 + 2·count`. -/
 theorem room_counts (N : Nat) {E G c : Nat} (hc : c + 1 ≤ N) (hE : E ≤ c + 1) (hG : G ≤ 2 + 2 * c) :
     4 * E + 8 ≤ 2 ^ wK (proofParams N) ∧ G + 2 ≤ 2 ^ wK (proofParams N) ∧
       2 * c + 4 ≤ 2 ^ wK (proofParams N) ∧
-      nb0 (proofParams N) + topJ (proofParams N) * (2 + 2 * (c + 1)) + 2 ≤ 2 ^ wK (proofParams N) := by
+      nb0 (proofParams N) + topJ (proofParams N) * (2 + 2 * (c + 1)) + 2 ≤ 2 ^ wK (proofParams
+        N) := by
   have hL := pL_ge N
   have hN := N_lt N
   have hJ := topJ_le N
@@ -127,7 +135,9 @@ theorem room_counts (N : Nat) {E G c : Nat} (hc : c + 1 ≤ N) (hE : E ≤ c + 1
     rw [show 2 * pL N + 8 = pL N + pL N + 8 by omega, pow_add, pow_add]
     norm_num
   have hb : ∀ x, x < 2 ^ pL N * 2 ^ pL N * 256 → x + 1 ≤ 2 ^ wK (proofParams N) := fun x hx =>
-    lt_wK N (by rw [hp]; exact hx)
+    lt_wK N (by
+      rw [hp]
+      exact hx)
   have hJc : topJ (proofParams N) * (2 + 2 * (c + 1)) ≤ 2 ^ pL N * (4 * 2 ^ pL N) :=
     Nat.mul_le_mul (by omega) (by omega)
   have hnb' : nb0 (proofParams N) ≤ 2 ^ pL N := by rw [hnb]; omega
@@ -137,7 +147,8 @@ theorem room_counts (N : Nat) {E G c : Nat} (hc : c + 1 ≤ N) (hE : E ≤ c + 1
 
 /-- **An insertion into a core in service keeps the stored-value bound** at the core's word size
 `wK c.P = 64·L`. -/
-theorem _root_.OrderMaintenance.Impl.InService.wb {c : Core} {L : List Nat} (h : InService c L) {x : Nat} (hx : x ∈ L) (hh : Nat)
+theorem _root_.OrderMaintenance.Impl.InService.wb {c : Core} {L : List Nat} (h : InService c L)
+  {x : Nat} (hx : x ∈ L) (hh : Nat)
     (hW : WB (wK c.P) c) {c' : Core} (hr : (insertAfter x hh).run c = .ok c.E.size c') :
     WB (wK c.P) c' := by
   obtain ⟨hk, hR, hn, hsize, hcap, hI5, -⟩ := h.params
@@ -150,7 +161,8 @@ theorem _root_.OrderMaintenance.Impl.InService.wb {c : Core} {L : List Nat} (h :
   obtain ⟨-, hNB, -, -, -, -, -, hGs⟩ := h.mc
   obtain ⟨r1, r2, r3, r4⟩ := room_counts c.P.N h.room hE hGs
   rw [← hmk] at r1 r2 r3 r4
-  obtain ⟨c'', hr', hW'⟩ := insertAfter_wb_top (P := c.P) h.ok.cost hx hk hR hn hsize hcap hI5 hh hW hLR hTR
+  obtain ⟨c'', hr', hW'⟩ := insertAfter_wb_top (P := c.P) h.ok.cost hx hk hR hn hsize hcap hI5
+    hh hW hLR hTR
     r1 r2 r3 hNB rfl r4
   rw [hr] at hr'
   obtain ⟨-, rfl⟩ := EStateM.Result.ok.inj hr'
@@ -165,7 +177,8 @@ theorem newCore_wK {N : Nat} {lazy : Bool} {c : Core} (hc : newCore (proofParams
   exact newCore_wb (params_wB N) hL hR (pp_topPP N) hc
 
 /-- **A preparation step** of a core under construction (`PrepM`) at the proof parameters. -/
-theorem _root_.OrderMaintenance.Impl.PrepM.wb {n : Core} (hM : PrepM n) (hmk : n.P = proofParams n.P.N) (hW : WB (wK n.P) n)
+theorem _root_.OrderMaintenance.Impl.PrepM.wb {n : Core} (hM : PrepM n) (hmk : n.P = proofParams
+  n.P.N) (hW : WB (wK n.P) n)
     {b : Bool} {n' : Core} (hr : prepareStep.run n = .ok b n') : WB (wK n.P) n' := by
   obtain ⟨-, -, hR⟩ := room_wK n.P.N
   rw [← hmk] at hR

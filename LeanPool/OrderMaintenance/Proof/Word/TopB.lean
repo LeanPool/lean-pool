@@ -59,7 +59,8 @@ theorem mem_setX {α : Type} [Inhabited α] {P : α → Prop} {a : Array α} (h 
       · rw [Array.mem_replicate] at hx; rw [hx.2]; exact hd
     · subst hx; exact hv
 
-theorem lb_append {α : Type} {P : α → Prop} {l l' : List α} (h : ∀ x ∈ l, P x) (h' : ∀ x ∈ l', P x) :
+theorem lb_append {α : Type} {P : α → Prop} {l l' : List α} (h : ∀ x ∈ l, P x) (h' : ∀ x ∈ l', P
+  x) :
     ∀ x ∈ l ++ l', P x := fun x hx => by
   rcases List.mem_append.mp hx with hx | hx
   · exact h x hx
@@ -103,7 +104,8 @@ theorem lb_assocSet {β : Type} {P : Nat → Prop} {l : List (Nat × β)} (h : �
     · exact h p hp
     · simp only [List.mem_singleton] at hp; subst hp; exact hk
 
-theorem lb_assocErase {β : Type} {P : Nat × β → Prop} {l : List (Nat × β)} (h : ∀ p ∈ l, P p) (k : Nat) :
+theorem lb_assocErase {β : Type} {P : Nat × β → Prop} {l : List (Nat × β)} (h : ∀ p ∈ l, P p) (k
+  : Nat) :
     ∀ p ∈ assocErase l k, P p := lb_filter h _
 
 /-- The keys of `sidesOf` are entries of the order. -/
@@ -171,7 +173,8 @@ theorem evenTable_lt {β : Nat} {part : List Nat} {P : Nat → Prop} (hp : ∀ x
   · subst h4; simpa using hpos
   · omega
 
-theorem getD_label_lt {tab : List (Nat × Nat)} (h : ∀ q ∈ tab, q.1 < 2 ^ K ∧ q.2 < 2 ^ K) (i : Nat) :
+theorem getD_label_lt {tab : List (Nat × Nat)} (h : ∀ q ∈ tab, q.1 < 2 ^ K ∧ q.2 < 2 ^ K) (i :
+  Nat) :
     (tab.getD i (0, 0)).2 < 2 ^ K := by
   rw [List.getD_eq_getElem?_getD]
   cases hq : tab[i]? with
@@ -223,20 +226,29 @@ theorem allN_modify {a : Array Node} (h : ∀ j, NodeB K (a.getX j)) {f : Node �
   allX_modify h hf i
 
 theorem WB.nodeB {s : Core} (h : WB K s) (i : Nat) : NodeB K (s.nodes.getX i) := h.nodes i
-theorem WB.nHeight {s : Core} (h : WB K s) (i : Nat) : (s.nodes.getX i).height < 2 ^ K := (h.nodes i).1
-theorem WB.nLivePar {s : Core} (h : WB K s) (i : Nat) : (s.nodes.getX i).livePar < 2 ^ K := (h.nodes i).2.1
-theorem WB.nWeight {s : Core} (h : WB K s) (i : Nat) : (s.nodes.getX i).weight < 2 ^ K := (h.nodes i).2.2.1
-theorem WB.nFirst {s : Core} (h : WB K s) (i : Nat) : (s.nodes.getX i).first < 2 ^ K := (h.nodes i).2.2.2.1
-theorem WB.nLast {s : Core} (h : WB K s) (i : Nat) : (s.nodes.getX i).last < 2 ^ K := (h.nodes i).2.2.2.2.1
-theorem WB.nT1 {s : Core} (h : WB K s) (i : Nat) : (s.nodes.getX i).t1 < 2 ^ K := (h.nodes i).2.2.2.2.2.1
-theorem WB.nT2 {s : Core} (h : WB K s) (i : Nat) : (s.nodes.getX i).t2 < 2 ^ K := (h.nodes i).2.2.2.2.2.2.1
+theorem WB.nHeight {s : Core} (h : WB K s) (i : Nat) : (s.nodes.getX i).height < 2 ^ K :=
+  (h.nodes i).1
+theorem WB.nLivePar {s : Core} (h : WB K s) (i : Nat) : (s.nodes.getX i).livePar < 2 ^ K :=
+  (h.nodes i).2.1
+theorem WB.nWeight {s : Core} (h : WB K s) (i : Nat) : (s.nodes.getX i).weight < 2 ^ K :=
+  (h.nodes i).2.2.1
+theorem WB.nFirst {s : Core} (h : WB K s) (i : Nat) : (s.nodes.getX i).first < 2 ^ K := (h.nodes
+  i).2.2.2.1
+theorem WB.nLast {s : Core} (h : WB K s) (i : Nat) : (s.nodes.getX i).last < 2 ^ K := (h.nodes
+  i).2.2.2.2.1
+theorem WB.nT1 {s : Core} (h : WB K s) (i : Nat) : (s.nodes.getX i).t1 < 2 ^ K := (h.nodes
+  i).2.2.2.2.2.1
+theorem WB.nT2 {s : Core} (h : WB K s) (i : Nat) : (s.nodes.getX i).t2 < 2 ^ K := (h.nodes
+  i).2.2.2.2.2.2.1
 theorem WB.nOvf {s : Core} (h : WB K s) (i : Nat) : (s.nodes.getX i).overflowOf < 2 ^ K :=
   (h.nodes i).2.2.2.2.2.2.2.1
-theorem WB.nChildren {s : Core} (h : WB K s) (i : Nat) : ∀ c ∈ (s.nodes.getX i).children, c < 2 ^ K :=
+theorem WB.nChildren {s : Core} (h : WB K s) (i : Nat) : ∀ c ∈ (s.nodes.getX i).children, c < 2
+  ^ K :=
   (h.nodes i).2.2.2.2.2.2.2.2.1
 theorem WB.nTable {s : Core} (h : WB K s) (i : Nat) :
     ∀ p ∈ (s.nodes.getX i).table, p.1 < 2 ^ K ∧ p.2 < 2 ^ K := (h.nodes i).2.2.2.2.2.2.2.2.2.1
-theorem WB.nInTables {s : Core} (h : WB K s) (i : Nat) : ∀ t ∈ (s.nodes.getX i).inTables, t < 2 ^ K :=
+theorem WB.nInTables {s : Core} (h : WB K s) (i : Nat) : ∀ t ∈ (s.nodes.getX i).inTables, t < 2
+  ^ K :=
   (h.nodes i).2.2.2.2.2.2.2.2.2.2.1
 theorem WB.nSide {s : Core} (h : WB K s) (i : Nat) : ∀ p ∈ (s.nodes.getX i).side, p.1 < 2 ^ K :=
   (h.nodes i).2.2.2.2.2.2.2.2.2.2.2
@@ -250,11 +262,30 @@ theorem WB.lparE {s : Core} (h : WB K s) (c : Nat) : s.lpar.getX c < 2 ^ K := h.
 
 /-- Updates of the top structure's arrays. -/
 theorem WB.withPath {s : Core} (h : WB K s) {p : Array (Array Nat)} (hp : ∀ c, ArrB K (p.getX c)) :
-    WB K { s with path := p } := { h with path := hp }
-theorem WB.withCin {s : Core} (h : WB K s) {p : Array (List Nat)} (hp : ∀ c, ∀ t ∈ p.getX c, t < 2 ^ K) :
-    WB K { s with cin := p } := { h with cin := hp }
+    WB K {
+      s with
+      path := p
+    } := {
+      h with
+      path := hp
+    }
+theorem WB.withCin {s : Core} (h : WB K s) {p : Array (List Nat)} (hp : ∀ c, ∀ t ∈ p.getX c, t <
+  2 ^ K) :
+    WB K {
+      s with
+      cin := p
+    } := {
+      h with
+      cin := hp
+    }
 theorem WB.withLpar {s : Core} (h : WB K s) {p : Array Nat} (hp : ArrB K p) :
-    WB K { s with lpar := p } := { h with lpar := hp }
+    WB K {
+      s with
+      lpar := p
+    } := {
+      h with
+      lpar := hp
+    }
 
 theorem path_setX {s : Core} (h : WB K s) {c j v : Nat} (hv : v < 2 ^ K) :
     ∀ d, ArrB K ((s.path.setX c ((s.path.getX c).setX j v)).getX d) :=
@@ -265,7 +296,8 @@ theorem path_setX {s : Core} (h : WB K s) {c j v : Nat} (hv : v < 2 ^ K) :
 theorem copyS_tag (t : TS) (j : Job) (l : Nat) : (copyS t j l).tag = t.tag := by
   unfold copyS; dsimp only; split_ifs <;> rfl
 
-theorem copyRest_tag (j : Job) (H : Nat) : ∀ k t l, H + 1 - l = k → (copyRest j H t l).tag = t.tag := by
+theorem copyRest_tag (j : Job) (H : Nat) : ∀ k t l, H + 1 - l = k → (copyRest j H t l).tag =
+  t.tag := by
   intro k
   induction k with
   | zero => intro t l hk; rw [copyRest]; rw [ite_eq_right (by omega)]
@@ -309,7 +341,10 @@ theorem tag_lt_of_topInv {s : Core} (hT : TopInv s) {c : Nat} (hc1 : 1 ≤ c) (h
 /-! ### Node updates -/
 
 theorem WB.modN {s : Core} (h : WB K s) {f : Node → Node} (hf : ∀ X, NodeB K X → NodeB K (f X))
-    (i : Nat) : WB K { s with nodes := s.nodes.modify i f } :=
+    (i : Nat) : WB K {
+      s with
+      nodes := s.nodes.modify i f
+    } :=
   h.withNodes (allN_modify h.nodes hf i)
 
 theorem WB.ite {c : Prop} [Decidable c] {s a b : Core} (ha : c → WB K a) (hb : ¬ c → WB K b)
@@ -320,7 +355,8 @@ theorem WB.ite {c : Prop} [Decidable c] {s a b : Core} (ha : c → WB K a) (hb :
 
 /-! ### A copy step -/
 
-theorem wb_copyC {s : Core} (h : WB K s) {j : Job} (hj : JobB K j) (l : Nat) : WB K (copyC s j l) := by
+theorem wb_copyC {s : Core} (h : WB K s) {j : Job} (hj : JobB K j) (l : Nat) : WB K (copyC s j
+  l) := by
   obtain ⟨hx, hy, hz, -⟩ := hj
   have hv := h.pathE j.x l
   have h1 := h.withPath (path_setX (c := j.y) (j := l) h hv)
@@ -361,7 +397,13 @@ theorem wb_dsS {s : Core} (h : WB K s) {v tag : Nat} (htag : tag < 2 ^ K) : WB K
   have ht := dsT_lt h v
   have hn := h.cNext (dsY s v)
   have hp := h.cPrev (dsY s v)
-  have h1 : WB K { s with C := s.C.modify (dsY s v) fun C => { C with tag := tag } } :=
+  have h1 : WB K {
+    s with
+    C := s.C.modify (dsY s v) fun C => {
+      C with
+      tag := tag
+    }
+  } :=
     h.withC (allX_modify h.C (fun X hX => by recb) _)
   have h2 := h1.withPath (path_setX (c := dsY s v) (j := (s.nodes.getX v).height) h1 ht)
   unfold dsS
@@ -369,7 +411,8 @@ theorem wb_dsS {s : Core} (h : WB K s) {v tag : Nat} (htag : tag < 2 ^ K) : WB K
   split_ifs
   all_goals first
     | exact (h2.modN (fun X hX => by nodeb) _).modN (fun X hX => by nodeb) _
-    | exact ((h2.modN (fun X hX => by nodeb) _).modN (fun X hX => by nodeb) _).modN (fun X hX => by nodeb) _
+    | exact ((h2.modN (fun X hX => by
+      nodeb) _).modN (fun X hX => by nodeb) _).modN (fun X hX => by nodeb) _
 
 /-! ### The end of a drain (class R) -/
 
@@ -420,10 +463,12 @@ theorem wb_fdS {s : Core} (h : WB K s) (v : Nat) : WB K (fdS v s) := by
 /-! ### A drain start (classes F, Lab, Sz) -/
 
 theorem nodeB_setTS {X : Node} (hX : NodeB K X) {tab : List (Nat × Nat)} {side : List (Nat × Side)}
-    (ht : ∀ q ∈ tab, q.1 < 2 ^ K ∧ q.2 < 2 ^ K) (hs : ∀ q ∈ side, q.1 < 2 ^ K) : NodeB K (setTS tab side X) := by
+    (ht : ∀ q ∈ tab, q.1 < 2 ^ K ∧ q.2 < 2 ^ K) (hs : ∀ q ∈ side, q.1 < 2 ^ K) : NodeB K (setTS
+      tab side X) := by
   unfold setTS; nodeb
 
-theorem aroundT_lt {tab : List (Nat × Nat)} (h : ∀ q ∈ tab, q.1 < 2 ^ K ∧ q.2 < 2 ^ K) {e n1 n2 a b : Nat}
+theorem aroundT_lt {tab : List (Nat × Nat)} (h : ∀ q ∈ tab, q.1 < 2 ^ K ∧ q.2 < 2 ^ K) {e n1 n2
+  a b : Nat}
     (h1 : n1 < 2 ^ K) (h2 : n2 < 2 ^ K) (ha : a < 2 ^ K) (hb : b < 2 ^ K) :
     ∀ q ∈ aroundT tab e n1 n2 a b, q.1 < 2 ^ K ∧ q.2 < 2 ^ K := by
   unfold aroundT
@@ -434,7 +479,8 @@ theorem sideAround_lt {T : Node} (hT : ∀ q ∈ T.side, q.1 < 2 ^ K) {e n1 n2 :
     (h2 : n2 < 2 ^ K) : ∀ q ∈ sideAround T e n1 n2, q.1 < 2 ^ K := by
   unfold sideAround
   split
-  · exact lb_assocSet (P := fun x => x < 2 ^ K) (k := n2) (lb_assocSet (P := fun x => x < 2 ^ K) (k := n1) hT h1 _) h2 _
+  · exact lb_assocSet (P := fun x => x < 2 ^ K) (k := n2) (lb_assocSet (P := fun x => x < 2 ^ K)
+      (k := n1) hT h1 _) h2 _
   · exact hT
 
 /-- Insertions around `e` in a list of tables: the new entries and their labels are bounded. -/
@@ -447,7 +493,8 @@ theorem allN_fold_aroundF {s0 : Core} (h0 : WB K s0) {e n1 n2 : Nat} {f : Nat �
     simp only [List.foldl_cons]
     refine allN_fold_aroundF h0 h1 h2 hf l _ (allN_modify h (fun X hX => ?_) T)
     unfold aroundF
-    exact nodeB_setTS hX (aroundT_lt (h0.nTable T) h1 h2 (hf T).1 (hf T).2) (sideAround_lt (h0.nSide T) h1 h2)
+    exact nodeB_setTS hX (aroundT_lt (h0.nTable T) h1 h2 (hf T).1 (hf T).2) (sideAround_lt
+      (h0.nSide T) h1 h2)
 
 theorem wb_addTableS {s : Core} (h : WB K s) {w : Nat} (hw : w < 2 ^ K) (hh e : Nat) :
     WB K (addTableS hh w e s) := by
@@ -460,7 +507,8 @@ theorem wb_addTableS {s : Core} (h : WB K s) {w : Nat} (hw : w < 2 ^ K) (hh e : 
     nodeb
     exact lb_append ‹_› (lb_cons hw lb_nil)
 
-theorem wb_fold_addTableS {w : Nat} (hw : w < 2 ^ K) (hh : Nat) : ∀ (l : List Nat) {s : Core}, WB K s →
+theorem wb_fold_addTableS {w : Nat} (hw : w < 2 ^ K) (hh : Nat) : ∀ (l : List Nat) {s : Core},
+  WB K s →
     WB K (l.foldl (fun s e => addTableS hh w e s) s)
   | [], _, h => h
   | e :: l, _, h => by
@@ -473,7 +521,8 @@ theorem wb_setParentS {s : Core} (h : WB K s) {w : Nat} (hw : w < 2 ^ K) (hh e :
   · exact h.withLpar (arrB_setX h.lpar hw e)
   · exact h.modN (fun X hX => by nodeb) e
 
-theorem wb_fold_setParentS {w : Nat} (hw : w < 2 ^ K) (hh : Nat) : ∀ (l : List Nat) {s : Core}, WB K s →
+theorem wb_fold_setParentS {w : Nat} (hw : w < 2 ^ K) (hh : Nat) : ∀ (l : List Nat) {s : Core},
+  WB K s →
     WB K (l.foldl (fun s e => setParentS hh w e s) s)
   | [], _, h => h
   | e :: l, _, h => by
@@ -515,7 +564,8 @@ theorem wb_sd6 (hN : t.nodes.size + 2 ≤ 2 ^ K) (hβ : t.P.beta ≤ K) : WB K (
 
 theorem wb_sd8 (hN : t.nodes.size + 2 ≤ 2 ^ K) (hβ : t.P.beta ≤ K) (hv : v < 2 ^ K)
     (hw : ((sCh1 t v side).map (sWt t v)).sum < 2 ^ K) : WB K (sd8 t v side) := by
-  have h6 := wb_fold_setParentS (w := t.nodes.size) (by omega) (sH t v) (sCh1 t v side) (wb_sd6 (v := v) (side := side) h hN hβ)
+  have h6 := wb_fold_setParentS (w := t.nodes.size) (by omega) (sH t v) (sCh1 t v side) (wb_sd6
+    (v := v) (side := side) h hN hβ)
   have hc := lb_filter (h.nChildren v) (fun x => lookup side x == some .left)
   have hl := h.nLivePar v
   unfold sd8

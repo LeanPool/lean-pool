@@ -31,7 +31,8 @@ namespace OrderMaintenance.Proof.Top
 open OrderMaintenance.Model OrderMaintenance.Proof
 /-- **The hypotheses of a sweep step that moves a chunk** (those of `drainStep_move`, and the shape
 facts the Level M program needs), from the order invariant: the proof of `Shape.drain_run`. -/
-theorem Shape.drain_move_hyps {s : Core} {cl : List Nat} {ord : Nat → List Nat} (S : Shape (ts s) cl ord) {v : Nat}
+theorem Shape.drain_move_hyps {s : Core} {cl : List Nat} {ord : Nat → List Nat} (S : Shape (ts
+  s) cl ord) {v : Nat}
     (hg : ghostN (ts s) v) (hne : rng (ts s) cl v ≠ []) (hL : LList (cN s) (cP s) s.firstChunk cl) :
     let y := dsY s v
     let h := ht (ts s) v
@@ -44,7 +45,8 @@ theorem Shape.drain_move_hyps {s : Core} {cl : List Nat} {ord : Nat → List Nat
       lookup (s.nodes.getX v).side (belowY s v (s.nodes.getX v).first) = some .right ∧
       lookup (s.nodes.getX v).side (belowY s v (s.nodes.getX v).last) = some .right) ∧
     (s.nodes.getX v).height + 1 < (s.path.getX (dsY s v)).size ∧
-    (s.nodes.getX ((s.path.getX (dsY s v)).getX ((s.nodes.getX v).height + 1))).lab? (dsT s v) = some pt ∧
+    (s.nodes.getX ((s.path.getX (dsY s v)).getX ((s.nodes.getX v).height + 1))).lab? (dsT s v) =
+      some pt ∧
     (s.nodes.getX (dsT s v)).lab? (belowY s v (dsY s v)) = some tb ∧
     (s.nodes.getX ((s.path.getX (dsY s v)).getX ((s.nodes.getX v).height + 1))).lab? v = some pv ∧
     (s.nodes.getX v).lab? (belowY s v (dsY s v)) = some vb ∧
@@ -52,7 +54,8 @@ theorem Shape.drain_move_hyps {s : Core} {cl : List Nat} {ord : Nat → List Nat
         (vb <<< (((s.nodes.getX v).height - 1) * s.P.beta)) ≤ (s.C.getX (dsY s v)).tag ∧
     TagOK s (dsY s v) (dsTag s v pt tb pv vb) ∧
     1 ≤ (s.nodes.getX v).height ∧ (s.path.getX (dsY s v)).size = s.P.H + 1 ∧
-    tb < 2 ^ s.P.beta ∧ vb < 2 ^ s.P.beta ∧ dsT s v ≠ v ∧ v < s.nodes.size ∧ dsT s v < s.nodes.size ∧
+    tb < 2 ^ s.P.beta ∧ vb < 2 ^ s.P.beta ∧ dsT s v ≠ v ∧ v < s.nodes.size ∧ dsT s v <
+      s.nodes.size ∧
     dsY s v ∈ cl ∧ (s.nodes.getX v).height < s.P.H ∧
     (s.path.getX (dsY s v)).getX ((s.nodes.getX v).height + 1) < s.nodes.size := by
   intro y h pv vb pt tb
@@ -86,7 +89,7 @@ theorem Shape.drain_move_hyps {s : Core} {cl : List Nat} {ord : Nat → List Nat
   have e2 : tag = (s.C.getX y).tag - (pv * 2 ^ (h * s.P.beta) + vb * 2 ^ ((h - 1) * s.P.beta)) +
       (pt * 2 ^ (h * s.P.beta) + tb * 2 ^ ((h - 1) * s.P.beta)) := by
     rw [htag]; unfold dsTag
-    show (s.C.getX y).tag - ((pv <<< (h * s.P.beta)) ||| (vb <<< ((h - 1) * s.P.beta))) +
+    change (s.C.getX y).tag - ((pv <<< (h * s.P.beta)) ||| (vb <<< ((h - 1) * s.P.beta))) +
       ((pt <<< (h * s.P.beta)) ||| (tb <<< ((h - 1) * s.P.beta))) = _
     rw [hor1, hor2]
   have hnew : tag = tagF (ts (dsS s v tag)) y := by rw [e1, e2, htagy]
@@ -94,19 +97,21 @@ theorem Shape.drain_move_hyps {s : Core} {cl : List Nat} {ord : Nat → List Nat
     simp only [pv, digit, Nat.add_sub_cancel]; rw [show pp (ts s) y h = v from hypp]
   have hvb' : vb = ((nd (ts s) v).lab? (pp (ts s) y (h - 1))).getD 0 := by
     simp only [vb, digit]; rw [show pp (ts s) y h = v from hypp]
-  refine ⟨hg.1.2.2, ?_, hside, ?_, getD_of_mem m1, ?_, (by rw [hpv]; exact getD_of_mem m3), ?_, ?_, ?_,
+  refine ⟨hg.1.2.2, ?_, hside, ?_, getD_of_mem m1, ?_, (by
+    rw [hpv]
+    exact getD_of_mem m3), ?_, ?_, ?_,
     hh1, S.pathSize y hycl, htbl, hvbl, Ne.symm hvt, hv, htz, hycl, hhH, ?_⟩
   · obtain ⟨hf, -⟩ := S.ends v hg.1
-    show (nd (ts s) v).first ≠ NIL
+    change (nd (ts s) v).first ≠ NIL
     rw [hf]
     exact fun e => hL.nonil (e ▸ (rng_sub (s := s) (cl := cl) v).subset (headD_mem hne NIL))
-  · show h + 1 < ((ts s).path.getX y).size
+  · change h + 1 < ((ts s).path.getX y).size
     rw [S.pathSize y hycl]; omega
-  · show (nd (ts s) (dsT s v)).lab? (belowY s v y) = some tb
+  · change (nd (ts s) (dsT s v)).lab? (belowY s v y) = some tb
     rw [hbel]; exact getD_of_mem m2
-  · show (nd (ts s) v).lab? (belowY s v y) = some vb
+  · change (nd (ts s) v).lab? (belowY s v y) = some vb
     rw [hbel, hvb']; exact getD_of_mem m4
-  · show (pv <<< (h * s.P.beta)) ||| (vb <<< ((h - 1) * s.P.beta)) ≤ (s.C.getX y).tag
+  · change (pv <<< (h * s.P.beta)) ||| (vb <<< ((h - 1) * s.P.beta)) ≤ (s.C.getX y).tag
     rw [hor1, htagy]; unfold tagF; exact hrep.1
   · -- the guard: the new tag lies between the neighbours' tags (Lemma T1 after the step)
     have ST := S.drain_shapeT hg hne tag
@@ -120,7 +125,7 @@ theorem Shape.drain_move_hyps {s : Core} {cl : List Nat} {ord : Nat → List Nat
         rw [this]; exact before_split (by simp)
       have hpcl := hb.mem_left
       have hpy := hb.ne hcl
-      show (s.C.getX q).tag < tag
+      change (s.C.getX q).tag < tag
       rw [show (s.C.getX q).tag = (ts s).tag q from rfl, S.tags _ hpcl,
         ← S.ds_tagF_other hg hne tag _ hpy]
       exact lt_of_lt_of_eq (ST.tagF_lt hb) hnew.symm
@@ -133,7 +138,7 @@ theorem Shape.drain_move_hyps {s : Core} {cl : List Nat} {ord : Nat → List Nat
         rw [this]; exact before_split (by simp)
       have hpcl := hb.mem_right
       have hpy := hb.ne hcl
-      show tag < (s.C.getX q).tag
+      change tag < (s.C.getX q).tag
       rw [show (s.C.getX q).tag = (ts s).tag q from rfl, S.tags _ hpcl,
         ← S.ds_tagF_other hg hne tag _ (Ne.symm hpy)]
       exact lt_of_eq_of_lt hnew (ST.tagF_lt hb)
@@ -141,20 +146,23 @@ theorem Shape.drain_move_hyps {s : Core} {cl : List Nat} {ord : Nat → List Nat
     unfold pp at h2; rw [ite_eq_right (by omega)] at h2; exact h2
 
 
-theorem len_le_two_of {l : List Nat} {a b : Nat} (hnd : l.Nodup) (h : ∀ x ∈ l, x = a ∨ x = b) : l.length ≤ 2 := by
+theorem len_le_two_of {l : List Nat} {a b : Nat} (hnd : l.Nodup) (h : ∀ x ∈ l, x = a ∨ x = b) :
+  l.length ≤ 2 := by
   have hs : l.toFinset ⊆ {a, b} := fun x hx => by
     rcases h x (List.mem_toFinset.mp hx) with e | e <;> simp [e]
   rw [← List.toFinset_card_of_nodup hnd]
   exact (Finset.card_le_card hs).trans (Finset.card_le_two)
 
 /-- An entry lies in at most two tables (invariant Q). -/
-theorem Shape.tabs_len {t : TS} {cl : List Nat} {ord : Nat → List Nat} (S : Shape t cl ord) {h e : Nat}
+theorem Shape.tabs_len {t : TS} {cl : List Nat} {ord : Nat → List Nat} (S : Shape t cl ord) {h e
+  : Nat}
     (he : Ent ord h e) : (tabs t h e).length ≤ 2 :=
   len_le_two_of (S.tabsNodup h e he) (fun X hX => S.Q h e X he hX)
 
 /-- **The hypotheses of a sweep step that ends the drain** (those of `drainStep_finish`, and the
 shape facts the Level M program needs). -/
-theorem Shape.drain_finish_hyps {s : Core} {cl : List Nat} {ord : Nat → List Nat} (S : Shape (ts s) cl ord)
+theorem Shape.drain_finish_hyps {s : Core} {cl : List Nat} {ord : Nat → List Nat} (S : Shape (ts
+  s) cl ord)
     {v : Nat} (hg : ghostN (ts s) v) (hemp : rng (ts s) cl v = []) :
     (s.nodes.getX v).alive = true ∧ (s.nodes.getX v).first = NIL ∧ (s.nodes.getX v).inTables.Nodup ∧
     (∀ T ∈ (s.nodes.getX v).inTables, v ∈ (s.nodes.getX T).order) ∧ v ≠ 0 ∧ v < s.nodes.size ∧
@@ -163,18 +171,22 @@ theorem Shape.drain_finish_hyps {s : Core} {cl : List Nat} {ord : Nat → List N
     (s.nodes.getX v).t1 < s.nodes.size ∧ (s.nodes.getX v).t2 < s.nodes.size ∧
     (∀ e ∈ (s.nodes.getX v).order, (s.nodes.getX v).height - 1 ≠ 0 →
       e < s.nodes.size ∧ (s.nodes.getX e).inTables.length ≤ 2) ∧
-    (∀ e ∈ (s.nodes.getX v).order, (s.nodes.getX v).height - 1 = 0 → e ∈ cl ∧ (s.cin.getX e).length ≤ 2) := by
+    (∀ e ∈ (s.nodes.getX v).order, (s.nodes.getX v).height - 1 = 0 → e ∈ cl ∧ (s.cin.getX
+      e).length ≤ 2) := by
   obtain ⟨hv, hno, hni, hvo, hvi, h1, h2, h12, ho1, ho2, hi1, hi2, hoi, hin, hent⟩ := S.fin_facts hg
   obtain ⟨hl1, hl2, -, -, -, -, -, -, -, -, -⟩ := S.ghost v hg
-  refine ⟨hg.1.2.2, ?_, hni, fun T hT => ?_, hg.1.1, hv, hvo, fun T hT => (hin T hT).1.2.1, hl1.1.2.1, hl2.1.2.1,
+  refine ⟨hg.1.2.2, ?_, hni, fun T hT => ?_, hg.1.1, hv, hvo, fun T hT => (hin T hT).1.2.1,
+    hl1.1.2.1, hl2.1.2.1,
     fun e he h0 => ⟨(hent e he h0).1.2.1, ?_⟩, fun e he h0 => ?_⟩
   · obtain ⟨hf, -⟩ := S.ends v hg.1
-    show (nd (ts s) v).first = NIL
+    change (nd (ts s) v).first = NIL
     rw [hf, hemp]; rfl
   · have hvent : Ent ord (ht (ts s) v) v :=
       (S.ordMem _ (S.htN v hg.1).1 (S.htN v hg.1).2 v).mpr ⟨hg.1, rfl⟩
     have := S.tabsIff _ v T hvent
-    unfold tabs at this; rw [ite_eq_right (by have := (S.htN v hg.1).1; omega)] at this
+    unfold tabs at this; rw [ite_eq_right (by
+      have := (S.htN v hg.1).1
+      omega)] at this
     exact (this.mp hT).2.2
   · have hE : Ent ord (ht (ts s) v - 1) e := S.tabEnt v hg.1 e he
     have hL := S.tabs_len hE
@@ -208,8 +220,13 @@ theorem ins_hyps {s : Core} {A : Abs} {x : Nat} (hA : INV s A) (hT : TopInv s)
       f1x ≤ ((ins0 s x).C.getX x).tag ∧
       x ∈ ((ins0 s x).nodes.getX ((ins0 s x).lpar.getX x)).children ∧
       TagOK (ins0 s x) s.C.size (tagY (ins0 s x) x f1x i1) ∧
-      TagOK { (ins0 s x) with
-        C := (ins0 s x).C.modify s.C.size fun C => { C with tag := tagY (ins0 s x) x f1x i1 } }
+      TagOK {
+        (ins0 s x) with
+        C := (ins0 s x).C.modify s.C.size fun C => {
+          C with
+          tag := tagY (ins0 s x) x f1x i1
+        }
+      }
         (s.C.size + 1) (tagZ (ins0 s x) x f1x i1) ∧
       cP (ins0 s x) s.C.size < s.C.size ∧ cN (ins0 s x) s.C.size < s.C.size + 2 ∧
       cP (ins0 s x) (s.C.size + 1) < s.C.size + 2 ∧ cN (ins0 s x) (s.C.size + 1) < s.C.size ∧
@@ -250,7 +267,8 @@ theorem ins_hyps {s : Core} {A : Abs} {x : Nat} (hA : INV s A) (hT : TopInv s)
   have T1 : ∀ c d, Before (clIns cl x s.C.size (s.C.size + 1)) c d →
       tagF (insFin s x f1x i1) c < tagF (insFin s x f1x i1) d := fun c d h => SH.toShapeT.tagF_lt h
   obtain ⟨Al, Bl, hcl1, hA1, hB1, hcl'⟩ := ins_cl hI hC hx
-  have hmem' : ∀ c, c ∈ clIns cl x s.C.size (s.C.size + 1) ↔ c ∈ cl ∨ c = s.C.size ∨ c = s.C.size + 1 := by
+  have hmem' : ∀ c, c ∈ clIns cl x s.C.size (s.C.size + 1) ↔ c ∈ cl ∨ c = s.C.size ∨ c =
+    s.C.size + 1 := by
     intro c; rw [hcl', hcl1]; simp only [List.mem_append, List.mem_cons]; tauto
   -- the tags after the split are `tagF`
   have hty : tagY (ins0 s x) x f1x i1 = tagF (insFin s x f1x i1) s.C.size := by
@@ -280,29 +298,52 @@ theorem ins_hyps {s : Core} {A : Abs} {x : Nat} (hA : INV s A) (hT : TopInv s)
   have cPz : cP (ins0 s x) (s.C.size + 1) = x := by
     unfold ins0; rw [hLk.cP', ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_left rfl]
   have cNz : cN (ins0 s x) (s.C.size + 1) = Bl.headD NIL := by
-    unfold ins0; rw [hLk.cN', ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_left rfl, hn2, hnx]
+    unfold ins0; rw [hLk.cN', ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_left rfl,
+      hn2, hnx]
   have hgy : TagOK (ins0 s x) s.C.size (tagY (ins0 s x) x f1x i1) := by
     refine ⟨fun hp => ?_, fun _ => ?_⟩
     · rw [cPy] at hp ⊢
       have hAl : Al ≠ [] := by rintro rfl; exact hp rfl
       have hm := getLastD_mem hAl NIL
-      rw [hto _ (by rw [hcl1]; exact List.mem_append_left _ hm), hty]
+      rw [hto _ (by
+        rw [hcl1]
+        exact List.mem_append_left _ hm), hty]
       apply T1; rw [hcl']; exact before_app_l hm
     · rw [cNy, hto x hx, hty]
       apply T1; rw [hcl', show Al ++ s.C.size :: x :: (s.C.size + 1) :: Bl =
         (Al ++ [s.C.size]) ++ x :: (s.C.size + 1) :: Bl by simp]
       exact before_app_l (by simp)
-  have hgz : TagOK { (ins0 s x) with
-      C := (ins0 s x).C.modify s.C.size fun C => { C with tag := tagY (ins0 s x) x f1x i1 } }
+  have hgz : TagOK {
+    (ins0 s x) with
+    C := (ins0 s x).C.modify s.C.size fun C => {
+      C with
+      tag := tagY (ins0 s x) x f1x i1
+    }
+  }
       (s.C.size + 1) (tagZ (ins0 s x) x f1x i1) := by
-    have eP : ∀ c, cP { (ins0 s x) with
-        C := (ins0 s x).C.modify s.C.size fun C => { C with tag := tagY (ins0 s x) x f1x i1 } } c =
+    have eP : ∀ c, cP {
+      (ins0 s x) with
+      C := (ins0 s x).C.modify s.C.size fun C => {
+        C with
+        tag := tagY (ins0 s x) x f1x i1
+      }
+    } c =
         cP (ins0 s x) c := fun c => by unfold cP; simp only [Array.getX_modify]; split_ifs <;> rfl
-    have eN : ∀ c, cN { (ins0 s x) with
-        C := (ins0 s x).C.modify s.C.size fun C => { C with tag := tagY (ins0 s x) x f1x i1 } } c =
+    have eN : ∀ c, cN {
+      (ins0 s x) with
+      C := (ins0 s x).C.modify s.C.size fun C => {
+        C with
+        tag := tagY (ins0 s x) x f1x i1
+      }
+    } c =
         cN (ins0 s x) c := fun c => by unfold cN; simp only [Array.getX_modify]; split_ifs <;> rfl
-    have eT : ∀ c, c ≠ s.C.size → cT { (ins0 s x) with
-        C := (ins0 s x).C.modify s.C.size fun C => { C with tag := tagY (ins0 s x) x f1x i1 } } c =
+    have eT : ∀ c, c ≠ s.C.size → cT {
+      (ins0 s x) with
+      C := (ins0 s x).C.modify s.C.size fun C => {
+        C with
+        tag := tagY (ins0 s x) x f1x i1
+      }
+    } c =
         cT (ins0 s x) c := fun c hc => by
       unfold cT; simp only [Array.getX_modify, Ne.symm hc, false_and, ite_false]
     refine ⟨fun _ => ?_, fun hn => ?_⟩
@@ -313,7 +354,8 @@ theorem ins_hyps {s : Core} {A : Abs} {x : Nat} (hA : INV s A) (hT : TopInv s)
     · rw [eN, cNz] at hn ⊢
       have hBl : Bl ≠ [] := by rintro rfl; exact hn rfl
       have hm := headD_mem hBl NIL
-      have hmc : Bl.headD NIL ∈ cl := by rw [hcl1]; exact List.mem_append_right _ (List.mem_cons_of_mem _ hm)
+      have hmc : Bl.headD NIL ∈ cl := by
+        rw [hcl1]; exact List.mem_append_right _ (List.mem_cons_of_mem _ hm)
       have hcs := (hC _).mp hmc
       rw [eT _ (by omega), hto _ hmc, htz]
       apply T1; rw [hcl', show Al ++ s.C.size :: x :: (s.C.size + 1) :: Bl =
@@ -326,18 +368,22 @@ theorem ins_hyps {s : Core} {A : Abs} {x : Nat} (hA : INV s A) (hT : TopInv s)
       start_room hI hTP hx (T := T) hT s.C.size (s.C.size + 1)
     exact ⟨A', le, Bs, htab, hA', hside, h1, h2⟩
   have hw : x ∈ (nd (ts s) (pp (ts s) x 1)).table.map (·.1) :=
-    S.W3 x hx 1 le_rfl (by have := S.H3; omega)
+    S.W3 x hx 1 le_rfl (by
+      have := S.H3
+      omega)
   obtain ⟨v, hv⟩ := lookup_some_of_mem hw
   have hfv : f1x = v := by
     rw [hf1]; unfold digit
-    show ((nd (ts s) (pp (ts s) x 1)).lab? x).getD 0 = v
+    change ((nd (ts s) (pp (ts s) x 1)).lab? x).getD 0 = v
     unfold Node.lab?; rw [hv]; rfl
   have hf1' : ((ins0 s x).nodes.getX (((ins0 s x).path.getX x).getX 1)).lab? x = some f1x := by
     rw [hfv]; exact hv
   have htx : f1x ≤ ((ins0 s x).C.getX x).tag := by
     rw [ins0_tag s x hxs, show (s.C.getX x).tag = (ts s).tag x from rfl, S.tags x hx, hf1,
       ← tagUp_one]
-    exact tagUp_mono _ _ _ _ (by have := S.H3; omega)
+    exact tagUp_mono _ _ _ _ (by
+      have := S.H3
+      omega)
   have hlp : x ∈ ((ins0 s x).nodes.getX ((ins0 s x).lpar.getX x)).children := (S.lp x hx).2.2
   -- the exported facts
   have hTL := tab_le_160 hI.len
@@ -347,7 +393,7 @@ theorem ins_hyps {s : Core} {A : Abs} {x : Nat} (hA : INV s A) (hT : TopInv s)
     have h2 := (sublist_of_subset_common hsub' (S.O1 _ hlpx.1.1) (S.ordNodup _)
       (fun e he => S.kid_mem hI.time hlpx.1 he)).length_le
     have hl2 := (hTL (lpr (ts s) x)).1
-    show (nd (ts s) (lpr (ts s) x)).children.length ≤ 160
+    change (nd (ts s) (lpr (ts s) x)).children.length ≤ 160
     simp only [Top.order, Node.order, List.length_map] at h2; omega
   have hcinT : ∀ T ∈ s.cin.getX x, T < s.nodes.size := by
     intro T hT
@@ -363,7 +409,9 @@ theorem ins_hyps {s : Core} {A : Abs} {x : Nat} (hA : INV s A) (hT : TopInv s)
     rcases List.eq_nil_or_concat Al with h | ⟨L, b, h⟩
     · rw [h]; simp [NIL]; omega
     · have hm : Al.getLastD NIL ∈ cl := by
-        rw [hcl1]; exact List.mem_append_left _ (getLastD_mem (by rw [h]; simp) NIL)
+        rw [hcl1]; exact List.mem_append_left _ (getLastD_mem (by
+          rw [h]
+          simp) NIL)
       exact hlt _ hm
   · rw [cNy]; omega
   · rw [cPz]; omega
@@ -405,19 +453,23 @@ structure TopCaps (κ : Caps) (s : Core) : Prop where
 tables. -/
 def sdBound : Nat := sdCost 160 160 2 160 160 160
 
-theorem sdCost_le {K T I S B P : Nat} (hK : K ≤ 160) (hT : T ≤ 160) (hI : I ≤ 2) (hS : S ≤ 160) (hB : B ≤ 160)
+theorem sdCost_le {K T I S B P : Nat} (hK : K ≤ 160) (hT : T ≤ 160) (hI : I ≤ 2) (hS : S ≤ 160)
+  (hB : B ≤ 160)
     (hP : P ≤ 160) : sdCost K T I S B P ≤ sdBound := by
   unfold sdBound sdCost; gcongr
 
 /-- **`startDrain` agrees at a drain start** (the context of `sr_run`). -/
-theorem sdAgree_walk {κ : Caps} {s : Core} {cl : List Nat} {ord : Nat → List Nat} {dr n0 : Nat → Nat}
-    {j : Job} {v : Nat} (hpc : j.pc = .walk (some v)) (hv0 : v ≠ NIL) (hI : InvJ (ts s) cl ord dr n0 (some j))
+theorem sdAgree_walk {κ : Caps} {s : Core} {cl : List Nat} {ord : Nat → List Nat} {dr n0 : Nat →
+  Nat}
+    {j : Job} {v : Nat} (hpc : j.pc = .walk (some v)) (hv0 : v ≠ NIL) (hI : InvJ (ts s) cl ord
+      dr n0 (some j))
     (hlp : (nd (ts s) v).livePar ≠ NIL) (hTP : TopParams s.P) (hof : (nd (ts s) v).overflowOf = NIL)
     (hW : Wd s.P (ht (ts s) v) < (nd (ts s) v).weight + 2)
     {side : List (Nat × Side)} (hside : sSideO (wiC s v) v = some side)
     (hlook : ∀ x, lookup side x =
       if 2 ≤ ht (ts s) v ∧ x ∈ sEntries (wiC s v) v ∧ (nd (ts s) x).draining = true then
-        lookup (sidesOf (order (ts s) v) ((nd (ts s) v).children.getD (sK (wiC s v) v) 0)) (nd (ts s) x).t1
+        lookup (sidesOf (order (ts s) v) ((nd (ts s) v).children.getD (sK (wiC s v) v) 0)) (nd
+          (ts s) x).t1
       else lookup (sidesOf (order (ts s) v) ((nd (ts s) v).children.getD (sK (wiC s v) v) 0)) x)
     (hcl : CLok s cl) (K : TopCaps κ s) :
     ∃ D, D ≤ sdBound ∧ SDAgree κ (wiC s v) v D := by
@@ -442,7 +494,9 @@ theorem sdAgree_walk {κ : Caps} {s : Core} {cl : List Nat} {ord : Nat → List 
     have he' : e ∈ Top.order (ts s) v := by rw [hwt] at he; simpa [Top.order, Node.order] using he
     have hE : Ent ord (ht (ts s) v - 1) e := S.tabEnt v hvl.1 e he'
     refine ⟨fun h0 => ?_, fun h0 => ?_⟩
-    · exact ((S.ordMem _ (by omega) (by have := (S.htN v hvl.1).2; omega) e).mp hE).1.2.1
+    · exact ((S.ordMem _ (by omega) (by
+      have := (S.htN v hvl.1).2
+      omega) e).mp hE).1.2.1
     · rw [h0] at hE
       have hE0 : e ∈ ord 0 := hE
       rw [S.ord0] at hE0
@@ -452,7 +506,9 @@ theorem sdAgree_walk {κ : Caps} {s : Core} {cl : List Nat} {ord : Nat → List 
     intro e he
     refine ⟨fun h0 => ⟨H.kid h0 e he, fun hev => ?_⟩, fun h0 => ?_⟩
     · have hm : e ∈ ord (ht (ts s) v - 1) := hksub.subset he
-      have := ((S.ordMem _ (by omega) (by have := (S.htN v hvl.1).2; omega) e).mp hm).2
+      have := ((S.ordMem _ (by omega) (by
+        have := (S.htN v hvl.1).2
+        omega) e).mp hm).2
       rw [hev] at this; omega
     · have hm : e ∈ ord (ht (ts s) v - 1) := hksub.subset he
       rw [h0, Nat.sub_self, S.ord0] at hm
@@ -478,7 +534,8 @@ theorem sdAgree_walk {κ : Caps} {s : Core} {cl : List Nat} {ord : Nat → List 
   have hinv : (nd (ts s) v).inTables.length ≤ 2 := by
     have := S.tabs_len hvent
     unfold tabs at this; rw [ite_eq_right (by omega)] at this; exact this
-  have htl : ∀ e ∈ ((wiC s v).nodes.getX v).table.map (·.1), tabsLen (wiC s v) (sH (wiC s v) v - 1) e ≤ 2 := by
+  have htl : ∀ e ∈ ((wiC s v).nodes.getX v).table.map (·.1), tabsLen (wiC s v) (sH (wiC s v) v -
+    1) e ≤ 2 := by
     intro e he
     have hwt : ((wiC s v).nodes.getX v).table = (nd (ts s) v).table := W.table v
     have he' : e ∈ Top.order (ts s) v := by rw [hwt] at he; simpa [Top.order, Node.order] using he
@@ -493,17 +550,28 @@ theorem sdAgree_walk {κ : Caps} {s : Core} {cl : List Nat} {ord : Nat → List 
     have := sp_side_len hpc hv0 hI hlp hTP hof hW hside
     have := (hTL v).1
     simp only [Top.order, Node.order, List.length_map] at *; omega
-  refine ⟨_, sdCost_le (by rw [SDHyps.w_children]; exact hkl) hTt (by rw [SDHyps.w_inTables]; exact hinv) hsl le_rfl
-    (by rw [SDHyps.w_livePar,
-      SDHyps.w_children]; exact hpl),
-      sdAgree_ok (B := 160) (side := side) (by rw [sd_kids_eq]; exact hk2) (fun h => by omega) hside
+  refine ⟨_, sdCost_le (by
+    rw [SDHyps.w_children]
+    exact hkl) hTt (by
+    rw [SDHyps.w_inTables]
+    exact hinv) hsl le_rfl
+    (by
+      rw [SDHyps.w_livePar, SDHyps.w_children]
+      exact hpl),
+      sdAgree_ok (B := 160) (side := side) (by
+        rw [sd_kids_eq]
+        exact hk2) (fun h => by omega) hside
     (fun T hT => ?_) H.t_nd
     (fun e he => by
       rw [sd_kids_eq] at he
       rw [sw_kid hpc hv0 hI hlp hTP hof hW hlook he]; rfl)
-    (by rw [SDHyps.w_livePar, SDHyps.w_children]; exact hvL) H.t_hv
+    (by
+      rw [SDHyps.w_livePar, SDHyps.w_children]
+      exact hvL) H.t_hv
     (fun h => by rw [SDHyps.w_inTables] at h; have := (hTv v h).1; omega)
-    (fun h0 h => by rw [SDHyps.w_children] at h; exact (hkid v h).1 (by rw [hsh] at h0; exact h0) |>.2 rfl)
+    (fun h0 h => by rw [SDHyps.w_children] at h; exact (hkid v h).1 (by
+      rw [hsh] at h0
+      exact h0) |>.2 rfl)
     (fun h0 e he => by rw [hsz]; exact (hkeys e he).1 (by rwa [hsh] at h0))
     (fun e he => by
       by_cases h0 : ht (ts s) v - 1 = 0
@@ -511,22 +579,56 @@ theorem sdAgree_walk {κ : Caps} {s : Core} {cl : List Nat} {ord : Nat → List 
         exact ⟨by have := K.NC; omega, fun _ => by have := K.rcin; omega⟩
       · have := (hkeys e he).1 h0
         exact ⟨by have := K.N; omega, fun h => absurd (by rwa [hsh] at h) h0⟩)
-    (fun h0 e he => by rw [SDHyps.w_children] at he; rw [hsz]; exact ((hkid e he).1 (by rwa [hsh] at h0)).1)
+    (fun h0 e he => by rw [SDHyps.w_children] at he; rw [hsz]; exact ((hkid e he).1 (by
+      rwa [hsh] at h0)).1)
     (fun h0 e he => by
-      rw [SDHyps.w_children] at he; have := (hkid e he).2 (by rwa [hsh] at h0); have := K.alp; omega)
-    H.t_hL (by rw [SDHyps.w_livePar]; exact H.hLv)
+      rw [SDHyps.w_children] at he; have := (hkid e he).2 (by rwa [hsh] at h0); have := K.alp;
+        omega)
+    H.t_hL (by
+      rw [SDHyps.w_livePar]
+      exact H.hLv)
     (fun T hT => by rw [SDHyps.w_table, SDHyps.w_side]; exact hTL T)
-    (by rw [hsz]; exact K.N) (by rw [hsz]; exact K.rc) (by rw [hsz]; exact K.rs) (by rw [hsz]; exact K.rt)
-    (by rw [hsz]; exact K.ri) (by rw [hsz]; have := K.rcin; omega) (by rw [hsz]; have := K.alp; omega)
-    (fun T hT => by rw [SDHyps.w_table, SDHyps.w_side]; have := hTL T; have := K.lt; have := K.ls; omega)
-    (by have := K.ls; omega) (by have := K.lt; omega)
-    (by rw [SDHyps.w_inTables]; have := K.li; omega)
+    (by
+      rw [hsz]
+      exact K.N) (by
+      rw [hsz]
+      exact K.rc) (by
+      rw [hsz]
+      exact K.rs) (by
+      rw [hsz]
+      exact K.rt)
+    (by
+      rw [hsz]
+      exact K.ri)
+    (fun T hT => by
+      rw [SDHyps.w_table, SDHyps.w_side]
+      have := hTL T
+      have := K.lt
+      have := K.ls
+      omega)
+    (by
+      have := K.ls
+      omega) (by
+      have := K.lt
+      omega)
+    (by
+      rw [SDHyps.w_inTables]
+      have := K.li
+      omega)
     (fun e he => by have := htl e he; have := K.li; have := K.lcin; split <;> omega)
-    (by rw [SDHyps.w_children]; have := K.lc; omega)
-    (by rw [SDHyps.w_livePar, SDHyps.w_children]; have := K.lc; omega)⟩
+    (by
+      rw [SDHyps.w_children]
+      have := K.lc
+      omega)
+    (by
+      rw [SDHyps.w_livePar, SDHyps.w_children]
+      have := K.lc
+      omega)⟩
   · rw [SDHyps.w_inTables] at hT
     obtain ⟨A, le, Bs, htab, hA, hsd, h1, h2, -⟩ := room_up hI hTP hvl.1 hT 0 0
-    exact ⟨A, le, Bs, by rw [SDHyps.w_table]; exact htab, hA, by rw [SDHyps.w_draining, SDHyps.w_side]; exact hsd, h1, h2⟩
+    exact ⟨A, le, Bs, by rw [SDHyps.w_table]; exact htab, hA, by
+      rw [SDHyps.w_draining, SDHyps.w_side]
+      exact hsd, h1, h2⟩
 
 /-- A chunk of the chunk list links to chunks of the list (or `NIL`). -/
 theorem CLok.links {s : Core} {cl : List Nat} (h : CLok s cl) {c : Nat} (hc : c ∈ cl) :
@@ -547,18 +649,22 @@ in at most two tables: the end of a drain dominates. -/
 def dsBound : Nat := 300 + 160 * (171 + 100 * 160) + 2 * (301 + 200 * 160)
 
 /-- **A sweep step that moves a chunk agrees** (outside a preparation). -/
-theorem dsAgree_moveI {κ : Caps} {s : Core} {cl : List Nat} {ord : Nat → List Nat} (S : Shape (ts s) cl ord)
+theorem dsAgree_moveI {κ : Caps} {s : Core} {cl : List Nat} {ord : Nat → List Nat} (S : Shape
+  (ts s) cl ord)
     {dr n0 : Nat → Nat} (hTL : TabLen (ts s) dr n0)
-    {v : Nat} (hg : ghostN (ts s) v) (hne : rng (ts s) cl v ≠ []) (hcl : CLok s cl) (hprep : s.prep = none)
+    {v : Nat} (hg : ghostN (ts s) v) (hne : rng (ts s) cl v ≠ []) (hcl : CLok s cl) (hprep :
+      s.prep = none)
     (K : TopCaps κ s) : ∃ D, D ≤ dsBound ∧ DSAgree κ s v D := by
-  obtain ⟨hal, hf, hside, hsz, hpt, htb, hpv, hvb, hold, hok, h1, hpsz, htbB, hvbB, htv, hvs, hts, hycl, hhH, hpr⟩ :=
+  obtain ⟨hal, hf, hside, hsz, hpt, htb, hpv, hvb, hold, hok, h1, hpsz, htbB, hvbB, htv, hvs,
+    hts, hycl, hhH, hpr⟩ :=
     S.drain_move_hyps hg hne hcl.1
   have hfl : (s.nodes.getX v).first ∈ cl ∧ (s.nodes.getX v).last ∈ cl := by
     obtain ⟨e1, e2⟩ := S.ends v hg.1
     have e1' : (s.nodes.getX v).first = (rng (ts s) cl v).headD NIL := e1
     have e2' : (s.nodes.getX v).last = (rng (ts s) cl v).getLastD NIL := e2
     rw [e1', e2']
-    refine ⟨(rng_sub (s := s) (cl := cl) v).subset (headD_mem hne NIL), (rng_sub (s := s) (cl := cl) v).subset ?_⟩
+    refine ⟨(rng_sub (s := s) (cl := cl) v).subset (headD_mem hne NIL), (rng_sub (s := s) (cl :=
+      cl) v).subset ?_⟩
     rw [List.getLastD_eq_getLast?, List.getLast?_eq_some_getLast hne]; exact List.getLast_mem hne
   have hfC := ((hcl.2 _).mp hfl.1).2
   have hlC := ((hcl.2 _).mp hfl.2).2
@@ -566,17 +672,44 @@ theorem dsAgree_moveI {κ : Caps} {s : Core} {cl : List Nat} {ord : Nat → List
   have hnp : ∀ c, notPrep s c := fun c => by simp [notPrep, hprep]
   have hB : ∀ X, (s.nodes.getX X).table.length ≤ 160 ∧ (s.nodes.getX X).side.length ≤ 160 :=
     fun X => tab_le_160 hTL X
-  refine ⟨_, ?_, dsAgree_move hal hf hside hsz hpt htb hpv hvb hold hok h1 hpsz htbB hvbB htv hvs hts
-    (by have := ((hcl.2 _).mp hycl).2; exact this) (hnp _) (hnp _)
-    (by have := K.N; omega) (by have := K.N; omega) (by have := K.rs; omega) (by have := K.rt; omega)
-    (by have := K.rt; omega) (by have := K.rt; omega)
-    (by have := K.C; omega) (by have := K.C; omega) (by have := K.C; omega) (by have := K.C; omega)
-    (by rw [K.pw]; omega)⟩
-  have := hB v; have := hB (dsT s v); have := hB ((s.path.getX (dsY s v)).getX ((s.nodes.getX v).height + 1))
+  refine ⟨_, ?_, dsAgree_move hal hf hside hsz hpt htb hpv hvb hold hok h1 hpsz htbB hvbB htv
+    hvs hts
+    (by
+      have := ((hcl.2 _).mp hycl).2
+      exact this) (hnp _) (hnp _)
+    (by
+      have := K.N
+      omega) (by
+      have := K.N
+      omega) (by
+      have := K.rs
+      omega) (by
+      have := K.rt
+      omega)
+    (by
+      have := K.rt
+      omega) (by
+      have := K.rt
+      omega)
+    (by
+      have := K.C
+      omega) (by
+      have := K.C
+      omega) (by
+      have := K.C
+      omega) (by
+      have := K.C
+      omega)
+    (by
+      rw [K.pw]
+      omega)⟩
+  have := hB v; have := hB (dsT s v); have := hB ((s.path.getX (dsY s v)).getX ((s.nodes.getX
+    v).height + 1))
   unfold dsBound; omega
 
 /-- **A sweep step that ends the drain agrees.** -/
-theorem dsAgree_finishI {κ : Caps} {s : Core} {cl : List Nat} {ord : Nat → List Nat} {dr n0 : Nat → Nat}
+theorem dsAgree_finishI {κ : Caps} {s : Core} {cl : List Nat} {ord : Nat → List Nat} {dr n0 :
+  Nat → Nat}
     (S : Shape (ts s) cl ord) (hTL : TabLen (ts s) dr n0)
     {v : Nat} (hg : ghostN (ts s) v) (hemp : rng (ts s) cl v = []) (hcl : CLok s cl)
     (K : TopCaps κ s) : ∃ D, D ≤ dsBound ∧ DSAgree κ s v D := by
@@ -585,11 +718,23 @@ theorem dsAgree_finishI {κ : Caps} {s : Core} {cl : List Nat} {ord : Nat → Li
     (S.ordMem _ (S.htN v hg.1).1 (S.htN v hg.1).2 v).mpr ⟨hg.1, rfl⟩
   have hin : (s.nodes.getX v).inTables.length ≤ 2 := by
     have := S.tabs_len hvent
-    unfold tabs at this; rw [ite_eq_right (by have := (S.htN v hg.1).1; omega)] at this; exact this
+    unfold tabs at this; rw [ite_eq_right (by
+      have := (S.htN v hg.1).1
+      omega)] at this; exact this
   have htv : (s.nodes.getX v).table.length ≤ 160 := (tab_le_160 hTL v).1
   refine ⟨_, ?_, dsAgree_finish (B := 160) hal hf hnd hT hv0 hvs hvo
-    (by have := K.N; omega) (by have := K.rt; omega) (by have := K.ri; omega)
-    (by have := K.N; omega) (by have := K.N; omega)
+    (by
+      have := K.N
+      omega) (by
+      have := K.rt
+      omega) (by
+      have := K.ri
+      omega)
+    (by
+      have := K.N
+      omega) (by
+      have := K.N
+      omega)
     (fun e he => ⟨fun h0 => by
         obtain ⟨a, b⟩ := hE0 e he h0
         have := ((hcl.2 e).mp a).2
@@ -611,9 +756,13 @@ theorem dsAgree_finishI {κ : Caps} {s : Core} {cl : List Nat} {ord : Nat → Li
 
 /-- **The funding loop's sweep step agrees**: its source is a ghost, so the step moves a chunk or
 ends the drain. -/
-theorem dsAgree_fund {κ : Caps} {s : Core} {cl : List Nat} {ord : Nat → List Nat} {dr n0 : Nat → Nat}
+theorem dsAgree_fund {κ : Caps} {s : Core} {cl : List Nat} {ord : Nat → List Nat} {dr n0 : Nat →
+  Nat}
     {j : Job} {v up src k : Nat} (hcl : CLok s cl) (hprep : s.prep = none)
-    (hI : InvJ (ts s) cl ord dr n0 (some { j with pc := .fund v up src k })) (K : TopCaps κ s) :
+    (hI : InvJ (ts s) cl ord dr n0 (some {
+      j with
+      pc := .fund v up src k
+    })) (K : TopCaps κ s) :
     ∃ D, D ≤ dsBound ∧ DSAgree κ s src D := by
   have S := hI.shape
   obtain ⟨-, hat⟩ := hI.job _ rfl
@@ -631,10 +780,13 @@ theorem DSAgree.mono {κ : Caps} {S : Core} {v D D' : Nat} (h : DSAgree κ S v D
     DSAgree κ S v D' := fun b S' e => by
   obtain ⟨L', c, a, b1, b2, d⟩ := h b S' e; exact ⟨L', c, a, b1, by omega, d⟩
 
-theorem TopCaps.wiC {κ : Caps} {s : Core} (K : TopCaps κ s) (v : Nat) : TopCaps κ (OrderMaintenance.Proof.Top.wiC s v) := by
-  have h : (OrderMaintenance.Proof.Top.wiC s v).nodes.size = s.nodes.size := by simp [OrderMaintenance.Proof.Top.wiC]
+theorem TopCaps.wiC {κ : Caps} {s : Core} (K : TopCaps κ s) (v : Nat) : TopCaps κ
+  (OrderMaintenance.Proof.Top.wiC s v) := by
+  have h : (OrderMaintenance.Proof.Top.wiC s v).nodes.size = s.nodes.size := by
+    simp [OrderMaintenance.Proof.Top.wiC]
   obtain ⟨a, b, c, d, e, f, g, i, k, l, m, n, o, p, q⟩ := K
-  exact ⟨by rw [h]; exact a, b, c, by rw [h]; exact d, by rw [h]; exact e, by rw [h]; exact f, by rw [h]; exact g,
+  exact ⟨by rw [h]; exact a, b, c, by rw [h]; exact d, by rw [h]; exact e, by rw [h]; exact f,
+    by rw [h]; exact g,
     by rw [h]; exact i, by rw [h]; exact k, l, m, n, o, p, q⟩
 
 /-- **The walk step's agreements**, at node `v` of the walk: `startDrain` where the walk starts a
@@ -646,19 +798,27 @@ theorem walkAgree {κ : Caps} {s : Core} {cl : List Nat} {ord : Nat → List Nat
       (s.nodes.getX v).overflowOf == NIL &&
       decide ((s.nodes.getX v).weight + 2 > 2 * s.P.a ^ (s.nodes.getX v).height)) = true →
         SDAgree κ (wiC s v) v sdBound) ∧
-    (v ≠ NIL → (s.nodes.getX v).overflowOf ≠ NIL → DSAgree κ (wiC s v) (s.nodes.getX v).overflowOf dsBound) := by
+    (v ≠ NIL → (s.nodes.getX v).overflowOf ≠ NIL → DSAgree κ (wiC s v) (s.nodes.getX
+      v).overflowOf dsBound) := by
   refine ⟨fun hv0 hc => ?_, fun hv0 hov => ?_⟩
   · simp only [Bool.and_eq_true, bne_iff_ne, ne_eq, Bool.not_eq_true', beq_iff_eq,
     decide_eq_true_eq] at hc
     obtain ⟨⟨⟨h1, h2⟩, h3⟩, h4⟩ := hc
-    obtain ⟨side, hside, hlook⟩ := sp_side hpc hv0 hI h1 hTP h3 (by unfold Wd ht; exact h4)
-    obtain ⟨D, hD, hA⟩ := sdAgree_walk hpc hv0 hI h1 hTP h3 (by unfold Wd ht; exact h4) hside hlook hcl K
+    obtain ⟨side, hside, hlook⟩ := sp_side hpc hv0 hI h1 hTP h3 (by
+      unfold Wd ht
+      exact h4)
+    obtain ⟨D, hD, hA⟩ := sdAgree_walk hpc hv0 hI h1 hTP h3 (by
+      unfold Wd ht
+      exact h4) hside hlook hcl K
     exact hA.mono hD
   · have hno : ¬ ((nd (ts s) v).livePar ≠ NIL ∧ (nd (ts s) v).draining = false ∧
         (nd (ts s) v).overflowOf = NIL ∧ Wd s.P (ht (ts s) v) < (nd (ts s) v).weight + 2) :=
       fun h => hov h.2.2.1
     have hI' := inv_winc hpc hv0 hI hno
-    have hn : walkNext (ts s) j v = { j with pc := .fund v (nd (ts s) v).livePar (srcOf (ts s) v) 0 } := by
+    have hn : walkNext (ts s) j v = {
+      j with
+      pc := .fund v (nd (ts s) v).livePar (srcOf (ts s) v) 0
+    } := by
       simp only [walkNext]; rw [ite_eq_right (show srcOf (ts s) v ≠ NIL from hov)]
     rw [hn] at hI'
     obtain ⟨D, hD, hA⟩ := dsAgree_fund (hcl.topRel (wiC_topRel s v)) hprep hI' (K.wiC v)
@@ -666,12 +826,15 @@ theorem walkAgree {κ : Caps} {s : Core} {cl : List Nat} {ord : Nat → List Nat
 
 /-- A copy step keeps the node count and the path of the chunk copied from. -/
 theorem copyS_frame (t : TS) (j : Job) (l : Nat) (hxy : j.x ≠ j.y) (hxz : j.x ≠ j.z) :
-    (OrderMaintenance.Proof.Top.copyS t j l).nodes.size = t.nodes.size ∧ (OrderMaintenance.Proof.Top.copyS t j l).path.getX j.x = t.path.getX j.x := by
+    (OrderMaintenance.Proof.Top.copyS t j l).nodes.size = t.nodes.size ∧
+      (OrderMaintenance.Proof.Top.copyS t j l).path.getX j.x = t.path.getX j.x := by
   unfold OrderMaintenance.Proof.Top.copyS; dsimp only
-  split_ifs <;> simp [Array.getX_setX, Ne.symm hxy, Ne.symm hxz, hxy, hxz]
+  split_ifs <;> simp [Array.getX_setX,   hxy, hxz]
 
-theorem copyRest_frame (j : Job) (H : Nat) (hxy : j.x ≠ j.y) (hxz : j.x ≠ j.z) : ∀ k t l, H + 1 - l = k →
-    (copyRest j H t l).nodes.size = t.nodes.size ∧ (copyRest j H t l).path.getX j.x = t.path.getX j.x := by
+theorem copyRest_frame (j : Job) (H : Nat) (hxy : j.x ≠ j.y) (hxz : j.x ≠ j.z) : ∀ k t l, H + 1
+  - l = k →
+    (copyRest j H t l).nodes.size = t.nodes.size ∧ (copyRest j H t l).path.getX j.x =
+      t.path.getX j.x := by
   intro k
   induction k with
   | zero => intro t l hk; unfold copyRest; rw [ite_eq_right (by omega)]; exact ⟨rfl, rfl⟩
@@ -682,18 +845,21 @@ theorem copyRest_frame (j : Job) (H : Nat) (hxy : j.x ≠ j.y) (hxz : j.x ≠ j.
     exact ⟨a.trans c, b.trans d⟩
 
 /-- The running job's chunks: in the chunk list, distinct, not `NIL`. -/
-theorem job_chunks {t : TS} {s : Core} {cl : List Nat} {j : Job} (hcl : CLok s cl) (hJ : JobOK t cl j) :
+theorem job_chunks {t : TS} {s : Core} {cl : List Nat} {j : Job} (hcl : CLok s cl) (hJ : JobOK t
+  cl j) :
     j.x ∈ cl ∧ j.y ∈ cl ∧ j.z ∈ cl ∧ j.x ≠ j.y ∧ j.x ≠ j.z ∧ j.y ≠ j.z := by
   obtain ⟨A, B, e⟩ := hJ.pos
   have hnd := hcl.1.nodup
   rw [e] at hnd ⊢
-  simp only [List.nodup_append, List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false] at hnd
+  simp only [List.nodup_append, List.nodup_cons, List.mem_cons, ] at hnd
   refine ⟨by simp, by simp, by simp, fun h => ?_, fun h => ?_, fun h => ?_⟩ <;> simp_all
 
 /-- **A copy step agrees.** -/
 theorem copyAgree {κ : Caps} {s : Core} {cl : List Nat} {ord : Nat → List Nat} {dr n0 : Nat → Nat}
-    {j : Job} {l : Nat} (hpc : j.pc = .copy l) (hres : s.resJob = some j) (hcl : CLok s cl) (hprep : s.prep = none)
-    (hI : InvJ (finS (ts s) (some j)) cl ord dr n0 (some j)) (K : TopCaps κ s) : JobAgree κ s j 140 := by
+    {j : Job} {l : Nat} (hpc : j.pc = .copy l) (hres : s.resJob = some j) (hcl : CLok s cl)
+      (hprep : s.prep = none)
+    (hI : InvJ (finS (ts s) (some j)) cl ord dr n0 (some j)) (K : TopCaps κ s) : JobAgree κ s j
+      140 := by
   intro r t1 h
   rw [jobStep_copy hpc] at h
   injection h with hr ht; subst hr; subst ht
@@ -706,22 +872,31 @@ theorem copyAgree {κ : Caps} {s : Core} {cl : List Nat} {ord : Nat → List Nat
   have hP : (finS (ts s) (some j)).P = s.P := by rw [hfin]; exact copyRest_P j _ _ _ _ rfl
   rw [hP] at hlH
   obtain ⟨hsz, hpx⟩ := copyRest_frame j s.P.H hxy hxz _ (ts s) l rfl
-  have hN := (hI.shape.toShapeT.isN_pp hx hl1 (by rw [hP]; exact hlH)).1.2.1
+  have hN := (hI.shape.toShapeT.isN_pp hx hl1 (by
+    rw [hP]
+    exact hlH)).1.2.1
   unfold pp pth at hN; rw [ite_eq_right (by omega)] at hN
   rw [← hfin] at hsz hpx
   rw [hpx, hsz] at hN
   have hC : ∀ c ∈ cl, c < κ.tbl .C := fun c hc => by have := ((hcl.2 c).mp hc).2; have := K.C; omega
   have hnp : ∀ c, notPrep s c := fun c => by simp [notPrep, hprep]
-  obtain ⟨L', c, e, hc⟩ := jobStepS_copy (κ := κ) (L := OrderMaintenance.Machine.State.setLocs (fun _ => 0) [] []) hres hpc
-    (fun h => hcl.1.nonil (h ▸ hx)) hyz (hnp _) (hnp _) (hnp _) (hC _ hx) (hC _ hy) (hC _ hz)
-    (by rw [K.pw]; omega) (by have := K.N; have hN' : (s.path.getX j.x).getX l < s.nodes.size := hN; omega)
+  obtain ⟨L', c, e, hc⟩ := jobStepS_copy (κ := κ) (L := Machine.State.setLocs (fun _ => 0) []
+    []) hres hpc
+    (fun h => hcl.1.nonil (h ▸ hx))  (hnp _) (hnp _) (hnp _) (hC _ hx) (hC _ hy) (hC _ hz)
+    (by
+      rw [K.pw]
+      omega) (by
+      have := K.N
+      have hN' : (s.path.getX j.x).getX l < s.nodes.size := hN
+      omega)
   exact ⟨L', c, e, hc⟩
 
 /-- The cost bound of one job step at Level M. -/
 def jobBound : Nat := sdBound + dsBound + 300
 
-/-- **Every job step agrees**, under the top invariant, outside a preparation, with the capacities. -/
-theorem jobAgree {κ : Caps} {s : Core} {j : Job} (hT : TopInv s) (hres : s.resJob = some j) (hprep : s.prep = none)
+/-- Every job step agrees under the top invariant, outside preparation, with the capacities. -/
+theorem jobAgree {κ : Caps} {s : Core} {j : Job} (hT : TopInv s) (hres : s.resJob = some j)
+  (hprep : s.prep = none)
     (hpow : s.P.a = 2 ^ Nat.log2 s.P.a) (K : TopCaps κ s) : JobAgree κ s j jobBound := by
   obtain ⟨hTP, cl, ord, dr, n0, hL, hC, hI⟩ := hT
   rw [hres] at hI
@@ -737,12 +912,19 @@ theorem jobAgree {κ : Caps} {s : Core} {j : Job} (hT : TopInv s) (hres : s.resJ
     cases ov with
     | none =>
       obtain ⟨hI', hl, -⟩ := walkNone_inv hpc hI
-      obtain ⟨hsd, hds⟩ := walkAgree (j := { j with pc := .walk (some (lpr (ts s) j.y)) }) rfl hTP hcl hprep hI' K
+      obtain ⟨hsd, hds⟩ := walkAgree (j := {
+        j with
+        pc := .walk (some (lpr (ts s) j.y))
+      }) rfl
+        hTP hcl hprep hI' K
       have hy := (job_chunks hcl (hI.job j rfl)).2.1
       have hyC := ((hcl.2 _).mp hy).2
       have hls : s.lpar.getX j.y < s.nodes.size := hl.1.2.1
-      obtain ⟨L', c, e, hc⟩ := jobStepS_walkNone (κ := κ) (L := OrderMaintenance.Machine.State.setLocs (fun _ => 0) [] [])
-        hres hpc (by have := K.alp; omega) (fun _ => hls) (fun _ => by have := K.N; omega) hsd hds hpow h
+      obtain ⟨L', c, e, hc⟩ := jobStepS_walkNone (κ := κ) (L := Machine.State.setLocs (fun _ =>
+        0) [] [])
+        hres hpc (by
+          have := K.alp
+          omega) (fun _ => hls) (fun _ => by have := K.N; omega) hsd hds hpow h
       exact ⟨L', c, e, by unfold jobBound; omega⟩
     | some v =>
       obtain ⟨hsd, hds⟩ := walkAgree hpc hTP hcl hprep hI K
@@ -752,7 +934,8 @@ theorem jobAgree {κ : Caps} {s : Core} {j : Job} (hT : TopInv s) (hres : s.resJ
         rcases hat with e | ⟨hl, -⟩
         · exact absurd e h0
         · exact hl.1.2.1
-      obtain ⟨L', c, e, hc⟩ := jobStepS_walkSome (κ := κ) (L := OrderMaintenance.Machine.State.setLocs (fun _ => 0) [] [])
+      obtain ⟨L', c, e, hc⟩ := jobStepS_walkSome (κ := κ) (L := Machine.State.setLocs (fun _ =>
+        0) [] [])
         hres hpc hvs (fun h0 => by have := hvs h0; have := K.N; omega) hsd hds hpow h
       exact ⟨L', c, e, by unfold jobBound; omega⟩
   | afterDrain v up =>
@@ -763,15 +946,19 @@ theorem jobAgree {κ : Caps} {s : Core} {j : Job} (hT : TopInv s) (hres : s.resJ
     obtain ⟨hg, -, -⟩ := hat
     obtain ⟨-, -, -, -, -, -, -, -, hgs, -⟩ := hI.shape.ghost v hg
     have hvs : v < s.nodes.size := hg.1.2.1
-    obtain ⟨L', c, e, hc⟩ := jobStepS_after (κ := κ) (L := OrderMaintenance.Machine.State.setLocs (fun _ => 0) [] []) (D := 0)
-      hres hpc (by have := K.N; omega) (fun hne => absurd hgs hne) h
+    obtain ⟨L', c, e, hc⟩ := jobStepS_after (κ := κ) (L := Machine.State.setLocs (fun _ => 0) []
+      []) (D := 0)
+      hres hpc (by
+        have := K.N
+        omega) (fun hne => absurd hgs hne) h
     exact ⟨L', c, e, by unfold jobBound; omega⟩
   | fund v up src k =>
     have hfin : finS (ts s) (some j) = ts s := by simp only [finS, hpc]
     rw [hfin] at hI
     rw [job_eta hpc] at hI
     obtain ⟨D, hD, hA⟩ := dsAgree_fund hcl hprep hI K
-    obtain ⟨L', c, e, hc⟩ := jobStepS_fund (κ := κ) (L := OrderMaintenance.Machine.State.setLocs (fun _ => 0) [] []) hres hpc hA h
+    obtain ⟨L', c, e, hc⟩ := jobStepS_fund (κ := κ) (L := Machine.State.setLocs (fun _ => 0) []
+      []) hres hpc hA h
     exact ⟨L', c, e, by unfold jobBound; omega⟩
 
 /-- The cost bound of a split start at Level M. -/
@@ -783,7 +970,8 @@ theorem splitAgree_top {κ : Caps} {s : Core} {A : Abs} {x : Nat} (hA : INV s A)
     (hres : s.resJob = none) (hxL : LiveC s x) (hprep : s.prep = none)
     (hrow : ∀ c, s.C.size ≤ c → ∀ j, (s.path.getX c).getX j = 0) (K : TopCaps κ s) :
     ∃ D, D ≤ splitBound ∧ SplitAgree κ s x D := by
-  obtain ⟨f1x, i1, hroom, hnd, hf1, hi1, htx, hlp, hgy, hgz, cPy, cNy, cPz, cNz, hT', hcl2, hlps, hlpl, hxs,
+  obtain ⟨f1x, i1, hroom, hnd, hf1, hi1, htx, hlp, hgy, hgz, cPy, cNy, cPz, cNz, hT', hcl2,
+    hlps, hlpl, hxs,
     hx0⟩ := ins_hyps hA hT hres hxL
   have H3 : 3 ≤ s.P.H := by
     obtain ⟨-, cl, ord, dr, n0, -, -, hI⟩ := hT
@@ -792,7 +980,8 @@ theorem splitAgree_top {κ : Caps} {s : Core} {A : Abs} {x : Nat} (hA : INV s A)
   obtain ⟨-, cl, ord, dr, n0, hL, hC, -⟩ := hT
   obtain ⟨hxn, hxp⟩ := CLok.links ⟨hL, hC⟩ ((hC x).mpr hxL)
   have hia : IAOK κ (ins0 s x) x s.C.size (s.C.size + 1) f1x i1 160 := {
-    room := hroom, nd := hnd, yx := by omega, f1 := hf1, idx := hi1, tx := htx, lp := hlp, gy := hgy, gz := hgz,
+    room := hroom, nd := hnd, yx := by
+      omega, f1 := hf1, idx := hi1, tx := htx, lp := hlp, gy := hgy, gz := hgz,
     zx := by omega, yz := by omega,
     npx := by simp [notPrep, ins0, linkChunkPair, push2, hprep]
     npy := by simp [notPrep, ins0, linkChunkPair, push2, hprep]
@@ -828,11 +1017,13 @@ theorem splitAgree_top {κ : Caps} {s : Core} {A : Abs} {x : Nat} (hA : INV s A)
     tB := fun T hT => ⟨(hT' T hT).2.1, (hT' T hT).2.2⟩
     lr := by have := K.rc; exact lt_of_lt_of_le hlps (by omega)
     ccap := by have := K.lc; exact le_trans (Nat.add_le_add_right hlpl 2) (by omega) }
-  refine ⟨_, ?_, splitAgree_ok hx0 hxs (by have := K.C; omega) (fun _ => hxp) (fun _ => hxn) hia⟩
+  refine ⟨_, ?_, splitAgree_ok hx0 hxs (by
+    have := K.C
+    omega) (fun _ => hxp) (fun _ => hxn) hia⟩
   unfold splitBound iaCost
   have e1 := Nat.mul_le_mul_right (1100 + 400 * 160) hcl2
   have e2 : (s.nodes.getX (s.lpar.getX x)).children.length ≤ 160 := hlpl
-  show 150 + (1200 + 60 * 160 + (s.cin.getX x).length * (1100 + 400 * 160) +
+  change 150 + (1200 + 60 * 160 + (s.cin.getX x).length * (1100 + 400 * 160) +
     220 * (s.nodes.getX (s.lpar.getX x)).children.length) ≤ _
   omega
 

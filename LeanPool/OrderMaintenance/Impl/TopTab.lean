@@ -266,6 +266,7 @@ def roomP : Proc where
 def rLo (tab : List (Nat × Nat)) (i : Nat) (before : Bool) : Nat :=
   if before then (if 0 < i then (tab[i - 1]?.getD (0, 0)).2 + 1 else 0) else (tab[i]?.getD (0,
     0)).2 + 1
+/-- The upper label boundary next to an insertion, using `2^β` beyond the final entry. -/
 def rHi (tab : List (Nat × Nat)) (i : Nat) (before : Bool) (β : Nat) : Nat :=
   if before then (tab[i]?.getD (0, 0)).2
   else (if i + 1 < tab.length then (tab[i + 1]?.getD (0, 0)).2 else 1 <<< β)

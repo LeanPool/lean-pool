@@ -79,6 +79,7 @@ theorem evalF_wrN_ok {κ : Caps} {s : Core} {L : Loc} {k : NF} {i e : Exp} {j w 
 
 /-! ### Stage 1: the two new nodes -/
 
+/-- Allocate the two drain targets at the source node's height. -/
 def newNodesS : Stm := cm{ v1 := new N; N[v1].height := h; v2 := new N; N[v2].height := h }
 
 theorem newNodesS_ok {κ : Caps} {t : Core} {L : Loc} {v : Nat} {side : List (Nat × Side)}
@@ -173,6 +174,7 @@ theorem fold_modify_size {f : Array Node → Nat → Array Node} (hf : ∀ ns T,
 def aroundStep (t : Core) (v : Nat) (ns : Array Node) (T : Nat) : Array Node :=
   ns.modify T (aroundF (sd1 t v) v t.nodes.size (t.nodes.size + 1) (sF t v) T)
 
+/-- The drain-start state after updating the first `j` enclosing tables. -/
 def sdJ (t : Core) (v j : Nat) : Core :=
   {
     sd1 t v with
@@ -187,6 +189,7 @@ theorem sd1_getX (t : Core) (v : Nat) {u : Nat} (hu : u < t.nodes.size) : (sd1 t
   simp only [sd1, getX_push',
     Array.size_push]; rw [ite_eq_right (by omega), ite_eq_right (by omega)]
 
+/-- Insert both drain targets around the source in one enclosing table. -/
 def insBody : Stm := cm{
   T := inTab[v][j].fst
   a ← roomP(T, v, 1)
@@ -194,6 +197,7 @@ def insBody : Stm := cm{
   call tableInsertP(T, v, v1, 1, a)
   call tableInsertP(T, v, v2, 0, b) }
 
+/-- Insert both drain targets into every table containing the source. -/
 def insS : Stm := cm{ m := len inTab[v]; for j < m do insBody }
 
 theorem nodup_getElem_notin_take {l : List Nat} (hnd : l.Nodup) {j : Nat} (hj : j < l.length) :
@@ -461,6 +465,7 @@ def entOK (t : Core) (v e : Nat) : Bool :=
 
 /-- `q := ` entry `e` is a drain entry on side `sd` (locals `v h e sd`). -/
 def selE : Exp := cme{ ((h = 1 || r < m) || N[e].first ≠ 0) && (f && x = sd) }
+/-- Decide whether a table entry belongs to the selected side of the drain. -/
 def selS : Stm := cm{
   r ← ‹findP .children›(v, e)
   m := len children[v]
@@ -561,6 +566,7 @@ theorem selS_ok {κ : Caps} {St t : Core} {L : Loc} {v e : Nat} {side : List (Na
 def selP (t : Core) (v : Nat) (side : List (Nat × Side)) (sd : Side) (e : Nat) : Bool :=
   entOK t v e && lookup side e == some sd
 
+/-- Filter a node's table entries by the requested drain side. -/
 def part (t : Core) (v : Nat) (side : List (Nat × Side)) (sd : Side) : List Nat :=
   ((t.nodes.getX v).table.map (·.1)).filter (selP t v side sd)
 
@@ -609,7 +615,9 @@ theorem ReadOK.put_table {St t : Core} {v w : Nat} {side : List (Nat × Side)} (
   exact ⟨by rw [hg v (Ne.symm hw)]; exact hR.tab, by rw [hg v (Ne.symm hw)]; exact hR.kids,
     by rw [hg v (Ne.symm hw)]; exact hR.side, fun u => by rw [hf]; exact hR.first u⟩
 
+/-- Count one table entry when it belongs to the selected drain side. -/
 def cntBody : Stm := cm{ e := table[v][j].fst; selS; if q then cnt := cnt + 1 }
+/-- Append a selected table entry with its evenly spaced target label. -/
 def bldBody : Stm := cm{
   e := table[v][j].fst; selS
   if q then { idx := idx + 1; append table[w] (e, idx * st) } }
@@ -1042,6 +1050,7 @@ theorem newTabS_ok {κ : Caps} {St t : Core} {L : Loc} {v w : Nat} {side : List 
   · intro r h1 h2 h3 h4 h5 h6 h7 h8 h9 h10 h11 h12 h13
     rw [hF3 r h4 h5 h3 h6 h7 h8 h9 h10 h11 h12 h13, hfr2 r h1 h2 h3]
 
+/-- Build the left and right target tables from their selected drain entries. -/
 def stage3S : Stm := cm{
   w := v1; sd := 0; newTabS
   w := v2; sd := 1; newTabS }
@@ -1163,9 +1172,11 @@ theorem stage3S_ok {κ : Caps} {t : Core} {L : Loc} {v : Nat} {side : List (Nat 
 
 /-! ### Stage 4: the entries learn their new tables -/
 
+/-- Record one newly built table in an entry's containing-table list. -/
 def atBody : Stm := cm{
   e := table[w][j].fst
   if h ≤ 1 then append cin[e] (w, 0) else append inTab[e] (w, 0) }
+/-- Record the new table membership of every entry in one drain target. -/
 def atS : Stm := cm{ nt := len table[w]; for j < nt do atBody }
 
 theorem addTableS_table (h w e : Nat) (s : Core) (u : Nat) :
@@ -1359,6 +1370,7 @@ theorem sd4_inTables {t : Core} {v e : Nat} {side : List (Nat × Side)} (he : e 
 theorem sd4_cin (t : Core) (v : Nat) (side : List (Nat × Side)) : (phiS v side (sd4 t v
   side)).cin = t.cin := rfl
 
+/-- Register the containing-table memberships of both drain targets. -/
 def stage4S : Stm := cm{ w := v1; atS; w := v2; atS }
 
 theorem sd4_table_N (t : Core) (v : Nat) (side : List (Nat × Side)) (hv : v < t.nodes.size) :
@@ -1447,8 +1459,11 @@ theorem stage4S_ok {κ : Caps} {t : Core} {L : Loc} {v : Nat} {side : List (Nat 
 
 /-! ### Stages 5, 6: the children of `v1`, `v2` -/
 
+/-- Test whether a live child has the currently selected drain side. -/
 def chSel : Exp := cme{ f && x = sd }
+/-- Set an entry's live parent, using the chunk-parent array at height one. -/
 def setParS : Stm := cm{ if h = 1 then lpar[e] := u else N[e].livePar := u }
+/-- Transfer one selected child, repair its live parent, and accumulate its weight. -/
 def chBody : Stm := cm{
   e := children[v][j].fst
   (f, x) ← ‹lookupP .side›(v, e)
@@ -1975,6 +1990,7 @@ theorem sd10_eq (t : Core) (v : Nat) (side : List (Nat × Side)) :
     sd10 t v side = chRes (sH t v) (t.nodes.size + 1) v (t.nodes.getX v).livePar
       (((sCh2 t v side).map (sWt t v)).sum) (sCh2 t v side) (sd8 t v side) := rfl
 
+/-- Transfer and weigh the children assigned to each drain target. -/
 def stage56S : Stm := cm{
   u := v1; sd := 0; chS
   u := v2; sd := 1; chS }
@@ -2114,6 +2130,7 @@ theorem findIdx_pair0' (l : List Nat) (x : Nat) :
     (l.map fun e => (e, 0)).findIdx (·.1 == x) = l.findIdx (· == x) := by
   rw [List.findIdx_map]; rfl
 
+/-- Replace the source node by its two targets in the live parent's child list. -/
 def stage7S : Stm := cm{
   p := N[v].livePar
   r ← ‹findP .children›(p, v)
@@ -2274,6 +2291,7 @@ theorem stage7S_ok {κ : Caps} {t : Core} {L : Loc} {v : Nat} {side : List (Nat 
 
 /-! ### Stage 8: `v` becomes a ghost -/
 
+/-- Turn the source into a draining ghost and clear its live child list. -/
 def stage8S : Stm := cm{
   N[v].draining := 1; N[v].t1 := v1; N[v].t2 := v2; N[v].livePar := 0
   clear children[v] }
@@ -2353,7 +2371,9 @@ theorem stage8S_ok {κ : Caps} {t : Core} {L : Loc} {v : Nat} {side : List (Nat 
 
 /-! ### `startDrain` -/
 
+/-- Detect a nonleaf cut that leaves no child on its left side. -/
 def sdCond : Exp := cme{ 1 < h && k = 0 }
+/-- Construct a drain's side assignment, targets, tables, links and ghost source. -/
 def sdMain : Stm := cm{
   if k < nk then b := children[v][k].fst else b := 0
   drainSideS; newNodesS; insS; stage3S; stage4S; stage56S; stage7S; stage8S }

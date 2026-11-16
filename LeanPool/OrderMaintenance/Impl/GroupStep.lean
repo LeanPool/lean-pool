@@ -32,15 +32,18 @@ local notation "upd" => Machine.State.upd
 
 /-! ### `removeGroup` -/
 
+/-- Procedure allocating and linking a group's two overflow siblings. -/
 def startGroupSplitP : Proc := { name := "startGroupSplit", params := ["g"], rets := [], body :=
   startGroupSplitS }
 
 /-- Quiet the overflow sibling `x` of `g` (flag `q`). -/
 def quietE (x : Reg) : Exp := cme{ G[‹x›].st = 1 && G[‹x›].src = g }
+/-- Quiet a matching overflow sibling and record whether its state changed. -/
 def quietS (x q : Reg) : Stm :=
   cm{ ‹q› := 0; if ‹quietE x› then { G[‹x›].st := 0; G[‹x›].src := 0; ‹q› := 1 } }
 /-- Split the quieted sibling `x` if it is full. -/
 def splitIfE (x q : Reg) : Exp := cme{ ‹q› && P.G ≤ G[‹x›].size }
+/-- Start a split when a newly quieted sibling meets the group-size threshold. -/
 def splitIfS (x q : Reg) : Stm := cm{ if ‹splitIfE x q› then call startGroupSplitP(‹x›) }
 
 /-- Unlink and free `g`, quiet its overflow siblings, and split full siblings. -/
@@ -189,12 +192,15 @@ theorem removeGroupS_agree (κ : Caps) (s : Core) (L : Loc) {p : Nat} (hg : L "g
 
 /-- The centre label `1 <<< (elementBits - 1)`. -/
 def centreE : Exp := cme{ 1 <<< (P.Be ∸ 1) }
+/-- Choose the append label for an element moving to the left overflow group. -/
 def moveLabL : Stm := cm{
   if G[gl].first = 0 then lab := ‹centreE›
   else { a := E[G[gl].last].lab; D := P.De; B := P.Be; afterS } }
+/-- Choose the prepend label for an element moving to the right overflow group. -/
 def moveLabR : Stm := cm{
   if G[gr].first = 0 then lab := ‹centreE›
   else { b := E[G[gr].first].lab; D := P.De; beforeS } }
+/-- Procedure moving an endpoint element between groups with a supplied label. -/
 def moveP (first : Bool) : Proc := {
   name := "move"
   params := ["g", "d", "e", "lab"]
@@ -406,6 +412,7 @@ theorem moveElemS_right (κ : Caps) (s : Core) (L : Loc) {p : Nat} (hg : L "g" =
 
 /-! ### `groupSplitStep` -/
 
+/-- Test whether a group-split move stays inside its source chunk. -/
 def gssChkE : Exp := cme{ G[d].chk = G[g].chk }
 /-- After a move: the sizes, and (unreachable under invariant F) a move across chunks. -/
 def gssTail : Stm := cm{
@@ -548,8 +555,10 @@ theorem groupSplitStepS_remove (κ : Caps) (s : Core) (L : Loc) {p : Nat} (hg : 
 
 /-! ### The drive loop -/
 
+/-- Procedure moving one element of a group split and reporting progress. -/
 def groupSplitStepP : Proc := { name := "groupSplitStep", params := ["g"], rets := ["ok"], body
   := groupSplitStepS }
+/-- Perform one group-split step unless an earlier iteration removed its source. -/
 def driveBody : Stm := cm{ if dn = 0 then { ok ← groupSplitStepP(g); if ok = 0 then dn := 1 } }
 /-- `driveGroupFrom g`: up to `groupBudget` split steps, stopping once `g` is removed. -/
 def driveGroupFromS : Stm := cm{ dn := 0; for jj < P.KG do driveBody }
@@ -681,6 +690,7 @@ theorem driveGroupFromS_agree (κ : Caps) (s : Core) (L : Loc) {p : Nat} (hg : L
 
 /-! ### `driveGroup` -/
 
+/-- Procedure performing at most the configured group-split budget. -/
 def driveP : Proc := { name := "driveGroupFrom", params := ["g"], rets := [], body :=
   driveGroupFromS }
 /-- `driveGroup g`: drive the split `g` belongs to, if any (local `g`). -/

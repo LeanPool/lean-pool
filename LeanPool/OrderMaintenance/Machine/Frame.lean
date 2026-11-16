@@ -71,7 +71,8 @@ theorem runFor_frame {f : State → Out} {x : Reg} {b : Arr} (hf : ∀ s, Same b
     simp only [runFor, Out.bind]
     have h1 := hf (s.setLoc x k)
     cases hs : (f (s.setLoc x k)).status <;> simp only
-    · exact (show Same b s (s.setLoc x k) from ⟨rfl, rfl⟩).trans (h1.trans (runFor_frame hf n (k + 1) _))
+    · exact (show Same b s (s.setLoc x k) from ⟨rfl, rfl⟩).trans (h1.trans (runFor_frame hf n
+      (k + 1) _))
     · exact (show Same b s (s.setLoc x k) from ⟨rfl, rfl⟩).trans h1
     · exact (show Same b s (s.setLoc x k) from ⟨rfl, rfl⟩).trans h1
 

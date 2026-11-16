@@ -36,17 +36,23 @@ open OrderMaintenance.Model OrderMaintenance.Proof
 section consts
 variable (P : Params)
 
+/-- Weight threshold for starting a drain at the given height. -/
 def Wd (h : Nat) : Nat := 2 * P.a ^ h
+/-- Number of drain steps allowed by the height-dependent sweep budget. -/
 def Kd (h : Nat) : Nat := (Wd P h + 2) / (P.s - 2) + 1
+/-- Potential allowance for insertions during a node drain. -/
 def Pid (h : Nat) : Nat := Wd P h + 2 + 2 * Kd P h
+/-- Upper weight threshold for a live node at the given height. -/
 def taud : Nat → Nat
   | 0 => 0
   | 1 => P.a + 1
   | h + 2 => P.a ^ (h + 2) + 1 + Pid P (h + 1)
+/-- Lower weight threshold for a released drain target. -/
 def lamd : Nat → Nat
   | 0 => 0
   | 1 => P.a
   | h + 2 => P.a ^ (h + 2) + 1 - Pid P (h + 1)
+/-- Weight slack freed by completing a drain at the given height. -/
 def gamd (h : Nat) : Nat := Wd P h + 1 - taud P h
 
 /-- Entries of a fresh table of height `h`: children plus the ghosts between them
@@ -166,6 +172,7 @@ def ew (s : TS) (cl : List Nat) (v : Nat) : Nat :=
 /-- Funding jobs of ghost `v` so far. -/
 def fundOf (s : TS) (cl : List Nat) (v : Nat) : Nat := (ew s cl v - (nd s v).weight) / 2
 
+/-- Weight and progress inequalities ensuring scheduled drains finish in time. -/
 structure Timing (s : TS) (cl : List Nat) (oj : Option Job) : Prop where
   /-- (F1) stored weights. -/
   wts : ∀ v, liveN s v → (nd s v).weight + (if v ∈ pend s oj then 2 else 0) = tw s cl v
@@ -204,6 +211,7 @@ def growth (s : TS) (cl : List Nat) (X : Nat) : Nat :=
 def oldLive (s : TS) (X : Nat) : Nat :=
   ((order s X).filter fun e => decide (liveN s e) && decide (e < X)).length
 
+/-- Label-gap potential sufficient for every insertion before a table is replaced. -/
 structure Room (s : TS) (cl : List Nat) (dr n0 : Nat → Nat) : Prop where
   gaps : ∀ X, isN s X → GapsGe s.P.beta (gapB s.P.beta (n0 X) (dr X)) (labs s X)
   n0le : ∀ X, isN s X → n0 X ≤ n0max s.P (ht s X)
@@ -245,6 +253,7 @@ def JobAt (s : TS) (j : Job) : Prop :=
   | .fund v up src k => liveN s v ∧ v = anc s j.y (ht s v) ∧ up = anc s j.y (ht s v + 1) ∧
       ghostN s src ∧ srcOf s v = src ∧ k ≤ s.P.s
 
+/-- Consistency of the suspended reservation job with its copied paths and weight walk. -/
 structure JobOK (s : TS) (cl : List Nat) (j : Job) : Prop where
   pos : ∃ A B, cl = A ++ j.y :: j.x :: j.z :: B
   at_ : JobAt s j

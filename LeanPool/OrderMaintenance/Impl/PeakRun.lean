@@ -34,7 +34,8 @@ The existing theorems are unchanged. Nothing here is used by Theorems A and B.
 
 namespace OrderMaintenance.Impl
 
-open OrderMaintenance.Model OrderMaintenance.Proof OrderMaintenance.Proof.Top OrderMaintenance.Proof.Word
+open OrderMaintenance.Model OrderMaintenance.Proof OrderMaintenance.Proof.Top
+  OrderMaintenance.Proof.Word
 open OrderMaintenance.Machine (Reg Arr State Out exec Stmt Same Expr BinOp UnOp wp wpB dpk)
 
 /-! ### The clean bound -/
@@ -44,35 +45,49 @@ theorem clean_le (i : Nat) :
     2 ^ (128 * Nat.log2 (i + 1) + 1285) + 2 * (i + 1) ≤ 2 ^ (128 * Nat.log2 (i + 1) + 1286) := by
   have h1 : i + 1 < 2 ^ (Nat.log2 (i + 1) + 1) := Nat.lt_log2_self
   have h2 := pow2_mono (show Nat.log2 (i + 1) + 1 ≤ 128 * Nat.log2 (i + 1) + 1284 by omega)
-  have e1 : 2 ^ (128 * Nat.log2 (i + 1) + 1285) = 2 ^ (128 * Nat.log2 (i + 1) + 1284) * 2 := pow_succ _ _
-  have e2 : 2 ^ (128 * Nat.log2 (i + 1) + 1286) = 2 ^ (128 * Nat.log2 (i + 1) + 1285) * 2 := pow_succ _ _
+  have e1 : 2 ^ (128 * Nat.log2 (i + 1) + 1285) = 2 ^ (128 * Nat.log2 (i + 1) + 1284) * 2 :=
+    pow_succ _ _
+  have e2 : 2 ^ (128 * Nat.log2 (i + 1) + 1286) = 2 ^ (128 * Nat.log2 (i + 1) + 1285) * 2 :=
+    pow_succ _ _
   omega
 
 /-- The bound of operation `i` is monotone in `i`. -/
 theorem clean_mono {i t : Nat} (h : i ≤ t) :
     2 ^ (128 * Nat.log2 (i + 1) + 1286) ≤ 2 ^ (128 * Nat.log2 (t + 1) + 1286) :=
-  pow2_mono (by have := log2_mono h; omega)
+  pow2_mono (by
+    have := log2_mono h
+    omega)
 
 /-- **Theorem W at Level M, clean form.** For `4 ≤ K_B < 2^512` in local `kb` and every valid
 operation sequence: initialization computes no value at or above `2^1029`, and operation `i`, run
 from the machine state before it, computes no value at or above `2^(128·⌊log₂(i + 1)⌋ + 1286)`. -/
-theorem theoremW_M_clean {m₀ : State} {KB : Nat} (hkb : m₀.loc "kb" = KB) (h4 : 4 ≤ KB) (h512 : KB < 2 ^ 512)
-    (ops : List OrderMaintenance.Spec.Op) (hv : OrderMaintenance.Spec.Valid OrderMaintenance.Spec.State.empty ops) :
+theorem theoremW_M_clean {m₀ : State} {KB : Nat} (hkb : m₀.loc "kb" = KB) (h4 : 4 ≤ KB) (h512 :
+  KB < 2 ^ 512)
+    (ops : List OrderMaintenance.Spec.Op) (hv : OrderMaintenance.Spec.Valid
+      OrderMaintenance.Spec.State.empty ops) :
     dpk initWS m₀ < 2 ^ 1029 ∧
     ∀ i (hi : i < ops.length),
-      dpk (opS ops[i]) (runSt (exec initWS m₀).st (ops.take i)) < 2 ^ (128 * Nat.log2 (i + 1) + 1286) := by
+      dpk (opS ops[i]) (runSt (exec initWS m₀).st (ops.take i)) < 2 ^ (128 * Nat.log2 (i + 1) +
+        1286) := by
   obtain ⟨hinit, hops⟩ := theoremW_M hkb h4 h512 ops hv
   exact ⟨hinit, fun i hi => lt_of_lt_of_le (hops i hi) (clean_le i)⟩
 
 /-- **Theorem W for a run of `t` operations.** Initialization and every operation of a valid
 sequence of `t = ops.length` operations compute no value at or above
 `2^(128·⌊log₂(t + 1)⌋ + 1286)`; so neither does the whole run (its peak from a reset peak). -/
-theorem theoremW_M_run {m₀ : State} {KB : Nat} (hkb : m₀.loc "kb" = KB) (h4 : 4 ≤ KB) (h512 : KB < 2 ^ 512)
-    (ops : List OrderMaintenance.Spec.Op) (hv : OrderMaintenance.Spec.Valid OrderMaintenance.Spec.State.empty ops) :
+theorem theoremW_M_run {m₀ : State} {KB : Nat} (hkb : m₀.loc "kb" = KB) (h4 : 4 ≤ KB) (h512 : KB
+  < 2 ^ 512)
+    (ops : List OrderMaintenance.Spec.Op) (hv : OrderMaintenance.Spec.Valid
+      OrderMaintenance.Spec.State.empty ops) :
     dpk initWS m₀ < 2 ^ (128 * Nat.log2 (ops.length + 1) + 1286) ∧
     (∀ i (hi : i < ops.length),
-      dpk (opS ops[i]) (runSt (exec initWS m₀).st (ops.take i)) < 2 ^ (128 * Nat.log2 (ops.length + 1) + 1286)) ∧
-    (runSt (exec initWS { m₀ with peak := 0 }).st ops).peak < 2 ^ (128 * Nat.log2 (ops.length + 1) + 1286) := by
+      dpk (opS ops[i]) (runSt (exec initWS m₀).st (ops.take i)) < 2 ^ (128 * Nat.log2
+        (ops.length + 1) + 1286)) ∧
+    (runSt (exec initWS {
+      m₀ with
+      peak := 0
+    }).st ops).peak < 2 ^ (128 * Nat.log2 (ops.length +
+      1) + 1286) := by
   have run : ∀ m : State, m.loc "kb" = KB →
       dpk initWS m < 2 ^ (128 * Nat.log2 (ops.length + 1) + 1286) ∧
       ∀ i (hi : i < ops.length), dpk (opS ops[i]) (runSt (exec initWS m).st (ops.take i)) <
@@ -82,11 +97,24 @@ theorem theoremW_M_run {m₀ : State} {KB : Nat} (hkb : m₀.loc "kb" = KB) (h4 
     exact lt_of_lt_of_le (hops i hi) (clean_mono (le_of_lt hi))
   obtain ⟨hinit, hops⟩ := run m₀ hkb
   refine ⟨hinit, hops, ?_⟩
-  obtain ⟨hinit', hops'⟩ := run { m₀ with peak := 0 } hkb
+  obtain ⟨hinit', hops'⟩ := run {
+    m₀ with
+    peak := 0
+  } hkb
   have hr := runSt_peak (B := 2 ^ (128 * Nat.log2 (ops.length + 1) + 1286) - 1) ops
-    (exec initWS { m₀ with peak := 0 }).st (fun i hi => by have := hops' i hi; omega)
-  have e := OrderMaintenance.Machine.peak_exec initWS { m₀ with peak := 0 }
-  have h0 : (exec initWS { m₀ with peak := 0 }).st.peak < 2 ^ (128 * Nat.log2 (ops.length + 1) + 1286) := by
+    (exec initWS {
+      m₀ with
+      peak := 0
+    }).st (fun i hi => by have := hops' i hi; omega)
+  have e := Machine.peak_exec initWS {
+    m₀ with
+    peak := 0
+  }
+  have h0 : (exec initWS {
+    m₀ with
+    peak := 0
+  }).st.peak < 2 ^ (128 * Nat.log2 (ops.length + 1) +
+    1286) := by
     rw [e]; exact max_lt (Nat.two_pow_pos _) hinit'
   have hp := Nat.two_pow_pos (128 * Nat.log2 (ops.length + 1) + 1286)
   omega
@@ -95,13 +123,15 @@ theorem theoremW_M_run {m₀ : State} {KB : Nat} (hkb : m₀.loc "kb" = KB) (h4 
 sequence of `t` operations, the machine's recorded peak is at most the initial peak or
 `2^(128·⌊log₂(t + 1)⌋ + 1286) − 1`: every value computed is below `2^(128·⌊log₂(t + 1)⌋ + 1286)`. -/
 theorem theoremW_M_peak_clean {m₀ : State} {KB : Nat} (hkb : m₀.loc "kb" = KB) (h4 : 4 ≤ KB)
-    (h512 : KB < 2 ^ 512) (ops : List OrderMaintenance.Spec.Op) (hv : OrderMaintenance.Spec.Valid OrderMaintenance.Spec.State.empty ops) :
-    (runSt (exec initWS m₀).st ops).peak ≤ max m₀.peak (2 ^ (128 * Nat.log2 (ops.length + 1) + 1286) - 1) := by
+    (h512 : KB < 2 ^ 512) (ops : List OrderMaintenance.Spec.Op) (hv :
+      OrderMaintenance.Spec.Valid OrderMaintenance.Spec.State.empty ops) :
+    (runSt (exec initWS m₀).st ops).peak ≤ max m₀.peak (2 ^ (128 * Nat.log2 (ops.length + 1) +
+      1286) - 1) := by
   obtain ⟨hinit, hops, -⟩ := theoremW_M_run hkb h4 h512 ops hv
   have hr := runSt_peak (B := 2 ^ (128 * Nat.log2 (ops.length + 1) + 1286) - 1) ops
     (exec initWS m₀).st (fun i hi => by have := hops i hi; omega)
   refine le_trans hr (max_le ?_ (le_max_right _ _))
-  rw [OrderMaintenance.Machine.peak_exec]
+  rw [Machine.peak_exec]
   exact max_le (le_max_left _ _) (le_trans (by omega) (le_max_right _ _))
 
 /-! ### One runner for answers, costs and peaks -/
@@ -109,12 +139,14 @@ theorem theoremW_M_peak_clean {m₀ : State} {KB : Nat} (hkb : m₀.loc "kb" = K
 /-- **The machine run with peaks**: `runM`, which returns the answers and the cost of each
 operation, together with the largest value each operation's machine code computes (`dpk`: the
 peak of its run with the peak reset to 0). `none` if an operation fails or reaches an error. -/
-def runMW : State → List OrderMaintenance.Spec.Op → Option (List OrderMaintenance.Spec.Ans × List Nat × List Nat)
+def runMW : State → List OrderMaintenance.Spec.Op → Option (List OrderMaintenance.Spec.Ans ×
+  List Nat × List Nat)
   | _, [] => some ([], [], [])
   | m, op :: ops =>
     if (exec (opS op) m).status = .ok then
       (runMW (exec (opS op) m).st ops).map fun r =>
-        (ansOf op (exec (opS op) m).st :: r.1, (exec (opS op) m).cost :: r.2.1, dpk (opS op) m :: r.2.2)
+        (ansOf op (exec (opS op) m).st :: r.1, (exec (opS op) m).cost :: r.2.1, dpk (opS op) m
+          :: r.2.2)
     else none
 
 /-- The peaks of the operations along the run from `m` (the recursion of `runSt`). -/
@@ -132,19 +164,24 @@ theorem runMW_eq : ∀ (ops : List OrderMaintenance.Spec.Op) (m : State),
     · rw [runMW_eq ops]; cases runM (exec (opS op) m).st ops <;> rfl
     · rfl
 
-theorem pks_length : ∀ (ops : List OrderMaintenance.Spec.Op) (m : State), (pks m ops).length = ops.length
+theorem pks_length : ∀ (ops : List OrderMaintenance.Spec.Op) (m : State), (pks m ops).length =
+  ops.length
   | [], _ => rfl
   | _ :: ops, _ => by simp only [pks, List.length_cons, pks_length ops]
 
 /-- **The peaks of `runMW` are those of `runSt`'s states**: entry `i` is the peak of operation `i`
 run from `runSt m (ops.take i)`. -/
-theorem pks_get : ∀ (ops : List OrderMaintenance.Spec.Op) (m : State) (i : Nat) (hi : i < ops.length),
-    (pks m ops)[i]'(by rw [pks_length]; exact hi) = dpk (opS ops[i]) (runSt m (ops.take i))
+theorem pks_get : ∀ (ops : List OrderMaintenance.Spec.Op) (m : State) (i : Nat) (hi : i <
+  ops.length),
+    (pks m ops)[i]'(by
+      rw [pks_length]
+      exact hi) = dpk (opS ops[i]) (runSt m (ops.take i))
   | [], _, _, hi => by simp at hi
   | _ :: _, _, 0, _ => rfl
   | _ :: ops, m, i + 1, hi => pks_get ops _ i (by simpa using hi)
 
-theorem runM_length : ∀ (ops : List OrderMaintenance.Spec.Op) (m : State) {as : List OrderMaintenance.Spec.Ans} {cs : List Nat},
+theorem runM_length : ∀ (ops : List OrderMaintenance.Spec.Op) (m : State) {as : List
+  OrderMaintenance.Spec.Ans} {cs : List Nat},
     runM m ops = some (as, cs) → cs.length = ops.length
   | [], _, _, _, h => by simp only [runM, Option.some.injEq, Prod.mk.injEq] at h; rw [← h.2]; rfl
   | op :: ops, m, as, cs, h => by
@@ -163,16 +200,20 @@ every valid operation sequence: initialization ends normally within `initB` step
 value at or above `2^1029`; the run `runMW` of the operations returns exactly the specification's
 answers, every operation takes at most `opB K_B` steps, and operation `i` computes no value at or
 above `2^(128·⌊log₂(i + 1)⌋ + 1286)`. -/
-theorem theoremABW_MW {m₀ : State} {KB : Nat} (hkb : m₀.loc "kb" = KB) (h4 : 4 ≤ KB) (h512 : KB < 2 ^ 512)
-    (ops : List OrderMaintenance.Spec.Op) (hv : OrderMaintenance.Spec.Valid OrderMaintenance.Spec.State.empty ops) :
+theorem theoremABW_MW {m₀ : State} {KB : Nat} (hkb : m₀.loc "kb" = KB) (h4 : 4 ≤ KB) (h512 : KB
+  < 2 ^ 512)
+    (ops : List OrderMaintenance.Spec.Op) (hv : OrderMaintenance.Spec.Valid
+      OrderMaintenance.Spec.State.empty ops) :
     (exec initWS m₀).status = .ok ∧ (exec initWS m₀).cost ≤ initB ∧ dpk initWS m₀ < 2 ^ 1029 ∧
-    ∃ cs ps, runMW (exec initWS m₀).st ops = some (OrderMaintenance.Spec.run OrderMaintenance.Spec.State.empty ops, cs, ps) ∧
+    ∃ cs ps, runMW (exec initWS m₀).st ops = some (OrderMaintenance.Spec.run
+      OrderMaintenance.Spec.State.empty ops, cs, ps) ∧
       cs.length = ops.length ∧ ps.length = ops.length ∧
       (∀ c ∈ cs, c ≤ opB KB) ∧
       ∀ i (hi : i < ps.length), ps[i] < 2 ^ (128 * Nat.log2 (i + 1) + 1286) := by
   obtain ⟨hst, hk, cs, hrun, hcs⟩ := theoremAB_M hkb h4 ops hv
   obtain ⟨hinit, hops⟩ := theoremW_M_clean hkb h4 h512 ops hv
-  refine ⟨hst, hk, hinit, cs, pks (exec initWS m₀).st ops, ?_, runM_length ops _ hrun, pks_length _ _, hcs,
+  refine ⟨hst, hk, hinit, cs, pks (exec initWS m₀).st ops, ?_, runM_length ops _ hrun,
+    pks_length _ _, hcs,
     fun i hi => ?_⟩
   · rw [runMW_eq, hrun]; rfl
   · have hi' : i < ops.length := by rw [pks_length] at hi; exact hi

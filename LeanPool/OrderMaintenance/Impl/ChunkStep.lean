@@ -39,7 +39,9 @@ theorem pqEnterIfAbove_noop {σ : Core} {c : Nat} (h : (σ.C.getX c).size ≤ σ
   simp [
     Nat.not_lt.mpr h]
 
+/-- Test whether a chunk is an overflow sibling of the source in local `x`. -/
 def cquietE (y : Reg) : Exp := cme{ C[‹y›].st = 1 && C[‹y›].src = x }
+/-- Release an overflow sibling to the quiet state and reconsider its queue entry. -/
 def cquietS (y : Reg) : Stm :=
   cm{ if ‹cquietE y› then { C[‹y›].st := 0; C[‹y›].src := 0; call pqEnterIfAboveP(‹y›) } }
 
@@ -157,7 +159,9 @@ theorem removeChunkS_agree (κ : Caps) (s : Core) (L : Loc) {x : Nat} (hx : L "x
 /-- The unit held in locals: `[u0]`, or `[u0, u1, u2]` when `uk = 3`. -/
 def unitOf (L : Loc) : List Nat := if L "uk" = 1 then [L "u0"] else [L "u0", L "u1", L "u2"]
 
+/-- Test whether the left candidate is the source group's left overflow sibling. -/
 def unitLE : Exp := cme{ lf && G[sr].l = g0 }
+/-- Test whether the right candidate is the source group's right overflow sibling. -/
 def unitRE : Exp := cme{ !lf && G[sr].r = g0 }
 /-- `unitCand x (lf = 1)` into `uk, u0, u1, u2` (locals `x lf`). -/
 def unitS : Stm := cm{
@@ -372,6 +376,7 @@ theorem pushFrontLabs_zero {c D : Nat} {nxt : Option Nat} {s s' : Core} {labs : 
 /-- The labels held in locals: `[l0]`, or `[l0, l1, l2]` when `uk = 3`. -/
 def labsOf (L : Loc) : List Nat := if L "uk" = 1 then [L "l0"] else [L "l0", L "l1", L "l2"]
 
+/-- The central group label at the configured group-label width. -/
 def centreG : Exp := cme{ 1 <<< (P.Bg ∸ 1) }
 
 theorem centreG_ev {κ : Caps} {S0 : Core} {L : Loc} : centreG.ev κ S0 L = some (1 <<<
@@ -620,6 +625,7 @@ theorem labRS_ok {κ : Caps} {s : Core} {L : Loc} {y k : Nat} {labs : List Nat} 
 
 /-- The moved groups join chunk `y` with their labels. -/
 def mgPair (xg xl : Reg) : Stm := cm{ G[‹xg›].chk := y; G[‹xg›].lab := ‹xl› }
+/-- Update chunk indices and labels for the one or three groups in a moving unit. -/
 def mgGS : Stm := cm{
   ‹mgPair "u0" "l0"›; if uk = 3 then { ‹mgPair "u1" "l1"›; ‹mgPair "u2" "l2"› } }
 
@@ -631,6 +637,7 @@ def moveGs (y : Nat) (u labs : List Nat) (A : Array Group) : Array Group :=
     lab := p.2
   }) A
 
+/-- Change a group's containing chunk and order label. -/
 def chkLabF (y l : Nat) (G : Group) : Group := {
   G with
   chk := y
@@ -703,9 +710,12 @@ theorem mgGS_ok {κ : Caps} {S0 : Core} {L : Loc} {y : Nat} (hy : L "y" = y) (hk
     exact ⟨_, evalF_seq_ok2 e1 (evalF_ite_t hc one_ne_zero (evalF_seq_ok2 e2 e3)), by simp
       [Exp.cost]⟩
 
+/-- Select the last group of a moving unit, according to whether it has one or three groups. -/
 def ulS : Stm := cm{ if uk = 1 then ul := u0 else ul := u2 }
+/-- Remove the moving prefix from the source chunk's endpoint registers. -/
 def mgLx : Stm := cm{
   if C[x].last = ul then { C[x].first := 0; C[x].last := 0 } else C[x].first := G[ul].next }
+/-- Append the moving prefix to the destination chunk's endpoints. -/
 def mgLy : Stm := cm{ if C[y].first = 0 then C[y].first := u0; C[y].last := ul }
 /-- `moveGroupsLeft x y unit labels` (locals `x y uk u0 u1 u2 l0 l1 l2`). -/
 def mgLS : Stm := ulS;; mgLx;; mgLy;; mgGS
@@ -870,8 +880,10 @@ theorem mgLS_ok {κ : Caps} {s : Core} {L : Loc} {x y : Nat} (hx : L "x" = x) (h
   rw [hfin] at e4
   refine ⟨L1, _, evalF_seq_ok2 e1 (evalF_seq_ok2 e2 (evalF_seq_ok2 e3 e4)), by omega, h1⟩
 
+/-- Remove the moving suffix from the source chunk's endpoints. -/
 def mgRx : Stm := cm{
   if C[x].first = u0 then { C[x].first := 0; C[x].last := 0 } else C[x].last := G[u0].prev }
+/-- Prepend the moving suffix to the destination chunk's endpoints. -/
 def mgRy : Stm := cm{ if C[y].first = 0 then C[y].last := ul; C[y].first := u0 }
 /-- `moveGroupsRight x y unit labels` (locals `x y uk u0 u1 u2 l0 l1 l2`). -/
 def mgRS : Stm := ulS;; mgRx;; mgRy;; mgGS
@@ -1035,6 +1047,7 @@ theorem mgRS_ok {κ : Caps} {s : Core} {L : Loc} {x y : Nat} (hx : L "x" = x) (h
 
 /-- `moveSizes x y unit` (locals `x y uk u0 u1 u2`). -/
 def msMv : Stm := cm{ mv := G[u0].size; if uk = 3 then mv := mv + G[u1].size + G[u2].size }
+/-- Transfer the moving unit's element count between its source and destination chunks. -/
 def msS : Stm := cm{ msMv; C[x].size := C[x].size ∸ mv; C[y].size := C[y].size + mv }
 
 theorem msS_ok {κ : Caps} {s : Core} {L : Loc} {x y : Nat} (hx : L "x" = x) (hy : L "y" = y)
@@ -1113,9 +1126,13 @@ theorem msS_ok {κ : Caps} {s : Core} {L : Loc} {x y : Nat} (hx : L "x" = x) (hy
 
 /-! ### `chunkSplitStep` -/
 
+/-- Choose the lighter overflow sibling, breaking equal-size ties to the left. -/
 def cssDirE : Exp := cme{ C[C[x].l].size ≤ C[C[x].r].size }
+/-- Label and move a unit to the left overflow sibling. -/
 def cssL : Stm := cm{ y := C[x].l; labLS; mgLS }
+/-- Label and move a unit to the right overflow sibling. -/
 def cssR : Stm := cm{ y := C[x].r; labRS; mgRS }
+/-- Choose a unit and destination, move it, and update the two chunk sizes. -/
 def cssMove : Stm := cm{ lf := ‹cssDirE›; unitS; if lf then cssL else cssR; msS }
 /-- Move one unit to the lighter sibling, or remove an empty chunk, returning `ok`. -/
 def chunkSplitStepS : Stm := cm{
@@ -1351,8 +1368,10 @@ theorem chunkSplitStepS_remove (κ : Caps) (s : Core) (L : Loc) {x : Nat} (hx : 
 
 /-! ### The drive loop -/
 
+/-- Procedure moving one chunk-split unit and reporting whether work remains. -/
 def chunkSplitStepP : Proc := { name := "chunkSplitStep", params := ["x"], rets := ["ok"], body
   := chunkSplitStepS }
+/-- Perform one chunk-split step unless an earlier iteration finished the split. -/
 def cdriveBody : Stm := cm{ if dn = 0 then { ok ← chunkSplitStepP(x); if ok = 0 then dn := 1 } }
 /-- `driveChunkFrom g`: up to `chunkBudget` split steps, stopping once `g` is removed. -/
 def driveChunkFromS : Stm := cm{ dn := 0; for jj < P.KC do cdriveBody }
@@ -1485,6 +1504,7 @@ theorem driveChunkFromS_agree (κ : Caps) (s : Core) (L : Loc) {p : Nat} (hg : L
 
 /-! ### `driveChunk` -/
 
+/-- Procedure performing at most the configured chunk-split budget. -/
 def cdriveP : Proc := { name := "driveChunkFrom", params := ["x"], rets := [], body :=
   driveChunkFromS }
 /-- `driveChunk g`: drive the split `g` belongs to, if any (local `g`). -/

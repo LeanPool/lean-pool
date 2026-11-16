@@ -160,6 +160,7 @@ theorem insertElem_agree (κ : Caps) (σ : Core) (L : Loc) {x hh : Nat} (hx : L 
           ite_eq_right_iff, one_ne_zero, imp_false, not_le, hc2, Res.ok.injEq, true_and,
           and_self, and_true, ↓existsAndEq, Nat.reduceLeDiff, exists_eq_left', hl]
 
+/-- Procedure marking an element dead without unlinking it. -/
 def markDeadP : Proc where
   name := "markDead"
   params := ["x"]
@@ -184,6 +185,7 @@ def keyS (e t g l : Reg) : Stm := cm{
   ‹t› := C[G[‹g›].chk].tag
   ‹g› := G[‹g›].lab }
 
+/-- Procedure comparing the lexicographic order labels of two element indices. -/
 def orderP : Proc where
   name := "order"
   params := ["x", "y"]

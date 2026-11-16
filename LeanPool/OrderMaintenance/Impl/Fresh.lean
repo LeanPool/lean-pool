@@ -27,27 +27,42 @@ the parameters, computes the capacities into locals, and allocates every other a
 namespace OrderMaintenance.Impl
 
 open OrderMaintenance.Model
-open OrderMaintenance.Machine (Reg Arr State Out exec Stmt Same Expr allocAll allocCost exec_allocAll)
+open OrderMaintenance.Machine (Reg Arr State Out exec Stmt Same Expr allocAll allocCost
+  exec_allocAll)
 
 /-! ### The arrays of a slot -/
 
+/-- All `EF` constructors in the order used by fresh-array initialization. -/
 def EF.all : List EF := [.next, .prev, .grp, .lab, .dead, .h]
+/-- All `GF` constructors in the order used by fresh-array initialization. -/
 def GF.all : List GF := [.next, .prev, .first, .last, .chk, .lab, .size, .st, .src, .l, .r, .dead]
+/-- All `CF` constructors in the order used by fresh-array initialization. -/
 def CF.all : List CF := [.next, .prev, .first, .last, .size, .st, .src, .l, .r, .tag, .dead]
-def NF.all : List NF := [.height, .livePar, .weight, .first, .last, .draining, .t1, .t2, .overflow, .dead]
+/-- All `NF` constructors in the order used by fresh-array initialization. -/
+def NF.all : List NF := [.height, .livePar, .weight, .first, .last, .draining, .t1, .t2,
+  .overflow, .dead]
+/-- All `AF` constructors in the order used by fresh-array initialization. -/
 def AF.all : List AF := [.pqHead, .pqNext, .pqPrev, .pqWhere, .nbNext, .nbPrev, .lpar]
-def SF.all : List SF := [.count, .head, .tail, .firstGroup, .firstChunk, .notReady, .fallbacks, .pqHi, .pqLo]
+/-- All `SF` constructors in the order used by fresh-array initialization. -/
+def SF.all : List SF := [.count, .head, .tail, .firstGroup, .firstChunk, .notReady, .fallbacks,
+  .pqHi, .pqLo]
+/-- All `Tbl` constructors in the order used by fresh-array initialization. -/
 def Tbl.all : List Tbl := [.E, .G, .C, .N]
+/-- All `LK` constructors in the order used by fresh-array initialization. -/
 def LK.all : List LK := [.children, .table, .inTab, .side, .cin, .freeG]
-def OF.all : List OF := [.prepOn, .prepChunk, .prepH, .prepBelow, .prepTag, .jobOn, .jobX, .jobY, .jobZ, .jobT,
+/-- All `OF` constructors in the order used by fresh-array initialization. -/
+def OF.all : List OF := [.prepOn, .prepChunk, .prepH, .prepBelow, .prepTag, .jobOn, .jobX,
+  .jobY, .jobZ, .jobT,
   .jobA, .jobB, .jobC, .jobD]
 
+/-- All `Fld` constructors in the order used by fresh-array initialization. -/
 def Fld.all : List Fld :=
   EF.all.map .e ++ GF.all.map .g ++ CF.all.map .c ++ NF.all.map .n ++ AF.all.map .a ++ SF.all.map .s
 
 /-- Every array of a slot but the parameters. -/
 def Slot.allNP : List Slot :=
-  Fld.all.map .f ++ Tbl.all.map .sz ++ LK.all.flatMap (fun k => [.lst k false, .lst k true, .len k]) ++
+  Fld.all.map .f ++ Tbl.all.map .sz ++ LK.all.flatMap (fun k => [.lst k false, .lst k true, .len
+    k]) ++
     [.path] ++ OF.all.map .opt
 
 theorem Fld.mem_all (f : Fld) : f ∈ Fld.all := by
@@ -101,7 +116,8 @@ def lrecE : LK → Expr
   | .cin => .var "kRc" | .freeG => .lit 1
 /-- The list capacity of kind `k`, from the locals. -/
 def lcapE : LK → Expr
-  | .children => .lit 162 | .table => .lit 162 | .inTab => .lit 322 | .side => .lit 322 | .cin => .lit 322
+  | .children => .lit 162 | .table => .lit 162 | .inTab => .lit 322 | .side => .lit 322 | .cin
+    => .lit 322
   | .freeG => .var "kf"
 
 /-- The capacity of each array, from the locals `kE … kW`. -/
@@ -157,13 +173,14 @@ theorem capE_eval {P : Params} {m : State} (h : CapLocs P m.loc) (sl : Slot) :
     | c k => simp [capE, capOf, Fld.cap, capsOf, Expr.eval, h.kC]
     | n k => simp [capE, capOf, Fld.cap, capsOf, Expr.eval, h.kN]
     | a k => cases k <;> simp [capE, capOf, Fld.cap, capsOf, Expr.eval, h.kB, h.kCc, h.kL]
-    | s k => simp [capE, capOf, Fld.cap, capsOf, Expr.eval]
+    | s k => simp [capE, capOf, Fld.cap,  Expr.eval]
   | sz t => rfl
   | prm => rfl
-  | lst k b => cases k <;> simp [capE, capOf, capsOf, lrecE, lcapE, Expr.eval, OrderMaintenance.Machine.BinOp.eval, h.kR,
+  | lst k b => cases k <;> simp [capE, capOf, capsOf, lrecE, lcapE, Expr.eval,
+    Machine.BinOp.eval, h.kR,
       h.kRc, h.kf]
   | len k => cases k <;> simp [capE, capOf, capsOf, lrecE, Expr.eval, h.kR, h.kRc]
-  | path => simp [capE, capOf, capsOf, Expr.eval, OrderMaintenance.Machine.BinOp.eval, h.kC, h.kW]
+  | path => simp [capE, capOf, capsOf, Expr.eval, Machine.BinOp.eval, h.kC, h.kW]
   | opt o => rfl
 
 /-- Allocate every array of slot `q` but the parameters. -/
@@ -190,7 +207,8 @@ theorem fresh_opt (P : Params) (o : OF) : o.get (freshC P) = 0 := by
 locals hold `P`'s capacities, and every other array of the slot is allocated by `allocSlot`. -/
 theorem fresh_enc {P : Params} {q : Nat} {m : State} (hpc : m.cap (arr q .prm) = 16)
     (hpm : ∀ k : PF, m.mem (arr q .prm) k.idx = k.get P) (hl : CapLocs P m.loc) :
-    (exec (allocSlot q) m).status = .ok ∧ (exec (allocSlot q) m).cost = allocCost (Slot.allNP.map fun sl => (arr q sl, capE sl)) ∧
+    (exec (allocSlot q) m).status = .ok ∧ (exec (allocSlot q) m).cost = allocCost
+      (Slot.allNP.map fun sl => (arr q sl, capE sl)) ∧
       (exec (allocSlot q) m).st.loc = m.loc ∧
       Enc q (capsOf P) (freshC P) (exec (allocSlot q) m).st ∧
       (∀ b, ¬ InSlot q b → Same b m (exec (allocSlot q) m).st) := by
@@ -205,7 +223,8 @@ theorem fresh_enc {P : Params} {q : Nat} {m : State} (hpc : m.cap (arr q .prm) =
     simp only [l, List.map_map]; exact Slot.allNP_nodup q
   obtain ⟨r1, r2, r3, r4, r5⟩ := exec_allocAll l m hev hnd
   set m' := (exec (allocAll l) m).st
-  have hS : ∀ sl, sl ≠ .prm → m'.cap (arr q sl) = capOf (capsOf P) sl ∧ ∀ i, m'.mem (arr q sl) i = 0 := by
+  have hS : ∀ sl, sl ≠ .prm → m'.cap (arr q sl) = capOf (capsOf P) sl ∧ ∀ i, m'.mem (arr q sl) i
+    = 0 := by
     intro sl hsl
     obtain ⟨c1, c2⟩ := r4 (arr q sl, capE sl) (List.mem_map_of_mem (Slot.mem_allNP sl hsl))
     exact ⟨by rw [c1, capE_eval hl]; rfl, c2⟩
@@ -214,10 +233,12 @@ theorem fresh_enc {P : Params} {q : Nat} {m : State} (hpc : m.cap (arr q .prm) =
     rintro ⟨sl, hsl, he⟩
     have := arr_inj he; subst this; exact Slot.prm_notMem hsl)
   refine ⟨r1, r2, r3, ?_, fun b hb => r5 b ?_⟩
-  · refine ⟨fun f => (hS (.f f) (by simp)).1, fun f i _ => by rw [(hS (.f f) (by simp)).2, fresh_get],
+  · refine ⟨fun f => (hS (.f f) (by simp)).1, fun f i _ => by rw [(hS (.f f) (by simp)).2,
+      fresh_get],
       fun t => (hS (.sz t) (by simp)).1, fun t => by rw [(hS (.sz t) (by simp)).2]; cases t <;> rfl,
       fun t => by cases t <;> simp [Tbl.size, freshC], by rw [hP.2]; exact hpc,
-      fun k => by rw [hP.1]; exact hpm k, fun k b => (hS (.lst k b) (by simp)).1, fun k => (hS (.len k) (by simp)).1,
+      fun k => by rw [hP.1]; exact hpm k, fun k b => (hS (.lst k b) (by simp)).1, fun k => (hS
+        (.len k) (by simp)).1,
       fun k i _ => by rw [(hS (.len k) (by simp)).2, fresh_view]; simp,
       fun k i _ j hj => by rw [fresh_view] at hj; simp at hj,
       (hS .path (by simp)).1, fun c _ j _ => by rw [(hS .path (by simp)).2]; rfl,

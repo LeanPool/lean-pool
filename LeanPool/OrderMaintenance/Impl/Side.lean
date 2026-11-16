@@ -254,6 +254,7 @@ theorem fixSides_step (ns : Array Node) (p : Nat → Bool) (o : List Nat) (side0
 
 /-- One round of `fixSides`: an entry that is a ghost takes the side of its first target. -/
 def fixC : Exp := cme{ (r < m || N[e].first ≠ 0) && N[e].draining }
+/-- Repair one table entry's recorded side using the live child partition. -/
 def fixBody : Stm := cm{
   e := table[v][j].fst
   r ← ‹findP .children›(v, e)

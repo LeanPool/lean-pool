@@ -56,69 +56,124 @@ namespace OrderMaintenance.Impl.CM
 
 open Lean
 
+/-- Field selectors in the core-program surface syntax. -/
 declare_syntax_cat cmF
+/-- Expressions in the core-program surface syntax. -/
 declare_syntax_cat cmE (behavior := both)
+/-- Statements in the core-program surface syntax. -/
 declare_syntax_cat cmS (behavior := both)
 
 open Lean.Parser in
 /-- Statements separated by `;` or by line breaks at the same column. -/
 def cmSeq := leading_parser sepBy1Indent (categoryParser `cmS 0) "; "
 
+/-- A field given by its identifier. -/
 syntax (name := fId) ident : cmF
+/-- A field supplied as an embedded Lean term. -/
 syntax (name := fTm) "‹" term "›" : cmF
 
+/-- A natural-number literal in a core expression. -/
 syntax (name := eNum) num : cmE
+/-- A register, parameter, scalar or optional-job field in a core expression. -/
 syntax (name := eVar) ident : cmE
+/-- A parenthesized core expression. -/
 syntax (name := ePar) "(" cmE ")" : cmE
+/-- An embedded Lean expression term. -/
 syntax (name := eTm) "‹" term "›" : cmE
+/-- A field read from an indexed core record. -/
 syntax (name := eFld) ident "[" cmE "]" "." cmF : cmE
+/-- A read from a core array. -/
 syntax (name := eArr) ident "[" cmE "]" : cmE
+/-- A first or second component read from a stored list entry. -/
 syntax (name := eLst) ident "[" cmE "]" "[" cmE "]" "." cmF : cmE
+/-- The length of a stored core list. -/
 syntax (name := eLen) &"len" ident "[" cmE "]" : cmE
+/-- The number of allocated table records. -/
 syntax (name := eSize) &"size" ident : cmE
+/-- A read of one chunk ancestor-path entry. -/
 syntax (name := ePath) &"path" "(" cmE ", " cmE ")" : cmE
+/-- The maximum of two core expressions. -/
 syntax (name := eMax) &"max" "(" cmE ", " cmE ")" : cmE
+/-- The most-significant-bit index of a core expression. -/
 syntax (name := eMsb) &"msb" "(" cmE ")" : cmE
 -- The operand is at `lead` (not `max`) precedence: the forms that start with an identifier
 -- (`x`, `G[i].f`, …) sit at `lead`, so `!x` and `!G[i].f` parse without parentheses.
+/-- Boolean negation, represented by zero or one. -/
 syntax:max (name := eNot) "!" cmE:lead : cmE
+/-- Left shift of a core expression. -/
 syntax:75 (name := eShl) cmE:75 " <<< " cmE:76 : cmE
+/-- Right shift of a core expression. -/
 syntax:75 (name := eShr) cmE:75 " >>> " cmE:76 : cmE
+/-- Multiplication of core expressions. -/
 syntax:70 (name := eMul) cmE:70 " * " cmE:71 : cmE
+/-- Natural-number division of core expressions. -/
 syntax:70 (name := eDiv) cmE:70 " / " cmE:71 : cmE
+/-- Natural-number remainder of core expressions. -/
 syntax:70 (name := eMod) cmE:70 " % " cmE:71 : cmE
+/-- Addition of core expressions. -/
 syntax:65 (name := eAdd) cmE:65 " + " cmE:66 : cmE
+/-- Guarded subtraction of core expressions. -/
 syntax:65 (name := eSub) cmE:65 " - " cmE:66 : cmE
+/-- Truncated subtraction of core expressions. -/
 syntax:65 (name := eMonus) cmE:65 " ∸ " cmE:66 : cmE
+/-- Strict comparison of core expressions, returning zero or one. -/
 syntax:50 (name := eLt) cmE:51 " < " cmE:51 : cmE
+/-- Nonstrict comparison of core expressions, returning zero or one. -/
 syntax:50 (name := eLe) cmE:51 " ≤ " cmE:51 : cmE
+/-- Equality comparison of core expressions, returning zero or one. -/
 syntax:50 (name := eEq) cmE:51 " = " cmE:51 : cmE
+/-- Inequality comparison of core expressions, returning zero or one. -/
 syntax:50 (name := eNe) cmE:51 " ≠ " cmE:51 : cmE
+/-- Boolean conjunction of core expressions. -/
 syntax:35 (name := eAnd) cmE:36 " && " cmE:35 : cmE
+/-- Boolean disjunction of core expressions. -/
 syntax:30 (name := eOr) cmE:31 " || " cmE:30 : cmE
 
+/-- An existing core statement named by an identifier. -/
 syntax (name := sId) ident : cmS
+/-- An embedded Lean statement term. -/
 syntax (name := sTm) "‹" term "›" : cmS
+/-- A grouped sequence of core statements. -/
 syntax (name := sBlk) "{" cmSeq "}" : cmS
+/-- Assignment to a local register named by an identifier. -/
 syntax (name := sAsg) ident " := " cmE : cmS
+/-- Assignment to a register supplied as a Lean term. -/
 syntax (name := sAsgT) "‹" term "›" " := " cmE : cmS
+/-- Allocation of a fresh core record with its index assigned to a local. -/
 syntax (name := sNew) ident " := " &"new" ident : cmS
+/-- Assignment to an indexed core-record field. -/
 syntax (name := sFld) ident "[" cmE "]" "." cmF " := " cmE : cmS
+/-- Assignment to a core-array entry. -/
 syntax (name := sArr) ident "[" cmE "]" " := " cmE : cmS
+/-- Assignment to a first or second component of a stored list entry. -/
 syntax (name := sLst) ident "[" cmE "]" "[" cmE "]" "." cmF " := " cmE : cmS
+/-- Appending a pair to a stored core list. -/
 syntax (name := sApp) &"append" ident "[" cmE "]" " (" cmE ", " cmE ")" : cmS
+/-- Removing the last stored-list entry. -/
 syntax (name := sPop) &"pop" ident "[" cmE "]" : cmS
+/-- Clearing a stored core list. -/
 syntax (name := sClr) &"clear" ident "[" cmE "]" : cmS
+/-- Conditional execution of core statements. -/
 syntax (name := sIf) "if " cmE " then " cmS (" else " cmS)? : cmS
+/-- A bounded core loop with a local counter. -/
 syntax (name := sFor) "for " ident " < " cmE " do " cmS : cmS
+/-- Handling a recoverable core guard failure. -/
 syntax (name := sTry) "try " cmS " catch " cmS : cmS
+/-- Assignment to a chunk ancestor-path entry. -/
 syntax (name := sPath) &"path" "(" cmE ", " cmE ")" " := " cmE : cmS
+/-- A core statement constructor applied to expression arguments. -/
 syntax (name := sCon) ident "(" cmE,* ")" : cmS
+/-- A named procedure call returning one local. -/
 syntax (name := sCall1) ident " ← " ident "(" cmE,* ")" : cmS
+/-- A named procedure call returning a tuple of locals. -/
 syntax (name := sCallN) "(" ident,* ")" " ← " ident "(" cmE,* ")" : cmS
+/-- A named procedure call without returned locals. -/
 syntax (name := sCall0) &"call" ident "(" cmE,* ")" : cmS
+/-- An embedded procedure call returning one local. -/
 syntax (name := sCall1T) ident " ← " "‹" term "›" "(" cmE,* ")" : cmS
+/-- An embedded procedure call returning a tuple of locals. -/
 syntax (name := sCallNT) "(" ident,* ")" " ← " "‹" term "›" "(" cmE,* ")" : cmS
+/-- An embedded procedure call without returned locals. -/
 syntax (name := sCall0T) &"call" "‹" term "›" "(" cmE,* ")" : cmS
 
 /-- `ns.f` for a field identifier `f`, or the embedded term. -/
@@ -137,18 +192,21 @@ def dotted (x : Syntax) : Option (String × Name) :=
   | .str (.str .anonymous p) k => some (p, .mkSimple k)
   | _ => none
 
+/-- Recognize built-in stored-list kind identifiers in core syntax. -/
 def isLK (k : Syntax) : Bool :=
   k.getId ∈ [`children, `table, `inTab, `side, `cin, `freeG]
 
 /-- A list kind: an `LK` constructor, or else a Lean variable of type `LK`. -/
 def lk (k : Syntax) : Term := if isLK k then mkIdent (`OrderMaintenance.Impl.LK ++ k.getId) else ⟨k⟩
 
+/-- Decode a list-component selector, rejecting names other than `fst` and `snd`. -/
 def sndOf (f : Syntax) : MacroM Term :=
   match f.getKind, f[0].getId with
   | ``fId, `fst => `(false)
   | ``fId, `snd => `(true)
   | _, _ => Macro.throwErrorAt f "expected `fst` or `snd`"
 
+/-- Construct a core binary expression with the named machine primitive. -/
 def bin (op : Name) (a b : Term) : MacroM Term :=
   `(Exp.bin $(mkIdent (`OrderMaintenance.Machine.BinOp ++ op)) $a $b)
 
@@ -163,6 +221,7 @@ decreasing_by
   have hchild := Array.sizeOf_lt_of_mem child.property
   omega
 
+/-- Expand a core expression using structural syntax fuel. -/
 def expandExpression : Nat → Syntax → MacroM Term
   | 0, s => Macro.throwErrorAt s "invalid expression nesting"
   | fuel + 1, s => do
@@ -218,6 +277,7 @@ def expandExpression : Nat → Syntax → MacroM Term
 /-- Expand an expression with a structural bound from its syntax tree. -/
 def expE (s : Syntax) : MacroM Term := expandExpression (syntaxWeight s + 1) s
 
+/-- Expand a sequence of core-expression arguments. -/
 def expArgs (args : Syntax) : MacroM Term := do
   let es ← args.getSepArgs.mapM expE
   `([$es,*])
@@ -231,6 +291,7 @@ def call (p args : Syntax) (ds : Array Syntax) : MacroM Term := do
 
 mutual
 
+/-- Expand a statement sequence using structural syntax fuel. -/
 def expandStatements : Nat → Array Syntax → MacroM Term
   | 0, _ => Macro.throwError "invalid statement nesting"
   | fuel + 1, ss => do
@@ -238,6 +299,7 @@ def expandStatements : Nat → Array Syntax → MacroM Term
     ss.pop.foldrM (fun s acc => do `(Stm.seq $(← expandStatement fuel s) $acc))
       (← expandStatement fuel last)
 
+/-- Expand one core statement using structural syntax fuel. -/
 def expandStatement : Nat → Syntax → MacroM Term
   | 0, s => Macro.throwErrorAt s "invalid statement nesting"
   | fuel + 1, s => do
@@ -305,10 +367,14 @@ def expSeq (ss : Array Syntax) : MacroM Term :=
 /-- Expand a statement with a structural bound from its syntax tree. -/
 def expS (s : Syntax) : MacroM Term := expandStatement (syntaxWeight s + 1) s
 
+/-- Surface notation embedding a core statement sequence as a Lean term. -/
 syntax (name := cmStm) "cm{" cmSeq "}" : term
+/-- Surface notation embedding a core expression as a Lean term. -/
 syntax (name := cmExp) "cme{" cmE "}" : term
 
+/-- Expand a complete core statement with fuel derived from its syntax tree. -/
 @[macro cmStm] def expandStm : Macro := fun s => expSeq s[1][0].getSepArgs
+/-- Expand a complete core expression with fuel derived from its syntax tree. -/
 @[macro cmExp] def expandExp : Macro := fun s => expE s[1]
 
 end OrderMaintenance.Impl.CM

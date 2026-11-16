@@ -29,20 +29,33 @@ open OrderMaintenance.Model OrderMaintenance.Proof
 section data
 variable (t : Core) (v : Nat)
 
+/-- Height of the node whose drain is being started. -/
 abbrev sH : Nat := (t.nodes.getX v).height
+/-- Live children of the node whose drain is being started. -/
 abbrev sKids : List Nat := (t.nodes.getX v).children
+/-- Weight of an entry at the drain source's height. -/
 abbrev sWt : Nat → Nat := drainWt t.nodes (sH t v)
+/-- The source's child weights in live-list order. -/
 abbrev sWs : List Nat := (sKids t v).map (sWt t v)
+/-- The adjacent-child restriction used to choose a drain cut. -/
 abbrev sPr : Nat → Bool := drainPr t.nodes (sKids t v)
+/-- Index of the selected balanced cut in the source's child list. -/
 abbrev sK : Nat := drainCut (sWs t v) (sPr t v) (decide (sH t v > 1))
+/-- The child at the selected cut, or zero beyond the child list. -/
 abbrev sB : Nat := (sKids t v).getD (sK t v) 0
+/-- Table entries whose sides must be assigned when this drain starts. -/
 abbrev sEntries : List Nat := drainEntries t.nodes (t.nodes.getX v)
+/-- The checked side assignment for the source's table entries. -/
 abbrev sSideO : Option (List (Nat × Side)) := drainSide t.nodes (t.nodes.getX v) (sB t v)
 
 variable (side : List (Nat × Side))
+/-- Table entries assigned to the left drain target. -/
 abbrev sLeft : List Nat := (sEntries t v).filter (lookup side · == some .left)
+/-- Table entries assigned to the right drain target. -/
 abbrev sRight : List Nat := (sEntries t v).filter (lookup side · == some .right)
+/-- Live children assigned to the left drain target. -/
 abbrev sCh1 : List Nat := (sKids t v).filter (lookup side · == some .left)
+/-- Live children assigned to the right drain target. -/
 abbrev sCh2 : List Nat := (sKids t v).filter (lookup side · == some .right)
 
 end data

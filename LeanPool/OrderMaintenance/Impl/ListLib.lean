@@ -37,6 +37,7 @@ open OrderMaintenance.Machine (Reg BinOp UnOp)
 /-- The key of element `m` of a list (0 past the end). -/
 abbrev key (l : List (Nat × Nat)) (m : Nat) : Nat := (l.getD m (0, 0)).1
 
+/-- Procedure finding the first index of a key in a stored list. -/
 def findP (k : LK) : Proc where
   name := "find"
   params := ["i", "x"]
@@ -347,6 +348,7 @@ theorem valid_preSet {k : LK} {l : List (Nat × Nat)} {x y j : Nat} (hl : k.vali
     · exact hl p (List.mem_of_mem_take hp)
   · exact hl q (List.mem_of_mem_drop hq)
 
+/-- Procedure replacing an association-list value or appending a fresh key. -/
 def assocSetP (k : LK) : Proc where
   name := "assocSet"
   params := ["i", "x", "y"]
@@ -497,6 +499,7 @@ theorem assocSetP_agree (κ : Caps) (k : LK) (s : Core) (L : Loc) {i x y : Nat} 
 
 /-! ### `lookup` -/
 
+/-- Procedure returning whether an association key exists and its stored value. -/
 def lookupP (k : LK) : Proc where
   name := "lookup"
   params := ["i", "x"]
@@ -671,6 +674,7 @@ theorem bubble_insertIdx (l : List (Nat × Nat)) (x : Nat × Nat) {p : Nat} (hp 
 theorem bubble_len (l : List (Nat × Nat)) (x : Nat × Nat) : bubble l x l.length = l ++ [x] := by
   simp only [bubble, List.take_length, List.drop_length]
 
+/-- Exchange the working pair with one stored list entry. -/
 def swapS (k : LK) : Stm := cm{
   q := n - 1 - t
   x1 := k[i][q].fst; y1 := k[i][q].snd
@@ -678,6 +682,7 @@ def swapS (k : LK) : Stm := cm{
   k[i][q].fst := x2; k[i][q].snd := y2
   k[i][q + 1].fst := x1; k[i][q + 1].snd := y1 }
 
+/-- Procedure inserting a pair at a specified list index. -/
 def insertIdxP (k : LK) : Proc where
   name := "insertIdx"
   params := ["i", "p", "a", "b"]
@@ -970,7 +975,9 @@ theorem insertIdxP_agree (κ : Caps) (k : LK) (s : Core) (L : Loc) {i p a b : Na
 
 /-! ### Copying a list -/
 
+/-- Append one entry of the source list to the destination list. -/
 def copyBody (k : LK) : Stm := cm{ append k[w] (k[a][j].fst, k[a][j].snd) }
+/-- Append the source list to the destination list in list order. -/
 def copyS (k : LK) : Stm := cm{ n := len k[a]; for j < n do ‹copyBody k› }
 
 /-- **`copyS` appends list `k` of record `a` to that of record `w`** (`w ≠ a`). -/

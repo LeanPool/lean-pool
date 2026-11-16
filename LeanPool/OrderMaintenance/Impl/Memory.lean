@@ -36,7 +36,7 @@ theorem memOf_eq (P : Params) :
   simp only [Slot.allNP, Fld.all, EF.all, GF.all, CF.all, NF.all, AF.all, SF.all, Tbl.all, LK.all,
     OF.all,
     List.map, List.flatMap_cons, List.flatMap_nil, List.cons_append, List.nil_append,
-    List.append_assoc, List.sum_cons, List.sum_nil, List.sum_append, capOf, Fld.cap, capsOf]
+     List.sum_cons, List.sum_nil,  capOf, Fld.cap, capsOf]
   ring
 
 /-- The chunk bound's divisor is at least `L² / 8`. -/
@@ -96,7 +96,7 @@ theorem core_mem {N : Nat} (hN : 64 ≤ N) : memOf (capsOf (proofParams N)) ≤ 
     have := Nat.mul_le_mul_left q h3H
     nlinarith
   simp only [vnb, vcb, pp_N, pp_H]
-  show 5343 + N * 37 + (2 + 2 * q) * 671 + (2 + 2 * q) * vH L +
+  change 5343 + N * 37 + (2 + 2 * q) * 671 + (2 + 2 * q) * vH L +
     (vH L + 2 + (vH L + 1 + (vH L * 12 + 1)) * (2 + 2 * q)) * 2596 + vH L * 2 ≤ 40000 * N
   have e : 5343 + N * 37 + (2 + 2 * q) * 671 + (2 + 2 * q) * vH L +
       (vH L + 2 + (vH L + 1 + (vH L * 12 + 1)) * (2 + 2 * q)) * 2596 + vH L * 2 =
@@ -107,7 +107,8 @@ theorem core_mem {N : Nat} (hN : 64 ≤ N) : memOf (capsOf (proofParams N)) ≤ 
 /-! ### The memory of the reachable states -/
 
 /-- The cells of slot `p`'s arrays in machine state `m`. -/
-def slotMem (m : State) (p : Nat) : Nat := (Slot.allNP.map fun sl => m.cap (arr p sl)).sum + m.cap (arr p .prm)
+def slotMem (m : State) (p : Nat) : Nat := (Slot.allNP.map fun sl => m.cap (arr p sl)).sum +
+  m.cap (arr p .prm)
 
 theorem Enc.cap_slot {p : Nat} {κ : Caps} {s : Core} {m : State} (h : Enc p κ s m) :
     ∀ sl, m.cap (arr p sl) = capOf κ sl
@@ -119,7 +120,8 @@ theorem Enc.cap_slot {p : Nat} {κ : Caps} {s : Core} {m : State} (h : Enc p κ 
   | .path => h.wcap
   | .opt o => h.ocap o
 
-theorem Enc.slotMem_eq {p : Nat} {κ : Caps} {s : Core} {m : State} (h : Enc p κ s m) : OrderMaintenance.Impl.slotMem m p = memOf κ := by
+theorem Enc.slotMem_eq {p : Nat} {κ : Caps} {s : Core} {m : State} (h : Enc p κ s m) :
+  OrderMaintenance.Impl.slotMem m p = memOf κ := by
   unfold OrderMaintenance.Impl.slotMem memOf
   rw [h.cap_slot .prm]
   congr 2

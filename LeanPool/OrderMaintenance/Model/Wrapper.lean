@@ -68,7 +68,8 @@ def runCore {α : Type} (c : Core) (act : CM α) : WM (α × Core) :=
 
 /-- Run a core action on `cur`. The core is moved out of `om` first, so that its arrays stay
 unshared and are updated in place by compiled code. -/
-def OrderMaintenance.onCur {α : Type} (om : OrderMaintenance) (act : CM α) : WM (α × OrderMaintenance) := do
+def OrderMaintenance.onCur {α : Type} (om : OrderMaintenance) (act : CM α) : WM (α ×
+  OrderMaintenance) := do
   let cur := om.cur
   let om := { om with cur := default }
   let (a, cur) ← runCore cur act
@@ -120,7 +121,8 @@ def rebuildLoop (om : OrderMaintenance) (nxt : Core) : Nat → Nat → WM OrderM
       else rebuildLoop om' n' fuel (budget - 1)
 
 /-- The rebuild's share of one operation: exactly `K_B` steps (`wrapper.py` `_rebuild_step`). -/
-def OrderMaintenance.rebuildStep (mk : Nat → Params) (om : OrderMaintenance) : WM OrderMaintenance := do
+def OrderMaintenance.rebuildStep (mk : Nat → Params) (om : OrderMaintenance) : WM
+  OrderMaintenance := do
   match om.nxt with
   | none =>
     let N := om.cur.P.N
@@ -132,7 +134,8 @@ def OrderMaintenance.rebuildStep (mk : Nat → Params) (om : OrderMaintenance) :
   | some nxt0 => rebuildLoop { om with nxt := none } nxt0 (om.KB + 1) om.KB
 
 /-- Mirror an insertion into `nxt`, if its anchor is already copied. -/
-def OrderMaintenance.mirrorInsert (om : OrderMaintenance) (hx : Option Nat) (hy : Nat) : WM OrderMaintenance :=
+def OrderMaintenance.mirrorInsert (om : OrderMaintenance) (hx : Option Nat) (hy : Nat) : WM
+  OrderMaintenance :=
   match om.nxt with
   | none => return om
   | some nxt =>
@@ -161,7 +164,8 @@ def OrderMaintenance.mirrorDelete (om : OrderMaintenance) (x : Nat) : WM OrderMa
     else return om
 
 /-- Allocate a fresh handle and insert it at the front or after a live handle. -/
-def OrderMaintenance.insert (mk : Nat → Params) (om : OrderMaintenance) (hx : Option Nat) : WM (Nat × OrderMaintenance) := do
+def OrderMaintenance.insert (mk : Nat → Params) (om : OrderMaintenance) (hx : Option Nat) :
+  WM (Nat × OrderMaintenance) := do
   let hy := om.nextHandle
   let xi := match hx with
     | none => om.cur.head
@@ -171,7 +175,8 @@ def OrderMaintenance.insert (mk : Nat → Params) (om : OrderMaintenance) (hx : 
   return (hy, ← { om with live := om.live + 1 }.rebuildStep mk)
 
 /-- Delete a live handle and mirror the deletion into a replacement core. -/
-def OrderMaintenance.delete (mk : Nat → Params) (om : OrderMaintenance) (x : Nat) : WM OrderMaintenance := do
+def OrderMaintenance.delete (mk : Nat → Params) (om : OrderMaintenance) (x : Nat) : WM
+  OrderMaintenance := do
   let (_, om) ← om.onCur (markDead (om.curIdx.getX x))
   let om ← { om with curIdx := om.curIdx.setX x 0 }.mirrorDelete x
   { om with live := om.live - 1 }.rebuildStep mk
@@ -182,7 +187,8 @@ def OrderMaintenance.order (om : OrderMaintenance) (x y : Nat) : WM Bool :=
 
 /-- One operation of the specification's interface. The `k`-th insertion returns handle `k`,
 which is the specification's name for the new element. -/
-def OrderMaintenance.apply (mk : Nat → Params) (om : OrderMaintenance) : _root_.OrderMaintenance.Spec.Op → WM (_root_.OrderMaintenance.Spec.Ans × OrderMaintenance)
+def OrderMaintenance.apply (mk : Nat → Params) (om : OrderMaintenance) :
+  _root_.OrderMaintenance.Spec.Op → WM (_root_.OrderMaintenance.Spec.Ans × OrderMaintenance)
   | .insertFirst => do
     let (_, om) ← om.insert mk none
     return (.inserted, om)
@@ -197,7 +203,8 @@ def OrderMaintenance.apply (mk : Nat → Params) (om : OrderMaintenance) : _root
     return (.bool b, om)
 
 /-- The answers to a sequence of operations. -/
-def OrderMaintenance.runOps (mk : Nat → Params) : OrderMaintenance → List _root_.OrderMaintenance.Spec.Op → WM (List _root_.OrderMaintenance.Spec.Ans)
+def OrderMaintenance.runOps (mk : Nat → Params) : OrderMaintenance → List
+  _root_.OrderMaintenance.Spec.Op → WM (List _root_.OrderMaintenance.Spec.Ans)
   | _, [] => pure []
   | om, op :: ops => do
     let (a, om) ← om.apply mk op

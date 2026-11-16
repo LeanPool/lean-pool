@@ -101,7 +101,7 @@ theorem findIdx_lt_iff_contains (l : List Nat) (a : Nat) : l.findIdx (· == a) <
   l.contains a = true := by
   rw [List.findIdx_lt_length]; simp
 
-theorem getX_nonempty {α : Type} [Inhabited α] {a : Array (List α)} {i : Nat} (h : a.getX i ≠ [])
+theorem getX_nonempty {α : Type} {a : Array (List α)} {i : Nat} (h : a.getX i ≠ [])
     (hd : (default : List α) = []) : i < a.size := by
   by_contra hc; apply h; unfold Array.getX Array.getD; rw [dite_eq_right hc]; exact hd
 
@@ -132,6 +132,7 @@ theorem dropS_inTab_eq (s : Core) (v e hh : Nat) (hh0 : hh ≠ 0) :
     erase_eq_eraseIdx']
   · rfl
 
+/-- Remove one drained-table membership from the entry's containing-table list. -/
 def dtBody : Stm := cm{ e := table[v][j].fst; if hh = 0 then ‹dropS .cin› else ‹dropS .inTab› }
 
 theorem dropTableS_cin_len (v hh : Nat) (s : Core) (e e' : Nat) :
@@ -219,6 +220,7 @@ theorem dtBody_ok {κ : Caps} {X : Core} {L : Loc} {v hh e j B : Nat} (hv : L "v
       fun r a b c d => (hF2 r c d).trans (h1F r a b)⟩
     simp only [LK.view, List.length_map] at hc2; simp only [Exp.cost]; nlinarith
 
+/-- Remove the drained table from every entry that it contains. -/
 def dtLoopS : Stm := cm{ m := len table[v]; for j < m do dtBody }
 
 theorem dtLoopS_ok {κ : Caps} {s : Core} {L : Loc} {v hh B : Nat} (hv : L "v" = v) (hhh : L "hh"
@@ -274,6 +276,7 @@ theorem dtLoopS_ok {κ : Caps} {s : Core} {L : Loc} {v hh B : Nat} (hv : L "v" =
 
 /-! ### `dropEntry` -/
 
+/-- Remove the drained node from one enclosing table and its side map. -/
 def deBody : Stm := cm{
   T := inTab[v][j].fst
   r ← ‹findP .table›(T, v); n := len table[T]; if r < n then skip else fail
@@ -442,6 +445,7 @@ theorem foldl_dropEntryS_size (v : Nat) : ∀ (l : List Nat) (s : Core), (l.fold
 
 /-! ### The `dropEntry` loop -/
 
+/-- Remove the drained node from all of its enclosing tables. -/
 def deLoopS : Stm := cm{ m := len inTab[v]; for j < m do deBody }
 
 theorem deLoopS_ok {κ : Caps} {X : Core} {L : Loc} {v B : Nat} (hv : L "v" = v) (hvi : v <
@@ -541,6 +545,7 @@ theorem releaseS_size (v : Nat) (S : Core) (t : Nat) : (releaseS v S t).nodes.si
   S.nodes.size := by
   unfold releaseS; split <;> simp
 
+/-- Detach a completed drain, release its targets, and mark its source dead. -/
 def finishDrainS : Stm := cm{
   hh := h ∸ 1; dtLoopS; deLoopS; ‹relS .t1›; ‹relS .t2›
   N[v].dead := 1; clear inTab[v] }

@@ -62,8 +62,15 @@ theorem cs_insertAroundFinish (x y z : Nat) (tabs ly lz : List Nat) (lp : Nat) :
   all_goals intro s; rfl
 
 /-- A guarded tag write that succeeds writes the tag. -/
-theorem guardedSetTag_ok {s s' : Core} {c t : Nat} {u : PUnit} (h : (guardedSetTag c t).run s = .ok u s') :
-    s' = { s with C := s.C.modify c fun C => { C with tag := t } } := by
+theorem guardedSetTag_ok {s s' : Core} {c t : Nat} {u : PUnit} (h : (guardedSetTag c t).run s =
+  .ok u s') :
+    s' = {
+      s with
+      C := s.C.modify c fun C => {
+        C with
+        tag := t
+      }
+    } := by
   unfold guardedSetTag modC at h
   rw [run_bind] at h
   have hg := ro_guardTag c t s
@@ -84,7 +91,7 @@ theorem NodeB.sd {n : Node} (h : NodeB K n) : ∀ p ∈ n.side, p.1 < 2 ^ K := h
 
 theorem half_lt {lo hi B : Nat} (h : ¬ lo ≥ hi) (hB : hi ≤ B) : (lo + hi - 1) / 2 < B := by omega
 
-/-- **A label next to an entry** is below `2^K` (Lab): below its upper neighbour, a label or `2^β`. -/
+/-- A label next to an entry is below its upper neighbour, a label or `2^β`, hence below `2^K`. -/
 theorem ht_roomNextTo (hβ : P0.beta ≤ K) (t e : Nat) (b : Bool) :
     HT K P0 (roomNextTo t e b) (· < 2 ^ K) := by
   unfold roomNextTo
@@ -97,21 +104,28 @@ theorem ht_roomNextTo (hβ : P0.beta ≤ K) (t e : Nat) (b : Bool) :
     split
     all_goals first
       | exact HT.guard
-      | (refine HT.ite (fun _ => HT.bind HT.guard_false fun _ h => h.elim) (fun hc => HT.pure (half_lt hc ?_))
+      | (refine HT.ite (fun _ => HT.bind HT.guard_false fun _ h => h.elim) (fun hc => HT.pure
+        (half_lt hc ?_))
          first | exact le_of_lt (hl _) | (split <;> first | exact le_of_lt (hl _) | exact hb))
 
 /-- A table insertion: the new entry and its label (hypotheses), the side list (R). -/
-theorem ht_tableInsert {t e new : Nat} {before : Bool} {lab : Nat} (hn : new < 2 ^ K) (hl : lab < 2 ^ K) :
+theorem ht_tableInsert {t e new : Nat} {before : Bool} {lab : Nat} (hn : new < 2 ^ K) (hl : lab
+  < 2 ^ K) :
     HT K P0 (tableInsert t e new before lab) (fun _ => True) := by
   unfold tableInsert
   refine HT.bind (HT.getN t) fun T hT => ?_
   have key : ∀ (tab : List (Nat × Nat)) (side : List (Nat × Side)),
       (∀ q ∈ tab, q.1 < 2 ^ K ∧ q.2 < 2 ^ K) → (∀ p ∈ side, p.1 < 2 ^ K) →
-      HT K P0 (modN t fun n => { n with table := tab, side := side }) (fun _ => True) := by
+      HT K P0 (modN t fun n => {
+        n with
+        table := tab
+        side := side
+      }) (fun _ => True) := by
     intro tab side htab hs
     unfold modN
     exact HT.modify fun s hW hP => ⟨hW.modN (fun X hX => by nodeb) t, hP⟩
-  have htab := lb_insertIdx (P := fun q : Nat × Nat => q.1 < 2 ^ K ∧ q.2 < 2 ^ K) hT.tab (y := (new, lab)) ⟨hn, hl⟩
+  have htab := lb_insertIdx (P := fun q : Nat × Nat => q.1 < 2 ^ K ∧ q.2 < 2 ^ K) hT.tab (y :=
+    (new, lab)) ⟨hn, hl⟩
   split
   all_goals first
     | exact HT.guard
@@ -124,11 +138,13 @@ theorem ht_tableInsert {t e new : Nat} {before : Bool} {lab : Nat} (hn : new < 2
        · exact HT.bind (HT.pure hT.sd) fun side hs => key _ side (htab _) hs)
 
 theorem ht_insertAroundIn {v v1 v2 : Nat} {q : Nat × Nat × Nat} (h1 : v1 < 2 ^ K) (h2 : v2 < 2 ^ K)
-    (ha : q.2.1 < 2 ^ K) (hb : q.2.2 < 2 ^ K) : HT K P0 (insertAroundIn v v1 v2 q) (fun _ => True) := by
+    (ha : q.2.1 < 2 ^ K) (hb : q.2.2 < 2 ^ K) : HT K P0 (insertAroundIn v v1 v2 q) (fun _ =>
+      True) := by
   unfold insertAroundIn
   exact HT.bind (ht_tableInsert h1 ha) fun _ _ => ht_tableInsert h2 hb
 
-theorem ht_joinChunk {tabs : List Nat} {lp c : Nat} (ht : ∀ T ∈ tabs, T < 2 ^ K) (hlp : lp < 2 ^ K) :
+theorem ht_joinChunk {tabs : List Nat} {lp c : Nat} (ht : ∀ T ∈ tabs, T < 2 ^ K) (hlp : lp < 2 ^
+  K) :
     HT K P0 (joinChunk tabs lp c) (fun _ => True) := by
   intro s hW hP
   rw [joinChunk_run]
@@ -157,7 +173,8 @@ theorem ht_insertAroundFinish {x y z lp : Nat} {tabs ly lz : List Nat} (hK : 1 �
     obtain ⟨ha, hb⟩ := List.of_mem_zip hq2
     exact ht_insertAroundIn hy hz (hly _ ha) (hlz _ hb)
   · nodeb
-    exact lb_replace1 (P := fun c => c < 2 ^ K) (lb_cons hy (lb_cons hx (lb_cons hz lb_nil))) x _ ‹_›
+    exact lb_replace1 (P := fun c => c < 2 ^ K) (lb_cons hy (lb_cons hx (lb_cons hz lb_nil))) x
+      _ ‹_›
 
 theorem ht_mapM_roomNextTo (hβ : P0.beta ≤ K) (l : List Nat) (e : Nat) (b : Bool) :
     HT K P0 (l.mapM (roomNextTo · e b)) (fun r => ∀ a ∈ r, a < 2 ^ K) :=
@@ -168,7 +185,8 @@ theorem ht_getLpar (c : Nat) : HT K P0 (getLpar c) (· < 2 ^ K) :=
 
 /-- **The read-only part of a split's insertion** returns bounded tables, labels and parent. -/
 theorem ht_insertAroundPrep (hβ : P0.beta ≤ K) (x : Nat) :
-    HT K P0 (insertAroundPrep x) (fun r => (∀ T ∈ r.2.2.1, T < 2 ^ K) ∧ (∀ a ∈ r.2.2.2.1, a < 2 ^ K) ∧
+    HT K P0 (insertAroundPrep x) (fun r => (∀ T ∈ r.2.2.1, T < 2 ^ K) ∧ (∀ a ∈ r.2.2.2.1, a < 2
+      ^ K) ∧
       (∀ a ∈ r.2.2.2.2.1, a < 2 ^ K) ∧ r.2.2.2.2.2 < 2 ^ K) := by
   unfold insertAroundPrep getPath
   refine HT.bind (HT.bind HT.get fun st _ => HT.pure (Q := fun _ => True) trivial) fun _ _ => ?_
@@ -203,22 +221,47 @@ theorem insertAround_wb {t : Core} {x y z : Nat} (hW : WB K t) (hK : 1 ≤ K) (h
       dsimp only at hr
       rw [run_bind] at hr
       rcases hg2 : (guardedSetTag z tz).run
-          { t1 with C := t1.C.modify y fun C => { C with tag := ty } } with ⟨u2, t3⟩ | ⟨e, t3⟩
+          {
+            t1 with
+            C := t1.C.modify y fun C => {
+              C with
+              tag := ty
+            }
+          } with ⟨u2, t3⟩ | ⟨e, t3⟩
       · rw [hg2] at hr
         have e3 := guardedSetTag_ok hg2
         subst e3
         dsimp only at hr
         have hCS := cs_insertAroundFinish x y z tabs ly lz lp
-          { t1 with C := (t1.C.modify y (fun C => { C with tag := ty })).modify z (fun C => { C with tag := tz }) }
+          {
+            t1 with
+            C := (t1.C.modify y (fun C => {
+              C with
+              tag := ty
+            })).modify z (fun C => {
+              C with
+              tag := tz
+            })
+          }
         rw [hr] at hCS
         change s2.C = _ at hCS
         rw [hCS] at htag
         simp only [Array.getX_modify, Array.size_modify', hys, hzs, hyz, Ne.symm hyz, and_true,
           ite_true, ite_false] at htag
         obtain ⟨hty, htz⟩ := htag
-        have hW3 : WB K { t1 with C := (t1.C.modify y (fun C => { C with tag := ty })).modify z (fun C => { C with tag := tz }) } :=
+        have hW3 : WB K {
+          t1 with
+          C := (t1.C.modify y (fun C => {
+            C with
+            tag := ty
+          })).modify z (fun C => {
+            C with
+            tag := tz
+          })
+        } :=
           hW.withC (allX_modify (allX_modify hW.C (fun X hX => by recb) _) (fun X hX => by recb) _)
-        have := (ht_insertAroundFinish (P0 := t1.P) hK hx hy hz hb.1 hb.2.1 hb.2.2.1 hb.2.2.2).ok hW3 rfl hr
+        have := (ht_insertAroundFinish (P0 := t1.P) hK hx hy hz hb.1 hb.2.1 hb.2.2.1
+          hb.2.2.2).ok hW3 rfl hr
         exact ⟨this.1.1, this.2⟩
       · rw [hg2] at hr; simp at hr
     · rw [hg1] at hr; simp at hr
@@ -241,7 +284,13 @@ structure PrepRoom (K : Nat) (P : Params) : Prop where
   HK : P.H + 1 < 2 ^ K
 
 theorem WB.withPrep {s : Core} (h : WB K s) {p : Option Prep} (hp : ∀ q, p = some q → PrepB K q) :
-    WB K { s with prep := p } := { h with prep := hp }
+    WB K {
+      s with
+      prep := p
+    } := {
+      h with
+      prep := hp
+    }
 
 theorem PrepRoom.center {P : Params} (h : PrepRoom K P) : 1 <<< (P.beta - 1) < 2 ^ K :=
   center_lt h.top.beta (Or.inr h.b1)
@@ -279,10 +328,14 @@ theorem initStep_wb {P : Params} {h : Nat} {s : Core} (S : Stage P h s) (hW : WB
   by_cases e1 : h = 1
   · subst e1
     obtain ⟨hc, hh, hbl, htg, hpp⟩ := hW.prep _ hp
-    rw [initStep_first s _ hp rfl (by rw [hP]; exact hR.H1)] at hr
+    rw [initStep_first s _ hp rfl (by
+      rw [hP]
+      exact hR.H1)] at hr
     obtain ⟨-, rfl⟩ := EStateM.Result.ok.inj hr
     clear hr
-    have hn0 : ∀ i, NodeB K ((#[default].push ({ height := 1 } : Node)).getX i) :=
+    have hn0 : ∀ i, NodeB K ((#[default].push ({
+      height := 1
+    } : Node)).getX i) :=
       getX_of (nodeB_default K) (fun x hx => by
         simp only [List.push_toArray, List.cons_append, List.nil_append, List.mem_toArray,
           List.mem_cons,
@@ -290,19 +343,32 @@ theorem initStep_wb {P : Params} {h : Nat} {s : Core} (S : Stage P h s) (hW : WB
         rcases hx with rfl | rfl
         · exact nodeB_default K
         · nodeb)
-    have hn := allX_modify hn0 (fun X hX => chainNew_nodeB (P := s.P) hX hc hbl hK1 (by rw [hP]; exact hce)) 1
+    have hn := allX_modify hn0 (fun X hX => chainNew_nodeB (P := s.P) hX hc hbl hK1 (by
+      rw [hP]
+      exact hce)) 1
     have hpath : ∀ c, ArrB K ((#[] : Array (Array Nat)).getX c) := fun c => by
       simp only [getX_empty]; exact arrB_default K
     have hcin : ∀ c, ∀ t ∈ ((((#[] : Array (List Nat)).setX 1 []).setX 1 [1]).getX c), t < 2 ^ K :=
       allX_setX (p := fun l => ∀ t ∈ l, t < 2 ^ K) (allX_setX (p := fun l => ∀ t ∈ l, t < 2 ^ K)
-        (fun c t ht => by simp only [getX_empty] at ht; change t ∈ ([] : List Nat) at ht; cases ht) lb_nil _) (lb_cons (P := (· < 2 ^ K)) hK1 lb_nil) _
+        (fun c t ht => by simp only [getX_empty] at ht; change t ∈ ([] : List Nat) at ht; cases
+          ht) lb_nil _) (lb_cons (P := (· < 2 ^ K)) hK1 lb_nil) _
     have hlpar : ArrB K ((#[] : Array Nat).setX 1 1) := arrB_setX (arrB_empty K) hK1 _
     have hprep : PrepB K (prepNext s.P
-        { chunk := 1, h := 1, below := if 1 = 1 then 1 else 1 - 1, tag := chainTag P (1 - 1), path := pa } 1) := by
-      refine prepNext_prepB ⟨hc, hh, hbl, htg, hpp⟩ (by have := hR.HK; have := hR.H1; show 1 + 1 < _; omega)
+        {
+          chunk := 1
+          h := 1
+          below := if 1 = 1 then 1 else 1 - 1
+          tag := chainTag P (1 - 1)
+          path := pa
+        } 1) := by
+      refine prepNext_prepB ⟨hc, hh, hbl, htg, hpp⟩ (by
+        have := hR.HK
+        have := hR.H1
+        change 1 + 1 < _
+        omega)
         hK1 ?_
       rw [hP]
-      show chainTag P (1 - 1) ||| ((1 <<< (P.beta - 1)) <<< ((1 - 1) * P.beta)) < 2 ^ K
+      change chainTag P (1 - 1) ||| ((1 <<< (P.beta - 1)) <<< ((1 - 1) * P.beta)) < 2 ^ K
       have := chainTag_succ hR.b1 (1 - 1)
       unfold center at this
       rw [this]
@@ -314,26 +380,57 @@ theorem initStep_wb {P : Params} {h : Nat} {s : Core} (S : Stage P h s) (hW : WB
       rw [ite_eq_right e1] at hp
       obtain ⟨hc, hh, hbl, htg, hpp⟩ := hW.prep _ hp
       dsimp only at hc hh hbl htg hpp
-      rw [initStep_mid s _ hp (by simpa using e1) (by rw [hP]; exact eH)] at hr
+      rw [initStep_mid s _ hp (by simpa using e1) (by
+        rw [hP]
+        exact eH)] at hr
       obtain ⟨-, rfl⟩ := EStateM.Result.ok.inj hr
       clear hr
       have hsz' : s.nodes.size < 2 ^ K := by rw [hn]; have := hR.HK; omega
-      have hnd : ∀ i, NodeB K ((((s.nodes.push { height := h }).modify s.nodes.size
-          (chainNew s.P { chunk := 1, h := h, below := h - 1, tag := chainTag P (h - 1), path := pa })).modify
-            (h - 1) (fun n => { n with inTables := [s.nodes.size], livePar := s.nodes.size })).getX i) := by
+      have hnd : ∀ i, NodeB K ((((s.nodes.push {
+        height := h
+      }).modify s.nodes.size
+          (chainNew s.P {
+            chunk := 1
+            h := h
+            below := h - 1
+            tag := chainTag P (h - 1)
+            path := pa
+          })).modify
+            (h - 1) (fun n => {
+              n with
+              inTables := [s.nodes.size]
+              livePar := s.nodes.size
+            })).getX i) := by
         have hhK : h < 2 ^ K := by have := hR.HK; omega
-        have hnew : NodeB K ({ height := h } : Node) := by nodeb
+        have hnew : NodeB K ({
+          height := h
+        } : Node) := by nodeb
         have a1 := allX_push (p := NodeB K) hW.nodes hnew
         have a2 := allX_modify_at (p := NodeB K) (i := s.nodes.size) a1
-          (f := chainNew s.P { chunk := 1, h := h, below := h - 1, tag := chainTag P (h - 1), path := pa })
-          (chainNew_nodeB (a1 _) hc (by show h - 1 < 2 ^ K; omega) hK1 (by rw [hP]; exact hce))
-        exact allX_modify (p := NodeB K) a2 (fun X hX => by nodeb; exact lb_cons (P := (· < 2 ^ K)) hsz' lb_nil) _
+          (f := chainNew s.P {
+            chunk := 1
+            h := h
+            below := h - 1
+            tag := chainTag P (h - 1)
+            path := pa
+          })
+          (chainNew_nodeB (a1 _) hc (by
+            change h - 1 < 2 ^ K
+            omega) hK1 (by
+            rw [hP]
+            exact hce))
+        exact allX_modify (p := NodeB K) a2 (fun X hX => by
+          nodeb
+          exact lb_cons (P := (· < 2 ^ K)) hsz' lb_nil) _
       refine (hW.withNodes hnd).withPrep ?_
       · intro q hq
         cases hq
-        refine prepNext_prepB ⟨hc, hh, hbl, htg, hpp⟩ (by have := hR.HK; show h + 1 < _; omega) hsz' ?_
+        refine prepNext_prepB ⟨hc, hh, hbl, htg, hpp⟩ (by
+          have := hR.HK
+          change h + 1 < _
+          omega) hsz' ?_
         rw [hP]
-        show chainTag P (h - 1) ||| ((1 <<< (P.beta - 1)) <<< ((h - 1) * P.beta)) < 2 ^ K
+        change chainTag P (h - 1) ||| ((1 <<< (P.beta - 1)) <<< ((h - 1) * P.beta)) < 2 ^ K
         have := chainTag_succ hR.b1 (h - 1)
         unfold center at this
         rw [this, show h - 1 + 1 = h by omega]
@@ -341,7 +438,10 @@ theorem initStep_wb {P : Params} {h : Nat} {s : Core} (S : Stage P h s) (hW : WB
     · rw [ite_eq_right e1] at hp
       obtain ⟨hc, hh, hbl, htg, hpp⟩ := hW.prep _ hp
       dsimp only at hc hh hbl htg hpp
-      rw [initStep_last s _ hp (by simpa using e1) (by rw [hP]; show P.H < h; omega)] at hr
+      rw [initStep_last s _ hp (by simpa using e1) (by
+        rw [hP]
+        change P.H < h
+        omega)] at hr
       obtain ⟨-, rfl⟩ := EStateM.Result.ok.inj hr
       clear hr
       have hpa' : ∀ d, ArrB K ((s.path.setX 1 pa).getX d) := by
@@ -350,17 +450,33 @@ theorem initStep_wb {P : Params} {h : Nat} {s : Core} (S : Stage P h s) (hW : WB
         cases hj : pa[j]? with
         | none => exact pos K
         | some w => exact hpp w (Array.mem_of_getElem? hj)
-      have hC' := allX_modify (p := ChunkB K) hW.C (f := fun C => { C with tag := chainTag P (h - 1) })
+      have hC' := allX_modify (p := ChunkB K) hW.C (f := fun C => {
+        C with
+        tag := chainTag P (h - 1)
+      })
         (fun X hX => by recb) 1
       exact ((hW.withPath hpa').withC hC').withPrep (p := none) (fun q hq => by cases hq)
 
 /-- The fresh core before its chain is built. -/
 theorem wb_prepStart {P : Params} (hP : ParamsB K P) (hL : LabRoom K P) (r : Bool) :
-    WB K { initState P with
-      prep := some { chunk := 1, below := 1, path := Array.replicate (P.H + 1) NIL }, ready := r } := by
-  have hK1 : 1 < 2 ^ K := Nat.one_lt_two_pow (by have := hL.K1; omega)
+    WB K {
+      initState P with
+      prep := some {
+        chunk := 1
+        below := 1
+        path := Array.replicate (P.H + 1) NIL
+      }
+      ready := r
+    } := by
+  have hK1 : 1 < 2 ^ K := Nat.one_lt_two_pow (by
+    have := hL.K1
+    omega)
   have h0 := initState_wB hP hL.Be hL.Bg hL.K1
-  refine (h0.withPrep (p := some { chunk := 1, below := 1, path := Array.replicate (P.H + 1) NIL })
+  refine (h0.withPrep (p := some {
+    chunk := 1
+    below := 1
+    path := Array.replicate (P.H + 1) NIL
+  })
     (fun q hq => ?_)).withReady
   cases hq
   refine ⟨hK1, hK1, hK1, pos K, fun v hv => ?_⟩
@@ -407,35 +523,51 @@ theorem initCore_wb {lazy : Bool} {s s' : Core} (hP : ParamsB K s.P) (hL : LabRo
     rcases hl : (forIn (List.range (s.P.H + 1)) PUnit.unit fun (_ : Nat) (_ : PUnit) => do
         let b ← initStep
         if b = true then pure (ForInStep.done PUnit.unit) else pure (ForInStep.yield PUnit.unit) :
-        CM PUnit).run { initState s.P with
-          prep := some { chunk := 1, below := 1, path := Array.replicate (s.P.H + 1) NIL }, ready := true }
+        CM PUnit).run {
+          initState s.P with
+          prep := some {
+            chunk := 1
+            below := 1
+            path := Array.replicate (s.P.H + 1) NIL
+          }
+          ready := true
+        }
         with ⟨u, s1⟩ | ⟨e, s1⟩
     · rw [hl] at hr
       simp only [run_modify] at hr
       obtain ⟨-, rfl⟩ := EStateM.Result.ok.inj hr
-      exact (wb_initLoop hPP hR _ 1 _ (stage_one s true) (wb_prepStart hP hL true) le_rfl (by omega) s1 hl).withReady
+      exact (wb_initLoop hPP hR _ 1 _ (stage_one s true) (wb_prepStart hP hL true) le_rfl (by
+        omega) s1 hl).withReady
     · rw [hl] at hr; simp at hr
 
 /-- **A fresh core**, as the wrapper makes it (`newCore`). -/
 theorem newCore_wb {P : Params} {lazy : Bool} {c : Core} (hP : ParamsB K P) (hL : LabRoom K P)
     (hR : PrepRoom K P) (hPP : topPP P) (hc : newCore P lazy = .ok c) : WB K c := by
   unfold newCore runCore at hc
-  rcases hr : (initCore lazy).run { P := P } with ⟨u, s'⟩ | ⟨e, s'⟩
+  rcases hr : (initCore lazy).run {
+    P := P
+  } with ⟨u, s'⟩ | ⟨e, s'⟩
   · rw [hr] at hc
     cases hc
-    exact initCore_wb (s := { P := P }) hP hL hR hPP hr
+    exact initCore_wb (s := {
+      P := P
+    }) hP hL hR hPP hr
   · rw [hr] at hc; cases hc
 
 /-- **A preparation step keeps the stored-value bound**, on a core whose chain is being built
 (`topPI`) or that is ready. -/
-theorem prepareStep_wb {s : Core} (hI : s.ready = true ∨ topPI s) (hW : WB K s) (hR : PrepRoom K s.P)
+theorem prepareStep_wb {s : Core} (hI : s.ready = true ∨ topPI s) (hW : WB K s) (hR : PrepRoom K
+  s.P)
     {b : Bool} {s' : Core} (hr : prepareStep.run s = .ok b s') : WB K s' := by
   rcases hI with hrd | ⟨-, hrd, h, h1, hH, S⟩
   · unfold prepareStep at hr
     simp only [run_get_bind, hrd, Bool.not_true, Bool.false_eq_true, ite_false, run_pure] at hr
     obtain ⟨-, rfl⟩ := EStateM.Result.ok.inj hr; exact hW
   · have key : ∀ c s1, initStep.run s = .ok c s1 → prepareStep.run s =
-        .ok (if c then true else s1.ready) (if c then { s1 with ready := true } else s1) := by
+        .ok (if c then true else s1.ready) (if c then {
+          s1 with
+          ready := true
+        } else s1) := by
       intro c s1 hi
       unfold prepareStep
       simp only [run_get_bind, hrd, Bool.not_false, ite_true]
@@ -444,7 +576,11 @@ theorem prepareStep_wb {s : Core} (hI : s.ready = true ∨ topPI s) (hW : WB K s
     rcases hi : initStep.run s with ⟨c, s1⟩ | ⟨e, s1⟩
     · rw [key c s1 hi] at hr
       obtain ⟨-, rfl⟩ := EStateM.Result.ok.inj hr
-      have hW1 := initStep_wb S hW (by rw [← S.P]; exact hR) h1 (by rw [← S.P]; exact hH) hi
+      have hW1 := initStep_wb S hW (by
+        rw [← S.P]
+        exact hR) h1 (by
+        rw [← S.P]
+        exact hH) hi
       cases c
       · exact hW1
       · exact hW1.withReady

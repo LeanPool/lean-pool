@@ -35,7 +35,8 @@ Nothing here is used by Theorems A and B.
 
 namespace OrderMaintenance.Impl
 
-open OrderMaintenance.Model OrderMaintenance.Proof OrderMaintenance.Proof.Word OrderMaintenance.Proof.Top
+open OrderMaintenance.Model OrderMaintenance.Proof OrderMaintenance.Proof.Word
+  OrderMaintenance.Proof.Top
 open OrderMaintenance.Machine (Reg)
 
 variable {K KH : Nat} {κ : Caps}
@@ -48,52 +49,67 @@ theorem wPk_geH (K KH : Nat) : KH ≤ wPk K KH := le_max_right _ _
 
 theorem pk_of_PK {Γ : Reg → Nat} {W : Nat} {c : Stm} {s : Core} {L : Loc} (h : PK K KH κ Γ W c s L)
     {s' : Core} {L' : Loc} {n : Nat} (he : evalF κ c s L = .ok s' L' n) : pkF κ c s L < 2 ^ W :=
-  (h (by rw [he]; exact Res.noConfusion)).1
+  (h (by
+    rw [he]
+    exact Res.noConfusion)).1
 
-theorem pk_of_PKok {Γ : Reg → Nat} {W : Nat} {c : Stm} {s : Core} {L : Loc} (h : PKok K KH κ Γ W c s L)
+theorem pk_of_PKok {Γ : Reg → Nat} {W : Nat} {c : Stm} {s : Core} {L : Loc} (h : PKok K KH κ Γ W
+  c s L)
     {s' : Core} {L' : Loc} {n : Nat} (he : evalF κ c s L = .ok s' L' n) : pkF κ c s L < 2 ^ W :=
   (h _ _ _ he).1
 
 section top
-variable {p : Nat} {m : OrderMaintenance.Machine.State} {s : Core}
-variable (hC : CapsW K κ) (hK : 8 ≤ K) (hE : Enc p κ s m) (hWB : WB K s) (hh : ∀ i, (s.E.getX i).h < 2 ^ KH)
+variable {p : Nat} {m : Machine.State} {s : Core}
+variable (hC : CapsW K κ) (hK : 8 ≤ K) (hE : Enc p κ s m) (hWB : WB K s) (hh : ∀ i, (s.E.getX
+  i).h < 2 ^ KH)
   (hR : PRoom K s.P)
 include hC hK hE hWB hh hR
 
+omit hC in
 theorem gd_entry {ps : List Reg} {vs : List Nat} (hvs : ∀ v ∈ vs, v < 2 ^ K) :
-    Gd K KH κ (ΓK K) s (OrderMaintenance.Machine.State.setLocs (fun _ => 0) ps vs) :=
+    Gd K KH κ (ΓK K) s (Machine.State.setLocs (fun _ => 0) ps vs) :=
   gd_of_WB hE hWB (by omega) hh hR (setLocs_lt (zero_locs _) (fun _ _ => le_refl K) hvs)
 
 /-- **`order`**. -/
 theorem order_peak {vs : List Nat} (hvs : ∀ v ∈ vs, v < 2 ^ K) {s' : Core} {L' : Loc} {n : Nat}
-    (he : evalF κ orderP.body s (OrderMaintenance.Machine.State.setLocs (fun _ => 0) orderP.params vs) = .ok s' L' n) :
-    pkF κ orderP.body s (OrderMaintenance.Machine.State.setLocs (fun _ => 0) orderP.params vs) < 2 ^ wPk K KH :=
-  pk_of_PK (PK.of_safe hC (by omega) (by have := wPk_ge K KH; omega) (order_safe hK (wPk_ge K KH))
-    (gd_entry hC hK hE hWB hh hR hvs)) he
+    (he : evalF κ orderP.body s (Machine.State.setLocs (fun _ => 0) orderP.params vs) = .ok s'
+      L' n) :
+    pkF κ orderP.body s (Machine.State.setLocs (fun _ => 0) orderP.params vs) < 2 ^ wPk K KH :=
+  pk_of_PK (PK.of_safe hC (by omega) (by
+    have := wPk_ge K KH
+    omega) (order_safe hK (wPk_ge K KH))
+    (gd_entry hK hE hWB hh hR hvs)) he
 
 /-- **`markDead`**. -/
 theorem markDead_peak {vs : List Nat} (hvs : ∀ v ∈ vs, v < 2 ^ K) {s' : Core} {L' : Loc} {n : Nat}
-    (he : evalF κ markDeadP.body s (OrderMaintenance.Machine.State.setLocs (fun _ => 0) markDeadP.params vs) = .ok s' L' n) :
-    pkF κ markDeadP.body s (OrderMaintenance.Machine.State.setLocs (fun _ => 0) markDeadP.params vs) < 2 ^ wPk K KH :=
-  pk_of_PK (PK.of_safe hC (by omega) (by have := wPk_ge K KH; omega) (markDead_safe hK (wPk_ge K KH))
-    (gd_entry hC hK hE hWB hh hR hvs)) he
+    (he : evalF κ markDeadP.body s (Machine.State.setLocs (fun _ => 0) markDeadP.params vs) =
+      .ok s' L' n) :
+    pkF κ markDeadP.body s (Machine.State.setLocs (fun _ => 0) markDeadP.params vs) < 2 ^ wPk K
+      KH :=
+  pk_of_PK (PK.of_safe hC (by omega) (by
+    have := wPk_ge K KH
+    omega) (markDead_safe hK (wPk_ge K KH))
+    (gd_entry hK hE hWB hh hR hvs)) he
 
 /-- **`prepareStep`**, on a core being built. -/
-theorem prepareStep_peak (hM : PrepM s) {vs : List Nat} (hvs : ∀ v ∈ vs, v < 2 ^ K) {s' : Core} {L' : Loc}
-    {n : Nat} (he : evalF κ prepP.body s (OrderMaintenance.Machine.State.setLocs (fun _ => 0) prepP.params vs) = .ok s' L' n) :
-    pkF κ prepP.body s (OrderMaintenance.Machine.State.setLocs (fun _ => 0) prepP.params vs) < 2 ^ wPk K KH :=
-  pk_of_PKok (prepP_pkok hC hK (wPk_ge K KH) hM (gd_entry hC hK hE hWB hh hR hvs)) he
+theorem prepareStep_peak (hM : PrepM s) {vs : List Nat} (hvs : ∀ v ∈ vs, v < 2 ^ K) {s' : Core}
+  {L' : Loc}
+    {n : Nat} (he : evalF κ prepP.body s (Machine.State.setLocs (fun _ => 0) prepP.params vs) =
+      .ok s' L' n) :
+    pkF κ prepP.body s (Machine.State.setLocs (fun _ => 0) prepP.params vs) < 2 ^ wPk K KH :=
+  pk_of_PKok (prepP_pkok hC hK (wPk_ge K KH) hM (gd_entry hK hE hWB hh hR hvs)) he
 
 end top
 
 /-- **`initCore`**, from the empty core of the construction. -/
-theorem initCore_peak {p : Nat} {m : OrderMaintenance.Machine.State} {P : Params} (hC : CapsW K κ) (hK : 8 ≤ K)
+theorem initCore_peak {p : Nat} {m : Machine.State} {P : Params} (hC : CapsW K κ) (hK : 8 ≤ K)
     (hE : Enc p κ (freshC P) m) (hWB : WB K (freshC P)) (hh : ∀ i, ((freshC P).E.getX i).h < 2 ^ KH)
     (hR : PRoom K P) (hH : 1 ≤ P.H) (hK2 : InitCaps κ P) (hE2 : 2 ≤ κ.tbl .E) (hG2 : 2 ≤ κ.tbl .G)
     {vs : List Nat} (hvs : ∀ v ∈ vs, v < 2 ^ K) {s' : Core} {L' : Loc} {n : Nat}
-    (he : evalF κ initCoreS (freshC P) (OrderMaintenance.Machine.State.setLocs (fun _ => 0) ["lz"] vs) = .ok s' L' n) :
-    pkF κ initCoreS (freshC P) (OrderMaintenance.Machine.State.setLocs (fun _ => 0) ["lz"] vs) < 2 ^ wPk K KH :=
+    (he : evalF κ initCoreS (freshC P) (Machine.State.setLocs (fun _ => 0) ["lz"] vs) = .ok s'
+      L' n) :
+    pkF κ initCoreS (freshC P) (Machine.State.setLocs (fun _ => 0) ["lz"] vs) < 2 ^ wPk K KH :=
   pk_of_PKok (initCore_pkok hC hK (wPk_ge K KH) hH hK2 hE2 hG2
-    (gd_entry (s := freshC P) hC hK hE hWB hh (by simpa [freshC] using hR) hvs)) he
+    (gd_entry (s := freshC P) hK hE hWB hh (by simpa [freshC] using hR) hvs)) he
 
 end OrderMaintenance.Impl

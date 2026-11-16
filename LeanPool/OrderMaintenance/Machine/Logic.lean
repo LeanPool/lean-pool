@@ -79,7 +79,8 @@ theorem wp_store {a : Arr} {i e : Expr} {Q : State → Nat → Prop} {s : State}
     | some v => by_cases hj : j < s.cap a <;> simp [hj]
 
 theorem wp_alloc {a : Arr} {n : Expr} {Q : State → Nat → Prop} {s : State} :
-    wp (.alloc a n) Q s ↔ ∃ k, n.eval s = some k ∧ Q ((s.bump (n.maxv s)).alloc a k) (1 + n.cost) := by
+    wp (.alloc a n) Q s ↔ ∃ k, n.eval s = some k ∧ Q ((s.bump (n.maxv s)).alloc a k) (1 +
+      n.cost) := by
   simp only [wp, exec]; cases n.eval s <;> simp
 
 theorem wp_seq {c d : Stmt} {Q : State → Nat → Prop} {s : State} :

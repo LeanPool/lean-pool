@@ -60,13 +60,15 @@ theorem SF.get_set (s : Core) (v : Nat) (k k' : SF) (h : k.ok v = true) :
 
 /-- What an `AF` write keeps. -/
 theorem AF.set_keep (s : Core) (a : Array Nat) (k : AF) :
-    (k.set s a).E = s.E ∧ (k.set s a).Gs = s.Gs ∧ (k.set s a).C = s.C ∧ (k.set s a).nodes = s.nodes ∧
+    (k.set s a).E = s.E ∧ (k.set s a).Gs = s.Gs ∧ (k.set s a).C = s.C ∧ (k.set s a).nodes =
+      s.nodes ∧
       (k.set s a).P = s.P ∧ ∀ k' : SF, k'.get (k.set s a) = k'.get s := by
   cases k <;> exact ⟨rfl, rfl, rfl, rfl, rfl, fun k' => by cases k' <;> rfl⟩
 
 /-- What a scalar write keeps. -/
 theorem SF.set_keep (s : Core) (v : Nat) (k : SF) :
-    (k.set s v).E = s.E ∧ (k.set s v).Gs = s.Gs ∧ (k.set s v).C = s.C ∧ (k.set s v).nodes = s.nodes ∧
+    (k.set s v).E = s.E ∧ (k.set s v).Gs = s.Gs ∧ (k.set s v).C = s.C ∧ (k.set s v).nodes =
+      s.nodes ∧
       (k.set s v).P = s.P ∧ ∀ k' : AF, k'.get (k.set s v) = k'.get s := by
   cases k <;> exact ⟨rfl, rfl, rfl, rfl, rfl, fun k' => by cases k' <;> rfl⟩
 
@@ -86,7 +88,8 @@ theorem Fld.get_set {κ : Caps} {s s' : Core} {i v : Nat} {f : Fld} (h : f.set �
     | e k' =>
       simp only [Fld.get, getX_modify']
       by_cases e1 : j = i
-      · subst e1; rw [ite_eq_left ⟨rfl, hc.1⟩, EF.get_set _ _ _ _ hc.2]; by_cases e2 : k' = k <;> simp [e2]
+      · subst e1; rw [ite_eq_left ⟨rfl, hc.1⟩, EF.get_set _ _ _ _ hc.2]; by_cases e2 : k' = k
+        <;> simp [e2]
       · rw [ite_eq_right (fun h => e1 h.1)]; simp [e1]
     | _ k' => cases k' <;> simp [Fld.get, AF.get, SF.get]
   | g k =>
@@ -97,7 +100,8 @@ theorem Fld.get_set {κ : Caps} {s s' : Core} {i v : Nat} {f : Fld} (h : f.set �
     | g k' =>
       simp only [Fld.get, getX_modify']
       by_cases e1 : j = i
-      · subst e1; rw [ite_eq_left ⟨rfl, hc.1⟩, GF.get_set _ _ _ _ hc.2]; by_cases e2 : k' = k <;> simp [e2]
+      · subst e1; rw [ite_eq_left ⟨rfl, hc.1⟩, GF.get_set _ _ _ _ hc.2]; by_cases e2 : k' = k
+        <;> simp [e2]
       · rw [ite_eq_right (fun h => e1 h.1)]; simp [e1]
     | _ k' => cases k' <;> simp [Fld.get, AF.get, SF.get]
   | c k =>
@@ -108,7 +112,8 @@ theorem Fld.get_set {κ : Caps} {s s' : Core} {i v : Nat} {f : Fld} (h : f.set �
     | c k' =>
       simp only [Fld.get, getX_modify']
       by_cases e1 : j = i
-      · subst e1; rw [ite_eq_left ⟨rfl, hc.1⟩, CF.get_set _ _ _ _ hc.2]; by_cases e2 : k' = k <;> simp [e2]
+      · subst e1; rw [ite_eq_left ⟨rfl, hc.1⟩, CF.get_set _ _ _ _ hc.2]; by_cases e2 : k' = k
+        <;> simp [e2]
       · rw [ite_eq_right (fun h => e1 h.1)]; simp [e1]
     | _ k' => cases k' <;> simp [Fld.get, AF.get, SF.get]
   | n k =>
@@ -119,7 +124,8 @@ theorem Fld.get_set {κ : Caps} {s s' : Core} {i v : Nat} {f : Fld} (h : f.set �
     | n k' =>
       simp only [Fld.get, getX_modify']
       by_cases e1 : j = i
-      · subst e1; rw [ite_eq_left ⟨rfl, hc.1⟩, NF.get_set _ _ _ _ hc.2]; by_cases e2 : k' = k <;> simp [e2]
+      · subst e1; rw [ite_eq_left ⟨rfl, hc.1⟩, NF.get_set _ _ _ _ hc.2]; by_cases e2 : k' = k
+        <;> simp [e2]
       · rw [ite_eq_right (fun h => e1 h.1)]; simp [e1]
     | _ k' => cases k' <;> simp [Fld.get, AF.get, SF.get]
   | a k =>
@@ -208,7 +214,8 @@ theorem NF.set_lists (x : Node) (v : Nat) (k : NF) :
 
 /-- A field write keeps every list, path row and optional record. -/
 theorem Fld.set_rest {κ : Caps} {s s' : Core} {i v : Nat} {f : Fld} (h : f.set κ s i v = some s') :
-    (∀ (k : LK) j, k.view s' j = k.view s j) ∧ (∀ c, rowOf s' c = rowOf s c) ∧ (∀ o : OF, o.get s' = o.get s) := by
+    (∀ (k : LK) j, k.view s' j = k.view s j) ∧ (∀ c, rowOf s' c = rowOf s c) ∧ (∀ o : OF,
+      o.get s' = o.get s) := by
   cases f with
   | e k | g k | c k =>
     simp only [Fld.set] at h; split at h <;> [skip; simp at h]
@@ -259,12 +266,14 @@ theorem Tbl.push_rest (s : Core) (t : Tbl) :
 theorem NF.get_lists (x : Node) (k : NF) (a : List Nat) (b : List (Nat × Nat)) (c : List Nat)
     (d : List (Nat × Side)) :
     NF.get { x with children := a } k = NF.get x k ∧ NF.get { x with table := b } k = NF.get x k ∧
-      NF.get { x with inTables := c } k = NF.get x k ∧ NF.get { x with side := d } k = NF.get x k := by
+      NF.get { x with inTables := c } k = NF.get x k ∧ NF.get { x with side := d } k = NF.get
+        x k := by
   cases k <;> exact ⟨rfl, rfl, rfl, rfl⟩
 
 /-- What a list replacement keeps. -/
 theorem LK.put_keep (s : Core) (i : Nat) (l : List (Nat × Nat)) (k : LK) :
-    (∀ (f : Fld) j, f.get (k.put s i l) j = f.get s j) ∧ (∀ t : Tbl, t.size (k.put s i l) = t.size s) ∧
+    (∀ (f : Fld) j, f.get (k.put s i l) j = f.get s j) ∧ (∀ t : Tbl, t.size (k.put s i l) =
+      t.size s) ∧
       (k.put s i l).P = s.P ∧ (∀ c, rowOf (k.put s i l) c = rowOf s c) ∧
       (∀ o : OF, o.get (k.put s i l) = o.get s) := by
   refine ⟨fun f j => ?_, fun t => ?_, by cases k <;> rfl, fun c => by cases k <;> rfl,
@@ -301,7 +310,8 @@ theorem map_side' {l : List (Nat × Nat)} (h : (l.all fun q => decide (q.2 ≤ 1
     l.map (fun q => (q.1, sideN (sideOfN q.2))) = l := by
   have := map_side h; simpa [List.map_map, Function.comp_def] using this
 
-theorem map_pair0_mem {l : List (Nat × Nat)} (h : ∀ q ∈ l, q.2 = 0) : l.map (fun q => (q.1, 0)) = l := by
+theorem map_pair0_mem {l : List (Nat × Nat)} (h : ∀ q ∈ l, q.2 = 0) : l.map (fun q => (q.1,
+  0)) = l := by
   apply map_pair0'; simpa using h
 
 theorem map_side_mem {l : List (Nat × Nat)} (h : ∀ q ∈ l, q.2 ≤ 1) :

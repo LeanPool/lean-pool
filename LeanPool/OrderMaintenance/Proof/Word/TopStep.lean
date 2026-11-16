@@ -58,9 +58,12 @@ theorem sum_filter_le (l : List Nat) (f : Nat → Nat) (p : Nat → Bool) :
     split <;> simp only [List.map_cons, List.sum_cons] <;> omega
 
 /-- The chunk list of a core has at most `C.size - 1` entries. -/
-theorem CLok.len {s : Core} {cl : List Nat} (h : CLok s cl) (hnd : cl.Nodup) : cl.length + 1 ≤ max 1 s.C.size := by
+theorem CLok.len {s : Core} {cl : List Nat} (h : CLok s cl) (hnd : cl.Nodup) : cl.length + 1 ≤
+  max 1 s.C.size := by
   have := (hnd.subperm (l₂ := List.range' 1 (s.C.size - 1))
-    (fun e he => List.mem_range'_1.mpr (by have := (h.2 e).mp he; omega))).length_le
+    (fun e he => List.mem_range'_1.mpr (by
+      have := (h.2 e).mp he
+      omega))).length_le
   simp only [List.length_range'] at this
   omega
 
@@ -85,7 +88,7 @@ theorem walk_weight : (s.nodes.getX v).weight + 2 ≤ cl.length := by
     unfold upChain; rw [ite_eq_right hv0]; simp
   rw [ite_eq_left hp] at hw
   have := tw_le (s := ts s) cl v
-  show (nd (ts s) v).weight + 2 ≤ _
+  change (nd (ts s) v).weight + 2 ≤ _
   omega
 
 /-- **A drain start's new weights** (Sz): the children's stored weights are at most their true
@@ -96,8 +99,11 @@ theorem walk_sum (p : Nat → Bool) :
   have S := hI.shape
   have hvl := walk_live hpc hv0 hI
   have hvs : v < s.nodes.size := hvl.1.2.1
-  have eV : (wiC s v).nodes.getX v = { s.nodes.getX v with weight := (s.nodes.getX v).weight + 2 } := by
-    show (s.nodes.modify v _).getX v = _
+  have eV : (wiC s v).nodes.getX v = {
+    s.nodes.getX v with
+    weight := (s.nodes.getX v).weight + 2
+  } := by
+    change (s.nodes.modify v _).getX v = _
     rw [Array.getX_modify, ite_eq_left ⟨rfl, hvs⟩]
   rw [eV]
   dsimp only
@@ -114,7 +120,8 @@ theorem walk_sum (p : Nat → Bool) :
     rw [← S.tw_one hvl h1]
     exact tw_le cl v
   · have h2 : 2 ≤ ht (ts s) v := by omega
-    have e : ∀ e ∈ (nd (ts s) v).children, drainWt (wiC s v).nodes (ht (ts s) v) e ≤ tw (ts s) cl e := by
+    have e : ∀ e ∈ (nd (ts s) v).children, drainWt (wiC s v).nodes (ht (ts s) v) e ≤ tw (ts s)
+      cl e := by
       intro e he
       have hm := ((S.mem_children hvl).mp he).1
       rw [ite_eq_right h1] at hm
@@ -135,14 +142,20 @@ end walk
 
 /-! ### The funding loop -/
 
-theorem jobB_with {j : Job} (hj : JobB K j) {pc : JobPc} (hpc : JobPcB K pc) : JobB K { j with pc := pc } :=
+theorem jobB_with {j : Job} (hj : JobB K j) {pc : JobPc} (hpc : JobPcB K pc) : JobB K {
+  j with
+  pc := pc
+} :=
   ⟨hj.1, hj.2.1, hj.2.2.1, hpc⟩
 
 /-- **A step of the funding loop**: a sweep (`dsS`, its tag bounded by the final state's
 hypothesis), the end of a drain (`fdS`), or the end of the loop. -/
 theorem fund_wb {t : Core} {cl : List Nat} {ord : Nat → List Nat} {dr n0 : Nat → Nat} {j : Job}
     {v up src k : Nat} (hTP : TopParams t.P) (hcl : CLok t cl)
-    (hI : InvJ (ts t) cl ord dr n0 (some { j with pc := .fund v up src k }))
+    (hI : InvJ (ts t) cl ord dr n0 (some {
+      j with
+      pc := .fund v up src k
+    }))
     (hW : WB K t) (hj : JobB K j) (hpc : JobPcB K (.fund v up src k)) {r : Option Job} {t' : Core}
     (hr : (fundLoop j v up src k).run t = .ok r t')
     (htag : ∀ c, 1 ≤ c → c < t'.C.size → (t'.C.getX c).tag < 2 ^ K) :
@@ -152,7 +165,10 @@ theorem fund_wb {t : Core} {cl : List Nat} {ord : Nat → List Nat} {dr n0 : Nat
   obtain ⟨-, hat⟩ := hI.job _ rfl
   simp only [JobAt] at hat
   obtain ⟨-, -, -, hg, -, -⟩ := hat
-  have hwalk : JobB K { j with pc := .walk (some up) } := jobB_with hj hup
+  have hwalk : JobB K {
+    j with
+    pc := .walk (some up)
+  } := jobB_with hj hup
   unfold fundLoop at hr
   simp only [run_getP_bind] at hr
   by_cases hks : k < t.P.s
@@ -171,7 +187,9 @@ theorem fund_wb {t : Core} {cl : List Nat} {ord : Nat → List Nat} {dr n0 : Nat
       have hycl := (rng_sub (s := t) (cl := cl) src).subset hy
       obtain ⟨hy1, hys⟩ := (hcl.2 _).mp hycl
       refine ⟨wb_dsS hW ?_, fun j' e => ?_⟩
-      · have := htag _ hy1 (by rw [dsS_C, Array.size_modify]; exact hys)
+      · have := htag _ hy1 (by
+        rw [dsS_C, Array.size_modify]
+        exact hys)
         rw [dsS_C, Array.getX_modify, ite_eq_left ⟨rfl, hys⟩] at this
         exact this
       · cases e
@@ -212,7 +230,9 @@ theorem walk_wb {s : Core} {cl : List Nat} {ord : Nat → List Nat} {dr n0 : Nat
     obtain ⟨rfl, rfl⟩ := EStateM.Result.ok.inj hr
     have hs1 := walk_sum hpc hv0 hI (fun x => lookup side x == some .left)
     have hs2 := walk_sum hpc hv0 hI (fun x => lookup side x == some .right)
-    refine ⟨wb_sdS hW1 (by simp only [wiC, Array.size_modify]; omega) hR.beta hv
+    refine ⟨wb_sdS hW1 (by
+      simp only [wiC, Array.size_modify]
+      omega) hR.beta hv
       (lt_of_le_of_lt hs1 (by omega)) (lt_of_le_of_lt hs2 (by omega))
       (drainSide_keys (hW1.nOrder v) hside), fun j' e => ?_⟩
     cases e
@@ -222,7 +242,7 @@ theorem walk_wb {s : Core} {cl : List Nat} {ord : Nat → List Nat} {dr n0 : Nat
     have hcl' := hcl.topRel (wiC_topRel s v)
     have hTP' : TopParams (wiC s v).P := hTP
     have hO : ((wiC s v).nodes.getX v).overflowOf = srcOf (ts s) v := by
-      show ((s.nodes.modify v _).getX v).overflowOf = _
+      change ((s.nodes.modify v _).getX v).overflowOf = _
       rw [Array.getX_modify]; split <;> rfl
     rw [hO] at hr
     by_cases hsv : srcOf (ts s) v = NIL
@@ -230,7 +250,10 @@ theorem walk_wb {s : Core} {cl : List Nat} {ord : Nat → List Nat} {dr n0 : Nat
       obtain ⟨rfl, rfl⟩ := EStateM.Result.ok.inj hr
       exact ⟨hW1, fun j' e => by cases e; exact jobB_with hj hlp⟩
     · rw [ite_eq_right hsv] at hr
-      have hn : walkNext (ts s) j v = { j with pc := .fund v (nd (ts s) v).livePar (srcOf (ts s) v) 0 } := by
+      have hn : walkNext (ts s) j v = {
+        j with
+        pc := .fund v (nd (ts s) v).livePar (srcOf (ts s) v) 0
+      } := by
         simp [walkNext, hsv]
       rw [hn] at hI'
       exact fund_wb hTP' hcl' hI' hW1 hj ⟨hv, hlp, hW.nOvf v, pos K⟩ hr htag
@@ -242,12 +265,21 @@ the step (for the run) and after it (for the new tag of a sweep), room for two f
 the chunk count below `2^K` (for the weights). -/
 theorem jobStep_wb {s : Core} {job : Job} (hT : TopInv s) (hres : s.resJob = some job) (hW : WB K s)
     (hR : TopRoom K s.P) (hN : s.nodes.size + 2 ≤ 2 ^ K) (hC : s.C.size ≤ 2 ^ K) {r : Option Job}
-    {s' : Core} (hr : (jobStep job).run s = .ok r s') (hT' : TopInv { s' with resJob := r }) :
-    WB K { s' with resJob := r } := by
+    {s' : Core} (hr : (jobStep job).run s = .ok r s') (hT' : TopInv {
+      s' with
+      resJob := r
+    }) :
+    WB K {
+      s' with
+      resJob := r
+    } := by
   have hP' : s'.P = s.P := ((top_jobStep job).ok hr).rest.1
   have htag : ∀ c, 1 ≤ c → c < s'.C.size → (s'.C.getX c).tag < 2 ^ K := fun c h1 h2 => by
     have := tag_lt_of_topInv hT' h1 h2
-    exact lt_pow_mono this (by show s'.P.H * s'.P.beta ≤ K; rw [hP']; exact hR.tag)
+    exact lt_pow_mono this (by
+      change s'.P.H * s'.P.beta ≤ K
+      rw [hP']
+      exact hR.tag)
   have hJ : JobB K job := hW.job job hres
   have hH := hW.P.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2
   suffices h : WB K s' ∧ ∀ j', r = some j' → JobB K j' from h.1.withResJob h.2
@@ -262,7 +294,7 @@ theorem jobStep_wb {s : Core} {job : Job} (hT : TopInv s) (hres : s.resJob = som
     cases e
     refine jobB_with hJ ?_
     split
-    · show l + 1 < 2 ^ K; omega
+    · change l + 1 < 2 ^ K; omega
     · trivial
   | walk ov =>
     have hfin : finS (ts s) (some job) = ts s := by simp only [finS, hpc]
@@ -271,7 +303,10 @@ theorem jobStep_wb {s : Core} {job : Job} (hT : TopInv s) (hres : s.resJob = som
     | none =>
       obtain ⟨hI', -, -⟩ := walkNone_inv hpc hI
       rw [OrderMaintenance.Impl.jobStep_walkNone hpc] at hr
-      exact walk_wb (j := { job with pc := .walk (some (lpr (ts s) job.y)) }) rfl hTP hcl hI' hW
+      exact walk_wb (j := {
+        job with
+        pc := .walk (some (lpr (ts s) job.y))
+      }) rfl hTP hcl hI' hW
         (jobB_with hJ (hW.lparE job.y)) (hW.lparE job.y) hR hN hC hr htag
     | some v =>
       rw [OrderMaintenance.Impl.jobStep_walkSome hpc] at hr

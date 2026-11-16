@@ -33,7 +33,8 @@ Nothing here is used by Theorems A and B.
 
 namespace OrderMaintenance.Impl
 
-open OrderMaintenance.Model OrderMaintenance.Proof OrderMaintenance.Proof.Top OrderMaintenance.Proof.Word
+open OrderMaintenance.Model OrderMaintenance.Proof OrderMaintenance.Proof.Top
+  OrderMaintenance.Proof.Word
 open OrderMaintenance.Machine (Reg Arr State Out exec Stmt Same Expr BinOp UnOp wp wpB dpk)
 
 variable {K KH : Nat}
@@ -49,24 +50,30 @@ theorem wpB_seqAll {B : Nat} (P : State → Prop) :
 
 theorem wpB_storeAll {B : Nat} (a : Arr) (lc : Reg → Nat) (ca : Nat) :
     ∀ (l : List (Nat × Expr)) (s : State), s.loc = lc → s.cap a = ca →
-      (∀ ie ∈ l, ∀ s : State, s.loc = lc → (∃ v, ie.2.eval s = some v) ∧ ie.1 < ca ∧ ie.1 ≤ B ∧ ie.2.maxv s ≤ B) →
-      wpB B (OrderMaintenance.Machine.storeAll a l) TT s
+      (∀ ie ∈ l, ∀ s : State, s.loc = lc → (∃ v, ie.2.eval s = some v) ∧ ie.1 < ca ∧ ie.1 ≤ B ∧
+        ie.2.maxv s ≤ B) →
+      wpB B (Machine.storeAll a l) TT s
   | [], _, _, _, _ => wpB_skip_T
   | (i, e) :: l, s, hl, hc, h => by
     obtain ⟨⟨v, hv⟩, hi, hiB, heB⟩ := h (i, e) (by simp) s hl
-    exact wpB_store_seq i v rfl hv (by rw [hc]; exact hi) (by simpa using hiB) heB
-      (fun s' hl' _ hc' => wpB_storeAll a lc ca l s' (hl'.trans hl) (by rw [hc']; exact hc)
+    exact wpB_store_seq i v rfl hv (by
+      rw [hc]
+      exact hi) (by simpa using hiB) heB
+      (fun s' hl' _ hc' => wpB_storeAll a lc ca l s' (hl'.trans hl) (by
+        rw [hc']
+        exact hc)
         (fun ie hie => h ie (by simp [hie])))
 
 theorem wpB_allocAll {B : Nat} (lc : Reg → Nat) :
     ∀ (l : List (Arr × Expr)) (s : State), s.loc = lc →
       (∀ ae ∈ l, ∀ s : State, s.loc = lc → (ae.2.eval s).isSome ∧ ae.2.maxv s ≤ B) →
-      wpB B (OrderMaintenance.Machine.allocAll l) TT s
+      wpB B (Machine.allocAll l) TT s
   | [], _, _, _ => wpB_skip_T
   | (a, e) :: l, s, hl, h => by
     obtain ⟨he, heB⟩ := h (a, e) (by simp) s hl
     obtain ⟨k, hk⟩ := Option.isSome_iff_exists.mp he
-    exact wpB_seq_T (OrderMaintenance.Machine.wpB_alloc_g (Q := fun s' _ => s'.loc = lc) k hk heB (fun s' a _ _ => a.trans hl))
+    exact wpB_seq_T (Machine.wpB_alloc_g (Q := fun s' _ => s'.loc = lc) k hk heB (fun s' a _ _
+      => a.trans hl))
       (fun s' _ hl' => wpB_allocAll lc l s' hl' (fun ae hae => h ae (by simp [hae])))
 
 /-! ### Widths of the parameter expressions -/
@@ -75,16 +82,19 @@ theorem wpB_allocAll {B : Nat} (lc : Reg → Nat) :
 def ΓP (K : Nat) : Reg → Nat := fun _ => K / 2
 
 theorem maxv_BW {s : State} {e : Expr} {v : Nat} (hl : e.LeafB s (ΓP K) (fun _ => 0) K)
-    (he : e.eval s = some v) (hw : e.wpM (ΓP K) (fun _ => 0) K ≤ 2 * K + 4) : e.maxv s ≤ BW K KH := by
+    (he : e.eval s = some v) (hw : e.wpM (ΓP K) (fun _ => 0) K ≤ 2 * K + 4) : e.maxv s ≤ BW K KH
+      := by
   have h1 := (Expr.wdM_sound e hl he).2
-  have h2 : 2 ^ e.wpM (ΓP K) (fun _ => 0) K ≤ 2 ^ (2 * K + 4) := Nat.pow_le_pow_right (by norm_num) hw
+  have h2 : 2 ^ e.wpM (ΓP K) (fun _ => 0) K ≤ 2 ^ (2 * K + 4) := Nat.pow_le_pow_right (by
+    norm_num) hw
   exact le_trans (le_of_lt (lt_of_lt_of_le h1 h2)) (Nat.le_add_right _ _)
 
 theorem small_half {x : Nat} (h : 64 * x ≤ K) : x < 2 ^ (K / 2) :=
   lt_of_lt_of_le Nat.lt_two_pow_self (Nat.pow_le_pow_right (by norm_num) (by omega))
 
 theorem N_half {N : Nat} (h : 64 * pL N ≤ K) : N < 2 ^ (K / 2) :=
-  lt_of_lt_of_le (OrderMaintenance.Proof.Word.N_lt N) (Nat.pow_le_pow_right (by norm_num) (by omega))
+  lt_of_lt_of_le (OrderMaintenance.Proof.Word.N_lt N) (Nat.pow_le_pow_right (by norm_num) (by
+    omega))
 
 /-- The expression reads only the locals `xs`, no array, and shifts nothing. -/
 def _root_.OrderMaintenance.Machine.Expr.rdOK (xs : List Reg) : Expr → Bool
@@ -105,7 +115,8 @@ theorem leafB_of_rdOK {s : State} {Γ : Reg → Nat} {A : Arr → Nat} {S : Nat}
   | .un _ a, h => leafB_of_rdOK hx a (by simpa [Expr.rdOK] using h)
 
 theorem maxv_BW' {s : State} {e : Expr} (hl : e.LeafB s (ΓP K) (fun _ => 0) K)
-    (he : ∃ v, e.eval s = some v) (hw : e.wpM (ΓP K) (fun _ => 0) K ≤ 2 * K + 4) : e.maxv s ≤ BW K KH := by
+    (he : ∃ v, e.eval s = some v) (hw : e.wpM (ΓP K) (fun _ => 0) K ≤ 2 * K + 4) : e.maxv s ≤ BW
+      K KH := by
   obtain ⟨v, hv⟩ := he; exact maxv_BW hl hv hw
 
 /-! ### Linear widths, computed from the syntax
@@ -160,8 +171,10 @@ theorem wvM_le_wl : ∀ e : Expr, e.wvM (ΓP K) (fun _ => 0) K ≤ e.wl.1 * (K /
     have ha := wvM_le_wl a
     have hb := wvM_le_wl b
     cases op <;> simp only [Expr.wvM, Expr.wl] <;> try omega
-    · have h1 : a.wl.1 * (K / 2) ≤ max a.wl.1 b.wl.1 * (K / 2) := Nat.mul_le_mul_right _ (le_max_left _ _)
-      have h2 : b.wl.1 * (K / 2) ≤ max a.wl.1 b.wl.1 * (K / 2) := Nat.mul_le_mul_right _ (le_max_right _ _)
+    · have h1 : a.wl.1 * (K / 2) ≤ max a.wl.1 b.wl.1 * (K / 2) := Nat.mul_le_mul_right _
+        (le_max_left _ _)
+      have h2 : b.wl.1 * (K / 2) ≤ max a.wl.1 b.wl.1 * (K / 2) := Nat.mul_le_mul_right _
+        (le_max_right _ _)
       omega
     · rw [Nat.add_mul]; omega
     · rw [Nat.add_mul]; omega
@@ -191,9 +204,10 @@ theorem wpM_le_of_wlp {e : Expr} (hK : 512 ≤ K) (h : e.wlp.1 ≤ 2 ∧ e.wlp.2
 
 theorem wpB_assign_some {B : Nat} {x : Reg} {e : Expr} {Q : State → Nat → Prop} {s : State}
     (he : ∃ v, e.eval s = some v) (hB : e.maxv s ≤ B)
-    (h : ∀ v s', e.eval s = some v → s'.loc = State.upd s.loc x v → s'.mem = s.mem → s'.cap = s.cap →
+    (h : ∀ v s', e.eval s = some v → s'.loc = State.upd s.loc x v → s'.mem = s.mem → s'.cap =
+      s.cap →
       Q s' (1 + e.cost)) : wpB B (.assign x e) Q s := by
-  obtain ⟨v, hv⟩ := he; exact OrderMaintenance.Machine.wpB_assign_g v hv hB (fun s' a b c => h v s' hv a b c)
+  obtain ⟨v, hv⟩ := he; exact Machine.wpB_assign_g v hv hB (fun s' a b c => h v s' hv a b c)
 
 theorem vUG_eq (N : Nat) : vUG (pL N) = UG (proofParams N) := rfl
 theorem vHC_eq (N : Nat) : vHC (pL N) = HC (proofParams N) := rfl
@@ -215,19 +229,29 @@ theorem partA_pk {m : State} (hN : m.loc "nN" = N) : wpB (BW K KH) partA TT m :=
   have hNh := N_half hK
   have hlog : Nat.log2 N ≤ N := Nat.log2_le_self N
   unfold partA
-  refine wpB_seq_T (OrderMaintenance.Machine.wpB_assign_g (Q := fun s' _ => s'.loc "L" = Nat.log2 N + 1) (Nat.log2 N + 1)
-    (by simp [eN,
-      hN]) (maxv_BW (v := Nat.log2 N + 1) (by simp [Expr.LeafB, eN, ΓP, hN, hNh]) (by simp [eN, hN])
-      (by simp [Expr.wpM, Expr.wvM, eN, ΓP]; omega))
+  refine wpB_seq_T (Machine.wpB_assign_g (Q := fun s' _ => s'.loc "L" = Nat.log2 N + 1)
+    (Nat.log2 N + 1)
+    (by
+      simp [eN, hN]) (maxv_BW (v := Nat.log2 N + 1) (by simp [Expr.LeafB, eN, ΓP, hN, hNh]) (by
+        simp [eN, hN])
+      (by
+        simp [Expr.wpM, Expr.wvM, eN, ΓP]
+        omega))
     (fun s' hl _ _ => by rw [hl]; simp)) (fun s1 _ hL1 => ?_)
-  have hL1h : Nat.log2 N + 1 < 2 ^ (K / 2) := small_half (by have := log2_pL N; omega)
-  refine wpB_ite_T (if Nat.log2 N + 1 < 8 then 1 else 0) (by simp [eL, hL1]) (maxv_BW (v := if Nat.log2 N + 1 < 8 then 1 else 0)
+  have hL1h : Nat.log2 N + 1 < 2 ^ (K / 2) := small_half (by
+    have := log2_pL N
+    omega)
+  refine wpB_ite_T (if Nat.log2 N + 1 < 8 then 1 else 0) (by simp [eL, hL1]) (maxv_BW (v := if
+    Nat.log2 N + 1 < 8 then 1 else 0)
     (by simp [Expr.LeafB, eL, ΓP, hL1, hL1h]) (by simp [eL, hL1])
-    (by simp [Expr.wpM, Expr.wvM, eL, ΓP]; omega)) (fun s2 _ _ _ => ?_)
+    (by
+      simp [Expr.wpM, Expr.wvM, eL, ΓP]
+      omega)) (fun s2 _ _ _ => ?_)
   have h8 : (8 : Nat) < 2 ^ K := lt_of_lt_of_le (by norm_num)
     (Nat.pow_le_pow_right (by norm_num) (show 4 ≤ K by have := pL_ge N; omega))
   split
-  · exact wpB_T (OrderMaintenance.Machine.wpB_assign_g (Q := TT) 8 rfl (lt_K_BW (by simpa using h8)) (fun _ _ _ _ => trivial))
+  · exact wpB_T (Machine.wpB_assign_g (Q := TT) 8 rfl (lt_K_BW (by simpa using h8)) (fun _ _ _ _
+      => trivial))
   · exact wpB_skip_T
 
 variable {L : Nat} (hLe : L = pL N)
@@ -241,18 +265,22 @@ theorem locLN {s : State} (hL : s.loc "L" = L) (hN : s.loc "nN" = N) :
   · rw [hL, hLe]; exact small_half hK
   · rw [hN]; exact N_half hK
 
-theorem partC_pk {m : State} (hL : m.loc "L" = L) (hN : m.loc "nN" = N) : wpB (BW K KH) partC TT m := by
+theorem partC_pk {m : State} (hL : m.loc "L" = L) (hN : m.loc "nN" = N) : wpB (BW K KH) partC TT
+  m := by
   have h8 : 8 ≤ L := by rw [hLe]; exact pL_ge N
   have hc : vcm L ≤ vth L + 1 := by rw [hLe]; exact vcm_le N
-  refine wpB_seqAll (fun s => s.loc "L" = L ∧ s.loc "nN" = N) _ m ⟨hL, hN⟩ (fun c hc' s ⟨hL', hN'⟩ => ?_)
+  refine wpB_seqAll (fun s => s.loc "L" = L ∧ s.loc "nN" = N) _ m ⟨hL, hN⟩ (fun c hc' s ⟨hL',
+    hN'⟩ => ?_)
   have hx := locLN hK hLe hL' hN'
   have hKL : 64 * L ≤ K := by rw [hLe]; exact hK
   have h512 : 512 ≤ K := by omega
   simp only [List.mem_cons, List.not_mem_nil, or_false] at hc'
   rcases hc' with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;>
-  refine wpB_assign_some (by simp [eN, eH_ev hL', ecb_ev hL' hN' h8 hc, enb_ev hL' hN' h8 hc, hN'])
-    (maxv_BW' (leafB_of_rdOK hx _ (by simp [Expr.rdOK, eN, eL, ecb, enb, eH, eth, ecm, eT, ekc, euT, egm, eG,
-      ekg])) (by simp [eN, eH_ev hL', ecb_ev hL' hN' h8 hc, enb_ev hL' hN' h8 hc, hN'])
+  refine wpB_assign_some (by
+    simp [eN, eH_ev hL', ecb_ev hL' hN' h8 hc, enb_ev hL' hN' h8 hc, hN'])
+    (maxv_BW' (leafB_of_rdOK hx _ (by
+      simp [Expr.rdOK, eN, eL, ecb, enb, eH, eth, ecm, eT, ekc, euT, egm, eG, ekg])) (by
+        simp [eN, eH_ev hL', ecb_ev hL' hN' h8 hc, enb_ev hL' hN' h8 hc, hN'])
       (wpM_le_of_wlp (by omega) (by decide)))
     (fun _ s' _ hl _ _ => ⟨by rw [hl]; simp [State.upd, hL'], by rw [hl]; simp [State.upd, hN']⟩)
 
@@ -266,29 +294,36 @@ theorem partB_pk (q : Nat) {m : State} (hL : m.loc "L" = L) (hN : m.loc "nN" = N
   have hUG : vUG L ≤ K := by rw [hLe, vUG_eq]; have := UG_le N; omega
   have hHC : vHC L ≤ K := by rw [hLe, vHC_eq]; have := HC_le N; omega
   unfold partB
-  refine wpB_seq_T (OrderMaintenance.Machine.wpB_alloc_g (Q := fun s' _ => s'.loc = m.loc ∧ s'.cap (arr q .prm) = 16) 16 rfl
+  refine wpB_seq_T (Machine.wpB_alloc_g (Q := fun s' _ => s'.loc = m.loc ∧ s'.cap (arr q .prm) =
+    16) 16 rfl
     (by simpa using h16) (fun s' hl _ hc => ⟨hl, by rw [hc]; simp [State.alloc, State.upd]⟩))
     (fun s' _ ⟨hl, hc⟩ => wpB_storeAll _ m.loc 16 pList s' hl hc (fun ie hie s hs => ?_))
   have hL' : s.loc "L" = L := by rw [hs, hL]
   have hN' : s.loc "nN" = N := by rw [hs, hN]
   have hx := locLN hK hLe hL' hN'
   simp only [pList, List.mem_cons, List.not_mem_nil, or_false] at hie
-  rcases hie with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl
+  rcases hie with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl |
+    rfl | rfl | rfl
   -- the two shifts
   case inr.inr.inr.inr.inr.inr.inr.inl =>
     refine ⟨by simp [eUG_ev hL' h8], by simp [PF.idx], le_trans (by simp [PF.idx]) h16,
       maxv_BW' ⟨trivial, leafB_of_rdOK hx _ (by simp [Expr.rdOK, eUG, eG, ekg, egm, tsubE, eL]),
-        fun _ => by simp [eUG_ev hL' h8, hUG]⟩ (by simp [eUG_ev hL' h8]) (wpM_le_of_wlp h512 (by decide))⟩
+        fun _ => by simp [eUG_ev hL' h8, hUG]⟩ (by simp [eUG_ev hL' h8]) (wpM_le_of_wlp h512 (by
+          decide))⟩
   case inr.inr.inr.inr.inr.inr.inr.inr.inl =>
     refine ⟨by simp [eHC_ev hL' h8], by simp [PF.idx], le_trans (by simp [PF.idx]) h16,
-      maxv_BW' ⟨trivial, leafB_of_rdOK hx _ (by simp [Expr.rdOK, eHC, ecsB, ersB, eIC, eMu, euT, ekc, eT, egm, eG,
-        eL]), fun _ => by simp [eHC_ev hL' h8, hHC]⟩ (by simp [eHC_ev hL' h8]) (wpM_le_of_wlp h512 (by decide))⟩
-  all_goals refine ⟨by simp [eN, eL, hN', hL', eG_ev hL', eT_ev hL', eth_ev hL', eBe_ev hL' h8, eBg_ev hL' h8,
+      maxv_BW' ⟨trivial, leafB_of_rdOK hx _ (by
+        simp [Expr.rdOK, eHC, ecsB, ersB, eIC, eMu, euT, ekc, eT, egm, eG, eL]), fun _ => by
+          simp [eHC_ev hL' h8, hHC]⟩ (by simp [eHC_ev hL' h8]) (wpM_le_of_wlp h512 (by decide))⟩
+  all_goals refine ⟨by simp [eN, eL, hN', hL', eG_ev hL', eT_ev hL', eth_ev hL', eBe_ev hL' h8,
+    eBg_ev hL' h8,
       eH_ev hL'], by simp [PF.idx], le_trans (by simp [PF.idx]) h16,
-      maxv_BW' (leafB_of_rdOK hx _ (by simp [Expr.rdOK, eN, eL, eG, eT, eth, eBe, eBg, eUG, eHC, ePC, eH, ekg, egm,
-        tsubE, ecsB, ersB, eIC, eMu, euT, ekc]))
-        (by simp [eN, eL, hN', hL', eG_ev hL', eT_ev hL', eth_ev hL', eBe_ev hL' h8,
-          eBg_ev hL' h8, eH_ev hL'])
+      maxv_BW' (leafB_of_rdOK hx _ (by
+        simp [Expr.rdOK, eN, eL, eG, eT, eth, eBe, eBg, eUG, eHC, ePC, eH, ekg, egm, tsubE,
+          ecsB, ersB, eIC, eMu, euT, ekc]))
+        (by
+          simp [eN, eL, hN', hL', eG_ev hL', eT_ev hL', eth_ev hL', eBe_ev hL' h8, eBg_ev hL'
+            h8, eH_ev hL'])
         (wpM_le_of_wlp h512 (by decide))⟩
 
 end parts
@@ -297,7 +332,8 @@ end OrderMaintenance.Impl
 
 namespace OrderMaintenance.Impl
 
-open OrderMaintenance.Model OrderMaintenance.Proof OrderMaintenance.Proof.Top OrderMaintenance.Proof.Word
+open OrderMaintenance.Model OrderMaintenance.Proof OrderMaintenance.Proof.Top
+  OrderMaintenance.Proof.Word
 open OrderMaintenance.Machine (Reg Arr State Out exec Stmt Same Expr BinOp UnOp wp wpB dpk)
 
 variable {K KH : Nat}
@@ -305,7 +341,8 @@ variable {K KH : Nat}
 /-! ### The parameter computation -/
 
 /-- **The parameters of a new core**: the peak of `paramsS`. -/
-theorem paramsS_pk (q : Nat) {m : State} {N : Nat} (hN : m.loc "nN" = N) (hpos : 0 < N) (hK : 64 * pL N ≤ K) :
+theorem paramsS_pk (q : Nat) {m : State} {N : Nat} (hN : m.loc "nN" = N) (hpos : 0 < N) (hK : 64
+  * pL N ≤ K) :
     wpB (BW K KH) (paramsS q) TT m := by
   obtain ⟨a1, a2, a3, -, -, -⟩ := partA_ok hN
   have hA : wp partA (fun s _ => s.loc "L" = pL N ∧ s.loc "nN" = N) m :=
@@ -319,7 +356,8 @@ theorem paramsS_pk (q : Nat) {m : State} {N : Nat} (hN : m.loc "nN" = N) (hpos :
 
 /-! ### The allocations of a slot -/
 
-theorem capE_maxv {P : Params} {m : State} (hC : CapsW K (capsOf P)) (h : CapLocs P m.loc) (sl : Slot) :
+theorem capE_maxv {P : Params} {m : State} (hC : CapsW K (capsOf P)) (h : CapLocs P m.loc) (sl :
+  Slot) :
     (capE sl).maxv m ≤ BW K KH := by
   have h16 := hC.sixteen
   have hB : 2 ^ K ≤ BW K KH := by have := pow_BW K; have := Nat.two_pow_pos KH; unfold BW; omega
@@ -352,21 +390,31 @@ theorem capE_maxv {P : Params} {m : State} (hC : CapsW K (capsOf P)) (h : CapLoc
   | lst k b =>
     have hk := hl k
     have hk' := hc k
-    cases k <;> simp [capE, lrecE, lcapE, Expr.maxv, Expr.eval, h.kR, h.kRc, h.kf, BinOp.eval] <;>
-      simp only [capsOf] at hk hk' <;> (repeat' apply And.intro) <;> exact lt _ (by omega)
+    cases k <;> simp only [capE, lrecE, lcapE, Expr.maxv, h.kR, Expr.eval, BinOp.eval,
+        Option.bind_some, Option.getD_some, sup_le_iff, add_pos_iff,
+        Order.lt_two_iff, zero_le, or_true, le_mul_iff_one_le_right,
+        Nat.one_le_ofNat, Nat.ofNat_pos, le_mul_iff_one_le_left,
+        Nat.reduceLeDiff, and_self, sup_of_le_right, ge_iff_le, h.kRc, h.kf,
+        le_add_iff_nonneg_left, one_mul, max_self] <;>
+      simp only [capsOf] at hk hk' <;> exact lt _ (by omega)
   | len k =>
     have hk := hl k
-    cases k <;> simp [capE, lrecE, Expr.maxv, h.kR, h.kRc] <;> simp only [capsOf] at hk <;>
-      first | omega | exact lt _ (by omega)
+    cases k <;> simp only [capE, lrecE, Expr.maxv, h.kR, ge_iff_le, h.kRc] <;>
+      simp only [capsOf] at hk <;>
+      omega
   | path =>
     have hC' := ht .C
     simp only [capsOf] at hp hw hC'
-    simp [capE, Expr.maxv, Expr.eval, h.kC, h.kW, BinOp.eval]
-    (repeat' apply And.intro) <;> first | exact lt _ hC' | exact lt _ hw | exact lt _ hp
+    simp only [capE, Expr.maxv, h.kC, h.kW, Expr.eval, BinOp.eval, Option.bind_some,
+        Option.getD_some, sup_le_iff, add_pos_iff, Order.lt_two_iff, zero_le, or_true,
+        le_mul_iff_one_le_right, le_add_iff_nonneg_left, Order.lt_add_one_iff,
+        le_mul_iff_one_le_left, Nat.reduceLeDiff, and_self, sup_of_le_right, ge_iff_le]
+    exact lt _ hp
   | opt o => simp only [capE, Expr.maxv]; exact lt _ (by omega)
 
 /-- **The allocations of a slot.** -/
-theorem allocSlot_pk (q : Nat) {P : Params} {m : State} (hC : CapsW K (capsOf P)) (h : CapLocs P m.loc) :
+theorem allocSlot_pk (q : Nat) {P : Params} {m : State} (hC : CapsW K (capsOf P)) (h : CapLocs P
+  m.loc) :
     wpB (BW K KH) (allocSlot q) TT m :=
   wpB_allocAll m.loc _ m rfl (fun ae hae s hs => by
     simp only [List.mem_map] at hae
@@ -378,7 +426,8 @@ end OrderMaintenance.Impl
 
 namespace OrderMaintenance.Impl
 
-open OrderMaintenance.Model OrderMaintenance.Proof OrderMaintenance.Proof.Top OrderMaintenance.Proof.Word
+open OrderMaintenance.Model OrderMaintenance.Proof OrderMaintenance.Proof.Top
+  OrderMaintenance.Proof.Word
 open OrderMaintenance.Machine (Reg Arr State Out exec Stmt Same Expr BinOp UnOp wp wpB dpk)
 
 variable {K KH : Nat}
@@ -388,17 +437,19 @@ variable {K KH : Nat}
 /-- The empty core of the construction is bounded. -/
 theorem wb_fresh {P : Params} (hP : ParamsB K P) : WB K (freshC P) := by
   have p0 := pos K
-  refine ⟨hP, fun i => ?_, fun i => ?_, fun i => ?_, fun i => ?_, ?_, ?_, ?_, ?_, ?_, fun c => ?_, fun c t ht => ?_, ?_⟩
-  · simp [freshC]; exact elemB_default K
-  · simp [freshC]; exact groupB_default K
-  · simp [freshC]; exact chunkB_default K
-  · simp [freshC]; exact nodeB_default K
+  refine ⟨hP, fun i => ?_, fun i => ?_, fun i => ?_, fun i => ?_, ?_, ?_, ?_, ?_, ?_, fun c =>
+    ?_, fun c t ht => ?_, ?_⟩
+  · simp only [freshC, getX_empty]; exact elemB_default K
+  · simp only [freshC, getX_empty]; exact groupB_default K
+  · simp only [freshC, getX_empty]; exact chunkB_default K
+  · simp only [freshC, getX_empty]; exact nodeB_default K
   · simp [freshC]
   · simp [freshC, p0]
   · simp [freshC]
   · simp [freshC]
   · simp only [freshC]
-    exact ⟨arrB_default K, arrB_default K, arrB_default K, arrB_default K, arrB_default K, arrB_default K⟩
+    exact ⟨arrB_default K, arrB_default K, arrB_default K, arrB_default K, arrB_default K,
+      arrB_default K⟩
   · simp only [freshC]; exact arrB_default K
   · change t ∈ ([] : List Nat) at ht; cases ht
   · exact arrB_default K
@@ -420,22 +471,29 @@ theorem newCore_pk (q : Nat) {m : State} {N : Nat} (hN : m.loc "nN" = N) (hpos :
     (proofParams_B N).1 (proofParams_B N).2 (capsOf_init P) (by simp [capsOf]) (by simp [capsOf])
   have hC : CapsW K (capsOf P) := (capsW_wK N).mono hK
   unfold newCoreS
-  refine wpB_seq_of (Qc := fun s _ => s = m1) ⟨a1, rfl⟩ (paramsS_pk q hN hpos hK64) (fun s1 _ e1 => ?_)
+  refine wpB_seq_of (Qc := fun s _ => s = m1) ⟨a1, rfl⟩ (paramsS_pk q hN hpos hK64) (fun s1 _ e1
+    => ?_)
   subst e1
   refine wpB_seq_of (Qc := fun s _ => s = m2) ⟨b1, rfl⟩ (allocSlot_pk q hC a5) (fun s2 _ e2 => ?_)
   subst e2
   rw [compile_κ₀ q P]
   have hvs : ∀ v ∈ [1], v < 2 ^ K := fun v hv => by
     simp only [List.mem_singleton] at hv; subst hv; exact Nat.one_lt_two_pow (by omega)
-  refine wpB_coreCall b4 rfl he (by simp; exact Nat.le_add_left_of_le (Nat.one_le_two_pow)) ?_
+  refine wpB_coreCall b4 rfl he (by
+    simp only [Machine.maxvList, List.map_cons, Expr.maxv, List.map_nil, List.foldr_cons,
+        List.foldr_nil, zero_le, sup_of_le_left]
+    exact Nat.le_add_left_of_le (Nat.one_le_two_pow)) ?_
     (fun _ _ _ _ => trivial)
   exact pk_BW (initCore_peak hC (by omega) b4 (wb_fresh ((params_wB N).mono hK)) (fun i => by
-    rw [fresh_h]; exact Nat.two_pow_pos KH) ((proom_wK N).mono hK) (by simp [P, proofParams]) (capsOf_init P)
+    rw [fresh_h]; exact Nat.two_pow_pos KH) ((proom_wK N).mono hK) (by simp [P, proofParams])
+      (capsOf_init P)
     (by simp [capsOf]) (by simp [capsOf]) hvs he)
 
 /-- **An eagerly built core** (the initialization): the peak of `eagerCoreS`. -/
 theorem eagerCore_pk (q : Nat) {m : State} {N : Nat} (hN : m.loc "nN" = N) (hpos : 0 < N) {n : Core}
-    (hn : (initCore false).run ({ P := proofParams N } : Core) = .ok () n)
+    (hn : (initCore false).run ({
+      P := proofParams N
+    } : Core) = .ok () n)
     (hK : wK (proofParams N) ≤ K) : wpB (BW K KH) (eagerCoreS q) TT m := by
   have hK64 : 64 * pL N ≤ K := hK
   have h512 : 512 ≤ K := le_trans (wK_ge N) hK
@@ -448,10 +506,12 @@ theorem eagerCore_pk (q : Nat) {m : State} {N : Nat} (hN : m.loc "nN" = N) (hpos
   have hb : 1 ≤ P.beta := by simp [P, proofParams]
   obtain ⟨L', c, he, -⟩ := initCoreS_eager (κ := capsOf P) (P := P)
     (L := State.setLocs (fun _ => 0) ["lz"] [0]) (by simp [State.setLocs, State.upd])
-    (proofParams_B N).1 (proofParams_B N).2 hb hH (capsOf_init P) (by simp [capsOf]) (by simp [capsOf]) rfl hn
+    (proofParams_B N).1 (proofParams_B N).2 hb hH (capsOf_init P) (by simp [capsOf]) (by
+      simp [capsOf]) rfl hn
   have hC : CapsW K (capsOf P) := (capsW_wK N).mono hK
   unfold eagerCoreS
-  refine wpB_seq_of (Qc := fun s _ => s = m1) ⟨a1, rfl⟩ (paramsS_pk q hN hpos hK64) (fun s1 _ e1 => ?_)
+  refine wpB_seq_of (Qc := fun s _ => s = m1) ⟨a1, rfl⟩ (paramsS_pk q hN hpos hK64) (fun s1 _ e1
+    => ?_)
   subst e1
   refine wpB_seq_of (Qc := fun s _ => s = m2) ⟨b1, rfl⟩ (allocSlot_pk q hC a5) (fun s2 _ e2 => ?_)
   subst e2

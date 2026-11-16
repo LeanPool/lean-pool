@@ -100,7 +100,11 @@ theorem Hn_le (N : Nat) : Hn (nfP (proofParams N) - 1) + 1 ≤ (pL N : ℝ) := b
     · have hmr : (m : ℝ) ≤ (2 : ℝ) ^ (pL N - 2) := by exact_mod_cast hm.le
       have hl := Real.log_le_log (by exact_mod_cast hpos) hmr
       rw [Real.log_pow] at hl
-      have h2 : Real.log 2 < 1 := by simpa using Real.log_lt_sub_one_of_pos (by norm_num : (0 : ℝ) < 2) (by norm_num : (2 : ℝ) ≠ 1)
+      have h2 : Real.log 2 < 1 := by
+        have hlog := Real.log_lt_sub_one_of_pos
+          (by norm_num : (0 : ℝ) < 2) (by norm_num : (2 : ℝ) ≠ 1)
+        norm_num at hlog
+        exact hlog
       have hc : ((pL N - 2 : ℕ) : ℝ) = (pL N : ℝ) - 2 := by
         rw [Nat.cast_sub (by omega)]; norm_num
       rw [hc] at hl
@@ -155,7 +159,9 @@ theorem prepB_proof (N N' : Nat) (h : N' ≤ 4 * N) : (proofParams N').H + 1 ≤
     have := Nat.lt_size_self N
     rw [pow_add]
     rcases Nat.eq_zero_or_pos N with rfl | hN
-    · simp only [Nat.size_zero, pow_zero, Nat.reducePow, one_mul, gt_iff_lt] at h; subst h; positivity
+    · have hz : N' = 0 := by omega
+      subst hz
+      positivity
     · have : 4 * N < 4 * 2 ^ Nat.size N := by omega
       calc N' ≤ 4 * N := h
         _ < 2 ^ Nat.size N * 2 ^ 2 := by rw [Nat.mul_comm]; simpa using this

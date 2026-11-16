@@ -60,10 +60,13 @@ theorem evalF_wrS_ok {κ : Caps} {s : Core} {L : Loc} {k : SF} {e : Exp} {w : Na
 
 /-! ### `linkGroupPair` -/
 
+/-- Initialize and link the left overflow group before its source. -/
 def lgpA0 : Stm := cm{
   G[gl].lab := labL; G[gl].st := 1; G[gl].src := g; G[gl].prev := gp; G[gl].next := g }
+/-- Initialize and link the right overflow group after its source. -/
 def lgpA2 : Stm := cm{
   G[gr].lab := labR; G[gr].st := 1; G[gr].src := g; G[gr].prev := g; G[gr].next := gn }
+/-- Mark the source group as splitting and record its two overflow siblings. -/
 def lgpG : Stm := cm{
   G[g].prev := gl; G[g].next := gr; G[g].st := 2; G[g].l := gl; G[g].r := gr }
 
@@ -346,7 +349,9 @@ theorem linkGroupPairS_agree (κ : Caps) (σ : Core) (L : Loc) {g gl gr labL lab
 
 /-! ### `unlinkGroup` -/
 
+/-- Test whether the group being removed is its chunk's only group. -/
 def ulCE : Exp := cme{ cf = g && cl = g }
+/-- Mark a removed group dead and clear its list links. -/
 def ulG : Stm := cm{ G[g].dead := 1; G[g].next := 0; G[g].prev := 0 }
 /-- `unlinkGroup`: unlink `g` from the group list and its chunk, and free it (local `g`). -/
 def unlinkGroupS : Stm := cm{
@@ -576,12 +581,15 @@ theorem evalF_wrE_ok {κ : Caps} {s : Core} {L : Loc} {k : EF} {i e : Exp} {j w 
     } L (1 + i.cost + e.cost) := by
   simp [evalF, hi, he, Fld.set, hj, hk]
 
+/-- Remove an endpoint element from its source group, clearing both endpoints if empty. -/
 def mvGS (first : Bool) : Stm :=
   if first then cm{ if f = l then { G[g].first := 0; G[g].last := 0 } else G[g].first := en }
   else cm{ if f = l then { G[g].first := 0; G[g].last := 0 } else G[g].last := en }
+/-- Attach a moving element to the corresponding end of its destination group. -/
 def mvDS (first : Bool) : Stm :=
   if first then cm{ if G[d].first = 0 then G[d].first := e; G[d].last := e }
   else cm{ if G[d].first = 0 then G[d].last := e; G[d].first := e }
+/-- Set the moving element's containing group and new label. -/
 def mvES : Stm := cm{ E[e].grp := d; E[e].lab := lab }
 
 /-- Move the first or last element of `g` to the corresponding end of `d`, with label `lab`.
@@ -1007,10 +1015,13 @@ theorem labAfterS_agree (κ : Caps) (σ : Core) (L : Loc) {g : Nat} (hg : L "g" 
 
 /-! ### `newGroup` -/
 
+/-- Clear a reused group's links and endpoints and set its containing chunk. -/
 def rgA : Stm := cm{
   G[gn].next := 0; G[gn].prev := 0; G[gn].first := 0; G[gn].last := 0; G[gn].chk := c }
+/-- Clear a reused group's label, size, split state, source and left sibling. -/
 def rgB : Stm := cm{
   G[gn].lab := 0; G[gn].size := 0; G[gn].st := 0; G[gn].src := 0; G[gn].l := 0 }
+/-- Clear a reused group's right sibling and mark it alive. -/
 def rgC : Stm := cm{ G[gn].r := 0; G[gn].dead := 0 }
 /-- Reset group `gn` to `{
   chk := c
@@ -1023,8 +1034,10 @@ def newGroupS : Stm := cm{
   if nf = 0 then { gn := new G; G[gn].chk := c }
   else { gn := freeG[0][nf - 1].fst; pop freeG[0]; resetGS } }
 
+/-- The record update corresponding to the first reused-group reset stage. -/
 def rgF1 (c : Nat) (X : Group) : Group :=
   GF.set (GF.set (GF.set (GF.set (GF.set X 0 .next) 0 .prev) 0 .first) 0 .last) c .chk
+/-- The record update corresponding to the second reused-group reset stage. -/
 def rgF2 (X : Group) : Group := GF.set (GF.set (GF.set (GF.set (GF.set X 0 .lab) 0 .size) 0 .st)
   0 .src) 0 .l
 
@@ -1225,9 +1238,12 @@ theorem newGroup_eff {c i : Nat} {σ σ' : Core} (h : (newGroup c).run σ = .ok 
     refine ⟨fun x => ?_, by simp, by simp, by simp, rfl, rfl, le_refl _, fun x hx => hx⟩
     simp only [OrderMaintenance.Proof.Top.getX_push']
 
+/-- Procedure selecting a group label before the given group. -/
 def labBeforeP : Proc := { name := "labBefore", params := ["g"], rets := ["lab"], body :=
   labBeforeS }
+/-- Procedure selecting a group label after the given group. -/
 def labAfterP : Proc := { name := "labAfter", params := ["g"], rets := ["lab"], body := labAfterS }
+/-- Procedure allocating or reusing a group in a chunk. -/
 def newGroupP : Proc := { name := "newGroup", params := ["c"], rets := ["gn"], body := newGroupS }
 
 /-- `startGroupSplit g`, guarded by Level F; every successful run satisfies the guard. -/

@@ -54,7 +54,8 @@ def opB (KB : Nat) : Nat := insW KB + delW KB + 200
 def Reach (KB : Nat) (m : State) (Sp : OrderMaintenance.Spec.State) : Prop :=
   ∃ om p, WEnc om m p ∧ MInv om Sp ∧ om.KB = KB
 
-theorem reach_of {KB : Nat} {om : OrderMaintenance} {m : State} {Sp : OrderMaintenance.Spec.State} (h : WEnc om m 0 ∨ WEnc om m 1)
+theorem reach_of {KB : Nat} {om : OrderMaintenance} {m : State} {Sp :
+  OrderMaintenance.Spec.State} (h : WEnc om m 0 ∨ WEnc om m 1)
     (hI : MInv om Sp) (hK : om.KB = KB) : Reach KB m Sp := by
   rcases h with h | h
   · exact ⟨om, 0, h, hI, hK⟩
@@ -70,63 +71,80 @@ theorem init_reach {m : State} {KB : Nat} (hkb : m.loc "kb" = KB) (h4 : 4 ≤ KB
     split at hinit
     · cases hinit
     · injection hinit with h; rw [← h]
-  exact OrderMaintenance.Machine.wp_mono (fun m' k ⟨h, hk⟩ => ⟨⟨om, 0, h, hI, hK⟩, hk⟩) hwp
+  exact Machine.wp_mono (fun m' k ⟨h, hk⟩ => ⟨⟨om, 0, h, hI, hK⟩, hk⟩) hwp
 
 /-- **One operation**: the specification's answer, the invariant again, at most `opB K_B` steps. -/
-theorem step_reach {KB : Nat} {m : State} {Sp : OrderMaintenance.Spec.State} (hR : Reach KB m Sp) {op : OrderMaintenance.Spec.Op}
+theorem step_reach {KB : Nat} {m : State} {Sp : OrderMaintenance.Spec.State} (hR : Reach KB m
+  Sp) {op : OrderMaintenance.Spec.Op}
     (hv : op.Valid Sp) :
-    wp (opS op) (fun m' k => Reach KB m' (OrderMaintenance.Spec.step Sp op).1 ∧ ansOf op m' = (OrderMaintenance.Spec.step Sp op).2 ∧
+    wp (opS op) (fun m' k => Reach KB m' (OrderMaintenance.Spec.step Sp op).1 ∧ ansOf op m' =
+      (OrderMaintenance.Spec.step Sp op).2 ∧
       k ≤ opB KB) m := by
   obtain ⟨om, p, h, hI, hK⟩ := hR
   cases op <;> unfold opS
   case insertFirst =>
-    rw [OrderMaintenance.Machine.wp_seq]
+    rw [Machine.wp_seq]
     refine wp_assign_g 0 rfl (fun s1 hl1 hm1 hc1 => ?_)
     obtain ⟨om', -, hI', hK', hwp⟩ := insertW_ok (h.congr hm1 hc1) hI (hx := none) hv
-      (by rw [hl1]; simp [OrderMaintenance.Machine.State.upd, b2n]) (fun x e => by cases e)
-    refine OrderMaintenance.Machine.wp_mono (fun m' k ⟨h', _, hk⟩ => ⟨reach_of h' hI' (hK'.trans hK), rfl, ?_⟩) hwp
+      (by
+        rw [hl1]
+        simp [Machine.State.upd, b2n]) (fun x e => by cases e)
+    refine Machine.wp_mono (fun m' k ⟨h', _, hk⟩ => ⟨reach_of h' hI' (hK'.trans hK), rfl, ?_⟩) hwp
     rw [hK] at hk; unfold opB; simp only [Expr.cost] at hk ⊢; omega
   case insertAfter x =>
-    rw [OrderMaintenance.Machine.wp_seq]
+    rw [Machine.wp_seq]
     refine wp_assign_g 1 rfl (fun s1 hl1 hm1 hc1 => ?_)
-    rw [OrderMaintenance.Machine.wp_seq]
+    rw [Machine.wp_seq]
     refine wp_assign_g x rfl (fun s2 hl2 hm2 hc2 => ?_)
-    obtain ⟨om', -, hI', hK', hwp⟩ := insertW_ok ((h.congr hm1 hc1).congr hm2 hc2) hI (hx := some x) hv
-      (by rw [hl2, hl1]; simp [OrderMaintenance.Machine.State.upd, b2n]) (fun x' e => by
-        cases e; rw [hl2]; simp [OrderMaintenance.Machine.State.upd])
-    refine OrderMaintenance.Machine.wp_mono (fun m' k ⟨h', _, hk⟩ => ⟨reach_of h' hI' (hK'.trans hK), rfl, ?_⟩) hwp
+    obtain ⟨om', -, hI', hK', hwp⟩ := insertW_ok ((h.congr hm1 hc1).congr hm2 hc2) hI (hx :=
+      some x) hv
+      (by
+        rw [hl2, hl1]
+        simp [Machine.State.upd, b2n]) (fun x' e => by
+        cases e; rw [hl2]; simp [Machine.State.upd])
+    refine Machine.wp_mono (fun m' k ⟨h', _, hk⟩ => ⟨reach_of h' hI' (hK'.trans hK), rfl, ?_⟩) hwp
     rw [hK] at hk; unfold opB; simp only [Expr.cost] at hk ⊢; omega
   case delete x =>
-    rw [OrderMaintenance.Machine.wp_seq]
+    rw [Machine.wp_seq]
     refine wp_assign_g x rfl (fun s1 hl1 hm1 hc1 => ?_)
     obtain ⟨om', -, hI', hK', hwp⟩ := deleteW_ok (h.congr hm1 hc1) hI hv
-      (by rw [hl1]; simp [OrderMaintenance.Machine.State.upd])
-    refine OrderMaintenance.Machine.wp_mono (fun m' k ⟨h', hk⟩ => ⟨reach_of h' hI' (hK'.trans hK), rfl, ?_⟩) hwp
+      (by
+        rw [hl1]
+        simp [Machine.State.upd])
+    refine Machine.wp_mono (fun m' k ⟨h', hk⟩ => ⟨reach_of h' hI' (hK'.trans hK), rfl, ?_⟩) hwp
     rw [hK] at hk; unfold opB; simp only [Expr.cost] at hk ⊢; omega
   case order x y =>
-    rw [OrderMaintenance.Machine.wp_seq]
+    rw [Machine.wp_seq]
     refine wp_assign_g x rfl (fun s1 hl1 hm1 hc1 => ?_)
-    rw [OrderMaintenance.Machine.wp_seq]
+    rw [Machine.wp_seq]
     refine wp_assign_g y rfl (fun s2 hl2 hm2 hc2 => ?_)
     obtain ⟨-, hwp⟩ := orderW_okM ((h.congr hm1 hc1).congr hm2 hc2) hI hv.1 hv.2
-      (by rw [hl2,
-        hl1]; simp [OrderMaintenance.Machine.State.upd]) (by rw [hl2]; simp [OrderMaintenance.Machine.State.upd])
-    refine OrderMaintenance.Machine.wp_mono (fun m' k ⟨h', hr, hk⟩ => ⟨⟨om, p, h', hI, hK⟩, ?_, ?_⟩) hwp
-    · show OrderMaintenance.Spec.Ans.bool (decide (m'.loc "r" ≠ 0)) = OrderMaintenance.Spec.Ans.bool (OrderMaintenance.Spec.precedes Sp.list x y)
+      (by
+        rw [hl2, hl1]
+        simp [Machine.State.upd]) (by
+          rw [hl2]
+          simp [Machine.State.upd])
+    refine Machine.wp_mono (fun m' k ⟨h', hr, hk⟩ => ⟨⟨om, p, h', hI, hK⟩, ?_, ?_⟩) hwp
+    · change OrderMaintenance.Spec.Ans.bool (decide (m'.loc "r" ≠ 0)) =
+        OrderMaintenance.Spec.Ans.bool (OrderMaintenance.Spec.precedes Sp.list x y)
       rw [hr]; cases OrderMaintenance.Spec.precedes Sp.list x y <;> rfl
     · unfold opB; simp only [Expr.cost] at hk ⊢; omega
 
 /-- The machine run over a sequence of operations: the answers and the cost of each operation
 (`none` if an operation fails or reaches an error). -/
-def runM : State → List OrderMaintenance.Spec.Op → Option (List OrderMaintenance.Spec.Ans × List Nat)
+def runM : State → List OrderMaintenance.Spec.Op → Option (List OrderMaintenance.Spec.Ans × List
+  Nat)
   | _, [] => some ([], [])
   | m, op :: ops =>
     if (exec (opS op) m).status = .ok then
-      (runM (exec (opS op) m).st ops).map fun r => (ansOf op (exec (opS op) m).st :: r.1, (exec (opS op) m).cost :: r.2)
+      (runM (exec (opS op) m).st ops).map fun r => (ansOf op (exec (opS op) m).st :: r.1, (exec
+        (opS op) m).cost :: r.2)
     else none
 
-theorem run_reach {KB : Nat} : ∀ (ops : List OrderMaintenance.Spec.Op) (Sp : OrderMaintenance.Spec.State) (m : State), Reach KB m Sp →
-    OrderMaintenance.Spec.Valid Sp ops → ∃ cs, runM m ops = some (OrderMaintenance.Spec.run Sp ops, cs) ∧ ∀ c ∈ cs, c ≤ opB KB
+theorem run_reach {KB : Nat} : ∀ (ops : List OrderMaintenance.Spec.Op) (Sp :
+  OrderMaintenance.Spec.State) (m : State), Reach KB m Sp →
+    OrderMaintenance.Spec.Valid Sp ops → ∃ cs, runM m ops = some (OrderMaintenance.Spec.run Sp
+      ops, cs) ∧ ∀ c ∈ cs, c ≤ opB KB
   | [], _, _, _, _ => ⟨[], rfl, fun _ h => by cases h⟩
   | op :: ops, Sp, m, hR, ⟨hv, hvs⟩ => by
     obtain ⟨hst, hR', hans, hk⟩ := step_reach hR hv
@@ -143,9 +161,11 @@ theorem run_reach {KB : Nat} : ∀ (ops : List OrderMaintenance.Spec.Op) (Sp : O
 sequence, the machine program returns exactly the specification's answers; initialization takes
 at most `initB` steps and each operation at most `opB K_B` steps. -/
 theorem theoremAB_M {m₀ : State} {KB : Nat} (hkb : m₀.loc "kb" = KB) (h4 : 4 ≤ KB)
-    (ops : List OrderMaintenance.Spec.Op) (hv : OrderMaintenance.Spec.Valid OrderMaintenance.Spec.State.empty ops) :
+    (ops : List OrderMaintenance.Spec.Op) (hv : OrderMaintenance.Spec.Valid
+      OrderMaintenance.Spec.State.empty ops) :
     (exec initWS m₀).status = .ok ∧ (exec initWS m₀).cost ≤ initB ∧
-      ∃ cs, runM (exec initWS m₀).st ops = some (OrderMaintenance.Spec.run OrderMaintenance.Spec.State.empty ops, cs) ∧
+      ∃ cs, runM (exec initWS m₀).st ops = some (OrderMaintenance.Spec.run
+        OrderMaintenance.Spec.State.empty ops, cs) ∧
         ∀ c ∈ cs, c ≤ opB KB := by
   obtain ⟨hst, hR, hk⟩ := init_reach hkb h4
   exact ⟨hst, hk, run_reach ops _ _ hR hv⟩

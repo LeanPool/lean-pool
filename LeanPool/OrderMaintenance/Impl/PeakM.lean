@@ -45,6 +45,7 @@ namespace OrderMaintenance.Machine
 /-- Raise the peak of a state to at least `q`. -/
 def State.raise (s : State) (q : Nat) : State := { s with peak := max q s.peak }
 
+/-- Raise an execution outcome's ghost peak bound without changing its result or cost. -/
 def Out.raise (o : Out) (q : Nat) : Out := ⟨o.st.raise q, o.cost, o.status⟩
 
 @[simp] theorem State.raise_mem (s : State) (q : Nat) : (s.raise q).mem = s.mem := rfl

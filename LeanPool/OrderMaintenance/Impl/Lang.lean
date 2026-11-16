@@ -144,8 +144,14 @@ def NF.get (x : Node) : NF → Nat
 /-- Write a natural-number encoding into a top-tree node field. -/
 def NF.set (x : Node) (v : Nat) : NF → Node
   | .height => { x with height := v } | .livePar => { x with livePar := v }
-  | .weight => { x with weight := v } | .first => { x with first := v } | .last => { x with last := v }
-  | .draining => { x with draining := v != 0 } | .t1 => { x with t1 := v } | .t2 => { x with t2 := v }
+
+  | .weight => { x with weight := v }
+  | .first => { x with first := v }
+  | .last => { x with last := v }
+
+  | .draining => { x with draining := v != 0 }
+  | .t1 => { x with t1 := v }
+  | .t2 => { x with t2 := v }
   | .overflow => { x with overflowOf := v } | .dead => { x with alive := v == 0 }
 
 /-- Check that a numeric value is a valid encoding for this top-tree node field. -/
@@ -246,7 +252,10 @@ def LK.put (s : Core) (i : Nat) (l : List (Nat × Nat)) : LK → Core
   | .children => { s with nodes := s.nodes.modify i fun n => { n with children := l.map (·.1) } }
   | .table => { s with nodes := s.nodes.modify i fun n => { n with table := l } }
   | .inTab => { s with nodes := s.nodes.modify i fun n => { n with inTables := l.map (·.1) } }
-  | .side => { s with nodes := s.nodes.modify i fun n => { n with side := l.map fun q => (q.1, sideOfN q.2) } }
+
+  | .side =>
+    { s with nodes := s.nodes.modify i fun n =>
+      { n with side := l.map fun q => (q.1, sideOfN q.2) } }
   | .cin => { s with cin := s.cin.setX i (l.map (·.1)) }
   | .freeG => { s with freeG := (l.map (·.1)).reverse }
 
@@ -339,17 +348,30 @@ def Fld.get (s : Core) (i : Nat) : Fld → Nat
 
 /-- Write field `f` of record `i`; `none` if the encoding cannot represent the result. -/
 def Fld.set (κ : Caps) (s : Core) (i v : Nat) : Fld → Option Core
-  | .e k => if i < s.E.size ∧ k.ok v = true then some { s with E := s.E.modify i (k.set · v) } else none
-  | .g k => if i < s.Gs.size ∧ k.ok v = true then some { s with Gs := s.Gs.modify i (k.set · v) } else none
-  | .c k => if i < s.C.size ∧ k.ok v = true then some { s with C := s.C.modify i (k.set · v) } else none
-  | .n k => if i < s.nodes.size ∧ k.ok v = true then some { s with nodes := s.nodes.modify i (k.set · v) }
+
+  | .e k =>
+    if i < s.E.size ∧ k.ok v = true then
+      some { s with E := s.E.modify i (k.set · v) }
+    else none
+  | .g k =>
+    if i < s.Gs.size ∧ k.ok v = true then
+      some { s with Gs := s.Gs.modify i (k.set · v) }
+    else none
+  | .c k =>
+    if i < s.C.size ∧ k.ok v = true then
+      some { s with C := s.C.modify i (k.set · v) }
+    else none
+  | .n k =>
+    if i < s.nodes.size ∧ k.ok v = true then
+      some { s with nodes := s.nodes.modify i (k.set · v) }
     else none
   | .a k => if i < κ.arr k then some (k.set s ((k.get s).setX i v)) else none
   | .s k => if i < 1 ∧ k.ok v = true then some (k.set s v) else none
 
 /-- Replace list `k` of record `i` by `l`; `none` if not representable. -/
 def LK.set (κ : Caps) (s : Core) (i : Nat) (l : List (Nat × Nat)) (k : LK) : Option Core :=
-  if k.recOk s i = true ∧ k.valid l = true ∧ l.length ≤ κ.lcap k ∧ i < κ.lrec k then some (k.put s i l)
+  if k.recOk s i = true ∧ k.valid l = true ∧ l.length ≤ κ.lcap k ∧ i < κ.lrec k then some
+    (k.put s i l)
   else none
 
 /-- The path row of `c` reads 0 everywhere. -/
@@ -364,7 +386,9 @@ def notPrep (s : Core) (c : Nat) : Prop :=
   | some pr => c ≠ pr.chunk
   | none => True
 
-instance (s : Core) (c : Nat) : Decidable (notPrep s c) := by unfold notPrep; split <;> infer_instance
+instance (s : Core) (c : Nat) : Decidable (notPrep s c) := by
+  unfold notPrep
+  split <;> infer_instance
 
 /-! ### Syntax -/
 
@@ -452,7 +476,8 @@ def Exp.ev (κ : Caps) (s : Core) (L : Loc) : Exp → Option Nat
   | .opt f => some (f.get s)
 
 /-- Evaluate a list of arguments, failing when any argument is invalid. -/
-def evList (κ : Caps) (s : Core) (L : Loc) (es : List Exp) : Option (List Nat) := es.mapM (·.ev κ s L)
+def evList (κ : Caps) (s : Core) (L : Loc) (es : List Exp) : Option (List Nat) := es.mapM
+  (·.ev κ s L)
 
 /-- The number of machine steps to evaluate an expression (that of its compiled form). -/
 def Exp.cost : Exp → Nat
@@ -493,7 +518,9 @@ def pushCost : Nat := 8
 /-- Execute a bounded typed loop with its index local and accumulated instruction cost. -/
 def runForF (f : Core → Loc → Res) (x : Reg) : Nat → Nat → Core → Loc → Res
   | _, 0, s, L => .ok s L 0
-  | k, n + 1, s, L => ((f s (OrderMaintenance.Machine.State.upd L x k)).addCost 1).bind (runForF f x (k + 1) n)
+
+  | k, n + 1, s, L => ((f s (OrderMaintenance.Machine.State.upd L x k)).addCost 1).bind
+    (runForF f x (k + 1) n)
 
 /-- Execute typed core statements with exact charged RAM cost and explicit abnormal outcomes. -/
 def evalF (κ : Caps) : Stm → Core → Loc → Res
@@ -509,7 +536,8 @@ def evalF (κ : Caps) : Stm → Core → Loc → Res
       | none => .bug
     | _, _ => .bug
   | .push t x, s, L =>
-    if t.size s < κ.tbl t then .ok (t.push s) (OrderMaintenance.Machine.State.upd L x (t.size s)) pushCost
+    if t.size s < κ.tbl t then .ok (t.push s) (OrderMaintenance.Machine.State.upd L x (t.size
+      s)) pushCost
     else .bug
   | .seq c d, s, L => (evalF κ c s L).bind (evalF κ d)
   | .ite c t f, s, L =>
@@ -541,7 +569,8 @@ def evalF (κ : Caps) : Stm → Core → Loc → Res
     | some x, some y, some v =>
       if y < (k.view s x).length then
         match k.set κ s x ((k.view s x).set y
-            (if snd then (((k.view s x).getD y (0, 0)).1, v) else (v, ((k.view s x).getD y (0, 0)).2))) with
+            (if snd then (((k.view s x).getD y (0, 0)).1, v) else (v, ((k.view s x).getD y
+              (0, 0)).2))) with
         | some s' => .ok s' L (4 + i.cost + j.cost + e.cost)
         | none => .bug
       else .bug
@@ -573,7 +602,8 @@ def evalF (κ : Caps) : Stm → Core → Loc → Res
     match c.ev κ s L, j.ev κ s L, e.ev κ s L with
     | some x, some y, some v =>
       if x < κ.tbl .C ∧ y < κ.pw ∧ notPrep s x then
-        .ok { s with path := s.path.setX x ((s.path.getX x).setX y v) } L (7 + c.cost + j.cost + e.cost)
+        .ok { s with path := s.path.setX x ((s.path.getX x).setX y v) } L (7 + c.cost +
+          j.cost + e.cost)
       else .bug
     | _, _, _ => .bug
   | .rowReset c, s, L =>
@@ -587,14 +617,17 @@ def evalF (κ : Caps) : Stm → Core → Loc → Res
     match c.ev κ s L, b.ev κ s L with
     | some x, some y =>
       if s.prep.isNone = true ∧ x < κ.tbl .C ∧ rowZero κ s x ∧ s.P.H + 1 ≤ κ.pw then
-        .ok { s with prep := some { chunk := x, below := y, path := Array.replicate (s.P.H + 1) NIL } } L
-          (16 + c.cost + b.cost)
+        .ok {
+          s with
+          prep := some { chunk := x, below := y, path := Array.replicate (s.P.H + 1) NIL }
+        } L (16 + c.cost + b.cost)
       else .bug
     | _, _ => .bug
   | .prepSet h b t, s, L =>
     match s.prep, h.ev κ s L, b.ev κ s L, t.ev κ s L with
     | some pr, some vh, some vb, some vt =>
-      .ok { s with prep := some { pr with h := vh, below := vb, tag := vt } } L (10 + h.cost + b.cost + t.cost)
+      .ok { s with prep := some { pr with h := vh, below := vb, tag := vt } } L (10 + h.cost
+        + b.cost + t.cost)
     | _, _, _, _ => .bug
   | .prepPath j e, s, L =>
     match s.prep, j.ev κ s L, e.ev κ s L with
@@ -620,7 +653,9 @@ def evalF (κ : Caps) : Stm → Core → Loc → Res
     match s.resJob, evList κ s L [t, a, b, c, d] with
     | some jb, some [vt, va, vb, vc, vd] =>
       match pcDec vt va vb vc vd with
-      | some pc => .ok { s with resJob := some { jb with pc := pc } } L (16 + costList [t, a, b, c, d])
+
+      | some pc => .ok { s with resJob := some { jb with pc := pc } } L (16 + costList [t, a,
+        b, c, d])
       | none => .bug
     | _, _ => .bug
 

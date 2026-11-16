@@ -74,7 +74,8 @@ theorem evalListW_raise (w : Nat) (s : State) (q : Nat) (es : List Expr) :
 /-! ### The peak is ghost for `execW` -/
 
 /-- As `exec_raise`. -/
-theorem execW_raise (w q : Nat) : ∀ (c : Stmt) (s : State), execW w c (s.raise q) = (execW w c s).raise q
+theorem execW_raise (w q : Nat) : ∀ (c : Stmt) (s : State), execW w c (s.raise q) = (execW w c
+  s).raise q
   | .skip, s => rfl
   | .assign x e, s => by
     simp only [execW, Expr.evalW_raise, Expr.maxv_raise]
@@ -108,7 +109,8 @@ theorem execW_raise (w q : Nat) : ∀ (c : Stmt) (s : State), execW w c (s.raise
       have : (Out.mk ((s.bump (n.maxv s)).raise q) (1 + n.cost) .ok) =
           (Out.mk (s.bump (n.maxv s)) (1 + n.cost) .ok).raise q := rfl
       rw [this]
-      exact Out.raise_bind _ q _ _ (fun s => runFor_raise _ q (fun s => execW_raise w q b s) x _ 0 s)
+      exact Out.raise_bind _ q _ _ (fun s => runFor_raise _ q (fun s => execW_raise w q b s) x _
+        0 s)
     · rfl
   | .call nm ps b rs args ds, s => by
     simp only [execW, evalListW_raise, maxvList_raise]
@@ -153,12 +155,14 @@ theorem runFor_peak_le {f : State → Out} (hf : ∀ s, s.peak ≤ (f s).st.peak
           (runFor f x (k + 1) n) := rfl
     rw [e]
     exact le_trans (hf (s.setLoc x k))
-      (Out.bind_peak_le (o := ⟨(f (s.setLoc x k)).st, 1 + (f (s.setLoc x k)).cost, (f (s.setLoc x k)).status⟩)
+      (Out.bind_peak_le (o := ⟨(f (s.setLoc x k)).st, 1 + (f (s.setLoc x k)).cost, (f (s.setLoc
+        x k)).status⟩)
         (runFor_peak_le hf x n (k + 1)))
 
 theorem runFor_agree {w : Nat} {f f' : State → Out} (hm : ∀ s, s.peak ≤ (f s).st.peak)
     (hf : ∀ s, (f s).st.peak < 2 ^ w → f' s = f s) (x : Reg) :
-    ∀ (n k : Nat) (s : State), (runFor f x k n s).st.peak < 2 ^ w → runFor f' x k n s = runFor f x k n s
+    ∀ (n k : Nat) (s : State), (runFor f x k n s).st.peak < 2 ^ w → runFor f' x k n s = runFor f
+      x k n s
   | 0, _, _, _ => rfl
   | n + 1, k, s, h => by
     have e : ∀ g : State → Out, runFor g x k (n + 1) s =
@@ -167,7 +171,8 @@ theorem runFor_agree {w : Nat} {f f' : State → Out} (hm : ∀ s, s.peak ≤ (f
     rw [e] at h ⊢; rw [e]
     have h1 : (f (s.setLoc x k)).st.peak < 2 ^ w :=
       lt_of_le_of_lt
-        (Out.bind_peak_le (o := ⟨(f (s.setLoc x k)).st, 1 + (f (s.setLoc x k)).cost, (f (s.setLoc x k)).status⟩)
+        (Out.bind_peak_le (o := ⟨(f (s.setLoc x k)).st, 1 + (f (s.setLoc x k)).cost, (f
+          (s.setLoc x k)).status⟩)
           (runFor_peak_le hm x n (k + 1))) h
     rw [hf _ h1]
     refine Out.bind_agree (fun hs => runFor_agree hm hf x n (k + 1) _ ?_)
@@ -175,7 +180,8 @@ theorem runFor_agree {w : Nat} {f f' : State → Out} (hm : ∀ s, s.peak ≤ (f
 
 /-- **Agreement for a run whose final peak is below `2^w`**: every value `exec` records is at most
 its final peak, so every check of `execW w` passes. -/
-theorem execW_eq_of (w : Nat) : ∀ (c : Stmt) (s : State), (exec c s).st.peak < 2 ^ w → execW w c s = exec c s
+theorem execW_eq_of (w : Nat) : ∀ (c : Stmt) (s : State), (exec c s).st.peak < 2 ^ w → execW w c
+  s = exec c s
   | .skip, _, _ => rfl
   | .assign x e, s, h => by
     cases he : e.eval s with
@@ -232,10 +238,13 @@ theorem execW_eq_of (w : Nat) : ∀ (c : Stmt) (s : State), (exec c s).st.peak <
       simp only [execW, exec, Expr.evalW_of_lt hm, he]
       refine Out.bind_agree (fun _ => ?_)
       by_cases hv : v ≠ 0
-      · have e1 : (if v ≠ 0 then exec t else exec f) = exec t := ite_eq_left_of_eq_true _ _ (eq_true hv)
-        have e2 : (if v ≠ 0 then execW w t else execW w f) = execW w t := ite_eq_left_of_eq_true _ _ (eq_true hv)
+      · have e1 : (if v ≠ 0 then exec t else exec f) = exec t := ite_eq_left_of_eq_true _ _
+          (eq_true hv)
+        have e2 : (if v ≠ 0 then execW w t else execW w f) = execW w t := ite_eq_left_of_eq_true
+          _ _ (eq_true hv)
         rw [e1] at h ⊢; rw [e2]; exact execW_eq_of w t _ h
-      · have e1 : (if v ≠ 0 then exec t else exec f) = exec f := ite_eq_right_of_eq_false _ _ (eq_false hv)
+      · have e1 : (if v ≠ 0 then exec t else exec f) = exec f := ite_eq_right_of_eq_false _ _
+          (eq_false hv)
         have e2 : (if v ≠ 0 then execW w t else execW w f) = execW w f :=
           ite_eq_right_of_eq_false _ _ (eq_false hv)
         rw [e1] at h ⊢; rw [e2]; exact execW_eq_of w f _ h
@@ -279,9 +288,16 @@ theorem execW_eq_of (w : Nat) : ∀ (c : Stmt) (s : State), (exec c s).st.peak <
 
 /-- **The `w`-bit machine agrees with `exec`** on every run that computes no value at or above
 `2^w`: same final state, cost and status. -/
-theorem execW_agree {w : Nat} {c : Stmt} {s : State} (h : dpk c s < 2 ^ w) : execW w c s = exec c s := by
-  have e1 := exec_raise s.peak c { s with peak := 0 }
-  have e2 := execW_raise w s.peak c { s with peak := 0 }
+theorem execW_agree {w : Nat} {c : Stmt} {s : State} (h : dpk c s < 2 ^ w) : execW w c s = exec
+  c s := by
+  have e1 := exec_raise s.peak c {
+    s with
+    peak := 0
+  }
+  have e2 := execW_raise w s.peak c {
+    s with
+    peak := 0
+  }
   rw [raise_reset] at e1 e2
   rw [e1, e2, execW_eq_of w c _ h]
 
@@ -289,14 +305,16 @@ end OrderMaintenance.Machine
 
 namespace OrderMaintenance.Impl
 
-open OrderMaintenance.Model OrderMaintenance.Proof OrderMaintenance.Proof.Top OrderMaintenance.Proof.Word
+open OrderMaintenance.Model OrderMaintenance.Proof OrderMaintenance.Proof.Top
+  OrderMaintenance.Proof.Word
 open OrderMaintenance.Machine (Reg Arr State Out exec execW Stmt Same Expr BinOp UnOp wp wpB dpk)
 
 /-! ### The program on `w`-bit words -/
 
 /-- **`runM` on the `w`-bit machine**: the answers and the cost of each operation (`none` if an
 operation fails or reaches an error, including a value that does not fit in `w` bits). -/
-def runMw (w : Nat) : State → List OrderMaintenance.Spec.Op → Option (List OrderMaintenance.Spec.Ans × List Nat)
+def runMw (w : Nat) : State → List OrderMaintenance.Spec.Op → Option (List
+  OrderMaintenance.Spec.Ans × List Nat)
   | _, [] => some ([], [])
   | m, op :: ops =>
     if (execW w (opS op) m).status = .ok then
@@ -306,22 +324,26 @@ def runMw (w : Nat) : State → List OrderMaintenance.Spec.Op → Option (List O
 
 /-- `runMw w` agrees with `runM` when no operation computes a value at or above `2^w`. -/
 theorem runMw_eq (w : Nat) : ∀ (ops : List OrderMaintenance.Spec.Op) (m : State),
-    (∀ i (hi : i < ops.length), dpk (opS ops[i]) (runSt m (ops.take i)) < 2 ^ w) → runMw w m ops = runM m ops
+    (∀ i (hi : i < ops.length), dpk (opS ops[i]) (runSt m (ops.take i)) < 2 ^ w) → runMw w m ops
+      = runM m ops
   | [], _, _ => rfl
   | op :: ops, m, h => by
     have h0 : dpk (opS op) m < 2 ^ w := h 0 (by simp)
     have ih := runMw_eq w ops (exec (opS op) m).st (fun i hi => h (i + 1) (by simpa using hi))
-    simp only [runMw, runM, OrderMaintenance.Machine.execW_agree h0, ih]
+    simp only [runMw, runM, Machine.execW_agree h0, ih]
 
 /-- **The program on `w`-bit words agrees with `exec`.** For a valid sequence of `t` operations
 and `w ≥ 128·⌊log₂(t + 1)⌋ + 1286`, initialization and every operation run on the `w`-bit machine
 exactly as on `exec`. -/
-theorem run_word_agree {m₀ : State} {KB w : Nat} (hkb : m₀.loc "kb" = KB) (h4 : 4 ≤ KB) (h512 : KB < 2 ^ 512)
-    (ops : List OrderMaintenance.Spec.Op) (hv : OrderMaintenance.Spec.Valid OrderMaintenance.Spec.State.empty ops)
+theorem run_word_agree {m₀ : State} {KB w : Nat} (hkb : m₀.loc "kb" = KB) (h4 : 4 ≤ KB) (h512 :
+  KB < 2 ^ 512)
+    (ops : List OrderMaintenance.Spec.Op) (hv : OrderMaintenance.Spec.Valid
+      OrderMaintenance.Spec.State.empty ops)
     (hw : 128 * Nat.log2 (ops.length + 1) + 1286 ≤ w) :
-    execW w initWS m₀ = exec initWS m₀ ∧ runMw w (exec initWS m₀).st ops = runM (exec initWS m₀).st ops := by
+    execW w initWS m₀ = exec initWS m₀ ∧ runMw w (exec initWS m₀).st ops = runM (exec initWS
+      m₀).st ops := by
   obtain ⟨hinit, hops, -⟩ := theoremW_M_run hkb h4 h512 ops hv
-  exact ⟨OrderMaintenance.Machine.execW_agree (lt_of_lt_of_le hinit (pow2_mono hw)),
+  exact ⟨Machine.execW_agree (lt_of_lt_of_le hinit (pow2_mono hw)),
     runMw_eq w ops _ (fun i hi => lt_of_lt_of_le (hops i hi) (pow2_mono hw))⟩
 
 /-- **Theorems A and B on `w`-bit words.** For `4 ≤ K_B < 2^512` (in local `kb`), every valid
@@ -329,12 +351,16 @@ sequence of `t` operations and every `w ≥ 128·⌊log₂(t + 1)⌋ + 1286`, th
 initialization and the operations is `exec`'s, and the conclusion of `theoremAB_M` holds verbatim
 for it: the specification's answers, initialization within `initB` steps and every operation
 within `opB K_B` steps. -/
-theorem theoremAB_word {m₀ : State} {KB w : Nat} (hkb : m₀.loc "kb" = KB) (h4 : 4 ≤ KB) (h512 : KB < 2 ^ 512)
-    (ops : List OrderMaintenance.Spec.Op) (hv : OrderMaintenance.Spec.Valid OrderMaintenance.Spec.State.empty ops)
+theorem theoremAB_word {m₀ : State} {KB w : Nat} (hkb : m₀.loc "kb" = KB) (h4 : 4 ≤ KB) (h512 :
+  KB < 2 ^ 512)
+    (ops : List OrderMaintenance.Spec.Op) (hv : OrderMaintenance.Spec.Valid
+      OrderMaintenance.Spec.State.empty ops)
     (hw : 128 * Nat.log2 (ops.length + 1) + 1286 ≤ w) :
-    (execW w initWS m₀ = exec initWS m₀ ∧ runMw w (exec initWS m₀).st ops = runM (exec initWS m₀).st ops) ∧
+    (execW w initWS m₀ = exec initWS m₀ ∧ runMw w (exec initWS m₀).st ops = runM (exec initWS
+      m₀).st ops) ∧
     (execW w initWS m₀).status = .ok ∧ (execW w initWS m₀).cost ≤ initB ∧
-      ∃ cs, runMw w (execW w initWS m₀).st ops = some (OrderMaintenance.Spec.run OrderMaintenance.Spec.State.empty ops, cs) ∧
+      ∃ cs, runMw w (execW w initWS m₀).st ops = some (OrderMaintenance.Spec.run
+        OrderMaintenance.Spec.State.empty ops, cs) ∧
         ∀ c ∈ cs, c ≤ opB KB := by
   obtain ⟨hi, hr⟩ := run_word_agree hkb h4 h512 ops hv hw
   rw [hi, hr]

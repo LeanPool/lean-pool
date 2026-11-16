@@ -144,6 +144,7 @@ theorem wtS_ok {κ : Caps} {s : Core} {L : Loc} {h e : Nat} (hh : L "h" = h) (he
 
 /-- `t := the sum of the weights of the children of `v``. -/
 def sumBody : Stm := cm{ e := children[v][j].fst; wtS; t := t + w }
+/-- Accumulate the weights of the first `n` children in local `t`. -/
 def sumS : Stm := cm{ t := 0; for j < n do sumBody }
 
 theorem sumS_ok {κ : Caps} {s : Core} {L : Loc} {v h : Nat} (hv : L "v" = v) (hh : L "h" = h)
@@ -201,6 +202,7 @@ theorem sumS_ok {κ : Caps} {s : Core} {L : Loc} {v h : Nat} (hv : L "v" = v) (h
 def cutBody : Stm := cm{
   e := children[v][j].fst; wtS
   if d = 0 && w ≤ b then { c := c + 1; b := b - w } else d := 1 }
+/-- Find a weight-balanced cut before the last child. -/
 def cutS : Stm := cm{ b := t / 2; c := 0; d := 0; for j < n ∸ 1 do cutBody }
 
 theorem cutS_ok {κ : Caps} {s : Core} {L : Loc} {v h : Nat} (hv : L "v" = v) (hh : L "h" = h)
@@ -361,7 +363,9 @@ theorem prS_ok {κ : Caps} {s : Core} {L : Loc} {v k : Nat} (hv : L "v" = v) (hk
 
 /-- `shiftR`: move the cut `k` right past pairs, at most `n` times. -/
 def shRC : Exp := cme{ (d = 0 && 0 < k) && k < n }
+/-- Advance a cut right by one while the adjacent children satisfy the pair restriction. -/
 def shRBody : Stm := cm{ if ‹shRC› then { prS; if ‹prE› then k := k + 1 else d := 1 } else d := 1 }
+/-- Scan right for an admissible cut, stopping at the first rejected pair. -/
 def shRS : Stm := cm{ d := 0; for j < n do shRBody }
 
 theorem shRS_ok {κ : Caps} {s : Core} {L : Loc} {v : Nat} (hv : L "v" = v)
@@ -454,7 +458,9 @@ theorem shRS_ok {κ : Caps} {s : Core} {L : Loc} {v : Nat} (hv : L "v" = v)
 
 /-- `shiftL` from `n - 1`: move the cut left past pairs, at most `n` times. -/
 def shLC : Exp := cme{ d = 0 && 0 < k }
+/-- Advance a cut left by one while the adjacent children satisfy the pair restriction. -/
 def shLBody : Stm := cm{ if ‹shLC› then { prS; if ‹prE› then k := k - 1 else d := 1 } else d := 1 }
+/-- Scan left from the last child for an admissible cut. -/
 def shLS : Stm := cm{ k := n ∸ 1; d := 0; for j < n do shLBody }
 
 theorem shLS_ok {κ : Caps} {s : Core} {L : Loc} {v : Nat} (hv : L "v" = v)

@@ -28,7 +28,7 @@ open OrderMaintenance.Model
 open OrderMaintenance.Proof.Top
 open OrderMaintenance.Machine (Reg BinOp UnOp)
 
-local notation "upd" => OrderMaintenance.Machine.State.upd
+local notation "upd" => Machine.State.upd
 
 /-- The body of Level F's reservation loop (as elaborated). -/
 def resF : Nat → Option Unit × Unit → CM (ForInStep (Option Unit × Unit)) := fun _ _ => do
@@ -42,7 +42,10 @@ def resF : Nat → Option Unit × Unit → CM (ForInStep (Option Unit × Unit)) 
       pure (ForInStep.yield (none, ()))
   | some job => do
     let r ← jobStep job
-    modify fun s => { s with resJob := r }
+    modify fun s => {
+      s with
+      resJob := r
+    }
     pure (ForInStep.yield (none, ()))
 
 theorem reservation_eq (k : Nat) (s : Core) :
@@ -53,9 +56,22 @@ theorem reservation_eq (k : Nat) (s : Core) :
   funext x a
   rcases x with ⟨_ | _, _⟩ <;> rfl
 
-def jobP : Proc := { name := "jobStep", params := [], rets := [], body := jobStepS }
-def splitP : Proc := { name := "splitChunkStart", params := ["x"], rets := [], body := splitChunkStartS }
+/-- Procedure performing one suspended reservation-job step. -/
+def jobP : Proc := {
+  name := "jobStep"
+  params := []
+  rets := []
+  body := jobStepS
+}
+/-- Procedure starting a chunk split and its reservation job. -/
+def splitP : Proc := {
+  name := "splitChunkStart"
+  params := ["x"]
+  rets := []
+  body := splitChunkStartS
+}
 
+/-- Spend one reservation iteration on the active job or the largest queued chunk. -/
 def resBody : Stm := cm{
   if dn = 0 then {
     if O.jobOn then call jobP()
@@ -75,7 +91,8 @@ def resOut (stop : Bool) : ForInStep (Option Unit × Unit) :=
 
 theorem reservationS_agree (κ : Caps) (s : Core) (L : Loc) {D : Nat}
     (I : Nat → Core → Prop) (h0 : I 0 s)
-    (hstep : ∀ j t, I j t → j < s.P.reservationBudget → ∃ stop t', (resF j ((none : Option Unit), ())).run t = .ok (resOut stop) t' ∧
+    (hstep : ∀ j t, I j t → j < s.P.reservationBudget → ∃ stop t', (resF j ((none : Option
+      Unit), ())).run t = .ok (resOut stop) t' ∧
       (stop = false → I (j + 1) t') ∧ ResAgree κ t t' stop D) :
     ∃ t' L' n, (reservation s.P.reservationBudget).run s = .ok () t' ∧ evalF κ reservationS s L
       = .ok t' L' n ∧
@@ -96,28 +113,32 @@ theorem reservationS_agree (κ : Caps) (s : Core) (L : Loc) {D : Nat}
       obtain ⟨stop, t', hr, hI', -⟩ := hstep j t hI hjK
       cases stop
       · obtain ⟨c, tF, h⟩ := ih (j + 1) t' (hI' rfl) (by omega)
-        exact ⟨c, tF, by simp only [R, List.forIn_cons, OrderMaintenance.Proof.run_bind, hr, resOut]; exact h⟩
-      · exact ⟨_, _, by simp only [R, List.forIn_cons, OrderMaintenance.Proof.run_bind, hr, resOut]; rfl⟩
+        exact ⟨c, tF, by
+          simp only [R, List.forIn_cons, OrderMaintenance.Proof.run_bind, hr, resOut]; exact h⟩
+      · exact ⟨_, _, by
+        simp only [R, List.forIn_cons, OrderMaintenance.Proof.run_bind, hr, resOut]; rfl⟩
   obtain ⟨c0, tF, hR0⟩ := hF K 0 s h0 (by omega)
   simp only [List.drop_zero] at hR0
   have hFrun : (reservation s.P.reservationBudget).run s = .ok () tF := by
     rw [reservation_eq, OrderMaintenance.Proof.run_bind]
-    have hR0' : (forIn (List.range s.P.reservationBudget) ((none : Option Unit), ()) resF).run s = .ok c0 tF := hR0
+    have hR0' : (forIn (List.range s.P.reservationBudget) ((none : Option Unit), ()) resF).run s
+      = .ok c0 tF := hR0
     rw [hR0']
     dsimp only
     split <;> rfl
   -- Level M's loop
   have a1 := evalF_assign_ok (κ := κ) (s := s) (L := L) (x := "dn") (e := (0 : Exp)) (v := 0) rfl
-  obtain ⟨S', L', c, he, hc, hI⟩ := evalF_loop (κ := κ) (x := "ri") (n := .prm .KR) (b := resBody) (s := s)
+  obtain ⟨S', L', c, he, hc, hI⟩ := evalF_loop (κ := κ) (x := "ri") (n := .prm .KR) (b :=
+    resBody) (s := s)
     (L := upd L "dn" 0) (N := K) (by simp [Exp.ev, PF.get, K])
     (fun j S L' => (L' "dn" = 0 ∧ I j S ∧ ∃ c, R ((List.range K).drop j) S = .ok c tF) ∨
       (L' "dn" = 1 ∧ S = tF)) (D + 5)
-    (Or.inl ⟨by simp [OrderMaintenance.Machine.State.upd], h0, c0, by simpa using hR0⟩)
+    (Or.inl ⟨by simp [Machine.State.upd], h0, c0, by simpa using hR0⟩)
     (by
       intro j hj S L1 hcase
       set L2 := upd L1 "ri" j
       rcases hcase with ⟨hdn, hIj, c1, hR⟩ | ⟨hdn, hSF⟩
-      · have h2dn : L2 "dn" = 0 := by simp [L2, OrderMaintenance.Machine.State.upd, hdn]
+      · have h2dn : L2 "dn" = 0 := by simp [L2, Machine.State.upd, hdn]
         obtain ⟨stop, t', hr, hI', hRA⟩ := hstep j S hIj hj
         obtain ⟨L3, n3, e3, h3dn, hn3⟩ := hRA L2 h2dn
         rw [List.drop_eq_getElem_cons (by simpa using hj), List.getElem_range] at hR
@@ -128,10 +149,10 @@ theorem reservationS_agree (κ : Caps) (s : Core) (L : Loc) {D : Nat}
           injection hR with _ hT; subst hT
           exact ⟨t', L3, n3, e3, by omega, Or.inr ⟨by simpa [b2n] using h3dn, rfl⟩⟩
       · subst hSF
-        have hc0 : ("dn" =ₑ 0 : Exp).ev κ S L2 = some 0 := by simp [Exp.ev, OrderMaintenance.Machine.BinOp.eval, L2,
-          OrderMaintenance.Machine.State.upd, hdn]
+        have hc0 : ("dn" =ₑ 0 : Exp).ev κ S L2 = some 0 := by simp [Exp.ev, Machine.BinOp.eval, L2,
+          Machine.State.upd, hdn]
         exact ⟨S, L2, _, evalF_ite_f hc0 evalF_skip, by simp [Exp.cost],
-          Or.inr ⟨by simp [L2, OrderMaintenance.Machine.State.upd, hdn], rfl⟩⟩)
+          Or.inr ⟨by simp [L2, Machine.State.upd, hdn], rfl⟩⟩)
   have hS' : S' = tF := by
     rcases hI with ⟨hdn, hIK, c2, hR⟩ | ⟨hdn, h⟩
     · rw [List.drop_of_length_le (by simp)] at hR
@@ -147,48 +168,64 @@ theorem reservationS_agree (κ : Caps) (s : Core) (L : Loc) {D : Nat}
 
 theorem resF_empty {t : Core} {j : Nat} (hj : t.resJob = none) (h0 : t.pqHi = 0) :
     (resF j ((none : Option Unit), ())).run t = .ok (resOut true) t := by
-  simp [resF, OrderMaintenance.Proof.run_bind, hj, pqEmpty, h0, resOut]
+  simp [resF, hj, pqEmpty, h0, resOut]
 
-theorem resAgree_empty {κ : Caps} {t : Core} (hj : t.resJob = none) (h0 : t.pqHi = 0) : ResAgree κ t t true 40 := by
+theorem resAgree_empty {κ : Caps} {t : Core} (hj : t.resJob = none) (h0 : t.pqHi = 0) : ResAgree
+  κ t t true 40 := by
   intro L hdn
-  obtain ⟨Le, ce, ee, her, hce⟩ := pqEmpty_agree κ t (OrderMaintenance.Machine.State.setLocs (fun _ => 0) [] [])
-    (b := true) (σ' := t) (by simp [pqEmpty, h0])
-  have e1 := evalF_call_ok (q := pqEmptyP) (args := []) (ds := ["em"]) (L := L) (by simp [evList]) ee
-  set L1 := OrderMaintenance.Machine.State.setLocs L ["em"] (pqEmptyP.rets.map Le)
-  have h1em : L1 "em" = 1 := by simp [L1, pqEmptyP, OrderMaintenance.Machine.State.setLocs, OrderMaintenance.Machine.State.upd, her, b2n]
+  obtain ⟨Le, ce, ee, her, hce⟩ := pqEmpty_agree κ t (Machine.State.setLocs (fun _ => 0) [] [])
+    (b := true) (σ' := t) (by
+      change EStateM.Result.ok (t.pqHi == 0) t = EStateM.Result.ok true t
+      simp [h0])
+  have e1 := evalF_call_ok (q := pqEmptyP) (args := []) (ds := ["em"]) (L := L) (by
+    simp [evList]) ee
+  set L1 := Machine.State.setLocs L ["em"] (pqEmptyP.rets.map Le)
+  have h1em : L1 "em" = 1 := by
+    simp [L1, pqEmptyP, Machine.State.setLocs, Machine.State.upd, her, b2n]
   have e2 := evalF_assign_ok (κ := κ) (s := t) (L := L1) (x := "dn") (e := (1 : Exp)) (v := 1) rfl
-  refine ⟨_, _, evalF_ite_t (v := 1) (by simp [Exp.ev, OrderMaintenance.Machine.BinOp.eval, hdn]) one_ne_zero
+  refine ⟨_, _, evalF_ite_t (v := 1) (by simp [Exp.ev, Machine.BinOp.eval, hdn]) one_ne_zero
     (evalF_ite_f (by simp [Exp.ev, OF.get, hj, b2n]) (evalF_seq_ok2 e1 (evalF_ite_t (v := 1)
-      (by simp [Exp.ev,
-        h1em]) one_ne_zero e2))), by simp [OrderMaintenance.Machine.State.upd, b2n], ?_⟩
+      (by
+        simp [Exp.ev, h1em]) one_ne_zero e2))), by simp [Machine.State.upd, b2n], ?_⟩
   simp [Exp.cost, costList] at hce ⊢; omega
 
 /-- The program agrees with Level F's `jobStep j` from `t` (within `D` steps). -/
 def JobAgree (κ : Caps) (t : Core) (j : Job) (D : Nat) : Prop :=
   ∀ r t1, (jobStep j).run t = .ok r t1 →
-    ∃ L' c, evalF κ jobStepS t (OrderMaintenance.Machine.State.setLocs (fun _ => 0) [] []) = .ok { t1 with resJob := r } L' c ∧ c ≤ D
+    ∃ L' c, evalF κ jobStepS t (Machine.State.setLocs (fun _ => 0) [] []) = .ok {
+      t1 with
+      resJob := r
+    } L' c ∧ c ≤ D
 
 theorem resF_job {t t1 : Core} {i : Nat} {j : Job} {r : Option Job} (hj : t.resJob = some j)
     (h : (jobStep j).run t = .ok r t1) :
-    (resF i ((none : Option Unit), ())).run t = .ok (resOut false) { t1 with resJob := r } := by
+    (resF i ((none : Option Unit), ())).run t = .ok (resOut false) {
+      t1 with
+      resJob := r
+    } := by
   simp only [resF, OrderMaintenance.Proof.run_bind, OrderMaintenance.Proof.run_get, hj]
-  simp only [OrderMaintenance.Proof.run_bind, h]; rfl
+  simp only [h]; rfl
 
-theorem resAgree_job {κ : Caps} {t t1 : Core} {j : Job} {r : Option Job} {D : Nat} (hj : t.resJob = some j)
+theorem resAgree_job {κ : Caps} {t t1 : Core} {j : Job} {r : Option Job} {D : Nat} (hj :
+  t.resJob = some j)
     (hA : JobAgree κ t j D) (h : (jobStep j).run t = .ok r t1) :
-    ResAgree κ t { t1 with resJob := r } false (D + 10) := by
+    ResAgree κ t {
+      t1 with
+      resJob := r
+    } false (D + 10) := by
   intro L hdn
   obtain ⟨Lj, cj, ej, hcj⟩ := hA r t1 h
   have e1 := evalF_call_ok (q := jobP) (args := []) (ds := []) (L := L) (by simp [evList]) ej
-  refine ⟨_, _, evalF_ite_t (v := 1) (by simp [Exp.ev, OrderMaintenance.Machine.BinOp.eval, hdn]) one_ne_zero
+  refine ⟨_, _, evalF_ite_t (v := 1) (by simp [Exp.ev, Machine.BinOp.eval, hdn]) one_ne_zero
     (evalF_ite_t (v := 1) (by simp [Exp.ev, OF.get, hj, b2n]) one_ne_zero e1),
-    by simp [OrderMaintenance.Machine.State.setLocs, hdn, b2n], ?_⟩
+    by simp [Machine.State.setLocs, hdn, b2n], ?_⟩
   simp [Exp.cost, costList]; omega
 
 /-- The program agrees with Level F's `splitChunkStart c` from `t` (within `D` steps). -/
 def SplitAgree (κ : Caps) (t : Core) (c D : Nat) : Prop :=
   ∀ t2, (splitChunkStart c).run t = .ok () t2 →
-    ∃ L' n, evalF κ splitChunkStartS t (OrderMaintenance.Machine.State.setLocs (fun _ => 0) ["x"] [c]) = .ok t2 L' n ∧ n ≤ D
+    ∃ L' n, evalF κ splitChunkStartS t (Machine.State.setLocs (fun _ => 0) ["x"] [c]) = .ok t2
+      L' n ∧ n ≤ D
 
 theorem resF_split {t t1 t2 : Core} {i c : Nat} (hj : t.resJob = none) (h0 : t.pqHi ≠ 0)
     (hp : pqPopMax.run t = .ok c t1) (hs : (splitChunkStart c).run t1 = .ok () t2) :
@@ -196,30 +233,39 @@ theorem resF_split {t t1 t2 : Core} {i c : Nat} (hj : t.resJob = none) (h0 : t.p
   simp only [resF, OrderMaintenance.Proof.run_bind, OrderMaintenance.Proof.run_get, hj]
   simp only [pqEmpty, OrderMaintenance.Proof.run_bind]
   simp [h0]
-  simp only [OrderMaintenance.Proof.run_bind, hp, hs]; rfl
+  simp only [← bind_pure_comp, OrderMaintenance.Proof.run_bind, hp, hs]
+  rfl
 
-theorem resAgree_split {κ : Caps} {t t1 t2 : Core} {c D : Nat} (hj : t.resJob = none) (hq : PQCaps κ t)
+theorem resAgree_split {κ : Caps} {t t1 t2 : Core} {c D : Nat} (hj : t.resJob = none) (hq :
+  PQCaps κ t)
     (h0 : t.pqHi ≠ 0) (hp : pqPopMax.run t = .ok c t1) (hA : SplitAgree κ t1 c D)
     (hs : (splitChunkStart c).run t1 = .ok () t2) :
     ResAgree κ t t2 false (D + 300) := by
   intro L hdn
-  obtain ⟨Le, ce, ee, her, hce⟩ := pqEmpty_agree κ t (OrderMaintenance.Machine.State.setLocs (fun _ => 0) [] [])
-    (b := false) (σ' := t) (by simp [pqEmpty, h0])
-  have e1 := evalF_call_ok (q := pqEmptyP) (args := []) (ds := ["em"]) (L := L) (by simp [evList]) ee
-  set L1 := OrderMaintenance.Machine.State.setLocs L ["em"] (pqEmptyP.rets.map Le)
-  have h1em : L1 "em" = 0 := by simp [L1, pqEmptyP, OrderMaintenance.Machine.State.setLocs, OrderMaintenance.Machine.State.upd, her, b2n]
-  have h1dn : L1 "dn" = 0 := by simp [L1, pqEmptyP, OrderMaintenance.Machine.State.setLocs, OrderMaintenance.Machine.State.upd, hdn]
-  obtain ⟨⟨Lp, cp, ep, hcp, hncp⟩, -⟩ := pqPopMax_agree κ t (OrderMaintenance.Machine.State.setLocs (fun _ => 0) [] []) hq hp
-  have e2 := evalF_call_ok (q := pqPopMaxP) (args := []) (ds := ["x"]) (L := L1) (by simp [evList]) ep
-  set L2 := OrderMaintenance.Machine.State.setLocs L1 ["x"] (pqPopMaxP.rets.map Lp)
-  have h2x : L2 "x" = c := by simp [L2, pqPopMaxP, OrderMaintenance.Machine.State.setLocs, OrderMaintenance.Machine.State.upd, hcp]
-  have h2dn : L2 "dn" = 0 := by simp [L2, pqPopMaxP, OrderMaintenance.Machine.State.setLocs, OrderMaintenance.Machine.State.upd, h1dn]
+  obtain ⟨Le, ce, ee, her, hce⟩ := pqEmpty_agree κ t (Machine.State.setLocs (fun _ => 0) [] [])
+    (b := false) (σ' := t) (by
+      change EStateM.Result.ok (t.pqHi == 0) t = EStateM.Result.ok false t
+      simp [h0])
+  have e1 := evalF_call_ok (q := pqEmptyP) (args := []) (ds := ["em"]) (L := L) (by
+    simp [evList]) ee
+  set L1 := Machine.State.setLocs L ["em"] (pqEmptyP.rets.map Le)
+  have h1em : L1 "em" = 0 := by
+    simp [L1, pqEmptyP, Machine.State.setLocs, Machine.State.upd, her, b2n]
+  have h1dn : L1 "dn" = 0 := by simp [L1, pqEmptyP, Machine.State.setLocs, Machine.State.upd, hdn]
+  obtain ⟨⟨Lp, cp, ep, hcp, hncp⟩, -⟩ := pqPopMax_agree κ t (Machine.State.setLocs (fun _ => 0)
+    [] []) hq hp
+  have e2 := evalF_call_ok (q := pqPopMaxP) (args := []) (ds := ["x"]) (L := L1) (by
+    simp [evList]) ep
+  set L2 := Machine.State.setLocs L1 ["x"] (pqPopMaxP.rets.map Lp)
+  have h2x : L2 "x" = c := by simp [L2, pqPopMaxP, Machine.State.setLocs, Machine.State.upd, hcp]
+  have h2dn : L2 "dn" = 0 := by simp [L2, pqPopMaxP, Machine.State.setLocs, Machine.State.upd, h1dn]
   obtain ⟨Ls, cs, es, hcs⟩ := hA t2 hs
-  have e3 := evalF_call_ok (q := splitP) (args := [.var "x"]) (ds := []) (L := L2) (by simp [evList, Exp.ev, h2x]) es
-  refine ⟨_, _, evalF_ite_t (v := 1) (by simp [Exp.ev, OrderMaintenance.Machine.BinOp.eval, hdn]) one_ne_zero
+  have e3 := evalF_call_ok (q := splitP) (args := [.var "x"]) (ds := []) (L := L2) (by
+    simp [evList, Exp.ev, h2x]) es
+  refine ⟨_, _, evalF_ite_t (v := 1) (by simp [Exp.ev, Machine.BinOp.eval, hdn]) one_ne_zero
     (evalF_ite_f (by simp [Exp.ev, OF.get, hj, b2n]) (evalF_seq_ok2 e1 (evalF_ite_f
-      (by simp [Exp.ev,
-        h1em]) (evalF_seq_ok2 e2 e3)))), by simp [OrderMaintenance.Machine.State.setLocs, h2dn,
+      (by
+        simp [Exp.ev, h1em]) (evalF_seq_ok2 e2 e3)))), by simp [Machine.State.setLocs, h2dn,
         b2n], ?_⟩
   simp [Exp.cost, costList] at hce hncp ⊢; omega
 
@@ -227,14 +273,17 @@ theorem splitAgree_ok {κ : Caps} {s : Core} {x f1x i1 B : Nat} (hx0 : x ≠ NIL
     (hxs : x < s.C.size) (hC : s.C.size + 2 ≤ κ.tbl .C)
     (hp : (s.C.getX x).prev ≠ NIL → (s.C.getX x).prev < s.C.size)
     (hn : (s.C.getX x).next ≠ NIL → (s.C.getX x).next < s.C.size)
-    (hia : IAOK κ (linkChunkPair (OrderMaintenance.Proof.push2 s) x s.C.size (s.C.size + 1)) x s.C.size (s.C.size + 1) f1x i1 B) :
-    SplitAgree κ s x (150 + iaCost (linkChunkPair (OrderMaintenance.Proof.push2 s) x s.C.size (s.C.size + 1)) x B) := by
+    (hia : IAOK κ (linkChunkPair (OrderMaintenance.Proof.push2 s) x s.C.size (s.C.size + 1)) x
+      s.C.size (s.C.size + 1) f1x i1 B) :
+    SplitAgree κ s x (150 + iaCost (linkChunkPair (OrderMaintenance.Proof.push2 s) x s.C.size
+      (s.C.size + 1)) x B) := by
   intro t2 h
   rw [OrderMaintenance.Proof.splitChunkStart_ok hx0 hxs hia.run] at h
   injection h with _ h2; subst h2
-  obtain ⟨L', c, e, hc, -⟩ := splitChunkStartS_ok (κ := κ) (L := OrderMaintenance.Machine.State.setLocs (fun _ => 0) ["x"] [x])
-    (by simp [OrderMaintenance.Machine.State.setLocs,
-      OrderMaintenance.Machine.State.upd]) hx0 hxs hC hp hn hia
+  obtain ⟨L', c, e, hc, -⟩ := splitChunkStartS_ok (κ := κ) (L := Machine.State.setLocs (fun _ =>
+    0) ["x"] [x])
+    (by
+      simp [Machine.State.setLocs, Machine.State.upd]) hx0 hxs hC hp hn hia
   exact ⟨L', c, e, hc⟩
 
 end OrderMaintenance.Impl

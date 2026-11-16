@@ -162,6 +162,7 @@ theorem valid_shiftL {k : LK} {l : List (Nat × Nat)} (hv : k.valid l = true) (p
     · rw [List.getD_eq_default _ _ (by omega)]; exact valid_default k
   split <;> exact g _
 
+/-- Procedure removing the list entry at a specified index. -/
 def eraseIdxP (k : LK) : Proc where
   name := "eraseIdx"
   params := ["i", "p"]
@@ -292,9 +293,11 @@ theorem valid_keepF {k : LK} {l : List (Nat × Nat)} (hv : k.valid l = true) (x 
   rw [LK.valid_iff] at hv ⊢
   intro z hz; exact hv z (List.mem_of_mem_take (List.mem_of_mem_filter hz))
 
+/-- Retain one list entry when its key differs from the key being filtered out. -/
 def filterBody (k : LK) : Stm :=
   cm{ if k[i][j].fst = x then skip else { ‹mvS k "w" "j"›; w := w + 1 } }
 
+/-- Procedure filtering every occurrence of a key from a stored list. -/
 def filterP (k : LK) : Proc where
   name := "filter"
   params := ["i", "x"]

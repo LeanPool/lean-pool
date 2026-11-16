@@ -25,6 +25,7 @@ namespace OrderMaintenance.Impl
 
 open OrderMaintenance.Model
 
+/-- Check that a statement contains no pending-job update primitives. -/
 def Stm.noJob : Stm → Bool
   | .seq a b => a.noJob && b.noJob
   | .ite _ a b => a.noJob && b.noJob

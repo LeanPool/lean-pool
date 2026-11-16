@@ -229,7 +229,8 @@ def sameDrainN (ns : Array Node) (a b : Nat) : Bool :=
 /-- Test whether two node indices belong to the same active drain. -/
 def sameDrain (a b : Nat) : CM Bool := return sameDrainN (← get).nodes a b
 
-/-- `startDrain`'s greedy cut: the length of the longest prefix of `ws` with sum at most `budget`. -/
+/-- `startDrain`'s greedy cut: the length of the longest prefix of `ws` with sum at most
+`budget`. -/
 def cutLen : List Nat → Nat → Nat
   | [], _ => 0
   | w :: ws, budget => if w ≤ budget then cutLen ws (budget - w) + 1 else 0
@@ -262,7 +263,8 @@ def fixSides (ns : Array Node) : List Nat → List (Nat × Side) → Option (Lis
 
 /-- A fresh table: the entries `part` with evenly spaced labels. -/
 def evenTable (beta : Nat) (part : List Nat) : List (Nat × Nat) :=
-  (List.range part.length).zip part |>.map fun (i, e) => (e, (i + 1) * ((1 <<< beta) / (part.length + 1)))
+  (List.range part.length).zip part |>.map fun (i, e) => (e, (i + 1) * ((1 <<< beta) /
+    (part.length + 1)))
 
 /-- Add table `t` to the tables of entry `e` (height `h`). -/
 def addTable (h t e : Nat) : CM Unit := do

@@ -40,6 +40,7 @@ local notation "upd" => Machine.State.upd
 def cLab (S0 : Core) (x : Nat) (T : Nat) : Nat × Nat :=
   (roomL S0.P.beta (S0.nodes.getX T).table x true, roomL S0.P.beta (S0.nodes.getX T).table x false)
 
+/-- Insert replacement-chunk entries around the source in one containing table. -/
 def cStep (S0 : Core) (x y z : Nat) (ns : Array Node) (T : Nat) : Array Node :=
   ns.modify T (aroundF S0 x y z (cLab S0 x) T)
 
@@ -66,6 +67,7 @@ theorem cJ_size (S0 : Core) (x y z j : Nat) : (cJ S0 x y z j).nodes.size = S0.no
 
 theorem cJ_zero (S0 : Core) (x y z : Nat) : cJ S0 x y z 0 = S0 := by simp [cJ]
 
+/-- Insert replacement chunks around the source in one chunk membership table. -/
 def cinsBody : Stm := cm{
   T := cin[x][j].fst
   a ← roomP(T, x, 1)
@@ -73,6 +75,7 @@ def cinsBody : Stm := cm{
   call tableInsertP(T, x, y, 1, a)
   call tableInsertP(T, x, z, 0, b) }
 
+/-- Update every table containing a chunk with its two replacement entries. -/
 def cinsS : Stm := cm{ m := len cin[x]; for j < m do cinsBody }
 
 theorem cinsStep_ok {κ : Caps} {S0 : Core} {L : Loc} {x y z j B : Nat}
@@ -101,7 +104,7 @@ theorem cinsStep_ok {κ : Caps} {S0 : Core} {L : Loc} {x y z j B : Nat}
   set L0 := upd L "j" j
   have e1 := evalF_assign_ok (κ := κ) (s := S) (L := L0) (x := "T") (e := .lrd .cin false "x"
     "j") (v := T) (by
-    simp [Exp.ev, L0, Machine.State.upd, hLx, hxi, LK.view, hSx, hj, T])
+      simp [Exp.ev, L0, Machine.State.upd, hLx, hxi, LK.view, hSx, hj, T])
   set L1 := upd L0 "T" T
   have hL1 : ∀ r, r ≠ "j" → r ≠ "T" → L1 r = L r := fun r h1 h2 => by simp [L1, L0,
     Machine.State.upd, h1, h2]
@@ -114,8 +117,8 @@ theorem cinsStep_ok {κ : Caps} {S0 : Core} {L : Loc} {x y z j B : Nat}
       true)
     (by simp [Machine.State.setLocs, Machine.State.upd])
     (by simp [Machine.State.setLocs, Machine.State.upd])
-    (by simp [Machine.State.setLocs, Machine.State.upd,
-      b2n]) hTt (roomNextTo_run' hroomS true)
+    (by
+      simp [Machine.State.setLocs, Machine.State.upd, b2n]) hTt (roomNextTo_run' hroomS true)
   have e2 := evalF_call_ok (q := roomP) (args := [.var "T", .var "x", 1]) (ds := ["a"]) (L := L1)
     (by simp [evList, Exp.ev, L1, L0, Machine.State.upd, hLx]) ea
   set L2 := Machine.State.setLocs L1 ["a"] (roomP.rets.map La)
@@ -124,11 +127,11 @@ theorem cinsStep_ok {κ : Caps} {S0 : Core} {L : Loc} {x y z j B : Nat}
       false)
     (by simp [Machine.State.setLocs, Machine.State.upd])
     (by simp [Machine.State.setLocs, Machine.State.upd])
-    (by simp [Machine.State.setLocs, Machine.State.upd,
-      b2n]) hTt (roomNextTo_run' hroomS false)
+    (by
+      simp [Machine.State.setLocs, Machine.State.upd, b2n]) hTt (roomNextTo_run' hroomS false)
   have e3 := evalF_call_ok (q := roomP) (args := [.var "T", .var "x", 0]) (ds := ["b"]) (L := L2)
-    (by simp [evList, Exp.ev, L2, L1, L0, roomP, Machine.State.setLocs,
-      Machine.State.upd, hLx]) eb
+    (by
+      simp [evList, Exp.ev, L2, L1, L0, roomP, Machine.State.setLocs, Machine.State.upd, hLx]) eb
   set L3 := Machine.State.setLocs L2 ["b"] (roomP.rets.map Lb)
   have hL3 : ∀ r, r ≠ "j" → r ≠ "T" → r ≠ "a" → r ≠ "b" → L3 r = L r := fun r h1 h2 h3 h4 => by
     simp only [L3, L2, roomP, Machine.State.setLocs, List.map,
@@ -164,9 +167,13 @@ theorem cinsStep_ok {κ : Caps} {S0 : Core} {L : Loc} {x y z j B : Nat}
     (by simp [Machine.State.setLocs, Machine.State.upd])
     (by simp [Machine.State.setLocs, Machine.State.upd])
     (by simp [Machine.State.setLocs, Machine.State.upd, b2n])
-    (by simp [Machine.State.setLocs,
-      Machine.State.upd]) hTt hTs hTNc
-    (by rw [hST]; omega) (by rw [hST]; omega) h1'
+    (by
+      simp [Machine.State.setLocs, Machine.State.upd]) hTt hTs hTNc
+    (by
+      rw [hST]
+      omega) (by
+      rw [hST]
+      omega) h1'
   have e4 := evalF_call_ok (q := tableInsertP) (args := [.var "T", .var "x", .var "y", 1, .var
     "a"]) (ds := [])
     (L := L3) (by
@@ -188,9 +195,13 @@ theorem cinsStep_ok {κ : Caps} {S0 : Core} {L : Loc} {x y z j B : Nat}
     (by simp [Machine.State.setLocs, Machine.State.upd])
     (by simp [Machine.State.setLocs, Machine.State.upd])
     (by simp [Machine.State.setLocs, Machine.State.upd, b2n])
-    (by simp [Machine.State.setLocs,
-      Machine.State.upd]) hTt hTs hTNc
-    (by rw [hlen1, hST]; omega) (by rw [hST] at hside1; omega) h2
+    (by
+      simp [Machine.State.setLocs, Machine.State.upd]) hTt hTs hTNc
+    (by
+      rw [hlen1, hST]
+      omega) (by
+      rw [hST] at hside1
+      omega) h2
   have e5 := evalF_call_ok (q := tableInsertP) (args := [.var "T", .var "x", .var "z", 0, .var
     "b"]) (ds := [])
     (L := L4) (by
@@ -225,11 +236,10 @@ theorem cinsStep_ok {κ : Caps} {S0 : Core} {L : Loc} {x y z j B : Nat}
     rw [hST] at hside1
     have : (s1.nodes.getX T).side.length ≤ B + 1 := by omega
     simp only [Exp.cost, costList, List.map, List.sum_cons, List.sum_nil, List.length_cons,
-      List.length_nil,
-      Exp.ofNat_def] at hca hcb hc4 hc5 ⊢
+      List.length_nil] at hca hcb hc4 hc5 ⊢
     omega
   · intro r h1 h2 h3 h4
-    simp only [Machine.State.setLocs, tableInsertP, List.map]
+    simp only [Machine.State.setLocs, ]
     exact hL3 r h1 h2 h3 h4
 
 theorem cinsS_ok {κ : Caps} {S0 : Core} {L : Loc} {x y z B : Nat}
@@ -301,10 +311,12 @@ theorem joinCS_ok {κ : Caps} {s : Core} {L : Loc} {w x lp : Nat} (hw : L "w" = 
     simp only [LK.idOk, s2, LK.put, size_setX']; omega
   obtain ⟨L4, c4, e4, hc4, hF4⟩ := copyS_ok (κ := κ) (k := .cin) (s := s2) (L := L3) (a := x) (w
     := w)
-    (by simp [L3,
-      Machine.State.upd]) (by simp [L3, Machine.State.upd,
-      hw]) hwx hid (by rfl) hxi hwi
-    (by rw [hv2w, hv2x]; simpa using hcap)
+    (by
+      simp [L3, Machine.State.upd]) (by
+        simp [L3, Machine.State.upd, hw]) hwx hid (by rfl) hxi hwi
+    (by
+      rw [hv2w, hv2x]
+      simpa using hcap)
   rw [hv2w, hv2x, List.nil_append, LK.put_put] at e4
   have h4w : L4 "w" = w := by rw [hF4 "w" (by decide) (by decide)]; simp [L3, Machine.State.upd, hw]
   have h4lp : L4 "lp" = lp := by
@@ -356,36 +368,38 @@ theorem gstP_agree {κ : Caps} {s : Core} {L : Loc} {c t : Nat} (hc : L "c" = c)
     .fail)) s L1 =
       .ok s L1 c2 ∧ c2 ≤ 10 := by
     by_cases hp0 : p = 0
-    · exact ⟨_, evalF_ite_t (v := 1) (by simp [Exp.ev, Machine.BinOp.eval, L1,
-        Machine.State.upd, hp0])
+    · exact ⟨_, evalF_ite_t (v := 1) (by
+      simp [Exp.ev, Machine.BinOp.eval, L1, Machine.State.upd, hp0])
         one_ne_zero evalF_skip, by simp [Exp.cost]⟩
     · have hlt : (s.C.getX p).tag < t := hp (by simpa [NIL] using hp0)
       exact ⟨_, evalF_ite_f (by simp [Exp.ev, Machine.BinOp.eval, L1, Machine.State.upd, hp0])
-        (evalF_ite_t (v := 1) (by simp [Exp.ev, Machine.BinOp.eval, L1, Machine.State.upd, hpT,
-          Fld.cap,
-          Fld.get, CF.get, ht, hlt]) one_ne_zero evalF_skip), by simp [Exp.cost]⟩
+        (evalF_ite_t (v := 1) (by
+          simp [Exp.ev, Machine.BinOp.eval, L1, Machine.State.upd, hpT, Fld.cap, Fld.get,
+            CF.get, ht, hlt]) one_ne_zero evalF_skip), by simp [Exp.cost]⟩
   obtain ⟨c2, e2, hc2⟩ := e2
   have a3 := evalF_assign_ok (κ := κ) (s := s) (L := L1) (x := "cn") (e := .rd (.c .next) "c")
     (v := q)
-    (by simp [Exp.ev, L1, Machine.State.upd, hc, hcT, Fld.cap, Fld.get, CF.get, q])
+    (by
+      simp [Exp.ev, L1, Machine.State.upd, hc, hcT, Fld.cap, Fld.get, CF.get, q])
   set L3 := upd L1 "cn" q
   have e4 : ∃ c4, evalF κ (.ite ("cn" =ₑ 0) .skip (.ite ("t" <ₑ .rd (.c .tag) "cn") .skip
     .fail)) s L3 =
       .ok s L3 c4 ∧ c4 ≤ 10 := by
     by_cases hq0 : q = 0
-    · exact ⟨_, evalF_ite_t (v := 1) (by simp [Exp.ev, Machine.BinOp.eval, L3,
-        Machine.State.upd, hq0])
+    · exact ⟨_, evalF_ite_t (v := 1) (by
+      simp [Exp.ev, Machine.BinOp.eval, L3, Machine.State.upd, hq0])
         one_ne_zero evalF_skip, by simp [Exp.cost]⟩
     · have hlt : t < (s.C.getX q).tag := hn (by simpa [NIL] using hq0)
       exact ⟨_, evalF_ite_f (by simp [Exp.ev, Machine.BinOp.eval, L3, Machine.State.upd, hq0])
-        (evalF_ite_t (v := 1) (by simp [Exp.ev, Machine.BinOp.eval, L3, L1, Machine.State.upd,
-          hnT, Fld.cap,
-          Fld.get, CF.get, ht, hlt]) one_ne_zero evalF_skip), by simp [Exp.cost]⟩
+        (evalF_ite_t (v := 1) (by
+          simp [Exp.ev, Machine.BinOp.eval, L3, L1, Machine.State.upd, hnT, Fld.cap, Fld.get,
+            CF.get, ht, hlt]) one_ne_zero evalF_skip), by simp [Exp.cost]⟩
   obtain ⟨c4, e4, hc4⟩ := e4
   have e5 := evalF_wrC_ok (κ := κ) (s := s) (L := L3) (k := .tag) (i := .var "c") (e := .var
     "t") (j := c) (w := t)
-    (by simp [Exp.ev, L3, L1, Machine.State.upd,
-      hc]) (by simp [Exp.ev, L3, L1, Machine.State.upd, ht])
+    (by
+      simp [Exp.ev, L3, L1, Machine.State.upd, hc]) (by simp [Exp.ev, L3, L1, Machine.State.upd,
+        ht])
     hcs  rfl
   exact ⟨_, _, evalF_seq_ok2 a1 (evalF_seq_ok2 e2 (evalF_seq_ok2 a3 (evalF_seq_ok2 e4 e5))),
     by simp [Exp.cost]; omega⟩
@@ -401,10 +415,11 @@ theorem replace1_eq3 (x a b : Nat) : ∀ (l : List Nat), x ∈ l →
     by_cases hy : y = x
     · subst hy; simp
     · have hx : x ∈ l := by simp at h; tauto
-      simp only [hy, ite_false, beq_iff_eq, Bool.cond_false]
+      simp only [hy, ite_false, beq_iff_eq]
       rw [replace1_eq3 x a b l hx]
       simp [List.insertIdx_succ_cons]
 
+/-- Insert replacement chunks on either side of their source in the live child list. -/
 def childS : Stm := cm{
   r ← ‹findP .children›(lp, x)
   call ‹insertIdxP .children›(lp, r, y, 0)
@@ -451,10 +466,13 @@ theorem childS_ok {κ : Caps} {s : Core} {L : Loc} {lp x y z : Nat} (hlp : L "lp
     (by simp [Machine.State.setLocs, Machine.State.upd])
     (by simp [Machine.State.setLocs, Machine.State.upd])
     (by simp [Machine.State.setLocs, Machine.State.upd])
-    (by simp [Machine.State.setLocs,
-      Machine.State.upd]) (by simp [LK.recOk, hlpn]) hlr
-    (by simp [LK.valid]) (by rw [hview, List.length_map]; omega) (by rw [hview,
-      List.length_map]; omega)
+    (by
+      simp [Machine.State.setLocs, Machine.State.upd]) (by simp [LK.recOk, hlpn]) hlr
+    (by simp [LK.valid]) (by
+      rw [hview, List.length_map]
+      omega) (by
+      rw [hview, List.length_map]
+      omega)
   have e2 := evalF_call_ok (q := insertIdxP .children) (args := [.var "lp", .var "r", .var "y",
     0]) (ds := [])
     (L := L1) (by simp [evList, Exp.ev, hL1r, hL1 "lp" (by decide), hlp, hL1 "y" (by decide),
@@ -473,8 +491,14 @@ theorem childS_ok {κ : Caps} {s : Core} {L : Loc} {lp x y z : Nat} (hlp : L "lp
     (by simp [Machine.State.setLocs, Machine.State.upd])
     (by simp [Machine.State.setLocs, Machine.State.upd])
     (by simp [Machine.State.setLocs, Machine.State.upd])
-    (by rw [LK.recOk_put]; simp [LK.recOk, hlpn]) hlr
-    (by simp [LK.valid]) (by rw [hv2, List.length_map]; omega) (by rw [hv2, List.length_map]; omega)
+    (by
+      rw [LK.recOk_put]
+      simp [LK.recOk, hlpn]) hlr
+    (by simp [LK.valid]) (by
+      rw [hv2, List.length_map]
+      omega) (by
+      rw [hv2, List.length_map]
+      omega)
   set L2 := Machine.State.setLocs L1 [] ((insertIdxP .children).rets.map L2')
   have e3 := evalF_call_ok (q := insertIdxP .children) (args := [.var "lp", "r" + 2, .var "z",
     0]) (ds := [])
@@ -501,11 +525,10 @@ theorem childS_ok {κ : Caps} {s : Core} {L : Loc} {lp x y z : Nat} (hlp : L "lp
   · rw [hv2, List.length_map, hlen2] at hc3
     rw [hview, List.length_map] at hc2
     simp only [Exp.cost, costList, List.map, List.sum_cons, List.sum_nil, List.length_cons,
-      List.length_nil,
-      Exp.ofNat_def] at hc2 hc3 hcf ⊢
+      List.length_nil] at hc2 hc3 hcf ⊢
     omega
   · intro q hq
-    simp only [Machine.State.setLocs, insertIdxP, List.map, L2]
+    simp only [Machine.State.setLocs,   L2]
     exact hL1 q hq
 
 /-! ### The reads of `insertAround` -/
@@ -581,8 +604,9 @@ theorem iaPrepS_ok {κ : Caps} {s : Core} {L : Loc} {x f1x i1 : Nat} (hLx : L "x
       := true)
     (by simp [Machine.State.setLocs, Machine.State.upd])
     (by simp [Machine.State.setLocs, Machine.State.upd])
-    (by simp [Machine.State.setLocs, Machine.State.upd,
-      b2n]) hp1 (roomNextTo_run' (hroom p1 hp1m) true)
+    (by
+      simp [Machine.State.setLocs, Machine.State.upd, b2n]) hp1 (roomNextTo_run' (hroom p1 hp1m)
+        true)
   have e4 := evalF_call_ok (q := roomP) (args := [.var "p1", .var "x", 1]) (ds := ["a"]) (L := L2)
     (by simp [evList, Exp.ev, h2p, h2x]) ea
   set L4 := Machine.State.setLocs L2 ["a"] (roomP.rets.map La)
@@ -593,8 +617,9 @@ theorem iaPrepS_ok {κ : Caps} {s : Core} {L : Loc} {x f1x i1 : Nat} (hLx : L "x
       := false)
     (by simp [Machine.State.setLocs, Machine.State.upd])
     (by simp [Machine.State.setLocs, Machine.State.upd])
-    (by simp [Machine.State.setLocs, Machine.State.upd,
-      b2n]) hp1 (roomNextTo_run' (hroom p1 hp1m) false)
+    (by
+      simp [Machine.State.setLocs, Machine.State.upd, b2n]) hp1 (roomNextTo_run' (hroom p1 hp1m)
+        false)
   have e5 := evalF_call_ok (q := roomP) (args := [.var "p1", .var "x", 0]) (ds := ["b"]) (L := L4)
     (by simp [evList, Exp.ev, hL4 "p1" (by decide), hL4 "x" (by decide), h2p, h2x]) eb
   set L5 := Machine.State.setLocs L4 ["b"] (roomP.rets.map Lb)
@@ -621,22 +646,24 @@ theorem iaPrepS_ok {κ : Caps} {s : Core} {L : Loc} {x f1x i1 : Nat} (hLx : L "x
       Machine.BinOp.eval, this, Exp.cost, Res.addCost]
   have a8 := evalF_assign_ok (κ := κ) (s := s) (L := L6) (x := "lp") (e := .rd (.a .lpar) "x")
     (v := s.lpar.getX x)
-    (by simp [Exp.ev, L6, Machine.State.upd, h5x, hxa, Fld.cap, Fld.get, AF.get])
+    (by
+      simp [Exp.ev, L6, Machine.State.upd, h5x, hxa, Fld.cap, Fld.get, AF.get])
   set L8 := upd L6 "lp" (s.lpar.getX x)
   have hm : (Exp.monus "tx" "f1").ev κ s L8 = some (tx - f1x) :=
     Exp.ev_monus κ s L8 (by simp [Exp.ev, L8, L6, Machine.State.upd])
       (by simp [Exp.ev, L8, L6, Machine.State.upd, h5f1])
   have a9 := evalF_assign_ok (κ := κ) (s := s) (L := L8) (x := "ty") (e := Exp.monus "tx" "f1" +
     "a")
-    (v := tx - f1x + la) (by simp [Exp.ev, hm, Machine.BinOp.eval, L8, L6, Machine.State.upd, h5a])
+    (v := tx - f1x + la) (by
+      simp [Exp.ev, hm, Machine.BinOp.eval, L8, L6, Machine.State.upd, h5a])
   set L9 := upd L8 "ty" (tx - f1x + la)
   have hm' : (Exp.monus "tx" "f1").ev κ s L9 = some (tx - f1x) :=
     Exp.ev_monus κ s L9 (by simp [Exp.ev, L9, L8, L6, Machine.State.upd])
       (by simp [Exp.ev, L9, L8, L6, Machine.State.upd, h5f1])
   have a10 := evalF_assign_ok (κ := κ) (s := s) (L := L9) (x := "tz") (e := Exp.monus "tx" "f1"
     + "b")
-    (v := tx - f1x + lb) (by simp [Exp.ev, hm', Machine.BinOp.eval, L9, L8, L6,
-      Machine.State.upd, h5b])
+    (v := tx - f1x + lb) (by
+      simp [Exp.ev, hm', Machine.BinOp.eval, L9, L8, L6, Machine.State.upd, h5b])
   have hty : OrderMaintenance.Proof.Top.tagY s x f1x i1 = tx - f1x + la := by
     unfold OrderMaintenance.Proof.Top.tagY; rw [idx?_getD_map hi1]
   have htz : OrderMaintenance.Proof.Top.tagZ s x f1x i1 = tx - f1x + lb := by
@@ -760,9 +787,9 @@ theorem insertAroundS_ok {κ : Caps} {s : Core} {L : Loc} {x y z f1x i1 B : Nat}
   }
   obtain ⟨Lg, cg, eg, hcg⟩ := gstP_agree (κ := κ) (s := s)
     (L := Machine.State.setLocs (fun _ => 0) ["c", "t"] [y, ty]) (c := y) (t := ty)
-    (by simp [Machine.State.setLocs,
-      Machine.State.upd]) (by simp [Machine.State.setLocs,
-      Machine.State.upd])
+    (by
+      simp [Machine.State.setLocs, Machine.State.upd]) (by
+        simp [Machine.State.setLocs, Machine.State.upd])
     hys hyC hyP hyN hgy
   have e2 := evalF_call_ok (q := gstP) (args := [.var "y", .var "ty"]) (ds := []) (L := L1)
     (by simp [evList, Exp.ev, h1 "y" (by simp), hLy, h1y, ty]) eg
@@ -770,10 +797,14 @@ theorem insertAroundS_ok {κ : Caps} {s : Core} {L : Loc} {x y z f1x i1 B : Nat}
     simp only [sY, getX_modify']; rw [ite_eq_right (fun h => hyz h.1.symm)]
   obtain ⟨Lg', cg', eg', hcg'⟩ := gstP_agree (κ := κ) (s := sY)
     (L := Machine.State.setLocs (fun _ => 0) ["c", "t"] [z, tz]) (c := z) (t := tz)
-    (by simp [Machine.State.setLocs,
-      Machine.State.upd]) (by simp [Machine.State.setLocs,
-      Machine.State.upd])
-    (by simp [sY, hzs]) hzC (by rw [hzY]; exact hzP) (by rw [hzY]; exact hzN) hgz
+    (by
+      simp [Machine.State.setLocs, Machine.State.upd]) (by
+        simp [Machine.State.setLocs, Machine.State.upd])
+    (by simp [sY, hzs]) hzC (by
+      rw [hzY]
+      exact hzP) (by
+      rw [hzY]
+      exact hzN) hgz
   set L2 := Machine.State.setLocs L1 [] (gstP.rets.map Lg)
   have e3 := evalF_call_ok (q := gstP) (args := [.var "z", .var "tz"]) (ds := []) (L := L2)
     (by simp [evList, Exp.ev, L2, Machine.State.setLocs, h1 "z" (by simp), hLz,
@@ -797,29 +828,35 @@ theorem insertAroundS_ok {κ : Caps} {s : Core} {L : Loc} {x y z f1x i1 B : Nat}
   set J0 := cJ S0 x y z tabs.length
   have h4 : ∀ r, r = "x" ∨ r = "y" ∨ r = "z" ∨ r = "lp" → L4 r = L1 r := by
     intro r hr
-    rw [hF4 r (by rcases hr with rfl | rfl | rfl | rfl <;> decide) (by rcases hr with rfl | rfl
+    rw [hF4 r (by
+      rcases hr with rfl | rfl | rfl | rfl <;> decide) (by rcases hr with rfl | rfl
       | rfl | rfl <;> decide)
-      (by rcases hr with rfl | rfl | rfl | rfl <;> decide) (by rcases hr with rfl | rfl | rfl |
-        rfl <;> decide)
-      (by rcases hr with rfl | rfl | rfl | rfl <;> decide), h3]
+      (by
+        rcases hr with rfl | rfl | rfl | rfl <;> decide) (by
+        rcases hr with rfl | rfl | rfl | rfl <;> decide)
+      (by
+        rcases hr with rfl | rfl | rfl | rfl <;> decide), h3]
   -- `y` joins
   have a5 := evalF_assign_ok (κ := κ) (s := J0) (L := L4) (x := "w") (e := .var "y") (v := y)
     (by simp [Exp.ev, h4 "y" (by simp), h1 "y" (by simp), hLy])
   set L5 := upd L4 "w" y
   have h5 : ∀ r, r = "x" ∨ r = "y" ∨ r = "z" ∨ r = "lp" → L5 r = L1 r := by
     intro r hr; simp only [L5, Machine.State.upd]
-    rw [ite_eq_right (by rcases hr with rfl | rfl | rfl | rfl <;> decide)]; exact h4 r hr
+    rw [ite_eq_right (by
+      rcases hr with rfl | rfl | rfl | rfl <;> decide)]; exact h4 r hr
   obtain ⟨L6, c6, e6, hc6, hF6⟩ := joinCS_ok (κ := κ) (s := J0) (L := L5) (w := y) (x := x) (lp
     := lp)
-    (by simp [L5,
-      Machine.State.upd]) (by rw [h5 "x" (by simp), h1 "x" (by simp), hLx])
+    (by
+      simp [L5, Machine.State.upd]) (by rw [h5 "x" (by simp), h1 "x" (by simp), hLx])
     (by rw [h5 "lp" (by simp), h1lp]) hyx hyC hry hnpy hH hyi hxi hcin hya
   set J1 := joinS J0 tabs lp y
   have h6 : ∀ r, r = "x" ∨ r = "y" ∨ r = "z" ∨ r = "lp" → L6 r = L1 r := by
     intro r hr
-    rw [hF6 r (by rcases hr with rfl | rfl | rfl | rfl <;> decide) (by rcases hr with rfl | rfl
+    rw [hF6 r (by
+      rcases hr with rfl | rfl | rfl | rfl <;> decide) (by rcases hr with rfl | rfl
       | rfl | rfl <;> decide)
-      (by rcases hr with rfl | rfl | rfl | rfl <;> decide)]
+      (by
+        rcases hr with rfl | rfl | rfl | rfl <;> decide)]
     exact h5 r hr
   -- `z` joins
   have a7 := evalF_assign_ok (κ := κ) (s := J1) (L := L6) (x := "w") (e := .var "z") (v := z)
@@ -827,23 +864,28 @@ theorem insertAroundS_ok {κ : Caps} {s : Core} {L : Loc} {x y z f1x i1 B : Nat}
   set L7 := upd L6 "w" z
   have h7 : ∀ r, r = "x" ∨ r = "y" ∨ r = "z" ∨ r = "lp" → L7 r = L1 r := by
     intro r hr; simp only [L7, Machine.State.upd]
-    rw [ite_eq_right (by rcases hr with rfl | rfl | rfl | rfl <;> decide)]; exact h6 r hr
+    rw [ite_eq_right (by
+      rcases hr with rfl | rfl | rfl | rfl <;> decide)]; exact h6 r hr
   have hJ1x : J1.cin.getX x = tabs := by
     simp only [J1, joinS]; rw [getX_setX', ite_eq_right (Ne.symm hyx)]; rfl
   obtain ⟨L8, c8, e8, hc8, hF8⟩ := joinCS_ok (κ := κ) (s := J1) (L := L7) (w := z) (x := x) (lp
     := lp)
-    (by simp [L7,
-      Machine.State.upd]) (by rw [h7 "x" (by simp), h1 "x" (by simp), hLx])
+    (by
+      simp [L7, Machine.State.upd]) (by rw [h7 "x" (by simp), h1 "x" (by simp), hLx])
     (by rw [h7 "lp" (by simp),
       h1lp]) hzx hzC (rowZero_joinS (Ne.symm hyz) hrz) hnpz (show s.P.H + 1 ≤ κ.pw from hH)
-    hzi hxi (by rw [hJ1x]; exact hcin) hza
+    hzi hxi (by
+      rw [hJ1x]
+      exact hcin) hza
   rw [hJ1x] at e8 hc8
   set J2 := joinS J1 tabs lp z
   have h8 : ∀ r, r = "x" ∨ r = "y" ∨ r = "z" ∨ r = "lp" → L8 r = L1 r := by
     intro r hr
-    rw [hF8 r (by rcases hr with rfl | rfl | rfl | rfl <;> decide) (by rcases hr with rfl | rfl
+    rw [hF8 r (by
+      rcases hr with rfl | rfl | rfl | rfl <;> decide) (by rcases hr with rfl | rfl
       | rfl | rfl <;> decide)
-      (by rcases hr with rfl | rfl | rfl | rfl <;> decide)]
+      (by
+        rcases hr with rfl | rfl | rfl | rfl <;> decide)]
     exact h7 r hr
   -- the parent's children
   have hJ2c : (J2.nodes.getX lp).children = (s.nodes.getX lp).children := cJ_children S0 x y z _ lp
@@ -856,8 +898,13 @@ theorem insertAroundS_ok {κ : Caps} {s : Core} {L : Loc} {x y z f1x i1 B : Nat}
     (by rw [h8 "lp" (by simp), h1lp]) (by rw [h8 "x" (by simp), h1 "x" (by simp), hLx])
     (by rw [h8 "y" (by simp), h1 "y" (by simp),
       hLy]) (by rw [h8 "z" (by simp), h1 "z" (by simp), hLz])
-    (by rw [hJ2c]; exact hlp) (by simp only [J2, J1, joinS, J0, cJ_size]; exact hlpn) hlr (by rw
-      [hJ2c]; exact hccap)
+    (by
+      rw [hJ2c]
+      exact hlp) (by
+      simp only [J2, J1, joinS, J0, cJ_size]
+      exact hlpn) hlr (by
+      rw [hJ2c]
+      exact hccap)
   rw [hJ2c] at hc9
   have hfin : ({
     J2 with
@@ -881,7 +928,7 @@ theorem insertAroundS_ok {κ : Caps} {s : Core} {L : Loc} {x y z f1x i1 B : Nat}
       ring
     have hc4' : c4 ≤ 5 + tabs.length * (1001 + 400 * B) := hc4
     have hc6' : c6 ≤ 20 + 40 * tabs.length := hc6
-    simp only [Exp.cost, costList, List.map, List.sum_cons, List.sum_nil, List.length_cons,
+    simp only [Exp.cost, costList, List.map, List.sum_cons, List.sum_nil,
       List.length_nil]
     omega
   · rw [hF9 "x" (by decide), h8 "x" (by simp), h1 "x" (by simp), hLx]
@@ -919,10 +966,15 @@ theorem ev_var_const {κ : Caps} {L : Loc} {r : Reg} {v : Nat} (h : L r = v) :
 theorem ev_lit_const {κ : Caps} {L : Loc} (v : Nat) : ∀ S : Core, (Exp.lit v).ev κ S L = some v
   := fun _ => rfl
 
+/-- Link the left replacement chunk immediately before its source. -/
 def lcpY : Stm := cm{ C[y].prev := xp; C[y].next := x }
+/-- Redirect the preceding chunk, or the chunk-list head, to the left replacement. -/
 def lcpP : Stm := cm{ if xp = 0 then S.firstChunk := y else C[xp].next := y }
+/-- Link the right replacement chunk immediately after its source. -/
 def lcpZ : Stm := cm{ C[z].prev := x; C[z].next := xn }
+/-- Redirect the succeeding chunk to the right replacement when it exists. -/
 def lcpN : Stm := cm{ if xn = 0 then skip else C[xn].prev := z }
+/-- Record both replacement chunks as the source's list neighbours. -/
 def lcpX : Stm := cm{ C[x].prev := y; C[x].next := z }
 /-- `linkChunkPair x y z`: `y`, `z` go before and after `x` in the chunk list (locals `x y z`). -/
 def linkChunkPairS : Stm := cm{ xp := C[x].prev; xn := C[x].next; lcpY; lcpP; lcpZ; lcpN; lcpX }
@@ -942,8 +994,8 @@ theorem linkChunkPairS_ok {κ : Caps} {s : Core} {L : Loc} {x y z : Nat} (hx : L
     (by simp [Exp.cF, Exp.ev, hx, hxT, Fld.cap, Fld.get, CF.get, p])
   set L1 := upd L "xp" p
   have a2 := evalF_assign_ok (κ := κ) (s := s) (L := L1) (x := "xn") (e := .cF .next "x") (v := n)
-    (by simp [Exp.cF, Exp.ev, L1, Machine.State.upd, hx, hxT, Fld.cap, Fld.get,
-      CF.get, n])
+    (by
+      simp [Exp.cF, Exp.ev, L1, Machine.State.upd, hx, hxT, Fld.cap, Fld.get, CF.get, n])
   set L2 := upd L1 "xn" n
   have hF2 : ∀ r, r ≠ "xp" → r ≠ "xn" → L2 r = L r := fun r h1 h2 => by simp [L2, L1,
     Machine.State.upd, h1, h2]
@@ -964,7 +1016,7 @@ theorem linkChunkPairS_ok {κ : Caps} {s : Core} {L : Loc} {x y z : Nat} (hx : L
   have e3 : evalF κ lcpY s L2 = .ok S1 L2 6 := by
     have := evalF_wrC2 (κ := κ) (s := s) (L := L2) (k1 := .prev) (k2 := .next) (i := .var "y")
       (e1 := .var "xp")
-      (e2 := .var "x") (ev_var_const h2y) (ev_var_const h2p) (ev_var_const h2x) hys 
+      (e2 := .var "x") (ev_var_const h2y) (ev_var_const h2p) (ev_var_const h2x) hys
         rfl rfl
     exact this
   -- the predecessor of `x`
@@ -986,7 +1038,9 @@ theorem linkChunkPairS_ok {κ : Caps} {s : Core} {L : Loc} {x y z : Nat} (hx : L
       have hS2 : S2 = SF.set S1 y .firstChunk := by simp only [S2, ite_eq_left hp0]; rfl
       rw [← hS2] at w
       exact ⟨_, evalF_ite_t (v := 1) (by simp [Exp.ev, Machine.BinOp.eval, h2p, hp0]) one_ne_zero
-        (by simp only [Stm.wsc]; exact w), by simp [Exp.cost]⟩
+        (by
+          simp only [Stm.wsc]
+          exact w), by simp [Exp.cost]⟩
     · have hps : p < s.C.size := hp hp0
       have w := evalF_wrC_ok (κ := κ) (s := S1) (L := L2) (k := .next) (i := .var "xp") (e :=
         .var "y") (j := p) (w := y)
@@ -997,8 +1051,9 @@ theorem linkChunkPairS_ok {κ : Caps} {s : Core} {L : Loc} {x y z : Nat} (hx : L
       } := by
         simp only [S2, ite_eq_right hp0]; rfl
       rw [← hS2] at w
-      exact ⟨_, evalF_ite_f (by simp [Exp.ev, Machine.BinOp.eval, h2p, hp0]) (by simp only
-        [Stm.wcF]; exact w),
+      exact ⟨_, evalF_ite_f (by simp [Exp.ev, Machine.BinOp.eval, h2p, hp0]) (by
+        simp only [Stm.wcF]
+        exact w),
         by simp [Exp.cost]⟩
   obtain ⟨c4, e4, hc4⟩ := e4
   have hS2C : S2.C.size = s.C.size := by simp only [S2, S1]; split <;> simp
@@ -1041,15 +1096,16 @@ theorem linkChunkPairS_ok {κ : Caps} {s : Core} {L : Loc} {x y z : Nat} (hx : L
       } := by
         simp only [S4, ite_eq_right hn0]; rfl
       rw [← hS4] at w
-      exact ⟨_, evalF_ite_f (by simp [Exp.ev, Machine.BinOp.eval, h2n, hn0]) (by simp only
-        [Stm.wcF]; exact w),
+      exact ⟨_, evalF_ite_f (by simp [Exp.ev, Machine.BinOp.eval, h2n, hn0]) (by
+        simp only [Stm.wcF]
+        exact w),
         by simp [Exp.cost]⟩
   obtain ⟨c6, e6, hc6⟩ := e6
   have hS4C : S4.C.size = s.C.size := by simp only [S4, S3]; split <;> simp [hS2C]
   -- `x`
   have e7 := evalF_wrC2 (κ := κ) (s := S4) (L := L2) (k1 := .prev) (k2 := .next) (i := .var "x")
     (e1 := .var "y")
-      (e2 := .var "z") (ev_var_const h2x) (ev_var_const h2y) (ev_var_const h2z) (by omega) 
+      (e2 := .var "z") (ev_var_const h2x) (ev_var_const h2y) (ev_var_const h2z) (by omega)
         rfl rfl
   have hfin : ({
     S4 with
@@ -1065,16 +1121,18 @@ theorem linkChunkPairS_ok {κ : Caps} {s : Core} {L : Loc} {x y z : Nat} (hx : L
     (evalF_seq_ok2 e6 e7))))), ?_, hF2⟩
   simp only [Exp.cost, Exp.cF] at hc4 hc6 ⊢; omega
 
+/-- Mark the source chunk as splitting and store both replacement indices. -/
 def msX : Stm := cm{ C[x].st := 2; C[x].l := y; C[x].r := z }
+/-- Mark the left replacement as an overflow sibling of the source chunk. -/
 def msY : Stm := cm{ C[y].st := 1; C[y].src := x }
+/-- Mark the right replacement as an overflow sibling of the source chunk. -/
 def msZ : Stm := cm{ C[z].st := 1; C[z].src := x }
 /-- `markSplit x y z job` for the job `insertAround` returns (locals `x y z`). -/
 def markSplitS : Stm := cm{ msX; msY; msZ; jobSet(x, y, z, 0, 1, 0, 0, 0) }
 
 theorem markSplitS_ok {κ : Caps} {t : Core} {L : Loc} {x y z : Nat} (hx : L "x" = x) (hy : L "y"
   = y)
-    (hz : L "z" = z) (hxs : x < t.C.size) (hys : y < t.C.size) (hzs : z < t.C.size) (hC :
-      t.C.size ≤ κ.tbl .C) :
+    (hz : L "z" = z) (hxs : x < t.C.size) (hys : y < t.C.size) (hzs : z < t.C.size) :
     evalF κ markSplitS t L = .ok (OrderMaintenance.Proof.markState t x y z {
       x := x
       y := y
@@ -1123,8 +1181,8 @@ theorem markSplitS_ok {κ : Caps} {t : Core} {L : Loc} {x y z : Nat} (hx : L "x"
   }
   have e3 := evalF_wrC2 (κ := κ) (s := t2) (L := L) (k1 := .st) (k2 := .src) (i := .var "z") (e1
     := (1 : Exp))
-      (e2 := .var "x") (ev_var_const hz) (ev_lit_const 1) (ev_var_const hx) (by simp [t2, t1,
-        hzs])  rfl rfl
+      (e2 := .var "x") (ev_var_const hz) (ev_lit_const 1) (ev_var_const hx) (by
+        simp [t2, t1, hzs])  rfl rfl
   set t3 : Core := {
     t2 with
     C := t2.C.modify z fun C => {
@@ -1281,9 +1339,16 @@ theorem splitChunkStartS_ok {κ : Caps} {s : Core} {L : Loc} {x f1x i1 B : Nat} 
       Array.size_push]; rw [ite_eq_right (by omega), ite_eq_right (by omega)]
   obtain ⟨L4, c4, e4, hc4, hF4⟩ := linkChunkPairS_ok (κ := κ) (s := OrderMaintenance.Proof.push2
     s) (L := L3) (x := x) (y := y)
-    (z := z) h3x h3y h3z (by omega) (by omega) (by omega) (by omega) (by rw [hpx, hps]; intro h;
-      have := hp h; omega)
-    (by rw [hpx, hps]; intro h; have := hn h; omega)
+    (z := z) h3x h3y h3z (by omega) (by omega) (by omega) (by omega) (by
+      rw [hpx, hps]
+      intro h
+      have := hp h
+      omega)
+    (by
+      rw [hpx, hps]
+      intro h
+      have := hn h
+      omega)
   obtain ⟨L5, c5, e5, hc5, h5x, h5y, h5z⟩ := hia.agree (L := L4)
     (by rw [hF4 "x" (by decide) (by decide), h3x]) (by rw [hF4 "y" (by decide) (by decide), h3y])
     (by rw [hF4 "z" (by decide) (by decide), h3z])
@@ -1293,7 +1358,7 @@ theorem splitChunkStartS_ok {κ : Caps} {s : Core} {L : Loc} {x f1x i1 B : Nat} 
     simp [linkChunkPair, hps]
   have e6 := markSplitS_ok (κ := κ) (t := iaState (linkChunkPair (OrderMaintenance.Proof.push2
     s) x y z) x y z f1x i1) (L := L5)
-    (x := x) (y := y) (z := z) h5x h5y h5z (by omega) (by omega) (by omega) (by omega)
+    (x := x) (y := y) (z := z) h5x h5y h5z (by omega) (by omega) (by omega)
   refine ⟨L5, _, evalF_seq_ok2 e1 (evalF_seq_ok2 e2 (evalF_seq_ok2 e3 (evalF_seq_ok2 e4
     (evalF_seq_ok2 e5 e6)))),
     ?_, h5x⟩

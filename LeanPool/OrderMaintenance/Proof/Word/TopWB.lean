@@ -28,7 +28,8 @@ candidate word size `wK P = 64·L`.
 
 namespace OrderMaintenance.Proof.Word
 
-open OrderMaintenance.Model OrderMaintenance.Proof OrderMaintenance.Proof.Top OrderMaintenance.Impl OrderMaintenance.Zeroing
+open OrderMaintenance.Model OrderMaintenance.Proof OrderMaintenance.Proof.Top
+  OrderMaintenance.Impl OrderMaintenance.Zeroing
 variable {K : Nat}
 
 theorem markState_tag (t : Core) (x y z : Nat) (j : Job) (c : Nat) :
@@ -48,25 +49,41 @@ theorem topWB {P : Params} (hR : TopRoom K P) (hK : 1 ≤ K) : TopWB K (TIat Top
     fun s A job r s' hI hT hres hW hN hC hr hT' => ?_⟩
   · -- the split's insertion
     have hR2 : TopRel (linkChunkPair (push2 s) x s.C.size (s.C.size + 1)) s2 := by
-      have := top_insertAround x s.C.size (s.C.size + 1) (linkChunkPair (push2 s) x s.C.size (s.C.size + 1))
+      have := top_insertAround x s.C.size (s.C.size + 1) (linkChunkPair (push2 s) x s.C.size
+        (s.C.size + 1))
       rw [hr] at this; exact this
     have hts : (linkChunkPair (push2 s) x s.C.size (s.C.size + 1)).C.size = s.C.size + 2 := by
       simp [linkChunkPair, push2]
     have hP2 : s2.P = P := by rw [hR2.rest.1, ← hT.2]; rfl
     have hx := hxL.2
     have htag : ∀ c, 1 ≤ c → c < s.C.size + 2 → (s2.C.getX c).tag < 2 ^ K := fun c h1 h2 => by
-      have := tag_lt_of_topInv hT'.1 (c := c) h1 (by rw [markState_Csize, hR2.Csize, hts]; exact h2)
+      have := tag_lt_of_topInv hT'.1 (c := c) h1 (by
+        rw [markState_Csize, hR2.Csize, hts]
+        exact h2)
       rw [markState_tag] at this
-      exact lt_pow_mono this (by show s2.P.H * s2.P.beta ≤ K; rw [hP2]; exact hR.tag)
-    obtain ⟨hW2, hJ⟩ := insertAround_wb hWl hK (by show s.P.beta ≤ K; rw [hT.2]; exact hR.beta)
-      (by omega) (by omega) (by omega) (by omega) (by rw [hts]; omega) (by rw [hts]; omega) hr
+      exact lt_pow_mono this (by
+        change s2.P.H * s2.P.beta ≤ K
+        rw [hP2]
+        exact hR.tag)
+    obtain ⟨hW2, hJ⟩ := insertAround_wb hWl hK (by
+      change s.P.beta ≤ K
+      rw [hT.2]
+      exact hR.beta)
+      (by omega) (by omega) (by omega) (by omega) (by
+        rw [hts]
+        omega) (by
+        rw [hts]
+        omega) hr
       ⟨htag _ (by omega) (by omega), htag _ (by omega) (by omega)⟩
     refine ⟨hW2, hJ, ?_⟩
-    have := ns_insertAround x s.C.size (s.C.size + 1) (linkChunkPair (push2 s) x s.C.size (s.C.size + 1))
+    have := ns_insertAround x s.C.size (s.C.size + 1) (linkChunkPair (push2 s) x s.C.size
+      (s.C.size + 1))
     rw [hr] at this
     exact this
   · -- a job step
-    exact ⟨jobStep_wb hT.1 hres hW (by rw [hT.2]; exact hR) hN hC hr hT'.1, node_step hT.1 hres hr⟩
+    exact ⟨jobStep_wb hT.1 hres hW (by
+      rw [hT.2]
+      exact hR) hN hC hr hT'.1, node_step hT.1 hres hr⟩
 
 /-- **A core insertion keeps the stored-value bound**, at the cost proof's top invariant
 (`insertAfter_wb` with `TopWB` discharged by `topWB`). The node budget is that of `NodeB`
@@ -83,8 +100,12 @@ theorem insertAfter_wb_top {P : Params} {n R : Nat} {L : List Nat} {s : Core} {x
     (hNB : OrderMaintenance.Impl.NodeB s) (hsP : s.P = P)
     (hNK : nb0 P + topJ P * (2 + 2 * (s.count + 1)) + 2 ≤ 2 ^ K) :
     ∃ s', (insertAfter x hh).run s = .ok s.E.size s' ∧ WB K s' :=
-  insertAfter_wb (topContract'.at P) (topWB hTR hL.K1) hC hx hk hRk hn hsize hcap hI5 hh hW hL hE hG hcnt
-    (NB0 := nb0 P) (by unfold OrderMaintenance.Impl.NodeB at hNB; rw [hsP] at hNB; exact hNB) hNK
+  insertAfter_wb (topContract'.at P) (topWB hTR hL.K1) hC hx hk hRk hn hsize hcap hI5 hh hW hL
+    hE hG hcnt
+    (NB0 := nb0 P) (by
+      unfold OrderMaintenance.Impl.NodeB at hNB
+      rw [hsP] at hNB
+      exact hNB) hNK
 
 /-! ### The room at the candidate word size -/
 

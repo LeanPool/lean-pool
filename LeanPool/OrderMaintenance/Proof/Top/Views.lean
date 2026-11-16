@@ -35,13 +35,20 @@ open OrderMaintenance.Model OrderMaintenance.Proof
 
 /-- The top structure's part of a core: everything its code reads, with the chunk tags. -/
 structure TS where
+  /-- Parameters controlling the projected top tree. -/
   P : Params
+  /-- Allocated node records visible to the top-tree implementation. -/
   nodes : Array Node
+  /-- Ancestor paths indexed by chunk. -/
   path : Array (Array Nat)
+  /-- Containing tables indexed by chunk. -/
   cin : Array (List Nat)
+  /-- Live parent indices of chunks. -/
   lpar : Array Nat
+  /-- Order tag of each chunk. -/
   tag : Nat → Nat
 
+/-- Project a core to the fields observed by the top-tree proofs. -/
 def ts (s : Core) : TS :=
   ⟨s.P, s.nodes, s.path, s.cin, s.lpar, fun c => (s.C.getX c).tag⟩
 
@@ -59,10 +66,15 @@ theorem _root_.OrderMaintenance.Proof.TopSame.ts {s s' : Core} (h : TopSame s s'
 section views
 variable (s : TS)
 
+/-- Read a node record, returning the default record outside the array. -/
 def nd (v : Nat) : Node := s.nodes.getX v
+/-- Read a stored chunk ancestor at the specified height. -/
 def pth (c j : Nat) : Nat := (s.path.getX c).getX j
+/-- Read a chunk's live parent. -/
 def lpr (c : Nat) : Nat := s.lpar.getX c
+/-- Read the list of tables containing a chunk. -/
 def cinT (c : Nat) : List Nat := s.cin.getX c
+/-- Read a node's height. -/
 def ht (v : Nat) : Nat := (nd s v).height
 
 /-- The tables holding entry `e` of height `h` (`h = 0`: a chunk). -/
@@ -77,16 +89,22 @@ def anc (c : Nat) : Nat → Nat
   | 1 => lpr s c
   | h + 2 => (nd s (anc c (h + 1))).livePar
 
+/-- The index denotes an allocated, alive, nonsentinel node. -/
 def isN (v : Nat) : Prop := v ≠ NIL ∧ v < s.nodes.size ∧ (nd s v).alive = true
+/-- The index denotes an alive node that is not draining. -/
 def liveN (v : Nat) : Prop := isN s v ∧ (nd s v).draining = false
+/-- The index denotes an alive draining node. -/
 def ghostN (v : Nat) : Prop := isN s v ∧ (nd s v).draining = true
 
 instance (v : Nat) : Decidable (isN s v) := by unfold isN; infer_instance
 instance (v : Nat) : Decidable (liveN s v) := by unfold liveN; infer_instance
 instance (v : Nat) : Decidable (ghostN s v) := by unfold ghostN; infer_instance
 
+/-- Entries of a node table in their stored order. -/
 def order (X : Nat) : List Nat := (nd s X).order
+/-- Labels of a node table in their stored order. -/
 def labs (X : Nat) : List Nat := (nd s X).table.map (·.2)
+/-- Look up an entry's label in a node table. -/
 def lab (X e : Nat) : Option Nat := (nd s X).lab? e
 
 /-- The live parent of entry `e` of height `h`; for a ghost, that of its targets. -/

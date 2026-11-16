@@ -65,7 +65,9 @@ def execW (w : Nat) : Stmt → State → Out
   | .seq c d, s => (execW w c s).bind (execW w d)
   | .ite c t f, s =>
     match c.evalW w s with
-    | some v => Out.bind ⟨s.bump (c.maxv s), 1 + c.cost, .ok⟩ (if v ≠ 0 then execW w t else execW w f)
+
+    | some v => Out.bind ⟨s.bump (c.maxv s), 1 + c.cost, .ok⟩ (if v ≠ 0 then execW w t else
+      execW w f)
     | none => ⟨s, 1 + c.cost, .err⟩
   | .loop x n b, s =>
     match n.evalW w s with

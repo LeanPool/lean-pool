@@ -208,6 +208,7 @@ theorem ins3_getX (hnd : (s.cin.getX x).Nodup) (u : Nat) :
 def insFirst (u : Nat) : Nat :=
   if cpHit (insJob s x) s.P.H (ts s) 1 u = true ∧ (s.nodes.getX u).first = x then s.C.size
   else (s.nodes.getX u).first
+/-- A node's range endpoint after inserting replacement chunks along the copied path. -/
 def insLast (u : Nat) : Nat :=
   if cpHit (insJob s x) s.P.H (ts s) 1 u = true ∧ (s.nodes.getX u).last = x then s.C.size + 1
   else (s.nodes.getX u).last

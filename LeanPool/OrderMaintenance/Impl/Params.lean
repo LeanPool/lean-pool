@@ -31,7 +31,8 @@ open OrderMaintenance.Machine (Reg Arr State Out exec Stmt Same Expr BinOp UnOp 
 /-- `a - b`, truncated at 0, without a failing subtraction: `a·[b ≤ a] - b·[b ≤ a]`. -/
 def tsubE (a b : Expr) : Expr := .bin .sub (.bin .mul a (.bin .le b a)) (.bin .mul b (.bin .le b a))
 
-theorem tsubE_eval {s : State} {a b : Expr} {x y : Nat} (ha : a.eval s = some x) (hb : b.eval s = some y) :
+theorem tsubE_eval {s : State} {a b : Expr} {x y : Nat} (ha : a.eval s = some x) (hb : b.eval s
+  = some y) :
     (tsubE a b).eval s = some (x - y) := by
   simp only [tsubE, Expr.eval, ha, hb, Option.bind_some, BinOp.eval]
   by_cases h : y ≤ x
@@ -41,28 +42,51 @@ theorem tsubE_eval {s : State} {a b : Expr} {x y : Nat} (ha : a.eval s = some x)
 /-! ### The parameters as expressions in `L` and `N` -/
 
 section exprs
-open Expr in
+/-- RAM expression for the logarithmic scale. -/
 def eL : Expr := .var "L"
+/-- RAM expression for the requested core capacity. -/
 def eN : Expr := .var "nN"
+/-- RAM expression for the group-split threshold. -/
 def eG : Expr := .bin .mul (.lit 2) eL
+/-- RAM expression for the chunk-split threshold. -/
 def eT : Expr := .bin .mul (.bin .mul (.lit 3) eL) eL
+/-- RAM expression for the group-move budget bound. -/
 def ekg : Expr := .bin .add (.bin .div eG (.lit 3)) (.lit 1)
+/-- RAM expression for the minimum group contribution. -/
 def egm : Expr := .bin .div (.bin .sub eG (.lit 2)) (.lit 2)
+/-- RAM expression for the group label-spacing exponent. -/
 def eUG : Expr := .bin .add (.bin .add eG ekg) (tsubE ekg egm)
+/-- RAM expression for the chunk unit-count bound. -/
 def euT : Expr := .bin .add (.bin .div eT egm) (.lit 1)
+/-- RAM expression for the chunk-move budget bound. -/
 def ekc : Expr := .bin .add (.bin .div euT (.lit 3)) (.lit 1)
+/-- RAM expression for the chunk move-count allowance. -/
 def eMu : Expr := .bin .add euT ekc
+/-- RAM expression for the initial chunk-size allowance. -/
 def eIC : Expr := .bin .add eT (.bin .mul (.lit 2) ekc)
+/-- RAM expression for the chunk split-count bound. -/
 def ecsB : Expr := .bin .div eIC egm
+/-- RAM expression for the reservation-step allowance. -/
 def ersB : Expr := .bin .add (.bin .mul (.lit 3) eMu) (.lit 1)
+/-- RAM expression for the chunk label-spacing exponent. -/
 def eHC : Expr := .bin .mul (.lit 2) (.bin .add ecsB ersB)
+/-- RAM expression for the chunk label-range allowance. -/
 def ePC : Expr := .bin .add (.bin .add (.bin .mul (.lit 3) eMu) ersB) ecsB
+/-- RAM expression for the quiet-chunk size threshold. -/
 def eth : Expr := .bin .mul (.bin .mul (.lit 2) eL) eL
+/-- RAM expression for the top-tree height bound. -/
 def eH : Expr := .bin .add (.bin .div eL (.lit 3)) (.lit 1)
+/-- RAM expression for the element-label bit width. -/
 def eBe : Expr := .bin .add eUG (.bin .add (.un .msb (.bin .add eG ekg)) (.lit 2))
+/-- RAM expression for the group-label bit width. -/
 def eBg : Expr := .bin .add eHC (.bin .add (.un .msb ePC) (.lit 2))
-def ecm : Expr := .bin .div (.bin .add (.bin .add (.bin .add eT ekc) (.bin .add eG ekg)) (.lit 1)) (.lit 2)
-def ecb : Expr := .bin .add (.lit 2) (.bin .mul (.lit 2) (.bin .div eN (.bin .sub (.bin .add eth (.lit 1)) ecm)))
+/-- RAM expression for the maximum quiet chunk contribution. -/
+def ecm : Expr := .bin .div (.bin .add (.bin .add (.bin .add eT ekc) (.bin .add eG ekg)) (.lit
+  1)) (.lit 2)
+/-- RAM expression for the chunk-array capacity bound. -/
+def ecb : Expr := .bin .add (.lit 2) (.bin .mul (.lit 2) (.bin .div eN (.bin .sub (.bin .add eth
+  (.lit 1)) ecm)))
+/-- RAM expression for the top-node-array capacity bound. -/
 def enb : Expr := .bin .add (.bin .add eH (.lit 2))
   (.bin .mul (.bin .add (.bin .add eH (.lit 1)) (.bin .add (.bin .mul eH (.lit 12)) (.lit 1))) ecb)
 end exprs
@@ -71,25 +95,45 @@ end exprs
 
 section vals
 variable (N L : Nat)
+/-- Natural-number value of the group-split threshold. -/
 def vG : Nat := 2 * L
+/-- Natural-number value of the chunk-split threshold. -/
 def vT : Nat := 3 * L * L
+/-- Natural-number value of the group-move budget bound. -/
 def vkg : Nat := vG L / 3 + 1
+/-- Natural-number value of the minimum group contribution. -/
 def vgm : Nat := (vG L - 2) / 2
+/-- Natural-number value of the group label-spacing exponent. -/
 def vUG : Nat := vG L + vkg L + (vkg L - vgm L)
+/-- Natural-number value of the chunk unit-count bound. -/
 def vuT : Nat := vT L / vgm L + 1
+/-- Natural-number value of the chunk-move budget bound. -/
 def vkc : Nat := vuT L / 3 + 1
+/-- Natural-number value of the chunk move-count allowance. -/
 def vMu : Nat := vuT L + vkc L
+/-- Natural-number value of the initial chunk-size allowance. -/
 def vIC : Nat := vT L + 2 * vkc L
+/-- Natural-number value of the chunk split-count bound. -/
 def vcsB : Nat := vIC L / vgm L
+/-- Natural-number value of the reservation-step allowance. -/
 def vrsB : Nat := 3 * vMu L + 1
+/-- Natural-number value of the chunk label-spacing exponent. -/
 def vHC : Nat := 2 * (vcsB L + vrsB L)
+/-- Natural-number value of the chunk label-range allowance. -/
 def vPC : Nat := 3 * vMu L + vrsB L + vcsB L
+/-- Natural-number value of the quiet-chunk size threshold. -/
 def vth : Nat := 2 * L * L
+/-- Natural-number value of the top-tree height bound. -/
 def vH : Nat := L / 3 + 1
+/-- Natural-number value of the element-label bit width. -/
 def vBe : Nat := vUG L + (Nat.log2 (vG L + vkg L) + 2)
+/-- Natural-number value of the group-label bit width. -/
 def vBg : Nat := vHC L + (Nat.log2 (vPC L) + 2)
+/-- Natural-number value of the maximum quiet chunk contribution. -/
 def vcm : Nat := (vT L + vkc L + (vG L + vkg L) + 1) / 2
+/-- Natural-number value of the chunk-array capacity bound. -/
 def vcb : Nat := 2 + 2 * (N / (vth L + 1 - vcm L))
+/-- Natural-number value of the top-node-array capacity bound. -/
 def vnb : Nat := (vH L + 2) + ((vH L + 1) + (vH L * 12 + 1)) * vcb N L
 end vals
 
@@ -141,10 +185,24 @@ end evals
 /-! ### They are `proofParams` and its capacities -/
 
 theorem proofParams_eq (N : Nat) : proofParams N =
-    { N := N, L := pL N, G := vG (pL N), T := vT (pL N), theta := vth (pL N), elementBits :=
-      vBe (pL N),
-      groupBits := vBg (pL N), elementSpacing := 2 ^ vUG (pL N), groupSpacing := 2 ^ vHC (pL N), groupBudget := 4, chunkBudget := 4, reservationBudget := 8, a := 8,
-      s := 11, beta := 64, H := vH (pL N) } := rfl
+    {
+      N := N
+      L := pL N
+      G := vG (pL N)
+      T := vT (pL N)
+      theta := vth (pL N)
+      elementBits := vBe (pL N)
+      groupBits := vBg (pL N)
+      elementSpacing := 2 ^ vUG (pL N)
+      groupSpacing := 2 ^ vHC (pL N)
+      groupBudget := 4
+      chunkBudget := 4
+      reservationBudget := 8
+      a := 8
+      s := 11
+      beta := 64
+      H := vH (pL N)
+    } := rfl
 
 theorem cb_proof (N : Nat) : cb (proofParams N) = vcb N (pL N) := rfl
 
@@ -173,26 +231,33 @@ def seqAll : List Stmt → Stmt
 
 /-- A sequence preserves every local preserved by each of its statements. -/
 theorem seqAll_preservesLocal (commands : List Stmt) (x : Reg)
-    (h : ∀ c ∈ commands, OrderMaintenance.Machine.PreservesLocal c x) :
-    OrderMaintenance.Machine.PreservesLocal (seqAll commands) x := by
+    (h : ∀ c ∈ commands, Machine.PreservesLocal c x) :
+    Machine.PreservesLocal (seqAll commands) x := by
   induction commands with
-  | nil => exact OrderMaintenance.Machine.preservesLocal_skip x
+  | nil => exact Machine.preservesLocal_skip x
   | cons c cs ih =>
     exact (h c (by simp)).seq (ih (fun d hd => h d (by simp [hd])))
 
 /-- The parameter computation: `L`, then the parameter array, then the capacity locals. -/
 def partA : Stmt :=
-  .seq (.assign "L" (.bin .add (.un .msb eN) (.lit 1))) (.ite (.bin .lt eL (.lit 8)) (.assign "L" (.lit 8)) .skip)
+  .seq (.assign "L" (.bin .add (.un .msb eN) (.lit 1))) (.ite (.bin .lt eL (.lit 8)) (.assign
+    "L" (.lit 8)) .skip)
 
 /-- The parameters, as (index, expression) pairs. -/
 def pList : List (Nat × Expr) := [
-  (PF.N.idx, eN), (PF.L.idx, eL), (PF.G.idx, eG), (PF.T.idx, eT), (PF.theta.idx, eth), (PF.Be.idx, eBe),
-  (PF.Bg.idx, eBg), (PF.De.idx, .bin .shl (.lit 1) eUG), (PF.Dg.idx, .bin .shl (.lit 1) eHC), (PF.KG.idx, .lit 4),
-  (PF.KC.idx, .lit 4), (PF.KR.idx, .lit 8), (PF.a.idx, .lit 8), (PF.s.idx, .lit 11), (PF.beta.idx, .lit 64),
+  (PF.N.idx, eN), (PF.L.idx, eL), (PF.G.idx, eG), (PF.T.idx, eT), (PF.theta.idx, eth),
+    (PF.Be.idx, eBe),
+  (PF.Bg.idx, eBg), (PF.De.idx, .bin .shl (.lit 1) eUG), (PF.Dg.idx, .bin .shl (.lit 1) eHC),
+    (PF.KG.idx, .lit 4),
+  (PF.KC.idx, .lit 4), (PF.KR.idx, .lit 8), (PF.a.idx, .lit 8), (PF.s.idx, .lit 11),
+    (PF.beta.idx, .lit 64),
   (PF.H.idx, eH)]
 
-def partB (q : Nat) : Stmt := .seq (.alloc (arr q .prm) (.lit 16)) (OrderMaintenance.Machine.storeAll (arr q .prm) pList)
+/-- Allocate the slot's parameter array and store all parameter expressions. -/
+def partB (q : Nat) : Stmt := .seq (.alloc (arr q .prm) (.lit 16)) (Machine.storeAll (arr q
+  .prm) pList)
 
+/-- Populate the capacity locals from the computed scale and requested core capacity. -/
 def partC : Stmt := seqAll [
   .assign "kE" (.bin .add eN (.lit 2)),
   .assign "kG" (.bin .add (.bin .mul (.lit 2) eN) (.lit 4)),
@@ -206,36 +271,84 @@ def partC : Stmt := seqAll [
   .assign "kf" (.bin .add (.bin .mul (.lit 2) eN) (.lit 4)),
   .assign "kW" (.bin .add eH (.lit 1))]
 
+/-- Compute the logarithmic scale, parameter array and allocation-capacity locals. -/
 def paramsS (q : Nat) : Stmt := .seq partA (.seq (partB q) partC)
 
 /-! ### What the parts do -/
+
+private theorem seqAll_assignments_ok (steps : List (Reg × Expr × Nat))
+    (P : State → Prop)
+    (hsteps : ∀ step ∈ steps, ∀ s, P s →
+      step.2.1.eval s = some step.2.2 ∧ P ((s.bump (step.2.1.maxv s)).setLoc step.1 step.2.2))
+    (s : State) (hs : P s) :
+    (exec (seqAll (steps.map fun step => .assign step.1 step.2.1)) s).status = .ok ∧
+      (exec (seqAll (steps.map fun step => .assign step.1 step.2.1)) s).st.mem = s.mem ∧
+      (exec (seqAll (steps.map fun step => .assign step.1 step.2.1)) s).st.cap = s.cap ∧
+      (exec (seqAll (steps.map fun step => .assign step.1 step.2.1)) s).st.loc =
+        steps.foldl (fun loc step => State.upd loc step.1 step.2.2) s.loc := by
+  induction steps generalizing s with
+  | nil => exact ⟨rfl, rfl, rfl, rfl⟩
+  | cons step steps ih =>
+    obtain ⟨he, hp⟩ := hsteps step (by simp) s hs
+    have hr := ih (fun entry hentry => hsteps entry (by simp [hentry])) _ hp
+    simpa only [List.map_cons, seqAll, exec, he, Out.bind, List.foldl_cons,
+      State.setLoc, State.bump] using hr
+
 theorem partC_ok {s : State} {N L : Nat} (hL : s.loc "L" = L) (hN : s.loc "nN" = N) (h8 : 8 ≤ L)
     (hc : vcm L ≤ vth L + 1) :
     (exec partC s).status = .ok ∧ (exec partC s).st.mem = s.mem ∧ (exec partC s).st.cap = s.cap ∧
       (exec partC s).st.loc "kE" = N + 2 ∧ (exec partC s).st.loc "kG" = 2 * N + 4 ∧
-      (exec partC s).st.loc "kC" = vcb N L + 2 ∧ (exec partC s).st.loc "kN" = vnb N L + vcb N L + 2 ∧
+      (exec partC s).st.loc "kC" = vcb N L + 2 ∧ (exec partC s).st.loc "kN" = vnb N L + vcb N L
+        + 2 ∧
       (exec partC s).st.loc "kB" = N + 3 ∧ (exec partC s).st.loc "kCc" = vcb N L + 2 ∧
-      (exec partC s).st.loc "kL" = vnb N L + vcb N L + 2 ∧ (exec partC s).st.loc "kR" = vnb N L + 2 ∧
+      (exec partC s).st.loc "kL" = vnb N L + vcb N L + 2 ∧ (exec partC s).st.loc "kR" = vnb N L
+        + 2 ∧
       (exec partC s).st.loc "kRc" = vnb N L + vcb N L + 2 ∧ (exec partC s).st.loc "kf" = 2 * N + 4 ∧
       (exec partC s).st.loc "kW" = vH L + 1 := by
-  have hNe : ∀ s' : State, s'.loc "nN" = N → eN.eval s' = some N := fun s' h => by simp [eN, Expr.eval, h]
-  generalize hout : exec partC s = result
-  simp? [partC, seqAll, exec, Out.bind, State.setLoc, State.upd, Expr.eval,
-    BinOp.eval, eH_ev, ecb_ev, enb_ev, hNe, hL, hN, h8, hc] at hout
-  cases hout
-  simp [State.setLoc, State.upd]
+  let steps : List (Reg × Expr × Nat) := [
+    ("kE", .bin .add eN (.lit 2), N + 2),
+    ("kG", .bin .add (.bin .mul (.lit 2) eN) (.lit 4), 2 * N + 4),
+    ("kC", .bin .add ecb (.lit 2), vcb N L + 2),
+    ("kN", .bin .add (.bin .add enb ecb) (.lit 2), vnb N L + vcb N L + 2),
+    ("kB", .bin .add eN (.lit 3), N + 3),
+    ("kCc", .bin .add ecb (.lit 2), vcb N L + 2),
+    ("kL", .bin .add (.bin .add enb ecb) (.lit 2), vnb N L + vcb N L + 2),
+    ("kR", .bin .add enb (.lit 2), vnb N L + 2),
+    ("kRc", .bin .add (.bin .add enb ecb) (.lit 2), vnb N L + vcb N L + 2),
+    ("kf", .bin .add (.bin .mul (.lit 2) eN) (.lit 4), 2 * N + 4),
+    ("kW", .bin .add eH (.lit 1), vH L + 1)]
+  have hsteps : ∀ step ∈ steps, ∀ s' : State, s'.loc "L" = L ∧ s'.loc "nN" = N →
+      step.2.1.eval s' = some step.2.2 ∧
+        ((s'.bump (step.2.1.maxv s')).setLoc step.1 step.2.2).loc "L" = L ∧
+        ((s'.bump (step.2.1.maxv s')).setLoc step.1 step.2.2).loc "nN" = N := by
+    intro step hstep s' ⟨hL', hN'⟩
+    simp only [steps, List.mem_cons, List.not_mem_nil, or_false] at hstep
+    rcases hstep with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;>
+      simp [Expr.eval, BinOp.eval, eN, hN', eH_ev hL', ecb_ev hL' hN' h8 hc,
+        enb_ev hL' hN' h8 hc, State.setLoc, State.bump, State.upd, hL']
+  have hr := seqAll_assignments_ok steps (fun s' => s'.loc "L" = L ∧ s'.loc "nN" = N)
+    hsteps s ⟨hL, hN⟩
+  change (exec partC s).status = .ok ∧ (exec partC s).st.mem = s.mem ∧
+    (exec partC s).st.cap = s.cap ∧ _ at hr
+  rcases hr with ⟨hstatus, hmem, hcap, hloc⟩
+  change (exec partC s).st.loc = _ at hloc
+  refine ⟨hstatus, hmem, hcap, ?_⟩
+  rw [hloc]
+  simp [steps, State.upd]
 
 
 /-- The parameter values, in terms of `N` and `L`. -/
 def pvals (N L : Nat) : PF → Nat
   | .N => N | .L => L | .G => vG L | .T => vT L | .theta => vth L | .Be => vBe L | .Bg => vBg L
-  | .De => 2 ^ vUG L | .Dg => 2 ^ vHC L | .KG => 4 | .KC => 4 | .KR => 8 | .a => 8 | .s => 11 | .beta => 64
+  | .De => 2 ^ vUG L | .Dg => 2 ^ vHC L | .KG => 4 | .KC => 4 | .KR => 8 | .a => 8 | .s => 11 |
+    .beta => 64
   | .H => vH L
 
 theorem pvals_proof (N : Nat) (k : PF) : pvals N (pL N) k = k.get (proofParams N) := by
   cases k <;> rfl
 
-theorem partB_ok (q : Nat) {s : State} {N L : Nat} (hL : s.loc "L" = L) (hN : s.loc "nN" = N) (h8 : 8 ≤ L) :
+theorem partB_ok (q : Nat) {s : State} {N L : Nat} (hL : s.loc "L" = L) (hN : s.loc "nN" = N)
+  (h8 : 8 ≤ L) :
     (exec (partB q) s).status = .ok ∧ (exec (partB q) s).st.cap (arr q .prm) = 16 ∧
       (∀ k : PF, (exec (partB q) s).st.mem (arr q .prm) k.idx = pvals N L k) ∧
       (exec (partB q) s).st.loc = s.loc ∧
@@ -248,24 +361,28 @@ theorem partB_ok (q : Nat) {s : State} {N L : Nat} (hL : s.loc "L" = L) (hN : s.
     intro ie hie
     rw [hc1]
     simp only [pList, List.mem_cons, List.not_mem_nil, or_false] at hie
-    rcases hie with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;>
+    rcases hie with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl
+      | rfl | rfl | rfl <;>
     simp [eN, eL, Expr.eval, hl1, hn1, eG_ev hl1, eT_ev hl1, eth_ev hl1, eBe_ev hl1 h8,
       eBg_ev hl1 h8,
       eUG_ev hl1 h8, eHC_ev hl1 h8, eH_ev hl1, PF.idx, BinOp.eval] <;> rfl
-  obtain ⟨r1, r2, r3, r4, r5⟩ := OrderMaintenance.Machine.exec_storeAll (arr q .prm) pList s1 hev
+  obtain ⟨r1, r2, r3, r4, r5⟩ := Machine.exec_storeAll (arr q .prm) pList s1 hev
   have he : exec (partB q) s = Out.bind ⟨s1, 1 + (Expr.lit 16).cost, .ok⟩
-      (exec (OrderMaintenance.Machine.storeAll (arr q .prm) pList)) := by
+      (exec (Machine.storeAll (arr q .prm) pList)) := by
     simp only [partB, exec, Expr.eval]; rw [hs1]
   rw [he]
-  simp only [OrderMaintenance.Machine.Out.bind, r1]
+  simp only [Machine.Out.bind, r1]
   refine ⟨trivial, by rw [r3, hc1], fun k => ?_, by rw [r2, hs1]; rfl, fun b hb => ?_⟩
   · rw [r4]
     have hm1 : s1.mem (arr q .prm) = fun _ => 0 := by rw [hs1]; simp [State.alloc]
     rw [hm1]
-    cases k <;> simp [OrderMaintenance.Machine.storeFold, pList, State.upd, PF.idx, pvals, eN, eL, Expr.eval, hl1, hn1,
-      eG_ev hl1, eT_ev hl1, eth_ev hl1, eBe_ev hl1 h8, eBg_ev hl1 h8, eUG_ev hl1 h8, eHC_ev hl1 h8, eH_ev hl1,
+    cases k <;> simp [Machine.storeFold, pList, State.upd, PF.idx, pvals, eN, eL, Expr.eval,
+      hl1, hn1,
+      eG_ev hl1, eT_ev hl1, eth_ev hl1, eBe_ev hl1 h8, eBg_ev hl1 h8, eUG_ev hl1 h8, eHC_ev hl1
+        h8, eH_ev hl1,
       BinOp.eval]
-  · refine ⟨by rw [r5 b hb, hs1]; simp [State.alloc, State.bump, hb], by rw [r3, hs1]; simp [State.alloc,
+  · refine ⟨by rw [r5 b hb, hs1]; simp [State.alloc, State.bump, hb], by rw [r3, hs1]; simp
+      [State.alloc,
       State.bump, State.upd, hb]⟩
 
 theorem partA_ok {s : State} {N : Nat} (hN : s.loc "nN" = N) :
@@ -273,42 +390,50 @@ theorem partA_ok {s : State} {N : Nat} (hN : s.loc "nN" = N) :
       (∀ x, x ≠ "L" → (exec partA s).st.loc x = s.loc x) ∧ (exec partA s).st.mem = s.mem ∧
       (exec partA s).st.cap = s.cap ∧ (exec partA s).cost ≤ 20 := by
   by_cases h : Nat.log2 N + 1 < 8
-  · simp [partA, exec, Out.bind, Expr.eval, BinOp.eval, UnOp.eval, eN, eL, hN, State.setLoc,
-    State.upd, h,
-      Expr.cost]
+  · simp only [partA, eN, eL, exec, Out.bind, Expr.eval, hN, Option.map_some, UnOp.eval,
+      BinOp.eval, Option.bind_some, State.setLoc, State.bump, Expr.maxv, Option.getD_some,
+      Nat.max_assoc, sup_le_iff, le_add_iff_nonneg_right, zero_le, le_add_iff_nonneg_left,
+      and_self, sup_of_le_right, Expr.cost, Nat.reduceAdd, State.upd, ↓reduceIte, h, ne_eq,
+      one_ne_zero, not_false_eq_true, le_max_iff, Nat.one_le_ofNat, or_self, sup_of_le_left,
+      Std.le_refl, Nat.reduceLeDiff, true_or, or_true, left_eq_sup, and_true, true_and]
     refine ⟨by omega, fun x hx => by simp [hx]⟩
-  · simp [partA, exec, Out.bind, Expr.eval, BinOp.eval, UnOp.eval, eN, eL, hN, State.setLoc,
-    State.upd, h,
-      Expr.cost]
+  · simp only [partA, eN, eL, exec, Out.bind, Expr.eval, hN, Option.map_some, UnOp.eval,
+      BinOp.eval, Option.bind_some, State.setLoc, State.bump, Expr.maxv, Option.getD_some,
+      Nat.max_assoc, sup_le_iff, le_add_iff_nonneg_right, zero_le, le_add_iff_nonneg_left,
+      and_self, sup_of_le_right, Expr.cost, Nat.reduceAdd, State.upd, ↓reduceIte, h, ne_eq,
+      not_true_eq_false, le_max_iff, or_self, sup_of_le_left, Std.le_refl, Nat.reduceLeDiff,
+      true_or, right_eq_sup, ite_eq_right_iff, and_true, true_and]
     refine ⟨by omega, fun x hx => by simp [hx]⟩
-theorem partC_frame {s : State} (x : Reg) (h1 : x ≠ "kE") (h2 : x ≠ "kG") (h3 : x ≠ "kC") (h4 : x ≠ "kN")
-    (h5 : x ≠ "kB") (h6 : x ≠ "kCc") (h7 : x ≠ "kL") (h8' : x ≠ "kR") (h9 : x ≠ "kRc") (h10 : x ≠ "kf")
+theorem partC_frame {s : State} (x : Reg) (h1 : x ≠ "kE") (h2 : x ≠ "kG") (h3 : x ≠ "kC") (h4 :
+  x ≠ "kN")
+    (h5 : x ≠ "kB") (h6 : x ≠ "kCc") (h7 : x ≠ "kL") (h8' : x ≠ "kR") (h9 : x ≠ "kRc") (h10 : x
+      ≠ "kf")
     (h11 : x ≠ "kW") : (exec partC s).st.loc x = s.loc x := by
-  have hframe : OrderMaintenance.Machine.PreservesLocal partC x := by
+  have hframe : Machine.PreservesLocal partC x := by
     apply seqAll_preservesLocal
     intro c hc
-    simp only [List.mem_cons, List.mem_singleton] at hc
+    simp only [List.mem_cons, List.not_mem_nil, or_false] at hc
     rcases hc with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl
-    · exact OrderMaintenance.Machine.preservesLocal_assign h1 _
-    · exact OrderMaintenance.Machine.preservesLocal_assign h2 _
-    · exact OrderMaintenance.Machine.preservesLocal_assign h3 _
-    · exact OrderMaintenance.Machine.preservesLocal_assign h4 _
-    · exact OrderMaintenance.Machine.preservesLocal_assign h5 _
-    · exact OrderMaintenance.Machine.preservesLocal_assign h6 _
-    · exact OrderMaintenance.Machine.preservesLocal_assign h7 _
-    · exact OrderMaintenance.Machine.preservesLocal_assign h8' _
-    · exact OrderMaintenance.Machine.preservesLocal_assign h9 _
-    · exact OrderMaintenance.Machine.preservesLocal_assign h10 _
-    · exact OrderMaintenance.Machine.preservesLocal_assign h11 _
+    · exact Machine.preservesLocal_assign h1 _
+    · exact Machine.preservesLocal_assign h2 _
+    · exact Machine.preservesLocal_assign h3 _
+    · exact Machine.preservesLocal_assign h4 _
+    · exact Machine.preservesLocal_assign h5 _
+    · exact Machine.preservesLocal_assign h6 _
+    · exact Machine.preservesLocal_assign h7 _
+    · exact Machine.preservesLocal_assign h8' _
+    · exact Machine.preservesLocal_assign h9 _
+    · exact Machine.preservesLocal_assign h10 _
+    · exact Machine.preservesLocal_assign h11 _
   exact hframe s
 
 theorem partB_cost (q : Nat) : (partB q).slCost = some 469 := by
-  simp [partB, OrderMaintenance.Machine.storeAll, pList, OrderMaintenance.Machine.Stmt.slCost,
+  simp [partB, Machine.storeAll, pList, Machine.Stmt.slCost,
     Expr.cost, eN, eL, eG, eT, eth, eBe, eBg, eUG,
     eHC, eH, ekg, egm, tsubE, ecsB, ersB, eIC, ekc, euT, eMu, ePC]
 
 theorem partC_cost : partC.slCost = some 649 := by
-  simp [partC, seqAll, OrderMaintenance.Machine.Stmt.slCost, Expr.cost, eN, eL, eT, eth, eH, ekg,
+  simp [partC, seqAll, Machine.Stmt.slCost, Expr.cost, eN, eL, eT, eth, eH, ekg,
     egm, ekc, euT, ecb, enb, ecm,
     eG]
 
@@ -316,11 +441,13 @@ theorem pp_N (N : Nat) : (proofParams N).N = N := rfl
 theorem pp_H (N : Nat) : (proofParams N).H = vH (pL N) := rfl
 
 theorem bind_st {o : Out} {g : State → Out} (h : o.status = .ok) : (o.bind g).st = (g o.st).st := by
-  unfold OrderMaintenance.Machine.Out.bind; rw [h]
-theorem bind_cost {o : Out} {g : State → Out} (h : o.status = .ok) : (o.bind g).cost = o.cost + (g o.st).cost := by
-  unfold OrderMaintenance.Machine.Out.bind; rw [h]
-theorem bind_status {o : Out} {g : State → Out} (h : o.status = .ok) : (o.bind g).status = (g o.st).status := by
-  unfold OrderMaintenance.Machine.Out.bind; rw [h]
+  unfold Machine.Out.bind; rw [h]
+theorem bind_cost {o : Out} {g : State → Out} (h : o.status = .ok) : (o.bind g).cost = o.cost +
+  (g o.st).cost := by
+  unfold Machine.Out.bind; rw [h]
+theorem bind_status {o : Out} {g : State → Out} (h : o.status = .ok) : (o.bind g).status = (g
+  o.st).status := by
+  unfold Machine.Out.bind; rw [h]
 
 /-- **The parameters of a new core**, computed in a constant number of steps. -/
 theorem paramsS_ok (q : Nat) {m : State} {N : Nat} (hN : m.loc "nN" = N) (hpos : 0 < N) :
@@ -331,24 +458,27 @@ theorem paramsS_ok (q : Nat) {m : State} {N : Nat} (hN : m.loc "nN" = N) (hpos :
       (∀ b, b ≠ arr q .prm → Same b m (exec (paramsS q) m).st) ∧
       (∀ x, x ≠ "L" → x ≠ "kE" → x ≠ "kG" → x ≠ "kC" → x ≠ "kN" → x ≠ "kB" → x ≠ "kCc" → x ≠ "kL" →
         x ≠ "kR" → x ≠ "kRc" → x ≠ "kf" → x ≠ "kW" → (exec (paramsS q) m).st.loc x = m.loc x) := by
-  have he : exec (paramsS q) m = (exec partA m).bind fun s => (exec (partB q) s).bind (exec partC) := rfl
+  have he : exec (paramsS q) m = (exec partA m).bind fun s => (exec (partB q) s).bind (exec
+    partC) := rfl
   rw [he]
   obtain ⟨a1, a2, a3, a4, a5, a6⟩ := partA_ok hN
   have hLA : (exec partA m).st.loc "L" = pL N := by rw [a2, pL_eq hpos]
   have hNA : (exec partA m).st.loc "nN" = N := by rw [a3 "nN" (by decide), hN]
   have h8 := pL_ge N
   obtain ⟨b1, b2, b3, b4, b5⟩ := partB_ok q hLA hNA h8
-  have hcB := OrderMaintenance.Machine.cost_of_ok _ _ _ (partB_cost q) b1
+  have hcB := Machine.cost_of_ok _ _ _ (partB_cost q) b1
   have hLB : (exec (partB q) (exec partA m).st).st.loc "L" = pL N := by rw [b4, hLA]
   have hNB : (exec (partB q) (exec partA m).st).st.loc "nN" = N := by rw [b4, hNA]
   have hc := vcm_le N
   obtain ⟨c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14⟩ := partC_ok hLB hNB h8 hc
   have hfr := partC_frame (s := (exec (partB q) (exec partA m).st).st)
-  have hcC := OrderMaintenance.Machine.cost_of_ok _ _ _ partC_cost c1
+  have hcC := Machine.cost_of_ok _ _ _ partC_cost c1
   simp only [bind_st a1, bind_cost a1, bind_status a1, bind_st b1, bind_cost b1, bind_status b1]
-  refine ⟨c1, by rw [hcC, hcB]; omega, by rw [c3]; exact b2, fun k => by rw [c2, b3, pvals_proof], ?_,
+  refine ⟨c1, by rw [hcC, hcB]; omega, by rw [c3]; exact b2, fun k => by rw [c2, b3,
+    pvals_proof], ?_,
     fun b hb => ?_, ?_⟩
-  · exact ⟨by rw [c4, pp_N], by rw [c5, pp_N], by rw [c6, cb_proof], by rw [c7, nbMax_proof, cb_proof],
+  · exact ⟨by rw [c4, pp_N], by rw [c5, pp_N], by rw [c6, cb_proof], by rw [c7, nbMax_proof,
+      cb_proof],
       by rw [c8,
         pp_N], by rw [c9, cb_proof], by rw [c10, nbMax_proof, cb_proof], by rw [c11, nbMax_proof],
       by rw [c12, nbMax_proof, cb_proof], by rw [c13, pp_N], by rw [c14, pp_H]⟩
