@@ -34,25 +34,21 @@ Each `r` is `L1_orbit_decay` applied to `f r`; the countably many `r` are inters
 `ae_all_iff`. Note this is now a corollary of Birkhoff, not of `kingman` — see the note on
 `L1_orbit_decay` above. -/
 theorem SubadditiveFamily.boundary_decay (μ : Measure Ω) [IsProbabilityMeasure μ] (σ : Ω → Ω)
-    (hσ : Ergodic σ μ) (f : ℕ → Ω → ℝ) (hf : SubadditiveFamily σ f)
+    (hmp : MeasurePreserving σ μ μ) (f : ℕ → Ω → ℝ) (hf : SubadditiveFamily σ f)
     (hint : ∀ n, Integrable (f n) μ) :
     ∀ᵐ ω ∂μ, ∀ r : ℕ, Tendsto (fun m : ℕ => f r (σ^[m] ω) / m) atTop (nhds 0) := by
   refine ae_all_iff.mpr (fun r => ?_)
-  exact L1_orbit_decay μ σ hσ (f r) (hf.1 r) (hint r)
+  exact L1_orbit_decay μ σ hmp (f r) (hf.1 r) (hint r)
 
-/-- **Block bound along multiples of `N`.** Dividing `le_sum_blocks` through by `qN` and applying
-Birkhoff for `σ^N` to the observable `f_N`:
+/-- **Pointwise block bound along multiples of `N`.** Dividing `le_sum_blocks` by `qN` gives
+`f_{qN}(ω)/(qN) ≤ (1/N) · (1/q) Σ_{i<q} f_N(σ^{iN} ω)`.
 
-`f_{qN}(ω)/(qN) ≤ (1/N) · (1/q) Σ_{i<q} f_N(σ^{iN} ω)`,
-
-whose right-hand side converges a.e. as `q → ∞`. This is the subsequence `n = qN` of the
-`limsup ≤ C` half; the general `n` needs the offset average, and the boundary terms are
-`boundary_decay`.
-
-Note `σ^N` is used only through `MeasurePreserving`, never through ergodicity — `σ^N` need not
-be ergodic even when `σ` is (see the note in `ProofMet.Birkhoff`). -/
-theorem SubadditiveFamily.blockAverage_le (μ : Measure Ω) (σ : Ω → Ω)
-    (_hmp : MeasurePreserving σ μ μ) (f : ℕ → Ω → ℝ) (hf : SubadditiveFamily σ f)
+This finite inequality needs no invariant measure. Under measure preservation and integrability
+of `f_N`, Birkhoff's theorem can later supply almost-everywhere convergence of the right side;
+ergodicity of `σ^N` is unnecessary. The general-index bound also needs the offset average and
+`boundary_decay`. -/
+theorem SubadditiveFamily.blockAverage_le (σ : Ω → Ω)
+    (f : ℕ → Ω → ℝ) (hf : SubadditiveFamily σ f)
     (N : ℕ) (hN : 1 ≤ N) (q : ℕ) (hq : 1 ≤ q) (ω : Ω) :
     f (q * N) ω / (q * N : ℝ)
       ≤ (1 / (N : ℝ)) * birkhoffAverage ℝ (σ^[N]) (f N) q ω := by
@@ -168,7 +164,7 @@ theorem SubadditiveFamily.eventually_lt_of_integral_div_lt (μ : Measure Ω)
   have hmp : MeasurePreserving σ μ μ := hσ.toMeasurePreserving
   have hN0 : (0 : ℝ) < N := by exact_mod_cast hN
   filter_upwards [ae_tendsto_birkhoffAverage_of_ergodic hσ (f N) (hf.1 N) (hint N),
-    hf.boundary_decay μ σ hσ f hint] with ω hbirk hbd
+    hf.boundary_decay μ σ hmp f hint] with ω hbirk hbd
   intro b hb
   -- The right-hand side of `nsmul_le_sum_offsets`, divided by `N·(p+1)N`.
   set S : ℕ → ℝ := fun p => (∑ k ∈ Finset.range (p * N), f N (σ^[k] ω)) / (((p + 1) * N : ℕ) : ℝ)
@@ -364,7 +360,8 @@ theorem SubadditiveFamily.eventually_shift_lt_of_integral_div_lt (μ : Measure �
         _ = n / N * N := hDeq
         _ ≤ n := hle
   filter_upwards [ae_tendsto_birkhoffAverage_of_ergodic hσ (f N) (hf.1 N) (hint N),
-    L1_orbit_decay μ σ hσ (fun y => ∑ t ∈ Finset.range (2 * N + 1), |f t y|) hGmeas hGint]
+    L1_orbit_decay μ σ hσ.toMeasurePreserving
+      (fun y => ∑ t ∈ Finset.range (2 * N + 1), |f t y|) hGmeas hGint]
     with ω hbirk hGdec
   intro b hb
   -- `qN/n → 1` and `(n + qN)/n → 2`.

@@ -246,14 +246,8 @@ theorem growth_le_growth {T : X →L[ℝ] X} {W V : Submodule ℝ X} (hWV : W �
 
 omit [MeasurableSpace X] in
 /-- `0 ≤ ρ_k(T)`, junk case included: when `dim X < k` the supremum is over `∅` and equals `0`. -/
-theorem bernsteinNumber_nonneg (T : X →L[ℝ] X) (k : ℕ) : 0 ≤ bernsteinNumber T k := by
-  rcases isEmpty_or_nonempty (GrassmannianFin X k) with h | h
-  · change (0 : ℝ) ≤ sSup _
-    rw [Set.range_eq_empty, Real.sSup_empty]
-  · refine le_trans (growth_nonneg T ((Classical.arbitrary (GrassmannianFin X k)).1)) ?_
-    refine le_csSup ⟨‖T‖, ?_⟩ ⟨Classical.arbitrary (GrassmannianFin X k), rfl⟩
-    rintro _ ⟨V, rfl⟩
-    exact growth_le_opNorm T _
+theorem bernsteinNumber_nonneg (T : X →L[ℝ] X) (k : ℕ) : 0 ≤ bernsteinNumber T k :=
+  MultiplicativeErgodic.bernsteinNumber_nonneg T k
 
 omit [MeasurableSpace X] in
 /-- A `(k+2)`-dimensional subspace contains a nonzero `(k+1)`-dimensional one: span all but the
@@ -587,12 +581,8 @@ theorem Cocycle.exists_logProdTrunc_subadditive (R : Cocycle Ω X) (k : ℕ) :
 /-- `ρ_k(T) ≤ ‖T‖` with no nonemptiness hypothesis: when `𝒢_kX` is empty the supremum is over
 `∅` and equals `0`. -/
 theorem bernsteinNumber_le_opNorm' {Y : Type*} [NormedAddCommGroup Y] [NormedSpace ℝ Y]
-    (T : Y →L[ℝ] Y) (k : ℕ) : bernsteinNumber T k ≤ ‖T‖ := by
-  rcases isEmpty_or_nonempty (GrassmannianFin Y k) with h | h
-  · change sSup _ ≤ _
-    rw [Set.range_eq_empty, Real.sSup_empty]
-    exact norm_nonneg T
-  · exact bernsteinNumber_le_opNorm T k
+    (T : Y →L[ℝ] Y) (k : ℕ) : bernsteinNumber T k ≤ ‖T‖ :=
+  bernsteinNumber_le_opNorm T k
 
 /-- `∏_{i≤k} ρ_i(T) ≤ ‖T‖^k`. -/
 theorem prod_bernstein_le_opNorm_pow {Y : Type*} [NormedAddCommGroup Y] [NormedSpace ℝ Y]
@@ -1825,7 +1815,8 @@ theorem Cocycle.ae_tempered_backward (R : Cocycle Ω X) [SeparableSpace X] [Bore
       Real.log (max ‖R.L (zIter R.σ (-(n : ℤ)) ω)‖ 1) / n) atTop (nhds 0) := by
   have hg : Measurable fun ω : Ω => Real.log (max ‖R.L ω‖ 1) :=
     Real.measurable_log.comp (R.measurable_norm_L.max measurable_const)
-  have hL := L1_orbit_decay R.μ (⇑R.σ.symm) R.ergodic.symm _ hg R.forwardIntegrable
+  have hL :=
+    L1_orbit_decay R.μ (⇑R.σ.symm) R.ergodic.symm.toMeasurePreserving _ hg R.forwardIntegrable
   filter_upwards [hL] with ω hω
   simpa [zIter_neg_natCast] using hω
 

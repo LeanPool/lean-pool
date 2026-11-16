@@ -773,7 +773,7 @@ theorem vitali_cover_third [StandardBorelSpace Ω] (μ : Measure Ω)
       have hsub : windowUnion (radius k) (level k \ Good) ⊆ windowUnion (radius k) N :=
         hWUmono (radius k) hsubN
       have hb : μ (windowUnion (radius k) N) ≤ (2 * radius k + 1) * μ N :=
-        measure_iUnion_zIter_window_le σ hσ (radius k) hNmeas
+        measure_iUnion_zIter_window_le σ hσ.toMeasurePreserving (radius k) hNmeas
       rw [hNnull, mul_zero] at hb
       exact le_antisymm ((measure_mono hsub).trans hb) bot_le
     have hchain0 : μ (⋃ k ∈ Finset.range (B + 1), windowUnion (radius k) (level k \ Good)) ≤ 0 :=
@@ -808,7 +808,7 @@ theorem vitali_cover_third [StandardBorelSpace Ω] (μ : Measure Ω)
           measure_biUnion_finset_le _ _
       _ ≤ ∑ k ∈ Finset.range (B + 1), (2 * ((3 * radius k + 1 : ℕ) : ℝ≥0∞) + 1) * μ (Piece k) :=
           Finset.sum_le_sum (fun k _ =>
-            measure_iUnion_zIter_window_le σ hσ (3 * radius k + 1) (hMeas k).2)
+            measure_iUnion_zIter_window_le σ hσ.toMeasurePreserving (3 * radius k + 1) (hMeas k).2)
       _ = ∑ k ∈ Finset.range (B + 1), 3 * ((2 * radius k + 1) * μ (Piece k)) := by
           refine Finset.sum_congr rfl (fun k _ => ?_)
           push_cast
@@ -816,7 +816,8 @@ theorem vitali_cover_third [StandardBorelSpace Ω] (μ : Measure Ω)
       _ = ∑ k ∈ Finset.range (B + 1), 3 * μ (windowUnion (radius k) (Piece k)) := by
           refine Finset.sum_congr rfl (fun k _ => ?_)
           congr 1
-          exact (measure_iUnion_zIter_window_eq σ hσ (radius k) (hMeas k).2 (hPieceSpec k).2.1).symm
+          exact (measure_iUnion_zIter_window_eq σ hσ.toMeasurePreserving (radius k)
+            (hMeas k).2 (hPieceSpec k).2.1).symm
       _ = 3 * ∑ k ∈ Finset.range (B + 1), μ (windowUnion (radius k) (Piece k)) := by
           rw [Finset.mul_sum]
       _ = 3 * μ (⋃ k ∈ Finset.range (B + 1), windowUnion (radius k) (Piece k)) := by

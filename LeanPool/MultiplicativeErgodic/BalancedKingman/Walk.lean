@@ -569,10 +569,9 @@ theorem zIter_natCast_fun (σ : Ω ≃ᵐ Ω) (k : ℕ) : zIter σ (k : ℤ) = (
 
 /-- Change of variables for a set integral along a measure-preserving bijection:
 `∫_Λ h ∘ σ^k = ∫_{σ^k Λ} h`. -/
-theorem setIntegral_comp_iterate {μ : Measure Ω} (σ : Ω ≃ᵐ Ω) (hσ : Ergodic (⇑σ) μ)
+theorem setIntegral_comp_iterate {μ : Measure Ω} (σ : Ω ≃ᵐ Ω) (hmp : MeasurePreserving (⇑σ) μ μ)
     {Λ : Set Ω} (hΛ : MeasurableSet Λ) {h : Ω → ℝ} (hh : Integrable h μ) (k : ℕ) :
     ∫ ω in Λ, h ((σ : Ω → Ω)^[k] ω) ∂μ = ∫ y in (σ : Ω → Ω)^[k] '' Λ, h y ∂μ := by
-  have hmp : MeasurePreserving (⇑σ) μ μ := hσ.toMeasurePreserving
   have hTm : Measurable ((σ : Ω → Ω)^[k]) := σ.measurable.iterate k
   have himg : MeasurableSet ((σ : Ω → Ω)^[k] '' Λ) := by
     have := measurableSet_zIter_image σ (k : ℤ) hΛ
@@ -604,14 +603,14 @@ whole Birkhoff sum costs at most `n · ε` on `Λ` — because each translate `�
 measure, so each of the `n` terms is separately small. This is the paper's
 `(1/n) Σ_i ∫_{σ^i Λ} |f_1| ≤ ε` step. -/
 theorem setIntegral_birkhoffSum_le {μ : Measure Ω} (σ : Ω ≃ᵐ Ω)
-    (hσ : Ergodic (⇑σ) μ) {Λ : Set Ω} (hΛ : MeasurableSet Λ) {g : Ω → ℝ}
+    (hmp : MeasurePreserving (⇑σ) μ μ) {Λ : Set Ω} (hΛ : MeasurableSet Λ) {g : Ω → ℝ}
     (hg : Integrable g μ) {δ ε : ℝ}
     (hac : ∀ S : Set Ω, MeasurableSet S → μ S ≤ ENNReal.ofReal δ → ∫ ω in S, |g ω| ∂μ ≤ ε)
     (hΛδ : μ Λ ≤ ENNReal.ofReal δ) (n : ℕ) :
     ∫ ω in Λ, birkhoffSum (σ : Ω → Ω) (fun x => |g x|) n ω ∂μ ≤ n * ε := by
   have hint : ∀ k : ℕ, IntegrableOn (fun ω => |g ((σ : Ω → Ω)^[k] ω)|) Λ μ := by
     intro k
-    exact (((hσ.toMeasurePreserving.iterate k).integrable_comp_of_integrable hg).abs).integrableOn
+    exact (((hmp.iterate k).integrable_comp_of_integrable hg).abs).integrableOn
   have hsplit : ∫ ω in Λ, birkhoffSum (σ : Ω → Ω) (fun x => |g x|) n ω ∂μ
       = ∑ k ∈ Finset.range n, ∫ ω in Λ, |g ((σ : Ω → Ω)^[k] ω)| ∂μ := by
     simp only [birkhoffSum]
@@ -619,12 +618,12 @@ theorem setIntegral_birkhoffSum_le {μ : Measure Ω} (σ : Ω ≃ᵐ Ω)
   rw [hsplit]
   have hterm : ∀ k ∈ Finset.range n, ∫ ω in Λ, |g ((σ : Ω → Ω)^[k] ω)| ∂μ ≤ ε := by
     intro k _
-    rw [setIntegral_comp_iterate σ hσ hΛ hg.abs k]
+    rw [setIntegral_comp_iterate σ hmp hΛ hg.abs k]
     have himg : MeasurableSet ((σ : Ω → Ω)^[k] '' Λ) := by
       have := measurableSet_zIter_image σ (k : ℤ) hΛ
       rwa [zIter_natCast_fun] at this
     have hmeasure : μ ((σ : Ω → Ω)^[k] '' Λ) = μ Λ := by
-      have := measure_zIter_image σ hσ (k : ℤ) hΛ
+      have := measure_zIter_image σ hmp (k : ℤ) hΛ
       rwa [zIter_natCast_fun] at this
     exact hac _ himg (by rw [hmeasure]; exact hΛδ)
   calc ∑ k ∈ Finset.range n, ∫ ω in Λ, |g ((σ : Ω → Ω)^[k] ω)| ∂μ
@@ -696,7 +695,7 @@ translates of `A` over `Icc (-N) N` are pairwise disjoint, so `(2N+1) μ A ≤ 1
 This is what makes the paper's dropped endpoint terms negligible: they live in `Λ₊`, which has
 the same measure as `A`. -/
 theorem measure_le_of_radius_ge {μ : Measure Ω} [IsProbabilityMeasure μ] (σ : Ω ≃ᵐ Ω)
-    (hσ : Ergodic (⇑σ) μ) {A : Set Ω} (hAm : MeasurableSet A) {jω : Ω → ℕ} (N : ℕ)
+    (hmp : MeasurePreserving (⇑σ) μ μ) {A : Set Ω} (hAm : MeasurableSet A) {jω : Ω → ℕ} (N : ℕ)
     (hdisj : A.PairwiseDisjoint fun x => (fun i => zIter σ i x) '' Set.Icc (-(jω x : ℤ)) (jω x))
     (hN : ∀ ω ∈ A, N ≤ jω ω)
     (hinj : ∀ ω ∈ A, Function.Injective fun i : ℤ => zIter σ i ω) :
@@ -721,7 +720,7 @@ theorem measure_le_of_radius_ge {μ : Measure Ω} [IsProbabilityMeasure μ] (σ 
       exact Set.disjoint_left.mp (hdisj hωA hω'A hne) hmem1 hmem2
     subst hωω
     exact hik (hinj ω hωA hx').symm
-  have heq := measure_iUnion_zIter_window_eq σ hσ N hAm hdisjT
+  have heq := measure_iUnion_zIter_window_eq σ hmp N hAm hdisjT
   have hle : μ (⋃ t ∈ Set.Icc (-(N : ℤ)) N, zIter σ t '' A) ≤ 1 := by
     calc μ (⋃ t ∈ Set.Icc (-(N : ℤ)) N, zIter σ t '' A) ≤ μ Set.univ :=
           measure_mono (Set.subset_univ _)
@@ -733,7 +732,7 @@ must be *backward*: going forward from a right endpoint immediately leaves its w
 stepping back `i ≤ 2j` stays inside. So it is the `2N+1` translates `σ^{-i} Λ₊`, `0 ≤ i ≤ 2N`,
 that are disjoint. -/
 theorem measure_rightEnd_le {μ : Measure Ω} [IsProbabilityMeasure μ] (σ : Ω ≃ᵐ Ω)
-    (hσ : Ergodic (⇑σ) μ) {A : Set Ω} {jω : Ω → ℕ} (N : ℕ)
+    (hmp : MeasurePreserving (⇑σ) μ μ) {A : Set Ω} {jω : Ω → ℕ} (N : ℕ)
     (hΛm : MeasurableSet (rightEnd σ jω '' A))
     (hdisj : A.PairwiseDisjoint fun x => (fun i => zIter σ i x) '' Set.Icc (-(jω x : ℤ)) (jω x))
     (hN : ∀ ω ∈ A, N ≤ jω ω)
@@ -781,7 +780,7 @@ theorem measure_rightEnd_le {μ : Measure Ω} [IsProbabilityMeasure μ] (σ : Ω
     have hcongr : ∑ i ∈ Finset.range (2 * N + 1),
         μ (zIter σ (-(i : ℤ)) '' (rightEnd σ jω '' A))
         = ∑ _i ∈ Finset.range (2 * N + 1), μ (rightEnd σ jω '' A) :=
-      Finset.sum_congr rfl (fun i _ => measure_zIter_image σ hσ (-(i : ℤ)) hΛm)
+      Finset.sum_congr rfl (fun i _ => measure_zIter_image σ hmp (-(i : ℤ)) hΛm)
     rw [hcongr, Finset.sum_const, Finset.card_range, nsmul_eq_mul]
     push_cast
     ring

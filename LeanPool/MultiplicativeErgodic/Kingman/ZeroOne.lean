@@ -110,12 +110,11 @@ The `ε`-bookkeeping is delicate because the shift changes the denominator: the 
 on `f_{n+1}(ω)/(n+1)` but what appears is `f_{n+1}(ω)/n`. Writing the latter as `A + A/n` with
 `A = f_{n+1}(ω)/(n+1)` and using `A > q - ε/3` gives `A/n > (q - ε/3)/n`, which is eventually
 `> -ε/3` whatever the sign of `q - ε/3`. -/
-theorem SubadditiveFamily.liminfGE_le_preimage (μ : Measure Ω)
-    (σ : Ω → Ω) (_hσ : Ergodic σ μ) (f : ℕ → Ω → ℝ) (hf : SubadditiveFamily σ f)
-    (_hint : ∀ n, Integrable (f n) μ) (q : ℝ) :
+theorem SubadditiveFamily.liminfGE_subset_preimage
+    (σ : Ω → Ω) (f : ℕ → Ω → ℝ) (hf : SubadditiveFamily σ f) (q : ℝ) :
     (liminfGE (fun n ω => f n ω / n) q : Set Ω)
-      ≤ᵐ[μ] σ ⁻¹' liminfGE (fun n ω => f n ω / n) q := by
-  filter_upwards with ω hmem
+      ⊆ σ ⁻¹' liminfGE (fun n ω => f n ω / n) q := by
+  intro ω hmem
   simp only [liminfGE] at hmem ⊢
   intro ε hε
   have hε0 : (0 : ℝ) < (ε : ℝ) := by exact_mod_cast hε
@@ -174,17 +173,24 @@ theorem SubadditiveFamily.liminfGE_le_preimage (μ : Measure Ω)
     linarith
   exact hkey
 
+/-- Every pointwise liminf threshold is forward invariant almost everywhere for any measure. -/
+theorem SubadditiveFamily.liminfGE_le_preimage (μ : Measure Ω)
+    (σ : Ω → Ω) (f : ℕ → Ω → ℝ) (hf : SubadditiveFamily σ f) (q : ℝ) :
+    (liminfGE (fun n ω => f n ω / n) q : Set Ω)
+      ≤ᵐ[μ] σ ⁻¹' liminfGE (fun n ω => f n ω / n) q :=
+  Filter.Eventually.of_forall (hf.liminfGE_subset_preimage σ f q)
+
 /-- **Zero-one law for Kingman's liminf thresholds.** Combining `liminfGE_le_preimage` with
 `measure_liminfGE_eq_zero_or_one'`: for every `q`, the set where `liminf f_n/n ≥ q` is null or
 conull. This is the a.e.-constancy of `liminf f_n/n`, in the set form that avoids ever
 constructing a `liminf`-valued function. -/
 theorem SubadditiveFamily.measure_liminfGE_zero_or_one (μ : Measure Ω) [IsProbabilityMeasure μ]
     (σ : Ω → Ω) (hσ : Ergodic σ μ) (f : ℕ → Ω → ℝ) (hf : SubadditiveFamily σ f)
-    (hint : ∀ n, Integrable (f n) μ) (q : ℝ) :
+    (q : ℝ) :
     μ (liminfGE (fun n ω => f n ω / n) q) = 0
       ∨ μ (liminfGE (fun n ω => f n ω / n) q) = 1 :=
   measure_liminfGE_eq_zero_or_one' hσ (fun n => (hf.1 n).div_const _) q
-    (hf.liminfGE_le_preimage μ σ hσ f hint q)
+    (hf.liminfGE_le_preimage μ σ f q)
 
 /-!
 ### Steele's good and bad sets

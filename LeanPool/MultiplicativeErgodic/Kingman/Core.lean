@@ -59,7 +59,7 @@ theorem bkingman (μ : Measure Ω) [IsProbabilityMeasure μ] (σ : Ω → Ω) (h
     rw [integral_sub (hL1 n) (hbs n), integral_birkhoffSum hmp (f 1) (hL1 1) n]
   -- (i) the zero-one law for the normalised family's thresholds
   have hzo := SubadditiveFamily.measure_liminfGE_zero_or_one μ σ hσ
-    (SubadditiveFamily.normalize σ f) hgsub hgint
+    (SubadditiveFamily.normalize σ f) hgsub
   -- (ii) one conull threshold, from the linear lower bound
   have hlow : μ (liminfGE (fun n ω => SubadditiveFamily.normalize σ f n ω / n)
       (-K - (∫ ω, f 1 ω ∂μ) - 1)) = 1 :=
@@ -456,26 +456,19 @@ theorem kingman_backward_of_integrable (μ : Measure Ω) [IsProbabilityMeasure �
   refine hω.congr (fun n => ?_)
   rw [zIter_neg_natCast]
 
-/-- **L¹ orbit-decay.** For an ergodic `σ` and `g ∈ L¹`, `(1/n) g(σⁿ ω) → 0` a.e.
-This is Birkhoff's theorem for a single observable, now an immediate corollary of
-`ae_tendsto_birkhoffAverage` (`ProofMet.Birkhoff`): the Birkhoff averages converge a.e., and the
-telescoping difference `g(σⁿω)/n = h_{n+1}(ω)/n - h_n(ω)/n` tends to `L - L = 0`.
-
-**Previously** this was derived from Kingman applied to the auxiliary **additive** family
-`h_n := Σ_{i<n} g ∘ σ^i` (a `SubadditiveFamily`, with equality), because Mathlib has *no*
-pointwise ergodic theorem (only the L²/von Neumann mean one) and none had been proved here yet.
-That inverted the real dependency order and left every §4 result carrying `sorryAx`. Birkhoff is
-now proved directly in `ProofMet.Birkhoff`, so the dependency runs the right way round. -/
+/-- **L¹ orbit-decay.** For a measure-preserving `σ` and `g ∈ L¹`,
+`(1/n) g(σⁿ ω) → 0` almost everywhere. The general Birkhoff adapter supplies convergence
+of the averages; their telescoping difference tends to `L - L = 0`.
+This argument needs measure preservation, independently of ergodicity or Kingman's theorem. -/
 theorem L1_orbit_decay (μ : Measure Ω) [IsProbabilityMeasure μ] (σ : Ω → Ω)
-    (hσ : Ergodic σ μ) (g : Ω → ℝ) (hg : Measurable g) (hgL1 : Integrable g μ) :
+    (hmp : MeasurePreserving σ μ μ) (g : Ω → ℝ) (hg : Measurable g) (hgL1 : Integrable g μ) :
     ∀ᵐ ω ∂μ, Tendsto (fun n => g (σ^[n] ω) / n) atTop (nhds 0) := by
-  have hmp : MeasurePreserving σ μ μ := hσ.toMeasurePreserving
   set h : ℕ → Ω → ℝ := fun n => birkhoffSum σ g n with hh
   -- `(n+1)/n → 1`, obtained as the reciprocal of `n/(n+1) → 1`.
   have hratio : Tendsto (fun n : ℕ => ((n : ℝ) + 1) / (n : ℝ)) atTop (nhds 1) := by
     have := (tendsto_natCast_div_add_atTop (1 : ℝ)).inv₀ one_ne_zero
     simpa [inv_div] using this
-  filter_upwards [ae_tendsto_birkhoffAverage hmp hmp.measurable g hg hgL1] with ω hωex
+  filter_upwards [ae_tendsto_birkhoffAverage hmp g hg hgL1] with ω hωex
   obtain ⟨L, hL⟩ := hωex
   have hω : Tendsto (fun n => h n ω / (n : ℝ)) atTop (nhds L) := by
     simpa only [birkhoffAverage_real, hh] using hL

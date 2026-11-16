@@ -8,6 +8,8 @@ Authors: George Lee
 
 module
 
+public import Mathlib.MeasureTheory.Integral.DominatedConvergence
+
 public import LeanPool.MultiplicativeErgodic.Birkhoff.Average
 
 /-!

@@ -393,7 +393,7 @@ theorem measurableSet_iUnion_windows [StandardBorelSpace Ω] {σ : Ω ≃ᵐ Ω}
 
 /-- If the centres carry positive measure then so does any set of endpoints they are orbit
 translates of. Used to know `μ Λ± > 0`, which is what makes the hitting times a.e. finite. -/
-theorem measure_ne_zero_of_endpoints {μ : Measure Ω} (σ : Ω ≃ᵐ Ω) (hσ : Ergodic (⇑σ) μ)
+theorem measure_ne_zero_of_endpoints {μ : Measure Ω} (σ : Ω ≃ᵐ Ω) (hmp : MeasurePreserving (⇑σ) μ μ)
     {A Λ : Set Ω} (hΛm : MeasurableSet Λ) (e : Ω → Ω) (k : Ω → ℤ)
     (he : ∀ ω ∈ A, e ω ∈ Λ ∧ zIter σ (k ω) (e ω) = ω) (hA : μ A ≠ 0) : μ Λ ≠ 0 := by
   intro h0
@@ -401,7 +401,7 @@ theorem measure_ne_zero_of_endpoints {μ : Measure Ω} (σ : Ω ≃ᵐ Ω) (hσ 
   · obtain ⟨hmem, heq⟩ := he ω hω
     exact Set.mem_iUnion.mpr ⟨k ω, ⟨e ω, hmem, heq⟩⟩
   · refine measure_iUnion_null (fun m : ℤ => ?_)
-    rw [measure_zIter_image σ hσ m hΛm]
+    rw [measure_zIter_image σ hmp m hΛm]
     exact h0
 
 omit [MeasurableSpace Ω] in

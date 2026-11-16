@@ -877,14 +877,15 @@ theorem Cocycle.ae_nu_le_of_compactnessIndex_lt (R : Cocycle Ω X) [SeparableSpa
   have hη : ∀ i : ℕ, ∫ ω in Gᶜ, Real.log (max ‖R.L (R.σ^[i] ω)‖ 1) ∂(R.μ) ≤ ε / 2 := by
     intro i
     have hGcm : MeasurableSet Gᶜ := hGm.compl
-    have hcv := setIntegral_comp_iterate R.σ R.ergodic hGcm (h := g) R.forwardIntegrable i
+    have hcv := setIntegral_comp_iterate R.σ R.ergodic.toMeasurePreserving hGcm (h := g)
+      R.forwardIntegrable i
     simp only [hg] at hcv
     rw [hcv]
     have himg : MeasurableSet ((⇑R.σ)^[i] '' Gᶜ) := by
       have := measurableSet_zIter_image R.σ (i : ℤ) hGcm
       rwa [zIter_natCast_fun] at this
     have hmeas : R.μ ((⇑R.σ)^[i] '' Gᶜ) = R.μ Gᶜ := by
-      have := measure_zIter_image R.σ R.ergodic (i : ℤ) hGcm
+      have := measure_zIter_image R.σ R.ergodic.toMeasurePreserving (i : ℤ) hGcm
       rwa [zIter_natCast_fun] at this
     have hsmall : R.μ ((⇑R.σ)^[i] '' Gᶜ) ≤ ENNReal.ofReal δr := by
       rw [hmeas]

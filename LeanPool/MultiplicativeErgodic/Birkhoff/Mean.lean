@@ -71,10 +71,9 @@ theorem measure_orbit_level (hmp : MeasurePreserving σ μ μ) (h : Ω → ℝ) 
 
 /-- Orbit decay for an `L²` observable: `h(σⁿx)/n → 0` a.e.
 
-Chebyshev plus Borel–Cantelli, as in `dyn.tex` stage 3. Note this is *weaker* than Birkhoff and
-does not depend on it — unlike `ProofMet.Kingman.L1_orbit_decay`, which derives the `L¹` version
-from `kingman`. (That route used to carry `sorryAx`; it no longer does — `kingman` is proved,
-and `L1_orbit_decay` is axiom-clean.) -/
+Chebyshev plus Borel–Cantelli, as in `dyn.tex` stage 3. This independent argument does not
+use Birkhoff. The `L¹` orbit-decay theorem instead uses the pool’s general pointwise
+Birkhoff theorem through `ae_tendsto_birkhoffAverage`; neither route depends on Kingman. -/
 theorem orbit_decay_of_sq_integrable [IsFiniteMeasure μ] (hmp : MeasurePreserving σ μ μ)
     (h : Ω → ℝ) (hm : Measurable h) (hsq : Integrable (fun x => (h x) ^ 2) μ) :
     ∀ᵐ x ∂μ, Filter.Tendsto (fun n : ℕ => h (σ^[n] x) / n) Filter.atTop (nhds 0) := by

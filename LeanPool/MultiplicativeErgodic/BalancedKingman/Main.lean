@@ -130,7 +130,7 @@ theorem balancedKingman_of_integrable [StandardBorelSpace Ω] (μ : Measure Ω)
   -- (`tendsto_orbit_div_of_ratio`, ratio `→ 1`).
   have hdecay : ∀ᵐ ω ∂μ,
       Tendsto (fun n : ℕ => f 2 (zIter σ ((n : ℤ) - 1) ω) / (2 * (n : ℝ))) atTop (nhds 0) := by
-    filter_upwards [L1_orbit_decay μ σ hσ (f 2) (hf.1 2) (hL1 2)] with ω hω
+    filter_upwards [L1_orbit_decay μ σ hσ.toMeasurePreserving (f 2) (hf.1 2) (hL1 2)] with ω hω
     have hidx : Tendsto (fun n : ℕ => n - 1) atTop atTop := tendsto_sub_atTop_nat 1
     have hratio : Tendsto (fun n : ℕ => (((n - 1 : ℕ)) : ℝ) / n) atTop (nhds 1) := by
       have hbase : Tendsto (fun n : ℕ => 1 - 1 / (n : ℝ)) atTop (nhds (1 - 0)) :=

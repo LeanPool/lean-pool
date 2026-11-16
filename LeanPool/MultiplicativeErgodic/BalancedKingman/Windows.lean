@@ -373,12 +373,13 @@ everywhere, but the covering argument meets `Λ₋` points along an orbit and ne
 *every* one it meets. The fix is to shrink the centre set `A` to `A ∩ G` for a conull `G`, and
 this lemma says that costs no coverage — each window is a finite set of orbit translates, so the
 discarded part is contained in a countable union of translates of a null set. -/
-theorem measure_iUnion_windows_of_null {μ : Measure Ω} (σ : Ω ≃ᵐ Ω) (hσ : Ergodic (⇑σ) μ)
+theorem measure_iUnion_windows_of_null {μ : Measure Ω} (σ : Ω ≃ᵐ Ω) (hmp : MeasurePreserving
+  (⇑σ) μ μ)
     {S : Set Ω} (hSm : MeasurableSet S) (hS : μ S = 0) (jω : Ω → ℕ) :
     μ (⋃ ω ∈ S, (fun i => zIter σ i ω) '' Set.Icc (-(jω ω : ℤ)) (jω ω)) = 0 := by
   refine measure_mono_null (fun x hx => ?_)
     (measure_iUnion_null (fun t : ℤ => by
-      rw [measure_zIter_image σ hσ t hSm]; exact hS))
+      rw [measure_zIter_image σ hmp t hSm]; exact hS))
   obtain ⟨ω, hωS, hxω⟩ := Set.mem_iUnion₂.mp hx
   obtain ⟨i, -, hix⟩ := hxω
   exact Set.mem_iUnion.mpr ⟨i, ⟨ω, hωS, hix⟩⟩

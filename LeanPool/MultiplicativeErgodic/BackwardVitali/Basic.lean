@@ -514,16 +514,16 @@ lemma measurable_zIter (σ : Ω ≃ᵐ Ω) (t : ℤ) : Measurable (zIter σ t) :
   | ofNat n => exact σ.measurable.iterate n
   | negSucc n => exact σ.symm.measurable.iterate (n + 1)
 
-/-- Under an ergodic (hence measure-preserving) `σ`, each translate `zIter σ t` preserves `μ`. -/
+/-- Under a measure-preserving `σ`, each translate `zIter σ t` preserves `μ`. -/
 lemma measurePreserving_zIter {μ : Measure Ω} (σ : Ω ≃ᵐ Ω)
-    (hσ : Ergodic (⇑σ) μ) (t : ℤ) : MeasurePreserving (zIter σ t) μ μ := by
+    (hmp : MeasurePreserving (⇑σ) μ μ) (t : ℤ) : MeasurePreserving (zIter σ t) μ μ := by
   cases t with
-  | ofNat n => exact hσ.toMeasurePreserving.iterate n
-  | negSucc n => exact (MeasurePreserving.symm σ hσ.toMeasurePreserving).iterate (n + 1)
+  | ofNat n => exact hmp.iterate n
+  | negSucc n => exact (MeasurePreserving.symm σ hmp).iterate (n + 1)
 
 /-- Each translate preserves the measure of a set (`μ (zIter σ t '' s) = μ s`), because
 `zIter σ t` is a measure-preserving bijection with inverse `zIter σ (-t)`. -/
-lemma measure_zIter_image {μ : Measure Ω} (σ : Ω ≃ᵐ Ω) (hσ : Ergodic (⇑σ) μ)
+lemma measure_zIter_image {μ : Measure Ω} (σ : Ω ≃ᵐ Ω) (hmp : MeasurePreserving (⇑σ) μ μ)
     (t : ℤ) {s : Set Ω} (hs : MeasurableSet s) : μ (zIter σ t '' s) = μ s := by
   have hinv : zIter σ t '' s = zIter σ (-t) ⁻¹' s := by
     have h := Set.image_eq_preimage_of_inverse (f := zIter σ t) (g := zIter σ (-t))
@@ -531,13 +531,13 @@ lemma measure_zIter_image {μ : Measure Ω} (σ : Ω ≃ᵐ Ω) (hσ : Ergodic (
       (fun ω => by rw [← zIter_add]; simp [zIter_zero_apply])
     exact congrFun h s
   rw [hinv]
-  exact (measurePreserving_zIter σ hσ (-t)).measure_preimage hs.nullMeasurableSet
+  exact (measurePreserving_zIter σ hmp (-t)).measure_preimage hs.nullMeasurableSet
 
 /-- **Window-counting bound.** The union of the `2r+1` translates of a measurable set `S`
 over the symmetric index window `Icc (-r) r` has measure at most `(2r+1) · μ S`. This is the
 elementary "length of the window" estimate that produces the factor in the Vitali bound. -/
 lemma measure_iUnion_zIter_window_le {μ : Measure Ω} (σ : Ω ≃ᵐ Ω)
-    (hσ : Ergodic (⇑σ) μ) (r : ℕ) {S : Set Ω} (hS : MeasurableSet S) :
+    (hmp : MeasurePreserving (⇑σ) μ μ) (r : ℕ) {S : Set Ω} (hS : MeasurableSet S) :
     μ (⋃ t ∈ Set.Icc (-(r : ℤ)) r, zIter σ t '' S) ≤ (2 * r + 1) * μ S := by
   have hbi : (⋃ t ∈ Set.Icc (-(r : ℤ)) r, zIter σ t '' S)
       = ⋃ t ∈ (Finset.Icc (-(r : ℤ)) r), zIter σ t '' S := by
@@ -548,7 +548,7 @@ lemma measure_iUnion_zIter_window_le {μ : Measure Ω} (σ : Ω ≃ᵐ Ω)
     rw [Int.card_Icc]; omega
   calc ∑ t ∈ Finset.Icc (-(r : ℤ)) r, μ (zIter σ t '' S)
       = ∑ _t ∈ Finset.Icc (-(r : ℤ)) r, μ S := by
-        apply Finset.sum_congr rfl; intro t _; exact measure_zIter_image σ hσ t hS
+        apply Finset.sum_congr rfl; intro t _; exact measure_zIter_image σ hmp t hS
     _ = (Finset.Icc (-(r : ℤ)) r).card • μ S := by rw [Finset.sum_const]
     _ = (2 * r + 1) * μ S := by rw [hcard, nsmul_eq_mul]; push_cast; ring
 
@@ -570,7 +570,7 @@ symmetric window `Icc (-r) r` are pairwise disjoint, their union has measure *ex
 turns the greedy construction's per-level disjointness into the exact `Σ (2r+1) μ A'_r` term in
 the factor-3 bound of `vitali_cover_third`. -/
 lemma measure_iUnion_zIter_window_eq {μ : Measure Ω} (σ : Ω ≃ᵐ Ω)
-    (hσ : Ergodic (⇑σ) μ) (r : ℕ) {S : Set Ω} (hS : MeasurableSet S)
+    (hmp : MeasurePreserving (⇑σ) μ μ) (r : ℕ) {S : Set Ω} (hS : MeasurableSet S)
     (hdisj : ∀ i ∈ Set.Icc (-(r : ℤ)) r, ∀ k ∈ Set.Icc (-(r : ℤ)) r, i ≠ k →
         Disjoint (zIter σ i '' S) (zIter σ k '' S)) :
     μ (⋃ t ∈ Set.Icc (-(r : ℤ)) r, zIter σ t '' S) = (2 * r + 1) * μ S := by
@@ -587,7 +587,7 @@ lemma measure_iUnion_zIter_window_eq {μ : Measure Ω} (σ : Ω ≃ᵐ Ω)
   have hcard : (Finset.Icc (-(r : ℤ)) r).card = 2 * r + 1 := by rw [Int.card_Icc]; omega
   calc ∑ t ∈ Finset.Icc (-(r : ℤ)) r, μ (zIter σ t '' S)
       = ∑ _t ∈ Finset.Icc (-(r : ℤ)) r, μ S :=
-        Finset.sum_congr rfl (fun t _ => measure_zIter_image σ hσ t hS)
+        Finset.sum_congr rfl (fun t _ => measure_zIter_image σ hmp t hS)
     _ = (Finset.Icc (-(r : ℤ)) r).card • μ S := by rw [Finset.sum_const]
     _ = (2 * r + 1) * μ S := by rw [hcard, nsmul_eq_mul]; push_cast; ring
 

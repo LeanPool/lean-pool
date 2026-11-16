@@ -197,7 +197,7 @@ private theorem measure_variable_window_enlargement [StandardBorelSpace Ω]
         · exact Or.inl (Set.mem_biUnion ⟨hω, hb⟩ hz)
       have hBadWU0 : μ (⋃ ω ∈ Bad r, win r ω) = 0 := by
         rw [← hWU_eq r (Bad r)]
-        have hle := measure_iUnion_zIter_window_le σ hσ r (hBadmeas r)
+        have hle := measure_iUnion_zIter_window_le σ hσ.toMeasurePreserving r (hBadmeas r)
         rw [hBadnull r, mul_zero] at hle
         exact le_antisymm hle bot_le
       calc μ (⋃ ω ∈ level r, win r ω)
@@ -230,7 +230,8 @@ private theorem measure_variable_window_enlargement [StandardBorelSpace Ω]
         rw [hlevel_r0 r x hx.1, hlevel_r0 r y hy.1] at hd
         exact Set.disjoint_left.mp hd ⟨i, hi, hxz⟩ ⟨k, hk, hyz⟩
     rw [← hWU_eq r (level r \ Bad r)]
-    rw [measure_iUnion_zIter_window_eq σ hσ r ((hlevelmeas r).diff (hBadmeas r)) hdisjTrim]
+    rw [measure_iUnion_zIter_window_eq σ hσ.toMeasurePreserving r ((hlevelmeas r).diff
+      (hBadmeas r)) hdisjTrim]
     congr 1
     exact measure_sdiff_null (hBadnull r)
   -- Enlarged bound: subadditive over levels (no disjointness needed).
@@ -255,7 +256,7 @@ private theorem measure_variable_window_enlargement [StandardBorelSpace Ω]
       ≤ (2 * ((r + r / G : ℕ) : ℝ≥0∞) + 1) * μ (level r) := by
     intro r
     rw [← hWU_eq (r + r / G) (level r)]
-    exact measure_iUnion_zIter_window_le σ hσ (r + r / G) (hlevelmeas r)
+    exact measure_iUnion_zIter_window_le σ hσ.toMeasurePreserving (r + r / G) (hlevelmeas r)
   -- Combine level-by-level via `enlarge_ratio_le`, then sum.
   have hlevelRatio : ∀ r, (G : ℝ≥0∞) * μ (⋃ ω ∈ level r, win (r + r / G) ω)
       ≤ ((G : ℝ≥0∞) + 1) * μ (⋃ ω ∈ level r, win (r0 ω) ω) := by

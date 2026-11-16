@@ -8,7 +8,7 @@ Authors: George Lee
 
 module
 
-public import Mathlib.MeasureTheory.Integral.DominatedConvergence
+import LeanPool.PointwiseBirkhoff.Main
 public import Mathlib.Dynamics.Ergodic.Function
 
 public import LeanPool.MultiplicativeErgodic.Birkhoff.OscIO
@@ -16,8 +16,8 @@ public import LeanPool.MultiplicativeErgodic.Birkhoff.OscIO
 /-!
 # Convergence of the Birkhoff averages
 
-Stage 4: `ae_tendsto_birkhoffAverage` for an `L¹` observable, assembled from the `L²` case by
-density, plus the comparison of `Aₙf(σx)` with `Aₙf(x)`.
+An independent `L²` convergence proof and an adapter to the pool’s `L¹` Birkhoff theorem,
+plus the comparison of `Aₙf(σx)` with `Aₙf(x)`.
 -/
 
 @[expose] public section
@@ -101,69 +101,15 @@ theorem ae_tendsto_birkhoffAverage_of_memLp_two [IsProbabilityMeasure μ]
   filter_upwards [Lp.coeFn_add y z] with x hx
   exact hx.symm
 
-/-- **Birkhoff's pointwise ergodic theorem.** The Birkhoff averages of an `L¹` observable
-converge almost everywhere.
-
-Route C of the three recorded at the top of this file, following the author's `dyn.tex`:
-stage 1 `maximal_ergodic`, stage 2 `maximal_inequality`, stage 3
-`ae_tendsto_birkhoffAverage_of_coboundary`, stage 4 the orthogonal splitting plus the density
-transfer. The `L²` case is `ae_tendsto_birkhoffAverage_of_memLp_two`; this final step reaches
-`L¹` by truncating `f` at height `N`, which is bounded hence square-integrable, and letting
-`N → ∞` under dominated convergence. -/
+/-- **Birkhoff's pointwise ergodic theorem.** The averages of an integrable observable
+converge almost everywhere. This adapter reuses the pool's conditional-expectation theorem;
+the preceding maximal, density and square-integrable infrastructure remains independently usable. -/
 theorem ae_tendsto_birkhoffAverage [IsProbabilityMeasure μ] (hmp : MeasurePreserving σ μ μ)
-    (hσ : Measurable σ) (f : Ω → ℝ) (hfm : Measurable f) (hf : Integrable f μ) :
+    (f : Ω → ℝ) (hfm : Measurable f) (hf : Integrable f μ) :
     ∀ᵐ x ∂μ, ∃ L : ℝ, Filter.Tendsto
       (fun n : ℕ => birkhoffAverage ℝ σ f n x) Filter.atTop (nhds L) := by
-  refine ae_tendsto_birkhoffAverage_of_dense hmp hσ f hfm ?_
-  intro η hη
-  -- Truncate `f` at height `N`.
-  set T : ℕ → Ω → ℝ := fun N x => if (N : ℝ) < |f x| then 0 else f x with hT
-  have hTm : ∀ N, Measurable (T N) := fun N =>
-    Measurable.ite (measurableSet_lt measurable_const hfm.abs) measurable_const hfm
-  have hTle : ∀ N x, |T N x| ≤ (N : ℝ) := by
-    intro N x
-    simp only [hT]
-    split
-    · simp
-    · exact not_lt.mp (by assumption)
-  have hTsq : ∀ N, Integrable (fun x => (T N x) ^ 2) μ := by
-    intro N
-    refine Integrable.mono' (integrable_const ((N : ℝ) ^ 2))
-      ((hTm N).pow_const 2).aestronglyMeasurable ?_
-    filter_upwards with x
-    rw [Real.norm_eq_abs, abs_of_nonneg (sq_nonneg _), ← sq_abs]
-    nlinarith [abs_nonneg (T N x), hTle N x, Nat.cast_nonneg (α := ℝ) N]
-  -- `∫ |f - T N| → 0` by dominated convergence: the integrand vanishes pointwise and is `≤ |f|`.
-  have hdom : Filter.Tendsto (fun N : ℕ => ∫ x, |f x - T N x| ∂μ) Filter.atTop (nhds 0) := by
-    have hbound : ∀ N : ℕ, ∀ᵐ x ∂μ, ‖|f x - T N x|‖ ≤ |f x| := by
-      intro N
-      filter_upwards with x
-      rw [Real.norm_eq_abs, abs_abs]
-      simp only [hT]
-      split
-      · simp
-      · simp
-    have hptw : ∀ᵐ x ∂μ, Filter.Tendsto (fun N : ℕ => |f x - T N x|) Filter.atTop (nhds 0) := by
-      filter_upwards with x
-      refine tendsto_const_nhds.congr' ?_
-      obtain ⟨N₀, hN₀⟩ := exists_nat_gt |f x|
-      filter_upwards [eventually_ge_atTop N₀] with N hN
-      have : ¬ ((N : ℝ) < |f x|) := by
-        have : (|f x|) < (N : ℝ) := lt_of_lt_of_le hN₀ (by exact_mod_cast hN)
-        linarith
-      simp [hT, this]
-    have := tendsto_integral_of_dominated_convergence (F := fun N : ℕ => fun x => |f x - T N x|)
-      (f := fun _ => (0 : ℝ)) (bound := fun x => |f x|)
-      (fun N => ((hfm.sub (hTm N)).abs).aestronglyMeasurable) hf.abs hbound hptw
-    simpa using this
-  obtain ⟨N, hN⟩ := (hdom.eventually (gt_mem_nhds hη)).exists
-  refine ⟨T N, hTm N, ((hf.sub (integrable_of_sq_integrable (hTm N) (hTsq N))).abs), ?_, ?_⟩
-  · simpa using hN
-  · -- The truncation is square-integrable, so the `L²` case applies.
-    have hmem : MemLp (T N) 2 μ :=
-      (memLp_two_iff_integrable_sq (hTm N).aestronglyMeasurable).mpr (hTsq N)
-    refine ae_tendsto_birkhoffAverage_congr hmp (hmem.coeFn_toLp) ?_
-    exact ae_tendsto_birkhoffAverage_of_memLp_two hmp hσ (hmem.toLp (T N))
+  filter_upwards [LeanPool.PointwiseBirkhoff.birkhoffErgodicTheorem μ hmp hf hfm] with x hx
+  exact ⟨_, hx⟩
 
 /-!
 ### The ergodic case: identifying the limit
@@ -226,7 +172,7 @@ theorem exists_ae_tendsto_birkhoffAverage_const [IsProbabilityMeasure μ] (hσ :
     exact (Finset.measurable_sum _ (fun i _ => hfm.comp (hmp.measurable.iterate i))).div_const _
   have hLm : Measurable L := Measurable.limsup hbm
   -- The averages converge a.e., and where they converge the limit is the `limsup`.
-  have hconv := ae_tendsto_birkhoffAverage hmp hmp.measurable f hfm hf
+  have hconv := ae_tendsto_birkhoffAverage hmp f hfm hf
   have hLlim : ∀ᵐ ω ∂μ, Filter.Tendsto
       (fun n : ℕ => birkhoffAverage ℝ σ f n ω) Filter.atTop (nhds (L ω)) := by
     filter_upwards [hconv] with ω hω

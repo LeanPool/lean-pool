@@ -102,7 +102,7 @@ private theorem exists_good_windows_everywhere [StandardBorelSpace Ω] (μ : Mea
   -- **Coverage survives the shrink**, because the discarded centres form a null set.
   have hnullwin : μ (⋃ ω' ∈ A₀ ∩ Z, (fun i => zIter σ i ω') '' Set.Icc (-(jω ω' : ℤ)) (jω ω'))
       = 0 :=
-    measure_iUnion_windows_of_null σ hσ (hA₀m.inter hZm)
+    measure_iUnion_windows_of_null σ hσ.toMeasurePreserving (hA₀m.inter hZm)
       (measure_mono_null Set.inter_subset_right hZ0) jω
   have hcov : ENNReal.ofReal (1 - ε₁)
       < μ (⋃ ω' ∈ A, (fun i => zIter σ i ω') '' Set.Icc (-(jω ω' : ℤ)) (jω ω')) := by
@@ -147,12 +147,14 @@ private theorem exists_small_badSet_cutoff (μ : Measure Ω) [IsProbabilityMeasu
   have hmp := hσ.toMeasurePreserving
   -- **The endpoint sets are non-null**, so the hitting times are almost surely finite.
   have hΛm0 : μ (leftEnd σ jω '' A) ≠ 0 :=
-    measure_ne_zero_of_endpoints σ hσ hΛmm (leftEnd σ jω) (fun ω' => (jω ω' : ℤ))
+    measure_ne_zero_of_endpoints σ hσ.toMeasurePreserving hΛmm (leftEnd σ jω) (fun ω' => (jω ω'
+      : ℤ))
       (fun ω' hω' => ⟨⟨ω', hω', rfl⟩, by
         rw [leftEnd, ← zIter_add, show (jω ω' : ℤ) + -(jω ω' : ℤ) = 0 from by ring]
         simp [zIter_zero_apply]⟩) hA0
   have hΛp0 : μ (rightEnd σ jω '' A) ≠ 0 :=
-    measure_ne_zero_of_endpoints σ hσ hΛpm (rightEnd σ jω) (fun ω' => -(jω ω' : ℤ))
+    measure_ne_zero_of_endpoints σ hσ.toMeasurePreserving hΛpm (rightEnd σ jω) (fun ω' => -(jω
+      ω' : ℤ))
       (fun ω' hω' => ⟨⟨ω', hω', rfl⟩, by
         rw [rightEnd, ← zIter_add, show -(jω ω' : ℤ) + (jω ω' : ℤ) = 0 from by ring]
         simp [zIter_zero_apply]⟩) hA0
@@ -312,7 +314,7 @@ theorem covering_bound [StandardBorelSpace Ω] (μ : Measure Ω) [IsProbabilityM
     rw [ENNReal.ofReal_pos]; linarith
   have hA0 : μ A ≠ 0 := by
     intro h0
-    exact absurd (measure_iUnion_windows_of_null σ hσ hAm h0 jω) (by
+    exact absurd (measure_iUnion_windows_of_null σ hσ.toMeasurePreserving hAm h0 jω) (by
       intro hz; rw [hz] at hcov; exact absurd hcov (by simp))
   -- `μ B ≤ ε₁`
   have hBμ : μ (uncovered σ jω A) ≤ ENNReal.ofReal ε₁ := by
@@ -325,7 +327,7 @@ theorem covering_bound [StandardBorelSpace Ω] (μ : Measure Ω) [IsProbabilityM
     ring
   -- `μ Λ₊ ≤ ε₁`, the repair of the paper's dropped endpoint terms
   have hΛpμ : μ (rightEnd σ jω '' A) ≤ ENNReal.ofReal ε₁ := by
-    have hbound := measure_rightEnd_le σ hσ N₀ hΛpm hdisj hrad hinj
+    have hbound := measure_rightEnd_le σ hσ.toMeasurePreserving N₀ hΛpm hdisj hrad hinj
     have hfac : (2 * (N₀ : ℝ≥0∞) + 1) ≠ 0 := by positivity
     have hfac' : (2 * (N₀ : ℝ≥0∞) + 1) ≠ ⊤ :=
       ENNReal.add_ne_top.mpr
@@ -422,7 +424,8 @@ theorem covering_bound [StandardBorelSpace Ω] (μ : Measure Ω) [IsProbabilityM
         ≤ 2 * ((n : ℝ) * e) := by
       rw [integral_const_mul, integral_indicator (hbadm n)]
       exact mul_le_mul_of_nonneg_left
-        (setIntegral_birkhoffSum_le σ hσ (hbadm n) (hL1 1) hδ (hbadδ n hn0) n) (by norm_num)
+        (setIntegral_birkhoffSum_le σ hσ.toMeasurePreserving (hbadm n) (hL1 1) hδ (hbadδ n hn0)
+          n) (by norm_num)
     have b5 : ∫ ω, (fun ω => birkhoffSum (σ : Ω → Ω) (gapMaj σ jω A f) n ω) ω ∂μ
         ≤ (n : ℝ) * (2 * e) := by
       rw [integral_birkhoffSum hmp _ hgapMajInt n]

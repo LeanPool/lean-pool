@@ -169,7 +169,8 @@ theorem rokhlin_lemma (μ : Measure Ω) [IsProbabilityMeasure μ] [MeasureTheory
     set L : Set Ω := ⋃ N : ℕ, zIter σ (N : ℤ) '' Ap N with hLdef
     set P' : Set Ω := ⋃ t : ℤ, zIter σ t '' periodicPts σ with hP'def
     have hP' : μ P' = 0 := measure_iUnion_null fun t => by
-      rw [measure_zIter_image σ hσ t (measurableSet_periodicPts σ), measure_periodicPts μ σ hσ]
+      rw [measure_zIter_image σ hσ.toMeasurePreserving t (measurableSet_periodicPts σ),
+        measure_periodicPts μ σ hσ]
     have hsub : (⋃ ω ∈ A, win ω) ⊆ (U ∪ L) ∪ P' := by
       intro x hx
       simp only [hwin, Set.mem_iUnion] at hx
@@ -204,7 +205,7 @@ theorem rokhlin_lemma (μ : Measure Ω) [IsProbabilityMeasure μ] [MeasureTheory
     have hL : μ L ≤ μ A' := by
       calc μ L ≤ ∑' N : ℕ, μ (zIter σ (N : ℤ) '' Ap N) := measure_iUnion_le _
         _ = ∑' N : ℕ, μ (Ap N) := by
-          congr 1; funext N; exact measure_zIter_image σ hσ _ (hAp N)
+          congr 1; funext N; exact measure_zIter_image σ hσ.toMeasurePreserving _ (hAp N)
         _ = μ (⋃ N, Ap N) := by
           rw [measure_iUnion ?_ hAp]
           intro N M hNM
@@ -219,7 +220,7 @@ theorem rokhlin_lemma (μ : Measure Ω) [IsProbabilityMeasure μ] [MeasureTheory
             Set.mem_singleton_iff]
           exact ⟨fun ⟨_, h, _⟩ => h, fun h => ⟨_, h, rfl⟩⟩
     have hsmall : μ A' ≤ ENNReal.ofReal (ε / 2) := by
-      have heq := measure_iUnion_zIter_window_eq (μ := μ) σ hσ (n * K) hA' (by
+      have heq := measure_iUnion_zIter_window_eq (μ := μ) σ hσ.toMeasurePreserving (n * K) hA' (by
         intro a ha b hb hab
         rw [Set.disjoint_left]
         rintro x ⟨ω, hω, rfl⟩ ⟨ω', hω', hx⟩

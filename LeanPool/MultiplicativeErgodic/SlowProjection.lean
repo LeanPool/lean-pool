@@ -532,8 +532,8 @@ theorem Cocycle.exists_slowProjection (R : Cocycle Ω X) [SeparableSpace X] [Bor
       Real.log (max ‖R.L (R.σ^[n] ω)‖ 1) / n) atTop (𝓝 0) := by
     have hgm : Measurable fun ω : Ω => Real.log (max ‖R.L ω‖ 1) :=
       Real.measurable_log.comp (R.measurable_norm_L.max measurable_const)
-    exact L1_orbit_decay R.μ (⇑R.σ) R.ergodic (fun ω => Real.log (max ‖R.L ω‖ 1)) hgm
-      R.forwardIntegrable
+    exact L1_orbit_decay R.μ (⇑R.σ) R.ergodic.toMeasurePreserving
+      (fun ω => Real.log (max ‖R.L ω‖ 1)) hgm R.forwardIntegrable
   obtain ⟨Good, hGood⟩ : ∃ Good : Ω → Prop, ∀ ω, Good ω ↔
       (Tendsto (fun n : ℕ => logEReal ‖R.iterate n ω‖ / (n : EReal)) atTop (𝓝 (lam : EReal)) ∧
       Tendsto (fun n : ℕ =>
