@@ -145,37 +145,31 @@ theorem SubadditiveFamily.truncate_subadditive {σ : Ω → Ω} {f : ℕ → Ω 
   rw [this]
   linarith
 
-theorem SubadditiveFamily.truncate_integrable {σ : Ω → Ω} {f : ℕ → Ω → ℝ} {μ : Measure Ω}
-    [IsProbabilityMeasure μ] (hf : SubadditiveFamily σ f) (hL1 : ∀ n, Integrable (f n) μ)
-    (M : ℝ) (n : ℕ) : Integrable (SubadditiveFamily.truncate f M n) μ := by
-  refine Integrable.mono' ((hL1 n).abs.add (integrable_const (|M| * n)))
-    ((hf.1 n).max measurable_const).aestronglyMeasurable ?_
-  filter_upwards with ω
-  simp only [Pi.add_apply]
-  rw [Real.norm_eq_abs, SubadditiveFamily.truncate]
-  have hMn : |(-(M * (n : ℝ)))| = |M| * n := by
-    rw [abs_neg, abs_mul, Nat.abs_cast]
-  have h1 : (0 : ℝ) ≤ |M| * n := by positivity
-  have h2 : (0 : ℝ) ≤ |f n ω| := abs_nonneg _
-  rcases max_choice (f n ω) (-(M * (n : ℝ))) with h | h <;> rw [h]
-  · linarith
-  · rw [hMn]; linarith
+theorem SubadditiveFamily.truncate_integrable {f : ℕ → Ω → ℝ} {μ : Measure Ω}
+    [IsFiniteMeasure μ] (n : ℕ) (hfn : Integrable (f n) μ) (M : ℝ) :
+    Integrable (SubadditiveFamily.truncate f M n) μ :=
+  hfn.sup (integrable_const (-(M * n)))
 
-/-- The truncated means are bounded below by `-M`, so Fekete's constant for `gᴹ` is real. -/
-theorem SubadditiveFamily.truncate_integral_bddBelow {σ : Ω → Ω} {f : ℕ → Ω → ℝ}
-    {μ : Measure Ω} [IsProbabilityMeasure μ] (hf : SubadditiveFamily σ f)
-    (hL1 : ∀ n, Integrable (f n) μ) (M : ℝ) (hM : 0 ≤ M) :
+/-- Under finite measure, the truncated means have a uniform lower bound obtained by
+integrating their constant floor; the zero index is bounded separately. -/
+theorem SubadditiveFamily.truncate_integral_bddBelow {f : ℕ → Ω → ℝ}
+    {μ : Measure Ω} [IsFiniteMeasure μ] (hL1 : ∀ n, Integrable (f n) μ) (M : ℝ) :
     BddBelow (Set.range fun n : ℕ => (∫ ω, SubadditiveFamily.truncate f M n ω ∂μ) / n) := by
-  refine ⟨-M, ?_⟩
+  refine ⟨min 0 (-M * μ.real Set.univ), ?_⟩
   rintro _ ⟨n, rfl⟩
   rcases Nat.eq_zero_or_pos n with rfl | hn
-  · simpa using neg_nonpos.mpr hM
+  · simp
   have hn0 : (0 : ℝ) < n := by exact_mod_cast hn
+  refine (min_le_right _ _).trans ?_
   rw [le_div_iff₀ hn0]
   have hge : ∀ ω, -(M * n) ≤ SubadditiveFamily.truncate f M n ω := fun ω => le_max_right _ _
-  have := integral_mono (integrable_const (-(M * (n:ℝ))))
-    (hf.truncate_integrable hL1 M n) hge
-  simpa using this
+  have hint := integral_mono (integrable_const (-(M * (n : ℝ))))
+    (SubadditiveFamily.truncate_integrable n (hL1 n) M) hge
+  calc
+    -M * μ.real Set.univ * n = ∫ _ : Ω, -(M * (n : ℝ)) ∂μ := by
+      simp only [integral_const, smul_eq_mul]
+      ring
+    _ ≤ _ := hint
 
 omit [MeasurableSpace Ω] in
 /-- Dividing the truncation through by `n` truncates the *averages* at the fixed level `-M`:
@@ -221,13 +215,12 @@ theorem SubadditiveFamily.abs_truncate_le (f : ℕ → Ω → ℝ) {M : ℝ} (hM
 `∫ gᴹ_n → ∫ f_n` as `M → ∞`: the truncation is eventually inactive at each point, and
 `|gᴹ_n| ≤ |f_n|` uniformly in `M`. -/
 theorem SubadditiveFamily.tendsto_integral_truncate (μ : Measure Ω)
-    {σ : Ω → Ω} {f : ℕ → Ω → ℝ} (hf : SubadditiveFamily σ f) (hL1 : ∀ n, Integrable (f n) μ)
-    (n : ℕ) (hn : 1 ≤ n) :
+    {f : ℕ → Ω → ℝ} (n : ℕ) (hfn : Integrable (f n) μ) (hn : 1 ≤ n) :
     Tendsto (fun M : ℕ => ∫ ω, SubadditiveFamily.truncate f (M : ℝ) n ω ∂μ) atTop
       (nhds (∫ ω, f n ω ∂μ)) := by
   have hn0 : (0 : ℝ) < n := by exact_mod_cast hn
   refine tendsto_integral_of_dominated_convergence (fun ω => |f n ω|)
-    (fun M => ((hf.1 n).max measurable_const).aestronglyMeasurable) (hL1 n).abs
+    (fun _ => hfn.aestronglyMeasurable.sup aestronglyMeasurable_const) hfn.abs
     (fun M => ?_) ?_
   · filter_upwards with ω
     rw [Real.norm_eq_abs]

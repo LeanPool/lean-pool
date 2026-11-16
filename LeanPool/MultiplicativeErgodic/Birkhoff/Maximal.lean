@@ -138,24 +138,14 @@ theorem maxBirkhoff_measurable (hσ : Measurable σ) (hf : Measurable f) (n : �
   | zero => simp only [maxBirkhoff]; exact measurable_const
   | succ n ih => exact measurable_const.max (hf.add (ih.comp hσ))
 
-/-- `Fₙ ∈ L¹` whenever `f` is, by induction on the recursion: `Fₙ ∘ σ` is integrable because `σ`
-preserves `μ`, and `|max 0 g| ≤ |g|`. -/
+/-- `Fₙ ∈ L¹` whenever `f` is, by closure under maxima and composition with the
+measure-preserving transformation. -/
 theorem maxBirkhoff_integrable (hmp : MeasurePreserving σ μ μ) (hf : Integrable f μ)
-    (hfm : Measurable f) (n : ℕ) : Integrable (maxBirkhoff σ f n) μ := by
+    (n : ℕ) : Integrable (maxBirkhoff σ f n) μ := by
   induction n with
   | zero => simpa only [maxBirkhoff] using integrable_fun_zero Ω ℝ μ
   | succ n ih =>
-    have hcomp : Integrable (fun x => maxBirkhoff σ f n (σ x)) μ :=
-      hmp.integrable_comp_of_integrable ih
-    have hsum : Integrable (fun x => f x + maxBirkhoff σ f n (σ x)) μ := hf.add hcomp
-    refine Integrable.mono' hsum.abs
-      ((measurable_const.max (hfm.add ((maxBirkhoff_measurable hmp.measurable hfm n).comp
-        hmp.measurable))).aestronglyMeasurable) ?_
-    filter_upwards with x
-    rw [Real.norm_eq_abs, maxBirkhoff_succ]
-    rcases le_or_gt (f x + maxBirkhoff σ f n (σ x)) 0 with h | h
-    · rw [max_eq_left h, abs_zero]; exact abs_nonneg _
-    · rw [max_eq_right h.le]
+    exact (integrable_fun_zero Ω ℝ μ).sup (hf.add (hmp.integrable_comp_of_integrable ih))
 
 /-- **Maximal ergodic theorem** (Garsia's form; Rudolph 1990 Lemma 3.2).
 On `Eₙ = {x | 0 < Fₙ(x)}` — equivalently, by `maxBirkhoff_pos_iff`, the set where some Birkhoff
@@ -173,7 +163,7 @@ theorem maximal_ergodic (hmp : MeasurePreserving σ μ μ) (hf : Integrable f μ
   | 0 => simp [maxBirkhoff]        -- degenerate: `F₀ ≡ 0`, so the domain is empty
   | (n + 1) =>
   have hFm : ∀ k, Measurable (maxBirkhoff σ f k) := maxBirkhoff_measurable hmp.measurable hfm
-  have hFi : ∀ k, Integrable (maxBirkhoff σ f k) μ := maxBirkhoff_integrable hmp hf hfm
+  have hFi : ∀ k, Integrable (maxBirkhoff σ f k) μ := maxBirkhoff_integrable hmp hf
   have hEmeas : MeasurableSet {x | 0 < maxBirkhoff σ f (n + 1) x} :=
     measurableSet_lt measurable_const (hFm (n + 1))
   have hcompi : Integrable (fun x => maxBirkhoff σ f n (σ x)) μ :=

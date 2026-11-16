@@ -177,6 +177,33 @@ private lemma disjWin_union_of_disjoint_window (σ : Ω ≃ᵐ Ω) (r : ℕ) {A'
   · exact (hmeet k hk i hi).symm
   · exact hB' i hi k hk hik
 
+/-- The set whose radius-`r` window avoids `W` is measurable. Used both in the saturation
+dichotomy and for the per-level candidates in `vitali_cover_third`. -/
+private lemma measurableSet_disjoint_window (σ : Ω ≃ᵐ Ω) (r : ℕ) {S W : Set Ω}
+    (hS : MeasurableSet S) (hW : MeasurableSet W) :
+    MeasurableSet {x ∈ S | Disjoint ((fun t => zIter σ t x) '' Set.Icc (-(r : ℤ)) r) W} := by
+  have heq : {x ∈ S | Disjoint ((fun t => zIter σ t x) '' Set.Icc (-(r : ℤ)) r) W}
+      = S \ ⋃ t ∈ Set.Icc (-(r : ℤ)) r, zIter σ t ⁻¹' W := by
+    ext x
+    simp only [Set.mem_sdiff, Set.mem_iUnion, Set.mem_preimage,
+      Set.disjoint_left, Set.mem_image, not_exists]
+    constructor
+    · rintro ⟨hxS, hdisj⟩
+      exact ⟨hxS, fun t ht hxt => hdisj ⟨t, ht, rfl⟩ hxt⟩
+    · rintro ⟨hxS, hnot⟩
+      refine ⟨hxS, ?_⟩
+      rintro z ⟨t, ht, rfl⟩ hzW
+      exact hnot t ht hzW
+  rw [heq]
+  exact hS.diff (MeasurableSet.biUnion ((Set.finite_Icc _ _).countable)
+    (fun t _ => (measurable_zIter σ t) hW))
+
+/-- The collective window over a symmetric index range of a measurable set is measurable. -/
+private lemma measurableSet_windowUnion (σ : Ω ≃ᵐ Ω) (r : ℕ) {S : Set Ω} (hS : MeasurableSet S) :
+    MeasurableSet (⋃ k ∈ Set.Icc (-(r : ℤ)) r, zIter σ k '' S) :=
+  MeasurableSet.biUnion ((Set.finite_Icc _ _).countable)
+    (fun k _ => measurableSet_zIter_image σ k hS)
+
 /-- **Vitali dichotomy at a fixed window radius.** For measurable `S`, there is a saturated
 `A' ⊆ S` (as in `exists_saturated`) such that *almost every* `x ∈ S` has its radius-`r` window
 meeting the collective radius-`r` window of `A'`. This is the key non-covering-but-meeting fact
@@ -193,26 +220,9 @@ private lemma exists_saturated_dichotomy [StandardBorelSpace Ω] (μ : Measure �
   obtain ⟨A', hA'S, hA'meas, hA'disj, hA'sat⟩ := exists_saturated μ σ r
   refine ⟨A', hA'S, hA'meas, hA'disj, ?_⟩
   set W : Set Ω := ⋃ k ∈ Set.Icc (-(r : ℤ)) r, zIter σ k '' A' with hWdef
-  have hWmeas : MeasurableSet W :=
-    MeasurableSet.biUnion ((Set.finite_Icc _ _).countable)
-      (fun k _ => measurableSet_zIter_image σ k hA'meas)
+  have hWmeas : MeasurableSet W := measurableSet_windowUnion σ r hA'meas
   set B : Set Ω := {x ∈ S | Disjoint ((fun t => zIter σ t x) '' Set.Icc (-(r : ℤ)) r) W}
-    with hBdef
-  have hBmeas : MeasurableSet B := by
-    have heq : B = S \ ⋃ t ∈ Set.Icc (-(r : ℤ)) r, zIter σ t ⁻¹' W := by
-      ext x
-      simp only [hBdef, Set.mem_sdiff, Set.mem_iUnion, Set.mem_preimage,
-        Set.disjoint_left, Set.mem_image, not_exists]
-      constructor
-      · rintro ⟨hxS, hdisj⟩
-        exact ⟨hxS, fun t ht hxt => hdisj ⟨t, ht, rfl⟩ hxt⟩
-      · rintro ⟨hxS, hnot⟩
-        refine ⟨hxS, ?_⟩
-        rintro z ⟨t, ht, rfl⟩ hzW
-        exact hnot t ht hzW
-    rw [heq]
-    exact hS.diff (MeasurableSet.biUnion ((Set.finite_Icc _ _).countable)
-      (fun t _ => (measurable_zIter σ t) hWmeas))
+  have hBmeas : MeasurableSet B := measurableSet_disjoint_window σ r hS hWmeas
   by_contra hBne
   have hBpos : 0 < μ B := pos_iff_ne_zero.mpr hBne
   obtain ⟨B', hB'B, hB'meas, hB'pos, hB'disj⟩ :=
@@ -245,35 +255,6 @@ private lemma exists_saturated_dichotomy [StandardBorelSpace Ω] (μ : Measure �
     hA'sat (A' ∪ B') Set.subset_union_left hUnionSub hUnionMeas hUnionDisj
   rw [h0] at hle0
   exact absurd (le_antisymm hle0 bot_le) hB'pos.ne'
-
-/-- The "not-yet-touching-`W`" set is measurable: a standalone version of the computation
-inlined in `exists_saturated_dichotomy`'s `hBmeas`, needed again for the per-level candidate
-sets in `vitali_cover_third`. -/
-private lemma measurableSet_disjoint_window (σ : Ω ≃ᵐ Ω) (r : ℕ) {S W : Set Ω}
-    (hS : MeasurableSet S) (hW : MeasurableSet W) :
-    MeasurableSet {x ∈ S | Disjoint ((fun t => zIter σ t x) '' Set.Icc (-(r : ℤ)) r) W} := by
-  have heq : {x ∈ S | Disjoint ((fun t => zIter σ t x) '' Set.Icc (-(r : ℤ)) r) W}
-      = S \ ⋃ t ∈ Set.Icc (-(r : ℤ)) r, zIter σ t ⁻¹' W := by
-    ext x
-    simp only [Set.mem_sdiff, Set.mem_iUnion, Set.mem_preimage,
-      Set.disjoint_left, Set.mem_image, not_exists]
-    constructor
-    · rintro ⟨hxS, hdisj⟩
-      exact ⟨hxS, fun t ht hxt => hdisj ⟨t, ht, rfl⟩ hxt⟩
-    · rintro ⟨hxS, hnot⟩
-      refine ⟨hxS, ?_⟩
-      rintro z ⟨t, ht, rfl⟩ hzW
-      exact hnot t ht hzW
-  rw [heq]
-  exact hS.diff (MeasurableSet.biUnion ((Set.finite_Icc _ _).countable)
-    (fun t _ => (measurable_zIter σ t) hW))
-
-/-- The collective window (over a symmetric index range) of a measurable set is measurable;
-standalone version of the `hWmeas` computation inlined in `exists_saturated_dichotomy`. -/
-private lemma measurableSet_windowUnion (σ : Ω ≃ᵐ Ω) (r : ℕ) {S : Set Ω} (hS : MeasurableSet S) :
-    MeasurableSet (⋃ k ∈ Set.Icc (-(r : ℤ)) r, zIter σ k '' S) :=
-  MeasurableSet.biUnion ((Set.finite_Icc _ _).countable)
-    (fun k _ => measurableSet_zIter_image σ k hS)
 
 /-- If `DisjWin σ r A'` holds, distinct points of `A'` have disjoint radius-`r` windows: two
 translates `zIter σ t₁ x`, `zIter σ t₂ y` colliding either force `t₁ = t₂` (hence `x = y` by
@@ -606,8 +587,7 @@ proof term). Originally, for a resuming session, the plan was:
    then (exists_saturated_dichotomy … h).choose else ∅`, then prove `MeasurableSet (Sel k)` for
    all `k` by a separate induction so the `dite_eq_left` branch always fires). Measurability of each
    `S_k` needs the "Disjoint window" set to be measurable, which is the same argument already
-   inlined in `exists_saturated_dichotomy`'s `hBmeas` (worth factoring out as a standalone
-   `measurableSet_disjoint_window` lemma for reuse here).
+   supplied by `measurableSet_disjoint_window`, also used in `exists_saturated_dichotomy`.
 2. **Coverage induction.** Prove by induction on `k = 0, …, B + 1`:
    `μ ({x ∈ A | w x ≥ B - k + 1} \ Good) = 0`, where `Good` is the *fixed* (`k`-independent) set
    `{x ∈ A | ∃ u ≤ B, w x ≤ u ∧ window_{w x} x ⊆ ⋃_{|s| ≤ 3u+1} zIter σ s '' Piece (B - u)}`.
