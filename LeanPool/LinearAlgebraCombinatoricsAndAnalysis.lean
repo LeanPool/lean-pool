@@ -1,0 +1,36 @@
+/-
+Copyright (c) 2026 Michel Hua. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Michel Hua
+-/
+module
+
+public import LeanPool.LinearAlgebraCombinatoricsAndAnalysis.AeNormSqLeOfInner
+public import LeanPool.LinearAlgebraCombinatoricsAndAnalysis.ChoosePrimePowSubOne
+public import LeanPool.LinearAlgebraCombinatoricsAndAnalysis.ContDiffIsMeagreImage
+public import LeanPool.LinearAlgebraCombinatoricsAndAnalysis.CurryR1Space
+public import LeanPool.LinearAlgebraCombinatoricsAndAnalysis.DetPascalMatrix
+public import LeanPool.LinearAlgebraCombinatoricsAndAnalysis.MatrixDetFinTwoCauchyBinet
+public import LeanPool.LinearAlgebraCombinatoricsAndAnalysis.MatrixElementarySubgroup
+public import LeanPool.LinearAlgebraCombinatoricsAndAnalysis.MatrixTraceSubPowOdd
+public import LeanPool.LinearAlgebraCombinatoricsAndAnalysis.MonoidRightZero
+public import LeanPool.LinearAlgebraCombinatoricsAndAnalysis.MulPowCommutator
+public import LeanPool.LinearAlgebraCombinatoricsAndAnalysis.QBinomial
+public import LeanPool.LinearAlgebraCombinatoricsAndAnalysis.QuasiSoberPiCoreCompact
+public import LeanPool.LinearAlgebraCombinatoricsAndAnalysis.SingularValuesSigmaTwo
+
+/-!
+# Singular values, minors and elementary matrices, with lemmas in combinatorics and analysis
+
+Source: url:https://doi.org/10.1073/pnas.37.11.760
+Authors: Michel Hua
+Status: verified
+Main declarations: `LinearMap.sum_singularValues_add_le`,
+  `LinearMap.sum_powersetCard_two_prod_singularValues_add_le`, `Matrix.det_mul_eq_sum_powersetCard`,
+  `Matrix.det_pascal`, `Matrix.isPerfect_elementarySubgroup`,
+  `Matrix.exists_mem_elementarySubgroup_fromBlocks_inv`, `prod_one_add_pow_mul_eq_sum_qBinomial`,
+  `Monoid.exists_forall_mul_eq_self_iff_of_finite`, `Homeomorph.curryOfR1Space`,
+  `ContDiffOn.isMeagre_image`
+Tags: singular-values, ky-fan-inequality, cauchy-binet, elementary-matrices, whitehead-lemma
+MSC: 15A18, 15A15, 15A42, 19B10, 05A30, 11B65, 20F12, 20M10, 54C35, 54E52
+-/
