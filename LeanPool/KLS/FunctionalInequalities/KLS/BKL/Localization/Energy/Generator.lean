@@ -40,6 +40,7 @@ namespace FunctionalInequalities.KLS.BKL.Localization
 variable {n : ℕ} (μ : ProbabilityMeasure (EuclideanSpace ℝ (Fin n)))
   (hc : IsCompact (μ : Measure (EuclideanSpace ℝ (Fin n))).support)
 
+/-- The posterior cumulant tensor evaluated in covariance-normalized coordinate directions. -/
 def energyTensor (p : Param n) (r : ℕ) (u : EuclideanSpace ℝ (Fin n)) :
     (Fin r → Fin n) → ℝ :=
   fun K => cumulant
@@ -47,6 +48,7 @@ def energyTensor (p : Param n) (r : ℕ) (u : EuclideanSpace ℝ (Fin n)) :
     (Fin.cons u fun s =>
       inverseSqrt (cov μ hc p) (EuclideanSpace.basisFun (Fin n) ℝ (K s)))
 
+/-- The lower-order drift contribution in covariance-normalized coordinates. -/
 def lowerTensor (p : Param n) (r : ℕ) (u : EuclideanSpace ℝ (Fin n)) :
     (Fin r → Fin n) → ℝ :=
   fun K => lowerDrift
@@ -54,6 +56,7 @@ def lowerTensor (p : Param n) (r : ℕ) (u : EuclideanSpace ℝ (Fin n)) :
     (Fin.cons u fun s =>
       inverseSqrt (cov μ hc p) (EuclideanSpace.basisFun (Fin n) ℝ (K s))) 0
 
+/-- The noise tensor for coordinate `k` in the evolution of the posterior cumulants. -/
 def noiseTensor (p : Param n) (r : ℕ) (u : EuclideanSpace ℝ (Fin n))
     (k : Fin n) : (Fin r → Fin n) → ℝ :=
   fun K => cumulant
@@ -64,6 +67,7 @@ def noiseTensor (p : Param n) (r : ℕ) (u : EuclideanSpace ℝ (Fin n))
           inverseSqrt (cov μ hc p) (EuclideanSpace.basisFun (Fin n) ℝ (K s)))
         (inverseSqrt (cov μ hc p) (EuclideanSpace.basisFun (Fin n) ℝ k))))
 
+/-- The noise operator conjugated by the inverse square root of the posterior covariance. -/
 def conjugatedNoiseOperator (p : Param n) (k : Fin n) :
     EuclideanSpace ℝ (Fin n) →L[ℝ] EuclideanSpace ℝ (Fin n) :=
   inverseSqrt (cov μ hc p) *

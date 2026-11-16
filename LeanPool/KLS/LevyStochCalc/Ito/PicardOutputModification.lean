@@ -136,14 +136,15 @@ theorem ae_continuous_picardStep_drift
     (h_μ_meas : Measurable (Function.uncurry fun ω s => coeffs.μ s (X s ω) i))
     (h_μ_sq : ∀ b : ℝ, 0 < b → ∫⁻ ω, ∫⁻ s in Set.Icc (0 : ℝ) b,
       (‖coeffs.μ s (X s ω) i‖₊ : ℝ≥0∞) ^ 2 ∂volume ∂P < ⊤) :
-    ∀ᵐ ω ∂P, Continuous fun t => picardStep_drift coeffs X x₀ t ω i := by
+    ∀ᵐ ω ∂P, Continuous fun t => picardStepDrift coeffs X x₀ t ω i := by
   filter_upwards [ae_integrableOn_of_lintegral_sq h_μ_meas h_μ_sq] with ω hω
-  have : (fun t => picardStep_drift coeffs X x₀ t ω i)
+  have : (fun t => picardStepDrift coeffs X x₀ t ω i)
       = fun t => x₀ i + ∫ s in Set.Icc (0 : ℝ) t, coeffs.μ s (X s ω) i := rfl
   rw [this]
   exact continuous_const.add (continuous_setIntegral_Icc_of_integrableOn hω)
 
 omit [MeasurableSpace E] in
+omit [IsProbabilityMeasure P] in
 /-- The Bielecki norm depends on the process only through its almost-everywhere class at each
 time, so a modification has the same norm. -/
 theorem bieleckiNorm_congr_ae (β T : ℝ) {Y Z : ℝ → Ω → (Fin n → ℝ)}
@@ -226,9 +227,9 @@ variable (h_γ_sq : ∀ i : Fin n, ∀ T : ℝ, 0 < T →
 it stands; this replaces its Brownian component by the càdlàg modification of C0d-2, which
 changes it only on a null set at each time. -/
 noncomputable def picardStepMod : ℝ → Ω → (Fin n → ℝ) :=
-  fun t ω i => picardStep_drift coeffs X x₀ t ω i
+  fun t ω i => picardStepDrift coeffs X x₀ t ω i
     + (∑ j : Fin d, sigmaMod W ℱ hℱW coeffs X h_σ_meas h_σ_progMeas h_σ_sq i j t ω)
-    + picardStep_jump N ℱ hℱN coeffs X h_γ_meas h_γ_progMeas h_γ_sq t ω i
+    + picardStepJump N ℱ hℱN coeffs X h_γ_meas h_γ_progMeas h_γ_sq t ω i
 
 /-- The modified step is a modification of the Picard step. -/
 theorem picardStepMod_ae_eq (t : ℝ) :
@@ -245,11 +246,11 @@ theorem picardStepMod_ae_eq (t : ℝ) :
       h_σ_progMeas h_σ_sq p.1 p.2 t
   filter_upwards [hall] with ω hω
   funext i
-  change picardStep_drift coeffs X x₀ t ω i
+  change picardStepDrift coeffs X x₀ t ω i
       + (∑ j : Fin d, sigmaMod W ℱ hℱW coeffs X h_σ_meas h_σ_progMeas h_σ_sq i j t ω)
-      + picardStep_jump N ℱ hℱN coeffs X h_γ_meas h_γ_progMeas h_γ_sq t ω i
+      + picardStepJump N ℱ hℱN coeffs X h_γ_meas h_γ_progMeas h_γ_sq t ω i
     = _
-  simp only [picardStep, Pi.add_apply, picardStep_diffusion,
+  simp only [picardStep, Pi.add_apply, picardStepDiffusion,
     LevyStochCalc.Brownian.Multidim.MultidimBrownianMotion.stochasticIntegral]
   exact congrArg₂ (· + ·)
     (congrArg₂ (· + ·) rfl (Finset.sum_congr rfl fun j _ => hω (i, j))) rfl
@@ -273,14 +274,14 @@ theorem picardStepMod_adapted
     Measurable[ℱ.rightCont t] fun ω =>
       picardStepMod W ℱ hℱW coeffs X h_σ_meas h_σ_progMeas h_σ_sq N hℱN x₀
         h_γ_meas h_γ_progMeas h_γ_sq t ω i := by
-  have hdrift : Measurable[ℱ.rightCont t] fun ω => picardStep_drift coeffs X x₀ t ω i :=
+  have hdrift : Measurable[ℱ.rightCont t] fun ω => picardStepDrift coeffs X x₀ t ω i :=
     ((LevyStochCalc.Probability.ProgressivelyMeasurable.measurable_setIntegral_Icc
       (h_μ_progMeas i) t).mono (ℱ.le_rightCont t) le_rfl).const_add _
   have hσ : ∀ j : Fin d, Measurable[ℱ.rightCont t] fun ω =>
       sigmaMod W ℱ hℱW coeffs X h_σ_meas h_σ_progMeas h_σ_sq i j t ω :=
     fun j => sigmaMod_adapted W ℱ hℱW coeffs X h_σ_meas h_σ_progMeas h_σ_sq i j t
   have hγ : Measurable[ℱ.rightCont t] fun ω =>
-      picardStep_jump N ℱ hℱN coeffs X h_γ_meas h_γ_progMeas h_γ_sq t ω i :=
+      picardStepJump N ℱ hℱN coeffs X h_γ_meas h_γ_progMeas h_γ_sq t ω i :=
     (LevyStochCalc.Poisson.Compensated.stochasticIntegral_adapted N ℱ hℱN
       (fun ω s e => coeffs.γ s (X s ω) e i) (h_γ_meas i) (h_γ_progMeas i)
         (h_γ_sq i) t).stronglyMeasurable.measurable
@@ -322,7 +323,7 @@ theorem picardStepMod_cadlag
   refine ⟨((hright.add (tendsto_finsetSum _ fun j _ => (hσ j t).1)).add (hγ t).1), ?_⟩
   choose L hL using fun j : Fin d => (hσ j t).2
   obtain ⟨Lγ, hLγ⟩ := (hγ t).2
-  refine ⟨picardStep_drift coeffs X x₀ t ω i + (∑ j : Fin d, L j) + Lγ, ?_⟩
+  refine ⟨picardStepDrift coeffs X x₀ t ω i + (∑ j : Fin d, L j) + Lγ, ?_⟩
   exact ((((hdr.continuousAt (x := t)).continuousWithinAt (s := Set.Iio t)).tendsto.add
     (tendsto_finsetSum _ fun j _ => hL j)).add hLγ)
 

@@ -203,7 +203,7 @@ theorem SimplePredictable.progressivelyMeasurable_eval_mul {T : ℝ} (G : Simple
 /-- A simple integrand times a square-integrable process is square-integrable on every
 window. -/
 theorem SimplePredictable.lintegral_eval_mul_sq_lt_top {T : ℝ} (G : SimplePredictable Ω T)
-    {P : Measure Ω} [IsProbabilityMeasure P] {H : Ω → ℝ → ℝ}
+    {P : Measure Ω} {H : Ω → ℝ → ℝ}
     (hq : ∀ T, 0 < T → ∫⁻ ω, ∫⁻ s in Set.Icc (0 : ℝ) T,
       (‖H ω s‖₊ : ℝ≥0∞) ^ 2 ∂volume ∂P < ⊤)
     (T' : ℝ) (hT' : 0 < T') :

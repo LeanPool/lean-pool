@@ -234,8 +234,9 @@ theorem progressivelyMeasurable_indicator_Ioc_mul
       (Set.Ioc a b).indicator (fun _ => (1 : ℝ)) s * H ω s :=
   (progressivelyMeasurable_of_time ℱ (measurable_const.indicator measurableSet_Ioc)).mul hp
 
-/-- Restricting an integrand to `(a, b]` cannot increase its `L²` mass. -/
-theorem abs_indicator_Ioc_mul_le {P : Measure Ω} [IsProbabilityMeasure P] (H : Ω → ℝ → ℝ)
+omit [MeasurableSpace Ω] in
+/-- Restricting an integrand to `(a, b]` cannot increase its absolute value. -/
+theorem abs_indicator_Ioc_mul_le (H : Ω → ℝ → ℝ)
     (a b : ℝ) (ω : Ω) (s : ℝ) :
     |(Set.Ioc a b).indicator (fun _ => (1 : ℝ)) s * H ω s| ≤ |H ω s| := by
   by_cases hs : s ∈ Set.Ioc a b
@@ -244,7 +245,7 @@ theorem abs_indicator_Ioc_mul_le {P : Measure Ω} [IsProbabilityMeasure P] (H : 
     exact abs_nonneg _
 
 /-- Restricting an integrand to `(a, b]` preserves square integrability. -/
-theorem lintegral_sq_indicator_Ioc_mul_lt_top {P : Measure Ω} [IsProbabilityMeasure P]
+theorem lintegral_sq_indicator_Ioc_mul_lt_top {P : Measure Ω}
     (H : Ω → ℝ → ℝ)
     (hq : ∀ T, 0 < T → ∫⁻ ω, ∫⁻ s in Set.Icc (0 : ℝ) T,
       (‖H ω s‖₊ : ℝ≥0∞) ^ 2 ∂volume ∂P < ⊤) (a b : ℝ) :
@@ -255,7 +256,7 @@ theorem lintegral_sq_indicator_Ioc_mul_lt_top {P : Measure Ω} [IsProbabilityMea
   refine lintegral_mono fun ω => lintegral_mono fun s => ?_
   refine pow_le_pow_left' (ENNReal.coe_le_coe.mpr ?_) 2
   rw [← NNReal.coe_le_coe]
-  simpa [Real.norm_eq_abs] using abs_indicator_Ioc_mul_le (P := P) H a b ω s
+  simpa [Real.norm_eq_abs] using abs_indicator_Ioc_mul_le H a b ω s
 
 include hℱ in
 /-- **Fourth moment of an increment of the `L²` Itô integral.** For an integrand bounded by `C`,
@@ -277,7 +278,7 @@ theorem lintegral_stochasticIntegralBrownian_sub_pow_four_le
   have hb : (0 : ℝ) < b := lt_of_le_of_lt ha hab
   have hFle : ∀ (ω : Ω) (s : ℝ),
       |(Set.Ioc a b).indicator (fun _ => (1 : ℝ)) s * H ω s| ≤ |H ω s| :=
-    fun ω s => abs_indicator_Ioc_mul_le (P := P) H a b ω s
+    fun ω s => abs_indicator_Ioc_mul_le H a b ω s
   have hmF := measurable_uncurry_indicator_Ioc_mul H hm a b
   have hpF := progressivelyMeasurable_indicator_Ioc_mul ℱ H hp a b
   have hqF := lintegral_sq_indicator_Ioc_mul_lt_top (P := P) H hq a b
@@ -319,7 +320,7 @@ theorem lintegral_stochasticIntegralBrownian_sub_sq_le
   have hb : (0 : ℝ) < b := lt_of_le_of_lt ha hab
   have hFle : ∀ (ω : Ω) (s : ℝ),
       |(Set.Ioc a b).indicator (fun _ => (1 : ℝ)) s * H ω s| ≤ |H ω s| :=
-    fun ω s => abs_indicator_Ioc_mul_le (P := P) H a b ω s
+    fun ω s => abs_indicator_Ioc_mul_le H a b ω s
   have hmF := measurable_uncurry_indicator_Ioc_mul H hm a b
   have hpF := progressivelyMeasurable_indicator_Ioc_mul ℱ H hp a b
   have hqF := lintegral_sq_indicator_Ioc_mul_lt_top (P := P) H hq a b

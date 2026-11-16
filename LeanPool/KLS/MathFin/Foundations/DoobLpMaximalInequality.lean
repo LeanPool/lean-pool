@@ -349,7 +349,7 @@ private lemma fubini_swap
     Wraps `ENNReal.lintegral_mul_le_Lp_mul_Lq` plus the rpow algebra
     `(x^(p-1))^q = x^p` (using `(p-1)*q = p`). -/
 private lemma holder_apply
-    [IsFiniteMeasure μ] {𝒢 : Filtration ℕ m0} {f : ℕ → Ω → ℝ} {p : ℝ}
+     {𝒢 : Filtration ℕ m0} {f : ℕ → Ω → ℝ} {p : ℝ}
     (hsub : Submartingale f 𝒢 μ) (hnonneg : ∀ n ω, 0 ≤ f n ω)
     (hp : 1 < p) (n : ℕ) :
     (∫⁻ ω, ENNReal.ofReal (f n ω) *

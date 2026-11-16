@@ -106,7 +106,7 @@ private theorem le_of_smul_of_convex_epigraph {E : Type*} [NormedAddCommGroup E]
 
 private theorem ae_mem_closure_and_smul_mem_interior_convexHull_support {E : Type*}
     [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteDimensional ℝ E] [MeasurableSpace E]
-    [BorelSpace E] (μ : Measure E) (h0 : (0 : E) ∈ interior (convexHull ℝ μ.support)) :
+     (μ : Measure E) (h0 : (0 : E) ∈ interior (convexHull ℝ μ.support)) :
     (∀ᵐ x ∂μ, x ∈ closure (interior (convexHull ℝ μ.support))) ∧
       ∀ t : ℝ, 0 ≤ t → t < 1 → ∀ᵐ x ∂μ, t • x ∈ interior (convexHull ℝ μ.support) := by
   let C := convexHull ℝ μ.support

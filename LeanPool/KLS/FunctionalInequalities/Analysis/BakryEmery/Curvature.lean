@@ -273,7 +273,7 @@ variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
 
 omit [CompleteSpace E] in
 private theorem integrable_hessianSqStdBasis
-    (m : Measure E) [m.IsAddHaarMeasure]
+    (m : Measure E)
     {U u : E → ℝ} (hu : ContDiff ℝ ∞ u) (huc : HasCompactSupport u) :
     Integrable (fun x => hessianSqStdBasis u x) (m.tilted (-U)) := by
   classical

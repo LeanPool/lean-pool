@@ -226,7 +226,7 @@ theorem exists_isDiffusion (W : MultidimBrownianMotion P d)
     · have hj :
         ∀ᵐ ω ∂P,
           ∀ i : Fin N,
-            picardStep_jump Z ℱ hZ C X S.h_γ_meas S.h_γ_progMeas S.h_γ_sq t ω i = 0 := by
+            picardStepJump Z ℱ hZ C X S.h_γ_meas S.h_γ_progMeas S.h_γ_sq t ω i = 0 := by
         apply ae_all_iff.mpr
         intro i
         have hiso :=
@@ -257,7 +257,7 @@ theorem exists_isDiffusion (W : MultidimBrownianMotion P d)
       change
         X t ω i =
           vectorItoProcess W ℱ hW H hm hp hq (fun _ => x₀) a t ω i +
-            picardStep_jump Z ℱ hZ C X S.h_γ_meas S.h_γ_progMeas S.h_γ_sq t ω i at hi
+            picardStepJump Z ℱ hZ C X S.h_γ_meas S.h_γ_progMeas S.h_γ_sq t ω i at hi
       simpa only [hz i, add_zero] using hi
   have hXY : ∀ t : ℝ, 0 ≤ t → X t =ᵐ[P] Y t := fun t ht =>
     (hXrep t ht).trans (hY.ae_eq t ht).symm

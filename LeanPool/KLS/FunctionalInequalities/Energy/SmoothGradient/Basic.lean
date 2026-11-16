@@ -96,8 +96,8 @@ theorem toL2_coeFn (f : Test μ) :
 end Test
 
 /-- The finite smooth-gradient pre-energy, realized in real `L²(μ)`. -/
-def preEnergy (μ : ProbabilityMeasure E) [FiniteDimensional ℝ E]
-    [BorelSpace E] [SecondCountableTopology E] :
+def preEnergy (μ : ProbabilityMeasure E)
+      :
     PreEnergy (Lp ℝ 2 (μ : Measure E)) where
   Test := Test μ
   toAmbient := Test.toL2
@@ -105,16 +105,14 @@ def preEnergy (μ : ProbabilityMeasure E) [FiniteDimensional ℝ E]
 
 /-- The ambient realization of the smooth-gradient pre-energy is the test's `L²` class. -/
 @[simp]
-theorem preEnergy_toAmbient (μ : ProbabilityMeasure E) [FiniteDimensional ℝ E]
-    [BorelSpace E] [SecondCountableTopology E]
+theorem preEnergy_toAmbient (μ : ProbabilityMeasure E)
     (f : Test μ) :
     (preEnergy μ).toAmbient f = f.toL2 :=
   rfl
 
 /-- The smooth-gradient pre-energy is exactly the finite squared-gradient integral. -/
 @[simp]
-theorem preEnergy_energy (μ : ProbabilityMeasure E) [FiniteDimensional ℝ E]
-    [BorelSpace E] [SecondCountableTopology E]
+theorem preEnergy_energy (μ : ProbabilityMeasure E)
     (f : Test μ) :
     (preEnergy μ).energy f = f.energy :=
   rfl
@@ -124,14 +122,13 @@ theorem preEnergy_energy (μ : ProbabilityMeasure E) [FiniteDimensional ℝ E]
 This is the intended candidate for the standard canonical energy `2 Ch`. The equality with
 `2 Ch`, and the required smooth-core density statement, are deliberately left as later
 theorems rather than built into this name. -/
-def relaxation (μ : ProbabilityMeasure E) [FiniteDimensional ℝ E]
-    [BorelSpace E] [SecondCountableTopology E] :
+def relaxation (μ : ProbabilityMeasure E)
+      :
     Functional (Lp ℝ 2 (μ : Measure E)) :=
   (preEnergy μ).sequentialRelaxation
 
 /-- Unfolding the smooth-gradient relaxation exposes the generic sequential relaxation. -/
-theorem relaxation_apply (μ : ProbabilityMeasure E) [FiniteDimensional ℝ E]
-    [BorelSpace E] [SecondCountableTopology E]
+theorem relaxation_apply (μ : ProbabilityMeasure E)
     (f : Lp ℝ 2 (μ : Measure E)) :
     relaxation μ f =
       (preEnergy μ).sequentialRelaxation f :=

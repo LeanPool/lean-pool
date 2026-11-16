@@ -540,7 +540,7 @@ omit [CompleteSpace E] in
 /-- Tilt averages of polynomially bounded measurable functions are smooth (finite nonzero measure
 with all exponential moments). -/
 theorem contDiff_tiltAverage_of_norm_le_pow {F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F]
-    [CompleteSpace F] (μ : Measure E) [IsFiniteMeasure μ] [NeZero μ]
+    [CompleteSpace F] (μ : Measure E) [NeZero μ]
     (hexp : ∀ r : ℝ, Integrable (fun x => Real.exp (r * ‖x‖)) μ) {f : E → F}
     (hf : AEStronglyMeasurable f μ) {M : ℝ} {k : ℕ} (hfb : ∀ x, ‖f x‖ ≤ M * (1 + ‖x‖) ^ k) :
     ContDiff ℝ ∞ (tiltAverage μ f) := by

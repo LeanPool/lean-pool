@@ -89,6 +89,7 @@ section Sequence
 
 variable {ε : ℕ → ℝ≥0} {C : ℕ → Finset E} {k n : ℕ}
 
+/-- The chaining sequence starting at `x` and following covering points toward coarser levels. -/
 noncomputable
 def chainingSequenceReverse (C : ℕ → Finset E) (x : E) (k : ℕ) : ℕ → E
   | 0 => x
@@ -117,6 +118,7 @@ lemma chainingSequenceReverse_mem (hC : ∀ i, IsCover (ε i) A (C i)) (hA : A.N
     refine nearestPt_mem ?_
     exact (hC _).nonempty hA
 
+/-- The chaining sequence indexed from the coarsest level and extended by `x` after level `k`. -/
 noncomputable
 def chainingSequence (C : ℕ → Finset E) (x : E) (k n : ℕ) : E :=
   if n ≤ k then chainingSequenceReverse C x k (k - n) else x

@@ -292,6 +292,7 @@ end EuclideanCoordinates
 end FunctionalInequalities.Analysis
 
 namespace FunctionalInequalities.Probability.Stein
+/-- A real square matrix representing a Stein kernel in coordinates. -/
 abbrev KernelMatrix (n : ℕ) := Matrix (Fin n) (Fin n) ℝ
 
 end FunctionalInequalities.Probability.Stein

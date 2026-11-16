@@ -37,7 +37,7 @@ namespace FunctionalInequalities.Probability
 `f`, `∫ f d(μ tilted by e^{-δ‖x‖²/2}) → ∫ f dμ` as `δ → 0⁺`. -/
 theorem integral_quadraticTilt_tendsto {E F : Type*} [NormedAddCommGroup E]
     [MeasurableSpace E] [BorelSpace E]
-    [NormedAddCommGroup F] [NormedSpace ℝ F] [CompleteSpace F]
+    [NormedAddCommGroup F] [NormedSpace ℝ F]
     (μ : Measure E) [IsProbabilityMeasure μ] (f : E → F) (hf : Integrable f μ) :
     Tendsto
       (fun δ : ℝ => ∫ x, f x ∂(μ.tilted (fun x => -(δ / 2) * ‖x‖ ^ 2)))
@@ -142,7 +142,7 @@ theorem quadraticTiltLaw_tendsto (μ : ProbabilityMeasure E) (δseq : ℕ → �
 end QuadraticTiltLaws
 
 /-- Means converge when `μ` has a first moment. -/
-theorem integral_id_quadraticTilt_tendsto [CompleteSpace E] (μ : Measure E) [IsProbabilityMeasure μ]
+theorem integral_id_quadraticTilt_tendsto (μ : Measure E) [IsProbabilityMeasure μ]
     (hint : Integrable (fun x : E => x) μ) :
     Tendsto (fun δ : ℝ => ∫ x : E, x ∂(μ.tilted (fun x => -(δ / 2) * ‖x‖ ^ 2)))
       (𝓝[>] (0 : ℝ)) (𝓝 (∫ x : E, x ∂μ)) :=

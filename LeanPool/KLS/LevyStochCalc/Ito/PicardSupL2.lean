@@ -69,11 +69,11 @@ theorem iSup_dyadicRunMax_drift_le
     (X : ℝ → Ω → (Fin n → ℝ)) (x₀ : Fin n → ℝ) (i : Fin n) {T' : ℝ} (hT' : 0 ≤ T') {ω : Ω}
     (hint : MeasureTheory.IntegrableOn (fun s => coeffs.μ s (X s ω) i)
       (Set.Icc (0 : ℝ) T') volume) :
-    (⨆ m, (‖dyadicRunMax (fun t ω => picardStep_drift coeffs X x₀ t ω i) T' m ω‖₊ : ℝ≥0∞))
+    (⨆ m, (‖dyadicRunMax (fun t ω => picardStepDrift coeffs X x₀ t ω i) T' m ω‖₊ : ℝ≥0∞))
       ≤ (‖x₀ i‖₊ : ℝ≥0∞)
         + (‖∫ s in Set.Icc (0 : ℝ) T', ‖coeffs.μ s (X s ω) i‖‖₊ : ℝ≥0∞) := by
   refine iSup_dyadicRunMax_le_of_bound hT' fun t ht => ?_
-  have hval : picardStep_drift coeffs X x₀ t ω i
+  have hval : picardStepDrift coeffs X x₀ t ω i
       = x₀ i + ∫ s in Set.Icc (0 : ℝ) t, coeffs.μ s (X s ω) i := rfl
   have hsub : Set.Icc (0 : ℝ) t ⊆ Set.Icc (0 : ℝ) T' := Set.Icc_subset_Icc le_rfl ht.2
   have hnn' : (0 : ℝ → ℝ) ≤ᵐ[volume.restrict (Set.Icc (0 : ℝ) T')]
@@ -145,12 +145,12 @@ theorem lintegral_sq_iSup_jump_le
         (‖coeffs.γ s (X s ω) e i‖₊ : ℝ≥0∞) ^ 2 ∂ν ∂volume ∂P < ⊤)
     (i : Fin n) {T' : ℝ} (hT' : 0 ≤ T') :
     ∫⁻ ω, (⨆ m, (‖dyadicRunMax
-        (fun t ω => picardStep_jump N ℱ hℱN coeffs X h_meas h_progMeas h_sq t ω i)
+        (fun t ω => picardStepJump N ℱ hℱN coeffs X h_meas h_progMeas h_sq t ω i)
         T' m ω‖₊ : ℝ≥0∞)) ^ 2 ∂P
       ≤ 4 * ∫⁻ ω, ∫⁻ s in Set.Icc (0 : ℝ) T', ∫⁻ e,
           (‖coeffs.γ s (X s ω) e i‖₊ : ℝ≥0∞) ^ 2 ∂ν ∂volume ∂P := by
   have hmart : MeasureTheory.Martingale
-      (fun t ω => picardStep_jump N ℱ hℱN coeffs X h_meas h_progMeas h_sq t ω i)
+      (fun t ω => picardStepJump N ℱ hℱN coeffs X h_meas h_progMeas h_sq t ω i)
       ℱ.rightCont P :=
     LevyStochCalc.Poisson.Compensated.martingale_stochasticIntegral_rightCont N ℱ hℱN
       (fun ω s e => coeffs.γ s (X s ω) e i) (h_meas i) (h_progMeas i) (h_sq i)
@@ -225,14 +225,14 @@ theorem lintegral_sq_iSup_diffusion_lt_top
         (‖coeffs.σ s (X s ω) i j‖₊ : ℝ≥0∞) ^ 2 ∂volume ∂P < ⊤)
     (i : Fin n) {T' : ℝ} (hT' : 0 < T') :
     ∫⁻ ω, (⨆ m, (‖dyadicRunMax (fun t ω =>
-        picardStep_diffusion W ℱ hℱW coeffs X h_meas h_progMeas h_sq t ω i)
+        picardStepDiffusion W ℱ hℱW coeffs X h_meas h_progMeas h_sq t ω i)
         T' m ω‖₊ : ℝ≥0∞)) ^ 2 ∂P < ⊤ := by
   set g : Fin d → ℝ → Ω → ℝ := fun j t ω =>
     LevyStochCalc.Brownian.Ito.stochasticIntegral (W.W j) ℱ (hℱW j)
       (fun ω' s => coeffs.σ s (X s ω') i j)
       (h_meas i j) (h_progMeas i j) (h_sq i j) t ω with hg
   have hunfold : (fun t (ω : Ω) =>
-      picardStep_diffusion W ℱ hℱW coeffs X h_meas h_progMeas h_sq t ω i)
+      picardStepDiffusion W ℱ hℱW coeffs X h_meas h_progMeas h_sq t ω i)
       = fun t ω => ∑ j : Fin d, g j t ω := rfl
   have hmeas : ∀ j : Fin d, ∀ t : ℝ, Measurable (g j t) := fun j t =>
     measurable_brownianIntegral_slice W ℱ hℱW coeffs X h_meas h_progMeas h_sq i j t
@@ -289,11 +289,11 @@ theorem lintegral_sq_iSup_picardStep_lt_top
     ∫⁻ ω, (⨆ m, (‖dyadicRunMax (fun t ω =>
         picardStep W N ℱ hℱW hℱN coeffs X x₀ h_σ_meas h_σ_progMeas h_σ_sq
           h_γ_meas h_γ_progMeas h_γ_sq t ω i) T' m ω‖₊ : ℝ≥0∞)) ^ 2 ∂P < ⊤ := by
-  set A : ℝ → Ω → ℝ := fun t ω => picardStep_drift coeffs X x₀ t ω i with hA
+  set A : ℝ → Ω → ℝ := fun t ω => picardStepDrift coeffs X x₀ t ω i with hA
   set B : ℝ → Ω → ℝ := fun t ω =>
-    picardStep_diffusion W ℱ hℱW coeffs X h_σ_meas h_σ_progMeas h_σ_sq t ω i with hB
+    picardStepDiffusion W ℱ hℱW coeffs X h_σ_meas h_σ_progMeas h_σ_sq t ω i with hB
   set C : ℝ → Ω → ℝ := fun t ω =>
-    picardStep_jump N ℱ hℱN coeffs X h_γ_meas h_γ_progMeas h_γ_sq t ω i with hC
+    picardStepJump N ℱ hℱN coeffs X h_γ_meas h_γ_progMeas h_γ_sq t ω i with hC
   have hunfold : (fun t (ω : Ω) =>
       picardStep W N ℱ hℱW hℱN coeffs X x₀ h_σ_meas h_σ_progMeas h_σ_sq
         h_γ_meas h_γ_progMeas h_γ_sq t ω i)

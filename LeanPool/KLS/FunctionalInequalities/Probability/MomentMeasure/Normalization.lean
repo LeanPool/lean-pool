@@ -35,6 +35,7 @@ open MeasureTheory Filter Set
 open scoped ENNReal Topology
 variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
   [FiniteDimensional ℝ E] [MeasurableSpace E] [BorelSpace E]
+omit [BorelSpace E] in
 /-- A constant lower bound `-M ≤ c` reduces a signed convex potential, after the constant shift
 by `M`, to the nonnegative case `mem_interior_setOf_ne_top_of_lintegral_ne_top`. -/
 theorem origin_mem_interior_domain_of_lower_bound (μ : Measure E) [IsFiniteMeasure μ]

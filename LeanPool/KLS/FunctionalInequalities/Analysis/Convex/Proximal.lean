@@ -217,6 +217,7 @@ section InnerProduct
 variable {E : Type*}
   [NormedAddCommGroup E] [InnerProductSpace ℝ E]
 
+/-- The Moreau envelope evaluated at the proximal point of the scaled function. -/
 def moreauEnvelope (f : E → ℝ) (ε : ℝ) (x : E) : ℝ :=
   ε⁻¹ *
     (ε * f ((proximalPoint (fun z => ε * f z)) x) +

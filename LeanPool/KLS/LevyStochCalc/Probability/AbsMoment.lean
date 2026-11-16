@@ -90,7 +90,7 @@ theorem integral_abs_le_of_bounded {P : Measure Ω} [IsProbabilityMeasure P] {f 
 
 
 /-- A four-term triangle inequality under the integral. -/
-theorem integral_abs_add_four_le {P : Measure Ω} [IsProbabilityMeasure P]
+theorem integral_abs_add_four_le {P : Measure Ω}
     {a b c d : Ω → ℝ} (ha : Integrable a P) (hb : Integrable b P) (hc : Integrable c P)
     (hd : Integrable d P) {A B C D : ℝ} (hA : ∫ ω, |a ω| ∂P ≤ A)
     (hB : ∫ ω, |b ω| ∂P ≤ B) (hC : ∫ ω, |c ω| ∂P ≤ C) (hD : ∫ ω, |d ω| ∂P ≤ D) :

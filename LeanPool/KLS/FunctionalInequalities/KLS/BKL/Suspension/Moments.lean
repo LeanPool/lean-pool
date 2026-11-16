@@ -42,7 +42,7 @@ theorem copyStat_moments {n N : ℕ} (hN : 0 < N)
 
 /-- Linear functionals of a law with finite second moment are in `L²`. -/
 private theorem memLp_inner {n : ℕ} (μ : Measure (EuclideanSpace ℝ (Fin n)))
-    [IsProbabilityMeasure μ] (hμ2 : MemLp id 2 μ) (u : EuclideanSpace ℝ (Fin n)) :
+     (hμ2 : MemLp id 2 μ) (u : EuclideanSpace ℝ (Fin n)) :
     MemLp (fun x => ⟪u, x⟫) 2 μ := by
   simpa [Function.comp_def] using (innerSL ℝ u).comp_memLp' hμ2
 

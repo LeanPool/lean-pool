@@ -138,6 +138,7 @@ lemma lintegral_div_edist_le_sum_integral_edist_le (hT : Metric.ediam U < ∞)
   apply le_iSup_of_le (i := ⟨s, hs⟩)
   exact le_iSup_of_le (i := ⟨⟨t, ht⟩, by rwa [mul_assoc]⟩) (le_refl _)
 
+/-- The constant in the Kolmogorov–Chentsov bound for the given covering and moment parameters. -/
 noncomputable
 -- the `max 0 ...` in the blueprint is performed by `ENNReal.ofReal` here
 def constL (c : ℝ≥0∞) (d p q β : ℝ) : ℝ≥0∞ :=

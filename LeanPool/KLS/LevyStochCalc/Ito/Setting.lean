@@ -68,8 +68,11 @@ variable {E : Type v} [MeasurableSpace E]
 /-- Coefficient bundle for a jump diffusion: drift `μ`, diffusion `σ`, jump
 size `γ`. Lipschitz / measurability hypotheses live on the headline theorem. -/
 structure JumpDiffusionCoeffs (n d : ℕ) (E : Type v) where
+  /-- The time- and state-dependent drift coefficient. -/
   μ : ℝ → (Fin n → ℝ) → (Fin n → ℝ)
+  /-- The time- and state-dependent diffusion coefficient. -/
   σ : ℝ → (Fin n → ℝ) → (Fin n → Fin d → ℝ)
+  /-- The time-, state- and mark-dependent jump coefficient. -/
   γ : ℝ → (Fin n → ℝ) → E → (Fin n → ℝ)
 
 /-- Joint Lipschitz hypothesis on the jump-diffusion coefficients

@@ -51,15 +51,15 @@ variable {E : Type u} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [Complete
 def expTilt (μ : Measure E) (z : E) : Measure E :=
   μ.tilted fun x => ⟪z, x⟫
 
-/-- The tilt average `F_f(z) = ∫ f dμ_z` (BKL (27)), for functions with values in a real Banach
-space. -/
-def tiltAverage {F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F] [CompleteSpace F]
+/-- The tilt average `F_f(z) = ∫ f dμ_z` (BKL (27)), for functions with values in a real
+normed space. -/
+def tiltAverage {F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F]
     (μ : Measure E) (f : E → F) (z : E) : F :=
   ∫ x, f x ∂(expTilt μ z)
 
 /-- The Taylor tensor `T_d f = (1/d!) ∇^d F_f(0)` (BKL (28)), as a continuous `d`-linear map (its
 norm is the operator norm, not the source's Hilbert–Schmidt norm). -/
-def taylorTensor {F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F] [CompleteSpace F]
+def taylorTensor {F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F]
     (μ : Measure E) (f : E → F) (d : ℕ) : ContinuousMultilinearMap ℝ (fun _ : Fin d => E) F :=
   ((d.factorial : ℝ)⁻¹) • iteratedFDeriv ℝ d (tiltAverage μ f) 0
 
@@ -324,7 +324,7 @@ private theorem exp_smul_hasFDeriv
 section ExponentialDifferentiation
 
 omit [CompleteSpace E]
-private theorem exp_integral_hasFDeriv [CompleteSpace F]
+private theorem exp_integral_hasFDeriv
     (μ : Measure E)
     (hexp : ∀ r : ℝ,
       Integrable (fun x => Real.exp (r * ‖x‖)) μ)
@@ -429,9 +429,9 @@ theorem contDiff_integral_exp_inner_smul (μ : Measure E)
     (fun z => L (∫ x, Real.exp ⟪z, x⟫ • L.symm (g x) ∂μ)) at hs
   rwa [heq] at hs
 
-/-- Tilt averages of bounded measurable functions are smooth for a nonzero finite measure with all
+/-- Tilt averages of bounded measurable functions are smooth for a nonzero measure with all
 exponential moments (BKL: "The function `F_f` is smooth"). -/
-theorem contDiff_tiltAverage (μ : Measure E) [IsFiniteMeasure μ] [NeZero μ]
+theorem contDiff_tiltAverage (μ : Measure E) [NeZero μ]
     (hexp : ∀ r : ℝ, Integrable (fun x => Real.exp (r * ‖x‖)) μ) {f : E → F}
     (hf : AEStronglyMeasurable f μ) {M : ℝ} (hfb : ∀ x, ‖f x‖ ≤ M) :
     ContDiff ℝ ∞ (tiltAverage μ f) := by
@@ -497,6 +497,7 @@ theorem contDiff_tiltAverage (μ : Measure E) [IsFiniteMeasure μ] [NeZero μ]
 end SmoothTiltIntegrals
 
 omit [FiniteDimensional ℝ E] [BorelSpace E] in
+omit [CompleteSpace E] in
 /-- Lemma 3.6 from the tilt identity: if `F_g(w) = ⟪w, F_G(w)⟫` for every `w` with `F_G` smooth,
 then `T_{d+1} g = S_{d+1} T_d G`. This is the tensor part of the proof of
 `taylorTensor_neg_weightedLaplacian`, isolated from the smooth compactly supported setting. -/
@@ -618,7 +619,7 @@ private lemma inner_comp_apply
 
 end TensorEvaluation
 
-omit [FiniteDimensional ℝ E] [BorelSpace E] in
+omit [FiniteDimensional ℝ E] [BorelSpace E] [CompleteSpace E] in
 private lemma taylorTensor_zero_apply
     (μ : Measure E) (g : E → E) (a : Fin 0 → E) :
     taylorTensor μ g 0 a = tiltAverage μ g 0 := by
@@ -640,6 +641,7 @@ theorem taylorTensor_one_neg_weightedLaplacian {V f : E → ℝ} (hV : ContDiff 
       expTilt_tilted_zero (m := m) V] using Hh
 
 omit [CompleteSpace E] [FiniteDimensional ℝ E] [BorelSpace E] in
+omit [CompleteSpace F] in
 /-- Taylor tensors of a function with smooth tilt average are symmetric multilinear maps. -/
 theorem taylorTensor_domDomCongr (μ : Measure E) (f : E → F)
     (hF : ContDiff ℝ ∞ (tiltAverage μ f)) (d : ℕ) (σ : Equiv.Perm (Fin d)) :

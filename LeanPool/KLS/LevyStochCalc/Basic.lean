@@ -122,7 +122,7 @@ For any `ℝ`-valued measurable `h : α × β → ℝ` and SFinite `μ`, `ν`,
 Tonelli + `eLpNorm_nnreal_pow_eq_lintegral` (instantiated at `p = 2`). -/
 lemma lintegral_sq_eq_eLpNorm_sq_on_prod
     {α β : Type*} [MeasurableSpace α] [MeasurableSpace β]
-    {μ : Measure α} {ν : Measure β} [SFinite μ] [SFinite ν]
+    {μ : Measure α} {ν : Measure β} [SFinite ν]
     (h : α × β → ℝ) (hh : Measurable h) :
     ∫⁻ x, ∫⁻ y, (‖h (x, y)‖₊ : ℝ≥0∞) ^ 2 ∂ν ∂μ
       = MeasureTheory.eLpNorm h 2 (μ.prod ν) ^ (2 : ℝ) := by
@@ -158,7 +158,7 @@ Iterated Tonelli + `eLpNorm_nnreal_pow_eq_lintegral`. Used by Compensated chain.
 lemma lintegral_sq_eq_eLpNorm_sq_on_triple_prod
     {α β γ : Type*} [MeasurableSpace α] [MeasurableSpace β] [MeasurableSpace γ]
     {μ : Measure α} {ν : Measure β} {η : Measure γ}
-    [SFinite μ] [SFinite ν] [SFinite η]
+     [SFinite ν] [SFinite η]
     (h : α × β × γ → ℝ) (hh : Measurable h) :
     ∫⁻ x, ∫⁻ y, ∫⁻ z, (‖h (x, y, z)‖₊ : ℝ≥0∞) ^ 2 ∂η ∂ν ∂μ
       = MeasureTheory.eLpNorm h 2 (μ.prod (ν.prod η)) ^ (2 : ℝ) := by
@@ -221,7 +221,7 @@ restriction); square root → reverse triangle continuity → square back → br
 
 Generic version, namespace-shared between Brownian and Compensated chains. -/
 lemma lintegral_sq_eval_tendsto_of_diff_tendsto_zero_brownian_shape
-    {α : Type*} [MeasurableSpace α] {μ : Measure α} [SFinite μ]
+    {α : Type*} [MeasurableSpace α] {μ : Measure α}
     {T : ℝ}
     (H : α → ℝ → ℝ) (h_H_meas : Measurable (Function.uncurry H))
     (ev : ℕ → ℝ → α → ℝ)
@@ -326,7 +326,7 @@ Same pipeline as the binary-product version, but lifting via the ternary-product
 Tonelli bridge `lintegral_sq_eq_eLpNorm_sq_on_triple_prod`. -/
 lemma lintegral_sq_eval_tendsto_of_diff_tendsto_zero_compensated_shape
     {α γ : Type*} [MeasurableSpace α] [MeasurableSpace γ]
-    {μ : Measure α} {η : Measure γ} [SFinite μ] [SFinite η]
+    {μ : Measure α} {η : Measure γ} [SFinite η]
     {T : ℝ}
     (H : α → ℝ → γ → ℝ)
     (h_H_meas : Measurable (fun (p : α × ℝ × γ) => H p.1 p.2.1 p.2.2))

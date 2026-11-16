@@ -24,7 +24,7 @@ namespace FunctionalInequalities.Analysis.BakryEmery
 
 /-- Cumulants are bounded by moments. -/
 theorem norm_cumulant_le_of_moment_bounds
-    {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [CompleteSpace E]
+    {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
     [FiniteDimensional ℝ E] [MeasurableSpace E] [BorelSpace E]
     (ν : Measure E) [IsProbabilityMeasure ν] {r : ℝ} (hr : 0 < r)
     (hexp : Integrable (fun x => Real.exp (r * ‖x‖)) ν) {m : ℕ} {D : ℝ}

@@ -113,7 +113,7 @@ For any `ℝ`-valued `h : Ω × ℝ → ℝ` measurable and `μ`-SFinite,
 `  = eLpNorm h 2 (μ.prod (vol.restrict (Icc 0 T))) ^ 2`.
 Tonelli + `eLpNorm_nnreal_pow_eq_lintegral` (instantiated at `p = 2`). -/
 lemma lintegral_sq_eq_eLpNorm_sq_on_prod_brownian
-    {μ : Measure Ω} [SFinite μ] {T : ℝ} (h : Ω × ℝ → ℝ) (hh : Measurable h) :
+    {μ : Measure Ω} {T : ℝ} (h : Ω × ℝ → ℝ) (hh : Measurable h) :
     ∫⁻ ω, ∫⁻ s in Set.Icc (0 : ℝ) T,
         (‖h (ω, s)‖₊ : ℝ≥0∞) ^ 2 ∂volume ∂μ
       = MeasureTheory.eLpNorm h 2
@@ -155,7 +155,7 @@ Proof: bridge to `eLpNorm² _ 2 (μ.prod (vol.restrict (Icc 0 T)))` via Tonelli;
 square-root step gives `eLpNorm (F - Fn) → 0`; reverse-triangle squeeze
 (`eLpNorm_tendsto_of_eLpNorm_sub_tendsto_zero`) closes; square back. -/
 lemma lintegral_sq_eval_tendsto_of_diff_tendsto_zero_brownian
-    {μ : Measure Ω} [SFinite μ]
+    {μ : Measure Ω}
     {T : ℝ}
     (H : Ω → ℝ → ℝ) (h_H_meas : Measurable (Function.uncurry H))
     (ev : ℕ → ℝ → Ω → ℝ)
@@ -248,7 +248,7 @@ lemma lintegral_sq_eval_tendsto_of_diff_tendsto_zero_brownian
 
 /-- **Bounded dyadic eval lintegral_sq tendsto.** Specialization of
 `lintegral_sq_eval_tendsto_of_diff_tendsto_zero_brownian` to the
-`predictableDyadicSimple_brownian` sequence (bounded `g` case). -/
+`predictableDyadicSimpleBrownian` sequence (bounded `g` case). -/
 lemma predictableDyadicSimple_brownian_eval_norm_tendsto_bounded
     {P : Measure Ω} [IsProbabilityMeasure P]
     {T : ℝ} (hT : 0 < T)
@@ -257,13 +257,13 @@ lemma predictableDyadicSimple_brownian_eval_norm_tendsto_bounded
     (M : ℝ) (h_bound : ∀ ω s, |g ω s| ≤ M) :
     Filter.Tendsto
       (fun n => ∫⁻ ω, ∫⁻ s in Set.Icc (0 : ℝ) T,
-        (‖(predictableDyadicSimple_brownian hT g h_meas M h_bound n).eval s ω‖₊
+        (‖(predictableDyadicSimpleBrownian hT g h_meas M h_bound n).eval s ω‖₊
           : ℝ≥0∞) ^ 2 ∂volume ∂P)
       Filter.atTop
       (nhds (∫⁻ ω, ∫⁻ s in Set.Icc (0 : ℝ) T,
         (‖g ω s‖₊ : ℝ≥0∞) ^ 2 ∂volume ∂P)) :=
   lintegral_sq_eval_tendsto_of_diff_tendsto_zero_brownian (μ := P) (T := T) g h_meas
-    (fun n => (predictableDyadicSimple_brownian hT g h_meas M h_bound n).eval)
+    (fun n => (predictableDyadicSimpleBrownian hT g h_meas M h_bound n).eval)
     (fun n => predictableDyadicSimple_brownian_eval_jointly_measurable hT g h_meas
       M h_bound n)
     (predictableDyadicSimple_brownian_L2_converges (P := P) hT g h_meas M h_bound)
@@ -275,7 +275,7 @@ lemma predictableDyadicSimple_brownian_eval_norm_tendsto_bounded
 integrands.
 
 Mirrors `simplePredictable_dense_L2` but produces adapted simples when `H`
-is progressively measurable. Uses `predictableDyadicSimple_brownian` (the
+is progressively measurable. Uses `predictableDyadicSimpleBrownian` (the
 left-shifted dyadic average construction) via
 `adaptedSimple_dense_L2_bounded_brownian`. -/
 lemma adaptedSimple_dense_L2_brownian

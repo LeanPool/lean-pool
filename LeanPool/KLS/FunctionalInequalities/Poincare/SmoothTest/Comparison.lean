@@ -43,6 +43,7 @@ variable {E : Type u} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [Complete
   [MeasurableSpace E] [BorelSpace E] [SecondCountableTopology E] [FiniteDimensional ℝ E]
   (μ : ProbabilityMeasure E)
 
+omit [BorelSpace E] [SecondCountableTopology E] [FiniteDimensional ℝ E] in
 /-- The concrete smooth-gradient family has exactly the smooth-test fixed-constant inequality.
 Source: identical smooth finite-energy tests and `L2.variance_toLp`; no closure theorem is used. -/
 theorem holds_iff_preEnergy (C : NNReal) :
@@ -70,6 +71,7 @@ theorem holds_iff_preEnergy (C : NNReal) :
     rw [hvariance, NNReal.coe_mul] at ht
     exact ht
 
+omit [BorelSpace E] [SecondCountableTopology E] [FiniteDimensional ℝ E] in
 /-- Smooth-test and ambient relaxed inequalities have the same valid finite constants.
 Source: Blueprint `thm:legacy-relaxed-holds-equivalence` and the abstract pre-energy bridge. -/
 theorem holds_iff_ambient (C : NNReal) :
@@ -77,6 +79,7 @@ theorem holds_iff_ambient (C : NNReal) :
   exact (holds_iff_preEnergy μ C).trans
     (TestFamily.holds_ofPreEnergy_iff μ (Energy.SmoothGradient.preEnergy μ) C)
 
+omit [BorelSpace E] [SecondCountableTopology E] [FiniteDimensional ℝ E] in
 /-- The smooth-test infimum equals the ambient relaxed Rayleigh supremum, also at infinity.
 Source: equality of the sets of valid finite constants; no attainment assumption is needed. -/
 theorem constant_eq_ambient :

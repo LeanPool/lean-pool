@@ -95,6 +95,7 @@ lemma HasBoundedCoveringNumber.subset {B : Set T}
       ENNReal.mul_rpow_of_nonneg _ _ hd]
     ring
 
+/-- A sequence of covers of `A` with bounds on covering radii and covering numbers. -/
 structure IsCoverWithBoundedCoveringNumber (C : ℕ → Set T) (A : Set T) (c : ℕ → ℝ≥0∞) (d : ℕ → ℝ)
     where
   c_ne_top : ∀ n, c n ≠ ∞

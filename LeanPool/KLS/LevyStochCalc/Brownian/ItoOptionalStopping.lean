@@ -101,7 +101,7 @@ theorem progressivelyMeasurable_cutTerm (ℱ : Filtration ℝ ‹MeasurableSpace
   (progressivelyMeasurable_mul_indIoc ℱ hc hct ⟨1, abs_hitInd_le_one τ c⟩
     (measurable_hitInd τ hτ c) (stronglyMeasurable_hitInd τ hτ c)).mul hp
 
-omit [IsProbabilityMeasure P] in
+omit [IsProbabilityMeasure P] [MeasurableSpace Ω] in
 theorem abs_cutTerm_le {H : Ω → ℝ → ℝ} (c t : ℝ) (ω : Ω) (s : ℝ) :
     |cutTerm τ H c t ω s| ≤ |H ω s| := by
   have h1 : |hitInd τ c ω| ≤ 1 := abs_hitInd_le_one τ c ω
@@ -139,7 +139,7 @@ theorem progressivelyMeasurable_indTerm (ℱ : Filtration ℝ ‹MeasurableSpace
     (V := fun _ => (1 : ℝ)) ⟨1, fun ω => by simp⟩ measurable_const stronglyMeasurable_const
   exact (hfun ▸ h1).mul hp
 
-omit [IsProbabilityMeasure P] in
+omit [IsProbabilityMeasure P] [MeasurableSpace Ω] in
 theorem abs_indTerm_le {H : Ω → ℝ → ℝ} (c t : ℝ) (ω : Ω) (s : ℝ) :
     |indTerm H c t ω s| ≤ |H ω s| := by
   have h2 : |indIoc Ω c t ω s| ≤ 1 := indIoc_le_one c t ω s
@@ -148,6 +148,7 @@ theorem abs_indTerm_le {H : Ω → ℝ → ℝ} (c t : ℝ) (ω : Ω) (s : ℝ) 
     _ = |H ω s| := by ring
 
 omit [IsProbabilityMeasure P] in
+omit [MeasurableSpace Ω] in
 /-- **The pathwise decomposition of the cut integrand.** On the window `(0, t]` the integrand cut
 off at `τ` is the integrand minus, for each value `c` the stopping time can take below `t`, the
 piece it carries on `(c, t]`. -/

@@ -183,6 +183,7 @@ end CheegerEnergy
 
 end Test
 
+omit [BorelSpace V] [SecondCountableTopology V] [FiniteDimensional ℝ V] in
 /-- Unconditional direction: relaxing over the larger local-slope test class gives at most the
 smooth-gradient relaxation.  Holds for every law, singular laws included. -/
 theorem localSlope_relaxation_le (ν : ProbabilityMeasure V) (f : Lp ℝ 2 (ν : Measure V)) :

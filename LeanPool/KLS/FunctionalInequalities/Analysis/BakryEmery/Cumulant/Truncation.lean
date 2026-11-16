@@ -193,7 +193,7 @@ supported laws): for a probability measure with one exponential moment `∫ e^{r
 given by Borell's lemma for log-concave laws), the cumulants of the conditional laws on the balls
 `B(0, R)` converge to those of the measure as `R → ∞`. -/
 theorem tendsto_cumulant_cond_closedBall {E : Type*} [NormedAddCommGroup E]
-    [InnerProductSpace ℝ E] [CompleteSpace E] [FiniteDimensional ℝ E] [MeasurableSpace E]
+    [InnerProductSpace ℝ E] [FiniteDimensional ℝ E] [MeasurableSpace E]
     [BorelSpace E] (ν : Measure E) [IsProbabilityMeasure ν] {r : ℝ} (hr : 0 < r)
     (hexp : Integrable (fun x => Real.exp (r * ‖x‖)) ν) (k : ℕ) :
     Tendsto (fun R : ℕ => cumulant (ν[|Metric.closedBall (0 : E) R]) k) atTop

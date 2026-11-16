@@ -328,7 +328,7 @@ end FiniteDimensional
 /--
 For strictly convex `u`, a subgradient `p` at a point `x` of the open ball has `x` as its only ball
 maximiser. -/
-theorem eq_of_truncatedConjugate_eq_of_subgradient [FiniteDimensional ℝ E] {u : E → ℝ}
+theorem eq_of_truncatedConjugate_eq_of_subgradient {u : E → ℝ}
     (hstrict : StrictConvexOn ℝ univ u) {M : ℝ} {x p : E} (hx : ‖x‖ < M)
     (hp : ∀ y, u x + ⟪p, y - x⟫ ≤ u y) {x' : E} (hx' : x' ∈ closedBall (0 : E) M)
     (heq : truncatedConjugate u M p = ⟪p, x'⟫ - u x') : x' = x := by

@@ -17,8 +17,8 @@ public import LeanPool.KLS.LevyStochCalc.Brownian.SimplePredictableRefineInvaria
 The common refinement of two `SimplePredictable Ω T` sharing an endpoint: the
 merged set of partition points, the merged partition `SimplePredictable.mergedπ`
 with its two refining index maps, the induced refinements
-`SimplePredictable.commonRefinement_left`/`_right` and their difference
-`SimplePredictable.sub_on_common`. These give the difference isometry for simple
+`SimplePredictable.commonRefinementLeft`/`_right` and their difference
+`SimplePredictable.subOnCommonRefinement`. These give the difference isometry for simple
 integrals (`SimplePredictable.diff_isometry_simple`) and the Cauchy property of
 the simple integrals of an `L²`-Cauchy sequence of simple predictables
 (`cauchy_of_L2_dense_simple`).
@@ -281,7 +281,7 @@ private lemma SimplePredictable.exists_mergedIdxMap_right
 /-- **C0b.4-pre17: left index map.** For each merged tile `j`, the
 unique `H₁` tile whose interval contains it. Extracted via Choice
 from `exists_mergedIdxMap_left`. -/
-noncomputable def SimplePredictable.mergedIdxMap_left
+noncomputable def SimplePredictable.mergedIdxMapLeft
     {T : ℝ} (H₁ H₂ : SimplePredictable Ω T)
     (h_eq : H₁.partition (Fin.last H₁.N) = H₂.partition (Fin.last H₂.N))
     (j : Fin (H₁.mergedM H₂)) : Fin H₁.N :=
@@ -295,7 +295,7 @@ lemma SimplePredictable.mergedIdxMap_left_idx_le
     {T : ℝ} (H₁ H₂ : SimplePredictable Ω T)
     (h_eq : H₁.partition (Fin.last H₁.N) = H₂.partition (Fin.last H₂.N))
     (j : Fin (H₁.mergedM H₂)) :
-    H₁.partition (H₁.mergedIdxMap_left H₂ h_eq j).castSucc
+    H₁.partition (H₁.mergedIdxMapLeft H₂ h_eq j).castSucc
       ≤ H₁.mergedπ H₂ j.castSucc :=
   (H₁.exists_mergedIdxMap_left H₂ h_eq j).choose_spec.1
 
@@ -305,11 +305,11 @@ lemma SimplePredictable.mergedIdxMap_left_idx_ge
     (h_eq : H₁.partition (Fin.last H₁.N) = H₂.partition (Fin.last H₂.N))
     (j : Fin (H₁.mergedM H₂)) :
     H₁.mergedπ H₂ j.succ
-      ≤ H₁.partition (H₁.mergedIdxMap_left H₂ h_eq j).succ :=
+      ≤ H₁.partition (H₁.mergedIdxMapLeft H₂ h_eq j).succ :=
   (H₁.exists_mergedIdxMap_left H₂ h_eq j).choose_spec.2
 
-/-- **C0b.4-pre20: right index map.** Mirror of `mergedIdxMap_left`. -/
-noncomputable def SimplePredictable.mergedIdxMap_right
+/-- **C0b.4-pre20: right index map.** Mirror of `mergedIdxMapLeft`. -/
+noncomputable def SimplePredictable.mergedIdxMapRight
     {T : ℝ} (H₁ H₂ : SimplePredictable Ω T)
     (h_eq : H₁.partition (Fin.last H₁.N) = H₂.partition (Fin.last H₂.N))
     (j : Fin (H₁.mergedM H₂)) : Fin H₂.N :=
@@ -323,7 +323,7 @@ lemma SimplePredictable.mergedIdxMap_right_idx_le
     {T : ℝ} (H₁ H₂ : SimplePredictable Ω T)
     (h_eq : H₁.partition (Fin.last H₁.N) = H₂.partition (Fin.last H₂.N))
     (j : Fin (H₁.mergedM H₂)) :
-    H₂.partition (H₁.mergedIdxMap_right H₂ h_eq j).castSucc
+    H₂.partition (H₁.mergedIdxMapRight H₂ h_eq j).castSucc
       ≤ H₁.mergedπ H₂ j.castSucc :=
   (H₁.exists_mergedIdxMap_right H₂ h_eq j).choose_spec.1
 
@@ -333,14 +333,14 @@ lemma SimplePredictable.mergedIdxMap_right_idx_ge
     (h_eq : H₁.partition (Fin.last H₁.N) = H₂.partition (Fin.last H₂.N))
     (j : Fin (H₁.mergedM H₂)) :
     H₁.mergedπ H₂ j.succ
-      ≤ H₂.partition (H₁.mergedIdxMap_right H₂ h_eq j).succ :=
+      ≤ H₂.partition (H₁.mergedIdxMapRight H₂ h_eq j).succ :=
   (H₁.exists_mergedIdxMap_right H₂ h_eq j).choose_spec.2
 
 /-- **C0b.4: common refinement of `H₁` (the left input).** Refine
-`H₁` onto the merged partition `mergedπ`, using `mergedIdxMap_left`
+`H₁` onto the merged partition `mergedπ`, using `mergedIdxMapLeft`
 to map merged tiles back to `H₁`-tiles. The resulting SimplePredictable
 has `N = H₁.mergedM H₂`, partition `mergedπ`, and `ξ_j = H₁.ξ (idxMap j)`. -/
-noncomputable def SimplePredictable.commonRefinement_left
+noncomputable def SimplePredictable.commonRefinementLeft
     {T : ℝ} (H₁ H₂ : SimplePredictable Ω T)
     (h_eq : H₁.partition (Fin.last H₁.N) = H₂.partition (Fin.last H₂.N)) :
     SimplePredictable Ω T :=
@@ -348,14 +348,14 @@ noncomputable def SimplePredictable.commonRefinement_left
     (H₁.mergedπ_zero H₂)
     (H₁.mergedπ_last H₂ h_eq)
     (H₁.mergedπ_strictMono H₂)
-    (H₁.mergedIdxMap_left H₂ h_eq)
+    (H₁.mergedIdxMapLeft H₂ h_eq)
     (H₁.mergedIdxMap_left_idx_le H₂ h_eq)
     (H₁.mergedIdxMap_left_idx_ge H₂ h_eq)
 
 /-- **C0b.4: common refinement of `H₂` (the right input).** Mirror of
-`commonRefinement_left`, refining `H₂` onto the same `mergedπ`. The
+`commonRefinementLeft`, refining `H₂` onto the same `mergedπ`. The
 two refinements share `N` and `partition` but differ in `ξ`. -/
-noncomputable def SimplePredictable.commonRefinement_right
+noncomputable def SimplePredictable.commonRefinementRight
     {T : ℝ} (H₁ H₂ : SimplePredictable Ω T)
     (h_eq : H₁.partition (Fin.last H₁.N) = H₂.partition (Fin.last H₂.N)) :
     SimplePredictable Ω T :=
@@ -363,21 +363,21 @@ noncomputable def SimplePredictable.commonRefinement_right
     (H₁.mergedπ_zero H₂)
     (h_eq ▸ H₁.mergedπ_last H₂ h_eq)
     (H₁.mergedπ_strictMono H₂)
-    (H₁.mergedIdxMap_right H₂ h_eq)
+    (H₁.mergedIdxMapRight H₂ h_eq)
     (H₁.mergedIdxMap_right_idx_le H₂ h_eq)
     (H₁.mergedIdxMap_right_idx_ge H₂ h_eq)
 
 /-- **C0b.5: compatibility of the two common refinements.** They have
 the same `N` (both equal to `mergedM`) and the same `partition` function
 (both equal to `mergedπ`). This is what allows pointwise subtraction
-of their `ξ` values to form `sub_on_common`. -/
+of their `ξ` values to form `subOnCommonRefinement`. -/
 lemma SimplePredictable.commonRefinement_compat
     {T : ℝ} (H₁ H₂ : SimplePredictable Ω T)
     (h_eq : H₁.partition (Fin.last H₁.N) = H₂.partition (Fin.last H₂.N)) :
-    (H₁.commonRefinement_left H₂ h_eq).N
-        = (H₁.commonRefinement_right H₂ h_eq).N
-      ∧ HEq (H₁.commonRefinement_left H₂ h_eq).partition
-            (H₁.commonRefinement_right H₂ h_eq).partition := by
+    (H₁.commonRefinementLeft H₂ h_eq).N
+        = (H₁.commonRefinementRight H₂ h_eq).N
+      ∧ HEq (H₁.commonRefinementLeft H₂ h_eq).partition
+            (H₁.commonRefinementRight H₂ h_eq).partition := by
   refine ⟨rfl, HEq.rfl⟩
 
 /-- **C0b.6: subtraction on common refinement.** Given two
@@ -387,7 +387,7 @@ on the common refinement: same partition (`mergedπ`), with
 
 Boundedness uses `abs_sub` (`|a-b| ≤ |a|+|b|`) with the sum of bounds.
 Measurability uses `Measurable.sub`. -/
-noncomputable def SimplePredictable.sub_on_common
+noncomputable def SimplePredictable.subOnCommonRefinement
     {T : ℝ} (H₁ H₂ : SimplePredictable Ω T)
     (h_eq : H₁.partition (Fin.last H₁.N) = H₂.partition (Fin.last H₂.N)) :
     SimplePredictable Ω T where
@@ -396,18 +396,18 @@ noncomputable def SimplePredictable.sub_on_common
   partition_zero := H₁.mergedπ_zero H₂
   partition_le_T := (H₁.mergedπ_last H₂ h_eq) ▸ H₁.partition_le_T
   partition_strictMono := H₁.mergedπ_strictMono H₂
-  ξ := fun j ω => H₁.ξ (H₁.mergedIdxMap_left H₂ h_eq j) ω
-    - H₂.ξ (H₁.mergedIdxMap_right H₂ h_eq j) ω
+  ξ := fun j ω => H₁.ξ (H₁.mergedIdxMapLeft H₂ h_eq j) ω
+    - H₂.ξ (H₁.mergedIdxMapRight H₂ h_eq j) ω
   ξ_bounded := fun j => by
-    obtain ⟨C₁, hC₁⟩ := H₁.ξ_bounded (H₁.mergedIdxMap_left H₂ h_eq j)
-    obtain ⟨C₂, hC₂⟩ := H₂.ξ_bounded (H₁.mergedIdxMap_right H₂ h_eq j)
+    obtain ⟨C₁, hC₁⟩ := H₁.ξ_bounded (H₁.mergedIdxMapLeft H₂ h_eq j)
+    obtain ⟨C₂, hC₂⟩ := H₂.ξ_bounded (H₁.mergedIdxMapRight H₂ h_eq j)
     exact ⟨C₁ + C₂, fun ω =>
       (abs_sub _ _).trans (add_le_add (hC₁ ω) (hC₂ ω))⟩
   ξ_measurable := fun j =>
     (H₁.ξ_measurable _).sub (H₂.ξ_measurable _)
 
 /-- **C0b.7: linearity on common refinement.** The simple integral of
-`sub_on_common H₁ H₂` equals the difference of the simple integrals of
+`subOnCommonRefinement H₁ H₂` equals the difference of the simple integrals of
 `H₁` and `H₂`.
 
 Proof: expand both `simpleIntegral`s via `simpleIntegral_eq_sum`,
@@ -420,12 +420,12 @@ lemma SimplePredictable.simpleIntegral_sub_on_common
     {T : ℝ} (H₁ H₂ : SimplePredictable Ω T)
     (h_eq : H₁.partition (Fin.last H₁.N) = H₂.partition (Fin.last H₂.N))
     (ω : Ω) :
-    simpleIntegral W (H₁.sub_on_common H₂ h_eq) T ω
+    simpleIntegral W (H₁.subOnCommonRefinement H₂ h_eq) T ω
       = simpleIntegral W H₁ T ω - simpleIntegral W H₂ T ω := by
   rw [simpleIntegral_eq_sum]
   change (∑ j : Fin (H₁.mergedM H₂),
-        (H₁.ξ (H₁.mergedIdxMap_left H₂ h_eq j) ω
-          - H₂.ξ (H₁.mergedIdxMap_right H₂ h_eq j) ω)
+        (H₁.ξ (H₁.mergedIdxMapLeft H₂ h_eq j) ω
+          - H₂.ξ (H₁.mergedIdxMapRight H₂ h_eq j) ω)
         * (W.W (H₁.mergedπ H₂ j.succ) ω - W.W (H₁.mergedπ H₂ j.castSucc) ω))
       = simpleIntegral W H₁ T ω - simpleIntegral W H₂ T ω
   simp_rw [sub_mul]
@@ -434,7 +434,7 @@ lemma SimplePredictable.simpleIntegral_sub_on_common
   · -- LHS sum = simpleIntegral W H₁ T ω
     have h_left := H₁.simpleIntegral_refine W (H₁.mergedM H₂) (H₁.mergedπ H₂)
       (H₁.mergedπ_zero H₂) (H₁.mergedπ_last H₂ h_eq) (H₁.mergedπ_strictMono H₂)
-      (H₁.mergedIdxMap_left H₂ h_eq) (H₁.mergedIdxMap_left_idx_le H₂ h_eq)
+      (H₁.mergedIdxMapLeft H₂ h_eq) (H₁.mergedIdxMap_left_idx_le H₂ h_eq)
       (H₁.mergedIdxMap_left_idx_ge H₂ h_eq) (H₁.mergedπ_refines_left H₂) ω
     rw [← h_left, simpleIntegral_eq_sum]
     exact Finset.sum_congr rfl (fun _ _ => rfl)
@@ -442,13 +442,13 @@ lemma SimplePredictable.simpleIntegral_sub_on_common
     have h_right := H₂.simpleIntegral_refine W (H₁.mergedM H₂) (H₁.mergedπ H₂)
       (H₁.mergedπ_zero H₂) (h_eq ▸ H₁.mergedπ_last H₂ h_eq)
       (H₁.mergedπ_strictMono H₂)
-      (H₁.mergedIdxMap_right H₂ h_eq) (H₁.mergedIdxMap_right_idx_le H₂ h_eq)
+      (H₁.mergedIdxMapRight H₂ h_eq) (H₁.mergedIdxMap_right_idx_le H₂ h_eq)
       (H₁.mergedIdxMap_right_idx_ge H₂ h_eq) (H₁.mergedπ_refines_right H₂) ω
     rw [← h_right, simpleIntegral_eq_sum]
     exact Finset.sum_congr rfl (fun _ _ => rfl)
 
 /-- **General-time linearity on common refinement.** The `min (·) t`-clamped
-analogue of `simpleIntegral_sub_on_common`: the simple integral of `sub_on_common`
+analogue of `simpleIntegral_sub_on_common`: the simple integral of `subOnCommonRefinement`
 equals the difference of the simple integrals at *every* time `t`. Uses
 `simpleIntegral_refine_intermediate`. -/
 lemma SimplePredictable.simpleIntegral_sub_on_common_intermediate
@@ -457,12 +457,12 @@ lemma SimplePredictable.simpleIntegral_sub_on_common_intermediate
     {T : ℝ} (H₁ H₂ : SimplePredictable Ω T)
     (h_eq : H₁.partition (Fin.last H₁.N) = H₂.partition (Fin.last H₂.N))
     (t : ℝ) (ω : Ω) :
-    simpleIntegral W (H₁.sub_on_common H₂ h_eq) t ω
+    simpleIntegral W (H₁.subOnCommonRefinement H₂ h_eq) t ω
       = simpleIntegral W H₁ t ω - simpleIntegral W H₂ t ω := by
   unfold simpleIntegral
   change (∑ j : Fin (H₁.mergedM H₂),
-        (H₁.ξ (H₁.mergedIdxMap_left H₂ h_eq j) ω
-          - H₂.ξ (H₁.mergedIdxMap_right H₂ h_eq j) ω)
+        (H₁.ξ (H₁.mergedIdxMapLeft H₂ h_eq j) ω
+          - H₂.ξ (H₁.mergedIdxMapRight H₂ h_eq j) ω)
         * (W.W (min (H₁.mergedπ H₂ j.succ) t) ω
             - W.W (min (H₁.mergedπ H₂ j.castSucc) t) ω))
       = simpleIntegral W H₁ t ω - simpleIntegral W H₂ t ω
@@ -471,19 +471,19 @@ lemma SimplePredictable.simpleIntegral_sub_on_common_intermediate
   congr 1
   · have h_left := H₁.simpleIntegral_refine_intermediate W (H₁.mergedM H₂) (H₁.mergedπ H₂)
       (H₁.mergedπ_zero H₂) (H₁.mergedπ_last H₂ h_eq) (H₁.mergedπ_strictMono H₂)
-      (H₁.mergedIdxMap_left H₂ h_eq) (H₁.mergedIdxMap_left_idx_le H₂ h_eq)
+      (H₁.mergedIdxMapLeft H₂ h_eq) (H₁.mergedIdxMap_left_idx_le H₂ h_eq)
       (H₁.mergedIdxMap_left_idx_ge H₂ h_eq) (H₁.mergedπ_refines_left H₂) t ω
     rw [← h_left]
     exact Finset.sum_congr rfl (fun _ _ => rfl)
   · have h_right := H₂.simpleIntegral_refine_intermediate W (H₁.mergedM H₂) (H₁.mergedπ H₂)
       (H₁.mergedπ_zero H₂) (h_eq ▸ H₁.mergedπ_last H₂ h_eq)
       (H₁.mergedπ_strictMono H₂)
-      (H₁.mergedIdxMap_right H₂ h_eq) (H₁.mergedIdxMap_right_idx_le H₂ h_eq)
+      (H₁.mergedIdxMapRight H₂ h_eq) (H₁.mergedIdxMap_right_idx_le H₂ h_eq)
       (H₁.mergedIdxMap_right_idx_ge H₂ h_eq) (H₁.mergedπ_refines_right H₂) t ω
     rw [← h_right]
     exact Finset.sum_congr rfl (fun _ _ => rfl)
 
-/-- **C0b.7-aux: pointwise evaluation of `sub_on_common`.** The eval
+/-- **C0b.7-aux: pointwise evaluation of `subOnCommonRefinement`.** The eval
 of the difference SimplePredictable equals the pointwise difference of
 the evals.
 
@@ -496,38 +496,38 @@ lemma SimplePredictable.eval_sub_on_common
     {T : ℝ} (H₁ H₂ : SimplePredictable Ω T)
     (h_eq : H₁.partition (Fin.last H₁.N) = H₂.partition (Fin.last H₂.N))
     (s : ℝ) (ω : Ω) :
-    (H₁.sub_on_common H₂ h_eq).eval s ω
+    (H₁.subOnCommonRefinement H₂ h_eq).eval s ω
       = H₁.eval s ω - H₂.eval s ω := by
   rw [← H₁.refine_eval (H₁.mergedM H₂) (H₁.mergedπ H₂)
         (H₁.mergedπ_zero H₂) (H₁.mergedπ_last H₂ h_eq)
-        (H₁.mergedπ_strictMono H₂) (H₁.mergedIdxMap_left H₂ h_eq)
+        (H₁.mergedπ_strictMono H₂) (H₁.mergedIdxMapLeft H₂ h_eq)
         (H₁.mergedIdxMap_left_idx_le H₂ h_eq)
         (H₁.mergedIdxMap_left_idx_ge H₂ h_eq) s ω]
   rw [← H₂.refine_eval (H₁.mergedM H₂) (H₁.mergedπ H₂)
         (H₁.mergedπ_zero H₂) (h_eq ▸ H₁.mergedπ_last H₂ h_eq)
-        (H₁.mergedπ_strictMono H₂) (H₁.mergedIdxMap_right H₂ h_eq)
+        (H₁.mergedπ_strictMono H₂) (H₁.mergedIdxMapRight H₂ h_eq)
         (H₁.mergedIdxMap_right_idx_le H₂ h_eq)
         (H₁.mergedIdxMap_right_idx_ge H₂ h_eq) s ω]
   unfold SimplePredictable.eval
   change (∑ j : Fin (H₁.mergedM H₂),
         if H₁.mergedπ H₂ j.castSucc < s ∧ s ≤ H₁.mergedπ H₂ j.succ
-        then (H₁.ξ (H₁.mergedIdxMap_left H₂ h_eq j) ω
-              - H₂.ξ (H₁.mergedIdxMap_right H₂ h_eq j) ω)
+        then (H₁.ξ (H₁.mergedIdxMapLeft H₂ h_eq j) ω
+              - H₂.ξ (H₁.mergedIdxMapRight H₂ h_eq j) ω)
         else 0)
       = (∑ j : Fin (H₁.mergedM H₂),
           if H₁.mergedπ H₂ j.castSucc < s ∧ s ≤ H₁.mergedπ H₂ j.succ
-          then H₁.ξ (H₁.mergedIdxMap_left H₂ h_eq j) ω else 0)
+          then H₁.ξ (H₁.mergedIdxMapLeft H₂ h_eq j) ω else 0)
         - (∑ j : Fin (H₁.mergedM H₂),
           if H₁.mergedπ H₂ j.castSucc < s ∧ s ≤ H₁.mergedπ H₂ j.succ
-          then H₂.ξ (H₁.mergedIdxMap_right H₂ h_eq j) ω else 0)
+          then H₂.ξ (H₁.mergedIdxMapRight H₂ h_eq j) ω else 0)
   rw [← Finset.sum_sub_distrib]
   refine Finset.sum_congr rfl (fun j _ => ?_)
   by_cases h_cond : H₁.mergedπ H₂ j.castSucc < s ∧ s ≤ H₁.mergedπ H₂ j.succ
   · simp [h_cond]
   · simp [h_cond]
 
-/-- **C0b.8-pre: adaptedness of `sub_on_common`.** If both inputs are
-adapted to a filtration `ℱ`, so is `sub_on_common`. The
+/-- **C0b.8-pre: adaptedness of `subOnCommonRefinement`.** If both inputs are
+adapted to a filtration `ℱ`, so is `subOnCommonRefinement`. The
 proof: for each merged tile `j`, the input adaptedness gives StronglyMeas
 at `H_k.partition (idxMap_k j).castSucc`. By `Filtration.mono` and
 `mergedIdxMap_k_idx_le` (which says `H_k.partition (idxMap_k j).castSucc
@@ -541,17 +541,17 @@ lemma SimplePredictable.sub_on_common_adapt
       (ℱ (H₁.partition i.castSucc)) (H₁.ξ i))
     (h_adapt₂ : ∀ i : Fin H₂.N, @MeasureTheory.StronglyMeasurable Ω ℝ _
       (ℱ (H₂.partition i.castSucc)) (H₂.ξ i)) :
-    ∀ j : Fin (H₁.sub_on_common H₂ h_eq).N,
+    ∀ j : Fin (H₁.subOnCommonRefinement H₂ h_eq).N,
       @MeasureTheory.StronglyMeasurable Ω ℝ _
-        (ℱ ((H₁.sub_on_common H₂ h_eq).partition j.castSucc))
-        ((H₁.sub_on_common H₂ h_eq).ξ j) := by
+        (ℱ ((H₁.subOnCommonRefinement H₂ h_eq).partition j.castSucc))
+        ((H₁.subOnCommonRefinement H₂ h_eq).ξ j) := by
   intro j
   have h_mono₁ := ℱ.mono
     (H₁.mergedIdxMap_left_idx_le H₂ h_eq j)
   have h_mono₂ := ℱ.mono
     (H₁.mergedIdxMap_right_idx_le H₂ h_eq j)
-  have h₁ := (h_adapt₁ (H₁.mergedIdxMap_left H₂ h_eq j)).mono h_mono₁
-  have h₂ := (h_adapt₂ (H₁.mergedIdxMap_right H₂ h_eq j)).mono h_mono₂
+  have h₁ := (h_adapt₁ (H₁.mergedIdxMapLeft H₂ h_eq j)).mono h_mono₁
+  have h₂ := (h_adapt₂ (H₁.mergedIdxMapRight H₂ h_eq j)).mono h_mono₂
   exact h₁.sub h₂
 
 /-- **C0b.8: L² isometry on the difference of simples (`diff isometry`).**
@@ -559,9 +559,9 @@ For two adapted simple integrands `H₁, H₂` sharing endpoint, the L² norm
 squared of `∫H₁ dW − ∫H₂ dW` equals the (joint) L² norm squared of
 `H₁.eval − H₂.eval` over `[0,T] × Ω`.
 
-Direct consequence of `simpleIntegral_isometry` applied to `sub_on_common`,
+Direct consequence of `simpleIntegral_isometry` applied to `subOnCommonRefinement`,
 combined with `simpleIntegral_sub_on_common` (LHS rewrite) and
-`eval_sub_on_common` (RHS rewrite). The adaptedness of `sub_on_common`
+`eval_sub_on_common` (RHS rewrite). The adaptedness of `subOnCommonRefinement`
 follows from `sub_on_common_adapt`. -/
 theorem SimplePredictable.diff_isometry_simple
     {P : MeasureTheory.Measure Ω} [MeasureTheory.IsProbabilityMeasure P]
@@ -580,7 +580,7 @@ theorem SimplePredictable.diff_isometry_simple
   have h_LHS :
       ∫⁻ ω, (‖simpleIntegral W H₁ T ω - simpleIntegral W H₂ T ω‖₊
               : ℝ≥0∞) ^ 2 ∂P
-        = ∫⁻ ω, (‖simpleIntegral W (H₁.sub_on_common H₂ h_eq) T ω‖₊
+        = ∫⁻ ω, (‖simpleIntegral W (H₁.subOnCommonRefinement H₂ h_eq) T ω‖₊
               : ℝ≥0∞) ^ 2 ∂P := by
     refine MeasureTheory.lintegral_congr (fun ω => ?_)
     rw [SimplePredictable.simpleIntegral_sub_on_common W H₁ H₂ h_eq ω]
@@ -588,14 +588,14 @@ theorem SimplePredictable.diff_isometry_simple
       ∫⁻ ω, ∫⁻ s in Set.Icc (0 : ℝ) T,
           (‖H₁.eval s ω - H₂.eval s ω‖₊ : ℝ≥0∞) ^ 2 ∂volume ∂P
         = ∫⁻ ω, ∫⁻ s in Set.Icc (0 : ℝ) T,
-          (‖((H₁.sub_on_common H₂ h_eq).eval s ω)‖₊ : ℝ≥0∞) ^ 2 ∂volume ∂P :=
+          (‖((H₁.subOnCommonRefinement H₂ h_eq).eval s ω)‖₊ : ℝ≥0∞) ^ 2 ∂volume ∂P :=
         by
     refine MeasureTheory.lintegral_congr (fun ω => ?_)
     refine MeasureTheory.setLIntegral_congr_fun measurableSet_Icc
       (fun s _ => ?_)
     rw [SimplePredictable.eval_sub_on_common H₁ H₂ h_eq s ω]
   rw [h_LHS, h_RHS]
-  exact simpleIntegral_isometry W ℱ hℱ hT (H₁.sub_on_common H₂ h_eq)
+  exact simpleIntegral_isometry W ℱ hℱ hT (H₁.subOnCommonRefinement H₂ h_eq)
     (SimplePredictable.sub_on_common_adapt ℱ H₁ H₂ h_eq h_adapt₁ h_adapt₂)
 
 /-- **C0b.9: Cauchy preservation for `simpleIntegral`.** If an

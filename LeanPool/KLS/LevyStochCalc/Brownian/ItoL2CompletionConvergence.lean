@@ -46,7 +46,7 @@ integrable), then `F` is an `ℱ`-martingale. The conditional expectation is an
 (#5) and its compensated analogue (#6). -/
 lemma martingale_of_tendsto_eLpNorm_one
     {m0 : MeasurableSpace Ω} {μ : MeasureTheory.Measure Ω}
-    [MeasureTheory.IsFiniteMeasure μ] {ℱ : MeasureTheory.Filtration ℝ m0}
+    {ℱ : MeasureTheory.Filtration ℝ m0}
     {M : ℕ → ℝ → Ω → ℝ} {F : ℝ → Ω → ℝ}
     (hM : ∀ n, MeasureTheory.Martingale (M n) ℱ μ)
     (hMint : ∀ n t, MeasureTheory.Integrable (M n t) μ)
@@ -522,7 +522,7 @@ lemma simpleIntegral_eq_zero_of_nonpos
 
 /-- `∫⁻ ‖g‖₊² = ofReal (∫ g²)` for `g ∈ L²`. -/
 lemma lintegral_nnnorm_sq_eq_ofReal_integral
-    {P : MeasureTheory.Measure Ω} [MeasureTheory.IsProbabilityMeasure P]
+    {P : MeasureTheory.Measure Ω}
     {g : Ω → ℝ} (hg : MeasureTheory.MemLp g 2 P) :
     ∫⁻ ω, (‖g ω‖₊ : ℝ≥0∞) ^ 2 ∂P = ENNReal.ofReal (∫ ω, (g ω) ^ 2 ∂P) := by
   rw [MeasureTheory.ofReal_integral_eq_lintegral_ofReal hg.integrable_sq

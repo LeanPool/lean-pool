@@ -106,7 +106,7 @@ theorem integrableExpSet_score_posterior (μ : Measure E) [IsProbabilityMeasure 
 end ScoreExponentialMoments
 
 private theorem normalizedDensity_eq_gaussian_weight {μ : Measure E}
-    [IsProbabilityMeasure μ] {ρ : E → ℝ}
+     {ρ : E → ℝ}
     (hρ : FunctionalInequalities.KLS.IsBorellDensity μ volume ρ)
     {s : ℝ} (hs : 0 < s) (x : E) :
     normalizedDensity ρ s x =

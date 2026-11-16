@@ -304,7 +304,7 @@ end FiniteIndex
 Uniform positive mass of the strict open halfspaces through an interior point of the convex hull of
 the support. -/
 theorem exists_pos_le_measure_halfspace_of_mem_interior_convexHull_support
-    [FiniteDimensional ℝ E] [MeasurableSpace E] [BorelSpace E] (μ : ProbabilityMeasure E)
+    [FiniteDimensional ℝ E] [MeasurableSpace E] (μ : ProbabilityMeasure E)
     {x₀ : E} (hx₀ : x₀ ∈ interior (convexHull ℝ (μ : Measure E).support)) :
     ∃ m : ℝ,
       0 < m ∧ m ≤ 1 ∧ ∀ u : E, ‖u‖ = 1 → m ≤ ((μ : Measure E) {x | 0 < ⟪u, x - x₀⟫}).toReal := by
@@ -423,8 +423,8 @@ private lemma effective_domain_convex (φ : E → EReal)
 An interior point of the convex hull of the support of a finite measure is interior to the effective
 domain of every
 nonnegative extended-real potential with convex real epigraph and finite integral. -/
-theorem mem_interior_setOf_ne_top_of_lintegral_ne_top [FiniteDimensional ℝ E] [BorelSpace E]
-    (μ : Measure E) [IsFiniteMeasure μ] (x₀ : E) :
+theorem mem_interior_setOf_ne_top_of_lintegral_ne_top [FiniteDimensional ℝ E]
+    (μ : Measure E) (x₀ : E) :
     x₀ ∈ interior (convexHull ℝ μ.support) →
       ∀ φ : E → EReal,
         (∀ x, 0 ≤ φ x) →
@@ -474,7 +474,7 @@ point of the convex
 hull of the support of a finite Borel measure. -/
 theorem exists_pos_le_measure_halfspace_of_mem_interior_convexHull_support_of_isFiniteMeasure
     {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [FiniteDimensional ℝ E]
-    [MeasurableSpace E] [BorelSpace E] (μ : Measure E) [IsFiniteMeasure μ] {x₀ : E}
+    [MeasurableSpace E] (μ : Measure E) [IsFiniteMeasure μ] {x₀ : E}
     (hx₀ : x₀ ∈ interior (convexHull ℝ μ.support)) :
     ∃ m : ℝ,
       0 < m ∧ m ≤ μ.real Set.univ ∧ ∀ u : E, ‖u‖ = 1 → m ≤ μ.real {x | 0 < ⟪u, x - x₀⟫} := by
@@ -660,7 +660,7 @@ there is `C > 0`, chosen before `φ`, with `φ x₀ ≤ C · (∫⁻ φ dμ).toR
 extended-real `φ` with convex
 real epigraph, a.e.-measurable `toENNReal` and finite lintegral. -/
 theorem exists_pos_le_mul_lintegral_toReal_of_convex_epigraph [MeasurableSpace E]
-    [FiniteDimensional ℝ E] [BorelSpace E] (μ : Measure E) [IsFiniteMeasure μ] (x₀ : E) :
+    [FiniteDimensional ℝ E] (μ : Measure E) [IsFiniteMeasure μ] (x₀ : E) :
     x₀ ∈ interior (convexHull ℝ μ.support) →
       ∃ C : ℝ,
         0 < C ∧
@@ -724,7 +724,7 @@ first moment and
 zero barycenter that is not concentrated on any proper linear subspace. -/
 theorem zero_mem_interior_convexHull_support_of_integral_eq_zero {E : Type*}
     [NormedAddCommGroup E] [InnerProductSpace ℝ E] [FiniteDimensional ℝ E] [MeasurableSpace E]
-    [BorelSpace E] (μ : Measure E) [IsFiniteMeasure μ] (hμ : μ ≠ 0)
+     (μ : Measure E) [IsFiniteMeasure μ] (hμ : μ ≠ 0)
     (hsub : ∀ V : Submodule ℝ E, μ (V : Set E)ᶜ = 0 → V = ⊤)
     (hint : Integrable (fun x : E => x) μ) (hbar : ∫ x, x ∂μ = 0) :
     (0 : E) ∈ interior (convexHull ℝ μ.support) := by

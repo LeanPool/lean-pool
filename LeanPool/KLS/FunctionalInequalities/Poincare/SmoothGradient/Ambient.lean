@@ -32,20 +32,20 @@ variable {E : Type u} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [Complete
   [MeasurableSpace E]
 
 /-- The optimal Poincaré constant of the smooth-gradient sequential relaxation. -/
-def optimalConstant (μ : ProbabilityMeasure E) [FiniteDimensional ℝ E]
-    [BorelSpace E] [SecondCountableTopology E] : ENNReal :=
+def optimalConstant (μ : ProbabilityMeasure E)
+      : ENNReal :=
   L2Energy.optimalConstant μ (Energy.SmoothGradient.relaxation μ)
 
 /-- Validity of a finite Poincaré constant on the finite domain of the smooth-gradient
 sequential relaxation. -/
-def Holds (μ : ProbabilityMeasure E) [FiniteDimensional ℝ E]
-    [BorelSpace E] [SecondCountableTopology E] (C : NNReal) : Prop :=
+def Holds (μ : ProbabilityMeasure E)
+      (C : NNReal) : Prop :=
   L2Energy.Holds μ (Energy.SmoothGradient.relaxation μ) C
 
 /-- A finite constant is valid for the smooth-gradient relaxation exactly when it bounds its
 optimal extended constant. -/
 theorem holds_iff_constant_le (μ : ProbabilityMeasure E)
-    [FiniteDimensional ℝ E] [BorelSpace E] [SecondCountableTopology E] (C : NNReal) :
+       (C : NNReal) :
     Holds μ C ↔
       optimalConstant μ ≤ (C : ENNReal) := by
   exact L2Energy.holds_iff_constant_le μ (Energy.SmoothGradient.relaxation μ) C

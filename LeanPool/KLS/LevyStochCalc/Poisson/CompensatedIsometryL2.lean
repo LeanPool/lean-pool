@@ -462,7 +462,7 @@ theorem simpleIntegral_L2_isometry_compensatedPoisson_sumForm
 /-! ## C0b-Compensated mirror chain
 
 The `simpleIntegral N φ T` lifted into `Lp ℝ 2 P` framework, mirroring
-`Brownian.SimplePredictableRefine.simpleIntegralLp_brownian` etc. -/
+`Brownian.SimplePredictableRefine.simpleIntegralLpBrownian` etc. -/
 
 /-- **Finite L²-norm of `simpleIntegral N φ T`.** Combines `simpleIntegral_isometry`
 (which gives `∫⁻ ‖simpleIntegral‖² = ∑_i ν̂(rect_i) · ∫⁻ ξ_i²`) with the
@@ -560,13 +560,13 @@ lemma simpleIntegral_memLp_compensated
 /-- **B1: Simple integral against compensated Poisson `Ñ` (renamed alias).**
 
 This is the standard `simpleIntegral` in this namespace, exposed under the
-roadmap's explicit name `simpleIntegral_compensatedPoisson`. Mathematical
+roadmap's explicit name `simpleIntegralCompensatedPoisson`. Mathematical
 content:
 `∫ g dÑ := ∑_i ξ_i · Ñ((t_i, t_{i+1}] × A_i)`
 where `Ñ(B) := N(B) − ν̂(B)` is the compensated random measure
 (`PoissonRandomMeasure.compensated`); equivalently
 `∫ g dÑ = ∫ g dN − ∫ g(z) ν(dz) dt` for simple `g`. -/
-@[reducible] noncomputable def simpleIntegral_compensatedPoisson
+@[reducible] noncomputable def simpleIntegralCompensatedPoisson
     {P : Measure Ω} [IsProbabilityMeasure P]
     {ν : Measure E} [SigmaFinite ν]
     (N : LevyStochCalc.Poisson.PoissonRandomMeasure P ν)

@@ -43,6 +43,7 @@ namespace ProbabilityTheory
 
 variable {ι : Type*} {d : ℕ}
 
+/-- The Brownian covariance matrix on a finite set of times. -/
 def brownianCovMatrix (I : Finset ℝ≥0) : Matrix I I ℝ := Matrix.of fun s t ↦ min s.1 t.1
 
 lemma brownianCovMatrix_apply {I : Finset ℝ≥0} (s t : I) :
@@ -64,6 +65,7 @@ lemma posSemidef_brownianCovMatrix (I : Finset ℝ≥0) :
 
 variable [DecidableEq ι]
 
+/-- The centered finite-dimensional Gaussian law with Brownian covariance. -/
 noncomputable
 def gaussianProjectiveFamily (I : Finset ℝ≥0) : Measure (I → ℝ) :=
   multivariateGaussian 0 (brownianCovMatrix I) |>.map (MeasurableEquiv.toLp 2 (I → ℝ)).symm
@@ -178,6 +180,7 @@ lemma measurePreserving_restrict_gaussianProjectiveFamily {I J : Finset ℝ≥0}
   measurable := Finset.measurable_restrict₂ _
   map_eq := isProjectiveMeasureFamily_gaussianProjectiveFamily J I hIJ |>.symm
 
+/-- The projective limit of the finite-dimensional Brownian Gaussian laws. -/
 noncomputable
 def gaussianLimit : Measure (ℝ≥0 → ℝ) :=
   projectiveLimit gaussianProjectiveFamily isProjectiveMeasureFamily_gaussianProjectiveFamily

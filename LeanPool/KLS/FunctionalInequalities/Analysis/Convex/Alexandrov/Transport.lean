@@ -150,7 +150,8 @@ section FiniteDimensional
 variable {E : Type*}
   [NormedAddCommGroup E] [InnerProductSpace ℝ E] [FiniteDimensional ℝ E] [MeasurableSpace E]
 
-private lemma isCompact_subgradientImage_local [BorelSpace E]
+omit [MeasurableSpace E] in
+private lemma isCompact_subgradientImage_local
     {u : E → ℝ} {L : NNReal} (hu : LipschitzWith L u) {S : Set E}
     (hS : IsCompact S) :
     IsCompact (subgradientImage u S) := by

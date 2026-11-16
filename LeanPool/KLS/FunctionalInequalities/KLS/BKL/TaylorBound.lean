@@ -258,7 +258,7 @@ private theorem hessian_const_mul {n : ℕ} {g : EuclideanSpace ℝ (Fin n) → 
 /-- A genuine nonzero smooth affine-orthogonal L2 test can be normalized to all of (108),
 retaining smooth infinity and an actual Hessian bound. -/
 private theorem normalize_smooth_test {n : ℕ}
-    (μ : Measure (EuclideanSpace ℝ (Fin n))) [IsProbabilityMeasure μ]
+    (μ : Measure (EuclideanSpace ℝ (Fin n)))
     {g : EuclideanSpace ℝ (Fin n) → ℝ} (hg : ContDiff ℝ ∞ g)
     (hM : ∃ M : ℝ, ∀ x, ‖fderiv ℝ (fderiv ℝ g) x‖ ≤ M)
     (hg2 : MemLp g 2 μ) (hg0 : ∫ x, g x ∂μ = 0)

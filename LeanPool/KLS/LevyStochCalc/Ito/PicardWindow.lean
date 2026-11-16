@@ -73,6 +73,7 @@ theorem lintegral_lintegral_sq_lt_top_of_supL2 {Z : ℝ → Ω → (Fin n → �
 /-! ### Auxiliary Bielecki facts -/
 
 omit [MeasurableSpace E] in
+omit [IsProbabilityMeasure P] in
 /-- Two path maps agreeing a.s. at every time of the window have equal Bielecki norms. -/
 theorem bieleckiNorm_congr_ae_on (β T : ℝ) {Y Z : ℝ → Ω → (Fin n → ℝ)}
     (h : ∀ t ∈ Set.Icc (0 : ℝ) T, Y t =ᵐ[P] Z t) :
@@ -87,6 +88,7 @@ theorem bieleckiNorm_congr_ae_on (β T : ℝ) {Y Z : ℝ → Ω → (Fin n → �
   rw [hinner]
 
 omit [MeasurableSpace E] in
+omit [IsProbabilityMeasure P] in
 /-- A finite `S²` norm gives a finite Bielecki norm at weight `0`. -/
 theorem bieleckiNorm_lt_top_of_supL2 {T : ℝ} (hT : 0 < T) {Z : ℝ → Ω → (Fin n → ℝ)}
     (hS : ∀ T' : ℝ, 0 < T' →
@@ -110,6 +112,7 @@ theorem bieleckiNorm_lt_top_of_supL2 {T : ℝ} (hT : 0 < T) {Z : ℝ → Ω → 
     _ ≤ M ^ ((1 : ℝ) / 2) := ENNReal.rpow_le_rpow hslice (by norm_num)
 
 omit [MeasurableSpace E] in
+omit [IsProbabilityMeasure P] in
 /-- The Bielecki norm of a difference of two path maps of finite norm is finite. -/
 theorem bieleckiNorm_sub_lt_top_of_lt_top {β : ℝ} (hβ : 0 ≤ β) (T : ℝ)
     {X Y : ℝ → Ω → (Fin n → ℝ)}

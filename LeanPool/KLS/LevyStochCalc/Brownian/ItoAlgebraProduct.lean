@@ -67,7 +67,7 @@ theorem sum_ite_mul_sum_ite {M : ℕ} {π : Fin (M + 1) → ℝ} (hπ : StrictMo
 
 
 /-- The product of two simple integrands, carried on their common refinement. -/
-noncomputable def SimplePredictable.mul_on_common
+noncomputable def SimplePredictable.mulOnCommonRefinement
     {T : ℝ} (H₁ H₂ : SimplePredictable Ω T)
     (h_eq : H₁.partition (Fin.last H₁.N) = H₂.partition (Fin.last H₂.N)) :
     SimplePredictable Ω T where
@@ -76,11 +76,11 @@ noncomputable def SimplePredictable.mul_on_common
   partition_zero := H₁.mergedπ_zero H₂
   partition_le_T := (H₁.mergedπ_last H₂ h_eq) ▸ H₁.partition_le_T
   partition_strictMono := H₁.mergedπ_strictMono H₂
-  ξ := fun j ω => H₁.ξ (H₁.mergedIdxMap_left H₂ h_eq j) ω
-    * H₂.ξ (H₁.mergedIdxMap_right H₂ h_eq j) ω
+  ξ := fun j ω => H₁.ξ (H₁.mergedIdxMapLeft H₂ h_eq j) ω
+    * H₂.ξ (H₁.mergedIdxMapRight H₂ h_eq j) ω
   ξ_bounded := fun j => by
-    obtain ⟨C₁, hC₁⟩ := H₁.ξ_bounded (H₁.mergedIdxMap_left H₂ h_eq j)
-    obtain ⟨C₂, hC₂⟩ := H₂.ξ_bounded (H₁.mergedIdxMap_right H₂ h_eq j)
+    obtain ⟨C₁, hC₁⟩ := H₁.ξ_bounded (H₁.mergedIdxMapLeft H₂ h_eq j)
+    obtain ⟨C₂, hC₂⟩ := H₂.ξ_bounded (H₁.mergedIdxMapRight H₂ h_eq j)
     refine ⟨max C₁ 0 * max C₂ 0, fun ω => ?_⟩
     rw [abs_mul]
     exact mul_le_mul ((hC₁ ω).trans (le_max_left _ _)) ((hC₂ ω).trans (le_max_left _ _))
@@ -93,20 +93,20 @@ theorem SimplePredictable.eval_mul_on_common
     {T : ℝ} (H₁ H₂ : SimplePredictable Ω T)
     (h_eq : H₁.partition (Fin.last H₁.N) = H₂.partition (Fin.last H₂.N))
     (s : ℝ) (ω : Ω) :
-    (H₁.mul_on_common H₂ h_eq).eval s ω = H₁.eval s ω * H₂.eval s ω := by
+    (H₁.mulOnCommonRefinement H₂ h_eq).eval s ω = H₁.eval s ω * H₂.eval s ω := by
   have hl := H₁.refine_eval (H₁.mergedM H₂) (H₁.mergedπ H₂) (H₁.mergedπ_zero H₂)
     (H₁.mergedπ_last H₂ h_eq) (H₁.mergedπ_strictMono H₂)
-    (H₁.mergedIdxMap_left H₂ h_eq)
+    (H₁.mergedIdxMapLeft H₂ h_eq)
     (H₁.mergedIdxMap_left_idx_le H₂ h_eq) (H₁.mergedIdxMap_left_idx_ge H₂ h_eq) s ω
   have hr := H₂.refine_eval (H₁.mergedM H₂) (H₁.mergedπ H₂) (H₁.mergedπ_zero H₂)
     (h_eq ▸ H₁.mergedπ_last H₂ h_eq) (H₁.mergedπ_strictMono H₂)
-    (H₁.mergedIdxMap_right H₂ h_eq)
+    (H₁.mergedIdxMapRight H₂ h_eq)
     (H₁.mergedIdxMap_right_idx_le H₂ h_eq) (H₁.mergedIdxMap_right_idx_ge H₂ h_eq) s ω
   rw [SimplePredictable.eval] at hl hr ⊢
   change (∑ j : Fin (H₁.mergedM H₂),
       if H₁.mergedπ H₂ j.castSucc < s ∧ s ≤ H₁.mergedπ H₂ j.succ
-        then H₁.ξ (H₁.mergedIdxMap_left H₂ h_eq j) ω
-          * H₂.ξ (H₁.mergedIdxMap_right H₂ h_eq j) ω else 0)
+        then H₁.ξ (H₁.mergedIdxMapLeft H₂ h_eq j) ω
+          * H₂.ξ (H₁.mergedIdxMapRight H₂ h_eq j) ω else 0)
     = H₁.eval s ω * H₂.eval s ω
   rw [← hl, ← hr]
   exact (sum_ite_mul_sum_ite (H₁.mergedπ_strictMono H₂) _ _ s).symm
@@ -129,11 +129,11 @@ theorem SimplePredictable.sum_xi_mul_simpleIntegral_sub
     (∑ i : Fin G.N, G.ξ i ω *
         (simpleIntegral W K (min (G.partition i.succ) t) ω
           - simpleIntegral W K (min (G.partition i.castSucc) t) ω))
-      = simpleIntegral W (G.mul_on_common K h_eq) t ω := by
+      = simpleIntegral W (G.mulOnCommonRefinement K h_eq) t ω := by
   classical
   set π : Fin (G.mergedM K + 1) → ℝ := G.mergedπ K with hπ
-  set L : Fin (G.mergedM K) → Fin G.N := G.mergedIdxMap_left K h_eq with hL
-  set R : Fin (G.mergedM K) → Fin K.N := G.mergedIdxMap_right K h_eq with hR
+  set L : Fin (G.mergedM K) → Fin G.N := G.mergedIdxMapLeft K h_eq with hL
+  set R : Fin (G.mergedM K) → Fin K.N := G.mergedIdxMapRight K h_eq with hR
   have hmono : StrictMono π := G.mergedπ_strictMono K
   have hLle : ∀ j, G.partition (L j).castSucc ≤ π j.castSucc :=
     G.mergedIdxMap_left_idx_le K h_eq
@@ -203,7 +203,7 @@ theorem SimplePredictable.sum_xi_mul_simpleIntegral_sub
           (fun i _ hne => by rw [hDzero j i hne, mul_zero, mul_zero])
           (fun hnm => absurd (Finset.mem_univ _) hnm), hDself j]
         ring
-    _ = simpleIntegral W (G.mul_on_common K h_eq) t ω := by
+    _ = simpleIntegral W (G.mulOnCommonRefinement K h_eq) t ω := by
         unfold simpleIntegral
         refine Finset.sum_congr rfl fun j _ => ?_
         rw [hΔW]
@@ -219,14 +219,14 @@ theorem SimplePredictable.mul_on_common_adapt
       (ℱ (H₁.partition i.castSucc)) (H₁.ξ i))
     (h_adapt₂ : ∀ i : Fin H₂.N, @MeasureTheory.StronglyMeasurable Ω ℝ _
       (ℱ (H₂.partition i.castSucc)) (H₂.ξ i)) :
-    ∀ j : Fin (H₁.mul_on_common H₂ h_eq).N,
+    ∀ j : Fin (H₁.mulOnCommonRefinement H₂ h_eq).N,
       @MeasureTheory.StronglyMeasurable Ω ℝ _
-        (ℱ ((H₁.mul_on_common H₂ h_eq).partition j.castSucc))
-        ((H₁.mul_on_common H₂ h_eq).ξ j) := by
+        (ℱ ((H₁.mulOnCommonRefinement H₂ h_eq).partition j.castSucc))
+        ((H₁.mulOnCommonRefinement H₂ h_eq).ξ j) := by
   intro j
-  have h₁ := (h_adapt₁ (H₁.mergedIdxMap_left H₂ h_eq j)).mono
+  have h₁ := (h_adapt₁ (H₁.mergedIdxMapLeft H₂ h_eq j)).mono
     (ℱ.mono (H₁.mergedIdxMap_left_idx_le H₂ h_eq j))
-  have h₂ := (h_adapt₂ (H₁.mergedIdxMap_right H₂ h_eq j)).mono
+  have h₂ := (h_adapt₂ (H₁.mergedIdxMapRight H₂ h_eq j)).mono
     (ℱ.mono (H₁.mergedIdxMap_right_idx_le H₂ h_eq j))
   exact h₁.mul h₂
 
@@ -313,7 +313,7 @@ theorem SimplePredictable.exists_mul_simple
   have h_eq : (G.appendInterval hG).partition (Fin.last (G.appendInterval hG).N)
       = (K.appendInterval hK).partition (Fin.last (K.appendInterval hK).N) :=
     (G.appendInterval_partition_last hG).trans (K.appendInterval_partition_last hK).symm
-  refine ⟨_, (G.appendInterval hG).mul_on_common (K.appendInterval hK) h_eq, ?_, ?_, ?_⟩
+  refine ⟨_, (G.appendInterval hG).mulOnCommonRefinement (K.appendInterval hK) h_eq, ?_, ?_, ?_⟩
   · exact SimplePredictable.mul_on_common_adapt ℱ _ _ h_eq
       (G.appendInterval_adapt ℱ hG h_adaptG) (K.appendInterval_adapt ℱ hK h_adaptK)
   · intro s ω

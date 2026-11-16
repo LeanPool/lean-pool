@@ -63,6 +63,7 @@ noncomputable def stateEquiv (V : Type*) [NormedAddCommGroup V] [NormedSpace ℝ
 noncomputable def transportDrift {V' : Type*} [NormedAddCommGroup V'] [NormedSpace ℝ V']
     (Φ : V ≃L[ℝ] V') (b : V → V) : V' → V' := fun y => Φ (b (Φ.symm y))
 
+/-- The noise coefficient transported by the linear equivalence `Φ`. -/
 noncomputable def transportNoise {V' : Type*} [NormedAddCommGroup V'] [NormedSpace ℝ V']
     {d : ℕ} (Φ : V ≃L[ℝ] V') (σ : V → Fin d → V) : V' → Fin d → V' :=
   fun y k => Φ (σ (Φ.symm y) k)

@@ -126,9 +126,9 @@ theorem picardStep_apply_eq
     (t : ℝ) (ω : Ω) (i : Fin n) :
     picardStep W N ℱ hℱW hℱN coeffs X x₀ h_σ_meas h_σ_progMeas h_σ_sq
         h_γ_meas h_γ_progMeas h_γ_sq t ω i
-      = picardStep_drift coeffs X x₀ t ω i
-        + picardStep_diffusion W ℱ hℱW coeffs X h_σ_meas h_σ_progMeas h_σ_sq t ω i
-        + picardStep_jump N ℱ hℱN coeffs X h_γ_meas h_γ_progMeas h_γ_sq t ω i := rfl
+      = picardStepDrift coeffs X x₀ t ω i
+        + picardStepDiffusion W ℱ hℱW coeffs X h_σ_meas h_σ_progMeas h_σ_sq t ω i
+        + picardStepJump N ℱ hℱN coeffs X h_γ_meas h_γ_progMeas h_γ_sq t ω i := rfl
 
 /-- **Slice measurability of the Picard step.** At each fixed time the step is measurable in the
 sample point; joint measurability in `(t, ω)` is a property of the modification, not of the step
@@ -163,9 +163,9 @@ theorem measurable_picardStep_slice
       h_γ_meas h_γ_progMeas h_γ_sq t ω i := by
   have heq : (fun ω => picardStep W N ℱ hℱW hℱN coeffs X x₀ h_σ_meas h_σ_progMeas h_σ_sq
         h_γ_meas h_γ_progMeas h_γ_sq t ω i)
-      = fun ω => picardStep_drift coeffs X x₀ t ω i
-        + picardStep_diffusion W ℱ hℱW coeffs X h_σ_meas h_σ_progMeas h_σ_sq t ω i
-        + picardStep_jump N ℱ hℱN coeffs X h_γ_meas h_γ_progMeas h_γ_sq t ω i := by
+      = fun ω => picardStepDrift coeffs X x₀ t ω i
+        + picardStepDiffusion W ℱ hℱW coeffs X h_σ_meas h_σ_progMeas h_σ_sq t ω i
+        + picardStepJump N ℱ hℱN coeffs X h_γ_meas h_γ_progMeas h_γ_sq t ω i := by
     funext ω
     exact picardStep_apply_eq W N ℱ hℱW hℱN coeffs X x₀ h_σ_meas h_σ_progMeas h_σ_sq
       h_γ_meas h_γ_progMeas h_γ_sq t ω i
@@ -202,7 +202,7 @@ theorem ae_picardStep_zero
     ∀ᵐ ω ∂P, ∀ i : Fin n,
       picardStep W N ℱ hℱW hℱN coeffs X x₀ h_σ_meas h_σ_progMeas h_σ_sq
         h_γ_meas h_γ_progMeas h_γ_sq 0 ω i = x₀ i := by
-  have hdrift : ∀ (ω : Ω) (i : Fin n), picardStep_drift coeffs X x₀ 0 ω i = x₀ i := by
+  have hdrift : ∀ (ω : Ω) (i : Fin n), picardStepDrift coeffs X x₀ 0 ω i = x₀ i := by
     intro ω i
     have hzero : (∫ s in Set.Icc (0 : ℝ) 0, coeffs.μ s (X s ω) i ∂volume) = 0 :=
       MeasureTheory.setIntegral_measure_zero _ (by simp)
@@ -217,7 +217,7 @@ theorem ae_picardStep_zero
         (hℱW p.2) (fun ω' s => coeffs.σ s (X s ω') p.1 p.2)
         (h_σ_meas p.1 p.2) (h_σ_progMeas p.1 p.2) (h_σ_sq p.1 p.2) le_rfl
   have hγ : ∀ᵐ ω ∂P, ∀ i : Fin n,
-      picardStep_jump N ℱ hℱN coeffs X h_γ_meas h_γ_progMeas h_γ_sq 0 ω i = 0 := by
+      picardStepJump N ℱ hℱN coeffs X h_γ_meas h_γ_progMeas h_γ_sq 0 ω i = 0 := by
     refine MeasureTheory.ae_all_iff.mpr fun i => ?_
     filter_upwards [LevyStochCalc.Poisson.Compensated.stochasticIntegral_ae_eq_process N ℱ hℱN
         (fun ω s e => coeffs.γ s (X s ω) e i) (h_γ_meas i) (h_γ_progMeas i) (h_γ_sq i) 0,
@@ -231,7 +231,7 @@ theorem ae_picardStep_zero
   filter_upwards [hσ, hγ] with ω hσω hγω i
   rw [picardStep_apply_eq W N ℱ hℱW hℱN coeffs X x₀ h_σ_meas h_σ_progMeas h_σ_sq
     h_γ_meas h_γ_progMeas h_γ_sq 0 ω i, hdrift ω i, hγω i, add_zero]
-  have hdiff : picardStep_diffusion W ℱ hℱW coeffs X h_σ_meas h_σ_progMeas h_σ_sq 0 ω i = 0 := by
+  have hdiff : picardStepDiffusion W ℱ hℱW coeffs X h_σ_meas h_σ_progMeas h_σ_sq 0 ω i = 0 := by
     change (∑ j : Fin d, LevyStochCalc.Brownian.Ito.stochasticIntegral (W.W j) ℱ (hℱW j)
       (fun ω' s => coeffs.σ s (X s ω') i j)
       (h_σ_meas i j) (h_σ_progMeas i j) (h_σ_sq i j) 0 ω) = 0
@@ -241,7 +241,7 @@ theorem ae_picardStep_zero
 -- `picardStep` and the two stochastic-integral components unfold to `Finset` sums over `Fin d`
 -- and to the `L²`-limit integrals; the statement below repeats those terms verbatim on both
 -- sides, so unfolding them during unification only costs time. Sealed as in `Ito/Picard.lean`.
-attribute [local irreducible] picardStep picardStep_diffusion picardStep_jump
+attribute [local irreducible] picardStep picardStepDiffusion picardStepJump
 attribute [local irreducible]
   LevyStochCalc.Brownian.Multidim.MultidimBrownianMotion.stochasticIntegral
 attribute [local irreducible] LevyStochCalc.Brownian.Ito.stochasticIntegral
@@ -330,11 +330,11 @@ theorem lintegral_sq_picardStep_diff_le
         - picardStep (P := P) (ν := ν) (n := n) (d := d)
             W N ℱ hℱW hℱN coeffs Y x₀ h_σ_meas_Y h_σ_progMeas_Y h_σ_sq_Y
             h_γ_meas_Y h_γ_progMeas_Y h_γ_sq_Y t ω i
-      = (picardStep_drift coeffs X x₀ t ω i - picardStep_drift coeffs Y x₀ t ω i)
-        + (picardStep_diffusion W ℱ hℱW coeffs X h_σ_meas_X h_σ_progMeas_X h_σ_sq_X t ω i
-            - picardStep_diffusion W ℱ hℱW coeffs Y h_σ_meas_Y h_σ_progMeas_Y h_σ_sq_Y t ω i)
-        + (picardStep_jump N ℱ hℱN coeffs X h_γ_meas_X h_γ_progMeas_X h_γ_sq_X t ω i
-            - picardStep_jump N ℱ hℱN coeffs Y h_γ_meas_Y h_γ_progMeas_Y h_γ_sq_Y t ω i) := by
+      = (picardStepDrift coeffs X x₀ t ω i - picardStepDrift coeffs Y x₀ t ω i)
+        + (picardStepDiffusion W ℱ hℱW coeffs X h_σ_meas_X h_σ_progMeas_X h_σ_sq_X t ω i
+            - picardStepDiffusion W ℱ hℱW coeffs Y h_σ_meas_Y h_σ_progMeas_Y h_σ_sq_Y t ω i)
+        + (picardStepJump N ℱ hℱN coeffs X h_γ_meas_X h_γ_progMeas_X h_γ_sq_X t ω i
+            - picardStepJump N ℱ hℱN coeffs Y h_γ_meas_Y h_γ_progMeas_Y h_γ_sq_Y t ω i) := by
     intro ω i
     rw [picardStep_apply_eq W N ℱ hℱW hℱN coeffs X x₀ h_σ_meas_X h_σ_progMeas_X h_σ_sq_X
       h_γ_meas_X h_γ_progMeas_X h_γ_sq_X t ω i,
@@ -343,14 +343,14 @@ theorem lintegral_sq_picardStep_diff_le
     ring
   rw [lintegral_congr fun ω => Finset.sum_congr rfl fun i _ => by rw [hsplit ω i]]
   refine lintegral_sq_sum3_le
-    (U₁ := fun ω i => picardStep_drift coeffs X x₀ t ω i
-      - picardStep_drift coeffs Y x₀ t ω i)
+    (U₁ := fun ω i => picardStepDrift coeffs X x₀ t ω i
+      - picardStepDrift coeffs Y x₀ t ω i)
     (U₂ := fun ω i =>
-      picardStep_diffusion W ℱ hℱW coeffs X h_σ_meas_X h_σ_progMeas_X h_σ_sq_X t ω i
-        - picardStep_diffusion W ℱ hℱW coeffs Y h_σ_meas_Y h_σ_progMeas_Y h_σ_sq_Y t ω i)
+      picardStepDiffusion W ℱ hℱW coeffs X h_σ_meas_X h_σ_progMeas_X h_σ_sq_X t ω i
+        - picardStepDiffusion W ℱ hℱW coeffs Y h_σ_meas_Y h_σ_progMeas_Y h_σ_sq_Y t ω i)
     (U₃ := fun ω i =>
-      picardStep_jump N ℱ hℱN coeffs X h_γ_meas_X h_γ_progMeas_X h_γ_sq_X t ω i
-        - picardStep_jump N ℱ hℱN coeffs Y h_γ_meas_Y h_γ_progMeas_Y h_γ_sq_Y t ω i)
+      picardStepJump N ℱ hℱN coeffs X h_γ_meas_X h_γ_progMeas_X h_γ_sq_X t ω i
+        - picardStepJump N ℱ hℱN coeffs Y h_γ_meas_Y h_γ_progMeas_Y h_γ_sq_Y t ω i)
     (fun i => ((((measurable_picardStep_drift coeffs X x₀ i (hμX i) t).sub
       (measurable_picardStep_drift coeffs Y x₀ i (hμY i) t)).nnnorm).coe_nnreal_ennreal).pow_const
         2)

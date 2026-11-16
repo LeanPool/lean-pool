@@ -578,8 +578,8 @@ lemma simpleIntegral_memLp_intermediate_brownian
 `T`, the `L²(P)`-norm² of the integral difference at *any* `t ≥ 0` equals the
 `L²(λ⊗P)`-norm² of their eval difference over `[0, t]`. The `min (·) t`-clamped
 analogue of `diff_isometry_simple`: rewrite the integral difference as the integral
-of `sub_on_common` (`simpleIntegral_sub_on_common_intermediate`), apply the
-intermediate-time isometry, and unfold `eval` of `sub_on_common`. This is the exact
+of `subOnCommonRefinement` (`simpleIntegral_sub_on_common_intermediate`), apply the
+intermediate-time isometry, and unfold `eval` of `subOnCommonRefinement`. This is the exact
 isometry underlying both `L²`-Cauchy-at-each-`t` and cross-horizon consistency. -/
 lemma simpleIntegral_intermediate_diff_isometry
     {P : MeasureTheory.Measure Ω} [MeasureTheory.IsProbabilityMeasure P]
@@ -596,10 +596,10 @@ lemma simpleIntegral_intermediate_diff_isometry
       = ∫⁻ ω, ∫⁻ s in Set.Icc (0 : ℝ) t,
           (‖H₁.eval s ω - H₂.eval s ω‖₊ : ℝ≥0∞) ^ 2 ∂volume ∂P := by
   have hLHS : ∫⁻ ω, (‖simpleIntegral W H₁ t ω - simpleIntegral W H₂ t ω‖₊ : ℝ≥0∞) ^ 2 ∂P
-      = ∫⁻ ω, (‖simpleIntegral W (H₁.sub_on_common H₂ h_eq) t ω‖₊ : ℝ≥0∞) ^ 2 ∂P := by
+      = ∫⁻ ω, (‖simpleIntegral W (H₁.subOnCommonRefinement H₂ h_eq) t ω‖₊ : ℝ≥0∞) ^ 2 ∂P := by
     refine lintegral_congr (fun ω => ?_)
     rw [SimplePredictable.simpleIntegral_sub_on_common_intermediate W H₁ H₂ h_eq t ω]
-  rw [hLHS, simpleIntegral_intermediate_isometry W ℱ hℱ (H₁.sub_on_common H₂ h_eq)
+  rw [hLHS, simpleIntegral_intermediate_isometry W ℱ hℱ (H₁.subOnCommonRefinement H₂ h_eq)
       (SimplePredictable.sub_on_common_adapt ℱ H₁ H₂ h_eq h_adapt₁ h_adapt₂) ht_nn]
   refine lintegral_congr (fun ω => ?_)
   refine MeasureTheory.setLIntegral_congr_fun measurableSet_Icc (fun s _ => ?_)

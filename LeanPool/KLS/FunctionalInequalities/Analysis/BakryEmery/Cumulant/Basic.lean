@@ -58,9 +58,9 @@ section LaplaceCalculus
 
 omit [CompleteSpace E]
 
-/-- The logarithmic Laplace transform is smooth for a nonzero finite measure with all exponential
+/-- The logarithmic Laplace transform is smooth for a nonzero measure with all exponential
 moments. -/
-theorem contDiff_logLaplace (μ : Measure E) [IsFiniteMeasure μ] [NeZero μ]
+theorem contDiff_logLaplace (μ : Measure E) [NeZero μ]
     (hexp : ∀ r : ℝ, Integrable (fun x => Real.exp (r * ‖x‖)) μ) :
     ContDiff ℝ ∞ (logLaplace μ) := by
     have hZ : ContDiff ℝ ∞ (fun z : E => ∫ x, Real.exp ⟪z, x⟫ ∂μ) := by
@@ -88,7 +88,7 @@ theorem contDiff_logLaplace (μ : Measure E) [IsFiniteMeasure μ] [NeZero μ]
     exact hZ.log (fun z => (hpos z).ne')
 
 omit [FiniteDimensional ℝ E] in
-private lemma bkl_integrable_exp_inner (μ : Measure E) [IsFiniteMeasure μ]
+private lemma bkl_integrable_exp_inner (μ : Measure E)
     (hexp : ∀ r : ℝ, Integrable (fun x => Real.exp (r * ‖x‖)) μ) (z : E) :
     Integrable (fun x => Real.exp ⟪z, x⟫) μ := by
   refine (hexp ‖z‖).mono'
@@ -97,7 +97,7 @@ private lemma bkl_integrable_exp_inner (μ : Measure E) [IsFiniteMeasure μ]
     rw [Real.norm_eq_abs, abs_of_pos (Real.exp_pos _)]
     exact Real.exp_le_exp.mpr (real_inner_le_norm z x)
 
-private lemma bkl_hasFDerivAt_laplace (μ : Measure E) [IsFiniteMeasure μ]
+private lemma bkl_hasFDerivAt_laplace (μ : Measure E)
     (hexp : ∀ r : ℝ, Integrable (fun x => Real.exp (r * ‖x‖)) μ) (z : E) :
     HasFDerivAt (fun y => ∫ x, Real.exp ⟪y, x⟫ ∂μ)
       (∫ x, Real.exp ⟪z, x⟫ • innerSL ℝ x ∂μ) z := by
@@ -143,7 +143,7 @@ private lemma bkl_hasFDerivAt_laplace (μ : Measure E) [IsFiniteMeasure μ]
 
 /-- The tilt average of a linear function is a derivative of `Λ_μ`: `F_ℓ(z) = ⟪v, ∇Λ_μ(z)⟫` for
 `ℓ = ⟪v, ·⟫` (proof of BKL Proposition 7.1). -/
-theorem tiltAverage_inner_eq_fderiv_logLaplace (μ : Measure E) [IsFiniteMeasure μ] [NeZero μ]
+theorem tiltAverage_inner_eq_fderiv_logLaplace (μ : Measure E) [NeZero μ]
     (hexp : ∀ r : ℝ, Integrable (fun x => Real.exp (r * ‖x‖)) μ) (v z : E) :
     tiltAverage μ (fun x => ⟪v, x⟫) z = fderiv ℝ (logLaplace μ) z v := by
   have hi := bkl_integrable_exp_inner μ hexp z
@@ -186,7 +186,7 @@ theorem tiltAverage_inner_eq_fderiv_logLaplace (μ : Measure E) [IsFiniteMeasure
 
 /-- **Local tilt-average/derivative identity**: `F_{⟪v,·⟫}(z) = ∂_v Λ_μ(z)` for `‖z‖ < r`, assuming
 only the single exponential moment `∫ e^{r‖x‖} dμ < ∞`. -/
-theorem tiltAverage_inner_eq_fderiv_logLaplace_of_lt (μ : Measure E) [IsFiniteMeasure μ] [NeZero μ]
+theorem tiltAverage_inner_eq_fderiv_logLaplace_of_lt (μ : Measure E) [NeZero μ]
     {r : ℝ} (hexp : Integrable (fun x => Real.exp (r * ‖x‖)) μ) {z : E} (hz : ‖z‖ < r) (v : E) :
     tiltAverage μ (fun x => ⟪v, x⟫) z = fderiv ℝ (logLaplace μ) z v := by
       let g : E → ℝ := fun _ => 1
@@ -311,7 +311,7 @@ private lemma bkl_cumulant_swap_front {g : E → F} (hg : ContDiff ℝ ∞ g)
     ((ha.of_le (by norm_cast : (2 : WithTop ℕ∞) ≤ ∞)).contDiffAt.isSymmSndFDerivAt
       (by simp)).eq v w
 
-private lemma bkl_cumulant_cons_snoc [CompleteSpace F] {g : E → F} (hg : ContDiff ℝ ∞ g)
+private lemma bkl_cumulant_cons_snoc {g : E → F} (hg : ContDiff ℝ ∞ g)
     (n : ℕ) (x v : E) (h : Fin n → E) :
     iteratedFDeriv ℝ (n + 1) g x (Fin.cons v h) =
       iteratedFDeriv ℝ (n + 1) g x (Fin.snoc h v) := by
@@ -343,7 +343,7 @@ end NormedSpace
 
 /-- **Taylor tensors of linear functions are cumulants** (proof of BKL Proposition 7.1):
 for `ℓ = ⟪v, ·⟫`, `T_d ℓ = κ_{d+1}(v, ·, …, ·) / d!`. -/
-theorem taylorTensor_inner_eq_cumulant (μ : Measure E) [IsFiniteMeasure μ] [NeZero μ]
+theorem taylorTensor_inner_eq_cumulant (μ : Measure E) [NeZero μ]
     (hexp : ∀ r : ℝ, Integrable (fun x => Real.exp (r * ‖x‖)) μ) (v : E) (d : ℕ)
     (h : Fin d → E) :
     taylorTensor μ (fun x => ⟪v, x⟫) d h =
@@ -794,7 +794,7 @@ open scoped ContDiff in
 /-- **Local smoothness of `Λ_μ`** (BKL p. 29, "finite and smooth in a neighborhood of the origin"):
 one positive norm-exponential moment `∫ e^{r‖x‖} dμ < ∞` makes `Λ_μ` `C^∞` on the open ball of
 radius `r`. The local integral identities are in `Tilt/Local.lean`. -/
-theorem contDiffOn_logLaplace_ball (μ : Measure E) [IsFiniteMeasure μ] [NeZero μ] {r : ℝ}
+theorem contDiffOn_logLaplace_ball (μ : Measure E) [NeZero μ] {r : ℝ}
     (hr : 0 < r) (hexp : Integrable (fun x => Real.exp (r * ‖x‖)) μ) :
     ContDiffOn ℝ ∞ (logLaplace μ) (Metric.ball 0 r) := by
   let _ := hr
@@ -915,7 +915,7 @@ private lemma affine_iteratedFDeriv_linear_eq_zero
 theorem cumulant_map_affine [CompleteSpace E] [FiniteDimensional ℝ E] [MeasurableSpace E]
     [BorelSpace E] [NormedAddCommGroup F] [InnerProductSpace ℝ F] [CompleteSpace F]
     [MeasurableSpace F] [BorelSpace F]
-    (T : E ≃L[ℝ] F) (a : E) (μ : Measure E) [IsFiniteMeasure μ] [NeZero μ]
+    (T : E ≃L[ℝ] F) (a : E) (μ : Measure E) [NeZero μ]
     (hexp : ∀ r : ℝ, Integrable (fun x => Real.exp (r * ‖x‖)) μ)
     {k : ℕ} (hk : 2 ≤ k) (u : Fin k → F) :
     cumulant (μ.map (fun x => T (x - a))) k u =
@@ -1076,7 +1076,7 @@ probability laws `μ k` with finite fourth moments satisfy `LetwinQuadraticBound
 moments `∫ ∏ᵢ ⟪vᵢ, x⟫` of degree `d ≤ 4` converge to those of a law `ν` with finite fourth
 moment, then `ν` satisfies `LetwinQuadraticBound`. -/
 theorem letwinQuadraticBound_of_tendsto_moments [CompleteSpace E] [FiniteDimensional ℝ E]
-    [MeasurableSpace E] [BorelSpace E] (μ : ℕ → Measure E) (ν : Measure E)
+    [MeasurableSpace E] (μ : ℕ → Measure E) (ν : Measure E)
     [∀ k, IsProbabilityMeasure (μ k)] [IsProbabilityMeasure ν] (hμ : ∀ k, MemLp id 4 (μ k))
     (hν : MemLp id 4 ν)
     (hmom :

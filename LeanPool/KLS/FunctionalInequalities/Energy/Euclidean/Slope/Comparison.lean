@@ -184,6 +184,7 @@ end AsymptoticSlope
 
 end Test
 
+omit [BorelSpace V] [SecondCountableTopology V] [FiniteDimensional ℝ V] in
 /-- The third side of the sandwich.  Every smooth-gradient test is an asymptotic-Lipschitz
 test with the same energy, so relaxing over the larger class gives the smaller relaxed functional.
 Holds for every Borel probability law, singular laws included. -/
@@ -204,6 +205,7 @@ namespace LocalSlope
 variable {V : Type u} [NormedAddCommGroup V] [InnerProductSpace ℝ V] [CompleteSpace V]
   [MeasurableSpace V] [BorelSpace V] [SecondCountableTopology V] [FiniteDimensional ℝ V]
 
+omit [BorelSpace V] [SecondCountableTopology V] [FiniteDimensional ℝ V] in
 /-- The collapse: once the two ends of the sandwich
 `LocalSlope.relaxation ν ≤ AsymptoticLipschitz.relaxation ν ≤ SmoothGradient.relaxation ν` agree,
 the two Cheeger conventions relax to the same `L²(ν)` functional.  The hypothesis is the open

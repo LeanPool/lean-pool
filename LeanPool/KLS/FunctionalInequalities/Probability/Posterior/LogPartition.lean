@@ -146,7 +146,7 @@ omit [CompleteSpace E] [FiniteDimensional ℝ E]
   [MeasurableSpace E] [BorelSpace E] in
 /-- `ψ` is jointly `C^∞` in `(c, Q)` for a compactly supported prior. -/
 theorem contDiff_logPartition_joint
-    [CompleteSpace E] [FiniteDimensional ℝ E]
+     [FiniteDimensional ℝ E]
     [MeasurableSpace E] [BorelSpace E]
     (μ : ProbabilityMeasure E)
     (hc : IsCompact (μ : Measure E).support) :
@@ -218,7 +218,7 @@ theorem contDiff_logPartition_joint
 omit [CompleteSpace E] [FiniteDimensional ℝ E]
   [MeasurableSpace E] [BorelSpace E] in
 theorem logLaplace_compactPosterior
-    [CompleteSpace E] [FiniteDimensional ℝ E]
+     [FiniteDimensional ℝ E]
     [MeasurableSpace E] [BorelSpace E]
     (μ : ProbabilityMeasure E)
     (hc : IsCompact (μ : Measure E).support) (c : E) (Q : E →L[ℝ] E) (z : E) :
@@ -251,6 +251,7 @@ theorem logLaplace_compactPosterior
         unfold quadraticExponent
         fun_prop))).ne']
 
+omit [CompleteSpace E] in
 /--
 **Posterior cumulants are `c`-derivatives of `ψ`**: `κ_m(μ_{c,Q}) = D_c^m ψ(c, Q)` for `m ≥ 1`. -/
 theorem cumulant_compactPosterior (μ : ProbabilityMeasure E)

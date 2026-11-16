@@ -275,7 +275,7 @@ lemma referenceIntensity_Ioc_prod_eq
 `markSum_sq_sametime`; underlies the Tonelli bridge from the isometry sum-form to the
 integrand `L²` norm. -/
 lemma mark_sq_integral
-    {ν : Measure E} [SigmaFinite ν] {K : ℕ}
+    {ν : Measure E} {K : ℕ}
     (B : Fin K → Set E) (hBm : ∀ k, MeasurableSet (B k)) (hBf : ∀ k, ν (B k) ≠ ⊤) (c : Fin K → ℝ) :
     ∫ e, (∑ k : Fin K, c k * (B k).indicator (fun _ => (1 : ℝ)) e) ^ 2 ∂ν
       = ∑ k : Fin K, ∑ k' : Fin K, c k * c k' * (ν (B k ∩ B k')).toReal := by
@@ -365,7 +365,7 @@ in `[0,T]`, arbitrary marks `B`, and real coeffs `c`,
   = ∑ᵢ (pᵢ₊₁−pᵢ)·∑ₖ∑ₖ' cᵢₖ·cᵢₖ'·ν(Bₖ∩Bₖ')`. The `s`-integral collapses by
 `timeIndicator_sq_integral`, the `e`-integral by `mark_sq_integral`. -/
 lemma eval_sq_integral
-    {ν : Measure E} [SigmaFinite ν] {N₀ K : ℕ} (p : Fin (N₀ + 1) → ℝ) (hp0 : p 0 = 0)
+    {ν : Measure E} {N₀ K : ℕ} (p : Fin (N₀ + 1) → ℝ) (hp0 : p 0 = 0)
     (hpmono : StrictMono p) {T : ℝ} (hpleT : p (Fin.last N₀) ≤ T)
     (B : Fin K → Set E) (hBm : ∀ k, MeasurableSet (B k)) (hBf : ∀ k, ν (B k) ≠ ⊤)
     (c : Fin N₀ → Fin K → ℝ) :
@@ -560,7 +560,7 @@ lemma markSumProcess_diff_isometry_L2
 Lp completeness + `tendsto_Lp_iff_tendsto_eLpNorm''`. The "define the integral as the
 `L²`-limit" half of the masterApprox construction (→ dissertation #2(B)). -/
 lemma exists_L2_limit_of_memLp_cauchySeq
-    {P : Measure Ω} [IsProbabilityMeasure P]
+    {P : Measure Ω}
     {Mₙ : ℕ → Ω → ℝ} (hmem : ∀ n, MeasureTheory.MemLp (Mₙ n) 2 P)
     (hcs : CauchySeq (fun n => (hmem n).toLp (Mₙ n))) :
     ∃ M : Ω → ℝ, MeasureTheory.MemLp M 2 P ∧

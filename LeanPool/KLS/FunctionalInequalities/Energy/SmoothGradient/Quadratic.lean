@@ -175,10 +175,10 @@ instance : Neg (Test mu) :=
 instance [BorelSpace E] : Sub (Test mu) :=
   ⟨sub⟩
 
-instance [BorelSpace E] : SMul ℕ (Test mu) :=
+instance : SMul ℕ (Test mu) :=
   ⟨fun n f ↦ smul (n : ℝ) f⟩
 
-instance [BorelSpace E] : SMul ℤ (Test mu) :=
+instance : SMul ℤ (Test mu) :=
   ⟨fun n f ↦ smul (n : ℝ) f⟩
 
 instance : SMul ℝ (Test mu) :=
@@ -283,14 +283,14 @@ theorem energy_parallelogram [BorelSpace E] (f g : Test mu) :
 end Test
 
 instance smoothGradientPreEnergyTestAddCommGroup
-    (mu : ProbabilityMeasure E) [FiniteDimensional ℝ E] [BorelSpace E]
-    [SecondCountableTopology E] : AddCommGroup (preEnergy mu).Test := by
+    (mu : ProbabilityMeasure E) [BorelSpace E]
+     : AddCommGroup (preEnergy mu).Test := by
   change AddCommGroup (Test mu)
   infer_instance
 
 instance smoothGradientPreEnergyTestModule
-    (mu : ProbabilityMeasure E) [FiniteDimensional ℝ E] [BorelSpace E]
-    [SecondCountableTopology E] : Module ℝ (preEnergy mu).Test := by
+    (mu : ProbabilityMeasure E) [BorelSpace E]
+     : Module ℝ (preEnergy mu).Test := by
   change Module ℝ (Test mu)
   infer_instance
 
@@ -299,8 +299,8 @@ instance smoothGradientPreEnergyTestModule
 This result concerns only the concrete smooth tests. It does not assert that the sequential
 relaxation is closed quadratic, or that relaxation agrees with the original energy on tests.
 -/
-theorem preEnergy_quadratic (mu : ProbabilityMeasure E) [FiniteDimensional ℝ E]
-    [BorelSpace E] [SecondCountableTopology E] :
+theorem preEnergy_quadratic (mu : ProbabilityMeasure E)
+    [BorelSpace E] :
     (preEnergy mu).Quadratic where
   map_zero := by
     change (Test.zero mu).toL2 = 0

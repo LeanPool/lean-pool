@@ -959,7 +959,7 @@ and the covariance of `μ` is at most `K` (`∫ ⟪e, x - b⟫² ≤ K ‖e‖²
 `‖∫ ∇f‖² ≤ λ² K ∫ f²` (the source's `p₁ = λ₁² |∫ x f|² ≤ λ₁² ‖Cov μ‖`, with `‖f‖₂ = 1`, `K = 1`). -/
 theorem norm_sq_integral_gradient_le_of_eigen {V : E → ℝ} (hV : V.HasTemperateGrowth)
     (hexp : ∀ r : ℝ, Integrable (fun x => Real.exp (r * ‖x‖)) (m.tilted (-V)))
-    [IsProbabilityMeasure (m.tilted (-V))] {f : E → ℝ} (hf : f.HasTemperateGrowth) {lam : ℝ}
+     {f : E → ℝ} (hf : f.HasTemperateGrowth) {lam : ℝ}
     (heig : ∀ x, weightedLaplacian V f x = -lam * f x) (hf0 : ∫ x, f x ∂(m.tilted (-V)) = 0)
     {K : ℝ} (hK0 : 0 ≤ K)
     (hcov : ∀ e : E, ∫ x, ⟪e, x - ∫ y, y ∂(m.tilted (-V))⟫ ^ 2 ∂(m.tilted (-V)) ≤ K * ‖e‖ ^ 2) :

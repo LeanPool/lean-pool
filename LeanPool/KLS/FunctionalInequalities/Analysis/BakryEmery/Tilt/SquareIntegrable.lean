@@ -103,7 +103,7 @@ theorem weightedExp_hasFDeriv (g : E → F) (x z : E) :
 
 /-- Differentiation under the integral sign for exponential weights (first derivative): the
 derivative of `z ↦ ∫ e^{⟪z, x⟫} g(x) dμ` at `z` is `∫ e^{⟪z, x⟫} (⟪x, ·⟫ g(x)) dμ`. -/
-theorem weightedExp_integral_hasFDeriv [CompleteSpace F] (μ : Measure E) {g : E → F}
+theorem weightedExp_integral_hasFDeriv (μ : Measure E) {g : E → F}
     (hg : AEStronglyMeasurable g μ)
     (hgi : ∀ r : ℝ, Integrable (fun x => Real.exp (r * ‖x‖) * ‖g x‖) μ) (z : E) :
     HasFDerivAt (fun w => ∫ x, Real.exp ⟪w, x⟫ • g x ∂μ)
@@ -306,7 +306,7 @@ theorem tiltAverage_mul_integral_exp (μ : Measure E) (f : E → ℝ) (z : E)
     exact div_mul_cancel₀ _ hz
 
 /-- Tilt averages of square-integrable functions are smooth. -/
-theorem contDiff_tiltAverage_of_memLp (μ : Measure E) [IsFiniteMeasure μ] [NeZero μ]
+theorem contDiff_tiltAverage_of_memLp (μ : Measure E) [NeZero μ]
     (hexp : ∀ r : ℝ, Integrable (fun x => Real.exp (r * ‖x‖)) μ) {f : E → ℝ} (hf : MemLp f 2 μ) :
     ContDiff ℝ ∞ (tiltAverage μ f) := by
     let N : E → ℝ := fun z => ∫ x, Real.exp ⟪z, x⟫ • f x ∂μ
@@ -360,7 +360,7 @@ theorem contDiff_tiltAverage_of_memLp (μ : Measure E) [IsFiniteMeasure μ] [NeZ
     exact hmul
 
 /-- `T_d` is additive on `L²(μ)`. -/
-theorem taylorTensor_add (μ : Measure E) [IsFiniteMeasure μ] [NeZero μ]
+theorem taylorTensor_add (μ : Measure E) [NeZero μ]
     (hexp : ∀ r : ℝ, Integrable (fun x => Real.exp (r * ‖x‖)) μ) {f g : E → ℝ} (hf : MemLp f 2 μ)
     (hg : MemLp g 2 μ) (d : ℕ) :
     taylorTensor μ (fun x => f x + g x) d = taylorTensor μ f d + taylorTensor μ g d := by
@@ -472,7 +472,7 @@ private theorem tiltMoment_product_bound (d : ℕ) (h : Fin d → E) (x : E) :
       rw [Finset.prod_mul_distrib, Finset.prod_const, Finset.card_univ, Fintype.card_fin,
         ← Real.exp_nat_mul]
 
-private theorem tiltNumerator_deriv_bound (μ : Measure E) [IsFiniteMeasure μ]
+private theorem tiltNumerator_deriv_bound (μ : Measure E)
     (hexp : ∀ r : ℝ, Integrable (fun x => Real.exp (r * ‖x‖)) μ)
     {f : E → ℝ} (hf : MemLp f 2 μ) (d : ℕ) :
     ‖iteratedFDeriv ℝ d (fun z => ∫ x, Real.exp ⟪z, x⟫ • f x ∂μ) 0‖ ≤
@@ -600,6 +600,7 @@ section CompleteSpace
 variable [CompleteSpace G]
 
 omit [BorelSpace E]
+omit [CompleteSpace G] in
 /-- Tilt averages only see the `μ`-class of a function: every tilt `μ_z` is absolutely
 continuous with respect to `μ`. -/
 theorem tiltAverage_congr_ae (μ : Measure E) {f g : E → G} (hfg : f =ᵐ[μ] g) (z : E) :
@@ -607,6 +608,7 @@ theorem tiltAverage_congr_ae (μ : Measure E) {f g : E → G} (hfg : f =ᵐ[μ] 
   unfold tiltAverage expTilt
   exact integral_congr_ae ((tilted_absolutelyContinuous μ _).ae_le hfg)
 
+omit [CompleteSpace G] in
 /-- Taylor tensors only see the `μ`-class of a function. -/
 theorem taylorTensor_congr_ae (μ : Measure E) {f g : E → G} (hfg : f =ᵐ[μ] g) (d : ℕ) :
     taylorTensor μ f d = taylorTensor μ g d := by
@@ -631,7 +633,7 @@ theorem memLp_exp_inner (μ : Measure E)
 /-- Square-integrable functions are integrable against every exponential tilt of a finite measure
 with all exponential moments. -/
 theorem integrable_expTilt_of_memLp
-    (μ : Measure E) [IsFiniteMeasure μ]
+    (μ : Measure E)
     (hexp : ∀ r : ℝ, Integrable (fun x => Real.exp (r * ‖x‖)) μ) {g : E → G}
     (hg : MemLp g 2 μ) (z : E) : Integrable g (expTilt μ z) := by
   have hc : Continuous fun x : E => Real.exp ⟪z, x⟫ := by fun_prop
@@ -672,7 +674,7 @@ end ScalarLp
 omit [FiniteDimensional ℝ E] in
 /-- Pairing the tilt average of a vector class `G ∈ L²(μ; E)` with `w` is the tilt average of the
 scalar class `⟪w, G⟫`. -/
-theorem inner_tiltAverage_Lp (μ : Measure E) [IsFiniteMeasure μ]
+theorem inner_tiltAverage_Lp (μ : Measure E)
     (hexp : ∀ r : ℝ, Integrable (fun x => Real.exp (r * ‖x‖)) μ) (G : Lp E 2 μ) (w z : E) :
     ⟪w, tiltAverage μ (⇑G) z⟫ = tiltAverage μ (⇑((innerSL ℝ w).compLpL 2 μ G)) z := by
   rw [tiltAverage_congr_ae μ ((innerSL ℝ w).coeFn_compLpL G) z]
@@ -681,7 +683,7 @@ theorem inner_tiltAverage_Lp (μ : Measure E) [IsFiniteMeasure μ]
   exact (integral_inner (integrable_expTilt_of_memLp μ hexp (Lp.memLp G) z) w).symm
 
 /-- The tilt average of a vector class `G ∈ L²(μ; E)` is smooth. -/
-theorem contDiff_tiltAverage_Lp (μ : Measure E) [IsFiniteMeasure μ] [NeZero μ]
+theorem contDiff_tiltAverage_Lp (μ : Measure E) [NeZero μ]
     (hexp : ∀ r : ℝ, Integrable (fun x => Real.exp (r * ‖x‖)) μ) (G : Lp E 2 μ) :
     ContDiff ℝ ∞ (tiltAverage μ (⇑G)) := by
   let b := stdOrthonormalBasis ℝ E

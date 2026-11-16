@@ -31,9 +31,10 @@ variable {Ω : Type u} [MeasurableSpace Ω]
 section Indicator
 
 /-- The indicator integrand of a time window, as a process constant in the sample point. -/
-noncomputable def indIoc (Ω) [MeasurableSpace Ω] (a b : ℝ) : Ω → ℝ → ℝ :=
+noncomputable def indIoc (Ω) (a b : ℝ) : Ω → ℝ → ℝ :=
   fun _ s => (Set.Ioc a b).indicator (fun _ => (1 : ℝ)) s
 
+omit [MeasurableSpace Ω] in
 theorem indIoc_le_one (a b : ℝ) (ω : Ω) (s : ℝ) : |indIoc Ω a b ω s| ≤ 1 := by
   unfold indIoc
   by_cases h : s ∈ Set.Ioc a b

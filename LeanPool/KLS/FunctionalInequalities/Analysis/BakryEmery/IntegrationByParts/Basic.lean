@@ -291,7 +291,7 @@ for smooth `φ, f, g` with `∫ e^{-φ} dm = 1` and the four integrands `(∂_v 
 `f g` integrable under `ν = e^{-φ} m`,
 `∫ (∂_v f) g dν = ∫ f ((∂_v φ) g − ∂_v g) dν`.
 -/
-theorem integral_fderiv_mul_tilted_eq [CompleteSpace E] [FiniteDimensional ℝ E]
+theorem integral_fderiv_mul_tilted_eq [FiniteDimensional ℝ E]
     [MeasurableSpace E] [BorelSpace E] (m : Measure E) [m.IsAddHaarMeasure] (φ f g : E → ℝ)
     (v : E) (hφ : ContDiff ℝ ∞ φ) (hf : ContDiff ℝ ∞ f) (hg : ContDiff ℝ ∞ g)
     (hφexp : Integrable (fun x => Real.exp (-φ x)) m) (hφnorm : ∫ x, Real.exp (-φ x) ∂m = 1)
@@ -360,7 +360,7 @@ theorem integral_fderiv_mul_tilted_eq [CompleteSpace E] [FiniteDimensional ℝ E
 **Mean Hessian equals the gradient second moment** under `e^{-φ}m` (Letwin Lemma 2.3, step 1): the
 directional integration by parts applied to `∂_u φ` and
 `g = 1`. -/
-theorem integral_fderiv_fderiv_tilted_eq_integral_mul [CompleteSpace E] [FiniteDimensional ℝ E]
+theorem integral_fderiv_fderiv_tilted_eq_integral_mul [FiniteDimensional ℝ E]
     [MeasurableSpace E] [BorelSpace E] (m : Measure E) [m.IsAddHaarMeasure] (φ : E → ℝ)
     (u v : E) (hφ : ContDiff ℝ ∞ φ) (hφexp : Integrable (fun x => Real.exp (-φ x)) m)
     (hφnorm : ∫ x, Real.exp (-φ x) ∂m = 1)

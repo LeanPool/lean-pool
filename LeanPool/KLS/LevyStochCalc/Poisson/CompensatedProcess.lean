@@ -296,7 +296,7 @@ lemma horizonInt_right_tendsto {s : ℝ} (hs : 0 ≤ s) :
 
 omit [IsProbabilityMeasure P] in
 /-- The nested triple integral over `Ω × E × [0, t]` as an integral for the product measure. -/
-lemma triple_eq_lintegral_prod [SFinite P] {t : ℝ} (f : Ω → ℝ → E → ℝ≥0∞)
+lemma triple_eq_lintegral_prod {t : ℝ} (f : Ω → ℝ → E → ℝ≥0∞)
     (hf : Measurable (fun p : Ω × ℝ × E => f p.1 p.2.1 p.2.2)) :
     ∫⁻ ω, ∫⁻ e, ∫⁻ s in Set.Icc (0 : ℝ) t, f ω s e ∂volume ∂ν ∂P
       = ∫⁻ q : Ω × E × ℝ, f q.1 q.2.2 q.2.1

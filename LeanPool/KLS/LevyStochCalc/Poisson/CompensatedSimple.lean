@@ -292,7 +292,7 @@ lemma SimplePredictable.lintegral_eval_sq
 `∑_i ν̂(fullRect i) · ∫⁻ ω, ‖ξ_i ω‖² ∂P` — the canonical RHS form of the
 Itô-Lévy isometry. -/
 lemma SimplePredictable.lintegral_eval_sq_outer
-    {P : Measure Ω} [IsProbabilityMeasure P]
+    {P : Measure Ω}
     {ν : Measure E} [SigmaFinite ν] {T : ℝ}
     (φ : SimplePredictable Ω E ν T) :
     ∫⁻ ω, ∫⁻ s in Set.Icc (0 : ℝ) T, ∫⁻ e,

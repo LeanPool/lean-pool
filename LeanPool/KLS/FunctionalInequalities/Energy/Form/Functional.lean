@@ -136,7 +136,6 @@ theorem zero_mem_domain (h : ZeroEnergy energy) : (0 : X) ∈ energy.domain :=
   h.finiteAt_zero
 
 /-- The zero functional vanishes at the zero test. -/
-@[simp]
 theorem zero : ZeroEnergy (0 : Functional X) :=
   rfl
 

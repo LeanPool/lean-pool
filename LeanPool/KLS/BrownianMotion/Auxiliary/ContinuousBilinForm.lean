@@ -29,6 +29,7 @@ variable [RCLike 𝕜] [NormedSpace 𝕜 E]
 
 variable (𝕜 E) in
 /- The type of continuous bilinear forms. -/
+/-- Continuous bilinear forms, represented as continuous linear maps into the continuous dual. -/
 abbrev _root_.ContinuousBilinForm := E →L[𝕜] E →L[𝕜] 𝕜
 
 variable (f : ContinuousBilinForm 𝕜 E) (b : Basis n 𝕜 E)
@@ -147,6 +148,7 @@ section ofMatrix
 
 variable (M : Matrix n n 𝕜) (b : Basis n 𝕜 E)
 
+/-- The continuous bilinear form with the given matrix in the basis `b`. -/
 noncomputable
 def ofMatrix : ContinuousBilinForm 𝕜 E :=
   haveI : FiniteDimensional 𝕜 E := Module.Basis.finiteDimensional_of_finite b

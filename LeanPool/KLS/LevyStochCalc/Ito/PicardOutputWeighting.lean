@@ -37,6 +37,7 @@ variable {n d : ℕ} {P : MeasureTheory.Measure Ω} [MeasureTheory.IsProbability
 section Weighting
 
 omit [MeasurableSpace E] in
+omit [IsProbabilityMeasure P] in
 /-- The second moment at a single time of `[0, T]`, weighted back up from the Bielecki norm. -/
 theorem lintegral_sq_le_bieleckiNorm_sq_weighted (β T : ℝ) (Z : ℝ → Ω → (Fin n → ℝ))
     {s : ℝ} (hs : s ∈ Set.Icc (0 : ℝ) T) :
@@ -265,7 +266,7 @@ theorem ae_drift_diff_sq_bound
       (‖X s ω - Y s ω‖₊ : ℝ≥0∞) ^ 2 ∂volume ∂P < ⊤)
     {t : ℝ} (ht : 0 ≤ t) :
     ∀ᵐ ω ∂P, ∑ i : Fin n,
-        ((picardStep_drift coeffs X x₀ t ω - picardStep_drift coeffs Y x₀ t ω) i) ^ 2
+        ((picardStepDrift coeffs X x₀ t ω - picardStepDrift coeffs Y x₀ t ω) i) ^ 2
       ≤ (n : ℝ) * L_μ ^ 2 * t * ∫ s in Set.Icc (0 : ℝ) t, ‖X s ω - Y s ω‖ ^ 2 ∂volume := by
   have hXYsq' : ∀ b : ℝ, 0 < b → ∫⁻ ω, ∫⁻ s in Set.Icc (0 : ℝ) b,
       (‖(‖X s ω - Y s ω‖ : ℝ)‖₊ : ℝ≥0∞) ^ 2 ∂volume ∂P < ⊤ := by
@@ -279,7 +280,7 @@ theorem ae_drift_diff_sq_bound
     ae_integrableOn_of_lintegral_sq hXYm hXYsq',
     ae_memLp_two_of_lintegral_sq hXYm hXYsq'] with ω hX hY hXY hXYL2
   calc ∑ i : Fin n,
-        ((picardStep_drift coeffs X x₀ t ω - picardStep_drift coeffs Y x₀ t ω) i) ^ 2
+        ((picardStepDrift coeffs X x₀ t ω - picardStepDrift coeffs Y x₀ t ω) i) ^ 2
       ≤ ∑ _i : Fin n, L_μ ^ 2 * t
           * ∫ s in Set.Icc (0 : ℝ) t, ‖X s ω - Y s ω‖ ^ 2 ∂volume :=
         Finset.sum_le_sum fun i _ =>
@@ -291,6 +292,7 @@ theorem ae_drift_diff_sq_bound
         ring
 
 omit [MeasurableSpace E] in
+omit [IsProbabilityMeasure P] in
 /-- **The drift half of the per-time contraction estimate, in lower-integral form.**
 `picardStep_drift_diff_lintegral_sq_bound` with both of its almost-everywhere hypotheses
 discharged. -/
@@ -311,8 +313,8 @@ theorem drift_diff_lintegral_sq_bound
       (‖X s ω - Y s ω‖₊ : ℝ≥0∞) ^ 2 ∂volume ∂P < ⊤)
     {t : ℝ} (ht : 0 ≤ t) :
     ∫⁻ ω, ENNReal.ofReal (∑ i : Fin n,
-        ((picardStep_drift (E := E) coeffs X x₀ t ω
-            - picardStep_drift coeffs Y x₀ t ω) i) ^ 2) ∂P
+        ((picardStepDrift (E := E) coeffs X x₀ t ω
+            - picardStepDrift coeffs Y x₀ t ω) i) ^ 2) ∂P
       ≤ ENNReal.ofReal ((n : ℝ) * L_μ ^ 2 * t)
           * ∫⁻ ω, ENNReal.ofReal
               (∫ s in Set.Icc (0 : ℝ) t, ‖X s ω - Y s ω‖ ^ 2) ∂P :=
@@ -350,23 +352,23 @@ theorem diffusion_diff_lintegral_sq_bound
         (‖coeffs.σ s (Y s ω) i j‖₊ : ℝ≥0∞) ^ 2 ∂volume ∂P < ⊤)
     {t : ℝ} (ht : 0 < t) :
     ∫⁻ ω, ∑ i : Fin n,
-        (‖picardStep_diffusion W ℱ hℱW coeffs X h_σ_meas_X h_σ_progMeas_X h_σ_sq_X t ω i
-          - picardStep_diffusion W ℱ hℱW coeffs Y h_σ_meas_Y h_σ_progMeas_Y h_σ_sq_Y t ω i‖₊
+        (‖picardStepDiffusion W ℱ hℱW coeffs X h_σ_meas_X h_σ_progMeas_X h_σ_sq_X t ω i
+          - picardStepDiffusion W ℱ hℱW coeffs Y h_σ_meas_Y h_σ_progMeas_Y h_σ_sq_Y t ω i‖₊
           : ℝ≥0∞) ^ 2 ∂P
       ≤ ENNReal.ofReal ((n : ℝ) * ((d : ℝ) * L_σ ^ 2))
           * ∫⁻ ω, ∫⁻ s in Set.Icc (0 : ℝ) t,
               (‖X s ω - Y s ω‖₊ : ℝ≥0∞) ^ 2 ∂volume ∂P := by
   have hmeas : ∀ i : Fin n, Measurable fun ω =>
-      (‖picardStep_diffusion W ℱ hℱW coeffs X h_σ_meas_X h_σ_progMeas_X h_σ_sq_X t ω i
-        - picardStep_diffusion W ℱ hℱW coeffs Y h_σ_meas_Y h_σ_progMeas_Y h_σ_sq_Y t ω i‖₊
+      (‖picardStepDiffusion W ℱ hℱW coeffs X h_σ_meas_X h_σ_progMeas_X h_σ_sq_X t ω i
+        - picardStepDiffusion W ℱ hℱW coeffs Y h_σ_meas_Y h_σ_progMeas_Y h_σ_sq_Y t ω i‖₊
         : ℝ≥0∞) ^ 2 := fun i =>
     ((((measurable_picardStep_diffusion W ℱ hℱW coeffs X h_σ_meas_X h_σ_progMeas_X h_σ_sq_X i
       t).sub (measurable_picardStep_diffusion W ℱ hℱW coeffs Y h_σ_meas_Y h_σ_progMeas_Y
         h_σ_sq_Y i t)).nnnorm).coe_nnreal_ennreal).pow_const 2
   rw [MeasureTheory.lintegral_finsetSum _ fun i _ => hmeas i]
   calc ∑ i : Fin n, ∫⁻ ω,
-        (‖picardStep_diffusion W ℱ hℱW coeffs X h_σ_meas_X h_σ_progMeas_X h_σ_sq_X t ω i
-          - picardStep_diffusion W ℱ hℱW coeffs Y h_σ_meas_Y h_σ_progMeas_Y h_σ_sq_Y t ω i‖₊
+        (‖picardStepDiffusion W ℱ hℱW coeffs X h_σ_meas_X h_σ_progMeas_X h_σ_sq_X t ω i
+          - picardStepDiffusion W ℱ hℱW coeffs Y h_σ_meas_Y h_σ_progMeas_Y h_σ_sq_Y t ω i‖₊
           : ℝ≥0∞) ^ 2 ∂P
       ≤ ∑ _i : Fin n, ENNReal.ofReal ((d : ℝ) * L_σ ^ 2)
           * ∫⁻ ω, ∫⁻ s in Set.Icc (0 : ℝ) t,
@@ -434,23 +436,23 @@ theorem jump_diff_lintegral_sq_bound {ν : MeasureTheory.Measure E}
         (‖coeffs.γ s (Y s ω) e i‖₊ : ℝ≥0∞) ^ 2 ∂ν ∂volume ∂P < ⊤)
     {t : ℝ} (ht : 0 < t) :
     ∫⁻ ω, ∑ i : Fin n,
-        (‖picardStep_jump N ℱ hℱN coeffs X hX_meas hX_progMeas hX_sq t ω i
-          - picardStep_jump N ℱ hℱN coeffs Y hY_meas hY_progMeas hY_sq t ω i‖₊
+        (‖picardStepJump N ℱ hℱN coeffs X hX_meas hX_progMeas hX_sq t ω i
+          - picardStepJump N ℱ hℱN coeffs Y hY_meas hY_progMeas hY_sq t ω i‖₊
           : ℝ≥0∞) ^ 2 ∂P
       ≤ ENNReal.ofReal ((n : ℝ) * L ^ 2)
           * ∫⁻ ω, ∫⁻ s in Set.Icc (0 : ℝ) t,
               (‖X s ω - Y s ω‖₊ : ℝ≥0∞) ^ 2 ∂volume ∂P := by
   have hmeas : ∀ i : Fin n, Measurable fun ω =>
-      (‖picardStep_jump N ℱ hℱN coeffs X hX_meas hX_progMeas hX_sq t ω i
-        - picardStep_jump N ℱ hℱN coeffs Y hY_meas hY_progMeas hY_sq t ω i‖₊ : ℝ≥0∞) ^ 2 :=
+      (‖picardStepJump N ℱ hℱN coeffs X hX_meas hX_progMeas hX_sq t ω i
+        - picardStepJump N ℱ hℱN coeffs Y hY_meas hY_progMeas hY_sq t ω i‖₊ : ℝ≥0∞) ^ 2 :=
     fun i =>
       ((((measurable_picardStep_jump N ℱ hℱN coeffs X hX_meas hX_progMeas hX_sq i t).sub
         (measurable_picardStep_jump N ℱ hℱN coeffs Y hY_meas hY_progMeas hY_sq i
           t)).nnnorm).coe_nnreal_ennreal).pow_const 2
   rw [MeasureTheory.lintegral_finsetSum _ fun i _ => hmeas i]
   calc ∑ i : Fin n, ∫⁻ ω,
-        (‖picardStep_jump N ℱ hℱN coeffs X hX_meas hX_progMeas hX_sq t ω i
-          - picardStep_jump N ℱ hℱN coeffs Y hY_meas hY_progMeas hY_sq t ω i‖₊
+        (‖picardStepJump N ℱ hℱN coeffs X hX_meas hX_progMeas hX_sq t ω i
+          - picardStepJump N ℱ hℱN coeffs Y hY_meas hY_progMeas hY_sq t ω i‖₊
           : ℝ≥0∞) ^ 2 ∂P
       ≤ ∑ _i : Fin n, ENNReal.ofReal (L ^ 2)
           * ∫⁻ ω, ∫⁻ s in Set.Icc (0 : ℝ) t,

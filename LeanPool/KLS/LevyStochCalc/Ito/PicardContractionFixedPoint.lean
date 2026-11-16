@@ -238,6 +238,7 @@ theorem bieleckiNorm_picardStepOnRawStop_picardLimit_eq_zero {β : ℝ} (hβ : 0
   exact le_antisymm (ge_of_tendsto' htend hbound) zero_le
 
 omit [ℱ'.IsRightContinuous] hℱW hℱN hℱ0 hnull hReg hLip in
+omit [IsProbabilityMeasure P] in
 /-- A vanishing Bielecki norm means the path map vanishes almost surely at every time of the
 window. -/
 theorem ae_eq_zero_of_bieleckiNorm_eq_zero {β T : ℝ} {Z : ℝ → Ω → (Fin n → ℝ)}

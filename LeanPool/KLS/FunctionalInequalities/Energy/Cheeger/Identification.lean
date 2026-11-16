@@ -111,7 +111,7 @@ energy of the intrinsic law on the affine support, transported along the intrins
 isometry.  Every finite-dimensional Borel probability law is included, with the value `⊤`
 allowed on both sides and a one-point affine support giving `0 = 2 * 0`. -/
 theorem energy_eq_two_mul_cheeger
-    {E : Type u} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [CompleteSpace E]
+    {E : Type u} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
     [MeasurableSpace E] [BorelSpace E] [SecondCountableTopology E] [FiniteDimensional ℝ E]
     (μ : ProbabilityMeasure E) (f : Lp ℝ 2 (μ : Measure E)) :
     energy μ f = 2 * Cheeger.Intrinsic.energy μ f := by

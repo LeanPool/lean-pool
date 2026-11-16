@@ -120,7 +120,7 @@ section InnerProduct
 variable {E : Type*}
   [NormedAddCommGroup E] [InnerProductSpace ℝ E]
 
-private lemma convex_line_slope_mono [FiniteDimensional ℝ E] {u : E → ℝ}
+private lemma convex_line_slope_mono {u : E → ℝ}
     (hconv : ConvexOn ℝ Set.univ u) (x v : E) {a b : ℝ}
     (ha : 0 < a) (hab : a ≤ b) :
     (u (x + a • v) - u x) / a ≤ (u (x + b • v) - u x) / b := by

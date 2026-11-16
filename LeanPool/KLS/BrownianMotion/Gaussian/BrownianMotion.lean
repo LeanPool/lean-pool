@@ -498,6 +498,7 @@ theorem IsBrownianReal.indep_zero (h : IsBrownianReal X P) (hX : ∀ t, Measurab
 
 end IsBrownianReal
 
+/-- Coordinate evaluation on the space of Brownian sample functions. -/
 def preBrownian : ℝ≥0 → (ℝ≥0 → ℝ) → ℝ := fun t ω ↦ ω t
 
 @[fun_prop]
@@ -559,6 +560,7 @@ lemma isKolmogorovProcess_preBrownian {n : ℕ} (hn : 0 < n) :
     exact IsGaussian.memLp_id _ _ (ENNReal.natCast_ne_top (2 * n))
   · exact ae_of_all _ fun _ ↦ by positivity
 
+/-- The continuous modification of the coordinate process under `gaussianLimit`. -/
 noncomputable
 def brownian : ℝ≥0 → (ℝ≥0 → ℝ) → ℝ := isPreBrownianReal_preBrownian.mk
 
@@ -621,6 +623,7 @@ lemma hasIndepIncrements_brownian : HasIndepIncrements brownian gaussianLimit :=
 
 section Measure
 
+/-- The law of the continuous Brownian sample path on the subtype of continuous functions. -/
 noncomputable
 def wienerMeasureAux : Measure {f : ℝ≥0 → ℝ // Continuous f} :=
   gaussianLimit.map (fun ω ↦ (⟨fun t ↦ brownian t ω, continuous_brownian ω⟩))
@@ -629,7 +632,7 @@ section ContinuousMap.MeasurableSpace
 
 variable {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
 
-instance : MeasurableSpace C(X, Y) := borel _
+instance instMeasurableSpaceContinuousMapBorel : MeasurableSpace C(X, Y) := borel _
 instance : BorelSpace C(X, Y) where
   measurable_eq := rfl
 
@@ -783,6 +786,7 @@ lemma ContinuousMap.measurable_iff_eval {α : Type*} [MeasurableSpace α]
 
 end ContinuousMap.MeasurableSpace
 
+/-- The measurable equivalence between the subtype of continuous functions and continuous maps. -/
 def MeasurableEquiv.continuousMap : {f : ℝ≥0 → ℝ // Continuous f} ≃ᵐ C(ℝ≥0, ℝ) where
   toFun := fun f ↦ ContinuousMap.mk f.1 f.2
   invFun := fun f ↦ ⟨f, f.continuous⟩
@@ -802,6 +806,7 @@ def MeasurableEquiv.continuousMap : {f : ℝ≥0 → ℝ // Continuous f} ≃ᵐ
     rw [measurable_pi_iff]
     exact fun _ ↦ Continuous.measurable (by fun_prop)
 
+/-- The law of Brownian sample paths as a measure on the space of continuous maps. -/
 noncomputable
 def wienerMeasure : Measure C(ℝ≥0, ℝ) := wienerMeasureAux.map MeasurableEquiv.continuousMap
 

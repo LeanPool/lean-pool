@@ -21,7 +21,7 @@ public import LeanPool.KLS.LevyStochCalc.Martingale.RightCont
 Lifts `simpleIntegral W H T` into `Lp ℝ 2 P` for an adapted `SimplePredictable`
 integrand `H`, shows that this lift is Cauchy along an `L²`-dense approximating
 sequence of simple predictable integrands, and identifies the squared `L²`-norm of
-the resulting limit `itoIntegralLp_brownian` with the time-space integral
+the resulting limit `itoIntegralLpBrownian` with the time-space integral
 `∫⁻ ω, ∫⁻ s in [0, T], ‖H ω s‖₊² ∂volume ∂P`.
 -/
 
@@ -122,7 +122,7 @@ lemma simpleIntegral_memLp_brownian
 genuine `Lp` element. This is the function that gets fed to
 `MeasureTheory.Lp.completeSpace` for the L² limit construction in
 C0b.10. -/
-noncomputable def simpleIntegralLp_brownian
+noncomputable def simpleIntegralLpBrownian
     {P : MeasureTheory.Measure Ω} [MeasureTheory.IsProbabilityMeasure P]
     (W : LevyStochCalc.Brownian.BrownianMotion P)
     (ℱ : Filtration ℝ ‹MeasurableSpace Ω›) (hℱ : IsBrownianFiltration W ℱ)
@@ -132,8 +132,8 @@ noncomputable def simpleIntegralLp_brownian
     MeasureTheory.Lp ℝ 2 P :=
   (simpleIntegral_memLp_brownian W ℱ hℱ hT H h_adapt).toLp
 
-/-- **C0b.10-pre4: `simpleIntegralLp_brownian` `coeFn` matches `simpleIntegral`.**
-The coercion of `simpleIntegralLp_brownian W ℱ hℱ hT H h_adapt` back to a
+/-- **C0b.10-pre4: `simpleIntegralLpBrownian` `coeFn` matches `simpleIntegral`.**
+The coercion of `simpleIntegralLpBrownian W ℱ hℱ hT H h_adapt` back to a
 function `Ω → ℝ` is a.e.-equal to `fun ω => simpleIntegral W H T ω`. -/
 lemma coeFn_simpleIntegralLp_brownian
     {P : MeasureTheory.Measure Ω} [MeasureTheory.IsProbabilityMeasure P]
@@ -142,7 +142,7 @@ lemma coeFn_simpleIntegralLp_brownian
     {T : ℝ} (hT : 0 < T) (H : SimplePredictable Ω T)
     (h_adapt : ∀ i : Fin H.N, @MeasureTheory.StronglyMeasurable Ω ℝ _
       (ℱ (H.partition i.castSucc)) (H.ξ i)) :
-    (simpleIntegralLp_brownian W ℱ hℱ hT H h_adapt : Ω → ℝ)
+    (simpleIntegralLpBrownian W ℱ hℱ hT H h_adapt : Ω → ℝ)
       =ᵐ[P] (fun ω => simpleIntegral W H T ω) :=
   MeasureTheory.MemLp.coeFn_toLp _
 
@@ -194,7 +194,7 @@ lemma eLpNorm_simpleIntegral_sub_rpow_brownian
   rw [h_pointwise]
   exact SimplePredictable.diff_isometry_simple W ℱ hℱ hT H₁ H₂ h_eq h_adapt₁ h_adapt₂
 
-/-- **C0b.10-pre6: `simpleIntegralLp_brownian` is a `CauchySeq` in
+/-- **C0b.10-pre6: `simpleIntegralLpBrownian` is a `CauchySeq` in
 `Lp ℝ 2 P` whenever the eval-sequence is L²-Cauchy.**
 
 Direct application of the eLpNorm-form diff isometry
@@ -219,12 +219,12 @@ theorem cauchySeq_simpleIntegralLp_brownian
       ∫⁻ ω, ∫⁻ s in Set.Icc (0 : ℝ) T,
         (‖(G n).eval s ω - (G m).eval s ω‖₊ : ℝ≥0∞) ^ 2
           ∂volume ∂P < ε) :
-    CauchySeq (fun n => simpleIntegralLp_brownian W ℱ hℱ hT (G n) (h_adapt n)) := by
+    CauchySeq (fun n => simpleIntegralLpBrownian W ℱ hℱ hT (G n) (h_adapt n)) := by
   -- Step 1: establish that edist of the Lp elements equals the eLpNorm of the
   -- raw simpleIntegral function difference (via Lp.edist_toLp_toLp).
   have h_edist_eq : ∀ m n : ℕ,
-      edist (simpleIntegralLp_brownian W ℱ hℱ hT (G m) (h_adapt m))
-            (simpleIntegralLp_brownian W ℱ hℱ hT (G n) (h_adapt n))
+      edist (simpleIntegralLpBrownian W ℱ hℱ hT (G m) (h_adapt m))
+            (simpleIntegralLpBrownian W ℱ hℱ hT (G n) (h_adapt n))
         = MeasureTheory.eLpNorm
             (fun ω => simpleIntegral W (G m) T ω - simpleIntegral W (G n) T ω) 2 P := by
     intro m n
@@ -260,19 +260,19 @@ theorem cauchySeq_simpleIntegralLp_brownian
     rw [hδ] at h_lt
     exact (ENNReal.rpow_lt_rpow_iff (by norm_num : (0 : ℝ) < 2)).mp h_lt
 
-/-- **C0b.10: `itoIntegralLp_brownian` — the L²-limit of `simpleIntegralLp_brownian`
+/-- **C0b.10: `itoIntegralLpBrownian` — the L²-limit of `simpleIntegralLpBrownian`
 along a Cauchy approximating sequence.**
 
 This is the genuine L²-extended Itô integral against Brownian motion,
-defined as `Filter.limUnder Filter.atTop (simpleIntegralLp_brownian ∘ G)`
+defined as `Filter.limUnder Filter.atTop (simpleIntegralLpBrownian ∘ G)`
 for any approximating sequence `G : ℕ → SimplePredictable` whose evals
 are L²-Cauchy and which are adapted with shared endpoints.
 
 The convergence (and unique-limit identification) follows from
 `Lp.completeSpace` + `cauchySeq_simpleIntegralLp_brownian` (C0b.10-pre6)
-+ `CauchySeq.tendsto_limUnder`. Properties of `itoIntegralLp_brownian`
++ `CauchySeq.tendsto_limUnder`. Properties of `itoIntegralLpBrownian`
 (L² isometry, etc.) are proved in subsequent lemmas. -/
-noncomputable def itoIntegralLp_brownian
+noncomputable def itoIntegralLpBrownian
     {P : MeasureTheory.Measure Ω} [MeasureTheory.IsProbabilityMeasure P]
     (W : LevyStochCalc.Brownian.BrownianMotion P)
     (ℱ : Filtration ℝ ‹MeasurableSpace Ω›) (hℱ : IsBrownianFiltration W ℱ)
@@ -291,9 +291,9 @@ noncomputable def itoIntegralLp_brownian
           ∂volume ∂P < ε) :
     MeasureTheory.Lp ℝ 2 P :=
   Filter.limUnder Filter.atTop
-    (fun n => simpleIntegralLp_brownian W ℱ hℱ _hT (G n) (h_adapt n))
+    (fun n => simpleIntegralLpBrownian W ℱ hℱ _hT (G n) (h_adapt n))
 
-/-- **C0b.10-post1: `simpleIntegralLp_brownian` converges to `itoIntegralLp_brownian`
+/-- **C0b.10-post1: `simpleIntegralLpBrownian` converges to `itoIntegralLpBrownian`
 in `Lp ℝ 2 P`.** Direct from `cauchySeq_simpleIntegralLp_brownian` +
 `CauchySeq.tendsto_limUnder` (using `Lp.completeSpace`). -/
 theorem itoIntegralLp_brownian_tendsto
@@ -314,9 +314,9 @@ theorem itoIntegralLp_brownian_tendsto
         (‖(G n).eval s ω - (G m).eval s ω‖₊ : ℝ≥0∞) ^ 2
           ∂volume ∂P < ε) :
     Filter.Tendsto
-      (fun n => simpleIntegralLp_brownian W ℱ hℱ hT (G n) (h_adapt n))
+      (fun n => simpleIntegralLpBrownian W ℱ hℱ hT (G n) (h_adapt n))
       Filter.atTop
-      (nhds (itoIntegralLp_brownian W ℱ hℱ hT G h_eq h_adapt h_cauchy_eval)) :=
+      (nhds (itoIntegralLpBrownian W ℱ hℱ hT G h_eq h_adapt h_cauchy_eval)) :=
   (cauchySeq_simpleIntegralLp_brownian W ℱ hℱ hT G h_eq h_adapt h_cauchy_eval).tendsto_limUnder
 
 /-- **C0b.10-post2: `eLpNorm` of `simpleIntegralLp` rpow-form, the
@@ -335,7 +335,7 @@ lemma eLpNorm_simpleIntegralLp_brownian_rpow_eq
     (h_adapt : ∀ i : Fin H.N, @MeasureTheory.StronglyMeasurable Ω ℝ _
       (ℱ (H.partition i.castSucc)) (H.ξ i)) :
     MeasureTheory.eLpNorm
-        (↑↑(simpleIntegralLp_brownian W ℱ hℱ hT H h_adapt) : Ω → ℝ) 2 P ^ (2 : ℝ)
+        (↑↑(simpleIntegralLpBrownian W ℱ hℱ hT H h_adapt) : Ω → ℝ) 2 P ^ (2 : ℝ)
       = ∫⁻ ω, ∫⁻ s in Set.Icc (0 : ℝ) T,
           (‖H.eval s ω‖₊ : ℝ≥0∞) ^ 2 ∂volume ∂P := by
   -- Step 1: replace ↑↑(toLp ...) with the original simpleIntegral function (a.e.).
@@ -369,9 +369,9 @@ lemma eLpNorm_simpleIntegralLp_brownian_rpow_eq
   -- Step 4: simpleIntegral_isometry.
   exact simpleIntegral_isometry W ℱ hℱ hT H h_adapt
 
-/-- **C0b.10-post3: ‖simpleIntegralLp_brownian (G n)‖ converges to
-‖itoIntegralLp_brownian‖ in ℝ.** Direct from the convergence of
-`simpleIntegralLp_brownian (G n) → itoIntegralLp_brownian` in `Lp`
+/-- **C0b.10-post3: ‖simpleIntegralLpBrownian (G n)‖ converges to
+‖itoIntegralLpBrownian‖ in ℝ.** Direct from the convergence of
+`simpleIntegralLpBrownian (G n) → itoIntegralLpBrownian` in `Lp`
 plus continuity of the norm. -/
 theorem norm_simpleIntegralLp_tendsto_norm_itoIntegralLp_brownian
     {P : MeasureTheory.Measure Ω} [MeasureTheory.IsProbabilityMeasure P]
@@ -391,9 +391,9 @@ theorem norm_simpleIntegralLp_tendsto_norm_itoIntegralLp_brownian
         (‖(G n).eval s ω - (G m).eval s ω‖₊ : ℝ≥0∞) ^ 2
           ∂volume ∂P < ε) :
     Filter.Tendsto
-      (fun n => ‖simpleIntegralLp_brownian W ℱ hℱ hT (G n) (h_adapt n)‖)
+      (fun n => ‖simpleIntegralLpBrownian W ℱ hℱ hT (G n) (h_adapt n)‖)
       Filter.atTop
-      (nhds ‖itoIntegralLp_brownian W ℱ hℱ hT G h_eq h_adapt h_cauchy_eval‖) :=
+      (nhds ‖itoIntegralLpBrownian W ℱ hℱ hT G h_eq h_adapt h_cauchy_eval‖) :=
   (itoIntegralLp_brownian_tendsto W ℱ hℱ hT G h_eq h_adapt h_cauchy_eval).norm
 
 /-- **C0b.10-post4: `eLpNorm (↑↑(simpleIntegralLp (G n))) 2 P` converges
@@ -419,10 +419,10 @@ theorem eLpNorm_simpleIntegralLp_tendsto_eLpNorm_itoIntegralLp_brownian
           ∂volume ∂P < ε) :
     Filter.Tendsto
       (fun n => MeasureTheory.eLpNorm
-        (↑↑(simpleIntegralLp_brownian W ℱ hℱ hT (G n) (h_adapt n)) : Ω → ℝ) 2 P)
+        (↑↑(simpleIntegralLpBrownian W ℱ hℱ hT (G n) (h_adapt n)) : Ω → ℝ) 2 P)
       Filter.atTop
       (nhds (MeasureTheory.eLpNorm
-        (↑↑(itoIntegralLp_brownian W ℱ hℱ hT G h_eq h_adapt h_cauchy_eval) : Ω → ℝ) 2 P)) := by
+        (↑↑(itoIntegralLpBrownian W ℱ hℱ hT G h_eq h_adapt h_cauchy_eval) : Ω → ℝ) 2 P)) := by
   have h_tendsto :=
     (itoIntegralLp_brownian_tendsto W ℱ hℱ hT G h_eq h_adapt h_cauchy_eval).enorm
   -- h_tendsto : Tendsto (fun n => ‖Lp_n‖ₑ) atTop (nhds ‖Lp_lim‖ₑ)
@@ -452,16 +452,16 @@ theorem eLpNorm_rpow_simpleIntegralLp_tendsto_brownian
           ∂volume ∂P < ε) :
     Filter.Tendsto
       (fun n => MeasureTheory.eLpNorm
-        (↑↑(simpleIntegralLp_brownian W ℱ hℱ hT (G n) (h_adapt n)) : Ω → ℝ) 2 P ^ (2 : ℝ))
+        (↑↑(simpleIntegralLpBrownian W ℱ hℱ hT (G n) (h_adapt n)) : Ω → ℝ) 2 P ^ (2 : ℝ))
       Filter.atTop
       (nhds (MeasureTheory.eLpNorm
-        (↑↑(itoIntegralLp_brownian W ℱ hℱ hT G h_eq h_adapt h_cauchy_eval) : Ω → ℝ)
+        (↑↑(itoIntegralLpBrownian W ℱ hℱ hT G h_eq h_adapt h_cauchy_eval) : Ω → ℝ)
           2 P ^ (2 : ℝ))) :=
   (eLpNorm_simpleIntegralLp_tendsto_eLpNorm_itoIntegralLp_brownian W ℱ hℱ hT G h_eq h_adapt
     h_cauchy_eval).ennrpow_const 2
 
 /-- **C0b.10-post6: lintegral-of-squared-eval converges to `eLpNorm²` of
-`itoIntegralLp_brownian`.**
+`itoIntegralLpBrownian`.**
 
 Substitutes `eLpNorm_simpleIntegralLp_brownian_rpow_eq` (post2) into
 `eLpNorm_rpow_simpleIntegralLp_tendsto_brownian` (post5) to express
@@ -488,7 +488,7 @@ theorem lintegral_sq_eval_tendsto_eLpNorm_itoIntegralLp_brownian
           (‖(G n).eval s ω‖₊ : ℝ≥0∞) ^ 2 ∂volume ∂P)
       Filter.atTop
       (nhds (MeasureTheory.eLpNorm
-        (↑↑(itoIntegralLp_brownian W ℱ hℱ hT G h_eq h_adapt h_cauchy_eval) : Ω → ℝ)
+        (↑↑(itoIntegralLpBrownian W ℱ hℱ hT G h_eq h_adapt h_cauchy_eval) : Ω → ℝ)
           2 P ^ (2 : ℝ))) := by
   have h_tendsto := eLpNorm_rpow_simpleIntegralLp_tendsto_brownian W ℱ hℱ hT G h_eq h_adapt
     h_cauchy_eval
@@ -497,20 +497,20 @@ theorem lintegral_sq_eval_tendsto_eLpNorm_itoIntegralLp_brownian
   -- Substitute eLpNorm² = lintegral via post2.
   have h_subst : ∀ n : ℕ,
       MeasureTheory.eLpNorm
-        (↑↑(simpleIntegralLp_brownian W ℱ hℱ hT (G n) (h_adapt n)) : Ω → ℝ) 2 P ^ (2 : ℝ)
+        (↑↑(simpleIntegralLpBrownian W ℱ hℱ hT (G n) (h_adapt n)) : Ω → ℝ) 2 P ^ (2 : ℝ)
         = ∫⁻ ω, ∫⁻ s in Set.Icc (0 : ℝ) T,
             (‖(G n).eval s ω‖₊ : ℝ≥0∞) ^ 2 ∂volume ∂P :=
     fun n => eLpNorm_simpleIntegralLp_brownian_rpow_eq W ℱ hℱ hT (G n) (h_adapt n)
   -- Rewrite the function inside the Tendsto.
   have h_eqv : (fun n => MeasureTheory.eLpNorm
-        (↑↑(simpleIntegralLp_brownian W ℱ hℱ hT (G n) (h_adapt n)) : Ω → ℝ) 2 P ^ (2 : ℝ))
+        (↑↑(simpleIntegralLpBrownian W ℱ hℱ hT (G n) (h_adapt n)) : Ω → ℝ) 2 P ^ (2 : ℝ))
       = (fun n => ∫⁻ ω, ∫⁻ s in Set.Icc (0 : ℝ) T,
           (‖(G n).eval s ω‖₊ : ℝ≥0∞) ^ 2 ∂volume ∂P) :=
     funext h_subst
   rw [h_eqv] at h_tendsto
   exact h_tendsto
 
-/-- **C0b.10-post7: L² isometry on `itoIntegralLp_brownian`.**
+/-- **C0b.10-post7: L² isometry on `itoIntegralLpBrownian`.**
 
 Conditional on the approximating sequence's `lintegral_sq` of `(G n).eval`
 converging to `∫⁻ ω ∫⁻ s ‖H ω s‖₊² ∂vol ∂P`, we obtain
@@ -544,7 +544,7 @@ theorem itoIntegralLp_brownian_L2_isometry
       (nhds (∫⁻ ω, ∫⁻ s in Set.Icc (0 : ℝ) T,
           (‖H ω s‖₊ : ℝ≥0∞) ^ 2 ∂volume ∂P))) :
     MeasureTheory.eLpNorm
-        (↑↑(itoIntegralLp_brownian W ℱ hℱ hT G h_eq h_adapt h_cauchy_eval) : Ω → ℝ) 2 P
+        (↑↑(itoIntegralLpBrownian W ℱ hℱ hT G h_eq h_adapt h_cauchy_eval) : Ω → ℝ) 2 P
           ^ (2 : ℝ)
       = ∫⁻ ω, ∫⁻ s in Set.Icc (0 : ℝ) T,
           (‖H ω s‖₊ : ℝ≥0∞) ^ 2 ∂volume ∂P := by

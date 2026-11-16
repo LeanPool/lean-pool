@@ -88,7 +88,7 @@ theorem continuous_coareaJacobian :
 
 omit [MeasurableSpace H] [BorelSpace H] in
 /-- The integrand of the codimension-`m` coarea formula is measurable, for an arbitrary function. -/
-theorem measurable_coareaJacobian_fderiv [MeasurableSpace W] [BorelSpace W] (u : V → W) :
+theorem measurable_coareaJacobian_fderiv (u : V → W) :
     Measurable (fun x : V => coareaJacobian (fderiv ℝ u x)) :=
   continuous_coareaJacobian.measurable.comp (measurable_fderiv ℝ u)
 

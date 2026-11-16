@@ -123,7 +123,6 @@ variable {V : Type*} [NormedAddCommGroup V] [NormedSpace ℝ V] [FiniteDimension
 
 omit [FiniteDimensional ℝ V] in
 theorem IsDiffusion.ae_linear_eq_integral_transport
-    [FiniteDimensional ℝ V]
     (Φ : V ≃L[ℝ] (Fin N → ℝ))
     {b : V → V} {σ : V → Fin d → V} {x₀ : V}
     (hbc : Continuous b) {B : ℝ} (hbB : ∀ x, ‖b x‖ ≤ B)

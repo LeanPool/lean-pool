@@ -239,7 +239,7 @@ lemma lintegral_eval_sq {T : ℝ} (H : SimplePredictable Ω T) (ω : Ω) :
 `ENNReal.ofReal(t_{i+1} - t_i) · ∫⁻ ‖ξ_i‖₊² ∂P`. This is the RHS reduction
 of `simpleIntegral_isometry`. -/
 lemma lintegral_eval_sq_outer
-    {P : Measure Ω} [IsProbabilityMeasure P]
+    {P : Measure Ω}
     {T : ℝ} (H : SimplePredictable Ω T) :
     ∫⁻ ω, ∫⁻ s in Set.Icc (0 : ℝ) T,
         (‖H.eval s ω‖₊ : ℝ≥0∞) ^ 2 ∂volume ∂P

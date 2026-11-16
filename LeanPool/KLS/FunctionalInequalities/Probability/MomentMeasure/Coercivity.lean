@@ -58,6 +58,7 @@ end Integral
 section Geometry
 variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
   [FiniteDimensional ℝ E] [MeasurableSpace E] [BorelSpace E]
+omit [BorelSpace E] in
 /-- Constants are chosen from the measure and one fixed finite simplex before
 any potential. Lemma16 produces every vertex bound, and the actual affine
 maximum converts it to linear growth of the actual conjugate. -/

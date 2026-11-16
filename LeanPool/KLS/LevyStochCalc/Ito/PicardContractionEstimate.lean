@@ -234,6 +234,7 @@ theorem bieleckiNorm_picardSelfMap_diff_le
 
 /-! ### The Picard iterates and their limit -/
 
+omit [IsProbabilityMeasure P] in
 /-- A positive Bielecki weight only shrinks the norm on `[0, T]`. -/
 theorem bieleckiNorm_le_bieleckiNorm_zero {β : ℝ} (hβ : 0 ≤ β) (T : ℝ)
     (Z : ℝ → Ω → (Fin n → ℝ)) :
@@ -380,6 +381,7 @@ theorem bieleckiNorm_inner_aemeasurable_of_slice {Y : ℝ → Ω → (Fin n → 
       ((1 : ℝ) / 2)).aemeasurable
 
 omit [ℱ'.IsRightContinuous] in
+omit [IsProbabilityMeasure P] in
 /-- The Bielecki norm of a difference is symmetric. -/
 theorem bieleckiNorm_sub_comm (β T : ℝ) (A B : ℝ → Ω → (Fin n → ℝ)) :
     bieleckiNorm (P := P) β T (fun t ω i => A t ω i - B t ω i)
@@ -391,6 +393,7 @@ theorem bieleckiNorm_sub_comm (β T : ℝ) (A B : ℝ → Ω → (Fin n → ℝ)
   simp only [show A t ω i - B t ω i = -(B t ω i - A t ω i) from by ring, nnnorm_neg]
 
 omit [ℱ'.IsRightContinuous] in
+omit [IsProbabilityMeasure P] in
 /-- The unweighted Bielecki norm is bounded by the weighted one, at the cost of `e^{βT}`. -/
 theorem bieleckiNorm_zero_le_mul {β : ℝ} (hβ : 0 ≤ β) {T : ℝ} (Z : ℝ → Ω → (Fin n → ℝ)) :
     bieleckiNorm (P := P) 0 T Z
@@ -414,6 +417,7 @@ theorem bieleckiNorm_zero_le_mul {β : ℝ} (hβ : 0 ≤ β) {T : ℝ} (Z : ℝ 
         mul_le_mul' hexp hle
 
 omit [ℱ'.IsRightContinuous] in
+omit [IsProbabilityMeasure P] in
 /-- A path map at finite Bielecki distance from one of finite Bielecki norm has finite Bielecki
 norm. -/
 theorem bieleckiNorm_lt_top_of_approx (β T : ℝ) {A Z : ℝ → Ω → (Fin n → ℝ)}

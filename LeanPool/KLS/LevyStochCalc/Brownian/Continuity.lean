@@ -56,7 +56,7 @@ Hölder regularity (`kc_ae_nbhd_holder`) via `extendFrom`, and the modification
 property from `kolmogorov_modification_ae_eq`. The Hölder exponent is
 `α := (q−1)/(2p)` (`0 < α`, `αp < q−1`). -/
 theorem kolmogorovChentsov_modification
-    (P : Measure Ω) [IsProbabilityMeasure P]
+    (P : Measure Ω)
     (X : ℝ → Ω → ℝ) {p q : ℝ} {M : ℝ≥0}
     (hX : ProbabilityTheory.IsKolmogorovProcess X P p q M)
     (hq : 1 < q) :
@@ -304,7 +304,7 @@ lemma gaussianReal_fourth_moment (v : ℝ≥0) :
 /-- **Brownian increment fourth moment.** For a process `X` with Brownian-law
 increments, `𝔼[(X_t − X_s)⁴] = 3 (t − s)²` for `s < t`. -/
 lemma brownian_increment_fourth_moment
-    (P : Measure Ω) [IsProbabilityMeasure P]
+    (P : Measure Ω)
     (X : ℝ → Ω → ℝ)
     (h_meas : ∀ s : ℝ, Measurable (X s))
     (h_increment : ∀ {s t : ℝ} (hst : s < t),
@@ -333,7 +333,7 @@ Proof: convert `edist^4` to `ENNReal.ofReal ((X s ω - X t ω)^4)` (via
 apply `h_increment` to get `gaussianReal 0 ⟨t - s, _⟩`, then use
 `gaussianReal_fourth_moment` and ENNReal arithmetic. -/
 lemma brownian_continuous_modification_kol_aux
-    {P : Measure Ω} [IsProbabilityMeasure P]
+    {P : Measure Ω}
     (X : ℝ → Ω → ℝ)
     (h_meas : ∀ s : ℝ, Measurable (X s))
     (h_increment : ∀ {s t : ℝ} (hst : s < t),
@@ -400,7 +400,7 @@ The hypothesis `h_increment` is stated for **all** real `s < t` (no
 nonnegativity constraint). This is consistent with a two-sided BM and is
 required because the Kolmogorov bound must hold for all `s, t : ℝ`. -/
 theorem brownian_continuous_modification
-    (P : Measure Ω) [IsProbabilityMeasure P]
+    (P : Measure Ω)
     (X : ℝ → Ω → ℝ)
     (h_meas : ∀ s : ℝ, Measurable (X s))
     (h_increment : ∀ {s t : ℝ} (hst : s < t),

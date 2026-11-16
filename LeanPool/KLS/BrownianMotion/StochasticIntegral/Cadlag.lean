@@ -40,12 +40,10 @@ lemma IsRightContinuous.comp_of_monotone_of_continuous {κ : Type*} [LinearOrder
   refine ContinuousWithinAt.comp (t := Set.Ici (ψ x)) ?_ hψc.continuousWithinAt fun y hy ↦ hψ hy
   exact continuousWithinAt_Ioi_iff_Ici.1 (hf (ψ x))
 
-@[simp]
 lemma isRightContinuous_const [TopologicalSpace E] [Preorder ι] (c : E) :
     IsRightContinuous (fun _ ↦ c : ι → E) :=
   continuous_const.isRightContinuous
 
-@[simp]
 lemma isCadlag_const [TopologicalSpace E] [Preorder ι] (c : E) : IsCadlag (fun _ ↦ c : ι → E) :=
   continuous_const.isCadlag
 

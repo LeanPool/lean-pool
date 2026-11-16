@@ -44,6 +44,7 @@ variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [CompleteS
 /-- **Unit-energy tests** (Letwin (2.19)): locally Lipschitz `f ∈ L²(μ)` with `∇f ∈ L²(μ)` and
 `∫ ‖∇f‖² dμ ≤ 1`; no centering, smoothness or compact support is required. -/
 structure UnitEnergyTest (μ : ProbabilityMeasure E) where
+  /-- The real-valued test function. -/
   fn : E → ℝ
   locallyLipschitz : LocallyLipschitz fn
   memLp : MemLp fn 2 (μ : Measure E)
@@ -60,6 +61,7 @@ The `H^{-1}(μ)` dual norm `‖q‖_{H^{-1}} = sup_f ⟪q, f⟫` over unit-energ
 def dualNorm (μ : ProbabilityMeasure E) (q : Lp ℝ 2 (μ : Measure E)) : ENNReal :=
   ⨆ t : UnitEnergyTest μ, ENNReal.ofReal (pairing μ q t)
 
+/-- The set of signed pairings of `q` with admissible unit-energy tests. -/
 def signedPairings (μ : ProbabilityMeasure E) (q : Lp ℝ 2 (μ : Measure E)) : Set ℝ :=
   Set.range (pairing μ q)
 

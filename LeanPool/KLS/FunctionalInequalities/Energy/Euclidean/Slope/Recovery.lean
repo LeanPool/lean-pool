@@ -593,6 +593,7 @@ section Recovery
 variable {V : Type u} [NormedAddCommGroup V] [InnerProductSpace ℝ V] [CompleteSpace V]
   [MeasurableSpace V] [BorelSpace V] [SecondCountableTopology V] [FiniteDimensional ℝ V]
 
+omit [SecondCountableTopology V] in
 /-- smooth recovery.  The smooth-gradient relaxation of a globally Lipschitz test is at most its
 asymptotic-Lipschitz energy.  The recovery sequence is the mollification at radius `2 / (j + 1)`;
 the global Lipschitz constant dominates the integrands uniformly, so reverse Fatou converts the

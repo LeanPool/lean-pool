@@ -239,7 +239,7 @@ section HaarReference
 
 variable (m : Measure (EuclideanSpace ℝ (Fin n)))
 
-private theorem gammaTwo_integrable [m.IsAddHaarMeasure]
+private theorem gammaTwo_integrable
     {W g : EuclideanSpace ℝ (Fin n) → ℝ} (hW : ContDiff ℝ 2 W)
     (hg : ContDiff ℝ ∞ g) (hgc : HasCompactSupport g) :
     Integrable (gammaTwo W g) (m.tilted (-W)) := by

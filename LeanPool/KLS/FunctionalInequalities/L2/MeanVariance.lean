@@ -144,13 +144,11 @@ theorem center_smul (μ : ProbabilityMeasure α) (c : ℝ) (f : Lp ℝ 2 (μ : M
   simp only [center, mean_smul, const_smul, smul_sub]
 
 /-- Adding a constant `L²` element does not change the centered part. -/
-@[simp]
 theorem center_add_const (μ : ProbabilityMeasure α) (f : Lp ℝ 2 (μ : Measure α)) (c : ℝ) :
     center μ (f + const μ c) = center μ f := by
   rw [center_add, center_const, add_zero]
 
 /-- Adding a constant on the left does not change the centered part. -/
-@[simp]
 theorem center_const_add (μ : ProbabilityMeasure α) (c : ℝ) (f : Lp ℝ 2 (μ : Measure α)) :
     center μ (const μ c + f) = center μ f := by
   rw [center_add, center_const, zero_add]

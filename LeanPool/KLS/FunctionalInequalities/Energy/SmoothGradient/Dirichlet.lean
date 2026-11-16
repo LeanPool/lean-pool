@@ -167,6 +167,7 @@ variable {E : Type u} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [Complete
   [MeasurableSpace E] [BorelSpace E] [SecondCountableTopology E] [FiniteDimensional ℝ E]
   (μ : ProbabilityMeasure E)
 
+omit [FiniteDimensional ℝ E] in
 /--
 Every normal contraction satisfies the relaxed contraction bound on the realized smooth tests:
 the relaxed energy of `φ ∘ f` is at most the raw energy of `f`. -/
@@ -187,6 +188,7 @@ theorem relaxedContractionBound (φ : NormalContraction) :
   refine (liminf_le_liminf (Eventually.of_forall fun j ↦ ?_)).trans_eq (liminf_const _)
   exact ENNReal.coe_le_coe.mpr (f.energy_compSmoothed_le φ j)
 
+omit [FiniteDimensional ℝ E] in
 /-- The smooth-gradient relaxation is Markovian: normal contractions do not increase it. -/
 theorem markovian : Markovian (μ : Measure E) (relaxation μ) := by
   intro φ f

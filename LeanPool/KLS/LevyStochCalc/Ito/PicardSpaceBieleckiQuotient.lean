@@ -128,7 +128,7 @@ measurable; composing with the continuous `r ↦ ‖r‖₊²` and finite sum
 preserves measurability; the (1/2)-rpow is measurable; pushing through
 gives AEMeasurable of the inner Bielecki expression. -/
 lemma bieleckiNorm_inner_aemeasurable
-    {n : ℕ} {P : Measure Ω} [IsProbabilityMeasure P]
+    {n : ℕ} {P : Measure Ω}
     (X : ℝ → Ω → (Fin n → ℝ))
     (hX_meas : Measurable (Function.uncurry X)) (t : ℝ) :
     AEMeasurable

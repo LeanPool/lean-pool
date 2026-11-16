@@ -403,6 +403,7 @@ theorem taylorTensor_sub_const {V : E → ℝ}
     simp only [taylorTensor, hz]
 
 omit [CompleteSpace E] [FiniteDimensional ℝ E] [BorelSpace E] in
+omit [CompleteSpace H] in
 /-- Taylor tensors are homogeneous for vector-valued functions. -/
 theorem taylorTensor_const_smul (μ : Measure E) (a : ℝ) (f : E → H) (d : ℕ) :
     taylorTensor μ (fun x => a • f x) d = a • taylorTensor μ f d := by

@@ -485,7 +485,7 @@ theorem graph_map_probability {n : ℕ} (μ : Measure (EuclideanSpace ℝ (Fin n
 
 /-- **The copy factor is the Laplace transform of the graph law** `(f(x), x)_* μ` at `(c, z)`. -/
 theorem integral_exp_add_inner_eq_graph {n : ℕ} (μ : Measure (EuclideanSpace ℝ (Fin n)))
-    [IsProbabilityMeasure μ] {f : EuclideanSpace ℝ (Fin n) → ℝ} (hf : Measurable f) (c : ℝ)
+     {f : EuclideanSpace ℝ (Fin n) → ℝ} (hf : Measurable f) (c : ℝ)
     (z : EuclideanSpace ℝ (Fin n)) :
     (∫ x, Real.exp (c * f x + ⟪z, x⟫) ∂μ) =
       ∫ y, Real.exp ⟪(WithLp.toLp 2 fun o => Option.elim o c fun j => z j :
@@ -520,7 +520,7 @@ theorem integral_exp_add_inner_eq_graph {n : ℕ} (μ : Measure (EuclideanSpace 
 
 /-- **The tilt average of the `none` coordinate of the graph law at `(0, z)` is `F_f(z)`**. -/
 theorem tiltAverage_graph_none {n : ℕ} (μ : Measure (EuclideanSpace ℝ (Fin n)))
-    [IsProbabilityMeasure μ] {f : EuclideanSpace ℝ (Fin n) → ℝ} (hf : Measurable f)
+     {f : EuclideanSpace ℝ (Fin n) → ℝ} (hf : Measurable f)
     (z : EuclideanSpace ℝ (Fin n)) :
     tiltAverage (μ.map (fun x : EuclideanSpace ℝ (Fin n) =>
         (WithLp.toLp 2 fun o => Option.elim o (f x) fun j => x j :

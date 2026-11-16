@@ -55,7 +55,7 @@ def Filtration.compMono {ι ι' : Type*} [Preorder ι] [Preorder ι']
 /-- A martingale sampled along a monotone time map is a martingale for the sampled
 filtration. -/
 theorem martingale_compMono {ι ι' : Type*} [Preorder ι] [Preorder ι']
-    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     {μ : Measure Ω} {ℱ : Filtration ι' mΩ} {f : ι' → Ω → E}
     (hf : MeasureTheory.Martingale f ℱ μ) (τ : ι → ι') (hτ : Monotone τ) :
     MeasureTheory.Martingale (fun i => f (τ i)) (Filtration.compMono mΩ ℱ τ hτ) μ :=

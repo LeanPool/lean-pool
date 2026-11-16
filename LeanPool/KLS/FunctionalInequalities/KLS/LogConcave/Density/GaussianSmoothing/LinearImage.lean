@@ -42,7 +42,7 @@ open FunctionalInequalities.Probability.Gaussian
 variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
   [FiniteDimensional ℝ E] [MeasurableSpace E] [BorelSpace E]
 
-theorem gaussian_product_latent_map (ρ μ : Measure E) [IsProbabilityMeasure ρ]
+theorem gaussian_product_latent_map (ρ μ : Measure E)
     (g : E → E) (hg : Measurable g) (hmap : ρ.map g = μ)
     (S : E →L[ℝ] E) {s : ℝ} (hs : 0 < s) :
     (ρ.prod (Probability.Gaussian.law (V := E) s)).map (fun p => S (g p.1) + p.2) =

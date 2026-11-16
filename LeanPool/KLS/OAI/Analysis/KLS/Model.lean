@@ -31,6 +31,7 @@ open scoped ContDiff
 
 namespace LeanBlast.KLS
 
+/-- The real Euclidean space of dimension `n`. -/
 abbrev Space (n : ℕ) := EuclideanSpace ℝ (Fin n)
 
 /-- The ordinary Lebesgue-density measure. -/
@@ -53,12 +54,15 @@ structure IsIsotropic {n : ℕ} (μ : Measure (Space n)) : Prop where
   second_moment : ∀ i j : Fin n,
     (∫ x : Space n, x i * x j ∂μ) = if i = j then 1 else 0
 
+/-- The integral of a real-valued function against the measure `μ`. -/
 def expectation {n : ℕ} (μ : Measure (Space n)) (f : Space n → ℝ) : ℝ :=
   ∫ x, f x ∂μ
 
+/-- The squared deviation from the expectation, integrated against `μ`. -/
 def variance {n : ℕ} (μ : Measure (Space n)) (f : Space n → ℝ) : ℝ :=
   ∫ x, (f x - expectation μ f) ^ 2 ∂μ
 
+/-- The integrated squared norm of the gradient. -/
 def dirichletEnergy {n : ℕ} (μ : Measure (Space n)) (f : Space n → ℝ) : ℝ :=
   ∫ x, ‖gradient f x‖ ^ 2 ∂μ
 
@@ -77,6 +81,7 @@ def KLSStatement : Prop :=
     ∀ ρ : Space n → ℝ, IsLogConcaveDensity ρ → IsIsotropic (densityMeasure ρ) →
       PoincareBound (densityMeasure ρ) C
 
+/-- The dimension-free Poincaré inequality in the OpenAI KLS model. -/
 abbrev FullStatement := KLSStatement
 
 end LeanBlast.KLS

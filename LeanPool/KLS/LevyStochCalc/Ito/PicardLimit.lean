@@ -45,6 +45,7 @@ variable {Ω : Type*} [MeasurableSpace Ω] {n : ℕ} {P : Measure Ω} [IsProbabi
 
 /-! ### The Bielecki norm and the weighted `L²` norms at a fixed time -/
 
+omit [IsProbabilityMeasure P] in
 /-- A uniform bound on the weighted `L²` norms over the window bounds the Bielecki norm. -/
 theorem bieleckiNorm_le_of_perTime_rpow (β T : ℝ) (Z : ℝ → Ω → (Fin n → ℝ)) (c : ℝ≥0∞)
     (h : ∀ t ∈ Set.Icc (0 : ℝ) T,
@@ -56,6 +57,7 @@ theorem bieleckiNorm_le_of_perTime_rpow (β T : ℝ) (Z : ℝ → Ω → (Fin n 
   rw [← mul_assoc, ← ENNReal.ofReal_mul (Real.exp_nonneg _), ← Real.exp_add]
   simp
 
+omit [IsProbabilityMeasure P] in
 /-- The Bielecki norm bounds the weighted `L²` norm at every time of the window. -/
 theorem lintegral_sq_rpow_le_of_bieleckiNorm (β T : ℝ) (Z : ℝ → Ω → (Fin n → ℝ))
     {t : ℝ} (ht : t ∈ Set.Icc (0 : ℝ) T) :

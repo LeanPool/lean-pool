@@ -387,7 +387,7 @@ theorem norm_gradient_scaled_mul_sq_le {R M : ℝ} (hR : 0 < R)
         rfl
 
 /-- The energies of the cutoffs `f χ_{n+1}` converge to the energy of `f` for an admissible `f`. -/
-theorem tendsto_energy_scaled_mul {μ : Measure E} [IsFiniteMeasure μ] {f : E → ℝ}
+theorem tendsto_energy_scaled_mul {μ : Measure E} {f : E → ℝ}
     (hf : Admissible μ f) :
     Tendsto (fun n : ℕ =>
         energy μ (fun x => Energy.Euclidean.LipschitzApproximation.scaled ((n : ℝ) + 1) x * f x))

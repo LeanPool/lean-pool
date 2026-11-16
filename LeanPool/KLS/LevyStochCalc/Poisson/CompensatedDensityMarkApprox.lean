@@ -151,7 +151,7 @@ lemma exists_markSimple_adapted_within
                 ENNReal.rpow_one]
 
 /-- **Adaptedness of the shifted dyadic average (mark-jointly).** Under progressive
-measurability of `φ`, the coefficient `(ω, e) ↦ dyadicAvg_shifted T φ n i ω e` is
+measurability of `φ`, the coefficient `(ω, e) ↦ dyadicAvgShifted T φ n i ω e` is
 `(ℱ_{pᵢ} ⊗ E)`-measurable, where `pᵢ = dyadicPartition T n i.castSucc`. (Integrates
 out the time variable from the `ℱ_{pᵢ} ⊗ Borel ⊗ E`-measurable integrand `φ`.) -/
 lemma dyadicAvg_shifted_adapted_prod
@@ -162,8 +162,8 @@ lemma dyadicAvg_shifted_adapted_prod
     (n : ℕ) (i : Fin (2 ^ n)) :
     @Measurable (Ω × E) ℝ
       ((ℱ (dyadicPartition T n i.castSucc)).prod inferInstance) _
-      (fun q : Ω × E => dyadicAvg_shifted T φ n i q.1 q.2) := by
-  unfold dyadicAvg_shifted
+      (fun q : Ω × E => dyadicAvgShifted T φ n i q.1 q.2) := by
+  unfold dyadicAvgShifted
   by_cases hi : i.val = 0
   · simp only [hi, ↓reduceDIte]; exact measurable_const
   · simp only [hi, ↓reduceDIte, dyadicAvg]
@@ -233,7 +233,7 @@ lemma sq_nnnorm_add_le_two_mul (x y : ℝ) :
 /-- **Mark-discretisation error of the shifted dyadic eval.** For each level `n` and
 tolerance `δ`, there is a per-piece adapted mark-simple family approximating the shifted
 dyadic eval within `T·δ` in `L²(P ⊗ vol ⊗ ν)`: each time-piece coefficient
-`dyadicAvg_shifted T φ n i` is mark-discretised (via `exists_markSimple_adapted_within`)
+`dyadicAvgShifted T φ n i` is mark-discretised (via `exists_markSimple_adapted_within`)
 to within `δ` in `L²(P ⊗ ν)`, and the disjoint-interval collapse pays a factor
 `∑ᵢ vol(pᵢ, pᵢ₊₁] = T`. -/
 lemma exists_markEval_close_dyadic
@@ -267,12 +267,12 @@ lemma exists_markEval_close_dyadic
       (∀ k, @Measurable Ω ℝ
         (ℱ (dyadicPartition T n i.castSucc)) _ (c k)) ∧
       (∀ k, ∃ C, ∀ ω, |c k ω| ≤ C) ∧
-      ∫⁻ ω, ∫⁻ e, (‖dyadicAvg_shifted T φ n i ω e
+      ∫⁻ ω, ∫⁻ e, (‖dyadicAvgShifted T φ n i ω e
           - ∑ k, c k ω * (B k).indicator (fun _ => (1 : ℝ)) e‖₊ : ℝ≥0∞) ^ 2 ∂ν ∂P ≤ δ := by
     intro i
-    have hsupp_i : ∀ ω e, e ∉ S → dyadicAvg_shifted T φ n i ω e = 0 := by
+    have hsupp_i : ∀ ω e, e ∉ S → dyadicAvgShifted T φ n i ω e = 0 := by
       intro ω e he
-      unfold dyadicAvg_shifted
+      unfold dyadicAvgShifted
       by_cases hi0 : i.val = 0
       · simp [hi0]
       · simp only [hi0, ↓reduceDIte, dyadicAvg]
@@ -280,13 +280,13 @@ lemma exists_markEval_close_dyadic
           (fun s _ => hSupp ω e he s)]
         simp
     exact exists_markSimple_adapted_within (ℱ.le _)
-      (dyadicAvg_shifted T φ n i) (dyadicAvg_shifted_adapted_prod N ℱ T φ h_progMeas n i)
+      (dyadicAvgShifted T φ n i) (dyadicAvg_shifted_adapted_prod N ℱ T φ h_progMeas n i)
       (dyadicAvg_shifted_bounded hT φ hM n i) hS hSfin hsupp_i hδ
   choose Ki Bi ci hBim hBiS hcim hcib hci_err using hpiece
   refine ⟨Ki, Bi, ci, hBim, hBiS, fun i k => (hcim i k).stronglyMeasurable, hcib, ?_⟩
   -- abbreviations.
   set p := dyadicPartition T n with hp
-  set d : Fin (2 ^ n) → Ω → E → ℝ := fun i ω e => dyadicAvg_shifted T φ n i ω e with hd
+  set d : Fin (2 ^ n) → Ω → E → ℝ := fun i ω e => dyadicAvgShifted T φ n i ω e with hd
   set mk : Fin (2 ^ n) → Ω → E → ℝ :=
     fun i ω e => ∑ k, ci i k ω * (Bi i k).indicator (fun _ => (1 : ℝ)) e with hmk
   set W : Fin (2 ^ n) → Ω → ℝ≥0∞ :=

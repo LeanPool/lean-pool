@@ -17,8 +17,8 @@ The vector-norm and `ω`-integrated forms of the drift Lipschitz estimate; the B
 exponential-weight calculus `∫_0^t e^{2βs} ds = (e^{2βt} - 1) / (2β)` together with the
 weighted-integral bound and the contraction-rate threshold it yields; the joint measurability of
 the coefficients `σ` and `γ` composed with a process; and the Picard map `picardStep` itself, the
-sum of the initial value, the drift integral, the Brownian component `picardStep_diffusion` and
-the compensated-Poisson component `picardStep_jump`.
+sum of the initial value, the drift integral, the Brownian component `picardStepDiffusion` and
+the compensated-Poisson component `picardStepJump`.
 -/
 
 @[expose] public section
@@ -61,20 +61,20 @@ lemma picardStep_drift_diff_sum_sq_bound
     (h_XY_diff_sq_L2 : MeasureTheory.MemLp
       (fun s => ‖X s ω - Y s ω‖) 2
       (MeasureTheory.volume.restrict (Set.Icc (0 : ℝ) t))) :
-    (∑ i : Fin n, ((picardStep_drift (E := E) coeffs X x₀ t ω
-        - picardStep_drift coeffs Y x₀ t ω) i) ^ 2)
+    (∑ i : Fin n, ((picardStepDrift (E := E) coeffs X x₀ t ω
+        - picardStepDrift coeffs Y x₀ t ω) i) ^ 2)
       ≤ (n : ℝ) * L_μ ^ 2 * t *
           ∫ s in Set.Icc (0 : ℝ) t, ‖X s ω - Y s ω‖ ^ 2 := by
   -- Per-component bound, summed over Fin n.
-  have h_each : ∀ i : Fin n, ((picardStep_drift (E := E) coeffs X x₀ t ω
-        - picardStep_drift coeffs Y x₀ t ω) i) ^ 2
+  have h_each : ∀ i : Fin n, ((picardStepDrift (E := E) coeffs X x₀ t ω
+        - picardStepDrift coeffs Y x₀ t ω) i) ^ 2
       ≤ L_μ ^ 2 * t * ∫ s in Set.Icc (0 : ℝ) t, ‖X s ω - Y s ω‖ ^ 2 := fun i =>
     picardStep_drift_diff_lipschitz_sq_componentwise
       coeffs hL_μ_nn h_μ_lip X Y x₀ t ht ω i
       (h_X_int i) (h_Y_int i) h_XY_diff_int h_XY_diff_sq_L2
   -- Sum the bounds. Sum of n copies of B = n · B.
-  calc (∑ i : Fin n, ((picardStep_drift (E := E) coeffs X x₀ t ω
-        - picardStep_drift coeffs Y x₀ t ω) i) ^ 2)
+  calc (∑ i : Fin n, ((picardStepDrift (E := E) coeffs X x₀ t ω
+        - picardStepDrift coeffs Y x₀ t ω) i) ^ 2)
       ≤ ∑ _i : Fin n, L_μ ^ 2 * t *
           ∫ s in Set.Icc (0 : ℝ) t, ‖X s ω - Y s ω‖ ^ 2 :=
         Finset.sum_le_sum (fun i _ => h_each i)
@@ -104,7 +104,6 @@ This is the operator-level (probability-measure-integrated) bound that
 sits one step away from the Bielecki β-norm contraction. -/
 lemma picardStep_drift_diff_lintegral_sq_bound
     {n d : ℕ} (P : MeasureTheory.Measure Ω)
-    [MeasureTheory.IsProbabilityMeasure P]
     (coeffs : LevyStochCalc.Ito.Setting.JumpDiffusionCoeffs n d E)
     {L_μ : ℝ} (_hL_μ_nn : 0 ≤ L_μ)
     (_h_μ_lip : ∀ s : ℝ, ∀ x₁ x₂ : Fin n → ℝ, ∀ i : Fin n,
@@ -115,32 +114,32 @@ lemma picardStep_drift_diff_lintegral_sq_bound
     -- Almost-everywhere integrability hypotheses (the pointwise bound only
     -- holds for ω with all integrands well-defined):
     (h_bound_ae : ∀ᵐ ω ∂P,
-      (∑ i : Fin n, ((picardStep_drift (E := E) coeffs X x₀ t ω
-          - picardStep_drift coeffs Y x₀ t ω) i) ^ 2)
+      (∑ i : Fin n, ((picardStepDrift (E := E) coeffs X x₀ t ω
+          - picardStepDrift coeffs Y x₀ t ω) i) ^ 2)
         ≤ (n : ℝ) * L_μ ^ 2 * t *
             ∫ s in Set.Icc (0 : ℝ) t, ‖X s ω - Y s ω‖ ^ 2)
     -- Nonnegativity of the per-ω inner integral (for ENNReal conversion):
     (h_inner_nn : ∀ᵐ ω ∂P, 0 ≤
       ∫ s in Set.Icc (0 : ℝ) t, ‖X s ω - Y s ω‖ ^ 2) :
     ∫⁻ ω, ENNReal.ofReal (∑ i : Fin n,
-      ((picardStep_drift (E := E) coeffs X x₀ t ω
-          - picardStep_drift coeffs Y x₀ t ω) i) ^ 2) ∂P
+      ((picardStepDrift (E := E) coeffs X x₀ t ω
+          - picardStepDrift coeffs Y x₀ t ω) i) ^ 2) ∂P
     ≤ ENNReal.ofReal ((n : ℝ) * L_μ ^ 2 * t) *
         ∫⁻ ω, ENNReal.ofReal
           (∫ s in Set.Icc (0 : ℝ) t, ‖X s ω - Y s ω‖ ^ 2) ∂P := by
   -- Monotonicity of lintegral applied to the a.e. bound.
   have h_pointwise_ennreal : ∀ᵐ ω ∂P,
       ENNReal.ofReal (∑ i : Fin n,
-        ((picardStep_drift (E := E) coeffs X x₀ t ω
-            - picardStep_drift coeffs Y x₀ t ω) i) ^ 2)
+        ((picardStepDrift (E := E) coeffs X x₀ t ω
+            - picardStepDrift coeffs Y x₀ t ω) i) ^ 2)
       ≤ ENNReal.ofReal ((n : ℝ) * L_μ ^ 2 * t) *
           ENNReal.ofReal (∫ s in Set.Icc (0 : ℝ) t, ‖X s ω - Y s ω‖ ^ 2) := by
     filter_upwards [h_bound_ae, h_inner_nn] with ω h_bd h_inner_nn
     rw [← ENNReal.ofReal_mul (by positivity : (0 : ℝ) ≤ (n : ℝ) * L_μ ^ 2 * t)]
     exact ENNReal.ofReal_le_ofReal h_bd
   calc ∫⁻ ω, ENNReal.ofReal (∑ i : Fin n,
-      ((picardStep_drift (E := E) coeffs X x₀ t ω
-          - picardStep_drift coeffs Y x₀ t ω) i) ^ 2) ∂P
+      ((picardStepDrift (E := E) coeffs X x₀ t ω
+          - picardStepDrift coeffs Y x₀ t ω) i) ^ 2) ∂P
       ≤ ∫⁻ ω, ENNReal.ofReal ((n : ℝ) * L_μ ^ 2 * t) *
           ENNReal.ofReal (∫ s in Set.Icc (0 : ℝ) t, ‖X s ω - Y s ω‖ ^ 2) ∂P :=
         MeasureTheory.lintegral_mono_ae h_pointwise_ennreal
@@ -406,7 +405,7 @@ Built using `MultidimBrownianMotion.stochasticIntegral`. The hypotheses
 `h_meas`, `h_progMeas`, `h_sq_int_global` propagate from joint-measurability
 + progressive-measurability + L²-boundedness of σ along X, which in turn
 follow from the corresponding hypotheses on X and σ. -/
-noncomputable def picardStep_diffusion
+noncomputable def picardStepDiffusion
     {P : MeasureTheory.Measure Ω}
     [MeasureTheory.IsProbabilityMeasure P]
     {n d : ℕ}
@@ -441,7 +440,7 @@ integral of `(s, e, ω) ↦ γ(s, X(s,ω), e) i` against `Ñ`.
 Built using `Compensated.stochasticIntegral`. The hypotheses
 `h_meas`, `h_progMeas`, `h_sq` propagate from joint Ω×ℝ×E-measurability
 + progressive-measurability + L²-boundedness of γ along X. -/
-noncomputable def picardStep_jump
+noncomputable def picardStepJump
     {P : MeasureTheory.Measure Ω}
     [MeasureTheory.IsProbabilityMeasure P]
     {ν : MeasureTheory.Measure E} [MeasureTheory.SigmaFinite ν]
@@ -473,7 +472,7 @@ and jump (compensated-Poisson) components:
   `Φ X t ω = x₀ + ∫_0^t μ(s, X_s) ds + ∫_0^t σ(s, X_s) dW_s
           + ∫_0^t ∫_E γ(s, X_s, e) Ñ(ds, de)`
 
-The `x₀ +` is already in `picardStep_drift`; here we add the diffusion
+The `x₀ +` is already in `picardStepDrift`; here we add the diffusion
 and jump components.
 
 This is the literature Picard map for the jump-diffusion SDE (Applebaum
@@ -511,9 +510,9 @@ noncomputable def picardStep
       ∫⁻ ω, ∫⁻ s in Set.Icc (0 : ℝ) T, ∫⁻ e,
         (‖coeffs.γ s (X s ω) e i‖₊ : ℝ≥0∞) ^ 2 ∂ν ∂volume ∂P < ⊤)
     (t : ℝ) (ω : Ω) : Fin n → ℝ :=
-  picardStep_drift coeffs X x₀ t ω
-    + picardStep_diffusion W ℱ hℱW coeffs X h_σ_meas h_σ_progMeas h_σ_sq t ω
-    + picardStep_jump N ℱ hℱN coeffs X h_γ_meas h_γ_progMeas h_γ_sq t ω
+  picardStepDrift coeffs X x₀ t ω
+    + picardStepDiffusion W ℱ hℱW coeffs X h_σ_meas h_σ_progMeas h_σ_sq t ω
+    + picardStepJump N ℱ hℱN coeffs X h_γ_meas h_γ_progMeas h_γ_sq t ω
 
 /-! ## Map of the contraction argument
 

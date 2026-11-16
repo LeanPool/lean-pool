@@ -95,7 +95,7 @@ theorem weightedExpD_integrable_lt {F : Type*} [NormedAddCommGroup F] [NormedSpa
 
 /-- **Local differentiation under the integral.** -/
 theorem weightedExp_integral_hasFDerivAt_of_lt {F : Type*} [NormedAddCommGroup F]
-    [NormedSpace ℝ F] [CompleteSpace F] (μ : Measure E) {g : E → F}
+    [NormedSpace ℝ F] (μ : Measure E) {g : E → F}
     (hg : AEStronglyMeasurable g μ) {r : ℝ}
     (hgi : ∀ t < r, Integrable (fun x => Real.exp (t * ‖x‖) * ‖g x‖) μ) {z : E} (hz : ‖z‖ < r) :
     HasFDerivAt (fun w => ∫ x, Real.exp ⟪w, x⟫ • g x ∂μ)

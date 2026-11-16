@@ -36,7 +36,7 @@ variable {E : Type v} [MeasurableSpace E]
 /-! ### Adapted (left-shifted) eval
 
 The coefficient on the `i`-th dyadic interval is the average over the *previous*
-interval (`dyadicAvg_shifted`), making it `ℱ_{tᵢ}`-measurable for progressively
+interval (`dyadicAvgShifted`), making it `ℱ_{tᵢ}`-measurable for progressively
 measurable `φ` — the predictable/adapted version of `dyadicEval`. -/
 
 /-- The left-shifted dyadic eval (adapted coefficients). -/
@@ -44,14 +44,14 @@ noncomputable def dyadicEvalShifted
     (T : ℝ) (φ : Ω → ℝ → E → ℝ) (n : ℕ) (s : ℝ) (ω : Ω) (e : E) : ℝ :=
   ∑ i : Fin (2 ^ n),
     if dyadicPartition T n i.castSucc < s ∧ s ≤ dyadicPartition T n i.succ
-    then dyadicAvg_shifted T φ n i ω e else 0
+    then dyadicAvgShifted T φ n i ω e else 0
 
 omit [MeasurableSpace Ω] [MeasurableSpace E] in
 /-- For `s ∈ (0, T]`, the shifted eval collapses to the shifted average at the index of `s`. -/
 lemma dyadicEvalShifted_eq_at_index
     {T : ℝ} (hT : 0 < T) (φ : Ω → ℝ → E → ℝ) (n : ℕ) (s : ℝ) (hs : 0 < s ∧ s ≤ T)
     (ω : Ω) (e : E) :
-    dyadicEvalShifted T φ n s ω e = dyadicAvg_shifted T φ n (dyadicIndex n T hT s hs) ω e := by
+    dyadicEvalShifted T φ n s ω e = dyadicAvgShifted T φ n (dyadicIndex n T hT s hs) ω e := by
   set i := dyadicIndex n T hT s hs with hi
   have hi_mem := dyadicIndex_mem n T hT s hs
   have h_pcast : dyadicPartition T n i.castSucc = ((i : ℕ) : ℝ) * T / (2 ^ n : ℕ) := by
@@ -107,7 +107,7 @@ lemma dyadicEvalShifted_measurable_triple
   refine Finset.measurable_sum _ (fun i _ => ?_)
   refine Measurable.ite ((measurable_fst.comp measurable_snd) measurableSet_Ioc) ?_
     measurable_const
-  unfold dyadicAvg_shifted
+  unfold dyadicAvgShifted
   by_cases h : i.val = 0
   · simp only [h, ↓reduceDIte]; exact measurable_const
   · simp only [h, ↓reduceDIte]
@@ -214,7 +214,7 @@ lemma dyadicEvalShifted_ae_tendsto_per_param
       dyadicEvalShifted T φ n x ω e = ⨍ y in Metric.closedBall (w n) (δ n), φ ω y e ∂volume := by
     filter_upwards [hev1] with n hn1
     have hival : (dyadicIndex n T hT x hx).val ≠ 0 := by omega
-    rw [dyadicEvalShifted_eq_at_index hT φ n x hx ω e, dyadicAvg_shifted, dite_eq_right hival]
+    rw [dyadicEvalShifted_eq_at_index hT φ n x hx ω e, dyadicAvgShifted, dite_eq_right hival]
     change dyadicAvg T φ n (jp n) ω e = _
     rw [dyadicAvg_eq_average_closedBall hT φ n (jp n) ω e]
   exact Filter.Tendsto.congr' (hbridge.mono (fun n h => h.symm)) (h_leb_x w δ hδ_nhds hxball)
@@ -225,8 +225,8 @@ lemma dyadicEvalShifted_eq_zero {T : ℝ} (φ : Ω → ℝ → E → ℝ) (n : �
     (h0 : ∀ u, φ ω u e = 0) : dyadicEvalShifted T φ n s ω e = 0 := by
   unfold dyadicEvalShifted
   refine Finset.sum_eq_zero (fun i _ => ?_)
-  have havg : dyadicAvg_shifted T φ n i ω e = 0 := by
-    unfold dyadicAvg_shifted
+  have havg : dyadicAvgShifted T φ n i ω e = 0 := by
+    unfold dyadicAvgShifted
     split_ifs with h
     · rfl
     · unfold dyadicAvg; simp [h0]
@@ -242,7 +242,7 @@ lemma dyadicEvalShifted_measurable_prod
   unfold dyadicEvalShifted
   refine Finset.measurable_sum _ (fun i _ => ?_)
   refine Measurable.ite (measurable_fst measurableSet_Ioc) ?_ measurable_const
-  unfold dyadicAvg_shifted
+  unfold dyadicAvgShifted
   by_cases h : i.val = 0
   · simp only [h, ↓reduceDIte]; exact measurable_const
   · simp only [h, ↓reduceDIte]

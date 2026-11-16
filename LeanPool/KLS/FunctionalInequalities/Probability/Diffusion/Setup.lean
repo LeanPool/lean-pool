@@ -42,6 +42,7 @@ section Usual
 
 variable {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} [IsProbabilityMeasure P] {d : ℕ}
 
+/-- The augmented right-continuous natural filtration of the multidimensional Brownian motion. -/
 noncomputable def usualFiltration (W : MultidimBrownianMotion P d) :
     Filtration ℝ ‹MeasurableSpace Ω› :=
   augFiltration W.naturalFiltration.rightCont P

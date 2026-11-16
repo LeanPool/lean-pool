@@ -235,65 +235,65 @@ private lemma exists_simpleFunc_seq_tendsto_brownian
 
 /-- **Dyadic partition** of `[0, T]` at refinement level `n`:
 `partition i = i * T / 2^n` for `i = 0, ..., 2^n`. -/
-noncomputable def dyadicPartition_brownian (T : ℝ) (n : ℕ) :
+noncomputable def dyadicPartitionBrownian (T : ℝ) (n : ℕ) :
     Fin (2 ^ n + 1) → ℝ :=
   fun i => (i : ℝ) * T / (2 ^ n : ℕ)
 
 lemma dyadicPartition_brownian_zero (T : ℝ) (n : ℕ) :
-    dyadicPartition_brownian T n 0 = 0 := by
-  simp [dyadicPartition_brownian]
+    dyadicPartitionBrownian T n 0 = 0 := by
+  simp [dyadicPartitionBrownian]
 
 lemma dyadicPartition_brownian_last (T : ℝ) (n : ℕ) :
-    dyadicPartition_brownian T n (Fin.last (2 ^ n)) = T := by
-  unfold dyadicPartition_brownian
+    dyadicPartitionBrownian T n (Fin.last (2 ^ n)) = T := by
+  unfold dyadicPartitionBrownian
   rw [Fin.val_last]
   field_simp
 
 lemma dyadicPartition_brownian_strictMono {T : ℝ} (hT : 0 < T) (n : ℕ) :
-    StrictMono (dyadicPartition_brownian T n) := by
+    StrictMono (dyadicPartitionBrownian T n) := by
   intro i j hij
-  unfold dyadicPartition_brownian
+  unfold dyadicPartitionBrownian
   have h_pos : (0 : ℝ) < (2 ^ n : ℕ) := by positivity
   have h_lt : (i : ℝ) < (j : ℝ) := by exact_mod_cast hij
   rw [div_lt_div_iff_of_pos_right h_pos]
   exact mul_lt_mul_of_pos_right h_lt hT
 
 lemma dyadicPartition_brownian_le_T {T : ℝ} (_hT : 0 < T) (n : ℕ) :
-    dyadicPartition_brownian T n (Fin.last (2 ^ n)) ≤ T :=
+    dyadicPartitionBrownian T n (Fin.last (2 ^ n)) ≤ T :=
   le_of_eq (dyadicPartition_brownian_last T n)
 
 /-- **Dyadic averaging coefficient**: the average of `g(ω, ·)` over the `i`-th
 dyadic interval `(t_i, t_{i+1}]` of `[0, T]` at refinement level `n`.
 
 Used as the ξ-coefficient of the dyadic SimplePredictable approximation. -/
-noncomputable def dyadicAvg_brownian
+noncomputable def dyadicAvgBrownian
     {T : ℝ} (g : Ω → ℝ → ℝ) (n : ℕ) (i : Fin (2 ^ n)) (ω : Ω) : ℝ :=
   ((2 ^ n : ℕ) / T) *
-    ∫ s in Set.Ioc (dyadicPartition_brownian T n i.castSucc)
-                    (dyadicPartition_brownian T n i.succ),
+    ∫ s in Set.Ioc (dyadicPartitionBrownian T n i.castSucc)
+                    (dyadicPartitionBrownian T n i.succ),
       g ω s
 
-/-- Measurability of `dyadicAvg_brownian` in `ω` (Bochner integral commutes with
+/-- Measurability of `dyadicAvgBrownian` in `ω` (Bochner integral commutes with
 measurability via Fubini). -/
 lemma dyadicAvg_brownian_measurable
     (T : ℝ) (g : Ω → ℝ → ℝ) (h_meas : Measurable (Function.uncurry g))
     (n : ℕ) (i : Fin (2 ^ n)) :
-    Measurable (dyadicAvg_brownian (T := T) g n i) := by
-  unfold dyadicAvg_brownian
+    Measurable (dyadicAvgBrownian (T := T) g n i) := by
+  unfold dyadicAvgBrownian
   refine Measurable.const_mul ?_ _
   -- The Bochner integral ∫ s in S, g ω s ∂volume = ∫ s, g ω s ∂(volume.restrict S)
   -- is measurable in ω by `StronglyMeasurable.integral_prod_right`.
   refine MeasureTheory.StronglyMeasurable.measurable ?_
   exact MeasureTheory.StronglyMeasurable.integral_prod_right
-    (ν := volume.restrict (Set.Ioc (dyadicPartition_brownian T n i.castSucc)
-                                    (dyadicPartition_brownian T n i.succ)))
+    (ν := volume.restrict (Set.Ioc (dyadicPartitionBrownian T n i.castSucc)
+                                    (dyadicPartitionBrownian T n i.succ)))
     h_meas.stronglyMeasurable
 
 /-- Length of dyadic interval at refinement level `n`: `T/2^n`. -/
 lemma dyadicPartition_brownian_diff {T : ℝ} (n : ℕ) (i : Fin (2 ^ n)) :
-    dyadicPartition_brownian T n i.succ - dyadicPartition_brownian T n i.castSucc
+    dyadicPartitionBrownian T n i.succ - dyadicPartitionBrownian T n i.castSucc
       = T / (2 ^ n : ℕ) := by
-  unfold dyadicPartition_brownian
+  unfold dyadicPartitionBrownian
   have hi_succ : ((i.succ : Fin (2 ^ n + 1)) : ℝ) = (i : ℝ) + 1 := by
     simp [Fin.val_succ]
   have hi_castSucc : ((i.castSucc : Fin (2 ^ n + 1)) : ℝ) = (i : ℝ) := by
@@ -304,15 +304,15 @@ lemma dyadicPartition_brownian_diff {T : ℝ} (n : ℕ) (i : Fin (2 ^ n)) :
 -- `omit` the unused `[MeasurableSpace Ω]` section variable (this lemma's
 -- `g : Ω → ℝ → ℝ` does not need it).
 omit [MeasurableSpace Ω] in
-/-- Boundedness of `dyadicAvg_brownian`: if `|g| ≤ M`, then `|dyadicAvg ω| ≤ M`. -/
+/-- Boundedness of `dyadicAvgBrownian`: if `|g| ≤ M`, then `|dyadicAvg ω| ≤ M`. -/
 lemma dyadicAvg_brownian_bounded
     (T : ℝ) (hT : 0 < T) (g : Ω → ℝ → ℝ)
     (M : ℝ) (h_bound : ∀ ω s, |g ω s| ≤ M)
     (n : ℕ) (i : Fin (2 ^ n)) (ω : Ω) :
-    |dyadicAvg_brownian (T := T) g n i ω| ≤ M := by
-  unfold dyadicAvg_brownian
-  set t_i := dyadicPartition_brownian T n i.castSucc with ht_i
-  set t_succ := dyadicPartition_brownian T n i.succ with ht_succ
+    |dyadicAvgBrownian (T := T) g n i ω| ≤ M := by
+  unfold dyadicAvgBrownian
+  set t_i := dyadicPartitionBrownian T n i.castSucc with ht_i
+  set t_succ := dyadicPartitionBrownian T n i.succ with ht_succ
   have h_lt : t_i < t_succ :=
     dyadicPartition_brownian_strictMono hT n Fin.castSucc_lt_succ
   have h_le : t_i ≤ t_succ := le_of_lt h_lt
@@ -371,17 +371,17 @@ dyadic refinement of `g` at level `n`. Partition `t_i = i T / 2^n`; coefficient
 This SimplePredictable converges to `g` in L²(P × volume) as `n → ∞`. The
 convergence is the substantive sub-result (Lévy upward / L² martingale convergence
 on the dyadic σ-algebra). -/
-noncomputable def dyadicSimplePredictable_brownian
+noncomputable def dyadicSimplePredictableBrownian
     {T : ℝ} (hT : 0 < T)
     (g : Ω → ℝ → ℝ) (h_meas : Measurable (Function.uncurry g))
     (M : ℝ) (h_bound : ∀ ω s, |g ω s| ≤ M) (n : ℕ) :
     SimplePredictable Ω T where
   N := 2 ^ n
-  partition := dyadicPartition_brownian T n
+  partition := dyadicPartitionBrownian T n
   partition_zero := dyadicPartition_brownian_zero T n
   partition_le_T := dyadicPartition_brownian_le_T hT n
   partition_strictMono := dyadicPartition_brownian_strictMono hT n
-  ξ := dyadicAvg_brownian (T := T) g n
+  ξ := dyadicAvgBrownian (T := T) g n
   ξ_bounded := fun i =>
     ⟨M, fun ω => dyadicAvg_brownian_bounded T hT g M h_bound n i ω⟩
   ξ_measurable := dyadicAvg_brownian_measurable T g h_meas n

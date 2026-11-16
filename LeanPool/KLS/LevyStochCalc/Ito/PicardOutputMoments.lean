@@ -111,7 +111,7 @@ theorem lintegral_sq_picardStep_diffusion_le
       ∫⁻ ω, ∫⁻ s in Set.Icc (0 : ℝ) T,
         (‖coeffs.σ s (X s ω) i j‖₊ : ℝ≥0∞) ^ 2 ∂volume ∂P < ⊤)
     (i : Fin n) {t : ℝ} (ht : 0 ≤ t) :
-    ∫⁻ ω, (‖picardStep_diffusion W ℱ hℱW coeffs X h_meas h_progMeas h_sq t ω i‖₊ : ℝ≥0∞) ^ 2 ∂P
+    ∫⁻ ω, (‖picardStepDiffusion W ℱ hℱW coeffs X h_meas h_progMeas h_sq t ω i‖₊ : ℝ≥0∞) ^ 2 ∂P
       ≤ (d : ℝ≥0∞) * ∑ j : Fin d, ∫⁻ ω, ∫⁻ s in Set.Icc (0 : ℝ) t,
           (‖coeffs.σ s (X s ω) i j‖₊ : ℝ≥0∞) ^ 2 ∂volume ∂P := by
   set M : Fin d → Ω → ℝ := fun j ω =>
@@ -125,12 +125,12 @@ theorem lintegral_sq_picardStep_diffusion_le
       (h_meas i j) (h_progMeas i j) (h_sq i j)
     exact (hMart.stronglyMeasurable t).measurable.mono (Filt.le t) le_rfl
   have hunfold : ∀ ω : Ω,
-      picardStep_diffusion W ℱ hℱW coeffs X h_meas h_progMeas h_sq t ω i
+      picardStepDiffusion W ℱ hℱW coeffs X h_meas h_progMeas h_sq t ω i
         = ∑ j : Fin d, M j ω := by
     intro ω
-    simp only [picardStep_diffusion,
+    simp only [picardStepDiffusion,
       LevyStochCalc.Brownian.Multidim.MultidimBrownianMotion.stochasticIntegral, M]
-  calc ∫⁻ ω, (‖picardStep_diffusion W ℱ hℱW coeffs X h_meas h_progMeas h_sq t ω i‖₊
+  calc ∫⁻ ω, (‖picardStepDiffusion W ℱ hℱW coeffs X h_meas h_progMeas h_sq t ω i‖₊
         : ℝ≥0∞) ^ 2 ∂P
       = ∫⁻ ω, (‖∑ j : Fin d, M j ω‖₊ : ℝ≥0∞) ^ 2 ∂P :=
         lintegral_congr fun ω => by rw [hunfold ω]
@@ -164,7 +164,7 @@ theorem lintegral_sq_picardStep_jump_eq {ν : MeasureTheory.Measure E}
       ∫⁻ ω, ∫⁻ s in Set.Icc (0 : ℝ) T, ∫⁻ e,
         (‖coeffs.γ s (X s ω) e i‖₊ : ℝ≥0∞) ^ 2 ∂ν ∂volume ∂P < ⊤)
     (i : Fin n) {t : ℝ} (ht : 0 ≤ t) :
-    ∫⁻ ω, (‖picardStep_jump N ℱ hℱN coeffs X h_meas h_progMeas h_sq t ω i‖₊ : ℝ≥0∞) ^ 2 ∂P
+    ∫⁻ ω, (‖picardStepJump N ℱ hℱN coeffs X h_meas h_progMeas h_sq t ω i‖₊ : ℝ≥0∞) ^ 2 ∂P
       = ∫⁻ ω, ∫⁻ s in Set.Icc (0 : ℝ) t, ∫⁻ e,
           (‖coeffs.γ s (X s ω) e i‖₊ : ℝ≥0∞) ^ 2 ∂ν ∂volume ∂P :=
   compensatedIsometry_of_nonneg N ℱ hℱN
@@ -276,13 +276,13 @@ theorem lintegral_sq_picardStep_drift_le
     {t : ℝ} (ht : 0 ≤ t)
     (hfin : ∫⁻ ω, ∫⁻ s in Set.Icc (0 : ℝ) t,
       (‖coeffs.μ s (X s ω) i‖₊ : ℝ≥0∞) ^ 2 ∂volume ∂P < ⊤) :
-    ∫⁻ ω, (‖picardStep_drift coeffs X x₀ t ω i‖₊ : ℝ≥0∞) ^ 2 ∂P
+    ∫⁻ ω, (‖picardStepDrift coeffs X x₀ t ω i‖₊ : ℝ≥0∞) ^ 2 ∂P
       ≤ 2 * (‖x₀ i‖₊ : ℝ≥0∞) ^ 2
         + 2 * (ENNReal.ofReal t * ∫⁻ ω, ∫⁻ s in Set.Icc (0 : ℝ) t,
             (‖coeffs.μ s (X s ω) i‖₊ : ℝ≥0∞) ^ 2 ∂volume ∂P) := by
-  have hunfold : ∀ ω : Ω, picardStep_drift coeffs X x₀ t ω i
+  have hunfold : ∀ ω : Ω, picardStepDrift coeffs X x₀ t ω i
       = x₀ i + ∫ s in Set.Icc (0 : ℝ) t, coeffs.μ s (X s ω) i := fun _ => rfl
-  calc ∫⁻ ω, (‖picardStep_drift coeffs X x₀ t ω i‖₊ : ℝ≥0∞) ^ 2 ∂P
+  calc ∫⁻ ω, (‖picardStepDrift coeffs X x₀ t ω i‖₊ : ℝ≥0∞) ^ 2 ∂P
       = ∫⁻ ω, (‖x₀ i + ∫ s in Set.Icc (0 : ℝ) t, coeffs.μ s (X s ω) i‖₊ : ℝ≥0∞) ^ 2 ∂P :=
         lintegral_congr fun ω => by rw [hunfold ω]
     _ ≤ ∫⁻ ω, (2 * (‖x₀ i‖₊ : ℝ≥0∞) ^ 2
@@ -341,7 +341,7 @@ theorem measurable_picardStep_drift
     (coeffs : LevyStochCalc.Ito.Setting.JumpDiffusionCoeffs n d E)
     (X : ℝ → Ω → (Fin n → ℝ)) (x₀ : Fin n → ℝ) (i : Fin n)
     (h_μ_meas : Measurable (Function.uncurry fun ω s => coeffs.μ s (X s ω) i)) (t : ℝ) :
-    Measurable fun ω => picardStep_drift coeffs X x₀ t ω i :=
+    Measurable fun ω => picardStepDrift coeffs X x₀ t ω i :=
   (measurable_setIntegral_slice h_μ_meas t).const_add _
 
 omit [MeasurableSpace E] in
@@ -361,7 +361,7 @@ theorem measurable_picardStep_diffusion
         (‖coeffs.σ s (X s ω) i j‖₊ : ℝ≥0∞) ^ 2 ∂volume ∂P < ⊤)
     (i : Fin n) (t : ℝ) :
     Measurable fun ω =>
-      picardStep_diffusion W ℱ hℱW coeffs X h_meas h_progMeas h_sq t ω i := by
+      picardStepDiffusion W ℱ hℱW coeffs X h_meas h_progMeas h_sq t ω i := by
   have hcomp : ∀ j : Fin d, Measurable fun ω =>
       LevyStochCalc.Brownian.Ito.stochasticIntegral (W.W j) ℱ (hℱW j)
         (fun ω' s => coeffs.σ s (X s ω') i j)
@@ -371,7 +371,7 @@ theorem measurable_picardStep_diffusion
       (W.W j) ℱ (hℱW j) (fun ω' s => coeffs.σ s (X s ω') i j)
       (h_meas i j) (h_progMeas i j) (h_sq i j)
     exact (hMart.stronglyMeasurable t).measurable.mono (Filt.le t) le_rfl
-  have hunfold : (fun ω => picardStep_diffusion W ℱ hℱW coeffs X h_meas h_progMeas h_sq t ω i)
+  have hunfold : (fun ω => picardStepDiffusion W ℱ hℱW coeffs X h_meas h_progMeas h_sq t ω i)
       = fun ω => ∑ j : Fin d, LevyStochCalc.Brownian.Ito.stochasticIntegral (W.W j) ℱ (hℱW j)
         (fun ω' s => coeffs.σ s (X s ω') i j)
         (h_meas i j) (h_progMeas i j) (h_sq i j) t ω := rfl
@@ -394,7 +394,7 @@ theorem measurable_picardStep_jump {ν : MeasureTheory.Measure E}
       ∫⁻ ω, ∫⁻ s in Set.Icc (0 : ℝ) T, ∫⁻ e,
         (‖coeffs.γ s (X s ω) e i‖₊ : ℝ≥0∞) ^ 2 ∂ν ∂volume ∂P < ⊤)
     (i : Fin n) (t : ℝ) :
-    Measurable fun ω => picardStep_jump N ℱ hℱN coeffs X h_meas h_progMeas h_sq t ω i :=
+    Measurable fun ω => picardStepJump N ℱ hℱN coeffs X h_meas h_progMeas h_sq t ω i :=
   ((LevyStochCalc.Poisson.Compensated.stochasticIntegral_adapted N ℱ hℱN
     (fun ω s e => coeffs.γ s (X s ω) e i) (h_meas i) (h_progMeas i) (h_sq i)
       t).stronglyMeasurable).measurable.mono (ℱ.rightCont.le t) le_rfl
@@ -444,16 +444,16 @@ theorem lintegral_sq_picardStep_le
                 (‖coeffs.γ s (X s ω) e i‖₊ : ℝ≥0∞) ^ 2 ∂ν ∂volume ∂P) := by
   obtain ⟨ht0, htT⟩ := ht
   have hdr : ∀ i : Fin n, Measurable fun ω =>
-      (‖picardStep_drift coeffs X x₀ t ω i‖₊ : ℝ≥0∞) ^ 2 := fun i =>
+      (‖picardStepDrift coeffs X x₀ t ω i‖₊ : ℝ≥0∞) ^ 2 := fun i =>
     (((measurable_picardStep_drift coeffs X x₀ i (h_μ_meas i)
       t).nnnorm).coe_nnreal_ennreal).pow_const 2
   have hdf : ∀ i : Fin n, Measurable fun ω =>
-      (‖picardStep_diffusion W ℱ hℱW coeffs X h_σ_meas h_σ_progMeas h_σ_sq t ω i‖₊
+      (‖picardStepDiffusion W ℱ hℱW coeffs X h_σ_meas h_σ_progMeas h_σ_sq t ω i‖₊
         : ℝ≥0∞) ^ 2 := fun i =>
     (((measurable_picardStep_diffusion W ℱ hℱW coeffs X h_σ_meas h_σ_progMeas h_σ_sq i
       t).nnnorm).coe_nnreal_ennreal).pow_const 2
   have hjp : ∀ i : Fin n, Measurable fun ω =>
-      (‖picardStep_jump N ℱ hℱN coeffs X h_γ_meas h_γ_progMeas h_γ_sq t ω i‖₊
+      (‖picardStepJump N ℱ hℱN coeffs X h_γ_meas h_γ_progMeas h_γ_sq t ω i‖₊
         : ℝ≥0∞) ^ 2 := fun i =>
     (((measurable_picardStep_jump N ℱ hℱN coeffs X h_γ_meas h_γ_progMeas h_γ_sq i
       t).nnnorm).coe_nnreal_ennreal).pow_const 2
@@ -461,24 +461,24 @@ theorem lintegral_sq_picardStep_le
   have hpt : ∀ ω : Ω, ∑ i, (‖picardStep W N ℱ hℱW hℱN coeffs X x₀ h_σ_meas h_σ_progMeas
         h_σ_sq h_γ_meas h_γ_progMeas h_γ_sq t ω i‖₊ : ℝ≥0∞) ^ 2
       ≤ ∑ i : Fin n,
-          (3 * (‖picardStep_drift coeffs X x₀ t ω i‖₊ : ℝ≥0∞) ^ 2
-            + 3 * (‖picardStep_diffusion W ℱ hℱW coeffs X h_σ_meas h_σ_progMeas h_σ_sq
+          (3 * (‖picardStepDrift coeffs X x₀ t ω i‖₊ : ℝ≥0∞) ^ 2
+            + 3 * (‖picardStepDiffusion W ℱ hℱW coeffs X h_σ_meas h_σ_progMeas h_σ_sq
                 t ω i‖₊ : ℝ≥0∞) ^ 2
-            + 3 * (‖picardStep_jump N ℱ hℱN coeffs X h_γ_meas h_γ_progMeas h_γ_sq
+            + 3 * (‖picardStepJump N ℱ hℱN coeffs X h_γ_meas h_γ_progMeas h_γ_sq
                 t ω i‖₊ : ℝ≥0∞) ^ 2) := by
     intro ω
     refine Finset.sum_le_sum fun i _ => ?_
     exact sq_nnnorm_add3_le _ _ _
   have hmeas2 : ∀ i : Fin n, Measurable fun ω =>
-      3 * (‖picardStep_drift coeffs X x₀ t ω i‖₊ : ℝ≥0∞) ^ 2
-        + 3 * (‖picardStep_diffusion W ℱ hℱW coeffs X h_σ_meas h_σ_progMeas h_σ_sq
+      3 * (‖picardStepDrift coeffs X x₀ t ω i‖₊ : ℝ≥0∞) ^ 2
+        + 3 * (‖picardStepDiffusion W ℱ hℱW coeffs X h_σ_meas h_σ_progMeas h_σ_sq
             t ω i‖₊ : ℝ≥0∞) ^ 2 :=
     fun i => ((hdr i).const_mul 3).add ((hdf i).const_mul 3)
   have hmeas3 : ∀ i : Fin n, Measurable fun ω =>
-      3 * (‖picardStep_drift coeffs X x₀ t ω i‖₊ : ℝ≥0∞) ^ 2
-        + 3 * (‖picardStep_diffusion W ℱ hℱW coeffs X h_σ_meas h_σ_progMeas h_σ_sq
+      3 * (‖picardStepDrift coeffs X x₀ t ω i‖₊ : ℝ≥0∞) ^ 2
+        + 3 * (‖picardStepDiffusion W ℱ hℱW coeffs X h_σ_meas h_σ_progMeas h_σ_sq
             t ω i‖₊ : ℝ≥0∞) ^ 2
-        + 3 * (‖picardStep_jump N ℱ hℱN coeffs X h_γ_meas h_γ_progMeas h_γ_sq
+        + 3 * (‖picardStepJump N ℱ hℱN coeffs X h_γ_meas h_γ_progMeas h_γ_sq
             t ω i‖₊ : ℝ≥0∞) ^ 2 :=
     fun i => (hmeas2 i).add ((hjp i).const_mul 3)
   refine (lintegral_mono hpt).trans ?_

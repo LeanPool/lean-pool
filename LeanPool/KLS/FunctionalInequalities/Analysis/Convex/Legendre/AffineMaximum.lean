@@ -65,7 +65,7 @@ theorem exists_finite_hull_neighborhood [FiniteDimensional ℝ E]
 
 /-- The geometric neighborhood produces a linear lower bound for the actual
 finite affine maximum. The intercept bound is only at its finitely many vertices. -/
-theorem affineMaximum_coercive [FiniteDimensional ℝ E]
+theorem affineMaximum_coercive
     (s : Finset E) (hs : s.Nonempty)
     (h0 : (0 : E) ∈ interior (convexHull ℝ (↑s : Set E))) :
     ∃ c : ℝ, 0 < c ∧ ∀ (a : E → ℝ) (M : ℝ), (∀ x ∈ s, a x ≤ M) →

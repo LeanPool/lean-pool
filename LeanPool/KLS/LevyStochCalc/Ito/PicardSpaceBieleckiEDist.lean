@@ -155,7 +155,7 @@ The proof chains four steps:
 * Multiplication by the (constant in `ω`) Bielecki weight `e^{-βt}`.
 * Sup-subadditivity over `t ∈ [0, T]`. -/
 lemma bieleckiNorm_add_le
-    {n : ℕ} {P : Measure Ω} [IsProbabilityMeasure P] (β T : ℝ)
+    {n : ℕ} {P : Measure Ω} (β T : ℝ)
     (Y₁ Y₂ : ℝ → Ω → (Fin n → ℝ))
     (hY₁_meas : ∀ t : ℝ, AEMeasurable
       (fun ω => (∑ i, (‖Y₁ t ω i‖₊ : ℝ≥0∞) ^ 2) ^ ((1 : ℝ) / 2)) P)

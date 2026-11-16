@@ -25,11 +25,11 @@ Bielecki-weighted norm `‖X‖_β := sup_{t ≤ T} e^{-βt} √(𝔼‖X_t‖²
 its parts:
 
 * `Ito/PicardBieleckiNorm.lean` — `bieleckiNorm`, the process space `SBoundedProcess` with its
-  deterministic-time freeze `SBoundedProcess.stop`, the drift component `picardStep_drift` of the
+  deterministic-time freeze `SBoundedProcess.stop`, the drift component `picardStepDrift` of the
   Picard map and the per-component Lipschitz estimates of that component.
 * `Ito/PicardStepMap.lean` — the vector and integrated drift estimates, the Bielecki
   exponential-weight calculus, and the Picard map `picardStep` with its components
-  `picardStep_diffusion` and `picardStep_jump`.
+  `picardStepDiffusion` and `picardStepJump`.
 * `Ito/PicardStochasticLipschitz.lean` — `itoIsometry_diff_brownian` and the per-component
   `L²`-Lipschitz estimates `picardStep_diffusion_diff_lipschitz_sq_componentwise` and
   `picardStep_jump_diff_lipschitz_sq_componentwise`.

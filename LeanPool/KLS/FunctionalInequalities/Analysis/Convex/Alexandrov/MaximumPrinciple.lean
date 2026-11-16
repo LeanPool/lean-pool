@@ -661,7 +661,7 @@ section InnerProduct
 variable {E : Type*}
   [NormedAddCommGroup E] [InnerProductSpace ℝ E]
 
-private lemma alexandrov_diam_pos [FiniteDimensional ℝ E] [Nontrivial E]
+private lemma alexandrov_diam_pos [Nontrivial E]
     {Ω : Set E} (hΩ : IsOpen Ω) (hb : Bornology.IsBounded Ω)
     {x₀ : E} (hx₀ : x₀ ∈ Ω) :
     0 < diam Ω := by

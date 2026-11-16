@@ -17,7 +17,7 @@ The Bielecki-weighted `L²` norm `‖X‖_{β,T} = sup_{t ∈ [0,T]} e^{-βt} (�
 process on `[0, T]`, the space `SBoundedProcess` of jointly measurable, progressively measurable,
 almost surely càdlàg processes of finite norm at weight `0`, and the freeze of such a process at
 the horizon, which leaves the norm unchanged and is `L²`-bounded at every later time.  The drift
-component `picardStep_drift` of the Picard map is defined here, with its per-component difference
+component `picardStepDrift` of the Picard map is defined here, with its per-component difference
 identities, its `L¹` Lipschitz bound, the Cauchy-Schwarz bound `(∫_0^t f)² ≤ t ∫_0^t f²` on a
 window, and the per-component `L²` Lipschitz bound that follows from them.
 -/
@@ -42,7 +42,7 @@ For `β = 0` this is the standard `S²` norm; for `β > 0` it is
 equivalent to `S²` but absorbs the Grönwall constant in the Picard
 contraction estimate. -/
 noncomputable def bieleckiNorm
-    {n : ℕ} {P : Measure Ω} [IsProbabilityMeasure P]
+    {n : ℕ} {P : Measure Ω}
     (β T : ℝ) (X : ℝ → Ω → (Fin n → ℝ)) : ℝ≥0∞ :=
   ⨆ t ∈ Set.Icc (0 : ℝ) T,
     ENNReal.ofReal (Real.exp (-β * t)) *
@@ -74,7 +74,7 @@ structure SBoundedProcess
 
 /-- Freezing a process at the horizon does not change its Bielecki norm on `[0, T]`, since the
 supremum runs over times at which the two processes agree. -/
-theorem bieleckiNorm_min {n : ℕ} {P : Measure Ω} [IsProbabilityMeasure P] (β T : ℝ)
+theorem bieleckiNorm_min {n : ℕ} {P : Measure Ω} (β T : ℝ)
     (X : ℝ → Ω → (Fin n → ℝ)) :
     bieleckiNorm (P := P) β T (fun s ω => X (min s T) ω) = bieleckiNorm (P := P) β T X := by
   unfold bieleckiNorm
@@ -83,7 +83,7 @@ theorem bieleckiNorm_min {n : ℕ} {P : Measure Ω} [IsProbabilityMeasure P] (β
 
 /-- The Bielecki norm at weight `0` bounds the `L²` slice energy at every time of the window,
 for any path map. -/
-theorem lintegral_sq_le_bieleckiNorm_sq_raw {n : ℕ} {P : Measure Ω} [IsProbabilityMeasure P]
+theorem lintegral_sq_le_bieleckiNorm_sq_raw {n : ℕ} {P : Measure Ω}
     {T : ℝ} (Z : ℝ → Ω → (Fin n → ℝ)) {u : ℝ} (hu : u ∈ Set.Icc (0 : ℝ) T) :
     (∫⁻ ω, ∑ i, (‖Z u ω i‖₊ : ℝ≥0∞) ^ 2 ∂P)
       ≤ (bieleckiNorm (P := P) 0 T Z) ^ (2 : ℕ) := by
@@ -231,7 +231,7 @@ For now we provide ONLY the drift component `∫_0^t μ(s, X_s) ds`; the
 Brownian and compensated-Poisson integral components require
 additional measurability bundling that is built up in subsequent
 lemmas. -/
-noncomputable def picardStep_drift
+noncomputable def picardStepDrift
     {n d : ℕ}
     (coeffs : LevyStochCalc.Ito.Setting.JumpDiffusionCoeffs n d E)
     (X : ℝ → Ω → (Fin n → ℝ))
@@ -247,7 +247,7 @@ integral of the per-component drift-coefficient difference:
   `(drift X x₀ t ω - drift Y x₀ t ω) i
     = ∫ s in [0, t], (μ s (X s ω) i - μ s (Y s ω) i) ds`.
 
-This is just the algebraic identity that `picardStep_drift` cancels the
+This is just the algebraic identity that `picardStepDrift` cancels the
 common `x₀` and pulls the integral subtraction componentwise — no
 analytic content yet, but a load-bearing intermediate. -/
 lemma picardStep_drift_diff
@@ -261,10 +261,10 @@ lemma picardStep_drift_diff
       (Set.Icc (0 : ℝ) t) MeasureTheory.volume)
     (h_Y_int : MeasureTheory.IntegrableOn (fun s => coeffs.μ s (Y s ω) i)
       (Set.Icc (0 : ℝ) t) MeasureTheory.volume) :
-    (picardStep_drift (E := E) coeffs X x₀ t ω - picardStep_drift coeffs Y x₀ t ω) i
+    (picardStepDrift (E := E) coeffs X x₀ t ω - picardStepDrift coeffs Y x₀ t ω) i
       = ∫ s in Set.Icc (0 : ℝ) t,
           (coeffs.μ s (X s ω) i - coeffs.μ s (Y s ω) i) := by
-  unfold picardStep_drift
+  unfold picardStepDrift
   -- LHS = ((x₀ + (fun i => ∫ ... μ(X) i)) - (x₀ + (fun i => ∫ ... μ(Y) i))) i
   --     = (∫ ... μ(X) i - ∫ ... μ(Y) i)  by add_sub_add_cancel
   --     = ∫ ... (μ(X) i - μ(Y) i)        by integral_sub
@@ -287,8 +287,8 @@ lemma picardStep_drift_diff_vec
       (fun s => coeffs.μ s (X s ω) i) (Set.Icc (0 : ℝ) t) MeasureTheory.volume)
     (h_Y_int : ∀ i : Fin n, MeasureTheory.IntegrableOn
       (fun s => coeffs.μ s (Y s ω) i) (Set.Icc (0 : ℝ) t) MeasureTheory.volume) :
-    picardStep_drift (E := E) coeffs X x₀ t ω
-        - picardStep_drift coeffs Y x₀ t ω
+    picardStepDrift (E := E) coeffs X x₀ t ω
+        - picardStepDrift coeffs Y x₀ t ω
       = fun i => ∫ s in Set.Icc (0 : ℝ) t,
           (coeffs.μ s (X s ω) i - coeffs.μ s (Y s ω) i) := by
   funext i
@@ -313,8 +313,8 @@ lemma picardStep_drift_diff_componentwise_norm_bound
       (fun s => coeffs.μ s (X s ω) i) (Set.Icc (0 : ℝ) t) MeasureTheory.volume)
     (h_Y_int : MeasureTheory.IntegrableOn
       (fun s => coeffs.μ s (Y s ω) i) (Set.Icc (0 : ℝ) t) MeasureTheory.volume) :
-    |(picardStep_drift (E := E) coeffs X x₀ t ω
-        - picardStep_drift coeffs Y x₀ t ω) i|
+    |(picardStepDrift (E := E) coeffs X x₀ t ω
+        - picardStepDrift coeffs Y x₀ t ω) i|
       ≤ ∫ s in Set.Icc (0 : ℝ) t,
           |coeffs.μ s (X s ω) i - coeffs.μ s (Y s ω) i| := by
   rw [picardStep_drift_diff coeffs X Y x₀ t ω i h_X_int h_Y_int]
@@ -359,8 +359,8 @@ lemma picardStep_drift_diff_lipschitz_componentwise
     -- bound's `mul_integral` rewrite to be valid:
     (h_XY_diff_int : MeasureTheory.IntegrableOn
       (fun s => ‖X s ω - Y s ω‖) (Set.Icc (0 : ℝ) t) MeasureTheory.volume) :
-    |(picardStep_drift (E := E) coeffs X x₀ t ω
-        - picardStep_drift coeffs Y x₀ t ω) i|
+    |(picardStepDrift (E := E) coeffs X x₀ t ω
+        - picardStepDrift coeffs Y x₀ t ω) i|
       ≤ L_μ * ∫ s in Set.Icc (0 : ℝ) t, ‖X s ω - Y s ω‖ := by
   -- Chain the two preceding bounds:
   -- |·| ≤ ∫ |μ(X) i - μ(Y) i|        (norm_integral_le_integral_norm)
@@ -507,8 +507,8 @@ lemma picardStep_drift_diff_lipschitz_sq_componentwise
     (h_XY_diff_sq_L2 : MeasureTheory.MemLp
       (fun s => ‖X s ω - Y s ω‖) 2
       (MeasureTheory.volume.restrict (Set.Icc (0 : ℝ) t))) :
-    ((picardStep_drift (E := E) coeffs X x₀ t ω
-        - picardStep_drift coeffs Y x₀ t ω) i) ^ 2
+    ((picardStepDrift (E := E) coeffs X x₀ t ω
+        - picardStepDrift coeffs Y x₀ t ω) i) ^ 2
       ≤ L_μ ^ 2 * t *
           ∫ s in Set.Icc (0 : ℝ) t, ‖X s ω - Y s ω‖ ^ 2 := by
   -- Step 1: L¹ Lipschitz bound (proven).
@@ -516,15 +516,15 @@ lemma picardStep_drift_diff_lipschitz_sq_componentwise
     coeffs hL_μ_nn h_μ_lip X Y x₀ t ω i h_X_int h_Y_int h_XY_diff_int
   -- The L¹ bound's |·| is the abs of the i-th component diff.
   -- Square both sides (LHS² = (|·|)² = (·)², RHS² = L² · (∫‖X-Y‖)²).
-  have h_abs_sq : ((picardStep_drift (E := E) coeffs X x₀ t ω
-        - picardStep_drift coeffs Y x₀ t ω) i) ^ 2
-      = |(picardStep_drift (E := E) coeffs X x₀ t ω
-          - picardStep_drift coeffs Y x₀ t ω) i| ^ 2 := by
+  have h_abs_sq : ((picardStepDrift (E := E) coeffs X x₀ t ω
+        - picardStepDrift coeffs Y x₀ t ω) i) ^ 2
+      = |(picardStepDrift (E := E) coeffs X x₀ t ω
+          - picardStepDrift coeffs Y x₀ t ω) i| ^ 2 := by
     rw [sq_abs]
   rw [h_abs_sq]
   -- |·|² ≤ (L_μ · ∫‖X-Y‖)² by squaring h_L1 (both sides nonneg).
-  have h_abs_nn : 0 ≤ |(picardStep_drift (E := E) coeffs X x₀ t ω
-        - picardStep_drift coeffs Y x₀ t ω) i| := abs_nonneg _
+  have h_abs_nn : 0 ≤ |(picardStepDrift (E := E) coeffs X x₀ t ω
+        - picardStepDrift coeffs Y x₀ t ω) i| := abs_nonneg _
   have h_int_nn : 0 ≤ ∫ s in Set.Icc (0 : ℝ) t, ‖X s ω - Y s ω‖ :=
     MeasureTheory.integral_nonneg_of_ae
       (Filter.Eventually.of_forall fun _ => norm_nonneg _)
@@ -533,12 +533,12 @@ lemma picardStep_drift_diff_lipschitz_sq_componentwise
   have h_sq_bound := mul_self_le_mul_self h_abs_nn h_L1
   -- h_sq_bound: |·| * |·| ≤ (L_μ · ∫‖X-Y‖) * (L_μ · ∫‖X-Y‖)
   -- Convert ·*· to ·^2 on both sides:
-  have h_LHS_sq_eq : |(picardStep_drift (E := E) coeffs X x₀ t ω
-        - picardStep_drift coeffs Y x₀ t ω) i| *
-      |(picardStep_drift coeffs X x₀ t ω
-          - picardStep_drift coeffs Y x₀ t ω) i|
-      = |(picardStep_drift coeffs X x₀ t ω
-          - picardStep_drift coeffs Y x₀ t ω) i| ^ 2 := by ring
+  have h_LHS_sq_eq : |(picardStepDrift (E := E) coeffs X x₀ t ω
+        - picardStepDrift coeffs Y x₀ t ω) i| *
+      |(picardStepDrift coeffs X x₀ t ω
+          - picardStepDrift coeffs Y x₀ t ω) i|
+      = |(picardStepDrift coeffs X x₀ t ω
+          - picardStepDrift coeffs Y x₀ t ω) i| ^ 2 := by ring
   have h_RHS_sq_eq : (L_μ * ∫ s in Set.Icc (0 : ℝ) t, ‖X s ω - Y s ω‖) *
       (L_μ * ∫ s in Set.Icc (0 : ℝ) t, ‖X s ω - Y s ω‖)
       = L_μ ^ 2 * (∫ s in Set.Icc (0 : ℝ) t, ‖X s ω - Y s ω‖) ^ 2 := by ring
@@ -553,8 +553,8 @@ lemma picardStep_drift_diff_lipschitz_sq_componentwise
   have h_CS_mul : L_μ ^ 2 * (∫ s in Set.Icc (0 : ℝ) t, ‖X s ω - Y s ω‖) ^ 2
       ≤ L_μ ^ 2 * (t * ∫ s in Set.Icc (0 : ℝ) t, ‖X s ω - Y s ω‖ ^ 2) :=
     mul_le_mul_of_nonneg_left h_CS h_L_sq_nn
-  calc |(picardStep_drift (E := E) coeffs X x₀ t ω
-        - picardStep_drift coeffs Y x₀ t ω) i| ^ 2
+  calc |(picardStepDrift (E := E) coeffs X x₀ t ω
+        - picardStepDrift coeffs Y x₀ t ω) i| ^ 2
       ≤ L_μ ^ 2 * (∫ s in Set.Icc (0 : ℝ) t, ‖X s ω - Y s ω‖) ^ 2 := h_sq_bound
     _ ≤ L_μ ^ 2 * (t * ∫ s in Set.Icc (0 : ℝ) t, ‖X s ω - Y s ω‖ ^ 2) := h_CS_mul
     _ = L_μ ^ 2 * t * ∫ s in Set.Icc (0 : ℝ) t, ‖X s ω - Y s ω‖ ^ 2 := by ring

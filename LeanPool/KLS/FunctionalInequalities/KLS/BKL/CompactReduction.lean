@@ -154,8 +154,8 @@ section InnerProduct
 variable [InnerProductSpace ℝ E]
 
 /-- A ball truncation is compactly supported. -/
-theorem isCompact_support_cond_closedBall [CompleteSpace E] [FiniteDimensional ℝ E]
-    [MeasurableSpace E] [BorelSpace E] [SecondCountableTopology E]
+theorem isCompact_support_cond_closedBall [FiniteDimensional ℝ E]
+    [MeasurableSpace E] [BorelSpace E]
     (ν : Measure E) (R : ℕ) :
     IsCompact (ν[|Metric.closedBall (0 : E) R]).support := by
   refine (isCompact_closedBall (0 : E) R).of_isClosed_subset Measure.isClosed_support

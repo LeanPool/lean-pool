@@ -531,6 +531,7 @@ lemma lintegral_sup_rpow_edist_le_of_minimal_cover_two_of_le_one (hp : p ≤ 1)
     _ = 2 ^ (q - d) * (2 ^ (q - d) - 1)⁻¹ := by
       rw [ENNReal.mul_inv (.inr (by finiteness)) (.inl (by simp)), ENNReal.inv_rpow, inv_inv]
 
+/-- The geometric-series bound used in the Kolmogorov moment estimate. -/
 noncomputable
 def Cp (d p q : ℝ) : ℝ≥0∞ :=
   max (1 / ((2 ^ ((q - d) / p)) - 1) ^ p) (1 / (2 ^ (q - d) - 1))

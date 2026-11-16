@@ -130,7 +130,7 @@ theorem exists_itoIntegralL2_brownian
       MeasureTheory.eLpNorm (↑↑M : Ω → ℝ) 2 P ^ (2 : ℝ)
         = ∫⁻ ω, ∫⁻ s in Set.Icc (0 : ℝ) T,
             (‖H ω s‖₊ : ℝ≥0∞) ^ 2 ∂volume ∂P :=
-  ⟨itoIntegralLp_brownian W ℱ hℱ hT G h_eq h_adapt h_cauchy_eval,
+  ⟨itoIntegralLpBrownian W ℱ hℱ hT G h_eq h_adapt h_cauchy_eval,
    itoIntegralLp_brownian_L2_isometry W ℱ hℱ hT G h_eq h_adapt h_cauchy_eval H
      h_eval_norm_tendsto⟩
 
@@ -138,7 +138,7 @@ theorem exists_itoIntegralL2_brownian
 `g : Ω → ℝ → ℝ` with explicit bound `M`, there exists an `Lp ℝ 2 P` element whose
 squared `eLpNorm` over `P` equals the full `L²(P × ds)` norm of `g` over `[0,T]`.
 
-Construction: feed the explicit `predictableDyadicSimple_brownian` sequence into
+Construction: feed the explicit `predictableDyadicSimpleBrownian` sequence into
 `exists_itoIntegralL2_brownian`. All four prerequisites are dyadic-specific lemmas
 already in `Brownian.Ito`:
 
@@ -160,7 +160,7 @@ theorem exists_itoIntegralL2_brownian_progMeas_bounded
         = ∫⁻ ω, ∫⁻ s in Set.Icc (0 : ℝ) T,
             (‖g ω s‖₊ : ℝ≥0∞) ^ 2 ∂volume ∂P := by
   set G : ℕ → SimplePredictable Ω T :=
-    fun n => predictableDyadicSimple_brownian hT g h_meas M h_bound n with hG
+    fun n => predictableDyadicSimpleBrownian hT g h_meas M h_bound n with hG
   have h_eq : ∀ n m : ℕ,
       (G n).partition (Fin.last (G n).N)
         = (G m).partition (Fin.last (G m).N) := by
@@ -252,7 +252,7 @@ theorem exists_itoIntegralL2_brownian_progMeas
   have h_N : ∀ n : ℕ, ∃ N : ℕ, ∀ k ≥ N,
       (∫⁻ ω, ∫⁻ s in Set.Icc (0 : ℝ) T,
         (‖max (-(n : ℝ)) (min (n : ℝ) (H ω s)) -
-          (predictableDyadicSimple_brownian hT
+          (predictableDyadicSimpleBrownian hT
             (fun ω s => max (-(n : ℝ)) (min (n : ℝ) (H ω s)))
             (h_clip_meas n) (n : ℝ) (h_clip_bound n) k).eval s ω‖₊ : ℝ≥0∞) ^ 2
         ∂volume ∂P) ≤ ((n : ℝ≥0∞) + 1)⁻¹ := by
@@ -267,7 +267,7 @@ theorem exists_itoIntegralL2_brownian_progMeas
   choose N_seq h_N_seq using h_N
   -- Diagonal sequence: G n = dyadic for clip_n H at depth (max n (N_seq n)).
   set G : ℕ → SimplePredictable Ω T := fun n =>
-    predictableDyadicSimple_brownian hT
+    predictableDyadicSimpleBrownian hT
       (fun ω s => max (-(n : ℝ)) (min (n : ℝ) (H ω s)))
       (h_clip_meas n) (n : ℝ) (h_clip_bound n) (max n (N_seq n)) with hG_def
   -- Properties of G.

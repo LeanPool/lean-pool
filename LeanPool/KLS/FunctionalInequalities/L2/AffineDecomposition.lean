@@ -39,7 +39,7 @@ namespace FunctionalInequalities.L2
 
 /-- **Three-term orthogonal decomposition bound** (BKL p. 30). -/
 theorem norm_apply_le_sqrt_two_mul {H F : Type*} [NormedAddCommGroup H] [InnerProductSpace ℝ H]
-    [CompleteSpace H] [NormedAddCommGroup F] [NormedSpace ℝ F]
+     [NormedAddCommGroup F] [NormedSpace ℝ F]
     (K L : Submodule ℝ H) [FiniteDimensional ℝ K] [FiniteDimensional ℝ L] (hKL : K ⟂ L)
     (T : H →ₗ[ℝ] F) {A : ℝ} (hA : 0 ≤ A) (hK : ∀ x ∈ K, T x = 0)
     (hL : ∀ x ∈ L, ‖T x‖ ≤ A * ‖x‖) (hH : ∀ x ∈ (K ⊔ L)ᗮ, ‖T x‖ ≤ A * ‖x‖) (f : H) :

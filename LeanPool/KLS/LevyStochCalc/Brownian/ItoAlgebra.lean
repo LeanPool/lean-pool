@@ -28,7 +28,7 @@ simple integrand is its elementary integral.
   integrands at an intermediate time, with no constraint relating their horizons.
 * `stochasticIntegralBrownian_eval_simple` — the `L²` Itô integral of a simple integrand agrees
   almost everywhere with its elementary integral.
-* `SimplePredictable.mul_on_common` — the product of two simple integrands, carried on their
+* `SimplePredictable.mulOnCommonRefinement` — the product of two simple integrands, carried on their
   common refinement, together with its evaluation and its adaptedness.
 * `SimplePredictable.integralAgainst` — the elementary integral of a simple integrand against an
   arbitrary process.

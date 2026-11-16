@@ -72,7 +72,7 @@ noncomputable def dyadicAvg
 
 /-- Left-shifted dyadic average (value from the *previous* interval; `0` on the
 first), the adapted coefficient of the dyadic approximation. -/
-noncomputable def dyadicAvg_shifted
+noncomputable def dyadicAvgShifted
     (T : ℝ) (φ : Ω → ℝ → E → ℝ) (n : ℕ) (i : Fin (2 ^ n)) (ω : Ω) (e : E) : ℝ :=
   if h : i.val = 0 then 0
   else dyadicAvg T φ n ⟨i.val - 1, by omega⟩ ω e
@@ -97,8 +97,8 @@ lemma dyadicAvg_shifted_measurable
     (T : ℝ) (φ : Ω → ℝ → E → ℝ)
     (h_meas : Measurable (fun p : Ω × ℝ × E => φ p.1 p.2.1 p.2.2))
     (n : ℕ) (i : Fin (2 ^ n)) :
-    Measurable (fun q : Ω × E => dyadicAvg_shifted T φ n i q.1 q.2) := by
-  unfold dyadicAvg_shifted
+    Measurable (fun q : Ω × E => dyadicAvgShifted T φ n i q.1 q.2) := by
+  unfold dyadicAvgShifted
   by_cases h : i.val = 0
   · simp only [h, ↓reduceDIte]; exact measurable_const
   · simp only [h, ↓reduceDIte]; exact dyadicAvg_measurable T φ h_meas n _
@@ -137,8 +137,8 @@ omit [MeasurableSpace Ω] [MeasurableSpace E] in
 case, which is the constant `0`). -/
 lemma dyadicAvg_shifted_bounded {T : ℝ} (hT : 0 < T) (φ : Ω → ℝ → E → ℝ)
     {M : ℝ} (hM : ∀ ω s e, |φ ω s e| ≤ M) (n : ℕ) (i : Fin (2 ^ n)) (ω : Ω) (e : E) :
-    |dyadicAvg_shifted T φ n i ω e| ≤ max M 0 := by
-  unfold dyadicAvg_shifted
+    |dyadicAvgShifted T φ n i ω e| ≤ max M 0 := by
+  unfold dyadicAvgShifted
   by_cases h : i.val = 0
   · simp only [h, ↓reduceDIte, abs_zero]; exact le_max_right _ _
   · simp only [h, ↓reduceDIte]

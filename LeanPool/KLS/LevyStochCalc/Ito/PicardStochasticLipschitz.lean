@@ -135,7 +135,7 @@ The proof routes through `ENNReal.ofReal` for the real-valued square
 bound, then uses `lintegral_const_mul` and `lintegral_finsetSum`
 (monotonicity of swapping `∑` and `∫⁻` for non-negative integrands). -/
 lemma lintegral_nnnorm_sum_sq_le_card_mul_sum_lintegral_nnnorm_sq
-    {P : MeasureTheory.Measure Ω} [MeasureTheory.IsProbabilityMeasure P]
+    {P : MeasureTheory.Measure Ω}
     {d : ℕ} (M : Fin d → Ω → ℝ)
     (hM : ∀ j : Fin d, Measurable (M j)) :
     ∫⁻ ω, (‖∑ j : Fin d, M j ω‖₊ : ℝ≥0∞) ^ 2 ∂P
@@ -204,14 +204,14 @@ omit [MeasurableSpace E] in
 For row `i : Fin n`, the squared expected difference of the diffusion
 component is bounded by `d · L_σ² · 𝔼 ∫_0^T ‖X-Y‖²`:
 
-  `𝔼 |(picardStep_diffusion W ℱ hℱW coeffs X)ᵢ -
-       (picardStep_diffusion W ℱ hℱW coeffs Y)ᵢ|²
+  `𝔼 |(picardStepDiffusion W ℱ hℱW coeffs X)ᵢ -
+       (picardStepDiffusion W ℱ hℱW coeffs Y)ᵢ|²
    ≤ d · L_σ² · 𝔼 ∫_0^T ‖X_s - Y_s‖² ds`.
 
 **Proof sketch**:
 
 1. The row-`i` diffusion is `∑_j ∫ σ(X)_{ij} dW^j` (definition of
-   `MultidimBrownianMotion.stochasticIntegral` + `picardStep_diffusion`).
+   `MultidimBrownianMotion.stochasticIntegral` + `picardStepDiffusion`).
 
 2. Cauchy-Schwarz on the j-sum:
    `(∑_j a_j)² ≤ d · ∑_j a_j²`.
@@ -242,7 +242,7 @@ lemma picardStep_diffusion_diff_lipschitz_sq_componentwise
     (X Y : ℝ → Ω → (Fin n → ℝ))
     (i : Fin n)
     -- Per-(i', j) measurability / progressive-measurability / L²
-    -- hypotheses for σ along X and Y, threaded to `picardStep_diffusion`.
+    -- hypotheses for σ along X and Y, threaded to `picardStepDiffusion`.
     (h_σ_meas_X : ∀ i' : Fin n, ∀ j : Fin d,
       Measurable (Function.uncurry (fun ω s => coeffs.σ s (X s ω) i' j)))
     (h_σ_meas_Y : ∀ i' : Fin n, ∀ j : Fin d,
@@ -260,8 +260,8 @@ lemma picardStep_diffusion_diff_lipschitz_sq_componentwise
       ∫⁻ ω, ∫⁻ s in Set.Icc (0 : ℝ) T',
         (‖coeffs.σ s (Y s ω) i' j‖₊ : ℝ≥0∞) ^ 2 ∂volume ∂P < ⊤)
     (T : ℝ) (hT : 0 < T) :
-    ∫⁻ ω, (‖picardStep_diffusion W ℱ hℱW coeffs X h_σ_meas_X h_σ_progMeas_X h_σ_sq_X T ω i
-              - picardStep_diffusion W ℱ hℱW coeffs Y h_σ_meas_Y h_σ_progMeas_Y h_σ_sq_Y T ω i‖₊
+    ∫⁻ ω, (‖picardStepDiffusion W ℱ hℱW coeffs X h_σ_meas_X h_σ_progMeas_X h_σ_sq_X T ω i
+              - picardStepDiffusion W ℱ hℱW coeffs Y h_σ_meas_Y h_σ_progMeas_Y h_σ_sq_Y T ω i‖₊
             : ℝ≥0∞) ^ 2 ∂P
       ≤ ENNReal.ofReal ((d : ℝ) * L_σ ^ 2) *
           ∫⁻ ω, ∫⁻ s in Set.Icc (0 : ℝ) T,
@@ -294,20 +294,20 @@ lemma picardStep_diffusion_diff_lipschitz_sq_componentwise
       (h_σ_meas_Y i j) (h_σ_progMeas_Y i j) (h_σ_sq_Y i j)
     have h_sm := hMart.stronglyMeasurable T
     exact h_sm.measurable.mono (Filt.le T) le_rfl
-  -- Step 1: unfold picardStep_diffusion to ∑ j (Mx j - My j).
+  -- Step 1: unfold picardStepDiffusion to ∑ j (Mx j - My j).
   have h_unfold : ∀ ω : Ω,
-      picardStep_diffusion W ℱ hℱW coeffs X h_σ_meas_X h_σ_progMeas_X h_σ_sq_X T ω i
-        - picardStep_diffusion W ℱ hℱW coeffs Y h_σ_meas_Y h_σ_progMeas_Y h_σ_sq_Y T ω i
+      picardStepDiffusion W ℱ hℱW coeffs X h_σ_meas_X h_σ_progMeas_X h_σ_sq_X T ω i
+        - picardStepDiffusion W ℱ hℱW coeffs Y h_σ_meas_Y h_σ_progMeas_Y h_σ_sq_Y T ω i
         = ∑ j : Fin d, (Mx j ω - My j ω) := by
     intro ω
-    simp only [picardStep_diffusion,
+    simp only [picardStepDiffusion,
       LevyStochCalc.Brownian.Multidim.MultidimBrownianMotion.stochasticIntegral,
       Mx, My]
     exact (Finset.sum_sub_distrib _ _).symm
   -- Step 2: rewrite the LHS using h_unfold via lintegral_congr.
   have h_LHS_rewrite :
-      ∫⁻ ω, (‖picardStep_diffusion W ℱ hℱW coeffs X h_σ_meas_X h_σ_progMeas_X h_σ_sq_X T ω i
-            - picardStep_diffusion W ℱ hℱW coeffs Y h_σ_meas_Y h_σ_progMeas_Y h_σ_sq_Y T ω i‖₊
+      ∫⁻ ω, (‖picardStepDiffusion W ℱ hℱW coeffs X h_σ_meas_X h_σ_progMeas_X h_σ_sq_X T ω i
+            - picardStepDiffusion W ℱ hℱW coeffs Y h_σ_meas_Y h_σ_progMeas_Y h_σ_sq_Y T ω i‖₊
             : ℝ≥0∞) ^ 2 ∂P
         = ∫⁻ ω, (‖∑ j : Fin d, (Mx j ω - My j ω)‖₊ : ℝ≥0∞) ^ 2 ∂P :=
     lintegral_congr (fun ω => by rw [h_unfold ω])
@@ -478,12 +478,12 @@ Given:
 * L²-in-`e` Lipschitz hypothesis on `γ` in the state argument with rate
   `L_γ` (ENNReal form),
 * the joint measurability / progressive measurability / L²-boundedness
-  hypothesis bundles that `picardStep_jump` requires for `X` and `Y`,
+  hypothesis bundles that `picardStepJump` requires for `X` and `Y`,
 
 the per-(t = T) L²-norm of the difference of jump-step components is
 bounded by `L_γ²` times the time-integrated squared L² distance:
 
-  `∫⁻ ω, ‖(picardStep_jump X)_i T ω − (picardStep_jump Y)_i T ω‖² ∂P
+  `∫⁻ ω, ‖(picardStepJump X)_i T ω − (picardStepJump Y)_i T ω‖² ∂P
     ≤ ENNReal.ofReal L_γ² · ∫⁻ ω, ∫⁻ s ∈ [0, T], ‖X_s ω − Y_s ω‖² ds ∂P`.
 
 This is the operator-level per-component bound that, when summed over
@@ -510,7 +510,7 @@ lemma picardStep_jump_diff_lipschitz_sq_componentwise
       ∫⁻ e,
         (‖coeffs.γ s (X s ω) e i - coeffs.γ s (Y s ω) e i‖₊ : ℝ≥0∞) ^ 2 ∂ν
         ≤ ENNReal.ofReal (L_γ ^ 2) * (‖X s ω - Y s ω‖₊ : ℝ≥0∞) ^ 2)
-    -- Hypothesis bundles for `picardStep_jump` well-typedness — X side:
+    -- Hypothesis bundles for `picardStepJump` well-typedness — X side:
     (hX_meas : ∀ i : Fin n,
       Measurable (fun (p : Ω × ℝ × E) => coeffs.γ p.2.1 (X p.2.1 p.1) p.2.2 i))
     (hX_progMeas : ∀ i : Fin n,
@@ -529,19 +529,19 @@ lemma picardStep_jump_diff_lipschitz_sq_componentwise
       ∫⁻ ω, ∫⁻ s in Set.Icc (0 : ℝ) T, ∫⁻ e,
         (‖coeffs.γ s (Y s ω) e i‖₊ : ℝ≥0∞) ^ 2 ∂ν ∂volume ∂P < ⊤)
     (T : ℝ) (hT : 0 < T) :
-    ∫⁻ ω, (‖picardStep_jump (E := E) N ℱ hℱN coeffs X hX_meas hX_progMeas hX_sq T ω i
-            - picardStep_jump N ℱ hℱN coeffs Y hY_meas hY_progMeas hY_sq T ω i‖₊
+    ∫⁻ ω, (‖picardStepJump (E := E) N ℱ hℱN coeffs X hX_meas hX_progMeas hX_sq T ω i
+            - picardStepJump N ℱ hℱN coeffs Y hY_meas hY_progMeas hY_sq T ω i‖₊
           : ℝ≥0∞) ^ 2 ∂P
       ≤ ENNReal.ofReal (L_γ ^ 2) *
           ∫⁻ ω, ∫⁻ s in Set.Icc (0 : ℝ) T,
             (‖X s ω - Y s ω‖₊ : ℝ≥0∞) ^ 2 ∂volume ∂P := by
-  -- Step 1: unfold `picardStep_jump` (definitional) so the LHS is exactly
+  -- Step 1: unfold `picardStepJump` (definitional) so the LHS is exactly
   -- the L²-norm-squared of the difference of two `Compensated.stochasticIntegral`
   -- outputs, matching the LHS of `itoIsometry_diff_compensated`.
-  -- `picardStep_jump` is `noncomputable def`-ed as
+  -- `picardStepJump` is `noncomputable def`-ed as
   --   `fun i => Compensated.stochasticIntegral N ℱ hℱN
   --     (fun ω' s e => γ s (X s ω') e i) ... T ω`
-  -- so the lemma's LHS is, by `unfold + simp only [picardStep_jump]`,
+  -- so the lemma's LHS is, by `unfold + simp only [picardStepJump]`,
   -- exactly the LHS of `itoIsometry_diff_compensated` with
   --   φ₁ ω' s e := γ s (X s ω') e i
   --   φ₂ ω' s e := γ s (Y s ω') e i.
@@ -556,9 +556,9 @@ lemma picardStep_jump_diff_lipschitz_sq_componentwise
   -- Rewriting the LHS via the isometry turns the goal into the bound
   -- `inner double lintegral ≤ ENNReal.ofReal L_γ²
   --   · ∫⁻ ω ∫⁻ s, ‖X-Y‖² ∂volume ∂P`.
-  -- `picardStep_jump i` unfolds definitionally to the `Compensated.stochasticIntegral`
+  -- `picardStepJump i` unfolds definitionally to the `Compensated.stochasticIntegral`
   -- of `γ ... i`, so the rewrite goes through `show`+`exact_mod_cast`.
-  simp only [picardStep_jump] at *
+  simp only [picardStepJump] at *
   rw [h_iso]
   -- Goal now:
   -- ∫⁻ ω, ∫⁻ s in [0,T], ∫⁻ e,

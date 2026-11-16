@@ -186,7 +186,7 @@ omit [MeasurableSpace E] [IsProbabilityMeasure P] in
 /-- The drift component at `t` only reads its input on `[0, t]`. -/
 theorem picardStep_drift_congr_ae {t : ℝ}
     (hXY : ∀ᵐ ω ∂P, ∀ᵐ s ∂(volume.restrict (Set.Icc (0 : ℝ) t)), X s ω = Y s ω) :
-    ∀ᵐ ω ∂P, picardStep_drift coeffs X x₀ t ω = picardStep_drift coeffs Y x₀ t ω := by
+    ∀ᵐ ω ∂P, picardStepDrift coeffs X x₀ t ω = picardStepDrift coeffs Y x₀ t ω := by
   filter_upwards [hXY] with ω hω
   have hω' : ∀ᵐ s ∂volume, s ∈ Set.Icc (0 : ℝ) t → X s ω = Y s ω :=
     (ae_restrict_iff' measurableSet_Icc).mp hω
@@ -196,7 +196,7 @@ theorem picardStep_drift_congr_ae {t : ℝ}
     refine setIntegral_congr_ae measurableSet_Icc ?_
     filter_upwards [hω'] with s hs hsmem
     rw [hs hsmem]
-  simp only [picardStep_drift, hint]
+  simp only [picardStepDrift, hint]
 
 omit [MeasurableSpace E] in
 /-- The Brownian component at `t` only reads its input on `[0, t]`. -/
@@ -218,8 +218,8 @@ theorem picardStep_diffusion_congr_ae
     {t : ℝ} (ht : 0 < t)
     (hXY : ∀ᵐ ω ∂P, ∀ᵐ s ∂(volume.restrict (Set.Icc (0 : ℝ) t)), X s ω = Y s ω) :
     ∀ᵐ ω ∂P,
-      picardStep_diffusion W ℱ hℱW coeffs X h_σ_meas_X h_σ_progMeas_X h_σ_sq_X t ω
-        = picardStep_diffusion W ℱ hℱW coeffs Y h_σ_meas_Y h_σ_progMeas_Y h_σ_sq_Y t ω := by
+      picardStepDiffusion W ℱ hℱW coeffs X h_σ_meas_X h_σ_progMeas_X h_σ_sq_X t ω
+        = picardStepDiffusion W ℱ hℱW coeffs Y h_σ_meas_Y h_σ_progMeas_Y h_σ_sq_Y t ω := by
   have hcomp : ∀ p : Fin n × Fin d, ∀ᵐ ω ∂P,
       LevyStochCalc.Brownian.Ito.stochasticIntegral (W.W p.2) ℱ (hℱW p.2)
           (fun ω' s => coeffs.σ s (X s ω') p.1 p.2)
@@ -234,7 +234,7 @@ theorem picardStep_diffusion_congr_ae
     rw [hs]
   filter_upwards [MeasureTheory.ae_all_iff.mpr hcomp] with ω hω
   funext i
-  simp only [picardStep_diffusion]
+  simp only [picardStepDiffusion]
   exact Finset.sum_congr rfl fun j _ => hω (i, j)
 
 /-- The compensated-Poisson component at `t` only reads its input on `[0, t]`. -/
@@ -256,8 +256,8 @@ theorem picardStep_jump_congr_ae
     {t : ℝ} (ht : 0 < t)
     (hXY : ∀ᵐ ω ∂P, ∀ᵐ s ∂(volume.restrict (Set.Icc (0 : ℝ) t)), X s ω = Y s ω) :
     ∀ᵐ ω ∂P,
-      picardStep_jump N ℱ hℱN coeffs X h_γ_meas_X h_γ_progMeas_X h_γ_sq_X t ω
-        = picardStep_jump N ℱ hℱN coeffs Y h_γ_meas_Y h_γ_progMeas_Y h_γ_sq_Y t ω := by
+      picardStepJump N ℱ hℱN coeffs X h_γ_meas_X h_γ_progMeas_X h_γ_sq_X t ω
+        = picardStepJump N ℱ hℱN coeffs Y h_γ_meas_Y h_γ_progMeas_Y h_γ_sq_Y t ω := by
   have hcomp : ∀ i : Fin n, ∀ᵐ ω ∂P,
       LevyStochCalc.Poisson.Compensated.stochasticIntegral N ℱ hℱN
           (fun ω' s e => coeffs.γ s (X s ω') e i)

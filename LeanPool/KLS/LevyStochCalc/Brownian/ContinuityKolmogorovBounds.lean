@@ -50,7 +50,7 @@ This is the per-pair tail bound underlying both the convergence-in-measure
 argument (`kolmogorov_modification_ae_eq`) and the per-dyadic-level Borel–
 Cantelli step of the continuous-modification construction. -/
 lemma kolmogorov_markov_bound
-    (P : Measure Ω) [IsProbabilityMeasure P]
+    (P : Measure Ω)
     (X : ℝ → Ω → ℝ) {p q : ℝ} {M : ℝ≥0}
     (hX : ProbabilityTheory.IsKolmogorovProcess X P p q M)
     (s t : ℝ) {lam : ℝ≥0∞} (hlam_pos : 0 < lam) (hlam_top : lam ≠ ⊤) :
@@ -87,7 +87,7 @@ lemma kolmogorov_markov_bound
 /-- Real-threshold form of the tail bound: for `lam > 0`,
 `P {ω | lam < |X s ω − X t ω|} ≤ M · edist s t ^ q / (ofReal lam) ^ p`. -/
 lemma kolmogorov_real_tail_bound
-    (P : Measure Ω) [IsProbabilityMeasure P]
+    (P : Measure Ω)
     (X : ℝ → Ω → ℝ) {p q : ℝ} {M : ℝ≥0}
     (hX : ProbabilityTheory.IsKolmogorovProcess X P p q M)
     (s t : ℝ) {lam : ℝ} (hlam : 0 < lam) :
@@ -106,7 +106,7 @@ intervals in `[0,1]` of the events `{ |increment| > ((1/2)^α)^n }` has measure
 `≤ ofReal((M:ℝ)·ρⁿ)` with `ρ = (1/2)^{q−αp−1}`. (Borel–Cantelli summability
 follows when `αp < q−1`, i.e. `ρ < 1`.) -/
 lemma kc_level_bad_measure
-    (P : Measure Ω) [IsProbabilityMeasure P]
+    (P : Measure Ω)
     (X : ℝ → Ω → ℝ) {p q : ℝ} {M : ℝ≥0}
     (hX : ProbabilityTheory.IsKolmogorovProcess X P p q M)
     {α : ℝ} (n : ℕ) :
@@ -235,7 +235,7 @@ lemma isKolmogorovProcess_comp_add_right
 level-`n` dyadic increments in `[0,1]` bounded by `((1/2)^α)^n` for every
 `n ≥ N`. This supplies the hypothesis of `dyadic_holder_chaining`. -/
 lemma kc_ae_increment_bound
-    (P : Measure Ω) [IsProbabilityMeasure P]
+    (P : Measure Ω)
     (X : ℝ → Ω → ℝ) {p q : ℝ} {M : ℝ≥0}
     (hX : ProbabilityTheory.IsKolmogorovProcess X P p q M)
     {α : ℝ} (hαpq : α * p < q - 1) :
@@ -284,7 +284,7 @@ Obtained by transporting `dyadic_holder_chaining` (on `[0,1]`) to `[j,j+1]` via
 the time-shifted process `X(·+j)` (translation-invariant Kolmogorov condition),
 intersected over the countable family `j : ℤ`. -/
 lemma kc_ae_interval_holder
-    (P : Measure Ω) [IsProbabilityMeasure P]
+    (P : Measure Ω)
     (X : ℝ → Ω → ℝ) {p q : ℝ} {M : ℝ≥0}
     (hX : ProbabilityTheory.IsKolmogorovProcess X P p q M)
     {α : ℝ} (hα0 : 0 < α) (hαpq : α * p < q - 1) :
@@ -321,7 +321,7 @@ neighbourhood on whose dyadics `X(·)ω` is α-Hölder. At a point near an integ
 since `c` is dyadic), using the two adjacent unit-interval bounds. This is the
 hypothesis of `exists_tendsto_of_local_holder`. -/
 lemma kc_ae_nbhd_holder
-    (P : Measure Ω) [IsProbabilityMeasure P]
+    (P : Measure Ω)
     (X : ℝ → Ω → ℝ) {p q : ℝ} {M : ℝ≥0}
     (hX : ProbabilityTheory.IsKolmogorovProcess X P p q M)
     {α : ℝ} (hα0 : 0 < α) (hαpq : α * p < q - 1) :
@@ -427,7 +427,7 @@ Sub-steps:
 4. Combine: at each fixed t, X_t = Y_t a.s. (limit of equal-a.s. sequences,
    one converging in probability the other a.s., are equal a.s.). -/
 lemma kolmogorov_modification_ae_eq
-    (P : Measure Ω) [IsProbabilityMeasure P]
+    (P : Measure Ω)
     (X : ℝ → Ω → ℝ) {p q : ℝ} {M : ℝ≥0}
     (hX : ProbabilityTheory.IsKolmogorovProcess X P p q M)
     (Y : ℝ → Ω → ℝ)
