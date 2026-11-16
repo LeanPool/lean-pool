@@ -38,7 +38,7 @@ IMPORTS = re.compile(
 )
 STATE = "documentation-progress.json"
 # Bump when stored analysis must be discarded, e.g. a changed database contract.
-STATE_VERSION = 2
+STATE_VERSION = 3
 # One analyzer per hosted-runner core. Lake could not hold this bound: jobs
 # resuming from dependency waits exceeded its worker limit and exhausted memory.
 ANALYZERS = 4

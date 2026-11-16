@@ -286,6 +286,23 @@ def test_failed_pruning_rejects_restored_modules(
         documentation.require_complete(repository)
 
 
+def test_legacy_checkpoint_reanalyzes_possibly_replaced_rows(
+    repository: Path, analyzer: RecordingAnalyzer, monkeypatch
+) -> None:
+    """A pre-fix completion certificate may already disagree with its database."""
+    current_version = documentation.STATE_VERSION
+    monkeypatch.setattr(documentation, "STATE_VERSION", 2)
+    assert documentation.build_batches(repository, "lake", 60, 8, workers=1)
+    populate(analyzer.build, value="legacy replacement after failure")
+    monkeypatch.setattr(documentation, "STATE_VERSION", current_version)
+    with pytest.raises(ValueError, match="incomplete"):
+        documentation.require_complete(repository)
+    analyzer.modules.clear()
+    assert documentation.build_batches(repository, "lake", 60, 8, workers=1)
+    assert set(analyzer.modules) == {"LeanPool", "LeanPool.A", "LeanPool.Z"}
+    documentation.require_complete(repository)
+
+
 def test_analyzer_runs_doc_gen_like_its_lake_facet(tmp_path: Path, caplog) -> None:
     """The direct command must match the facet's arguments and environment."""
     build = tmp_path / "docbuild" / ".lake" / "build"
