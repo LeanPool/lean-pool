@@ -482,18 +482,20 @@ theorem wp_par_or {om : OrderMaintenance} {m : State} {p : Nat} (hp : p < 2) (h 
     · exact Or.inr h
     · exact Or.inl h
 
-/-- **An insertion at Level M**: it answers Level F's handle, keeps the invariant, and the machine
-code runs in at most `insW K_B` steps. -/
-theorem insertW_ok {om : OrderMaintenance} {m : State} {p : Nat} {Sp :
-  OrderMaintenance.Spec.State} (h : WEnc om m p) (hI : MInv om Sp)
-    {hx : Option Nat} (hv : (insOp hx).Valid Sp) (hhx : m.loc "hx" = b2n hx.isSome)
-    (hxl : ∀ x, hx = some x → m.loc "x" = x) :
-    ∃ om', om.insert proofParams hx = .ok (Sp.fresh, om') ∧ MInv om' (OrderMaintenance.Spec.step
-      Sp (insOp hx)).1 ∧
-      om'.KB = om.KB ∧ wp insertWS (fun m' k => (WEnc om' m' 0 ∨ WEnc om' m' 1) ∧ m'.loc "hy" =
-        Sp.fresh ∧
-        k ≤ insW om.KB) m := by
-  have hp := h.p2
+/-- The shared functional prefix of insertion: the core update, mirroring, and safe
+rebuild preserve parameters and the Level M invariant. Machine and word bounds reuse it. -/
+theorem MInv.insert_prefix {om : OrderMaintenance} {Sp : OrderMaintenance.Spec.State}
+    (hI : MInv om Sp) {hx : Option Nat} (hv : (insOp hx).Valid Sp) :
+    ∃ (om' : OrderMaintenance) (c' : Core) (om2 : OrderMaintenance),
+      om.insert proofParams hx = .ok (Sp.fresh, om') ∧
+      MInv om' (OrderMaintenance.Spec.step Sp (insOp hx)).1 ∧
+      (insertAfter (insXi om hx) om.nextHandle).run om.cur = .ok om.cur.E.size c' ∧
+      (insOM om c' om.cur.E.size).mirrorInsert hx om.nextHandle = .ok om2 ∧
+      (∀ n, om2.nxt = some n →
+        RLSafeP { om2 with live := om2.live + 1, nxt := none } n (om2.KB + 1) om2.KB) ∧
+      ({ om2 with live := om2.live + 1 } : OrderMaintenance).rebuildStep proofParams = .ok om' ∧
+      c'.P = om.cur.P ∧ c'.count = om.cur.count + 1 ∧ om2.cur = c' ∧ om2.KB = om.KB ∧
+      MX { om2 with live := om2.live + 1 } := by
   have hW := hI.1
   obtain ⟨hS, hf, A, hR, hL, hIdx, hN⟩ := hW.w
   obtain ⟨om', hins, hW'⟩ := insert_cost costSetup hW hx hv
@@ -511,9 +513,8 @@ theorem insertW_ok {om : OrderMaintenance} {m : State} {p : Nat} {Sp :
     | none => exact hR.head
     | some x => exact (hIdx x (hxS x rfl)).1
   have hS0 := hI.cur hR.inv
-  obtain ⟨hk, hRf, hn1, hsize, hcap, hI5, hpow⟩ := hS0.params
   -- the side conditions after the mirroring and the rebuild step
-  obtain ⟨c'', hr'', -, -, -, hP'', hM''⟩ := hS0.insert hxL om.nextHandle
+  obtain ⟨c'', hr'', -, -, hcnt, hP'', hM''⟩ := hS0.insert hxL om.nextHandle
     (fun r => if r = "x" then insAnchor om hx else om.nextHandle) (by simp) (by simp)
   have hr1' : (insertAfter (insAnchor om hx) om.nextHandle).run om.cur = .ok om.cur.E.size c' := hr1
   rw [hr1'] at hr''
@@ -528,7 +529,34 @@ theorem insertW_ok {om : OrderMaintenance} {m : State} {p : Nat} {Sp :
     ⟨by change Mc (capsOf om2.cur.P) om2.cur.P om2.cur; rw [e1]; change Mc (capsOf c'.P) c'.P c'; rw
       [hP'']; exact hM'',
       fun n hn => hX2 n hn⟩
-  refine ⟨om', hins, ⟨hW', rebuild_MX hX3 hsafe hR'⟩, (rebuildStep_KB hR').trans e2, ?_⟩
+  exact ⟨om', c', om2, hins, ⟨hW', rebuild_MX hX3 hsafe hR'⟩, hr1, hm2, hsafe,
+    hR', hP'', hcnt, e1, e2, hX3⟩
+
+/-- **An insertion at Level M**: it answers Level F's handle, keeps the invariant, and the machine
+code runs in at most `insW K_B` steps. -/
+theorem insertW_ok {om : OrderMaintenance} {m : State} {p : Nat} {Sp :
+  OrderMaintenance.Spec.State} (h : WEnc om m p) (hI : MInv om Sp)
+    {hx : Option Nat} (hv : (insOp hx).Valid Sp) (hhx : m.loc "hx" = b2n hx.isSome)
+    (hxl : ∀ x, hx = some x → m.loc "x" = x) :
+    ∃ om', om.insert proofParams hx = .ok (Sp.fresh, om') ∧ MInv om' (OrderMaintenance.Spec.step
+      Sp (insOp hx)).1 ∧
+      om'.KB = om.KB ∧ wp insertWS (fun m' k => (WEnc om' m' 0 ∨ WEnc om' m' 1) ∧ m'.loc "hy" =
+        Sp.fresh ∧
+        k ≤ insW om.KB) m := by
+  have hp := h.p2
+  have hW := hI.1
+  obtain ⟨hS, hf, A, hR, hL, hIdx, hN⟩ := hW.w
+  obtain ⟨om', c', om2, hins, hI', hr1, hm2, hsafe, hR', hP'', hcnt, e1, e2, hX3⟩ :=
+    hI.insert_prefix hv
+  have hxS : ∀ x, hx = some x → x ∈ Sp.list := fun x e => by subst e; exact hv
+  have hxL : insAnchor om hx ∈ A.elist := by
+    cases hx with
+    | none => exact hR.head
+    | some x => exact (hIdx x (hxS x rfl)).1
+  have hS0 := hI.cur hR.inv
+  have hr1' : (insertAfter (insAnchor om hx) om.nextHandle).run om.cur = .ok om.cur.E.size c' := hr1
+  obtain ⟨hk, hRf, hn1, hsize, hcap, hI5, hpow⟩ := hS0.params
+  refine ⟨om', hins, hI', (rebuildStep_KB hR').trans e2, ?_⟩
   -- the machine
   refine wp_byPar h ?_
   have h0 := h.bump (parE.maxv m)
@@ -688,16 +716,21 @@ def deleteWS : Stmt := byPar delC
 /-- The cost bound of a deletion. -/
 def delW (KB : Nat) : Nat := 200 + rebB KB
 
-/-- **A deletion at Level M**: it keeps the invariant, and the machine code runs in at most
-`delW K_B` steps. -/
-theorem deleteW_ok {om : OrderMaintenance} {m : State} {p : Nat} {Sp :
-  OrderMaintenance.Spec.State} (h : WEnc om m p) (hI : MInv om Sp)
-    {x : Nat} (hv : x ∈ Sp.list) (hxl : m.loc "x" = x) :
-    ∃ om', om.delete proofParams x = .ok om' ∧ MInv om' (OrderMaintenance.Spec.step Sp (.delete
-      x)).1 ∧
-      om'.KB = om.KB ∧ wp deleteWS (fun m' k => (WEnc om' m' 0 ∨ WEnc om' m' 1) ∧ k ≤ delW
-        om.KB) m := by
-  have hp := h.p2
+/-- The shared functional prefix of deletion: marking, mirroring, and the safe rebuild
+retain the core parameters and intermediate Level M invariant. -/
+theorem MInv.delete_prefix {om : OrderMaintenance} {Sp : OrderMaintenance.Spec.State}
+    (hI : MInv om Sp) {x : Nat} (hv : x ∈ Sp.list) :
+    ∃ (om' : OrderMaintenance) (c' : Core) (om2 : OrderMaintenance),
+      om.delete proofParams x = .ok om' ∧
+      MInv om' (OrderMaintenance.Spec.step Sp (.delete x)).1 ∧
+      (markDead (om.curIdx.getX x)).run om.cur = .ok () c' ∧
+      ({ om with cur := c', curIdx := om.curIdx.setX x 0 } : OrderMaintenance).mirrorDelete x =
+        .ok om2 ∧
+      (∀ n, om2.nxt = some n →
+        RLSafeP { om2 with live := om2.live - 1, nxt := none } n (om2.KB + 1) om2.KB) ∧
+      ({ om2 with live := om2.live - 1 } : OrderMaintenance).rebuildStep proofParams = .ok om' ∧
+      c'.P = om.cur.P ∧ om2.cur = c' ∧ om2.KB = om.KB ∧
+      MX { om2 with live := om2.live - 1 } := by
   have hW := hI.1
   obtain ⟨hS, hf, A, hR, hL, hIdx, hN⟩ := hW.w
   obtain ⟨om', hdel, hW'⟩ := delete_cost costSetup hW hv
@@ -728,7 +761,26 @@ theorem deleteW_ok {om : OrderMaintenance} {m : State} {p : Nat} {Sp :
     ⟨by change Mc (capsOf om2.cur.P) om2.cur.P om2.cur; rw [e1]; change Mc (capsOf c'.P) c'.P c'; rw
       [hP'']; exact hM'',
       fun n hn => hX2 n hn⟩
-  refine ⟨om', hdel, ⟨hW', rebuild_MX hX3 hsafe hR'⟩, (rebuildStep_KB hR').trans e2, ?_⟩
+  exact ⟨om', c', om2, hdel, ⟨hW', rebuild_MX hX3 hsafe hR'⟩, hr1, hm2, hsafe,
+    hR', hP'', e1, e2, hX3⟩
+
+/-- **A deletion at Level M**: it keeps the invariant, and the machine code runs in at most
+`delW K_B` steps. -/
+theorem deleteW_ok {om : OrderMaintenance} {m : State} {p : Nat} {Sp :
+  OrderMaintenance.Spec.State} (h : WEnc om m p) (hI : MInv om Sp)
+    {x : Nat} (hv : x ∈ Sp.list) (hxl : m.loc "x" = x) :
+    ∃ om', om.delete proofParams x = .ok om' ∧ MInv om' (OrderMaintenance.Spec.step Sp (.delete
+      x)).1 ∧
+      om'.KB = om.KB ∧ wp deleteWS (fun m' k => (WEnc om' m' 0 ∨ WEnc om' m' 1) ∧ k ≤ delW
+        om.KB) m := by
+  have hp := h.p2
+  have hW := hI.1
+  obtain ⟨hS, hf, A, hR, hL, hIdx, hN⟩ := hW.w
+  obtain ⟨om', c', om2, hdel, hI', hr1, hm2, hsafe, hR', hP'', e1, e2, hX3⟩ :=
+    hI.delete_prefix hv
+  have hxL : om.curIdx.getX x ∈ A.elist := (hIdx x hv).1
+  have hS0 := hI.cur hR.inv
+  refine ⟨om', hdel, hI', (rebuildStep_KB hR').trans e2, ?_⟩
   refine wp_byPar h ?_
   have h0 := h.bump (parE.maxv m)
   have hxc : x < om.nextHandle := by have := hS.2 x hv; rw [hf]; exact this

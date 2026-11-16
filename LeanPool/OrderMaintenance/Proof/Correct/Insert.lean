@@ -67,26 +67,8 @@ theorem INV.eN_in_run {s : Core} {A : Abs} (h : INV s A) {g x : Nat} (hg : g ∈
 theorem isChain_insert {l1 l2 : List Nat} {x y : Nat} {f f' : Nat → Nat}
     (hs : ((l1 ++ x :: l2).map f).IsChain (· < ·)) (hagree : ∀ z ∈ l1 ++ x :: l2, f' z = f z)
     (hxy : f x < f' y) (hy2 : ∀ w ∈ l2.head?, f' y < f w) :
-    ((l1 ++ x :: y :: l2).map f').IsChain (· < ·) := by
-  have e1 : l1.map f' = l1.map f := List.map_congr_left fun z hz => hagree z (by simp [hz])
-  have e2 : l2.map f' = l2.map f := List.map_congr_left fun z hz => hagree z (by simp [hz])
-  have ex : f' x = f x := hagree x (by simp)
-  simp only [List.map_append, List.map_cons, e1, e2, ex] at hs ⊢
-  rw [List.isChain_append] at hs ⊢
-  refine ⟨hs.1, ?_, ?_⟩
-  · rw [List.isChain_cons_cons]
-    refine ⟨hxy, ?_⟩
-    rw [List.isChain_cons]
-    refine ⟨fun w hw => ?_, (List.isChain_cons.mp hs.2.1).2⟩
-    cases l2 with
-    | nil => simp at hw
-    | cons a t =>
-      simp only [List.map_cons, List.head?_cons, Option.mem_def, Option.some.injEq] at hw
-      subst hw; exact hy2 a (by simp)
-  · intro a ha b hb
-    simp only [List.head?_cons, Option.mem_def, Option.some.injEq] at hb
-    subst hb
-    exact hs.2.2 a ha (f x) (by simp)
+    ((l1 ++ x :: y :: l2).map f').IsChain (· < ·) :=
+  isChain_insert_relation hs hagree hxy hy2
 
 theorem insertAfterL_append (x y : Nat) (a b : List Nat) :
     OrderMaintenance.Spec.insertAfterL x y (a ++ b) =

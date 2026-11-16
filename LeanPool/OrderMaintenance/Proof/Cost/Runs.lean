@@ -148,26 +148,8 @@ theorem filter_insertAfterL (p : Nat → Bool) (x y : Nat) (L : List Nat) (hxy :
 theorem isChain_insert' {R : Nat → Nat → Prop} {l1 l2 : List Nat} {x y : Nat} {f f' : Nat → Nat}
     (hs : ((l1 ++ x :: l2).map f).IsChain R) (hagree : ∀ z ∈ l1 ++ x :: l2, f' z = f z)
     (hxy : R (f x) (f' y)) (hy2 : ∀ w ∈ l2.head?, R (f' y) (f w)) :
-    ((l1 ++ x :: y :: l2).map f').IsChain R := by
-  have e1 : l1.map f' = l1.map f := List.map_congr_left fun z hz => hagree z (by simp [hz])
-  have e2 : l2.map f' = l2.map f := List.map_congr_left fun z hz => hagree z (by simp [hz])
-  have ex : f' x = f x := hagree x (by simp)
-  simp only [List.map_append, List.map_cons, e1, e2, ex] at hs ⊢
-  rw [List.isChain_append] at hs ⊢
-  refine ⟨hs.1, ?_, ?_⟩
-  · rw [List.isChain_cons_cons]
-    refine ⟨hxy, ?_⟩
-    rw [List.isChain_cons]
-    refine ⟨fun w hw => ?_, (List.isChain_cons.mp hs.2.1).2⟩
-    cases l2 with
-    | nil => simp at hw
-    | cons a t =>
-      simp only [List.map_cons, List.head?_cons, Option.mem_def, Option.some.injEq] at hw
-      subst hw; exact hy2 a (by simp)
-  · intro a ha b hb
-    simp only [List.head?_cons, Option.mem_def, Option.some.injEq] at hb
-    subst hb
-    exact hs.2.2 a ha (f x) (by simp)
+    ((l1 ++ x :: y :: l2).map f').IsChain R :=
+  isChain_insert_relation hs hagree hxy hy2
 
 /-- In a chain of a reflexive-free gap relation, consecutive members are related. -/
 theorem isChain_mid {R : Nat → Nat → Prop} {l1 l2 : List Nat} {x y : Nat} {f : Nat → Nat}

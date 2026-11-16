@@ -1368,7 +1368,8 @@ theorem sd4_inTables {t : Core} {v e : Nat} {side : List (Nat × Side)} (he : e 
   rw [h1, ← sdJ_all]; simp only [sdJ]; rw [h2, sd1_getX t v he]
 
 theorem sd4_cin (t : Core) (v : Nat) (side : List (Nat × Side)) : (phiS v side (sd4 t v
-  side)).cin = t.cin := rfl
+  side)).cin = t.cin := by
+  simp only [phiS, sd4, sd2, sd1]
 
 /-- Register the containing-table memberships of both drain targets. -/
 def stage4S : Stm := cm{ w := v1; atS; w := v2; atS }

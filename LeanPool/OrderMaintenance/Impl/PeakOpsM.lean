@@ -96,52 +96,20 @@ theorem insertW_pk {om : OrderMaintenance} {m : State} {p : Nat} {Sp :
   have hp := h.p2
   have hW := hI.1
   obtain ⟨hS, hf, A, hR, hL, hIdx, hN⟩ := hW.w
-  obtain ⟨om', hins, hW'⟩ := insert_cost costSetup hW hx hv
-  obtain ⟨c', om2, hr1, hm2, hsafe⟩ := insert_safe costSetup hW hx hv
-  have hR' : ({
-    om2 with
-    live := om2.live + 1
-  } : OrderMaintenance).rebuildStep proofParams =
-    .ok om' := by
-    rw [← insert_eq hr1 hm2, hf]; exact hins
+  obtain ⟨om', c', om2, hins, hI', hr1, hm2, hsafe, hR', hP'', hcnt, e1, e2, hX3⟩ :=
+    hI.insert_prefix hv
   have hxS : ∀ x, hx = some x → x ∈ Sp.list := fun x e => by subst e; exact hv
   have hxL : insAnchor om hx ∈ A.elist := by
     cases hx with
     | none => exact hR.head
     | some x => exact (hIdx x (hxS x rfl)).1
   have hS0 := hI.cur hR.inv
-  obtain ⟨hk, hRf, hn1, hsize, hcap, hI5, hpow⟩ := hS0.params
-  obtain ⟨c'', hr'', -, -, -, hP'', hM''⟩ := hS0.insert hxL om.nextHandle
-    (fun r => if r = "x" then insAnchor om hx else om.nextHandle) (by simp) (by simp)
   have hr1' : (insertAfter (insAnchor om hx) om.nextHandle).run om.cur = .ok om.cur.E.size c' := hr1
-  rw [hr1'] at hr''
-  injection hr'' with _ hcc; subst hcc
-  obtain ⟨e1, e2, hX2⟩ := mirrorInsert_M (om := insOM om c' om.cur.E.size) (hx := hx) (hy :=
-    om.nextHandle)
-    (fun n hn => hI.2.2 n hn) (fun n hn hs hc => hI.mirror hx n hn hs hc) hm2
-  have hX3 : MX ({
-    om2 with
-    live := om2.live + 1
-  } : OrderMaintenance) :=
-    ⟨by change Mc (capsOf om2.cur.P) om2.cur.P om2.cur; rw [e1]; change Mc (capsOf c'.P) c'.P c'; rw
-      [hP'']; exact hM'',
-      fun n hn => hX2 n hn⟩
-  have hI' : MInv om' (OrderMaintenance.Spec.step Sp (insOp hx)).1 := ⟨hW', rebuild_MX hX3 hsafe
-    hR'⟩
+  obtain ⟨hk, hRf, hn1, hsize, hcap, hI5, hpow⟩ := hS0.params
   -- the value bounds along the operation (`insert_step`)
   have hKw : wKom om ≤ K := by omega
   have hW0 : WK K KH (t + 1) om := WK.of_inv hI hB (Nat.le_succ t) hKw hKB hKH
-  have hcW := hS0.wb hxL om.nextHandle hB.cur hr1'
-  have hcf := hS0.hframe hxL om.nextHandle hr1'
-  have hB1 : WBW (t + 1) (insOM om c' om.cur.E.size) (insOM om c' om.cur.E.size).nxt := by
-    refine ⟨by change WB (wK c'.P) c'; rw [hP'']; exact hcW, fun c e => ?_, hB.noNxt,
-      by change ArrB (wK c'.P) _; rw [hP'']; exact arrB_setX hB.curIdx hS0.Esize_lt _,
-      by change om.cursor < 2 ^ wK c'.P; rw [hP'']; exact hB.cursor,
-      h_le_of_frame hcf (fun i => le_trans (hB.hcur i) (Nat.le_succ _)) (Nat.le_succ _),
-      le_trans hB.live (Nat.le_succ _), by change om.nextHandle + 1 ≤ t + 1; have := hB.hnd; omega,
-      le_trans hB.reb (Nat.le_succ _)⟩
-    obtain ⟨a1, a2, a3⟩ := hB.nxt c e
-    exact ⟨a1, a2, fun i => le_trans (a3 i) (Nat.le_succ _)⟩
+  have hB1 := insert_core_wbw hS0 hxL hB hP'' hr1'
   have hW1 : WK K KH (t + 1) (insOM om c' om.cur.E.size) :=
     ⟨hB1, by change c'.P = proofParams c'.P.N; rw [hP'']; exact hW0.cpmk,
       by change wK c'.P ≤ K; rw [hP'']; exact hW0.cwk, hW0.npmk, hW0.nwk, hW0.kb, hKH⟩
@@ -229,69 +197,15 @@ theorem deleteW_pk {om : OrderMaintenance} {m : State} {p : Nat} {Sp :
   have hp := h.p2
   have hW := hI.1
   obtain ⟨hS, hf, A, hR, hL, hIdx, hN⟩ := hW.w
-  obtain ⟨om', hdel, hW'⟩ := delete_cost costSetup hW hv
-  obtain ⟨c', om2, hr1, hm2, hsafe⟩ := delete_safe costSetup hW hv
-  have hR' : ({
-    om2 with
-    live := om2.live - 1
-  } : OrderMaintenance).rebuildStep proofParams =
-    .ok om' := by
-    rw [← delete_eq hr1 hm2]; exact hdel
+  obtain ⟨om', c', om2, hdel, hI', hr1, hm2, hsafe, hR', hP'', e1, e2, hX3⟩ :=
+    hI.delete_prefix hv
   have hxL : om.curIdx.getX x ∈ A.elist := (hIdx x hv).1
   have hS0 := hI.cur hR.inv
-  obtain ⟨c'', hr'', -, -, -, hP'', hM''⟩ := markDeadAgreeM hS0.ok.cost rfl hxL (κ := capsOf
-    om.cur.P)
-    (fun _ => om.curIdx.getX x) rfl (capsOf_ok _) hS0.ok.cnt hS0.mc
-  rw [hr1] at hr''
-  injection hr'' with _ hcc; subst hcc
-  obtain ⟨e1, e2, -, hX2⟩ := mirrorDelete_M (om := {
-    om with
-    cur := c'
-    curIdx := om.curIdx.setX x 0
-  }) (x := x)
-    (fun n hn => hI.2.2 n hn) (fun n hn hx0 => hI.mirrorDel x n hn hx0) hm2
-  have hX3 : MX ({
-    om2 with
-    live := om2.live - 1
-  } : OrderMaintenance) :=
-    ⟨by change Mc (capsOf om2.cur.P) om2.cur.P om2.cur; rw [e1]; change Mc (capsOf c'.P) c'.P c'; rw
-      [hP'']; exact hM'',
-      fun n hn => hX2 n hn⟩
-  have hI' : MInv om' (OrderMaintenance.Spec.step Sp (.delete x)).1 := ⟨hW', rebuild_MX hX3
-    hsafe hR'⟩
   -- the value bounds along the operation (`delete_step`)
   have hKw : wKom om ≤ K := by omega
   have hW0 : WK K KH (t + 1) om := WK.of_inv hI hB (Nat.le_succ t) hKw hKB hKH
-  have hc' : c' = {
-    om.cur with
-    E := om.cur.E.modify (om.curIdx.getX x) fun e => {
-      e with
-      live := false
-    }
-  } := by
-    rw [markDead_run] at hr1; cases hr1; rfl
-  have hcW := markDead_wb hB.cur _ hr1
-  have hP1 : c'.P = om.cur.P := by rw [hc']
-  have hB1 : WBW (t + 1) ({
-    om with
-    cur := c'
-    curIdx := om.curIdx.setX x 0
-  } : OrderMaintenance)
-      ({
-        om with
-        cur := c'
-        curIdx := om.curIdx.setX x 0
-      } : OrderMaintenance).nxt := by
-    refine ⟨by change WB (wK c'.P) c'; rw [hP1]; exact hcW, fun c e => ?_, hB.noNxt,
-      by change ArrB (wK c'.P) _; rw [hP1]; exact arrB_setX hB.curIdx (pos _) _,
-      by change om.cursor < 2 ^ wK c'.P; rw [hP1]; exact hB.cursor, fun i => ?_,
-      le_trans hB.live (Nat.le_succ _), le_trans hB.hnd (Nat.le_succ _), le_trans hB.reb
-        (Nat.le_succ _)⟩
-    · exact hB.nxt c e
-    · rw [hc']; change ((om.cur.E.modify _ _).getX i).h ≤ _
-      rw [Array.getX_modify]; split
-      · exact hB.hcur _
-      · exact hB.hcur i
+  have hP1 : c'.P = om.cur.P := hP''
+  have hB1 := markDead_wbw hB hr1
   have hW1 : WK K KH (t + 1) ({
     om with
     cur := c'
