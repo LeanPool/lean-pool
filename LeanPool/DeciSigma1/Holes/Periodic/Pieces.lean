@@ -174,7 +174,7 @@ theorem retainedCount_head (P : Piece W ρ.length) {o : ℕ}
   exact ho.elim (fun h => Or.inl (by omega)) (fun h => Or.inr (Or.inl h))
 
 /-- The retained-cut map inside a shortened piece, after its site. -/
-theorem retainedCount_tail (P : Piece W ρ.length) {o : ℕ} (_hxP : x P ≠ 0)
+theorem retainedCount_tail (P : Piece W ρ.length) {o : ℕ}
     (ho : Periodic.boundaryMargin N ρ.length ≤ o)
     (hoL : o + Periodic.statePeriodModulus N ρ.length * x P ≤ P.len) :
     keepCut W ρ N x P.coordinate (P.start + o + Periodic.statePeriodModulus N ρ.length * x P) =
@@ -207,7 +207,7 @@ theorem retainedCount_piece_end (P : Piece W ρ.length) :
   · have := hx.retainedCount_head P (o := P.len) (Or.inr hxP) le_rfl
     rw [hxP, Nat.mul_zero, Nat.sub_zero, ← this]; unfold Piece.len; congr 1; have := P.long; omega
   · have hb := hx.site_bound hxP
-    have := hx.retainedCount_tail P (o := P.len - Periodic.statePeriodModulus N ρ.length * x P) hxP
+    have := hx.retainedCount_tail P (o := P.len - Periodic.statePeriodModulus N ρ.length * x P)
       (by unfold Piece.len; omega) (by unfold Piece.len; omega)
     rw [← this]; congr 1; unfold Piece.len; have := P.long; omega
 
@@ -231,8 +231,8 @@ theorem retainedLength_ge_fixedMargin (P : Piece W ρ.length) (hxP : x P ≠ 0) 
     Periodic.fixedMargin N ρ.length ≤ retainedLength (N := N) (x := x) P := by
   unfold retainedLength; have := hx.long P (hx.supp P hxP) hxP; omega
 
-omit hx in
-theorem retainedLength_le (_hx : AdmissibleDeletion W ρ N x) (P : Piece W ρ.length) :
+omit [DecidableEq α] hx in
+theorem retainedLength_le (P : Piece W ρ.length) :
     retainedLength (N := N) (x := x) P ≤ P.len := by
   unfold retainedLength; omega
 
@@ -240,7 +240,7 @@ theorem retainedLength_le (_hx : AdmissibleDeletion W ρ N x) (P : Piece W ρ.le
 theorem getElem?_new (P : Piece W ρ.length) {o : ℕ} (ho : o < retainedLength (N := N) (x := x) P) :
     (editedTuple W ρ N x P.coordinate)[keepCut W ρ N x P.coordinate P.start + o]? =
         (W P.coordinate)[P.start + o]? := by
-  have hL := hx.retainedLength_le P
+  have hL := retainedLength_le (N := N) (x := x) P
   have hPl := P.start_add_len
   have hle := P.stop_le_length
   unfold retainedLength at ho hL
@@ -254,14 +254,14 @@ theorem getElem?_new (P : Piece W ρ.length) {o : ℕ} (ho : o < retainedLength 
     have hret : P.start + o + Periodic.statePeriodModulus N ρ.length * x P ∉
         deletedPositions W ρ N x P.coordinate :=
       hx.in_piece_not_mem P (by omega) (by omega) (Or.inr (by omega))
-    rw [← hx.retainedCount_tail P hh.2 hh.1 (by omega)]
+    rw [← hx.retainedCount_tail P hh.1 (by omega)]
     unfold keepCut
     rw [editedTuple, getElem?_deletePositions _ hret (by omega), Nat.add_assoc]
     apply P.getElem?_eq_of_mod (by omega) (by omega)
     rw [Periodic.statePeriodModulus, Nat.mul_assoc, Nat.add_mul_mod_self_left]
 
 omit hx in
-theorem keepCut_stop_le_length (_hx : AdmissibleDeletion W ρ N x) (P : Piece W ρ.length) :
+theorem keepCut_stop_le_length (P : Piece W ρ.length) :
     keepCut W ρ N x P.coordinate P.stop ≤ (editedTuple W ρ N x P.coordinate).length := by
   rw [editedTuple, length_deletePositions]; exact retainedCount_mono P.stop_le_length
 
@@ -270,7 +270,7 @@ theorem imagePiece_period (P : Piece W ρ.length) : ∀ p, keepCut W ρ N x P.co
     (editedTuple W ρ N x P.coordinate)[p]? = (editedTuple W ρ N x P.coordinate)[p + ρ.length]? := by
   intro p hp hpe
   have hend := hx.retainedCount_piece_end P
-  have hL := hx.retainedLength_le P
+  have hL := retainedLength_le (N := N) (x := x) P
   have hPl := P.start_add_len
   unfold retainedLength at hL
   obtain ⟨o, rfl⟩ := Nat.exists_eq_add_of_le hp
@@ -327,7 +327,7 @@ theorem imagePiece_maxR (P : Piece W ρ.length) :
     have hend := hx.retainedCount_piece_end P
     have hd := P.period_pos
     have hnl := hx.retainedLength_ge P
-    have hL := hx.retainedLength_le P
+    have hL := retainedLength_le (N := N) (x := x) P
     have hPl := P.start_add_len
     unfold retainedLength at hnl hL
     have hnew :=
@@ -363,7 +363,7 @@ def imagePiece (P : Piece W ρ.length) : Piece (editedTuple W ρ N x) ρ.length 
   stop := keepCut W ρ N x P.coordinate P.stop
   long := by rw [hx.retainedCount_piece_end P]; have := hx.retainedLength_ge P;
              unfold retainedLength at this; omega
-  stop_le_length := hx.keepCut_stop_le_length P
+  stop_le_length := keepCut_stop_le_length (N := N) (x := x) P
   periodic := hx.imagePiece_period P
   primitive := by rw [hx.take_drop_editedTuple_eq_root P]; exact P.primitive
   left_maximal := hx.imagePiece_maxL P
@@ -466,7 +466,7 @@ theorem runPrefix_imagePiece (P : Piece W ρ.length) {o : ℕ}
     (ho : o ≤ retainedLength (N := N) (x := x) P) :
     T.runPrefix (editedTuple W ρ N x) P.coordinate ((hx.imagePiece P).start + o) =
         T.runPrefix W P.coordinate (P.start + o) := by
-  have hL := hx.retainedLength_le P
+  have hL := retainedLength_le (N := N) (x := x) P
   have hPl := P.start_add_len
   have hle := P.stop_le_length
   have hdA := Periodic.d_le_boundaryMargin N ρ.length
@@ -482,7 +482,7 @@ theorem runPrefix_imagePiece (P : Piece W ρ.length) {o : ℕ}
       exact hx.not_mem_deletedPositions_of_piece_margin P (by omega) (by omega)
         (hh.elim (fun h => Or.inl (by omega)) (fun h => Or.inr (Or.inl h)))
   · push Not at hh
-    rw [imagePiece_start, ← hx.retainedCount_tail P hh.2 (by omega) (by omega)]
+    rw [imagePiece_start, ← hx.retainedCount_tail P (by omega) (by omega)]
     rw [hx.runPrefix_editedTuple T hN P.coordinate (by omega)
       (Or.inr (Or.inr (hx.in_piece_not_mem P (by omega) (by omega) (Or.inr (by omega)))))]
     have hM : Periodic.statePeriodModulus N ρ.length * x P = x P *
@@ -508,9 +508,10 @@ end States
 
 /-! ## Canonical original cuts -/
 
+omit hx in
 /-- `c` is the canonical original cut of the cut `c'` of the edited word `l`: a retained
 position, or the end of the word, whose image is `c'`. -/
-def CanonicalCut (_hx : AdmissibleDeletion W ρ N x) (l : Fin k) (c c' : ℕ) : Prop :=
+def CanonicalCut (l : Fin k) (c c' : ℕ) : Prop :=
   c ≤ (W l).length ∧ keepCut W ρ N x l c = c' ∧ (c < (W l).length → c ∉ deletedPositions W ρ N x l)
 
 omit hx in
@@ -520,20 +521,23 @@ theorem length_editedTuple (l : Fin k) :
 
 /-- Every cut of an edited word has a canonical original cut: its greatest preimage. -/
 theorem exists_canonicalCut (l : Fin k) {c' : ℕ} (hc' : c' ≤ (editedTuple W ρ N x l).length) :
-    ∃ c, hx.CanonicalCut l c c' :=
+    ∃ c, CanonicalCut (W := W) (ρ := ρ) (N := N) (x := x) l c c' :=
   ⟨greatestPreimage (deletedPositions W ρ N x l) c',
     greatestPreimage_le_length _
         (fun h => absurd (hx.deletedPositions_lt_length h) (lt_irrefl _)) hc',
     retainedCount_greatestPreimage c', fun _ => greatestPreimage_not_mem c'⟩
 
-theorem canonicalCut_eq_greatestPreimage {l : Fin k} {c c' : ℕ} (h : hx.CanonicalCut l c c') :
+theorem canonicalCut_eq_greatestPreimage {l : Fin k} {c c' : ℕ} (h :
+    CanonicalCut (W := W) (ρ := ρ) (N := N) (x := x) l c c') :
     greatestPreimage (deletedPositions W ρ N x l) c' = c := by
   obtain ⟨-, hk, hr⟩ := h
   rw [← hk]
   exact greatestPreimage_retainedCount fun hm => hr (hx.deletedPositions_lt_length hm) hm
 
-theorem canonicalCut_unique {l : Fin k} {c₁ c₂ c' : ℕ} (h₁ : hx.CanonicalCut l c₁ c')
-    (h₂ : hx.CanonicalCut l c₂ c') :
+omit hx in
+theorem canonicalCut_unique {l : Fin k} {c₁ c₂ c' : ℕ} (h₁ :
+    CanonicalCut (W := W) (ρ := ρ) (N := N) (x := x) l c₁ c')
+    (h₂ : CanonicalCut (W := W) (ρ := ρ) (N := N) (x := x) l c₂ c') :
     c₁ = c₂ := by
   obtain ⟨h1l, h1k, h1r⟩ := h₁
   obtain ⟨h2l, h2k, h2r⟩ := h₂
@@ -544,7 +548,9 @@ theorem canonicalCut_unique {l : Fin k} {c₁ c₂ c' : ℕ} (h₁ : hx.Canonica
   · have := retainedCount_lt_of_not_mem (h2r (by omega)) h; omega
 
 theorem runPrefix_canonicalCut [Fintype S] (T : Table α S k) (hN : N = Fintype.card S) {l : Fin k}
-    {c c' : ℕ} (h : hx.CanonicalCut l c c') : T.runPrefix (editedTuple W ρ N x) l c' =
+    {c c' : ℕ} (h :
+        CanonicalCut (W := W) (ρ := ρ) (N := N) (x := x) l c c') :
+    T.runPrefix (editedTuple W ρ N x) l c' =
         T.runPrefix W l c := by
   rw [← h.2.1]
   apply hx.runPrefix_editedTuple T hN l h.1
@@ -553,7 +559,7 @@ theorem runPrefix_canonicalCut [Fintype S] (T : Table α S k) (hN : N = Fintype.
   exact (h.2.2 (hx.deletedPositions_lt_length hm)) hm
 
 theorem canonicalCut_start (P : Piece W ρ.length) :
-    hx.CanonicalCut P.coordinate P.start (hx.imagePiece P).start :=
+    CanonicalCut (W := W) (ρ := ρ) (N := N) (x := x) P.coordinate P.start (hx.imagePiece P).start :=
   ⟨by have := P.start_lt_stop; have := P.stop_le_length; omega, rfl,
       fun _ => hx.in_piece_not_mem P le_rfl
     P.start_lt_stop (Or.inl
@@ -562,11 +568,12 @@ theorem canonicalCut_start (P : Piece W ρ.length) :
 /-- The cut `|ρ|` letters before the end of a piece is the canonical original cut of the cut
 `|ρ|` letters before the end of its image. -/
 theorem canonicalCut_end_sub (P : Piece W ρ.length) :
-    hx.CanonicalCut P.coordinate (P.stop - ρ.length) ((hx.imagePiece P).stop - ρ.length) := by
+    CanonicalCut (W := W) (ρ := ρ) (N := N) (x := x) P.coordinate (P.stop - ρ.length)
+        ((hx.imagePiece P).stop - ρ.length) := by
   have hPl := P.start_add_len
   have hd := P.period_pos
   have hnl := hx.retainedLength_ge P
-  have hL := hx.retainedLength_le P
+  have hL := retainedLength_le (N := N) (x := x) P
   have hlg := P.len_ge
   have hdA := Periodic.d_le_boundaryMargin N ρ.length
   have hpos : ∀ i < ρ.length, P.stop - ρ.length + i ∉ deletedPositions W ρ N x P.coordinate := by
@@ -603,7 +610,7 @@ theorem retainedCount_junction (P : Piece W ρ.length) (hxP : x P ≠ 0) :
   rfl
 
 omit hx in
-theorem zero_not_mem (_hx : AdmissibleDeletion W ρ N x) (l : Fin k) :
+theorem zero_not_mem (l : Fin k) :
     0 ∉ deletedPositions W ρ N x l := by
   intro hp
   obtain ⟨R, _, _, h1, _⟩ := mem_deletedPositions.mp hp
@@ -623,7 +630,8 @@ theorem keepCut_of_mem {l : Fin k} {p : ℕ} (hp : p ∈ deletedPositions W ρ N
   exact retainedCount_add_of_mem fun i hi => hx.site_sub (by omega) (by omega)
 
 /-- From a canonical cut, the positions up to the next junction are retained. -/
-theorem not_mem_of_canonicalCut {l : Fin k} {c c' n : ℕ} (hc : hx.CanonicalCut l c c')
+theorem not_mem_of_canonicalCut {l : Fin k} {c c' n : ℕ} (hc :
+    CanonicalCut (W := W) (ρ := ρ) (N := N) (x := x) l c c')
     (hJ : ∀ R : Piece W ρ.length, R.coordinate = l → x R ≠ 0 →
       ¬ (c' < (hx.imagePiece R).start + Periodic.boundaryMargin N ρ.length ∧
           (hx.imagePiece R).start + Periodic.boundaryMargin N ρ.length < c' + n)) :
@@ -635,7 +643,8 @@ theorem not_mem_of_canonicalCut {l : Fin k} {c c' n : ℕ} (hc : hx.CanonicalCut
 
 /-- From a canonical cut, `n` letters of the edited word with no deleted block in
 `(c', c' + n)` are `n` retained letters of the original word. -/
-theorem text_canonicalCut {l : Fin k} {c c' n : ℕ} (hc : hx.CanonicalCut l c c')
+theorem text_canonicalCut {l : Fin k} {c c' n : ℕ} (hc :
+    CanonicalCut (W := W) (ρ := ρ) (N := N) (x := x) l c c')
     (hn : c' + n ≤ (editedTuple W ρ N x l).length)
     (hJ : ∀ R : Piece W ρ.length, R.coordinate = l → x R ≠ 0 →
       ¬ (c' < (hx.imagePiece R).start + Periodic.boundaryMargin N ρ.length ∧
@@ -659,12 +668,13 @@ theorem text_canonicalCut {l : Fin k} {c c' n : ℕ} (hc : hx.CanonicalCut l c c
 
 /-- With no junction in `(c', c' + n]` either, the cut `n` letters later is again canonical, and
 the `n` letters in between are original letters. -/
-theorem canonicalCut_add {l : Fin k} {c c' n : ℕ} (hc : hx.CanonicalCut l c c')
+theorem canonicalCut_add {l : Fin k} {c c' n : ℕ} (hc :
+    CanonicalCut (W := W) (ρ := ρ) (N := N) (x := x) l c c')
     (hn : c' + n ≤ (editedTuple W ρ N x l).length)
     (hJ : ∀ R : Piece W ρ.length, R.coordinate = l → x R ≠ 0 →
       ¬ (c' < (hx.imagePiece R).start + Periodic.boundaryMargin N ρ.length ∧
           (hx.imagePiece R).start + Periodic.boundaryMargin N ρ.length < c' + (n + 1))) :
-    hx.CanonicalCut l (c + n) (c' + n) ∧
+    CanonicalCut (W := W) (ρ := ρ) (N := N) (x := x) l (c + n) (c' + n) ∧
       ∀ i < n, (W l)[c + i]? = (editedTuple W ρ N x l)[c' + i]? := by
   obtain ⟨hall, hkn, htext⟩ :=
     hx.text_canonicalCut hc hn fun R hRl hxR h => hJ R hRl hxR ⟨h.1, by omega⟩
@@ -725,7 +735,8 @@ theorem exists_imagePiece (P' : Piece (editedTuple W ρ N x) ρ.length) :
     by_cases hs0 : P'.start = 0
     · left
       by_contra hc0
-      have := retainedCount_succ_of_not_mem (hx.zero_not_mem (l := P'.coordinate))
+      have := retainedCount_succ_of_not_mem
+        (zero_not_mem (W := W) (ρ := ρ) (N := N) (x := x) (l := P'.coordinate))
       have := retainedCount_mono (D := deletedPositions W ρ N x P'.coordinate) (show 1 ≤ c by omega)
       simp at *; omega
     rcases P'.left_maximal with h | h
@@ -829,8 +840,8 @@ theorem len_eq_retainedLength_add (P : Piece W ρ.length) :
   · rw [hxP]; simp
   · have := hx.long P (hx.supp P hxP) hxP; omega
 
-omit hx in
-theorem comparisonGap_pos (_hx : AdmissibleDeletion W ρ N x) (P : Piece W ρ.length) :
+omit [DecidableEq α] hx in
+theorem comparisonGap_pos (P : Piece W ρ.length) :
     0 < Periodic.comparisonGap N ρ.length := by
   have := Periodic.d_le_boundaryMargin N ρ.length; have :=
       P.period_pos; unfold Periodic.comparisonGap; omega
@@ -856,7 +867,7 @@ theorem len_le_of_followerEdge {P Q : Piece W ρ.length} (hP : P ∈ piecesOf W 
     (hG : FollowerEdge P Q)
         (hle : retainedLength (N := N) (x := x) P ≤ retainedLength (N := N) (x := x) Q) :
     P.len ≤ Q.len := by
-  have := hx.comparisonGap_pos P
+  have := comparisonGap_pos (N := N) P
   rcases hx.followerEdge_cases hP hQ hG with h | h | h
   · rw [hx.len_eq_retainedLength_add P, hx.len_eq_retainedLength_add Q, h]; omega
   · omega
@@ -866,7 +877,7 @@ theorem eq_of_followerEdge {P Q : Piece W ρ.length} (hP : P ∈ piecesOf W ρ) 
     (hG : FollowerEdge P Q)
         (heq : retainedLength (N := N) (x := x) P = retainedLength (N := N) (x := x) Q) :
     x P = x Q ∧ P.len = Q.len := by
-  have := hx.comparisonGap_pos P
+  have := comparisonGap_pos (N := N) P
   rcases hx.followerEdge_cases hP hQ hG with h | h | h
   · refine ⟨h, ?_⟩; rw [hx.len_eq_retainedLength_add P, hx.len_eq_retainedLength_add Q, h, heq]
   · omega

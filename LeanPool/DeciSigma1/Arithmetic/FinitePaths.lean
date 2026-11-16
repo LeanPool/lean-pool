@@ -306,7 +306,7 @@ theorem streamPeriod_mul {ξ : ℕ → α} {d : ℕ} (h : StreamPeriod ξ d) (a 
 /-- Along an infinite word of period `d`, the states of a run at cuts of at least `|S| · d`
 repeat with period `d · |S|!`. -/
 theorem periodic_run_stable [Fintype S] (T : Table α S k) (q : S) (ξ : ℕ → α) {d p : ℕ}
-    (_hd : 0 < d) (hξ : StreamPeriod ξ d) (hp : Fintype.card S * d ≤ p) (m : ℕ) :
+    (hξ : StreamPeriod ξ d) (hp : Fintype.card S * d ≤ p) (m : ℕ) :
     runFrom T.step q (streamPrefix ξ (p + m * (d * (Fintype.card S).factorial))) =
       runFrom T.step q (streamPrefix ξ p) := by
   set N := Fintype.card S
@@ -353,7 +353,7 @@ theorem runFrom_take_periodic [Fintype S] (T : Table α S k) (q : S) {u : List �
       List.getElem?_eq_getElem hi] at this
     exact Option.some.inj this
   rw [← htake _ hlen, ← htake _ (by omega)]
-  exact periodic_run_stable T q ξ hd hξ ho m
+  exact periodic_run_stable T q ξ hξ ho m
 
 end Runs
 

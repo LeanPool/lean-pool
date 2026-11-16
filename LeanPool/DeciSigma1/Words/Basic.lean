@@ -173,9 +173,9 @@ theorem leastPeriod_suffix {ξ : ℕ → α} {p : ℕ} (hp : LeastStreamPeriod �
   intro q hq hper
   exact hp.2.2 q hq (period_of_suffix hp.1 hp.2.1 hper)
 
-/-- The positive periods of an infinite word are the multiples of its least period. -/
-theorem leastPeriod_dvd_iff {ξ : ℕ → α} {p q : ℕ} (hp : LeastStreamPeriod ξ p)
-    (_hq : 0 < q) : StreamPeriod ξ q ↔ p ∣ q := by
+/-- The periods of an infinite word are the multiples of its least positive period. -/
+theorem leastPeriod_dvd_iff {ξ : ℕ → α} {p q : ℕ} (hp : LeastStreamPeriod ξ p) :
+    StreamPeriod ξ q ↔ p ∣ q := by
   constructor
   · intro hper
     have hg := streamPeriod_gcd hp.2.1 hper
@@ -443,8 +443,7 @@ theorem leastStreamPeriod_periodicTail : LeastStreamPeriod Ω.periodicTail Ω.pe
       fun t _ => hqp t⟩⟩
 
 theorem period_dvd : Ω.period ∣ Ω.loop.length :=
-  (leastPeriod_dvd_iff leastStreamPeriod_periodicTail
-      Ω.loop_length_pos).mp periodicTail_period_length
+  (leastPeriod_dvd_iff leastStreamPeriod_periodicTail).mp periodicTail_period_length
 
 /-- Every suffix from the onset on has least period `period`. -/
 theorem leastStreamPeriod_shift {A : ℕ} (h : Ω.onset ≤ A) :

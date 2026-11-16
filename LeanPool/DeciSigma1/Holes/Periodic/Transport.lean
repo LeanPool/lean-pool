@@ -368,21 +368,25 @@ theorem target_piece_of_junction (hN : 0 < N) {i j : Fin k} {ct ch : ℕ}
   rw [mem_piecesOf, hProot, hx.imagePiece_root]
   exact (mem_piecesOf _).mp (hx.supp R hxR)
 
-theorem canonicalCut_le_length {l : Fin k} {c c' : ℕ} (h : hx.CanonicalCut l c c') :
+omit hx in
+theorem canonicalCut_le_length {l : Fin k} {c c' : ℕ} (h :
+    CanonicalCut (W := W) (ρ := ρ) (N := N) (x := x) l c c') :
     c' ≤ (editedTuple W ρ N x l).length := by
   rw [← h.2.1, length_editedTuple]; exact retainedCount_mono h.1
 
 theorem canonicalCut_start_of_image_eq {P : Piece W ρ.length}
     {P' : Piece (editedTuple W ρ N x) ρ.length}
     (hP : hx.imagePiece P = P') {l : Fin k}
-        (hl : P'.coordinate = l) : hx.CanonicalCut l P.start P'.start := by
+        (hl : P'.coordinate = l) :
+            CanonicalCut (W := W) (ρ := ρ) (N := N) (x := x) l P.start P'.start := by
   have hPl : P.coordinate = l := by rw [← hl, ← hP]; rfl
   have := hx.canonicalCut_start P; rw [hP, hPl] at this; exact this
 
 theorem canonicalCut_end_sub_of_image_eq {P : Piece W ρ.length}
     {P' : Piece (editedTuple W ρ N x) ρ.length}
     (hP : hx.imagePiece P = P') {l : Fin k} (hl : P'.coordinate = l) :
-    hx.CanonicalCut l (P.stop - ρ.length) (P'.stop - ρ.length) := by
+    CanonicalCut (W := W) (ρ := ρ) (N := N) (x := x) l (P.stop - ρ.length) (P'.stop - ρ.length)
+        := by
   have hPl : P.coordinate = l := by rw [← hl, ← hP]; rfl
   have := hx.canonicalCut_end_sub P; rw [hP, hPl] at this; exact this
 
@@ -408,7 +412,9 @@ theorem canonicalCut_suffixComparison (hN : 0 < N) (i j : Fin k) (m : ℕ) :
     ∀ ct' ch', (editedTuple W ρ N x j).length - ct' = m → ct' ≤ (editedTuple W ρ N x j).length →
       SuffixComparison (editedTuple W ρ N x j) ct' (editedTuple W ρ N x i) ch' →
           hx.NoInteriorJunction j ct' m →
-      hx.NoInteriorJunction i ch' m → ∀ ct ch, hx.CanonicalCut j ct ct' → hx.CanonicalCut i ch ch' →
+      hx.NoInteriorJunction i ch' m → ∀ ct ch,
+        CanonicalCut (W := W) (ρ := ρ) (N := N) (x := x) j ct ct' →
+        CanonicalCut (W := W) (ρ := ρ) (N := N) (x := x) i ch ch' →
       SuffixComparison (W j) ct (W i) ch := by
   classical
   induction m using Nat.strong_induction_on with
@@ -416,7 +422,7 @@ theorem canonicalCut_suffixComparison (hN : 0 < N) (i j : Fin k) (m : ℕ) :
   intro ct' ch' hm hct hcmp hNJt hNJh ct ch hctc hchc
   have hdA := Periodic.d_le_boundaryMargin N ρ.length
   have h2d := Periodic.two_d_le_boundaryMargin hN ρ.length
-  have hch' := hx.canonicalCut_le_length hchc
+  have hch' := canonicalCut_le_length hchc
   have hag : ∀ n < m, (editedTuple W ρ N x j)[ct' + n]? = (editedTuple W ρ N x i)[ch' + n]? :=
     fun n hn => hcmp n (by omega)
   by_cases hex : ∃ P' : Piece (editedTuple W ρ N x) ρ.length, P'.coordinate = j ∧
@@ -458,9 +464,9 @@ theorem canonicalCut_suffixComparison (hN : 0 < N) (i j : Fin k) (m : ℕ) :
     rw [show ct' + (P'.start - ct') = P'.start by omega] at hcT
     rw [show ch' + (P'.start - ct') = Q'.start by omega] at hcH
     have hctr : ct + (P'.start - ct') = P.start :=
-        hx.canonicalCut_unique hcT (hx.canonicalCut_start_of_image_eq hP hP'l)
+        canonicalCut_unique hcT (hx.canonicalCut_start_of_image_eq hP hP'l)
     have hchr : ch + (P'.start - ct') = Q.start :=
-        hx.canonicalCut_unique hcH (hx.canonicalCut_start_of_image_eq hQ hQ'l)
+        canonicalCut_unique hcH (hx.canonicalCut_start_of_image_eq hQ hQ'l)
     have hreg : ∀ n < P'.start - ct', (W j)[ct + n]? = (W i)[ch + n]? := by
       intro n hn; rw [htT n hn, hag n (by omega), ← htH n hn]
     -- the piece step
@@ -558,8 +564,8 @@ theorem lift_in_pieces {S : Type} [Fintype S] (T : Table α S k) (hNS : N = Fint
     SuffixComparison (W j) (P.start + oT) (W i) (Q.start + oS) ∧ T.runPrefix W j (P.start + oT) =
         T.runPrefix (editedTuple W ρ N x) j b' ∧
       T.runPrefix W i (Q.start + oS) = T.runPrefix (editedTuple W ρ N x) i a' := by
-  have hLP := hx.retainedLength_le P
-  have hLQ := hx.retainedLength_le Q
+  have hLP := retainedLength_le (N := N) (x := x) P
+  have hLQ := retainedLength_le (N := N) (x := x) Q
   have hd := P.period_pos
   have hmT := mod_d_of_mod_statePeriodModulus hT
   have hmS := mod_d_of_mod_statePeriodModulus hS
@@ -576,7 +582,7 @@ theorem lift_in_pieces {S : Type} [Fintype S] (T : Table α S k) (hNS : N = Fint
     rw [hx.runPrefix_imagePiece T hNS R hp]
     rcases h with h | ⟨h1, h2, h3⟩
     · rw [h]
-    · have := hx.retainedLength_le R
+    · have := retainedLength_le (N := N) (x := x) R
       subst hNS
       exact R.runPrefix_mod T h1 h2 ho (by omega) h3
   refine ⟨?_, by rw [hb']; exact hstate P oT pT j hPl hoT (by omega) hT,
@@ -787,7 +793,7 @@ private theorem suffixComparison_lift_of_no_piece {S : Type} [Fintype S] (T : Ta
     have hpS : a' - (hx.imagePiece R).start ≤ retainedLength (N := N) (x := x) R := by
       have := hx.imagePiece_len R; omega
     have hale : R.start + (a' - (hx.imagePiece R).start) ≤ (W i).length := by
-      have h1' := hx.retainedLength_le R
+      have h1' := retainedLength_le (N := N) (x := x) R
       have h2' := R.stop_le_length
       have h3' := R.start_add_len
       have h4' := hx.imagePiece_len R
@@ -839,7 +845,7 @@ variable [DecidableEq α] {S : Type} [Fintype S] [DecidableEq S] {W : Fin k → 
 
 /-- Every channel of the edited tuple, including those from a coordinate to itself and those
 with empty target suffixes, is contained in the channel of the original tuple. -/
-theorem editedTuple_channel_subset (T : Table α S k) (_hρ : IsPrimitive ρ)
+theorem editedTuple_channel_subset (T : Table α S k)
     (hx : AdmissibleDeletion W ρ (Fintype.card S) x) (i j : Fin k) :
     T.channel (editedTuple W ρ (Fintype.card S) x) i j ⊆ T.channel W i j := by
   intro pq hpq
@@ -851,11 +857,11 @@ theorem editedTuple_channel_subset (T : Table α S k) (_hρ : IsPrimitive ρ)
 
 /-- The edited tuple dominates the original one: equal endpoints, fewer visited states and
 smaller channels. -/
-theorem editedTuple_dominates (T : Table α S k) (hρ : IsPrimitive ρ)
+theorem editedTuple_dominates (T : Table α S k)
     (hx : AdmissibleDeletion W ρ (Fintype.card S) x) :
     Dominates T (editedTuple W ρ (Fintype.card S) x) W :=
   ⟨fun l => hx.editedTuple_endState T rfl l, fun l => hx.editedTuple_visitedStates T rfl l,
-    fun i j => editedTuple_channel_subset T hρ hx i j⟩
+    fun i j => editedTuple_channel_subset T hx i j⟩
 
 end Main
 

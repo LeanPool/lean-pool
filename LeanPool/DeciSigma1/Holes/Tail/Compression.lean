@@ -449,7 +449,7 @@ theorem exists_hole_compressed_step (M : StructuralReader α S k) {U : Fin k →
     occurrenceSplit M hU ρ runs (fun r hr => ⟨(hruns r hr).1, hle r hr⟩) (by
       dsimp [T]; omega)
   obtain ⟨x, hx, hcap⟩ := cap_exists N hρ hsplit
-  have hdom := editedTuple_dominates M.toTable hρ hx
+  have hdom := editedTuple_dominates M.toTable hx
   obtain ⟨hU', hends⟩ := StructuralReader.IsHole.of_dominates hU hdom
   have hJ' : ∀ l, M.firstRejection (editedTuple U ρ N x) l =
       keepCut U ρ N x l (M.firstRejection U l) :=
