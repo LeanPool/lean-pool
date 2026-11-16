@@ -21,6 +21,8 @@ authors:
 - Michel Hua
 source:
   url: https://doi.org/10.1073/pnas.37.11.760
+  github_repo: mycaule/lean-pool
+  commit: 623506555f2fde7d44c697d9f7d94f21e8015cd1
 license: Apache-2.0
 status: verified
 provenance: mix

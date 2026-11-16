@@ -5,6 +5,7 @@ Authors: Michel Hua
 -/
 module
 
+import LeanPool.DavisKahan.ForTauCeti.Analysis.InnerProductSpace.KyFan
 public import Mathlib.Analysis.InnerProductSpace.SingularValues
 public import Mathlib.Analysis.InnerProductSpace.Spectrum
 public import Mathlib.Analysis.RCLike.Basic
@@ -651,32 +652,7 @@ private theorem sum_range_singularValues_eq (T : E →ₗ[𝕜] F) (n : ℕ) :
 theorem sum_singularValues_add_le (u v : E →ₗ[𝕜] F) (n : ℕ) :
     ∑ j ∈ Finset.range n, (u + v).singularValues j ≤
       ∑ j ∈ Finset.range n, u.singularValues j + ∑ j ∈ Finset.range n, v.singularValues j := by
-  set e := rightSingularBasis (u + v)
-  set f := leftSingularVec (u + v)
-  set S := univ.filter (fun j : Fin (finrank 𝕜 E) ↦ (j : ℕ) < n)
-  have hSn : #S ≤ n := by
-    rw [Fin.card_filter_val_lt]
-    exact min_le_right _ _
-  rw [sum_range_singularValues_eq]
-  have key : ((∑ j ∈ S, (u + v).singularValues j : ℝ) : 𝕜) =
-      ∑ j ∈ S, ⟪f j, u (e j)⟫ + ∑ j ∈ S, ⟪f j, v (e j)⟫ := by
-    rw [← sum_add_distrib, RCLike.ofReal_sum]
-    refine sum_congr rfl fun j _ ↦ ?_
-    rw [← inner_add_right, ← add_apply, inner_leftSingularVec_apply]
-  have hxo : ∀ i ∈ S, ∀ j ∈ S, i ≠ j → ⟪e i, e j⟫ = 0 := fun i _ j _ h ↦ e.orthonormal.2 h
-  have hx1 : ∀ i ∈ S, ‖e i‖ ≤ 1 := fun i _ ↦ (e.orthonormal.1 i).le
-  have hyo : ∀ i ∈ S, ∀ j ∈ S, i ≠ j → ⟪f i, f j⟫ = 0 :=
-    fun i _ j _ h ↦ inner_leftSingularVec_of_ne (u + v) h
-  have hy1 : ∀ i ∈ S, ‖f i‖ ≤ 1 := fun i _ ↦ norm_leftSingularVec_le (u + v) i
-  calc ∑ j ∈ S, (u + v).singularValues j
-      = ‖((∑ j ∈ S, (u + v).singularValues j : ℝ) : 𝕜)‖ := by
-        rw [RCLike.norm_ofReal,
-          abs_of_nonneg (sum_nonneg fun j _ ↦ (u + v).singularValues_nonneg _)]
-    _ ≤ ‖∑ j ∈ S, ⟪f j, u (e j)⟫‖ + ‖∑ j ∈ S, ⟪f j, v (e j)⟫‖ := by
-        rw [key]
-        exact norm_add_le _ _
-    _ ≤ _ := add_le_add (norm_sum_inner_le_sum_singularValues S hxo hx1 hyo hy1 u hSn)
-        (norm_sum_inner_le_sum_singularValues S hxo hx1 hyo hy1 v hSn)
+  simpa only [TauCeti.kyFanSum_eq_sum_range] using TauCeti.kyFanSum_add_le n u v
 
 /-- The singular value expansion `⟪y, T x⟫ = ∑_k s_k(T) ⟪y, f_k⟫ ⟪e_k, x⟫`. -/
 private theorem inner_apply_eq_sum (T : E →ₗ[𝕜] F) (x : E) (y : F) :
