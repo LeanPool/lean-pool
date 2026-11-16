@@ -39,6 +39,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
                                      https://github.com/gdahia/ArithmeticTriangleRemovalInVectorSpaces
   LeanPool/ArnoldKAM                 https://github.com/ybq1415926-droid/arnold1963-kam
   LeanPool/AsymptoticTrianglePacking https://github.com/jtraverso/erdos-81-chordal-clique-partitions
+  LeanPool/AutoconvolutionSharpness  https://github.com/VjekoKovac/lean-autoconvolutions
   LeanPool/BKARForestFormula         https://github.com/scottnarmstrong/bkarforestformula
   LeanPool/BalancedEdgeColourings    https://github.com/jtraverso/balanced-edge-colourings
   LeanPool/BannaiBannaiStanton       https://github.com/AntoineduFresne/Bannai-Bannai-Stanton_Theorem
@@ -171,6 +172,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/KahnKalai                 https://github.com/dcposch/kahn-kalai-lean
   LeanPool/KasamiCyclicAdditive      https://github.com/dsm054/kasami_cyclic_additive
   LeanPool/KloostermanWeil           https://github.com/charliedorsey/weil-bounds-toolkit
+  LeanPool/KnillLaflamme             https://github.com/zblore/knill-laflamme-lean
   LeanPool/Koethe                    https://github.com/tadamcz/koethe
   LeanPool/Komlos                    https://github.com/gdahia/Komlos
   LeanPool/KrafftSieve               https://github.com/ElNando888/KrafftSieve
