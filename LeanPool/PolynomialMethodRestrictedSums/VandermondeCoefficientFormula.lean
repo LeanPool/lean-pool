@@ -284,7 +284,8 @@ lemma symmetricSumFixed_eq_expectedValue (c : Fin (k + 1) → ℕ) (m : ℕ) :
         (σ i).val ≤ c i then (∏ i, ((c i).factorial : ℚ)) / (∏ i,
             ((c i - (σ i).val).factorial : ℚ)) else 0 := by
       intro σ; split_ifs
-          <;> simp_all? (config := {decide := Bool.true}) [fallingFactorial_eq_factorial_div]
+          <;> simp_all (config := { decide := Bool.true }) only [fallingFactorial_eq_factorial_div,
+              Nat.cast_ite, CharP.cast_eq_zero, ↓reduceIte, not_forall, not_le]
       · rw [← Finset.prod_div_distrib, Finset.prod_congr rfl]
         intros
         rw [Nat.cast_div (Nat.factorial_dvd_factorial <| Nat.sub_le _ _) (by positivity)]
@@ -344,10 +345,13 @@ private lemma sum_X_pow_eq_multinomial_sum (m : ℕ) :
     · apply Finset.mem_sym_iff.mpr
       exact fun i _ => Finset.mem_univ i
     · ext i
-      simp? +decide [Multiset.count_bind]
+      simp +decide only [Sym.coe_mk, Multiset.count_bind, Fin.univ_val_map, List.ofFn_succ,
+          Multiset.sum_coe, List.sum_cons]
       induction i using Fin.inductionOn
-          <;> simp_all? (config := {decide := Bool.true})
-              [Multiset.count_replicate, List.sum_ofFn]
+          <;> simp_all (config := { decide := Bool.true }) only [Multiset.count_replicate_self,
+              Multiset.count_replicate, Fin.succ_ne_zero, ↓reduceIte, List.ofFn_const,
+              List.sum_replicate, nsmul_zero, add_zero, List.sum_ofFn, Fin.succ_inj, sum_ite_eq',
+              mem_univ, Nat.add_eq_right, ite_eq_right_iff]
       exact fun h => absurd h (ne_of_lt (Fin.succ_pos _))
   case h_eq =>
     intro a _
@@ -464,7 +468,8 @@ lemma coeff_term (c : Fin (k + 1) → ℕ) (m : ℕ) (σ : Equiv.Perm (Fin (k + 
                       one_ne_zero, imp_false] at *
                   contrapose! hd'
                   ext i; replace hd' := congr_arg (fun f => f i) hd'.2; aesop
-                · simp? (config := {decide := Bool.true}) [MvPolynomial.monomial_eq]
+                · simp (config := { decide := Bool.true }) only [monomial_eq, C_1, Finsupp.prod_pow,
+                      one_mul]
                   unfold toFinsupp; aesop
               · simp +zetaDelta only [mem_filter, mem_Iic, not_and, nsmul_eq_mul] at *
                 exact fun h => False.elim <|
@@ -487,7 +492,7 @@ lemma coeff_term (c : Fin (k + 1) → ℕ) (m : ℕ) (σ : Equiv.Perm (Fin (k + 
               -- Since snd is a monomial in the product of X_i^( i), its support is exactly the set
               -- of indices where  i is non-zero. Therefore, (snd i) must equal ( i : ℕ).
               have h_snd_support : snd = ∑ i, Finsupp.single i (σ i : ℕ) := by
-                simp_all? (config := {decide := Bool.true}) [MvPolynomial.X_pow_eq_monomial]
+                simp_all (config := { decide := Bool.true }) only [X_pow_eq_monomial]
                 -- Since snd is a monomial in the product of X_i^( i), its support is exactly the
                 -- set of indices where  i is non-zero. Therefore, snd must be equal to the sum of
                 -- the singletons of  i.
@@ -504,7 +509,8 @@ lemma coeff_term (c : Fin (k + 1) → ℕ) (m : ℕ) (σ : Equiv.Perm (Fin (k + 
                       Decidable.not_not]
                 exact h_snd_support
               simp +decide [h_snd_support, Finsupp.single_apply]
-            simp_all? +decide [Finsupp.ext_iff, toFinsupp]
+            simp_all +decide only [toFinsupp, ne_eq, Finsupp.ext_iff, Finsupp.coe_add, Pi.add_apply,
+                Finsupp.coe_mk, Fin.val_eq_zero_iff, implies_true, and_true]
             exact fun i => eq_tsub_of_add_eq <| a i
           · contrapose!
             unfold toFinsupp

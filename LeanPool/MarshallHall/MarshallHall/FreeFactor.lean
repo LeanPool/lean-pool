@@ -252,7 +252,9 @@ theorem generatedByBasis_isFreeFactor {X K : Type u} [Group K]
     inclusion := ?_ }⟩
   intro h
   apply B.repr.injective
-  simp? [basisSubsetFreeFactorEquiv, B.repr_apply_coe]
+  simp only [basisSubsetFreeFactorEquiv, MulEquiv.trans_apply, MulEquiv.coprodCongr_apply,
+      MulEquiv.toMonoidHom_refl, map_apply_inl, MonoidHom.coe_ofClass, binaryFreeProductEquiv_inl,
+      FreeGroup.freeGroupCongr_apply, MulEquiv.apply_symm_apply, Subgroup.subtype_apply]
   rw [FreeGroup.map.comp]
   convert repr_subsetBasisEquiv B Y h using 1
   congr 1
