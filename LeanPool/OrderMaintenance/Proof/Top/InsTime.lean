@@ -42,7 +42,8 @@ theorem Shape.upChain_anc {s : TS} {cl : List Nat} {ord : Nat → List Nat} (S :
     · rintro ⟨k, h1, h2, h3⟩; rw [h3, show k = s.P.H by omega]
   | n + 1, j, hj, hn, v => by
     have hne : anc s c j ≠ NIL := (S.anc_live hc j hj (by omega)).1.1.1
-    have e : upChain s (n + 1 + 2) (anc s c j) = anc s c j :: upChain s (n + 2) (anc s c (j + 1)) := by
+    have e : upChain s (n + 1 + 2) (anc s c j) = anc s c j :: upChain s (n + 2) (anc s c (j +
+      1)) := by
       rw [anc_succ c j hj]; simp only [upChain, ite_eq_right hne]
     rw [e, List.mem_cons, S.upChain_anc hc n (j + 1) (by omega) (by omega) v]
     constructor
@@ -72,7 +73,8 @@ theorem Shape.upChain_lpr {s : TS} {cl : List Nat} {ord : Nat → List Nat} (S :
 /-- Raising one entry's term by at most 2 raises a sum over distinct entries by at most 2. -/
 theorem foldr_bump {l : List Nat} (hl : l.Nodup) (f g : Nat → Nat) (e0 : Nat)
     (hfg : ∀ e ∈ l, e ≠ e0 → g e ≤ f e) (h0 : g e0 ≤ f e0 + 2) :
-    l.foldr (fun e acc => acc + g e) 0 ≤ l.foldr (fun e acc => acc + f e) 0 + (if e0 ∈ l then 2 else 0) := by
+    l.foldr (fun e acc => acc + g e) 0 ≤ l.foldr (fun e acc => acc + f e) 0 + (if e0 ∈ l then 2
+      else 0) := by
   induction l with
   | nil => simp
   | cons a r ih =>
@@ -88,7 +90,7 @@ theorem foldr_bump {l : List Nat} (hl : l.Nodup) (f g : Nat → Nat) (e0 : Nat)
     · have := hfg a (by simp) ha
       by_cases hr : e0 ∈ r
       · simp only [hr, or_true, ite_true]; rw [ite_eq_left hr] at ih'; omega
-      · simp only [Ne.symm ha, hr, or_self, ite_false, false_or]; rw [ite_eq_right hr] at ih'; omega
+      · simp only [Ne.symm ha, hr, or_self, ite_false]; rw [ite_eq_right hr] at ih'; omega
 
 /-! ### Weights after the split -/
 
@@ -99,13 +101,14 @@ variable {s : Core} {cl : List Nat} {ord : Nat → List Nat} {dr n0 : Nat → Na
   {f1x i1 : Nat} {t : TS} (F : InsFrame s x f1x i1 t)
 include hI hcs hx F
 
+omit F in
 /-- Filtering the chunk list after the split, for a predicate on the chunk each one stands for. -/
 theorem ins_filter_len (p : Nat → Nat → Prop) [∀ a b, Decidable (p a b)] (u : Nat) :
     ((clIns cl x s.C.size (s.C.size + 1)).filter fun c =>
         decide (p (if c = s.C.size ∨ c = s.C.size + 1 then x else c) u)).length =
       (cl.filter fun c => decide (p c u)).length + (if p x u then 2 else 0) := by
   obtain ⟨A, B, hcl, hA, hB, hcl'⟩ := ins_cl hI hcs hx
-  obtain ⟨hy, hz⟩ := ins_fresh hI hcs hx
+  obtain ⟨hy, hz⟩ := ins_fresh hcs
   have hxs := (hcs x).mp hx
   have hfr : ∀ c, c ∈ A ∨ c ∈ B → ¬(c = s.C.size ∨ c = s.C.size + 1) := fun c hc => by
     have : c ∈ cl := by rw [hcl]; simp only [List.mem_append, List.mem_cons]; tauto
@@ -129,7 +132,7 @@ theorem ins_filter_len (p : Nat → Nat → Prop) [∀ a b, Decidable (p a b)] (
 theorem ins_tw {u : Nat} (hu : 1 ≤ ht (ts s) u) :
     tw t (clIns cl x s.C.size (s.C.size + 1)) u =
       tw (ts s) cl u + (if anc (ts s) x (ht (ts s) u) = u then 2 else 0) := by
-  have h := ins_filter_len hI hcs hx F (fun c u => anc (ts s) c (ht (ts s) u) = u) u
+  have h := ins_filter_len hI hcs hx (fun c u => anc (ts s) c (ht (ts s) u) = u) u
   unfold tw; rw [F.ht, ← h]
   congr 1
   apply List.filter_congr
@@ -141,7 +144,7 @@ theorem ins_tw {u : Nat} (hu : 1 ≤ ht (ts s) u) :
 theorem ins_rng_len {u : Nat} (hu : 1 ≤ ht (ts s) u) (hH : ht (ts s) u ≤ s.P.H) :
     (rng t (clIns cl x s.C.size (s.C.size + 1)) u).length =
       (rng (ts s) cl u).length + (if pp (ts s) x (ht (ts s) u) = u then 2 else 0) := by
-  have h := ins_filter_len hI hcs hx F (fun c u => pp (ts s) c (ht (ts s) u) = u) u
+  have h := ins_filter_len hI hcs hx (fun c u => pp (ts s) c (ht (ts s) u) = u) u
   unfold rng; rw [F.ht, ← h]
   congr 1
   apply List.filter_congr
@@ -163,9 +166,7 @@ theorem ins_ew_ghost {u : Nat} (hu : ghostN (ts s) u) :
         anc (ts s) x (ht (ts s) u) = (nd (ts s) u).t2 then 2 else 0) := by
   have S := hI.shape
   obtain ⟨g1, g2, g3, g4, -, -, -, -, -, -, -, -, g13⟩ := S.ghost u hu
-  have hne : (nd (ts s) u).t1 ≠ (nd (ts s) u).t2 := by
-    have hnd := (S.ordNodup (ht (ts s) u)).sublist g13.sublist
-    simp at hnd; exact hnd.1.2
+  have hne : (nd (ts s) u).t1 ≠ (nd (ts s) u).t2 := S.t1_ne_t2 hu
   unfold ew; rw [F.draining, ite_eq_left hu.2, ite_eq_left hu.2, F.t1, F.t2]
   have e1 := ins_tw hI hcs hx F (u := (nd (ts s) u).t1) (by rw [g3]; exact (S.htN u hu.1).1)
   have e2 := ins_tw hI hcs hx F (u := (nd (ts s) u).t2) (by rw [g4]; exact (S.htN u hu.1).1)
@@ -178,40 +179,48 @@ theorem ins_ew_ghost {u : Nat} (hu : ghostN (ts s) u) :
     · rw [ite_eq_right h1, ite_eq_left h2, ite_eq_left (Or.inr h2)]; omega
     · rw [ite_eq_right h1, ite_eq_right h2, ite_eq_right (by tauto)]; omega
 
+omit hI hcs hx in
 theorem ins_upChain : ∀ f v, upChain t f v = upChain (ts s) f v
   | 0, _ => rfl
   | f + 1, v => by simp only [upChain, F.livePar, ins_upChain f]
 
+omit hcs in
 /-- The split's pending nodes are `x`'s live ancestors. -/
 theorem ins_pend {v : Nat} (hv : liveN (ts s) v) :
     v ∈ pend t (some (insJob s x)) ↔ anc (ts s) x (ht (ts s) v) = v := by
   unfold pend wStart
   simp only [insJob]
-  rw [F.P, ins_upChain hI hcs hx F, F.lpar, ite_eq_left (Or.inl rfl)]
+  rw [F.P, ins_upChain F, F.lpar, ite_eq_left (Or.inl rfl)]
   exact hI.shape.upChain_lpr hx hv
 
+omit hI hcs hx in
 theorem ins_anc_y (h : Nat) (hh : 1 ≤ h) : anc t (insJob s x).y h = anc (ts s) x h :=
   F.anc_new _ (Or.inl rfl) h hh
 
+omit hcs hx in
 theorem ins_funded {v : Nat} (hv : ghostN (ts s) v) :
     funded t (some (insJob s x)) v ↔ (anc (ts s) x (ht (ts s) v) = (nd (ts s) v).t1 ∨
       anc (ts s) x (ht (ts s) v) = (nd (ts s) v).t2) := by
   have h1 := (hI.shape.htN v hv.1).1
-  show anc t (insJob s x).y (ht t v) = (nd t v).t1 ∨ anc t (insJob s x).y (ht t v) = (nd t v).t2 ↔ _
-  rw [F.ht, F.t1, F.t2, ins_anc_y hI hcs hx F _ h1]
+  change anc t (insJob s x).y (ht t v) = (nd t v).t1 ∨ anc t (insJob s x).y (ht t v) = (nd t
+    v).t2 ↔ _
+  rw [F.ht, F.t1, F.t2, ins_anc_y F _ h1]
 
-theorem ins_slack (hTP : TopParams s.P) {v : Nat} (hv : ghostN (ts s) v) :
+omit hcs hx in
+theorem ins_slack {v : Nat} (hv : ghostN (ts s) v) :
     slack t (some (insJob s x)) v = if anc (ts s) x (ht (ts s) v) = (nd (ts s) v).t1 ∨
       anc (ts s) x (ht (ts s) v) = (nd (ts s) v).t2 then s.P.s else 0 := by
   have h1 := (hI.shape.htN v hv.1).1
-  have hfu := ins_funded hI hcs hx F hv
+  have hfu := ins_funded hI F hv
   have hcur : curH t (insJob s x) = 1 := rfl
-  show (if anc t (insJob s x).y (ht t v) = (nd t v).t1 ∨ anc t (insJob s x).y (ht t v) = (nd t v).t2 then
+  change (if anc t (insJob s x).y (ht t v) = (nd t v).t1 ∨ anc t (insJob s x).y (ht t v) = (nd t
+    v).t2 then
     (if curH t (insJob s x) ≤ ht t v then t.P.s else _) else 0) = _
   by_cases hC : anc (ts s) x (ht (ts s) v) = (nd (ts s) v).t1 ∨
       anc (ts s) x (ht (ts s) v) = (nd (ts s) v).t2
   · rw [ite_eq_left (show anc t (insJob s x).y (ht t v) = (nd t v).t1 ∨
-      anc t (insJob s x).y (ht t v) = (nd t v).t2 from hfu.mpr hC), ite_eq_left hC, hcur, F.ht, ite_eq_left h1, F.P]
+      anc t (insJob s x).y (ht t v) = (nd t v).t2 from hfu.mpr hC), ite_eq_left hC, hcur, F.ht,
+        ite_eq_left h1, F.P]
   · rw [ite_eq_right (show ¬(anc t (insJob s x).y (ht t v) = (nd t v).t1 ∨
       anc t (insJob s x).y (ht t v) = (nd t v).t2) from fun h => hC (hfu.mp h)), ite_eq_right hC]
 
@@ -230,8 +239,8 @@ theorem ins_time (hTP : TopParams s.P) :
     simp only [pend, List.not_mem_nil, ite_false, Nat.add_zero] at hw
     rw [F.weight, ins_tw hI hcs hx F h1, ← hw]
     by_cases hp : anc (ts s) x (ht (ts s) v) = v
-    · rw [ite_eq_left ((ins_pend hI hcs hx F hv).mpr hp), ite_eq_left hp]
-    · rw [ite_eq_right (fun h => hp ((ins_pend hI hcs hx F hv).mp h)), ite_eq_right hp]
+    · rw [ite_eq_left ((ins_pend hI hx F hv).mpr hp), ite_eq_left hp]
+    · rw [ite_eq_right (fun h => hp ((ins_pend hI hx F hv).mp h)), ite_eq_right hp]
   · rw [F.liveN] at hv; rw [F.livePar] at hp; rw [F.srcOf] at hs
     rw [F.weight, F.ht, F.P]; exact Ti.wA v hv hp hs
   · rw [F.ghostN] at hv; rw [F.weight, F.ht, F.P]; exact Ti.wB v hv
@@ -240,7 +249,8 @@ theorem ins_time (hTP : TopParams s.P) :
     obtain ⟨a1, a2⟩ := Ti.wF v hv
     split
     · refine ⟨by omega, ?_⟩
-      rw [show ew (ts s) cl v + 2 - (nd (ts s) v).weight = ew (ts s) cl v - (nd (ts s) v).weight + 2 by omega]
+      rw [show ew (ts s) cl v + 2 - (nd (ts s) v).weight = ew (ts s) cl v - (nd (ts s) v).weight
+        + 2 by omega]
       omega
     · exact ⟨by omega, by simpa using a2⟩
   · rw [F.ghostN] at hv
@@ -251,7 +261,7 @@ theorem ins_time (hTP : TopParams s.P) :
     unfold fundOf at hw ⊢
     have hF := Ti.wF v hv
     rw [ins_rng_len hI hcs hx F h1 hH, F.weight, ins_ew_ghost hI hcs hx F hv,
-      ins_slack hI hcs hx F hTP hv, F.P]
+      ins_slack hI F hv, F.P]
     by_cases hfd : anc (ts s) x (ht (ts s) v) = (nd (ts s) v).t1 ∨
         anc (ts s) x (ht (ts s) v) = (nd (ts s) v).t2
     · rw [ite_eq_left hfd, ite_eq_left hfd]
@@ -274,7 +284,7 @@ theorem ins_time (hTP : TopParams s.P) :
     rw [eP] at hw
     unfold fundOf at hw ⊢
     have hF := Ti.wF v hv
-    have hfu := ins_funded hI hcs hx F hv
+    have hfu := ins_funded hI F hv
     rw [F.weight, ins_ew_ghost hI hcs hx F hv, F.P]
     by_cases hfd : anc (ts s) x (ht (ts s) v) = (nd (ts s) v).t1 ∨
         anc (ts s) x (ht (ts s) v) = (nd (ts s) v).t2
@@ -340,9 +350,9 @@ theorem ins_room (hTP : TopParams s.P) :
   · rw [F.isN] at hX; rw [F.P]
     unfold drIns
     by_cases hXc : X ∈ s.cin.getX x
-    · obtain ⟨A', le, Bs, a, b, -, -, htab', hg, -⟩ := ins_table hI hcs hx F hTP hXc
+    · obtain ⟨A', le, Bs, a, b, -, -, htab', hg, -⟩ := ins_table hI hx F hTP hXc
       rw [ite_eq_left hXc]; unfold labs; rw [htab']; exact hg
-    · rw [ite_eq_right hXc, ins_labs_old hI hcs hx F hXc]; exact Ro.gaps X hX
+    · rw [ite_eq_right hXc, ins_labs_old F hXc]; exact Ro.gaps X hX
   · rw [F.isN] at hX; rw [F.ht, F.P]; exact Ro.n0le X hX
   · rw [F.isN] at hX; rw [F.ht] at h1; rw [F.P]
     have hp := Ro.pot1 X hX h1
@@ -351,12 +361,13 @@ theorem ins_room (hTP : TopParams s.P) :
     unfold drIns
     by_cases hXc : X ∈ s.cin.getX x
     · rw [ite_eq_left hXc]
-      have hx1 : x ∈ order (ts s) X := (ins_cinX hI hcs hx hXc).2.2
-      have := ins_ew_up hI hcs hx F hX h1 le_rfl (by have : 3 ≤ s.P.H := S.H3; omega) hx1 (Or.inl rfl)
+      have hx1 : x ∈ order (ts s) X := (ins_cinX hI hx hXc).2.2
+      have := ins_ew_up hI hcs hx F hX h1 le_rfl (by have : 3 ≤ s.P.H := S.H3; omega) hx1
+        (Or.inl rfl)
       omega
     · rw [ite_eq_right hXc]; omega
   · rw [F.isN] at hX; rw [F.ht] at h2; rw [F.P, F.ht]
-    have hXc : X ∉ s.cin.getX x := fun h => by have := (ins_cinX hI hcs hx h).2.1; omega
+    have hXc : X ∉ s.cin.getX x := fun h => by have := (ins_cinX hI hx h).2.1; omega
     unfold drIns; rw [ite_eq_right hXc]
     have hp := Ro.pot2 X hX h2
     rw [eP] at hp
@@ -364,7 +375,7 @@ theorem ins_room (hTP : TopParams s.P) :
     have hH := (S.htN X hX).2
     -- old live entries are unchanged
     have hold : oldLive t X = oldLive (ts s) X := by
-      unfold oldLive; rw [ins_order_old hI hcs hx F hXc]
+      unfold oldLive; rw [ins_order_old F hXc]
       congr 1; apply List.filter_congr; intro e _
       simp only [F.liveN]
     -- growth rises by at most what the node gains
@@ -373,12 +384,13 @@ theorem ins_room (hTP : TopParams s.P) :
         growth (ts s) cl X + (if e0 ∈ (order (ts s) X).filter
           (fun e => decide (liveN (ts s) e) && decide (X < e)) then 2 else 0) := by
       unfold growth
-      rw [ins_order_old hI hcs hx F hXc, F.ht, F.P]
+      rw [ins_order_old F hXc, F.ht, F.P]
       have hfl : ((order (ts s) X).filter fun e => decide (liveN t e) && decide (X < e)) =
           (order (ts s) X).filter fun e => decide (liveN (ts s) e) && decide (X < e) := by
         apply List.filter_congr; intro e _; simp only [F.liveN]
       rw [hfl]
-      have hnd : ((order (ts s) X).filter fun e => decide (liveN (ts s) e) && decide (X < e)).Nodup := by
+      have hnd : ((order (ts s) X).filter fun e => decide (liveN (ts s) e) && decide (X <
+        e)).Nodup := by
         have := (S.ordNodup _).sublist (S.O1 X hX)
         exact this.filter _
       have hht : ∀ e ∈ order (ts s) X, ht (ts s) e = ht (ts s) X - 1 := fun e he => by

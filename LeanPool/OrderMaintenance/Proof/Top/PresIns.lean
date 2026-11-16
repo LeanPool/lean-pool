@@ -26,7 +26,8 @@ namespace OrderMaintenance.Proof.Top
 open OrderMaintenance.Model OrderMaintenance.Proof
 /-! ### Room for an insertion event -/
 
-theorem gapsGe_mono {β B B' : Nat} {ls : List Nat} (h : B' ≤ B) (hg : GapsGe β B ls) : GapsGe β B' ls :=
+theorem gapsGe_mono {β B B' : Nat} {ls : List Nat} (h : B' ≤ B) (hg : GapsGe β B ls) : GapsGe β
+  B' ls :=
   List.IsChain.imp (fun a b hab => by omega) hg
 
 theorem gapB_succ (β n d : Nat) : gapB β n (d + 1) = gapB β n d / 2 := by
@@ -49,9 +50,11 @@ theorem gap_two {β n0 dr D nmax : Nat} (hn0 : n0 ≤ nmax) (hdr : dr + 1 ≤ D)
 /-! ### Between jobs -/
 
 section between
-variable {s : TS} {cl : List Nat} {ord : Nat → List Nat} (S : Shape s cl ord) (Ti : Timing s cl none)
+variable {s : TS} {cl : List Nat} {ord : Nat → List Nat} (S : Shape s cl ord) (Ti : Timing s cl
+  none)
 include S Ti
 
+omit S in
 /-- Between jobs, a running drain has had fewer than `K_h` funding jobs. -/
 theorem Timing.fund_lt (hTP : TopParams s.P) {v : Nat} (hg : ghostN s v) :
     fundOf s cl v + 1 ≤ Kd s.P (ht s v) := by
@@ -91,7 +94,9 @@ theorem table_split {t : List (Nat × Nat)} {e : Nat} (he : e ∈ t.map (·.1)) 
     obtain ⟨k, l⟩ := p
     by_cases hk : k = e
     · subst hk; exact ⟨[], l, r, rfl, by simp⟩
-    · have he' : e ∈ r.map (·.1) := by simp at he ⊢; rcases he with h | h <;> [exact absurd h.symm hk; exact h]
+    · have he' : e ∈ r.map (·.1) := by
+        simp only [List.map_cons, List.mem_cons] at he
+        exact he.resolve_left (Ne.symm hk)
       obtain ⟨A, le, Bs, h1, h2⟩ := ih he'
       exact ⟨(k, l) :: A, le, Bs, by simp [h1], by simp [h2, Ne.symm hk]⟩
 
@@ -101,7 +106,8 @@ theorem start_room {s : TS} {cl : List Nat} {ord : Nat → List Nat} {dr n0 : Na
     (hT : T ∈ cinT s x) (y z : Nat) :
     ∃ A le Bs, (nd s T).table = A ++ (x, le) :: Bs ∧ x ∉ A.map (·.1) ∧
       ((nd s T).draining = true → (lookup (nd s T).side x).isSome) ∧
-      roomLo A le true < roomHi s.P.beta Bs le true ∧ roomLo A le false < roomHi s.P.beta Bs le false ∧
+      roomLo A le true < roomHi s.P.beta Bs le true ∧ roomLo A le false < roomHi s.P.beta Bs le
+        false ∧
       2 ≤ gapB s.P.beta (n0 T) (dr T) ∧
       GapsGe s.P.beta (gapB s.P.beta (n0 T) (dr T) / 2)
         ((A ++ (y, (roomLo A le true + roomHi s.P.beta Bs le true - 1) / 2) :: (x, le) ::
@@ -122,12 +128,13 @@ theorem start_room {s : TS} {cl : List Nat} {ord : Nat → List Nat} {dr n0 : Na
     · subst h
       obtain ⟨hpl, -, -⟩ := S.up _ hl (by have := S.H3; omega)
       have hw := Ti.tw_live S hTP hl (fun e => hpl.1.1 e)
-      have : ew s cl (lpr s x) = tw s cl (lpr s x) := by unfold ew; rw [ite_eq_right (by rw [hl.2]; simp)]
+      have : ew s cl (lpr s x) = tw s cl (lpr s x) := by
+        unfold ew; rw [ite_eq_right (by rw [hl.2]; simp)]
       rw [this]; rw [hlh] at hw; unfold Pid; omega
     · have hsn : srcOf s (lpr s x) ≠ NIL := fun e => hTN.1 (h.trans e)
       obtain ⟨hg, -⟩ := S.src _ hl hsn
       rw [← h] at hg
-      have hf := Ti.fund_lt S hTP hg
+      have hf := Ti.fund_lt hTP hg
       have hF := Ti.wF T hg
       have hB := (Ti.wB T hg).2
       rw [hTh] at hf hB
@@ -178,12 +185,14 @@ theorem side (u : Nat) : (nd t u).side = if u ∈ s.cin.getX x ∧ u < s.nodes.s
     sideAround (s.nodes.getX u) x s.C.size (s.C.size + 1) else (s.nodes.getX u).side := by
   rw [F.node]; unfold insNode; split_ifs <;> rfl
 theorem children (u : Nat) : (nd t u).children = if u = s.lpar.getX x ∧ u < s.nodes.size then
-    (s.nodes.getX u).children.replace1 x [s.C.size, x, s.C.size + 1] else (s.nodes.getX u).children := by
+    (s.nodes.getX u).children.replace1 x [s.C.size, x, s.C.size + 1] else (s.nodes.getX
+      u).children := by
   rw [F.node]; unfold insNode; split_ifs <;> rfl
 
 theorem par_pos {h : Nat} (hh : 1 ≤ h) (e : Nat) : par t h e = par (ts s) h e := by
   unfold par; simp only [show h ≠ 0 by omega, ite_false, F.draining, F.t1, F.livePar]
 
+omit F in
 theorem par_zero (e : Nat) : par t 0 e = lpr t e := by unfold par; rw [ite_eq_left rfl]
 
 theorem ht (u : Nat) : Top.ht t u = Top.ht (ts s) u := F.height u
@@ -198,17 +207,17 @@ theorem srcOf (u : Nat) : Top.srcOf t u = Top.srcOf (ts s) u := F.overflowOf u
 theorem anc_old (c : Nat) (hy : c ≠ s.C.size) (hz : c ≠ s.C.size + 1) :
     ∀ j, Top.anc t c j = Top.anc (ts s) c j
   | 0 => rfl
-  | 1 => by show lpr t c = lpr (ts s) c; rw [F.lpar, ite_eq_right (by omega)]
+  | 1 => by change lpr t c = lpr (ts s) c; rw [F.lpar, ite_eq_right (by omega)]
   | j + 2 => by
-    show (nd t (Top.anc t c (j + 1))).livePar = (nd (ts s) (Top.anc (ts s) c (j + 1))).livePar
+    change (nd t (Top.anc t c (j + 1))).livePar = (nd (ts s) (Top.anc (ts s) c (j + 1))).livePar
     rw [anc_old c hy hz (j + 1), F.livePar]
 
 theorem anc_new (c : Nat) (hc : c = s.C.size ∨ c = s.C.size + 1) :
     ∀ j, 1 ≤ j → Top.anc t c j = Top.anc (ts s) x j
   | 0, h => absurd h (by omega)
-  | 1, _ => by show lpr t c = lpr (ts s) x; rw [F.lpar, ite_eq_left hc]
+  | 1, _ => by change lpr t c = lpr (ts s) x; rw [F.lpar, ite_eq_left hc]
   | j + 2, _ => by
-    show (nd t (Top.anc t c (j + 1))).livePar = (nd (ts s) (Top.anc (ts s) x (j + 1))).livePar
+    change (nd t (Top.anc t c (j + 1))).livePar = (nd (ts s) (Top.anc (ts s) x (j + 1))).livePar
     rw [anc_new c hc (j + 1) (by omega), F.livePar]
 
 theorem pp_old (c : Nat) (hy : c ≠ s.C.size) (hz : c ≠ s.C.size + 1) (j : Nat) :
@@ -219,7 +228,8 @@ theorem pp_old (c : Nat) (hy : c ≠ s.C.size) (hz : c ≠ s.C.size + 1) (j : Na
 
 theorem pp_new (c : Nat) (hc : c = s.C.size ∨ c = s.C.size + 1) (j : Nat) (hj1 : 1 ≤ j)
     (hj : j ≤ s.P.H) : Top.pp t c j = Top.pp (ts s) x j := by
-  unfold Top.pp; rw [ite_eq_right (by omega), ite_eq_right (by omega), F.path, ite_eq_left hc, ite_eq_left ⟨hj1, hj⟩]
+  unfold Top.pp; rw [ite_eq_right (by omega), ite_eq_right (by omega), F.path, ite_eq_left hc,
+    ite_eq_left ⟨hj1, hj⟩]
 
 end InsFrame
 

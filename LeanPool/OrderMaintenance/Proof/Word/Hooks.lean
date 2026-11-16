@@ -100,9 +100,11 @@ def XG (K : Nat) (P : Params) (G0 : Nat) (t : Core) : Prop :=
   WB K t ∧ t.P = P ∧ t.Gs.size ≤ G0 + 2 ∧
     (t.Gs.size ≤ G0 ∨ ∀ g, LiveG t g → gSt t g = .quiet → gSz t g < t.P.G)
 
-theorem xg_moveL {P : Params} {G0 : Nat} {L : List Nat} (hL : LabRoom K P) (hlen : L.length + 2 ≤ 2 ^ K)
-    {t : Core} {A' : Abs} {gh : GGh} {δ : Nat → Nat} {p : Nat} (hG : GInvE t L gh δ p)
-    (hok : MoveLOK t p) (hst : gSt t p = .splitting) (hX : XG K P G0 t) : XG K P G0 (moveLState t p) := by
+theorem xg_moveL {P : Params} {G0 : Nat} {L : List Nat} (hL : LabRoom K P) (hlen : L.length + 2
+  ≤ 2 ^ K)
+    {t : Core} {gh : GGh} {δ : Nat → Nat} {p : Nat} (hG : GInvE t L gh δ p)
+    (hok : MoveLOK t p) (hst : gSt t p = .splitting) (hX : XG K P G0 t) : XG K P G0 (moveLState
+      t p) := by
   obtain ⟨hW, hP, hGs, hor⟩ := hX
   have F := hG.fam p hok.live hst
   have hsz : gSz t (gLl t p) + 1 < 2 ^ K := by
@@ -114,16 +116,21 @@ theorem xg_moveL {P : Params} {G0 : Nat} {L : List Nat} (hL : LabRoom K P) (hlen
   · right
     intro g hg hq
     obtain ⟨e1, e2, e3⟩ := moveLState_g t p g
-    have hg' : LiveG t g := ⟨hg.1, by rw [← moveLState_Gsize t p]; exact hg.2.1, by rw [← e2]; exact hg.2.2⟩
+    have hg' : LiveG t g := by
+      refine ⟨hg.1, ?_, ?_⟩
+      · rw [← moveLState_Gsize t p]; exact hg.2.1
+      · rw [← e2]; exact hg.2.2
     have hq' : gSt t g = .quiet := by rw [← e1]; exact hq
     have hgp : g ≠ p := by rintro rfl; rw [hst] at hq'; cases hq'
     have hgl : g ≠ gLl t p := by rintro rfl; rw [F.lSt] at hq'; cases hq'
     rw [e3 hgp hgl, moveLState_P]
     exact h g hg' hq'
 
-theorem xg_moveR {P : Params} {G0 : Nat} {L : List Nat} (hL : LabRoom K P) (hlen : L.length + 2 ≤ 2 ^ K)
+theorem xg_moveR {P : Params} {G0 : Nat} {L : List Nat} (hL : LabRoom K P) (hlen : L.length + 2
+  ≤ 2 ^ K)
     {t : Core} {gh : GGh} {δ : Nat → Nat} {p : Nat} (hG : GInvE t L gh δ p)
-    (hok : MoveROK t p) (hst : gSt t p = .splitting) (hX : XG K P G0 t) : XG K P G0 (moveRState t p) := by
+    (hok : MoveROK t p) (hst : gSt t p = .splitting) (hX : XG K P G0 t) : XG K P G0 (moveRState
+      t p) := by
   obtain ⟨hW, hP, hGs, hor⟩ := hX
   have F := hG.fam p hok.live hst
   have hsz : gSz t (gRr t p) + 1 < 2 ^ K := by
@@ -135,14 +142,18 @@ theorem xg_moveR {P : Params} {G0 : Nat} {L : List Nat} (hL : LabRoom K P) (hlen
   · right
     intro g hg hq
     obtain ⟨e1, e2, e3⟩ := moveRState_g t p g
-    have hg' : LiveG t g := ⟨hg.1, by rw [← moveRState_Gsize t p]; exact hg.2.1, by rw [← e2]; exact hg.2.2⟩
+    have hg' : LiveG t g := by
+      refine ⟨hg.1, ?_, ?_⟩
+      · rw [← moveRState_Gsize t p]; exact hg.2.1
+      · rw [← e2]; exact hg.2.2
     have hq' : gSt t g = .quiet := by rw [← e1]; exact hq
     have hgp : g ≠ p := by rintro rfl; rw [hst] at hq'; cases hq'
     have hgr : g ≠ gRr t p := by rintro rfl; rw [F.rSt] at hq'; cases hq'
     rw [e3 hgp hgr, moveRState_P]
     exact h g hg' hq'
 
-theorem xg_rem {P : Params} {G0 : Nat} (hroom : G0 + 2 ≤ 2 ^ K) {t : Core} {p : Nat} (hp : LiveG t p)
+theorem xg_rem {P : Params} {G0 : Nat} (hroom : G0 + 2 ≤ 2 ^ K) {t : Core} {p : Nat} (hp : LiveG
+  t p)
     (hlL : LiveG t (gLl t p)) (hrL : LiveG t (gRr t p))
     (hl : gSz t (gLl t p) < t.P.G) (hr : gSz t (gRr t p) < t.P.G) (hX : XG K P G0 t) :
     XG K P G0 (removeState t p) := by
@@ -166,22 +177,25 @@ theorem xg_rem {P : Params} {G0 : Nat} (hroom : G0 + 2 ≤ 2 ^ K) {t : Core} {p 
     · exact h g hg' hq
 
 theorem splitState_P (s : Core) (g labL labR : Nat) : (splitState s g labL labR).P = s.P := by
-  show (allocGroup (allocGroup s (gC s g)).2 (gC s g)).2.P = s.P
+  change (allocGroup (allocGroup s (gC s g)).2 (gC s g)).2.P = s.P
   rw [allocGroup_P', allocGroup_P']
 
 theorem splitState_size_le (s : Core) (g labL labR : Nat) :
     (splitState s g labL labR).Gs.size ≤ s.Gs.size + 2 := by
   have h1 := allocGroup_size_le s (gC s g)
   have h2 := allocGroup_size_le (allocGroup s (gC s g)).2 (gC s g)
-  have : (splitState s g labL labR).Gs.size = (allocGroup (allocGroup s (gC s g)).2 (gC s g)).2.Gs.size := by
+  have : (splitState s g labL labR).Gs.size = (allocGroup (allocGroup s (gC s g)).2 (gC s
+    g)).2.Gs.size := by
     simp only [splitState, linkGroupPair, Array.size_modify', Array.size_ite]; split_ifs <;> rfl
   omega
 
-theorem xg_split {P : Params} {G0 : Nat} (hL : LabRoom K P) (hroom : G0 + 2 ≤ 2 ^ K) {s : Core} {A : Abs}
+theorem xg_split {P : Params} {G0 : Nat} (hL : LabRoom K P) (hroom : G0 + 2 ≤ 2 ^ K) {s : Core}
+  {A : Abs}
     {gh : GGh} {g labL labR : Nat} (hI : INV s A)
     (hG : GInv s A.elist gh (fun b => if b = g then 1 else 0)) (hg : LiveG s g)
     (hq : gSt s g = .quiet) (hsz : gSz s g = s.P.G) (hLb : (labBefore g).run s = .ok labL s)
-    (hLa : (labAfter g).run s = .ok labR s) (hX : XG K P G0 s) : XG K P G0 (splitState s g labL labR) := by
+    (hLa : (labAfter g).run s = .ok labR s) (hX : XG K P G0 s) : XG K P G0 (splitState s g labL
+      labR) := by
   obtain ⟨hW, hP, hGs, hor⟩ := hX
   have hG0 : s.Gs.size ≤ G0 := by
     rcases hor with h | h
@@ -215,7 +229,7 @@ theorem xgroup_wb {P : Params} {G0 : Nat} {L : List Nat} {c : Nat} (hL : LabRoom
     (hroom : G0 + 2 ≤ 2 ^ K) (hlen : L.length + 2 ≤ 2 ^ K) :
     XGroup (XG K P G0) (XG K P G0) L c := by
   refine ⟨fun δ p => ⟨?_, ?_, ?_⟩, ?_⟩
-  · intro t A' gh _ _ hG hok hst hX; exact xg_moveL (A' := A') hL hlen hG hok hst hX
+  · intro t A' gh _ _ hG hok hst hX; exact xg_moveL hL hlen hG hok hst hX
   · intro t A' gh _ _ hG hok hst hX; exact xg_moveR hL hlen hG hok hst hX
   · intro t A' gh _ _ hG hp hs _ hl hr _ _ _ hX
     have F := hG.fam p hp hs
@@ -228,7 +242,8 @@ theorem xgroup_wb {P : Params} {G0 : Nat} {L : List Nat} {c : Nat} (hL : LabRoom
 
 /-- Combine a chunk-drive invariant with one that needs the labels of the move (which the first
 one's run provides). -/
-theorem _root_.OrderMaintenance.Proof.CXSteps.andRun {X Y W : Core → Prop} {L : List Nat} {δ δu s₀ : Nat → Nat} {x : Nat}
+theorem _root_.OrderMaintenance.Proof.CXSteps.andRun {X Y W : Core → Prop} {L : List Nat} {δ δu
+  s₀ : Nat → Nat} {x : Nat}
     (h : CXSteps X Y L δ δu s₀ x)
     (hl : ∀ t A gh labs, INV t A → A.elist = L → GInv t L gh (fun _ => 0) → CInvE t L δ δu s₀ x →
       LiveC t x → cSt t x = .splitting → cF t x ≠ NIL →
@@ -302,7 +317,8 @@ theorem unit_sum_le {t : Core} {A : Abs} {gh : GGh} (hI : INV t A)
 /-- **The stored-value bound through the chunk drive.** -/
 theorem cxsteps_wb {X Y : Core → Prop} {P : Params} {L : List Nat} {δ δu s₀ : Nat → Nat} {x : Nat}
     (h : CXSteps X Y L δ δu s₀ x) (hL : LabRoom K P) (hlen : 4 * L.length + 1 ≤ 2 ^ K) :
-    CXSteps (fun t => X t ∧ (WB K t ∧ t.P = P)) (fun t => Y t ∧ (WB K t ∧ t.P = P)) L δ δu s₀ x := by
+    CXSteps (fun t => X t ∧ (WB K t ∧ t.P = P)) (fun t => Y t ∧ (WB K t ∧ t.P = P)) L δ δu s₀ x
+      := by
   refine h.andRun ?_ ?_ (fun t hW => ⟨wb_cremoveState hW.1, hW.2⟩)
   · intro t A gh labs hI hel hG hC hxL hst hne hrun hW
     subst hel

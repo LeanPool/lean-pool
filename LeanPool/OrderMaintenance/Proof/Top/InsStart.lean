@@ -48,10 +48,14 @@ theorem linkCOK_push2 {s : Core} {A : Abs} (hI : INV s A) {x : Nat} (hx : x ∈ 
   generalize hndef : cN s x = n
   have hpm : p = NIL ∨ p ∈ A.chunks := by
     rw [← hpdef, hI.cList.prev x hx]
-    rcases predOf_mem_or (l := A.chunks) (x := x) with h | h; exact Or.inr h; exact Or.inl h
+    rcases predOf_mem_or (l := A.chunks) (x := x) with h | h
+    · exact Or.inr h
+    · exact Or.inl h
   have hnm : n = NIL ∨ n ∈ A.chunks := by
     rw [← hndef, hI.cList.next x hx]
-    rcases succOf_mem_or (l := A.chunks) (x := x) with h | h; exact Or.inr h; exact Or.inl h
+    rcases succOf_mem_or (l := A.chunks) (x := x) with h | h
+    · exact Or.inr h
+    · exact Or.inl h
   have hmem_lt : ∀ c ∈ A.chunks, c < y := fun c hc => hydef ▸ ((hI.cAlloc c).mp hc).2
   have hp1 : cP (push2 s) x = p := by
     simp only [cP, h1C, show x ≠ y by omega, show x ≠ y + 1 by omega]; simp [hpdef]
@@ -112,6 +116,56 @@ theorem cP_markState (t : Core) (x y z : Nat) (j : Job) (c : Nat) :
     cP (markState t x y z j) c = cP t c := by
   unfold cP markState; simp only [Array.getX_modify]; split_ifs <;> rfl
 
+/-- An insertion invariant supplies a valid completed-copy frame and distinct containing tables. -/
+theorem insFin_frame_of_invariant {s : Core} {cl : List Nat} {ord : Nat → List Nat}
+    {dr n0 : Nat → Nat} {x f1x i1 : Nat} (hI : InvJ (ts s) cl ord dr n0 none)
+    (hx : x ∈ cl) (hxs : x < s.C.size) :
+    InsFrame s x f1x i1 (insFin s x f1x i1) ∧ (s.cin.getX x).Nodup := by
+  have S := hI.shape
+  have hent : Ent ord 0 x := by unfold Ent; rw [S.ord0]; exact hx
+  have hnd : (s.cin.getX x).Nodup := by
+    have := S.tabsNodup 0 x hent; unfold tabs at this; rw [ite_eq_left rfl] at this; exact this
+  have hdist : ∀ i i', 1 ≤ i → i ≤ s.P.H → 1 ≤ i' → i' ≤ s.P.H → pth (ts s) x i = pth (ts s) x i' →
+      i = i' := by
+    intro i i' h1 h2 h1' h2' e
+    have a := (ins_pp_ht hI hx h1 h2).2
+    have b := (ins_pp_ht hI hx h1' h2').2
+    unfold pp at a b; rw [ite_eq_right (by omega)] at a; rw [ite_eq_right (by omega)] at b
+    rw [e] at a; omega
+  have hex : ∀ i, 1 ≤ i → i ≤ s.P.H → pth (ts s) x i < s.nodes.size := by
+    intro i h1 h2
+    have a := (ins_pp_ht hI hx h1 h2).1
+    unfold pp at a; rw [ite_eq_right (by omega)] at a; exact a.2.1
+  exact ⟨insFin_frame s x f1x i1 hxs hnd hdist hex, hnd⟩
+
+/-- The inserted and retained chunk tags agree with the completed tree interpretation. -/
+theorem ins_tag_interpretation {s : Core} {cl : List Nat} {ord : Nat → List Nat}
+    {dr n0 : Nat → Nat} {x f1x i1 : Nat} {t : TS} (hI : InvJ (ts s) cl ord dr n0 none)
+    (hC : ∀ c, c ∈ cl ↔ 1 ≤ c ∧ c < s.C.size) (hx : x ∈ cl)
+    (F : InsFrame s x f1x i1 t) (hTP : TopParams s.P) (hf1 : f1x = digit (ts s) x 1)
+    (hi1 : (s.cin.getX x).idx? (pp (ts s) x 1) = some i1) :
+    tagY (ins0 s x) x f1x i1 = tagF t s.C.size ∧
+      tagZ (ins0 s x) x f1x i1 = tagF t (s.C.size + 1) ∧
+      ∀ c ∈ cl, cT (ins0 s x) c = tagF t c := by
+  have htags := ins_tags hI hC hx F hTP hf1 hi1
+  obtain ⟨Al, Bl, hcl1, -, -, hcl'⟩ := ins_cl hI hC hx
+  have hmem' : ∀ c, c ∈ clIns cl x s.C.size (s.C.size + 1) ↔
+      c ∈ cl ∨ c = s.C.size ∨ c = s.C.size + 1 := by
+    intro c; rw [hcl', hcl1]; simp only [List.mem_append, List.mem_cons]; tauto
+  have hty : tagY (ins0 s x) x f1x i1 = tagF (t) s.C.size := by
+    have := htags s.C.size ((hmem' _).mpr (Or.inr (Or.inl rfl)))
+    rw [F.tag, ite_eq_right (by omega), ite_eq_left rfl] at this; exact this
+  have htz : tagZ (ins0 s x) x f1x i1 = tagF (t) (s.C.size + 1) := by
+    have := htags (s.C.size + 1) ((hmem' _).mpr (Or.inr (Or.inr rfl)))
+    rw [F.tag, ite_eq_left rfl] at this; exact this
+  have hto : ∀ c ∈ cl, cT (ins0 s x) c = tagF (t) c := by
+    intro c hc
+    have hcs := (hC c).mp hc
+    have := htags c ((hmem' _).mpr (Or.inl hc))
+    rw [F.tag, ite_eq_right (by omega), ite_eq_right (by omega)] at this
+    unfold cT; rw [ins0_tag s x hcs.2, this]
+  exact ⟨hty, htz, hto⟩
+
 /-- **The contract's `start`.** -/
 theorem length_assocSet_le {β : Type} (l : List (Nat × β)) (k : Nat) (v : β) :
     (assocSet l k v).length ≤ l.length + 1 := by
@@ -147,44 +201,20 @@ theorem top_start {s : Core} {A : Abs} {x : Nat} (hA : INV s A) (hT : TopInv s)
   have hcl : cl = A.chunks := NList.unique hL.nlist hA.cList.nlist
   have hxA : x ∈ A.chunks := hcl ▸ hx
   have hent : Ent ord 0 x := by unfold Ent; rw [S.ord0]; exact hx
-  have hnd : (s.cin.getX x).Nodup := by
-    have := S.tabsNodup 0 x hent; unfold tabs at this; rw [ite_eq_left rfl] at this; exact this
   -- the split's data
-  have hT1 := ins_pp1 hI hC hx
+  have hT1 := ins_pp1 hI hx
   obtain ⟨i1, hi1⟩ := idx?_some_of_mem hT1
   set f1x := digit (ts s) x 1 with hf1
-  have hdist : ∀ i i', 1 ≤ i → i ≤ s.P.H → 1 ≤ i' → i' ≤ s.P.H → pth (ts s) x i = pth (ts s) x i' →
-      i = i' := by
-    intro i i' h1 h2 h1' h2' e
-    have a := (ins_pp_ht hI hx h1 h2).2
-    have b := (ins_pp_ht hI hx h1' h2').2
-    unfold pp at a b; rw [ite_eq_right (by omega)] at a; rw [ite_eq_right (by omega)] at b
-    rw [e] at a; omega
-  have hex : ∀ i, 1 ≤ i → i ≤ s.P.H → pth (ts s) x i < s.nodes.size := by
-    intro i h1 h2
-    have a := (ins_pp_ht hI hx h1 h2).1
-    unfold pp at a; rw [ite_eq_right (by omega)] at a; exact a.2.1
-  have F := insFin_frame s x f1x i1 hxs hnd hdist hex
+  obtain ⟨F, hnd⟩ := insFin_frame_of_invariant (f1x := f1x) (i1 := i1) hI hx hxs
   have SH := ins_shape hI hC hx F hTP rfl hi1
-  have htags := ins_tags hI hC hx F hTP rfl hi1
   have T1 : ∀ c d, Before (clIns cl x s.C.size (s.C.size + 1)) c d →
       tagF (insFin s x f1x i1) c < tagF (insFin s x f1x i1) d := fun c d h => SH.toShapeT.tagF_lt h
   obtain ⟨Al, Bl, hcl1, hA1, hB1, hcl'⟩ := ins_cl hI hC hx
-  have hmem' : ∀ c, c ∈ clIns cl x s.C.size (s.C.size + 1) ↔ c ∈ cl ∨ c = s.C.size ∨ c = s.C.size + 1 := by
+  have hmem' : ∀ c, c ∈ clIns cl x s.C.size (s.C.size + 1) ↔ c ∈ cl ∨ c = s.C.size ∨ c =
+    s.C.size + 1 := by
     intro c; rw [hcl', hcl1]; simp only [List.mem_append, List.mem_cons]; tauto
   -- the tags after the split are `tagF`
-  have hty : tagY (ins0 s x) x f1x i1 = tagF (insFin s x f1x i1) s.C.size := by
-    have := htags s.C.size ((hmem' _).mpr (Or.inr (Or.inl rfl)))
-    rw [F.tag, ite_eq_right (by omega), ite_eq_left rfl] at this; exact this
-  have htz : tagZ (ins0 s x) x f1x i1 = tagF (insFin s x f1x i1) (s.C.size + 1) := by
-    have := htags (s.C.size + 1) ((hmem' _).mpr (Or.inr (Or.inr rfl)))
-    rw [F.tag, ite_eq_left rfl] at this; exact this
-  have hto : ∀ c ∈ cl, cT (ins0 s x) c = tagF (insFin s x f1x i1) c := by
-    intro c hc
-    have hcs := (hC c).mp hc
-    have := htags c ((hmem' _).mpr (Or.inl hc))
-    rw [F.tag, ite_eq_right (by omega), ite_eq_right (by omega)] at this
-    unfold cT; rw [ins0_tag s x hcs.2, this]
+  obtain ⟨hty, htz, hto⟩ := ins_tag_interpretation hI hC hx F hTP rfl hi1
   have hnd1 : cl.Nodup := S.ord0 ▸ S.ordNodup 0
   -- the links around the new chunks
   obtain ⟨hLk, hp2, hn2⟩ := linkCOK_push2 hA hxA
@@ -200,7 +230,8 @@ theorem top_start {s : Core} {A : Abs} {x : Nat} (hA : INV s A) (hT : TopInv s)
   have cPz : cP (ins0 s x) (s.C.size + 1) = x := by
     unfold ins0; rw [hLk.cP', ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_left rfl]
   have cNz : cN (ins0 s x) (s.C.size + 1) = Bl.headD NIL := by
-    unfold ins0; rw [hLk.cN', ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_left rfl, hn2, hnx]
+    unfold ins0; rw [hLk.cN', ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_left rfl,
+      hn2, hnx]
   have hgy : TagOK (ins0 s x) s.C.size (tagY (ins0 s x) x f1x i1) := by
     refine ⟨fun hp => ?_, fun _ => ?_⟩
     · rw [cPy] at hp ⊢
@@ -233,7 +264,8 @@ theorem top_start {s : Core} {A : Abs} {x : Nat} (hA : INV s A) (hT : TopInv s)
     · rw [eN, cNz] at hn ⊢
       have hBl : Bl ≠ [] := by rintro rfl; exact hn rfl
       have hm := headD_mem hBl NIL
-      have hmc : Bl.headD NIL ∈ cl := by rw [hcl1]; exact List.mem_append_right _ (List.mem_cons_of_mem _ hm)
+      have hmc : Bl.headD NIL ∈ cl := by
+        rw [hcl1]; exact List.mem_append_right _ (List.mem_cons_of_mem _ hm)
       have hcs := (hC _).mp hmc
       rw [eT _ (by omega), hto _ hmc, htz]
       apply T1; rw [hcl', show Al ++ s.C.size :: x :: (s.C.size + 1) :: Bl =
@@ -250,7 +282,7 @@ theorem top_start {s : Core} {A : Abs} {x : Nat} (hA : INV s A) (hT : TopInv s)
   obtain ⟨v, hv⟩ := lookup_some_of_mem hw
   have hfv : f1x = v := by
     rw [hf1]; unfold digit
-    show ((nd (ts s) (pp (ts s) x 1)).lab? x).getD 0 = v
+    change ((nd (ts s) (pp (ts s) x 1)).lab? x).getD 0 = v
     unfold Node.lab?; rw [hv]; rfl
   have hf1' : ((ins0 s x).nodes.getX (((ins0 s x).path.getX x).getX 1)).lab? x = some f1x := by
     rw [hfv]; exact hv
@@ -269,14 +301,15 @@ theorem top_start {s : Core} {A : Abs} {x : Nat} (hA : INV s A) (hT : TopInv s)
     ins3_P s x f1x i1
   have hmu : topMu (markState (ins3 s x f1x i1) x s.C.size (s.C.size + 1) (insJob s x)) =
       (s.P.H + 1 - 1) + walkLeft s.P 1 := by
-    show jobLeft (ts (markState (ins3 s x f1x i1) x s.C.size (s.C.size + 1) (insJob s x))) (insJob s x) = _
+    change jobLeft (ts (markState (ins3 s x f1x i1) x s.C.size (s.C.size + 1) (insJob s x)))
+      (insJob s x) = _
     rw [hts]
-    show ((ts (ins3 s x f1x i1)).P.H + 1 - 1) + walkLeft (ts (ins3 s x f1x i1)).P 1 = _
+    change ((ts (ins3 s x f1x i1)).P.H + 1 - 1) + walkLeft (ts (ins3 s x f1x i1)).P 1 = _
     rw [ts_P, ins3_P]
   have hfin : finS (ts (markState (ins3 s x f1x i1) x s.C.size (s.C.size + 1) (insJob s x)))
       (some (insJob s x)) = insFin s x f1x i1 := by
     rw [hts]
-    show copyRest (insJob s x) (ts (ins3 s x f1x i1)).P.H (ts (ins3 s x f1x i1)) 1 = _
+    change copyRest (insJob s x) (ts (ins3 s x f1x i1)).P.H (ts (ins3 s x f1x i1)) 1 = _
     rw [ts_P, ins3_P]; rfl
   refine ⟨by rw [hmu]; unfold walkLeft; omega, by rw [hmu]; unfold topJ walkLeft; omega, ?_⟩
   -- the invariant
@@ -293,7 +326,8 @@ theorem top_start {s : Core} {A : Abs} {x : Nat} (hA : INV s A) (hT : TopInv s)
       (withTag (withTag (linkChunkPair (push2 s) x s.C.size (s.C.size + 1)) s.C.size
         (tagY (ins0 s x) x f1x i1)) (s.C.size + 1) (tagZ (ins0 s x) x f1x i1)).firstChunk := by
     unfold markState; rw [ins3_eq]; unfold insFinS joinS; rfl
-  have hch : (A.splitChunk x s.C.size (s.C.size + 1)).chunks = clIns cl x s.C.size (s.C.size + 1) := by
+  have hch : (A.splitChunk x s.C.size (s.C.size + 1)).chunks = clIns cl x s.C.size (s.C.size +
+    1) := by
     unfold Abs.splitChunk clIns; rw [hcl]
   have hsz : (markState (ins3 s x f1x i1) x s.C.size (s.C.size + 1) (insJob s x)).C.size =
       s.C.size + 2 := by
@@ -308,7 +342,7 @@ theorem top_start {s : Core} {A : Abs} {x : Nat} (hA : INV s A) (hT : TopInv s)
     ordIns ord cl x s.C.size (s.C.size + 1), drIns dr (s.cin.getX x), n0, ?_, fun c => ?_, ?_⟩
   · rw [eN, eP, eF, ← hch]; exact hW.cList
   · rw [hmem', hsz, hC]; omega
-  · show InvJ (finS (ts (markState (ins3 s x f1x i1) x s.C.size (s.C.size + 1) (insJob s x)))
+  · change InvJ (finS (ts (markState (ins3 s x f1x i1) x s.C.size (s.C.size + 1) (insJob s x)))
       (some (insJob s x))) _ _ _ _ (some (insJob s x))
     rw [hfin]
     have hcap' : (clIns cl x s.C.size (s.C.size + 1)).length + 2 ≤
@@ -334,9 +368,10 @@ theorem top_start {s : Core} {A : Abs} {x : Nat} (hA : INV s A) (hT : TopInv s)
         unfold order Node.order at a ⊢
         rw [F.table X, F.side X, ite_eq_left ⟨hX, hsz⟩, ite_eq_left ⟨hX, hsz⟩]
         refine ⟨?_, ?_, hb⟩
-        · have := length_aroundT_le (s.nodes.getX X).table x s.C.size (s.C.size + 1) (insF s x X).1 (insF s x X).2
+        · have := length_aroundT_le (s.nodes.getX X).table x s.C.size (s.C.size + 1) (insF s x
+          X).1 (insF s x X).2
           rw [List.length_map]; rw [List.length_map] at a
-          show _ ≤ n0 X + 2 * (dr X + 1)
+          change _ ≤ n0 X + 2 * (dr X + 1)
           have e1 : ((s.nodes.getX X).table).length = ((nd (ts s) X).table).length := rfl
           omega
         · have := length_sideAround_le (s.nodes.getX X) x s.C.size (s.C.size + 1)
@@ -349,7 +384,7 @@ theorem top_start {s : Core} {A : Abs} {x : Nat} (hA : INV s A) (hT : TopInv s)
     refine ⟨SH, hTi, hRo, fun j hj => ?_, hcap', hTL⟩
     cases hj
     refine ⟨⟨Al, Bl, hcl'⟩, ?_⟩
-    show 1 ≤ 1 ∧ 1 ≤ (insFin s x f1x i1).P.H ∧
+    change 1 ≤ 1 ∧ 1 ≤ (insFin s x f1x i1).P.H ∧
       lpr (insFin s x f1x i1) s.C.size = lpr (insFin s x f1x i1) x ∧
       lpr (insFin s x f1x i1) (s.C.size + 1) = lpr (insFin s x f1x i1) x
     rw [F.P, F.lpar, F.lpar, F.lpar, ite_eq_left (Or.inl rfl), ite_eq_left (Or.inr rfl),

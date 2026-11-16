@@ -71,18 +71,25 @@ structure LParams (P : Params) : Prop where
 
 /-! ### Ghost state -/
 
+/-- Ghost counters tracking each chunk’s label halvings, splits, pushes and arrivals. -/
 structure LGh where
   /-- A group created by a split start in its current chunk, and not moved since. -/
   child : Nat → Bool
   /-- Halvings, child splits, root splits, insertions of a chunk. -/
   hv : Nat → Nat
+  /-- Child splits started in each chunk. -/
   cs : Nat → Nat
+  /-- Root splits started in each chunk. -/
   rs : Nat → Nat
+  /-- Insertions charged to each chunk. -/
   ins : Nat → Nat
   /-- Pushes at the back and front, and groups arrived at the back and front. -/
   pb : Nat → Nat
+  /-- Label pushes at the front of each chunk. -/
   pf : Nat → Nat
+  /-- Groups arriving at the back of each chunk. -/
   arB : Nat → Nat
+  /-- Groups arriving at the front of each chunk. -/
   arF : Nat → Nat
   /-- The size of a quiet chunk when it became quiet. -/
   e0 : Nat → Nat
@@ -108,6 +115,7 @@ def famC (s : Core) (x : Nat) : Nat := cSz s (cLl s x) + cSz s x + cSz s (cRr s 
 
 /-! ### The invariant -/
 
+/-- Group-label separation, range and charging bounds across chunk phases. -/
 structure LInv (s : Core) (lg : LGh) (s₀ δ δu : Nat → Nat) : Prop where
   /-- Gaps between consecutive groups of a chunk survive the chunk's halvings. -/
   gaps : ∀ g, LiveG s g → g ≠ cLs s (gC s g) →

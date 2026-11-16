@@ -165,10 +165,12 @@ theorem GSame.of_eq {s s' : Core} (hG : s'.Gs = s.Gs) (hE : s'.E = s.E) (hh : s'
   have hG' : ∀ g, s'.Gs.getX g = s.Gs.getX g := fun g => by rw [hG]
   have hE' : ∀ e, s'.E.getX e = s.E.getX e := fun e => by rw [hE]
   exact ⟨by rw [hG], fun g => by simp only [gSz, hG'], fun g => by simp only [gSt, hG'],
-    fun g => by simp only [gSrc, hG'], fun g => by simp only [gLl, hG'], fun g => by simp only [gRr, hG'],
-    fun g => by simp only [gN, hG'], fun g => by simp only [gC, hG'], fun g => by simp only [gA, hG'],
-    fun e => by show (s'.E.getX e).grp = (s.E.getX e).grp; rw [hE'],
-    fun e => by show (s'.E.getX e).lab = (s.E.getX e).lab; rw [hE'], hh, hP⟩
+    fun g => by simp only [gSrc, hG'], fun g => by simp only [gLl, hG'], fun g => by simp only
+      [gRr, hG'],
+    fun g => by simp only [gN, hG'], fun g => by simp only [gC, hG'], fun g => by simp only [gA,
+      hG'],
+    fun e => by change (s'.E.getX e).grp = (s.E.getX e).grp; rw [hE'],
+    fun e => by change (s'.E.getX e).lab = (s.E.getX e).lab; rw [hE'], hh, hP⟩
 
 /-- **The lower invariants after a pop and the split start.** -/
 theorem lowinv_pop {t s2 : Core} {L : List Nat} {c : Nat} {job : Job} (h : LowInv t L)

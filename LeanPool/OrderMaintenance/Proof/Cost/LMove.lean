@@ -53,8 +53,14 @@ theorem linv_cmove_core {s s' : Core} {A : Abs} {s₀ δ δu : Nat → Nat}
   have hxy := Fx.lx hI hxL
   have hxz := Fx.rx hI hxL
   have hyz := Fx.lr hI hxL
-  have hxd : x ≠ dst := by rcases hdst with rfl | rfl; exact Ne.symm hxy; exact Ne.symm hxz
-  have hdov : cSt s dst = .overflow := by rcases hdst with rfl | rfl; exact Fx.lSt; exact Fx.rSt
+  have hxd : x ≠ dst := by
+    rcases hdst with rfl | rfl
+    · exact Ne.symm hxy
+    · exact Ne.symm hxz
+  have hdov : cSt s dst = .overflow := by
+    rcases hdst with rfl | rfl
+    · exact Fx.lSt
+    · exact Fx.rSt
   have hLC : ∀ c, LiveC s' c ↔ LiveC s c := by intro c; simp only [LiveC, M.Csize]
   have hLv : ∀ z, LiveG s' z ↔ LiveG s z := M.liveG
   -- the family of a splitting chunk keeps its size
@@ -70,9 +76,18 @@ theorem linv_cmove_core {s s' : Core} {A : Abs} {s₀ δ δu : Nat → Nat}
       · rw [ite_eq_right hyz, ite_eq_left rfl]; omega
     · obtain ⟨d1, d2, d3, d4, d5, d6, d7, d8⟩ :=
         Fx.disjoint (hC.cfam x' hx' hs') (Ne.symm hxx) hst hs'
-      have hnd1 : cLl s x' ≠ dst := by rcases hdst with rfl | rfl; exact d5; exact d6
-      have hnd2 : x' ≠ dst := by rcases hdst with rfl | rfl; exact d1; exact d2
-      have hnd3 : cRr s x' ≠ dst := by rcases hdst with rfl | rfl; exact d7; exact d8
+      have hnd1 : cLl s x' ≠ dst := by
+        rcases hdst with rfl | rfl
+        · exact d5
+        · exact d6
+      have hnd2 : x' ≠ dst := by
+        rcases hdst with rfl | rfl
+        · exact d1
+        · exact d2
+      have hnd3 : cRr s x' ≠ dst := by
+        rcases hdst with rfl | rfl
+        · exact d7
+        · exact d8
       rw [ite_eq_right d3, ite_eq_right hnd1, ite_eq_right hxx, ite_eq_right hnd2,
         ite_eq_right d4, ite_eq_right hnd3]
   have hcszq : ∀ d, d ≠ x → d ≠ dst → cSz s' d = cSz s d := by
@@ -177,8 +192,14 @@ theorem linv_cmove_core {s s' : Core} {A : Abs} {s₀ δ δu : Nat → Nat}
       · rw [ite_eq_right hyz] at e1; rw [ite_eq_left rfl] at e2; omega
     · obtain ⟨d1, d2, d3, d4, d5, d6, d7, d8⟩ :=
         Fx.disjoint (hC.cfam x' hx' hxs') (Ne.symm hxx) hst hxs'
-      have hnd1 : cLl s x' ≠ dst := by rcases hdst with rfl | rfl; exact d5; exact d6
-      have hnd3 : cRr s x' ≠ dst := by rcases hdst with rfl | rfl; exact d7; exact d8
+      have hnd1 : cLl s x' ≠ dst := by
+        rcases hdst with rfl | rfl
+        · exact d5
+        · exact d6
+      have hnd3 : cRr s x' ≠ dst := by
+        rcases hdst with rfl | rfl
+        · exact d7
+        · exact d8
       have e1 := harr (cLl s x'); rw [ite_eq_right hnd1] at e1
       have e2 := harr (cRr s x'); rw [ite_eq_right hnd3] at e2
       rw [hunits' x' hx' hxs' hxx]; omega
@@ -287,12 +308,12 @@ theorem pushFrontLabs_vals {s : Core} {center D : Nat} :
         rw [List.range_succ, List.map_append, ih]
         simp only [List.map_cons, List.map_nil]
         congr 1
-        refine List.map_congr_left fun i hi => ?_
-        have hi' : i < k := List.mem_range.mp hi
-        have : (k + 1 - i) * D = (k - i) * D + D := by
-          rw [show k + 1 - i = (k - i) + 1 by omega, Nat.add_mul, Nat.one_mul]
-        rw [this]; omega
-        rw [Nat.add_sub_cancel_left, Nat.one_mul, Nat.add_sub_cancel]
+        · refine List.map_congr_left fun i hi => ?_
+          have hi' : i < k := List.mem_range.mp hi
+          have : (k + 1 - i) * D = (k - i) * D + D := by
+            rw [show k + 1 - i = (k - i) + 1 by omega, Nat.add_mul, Nat.one_mul]
+          rw [this]; omega
+        · rw [Nat.add_sub_cancel_left, Nat.one_mul, Nat.add_sub_cancel]
       · rw [hr] at hl; cases hl
     cases nxt with
     | none =>
@@ -827,9 +848,10 @@ theorem linv_cmoveL {s : Core} {A : Abs} {gh : GGh} {lg : LGh} {s₀ δ δu : Na
     hnd hlen (fun g hg => (hmem g hg).1.2.1)
   obtain ⟨-, hun', hle⟩ := cinv_cmove hG hC M hxL hst (Or.inl rfl) (Ne.symm hxy) hmem hnd hone
   have E := cmoveL_ends (s := s) (x := x) (u := u) (labs := labs) (Ne.symm hxy) hxL.2 Fx.lLive.2
-  refine ⟨{ lg with child := fun g => if g ∈ u then false else lg.child g, pb := Function.update
-    lg.pb (cLl s x) (lg.pb (cLl s x) + u.length), arB := Function.update lg.arB (cLl s x)
-      (lg.arB (cLl s x) + u.length) }, ?_⟩
+  refine ⟨{ lg with
+    child := fun g => if g ∈ u then false else lg.child g
+    pb := Function.update lg.pb (cLl s x) (lg.pb (cLl s x) + u.length)
+    arB := Function.update lg.arB (cLl s x) (lg.arB (cLl s x) + u.length) }, ?_⟩
   refine linv_cmove_core hI hC hL M hxL hst (Or.inl rfl) hmem hk hun' hle hcl (fun g => rfl)
     rfl rfl rfl rfl rfl ?_ (fun c => hL.pf c) ?_ ?_ ?_
   · intro c
@@ -932,9 +954,10 @@ theorem linv_cmoveR {s : Core} {A : Abs} {gh : GGh} {lg : LGh} {s₀ δ δu : Na
     hnd hlen (fun g hg => (hmem g hg).1.2.1)
   obtain ⟨-, hun', hle⟩ := cinv_cmove hG hC M hxL hst (Or.inr rfl) (Ne.symm hxz) hmem hnd hone
   have E := cmoveR_ends (s := s) (x := x) (u := u) (labs := labs) (Ne.symm hxz) hxL.2 Fx.rLive.2
-  refine ⟨{ lg with child := fun g => if g ∈ u then false else lg.child g, pf := Function.update
-    lg.pf (cRr s x) (lg.pf (cRr s x) + u.length), arF := Function.update lg.arF (cRr s x)
-      (lg.arF (cRr s x) + u.length) }, ?_⟩
+  refine ⟨{ lg with
+    child := fun g => if g ∈ u then false else lg.child g
+    pf := Function.update lg.pf (cRr s x) (lg.pf (cRr s x) + u.length)
+    arF := Function.update lg.arF (cRr s x) (lg.arF (cRr s x) + u.length) }, ?_⟩
   refine linv_cmove_core hI hC hL M hxL hst (Or.inr rfl) hmem hk hun' hle hcl (fun g => rfl)
     rfl rfl rfl rfl rfl (fun c => hL.pb c) ?_ ?_ ?_ ?_
   · intro c
@@ -1030,8 +1053,14 @@ theorem linv_cremove {s : Core} {A : Abs} {lg : LGh} {s₀ δ δu : Nat → Nat}
     rw [hsz]
     by_cases h2 : d = cLl s x ∨ d = cRr s x
     · rw [ite_eq_left h2]
-      have hdo : cSt s d = .overflow := by rcases h2 with rfl | rfl; exact Fx.lSt; exact Fx.rSt
-      have hds : cSrc s d = x := by rcases h2 with rfl | rfl; exact Fx.lSrc; exact Fx.rSrc
+      have hdo : cSt s d = .overflow := by
+        rcases h2 with rfl | rfl
+        · exact Fx.lSt
+        · exact Fx.rSt
+      have hds : cSrc s d = x := by
+        rcases h2 with rfl | rfl
+        · exact Fx.lSrc
+        · exact Fx.rSrc
       have hO := hL.insO d hd hdo
       rw [hds] at hO; unfold famC at hO
       unfold kC

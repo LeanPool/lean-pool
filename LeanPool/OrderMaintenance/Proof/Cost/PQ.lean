@@ -29,6 +29,7 @@ never takes the slow path (K2); `pqPopMax` returns a chunk of largest key; `pqEm
 namespace OrderMaintenance.Proof
 
 open OrderMaintenance.Model
+/-- The concrete bucket queue represents the given keys, membership and ordered nonempty buckets. -/
 structure QRep (s : Core) (k : Nat → Nat) (inQ : Nat → Bool) (bl : Nat → List Nat) (nb : List Nat) :
     Prop where
   where_ : ∀ c, s.pqWhere.getX c = if inQ c then k c else 0

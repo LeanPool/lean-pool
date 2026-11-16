@@ -9,6 +9,7 @@ Authors: Denis Firsov
 module
 
 public import LeanPool.OrderMaintenance.Proof.Cost.Fresh
+public import Mathlib.Data.Nat.Size
 
 
 /-!
@@ -34,7 +35,8 @@ open OrderMaintenance.Model
 def pL (N : Nat) : Nat := max 8 (Nat.size N)
 
 /-- The parameters of a core of capacity `N`. The label widths are the smallest the conditions
-allow: `elementBits − 1 > UG + log₂(G + kG)` and `groupBits − 1 > HC + log₂ PC` (`GParams.push`, `LParams.push`). -/
+allow: `elementBits − 1 > UG + log₂(G + kG)` and `groupBits − 1 > HC + log₂ PC` (`GParams.push`,
+  `LParams.push`). -/
 def proofParams (N : Nat) : Params :=
   let L := pL N
   let G := 2 * L
@@ -50,16 +52,29 @@ def proofParams (N : Nat) : Params :=
   let rsB := 3 * Mu + 1
   let HC := 2 * (csB + rsB)
   let PC := 3 * Mu + rsB + csB
-  { N := N, L := L, G := G, T := T, theta := 2 * L * L, elementBits := UG + (Nat.log2 (G + kG) + 2),
-    groupBits := HC + (Nat.log2 PC + 2), elementSpacing := 2 ^ UG, groupSpacing := 2 ^ HC, groupBudget := 4, chunkBudget := 4, reservationBudget := 8, a := 8,
-    s := 11, beta := 64, H := L / 3 + 1 }
+  { N := N
+    L := L
+    G := G
+    T := T
+    theta := 2 * L * L
+    elementBits := UG + (Nat.log2 (G + kG) + 2)
+    groupBits := HC + (Nat.log2 PC + 2)
+    elementSpacing := 2 ^ UG
+    groupSpacing := 2 ^ HC
+    groupBudget := 4
+    chunkBudget := 4
+    reservationBudget := 8
+    a := 8
+    s := 11
+    beta := 64
+    H := L / 3 + 1 }
 
 theorem pL_ge (N : Nat) : 8 ≤ pL N := le_max_left _ _
 
 theorem pow_lt_two_pow (a b : Nat) (h : a < 2 ^ b) (c : Nat) : a * 2 ^ c < 2 ^ (c + b) := by
   rw [pow_add]; nlinarith [Nat.one_le_two_pow (n := c)]
 
-theorem cE_eq (P : Params) (hB : 1 ≤ P.elementBits) : cE P = 2 ^ (P.elementBits - 1) := by
+theorem cE_eq (P : Params) : cE P = 2 ^ (P.elementBits - 1) := by
   unfold cE; simp [Nat.shiftLeft_eq]
 
 theorem cG_eq (P : Params) : cG P = 2 ^ (P.groupBits - 1) := by
@@ -72,7 +87,7 @@ theorem gparams_proof (N : Nat) : GParams (proofParams N) := by
   · simp only [proofParams]; omega
   · simp only [proofParams]; exact Nat.one_le_two_pow
   · simp only [proofParams]; omega
-  · rw [cE_eq _ (by simp only [proofParams]; omega)]
+  · rw [cE_eq]
     simp only [proofParams, kG]
     generalize hU : 2 * pL N + (2 * pL N / 3 + 1) + ((2 * pL N / 3 + 1) - (2 * pL N - 2) / 2) = U
     generalize hX : 2 * pL N + (2 * pL N / (4 - 1) + 1) = X

@@ -31,7 +31,8 @@ theorem ins_elem_ok {s : Core} {A : Abs} {gh : GGh} (hI : INV s A)
     ∃ lab, (insertElem x hh).run s = .ok s.E.size (linkElem s x s.E.size lab hh) ∧
       (∃ A', INV (linkElem s x s.E.size lab hh) A' ∧
         A'.elist = OrderMaintenance.Spec.insertAfterL x s.E.size A.elist) ∧
-      ∃ gh', GInv (linkElem s x s.E.size lab hh) (OrderMaintenance.Spec.insertAfterL x s.E.size A.elist) gh'
+      ∃ gh', GInv (linkElem s x s.E.size lab hh) (OrderMaintenance.Spec.insertAfterL x s.E.size
+        A.elist) gh'
         (fun b => if b = eG s x then 1 else 0) := by
   obtain ⟨lab, hrun, hG'⟩ := ginv_insertElem hI hG hP hx hh
   refine ⟨lab, hrun, ?_, hG'⟩
@@ -74,8 +75,10 @@ theorem chunkSize_ok {s : Core} {x lab hh : Nat} (hpq : PQC s) (hcL : LiveC s (g
     rw [chunkSize_run_q hq1]
     have hsz1 : cSz s1 c = cSz s c := by simp only [cSz, hC1]
     rw [hsz1]
-    have hss : sizeState s1 c = { s1 with C := s1.C.modify c fun C => { C with size := (s1.C.getX c).size + 1 } } := rfl
-    have hQ' : QRep (sizeState s1 c) (cSz s) (inQC s) bl nb := hQ.congr hPS (fun _ => rfl) (fun _ _ => rfl)
+    have hss : sizeState s1 c = { s1 with C := s1.C.modify c fun C => { C with size :=
+      (s1.C.getX c).size + 1 } } := rfl
+    have hQ' : QRep (sizeState s1 c) (cSz s) (inQC s) bl nb := hQ.congr hPS (fun _ => rfl) (fun
+      _ _ => rfl)
     have hin : inQC s c = decide ((sizeState s1 c).P.theta < cSz s c) := by
       unfold inQC; rw [hPs]; simp [hcL, hq]
     obtain ⟨st', hrun, hO, hQI⟩ := pqAdjust_inc hQ' (by have := hcL.1; omega) hin
@@ -146,7 +149,8 @@ end OrderMaintenance.Proof
 namespace OrderMaintenance.Proof
 
 open OrderMaintenance.Model OrderMaintenance.Zeroing
-/-- **The game across an insertion**: one value grows by at most 1, and the round has room for it. -/
+/-- **The game across an insertion**: one value grows by at most 1,
+and the round has room for it. -/
 theorem game_ins {n R k J : Nat} {μ : Core → Nat} {s s2 : Core} {y : Fin n → ℝ} {i : Fin n}
     {a : Fin n → ℝ} {ip js : Nat} (hG : GameInv n R s y i a ip) (hRO : RoundOK k J μ s ip js)
     (hk : 1 ≤ k) (hR : J / k + 1 ≤ R) (hn : 1 ≤ n) {c : Nat} (hc1 : 1 ≤ c) (hcn : c - 1 < n)
@@ -173,7 +177,7 @@ theorem game_ins {n R k J : Nat} {μ : Core → Nat} {s s2 : Core} {y : Fin n �
     rw [hj] at hRO
     obtain ⟨h1, h2, h3⟩ := hRO
     exact ⟨y, i, _, ip + 1, js, hG.insert ⟨c - 1, hcn⟩ hlev (hipR ip (by omega)),
-      by show (ip + 1) * k ≤ js + (k - 0) ∧ js + μ s2 ≤ J ∧ 1 ≤ μ s2
+      by change (ip + 1) * k ≤ js + (k - 0) ∧ js + μ s2 ≤ J ∧ 1 ≤ μ s2
          rw [hμ]; refine ⟨?_, h2, h3⟩; rw [Nat.add_mul, Nat.one_mul]; omega⟩
   | none =>
     rw [hj] at hRO
@@ -181,9 +185,9 @@ theorem game_ins {n R k J : Nat} {μ : Core → Nat} {s s2 : Core} {y : Fin n �
     · have hz' : ∀ j : Fin n, gvec n s j = 0 := fun j => by unfold gvec; rw [hz]; simp
       have hG0 := GameInv.reset (R := R) hz' ⟨0, hn⟩
       exact ⟨0, ⟨0, hn⟩, _, 0 + 1, 0, hG0.insert ⟨c - 1, hcn⟩ hlev (hipR 0 (by simp)),
-        by show (0 + 1) * k ≤ J + (k - 0); omega⟩
+        by change (0 + 1) * k ≤ J + (k - 0); omega⟩
     · exact ⟨y, i, _, ip + 1, js, hG.insert ⟨c - 1, hcn⟩ hlev (hipR ip hip),
-        by show (ip + 1) * k ≤ J + (k - 0); rw [Nat.add_mul, Nat.one_mul]; omega⟩
+        by change (ip + 1) * k ≤ J + (k - 0); rw [Nat.add_mul, Nat.one_mul]; omega⟩
 
 end OrderMaintenance.Proof
 
@@ -191,9 +195,12 @@ namespace OrderMaintenance.Proof
 
 open OrderMaintenance.Model OrderMaintenance.Zeroing
 theorem sizeState_sameLinks (t : Core) (c : Nat) : SameLinks t (sizeState t c) := by
-  refine ⟨rfl, fun _ => rfl, fun _ => rfl, fun _ => rfl, fun _ => rfl, fun _ => rfl, fun _ => rfl, rfl,
-    fun _ => rfl, fun _ => rfl, fun _ => rfl, fun _ => rfl, fun _ => rfl, fun _ => rfl, fun _ => rfl,
-    rfl, rfl, rfl, rfl, rfl, by simp [sizeState], fun d => ?_, fun d => ?_, fun d => ?_, fun d => ?_,
+  refine ⟨rfl, fun _ => rfl, fun _ => rfl, fun _ => rfl, fun _ => rfl, fun _ => rfl, fun _ =>
+    rfl, rfl,
+    fun _ => rfl, fun _ => rfl, fun _ => rfl, fun _ => rfl, fun _ => rfl, fun _ => rfl, fun _ =>
+      rfl,
+    rfl, rfl, rfl, rfl, rfl, by simp [sizeState], fun d => ?_, fun d => ?_, fun d => ?_, fun d
+      => ?_,
     rfl⟩ <;> simp only [cN, cP, cF, cLs, sizeState, Array.getX_modify] <;> split <;> simp_all
 
 theorem sizeState_cT (t : Core) (c d : Nat) : cT (sizeState t c) d = cT t d := by
@@ -201,7 +208,8 @@ theorem sizeState_cT (t : Core) (c d : Nat) : cT (sizeState t c) d = cT t d := b
 
 /-- **The insertion step**: the element link and the size update succeed; all invariants hold
 with one undriven insertion. -/
-theorem insert_step {TI : Core → Prop} {μ : Core → Nat} {J k n R : Nat} {cap : Params → Nat} {L : List Nat}
+theorem insert_step {TI : Core → Prop} {μ : Core → Nat} {J k n R : Nat} {cap : Params → Nat} {L
+  : List Nat}
     {s : Core} {y : Fin n → ℝ} {i : Fin n} {a : Fin n → ℝ} {ip js x : Nat}
     (hTC : TopContract TI μ J cap) (hL : LowInv s L) (hTI : TI s) (hG : GameInv n R s y i a ip)
     (hRO : RoundOK k J μ s ip js) (hx : x ∈ L) (hk : 1 ≤ k) (hR : J / k + 1 ≤ R) (hn : 1 ≤ n)
@@ -209,7 +217,8 @@ theorem insert_step {TI : Core → Prop} {μ : Core → Nat} {J k n R : Nat} {ca
     (hI5 : (s.P.theta : ℝ) + R * (Hn (n - 1) + 1) ≤ s.P.T) (hh : Nat) :
     ∃ s1 s2, (insertElem x hh).run s = .ok s.E.size s1 ∧
       (chunkSize (gC s1 (eG s1 s.E.size)) true).run s1 = .ok () s2 ∧
-      InsPost TI k J n R μ (OrderMaintenance.Spec.insertAfterL x s.E.size L) s (eG s x) (gC s (eG s x)) s2 ∧
+      InsPost TI k J n R μ (OrderMaintenance.Spec.insertAfterL x s.E.size L) s (eG s x) (gC s
+        (eG s x)) s2 ∧
       eG s1 s.E.size = eG s x ∧ gC s1 (eG s x) = gC s (eG s x) ∧ s2.E = s1.E ∧ s1.P = s.P := by
   obtain ⟨A, hI, hel⟩ := hL.inv
   subst hel
@@ -238,7 +247,9 @@ theorem insert_step {TI : Core → Prop} {μ : Core → Nat} {J k n R : Nat} {ca
       cLl s (cSrc s (gC s (eG s x))) = gC s (eG s x) ∨
         cRr s (cSrc s (gC s (eG s x))) = gC s (eG s x) := by
     intro ho; obtain ⟨-, -, h⟩ := hC.covf _ hcL ho
-    rcases h with h | h; exact Or.inl h; exact Or.inr h
+    rcases h with h | h
+    · exact Or.inl h
+    · exact Or.inr h
   -- Lemma R's size bound before the insertion
   have hd := hL.cp.I4
   have hchunks := hN.chunks (by omega)
@@ -246,15 +257,23 @@ theorem insert_step {TI : Core → Prop} {μ : Core → Nat} {J k n R : Nat} {ca
   have hTS2 : TopSame s s2 := topSame_ins hC2 hP2 ⟨by rw [r12]; rfl, by rw [r13]; rfl,
     by rw [r14]; rfl, by rw [r15]; rfl, by rw [r9]; rfl, by rw [r8]; rfl, by rw [r7]; rfl,
     by rw [r6]; rfl⟩
+  let lg' : LGh := { lg with
+    ins := Function.update lg.ins (gC s (eG s x)) (lg.ins (gC s (eG s x)) + 1) }
   refine
-    { inv := ⟨A', hI1.of_sameLinks ?_ ?_, hel1⟩, ginv := ⟨gh', hG1.of_gsame (GSame.of_eq hGs2 hE2 hhead2
-        (by rw [hP2]; rfl))⟩, cinv := ⟨s₀, ?_, ⟨{ lg with ins := Function.update lg.ins (gC s (eG s x)) (lg.ins (gC s (eG s x)) + 1) }, ?_⟩, by rw [hP2]; exact hLP, by rw [hP2]; exact hGP⟩,
-      pq := hpq2, cnt := ⟨e, pops, hN.ins S hcnt2⟩, cp := by rw [hP2]; exact hL.cp,
-      ti := hTC.frame _ _ hTS2 hTI,
-      game := ?_, count := hcnt2, P := hP2,
-      grp := ⟨(S.live _).mpr hgL, by rw [S.chk], by rw [S.sz, ite_eq_left rfl]; omega⟩,
-      csz := by rw [S.csz, ite_eq_left rfl]; omega,
-      quiet := fun hq => ?_, cL := by simp only [LiveC, S.Csize]; exact hcL }
+    { inv := ⟨A', hI1.of_sameLinks ?_ ?_, hel1⟩
+      ginv := ⟨gh', hG1.of_gsame (GSame.of_eq hGs2 hE2 hhead2 (by rw [hP2]; rfl))⟩
+      cinv := ⟨s₀, ?_, ⟨lg', ?_⟩, by rw [hP2]; exact hLP, by rw [hP2]; exact hGP⟩
+      pq := hpq2
+      cnt := ⟨e, pops, hN.ins S hcnt2⟩
+      cp := by rw [hP2]; exact hL.cp
+      ti := hTC.frame _ _ hTS2 hTI
+      game := ?_
+      count := hcnt2
+      P := hP2
+      grp := ⟨(S.live _).mpr hgL, by rw [S.chk], by rw [S.sz, ite_eq_left rfl]; omega⟩
+      csz := by rw [S.csz, ite_eq_left rfl]; omega
+      quiet := fun hq => ?_
+      cL := by simp only [LiveC, S.Csize]; exact hcL }
   · exact (sizeState_sameLinks _ _).trans hO.sameLinks
   · intro d; rw [show cT s2 d = cT (sizeState (linkElem s x s.E.size lab hh) (gC s (eG s x))) d by
       simp only [cT, hO.C], sizeState_cT]

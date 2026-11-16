@@ -28,25 +28,25 @@ open OrderMaintenance.Model OrderMaintenance.Proof
 section reads
 variable {β : Type} (s : Core)
 
-@[simp] theorem run_getN_bind (i : Nat) (k : Node → CM β) :
+theorem run_getN_bind (i : Nat) (k : Node → CM β) :
     (getN i >>= k).run s = (k (s.nodes.getX i)).run s := rfl
-@[simp] theorem run_getPath_bind (c : Nat) (k : Array Nat → CM β) :
+theorem run_getPath_bind (c : Nat) (k : Array Nat → CM β) :
     (getPath c >>= k).run s = (k (s.path.getX c)).run s := rfl
-@[simp] theorem run_getLpar_bind (c : Nat) (k : Nat → CM β) :
+theorem run_getLpar_bind (c : Nat) (k : Nat → CM β) :
     (getLpar c >>= k).run s = (k (s.lpar.getX c)).run s := rfl
-@[simp] theorem run_modN_bind (i : Nat) (f : Node → Node) (k : PUnit → CM β) :
+theorem run_modN_bind (i : Nat) (f : Node → Node) (k : PUnit → CM β) :
     (modN i f >>= k).run s = (k ⟨⟩).run { s with nodes := s.nodes.modify i f } := rfl
 @[simp] theorem run_modN (i : Nat) (f : Node → Node) :
     (modN i f).run s = .ok ⟨⟩ { s with nodes := s.nodes.modify i f } := rfl
-@[simp] theorem run_setPathAt_bind (c j v : Nat) (k : PUnit → CM β) :
+theorem run_setPathAt_bind (c j v : Nat) (k : PUnit → CM β) :
     (setPathAt c j v >>= k).run s =
       (k ⟨⟩).run { s with path := s.path.setX c ((s.path.getX c).setX j v) } := rfl
-@[simp] theorem run_modC_bind (i : Nat) (f : Chunk → Chunk) (k : PUnit → CM β) :
+theorem run_modC_bind (i : Nat) (f : Chunk → Chunk) (k : PUnit → CM β) :
     (modC i f >>= k).run s = (k ⟨⟩).run { s with C := s.C.modify i f } := rfl
 
-@[simp] theorem run_guard_bind {α : Type} (msg : String) (k : α → CM β) :
+theorem run_guard_bind {α : Type} (msg : String) (k : α → CM β) :
     (OrderMaintenance.Model.guard msg >>= k).run s = .error (.guard msg) s := rfl
-@[simp] theorem run_belowOf_bind (h y : Nat) (k : Nat → CM β) :
+theorem run_belowOf_bind (h y : Nat) (k : Nat → CM β) :
     (belowOf h y >>= k).run s =
       (k (if h == 1 then y else (s.path.getX y).getX (h - 1))).run s := by
   unfold belowOf
@@ -61,10 +61,14 @@ theorem guardTag_ok {s : Core} {c t : Nat} (h : TagOK s c t) : (guardTag c t).ru
   obtain ⟨h1, h2⟩ := h
   simp only [cP, cN, cT] at h1 h2
   by_cases hp : (s.C.getX c).prev = NIL <;> by_cases hn : (s.C.getX c).next = NIL <;>
-    simp_all [ Nat.not_le.mpr]
+    simp_all only [ne_eq, not_true_eq_false, IsEmpty.forall_iff, not_false_eq_true,
+      forall_const, Bool.and_eq_true, bne_iff_ne, Bool.not_eq_eq_eq_not, Bool.not_true,
+      decide_eq_false_iff_not, not_lt, EStateM.run_bind, run_getC', false_and,
+      ↓reduceIte, true_and, Nat.not_le.mpr, EStateM.run_pure]
 
 theorem guardedSetTag_bind {β : Type} {s : Core} {c t : Nat} (h : TagOK s c t) (k : PUnit → CM β) :
-    (guardedSetTag c t >>= k).run s = (k ⟨⟩).run { s with C := s.C.modify c fun C => { C with tag := t } } := by
+    (guardedSetTag c t >>= k).run s = (k ⟨⟩).run { s with C := s.C.modify c fun C => { C with
+      tag := t } } := by
   unfold guardedSetTag
   rw [bind_assoc, run_bind, guardTag_ok h]
   rfl
@@ -105,14 +109,18 @@ def dsS (tag : Nat) : Core :=
   let cy := s.C.getX y
   let s1 := { s with C := s.C.modify y fun C => { C with tag := tag } }
   let s2 := { s1 with path := s1.path.setX y ((s1.path.getX y).setX h t) }
-  let s3 := if V.first == V.last then { s2 with nodes := s2.nodes.modify v fun n => { n with first := NIL, last := NIL } }
-    else if goesLeft s v then { s2 with nodes := s2.nodes.modify v fun n => { n with first := cy.next } }
+  let s3 := if V.first == V.last then { s2 with nodes := s2.nodes.modify v fun n => { n with
+    first := NIL, last := NIL } }
+    else if goesLeft s v then { s2 with nodes := s2.nodes.modify v fun n => { n with first :=
+      cy.next } }
     else { s2 with nodes := s2.nodes.modify v fun n => { n with last := cy.prev } }
   if goesLeft s v then
-    let s4 := if T.first == NIL then { s3 with nodes := s3.nodes.modify t fun n => { n with first := y } } else s3
+    let s4 := if T.first == NIL then { s3 with nodes := s3.nodes.modify t fun n => { n with
+      first := y } } else s3
     { s4 with nodes := s4.nodes.modify t fun n => { n with last := y } }
   else
-    let s4 := if T.last == NIL then { s3 with nodes := s3.nodes.modify t fun n => { n with last := y } } else s3
+    let s4 := if T.last == NIL then { s3 with nodes := s3.nodes.modify t fun n => { n with last
+      := y } } else s3
     { s4 with nodes := s4.nodes.modify t fun n => { n with first := y } }
 
 end pick
@@ -125,9 +133,11 @@ theorem drainStep_move {s : Core} {v : Nat} (hal : (s.nodes.getX v).alive = true
       lookup (s.nodes.getX v).side (belowY s v (s.nodes.getX v).last) = some .right)
     (hsz : (s.nodes.getX v).height + 1 < (s.path.getX (dsY s v)).size)
     {pt tb pv vb : Nat}
-    (hpt : (s.nodes.getX ((s.path.getX (dsY s v)).getX ((s.nodes.getX v).height + 1))).lab? (dsT s v) = some pt)
+    (hpt : (s.nodes.getX ((s.path.getX (dsY s v)).getX ((s.nodes.getX v).height + 1))).lab? (dsT
+      s v) = some pt)
     (htb : (s.nodes.getX (dsT s v)).lab? (belowY s v (dsY s v)) = some tb)
-    (hpv : (s.nodes.getX ((s.path.getX (dsY s v)).getX ((s.nodes.getX v).height + 1))).lab? v = some pv)
+    (hpv : (s.nodes.getX ((s.path.getX (dsY s v)).getX ((s.nodes.getX v).height + 1))).lab? v =
+      some pv)
     (hvb : (s.nodes.getX v).lab? (belowY s v (dsY s v)) = some vb)
     (hold : (pv <<< ((s.nodes.getX v).height * s.P.beta)) |||
         (vb <<< (((s.nodes.getX v).height - 1) * s.P.beta)) ≤ (s.C.getX (dsY s v)).tag)
@@ -147,11 +157,13 @@ theorem drainStep_move {s : Core} {v : Nat} (hal : (s.nodes.getX v).alive = true
     rw [ht] at hpt htb
     rw [hl']
     simp only [run_pure_bind, beq_self_eq_true, ite_true, run_getN_bind, run_getPath_bind,
-      ite_eq_right (Nat.not_le.mpr hsz), hpt, htb, hpv, hvb, run_getC_bind, ite_eq_right (Nat.not_lt.mpr hold)]
+      ite_eq_right (Nat.not_le.mpr hsz), hpt, htb, hpv, hvb, run_getC_bind, ite_eq_right
+        (Nat.not_lt.mpr hold)]
     simp only [dsTag, hy] at hok
     rw [guardedSetTag_bind hok]
     simp only [run_setPathAt_bind, dsS, dsY, dsT, ite_eq_left hl, dsTag]
-    split <;> split <;> simp_all
+    split <;> split <;> simp_all only [ne_eq, true_or, beq_iff_eq, EStateM.run_bind, run_modN,
+      EStateM.run_pure]
   · have hr := hside.resolve_left hl
     have hy : dsY s v = (s.nodes.getX v).last := by simp [dsY, hl]
     have ht : dsT s v = (s.nodes.getX v).t2 := by simp [dsT, hl]
@@ -162,10 +174,12 @@ theorem drainStep_move {s : Core} {v : Nat} (hal : (s.nodes.getX v).alive = true
     rw [hr1]
     simp only [run_pure_bind, show (Side.right == Side.left) = false from rfl, Bool.false_eq_true,
       ite_false, run_belowOf_bind, hr2, bne_self_eq_false, run_getN_bind, run_getPath_bind,
-      ite_eq_right (Nat.not_le.mpr hsz), hpt, htb, hpv, hvb, run_getC_bind, ite_eq_right (Nat.not_lt.mpr hold)]
+      ite_eq_right (Nat.not_le.mpr hsz), hpt, htb, hpv, hvb, run_getC_bind, ite_eq_right
+        (Nat.not_lt.mpr hold)]
     simp only [dsTag, hy] at hok
     rw [guardedSetTag_bind hok]
     simp only [run_setPathAt_bind, dsS, dsY, dsT, ite_eq_right hl, dsTag]
-    split <;> split <;> simp_all
+    split <;> split <;> simp_all only [ne_eq, false_or, beq_iff_eq, EStateM.run_bind, run_modN,
+      EStateM.run_pure]
 
 end OrderMaintenance.Proof.Top

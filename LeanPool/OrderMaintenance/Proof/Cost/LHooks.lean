@@ -111,7 +111,7 @@ theorem xgroup_linv {L : List Nat} {s₀ δ δu : Nat → Nat} {c : Nat} :
     subst hel
     obtain ⟨⟨lg, hLi⟩, hLP, hP⟩ := hX
     have hPs : (splitState t g labL labR).P = t.P := by
-      show (linkGroupPair _ g _ _ labL labR).P = t.P
+      change (linkGroupPair _ g _ _ labL labR).P = t.P
       simp only [linkGroupPair, allocGroup_P]
     exact ⟨⟨_, linv_splitStart hI hG hLi hg hq hsz hL hR⟩, by rwa [hPs], by rwa [hPs]⟩
 

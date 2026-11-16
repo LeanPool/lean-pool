@@ -25,7 +25,8 @@ namespace OrderMaintenance.Proof.Top
 
 open OrderMaintenance.Model OrderMaintenance.Proof
 /-- A drain's targets weigh at most `Π_h` together. -/
-theorem Timing.ew_le {s : TS} {cl : List Nat} {oj : Option Job} (Ti : Timing s cl oj) (hTP : TopParams s.P)
+theorem Timing.ew_le {s : TS} {cl : List Nat} {oj : Option Job} (Ti : Timing s cl oj) (hTP :
+  TopParams s.P)
     {g : Nat} (hg : ghostN s g) : ew s cl g ≤ Pid s.P (ht s g) := by
   have h1 := Ti.wF g hg
   have h2 := (Ti.wB g hg).2
@@ -34,8 +35,10 @@ theorem Timing.ew_le {s : TS} {cl : List Nat} {oj : Option Job} (Ti : Timing s c
   unfold Pid; omega
 
 /-- **Every node serves at most `Π_h`.** -/
-theorem ew_le_any {s : TS} {cl : List Nat} {ord : Nat → List Nat} {oj : Option Job} (S : Shape s cl ord)
-    (Ti : Timing s cl oj) (hTP : TopParams s.P) (hcap : cl.length + 2 ≤ Wd s.P (s.P.H - 1)) {T : Nat}
+theorem ew_le_any {s : TS} {cl : List Nat} {ord : Nat → List Nat} {oj : Option Job} (S : Shape s
+  cl ord)
+    (Ti : Timing s cl oj) (hTP : TopParams s.P) (hcap : cl.length + 2 ≤ Wd s.P (s.P.H - 1)) {T :
+      Nat}
     (hT : isN s T) : ew s cl T ≤ Pid s.P (ht s T) := by
   by_cases hd : (nd s T).draining = true
   · exact Ti.ew_le hTP ⟨hT, hd⟩
@@ -51,7 +54,8 @@ theorem ew_le_any {s : TS} {cl : List Nat} {ord : Nat → List Nat} {oj : Option
         have := tw_le (s := s) cl T
         have ha : 2 ≤ s.P.a := by have := hTP.lamK 1 le_rfl; simp [lamd] at this; omega
         have hw : Wd s.P (s.P.H - 1) ≤ Wd s.P s.P.H := by
-          unfold Wd; have := Nat.pow_le_pow_right (show 1 ≤ s.P.a by omega) (show s.P.H - 1 ≤ s.P.H by omega)
+          unfold Wd; have := Nat.pow_le_pow_right (show 1 ≤ s.P.a by omega) (show s.P.H - 1 ≤
+            s.P.H by omega)
           omega
         rw [hroot]; unfold Pid; omega
       · have := Ti.wA T hl hp hs
@@ -69,9 +73,11 @@ theorem ew_le_any {s : TS} {cl : List Nat} {ord : Nat → List Nat} {oj : Option
         rw [this]; rw [← e] at hle; omega
 
 /-- **A live table has seen fewer than `Dmax` insertion events.** -/
-theorem Room.dr_lt {s : TS} {cl : List Nat} {ord : Nat → List Nat} {dr n0 : Nat → Nat} {oj : Option Job}
+theorem Room.dr_lt {s : TS} {cl : List Nat} {ord : Nat → List Nat} {dr n0 : Nat → Nat} {oj :
+  Option Job}
     (Ro : Room s cl dr n0) (S : Shape s cl ord) (Ti : Timing s cl oj) (hTP : TopParams s.P)
-    (hcap : cl.length + 2 ≤ Wd s.P (s.P.H - 1)) {T : Nat} (hT : isN s T) : dr T + 1 ≤ Dmax s.P (ht s T) := by
+    (hcap : cl.length + 2 ≤ Wd s.P (s.P.H - 1)) {T : Nat} (hT : isN s T) : dr T + 1 ≤ Dmax s.P
+      (ht s T) := by
   have hew := ew_le_any S Ti hTP hcap hT
   obtain ⟨h1, hH⟩ := S.htN T hT
   have hc : 1 ≤ (if s.P.H < T then lamd s.P (ht s T) else 1) := by
@@ -99,9 +105,11 @@ theorem Room.dr_lt {s : TS} {cl : List Nat} {ord : Nat → List Nat} {dr n0 : Na
     omega
 
 /-- The bound `n0 + 2·dr ≤ 160` of a live table. -/
-theorem Room.len_le {s : TS} {cl : List Nat} {ord : Nat → List Nat} {dr n0 : Nat → Nat} {oj : Option Job}
+theorem Room.len_le {s : TS} {cl : List Nat} {ord : Nat → List Nat} {dr n0 : Nat → Nat} {oj :
+  Option Job}
     (Ro : Room s cl dr n0) (S : Shape s cl ord) (Ti : Timing s cl oj) (hTP : TopParams s.P)
-    (hcap : cl.length + 2 ≤ Wd s.P (s.P.H - 1)) {T : Nat} (hT : isN s T) : n0 T + 2 * dr T ≤ 160 := by
+    (hcap : cl.length + 2 ≤ Wd s.P (s.P.H - 1)) {T : Nat} (hT : isN s T) : n0 T + 2 * dr T ≤ 160
+      := by
   have h1 := Ro.dr_lt S Ti hTP hcap hT
   have h2 := Ro.n0le T hT
   have h3 := hTP.tab (ht s T) (S.htN T hT).1

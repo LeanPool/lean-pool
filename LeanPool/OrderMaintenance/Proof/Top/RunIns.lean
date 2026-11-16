@@ -109,7 +109,8 @@ def aroundTab (A Bs : List (Nat × Nat)) (e le n1 n2 a b : Nat) : List (Nat × N
 theorem insertAroundIn_run {s : Core} {e n1 n2 T a b : Nat} {A Bs : List (Nat × Nat)} {le : Nat}
     (htab : (s.nodes.getX T).table = A ++ (e, le) :: Bs) (hA : e ∉ A.map (·.1)) (hn1 : n1 ≠ e)
     (hside : (s.nodes.getX T).draining = true → (lookup (s.nodes.getX T).side e).isSome) :
-    (insertAroundIn e n1 n2 (T, a, b)).run s = .ok ⟨⟩ { s with nodes := s.nodes.modify T (setTS (aroundTab A Bs e le n1 n2 a b) (sideAround (s.nodes.getX T) e n1 n2)) } := by
+    (insertAroundIn e n1 n2 (T, a, b)).run s = .ok ⟨⟩ { s with nodes := s.nodes.modify T (setTS
+      (aroundTab A Bs e le n1 n2 a b) (sideAround (s.nodes.getX T) e n1 n2)) } := by
   unfold insertAroundIn
   rw [run_bind, tableInsert_run htab hA true a hside]
   have hT : T < s.nodes.size := by
@@ -117,16 +118,18 @@ theorem insertAroundIn_run {s : Core} {e n1 n2 T a b : Nat} {A Bs : List (Nat ×
     have : s.nodes.getX T = default := by unfold Array.getX Array.getD; rw [dite_eq_right h]
     have hd : (default : Node).table = [] := rfl
     rw [this, hd] at htab; exact absurd htab.symm (by simp)
-  set s1 : Core := { s with nodes := s.nodes.modify T (setTS (insTab A Bs e le n1 a true) (sideAfter (s.nodes.getX T) e n1)) } with hs1
-  have h1 : s1.nodes.getX T = setTS (insTab A Bs e le n1 a true) (sideAfter (s.nodes.getX T) e n1) (s.nodes.getX T) := by
-    rw [hs1]; show (s.nodes.modify T _).getX T = _; rw [Array.getX_modify, ite_eq_left ⟨rfl, hT⟩]
+  set s1 : Core := { s with nodes := s.nodes.modify T (setTS (insTab A Bs e le n1 a true)
+    (sideAfter (s.nodes.getX T) e n1)) } with hs1
+  have h1 : s1.nodes.getX T = setTS (insTab A Bs e le n1 a true) (sideAfter (s.nodes.getX T) e
+    n1) (s.nodes.getX T) := by
+    rw [hs1]; change (s.nodes.modify T _).getX T = _; rw [Array.getX_modify, ite_eq_left ⟨rfl, hT⟩]
   have htab1 : (s1.nodes.getX T).table = (A ++ [(n1, a)]) ++ (e, le) :: Bs := by
     rw [h1]; simp [setTS, insTab]
   have hA1 : e ∉ (A ++ [(n1, a)]).map (·.1) := by simp [hA, Ne.symm hn1]
   have hside1 : (s1.nodes.getX T).draining = true → (lookup (s1.nodes.getX T).side e).isSome := by
     rw [h1]; simp only [setTS]; intro hd
     unfold sideAfter; rw [ite_eq_left hd, lookup_assocSet_ne _ _ _ _ hn1.symm]; exact hside hd
-  show (tableInsert T e n2 false b).run s1 = _
+  change (tableInsert T e n2 false b).run s1 = _
   rw [tableInsert_run htab1 hA1 false b hside1]
   congr 1
   have hside2 : sideAfter (s1.nodes.getX T) e n2 = sideAround (s.nodes.getX T) e n1 n2 := by
@@ -166,7 +169,8 @@ theorem aroundT_eq {A Bs : List (Nat × Nat)} {e le n1 n2 a b : Nat} (hA : e ∉
 
 /-- The update `insertAroundIn` makes to table `T`. -/
 def aroundF (s : Core) (e n1 n2 : Nat) (f : Nat → Nat × Nat) (T : Nat) : Node → Node :=
-  setTS (aroundT (s.nodes.getX T).table e n1 n2 (f T).1 (f T).2) (sideAround (s.nodes.getX T) e n1 n2)
+  setTS (aroundT (s.nodes.getX T).table e n1 n2 (f T).1 (f T).2) (sideAround (s.nodes.getX T) e
+    n1 n2)
 
 /-- Entry `e` is in table `T`, once (as the table's keys are distinct). -/
 def AroundOK (s : Core) (e T : Nat) : Prop :=
@@ -177,17 +181,23 @@ def AroundOK (s : Core) (e T : Nat) : Prop :=
 theorem forM_around_run (e n1 n2 : Nat) (f : Nat → Nat × Nat) (hne : n1 ≠ e) :
     ∀ (tbs : List Nat) (s : Core), tbs.Nodup → (∀ T ∈ tbs, AroundOK s e T) →
       ((tbs.map fun T => (T, f T)).forM (insertAroundIn e n1 n2)).run s =
-        .ok ⟨⟩ { s with nodes := tbs.foldl (fun ns T => ns.modify T (aroundF s e n1 n2 f T)) s.nodes }
+        .ok ⟨⟩ {
+          s with
+          nodes := tbs.foldl (fun ns T => ns.modify T (aroundF s e n1 n2 f T)) s.nodes }
   | [], s, _, _ => rfl
   | T :: rest, s, hnd, hok => by
     have hT := List.nodup_cons.mp hnd
     obtain ⟨A, le, Bs, htab, hA, hside⟩ := hok T (by simp)
-    show (do insertAroundIn e n1 n2 (T, f T); (rest.map fun T => (T, f T)).forM (insertAroundIn e n1 n2)).run s = _
+    change (do
+      insertAroundIn e n1 n2 (T, f T)
+      (rest.map fun T => (T, f T)).forM (insertAroundIn e n1 n2)).run s = _
     rw [run_bind, insertAroundIn_run htab hA hne hside]
     simp only
-    set s1 : Core := { s with nodes := s.nodes.modify T (setTS (aroundTab A Bs e le n1 n2 (f T).1 (f T).2) (sideAround (s.nodes.getX T) e n1 n2)) } with hs1
+    set s1 : Core := { s with nodes := s.nodes.modify T (setTS (aroundTab A Bs e le n1 n2 (f
+      T).1 (f T).2) (sideAround (s.nodes.getX T) e n1 n2)) } with hs1
     have hsame : ∀ T', T' ≠ T → s1.nodes.getX T' = s.nodes.getX T' := fun T' h => by
-      rw [hs1]; show (s.nodes.modify T _).getX T' = _; rw [Array.getX_modify, ite_eq_right (fun h' => h h'.1.symm)]
+      rw [hs1]; change (s.nodes.modify T _).getX T' = _; rw [Array.getX_modify, ite_eq_right
+        (fun h' => h h'.1.symm)]
     have hok1 : ∀ T' ∈ rest, AroundOK s1 e T' := fun T' hT' => by
       have hne' : T' ≠ T := fun h => hT.1 (h ▸ hT')
       unfold AroundOK; rw [hsame T' hne']; exact hok T' (by simp [hT'])
@@ -234,7 +244,8 @@ theorem roomNextTo_run' {s : Core} {e T : Nat} (h : RoomOK s e T) (before : Bool
   obtain ⟨A, le, Bs, htab, hA, -, h1, h2⟩ := h
   rw [roomNextTo_run htab hA before (by cases before <;> assumption), htab, roomL_eq hA]
 
-theorem zip_map_self {α β : Type} (l : List α) (f : α → β) : l.zip (l.map f) = l.map fun x => (x, f x) := by
+theorem zip_map_self {α β : Type} (l : List α) (f : α → β) : l.zip (l.map f) = l.map fun x =>
+  (x, f x) := by
   induction l with
   | nil => rfl
   | cons x t ih => simp [ih]
@@ -266,7 +277,10 @@ theorem insertAroundPrep_run {s : Core} {x f1x i1 : Nat}
 
 /-- `joinChunk`, as a state update. -/
 def joinS (s : Core) (tabs : List Nat) (lp c : Nat) : Core :=
-  { s with path := s.path.setX c (Array.replicate (s.P.H + 1) NIL), cin := s.cin.setX c tabs, lpar := s.lpar.setX c lp }
+  { s with
+    path := s.path.setX c (Array.replicate (s.P.H + 1) NIL)
+    cin := s.cin.setX c tabs
+    lpar := s.lpar.setX c lp }
 
 theorem joinChunk_run (s : Core) (tabs : List Nat) (lp c : Nat) :
     (joinChunk tabs lp c).run s = .ok ⟨⟩ (joinS s tabs lp c) := by
@@ -280,7 +294,8 @@ def insFinS (s : Core) (x y z : Nat) (f : Nat → Nat × Nat) : Core :=
   let lp := s.lpar.getX x
   let s1 := { s with nodes := tabs.foldl (fun ns T => ns.modify T (aroundF s x y z f T)) s.nodes }
   let s3 := joinS (joinS s1 tabs lp y) tabs lp z
-  { s3 with nodes := s3.nodes.modify lp fun n => { n with children := n.children.replace1 x [y, x, z] } }
+  { s3 with
+    nodes := s3.nodes.modify lp fun n => { n with children := n.children.replace1 x [y, x, z] } }
 
 theorem insertAroundFinish_run {s : Core} {x y z : Nat} (g1 g2 : Nat → Nat) (hyx : y ≠ x)
     (hnd : (s.cin.getX x).Nodup) (hok : ∀ T ∈ s.cin.getX x, AroundOK s x T) :
@@ -302,13 +317,17 @@ theorem insertAroundFinish_run {s : Core} {x y z : Nat} (g1 g2 : Nat → Nat) (h
 
 /-- The tags written by `insertAround`. -/
 def tagY (s : Core) (x f1x i1 : Nat) : Nat :=
-  (s.C.getX x).tag - f1x + ((s.cin.getX x).map fun T => roomL s.P.beta (s.nodes.getX T).table x true).getD i1 0
+  (s.C.getX x).tag - f1x + ((s.cin.getX x).map fun T => roomL s.P.beta (s.nodes.getX T).table x
+    true).getD i1 0
+/-- The tag assigned to the new chunk immediately after the split chunk. -/
 def tagZ (s : Core) (x f1x i1 : Nat) : Nat :=
-  (s.C.getX x).tag - f1x + ((s.cin.getX x).map fun T => roomL s.P.beta (s.nodes.getX T).table x false).getD i1 0
+  (s.C.getX x).tag - f1x + ((s.cin.getX x).map fun T => roomL s.P.beta (s.nodes.getX T).table x
+    false).getD i1 0
 
 /-- The core after both tag writes. -/
 def tagsS (s : Core) (y z ty tz : Nat) : Core :=
-  { s with C := (s.C.modify y fun C => { C with tag := ty }).modify z fun C => { C with tag := tz } }
+  { s with
+    C := (s.C.modify y fun C => { C with tag := ty }).modify z fun C => { C with tag := tz } }
 
 /-- **Running `insertAround`.** -/
 theorem insertAround_run {s : Core} {x y z f1x i1 : Nat}
@@ -318,7 +337,8 @@ theorem insertAround_run {s : Core} {x y z f1x i1 : Nat}
     (htx : f1x ≤ (s.C.getX x).tag)
     (hlp : x ∈ (s.nodes.getX (s.lpar.getX x)).children)
     (hgy : TagOK s y (tagY s x f1x i1))
-    (hgz : TagOK { s with C := s.C.modify y fun C => { C with tag := tagY s x f1x i1 } } z (tagZ s x f1x i1)) :
+    (hgz : TagOK { s with C := s.C.modify y fun C => { C with tag := tagY s x f1x i1 } } z (tagZ
+      s x f1x i1)) :
     (insertAround x y z).run s = .ok { x := x, y := y, z := z, pc := .copy 1 }
       (insFinS (tagsS s y z (tagY s x f1x i1) (tagZ s x f1x i1)) x y z
         fun T => (roomL s.P.beta (s.nodes.getX T).table x true,

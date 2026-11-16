@@ -52,19 +52,24 @@ end data
 /-- `addTable h w e`, as a state update. -/
 def addTableS (h w e : Nat) (s : Core) : Core :=
   if h = 0 then { s with cin := s.cin.setX e (s.cin.getX e ++ [w]) }
-  else { s with nodes := s.nodes.modify e fun n => { n with inTables := (s.nodes.getX e).inTables ++ [w] } }
+  else {
+    s with
+    nodes := s.nodes.modify e fun n => { n with inTables := (s.nodes.getX e).inTables ++ [w] } }
 
 /-- `setParent h w e`, as a state update. -/
 def setParentS (h w e : Nat) (s : Core) : Core :=
-  if h = 1 then { s with lpar := s.lpar.setX e w } else { s with nodes := s.nodes.modify e fun n => { n with livePar := w } }
+  if h = 1 then { s with lpar := s.lpar.setX e w }
+  else { s with nodes := s.nodes.modify e fun n => { n with livePar := w } }
 
-theorem addTable_run (h w e : Nat) (s : Core) : (addTable h w e).run s = .ok ⟨⟩ (addTableS h w e s) := by
+theorem addTable_run (h w e : Nat) (s : Core) : (addTable h w e).run s = .ok ⟨⟩ (addTableS h w e
+  s) := by
   unfold addTable addTableS inTablesOf setInTables
   by_cases h0 : h = 0
   · subst h0; simp
   · simp [h0]
 
-theorem setParent_run (h w e : Nat) (s : Core) : (setParent h w e).run s = .ok ⟨⟩ (setParentS h w e s) := by
+theorem setParent_run (h w e : Nat) (s : Core) : (setParent h w e).run s = .ok ⟨⟩ (setParentS h
+  w e s) := by
   unfold setParent setParentS setLpar
   by_cases h1 : h = 1
   · subst h1; simp
@@ -81,32 +86,70 @@ def sF (T : Nat) : Nat × Nat :=
 def sd1 : Core := { t with nodes := (t.nodes.push { height := sH t v }).push { height := sH t v } }
 
 /-- `v1`, `v2` around `v` in every table holding `v`. -/
-def sd2 : Core := { sd1 t v with nodes := (t.nodes.getX v).inTables.foldl (fun ns T => ns.modify T (aroundF (sd1 t v) v t.nodes.size (t.nodes.size + 1) (sF t v) T)) (sd1 t v).nodes }
+def sd2 : Core := {
+  sd1 t v with
+  nodes := (t.nodes.getX v).inTables.foldl
+    (fun ns T => ns.modify T
+      (aroundF (sd1 t v) v t.nodes.size (t.nodes.size + 1) (sF t v) T)) (sd1 t v).nodes }
 
-/-- The tables of `v1`, `v2`. -/
+/-- The tables of the two newly allocated targets. -/
 def sd4 : Core :=
-  let s3 := { sd2 t v with nodes := (sd2 t v).nodes.modify t.nodes.size fun n => { n with inTables := (t.nodes.getX v).inTables, table := evenTable t.P.beta (sLeft t v side) } }
-  { s3 with nodes := s3.nodes.modify (t.nodes.size + 1) fun n => { n with inTables := (t.nodes.getX v).inTables, table := evenTable t.P.beta (sRight t v side) } }
+  let s3 : Core := {
+    sd2 t v with
+    nodes := (sd2 t v).nodes.modify t.nodes.size fun n => {
+      n with
+      inTables := (t.nodes.getX v).inTables
+      table := evenTable t.P.beta (sLeft t v side) } }
+  { s3 with
+    nodes := s3.nodes.modify (t.nodes.size + 1) fun n => {
+      n with
+      inTables := (t.nodes.getX v).inTables
+      table := evenTable t.P.beta (sRight t v side) } }
 
 /-- The entries learn their new tables. -/
 def sd6 : Core :=
-  let s5 := (sLeft t v side).foldl (fun s e => addTableS (sH t v - 1) t.nodes.size e s) (sd4 t v side)
+  let s5 := (sLeft t v side).foldl
+    (fun s e => addTableS (sH t v - 1) t.nodes.size e s) (sd4 t v side)
   (sRight t v side).foldl (fun s e => addTableS (sH t v - 1) (t.nodes.size + 1) e s) s5
 
-/-- The children of `v1`. -/
+/-- The children of the first target. -/
 def sd8 : Core :=
   let s7 := (sCh1 t v side).foldl (fun s e => setParentS (sH t v) t.nodes.size e s) (sd6 t v side)
-  { s7 with nodes := s7.nodes.modify t.nodes.size fun n => { n with children := sCh1 t v side, weight := ((sCh1 t v side).map (sWt t v)).sum, livePar := (t.nodes.getX v).livePar, overflowOf := v } }
+  { s7 with
+    nodes := s7.nodes.modify t.nodes.size fun n => {
+      n with
+      children := sCh1 t v side
+      weight := ((sCh1 t v side).map (sWt t v)).sum
+      livePar := (t.nodes.getX v).livePar
+      overflowOf := v } }
 
-/-- The children of `v2`. -/
+/-- The children of the second target. -/
 def sd10 : Core :=
-  let s9 := (sCh2 t v side).foldl (fun s e => setParentS (sH t v) (t.nodes.size + 1) e s) (sd8 t v side)
-  { s9 with nodes := s9.nodes.modify (t.nodes.size + 1) fun n => { n with children := sCh2 t v side, weight := ((sCh2 t v side).map (sWt t v)).sum, livePar := (t.nodes.getX v).livePar, overflowOf := v } }
+  let s9 := (sCh2 t v side).foldl
+    (fun s e => setParentS (sH t v) (t.nodes.size + 1) e s) (sd8 t v side)
+  { s9 with
+    nodes := s9.nodes.modify (t.nodes.size + 1) fun n => {
+      n with
+      children := sCh2 t v side
+      weight := ((sCh2 t v side).map (sWt t v)).sum
+      livePar := (t.nodes.getX v).livePar
+      overflowOf := v } }
 
-/-- **The state after `startDrain v`.** -/
+/-- The state after starting the drain of the selected node. -/
 def sdS : Core :=
-  let s11 := { sd10 t v side with nodes := (sd10 t v side).nodes.modify (t.nodes.getX v).livePar fun n => { n with children := n.children.replace1 v [t.nodes.size, t.nodes.size + 1] } }
-  { s11 with nodes := s11.nodes.modify v fun n => { n with draining := true, t1 := t.nodes.size, t2 := t.nodes.size + 1, side := side, livePar := NIL, children := [] } }
+  let s11 : Core := {
+    sd10 t v side with
+    nodes := (sd10 t v side).nodes.modify (t.nodes.getX v).livePar fun n => {
+      n with children := n.children.replace1 v [t.nodes.size, t.nodes.size + 1] } }
+  { s11 with
+    nodes := s11.nodes.modify v fun n => {
+      n with
+      draining := true
+      t1 := t.nodes.size
+      t2 := t.nodes.size + 1
+      side := side
+      livePar := NIL
+      children := [] } }
 
 end stages
 
@@ -138,7 +181,8 @@ theorem fold_addTableS_children (h w : Nat) (u : Nat) : ∀ (l : List Nat) (s : 
 
 theorem fold_aroundF_children (s0 : Core) (e n1 n2 : Nat) (f : Nat → Nat × Nat) (u : Nat) :
     ∀ (l : List Nat) (ns : Array Node),
-      ((l.foldl (fun ns T => ns.modify T (aroundF s0 e n1 n2 f T)) ns).getX u).children = (ns.getX u).children
+      ((l.foldl (fun ns T => ns.modify T (aroundF s0 e n1 n2 f T)) ns).getX u).children =
+        (ns.getX u).children
   | [], _ => rfl
   | T :: l, ns => by
     simp only [List.foldl_cons]; rw [fold_aroundF_children s0 e n1 n2 f u l]
@@ -194,14 +238,15 @@ theorem startDrain_run {t : Core} {v : Nat} {side : List (Nat × Side)}
   simp only [Array.size_push]
   -- the insertions around `v`
   rw [zip_map_map, run_bind, forM_around_run v t.nodes.size (t.nodes.size + 1)
-    (fun T => (roomL t.P.beta (t.nodes.getX T).table v true, roomL t.P.beta (t.nodes.getX T).table v false))
+    (fun T => (roomL t.P.beta (t.nodes.getX T).table v true, roomL t.P.beta (t.nodes.getX
+      T).table v false))
     (by omega) _ _ hnd]
   swap
   · intro T hT
     have hlt := (hroom T hT).lt
     obtain ⟨A, le, Bs, htab, hA, hside, -⟩ := hroom T hT
     have e : (sd1 t v).nodes.getX T = t.nodes.getX T := by
-      show ((t.nodes.push _).push _).getX T = _
+      change ((t.nodes.push _).push _).getX T = _
       rw [Array.getX_push, Array.getX_push, ite_eq_right (by simp; omega), ite_eq_right (by omega)]
     exact ⟨A, le, Bs, by rw [e]; exact htab, hA, by rw [e]; exact hside⟩
   simp only [run_modN_bind]
@@ -213,8 +258,9 @@ theorem startDrain_run {t : Core} {v : Nat} {side : List (Nat × Side)}
     forM_run' _ _ (fun e s => addTableS ((t.nodes.getX v).height - 1) (t.nodes.size + 1) e s)
     (fun e s => addTable_run _ _ _ _)]
   simp only
-  rw [ite_eq_right (by rw [show (t.nodes.getX v).children.all (fun e => (lookup side e).isSome) = true from
-    List.all_eq_true.mpr hall]; simp)]
+  have hallBool : (t.nodes.getX v).children.all (fun e => (lookup side e).isSome) = true :=
+    List.all_eq_true.mpr hall
+  rw [ite_eq_right (by rw [hallBool]; simp)]
   -- the children
   rw [run_bind, forM_run' _ _ (fun e s => setParentS (t.nodes.getX v).height t.nodes.size e s)
     (fun e s => setParent_run _ _ _ _)]
@@ -226,7 +272,7 @@ theorem startDrain_run {t : Core} {v : Nat} {side : List (Nat × Side)}
     generalize (t.nodes.getX v).livePar = L at hpar
     by_contra hL
     have : t.nodes.getX L = default := by unfold Array.getX Array.getD; rw [dite_eq_right hL]
-    rw [this] at hpar; exact absurd hpar (by show ¬ v ∈ ([] : List Nat); simp)
+    rw [this] at hpar; exact absurd hpar (by change ¬ v ∈ ([] : List Nat); simp)
   rw [ite_eq_right]
   swap
   · simp only [Array.getX_modify, fold_setParentS_children, fold_addTableS_children,

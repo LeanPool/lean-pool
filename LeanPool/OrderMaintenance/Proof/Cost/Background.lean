@@ -50,7 +50,8 @@ namespace OrderMaintenance.Proof
 
 open OrderMaintenance.Model OrderMaintenance.Zeroing
 /-- **The background work of one insertion** succeeds and restores the cost invariant. -/
-theorem background_ok {TI : Core → Prop} {μ : Core → Nat} {J k n R : Nat} {cap : Params → Nat} {L : List Nat}
+theorem background_ok {TI : Core → Prop} {μ : Core → Nat} {J k n R : Nat} {cap : Params → Nat}
+    {L : List Nat}
     {s0 s1 s2 : Core} {y g c : Nat} (hTC : TopContract TI μ J cap)
     (hPost : InsPost TI k J n R μ L s0 g c s2) (hy : y ∈ L) (heg1 : eG s1 y = g)
     (hgc1 : gC s1 g = c) (hchunk : (chunkSize c true).run s1 = .ok () s2)
@@ -129,7 +130,7 @@ theorem background_ok {TI : Core → Prop} {μ : Core → Nat} {J k n R : Nat} {
   unfold background
   rw [run_getP_bind, run_getE_bind, run_getG_bind]
   have e1 : (s1.Gs.getX (s1.E.getX y).grp).chk = c := by
-    show gC s1 (eG s1 y) = c; rw [heg1, hgc1]
+    change gC s1 (eG s1 y) = c; rw [heg1, hgc1]
   rw [e1, run_bind, hchunk]
   dsimp only
   rw [run_getE_bind, run_getG_bind]

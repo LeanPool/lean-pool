@@ -55,7 +55,8 @@ variable (f1x i1 : Nat)
 
 /-- The core after `insertAround`. -/
 def ins3 : Core :=
-  insFinS (tagsS (ins0 s x) s.C.size (s.C.size + 1) (tagY (ins0 s x) x f1x i1) (tagZ (ins0 s x) x f1x i1))
+  insFinS (tagsS (ins0 s x) s.C.size (s.C.size + 1) (tagY (ins0 s x) x f1x i1) (tagZ (ins0 s x)
+    x f1x i1))
     x s.C.size (s.C.size + 1) (insF s x)
 
 /-- The top structure after the split, path copy completed. -/
@@ -73,19 +74,24 @@ theorem insFinS_C : (insFinS t x y z f).C = t.C := by unfold insFinS joinS; rfl
 theorem insFinS_path : (insFinS t x y z f).path =
     (t.path.setX y (Array.replicate (t.P.H + 1) NIL)).setX z (Array.replicate (t.P.H + 1) NIL) := by
   unfold insFinS joinS; rfl
-theorem insFinS_cin : (insFinS t x y z f).cin = (t.cin.setX y (t.cin.getX x)).setX z (t.cin.getX x) := by
+theorem insFinS_cin : (insFinS t x y z f).cin = (t.cin.setX y (t.cin.getX x)).setX z (t.cin.getX
+  x) := by
   unfold insFinS joinS; rfl
-theorem insFinS_lpar : (insFinS t x y z f).lpar = (t.lpar.setX y (t.lpar.getX x)).setX z (t.lpar.getX x) := by
+theorem insFinS_lpar : (insFinS t x y z f).lpar = (t.lpar.setX y (t.lpar.getX x)).setX z
+  (t.lpar.getX x) := by
   unfold insFinS joinS; rfl
 theorem insFinS_nodes : (insFinS t x y z f).nodes =
-    ((t.cin.getX x).foldl (fun ns T => ns.modify T (aroundF t x y z f T)) t.nodes).modify (t.lpar.getX x)
+    ((t.cin.getX x).foldl (fun ns T => ns.modify T (aroundF t x y z f T)) t.nodes).modify
+      (t.lpar.getX x)
         (fun n => { n with children := n.children.replace1 x [y, x, z] }) := by
   unfold insFinS joinS; rfl
 
 variable (a b : Nat)
 theorem tagsS_top : (tagsS t y z a b).P = t.P ∧ (tagsS t y z a b).path = t.path ∧
-    (tagsS t y z a b).cin = t.cin ∧ (tagsS t y z a b).lpar = t.lpar ∧ (tagsS t y z a b).nodes = t.nodes ∧
-    (tagsS t y z a b).C = (t.C.modify y fun C => { C with tag := a }).modify z fun C => { C with tag := b } :=
+    (tagsS t y z a b).cin = t.cin ∧ (tagsS t y z a b).lpar = t.lpar ∧ (tagsS t y z a b).nodes =
+      t.nodes ∧
+    (tagsS t y z a b).C = (t.C.modify y fun C => { C with tag := a }).modify z fun C => { C with
+      tag := b } :=
   ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 end generic
@@ -97,7 +103,8 @@ theorem ins0_top : (ins0 s x).nodes = s.nodes ∧ (ins0 s x).path = s.path ∧ (
     (ins0 s x).lpar = s.lpar ∧ (ins0 s x).P = s.P ∧ (ins0 s x).C.size = s.C.size + 2 := by
   refine ⟨rfl, rfl, rfl, rfl, rfl, ?_⟩
   unfold ins0
-  rw [(linkChunkPair_rest (s := push2 s) (x := x) (y := s.C.size) (z := s.C.size + 1)).2.2.2.2.2.2.1]
+  rw [(linkChunkPair_rest (s := push2 s) (x := x) (y := s.C.size) (z := s.C.size +
+    1)).2.2.2.2.2.2.1]
   simp [push2]
 
 theorem ins0_tag {c : Nat} (hc : c < s.C.size) : ((ins0 s x).C.getX c).tag = (s.C.getX c).tag := by
@@ -109,10 +116,12 @@ theorem ins0_tag {c : Nat} (hc : c < s.C.size) : ((ins0 s x).C.getX c).tag = (s.
 abbrev ins2 : Core :=
   tagsS (ins0 s x) s.C.size (s.C.size + 1) (tagY (ins0 s x) x f1x i1) (tagZ (ins0 s x) x f1x i1)
 
-theorem ins3_eq : ins3 s x f1x i1 = insFinS (ins2 s x f1x i1) x s.C.size (s.C.size + 1) (insF s x) := rfl
+theorem ins3_eq : ins3 s x f1x i1 = insFinS (ins2 s x f1x i1) x s.C.size (s.C.size + 1) (insF s
+  x) := rfl
 
 theorem ins2_top : (ins2 s x f1x i1).P = s.P ∧ (ins2 s x f1x i1).path = s.path ∧
-    (ins2 s x f1x i1).cin = s.cin ∧ (ins2 s x f1x i1).lpar = s.lpar ∧ (ins2 s x f1x i1).nodes = s.nodes := by
+    (ins2 s x f1x i1).cin = s.cin ∧ (ins2 s x f1x i1).lpar = s.lpar ∧ (ins2 s x f1x i1).nodes =
+      s.nodes := by
   obtain ⟨t1, t2, t3, t4, t5, -⟩ := tagsS_top (ins0 s x) s.C.size (s.C.size + 1)
     (tagY (ins0 s x) x f1x i1) (tagZ (ins0 s x) x f1x i1)
   obtain ⟨u1, u2, u3, u4, u5, -⟩ := ins0_top s x
@@ -120,15 +129,19 @@ theorem ins2_top : (ins2 s x f1x i1).P = s.P ∧ (ins2 s x f1x i1).path = s.path
 
 theorem ins3_P : (ins3 s x f1x i1).P = s.P := by rw [ins3_eq, insFinS_P, (ins2_top s x f1x i1).1]
 theorem ins3_path : (ins3 s x f1x i1).path =
-    (s.path.setX s.C.size (Array.replicate (s.P.H + 1) NIL)).setX (s.C.size + 1) (Array.replicate (s.P.H + 1) NIL) := by
+    (s.path.setX s.C.size (Array.replicate (s.P.H + 1) NIL)).setX (s.C.size + 1)
+      (Array.replicate (s.P.H + 1) NIL) := by
   rw [ins3_eq, insFinS_path, (ins2_top s x f1x i1).1, (ins2_top s x f1x i1).2.1]
-theorem ins3_cin : (ins3 s x f1x i1).cin = (s.cin.setX s.C.size (s.cin.getX x)).setX (s.C.size + 1) (s.cin.getX x) := by
+theorem ins3_cin : (ins3 s x f1x i1).cin = (s.cin.setX s.C.size (s.cin.getX x)).setX (s.C.size +
+  1) (s.cin.getX x) := by
   rw [ins3_eq, insFinS_cin, (ins2_top s x f1x i1).2.2.1]
 theorem ins3_lpar : (ins3 s x f1x i1).lpar =
     (s.lpar.setX s.C.size (s.lpar.getX x)).setX (s.C.size + 1) (s.lpar.getX x) := by
   rw [ins3_eq, insFinS_lpar, (ins2_top s x f1x i1).2.2.2.1]
 theorem ins3_nodes : (ins3 s x f1x i1).nodes =
-    ((s.cin.getX x).foldl (fun ns T => ns.modify T (aroundF (ins2 s x f1x i1) x s.C.size (s.C.size + 1) (insF s x) T)) s.nodes).modify (s.lpar.getX x) (fun n => { n with children := n.children.replace1 x [s.C.size, x, s.C.size + 1] }) := by
+    ((s.cin.getX x).foldl (fun ns T => ns.modify T (aroundF (ins2 s x f1x i1) x s.C.size
+      (s.C.size + 1) (insF s x) T)) s.nodes).modify (s.lpar.getX x) (fun n => {
+      n with children := n.children.replace1 x [s.C.size, x, s.C.size + 1] }) := by
   rw [ins3_eq, insFinS_nodes, (ins2_top s x f1x i1).2.2.1, (ins2_top s x f1x i1).2.2.2.1,
     (ins2_top s x f1x i1).2.2.2.2]
 
@@ -174,9 +187,11 @@ theorem ins3_getX (hnd : (s.cin.getX x).Nodup) (u : Nat) :
   rw [ins3_nodes, Array.getX_modify, foldl_modify_size]
   unfold insNode
   simp only
-  have hfold : ((s.cin.getX x).foldl (fun ns T => ns.modify T (aroundF (ins2 s x f1x i1) x s.C.size (s.C.size + 1) (insF s x) T)) s.nodes).getX u =
+  have hfold : ((s.cin.getX x).foldl (fun ns T => ns.modify T (aroundF (ins2 s x f1x i1) x
+    s.C.size (s.C.size + 1) (insF s x) T)) s.nodes).getX u =
       if u ∈ s.cin.getX x ∧ u < s.nodes.size then
-        setTS (aroundT (s.nodes.getX u).table x s.C.size (s.C.size + 1) (insF s x u).1 (insF s x u).2)
+        setTS (aroundT (s.nodes.getX u).table x s.C.size (s.C.size + 1) (insF s x u).1 (insF s x
+          u).2)
           (sideAround (s.nodes.getX u) x s.C.size (s.C.size + 1)) (s.nodes.getX u)
       else s.nodes.getX u := by
     rw [foldl_modify_getX' _ (s.cin.getX x) hnd]
@@ -189,7 +204,7 @@ theorem ins3_getX (hnd : (s.cin.getX x).Nodup) (u : Nat) :
   · rw [ite_eq_left ⟨hu.1.symm, by rw [← hu.1]; exact hu.2⟩, ite_eq_left hu]
   · rw [ite_eq_right (fun h => hu ⟨h.1.symm, by rw [← h.1]; exact h.2⟩), ite_eq_right hu]
 
-/-- The range pointers after the split: `y` takes over first places, `z` last places, on `x`'s path. -/
+/-- The new chunks take over the first and last range pointers along the split chunk path. -/
 def insFirst (u : Nat) : Nat :=
   if cpHit (insJob s x) s.P.H (ts s) 1 u = true ∧ (s.nodes.getX u).first = x then s.C.size
   else (s.nodes.getX u).first
@@ -212,7 +227,8 @@ structure InsFrame (t : TS) : Prop where
     else if c = s.C.size then tagY (ins0 s x) x f1x i1 else (s.C.getX c).tag
 
 theorem insFin_frame (hxs : x < s.C.size) (hnd : (s.cin.getX x).Nodup)
-    (hdist : ∀ i i', 1 ≤ i → i ≤ s.P.H → 1 ≤ i' → i' ≤ s.P.H → pth (ts s) x i = pth (ts s) x i' → i = i')
+    (hdist : ∀ i i', 1 ≤ i → i ≤ s.P.H → 1 ≤ i' → i' ≤ s.P.H → pth (ts s) x i = pth (ts s) x i'
+      → i = i')
     (hex : ∀ i, 1 ≤ i → i ≤ s.P.H → pth (ts s) x i < s.nodes.size) :
     InsFrame s x f1x i1 (insFin s x f1x i1) := by
   set t3 := ts (ins3 s x f1x i1) with ht3
@@ -238,7 +254,8 @@ theorem insFin_frame (hxs : x < s.C.size) (hnd : (s.cin.getX x).Nodup)
   simp only [ex, ey, ez] at cO cY cZ cSy cSz
   have hfin : insFin s x f1x i1 = copyRest (insJob s x) s.P.H t3 1 := rfl
   rw [hfin]
-  refine ⟨cP.trans hP3, cS.trans hsize3, fun u => ?_, fun c i => ?_, fun c hc => ?_, fun c h1 h2 => ?_,
+  refine ⟨cP.trans hP3, cS.trans hsize3, fun u => ?_, fun c i => ?_, fun c hc => ?_, fun c h1 h2
+    => ?_,
     fun c => ?_, fun c => ?_, fun c => ?_⟩
   · rw [cN]
     have hn3 : nd t3 u = insNode s x u := by rw [ht3]; exact ins3_getX s x f1x i1 hnd u
@@ -254,7 +271,7 @@ theorem insFin_frame (hxs : x < s.C.size) (hnd : (s.cin.getX x).Nodup)
     · rw [ite_eq_left hc]
       rcases hc with rfl | rfl
       · have := cY i
-        show ((copyRest (insJob s x) s.P.H t3 1).path.getX s.C.size).getX i = _
+        change ((copyRest (insJob s x) s.P.H t3 1).path.getX s.C.size).getX i = _
         rw [this, hpx]
         split
         · rfl
@@ -263,7 +280,7 @@ theorem insFin_frame (hxs : x < s.C.size) (hnd : (s.cin.getX x).Nodup)
           · simp [Array.getX, Array.getD, hi]
           · simp [Array.getX, Array.getD, hi]
       · have := cZ i
-        show ((copyRest (insJob s x) s.P.H t3 1).path.getX (s.C.size + 1)).getX i = _
+        change ((copyRest (insJob s x) s.P.H t3 1).path.getX (s.C.size + 1)).getX i = _
         rw [this, hpx]
         split
         · rfl

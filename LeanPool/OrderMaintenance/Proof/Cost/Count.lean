@@ -84,7 +84,7 @@ theorem CountInv.ins {s s' : Core} {e : Nat → Nat} {pops g : Nat} (h : CountIn
 /-- A chunk removal: the siblings become quiet, with their sizes (at most `c_max`) as `e`. -/
 theorem CountInv.remove {s : Core} {e : Nat → Nat} {pops x : Nat} (h : CountInv s e pops)
     (hx : x < s.C.size) (hl : cLl s x < s.C.size) (hr : cRr s x < s.C.size)
-    (hlx : cLl s x ≠ x) (hrx : cRr s x ≠ x) (hxs : cSt s x = .splitting)
+    (hlx : cLl s x ≠ x) (hrx : cRr s x ≠ x)
     (hls : cSt s (cLl s x) = .overflow) (hrs : cSt s (cRr s x) = .overflow)
     (hszl : cSz s (cLl s x) ≤ cmax s.P) (hszr : cSz s (cRr s x) ≤ cmax s.P) :
     CountInv (cremoveState s x)
@@ -141,7 +141,10 @@ theorem CountInv.remove {s : Core} {e : Nat → Nat} {pops x : Nat} (h : CountIn
     · rw [ite_eq_right h1] at hq
       rw [hP]
       by_cases h2 : c = cLl s x ∨ c = cRr s x
-      · simp only [ite_eq_left h2]; rcases h2 with rfl | rfl; exact hszl; exact hszr
+      · simp only [ite_eq_left h2]
+        rcases h2 with rfl | rfl
+        · exact hszl
+        · exact hszr
       · simp only [ite_eq_right h2]; rw [ite_eq_right h2] at hq; exact h.e_le c hc hq
 
 /-- **A pop**: the popped chunk (above `θ`) leaves the quiet set, and two chunks are added. -/

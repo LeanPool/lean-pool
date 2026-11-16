@@ -151,17 +151,19 @@ theorem cxsteps_count {X Y : Core → Prop} {L : List Nat} {δ δu s₀ : Nat �
     subst hel
     obtain ⟨e, pops, hN⟩ := hX
     have Fx := hC.cfam x hxL hst
-    exact ⟨e, pops, hN.frame (cmoveL_qsame (Ne.symm (Fx.lx hI hxL)) hxL.2 Fx.lLive.2 hst Fx.lSt) rfl⟩
+    exact ⟨e, pops, hN.frame
+      (cmoveL_qsame (Ne.symm (Fx.lx hI hxL)) hxL.2 Fx.lLive.2 hst Fx.lSt) rfl⟩
   · intro t A gh labs hI hel hG hC hxL hst hX
     subst hel
     obtain ⟨e, pops, hN⟩ := hX
     have Fx := hC.cfam x hxL hst
-    exact ⟨e, pops, hN.frame (cmoveR_qsame (Ne.symm (Fx.rx hI hxL)) hxL.2 Fx.rLive.2 hst Fx.rSt) rfl⟩
+    exact ⟨e, pops, hN.frame
+      (cmoveR_qsame (Ne.symm (Fx.rx hI hxL)) hxL.2 Fx.rLive.2 hst Fx.rSt) rfl⟩
   · intro t A gh hI hel hG hC hxL hst hl hr hX
     subst hel
     obtain ⟨e, pops, hN⟩ := hX
     have Fx := hC.cfam x hxL hst
-    exact ⟨_, pops, hN.remove hxL.2 Fx.lLive.2 Fx.rLive.2 (Fx.lx hI hxL) (Fx.rx hI hxL) hst Fx.lSt
+    exact ⟨_, pops, hN.remove hxL.2 Fx.lLive.2 Fx.rLive.2 (Fx.lx hI hxL) (Fx.rx hI hxL) Fx.lSt
       Fx.rSt hl hr⟩
 
 end OrderMaintenance.Proof
@@ -169,17 +171,39 @@ end OrderMaintenance.Proof
 namespace OrderMaintenance.Proof
 
 open OrderMaintenance.Model
+private theorem run_split_state {α : Type} (state : St)
+    (splitting overflow other : CM α) (t : Core) :
+    ((match state with
+      | .splitting => splitting
+      | .overflow => overflow
+      | _ => other) : CM α).run t =
+      match state with
+      | .splitting => splitting.run t
+      | .overflow => overflow.run t
+      | _ => other.run t := by
+  cases state <;> rfl
+
+-- Reduce the state selector while keeping the full driver opaque to the kernel.
+private theorem driveChunk_run_match (t : Core) (c : Nat) :
+    (driveChunk c).run t = match cSt t c with
+      | .splitting => (driveChunkFrom c).run t
+      | .overflow => (driveChunkFrom (cSrc t c)).run t
+      | _ => .ok () t := by
+  unfold driveChunk
+  rw [run_getC_bind]
+  exact run_split_state _ _ _ _ _
+
 theorem driveChunk_run_split {t : Core} {c : Nat} (h : cSt t c = .splitting) :
     (driveChunk c).run t = (driveChunkFrom c).run t := by
-  unfold driveChunk; simp only [run_getC_bind]; simp only [cSt] at h; rw [h]
+  rw [driveChunk_run_match, h]
 
 theorem driveChunk_run_ovf {t : Core} {c : Nat} (h : cSt t c = .overflow) :
     (driveChunk c).run t = (driveChunkFrom (cSrc t c)).run t := by
-  unfold driveChunk; simp only [run_getC_bind]; simp only [cSt] at h; rw [h]
+  rw [driveChunk_run_match, h]
 
 theorem driveChunk_run_quiet {t : Core} {c : Nat} (h : cSt t c = .quiet) :
     (driveChunk c).run t = .ok () t := by
-  unfold driveChunk; simp only [run_getC_bind]; simp only [cSt] at h; rw [h]; rfl
+  rw [driveChunk_run_match, h]
 
 /-- What the chunk phase leaves. -/
 structure CPost (L : List Nat) (s₀ : Nat → Nat) (t3 t4 : Core) : Prop where
@@ -214,7 +238,8 @@ theorem driveChunk_ok {t : Core} {A : Abs} {L : List Nat} {gh : GGh} {s₀ δu :
     have hC1 := hC.c1 x hxL hxs (by unfold NIL; have := hxL.1; omega)
     have hXs := cxsteps_count (cxsteps_dframe (cxsteps_linv (L := A.elist) (δ := δ1 c) (δu := δu)
       (s₀ := s₀) (x := x)) t hcθ)
-    obtain ⟨t4, hrun, hD⟩ := cinv_drive hI hG hCx hC1 hXs ⟨⟨hLX, DFrame.refl t⟩, e, pops, hN⟩ hGP hCP
+    obtain ⟨t4, hrun, hD⟩ := cinv_drive hI hG hCx hC1 hXs ⟨⟨hLX, DFrame.refl t⟩, e, pops, hN⟩
+      hGP hCP
       hxL hxs (fun c' h1 h2 h3 => by
         unfold δ1; rw [ite_eq_right]; rintro rfl; rcases hcx with h | h | h <;> contradiction)
       (by unfold δ1; rcases hcx with rfl | rfl | rfl <;> simp [hlx, hrx, hlr, Ne.symm hlx,
@@ -235,7 +260,10 @@ theorem driveChunk_ok {t : Core} {A : Abs} {L : List Nat} {gh : GGh} {s₀ δu :
   | overflow =>
     rw [driveChunk_run_ovf hst]
     obtain ⟨hxL, hxs, hlr⟩ := hC.covf c hcL hst
-    exact drive _ hxL hxs (by rcases hlr with h | h; exact Or.inl h.symm; exact Or.inr (Or.inr h.symm))
+    exact drive _ hxL hxs (by
+      rcases hlr with h | h
+      · exact Or.inl h.symm
+      · exact Or.inr (Or.inr h.symm))
   | quiet =>
     rw [driveChunk_run_quiet hst]
     -- the undriven insertion is in no family

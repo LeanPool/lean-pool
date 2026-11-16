@@ -63,7 +63,7 @@ theorem t_hL : ((wiC s v).nodes.getX v).livePar < (wiC s v).nodes.size := by
   exact H.hL
 
 theorem height (u : Nat) : (nd S' u).height = if u = N ∨ u = N + 1 then ht (ts s) v else ht (ts s) u := by
-  rw [nd_ts, sdS_height H.ln H.rn H.c1n H.c2n H.t_nd H.t_lt, H.wsize, sd_h_eq]
+  rw [nd_ts, sdS_height H.ln H.rn H.t_nd H.t_lt, H.wsize, sd_h_eq]
   split
   · rfl
   · exact (wiC_sameTree s v).height u
@@ -140,7 +140,7 @@ theorem table (u : Nat) : (nd S' u).table =
       aroundT (nd (ts s) u).table v N (N + 1) (roomL s.P.beta (nd (ts s) u).table v true)
         (roomL s.P.beta (nd (ts s) u).table v false)
     else (nd (ts s) u).table := by
-  rw [nd_ts, sdS_table H.ln H.rn H.c1n H.c2n H.t_nd H.t_lt H.t_hv H.t_hL, H.wsize]
+  rw [nd_ts, sdS_table H.ln H.rn H.t_nd H.t_lt H.t_hv H.t_hL, H.wsize]
   simp only [sF, H.w_table, H.w_inTables]
   rfl
 
@@ -148,7 +148,7 @@ theorem inTables (u : Nat) : (nd S' u).inTables =
     if u = N ∨ u = N + 1 then (nd (ts s) v).inTables
     else (nd (ts s) u).inTables ++ (if ht (ts s) v - 1 ≠ 0 ∧ u ∈ sLeft (wiC s v) v side then [N] else []) ++
       (if ht (ts s) v - 1 ≠ 0 ∧ u ∈ sRight (wiC s v) v side then [N + 1] else []) := by
-  rw [nd_ts, sdS_inTables H.ln H.rn H.c1n H.c2n H.t_nd H.t_lt H.t_hv H.t_hL
+  rw [nd_ts, sdS_inTables H.ln H.rn H.t_nd H.t_lt
     (by rw [sd_h_eq, H.wsize]; exact H.ent), H.wsize, H.w_inTables, H.w_inTables, sd_h_eq]
 
 theorem children (u : Nat) : (nd S' u).children =

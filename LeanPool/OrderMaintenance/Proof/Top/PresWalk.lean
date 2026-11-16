@@ -35,7 +35,36 @@ theorem Shape.of_frame {s s' : TS} {cl : List Nat} {ord : Nat → List Nat} (S :
   have hdig : ∀ c j, digit s' c j = digit s c j := fun c j => by unfold digit; rw [hpp, hpp, T.lab?]
   have htagF : ∀ c, tagF s' c = tagF s c := fun c => by
     unfold tagF; rw [hP]; exact tagUp_congr (by rw [hP]) _ (fun i _ _ => hdig c i)
-  refine { H3 := by rw [hP]; exact S.H3, ord0 := S.ord0, ordNodup := S.ordNodup, ordMem := ?_, ordHigh := ?_, htN := ?_, root := ?_, pathEnt := ?_, W3 := ?_, O2 := ?_, O1 := ?_, labsOk := ?_, up := ?_, lp := ?_, kids := ?_, OT := ?_, ghost := ?_, src := ?_, tabEnt := ?_, tabsIff := ?_, tabsNodup := ?_, Q := ?_, W1 := ?_, side := ?_, pathSize := ?_, P := ?_, Sr := ?_, ends := ?_, tags := ?_ }
+  refine {
+    H3 := by rw [hP]; exact S.H3
+    ord0 := S.ord0
+    ordNodup := S.ordNodup
+    ordMem := ?_
+    ordHigh := ?_
+    htN := ?_
+    root := ?_
+    pathEnt := ?_
+    W3 := ?_
+    O2 := ?_
+    O1 := ?_
+    labsOk := ?_
+    up := ?_
+    lp := ?_
+    kids := ?_
+    OT := ?_
+    ghost := ?_
+    src := ?_
+    tabEnt := ?_
+    tabsIff := ?_
+    tabsNodup := ?_
+    Q := ?_
+    W1 := ?_
+    side := ?_
+    pathSize := ?_
+    P := ?_
+    Sr := ?_
+    ends := ?_
+    tags := ?_ }
   · intro h h1 h2 u; rw [hP] at h2; rw [T.isN, T.ht]; exact S.ordMem h h1 h2 u
   · intro h hh; rw [hP] at hh; exact S.ordHigh h hh
   · intro u hu; rw [T.isN] at hu; rw [T.ht, hP]; exact S.htN u hu
@@ -95,7 +124,8 @@ theorem Shape.upChain_succ {s : TS} {cl : List Nat} {ord : Nat → List Nat} (S 
     · have hroot : (nd s u).livePar = NIL := by
         have := S.htN u hu.1
         have hm := (S.ordMem s.P.H (by have := S.H3; omega) le_rfl u).mpr ⟨hu.1, by omega⟩
-        rw [S.root.1] at hm; simp at hm; rw [hm]; exact S.root.2.2
+        rw [S.root.1] at hm; simp only [List.mem_cons, List.not_mem_nil, or_false] at hm; rw
+          [hm]; exact S.root.2.2
       rw [hroot, upChain_nil, upChain_nil]
 
 /-! ### Adding 2 to a stored weight -/
@@ -106,23 +136,30 @@ def wiC (s : Core) (v : Nat) : Core :=
 
 theorem wiC_sameTree (s : Core) (v : Nat) : SameTree (ts s) (ts (wiC s v)) := by
   refine ⟨rfl, by simp [wiC, ts], rfl, rfl, fun u => ?_⟩
-  show (s.nodes.modify v fun n => { n with weight := n.weight + 2 }).getX u = { s.nodes.getX u with first := ((s.nodes.modify v fun n => { n with weight := n.weight + 2 }).getX u).first, last := ((s.nodes.modify v fun n => { n with weight := n.weight + 2 }).getX u).last, weight := ((s.nodes.modify v fun n => { n with weight := n.weight + 2 }).getX u).weight }
+  let updated := s.nodes.modify v fun n => { n with weight := n.weight + 2 }
+  change updated.getX u = {
+    s.nodes.getX u with
+    first := (updated.getX u).first
+    last := (updated.getX u).last
+    weight := (updated.getX u).weight }
+  dsimp only [updated]
   rw [Array.getX_modify]; split <;> rfl
 
 theorem wiC_weight (s : Core) (v u : Nat) (hv : v < s.nodes.size) :
-    (nd (ts (wiC s v)) u).weight = if u = v then (nd (ts s) u).weight + 2 else (nd (ts s) u).weight := by
-  show ((s.nodes.modify v _).getX u).weight = _
+    (nd (ts (wiC s v)) u).weight = if u = v then (nd (ts s) u).weight + 2 else (nd (ts s)
+      u).weight := by
+  change ((s.nodes.modify v _).getX u).weight = _
   rw [Array.getX_modify]
   by_cases h : u = v
   · subst h; simp [hv]; rfl
   · simp [h, Ne.symm h]; rfl
 
 theorem wiC_first (s : Core) (v u : Nat) : (nd (ts (wiC s v)) u).first = (nd (ts s) u).first := by
-  show ((s.nodes.modify v _).getX u).first = _
+  change ((s.nodes.modify v _).getX u).first = _
   rw [Array.getX_modify]; split <;> rfl
 
 theorem wiC_last (s : Core) (v u : Nat) : (nd (ts (wiC s v)) u).last = (nd (ts s) u).last := by
-  show ((s.nodes.modify v _).getX u).last = _
+  change ((s.nodes.modify v _).getX u).last = _
   rw [Array.getX_modify]; split <;> rfl
 
 /-- The job after the walk visits `v` and starts no drain. -/
@@ -153,7 +190,8 @@ theorem inv_winc {s : Core} {cl : List Nat} {ord : Nat → List Nat} {dr n0 : Na
     · obtain ⟨h1, h2, -⟩ := S.up v hvl hH; exact Or.inr ⟨h1, h2⟩
     · left
       have hm := (S.ordMem (ts s).P.H (by have := S.H3; omega) le_rfl v).mpr ⟨hvl.1, by omega⟩
-      rw [S.root.1] at hm; simp at hm; rw [hup, hm]; exact S.root.2.2
+      rw [S.root.1] at hm; simp only [List.mem_cons, List.not_mem_nil, or_false] at hm; rw [hup,
+        hm]; exact S.root.2.2
   have hupa : up = anc (ts s) j.y (ht (ts s) v + 1) := by
     rw [anc_succ j.y _ hv1, ← hva]
   -- the lagging nodes: `v` leaves them
@@ -165,17 +203,19 @@ theorem inv_winc {s : Core} {cl : List Nat} {ord : Nat → List Nat} {dr n0 : Na
     rcases hupl with h | ⟨h1, h2⟩
     · rw [h, upChain_nil, upChain_nil]
     · rw [S.upChain_succ (ts s).P.H up h1 (by rw [h2]; omega)]
-  have hpnew : pend (ts (wiC s v)) (some (walkNext (ts s) j v)) = upChain (ts s) ((ts s).P.H + 1) up := by
+  have hpnew : pend (ts (wiC s v)) (some (walkNext (ts s) j v)) = upChain (ts s) ((ts s).P.H +
+    1) up := by
     simp only [pend, walkNext]
     split <;> (simp only [wStart]; rw [T.upChain]; rfl)
   have hvnot : v ∉ upChain (ts s) ((ts s).P.H + 1) up := by
     intro hm
     rcases hupl with h | ⟨h1, h2⟩
-    · rw [h, upChain_nil] at hm; simp at hm
+    · rw [h, upChain_nil] at hm; simp only [List.not_mem_nil] at hm
     · have := (S.upChain_mem _ _ v h1 hm).2; omega
   -- a ghost funded at the height of `v` is the drain `v` is a target of
   have hfv : ∀ u, ghostN (ts s) u → ht (ts s) u = ht (ts s) v →
-      (anc (ts s) j.y (ht (ts s) u) = (nd (ts s) u).t1 ∨ anc (ts s) j.y (ht (ts s) u) = (nd (ts s) u).t2) →
+      (anc (ts s) j.y (ht (ts s) u) = (nd (ts s) u).t1 ∨ anc (ts s) j.y (ht (ts s) u) = (nd (ts
+        s) u).t2) →
       srcOf (ts s) v = u := by
     intro u hu hh hf
     rw [hh, ← hva] at hf
@@ -199,7 +239,7 @@ theorem inv_winc {s : Core} {cl : List Nat} {ord : Nat → List Nat} {dr n0 : Na
       by_cases huv : u = v
       · subst huv
         rw [hW, ite_eq_left rfl]
-        show (nd (ts s) u).weight + 2 ≤ Wd s.P (ht (ts s) u)
+        change (nd (ts s) u).weight + 2 ≤ Wd s.P (ht (ts s) u)
         by_contra hc
         exact hno ⟨hp, hu.2, hs, by omega⟩
       · rw [hW' u huv]; exact Ti.wA u hu hp hs
@@ -273,7 +313,8 @@ theorem inv_winc {s : Core} {cl : List Nat} {ord : Nat → List Nat} {dr n0 : Na
       have huv : u ≠ v := fun e => by rw [e] at hu; exact absurd hu.2 (by rw [hvl.2]; simp)
       rw [T.fundOf cl u (hW' u huv), hW' u huv]
       have := Ti.wC' u hu
-      have hfe : funded (ts (wiC s v)) (some (walkNext (ts s) j v)) u ↔ funded (ts s) (some j) u := by
+      have hfe : funded (ts (wiC s v)) (some (walkNext (ts s) j v)) u ↔ funded (ts s) (some j) u
+        := by
         have hy : (walkNext (ts s) j v).y = j.y := by unfold walkNext; split <;> rfl
         simp only [funded]; rw [hy, T.anc, T.ht, T.t1, T.t2]
       by_cases hf : funded (ts s) (some j) u

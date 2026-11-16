@@ -123,7 +123,8 @@ theorem QSame.refl (s : Core) : QSame s s := ⟨rfl, rfl, fun _ _ => Iff.rfl, fu
 
 theorem QSame.trans {a b c : Core} (h1 : QSame a b) (h2 : QSame b c) : QSame a c := by
   have hL : ∀ d, LiveC a d → LiveC b d := fun d hd => by simp only [LiveC, h1.Csize]; exact hd
-  refine ⟨h2.Csize.trans h1.Csize, h2.P.trans h1.P, fun d hd => (h2.q d (hL d hd)).trans (h1.q d hd),
+  refine ⟨h2.Csize.trans h1.Csize, h2.P.trans h1.P, fun d hd => (h2.q d (hL d hd)).trans (h1.q d
+    hd),
     fun d hd hq => ?_⟩
   rw [h2.sz d (hL d hd) ((h1.q d hd).mpr hq), h1.sz d hd hq]
 
@@ -218,7 +219,8 @@ theorem allocGroup_frame (s : Core) (c : Nat) :
     rfl, rfl⟩
 
 theorem linkGroupPair_frame (t : Core) (g gl gr labL labR : Nat) :
-    PQSame t (linkGroupPair t g gl gr labL labR) ∧ (linkGroupPair t g gl gr labL labR).nodes = t.nodes ∧
+    PQSame t (linkGroupPair t g gl gr labL labR) ∧ (linkGroupPair t g gl gr labL labR).nodes =
+      t.nodes ∧
       (linkGroupPair t g gl gr labL labR).path = t.path ∧
       (linkGroupPair t g gl gr labL labR).cin = t.cin ∧
       (linkGroupPair t g gl gr labL labR).lpar = t.lpar ∧
@@ -300,7 +302,8 @@ theorem DFrame.of_qsame {s s' : Core} (Q : QSame s s') (hq : PQSame s s')
     (hl : ∀ c, cN s' c = cN s c ∧ cP s' c = cP s c ∧ cT s' c = cT s c)
     (hcnt : s'.count = s.count) : DFrame s s' :=
   ⟨Q.Csize, Q.P, hq, ht, hl, Q.inQC, fun c hc => by
-    unfold OrderMaintenance.Proof.inQC at hc; simp only [decide_eq_true_eq] at hc; exact Q.sz c hc.1 hc.2.1,
+    unfold OrderMaintenance.Proof.inQC at hc; simp only [decide_eq_true_eq] at hc; exact Q.sz c
+      hc.1 hc.2.1,
     Q.gval, hcnt⟩
 
 theorem CFrame.dframe {s s' : Core} (h : CFrame s s') : DFrame s s' :=
@@ -315,7 +318,8 @@ theorem cmoveL_dframe {s : Core} {x : Nat} {u labs : List Nat} (hxy : x ≠ cLl 
   have hC := fun c => cmoveSizes_C (t := moveGroupsLeft s x (cLl s x) u labs) (u := u) hxy
     (by rw [hCs]; exact hx) (by rw [hCs]; exact hy) c
   have hCm := fun c => moveGroupsLeft_C (s := s) (u := u) (labs := labs) hxy hx hy c
-  have fld : ∀ c, cSt (cmoveLState s x u labs) c = cSt s c ∧ cN (cmoveLState s x u labs) c = cN s c ∧
+  have fld : ∀ c, cSt (cmoveLState s x u labs) c = cSt s c ∧ cN (cmoveLState s x u labs) c = cN
+    s c ∧
       cP (cmoveLState s x u labs) c = cP s c ∧ cT (cmoveLState s x u labs) c = cT s c ∧
       (c ≠ x → c ≠ cLl s x → cSz (cmoveLState s x u labs) c = cSz s c) := by
     intro c
@@ -342,7 +346,8 @@ theorem cmoveR_dframe {s : Core} {x : Nat} {u labs : List Nat} (hxz : x ≠ cRr 
   have hC := fun c => cmoveSizes_C (t := moveGroupsRight s x (cRr s x) u labs) (u := u) hxz
     (by rw [hCs]; exact hx) (by rw [hCs]; exact hz) c
   have hCm := fun c => moveGroupsRight_C (s := s) (u := u) (labs := labs) hxz hx hz c
-  have fld : ∀ c, cSt (cmoveRState s x u labs) c = cSt s c ∧ cN (cmoveRState s x u labs) c = cN s c ∧
+  have fld : ∀ c, cSt (cmoveRState s x u labs) c = cSt s c ∧ cN (cmoveRState s x u labs) c = cN
+    s c ∧
       cP (cmoveRState s x u labs) c = cP s c ∧ cT (cmoveRState s x u labs) c = cT s c ∧
       (c ≠ x → c ≠ cRr s x → cSz (cmoveRState s x u labs) c = cSz s c) := by
     intro c

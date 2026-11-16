@@ -26,6 +26,7 @@ succeeds or fails a guard.
 namespace OrderMaintenance.Proof
 
 open OrderMaintenance.Model
+/-- A top-structure step preserves core fields except for chunk tags. -/
 structure TopRel (s s' : Core) : Prop where
   E : s'.E = s.E
   Gs : s'.Gs = s.Gs

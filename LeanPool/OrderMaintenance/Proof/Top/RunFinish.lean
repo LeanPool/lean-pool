@@ -31,9 +31,11 @@ variable (v : Nat)
 /-- `dropTable`, as a state update. -/
 def dropTableS (hh : Nat) (s : Core) (e : Nat) : Core :=
   if hh == 0 then
-    (if (s.cin.getX e).contains v then { s with cin := s.cin.setX e ((s.cin.getX e).erase v) } else s)
+    (if (s.cin.getX e).contains v then { s with cin := s.cin.setX e ((s.cin.getX e).erase v) }
+      else s)
   else if (s.nodes.getX e).inTables.contains v then
-    { s with nodes := s.nodes.modify e fun n => { n with inTables := (s.nodes.getX e).inTables.erase v } }
+    { s with nodes := s.nodes.modify e fun n => { n with
+      inTables := (s.nodes.getX e).inTables.erase v } }
   else s
 
 /-- `dropEntry`, as a state update. -/
@@ -47,15 +49,20 @@ def releaseS (s : Core) (t : Nat) : Core :=
     { s with nodes := s.nodes.modify t fun n => { n with overflowOf := NIL } }
   else s
 
+/-- Removes the finished ghost from the inverse tables of every entry it held. -/
 def fd1 (s : Core) : Core :=
   (s.nodes.getX v).order.foldl (dropTableS v ((s.nodes.getX v).height - 1)) s
+/-- Removes the finished ghost entry from each table that contained it. -/
 def fd2 (s : Core) : Core := (s.nodes.getX v).inTables.foldl (dropEntryS v) (fd1 v s)
+/-- Releases both targets after removing the finished ghost from all tables. -/
 def fd4 (s : Core) : Core :=
   releaseS v (releaseS v (fd2 v s) (s.nodes.getX v).t1) (s.nodes.getX v).t2
 
 /-- The state after `finishDrain v`. -/
 def fdS (s : Core) : Core :=
-  { fd4 v s with nodes := (fd4 v s).nodes.modify v fun n => { n with alive := false, inTables := [] } }
+  { fd4 v s with nodes := (fd4 v s).nodes.modify v fun n => { n with
+    alive := false
+    inTables := [] } }
 
 end defs
 
@@ -69,7 +76,7 @@ theorem dropTable_run (hh v e : Nat) (s : Core) :
     simp only [beq_self_eq_true, ite_true, run_bind, run_get, run_pure]
     split <;> rfl
   · simp only [show (hh == 0) = false by simpa using h0, Bool.false_eq_true, ite_false, run_bind,
-       run_get, run_pure, run_getN]
+        run_pure, run_getN]
     split <;> rfl
 
 theorem dropEntry_run (v T : Nat) (s : Core) (h : v ∈ (s.nodes.getX T).order) :
@@ -86,7 +93,7 @@ theorem release_run (v t : Nat) (s : Core) : (release v t).run s = .ok ⟨⟩ (r
 
 theorem dropTableS_table (v hh : Nat) (s : Core) (e T : Nat) :
     ((dropTableS v hh s e).nodes.getX T).table = (s.nodes.getX T).table := by
-  unfold dropTableS; split_ifs <;> simp [Array.getX_modify] <;> split <;> rfl
+  unfold dropTableS; split_ifs <;> simp [Array.getX_modify] ; split <;> rfl
 
 theorem foldl_dropTableS_table (v hh : Nat) (l : List Nat) (s : Core) (T : Nat) :
     ((l.foldl (dropTableS v hh) s).nodes.getX T).table = (s.nodes.getX T).table := by
@@ -110,7 +117,7 @@ theorem finishDrain_run (v : Nat) (s : Core) (hnd : (s.nodes.getX v).inTables.No
   rw [run_bind, forM_run _ _ (fun T t => dropEntryS v t T)
     (fun rest t => rest.Nodup ∧ ∀ T ∈ rest, v ∈ (t.nodes.getX T).order) s1
     ⟨hnd, fun T hT' => by
-      show v ∈ ((s1.nodes.getX T).table.map (·.1))
+      change v ∈ ((s1.nodes.getX T).table.map (·.1))
       rw [foldl_dropTableS_table]; exact hT T hT'⟩
     (fun x rest t ⟨hn, hm⟩ => ⟨dropEntry_run v x t (hm x (by simp)),
       (List.nodup_cons.mp hn).2, fun T hT' => by
@@ -211,7 +218,9 @@ theorem foldl_dropTableS (v hh : Nat) (l : List Nat) (hl : l.Nodup) (s : Core) :
 theorem foldl_dropEntryS (v : Nat) (l : List Nat) (hl : l.Nodup) (s : Core) :
     (∀ u, (l.foldl (dropEntryS v) s).nodes.getX u =
       if u ∈ l ∧ u < s.nodes.size then
-        { s.nodes.getX u with table := assocErase (s.nodes.getX u).table v, side := assocErase (s.nodes.getX u).side v }
+        { s.nodes.getX u with
+          table := assocErase (s.nodes.getX u).table v
+          side := assocErase (s.nodes.getX u).side v }
       else s.nodes.getX u) ∧
     (l.foldl (dropEntryS v) s).nodes.size = s.nodes.size ∧
     (l.foldl (dropEntryS v) s).cin = s.cin ∧
@@ -255,7 +264,8 @@ theorem releaseS_getX (v : Nat) (s : Core) (t u : Nat) :
     · subst hu; simp [hc]
     · simp [hu]
 
-theorem releaseS_size (v : Nat) (s : Core) (t : Nat) : (releaseS v s t).nodes.size = s.nodes.size := by
+theorem releaseS_size (v : Nat) (s : Core) (t : Nat) : (releaseS v s t).nodes.size =
+  s.nodes.size := by
   unfold releaseS; split <;> simp
 
 theorem releaseS_rest (v : Nat) (s : Core) (t : Nat) :
@@ -280,7 +290,9 @@ theorem fd1_size : (fd1 v s).nodes.size = s.nodes.size := (foldl_dropTableS v _ 
 include hno hni in
 theorem fd2_getX (u : Nat) : (fd2 v s).nodes.getX u =
     if u ∈ (s.nodes.getX v).inTables ∧ u < s.nodes.size then
-      { (fd1 v s).nodes.getX u with table := assocErase ((fd1 v s).nodes.getX u).table v, side := assocErase ((fd1 v s).nodes.getX u).side v }
+      { (fd1 v s).nodes.getX u with
+        table := assocErase ((fd1 v s).nodes.getX u).table v
+        side := assocErase ((fd1 v s).nodes.getX u).side v }
     else (fd1 v s).nodes.getX u := by
   unfold fd2; rw [(foldl_dropEntryS v _ hni (fd1 v s)).1, fd1_size v s hno]
 
@@ -291,7 +303,8 @@ theorem fd2_size : (fd2 v s).nodes.size = s.nodes.size := by
 end fd
 
 theorem fdS_nodes (v : Nat) (s : Core) :
-    (fdS v s).nodes = (fd4 v s).nodes.modify v fun n => { n with alive := false, inTables := [] } := by
+    (fdS v s).nodes = (fd4 v s).nodes.modify v fun n => { n with alive := false, inTables := []
+      } := by
   simp only [fdS]
 
 /-- **The nodes after `finishDrain v`.** -/
@@ -312,7 +325,9 @@ theorem fdS_getX (v : Nat) (s : Core) (hv : v < s.nodes.size)
       else if u ∈ (s.nodes.getX v).order ∧ (s.nodes.getX v).height - 1 ≠ 0 ∧ u < s.nodes.size then
         { s.nodes.getX u with inTables := (s.nodes.getX u).inTables.erase v }
       else if u ∈ (s.nodes.getX v).inTables ∧ u < s.nodes.size then
-        { s.nodes.getX u with table := assocErase (s.nodes.getX u).table v, side := assocErase (s.nodes.getX u).side v }
+        { s.nodes.getX u with
+          table := assocErase (s.nodes.getX u).table v
+          side := assocErase (s.nodes.getX u).side v }
       else if (u = (s.nodes.getX v).t1 ∨ u = (s.nodes.getX v).t2) ∧
           (s.nodes.getX u).overflowOf = v ∧ u < s.nodes.size then
         { s.nodes.getX u with overflowOf := NIL }
@@ -329,12 +344,14 @@ theorem fdS_getX (v : Nat) (s : Core) (hv : v < s.nodes.size)
   have hs4 : (fd4 v s).nodes.size = s.nodes.size := by
     unfold fd4; rw [releaseS_size, releaseS_size, hs2]
   have h4 : (fd4 v s).nodes.getX u =
-      if u = (s.nodes.getX v).t2 ∧ (s.nodes.getX (s.nodes.getX v).t2).overflowOf = v ∧ u < s.nodes.size then
+      if u = (s.nodes.getX v).t2 ∧ (s.nodes.getX (s.nodes.getX v).t2).overflowOf = v ∧ u <
+        s.nodes.size then
         { (releaseS v (fd2 v s) (s.nodes.getX v).t1).nodes.getX u with overflowOf := NIL }
       else (releaseS v (fd2 v s) (s.nodes.getX v).t1).nodes.getX u := by
     unfold fd4; rw [releaseS_getX, t2e, releaseS_size, hs2]
   have h3 : (releaseS v (fd2 v s) (s.nodes.getX v).t1).nodes.getX u =
-      if u = (s.nodes.getX v).t1 ∧ (s.nodes.getX (s.nodes.getX v).t1).overflowOf = v ∧ u < s.nodes.size then
+      if u = (s.nodes.getX v).t1 ∧ (s.nodes.getX (s.nodes.getX v).t1).overflowOf = v ∧ u <
+        s.nodes.size then
         { (fd2 v s).nodes.getX u with overflowOf := NIL }
       else (fd2 v s).nodes.getX u := by
     rw [releaseS_getX, t1e, hs2]

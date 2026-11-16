@@ -45,12 +45,14 @@ theorem TopRelR.trans {a b c : Core} (h1 : TopRelR a b) (h2 : TopRelR b c) : Top
   unfold TopRelR at *
   have h1' : TopRel a { b with ready := a.ready } := h1
   have hr : b.ready = b.ready := rfl
-  obtain ⟨e2, g2, s2, c2, ⟨q1, q2, q3, q4, q5, q6, q7, q8⟩, ⟨r1, r2, r3, r4, r5, r6, r7, r8, -⟩⟩ := h2
-  obtain ⟨e1, g1, s1, c1, ⟨p1, p2, p3, p4, p5, p6, p7, p8⟩, ⟨t1, t2, t3, t4, t5, t6, t7, t8, -⟩⟩ := h1'
+  obtain ⟨e2, g2, s2, c2, ⟨q1, q2, q3, q4, q5, q6, q7, q8⟩, ⟨r1, r2, r3, r4, r5, r6, r7, r8, -⟩⟩
+    := h2
+  obtain ⟨e1, g1, s1, c1, ⟨p1, p2, p3, p4, p5, p6, p7, p8⟩, ⟨t1, t2, t3, t4, t5, t6, t7, t8, -⟩⟩
+    := h1'
   have c1' : ∀ x, b.C.getX x = { a.C.getX x with tag := (b.C.getX x).tag } := c1
   have c2' : ∀ x, c.C.getX x = { b.C.getX x with tag := (c.C.getX x).tag } := c2
   exact ⟨e2.trans e1, g2.trans g1, s2.trans s1, fun x => by
-    show c.C.getX x = { a.C.getX x with tag := (c.C.getX x).tag }
+    change c.C.getX x = { a.C.getX x with tag := (c.C.getX x).tag }
     rw [c2' x, c1' x],
     ⟨q1.trans p1, q2.trans p2, q3.trans p3, q4.trans p4, q5.trans p5, q6.trans p6, q7.trans p7,
       q8.trans p8⟩, ⟨r1.trans t1, r2.trans t2, r3.trans t3, r4.trans t4, r5.trans t5,
@@ -89,7 +91,8 @@ theorem low_initStep : Pres LowRel initStep := top_initStep.mono fun _ _ h => h.
 theorem low_prepareStep : Pres LowRel prepareStep := by
   unfold prepareStep
   pres [low_initStep]
-  intro s; exact ⟨⟨rfl, rfl, rfl, fun _ => rfl, rfl, rfl, rfl⟩, ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩⟩
+  intro s; exact ⟨⟨rfl, rfl, rfl, fun _ => rfl, rfl, rfl, rfl⟩, ⟨rfl, rfl, rfl, rfl, rfl, rfl,
+    rfl, rfl, rfl⟩⟩
 
 theorem low_initTop (lazy : Bool) : Pres LowRel (initTop lazy) := by
   unfold initTop
@@ -138,7 +141,8 @@ theorem init_g1 : gSz (initState P) 1 = 1 ∧ gSt (initState P) 1 = .quiet ∧ g
     { chk := 1, lab := 1 <<< (P.groupBits - 1), first := 1, last := 1, size := 1 }
   simp [gSz, gSt, gC, gL, gN, initState, hG, cG]
 
-theorem init_c1 : cSz (initState P) 1 = 1 ∧ cSt (initState P) 1 = .quiet ∧ cLs (initState P) 1 = 1 := by
+theorem init_c1 : cSz (initState P) 1 = 1 ∧ cSt (initState P) 1 = .quiet ∧ cLs (initState P) 1 =
+  1 := by
   have hC := getX_two (default : Chunk) { first := 1, last := 1, size := 1 }
   simp [cSz, cSt, cLs, initState, hC]
 
@@ -156,7 +160,8 @@ theorem init_GrpsC (c : Nat) : GrpsC (initState P) c = if c = 1 then {1} else �
   constructor
   · rintro ⟨rfl, hc⟩; rw [(init_g1 P).2.2.1] at hc; subst hc; simp
   · intro h; split at h
-    · next hc => simp at h; subst h; subst hc; exact ⟨rfl, (init_g1 P).2.2.1⟩
+    · next hc => simp only [Finset.mem_singleton] at h; subst h; subst hc; exact ⟨rfl, (init_g1
+      P).2.2.1⟩
     · simp at h
 
 end init
@@ -184,7 +189,8 @@ theorem lowinv_initState (P : Params) (hGP : GParams P) (hCP : CParams P) (hLP :
       fun _ => 0, fun _ => 0, fun _ => 0, fun _ => 1⟩, ?_⟩, hLP, hGP⟩, ?_, ⟨fun _ => 1, 0, ?_⟩, hCP⟩
   · -- groups
     refine ⟨fun g hg => ?_, fun g hg hs => ?_, fun g hg hs => ?_, fun g hg => ?_, fun g hg hs => ?_,
-      fun g hg hs _ => ?_, fun g hg => ?_, fun g hg e he => ?_, fun g hg hs => ?_, fun g hg hs => ?_,
+      fun g hg hs _ => ?_, fun g hg => ?_, fun g hg e he => ?_, fun g hg hs => ?_, fun g hg hs
+        => ?_,
       fun g hg hs => ?_⟩ <;> rw [hLv] at hg <;> subst hg
     · rw [hrun, g1sz]; rfl
     · rw [g1st] at hs; cases hs
@@ -194,7 +200,11 @@ theorem lowinv_initState (P : Params) (hGP : GParams P) (hCP : CParams P) (hLP :
       rw [hrun]; simp [initState]
     · rw [g1st] at hs; cases hs
     · rw [hrun]; simp
-    · rw [hrun] at he; simp at he; subst he; rw [e1l, hP]; omega
+    · rw [hrun] at he
+      simp only [List.mem_cons, List.not_mem_nil, or_false] at he
+      subst he
+      rw [e1l, hP]
+      omega
     · simp
     · rw [g1st] at hs; cases hs
     · rw [g1st] at hs; cases hs
@@ -217,23 +227,24 @@ theorem lowinv_initState (P : Params) (hGP : GParams P) (hCP : CParams P) (hLP :
     · rw [hLv] at hg; subst hg; rw [g1c, c1ls] at hl; exact absurd rfl hl
     · rw [hLv] at hg; subst hg; rw [g1l, hP, g1c]; simp
     · rw [hLC] at hc; subst hc
-      show 0 + pending (initState P) _ 1 ≤ 0 + 0 + 1
+      change 0 + pending (initState P) _ 1 ≤ 0 + 0 + 1
       unfold pending; rw [init_GrpsC, ite_eq_left rfl]
       have := Finset.card_filter_le ({1} : Finset Nat)
         (fun g => (fun _ => false : Nat → Bool) g = false ∧ gSt (initState P) g ≠ .splitting)
       simp at this ⊢; omega
     · rw [hLC] at hc; subst hc
-      show 0 * gmin _ + charge (initState P) _ 1 ≤ 0
+      change 0 * gmin _ + charge (initState P) _ 1 ≤ 0
       rw [charge_eq, init_GrpsC, ite_eq_left rfl, Finset.sum_singleton]
       unfold chTerm; rw [g1st]; simp
-    · rw [hLC] at hc; subst hc; show 0 + 1 ≤ _; rw [c1sz]; omega
+    · rw [hLC] at hc; subst hc; change 0 + 1 ≤ _; rw [c1sz]; omega
     · rw [hLC] at hc; subst hc; rw [c1st] at hcs; cases hcs
     · rw [hLC] at hc; subst hc; rw [c1st] at hcs; cases hcs
     · rw [hLC] at hx; subst hx; rw [c1st] at hxs; cases hxs
-    · rw [hLC] at hc; subst hc; show 1 ≤ _; simp only [c1sz, le_refl]
+    · rw [hLC] at hc; subst hc; change 1 ≤ _; simp only [c1sz, le_refl]
     · rfl
   · -- the queue: empty
-    refine ⟨fun _ => [], [], ⟨fun c => ?_, fun c h => ?_, fun b => ?_, fun b c => ?_, ?_, fun b => ?_,
+    refine ⟨fun _ => [], [], ⟨fun c => ?_, fun c h => ?_, fun b => ?_, fun b c => ?_, ?_, fun b
+      => ?_,
       List.IsChain.nil, rfl⟩⟩
     · have : inQC (initState P) c = false := by
         unfold inQC
@@ -261,7 +272,7 @@ theorem lowinv_initState (P : Params) (hGP : GParams P) (hCP : CParams P) (hLP :
       ext c; rw [mem_quietSet, hLC]
       constructor
       · rintro ⟨rfl, -⟩; simp
-      · intro h; simp at h; subst h; exact ⟨rfl, c1st⟩
+      · intro h; simp only [Finset.mem_singleton] at h; subst h; exact ⟨rfl, c1st⟩
     rw [hQ, Finset.sum_singleton, c1sz]; simp [initState]
 
 end OrderMaintenance.Proof
@@ -301,7 +312,7 @@ theorem costInv_fresh {TI : Core → Prop} {μ : Core → Nat} {J n R : Nat} {s 
   unfold RoundOK; rw [hres]; exact Or.inl hz
 
 /-- The game values of a core holding the sentinel alone are 0. -/
-theorem gval_fresh {s : Core} (hL : LowInv s initAbs.elist) (hI : INV s initAbs) (c : Nat) :
+theorem gval_fresh {s : Core} (hL : LowInv s initAbs.elist) (c : Nat) :
     gval s c = 0 := by
   obtain ⟨s₀, hC, -⟩ := hL.cinv
   have hθ := hL.cp.I4

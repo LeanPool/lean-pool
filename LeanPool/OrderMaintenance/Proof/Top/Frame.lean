@@ -15,7 +15,8 @@ public import LeanPool.OrderMaintenance.Proof.Top.Struct
 # M5: frames
 
 `SameTree s s'`: `s'` differs from `s` at most in the range pointers (`first`, `last`) and the
-stored weights of nodes, in paths and in tags. The live tree, the tables, the weights and everything computed from them
+stored weights of nodes, in paths and in tags. The live tree, the tables, the weights and
+  everything computed from them
 are then the same (`SameTree.*`), and so are the parts of the invariant that read only those.
 -/
 
@@ -30,7 +31,8 @@ structure SameTree (s s' : TS) : Prop where
   size : s'.nodes.size = s.nodes.size
   cin : s'.cin = s.cin
   lpar : s'.lpar = s.lpar
-  node : ∀ u, nd s' u = { nd s u with first := (nd s' u).first, last := (nd s' u).last, weight := (nd s' u).weight }
+  node : ∀ u, nd s' u = { nd s u with first := (nd s' u).first, last := (nd s' u).last, weight
+    := (nd s' u).weight }
 
 namespace SameTree
 
@@ -68,7 +70,7 @@ theorem anc (c : Nat) : ∀ k, anc s' c k = anc s c k
   | 0 => rfl
   | 1 => h.lpr c
   | k + 2 => by
-    show (nd s' (Top.anc s' c (k + 1))).livePar = (nd s (Top.anc s c (k + 1))).livePar
+    change (nd s' (Top.anc s' c (k + 1))).livePar = (nd s (Top.anc s c (k + 1))).livePar
     rw [anc c (k + 1), h.livePar]
 theorem tw (cl : List Nat) (u : Nat) : tw s' cl u = tw s cl u := by
   unfold Top.tw; simp only [h.ht, h.anc]

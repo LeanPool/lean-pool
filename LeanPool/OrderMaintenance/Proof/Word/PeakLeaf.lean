@@ -45,7 +45,8 @@ theorem St.toN_le (x : St) : x.toN ≤ 3 := by cases x <;> decide
 
 theorem sideN_le (x : Side) : sideN x ≤ 1 := by cases x <;> decide
 
-theorem getD_mem {α : Type} {l : List α} {j : Nat} {d : α} (hj : j < l.length) : l.getD j d ∈ l := by
+theorem getD_mem {α : Type} {l : List α} {j : Nat} {d : α} (hj : j < l.length) : l.getD j d ∈ l
+  := by
   rw [List.getD_eq_getElem _ _ hj]; exact List.getElem_mem hj
 
 theorem arrB_getX_of {K : Nat} {a : Array Nat} (h : ∀ v ∈ a, v < 2 ^ K) : ArrB K a :=
@@ -54,20 +55,30 @@ theorem arrB_getX_of {K : Nat} {a : Array Nat} (h : ∀ v ∈ a, v < 2 ^ K) : Ar
 variable {K KH : Nat} {κ : Caps} {s : Core}
 
 /-- The fields of a core with `WB`. -/
-theorem fld_of_WB (hW : WB K s) (hK : 3 ≤ K) (hh : ∀ i, (s.E.getX i).h < 2 ^ KH) (f : Fld) (j : Nat) :
+theorem fld_of_WB (hW : WB K s) (hK : 3 ≤ K) (hh : ∀ i, (s.E.getX i).h < 2 ^ KH) (f : Fld) (j :
+  Nat) :
     f.get s j < 2 ^ f.wd K KH := by
   have hK1 : 1 ≤ K := by omega
   have h3 : ∀ x : St, x.toN < 2 ^ K := fun x => small_lt hK (le_trans (St.toN_le x) (by norm_num))
   cases f with
   | e k =>
     obtain ⟨h1, h2, h3, h4⟩ := hW.E j
-    cases k <;> simp only [Fld.get, EF.get, Fld.wd] <;> first | assumption | exact b2n_lt hK1 _ | exact hh j
+    cases k <;> simp only [Fld.get, EF.get, Fld.wd] <;> first
+      | assumption
+      | exact b2n_lt hK1 _
+      | exact hh j
   | g k =>
     obtain ⟨h1, h2, h3', h4, h5, h6, h7, h8, h9, h10⟩ := hW.Gs j
-    cases k <;> simp only [Fld.get, GF.get, Fld.wd] <;> first | assumption | exact b2n_lt hK1 _ | exact h3 _
+    cases k <;> simp only [Fld.get, GF.get, Fld.wd] <;> first
+      | assumption
+      | exact b2n_lt hK1 _
+      | exact h3 _
   | c k =>
     obtain ⟨h1, h2, h3', h4, h5, h6, h7, h8, h9⟩ := hW.C j
-    cases k <;> simp only [Fld.get, CF.get, Fld.wd] <;> first | assumption | exact b2n_lt hK1 _ | exact h3 _
+    cases k <;> simp only [Fld.get, CF.get, Fld.wd] <;> first
+      | assumption
+      | exact b2n_lt hK1 _
+      | exact h3 _
   | n k =>
     obtain ⟨h1, h2, h3', h4, h5, h6, h7, h8, -⟩ := hW.nodes j
     cases k <;> simp only [Fld.get, NF.get, Fld.wd] <;> first | assumption | exact b2n_lt hK1 _
@@ -141,17 +152,29 @@ theorem opt_of_WB (hW : WB K s) (hK : 3 ≤ K) (o : OF) : o.get s < 2 ^ K := by
                | walk v =>
                  cases v with
                  | none => simp only [pcEnc]; first | exact h0 | exact small_lt hK (by norm_num)
-                 | some v => simp only [pcEnc, JobPcB] at h4 ⊢; first | exact h4 | exact h0 | exact small_lt hK (by norm_num)
+                 | some v => simp only [pcEnc, JobPcB] at h4 ⊢; first
+                   | exact h4
+                   | exact h0
+                   | exact small_lt hK (by norm_num)
                | afterDrain v up =>
                  simp only [pcEnc,
-                   JobPcB] at h4 ⊢; first | exact h4.1 | exact h4.2 | exact h0 | exact small_lt hK (by norm_num)
+                   JobPcB] at h4 ⊢; first
+                     | exact h4.1
+                     | exact h4.2
+                     | exact h0
+                     | exact small_lt hK (by norm_num)
                | fund v up src k =>
                  simp only [pcEnc, JobPcB] at h4 ⊢
-                 first | exact h4.1 | exact h4.2.1 | exact h4.2.2.1 | exact h4.2.2.2 | exact small_lt hK (by norm_num)))
+                 first
+                   | exact h4.1
+                   | exact h4.2.1
+                   | exact h4.2.2.1
+                   | exact h4.2.2.2
+                   | exact small_lt hK (by norm_num)))
 
 /-- **The leaves of the generic lemma, from option (B).** A core with `WB K` (and handles below
 `2^KH`) encoded with capacities below `2^K` satisfies `MemW K KH κ`. -/
-theorem memW_of_enc {p : Nat} {m : OrderMaintenance.Machine.State} (h : Enc p κ s m) (hW : WB K s) (hK : 3 ≤ K)
+theorem memW_of_enc {p : Nat} {m : Machine.State} (h : Enc p κ s m) (hW : WB K s) (hK : 3 ≤ K)
     (hh : ∀ i, (s.E.getX i).h < 2 ^ KH) (hT : ∀ t, κ.tbl t < 2 ^ K) (hpw : κ.pw < 2 ^ K) :
     MemW K KH κ s where
   fld f j _ := fld_of_WB hW hK hh f j
@@ -178,7 +201,7 @@ theorem vb_of_WB (hW : WB K s) (hK : 3 ≤ K) (hh : ∀ i, (s.E.getX i).h < 2 ^ 
   room := hR
 
 /-- **The invariant at the entry of a core procedure**, from option (B)'s `WB`. -/
-theorem gd_of_WB {p : Nat} {m : OrderMaintenance.Machine.State} {Γ : OrderMaintenance.Machine.Reg → Nat} {L : Loc} (h : Enc p κ s m)
+theorem gd_of_WB {p : Nat} {m : Machine.State} {Γ : Machine.Reg → Nat} {L : Loc} (h : Enc p κ s m)
     (hW : WB K s) (hK : 3 ≤ K) (hh : ∀ i, (s.E.getX i).h < 2 ^ KH) (hR : PRoom K s.P)
     (hL : ∀ x, L x < 2 ^ Γ x) : Gd K KH κ Γ s L :=
   ⟨⟨p, m, h⟩, vb_of_WB hW hK hh hR, hL⟩

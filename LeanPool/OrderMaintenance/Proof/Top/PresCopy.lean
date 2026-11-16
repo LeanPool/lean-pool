@@ -52,13 +52,14 @@ theorem jobStep_copy {s : Core} {j : Job} {l : Nat} (hpc : j.pc = .copy l) :
   unfold jobStep copyC copyNext
   rw [hpc]
   simp only [run_getP_bind, run_getPath_bind, run_setPathAt_bind, run_getN_bind]
-  split_ifs <;> simp only [  run_pure, run_bind, run_modN, ] <;> first | rfl | (split_ifs <;> rfl)
+  split_ifs <;> simp only [run_pure, run_bind, run_modN]
 
 /-- Timing depends on the job only through the lagging nodes, the sweeps owed, and funding. -/
 theorem Timing.congr_job {s : TS} {cl : List Nat} {oj oj' : Option Job} (Ti : Timing s cl oj)
     (hp : pend s oj' = pend s oj) (hs : ∀ v, slack s oj' v = slack s oj v)
     (hf : ∀ v, funded s oj' v ↔ funded s oj v) : Timing s cl oj' := by
-  refine ⟨fun v hv => ?_, Ti.wA, Ti.wB, Ti.wF, fun v hv => ?_, fun v hv => ?_, Ti.wD, Ti.big, Ti.chain, Ti.tw1⟩
+  refine ⟨fun v hv => ?_, Ti.wA, Ti.wB, Ti.wF, fun v hv => ?_, fun v hv => ?_, Ti.wD, Ti.big,
+    Ti.chain, Ti.tw1⟩
   · rw [hp]; exact Ti.wts v hv
   · rw [hs]; exact Ti.wC v hv
   · have := Ti.wC' v hv
@@ -66,7 +67,8 @@ theorem Timing.congr_job {s : TS} {cl : List Nat} {oj oj' : Option Job} (Ti : Ti
     · rw [ite_eq_left ((hf v).mpr h)]; rw [ite_eq_left h] at this; exact this
     · rw [ite_eq_right (fun h' => h ((hf v).mp h'))]; rw [ite_eq_right h] at this; exact this
 
-theorem copyRest_congr {j j' : Job} (hx : j'.x = j.x) (hy : j'.y = j.y) (hz : j'.z = j.z) (H : Nat) :
+theorem copyRest_congr {j j' : Job} (hx : j'.x = j.x) (hy : j'.y = j.y) (hz : j'.z = j.z) (H :
+  Nat) :
     ∀ k t l, H + 1 - l = k → copyRest j' H t l = copyRest j H t l := by
   intro k
   induction k with
@@ -115,7 +117,8 @@ theorem inv_copy {s : Core} {cl : List Nat} {ord : Nat → List Nat} {dr n0 : Na
     by_cases h : l < s.P.H
     · simp only [ite_eq_left h]
       rw [hP']
-      exact copyRest_congr (j := j) (j' := { j with pc := .copy (l + 1) }) rfl rfl rfl s.P.H _ _ _ rfl
+      exact copyRest_congr (j := j) (j' := { j with pc := .copy (l + 1) }) rfl rfl rfl s.P.H _ _
+        _ rfl
     · simp only [ite_eq_right h]
       unfold copyRest; rw [ite_eq_right (by omega)]
   rw [hsame]

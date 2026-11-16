@@ -87,7 +87,8 @@ structure FinFrame (s s' : TS) (v : Nat) : Prop where
     alive := if u = v then false else (nd s u).alive,
     table := if u ∈ (nd s v).inTables then assocErase (nd s u).table v else (nd s u).table,
     side := if u ∈ (nd s v).inTables then assocErase (nd s u).side v else (nd s u).side,
-    inTables := if u = v then [] else if u ∈ order s v ∧ ht s v - 1 ≠ 0 then (nd s u).inTables.erase v
+    inTables := if u = v then [] else if u ∈ order s v ∧ ht s v - 1 ≠ 0 then (nd s
+      u).inTables.erase v
       else (nd s u).inTables,
     overflowOf := if (u = (nd s v).t1 ∨ u = (nd s v).t2) ∧ (nd s u).overflowOf = v then NIL
       else (nd s u).overflowOf }
@@ -111,14 +112,16 @@ theorem fdS_rest (v : Nat) (s : Core) (hno : (s.nodes.getX v).order.Nodup) :
       else s.cin.getX e) ∧
     (fdS v s).path = s.path ∧ (fdS v s).lpar = s.lpar ∧ (fdS v s).P = s.P ∧ (fdS v s).C = s.C ∧
     (fdS v s).resJob = s.resJob ∧ (fdS v s).nodes.size = s.nodes.size := by
-  obtain ⟨d1, d2, d3, d4, d5, d6, d7, d8⟩ := foldl_dropTableS v ((s.nodes.getX v).height - 1) _ hno s
+  obtain ⟨d1, d2, d3, d4, d5, d6, d7, d8⟩ := foldl_dropTableS v ((s.nodes.getX v).height - 1) _
+    hno s
   obtain ⟨e1, e2, e3, e4, e5, e6, e7⟩ := foldl_dropEntryS_rest v (s.nodes.getX v).inTables (fd1 v s)
   have r1 := releaseS_rest v (fd2 v s) (s.nodes.getX v).t1
   have r2 := releaseS_rest v (releaseS v (fd2 v s) (s.nodes.getX v).t1) (s.nodes.getX v).t2
   have hf2 : (fd2 v s).cin = (fd1 v s).cin ∧ (fd2 v s).path = s.path ∧ (fd2 v s).lpar = s.lpar ∧
       (fd2 v s).P = s.P ∧ (fd2 v s).C = s.C ∧ (fd2 v s).resJob = s.resJob ∧
       (fd2 v s).nodes.size = s.nodes.size := by
-    unfold fd2; exact ⟨e1, e2.trans d4, e3.trans d5, e4.trans d6, e5.trans d7, e6.trans d8, e7.trans d2⟩
+    unfold fd2; exact ⟨e1, e2.trans d4, e3.trans d5, e4.trans d6, e5.trans d7, e6.trans d8,
+      e7.trans d2⟩
   have hf4 : (fd4 v s).cin = (fd1 v s).cin ∧ (fd4 v s).path = s.path ∧ (fd4 v s).lpar = s.lpar ∧
       (fd4 v s).P = s.P ∧ (fd4 v s).C = s.C ∧ (fd4 v s).resJob = s.resJob ∧
       (fd4 v s).nodes.size = s.nodes.size := by
@@ -131,7 +134,10 @@ theorem fdS_rest (v : Nat) (s : Core) (hno : (s.nodes.getX v).order.Nodup) :
   have hc : (fdS v s).cin = (fd4 v s).cin := by simp only [fdS]
   refine ⟨fun e => ?_, by simp only [fdS]; exact hf4.2.1, by simp only [fdS]; exact hf4.2.2.1,
     by simp only [fdS]; exact hf4.2.2.2.1, by simp only [fdS]; exact hf4.2.2.2.2.1,
-    by simp only [fdS]; exact hf4.2.2.2.2.2.1, by simp only [fdS]; rw [Array.size_modify']; exact hf4.2.2.2.2.2.2⟩
+    by simp only [fdS]; exact hf4.2.2.2.2.2.1, by
+      simp only [fdS]
+      rw [Array.size_modify']
+      exact hf4.2.2.2.2.2.2⟩
   rw [hc, hf4.1]
   unfold fd1; rw [d3 e]
 
@@ -203,9 +209,11 @@ theorem last (u : Nat) : (nd s' u).last = (nd s u).last := by rw [F.node u]
 theorem draining (u : Nat) : (nd s' u).draining = (nd s u).draining := by rw [F.node u]
 theorem t1 (u : Nat) : (nd s' u).t1 = (nd s u).t1 := by rw [F.node u]
 theorem t2 (u : Nat) : (nd s' u).t2 = (nd s u).t2 := by rw [F.node u]
-theorem alive (u : Nat) : (nd s' u).alive = if u = v then false else (nd s u).alive := by rw [F.node u]
+theorem alive (u : Nat) : (nd s' u).alive = if u = v then false else (nd s u).alive := by
+  rw [F.node u]
 theorem table (u : Nat) : (nd s' u).table =
-    if u ∈ (nd s v).inTables then assocErase (nd s u).table v else (nd s u).table := by rw [F.node u]
+    if u ∈ (nd s v).inTables then assocErase (nd s u).table v else (nd s u).table := by
+      rw [F.node u]
 theorem side (u : Nat) : (nd s' u).side =
     if u ∈ (nd s v).inTables then assocErase (nd s u).side v else (nd s u).side := by rw [F.node u]
 theorem inTables (u : Nat) : (nd s' u).inTables =
@@ -231,7 +239,7 @@ theorem anc (c : Nat) : ∀ k, Top.anc s' c k = Top.anc s c k
   | 0 => rfl
   | 1 => F.lpr c
   | k + 2 => by
-    show (nd s' (Top.anc s' c (k + 1))).livePar = (nd s (Top.anc s c (k + 1))).livePar
+    change (nd s' (Top.anc s' c (k + 1))).livePar = (nd s (Top.anc s c (k + 1))).livePar
     rw [anc c (k + 1), F.livePar]
 theorem tw (cl : List Nat) (u : Nat) : Top.tw s' cl u = Top.tw s cl u := by
   unfold Top.tw; simp only [F.ht, F.anc]
@@ -252,20 +260,27 @@ variable {s : Core} {cl : List Nat} {ord : Nat → List Nat} (S : Shape (ts s) c
 include S hg
 
 theorem Shape.fin_facts :
-    v < s.nodes.size ∧ (nd (ts s) v).order.Nodup ∧ (nd (ts s) v).inTables.Nodup ∧ ((nd (ts s) v).height - 1 ≠ 0 → v ∉ (nd (ts s) v).order) ∧
-      v ∉ (nd (ts s) v).inTables ∧ v ≠ (nd (ts s) v).t1 ∧ v ≠ (nd (ts s) v).t2 ∧ (nd (ts s) v).t1 ≠ (nd (ts s) v).t2 ∧ ((nd (ts s) v).height - 1 ≠ 0 → (nd (ts s) v).t1 ∉ (nd (ts s) v).order) ∧
-      ((nd (ts s) v).height - 1 ≠ 0 → (nd (ts s) v).t2 ∉ (nd (ts s) v).order) ∧ (nd (ts s) v).t1 ∉ (nd (ts s) v).inTables ∧ (nd (ts s) v).t2 ∉ (nd (ts s) v).inTables ∧
+    v < s.nodes.size ∧ (nd (ts s) v).order.Nodup ∧ (nd (ts s) v).inTables.Nodup ∧ ((nd (ts s)
+      v).height - 1 ≠ 0 → v ∉ (nd (ts s) v).order) ∧
+      v ∉ (nd (ts s) v).inTables ∧ v ≠ (nd (ts s) v).t1 ∧ v ≠ (nd (ts s) v).t2 ∧ (nd (ts s)
+        v).t1 ≠ (nd (ts s) v).t2 ∧ ((nd (ts s) v).height - 1 ≠ 0 → (nd (ts s) v).t1 ∉ (nd (ts s)
+          v).order) ∧
+      ((nd (ts s) v).height - 1 ≠ 0 → (nd (ts s) v).t2 ∉ (nd (ts s) v).order) ∧ (nd (ts s) v).t1
+        ∉ (nd (ts s) v).inTables ∧ (nd (ts s) v).t2 ∉ (nd (ts s) v).inTables ∧
       (∀ u, u ∈ (nd (ts s) v).order → (nd (ts s) v).height - 1 ≠ 0 → u ∉ (nd (ts s) v).inTables) ∧
       (∀ u ∈ (nd (ts s) v).inTables, isN (ts s) u ∧ ht (ts s) u = ht (ts s) v + 1) ∧
-      (∀ u ∈ (nd (ts s) v).order, (nd (ts s) v).height - 1 ≠ 0 → isN (ts s) u ∧ ht (ts s) u = ht (ts s) v - 1) := by
+      (∀ u ∈ (nd (ts s) v).order, (nd (ts s) v).height - 1 ≠ 0 → isN (ts s) u ∧ ht (ts s) u = ht
+        (ts s) v - 1) := by
   obtain ⟨hl1, hl2, hh1, hh2, -, -, -, -, -, hlt, -⟩ := S.ghost v hg
   obtain ⟨hv1, hvH⟩ := S.htN v hg.1
   have hvent : Ent ord (ht (ts s) v) v := (S.ordMem _ hv1 hvH v).mpr ⟨hg.1, rfl⟩
   have htabs : tabs (ts s) (ht (ts s) v) v = (nd (ts s) v).inTables := by
     unfold tabs; rw [ite_eq_right (by omega)]
-  have hin : ∀ u ∈ (nd (ts s) v).inTables, isN (ts s) u ∧ ht (ts s) u = ht (ts s) v + 1 := fun u hu => by
+  have hin : ∀ u ∈ (nd (ts s) v).inTables, isN (ts s) u ∧ ht (ts s) u = ht (ts s) v + 1 := fun u
+    hu => by
     rw [← htabs] at hu; obtain ⟨h1, h2, -⟩ := (S.tabsIff _ v u hvent).mp hu; exact ⟨h1, h2⟩
-  have hent : ∀ u ∈ (nd (ts s) v).order, (nd (ts s) v).height - 1 ≠ 0 → isN (ts s) u ∧ ht (ts s) u = ht (ts s) v - 1 :=
+  have hent : ∀ u ∈ (nd (ts s) v).order, (nd (ts s) v).height - 1 ≠ 0 → isN (ts s) u ∧ ht (ts s)
+    u = ht (ts s) v - 1 :=
     fun u hu h0 => by
       have := S.tabEnt v hg.1 u hu
       have h0' : ht (ts s) v - 1 ≠ 0 := h0
@@ -289,12 +304,14 @@ theorem Shape.fin_frame : FinFrame (ts s) (ts (fdS v s)) v := by
   obtain ⟨hv, hno, hni, hvo, hvi, h1, h2, h12, ho1, ho2, hi1, hi2, hoi, hin, hent⟩ := S.fin_facts hg
   obtain ⟨hc, hp, hl, hP, hC, hr, hsz⟩ := fdS_rest v s hno
   refine ⟨hP, hsz, hp, hl, by unfold ts; simp only [hC], fun u => ?_, fun e => ?_⟩
-  · show (fdS v s).nodes.getX u = _
+  · change (fdS v s).nodes.getX u = _
     rw [fdS_getX v s hv hno hni hvo hvi h1 h2 h12 ho1 ho2 hi1 hi2 hoi u]
     by_cases huv : u = v
     · subst huv
       have : ¬ (u = (s.nodes.getX u).t1 ∨ u = (s.nodes.getX u).t2) := by
-        rintro (e | e); exact h1 e; exact h2 e
+        rintro (e | e)
+        · exact h1 e
+        · exact h2 e
       have hvi' : u ∉ (s.nodes.getX u).inTables := hvi
       simp [hvi', this, nd, ts]
     · rw [ite_eq_right huv]
@@ -325,7 +342,7 @@ theorem Shape.fin_frame : FinFrame (ts s) (ts (fdS v s)) v := by
             simp [huv, hu2, hu1, hu3]
           · rw [ite_eq_right (fun h => hu3 ⟨h.1, h.2.1⟩)]
             simp [huv, hu2, hu1, hu3]
-  · show (fdS v s).cin.getX e = _
+  · change (fdS v s).cin.getX e = _
     rw [hc e]
     unfold cinT order ht nd ts
     simp only [and_comm]
@@ -344,6 +361,7 @@ theorem Shape.fin_order (X : Nat) : order s' X =
   · next h => rw [assocErase_keys _ _ (S.order_nodup (hin X h).1)]
   · rfl
 
+omit hg in
 theorem Shape.fin_labs (X : Nat) (hX : isN (ts s) X) :
     GapsGe s'.P.beta 1 (labs s' X) := by
   unfold labs; rw [F.table, F.P]
@@ -351,12 +369,14 @@ theorem Shape.fin_labs (X : Nat) (hX : isN (ts s) X) :
   · exact gapsGe_assocErase v (S.labsOk X hX)
   · exact S.labsOk X hX
 
+omit S hg in
 theorem Shape.fin_lab (X e : Nat) (he : X ∈ (nd (ts s) v).inTables → e ≠ v) :
     (nd s' X).lab? e = (nd (ts s) X).lab? e := by
   unfold Node.lab?; rw [F.table]; split
   · next h => exact lookup_assocErase _ _ _ (he h)
   · rfl
 
+omit S hg in
 theorem Shape.fin_sideL (X e : Nat) (he : X ∈ (nd (ts s) v).inTables → e ≠ v) :
     lookup (nd s' X).side e = lookup (nd (ts s) X).side e := by
   rw [F.side]; split
@@ -391,6 +411,7 @@ theorem Shape.fin_tabs (k e : Nat) (he : Ent ord k e) (hev : k = ht (ts s) v →
       rintro ⟨hm1, hm2⟩
       exact hm ⟨hm1, by rw [← heh]; exact (hent e hm1 hm2).2⟩
 
+omit hg F in
 theorem Shape.fin_ent {k e : Nat} :
     Ent (ordE ord (ht (ts s) v) v) k e ↔ Ent ord k e ∧ (k = ht (ts s) v → e ≠ v) := by
   unfold Ent ordE
@@ -400,6 +421,7 @@ theorem Shape.fin_ent {k e : Nat} :
     exact ⟨fun h => ⟨h.2, fun _ => h.1⟩, fun h => ⟨h.2 hk, h.1⟩⟩
   · next hk => exact ⟨fun h => ⟨h, fun e => absurd e hk⟩, fun h => h.1⟩
 
+omit hg F in
 theorem Shape.fin_before {k a b : Nat} (hab : k = ht (ts s) v → a ≠ v ∧ b ≠ v) :
     Before (ordE ord (ht (ts s) v) v k) a b ↔ Before (ord k) a b := by
   unfold ordE
@@ -407,6 +429,7 @@ theorem Shape.fin_before {k a b : Nat} (hab : k = ht (ts s) v → a ≠ v ∧ b 
   · next hk => exact before_erase (S.ordNodup k) (hab hk).1 (hab hk).2
   · exact Iff.rfl
 
+omit S hg F in
 theorem Shape.fin_ppv (hemp : rng (ts s) cl v = []) {c : Nat} (hc : c ∈ cl) :
     pp (ts s) c (ht (ts s) v) ≠ v := by
   intro e
@@ -421,7 +444,7 @@ theorem Shape.fin_shapeT (hemp : rng (ts s) cl v = []) :
   obtain ⟨hv1, hvH⟩ := S.htN v hg.1
   obtain ⟨-, -, -, -, -, -, -, -, -, hlt, -⟩ := S.ghost v hg
   have hP := F.P
-  have hppv : ∀ {c : Nat}, c ∈ cl → pp (ts s) c (ht (ts s) v) ≠ v := fun hc => S.fin_ppv hg F hemp hc
+  have hppv : ∀ {c : Nat}, c ∈ cl → pp (ts s) c (ht (ts s) v) ≠ v := fun hc => Shape.fin_ppv hemp hc
   refine ⟨by rw [hP]; exact S.H3, ?_, fun k => ?_, fun k k1 kH u => ?_, fun k hk => ?_,
     fun u hu => ?_, ?_, fun c hc j hj => ?_, fun c hc j hj1 hj => ?_, fun j hj c d hcd => ?_,
     fun X hX => ?_, fun X hX => ?_⟩
@@ -431,7 +454,7 @@ theorem Shape.fin_shapeT (hemp : rng (ts s) cl v = []) :
     · exact S.ordNodup k
   · rw [hP] at kH
     rw [show (u ∈ ordE ord (ht (ts s) v) v k) = Ent (ordE ord (ht (ts s) v) v) k u from rfl,
-      S.fin_ent hg F, F.isN, F.ht]
+      S.fin_ent, F.isN, F.ht]
     unfold Ent; rw [S.ordMem k k1 kH u]
     constructor
     · rintro ⟨⟨h1', h2'⟩, h3'⟩; exact ⟨⟨h1', fun e => h3' (by rw [← h2', e]) e⟩, h2'⟩
@@ -445,7 +468,7 @@ theorem Shape.fin_shapeT (hemp : rng (ts s) cl v = []) :
     · intro e; rw [← e] at hg; exact absurd hg.2 (by rw [r2.2]; simp)
   · rw [hP] at hj
     rw [F.pp]
-    exact (S.fin_ent hg F).mpr ⟨S.pathEnt c hc j hj, fun hjh => by subst hjh; exact hppv hc⟩
+    exact (S.fin_ent).mpr ⟨S.pathEnt c hc j hj, fun hjh => by subst hjh; exact hppv hc⟩
   · rw [hP] at hj
     rw [F.pp, F.pp, S.fin_order hg F]
     split
@@ -460,7 +483,8 @@ theorem Shape.fin_shapeT (hemp : rng (ts s) cl v = []) :
     rcases S.O2 j hj c d hcd with h | h
     · exact Or.inl h
     · right
-      exact (S.fin_before hg F (fun hjh => by subst hjh; exact ⟨hppv hcd.mem_left, hppv hcd.mem_right⟩)).mpr h
+      exact (S.fin_before (fun hjh => by subst hjh; exact ⟨hppv hcd.mem_left, hppv
+        hcd.mem_right⟩)).mpr h
   · rw [F.isN] at hX
     rw [S.fin_order hg F, F.ht]
     unfold ordE
@@ -478,13 +502,77 @@ theorem Shape.fin_shapeT (hemp : rng (ts s) cl v = []) :
         have := (S.tabsIff _ v X hvent).mpr ⟨hX.1, by omega, hm⟩
         unfold tabs at this; rwa [ite_eq_right (by omega)] at this
       · exact S.O1 X hX.1
-  · rw [F.isN] at hX; exact S.fin_labs hg F X hX.1
+  · rw [F.isN] at hX; exact S.fin_labs F X hX.1
 
+omit S in
 theorem Shape.fin_live (u : Nat) : liveN s' u ↔ liveN (ts s) u := by
   rw [F.liveN]
   constructor
   · exact fun h => h.1
   · intro h; refine ⟨h, fun e => ?_⟩; rw [e] at h; exact absurd hg.2 (by rw [h.2]; simp)
+
+/-- Ending one drain preserves the targets and order of every remaining ghost. -/
+theorem Shape.fin_ghost : ∀ g, ghostN s' g →
+    liveN s' (nd s' g).t1 ∧ liveN s' (nd s' g).t2 ∧ ht s' (nd s' g).t1 = ht s' g ∧
+      ht s' (nd s' g).t2 = ht s' g ∧ srcOf s' (nd s' g).t1 = g ∧
+      srcOf s' (nd s' g).t2 = g ∧ (nd s' g).livePar = NIL ∧
+      (nd s' g).children = [] ∧ srcOf s' g = NIL ∧ ht s' g < s'.P.H ∧
+      (nd s' (nd s' g).t1).livePar = (nd s' (nd s' g).t2).livePar ∧
+      [(nd s' g).t1, (nd s' g).t2] <:+: (nd s' (nd s' (nd s' g).t1).livePar).children ∧
+      [(nd s' g).t1, g, (nd s' g).t2] <:+: ordE ord (ht (ts s) v) v (ht s' g) := by
+  obtain ⟨-, -, -, -, hs1, hs2, -⟩ := S.ghost v hg
+  have hP := F.P
+  have hL := Shape.fin_live hg F
+  have hnv : ∀ u, liveN (ts s) u → u ≠ v := fun u hu e => by
+    rw [e] at hu; exact absurd hg.2 (by rw [hu.2]; simp)
+  -- a target of `v` is released; any other node keeps its source
+  have hsrc : ∀ u, liveN (ts s) u → srcOf s' u =
+      if u = (nd (ts s) v).t1 ∨ u = (nd (ts s) v).t2 then NIL else srcOf (ts s) u := fun u hu => by
+    rw [F.srcOf]
+    by_cases ht : u = (nd (ts s) v).t1 ∨ u = (nd (ts s) v).t2
+    · rw [ite_eq_left ht, ite_eq_left ⟨ht, by rcases ht with e | e <;> rw [e] <;> assumption⟩]
+    · rw [ite_eq_right ht, ite_eq_right (fun h => ht h.1)]
+  intro g hg'; rw [F.ghostN] at hg'
+  obtain ⟨g1, g2, g3, g4, g5, g6, g7, g8, g9, g10, g11, g12, g13⟩ := S.ghost g hg'.1
+  have hgv := hg'.2
+  -- the targets of `g` are not those of `v`
+  have hn1 : ¬ ((nd (ts s) g).t1 = (nd (ts s) v).t1 ∨ (nd (ts s) g).t1 = (nd (ts s) v).t2) := by
+    rintro (e | e) <;> apply hgv <;> [rw [← g5, ← hs1, e]; rw [← g5, ← hs2, e]]
+  have hn2 : ¬ ((nd (ts s) g).t2 = (nd (ts s) v).t1 ∨ (nd (ts s) g).t2 = (nd (ts s) v).t2) := by
+    rintro (e | e) <;> apply hgv <;> [rw [← g6, ← hs1, e]; rw [← g6, ← hs2, e]]
+  rw [F.t1, F.t2, hL, hL, F.ht, F.ht, F.ht, hsrc _ g1, hsrc _ g2, ite_eq_right hn1,
+    ite_eq_right hn2,
+    F.livePar, F.children, F.livePar, F.livePar, F.children, F.srcOf, hP]
+  refine ⟨g1, g2, g3, g4, g5, g6, g7, g8, ?_, g10, g11, g12, ?_⟩
+  · rw [g9]; split <;> rfl
+  · unfold ordE; split
+    · refine infix_erase (S.ordNodup _) g13 ?_
+      simp only [List.mem_cons, List.not_mem_nil, or_false]
+      rintro (e | e | e)
+      · exact hnv _ g1 e.symm
+      · exact hgv e.symm
+      · exact hnv _ g2 e.symm
+    · exact g13
+
+/-- Removing an empty ghost range leaves every chunk tag correct. -/
+theorem Shape.fin_tags (hemp : rng (ts s) cl v = []) :
+    ∀ c ∈ cl, s'.tag c = tagF s' c := by
+  obtain ⟨-, -, -, -, -, -, -, -, -, -, -, -, -, hin, -⟩ := S.fin_facts hg
+  have hP := F.P
+  have hppv : ∀ {c : Nat}, c ∈ cl → pp (ts s) c (ht (ts s) v) ≠ v :=
+    fun hc => Shape.fin_ppv hemp hc
+  intro c hc; rw [F.tag]
+  rw [S.tags c hc]
+  unfold tagF; rw [hP]
+  apply (tagUp_congr (by rw [hP]) _ _).symm
+  intro i hi1 hi2
+  unfold digit
+  rw [F.pp, F.pp, Shape.fin_lab F]
+  intro hX e
+  have := (hin _ hX).2
+  rw [(S.isN_pp hc hi1 (by omega)).2] at this
+  rw [show i - 1 = ht (ts s) v by omega] at e
+  exact hppv hc e
 
 /-- **The order invariant after the drain ends.** -/
 theorem Shape.fin_shape (hemp : rng (ts s) cl v = []) :
@@ -493,8 +581,8 @@ theorem Shape.fin_shape (hemp : rng (ts s) cl v = []) :
   obtain ⟨hv1, hvH⟩ := S.htN v hg.1
   obtain ⟨hl1, hl2, hh1, hh2, hs1, hs2, -, -, -, hlt, -⟩ := S.ghost v hg
   have hP := F.P
-  have hppv : ∀ {c : Nat}, c ∈ cl → pp (ts s) c (ht (ts s) v) ≠ v := fun hc => S.fin_ppv hg F hemp hc
-  have hL := S.fin_live hg F
+  have hppv : ∀ {c : Nat}, c ∈ cl → pp (ts s) c (ht (ts s) v) ≠ v := fun hc => Shape.fin_ppv hemp hc
+  have hL := Shape.fin_live hg F
   have hvent : Ent ord (ht (ts s) v) v := (S.ordMem _ hv1 hvH v).mpr ⟨hg.1, rfl⟩
   have htabv : ∀ X, X ∈ (nd (ts s) v).inTables ↔ isN (ts s) X ∧ ht (ts s) X = ht (ts s) v + 1 ∧
       v ∈ order (ts s) X := fun X => by
@@ -508,7 +596,25 @@ theorem Shape.fin_shape (hemp : rng (ts s) cl v = []) :
     by_cases ht : u = (nd (ts s) v).t1 ∨ u = (nd (ts s) v).t2
     · rw [ite_eq_left ht, ite_eq_left ⟨ht, by rcases ht with e | e <;> rw [e] <;> assumption⟩]
     · rw [ite_eq_right ht, ite_eq_right (fun h => ht h.1)]
-  refine { toShapeT := S.fin_shapeT hg F hemp, up := ?_, lp := ?_, kids := ?_, OT := ?_, ghost := ?_, src := ?_, tabEnt := ?_, tabsIff := ?_, tabsNodup := ?_, Q := ?_, W1 := ?_, side := ?_, pathSize := ?_, P := ?_, Sr := ?_, ends := ?_, tags := ?_ }
+  refine {
+    toShapeT := S.fin_shapeT hg F hemp
+    up := ?_
+    lp := ?_
+    kids := ?_
+    OT := ?_
+    ghost := S.fin_ghost hg F
+    src := ?_
+    tabEnt := ?_
+    tabsIff := ?_
+    tabsNodup := ?_
+    Q := ?_
+    W1 := ?_
+    side := ?_
+    pathSize := ?_
+    P := ?_
+    Sr := ?_
+    ends := ?_
+    tags := S.fin_tags hg F hemp }
   · intro u hu hh; rw [hL] at hu; rw [F.ht, hP] at hh
     rw [F.livePar, hL, F.ht, F.ht, F.children]; exact S.up u hu hh
   · intro c hc; rw [F.lpr, hL, F.ht, F.children]; exact S.lp c hc
@@ -525,31 +631,10 @@ theorem Shape.fin_shape (hemp : rng (ts s) cl v = []) :
     · rw [F.par, hL]; exact k3 e he
   · intro k k1 kH u u' e e' hu hu' hb he he' hpe hpe'
     rw [hP] at kH; rw [hL] at hu hu'; rw [F.par] at hpe hpe'
-    rw [S.fin_before hg F (fun _ => ⟨hnv u hu, hnv u' hu'⟩)] at hb
-    rw [S.fin_ent hg F] at he he'
-    rw [S.fin_before hg F (fun hk => ⟨he.2 hk, he'.2 hk⟩)]
+    rw [S.fin_before (fun _ => ⟨hnv u hu, hnv u' hu'⟩)] at hb
+    rw [S.fin_ent] at he he'
+    rw [S.fin_before (fun hk => ⟨he.2 hk, he'.2 hk⟩)]
     exact S.OT k k1 kH u u' e e' hu hu' hb he.1 he'.1 hpe hpe'
-  · intro g hg'; rw [F.ghostN] at hg'
-    obtain ⟨g1, g2, g3, g4, g5, g6, g7, g8, g9, g10, g11, g12, g13⟩ := S.ghost g hg'.1
-    have hgv := hg'.2
-    -- the targets of `g` are not those of `v`
-    have hn1 : ¬ ((nd (ts s) g).t1 = (nd (ts s) v).t1 ∨ (nd (ts s) g).t1 = (nd (ts s) v).t2) := by
-      rintro (e | e) <;> apply hgv <;> [rw [← g5, ← hs1, e]; rw [← g5, ← hs2, e]]
-    have hn2 : ¬ ((nd (ts s) g).t2 = (nd (ts s) v).t1 ∨ (nd (ts s) g).t2 = (nd (ts s) v).t2) := by
-      rintro (e | e) <;> apply hgv <;> [rw [← g6, ← hs1, e]; rw [← g6, ← hs2, e]]
-    rw [F.t1, F.t2, hL, hL, F.ht, F.ht, F.ht, hsrc _ g1, hsrc _ g2, ite_eq_right hn1,
-      ite_eq_right hn2,
-      F.livePar, F.children, F.livePar, F.livePar, F.children, F.srcOf, hP]
-    refine ⟨g1, g2, g3, g4, g5, g6, g7, g8, ?_, g10, g11, g12, ?_⟩
-    · rw [g9]; split <;> rfl
-    · unfold ordE; split
-      · refine infix_erase (S.ordNodup _) g13 ?_
-        simp only [List.mem_cons, List.not_mem_nil, or_false]
-        rintro (e | e | e)
-        · exact hnv _ g1 e.symm
-        · exact hgv e.symm
-        · exact hnv _ g2 e.symm
-      · exact g13
   · intro t ht' hst
     rw [hL] at ht'
     rw [hsrc t ht'] at hst ⊢
@@ -566,10 +651,11 @@ theorem Shape.fin_shape (hemp : rng (ts s) cl v = []) :
     intro X hX e he
     rw [F.isN] at hX
     rw [S.fin_order hg F] at he
-    rw [F.ht, S.fin_ent hg F]
+    rw [F.ht, S.fin_ent]
     have hmem : e ∈ order (ts s) X ∧ (X ∈ (nd (ts s) v).inTables → e ≠ v) := by
       split at he
-      · next hX' => exact ⟨List.mem_of_mem_erase he, fun _ => ((S.order_nodup hX.1).mem_erase_iff.mp he).1⟩
+      · next hX' => exact ⟨List.mem_of_mem_erase he, fun _ => ((S.order_nodup
+        hX.1).mem_erase_iff.mp he).1⟩
       · next hX' => exact ⟨he, fun h => absurd h hX'⟩
     refine ⟨S.tabEnt X hX.1 e hmem.1, fun hk => ?_⟩
     by_cases hX' : X ∈ (nd (ts s) v).inTables
@@ -577,7 +663,7 @@ theorem Shape.fin_shape (hemp : rng (ts s) cl v = []) :
     · intro e'; subst e'; exact hX' ((htabv X).mpr ⟨hX.1, by omega, hmem.1⟩)
   · -- the tables of an entry
     intro k e X he
-    rw [S.fin_ent hg F] at he
+    rw [S.fin_ent] at he
     rw [S.fin_tabs hg F k e he.1 he.2, F.isN, F.ht, S.fin_order hg F]
     have hXh : X ∈ (nd (ts s) v).inTables → ht (ts s) X = ht (ts s) v + 1 := fun h => (hin X h).2
     split
@@ -610,13 +696,13 @@ theorem Shape.fin_shape (hemp : rng (ts s) cl v = []) :
         · exact List.mem_of_mem_erase hx3
         · exact hx3
   · intro k e he
-    rw [S.fin_ent hg F] at he
+    rw [S.fin_ent] at he
     rw [S.fin_tabs hg F k e he.1 he.2]
     split
     · exact (S.tabsNodup k e he.1).erase v
     · exact S.tabsNodup k e he.1
   · intro k e X he hX
-    rw [S.fin_ent hg F] at he
+    rw [S.fin_ent] at he
     rw [S.fin_tabs hg F k e he.1 he.2] at hX
     have hX' : X ∈ tabs (ts s) k e ∧ X ≠ v := by
       split at hX
@@ -630,7 +716,8 @@ theorem Shape.fin_shape (hemp : rng (ts s) cl v = []) :
     rcases S.Q k e X he.1 hX'.1 with h | h
     · exact Or.inl h
     · right
-      rw [ite_eq_right]; exact h
+      rw [ite_eq_right _]
+      · exact h
       rintro ⟨-, h'⟩; exact hX'.2 (h.trans h')
   · intro g hg' X hX
     rw [F.ghostN] at hg'
@@ -658,9 +745,10 @@ theorem Shape.fin_shape (hemp : rng (ts s) cl v = []) :
     rw [S.fin_order hg F] at he
     have hmem : e ∈ order (ts s) g ∧ (g ∈ (nd (ts s) v).inTables → e ≠ v) := by
       split at he
-      · next hX' => exact ⟨List.mem_of_mem_erase he, fun _ => ((S.order_nodup hg'.1.1).mem_erase_iff.mp he).1⟩
+      · next hX' => exact ⟨List.mem_of_mem_erase he, fun _ => ((S.order_nodup
+        hg'.1.1).mem_erase_iff.mp he).1⟩
       · next hX' => exact ⟨he, fun h => absurd h hX'⟩
-    rw [S.fin_sideL hg F g e hmem.2, F.ht, F.par, F.t1]
+    rw [Shape.fin_sideL F g e hmem.2, F.ht, F.par, F.t1]
     exact S.side g hg'.1 e hmem.1
   · intro c hc; rw [F.path, hP]; exact S.pathSize c hc
   · intro c hc j hj1 hj; rw [hP] at hj
@@ -681,18 +769,6 @@ theorem Shape.fin_shape (hemp : rng (ts s) cl v = []) :
       exact hsr
     · exact hsr
   · intro u hu; rw [F.isN] at hu; rw [F.first, F.last, F.rng]; exact S.ends u hu.1
-  · intro c hc; rw [F.tag]
-    rw [S.tags c hc]
-    unfold tagF; rw [hP]
-    apply (tagUp_congr (by rw [hP]) _ _).symm
-    intro i hi1 hi2
-    unfold digit
-    rw [F.pp, F.pp, S.fin_lab hg F]
-    intro hX e
-    have := (hin _ hX).2
-    rw [(S.isN_pp hc hi1 (by omega)).2] at this
-    rw [show i - 1 = ht (ts s) v by omega] at e
-    exact hppv hc e
 
 end fin
 
@@ -712,16 +788,18 @@ theorem inv_drainFinish {s : Core} {cl : List Nat} {ord : Nat → List Nat} {dr 
     (hI : InvJ (ts s) cl ord dr n0 (some { j with pc := .fund w up v k }))
     (hTP : TopParams s.P) (hemp : rng (ts s) cl v = []) :
     (drainStep v).run s = .ok false (fdS v s) ∧ TopRel s (fdS v s) ∧
-      InvJ (ts (fdS v s)) cl (ordE ord (ht (ts s) v) v) dr n0 (some { j with pc := .walk (some up) }) := by
+      InvJ (ts (fdS v s)) cl (ordE ord (ht (ts s) v) v) dr n0 (some { j with pc := .walk (some
+        up) }) := by
   have S := hI.shape
   obtain ⟨hpos, hat⟩ := hI.job _ rfl
   simp only [JobAt] at hat
   obtain ⟨hwl, hwa, hua, hg, hsw, hks⟩ := hat
   obtain ⟨hv, hno, hni, hvo, hvi, h1, h2, h12, ho1, ho2, hi1, hi2, hoi, hin, hent⟩ := S.fin_facts hg
   have hrun : (drainStep v).run s = .ok false (fdS v s) := by
-    refine drainStep_finish hg.1.2.2 ?_ hni fun T hT => (S.fin_facts hg).2.2.2.2.2.2.2.2.2.2.2.2.2.1 T hT |>.2 |> fun _ => ?_
+    refine drainStep_finish hg.1.2.2 ?_ hni fun T hT => (S.fin_facts
+      hg).2.2.2.2.2.2.2.2.2.2.2.2.2.1 T hT |>.2 |> fun _ => ?_
     · obtain ⟨hf, -⟩ := S.ends v hg.1
-      show (nd (ts s) v).first = NIL
+      change (nd (ts s) v).first = NIL
       rw [hf, hemp]; rfl
     · have hvent : Ent ord (ht (ts s) v) v :=
         (S.ordMem _ (S.htN v hg.1).1 (S.htN v hg.1).2 v).mpr ⟨hg.1, rfl⟩
@@ -731,7 +809,7 @@ theorem inv_drainFinish {s : Core} {cl : List Nat} {ord : Nat → List Nat} {dr 
   refine ⟨hrun, by have := top_drainStep v s; rw [hrun] at this; exact this, ?_⟩
   have F := S.fin_frame hg
   have SH := S.fin_shape hg F hemp
-  have hL := S.fin_live hg F
+  have hL := Shape.fin_live hg F
   -- the walk node is a target of the ghost
   have hsrc := S.src w hwl (by rw [hsw]; exact fun e => hg.1.1 e)
   rw [hsw] at hsrc
@@ -748,7 +826,7 @@ theorem inv_drainFinish {s : Core} {cl : List Nat} {ord : Nat → List Nat} {dr 
   have Ro := hI.room
   have hpend : pend (ts (fdS v s)) (some { j with pc := .walk (some up) }) =
       pend (ts s) (some { j with pc := .fund w up v k }) := by
-    show upChain _ ((ts (fdS v s)).P.H + 1) up = upChain _ ((ts s).P.H + 1) up
+    change upChain _ ((ts (fdS v s)).P.H + 1) up = upChain _ ((ts s).P.H + 1) up
     rw [F.upChain, F.P]
   -- other ghosts owe the same sweeps
   have hslack : ∀ u, u ≠ v → slack (ts (fdS v s)) (some { j with pc := .walk (some up) }) u =
@@ -781,7 +859,8 @@ theorem inv_drainFinish {s : Core} {cl : List Nat} {ord : Nat → List Nat} {dr 
         have := Ti.release S hTP hg hrel.1 (fun hm => by
           obtain ⟨-, hge⟩ := S.upChain_mem _ _ _ hupl hm
           rw [huph, hwh] at hge
-          rcases hrel.1 with e | e <;> rw [e] at hge <;> [rw [hh1] at hge; rw [hh2] at hge] <;> omega)
+          rcases hrel.1 with e | e <;> rw [e] at hge <;> [rw [hh1] at hge; rw [hh2] at hge] <;>
+            omega)
         rcases hrel.1 with e | e <;> rw [e] <;> [rw [hh1]; rw [hh2]] <;> rw [← e] <;> exact this
       · exact Ti.wA u hu hp hs
     · rw [F.ghostN] at hu; rw [F.weight, F.ht, F.P]; exact Ti.wB u hu.1

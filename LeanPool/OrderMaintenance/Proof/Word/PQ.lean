@@ -46,7 +46,7 @@ theorem ht_pqInsertScan {c s : Nat} (hc : c < 2 ^ K) (hs : s < 2 ^ K) :
     fun p hp => ht_pqAdd hc hs (by split <;> first | exact hp | exact pos K)
   dsimp only
   split
-  · exact HT.pure (by show b - 1 < 2 ^ K; omega)
+  · exact HT.pure (by change b - 1 < 2 ^ K; omega)
   · exact HT.pure hb
 
 theorem ht_pqAdjust {c old new : Nat} (hc : c < 2 ^ K) (ho : old < 2 ^ K) (hn : new < 2 ^ K) :
@@ -55,7 +55,8 @@ theorem ht_pqAdjust {c old new : Nat} (hc : c < 2 ^ K) (ho : old < 2 ^ K) (hn : 
   ht [ht_pqInsertScan hc hn, ht_pqDel c, ht_pqAdd hc hn (pos K)]
   all_goals exact ht_pqAdd hc hn (by vb)
 
-theorem ht_pqEnterIfAbove {c : Nat} (hc : c < 2 ^ K) : HT K P0 (pqEnterIfAbove c) (fun _ => True) := by
+theorem ht_pqEnterIfAbove {c : Nat} (hc : c < 2 ^ K) : HT K P0 (pqEnterIfAbove c) (fun _ =>
+  True) := by
   unfold pqEnterIfAbove
   refine HT.bind (HT.getC c) fun C hC => HT.bind HT.getP fun P _ => ?_
   split

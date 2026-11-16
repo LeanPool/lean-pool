@@ -31,7 +31,8 @@ open OrderMaintenance.Model OrderMaintenance.Proof
 theorem isChain_insert_mid {X Y : List Nat} {p q B : Nat} (hB : 2 ≤ B)
     (h : (X ++ p :: q :: Y).IsChain fun a b => a + B ≤ b) :
     (X ++ p :: (p + q) / 2 :: q :: Y).IsChain fun a b => a + B / 2 ≤ b := by
-  have hmono : ∀ l : List Nat, l.IsChain (fun a b => a + B ≤ b) → l.IsChain (fun a b => a + B / 2 ≤ b) :=
+  have hmono : ∀ l : List Nat, l.IsChain (fun a b => a + B ≤ b) → l.IsChain (fun a b => a + B /
+    2 ≤ b) :=
     fun l hl => hl.imp fun a b hab => by omega
   rw [List.isChain_append] at h ⊢
   obtain ⟨h1, h2, h3⟩ := h
@@ -87,6 +88,7 @@ theorem getD_split_right {A Bs : List (Nat × Nat)} {x : Nat × Nat} (hB : Bs �
 /-- The label `roomNextTo` picks before (`before`) or after entry `e`. -/
 def roomLo (A : List (Nat × Nat)) (le : Nat) (before : Bool) : Nat :=
   if before then (if h : A = [] then 0 else (A.getLast h).2 + 1) else le + 1
+/-- The upper label boundary before or after an entry, with the full-width sentinel at the end. -/
 def roomHi (β : Nat) (Bs : List (Nat × Nat)) (le : Nat) (before : Bool) : Nat :=
   if before then le else (if h : Bs = [] then 1 <<< β else (Bs.head h).2)
 
@@ -97,11 +99,12 @@ theorem roomNextTo_run {s : Core} {t e : Nat} {A Bs : List (Nat × Nat)} {le : N
       .ok ((roomLo A le before + roomHi s.P.beta Bs le before - 1) / 2) s := by
   unfold roomNextTo
   simp only [run_getP_bind, run_getN_bind, htab, findIdx_split hA]
-  have hlo : (if before then (if A.length > 0 then ((A ++ (e, le) :: Bs).getD (A.length - 1) (0, 0)).2 + 1
+  have hlo : (if before then (if A.length > 0 then ((A ++ (e, le) :: Bs).getD (A.length - 1) (0,
+    0)).2 + 1
       else 0) else ((A ++ (e, le) :: Bs).getD A.length (0, 0)).2 + 1) = roomLo A le before := by
     unfold roomLo
     cases before
-    · simp [getD_split_mid]
+    · simp []
     · by_cases h : A = []
       · subst h; simp
       · simp only [ite_true, dite_eq_right h, ite_eq_left (List.length_pos_of_ne_nil h),
@@ -115,8 +118,10 @@ theorem roomNextTo_run {s : Core} {t e : Nat} {A Bs : List (Nat × Nat)} {le : N
     · by_cases h : Bs = []
       · subst h; simp
       · simp only [Bool.false_eq_true, ite_false, dite_eq_right h]
-        rw [ite_eq_left (by simp; exact List.length_pos_of_ne_nil h), getD_split_right h]
-    · simp [getD_split_mid]
+        have hpos := List.length_pos_of_ne_nil h
+        rw [ite_eq_left (by simp only [List.length_append, List.length_cons]; omega),
+          getD_split_right h]
+    · simp []
   simp only [apply_ite Prod.fst, apply_ite Prod.snd]
   rw [hlo, hhi, ite_eq_right (Nat.not_le.mpr hroom)]
   rfl
@@ -124,7 +129,8 @@ theorem roomNextTo_run {s : Core} {t e : Nat} {A Bs : List (Nat × Nat)} {le : N
 /-! ### Enough gap: the insertion succeeds and gaps halve at worst -/
 
 theorem last_zero_cons_map (A : List (Nat × Nat)) :
-    ∃ X, 0 :: A.map (fun p : Nat × Nat => p.2 + 1) = X ++ [if h : A = [] then 0 else (A.getLast h).2 + 1] := by
+    ∃ X, 0 :: A.map (fun p : Nat × Nat => p.2 + 1) = X ++ [if h : A = [] then 0 else (A.getLast
+      h).2 + 1] := by
   by_cases h : A = []
   · subst h; exact ⟨[], by simp⟩
   · obtain ⟨A', a, rfl⟩ := List.eq_nil_or_concat A |>.resolve_left h
@@ -135,7 +141,8 @@ theorem last_zero_cons_map (A : List (Nat × Nat)) :
 theorem gaps_room_before {β B : Nat} {A Bs : List (Nat × Nat)} {e le new : Nat} (hB : 2 ≤ B)
     (hg : GapsGe β B ((A ++ (e, le) :: Bs).map (·.2))) :
     roomLo A le true < roomHi β Bs le true ∧
-      GapsGe β (B / 2) ((A ++ (new, (roomLo A le true + roomHi β Bs le true - 1) / 2) :: (e, le) :: Bs).map (·.2)) := by
+      GapsGe β (B / 2) ((A ++ (new, (roomLo A le true + roomHi β Bs le true - 1) / 2) :: (e, le)
+        :: Bs).map (·.2)) := by
   rw [gapsGe_split] at hg
   obtain ⟨X, hX⟩ := last_zero_cons_map A
   set p := (if h : A = [] then 0 else (A.getLast h).2 + 1) with hp
@@ -150,7 +157,8 @@ theorem gaps_room_before {β B : Nat} {A Bs : List (Nat × Nat)} {e le new : Nat
   unfold GapsGe
   have hm := isChain_insert_mid hB hg
   have : (0 :: (A ++ (new, (p + le - 1) / 2) :: (e, le) :: Bs).map (·.2 + 1) ++ [2 ^ β + 1]) =
-      X ++ p :: (p + (le + 1)) / 2 :: (le + 1) :: (Bs.map (fun q : Nat × Nat => q.2 + 1) ++ [2 ^ β + 1]) := by
+      X ++ p :: (p + (le + 1)) / 2 :: (le + 1) :: (Bs.map (fun q : Nat × Nat => q.2 + 1) ++ [2 ^
+        β + 1]) := by
     have hX' := hX
     simp only [List.map_append, List.map_cons, List.cons_append, List.append_assoc]
     rw [show (0 :: (A.map (fun q : Nat × Nat => q.2 + 1) ++ ((p + le - 1) / 2 + 1) :: (le + 1) ::
@@ -165,7 +173,8 @@ theorem gaps_room_before {β B : Nat} {A Bs : List (Nat × Nat)} {e le new : Nat
 theorem gaps_room_after {β B : Nat} {A Bs : List (Nat × Nat)} {e le new : Nat} (hB : 2 ≤ B)
     (hg : GapsGe β B ((A ++ (e, le) :: Bs).map (·.2))) :
     roomLo A le false < roomHi β Bs le false ∧
-      GapsGe β (B / 2) ((A ++ (e, le) :: (new, (roomLo A le false + roomHi β Bs le false - 1) / 2) :: Bs).map (·.2)) := by
+      GapsGe β (B / 2) ((A ++ (e, le) :: (new, (roomLo A le false + roomHi β Bs le false - 1) /
+        2) :: Bs).map (·.2)) := by
   rw [gapsGe_split] at hg
   obtain ⟨q, hq⟩ : ∃ q, q = (if h : Bs = [] then 1 <<< β else (Bs.head h).2) := ⟨_, rfl⟩
   have hlo : roomLo A le false = le + 1 := by simp [roomLo]
@@ -183,7 +192,8 @@ theorem gaps_room_after {β B : Nat} {A Bs : List (Nat × Nat)} {e le new : Nat}
   unfold GapsGe
   have hm := isChain_insert_mid (X := 0 :: A.map (fun p : Nat × Nat => p.2 + 1)) (Y := Y) hB hg
   have : (0 :: (A ++ (e, le) :: (new, (le + 1 + q - 1) / 2) :: Bs).map (·.2 + 1) ++ [2 ^ β + 1]) =
-      (0 :: A.map (fun p : Nat × Nat => p.2 + 1)) ++ (le + 1) :: (le + 1 + (q + 1)) / 2 :: (q + 1) :: Y := by
+      (0 :: A.map (fun p : Nat × Nat => p.2 + 1)) ++ (le + 1) :: (le + 1 + (q + 1)) / 2 :: (q +
+        1) :: Y := by
     simp only [List.map_append, List.map_cons, List.cons_append, List.append_assoc]
     rw [show (Bs.map (·.2 + 1) ++ [2 ^ β + 1]) = (q + 1) :: Y from by simpa using hY]
     rw [show (le + 1 + q - 1) / 2 + 1 = (le + 1 + (q + 1)) / 2 by omega]
@@ -195,7 +205,8 @@ theorem gaps_room_after {β B : Nat} {A Bs : List (Nat × Nat)} {e le new : Nat}
 theorem isChain_insert_around {X Y : List Nat} {p r q B : Nat} (hB : 2 ≤ B)
     (h : (X ++ p :: r :: q :: Y).IsChain fun a b => a + B ≤ b) :
     (X ++ p :: (p + r) / 2 :: r :: (r + q) / 2 :: q :: Y).IsChain fun a b => a + B / 2 ≤ b := by
-  have hmono : ∀ l : List Nat, l.IsChain (fun a b => a + B ≤ b) → l.IsChain (fun a b => a + B / 2 ≤ b) :=
+  have hmono : ∀ l : List Nat, l.IsChain (fun a b => a + B ≤ b) → l.IsChain (fun a b => a + B /
+    2 ≤ b) :=
     fun l hl => hl.imp fun a b hab => by omega
   rw [List.isChain_append] at h ⊢
   obtain ⟨h1, h2, h3⟩ := h
@@ -239,8 +250,10 @@ theorem gaps_room_around {β B : Nat} {A Bs : List (Nat × Nat)} {e le y z : Nat
   refine ⟨by omega, by omega, ?_⟩
   unfold GapsGe
   have hm := isChain_insert_around hB hg
-  have : (0 :: (A ++ (y, (p + le - 1) / 2) :: (e, le) :: (z, (le + 1 + q - 1) / 2) :: Bs).map (·.2 + 1) ++
-      [2 ^ β + 1]) = X ++ p :: (p + (le + 1)) / 2 :: (le + 1) :: (le + 1 + (q + 1)) / 2 :: (q + 1) :: Y := by
+  have : (0 :: (A ++ (y, (p + le - 1) / 2) :: (e, le) :: (z, (le + 1 + q - 1) / 2) :: Bs).map
+    (·.2 + 1) ++
+      [2 ^ β + 1]) = X ++ p :: (p + (le + 1)) / 2 :: (le + 1) :: (le + 1 + (q + 1)) / 2 :: (q +
+        1) :: Y := by
     simp only [List.map_append, List.map_cons, List.cons_append, List.append_assoc]
     rw [show (Bs.map (·.2 + 1) ++ [2 ^ β + 1]) = (q + 1) :: Y from by simpa using hY]
     rw [show (0 :: (A.map (fun q : Nat × Nat => q.2 + 1) ++ ((p + le - 1) / 2 + 1) :: (le + 1) ::
@@ -275,16 +288,20 @@ theorem insertIdx_len1 {α : Type} (A B : List α) (x y : α) :
 def insTab (A Bs : List (Nat × Nat)) (e le new lab : Nat) (before : Bool) : List (Nat × Nat) :=
   if before then A ++ (new, lab) :: (e, le) :: Bs else A ++ (e, le) :: (new, lab) :: Bs
 
+/-- Updates a node table and its side map together. -/
 def setTS (tab : List (Nat × Nat)) (side : List (Nat × Side)) (n : Node) : Node :=
   { n with table := tab, side := side }
 
 theorem tableInsert_run {s : Core} {t e new : Nat} {A Bs : List (Nat × Nat)} {le : Nat}
     (htab : (s.nodes.getX t).table = A ++ (e, le) :: Bs) (hA : e ∉ A.map (·.1)) (before : Bool)
-    (lab : Nat) (hside : (s.nodes.getX t).draining = true → (lookup (s.nodes.getX t).side e).isSome) :
-    (tableInsert t e new before lab).run s = .ok ⟨⟩ { s with nodes := s.nodes.modify t (setTS (insTab A Bs e le new lab before) (sideAfter (s.nodes.getX t) e new)) } := by
+    (lab : Nat) (hside : (s.nodes.getX t).draining = true → (lookup (s.nodes.getX t).side
+      e).isSome) :
+    (tableInsert t e new before lab).run s = .ok ⟨⟩ { s with nodes := s.nodes.modify t (setTS
+      (insTab A Bs e le new lab before) (sideAfter (s.nodes.getX t) e new)) } := by
   unfold tableInsert sideAfter setTS insTab
   simp only [run_getN_bind, htab, findIdx_split hA]
-  have hins : (A ++ (e, le) :: Bs).insertIdx (if before then A.length else A.length + 1) (new, lab) =
+  have hins : (A ++ (e, le) :: Bs).insertIdx (if before then A.length else A.length + 1) (new,
+    lab) =
       if before then A ++ (new, lab) :: (e, le) :: Bs else A ++ (e, le) :: (new, lab) :: Bs := by
     cases before
     · simp only [Bool.false_eq_true, ite_false]; exact insertIdx_len1 _ _ _ _

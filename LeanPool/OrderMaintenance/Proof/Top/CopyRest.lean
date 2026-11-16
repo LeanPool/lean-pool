@@ -41,6 +41,7 @@ theorem cpHit_iff (t : TS) (l u : Nat) :
 /-- The first pointer after the copy from level `l`. -/
 def cpFirst (t : TS) (l u : Nat) : Nat :=
   if cpHit j H t l u = true ∧ (nd t u).first = j.x then j.y else (nd t u).first
+/-- The last range pointer after copying the path from the indicated level. -/
 def cpLast (t : TS) (l u : Nat) : Nat :=
   if cpHit j H t l u = true ∧ (nd t u).last = j.x then j.z else (nd t u).last
 
@@ -55,8 +56,8 @@ structure CopyOK (t : TS) (l : Nat) : Prop where
 
 end
 
-theorem copyS_views (t : TS) (j : Job) (l : Nat) (hyz : j.y ≠ j.z) (hxy : j.x ≠ j.y)
-    (hxz : j.x ≠ j.z) (hv : pth t j.x l < t.nodes.size) :
+theorem copyS_views (t : TS) (j : Job) (l : Nat) (hyz : j.y ≠ j.z) (hv : pth t j.x l <
+  t.nodes.size) :
     (copyS t j l).P = t.P ∧ (copyS t j l).cin = t.cin ∧ (copyS t j l).lpar = t.lpar ∧
       (copyS t j l).tag = t.tag ∧ (copyS t j l).nodes.size = t.nodes.size ∧
       (∀ c, c ≠ j.y → c ≠ j.z → (copyS t j l).path.getX c = t.path.getX c) ∧
@@ -75,7 +76,8 @@ theorem copyS_views (t : TS) (j : Job) (l : Nat) (hyz : j.y ≠ j.z) (hxy : j.x 
   · by_cases hu : u = pth t j.x l
     · subst hu
       have hv' : ¬ t.nodes.size ≤ pth t j.x l := Nat.not_le.mpr hv
-      by_cases h1 : (nd t (pth t j.x l)).first = j.x <;> by_cases h2 : (nd t (pth t j.x l)).last = j.x <;>
+      by_cases h1 : (nd t (pth t j.x l)).first = j.x <;> by_cases h2 : (nd t (pth t j.x l)).last
+        = j.x <;>
         simp only [nd] at h1 h2 <;> simp [h1, h2, nd, Array.getX_modify,  hv]
     · simp only [hu, false_and, ite_false]
       split_ifs <;> simp [nd, Array.getX_modify, Ne.symm hu]
@@ -105,7 +107,10 @@ theorem copyRest_views (j : Job) (H : Nat) :
         if l ≤ i ∧ i ≤ H then pth t j.x i else (t.path.getX j.z).getX i) ∧
       ((copyRest j H t l).path.getX j.y).size = (t.path.getX j.y).size ∧
       ((copyRest j H t l).path.getX j.z).size = (t.path.getX j.z).size ∧
-      (∀ u, nd (copyRest j H t l) u = { nd t u with first := cpFirst j H t l u, last := cpLast j H t l u }) := by
+      (∀ u, nd (copyRest j H t l) u = {
+        nd t u with
+        first := cpFirst j H t l u
+        last := cpLast j H t l u }) := by
   intro k
   induction k with
   | zero =>
@@ -114,7 +119,8 @@ theorem copyRest_views (j : Job) (H : Nat) :
     have hh : ∀ u, cpHit j H t l u = false := fun u => by
       by_contra hc; simp only [Bool.not_eq_false] at hc
       obtain ⟨i, h1, h2, -⟩ := (cpHit_iff j H t l u).mp hc; omega
-    refine ⟨rfl, rfl, rfl, rfl, rfl, fun _ _ _ => rfl, fun i => ?_, fun i => ?_, rfl, rfl, fun u => ?_⟩
+    refine ⟨rfl, rfl, rfl, rfl, rfl, fun _ _ _ => rfl, fun i => ?_, fun i => ?_, rfl, rfl, fun u
+      => ?_⟩
     · rw [ite_eq_right (by omega)]
     · rw [ite_eq_right (by omega)]
     · simp only [cpFirst, cpLast, hh, Bool.false_eq_true, false_and, ite_false]
@@ -123,7 +129,7 @@ theorem copyRest_views (j : Job) (H : Nat) :
     have hl : l ≤ H := by omega
     rw [copyRest_step j H t l hl]
     have hvl := hv l le_rfl hl
-    obtain ⟨cP, cC, cL, cT, cS, cO, cY, cZ, cN⟩ := copyS_views t j l hok.yz hok.xy hok.xz hvl
+    obtain ⟨cP, cC, cL, cT, cS, cO, cY, cZ, cN⟩ := copyS_views t j l hok.yz hvl
     have hpx : ∀ i, pth (copyS t j l) j.x i = pth t j.x i := fun i => by
       unfold pth; rw [cO j.x hok.xy hok.xz]
     have hsy : ((copyS t j l).path.getX j.y).size = (t.path.getX j.y).size := by
@@ -133,7 +139,8 @@ theorem copyRest_views (j : Job) (H : Nat) :
     have hok' : CopyOK j H (copyS t j l) (l + 1) :=
       ⟨hok.yz, hok.xy, hok.xz, fun i i' h1 h2 h3 h4 e => hok.dist i i' (by omega) h2 (by omega) h4
         (by rw [← hpx, ← hpx]; exact e), by rw [hsy]; exact hok.sy, by rw [hsz]; exact hok.sz⟩
-    obtain ⟨iP, iC, iL, iT, iS, iO, iY, iZ, iSy, iSz, iN⟩ := ih (copyS t j l) (l + 1) (by omega) hok'
+    obtain ⟨iP, iC, iL, iT, iS, iO, iY, iZ, iSy, iSz, iN⟩ := ih (copyS t j l) (l + 1) (by omega)
+      hok'
       (fun i h1 h2 => by rw [hpx, cS]; exact hv i (by omega) h2)
     refine ⟨iP.trans cP, iC.trans cC, iL.trans cL, iT.trans cT, iS.trans cS,
       fun c hy hz => (iO c hy hz).trans (cO c hy hz), fun i => ?_, fun i => ?_, iSy.trans hsy,
@@ -151,9 +158,11 @@ theorem copyRest_views (j : Job) (H : Nat) :
         · rw [ite_eq_left h2, ite_eq_left ⟨by omega, h2.2⟩]
         · rw [ite_eq_right h2, ite_eq_right hi, ite_eq_right (by omega)]
     · have hF : ∀ w, (nd (copyS t j l) w).first =
-          if w = pth t j.x l ∧ (nd t w).first = j.x then j.y else (nd t w).first := fun w => by rw [cN]
+          if w = pth t j.x l ∧ (nd t w).first = j.x then j.y else (nd t w).first := fun w => by
+            rw [cN]
       have hL : ∀ w, (nd (copyS t j l) w).last =
-          if w = pth t j.x l ∧ (nd t w).last = j.x then j.z else (nd t w).last := fun w => by rw [cN]
+          if w = pth t j.x l ∧ (nd t w).last = j.x then j.z else (nd t w).last := fun w => by rw
+            [cN]
       rw [iN, cN]
       have hhit : ∀ w, cpHit j H (copyS t j l) (l + 1) w = cpHit j H t (l + 1) w := fun w => by
         unfold cpHit; simp only [hpx]

@@ -31,27 +31,31 @@ open OrderMaintenance.Model OrderMaintenance.Proof
 theorem sum_ite_eq_count {f : Nat} (K : List Nat) :
     (K.map fun e => if f = e then 1 else 0).sum = K.count f := by
   induction K with
-  | nil => simp
+  | nil => simp only [List.map_nil, List.sum_nil,  List.count_nil]
   | cons e K ih =>
     simp only [List.map_cons, List.sum_cons, ih, List.count_cons]
     by_cases h : f = e
-    · subst h; simp; omega
-    · simp [h, Ne.symm h]
+    · subst h; simp only [↓reduceIte, BEq.rfl]; omega
+    · simp only [h, ↓reduceIte, zero_add, beq_iff_eq, Ne.symm h, add_zero]
 
 /-- Counting by the value of `f`, over a list of distinct values. -/
 theorem length_filter_mem (cl K : List Nat) (f : Nat → Nat) (hK : K.Nodup) :
-    (cl.filter fun c => f c ∈ K).length = (K.map fun e => (cl.filter fun c => f c = e).length).sum := by
+    (cl.filter fun c => f c ∈ K).length = (K.map fun e => (cl.filter fun c => f c =
+      e).length).sum := by
   induction cl with
-  | nil => simp
+  | nil => simp only [List.filter_nil, List.length_nil, List.map_const', List.sum_replicate,
+      nsmul_zero]
   | cons c cl ih =>
     have hsplit : (K.map fun e => ((c :: cl).filter fun c => f c = e).length) =
         (K.map fun e => (if f c = e then 1 else 0) + (cl.filter fun c => f c = e).length) := by
       apply List.map_congr_left; intro e _
-      rw [List.filter_cons]; split <;> simp_all <;> omega
+      rw [List.filter_cons]; split <;> simp_all ; omega
     rw [hsplit, List.sum_map_add, ← ih, sum_ite_eq_count, List.filter_cons]
     by_cases hm : f c ∈ K
-    · rw [List.count_eq_one_of_mem hK hm]; simp [hm]; omega
-    · rw [List.count_eq_zero_of_not_mem hm]; simp [hm]
+    · rw [List.count_eq_one_of_mem hK hm]; simp only [hm, decide_true, ↓reduceIte,
+        List.length_cons]; omega
+    · rw [List.count_eq_zero_of_not_mem hm]; simp only [hm, decide_false, Bool.false_eq_true,
+        ↓reduceIte, zero_add]
 
 /-- Two nodup lists with the same members have the same length. -/
 theorem length_eq_of_mem_iff {l l' : List Nat} (h : l.Nodup) (h' : l'.Nodup)
@@ -98,10 +102,10 @@ theorem par_live {h e : Nat} (he : h = 0 ∨ liveN s e) :
     par s h e = if h = 0 then lpr s e else (nd s e).livePar := by
   unfold par
   by_cases h0 : h = 0
-  · simp [h0]
+  · simp only [h0, ↓reduceIte]
   · rcases he with he | he
     · exact absurd he h0
-    · simp [h0, he.2]
+    · simp only [h0, ↓reduceIte, he.2, Bool.false_eq_true]
 
 /-- The children of a live node are the live entries (chunks at height 1) whose parent it is. -/
 theorem Shape.mem_children (S : Shape s cl ord) {u : Nat} (hu : liveN s u) {e : Nat} :
@@ -124,7 +128,7 @@ theorem Shape.mem_children (S : Shape s cl ord) {u : Nat} (hu : liveN s u) {e : 
     split at hm
     · next h1 =>
       rw [h1, Nat.sub_self] at hp
-      rw [par_live (Or.inl rfl)] at hp; simp at hp
+      rw [par_live (Or.inl rfl)] at hp; simp only [↓reduceIte] at hp
       have := (S.lp e hm).2.2; rw [hp] at this; exact this
     · next h1 =>
       obtain ⟨hl, hhe⟩ := hm
@@ -197,7 +201,7 @@ theorem Shape.rng_between (S : Shape s cl ord) {u c d e : Nat} (hu : isN s u)
 /-- Nodes up from a live node are live and at least as high. -/
 theorem Shape.upChain_mem (S : Shape s cl ord) :
     ∀ f u x, liveN s u → x ∈ upChain s f u → liveN s x ∧ ht s u ≤ ht s x
-  | 0, _, _, _, hx => by simp [upChain] at hx
+  | 0, _, _, _, hx => by simp only [upChain, List.not_mem_nil] at hx
   | f + 1, u, x, hu, hx => by
     unfold upChain at hx
     rw [ite_eq_right hu.1.1] at hx
@@ -212,7 +216,7 @@ theorem Shape.upChain_mem (S : Shape s cl ord) :
           have hm := (S.ordMem s.P.H (by have := S.H3; omega) le_rfl u).mpr ⟨hu.1, by omega⟩
           rw [S.root.1] at hm; simpa using hm
         rw [hroot, S.root.2.2] at hx
-        cases f <;> simp [upChain] at hx
+        cases f <;> simp only [upChain, List.not_mem_nil, ↓reduceIte] at hx
 
 /-! ### Paths and ancestors -/
 
@@ -222,7 +226,7 @@ theorem Shape.par_pp (S : Shape s cl ord) {c : Nat} (hc : c ∈ cl) {j : Nat} (h
   rcases Nat.lt_or_ge j 2 with h1 | h2
   · have : j = 1 := by omega
     subst this
-    simp [par, pp, anc]
+    simp only [par, tsub_self, ↓reduceIte, pp, anc]
   · have hP := S.P c hc (j - 1) (by omega) (by omega)
     obtain ⟨hl, hh⟩ := S.anc_live hc (j - 1) (by omega) (by omega)
     have e : anc s c j = (nd s (anc s c (j - 1))).livePar := by

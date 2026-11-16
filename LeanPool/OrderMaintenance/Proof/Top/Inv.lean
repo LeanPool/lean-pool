@@ -49,7 +49,8 @@ def lamd : Nat → Nat
   | h + 2 => P.a ^ (h + 2) + 1 - Pid P (h + 1)
 def gamd (h : Nat) : Nat := Wd P h + 1 - taud P h
 
-/-- Entries of a fresh table of height `h` (T4's counting: children plus the ghosts between them). -/
+/-- Entries of a fresh table of height `h`: children plus the ghosts between them
+(T4's counting). -/
 def n0max (h : Nat) : Nat :=
   if h ≤ 1 then P.a + 1 else
     (1 + (taud P h - 1) / lamd P (h - 1)) + (1 + (taud P h - 1) / lamd P (h - 1)) / 2
@@ -70,7 +71,8 @@ structure TopParams (P : Params) : Prop where
   lamK : ∀ h, 1 ≤ h → 2 + 2 * Kd P h ≤ lamd P h
   /-- Labels have room for every insertion event (our form of I7). -/
   room : ∀ h, 1 ≤ h → 2 ^ Dmax P h * (n0max P h + 1) ≤ 2 ^ P.beta
-  /-- A drain's targets weigh less than a node about to drain at the height above (`Π_{h-1} ≤ W_h`). -/
+  /-- A drain's targets weigh less than a node about to drain at the height above
+  (`Π_{h-1} ≤ W_h`). -/
   piW : ∀ h, 2 ≤ h → Pid P (h - 1) ≤ Wd P h
   /-- Draining one level down frees room: `γ_h ≥ 1`. -/
   gam1 : ∀ h, 1 ≤ h → 1 ≤ gamd P h
@@ -170,7 +172,8 @@ structure Timing (s : TS) (cl : List Nat) (oj : Option Job) : Prop where
   /-- T3 (a). -/
   wA : ∀ v, liveN s v → (nd s v).livePar ≠ NIL → srcOf s v = NIL → (nd s v).weight ≤ Wd s.P (ht s v)
   /-- T3 (b): the frozen start weight of a drain. -/
-  wB : ∀ v, ghostN s v → Wd s.P (ht s v) + 1 ≤ (nd s v).weight ∧ (nd s v).weight ≤ Wd s.P (ht s v) + 2
+  wB : ∀ v, ghostN s v → Wd s.P (ht s v) + 1 ≤ (nd s v).weight ∧ (nd s v).weight ≤ Wd s.P (ht s
+    v) + 2
   /-- Each funding job adds 2. -/
   wF : ∀ v, ghostN s v → (nd s v).weight ≤ ew s cl v ∧ (ew s cl v - (nd s v).weight) % 2 = 0
   /-- T3 (c). -/
@@ -219,7 +222,8 @@ def TabLen (s : TS) (dr n0 : Nat → Nat) : Prop :=
 
 /-- Lists that do not grow keep the bound (with the same `dr`, `n0`). -/
 theorem TabLen.mono {s s' : TS} {dr n0 : Nat → Nat} (h : TabLen s dr n0)
-    (hl : ∀ X, (order s' X).length ≤ (order s X).length ∧ (nd s' X).side.length ≤ (nd s X).side.length) :
+    (hl : ∀ X, (order s' X).length ≤ (order s X).length ∧ (nd s' X).side.length ≤ (nd s
+      X).side.length) :
     TabLen s' dr n0 := fun X => by
   obtain ⟨a, b, c⟩ := h X; obtain ⟨d, e⟩ := hl X; exact ⟨by omega, by omega, c⟩
 
@@ -286,7 +290,8 @@ def topMu (s : Core) : Nat :=
 /-- The job length bound (M5's `J`). -/
 def topJ (P : Params) : Nat := (P.H + 1) + walkLeft P 1
 
-theorem _root_.OrderMaintenance.Proof.TopSame.topInv {s s' : Core} (h : TopSame s s') (hI : TopInv s) : TopInv s' := by
+theorem _root_.OrderMaintenance.Proof.TopSame.topInv {s s' : Core} (h : TopSame s s') (hI :
+  TopInv s) : TopInv s' := by
   obtain ⟨hTP, cl, ord, dr, n0, hL, hC, hI⟩ := hI
   refine ⟨by rw [h.P]; exact hTP, cl, ord, dr, n0, ?_, fun c => by rw [h.Csize]; exact hC c,
     by rw [h.ts, h.top.2.2.2.2.1]; exact hI⟩
@@ -294,7 +299,8 @@ theorem _root_.OrderMaintenance.Proof.TopSame.topInv {s s' : Core} (h : TopSame 
   have e2 : cP s' = cP s := funext fun c => (h.links c).2.1
   rw [e1, e2, h.top.2.2.2.2.2.2.2]; exact hL
 
-theorem _root_.OrderMaintenance.Proof.TopSame.topMu {s s' : Core} (h : TopSame s s') : topMu s' = topMu s := by
+theorem _root_.OrderMaintenance.Proof.TopSame.topMu {s s' : Core} (h : TopSame s s') : topMu s'
+  = topMu s := by
   unfold OrderMaintenance.Proof.Top.topMu
   rw [h.ts, h.top.2.2.2.2.1]
 

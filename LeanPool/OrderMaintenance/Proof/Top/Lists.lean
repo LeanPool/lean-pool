@@ -31,8 +31,8 @@ theorem Array.size_setX {α : Type} [Inhabited α] (a : Array α) (i : Nat) (v :
     (a.setX i v).size = if i < a.size then a.size else i + 1 := by
   unfold Array.setX
   split
-  · simp
-  · simp; omega
+  · simp only [Array.set!_eq_setIfInBounds, Array.size_setIfInBounds]
+  · simp only [Array.push_append, Array.size_append, Array.size_push, Array.size_replicate]; omega
 
 /-! ### Filters changed at one element -/
 
@@ -40,7 +40,7 @@ theorem filter_erase_of {l : List Nat} (hl : l.Nodup) {p p' : Nat → Bool} {c :
     (hpp : ∀ x ∈ l, x ≠ c → p' x = p x) (hc : p' c = false) :
     l.filter p' = (l.filter p).erase c := by
   induction l with
-  | nil => simp
+  | nil => simp only [List.filter_nil, List.erase_nil]
   | cons x t ih =>
     have hx := List.nodup_cons.mp hl
     have ih' := ih hx.2 (fun y hy hyc => hpp y (List.mem_cons_of_mem _ hy) hyc)
@@ -62,7 +62,7 @@ theorem filter_snoc_of {l : List Nat} (hl : l.Nodup) {p p' : Nat → Bool} {c : 
     (hbefore : ∀ x ∈ l, p x = true → x ≠ c → Before l x c) :
     l.filter p' = l.filter p ++ [c] := by
   induction l with
-  | nil => simp at hcl
+  | nil => simp only [List.not_mem_nil] at hcl
   | cons x t ih =>
     have hx := List.nodup_cons.mp hl
     by_cases hxc : x = c
@@ -92,14 +92,14 @@ theorem filter_snoc_of {l : List Nat} (hl : l.Nodup) {p p' : Nat → Bool} {c : 
         · exact hb
         · exact absurd hy hx.1)
       rw [List.filter_cons, List.filter_cons, hpp x (by simp) hxc, ih']
-      split <;> simp
+      split <;> simp only [List.cons_append]
 
 theorem filter_cons_of {l : List Nat} (hl : l.Nodup) {p p' : Nat → Bool} {c : Nat}
     (hpp : ∀ x ∈ l, x ≠ c → p' x = p x) (hc : p' c = true) (hpc : p c = false) (hcl : c ∈ l)
     (hafter : ∀ x ∈ l, p x = true → x ≠ c → Before l c x) :
     l.filter p' = c :: l.filter p := by
   induction l with
-  | nil => simp at hcl
+  | nil => simp only [List.not_mem_nil] at hcl
   | cons x t ih =>
     have hx := List.nodup_cons.mp hl
     by_cases hxc : x = c
@@ -108,7 +108,7 @@ theorem filter_cons_of {l : List Nat} (hl : l.Nodup) {p p' : Nat → Bool} {c : 
       have h1 : t.filter p' = t.filter p := by
         apply List.filter_congr; intro y hy
         exact hpp y (List.mem_cons_of_mem _ hy) (fun e => hx.1 (e ▸ hy))
-      rw [h1, List.filter_cons, hpc]; simp
+      rw [h1, List.filter_cons, hpc]; simp only [Bool.false_eq_true, ↓reduceIte]
     · have hct : c ∈ t := by
         rcases List.mem_cons.mp hcl with h | h
         · exact absurd h.symm hxc
@@ -137,7 +137,7 @@ theorem filter_infix_of_convex {l : List Nat} (hl : l.Nodup) {p : Nat → Bool}
     (hcv : ∀ a b d, p a = true → p d = true → Before l a b → Before l b d → p b = true) :
     l.filter p <:+: l := by
   induction l with
-  | nil => simp
+  | nil => simp only [List.filter_nil, List.infix_rfl]
   | cons x t ih =>
     have hx := List.nodup_cons.mp hl
     have ih' := ih hx.2 (fun a b d ha hd hab hbd => hcv a b d ha hd (hab.cons x) (hbd.cons x))
@@ -158,7 +158,8 @@ theorem filter_infix_of_convex {l : List Nat} (hl : l.Nodup) {p : Nat → Bool}
             have hpz : p z = true := (List.mem_filter.mp (by rw [hf]; simp)).2
             have hyz : Before t y z := by
               rw [← e, hf]
-              have : y :: u ++ z :: r ++ w = [y] ++ (u ++ z :: r ++ w) := by simp
+              have : y :: u ++ z :: r ++ w = [y] ++ (u ++ z :: r ++ w) := by
+                simp only [List.cons_append, List.append_assoc, List.nil_append]
               rw [this]; exact before_append_mem (by simp) (by simp)
             have hpy : p y = true := hcv x y z hpx hpz (by
               rw [before_cons]; exact Or.inr ⟨rfl, hyz.mem_left⟩) (hyz.cons x)
@@ -179,16 +180,17 @@ theorem filter_infix_of_convex {l : List Nat} (hl : l.Nodup) {p : Nat → Bool}
 theorem headD_mem {l : List Nat} (h : l ≠ []) (d : Nat) : l.headD d ∈ l := by
   cases l with
   | nil => exact absurd rfl h
-  | cons a t => simp
+  | cons a t => simp only [List.headD_eq_head?_getD, List.head?_cons, Option.getD_some,
+      List.mem_cons, true_or]
 
 theorem getLastD_mem {l : List Nat} (h : l ≠ []) (d : Nat) : l.getLastD d ∈ l := by
-  rw [List.getLastD_eq_getLast?, List.getLast?_eq_getLast h]
-  simp [List.getLast_mem]
+  rw [List.getLastD_eq_getLast?, List.getLast?_eq_some_getLast h]
+  simp only [Option.getD_some, List.getLast_mem]
 
 theorem before_headD {l : List Nat} {c d : Nat} (hc : c ∈ l) (hne : c ≠ l.headD d) :
     Before l (l.headD d) c := by
   cases l with
-  | nil => simp at hc
+  | nil => simp only [List.not_mem_nil] at hc
   | cons a t =>
     simp only [List.headD_cons] at hne ⊢
     rw [before_cons]
@@ -205,32 +207,38 @@ theorem before_getLastD {l : List Nat} {c d : Nat} (hc : c ∈ l) (hne : c ≠ l
     Option.some_or, Option.getD_some] at hne ⊢
   rcases List.mem_append.mp hc with h | h
   · exact before_append_mem h (by simp)
-  · simp at h; exact absurd h hne
+  · simp only [List.mem_cons, List.not_mem_nil, or_false] at h; exact absurd h hne
 
 /-- In a block `y :: z :: _` of a nodup list, `z` follows `y`. -/
 theorem succOf_infix {l r : List Nat} {y z : Nat} (hl : l.Nodup) (h : y :: z :: r <:+: l) :
     succOf l y = z := by
   obtain ⟨u, w, rfl⟩ := h
-  have : u ++ y :: z :: r ++ w = u ++ y :: (z :: (r ++ w)) := by simp
+  have : u ++ y :: z :: r ++ w = u ++ y :: (z :: (r ++ w)) := by
+    simp only [List.append_assoc, List.cons_append]
   rw [this] at hl ⊢; rw [succOf_mid hl]; rfl
 
 theorem predOf_infix {l r : List Nat} {y z : Nat} (hl : l.Nodup) (h : r ++ [z, y] <:+: l) :
     predOf l y = z := by
   obtain ⟨u, w, rfl⟩ := h
-  have : u ++ (r ++ [z, y]) ++ w = (u ++ r ++ [z]) ++ y :: w := by simp
-  rw [this] at hl ⊢; rw [predOf_mid hl]; simp
+  have : u ++ (r ++ [z, y]) ++ w = (u ++ r ++ [z]) ++ y :: w := by
+    simp only [List.append_assoc, List.cons_append, List.nil_append]
+  rw [this] at hl ⊢; rw [predOf_mid hl]; simp only [List.append_assoc, List.getLastD_eq_getLast?,
+      List.getLast?_append, List.getLast?_singleton,
+      Option.some_or, Option.getD_some]
 
 theorem headD_append_cons (L R : List Nat) (a d : Nat) :
     (L ++ a :: R).headD d = if L = [] then a else L.headD d := by
-  cases L <;> simp
+  cases L <;> simp only [List.nil_append, List.headD_eq_head?_getD, List.head?_cons,
+      Option.getD_some, ↓reduceIte, List.cons_append, reduceCtorEq]
 
 theorem getLastD_append_cons (L R : List Nat) (a d : Nat) :
     (L ++ a :: R).getLastD d = if R = [] then a else R.getLastD d := by
   by_cases hR : R = []
-  · subst hR; simp [List.getLastD_eq_getLast?]
+  · subst hR; simp only [List.getLastD_eq_getLast?, List.getLast?_append,
+      List.getLast?_singleton, Option.some_or, Option.getD_some, ↓reduceIte]
   · rw [ite_eq_right hR, List.getLastD_eq_getLast?, List.getLastD_eq_getLast?,
-      List.getLast?_eq_getLast hR]
-    rw [List.getLast?_eq_getLast (by simp)]
+      List.getLast?_eq_some_getLast hR]
+    rw [List.getLast?_eq_some_getLast (by simp)]
     simp only [List.getLast_append_of_ne_nil _ (List.cons_ne_nil a R)]
     rw [List.getLast_cons hR]
 
@@ -382,16 +390,18 @@ theorem before_lift {A B : List Nat} {x y z c d : Nat} (hnd : (A ++ y :: x :: z 
   · exact h'
   · exfalso
     have hsmall : (A ++ x :: B).Nodup :=
-      hnd.sublist ((List.Sublist.refl A).append ((((List.Sublist.refl B).cons z).cons_cons x).cons y))
+      hnd.sublist ((List.Sublist.refl A).append ((((List.Sublist.refl B).cons z).cons_cons
+        x).cons y))
     rcases before_proj hyA hzA hyB hzB h' with e | e <;> simp only at e
     · exact hne e.symm
     · exact h.asymm hsmall e
 
 /-! ### Replacing one element -/
 
-theorem mem_replace1_of_ne {l ys : List Nat} {x y : Nat} (hx : x ∈ l) (hxy : x ≠ y) : x ∈ l.replace1 y ys := by
+theorem mem_replace1_of_ne {l ys : List Nat} {x y : Nat} (hx : x ∈ l) (hxy : x ≠ y) : x ∈
+  l.replace1 y ys := by
   induction l with
-  | nil => simp at hx
+  | nil => simp only [List.not_mem_nil] at hx
   | cons a t ih =>
     simp only [List.replace1]
     split
@@ -405,9 +415,10 @@ theorem mem_replace1_of_ne {l ys : List Nat} {x y : Nat} (hx : x ∈ l) (hxy : x
       · exact Or.inl rfl
       · exact Or.inr (ih hx)
 
-theorem mem_replace1_new {l ys : List Nat} {y z : Nat} (hy : y ∈ l) (hz : z ∈ ys) : z ∈ l.replace1 y ys := by
+theorem mem_replace1_new {l ys : List Nat} {y z : Nat} (hy : y ∈ l) (hz : z ∈ ys) : z ∈
+  l.replace1 y ys := by
   induction l with
-  | nil => simp at hy
+  | nil => simp only [List.not_mem_nil] at hy
   | cons a t ih =>
     simp only [List.replace1]
     split
@@ -420,7 +431,7 @@ theorem mem_replace1_new {l ys : List Nat} {y z : Nat} (hy : y ∈ l) (hz : z �
 
 theorem mem_replace1 {l ys : List Nat} {y z : Nat} (hz : z ∈ l.replace1 y ys) : z ∈ l ∨ z ∈ ys := by
   induction l with
-  | nil => simp [List.replace1] at hz
+  | nil => simp only [List.replace1, List.not_mem_nil] at hz
   | cons a t ih =>
     simp only [List.replace1] at hz
     split at hz
@@ -435,37 +446,48 @@ theorem mem_replace1 {l ys : List Nat} {y z : Nat} (hz : z ∈ l.replace1 y ys) 
         · exact Or.inl (List.mem_cons_of_mem _ h')
         · exact Or.inr h'
 
-theorem infix_replace1 {T l ys : List Nat} {y : Nat} (h : T <:+: l) (hy : y ∉ T) : T <:+: l.replace1 y ys := by
+theorem infix_replace1 {T l ys : List Nat} {y : Nat} (h : T <:+: l) (hy : y ∉ T) : T <:+:
+  l.replace1 y ys := by
   obtain ⟨u, w, rfl⟩ := h
   rw [replace1_append]
   by_cases hu : y ∈ u
   · rw [ite_eq_left (List.mem_append_left _ hu), replace1_append, ite_eq_left hu]
     exact ⟨u.replace1 y ys, w, by simp⟩
-  · rw [ite_eq_right (fun h => by rcases List.mem_append.mp h with h | h; exact hu h; exact hy h)]
+  · rw [ite_eq_right (fun h => by
+      rcases List.mem_append.mp h with h | h
+      · exact hu h
+      · exact hy h)]
     exact ⟨u, w.replace1 y ys, by simp⟩
 
-theorem infix_take {l : List Nat} (hl : l.Nodup) {a b k : Nat} (h : [a, b] <:+: l) (hb : b ∈ l.take k) :
+theorem infix_take {l : List Nat} (hl : l.Nodup) {a b k : Nat} (h : [a, b] <:+: l) (hb : b ∈
+  l.take k) :
     [a, b] <:+: l.take k := by
   obtain ⟨u, w, rfl⟩ := h
   have hnd : (u ++ a :: b :: w).Nodup := by simpa using hl
   have h1 := List.nodup_append.mp hnd
   have hbu : b ∉ u := fun hh => h1.2.2 b hh b (by simp) rfl
-  have hba : b ≠ a := fun e => by subst e; simp at h1
+  have hba : b ≠ a := fun e => by subst e; simp only [List.nodup_cons, List.mem_cons, true_or,
+      not_true_eq_false, false_and, or_self_left,
+      ne_eq, forall_eq_or_imp, and_false] at h1
   have hk : u.length + 2 ≤ k := by
     by_contra hk
     have e : (u ++ [a, b] ++ w).take k = (u ++ [a]).take k := by
       rw [show u ++ [a, b] ++ w = (u ++ [a]) ++ (b :: w) by simp,
-        List.take_append_of_le_length (by simp; omega)]
+        List.take_append_of_le_length (by
+          simp only [List.length_append, List.length_cons, List.length_nil, zero_add]; omega)]
     rw [e] at hb
     have := List.mem_of_mem_take hb
     simp only [List.mem_append, List.mem_singleton] at this
     rcases this with hh | hh
     · exact hbu hh
     · exact hba hh
-  rw [List.take_append, List.take_of_length_le (by simp; omega)]
+  rw [List.take_append, List.take_of_length_le (by
+    simp only [List.length_append, List.length_cons, List.length_nil, zero_add, Nat.reduceAdd];
+      omega)]
   exact ⟨u, _, rfl⟩
 
-theorem infix_drop {l : List Nat} (hl : l.Nodup) {a b k : Nat} (h : [a, b] <:+: l) (ha : a ∈ l.drop k) :
+theorem infix_drop {l : List Nat} (hl : l.Nodup) {a b k : Nat} (h : [a, b] <:+: l) (ha : a ∈
+  l.drop k) :
     [a, b] <:+: l.drop k := by
   obtain ⟨u, w, rfl⟩ := h
   have hnd : (u ++ a :: b :: w).Nodup := by simpa using hl
@@ -475,8 +497,10 @@ theorem infix_drop {l : List Nat} (hl : l.Nodup) {a b k : Nat} (h : [a, b] <:+: 
     by_contra hk
     have e : (u ++ [a, b] ++ w).drop k = (b :: w).drop (k - (u.length + 1)) := by
       rw [show u ++ [a, b] ++ w = (u ++ [a]) ++ (b :: w) by simp, List.drop_append,
-        List.drop_eq_nil_of_le (by simp; omega)]
-      simp
+        List.drop_eq_nil_of_le (by
+          simp only [List.length_append, List.length_cons, List.length_nil, zero_add]; omega)]
+      simp only [List.length_append, List.length_cons, List.length_nil, zero_add,
+          List.nil_append]
     rw [e] at ha
     exact h2.1 (List.mem_of_mem_drop ha)
   rw [show u ++ [a, b] ++ w = u ++ ([a, b] ++ w) by simp, List.drop_append_of_le_length hk]
@@ -497,13 +521,15 @@ theorem infix3_right {l : List Nat} {a b c : Nat} (h : [a, b, c] <:+: l) : [b, c
 theorem before_pred {l : List Nat} (hl : l.Nodup) {a b x : Nat} (h : [a, b] <:+: l)
     (hx : Before l x b) : x = a ∨ Before l x a := by
   obtain ⟨u, w, rfl⟩ := h
-  have e : u ++ [a, b] ++ w = (u ++ [a]) ++ b :: w := by simp
+  have e : u ++ [a, b] ++ w = (u ++ [a]) ++ b :: w := by
+    simp only [List.append_assoc, List.cons_append, List.nil_append]
   rw [e] at hx hl
   have hxm := mem_of_before_split hl hx
   rcases List.mem_append.mp hxm with h1 | h1
   · right
     rw [e]
-    have : (u ++ [a]) ++ b :: w = u ++ a :: (b :: w) := by simp
+    have : (u ++ [a]) ++ b :: w = u ++ a :: (b :: w) := by
+      simp only [List.append_assoc, List.cons_append, List.nil_append]
     rw [this]; exact before_split h1
   · left; simpa using h1
 
@@ -520,14 +546,16 @@ theorem before_succ {l : List Nat} (hl : l.Nodup) {b c x : Nat} (h : [b, c] <:+:
     have h1 := List.nodup_append.mp hl
     have h2 := (List.nodup_append.mp h1.1).2.1
     rcases List.mem_cons.mp hm' with e | e
-    · subst e; simp at h2
+    · subst e; simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false,
+        not_true_eq_false, not_false_eq_true, List.nodup_nil, and_self, and_true] at h2
     · exact h1.2.2 b (by simp) b e rfl
   rcases List.mem_append.mp hm with h1 | h1
   · rcases List.mem_append.mp h1 with h2 | h2
     · exfalso
       -- `x ∈ u` comes before `b`
       have hxb : Before (u ++ [b, c] ++ w) x b := by
-        have : u ++ [b, c] ++ w = u ++ b :: (c :: w) := by simp
+        have : u ++ [b, c] ++ w = u ++ b :: (c :: w) := by
+          simp only [List.append_assoc, List.cons_append, List.nil_append]
         rw [this]; exact before_split h2
       exact hx.asymm hl hxb
     · simp only [List.mem_cons,  List.not_mem_nil, or_false] at h2
@@ -535,9 +563,11 @@ theorem before_succ {l : List Nat} (hl : l.Nodup) {b c x : Nat} (h : [b, c] <:+:
       · exact absurd rfl (hx.ne hl)
       · left; rfl
   · right
-    have : u ++ [b, c] ++ w = (u ++ [b]) ++ c :: w := by simp
+    have : u ++ [b, c] ++ w = (u ++ [b]) ++ c :: w := by
+      simp only [List.append_assoc, List.cons_append, List.nil_append]
     rw [this]
-    have : (u ++ [b]) ++ c :: w = (u ++ [b] ++ [c]) ++ w := by simp
+    have : (u ++ [b]) ++ c :: w = (u ++ [b] ++ [c]) ++ w := by
+      simp only [List.append_assoc, List.cons_append, List.nil_append]
     rw [this]
     exact before_append_mem (by simp) h1
 

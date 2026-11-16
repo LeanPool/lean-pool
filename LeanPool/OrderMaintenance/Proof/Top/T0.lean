@@ -136,7 +136,8 @@ theorem sum_take_succ' (ws : List Nat) (m : Nat) (hm : m < ws.length) :
     (ws.take (m + 1)).sum = (ws.take m).sum + ws.getD m 0 := by
   rw [List.sum_take_succ _ _ hm, List.getD_eq_getElem _ _ hm]
 
-theorem sum_take_le (ws : List Nat) {a b : Nat} (h : a ≤ b) : (ws.take a).sum ≤ (ws.take b).sum := by
+theorem sum_take_le (ws : List Nat) {a b : Nat} (h : a ≤ b) : (ws.take a).sum ≤ (ws.take b).sum
+  := by
   have : ws.take a = (ws.take b).take a := by rw [List.take_take, Nat.min_eq_left h]
   rw [this]
   exact List.Sublist.sum_le_sum (List.take_sublist _ _) (by simp)

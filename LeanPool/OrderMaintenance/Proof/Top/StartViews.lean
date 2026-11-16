@@ -26,7 +26,13 @@ open OrderMaintenance.Model OrderMaintenance.Proof
 theorem fold_addTableS_node {h : Nat} (hh : h ≠ 0) (w : Nat) :
     ∀ (l : List Nat), l.Nodup → ∀ (s : Core),
       (l.foldl (fun s e => addTableS h w e s) s) =
-        { s with nodes := l.foldl (fun ns e => ns.modify e fun n => { n with inTables := n.inTables ++ [w] }) s.nodes }
+        {
+          s with
+          nodes := l.foldl (fun ns e => ns.modify e fun n => {
+            n with
+            inTables := n.inTables ++ [w]
+          }) s.nodes
+        }
   | [], _, s => rfl
   | e :: l, hl, s => by
     have hn := List.nodup_cons.mp hl
@@ -50,7 +56,10 @@ theorem fold_addTableS_node {h : Nat} (hh : h ≠ 0) (w : Nat) :
 theorem fold_addTableS_cin (w : Nat) :
     ∀ (l : List Nat) (s : Core),
       (l.foldl (fun s e => addTableS 0 w e s) s) =
-        { s with cin := l.foldl (fun cs e => cs.setX e (cs.getX e ++ [w])) s.cin }
+        {
+          s with
+          cin := l.foldl (fun cs e => cs.setX e (cs.getX e ++ [w])) s.cin
+        }
   | [], s => rfl
   | e :: l, s => by
     simp only [List.foldl_cons]
@@ -73,7 +82,13 @@ theorem fold_setX_append_getX (w : Nat) :
 theorem fold_setParentS_node {h : Nat} (hh : h ≠ 1) (w : Nat) :
     ∀ (l : List Nat) (s : Core),
       (l.foldl (fun s e => setParentS h w e s) s) =
-        { s with nodes := l.foldl (fun ns e => ns.modify e fun n => { n with livePar := w }) s.nodes }
+        {
+          s with
+          nodes := l.foldl (fun ns e => ns.modify e fun n => {
+            n with
+            livePar := w
+          }) s.nodes
+        }
   | [], s => rfl
   | e :: l, s => by
     simp only [List.foldl_cons]
@@ -82,7 +97,10 @@ theorem fold_setParentS_node {h : Nat} (hh : h ≠ 1) (w : Nat) :
 
 theorem fold_setParentS_lpar (w : Nat) :
     ∀ (l : List Nat) (s : Core),
-      (l.foldl (fun s e => setParentS 1 w e s) s) = { s with lpar := l.foldl (fun ls e => ls.setX e w) s.lpar }
+      (l.foldl (fun s e => setParentS 1 w e s) s) = {
+        s with
+        lpar := l.foldl (fun ls e => ls.setX e w) s.lpar
+      }
   | [], s => rfl
   | e :: l, s => by
     simp only [List.foldl_cons]
@@ -109,34 +127,79 @@ variable (t : Core) (v : Nat) (side : List (Nat × Side))
 def sdNode (u : Nat) : Node :=
   let N := t.nodes.size
   let V := t.nodes.getX v
-  if u = N then { height := sH t v, livePar := V.livePar, children := sCh1 t v side, weight := ((sCh1 t v side).map (sWt t v)).sum, table := evenTable t.P.beta (sLeft t v side), inTables := V.inTables, overflowOf := v }
-  else if u = N + 1 then { height := sH t v, livePar := V.livePar, children := sCh2 t v side, weight := ((sCh2 t v side).map (sWt t v)).sum, table := evenTable t.P.beta (sRight t v side), inTables := V.inTables, overflowOf := v }
+  if u = N then {
+    height := sH t v
+    livePar := V.livePar
+    children := sCh1 t v side
+    weight := ((sCh1 t v side).map (sWt t v)).sum
+    table := evenTable t.P.beta (sLeft t v side)
+    inTables := V.inTables
+    overflowOf := v
+  }
+  else if u = N + 1 then {
+    height := sH t v
+    livePar := V.livePar
+    children := sCh2 t v side
+    weight := ((sCh2 t v side).map (sWt t v)).sum
+    table := evenTable t.P.beta (sRight t v side)
+    inTables := V.inTables
+    overflowOf := v
+  }
   else if u < N then
-    let n1 := if u ∈ V.inTables then aroundF t v N (N + 1) (sF t v) u (t.nodes.getX u) else t.nodes.getX u
-    let n2 := if sH t v - 1 ≠ 0 ∧ u ∈ sLeft t v side then { n1 with inTables := n1.inTables ++ [N] } else n1
-    let n3 := if sH t v - 1 ≠ 0 ∧ u ∈ sRight t v side then { n2 with inTables := n2.inTables ++ [N + 1] } else n2
-    let n4 := if sH t v ≠ 1 ∧ u ∈ sCh1 t v side then { n3 with livePar := N } else n3
-    let n5 := if sH t v ≠ 1 ∧ u ∈ sCh2 t v side then { n4 with livePar := N + 1 } else n4
-    let n6 := if u = V.livePar then { n5 with children := n5.children.replace1 v [N, N + 1] } else n5
-    if u = v then { n6 with draining := true, t1 := N, t2 := N + 1, side := side, livePar := NIL, children := [] } else n6
+    let n1 := if u ∈ V.inTables then aroundF t v N (N + 1) (sF t v) u (t.nodes.getX u) else
+      t.nodes.getX u
+    let n2 := if sH t v - 1 ≠ 0 ∧ u ∈ sLeft t v side then {
+      n1 with
+      inTables := n1.inTables ++ [N]
+    } else n1
+    let n3 := if sH t v - 1 ≠ 0 ∧ u ∈ sRight t v side then {
+      n2 with
+      inTables := n2.inTables ++ [N + 1]
+    } else n2
+    let n4 := if sH t v ≠ 1 ∧ u ∈ sCh1 t v side then {
+      n3 with
+      livePar := N
+    } else n3
+    let n5 := if sH t v ≠ 1 ∧ u ∈ sCh2 t v side then {
+      n4 with
+      livePar := N + 1
+    } else n4
+    let n6 := if u = V.livePar then {
+      n5 with
+      children := n5.children.replace1 v [N, N + 1]
+    } else n5
+    if u = v then {
+      n6 with
+      draining := true
+      t1 := N
+      t2 := N + 1
+      side := side
+      livePar := NIL
+      children := []
+    } else n6
   else default
 
 variable {t v side}
 
 theorem sd1_getX (u : Nat) : (sd1 t v).nodes.getX u =
-    if u = t.nodes.size + 1 then { height := sH t v } else if u = t.nodes.size then { height := sH t v }
+    if u = t.nodes.size + 1 then {
+      height := sH t v
+    } else if u = t.nodes.size then {
+      height := sH t v
+    }
     else t.nodes.getX u := by
-  show ((t.nodes.push _).push _).getX u = _
+  change ((t.nodes.push _).push _).getX u = _
   rw [Array.getX_push, Array.getX_push, Array.size_push]
 
 theorem sd1_size : (sd1 t v).nodes.size = t.nodes.size + 2 := by
-  show ((t.nodes.push _).push _).size = _; simp
+  change ((t.nodes.push _).push _).size = _; simp
 
 theorem sd2_getX (hnd : (t.nodes.getX v).inTables.Nodup)
     (htabs : ∀ T ∈ (t.nodes.getX v).inTables, T < t.nodes.size) (u : Nat) :
     (sd2 t v).nodes.getX u = if u ∈ (t.nodes.getX v).inTables then
-      aroundF t v t.nodes.size (t.nodes.size + 1) (sF t v) u (t.nodes.getX u) else (sd1 t v).nodes.getX u := by
-  show ((t.nodes.getX v).inTables.foldl (fun ns T => ns.modify T (aroundF (sd1 t v) v t.nodes.size
+      aroundF t v t.nodes.size (t.nodes.size + 1) (sF t v) u (t.nodes.getX u) else (sd1 t
+        v).nodes.getX u := by
+  change ((t.nodes.getX v).inTables.foldl (fun ns T => ns.modify T (aroundF (sd1 t v) v t.nodes.size
     (t.nodes.size + 1) (sF t v) T)) (sd1 t v).nodes).getX u = _
   rw [foldl_modify_getX' _ _ hnd, sd1_size]
   by_cases hu : u ∈ (t.nodes.getX v).inTables
@@ -147,14 +210,15 @@ theorem sd2_getX (hnd : (t.nodes.getX v).inTables.Nodup)
   · rw [ite_eq_right (fun h => hu h.1), ite_eq_right hu]
 
 theorem sd2_size : (sd2 t v).nodes.size = t.nodes.size + 2 := by
-  show ((t.nodes.getX v).inTables.foldl _ (sd1 t v).nodes).size = _
+  change ((t.nodes.getX v).inTables.foldl _ (sd1 t v).nodes).size = _
   have := foldl_modify_size (t.nodes.getX v).inTables (fun x => x)
     (fun T => aroundF (sd1 t v) v t.nodes.size (t.nodes.size + 1) (sF t v) T) (sd1 t v).nodes
   rw [this, sd1_size]
 
 theorem fold_modify_getX_nd {f : Node → Node} :
     ∀ (l : List Nat), l.Nodup → ∀ (a : Array Node) (u : Nat),
-      (l.foldl (fun ns e => ns.modify e f) a).getX u = if u ∈ l ∧ u < a.size then f (a.getX u) else a.getX u :=
+      (l.foldl (fun ns e => ns.modify e f) a).getX u = if u ∈ l ∧ u < a.size then f (a.getX u)
+        else a.getX u :=
   foldl_modify_getX' (fun _ => f)
 
 theorem fold_modify_size_nd (f : Node → Node) (l : List Nat) (a : Array Node) :
@@ -164,8 +228,14 @@ theorem fold_modify_size_nd (f : Node → Node) (l : List Nat) (a : Array Node) 
 /-- The node array after the entry updates. -/
 theorem sd6_nodes (hln : (sLeft t v side).Nodup) (hrn : (sRight t v side).Nodup) :
     (sd6 t v side).nodes = if sH t v - 1 = 0 then (sd4 t v side).nodes else
-      (sRight t v side).foldl (fun ns e => ns.modify e fun n => { n with inTables := n.inTables ++ [t.nodes.size + 1] })
-        ((sLeft t v side).foldl (fun ns e => ns.modify e fun n => { n with inTables := n.inTables ++ [t.nodes.size] })
+      (sRight t v side).foldl (fun ns e => ns.modify e fun n => {
+        n with
+        inTables := n.inTables ++ [t.nodes.size + 1]
+      })
+        ((sLeft t v side).foldl (fun ns e => ns.modify e fun n => {
+          n with
+          inTables := n.inTables ++ [t.nodes.size]
+        })
           (sd4 t v side).nodes) := by
   unfold sd6; simp only []
   by_cases hA : sH t v - 1 = 0
@@ -191,7 +261,8 @@ theorem fold_addTableS_C : (l.foldl (fun s e => addTableS h w e s) s).C = s.C :=
   induction l generalizing s with
   | nil => rfl
   | cons e l ih => simp only [List.foldl_cons]; rw [ih]; unfold addTableS; split <;> rfl
-theorem fold_addTableS_cin' (hh : h ≠ 0) : (l.foldl (fun s e => addTableS h w e s) s).cin = s.cin := by
+theorem fold_addTableS_cin' (hh : h ≠ 0) : (l.foldl (fun s e => addTableS h w e s) s).cin =
+  s.cin := by
   induction l generalizing s with
   | nil => rfl
   | cons e l ih => simp only [List.foldl_cons]; rw [ih]; unfold addTableS; rw [ite_eq_right hh]
@@ -211,7 +282,8 @@ theorem fold_setParentS_C : (l.foldl (fun s e => setParentS h w e s) s).C = s.C 
   induction l generalizing s with
   | nil => rfl
   | cons e l ih => simp only [List.foldl_cons]; rw [ih]; unfold setParentS; split <;> rfl
-theorem fold_setParentS_lpar' (hh : h ≠ 1) : (l.foldl (fun s e => setParentS h w e s) s).lpar = s.lpar := by
+theorem fold_setParentS_lpar' (hh : h ≠ 1) : (l.foldl (fun s e => setParentS h w e s) s).lpar =
+  s.lpar := by
   induction l generalizing s with
   | nil => rfl
   | cons e l ih => simp only [List.foldl_cons]; rw [ih]; unfold setParentS; rw [ite_eq_right hh]
@@ -219,7 +291,8 @@ theorem fold_setParentS_lpar' (hh : h ≠ 1) : (l.foldl (fun s e => setParentS h
 end keep
 
 /-- The other fields after `startDrain`. -/
-theorem sdS_rest : (sdS t v side).path = t.path ∧ (sdS t v side).P = t.P ∧ (sdS t v side).C = t.C := by
+theorem sdS_rest : (sdS t v side).path = t.path ∧ (sdS t v side).P = t.P ∧ (sdS t v side).C =
+  t.C := by
   unfold sdS sd10 sd8 sd6 sd4 sd2 sd1
   simp only [fold_setParentS_path, fold_setParentS_P, fold_setParentS_C, fold_addTableS_path,
     fold_addTableS_P, fold_addTableS_C, and_self]
@@ -227,8 +300,10 @@ theorem sdS_rest : (sdS t v side).path = t.path ∧ (sdS t v side).P = t.P ∧ (
 theorem sdS_cin (hln : (sLeft t v side).Nodup) (hrn : (sRight t v side).Nodup) (c : Nat) :
     (sdS t v side).cin.getX c =
     if sH t v - 1 = 0 then
-      (if c ∈ sRight t v side then (if c ∈ sLeft t v side then t.cin.getX c ++ [t.nodes.size] else t.cin.getX c) ++
-        [t.nodes.size + 1] else (if c ∈ sLeft t v side then t.cin.getX c ++ [t.nodes.size] else t.cin.getX c))
+      (if c ∈ sRight t v side then (if c ∈ sLeft t v side then t.cin.getX c ++ [t.nodes.size]
+        else t.cin.getX c) ++
+        [t.nodes.size + 1] else (if c ∈ sLeft t v side then t.cin.getX c ++ [t.nodes.size] else
+          t.cin.getX c))
     else t.cin.getX c := by
   unfold sdS sd10 sd8 sd6 sd4 sd2 sd1
   simp only [fold_setParentS_cin]
@@ -241,7 +316,8 @@ theorem sdS_cin (hln : (sLeft t v side).Nodup) (hrn : (sRight t v side).Nodup) (
 
 theorem sdS_lpar (c : Nat) : (sdS t v side).lpar.getX c =
     if sH t v = 1 then
-      (if c ∈ sCh2 t v side then t.nodes.size + 1 else if c ∈ sCh1 t v side then t.nodes.size else t.lpar.getX c)
+      (if c ∈ sCh2 t v side then t.nodes.size + 1 else if c ∈ sCh1 t v side then t.nodes.size
+        else t.lpar.getX c)
     else t.lpar.getX c := by
   unfold sdS sd10 sd8 sd6 sd4 sd2 sd1
   simp only []
@@ -259,14 +335,58 @@ theorem sdS_nodes (hln : (sLeft t v side).Nodup) (hrn : (sRight t v side).Nodup)
     (sdS t v side).nodes =
       let N := t.nodes.size
       let V := t.nodes.getX v
-      let a4 := (((sd2 t v).nodes.modify N fun n => { n with inTables := V.inTables, table := evenTable t.P.beta (sLeft t v side) }).modify (N + 1) fun n => { n with inTables := V.inTables, table := evenTable t.P.beta (sRight t v side) })
-      let a6 := if sH t v - 1 = 0 then a4 else (sRight t v side).foldl (fun ns e => ns.modify e fun n => { n with inTables := n.inTables ++ [N + 1] }) ((sLeft t v side).foldl (fun ns e => ns.modify e fun n => { n with inTables := n.inTables ++ [N] }) a4)
-      let a7 := if sH t v = 1 then a6 else (sCh1 t v side).foldl (fun ns e => ns.modify e fun n => { n with livePar := N }) a6
-      let a8 := a7.modify N fun n => { n with children := sCh1 t v side, weight := ((sCh1 t v side).map (sWt t v)).sum, livePar := V.livePar, overflowOf := v }
-      let a9 := if sH t v = 1 then a8 else (sCh2 t v side).foldl (fun ns e => ns.modify e fun n => { n with livePar := N + 1 }) a8
-      let a10 := a9.modify (N + 1) fun n => { n with children := sCh2 t v side, weight := ((sCh2 t v side).map (sWt t v)).sum, livePar := V.livePar, overflowOf := v }
-      let a11 := a10.modify V.livePar fun n => { n with children := n.children.replace1 v [N, N + 1] }
-      a11.modify v fun n => { n with draining := true, t1 := N, t2 := N + 1, side := side, livePar := NIL, children := [] } := by
+      let a4 := (((sd2 t v).nodes.modify N fun n => {
+        n with
+        inTables := V.inTables
+        table := evenTable t.P.beta (sLeft t v side)
+      }).modify (N + 1) fun n => {
+        n with
+        inTables := V.inTables
+        table := evenTable t.P.beta (sRight t v side)
+      })
+      let a6 := if sH t v - 1 = 0 then a4 else (sRight t v side).foldl (fun ns e => ns.modify e
+        fun n => {
+          n with
+          inTables := n.inTables ++ [N + 1]
+        }) ((sLeft t v side).foldl (fun ns e => ns.modify e fun n => {
+        n with
+        inTables := n.inTables ++ [N]
+      }) a4)
+      let a7 := if sH t v = 1 then a6 else (sCh1 t v side).foldl (fun ns e => ns.modify e fun n => {
+        n with
+        livePar := N
+      }) a6
+      let a8 := a7.modify N fun n => {
+        n with
+        children := sCh1 t v side
+        weight := ((sCh1 t v side).map (sWt t v)).sum
+        livePar := V.livePar
+        overflowOf := v
+      }
+      let a9 := if sH t v = 1 then a8 else (sCh2 t v side).foldl (fun ns e => ns.modify e fun n => {
+        n with
+        livePar := N + 1
+      }) a8
+      let a10 := a9.modify (N + 1) fun n => {
+        n with
+        children := sCh2 t v side
+        weight := ((sCh2 t v side).map (sWt t v)).sum
+        livePar := V.livePar
+        overflowOf := v
+      }
+      let a11 := a10.modify V.livePar fun n => {
+        n with
+        children := n.children.replace1 v [N, N + 1]
+      }
+      a11.modify v fun n => {
+        n with
+        draining := true
+        t1 := N
+        t2 := N + 1
+        side := side
+        livePar := NIL
+        children := []
+      } := by
   unfold sdS sd10 sd8 sd6 sd4
   simp only []
   by_cases hA : sH t v - 1 = 0 <;> by_cases hB : sH t v = 1
@@ -287,18 +407,21 @@ theorem sdS_nodes (hln : (sLeft t v side).Nodup) (hrn : (sRight t v side).Nodup)
       fold_setParentS_node hB]
 
 /-- A field that an update keeps. -/
-theorem proj_modify {α : Type} (f : Node → α) {g : Node → Node} (hg : ∀ n, f (g n) = f n) (a : Array Node)
+theorem proj_modify {α : Type} (f : Node → α) {g : Node → Node} (hg : ∀ n, f (g n) = f n) (a :
+  Array Node)
     (i u : Nat) : f ((a.modify i g).getX u) = f (a.getX u) := by
   rw [Array.getX_modify]; split
   · exact hg _
   · rfl
 
 theorem proj_fold {α : Type} (f : Node → α) {g : Node → Node} (hg : ∀ n, f (g n) = f n) (u : Nat) :
-    ∀ (l : List Nat) (a : Array Node), f ((l.foldl (fun ns e => ns.modify e g) a).getX u) = f (a.getX u)
+    ∀ (l : List Nat) (a : Array Node), f ((l.foldl (fun ns e => ns.modify e g) a).getX u) = f
+      (a.getX u)
   | [], _ => rfl
   | e :: l, a => by simp only [List.foldl_cons]; rw [proj_fold f hg u l, proj_modify f hg]
 
-theorem proj_ite_fold {α : Type} (f : Node → α) {g : Node → Node} (hg : ∀ n, f (g n) = f n) (c : Prop)
+theorem proj_ite_fold {α : Type} (f : Node → α) {g : Node → Node} (hg : ∀ n, f (g n) = f n) (c :
+  Prop)
     [Decidable c] (l : List Nat) (a : Array Node) (u : Nat) :
     f ((if c then a else l.foldl (fun ns e => ns.modify e g) a).getX u) = f (a.getX u) := by
   split
@@ -306,8 +429,10 @@ theorem proj_ite_fold {α : Type} (f : Node → α) {g : Node → Node} (hg : �
   · exact proj_fold f hg u l a
 
 theorem proj_ite_fold2 {α : Type} (f : Node → α) {g g' : Node → Node} (hg : ∀ n, f (g n) = f n)
-    (hg' : ∀ n, f (g' n) = f n) (c : Prop) [Decidable c] (l l' : List Nat) (a : Array Node) (u : Nat) :
-    f ((if c then a else l'.foldl (fun ns e => ns.modify e g') (l.foldl (fun ns e => ns.modify e g) a)).getX u) =
+    (hg' : ∀ n, f (g' n) = f n) (c : Prop) [Decidable c] (l l' : List Nat) (a : Array Node) (u :
+      Nat) :
+    f ((if c then a else l'.foldl (fun ns e => ns.modify e g') (l.foldl (fun ns e => ns.modify e
+      g) a)).getX u) =
       f (a.getX u) := by
   split
   · rfl
@@ -319,8 +444,10 @@ theorem size_ite_fold {g : Node → Node} (c : Prop) [Decidable c] (l : List Nat
   · rfl
   · exact fold_modify_size_nd g l a
 
-theorem size_ite_fold2 {g g' : Node → Node} (c : Prop) [Decidable c] (l l' : List Nat) (a : Array Node) :
-    (if c then a else l'.foldl (fun ns e => ns.modify e g') (l.foldl (fun ns e => ns.modify e g) a)).size =
+theorem size_ite_fold2 {g g' : Node → Node} (c : Prop) [Decidable c] (l l' : List Nat) (a :
+  Array Node) :
+    (if c then a else l'.foldl (fun ns e => ns.modify e g') (l.foldl (fun ns e => ns.modify e g)
+      a)).size =
       a.size := by
   split
   · rfl
@@ -334,7 +461,8 @@ theorem getX_modify_eq {g : Node → Node} {a : Array Node} {i : Nat} (h : i < a
     (a.modify i g).getX i = g (a.getX i) := by
   rw [Array.getX_modify, ite_eq_left ⟨rfl, h⟩]
 
-theorem getX_ge {α : Type} [Inhabited α] {a : Array α} {u : Nat} (h : a.size ≤ u) : a.getX u = default := by
+theorem getX_ge {α : Type} [Inhabited α] {a : Array α} {u : Nat} (h : a.size ≤ u) : a.getX u =
+  default := by
   unfold Array.getX Array.getD; rw [dite_eq_right (by omega)]
 
 theorem sdS_size (hln : (sLeft t v side).Nodup) (hrn : (sRight t v side).Nodup) :
@@ -344,9 +472,13 @@ theorem sdS_size (hln : (sLeft t v side).Nodup) (hrn : (sRight t v side).Nodup) 
     Array.size_modify', size_ite_fold,
     size_ite_fold2, Array.size_modify', Array.size_modify', sd2_size]
 
-theorem ite_fold_livePar (c : Prop) [Decidable c] (w : Nat) {l : List Nat} (hl : l.Nodup) (a : Array Node)
+theorem ite_fold_livePar (c : Prop) [Decidable c] (w : Nat) {l : List Nat} (hl : l.Nodup) (a :
+  Array Node)
     {u : Nat} (hu : u < a.size) :
-    ((if c then a else l.foldl (fun ns e => ns.modify e fun n => { n with livePar := w }) a).getX u).livePar =
+    ((if c then a else l.foldl (fun ns e => ns.modify e fun n => {
+      n with
+      livePar := w
+    }) a).getX u).livePar =
       if ¬c ∧ u ∈ l then w else (a.getX u).livePar := by
   by_cases hc : c
   · rw [ite_eq_left hc, ite_eq_right (fun h => h.1 hc)]
@@ -356,11 +488,13 @@ theorem ite_fold_livePar (c : Prop) [Decidable c] (w : Nat) {l : List Nat} (hl :
     · rw [ite_eq_right (fun h => hm h.1), ite_eq_right (fun h => hm h.2)]
 
 section fields
-variable (hln : (sLeft t v side).Nodup) (hrn : (sRight t v side).Nodup) (hc1 : (sCh1 t v side).Nodup)
+variable (hln : (sLeft t v side).Nodup) (hrn : (sRight t v side).Nodup) (hc1 : (sCh1 t v
+  side).Nodup)
   (hc2 : (sCh2 t v side).Nodup) (hnd : (t.nodes.getX v).inTables.Nodup)
   (htabs : ∀ T ∈ (t.nodes.getX v).inTables, T < t.nodes.size)
 include hln hrn hc1 hc2 hnd htabs
 
+omit hc1 hc2 in
 theorem sdS_height (u : Nat) : ((sdS t v side).nodes.getX u).height =
     if u = t.nodes.size ∨ u = t.nodes.size + 1 then sH t v else (t.nodes.getX u).height := by
   have e : ((sdS t v side).nodes.getX u).height = ((sd2 t v).nodes.getX u).height := by
@@ -380,8 +514,10 @@ theorem sdS_height (u : Nat) : ((sdS t v side).nodes.getX u).height =
       · rw [ite_eq_left h2, ite_eq_left (Or.inl h2)]
       · rw [ite_eq_right h2, ite_eq_right (fun h => h.elim h2 h1)]
 
+omit hln hrn hc1 hc2 in
 /-- The common tail: below the new nodes, fields that only `sd2` touches. -/
-theorem sd2_proj {α : Type} (f : Node → α) (hf : ∀ (n : Node) tab sd, f (setTS tab sd n) = f n) {u : Nat}
+theorem sd2_proj {α : Type} (f : Node → α) (hf : ∀ (n : Node) tab sd, f (setTS tab sd n) = f n)
+  {u : Nat}
     (h1 : u ≠ t.nodes.size) (h2 : u ≠ t.nodes.size + 1) :
     f ((sd2 t v).nodes.getX u) = f (t.nodes.getX u) := by
   rw [sd2_getX hnd htabs]
@@ -389,7 +525,8 @@ theorem sd2_proj {α : Type} (f : Node → α) (hf : ∀ (n : Node) tab sd, f (s
   · exact hf _ _ _
   · rw [sd1_getX, ite_eq_right h2, ite_eq_right h1]
 
-theorem sdS_weight (hv : v < t.nodes.size) (hL : (t.nodes.getX v).livePar < t.nodes.size) (u : Nat) :
+theorem sdS_weight (hv : v < t.nodes.size) (hL : (t.nodes.getX v).livePar < t.nodes.size) (u :
+  Nat) :
     ((sdS t v side).nodes.getX u).weight =
       if u = t.nodes.size then ((sCh1 t v side).map (sWt t v)).sum
       else if u = t.nodes.size + 1 then ((sCh2 t v side).map (sWt t v)).sum
@@ -399,21 +536,27 @@ theorem sdS_weight (hv : v < t.nodes.size) (hL : (t.nodes.getX v).livePar < t.no
   · subst h1
     rw [getX_modify_ne (by omega), getX_modify_ne (by omega), getX_modify_ne (by omega)]
     simp (disch := (intro n; rfl)) only [proj_ite_fold Node.weight]
-    rw [getX_modify_eq (by rw [size_ite_fold, size_ite_fold2, Array.size_modify', Array.size_modify', sd2_size]; omega)]
+    rw [getX_modify_eq (by
+      rw [size_ite_fold, size_ite_fold2, Array.size_modify', Array.size_modify', sd2_size]; omega)]
     rfl
   · by_cases h2 : u = t.nodes.size + 1
     · subst h2
       rw [getX_modify_ne (by omega), getX_modify_ne (by omega),
-        getX_modify_eq (by rw [size_ite_fold, Array.size_modify', size_ite_fold, size_ite_fold2,
-        Array.size_modify', Array.size_modify', sd2_size]; omega)]
+        getX_modify_eq (by
+          rw [size_ite_fold, Array.size_modify', size_ite_fold, size_ite_fold2,
+            Array.size_modify', Array.size_modify', sd2_size]; omega)]
       simp only [ite_eq_right h1]; rfl
     · rw [ite_eq_right h1, ite_eq_right h2]
       simp (disch := first | (intro n; rfl) | omega) only [getX_modify_ne, proj_modify Node.weight,
         proj_ite_fold Node.weight, proj_ite_fold2 Node.weight]
-      exact sd2_proj hln hrn hc1 hc2 hnd htabs Node.weight (fun _ _ _ => rfl) h1 h2
+      exact sd2_proj hnd htabs Node.weight (fun _ _ _ => rfl) h1 h2
 
-theorem sd2_field {α : Type} (f : Node → α) (hf : ∀ (n : Node) tab sd, f (setTS tab sd n) = f n) (u : Nat) :
-    f ((sd2 t v).nodes.getX u) = if u = t.nodes.size ∨ u = t.nodes.size + 1 then f { height := sH t v }
+omit hln hrn hc1 hc2 in
+theorem sd2_field {α : Type} (f : Node → α) (hf : ∀ (n : Node) tab sd, f (setTS tab sd n) = f n)
+  (u : Nat) :
+    f ((sd2 t v).nodes.getX u) = if u = t.nodes.size ∨ u = t.nodes.size + 1 then f {
+      height := sH t v
+    }
       else f (t.nodes.getX u) := by
   rw [sd2_getX hnd htabs]
   by_cases hu : u ∈ (t.nodes.getX v).inTables
@@ -431,80 +574,105 @@ theorem sd2_field {α : Type} (f : Node → α) (hf : ∀ (n : Node) tab sd, f (
 theorem sdS_alive (u : Nat) : ((sdS t v side).nodes.getX u).alive =
     if u = t.nodes.size ∨ u = t.nodes.size + 1 then true else (t.nodes.getX u).alive := by
   rw [sdS_nodes hln hrn]; simp only []
-  simp (disch := first | (intro n; rfl) | omega) only [ proj_modify Node.alive, proj_ite_fold Node.alive, proj_ite_fold2 Node.alive]
-  exact sd2_field hln hrn hc1 hc2 hnd htabs Node.alive (fun _ _ _ => rfl) u
+  simp (disch := first | (intro n; rfl) | omega) only [ proj_modify Node.alive, proj_ite_fold
+    Node.alive, proj_ite_fold2 Node.alive]
+  exact sd2_field hnd htabs Node.alive (fun _ _ _ => rfl) u
 
 theorem sdS_first (u : Nat) : ((sdS t v side).nodes.getX u).first =
     if u = t.nodes.size ∨ u = t.nodes.size + 1 then NIL else (t.nodes.getX u).first := by
   rw [sdS_nodes hln hrn]; simp only []
-  simp (disch := first | (intro n; rfl) | omega) only [ proj_modify Node.first, proj_ite_fold Node.first, proj_ite_fold2 Node.first]
-  exact sd2_field hln hrn hc1 hc2 hnd htabs Node.first (fun _ _ _ => rfl) u
+  simp (disch := first | (intro n; rfl) | omega) only [ proj_modify Node.first, proj_ite_fold
+    Node.first, proj_ite_fold2 Node.first]
+  exact sd2_field hnd htabs Node.first (fun _ _ _ => rfl) u
 
 theorem sdS_last (u : Nat) : ((sdS t v side).nodes.getX u).last =
     if u = t.nodes.size ∨ u = t.nodes.size + 1 then NIL else (t.nodes.getX u).last := by
   rw [sdS_nodes hln hrn]; simp only []
-  simp (disch := first | (intro n; rfl) | omega) only [ proj_modify Node.last, proj_ite_fold Node.last, proj_ite_fold2 Node.last]
-  exact sd2_field hln hrn hc1 hc2 hnd htabs Node.last (fun _ _ _ => rfl) u
+  simp (disch := first | (intro n; rfl) | omega) only [ proj_modify Node.last, proj_ite_fold
+    Node.last, proj_ite_fold2 Node.last]
+  exact sd2_field hnd htabs Node.last (fun _ _ _ => rfl) u
 
-theorem sdS_overflowOf (hv : v < t.nodes.size) (hL : (t.nodes.getX v).livePar < t.nodes.size) (u : Nat) :
+theorem sdS_overflowOf (hv : v < t.nodes.size) (hL : (t.nodes.getX v).livePar < t.nodes.size) (u
+  : Nat) :
     ((sdS t v side).nodes.getX u).overflowOf =
-      if u = t.nodes.size then v else if u = t.nodes.size + 1 then v else (t.nodes.getX u).overflowOf := by
+      if u = t.nodes.size then v else if u = t.nodes.size + 1 then v else (t.nodes.getX
+        u).overflowOf := by
   rw [sdS_nodes hln hrn]; simp only []
   by_cases h1 : u = t.nodes.size
   · subst h1
     rw [getX_modify_ne (by omega), getX_modify_ne (by omega), getX_modify_ne (by omega)]
     simp (disch := (intro n; rfl)) only [proj_ite_fold Node.overflowOf]
-    rw [getX_modify_eq (by rw [size_ite_fold, size_ite_fold2, Array.size_modify', Array.size_modify', sd2_size]; omega)]
+    rw [getX_modify_eq (by
+      rw [size_ite_fold, size_ite_fold2, Array.size_modify', Array.size_modify', sd2_size]; omega)]
     rfl
   · by_cases h2 : u = t.nodes.size + 1
     · subst h2
       rw [getX_modify_ne (by omega), getX_modify_ne (by omega),
-        getX_modify_eq (by rw [size_ite_fold, Array.size_modify', size_ite_fold, size_ite_fold2,
-        Array.size_modify', Array.size_modify', sd2_size]; omega)]
+        getX_modify_eq (by
+          rw [size_ite_fold, Array.size_modify', size_ite_fold, size_ite_fold2,
+            Array.size_modify', Array.size_modify', sd2_size]; omega)]
       simp only [ite_eq_right h1]; rfl
     · rw [ite_eq_right h1, ite_eq_right h2]
-      simp (disch := first | (intro n; rfl) | omega) only [getX_modify_ne, proj_modify Node.overflowOf, proj_ite_fold Node.overflowOf, proj_ite_fold2 Node.overflowOf]
-      exact sd2_proj hln hrn hc1 hc2 hnd htabs Node.overflowOf (fun _ _ _ => rfl) h1 h2
+      simp (disch := first | (intro n; rfl) | omega) only [getX_modify_ne, proj_modify
+        Node.overflowOf, proj_ite_fold Node.overflowOf, proj_ite_fold2 Node.overflowOf]
+      exact sd2_proj hnd htabs Node.overflowOf (fun _ _ _ => rfl) h1 h2
 
 theorem sdS_draining (hv : v < t.nodes.size) (u : Nat) : ((sdS t v side).nodes.getX u).draining =
     if u = v then true else if u = t.nodes.size ∨ u = t.nodes.size + 1 then false
     else (t.nodes.getX u).draining := by
   rw [sdS_nodes hln hrn]; simp only []
   by_cases hu : u = v
-  · subst hu; rw [getX_modify_eq (by rw [Array.size_modify', Array.size_modify', size_ite_fold, Array.size_modify', size_ite_fold, size_ite_fold2, Array.size_modify', Array.size_modify', sd2_size]; omega), ite_eq_left rfl]
+  · subst hu; rw [getX_modify_eq (by
+    rw [Array.size_modify', Array.size_modify', size_ite_fold, Array.size_modify',
+      size_ite_fold, size_ite_fold2, Array.size_modify', Array.size_modify', sd2_size]; omega),
+        ite_eq_left rfl]
   · rw [ite_eq_right hu]
-    simp (disch := first | (intro n; rfl) | omega) only [getX_modify_ne, proj_modify Node.draining, proj_ite_fold Node.draining, proj_ite_fold2 Node.draining]
-    exact sd2_field hln hrn hc1 hc2 hnd htabs Node.draining (fun _ _ _ => rfl) u
+    simp (disch := first | (intro n; rfl) | omega) only [getX_modify_ne, proj_modify
+      Node.draining, proj_ite_fold Node.draining, proj_ite_fold2 Node.draining]
+    exact sd2_field hnd htabs Node.draining (fun _ _ _ => rfl) u
 
 theorem sdS_t1 (hv : v < t.nodes.size) (u : Nat) : ((sdS t v side).nodes.getX u).t1 =
     if u = v then t.nodes.size else if u = t.nodes.size ∨ u = t.nodes.size + 1 then NIL
     else (t.nodes.getX u).t1 := by
   rw [sdS_nodes hln hrn]; simp only []
   by_cases hu : u = v
-  · subst hu; rw [getX_modify_eq (by rw [Array.size_modify', Array.size_modify', size_ite_fold, Array.size_modify', size_ite_fold, size_ite_fold2, Array.size_modify', Array.size_modify', sd2_size]; omega), ite_eq_left rfl]
+  · subst hu; rw [getX_modify_eq (by
+    rw [Array.size_modify', Array.size_modify', size_ite_fold, Array.size_modify',
+      size_ite_fold, size_ite_fold2, Array.size_modify', Array.size_modify', sd2_size]; omega),
+        ite_eq_left rfl]
   · rw [ite_eq_right hu]
-    simp (disch := first | (intro n; rfl) | omega) only [getX_modify_ne, proj_modify Node.t1, proj_ite_fold Node.t1, proj_ite_fold2 Node.t1]
-    exact sd2_field hln hrn hc1 hc2 hnd htabs Node.t1 (fun _ _ _ => rfl) u
+    simp (disch := first | (intro n; rfl) | omega) only [getX_modify_ne, proj_modify Node.t1,
+      proj_ite_fold Node.t1, proj_ite_fold2 Node.t1]
+    exact sd2_field hnd htabs Node.t1 (fun _ _ _ => rfl) u
 
 theorem sdS_t2 (hv : v < t.nodes.size) (u : Nat) : ((sdS t v side).nodes.getX u).t2 =
     if u = v then t.nodes.size + 1 else if u = t.nodes.size ∨ u = t.nodes.size + 1 then NIL
     else (t.nodes.getX u).t2 := by
   rw [sdS_nodes hln hrn]; simp only []
   by_cases hu : u = v
-  · subst hu; rw [getX_modify_eq (by rw [Array.size_modify', Array.size_modify', size_ite_fold, Array.size_modify', size_ite_fold, size_ite_fold2, Array.size_modify', Array.size_modify', sd2_size]; omega), ite_eq_left rfl]
+  · subst hu; rw [getX_modify_eq (by
+    rw [Array.size_modify', Array.size_modify', size_ite_fold, Array.size_modify',
+      size_ite_fold, size_ite_fold2, Array.size_modify', Array.size_modify', sd2_size]; omega),
+        ite_eq_left rfl]
   · rw [ite_eq_right hu]
-    simp (disch := first | (intro n; rfl) | omega) only [getX_modify_ne, proj_modify Node.t2, proj_ite_fold Node.t2, proj_ite_fold2 Node.t2]
-    exact sd2_field hln hrn hc1 hc2 hnd htabs Node.t2 (fun _ _ _ => rfl) u
+    simp (disch := first | (intro n; rfl) | omega) only [getX_modify_ne, proj_modify Node.t2,
+      proj_ite_fold Node.t2, proj_ite_fold2 Node.t2]
+    exact sd2_field hnd htabs Node.t2 (fun _ _ _ => rfl) u
 
 theorem sdS_side (hv : v < t.nodes.size) (u : Nat) : ((sdS t v side).nodes.getX u).side =
     if u = v then side else if u = t.nodes.size ∨ u = t.nodes.size + 1 then []
-    else if u ∈ (t.nodes.getX v).inTables then sideAround (t.nodes.getX u) v t.nodes.size (t.nodes.size + 1)
+    else if u ∈ (t.nodes.getX v).inTables then sideAround (t.nodes.getX u) v t.nodes.size
+      (t.nodes.size + 1)
     else (t.nodes.getX u).side := by
   rw [sdS_nodes hln hrn]; simp only []
   by_cases hu : u = v
-  · subst hu; rw [getX_modify_eq (by rw [Array.size_modify', Array.size_modify', size_ite_fold, Array.size_modify', size_ite_fold, size_ite_fold2, Array.size_modify', Array.size_modify', sd2_size]; omega), ite_eq_left rfl]
+  · subst hu; rw [getX_modify_eq (by
+    rw [Array.size_modify', Array.size_modify', size_ite_fold, Array.size_modify',
+      size_ite_fold, size_ite_fold2, Array.size_modify', Array.size_modify', sd2_size]; omega),
+        ite_eq_left rfl]
   · rw [ite_eq_right hu]
-    simp (disch := first | (intro n; rfl) | omega) only [getX_modify_ne, proj_modify Node.side, proj_ite_fold Node.side, proj_ite_fold2 Node.side]
+    simp (disch := first | (intro n; rfl) | omega) only [getX_modify_ne, proj_modify Node.side,
+      proj_ite_fold Node.side, proj_ite_fold2 Node.side]
     rw [sd2_getX hnd htabs]
     by_cases ht : u ∈ (t.nodes.getX v).inTables
     · have := htabs u ht
@@ -518,6 +686,7 @@ theorem sdS_side (hv : v < t.nodes.size) (u : Nat) : ((sdS t v side).nodes.getX 
         · rw [ite_eq_right h1, ite_eq_right h2, ite_eq_right (fun h => h.elim h2 h1),
           ite_eq_right ht]
 
+omit hc1 hc2 in
 theorem sdS_table (hv : v < t.nodes.size) (hL : (t.nodes.getX v).livePar < t.nodes.size) (u : Nat) :
     ((sdS t v side).nodes.getX u).table =
       if u = t.nodes.size then evenTable t.P.beta (sLeft t v side)
@@ -528,28 +697,35 @@ theorem sdS_table (hv : v < t.nodes.size) (hL : (t.nodes.getX v).livePar < t.nod
   rw [sdS_nodes hln hrn]; simp only []
   by_cases h1 : u = t.nodes.size
   · subst h1
-    simp (disch := first | (intro n; rfl) | omega) only [getX_modify_ne, proj_modify Node.table, proj_ite_fold Node.table, proj_ite_fold2 Node.table]
+    simp (disch := first | (intro n; rfl) | omega) only [getX_modify_ne, proj_modify Node.table,
+      proj_ite_fold Node.table, proj_ite_fold2 Node.table]
     rw [getX_modify_eq (by rw [sd2_size]; omega)]
     rfl
   · by_cases h2 : u = t.nodes.size + 1
     · subst h2
-      simp (disch := first | (intro n; rfl) | omega) only [getX_modify_ne, proj_modify Node.table, proj_ite_fold Node.table, proj_ite_fold2 Node.table]
+      simp (disch := first | (intro n; rfl) | omega) only [getX_modify_ne, proj_modify
+        Node.table, proj_ite_fold Node.table, proj_ite_fold2 Node.table]
       rw [getX_modify_eq (by rw [Array.size_modify', sd2_size]; omega)]
       simp only [ite_eq_right h1]; rfl
     · rw [ite_eq_right h1, ite_eq_right h2]
-      simp (disch := first | (intro n; rfl) | omega) only [getX_modify_ne, proj_modify Node.table, proj_ite_fold Node.table, proj_ite_fold2 Node.table]
+      simp (disch := first | (intro n; rfl) | omega) only [getX_modify_ne, proj_modify
+        Node.table, proj_ite_fold Node.table, proj_ite_fold2 Node.table]
       rw [sd2_getX hnd htabs]
       by_cases ht : u ∈ (t.nodes.getX v).inTables
       · rw [ite_eq_left ht, ite_eq_left ht]; rfl
       · rw [ite_eq_right ht, ite_eq_right ht, sd1_getX, ite_eq_right h2, ite_eq_right h1]
 
-theorem sdS_inTables (hv : v < t.nodes.size) (hL : (t.nodes.getX v).livePar < t.nodes.size)
-    (hent : sH t v - 1 ≠ 0 → ∀ e ∈ sEntries t v, e < t.nodes.size) (u : Nat) : ((sdS t v side).nodes.getX u).inTables =
+omit hc1 hc2 in
+theorem sdS_inTables (hent : sH t v - 1 ≠ 0 → ∀ e ∈ sEntries t v, e < t.nodes.size) (u : Nat) :
+  ((sdS t v
+      side).nodes.getX u).inTables =
       if u = t.nodes.size ∨ u = t.nodes.size + 1 then (t.nodes.getX v).inTables
-      else (t.nodes.getX u).inTables ++ (if sH t v - 1 ≠ 0 ∧ u ∈ sLeft t v side then [t.nodes.size] else []) ++
+      else (t.nodes.getX u).inTables ++ (if sH t v - 1 ≠ 0 ∧ u ∈ sLeft t v side then
+        [t.nodes.size] else []) ++
         (if sH t v - 1 ≠ 0 ∧ u ∈ sRight t v side then [t.nodes.size + 1] else []) := by
   rw [sdS_nodes hln hrn]; simp only []
-  simp (disch := first | (intro n; rfl) | omega) only [ proj_modify Node.inTables, proj_ite_fold Node.inTables]
+  simp (disch := first | (intro n; rfl) | omega) only [ proj_modify Node.inTables, proj_ite_fold
+    Node.inTables]
   by_cases hA : sH t v - 1 = 0
   · rw [ite_eq_left hA]
     by_cases h1 : u = t.nodes.size
@@ -558,10 +734,12 @@ theorem sdS_inTables (hv : v < t.nodes.size) (hL : (t.nodes.getX v).livePar < t.
       · subst h2; rw [getX_modify_eq (by rw [Array.size_modify', sd2_size]; omega)]; simp
       · rw [getX_modify_ne (by omega), getX_modify_ne (by omega),
         ite_eq_right (fun h => h.elim h1 h2)]
-        rw [sd2_proj hln hrn hc1 hc2 hnd htabs Node.inTables (fun _ _ _ => rfl) h1 h2]
+        rw [sd2_proj hnd htabs Node.inTables (fun _ _ _ => rfl) h1 h2]
         simp [hA]
-  · have hlm : ∀ e ∈ sLeft t v side, e < t.nodes.size := fun e he => hent hA e (List.mem_of_mem_filter he)
-    have hrm : ∀ e ∈ sRight t v side, e < t.nodes.size := fun e he => hent hA e (List.mem_of_mem_filter he)
+  · have hlm : ∀ e ∈ sLeft t v side, e < t.nodes.size := fun e he =>
+      hent hA e (List.mem_of_mem_filter he)
+    have hrm : ∀ e ∈ sRight t v side, e < t.nodes.size := fun e he => hent hA e
+      (List.mem_of_mem_filter he)
     rw [ite_eq_right hA, fold_modify_getX_nd _ hrn, fold_modify_getX_nd _ hln, fold_modify_size_nd,
       Array.size_modify', Array.size_modify', sd2_size]
     by_cases h1 : u = t.nodes.size
@@ -574,8 +752,9 @@ theorem sdS_inTables (hv : v < t.nodes.size) (hL : (t.nodes.getX v).livePar < t.
         rw [ite_eq_right (fun h => by have := hrm _ h.1; omega),
           ite_eq_right (fun h => by have := hlm _ h.1; omega),
           getX_modify_eq (by rw [Array.size_modify', sd2_size]; omega)]; simp
-      · rw [ite_eq_right (show ¬(u = t.nodes.size ∨ u = t.nodes.size + 1) from fun h => h.elim h1 h2)]
-        have e0 := sd2_proj hln hrn hc1 hc2 hnd htabs Node.inTables (fun _ _ _ => rfl) h1 h2
+      · rw [ite_eq_right (show ¬(u = t.nodes.size ∨ u = t.nodes.size + 1) from fun h => h.elim
+        h1 h2)]
+        have e0 := sd2_proj hnd htabs Node.inTables (fun _ _ _ => rfl) h1 h2
         by_cases hr : u ∈ sRight t v side <;> by_cases hl : u ∈ sLeft t v side
         · have := hrm u hr
           rw [ite_eq_left ⟨hr, by omega⟩, ite_eq_left ⟨hl, by omega⟩]
@@ -606,38 +785,49 @@ theorem sdS_children (hv : v < t.nodes.size) (hL : (t.nodes.getX v).livePar < t.
       else (t.nodes.getX u).children := by
   rw [sdS_nodes hln hrn]; simp only []
   by_cases hu : u = v
-  · subst hu; rw [getX_modify_eq (by rw [Array.size_modify', Array.size_modify', size_ite_fold, Array.size_modify', size_ite_fold, size_ite_fold2, Array.size_modify', Array.size_modify', sd2_size]; omega), ite_eq_left rfl]
+  · subst hu; rw [getX_modify_eq (by
+    rw [Array.size_modify', Array.size_modify', size_ite_fold, Array.size_modify',
+      size_ite_fold, size_ite_fold2, Array.size_modify', Array.size_modify', sd2_size]; omega),
+        ite_eq_left rfl]
   · rw [ite_eq_right hu]
     by_cases h1 : u = t.nodes.size
     · subst h1
       rw [getX_modify_ne (by omega), getX_modify_ne (by omega), getX_modify_ne (by omega)]
       simp (disch := (intro n; rfl)) only [proj_ite_fold Node.children]
-      rw [getX_modify_eq (by rw [size_ite_fold, size_ite_fold2, Array.size_modify', Array.size_modify', sd2_size]; omega)]
+      rw [getX_modify_eq (by
+        rw [size_ite_fold, size_ite_fold2, Array.size_modify', Array.size_modify', sd2_size];
+          omega)]
       rfl
     · by_cases h2 : u = t.nodes.size + 1
       · subst h2
         rw [getX_modify_ne (by omega), getX_modify_ne (by omega),
-          getX_modify_eq (by rw [size_ite_fold, Array.size_modify', size_ite_fold, size_ite_fold2,
-          Array.size_modify', Array.size_modify', sd2_size]; omega)]
+          getX_modify_eq (by
+            rw [size_ite_fold, Array.size_modify', size_ite_fold, size_ite_fold2,
+              Array.size_modify', Array.size_modify', sd2_size]; omega)]
         simp only [ite_eq_right h1]; rfl
       · rw [ite_eq_right h1, ite_eq_right h2]
         by_cases h3 : u = (t.nodes.getX v).livePar
         · subst h3
           rw [getX_modify_ne (Ne.symm hu),
-            getX_modify_eq (by rw [Array.size_modify', size_ite_fold, Array.size_modify',
-            size_ite_fold, size_ite_fold2, Array.size_modify', Array.size_modify',
-            sd2_size]; omega), ite_eq_left rfl]
-          show List.replace1 _ _ _ = _
+            getX_modify_eq (by
+              rw [Array.size_modify', size_ite_fold, Array.size_modify', size_ite_fold,
+                size_ite_fold2, Array.size_modify', Array.size_modify', sd2_size]; omega),
+                  ite_eq_left rfl]
+          change List.replace1 _ _ _ = _
           congr 1
-          simp (disch := first | (intro n; rfl) | omega) only [getX_modify_ne, proj_modify Node.children, proj_ite_fold Node.children, proj_ite_fold2 Node.children]
-          exact sd2_proj hln hrn hc1 hc2 hnd htabs Node.children (fun _ _ _ => rfl) h1 h2
+          simp (disch := first | (intro n; rfl) | omega) only [getX_modify_ne, proj_modify
+            Node.children, proj_ite_fold Node.children, proj_ite_fold2 Node.children]
+          exact sd2_proj hnd htabs Node.children (fun _ _ _ => rfl) h1 h2
         · rw [ite_eq_right h3]
-          simp (disch := first | (intro n; rfl) | omega) only [getX_modify_ne, proj_modify Node.children, proj_ite_fold Node.children, proj_ite_fold2 Node.children]
-          exact sd2_proj hln hrn hc1 hc2 hnd htabs Node.children (fun _ _ _ => rfl) h1 h2
+          simp (disch := first | (intro n; rfl) | omega) only [getX_modify_ne, proj_modify
+            Node.children, proj_ite_fold Node.children, proj_ite_fold2 Node.children]
+          exact sd2_proj hnd htabs Node.children (fun _ _ _ => rfl) h1 h2
 
 theorem sdS_livePar (hv : v < t.nodes.size) (hL : (t.nodes.getX v).livePar < t.nodes.size)
-    (hkid : sH t v ≠ 1 → ∀ e ∈ sKids t v, e < t.nodes.size) (u : Nat) : ((sdS t v side).nodes.getX u).livePar =
-      if u = v then NIL else if u = t.nodes.size ∨ u = t.nodes.size + 1 then (t.nodes.getX v).livePar
+    (hkid : sH t v ≠ 1 → ∀ e ∈ sKids t v, e < t.nodes.size) (u : Nat) : ((sdS t v
+      side).nodes.getX u).livePar =
+      if u = v then NIL else if u = t.nodes.size ∨ u = t.nodes.size + 1 then (t.nodes.getX
+        v).livePar
       else if sH t v ≠ 1 ∧ u ∈ sCh2 t v side then t.nodes.size + 1
       else if sH t v ≠ 1 ∧ u ∈ sCh1 t v side then t.nodes.size
       else (t.nodes.getX u).livePar := by
@@ -647,27 +837,35 @@ theorem sdS_livePar (hv : v < t.nodes.size) (hL : (t.nodes.getX v).livePar < t.n
     hkid hh e (List.mem_of_mem_filter he)
   by_cases hbig : t.nodes.size + 2 ≤ u
   · rw [getX_ge (by rw [sdS_size hln hrn]; omega), getX_ge (a := t.nodes) (u := u) (by omega),
-      ite_eq_right (show u ≠ v by omega), ite_eq_right (show ¬(u = t.nodes.size ∨ u = t.nodes.size + 1) by omega),
-      ite_eq_right (fun h => by have := h2m h.1 _ h.2; omega), ite_eq_right (fun h => by have := h1m h.1 _ h.2; omega)]
+      ite_eq_right (show u ≠ v by omega), ite_eq_right (show ¬(u = t.nodes.size ∨ u =
+        t.nodes.size + 1) by omega),
+      ite_eq_right (fun h => by have := h2m h.1 _ h.2; omega), ite_eq_right (fun h => by have :=
+        h1m h.1 _ h.2; omega)]
   rw [sdS_nodes hln hrn]; simp only []
   by_cases hu : u = v
-  · subst hu; rw [getX_modify_eq (by rw [Array.size_modify', Array.size_modify', size_ite_fold, Array.size_modify', size_ite_fold, size_ite_fold2, Array.size_modify', Array.size_modify', sd2_size]; omega), ite_eq_left rfl]
+  · subst hu; rw [getX_modify_eq (by
+    rw [Array.size_modify', Array.size_modify', size_ite_fold, Array.size_modify',
+      size_ite_fold, size_ite_fold2, Array.size_modify', Array.size_modify', sd2_size]; omega),
+        ite_eq_left rfl]
   · rw [ite_eq_right hu, getX_modify_ne (Ne.symm hu)]
     simp (disch := (intro n; rfl)) only [proj_modify Node.livePar]
     by_cases h2 : u = t.nodes.size + 1
     · subst h2
-      rw [getX_modify_eq (by rw [size_ite_fold, Array.size_modify', size_ite_fold, size_ite_fold2, Array.size_modify', Array.size_modify', sd2_size]; omega), ite_eq_left (Or.inr rfl)]
+      rw [getX_modify_eq (by
+        rw [size_ite_fold, Array.size_modify', size_ite_fold, size_ite_fold2,
+          Array.size_modify', Array.size_modify', sd2_size]; omega), ite_eq_left (Or.inr rfl)]
     · rw [getX_modify_ne (Ne.symm h2)]
       rw [ite_fold_livePar _ _ hc2 _ (by
         rw [Array.size_modify', size_ite_fold, size_ite_fold2, Array.size_modify',
-          Array.size_modify', sd2_size]
-        omega)]
+          Array.size_modify', sd2_size] omega)]
       by_cases h1 : u = t.nodes.size
       · subst h1
         rw [ite_eq_right (fun h => by have := h2m h.1 _ h.2; omega),
-          getX_modify_eq (by rw [size_ite_fold, size_ite_fold2, Array.size_modify',
-          Array.size_modify', sd2_size]; omega), ite_eq_left (Or.inl rfl)]
-      · rw [ite_eq_right (show ¬(u = t.nodes.size ∨ u = t.nodes.size + 1) from fun h => h.elim h1 h2),
+          getX_modify_eq (by
+            rw [size_ite_fold, size_ite_fold2, Array.size_modify', Array.size_modify',
+              sd2_size]; omega), ite_eq_left (Or.inl rfl)]
+      · rw [ite_eq_right (show ¬(u = t.nodes.size ∨ u = t.nodes.size + 1) from fun h => h.elim
+        h1 h2),
           getX_modify_ne (Ne.symm h1)]
         congr 1
         rw [ite_fold_livePar _ _ hc1 _ (by
@@ -675,7 +873,7 @@ theorem sdS_livePar (hv : v < t.nodes.size) (hL : (t.nodes.getX v).livePar < t.n
         congr 1
         simp (disch := (intro n; rfl)) only [proj_ite_fold2 Node.livePar]
         rw [getX_modify_ne (Ne.symm h2), getX_modify_ne (Ne.symm h1)]
-        exact sd2_proj hln hrn hc1 hc2 hnd htabs Node.livePar (fun _ _ _ => rfl) h1 h2
+        exact sd2_proj hnd htabs Node.livePar (fun _ _ _ => rfl) h1 h2
 
 end fields
 

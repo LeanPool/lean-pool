@@ -109,18 +109,30 @@ theorem WB.withNbNext {a : Array Nat} (ha : ArrB K a) : WB K { s with nbNext := 
   { h with pq := ⟨h.pq.1, h.pq.2.1, h.pq.2.2.1, h.pq.2.2.2.1, ha, h.pq.2.2.2.2.2⟩ }
 theorem WB.withNbPrev {a : Array Nat} (ha : ArrB K a) : WB K { s with nbPrev := a } :=
   { h with pq := ⟨h.pq.1, h.pq.2.1, h.pq.2.2.1, h.pq.2.2.2.1, h.pq.2.2.2.2.1, ha⟩ }
-theorem WB.withPqHi {v : Nat} (hv : v < 2 ^ K) : WB K { s with pqHi := v } :=
-  { h with scalars := by obtain ⟨a, b, c, d, e, f, -, g⟩ := h.scalars; exact ⟨a, b, c, d, e, f, hv, g⟩ }
-theorem WB.withPqLo {v : Nat} (hv : v < 2 ^ K) : WB K { s with pqLo := v } :=
-  { h with scalars := by obtain ⟨a, b, c, d, e, f, g, -⟩ := h.scalars; exact ⟨a, b, c, d, e, f, g, hv⟩ }
-theorem WB.withCount {v : Nat} (hv : v < 2 ^ K) : WB K { s with count := v } :=
-  { h with scalars := by obtain ⟨-, b, c, d, e, f, g, i⟩ := h.scalars; exact ⟨hv, b, c, d, e, f, g, i⟩ }
-theorem WB.withTail {v : Nat} (hv : v < 2 ^ K) : WB K { s with tail := v } :=
-  { h with scalars := by obtain ⟨a, b, -, d, e, f, g, i⟩ := h.scalars; exact ⟨a, b, hv, d, e, f, g, i⟩ }
-theorem WB.withFirstGroup {v : Nat} (hv : v < 2 ^ K) : WB K { s with firstGroup := v } :=
-  { h with scalars := by obtain ⟨a, b, c, -, e, f, g, i⟩ := h.scalars; exact ⟨a, b, c, hv, e, f, g, i⟩ }
-theorem WB.withFirstChunk {v : Nat} (hv : v < 2 ^ K) : WB K { s with firstChunk := v } :=
-  { h with scalars := by obtain ⟨a, b, c, d, -, f, g, i⟩ := h.scalars; exact ⟨a, b, c, d, hv, f, g, i⟩ }
+theorem WB.withPqHi {v : Nat} (hv : v < 2 ^ K) : WB K { s with pqHi := v } := by
+  refine { h with scalars := ?_ }
+  obtain ⟨a, b, c, d, e, f, -, g⟩ := h.scalars
+  exact ⟨a, b, c, d, e, f, hv, g⟩
+theorem WB.withPqLo {v : Nat} (hv : v < 2 ^ K) : WB K { s with pqLo := v } := by
+  refine { h with scalars := ?_ }
+  obtain ⟨a, b, c, d, e, f, g, -⟩ := h.scalars
+  exact ⟨a, b, c, d, e, f, g, hv⟩
+theorem WB.withCount {v : Nat} (hv : v < 2 ^ K) : WB K { s with count := v } := by
+  refine { h with scalars := ?_ }
+  obtain ⟨-, b, c, d, e, f, g, i⟩ := h.scalars
+  exact ⟨hv, b, c, d, e, f, g, i⟩
+theorem WB.withTail {v : Nat} (hv : v < 2 ^ K) : WB K { s with tail := v } := by
+  refine { h with scalars := ?_ }
+  obtain ⟨a, b, -, d, e, f, g, i⟩ := h.scalars
+  exact ⟨a, b, hv, d, e, f, g, i⟩
+theorem WB.withFirstGroup {v : Nat} (hv : v < 2 ^ K) : WB K { s with firstGroup := v } := by
+  refine { h with scalars := ?_ }
+  obtain ⟨a, b, c, -, e, f, g, i⟩ := h.scalars
+  exact ⟨a, b, c, hv, e, f, g, i⟩
+theorem WB.withFirstChunk {v : Nat} (hv : v < 2 ^ K) : WB K { s with firstChunk := v } := by
+  refine { h with scalars := ?_ }
+  obtain ⟨a, b, c, d, -, f, g, i⟩ := h.scalars
+  exact ⟨a, b, c, d, hv, f, g, i⟩
 theorem WB.withResJob {j : Option Job} (hj : ∀ x, j = some x → JobB K x) :
     WB K { s with resJob := j } := { h with job := hj }
 theorem WB.withReady {b : Bool} : WB K { s with ready := b } := { h with }
@@ -191,20 +203,37 @@ macro_rules
       | assumption
       | with_reducible exact pos _
       | (with_reducible apply WB.pqHi; assumption) | (with_reducible apply WB.pqLo; assumption)
-      | (with_reducible apply WB.count; assumption) | (with_reducible apply WB.head; assumption) | (with_reducible apply WB.tail; assumption)
-      | (with_reducible apply WB.firstGroup; assumption) | (with_reducible apply WB.firstChunk; assumption)
+      | (with_reducible apply WB.count; assumption)
+      | (with_reducible apply WB.head; assumption)
+      | (with_reducible apply WB.tail; assumption)
+      | (with_reducible apply WB.firstGroup; assumption)
+      | (with_reducible apply WB.firstChunk; assumption)
       | (with_reducible apply WB.pqHead; assumption) | (with_reducible apply WB.pqNext; assumption)
       | (with_reducible apply WB.pqPrev; assumption) | (with_reducible apply WB.pqWhere; assumption)
       | (with_reducible apply WB.nbNext; assumption) | (with_reducible apply WB.nbPrev; assumption)
-      | (with_reducible apply WB.eNext; assumption) | (with_reducible apply WB.ePrev; assumption) | (with_reducible apply WB.eGrp; assumption)
+      | (with_reducible apply WB.eNext; assumption)
+      | (with_reducible apply WB.ePrev; assumption)
+      | (with_reducible apply WB.eGrp; assumption)
       | (with_reducible apply WB.eLab; assumption)
-      | (with_reducible apply WB.gNext; assumption) | (with_reducible apply WB.gPrev; assumption) | (with_reducible apply WB.gFirst; assumption)
-      | (with_reducible apply WB.gLast; assumption) | (with_reducible apply WB.gChk; assumption) | (with_reducible apply WB.gLab; assumption)
-      | (with_reducible apply WB.gSize; assumption) | (with_reducible apply WB.gSrc; assumption) | (with_reducible apply WB.gL; assumption)
+      | (with_reducible apply WB.gNext; assumption)
+      | (with_reducible apply WB.gPrev; assumption)
+      | (with_reducible apply WB.gFirst; assumption)
+      | (with_reducible apply WB.gLast; assumption)
+      | (with_reducible apply WB.gChk; assumption)
+      | (with_reducible apply WB.gLab; assumption)
+      | (with_reducible apply WB.gSize; assumption)
+      | (with_reducible apply WB.gSrc; assumption)
+      | (with_reducible apply WB.gL; assumption)
       | (with_reducible apply WB.gR; assumption)
-      | (with_reducible apply WB.cNext; assumption) | (with_reducible apply WB.cPrev; assumption) | (with_reducible apply WB.cFirst; assumption)
-      | (with_reducible apply WB.cLast; assumption) | (with_reducible apply WB.cSize; assumption) | (with_reducible apply WB.cSrc; assumption)
-      | (with_reducible apply WB.cL; assumption) | (with_reducible apply WB.cR; assumption) | (with_reducible apply WB.cTag; assumption)
+      | (with_reducible apply WB.cNext; assumption)
+      | (with_reducible apply WB.cPrev; assumption)
+      | (with_reducible apply WB.cFirst; assumption)
+      | (with_reducible apply WB.cLast; assumption)
+      | (with_reducible apply WB.cSize; assumption)
+      | (with_reducible apply WB.cSrc; assumption)
+      | (with_reducible apply WB.cL; assumption)
+      | (with_reducible apply WB.cR; assumption)
+      | (with_reducible apply WB.cTag; assumption)
       | (with_reducible exact lt_of_le_of_lt (Nat.sub_le _ _) (by vb))
       | (split <;> vb)
       | ((try simp only [ElemB, GroupB, ChunkB, NIL] at *); omega))
@@ -231,10 +260,15 @@ macro_rules
 syntax "wbv" : tactic
 macro_rules
   | `(tactic| wbv) => `(tactic| ((try dsimp only); repeat' (first
-      | (with_reducible apply WB.pqHeadA; assumption) | (with_reducible apply WB.pqNextA; assumption)
-      | (with_reducible apply WB.pqPrevA; assumption) | (with_reducible apply WB.pqWhereA; assumption)
-      | (with_reducible apply WB.nbNextA; assumption) | (with_reducible apply WB.nbPrevA; assumption)
-      | (with_reducible apply WB.allE; assumption) | (with_reducible apply WB.allG; assumption) | (with_reducible apply WB.allC; assumption)
+      | (with_reducible apply WB.pqHeadA; assumption)
+      | (with_reducible apply WB.pqNextA; assumption)
+      | (with_reducible apply WB.pqPrevA; assumption)
+      | (with_reducible apply WB.pqWhereA; assumption)
+      | (with_reducible apply WB.nbNextA; assumption)
+      | (with_reducible apply WB.nbPrevA; assumption)
+      | (with_reducible apply WB.allE; assumption)
+      | (with_reducible apply WB.allG; assumption)
+      | (with_reducible apply WB.allC; assumption)
       | (with_reducible refine WB.allFree ?_; assumption)
       | (with_reducible refine List.forall_mem_cons.2 ⟨?_, ?_⟩)
       | with_reducible apply arrB_setX
@@ -250,7 +284,8 @@ macro_rules
 /-! ### Records -/
 
 /-- Unfold the record bounds into plain inequalities (for `omega`). -/
-macro "bnd" : tactic => `(tactic| (simp only [ElemB, GroupB, ChunkB, JobB, JobPcB, NIL] at *; omega))
+macro "bnd" : tactic => `(tactic| (simp only [ElemB, GroupB, ChunkB,
+                                    JobB, JobPcB, NIL] at *; omega))
 
 theorem elemB_default' (K : Nat) : ElemB K {} := elemB_default K
 theorem groupB_mk {K c : Nat} (hc : c < 2 ^ K) : GroupB K { chk := c } := by
@@ -282,11 +317,13 @@ theorem HT.get : HT K P0 (get : CM Core) (WB K) :=
 theorem HT.throw {e : Err} {Q : α → Prop} : HT K P0 (throw e : CM α) Q :=
   fun _ hs hP => ⟨hs, hP⟩
 
-theorem HT.guard {msg : String} {Q : α → Prop} : HT K P0 (OrderMaintenance.Model.guard msg : CM α) Q :=
+theorem HT.guard {msg : String} {Q : α → Prop} : HT K P0 (OrderMaintenance.Model.guard msg : CM
+  α) Q :=
   fun _ hs hP => ⟨hs, hP⟩
 
 /-- A failed guard has no normal result. -/
-theorem HT.guard_false {msg : String} : HT K P0 (OrderMaintenance.Model.guard msg : CM α) (fun _ => False) :=
+theorem HT.guard_false {msg : String} : HT K P0 (OrderMaintenance.Model.guard msg : CM α) (fun _
+  => False) :=
   fun _ hs hP => ⟨hs, hP⟩
 
 theorem HT.modify {f : Core → Core} (h : ∀ s, WB K s → s.P = P0 → WB K (f s) ∧ (f s).P = P0) :
@@ -350,7 +387,7 @@ theorem HT.forM_list {γ : Type} (l : List γ) {f : γ → CM PUnit}
   induction l with
   | nil => exact HT.pure trivial
   | cons x t ih =>
-    show HT K P0 (do f x; t.forM f) _
+    change HT K P0 (do f x; t.forM f) _
     exact HT.bind (hf x (by simp)) fun _ _ => ih (fun y hy => hf y (by simp [hy]))
 
 theorem HT.mapM_list {γ δ : Type} (l : List γ) {f : γ → CM δ} {Q : δ → Prop}
@@ -397,7 +434,8 @@ theorem HT.getP_bind {f : Params → CM β} {Q : β → Prop} (h : HT K P0 (f P0
 
 theorem HT.pqEmpty : HT K P0 pqEmpty (fun _ => True) := fun _ hs hP => ⟨⟨hs, hP⟩, trivial⟩
 
-theorem HT.require {b : Bool} {msg : String} : HT K P0 (OrderMaintenance.Model.require b msg) (fun _ => True) := by
+theorem HT.require {b : Bool} {msg : String} : HT K P0 (OrderMaintenance.Model.require b msg)
+  (fun _ => True) := by
   unfold OrderMaintenance.Model.require; split
   · exact HT.pure trivial
   · exact HT.guard
@@ -437,10 +475,12 @@ macro_rules
       | (dsimp only; done)
       | dsimp only))
 
+/-- Applies the stored-value Hoare rules, splitting the core computation into primitive steps. -/
 syntax "ht" ("[" term,* "]")? : tactic
 macro_rules
   | `(tactic| ht) => `(tactic| ht [HT.get])
-  | `(tactic| ht [$ts,*]) => `(tactic| (ht_core [$ts,*]; all_goals try (with_reducible exact fun _ => True)))
+  | `(tactic| ht [$ts,*]) =>
+    `(tactic| (ht_core [$ts,*]; all_goals try (with_reducible exact fun _ => True)))
 
 end OrderMaintenance.Proof.Word
 

@@ -168,7 +168,7 @@ theorem fund_wb {t : Core} {cl : List Nat} {ord : Nat → List Nat} {dr n0 : Nat
       simp only [ite_true, run_pure] at hr
       obtain ⟨rfl, rfl⟩ := EStateM.Result.ok.inj hr
       obtain ⟨hy, -⟩ := S.pick hg hne
-      have hycl := (S.rng_sub src).subset hy
+      have hycl := (rng_sub (s := t) (cl := cl) src).subset hy
       obtain ⟨hy1, hys⟩ := (hcl.2 _).mp hycl
       refine ⟨wb_dsS hW ?_, fun j' e => ?_⟩
       · have := htag _ hy1 (by rw [dsS_C, Array.size_modify]; exact hys)

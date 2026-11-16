@@ -31,24 +31,26 @@ open OrderMaintenance.Model OrderMaintenance.Proof
 def CLok (s : Core) (cl : List Nat) : Prop :=
   LList (cN s) (cP s) s.firstChunk cl ∧ ∀ c, c ∈ cl ↔ 1 ≤ c ∧ c < s.C.size
 
-theorem CLok.topRel {s s' : Core} {cl : List Nat} (h : CLok s cl) (hr : TopRel s s') : CLok s' cl := by
+theorem CLok.topRel {s s' : Core} {cl : List Nat} (h : CLok s cl) (hr : TopRel s s') : CLok s'
+  cl := by
   obtain ⟨hL, hC⟩ := h
   have e1 : cN s' = cN s := funext fun c => by
-    show (s'.C.getX c).next = (s.C.getX c).next; rw [hr.C c]
+    change (s'.C.getX c).next = (s.C.getX c).next; rw [hr.C c]
   have e2 : cP s' = cP s := funext fun c => by
-    show (s'.C.getX c).prev = (s.C.getX c).prev; rw [hr.C c]
+    change (s'.C.getX c).prev = (s.C.getX c).prev; rw [hr.C c]
   refine ⟨by rw [e1, e2, hr.rest.2.2.2.2.2.1]; exact hL, fun c => by rw [hr.Csize]; exact hC c⟩
 
 /-! ### The job measure -/
 
-theorem walkLeft_lt (P : Params) {h : Nat} (hh : h ≤ P.H) : walkLeft P (h + 1) + P.s < walkLeft P h := by
+theorem walkLeft_lt (P : Params) {h : Nat} (hh : h ≤ P.H) : walkLeft P (h + 1) + P.s < walkLeft
+  P h := by
   unfold walkLeft
   have : P.H + 1 - h = (P.H + 1 - (h + 1)) + 1 := by omega
   rw [this, Nat.add_mul, one_mul]; omega
 
 /-! ### The funding loop -/
 
-/-- **The funding loop**: a sweep step that moves a chunk, or ends the drain, or the loop is done. -/
+/-- The funding loop moves a chunk, ends the drain, or finishes its remaining work. -/
 theorem fund_run {s : Core} {cl : List Nat} {ord : Nat → List Nat} {dr n0 : Nat → Nat}
     {j : Job} {v up src k : Nat} (hTP : TopParams s.P) (hcl : CLok s cl)
     (hI : InvJ (ts s) cl ord dr n0 (some { j with pc := .fund v up src k })) :
@@ -112,7 +114,8 @@ theorem fund_run {s : Core} {cl : List Nat} {ord : Nat → List Nat} {dr n0 : Na
         rw [hc']
         have h0 : (ts s).P.s - k = 0 := by rw [hks']; exact Nat.sub_self _
         split_ifs <;> first | rfl | simp only [h0]
-      refine ⟨S, hI.time.congr_job hp hs (fun _ => Iff.rfl), hI.room, fun j' hj' => ?_, hI.cap, hI.len⟩
+      refine ⟨S, hI.time.congr_job hp hs (fun _ => Iff.rfl), hI.room, fun j' hj' => ?_, hI.cap,
+        hI.len⟩
       cases hj'
       refine ⟨hpos, ?_⟩
       simp only [JobAt]
@@ -137,7 +140,8 @@ theorem inv_end {t : TS} {cl : List Nat} {ord : Nat → List Nat} {dr n0 : Nat �
     have := (S.htN u hu.1).2
     simp only [slack, curH, hpc, ite_true]
     split_ifs <;> first | rfl | omega
-  refine ⟨S, ⟨fun u hu => ?_, Ti.wA, Ti.wB, Ti.wF, fun u hu => ?_, fun u hu => ?_, Ti.wD, Ti.big, Ti.chain, Ti.tw1⟩,
+  refine ⟨S, ⟨fun u hu => ?_, Ti.wA, Ti.wB, Ti.wF, fun u hu => ?_, fun u hu => ?_, Ti.wD,
+    Ti.big, Ti.chain, Ti.tw1⟩,
     hI.room, fun _ h => absurd h (by simp), hI.cap, hI.len⟩
   · have := Ti.wts u hu; rw [hp] at this; simpa [pend] using this
   · have := Ti.wC u hu; rw [hs u hu] at this; simpa [slack] using this
@@ -188,7 +192,8 @@ theorem run_walkBody_drain (j : Job) (s : Core) (v : Nat) (hv : v ≠ NIL)
   rw [ite_eq_left]
   · rw [run_bind]
     have hsd' : (startDrain v).run
-        { s with nodes := s.nodes.modify v fun n => { n with weight := n.weight + 2 } } = .ok () s' := hsd
+        { s with nodes := s.nodes.modify v fun n => { n with weight := n.weight + 2 } } = .ok ()
+          s' := hsd
     rw [hsd']; rfl
   · simp only [Bool.and_eq_true, bne_iff_ne, ne_eq, Bool.not_eq_true', beq_iff_eq,
       decide_eq_true_eq]
@@ -204,7 +209,8 @@ theorem run_afterDrain (j : Job) (v up : Nat) (t : Core) :
   · simp [h]
   · simp [h]
 
-theorem wiC_topRel (s : Core) (v : Nat) : TopRel s (wiC s v) := TopRel.of_top s _ s.path s.cin s.lpar
+theorem wiC_topRel (s : Core) (v : Nat) : TopRel s (wiC s v) := TopRel.of_top s _ s.path s.cin
+  s.lpar
 
 /-- **A walk step.** -/
 theorem walk_run (hSD : SDOK) {s : Core} {cl : List Nat} {ord : Nat → List Nat}
@@ -228,7 +234,8 @@ theorem walk_run (hSD : SDOK) {s : Core} {cl : List Nat} {ord : Nat → List Nat
   by_cases hd : (nd (ts s) v).livePar ≠ NIL ∧ (nd (ts s) v).draining = false ∧
       (nd (ts s) v).overflowOf = NIL ∧ Wd s.P (ht (ts s) v) < (nd (ts s) v).weight + 2
   · obtain ⟨h1, h2, h3, h4⟩ := hd
-    obtain ⟨s', ord', dr', n0', hrun, hrel, hinv, hht⟩ := hSD s cl ord dr n0 j v hpc hv0 hTP hcl hI h1 h2 h3 h4
+    obtain ⟨s', ord', dr', n0', hrun, hrel, hinv, hht⟩ := hSD s cl ord dr n0 j v hpc hv0 hTP hcl
+      hI h1 h2 h3 h4
     refine ⟨_, s', ord', dr', n0', run_walkBody_drain j s v hv0 h1 h2 h3 h4 hrun,
       (wiC_topRel s v).trans hrel, hinv, fun j' hj' => ?_⟩
     cases hj'
@@ -242,7 +249,7 @@ theorem walk_run (hSD : SDOK) {s : Core} {cl : List Nat} {ord : Nat → List Nat
     have hcl' := hcl.topRel (wiC_topRel s v)
     have hTP' : TopParams (wiC s v).P := hTP
     have hW : ((wiC s v).nodes.getX v).overflowOf = srcOf (ts s) v := by
-      show ((s.nodes.modify v _).getX v).overflowOf = _
+      change ((s.nodes.modify v _).getX v).overflowOf = _
       rw [Array.getX_modify]; split <;> rfl
     rw [hW]
     -- where the walk goes on
@@ -252,7 +259,10 @@ theorem walk_run (hSD : SDOK) {s : Core} {cl : List Nat} {ord : Nat → List Nat
       · obtain ⟨h1, h2, -⟩ := S.up v hvl hH; exact Or.inr ⟨h1, h2⟩
       · left
         have hm := (S.ordMem (ts s).P.H (by have := S.H3; omega) le_rfl v).mpr ⟨hvl.1, by omega⟩
-        rw [S.root.1] at hm; simp at hm; rw [hm]; exact S.root.2.2
+        rw [S.root.1] at hm
+        simp only [List.mem_cons, List.not_mem_nil, or_false] at hm
+        rw [hm]
+        exact S.root.2.2
     by_cases hsv : srcOf (ts s) v = NIL
     · rw [ite_eq_left hsv]
       have hn : walkNext (ts s) j v = { j with pc := .walk (some (nd (ts s) v).livePar) } := by
@@ -270,7 +280,8 @@ theorem walk_run (hSD : SDOK) {s : Core} {cl : List Nat} {ord : Nat → List Nat
         have e : (ts (wiC s v)).P = s.P := rfl
         rw [e]; omega
     · rw [ite_eq_right hsv]
-      have hn : walkNext (ts s) j v = { j with pc := .fund v (nd (ts s) v).livePar (srcOf (ts s) v) 0 } := by
+      have hn : walkNext (ts s) j v =
+          { j with pc := .fund v (nd (ts s) v).livePar (srcOf (ts s) v) 0 } := by
         simp [walkNext, hsv]
       rw [hn] at hI'
       obtain ⟨j', s', ord', hrun, hrel, hinv, hlt', hnc⟩ := fund_run hTP' hcl' hI'
@@ -286,7 +297,8 @@ theorem walk_run (hSD : SDOK) {s : Core} {cl : List Nat} {ord : Nat → List Nat
 /-! ### The step after a drain start -/
 
 theorem afterDrain_step {s : Core} {cl : List Nat} {ord : Nat → List Nat} {dr n0 : Nat → Nat}
-    {j : Job} {v up : Nat} (hpc : j.pc = .afterDrain v up) (hI : InvJ (ts s) cl ord dr n0 (some j)) :
+    {j : Job} {v up : Nat} (hpc : j.pc = .afterDrain v up) (hI : InvJ (ts s) cl ord dr n0 (some
+      j)) :
     (jobStep j).run s = .ok (some { j with pc := .walk (some up) }) s ∧
       InvJ (ts s) cl ord dr n0 (some { j with pc := .walk (some up) }) ∧
       jobLeft (ts s) { j with pc := .walk (some up) } < jobLeft (ts s) j := by
@@ -303,7 +315,8 @@ theorem afterDrain_step {s : Core} {cl : List Nat} {ord : Nat → List Nat} {dr 
     rw [run_afterDrain, ite_eq_left (show (s.nodes.getX v).overflowOf = NIL from hgs)]
   · have hc : curH (ts s) { j with pc := .walk (some up) } = ht (ts s) v + 1 := by
       simp only [curH]; rw [ite_eq_right (fun e => by rw [e] at hupl; exact hupl.1.1 rfl), huph]
-    have hs : ∀ u, slack (ts s) (some { j with pc := .walk (some up) }) u = slack (ts s) (some j) u := by
+    have hs : ∀ u, slack (ts s) (some { j with pc := .walk (some up) }) u = slack (ts s) (some
+      j) u := by
       intro u
       simp only [slack]
       rw [hc]
@@ -311,7 +324,8 @@ theorem afterDrain_step {s : Core} {cl : List Nat} {ord : Nat → List Nat} {dr 
       rw [hc', hpc]
     have hp : pend (ts s) (some { j with pc := .walk (some up) }) = pend (ts s) (some j) := by
       simp only [pend, wStart, hpc]
-    refine ⟨S, hI.time.congr_job hp hs (fun _ => Iff.rfl), hI.room, fun j' hj' => ?_, hI.cap, hI.len⟩
+    refine ⟨S, hI.time.congr_job hp hs (fun _ => Iff.rfl), hI.room, fun j' hj' => ?_, hI.cap,
+      hI.len⟩
     cases hj'
     exact ⟨hpos, Or.inr ⟨hupl, by rw [huph, hua]⟩⟩
   · simp only [jobLeft, hpc]
@@ -328,7 +342,8 @@ theorem walkNone_inv {t : TS} {cl : List Nat} {ord : Nat → List Nat} {dr n0 : 
   obtain ⟨hpos, hat⟩ := hI.job j rfl
   have hy : j.y ∈ cl := by obtain ⟨A, B, e⟩ := hpos; rw [e]; simp
   obtain ⟨hl, hh, -⟩ := S.lp j.y hy
-  refine ⟨⟨S, hI.time.congr_job ?_ ?_ (fun _ => Iff.rfl), hI.room, fun j' hj' => ?_, hI.cap, hI.len⟩, hl, hh⟩
+  refine ⟨⟨S, hI.time.congr_job ?_ ?_ (fun _ => Iff.rfl), hI.room, fun j' hj' => ?_, hI.cap,
+    hI.len⟩, hl, hh⟩
   · simp only [pend, wStart, hpc]
   · intro u
     simp only [slack, curH, hpc, ite_eq_right hl.1.1, hh]
@@ -355,7 +370,8 @@ theorem job_eta {j : Job} {p : JobPc} (h : j.pc = p) : j = { j with pc := p } :=
 /-- **A step of the running job** keeps the top invariant and decreases the job measure. -/
 theorem top_step (hSD : SDOK) {s : Core} {job : Job} (hT : TopInv s) (hres : s.resJob = some job) :
     ∃ r s', (jobStep job).run s = .ok r s' ∧ TopInv { s' with resJob := r } ∧
-      ∀ j', r = some j' → 1 ≤ topMu { s' with resJob := r } ∧ topMu { s' with resJob := r } < topMu s := by
+      ∀ j', r = some j' → 1 ≤ topMu { s' with resJob := r } ∧ topMu { s' with resJob := r } <
+        topMu s := by
   obtain ⟨hTP, cl, ord, dr, n0, hL, hC, hI⟩ := hT
   rw [hres] at hI
   have hcl : CLok s cl := ⟨hL, hC⟩
@@ -405,7 +421,8 @@ theorem top_step (hSD : SDOK) {s : Core} {job : Job} (hT : TopInv s) (hres : s.r
         rw [hmu']
         refine ⟨jobLeft_pos _ _, ?_⟩
         have := (hlt j' rfl).1
-        have e : jobLeft (ts s) { job with pc := .walk (some (lpr (ts s) job.y)) } = jobLeft (ts s) job := by
+        have e : jobLeft (ts s) { job with pc := .walk (some (lpr (ts s) job.y)) } = jobLeft (ts
+          s) job := by
           simp only [jobLeft, hpc, ite_eq_right hl.1.1, hh]
         rw [e] at this; exact this
     | some v =>

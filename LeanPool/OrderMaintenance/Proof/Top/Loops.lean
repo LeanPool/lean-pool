@@ -28,14 +28,15 @@ open OrderMaintenance.Model OrderMaintenance.Proof
 /-- A `forM` whose iterations succeed, with an invariant over the remaining list. -/
 theorem forM_run {α : Type} (l : List α) (f : α → CM PUnit) (g : α → Core → Core)
     (Inv : List α → Core → Prop) :
-    ∀ s, Inv l s → (∀ x rest t, Inv (x :: rest) t → (f x).run t = .ok ⟨⟩ (g x t) ∧ Inv rest (g x t)) →
+    ∀ s, Inv l s → (∀ x rest t, Inv (x :: rest) t → (f x).run t = .ok ⟨⟩ (g x t) ∧ Inv rest (g x
+      t)) →
       (l.forM f).run s = .ok ⟨⟩ (l.foldl (fun t x => g x t) s) := by
   induction l with
   | nil => intro s _ _; rfl
   | cons x t ih =>
     intro s hI h
     obtain ⟨h1, h2⟩ := h x t s hI
-    show (do f x; t.forM f).run s = _
+    change (do f x; t.forM f).run s = _
     rw [run_bind, h1]
     exact ih (g x s) h2 h
 
@@ -99,7 +100,7 @@ theorem foldl_modify_getX' {α : Type} [Inhabited α] (F : Nat → α → α) :
       show ¬(x = u ∧ x < a.size) from fun h => hux h.1.symm,
         ite_false]
 
-theorem foldl_modify_size {α γ : Type} [Inhabited α] (l : List γ) (idx : γ → Nat) (F : γ → α → α)
+theorem foldl_modify_size {α γ : Type} (l : List γ) (idx : γ → Nat) (F : γ → α → α)
     (a : Array α) : (l.foldl (fun b x => b.modify (idx x) (F x)) a).size = a.size := by
   induction l generalizing a with
   | nil => rfl

@@ -68,7 +68,8 @@ namespace OrderMaintenance.Proof
 open OrderMaintenance.Model OrderMaintenance.Zeroing
 /-- **The reservation of one insertion** succeeds, keeps the lower invariants and the top
 structure's invariant, and carries the zeroing game and its round accounting. -/
-theorem reservation_cost {TI : Core → Prop} {μ : Core → Nat} {J k n R : Nat} {cap : Params → Nat} {L : List Nat}
+theorem reservation_cost {TI : Core → Prop} {μ : Core → Nat} {J k n R : Nat} {cap : Params →
+  Nat} {L : List Nat}
     {s : Core} (hTC : TopContract TI μ J cap) (h0 : ResInv TI k J n R μ L s 0 s) (hn : 1 ≤ n)
     (hsize : 2 + 2 * (s.count / (s.P.theta + 1 - cmax s.P)) ≤ n + 1)
     (hcap : 2 + 2 * (s.count / (s.P.theta + 1 - cmax s.P)) ≤ cap s.P)
@@ -109,7 +110,8 @@ theorem reservation_cost {TI : Core → Prop} {μ : Core → Nat} {J k n R : Nat
         have hT5 := cSz_le_T hG (by rw [hP]; exact hI5) hcL.1 hcn ⟨hcL, hcQ⟩
         -- start the split of `c`
         have hD := delSt_only t c
-        have hI1 : INV (delSt t c) A := hIA.of_sameLinks hD.sameLinks (fun d => by simp only [cT, hD.C])
+        have hI1 : INV (delSt t c) A := hIA.of_sameLinks hD.sameLinks (fun d => by simp only
+          [cT, hD.C])
         have hTI1 : TI (delSt t c) := hTC.frame _ _ hD.topSame hT
         have hsz1 : (delSt t c).C.size = t.C.size := by rw [hD.C]
         have hQS := hD.lowSame.qsame
@@ -132,7 +134,8 @@ theorem reservation_cost {TI : Core → Prop} {μ : Core → Nat} {J k n R : Nat
         obtain ⟨rE, rcnt, rhead, rP⟩ := split_rest (job := job) hs2
         have hjm : (⟨c - 1, hcn⟩ : Fin n).val + 1 = c := by simp only; have := hcL.1; omega
         refine ⟨hL2, hTI2, rcnt.trans (hD.rest.2.1.trans hc), rP.trans (hD.P.trans hP),
-          gvec n t, ⟨c - 1, hcn⟩, fun _ => 0, 0, 0, hG.pop ⟨c - 1, hcn⟩ (fun jj => ?_) (fun jj => ?_),
+          gvec n t, ⟨c - 1, hcn⟩, fun _ => 0, 0, 0, hG.pop ⟨c - 1, hcn⟩ (fun jj => ?_) (fun jj
+            => ?_),
           ?_⟩
         · unfold gvec; rw [hjm]; exact_mod_cast gval_max hcin hmax _
         · unfold gvec
@@ -144,7 +147,8 @@ theorem reservation_cost {TI : Core → Prop} {μ : Core → Nat} {J k n R : Nat
               intro e; apply hjj; ext; simp only; omega
             rw [ite_eq_right hne] at hp
             exact_mod_cast hp
-        · show RoundAt k J (μ (markState s2 c (delSt t c).C.size ((delSt t c).C.size + 1) job)) (some job) 0 0 (j + 1)
+        · change RoundAt k J (μ (markState s2 c (delSt t c).C.size ((delSt t c).C.size + 1)
+          job)) (some job) 0 0 (j + 1)
           exact ⟨by simp, by omega, hμ1⟩
     · obtain ⟨A, hIA, hel⟩ := hL.inv
       obtain ⟨r, t1, hj1, hTI1, hμ⟩ := hTC.step t A job hIA hT hjob
@@ -162,9 +166,9 @@ theorem reservation_cost {TI : Core → Prop} {μ : Core → Nat} {J k n R : Nat
       unfold RoundAt at hR
       rw [hjob] at hR
       obtain ⟨h1, h2, h3⟩ := hR
-      show RoundAt k J (μ { t1 with resJob := r }) r ip (js + 1) (j + 1)
+      change RoundAt k J (μ { t1 with resJob := r }) r ip (js + 1) (j + 1)
       cases r with
-      | none => show ip * k ≤ J + (k - (j + 1)); omega
+      | none => change ip * k ≤ J + (k - (j + 1)); omega
       | some j' =>
         obtain ⟨hm1, hm2⟩ := hμ j' rfl
         exact ⟨by omega, by omega, hm1⟩)

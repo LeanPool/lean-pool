@@ -45,7 +45,8 @@ theorem TopSame.trans {a b c : Core} (h1 : TopSame a b) (h2 : TopSame b c) : Top
     (l2 d).2.1.trans (l1 d).2.1, (l2 d).2.2.trans (l1 d).2.2⟩, P2.trans P1⟩
 
 theorem CFrame.topSame {s s' : Core} (h : CFrame s s') : TopSame s s' :=
-  ⟨h.top, h.Csize, fun c => ⟨(h.C c).2.2.2.2.2.1, (h.C c).2.2.2.2.2.2.1, (h.C c).2.2.2.2.2.2.2⟩, h.P⟩
+  ⟨h.top, h.Csize, fun c => ⟨(h.C c).2.2.2.2.2.1, (h.C c).2.2.2.2.2.2.1, (h.C c).2.2.2.2.2.2.2⟩,
+    h.P⟩
 
 theorem DFrame.topSame {s s' : Core} (h : DFrame s s') : TopSame s s' :=
   ⟨h.top, h.Csize, h.links, h.P⟩
@@ -65,7 +66,8 @@ theorem topSame_ins {s s2 : Core} {x lab hh : Nat}
 /-- **The top structure's contract.** `TI` is its invariant (it may require INV-S), `μ` measures
 the work left in the running job, and the job of a chunk split needs at most `J` steps. Both
 depend only on what `TopSame` keeps. The structure has room for chunks below `cap P`. -/
-structure TopContract (TI : Core → Prop) (μ : Core → Nat) (J : Nat) (cap : Params → Nat) : Prop where
+structure TopContract (TI : Core → Prop) (μ : Core → Nat) (J : Nat) (cap : Params → Nat) : Prop
+  where
   frame : ∀ s s', TopSame s s' → TI s → TI s'
   mframe : ∀ s s', TopSame s s' → μ s' = μ s
   start : ∀ s A x, INV s A → TI s → s.resJob = none → LiveC s x → cSt s x = .quiet →
@@ -110,11 +112,11 @@ theorem TopContractP.at {TI : Core → Prop} {μ : Core → Nat} {J cap : Params
         (linkChunkPair (push2 s) x s.C.size (s.C.size + 1))
       rw [hrun] at this; exact this
     refine ⟨job, s2, hrun, h1, by rw [← hT.2]; exact h2, h3, ?_⟩
-    show s2.P = P
+    change s2.P = P
     rw [hR.rest.1, ← hT.2]; rfl
   · intro s A job hI hT hres
     obtain ⟨r, s', hrun, h1, h2⟩ := h.step s A job hI hT.1 hres
     have hR : TopRel s s' := by have := top_jobStep job s; rw [hrun] at this; exact this
-    exact ⟨r, s', hrun, ⟨h1, by show s'.P = P; rw [hR.rest.1, hT.2]⟩, h2⟩
+    exact ⟨r, s', hrun, ⟨h1, by change s'.P = P; rw [hR.rest.1, hT.2]⟩, h2⟩
 
 end OrderMaintenance.Proof

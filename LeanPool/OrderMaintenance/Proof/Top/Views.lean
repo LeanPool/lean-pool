@@ -46,7 +46,8 @@ def ts (s : Core) : TS :=
   ⟨s.P, s.nodes, s.path, s.cin, s.lpar, fun c => (s.C.getX c).tag⟩
 
 /-- `TopSame` keeps the top structure's part. -/
-theorem _root_.OrderMaintenance.Proof.TopSame.ts {s s' : Core} (h : TopSame s s') : ts s' = ts s := by
+theorem _root_.OrderMaintenance.Proof.TopSame.ts {s s' : Core} (h : TopSame s s') : ts s' = ts s
+  := by
   obtain ⟨⟨h1, h2, h3, h4, -, -, -, -⟩, -, hl, hP⟩ := h
   unfold OrderMaintenance.Proof.Top.ts
   rw [h1, h2, h3, h4, hP]
@@ -253,7 +254,8 @@ theorem tagUp_lt {s : TS} {c : Nat} (k : Nat)
 theorem tagUp_lt_of_digit {s s' : TS} {c d : Nat} (hβ : s'.P.beta = s.P.beta) {j : Nat}
     (hj : 1 ≤ j) (hdc : ∀ i, 1 ≤ i → i ≤ j → digit s c i < 2 ^ s.P.beta)
     (hlt : digit s c j < digit s' d j) :
-    ∀ k, j ≤ k → (∀ i, j < i → i ≤ k → digit s c i = digit s' d i) → tagUp s c k < tagUp s' d k := by
+    ∀ k, j ≤ k → (∀ i, j < i → i ≤ k → digit s c i = digit s' d i) → tagUp s c k < tagUp s' d k
+      := by
   intro k hk heq
   induction k with
   | zero => omega
@@ -268,7 +270,8 @@ theorem tagUp_lt_of_digit {s s' : TS} {c d : Nat} (hβ : s'.P.beta = s.P.beta) {
       unfold tagUp
       have h1 := tagUp_lt (s := s) (c := c) k (fun i hi1 hi2 => hdc i hi1 (by omega))
       rw [hβ]
-      have : (digit s c (k + 1) + 1) * 2 ^ (k * s.P.beta) ≤ digit s' d (k + 1) * 2 ^ (k * s.P.beta) :=
+      have : (digit s c (k + 1) + 1) * 2 ^ (k * s.P.beta) ≤ digit s' d (k + 1) * 2 ^ (k *
+        s.P.beta) :=
         Nat.mul_le_mul_right _ hlt
       rw [Nat.add_mul, one_mul] at this
       omega
@@ -323,7 +326,8 @@ theorem tagUp_replace2 {s s' : TS} {c c' : Nat} (hβ : s'.P.beta = s.P.beta) {h 
         (digit s c (h + 1) * 2 ^ (h * s.P.beta) + digit s c h * 2 ^ ((h - 1) * s.P.beta)) +
       (digit s' c' (h + 1) * 2 ^ (h * s.P.beta) + digit s' c' h * 2 ^ ((h - 1) * s.P.beta)) := by
   obtain ⟨g, rfl⟩ : ∃ g, h = g + 1 := ⟨h - 1, by omega⟩
-  have hlow := tagUp_congr (c := c) (c' := c') hβ g (fun i h1 h2 => heq i h1 (by omega) (by omega) (by omega))
+  have hlow := tagUp_congr (c := c) (c' := c') hβ g (fun i h1 h2 => heq i h1 (by omega) (by
+    omega) (by omega))
   have hhi := tagUp_high (c := c) (c' := c') hβ (g + 2) k (by omega)
     (fun i h1 h2 => heq i (by omega) h2 (by omega) (by omega))
   have e1 : tagUp s c (g + 2) = tagUp s c g + digit s c (g + 1) * 2 ^ (g * s.P.beta) +

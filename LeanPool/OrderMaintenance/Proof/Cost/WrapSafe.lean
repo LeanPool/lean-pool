@@ -44,17 +44,20 @@ def RLSafeF (mk : Nat → Params) (TI : Core → Prop) (μ : Core → Nat) (Jf n
           { om with cursor := (om.cur.E.getX om.cur.head).next, cursorSet := true } n' f b) ∧
         (r = false → RLSafeF mk TI μ Jf nf Rf om n' f (b - 1))) ∧
     (om.cursorSet = true → om.cursor ≠ NIL → om.cursor < om.cur.E.size ∧
-      ((om.cur.E.getX om.cursor).live = true → ∃ L, CoreOK mk TI μ Jf nf Rf n L ∧ n.count + 1 ≤ n.P.N ∧
+      ((om.cur.E.getX om.cursor).live = true → ∃ L, CoreOK mk TI μ Jf nf Rf n L ∧ n.count + 1 ≤
+        n.P.N ∧
         n.tail ∈ L ∧ (om.cur.E.getX om.cursor).h < om.nextHandle) ∧
       ∀ om' n', copyAtCursor om n = .ok (om', n') → om'.cursor ≠ NIL →
         RLSafeF mk TI μ Jf nf Rf om' n' f (b - 1))
 
-theorem elist_lt {c : Core} {A : Abs} (hR : CoreR c A) {e : Nat} (he : e ∈ A.elist) : e < c.E.size :=
+theorem elist_lt {c : Core} {A : Abs} (hR : CoreR c A) {e : Nat} (he : e ∈ A.elist) : e <
+  c.E.size :=
   ((hR.inv.eAlloc e).mp he).2
 
 /-- **The rebuild loop is safe**: under `rebuildLoop_cost`'s hypotheses, its iterations get what
 they need. -/
-theorem rebuildLoop_safe (S : CostSetup mk TI PI μ ν PP Jf capf nf Rf) {Sp : OrderMaintenance.Spec.State}
+theorem rebuildLoop_safe (S : CostSetup mk TI PI μ ν PP Jf capf nf Rf) {Sp :
+  OrderMaintenance.Spec.State}
     (hS : OrderMaintenance.Spec.Inv Sp) {Φe live₀ I D N' : Nat} :
     ∀ fuel budget (om : OrderMaintenance) (n : Core) (A : Abs), CoreR om.cur A →
       liveH om.cur A.elist = Sp.list → IdxOK om.cur A om.curIdx Sp.list → NxtR' om.cur A om n →
@@ -84,12 +87,14 @@ theorem rebuildLoop_safe (S : CostSetup mk TI PI μ ν PP Jf capf nf Rf) {Sp : O
       refine ⟨hcnt2, fun hrd => ?_, fun hrd => ?_⟩
       · subst hrd
         have hok := hT2 rfl
-        set om1 : OrderMaintenance := { om with cursor := (om.cur.E.getX om.cur.head).next, cursorSet := true }
-          with hom1
+        set om1 : OrderMaintenance := {
+          om with
+          cursor := (om.cur.E.getX om.cur.head).next
+          cursorSet := true } with hom1
         have hcnt : om.cur.count = A.elist.length := by
           have := hC.curok.cnt; exact this
         have hpost1 : (postOf A.elist om1.cursor).length + 1 = A.elist.length := by
-          show (postOf A.elist (eN om.cur om.cur.head)).length + 1 = _
+          change (postOf A.elist (eN om.cur om.cur.head)).length + 1 = _
           rw [hR.inv.eList.next _ hR.head, hR.inv.eList.head,
             postOf_succOf hR.inv.eList.nodup hR.inv.eList.nonil
               (by rw [← hR.inv.eList.head]; exact hR.head), postOf_headD hR.ne, List.length_tail]
@@ -100,7 +105,7 @@ theorem rebuildLoop_safe (S : CostSetup mk TI PI μ ν PP Jf capf nf Rf) {Sp : O
           · rw [INV.elist_unique hB' hI2]
             refine ⟨hok, ?_⟩
             rw [hcnt2, hprep.cnt]; omega
-          · show (postOf A.elist om1.cursor).length + (om.KB - budget) ≤ Φe
+          · change (postOf A.elist om1.cursor).length + (om.KB - budget) ≤ Φe
             omega
         exact ih budget om1 n' A hR hL hI (hN2 rfl) hf hlv hC1
       · subst hrd
@@ -136,7 +141,7 @@ theorem rebuildLoop_safe (S : CostSetup mk TI PI μ ν PP Jf capf nf Rf) {Sp : O
           rw [hf]; exact this
       · obtain ⟨om', n', hcp, e1, e2, e3, e4, e5, e6, e7, hN'⟩ := copy_ok hN hR hnd hset hc
         obtain ⟨om2, n2, B2, hcp2, hcur2, hRB2, hok2, hfill2, hP2⟩ :=
-          copy_cost S hR hRB hset hc hcurA (hserve B hRB.inv).1 hfill hroom
+          copy_cost S hRB (hserve B hRB.inv).1 hfill hroom
         rw [hcp] at hcp2
         injection hcp2 with hcp2
         injection hcp2 with h1 h2
@@ -152,9 +157,11 @@ theorem rebuildLoop_safe (S : CostSetup mk TI PI μ ν PP Jf capf nf Rf) {Sp : O
           · rw [INV.elist_unique hB' hRB2.inv]; exact ⟨hok2, hfill2⟩
           · have hpo : postOf A.elist om.cursor = post := by
               rw [hsplit]
-              exact (split_unique (hsplit ▸ hR.inv.eList.nodup) (hsplit ▸ hR.inv.eList.nonil) hcpost).2
+              exact (split_unique (hsplit ▸ hR.inv.eList.nodup) (hsplit ▸ hR.inv.eList.nonil)
+                hcpost).2
             have hpne : post ≠ [] := by intro h; rw [h] at hcpost; exact hc hcpost
-            have hpost' : (postOf A.elist om'.cursor).length + 1 = (postOf A.elist om.cursor).length := by
+            have hpost' : (postOf A.elist om'.cursor).length + 1 = (postOf A.elist
+              om.cursor).length := by
               rw [hcur2, hR.inv.eList.next _ hcurA,
                 postOf_succOf hR.inv.eList.nodup hR.inv.eList.nonil hcurA,
                 hpo, List.length_tail]
@@ -164,11 +171,13 @@ theorem rebuildLoop_safe (S : CostSetup mk TI PI μ ν PP Jf capf nf Rf) {Sp : O
           (by rw [e6]; exact hlv) hC'
 
 /-- **The rebuild step's loop is safe**, under `rebuildStep_cost`'s hypotheses. -/
-theorem rebuildStep_safe (S : CostSetup mk TI PI μ ν PP Jf capf nf Rf) {om : OrderMaintenance} {Sp : OrderMaintenance.Spec.State}
-    (hW : WInv om Sp) (hlv : om.live = Sp.list.length) (hkb : 4 ≤ om.KB)
+theorem rebuildStep_safe (S : CostSetup mk TI PI μ ν PP Jf capf nf Rf) {om : OrderMaintenance}
+  {Sp : OrderMaintenance.Spec.State}
+    (hW : WInv om Sp) (hlv : om.live = Sp.list.length)
     (hcur : ∀ A, INV om.cur A → CoreOK mk TI μ Jf nf Rf om.cur A.elist)
     (hbusy : ∀ n, om.nxt = some n → ∃ c₀ live₀ I D, MidW mk TI PI μ ν Jf nf Rf om n c₀ live₀ I D) :
-    ∀ n0, om.nxt = some n0 → RLSafeF mk TI μ Jf nf Rf { om with nxt := none } n0 (om.KB + 1) om.KB := by
+    ∀ n0, om.nxt = some n0 → RLSafeF mk TI μ Jf nf Rf { om with nxt := none } n0 (om.KB + 1)
+      om.KB := by
   intro n0 hn
   have hW0 := hW
   obtain ⟨hS, hf, A, hR, hL, hI, hN⟩ := hW0
@@ -188,9 +197,9 @@ theorem rebuildStep_safe (S : CostSetup mk TI PI μ ν PP Jf capf nf Rf) {om : O
       (4 * max (live₀ + ((c₀ + (om.cur.P.L + 2)) / (om.KB - 1) + 1)) 16) := by
     refine ⟨hok, hM.nP, fun hs => ⟨(hM.prep hs).1, ?_⟩, fun hs => ⟨(hM.serve hs).1, ?_⟩, hroom,
       hM.live, le_rfl⟩
-    · show ν n0 + om.cur.count + (om.KB - om.KB) ≤ Φe
+    · change ν n0 + om.cur.count + (om.KB - om.KB) ≤ Φe
       simp only [hΦe, show om.cursorSet = false from hs, Bool.false_eq_true, ite_false]; omega
-    · show (postOf A.elist om.cursor).length + (om.KB - om.KB) ≤ Φe
+    · change (postOf A.elist om.cursor).length + (om.KB - om.KB) ≤ Φe
       simp only [hΦe, show om.cursorSet = true from hs, ite_true]; omega
   exact rebuildLoop_safe S hS (om.KB + 1) om.KB { om with nxt := none } n0 A hR hL hI hN hf hlv hC0
 
@@ -202,25 +211,24 @@ def insXi (om : OrderMaintenance) (hx : Option Nat) : Nat :=
 
 /-- **An insertion's rebuild step is safe**: after the insertion into `cur` and its mirroring, the
 rebuild loop gets what it needs. -/
-theorem insert_safe (S : CostSetup mk TI PI μ ν PP Jf capf nf Rf) {om : OrderMaintenance} {Sp : OrderMaintenance.Spec.State}
+theorem insert_safe (S : CostSetup mk TI PI μ ν PP Jf capf nf Rf) {om : OrderMaintenance} {Sp :
+  OrderMaintenance.Spec.State}
     (hW : WC mk TI PI μ ν Jf nf Rf om Sp) (hx : Option Nat) (hv : (insOp hx).Valid Sp) :
     ∃ c' om2, (insertAfter (insXi om hx) om.nextHandle).run om.cur = .ok om.cur.E.size c' ∧
-      ({ om with cur := c', nextHandle := om.nextHandle + 1, curIdx := om.curIdx.setX om.nextHandle om.cur.E.size } : OrderMaintenance).mirrorInsert hx om.nextHandle = .ok om2 ∧
+      ({
+        om with
+        cur := c'
+        nextHandle := om.nextHandle + 1
+        curIdx := om.curIdx.setX om.nextHandle om.cur.E.size
+      } : OrderMaintenance).mirrorInsert hx om.nextHandle = .ok om2 ∧
       ∀ n, om2.nxt = some n →
-        RLSafeF mk TI μ Jf nf Rf { om2 with live := om2.live + 1, nxt := none } n (om2.KB + 1) om2.KB := by
+        RLSafeF mk TI μ Jf nf Rf { om2 with live := om2.live + 1, nxt := none } n (om2.KB + 1)
+          om2.KB := by
   obtain ⟨hS, hf, A, hR, hL, hI, hN⟩ := hW.w
   have hnd : (liveH om.cur A.elist).Nodup := hL ▸ hS.1
   have hfresh : om.nextHandle ∉ liveH om.cur A.elist := by
     rw [hL, hf]; exact fun h => Nat.lt_irrefl _ (hS.2 _ h)
-  obtain ⟨xi, hxi, hxeq, hxn, hxs⟩ : ∃ xi, xi ∈ A.elist ∧
-      xi = (match hx with | none => om.cur.head | some x => om.curIdx.getX x) ∧
-      (hx = none → xi = om.cur.head) ∧
-      (∀ x, hx = some x → live om.cur xi = true ∧ hdl om.cur xi = x) := by
-    cases hx with
-    | none => exact ⟨_, hR.head, rfl, fun _ => rfl, fun _ h => (by cases h)⟩
-    | some x =>
-      obtain ⟨h1, h2, h3⟩ := hI x hv
-      exact ⟨_, h1, rfl, fun h => (by cases h), fun x' h => (by cases h; exact ⟨h2, h3⟩)⟩
+  obtain ⟨xi, hxi, hxeq, hxn, hxs⟩ := insertion_position hR hI hx hv
   have hok := hW.cur A hR.inv
   obtain ⟨c', A', hr, hR', hA', hrec, hly, hhy, hyA, hy0, hhead, hPc⟩ :=
     core_insert hR hxi om.nextHandle
@@ -233,39 +241,19 @@ theorem insert_safe (S : CostSetup mk TI PI μ ν PP Jf capf nf Rf) {om : OrderM
     (c' := c') hN hR hnd hxi hxn hxs hA' hyA hrec hly hhy hfresh
   -- Invariant R after the insertion (as in `insert_ok`)
   have hL' : liveH c' A'.elist = (OrderMaintenance.Spec.step Sp (insOp hx)).1.list := by
-    have hfr : liveH c' A.elist = liveH om.cur A.elist := liveH_frame hrec
-    cases hx with
-    | none =>
-      obtain ⟨a, t, ht⟩ := List.exists_cons_of_ne_nil hR.ne
-      have ha : om.cur.head = a := by rw [hR.inv.eList.head, ht]; rfl
-      have hda : live c' a = false := by rw [(hrec a (ht ▸ List.mem_cons_self)).1, ← ha]; exact hR.dead
-      rw [hA', hxn rfl, ha, ht, liveH_insertAfterL_head _ _ hda hly, hhy, hf]
-      show _ = Sp.fresh :: Sp.list
-      rw [← hL, ht]
-      have hda0 : live om.cur a = false := ha ▸ hR.dead
-      simp only [FM_cons, hda0, Bool.false_eq_true, ite_false]
-      congr 1
-      exact liveH_frame fun e he => hrec e (ht ▸ List.mem_cons_of_mem _ he)
-    | some x =>
-      obtain ⟨hlx, hhx⟩ := hxs x rfl
-      rw [hA', liveH_insertAfterL _ hxi (by rw [(hrec _ hxi).1]; exact hlx) (hfr ▸ hnd) hyA hly,
-        hfr,
-        (hrec _ hxi).2, hhx, hhy, hL, hf]
-      rfl
-  have hmem : ∀ z, z ∈ (OrderMaintenance.Spec.step Sp (insOp hx)).1.list ↔ z = Sp.fresh ∨ z ∈ Sp.list := by
-    intro z
-    cases hx with
-    | none => simp [OrderMaintenance.Spec.step, insOp]
-    | some x => exact OrderMaintenance.Spec.mem_insertAfterL hv
+    rw [hA']
+    exact inserted_live_handles hR hf hL hnd hxi hxn hxs hrec hly hhy hyA
+  have hmem := step_ins_mem Sp hx hv
   have hyA' : om.cur.E.size ∈ A'.elist := by
     rw [hA']; exact (OrderMaintenance.Spec.mem_insertAfterL hxi).mpr (Or.inl rfl)
-  have hW3 : WInv { om2 with live := om2.live + 1 } (OrderMaintenance.Spec.step Sp (insOp hx)).1 := by
+  have hW3 : WInv { om2 with live := om2.live + 1 } (OrderMaintenance.Spec.step Sp (insOp hx)).1
+    := by
     refine ⟨OrderMaintenance.Spec.step_inv hS hv, ?_, A', ?_, ?_, ?_, ?_⟩
-    · show om2.nextHandle = _
+    · change om2.nextHandle = _
       rw [e3]; cases hx <;> simp [OrderMaintenance.Spec.step, insOp, hf]
-    · show CoreR om2.cur A'; rw [e1]; exact hR'
-    · show liveH om2.cur A'.elist = _; rw [e1]; exact hL'
-    · show IdxOK om2.cur A' om2.curIdx _
+    · change CoreR om2.cur A'; rw [e1]; exact hR'
+    · change liveH om2.cur A'.elist = _; rw [e1]; exact hL'
+    · change IdxOK om2.cur A' om2.curIdx _
       rw [e1, e2]
       intro z hz
       simp only [Array.getX_setX]
@@ -277,10 +265,16 @@ theorem insert_safe (S : CostSetup mk TI PI μ ν PP Jf capf nf Rf) {om : OrderM
         obtain ⟨h1, h2, h3⟩ := hI z hz'
         refine ⟨?_, by rw [(hrec _ h1).1]; exact h2, by rw [(hrec _ h1).2]; exact h3⟩
         rw [hA']; exact (OrderMaintenance.Spec.mem_insertAfterL hxi).mpr (Or.inr h1)
-    · show NxtR om2.cur A' { om2 with live := om2.live + 1 }
+    · change NxtR om2.cur A' { om2 with live := om2.live + 1 }
       rw [e1]; exact hN2
   -- the cost side of the mirroring
-  have hm2 : ∀ om', ({ om with cur := c', nextHandle := om.nextHandle + 1, curIdx := om.curIdx.setX om.nextHandle om.cur.E.size } : OrderMaintenance).mirrorInsert hx om.nextHandle = .ok om' → om' = om2 := by
+  have hm2 : ∀ om', ({
+    om with
+    cur := c'
+    nextHandle := om.nextHandle + 1
+    curIdx := om.curIdx.setX om.nextHandle om.cur.E.size
+  } : OrderMaintenance).mirrorInsert hx
+      om.nextHandle = .ok om' → om' = om2 := by
     intro om' h; rw [hm] at h; injection h with h; exact h.symm
   have hcnt1 : c'.count = om.cur.count + 1 := hcnt'
   have hPc' : c'.P = om.cur.P := hP2
@@ -293,7 +287,8 @@ theorem insert_safe (S : CostSetup mk TI PI μ ν PP Jf capf nf Rf) {om : OrderM
   have hcp : om.cur.count + 1 ≤ om.cur.P.N := hW.cur_room S
   have hkb3 : 4 ≤ om2.KB := by rw [e5]; exact hW.kb
   -- the run, once the rebuild step is known
-  have finish : ∀ om4, ({ om2 with live := om2.live + 1 } : OrderMaintenance).rebuildStep mk = .ok om4 →
+  have finish : ∀ om4, ({ om2 with live := om2.live + 1 } : OrderMaintenance).rebuildStep mk =
+    .ok om4 →
       om.insert mk hx = .ok (Sp.fresh, om4) := by
     intro om4 hrb
     unfold OrderMaintenance.insert
@@ -309,14 +304,24 @@ theorem insert_safe (S : CostSetup mk TI PI μ ν PP Jf capf nf Rf) {om : OrderM
       rfl
   have hmi_none : om.nxt = none → om2.nxt = none := by
     intro hn
-    have : ({ om with cur := c', nextHandle := om.nextHandle + 1, curIdx := om.curIdx.setX om.nextHandle om.cur.E.size } : OrderMaintenance).mirrorInsert hx om.nextHandle = .ok { om with cur := c', nextHandle := om.nextHandle + 1, curIdx := om.curIdx.setX om.nextHandle om.cur.E.size } := by
+    have : ({
+      om with
+      cur := c'
+      nextHandle := om.nextHandle + 1
+      curIdx := om.curIdx.setX om.nextHandle om.cur.E.size
+    } : OrderMaintenance).mirrorInsert hx om.nextHandle = .ok {
+      om with
+      cur := c'
+      nextHandle := om.nextHandle + 1
+      curIdx := om.curIdx.setX om.nextHandle om.cur.E.size
+    } := by
       unfold OrderMaintenance.mirrorInsert; simp only [hn]; rfl
     rw [← hm2 _ this]; exact hn
   have hxi' : xi = insXi om hx := by cases hx <;> exact hxeq
   refine ⟨c', om2, by rw [← hxi']; exact hr, hm, ?_⟩
   cases hn : om.nxt with
   | none =>
-    exact rebuildStep_safe S hW3 hlv3 hkb3 hcur3
+    exact rebuildStep_safe S hW3 hlv3 hcur3
       (fun n' hn' => by
         exfalso; have := hmi_none hn; simp only at hn'; rw [this] at hn'; cases hn')
   | some n =>
@@ -336,23 +341,34 @@ theorem insert_safe (S : CostSetup mk TI PI μ ν PP Jf capf nf Rf) {om : OrderM
     have hkb := hW.kb
     cases hs : om.cursorSet with
     | false =>
-      have hmi : ({ om with cur := c', nextHandle := om.nextHandle + 1, curIdx := om.curIdx.setX om.nextHandle om.cur.E.size } : OrderMaintenance).mirrorInsert hx om.nextHandle = .ok { om with cur := c', nextHandle := om.nextHandle + 1, curIdx := om.curIdx.setX om.nextHandle om.cur.E.size } := by
-        unfold OrderMaintenance.mirrorInsert; simp only [hn, hs, Bool.false_and, Bool.false_eq_true, ite_false]; rfl
+      have hmi : ({
+        om with
+        cur := c'
+        nextHandle := om.nextHandle + 1
+        curIdx := om.curIdx.setX om.nextHandle om.cur.E.size
+      } : OrderMaintenance).mirrorInsert hx om.nextHandle = .ok {
+          om with
+          cur := c'
+          nextHandle := om.nextHandle + 1
+          curIdx := om.curIdx.setX om.nextHandle om.cur.E.size
+        } := by
+        unfold OrderMaintenance.mirrorInsert; simp only [hn, hs, Bool.false_and,
+          Bool.false_eq_true, ite_false]; rfl
       have h2 := hm2 _ hmi
       subst h2
       obtain ⟨hprep, hφ⟩ := hRW.prep hs
-      refine rebuildStep_safe S hW3 hlv3 hkb3 hcur3
+      refine rebuildStep_safe S hW3 hlv3 hcur3
         (fun n' hn' => by
           simp only [hn, Option.some.injEq] at hn'
           subst hn'
           refine ⟨c₀, live₀, I + 1, D, ⟨?_, ?_, ?_, ?_, hRW.l0, ?_, fun _ => ⟨hprep, ?_⟩,
             fun h => by simp [hs] at h⟩⟩
-          · show c₀ ≤ c'.P.N / 2; rw [hPc']; exact hRW.c0
+          · change c₀ ≤ c'.P.N / 2; rw [hPc']; exact hRW.c0
           · show n.P = _; rw [hRW.nP]; simp only [hPc']
-          · show c'.count ≤ c₀ + (I + 1); have := hRW.ccnt; omega
-          · show om.live + 1 + D = live₀ + (I + 1); have := hRW.live; omega
-          · show I + 1 ≤ (c₀ + (c'.P.L + 2)) / (om.KB - 1) + 1; rw [hPc']; omega
-          · show ν n + c'.count + (om.KB - 1) * (I + 1) ≤ c'.P.L + 2 + c₀ + om.KB
+          · change c'.count ≤ c₀ + (I + 1); have := hRW.ccnt; omega
+          · change om.live + 1 + D = live₀ + (I + 1); have := hRW.live; omega
+          · change I + 1 ≤ (c₀ + (c'.P.L + 2)) / (om.KB - 1) + 1; rw [hPc']; omega
+          · change ν n + c'.count + (om.KB - 1) * (I + 1) ≤ c'.P.L + 2 + c₀ + om.KB
             rw [hPc', hmul, hcnt1]; omega)
     | true =>
       obtain ⟨hserve, hpost⟩ := hRW.serve hs
@@ -361,7 +377,12 @@ theorem insert_safe (S : CostSetup mk TI PI μ ν PP Jf capf nf Rf) {om : OrderM
       rw [ite_eq_left hs] at hcs
       obtain ⟨pre, post, hsplit, hcpost, -, -⟩ := hcs
       obtain ⟨om2', hmi, f1, f2, f3, f4, f5, n', B', hn2, hRB', hok', hfill', hP'⟩ :=
-        mirrorInsert_cost (om := { om with cur := c', nextHandle := om.nextHandle + 1, curIdx := om.curIdx.setX om.nextHandle om.cur.E.size })
+        mirrorInsert_cost (om := {
+          om with
+          cur := c'
+          nextHandle := om.nextHandle + 1
+          curIdx := om.curIdx.setX om.nextHandle om.cur.E.size
+        })
           (hx := hx) (hy := om.nextHandle) S hn hs hRB hok0 hfill0 hroom hIB hzB
       have h2 := hm2 _ hmi
       subst h2
@@ -373,27 +394,32 @@ theorem insert_safe (S : CostSetup mk TI PI μ ν PP Jf capf nf Rf) {om : OrderM
       have hcurNe : om.cursor ≠ om.cur.E.size := by
         intro e
         cases post with
-        | nil => simp at hcpost; rw [hcpost] at e; exact hy0 e.symm
-        | cons a t => simp at hcpost; exact hyA (by rw [hsplit, ← e, hcpost]; simp)
-      refine rebuildStep_safe S hW3 hlv3 hkb3 hcur3
+        | nil =>
+          simp only [List.headD_eq_head?_getD, List.head?_nil, Option.getD_none] at hcpost
+          rw [hcpost] at e
+          exact hy0 e.symm
+        | cons a t =>
+          simp only [List.headD_eq_head?_getD, List.head?_cons, Option.getD_some] at hcpost
+          exact hyA (by rw [hsplit, ← e, hcpost]; simp)
+      refine rebuildStep_safe S hW3 hlv3 hcur3
         (fun n'' hn'' => by
           simp only [hn2, Option.some.injEq] at hn''
           subst hn''
           refine ⟨c₀, live₀, I + 1, D, ⟨?_, ?_, ?_, ?_, hRW.l0, ?_, fun h => ?_,
             fun _ => ⟨fun B'' hB'' => ?_, fun A'' hA'' => ?_⟩⟩⟩
-          · show c₀ ≤ om2'.cur.P.N / 2; rw [g1, hPc']; exact hRW.c0
-          · show n'.P = mk (4 * max (live₀ + ((c₀ + (om2'.cur.P.L + 2)) / (om2'.KB - 1) + 1)) 16)
+          · change c₀ ≤ om2'.cur.P.N / 2; rw [g1, hPc']; exact hRW.c0
+          · change n'.P = mk (4 * max (live₀ + ((c₀ + (om2'.cur.P.L + 2)) / (om2'.KB - 1) + 1)) 16)
             rw [hP', hRW.nP, g1, g4, hPc']
-          · show om2'.cur.count ≤ c₀ + (I + 1); rw [g1, hcnt1]; have := hRW.ccnt; omega
-          · show om2'.live + 1 + D = live₀ + (I + 1); rw [g5]; have := hRW.live; omega
-          · show I + 1 ≤ (c₀ + (om2'.cur.P.L + 2)) / (om2'.KB - 1) + 1
+          · change om2'.cur.count ≤ c₀ + (I + 1); rw [g1, hcnt1]; have := hRW.ccnt; omega
+          · change om2'.live + 1 + D = live₀ + (I + 1); rw [g5]; have := hRW.live; omega
+          · change I + 1 ≤ (c₀ + (om2'.cur.P.L + 2)) / (om2'.KB - 1) + 1
             rw [g1, g4, hPc']; omega
           · exfalso; have : om2'.cursorSet = true := by rw [g2]; exact hs
             simp only at h; rw [this] at h; cases h
           · rw [INV.elist_unique hB'' hRB'.inv]; exact ⟨hok', hfill'⟩
           · simp only at hA''
             rw [g1] at hA''
-            show (postOf A''.elist om2'.cursor).length + (om2'.KB - 1) * (I + 1) ≤
+            change (postOf A''.elist om2'.cursor).length + (om2'.KB - 1) * (I + 1) ≤
               om2'.cur.P.L + 2 + c₀ + om2'.KB
             rw [g1, g3, g4, INV.elist_unique hA'' hR'.inv, hPc', hmul]
             have h1 := hpostins om.cursor hcurNe
@@ -401,12 +427,19 @@ theorem insert_safe (S : CostSetup mk TI PI μ ν PP Jf capf nf Rf) {om : OrderM
             omega)
 
 /-- **A deletion's rebuild step is safe.** -/
-theorem delete_safe (S : CostSetup mk TI PI μ ν PP Jf capf nf Rf) {om : OrderMaintenance} {Sp : OrderMaintenance.Spec.State}
+theorem delete_safe (S : CostSetup mk TI PI μ ν PP Jf capf nf Rf) {om : OrderMaintenance} {Sp :
+  OrderMaintenance.Spec.State}
     (hW : WC mk TI PI μ ν Jf nf Rf om Sp) {x : Nat} (hv : x ∈ Sp.list) :
     ∃ c' om2, (markDead (om.curIdx.getX x)).run om.cur = .ok () c' ∧
-      ({ om with cur := c', curIdx := om.curIdx.setX x 0 } : OrderMaintenance).mirrorDelete x = .ok om2 ∧
+      ({
+        om with
+        cur := c'
+        curIdx := om.curIdx.setX x 0
+      } : OrderMaintenance).mirrorDelete x =
+        .ok om2 ∧
       ∀ n, om2.nxt = some n →
-        RLSafeF mk TI μ Jf nf Rf { om2 with live := om2.live - 1, nxt := none } n (om2.KB + 1) om2.KB := by
+        RLSafeF mk TI μ Jf nf Rf { om2 with live := om2.live - 1, nxt := none } n (om2.KB + 1)
+          om2.KB := by
   obtain ⟨hS, hf, A, hR, hL, hI, hN⟩ := hW.w
   have hnd : (liveH om.cur A.elist).Nodup := hL ▸ hS.1
   obtain ⟨hxi, hlx, hhx⟩ := hI x hv
@@ -417,12 +450,14 @@ theorem delete_safe (S : CostSetup mk TI PI μ ν PP Jf capf nf Rf) {om : OrderM
   obtain ⟨om2, hm, e1, e2, e3, e4, e5, hN2⟩ := mirrorDelete_ok (om := { om with
       cur := c'
       curIdx := om.curIdx.setX x 0 }) (c' := c') hN hR hnd hxi hlx hhx hrec hhdl hdead
-  have hW3 : WInv { om2 with live := om2.live - 1 } (OrderMaintenance.Spec.step Sp (.delete x)).1 := by
-    refine ⟨OrderMaintenance.Spec.step_inv hS hv, by show om2.nextHandle = _; rw [e3]; exact hf, A, ?_, ?_, ?_, ?_⟩
-    · show CoreR om2.cur A; rw [e1]; exact hR'
-    · show liveH om2.cur A.elist = Sp.list.erase x; rw [e1]; show liveH c' A.elist = _
+  have hW3 : WInv { om2 with live := om2.live - 1 } (OrderMaintenance.Spec.step Sp (.delete
+    x)).1 := by
+    refine ⟨OrderMaintenance.Spec.step_inv hS hv, by change om2.nextHandle = _; rw [e3]; exact
+      hf, A, ?_, ?_, ?_, ?_⟩
+    · change CoreR om2.cur A; rw [e1]; exact hR'
+    · change liveH om2.cur A.elist = Sp.list.erase x; rw [e1]; change liveH c' A.elist = _
       rw [hL', hhx, hL]
-    · show IdxOK om2.cur A om2.curIdx (Sp.list.erase x)
+    · change IdxOK om2.cur A om2.curIdx (Sp.list.erase x)
       rw [e1, e2]
       intro z hz
       have hzx : z ≠ x := fun e => by subst e; exact (List.Nodup.not_mem_erase hS.1) hz
@@ -432,9 +467,10 @@ theorem delete_safe (S : CostSetup mk TI PI μ ν PP Jf capf nf Rf) {om : OrderM
       have hne : om.curIdx.getX z ≠ om.curIdx.getX x := fun e => hzx (by rw [← h3, e, hhx])
       exact ⟨h1, by show live c' _ = true; rw [hrec _ hne]; exact h2,
         by show hdl c' _ = z; rw [hhdl]; exact h3⟩
-    · show NxtR om2.cur A { om2 with live := om2.live - 1 }
+    · change NxtR om2.cur A { om2 with live := om2.live - 1 }
       rw [e1]; exact hN2
-  have finish : ∀ om4, ({ om2 with live := om2.live - 1 } : OrderMaintenance).rebuildStep mk = .ok om4 →
+  have finish : ∀ om4, ({ om2 with live := om2.live - 1 } : OrderMaintenance).rebuildStep mk =
+    .ok om4 →
       om.delete mk x = .ok om4 := by
     intro om4 hrb
     unfold OrderMaintenance.delete
@@ -442,11 +478,16 @@ theorem delete_safe (S : CostSetup mk TI PI μ ν PP Jf capf nf Rf) {om : OrderM
     simp only [bind, Except.bind]
     rw [hm]
     exact hrb
-  have hm2 : ∀ om', ({ om with cur := c', curIdx := om.curIdx.setX x 0 } : OrderMaintenance).mirrorDelete x = .ok om' → om' = om2 := by
+  have hm2 : ∀ om', ({
+    om with
+    cur := c'
+    curIdx := om.curIdx.setX x 0
+  } :
+    OrderMaintenance).mirrorDelete x = .ok om' → om' = om2 := by
     intro om' h; rw [hm] at h; injection h with h; exact h.symm
   have hlen : 1 ≤ Sp.list.length := List.length_pos_of_mem hv
   have hlv3 : om2.live - 1 = (OrderMaintenance.Spec.step Sp (.delete x)).1.list.length := by
-    rw [e4, hW.live]; show _ = (Sp.list.erase x).length; rw [List.length_erase_of_mem hv]
+    rw [e4, hW.live]; change _ = (Sp.list.erase x).length; rw [List.length_erase_of_mem hv]
   have hcur3 : ∀ A'', INV om2.cur A'' → CoreOK mk TI μ Jf nf Rf om2.cur A''.elist := by
     intro A'' hA''; rw [e1] at hA'' ⊢; rw [INV.elist_unique hA'' hR'.inv]; exact hok'
   have hPc' : c'.P = om.cur.P := hP2
@@ -456,11 +497,21 @@ theorem delete_safe (S : CostSetup mk TI PI μ ν PP Jf capf nf Rf) {om : OrderM
   refine ⟨c', om2, hr, hm, ?_⟩
   cases hn : om.nxt with
   | none =>
-    have hmi : ({ om with cur := c', curIdx := om.curIdx.setX x 0 } : OrderMaintenance).mirrorDelete x = .ok { om with cur := c', curIdx := om.curIdx.setX x 0 } := by
+    have hmi : ({
+      om with
+      cur := c'
+      curIdx := om.curIdx.setX x 0
+    } :
+      OrderMaintenance).mirrorDelete x = .ok {
+        om with
+        cur := c'
+        curIdx := om.curIdx.setX x 0
+      }
+        := by
       unfold OrderMaintenance.mirrorDelete; simp only [hn]; rfl
     have h2 := hm2 _ hmi
     subst h2
-    exact rebuildStep_safe S hW3 hlv3 hkb3 hcur3
+    exact rebuildStep_safe S hW3 hlv3 hcur3
       (fun n' hn' => by simp only [hn] at hn'; cases hn')
   | some n =>
     obtain ⟨c₀, live₀, I, D, hRW⟩ := hW.busy n hn
@@ -478,24 +529,34 @@ theorem delete_safe (S : CostSetup mk TI PI μ ν PP Jf capf nf Rf) {om : OrderM
       subst hcs
       have hx0 : om.nxtIdx.getX x = 0 := by
         by_contra h; have := hzB x h; rw [liveH_initAbs hRB] at this; simp at this
-      have hmi : ({ om with cur := c', curIdx := om.curIdx.setX x 0 } : OrderMaintenance).mirrorDelete x = .ok { om with cur := c', curIdx := om.curIdx.setX x 0 } := by
-        unfold OrderMaintenance.mirrorDelete; simp only [hn, hx0, bne_self_eq_false, Bool.false_eq_true, ite_false]
+      have hmi : ({
+        om with
+        cur := c'
+        curIdx := om.curIdx.setX x 0
+      } :
+        OrderMaintenance).mirrorDelete x = .ok {
+          om with
+          cur := c'
+          curIdx := om.curIdx.setX x 0
+        } := by
+        unfold OrderMaintenance.mirrorDelete; simp only [hn, hx0, bne_self_eq_false,
+          Bool.false_eq_true, ite_false]
         rfl
       have h2 := hm2 _ hmi
       subst h2
       obtain ⟨hprep, hφ⟩ := hRW.prep hs
-      refine rebuildStep_safe S hW3 hlv3 hkb3 hcur3
+      refine rebuildStep_safe S hW3 hlv3 hcur3
         (fun n' hn' => by
           simp only [hn, Option.some.injEq] at hn'
           subst hn'
           refine ⟨c₀, live₀, I, D + 1, ⟨?_, ?_, ?_, ?_, hRW.l0, ?_, fun _ => ⟨hprep, ?_⟩,
             fun h => by simp [hs] at h⟩⟩
-          · show c₀ ≤ c'.P.N / 2; rw [hPc']; exact hRW.c0
+          · change c₀ ≤ c'.P.N / 2; rw [hPc']; exact hRW.c0
           · show n.P = _; rw [hRW.nP]; simp only [hPc']
-          · show c'.count ≤ c₀ + I; rw [hcnt']; exact hRW.ccnt
-          · show om.live - 1 + (D + 1) = live₀ + I; have := hRW.live; omega
-          · show I ≤ (c₀ + (c'.P.L + 2)) / (om.KB - 1) + 1; rw [hPc']; omega
-          · show ν n + c'.count + (om.KB - 1) * I ≤ c'.P.L + 2 + c₀ + om.KB
+          · change c'.count ≤ c₀ + I; rw [hcnt']; exact hRW.ccnt
+          · change om.live - 1 + (D + 1) = live₀ + I; have := hRW.live; omega
+          · change I ≤ (c₀ + (c'.P.L + 2)) / (om.KB - 1) + 1; rw [hPc']; omega
+          · change ν n + c'.count + (om.KB - 1) * I ≤ c'.P.L + 2 + c₀ + om.KB
             rw [hPc', hcnt']; omega)
     | true =>
       obtain ⟨hserve, hpost⟩ := hRW.serve hs
@@ -505,7 +566,11 @@ theorem delete_safe (S : CostSetup mk TI PI μ ν PP Jf capf nf Rf) {om : OrderM
       have hndB : (liveH n B.elist).Nodup := by
         rw [hLB]; exact (FM_sub_nodup (hsplit ▸ hnd)).1
       obtain ⟨om2', hmi, f1, f2, f3, f4, f5, n', hn2, hRB', hok', hfill', hP'⟩ :=
-        mirrorDelete_cost (om := { om with cur := c', curIdx := om.curIdx.setX x 0 }) (x := x)
+        mirrorDelete_cost (om := {
+          om with
+          cur := c'
+          curIdx := om.curIdx.setX x 0
+        }) (x := x)
           S hn hRB hok0 hfill0 hIB hzB hndB
       have h2 := hm2 _ hmi
       subst h2
@@ -514,25 +579,25 @@ theorem delete_safe (S : CostSetup mk TI PI μ ν PP Jf capf nf Rf) {om : OrderM
       have g3 : om2'.cursor = om.cursor := f3
       have g4 : om2'.KB = om.KB := f4
       have g5 : om2'.live = om.live := f5
-      refine rebuildStep_safe S hW3 hlv3 hkb3 hcur3
+      refine rebuildStep_safe S hW3 hlv3 hcur3
         (fun n'' hn'' => by
           simp only [hn2, Option.some.injEq] at hn''
           subst hn''
           refine ⟨c₀, live₀, I, D + 1, ⟨?_, ?_, ?_, ?_, hRW.l0, ?_, fun h => ?_,
             fun _ => ⟨fun B'' hB'' => ?_, fun A'' hA'' => ?_⟩⟩⟩
-          · show c₀ ≤ om2'.cur.P.N / 2; rw [g1, hPc']; exact hRW.c0
-          · show n'.P = mk (4 * max (live₀ + ((c₀ + (om2'.cur.P.L + 2)) / (om2'.KB - 1) + 1)) 16)
+          · change c₀ ≤ om2'.cur.P.N / 2; rw [g1, hPc']; exact hRW.c0
+          · change n'.P = mk (4 * max (live₀ + ((c₀ + (om2'.cur.P.L + 2)) / (om2'.KB - 1) + 1)) 16)
             rw [hP', hRW.nP, g1, g4, hPc']
-          · show om2'.cur.count ≤ c₀ + I; rw [g1, hcnt']; exact hRW.ccnt
-          · show om2'.live - 1 + (D + 1) = live₀ + I; rw [g5]; have := hRW.live; omega
-          · show I ≤ (c₀ + (om2'.cur.P.L + 2)) / (om2'.KB - 1) + 1
+          · change om2'.cur.count ≤ c₀ + I; rw [g1, hcnt']; exact hRW.ccnt
+          · change om2'.live - 1 + (D + 1) = live₀ + I; rw [g5]; have := hRW.live; omega
+          · change I ≤ (c₀ + (om2'.cur.P.L + 2)) / (om2'.KB - 1) + 1
             rw [g1, g4, hPc']; omega
           · exfalso; have : om2'.cursorSet = true := by rw [g2]; exact hs
             simp only at h; rw [this] at h; cases h
           · rw [INV.elist_unique hB'' hRB'.inv]; exact ⟨hok', hfill'⟩
           · simp only at hA''
             rw [g1] at hA''
-            show (postOf A''.elist om2'.cursor).length + (om2'.KB - 1) * I ≤
+            change (postOf A''.elist om2'.cursor).length + (om2'.KB - 1) * I ≤
               om2'.cur.P.L + 2 + c₀ + om2'.KB
             rw [g1, g3, g4, INV.elist_unique hA'' hR'.inv, hPc']
             have := hpost A hR.inv

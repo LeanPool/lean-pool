@@ -14,7 +14,7 @@ public import LeanPool.OrderMaintenance.Proof.Word.PQ
 /-!
 # Theorem W, stage B1: the core's write sites
 
-For each function of `OrderMaintenance/Model/Core.lean` (FALLBACK excluded), the stored-value bound across it.
+Stored-value bounds for the operations in `OrderMaintenance/Model/Core.lean`, excluding FALLBACK.
 The classes of `docs/WORD.md` §2:
 * **R** (a value read from the state, `NIL`, a constant, a sublist): no hypothesis.
 * **Lab** (a label): bounded by the guards, given `LabRoom K P` (`elementBits, groupBits ≤ K`).
@@ -155,7 +155,9 @@ theorem wb_moveGroupsLeft {x y : Nat} {u labs : List Nat} (hy : y < 2 ^ K)
   have h2 : u.getLastD NIL < 2 ^ K := by
     rcases List.eq_nil_or_concat u with e | ⟨L, b, e⟩
     · subst e; exact pos K
-    · subst e; simp only [List.concat_eq_append, List.getLastD_eq_getLast?, List.getLast?_append, List.getLast?_singleton, Option.some_or, Option.getD_some]; exact hu b (by simp)
+    · subst e; simp only [List.concat_eq_append, List.getLastD_eq_getLast?,
+      List.getLast?_append, List.getLast?_singleton, Option.some_or, Option.getD_some]; exact hu
+        b (by simp)
   unfold moveGroupsLeft
   wbx h
   · exact allX_foldChk hy u labs _ h.Gs hl
@@ -171,7 +173,9 @@ theorem wb_moveGroupsRight {x z : Nat} {u labs : List Nat} (hz : z < 2 ^ K)
   have h2 : u.getLastD NIL < 2 ^ K := by
     rcases List.eq_nil_or_concat u with e | ⟨L, b, e⟩
     · subst e; exact pos K
-    · subst e; simp only [List.concat_eq_append, List.getLastD_eq_getLast?, List.getLast?_append, List.getLast?_singleton, Option.some_or, Option.getD_some]; exact hu b (by simp)
+    · subst e; simp only [List.concat_eq_append, List.getLastD_eq_getLast?,
+      List.getLast?_append, List.getLast?_singleton, Option.some_or, Option.getD_some]; exact hu
+        b (by simp)
   unfold moveGroupsRight
   wbx h
   · exact allX_foldChk hz u labs _ h.Gs hl
@@ -200,33 +204,38 @@ theorem ht_between {a b : Nat} {why : String} (hb : b < 2 ^ K) :
   simp only [ge_iff_le, not_le] at hc
   omega
 
-theorem ht_after {a D B : Nat} {why : String} (hB : B ≤ K) : HT K P0 (after a D B why) (· < 2 ^ K) := by
+theorem ht_after {a D B : Nat} {why : String} (hB : B ≤ K) : HT K P0 (after a D B why) (· < 2 ^
+  K) := by
   unfold after; ht
   rename_i hc
   have := shift_lt (B := B) hB
   simp only [ge_iff_le, Bool.or_eq_true, decide_eq_true_eq, not_or, not_le] at hc
   omega
 
-theorem ht_before {b D : Nat} {why : String} (hb : b < 2 ^ K) : HT K P0 (before b D why) (· < 2 ^ K) := by
+theorem ht_before {b D : Nat} {why : String} (hb : b < 2 ^ K) : HT K P0 (before b D why) (· < 2
+  ^ K) := by
   unfold before; ht
   exact lt_of_le_of_lt (Nat.sub_le _ _) hb
 
 theorem ht_labBefore (g : Nat) : HT K P0 (labBefore g) (· < 2 ^ K) := by
   unfold labBefore
-  refine HT.bind HT.getP fun P _ => HT.bind (HT.getG g) fun G hG => HT.bind (HT.getC _) fun C _ => ?_
+  refine HT.bind HT.getP fun P _ => HT.bind (HT.getG g) fun G hG => HT.bind (HT.getC _) fun C _
+    => ?_
   split
   · exact ht_before (by vb)
   · exact HT.bind (HT.getG _) fun G' hG' => ht_between (by vb)
 
 theorem ht_labAfter (g : Nat) (hL : LabRoom K P0) : HT K P0 (labAfter g) (· < 2 ^ K) := by
   unfold labAfter
-  refine HT.bind HT.getP fun P hP => HT.bind (HT.getG g) fun G hG => HT.bind (HT.getC _) fun C _ => ?_
+  refine HT.bind HT.getP fun P hP => HT.bind (HT.getG g) fun G hG => HT.bind (HT.getC _) fun C _
+    => ?_
   split
   · exact ht_after (by rw [hP.1]; exact hL.Bg)
   · exact HT.bind (HT.getG _) fun G' hG' => ht_between (by vb)
 
 theorem ht_pushBackLabs {center D B : Nat} (hc : center < 2 ^ K) (hB : B ≤ K) :
-    ∀ (prev : Option Nat) (k : Nat), HT K P0 (pushBackLabs center D B prev k) (fun l => ∀ a ∈ l, a < 2 ^ K)
+    ∀ (prev : Option Nat) (k : Nat), HT K P0 (pushBackLabs center D B prev k) (fun l => ∀ a ∈ l,
+      a < 2 ^ K)
   | _, 0 => by unfold pushBackLabs; exact HT.pure (by simp)
   | prev, k + 1 => by
     unfold pushBackLabs
@@ -391,7 +400,8 @@ theorem unitCand_lt {s : Core} (h : WB K s) (x : Nat) (left : Bool) :
   all_goals (subst_vars; vb)
 
 theorem foldChk_size_eq {y : Nat} : ∀ (u labs : List Nat) (a : Array Group) (g : Nat),
-    (((u.zip labs).foldl (fun a p => a.modify p.1 fun G => { G with chk := y, lab := p.2 }) a).getX g).size =
+    (((u.zip labs).foldl (fun a p => a.modify p.1 fun G => { G with chk := y, lab := p.2 })
+      a).getX g).size =
       (a.getX g).size
   | [], _, a, g => by simp
   | _ :: _, [], a, g => by simp
@@ -403,7 +413,8 @@ theorem foldChk_size_eq {y : Nat} : ∀ (u labs : List Nat) (a : Array Group) (g
 plus the moved groups' sizes (Sz, the hypothesis). -/
 theorem wb_cmoveLState {s : Core} (h : WB K s) {x : Nat} {u labs : List Nat}
     (hu : ∀ g ∈ u, g < 2 ^ K) (hl : ∀ l ∈ labs, l < 2 ^ K)
-    (hsz : cSz s (cLl s x) + (u.map fun g => gSz s g).sum < 2 ^ K) : WB K (cmoveLState s x u labs) := by
+    (hsz : cSz s (cLl s x) + (u.map fun g => gSz s g).sum < 2 ^ K) : WB K (cmoveLState s x u
+      labs) := by
   have h1 := wb_moveGroupsLeft h (x := x) (h.cL x) hu hl
   unfold cmoveLState
   refine wb_cmoveSizes h1 ?_
@@ -415,7 +426,8 @@ theorem wb_cmoveLState {s : Core} (h : WB K s) {x : Nat} {u labs : List Nat}
 
 theorem wb_cmoveRState {s : Core} (h : WB K s) {x : Nat} {u labs : List Nat}
     (hu : ∀ g ∈ u, g < 2 ^ K) (hl : ∀ l ∈ labs, l < 2 ^ K)
-    (hsz : cSz s (cRr s x) + (u.map fun g => gSz s g).sum < 2 ^ K) : WB K (cmoveRState s x u labs) := by
+    (hsz : cSz s (cRr s x) + (u.map fun g => gSz s g).sum < 2 ^ K) : WB K (cmoveRState s x u
+      labs) := by
   have h1 := wb_moveGroupsRight h (x := x) (h.cR x) hu hl
   unfold cmoveRState
   refine wb_cmoveSizes h1 ?_
@@ -440,7 +452,8 @@ theorem ht_pushLabsR {s : Core} (h : WB K s) (hL : LabRoom K s.P) (x k : Nat) :
 
 /-! ### Reservation: the split start's own writes -/
 
-theorem wb_splitLink {t : Core} (h : WB K t) {x : Nat} (hx : x < 2 ^ K) (hroom : t.C.size + 2 ≤ 2 ^ K) :
+theorem wb_splitLink {t : Core} (h : WB K t) {x : Nat} (hx : x < 2 ^ K) (hroom : t.C.size + 2 ≤
+  2 ^ K) :
     WB K (linkChunkPair (push2 t) x t.C.size (t.C.size + 1)) :=
   wb_linkChunkPair (wb_push2 h) hx (by omega) (by omega)
 
@@ -488,14 +501,14 @@ theorem ht_removeChunk (x : Nat) : HT K P0 (removeChunk x) (fun _ => True) := by
 
 /-- A move of one element of a splitting group to a sibling (R, Lab). -/
 theorem ht_moveElem (g : Nat) (hL : LabRoom K P0) : HT K P0 (moveElem g) (· < 2 ^ K) := by
+  have hcenter := center_lt hL.Be (Or.inl hL.K1)
   unfold moveElem
   ht [ht_after hL.Be, ht_before ?_]
   all_goals first
-    | exact center_lt hL.Be (Or.inl hL.K1)
     | htfin
     | (intro t ht hP; refine ⟨?_, hP⟩; first
-        | exact wb_moveFirstLeft ht (by vb) (by vb) (by subst_vars; first | vb | exact center_lt hL.Be (Or.inl hL.K1))
-        | exact wb_moveLastRight ht (by vb) (by vb) (by subst_vars; first | vb | exact center_lt hL.Be (Or.inl hL.K1)))
+        | exact wb_moveFirstLeft ht (by vb) (by vb) (by subst_vars; vb)
+        | exact wb_moveLastRight ht (by vb) (by vb) (by subst_vars; vb))
 
 /-- A chunk-split move of a unit of groups (R, Lab). -/
 theorem ht_moveUnit (x : Nat) (left : Bool) (hL : LabRoom K P0) :
@@ -509,6 +522,7 @@ theorem ht_moveUnit (x : Nat) (left : Bool) (hL : LabRoom K P0) :
         | exact wb_moveGroupsLeft ht (by vb) ‹_› ‹_›
         | exact wb_moveGroupsRight ht (by vb) ‹_› ‹_›)
     | exact ⟨by vb, ‹_›⟩
-    | (intro n hn; cases hn <;> vb)
+    | (intro n hn; cases hn)
+  all_goals vb
 
 end OrderMaintenance.Proof.Word

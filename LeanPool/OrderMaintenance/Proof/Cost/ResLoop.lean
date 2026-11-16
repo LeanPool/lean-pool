@@ -43,7 +43,8 @@ theorem reservation_ok {s : Core} {k : Nat} (I : Nat → Core → Prop) (Q : Cor
     (h0 : I 0 s)
     (hstep : ∀ j t, I j t → j < k →
       (t.resJob = none → (t.pqHi = 0 ∧ Q t) ∨
-        (t.pqHi ≠ 0 ∧ ∃ c t1 t2, pqPopMax.run t = .ok c t1 ∧ (splitChunkStart c).run t1 = .ok () t2 ∧
+        (t.pqHi ≠ 0 ∧ ∃ c t1 t2, pqPopMax.run t = .ok c t1 ∧ (splitChunkStart c).run t1 = .ok ()
+          t2 ∧
           I (j + 1) t2)) ∧
       (∀ job, t.resJob = some job → ∃ r t1, (jobStep job).run t = .ok r t1 ∧
         I (j + 1) { t1 with resJob := r })) :

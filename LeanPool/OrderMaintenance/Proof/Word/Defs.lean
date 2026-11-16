@@ -43,10 +43,12 @@ open OrderMaintenance.Model OrderMaintenance.Proof
 def ElemB (K : Nat) (e : Elem) : Prop :=
   e.next < 2 ^ K ∧ e.prev < 2 ^ K ∧ e.grp < 2 ^ K ∧ e.lab < 2 ^ K
 
+/-- Every numerical field stored in a group fits below the word bound. -/
 def GroupB (K : Nat) (g : Group) : Prop :=
   g.next < 2 ^ K ∧ g.prev < 2 ^ K ∧ g.first < 2 ^ K ∧ g.last < 2 ^ K ∧ g.chk < 2 ^ K ∧
     g.lab < 2 ^ K ∧ g.size < 2 ^ K ∧ g.src < 2 ^ K ∧ g.l < 2 ^ K ∧ g.r < 2 ^ K
 
+/-- Every numerical field stored in a chunk fits below the word bound. -/
 def ChunkB (K : Nat) (c : Chunk) : Prop :=
   c.next < 2 ^ K ∧ c.prev < 2 ^ K ∧ c.first < 2 ^ K ∧ c.last < 2 ^ K ∧ c.size < 2 ^ K ∧
     c.src < 2 ^ K ∧ c.l < 2 ^ K ∧ c.r < 2 ^ K ∧ c.tag < 2 ^ K
@@ -59,6 +61,7 @@ def NodeB (K : Nat) (n : Node) : Prop :=
     (∀ c ∈ n.children, c < 2 ^ K) ∧ (∀ p ∈ n.table, p.1 < 2 ^ K ∧ p.2 < 2 ^ K) ∧
     (∀ t ∈ n.inTables, t < 2 ^ K) ∧ (∀ p ∈ n.side, p.1 < 2 ^ K)
 
+/-- The numerical arguments of each background-job program counter fit below the word bound. -/
 def JobPcB (K : Nat) : JobPc → Prop
   | .copy j => j < 2 ^ K
   | .walk none => True
@@ -66,11 +69,14 @@ def JobPcB (K : Nat) : JobPc → Prop
   | .afterDrain v up => v < 2 ^ K ∧ up < 2 ^ K
   | .fund v up src k => v < 2 ^ K ∧ up < 2 ^ K ∧ src < 2 ^ K ∧ k < 2 ^ K
 
+/-- The three chunk handles and program counter of a job fit below the word bound. -/
 def JobB (K : Nat) (j : Job) : Prop := j.x < 2 ^ K ∧ j.y < 2 ^ K ∧ j.z < 2 ^ K ∧ JobPcB K j.pc
 
+/-- All numerical preparation fields and path entries fit below the word bound. -/
 def PrepB (K : Nat) (p : Prep) : Prop :=
   p.chunk < 2 ^ K ∧ p.h < 2 ^ K ∧ p.below < 2 ^ K ∧ p.tag < 2 ^ K ∧ ∀ v ∈ p.path, v < 2 ^ K
 
+/-- Every concrete parameter fits below the word bound. -/
 def ParamsB (K : Nat) (P : Params) : Prop :=
   P.N < 2 ^ K ∧ P.L < 2 ^ K ∧ P.G < 2 ^ K ∧ P.T < 2 ^ K ∧ P.theta < 2 ^ K ∧ P.elementBits < 2 ^ K ∧
     P.groupBits < 2 ^ K ∧ P.elementSpacing < 2 ^ K ∧ P.groupSpacing < 2 ^ K ∧ P.groupBudget < 2
@@ -121,7 +127,8 @@ theorem elemB_default (K : Nat) : ElemB K default := by
   simp only [ElemB]; exact ⟨pos K, pos K, pos K, pos K⟩
 
 theorem groupB_default (K : Nat) : GroupB K default := by
-  have := pos K; simp only [GroupB]; exact ⟨this, this, this, this, this, this, this, this, this, this⟩
+  have := pos K; simp only [GroupB]; exact ⟨this, this, this, this, this, this, this, this,
+    this, this⟩
 
 theorem chunkB_default (K : Nat) : ChunkB K default := by
   have := pos K; simp only [ChunkB]; exact ⟨this, this, this, this, this, this, this, this, this⟩
@@ -139,10 +146,13 @@ theorem getX_of {α : Type} [Inhabited α] {p : α → Prop} {a : Array α} (hd 
   | none => exact hd
   | some x => exact h x (Array.mem_of_getElem? hx)
 
-@[simp] theorem getX_empty {α : Type} [Inhabited α] (i : Nat) : (#[] : Array α).getX i = default := by
-  simp [Array.getX]
+@[simp] theorem getX_empty {α : Type} [Inhabited α] (i : Nat) : (#[] : Array α).getX i = default
+  := by
+  simp only [Array.getX, Array.getD_eq_getD_getElem?, List.size_toArray, List.length_nil,
+      not_lt_zero, not_false_eq_true, getElem?_neg, Option.getD_none]
 
-theorem arrB_empty (K : Nat) : ArrB K #[] := fun i => by simp [pos K]
+theorem arrB_empty (K : Nat) : ArrB K #[] := fun i => by simp only [getX_empty,
+    Nat.default_eq_zero, pos K]
 
 theorem arrB_default (K : Nat) : ArrB K default := arrB_empty K
 
@@ -230,7 +240,9 @@ theorem Bg_le (N : Nat) : (proofParams N).groupBits ≤ 40 * pL N := by
     by_contra hc
     have : 2 ^ (pL N + 2) ≤ PC (proofParams N) :=
       le_trans (Nat.pow_le_pow_right (by norm_num) (by omega))
-        (Nat.log2_self_le (by intro h0; rw [h0] at hc; simp at hc))
+        (Nat.log2_self_le (by intro h0; rw [h0] at hc; simp only [Nat.log2_zero,
+            le_add_iff_nonneg_left,
+            zero_le, not_true_eq_false] at hc))
     omega
   omega
 
@@ -268,8 +280,8 @@ theorem params_room (N : Nat) :
   have hE := Be_le N
   have hG := Bg_le N
   refine ⟨?_, ?_, ?_, ?_, ?_, N_lt N⟩ <;> simp only [wK] <;>
-    try (first | (show _ ≤ 64 * pL N; omega) | (show _ < 64 * pL N; omega))
-  show (pL N / 3 + 1 + 2) * 64 ≤ 64 * pL N
+    try (first | (change _ ≤ 64 * pL N; omega) | (show _ < 64 * pL N; omega))
+  change (pL N / 3 + 1 + 2) * 64 ≤ 64 * pL N
   omega
 
 /-- `x < 2^m` and `m ≤ K` give `x < 2^K`. -/
@@ -284,12 +296,13 @@ theorem params_wB (N : Nat) : ParamsB (wK (proofParams N)) (proofParams N) := by
   have small : ∀ x, x ≤ 64 * pL N → x < 2 ^ wK (proofParams N) := fun x hx =>
     lt_of_le_of_lt (le_trans hx (by rw [hK])) Nat.lt_two_pow_self
   have hL' : (proofParams N).L = pL N := rfl
-  refine ⟨lt_pow_mono hN (by rw [hL', hK]; omega), small _ (by simp [proofParams]; omega),
-    small _ (by simp [proofParams]; omega), ?_, ?_, small _ (by rw [← hK]; omega),
-    small _ (by rw [← hK]; omega), ?_, ?_, small _ (by simp [proofParams]; omega),
-    small _ (by simp [proofParams]; omega), small _ (by simp [proofParams]; omega),
-    small _ (by simp [proofParams]; omega), small _ (by simp [proofParams]; omega),
-    small _ (by simp [proofParams]; omega), small _ (by simp [proofParams]; omega)⟩
+  refine ⟨lt_pow_mono hN (by rw [hL', hK]; omega), small _ (by simp only [proofParams]; omega),
+    small _ (by simp only [proofParams]; omega), ?_, ?_, small _ (by rw [← hK]; omega),
+    small _ (by rw [← hK]; omega), ?_, ?_, small _ (by simp only [proofParams]; omega),
+    small _ (by simp only [proofParams]; omega), small _ (by simp only [proofParams]; omega),
+    small _ (by simp only [proofParams]; omega), small _ (by simp only [proofParams]; omega),
+    small _ (by simp only [proofParams, Nat.ofNat_pos, le_mul_iff_one_le_right]; omega),
+    small _ (by simp only [proofParams]; omega)⟩
   · -- T = 3L² < 2^(2L + 2) ≤ 2^wK
     have h1 : 3 * pL N * pL N < 2 ^ (2 * pL N + 2) := by
       have := pow_ge_mul (pL N) hL
@@ -317,9 +330,16 @@ theorem initState_wB {K : Nat} {P : Params} (hP : ParamsB K P) (hBe : P.elementB
     rw [Nat.shiftLeft_eq, one_mul]; exact Nat.pow_lt_pow_right (by norm_num) (by omega)
   have cG : 1 <<< (P.groupBits - 1) < 2 ^ K := by
     rw [Nat.shiftLeft_eq, one_mul]; exact Nat.pow_lt_pow_right (by norm_num) (by omega)
-  refine ⟨hP, ?_, ?_, ?_, ?_, by simp [initState], ?_, by simp [initState], by simp [initState], ?_,
+  refine ⟨hP, ?_, ?_, ?_, ?_, by simp only [initState, List.not_mem_nil, IsEmpty.forall_iff,
+      implies_true], ?_, by simp only [initState, reduceCtorEq,
+      IsEmpty.forall_iff,
+      implies_true], by simp only [
+      initState,
+      reduceCtorEq,
+      IsEmpty.forall_iff,
+      implies_true], ?_,
     fun c => by simp only [initState, getX_empty]; exact arrB_default K,
-    fun c t ht => (by simp [initState] at ht; cases ht), arrB_empty K⟩
+    fun c t ht => (by simp only [initState, getX_empty] at ht; cases ht), arrB_empty K⟩
   · refine getX_of (elemB_default K) (fun x hx => ?_)
     simp only [initState, List.mem_toArray, List.mem_cons, List.not_mem_nil, or_false] at hx
     rcases hx with rfl | rfl

@@ -99,7 +99,7 @@ theorem Shape.drain_move_hyps {s : Core} {cl : List Nat} {ord : Nat → List Nat
   · obtain ⟨hf, -⟩ := S.ends v hg.1
     show (nd (ts s) v).first ≠ NIL
     rw [hf]
-    exact fun e => hL.nonil (e ▸ (S.rng_sub v).subset (headD_mem hne NIL))
+    exact fun e => hL.nonil (e ▸ (rng_sub (s := s) (cl := cl) v).subset (headD_mem hne NIL))
   · show h + 1 < ((ts s).path.getX y).size
     rw [S.pathSize y hycl]; omega
   · show (nd (ts s) (dsT s v)).lab? (belowY s v y) = some tb
@@ -230,7 +230,7 @@ theorem ins_hyps {s : Core} {A : Abs} {x : Nat} (hA : INV s A) (hT : TopInv s)
   have hnd : (s.cin.getX x).Nodup := by
     have := S.tabsNodup 0 x hent; unfold tabs at this; rw [ite_eq_left rfl] at this; exact this
   -- the split's data
-  have hT1 := ins_pp1 hI hC hx
+  have hT1 := ins_pp1 hI hx
   obtain ⟨i1, hi1⟩ := idx?_some_of_mem hT1
   set f1x := digit (ts s) x 1 with hf1
   have hdist : ∀ i i', 1 ≤ i → i ≤ s.P.H → 1 ≤ i' → i' ≤ s.P.H → pth (ts s) x i = pth (ts s) x i' →
@@ -558,8 +558,8 @@ theorem dsAgree_moveI {κ : Caps} {s : Core} {cl : List Nat} {ord : Nat → List
     have e1' : (s.nodes.getX v).first = (rng (ts s) cl v).headD NIL := e1
     have e2' : (s.nodes.getX v).last = (rng (ts s) cl v).getLastD NIL := e2
     rw [e1', e2']
-    refine ⟨(S.rng_sub v).subset (headD_mem hne NIL), (S.rng_sub v).subset ?_⟩
-    rw [List.getLastD_eq_getLast?, List.getLast?_eq_getLast hne]; exact List.getLast_mem hne
+    refine ⟨(rng_sub (s := s) (cl := cl) v).subset (headD_mem hne NIL), (rng_sub (s := s) (cl := cl) v).subset ?_⟩
+    rw [List.getLastD_eq_getLast?, List.getLast?_eq_some_getLast hne]; exact List.getLast_mem hne
   have hfC := ((hcl.2 _).mp hfl.1).2
   have hlC := ((hcl.2 _).mp hfl.2).2
   obtain ⟨hyN, hyP⟩ := CLok.links hcl hycl

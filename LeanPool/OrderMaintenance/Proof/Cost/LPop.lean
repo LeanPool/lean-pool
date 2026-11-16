@@ -75,6 +75,32 @@ def LGh.fresh (lg : LGh) (y z : Nat) : LGh :=
   { child := lg.child, hv := f lg.hv, cs := f lg.cs, rs := f lg.rs, ins := f lg.ins, pb := f lg.pb,
     pf := f lg.pf, arB := f lg.arB, arF := f lg.arF, e0 := lg.e0 }
 
+/-- Reserving two chunks adds exactly their two fresh indices to the live chunks. -/
+theorem ResSpec.liveC {s s' : Core} {x : Nat} (R : ResSpec s s' x) (hxL : LiveC s x) :
+    ∀ c, LiveC s' c ↔ LiveC s c ∨ c = s.C.size ∨ c = s.C.size + 1 := by
+  intro c; simp only [LiveC, R.Csize]; constructor
+  · rintro ⟨h1, h2⟩
+    by_cases h3 : c < s.C.size
+    · exact Or.inl ⟨h1, h3⟩
+    · right; have : c = s.C.size ∨ c = s.C.size + 1 := by omega
+      exact this
+  · rintro (⟨h1, h2⟩ | h | h)
+    · exact ⟨h1, by omega⟩
+    · subst h; exact ⟨hxL.1.trans (Nat.le_of_lt hxL.2), by omega⟩
+    · subst h; exact ⟨by omega, by omega⟩
+
+/-- A splitting family avoids every quiet chunk and has allocated siblings. -/
+theorem CInvE.family_avoids_quiet {s : Core} {L : List Nat} {δ δu s₀ : Nat → Nat} {ex x : Nat}
+    (hC : CInvE s L δ δu s₀ ex) (hxq : cSt s x = .quiet) :
+    ∀ x', LiveC s x' → cSt s x' = .splitting →
+      x' ≠ x ∧ cLl s x' ≠ x ∧ cRr s x' ≠ x ∧ cLl s x' < s.C.size ∧ cRr s x' < s.C.size := by
+  intro x' hx' hs'
+  have F := hC.cfam x' hx' hs'
+  refine ⟨?_, ?_, ?_, F.lLive.2, F.rLive.2⟩
+  · rintro rfl; rw [hxq] at hs'; cases hs'
+  · intro e; have := F.lSt; rw [e, hxq] at this; cases this
+  · intro e; have := F.rSt; rw [e, hxq] at this; cases this
+
 /-- **Lemma C3 at the reservation pop.** -/
 theorem linv_pop {s s' : Core} {A : Abs} {lg : LGh} {s₀ : Nat → Nat} {x : Nat}
     (R : ResSpec s s' x) (hC : CInv s A.elist (fun _ => 0) (fun _ => 0) s₀)
@@ -94,26 +120,8 @@ theorem linv_pop {s s' : Core} {A : Abs} {lg : LGh} {s₀ : Nat → Nat} {x : Na
     intro c hc; apply propext; constructor
     · intro h; exact hnew c h hc
     · intro h; exact h.elim
-  have hLC : ∀ c, LiveC s' c ↔ LiveC s c ∨ c = s.C.size ∨ c = s.C.size + 1 := by
-    intro c; simp only [LiveC, R.Csize]; constructor
-    · rintro ⟨h1, h2⟩
-      by_cases h3 : c < s.C.size
-      · exact Or.inl ⟨h1, h3⟩
-      · right; have : c = s.C.size ∨ c = s.C.size + 1 := by omega
-        exact this
-    · rintro (⟨h1, h2⟩ | h | h)
-      · exact ⟨h1, by omega⟩
-      · subst h; exact ⟨hxL.1.trans (Nat.le_of_lt hxL.2), by omega⟩
-      · subst h; exact ⟨by omega, by omega⟩
-  -- the family of an old splitting chunk is old and avoids `x`
-  have hfamOld : ∀ x', LiveC s x' → cSt s x' = .splitting →
-      x' ≠ x ∧ cLl s x' ≠ x ∧ cRr s x' ≠ x ∧ cLl s x' < s.C.size ∧ cRr s x' < s.C.size := by
-    intro x' hx' hs'
-    have F := hC.cfam x' hx' hs'
-    refine ⟨?_, ?_, ?_, F.lLive.2, F.rLive.2⟩
-    · rintro rfl; rw [hxq] at hs'; cases hs'
-    · intro e; have := F.lSt; rw [e, hxq] at this; cases this
-    · intro e; have := F.rSt; rw [e, hxq] at this; cases this
+  have hLC := R.liveC hxL
+  have hfamOld := hC.family_avoids_quiet hxq
   have hfamC : ∀ x', LiveC s x' → cSt s x' = .splitting → famC s' x' = famC s x' := by
     intro x' hx' hs'
     obtain ⟨h1, h2, h3, h4, h5⟩ := hfamOld x' hx' hs'
@@ -142,14 +150,15 @@ theorem linv_pop {s s' : Core} {A : Abs} {lg : LGh} {s₀ : Nat → Nat} {x : Na
     unfold famC
     rw [R.xs.2.2.2.1, R.xs.2.2.2.2, (R.new _ (Or.inl rfl)).1, R.xs.1, (R.new _ (Or.inr rfl)).1]
     omega
-  have hstN : ∀ c, c = s.C.size ∨ c = s.C.size + 1 → cSt s' c = .overflow := fun c h => (R.new c h).2.2.1
+  have hstN : ∀ c, c = s.C.size ∨ c = s.C.size + 1 → cSt s' c = .overflow := fun c h => (R.new c
+    h).2.2.1
   refine
     { gaps := ?_, range := ?_, hv := ?_, pb := ?_, pf := ?_, roots := ?_, claim2 := ?_,
       insQ := ?_, insO := ?_, insS := ?_, arrS := ?_, arrN := ?_, e0 := ?_, famChild := ?_ }
   · intro g hg' hl
     rw [hLv] at hg'
     have hgc := hcg g hg'
-    show gL s' g + s'.P.groupSpacing / 2 ^ (if gC s' g = s.C.size ∨ gC s' g = s.C.size + 1 then 0
+    change gL s' g + s'.P.groupSpacing / 2 ^ (if gC s' g = s.C.size ∨ gC s' g = s.C.size + 1 then 0
       else lg.hv (gC s' g)) ≤ gL s' (gN s' g)
     rw [eC] at hl ⊢
     rw [eL, eL, eN, R.P, hfr _ _ hgc]
@@ -162,21 +171,21 @@ theorem linv_pop {s s' : Core} {A : Abs} {lg : LGh} {s₀ : Nat → Nat} {x : Na
   · intro g hg'
     rw [hLv] at hg'
     have hgc := hcg g hg'
-    show cG s'.P ≤ gL s' g + (if gC s' g = s.C.size ∨ gC s' g = s.C.size + 1 then 0
+    change cG s'.P ≤ gL s' g + (if gC s' g = s.C.size ∨ gC s' g = s.C.size + 1 then 0
       else lg.pf (gC s' g)) * s'.P.groupSpacing ∧ gL s' g ≤ cG s'.P +
         (if gC s' g = s.C.size ∨ gC s' g = s.C.size + 1 then 0 else lg.pb (gC s' g)) *
           s'.P.groupSpacing
     rw [eL, eC, R.P, hfr _ _ hgc, hfr _ _ hgc]
     exact hL.range g hg'
   · intro c
-    show (if c = s.C.size ∨ c = s.C.size + 1 then 0 else lg.hv c) ≤
+    change (if c = s.C.size ∨ c = s.C.size + 1 then 0 else lg.hv c) ≤
       2 * ((if c = s.C.size ∨ c = s.C.size + 1 then 0 else lg.cs c) +
         (if c = s.C.size ∨ c = s.C.size + 1 then 0 else lg.rs c))
     by_cases hc : c = s.C.size ∨ c = s.C.size + 1
     · simp only [ite_eq_left hc]; omega
     · simp only [ite_eq_right hc]; exact hL.hv c
   · intro c
-    show (if c = s.C.size ∨ c = s.C.size + 1 then 0 else lg.pb c) ≤
+    change (if c = s.C.size ∨ c = s.C.size + 1 then 0 else lg.pb c) ≤
       (if c = s.C.size ∨ c = s.C.size + 1 then 0 else lg.arB c) +
         (if c = s.C.size ∨ c = s.C.size + 1 then 0 else lg.rs c) +
         (if c = s.C.size ∨ c = s.C.size + 1 then 0 else lg.cs c)
@@ -184,7 +193,7 @@ theorem linv_pop {s s' : Core} {A : Abs} {lg : LGh} {s₀ : Nat → Nat} {x : Na
     · simp only [ite_eq_left hc]; omega
     · simp only [ite_eq_right hc]; exact hL.pb c
   · intro c
-    show (if c = s.C.size ∨ c = s.C.size + 1 then 0 else lg.pf c) ≤
+    change (if c = s.C.size ∨ c = s.C.size + 1 then 0 else lg.pf c) ≤
       (if c = s.C.size ∨ c = s.C.size + 1 then 0 else lg.arF c) +
         (if c = s.C.size ∨ c = s.C.size + 1 then 0 else lg.rs c) +
         (if c = s.C.size ∨ c = s.C.size + 1 then 0 else lg.cs c)
@@ -192,21 +201,24 @@ theorem linv_pop {s s' : Core} {A : Abs} {lg : LGh} {s₀ : Nat → Nat} {x : Na
     · simp only [ite_eq_left hc]; omega
     · simp only [ite_eq_right hc]; exact hL.pf c
   · intro d hd
-    show (if d = s.C.size ∨ d = s.C.size + 1 then 0 else lg.rs d) + pending s' lg d ≤
+    change (if d = s.C.size ∨ d = s.C.size + 1 then 0 else lg.rs d) + pending s' lg d ≤
       (if d = s.C.size ∨ d = s.C.size + 1 then 0 else lg.arB d) +
         (if d = s.C.size ∨ d = s.C.size + 1 then 0 else lg.arF d) + 1
     rcases (hLC d).mp hd with hd | hdn
     · rw [hfr _ _ hd.2, hfr _ _ hd.2, hfr _ _ hd.2, pending_of_Gs R.Gs]; exact hL.roots d hd
     · rw [hfr0 _ _ hdn, hfr0 _ _ hdn, hfr0 _ _ hdn]
-      unfold pending; rw [hgrE d hdn]; simp
+      unfold pending; rw [hgrE d hdn]; simp only [ne_eq, Finset.filter_empty, Finset.card_empty,
+          add_zero, zero_add, zero_le]
   · intro d hd
-    show (if d = s.C.size ∨ d = s.C.size + 1 then 0 else lg.cs d) * gmin s'.P + charge s' lg d ≤
+    change (if d = s.C.size ∨ d = s.C.size + 1 then 0 else lg.cs d) * gmin s'.P + charge s' lg d ≤
       (if d = s.C.size ∨ d = s.C.size + 1 then 0 else lg.ins d)
     rcases (hLC d).mp hd with hd | hdn
     · rw [hfr _ _ hd.2, hfr _ _ hd.2, charge_of_Gs R.Gs R.P, R.P]; exact hL.claim2 d hd
-    · rw [hfr0 _ _ hdn, hfr0 _ _ hdn, charge_eq, hgrE d hdn]; simp
+    · rw [hfr0 _ _ hdn, hfr0 _ _ hdn, charge_eq, hgrE d hdn]; simp only [zero_mul,
+        Finset.sum_empty, add_zero,
+        Std.le_refl]
   · intro d hd hds
-    show (if d = s.C.size ∨ d = s.C.size + 1 then 0 else lg.ins d) + lg.e0 d ≤
+    change (if d = s.C.size ∨ d = s.C.size + 1 then 0 else lg.ins d) + lg.e0 d ≤
       cSz s' d + kC s'.P s'.P.T
     rcases (hLC d).mp hd with hd | hdn
     · have hdx : d ≠ x := by intro e; rw [e, R.xs.2.2.1] at hds; cases hds
@@ -215,7 +227,7 @@ theorem linv_pop {s s' : Core} {A : Abs} {lg : LGh} {s₀ : Nat → Nat} {x : Na
       rw [hfr _ _ hd.2, o.1, R.P]; exact hL.insQ d hd hds
     · rw [hstN d hdn] at hds; cases hds
   · intro d hd hds
-    show (if d = s.C.size ∨ d = s.C.size + 1 then 0 else lg.ins d) +
+    change (if d = s.C.size ∨ d = s.C.size + 1 then 0 else lg.ins d) +
       Function.update s₀ x (cSz s x) (cSrc s' d) ≤ famC s' (cSrc s' d)
     rcases (hLC d).mp hd with hd | hdn
     · have hdx : d ≠ x := by intro e; rw [e, R.xs.2.2.1] at hds; cases hds
@@ -227,7 +239,7 @@ theorem linv_pop {s s' : Core} {A : Abs} {lg : LGh} {s₀ : Nat → Nat} {x : Na
       exact hL.insO d hd hds
     · rw [hfr0 _ _ hdn, (R.new d hdn).2.2.2, Function.update_self, hfx]; omega
   · intro d hd hds
-    show (if d = s.C.size ∨ d = s.C.size + 1 then 0 else lg.ins d) ≤ famC s' d + kC s'.P s'.P.T
+    change (if d = s.C.size ∨ d = s.C.size + 1 then 0 else lg.ins d) ≤ famC s' d + kC s'.P s'.P.T
     rcases (hLC d).mp hd with hd | hdn
     · rw [hfr _ _ hd.2, R.P]
       by_cases hdx : d = x
@@ -240,7 +252,7 @@ theorem linv_pop {s s' : Core} {A : Abs} {lg : LGh} {s₀ : Nat → Nat} {x : Na
     rcases (hLC x').mp hx' with hx' | hdn
     · by_cases hdx : x' = x
       · subst hdx
-        show (if cLl s' x' = s.C.size ∨ cLl s' x' = s.C.size + 1 then 0 else lg.arB (cLl s' x')) +
+        change (if cLl s' x' = s.C.size ∨ cLl s' x' = s.C.size + 1 then 0 else lg.arB (cLl s' x')) +
             (if cLl s' x' = s.C.size ∨ cLl s' x' = s.C.size + 1 then 0 else lg.arF (cLl s' x')) +
             (if cRr s' x' = s.C.size ∨ cRr s' x' = s.C.size + 1 then 0 else lg.arB (cRr s' x')) +
             (if cRr s' x' = s.C.size ∨ cRr s' x' = s.C.size + 1 then 0 else lg.arF (cRr s' x')) +
@@ -254,7 +266,7 @@ theorem linv_pop {s s' : Core} {A : Abs} {lg : LGh} {s₀ : Nat → Nat} {x : Na
         rw [o.2.2.1] at hxs'
         obtain ⟨-, -, -, h4, h5⟩ := hfamOld x' hx' hxs'
         have h := hL.arrS x' hx' hxs'
-        show (if cLl s' x' = s.C.size ∨ cLl s' x' = s.C.size + 1 then 0 else lg.arB (cLl s' x')) +
+        change (if cLl s' x' = s.C.size ∨ cLl s' x' = s.C.size + 1 then 0 else lg.arB (cLl s' x')) +
             (if cLl s' x' = s.C.size ∨ cLl s' x' = s.C.size + 1 then 0 else lg.arF (cLl s' x')) +
             (if cRr s' x' = s.C.size ∨ cRr s' x' = s.C.size + 1 then 0 else lg.arB (cRr s' x')) +
             (if cRr s' x' = s.C.size ∨ cRr s' x' = s.C.size + 1 then 0 else lg.arF (cRr s' x')) +
@@ -265,7 +277,7 @@ theorem linv_pop {s s' : Core} {A : Abs} {lg : LGh} {s₀ : Nat → Nat} {x : Na
         exact h
     · rw [hstN x' hdn] at hxs'; cases hxs'
   · intro d hd hds
-    show (if d = s.C.size ∨ d = s.C.size + 1 then 0 else lg.arB d) +
+    change (if d = s.C.size ∨ d = s.C.size + 1 then 0 else lg.arB d) +
       (if d = s.C.size ∨ d = s.C.size + 1 then 0 else lg.arF d) ≤ 3 * Mu s'.P
     rcases (hLC d).mp hd with hd | hdn
     · rw [hfr _ _ hd.2, hfr _ _ hd.2, R.P]
@@ -276,7 +288,7 @@ theorem linv_pop {s s' : Core} {A : Abs} {lg : LGh} {s₀ : Nat → Nat} {x : Na
         exact hL.arrN d hd hds
     · exact absurd (hstN d hdn) hds
   · intro d hd hds
-    show lg.e0 d ≤ cSz s' d
+    change lg.e0 d ≤ cSz s' d
     rcases (hLC d).mp hd with hd | hdn
     · have hdx : d ≠ x := by intro e; rw [e, R.xs.2.2.1] at hds; cases hds
       have o := R.old d hd.2 hdx
@@ -285,7 +297,7 @@ theorem linv_pop {s s' : Core} {A : Abs} {lg : LGh} {s₀ : Nat → Nat} {x : Na
     · rw [hstN d hdn] at hds; cases hds
   · intro p hp hps
     rw [hLv] at hp; rw [eSt] at hps
-    show lg.child (gLl s' p) = lg.child (gRr s' p)
+    change lg.child (gLl s' p) = lg.child (gRr s' p)
     rw [eLl, eRr]; exact hL.famChild p hp hps
 
 end OrderMaintenance.Proof
@@ -352,7 +364,8 @@ namespace OrderMaintenance.Proof
 
 open OrderMaintenance.Model
 theorem LSame.trans {a b c : Core} (h1 : LSame a b) (h2 : LSame b c) : LSame a c :=
-  ⟨h2.Gs.trans h1.Gs, h2.P.trans h1.P, h2.Csize.trans h1.Csize, fun d => (h2.csz d).trans (h1.csz d),
+  ⟨h2.Gs.trans h1.Gs, h2.P.trans h1.P, h2.Csize.trans h1.Csize, fun d => (h2.csz d).trans
+    (h1.csz d),
     fun d => (h2.cst d).trans (h1.cst d), fun d => (h2.csrc d).trans (h1.csrc d),
     fun d => (h2.cl d).trans (h1.cl d), fun d => (h2.cr d).trans (h1.cr d),
     fun d => (h2.clast d).trans (h1.clast d)⟩
@@ -396,7 +409,8 @@ theorem INV.cN_cP {s : Core} {A : Abs} (hI : INV s A) {x : Nat} (hx : x ∈ A.ch
     (hp : cP s x ≠ NIL) : cN s (cP s x) = x := by
   have hnd := hI.cList.nodup
   obtain ⟨l1, l2, e⟩ := predOf_split (hI.cList.prev x hx).symm hp
-  have hm : cP s x ∈ A.chunks := by rw [e]; simp
+  have hm : cP s x ∈ A.chunks := by rw [e]; simp only [List.mem_append, List.mem_cons, true_or,
+      or_true]
   rw [hI.cList.next _ hm, e, succOf_mid (e ▸ hnd)]; rfl
 
 /-- The linking of two new chunks around `x` does what it should. -/
@@ -411,15 +425,24 @@ theorem linkCOK_push2 {s : Core} {A : Abs} (hI : INV s A) {x : Nat} (hx : x ∈ 
   have hn1 : cN (push2 s) x = cN s x := by
     simp only [cN, push2, Array.getX_push,
       Array.size_push]; rw [ite_eq_right (by omega), ite_eq_right (by omega)]
-  have hsz : (push2 s).C.size = s.C.size + 2 := by simp [push2]
+  have hsz : (push2 s).C.size = s.C.size + 2 := by
+    simp only [push2, Array.size_push, ]
   have hpm : cP s x = NIL ∨ cP s x ∈ A.chunks := by
     by_cases h : cP s x = NIL
     · exact Or.inl h
-    · right; obtain ⟨l1, l2, e⟩ := predOf_split (hI.cList.prev x hx).symm h; rw [e]; simp
+    · right; obtain ⟨l1, l2, e⟩ := predOf_split (hI.cList.prev x hx).symm h; rw [e]; simp only [
+        List.mem_append,
+        List.mem_cons,
+        true_or,
+        or_true]
   have hnm : cN s x = NIL ∨ cN s x ∈ A.chunks := by
     by_cases h : cN s x = NIL
     · exact Or.inl h
-    · right; obtain ⟨l1, l2, e⟩ := succOf_split (hI.cList.next x hx).symm h; rw [e]; simp
+    · right; obtain ⟨l1, l2, e⟩ := succOf_split (hI.cList.next x hx).symm h; rw [e]; simp only [
+        List.mem_append,
+        List.mem_cons,
+        true_or,
+        or_true]
   have hlt : ∀ c, c = NIL ∨ c ∈ A.chunks → c < s.C.size := by
     intro c hc; rcases hc with h | h
     · rw [h]; unfold NIL; omega
@@ -444,7 +467,8 @@ theorem resSpec_run_core {s s2 : Core} {x : Nat} {job : Job} (hxs : x < s.C.size
     (hT : TopRel (linkChunkPair (push2 s) x s.C.size (s.C.size + 1)) s2) :
     ResSpec' s (markState s2 x s.C.size (s.C.size + 1) job) x := by
   have S := (linkChunkPair_lsame (push2 s) x s.C.size (s.C.size + 1)).trans hT.lsame
-  have hsz2 : s2.C.size = s.C.size + 2 := by rw [S.Csize]; simp [push2]
+  have hsz2 : s2.C.size = s.C.size + 2 := by rw [S.Csize]; simp only [push2, Array.size_push,
+      ]
   -- the fields of `push2 s`
   have hp : ∀ c, (push2 s).C.getX c =
       if c = s.C.size + 1 then {} else if c = s.C.size then {} else s.C.getX c := by
@@ -458,26 +482,34 @@ theorem resSpec_run_core {s s2 : Core} {x : Nat} {job : Job} (hxs : x < s.C.size
     intro c
     simp only [markState, Array.getX_modify, Array.size_modify', hsz2]
     by_cases h1 : c = s.C.size + 1
-    · subst h1; simp [show x ≠ s.C.size + 1 by omega]
+    · subst h1; simp only [ add_lt_add_iff_left, Nat.one_lt_ofNat,
+        and_self, ↓reduceIte, Nat.left_eq_add, one_ne_zero, lt_add_iff_pos_right,
+        Nat.ofNat_pos, and_true, show x ≠ s.C.size + 1 by omega, false_and]
     · by_cases h2 : c = s.C.size
-      · subst h2; simp [show x ≠ s.C.size by omega, h1]
+      · subst h2; simp only [Nat.add_eq_left, one_ne_zero, add_lt_add_iff_left, Nat.one_lt_ofNat,
+          and_true, ↓reduceIte, lt_add_iff_pos_right, Nat.ofNat_pos, and_self,
+          show x ≠ s.C.size by omega, false_and, Nat.left_eq_add]
       · by_cases h3 : c = x
-        · subst h3; simp [h1, h2, Ne.symm h1, Ne.symm h2]; omega
-        · simp [h1, h2, h3, Ne.symm h1, Ne.symm h2, Ne.symm h3]
+        · subst h3; simp only [Ne.symm h1, add_lt_add_iff_left, Nat.one_lt_ofNat, and_true,
+            ↓reduceIte, Ne.symm h2, lt_add_iff_pos_right, Nat.ofNat_pos,
+            true_and, h1, h2, ite_eq_left_iff, not_lt]; omega
+        · simp only [Ne.symm h1, add_lt_add_iff_left, Nat.one_lt_ofNat, and_true, ↓reduceIte,
+            Ne.symm h2, lt_add_iff_pos_right, Nat.ofNat_pos, Ne.symm h3, false_and, h1,
+            h2, h3]
   have e2 : ∀ c, cSz s2 c = cSz (push2 s) c ∧ cLs s2 c = cLs (push2 s) c ∧
       cSt s2 c = cSt (push2 s) c ∧ cSrc s2 c = cSrc (push2 s) c ∧ cLl s2 c = cLl (push2 s) c ∧
       cRr s2 c = cRr (push2 s) c := fun c => ⟨S.csz c, S.clast c, S.cst c, S.csrc c, S.cl c, S.cr c⟩
   refine ⟨?_, ?_, ?_, fun c hc hcx => ?_, ?_, fun c hc => ?_⟩
-  · show s2.Gs = s.Gs; exact S.Gs
-  · show s2.P = s.P; exact S.P
-  · simp [markState, hsz2]
+  · change s2.Gs = s.Gs; exact S.Gs
+  · change s2.P = s.P; exact S.P
+  · simp only [markState, Array.size_modify, hsz2]
   · have h1 : c ≠ s.C.size + 1 := by omega
     have h2 : c ≠ s.C.size := by omega
     obtain ⟨a1, a2, a3, a4, a5, a6⟩ := e2 c
     simp only [cSz, cLs, cSt, cSrc, cLl, cRr] at a1 a2 a3 a4 a5 a6 ⊢
     rw [hm, ite_eq_right h1, ite_eq_right h2, ite_eq_right hcx, a1, a2, a3, a4, a5, a6, hp,
       ite_eq_right h1, ite_eq_right h2]
-    simp
+    simp only [and_self]
   · have h1 : x ≠ s.C.size + 1 := by omega
     have h2 : x ≠ s.C.size := by omega
     obtain ⟨a1, a2, -, -, -, -⟩ := e2 x
@@ -485,18 +517,18 @@ theorem resSpec_run_core {s s2 : Core} {x : Nat} {job : Job} (hxs : x < s.C.size
     rw [hm, ite_eq_right h1, ite_eq_right h2, ite_eq_left rfl]
     simp only
     rw [a1, a2, hp, ite_eq_right h1, ite_eq_right h2]
-    simp
+    simp only [and_self]
   · obtain ⟨a1, a2, -, -, -, -⟩ := e2 c
     simp only [cSz, cLs, cSt, cSrc] at a1 a2 ⊢
     rcases hc with rfl | rfl
     · rw [hm, ite_eq_right (by omega), ite_eq_left rfl]
       simp only
       rw [a1, a2, hp, ite_eq_right (by omega), ite_eq_left rfl]
-      simp
+      simp only [and_self]
     · rw [hm, ite_eq_left rfl]
       simp only
       rw [a1, a2, hp, ite_eq_left rfl]
-      simp
+      simp only [and_self]
 
 
 theorem resSpec_run {s s2 : Core} {A : Abs} {x : Nat} {job : Job} (hI : INV s A)
@@ -525,7 +557,7 @@ theorem resSpec_run {s s2 : Core} {A : Abs} {x : Nat} {job : Job} (hI : INV s A)
       Array.size_push]; rw [ite_eq_right (by omega), ite_eq_right (by omega)]
   have RS := resSpec_run_core (job := job) hxs hT
   refine { RS with ylink := ?_, xlink := ?_, next := ?_ }
-  · rw [hcN, hLk.cN']; simp [show s.C.size ≠ x by omega]
+  · rw [hcN, hLk.cN']; simp only [show s.C.size ≠ x by omega, ↓reduceIte]
   · rw [hcN, hLk.cN', ite_eq_left rfl]
   · intro c hc hcx hcp
     rw [hcN, hLk.cN', ite_eq_right hcx, ite_eq_right (by omega), ite_eq_right (by omega), hp1,
@@ -548,8 +580,8 @@ theorem cSz_eq_sum {s : Core} {A : Abs} {gh : GGh} {δg δ δu s₀ : Nat → Na
     refine List.filter_congr fun e he => ?_
     have hl : LiveG s (eG s e) := hI.mem_glist_iff.mp (hI.eG_mem he)
     by_cases h : gC s (eG s e) = x
-    · simp [Finset.mem_toList, mem_GrpsC, h, hl]
-    · simp [Finset.mem_toList, mem_GrpsC, h]
+    · simp only [h, decide_true, Finset.mem_toList, mem_GrpsC, hl, and_self]
+    · simp only [h, decide_false, Finset.mem_toList, mem_GrpsC, and_false]
   rw [e1, length_filter_mem s _ _ (Finset.nodup_toList _), Finset.sum_map_toList]
   refine Finset.sum_congr rfl fun h hh => ?_
   exact (hG.sz h (mem_GrpsC.mp hh).1).symm
@@ -562,7 +594,7 @@ def unitMem (s : Core) (g : Nat) : Finset Nat :=
 `g_min` elements. -/
 theorem units_le {s : Core} {A : Abs} {gh : GGh} {δg δ δu s₀ : Nat → Nat} {ex' : Nat}
     (hI : INV s A) (hG : GInv s A.elist gh δg) (hC : CInvE s A.elist δ δu s₀ ex')
-    (hP : GParams s.P) {x : Nat} (hx : LiveC s x) :
+    {x : Nat} (hx : LiveC s x) :
     units s x * gmin s.P ≤ cSz s x + gmin s.P := by
   have hgG : gmin s.P ≤ s.P.G := by unfold gmin; omega
   set U := (Finset.range s.Gs.size).filter (UnitG s x) with hU
@@ -627,7 +659,10 @@ theorem units_le {s : Core} {A : Abs} {gh : GGh} {δg δ δu s₀ : Nat → Nat}
       have hlp := F.lp hI hgL
       have hrp := F.rp hI hgL
       have hlr := F.lr hI hgL
-      rw [Finset.sum_insert (by simp [hlp, hlr]), Finset.sum_insert (by simp [Ne.symm hrp]),
+      rw [Finset.sum_insert (by
+        simp only [Finset.mem_insert, hlp, Finset.mem_singleton, hlr, or_self,
+          not_false_eq_true]), Finset.sum_insert (by
+            simp only [Finset.mem_singleton, Ne.symm hrp, not_false_eq_true]),
         Finset.sum_singleton]
       have := (hG.split g hgL hs (by unfold NIL; have := hgL.1; omega)).1
       omega
@@ -662,7 +697,7 @@ theorem units_le {s : Core} {A : Abs} {gh : GGh} {δg δ δu s₀ : Nat → Nat}
 theorem units_le_unitsOf {s : Core} {A : Abs} {gh : GGh} {δg δ δu s₀ : Nat → Nat} {ex' : Nat}
     (hI : INV s A) (hG : GInv s A.elist gh δg) (hC : CInvE s A.elist δ δu s₀ ex')
     (hP : GParams s.P) {x : Nat} (hx : LiveC s x) : units s x ≤ unitsOf s.P (cSz s x) := by
-  have h := units_le hI hG hC hP hx
+  have h := units_le hI hG hC hx
   have hgm : 0 < gmin s.P := by unfold gmin; have := hP.G4; omega
   unfold unitsOf
   have : units s x - 1 ≤ cSz s x / gmin s.P := by
@@ -708,18 +743,22 @@ theorem insSpec_link {s s2 : Core} {x lab hh : Nat} (hg : eG s x < s.Gs.size)
     have e : (linkElem s x s.E.size lab hh).C = s.C := rfl
     rw [hC]; simp only [sizeState, Array.getX_modify, e]
     by_cases h : gC s (eG s x) = d
-    · subst h; simp
-    · simp [h]
+    · subst h; simp only [true_and]
+    · simp only [h, false_and, ↓reduceIte]
   have fld : ∀ b, gL s2 b = gL s b ∧ gN s2 b = gN s b ∧ gC s2 b = gC s b ∧ gSt s2 b = gSt s b ∧
       gLl s2 b = gLl s b ∧ gRr s2 b = gRr s b ∧ gA s2 b = gA s b := by
-    intro b; simp only [gL, gN, gC, gSt, gLl, gRr, gA, hG b, linkElem_Gs]; split <;> simp
+    intro b; simp only [gL, gN, gC, gSt, gLl, gRr, gA, hG b, linkElem_Gs]; split <;> simp only [
+        and_self]
   have cfl : ∀ d, cSt s2 d = cSt s d ∧ cSrc s2 d = cSrc s d ∧ cLl s2 d = cLl s d ∧
       cRr s2 d = cRr s d ∧ cLs s2 d = cLs s d ∧ cN s2 d = cN s d := by
-    intro d; simp only [cSt, cSrc, cLl, cRr, cLs, cN, hCx d]; split <;> simp
-  have hGsz : s2.Gs.size = s.Gs.size := by rw [hGs]; simp [linkElem]
+    intro d; simp only [cSt, cSrc, cLl, cRr, cLs, cN, hCx d]; split <;> simp only [and_self]
+  have hGsz : s2.Gs.size = s.Gs.size := by rw [hGs]; simp only [linkElem, bne_iff_ne, ne_eq,
+      ite_not, beq_iff_eq,
+      Array.size_modify]
   refine
     { live := fun z => ?_, lab := fun z => (fld z).1, next := fun z => (fld z).2.1,
-      chk := fun z => (fld z).2.2.1, st := fun z => (fld z).2.2.2.1, l := fun z => (fld z).2.2.2.2.1,
+      chk := fun z => (fld z).2.2.1, st := fun z => (fld z).2.2.2.1, l := fun z => (fld
+        z).2.2.2.2.1,
       r := fun z => (fld z).2.2.2.2.2.1, sz := fun z => ?_, Csize := ?_,
       cst := fun d => (cfl d).1, csrc := fun d => (cfl d).2.1, cl := fun d => (cfl d).2.2.1,
       cr := fun d => (cfl d).2.2.2.1, clast := fun d => (cfl d).2.2.2.2.1, csz := fun d => ?_,
@@ -728,11 +767,12 @@ theorem insSpec_link {s s2 : Core} {x lab hh : Nat} (hg : eG s x < s.Gs.size)
   · have : gSz s2 z = gSz (linkElem s x s.E.size lab hh) z := by simp only [gSz, hGs]
     rw [this, linkElem_gSz s x lab hh z hg]
     split <;> simp_all
-  · rw [hC]; simp [sizeState, linkElem]
+  · rw [hC]; simp only [sizeState, linkElem, bne_iff_ne, ne_eq, ite_not, beq_iff_eq,
+      Array.size_modify]
   · simp only [cSz, hCx d]
     by_cases h : d = gC s (eG s x)
-    · subst h; simp [hcs]
-    · simp [h, Ne.symm h]
+    · subst h; simp only [hcs, and_self, ↓reduceIte]
+    · simp only [Ne.symm h, false_and, ↓reduceIte, h, add_zero]
 
 end OrderMaintenance.Proof
 
@@ -742,13 +782,17 @@ open OrderMaintenance.Model
 theorem length_insertAfterL {x y : Nat} {l : List Nat} (hx : x ∈ l) :
     (OrderMaintenance.Spec.insertAfterL x y l).length = l.length + 1 := by
   induction l with
-  | nil => simp at hx
+  | nil => simp only [List.not_mem_nil] at hx
   | cons a t ih =>
     simp only [OrderMaintenance.Spec.insertAfterL]
     by_cases hax : a = x
-    · simp [hax]
-    · have : x ∈ t := by simp at hx; rcases hx with h | h; exact absurd h.symm hax; exact h
-      simp [hax, ih this]
+    · simp only [hax, ↓reduceIte, List.length_cons]
+    · have : x ∈ t := by
+        simp only [List.mem_cons] at hx
+        rcases hx with h | h
+        · exact absurd h.symm hax
+        · exact h
+      simp only [hax, ↓reduceIte, List.length_cons, ih this]
 
 /-- **The chunk invariant across an insertion**: the chunk's size grows with one more undriven
 insertion. -/
@@ -895,9 +939,12 @@ theorem cinv_pop {s s' : Core} {A : Abs} {s₀ : Nat → Nat} {x : Nat} (hI : IN
         have hNL : LiveC s' s.C.size := (hLC _).mpr (Or.inr (Or.inl rfl))
         have hNR : LiveC s' (s.C.size + 1) := (hLC _).mpr (Or.inr (Or.inr rfl))
         obtain ⟨-, -, -, hl, hr⟩ := R.xs
-        refine ⟨by rw [hl]; exact hNL, by rw [hr]; exact hNR, by rw [hl, R.ylink], by rw [hr, R.xlink],
-          by rw [hl]; exact (R.new _ (Or.inl rfl)).2.2.1, by rw [hl]; exact (R.new _ (Or.inl rfl)).2.2.2,
-          by rw [hr]; exact (R.new _ (Or.inr rfl)).2.2.1, by rw [hr]; exact (R.new _ (Or.inr rfl)).2.2.2⟩
+        refine ⟨by rw [hl]; exact hNL, by rw [hr]; exact hNR, by rw [hl, R.ylink], by rw [hr,
+          R.xlink],
+          by rw [hl]; exact (R.new _ (Or.inl rfl)).2.2.1, by rw [hl]; exact (R.new _ (Or.inl
+            rfl)).2.2.2,
+          by rw [hr]; exact (R.new _ (Or.inr rfl)).2.2.1, by rw [hr]; exact (R.new _ (Or.inr
+            rfl)).2.2.2⟩
       · have o := R.old y hy.2 hyx
         rw [o.2.2.1] at hys
         have F := hC.cfam y hy hys
@@ -926,7 +973,10 @@ theorem cinv_pop {s s' : Core} {A : Abs} {s₀ : Nat → Nat} {x : Nat} (hI : IN
       rw [o.2.2.2.1, hLC, os.2.2.1, os.2.2.2.2.1, os.2.2.2.2.2]
       exact ⟨Or.inl p1, p2, p3⟩
     · rw [(R.new d hdn).2.2.2, hLC, R.xs.2.2.1, R.xs.2.2.2.1, R.xs.2.2.2.2]
-      exact ⟨Or.inl hxL, rfl, by rcases hdn with rfl | rfl; exact Or.inl rfl; exact Or.inr rfl⟩
+      refine ⟨Or.inl hxL, rfl, ?_⟩
+      rcases hdn with rfl | rfl
+      · exact Or.inl rfl
+      · exact Or.inr rfl
   · -- groups
     intro g hg'
     rw [hLv] at hg'
@@ -934,7 +984,7 @@ theorem cinv_pop {s s' : Core} {A : Abs} {s₀ : Nat → Nat} {x : Nat} (hI : IN
     obtain ⟨g1, g2⟩ := hC.gchk g hg'
     refine ⟨Or.inl g1, ?_⟩
     by_cases hgx : gC s g = x
-    · rw [hgx, R.xs.2.2.1]; simp
+    · rw [hgx, R.xs.2.2.1]; simp only [ne_eq, reduceCtorEq, not_false_eq_true]
     · rw [(R.old _ g1.2 hgx).2.2.1]; exact g2
   · -- C1
     intro y hy hys _
