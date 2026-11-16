@@ -172,12 +172,15 @@ decreasing in `M`, the averages themselves converge a.e. to `⨅ M, c M` in `ERe
 subadditivity, ergodicity or integrability enters: this is pure order/limit bookkeeping, and it
 is what lets the forward, backward, balanced and one-sided forms of Kingman all be extended from
 their `L¹` versions by the same three lines. -/
-theorem ae_tendsto_of_ae_tendsto_max {μ : Measure Ω} [IsProbabilityMeasure μ]
+theorem ae_tendsto_of_ae_tendsto_max {μ : Measure Ω}
     {a : ℕ → Ω → ℝ} {c : ℕ → ℝ} (hcanti : ∀ M M' : ℕ, M ≤ M' → c M' ≤ c M)
     (hcae : ∀ M : ℕ, ∀ᵐ ω ∂μ,
       Tendsto (fun n : ℕ => max (a n ω) (-(M : ℝ))) atTop (nhds (c M))) :
     ∀ᵐ ω ∂μ, Tendsto (fun n : ℕ => (a n ω : EReal)) atTop
       (nhds (⨅ M : ℕ, (c M : EReal))) := by
+  by_cases hμ : μ = 0
+  · simp [hμ]
+  have : NeZero μ := ⟨hμ⟩
   have hF2 : ∀ M : ℕ, (⨅ M : ℕ, (c M : EReal)) ≤ (c M : EReal) := fun M => iInf_le _ M
   have hF1 : ∀ b : ℝ, (⨅ M : ℕ, (c M : EReal)) < (b : EReal) → ∃ M : ℕ, c M < b := by
     intro b hb

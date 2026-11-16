@@ -766,7 +766,7 @@ theorem Cocycle.exists_level_zero (R : Cocycle Ω X) [SeparableSpace X] [BorelSp
 
 omit [StandardBorelSpace Ω] [MeasurableSpace X] in
 /-- Extend almost-everywhere complementary finite-dimensional data to total families. -/
-private theorem exists_total_complement_families (μ : Measure Ω) [IsProbabilityMeasure μ]
+private theorem exists_total_complement_families (μ : Measure Ω) [NeZero μ]
     {m k : ℕ} (F : Ω → GrassmannianFin X m) (E : Ω → GrassmannianFin X k)
     (V : Ω → GrassmannianCofin X m) (W : Ω → GrassmannianCofin X k)
     (Q P : Ω → X →L[ℝ] X)
