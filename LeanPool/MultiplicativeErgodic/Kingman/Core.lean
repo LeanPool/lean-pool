@@ -63,7 +63,7 @@ theorem bkingman (μ : Measure Ω) [IsProbabilityMeasure μ] (σ : Ω → Ω) (h
   -- (ii) one conull threshold, from the linear lower bound
   have hlow : μ (liminfGE (fun n ω => SubadditiveFamily.normalize σ f n ω / n)
       (-K - (∫ ω, f 1 ω ∂μ) - 1)) = 1 :=
-    SubadditiveFamily.liminfGE_normalize_full μ σ hσ f hf hL1 K hlb _ (by linarith)
+    SubadditiveFamily.liminfGE_normalize_full μ σ hσ f hf.1 (hL1 1) K hlb _ (by linarith)
   -- (iii) one null threshold: the normalised averages are `≤ 0`, so `liminf ≥ 1` is impossible
   have hhigh : μ (liminfGE (fun n ω => SubadditiveFamily.normalize σ f n ω / n) 1) = 0 := by
     have hempty : liminfGE (fun n ω => SubadditiveFamily.normalize σ f n ω / n) 1 = ∅ := by

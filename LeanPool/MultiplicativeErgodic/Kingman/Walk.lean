@@ -261,7 +261,7 @@ theorem SubadditiveFamily.eventually_div_lt_of_badDensity (μ : Measure Ω)
     ∀ᵐ x ∂μ, ∀ b : ℝ,
       d * (1 - μ.real (SubadditiveFamily.badSet f N (d + ε))) + ε < b →
         ∀ᶠ n in atTop, f n x / n < b := by
-  filter_upwards [hf.ae_tendsto_badSet_density μ σ hσ f N (d + ε)] with x hdens
+  filter_upwards [SubadditiveFamily.ae_tendsto_badSet_density μ σ hσ f hf.1 N (d + ε)] with x hdens
   intro b hb
   have hbc : ∀ n : ℕ, 1 ≤ n →
       (badCount σ f N (d + ε) x n : ℝ) / n
@@ -297,8 +297,8 @@ threshold, then `μ(bad_{N,c}) → 0` as `N → ∞`.
 This is the limiting step of Steele's outer argument: with `c` strictly above the a.e.-constant
 `liminf f_l/l`, a.e. `x` admits such a block, so the good blocks eventually cover all but a
 vanishing fraction. -/
-theorem SubadditiveFamily.tendsto_measure_badSet (μ : Measure Ω) [IsProbabilityMeasure μ]
-    (σ : Ω → Ω) (f : ℕ → Ω → ℝ) (hf : SubadditiveFamily σ f) (c : ℝ)
+theorem SubadditiveFamily.tendsto_measure_badSet (μ : Measure Ω) [IsFiniteMeasure μ]
+    (f : ℕ → Ω → ℝ) (hfm : ∀ n, Measurable (f n)) (c : ℝ)
     (hc : ∀ᵐ x ∂μ, ∃ l, 1 ≤ l ∧ f l x ≤ c * l) :
     Tendsto (fun N => μ (SubadditiveFamily.badSet f N c)) atTop (nhds 0) := by
   have hinter : μ (⋂ N, SubadditiveFamily.badSet f N c) = 0 := by
@@ -308,7 +308,7 @@ theorem SubadditiveFamily.tendsto_measure_badSet (μ : Measure Ω) [IsProbabilit
     intro l hl
     exact hx l l hl le_rfl
   have := tendsto_measure_iInter_atTop (μ := μ)
-    (fun N => (hf.measurableSet_badSet N c).nullMeasurableSet)
+    (fun N => (SubadditiveFamily.measurableSet_badSet hfm N c).nullMeasurableSet)
     (SubadditiveFamily.badSet_antitone f c) ⟨0, measure_ne_top μ _⟩
   rwa [hinter] at this
 
@@ -326,7 +326,7 @@ theorem SubadditiveFamily.eventually_div_lt_of_threshold (μ : Measure Ω)
     (hgood : ∀ᵐ x ∂μ, ∃ l, 1 ≤ l ∧ f l x ≤ (d + ε) * l) :
     ∀ᵐ x ∂μ, ∀ b : ℝ, d + ε < b → ∀ᶠ n in atTop, f n x / n < b := by
   -- Choose `N` making `d·μ(bad_{N,d+ε})` small enough that the `N`-bound drops below `b`.
-  have hbad := SubadditiveFamily.tendsto_measure_badSet μ σ f hf (d + ε) hgood
+  have hbad := SubadditiveFamily.tendsto_measure_badSet μ f hf.1 (d + ε) hgood
   -- The bound as a function of `N`, at the real-valued level.
   have hbadR : Tendsto (fun N => μ.real (SubadditiveFamily.badSet f N (d + ε))) atTop
       (nhds 0) := by

@@ -36,6 +36,65 @@ open TopologicalSpace
 
 variable {X : Type*} [NormedAddCommGroup X] [NormedSpace ℝ X]
 
+/-- Growth changes continuously under simultaneous perturbations of the operator and subspace. -/
+theorem growth_le_growth_add_of_norm_sub_and_dist_lt (k : ℕ) [NeZero k]
+    (A B : X →L[ℝ] X) (V W : GrassmannianFin X k) {δ : ℝ} (hδ : dist V W < δ) :
+    growth B (W.1 : Submodule ℝ X) ≤
+      growth A (V.1 : Submodule ℝ X) + (‖A‖ + ‖B - A‖) * δ + ‖B - A‖ := by
+  have hcont : ContinuousOn (fun x => ‖A x‖) V.sphere := (A.continuous.norm).continuousOn
+  obtain ⟨x₀, hx₀mem, hx₀min⟩ := V.isCompact_sphere.exists_isMinOn V.nonempty_sphere hcont
+  have hgA : growth A (V.1 : Submodule ℝ X) = ‖A x₀‖ := by
+    apply le_antisymm
+    · exact csInf_le ⟨0, by rintro _ ⟨z, -, rfl⟩; exact norm_nonneg _⟩ ⟨x₀, hx₀mem, rfl⟩
+    · have hne : ((fun x => ‖A x‖) '' V.sphere).Nonempty := ⟨‖A x₀‖, x₀, hx₀mem, rfl⟩
+      apply le_csInf hne
+      rintro _ ⟨y, hy, rfl⟩
+      exact hx₀min hy
+  have hhaus : Metric.hausdorffDist V.sphere W.sphere < δ := by
+    rwa [← GrassmannianFin.dist_eq_hausdorffDist]
+  have hfin : Metric.hausdorffEDist V.sphere W.sphere ≠ ⊤ :=
+    Metric.hausdorffEDist_ne_top_of_nonempty_of_bounded V.nonempty_sphere W.nonempty_sphere
+      V.isCompact_sphere.isBounded W.isCompact_sphere.isBounded
+  obtain ⟨y₀, hy₀mem, hy₀close⟩ := Metric.exists_dist_lt_of_hausdorffDist_lt hx₀mem hhaus hfin
+  have hgB : growth B (W.1 : Submodule ℝ X) ≤ ‖B y₀‖ :=
+    csInf_le ⟨0, by rintro _ ⟨z, -, rfl⟩; exact norm_nonneg _⟩ ⟨y₀, hy₀mem, rfl⟩
+  have hx₀norm : ‖x₀‖ = 1 := mem_sphere_zero_iff_norm.1 hx₀mem.1
+  have hBnorm : ‖B‖ ≤ ‖A‖ + ‖B - A‖ := by
+    calc ‖B‖ = ‖A + (B - A)‖ := by rw [add_sub_cancel]
+      _ ≤ ‖A‖ + ‖B - A‖ := norm_add_le _ _
+  calc growth B (W.1 : Submodule ℝ X) ≤ ‖B y₀‖ := hgB
+    _ = ‖B (y₀ - x₀) + B x₀‖ := by rw [map_sub, sub_add_cancel]
+    _ ≤ ‖B (y₀ - x₀)‖ + ‖B x₀‖ := norm_add_le _ _
+    _ ≤ ‖B‖ * ‖y₀ - x₀‖ + ‖B x₀‖ := by gcongr; exact B.le_opNorm _
+    _ ≤ (‖A‖ + ‖B - A‖) * δ + ‖B x₀‖ := by
+        gcongr
+        rw [← dist_eq_norm, dist_comm]
+        exact hy₀close.le
+    _ = (‖A‖ + ‖B - A‖) * δ + ‖(B - A) x₀ + A x₀‖ := by
+        rw [sub_apply, sub_add_cancel]
+    _ ≤ (‖A‖ + ‖B - A‖) * δ + (‖(B - A) x₀‖ + ‖A x₀‖) := by gcongr; exact norm_add_le _ _
+    _ ≤ (‖A‖ + ‖B - A‖) * δ + (‖B - A‖ * ‖x₀‖ + ‖A x₀‖) := by
+        gcongr; exact (B - A).le_opNorm _
+    _ = growth A (V.1 : Submodule ℝ X) + (‖A‖ + ‖B - A‖) * δ + ‖B - A‖ := by
+        rw [hx₀norm, mul_one, hgA]; ring
+
+/-- Growth is `‖T‖`-Lipschitz in the subspace, by the shared perturbation estimate. -/
+theorem growth_le_growth_add_of_dist_lt (k : ℕ) [NeZero k] (T : X →L[ℝ] X)
+    (V W : GrassmannianFin X k) {δ : ℝ} (h : dist V W < δ) :
+    growth T (W.1 : Submodule ℝ X) ≤ growth T (V.1 : Submodule ℝ X) + ‖T‖ * δ := by
+  simpa only [sub_self, norm_zero, add_zero] using
+    growth_le_growth_add_of_norm_sub_and_dist_lt k T T V W h
+
+/-- The non-strict form. -/
+theorem growth_le_growth_add_of_dist_le (k : ℕ) [NeZero k] (T : X →L[ℝ] X)
+    (V W : GrassmannianFin X k) {δ : ℝ} (h : dist V W ≤ δ) :
+    growth T (W.1 : Submodule ℝ X) ≤ growth T (V.1 : Submodule ℝ X) + ‖T‖ * δ := by
+  refine le_of_forall_pos_le_add_mul (c := ‖T‖) (norm_nonneg T) ?_
+  intro η hη
+  have := growth_le_growth_add_of_dist_lt k T V W (δ := δ + η) (by linarith)
+  calc growth T (W.1 : Submodule ℝ X) ≤ growth T (V.1 : Submodule ℝ X) + ‖T‖ * (δ + η) := this
+    _ = growth T (V.1 : Submodule ℝ X) + ‖T‖ * δ + ‖T‖ * η := by ring
+
 /-- **Lemma (continuity of `g`).** `g : 𝓑(X) × 𝒢_kX → [0,∞)` is continuous.
 
 Proved directly via an ε-δ argument rather than the paper's route through uniform continuity
@@ -47,46 +106,6 @@ on the unit sphere: for `A, B ∈ 𝓑(X)` and `V, W ∈ 𝒢_kX` with `dist V W
 theorem growth_continuous (k : ℕ) [NeZero k] :
     Continuous (fun p : (X →L[ℝ] X) × GrassmannianFin X k =>
       growth p.1 (p.2.1 : Submodule ℝ X)) := by
-  have key : ∀ (A B : X →L[ℝ] X) (V W : GrassmannianFin X k) (δ : ℝ), dist V W < δ →
-      growth B (W.1 : Submodule ℝ X) ≤
-        growth A (V.1 : Submodule ℝ X) + (‖A‖ + ‖B - A‖) * δ + ‖B - A‖ := by
-    intro A B V W δ hδ
-    have hcont : ContinuousOn (fun x => ‖A x‖) V.sphere := (A.continuous.norm).continuousOn
-    obtain ⟨x₀, hx₀mem, hx₀min⟩ := V.isCompact_sphere.exists_isMinOn V.nonempty_sphere hcont
-    have hgA : growth A (V.1 : Submodule ℝ X) = ‖A x₀‖ := by
-      apply le_antisymm
-      · exact csInf_le ⟨0, by rintro _ ⟨z, -, rfl⟩; exact norm_nonneg _⟩ ⟨x₀, hx₀mem, rfl⟩
-      · have hne : ((fun x => ‖A x‖) '' V.sphere).Nonempty := ⟨‖A x₀‖, x₀, hx₀mem, rfl⟩
-        apply le_csInf hne
-        rintro _ ⟨y, hy, rfl⟩
-        exact hx₀min hy
-    have hhaus : Metric.hausdorffDist V.sphere W.sphere < δ := by
-      rwa [← GrassmannianFin.dist_eq_hausdorffDist]
-    have hfin : Metric.hausdorffEDist V.sphere W.sphere ≠ ⊤ :=
-      Metric.hausdorffEDist_ne_top_of_nonempty_of_bounded V.nonempty_sphere W.nonempty_sphere
-        V.isCompact_sphere.isBounded W.isCompact_sphere.isBounded
-    obtain ⟨y₀, hy₀mem, hy₀close⟩ := Metric.exists_dist_lt_of_hausdorffDist_lt hx₀mem hhaus hfin
-    have hgB : growth B (W.1 : Submodule ℝ X) ≤ ‖B y₀‖ :=
-      csInf_le ⟨0, by rintro _ ⟨z, -, rfl⟩; exact norm_nonneg _⟩ ⟨y₀, hy₀mem, rfl⟩
-    have hx₀norm : ‖x₀‖ = 1 := mem_sphere_zero_iff_norm.1 hx₀mem.1
-    have hBnorm : ‖B‖ ≤ ‖A‖ + ‖B - A‖ := by
-      calc ‖B‖ = ‖A + (B - A)‖ := by rw [add_sub_cancel]
-        _ ≤ ‖A‖ + ‖B - A‖ := norm_add_le _ _
-    calc growth B (W.1 : Submodule ℝ X) ≤ ‖B y₀‖ := hgB
-      _ = ‖B (y₀ - x₀) + B x₀‖ := by rw [map_sub, sub_add_cancel]
-      _ ≤ ‖B (y₀ - x₀)‖ + ‖B x₀‖ := norm_add_le _ _
-      _ ≤ ‖B‖ * ‖y₀ - x₀‖ + ‖B x₀‖ := by gcongr; exact B.le_opNorm _
-      _ ≤ (‖A‖ + ‖B - A‖) * δ + ‖B x₀‖ := by
-          gcongr
-          rw [← dist_eq_norm, dist_comm]
-          exact hy₀close.le
-      _ = (‖A‖ + ‖B - A‖) * δ + ‖(B - A) x₀ + A x₀‖ := by
-          rw [sub_apply, sub_add_cancel]
-      _ ≤ (‖A‖ + ‖B - A‖) * δ + (‖(B - A) x₀‖ + ‖A x₀‖) := by gcongr; exact norm_add_le _ _
-      _ ≤ (‖A‖ + ‖B - A‖) * δ + (‖B - A‖ * ‖x₀‖ + ‖A x₀‖) := by
-          gcongr; exact (B - A).le_opNorm _
-      _ = growth A (V.1 : Submodule ℝ X) + (‖A‖ + ‖B - A‖) * δ + ‖B - A‖ := by
-          rw [hx₀norm, mul_one, hgA]; ring
   rw [Metric.continuous_iff]
   rintro ⟨S₀, V₀⟩ ε hε
   set δ := min 1 (ε / (2 * (‖S₀‖ + 3))) with hδdef
@@ -110,8 +129,9 @@ theorem growth_continuous (k : ℕ) [NeZero k] :
     linarith [hTS0, hδle1]
   change dist (growth T (W.1 : Submodule ℝ X)) (growth S₀ (V₀.1 : Submodule ℝ X)) < ε
   rw [Real.dist_eq, abs_lt]
-  have h1 := key S₀ T V₀ W δ (by rwa [dist_comm] at hWV)
-  have h2 := key T S₀ W V₀ δ hWV
+  have h1 := growth_le_growth_add_of_norm_sub_and_dist_lt k S₀ T V₀ W (δ := δ)
+    (by rwa [dist_comm] at hWV)
+  have h2 := growth_le_growth_add_of_norm_sub_and_dist_lt k T S₀ W V₀ (δ := δ) hWV
   have e1 : ‖T - S₀‖ * δ ≤ δ * δ := mul_le_mul_of_nonneg_right hTS0 hδpos.le
   have e2 : ‖S₀ - T‖ * δ ≤ δ * δ := mul_le_mul_of_nonneg_right hS0T hδpos.le
   have e3 : δ * δ ≤ δ * 1 := mul_le_mul_of_nonneg_left hδle1 hδpos.le

@@ -2417,51 +2417,6 @@ theorem Cocycle.eventually_growth_approx_ge (R : Cocycle Ω X) (m : ℕ)
   rw [hAval, ← hEeq] at hA2
   exact hA2
 
-omit [MeasurableSpace X] in
-/-- **Growth is `‖T‖`-Lipschitz in the subspace.** The estimate inside `growth_continuous`,
-extracted for the single-operator case, which is what the fastness step of the topfast
-construction needs: transferring a growth bound from the approximant `E^{(n)}(ω)` to its
-limit `E(ω)`. -/
-theorem growth_le_growth_add_of_dist_lt (k : ℕ) [NeZero k] (T : X →L[ℝ] X)
-    (V W : GrassmannianFin X k) {δ : ℝ} (h : dist V W < δ) :
-    growth T (W.1 : Submodule ℝ X) ≤ growth T (V.1 : Submodule ℝ X) + ‖T‖ * δ := by
-  have hcont : ContinuousOn (fun x => ‖T x‖) V.sphere := (T.continuous.norm).continuousOn
-  obtain ⟨x₀, hx₀mem, hx₀min⟩ := V.isCompact_sphere.exists_isMinOn V.nonempty_sphere hcont
-  have hgA : growth T (V.1 : Submodule ℝ X) = ‖T x₀‖ := by
-    refine le_antisymm (csInf_le ⟨0, by rintro _ ⟨z, -, rfl⟩; exact norm_nonneg _⟩
-      ⟨x₀, hx₀mem, rfl⟩) ?_
-    refine le_csInf ⟨‖T x₀‖, x₀, hx₀mem, rfl⟩ ?_
-    rintro _ ⟨y, hy, rfl⟩
-    exact hx₀min hy
-  have hhaus : Metric.hausdorffDist V.sphere W.sphere < δ := by
-    rwa [← GrassmannianFin.dist_eq_hausdorffDist]
-  have hfin : Metric.hausdorffEDist V.sphere W.sphere ≠ ⊤ :=
-    Metric.hausdorffEDist_ne_top_of_nonempty_of_bounded V.nonempty_sphere W.nonempty_sphere
-      V.isCompact_sphere.isBounded W.isCompact_sphere.isBounded
-  obtain ⟨y₀, hy₀mem, hy₀close⟩ := Metric.exists_dist_lt_of_hausdorffDist_lt hx₀mem hhaus hfin
-  have hgB : growth T (W.1 : Submodule ℝ X) ≤ ‖T y₀‖ :=
-    csInf_le ⟨0, by rintro _ ⟨z, -, rfl⟩; exact norm_nonneg _⟩ ⟨y₀, hy₀mem, rfl⟩
-  calc growth T (W.1 : Submodule ℝ X) ≤ ‖T y₀‖ := hgB
-    _ = ‖T (y₀ - x₀) + T x₀‖ := by rw [map_sub, sub_add_cancel]
-    _ ≤ ‖T (y₀ - x₀)‖ + ‖T x₀‖ := norm_add_le _ _
-    _ ≤ ‖T‖ * ‖y₀ - x₀‖ + ‖T x₀‖ := by gcongr; exact T.le_opNorm _
-    _ ≤ ‖T‖ * δ + ‖T x₀‖ := by
-        gcongr
-        rw [← dist_eq_norm, dist_comm]
-        exact hy₀close.le
-    _ = growth T (V.1 : Submodule ℝ X) + ‖T‖ * δ := by rw [hgA]; ring
-
-omit [MeasurableSpace X] in
-/-- The non-strict form. -/
-theorem growth_le_growth_add_of_dist_le (k : ℕ) [NeZero k] (T : X →L[ℝ] X)
-    (V W : GrassmannianFin X k) {δ : ℝ} (h : dist V W ≤ δ) :
-    growth T (W.1 : Submodule ℝ X) ≤ growth T (V.1 : Submodule ℝ X) + ‖T‖ * δ := by
-  refine le_of_forall_pos_le_add_mul (c := ‖T‖) (norm_nonneg T) ?_
-  intro η hη
-  have := growth_le_growth_add_of_dist_lt k T V W (δ := δ + η) (by linarith)
-  calc growth T (W.1 : Submodule ℝ X) ≤ growth T (V.1 : Submodule ℝ X) + ‖T‖ * (δ + η) := this
-    _ = growth T (V.1 : Submodule ℝ X) + ‖T‖ * δ + ‖T‖ * η := by ring
-
 /-- A strictly slower exponential is eventually dominated, whatever the constants. -/
 theorem eventually_mul_exp_le_exp {a b c D : ℝ} (hab : a < b) :
     ∀ᶠ n : ℕ in atTop, D * Real.exp (a * n) ≤ Real.exp (c + b * n) := by

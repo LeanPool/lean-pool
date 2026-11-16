@@ -28,17 +28,18 @@ open scoped ENNReal
 variable {Ω : Type*} [MeasurableSpace Ω]
 /-- **Boundary decay.** In the block decomposition `f_n ≤ f_r ∘ σ^{qN} + Σ_{i<q} f_N ∘ σ^{iN}`
 the remainder `r` ranges over the finitely many values `< N`, and each boundary term
-`f_r(σ^m ω)` is `o(m)` along the orbit. This holds for *all* `r` simultaneously, a.e.
+`f_r(σ^m ω)` is `o(m)` along the orbit. This holds for *all* `r` simultaneously, a.e.,
+for any measurable integrable family.
 
 Each `r` is `L1_orbit_decay` applied to `f r`; the countably many `r` are intersected with
 `ae_all_iff`. Note this is now a corollary of Birkhoff, not of `kingman` — see the note on
 `L1_orbit_decay` above. -/
 theorem SubadditiveFamily.boundary_decay (μ : Measure Ω) [IsProbabilityMeasure μ] (σ : Ω → Ω)
-    (hmp : MeasurePreserving σ μ μ) (f : ℕ → Ω → ℝ) (hf : SubadditiveFamily σ f)
+    (hmp : MeasurePreserving σ μ μ) (f : ℕ → Ω → ℝ) (hfm : ∀ n, Measurable (f n))
     (hint : ∀ n, Integrable (f n) μ) :
     ∀ᵐ ω ∂μ, ∀ r : ℕ, Tendsto (fun m : ℕ => f r (σ^[m] ω) / m) atTop (nhds 0) := by
   refine ae_all_iff.mpr (fun r => ?_)
-  exact L1_orbit_decay μ σ hmp (f r) (hf.1 r) (hint r)
+  exact L1_orbit_decay μ σ hmp (f r) (hfm r) (hint r)
 
 /-- **Pointwise block bound along multiples of `N`.** Dividing `le_sum_blocks` by `qN` gives
 `f_{qN}(ω)/(qN) ≤ (1/N) · (1/q) Σ_{i<q} f_N(σ^{iN} ω)`.
@@ -164,7 +165,7 @@ theorem SubadditiveFamily.eventually_lt_of_integral_div_lt (μ : Measure Ω)
   have hmp : MeasurePreserving σ μ μ := hσ.toMeasurePreserving
   have hN0 : (0 : ℝ) < N := by exact_mod_cast hN
   filter_upwards [ae_tendsto_birkhoffAverage_of_ergodic hσ (f N) (hf.1 N) (hint N),
-    hf.boundary_decay μ σ hmp f hint] with ω hbirk hbd
+    SubadditiveFamily.boundary_decay μ σ hmp f hf.1 hint] with ω hbirk hbd
   intro b hb
   -- The right-hand side of `nsmul_le_sum_offsets`, divided by `N·(p+1)N`.
   set S : ℕ → ℝ := fun p => (∑ k ∈ Finset.range (p * N), f N (σ^[k] ω)) / (((p + 1) * N : ℕ) : ℝ)

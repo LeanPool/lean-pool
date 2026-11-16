@@ -390,8 +390,8 @@ theorem lowerIntegral_div_eq {f : ℕ → Ω → ℝ} {μ : Measure Ω} (n : ℕ
 and `Aₙ(f 1) → ∫ f 1`. Hence a threshold strictly below `-K - ∫ f 1` is conull, which is the
 `L₀` that `exists_transition` needs. -/
 theorem SubadditiveFamily.liminfGE_normalize_full (μ : Measure Ω) [IsProbabilityMeasure μ]
-    (σ : Ω → Ω) (hσ : Ergodic σ μ) (f : ℕ → Ω → ℝ) (hf : SubadditiveFamily σ f)
-    (hL1 : ∀ n, Integrable (f n) μ) (K : ℝ) (hlb : ∀ n ω, -(K * n) ≤ f n ω)
+    (σ : Ω → Ω) (hσ : Ergodic σ μ) (f : ℕ → Ω → ℝ) (hfm : ∀ n, Measurable (f n))
+    (h1 : Integrable (f 1) μ) (K : ℝ) (hlb : ∀ n ω, -(K * n) ≤ f n ω)
     (L : ℝ) (hL : L < -K - ∫ ω, f 1 ω ∂μ) :
     μ (liminfGE (fun n ω => SubadditiveFamily.normalize σ f n ω / n) L) = 1 := by
   have hmp : MeasurePreserving σ μ μ := hσ.toMeasurePreserving
@@ -399,12 +399,12 @@ theorem SubadditiveFamily.liminfGE_normalize_full (μ : Measure Ω) [IsProbabili
       (liminfGE (fun n ω => SubadditiveFamily.normalize σ f n ω / n) L) := by
     refine measurableSet_liminfGE (fun n => ?_) L
     refine Measurable.div_const ?_ _
-    exact (hf.1 n).sub (by
+    exact (hfm n).sub (by
       change Measurable fun ω => ∑ i ∈ Finset.range n, f 1 (σ^[i] ω)
-      exact Finset.measurable_sum _ (fun i _ => (hf.1 1).comp (hmp.measurable.iterate i)))
+      exact Finset.measurable_sum _ (fun i _ => (hfm 1).comp (hmp.measurable.iterate i)))
   have hae : ∀ᵐ x ∂μ,
       x ∈ liminfGE (fun n ω => SubadditiveFamily.normalize σ f n ω / n) L := by
-    filter_upwards [ae_tendsto_birkhoffAverage_of_ergodic hσ (f 1) (hf.1 1) (hL1 1)] with x hbirk
+    filter_upwards [ae_tendsto_birkhoffAverage_of_ergodic hσ (f 1) (hfm 1) h1] with x hbirk
     simp only [liminfGE, Set.mem_ofPred_eq]
     intro ε hε
     have hε0 : (0 : ℝ) < (ε : ℝ) := by exact_mod_cast hε

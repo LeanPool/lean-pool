@@ -57,7 +57,7 @@ theorem integral_le_of_le_sum_eight {μ : Measure Ω} {F g1 g2 g3 g4 g5 g6 g7 g8
 private theorem exists_good_windows_everywhere [StandardBorelSpace Ω] (μ : Measure Ω)
     [IsProbabilityMeasure μ] [NullSingletonClass μ] (σ : Ω ≃ᵐ Ω)
     (hσ : Ergodic (σ : Ω → Ω) μ) (f : ℕ → Ω → ℝ)
-    (hf : SubadditiveFamily (σ : Ω → Ω) f) (q ε₁ : ℝ) (hε₁0 : 0 < ε₁) (N₀ : ℕ)
+    (hfm : ∀ n, Measurable (f n)) (q ε₁ : ℝ) (hε₁0 : 0 < ε₁) (N₀ : ℕ)
     (hinf : ∀ᵐ ω ∂μ, ∀ k : ℕ, ∃ j : ℕ, k ≤ j ∧ 1 ≤ j ∧
       f (2 * j) (zIter σ (-(j : ℤ)) ω) < 2 * j * q) :
     ∃ (A : Set Ω) (jω : Ω → ℕ), MeasurableSet A ∧ Measurable jω ∧
@@ -72,7 +72,7 @@ private theorem exists_good_windows_everywhere [StandardBorelSpace Ω] (μ : Mea
   classical
   -- **The good windows.**
   obtain ⟨A₀, jω, hA₀m, hjm, hdisj₀, hcov₀, hae⟩ :=
-    exists_good_windows μ σ hσ f hf.1 q ε₁ hε₁0 N₀ hinf
+    exists_good_windows μ σ hσ f hfm q ε₁ hε₁0 N₀ hinf
   -- **Shrink the centre set to where goodness and orbit injectivity really hold.**
   have hae2 : ∀ᵐ ω ∂μ, (ω ∈ A₀ → N₀ ≤ jω ω ∧ 1 ≤ jω ω ∧
       f (2 * jω ω) (zIter σ (-(jω ω : ℤ)) ω) < 2 * (jω ω) * q)
@@ -302,7 +302,7 @@ theorem covering_bound [StandardBorelSpace Ω] (μ : Measure Ω) [IsProbabilityM
     have h2 : (0 : ℝ) ≤ (N₀ : ℝ) := Nat.cast_nonneg _
     nlinarith
   obtain ⟨A, jω, hAm, hjm, hdisj, hgood, hinj, hrad, hcov⟩ :=
-    exists_good_windows_everywhere μ σ hσ f hf q ε₁ hε₁0 N₀ hinf
+    exists_good_windows_everywhere μ σ hσ f hf.1 q ε₁ hε₁0 N₀ hinf
   have hpos : ∀ ω' ∈ A, 1 ≤ jω ω' := fun ω' h => (hgood ω' h).1
   -- **The uncovered set `B`, and the two endpoint sets.**
   have hUm : MeasurableSet (⋃ ω' ∈ A, (fun i => zIter σ i ω') '' Set.Icc (-(jω ω' : ℤ)) (jω ω')) :=

@@ -210,8 +210,8 @@ Birkhoff applied to the indicator of `bad`.
 def SubadditiveFamily.badSet (f : ℕ → Ω → ℝ) (N : ℕ) (c : ℝ) : Set Ω :=
   {x | ∀ l : ℕ, 1 ≤ l → l ≤ N → c * l < f l x}
 
-theorem SubadditiveFamily.measurableSet_badSet {σ : Ω → Ω} {f : ℕ → Ω → ℝ}
-    (hf : SubadditiveFamily σ f) (N : ℕ) (c : ℝ) :
+theorem SubadditiveFamily.measurableSet_badSet {f : ℕ → Ω → ℝ}
+    (hfm : ∀ n, Measurable (f n)) (N : ℕ) (c : ℝ) :
     MeasurableSet (SubadditiveFamily.badSet f N c) := by
   have hrw : SubadditiveFamily.badSet f N c
       = ⋂ l ∈ Finset.Icc 1 N, {x | c * l < f l x} := by
@@ -220,7 +220,7 @@ theorem SubadditiveFamily.measurableSet_badSet {σ : Ω → Ω} {f : ℕ → Ω 
     exact ⟨fun h l hl => h l hl.1 hl.2, fun h l h1 h2 => h l ⟨h1, h2⟩⟩
   rw [hrw]
   exact MeasurableSet.biInter (Finset.countable_toSet _)
-    (fun l _ => measurableSet_lt measurable_const (hf.1 l))
+    (fun l _ => measurableSet_lt measurable_const (hfm l))
 
 /-- **Density of bad times.** By Birkhoff applied to the indicator of the bad set, the fraction
 of `k < n` with `σᵏx` bad converges a.e. to `μ(bad)`.
@@ -229,12 +229,12 @@ This is Steele's density-of-good-times step, and the ingredient that makes the g
 pay: the good blocks cover all but a `μ(bad)` fraction of `[0, n)`,
 up to the `N` positions at the end. -/
 theorem SubadditiveFamily.ae_tendsto_badSet_density (μ : Measure Ω) [IsProbabilityMeasure μ]
-    (σ : Ω → Ω) (hσ : Ergodic σ μ) (f : ℕ → Ω → ℝ) (hf : SubadditiveFamily σ f)
+    (σ : Ω → Ω) (hσ : Ergodic σ μ) (f : ℕ → Ω → ℝ) (hfm : ∀ n, Measurable (f n))
     (N : ℕ) (c : ℝ) :
     ∀ᵐ x ∂μ, Tendsto
       (fun n : ℕ => birkhoffAverage ℝ σ (Set.indicator (SubadditiveFamily.badSet f N c) 1) n x)
       atTop (nhds (μ.real (SubadditiveFamily.badSet f N c))) := by
-  have hmeas := hf.measurableSet_badSet N c
+  have hmeas := SubadditiveFamily.measurableSet_badSet hfm N c
   have hind : Measurable (Set.indicator (SubadditiveFamily.badSet f N c) (1 : Ω → ℝ)) :=
     (measurable_one).indicator hmeas
   have hintg : Integrable (Set.indicator (SubadditiveFamily.badSet f N c) (1 : Ω → ℝ)) μ :=

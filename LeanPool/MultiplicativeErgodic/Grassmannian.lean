@@ -1013,6 +1013,25 @@ theorem measurable_of_measurable_dist {Y Ω : Type*} [MetricSpace Y] [SeparableS
     exact measurableSet_lt (h (p.1 : Y)) measurable_const
   · simp [hp]
 
+/-- A measurable operator family sends measurable subspaces to measurable images,
+with arbitrary positive source and target dimensions. -/
+theorem measurable_pushforward' {Ω : Type*} [MeasurableSpace Ω] [MeasurableSpace X]
+    [OpensMeasurableSpace X] [SeparableSpace X] [CompleteSpace X] (k l : ℕ)
+    [NeZero k] [NeZero l] (E : Ω → GrassmannianFin X k) (hE : Measurable E)
+    (A : Ω → X →L[ℝ] X) (hA : ∀ x : X, Measurable fun ω => A ω x)
+    (F : Ω → GrassmannianFin X l)
+    (hF : ∀ ω, (F ω).1 = Submodule.map ((A ω : X →ₗ[ℝ] X)) (E ω).1) :
+    Measurable F := by
+  refine measurable_of_measurable_infDist l fun x => ?_
+  have himg : ∀ ω, (((F ω).1 : Submodule ℝ X) : Set X)
+      = (A ω) '' (((E ω).1 : Submodule ℝ X) : Set X) := by
+    intro ω
+    rw [hF ω]
+    ext z
+    simp []
+  simp_rw [himg]
+  exact measurable_infDist_map k hE hA x
+
 /-- **Lemma \ref{GXpush}.** The pointwise pushforward of a measurable family of subspaces along a
 strongly measurable family of operators is measurable.
 
@@ -1052,35 +1071,7 @@ theorem measurable_pushforward {Ω : Type*} [MeasurableSpace Ω] [MeasurableSpac
     (A : Ω → X →L[ℝ] X) (hA : ∀ x : X, Measurable fun ω => A ω x)
     (F : Ω → GrassmannianFin X k)
     (hF : ∀ ω, (F ω).1 = Submodule.map ((A ω : X →ₗ[ℝ] X)) (E ω).1) :
-    Measurable F := by
-  refine measurable_of_measurable_infDist k fun x => ?_
-  have himg : ∀ ω, (((F ω).1 : Submodule ℝ X) : Set X)
-      = (A ω) '' (((E ω).1 : Submodule ℝ X) : Set X) := by
-    intro ω
-    rw [hF ω]
-    ext z
-    simp []
-  simp_rw [himg]
-  exact measurable_infDist_map k hE hA x
-
-/-- The same, when the pushforward drops the dimension: only the *source* index enters
-`measurable_infDist_map` and only the *target* index enters `measurable_of_measurable_infDist`,
-so nothing forces them to agree. This is what the retraction `𝒢_{k+1}X → 𝒢_kX` needs. -/
-theorem measurable_pushforward' {Ω : Type*} [MeasurableSpace Ω] [MeasurableSpace X]
-    [OpensMeasurableSpace X] [SeparableSpace X] [CompleteSpace X] (k l : ℕ)
-    [NeZero k] [NeZero l] (E : Ω → GrassmannianFin X k) (hE : Measurable E)
-    (A : Ω → X →L[ℝ] X) (hA : ∀ x : X, Measurable fun ω => A ω x)
-    (F : Ω → GrassmannianFin X l)
-    (hF : ∀ ω, (F ω).1 = Submodule.map ((A ω : X →ₗ[ℝ] X)) (E ω).1) :
-    Measurable F := by
-  refine measurable_of_measurable_infDist l fun x => ?_
-  have himg : ∀ ω, (((F ω).1 : Submodule ℝ X) : Set X)
-      = (A ω) '' (((E ω).1 : Submodule ℝ X) : Set X) := by
-    intro ω
-    rw [hF ω]
-    ext z
-    simp []
-  simp_rw [himg]
-  exact measurable_infDist_map k hE hA x
+    Measurable F :=
+  measurable_pushforward' k k E hE A hA F hF
 
 end MultiplicativeErgodic
