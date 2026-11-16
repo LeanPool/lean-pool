@@ -1,10 +1,14 @@
 slug: linear-algebra-combinatorics-and-analysis
 title: Singular values, minors and elementary matrices, with lemmas in combinatorics and analysis
 summary: A collection of general results centred on linear algebra. For linear maps between
-  finite-dimensional inner product spaces over ℝ or ℂ, proves Ky Fan's maximum principle for
-  orthonormal-type families and, its main result, an analogue of Ky Fan's subadditivity for the
-  second elementary symmetric function of the n largest singular values (Ky Fan's inequality
-  itself is reused from the pool). Proves the factorisation and unit determinant of the
+  finite-dimensional inner product spaces over ℝ or ℂ, its main result is an analogue of
+  Ky Fan's subadditivity for the second elementary symmetric function of the n largest
+  singular values. Ky Fan's subadditivity is reused from the pool. The included
+  maximum-principle upper bound is a supporting restatement that follows from the pool's
+  existing contraction-family bound and finite-dimensional gauge identity; no attainment
+  theorem is claimed. Its cited reference remains K. Fan, "Maximum properties and inequalities
+  for the eigenvalues of completely continuous operators", Proc. Natl. Acad. Sci. USA 37
+  (1951), 760–766, Theorem 1 with m = 1. Proves the factorisation and unit determinant of the
   symmetric Pascal matrix and the trace of odd powers of a difference of two idempotent
   matrices, a characterisation of finite monoids with a right zero, continuity of currying for
   compact-open topologies out of an R1 space, quasi-sobriety of arbitrary products of
@@ -33,13 +37,6 @@ main_declarations:
 - Homeomorph.curryOfR1Space
 - ContDiffOn.isMeagre_image
 main_results:
-- declaration: LinearMap.norm_sum_inner_le_sum_singularValues
-  informal: For pairwise orthogonal families (x_i) in E and (y_i) in F of vectors of norm at
-    most 1, indexed by a finite set with at most n elements, the norm of the sum of the inner
-    products ⟪y_i, T x_i⟫ is at most the sum of the n largest singular values of T (Ky Fan's
-    maximum principle).
-  source_ref: K. Fan, "Maximum properties and inequalities for the eigenvalues of completely
-    continuous operators", Proc. Natl. Acad. Sci. USA 37 (1951), 760–766, Theorem 1 with m = 1.
 - declaration: LinearMap.sum_powersetCard_two_prod_singularValues_add_le
   informal: Writing σ₂(T) for the second elementary symmetric function of the n largest
     singular values of T, σ₂(u + v) ≤ σ₂(u) + (∑_{j<n} s_j(u)) (∑_{j<n} s_j(v)) + σ₂(v).

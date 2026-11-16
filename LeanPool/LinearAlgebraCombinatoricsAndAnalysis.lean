@@ -30,4 +30,9 @@ Main declarations: `LinearMap.sum_powersetCard_two_prod_singularValues_add_le`, 
   `ContDiffOn.isMeagre_image`
 Tags: singular-values, ky-fan-inequality, cauchy-binet, elementary-matrices, whitehead-lemma
 MSC: 15A18, 15A15, 15A42, 19B10, 05A30, 11B65, 20F12, 20M10, 54C35, 54E52
+
+The singular-value extension claimed here is the σ₂ addition inequality. The included
+maximum-principle upper bound is supporting: it follows from the pool's existing
+contraction-family bound and finite-dimensional gauge identity, using a unit-scalar
+rotation and prefix monotonicity. It is not a new headline or an attainment theorem.
 -/
