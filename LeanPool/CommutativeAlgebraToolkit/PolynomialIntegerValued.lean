@@ -8,6 +8,7 @@ module
 public import Mathlib.Algebra.Group.ForwardDiff
 public import Mathlib.Algebra.Polynomial.Roots
 public import Mathlib.LinearAlgebra.Basis.Basic
+public import Mathlib.LinearAlgebra.FreeModule.Basic
 public import Mathlib.RingTheory.Binomial
 
 /-!
@@ -142,11 +143,16 @@ private theorem linearIndependent_choose_X_int :
     mul_ite, mul_one, mul_zero] at h0
   simpa [hi] using h0
 
+/-- The binomial polynomials, viewed in `intValued`, are linearly independent over `ℤ`. -/
+theorem linearIndependent_choose_X_intValued :
+    LinearIndependent ℤ fun n ↦ (⟨Ring.choose X n, choose_X_mem_intValued n⟩ : intValued) :=
+  .of_comp intValued.val.toLinearMap linearIndependent_choose_X_int
+
 /-- **Pólya's basis**: the binomial polynomials `Ring.choose X n` form a `ℤ`-basis of the
 integer-valued polynomials. -/
 noncomputable def intValuedBasis : Module.Basis ℕ ℤ intValued :=
   Module.Basis.mk (v := fun n ↦ ⟨Ring.choose X n, choose_X_mem_intValued n⟩)
-    (.of_comp intValued.val.toLinearMap linearIndependent_choose_X_int)
+    linearIndependent_choose_X_intValued
     (fun P _ ↦ by
       obtain ⟨c, hc⟩ := exists_eq_sum_intCast_smul_choose fun m ↦ P.2 m
       have : P = ∑ k ∈ range ((P : ℚ[X]).natDegree + 1),
