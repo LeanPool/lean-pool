@@ -8,6 +8,7 @@ module
 
 public import LeanPool.MarkoffModP.BGS.NumberTheory.ExplicitDivisorBound
 public import Mathlib.Tactic.IntervalCases
+import LeanPool.MarkoffModP.BGS.NumberTheory.PrimeBlockSums
 
 /-!
 # An elementary tenth-moment divisor bound
@@ -343,53 +344,70 @@ private theorem factorization_succ_pow_ten_le
 -- Separate closed computations keep each kernel check within the default limit.
 private def preliminaryPrimePenaltyBlock (k : ℕ) : ℕ :=
   ∑ p ∈ Finset.range 64, if Nat.Prime (k * 64 + p) then preliminaryPrimePenalty (k * 64 + p) else 0
+-- Preserve the existing auxiliary certificates while sharing the primality calculations.
 private theorem preliminaryPrimePenaltyBlock_value_0 : preliminaryPrimePenaltyBlock 0 = 165 := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (sum_prime_block_0 preliminaryPrimePenalty).trans rfl
 
 private theorem preliminaryPrimePenaltyBlock_value_1 : preliminaryPrimePenaltyBlock 1 = 52 := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (sum_prime_block_1 preliminaryPrimePenalty).trans rfl
 
 private theorem preliminaryPrimePenaltyBlock_value_2 : preliminaryPrimePenaltyBlock 2 = 36 := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (sum_prime_block_2 preliminaryPrimePenalty).trans rfl
 
 private theorem preliminaryPrimePenaltyBlock_value_3 : preliminaryPrimePenaltyBlock 3 = 33 := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (sum_prime_block_3 preliminaryPrimePenalty).trans rfl
 
 private theorem preliminaryPrimePenaltyBlock_value_4 : preliminaryPrimePenaltyBlock 4 = 24 := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (sum_prime_block_4 preliminaryPrimePenalty).trans rfl
 
 private theorem preliminaryPrimePenaltyBlock_value_5 : preliminaryPrimePenaltyBlock 5 = 20 := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (sum_prime_block_5 preliminaryPrimePenalty).trans rfl
 
 private theorem preliminaryPrimePenaltyBlock_value_6 : preliminaryPrimePenaltyBlock 6 = 20 := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (sum_prime_block_6 preliminaryPrimePenalty).trans rfl
 
 private theorem preliminaryPrimePenaltyBlock_value_7 : preliminaryPrimePenaltyBlock 7 = 22 := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (sum_prime_block_7 preliminaryPrimePenalty).trans rfl
 
 private theorem preliminaryPrimePenaltyBlock_value_8 : preliminaryPrimePenaltyBlock 8 = 8 := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (sum_prime_block_8 preliminaryPrimePenalty).trans rfl
 
 private theorem preliminaryPrimePenaltyBlock_value_9 : preliminaryPrimePenaltyBlock 9 = 10 := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (sum_prime_block_9 preliminaryPrimePenalty).trans rfl
 
 private theorem preliminaryPrimePenaltyBlock_value_10 : preliminaryPrimePenaltyBlock 10 = 11 := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (sum_prime_block_10 preliminaryPrimePenalty).trans rfl
 
 private theorem preliminaryPrimePenaltyBlock_value_11 : preliminaryPrimePenaltyBlock 11 = 9 := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (sum_prime_block_11 preliminaryPrimePenalty).trans rfl
 
 private theorem preliminaryPrimePenaltyBlock_value_12 : preliminaryPrimePenaltyBlock 12 = 10 := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (sum_prime_block_12 preliminaryPrimePenalty).trans rfl
 
 private theorem preliminaryPrimePenaltyBlock_value_13 : preliminaryPrimePenaltyBlock 13 = 9 := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (sum_prime_block_13 preliminaryPrimePenalty).trans rfl
 
 private theorem preliminaryPrimePenaltyBlock_value_14 : preliminaryPrimePenaltyBlock 14 = 8 := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (sum_prime_block_14 preliminaryPrimePenalty).trans rfl
 
 private theorem preliminaryPrimePenaltyBlock_value_15 : preliminaryPrimePenaltyBlock 15 = 10 := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (sum_prime_block_15 preliminaryPrimePenalty).trans rfl
 
 private theorem sum_preliminaryPrimePenalty_blocks (k : ℕ) :
     (∑ p ∈ Finset.range (k * 64), if Nat.Prime p then preliminaryPrimePenalty p else 0) =
