@@ -235,10 +235,6 @@ theorem pushclose (k : ℕ) [NeZero k] (T : X →L[ℝ] X) (Θ : ℝ) (hΘ : ber
     rw [hbounddef]
     have : (0:ℝ) < 1 - x := by linarith
     positivity
-  have growth_le : ∀ (S : Submodule ℝ X) (y : X), y ∈ Metric.sphere (0 : X) 1 → y ∈ (S : Set X) →
-      growth T S ≤ ‖T y‖ :=
-    fun S y hy1 hy2 =>
-      csInf_le ⟨0, by rintro _ ⟨z, -, rfl⟩; exact norm_nonneg _⟩ ⟨y, ⟨hy1, hy2⟩, rfl⟩
   -- The one-directional estimate: every point of `TV`'s sphere is within `bound` of `TW`'s sphere.
   -- Applied to `(V, W)` and (by symmetry) to `(W, V)` to get the two-sided Hausdorff bound.
   have key : ∀ (V W : GrassmannianFin X k) (hVpos : 0 < growth T (V.1 : Submodule ℝ X))
@@ -304,18 +300,9 @@ theorem pushclose (k : ℕ) [NeZero k] (T : X →L[ℝ] X) (Θ : ℝ) (hΘ : ber
         rw [hTc_eq]; exact mul_le_mul_of_nonneg_left hgU (norm_nonneg c)
       -- b = 0 is impossible: it would force `growth T U = 1/‖a‖ ≤ ρ` while `‖a‖ ≤ 1/Θ` gives
       -- `Θ ≤ ρ`, contradicting `hΘ`.
-      have hane0 : ‖a‖ ≠ 0 := norm_ne_zero_iff.2 ha0
-      have haΘ : ‖a‖ * Θ ≤ ‖T a‖ := by
-        have hunit : ‖a‖⁻¹ • a ∈ Metric.sphere (0 : X) 1 ∩ (V.1 : Set X) :=
-          ⟨by rw [mem_sphere_zero_iff_norm, norm_smul, norm_inv, norm_norm, inv_mul_cancel₀ hane0],
-           (V.1 : Submodule ℝ X).smul_mem _ haV⟩
-        have hle := growth_le (V.1 : Submodule ℝ X) _ hunit.1 hunit.2
-        have heq2 : ‖T (‖a‖⁻¹ • a)‖ = ‖a‖⁻¹ * ‖T a‖ := by
-          rw [map_smul, norm_smul, norm_inv, norm_norm]
-        rw [heq2] at hle
-        have hΘlt : Θ < ‖a‖⁻¹ * ‖T a‖ := lt_of_lt_of_le hV' hle
-        rw [← div_eq_inv_mul, lt_div_iff₀ (norm_pos_iff.2 ha0)] at hΘlt
-        linarith
+      have haΘ : ‖a‖ * Θ ≤ ‖T a‖ :=
+        (mul_le_mul_of_nonneg_left hV'.le (norm_nonneg a)).trans
+          (by simpa only [mul_comm] using growth_mul_norm_le T haV)
       have hbne : b ≠ 0 := by
         intro hb0
         have hw0 : w = 0 := by
@@ -347,18 +334,9 @@ theorem pushclose (k : ℕ) [NeZero k] (T : X →L[ℝ] X) (Θ : ℝ) (hΘ : ber
           change T.toLinearMap b = T.toLinearMap 0
           rw [map_zero]; exact hTb0
         exact hbne (Subtype.ext_iff.1 this)
-      have hbΘ : ‖b‖ * Θ ≤ ‖T b‖ := by
-        have hbne0' : ‖b‖ ≠ 0 := norm_ne_zero_iff.2 hbne
-        have hunit : ‖b‖⁻¹ • b ∈ Metric.sphere (0 : X) 1 ∩ (W.1 : Set X) :=
-          ⟨by rw [mem_sphere_zero_iff_norm, norm_smul, norm_inv, norm_norm, inv_mul_cancel₀ hbne0'],
-           (W.1 : Submodule ℝ X).smul_mem _ hbW⟩
-        have hle := growth_le (W.1 : Submodule ℝ X) _ hunit.1 hunit.2
-        have heq2 : ‖T (‖b‖⁻¹ • b)‖ = ‖b‖⁻¹ * ‖T b‖ := by
-          rw [map_smul, norm_smul, norm_inv, norm_norm]
-        rw [heq2] at hle
-        have hΘlt : Θ < ‖b‖⁻¹ * ‖T b‖ := lt_of_lt_of_le hW' hle
-        rw [← div_eq_inv_mul, lt_div_iff₀ (norm_pos_iff.2 hbne)] at hΘlt
-        linarith
+      have hbΘ : ‖b‖ * Θ ≤ ‖T b‖ :=
+        (mul_le_mul_of_nonneg_left hW'.le (norm_nonneg b)).trans
+          (by simpa only [mul_comm] using growth_mul_norm_le T hbW)
       -- the algebraic chain isolating `‖Tc‖ ≤ 2x/(1-x)` (paper's estimate, for the subspace `TW`)
       have hTbnorm_le : ‖T b‖ ≤ ‖T a‖ + ‖T c‖ := by
         rw [hTbeq]; exact norm_sub_le _ _

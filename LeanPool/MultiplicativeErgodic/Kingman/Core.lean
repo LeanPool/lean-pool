@@ -156,7 +156,7 @@ This is the whole content of the former `kingman_of_integrable`: an `L¹` subadd
 satisfies `kingman`'s hypothesis (`(f 1)⁺` is integrable because `f 1` is), so the stronger
 theorem applies directly, and only the mean clause has to be translated. Keeping a separate `L¹`
 Kingman would have meant a second copy of the truncation ladder. -/
-theorem tendsto_mean_of_lowerIntegral {μ : Measure Ω} [IsProbabilityMeasure μ]
+theorem tendsto_mean_of_lowerIntegral {μ : Measure Ω}
     {f : ℕ → Ω → ℝ} (hL1 : ∀ n, Integrable (f n) μ) {C : EReal}
     (h : Tendsto (fun n : ℕ => lowerIntegral μ (fun ω => f n ω / n)) atTop (nhds C)) :
     Tendsto (fun n : ℕ => ((∫ ω, f n ω ∂μ) / n : EReal)) atTop (nhds C) := by

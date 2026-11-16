@@ -246,12 +246,12 @@ theorem SubadditiveFamily.tendsto_integral_truncate (μ : Measure Ω)
 /-- **The integral of `g`, valued in `[-∞, ∞)`.**
 
 Defined as the decreasing limit of the Bochner integrals of the truncations `max g (-M)`. This
-sidesteps the one real obstacle to stating Kingman's theorem without full integrability: Mathlib's
-`∫ g ∂μ` is the *junk value* `0` when `g` is not integrable, so a mean clause written with it
-becomes meaningless exactly when the theorem gets interesting. Every integrand here is genuinely
-integrable whenever `g⁺` is (it is squeezed between the constant `-M` and `g⁺`), so no junk value
-is ever consulted, and no new integration theory — no signed `EReal` Bochner integral, no `∫⁻`
-bookkeeping — is needed.
+sidesteps the one real obstacle to stating Kingman's theorem without full integrability:
+Mathlib's `∫ g ∂μ` is the *junk value* `0` when `g` is not integrable, so a mean clause written
+with it becomes meaningless exactly when the theorem gets interesting. On a finite measure
+space, each integrand is integrable whenever `g⁺` is (it lies between the constant `-M` and
+`g⁺`), so no junk value is ever consulted, and no new integration theory — no signed `EReal`
+Bochner integral, no `∫⁻` bookkeeping — is needed.
 
 Always `< ⊤`; equals `∫ g ∂μ` when `g` is integrable. -/
 noncomputable def lowerIntegral (μ : Measure Ω) (g : Ω → ℝ) : EReal :=
@@ -267,21 +267,22 @@ theorem le_lowerIntegral {μ : Measure Ω} {g : Ω → ℝ} {c : EReal}
     (h : ∀ M : ℕ, c ≤ ((∫ ω, max (g ω) (-(M : ℝ)) ∂μ : ℝ) : EReal)) : c ≤ lowerIntegral μ g :=
   le_iInf h
 
-/-- Truncating an integrable function at a constant level keeps it integrable. -/
-theorem lowerIntegral_integrable_trunc {μ : Measure Ω} [IsProbabilityMeasure μ] {g : Ω → ℝ}
+/-- Truncating an integrable function at a nonpositive level keeps it integrable. -/
+theorem lowerIntegral_integrable_trunc {μ : Measure Ω} {g : Ω → ℝ}
     (hg : Integrable g μ) (M : ℕ) : Integrable (fun ω => max (g ω) (-(M : ℝ))) μ := by
-  refine Integrable.mono' (hg.abs.add (integrable_const ((M : ℝ))))
+  refine Integrable.mono' hg.abs
     (hg.aestronglyMeasurable.sup aestronglyMeasurable_const) ?_
   filter_upwards with ω
   rw [Real.norm_eq_abs]
   have hM : (0 : ℝ) ≤ (M : ℝ) := Nat.cast_nonneg M
-  have h1 : |g ω| ≥ g ω := le_abs_self _
-  have h2 : |g ω| ≥ -(g ω) := neg_le_abs _
-  rcases max_choice (g ω) (-(M : ℝ)) with h | h <;> rw [h] <;>
-    simp only [Pi.add_apply] <;> rw [abs_le] <;> constructor <;> linarith
+  rcases max_choice (g ω) (-(M : ℝ)) with h | h
+  · rw [h]
+  · have h1 : g ω ≤ -(M : ℝ) := by rw [← h]; exact le_max_left _ _
+    rw [h, abs_of_nonpos (by linarith), abs_of_nonpos (by linarith)]
+    linarith
 
 /-- `lowerIntegral` agrees with the Bochner integral on `L¹`. -/
-theorem lowerIntegral_eq_integral {μ : Measure Ω} [IsProbabilityMeasure μ] {g : Ω → ℝ}
+theorem lowerIntegral_eq_integral {μ : Measure Ω} {g : Ω → ℝ}
     (hg : Integrable g μ) : lowerIntegral μ g = ((∫ ω, g ω ∂μ : ℝ) : EReal) := by
   have hint : ∀ M : ℕ, Integrable (fun ω => max (g ω) (-(M : ℝ))) μ :=
     lowerIntegral_integrable_trunc hg

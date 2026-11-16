@@ -340,17 +340,7 @@ theorem measurable_growth_moving [SeparableSpace X] [BorelSpace X] {m : ℕ} [Ne
         Continuous fun V : GrassmannianFin X m => (A ω, V))
   have hmeas : ∀ V, Measurable (u V) := by
     intro V
-    refine measurable_growth_of_weak hA _ ?_
-    have := V.2.1
-    have hne : ((V.1 : Submodule ℝ X)) ≠ ⊥ := by
-      intro h
-      have := V.2.2
-      rw [h, finrank_bot] at this
-      exact NeZero.ne m this.symm
-    obtain ⟨x, hx, hx0⟩ := Submodule.exists_mem_ne_zero_of_ne_bot hne
-    refine ⟨‖x‖⁻¹ • x, ?_, (V.1 : Submodule ℝ X).smul_mem _ hx⟩
-    rw [mem_sphere_zero_iff_norm, norm_smul, norm_inv, norm_norm,
-      inv_mul_cancel₀ (norm_ne_zero_iff.2 hx0)]
+    exact measurable_growth_of_weak hA _ V.nonempty_sphere
   have hjoint : Measurable (Function.uncurry u) :=
     measurable_uncurry_of_continuous_of_measurable (u := u) hcont hmeas
   have heq : (fun ω => growth (A ω) ((E ω).1 : Submodule ℝ X)) =

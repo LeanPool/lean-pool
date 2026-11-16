@@ -259,23 +259,12 @@ theorem exists_finrank_succ_le {V : Submodule ℝ X} (hfd : FiniteDimensional �
     ∃ W : Submodule ℝ X, W ≤ V ∧ FiniteDimensional ℝ W ∧
       Module.finrank ℝ W = k + 1 ∧ W ≠ ⊥ := by
   have := hfd
-  let b : Module.Basis (Fin (k + 1 + 1)) ℝ V :=
-    Module.finBasisOfFinrankEq ℝ (V : Submodule ℝ X) hV
-  let v : Fin (k + 1) → X := fun i => ((b i.castSucc : V) : X)
-  have hli : LinearIndependent ℝ v := by
-    have h1 : LinearIndependent ℝ (⇑b ∘ (Fin.castSucc : Fin (k + 1) → Fin (k + 1 + 1))) :=
-      b.linearIndependent.comp _ (Fin.castSucc_injective (k + 1))
-    exact h1.map' V.subtype (Submodule.ker_subtype V)
-  refine ⟨Submodule.span ℝ (Set.range v), ?_, FiniteDimensional.span_of_finite ℝ
-      (Set.finite_range v), ?_, ?_⟩
-  · rw [Submodule.span_le]
-    rintro _ ⟨i, rfl⟩
-    exact (b i.castSucc).2
-  · rw [finrank_span_eq_card hli, Fintype.card_fin]
-  · intro hbot
-    have hmem : v 0 ∈ Submodule.span ℝ (Set.range v) := Submodule.subset_span ⟨0, rfl⟩
-    rw [hbot, Submodule.mem_bot] at hmem
-    exact hli.ne_zero 0 hmem
+  obtain ⟨W, hWV, hWfd, hWdim⟩ :=
+    exists_le_finrank_eq' V (l := k + 1) (by omega)
+  refine ⟨W, hWV, hWfd, hWdim, ?_⟩
+  intro hbot
+  rw [hbot, finrank_bot] at hWdim
+  omega
 
 omit [MeasurableSpace X] in
 /-- **`ρ` is antitone from index `1` on.** Every `(k+2)`-dimensional subspace contains a

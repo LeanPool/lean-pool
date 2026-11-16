@@ -179,16 +179,8 @@ theorem measurable_apply_of_weak {Ω : Type*} [MeasurableSpace Ω] [MeasurableSp
 
 /-- A `k`-dimensional subspace with `k ≥ 1` has a nonempty unit sphere. -/
 theorem sphere_inter_nonempty_of_finrank {k : ℕ} [NeZero k] (V : GrassmannianFin X k) :
-    (Metric.sphere (0 : X) 1 ∩ ((V.1 : Submodule ℝ X) : Set X)).Nonempty := by
-  have hne : (V.1 : Submodule ℝ X) ≠ ⊥ := by
-    intro hbot
-    have : Module.finrank ℝ (V.1 : Submodule ℝ X) = 0 := by rw [hbot]; simp
-    exact NeZero.ne k (by rw [← V.2.2, this])
-  obtain ⟨x, hxV, hx0⟩ := Submodule.exists_mem_ne_zero_of_ne_bot hne
-  exact ⟨‖x‖⁻¹ • x,
-    mem_sphere_zero_iff_norm.2
-      (by rw [norm_smul, norm_inv, norm_norm, inv_mul_cancel₀ (norm_ne_zero_iff.2 hx0)]),
-    (V.1 : Submodule ℝ X).smul_mem _ hxV⟩
+    (Metric.sphere (0 : X) 1 ∩ ((V.1 : Submodule ℝ X) : Set X)).Nonempty :=
+  V.nonempty_sphere
 
 /-- **`ρ_k` of a strongly measurable operator family is measurable.** The strong-operator-topology
 counterpart of `bernstein_measurable`: it is `ω ↦ A(ω)x` that is assumed measurable, not
