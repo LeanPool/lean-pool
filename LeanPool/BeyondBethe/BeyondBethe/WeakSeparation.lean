@@ -9,7 +9,11 @@ module
 public import LeanPool.BeyondBethe.BeyondBethe.DirectedOptimizerOracle
 public import LeanPool.BeyondBethe.BeyondBethe.NumericalNearby
 public import LeanPool.BeyondBethe.BeyondBethe.NumericalPotentials
-public import Mathlib.Tactic
+import Mathlib.Tactic.Convert -- shake: keep
+import Mathlib.Tactic.Ext -- shake: keep
+import Mathlib.Tactic.Linarith -- shake: keep
+import Mathlib.Tactic.Ring -- shake: keep
+import Mathlib.Tactic.SimpRw -- shake: keep
 
 /-! # Weak Separation -/
 

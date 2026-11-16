@@ -7,7 +7,7 @@ module
 
 
 public import LeanPool.BeyondBethe.BeyondBethe.MachineKuhnStep
-public import Mathlib.Tactic
+import Aesop -- shake: keep
 
 /-!
 # Correctness of one encoded Kuhn transition

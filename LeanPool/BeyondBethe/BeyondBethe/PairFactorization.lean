@@ -10,7 +10,10 @@ public import LeanPool.BeyondBethe.BeyondBethe.CapacityScaling
 public import LeanPool.BeyondBethe.BeyondBethe.ClusterCertificate
 public import LeanPool.BeyondBethe.BeyondBethe.Gain
 public import LeanPool.BeyondBethe.BeyondBethe.TransferIdentity
-public import Mathlib.Tactic
+import Mathlib.Tactic.Convert -- shake: keep
+import Mathlib.Tactic.FieldSimp -- shake: keep
+import Mathlib.Tactic.Ring -- shake: keep
+import Mathlib.Tactic.SimpRw -- shake: keep
 
 /-! # Pair Factorization -/
 

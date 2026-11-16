@@ -7,7 +7,8 @@ module
 
 
 public import LeanPool.BeyondBethe.BeyondBethe.MachineScheduledStateEncodingBound
-public import Mathlib.Tactic
+import Mathlib.Tactic.GCongr -- shake: keep
+import Mathlib.Tactic.NormNum -- shake: keep
 
 /-!
 # The canonical Bethe feasibility run always fits its finite-word ruler

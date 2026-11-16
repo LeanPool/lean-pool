@@ -8,7 +8,7 @@ module
 
 public import LeanPool.BeyondBethe.BeyondBethe.MachineOptimizerFeasibilityCall
 public import LeanPool.BeyondBethe.BeyondBethe.ScannedBetheBisection
-public import Mathlib.Tactic
+import Mathlib.Tactic.NormNum -- shake: keep
 
 /-!
 # A finite-word dyadic bisection loop for the Bethe optimizer

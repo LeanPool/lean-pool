@@ -8,7 +8,8 @@ module
 
 public import LeanPool.BeyondBethe.BeyondBethe.BetheEpigraphGeometry
 public import LeanPool.BeyondBethe.BeyondBethe.ScheduledFeasibility
-public import Mathlib.Tactic
+import Mathlib.Tactic.NormNum -- shake: keep
+import Mathlib.Tactic.Positivity -- shake: keep
 
 /-! # Bethe Threshold Feasibility -/
 

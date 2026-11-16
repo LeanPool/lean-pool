@@ -8,7 +8,8 @@ module
 
 public import LeanPool.BeyondBethe.BeyondBethe.DyadicRounding
 public import Mathlib.Data.Nat.Size
-public import Mathlib.Tactic
+import Mathlib.Tactic.NormNum -- shake: keep
+import Mathlib.Tactic.Positivity -- shake: keep
 
 /-! # Dyadic Magnitude Precision -/
 

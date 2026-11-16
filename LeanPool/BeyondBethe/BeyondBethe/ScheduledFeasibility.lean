@@ -9,7 +9,10 @@ module
 public import LeanPool.BeyondBethe.BeyondBethe.ScheduledRoundedEllipsoidIteration
 public import LeanPool.BeyondBethe.BeyondBethe.RationalFeasibility
 public import LeanPool.BeyondBethe.BeyondBethe.RoundedFeasibility
-public import Mathlib.Tactic
+import Mathlib.Tactic.Linarith -- shake: keep
+import Mathlib.Tactic.NormNum -- shake: keep
+import Mathlib.Tactic.Positivity -- shake: keep
+import Mathlib.Tactic.Ring -- shake: keep
 
 /-! # Scheduled Feasibility -/
 

@@ -8,10 +8,20 @@ module
 
 public import LeanPool.BeyondBethe.BeyondBethe.Slack
 public import Mathlib.Analysis.Convex.Jensen
+public import Mathlib.Analysis.InnerProductSpace.Basic
 public import Mathlib.Analysis.SpecialFunctions.Artanh
 public import Mathlib.Analysis.SpecialFunctions.Log.Deriv
 public import Mathlib.Data.Fin.Rev
-public import Mathlib.Tactic
+import Mathlib.Tactic.Convert -- shake: keep
+import Mathlib.Tactic.Ext -- shake: keep
+import Mathlib.Tactic.FieldSimp -- shake: keep
+import Mathlib.Tactic.Linarith -- shake: keep
+import Mathlib.Tactic.NormNum -- shake: keep
+import Mathlib.Tactic.Positivity -- shake: keep
+import Mathlib.Tactic.Ring -- shake: keep
+import Mathlib.Tactic.SimpRw -- shake: keep
+import Mathlib.Tactic.SplitIfs -- shake: keep
+import Mathlib.Tactic.Tauto -- shake: keep
 
 /-! # Row Stability -/
 
@@ -899,7 +909,7 @@ theorem log_one_sub_lower_eight
   have hneg := neg_le_of_abs_le habs
   rw [abs_of_nonneg hx0] at hneg
   norm_num [Finset.sum_range_succ] at hneg
-  nlinarith
+  linarith only [hneg]
 
 /-- On `[0,1/2]`, the numerator of `h'` has a uniform cubic lower bound. -/
 theorem rowStabilityHPrime_numerator_lower
@@ -927,12 +937,12 @@ theorem rowStabilityHPrime_numerator_lower
     rw [div_le_iff₀ hden]
     have hs := mul_le_mul_of_nonneg_left
       (show (1 / 2 : ℝ) ≤ 1 - x by linarith) (pow_nonneg hx0 3)
-    nlinarith
+    nlinarith only [h9, hs]
   have hlog := log_one_sub_lower_eight hx0 (by linarith : x < 1)
   have hneg : x ^ 4 / 4 + x ^ 5 / 5 + x ^ 6 / 6 +
       x ^ 7 / 7 + x ^ 8 / 8 + x ^ 9 / (1 - x) ≤ x ^ 3 / 4 := by
-    nlinarith
-  nlinarith
+    linarith only [h4, h5, h6, h7, h8, hrem, pow_nonneg hx0 3]
+  linarith only [hlog, hneg]
 
 theorem rowStabilityHPrime_lower
     {x : ℝ} (hx0 : 0 < x) (hxHalf : x ≤ 1 / 2) :
@@ -1214,7 +1224,7 @@ theorem le_fourthRoot_of_pow_four_le
   have hx2 : 0 ≤ x ^ 2 := sq_nonneg x
   have hxsq : x ^ 2 ≤ Real.sqrt d := by
     rw [Real.le_sqrt hx2 hd]
-    convert hpow using 1; ring
+    simpa only [← pow_mul] using hpow
   rw [fourthRoot, Real.le_sqrt hx (Real.sqrt_nonneg d)]
   exact hxsq
 
@@ -1222,8 +1232,10 @@ theorem self_le_fourthRoot
     {d : ℝ} (hd0 : 0 ≤ d) (hd1 : d ≤ 1) :
     d ≤ fourthRoot d := by
   apply le_fourthRoot_of_pow_four_le hd0 hd0
-  have hd2 : d ^ 2 ≤ d := by nlinarith
-  nlinarith [sq_nonneg (d ^ 2 - d)]
+  calc
+    d ^ 4 = d ^ 3 * d := pow_succ _ _
+    _ ≤ 1 * d := mul_le_mul_of_nonneg_right (pow_le_one₀ hd0 hd1) hd0
+    _ = d := one_mul d
 
 theorem sum_rowStabilityF_eq
     {n : ℕ} (p : Fin n → ℝ) :
