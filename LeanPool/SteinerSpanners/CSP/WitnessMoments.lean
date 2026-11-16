@@ -140,7 +140,7 @@ theorem candidateQueriesFreshAndSupported : ∀ {N q : ℕ} (C₁ r_star m : ℕ
     r_star →
     ∀ (a b : Fin N → Fin q) (z_prev : Fin m → (Fin N → Fin q)) (x : Fin N → Fin q),
     x ∈ cspPoolCand C₁ r_star a b \ Finset.univ.image z_prev →
-    candMFresh a b m z_prev x ⊆ diffCoords x a ∩ diffCoords x b ∧
+    candMFresh a b m z_prev x ⊆ disagreeSet x a ∩ disagreeSet x b ∧
     (∀ w ∈ candMWit C₁ r_star a b m z_prev x, candQCand C₁ a b m z_prev x w ⊆
       cspUCand a b (m + 1) (Fin.snoc z_prev x) \ cspUCand a b m z_prev) ∧
     (∀ ω : cspIota N q → Bool, ω (Sum.inr x) = true →
@@ -160,7 +160,7 @@ theorem candidateQueriesFreshAndSupported : ∀ {N q : ℕ} (C₁ r_star m : ℕ
   let R_old := cspRvc a b m z_prev
   let R_new := cspRvc a b (m + 1) (Fin.snoc z_prev x)
   let S := candMFresh a b m z_prev x
-  let W_ab := diffCoords x a ∪ diffCoords x b
+  let W_ab := disagreeSet x a ∪ disagreeSet x b
   have ha_old : ∀ v : Fin N, (v, a v) ∈ R_old := by
     intro v
     simp only [R_old, cspRvc, Finset.mem_union, Finset.mem_image, Finset.mem_univ, true_and]
@@ -169,17 +169,17 @@ theorem candidateQueriesFreshAndSupported : ∀ {N q : ℕ} (C₁ r_star m : ℕ
     intro v
     simp only [R_old, cspRvc, Finset.mem_union, Finset.mem_image, Finset.mem_univ, true_and]
     exact Or.inl (Or.inr ⟨v, rfl⟩)
-  have hcstar_old : ∀ v : Fin N, (v, candCStar a b x v) ∈ R_old := by
+  have hcstar_old : ∀ v : Fin N, (v, activeColor x a b v) ∈ R_old := by
     intro v
-    unfold candCStar
+    unfold activeColor
     split_ifs
     · exact ha_old v
     · exact hb_old v
-  have hcstar_ne : ∀ v ∈ W_ab, candCStar a b x v ≠ x v := by
+  have hcstar_ne : ∀ v ∈ W_ab, activeColor x a b v ≠ x v := by
     intro v hv
-    simp only [W_ab, diffCoords, Finset.mem_union, Finset.mem_filter, Finset.mem_univ, true_and]
+    simp only [W_ab, disagreeSet, Finset.mem_union, Finset.mem_filter, Finset.mem_univ, true_and]
         at hv
-    unfold candCStar
+    unfold activeColor
     split_ifs with hax
     · exact hax
     · push Not at hax
@@ -212,8 +212,8 @@ theorem candidateQueriesFreshAndSupported : ∀ {N q : ℕ} (C₁ r_star m : ℕ
     have hu₂_not : (u₂, x u₂) ∉ R_old := by
       have hS₂ := h₂.1.1
       simpa [S, candMFresh, R_old] using hS₂
-    have hv₁_in : (v₁, candCStar a b x v₁) ∈ R_old := hcstar_old v₁
-    have hv₂_in : (v₂, candCStar a b x v₂) ∈ R_old := hcstar_old v₂
+    have hv₁_in : (v₁, activeColor x a b v₁) ∈ R_old := hcstar_old v₁
+    have hv₂_in : (v₂, activeColor x a b v₂) ∈ R_old := hcstar_old v₂
     dsimp [candPhi2] at heq
     split_ifs at heq with hlt₁ hlt₂ hlt₂
     · simp only [Prod.mk.injEq] at heq
@@ -236,7 +236,7 @@ theorem candidateQueriesFreshAndSupported : ∀ {N q : ℕ} (C₁ r_star m : ℕ
     rcases Finset.mem_image.mp ht₁ with ⟨⟨u₁, v₁⟩, _, rfl⟩
     rcases Finset.mem_image.mp ht₂ with ⟨⟨u₂, v₂⟩, h₂, heq⟩
     simp only [candA2, Finset.mem_filter, Finset.mem_product] at h₂
-    have hv₂_ne : candCStar a b x v₂ ≠ x v₂ := hcstar_ne v₂ h₂.1.2
+    have hv₂_ne : activeColor x a b v₂ ≠ x v₂ := hcstar_ne v₂ h₂.1.2
     dsimp [candPhi1, candPhi2] at heq
     split_ifs at heq with hlt₂
     · simp only [Prod.mk.injEq] at heq
@@ -248,7 +248,7 @@ theorem candidateQueriesFreshAndSupported : ∀ {N q : ℕ} (C₁ r_star m : ℕ
   refine ⟨?_, ?_, ?_, ?_⟩
   · intro v hv
     simp only [candMFresh, Finset.mem_filter, Finset.mem_univ, true_and] at hv
-    simp only [diffCoords, Finset.mem_inter, Finset.mem_filter, Finset.mem_univ, true_and]
+    simp only [disagreeSet, Finset.mem_inter, Finset.mem_filter, Finset.mem_univ, true_and]
     exact ⟨fun h => hv (h ▸ ha_old v), fun h => hv (h ▸ hb_old v)⟩
   · intro w hw i hi
     simp only [candQCand, Finset.mem_union, Finset.mem_image, Finset.mem_singleton] at hi
@@ -296,7 +296,7 @@ theorem candidateQueriesFreshAndSupported : ∀ {N q : ℕ} (C₁ r_star m : ℕ
       · refine ⟨?_, ?_⟩
         · simp only [cspUCand, Finset.mem_union, Finset.mem_image, Finset.mem_filter,
             Finset.mem_univ, true_and]
-          exact Or.inr ⟨(u, v, x u, candCStar a b x v),
+          exact Or.inr ⟨(u, v, x u, activeColor x a b v),
             ⟨hlt, hx_new u, hold_sub_new (hcstar_old v)⟩, rfl⟩
         · intro hmem
           simp only [cspUCand, Finset.mem_union, Finset.mem_image, Finset.mem_filter,
@@ -311,7 +311,7 @@ theorem candidateQueriesFreshAndSupported : ∀ {N q : ℕ} (C₁ r_star m : ℕ
         refine ⟨?_, ?_⟩
         · simp only [cspUCand, Finset.mem_union, Finset.mem_image, Finset.mem_filter,
             Finset.mem_univ, true_and]
-          exact Or.inr ⟨(v, u, candCStar a b x v, x u),
+          exact Or.inr ⟨(v, u, activeColor x a b v, x u),
             ⟨hgt, hold_sub_new (hcstar_old v), hx_new u⟩, rfl⟩
         · intro hmem
           simp only [cspUCand, Finset.mem_union, Finset.mem_image, Finset.mem_filter,
@@ -358,34 +358,34 @@ theorem freshCoordinateFiberCardinality : ∀ {N q : ℕ} (C₁ r_star m : ℕ),
   let R_old := cspRvc a b m z_prev
   let R_neq := R_old.filter (fun vc : Fin N × Fin q => vc.2 ≠ a vc.1)
   have hR_neq_card : R_neq.card ≤ (1 + m) * (C₁ * r_star) := by
-    have hsub : R_neq ⊆ (diffCoords a b).image (fun v => (v, b v)) ∪
+    have hsub : R_neq ⊆ (disagreeSet a b).image (fun v => (v, b v)) ∪
         Finset.univ.biUnion (fun t : Fin m =>
-          (diffCoords (z_prev t) a).image (fun v => (v, z_prev t v))) := by
+          (disagreeSet (z_prev t) a).image (fun v => (v, z_prev t v))) := by
       intro vc hvc
       simp only [R_neq, R_old, cspRvc, Finset.mem_filter, Finset.mem_union,
         Finset.mem_image, Finset.mem_univ, true_and, Finset.mem_biUnion] at hvc
       rcases hvc with ⟨(⟨v, rfl⟩ | ⟨v, rfl⟩) | ⟨t, v, rfl⟩, hne⟩
       · exact absurd rfl hne
       · simp only [Finset.mem_union, Finset.mem_image, Finset.mem_biUnion,
-          Finset.mem_univ, true_and, diffCoords, Finset.mem_filter]
+          Finset.mem_univ, true_and, disagreeSet, Finset.mem_filter]
         exact Or.inl ⟨v, Ne.symm hne, rfl⟩
       · simp only [Finset.mem_union, Finset.mem_image, Finset.mem_biUnion,
-          Finset.mem_univ, true_and, diffCoords, Finset.mem_filter]
+          Finset.mem_univ, true_and, disagreeSet, Finset.mem_filter]
         exact Or.inr ⟨t, v, hne, rfl⟩
     have hc1 := Finset.card_le_card hsub
     have hc2 := Finset.card_union_le
-      ((diffCoords a b).image (fun v => (v, b v)))
+      ((disagreeSet a b).image (fun v => (v, b v)))
       (Finset.univ.biUnion (fun t : Fin m =>
-        (diffCoords (z_prev t) a).image (fun v => (v, z_prev t v))))
-    have hc_ab : ((diffCoords a b).image (fun v => (v, b v))).card ≤ C₁ * r_star :=
+        (disagreeSet (z_prev t) a).image (fun v => (v, z_prev t v))))
+    have hc_ab : ((disagreeSet a b).image (fun v => (v, b v))).card ≤ C₁ * r_star :=
       le_trans Finset.card_image_le hd_ab_loc
     have hc_z : (Finset.univ.biUnion (fun t : Fin m =>
-        (diffCoords (z_prev t) a).image (fun v => (v, z_prev t v)))).card ≤
+        (disagreeSet (z_prev t) a).image (fun v => (v, z_prev t v)))).card ≤
         m * (C₁ * r_star) := by
       calc
         (Finset.univ.biUnion (fun t : Fin m =>
-            (diffCoords (z_prev t) a).image (fun v => (v, z_prev t v)))).card
-          ≤ ∑ t : Fin m, ((diffCoords (z_prev t) a).image (fun v => (v, z_prev t v))).card :=
+            (disagreeSet (z_prev t) a).image (fun v => (v, z_prev t v)))).card
+          ≤ ∑ t : Fin m, ((disagreeSet (z_prev t) a).image (fun v => (v, z_prev t v))).card :=
             Finset.card_biUnion_le
         _ ≤ ∑ _ : Fin m, (C₁ * r_star) :=
             Finset.sum_le_sum (fun t _ => le_trans Finset.card_image_le (hz_prev t))
@@ -473,9 +473,9 @@ theorem freshCoordinateFiberCardinality : ∀ {N q : ℕ} (C₁ r_star m : ℕ),
         simp only [R_neq, R_old, Finset.mem_filter]
         exact ⟨hv.1, hv.2⟩
       · have hsub_da : Finset.univ.filter
-            (fun v : Fin N => v ∉ candMFresh a b m z_prev x ∧ x v ≠ a v) ⊆ diffCoords x a := by
+            (fun v : Fin N => v ∉ candMFresh a b m z_prev x ∧ x v ≠ a v) ⊆ disagreeSet x a := by
           intro v hv
-          simp only [diffCoords, Finset.mem_filter, Finset.mem_univ, true_and] at hv ⊢
+          simp only [disagreeSet, Finset.mem_filter, Finset.mem_univ, true_and] at hv ⊢
           exact hv.2
         exact le_trans Finset.card_image_le (le_trans (Finset.card_le_card hsub_da) hx.2)
       · simp only [Sphere_a, Finset.mem_biUnion, Finset.mem_powersetCard,

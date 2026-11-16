@@ -46,21 +46,9 @@ private lemma closePairs_h_sphere_sum :
                     n_0 * p_keep * d_omega s := by
   classical
   intro r_star N q p_edge p_keep n_0 d_omega hdomega_def hn0_def h_uc
-      hs_choose_le
-      PairSphere s hs
-  have hsub := hs_choose_le s hs
-  have hcard_ps : (PairSphere s).card = q ^ N * (N.choose s * (q - 1) ^ s) :=
-    orderedHammingSphere_card s
-  have hcongr : ∀ xy ∈ PairSphere s,
-      p_keep ^ 2 * p_edge ^ (homQueries xy.1 ∪ homQueries xy.2).card =
-      p_keep ^ 2 * (p_edge ^ (N.choose 2) * p_edge ^ (s * (N - 1) - s.choose 2)) := by
-    intro xy hxy
-    simp only [PairSphere, Finset.mem_filter, Finset.mem_univ, true_and] at hxy
-    rw [h_uc xy.1 xy.2, hxy, Nat.add_sub_assoc hsub, pow_add]
-  rw [Finset.sum_congr rfl hcongr, Finset.sum_const, nsmul_eq_mul, hcard_ps,
-    hn0_def, hdomega_def s]
-  push_cast
-  ring
+      hs_choose_le PairSphere s hs
+  exact weightedHammingSphere_sum s (hs_choose_le s hs) p_edge p_keep n_0
+    (d_omega s) (hdomega_def s) hn0_def h_uc
 
 open Classical in
 private lemma closePairs_hterm_le :
@@ -212,7 +200,7 @@ private lemma closePair_core (r_star : ℕ) (hr_ge : 3001 ≤ r_star) : ∀ (N q
       exact Finset.card_pos.mpr ⟨v, Finset.mem_filter.mpr ⟨Finset.mem_univ v, hv⟩⟩
     · intro h1 heq
       subst heq
-      have h0 : dHam a a = 0 := by simp [dHam, diffCoords]
+      have h0 : dHam a a = 0 := by simp [dHam, disagreeSet]
       omega
   have hsub_close : Finset.univ.filter
       (fun ab : (Fin N → Fin q) × (Fin N → Fin q) =>

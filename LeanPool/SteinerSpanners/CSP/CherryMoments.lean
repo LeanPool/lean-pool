@@ -113,38 +113,38 @@ theorem sphereFiberCardinality : ∀ {N q : ℕ} (x : Fin N → Fin q) (U : Fins
       U.card.choose s * (q - 1) ^ s := by
   intro N q x U s
   let Sph := Finset.univ.filter (fun g : Fin N → Fin q => (∀ v ∉ U, g v = x v) ∧ dHam x g = s)
-  have hmaps : Set.MapsTo (diffCoords x) (Sph : Set (Fin N → Fin q))
+  have hmaps : Set.MapsTo (disagreeSet x) (Sph : Set (Fin N → Fin q))
       (U.powersetCard s : Set (Finset (Fin N))) := by
     intro g hg
     simp only [Sph, Finset.mem_coe, Finset.mem_filter, Finset.mem_univ, true_and] at hg
     rw [Finset.mem_coe, Finset.mem_powersetCard]
     refine ⟨?_, hg.2⟩
     intro v hv
-    simp only [diffCoords, Finset.mem_filter, Finset.mem_univ, true_and] at hv
+    simp only [disagreeSet, Finset.mem_filter, Finset.mem_univ, true_and] at hv
     by_contra hvU
     exact hv (hg.1 v hvU).symm
   rw [Finset.card_eq_sum_card_fiberwise hmaps]
   have hfib : ∀ D ∈ U.powersetCard s,
-      (Sph.filter (fun g => diffCoords x g = D)).card = (q - 1) ^ s := by
+      (Sph.filter (fun g => disagreeSet x g = D)).card = (q - 1) ^ s := by
     intro D hD
     rw [Finset.mem_powersetCard] at hD
-    have heq : Sph.filter (fun g => diffCoords x g = D) =
+    have heq : Sph.filter (fun g => disagreeSet x g = D) =
         Fintype.piFinset (fun v : Fin N => if v ∈ D then Finset.univ.erase (x v) else {x v}) := by
       ext g
       simp only [Sph, Finset.mem_filter, Finset.mem_univ, true_and, Fintype.mem_piFinset]
       constructor
       · rintro ⟨_, rfl⟩ v
-        by_cases hv : v ∈ diffCoords x g
+        by_cases hv : v ∈ disagreeSet x g
         · rw [ite_eq_left hv, Finset.mem_erase]
-          simp only [diffCoords, Finset.mem_filter, Finset.mem_univ, true_and] at hv
+          simp only [disagreeSet, Finset.mem_filter, Finset.mem_univ, true_and] at hv
           exact ⟨hv.symm, Finset.mem_univ _⟩
         · rw [ite_eq_right hv, Finset.mem_singleton]
-          simp only [diffCoords, Finset.mem_filter, Finset.mem_univ, true_and, not_not] at hv
+          simp only [disagreeSet, Finset.mem_filter, Finset.mem_univ, true_and, not_not] at hv
           exact hv.symm
       · intro hg
-        have hdiff : diffCoords x g = D := by
+        have hdiff : disagreeSet x g = D := by
           ext v
-          simp only [diffCoords, Finset.mem_filter, Finset.mem_univ, true_and]
+          simp only [disagreeSet, Finset.mem_filter, Finset.mem_univ, true_and]
           have hgv := hg v
           by_cases hv : v ∈ D
           · rw [ite_eq_left hv, Finset.mem_erase] at hgv
@@ -171,45 +171,46 @@ theorem sphereFiberCardinality : ∀ {N q : ℕ} (x : Fin N → Fin q) (U : Fins
 
 theorem threeWayFiberCardinality : ∀ {N q : ℕ} (x u : Fin N → Fin q) (d₃ w : ℕ),
     (Finset.univ.filter (fun z : Fin N → Fin q =>
-      (d3Coords x u z).card = d₃ ∧ (diffCoords x z \ diffCoords x u).card = w)).card ≤
+      (threeWayDisagree x u z).card = d₃ ∧ (disagreeSet x z \ disagreeSet x u).card = w)).card ≤
       2 ^ (2 * dHam x u) * (q - 1) ^ d₃ * (N.choose w * (q - 1) ^ w) := by
   intro N q x u d₃ w
   let Sph := fun (U : Finset (Fin N)) (s : ℕ) =>
     Finset.univ.filter (fun g : Fin N → Fin q => (∀ v ∉ U, g v = x v) ∧ dHam x g = s)
-  let B_copy := fun z : Fin N → Fin q => (diffCoords x u).filter (fun v => z v = u v)
-  let z_d3 := fun (z : Fin N → Fin q) (v : Fin N) => if v ∈ d3Coords x u z then z v else x v
+  let B_copy := fun z : Fin N → Fin q => (disagreeSet x u).filter (fun v => z v = u v)
+  let z_d3 := fun (z : Fin N → Fin q) (v : Fin N) => if v ∈ threeWayDisagree x u z then z v else x v
   let z_out := fun (z : Fin N → Fin q) (v : Fin N) =>
-    if v ∈ diffCoords x z \ diffCoords x u then z v else x v
+    if v ∈ disagreeSet x z \ disagreeSet x u then z v else x v
   let Φ := fun z : Fin N → Fin q => (B_copy z, (z_d3 z, z_out z))
   have hle : (Finset.univ.filter (fun z : Fin N → Fin q =>
-      (d3Coords x u z).card = d₃ ∧ (diffCoords x z \ diffCoords x u).card = w)).card ≤
-      ((diffCoords x u).powerset ×ˢ (Sph (diffCoords x u) d₃ ×ˢ Sph Finset.univ w)).card := by
+      (threeWayDisagree x u z).card = d₃ ∧ (disagreeSet x z \ disagreeSet x u).card = w)).card ≤
+      ((disagreeSet x u).powerset ×ˢ (Sph (disagreeSet x u) d₃ ×ˢ Sph Finset.univ w)).card := by
     apply Finset.card_le_card_of_injOn Φ
     · intro z hz
       simp only [Finset.mem_coe, Finset.mem_filter, Finset.mem_univ, true_and] at hz
       rw [Finset.mem_coe, Finset.mem_product, Finset.mem_product]
       refine ⟨Finset.mem_powerset.mpr (Finset.filter_subset _ _), ?_, ?_⟩
       · simp only [Sph, Finset.mem_filter, Finset.mem_univ, true_and]
-        have hdiff : diffCoords x (z_d3 z) = d3Coords x u z := by
+        have hdiff : disagreeSet x (z_d3 z) = threeWayDisagree x u z := by
           ext v
-          simp only [diffCoords, z_d3, d3Coords, Finset.mem_filter, Finset.mem_univ, true_and]
+          simp only [disagreeSet, z_d3, threeWayDisagree, Finset.mem_filter,
+            Finset.mem_univ, true_and]
           split_ifs with hv
           · exact iff_of_true hv.2.1 hv
           · exact iff_of_false (not_not.mpr rfl) hv
         refine ⟨?_, ?_⟩
         · intro v hv
-          have hvd3 : v ∉ d3Coords x u z := by
+          have hvd3 : v ∉ threeWayDisagree x u z := by
             intro hmem
-            simp only [d3Coords, diffCoords, Finset.mem_filter,
+            simp only [threeWayDisagree, disagreeSet, Finset.mem_filter,
               Finset.mem_univ, true_and] at hmem hv
             exact hv hmem.1
           exact ite_eq_right hvd3
         · rw [dHam, hdiff, hz.1]
       · dsimp only [Sph]
         rw [Finset.mem_filter]
-        have hdiff : diffCoords x (z_out z) = diffCoords x z \ diffCoords x u := by
+        have hdiff : disagreeSet x (z_out z) = disagreeSet x z \ disagreeSet x u := by
           ext v
-          simp only [diffCoords, z_out, Finset.mem_sdiff, Finset.mem_filter, Finset.mem_univ,
+          simp only [disagreeSet, z_out, Finset.mem_sdiff, Finset.mem_filter, Finset.mem_univ,
               true_and]
           split_ifs with hv
           · exact iff_of_true hv.1 hv
@@ -220,7 +221,7 @@ theorem threeWayFiberCardinality : ∀ {N q : ℕ} (x u : Fin N → Fin q) (d₃
       rcases Prod.mk.inj heq with ⟨hB, hp⟩
       rcases Prod.mk.inj hp with ⟨hd3, hout⟩
       funext v
-      by_cases hvu : v ∈ diffCoords x u
+      by_cases hvu : v ∈ disagreeSet x u
       · by_cases hzu : z₁ v = u v
         · have hvB1 : v ∈ B_copy z₁ := Finset.mem_filter.mpr ⟨hvu, hzu⟩
           rw [hB] at hvB1
@@ -233,12 +234,12 @@ theorem threeWayFiberCardinality : ∀ {N q : ℕ} (x u : Fin N → Fin q) (d₃
             intro z hzne
             dsimp only [z_d3]
             by_cases hzx : x v = z v
-            · have hnot : v ∉ d3Coords x u z := by
-                simp [d3Coords, hzx]
+            · have hnot : v ∉ threeWayDisagree x u z := by
+                simp [threeWayDisagree, hzx]
               rw [ite_eq_right hnot, hzx]
-            · have hmem : v ∈ d3Coords x u z := by
-                simp only [diffCoords, Finset.mem_filter, Finset.mem_univ, true_and] at hvu
-                simp only [d3Coords, Finset.mem_filter, Finset.mem_univ, true_and]
+            · have hmem : v ∈ threeWayDisagree x u z := by
+                simp only [disagreeSet, Finset.mem_filter, Finset.mem_univ, true_and] at hvu
+                simp only [threeWayDisagree, Finset.mem_filter, Finset.mem_univ, true_and]
                 exact ⟨hvu, hzx, Ne.symm hzne⟩
               exact ite_eq_left hmem
           rw [← hval z₁ hzu, ← hval z₂ hzu2, congr_fun hd3 v]
@@ -246,24 +247,24 @@ theorem threeWayFiberCardinality : ∀ {N q : ℕ} (x u : Fin N → Fin q) (d₃
           intro z
           dsimp only [z_out]
           by_cases hzx : x v = z v
-          · have hnot : v ∉ diffCoords x z \ diffCoords x u := by
-              simp [diffCoords, hzx]
+          · have hnot : v ∉ disagreeSet x z \ disagreeSet x u := by
+              simp [disagreeSet, hzx]
             rw [ite_eq_right hnot, hzx]
-          · have hmem : v ∈ diffCoords x z \ diffCoords x u := by
+          · have hmem : v ∈ disagreeSet x z \ disagreeSet x u := by
               rw [Finset.mem_sdiff]
               refine ⟨?_, hvu⟩
-              simp [diffCoords, hzx]
+              simp [disagreeSet, hzx]
             exact ite_eq_left hmem
         rw [← hval z₁, ← hval z₂, congr_fun hout v]
   rw [Finset.card_product, Finset.card_product, Finset.card_powerset] at hle
-  have hs1 : (Sph (diffCoords x u) d₃).card = (dHam x u).choose d₃ * (q - 1) ^ d₃ :=
-    sphereFiberCardinality x (diffCoords x u) d₃
+  have hs1 : (Sph (disagreeSet x u) d₃).card = (dHam x u).choose d₃ * (q - 1) ^ d₃ :=
+    sphereFiberCardinality x (disagreeSet x u) d₃
   have hs2 : (Sph Finset.univ w).card = N.choose w * (q - 1) ^ w := by
     have h := sphereFiberCardinality x Finset.univ w
     rwa [Finset.card_univ, Fintype.card_fin] at h
   rw [hs1, hs2] at hle
   have hch_le : (dHam x u).choose d₃ ≤ 2 ^ dHam x u := by
-    rw [← Finset.card_powersetCard d₃ (diffCoords x u), ← Finset.card_powerset (diffCoords x u)]
+    rw [← Finset.card_powersetCard d₃ (disagreeSet x u), ← Finset.card_powerset (disagreeSet x u)]
     apply Finset.card_le_card
     intro A hA
     exact Finset.mem_powerset.mpr (Finset.mem_powersetCard.mp hA).1
@@ -280,7 +281,7 @@ theorem cherryFiberCardinality : ∀ {N q : ℕ} (C₁ r_star : ℕ), 3 ≤ C₁
     R_old.card ≤ 21 * C₁ ^ 2 * r_star →
     ∀ (s : ℕ),
     ((Finset.univ.filter (fun y : Fin N → Fin q =>
-      ((diffCoords x y).filter (fun v => (v, y v) ∉ R_old)).card = s ∧
+      ((disagreeSet x y).filter (fun v => (v, y v) ∉ R_old)).card = s ∧
       dHam x y ≤ r_star)).card : ℝ) ≤
       ((r_star + 1 : ℕ) : ℝ) *
         (2 : ℝ) ^ ((1 / 100 : ℝ) * (cspLam0 C₁ : ℝ) * (r_star : ℝ)) *
@@ -288,9 +289,9 @@ theorem cherryFiberCardinality : ∀ {N q : ℕ} (C₁ r_star : ℕ), 3 ≤ C₁
   intro N q C₁ r_star hC₁_loc x R_old hR_old s
   let Sph := Finset.univ.filter (fun g : Fin N → Fin q =>
     (∀ v ∉ (Finset.univ : Finset (Fin N)), g v = x v) ∧ dHam x g = s)
-  let F_fresh := fun y : Fin N → Fin q => (diffCoords x y).filter (fun v => (v, y v) ∉ R_old)
+  let F_fresh := fun y : Fin N → Fin q => (disagreeSet x y).filter (fun v => (v, y v) ∉ R_old)
   let A_rev := fun y : Fin N → Fin q =>
-    ((diffCoords x y).filter (fun v => (v, y v) ∈ R_old)).image (fun v => (v, y v))
+    ((disagreeSet x y).filter (fun v => (v, y v) ∈ R_old)).image (fun v => (v, y v))
   let y_fresh := fun (y : Fin N → Fin q) (v : Fin N) => if v ∈ F_fresh y then y v else x v
   let Ψ := fun y : Fin N → Fin q => (A_rev y, y_fresh y)
   let P_old := R_old.powerset.filter (fun G => G.card ≤ r_star)
@@ -311,9 +312,9 @@ theorem cherryFiberCardinality : ∀ {N q : ℕ} (C₁ r_star : ℕ), 3 ≤ C₁
             (le_trans (Finset.card_filter_le _ _) hy.2)
       · dsimp only [Sph]
         rw [Finset.mem_filter]
-        have hdiff : diffCoords x (y_fresh y) = F_fresh y := by
+        have hdiff : disagreeSet x (y_fresh y) = F_fresh y := by
           ext v
-          simp only [diffCoords, y_fresh, F_fresh, Finset.mem_filter, Finset.mem_univ, true_and]
+          simp only [disagreeSet, y_fresh, F_fresh, Finset.mem_filter, Finset.mem_univ, true_and]
           split_ifs with hv
           · exact iff_of_true hv.1 hv
           · exact iff_of_false (not_not.mpr rfl) hv
@@ -325,14 +326,14 @@ theorem cherryFiberCardinality : ∀ {N q : ℕ} (C₁ r_star : ℕ), 3 ≤ C₁
         intro y v hnotA
         dsimp only [y_fresh]
         by_cases hxy : x v = y v
-        · have hnotF : v ∉ F_fresh y := by simp [F_fresh, diffCoords, hxy]
+        · have hnotF : v ∉ F_fresh y := by simp [F_fresh, disagreeSet, hxy]
           rw [ite_eq_right hnotF, hxy]
         · have hnotR : (v, y v) ∉ R_old := by
             intro hR
             apply hnotA
-            exact Finset.mem_image.mpr ⟨v, Finset.mem_filter.mpr ⟨by simp [diffCoords, hxy],
+            exact Finset.mem_image.mpr ⟨v, Finset.mem_filter.mpr ⟨by simp [disagreeSet, hxy],
                 hR⟩, rfl⟩
-          have hmemF : v ∈ F_fresh y := Finset.mem_filter.mpr ⟨by simp [diffCoords, hxy], hnotR⟩
+          have hmemF : v ∈ F_fresh y := Finset.mem_filter.mpr ⟨by simp [disagreeSet, hxy], hnotR⟩
           exact ite_eq_left hmemF
       funext v
       by_cases h1 : (v, y₁ v) ∈ A_rev y₁
@@ -814,7 +815,8 @@ private lemma cherryMoments_h_d3_sum :
                   x ≠ u →
                     dHam x u ≤ C₁ * r_star →
                       ∑ z : Fin ((2 : ℕ) ^ cspL C₁ * r_star) → Fin (cspQ C₁) with
-                          dHam x z ≤ C₁ * r_star ∧ r_star < cspInvEta0 C₁ * (d3Coords x u z).card,
+                          dHam x z ≤ C₁ * r_star ∧
+                            r_star < cspInvEta0 C₁ * (threeWayDisagree x u z).card,
                           cspPEdge C₁ r_star ^ (homQueries z \ (homQueries x ∪ homQueries u)).card ≤
                         (2 : ℝ) ^ (-((12 : ℝ) * (↑(C₁ ^ (2 : ℕ)) : ℝ)) * (↑(cspLam0 C₁) : ℝ) *
                             (↑r_star : ℝ)) := by
@@ -822,26 +824,28 @@ private lemma cherryMoments_h_d3_sum :
   intro C₁ hC₁ r_star hp_edge_pos hp_edge_lt1 h_s3a x u _hxu hd_xu
   let Z_bad := Finset.univ.filter (fun z : Fin (2 ^ cspL C₁ * r_star) → Fin (cspQ C₁) =>
     dHam x z ≤ C₁ * r_star ∧
-    r_star < cspInvEta0 C₁ * (d3Coords x u z).card)
+    r_star < cspInvEta0 C₁ * (threeWayDisagree x u z).card)
   let γ := fun z : Fin (2 ^ cspL C₁ * r_star) → Fin (cspQ C₁) =>
-    ((d3Coords x u z).card, (diffCoords x z \ diffCoords x u).card)
+    ((threeWayDisagree x u z).card, (disagreeSet x z \ disagreeSet x u).card)
   let B_idx := Finset.range (C₁ * r_star + 1) ×ˢ Finset.range (C₁ * r_star + 1)
   let f_z := fun z : Fin (2 ^ cspL C₁ * r_star) → Fin (cspQ C₁) =>
     (cspPEdge C₁ r_star) ^ ((homQueries z \ (homQueries x ∪ homQueries u)).card)
   let RHS_a : ℝ := (2 : ℝ) ^ (- (12 * (C₁ ^ 2 : ℕ) : ℝ) * (cspLam0 C₁ : ℝ) * (r_star : ℝ))
   have hd3w_le : ∀ z : Fin (2 ^ cspL C₁ * r_star) → Fin (cspQ C₁),
-      (d3Coords x u z).card + (diffCoords x z \ diffCoords x u).card ≤ dHam x z := by
+      (threeWayDisagree x u z).card + (disagreeSet x z \ disagreeSet x u).card ≤ dHam x z := by
     intro z
-    have hdisj : Disjoint (d3Coords x u z) (diffCoords x z \ diffCoords x u) := by
+    have hdisj : Disjoint (threeWayDisagree x u z) (disagreeSet x z \ disagreeSet x u) := by
       rw [Finset.disjoint_left]
       intro v hv1 hv2
-      simp only [d3Coords, diffCoords, Finset.mem_sdiff, Finset.mem_filter, Finset.mem_univ,
+      simp only [threeWayDisagree, disagreeSet, Finset.mem_sdiff, Finset.mem_filter,
+        Finset.mem_univ,
           true_and] at hv1 hv2
       exact hv2.2 hv1.1
-    have hsub : d3Coords x u z ∪ (diffCoords x z \ diffCoords x u) ⊆ diffCoords x z := by
+    have hsub : threeWayDisagree x u z ∪ (disagreeSet x z \ disagreeSet x u) ⊆ disagreeSet x z := by
       intro v hv
       rcases Finset.mem_union.mp hv with hv1 | hv2
-      · simp only [d3Coords, diffCoords, Finset.mem_filter, Finset.mem_univ, true_and] at hv1 ⊢
+      · simp only [threeWayDisagree, disagreeSet, Finset.mem_filter, Finset.mem_univ,
+          true_and] at hv1 ⊢
         exact hv1.2.1
       · exact (Finset.mem_sdiff.mp hv2).1
     rw [← Finset.card_union_of_disjoint hdisj]
@@ -855,28 +859,31 @@ private lemma cherryMoments_h_d3_sum :
   have hf_bound : ∀ z : Fin (2 ^ cspL C₁ * r_star) → Fin (cspQ C₁),
       f_z z ≤
         (cspPEdge C₁ r_star) ^
-          (((d3Coords x u z).card + (diffCoords x z \ diffCoords x u).card) *
+          (((threeWayDisagree x u z).card + (disagreeSet x z \ disagreeSet x u).card) *
             (2 ^ cspL C₁ * r_star - 1) -
-           ((d3Coords x u z).card + (diffCoords x z \ diffCoords x u).card).choose 2) := by
+           ((threeWayDisagree x u z).card +
+             (disagreeSet x z \ disagreeSet x u).card).choose 2) := by
     intro z
-    let T := d3Coords x u z ∪ (diffCoords x z \ diffCoords x u)
-    have hdisj : Disjoint (d3Coords x u z) (diffCoords x z \ diffCoords x u) := by
+    let T := threeWayDisagree x u z ∪ (disagreeSet x z \ disagreeSet x u)
+    have hdisj : Disjoint (threeWayDisagree x u z) (disagreeSet x z \ disagreeSet x u) := by
       rw [Finset.disjoint_left]
       intro v hv1 hv2
-      simp only [d3Coords, diffCoords, Finset.mem_sdiff, Finset.mem_filter, Finset.mem_univ,
+      simp only [threeWayDisagree, disagreeSet, Finset.mem_sdiff, Finset.mem_filter,
+        Finset.mem_univ,
           true_and] at hv1 hv2
       exact hv2.2 hv1.1
-    have hT_card : T.card = (d3Coords x u z).card + (diffCoords x z \ diffCoords x u).card :=
+    have hT_card : T.card =
+        (threeWayDisagree x u z).card + (disagreeSet x z \ disagreeSet x u).card :=
       Finset.card_union_of_disjoint hdisj
     have hT_fresh : ∀ v ∈ T, ∀ y ∈ ({x, u} : Finset _), z v ≠ y v := by
       intro v hv y hy
       simp only [Finset.mem_insert, Finset.mem_singleton] at hy
       rcases Finset.mem_union.mp hv with hv1 | hv2
-      · simp only [d3Coords, Finset.mem_filter, Finset.mem_univ, true_and] at hv1
+      · simp only [threeWayDisagree, Finset.mem_filter, Finset.mem_univ, true_and] at hv1
         rcases hy with rfl | rfl
         · exact hv1.2.1.symm
         · exact hv1.2.2.symm
-      · simp only [diffCoords, Finset.mem_sdiff, Finset.mem_filter, Finset.mem_univ, true_and,
+      · simp only [disagreeSet, Finset.mem_sdiff, Finset.mem_filter, Finset.mem_univ, true_and,
           not_not] at hv2
         rcases hy with rfl | rfl
         · exact hv2.1.symm
@@ -914,7 +921,7 @@ private lemma cherryMoments_h_d3_sum :
           2 ^ (2 * (C₁ * r_star)) * (cspQ C₁ - 1) ^ d₃ *
             ((2 ^ cspL C₁ * r_star).choose w * (cspQ C₁ - 1) ^ w) := by
         have hsub : Fib ⊆ Finset.univ.filter (fun z =>
-            (d3Coords x u z).card = d₃ ∧ (diffCoords x z \ diffCoords x u).card = w) := by
+            (threeWayDisagree x u z).card = d₃ ∧ (disagreeSet x z \ disagreeSet x u).card = w) := by
           intro z hz
           simp only [Fib, γ, Finset.mem_filter, Finset.mem_univ, true_and, Prod.mk.injEq] at hz ⊢
           exact hz.2
@@ -967,14 +974,14 @@ private lemma cherryMoments_hy_eval :
                 {x, w₀} ∪ Finset.image y_prev Finset.univ;
               let R_old : Finset (Fin ((2 : ℕ) ^ cspL C₁ * r_star) × Fin (cspQ C₁)) :=
                 Finset.image (fun (v : Fin ((2 : ℕ) ^ cspL C₁ * r_star)) => (v, w₀ v))
-                    (diffCoords x w₀) ∪
+                    (disagreeSet x w₀) ∪
                   Finset.univ.biUnion fun (t : Fin m) =>
                     Finset.image (fun (v : Fin ((2 : ℕ) ^ cspL C₁ * r_star)) => (v, y_prev t v))
-                        (diffCoords x (y_prev t));
+                        (disagreeSet x (y_prev t));
               let F_fresh :
                 (Fin ((2 : ℕ) ^ cspL C₁ * r_star) → Fin (cspQ C₁)) → Finset (Fin ((2 : ℕ) ^ cspL
                     C₁ * r_star)) :=
-                fun (y : Fin ((2 : ℕ) ^ cspL C₁ * r_star) → Fin (cspQ C₁)) => {v ∈ diffCoords x
+                fun (y : Fin ((2 : ℕ) ^ cspL C₁ * r_star) → Fin (cspQ C₁)) => {v ∈ disagreeSet x
                     y | (v, y v) ∉ R_old};
               let g_y : (Fin ((2 : ℕ) ^ cspL C₁ * r_star) → Fin (cspQ C₁)) → ℝ :=
                 fun (y : Fin ((2 : ℕ) ^ cspL C₁ * r_star) → Fin (cspQ C₁)) =>
@@ -1046,12 +1053,12 @@ private lemma cherryMoments_hy_eval :
       subst hi1
       rcases Finset.mem_image.mp hi2 with ⟨_, _, h⟩
       cases h
-  let B_w0 := (diffCoords x w₀ ∩ diffCoords x y) \ d3Coords x w₀ y
+  let B_w0 := (disagreeSet x w₀ ∩ disagreeSet x y) \ threeWayDisagree x w₀ y
   have hdisj_FB : Disjoint (F_fresh y) B_w0 := by
     rw [Finset.disjoint_left]
     intro v hvF hvB
     simp only [F_fresh, Finset.mem_filter] at hvF
-    simp only [B_w0, d3Coords, diffCoords, Finset.mem_sdiff, Finset.mem_inter,
+    simp only [B_w0, threeWayDisagree, disagreeSet, Finset.mem_sdiff, Finset.mem_inter,
       Finset.mem_filter, Finset.mem_univ, true_and] at hvB
     have hyw : w₀ v = y v := by
       by_contra hne
@@ -1060,7 +1067,7 @@ private lemma cherryMoments_hy_eval :
     rw [← hyw]
     exact Finset.mem_union_left _ (Finset.mem_image.mpr ⟨v,
       Finset.mem_filter.mpr ⟨Finset.mem_univ v, hvB.1.1⟩, rfl⟩)
-  have hFB_sub : F_fresh y ∪ B_w0 ⊆ diffCoords x y := by
+  have hFB_sub : F_fresh y ∪ B_w0 ⊆ disagreeSet x y := by
     intro v hv
     rcases Finset.mem_union.mp hv with hvF | hvB
     · exact (Finset.mem_filter.mp hvF).1
@@ -1068,15 +1075,16 @@ private lemma cherryMoments_hy_eval :
   have hFB_card : (F_fresh y).card + B_w0.card ≤ r_star := by
     rw [← Finset.card_union_of_disjoint hdisj_FB]
     exact le_trans (Finset.card_le_card hFB_sub) (le_of_eq hd_xy)
-  have hinter_le : (diffCoords x w₀ ∩ diffCoords x y).card ≤ B_w0.card + (d3Coords x w₀ y).card
+  have hinter_le : (disagreeSet x w₀ ∩ disagreeSet x y).card ≤
+      B_w0.card + (threeWayDisagree x w₀ y).card
       := by
-    have hcov : diffCoords x w₀ ∩ diffCoords x y ⊆ B_w0 ∪ d3Coords x w₀ y := by
+    have hcov : disagreeSet x w₀ ∩ disagreeSet x y ⊆ B_w0 ∪ threeWayDisagree x w₀ y := by
       intro v hv
-      by_cases hd3 : v ∈ d3Coords x w₀ y
+      by_cases hd3 : v ∈ threeWayDisagree x w₀ y
       · exact Finset.mem_union_right _ hd3
       · exact Finset.mem_union_left _ (Finset.mem_sdiff.mpr ⟨hv, hd3⟩)
     exact le_trans (Finset.card_le_card hcov) (Finset.card_union_le _ _)
-  have hd3_80 : 80 * (d3Coords x w₀ y).card ≤ r_star := by
+  have hd3_80 : 80 * (threeWayDisagree x w₀ y).card ≤ r_star := by
     simpa [cspInvEta0] using hd3_xy
   refine ⟨hg_eq, by omega, by omega⟩
 
@@ -1176,7 +1184,7 @@ theorem d3_and_cherry_query_sum_bounds (C₁ : ℕ) (hC₁ : 3 ≤ C₁) (r_star
     (∀ x u : Fin (2 ^ cspL C₁ * r_star) → Fin (cspQ C₁), x ≠ u → dHam x u ≤ C₁ * r_star →
       ∑ z ∈ Finset.univ.filter (fun z : Fin (2 ^ cspL C₁ * r_star) → Fin (cspQ C₁) =>
           dHam x z ≤ C₁ * r_star ∧
-          r_star < cspInvEta0 C₁ * (d3Coords x u z).card),
+          r_star < cspInvEta0 C₁ * (threeWayDisagree x u z).card),
         (cspPEdge C₁ r_star) ^ ((homQueries z \ (homQueries x ∪ homQueries u)).card) ≤
         (2 : ℝ) ^ (- (12 * (C₁ ^ 2 : ℕ) : ℝ) * (cspLam0 C₁ : ℝ) * (r_star : ℝ))) ∧
     (∀ x w₀ : Fin (2 ^ cspL C₁ * r_star) → Fin (cspQ C₁), x ≠ w₀ → dHam x w₀ ≤ C₁ * r_star →
@@ -1204,26 +1212,26 @@ by
     let S_old : Finset (Fin (2 ^ cspL C₁ * r_star) → Fin (cspQ C₁)) :=
       ({x, w₀} : Finset _) ∪ Finset.univ.image y_prev
     let R_old : Finset (Fin (2 ^ cspL C₁ * r_star) × Fin (cspQ C₁)) :=
-      (diffCoords x w₀).image (fun v => (v, w₀ v)) ∪
+      (disagreeSet x w₀).image (fun v => (v, w₀ v)) ∪
         Finset.univ.biUnion (fun t : Fin m =>
-          (diffCoords x (y_prev t)).image (fun v => (v, y_prev t v)))
+          (disagreeSet x (y_prev t)).image (fun v => (v, y_prev t v)))
     let F_fresh := fun y : Fin (2 ^ cspL C₁ * r_star) → Fin (cspQ C₁) =>
-      (diffCoords x y).filter (fun v => (v, y v) ∉ R_old)
+      (disagreeSet x y).filter (fun v => (v, y v) ∉ R_old)
     let g_y := fun y : Fin (2 ^ cspL C₁ * r_star) → Fin (cspQ C₁) =>
       ∏ i ∈ (({y} : Finset (Fin (2 ^ cspL C₁ * r_star) → Fin (cspQ C₁))).image Sum.inr ∪
           (homQueries y).image Sum.inl) \ cspUCh x w₀ m y_prev,
         cspPIota C₁ r_star i
     let RHS_b : ℝ := (2 : ℝ) ^ (- (72 / 100 : ℝ) * (cspLam0 C₁ : ℝ) * (r_star : ℝ))
     have hR_card : R_old.card ≤ (C₁ + cspKCh C₁) * r_star := by
-      have hc1 : ((diffCoords x w₀).image (fun v => (v, w₀ v))).card ≤ C₁ * r_star :=
+      have hc1 : ((disagreeSet x w₀).image (fun v => (v, w₀ v))).card ≤ C₁ * r_star :=
         le_trans Finset.card_image_le hd_xw₀
       have hc2 : (Finset.univ.biUnion (fun t : Fin m =>
-          (diffCoords x (y_prev t)).image (fun v => (v, y_prev t v)))).card ≤ cspKCh C₁ * r_star
+          (disagreeSet x (y_prev t)).image (fun v => (v, y_prev t v)))).card ≤ cspKCh C₁ * r_star
               := by
         calc
           (Finset.univ.biUnion (fun t : Fin m =>
-              (diffCoords x (y_prev t)).image (fun v => (v, y_prev t v)))).card
-            ≤ ∑ t : Fin m, ((diffCoords x (y_prev t)).image (fun v => (v, y_prev t v))).card :=
+              (disagreeSet x (y_prev t)).image (fun v => (v, y_prev t v)))).card
+            ≤ ∑ t : Fin m, ((disagreeSet x (y_prev t)).image (fun v => (v, y_prev t v))).card :=
               Finset.card_biUnion_le
           _ ≤ ∑ _t : Fin m, r_star := by
               refine Finset.sum_le_sum (fun t _ => ?_)
@@ -1233,9 +1241,9 @@ by
           _ = m * r_star := by simp
           _ ≤ cspKCh C₁ * r_star := Nat.mul_le_mul_right r_star (le_of_lt hm)
       calc
-        R_old.card ≤ ((diffCoords x w₀).image (fun v => (v, w₀ v))).card +
+        R_old.card ≤ ((disagreeSet x w₀).image (fun v => (v, w₀ v))).card +
             (Finset.univ.biUnion (fun t : Fin m =>
-              (diffCoords x (y_prev t)).image (fun v => (v, y_prev t v)))).card :=
+              (disagreeSet x (y_prev t)).image (fun v => (v, y_prev t v)))).card :=
           Finset.card_union_le _ _
         _ ≤ C₁ * r_star + cspKCh C₁ * r_star := Nat.add_le_add hc1 hc2
         _ = (C₁ + cspKCh C₁) * r_star := (add_mul C₁ (cspKCh C₁) r_star).symm
@@ -1257,7 +1265,7 @@ by
       rw [(hy_eval y hy).1]
       have hfresh : ∀ v ∈ F_fresh y, ∀ z ∈ S_old, y v ≠ z v := by
         intro v hv z hz
-        simp only [F_fresh, diffCoords, Finset.mem_filter, Finset.mem_univ, true_and] at hv
+        simp only [F_fresh, disagreeSet, Finset.mem_filter, Finset.mem_univ, true_and] at hv
         simp only [S_old, Finset.mem_union, Finset.mem_insert, Finset.mem_singleton,
           Finset.mem_image, Finset.mem_univ, true_and] at hz
         rcases hz with (rfl | rfl) | ⟨t, rfl⟩

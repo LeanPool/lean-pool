@@ -25,16 +25,16 @@ namespace HighDimSteinerSpanners.Proofs.CSP
 noncomputable section Helpers
 
 /-- Coordinates where two assignments disagree. -/
-def diffCoords {N q : ℕ} (x y : Fin N → Fin q) : Finset (Fin N) :=
-  Finset.univ.filter (fun v : Fin N => x v ≠ y v)
+abbrev diffCoords {N q : ℕ} (x y : Fin N → Fin q) : Finset (Fin N) :=
+  disagreeSet x y
 
 /-- Hamming distance computed from the finite disagreement set. -/
 abbrev dHam {N q : ℕ} (x y : Fin N → Fin q) : ℕ :=
-  (diffCoords x y).card
+  (disagreeSet x y).card
 
 /-- Coordinates carrying three pairwise distinct assignment values. -/
-def d3Coords {N q : ℕ} (x y z : Fin N → Fin q) : Finset (Fin N) :=
-  Finset.univ.filter (fun v : Fin N => x v ≠ y v ∧ x v ≠ z v ∧ y v ≠ z v)
+abbrev d3Coords {N q : ℕ} (x y z : Fin N → Fin q) : Finset (Fin N) :=
+  threeWayDisagree x y z
 
 /-- Maximum number of pieces in a candidate peeling witness. -/
 def cspKMax (C₁ : ℕ) : ℕ := 8 * C₁
@@ -146,8 +146,8 @@ disagreement. -/
 def cspPoolCh {N q : ℕ} (C₁ r_star : ℕ) (x w₀ : Fin N → Fin q) : Finset (Fin N → Fin q) :=
   Finset.univ.filter (fun y : Fin N → Fin q =>
     y ≠ x ∧ y ≠ w₀ ∧ dHam x y = r_star ∧
-    r_star < 4 * (diffCoords x w₀ ∩ diffCoords x y).card ∧
-    cspInvEta0 C₁ * (d3Coords x w₀ y).card ≤ r_star)
+    r_star < 4 * (disagreeSet x w₀ ∩ disagreeSet x y).card ∧
+    cspInvEta0 C₁ * (threeWayDisagree x w₀ y).card ≤ r_star)
 
 /-- Bernoulli support exposed by a cherry center, its pin and the previous candidates. -/
 def cspUCh {N q : ℕ} (x w₀ : Fin N → Fin q) (m : ℕ)
@@ -176,7 +176,7 @@ def cspBD3 {N q : ℕ} (C₁ r_star : ℕ) (ω : cspIota N q → Bool) : Finset 
     ∃ u ∈ cspPRaw ω, ∃ z : Fin N → Fin q,
       (∀ t ∈ homQueries z, ω (Sum.inl t) = true) ∧
       dHam x u ≤ C₁ * r_star ∧ dHam x z ≤ C₁ * r_star ∧
-      r_star < cspInvEta0 C₁ * (d3Coords x u z).card)
+      r_star < cspInvEta0 C₁ * (threeWayDisagree x u z).card)
 
 /-- Raw assignments with a local cherry list reaching the forbidden moment-order threshold. -/
 def cspBCh {N q : ℕ} (C₁ r_star : ℕ) (ω : cspIota N q → Bool) : Finset (Fin N → Fin q) :=
@@ -207,8 +207,8 @@ noncomputable def cspBBad {N q : ℕ} (C₁ r_star : ℕ) (ω : cspIota N q → 
   cspBD3 C₁ r_star ω ∪ cspBCh C₁ r_star ω ∪ cspBCand C₁ r_star ω ∪ cspBDist r_star ω
 
 /-- Choose the first pin color when it differs from `x`, falling back to the second pin color. -/
-def candCStar {N q : ℕ} (a b x : Fin N → Fin q) (v : Fin N) : Fin q :=
-  if a v ≠ x v then a v else b v
+abbrev candCStar {N q : ℕ} (a b x : Fin N → Fin q) (v : Fin N) : Fin q :=
+  activeColor x a b v
 
 /-- Coordinates whose candidate value has not occurred in the revealed coordinate-value pairs. -/
 def candMFresh {N q : ℕ} (a b : Fin N → Fin q) (m : ℕ)
@@ -230,7 +230,7 @@ abbrev candWitType (N C₁ : ℕ) : Type :=
 coordinates. -/
 def candA2 {N q : ℕ} (C₁ : ℕ) (a b x : Fin N → Fin q) (M : Finset (Fin N))
     (w : candWitType N C₁) : Finset (Fin N × Fin N) :=
-  (M ×ˢ (diffCoords x a ∪ diffCoords x b)).filter
+  (M ×ˢ (disagreeSet x a ∪ disagreeSet x b)).filter
     (fun uv => ∃ r : Fin (cspKMax C₁),
       r.1 < w.1.1 ∧ w.2.1 uv.1 = r.succ ∧ (uv.2 ∈ w.2.2.1 r ∨ (r, uv.2) ∈ w.2.2.2))
 
@@ -242,8 +242,8 @@ def candPhi1 {N q : ℕ} (x : Fin N → Fin q) (uv : Fin N × Fin N) :
 /-- Ordered constraint query mixing a candidate color with the selected pin color. -/
 def candPhi2 {N q : ℕ} (a b x : Fin N → Fin q) (uv : Fin N × Fin N) :
     Fin N × Fin N × Fin q × Fin q :=
-  if uv.1 < uv.2 then (uv.1, uv.2, x uv.1, candCStar a b x uv.2)
-  else (uv.2, uv.1, candCStar a b x uv.2, x uv.1)
+  if uv.1 < uv.2 then (uv.1, uv.2, x uv.1, activeColor x a b uv.2)
+  else (uv.2, uv.1, activeColor x a b uv.2, x uv.1)
 
 /-- Admissible finite peeling witnesses with the required residual, future-piece and exception
 bounds. -/
@@ -252,7 +252,7 @@ def candMWit {N q : ℕ} (C₁ r_star : ℕ) (a b : Fin N → Fin q) (m : ℕ)
     Finset (candWitType N C₁) :=
   let K_max := cspKMax C₁
   let M := candMFresh a b m z_prev x
-  let W_ab := diffCoords x a ∪ diffCoords x b
+  let W_ab := disagreeSet x a ∪ disagreeSet x b
   let base := (Finset.univ : Finset (Fin (K_max + 1))) ×ˢ
     (Fintype.piFinset (fun u : Fin N =>
       if u ∈ M then Finset.univ else ({0} : Finset (Fin (K_max + 1)))) ×ˢ

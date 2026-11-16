@@ -17,6 +17,7 @@ import Mathlib.Analysis.Complex.ExponentialBounds
 public import Mathlib.Analysis.Normed.Lp.PiLp
 
 public import LeanPool.SteinerSpanners.Defs
+public import LeanPool.SteinerSpanners.Geometry
 
 /-! # Glue infrastructure for Steiner spanners
 
@@ -34,13 +35,8 @@ theorem lpDist_eq_toLp_dist_proof :
     ∀ (p : ℝ), 1 ≤ p →
       ∀ {d : ℕ} (x y : Fin d → ℝ),
         lpDist p x y =
-          dist (WithLp.toLp (ENNReal.ofReal p) x) (WithLp.toLp (ENNReal.ofReal p) y) := by
-  intro p hp d x y
-  have hp0 : 0 < p := by linarith
-  have hp_ne_zero : ENNReal.ofReal p ≠ 0 := by positivity
-  have hp_ne_top : ENNReal.ofReal p ≠ ⊤ := ENNReal.ofReal_ne_top
-  rw [PiLp.dist_eq_sum (p := ENNReal.ofReal p) (ENNReal.toReal_pos hp_ne_zero hp_ne_top)]
-  simp only [ENNReal.toReal_ofReal hp0.le, lpDist, Real.dist_eq, one_div]
+          dist (WithLp.toLp (ENNReal.ofReal p) x) (WithLp.toLp (ENNReal.ofReal p) y) :=
+  Geometry.lpDist_eq_toLp_dist
 
 /-- Zero-`sorry` proof of Lemma 5.1 (`lem_5_1_interval_crossing`). -/
 theorem lem_5_1_proof :

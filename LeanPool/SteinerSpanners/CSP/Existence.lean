@@ -35,7 +35,7 @@ private abbrev Outcome (C₁ r : ℕ) := cspIota (2 ^ cspL C₁ * r) (cspQ C₁)
 private lemma hammingDistance_symm : ∀ {N q : ℕ} (x y : Fin N → Fin q), dHam x y = dHam y x :=
   by
   intro N q x y
-  unfold dHam diffCoords
+  unfold dHam disagreeSet
   congr 1
   ext v
   simp [ne_comm]
@@ -849,7 +849,7 @@ private lemma existence_hBD3_exp :
     x ≠ u →
     dHam x u ≤ C₁ * r_star →
     ∑ z : Assignment C₁ r_star with
-    dHam x z ≤ C₁ * r_star ∧ r_star < cspInvEta0 C₁ * (d3Coords x u z).card,
+    dHam x z ≤ C₁ * r_star ∧ r_star < cspInvEta0 C₁ * (threeWayDisagree x u z).card,
     cspPEdge C₁ r_star ^ (homQueries z \ (homQueries x ∪ homQueries u)).card ≤
     (2 : ℝ) ^ (-((12 : ℝ) * (↑(C₁ ^ (2 : ℕ)) : ℝ)) * (↑(cspLam0 C₁) : ℝ) * (↑r_star : ℝ))) →
     ∑ ω : Outcome C₁ r_star,
@@ -865,20 +865,20 @@ private lemma existence_hBD3_exp :
   let Z_d3 := fun x u : Fin (2 ^ cspL C₁ * r_star) → Fin (cspQ C₁) =>
     Finset.univ.filter (fun z =>
       dHam x z ≤ C₁ * r_star ∧
-      r_star < cspInvEta0 C₁ * (d3Coords x u z).card)
+      r_star < cspInvEta0 C₁ * (threeWayDisagree x u z).card)
   let Triples_d3 := BallPairs.biUnion (fun xu => (Z_d3 xu.1 xu.2).image (fun z => (xu.1, (xu.2,
     z))))
   have hd3_distinct : ∀ {N q : ℕ} {x u z : Fin N → Fin q},
-      r_star < cspInvEta0 C₁ * (d3Coords x u z).card →
+      r_star < cspInvEta0 C₁ * (threeWayDisagree x u z).card →
       x ≠ u ∧ x ≠ z ∧ u ≠ z := by
     intro N q x u z hlt
-    have hpos : 0 < (d3Coords x u z).card := by
+    have hpos : 0 < (threeWayDisagree x u z).card := by
       by_contra h0
-      have heq0 : (d3Coords x u z).card = 0 := by omega
+      have heq0 : (threeWayDisagree x u z).card = 0 := by omega
       rw [heq0, mul_zero] at hlt
       omega
     obtain ⟨v, hv⟩ := Finset.card_pos.mp hpos
-    simp only [d3Coords, Finset.mem_filter, Finset.mem_univ, true_and] at hv
+    simp only [threeWayDisagree, Finset.mem_filter, Finset.mem_univ, true_and] at hv
     exact ⟨fun h => hv.1 (congr_fun h v),
            fun h => hv.2.1 (congr_fun h v),
            fun h => hv.2.2 (congr_fun h v)⟩
@@ -1689,7 +1689,7 @@ private lemma existence_h_final :
     ∀ z ∈ satisfyingSet R,
     dHam x u ≤ C₁ * r_star →
     dHam x z ≤ C₁ * r_star →
-    cspInvEta0 C₁ * (d3Coords x u z).card ≤ r_star) ∧
+    cspInvEta0 C₁ * (threeWayDisagree x u z).card ≤ r_star) ∧
     (∀ x ∈ X_set,
     ∀ w₀ ∈ X_set,
     x ≠ w₀ →
@@ -1700,7 +1700,7 @@ private lemma existence_h_final :
     dHam x y = r_star ∧
     r_star <
     (4 : ℕ) *
-    (diffCoords x w₀ ∩ diffCoords x y).card}.card <
+    (disagreeSet x w₀ ∩ disagreeSet x y).card}.card <
     cspKCh C₁) ∧
     (∀ a ∈ X_set,
     ∀ b ∈ X_set,
@@ -1817,7 +1817,7 @@ private lemma existence_h_final :
     have hw₀P := (Finset.mem_sdiff.mp hw₀).1
     have hsub : (cspPRaw ω₀ \ cspBBad C₁ r_star ω₀).filter (fun y =>
         y ≠ x ∧ y ≠ w₀ ∧ dHam x y = r_star ∧
-        r_star < 4 * (diffCoords x w₀ ∩ diffCoords x y).card) ⊆
+        r_star < 4 * (disagreeSet x w₀ ∩ disagreeSet x y).card) ⊆
       (cspPoolCh C₁ r_star x w₀).filter (fun y => y ∈ cspPRaw ω₀) := by
       intro y hy
       simp only [Finset.mem_filter] at hy ⊢
@@ -1879,11 +1879,11 @@ theorem complete_graph_2csp_expurgated_existence (C₁ : ℕ) (hC₁ : 3 ≤ C�
         192 * (((X_set ×ˢ X_set).filter (fun xy => dHam xy.1 xy.2 = r_star)).card : ℝ)) ∧
       (∀ x ∈ X_set, ∀ u ∈ X_set, ∀ z ∈ satisfyingSet R,
         dHam x u ≤ C₁ * r_star → dHam x z ≤ C₁ * r_star →
-        cspInvEta0 C₁ * (d3Coords x u z).card ≤ r_star) ∧
+        cspInvEta0 C₁ * (threeWayDisagree x u z).card ≤ r_star) ∧
       (∀ x ∈ X_set, ∀ w₀ ∈ X_set, x ≠ w₀ → dHam x w₀ ≤ C₁ * r_star →
         (X_set.filter (fun y =>
           y ≠ x ∧ y ≠ w₀ ∧ dHam x y = r_star ∧
-          r_star < 4 * (diffCoords x w₀ ∩ diffCoords x y).card)).card < cspKCh C₁) ∧
+          r_star < 4 * (disagreeSet x w₀ ∩ disagreeSet x y).card)).card < cspKCh C₁) ∧
       (∀ a ∈ X_set, ∀ b ∈ X_set, a ≠ b → dHam a b ≤ C₁ * r_star →
         (X_set.filter (fun x => x ∈ bicliqueWitnessList R C₁ r_star a b)).card < cspKMom C₁) ∧
       (∀ x ∈ X_set, ∀ y ∈ X_set, x ≠ y → r_star ≤ 2 * dHam x y) :=
@@ -1959,7 +1959,7 @@ by
   have hdHam_ne_of_r : ∀ {N q : ℕ} {x y : Fin N → Fin q}, dHam x y = r_star → x ≠ y := by
     intro N q x y hd hxy
     subst hxy
-    have h0 : dHam x x = 0 := by simp [dHam, diffCoords]
+    have h0 : dHam x x = 0 := by simp [dHam, disagreeSet]
     omega
   have h_prod_iota :=
     @existence_h_prod_iota C₁ r_star

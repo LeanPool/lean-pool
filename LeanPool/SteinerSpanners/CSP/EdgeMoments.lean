@@ -46,18 +46,18 @@ private lemma homQueries_membership : ∀ {N0 q0 : ℕ} (z : Fin N0 → Fin q0)
 private lemma edgeMoments_hbound1 :
     ∀ (N0 q0 r0 : ℕ) (x y : Fin N0 → Fin q0),
       dHam x y = r0 →
-        (∀ (z : Fin N0 → Fin q0), {v ∈ diffCoords x y | z v = y v} ⊆ diffCoords x z) →
+        (∀ (z : Fin N0 → Fin q0), {v ∈ disagreeSet x y | z v = y v} ⊆ disagreeSet x z) →
           ∀ b ≤ r0,
             let B_of : (Fin N0 → Fin q0) → Finset (Fin N0) := fun (z : Fin N0 → Fin q0) => {v ∈
-                diffCoords x y | z v = y v};
+                disagreeSet x y | z v = y v};
             let F_b : Finset (Fin N0 → Fin q0) := {z : Fin N0 → Fin q0 | dHam x z = r0 ∧ (B_of
                 z).card = b};
-            let S₁ : Finset (Finset (Fin N0)) := Finset.powersetCard b (diffCoords x y);
+            let S₁ : Finset (Finset (Fin N0)) := Finset.powersetCard b (disagreeSet x y);
             ∀ B ∈ S₁, {z ∈ F_b | B_of z = B}.card ≤ (N0 - b).choose (r0 - b) * (q0 - (1 : ℕ)) ^
                 (r0 - b) := by
   classical
   intro N0 q0 r0 x y hdxy hB_sub_xz b hb B_of F_b S₁ B hB
-  let T_of : (Fin N0 → Fin q0) → Finset (Fin N0) := fun (z : Fin N0 → Fin q0) => diffCoords x z
+  let T_of : (Fin N0 → Fin q0) → Finset (Fin N0) := fun (z : Fin N0 → Fin q0) => disagreeSet x z
       \ B_of z
   have hB_card : B.card = b := (Finset.mem_powersetCard.mp hB).2
   let S₂ := (Finset.univ \ B).powersetCard (r0 - b)
@@ -76,7 +76,7 @@ private lemma edgeMoments_hbound1 :
       simp only [T_of, Finset.mem_sdiff, Finset.mem_univ, true_and] at hv ⊢
       rw [← hz.2]
       exact hv.2
-    · have hsub : B_of z ⊆ diffCoords x z := hB_sub_xz z
+    · have hsub : B_of z ⊆ disagreeSet x z := hB_sub_xz z
       have hadd := Finset.card_sdiff_add_card_eq_card hsub
       change (T_of z).card + (B_of z).card = dHam x z at hadd
       omega
@@ -104,7 +104,7 @@ private lemma edgeMoments_hbound1 :
       rw [Finset.mem_coe, Fintype.mem_piFinset]
       intro v
       have hvT : v.1 ∈ T_of z := by rw [hz.2]; exact v.2
-      simp only [T_of, diffCoords, Finset.mem_sdiff, Finset.mem_filter, Finset.mem_univ,
+      simp only [T_of, disagreeSet, Finset.mem_sdiff, Finset.mem_filter, Finset.mem_univ,
         true_and] at hvT
       exact Finset.mem_erase.mpr ⟨hvT.1.symm, Finset.mem_univ _⟩
     · intro z₁ hz₁ z₂ hz₂ heq
@@ -117,17 +117,18 @@ private lemma edgeMoments_hbound1 :
         rw [h1.2, h2.2]
       · by_cases hwT : w ∈ T
         · exact congr_fun heq ⟨w, hwT⟩
-        · have hn1 : w ∉ diffCoords x z₁ := by
+        · have hn1 : w ∉ disagreeSet x z₁ := by
             intro hd
             have hTw : w ∈ T_of z₁ := Finset.mem_sdiff.mpr ⟨hd, by rwa [hz₁.1.2]⟩
             rw [hz₁.2] at hTw
             exact hwT hTw
-          have hn2 : w ∉ diffCoords x z₂ := by
+          have hn2 : w ∉ disagreeSet x z₂ := by
             intro hd
             have hTw : w ∈ T_of z₂ := Finset.mem_sdiff.mpr ⟨hd, by rwa [hz₂.1.2]⟩
             rw [hz₂.2] at hTw
             exact hwT hTw
-          simp only [diffCoords, Finset.mem_filter, Finset.mem_univ, true_and, not_not] at hn1 hn2
+          simp only [disagreeSet, Finset.mem_filter, Finset.mem_univ, true_and, not_not]
+              at hn1 hn2
           rw [← hn1, ← hn2]
   rw [hfib2]
   calc
@@ -138,39 +139,39 @@ private lemma edgeMoments_hbound1 :
 private lemma queryTripleCardinalityAndFibers : ∀ (N0 q0 r0 : ℕ) (x y : Fin N0 → Fin q0),
     dHam x y = r0 →
         (∀ z : Fin N0 → Fin q0, dHam x z = r0 →
-          ((diffCoords x y).filter (fun v => z v = y v)).card ≤ r0 ∧
+          ((disagreeSet x y).filter (fun v => z v = y v)).card ≤ r0 ∧
           (homQueries x ∪ homQueries y).card +
-            ((r0 - ((diffCoords x y).filter (fun v => z v = y v)).card) * (N0 - 1) -
-             (r0 - ((diffCoords x y).filter (fun v => z v = y v)).card).choose 2) ≤
+            ((r0 - ((disagreeSet x y).filter (fun v => z v = y v)).card) * (N0 - 1) -
+             (r0 - ((disagreeSet x y).filter (fun v => z v = y v)).card).choose 2) ≤
             (homQueries x ∪ homQueries y ∪ homQueries z).card) ∧
         (∀ b : ℕ, b ≤ r0 →
           (Finset.univ.filter (fun z : Fin N0 → Fin q0 =>
             dHam x z = r0 ∧
-            ((diffCoords x y).filter (fun v => z v = y v)).card = b)).card ≤
+            ((disagreeSet x y).filter (fun v => z v = y v)).card = b)).card ≤
             r0.choose b * (N0 - b).choose (r0 - b) * (q0 - 1) ^ (r0 - b)) := by
   intro N0 q0 r0 x y hdxy
   have hB_sub_xz : ∀ z : Fin N0 → Fin q0,
-      (diffCoords x y).filter (fun v => z v = y v) ⊆ diffCoords x z := by
+      (disagreeSet x y).filter (fun v => z v = y v) ⊆ disagreeSet x z := by
     intro z v hv
-    simp only [diffCoords, Finset.mem_filter, Finset.mem_univ, true_and] at hv ⊢
+    simp only [disagreeSet, Finset.mem_filter, Finset.mem_univ, true_and] at hv ⊢
     rw [hv.2]
     exact hv.1
   constructor
   · intro z hdxz
-    let B := (diffCoords x y).filter (fun v => z v = y v)
+    let B := (disagreeSet x y).filter (fun v => z v = y v)
     let b := B.card
     have hb_le : b ≤ r0 := by
       rw [← hdxy]
       exact Finset.card_le_card (Finset.filter_subset _ _)
     refine ⟨hb_le, ?_⟩
-    let T := diffCoords x z \ B
+    let T := disagreeSet x z \ B
     have hT_card : T.card = r0 - b := by
       have hadd := Finset.card_sdiff_add_card_eq_card (hB_sub_xz z)
       change T.card + b = dHam x z at hadd
       omega
     have hT_ne : ∀ w ∈ T, z w ≠ x w ∧ z w ≠ y w := by
       intro w hw
-      simp only [T, B, diffCoords, Finset.mem_sdiff, Finset.mem_filter, Finset.mem_univ,
+      simp only [T, B, disagreeSet, Finset.mem_sdiff, Finset.mem_filter, Finset.mem_univ,
         true_and, not_and] at hw
       refine ⟨hw.1.symm, fun hzy => ?_⟩
       apply hw.2
@@ -196,11 +197,11 @@ private lemma queryTripleCardinalityAndFibers : ∀ (N0 q0 r0 : ℕ) (x y : Fin 
     exact Nat.add_le_add_left (by simpa only [hT_card] using hfresh) _
   · intro b hb
     let B_of : (Fin N0 → Fin q0) → Finset (Fin N0) :=
-      fun z => (diffCoords x y).filter (fun v => z v = y v)
+      fun z => (disagreeSet x y).filter (fun v => z v = y v)
     let T_of : (Fin N0 → Fin q0) → Finset (Fin N0) :=
-      fun z => diffCoords x z \ B_of z
+      fun z => disagreeSet x z \ B_of z
     let F_b := Finset.univ.filter (fun z : Fin N0 → Fin q0 => dHam x z = r0 ∧ (B_of z).card = b)
-    let S₁ := (diffCoords x y).powersetCard b
+    let S₁ := (disagreeSet x y).powersetCard b
     have hS₁_card : S₁.card = r0.choose b := by
       rw [Finset.card_powersetCard, ← hdxy]
     have hmaps1 : ∀ z ∈ F_b, B_of z ∈ S₁ := by
@@ -225,7 +226,7 @@ private lemma queryTripleCardinalityAndFibers : ∀ (N0 q0 r0 : ℕ) (x y : Fin 
 private lemma edgeMoments_h_props :
     ∀ (N0 q0 : ℕ) (x y x' y' : Fin N0 → Fin q0),
       let K₁ : Finset (Fin N0) := {v : Fin N0 | x' v = x v ∨ x' v = y v};
-      let K₂ : Finset (Fin N0) := {v ∈ diffCoords x' y' | y' v = x v ∨ y' v = y v};
+      let K₂ : Finset (Fin N0) := {v ∈ disagreeSet x' y' | y' v = x v ∨ y' v = y v};
       let S : Finset (Fin N0 ⊕ Fin N0) := K₁.disjSum K₂;
       let I : Finset (Fin N0 × Fin N0 × Fin q0 × Fin q0) := (homQueries x ∪ homQueries y) ∩
           (homQueries x' ∪ homQueries y');
@@ -290,13 +291,13 @@ private lemma edgeMoments_h_props :
 
 private lemma edgeMoments_hX_bound :
     ∀ (N0 q0 : ℕ) (x y : Fin N0 → Fin q0),
-      ∀ k₁ ≤ N0,
+      ∀ k₁ : ℕ,
         let K₁_of : (Fin N0 → Fin q0) → Finset (Fin N0) := fun (x' : Fin N0 → Fin q0) =>
           {v : Fin N0 | x' v = x v ∨ x' v = y v};
         let X_fib : Finset (Fin N0 → Fin q0) := {x' : Fin N0 → Fin q0 | (K₁_of x').card = k₁};
         X_fib.card ≤ N0.choose k₁ * (2 : ℕ) ^ k₁ * q0 ^ (N0 - k₁) := by
   classical
-  intro N0 q0 x y k₁ hk₁ K₁_of X_fib
+  intro N0 q0 x y k₁ K₁_of X_fib
   let S_K₁ := (Finset.univ : Finset (Fin N0)).powersetCard k₁
   have hSK₁_card : S_K₁.card = N0.choose k₁ := by
     rw [Finset.card_powersetCard, Finset.card_univ, Fintype.card_fin]
@@ -312,7 +313,6 @@ private lemma edgeMoments_hX_bound :
       (X_fib.filter (fun x' => K₁_of x' = K₁)).card ≤ 2 ^ k₁ * q0 ^ (N0 - k₁) := by
     intro K₁ hK₁
     have hK₁_card : K₁.card = k₁ := (Finset.mem_powersetCard.mp hK₁).2
-    let _ := hk₁
     let U_target : Finset ((↥K₁ → Bool) × (↥(Finset.univ \ K₁) → Fin q0)) := Finset.univ
     have hU_card : U_target.card = 2 ^ k₁ * q0 ^ (N0 - k₁) := by
       simp [U_target, Fintype.card_bool, hK₁_card]
@@ -346,37 +346,36 @@ private lemma edgeMoments_hX_bound :
 
 private lemma edgeMoments_hY_bound :
     ∀ (N0 q0 r0 : ℕ) (x y : Fin N0 → Fin q0) (k₂ : ℕ),
-      k₂ ≤ r0 →
         let K₂_of : (Fin N0 → Fin q0) → (Fin N0 → Fin q0) → Finset (Fin N0) := fun (x' y' : Fin
             N0 → Fin q0) =>
-          {v ∈ diffCoords x' y' | y' v = x v ∨ y' v = y v};
+          {v ∈ disagreeSet x' y' | y' v = x v ∨ y' v = y v};
         let Y_fib : (Fin N0 → Fin q0) → Finset (Fin N0 → Fin q0) := fun (x' : Fin N0 → Fin q0) =>
           {y' : Fin N0 → Fin q0 | dHam x' y' = r0 ∧ (K₂_of x' y').card = k₂};
         ∀ (x' : Fin N0 → Fin q0), (Y_fib x').card ≤ N0.choose r0 * r0.choose k₂ * (2 : ℕ) ^ k₂ *
             (q0 - (1 : ℕ)) ^ (r0 - k₂) := by
   classical
-  intro N0 q0 r0 x y k₂ _ K₂_of Y_fib x'
+  intro N0 q0 r0 x y k₂ K₂_of Y_fib x'
   let S_D := (Finset.univ : Finset (Fin N0)).powersetCard r0
   have hSD_card : S_D.card = N0.choose r0 := by
     rw [Finset.card_powersetCard, Finset.card_univ, Fintype.card_fin]
-  have hmaps_D : ∀ y' ∈ Y_fib x', diffCoords x' y' ∈ S_D := by
+  have hmaps_D : ∀ y' ∈ Y_fib x', disagreeSet x' y' ∈ S_D := by
     intro y' hy'
     simp only [Y_fib, Finset.mem_filter, Finset.mem_univ, true_and] at hy'
     rw [Finset.mem_powersetCard]
     exact ⟨Finset.subset_univ _, hy'.1⟩
   have hfib_D : (Y_fib x').card =
-      ∑ D ∈ S_D, ((Y_fib x').filter (fun y' => diffCoords x' y' = D)).card := by
+      ∑ D ∈ S_D, ((Y_fib x').filter (fun y' => disagreeSet x' y' = D)).card := by
     simp_rw [Finset.card_eq_sum_ones]
     exact (Finset.sum_fiberwise_of_maps_to hmaps_D _).symm
   have hbD : ∀ D ∈ S_D,
-      ((Y_fib x').filter (fun y' => diffCoords x' y' = D)).card ≤
+      ((Y_fib x').filter (fun y' => disagreeSet x' y' = D)).card ≤
         r0.choose k₂ * (2 ^ k₂ * (q0 - 1) ^ (r0 - k₂)) := by
     intro D hD
     have hD_card : D.card = r0 := (Finset.mem_powersetCard.mp hD).2
     let S_K₂ := D.powersetCard k₂
     have hSK₂_card : S_K₂.card = r0.choose k₂ := by
       rw [Finset.card_powersetCard, hD_card]
-    have hmaps_K₂ : ∀ y' ∈ (Y_fib x').filter (fun y' => diffCoords x' y' = D),
+    have hmaps_K₂ : ∀ y' ∈ (Y_fib x').filter (fun y' => disagreeSet x' y' = D),
         K₂_of x' y' ∈ S_K₂ := by
       intro y' hy'
       simp only [Y_fib, Finset.mem_filter, Finset.mem_univ, true_and] at hy'
@@ -384,13 +383,13 @@ private lemma edgeMoments_hY_bound :
       refine ⟨?_, hy'.1.2⟩
       rw [← hy'.2]
       exact Finset.filter_subset _ _
-    have hfib_K₂ : ((Y_fib x').filter (fun y' => diffCoords x' y' = D)).card =
-        ∑ K₂ ∈ S_K₂, (((Y_fib x').filter (fun y' => diffCoords x' y' = D)).filter
+    have hfib_K₂ : ((Y_fib x').filter (fun y' => disagreeSet x' y' = D)).card =
+        ∑ K₂ ∈ S_K₂, (((Y_fib x').filter (fun y' => disagreeSet x' y' = D)).filter
           (fun y' => K₂_of x' y' = K₂)).card := by
       simp_rw [Finset.card_eq_sum_ones]
       exact (Finset.sum_fiberwise_of_maps_to hmaps_K₂ _).symm
     have hbK₂ : ∀ K₂ ∈ S_K₂,
-        (((Y_fib x').filter (fun y' => diffCoords x' y' = D)).filter
+        (((Y_fib x').filter (fun y' => disagreeSet x' y' = D)).filter
           (fun y' => K₂_of x' y' = K₂)).card ≤ 2 ^ k₂ * (q0 - 1) ^ (r0 - k₂) := by
       intro K₂ hK₂
       obtain ⟨hK₂_sub, hK₂_card⟩ := Finset.mem_powersetCard.mp hK₂
@@ -419,10 +418,10 @@ private lemma edgeMoments_hY_bound :
         simp only [Finset.mem_coe, Finset.mem_filter] at hy'
         rw [Finset.mem_coe, Finset.mem_product]
         refine ⟨Finset.mem_univ _, Fintype.mem_piFinset.mpr (fun w => ?_)⟩
-        have hwD : w.1 ∈ diffCoords x' y' := by
+        have hwD : w.1 ∈ disagreeSet x' y' := by
           rw [hy'.1.2]
           exact (Finset.mem_sdiff.mp w.2).1
-        simp only [diffCoords, Finset.mem_filter, Finset.mem_univ, true_and] at hwD
+        simp only [disagreeSet, Finset.mem_filter, Finset.mem_univ, true_and] at hwD
         exact Finset.mem_erase.mpr ⟨hwD.symm, Finset.mem_univ _⟩
       · intro y'₁ hy₁ y'₂ hy₂ heq
         simp only [Finset.mem_coe, Finset.mem_filter] at hy₁ hy₂
@@ -442,46 +441,47 @@ private lemma edgeMoments_hY_bound :
             rw [hyu1, hyu2]
         · by_cases huD : u ∈ D
           · exact congr_fun heq.2 ⟨u, Finset.mem_sdiff.mpr ⟨huD, huK₂⟩⟩
-          · have hn1 : u ∉ diffCoords x' y'₁ := by rwa [hy₁.1.2]
-            have hn2 : u ∉ diffCoords x' y'₂ := by rwa [hy₂.1.2]
-            simp only [diffCoords, Finset.mem_filter, Finset.mem_univ, true_and, not_not] at hn1 hn2
+          · have hn1 : u ∉ disagreeSet x' y'₁ := by rwa [hy₁.1.2]
+            have hn2 : u ∉ disagreeSet x' y'₂ := by rwa [hy₂.1.2]
+            simp only [disagreeSet, Finset.mem_filter, Finset.mem_univ, true_and, not_not]
+              at hn1 hn2
             rw [← hn1, ← hn2]
     rw [hfib_K₂]
     calc
-      ∑ K₂ ∈ S_K₂, (((Y_fib x').filter (fun y' => diffCoords x' y' = D)).filter
+      ∑ K₂ ∈ S_K₂, (((Y_fib x').filter (fun y' => disagreeSet x' y' = D)).filter
           (fun y' => K₂_of x' y' = K₂)).card
         ≤ S_K₂.card • (2 ^ k₂ * (q0 - 1) ^ (r0 - k₂)) := Finset.sum_le_card_nsmul _ _ _ hbK₂
       _ = r0.choose k₂ * (2 ^ k₂ * (q0 - 1) ^ (r0 - k₂)) := by
           rw [hSK₂_card, smul_eq_mul]
   calc
     (Y_fib x').card
-      = ∑ D ∈ S_D, ((Y_fib x').filter (fun y' => diffCoords x' y' = D)).card := hfib_D
+      = ∑ D ∈ S_D, ((Y_fib x').filter (fun y' => disagreeSet x' y' = D)).card := hfib_D
     _ ≤ S_D.card • (r0.choose k₂ * (2 ^ k₂ * (q0 - 1) ^ (r0 - k₂))) :=
         Finset.sum_le_card_nsmul _ _ _ hbD
     _ = N0.choose r0 * r0.choose k₂ * 2 ^ k₂ * (q0 - 1) ^ (r0 - k₂) := by
         rw [hSD_card, smul_eq_mul]
         ring
 
-private lemma queryPairIntersectionAndFibers : ∀ (N0 q0 r0 : ℕ), 2 ≤ q0 → r0 ≤ N0 →
+private lemma queryPairIntersectionAndFibers : ∀ (N0 q0 r0 : ℕ),
       ∀ (x y : Fin N0 → Fin q0),
         (∀ x' y' : Fin N0 → Fin q0,
           ((homQueries x ∪ homQueries y) ∩ (homQueries x' ∪ homQueries y')).card ≤
             ((Finset.univ.filter (fun v : Fin N0 => x' v = x v ∨ x' v = y v)).card +
-             ((diffCoords x' y').filter (fun v : Fin N0 => y' v = x v ∨ y' v = y
+             ((disagreeSet x' y').filter (fun v : Fin N0 => y' v = x v ∨ y' v = y
                  v)).card).choose 2) ∧
-        (∀ k₁ k₂ : ℕ, k₁ ≤ N0 → k₂ ≤ r0 →
+        (∀ k₁ k₂ : ℕ,
           (Finset.univ.filter (fun xy' : (Fin N0 → Fin q0) × (Fin N0 → Fin q0) =>
             dHam xy'.1 xy'.2 = r0 ∧
             (Finset.univ.filter (fun v : Fin N0 => xy'.1 v = x v ∨ xy'.1 v = y v)).card = k₁ ∧
-            ((diffCoords xy'.1 xy'.2).filter (fun v : Fin N0 => xy'.2 v = x v ∨ xy'.2 v = y
+            ((disagreeSet xy'.1 xy'.2).filter (fun v : Fin N0 => xy'.2 v = x v ∨ xy'.2 v = y
                 v)).card = k₂)).card ≤
             N0.choose k₁ * 2 ^ k₁ * q0 ^ (N0 - k₁) *
               (N0.choose r0 * r0.choose k₂ * 2 ^ k₂ * (q0 - 1) ^ (r0 - k₂))) := by
-  intro N0 q0 r0 _hq _hrN x y
+  intro N0 q0 r0 x y
   constructor
   · intro x' y'
     let K₁ := Finset.univ.filter (fun v : Fin N0 => x' v = x v ∨ x' v = y v)
-    let K₂ := (diffCoords x' y').filter (fun v : Fin N0 => y' v = x v ∨ y' v = y v)
+    let K₂ := (disagreeSet x' y').filter (fun v : Fin N0 => y' v = x v ∨ y' v = y v)
     let S : Finset (Fin N0 ⊕ Fin N0) := K₁.disjSum K₂
     let I := (homQueries x ∪ homQueries y) ∩ (homQueries x' ∪ homQueries y')
     have hS_pow_card : (S.powersetCard 2).card = (K₁.card + K₂.card).choose 2 := by
@@ -509,7 +509,7 @@ private lemma queryPairIntersectionAndFibers : ∀ (N0 q0 r0 : ℕ), 2 ≤ q0 �
         simp only [K₁, Finset.mem_filter, Finset.mem_univ, true_and]
         rwa [heq_xy]
       · rw [Finset.inr_mem_disjSum]
-        simp only [K₂, diffCoords, Finset.mem_filter, Finset.mem_univ, true_and]
+        simp only [K₂, disagreeSet, Finset.mem_filter, Finset.mem_univ, true_and]
         exact ⟨heq_xy, hw⟩
     let α_map : Fin N0 × Fin N0 × Fin q0 × Fin q0 → Fin N0 ⊕ Fin N0 :=
       fun t => if t.2.2.1 = x' t.1 ∧ t.2.2.2 = x' t.2.1 then Sum.inl t.1 else τ t.1
@@ -594,11 +594,11 @@ private lemma queryPairIntersectionAndFibers : ∀ (N0 q0 r0 : ℕ), 2 ≤ q0 �
       rcases t₂ with ⟨u₂, v₂, c₂₁, c₂₂⟩
       simp only [Prod.mk.injEq] at hu_eq hv_eq hc1_eq hc2_eq ⊢
       exact ⟨hu_eq, hv_eq, hc1_eq, hc2_eq⟩
-  · intro k₁ k₂ hk₁ _hk₂
+  · intro k₁ k₂
     let K₁_of : (Fin N0 → Fin q0) → Finset (Fin N0) :=
       fun x' => Finset.univ.filter (fun v : Fin N0 => x' v = x v ∨ x' v = y v)
     let K₂_of : (Fin N0 → Fin q0) → (Fin N0 → Fin q0) → Finset (Fin N0) :=
-      fun x' y' => (diffCoords x' y').filter (fun v : Fin N0 => y' v = x v ∨ y' v = y v)
+      fun x' y' => (disagreeSet x' y').filter (fun v : Fin N0 => y' v = x v ∨ y' v = y v)
     let F_pair := Finset.univ.filter (fun xy' : (Fin N0 → Fin q0) × (Fin N0 → Fin q0) =>
       dHam xy'.1 xy'.2 = r0 ∧ (K₁_of xy'.1).card = k₁ ∧ (K₂_of xy'.1 xy'.2).card = k₂)
     let X_fib := Finset.univ.filter (fun x' : Fin N0 → Fin q0 => (K₁_of x').card = k₁)
@@ -606,9 +606,9 @@ private lemma queryPairIntersectionAndFibers : ∀ (N0 q0 r0 : ℕ), 2 ≤ q0 �
       fun x' => Finset.univ.filter (fun y' : Fin N0 → Fin q0 =>
         dHam x' y' = r0 ∧ (K₂_of x' y').card = k₂)
     have hX_bound :=
-      @edgeMoments_hX_bound N0 q0 x y k₁ hk₁
+      @edgeMoments_hX_bound N0 q0 x y k₁
     have hY_bound :=
-      @edgeMoments_hY_bound N0 q0 r0 x y k₂ (by assumption)
+      @edgeMoments_hY_bound N0 q0 r0 x y k₂
     have hmaps_pair : ∀ xy' ∈ F_pair, xy'.1 ∈ X_fib := by
       intro xy' hxy'
       simp only [F_pair, X_fib, Finset.mem_filter, Finset.mem_univ, true_and] at hxy' ⊢
@@ -1178,8 +1178,6 @@ private lemma edgeMoments_hM0_const :
 
 private lemma edgeMoments_hinner_bound :
     ∀ (N0 q0 r0 : ℕ) (p_k p_e γ : ℝ),
-      (2 : ℕ) ≤ q0 →
-        r0 ≤ N0 →
           (0 : ℝ) < p_k →
             (0 : ℝ) < p_e →
               (∀ (a b : Fin N0 → Fin q0),
@@ -1206,14 +1204,14 @@ private lemma edgeMoments_hinner_bound :
                               (↑E_all.card : ℝ) * (p_k ^ (2 : ℕ) * p_e ^ U_r) ^ (2 : ℕ) * ((2 :
                                   ℝ) * γ) := by
   classical
-  intro N0 q0 r0 p_k p_e γ hq hrN hpk_pos hpe_pos h_union h_s4_gen U_r E_all hE_card hq1_pos
+  intro N0 q0 r0 p_k p_e γ hpk_pos hpe_pos h_union h_s4_gen U_r E_all hE_card hq1_pos
       hq1_le_qr h1_le_inv_pe ⟨x, y⟩ hxy
   have hdxy : dHam x y = r0 := (Finset.mem_filter.mp hxy).2
-  obtain ⟨hs2_a, hs2_b⟩ := queryPairIntersectionAndFibers N0 q0 r0 hq hrN x y
+  obtain ⟨hs2_a, hs2_b⟩ := queryPairIntersectionAndFibers N0 q0 r0 x y
   let k1_fn : (Fin N0 → Fin q0) → ℕ :=
     fun x' => (Finset.univ.filter (fun v : Fin N0 => x' v = x v ∨ x' v = y v)).card
   let k2_fn : (Fin N0 → Fin q0) → (Fin N0 → Fin q0) → ℕ :=
-    fun x' y' => ((diffCoords x' y').filter (fun v : Fin N0 => y' v = x v ∨ y' v = y v)).card
+    fun x' y' => ((disagreeSet x' y').filter (fun v : Fin N0 => y' v = x v ∨ y' v = y v)).card
   let S_kr := Finset.range (N0 + 1) ×ˢ Finset.range (r0 + 1)
   have hmaps_kr : ∀ xy' ∈ E_all, (k1_fn xy'.1, k2_fn xy'.1 xy'.2) ∈ S_kr := by
     intro xy' hxy'
@@ -1287,7 +1285,7 @@ private lemma edgeMoments_hinner_bound :
         ext xy'
         simp [E_all, Prod.mk.injEq]
       rw [hfeq]
-      have hnat := hs2_b k₁ k₂ hk₁ hk₂
+      have hnat := hs2_b k₁ k₂
       let q_r : ℝ := (q0 : ℝ)
       let q_1 : ℝ := ((q0 - 1 : ℕ) : ℝ)
       have hcast : ((Finset.univ.filter
@@ -1401,7 +1399,7 @@ private lemma edgeMoments_hinner_bound :
     _ = (E_all.card : ℝ) * (p_k ^ 2 * p_e ^ U_r) ^ 2 * (2 * γ) := by ring
 
 private lemma rawMoments_assembly : ∀ (N0 q0 r0 : ℕ) (p_k p_e n_0 D_star γ : ℝ),
-      2 ≤ q0 → r0 ≤ N0 →
+      2 ≤ q0 →
       0 < p_k → 0 < p_e → p_e < 1 →
       (∀ a b : Fin N0 → Fin q0,
         (homQueries a ∪ homQueries b).card =
@@ -1434,7 +1432,7 @@ private lemma rawMoments_assembly : ∀ (N0 q0 r0 : ℕ) (p_k p_e n_0 D_star γ 
         p_k ^ 4 * p_e ^ (homQueries e₁₂.1.1 ∪ homQueries e₁₂.1.2 ∪
                          homQueries e₁₂.2.1 ∪ homQueries e₁₂.2.2).card ≤
           2 * γ * (n_0 * D_star) ^ 2) := by
-  intro N0 q0 r0 p_k p_e n_0 D_star γ hq hrN hpk_pos hpe_pos hpe_lt1
+  intro N0 q0 r0 p_k p_e n_0 D_star γ hq hpk_pos hpe_pos hpe_lt1
     h_union h_M0_gen h_s3_gen h_s4_gen
   let U_r := N0.choose 2 + r0 * (N0 - 1) - r0.choose 2
   let E_all := Finset.univ.filter
@@ -1478,7 +1476,7 @@ private lemma rawMoments_assembly : ∀ (N0 q0 r0 : ℕ) (p_k p_e n_0 D_star γ 
       rw [hfib_img, Finset.sum_image (fun _ _ _ _ h => (Prod.mk.inj (Prod.mk.inj h).2).2)]
       obtain ⟨hs1_a, hs1_b⟩ := queryTripleCardinalityAndFibers N0 q0 r0 x y hdxy
       let b_fn : (Fin N0 → Fin q0) → ℕ :=
-        fun z => ((diffCoords x y).filter (fun v => z v = y v)).card
+        fun z => ((disagreeSet x y).filter (fun v => z v = y v)).card
       have hmaps_b : ∀ z ∈ S_x, b_fn z ∈ Finset.range (r0 + 1) := by
         intro z hz
         have hdz : dHam x z = r0 := (Finset.mem_filter.mp hz).2
@@ -1598,7 +1596,7 @@ private lemma rawMoments_assembly : ∀ (N0 q0 r0 : ℕ) (p_k p_e n_0 D_star γ 
       exact_mod_cast (Nat.sub_le q0 1)
     have h1_le_inv_pe : 1 ≤ p_e⁻¹ := (one_le_inv₀ hpe_pos).mpr (le_of_lt hpe_lt1)
     have hinner_bound :=
-      @edgeMoments_hinner_bound N0 q0 r0 p_k p_e γ hq hrN hpk_pos hpe_pos h_union h_s4_gen
+      @edgeMoments_hinner_bound N0 q0 r0 p_k p_e γ hpk_pos hpe_pos h_union h_s4_gen
           hE_card hq1_pos hq1_le_qr h1_le_inv_pe
     calc
       ∑ e₁₂ ∈ E4_disj,
@@ -1664,8 +1662,6 @@ theorem raw_degree_and_edge_second_moment_sums (C₁ : ℕ) (hC₁ : 3 ≤ C₁)
           (cspN0 C₁ r_star * cspDStar C₁ r_star) ^ 2) :=
 by
   have hr_ge : 3001 ≤ r_star := by omega
-  have h1_le_2L : 1 ≤ 2 ^ cspL C₁ := Nat.one_le_two_pow
-  have hrN : r_star ≤ 2 ^ cspL C₁ * r_star := Nat.le_mul_of_pos_left r_star h1_le_2L
   have hq_ge2 : 2 ≤ cspQ C₁ := by
     unfold cspQ
     have := @Nat.one_le_two_pow (cspEq C₁)
@@ -1704,7 +1700,7 @@ by
   exact rawMoments_assembly (2 ^ cspL C₁ * r_star) (cspQ C₁) r_star
     (cspPKeep C₁ r_star) (cspPEdge C₁ r_star)
     (cspN0 C₁ r_star) (cspDStar C₁ r_star) (cspGamma r_star)
-    hq_ge2 hrN hp_keep_pos hp_edge_pos hp_edge_lt1
+    hq_ge2 hp_keep_pos hp_edge_pos hp_edge_lt1
     h_union_card h_M0 h_s3 h_s4
 
 end Helpers

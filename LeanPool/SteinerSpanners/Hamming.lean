@@ -18,6 +18,7 @@ public import Mathlib.Analysis.SpecialFunctions.Log.Base
 import Mathlib.Analysis.Complex.ExponentialBounds
 
 public import LeanPool.SteinerSpanners.Defs
+public import LeanPool.SteinerSpanners.Geometry
 
 /-! # Hamming infrastructure for Steiner spanners
 
@@ -32,27 +33,18 @@ namespace HighDimSteinerSpanners.Proofs.Hamming
 
 /-! ### Section A: `lpDist` and `cubeLpDist` helpers -/
 
-private lemma lpDist_eq_toLp_dist_local (p : ℝ) (hp : 1 ≤ p) {d : ℕ} (x y : Fin d → ℝ) :
-    lpDist p x y =
-      dist (WithLp.toLp (ENNReal.ofReal p) x) (WithLp.toLp (ENNReal.ofReal p) y) := by
-  have hp0 : 0 < p := by linarith
-  have hp_ne_zero : ENNReal.ofReal p ≠ 0 := by positivity
-  have hp_ne_top : ENNReal.ofReal p ≠ ⊤ := ENNReal.ofReal_ne_top
-  rw [PiLp.dist_eq_sum (p := ENNReal.ofReal p) (ENNReal.toReal_pos hp_ne_zero hp_ne_top)]
-  simp only [ENNReal.toReal_ofReal hp0.le, lpDist, Real.dist_eq, one_div]
-
 private lemma cubeLpDist_nonneg {p : ℝ} (hp : 1 ≤ p) {d : ℕ} (x y : Fin d → Bool) :
     0 ≤ cubeLpDist p x y := by
   have : Fact (1 ≤ ENNReal.ofReal p) := ⟨ENNReal.one_le_ofReal.mpr hp⟩
   unfold cubeLpDist
-  rw [lpDist_eq_toLp_dist_local p hp]
+  rw [Geometry.lpDist_eq_toLp_dist p hp]
   exact dist_nonneg
 
 private lemma cubeLpDist_self {p : ℝ} (hp : 1 ≤ p) {d : ℕ} (x : Fin d → Bool) :
     cubeLpDist p x x = 0 := by
   have : Fact (1 ≤ ENNReal.ofReal p) := ⟨ENNReal.one_le_ofReal.mpr hp⟩
   unfold cubeLpDist
-  rw [lpDist_eq_toLp_dist_local p hp]
+  rw [Geometry.lpDist_eq_toLp_dist p hp]
   exact dist_self _
 
 private lemma cubeLpDist_symm (p : ℝ) {d : ℕ} (x y : Fin d → Bool) :
@@ -63,8 +55,8 @@ private lemma cubeLpDist_triangle {p : ℝ} (hp : 1 ≤ p) {d : ℕ} (x y z : Fi
     cubeLpDist p x z ≤ cubeLpDist p x y + cubeLpDist p y z := by
   have : Fact (1 ≤ ENNReal.ofReal p) := ⟨ENNReal.one_le_ofReal.mpr hp⟩
   unfold cubeLpDist
-  rw [lpDist_eq_toLp_dist_local p hp, lpDist_eq_toLp_dist_local p hp, lpDist_eq_toLp_dist_local
-      p hp]
+  rw [Geometry.lpDist_eq_toLp_dist p hp, Geometry.lpDist_eq_toLp_dist p hp,
+    Geometry.lpDist_eq_toLp_dist p hp]
   exact dist_triangle _ _ _
 
 private lemma cubeLpDist_eq_hamming_rpow {p : ℝ} (hp : 1 ≤ p) {d : ℕ} (x y : Fin d → Bool) :
@@ -676,32 +668,17 @@ private lemma two_mul_sym2_image_le {d : ℕ} (V_set C_sub : Finset (Fin d → B
     _ = pairs.card := by rw [Finset.card_univ, Fintype.card_coe]
 
 open Classical in
-private lemma hamming_hsum_choose :
-    ∀ (r d : ℕ),
-      (4 : ℕ) ≤ r →
-        (1 : ℕ) ≤ d →
-          let b_r : ℝ := (2 : ℝ) ^ r - (1 : ℝ);
-          let ρ_r : ℝ := (1 : ℝ) / ((64 : ℝ) * b_r);
-          ∀ (P : Finset (Fin d → Bool)),
-            let bNat : ℕ := (2 : ℕ) ^ r - (1 : ℕ);
-            (↑bNat : ℝ) = b_r →
-              (15 : ℝ) ≤ b_r →
-                (0 : ℝ) < ρ_r →
-                  let C_r : Finset (Fin d → Bool) := blockCode r d;
-                  let S_r : Finset (Fin d → Bool) := C_r \ P;
-                  P ⊆ P ∪ S_r →
-                    C_r ⊆ P ∪ S_r →
-                      let k : ℕ := ⌊(27 / 4 : ℝ) * ρ_r * (↑d : ℝ)⌋₊;
-                      let α : ℝ := (7 : ℝ) * ρ_r;
-                      (0 : ℝ) < α →
-                        α < (1 : ℝ) →
-                          (↑k : ℝ) ≤ α * (↑d : ℝ) →
-                            k < d →
-                              ∑ j ∈ Finset.Icc (1 : ℕ) k, (↑(d.choose j) : ℝ) ≤
-                                (2 : ℝ) ^ ((↑r : ℝ) / ((4 : ℝ) * b_r) * (↑d : ℝ)) := by
+private lemma hamming_hsum_choose (r d : ℕ) (hr : 4 ≤ r) :
+    let b_r : ℝ := (2 : ℝ) ^ r - 1;
+    let ρ_r : ℝ := 1 / (64 * b_r);
+    15 ≤ b_r →
+      let k : ℕ := ⌊(27 / 4 : ℝ) * ρ_r * (d : ℝ)⌋₊;
+      let α : ℝ := 7 * ρ_r;
+      0 < α → α < 1 → (k : ℝ) ≤ α * (d : ℝ) → k < d →
+        ∑ j ∈ Finset.Icc 1 k, (d.choose j : ℝ) ≤
+          (2 : ℝ) ^ ((r : ℝ) / (4 * b_r) * (d : ℝ)) := by
   classical
-  intro r d hr hd b_r ρ_r P bNat hbNat_cast hbr_ge15 hρ_pos C_r S_r hP_sub hC_sub k α hα_pos
-      hα_lt1 hk_le_αd hk_lt_d
+  intro b_r ρ_r hbr_ge15 k α hα_pos hα_lt1 hk_le_αd hk_lt_d
   have hsub_range : Finset.Icc 1 k ⊆ Finset.range (d + 1) := by
     intro j hj
     rw [Finset.mem_Icc] at hj
@@ -1026,7 +1003,7 @@ lemma lem_3_3_proof :
           nlinarith only [hk_le_αd, mul_lt_mul_of_pos_right hα_lt1 hd_pos]
         exact_mod_cast hlt_real
       have hsum_choose :=
-        @hamming_hsum_choose r d hr hd P hbNat_cast hbr_ge15 hρ_pos hP_sub hC_sub hα_pos hα_lt1
+        @hamming_hsum_choose r d hr hbr_ge15 hα_pos hα_lt1
             hk_le_αd hk_lt_d
       have hpairs_real : (pairs_C.card : ℝ) ≤ 2 * (P.card : ℝ) :=
         @hamming_hpairs_real r d hr hd P hP_rate hbNat_ge15 hbNat_cast hbr_ge15 hbr_pos hρ_pos

@@ -143,7 +143,7 @@ lemma candMWit_proj {N q : ℕ} (C₁ r_star m : ℕ)
       ∀ i ∈ candQCand C₁ a b m z_prev x w, ω i = true := by
   let K_max := cspKMax C₁
   let M := candMFresh a b m z_prev x
-  let W_ab := diffCoords x a ∪ diffCoords x b
+  let W_ab := disagreeSet x a ∪ disagreeSet x b
   have hM_sub_I : M ⊆ disagreeSet x a ∩ disagreeSet x b := by
     intro v hv
     simp only [M, candMFresh, cspRvc, Finset.mem_filter, Finset.mem_univ, true_and,
@@ -323,9 +323,9 @@ lemma candMWit_proj {N q : ℕ} (C₁ r_star m : ℕ)
         have hrel := (hr_all ⟨r.1, hrk⟩).2.2.1 u huA v (Finset.mem_union_left _ hvBf0)
         dsimp [candPhi2]
         split_ifs with hlt
-        · simpa [symROf, ite_eq_left hlt, candCStar, activeColor] using hrel
+        · simpa [symROf, ite_eq_left hlt, activeColor] using hrel
         · have hgt : v < u := lt_of_le_of_ne (not_lt.mp hlt) (Ne.symm hne_uv)
-          simpa [symROf, ite_eq_right hlt, ite_eq_left hgt, candCStar, activeColor] using hrel
+          simpa [symROf, ite_eq_right hlt, ite_eq_left hgt, activeColor] using hrel
       · have huA : u ∈ A ⟨r.1, hrk⟩ := (hτ_succ_iff r hrk u huM).mp hτu
         have hvBsub : v ∈ B_sub ⟨r.1, hrk⟩ := by
           rw [← hBo_slice r hrk]
@@ -338,9 +338,9 @@ lemma candMWit_proj {N q : ℕ} (C₁ r_star m : ℕ)
         have hrel := (hr_all ⟨r.1, hrk⟩).2.2.1 u huA v (Finset.mem_union_right _ hvBo0)
         dsimp [candPhi2]
         split_ifs with hlt
-        · simpa [symROf, ite_eq_left hlt, candCStar, activeColor] using hrel
+        · simpa [symROf, ite_eq_left hlt, activeColor] using hrel
         · have hgt : v < u := lt_of_le_of_ne (not_lt.mp hlt) (Ne.symm hne_uv)
-          simpa [symROf, ite_eq_right hlt, ite_eq_left hgt, candCStar, activeColor] using hrel
+          simpa [symROf, ite_eq_right hlt, ite_eq_left hgt, activeColor] using hrel
 
 end Helpers
 

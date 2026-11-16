@@ -29,11 +29,11 @@ noncomputable section Helpers
 
 lemma candMFresh_subset_union {N q : ℕ} (a b : Fin N → Fin q)
     (m : ℕ) (z_prev : Fin m → (Fin N → Fin q)) (x : Fin N → Fin q) :
-    candMFresh a b m z_prev x ⊆ diffCoords x a ∪ diffCoords x b := by
+    candMFresh a b m z_prev x ⊆ disagreeSet x a ∪ disagreeSet x b := by
   intro v hv
   simp only [candMFresh, cspRvc, Finset.mem_filter, Finset.mem_univ, true_and,
     Finset.mem_union, Finset.mem_image] at hv
-  simp only [diffCoords, Finset.mem_union, Finset.mem_filter, Finset.mem_univ, true_and]
+  simp only [disagreeSet, Finset.mem_union, Finset.mem_filter, Finset.mem_univ, true_and]
   exact Or.inl (fun hxa => hv (Or.inl (Or.inl ⟨v, hxa.symm ▸ rfl⟩)))
 
 lemma candMWit_card_le {N q : ℕ} (C₁ r_star m : ℕ)
@@ -45,11 +45,11 @@ lemma candMWit_card_le {N q : ℕ} (C₁ r_star m : ℕ)
       (2 : ℝ) ^ (3 * (r_star : ℝ) + (1 / 10 : ℝ) * (cspLam0 C₁ : ℝ) * (M.card : ℝ)) := by
   intro M
   let K_max := cspKMax C₁
-  let W_ab := diffCoords x a ∪ diffCoords x b
+  let W_ab := disagreeSet x a ∪ disagreeSet x b
   have hW_card : W_ab.card ≤ 2 * C₁ * r_star := by
-    have h1 := Finset.card_union_le (diffCoords x a) (diffCoords x b)
-    have h2 : (diffCoords x a).card ≤ C₁ * r_star := hd_xa
-    have h3 : (diffCoords x b).card ≤ C₁ * r_star := hd_xb
+    have h1 := Finset.card_union_le (disagreeSet x a) (disagreeSet x b)
+    have h2 : (disagreeSet x a).card ≤ C₁ * r_star := hd_xa
+    have h3 : (disagreeSet x b).card ≤ C₁ * r_star := hd_xb
     calc
       W_ab.card ≤ C₁ * r_star + C₁ * r_star := le_trans h1 (Nat.add_le_add h2 h3)
       _ = 2 * C₁ * r_star := by ring
@@ -214,7 +214,7 @@ lemma candMWit_quad {N q : ℕ} (C₁ r_star m : ℕ)
         23 * (r_star : ℤ) * (M.card : ℤ) := by
   intro M
   let K_max := cspKMax C₁
-  let W_ab := diffCoords x a ∪ diffCoords x b
+  let W_ab := disagreeSet x a ∪ disagreeSet x b
   have hM_sub_W : M ⊆ W_ab := candMFresh_subset_union a b m z_prev x
   intro w hw
   have hw_filt := (Finset.mem_filter.mp hw).2

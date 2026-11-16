@@ -155,7 +155,7 @@ lemma homQueries_union_card {N q : ℕ} (hN_ge1 : 1 ≤ N) : ∀ x y : Fin N →
       N.choose 2 + dHam x y * (N - 1) - (dHam x y).choose 2 := by
   classical
   intro x y
-  let S := diffCoords x y
+  let S := disagreeSet x y
   let s := dHam x y
   let A : Finset (Fin N) := Finset.univ \ S
   have hs_eq : S.card = s := rfl
@@ -169,7 +169,7 @@ lemma homQueries_union_card {N q : ℕ} (hN_ge1 : 1 ≤ N) : ∀ x y : Fin N →
         (fun uv => (uv.1, uv.2, x uv.1, x uv.2)) := by
     ext t
     simp only [Finset.mem_inter, homQueries, Finset.mem_image, Finset.mem_filter,
-      Finset.mem_univ, true_and, Finset.mem_product, A, Finset.mem_sdiff, S, diffCoords,
+      Finset.mem_univ, true_and, Finset.mem_product, A, Finset.mem_sdiff, S, disagreeSet,
       not_not]
     constructor
     · rintro ⟨⟨uv₁, h₁, rfl⟩, ⟨uv₂, h₂, heq⟩⟩
@@ -212,9 +212,9 @@ lemma hammingSphere_card {N q : ℕ} : ∀ (x : Fin N → Fin q) (s : ℕ),
     Fintype.piFinset (fun v : Fin N =>
       if v ∈ S then Finset.univ.erase (x v) else ({x v} : Finset (Fin q)))
   have hFib_mem : ∀ (S : Finset (Fin N)) (y : Fin N → Fin q),
-      y ∈ Fib S ↔ diffCoords x y = S := by
+      y ∈ Fib S ↔ disagreeSet x y = S := by
     intro S y
-    simp only [Fib, Fintype.mem_piFinset, Finset.ext_iff, diffCoords, Finset.mem_filter,
+    simp only [Fib, Fintype.mem_piFinset, Finset.ext_iff, disagreeSet, Finset.mem_filter,
       Finset.mem_univ, true_and]
     constructor
     · intro hy v
@@ -238,7 +238,7 @@ lemma hammingSphere_card {N q : ℕ} : ∀ (x : Fin N → Fin q) (s : ℕ),
       Finset.mem_powersetCard, hFib_mem, dHam]
     constructor
     · intro hs
-      exact ⟨diffCoords x y, ⟨Finset.subset_univ _, hs⟩, rfl⟩
+      exact ⟨disagreeSet x y, ⟨Finset.subset_univ _, hs⟩, rfl⟩
     · rintro ⟨S, ⟨_, hScard⟩, rfl⟩
       exact hScard
   have h_disj : (((Finset.univ : Finset (Fin N)).powersetCard s : Finset (Finset (Fin N))) :
@@ -307,17 +307,46 @@ lemma orderedHammingSphere_card {N q : ℕ} : ∀ s : ℕ,
 
 
 
+/-- Joint retention weights on an ordered Hamming sphere factor into the expected
+vertex count and weighted neighbor count. The subtraction guard permits arbitrary radii. -/
+lemma weightedHammingSphere_sum {N q : ℕ} (s : ℕ)
+    (hsub : s.choose 2 ≤ s * (N - 1))
+    (edgeWeight keepWeight expectedVertices neighborWeight : ℝ)
+    (hneighbor : neighborWeight = (N.choose s : ℝ) * ((q - 1 : ℕ) : ℝ) ^ s *
+      edgeWeight ^ (s * (N - 1) - s.choose 2))
+    (hvertices : expectedVertices = keepWeight * (q : ℝ) ^ N * edgeWeight ^ N.choose 2)
+    (hqueries : ∀ x y : Fin N → Fin q, (homQueries x ∪ homQueries y).card =
+      N.choose 2 + dHam x y * (N - 1) - (dHam x y).choose 2) :
+    ∑ xy ∈ Finset.univ.filter (fun xy : (Fin N → Fin q) × (Fin N → Fin q) =>
+      dHam xy.1 xy.2 = s),
+      keepWeight ^ 2 * edgeWeight ^ (homQueries xy.1 ∪ homQueries xy.2).card =
+        expectedVertices * keepWeight * neighborWeight := by
+  classical
+  let sphere := Finset.univ.filter (fun xy : (Fin N → Fin q) × (Fin N → Fin q) =>
+    dHam xy.1 xy.2 = s)
+  have hcard : sphere.card = q ^ N * (N.choose s * (q - 1) ^ s) :=
+    orderedHammingSphere_card s
+  have hcongr : ∀ xy ∈ sphere,
+      keepWeight ^ 2 * edgeWeight ^ (homQueries xy.1 ∪ homQueries xy.2).card =
+        keepWeight ^ 2 * (edgeWeight ^ N.choose 2 *
+          edgeWeight ^ (s * (N - 1) - s.choose 2)) := by
+    intro xy hxy
+    simp only [sphere, Finset.mem_filter, Finset.mem_univ, true_and] at hxy
+    rw [hqueries xy.1 xy.2, hxy, Nat.add_sub_assoc hsub, pow_add]
+  change ∑ xy ∈ sphere, _ = _
+  rw [Finset.sum_congr rfl hcongr, Finset.sum_const, nsmul_eq_mul, hcard, hvertices, hneighbor]
+  push_cast
+  ring
+
 open Classical in
 private lemma calibration_h_upper_s :
     ∀ (r_star L : ℕ),
-      (3001 : ℕ) ≤ r_star →
-        (0 : ℝ) ≤ (↑r_star : ℝ) →
           let N : ℕ := (2 : ℕ) ^ L * r_star;
           (0 : ℝ) < (↑N : ℝ) →
             ∀ (s : ℕ), (↑(N.choose s) : ℝ) * ((↑r_star : ℝ) / ((4 : ℝ) * (↑N : ℝ))) ^ s ≤ (4 :
                 ℝ) ^ r_star / (4 : ℝ) ^ s := by
   classical
-  intro r_star L hr_3001 hr_real_nn N hN_pos s
+  intro r_star L N hN_pos s
   have h_exp_4 : Real.exp (r_star : ℝ) ≤ (4 : ℝ) ^ r_star := by
     have h1 : Real.exp (r_star : ℝ) = (Real.exp 1) ^ r_star := by
       simp
@@ -342,7 +371,7 @@ private lemma calibration_h_upper_s :
       ((r_star : ℝ) ^ s / (s.factorial : ℝ)) / (4 : ℝ) ^ s := by
     field_simp [hNs_ne]
   have hexp_s : (r_star : ℝ) ^ s / (s.factorial : ℝ) ≤ (4 : ℝ) ^ r_star :=
-    le_trans (Real.pow_div_factorial_le_exp (r_star : ℝ) hr_real_nn s) h_exp_4
+    le_trans (Real.pow_div_factorial_le_exp (r_star : ℝ) (by positivity) s) h_exp_4
   have hstep2 : ((r_star : ℝ) ^ s / (s.factorial : ℝ)) / (4 : ℝ) ^ s ≤
       (4 : ℝ) ^ r_star / (4 : ℝ) ^ s :=
     div_le_div_of_nonneg_right hexp_s (by positivity)
@@ -1067,19 +1096,10 @@ private lemma calibration_h_sphere_sum :
   classical
   intro r_star L q p_edge p_keep n_0 d_omega hdomega_def hn0_def N hN_def h_union_card
       PairSphere s hs
-  have hsub := choose_two_le_product s hs
-  have hcongr : ∀ xy ∈ PairSphere s,
-      p_keep ^ 2 * p_edge ^ (homQueries xy.1 ∪ homQueries xy.2).card =
-        p_keep ^ 2 * (p_edge ^ (N.choose 2) * p_edge ^ (s * (N - 1) - s.choose 2)) := by
-    intro xy hxy
-    simp only [PairSphere, Finset.mem_filter, Finset.mem_univ, true_and] at hxy
-    rw [h_union_card xy.1 xy.2, hxy, Nat.add_sub_assoc hsub, pow_add]
-  rw [Finset.sum_congr rfl hcongr, Finset.sum_const, nsmul_eq_mul]
-  have hcard : (PairSphere s).card = q ^ N * (N.choose s * (q - 1) ^ s) :=
-      orderedHammingSphere_card s
-  rw [hcard, hn0_def, hdomega_def s, ← hN_def]
-  push_cast
-  ring
+  apply weightedHammingSphere_sum s (choose_two_le_product s hs) p_edge p_keep n_0
+    (d_omega s) _ _ h_union_card
+  · simpa only [← hN_def] using hdomega_def s
+  · simpa only [← hN_def] using hn0_def
 
 open Classical in
 private lemma calibration_h_M0 :
@@ -1087,9 +1107,7 @@ private lemma calibration_h_M0 :
       p_keep = d_star / d_omega r_star →
         let N : ℕ := (2 : ℕ) ^ L * r_star;
         r_star ≤ N →
-          (0 : ℝ) < d_omega r_star →
-            (0 : ℝ) < d_star →
-              (0 : ℝ) < n_0 →
+          d_omega r_star ≠ 0 →
                 let PairSphere : ℕ → Finset ((Fin N → Fin q) × (Fin N → Fin q)) := fun (s : ℕ) =>
                   {xy : (Fin N → Fin q) × (Fin N → Fin q) | dHam xy.1 xy.2 = s};
                 (∀ s ≤ N,
@@ -1100,10 +1118,10 @@ private lemma calibration_h_M0 :
                       homQueries xy.2).card =
                     n_0 * d_star := by
   classical
-  intro r_star L q p_edge d_star p_keep n_0 d_omega hpkeep_def N hr_le_N hDOm_r_pos hDStar_pos
-      hn0_pos PairSphere h_sphere_sum
+  intro r_star L q p_edge d_star p_keep n_0 d_omega hpkeep_def N hr_le_N hDOm_r_ne
+      PairSphere h_sphere_sum
   rw [h_sphere_sum r_star hr_le_N, hpkeep_def]
-  field_simp [ne_of_gt hDOm_r_pos]
+  field_simp [hDOm_r_ne]
 
 open Classical in
 private lemma calibration_h_ball_sum :
@@ -1162,10 +1180,10 @@ private lemma calibration_h_ball_sum :
         push Not at hall
         exact hne (funext hall)
       rcases hex with ⟨v, hv⟩
-      exact Finset.card_pos.mpr ⟨v, by simp [diffCoords, hv]⟩
+      exact Finset.card_pos.mpr ⟨v, by simp [disagreeSet, hv]⟩
     · intro h1 heq
       subst heq
-      have h0 : dHam a a = 0 := by simp [dHam, diffCoords]
+      have h0 : dHam a a = 0 := by simp [dHam, disagreeSet]
       omega
   have hball_eq : Finset.univ.filter
       (fun ab : (Fin N → Fin q) × (Fin N → Fin q) =>
@@ -1414,7 +1432,7 @@ private lemma dyadicCalibration_core (C₁ : ℕ) (hC₁ : 3 ≤ C₁)
     rw [h4, ← pow_mul, ← Real.rpow_natCast, Nat.cast_mul, Nat.cast_ofNat]
   have h_upper_s : ∀ s : ℕ,
       (N.choose s : ℝ) * ((r_star : ℝ) / (4 * (N : ℝ))) ^ s ≤ (4 : ℝ) ^ r_star / (4 : ℝ) ^ s :=
-    @calibration_h_upper_s r_star L hr_3001 hr_real_nn hN_pos
+    @calibration_h_upper_s r_star L hN_pos
   have h_env_all :=
     @calibration_h_env_all r_star L h4_eq_rpow h_upper_s
   have h_env_diag_up : (N.choose r_star : ℝ) * ((r_star : ℝ) / (4 * (N : ℝ))) ^ r_star ≤ 1 := by
@@ -1498,7 +1516,7 @@ private lemma dyadicCalibration_core (C₁ : ℕ) (hC₁ : 3 ≤ C₁)
         h_union_card
   have h_M0 :=
     @calibration_h_M0 r_star L q p_edge d_star p_keep n_0 d_omega hpkeep_def hr_le_N
-        hDOm_r_pos hDStar_pos hn0_pos h_sphere_sum
+        (ne_of_gt hDOm_r_pos) h_sphere_sum
   have h_ball_sum :=
     @calibration_h_ball_sum C₁ hC₁ r_star hr lam0 beta0 gamma0 L q sigma_edge p_edge p_keep
         n_0 d_omega hdomega_def hr_3001 hr_real_nn hC2_real hlam0_real_ge hbeta0_real hCr_le_N

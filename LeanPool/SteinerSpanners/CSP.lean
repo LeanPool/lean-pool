@@ -214,7 +214,7 @@ theorem thm_2_3_from_6_3
         (rStar : ℝ) / 4 < ((disagreeSet x.val w₀.val ∩ disagreeSet x.val y.val).card : ℝ))).card ≤
       (X.filter (fun y =>
         y ≠ x.val ∧ y ≠ w₀.val ∧ dHam x.val y = rStar ∧
-        rStar < 4 * (diffCoords x.val w₀.val ∩ diffCoords x.val y).card)).card := by
+        rStar < 4 * (disagreeSet x.val w₀.val ∩ disagreeSet x.val y).card)).card := by
       apply Finset.card_le_card_of_injOn Subtype.val
       · intro y hy
         simp only [Finset.mem_coe, Finset.mem_filter, Finset.mem_univ, true_and] at hy ⊢

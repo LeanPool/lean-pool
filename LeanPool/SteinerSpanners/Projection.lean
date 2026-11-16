@@ -28,15 +28,6 @@ open HighDimSteinerSpanners
 
 namespace HighDimSteinerSpanners.Proofs.Projection
 
-private lemma lpDist_eq_toLp_dist_aux (p : ℝ) (hp : 1 ≤ p) {d : ℕ} (x y : Fin d → ℝ) :
-    lpDist p x y =
-      dist (WithLp.toLp (ENNReal.ofReal p) x) (WithLp.toLp (ENNReal.ofReal p) y) := by
-  have hp0 : 0 < p := by linarith
-  have hp_ne_zero : ENNReal.ofReal p ≠ 0 := by positivity
-  have hp_ne_top : ENNReal.ofReal p ≠ ⊤ := ENNReal.ofReal_ne_top
-  rw [PiLp.dist_eq_sum (p := ENNReal.ofReal p) (ENNReal.toReal_pos hp_ne_zero hp_ne_top)]
-  simp only [ENNReal.toReal_ofReal hp0.le, lpDist, Real.dist_eq, one_div]
-
 private lemma weightedWalk_nonnegative {V : Type} (H : SimpleGraph V) (w : Sym2 V → ℝ)
   (hweight : ∀ e ∈ H.edgeSet, 0 ≤ w e) : ∀ {u v : V} (q_w : H.Walk u v), 0 ≤ walkWeight w q_w := by
   intro u v q_w
@@ -337,36 +328,10 @@ theorem thm_2_1a_proof :
     exact hq₀ z (q₀.support_bypass_subset_support hz)
   exact ⟨G_hat, hG_card, hG_edge, hG_path⟩
 
+/-- Compatibility name for the shared one-hot embedding distance formula. -/
 lemma oneHotEmbed_lpDist {N q : ℕ} (p : ℝ) (hp : 1 ≤ p) : ∀ x y : Fin N → Fin q,
-    lpDist p (oneHotEmbed x) (oneHotEmbed y) = (2 * (hammingDist x y : ℝ)) ^ (1 / p) := by
-  classical
-  have hp_ne : p ≠ 0 := ne_of_gt (lt_of_lt_of_le zero_lt_one hp)
-  intro x y
-  unfold lpDist
-  congr 1
-  rw [← Equiv.sum_comp finProdFinEquiv, Fintype.sum_prod_type]
-  have h_inner : ∀ v : Fin N,
-      (∑ c : Fin q,
-        |oneHotEmbed x (finProdFinEquiv (v, c)) - oneHotEmbed y (finProdFinEquiv (v, c))| ^ p) =
-        2 * (if x v ≠ y v then (1 : ℝ) else 0) := by
-    intro v
-    dsimp only [oneHotEmbed]
-    simp only [Equiv.symm_apply_apply]
-    by_cases hne : x v = y v
-    · simp [hne, Real.zero_rpow hp_ne]
-    · simp only [ne_eq, hne, not_false_eq_true, ↓reduceIte, mul_one]
-      rw [← Finset.sum_subset (Finset.subset_univ ({x v, y v} : Finset (Fin q)))]
-      · rw [Finset.sum_pair hne]
-        have hne' : y v ≠ x v := Ne.symm hne
-        simp only [↓reduceIte, hne, hne', sub_zero, zero_sub, abs_one, abs_neg, Real.one_rpow]
-        norm_num
-      · intro c _ hc
-        have h1 : x v ≠ c := fun h => hc (by simp [h])
-        have h2 : y v ≠ c := fun h => hc (by simp [h])
-        simp [h1, h2, Real.zero_rpow hp_ne]
-  simp_rw [h_inner, ← Finset.mul_sum]
-  rw [Finset.sum_boole]
-  rfl
+    lpDist p (oneHotEmbed x) (oneHotEmbed y) = (2 * (hammingDist x y : ℝ)) ^ (1 / p) :=
+  Geometry.oneHotEmbed_lpDist p hp
 
 lemma oneHotEmbed_injective {N q : ℕ} : Function.Injective (@oneHotEmbed N q) := by
   classical
@@ -505,7 +470,7 @@ theorem thm_2_1b_proof :
   have hdist_eq : ∀ i j : Fin X.card,
       @dist (Fin X.card) msFin.toDist i j = lpDist p (P i) (P j) := by
     intro i j
-    exact (lpDist_eq_toLp_dist_aux p hp (P i) (P j)).symm
+    exact (Geometry.lpDist_eq_toLp_dist p hp (P i) (P j)).symm
   have hGen : @IsGeneralNonMetricSteinerSpanner (Fin X.card) msFin _ C S _ H w :=
     { weight_nonneg := hSpan.weight_nonneg
       noncontracting := fun i j => by rw [hdist_eq]; exact hSpan.noncontracting i j

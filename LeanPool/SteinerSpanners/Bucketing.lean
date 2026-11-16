@@ -16,6 +16,7 @@ import Mathlib.Analysis.Normed.Lp.PiLp
 public import Mathlib.Combinatorics.SimpleGraph.Paths
 
 public import LeanPool.SteinerSpanners.Defs
+public import LeanPool.SteinerSpanners.Geometry
 
 /-! # Bucketing infrastructure for Steiner spanners
 
@@ -27,15 +28,6 @@ open scoped ENNReal
 open HighDimSteinerSpanners
 
 namespace HighDimSteinerSpanners.Proofs.Bucketing
-
-private lemma lpDist_eq_toLp_dist_local (p : ℝ) (hp : 1 ≤ p) {d : ℕ} (x y : Fin d → ℝ) :
-    lpDist p x y =
-      dist (WithLp.toLp (ENNReal.ofReal p) x) (WithLp.toLp (ENNReal.ofReal p) y) := by
-  have hp0 : 0 < p := by linarith
-  have hp_ne_zero : ENNReal.ofReal p ≠ 0 := by positivity
-  have hp_ne_top : ENNReal.ofReal p ≠ ⊤ := ENNReal.ofReal_ne_top
-  rw [PiLp.dist_eq_sum (p := ENNReal.ofReal p) (ENNReal.toReal_pos hp_ne_zero hp_ne_top)]
-  simp only [ENNReal.toReal_ofReal hp0.le, lpDist, Real.dist_eq, one_div]
 
 private lemma lpDist_self_local {p : ℝ} (hp : 1 ≤ p) {d : ℕ} (x : Fin d → ℝ) :
     lpDist p x x = 0 := by
@@ -227,7 +219,7 @@ private lemma singleHubSteinerSpanner (p C : ℝ) (hp : 1 ≤ p) (hC : 1 ≤ C)
     exact hP_inj (congrArg WithLp.ofLp hij)
   let ms : MetricSpace (Fin m) := MetricSpace.induced f hf_inj inferInstance
   have hdist : ∀ i j : Fin m, @dist (Fin m) ms.toDist i j = lpDist p (P i) (P j) :=
-    fun i j => (lpDist_eq_toLp_dist_local p hp (P i) (P j)).symm
+    fun i j => (Geometry.lpDist_eq_toLp_dist p hp (P i) (P j)).symm
   let B : Unit → Finset (Fin m) := fun _ => Finset.univ
   have hm_card : 2 ≤ Fintype.card (Fin m) := by simpa using hm
   have hB_card : ∀ u : Unit, 2 ≤ (B u).card := by intro _; simpa [B] using hm
@@ -277,34 +269,6 @@ private lemma lpDist_stdBasis_ne (p : ℝ) (hp : 1 ≤ p) {n : ℕ} {i j : Fin n
     have hik : i ≠ k := fun h => hk (by simp [h])
     have hjk : j ≠ k := fun h => hk (by simp [h])
     simp [stdBasis, hik, hjk, Real.zero_rpow hp_ne]
-
-private lemma lpDist_oneHotEmbed (p : ℝ) (hp : 1 ≤ p) {N q : ℕ} (x y : Fin N → Fin q) :
-    lpDist p (oneHotEmbed x) (oneHotEmbed y) = (2 * (hammingDist x y : ℝ)) ^ (1 / p) := by
-  have hp_ne : p ≠ 0 := by linarith
-  unfold lpDist
-  congr 1
-  rw [← Equiv.sum_comp finProdFinEquiv, Fintype.sum_prod_type]
-  have h_inner : ∀ v : Fin N,
-      (∑ c : Fin q, |oneHotEmbed x (finProdFinEquiv (v, c)) -
-        oneHotEmbed y (finProdFinEquiv (v, c))| ^ p) =
-        2 * (if x v ≠ y v then (1 : ℝ) else 0) := by
-    intro v
-    simp only [oneHotEmbed, Equiv.symm_apply_apply]
-    by_cases hne : x v = y v
-    · simp [hne, Real.zero_rpow hp_ne]
-    · simp only [ne_eq, hne, not_false_eq_true, ↓reduceIte, mul_one]
-      rw [← Finset.sum_subset (Finset.subset_univ ({x v, y v} : Finset (Fin q)))]
-      · rw [Finset.sum_pair hne]
-        have hne' : y v ≠ x v := Ne.symm hne
-        simp only [↓reduceIte, hne, hne', sub_zero, zero_sub, abs_one, abs_neg, Real.one_rpow]
-        norm_num
-      · intro c _ hc
-        have h1 : x v ≠ c := fun h => hc (by simp [h])
-        have h2 : y v ≠ c := fun h => hc (by simp [h])
-        simp [h1, h2, Real.zero_rpow hp_ne]
-  simp_rw [h_inner, ← Finset.mul_sum]
-  rw [Finset.sum_boole]
-  rfl
 
 /-- **Proposition 3.2 (Simplex Separation and Necessity of `N ≫ rStar`)** -/
 theorem prop_3_2_proof :
@@ -438,7 +402,7 @@ theorem prop_3_2_proof :
         linarith
       have hzero : lpDist p (P i) (P j) = 0 := by
         rw [hij, lpDist_self_local hp]
-      rw [lpDist_oneHotEmbed p hp (e i).val (e j).val] at hzero
+      rw [Geometry.oneHotEmbed_lpDist p hp (e i).val (e j).val] at hzero
       linarith
     refine singleHubSteinerSpanner p stretch hp hstretch1 hXcard P hP_inj ?_
     intro a b i j hij
@@ -450,13 +414,13 @@ theorem prop_3_2_proof :
           (Fin N))
     have hub_ab : lpDist p (P a) (P b) ≤ (2 * (N : ℝ)) ^ (1 / p) := by
       dsimp [P]
-      rw [lpDist_oneHotEmbed p hp]
+      rw [Geometry.oneHotEmbed_lpDist p hp]
       apply Real.rpow_le_rpow (by positivity) _ hinv_nn
       have : (hammingDist (e a).val (e b).val : ℝ) ≤ (N : ℝ) := by exact_mod_cast hd_ab
       linarith
     have hlb_ij : (2 * (r₀ : ℝ)) ^ (1 / p) ≤ lpDist p (P i) (P j) := by
       dsimp [P]
-      rw [lpDist_oneHotEmbed p hp]
+      rw [Geometry.oneHotEmbed_lpDist p hp]
       apply Real.rpow_le_rpow (by positivity) _ hinv_nn
       have : (r₀ : ℝ) ≤ (hammingDist (e i).val (e j).val : ℝ) := by exact_mod_cast hd_ij
       linarith
