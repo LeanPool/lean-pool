@@ -11,7 +11,7 @@ public import Mathlib.Tactic.Ring
 /-!
 # Gaussian binomial coefficients and the `q`-binomial theorem
 
-The Gaussian binomial coefficient `[n, k]_q`, for `q` in any commutative ring, defined by the
+The Gaussian binomial coefficient `[n, k]_q`, for `q` in any commutative semiring, defined by the
 `q`-Pascal recursion, and the `q`-binomial theorem
 `∏_{i < n} (1 + q^i t) = Σ_{k ≤ n} q^(k choose 2) [n, k] t^k`.
 
@@ -31,7 +31,9 @@ The Gaussian binomial coefficient `[n, k]_q`, for `q` in any commutative ring, d
 
 open Finset
 
-variable {R : Type*} [CommRing R]
+section Semiring
+
+variable {R : Type*} [CommSemiring R]
 
 /-- The Gaussian binomial `[n, k]_q`, by the `q`-Pascal recursion
 `[n+1, k+1] = [n, k] + q^(k+1) [n, k+1]`. -/
@@ -85,6 +87,12 @@ theorem prod_one_add_pow_mul_eq_sum_qBinomial (q : R) (n : ℕ) (t : R) :
       mul_one]
     ring
 
+end Semiring
+
+section Ring
+
+variable {R : Type*} [CommRing R]
+
 /-- The alternating sum of the Möbius function of the subspace lattice vanishes:
 `Σ_{k ≤ n} (-1)^k q^(k choose 2) [n, k] = 0` for `n ≥ 1`. -/
 theorem sum_neg_one_pow_mul_qBinomial_eq_zero (q : R) {n : ℕ} (hn : 1 ≤ n) :
@@ -92,3 +100,5 @@ theorem sum_neg_one_pow_mul_qBinomial_eq_zero (q : R) {n : ℕ} (hn : 1 ≤ n) :
   have h := prod_one_add_pow_mul_eq_sum_qBinomial q n (-1)
   rw [prod_eq_zero (i := 0) (mem_range.2 hn) (by simp)] at h
   exact (sum_congr rfl fun k _ => by ring).trans h.symm
+
+end Ring

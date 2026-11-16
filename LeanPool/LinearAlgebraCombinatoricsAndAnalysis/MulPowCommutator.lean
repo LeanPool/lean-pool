@@ -10,7 +10,7 @@ public import Mathlib.Data.Nat.Choose.Dvd
 /-!
 # Powers of a product in nilpotency class two
 
-Let `u`, `v` be elements of a group whose commutator `d` (`v * u = d * u * v`) commutes with both.
+Let `u`, `v` be elements of a monoid whose commutator `d` (`v * u = d * u * v`) commutes with both.
 Then `(u * v) ^ n = u ^ n * v ^ n * d ^ (n choose 2)`; for `p` an odd prime with `d ^ p = 1`,
 `(u * v) ^ p = u ^ p * v ^ p`.
 
@@ -24,7 +24,7 @@ Then `(u * v) ^ n = u ^ n * v ^ n * d ^ (n choose 2)`; for `p` an odd prime with
 
 public section
 
-variable {G : Type*} [Group G]
+variable {G : Type*} [Monoid G]
 
 /-- If `v * u = d * u * v` and `d` commutes with `v`, then `v ^ n * u = d ^ n * u * v ^ n`. -/
 theorem pow_mul_eq_of_commute_commutator {u v d : G} (hd : v * u = d * u * v)
