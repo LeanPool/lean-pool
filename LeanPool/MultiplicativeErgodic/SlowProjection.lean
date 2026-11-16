@@ -683,9 +683,9 @@ theorem Cocycle.ae_forall_iterate (R : Cocycle Ω X) {p : Ω → Prop} (h : ∀�
   intro i
   exact (R.ergodic.toMeasurePreserving.iterate i).quasiMeasurePreserving.ae h
 
-/-- `log max(u, e^{-Mn})/n = max(log u / n, -M)` in `EReal`, for `u ≥ 0` and `n ≥ 1`: flooring
+/-- `log max(u, e^{-Mn})/n = max(log u / n, -M)` in `EReal`, for `n ≥ 1`: flooring
 the operator norm at `e^{-Mn}` floors its exponent at `-M`. -/
-theorem log_max_exp_div_eq {u : ℝ} (_hu : 0 ≤ u) {n : ℕ} (hn : 1 ≤ n) (M : ℝ) :
+theorem log_max_exp_div_eq {u : ℝ} {n : ℕ} (hn : 1 ≤ n) (M : ℝ) :
     ((Real.log (max u (Real.exp (-M * n))) / n : ℝ) : EReal) =
       max (logEReal u / (n : EReal)) ((-M : ℝ) : EReal) := by
   have hn0 : (0 : ℝ) < n := by exact_mod_cast hn
@@ -758,7 +758,7 @@ theorem Cocycle.ae_eventually_norm_shift_le (R : Cocycle Ω X) [SeparableSpace X
       have htr : Tendsto (fun n : ℕ => R.logProdTrunc 1 M n ω / n) atTop (𝓝 r) := by
         refine EReal.tendsto_coe.1 (hmax.congr' ?_)
         filter_upwards [eventually_ge_atTop 1] with n hn
-        rw [htrunc, log_max_exp_div_eq (norm_nonneg _) hn]
+        rw [htrunc, log_max_exp_div_eq hn]
       have hsum : Tendsto (fun n : ℕ => R.logProdTrunc 1 M n ω / n + c₀ / (n : ℝ)) atTop
           (𝓝 r) := by
         simpa using htr.add (tendsto_const_div_atTop_nhds_zero_nat c₀)
@@ -1253,7 +1253,7 @@ theorem Cocycle.topdecomp (R : Cocycle Ω X) [SeparableSpace X] [BorelSpace X] [
       refine lt_of_lt_of_le hn (EReal.div_le_div_right_of_nonneg (by positivity)
         (ChiOrder.logEReal_mono ?_))
       have hsmall := Tsmallgrow m1 1 one_ne_zero (rangeCofin (P ω) (E ω) ⟨hf.2.1, hf.2.2⟩)
-        (P ω) (fun x => ⟨x, rfl⟩) (by
+        (P ω) (by
           rintro _ ⟨z, rfl⟩
           simp only [ContinuousLinearMap.coe_coe]
           exact congrArg (fun T : X →L[ℝ] X => T z) hf.2.1) (R.iterate n ω)

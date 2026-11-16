@@ -244,7 +244,7 @@ This is the form used at stage 4 of `dyn.tex` to pass from a dense subspace to a
 It follows from `maximal_ergodic` applied to `f - ε`: that set is exactly
 `{x | 0 < maxBirkhoff σ (f - ε) n x}`, on which `∫ (f - ε) ≥ 0`. -/
 theorem maximal_inequality [IsFiniteMeasure μ] (hmp : MeasurePreserving σ μ μ)
-    (hf : Integrable f μ) (hfm : Measurable f) {ε : ℝ} (_hε : 0 < ε) (n : ℕ) :
+    (hf : Integrable f μ) (hfm : Measurable f) {ε : ℝ} (n : ℕ) :
     ε * μ.real {x | ∃ j, 1 ≤ j ∧ j ≤ n ∧ ε * j < birkhoffSum σ f j x} ≤ ∫ x, |f x| ∂μ := by
   set g : Ω → ℝ := fun y => f y - ε with hgdef
   have hgm : Measurable g := hfm.sub measurable_const

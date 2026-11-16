@@ -84,7 +84,7 @@ theorem abs_le_integral_abs_of_ae_tendsto_const [IsProbabilityMeasure μ]
       simp only [ Set.mem_univ, iff_true, eq_iff_iff]
       exact hω
     rw [measureReal_def, h1, measure_univ]; simp
-  have hglob := maximal_inequality_global (f := fun y => |g y|) hmp hg.abs hgm.abs ht
+  have hglob := maximal_inequality_global (f := fun y => |g y|) (ε := t) hmp hg.abs hgm.abs
   rw [hmeas, mul_one] at hglob
   have : ∫ x, ‖|g x|‖ ∂μ = ∫ x, |g x| ∂μ := by
     simp [Real.norm_eq_abs, abs_abs]

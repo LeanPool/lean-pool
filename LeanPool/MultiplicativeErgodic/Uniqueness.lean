@@ -123,39 +123,15 @@ theorem Cocycle.IsLevel.fast_unique (R : Cocycle Ω X) [SeparableSpace X] [Borel
   classical
   obtain ⟨A, C, hA, hApos, hC⟩ := R.exists_bounded_set hD.Q_meas
   let R' : Cocycle Ω X := R.modify D.Q hD.Q_meas A hA C hC
-  obtain ⟨lamL, hlamL⟩ := hD.lam_real
-  -- `𝓛 ∘ Q` grows slower than `F` (as in `exists_level_succ`)
-  have hgapR : ∀ᵐ ω ∂(R.μ), ∀ᶠ n : ℕ in atTop, ‖(R.iterate n ω).comp (D.Q ω)‖ <
-      growth (R.iterate n ω) ((D.F ω).1 : Submodule ℝ X) := by
-    obtain ⟨b1, hb1, hb1'⟩ := EReal.lt_iff_exists_real_btwn.1 hD.lam_gap
-    obtain ⟨b2, hb2, hb2'⟩ := EReal.lt_iff_exists_real_btwn.1 hb1'
-    have hb12 : b1 < b2 := by exact_mod_cast hb2
-    filter_upwards [hD.slow_rate, hD.F_growth] with ω hs hF
-    filter_upwards [eventually_lt_exp_of_tendsto hb1 hs, hF b2 hb2'] with n h1 h2
-    refine lt_of_lt_of_le h1 (le_trans ?_ h2)
-    rw [mul_comm]
-    exact Real.exp_le_exp.2 (mul_le_mul_of_nonneg_left hb12.le (Nat.cast_nonneg _))
-  have hχ := R.chi_modify (fun ω => ((D.F ω).1 : Submodule ℝ X)) D.V D.Q hD.Q_meas hA hApos hC
-    hD.Q_idem hD.Q_range hD.Q_ker hD.Q_equiv hD.Q_temp hgapR
-  have hshift : ∀ᵐ ω ∂(R.μ), ∀ i, R'.mult i ω = R.mult (l + 1 + i) ω ∧
-      R'.lambda i ω = R.lambda (l + 1 + i) ω := by
-    filter_upwards [hχ, hD.lambdaIdx_eq] with ω h1 h2 i
-    exact R.mult_lambda_shift R' ω ω h1 h2 i
-  have hlamR' : ∀ i, ∀ᵐ ω ∂(R.μ), R'.lambda i ω = lam (l + 1 + i) := fun i => by
-    filter_upwards [hshift, hlam (l + 1 + i)] with ω h1 h2
-    rw [(h1 i).2, h2]
+  have hm : ∀ᵐ ω ∂(R.μ), R.mult (l + 1) ω ≠ 0 := by
+    filter_upwards [hdim] with ω hω
+    rw [hω]
+    exact NeZero.ne m
+  obtain ⟨hshift, hlamR', -, hgapL, lam1, hlam1⟩ :=
+    Cocycle.IsLevel.modified_level_spectrum R hlam hD hm A hA hApos C hC
   have hmult' : ∀ᵐ ω ∂(R.μ), R'.mult 0 ω = m := by
     filter_upwards [hshift, hdim] with ω h1 h2
     rw [(h1 0).1]; simpa using h2
-  have hgapL : lam (l + 1 + 1) < lam (l + 1) := by
-    obtain ⟨ω, h0, h1, h2⟩ := ((hlamR' 0).and ((hlamR' 1).and hmult')).exists
-    have := R'.lambda_succ_lt ω (i := 0) (by rw [h2]; exact NeZero.ne m)
-    rw [h0, h1] at this
-    simpa using this
-  obtain ⟨lam1, hlam1⟩ : ∃ r : ℝ, lam (l + 1) = r := by
-    have htop : lam (l + 1) < ⊤ := lt_trans hD.lam_gap (by rw [hlamL]; exact EReal.coe_lt_top _)
-    have hbot : lam (l + 1) ≠ ⊥ := (lt_of_le_of_lt bot_le hgapL).ne'
-    exact ⟨(lam (l + 1)).toReal, (EReal.coe_toReal htop.ne hbot).symm⟩
   -- the relevant exponent of `𝓛'`
   have hchi' : ∀ᵐ ω ∂(R'.μ), R'.chi (m + 1) ω = lam (l + 1 + 1) := by
     filter_upwards [hlamR' 1, hmult'] with ω h1 h2

@@ -391,7 +391,7 @@ theorem GrassmannianFin.exists_close_sphere_point {k : ℕ} {V W : GrassmannianF
     (hvV : ∀ i, v i ∈ (V.1 : Set X))
     (hwspan : (W.1 : Submodule ℝ X) ≤ Submodule.span ℝ (Set.range w))
     (hcond : ∀ a : Fin k → ℝ, ‖a‖ ≤ C * ‖∑ i, a i • w i‖)
-    (hclose : ∀ i, ‖v i - w i‖ ≤ D) (hC : 0 ≤ C) (_hD : 0 ≤ D)
+    (hclose : ∀ i, ‖v i - w i‖ ≤ D) (hC : 0 ≤ C)
     (hsmall : (k : ℝ) * C * D < 1) :
     ∀ x ∈ W.sphere, ∃ y ∈ V.sphere, dist x y ≤ 2 * k * C * D := by
   intro x hx
@@ -449,10 +449,10 @@ theorem GrassmannianFin.dist_le_of_frames {k : ℕ} [NeZero k] {V W : Grassmanni
   have hclose' : ∀ i, ‖w i - v i‖ ≤ D := fun i => by rw [norm_sub_rev]; exact hclose i
   rw [GrassmannianFin.dist_eq_hausdorffDist]
   refine Metric.hausdorffDist_le_of_mem_dist (by positivity) ?_ ?_
-  · exact GrassmannianFin.exists_close_sphere_point hwW hvspan.le hcv hclose' hC hD hsmall
+  · exact GrassmannianFin.exists_close_sphere_point hwW hvspan.le hcv hclose' hC hsmall
   · intro y hy
     obtain ⟨x, hx, hd⟩ :=
-      GrassmannianFin.exists_close_sphere_point hvV hwspan.le hcw hclose hC hD hsmall y hy
+      GrassmannianFin.exists_close_sphere_point hvV hwspan.le hcw hclose hC hsmall y hy
     exact ⟨x, hx, hd⟩
 
 /-- **Riesz's lemma, uniformly.** A proper subspace `U < V` of a `k`-dimensional `V` is missed by

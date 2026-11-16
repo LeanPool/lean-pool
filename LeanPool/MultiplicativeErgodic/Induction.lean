@@ -151,7 +151,7 @@ theorem Cocycle.chi_modify (R : Cocycle Ω X) [SeparableSpace X] [BorelSpace X] 
       logEReal (bernsteinNumber ((R.modify Q hQm A hA C hC).iterate n ω) k) / (n : EReal)
     rw [hn]
     refine EReal.div_le_div_right_of_nonneg (by positivity) (ChiOrder.logEReal_mono ?_)
-    exact Tsmallgrow M k (by omega) (V ω) (Q ω) (hproj 0).map_mem (hproj 0).map_id (R.iterate n ω)
+    exact Tsmallgrow M k (by omega) (V ω) (Q ω) (hproj 0).map_id (R.iterate n ω)
 
 /-! ### Shifting the exponent indices -/
 
@@ -998,7 +998,7 @@ private theorem ae_projection_extension_equivariant (R : Cocycle Ω X)
       exact hVe (Submodule.mem_map_of_mem hwW)
 
 /-- The modified cocycle has the original level's shifted spectrum and a real next exponent. -/
-private theorem modified_level_spectrum (R : Cocycle Ω X) [SeparableSpace X] [BorelSpace X]
+theorem Cocycle.IsLevel.modified_level_spectrum (R : Cocycle Ω X) [SeparableSpace X] [BorelSpace X]
     {lam : ℕ → EReal} (hlam : ∀ i, ∀ᵐ ω ∂(R.μ), R.lambda i ω = lam i)
     {l : ℕ} {D : LevelData Ω X} (hD : R.IsLevel lam l D)
     (hm : ∀ᵐ ω ∂(R.μ), R.mult (l + 1) ω ≠ 0)
@@ -1062,7 +1062,7 @@ theorem Cocycle.exists_level_succ (R : Cocycle Ω X) [SeparableSpace X] [BorelSp
   let R' : Cocycle Ω X := R.modify D.Q hD.Q_meas A hA C hC
   obtain ⟨lamL, hlamL⟩ := hD.lam_real
   obtain ⟨hshift, hlamR', hmult', hgapL, lam1, hlam1⟩ :=
-    modified_level_spectrum R hlam hD hm A hA hApos C hC
+    Cocycle.IsLevel.modified_level_spectrum R hlam hD hm A hA hApos C hC
   have hqc' : R'.IsQuasicompact := R'.isQuasicompact_iff_mult_zero.2 hmult'
   have hlam1L : lam1 < lamL := by
     have := hD.lam_gap; rw [hlam1, hlamL] at this; exact_mod_cast this

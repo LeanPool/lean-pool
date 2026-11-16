@@ -516,7 +516,7 @@ theorem Cocycle.tendsto_chi_of_eq_bot (R : Cocycle Ω X) (k : ℕ) {ω : Ω} (h 
 
 /-- The real-analysis core of the truncated family's subadditivity: a floor `a*b` splits as
 `a` and `b`, so flooring a submultiplicative quantity keeps it submultiplicative. -/
-theorem log_max_le_of_le_mul {K P Q R a b : ℝ} (hK : 1 ≤ K) (_hQ : 0 ≤ Q) (hR : 0 ≤ R)
+theorem log_max_le_of_le_mul {K P Q R a b : ℝ} (hK : 1 ≤ K) (hR : 0 ≤ R)
     (ha : 0 < a) (hb : 0 < b) (h : P ≤ K * (Q * R)) :
     Real.log (max P (a * b)) ≤ Real.log (max Q a) + Real.log (max R b) + Real.log K := by
   have hQa : 0 < max Q a := lt_of_lt_of_le ha (le_max_right _ _)
@@ -575,7 +575,7 @@ theorem Cocycle.exists_logProdTrunc_subadditive (R : Cocycle Ω X) (k : ℕ) :
     ring
   change Real.log (max (R.prodBern k (m + n) ω) (Real.exp (-(M : ℝ) * (m + n : ℕ)))) ≤ _
   rw [hexp]
-  exact log_max_le_of_le_mul hK1 (R.prodBern_nonneg k m _) (R.prodBern_nonneg k n ω)
+  exact log_max_le_of_le_mul hK1 (R.prodBern_nonneg k n ω)
     (Real.exp_pos _) (Real.exp_pos _) hsub
 
 /-- `ρ_k(T) ≤ ‖T‖` with no nonemptiness hypothesis: when `𝒢_kX` is empty the supremum is over
@@ -2079,8 +2079,7 @@ theorem div_norm_le_growth_map (T S : X →L[ℝ] X) (V : Submodule ℝ X) (hT :
 omit [MeasurableSpace X] in
 /-- **Geometric form of `pushclose`.** Once the gap factor `ρ_{m+1}(T)/Θ` is at most `1/2`, the
 `4/(1-·)` in `pushclose` is at most `8`, so the estimate is a clean geometric one. This is the
-form the Cauchy argument of `proof_met.tex` l.730--735 uses. The hypothesis `Θ < ρ_m(T)` that
-`pushclose` carries is automatic here: `Θ < g_T(V) ≤ ρ_m(T)`. -/
+form the Cauchy argument of `proof_met.tex` l.730--735 uses. -/
 theorem pushclose_geom (m : ℕ) [NeZero m] (T : X →L[ℝ] X) (Θ : ℝ) (hΘpos : 0 < Θ)
     (hhalf : bernsteinNumber T (m + 1) ≤ Θ / 2) (V W : GrassmannianFin X m)
     (hV : Θ < growth T (V.1 : Submodule ℝ X)) (hW : Θ < growth T (W.1 : Submodule ℝ X)) :
@@ -2092,14 +2091,12 @@ theorem pushclose_geom (m : ℕ) [NeZero m] (T : X →L[ℝ] X) (Θ : ℝ) (hΘp
               ((lt_of_le_of_lt hhalf (by linarith)).trans hW)))
       ≤ 8 * (bernsteinNumber T (m + 1) / Θ) := by
   have hΘ : bernsteinNumber T (m + 1) < Θ := lt_of_le_of_lt hhalf (by linarith)
-  have hΘ' : Θ < bernsteinNumber T m :=
-    lt_of_lt_of_le hV (le_csSup ⟨‖T‖, by rintro _ ⟨U, rfl⟩; exact growth_le_opNorm T _⟩ ⟨V, rfl⟩)
   have hratio : bernsteinNumber T (m + 1) / Θ ≤ 1 / 2 := by
     rw [div_le_div_iff₀ hΘpos (by norm_num : (0:ℝ) < 2)]
     linarith
   have hrnn : 0 ≤ bernsteinNumber T (m + 1) / Θ :=
     div_nonneg (bernsteinNumber_nonneg _ _) hΘpos.le
-  refine le_trans (pushclose m T Θ hΘ hΘ' V W hV hW) ?_
+  refine le_trans (pushclose m T Θ hΘ V W hV hW) ?_
   have hden : (1 : ℝ) / 2 ≤ 1 - bernsteinNumber T (m + 1) / Θ := by linarith
   have hdenpos : (0 : ℝ) < 1 - bernsteinNumber T (m + 1) / Θ := by linarith
   have hfour : 4 / (1 - bernsteinNumber T (m + 1) / Θ) ≤ 8 := by

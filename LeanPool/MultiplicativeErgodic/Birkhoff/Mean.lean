@@ -251,7 +251,7 @@ Obtained from `maximal_inequality` by continuity from below: the finite-horizon 
 the global one. This is the form the transfer argument of stage 4 needs, since there the maximal
 function is not truncated. -/
 theorem maximal_inequality_global [IsFiniteMeasure μ] (hmp : MeasurePreserving σ μ μ)
-    (hf : Integrable f μ) (hfm : Measurable f) {ε : ℝ} (hε : 0 < ε) :
+    (hf : Integrable f μ) (hfm : Measurable f) {ε : ℝ} :
     ε * μ.real {x | ∃ j, 1 ≤ j ∧ ε * j < birkhoffSum σ f j x} ≤ ∫ x, |f x| ∂μ := by
   set E : ℕ → Set Ω := fun n => {x | ∃ j, 1 ≤ j ∧ j ≤ n ∧ ε * j < birkhoffSum σ f j x} with hEdef
   have hmono : Monotone E := by
@@ -275,7 +275,7 @@ theorem maximal_inequality_global [IsFiniteMeasure μ] (hmp : MeasurePreserving 
   -- Each finite-horizon bound passes to the limit.
   refine le_of_tendsto (htendR.const_mul ε) ?_
   filter_upwards with n
-  exact maximal_inequality hmp hf hfm hε n
+  exact maximal_inequality hmp hf hfm n
 
 /-!
 ### Stage 4: extension to all of `L¹`

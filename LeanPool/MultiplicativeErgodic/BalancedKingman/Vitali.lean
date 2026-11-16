@@ -197,7 +197,7 @@ sequence of domains `A 0 = univ ⊇ A 1 ⊇ A 2 ⊇ … ` (as a `Nat.rec`-define
 to avoid needing proof obligations *inside* the recursion): at step `u`, `Bnd u` is the truncation
 threshold from the *previous* step, `jhatOf (Bnd u) := j (kOf (Bnd u) ·) ·` is the next candidate
 (selected via `exists_meas_dominating_index` with **global** target `max 1 (G * Bnd u)` — the
-`max 1` ensures `jhatOf b ω ≥ 1` unconditionally, needed for `vitali_cover_geometric`'s `hw1`), and
+`max 1` ensures `jhatOf b ω ≥ 1` unconditionally, used in the selected-window estimates), and
 `A (u+1) := A u ∩ {x | jhatOf (Bnd u) x ≤ Bnd (u+1)}` where `Bnd (u+1)` is the threshold from
 `exists_meas_bound_sliver` applied to `jhatOf (Bnd u)` on `A u` with budget
 `δ := ε'/(4(m+1))` (so the sliver lost over all `m` steps is `< ε'/4` total, well inside budget).
@@ -301,12 +301,6 @@ theorem backwardVitali [StandardBorelSpace Ω] (μ : Measure Ω) [IsProbabilityM
   set w : ℕ → Ω → ℕ := fun s ω => if ω ∈ A m then jhatOf (Bnd s) ω else 1 with hwdef
   have hwmeas : ∀ s, Measurable (w s) := fun s =>
     Measurable.ite (hAmeas m) (hjhatOf_meas (Bnd s)) measurable_const
-  have hw1 : ∀ s ω, 1 ≤ w s ω := by
-    intro s ω
-    simp only [hwdef]
-    split
-    · exact hjhatOf_ge1 (Bnd s) ω
-    · exact le_refl 1
   have hwB : ∀ s, s < m → ∀ ω, w s ω ≤ BndGlobal := by
     intro s hs ω
     simp only [hwdef]
@@ -321,7 +315,7 @@ theorem backwardVitali [StandardBorelSpace Ω] (μ : Measure Ω) [IsProbabilityM
     simp only [hwdef, ite_eq_left hω, ite_eq_left hω']
     exact hgrow_final s hs ω ω' hω hω'
   obtain ⟨Asel, scale, hAselsub, hAselmeas, hscalemeas, hscalelt, hdisj, hcov⟩ :=
-    vitali_cover_geometric μ σ hσ (A m) (hAmeas m) m hm1 w hwmeas BndGlobal hwB hw1 G hG1 hgrow
+    vitali_cover_geometric μ σ hσ (A m) (hAmeas m) m hm1 w hwmeas BndGlobal hwB G hG1 hgrow
   set jω : Ω → ℕ := fun ω => w (scale ω) ω with hjωdef
   have hjωmeas : Measurable jω := by
     have hf : Measurable (fun p : Ω × ℕ => w p.2 p.1) :=

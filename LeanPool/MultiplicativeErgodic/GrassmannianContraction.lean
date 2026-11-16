@@ -217,7 +217,7 @@ subspace point back onto the unit sphere of `TW` (needed for an actual Hausdorff
 spheres bound) costs a further factor of `2` in general Banach spaces (no inner product to make
 that renormalization free), doubling the constant. -/
 theorem pushclose (k : ℕ) [NeZero k] (T : X →L[ℝ] X) (Θ : ℝ) (hΘ : bernsteinNumber T (k + 1) < Θ)
-    (_hΘ' : Θ < bernsteinNumber T k) (V W : GrassmannianFin X k)
+    (V W : GrassmannianFin X k)
     (hV : Θ < growth T (V.1 : Submodule ℝ X)) (hW : Θ < growth T (W.1 : Submodule ℝ X)) :
     dist (GrassmannianFin.pushforward T V
             (lt_of_le_of_lt (bernsteinNumber_nonneg T (k + 1)) (hΘ.trans hV)))
@@ -867,146 +867,10 @@ theorem exists_le_finrank_eq' {M : Type*} [AddCommGroup M] [Module ℝ M]
   rw [finrank_span_eq_card hind, Fintype.card_fin]
 
 
-/-- **Lemma.** There is a measurable retraction `U : 𝒢_kX → 𝒢_{k-1}X` with `U(V) < V` for
-every `V`.
-
-The σ-algebra on `𝒢_kX` is the project's canonical Borel one
-(`instMeasurableSpaceGrassmannianFin`, the Borel σ-algebra of the Hausdorff metric), which is
-what `[NeZero k]` is here for.
-
-It used to be taken as a `[MeasurableSpace (GrassmannianFin X _)]` *hypothesis* instead, and that
-made the statement **false**: instance-implicit binders are universally quantified, so it asserted
-the conclusion for every pair of σ-algebras on the two Grassmannians. See
-`exists_measurable_retract_false` just below, which proves it — give the source the indiscrete
-σ-algebra and the target the discrete one, and `Measurable U` forces `U` constant, while no single
-line lies inside every plane of `ℝ³`. The same shadowing has been removed from
-`exists_measurable_retract_complement`, `measbase`, and `Cocycle.IsFastSpace` /
-`Cocycle.exists_topFastSpace` / `Cocycle.topFastSpace_unique`. `[SeparableSpace X]`, which the
-blueprint node `lem:measurable-retract` states and the Lean omitted, has also been restored.
-**That correction is done; what remains below is only the proof.**
-
-**How it is proved, and why the route recorded here before was harder than it needed to be.**
-The earlier plan ran a greedy selection against a countable dense family of `𝒢_kX`, testing
-`V ↦ d(U_i, H(V))` with `H(V) = {W ∈ 𝒢_kX : W ≤ V}`. That needs `H` to be continuous for the
-Hausdorff distance, which is real work. The route taken instead never forms `H(V)`:
-
-1. *Select a unit vector, not a subspace.* `sphereSel` runs the greedy selection against a dense
-   sequence of `X` and the *sphere* `𝕊_V`. Every test is `V ↦ d(x, 𝕊_V)`, which is `1`-Lipschitz
-   for free (`continuous_infDist_sphere`), because the metric on `𝒢_kX` **is** the Hausdorff
-   distance between spheres. `measurable_of_countable_cover` (blueprint `lem:lexstruct`) makes
-   each stage measurable, and completeness of `X` gives the limit.
-2. *Cut with a functional.* A separable `X` has a countable family of functionals separating its
-   points (`exists_separating_dual_seq`, Hahn--Banach at a dense sequence), so the sets
-   `{V : f_i(e V) ≠ 0}` are open and cover `𝒢_{k+1}X`. On the `i`-th one,
-   `U V = V ⊓ ker f_i`, which is `Submodule.map (1 - f_i ⊗ v) V` for the vector
-   `v = e V / f_i(e V) ∈ V`; that presentation makes it measurable by `measurable_pushforward'`
-   and `k`-dimensional by rank-nullity (`map_sub_smulRight`, `finrank_map_sub_smulRight`).
-3. *Glue* with `measurable_glue`.
-
-**Hypotheses added:** `[CompleteSpace X]` (the greedy sequence must converge), and
-`[MeasurableSpace X]`, `[BorelSpace X]` (the pushforward measurability runs on distances in `X`).
-`[SeparableSpace X]`, missing before, was restored earlier. -/
-theorem exists_measurable_retract [SeparableSpace X] [CompleteSpace X] [MeasurableSpace X]
-    [BorelSpace X] (k : ℕ) [NeZero k] :
-    ∃ U : GrassmannianFin X (k + 1) → GrassmannianFin X k, Measurable U ∧
-      ∀ V, (U V).1 < V.1 := by
-  classical
-  rcases isEmpty_or_nonempty (GrassmannianFin X (k + 1)) with hE | hNE
-  · exact ⟨fun V => (IsEmpty.false V).elim, Subsingleton.measurable,
-      fun V => (IsEmpty.false V).elim⟩
-  · have : Nonempty (GrassmannianFin X k) := by
-      obtain ⟨V⟩ := hNE
-      have : FiniteDimensional ℝ (V.1 : Submodule ℝ X) := V.2.1
-      obtain ⟨W, -, hWfd, hWrank⟩ := exists_le_finrank_eq' (V.1 : Submodule ℝ X)
-        (l := k) (by rw [V.2.2]; omega)
-      exact ⟨⟨W, hWfd, hWrank⟩⟩
-    obtain ⟨u, hu⟩ := TopologicalSpace.exists_dense_seq X
-    obtain ⟨f, hfsep⟩ := exists_separating_dual_seq (X := X)
-    have hem : Measurable (sphereSel (k := k + 1) u) := measurable_sphereSel hu
-    have hesph : ∀ V : GrassmannianFin X (k + 1), sphereSel u V ∈ V.sphere :=
-      fun V => sphereSel_mem hu V
-    have hemem : ∀ V : GrassmannianFin X (k + 1),
-        sphereSel u V ∈ (V.1 : Submodule ℝ X) := fun V => (hesph V).2
-    have hene : ∀ V : GrassmannianFin X (k + 1), sphereSel u V ≠ 0 := by
-      intro V h
-      have hn := mem_sphere_zero_iff_norm.1 (hesph V).1
-      rw [h, norm_zero] at hn
-      exact zero_ne_one hn
-    choose W hWm hWlt using fun i =>
-      exists_measurable_hyperplane k (f i) (sphereSel u) hem hemem
-    have hSmeas : ∀ i, MeasurableSet {V : GrassmannianFin X (k + 1) | f i (sphereSel u V) ≠ 0} :=
-      fun i => (measurableSet_eq_fun ((f i).continuous.measurable.comp hem)
-        measurable_const).compl
-    have hcover : (⋃ i, {V : GrassmannianFin X (k + 1) | f i (sphereSel u V) ≠ 0})
-        = Set.univ := by
-      ext V
-      simp only [Set.mem_iUnion, Set.mem_univ, iff_true, Set.mem_ofPred_eq]
-      exact hfsep (sphereSel u V) (hene V)
-    obtain ⟨N, hN, -, hNspec⟩ := measurable_of_countable_cover (Y := ℕ) id
-      (fun i => {V : GrassmannianFin X (k + 1) | f i (sphereSel u V) ≠ 0}) hSmeas hcover
-    exact ⟨fun V => W (N V) V, measurable_glue hN hWm, fun V => (hWlt (N V) V (hNspec V).1).1⟩
-
-section RetractCounterexample
-
-open Module _root_.Submodule MultiplicativeErgodic.Submodule
-
-
-/-- Three-dimensional Euclidean space for the retraction counterexample. -/
-abbrev E3 := EuclideanSpace ℝ (Fin 3)
-
-/-- The orthogonal complement of a nonzero `v` is a 2-dimensional subspace of `E3` not
-containing `v`. -/
-noncomputable def planeMissing (v : E3) (hv : v ≠ 0) : GrassmannianFin E3 2 := by
-  refine ⟨(ℝ ∙ v)ᗮ, FiniteDimensional.finiteDimensional_submodule _, ?_⟩
-  have h1 : finrank ℝ (ℝ ∙ v) = 1 := finrank_span_singleton hv
-  have h2 := Submodule.finrank_add_finrank_orthogonal (K := (ℝ ∙ v)) (E := E3)
-  have h3 : finrank ℝ E3 = 3 := by simp
-  omega
-
-theorem v_notMem_planeMissing (v : E3) (hv : v ≠ 0) : v ∉ ((ℝ ∙ v)ᗮ : Submodule ℝ E3) := by
-  intro hmem
-  have := hmem v (Submodule.mem_span_singleton_self v)
-  rw [real_inner_self_eq_norm_sq] at this
-  exact hv (norm_eq_zero.mp (by nlinarith [norm_nonneg v]))
-
-/-- **Why `exists_measurable_retract` must use the canonical Borel σ-algebra.** With the
-σ-algebras taken as hypotheses — as they were until this was found — the statement is universally
-quantified over them and is false: give the source the indiscrete σ-algebra and the target the
-discrete one, and `Measurable U` forces `U` constant, while no single line lies inside every plane
-of `ℝ³`. Kept as a regression test against reintroducing the binders. -/
-theorem exists_measurable_retract_false :
-    ¬ ∀ (k : ℕ) [MeasurableSpace (GrassmannianFin E3 (k + 1))]
-        [MeasurableSpace (GrassmannianFin E3 k)],
-      ∃ U : GrassmannianFin E3 (k + 1) → GrassmannianFin E3 k, Measurable U ∧
-        ∀ V, (U V).1 < V.1 := by
-  intro h
-  obtain ⟨U, hmeas, hlt⟩ := @h 1 ⊥ ⊤
-  have hconst : ∀ V W : GrassmannianFin E3 2, U V = U W := by
-    intro V W
-    have hs : @MeasurableSet _ ⊥ (U ⁻¹' {U V}) := hmeas (by trivial)
-    rw [MeasurableSpace.measurableSet_bot_iff] at hs
-    rcases hs with h1 | h1
-    · exact absurd (show V ∈ U ⁻¹' {U V} from rfl) (by rw [h1]; exact id)
-    · have hW : W ∈ U ⁻¹' {U V} := by rw [h1]; trivial
-      exact (Set.mem_singleton_iff.mp hW).symm
-  obtain ⟨v₀, hv₀⟩ := exists_ne (0 : E3)
-  set V₀ : GrassmannianFin E3 2 := planeMissing v₀ hv₀ with hV₀
-  have hLdim : finrank ℝ (U V₀).1 = 1 := (U V₀).2.2
-  have hLne : (U V₀).1 ≠ ⊥ := by
-    intro h0
-    rw [h0, finrank_bot] at hLdim
-    exact one_ne_zero hLdim.symm
-  obtain ⟨v, hvL, hv0⟩ := Submodule.exists_mem_ne_zero_of_ne_bot hLne
-  have hlt' := hlt (planeMissing v hv0)
-  rw [hconst (planeMissing v hv0) V₀] at hlt'
-  exact v_notMem_planeMissing v hv0 (le_of_lt hlt' hvL)
-
-end RetractCounterexample
-
-
 open Module in
-/-- **Retraction together with its complementary unit vector.** The construction of
-`exists_measurable_retract` produces both at once: the selected unit vector `e V ∈ 𝕊_V` is the
+/-- **Retraction together with its complementary unit vector.**
+The measurable selection produces both at once:
+the selected unit vector `e V ∈ 𝕊_V` is the
 one the functional does not kill, so it spans a complement of `U V = V ⊓ ker f` inside `V`.
 
 Stated jointly because the complement is not produced from an *arbitrary* measurable retraction
@@ -1075,6 +939,78 @@ theorem exists_measurable_retract_complement [SeparableSpace X] [CompleteSpace X
     refine Submodule.eq_of_le_of_finrank_eq hle ?_
     rw [V.2.2]
     omega
+
+/-- A measurable strict-subspace retraction for the canonical Grassmannian Borel structures.
+It follows from the joint selection of a hyperplane and its complementary unit vector. -/
+theorem exists_measurable_retract [SeparableSpace X] [CompleteSpace X] [MeasurableSpace X]
+    [BorelSpace X] (k : ℕ) [NeZero k] :
+    ∃ U : GrassmannianFin X (k + 1) → GrassmannianFin X k, Measurable U ∧
+      ∀ V, (U V).1 < V.1 := by
+  obtain ⟨U, b, hU, -, hUb⟩ := exists_measurable_retract_complement (X := X) k
+  refine ⟨U, hU, fun V => lt_of_le_of_ne ?_ ?_⟩
+  · exact le_trans le_sup_left (hUb V).2.le
+  · intro heq
+    have hrank := congrArg (fun W : Submodule ℝ X => Module.finrank ℝ W) heq
+    rw [(U V).2.2, V.2.2] at hrank
+    omega
+
+section RetractCounterexample
+
+open Module _root_.Submodule MultiplicativeErgodic.Submodule
+
+
+/-- Three-dimensional Euclidean space for the retraction counterexample. -/
+abbrev E3 := EuclideanSpace ℝ (Fin 3)
+
+/-- The orthogonal complement of a nonzero `v` is a 2-dimensional subspace of `E3` not
+containing `v`. -/
+noncomputable def planeMissing (v : E3) (hv : v ≠ 0) : GrassmannianFin E3 2 := by
+  refine ⟨(ℝ ∙ v)ᗮ, FiniteDimensional.finiteDimensional_submodule _, ?_⟩
+  have h1 : finrank ℝ (ℝ ∙ v) = 1 := finrank_span_singleton hv
+  have h2 := Submodule.finrank_add_finrank_orthogonal (K := (ℝ ∙ v)) (E := E3)
+  have h3 : finrank ℝ E3 = 3 := by simp
+  omega
+
+theorem v_notMem_planeMissing (v : E3) (hv : v ≠ 0) : v ∉ ((ℝ ∙ v)ᗮ : Submodule ℝ E3) := by
+  intro hmem
+  have := hmem v (Submodule.mem_span_singleton_self v)
+  rw [real_inner_self_eq_norm_sq] at this
+  exact hv (norm_eq_zero.mp (by nlinarith [norm_nonneg v]))
+
+/-- **Why `exists_measurable_retract` must use the canonical Borel σ-algebra.** With the
+σ-algebras taken as hypotheses — as they were until this was found — the statement is universally
+quantified over them and is false: give the source the indiscrete σ-algebra and the target the
+discrete one, and `Measurable U` forces `U` constant, while no single line lies inside every plane
+of `ℝ³`. Kept as a regression test against reintroducing the binders. -/
+theorem exists_measurable_retract_false :
+    ¬ ∀ (k : ℕ) [MeasurableSpace (GrassmannianFin E3 (k + 1))]
+        [MeasurableSpace (GrassmannianFin E3 k)],
+      ∃ U : GrassmannianFin E3 (k + 1) → GrassmannianFin E3 k, Measurable U ∧
+        ∀ V, (U V).1 < V.1 := by
+  intro h
+  obtain ⟨U, hmeas, hlt⟩ := @h 1 ⊥ ⊤
+  have hconst : ∀ V W : GrassmannianFin E3 2, U V = U W := by
+    intro V W
+    have hs : @MeasurableSet _ ⊥ (U ⁻¹' {U V}) := hmeas (by trivial)
+    rw [MeasurableSpace.measurableSet_bot_iff] at hs
+    rcases hs with h1 | h1
+    · exact absurd (show V ∈ U ⁻¹' {U V} from rfl) (by rw [h1]; exact id)
+    · have hW : W ∈ U ⁻¹' {U V} := by rw [h1]; trivial
+      exact (Set.mem_singleton_iff.mp hW).symm
+  obtain ⟨v₀, hv₀⟩ := exists_ne (0 : E3)
+  set V₀ : GrassmannianFin E3 2 := planeMissing v₀ hv₀ with hV₀
+  have hLdim : finrank ℝ (U V₀).1 = 1 := (U V₀).2.2
+  have hLne : (U V₀).1 ≠ ⊥ := by
+    intro h0
+    rw [h0, finrank_bot] at hLdim
+    exact one_ne_zero hLdim.symm
+  obtain ⟨v, hvL, hv0⟩ := Submodule.exists_mem_ne_zero_of_ne_bot hLne
+  have hlt' := hlt (planeMissing v hv0)
+  rw [hconst (planeMissing v hv0) V₀] at hlt'
+  exact v_notMem_planeMissing v hv0 (le_of_lt hlt' hvL)
+
+end RetractCounterexample
+
 
 open Module in
 /-- The measurable basis, built by induction from dimension `1` upward: at each step the
@@ -1164,8 +1100,8 @@ theorem growth_comp_of_le (T P : X →L[ℝ] X) {V W : Submodule ℝ X} (hWV : W
   intro x hx
   rw [ContinuousLinearMap.comp_apply, hidem x (hWV hx.2)]
 
-/-- **Lemma \ref{Tsmallgrow}.** If `V` has finite codimension `k` with bounded projection
-`P : X → V`, then `ρ_{k+l}(T) ≤ ρ_l(T ∘ P)`.
+/-- **Lemma \ref{Tsmallgrow}.** If `V` has finite codimension `k` and the bounded operator
+`P : X → X` fixes `V`, then `ρ_{k+l}(T) ≤ ρ_l(T ∘ P)`.
 
 **Statement change (working-practice note 4): `l ≠ 0` had to be added.** The paper's proof reads
 `ρ_{k+l}(T) = sup_{U ∈ 𝒢_{k+l}X} g_T(U) ≤ sup_U g_T(U ∩ V) = sup_{U ∈ 𝒢_l V} g_{T∘Π}(U) ≤
@@ -1177,16 +1113,15 @@ makes `g` on the zero subspace an infimum over an empty sphere, i.e. `+∞`. Con
 while `ρ_1(id) = 1 > 0 = ρ_0(id ∘ 0)`. The intended (and only true) reading needs `l ≥ 1`, which
 is what every downstream call site in Section 5 supplies.
 
-Note also that `hP` -- the range of `P` lies in `V` -- is not used in this direction; only
-`hidem` is. It is kept in the signature because it is part of "`P` is a projection onto `V`"
-and `Tbiggrow` (the converse inequality) needs it.
+Only the identity of `P` on `V` is needed in this direction. A range condition is needed
+by `Tbiggrow`, the converse inequality.
 
 The mathematical core is the dimension count: a `(k+l)`-dimensional `U` meets the
 codimension-`k` subspace `V` in dimension at least `l`, via rank-nullity for the composite
 `U ↪ X ↠ X ⧸ V`. `exists_le_finrank_eq'` then extracts an honestly `l`-dimensional
 `W ≤ U ⊓ V` to feed to the supremum defining `ρ_l`. -/
 theorem Tsmallgrow (k l : ℕ) (hl : l ≠ 0) (V : GrassmannianCofin X k) (P : X →L[ℝ] X)
-    (_hP : ∀ x, P x ∈ (V.1.1 : Submodule ℝ X)) (hidem : ∀ x ∈ (V.1.1 : Submodule ℝ X), P x = x)
+    (hidem : ∀ x ∈ (V.1.1 : Submodule ℝ X), P x = x)
     (T : X →L[ℝ] X) :
     bernsteinNumber T (k + l) ≤ bernsteinNumber (T.comp P) l := by
   have : NeZero l := ⟨hl⟩

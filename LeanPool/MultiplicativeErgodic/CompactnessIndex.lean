@@ -537,7 +537,7 @@ theorem Cocycle.covFam_subadditive (R : Cocycle Ω X) {b : ℕ} (hb : 1 ≤ b) (
   have hkey := log_max_le_of_le_mul (K := 1) (P := coverRad (R.iterate (m + n) ω) (b ^ (m + n)))
     (Q := coverRad (R.iterate m (R.σ^[n] ω)) (b ^ m)) (R := coverRad (R.iterate n ω) (b ^ n))
     (a := Real.exp (-(M : ℝ) * m)) (b := Real.exp (-(M : ℝ) * n)) le_rfl
-    (coverRad_nonneg _ _) (coverRad_nonneg _ _) (Real.exp_pos _) (Real.exp_pos _)
+    (coverRad_nonneg _ _) (Real.exp_pos _) (Real.exp_pos _)
     (by rw [one_mul]; rw [mul_comm]; exact hsub)
   simp only [Cocycle.covFam]
   rw [show ((m + n : ℕ) : ℝ) = (m : ℝ) + (n : ℝ) by push_cast; ring]
@@ -797,8 +797,7 @@ theorem Cocycle.integral_covFam_le (R : Cocycle Ω X) [SeparableSpace X] [BorelS
 covered by `b^n` balls of radius `e^{n b₁}`, then every `χ_k` with `k ε > log b` is at most
 `b₁ + ε`. -/
 theorem Cocycle.chi_le_of_eventually_cover (R : Cocycle Ω X) {ω : Ω} {bb : ℕ} (hbb : 1 ≤ bb)
-    {b₁ ε : ℝ} (_hε : 0 < ε)
-    (hcov : ∀ᶠ n : ℕ in atTop, coverPred (R.iterate n ω) (Real.exp (b₁ * n)) (bb ^ n))
+    {b₁ ε : ℝ} (hcov : ∀ᶠ n : ℕ in atTop, coverPred (R.iterate n ω) (Real.exp (b₁ * n)) (bb ^ n))
     {k : ℕ} (hk : 1 ≤ k) (hkε : Real.log bb < k * ε)
     (hχ : Tendsto (fun n : ℕ => logEReal (bernsteinNumber (R.iterate n ω) k) / (n : EReal))
       atTop (nhds (R.chi k ω))) :
@@ -957,7 +956,7 @@ theorem Cocycle.ae_nu_le_of_compactnessIndex_lt (R : Cocycle Ω X) [SeparableSpa
       rw [← Real.exp_log hpos]
       exact Real.exp_lt_exp.mpr hlt
     exact lt_of_le_of_lt (le_max_left _ _) this
-  have hχk := R.chi_le_of_eventually_cover hbb hεpos hcov hk1 hkε hχ
+  have hχk := R.chi_le_of_eventually_cover hbb hcov hk1 hkε hχ
   refine (R.nu_le_chi ω hk1).trans (hχk.trans ?_)
   exact EReal.coe_le_coe_iff.mpr (by rw [hε]; linarith)
 

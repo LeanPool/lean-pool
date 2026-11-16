@@ -46,7 +46,7 @@ maximal function of `f - f'` exceeds `ε`.
 This is the inclusion `dyn.tex` uses to run the `ε/3` estimate, and it is pure pointwise
 algebra: `|Aₘf - Aₙf| ≤ |Aₘf' - Aₙf'| + |Aₘ(f-f')| + |Aₙ(f-f')|`, so if the left side is `≥ 3ε`
 and the first right-hand term is `< ε`, one of the last two exceeds `ε`. -/
-theorem oscIO_subset (σ : Ω → Ω) (f f' : Ω → ℝ) {ε : ℝ} (_hε : 0 < ε) :
+theorem oscIO_subset (σ : Ω → Ω) (f f' : Ω → ℝ) {ε : ℝ} :
     oscIO σ f (3 * ε) ⊆ oscIO σ f' ε
       ∪ {x | ∃ j, 1 ≤ j ∧ ε * j < birkhoffSum σ (fun y => |f y - f' y|) j x} := by
   intro x hx
@@ -144,7 +144,7 @@ theorem measureReal_oscIO_le [IsFiniteMeasure μ] (hmp : MeasurePreserving σ μ
   have hDabs : ∀ x, |D x| = D x := fun x => abs_of_nonneg (abs_nonneg _)
   -- The maximal set on the right of `oscIO_subset`.
   set M : Set Ω := {x | ∃ j, 1 ≤ j ∧ ε * j < birkhoffSum σ D j x} with hMdef
-  have hsub := oscIO_subset σ f f' hε
+  have hsub := oscIO_subset σ f f' (ε := ε)
   have hmeasM : MeasurableSet M := by
     have hbs : ∀ k : ℕ, Measurable (birkhoffSum σ D k) := by
       intro k
@@ -169,7 +169,7 @@ theorem measureReal_oscIO_le [IsFiniteMeasure μ] (hmp : MeasurePreserving σ μ
     rw [hconv, zero_add] at h2
     linarith
   -- and `ε · μ(M) ≤ ‖D‖₁` is the global maximal inequality.
-  have hglob := maximal_inequality_global (f := D) hmp hdiff hDm hε
+  have hglob := maximal_inequality_global (f := D) (ε := ε) hmp hdiff hDm
   simp only [hDabs] at hglob
   calc ε * μ.real (oscIO σ f (3 * ε)) ≤ ε * μ.real M := by
         exact mul_le_mul_of_nonneg_left hle hε.le

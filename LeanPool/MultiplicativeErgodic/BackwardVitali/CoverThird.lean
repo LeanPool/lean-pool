@@ -58,7 +58,7 @@ private lemma disjWin_iUnion_of_monotone (σ : Ω ≃ᵐ Ω) {r : ℕ} {f : ℕ 
   have hBN : b ∈ f (max na nb) := hf (le_max_right na nb) hnb
   exact Set.disjoint_left.mp (hDisj (max na nb) i hi k hk hik) ⟨a, hAN, rfl⟩ ⟨b, hBN, hzb⟩
 
-/-- **Measure-maximal (saturated) selection at a fixed window radius.** For any measurable
+/-- **Measure-maximal (saturated) selection at a fixed window radius.** For any set
 `S`, there is `A' ⊆ S`, measurable, with `DisjWin σ r A'`, which is *measure-saturated*: any
 further valid extension `A''` (measurable, `⊆ S`, `DisjWin σ r A''`, `A' ⊆ A''`) adds nothing,
 `μ (A'' \ A') = 0`.
@@ -71,7 +71,7 @@ valid `A'' ⊇ C` is in particular a valid extension of every `Aseq n`, so `μ A
 sup) ≤ μ (Aseq (n+1)) + 1/(n+1)`; letting `n → ∞` gives `μ A'' ≤ μ C`, and `C ⊆ A''` gives the
 reverse, forcing `μ (A'' \ C) = 0`. -/
 private lemma exists_saturated (μ : Measure Ω) [IsProbabilityMeasure μ] (σ : Ω ≃ᵐ Ω)
-    (r : ℕ) {S : Set Ω} (_hS : MeasurableSet S) :
+    (r : ℕ) {S : Set Ω} :
     ∃ A', A' ⊆ S ∧ MeasurableSet A' ∧ DisjWin σ r A' ∧
       ∀ A'', A' ⊆ A'' → A'' ⊆ S → MeasurableSet A'' → DisjWin σ r A'' → μ (A'' \ A') = 0 := by
   classical
@@ -190,7 +190,7 @@ private lemma exists_saturated_dichotomy [StandardBorelSpace Ω] (μ : Measure �
     ∃ A', A' ⊆ S ∧ MeasurableSet A' ∧ DisjWin σ r A' ∧
       μ {x ∈ S | Disjoint ((fun t => zIter σ t x) '' Set.Icc (-(r : ℤ)) r)
             (⋃ k ∈ Set.Icc (-(r : ℤ)) r, zIter σ k '' A')} = 0 := by
-  obtain ⟨A', hA'S, hA'meas, hA'disj, hA'sat⟩ := exists_saturated μ σ r hS
+  obtain ⟨A', hA'S, hA'meas, hA'disj, hA'sat⟩ := exists_saturated μ σ r
   refine ⟨A', hA'S, hA'meas, hA'disj, ?_⟩
   set W : Set Ω := ⋃ k ∈ Set.Icc (-(r : ℤ)) r, zIter σ k '' A' with hWdef
   have hWmeas : MeasurableSet W :=

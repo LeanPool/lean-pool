@@ -692,7 +692,7 @@ theorem vitali_cover_geometric [StandardBorelSpace Ω] (μ : Measure Ω)
     [IsProbabilityMeasure μ] [NullSingletonClass μ] (σ : Ω ≃ᵐ Ω) (hσ : Ergodic (⇑σ) μ)
     (A₀ : Set Ω) (hA₀ : MeasurableSet A₀)
     (m : ℕ) (hm : 1 ≤ m) (w : ℕ → Ω → ℕ) (hw : ∀ s, Measurable (w s))
-    (Bnd : ℕ) (hwB : ∀ s, s < m → ∀ ω, w s ω ≤ Bnd) (_hw1 : ∀ s ω, 1 ≤ w s ω)
+    (Bnd : ℕ) (hwB : ∀ s, s < m → ∀ ω, w s ω ≤ Bnd)
     (G : ℕ) (hG1 : 1 ≤ G)
     (hgrow : ∀ s, s < m → ∀ ω ω', ω ∈ A₀ → ω' ∈ A₀ → G * w s ω ≤ w (s + 1) ω') :
     ∃ (A : Set Ω) (scale : Ω → ℕ), A ⊆ A₀ ∧ MeasurableSet A ∧ Measurable scale ∧

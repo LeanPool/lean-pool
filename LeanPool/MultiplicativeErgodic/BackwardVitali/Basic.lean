@@ -324,6 +324,28 @@ private lemma disjoint_forward_shifts [StandardBorelSpace Ω] (μ : Measure Ω)
           rw [hdeq]; exact hCdisj
   exact main K
 
+/-- `zIter σ` is the `ℤ`-power of `σ` in the permutation group `Ω ≃ Ω`. -/
+lemma zIter_eq_zpow (σ : Ω ≃ᵐ Ω) (t : ℤ) : zIter σ t = ⇑(σ.toEquiv ^ t) := by
+  cases t with
+  | ofNat n =>
+    ext ω
+    rw [show (Int.ofNat n : ℤ) = (n : ℤ) from rfl, zpow_natCast, Equiv.Perm.coe_pow]
+    rfl
+  | negSucc n =>
+    ext ω
+    rw [zpow_negSucc, ← inv_pow, Equiv.Perm.coe_pow]
+    rfl
+
+/-- Group law for the two-sided iteration: `zIter σ (a + b) = zIter σ a ∘ zIter σ b`. -/
+lemma zIter_add (σ : Ω ≃ᵐ Ω) (a b : ℤ) (ω : Ω) :
+    zIter σ (a + b) ω = zIter σ a (zIter σ b ω) := by
+  rw [zIter_eq_zpow, zIter_eq_zpow, zIter_eq_zpow, zpow_add]
+  rfl
+
+/-- `zIter σ 0` is the identity. -/
+lemma zIter_zero_apply (σ : Ω ≃ᵐ Ω) (ω : Ω) : zIter σ 0 ω = ω := by
+  rw [zIter_eq_zpow, zpow_zero]; rfl
+
 /-- **Rudolph's disjoint-translates lemma**, built on `periodic_null` via ergodicity.
 Any positive-measure set
 `A` has a positive-measure measurable subset `A'` whose one-sided forward translates
@@ -348,26 +370,11 @@ theorem exists_subset_disjoint_iterates [StandardBorelSpace Ω] (μ : Measure Ω
   -- Two translates `σ^[i]B`, `σ^[k]B` are disjoint iff `B ∩ σ^[k-i]B = ∅` (apply the bijection
   -- `σ^[-i]`, i.e. `zIter σ (-i)`). As `i, k` range over `{0,…,N-1}`, `|k-i|` ranges over
   -- `1,…,N-1`, exactly the shifts `disjoint_forward_shifts` already handles.
-  set g : Equiv.Perm Ω := σ.toEquiv with hgdef
-  have hcoeg : (⇑g : Ω → Ω) = ⇑σ := rfl
-  have hcoeginv : (⇑(g⁻¹) : Ω → Ω) = ⇑σ.symm := rfl
-  have hzeq : ∀ n : ℤ, zIter σ n = ⇑(g ^ n) := by
-    intro n
-    cases n with
-    | ofNat m =>
-        change (fun ω => (⇑σ)^[m] ω) = ⇑(g ^ (Int.ofNat m))
-        rw [show (Int.ofNat m : ℤ) = (m : ℤ) from rfl, zpow_natCast, Equiv.Perm.coe_pow, hcoeg]
-    | negSucc m =>
-        change (fun ω => (⇑σ.symm)^[m + 1] ω) = ⇑(g ^ (Int.negSucc m))
-        rw [zpow_negSucc, ← inv_pow, Equiv.Perm.coe_pow, hcoeginv]
-  have hzcomp : ∀ (a b : ℤ) (x : Ω), zIter σ a (zIter σ b x) = zIter σ (a + b) x := by
-    intro a b x
-    rw [hzeq a, hzeq b, hzeq (a + b), ← Equiv.Perm.mul_apply, ← zpow_add]
-  have hzzero : ∀ x : Ω, zIter σ (0 : ℤ) x = x := by
-    intro x; rw [hzeq (0 : ℤ), zpow_zero]; rfl
-  have hznat : ∀ (n : ℕ) (x : Ω), zIter σ (n : ℤ) x = (⇑σ)^[n] x := by
-    intro n x
-    rw [hzeq, zpow_natCast, Equiv.Perm.coe_pow, hcoeg]
+  have hzcomp : ∀ (a b : ℤ) (x : Ω), zIter σ a (zIter σ b x) = zIter σ (a + b) x :=
+    fun a b x => (zIter_add σ a b x).symm
+  have hzzero : ∀ x : Ω, zIter σ (0 : ℤ) x = x := zIter_zero_apply σ
+  have hznat : ∀ (n : ℕ) (x : Ω), zIter σ (n : ℤ) x = (⇑σ)^[n] x :=
+    fun n x => zIter_natCast σ n x
   refine ⟨B, hBA, hBmeas, hBpos, ?_⟩
   intro i hi k hk hik
   rw [Set.disjoint_left]
@@ -421,26 +428,11 @@ theorem exists_subset_disjoint_iterates_symm [StandardBorelSpace Ω] (μ : Measu
         Disjoint (zIter σ i '' A') (zIter σ k '' A') := by
   classical
   obtain ⟨B, hBA, hBmeas, hBpos, hBdisj⟩ := disjoint_forward_shifts μ σ hσ (2 * N) hA hApos
-  set g : Equiv.Perm Ω := σ.toEquiv with hgdef
-  have hcoeg : (⇑g : Ω → Ω) = ⇑σ := rfl
-  have hcoeginv : (⇑(g⁻¹) : Ω → Ω) = ⇑σ.symm := rfl
-  have hzeq : ∀ n : ℤ, zIter σ n = ⇑(g ^ n) := by
-    intro n
-    cases n with
-    | ofNat m =>
-        change (fun ω => (⇑σ)^[m] ω) = ⇑(g ^ (Int.ofNat m))
-        rw [show (Int.ofNat m : ℤ) = (m : ℤ) from rfl, zpow_natCast, Equiv.Perm.coe_pow, hcoeg]
-    | negSucc m =>
-        change (fun ω => (⇑σ.symm)^[m + 1] ω) = ⇑(g ^ (Int.negSucc m))
-        rw [zpow_negSucc, ← inv_pow, Equiv.Perm.coe_pow, hcoeginv]
-  have hzcomp : ∀ (a b : ℤ) (x : Ω), zIter σ a (zIter σ b x) = zIter σ (a + b) x := by
-    intro a b x
-    rw [hzeq a, hzeq b, hzeq (a + b), ← Equiv.Perm.mul_apply, ← zpow_add]
-  have hzzero : ∀ x : Ω, zIter σ (0 : ℤ) x = x := by
-    intro x; rw [hzeq (0 : ℤ), zpow_zero]; rfl
-  have hznat : ∀ (n : ℕ) (x : Ω), zIter σ (n : ℤ) x = (⇑σ)^[n] x := by
-    intro n x
-    rw [hzeq, zpow_natCast, Equiv.Perm.coe_pow, hcoeg]
+  have hzcomp : ∀ (a b : ℤ) (x : Ω), zIter σ a (zIter σ b x) = zIter σ (a + b) x :=
+    fun a b x => (zIter_add σ a b x).symm
+  have hzzero : ∀ x : Ω, zIter σ (0 : ℤ) x = x := zIter_zero_apply σ
+  have hznat : ∀ (n : ℕ) (x : Ω), zIter σ (n : ℤ) x = (⇑σ)^[n] x :=
+    fun n x => zIter_natCast σ n x
   refine ⟨B, hBA, hBmeas, hBpos, ?_⟩
   intro i hi k hk hik
   obtain ⟨hi1, hi2⟩ := Set.mem_Icc.mp hi
@@ -485,28 +477,6 @@ The two-sided iteration `zIter σ` is the `ℤ`-action of `σ` by measure-preser
 These lemmas package that action (group law, measurability, measure-preservation, image
 measure) and the elementary window-counting bound that the covering argument needs. They are
 proved in full and are independent of the greedy construction. -/
-
-/-- `zIter σ` is the `ℤ`-power of `σ` in the permutation group `Ω ≃ Ω`. -/
-lemma zIter_eq_zpow (σ : Ω ≃ᵐ Ω) (t : ℤ) : zIter σ t = ⇑(σ.toEquiv ^ t) := by
-  cases t with
-  | ofNat n =>
-    ext ω
-    rw [show (Int.ofNat n : ℤ) = (n : ℤ) from rfl, zpow_natCast, Equiv.Perm.coe_pow]
-    rfl
-  | negSucc n =>
-    ext ω
-    rw [zpow_negSucc, ← inv_pow, Equiv.Perm.coe_pow]
-    rfl
-
-/-- Group law for the two-sided iteration: `zIter σ (a + b) = zIter σ a ∘ zIter σ b`. -/
-lemma zIter_add (σ : Ω ≃ᵐ Ω) (a b : ℤ) (ω : Ω) :
-    zIter σ (a + b) ω = zIter σ a (zIter σ b ω) := by
-  rw [zIter_eq_zpow, zIter_eq_zpow, zIter_eq_zpow, zpow_add]
-  rfl
-
-/-- `zIter σ 0` is the identity. -/
-lemma zIter_zero_apply (σ : Ω ≃ᵐ Ω) (ω : Ω) : zIter σ 0 ω = ω := by
-  rw [zIter_eq_zpow, zpow_zero]; rfl
 
 /-- Each translate `zIter σ t` is measurable. -/
 lemma measurable_zIter (σ : Ω ≃ᵐ Ω) (t : ℤ) : Measurable (zIter σ t) := by
