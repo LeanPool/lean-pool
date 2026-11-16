@@ -17,7 +17,7 @@ Milestone 2 of the operator polar decomposition project — COMPLETE
 module
 
 public import LeanPool.DavisKahan.ForTauCeti.Analysis.InnerProductSpace.Polar.Decomposition
-public import Mathlib.Analysis.InnerProductSpace.Spectrum
+import Mathlib.Analysis.InnerProductSpace.Spectrum
 
 
 /-! # The canonical intertwining (matching) unitary (Milestone 2)

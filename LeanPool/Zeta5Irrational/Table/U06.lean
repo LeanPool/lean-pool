@@ -24,25 +24,21 @@ lemma U_76_1 :
   have hlg :
     Real.log (293374760981357 / 10000000000000000 : ℝ) ≤
       (-(17644447654831053876417 / 5000000000000000000000 : ℝ)) := by
-    have h :=
-      log_le_of_split_neg 6
-        (show
-          (293374760981357 / 10000000000000000 : ℝ) =
-            (293374760981357 / 156250000000000 : ℝ) / 2 ^ 6
-          by norm_num)
-        (by norm_num)
-        ((by
-           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
-             (r := (293374760981357 / 156250000000000 : ℚ))
-             (U := (3149967754168946123583 / 5000000000000000000000 : ℚ))
-             13 (by decide +kernel)) :
-          Real.log (293374760981357 / 156250000000000 : ℝ) ≤
-            (3149967754168946123583 / 5000000000000000000000 : ℝ))
-    linarith only [h, Real.log_two_gt_d9]
-  exact
-    Uω_le_right_certificate (s := (146411849147607 / 5000000000000000 : ℝ)) (q :=
-      (293374760981357 / 10000000000000000 : ℝ)) (aρ_lt_bρ 1 (by decide)) (by norm_num [bρ_1])
-      (by norm_num) (by norm_num [aρ_1, bρ_1]) (by norm_num [aρ_1, bρ_1]) hlg
+    simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using
+      log_le_of_split_neg_rational
+        (r := (293374760981357 / 10000000000000000 : ℚ))
+        (r' := (293374760981357 / 156250000000000 : ℚ))
+        (U := (-(17644447654831053876417 / 5000000000000000000000 : ℚ)))
+        (U' := (3149967754168946123583 / 5000000000000000000000 : ℚ))
+        6 13 (by decide +kernel) (by decide +kernel)
+  simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using
+    Uω_le_right_certificate_rational
+      (j := 1) (t := (143369216701 / 4000000000000 : ℚ))
+      (s := (146411849147607 / 5000000000000000 : ℚ))
+      (q := (293374760981357 / 10000000000000000 : ℚ))
+      (U := (-(17644447654831053876417 / 5000000000000000000000 : ℚ)))
+      (by decide +kernel)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using hlg)
 
 lemma U_76_2 :
     Uω (aρ 2) (bρ 2) (143369216701 / 4000000000000 : ℝ) ≤
@@ -50,24 +46,21 @@ lemma U_76_2 :
   have hlg :
     Real.log (16635682819909 / 625000000000000 : ℝ) ≤
       (-(36262016923645122436277 / 10000000000000000000000 : ℝ)) := by
-    have h :=
-      log_le_of_split_neg 6
-        (show
-          (16635682819909 / 625000000000000 : ℝ) = (16635682819909 / 9765625000000 : ℝ) / 2 ^ 6 by
-          norm_num)
-        (by norm_num)
-        ((by
-           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
-             (r := (16635682819909 / 9765625000000 : ℚ))
-             (U := (5326813894354877563723 / 10000000000000000000000 : ℚ))
-             12 (by decide +kernel)) :
-          Real.log (16635682819909 / 9765625000000 : ℝ) ≤
-            (5326813894354877563723 / 10000000000000000000000 : ℝ))
-    linarith only [h, Real.log_two_gt_d9]
-  exact
-    Uω_le_right_certificate (s := (65546259769897 / 2500000000000000 : ℝ)) (q :=
-      (16635682819909 / 625000000000000 : ℝ)) (aρ_lt_bρ 2 (by decide)) (by norm_num [bρ_2])
-      (by norm_num) (by norm_num [aρ_2, bρ_2]) (by norm_num [aρ_2, bρ_2]) hlg
+    simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using
+      log_le_of_split_neg_rational
+        (r := (16635682819909 / 625000000000000 : ℚ))
+        (r' := (16635682819909 / 9765625000000 : ℚ))
+        (U := (-(36262016923645122436277 / 10000000000000000000000 : ℚ)))
+        (U' := (5326813894354877563723 / 10000000000000000000000 : ℚ))
+        6 12 (by decide +kernel) (by decide +kernel)
+  simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using
+    Uω_le_right_certificate_rational
+      (j := 2) (t := (143369216701 / 4000000000000 : ℚ))
+      (s := (65546259769897 / 2500000000000000 : ℚ))
+      (q := (16635682819909 / 625000000000000 : ℚ))
+      (U := (-(36262016923645122436277 / 10000000000000000000000 : ℚ)))
+      (by decide +kernel)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using hlg)
 
 lemma U_76_3 :
     Uω (aρ 3) (bρ 3) (143369216701 / 4000000000000 : ℝ) ≤
@@ -75,24 +68,21 @@ lemma U_76_3 :
   have hlg :
     Real.log (51172302248489 / 2500000000000000 : ℝ) ≤
       (-(38888475953383457362861 / 10000000000000000000000 : ℝ)) := by
-    have h :=
-      log_le_of_split_neg 6
-        (show
-          (51172302248489 / 2500000000000000 : ℝ) = (51172302248489 / 39062500000000 : ℝ) / 2 ^ 6
-          by norm_num)
-        (by norm_num)
-        ((by
-           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
-             (r := (51172302248489 / 39062500000000 : ℚ))
-             (U := (2700354864616542637139 / 10000000000000000000000 : ℚ))
-             8 (by decide +kernel)) :
-          Real.log (51172302248489 / 39062500000000 : ℝ) ≤
-            (2700354864616542637139 / 10000000000000000000000 : ℝ))
-    linarith only [h, Real.log_two_gt_d9]
-  exact
-    Uω_le_right_certificate (s := (46654428295103 / 2500000000000000 : ℝ)) (q :=
-      (51172302248489 / 2500000000000000 : ℝ)) (aρ_lt_bρ 3 (by decide)) (by norm_num [bρ_3])
-      (by norm_num) (by norm_num [aρ_3, bρ_3]) (by norm_num [aρ_3, bρ_3]) hlg
+    simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using
+      log_le_of_split_neg_rational
+        (r := (51172302248489 / 2500000000000000 : ℚ))
+        (r' := (51172302248489 / 39062500000000 : ℚ))
+        (U := (-(38888475953383457362861 / 10000000000000000000000 : ℚ)))
+        (U' := (2700354864616542637139 / 10000000000000000000000 : ℚ))
+        6 8 (by decide +kernel) (by decide +kernel)
+  simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using
+    Uω_le_right_certificate_rational
+      (j := 3) (t := (143369216701 / 4000000000000 : ℚ))
+      (s := (46654428295103 / 2500000000000000 : ℚ))
+      (q := (51172302248489 / 2500000000000000 : ℚ))
+      (U := (-(38888475953383457362861 / 10000000000000000000000 : ℚ)))
+      (by decide +kernel)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using hlg)
 
 lemma U_76_4 :
     Uω (aρ 4) (bρ 4) (143369216701 / 4000000000000 : ℝ) ≤
@@ -249,25 +239,21 @@ lemma U_77_1 :
   have hlg :
     Real.log (313634604861411 / 10000000000000000 : ℝ) ≤
       (-(17310558705766996086987 / 5000000000000000000000 : ℝ)) := by
-    have h :=
-      log_le_of_split_neg 5
-        (show
-          (313634604861411 / 10000000000000000 : ℝ) =
-            (313634604861411 / 312500000000000 : ℝ) / 2 ^ 5
-          by norm_num)
-        (by norm_num)
-        ((by
-           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
-             (r := (313634604861411 / 312500000000000 : ℚ))
-             (U := (18120801733003913013 / 5000000000000000000000 : ℚ))
-             3 (by decide +kernel)) :
-          Real.log (313634604861411 / 312500000000000 : ℝ) ≤
-            (18120801733003913013 / 5000000000000000000000 : ℝ))
-    linarith only [h, Real.log_two_gt_d9]
-  exact
-    Uω_le_right_certificate (s := (156559569576411 / 5000000000000000 : ℝ)) (q :=
-      (313634604861411 / 10000000000000000 : ℝ)) (aρ_lt_bρ 1 (by decide)) (by norm_num [bρ_1])
-      (by norm_num) (by norm_num [aρ_1, bρ_1]) (by norm_num [aρ_1, bρ_1]) hlg
+    simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using
+      log_le_of_split_neg_rational
+        (r := (313634604861411 / 10000000000000000 : ℚ))
+        (r' := (313634604861411 / 312500000000000 : ℚ))
+        (U := (-(17310558705766996086987 / 5000000000000000000000 : ℚ)))
+        (U' := (18120801733003913013 / 5000000000000000000000 : ℚ))
+        5 3 (by decide +kernel) (by decide +kernel)
+  simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using
+    Uω_le_right_certificate_rational
+      (j := 1) (t := (75729457731 / 2000000000000 : ℚ))
+      (s := (156559569576411 / 5000000000000000 : ℚ))
+      (q := (313634604861411 / 10000000000000000 : ℚ))
+      (U := (-(17310558705766996086987 / 5000000000000000000000 : ℚ)))
+      (by decide +kernel)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using hlg)
 
 lemma U_77_2 :
     Uω (aρ 2) (bρ 2) (75729457731 / 2000000000000 : ℝ) ≤
@@ -275,25 +261,21 @@ lemma U_77_2 :
   have hlg :
     Real.log (573360652699651 / 20000000000000000 : ℝ) ≤
       (-(17759863104573821333591 / 5000000000000000000000 : ℝ)) := by
-    have h :=
-      log_le_of_split_neg 6
-        (show
-          (573360652699651 / 20000000000000000 : ℝ) =
-            (573360652699651 / 312500000000000 : ℝ) / 2 ^ 6
-          by norm_num)
-        (by norm_num)
-        ((by
-           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
-             (r := (573360652699651 / 312500000000000 : ℚ))
-             (U := (3034552304426178666409 / 5000000000000000000000 : ℚ))
-             13 (by decide +kernel)) :
-          Real.log (573360652699651 / 312500000000000 : ℝ) ≤
-            (3034552304426178666409 / 5000000000000000000000 : ℝ))
-    linarith only [h, Real.log_two_gt_d9]
-  exact
-    Uω_le_right_certificate (s := (282979594639651 / 10000000000000000 : ℝ)) (q :=
-      (573360652699651 / 20000000000000000 : ℝ)) (aρ_lt_bρ 2 (by decide)) (by norm_num [bρ_2])
-      (by norm_num) (by norm_num [aρ_2, bρ_2]) (by norm_num [aρ_2, bρ_2]) hlg
+    simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using
+      log_le_of_split_neg_rational
+        (r := (573360652699651 / 20000000000000000 : ℚ))
+        (r' := (573360652699651 / 312500000000000 : ℚ))
+        (U := (-(17759863104573821333591 / 5000000000000000000000 : ℚ)))
+        (U' := (3034552304426178666409 / 5000000000000000000000 : ℚ))
+        6 13 (by decide +kernel) (by decide +kernel)
+  simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using
+    Uω_le_right_certificate_rational
+      (j := 2) (t := (75729457731 / 2000000000000 : ℚ))
+      (s := (282979594639651 / 10000000000000000 : ℚ))
+      (q := (573360652699651 / 20000000000000000 : ℚ))
+      (U := (-(17759863104573821333591 / 5000000000000000000000 : ℚ)))
+      (by decide +kernel)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using hlg)
 
 lemma U_77_3 :
     Uω (aρ 3) (bρ 3) (75729457731 / 2000000000000 : ℝ) ≤
@@ -301,25 +283,21 @@ lemma U_77_3 :
   have hlg :
     Real.log (453331156866793 / 20000000000000000 : ℝ) ≤
       (-(1893432330977563126623 / 500000000000000000000 : ℝ)) := by
-    have h :=
-      log_le_of_split_neg 6
-        (show
-          (453331156866793 / 20000000000000000 : ℝ) =
-            (453331156866793 / 312500000000000 : ℝ) / 2 ^ 6
-          by norm_num)
-        (by norm_num)
-        ((by
-           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
-             (r := (453331156866793 / 312500000000000 : ℚ))
-             (U := (186009209922436873377 / 500000000000000000000 : ℚ))
-             10 (by decide +kernel)) :
-          Real.log (453331156866793 / 312500000000000 : ℝ) ≤
-            (186009209922436873377 / 500000000000000000000 : ℝ))
-    linarith only [h, Real.log_two_gt_d9]
-  exact
-    Uω_le_right_certificate (s := (210346205156793 / 10000000000000000 : ℝ)) (q :=
-      (453331156866793 / 20000000000000000 : ℝ)) (aρ_lt_bρ 3 (by decide)) (by norm_num [bρ_3])
-      (by norm_num) (by norm_num [aρ_3, bρ_3]) (by norm_num [aρ_3, bρ_3]) hlg
+    simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using
+      log_le_of_split_neg_rational
+        (r := (453331156866793 / 20000000000000000 : ℚ))
+        (r' := (453331156866793 / 312500000000000 : ℚ))
+        (U := (-(1893432330977563126623 / 500000000000000000000 : ℚ)))
+        (U' := (186009209922436873377 / 500000000000000000000 : ℚ))
+        6 10 (by decide +kernel) (by decide +kernel)
+  simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using
+    Uω_le_right_certificate_rational
+      (j := 3) (t := (75729457731 / 2000000000000 : ℚ))
+      (s := (210346205156793 / 10000000000000000 : ℚ))
+      (q := (453331156866793 / 20000000000000000 : ℚ))
+      (U := (-(1893432330977563126623 / 500000000000000000000 : ℚ)))
+      (by decide +kernel)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using hlg)
 
 lemma U_77_4 :
     Uω (aρ 4) (bρ 4) (75729457731 / 2000000000000 : ℝ) ≤
@@ -476,25 +454,21 @@ lemma U_78_1 :
   have hlg :
     Real.log (354142058631351 / 10000000000000000 : ℝ) ≤
       (-(16703211212357127756093 / 5000000000000000000000 : ℝ)) := by
-    have h :=
-      log_le_of_split_neg 5
-        (show
-          (354142058631351 / 10000000000000000 : ℝ) =
-            (354142058631351 / 312500000000000 : ℝ) / 2 ^ 5
-          by norm_num)
-        (by norm_num)
-        ((by
-           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
-             (r := (354142058631351 / 312500000000000 : ℚ))
-             (U := (625468295142872243907 / 5000000000000000000000 : ℚ))
-             6 (by decide +kernel)) :
-          Real.log (354142058631351 / 312500000000000 : ℝ) ≤
-            (625468295142872243907 / 5000000000000000000000 : ℝ))
-    linarith only [h, Real.log_two_gt_d9]
-  exact
-    Uω_le_right_certificate (s := (176842776443851 / 5000000000000000 : ℝ)) (q :=
-      (354142058631351 / 10000000000000000 : ℝ)) (aρ_lt_bρ 1 (by decide)) (by norm_num [bρ_1])
-      (by norm_num) (by norm_num [aρ_1, bρ_1]) (by norm_num [aρ_1, bρ_1]) hlg
+    simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using
+      log_le_of_split_neg_rational
+        (r := (354142058631351 / 10000000000000000 : ℚ))
+        (r' := (354142058631351 / 312500000000000 : ℚ))
+        (U := (-(16703211212357127756093 / 5000000000000000000000 : ℚ)))
+        (U' := (625468295142872243907 / 5000000000000000000000 : ℚ))
+        5 6 (by decide +kernel) (by decide +kernel)
+  simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using
+    Uω_le_right_certificate_rational
+      (j := 1) (t := (20954789123 / 500000000000 : ℚ))
+      (s := (176842776443851 / 5000000000000000 : ℚ))
+      (q := (354142058631351 / 10000000000000000 : ℚ))
+      (U := (-(16703211212357127756093 / 5000000000000000000000 : ℚ)))
+      (by decide +kernel)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using hlg)
 
 lemma U_78_2 :
     Uω (aρ 2) (bρ 2) (20954789123 / 500000000000 : ℝ) ≤
@@ -502,25 +476,21 @@ lemma U_78_2 :
   have hlg :
     Real.log (655181959732697 / 20000000000000000 : ℝ) ≤
       (-(8546436382655285391233 / 2500000000000000000000 : ℝ)) := by
-    have h :=
-      log_le_of_split_neg 5
-        (show
-          (655181959732697 / 20000000000000000 : ℝ) =
-            (655181959732697 / 625000000000000 : ℝ) / 2 ^ 5
-          by norm_num)
-        (by norm_num)
-        ((by
-           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
-             (r := (655181959732697 / 625000000000000 : ℚ))
-             (U := (117903371094714608767 / 2500000000000000000000 : ℚ))
-             4 (by decide +kernel)) :
-          Real.log (655181959732697 / 625000000000000 : ℝ) ≤
-            (117903371094714608767 / 2500000000000000000000 : ℝ))
-    linarith only [h, Real.log_two_gt_d9]
-  exact
-    Uω_le_right_certificate (s := (324352407867697 / 10000000000000000 : ℝ)) (q :=
-      (655181959732697 / 20000000000000000 : ℝ)) (aρ_lt_bρ 2 (by decide)) (by norm_num [bρ_2])
-      (by norm_num) (by norm_num [aρ_2, bρ_2]) (by norm_num [aρ_2, bρ_2]) hlg
+    simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using
+      log_le_of_split_neg_rational
+        (r := (655181959732697 / 20000000000000000 : ℚ))
+        (r' := (655181959732697 / 625000000000000 : ℚ))
+        (U := (-(8546436382655285391233 / 2500000000000000000000 : ℚ)))
+        (U' := (117903371094714608767 / 2500000000000000000000 : ℚ))
+        5 4 (by decide +kernel) (by decide +kernel)
+  simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using
+    Uω_le_right_certificate_rational
+      (j := 2) (t := (20954789123 / 500000000000 : ℚ))
+      (s := (324352407867697 / 10000000000000000 : ℚ))
+      (q := (655181959732697 / 20000000000000000 : ℚ))
+      (U := (-(8546436382655285391233 / 2500000000000000000000 : ℚ)))
+      (by decide +kernel)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using hlg)
 
 lemma U_78_3 :
     Uω (aρ 3) (bρ 3) (20954789123 / 500000000000 : ℝ) ≤
@@ -528,25 +498,21 @@ lemma U_78_3 :
   have hlg :
     Real.log (539438049580741 / 20000000000000000 : ℝ) ≤
       (-(36129596021937323314463 / 10000000000000000000000 : ℝ)) := by
-    have h :=
-      log_le_of_split_neg 6
-        (show
-          (539438049580741 / 20000000000000000 : ℝ) =
-            (539438049580741 / 312500000000000 : ℝ) / 2 ^ 6
-          by norm_num)
-        (by norm_num)
-        ((by
-           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
-             (r := (539438049580741 / 312500000000000 : ℚ))
-             (U := (5459234796062676685537 / 10000000000000000000000 : ℚ))
-             12 (by decide +kernel)) :
-          Real.log (539438049580741 / 312500000000000 : ℝ) ≤
-            (5459234796062676685537 / 10000000000000000000000 : ℝ))
-    linarith only [h, Real.log_two_gt_d9]
-  exact
-    Uω_le_right_certificate (s := (256004604065741 / 10000000000000000 : ℝ)) (q :=
-      (539438049580741 / 20000000000000000 : ℝ)) (aρ_lt_bρ 3 (by decide)) (by norm_num [bρ_3])
-      (by norm_num) (by norm_num [aρ_3, bρ_3]) (by norm_num [aρ_3, bρ_3]) hlg
+    simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using
+      log_le_of_split_neg_rational
+        (r := (539438049580741 / 20000000000000000 : ℚ))
+        (r' := (539438049580741 / 312500000000000 : ℚ))
+        (U := (-(36129596021937323314463 / 10000000000000000000000 : ℚ)))
+        (U' := (5459234796062676685537 / 10000000000000000000000 : ℚ))
+        6 12 (by decide +kernel) (by decide +kernel)
+  simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using
+    Uω_le_right_certificate_rational
+      (j := 3) (t := (20954789123 / 500000000000 : ℚ))
+      (s := (256004604065741 / 10000000000000000 : ℚ))
+      (q := (539438049580741 / 20000000000000000 : ℚ))
+      (U := (-(36129596021937323314463 / 10000000000000000000000 : ℚ)))
+      (by decide +kernel)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using hlg)
 
 lemma U_78_4 :
     Uω (aρ 4) (bρ 4) (20954789123 / 500000000000 : ℝ) ≤
@@ -703,25 +669,21 @@ lemma U_79_1 :
   have hlg :
     Real.log (147649612727507 / 4000000000000000 : ℝ) ≤
       (-(8248019133811670168773 / 2500000000000000000000 : ℝ)) := by
-    have h :=
-      log_le_of_split_neg 5
-        (show
-          (147649612727507 / 4000000000000000 : ℝ) =
-            (147649612727507 / 125000000000000 : ℝ) / 2 ^ 5
-          by norm_num)
-        (by norm_num)
-        ((by
-           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
-             (r := (147649612727507 / 125000000000000 : ℚ))
-             (U := (416320619938329831227 / 2500000000000000000000 : ℚ))
-             7 (by decide +kernel)) :
-          Real.log (147649612727507 / 125000000000000 : ℝ) ≤
-            (416320619938329831227 / 2500000000000000000000 : ℝ))
-    linarith only [h, Real.log_two_gt_d9]
-  exact
-    Uω_le_right_certificate (s := (36868605468941 / 1000000000000000 : ℝ)) (q :=
-      (147649612727507 / 4000000000000000 : ℝ)) (aρ_lt_bρ 1 (by decide)) (by norm_num [bρ_1])
-      (by norm_num) (by norm_num [aρ_1, bρ_1]) (by norm_num [aρ_1, bρ_1]) hlg
+    simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using
+      log_le_of_split_neg_rational
+        (r := (147649612727507 / 4000000000000000 : ℚ))
+        (r' := (147649612727507 / 125000000000000 : ℚ))
+        (U := (-(8248019133811670168773 / 2500000000000000000000 : ℚ)))
+        (U' := (416320619938329831227 / 2500000000000000000000 : ℚ))
+        5 7 (by decide +kernel) (by decide +kernel)
+  simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using
+    Uω_le_right_certificate_rational
+      (j := 1) (t := (694494763253 / 16000000000000 : ℚ))
+      (s := (36868605468941 / 1000000000000000 : ℚ))
+      (q := (147649612727507 / 4000000000000000 : ℚ))
+      (U := (-(8248019133811670168773 / 2500000000000000000000 : ℚ)))
+      (by decide +kernel)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using hlg)
 
 lemma U_79_2 :
     Uω (aρ 2) (bρ 2) (694494763253 / 16000000000000 : ℝ) ≤
@@ -729,24 +691,21 @@ lemma U_79_2 :
   have hlg :
     Real.log (27415774538689 / 800000000000000 : ℝ) ≤
       (-(33734931655425398758109 / 10000000000000000000000 : ℝ)) := by
-    have h :=
-      log_le_of_split_neg 5
-        (show
-          (27415774538689 / 800000000000000 : ℝ) = (27415774538689 / 25000000000000 : ℝ) / 2 ^ 5
-          by norm_num)
-        (by norm_num)
-        ((by
-           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
-             (r := (27415774538689 / 25000000000000 : ℚ))
-             (U := (922427359574601241891 / 10000000000000000000000 : ℚ))
-             5 (by decide +kernel)) :
-          Real.log (27415774538689 / 25000000000000 : ℝ) ≤
-            (922427359574601241891 / 10000000000000000000000 : ℝ))
-    linarith only [h, Real.log_two_gt_d9]
-  exact
-    Uω_le_right_certificate (s := (3396013670291 / 100000000000000 : ℝ)) (q :=
-      (27415774538689 / 800000000000000 : ℝ)) (aρ_lt_bρ 2 (by decide)) (by norm_num [bρ_2])
-      (by norm_num) (by norm_num [aρ_2, bρ_2]) (by norm_num [aρ_2, bρ_2]) hlg
+    simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using
+      log_le_of_split_neg_rational
+        (r := (27415774538689 / 800000000000000 : ℚ))
+        (r' := (27415774538689 / 25000000000000 : ℚ))
+        (U := (-(33734931655425398758109 / 10000000000000000000000 : ℚ)))
+        (U' := (922427359574601241891 / 10000000000000000000000 : ℚ))
+        5 5 (by decide +kernel) (by decide +kernel)
+  simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using
+    Uω_le_right_certificate_rational
+      (j := 2) (t := (694494763253 / 16000000000000 : ℚ))
+      (s := (3396013670291 / 100000000000000 : ℚ))
+      (q := (27415774538689 / 800000000000000 : ℚ))
+      (U := (-(33734931655425398758109 / 10000000000000000000000 : ℚ)))
+      (by decide +kernel)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using hlg)
 
 lemma U_79_3 :
     Uω (aρ 3) (bρ 3) (694494763253 / 16000000000000 : ℝ) ≤
@@ -754,25 +713,21 @@ lemma U_79_3 :
   have hlg :
     Real.log (285437704511201 / 10000000000000000 : ℝ) ≤
       (-(17781582814941265651163 / 5000000000000000000000 : ℝ)) := by
-    have h :=
-      log_le_of_split_neg 6
-        (show
-          (285437704511201 / 10000000000000000 : ℝ) =
-            (285437704511201 / 156250000000000 : ℝ) / 2 ^ 6
-          by norm_num)
-        (by norm_num)
-        ((by
-           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
-             (r := (285437704511201 / 156250000000000 : ℚ))
-             (U := (3012832594058734348837 / 5000000000000000000000 : ℚ))
-             13 (by decide +kernel)) :
-          Real.log (285437704511201 / 156250000000000 : ℝ) ≤
-            (3012832594058734348837 / 5000000000000000000000 : ℝ))
-    linarith only [h, Real.log_two_gt_d9]
-  exact
-    Uω_le_right_certificate (s := (272478518934277 / 10000000000000000 : ℝ)) (q :=
-      (285437704511201 / 10000000000000000 : ℝ)) (aρ_lt_bρ 3 (by decide)) (by norm_num [bρ_3])
-      (by norm_num) (by norm_num [aρ_3, bρ_3]) (by norm_num [aρ_3, bρ_3]) hlg
+    simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using
+      log_le_of_split_neg_rational
+        (r := (285437704511201 / 10000000000000000 : ℚ))
+        (r' := (285437704511201 / 156250000000000 : ℚ))
+        (U := (-(17781582814941265651163 / 5000000000000000000000 : ℚ)))
+        (U' := (3012832594058734348837 / 5000000000000000000000 : ℚ))
+        6 13 (by decide +kernel) (by decide +kernel)
+  simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using
+    Uω_le_right_certificate_rational
+      (j := 3) (t := (694494763253 / 16000000000000 : ℚ))
+      (s := (272478518934277 / 10000000000000000 : ℚ))
+      (q := (285437704511201 / 10000000000000000 : ℚ))
+      (U := (-(17781582814941265651163 / 5000000000000000000000 : ℚ)))
+      (by decide +kernel)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using hlg)
 
 lemma U_79_4 :
     Uω (aρ 4) (bρ 4) (694494763253 / 16000000000000 : ℝ) ≤
@@ -780,24 +735,21 @@ lemma U_79_4 :
   have hlg :
     Real.log (37483956842069 / 2500000000000000 : ℝ) ≤
       (-(2625083115715732209859 / 625000000000000000000 : ℝ)) := by
-    have h :=
-      log_le_of_split_neg 7
-        (show
-          (37483956842069 / 2500000000000000 : ℝ) = (37483956842069 / 19531250000000 : ℝ) / 2 ^ 7
-          by norm_num)
-        (by norm_num)
-        ((by
-           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
-             (r := (37483956842069 / 19531250000000 : ℚ))
-             (U := (407435798096767790141 / 625000000000000000000 : ℚ))
-             14 (by decide +kernel)) :
-          Real.log (37483956842069 / 19531250000000 : ℝ) ≤
-            (407435798096767790141 / 625000000000000000000 : ℝ))
-    linarith only [h, Real.log_two_gt_d9]
-  exact
-    Uω_le_right_certificate (s := (79768945713427 / 10000000000000000 : ℝ)) (q :=
-      (37483956842069 / 2500000000000000 : ℝ)) (aρ_lt_bρ 4 (by decide)) (by norm_num [bρ_4])
-      (by norm_num) (by norm_num [aρ_4, bρ_4]) (by norm_num [aρ_4, bρ_4]) hlg
+    simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using
+      log_le_of_split_neg_rational
+        (r := (37483956842069 / 2500000000000000 : ℚ))
+        (r' := (37483956842069 / 19531250000000 : ℚ))
+        (U := (-(2625083115715732209859 / 625000000000000000000 : ℚ)))
+        (U' := (407435798096767790141 / 625000000000000000000 : ℚ))
+        7 14 (by decide +kernel) (by decide +kernel)
+  simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using
+    Uω_le_right_certificate_rational
+      (j := 4) (t := (694494763253 / 16000000000000 : ℚ))
+      (s := (79768945713427 / 10000000000000000 : ℚ))
+      (q := (37483956842069 / 2500000000000000 : ℚ))
+      (U := (-(2625083115715732209859 / 625000000000000000000 : ℚ)))
+      (by decide +kernel)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using hlg)
 
 lemma U_79_5 :
     Uω (aρ 5) (bρ 5) (694494763253 / 16000000000000 : ℝ) ≤
@@ -949,25 +901,21 @@ lemma U_80_1 :
   have hlg :
     Real.log (1506457859888209 / 40000000000000000 : ℝ) ≤
       (-(6558236691624471248019 / 2000000000000000000000 : ℝ)) := by
-    have h :=
-      log_le_of_split_neg 5
-        (show
-          (1506457859888209 / 40000000000000000 : ℝ) =
-            (1506457859888209 / 1250000000000000 : ℝ) / 2 ^ 5
-          by norm_num)
-        (by norm_num)
-        ((by
-           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
-             (r := (1506457859888209 / 1250000000000000 : ℚ))
-             (U := (373235111375528751981 / 2000000000000000000000 : ℚ))
-             7 (by decide +kernel)) :
-          Real.log (1506457859888209 / 1250000000000000 : ℝ) ≤
-            (373235111375528751981 / 2000000000000000000000 : ℝ))
-    linarith only [h, Real.log_two_gt_d9]
-  exact
-    Uω_le_right_certificate (s := (376185198709417 / 10000000000000000 : ℝ)) (q :=
-      (1506457859888209 / 40000000000000000 : ℝ)) (aρ_lt_bρ 1 (by decide)) (by norm_num [bρ_1])
-      (by norm_num) (by norm_num [aρ_1, bρ_1]) (by norm_num [aρ_1, bρ_1]) hlg
+    simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using
+      log_le_of_split_neg_rational
+        (r := (1506457859888209 / 40000000000000000 : ℚ))
+        (r' := (1506457859888209 / 1250000000000000 : ℚ))
+        (U := (-(6558236691624471248019 / 2000000000000000000000 : ℚ)))
+        (U' := (373235111375528751981 / 2000000000000000000000 : ℚ))
+        5 7 (by decide +kernel) (by decide +kernel)
+  simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using
+    Uω_le_right_certificate_rational
+      (j := 1) (t := (1412931037823 / 32000000000000 : ℚ))
+      (s := (376185198709417 / 10000000000000000 : ℚ))
+      (q := (1506457859888209 / 40000000000000000 : ℚ))
+      (U := (-(6558236691624471248019 / 2000000000000000000000 : ℚ)))
+      (by decide +kernel)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using hlg)
 
 lemma U_80_2 :
     Uω (aρ 2) (bρ 2) (1412931037823 / 32000000000000 : ℝ) ≤
@@ -975,25 +923,21 @@ lemma U_80_2 :
   have hlg :
     Real.log (1400982498276359 / 40000000000000000 : ℝ) ≤
       (-(33517056778454642676983 / 10000000000000000000000 : ℝ)) := by
-    have h :=
-      log_le_of_split_neg 5
-        (show
-          (1400982498276359 / 40000000000000000 : ℝ) =
-            (1400982498276359 / 1250000000000000 : ℝ) / 2 ^ 5
-          by norm_num)
-        (by norm_num)
-        ((by
-           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
-             (r := (1400982498276359 / 1250000000000000 : ℚ))
-             (U := (1140302236545357323017 / 10000000000000000000000 : ℚ))
-             6 (by decide +kernel)) :
-          Real.log (1400982498276359 / 1250000000000000 : ℝ) ≤
-            (1140302236545357323017 / 10000000000000000000000 : ℝ))
-    linarith only [h, Real.log_two_gt_d9]
-  exact
-    Uω_le_right_certificate (s := (86804132603373 / 2500000000000000 : ℝ)) (q :=
-      (1400982498276359 / 40000000000000000 : ℝ)) (aρ_lt_bρ 2 (by decide)) (by norm_num [bρ_2])
-      (by norm_num) (by norm_num [aρ_2, bρ_2]) (by norm_num [aρ_2, bρ_2]) hlg
+    simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using
+      log_le_of_split_neg_rational
+        (r := (1400982498276359 / 40000000000000000 : ℚ))
+        (r' := (1400982498276359 / 1250000000000000 : ℚ))
+        (U := (-(33517056778454642676983 / 10000000000000000000000 : ℚ)))
+        (U' := (1140302236545357323017 / 10000000000000000000000 : ℚ))
+        5 6 (by decide +kernel) (by decide +kernel)
+  simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using
+    Uω_le_right_certificate_rational
+      (j := 2) (t := (1412931037823 / 32000000000000 : ℚ))
+      (s := (86804132603373 / 2500000000000000 : ℚ))
+      (q := (1400982498276359 / 40000000000000000 : ℚ))
+      (U := (-(33517056778454642676983 / 10000000000000000000000 : ℚ)))
+      (by decide +kernel)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using hlg)
 
 lemma U_80_3 :
     Uω (aρ 3) (bρ 3) (1412931037823 / 32000000000000 : ℝ) ≤
@@ -1001,25 +945,21 @@ lemma U_80_3 :
   have hlg :
     Real.log (1173061294838367 / 40000000000000000 : ℝ) ≤
       (-(27572364292843690767 / 7812500000000000000 : ℝ)) := by
-    have h :=
-      log_le_of_split_neg 6
-        (show
-          (1173061294838367 / 40000000000000000 : ℝ) =
-            (1173061294838367 / 625000000000000 : ℝ) / 2 ^ 6
-          by norm_num)
-        (by norm_num)
-        ((by
-           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
-             (r := (1173061294838367 / 625000000000000 : ℚ))
-             (U := (4918909783718809233 / 7812500000000000000 : ℚ))
-             13 (by decide +kernel)) :
-          Real.log (1173061294838367 / 625000000000000 : ℝ) ≤
-            (4918909783718809233 / 7812500000000000000 : ℝ))
-    linarith only [h, Real.log_two_gt_d9]
-  exact
-    Uω_le_right_certificate (s := (17540752190281 / 625000000000000 : ℝ)) (q :=
-      (1173061294838367 / 40000000000000000 : ℝ)) (aρ_lt_bρ 3 (by decide)) (by norm_num [bρ_3])
-      (by norm_num) (by norm_num [aρ_3, bρ_3]) (by norm_num [aρ_3, bρ_3]) hlg
+    simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using
+      log_le_of_split_neg_rational
+        (r := (1173061294838367 / 40000000000000000 : ℚ))
+        (r' := (1173061294838367 / 625000000000000 : ℚ))
+        (U := (-(27572364292843690767 / 7812500000000000000 : ℚ)))
+        (U' := (4918909783718809233 / 7812500000000000000 : ℚ))
+        6 13 (by decide +kernel) (by decide +kernel)
+  simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using
+    Uω_le_right_certificate_rational
+      (j := 3) (t := (1412931037823 / 32000000000000 : ℚ))
+      (s := (17540752190281 / 625000000000000 : ℚ))
+      (q := (1173061294838367 / 40000000000000000 : ℚ))
+      (U := (-(27572364292843690767 / 7812500000000000000 : ℚ)))
+      (by decide +kernel)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using hlg)
 
 lemma U_80_4 :
     Uω (aρ 4) (bρ 4) (1412931037823 / 32000000000000 : ℝ) ≤
@@ -1027,25 +967,21 @@ lemma U_80_4 :
   have hlg :
     Real.log (652273459780041 / 40000000000000000 : ℝ) ≤
       (-(20580854203499261973059 / 5000000000000000000000 : ℝ)) := by
-    have h :=
-      log_le_of_split_neg 6
-        (show
-          (652273459780041 / 40000000000000000 : ℝ) =
-            (652273459780041 / 625000000000000 : ℝ) / 2 ^ 6
-          by norm_num)
-        (by norm_num)
-        ((by
-           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
-             (r := (652273459780041 / 625000000000000 : ℚ))
-             (U := (213561205500738026941 / 5000000000000000000000 : ℚ))
-             4 (by decide +kernel)) :
-          Real.log (652273459780041 / 625000000000000 : ℝ) ≤
-            (213561205500738026941 / 5000000000000000000000 : ℝ))
-    linarith only [h, Real.log_two_gt_d9]
-  exact
-    Uω_le_right_certificate (s := (98552298580333 / 10000000000000000 : ℝ)) (q :=
-      (652273459780041 / 40000000000000000 : ℝ)) (aρ_lt_bρ 4 (by decide)) (by norm_num [bρ_4])
-      (by norm_num) (by norm_num [aρ_4, bρ_4]) (by norm_num [aρ_4, bρ_4]) hlg
+    simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using
+      log_le_of_split_neg_rational
+        (r := (652273459780041 / 40000000000000000 : ℚ))
+        (r' := (652273459780041 / 625000000000000 : ℚ))
+        (U := (-(20580854203499261973059 / 5000000000000000000000 : ℚ)))
+        (U' := (213561205500738026941 / 5000000000000000000000 : ℚ))
+        6 4 (by decide +kernel) (by decide +kernel)
+  simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using
+    Uω_le_right_certificate_rational
+      (j := 4) (t := (1412931037823 / 32000000000000 : ℚ))
+      (s := (98552298580333 / 10000000000000000 : ℚ))
+      (q := (652273459780041 / 40000000000000000 : ℚ))
+      (U := (-(20580854203499261973059 / 5000000000000000000000 : ℚ)))
+      (by decide +kernel)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using hlg)
 
 lemma U_80_5 :
     Uω (aρ 5) (bρ 5) (1412931037823 / 32000000000000 : ℝ) ≤
@@ -1196,25 +1132,21 @@ lemma U_81_1 :
   have hlg :
     Real.log (192052279005631 / 5000000000000000 : ℝ) ≤
       (-(3259425568664305827969 / 1000000000000000000000 : ℝ)) := by
-    have h :=
-      log_le_of_split_neg 5
-        (show
-          (192052279005631 / 5000000000000000 : ℝ) =
-            (192052279005631 / 156250000000000 : ℝ) / 2 ^ 5
-          by norm_num)
-        (by norm_num)
-        ((by
-           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
-             (r := (192052279005631 / 156250000000000 : ℚ))
-             (U := (206310332835694172031 / 1000000000000000000000 : ℚ))
-             7 (by decide +kernel)) :
-          Real.log (192052279005631 / 156250000000000 : ℝ) ≤
-            (206310332835694172031 / 1000000000000000000000 : ℝ))
-    linarith only [h, Real.log_two_gt_d9]
-  exact
-    Uω_le_right_certificate (s := (191841831250637 / 5000000000000000 : ℝ)) (q :=
-      (192052279005631 / 5000000000000000 : ℝ)) (aρ_lt_bρ 1 (by decide)) (by norm_num [bρ_1])
-      (by norm_num) (by norm_num [aρ_1, bρ_1]) (by norm_num [aρ_1, bρ_1]) hlg
+    simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using
+      log_le_of_split_neg_rational
+        (r := (192052279005631 / 5000000000000000 : ℚ))
+        (r' := (192052279005631 / 156250000000000 : ℚ))
+        (U := (-(3259425568664305827969 / 1000000000000000000000 : ℚ)))
+        (U' := (206310332835694172031 / 1000000000000000000000 : ℚ))
+        5 7 (by decide +kernel) (by decide +kernel)
+  simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using
+    Uω_le_right_certificate_rational
+      (j := 1) (t := (71843627457 / 1600000000000 : ℚ))
+      (s := (191841831250637 / 5000000000000000 : ℚ))
+      (q := (192052279005631 / 5000000000000000 : ℚ))
+      (U := (-(3259425568664305827969 / 1000000000000000000000 : ℚ)))
+      (by decide +kernel)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using hlg)
 
 lemma U_81_2 :
     Uω (aρ 2) (bρ 2) (71843627457 / 1600000000000 : ℝ) ≤
@@ -1222,25 +1154,21 @@ lemma U_81_2 :
   have hlg :
     Real.log (715582457297373 / 20000000000000000 : ℝ) ≤
       (-(6660781429157999445921 / 2000000000000000000000 : ℝ)) := by
-    have h :=
-      log_le_of_split_neg 5
-        (show
-          (715582457297373 / 20000000000000000 : ℝ) =
-            (715582457297373 / 625000000000000 : ℝ) / 2 ^ 5
-          by norm_num)
-        (by norm_num)
-        ((by
-           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
-             (r := (715582457297373 / 625000000000000 : ℚ))
-             (U := (270690373842000554079 / 2000000000000000000000 : ℚ))
-             6 (by decide +kernel)) :
-          Real.log (715582457297373 / 625000000000000 : ℝ) ≤
-            (270690373842000554079 / 2000000000000000000000 : ℝ))
-    linarith only [h, Real.log_two_gt_d9]
-  exact
-    Uω_le_right_certificate (s := (354826016286123 / 10000000000000000 : ℝ)) (q :=
-      (715582457297373 / 20000000000000000 : ℝ)) (aρ_lt_bρ 2 (by decide)) (by norm_num [bρ_2])
-      (by norm_num) (by norm_num [aρ_2, bρ_2]) (by norm_num [aρ_2, bρ_2]) hlg
+    simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using
+      log_le_of_split_neg_rational
+        (r := (715582457297373 / 20000000000000000 : ℚ))
+        (r' := (715582457297373 / 625000000000000 : ℚ))
+        (U := (-(6660781429157999445921 / 2000000000000000000000 : ℚ)))
+        (U' := (270690373842000554079 / 2000000000000000000000 : ℚ))
+        5 6 (by decide +kernel) (by decide +kernel)
+  simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using
+    Uω_le_right_certificate_rational
+      (j := 2) (t := (71843627457 / 1600000000000 : ℚ))
+      (s := (354826016286123 / 10000000000000000 : ℚ))
+      (q := (715582457297373 / 20000000000000000 : ℚ))
+      (U := (-(6660781429157999445921 / 2000000000000000000000 : ℚ)))
+      (by decide +kernel)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using hlg)
 
 lemma U_81_3 :
     Uω (aρ 3) (bρ 3) (71843627457 / 1600000000000 : ℝ) ≤
@@ -1248,25 +1176,21 @@ lemma U_81_3 :
   have hlg :
     Real.log (120429677203231 / 4000000000000000 : ℝ) ≤
       (-(35029836476419809769441 / 10000000000000000000000 : ℝ)) := by
-    have h :=
-      log_le_of_split_neg 6
-        (show
-          (120429677203231 / 4000000000000000 : ℝ) =
-            (120429677203231 / 62500000000000 : ℝ) / 2 ^ 6
-          by norm_num)
-        (by norm_num)
-        ((by
-           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
-             (r := (120429677203231 / 62500000000000 : ℚ))
-             (U := (6558994341580190230559 / 10000000000000000000000 : ℚ))
-             14 (by decide +kernel)) :
-          Real.log (120429677203231 / 62500000000000 : ℝ) ≤
-            (6558994341580190230559 / 10000000000000000000000 : ℝ))
-    linarith only [h, Real.log_two_gt_d9]
-  exact
-    Uω_le_right_certificate (s := (57757610270981 / 2000000000000000 : ℝ)) (q :=
-      (120429677203231 / 4000000000000000 : ℝ)) (aρ_lt_bρ 3 (by decide)) (by norm_num [bρ_3])
-      (by norm_num) (by norm_num [aρ_3, bρ_3]) (by norm_num [aρ_3, bρ_3]) hlg
+    simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using
+      log_le_of_split_neg_rational
+        (r := (120429677203231 / 4000000000000000 : ℚ))
+        (r' := (120429677203231 / 62500000000000 : ℚ))
+        (U := (-(35029836476419809769441 / 10000000000000000000000 : ℚ)))
+        (U' := (6558994341580190230559 / 10000000000000000000000 : ℚ))
+        6 14 (by decide +kernel) (by decide +kernel)
+  simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using
+    Uω_le_right_certificate_rational
+      (j := 3) (t := (71843627457 / 1600000000000 : ℚ))
+      (s := (57757610270981 / 2000000000000000 : ℚ))
+      (q := (120429677203231 / 4000000000000000 : ℚ))
+      (U := (-(35029836476419809769441 / 10000000000000000000000 : ℚ)))
+      (by decide +kernel)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using hlg)
 
 lemma U_81_4 :
     Uω (aρ 4) (bρ 4) (71843627457 / 1600000000000 : ℝ) ≤
@@ -1274,24 +1198,21 @@ lemma U_81_4 :
   have hlg :
     Real.log (10932628365517 / 625000000000000 : ℝ) ≤
       (-(8091999804594550308781 / 2000000000000000000000 : ℝ)) := by
-    have h :=
-      log_le_of_split_neg 6
-        (show
-          (10932628365517 / 625000000000000 : ℝ) = (10932628365517 / 9765625000000 : ℝ) / 2 ^ 6 by
-          norm_num)
-        (by norm_num)
-        ((by
-           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
-             (r := (10932628365517 / 9765625000000 : ℚ))
-             (U := (225766359005449691219 / 2000000000000000000000 : ℚ))
-             6 (by decide +kernel)) :
-          Real.log (10932628365517 / 9765625000000 : ℝ) ≤
-            (225766359005449691219 / 2000000000000000000000 : ℝ))
-    linarith only [h, Real.log_two_gt_d9]
-  exact
-    Uω_le_right_certificate (s := (57388977050147 / 5000000000000000 : ℝ)) (q :=
-      (10932628365517 / 625000000000000 : ℝ)) (aρ_lt_bρ 4 (by decide)) (by norm_num [bρ_4])
-      (by norm_num) (by norm_num [aρ_4, bρ_4]) (by norm_num [aρ_4, bρ_4]) hlg
+    simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using
+      log_le_of_split_neg_rational
+        (r := (10932628365517 / 625000000000000 : ℚ))
+        (r' := (10932628365517 / 9765625000000 : ℚ))
+        (U := (-(8091999804594550308781 / 2000000000000000000000 : ℚ)))
+        (U' := (225766359005449691219 / 2000000000000000000000 : ℚ))
+        6 6 (by decide +kernel) (by decide +kernel)
+  simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using
+    Uω_le_right_certificate_rational
+      (j := 4) (t := (71843627457 / 1600000000000 : ℚ))
+      (s := (57388977050147 / 5000000000000000 : ℚ))
+      (q := (10932628365517 / 625000000000000 : ℚ))
+      (U := (-(8091999804594550308781 / 2000000000000000000000 : ℚ)))
+      (by decide +kernel)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using hlg)
 
 lemma U_81_5 :
     Uω (aρ 5) (bρ 5) (71843627457 / 1600000000000 : ℝ) ≤
@@ -1443,25 +1364,21 @@ lemma U_82_1 :
   have hlg :
     Real.log (3102795865275137 / 80000000000000000 : ℝ) ≤
       (-(32497230363190579783231 / 10000000000000000000000 : ℝ)) := by
-    have h :=
-      log_le_of_split_neg 5
-        (show
-          (3102795865275137 / 80000000000000000 : ℝ) =
-            (3102795865275137 / 2500000000000000 : ℝ) / 2 ^ 5
-          by norm_num)
-        (by norm_num)
-        ((by
-           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
-             (r := (3102795865275137 / 2500000000000000 : ℚ))
-             (U := (2160128651809420216769 / 10000000000000000000000 : ℚ))
-             7 (by decide +kernel)) :
-          Real.log (3102795865275137 / 2500000000000000 : ℝ) ≤
-            (2160128651809420216769 / 10000000000000000000000 : ℝ))
-    linarith only [h, Real.log_two_gt_d9]
-  exact
-    Uω_le_right_certificate (s := (387432651654253 / 10000000000000000 : ℝ)) (q :=
-      (3102795865275137 / 80000000000000000 : ℝ)) (aρ_lt_bρ 1 (by decide)) (by norm_num [bρ_1])
-      (by norm_num) (by norm_num [aρ_1, bρ_1]) (by norm_num [aρ_1, bρ_1]) hlg
+    simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using
+      log_le_of_split_neg_rational
+        (r := (3102795865275137 / 80000000000000000 : ℚ))
+        (r' := (3102795865275137 / 2500000000000000 : ℚ))
+        (U := (-(32497230363190579783231 / 10000000000000000000000 : ℚ)))
+        (U' := (2160128651809420216769 / 10000000000000000000000 : ℚ))
+        5 7 (by decide +kernel) (by decide +kernel)
+  simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using
+    Uω_le_right_certificate_rational
+      (j := 1) (t := (2897686609597 / 64000000000000 : ℚ))
+      (s := (387432651654253 / 10000000000000000 : ℚ))
+      (q := (3102795865275137 / 80000000000000000 : ℚ))
+      (U := (-(32497230363190579783231 / 10000000000000000000000 : ℚ)))
+      (by decide +kernel)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using hlg)
 
 lemma U_82_2 :
     Uω (aρ 2) (bρ 2) (2897686609597 / 64000000000000 : ℝ) ≤
@@ -1469,25 +1386,21 @@ lemma U_82_2 :
   have hlg :
     Real.log (578500836206773 / 16000000000000000 : ℝ) ≤
       (-(6639808015630789086519 / 2000000000000000000000 : ℝ)) := by
-    have h :=
-      log_le_of_split_neg 5
-        (show
-          (578500836206773 / 16000000000000000 : ℝ) =
-            (578500836206773 / 500000000000000 : ℝ) / 2 ^ 5
-          by norm_num)
-        (by norm_num)
-        ((by
-           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
-             (r := (578500836206773 / 500000000000000 : ℚ))
-             (U := (291663787369210913481 / 2000000000000000000000 : ℚ))
-             6 (by decide +kernel)) :
-          Real.log (578500836206773 / 500000000000000 : ℝ) ≤
-            (291663787369210913481 / 2000000000000000000000 : ℝ))
-    linarith only [h, Real.log_two_gt_d9]
-  exact
-    Uω_le_right_certificate (s := (71725748620787 / 2000000000000000 : ℝ)) (q :=
-      (578500836206773 / 16000000000000000 : ℝ)) (aρ_lt_bρ 2 (by decide)) (by norm_num [bρ_2])
-      (by norm_num) (by norm_num [aρ_2, bρ_2]) (by norm_num [aρ_2, bρ_2]) hlg
+    simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using
+      log_le_of_split_neg_rational
+        (r := (578500836206773 / 16000000000000000 : ℚ))
+        (r' := (578500836206773 / 500000000000000 : ℚ))
+        (U := (-(6639808015630789086519 / 2000000000000000000000 : ℚ)))
+        (U' := (291663787369210913481 / 2000000000000000000000 : ℚ))
+        5 6 (by decide +kernel) (by decide +kernel)
+  simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using
+    Uω_le_right_certificate_rational
+      (j := 2) (t := (2897686609597 / 64000000000000 : ℚ))
+      (s := (71725748620787 / 2000000000000000 : ℚ))
+      (q := (578500836206773 / 16000000000000000 : ℚ))
+      (U := (-(6639808015630789086519 / 2000000000000000000000 : ℚ)))
+      (by decide +kernel)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using hlg)
 
 lemma U_82_3 :
     Uω (aρ 3) (bρ 3) (2897686609597 / 64000000000000 : ℝ) ≤
@@ -1495,25 +1408,21 @@ lemma U_82_3 :
   have hlg :
     Real.log (2439776680760601 / 80000000000000000 : ℝ) ≤
       (-(87253003056903595321 / 25000000000000000000 : ℝ)) := by
-    have h :=
-      log_le_of_split_neg 6
-        (show
-          (2439776680760601 / 80000000000000000 : ℝ) =
-            (2439776680760601 / 1250000000000000 : ℝ) / 2 ^ 6
-          by norm_num)
-        (by norm_num)
-        ((by
-           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
-             (r := (2439776680760601 / 1250000000000000 : ℚ))
-             (U := (16719073988096404679 / 25000000000000000000 : ℚ))
-             14 (by decide +kernel)) :
-          Real.log (2439776680760601 / 1250000000000000 : ℝ) ≤
-            (16719073988096404679 / 25000000000000000000 : ℝ))
-    linarith only [h, Real.log_two_gt_d9]
-  exact
-    Uω_le_right_certificate (s := (292842974385619 / 10000000000000000 : ℝ)) (q :=
-      (2439776680760601 / 80000000000000000 : ℝ)) (aρ_lt_bρ 3 (by decide)) (by norm_num [bρ_3])
-      (by norm_num) (by norm_num [aρ_3, bρ_3]) (by norm_num [aρ_3, bρ_3]) hlg
+    simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using
+      log_le_of_split_neg_rational
+        (r := (2439776680760601 / 80000000000000000 : ℚ))
+        (r' := (2439776680760601 / 1250000000000000 : ℚ))
+        (U := (-(87253003056903595321 / 25000000000000000000 : ℚ)))
+        (U' := (16719073988096404679 / 25000000000000000000 : ℚ))
+        6 14 (by decide +kernel) (by decide +kernel)
+  simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using
+    Uω_le_right_certificate_rational
+      (j := 3) (t := (2897686609597 / 64000000000000 : ℚ))
+      (s := (292842974385619 / 10000000000000000 : ℚ))
+      (q := (2439776680760601 / 80000000000000000 : ℚ))
+      (U := (-(87253003056903595321 / 25000000000000000000 : ℚ)))
+      (by decide +kernel)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using hlg)
 
 lemma U_82_4 :
     Uω (aρ 4) (bρ 4) (2897686609597 / 64000000000000 : ℝ) ≤
@@ -1521,25 +1430,21 @@ lemma U_82_4 :
   have hlg :
     Real.log (1444254397221741 / 80000000000000000 : ℝ) ≤
       (-(20072167163996576495227 / 5000000000000000000000 : ℝ)) := by
-    have h :=
-      log_le_of_split_neg 6
-        (show
-          (1444254397221741 / 80000000000000000 : ℝ) =
-            (1444254397221741 / 1250000000000000 : ℝ) / 2 ^ 6
-          by norm_num)
-        (by norm_num)
-        ((by
-           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
-             (r := (1444254397221741 / 1250000000000000 : ℚ))
-             (U := (722248245003423504773 / 5000000000000000000000 : ℚ))
-             6 (by decide +kernel)) :
-          Real.log (1444254397221741 / 1250000000000000 : ℝ) ≤
-            (722248245003423504773 / 5000000000000000000000 : ℝ))
-    linarith only [h, Real.log_two_gt_d9]
-  exact
-    Uω_le_right_certificate (s := (7641036535369 / 625000000000000 : ℝ)) (q :=
-      (1444254397221741 / 80000000000000000 : ℝ)) (aρ_lt_bρ 4 (by decide)) (by norm_num [bρ_4])
-      (by norm_num) (by norm_num [aρ_4, bρ_4]) (by norm_num [aρ_4, bρ_4]) hlg
+    simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using
+      log_le_of_split_neg_rational
+        (r := (1444254397221741 / 80000000000000000 : ℚ))
+        (r' := (1444254397221741 / 1250000000000000 : ℚ))
+        (U := (-(20072167163996576495227 / 5000000000000000000000 : ℚ)))
+        (U' := (722248245003423504773 / 5000000000000000000000 : ℚ))
+        6 6 (by decide +kernel) (by decide +kernel)
+  simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using
+    Uω_le_right_certificate_rational
+      (j := 4) (t := (2897686609597 / 64000000000000 : ℚ))
+      (s := (7641036535369 / 625000000000000 : ℚ))
+      (q := (1444254397221741 / 80000000000000000 : ℚ))
+      (U := (-(20072167163996576495227 / 5000000000000000000000 : ℚ)))
+      (by decide +kernel)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using hlg)
 
 lemma U_82_5 :
     Uω (aρ 5) (bρ 5) (2897686609597 / 64000000000000 : ℝ) ≤
@@ -1691,25 +1596,21 @@ lemma U_83_1 :
   have hlg :
     Real.log (1566377321980367 / 40000000000000000 : ℝ) ≤
       (-(8100284844802228771499 / 2500000000000000000000 : ℝ)) := by
-    have h :=
-      log_le_of_split_neg 5
-        (show
-          (1566377321980367 / 40000000000000000 : ℝ) =
-            (1566377321980367 / 1250000000000000 : ℝ) / 2 ^ 5
-          by norm_num)
-        (by norm_num)
-        ((by
-           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
-             (r := (1566377321980367 / 1250000000000000 : ℚ))
-             (U := (564054908947771228501 / 2500000000000000000000 : ℚ))
-             7 (by decide +kernel)) :
-          Real.log (1566377321980367 / 1250000000000000 : ℝ) ≤
-            (564054908947771228501 / 2500000000000000000000 : ℝ))
-    linarith only [h, Real.log_two_gt_d9]
-  exact
-    Uω_le_right_certificate (s := (391181485182371 / 10000000000000000 : ℝ)) (q :=
-      (1566377321980367 / 40000000000000000 : ℝ)) (aρ_lt_bρ 1 (by decide)) (by norm_num [bρ_1])
-      (by norm_num) (by norm_num [aρ_1, bρ_1]) (by norm_num [aρ_1, bρ_1]) hlg
+    simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using
+      log_le_of_split_neg_rational
+        (r := (1566377321980367 / 40000000000000000 : ℚ))
+        (r' := (1566377321980367 / 1250000000000000 : ℚ))
+        (U := (-(8100284844802228771499 / 2500000000000000000000 : ℚ)))
+        (U' := (564054908947771228501 / 2500000000000000000000 : ℚ))
+        5 7 (by decide +kernel) (by decide +kernel)
+  simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using
+    Uω_le_right_certificate_rational
+      (j := 1) (t := (1460814060457 / 32000000000000 : ℚ))
+      (s := (391181485182371 / 10000000000000000 : ℚ))
+      (q := (1566377321980367 / 40000000000000000 : ℚ))
+      (U := (-(8100284844802228771499 / 2500000000000000000000 : ℚ)))
+      (by decide +kernel)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using hlg)
 
 lemma U_83_2 :
     Uω (aρ 2) (bρ 2) (1460814060457 / 32000000000000 : ℝ) ≤
@@ -1717,25 +1618,21 @@ lemma U_83_2 :
   have hlg :
     Real.log (1461336691110951 / 40000000000000000 : ℝ) ≤
       (-(4136909867612453369687 / 1250000000000000000000 : ℝ)) := by
-    have h :=
-      log_le_of_split_neg 5
-        (show
-          (1461336691110951 / 40000000000000000 : ℝ) =
-            (1461336691110951 / 1250000000000000 : ℝ) / 2 ^ 5
-          by norm_num)
-        (by norm_num)
-        ((by
-           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
-             (r := (1461336691110951 / 1250000000000000 : ℚ))
-             (U := (195260009262546630313 / 1250000000000000000000 : ℚ))
-             6 (by decide +kernel)) :
-          Real.log (1461336691110951 / 1250000000000000 : ℝ) ≤
-            (195260009262546630313 / 1250000000000000000000 : ℝ))
-    linarith only [h, Real.log_two_gt_d9]
-  exact
-    Uω_le_right_certificate (s := (362430182257663 / 10000000000000000 : ℝ)) (q :=
-      (1461336691110951 / 40000000000000000 : ℝ)) (aρ_lt_bρ 2 (by decide)) (by norm_num [bρ_2])
-      (by norm_num) (by norm_num [aρ_2, bρ_2]) (by norm_num [aρ_2, bρ_2]) hlg
+    simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using
+      log_le_of_split_neg_rational
+        (r := (1461336691110951 / 40000000000000000 : ℚ))
+        (r' := (1461336691110951 / 1250000000000000 : ℚ))
+        (U := (-(4136909867612453369687 / 1250000000000000000000 : ℚ)))
+        (U' := (195260009262546630313 / 1250000000000000000000 : ℚ))
+        5 6 (by decide +kernel) (by decide +kernel)
+  simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using
+    Uω_le_right_certificate_rational
+      (j := 2) (t := (1460814060457 / 32000000000000 : ℚ))
+      (s := (362430182257663 / 10000000000000000 : ℚ))
+      (q := (1461336691110951 / 40000000000000000 : ℚ))
+      (U := (-(4136909867612453369687 / 1250000000000000000000 : ℚ)))
+      (by decide +kernel)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using hlg)
 
 lemma U_83_3 :
     Uω (aρ 3) (bρ 3) (1460814060457 / 32000000000000 : ℝ) ≤
@@ -1743,25 +1640,21 @@ lemma U_83_3 :
   have hlg :
     Real.log (1235463415565381 / 40000000000000000 : ℝ) ≤
       (-(34774333175818615317637 / 10000000000000000000000 : ℝ)) := by
-    have h :=
-      log_le_of_split_neg 6
-        (show
-          (1235463415565381 / 40000000000000000 : ℝ) =
-            (1235463415565381 / 625000000000000 : ℝ) / 2 ^ 6
-          by norm_num)
-        (by norm_num)
-        ((by
-           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
-             (r := (1235463415565381 / 625000000000000 : ℚ))
-             (U := (6814497642181384682363 / 10000000000000000000000 : ℚ))
-             14 (by decide +kernel)) :
-          Real.log (1235463415565381 / 625000000000000 : ℝ) ≤
-            (6814497642181384682363 / 10000000000000000000000 : ℝ))
-    linarith only [h, Real.log_two_gt_d9]
-  exact
-    Uω_le_right_certificate (s := (148444825417439 / 5000000000000000 : ℝ)) (q :=
-      (1235463415565381 / 40000000000000000 : ℝ)) (aρ_lt_bρ 3 (by decide)) (by norm_num [bρ_3])
-      (by norm_num) (by norm_num [aρ_3, bρ_3]) (by norm_num [aρ_3, bρ_3]) hlg
+    simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using
+      log_le_of_split_neg_rational
+        (r := (1235463415565381 / 40000000000000000 : ℚ))
+        (r' := (1235463415565381 / 625000000000000 : ℚ))
+        (U := (-(34774333175818615317637 / 10000000000000000000000 : ℚ)))
+        (U' := (6814497642181384682363 / 10000000000000000000000 : ℚ))
+        6 14 (by decide +kernel) (by decide +kernel)
+  simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using
+    Uω_le_right_certificate_rational
+      (j := 3) (t := (1460814060457 / 32000000000000 : ℚ))
+      (s := (148444825417439 / 5000000000000000 : ℚ))
+      (q := (1235463415565381 / 40000000000000000 : ℚ))
+      (U := (-(34774333175818615317637 / 10000000000000000000000 : ℚ)))
+      (by decide +kernel)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using hlg)
 
 lemma U_83_4 :
     Uω (aρ 4) (bρ 4) (1460814060457 / 32000000000000 : ℝ) ≤
@@ -1769,25 +1662,21 @@ lemma U_83_4 :
   have hlg :
     Real.log (743918890423493 / 40000000000000000 : ℝ) ≤
       (-(19923513604471120193173 / 5000000000000000000000 : ℝ)) := by
-    have h :=
-      log_le_of_split_neg 6
-        (show
-          (743918890423493 / 40000000000000000 : ℝ) =
-            (743918890423493 / 625000000000000 : ℝ) / 2 ^ 6
-          by norm_num)
-        (by norm_num)
-        ((by
-           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
-             (r := (743918890423493 / 625000000000000 : ℚ))
-             (U := (870901804528879806827 / 5000000000000000000000 : ℚ))
-             7 (by decide +kernel)) :
-          Real.log (743918890423493 / 625000000000000 : ℝ) ≤
-            (870901804528879806827 / 5000000000000000000000 : ℝ))
-    linarith only [h, Real.log_two_gt_d9]
-  exact
-    Uω_le_right_certificate (s := (64705784664467 / 5000000000000000 : ℝ)) (q :=
-      (743918890423493 / 40000000000000000 : ℝ)) (aρ_lt_bρ 4 (by decide)) (by norm_num [bρ_4])
-      (by norm_num) (by norm_num [aρ_4, bρ_4]) (by norm_num [aρ_4, bρ_4]) hlg
+    simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using
+      log_le_of_split_neg_rational
+        (r := (743918890423493 / 40000000000000000 : ℚ))
+        (r' := (743918890423493 / 625000000000000 : ℚ))
+        (U := (-(19923513604471120193173 / 5000000000000000000000 : ℚ)))
+        (U' := (870901804528879806827 / 5000000000000000000000 : ℚ))
+        6 7 (by decide +kernel) (by decide +kernel)
+  simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using
+    Uω_le_right_certificate_rational
+      (j := 4) (t := (1460814060457 / 32000000000000 : ℚ))
+      (s := (64705784664467 / 5000000000000000 : ℚ))
+      (q := (743918890423493 / 40000000000000000 : ℚ))
+      (U := (-(19923513604471120193173 / 5000000000000000000000 : ℚ)))
+      (by decide +kernel)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using hlg)
 
 lemma U_83_5 :
     Uω (aρ 5) (bρ 5) (1460814060457 / 32000000000000 : ℝ) ≤
@@ -1939,25 +1828,21 @@ lemma U_84_1 :
   have hlg :
     Real.log (3162712817873931 / 80000000000000000 : ℝ) ≤
       (-(16152982436976417664993 / 5000000000000000000000 : ℝ)) := by
-    have h :=
-      log_le_of_split_neg 5
-        (show
-          (3162712817873931 / 80000000000000000 : ℝ) =
-            (3162712817873931 / 2500000000000000 : ℝ) / 2 ^ 5
-          by norm_num)
-        (by norm_num)
-        ((by
-           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
-             (r := (3162712817873931 / 2500000000000000 : ℚ))
-             (U := (1175697070523582335007 / 5000000000000000000000 : ℚ))
-             8 (by decide +kernel)) :
-          Real.log (3162712817873931 / 2500000000000000 : ℝ) ≤
-            (1175697070523582335007 / 5000000000000000000000 : ℝ))
-    linarith only [h, Real.log_two_gt_d9]
-  exact
-    Uω_le_right_certificate (s := (394930167517389 / 10000000000000000 : ℝ)) (q :=
-      (3162712817873931 / 80000000000000000 : ℝ)) (aρ_lt_bρ 1 (by decide)) (by norm_num [bρ_1])
-      (by norm_num) (by norm_num [aρ_1, bρ_1]) (by norm_num [aρ_1, bρ_1]) hlg
+    simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using
+      log_le_of_split_neg_rational
+        (r := (3162712817873931 / 80000000000000000 : ℚ))
+        (r' := (3162712817873931 / 2500000000000000 : ℚ))
+        (U := (-(16152982436976417664993 / 5000000000000000000000 : ℚ)))
+        (U' := (1175697070523582335007 / 5000000000000000000000 : ℚ))
+        5 8 (by decide +kernel) (by decide +kernel)
+  simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using
+    Uω_le_right_certificate_rational
+      (j := 1) (t := (2945569632231 / 64000000000000 : ℚ))
+      (s := (394930167517389 / 10000000000000000 : ℚ))
+      (q := (3162712817873931 / 80000000000000000 : ℚ))
+      (U := (-(16152982436976417664993 / 5000000000000000000000 : ℚ)))
+      (by decide +kernel)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using hlg)
 
 lemma U_84_2 :
     Uω (aρ 2) (bρ 2) (2945569632231 / 64000000000000 : ℝ) ≤
@@ -1965,25 +1850,21 @@ lemma U_84_2 :
   have hlg :
     Real.log (2952837593143699 / 80000000000000000 : ℝ) ≤
       (-(16496300146835009040687 / 5000000000000000000000 : ℝ)) := by
-    have h :=
-      log_le_of_split_neg 5
-        (show
-          (2952837593143699 / 80000000000000000 : ℝ) =
-            (2952837593143699 / 2500000000000000 : ℝ) / 2 ^ 5
-          by norm_num)
-        (by norm_num)
-        ((by
-           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
-             (r := (2952837593143699 / 2500000000000000 : ℚ))
-             (U := (832379360664990959313 / 5000000000000000000000 : ℚ))
-             7 (by decide +kernel)) :
-          Real.log (2952837593143699 / 2500000000000000 : ℝ) ≤
-            (832379360664990959313 / 5000000000000000000000 : ℝ))
-    linarith only [h, Real.log_two_gt_d9]
-  exact
-    Uω_le_right_certificate (s := (366230373844831 / 10000000000000000 : ℝ)) (q :=
-      (2952837593143699 / 80000000000000000 : ℝ)) (aρ_lt_bρ 2 (by decide)) (by norm_num [bρ_2])
-      (by norm_num) (by norm_num [aρ_2, bρ_2]) (by norm_num [aρ_2, bρ_2]) hlg
+    simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using
+      log_le_of_split_neg_rational
+        (r := (2952837593143699 / 80000000000000000 : ℚ))
+        (r' := (2952837593143699 / 2500000000000000 : ℚ))
+        (U := (-(16496300146835009040687 / 5000000000000000000000 : ℚ)))
+        (U' := (832379360664990959313 / 5000000000000000000000 : ℚ))
+        5 7 (by decide +kernel) (by decide +kernel)
+  simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using
+    Uω_le_right_certificate_rational
+      (j := 2) (t := (2945569632231 / 64000000000000 : ℚ))
+      (s := (366230373844831 / 10000000000000000 : ℚ))
+      (q := (2952837593143699 / 80000000000000000 : ℚ))
+      (U := (-(16496300146835009040687 / 5000000000000000000000 : ℚ)))
+      (by decide +kernel)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using hlg)
 
 lemma U_84_3 :
     Uω (aρ 3) (bρ 3) (2945569632231 / 64000000000000 : ℝ) ≤
@@ -1991,25 +1872,21 @@ lemma U_84_3 :
   have hlg :
     Real.log (2502045325907491 / 80000000000000000 : ℝ) ≤
       (-(34649181056232259045777 / 10000000000000000000000 : ℝ)) := by
-    have h :=
-      log_le_of_split_neg 5
-        (show
-          (2502045325907491 / 80000000000000000 : ℝ) =
-            (2502045325907491 / 2500000000000000 : ℝ) / 2 ^ 5
-          by norm_num)
-        (by norm_num)
-        ((by
-           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
-             (r := (2502045325907491 / 2500000000000000 : ℚ))
-             (U := (8177958767740954223 / 10000000000000000000000 : ℚ))
-             2 (by decide +kernel)) :
-          Real.log (2502045325907491 / 2500000000000000 : ℝ) ≤
-            (8177958767740954223 / 10000000000000000000000 : ℝ))
-    linarith only [h, Real.log_two_gt_d9]
-  exact
-    Uω_le_right_certificate (s := (300928413385779 / 10000000000000000 : ℝ)) (q :=
-      (2502045325907491 / 80000000000000000 : ℝ)) (aρ_lt_bρ 3 (by decide)) (by norm_num [bρ_3])
-      (by norm_num) (by norm_num [aρ_3, bρ_3]) (by norm_num [aρ_3, bρ_3]) hlg
+    simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using
+      log_le_of_split_neg_rational
+        (r := (2502045325907491 / 80000000000000000 : ℚ))
+        (r' := (2502045325907491 / 2500000000000000 : ℚ))
+        (U := (-(34649181056232259045777 / 10000000000000000000000 : ℚ)))
+        (U' := (8177958767740954223 / 10000000000000000000000 : ℚ))
+        5 2 (by decide +kernel) (by decide +kernel)
+  simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using
+    Uω_le_right_certificate_rational
+      (j := 3) (t := (2945569632231 / 64000000000000 : ℚ))
+      (s := (300928413385779 / 10000000000000000 : ℚ))
+      (q := (2502045325907491 / 80000000000000000 : ℚ))
+      (U := (-(34649181056232259045777 / 10000000000000000000000 : ℚ)))
+      (by decide +kernel)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using hlg)
 
 lemma U_84_4 :
     Uω (aρ 4) (bρ 4) (2945569632231 / 64000000000000 : ℝ) ≤
@@ -2017,25 +1894,21 @@ lemma U_84_4 :
   have hlg :
     Real.log (1530330503929419 / 80000000000000000 : ℝ) ≤
       (-(494567863174717687381 / 125000000000000000000 : ℝ)) := by
-    have h :=
-      log_le_of_split_neg 6
-        (show
-          (1530330503929419 / 80000000000000000 : ℝ) =
-            (1530330503929419 / 1250000000000000 : ℝ) / 2 ^ 6
-          by norm_num)
-        (by norm_num)
-        ((by
-           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
-             (r := (1530330503929419 / 1250000000000000 : ℚ))
-             (U := (25292522050282312619 / 125000000000000000000 : ℚ))
-             7 (by decide +kernel)) :
-          Real.log (1530330503929419 / 1250000000000000 : ℝ) ≤
-            (25292522050282312619 / 125000000000000000000 : ℝ))
-    linarith only [h, Real.log_two_gt_d9]
-  exact
-    Uω_le_right_certificate (s := (136293888956261 / 10000000000000000 : ℝ)) (q :=
-      (1530330503929419 / 80000000000000000 : ℝ)) (aρ_lt_bρ 4 (by decide)) (by norm_num [bρ_4])
-      (by norm_num) (by norm_num [aρ_4, bρ_4]) (by norm_num [aρ_4, bρ_4]) hlg
+    simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using
+      log_le_of_split_neg_rational
+        (r := (1530330503929419 / 80000000000000000 : ℚ))
+        (r' := (1530330503929419 / 1250000000000000 : ℚ))
+        (U := (-(494567863174717687381 / 125000000000000000000 : ℚ)))
+        (U' := (25292522050282312619 / 125000000000000000000 : ℚ))
+        6 7 (by decide +kernel) (by decide +kernel)
+  simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using
+    Uω_le_right_certificate_rational
+      (j := 4) (t := (2945569632231 / 64000000000000 : ℚ))
+      (s := (136293888956261 / 10000000000000000 : ℚ))
+      (q := (1530330503929419 / 80000000000000000 : ℚ))
+      (U := (-(494567863174717687381 / 125000000000000000000 : ℚ)))
+      (by decide +kernel)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using hlg)
 
 lemma U_84_5 :
     Uω (aρ 5) (bρ 5) (2945569632231 / 64000000000000 : ℝ) ≤
@@ -2186,24 +2059,21 @@ lemma U_85_1 :
   have hlg :
     Real.log (39908380050929 / 1000000000000000 : ℝ) ≤
       (-(16105844747499819637607 / 5000000000000000000000 : ℝ)) := by
-    have h :=
-      log_le_of_split_neg 5
-        (show
-          (39908380050929 / 1000000000000000 : ℝ) = (39908380050929 / 31250000000000 : ℝ) / 2 ^ 5
-          by norm_num)
-        (by norm_num)
-        ((by
-           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
-             (r := (39908380050929 / 31250000000000 : ℚ))
-             (U := (1222834760000180362393 / 5000000000000000000000 : ℚ))
-             8 (by decide +kernel)) :
-          Real.log (39908380050929 / 31250000000000 : ℝ) ≤
-            (1222834760000180362393 / 5000000000000000000000 : ℝ))
-    linarith only [h, Real.log_two_gt_d9]
-  exact
-    Uω_le_right_certificate (s := (79735740584841 / 2000000000000000 : ℝ)) (q :=
-      (39908380050929 / 1000000000000000 : ℝ)) (aρ_lt_bρ 1 (by decide)) (by norm_num [bρ_1])
-      (by norm_num) (by norm_num [aρ_1, bρ_1]) (by norm_num [aρ_1, bρ_1]) hlg
+    simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using
+      log_le_of_split_neg_rational
+        (r := (39908380050929 / 1000000000000000 : ℚ))
+        (r' := (39908380050929 / 31250000000000 : ℚ))
+        (U := (-(16105844747499819637607 / 5000000000000000000000 : ℚ)))
+        (U' := (1222834760000180362393 / 5000000000000000000000 : ℚ))
+        5 8 (by decide +kernel) (by decide +kernel)
+  simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using
+    Uω_le_right_certificate_rational
+      (j := 1) (t := (742377785887 / 16000000000000 : ℚ))
+      (s := (79735740584841 / 2000000000000000 : ℚ))
+      (q := (39908380050929 / 1000000000000000 : ℚ))
+      (U := (-(16105844747499819637607 / 5000000000000000000000 : ℚ)))
+      (by decide +kernel)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using hlg)
 
 lemma U_85_2 :
     Uω (aρ 2) (bρ 2) (742377785887 / 16000000000000 : ℝ) ≤
@@ -2211,24 +2081,21 @@ lemma U_85_2 :
   have hlg :
     Real.log (18643731047181 / 500000000000000 : ℝ) ≤
       (-(8222745361049200402393 / 2500000000000000000000 : ℝ)) := by
-    have h :=
-      log_le_of_split_neg 5
-        (show
-          (18643731047181 / 500000000000000 : ℝ) = (18643731047181 / 15625000000000 : ℝ) / 2 ^ 5
-          by norm_num)
-        (by norm_num)
-        ((by
-           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
-             (r := (18643731047181 / 15625000000000 : ℚ))
-             (U := (441594392700799597607 / 2500000000000000000000 : ℚ))
-             7 (by decide +kernel)) :
-          Real.log (18643731047181 / 15625000000000 : ℝ) ≤
-            (441594392700799597607 / 2500000000000000000000 : ℝ))
-    linarith only [h, Real.log_two_gt_d9]
-  exact
-    Uω_le_right_certificate (s := (74005871260573 / 2000000000000000 : ℝ)) (q :=
-      (18643731047181 / 500000000000000 : ℝ)) (aρ_lt_bρ 2 (by decide)) (by norm_num [bρ_2])
-      (by norm_num) (by norm_num [aρ_2, bρ_2]) (by norm_num [aρ_2, bρ_2]) hlg
+    simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using
+      log_le_of_split_neg_rational
+        (r := (18643731047181 / 500000000000000 : ℚ))
+        (r' := (18643731047181 / 15625000000000 : ℚ))
+        (U := (-(8222745361049200402393 / 2500000000000000000000 : ℚ)))
+        (U' := (441594392700799597607 / 2500000000000000000000 : ℚ))
+        5 7 (by decide +kernel) (by decide +kernel)
+  simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using
+    Uω_le_right_certificate_rational
+      (j := 2) (t := (742377785887 / 16000000000000 : ℚ))
+      (s := (74005871260573 / 2000000000000000 : ℚ))
+      (q := (18643731047181 / 500000000000000 : ℚ))
+      (U := (-(8222745361049200402393 / 2500000000000000000000 : ℚ)))
+      (by decide +kernel)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using hlg)
 
 lemma U_85_3 :
     Uω (aρ 3) (bρ 3) (742377785887 / 16000000000000 : ℝ) ≤
@@ -2236,25 +2103,21 @@ lemma U_85_3 :
   have hlg :
     Real.log (158320838924591 / 5000000000000000 : ℝ) ≤
       (-(17262847949594570677381 / 5000000000000000000000 : ℝ)) := by
-    have h :=
-      log_le_of_split_neg 5
-        (show
-          (158320838924591 / 5000000000000000 : ℝ) =
-            (158320838924591 / 156250000000000 : ℝ) / 2 ^ 5
-          by norm_num)
-        (by norm_num)
-        ((by
-           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
-             (r := (158320838924591 / 156250000000000 : ℚ))
-             (U := (65831557905429322619 / 5000000000000000000000 : ℚ))
-             3 (by decide +kernel)) :
-          Real.log (158320838924591 / 156250000000000 : ℝ) ≤
-            (65831557905429322619 / 5000000000000000000000 : ℝ))
-    linarith only [h, Real.log_two_gt_d9]
-  exact
-    Uω_le_right_certificate (s := (304959576463989 / 10000000000000000 : ℝ)) (q :=
-      (158320838924591 / 5000000000000000 : ℝ)) (aρ_lt_bρ 3 (by decide)) (by norm_num [bρ_3])
-      (by norm_num) (by norm_num [aρ_3, bρ_3]) (by norm_num [aρ_3, bρ_3]) hlg
+    simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using
+      log_le_of_split_neg_rational
+        (r := (158320838924591 / 5000000000000000 : ℚ))
+        (r' := (158320838924591 / 156250000000000 : ℚ))
+        (U := (-(17262847949594570677381 / 5000000000000000000000 : ℚ)))
+        (U' := (65831557905429322619 / 5000000000000000000000 : ℚ))
+        5 3 (by decide +kernel) (by decide +kernel)
+  simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using
+    Uω_le_right_certificate_rational
+      (j := 3) (t := (742377785887 / 16000000000000 : ℚ))
+      (s := (304959576463989 / 10000000000000000 : ℚ))
+      (q := (158320838924591 / 5000000000000000 : ℚ))
+      (U := (-(17262847949594570677381 / 5000000000000000000000 : ℚ)))
+      (by decide +kernel)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using hlg)
 
 lemma U_85_4 :
     Uω (aρ 4) (bρ 4) (742377785887 / 16000000000000 : ℝ) ≤
@@ -2262,25 +2125,21 @@ lemma U_85_4 :
   have hlg :
     Real.log (392972531333811 / 20000000000000000 : ℝ) ≤
       (-(7859495672749720896173 / 2000000000000000000000 : ℝ)) := by
-    have h :=
-      log_le_of_split_neg 6
-        (show
-          (392972531333811 / 20000000000000000 : ℝ) =
-            (392972531333811 / 312500000000000 : ℝ) / 2 ^ 6
-          by norm_num)
-        (by norm_num)
-        ((by
-           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
-             (r := (392972531333811 / 312500000000000 : ℚ))
-             (U := (458270490850279103827 / 2000000000000000000000 : ℚ))
-             7 (by decide +kernel)) :
-          Real.log (392972531333811 / 312500000000000 : ℝ) ≤
-            (458270490850279103827 / 2000000000000000000000 : ℝ))
-    linarith only [h, Real.log_two_gt_d9]
-  exact
-    Uω_le_right_certificate (s := (35735733291109 / 2500000000000000 : ℝ)) (q :=
-      (392972531333811 / 20000000000000000 : ℝ)) (aρ_lt_bρ 4 (by decide)) (by norm_num [bρ_4])
-      (by norm_num) (by norm_num [aρ_4, bρ_4]) (by norm_num [aρ_4, bρ_4]) hlg
+    simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using
+      log_le_of_split_neg_rational
+        (r := (392972531333811 / 20000000000000000 : ℚ))
+        (r' := (392972531333811 / 312500000000000 : ℚ))
+        (U := (-(7859495672749720896173 / 2000000000000000000000 : ℚ)))
+        (U' := (458270490850279103827 / 2000000000000000000000 : ℚ))
+        6 7 (by decide +kernel) (by decide +kernel)
+  simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using
+    Uω_le_right_certificate_rational
+      (j := 4) (t := (742377785887 / 16000000000000 : ℚ))
+      (s := (35735733291109 / 2500000000000000 : ℚ))
+      (q := (392972531333811 / 20000000000000000 : ℚ))
+      (U := (-(7859495672749720896173 / 2000000000000000000000 : ℚ)))
+      (by decide +kernel)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using hlg)
 
 lemma U_85_5 :
     Uω (aρ 5) (bρ 5) (742377785887 / 16000000000000 : ℝ) ≤
@@ -2432,25 +2291,21 @@ lemma U_86_1 :
   have hlg :
     Real.log (3222627418985217 / 80000000000000000 : ℝ) ≤
       (-(16059148189551546355899 / 5000000000000000000000 : ℝ)) := by
-    have h :=
-      log_le_of_split_neg 5
-        (show
-          (3222627418985217 / 80000000000000000 : ℝ) =
-            (3222627418985217 / 2500000000000000 : ℝ) / 2 ^ 5
-          by norm_num)
-        (by norm_num)
-        ((by
-           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
-             (r := (3222627418985217 / 2500000000000000 : ℚ))
-             (U := (1269531317948453644101 / 5000000000000000000000 : ℚ))
-             8 (by decide +kernel)) :
-          Real.log (3222627418985217 / 2500000000000000 : ℝ) ≤
-            (1269531317948453644101 / 5000000000000000000000 : ℝ))
-    linarith only [h, Real.log_two_gt_d9]
-  exact
-    Uω_le_right_certificate (s := (50303386938581 / 1250000000000000 : ℝ)) (q :=
-      (3222627418985217 / 80000000000000000 : ℝ)) (aρ_lt_bρ 1 (by decide)) (by norm_num [bρ_1])
-      (by norm_num) (by norm_num [aρ_1, bρ_1]) (by norm_num [aρ_1, bρ_1]) hlg
+    simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using
+      log_le_of_split_neg_rational
+        (r := (3222627418985217 / 80000000000000000 : ℚ))
+        (r' := (3222627418985217 / 2500000000000000 : ℚ))
+        (U := (-(16059148189551546355899 / 5000000000000000000000 : ℚ)))
+        (U' := (1269531317948453644101 / 5000000000000000000000 : ℚ))
+        5 8 (by decide +kernel) (by decide +kernel)
+  simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using
+    Uω_le_right_certificate_rational
+      (j := 1) (t := (598690530973 / 12800000000000 : ℚ))
+      (s := (50303386938581 / 1250000000000000 : ℚ))
+      (q := (3222627418985217 / 80000000000000000 : ℚ))
+      (U := (-(16059148189551546355899 / 5000000000000000000000 : ℚ)))
+      (by decide +kernel)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using hlg)
 
 lemma U_86_2 :
     Uω (aρ 2) (bρ 2) (598690530973 / 12800000000000 : ℝ) ≤
@@ -2458,25 +2313,21 @@ lemma U_86_2 :
   have hlg :
     Real.log (3013151652889589 / 80000000000000000 : ℝ) ≤
       (-(1024700013012026515809 / 312500000000000000000 : ℝ)) := by
-    have h :=
-      log_le_of_split_neg 5
-        (show
-          (3013151652889589 / 80000000000000000 : ℝ) =
-            (3013151652889589 / 2500000000000000 : ℝ) / 2 ^ 5
-          by norm_num)
-        (by norm_num)
-        ((by
-           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
-             (r := (3013151652889589 / 2500000000000000 : ℚ))
-             (U := (58342456206723484191 / 312500000000000000000 : ℚ))
-             7 (by decide +kernel)) :
-          Real.log (3013151652889589 / 2500000000000000 : ℝ) ≤
-            (58342456206723484191 / 312500000000000000000 : ℝ))
-    linarith only [h, Real.log_two_gt_d9]
-  exact
-    Uω_le_right_certificate (s := (373827166494741 / 10000000000000000 : ℝ)) (q :=
-      (3013151652889589 / 80000000000000000 : ℝ)) (aρ_lt_bρ 2 (by decide)) (by norm_num [bρ_2])
-      (by norm_num) (by norm_num [aρ_2, bρ_2]) (by norm_num [aρ_2, bρ_2]) hlg
+    simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using
+      log_le_of_split_neg_rational
+        (r := (3013151652889589 / 80000000000000000 : ℚ))
+        (r' := (3013151652889589 / 2500000000000000 : ℚ))
+        (U := (-(1024700013012026515809 / 312500000000000000000 : ℚ)))
+        (U' := (58342456206723484191 / 312500000000000000000 : ℚ))
+        5 7 (by decide +kernel) (by decide +kernel)
+  simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using
+    Uω_le_right_certificate_rational
+      (j := 2) (t := (598690530973 / 12800000000000 : ℚ))
+      (s := (373827166494741 / 10000000000000000 : ℚ))
+      (q := (3013151652889589 / 80000000000000000 : ℚ))
+      (U := (-(1024700013012026515809 / 312500000000000000000 : ℚ)))
+      (by decide +kernel)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using hlg)
 
 lemma U_86_3 :
     Uω (aρ 3) (bρ 3) (598690530973 / 12800000000000 : ℝ) ≤
@@ -2484,25 +2335,21 @@ lemma U_86_3 :
   have hlg :
     Real.log (2564192311550617 / 80000000000000000 : ℝ) ≤
       (-(6880766185247015737031 / 2000000000000000000000 : ℝ)) := by
-    have h :=
-      log_le_of_split_neg 5
-        (show
-          (2564192311550617 / 80000000000000000 : ℝ) =
-            (2564192311550617 / 2500000000000000 : ℝ) / 2 ^ 5
-          by norm_num)
-        (by norm_num)
-        ((by
-           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
-             (r := (2564192311550617 / 2500000000000000 : ℚ))
-             (U := (50705617752984262969 / 2000000000000000000000 : ℚ))
-             4 (by decide +kernel)) :
-          Real.log (2564192311550617 / 2500000000000000 : ℝ) ≤
-            (50705617752984262969 / 2000000000000000000000 : ℝ))
-    linarith only [h, Real.log_two_gt_d9]
-  exact
-    Uω_le_right_certificate (s := (154491718754999 / 5000000000000000 : ℝ)) (q :=
-      (2564192311550617 / 80000000000000000 : ℝ)) (aρ_lt_bρ 3 (by decide)) (by norm_num [bρ_3])
-      (by norm_num) (by norm_num [aρ_3, bρ_3]) (by norm_num [aρ_3, bρ_3]) hlg
+    simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using
+      log_le_of_split_neg_rational
+        (r := (2564192311550617 / 80000000000000000 : ℚ))
+        (r' := (2564192311550617 / 2500000000000000 : ℚ))
+        (U := (-(6880766185247015737031 / 2000000000000000000000 : ℚ)))
+        (U' := (50705617752984262969 / 2000000000000000000000 : ℚ))
+        5 4 (by decide +kernel) (by decide +kernel)
+  simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using
+    Uω_le_right_certificate_rational
+      (j := 3) (t := (598690530973 / 12800000000000 : ℚ))
+      (s := (154491718754999 / 5000000000000000 : ℚ))
+      (q := (2564192311550617 / 80000000000000000 : ℚ))
+      (U := (-(6880766185247015737031 / 2000000000000000000000 : ℚ)))
+      (by decide +kernel)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using hlg)
 
 lemma U_86_4 :
     Uω (aρ 4) (bρ 4) (598690530973 / 12800000000000 : ℝ) ≤
@@ -2510,25 +2357,21 @@ lemma U_86_4 :
   have hlg :
     Real.log (1612641249535897 / 80000000000000000 : ℝ) ≤
       (-(39041532706513693929033 / 10000000000000000000000 : ℝ)) := by
-    have h :=
-      log_le_of_split_neg 6
-        (show
-          (1612641249535897 / 80000000000000000 : ℝ) =
-            (1612641249535897 / 1250000000000000 : ℝ) / 2 ^ 6
-          by norm_num)
-        (by norm_num)
-        ((by
-           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
-             (r := (1612641249535897 / 1250000000000000 : ℚ))
-             (U := (2547298111486306070967 / 10000000000000000000000 : ℚ))
-             8 (by decide +kernel)) :
-          Real.log (1612641249535897 / 1250000000000000 : ℝ) ≤
-            (2547298111486306070967 / 10000000000000000000000 : ℝ))
-    linarith only [h, Real.log_two_gt_d9]
-  exact
-    Uω_le_right_certificate (s := (74694926535659 / 5000000000000000 : ℝ)) (q :=
-      (1612641249535897 / 80000000000000000 : ℝ)) (aρ_lt_bρ 4 (by decide)) (by norm_num [bρ_4])
-      (by norm_num) (by norm_num [aρ_4, bρ_4]) (by norm_num [aρ_4, bρ_4]) hlg
+    simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using
+      log_le_of_split_neg_rational
+        (r := (1612641249535897 / 80000000000000000 : ℚ))
+        (r' := (1612641249535897 / 1250000000000000 : ℚ))
+        (U := (-(39041532706513693929033 / 10000000000000000000000 : ℚ)))
+        (U' := (2547298111486306070967 / 10000000000000000000000 : ℚ))
+        6 8 (by decide +kernel) (by decide +kernel)
+  simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using
+    Uω_le_right_certificate_rational
+      (j := 4) (t := (598690530973 / 12800000000000 : ℚ))
+      (s := (74694926535659 / 5000000000000000 : ℚ))
+      (q := (1612641249535897 / 80000000000000000 : ℚ))
+      (U := (-(39041532706513693929033 / 10000000000000000000000 : ℚ)))
+      (by decide +kernel)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using hlg)
 
 lemma U_86_5 :
     Uω (aρ 5) (bρ 5) (598690530973 / 12800000000000 : ℝ) ≤
@@ -2680,25 +2523,21 @@ lemma U_87_1 :
   have hlg :
     Real.log (1626291939211537 / 40000000000000000 : ℝ) ≤
       (-(6405153826788440415589 / 2000000000000000000000 : ℝ)) := by
-    have h :=
-      log_le_of_split_neg 5
-        (show
-          (1626291939211537 / 40000000000000000 : ℝ) =
-            (1626291939211537 / 1250000000000000 : ℝ) / 2 ^ 5
-          by norm_num)
-        (by norm_num)
-        ((by
-           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
-             (r := (1626291939211537 / 1250000000000000 : ℚ))
-             (U := (526317976211559584411 / 2000000000000000000000 : ℚ))
-             8 (by decide +kernel)) :
-          Real.log (1626291939211537 / 1250000000000000 : ℝ) ≤
-            (526317976211559584411 / 2000000000000000000000 : ℝ))
-    linarith only [h, Real.log_two_gt_d9]
-  exact
-    Uω_le_right_certificate (s := (406175349224831 / 10000000000000000 : ℝ)) (q :=
-      (1626291939211537 / 40000000000000000 : ℝ)) (aρ_lt_bρ 1 (by decide)) (by norm_num [bρ_1])
-      (by norm_num) (by norm_num [aρ_1, bρ_1]) (by norm_num [aρ_1, bρ_1]) hlg
+    simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using
+      log_le_of_split_neg_rational
+        (r := (1626291939211537 / 40000000000000000 : ℚ))
+        (r' := (1626291939211537 / 1250000000000000 : ℚ))
+        (U := (-(6405153826788440415589 / 2000000000000000000000 : ℚ)))
+        (U' := (526317976211559584411 / 2000000000000000000000 : ℚ))
+        5 8 (by decide +kernel) (by decide +kernel)
+  simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using
+    Uω_le_right_certificate_rational
+      (j := 1) (t := (1508697083091 / 32000000000000 : ℚ))
+      (s := (406175349224831 / 10000000000000000 : ℚ))
+      (q := (1626291939211537 / 40000000000000000 : ℚ))
+      (U := (-(6405153826788440415589 / 2000000000000000000000 : ℚ)))
+      (by decide +kernel)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using hlg)
 
 lemma U_87_2 :
     Uω (aρ 2) (bρ 2) (1508697083091 / 32000000000000 : ℝ) ≤
@@ -2706,25 +2545,21 @@ lemma U_87_2 :
   have hlg :
     Real.log (1521650895320563 / 40000000000000000 : ℝ) ≤
       (-(6538167184020175693239 / 2000000000000000000000 : ℝ)) := by
-    have h :=
-      log_le_of_split_neg 5
-        (show
-          (1521650895320563 / 40000000000000000 : ℝ) =
-            (1521650895320563 / 1250000000000000 : ℝ) / 2 ^ 5
-          by norm_num)
-        (by norm_num)
-        ((by
-           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
-             (r := (1521650895320563 / 1250000000000000 : ℚ))
-             (U := (393304618979824306761 / 2000000000000000000000 : ℚ))
-             7 (by decide +kernel)) :
-          Real.log (1521650895320563 / 1250000000000000 : ℝ) ≤
-            (393304618979824306761 / 2000000000000000000000 : ℝ))
-    linarith only [h, Real.log_two_gt_d9]
-  exact
-    Uω_le_right_certificate (s := (11800744993417 / 312500000000000 : ℝ)) (q :=
-      (1521650895320563 / 40000000000000000 : ℝ)) (aρ_lt_bρ 2 (by decide)) (by norm_num [bρ_2])
-      (by norm_num) (by norm_num [aρ_2, bρ_2]) (by norm_num [aρ_2, bρ_2]) hlg
+    simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using
+      log_le_of_split_neg_rational
+        (r := (1521650895320563 / 40000000000000000 : ℚ))
+        (r' := (1521650895320563 / 1250000000000000 : ℚ))
+        (U := (-(6538167184020175693239 / 2000000000000000000000 : ℚ)))
+        (U' := (393304618979824306761 / 2000000000000000000000 : ℚ))
+        5 7 (by decide +kernel) (by decide +kernel)
+  simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using
+    Uω_le_right_certificate_rational
+      (j := 2) (t := (1508697083091 / 32000000000000 : ℚ))
+      (s := (11800744993417 / 312500000000000 : ℚ))
+      (q := (1521650895320563 / 40000000000000000 : ℚ))
+      (U := (-(6538167184020175693239 / 2000000000000000000000 : ℚ)))
+      (by decide +kernel)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using hlg)
 
 lemma U_87_3 :
     Uω (aρ 3) (bρ 3) (1508697083091 / 32000000000000 : ℝ) ≤
@@ -2732,25 +2567,21 @@ lemma U_87_3 :
   have hlg :
     Real.log (1297611559329427 / 40000000000000000 : ℝ) ≤
       (-(34283541402370319659499 / 10000000000000000000000 : ℝ)) := by
-    have h :=
-      log_le_of_split_neg 5
-        (show
-          (1297611559329427 / 40000000000000000 : ℝ) =
-            (1297611559329427 / 1250000000000000 : ℝ) / 2 ^ 5
-          by norm_num)
-        (by norm_num)
-        ((by
-           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
-             (r := (1297611559329427 / 1250000000000000 : ℚ))
-             (U := (373817612629680340501 / 10000000000000000000000 : ℚ))
-             4 (by decide +kernel)) :
-          Real.log (1297611559329427 / 1250000000000000 : ℝ) ≤
-            (373817612629680340501 / 10000000000000000000000 : ℝ))
-    linarith only [h, Real.log_two_gt_d9]
-  exact
-    Uω_le_right_certificate (s := (9781258691993 / 312500000000000 : ℝ)) (q :=
-      (1297611559329427 / 40000000000000000 : ℝ)) (aρ_lt_bρ 3 (by decide)) (by norm_num [bρ_3])
-      (by norm_num) (by norm_num [aρ_3, bρ_3]) (by norm_num [aρ_3, bρ_3]) hlg
+    simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using
+      log_le_of_split_neg_rational
+        (r := (1297611559329427 / 40000000000000000 : ℚ))
+        (r' := (1297611559329427 / 1250000000000000 : ℚ))
+        (U := (-(34283541402370319659499 / 10000000000000000000000 : ℚ)))
+        (U' := (373817612629680340501 / 10000000000000000000000 : ℚ))
+        5 4 (by decide +kernel) (by decide +kernel)
+  simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using
+    Uω_le_right_certificate_rational
+      (j := 3) (t := (1508697083091 / 32000000000000 : ℚ))
+      (s := (9781258691993 / 312500000000000 : ℚ))
+      (q := (1297611559329427 / 40000000000000000 : ℚ))
+      (U := (-(34283541402370319659499 / 10000000000000000000000 : ℚ)))
+      (by decide +kernel)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using hlg)
 
 lemma U_87_4 :
     Uω (aρ 4) (bρ 4) (1508697083091 / 32000000000000 : ℝ) ≤
@@ -2758,25 +2589,21 @@ lemma U_87_4 :
   have hlg :
     Real.log (165268434059053 / 8000000000000000 : ℝ) ≤
       (-(1551850317616410832219 / 400000000000000000000 : ℝ)) := by
-    have h :=
-      log_le_of_split_neg 6
-        (show
-          (165268434059053 / 8000000000000000 : ℝ) =
-            (165268434059053 / 125000000000000 : ℝ) / 2 ^ 6
-          by norm_num)
-        (by norm_num)
-        ((by
-           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
-             (r := (165268434059053 / 125000000000000 : ℚ))
-             (U := (111702915103589167781 / 400000000000000000000 : ℚ))
-             8 (by decide +kernel)) :
-          Real.log (165268434059053 / 125000000000000 : ℝ) ≤
-            (111702915103589167781 / 400000000000000000000 : ℝ))
-    linarith only [h, Real.log_two_gt_d9]
-  exact
-    Uω_le_right_certificate (s := (31131952938339 / 2000000000000000 : ℝ)) (q :=
-      (165268434059053 / 8000000000000000 : ℝ)) (aρ_lt_bρ 4 (by decide)) (by norm_num [bρ_4])
-      (by norm_num) (by norm_num [aρ_4, bρ_4]) (by norm_num [aρ_4, bρ_4]) hlg
+    simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using
+      log_le_of_split_neg_rational
+        (r := (165268434059053 / 8000000000000000 : ℚ))
+        (r' := (165268434059053 / 125000000000000 : ℚ))
+        (U := (-(1551850317616410832219 / 400000000000000000000 : ℚ)))
+        (U' := (111702915103589167781 / 400000000000000000000 : ℚ))
+        6 8 (by decide +kernel) (by decide +kernel)
+  simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using
+    Uω_le_right_certificate_rational
+      (j := 4) (t := (1508697083091 / 32000000000000 : ℚ))
+      (s := (31131952938339 / 2000000000000000 : ℚ))
+      (q := (165268434059053 / 8000000000000000 : ℚ))
+      (U := (-(1551850317616410832219 / 400000000000000000000 : ℚ)))
+      (by decide +kernel)
+      (by simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_zero] using hlg)
 
 lemma U_87_5 :
     Uω (aρ 5) (bρ 5) (1508697083091 / 32000000000000 : ℝ) ≤

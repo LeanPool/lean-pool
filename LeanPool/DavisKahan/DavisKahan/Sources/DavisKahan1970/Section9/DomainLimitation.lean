@@ -348,7 +348,7 @@ theorem geometricTrial_hasSum_sq {μ : ℝ} (hμ0 : 0 ≤ μ) (hμ1 : μ < 1) :
     funext n
     rw [geometricTrial_apply, ← pow_mul, ← pow_mul, mul_comm]
   rw [h]
-  exact hasSum_geometric_of_lt_one (by positivity) (by nlinarith)
+  exact hasSum_geometric_of_lt_one (by positivity) (by nlinarith only [hμ0, hμ1])
 
 /-! ### The truncations repair the domain defect, and arbitrarily little is lost
 
@@ -372,7 +372,7 @@ theorem truncatedTrial_sub_geometricTrial_hasSum_sq {μ : ℝ} (hμ0 : 0 ≤ μ)
     HasSum (fun n =>
         ((truncatedTrial μ N - geometricTrial hμ0 hμ1 : DomainLimitationSpace) : ℕ → ℝ) n ^ 2)
       ((μ ^ 2) ^ N * (1 - μ ^ 2)⁻¹) := by
-  have hlt : μ ^ 2 < 1 := by nlinarith
+  have hlt : μ ^ 2 < 1 := by nlinarith only [hμ0, hμ1]
   have hnn : (0 : ℝ) ≤ μ ^ 2 := by positivity
   set d : ℕ → ℝ := fun n => if n < N then 0 else (μ ^ 2) ^ n with hd
   have hcoord : (fun n =>
@@ -400,7 +400,7 @@ theorem truncatedTrial_sub_geometricTrial_hasSum_sq {μ : ℝ} (hμ0 : 0 ≤ μ)
 theorem tendsto_norm_truncatedTrial_sub_geometricTrial {μ : ℝ} (hμ0 : 0 ≤ μ) (hμ1 : μ < 1) :
     Filter.Tendsto
       (fun N => ‖truncatedTrial μ N - geometricTrial hμ0 hμ1‖) Filter.atTop (nhds 0) := by
-  have hlt : μ ^ 2 < 1 := by nlinarith
+  have hlt : μ ^ 2 < 1 := by nlinarith only [hμ0, hμ1]
   have hnn : (0 : ℝ) ≤ μ ^ 2 := by positivity
   have hsq : ∀ N, ‖truncatedTrial μ N - geometricTrial hμ0 hμ1‖ ^ 2
       = (μ ^ 2) ^ N * (1 - μ ^ 2)⁻¹ := by
@@ -479,7 +479,7 @@ theorem geometricTrial_rayleighQuotient {μ : ℝ} (hμ0 : 0 < μ) (hμ1 : μ < 
       / ‖geometricTrial hμ0.le hμ1‖ ^ 2 = 1 + μ := by
   have h1 : (1 : ℝ) - μ ≠ 0 := ne_of_gt (by linarith)
   rw [(geometricTrial_hasSum_form hμ0 hμ1).tsum_eq, geometricTrial_norm_sq hμ0.le hμ1]
-  have h2 : (1 : ℝ) - μ ^ 2 ≠ 0 := ne_of_gt (by nlinarith)
+  have h2 : (1 : ℝ) - μ ^ 2 ≠ 0 := ne_of_gt (by nlinarith only [hμ0, hμ1])
   field_simp
   ring
 
@@ -489,7 +489,7 @@ theorem geometricTrial_normalizedForm_apply {μ : ℝ} (hμ0 : 0 < μ) (hμ1 : �
         ((geometricTrial hμ0.le hμ1 : DomainLimitationSpace) : ℕ → ℝ) n ^ 2
       / ‖geometricTrial hμ0.le hμ1‖ ^ 2 = μ ^ n * (1 - μ ^ 2) := by
   have hne : μ ^ n ≠ 0 := ne_of_gt (pow_pos hμ0 n)
-  have h2 : (1 : ℝ) - μ ^ 2 ≠ 0 := ne_of_gt (by nlinarith)
+  have h2 : (1 : ℝ) - μ ^ 2 ≠ 0 := ne_of_gt (by nlinarith only [hμ0, hμ1])
   rw [geometricTrial_norm_sq hμ0.le hμ1, geometricTrial_apply, diagonalMultiplier]
   field_simp
 
@@ -610,7 +610,7 @@ vector and the first eigenvector. -/
 theorem sin_angle_geometricTrial {μ : ℝ} (hμ0 : 0 < μ) (hμ1 : μ < 1) :
     Real.sin (InnerProductGeometry.angle (geometricTrial hμ0.le hμ1)
         (firstEigenvector : DomainLimitationSpace)) = μ := by
-  have hpos : (0 : ℝ) ≤ 1 - μ ^ 2 := by nlinarith
+  have hpos : (0 : ℝ) ≤ 1 - μ ^ 2 := by nlinarith only [hμ0, hμ1]
   rw [Real.sin_eq_sqrt_one_sub_cos_sq (InnerProductGeometry.angle_nonneg _ _)
       (InnerProductGeometry.angle_le_pi _ _),
     cos_angle_geometricTrial hμ0 hμ1, Real.sq_sqrt hpos,
@@ -635,17 +635,17 @@ theorem geometricTrial_weinberger_sin_sq_le {μ αcheck₁ αcheck₂ : ℝ}
     Real.sin (InnerProductGeometry.angle (geometricTrial hμ0.le hμ1)
         (firstEigenvector : DomainLimitationSpace)) ^ 2
       ≤ (1 + μ - αcheck₁) / (αcheck₂ - αcheck₁) := by
-  have hsq : (0 : ℝ) ≤ 1 - μ ^ 2 := by nlinarith
+  have hsq : (0 : ℝ) ≤ 1 - μ ^ 2 := by nlinarith only [hμ0, hμ1]
   have hinvmul : μ⁻¹ * μ ^ 2 = μ := by
     field_simp
   have hhigh' : αcheck₂ * μ ^ 2 ≤ μ + μ ^ 2 := by
     have hstep : αcheck₂ * μ ^ 2 ≤ μ⁻¹ * μ ^ 2 :=
       mul_le_mul_of_nonneg_right hhigh (by positivity)
-    nlinarith [sq_nonneg μ]
+    nlinarith only [hinvmul, hstep, sq_nonneg μ]
   rw [sin_angle_geometricTrial hμ0 hμ1]
   exact weinberger_sine_sq_le_of_coupled_energy (s := μ) (alphaCheck := αcheck₁)
     (alphaHat := 1 + μ) (gamma := αcheck₂) (lowEnergy := 1 - μ ^ 2)
-    (highEnergy := μ + μ ^ 2) hgap (by ring) (by nlinarith) hhigh'
+    (highEnergy := μ + μ ^ 2) hgap (by ring) (by nlinarith only [hμ0, hμ1, hlow, hsq]) hhigh'
 
 /-- **The source's best-lower-bound simplification, squared.**  With
 `alphaCheck₁ = λ₁ = 1` and `alphaCheck₂ = λ₂ = μ⁻¹` the estimate reads `sin²θ ≤ μ²/(1-μ)`. -/
@@ -655,7 +655,7 @@ theorem geometricTrial_weinberger_best_sin_sq_le {μ : ℝ} (hμ0 : 0 < μ) (hμ
       ≤ μ ^ 2 / (1 - μ) := by
   have hmul : μ⁻¹ * μ = 1 := inv_mul_cancel₀ (ne_of_gt hμ0)
   have hinvpos : (0 : ℝ) < μ⁻¹ := inv_pos.mpr hμ0
-  have hinv : (1 : ℝ) < μ⁻¹ := by nlinarith
+  have hinv : (1 : ℝ) < μ⁻¹ := by nlinarith only [hμ0, hμ1, hmul]
   have h := geometricTrial_weinberger_sin_sq_le hμ0 hμ1 (αcheck₁ := 1) (αcheck₂ := μ⁻¹)
     le_rfl le_rfl hinv
   have h1 : (1 : ℝ) - μ ≠ 0 := ne_of_gt (by linarith)

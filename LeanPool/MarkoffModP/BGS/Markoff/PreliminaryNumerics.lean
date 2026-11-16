@@ -187,9 +187,21 @@ private theorem preliminary_endgame_coefficient_le_cutoff_pow_four :
     _ = (2 ^ 1833 * (48 ^ 3 + 1) ^ 10) ^ 4 := by
       rw [mul_pow, ← pow_mul, ← pow_mul]
 
+private theorem power_le_power_mul_of_bound
+    (a base coefficient k m n : ℕ) (hbound : a ≤ base ^ k)
+    (hbase : 0 < base) (hexponent : k * m ≤ n) (hcoefficient : 0 < coefficient) :
+    a ^ m ≤ base ^ n * coefficient := by
+  calc
+    a ^ m ≤ (base ^ k) ^ m := Nat.pow_le_pow_left hbound m
+    _ = base ^ (k * m) := (pow_mul base k m).symm
+    _ ≤ base ^ n := Nat.pow_le_pow_right hbase hexponent
+    _ ≤ base ^ n * coefficient := Nat.le_mul_of_pos_right _ hcoefficient
+
 private theorem preliminary_fixed_pow_eight_le_cutoff :
     100522 ^ 8 ≤ 2 ^ 1833 * (48 ^ 3 + 1) ^ 10 := by
-  decide +kernel
+  as_aux_lemma =>
+    exact power_le_power_mul_of_bound 100522 2 ((48 ^ 3 + 1) ^ 10) 17 8 1833
+      (by norm_num) Nat.zero_lt_two (by norm_num) (pow_pos (Nat.succ_pos _) _)
 
 private theorem preliminary_lowOrder_coefficient_eq_cutoff_sq :
     2 ^ 10 * (48 ^ 3 + 1) ^ 20 * preliminaryDivisorMomentConstant ^ 8 =
@@ -237,7 +249,7 @@ theorem preliminary_divisor_sum_lt_rpow_one_div_eight
         exact Nat.mul_le_mul_right _ <| by
           simpa only [Q] using preliminary_moment_pow_eight_le_cutoff_sq
       _ < p ^ 2 * p ^ 8 := by gcongr
-      _ = p ^ 10 := by ring
+      _ = p ^ 10 := (pow_add p _ _).symm
   have hpNonnegative : (0 : ℝ) ≤ p := by positivity
   have hpowReal : (T : ℝ) ^ 80 < (p : ℝ) ^ 10 := by
     exact_mod_cast hpowNat
@@ -271,16 +283,16 @@ theorem preliminary_corvajaZannier_divisor_term_lt_rpow_one_div_six
     exact preliminaryCutoff_constant_lt hp
   have hpowNat : (48 * T) ^ 60 < p ^ 10 := by
     calc
-      (48 * T) ^ 60 = 48 ^ 60 * (T ^ 10) ^ 6 := by ring
+      (48 * T) ^ 60 = 48 ^ 60 * (T ^ 10) ^ 6 := by
+        rw [mul_pow, ← pow_mul]
       _ ≤ 48 ^ 60 * (preliminaryDivisorMomentConstant * p) ^ 6 := by gcongr
       _ = (48 ^ 60 * preliminaryDivisorMomentConstant ^ 6) * p ^ 6 := by
-        rw [mul_pow]
-        ring
+        rw [mul_pow, Nat.mul_assoc]
       _ ≤ Q ^ 4 * p ^ 6 := by
         exact Nat.mul_le_mul_right _ <| by
           simpa only [Q] using preliminary_middle_coefficient_le_cutoff_pow_four
       _ < p ^ 4 * p ^ 6 := by gcongr
-      _ = p ^ 10 := by ring
+      _ = p ^ 10 := (pow_add p _ _).symm
   have hpNonnegative : (0 : ℝ) ≤ p := by positivity
   have hpowReal : ((48 * T : ℕ) : ℝ) ^ 60 < (p : ℝ) ^ 10 := by
     exact_mod_cast hpowNat
@@ -314,16 +326,16 @@ theorem preliminary_weighted_divisor_sum_sq_lt_rpow_one_div_three
     exact preliminaryCutoff_constant_lt hp
   have hpowNat : (68 * T ^ 2) ^ 30 < p ^ 10 := by
     calc
-      (68 * T ^ 2) ^ 30 = 68 ^ 30 * (T ^ 10) ^ 6 := by ring
+      (68 * T ^ 2) ^ 30 = 68 ^ 30 * (T ^ 10) ^ 6 := by
+        rw [mul_pow, ← pow_mul, ← pow_mul]
       _ ≤ 68 ^ 30 * (preliminaryDivisorMomentConstant * p) ^ 6 := by gcongr
       _ = (68 ^ 30 * preliminaryDivisorMomentConstant ^ 6) * p ^ 6 := by
-        rw [mul_pow]
-        ring
+        rw [mul_pow, Nat.mul_assoc]
       _ ≤ Q ^ 4 * p ^ 6 := by
         exact Nat.mul_le_mul_right _ <| by
           simpa only [Q] using preliminary_endgame_coefficient_le_cutoff_pow_four
       _ < p ^ 4 * p ^ 6 := by gcongr
-      _ = p ^ 10 := by ring
+      _ = p ^ 10 := (pow_add p _ _).symm
   have hpNonnegative : (0 : ℝ) ≤ p := by positivity
   have hpowReal : ((68 * T ^ 2 : ℕ) : ℝ) ^ 30 < (p : ℝ) ^ 10 := by
     exact_mod_cast hpowNat
@@ -520,7 +532,7 @@ theorem preliminary_cageWitness_explicitInequality
       exact_mod_cast hcoefficient
     _ = 100522 * (p : ℝ) ^ (6 / 8 : ℝ) := by
       rw [← hpower]
-      ring
+      ac_rfl
     _ < (p : ℝ) ^ (1 / 8 : ℝ) * (p : ℝ) ^ (6 / 8 : ℝ) := by
       exact mul_lt_mul_of_pos_right hfixed (Real.rpow_pos_of_pos hpRealPos _)
     _ = (p : ℝ) ^ (7 / 8 : ℝ) := by
@@ -572,13 +584,15 @@ theorem preliminary_lowOrder_divisorSensitive_cube
       2 + d * T ≤ T ^ 4 + d * T := Nat.add_le_add_right hTfour _
       _ ≤ T ^ 4 + (48 * T) ^ 3 * T := by gcongr
       _ = B * T ^ 4 := by
-        dsimp [B]
-        ring
+        dsimp only [B]
+        rw [add_mul, one_mul, mul_pow, Nat.mul_assoc, ← pow_succ]
+        exact Nat.add_comm _ _
   have hpLeCoarse : p ≤ 2 * B ^ 2 * T ^ 8 := by
     calc
       p ≤ 2 * (2 + d * T) ^ 2 := by simpa [T] using hpLe
       _ ≤ 2 * (B * T ^ 4) ^ 2 := by gcongr
-      _ = 2 * B ^ 2 * T ^ 8 := by ring
+      _ = 2 * B ^ 2 * T ^ 8 := by
+        rw [mul_pow, ← pow_mul, ← Nat.mul_assoc]
   have hmoment : T ^ 10 ≤ preliminaryDivisorMomentConstant * p := by
     simpa [T] using preliminary_divisor_sum_pow_ten_le hpTwo
   have hpPowLe :
@@ -586,11 +600,13 @@ theorem preliminary_lowOrder_divisorSensitive_cube
     calc
       p ^ 10 ≤ (2 * B ^ 2 * T ^ 8) ^ 10 :=
         Nat.pow_le_pow_left hpLeCoarse _
-      _ = 2 ^ 10 * B ^ 20 * (T ^ 10) ^ 8 := by ring
+      _ = 2 ^ 10 * B ^ 20 * (T ^ 10) ^ 8 := by
+        simp only [mul_pow, ← pow_mul]
       _ ≤ 2 ^ 10 * B ^ 20 *
           (preliminaryDivisorMomentConstant * p) ^ 8 := by gcongr
       _ = (2 ^ 10 * B ^ 20 *
-          preliminaryDivisorMomentConstant ^ 8) * p ^ 8 := by ring
+          preliminaryDivisorMomentConstant ^ 8) * p ^ 8 := by
+        simp only [mul_pow, Nat.mul_assoc]
       _ = Q ^ 2 * p ^ 8 := by
         change (2 ^ 10 * (48 ^ 3 + 1) ^ 20 *
           preliminaryDivisorMomentConstant ^ 8) * p ^ 8 =
@@ -602,7 +618,7 @@ theorem preliminary_lowOrder_divisorSensitive_cube
   have hstrict : Q ^ 2 * p ^ 8 < p ^ 10 := by
     calc
       Q ^ 2 * p ^ 8 < p ^ 2 * p ^ 8 := by gcongr
-      _ = p ^ 10 := by ring
+      _ = p ^ 10 := (pow_add p _ _).symm
   exact (not_lt_of_ge hpPowLe) hstrict
 
 end BGS.Markoff

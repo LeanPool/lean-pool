@@ -8,7 +8,9 @@ module
 
 public import LeanPool.BeyondBethe.BeyondBethe.ScannedBetheThresholdFeasibility
 public import LeanPool.BeyondBethe.BeyondBethe.BetheBisection
-public import Mathlib.Tactic
+import Mathlib.Tactic.Linarith -- shake: keep
+import Mathlib.Tactic.NormNum -- shake: keep
+import Mathlib.Tactic.Ring -- shake: keep
 
 /-!
 # Rational bisection for the row-major Bethe oracle

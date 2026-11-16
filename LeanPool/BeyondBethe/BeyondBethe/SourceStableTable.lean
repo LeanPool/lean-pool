@@ -8,7 +8,10 @@ module
 
 public import LeanPool.BeyondBethe.BeyondBethe.SourceStableClosure
 public import LeanPool.BeyondBethe.BeyondBethe.SourceStableBivariate
-public import Mathlib.Tactic
+import Mathlib.Algebra.MvPolynomial.CommRing
+import Mathlib.Tactic.Abel -- shake: keep
+import Mathlib.Tactic.Ring -- shake: keep
+import Mathlib.Tactic.SimpRw -- shake: keep
 
 /-! # Source Stable Table -/
 

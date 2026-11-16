@@ -8,7 +8,7 @@ module
 
 public import LeanPool.BeyondBethe.BeyondBethe.MachineBetheEpigraphOracle
 public import LeanPool.BeyondBethe.BeyondBethe.ExplicitScheduledFeasibility
-public import Mathlib.Tactic
+import Mathlib.Tactic.NormNum -- shake: keep
 
 /-! # Scanned Bethe Threshold Feasibility -/
 

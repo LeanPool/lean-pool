@@ -210,7 +210,7 @@ theorem crossBlockBound_lt_one {δ nB : ℝ} (hδ : 0 < δ) (hnB : 0 ≤ nB) :
   have hD2 : √(δ ^ 2 + 4 * nB ^ 2) ^ 2 = δ ^ 2 + 4 * nB ^ 2 :=
     Real.sq_sqrt (by positivity)
   rw [crossBlockBound_eq, div_lt_one hD]
-  nlinarith [hD, hD2, hnB, hδ]
+  nlinarith only [hδ, hnB, hD, hD2, hD, hD2, hnB, hδ]
 
 /-- The scalar step from the cross-block bound to the diagonal-block bound:
 `c² + s² = n²` and `s ≤ (2β/D) n` give `(δ/D) n ≤ c`, where `D² = δ² + 4β²`. -/
@@ -271,7 +271,7 @@ private theorem gap_mul_le_of_cross {δ nB s nx nC : ℝ} (hnB : 0 ≤ nB)
       _ = 4 * nB ^ 2 * nx ^ 2 := by field_simp
   have hsq : (δ * s) ^ 2 ≤ (2 * nB * nC) ^ 2 := by
     rw [hD2] at hmul
-    nlinarith [hmul, hpy]
+    nlinarith only [hpy, hmul, hmul, hpy]
   calc δ * s = √((δ * s) ^ 2) := (Real.sqrt_sq (by positivity)).symm
     _ ≤ √((2 * nB * nC) ^ 2) := Real.sqrt_le_sqrt hsq
     _ = 2 * nB * nC := Real.sqrt_sq (by positivity)
@@ -490,7 +490,7 @@ theorem sylvester_pairing_le (Ω : BoundedCutoff A U τ) {x : H}
     have h := norm_sq_diagonalPart_add_norm_sq_offDiagonalPart_of_mem_orthogonal
       (U := U) hZnorm hyU
     rw [hy1, one_pow, ← hCdef, ← hSdef] at h
-    nlinarith [sq_nonneg ‖r‖, hSynorm]
+    nlinarith only [hSynorm, h, sq_nonneg ‖r‖, hSynorm]
   have hCxle : ‖C x‖ ≤ √(1 - q ^ 2) := by
     rw [← Real.sqrt_sq (norm_nonneg (C x)), hCxnorm]
   have hCyle : ‖C y‖ ≤ √(1 - q ^ 2) := by
@@ -562,7 +562,7 @@ private theorem le_crossBlockBound_of_mul_le {δ m t : ℝ}
     (hmain : δ * m ≤ 2 * t * √(1 - m ^ 2)) :
     m ≤ crossBlockBound δ t := by
   -- close the algebra
-  have h1m2 : 0 ≤ 1 - m ^ 2 := by nlinarith [hm1, hm0]
+  have h1m2 : 0 ≤ 1 - m ^ 2 := by nlinarith only [hm0, hm1, hm1, hm0]
   have hlhs0 : 0 ≤ δ * m := by positivity
   have hrhs : (2 * t * √(1 - m ^ 2)) ^ 2 = 4 * t ^ 2 * (1 - m ^ 2) := by
     rw [mul_pow, Real.sq_sqrt h1m2]
@@ -578,7 +578,7 @@ private theorem le_crossBlockBound_of_mul_le {δ m t : ℝ}
     ring
   have hmD : (m * D) ^ 2 ≤ (2 * t) ^ 2 := by
     rw [hmDeq]
-    nlinarith [hsq]
+    nlinarith only [hsq, hsq]
   have hfin : m * D ≤ 2 * t :=
     calc m * D = √((m * D) ^ 2) := (Real.sqrt_sq (by positivity)).symm
       _ ≤ √((2 * t) ^ 2) := Real.sqrt_le_sqrt hmD
@@ -666,11 +666,11 @@ theorem opNorm_offDiagonalPart_comp_le (Ω : BoundedCutoff A U τ) (hτ : 0 ≤ 
         Real.norm_eq_abs, abs_of_pos hx₀pos]
     have hinv : ‖x₀‖ * ‖x₀‖⁻¹ = 1 := mul_inv_cancel₀ hx₀pos.ne'
     have hinvge : (1 : ℝ) ≤ ‖x₀‖⁻¹ := by
-      nlinarith [hinv, hx₀le, hx₀pos, inv_pos.mpr hx₀pos]
+      nlinarith only [hx₀pos, hx₀le, hinv, hinv, hx₀le, hx₀pos, inv_pos.mpr hx₀pos]
     have hqlow : m - ε < q := by
       have h1 : ‖S x₀‖ ≤ q := by
         rw [hqval]
-        nlinarith [hinvge, hSx₀pos.le]
+        nlinarith only [hεm, hv2, hinvge, hinvge, hSx₀pos.le]
       linarith
     have hq0 : 0 < q := lt_of_le_of_lt (by linarith) hqlow
     have hqm : q ≤ m := by
@@ -692,7 +692,7 @@ theorem opNorm_offDiagonalPart_comp_le (Ω : BoundedCutoff A U τ) (hτ : 0 ≤ 
     have hLle : L ≤ √(2 * ε) := by
       rw [← Real.sqrt_sq hL0]
       exact Real.sqrt_le_sqrt (by linarith [hleak])
-    have h1m2 : 0 ≤ 1 - m ^ 2 := by nlinarith [hm1, hm0]
+    have h1m2 : 0 ≤ 1 - m ^ 2 := by nlinarith only [hm0, hm1, hm1, hm0]
     have hqsqrt : √(1 - q ^ 2) ≤ √(1 - m ^ 2) + √(2 * ε) := by
       refine le_trans (Real.sqrt_le_sqrt (by linarith : 1 - q ^ 2 ≤
         (1 - m ^ 2) + 2 * ε)) ?_

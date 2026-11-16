@@ -27,7 +27,7 @@ public import LeanPool.DavisKahan.ForTauCeti.Analysis.InnerProductSpace.Sylveste
 public import LeanPool.DavisKahan.ForTauCeti.Analysis.InnerProductSpace.DoubleAngle.Vector
 public import LeanPool.DavisKahan.ForTauCeti.Analysis.InnerProductSpace.CourantFischer
 public import LeanPool.DavisKahan.ForTauCeti.Analysis.InnerProductSpace.PrincipalAngles
-public import Mathlib.Analysis.InnerProductSpace.Adjoint
+import Mathlib.Analysis.InnerProductSpace.Adjoint
 
 /-! # The operator-norm Davis–Kahan sin-Θ theorem
 

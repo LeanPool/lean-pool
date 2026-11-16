@@ -7,7 +7,7 @@ module
 
 
 public import LeanPool.BeyondBethe.BeyondBethe.MachineListUpdate
-public import Mathlib.Tactic
+import Mathlib.Tactic.Ring -- shake: keep
 
 /-!
 # Reversal of a self-delimiting machine list

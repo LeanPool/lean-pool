@@ -8,7 +8,7 @@ module
 
 public import LeanPool.BeyondBethe.BeyondBethe.SourceStableClosure
 public import LeanPool.BeyondBethe.BeyondBethe.SourceStableTable
-public import Mathlib.Tactic
+import Mathlib.Tactic.Convert -- shake: keep
 
 /-! # Source Stable Specialization -/
 

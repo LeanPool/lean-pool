@@ -1,0 +1,47 @@
+slug: knill-laflamme
+title: Knill–Laflamme quantum error-correction conditions
+summary: Characterizes correctability of arbitrary finite families of complex
+  error matrices on a nonzero orthogonal code projector by the Knill–Laflamme
+  matrix condition. Constructs a finite Kraus recovery channel, proves both the
+  individual-error and combined-noise equivalences up to scalar factors, and
+  proves exact recovery when the errors themselves form a trace-preserving channel.
+branch: quantum information
+entry_module: LeanPool.KnillLaflamme
+authors:
+- Zayn Blore
+source:
+  title: Theory of quantum error-correcting codes
+  doi: 10.1103/PhysRevA.55.900
+  url: https://github.com/zblore/knill-laflamme-lean/tree/f680e2d5f616bb423fb814f1471b07387729fffd
+  github_repo: zblore/knill-laflamme-lean
+  commit: f680e2d5f616bb423fb814f1471b07387729fffd
+  announcement_url: https://github.com/zblore/knill-laflamme-lean/commit/f680e2d5f616bb423fb814f1471b07387729fffd
+  announcement_date: '2026-11-13'
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+- QuantumInfo.knill_laflamme
+- QuantumInfo.knill_laflamme_sum
+- QuantumInfo.exists_recovery_channel_of_knillLaflamme
+main_results:
+- declaration: QuantumInfo.knill_laflamme
+  informal: For a nonzero orthogonal code projector and arbitrary finite error
+    family, the Knill–Laflamme condition is equivalent to the existence of a finite
+    Kraus channel correcting each error up to a scalar on all supported matrices.
+- declaration: QuantumInfo.knill_laflamme_sum
+  informal: The same condition is equivalent to a finite Kraus channel correcting
+    the sum of all error actions up to a scalar on all code-supported matrices;
+    the errors need not preserve trace.
+- declaration: QuantumInfo.exists_recovery_channel_of_knillLaflamme
+  informal: A trace-preserving noise channel satisfying the Knill–Laflamme
+    condition admits a recovery channel acting as the identity on every
+    code-supported matrix.
+tags:
+- quantum-information
+- quantum-error-correction
+- matrices
+- channels
+msc:
+- 81P73
+- 81P47

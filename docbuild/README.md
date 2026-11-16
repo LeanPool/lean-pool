@@ -27,10 +27,18 @@ analysis, it records external names from dependency environments and renders all
 local module records directly from the database.
 
 Four sequential analysis stages each allow 90 minutes of analysis. They restore
-the newest checkpoint compatible with the pinned dependencies, then process
-modules in dependency order in batches of 128. Each successful batch advances a
-cursor tied to all source files, configuration and linking policy. Changes reset
-that cursor while retaining Lake's ordinary per-module trace checking.
+the newest checkpoint compatible with the toolchain, dependency and doc-gen pins,
+then process modules in dependency order in batches of 128. The checkpoint
+records each completed project with a fingerprint of its sources and Lake's
+content hashes of its compiled modules, including modules it imports from
+other projects (read from Lake's per-module import inventories). Unchanged
+projects are not handed to Lake again, so a merge re-analyzes only the projects
+it touched and their importers, and a pool option change re-analyzes only
+projects whose compiled modules changed. Changes
+to the toolchain, dependency pins, doc-gen or linking policy restart every
+project; Lake's per-module traces still apply to every project it is given.
+Modules deleted from the pool are removed from the database together with
+their markers before analysis.
 
 Before each batch, the runner snapshots the database and its markers. If the
 batch times out, its process group is stopped and that pair is restored before
@@ -64,5 +72,5 @@ PYTHONPATH=python python3 -m lean_pool.documentation render
 
 Repeat `batch` until complete before running `render`. Preserve the whole
 `docbuild/.lake/build` tree together: a marker alone does not contain its SQLite
-documentation data. Workflow artifacts retain analysis cursors for diagnosis;
+documentation data. Workflow artifacts retain analysis progress for diagnosis;
 GitHub Actions reports publishing failures separately from PR validation.

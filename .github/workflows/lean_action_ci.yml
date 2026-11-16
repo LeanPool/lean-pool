@@ -248,14 +248,8 @@ jobs:
         with:
           fetch-depth: 0
 
-      # Restored caches plus the cache-save archive overflow the runner's
-      # default free space: every main build-cache save failed from
-      # 2026-10-16, so all runs rebuilt weeks of changes from a stale cache.
       - name: Free runner disk space
-        run: |
-          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc \
-            /usr/local/.ghcup /opt/hostedtoolcache/CodeQL /usr/share/swift
-          df -h /
+        uses: ./.github/actions/free-disk-space
 
       # Keep the large toolchain/Mathlib cache independent of per-commit builds.
       - name: Restore Lean dependencies
@@ -403,6 +397,12 @@ jobs:
             PYTHONPATH=python python3 -m lean_pool.build_time_limits check \
               --log lean-build.log --base "$time_base"
           fi
+
+      # Lake writes setup files only as compiler inputs, each listing every
+      # transitive import (~1.6 MB; ~46 GB pool-wide). Before validating,
+      # caching, or uploading, keep just the local entries our readers use.
+      - name: Slim Lake setup files
+        run: PYTHONPATH=python python3 -m lean_pool.slim_setup
 
       # Main publishes the shared full build. A minimal-verifier PR publishes
       # only its own projects; the verifier overlays them on the main cache.
@@ -566,14 +566,8 @@ jobs:
         with:
           fetch-depth: 0
 
-      # Restored caches plus the cache-save archive overflow the runner's
-      # default free space: every main build-cache save failed from
-      # 2026-10-16, so all runs rebuilt weeks of changes from a stale cache.
       - name: Free runner disk space
-        run: |
-          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc \
-            /usr/local/.ghcup /opt/hostedtoolcache/CodeQL /usr/share/swift
-          df -h /
+        uses: ./.github/actions/free-disk-space
 
       - name: Restore Lean dependencies
         id: dependency-cache
@@ -648,6 +642,12 @@ jobs:
               --log shard-build.log --base "$time_base" --modules $modules
           fi
 
+      # Lake writes setup files only as compiler inputs, each listing every
+      # transitive import (~1.6 MB; ~46 GB pool-wide). Before validating,
+      # caching, or uploading, keep just the local entries our readers use.
+      - name: Slim Lake setup files
+        run: PYTHONPATH=python python3 -m lean_pool.slim_setup
+
       # Ship only what this build produced; unchanged (cache-replayed)
       # files stay out, so `finalize` can layer the shard outputs onto the
       # same restored cache without clobbering anything fresher.
@@ -690,14 +690,8 @@ jobs:
         with:
           fetch-depth: 0
 
-      # Restored caches plus the cache-save archive overflow the runner's
-      # default free space: every main build-cache save failed from
-      # 2026-10-16, so all runs rebuilt weeks of changes from a stale cache.
       - name: Free runner disk space
-        run: |
-          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc \
-            /usr/local/.ghcup /opt/hostedtoolcache/CodeQL /usr/share/swift
-          df -h /
+        uses: ./.github/actions/free-disk-space
 
       - name: Restore Lean dependencies
         id: dependency-cache
@@ -832,6 +826,12 @@ jobs:
             PYTHONPATH=python python3 -m lean_pool.build_time_limits check \
               --log lean-build.log --base "$time_base" --exclude-projects $SHARD_PROJECTS
           fi
+
+      # Lake writes setup files only as compiler inputs, each listing every
+      # transitive import (~1.6 MB; ~46 GB pool-wide). Before validating,
+      # caching, or uploading, keep just the local entries our readers use.
+      - name: Slim Lake setup files
+        run: PYTHONPATH=python python3 -m lean_pool.slim_setup
 
       # Main publishes the shared full build. A minimal-verifier PR publishes
       # only its own projects; the verifier overlays them on the main cache.
@@ -990,14 +990,8 @@ jobs:
         with:
           fetch-depth: 0
 
-      # Restored caches plus the cache-save archive overflow the runner's
-      # default free space: every main build-cache save failed from
-      # 2026-10-16, so all runs rebuilt weeks of changes from a stale cache.
       - name: Free runner disk space
-        run: |
-          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc \
-            /usr/local/.ghcup /opt/hostedtoolcache/CodeQL /usr/share/swift
-          df -h /
+        uses: ./.github/actions/free-disk-space
 
       - name: Restore Lean dependencies
         uses: actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae
@@ -1095,6 +1089,12 @@ jobs:
             PYTHONPATH=python python3 -m lean_pool.build_time_limits check \
               --log lean-build.log --base "$time_base"
           fi
+
+      # Lake writes setup files only as compiler inputs, each listing every
+      # transitive import (~1.6 MB; ~46 GB pool-wide). Before validating,
+      # caching, or uploading, keep just the local entries our readers use.
+      - name: Slim Lake setup files
+        run: PYTHONPATH=python python3 -m lean_pool.slim_setup
 
       - name: Install validation dependencies
         run: cd python && uv sync --locked

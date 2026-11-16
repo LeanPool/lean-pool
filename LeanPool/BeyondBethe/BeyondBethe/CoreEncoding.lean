@@ -10,7 +10,10 @@ public import LeanPool.BeyondBethe.BeyondBethe.Entropy
 public import Mathlib.Combinatorics.Hall.Basic
 public import Mathlib.Data.Fin.Rev
 public import Mathlib.GroupTheory.Perm.Cycle.Factors
-public import Mathlib.Tactic
+import Mathlib.Tactic.Ext -- shake: keep
+import Mathlib.Tactic.FinCases -- shake: keep
+import Mathlib.Tactic.Positivity -- shake: keep
+import Mathlib.Tactic.SimpRw -- shake: keep
 
 /-! # Core Encoding -/
 

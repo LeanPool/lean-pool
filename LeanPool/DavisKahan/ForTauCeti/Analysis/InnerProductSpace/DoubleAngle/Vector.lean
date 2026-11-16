@@ -31,7 +31,7 @@ with no smallness assumption on the perturbation.
 module
 
 public import Mathlib.Analysis.InnerProductSpace.Projection.Basic
-public import Mathlib.Analysis.InnerProductSpace.Symmetric
+import Mathlib.Analysis.InnerProductSpace.Symmetric
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Inverse
 
 /-! # The Davis sin 2θ theorem (per-eigenvector, product form)
@@ -294,7 +294,7 @@ theorem sin_two_theta_le_of_mem (hT : T.IsSymmetric) (hH : H.IsSymmetric)
       ≤ 4 * (‖y‖ ^ 2 * ‖z‖ ^ 2) * ε := by linarith
   have h4 : (0 : ℝ) < 4 * (‖y‖ ^ 2 * ‖z‖ ^ 2) := by
     have := mul_pos hcs hcs
-    nlinarith [this]
+    nlinarith only [this, this]
   exact le_of_mul_le_mul_left hfinal h4
 
 /-- **Davis's sin 2θ theorem, per-eigenvector product form.**  Under the
@@ -341,13 +341,13 @@ theorem sin_two_arccos_le (hT : T.IsSymmetric) (hH : H.IsSymmetric)
     have h := norm_add_sq (𝕜 := 𝕜) y z
     simp only [hxsum, hx, hyz, map_zero, mul_zero, add_zero, one_pow] at h
     linarith
-  have hc1 : ‖y‖ ≤ 1 := by nlinarith [norm_nonneg y, sq_nonneg ‖z‖, sq_nonneg (‖y‖ - 1)]
+  have hc1 : ‖y‖ ≤ 1 := by nlinarith only [hpyth, norm_nonneg y, sq_nonneg ‖z‖, sq_nonneg (‖y‖ - 1)]
   rw [Real.sin_two_mul, Real.cos_arccos (by linarith [norm_nonneg y]) hc1, Real.sin_arccos]
   have hsqrt : Real.sqrt (1 - ‖y‖ ^ 2) = ‖z‖ := by
     rw [show (1 : ℝ) - ‖y‖ ^ 2 = ‖z‖ ^ 2 by linarith]
     exact Real.sqrt_sq (norm_nonneg z)
   rw [hsqrt]
-  nlinarith [hmain]
+  nlinarith only [hmain, hmain]
 
 /-- **Davis's tan 2θ theorem, orthogonal-decomposition form.**  Same setup as
 `sin_two_theta_le_of_mem`, but with the *vanishing-pinch* hypotheses: `H` has

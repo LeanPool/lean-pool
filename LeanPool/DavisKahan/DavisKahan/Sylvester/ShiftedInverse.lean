@@ -99,9 +99,9 @@ theorem norm_shift_apply_le_of_form_bounds
     rw [hre, abs_le]
     constructor
     · rw [hc, hr] at *
-      nlinarith [sq_nonneg ‖(w : F)‖]
+      nlinarith only [h1, sq_nonneg ‖(w : F)‖]
     · rw [hc, hr] at *
-      nlinarith [sq_nonneg ‖(w : F)‖]
+      nlinarith only [h2, sq_nonneg ‖(w : F)‖]
   -- polarization: unnormalized sesquilinear bound
   have hpolar : ∀ v w : B.domain,
       RCLike.re ⟪S v, (w : F)⟫_𝕜 ≤ (r / 2) * (‖(v : F)‖ ^ 2 + ‖(w : F)‖ ^ 2) := by
@@ -142,7 +142,7 @@ theorem norm_shift_apply_le_of_form_bounds
       rw [Submodule.coe_sub]
     rw [hcoeadd] at hb1
     rw [hcoesub] at hb2
-    nlinarith [hexp]
+    nlinarith only [hβα, hr, hexp, hb1, hb2, hpar, hexp]
   -- scaling: the sharp sesquilinear bound
   have hscaled : ∀ v w : B.domain,
       RCLike.re ⟪S v, (w : F)⟫_𝕜 ≤ r * ‖(v : F)‖ * ‖(w : F)‖ := by
@@ -221,7 +221,7 @@ theorem norm_shift_apply_le_of_form_bounds
   rcases eq_or_lt_of_le (norm_nonneg (S u)) with h0 | h0
   · rw [← h0]
     exact mul_nonneg hr0 (norm_nonneg _)
-  · nlinarith
+  · nlinarith only [hkey, h0]
 
 /-! ## Constant-one interval/exterior closed Sylvester estimates -/
 
@@ -308,7 +308,7 @@ theorem norm_sylvester_le_of_intervalExterior
       hallz
   have hmul := mul_le_mul_of_nonneg_left hXnorm hrd.le
   rw [← mul_assoc, mul_inv_cancel₀ hrd.ne', one_mul] at hmul
-  nlinarith [norm_nonneg X]
+  nlinarith only [hmul, norm_nonneg X]
 
 omit [CompleteSpace E] [CompleteSpace F] in
 /-- Raw partial-map form of the constant-one estimate in the swapped
@@ -377,7 +377,7 @@ theorem norm_sylvester_le_of_exteriorInterval
       hbound
   have hmul := mul_le_mul_of_nonneg_left hXnorm hrd.le
   rw [← mul_assoc, mul_inv_cancel₀ hrd.ne', one_mul] at hmul
-  nlinarith [norm_nonneg X]
+  nlinarith only [hmul, norm_nonneg X]
 
 /-! ## The unbounded `sin Θ` theorem, operator norm -/
 

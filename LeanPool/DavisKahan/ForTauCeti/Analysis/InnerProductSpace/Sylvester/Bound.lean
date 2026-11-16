@@ -4,8 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Jon Crall, Claude Fable 5
 -/
 module
+public import Mathlib.Analysis.InnerProductSpace.Symmetric
 
-public import Mathlib.Analysis.InnerProductSpace.Rayleigh
+import Mathlib.Analysis.InnerProductSpace.Rayleigh
 
 /-! # An operator-norm bound for the Sylvester equation
 

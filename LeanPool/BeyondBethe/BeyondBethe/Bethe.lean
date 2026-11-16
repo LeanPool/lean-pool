@@ -9,7 +9,7 @@ module
 public import LeanPool.BeyondBethe.BeyondBethe.Birkhoff
 public import LeanPool.BeyondBethe.BeyondBethe.Entropy
 public import Mathlib.Analysis.Convex.Function
-public import Mathlib.Tactic
+import Mathlib.Tactic.Linarith -- shake: keep
 
 /-! # Bethe -/
 

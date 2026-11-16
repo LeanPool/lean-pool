@@ -128,68 +128,21 @@ theorem tendsto_integral_continuousProcess
     (F : ContinuousPath alpha →ᵇ ℝ) (x : alpha) :
     Tendsto (fun i ↦ ∫ omega, F omega ∂(continuousProcess (P i) (hPc i) x)) l
       (nhds (∫ omega, F omega ∂(continuousProcess Q hQc x))) := by
-  rw [Metric.tendsto_nhds]
-  intro eps heps
-  set eps5 : ℝ := eps / 5 with heps5def
-  have heps5 : 0 < eps5 := by positivity
-  set Ctot : ℝ := ‖F‖ + (‖F‖ + eps5) with hCtotdef
-  have hCtotpos : 0 < Ctot := by
-    rw [hCtotdef]
-    have := norm_nonneg F
-    linarith
-  set eta : ℝ := eps5 / Ctot with hetadef
-  have hetapos : 0 < eta := div_pos heps5 hCtotpos
-  obtain ⟨Kp, hKpcompact, hKmassP, hKmassQ⟩ :=
-    exists_isCompact_measure_compl_le_insert hPc hQc hPmom hQmom x
-      (eps := ENNReal.ofReal eta) (ENNReal.ofReal_pos.mpr hetapos)
-  obtain ⟨G, hGcyl, hGnorm, hGapprox⟩ :=
-    ContinuousPath.exists_boundedCylinder_approx F hKpcompact heps5
-  have hKpmeas : MeasurableSet Kp := hKpcompact.isClosed.measurableSet
-  have herror : ∀ mu : Measure (ContinuousPath alpha), ∀ _ : IsProbabilityMeasure mu,
-      mu Kpᶜ ≤ ENNReal.ofReal eta →
-      |(∫ omega, F omega ∂mu) - ∫ omega, G omega ∂mu| ≤ 2 * eps5 := by
-    intro mu hmuprob hmass
-    have hmassreal : mu.real Kpᶜ ≤ eta := by
-      rw [measureReal_def]
-      exact ENNReal.toReal_le_of_le_ofReal hetapos.le hmass
-    have hbase := abs_integral_sub_le_of_approx_on mu F G hKpmeas heps5.le hGapprox
-    have hFG : ‖F‖ + ‖G‖ ≤ Ctot := by
-      rw [hCtotdef]
-      linarith [hGnorm]
-    have hprod : (‖F‖ + ‖G‖) * mu.real Kpᶜ ≤ eps5 := by
-      calc (‖F‖ + ‖G‖) * mu.real Kpᶜ ≤ Ctot * eta :=
-            mul_le_mul hFG hmassreal measureReal_nonneg hCtotpos.le
-        _ = eps5 := by
-            rw [hetadef]
-            field_simp
-    linarith [hbase, hprod]
-  obtain ⟨I, g, hg⟩ := hGcyl
-  have hcyl : Tendsto (fun i ↦ ∫ omega, G omega ∂(continuousProcess (P i) (hPc i) x)) l
-      (nhds (∫ omega, G omega ∂(continuousProcess Q hQc x))) := by
+  refine tendsto_integral_of_tight_approximation
+    (fun i ↦ continuousProcess (P i) (hPc i) x) (continuousProcess Q hQc x)
+    {G | ContinuousPath.IsBoundedCylinder G} F ?_ ?_ ?_
+  · intro eta heta
+    obtain ⟨K, hK, hmassP, hmassQ⟩ :=
+      exists_isCompact_measure_compl_le_insert hPc hQc hPmom hQmom x
+        (eps := ENNReal.ofReal eta) (ENNReal.ofReal_pos.mpr heta)
+    exact ⟨K, hK, Eventually.of_forall hmassP, hmassQ⟩
+  · intro K hK eps heps
+    exact ContinuousPath.exists_boundedCylinder_approx F hK heps
+  · rintro G ⟨I, g, hg⟩
     simp only [hg]
     exact tendsto_integral_finsetEvaluation_continuousProcess hP hPc
       (fun i ↦ KolmogorovRegular.of_hasKolmogorovMoments (P i) (hPc i) (hPmom i)) hQ hQc
       (KolmogorovRegular.of_hasKolmogorovMoments Q hQc hQmom) hconv I g x
-  have hnear : ∀ᶠ i in l, |(∫ omega, G omega ∂(continuousProcess (P i) (hPc i) x)) -
-      ∫ omega, G omega ∂(continuousProcess Q hQc x)| < eps5 := by
-    have h := Metric.tendsto_nhds.mp hcyl eps5 heps5
-    simpa only [Real.dist_eq] using h
-  filter_upwards [hnear] with i hinear
-  rw [Real.dist_eq]
-  have h1 := herror (continuousProcess (P i) (hPc i) x) inferInstance (hKmassP i)
-  have h2 := herror (continuousProcess Q hQc x) inferInstance hKmassQ
-  have h2' : |(∫ omega, G omega ∂(continuousProcess Q hQc x)) -
-      ∫ omega, F omega ∂(continuousProcess Q hQc x)| ≤ 2 * eps5 := by
-    rw [abs_sub_comm]
-    exact h2
-  have htri1 := abs_sub_le (∫ omega, F omega ∂(continuousProcess (P i) (hPc i) x))
-    (∫ omega, G omega ∂(continuousProcess (P i) (hPc i) x))
-    (∫ omega, F omega ∂(continuousProcess Q hQc x))
-  have htri2 := abs_sub_le (∫ omega, G omega ∂(continuousProcess (P i) (hPc i) x))
-    (∫ omega, G omega ∂(continuousProcess Q hQc x))
-    (∫ omega, F omega ∂(continuousProcess Q hQc x))
-  rw [heps5def] at h1 h2' hinear
-  linarith [htri1, htri2, h1, h2', hinear]
 
 /-- **The path laws converge in distribution.**  Read in the space of probability measures on path
 space with its topology of convergence in distribution, the laws of the approximating processes

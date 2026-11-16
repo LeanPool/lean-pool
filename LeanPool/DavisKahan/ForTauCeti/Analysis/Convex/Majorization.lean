@@ -6,14 +6,14 @@ Authors: Jon Crall, GPT-5.6 Thinking, Claude Fable 5, Claude Opus 5
 module
 
 public import Mathlib.Analysis.Convex.Basic
-public import Mathlib.Algebra.BigOperators.Fin
-public import Mathlib.Algebra.Order.Field.Basic
+import Mathlib.Algebra.BigOperators.Fin
+import Mathlib.Algebra.Order.Field.Basic
 public import Mathlib.Basic.Real.Basic
-public import Mathlib.Tactic.FieldSimp
+public meta import Mathlib.Tactic.FieldSimp
 public import Mathlib.Data.Fin.Tuple.Sort
-public import Mathlib.Tactic.Linarith
-public import Mathlib.Tactic.LinearCombination
-public import Mathlib.Algebra.Order.BigOperators.Group.Finset
+public meta import Mathlib.Tactic.Linarith
+public meta import Mathlib.Tactic.LinearCombination
+import Mathlib.Algebra.Order.BigOperators.Group.Finset
 
 /-!
 # Weak majorization and the Hardy–Littlewood–Pólya transfer lemma

@@ -9,7 +9,10 @@ module
 public import LeanPool.BeyondBethe.BeyondBethe.Gibbs
 public import LeanPool.BeyondBethe.BeyondBethe.Transfer
 public import LeanPool.BeyondBethe.BeyondBethe.SequentialNormalization
-public import Mathlib.Tactic
+import Mathlib.Tactic.Ext -- shake: keep
+import Mathlib.Tactic.FieldSimp -- shake: keep
+import Mathlib.Tactic.Ring -- shake: keep
+import Mathlib.Tactic.SimpRw -- shake: keep
 
 /-! # Sequential -/
 

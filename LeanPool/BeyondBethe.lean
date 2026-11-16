@@ -6,6 +6,10 @@ Authors: Nima Anari
 module
 
 
+-- Keep the existing proof-library reexports at the public entry point.
+public import Mathlib.Analysis.Asymptotics.SpecificAsymptotics -- shake: keep
+public import Mathlib.Tactic -- shake: keep
+
 public import LeanPool.BeyondBethe.BeyondBethe
 public import LeanPool.BeyondBethe.BeyondBethe.AdaptiveRoundedEllipsoid
 public import LeanPool.BeyondBethe.BeyondBethe.AlgorithmicSpec

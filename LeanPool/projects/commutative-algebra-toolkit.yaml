@@ -1,0 +1,83 @@
+slug: commutative-algebra-toolkit
+title: Commutative algebra toolkit
+summary: A collection of general results in commutative algebra and neighbouring areas,
+  each self-contained and stated in Mathlib's language. It proves Pólya's theorem that
+  the binomial polynomials form a ℤ-basis of the integer-valued polynomials, via Newton's
+  forward difference formula; that a ring is Noetherian if and only if every finitely
+  generated module is finitely presented; that over a principal ideal domain a module is
+  injective if and only if it is divisible, with the module K/A of a fraction field as an
+  application; that two finite-dimensional simple modules over an algebraically closed
+  field with the same trace function are isomorphic, in any characteristic; that in prime
+  characteristic p the Hasse derivatives of orders 0 < k < p^e vanish exactly on
+  polynomials in X^(p^e); that tensoring with a finitely presented module commutes with
+  arbitrary products; and that associated
+  primes of F/N lie over p when F is flat and N lies over pF. Smaller results cover flat
+  products, adic completeness along nilpotent ideals, Baer's criterion for I-primary
+  modules, stable range one for semilocal rings, Noetherian quasi-sober spaces, derivations, the group completion of a
+  commutative monoid, resultants of split polynomials, and the image of Frobenius in a
+  normed field of characteristic p.
+branch: commutative algebra
+entry_module: LeanPool.CommutativeAlgebraToolkit
+authors:
+- Michel Hua
+source:
+  url: https://stacks.math.columbia.edu
+  github_repo: mycaule/lean-pool
+  commit: b3b0193d76e054318747eff01ad9c1f4c0b509a8
+license: Apache-2.0
+status: verified
+provenance: mix
+main_declarations:
+- Polynomial.intValuedBasis
+- Polynomial.exists_eq_sum_intCast_smul_choose
+- isNoetherianRing_iff_forall_finitePresentation
+- Module.injective_iff_smul_surjective
+- IsSimpleModule.nonempty_linearEquiv_of_trace_eq
+- Polynomial.forall_hasseDeriv_eq_zero_iff_exists_expand
+- Module.FinitePresentation.piRightHom_bijective
+- Submodule.IsAssociatedPrime.comap_eq_of_flat
+main_results:
+- declaration: Polynomial.intValuedBasis
+  informal: The binomial polynomials X choose n, for n ≥ 0, form a basis over ℤ of the
+    ring of rational polynomials taking integer values at all integers.
+  source_ref: P.-J. Cahen and J.-L. Chabert, Integer-Valued Polynomials, Mathematical
+    Surveys and Monographs 48, American Mathematical Society (1997), Chapter I.
+- declaration: Polynomial.exists_eq_sum_intCast_smul_choose
+  informal: A rational polynomial P taking integer values at all natural numbers is an
+    integer linear combination of the binomial polynomials X choose k with k ≤ deg P.
+  source_ref: G. Pólya, "Über ganzwertige Polynome in algebraischen Zahlkörpern", J. Reine
+    Angew. Math. 149 (1919), 97–116; see also Cahen–Chabert, Integer-Valued Polynomials
+    (1997), Chapter I.
+- declaration: isNoetherianRing_iff_forall_finitePresentation
+  informal: A ring R is Noetherian if and only if every finitely generated R-module is
+    finitely presented.
+- declaration: Module.injective_iff_smul_surjective
+  informal: Over a principal ideal domain R, a module Q is injective if and only if it is
+    divisible, that is, multiplication by every nonzero r is surjective on Q.
+- declaration: IsSimpleModule.nonempty_linearEquiv_of_trace_eq
+  informal: Let k be an algebraically closed field of any characteristic and A a
+    k-algebra. Two simple A-modules that are finite-dimensional over k and on which every
+    element of A acts with the same trace are isomorphic.
+- declaration: Polynomial.forall_hasseDeriv_eq_zero_iff_exists_expand
+  informal: Over a commutative ring of prime characteristic p, the Hasse derivatives of a
+    polynomial f of all orders k with 0 < k < p^e vanish if and only if f is a polynomial
+    in X^(p^e).
+- declaration: Module.FinitePresentation.piRightHom_bijective
+  informal: For a finitely presented R-module M and any family of R-modules P i, the
+    canonical map from M ⊗ (Π i, P i) to Π i, M ⊗ P i is bijective.
+  source_ref: The Stacks Project, Tag 059K, implication (1) ⇒ (2).
+- declaration: Submodule.IsAssociatedPrime.comap_eq_of_flat
+  informal: Let B be an A-algebra, F a B-module that is flat over A, p a prime of A and N
+    a B-submodule of F whose underlying A-submodule is pF. Then every associated prime of
+    the B-module F/N lies over p.
+tags:
+- commutative-algebra
+- integer-valued-polynomials
+- injective-modules
+- hasse-derivatives
+msc:
+- 13C11
+- 13E05
+- 13F20
+- 13N15
+- 11C08
