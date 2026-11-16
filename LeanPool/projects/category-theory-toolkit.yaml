@@ -22,6 +22,8 @@ authors:
 - Michel Hua
 source:
   url: https://ncatlab.org/nlab/show/idempotent+adjunction
+  github_repo: mycaule/lean-pool
+  commit: 210cb3fdc18bac5b3d1741a5c7f8435f29388ab6
 license: Apache-2.0
 status: verified
 provenance: mix
