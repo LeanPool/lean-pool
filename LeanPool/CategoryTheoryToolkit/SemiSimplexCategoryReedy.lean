@@ -44,7 +44,7 @@ namespace HomotopicalAlgebra.ReedyStructure
 variable {C : Type u} [Category.{v} C]
 
 /-- The only factorization of `f` as an identity followed by a morphism is `𝟙 _ ≫ f`. -/
-instance {X Y : C} (f : X ⟶ Y) :
+instance uniqueMapFactorizationDataIdentitiesTop {X Y : C} (f : X ⟶ Y) :
     Unique ((identities C).MapFactorizationData ⊤ f) where
   default := ⟨X, 𝟙 X, f, by simp, .mk _, trivial⟩
   uniq := by
