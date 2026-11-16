@@ -8,12 +8,6 @@ module
 
 public import LeanPool.DeciSigma1.Readers.Basic
 import Mathlib.Tactic.Ring.RingNF
-import Mathlib.Tactic.Positivity.Finset
-import Mathlib.Algebra.Order.Field.Basic
-import Mathlib.Tactic.NormNum.OfScientific
-import Mathlib.Tactic.NormNum.DivMod
-import Mathlib.Tactic.NormNum.Abs
-import Mathlib.Data.Rat.Cast.Order
 public import Mathlib.Order.Interval.Finset.Nat
 
 /-! Ported to Lean Pool’s module system and pinned Lean and Mathlib.

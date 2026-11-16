@@ -9,12 +9,6 @@ module
 public import LeanPool.DeciSigma1.Arithmetic.FinitePaths
 public import LeanPool.DeciSigma1.Holes.Tail.Levels
 import Mathlib.Tactic.Ring.RingNF
-import Mathlib.Tactic.Positivity.Finset
-import Mathlib.Algebra.Order.Field.Basic
-import Mathlib.Tactic.NormNum.OfScientific
-import Mathlib.Tactic.NormNum.DivMod
-import Mathlib.Tactic.NormNum.Abs
-import Mathlib.Data.Rat.Cast.Order
 
 /-! Ported to Lean Pool’s module system and pinned Lean and Mathlib.
 

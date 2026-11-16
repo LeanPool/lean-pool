@@ -6,15 +6,11 @@ Authors: Yaoyu Zhao
 
 module
 
+import Mathlib.Algebra.Order.BigOperators.Group.Finset
+
 public import LeanPool.DeciSigma1.Holes.Tail.Levels
 import Mathlib.Algebra.Group.Action.Defs
 import Mathlib.Tactic.Ring.RingNF
-import Mathlib.Tactic.Positivity.Finset
-import Mathlib.Algebra.Order.Field.Basic
-import Mathlib.Tactic.NormNum.OfScientific
-import Mathlib.Tactic.NormNum.DivMod
-import Mathlib.Tactic.NormNum.Abs
-import Mathlib.Data.Rat.Cast.Order
 
 /-! Ported to Lean Pool’s module system and pinned Lean and Mathlib.
 

@@ -8,7 +8,6 @@ module
 
 public import LeanPool.DeciSigma1.Semantics.Tree
 import Mathlib.Tactic.Bound.Init
-import Mathlib.Tactic.Finiteness.Attr
 
 /-! Ported to Lean Pool’s module system and pinned Lean and Mathlib.
 

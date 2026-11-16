@@ -10,11 +10,6 @@ public import LeanPool.DeciSigma1.Entailment.Basic
 public import LeanPool.DeciSigma1.Entailment.Embedding
 public import LeanPool.DeciSigma1.Full.Reduction.Transfer
 import Mathlib.Data.Fintype.Option
-import Mathlib.Tactic.NormNum.OfScientific
-import Mathlib.Tactic.NormNum.DivMod
-import Mathlib.Tactic.NormNum.Abs
-import Mathlib.Data.Rat.Cast.Order
-import Mathlib.Tactic.NormNum.Pow
 import Mathlib.Data.Set.Finite.Basic
 
 /-! Ported to Lean Pool’s module system and pinned Lean and Mathlib.

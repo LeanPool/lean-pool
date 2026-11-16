@@ -7,12 +7,9 @@ Authors: Yaoyu Zhao
 module
 
 public import LeanPool.DeciSigma1.Logic.Syntax
-public import Mathlib.Tactic.ToAdditive
 import Mathlib.Data.List.Basic
 public import Mathlib.Tactic.Attr.Core
-import Mathlib.Tactic.Finiteness.Attr
 public import Mathlib.Tactic.Basic
-public import Mathlib.Tactic.ToDual
 
 /-! Ported to Lean Pool’s module system and pinned Lean and Mathlib.
 

@@ -8,11 +8,6 @@ module
 
 public import Mathlib.Data.Nat.Factorial.Basic
 import Mathlib.Order.Iterate
-import Mathlib.Tactic.NormNum.OfScientific
-import Mathlib.Tactic.NormNum.DivMod
-import Mathlib.Tactic.NormNum.Abs
-import Mathlib.Data.Rat.Cast.Order
-import Mathlib.Tactic.NormNum.Pow
 public import Mathlib.Algebra.Group.Nat.Defs
 public import Mathlib.Order.Monotone.Defs
 

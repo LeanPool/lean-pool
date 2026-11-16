@@ -11,11 +11,7 @@ public import LeanPool.DeciSigma1.Semantics.Selector
 public import LeanPool.DeciSigma1.Automata.Constraints
 import Mathlib.Algebra.Group.Action.Defs
 import Mathlib.Data.Fintype.Pigeonhole
-import Mathlib.Tactic.NormNum.OfScientific
-import Mathlib.Tactic.NormNum.DivMod
-import Mathlib.Tactic.NormNum.Abs
-import Mathlib.Data.Rat.Cast.Order
-import Mathlib.Tactic.Linarith.Frontend
+import Mathlib.Tactic.Linarith
 
 /-! Ported to Lean Pool’s module system and pinned Lean and Mathlib.
 

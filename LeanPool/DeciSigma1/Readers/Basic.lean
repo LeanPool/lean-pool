@@ -6,19 +6,15 @@ Authors: Yaoyu Zhao
 
 module
 
+import Mathlib.Algebra.Order.BigOperators.Group.Finset
+
 public import LeanPool.DeciSigma1.Automata.Basic
 import Mathlib.Order.SuccPred.Nat
 import Mathlib.Algebra.Group.Action.Defs
 public import Mathlib.Data.Fintype.Pi
 import Mathlib.Data.Fintype.Pigeonhole
-import Mathlib.Tactic.Positivity.Finset
 public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
-import Mathlib.Algebra.Order.Field.Basic
-import Mathlib.Tactic.NormNum.OfScientific
-import Mathlib.Tactic.NormNum.DivMod
-import Mathlib.Tactic.NormNum.Abs
-import Mathlib.Data.Rat.Cast.Order
-import Mathlib.Tactic.Linarith.Frontend
+import Mathlib.Tactic.Linarith
 public import Mathlib.Data.Finset.Prod
 
 /-! Ported to Lean Pool’s module system and pinned Lean and Mathlib.

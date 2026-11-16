@@ -7,7 +7,6 @@ Authors: Yaoyu Zhao
 module
 
 import Mathlib.Data.Set.Finite.List
-public import Mathlib.Tactic.ToAdditive
 public import Mathlib.Basic.Finite.Defs
 public import Mathlib.Tactic.Attr.Core
 public import Mathlib.Data.Set.Operations

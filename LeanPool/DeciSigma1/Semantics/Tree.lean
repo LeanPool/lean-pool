@@ -7,7 +7,6 @@ Authors: Yaoyu Zhao
 module
 
 import Mathlib.Algebra.Order.Ring.Nat
-public import Mathlib.Tactic.ToAdditive
 import Mathlib.Data.List.Induction
 public import Mathlib.Tactic.Attr.Core
 public import Mathlib.Order.Lattice

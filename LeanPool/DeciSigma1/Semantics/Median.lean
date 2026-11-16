@@ -12,7 +12,6 @@ import Mathlib.Data.List.Induction
 import Mathlib.Order.MinMax
 import Mathlib.Data.Finset.Attr
 import Mathlib.Tactic.SetLike
-import Mathlib.Tactic.Finiteness.Attr
 
 /-! Ported to Lean Pool’s module system and pinned Lean and Mathlib.
 
