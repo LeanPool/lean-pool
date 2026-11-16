@@ -683,5 +683,4 @@ public import LeanPool.KLS.LevyStochCalc.Probability.ProgressiveCadlag
 public import LeanPool.KLS.LevyStochCalc.Probability.StoppedProgressive
 public import LeanPool.KLS.LevyStochCalc.Probability.Transport
 public import LeanPool.KLS.LevyStochCalc.Probability.TrivialSigma
-public import LeanPool.KLS.MathFin.Foundations.DoobLpMaximalInequality
 public import LeanPool.KLS.OAI.Analysis.KLS.Model

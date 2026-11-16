@@ -10,7 +10,7 @@ module
 
 public import Mathlib.Probability.Martingale.Basic
 public import LeanPool.KLS.LevyStochCalc.Probability.ProgressiveCadlag
-public import LeanPool.KLS.MathFin.Foundations.DoobLpMaximalInequality
+import TauCeti.Probability.Martingale.MaximalInequality.Lp
 
 /-!
 # Doob's `L²` maximal inequality in continuous time
@@ -18,10 +18,10 @@ public import LeanPool.KLS.MathFin.Foundations.DoobLpMaximalInequality
 For a right-continuous martingale on `[0, T]`, the supremum of the paths over the window is
 square integrable, with `𝔼[sup_{t ≤ T} |M_t|²] ≤ 4 𝔼[|M_T|²]`.
 
-The discrete inequality is `MeasureTheory.Martingale.eLpNorm_norm_runMax_le`; the passage to
-continuous time samples the martingale along the dyadic partition of `[0, T]`, whose points are
-increasing in the level, and uses right-continuity to identify the supremum over the window with
-the supremum of the sampled maxima.
+The proof samples the martingale on dyadic partitions of `[0, T]` and applies Tau Ceti's
+`MeasureTheory.Martingale.eLpNorm_partialSups_norm_le`. The partitions refine with each level,
+and right-continuity identifies the supremum over the window with the supremum of the sampled
+maxima.
 
 ## Main statements
 
@@ -278,20 +278,20 @@ theorem lintegral_sq_dyadicRunMax_le {μ : Measure Ω} [IsFiniteMeasure μ]
     ∫⁻ ω, (‖dyadicRunMax M T n ω‖₊ : ℝ≥0∞) ^ 2 ∂μ
       ≤ 4 * ∫⁻ ω, (‖M T ω‖₊ : ℝ≥0∞) ^ 2 ∂μ := by
   have hsamp := martingale_compMono hM (dyadicTime T n) (dyadicTime_monotone hT n)
-  have hdoob := MeasureTheory.Martingale.eLpNorm_norm_runMax_le hsamp
-    (by norm_num : (1 : ℝ) < 2) (2 ^ n)
-  have hp : ENNReal.ofReal (2 : ℝ) = (2 : ℝ≥0∞) := by
-    simp
-  have hc : ENNReal.ofReal ((2 : ℝ) / (2 - 1)) = (2 : ℝ≥0∞) := by
-    norm_num
-  rw [hp, hc, dyadicTime_top n] at hdoob
-  have hlhs : eLpNorm (fun ω => (Finset.range (2 ^ n + 1)).sup' Finset.nonempty_range_add_one
-      fun k => ‖M (dyadicTime T n k) ω‖) 2 μ = eLpNorm (dyadicRunMax M T n) 2 μ := rfl
+  have hdoob := hsamp.eLpNorm_partialSups_norm_le (2 ^ n)
+    (p := 2) (by norm_num) (by simp)
+  have hmax : partialSups (fun k ω => ‖M (dyadicTime T n k) ω‖) (2 ^ n) =
+      dyadicRunMax M T n := by
+    funext ω
+    simp only [partialSups_eq_sup'_range, Finset.sup'_apply, dyadicRunMax]
+  have hdenom : (2 : ℝ≥0∞) - 1 = 1 := by
+    rw [← one_add_one_eq_two, ENNReal.add_sub_cancel_right ENNReal.one_ne_top]
+  rw [hmax, hdenom, div_one, dyadicTime_top n] at hdoob
   have hmeas_max : AEStronglyMeasurable (dyadicRunMax M T n) μ := by
     unfold dyadicRunMax
     exact (Finset.measurable_range_sup'' fun k _ =>
       ((hM.stronglyMeasurable _).mono (ℱ.le _)).measurable.norm).aestronglyMeasurable
-  rw [hlhs, eLpNorm_two_eq _ hmeas_max, eLpNorm_two_eq _ (hM.integrable T).aestronglyMeasurable]
+  rw [eLpNorm_two_eq _ hmeas_max, eLpNorm_two_eq _ (hM.integrable T).aestronglyMeasurable]
     at hdoob
   have hsq := ENNReal.rpow_le_rpow hdoob (by norm_num : (0 : ℝ) ≤ 2)
   rw [← ENNReal.rpow_mul, ENNReal.mul_rpow_of_nonneg _ _ (by norm_num : (0 : ℝ) ≤ 2),
