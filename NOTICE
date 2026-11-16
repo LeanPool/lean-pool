@@ -90,6 +90,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/CriticalPortraits         https://github.com/no-way-labs/lean-critical-portraits
   LeanPool/CryptidsGoldbach          https://github.com/google-deepmind/cryptids
   LeanPool/DavisKahan                https://github.com/aiq-kitware/aiq-davis-kahan-1970-rotation-eigenvectgors-perturbation-formalization
+  LeanPool/DeciSigma1                https://github.com/noti0na1/deci-sigma1
   LeanPool/DemazureOperatorsLean     https://github.com/bolito2/DemazureOperatorsLean
   LeanPool/DemazureProduct           https://github.com/npflueger/demazure
   LeanPool/DensityHalesJewett        https://github.com/gdahia/densityhalesjewett
@@ -196,6 +197,8 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/LiCriterion               https://github.com/nicholasbulka/li-criterion-rh-equivalence-lean
   LeanPool/LieTrotter                https://github.com/zblore/lie-trotter-lean
   LeanPool/LiebThirring              https://github.com/scottnarmstrong/LiebThirring
+  LeanPool/LinearAlgebraCombinatoricsAndAnalysis
+                                     https://github.com/mycaule/lean-pool
   LeanPool/ListEdgeColoringComplete  https://github.com/jtraverso/haggkvist-janssen
   LeanPool/LocalComplexGeometry      https://github.com/BochaoKong/nullstellensatz
   LeanPool/LongGapsBetweenPrimes     https://github.com/openai/LongGapsBetweenPrimes
@@ -309,6 +312,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/SpherePacking             https://github.com/openai/ten-proofs
   LeanPool/Stafford38                https://github.com/itpplasma/stafford38-formal
   LeanPool/StallingsFolding          https://github.com/Arthur742Ramos/stallings-folding
+  LeanPool/SteinerSpanners           https://github.com/goranzuzic/high-dimensional-steiner-spanners
   LeanPool/StructuralGraphClasses    https://github.com/jtraverso/lean-pool
   LeanPool/SumDifferenceExponent     https://github.com/linhaowei1/sum-diff-proof
   LeanPool/SumOfSetsInSeveralDimensions
