@@ -10,6 +10,7 @@ module
 
 public import LeanPool.OrderMaintenance.Proof.Top.TopParams
 public import LeanPool.OrderMaintenance.Proof.Top.PrepContract
+public import Mathlib.NumberTheory.Harmonic.Bounds
 public import LeanPool.OrderMaintenance.Proof.Cost.Params
 public import LeanPool.OrderMaintenance.Proof.Cost.Wrap
 
@@ -68,7 +69,7 @@ theorem topJ_eq (P : Params) (hs : P.s = 11) : topJ P = 13 * P.H + 2 := by
 theorem Rf_le (N : Nat) : RfP (proofParams N) ≤ pL N := by
   have hL := pL_ge N
   unfold RfP; rw [topJ_eq _ rfl, H_eq]
-  show (13 * (pL N / 3 + 1) + 2) / 8 + 1 ≤ pL N
+  change (13 * (pL N / 3 + 1) + 2) / 8 + 1 ≤ pL N
   omega
 
 /-- The game's counters, beyond the first, are fewer than `2^(L-2)`. -/
@@ -78,7 +79,8 @@ theorem nf_lt (N : Nat) : nfP (proofParams N) - 1 < 2 ^ (pL N - 2) := by
   have hN := N_lt N
   unfold nfP
   rw [show (proofParams N).N = N from rfl]
-  have h8 : N / ((proofParams N).theta + 1 - cmax (proofParams N)) ≤ N / 8 := Nat.div_le_div_left hd (by norm_num)
+  have h8 : N / ((proofParams N).theta + 1 - cmax (proofParams N)) ≤ N / 8 :=
+    Nat.div_le_div_left hd (by norm_num)
   have hp : 2 ^ pL N = 4 * 2 ^ (pL N - 2) := by
     rw [show pL N = (pL N - 2) + 2 by omega, pow_add]; simp; ring
   generalize N / ((proofParams N).theta + 1 - cmax (proofParams N)) = q at h8
@@ -98,7 +100,7 @@ theorem Hn_le (N : Nat) : Hn (nfP (proofParams N) - 1) + 1 ≤ (pL N : ℝ) := b
     · have hmr : (m : ℝ) ≤ (2 : ℝ) ^ (pL N - 2) := by exact_mod_cast hm.le
       have hl := Real.log_le_log (by exact_mod_cast hpos) hmr
       rw [Real.log_pow] at hl
-      have h2 : Real.log 2 < 1 := lt_trans Real.log_two_lt_d9 (by norm_num)
+      have h2 : Real.log 2 < 1 := by simpa using Real.log_lt_sub_one_of_pos (by norm_num : (0 : ℝ) < 2) (by norm_num : (2 : ℝ) ≠ 1)
       have hc : ((pL N - 2 : ℕ) : ℝ) = (pL N : ℝ) - 2 := by
         rw [Nat.cast_sub (by omega)]; norm_num
       rw [hc] at hl
@@ -114,9 +116,9 @@ theorem I5_proof (N : Nat) : ((proofParams N).theta : ℝ) +
   have hH := Hn_le N
   have hR : (RfP (proofParams N) : ℝ) ≤ pL N := by exact_mod_cast Rf_le N
   have hθ : ((proofParams N).theta : ℝ) = 2 * (pL N : ℝ) * pL N := by
-    show ((2 * pL N * pL N : ℕ) : ℝ) = _; push_cast; ring
+    change ((2 * pL N * pL N : ℕ) : ℝ) = _; push_cast; ring
   have hT : ((proofParams N).T : ℝ) = 3 * (pL N : ℝ) * pL N := by
-    show ((3 * pL N * pL N : ℕ) : ℝ) = _; push_cast; ring
+    change ((3 * pL N * pL N : ℕ) : ℝ) = _; push_cast; ring
   rw [hθ, hT]
   have hHn : 0 ≤ Hn (nfP (proofParams N) - 1) := by
     have := Hn_mono (Nat.zero_le (nfP (proofParams N) - 1)); simpa [Hn] using this
@@ -133,7 +135,7 @@ theorem capc_proof (N : Nat) : 2 + 2 * (N / ((proofParams N).theta + 1 - cmax (p
   unfold nfP at hm
   rw [show (proofParams N).N = N from rfl] at hm
   unfold capT
-  rw [Wd_eq (P := proofParams N) rfl rfl, H_eq, Nat.add_sub_cancel]
+  rw [Wd_eq (P := proofParams N) rfl _, H_eq, Nat.add_sub_cancel]
   have h8 : 2 ^ (pL N - 2) ≤ 8 ^ (pL N / 3) := by
     rw [show (8 : Nat) = 2 ^ 3 from rfl, ← pow_mul]
     exact Nat.pow_le_pow_right (by norm_num) (by omega)
@@ -144,15 +146,16 @@ theorem capc_proof (N : Nat) : 2 + 2 * (N / ((proofParams N).theta + 1 - cmax (p
   omega
 
 /-- The preparation budget: `H(N') + 1 ≤ L(N) + 2` for `N' ≤ 4N`. -/
-theorem prepB_proof (N N' : Nat) (h : N' ≤ 4 * N) : (proofParams N').H + 1 ≤ (proofParams N).L + 2 := by
+theorem prepB_proof (N N' : Nat) (h : N' ≤ 4 * N) : (proofParams N').H + 1 ≤ (proofParams N).L +
+  2 := by
   rw [H_eq]
-  show pL N' / 3 + 1 + 1 ≤ pL N + 2
+  change pL N' / 3 + 1 + 1 ≤ pL N + 2
   have hs : Nat.size N' ≤ Nat.size N + 2 := by
     rw [Nat.size_le]
     have := Nat.lt_size_self N
     rw [pow_add]
     rcases Nat.eq_zero_or_pos N with rfl | hN
-    · simp at h; subst h; positivity
+    · simp only [Nat.size_zero, pow_zero, Nat.reducePow, one_mul, gt_iff_lt] at h; subst h; positivity
     · have : 4 * N < 4 * 2 ^ Nat.size N := by omega
       calc N' ≤ 4 * N := h
         _ < 2 ^ Nat.size N * 2 ^ 2 := by rw [Nat.mul_comm]; simpa using this
@@ -167,7 +170,7 @@ theorem pow_ge_add (m : Nat) (hm : 7 ≤ m) : m + 6 ≤ 2 ^ (m - 2) := by
 
 /-- Small capacities: `L + 6 ≤ N/2` for `N ≥ 64`. -/
 theorem small_proof (N : Nat) (h : 64 ≤ N) : (proofParams N).L + 6 ≤ N / 2 := by
-  show pL N + 6 ≤ N / 2
+  change pL N + 6 ≤ N / 2
   unfold pL
   have hs : 7 ≤ Nat.size N := Nat.lt_size.mpr (by omega)
   have hle : 2 ^ (Nat.size N - 1) ≤ N := Nat.lt_size.mp (by omega)
@@ -226,7 +229,7 @@ theorem costSetup : CostSetup proofParams TopInv topPI topMu topNu topPP topJ ca
   gp := gparams_proof
   cp := cparams_proof
   lp := lparams_proof
-  kR _ := by show 1 ≤ 8; omega
+  kR _ := by change 1 ≤ 8; omega
   R _ := le_rfl
   n1 _ := by unfold nfP; omega
   I5 := I5_proof
@@ -241,7 +244,8 @@ specification. -/
 theorem theoremA_proof (KB : Nat) :
     ∃ om, OrderMaintenance.init proofParams KB = .ok om ∧
       ∀ ops, OrderMaintenance.Spec.Valid OrderMaintenance.Spec.State.empty ops →
-        om.runOps proofParams ops = .ok (OrderMaintenance.Spec.run OrderMaintenance.Spec.State.empty ops) :=
+        om.runOps proofParams ops = .ok (OrderMaintenance.Spec.run
+          OrderMaintenance.Spec.State.empty ops) :=
   theoremA core_proof KB
 
 /-- **The wrapper's cost theorem for the proof parameters** (Level F), with no assumptions left:
@@ -252,7 +256,8 @@ theorem wrapper_cost_proof {KB : Nat} (hKB : 4 ≤ KB) :
       WC proofParams TopInv topPI topMu topNu topJ nfP RfP om OrderMaintenance.Spec.State.empty) ∧
     ∀ om Sp op, WC proofParams TopInv topPI topMu topNu topJ nfP RfP om Sp → op.Valid Sp →
       ∃ om', om.apply proofParams op = .ok ((OrderMaintenance.Spec.step Sp op).2, om') ∧
-        WC proofParams TopInv topPI topMu topNu topJ nfP RfP om' (OrderMaintenance.Spec.step Sp op).1 :=
+        WC proofParams TopInv topPI topMu topNu topJ nfP RfP om' (OrderMaintenance.Spec.step Sp
+          op).1 :=
   wrapper_cost costSetup hKB
 
 end OrderMaintenance.Proof.Top

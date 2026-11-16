@@ -38,9 +38,11 @@ def prepNext (P : Params) (pr : Prep) (v : Nat) : Prep :=
     tag := pr.tag ||| ((1 <<< (P.beta - 1)) <<< ((pr.h - 1) * P.beta)) }
 
 /-- A middle step: node `v = |nodes|` of height `pr.h ≥ 2`. -/
-theorem initStep_mid (s : Core) (pr : Prep) (hp : s.prep = some pr) (h1 : pr.h ≠ 1) (hH : pr.h ≤ s.P.H) :
+theorem initStep_mid (s : Core) (pr : Prep) (hp : s.prep = some pr) (h1 : pr.h ≠ 1) (hH : pr.h ≤
+  s.P.H) :
     initStep.run s = .ok false { s with
-      nodes := ((s.nodes.push { height := pr.h }).modify s.nodes.size (chainNew s.P pr)).modify pr.below
+      nodes := ((s.nodes.push { height := pr.h }).modify s.nodes.size (chainNew s.P pr)).modify
+        pr.below
         (fun n => { n with inTables := [s.nodes.size], livePar := s.nodes.size }),
       prep := some (prepNext s.P pr s.nodes.size) } := by
   unfold initStep
@@ -48,7 +50,8 @@ theorem initStep_mid (s : Core) (pr : Prep) (hp : s.prep = some pr) (h1 : pr.h �
   rfl
 
 /-- The first step: reset, then node `1` of height `1` above chunk `pr.chunk`. -/
-theorem initStep_first (s : Core) (pr : Prep) (hp : s.prep = some pr) (h1 : pr.h = 1) (hH : 1 ≤ s.P.H) :
+theorem initStep_first (s : Core) (pr : Prep) (hp : s.prep = some pr) (h1 : pr.h = 1) (hH : 1 ≤
+  s.P.H) :
     initStep.run s = .ok false { s with
       nodes := (#[default].push { height := 1 }).modify 1 (chainNew s.P pr), path := #[],
       cin := ((#[] : Array (List Nat)).setX pr.chunk []).setX pr.chunk [1],
@@ -59,9 +62,11 @@ theorem initStep_first (s : Core) (pr : Prep) (hp : s.prep = some pr) (h1 : pr.h
   rfl
 
 /-- The last step: store the path and the tag. -/
-theorem initStep_last (s : Core) (pr : Prep) (hp : s.prep = some pr) (h1 : pr.h ≠ 1) (hH : s.P.H < pr.h) :
+theorem initStep_last (s : Core) (pr : Prep) (hp : s.prep = some pr) (h1 : pr.h ≠ 1) (hH : s.P.H
+  < pr.h) :
     initStep.run s = .ok true { s with
-      path := s.path.setX pr.chunk pr.path, C := s.C.modify pr.chunk (fun C => { C with tag := pr.tag }),
+      path := s.path.setX pr.chunk pr.path, C := s.C.modify pr.chunk (fun C => { C with tag :=
+        pr.tag }),
       prep := none } := by
   unfold initStep
   simp [hp, h1, show ¬(pr.h ≤ s.P.H) by omega, setPath]

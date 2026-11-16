@@ -422,7 +422,7 @@ theorem sdAgree_walk {κ : Caps} {s : Core} {cl : List Nat} {ord : Nat → List 
     (hcl : CLok s cl) (K : TopCaps κ s) :
     ∃ D, D ≤ sdBound ∧ SDAgree κ (wiC s v) v D := by
   have S := hI.shape
-  obtain ⟨hvl, -⟩ := sd_live hpc hv0 hI hlp
+  obtain ⟨hvl, -⟩ := sd_live hpc hv0 hI
   obtain ⟨hl, hlh, hvL⟩ := sd_up hpc hv0 hI hlp
   obtain ⟨h1, hhH⟩ := sd_ht hpc hv0 hI hlp
   obtain ⟨hk2, hk1, hkn⟩ := sp_k hpc hv0 hI hlp hTP hof hW
@@ -458,7 +458,7 @@ theorem sdAgree_walk {κ : Caps} {s : Core} {cl : List Nat} {ord : Nat → List 
       rw [h0, Nat.sub_self, S.ord0] at hm
       have := (hcl.2 e).mp hm; omega
   have hkl : (nd (ts s) v).children.length ≤ 160 := by
-    have := (sp_kids_sub hpc hv0 hI hlp hTP hof hW).length_le
+    have := (sp_kids_sub hpc hv0 hI).length_le
     have hl2 := (hTL v).1
     simp only [Top.order, Node.order, List.length_map] at this; omega
   have hpl : (nd (ts s) (nd (ts s) v).livePar).children.length ≤ 160 := by
@@ -487,23 +487,23 @@ theorem sdAgree_walk {κ : Caps} {s : Core} {cl : List Nat} {ord : Nat → List 
     rw [hsh]; unfold tabsLen tabs at *
     by_cases h0 : ht (ts s) v - 1 = 0
     · rw [ite_eq_left h0] at hL ⊢; exact hL
-    · rw [ite_eq_right h0] at hL ⊢; rw [H.w_inTables]; exact hL
-  have hTt : ((wiC s v).nodes.getX v).table.length ≤ 160 := by rw [H.w_table]; exact (hTL v).1
+    · rw [ite_eq_right h0] at hL ⊢; rw [SDHyps.w_inTables]; exact hL
+  have hTt : ((wiC s v).nodes.getX v).table.length ≤ 160 := by rw [SDHyps.w_table]; exact (hTL v).1
   have hsl : side.length ≤ 160 := by
     have := sp_side_len hpc hv0 hI hlp hTP hof hW hside
     have := (hTL v).1
     simp only [Top.order, Node.order, List.length_map] at *; omega
-  refine ⟨_, sdCost_le (by rw [H.w_children]; exact hkl) hTt (by rw [H.w_inTables]; exact hinv) hsl le_rfl
-    (by rw [H.w_livePar,
-      H.w_children]; exact hpl),
+  refine ⟨_, sdCost_le (by rw [SDHyps.w_children]; exact hkl) hTt (by rw [SDHyps.w_inTables]; exact hinv) hsl le_rfl
+    (by rw [SDHyps.w_livePar,
+      SDHyps.w_children]; exact hpl),
       sdAgree_ok (B := 160) (side := side) (by rw [sd_kids_eq]; exact hk2) (fun h => by omega) hside
     (fun T hT => ?_) H.t_nd
     (fun e he => by
       rw [sd_kids_eq] at he
       rw [sw_kid hpc hv0 hI hlp hTP hof hW hlook he]; rfl)
-    (by rw [H.w_livePar, H.w_children]; exact hvL) H.t_hv
-    (fun h => by rw [H.w_inTables] at h; have := (hTv v h).1; omega)
-    (fun h0 h => by rw [H.w_children] at h; exact (hkid v h).1 (by rw [hsh] at h0; exact h0) |>.2 rfl)
+    (by rw [SDHyps.w_livePar, SDHyps.w_children]; exact hvL) H.t_hv
+    (fun h => by rw [SDHyps.w_inTables] at h; have := (hTv v h).1; omega)
+    (fun h0 h => by rw [SDHyps.w_children] at h; exact (hkid v h).1 (by rw [hsh] at h0; exact h0) |>.2 rfl)
     (fun h0 e he => by rw [hsz]; exact (hkeys e he).1 (by rwa [hsh] at h0))
     (fun e he => by
       by_cases h0 : ht (ts s) v - 1 = 0
@@ -511,22 +511,22 @@ theorem sdAgree_walk {κ : Caps} {s : Core} {cl : List Nat} {ord : Nat → List 
         exact ⟨by have := K.NC; omega, fun _ => by have := K.rcin; omega⟩
       · have := (hkeys e he).1 h0
         exact ⟨by have := K.N; omega, fun h => absurd (by rwa [hsh] at h) h0⟩)
-    (fun h0 e he => by rw [H.w_children] at he; rw [hsz]; exact ((hkid e he).1 (by rwa [hsh] at h0)).1)
+    (fun h0 e he => by rw [SDHyps.w_children] at he; rw [hsz]; exact ((hkid e he).1 (by rwa [hsh] at h0)).1)
     (fun h0 e he => by
-      rw [H.w_children] at he; have := (hkid e he).2 (by rwa [hsh] at h0); have := K.alp; omega)
-    H.t_hL (by rw [H.w_livePar]; exact H.hLv)
-    (fun T hT => by rw [H.w_table, H.w_side]; exact hTL T)
+      rw [SDHyps.w_children] at he; have := (hkid e he).2 (by rwa [hsh] at h0); have := K.alp; omega)
+    H.t_hL (by rw [SDHyps.w_livePar]; exact H.hLv)
+    (fun T hT => by rw [SDHyps.w_table, SDHyps.w_side]; exact hTL T)
     (by rw [hsz]; exact K.N) (by rw [hsz]; exact K.rc) (by rw [hsz]; exact K.rs) (by rw [hsz]; exact K.rt)
     (by rw [hsz]; exact K.ri) (by rw [hsz]; have := K.rcin; omega) (by rw [hsz]; have := K.alp; omega)
-    (fun T hT => by rw [H.w_table, H.w_side]; have := hTL T; have := K.lt; have := K.ls; omega)
+    (fun T hT => by rw [SDHyps.w_table, SDHyps.w_side]; have := hTL T; have := K.lt; have := K.ls; omega)
     (by have := K.ls; omega) (by have := K.lt; omega)
-    (by rw [H.w_inTables]; have := K.li; omega)
+    (by rw [SDHyps.w_inTables]; have := K.li; omega)
     (fun e he => by have := htl e he; have := K.li; have := K.lcin; split <;> omega)
-    (by rw [H.w_children]; have := K.lc; omega)
-    (by rw [H.w_livePar, H.w_children]; have := K.lc; omega)⟩
-  · rw [H.w_inTables] at hT
+    (by rw [SDHyps.w_children]; have := K.lc; omega)
+    (by rw [SDHyps.w_livePar, SDHyps.w_children]; have := K.lc; omega)⟩
+  · rw [SDHyps.w_inTables] at hT
     obtain ⟨A, le, Bs, htab, hA, hsd, h1, h2, -⟩ := room_up hI hTP hvl.1 hT 0 0
-    exact ⟨A, le, Bs, by rw [H.w_table]; exact htab, hA, by rw [H.w_draining, H.w_side]; exact hsd, h1, h2⟩
+    exact ⟨A, le, Bs, by rw [SDHyps.w_table]; exact htab, hA, by rw [SDHyps.w_draining, SDHyps.w_side]; exact hsd, h1, h2⟩
 
 /-- A chunk of the chunk list links to chunks of the list (or `NIL`). -/
 theorem CLok.links {s : Core} {cl : List Nat} (h : CLok s cl) {c : Nat} (hc : c ∈ cl) :

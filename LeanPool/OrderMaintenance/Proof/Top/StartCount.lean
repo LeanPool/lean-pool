@@ -25,7 +25,8 @@ namespace OrderMaintenance.Proof.Top
 
 open OrderMaintenance.Model OrderMaintenance.Proof
 /-- Few heavy elements fit under a weight bound. -/
-theorem count_heavy {T : List Nat} (f : Nat → Nat) (lam tau : Nat) (P : Nat → Prop) [DecidablePred P]
+theorem count_heavy {T : List Nat} (f : Nat → Nat) (lam tau : Nat) (P : Nat → Prop)
+  [DecidablePred P]
     (hlam : 1 ≤ lam) (h1 : ∀ x ∈ T, 1 ≤ f x) (h2 : ∀ x ∈ T, ¬P x → lam ≤ f x)
     (h3 : (T.filter (fun x => decide (P x))).length ≤ 1) (hs : (T.map f).sum ≤ tau) :
     T.length ≤ 1 + (tau - 1) / lam := by
@@ -38,10 +39,12 @@ theorem count_heavy {T : List Nat} (f : Nat → Nat) (lam tau : Nat) (P : Nat �
     simp only [decide_not] at e
     have a1 : p ≤ ((T.filter (fun x => decide (P x))).map f).sum := by
       have := List.length_le_sum_of_one_le ((T.filter (fun x => decide (P x))).map f)
-        (fun y hy => by obtain ⟨x, hx, rfl⟩ := List.mem_map.mp hy; exact h1 x (List.mem_of_mem_filter hx))
+        (fun y hy => by
+          obtain ⟨x, hx, rfl⟩ := List.mem_map.mp hy
+          exact h1 x (List.mem_of_mem_filter hx))
       simpa using this
     have a2 : lam * q ≤ ((T.filter (fun x => !decide (P x))).map f).sum := by
-      have := List.card_nsmul_le_sum ((T.filter (fun x => !decide (P x))).map f) lam
+      have := List.length_nsmul_le_sum ((T.filter (fun x => !decide (P x))).map f) lam
         (fun y hy => by
           obtain ⟨x, hx, rfl⟩ := List.mem_map.mp hy
           have hm := List.mem_filter.mp hx
@@ -69,13 +72,14 @@ variable {s : Core} {cl : List Nat} {ord : Nat → List Nat} {dr n0 : Nat → Na
   (hW : Wd s.P (ht (ts s) v) < (nd (ts s) v).weight + 2)
 include hpc hv0 hI hlp hTP hof hW
 
+omit hlp hof hW in
 /-- Few children in a part. -/
 theorem sc_part (h2 : 2 ≤ ht (ts s) v) {T : List Nat} (hT : T.Sublist (nd (ts s) v).children)
     (hs : (T.map (tw (ts s) cl)).sum ≤ taud s.P (ht (ts s) v)) :
     T.length ≤ 1 + (taud s.P (ht (ts s) v) - 1) / lamd s.P (ht (ts s) v - 1) := by
   have S := hI.shape
   have Ti := hI.time
-  obtain ⟨hvl, -⟩ := sd_live hpc hv0 hI hlp
+  obtain ⟨hvl, -⟩ := sd_live hpc hv0 hI
   obtain ⟨hnd, -, hk⟩ := S.kids v hvl
   have hkh : ∀ x ∈ T, liveN (ts s) x ∧ ht (ts s) x = ht (ts s) v - 1 := by
     intro x hx
@@ -100,23 +104,26 @@ section side
 variable {side : List (Nat × Side)}
   (hlook : ∀ x, lookup side x =
     if 2 ≤ ht (ts s) v ∧ x ∈ sEntries (wiC s v) v ∧ (nd (ts s) x).draining = true then
-      lookup (sidesOf (order (ts s) v) ((nd (ts s) v).children.getD (sK (wiC s v) v) 0)) (nd (ts s) x).t1
+      lookup (sidesOf (order (ts s) v) ((nd (ts s) v).children.getD (sK (wiC s v) v) 0)) (nd (ts
+        s) x).t1
     else lookup (sidesOf (order (ts s) v) ((nd (ts s) v).children.getD (sK (wiC s v) v) 0)) x)
 include hlook
 
+omit hTP hof hW hlook in
 /-- The ghosts of a part are at most half of its children. -/
-theorem sc_ghosts (h2 : 2 ≤ ht (ts s) v) {Ch G : List Nat} (hCh : Ch.Nodup) (hG : G.Nodup)
+theorem sc_ghosts (h2 : 2 ≤ ht (ts s) v) {Ch G : List Nat} (hG : G.Nodup)
     (hGo : ∀ g ∈ G, g ∈ order (ts s) v) (hGd : ∀ g ∈ G, (nd (ts s) g).draining = true)
     (hGt : ∀ g ∈ G, (nd (ts s) g).t1 ∈ Ch ∧ (nd (ts s) g).t2 ∈ Ch) :
     2 * G.length ≤ Ch.length := by
   have S := hI.shape
   have hgh : ∀ g ∈ G, ghostN (ts s) g := fun g hg =>
-    ⟨((sp_entry hpc hv0 hI hlp hTP hof hW (hGo g hg)).2 h2).1, hGd g hg⟩
+    ⟨((sp_entry hpc hv0 hI hlp (hGo g hg)).2 h2).1, hGd g hg⟩
   have hsrc : ∀ g ∈ G, srcOf (ts s) (nd (ts s) g).t1 = g ∧ srcOf (ts s) (nd (ts s) g).t2 = g ∧
       (nd (ts s) g).t1 ≠ (nd (ts s) g).t2 := by
     intro g hg
     obtain ⟨-, -, -, -, h5, h6, -, -, -, -, -, -, hinf⟩ := S.ghost g (hgh g hg)
-    exact ⟨h5, h6, ((before_of_infix2 (infix3_left hinf)).trans (before_of_infix2 (infix3_right hinf))
+    exact ⟨h5, h6, ((before_of_infix2 (infix3_left hinf)).trans (before_of_infix2 (infix3_right
+      hinf))
       (S.ordNodup _)).ne (S.ordNodup _)⟩
   have hnd : (G.map (fun g => (nd (ts s) g).t1) ++ G.map (fun g => (nd (ts s) g).t2)).Nodup := by
     rw [List.nodup_append]
@@ -137,20 +144,23 @@ theorem sc_ghosts (h2 : 2 ≤ ht (ts s) v) {Ch G : List Nat} (hCh : Ch.Nodup) (h
   simp only [List.length_append, List.length_map] at this
   omega
 
+omit hof hW hlook in
 /-- A part with these children is small. -/
-theorem sc_part_len {Part Ch : List Nat} (hPn : Part.Nodup) (hCh : Ch.Sublist (nd (ts s) v).children)
-    (hmem : ∀ e ∈ Part, e ∈ Ch ∨ (2 ≤ ht (ts s) v ∧ e ∈ order (ts s) v ∧ (nd (ts s) e).draining = true ∧
+theorem sc_part_len {Part Ch : List Nat} (hPn : Part.Nodup) (hCh : Ch.Sublist (nd (ts s)
+  v).children)
+    (hmem : ∀ e ∈ Part, e ∈ Ch ∨ (2 ≤ ht (ts s) v ∧ e ∈ order (ts s) v ∧ (nd (ts s) e).draining
+      = true ∧
       (nd (ts s) e).t1 ∈ Ch ∧ (nd (ts s) e).t2 ∈ Ch))
     (hsum : 2 ≤ ht (ts s) v → (Ch.map (tw (ts s) cl)).sum ≤ taud s.P (ht (ts s) v))
     (hlen1 : ht (ts s) v = 1 → Ch.length ≤ taud s.P 1) :
     Part.length ≤ n0max s.P (ht (ts s) v) := by
   have S := hI.shape
-  obtain ⟨hvl, -⟩ := sd_live hpc hv0 hI hlp
+  obtain ⟨hvl, -⟩ := sd_live hpc hv0 hI
   obtain ⟨hknd, -, hk⟩ := S.kids v hvl
   have hChn : Ch.Nodup := hknd.sublist hCh
   obtain ⟨h1, -⟩ := sd_ht hpc hv0 hI hlp
   by_cases h2 : 2 ≤ ht (ts s) v
-  · have hc := sc_part hpc hv0 hI hlp hTP hof hW h2 hCh (hsum h2)
+  · have hc := sc_part hpc hv0 hI hTP h2 hCh (hsum h2)
     have hsplit := List.length_eq_length_filter_add (fun x => (nd (ts s) x).draining) (l := Part)
     have hA : (Part.filter (fun x => !(nd (ts s) x).draining)).length ≤ Ch.length := by
       apply (hPn.filter _).length_le_of_subset
@@ -159,18 +169,20 @@ theorem sc_part_len {Part Ch : List Nat} (hPn : Part.Nodup) (hCh : Ch.Sublist (n
       rcases hmem x hxP with hc1 | ⟨-, -, hd, -⟩
       · exact hc1
       · rw [hd] at hxd; exact absurd hxd (by simp)
-    have hG := sc_ghosts hpc hv0 hI hlp hTP hof hW hlook h2 hChn (hPn.filter _)
+    have hG := sc_ghosts hpc hv0 hI hlp h2 (hPn.filter _)
       (G := Part.filter (fun x => (nd (ts s) x).draining))
       (fun g hg => by
         obtain ⟨hgP, hgd⟩ := List.mem_filter.mp hg
         rcases hmem g hgP with hc1 | ⟨-, ho, -⟩
-        · exfalso; have := (hk g (hCh.subset hc1)).2 h2; rw [this.2] at hgd; exact absurd hgd (by simp)
+        · exfalso; have := (hk g (hCh.subset hc1)).2 h2; rw [this.2] at hgd; exact absurd hgd
+            (by simp)
         · exact ho)
       (fun g hg => (List.mem_filter.mp hg).2)
       (fun g hg => by
         obtain ⟨hgP, hgd⟩ := List.mem_filter.mp hg
         rcases hmem g hgP with hc1 | ⟨-, -, -, t1, t2⟩
-        · exfalso; have := (hk g (hCh.subset hc1)).2 h2; rw [this.2] at hgd; exact absurd hgd (by simp)
+        · exfalso; have := (hk g (hCh.subset hc1)).2 h2; rw [this.2] at hgd; exact absurd hgd
+            (by simp)
         · exact ⟨t1, t2⟩)
     unfold n0max; rw [ite_eq_right (by omega)]
     have hlen : Part.length ≤ Ch.length + Ch.length / 2 := by omega
@@ -189,33 +201,36 @@ theorem sc_part_len {Part Ch : List Nat} (hPn : Part.Nodup) (hCh : Ch.Sublist (n
     have e : taud s.P 1 = s.P.a + 1 := rfl
     omega
 
+omit hlp hTP hof hW hlook in
 theorem sc_entries_nodup : (sEntries (wiC s v) v).Nodup := by
   unfold sEntries drainEntries
   rw [show ((wiC s v).nodes.getX v).order = order (ts s) v from (wiC_sameTree s v).order v]
-  exact (sp_order_nodup hpc hv0 hI hlp hTP hof hW).filter _
+  exact (sp_order_nodup hpc hv0 hI).filter _
 
 /-- **A fresh table is small** (the left part). -/
 theorem sc_left : (sLeft (wiC s v) v side).length ≤ n0max s.P (ht (ts s) v) := by
-  refine sc_part_len hpc hv0 hI hlp hTP hof hW hlook ((sc_entries_nodup hpc hv0 hI hlp hTP hof hW hlook).filter _)
-    (List.take_sublist _ _) (fun e he => ?_) (fun h2 => (sd_cut2 hpc hv0 hI hlp hTP h2 hof hW).2.2.2.2.2.1)
+  refine sc_part_len hpc hv0 hI hlp hTP ((sc_entries_nodup hpc hv0 hI).filter _)
+    (List.take_sublist _ _) (fun e he => ?_) (fun h2 => (sd_cut2 hpc hv0 hI hlp hTP h2 hof
+      hW).2.2.2.2.2.1)
     (fun h1 => (sd_cut1 hpc hv0 hI hlp h1 hof hW).2.2.2.2.1)
   rcases (sw_left hpc hv0 hI hlp hTP hof hW hlook).mp he with hc1 | ⟨h2, ho, hd, -, ht1⟩
   · exact Or.inl hc1
-  · exact Or.inr ⟨h2, ho, hd, ht1, (sw_nosep hpc hv0 hI hlp hTP hof hW hlook h2 ho hd).mp ht1⟩
+  · exact Or.inr ⟨h2, ho, hd, ht1, (sw_nosep hpc hv0 hI hlp hTP hof hW h2 ho hd).mp ht1⟩
 
 /-- **A fresh table is small** (the right part). -/
 theorem sc_right : (sRight (wiC s v) v side).length ≤ n0max s.P (ht (ts s) v) := by
-  refine sc_part_len hpc hv0 hI hlp hTP hof hW hlook ((sc_entries_nodup hpc hv0 hI hlp hTP hof hW hlook).filter _)
-    (List.drop_sublist _ _) (fun e he => ?_) (fun h2 => (sd_cut2 hpc hv0 hI hlp hTP h2 hof hW).2.2.2.2.2.2.2)
+  refine sc_part_len hpc hv0 hI hlp hTP ((sc_entries_nodup hpc hv0 hI).filter _)
+    (List.drop_sublist _ _) (fun e he => ?_) (fun h2 => (sd_cut2 hpc hv0 hI hlp hTP h2 hof
+      hW).2.2.2.2.2.2.2)
     (fun h1 => (sd_cut1 hpc hv0 hI hlp h1 hof hW).2.2.2.2.2.2)
   rcases (sw_right hpc hv0 hI hlp hTP hof hW hlook).mp he with hc1 | ⟨h2, ho, hd, -, ht1⟩
   · exact Or.inl hc1
   · refine Or.inr ⟨h2, ho, hd, ht1, ?_⟩
     have S := hI.shape
-    obtain ⟨hvl, -⟩ := sd_live hpc hv0 hI hlp
+    obtain ⟨hvl, -⟩ := sd_live hpc hv0 hI
     obtain ⟨hnd, -, -⟩ := S.kids v hvl
-    obtain ⟨-, ht2k, -⟩ := sp_ghost hpc hv0 hI hlp hTP hof hW h2 ho hd
-    have hns := sw_nosep hpc hv0 hI hlp hTP hof hW hlook h2 ho hd
+    obtain ⟨-, ht2k, -⟩ := sp_ghost hpc hv0 hI hlp h2 ho hd
+    have hns := sw_nosep hpc hv0 hI hlp hTP hof hW h2 ho hd
     have hsp : (nd (ts s) v).children = (nd (ts s) v).children.take (sK (wiC s v) v) ++
         (nd (ts s) v).children.drop (sK (wiC s v) v) := (List.take_append_drop _ _).symm
     have hdis := (List.nodup_append.mp (hsp ▸ hnd)).2.2

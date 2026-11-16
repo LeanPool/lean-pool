@@ -117,8 +117,8 @@ theorem aAfter_pk {e : Exp} {rest : Stm} (hG : Gd K KH κ (ΓV K) s L) (hB : L "
     PK K KH κ (ΓV K) W ("a" ::= e;; afterS;; rest) s L := by
   refine PK.safe_seq' hC (by omega) (by omega) ⟨he, by simpa [ΓV] using hew⟩ hG (fun s1 L1 n1 h1 hG1 => ?_)
   have hB1 : L1 "B" = L "B" := evalF_frame_loc (by simp [Stm.asg]) h1
-  have hA := afterS_pk hC hK hW hG1 (by rw [hB1]; exact hB) (gd_a hC hK hW hG1 _ (by decide))
-    (gd_a hC hK hW hG1 _ (by decide))
+  have hA := afterS_pk hC hW hG1 (by rw [hB1]; exact hB) (gd_a hG1 _ (by decide))
+    (gd_a hG1 _ (by decide))
   exact PK.seq hA (fun s2 L2 n2 h2 => hr _ _ (hA.post h2) (by rw [evalF_frame_loc (by decide) h2, hB1]))
 
 theorem labLS_pk (hG : Gd K KH κ (ΓV K) s L) : PK K KH κ (ΓV K) W labLS s L := by

@@ -26,7 +26,8 @@ open OrderMaintenance.Model OrderMaintenance.Proof
 theorem evenTable_keys (β : Nat) (part : List Nat) : (evenTable β part).map (·.1) = part := by
   unfold evenTable
   rw [List.map_map]
-  have : ((fun x : Nat × Nat => x.1) ∘ fun (x : Nat × Nat) => (x.2, (x.1 + 1) * ((1 <<< β) / (part.length + 1)))) =
+  have : ((fun x : Nat × Nat => x.1) ∘ fun (x : Nat × Nat) => (x.2, (x.1 + 1) * ((1 <<< β) /
+    (part.length + 1)))) =
       Prod.snd := by funext x; rfl
   rw [this, List.map_snd_zip (by simp)]
 
@@ -39,7 +40,8 @@ theorem aroundT_keys {tab : List (Nat × Nat)} {e : Nat} (he : e ∈ tab.map (·
   rw [replace1_split _ hA]; simp
 
 /-- The situation when a drain of `v` starts, with the sides `startDrain` computes. -/
-structure SDCtx (s : Core) (cl : List Nat) (ord : Nat → List Nat) (dr n0 : Nat → Nat) (j : Job) (v : Nat)
+structure SDCtx (s : Core) (cl : List Nat) (ord : Nat → List Nat) (dr n0 : Nat → Nat) (j : Job)
+  (v : Nat)
     (side : List (Nat × Side)) : Prop where
   pc : j.pc = .walk (some v)
   v0 : v ≠ NIL
@@ -52,7 +54,8 @@ structure SDCtx (s : Core) (cl : List Nat) (ord : Nat → List Nat) (dr n0 : Nat
   cl1 : ∀ c ∈ cl, 1 ≤ c
   look : ∀ x, lookup side x =
     if 2 ≤ ht (ts s) v ∧ x ∈ sEntries (wiC s v) v ∧ (nd (ts s) x).draining = true then
-      lookup (sidesOf (order (ts s) v) ((nd (ts s) v).children.getD (sK (wiC s v) v) 0)) (nd (ts s) x).t1
+      lookup (sidesOf (order (ts s) v) ((nd (ts s) v).children.getD (sK (wiC s v) v) 0)) (nd (ts
+        s) x).t1
     else lookup (sidesOf (order (ts s) v) ((nd (ts s) v).children.getD (sK (wiC s v) v) 0)) x
 
 namespace SDCtx
@@ -64,12 +67,13 @@ include C
 theorem S : Shape (ts s) cl ord := C.I.shape
 theorem Ti : Timing (ts s) cl (some j) := C.I.time
 theorem H : SDHyps s v side := sr_hyps C.pc C.v0 C.I C.lp C.TP C.of C.W C.look
-theorem vl : liveN (ts s) v := (sd_live C.pc C.v0 C.I C.lp).1
-theorem vy : v = anc (ts s) j.y (ht (ts s) v) := (sd_live C.pc C.v0 C.I C.lp).2
+theorem vl : liveN (ts s) v := (sd_live C.pc C.v0 C.I).1
+theorem vy : v = anc (ts s) j.y (ht (ts s) v) := (sd_live C.pc C.v0 C.I).2
 theorem h1 : 1 ≤ ht (ts s) v := (sd_ht C.pc C.v0 C.I C.lp).1
 theorem hH : ht (ts s) v < s.P.H := (sd_ht C.pc C.v0 C.I C.lp).2
 theorem hHt : ht (ts s) v < (ts s).P.H := (sd_ht C.pc C.v0 C.I C.lp).2
-theorem up : liveN (ts s) (nd (ts s) v).livePar ∧ ht (ts s) (nd (ts s) v).livePar = ht (ts s) v + 1 ∧
+theorem up : liveN (ts s) (nd (ts s) v).livePar ∧ ht (ts s) (nd (ts s) v).livePar = ht (ts s) v
+  + 1 ∧
     v ∈ (nd (ts s) (nd (ts s) v).livePar).children := sd_up C.pc C.v0 C.I C.lp
 theorem ch : sCh1 (wiC s v) v side = (nd (ts s) v).children.take (sK (wiC s v) v) ∧
     sCh2 (wiC s v) v side = (nd (ts s) v).children.drop (sK (wiC s v) v) :=
@@ -80,11 +84,12 @@ theorem k : 2 ≤ (nd (ts s) v).children.length ∧ 1 ≤ sK (wiC s v) v ∧
 /-- The node count exceeds the chain. -/
 theorem NH : s.P.H < s.nodes.size := by
   have := C.S.root.2.1.1.2.1
-  show s.P.H < s.nodes.size; exact this
+  change s.P.H < s.nodes.size; exact this
 
 local notation "S'" => ts (sdS (wiC s v) v side)
 
-theorem isN (u : Nat) : Top.isN S' u ↔ Top.isN (ts s) u ∨ u = s.nodes.size ∨ u = s.nodes.size + 1 := by
+theorem isN (u : Nat) : Top.isN S' u ↔ Top.isN (ts s) u ∨ u = s.nodes.size ∨ u = s.nodes.size +
+  1 := by
   have hNH := C.NH
   unfold Top.isN
   rw [C.H.alive, C.H.size]
@@ -93,7 +98,7 @@ theorem isN (u : Nat) : Top.isN S' u ↔ Top.isN (ts s) u ∨ u = s.nodes.size �
     by_cases hn : u = s.nodes.size ∨ u = s.nodes.size + 1
     · exact Or.inr hn
     · rw [ite_eq_right hn] at ha
-      left; exact ⟨h0, by show u < s.nodes.size; omega, ha⟩
+      left; exact ⟨h0, by change u < s.nodes.size; omega, ha⟩
   · rintro (⟨h0, hs, ha⟩ | hn | hn)
     · have hn : ¬(u = s.nodes.size ∨ u = s.nodes.size + 1) := by
         have : u < s.nodes.size := hs; omega
@@ -101,13 +106,16 @@ theorem isN (u : Nat) : Top.isN S' u ↔ Top.isN (ts s) u ∨ u = s.nodes.size �
     · subst hn; rw [ite_eq_left (Or.inl rfl)]; exact ⟨by unfold NIL; omega, by omega, rfl⟩
     · subst hn; rw [ite_eq_left (Or.inr rfl)]; exact ⟨by unfold NIL; omega, by omega, rfl⟩
 
+omit C in
 theorem nN (u : Nat) (hu : Top.isN (ts s) u) : u ≠ s.nodes.size ∧ u ≠ s.nodes.size + 1 := by
   have : u < s.nodes.size := hu.2.1; omega
 
 theorem draining' (u : Nat) : (nd S' u).draining = (if u = v then true
-    else if u = s.nodes.size ∨ u = s.nodes.size + 1 then false else (nd (ts s) u).draining) := C.H.draining u
+    else if u = s.nodes.size ∨ u = s.nodes.size + 1 then false else (nd (ts s) u).draining) :=
+      C.H.draining u
 
-theorem liveN (u : Nat) : Top.liveN S' u ↔ (Top.liveN (ts s) u ∧ u ≠ v) ∨ u = s.nodes.size ∨ u = s.nodes.size + 1 := by
+theorem liveN (u : Nat) : Top.liveN S' u ↔ (Top.liveN (ts s) u ∧ u ≠ v) ∨ u = s.nodes.size ∨ u =
+  s.nodes.size + 1 := by
   have hv := C.H.hv
   unfold Top.liveN
   rw [C.isN, C.draining']
@@ -117,13 +125,13 @@ theorem liveN (u : Nat) : Top.liveN S' u ↔ (Top.liveN (ts s) u ∧ u ≠ v) �
     · rw [ite_eq_left huv] at hd; exact absurd hd (by simp)
     · rw [ite_eq_right huv] at hd
       rcases hn with hn | hn | hn
-      · have := C.nN u hn
+      · have := SDCtx.nN (s := s) u hn
         rw [ite_eq_right (fun h => h.elim this.1 this.2)] at hd
         exact Or.inl ⟨⟨hn, hd⟩, huv⟩
       · exact Or.inr (Or.inl hn)
       · exact Or.inr (Or.inr hn)
   · rintro (⟨⟨hn, hd⟩, huv⟩ | hn | hn)
-    · have := C.nN u hn
+    · have := SDCtx.nN (s := s) u hn
       refine ⟨Or.inl hn, ?_⟩
       rw [ite_eq_right huv, ite_eq_right (fun h => h.elim this.1 this.2)]; exact hd
     · refine ⟨Or.inr (Or.inl hn), ?_⟩
@@ -141,13 +149,13 @@ theorem ghostN (u : Nat) : Top.ghostN S' u ↔ Top.ghostN (ts s) u ∨ u = v := 
     · exact Or.inr huv
     · rw [ite_eq_right huv] at hd
       rcases hn with hn | hn | hn
-      · have := C.nN u hn
+      · have := SDCtx.nN (s := s) u hn
         rw [ite_eq_right (fun h => h.elim this.1 this.2)] at hd
         exact Or.inl ⟨hn, hd⟩
       · rw [ite_eq_left (Or.inl hn)] at hd; exact absurd hd (by simp)
       · rw [ite_eq_left (Or.inr hn)] at hd; exact absurd hd (by simp)
   · rintro (⟨hn, hd⟩ | huv)
-    · have := C.nN u hn
+    · have := SDCtx.nN (s := s) u hn
       have huv : u ≠ v := fun e => by rw [e] at hd; rw [C.vl.2] at hd; exact absurd hd (by simp)
       refine ⟨Or.inl hn, ?_⟩
       rw [ite_eq_right huv, ite_eq_right (fun h => h.elim this.1 this.2)]; exact hd
@@ -161,14 +169,17 @@ theorem srcOf (u : Nat) : Top.srcOf S' u = if u = s.nodes.size ∨ u = s.nodes.s
 
 theorem inTab (T : Nat) (hT : T ∈ (nd (ts s) v).inTables) :
     Top.isN (ts s) T ∧ Top.ht (ts s) T = Top.ht (ts s) v + 1 ∧ v ∈ Top.order (ts s) T := by
-  have hent : Ent ord (Top.ht (ts s) v) v := (C.S.ordMem _ C.h1 (C.S.htN v C.vl.1).2 v).mpr ⟨C.vl.1, rfl⟩
-  have hT' : T ∈ tabs (ts s) (Top.ht (ts s) v) v := by unfold tabs; rw [ite_eq_right (by have := C.h1; omega)]; exact hT
+  have hent : Ent ord (Top.ht (ts s) v) v := (C.S.ordMem _ C.h1 (C.S.htN v C.vl.1).2 v).mpr
+    ⟨C.vl.1, rfl⟩
+  have hT' : T ∈ tabs (ts s) (Top.ht (ts s) v) v := by
+    unfold tabs; rw [ite_eq_right (by have := C.h1; omega)]; exact hT
   exact (C.S.tabsIff _ v T hent).mp hT'
 
 theorem order (X : Nat) : Top.order S' X =
     if X = s.nodes.size then sLeft (wiC s v) v side
     else if X = s.nodes.size + 1 then sRight (wiC s v) v side
-    else if X ∈ (nd (ts s) v).inTables then (Top.order (ts s) X).replace1 v [s.nodes.size, v, s.nodes.size + 1]
+    else if X ∈ (nd (ts s) v).inTables then (Top.order (ts s) X).replace1 v [s.nodes.size, v,
+      s.nodes.size + 1]
     else Top.order (ts s) X := by
   unfold Top.order Node.order
   rw [C.H.table]
@@ -184,38 +195,45 @@ theorem order (X : Nat) : Top.order S' X =
 
 
 theorem lpr (c : Nat) : Top.lpr S' c = if Top.ht (ts s) v = 1 then
-    (if c ∈ (nd (ts s) v).children.drop (sK (wiC s v) v) then s.nodes.size + 1 else if c ∈ (nd (ts s) v).children.take (sK (wiC s v) v) then s.nodes.size else Top.lpr (ts s) c)
+    (if c ∈ (nd (ts s) v).children.drop (sK (wiC s v) v) then s.nodes.size + 1 else if c ∈ (nd
+      (ts s) v).children.take (sK (wiC s v) v) then s.nodes.size else Top.lpr (ts s) c)
     else Top.lpr (ts s) c := by
-  rw [C.H.lpar, C.ch.1, C.ch.2]
+  rw [SDHyps.lpar, C.ch.1, C.ch.2]
 
+omit C in
 theorem pp (c j : Nat) : Top.pp S' c j = Top.pp (ts s) c j := by
-  unfold Top.pp Top.pth; rw [C.H.path]; rfl
+  unfold Top.pp Top.pth; rw [SDHyps.path (s := s) (v := v) (side := side)]; rfl
 
 theorem livePar (u : Nat) : (nd S' u).livePar =
     if u = v then NIL else if u = s.nodes.size ∨ u = s.nodes.size + 1 then (nd (ts s) v).livePar
-    else if Top.ht (ts s) v ≠ 1 ∧ u ∈ (nd (ts s) v).children.drop (sK (wiC s v) v) then s.nodes.size + 1
+    else if Top.ht (ts s) v ≠ 1 ∧ u ∈ (nd (ts s) v).children.drop (sK (wiC s v) v) then
+      s.nodes.size + 1
     else if Top.ht (ts s) v ≠ 1 ∧ u ∈ (nd (ts s) v).children.take (sK (wiC s v) v) then s.nodes.size
     else (nd (ts s) u).livePar := by
   rw [C.H.livePar, C.ch.1, C.ch.2]
 
 theorem children (u : Nat) : (nd S' u).children =
-    if u = v then [] else if u = s.nodes.size then (nd (ts s) v).children.take (sK (wiC s v) v) else if u = s.nodes.size + 1 then (nd (ts s) v).children.drop (sK (wiC s v) v)
+    if u = v then [] else if u = s.nodes.size then (nd (ts s) v).children.take (sK (wiC s v) v)
+      else if u = s.nodes.size + 1 then (nd (ts s) v).children.drop (sK (wiC s v) v)
     else if u = (nd (ts s) v).livePar then
       (nd (ts s) (nd (ts s) v).livePar).children.replace1 v [s.nodes.size, s.nodes.size + 1]
     else (nd (ts s) u).children := by
   rw [C.H.children, C.ch.1, C.ch.2]
 
 /-- A node the drain does not touch keeps its live parent. -/
-theorem livePar_old {u : Nat} (hu : Top.isN (ts s) u) (huv : u ≠ v) (hk : Top.ht (ts s) v ≠ 1 → u ∉ (nd (ts s) v).children) :
+theorem livePar_old {u : Nat} (hu : Top.isN (ts s) u) (huv : u ≠ v) (hk : Top.ht (ts s) v ≠ 1 →
+  u ∉ (nd (ts s) v).children) :
     (nd S' u).livePar = (nd (ts s) u).livePar := by
-  have := C.nN u hu
+  have := SDCtx.nN (s := s) u hu
   rw [C.livePar, ite_eq_right huv, ite_eq_right (fun h => h.elim this.1 this.2)]
   rw [ite_eq_right (fun h => hk h.1 (List.mem_of_mem_drop h.2)),
     ite_eq_right (fun h => hk h.1 (List.mem_of_mem_take h.2))]
 
 theorem kids_split {e : Nat} (he : e ∈ (nd (ts s) v).children) :
-    (e ∈ (nd (ts s) v).children.take (sK (wiC s v) v) ∧ e ∉ (nd (ts s) v).children.drop (sK (wiC s v) v)) ∨
-    (e ∉ (nd (ts s) v).children.take (sK (wiC s v) v) ∧ e ∈ (nd (ts s) v).children.drop (sK (wiC s v) v)) := by
+    (e ∈ (nd (ts s) v).children.take (sK (wiC s v) v) ∧ e ∉ (nd (ts s) v).children.drop (sK (wiC
+      s v) v)) ∨
+    (e ∉ (nd (ts s) v).children.take (sK (wiC s v) v) ∧ e ∈ (nd (ts s) v).children.drop (sK (wiC
+      s v) v)) := by
   obtain ⟨hnd, -, -⟩ := C.S.kids v C.vl
   have hsp : (nd (ts s) v).children = (nd (ts s) v).children.take (sK (wiC s v) v) ++
       (nd (ts s) v).children.drop (sK (wiC s v) v) := (List.take_append_drop _ _).symm
@@ -234,7 +252,7 @@ theorem anc {c : Nat} (hc : c ∈ cl) : ∀ i, i ≤ s.P.H → Top.anc S' c i =
   | 0, _ => by
     rw [ite_eq_right (fun h => by have := C.h1; omega)]; rfl
   | 1, hi => by
-    show Top.lpr S' c = _
+    change Top.lpr S' c = _
     rw [C.lpr]
     have e1 : Top.anc (ts s) c 1 = Top.lpr (ts s) c := rfl
     by_cases h1 : Top.ht (ts s) v = 1
@@ -258,7 +276,7 @@ theorem anc {c : Nat} (hc : c ∈ cl) : ∀ i, i ≤ s.P.H → Top.anc S' c i =
     · rw [ite_eq_right h1,
       ite_eq_right (show ¬(1 = Top.ht (ts s) v ∧ _) from fun h => h1 h.1.symm)]; rfl
   | i + 2, hi => by
-    show (nd S' (Top.anc S' c (i + 1))).livePar = _
+    change (nd S' (Top.anc S' c (i + 1))).livePar = _
     rw [anc hc (i + 1) (by omega)]
     have hP : (ts s).P = s.P := rfl
     obtain ⟨hal, hah⟩ := C.S.anc_live hc (i + 1) (by omega) (by rw [hP]; omega)
@@ -294,7 +312,8 @@ theorem anc {c : Nat} (hc : c ∈ cl) : ∀ i, i ≤ s.P.H → Top.anc S' c i =
           rw [← hih, anc_succ c _ (by omega), hpar]
         rw [ite_eq_left ⟨hih, hav2⟩, show Top.ht (ts s) v - 1 = i + 1 by omega]
         rw [C.livePar, ite_eq_right hav,
-          ite_eq_right (fun h => h.elim (C.nN _ hal.1).1 (C.nN _ hal.1).2)]
+          ite_eq_right (fun h => h.elim (SDCtx.nN (s := s) _ hal.1).1 (SDCtx.nN (s := s) _
+            hal.1).2)]
         rcases C.kids_split hkk.2 with ⟨a, b⟩ | ⟨a, b⟩
         · rw [ite_eq_right (fun h => b h.2), ite_eq_left ⟨hkk.1, a⟩, ite_eq_left a]
         · rw [ite_eq_left ⟨hkk.1, b⟩, ite_eq_right a]
@@ -303,12 +322,13 @@ theorem anc {c : Nat} (hc : c ∈ cl) : ∀ i, i ≤ s.P.H → Top.anc S' c i =
         rintro ⟨hih, hav2⟩
         apply hkk
         have h1' : Top.ht (ts s) v ≠ 1 := by omega
-        refine ⟨h1', (C.S.mem_children C.vl).mpr ⟨by rw [ite_eq_right h1']; exact ⟨hal, by omega⟩, ?_⟩⟩
+        refine ⟨h1', (C.S.mem_children C.vl).mpr ⟨by rw [ite_eq_right h1']; exact ⟨hal, by
+          omega⟩, ?_⟩⟩
         rw [par_live (Or.inr hal), ite_eq_right (by omega), ← anc_succ c _ (by omega), hih, hav2]
 
 /-- **True weights of untouched nodes do not change.** -/
 theorem tw_old {u : Nat} (hu : Top.isN (ts s) u) (huv : u ≠ v) : tw S' cl u = tw (ts s) cl u := by
-  have hn := C.nN u hu
+  have hn := SDCtx.nN (s := s) u hu
   obtain ⟨-, hH⟩ := C.S.htN u hu
   unfold tw
   rw [C.ht, ite_eq_right (fun h => h.elim hn.1 hn.2)]
@@ -326,7 +346,7 @@ theorem tw_old {u : Nat} (hu : Top.isN (ts s) u) (huv : u ≠ v) : tw S' cl u = 
 
 /-- The drained node serves no chunk directly any more. -/
 theorem tw_v : tw S' cl v = 0 := by
-  have hn := C.nN v C.vl.1
+  have hn := SDCtx.nN (s := s) v C.vl.1
   unfold tw
   rw [C.ht, ite_eq_right (fun h => h.elim hn.1 hn.2)]
   apply List.length_eq_zero_iff.mpr

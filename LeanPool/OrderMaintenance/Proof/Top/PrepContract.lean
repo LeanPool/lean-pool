@@ -28,7 +28,8 @@ open OrderMaintenance.Model OrderMaintenance.Proof
 def topPP (P : Params) : Prop := TopParams P ∧ 3 ≤ P.H
 
 /-- A core whose chain is being built. -/
-def topPI (s : Core) : Prop := topPP s.P ∧ s.ready = false ∧ ∃ h, 1 ≤ h ∧ h ≤ s.P.H + 1 ∧ Stage s.P h s
+def topPI (s : Core) : Prop := topPP s.P ∧ s.ready = false ∧ ∃ h, 1 ≤ h ∧ h ≤ s.P.H + 1 ∧ Stage
+  s.P h s
 
 theorem topPP.beta {P : Params} (h : topPP P) : 1 ≤ P.beta := by
   have hr := h.1.room 1 le_rfl
@@ -50,10 +51,12 @@ theorem loop_run {P : Params} (hPP : topPP P) : ∀ (l : List Nat) (h : Nat) (s 
     rw [List.forIn_cons]
     by_cases hh : h ≤ P.H
     · obtain ⟨s', hr, S', -⟩ := stage_next S h1 hh hPP.beta
-      obtain ⟨s'', hr', F⟩ := loop_run hPP t (h + 1) s' S' (by omega) (by omega) (by simp at hl; omega)
+      obtain ⟨s'', hr', F⟩ := loop_run hPP t (h + 1) s' S' (by omega) (by omega) (by
+        simp only [List.length_cons] at hl
+        omega)
       refine ⟨s'', ?_, F⟩
       rw [run_bind, run_bind, hr]
-      simp
+      simp only [Bool.false_eq_true, ↓reduceIte, EStateM.run_pure]
       exact hr'
     · have e : h = P.H + 1 := by omega
       subst e
@@ -62,7 +65,8 @@ theorem loop_run {P : Params} (hPP : topPP P) : ∀ (l : List Nat) (h : Nat) (s 
       rw [run_bind, run_bind, hr]
       simp
 
-theorem Final.ready {P : Params} {s : Core} (F : Final P s) (r : Bool) : Final P { s with ready := r } :=
+theorem Final.ready {P : Params} {s : Core} (F : Final P s) (r : Bool) : Final P { s with ready
+  := r } :=
   ⟨F.low, F.res, F.prep, F.nsz, F.nodes, F.cin, F.lpar, F.psz, F.path, F.tag⟩
 
 theorem initCore_eager_eq (s : Core) : (initCore false).run s =
@@ -71,7 +75,8 @@ theorem initCore_eager_eq (s : Core) : (initCore false).run s =
         if b = true then pure (ForInStep.done PUnit.unit) else pure (ForInStep.yield PUnit.unit) :
         CM PUnit) >>= fun _ => (modify fun t => { t with ready := true } : CM PUnit)).run
       { initState s.P with
-        prep := some { chunk := 1, below := 1, path := Array.replicate (s.P.H + 1) NIL }, ready := true } :=
+        prep := some { chunk := 1, below := 1, path := Array.replicate (s.P.H + 1) NIL }, ready
+          := true } :=
   rfl
 
 theorem prep_eager (s s' : Core) (hPP : topPP s.P) (h : (initCore false).run s = .ok () s') :
@@ -88,7 +93,9 @@ theorem prep_lazy (s s' : Core) (hPP : topPP s.P) (h : (initCore true).run s = .
     topPI s' ∧ topNu s' ≤ s.P.H + 1 := by
   rw [initCore_lazy_run] at h; cases h
   have S := stage_one s false
-  exact ⟨⟨hPP, rfl, 1, le_rfl, by show 1 ≤ s.P.H + 1; omega, S⟩, by rw [S.nu]; show s.P.H + 2 - 1 ≤ _; omega⟩
+  refine ⟨⟨hPP, rfl, 1, le_rfl, by omega, S⟩, ?_⟩
+  rw [S.nu]
+  omega
 
 theorem prep_step (s : Core) (hI : topPI s) : ∃ b s', prepareStep.run s = .ok b s' ∧
     (b = true → TopInv s' ∧ s'.resJob = none) ∧ (b = false → topPI s' ∧ topNu s' < topNu s) := by
@@ -98,20 +105,24 @@ theorem prep_step (s : Core) (hI : topPI s) : ∃ b s', prepareStep.run s = .ok 
   · obtain ⟨s', hr, S', hrd'⟩ := stage_next S h1 hh hPP.beta
     refine ⟨false, s', ?_, fun e => absurd e (by simp), fun _ => ?_⟩
     · unfold prepareStep
-      simp [hrd]
+      simp only [hrd, Bool.not_eq_eq_eq_not, Bool.not_true, bind_pure_comp, EStateM.run_bind,
+          EStateM.run_get, run_ite, EStateM.run_modify]
       rw [hr]
-      simp [hrd', hrd]
+      change EStateM.Result.ok s'.ready s' = EStateM.Result.ok false s'
+      rw [hrd', hrd]
     · have hP' : s'.P = s.P := S'.P.trans S.P.symm
-      refine ⟨⟨by rw [hP']; exact hPP, by rw [hrd', hrd], h + 1, by omega, by rw [hP']; omega, by rw [hP']; exact S'⟩, ?_⟩
+      refine ⟨⟨by rw [hP']; exact hPP, by rw [hrd', hrd], h + 1, by omega, by rw [hP']; omega,
+        by rw [hP']; exact S'⟩, ?_⟩
       rw [S'.nu, hn]; omega
   · have e : h = s.P.H + 1 := by omega
     subst e
     obtain ⟨s', hr, F, hrd'⟩ := stage_last S (by have := hPP.2; omega)
     refine ⟨true, { s' with ready := true }, ?_, fun _ => ?_, fun e => absurd e (by simp)⟩
     · unfold prepareStep
-      simp [hrd]
+      simp only [hrd, Bool.not_eq_eq_eq_not, Bool.not_true, bind_pure_comp, EStateM.run_bind,
+          EStateM.run_get, run_ite, EStateM.run_modify]
       rw [hr]
-      simp
+      rfl
     · have F' := F.ready true
       exact ⟨F'.topInv hPP.1 hPP.2, F'.res⟩
 

@@ -70,16 +70,16 @@ theorem initEltS_ok {κ : Caps} {P : Params} {L : Loc} (hBe : 1 ≤ P.elementBit
   set s2 := Tbl.push (Tbl.push (freshC P) .E) .E
   have hs2 : s2.E.size = 2 := by simp [s2, Tbl.push, freshC]
   have w1 := evalF_wrE_ok (κ := κ) (s := s2) (L := upd (upd L "t" 0) "t" 1) (k := .grp) (i := (1 : Exp)) (e := (1 : Exp))
-    (j := 1) (w := 1) rfl rfl (by omega) (by omega) rfl
+    (j := 1) (w := 1) rfl rfl (by omega)  rfl
   set s3 : Core := { s2 with E := s2.E.modify 1 (EF.set · 1 .grp) }
   have w2 := evalF_wrE_ok (κ := κ) (s := s3) (L := upd (upd L "t" 0) "t" 1) (k := .lab) (i := (1 : Exp))
     (e := .bin .shl 1 (.prm .Be - 1)) (j := 1) (w := 1 <<< (P.elementBits - 1)) rfl
     (by simp [Exp.ev, OrderMaintenance.Machine.BinOp.eval, PF.get, s3, s2, Tbl.push, freshC, hBe,
       Nat.shiftLeft_eq])
-    (by simp [s3, hs2]) (by omega) rfl
+    (by simp [s3, hs2])  rfl
   set s4 : Core := { s3 with E := s3.E.modify 1 (EF.set · (1 <<< (P.elementBits - 1)) .lab) }
   have w3 := evalF_wrE_ok (κ := κ) (s := s4) (L := upd (upd L "t" 0) "t" 1) (k := .dead) (i := (1 : Exp))
-    (e := (1 : Exp)) (j := 1) (w := 1) rfl rfl (by simp [s4, s3, hs2]) (by omega) rfl
+    (e := (1 : Exp)) (j := 1) (w := 1) rfl rfl (by simp [s4, s3, hs2])  rfl
   have hfin : ({ s4 with E := s4.E.modify 1 (EF.set · 1 .dead) } : Core) = iE P := by
     simp only [s4, s3, s2, iE, freshC, Tbl.push]
     congr 1
@@ -97,22 +97,22 @@ theorem initGrpS_ok {κ : Caps} {P : Params} {L : Loc} (hBg : 1 ≤ P.groupBits)
   have hs2 : s2.Gs.size = 2 := by simp [s2, Tbl.push, iE, freshC]
   set L2 := upd (upd L "t" 0) "t" 1
   have w1 := evalF_wrG_ok (κ := κ) (s := s2) (L := L2) (k := .chk) (i := (1 : Exp)) (e := (1 : Exp))
-    (j := 1) (w := 1) rfl rfl (by omega) (by omega) rfl
+    (j := 1) (w := 1) rfl rfl (by omega)  rfl
   set s3 : Core := { s2 with Gs := s2.Gs.modify 1 (GF.set · 1 .chk) }
   have w2 := evalF_wrG_ok (κ := κ) (s := s3) (L := L2) (k := .lab) (i := (1 : Exp))
     (e := .bin .shl 1 (.prm .Bg - 1)) (j := 1) (w := 1 <<< (P.groupBits - 1)) rfl
     (by simp [Exp.ev, OrderMaintenance.Machine.BinOp.eval, PF.get, s3, s2, Tbl.push, iE, freshC,
       hBg, Nat.shiftLeft_eq])
-    (by simp [s3, hs2]) (by omega) rfl
+    (by simp [s3, hs2])  rfl
   set s4 : Core := { s3 with Gs := s3.Gs.modify 1 (GF.set · (1 <<< (P.groupBits - 1)) .lab) }
   have w3 := evalF_wrG_ok (κ := κ) (s := s4) (L := L2) (k := .first) (i := (1 : Exp)) (e := (1 : Exp))
-    (j := 1) (w := 1) rfl rfl (by simp [s4, s3, hs2]) (by omega) rfl
+    (j := 1) (w := 1) rfl rfl (by simp [s4, s3, hs2])  rfl
   set s5 : Core := { s4 with Gs := s4.Gs.modify 1 (GF.set · 1 .first) }
   have w4 := evalF_wrG_ok (κ := κ) (s := s5) (L := L2) (k := .last) (i := (1 : Exp)) (e := (1 : Exp))
-    (j := 1) (w := 1) rfl rfl (by simp [s5, s4, s3, hs2]) (by omega) rfl
+    (j := 1) (w := 1) rfl rfl (by simp [s5, s4, s3, hs2])  rfl
   set s6 : Core := { s5 with Gs := s5.Gs.modify 1 (GF.set · 1 .last) }
   have w5 := evalF_wrG_ok (κ := κ) (s := s6) (L := L2) (k := .size) (i := (1 : Exp)) (e := (1 : Exp))
-    (j := 1) (w := 1) rfl rfl (by simp [s6, s5, s4, s3, hs2]) (by omega) rfl
+    (j := 1) (w := 1) rfl rfl (by simp [s6, s5, s4, s3, hs2])  rfl
   have hfin : ({ s6 with Gs := s6.Gs.modify 1 (GF.set · 1 .size) } : Core) = iG P := by
     simp only [s6, s5, s4, s3, s2, iG, iE, freshC, Tbl.push]
     congr 1
@@ -132,13 +132,13 @@ theorem initChkS_ok {κ : Caps} {P : Params} {L : Loc} (hC : 2 ≤ κ.tbl .C) :
   have hs2 : s2.C.size = 2 := by simp [s2, Tbl.push, iG, iE, freshC]
   set L2 := upd (upd L "t" 0) "t" 1
   have w1 := evalF_wrC_ok (κ := κ) (s := s2) (L := L2) (k := .first) (i := (1 : Exp)) (e := (1 : Exp))
-    (j := 1) (w := 1) rfl rfl (by omega) (by omega) rfl
+    (j := 1) (w := 1) rfl rfl (by omega)  rfl
   set s3 : Core := { s2 with C := s2.C.modify 1 (CF.set · 1 .first) }
   have w2 := evalF_wrC_ok (κ := κ) (s := s3) (L := L2) (k := .last) (i := (1 : Exp)) (e := (1 : Exp))
-    (j := 1) (w := 1) rfl rfl (by simp [s3, hs2]) (by omega) rfl
+    (j := 1) (w := 1) rfl rfl (by simp [s3, hs2])  rfl
   set s4 : Core := { s3 with C := s3.C.modify 1 (CF.set · 1 .last) }
   have w3 := evalF_wrC_ok (κ := κ) (s := s4) (L := L2) (k := .size) (i := (1 : Exp)) (e := (1 : Exp))
-    (j := 1) (w := 1) rfl rfl (by simp [s4, s3, hs2]) (by omega) rfl
+    (j := 1) (w := 1) rfl rfl (by simp [s4, s3, hs2])  rfl
   have hfin : ({ s4 with C := s4.C.modify 1 (CF.set · 1 .size) } : Core) = iC P := by
     simp only [s4, s3, s2, iC, iG, iE, freshC, Tbl.push]
     congr 1
@@ -244,7 +244,7 @@ theorem initStepP_last {κ : Caps} {s : Core} {L : Loc} {pr : Prep} (hp : s.prep
   set L1 := isL L pr
   have w2 := evalF_wrC_ok (κ := κ) (s := s) (L := L1) (k := .tag) (i := .var "c") (e := .var "tg") (j := pr.chunk)
     (w := pr.tag) (by simp [Exp.ev, L1, isL, OrderMaintenance.Machine.State.upd]) (by simp [Exp.ev, L1, isL, OrderMaintenance.Machine.State.upd])
-    hcs hcC rfl
+    hcs  rfl
   set s2 : Core := { s with C := s.C.modify pr.chunk (CF.set · pr.tag .tag) }
   have e3 : evalF κ .prepCommit s2 L1 = .ok (isLastS s pr) L1 15 := by
     simp [evalF, s2, hp]; rfl
@@ -286,7 +286,7 @@ theorem isNode_ok {κ : Caps} {S : Core} {L : Loc} {pr : Prep} (hN : S.nodes.siz
   set S1 := Tbl.push S .N
   have hS1 : S1.nodes.size = v + 1 := by simp [S1, Tbl.push, v]
   have w2 := evalF_wrN_ok (κ := κ) (s := S1) (L := L1) (k := .height) (i := .var "v") (e := .var "h") (j := v)
-    (w := pr.h) (by simp [Exp.ev, h1v]) (by simp [Exp.ev, h1h]) (by omega) hN rfl
+    (w := pr.h) (by simp [Exp.ev, h1v]) (by simp [Exp.ev, h1h]) (by omega)  rfl
   set S2 : Core := { S1 with nodes := S1.nodes.modify v (NF.set · pr.h .height) }
   have hS2v : S2.nodes.getX v = { height := pr.h } := by
     simp only [S2, S1, Tbl.push, v]; rw [Array.modify_push_size, getX_push', ite_eq_left rfl]; rfl
@@ -306,13 +306,13 @@ theorem isNode_ok {κ : Caps} {S : Core} {L : Loc} {pr : Prep} (hN : S.nodes.siz
     (by simp [LK.set, LK.recOk, LK.valid, LK.view, hS3v, hS3n, hrt, hct, S4])
   have hS4n : S4.nodes.size = v + 1 := by simp [S4, hS3n]
   have w5 := evalF_wrN_ok (κ := κ) (s := S4) (L := L1) (k := .weight) (i := .var "v") (e := (1 : Exp)) (j := v)
-    (w := 1) (by simp [Exp.ev, h1v]) rfl (by omega) hN rfl
+    (w := 1) (by simp [Exp.ev, h1v]) rfl (by omega)  rfl
   set S5 : Core := { S4 with nodes := S4.nodes.modify v (NF.set · 1 .weight) }
   have w6 := evalF_wrN_ok (κ := κ) (s := S5) (L := L1) (k := .first) (i := .var "v") (e := .var "c") (j := v)
-    (w := pr.chunk) (by simp [Exp.ev, h1v]) (by simp [Exp.ev, h1c]) (by simp [S5, hS4n]) hN rfl
+    (w := pr.chunk) (by simp [Exp.ev, h1v]) (by simp [Exp.ev, h1c]) (by simp [S5, hS4n])  rfl
   set S6 : Core := { S5 with nodes := S5.nodes.modify v (NF.set · pr.chunk .first) }
   have w7 := evalF_wrN_ok (κ := κ) (s := S6) (L := L1) (k := .last) (i := .var "v") (e := .var "c") (j := v)
-    (w := pr.chunk) (by simp [Exp.ev, h1v]) (by simp [Exp.ev, h1c]) (by simp [S6, S5, hS4n]) hN rfl
+    (w := pr.chunk) (by simp [Exp.ev, h1v]) (by simp [Exp.ev, h1c]) (by simp [S6, S5, hS4n])  rfl
   have hfin : ({ S6 with nodes := S6.nodes.modify v (NF.set · pr.chunk .last) } : Core) = nodeS S pr := by
     have hv2 : LK.view S2 v .children = [] := by simp [LK.view, hS2v]
     have hv3 : LK.view S3 v .table = [] := by simp [LK.view, hS3v]
@@ -367,7 +367,7 @@ theorem isLink_mid {κ : Caps} {S : Core} {L : Loc} {v bl : Nat} (hh : L "h" ≠
     (b := (0 : Exp)) (x := bl) (va := v) (vb := 0) (by simp [Exp.ev, hbl]) (by simp [Exp.ev, hv]) rfl
     (by rw [hv1]; simp [LK.set, LK.recOk, LK.valid, S1, hbs, hbr, hci, S2])
   have w3 := evalF_wrN_ok (κ := κ) (s := S2) (L := L) (k := .livePar) (i := .var "bl") (e := .var "v") (j := bl) (w := v)
-    (by simp [Exp.ev, hbl]) (by simp [Exp.ev, hv]) (by simp [S2, S1, hbs]) hbN rfl
+    (by simp [Exp.ev, hbl]) (by simp [Exp.ev, hv]) (by simp [S2, S1, hbs])  rfl
   have hfin : ({ S2 with nodes := S2.nodes.modify bl (NF.set · v .livePar) } : Core) =
       { S with nodes := S.nodes.modify bl fun n => { n with inTables := [v], livePar := v } } := by
     simp only [S2, S1, LK.put, Array.modify_modify_same]; rfl

@@ -83,7 +83,7 @@ theorem jcopyS_ok {κ : Caps} {s : Core} {L : Loc} {j : Job} {l : Nat} (hjob : s
         have : V = default := getX_default_of_le (by omega)
         rw [this] at hf; exact hx0 (by rw [← hf]; rfl)
       have w := evalF_wrN_ok (κ := κ) (s := s2) (L := L1) (k := .first) (i := .var "v") (e := .var "jy") (j := v)
-        (w := j.y) (by simp [Exp.ev, h1v]) (by simp [Exp.ev, h1y]) hvs hvN rfl
+        (w := j.y) (by simp [Exp.ev, h1v]) (by simp [Exp.ev, h1y]) hvs  rfl
       have hs3 : s3 = { s2 with nodes := s2.nodes.modify v (NF.set · j.y .first) } := by
         simp only [s3, hf, beq_self_eq_true, ite_true]; rfl
       rw [← hs3] at w
@@ -109,7 +109,7 @@ theorem jcopyS_ok {κ : Caps} {s : Core} {L : Loc} {j : Job} {l : Nat} (hjob : s
         have : V = default := getX_default_of_le (by omega)
         rw [this] at hf; exact hx0 (by rw [← hf]; rfl)
       have w := evalF_wrN_ok (κ := κ) (s := s3) (L := L1) (k := .last) (i := .var "v") (e := .var "jz") (j := v)
-        (w := j.z) (by simp [Exp.ev, h1v]) (by simp [Exp.ev, h1z]) (by rw [hs3n]; exact hvs) hvN rfl
+        (w := j.z) (by simp [Exp.ev, h1v]) (by simp [Exp.ev, h1z]) (by rw [hs3n]; exact hvs)  rfl
       have hs4 : s4 = { s3 with nodes := s3.nodes.modify v (NF.set · j.z .last) } := by
         simp only [s4, hf, beq_self_eq_true, ite_true]; rfl
       rw [← hs4] at w
@@ -441,15 +441,15 @@ theorem dsLabS_ok {κ : Caps} {s : Core} {L : Loc} {v h y t bl pt tb pv vb : Nat
 /-- Two writes to the same node. -/
 theorem evalF_wrN2 {κ : Caps} {s : Core} {L : Loc} {k1 k2 : NF} {i e1 e2 : Exp} {j w1 w2 : Nat}
     (hi : ∀ S : Core, i.ev κ S L = some j) (he1 : ∀ S : Core, e1.ev κ S L = some w1)
-    (he2 : ∀ S : Core, e2.ev κ S L = some w2) (hj : j < s.nodes.size) (hc : j < κ.tbl .N)
+    (he2 : ∀ S : Core, e2.ev κ S L = some w2) (hj : j < s.nodes.size)
     (hk1 : k1.ok w1 = true) (hk2 : k2.ok w2 = true) :
     evalF κ (.wr (.n k1) i e1;; .wr (.n k2) i e2) s L =
       .ok { s with nodes := s.nodes.modify j fun n => NF.set (NF.set n w1 k1) w2 k2 } L
         (1 + i.cost + e1.cost + (1 + i.cost + e2.cost)) := by
   have w1' := evalF_wrN_ok (κ := κ) (s := s) (L := L) (k := k1) (i := i) (e := e1) (j := j) (w := w1) (hi _) (he1 _)
-    hj hc hk1
+    hj  hk1
   have w2' := evalF_wrN_ok (κ := κ) (s := { s with nodes := s.nodes.modify j (NF.set · w1 k1) }) (L := L) (k := k2)
-    (i := i) (e := e2) (j := j) (w := w2) (hi _) (he2 _) (by simp [hj]) hc hk2
+    (i := i) (e := e2) (j := j) (w := w2) (hi _) (he2 _) (by simp [hj])  hk2
   rw [Array.modify_modify_same] at w2'
   exact evalF_seq_ok2 w1' w2'
 
@@ -530,7 +530,7 @@ theorem dsMutS_ok {κ : Caps} {s : Core} {L : Loc} {v old new : Nat}
     by_cases hfl : V.first = V.last
     · have hfl' : (s.nodes.getX v).first = (s.nodes.getX v).last := hfl
       have w := evalF_wrN2 (κ := κ) (s := s2) (L := L3) (k1 := .first) (k2 := .last) (i := .var "v") (e1 := (0 : Exp))
-        (e2 := (0 : Exp)) (ev_var_const h3v) (ev_lit_const 0) (ev_lit_const 0) (by rw [hs2v]; exact hvs) hvN rfl rfl
+        (e2 := (0 : Exp)) (ev_var_const h3v) (ev_lit_const 0) (ev_lit_const 0) (by rw [hs2v]; exact hvs)  rfl rfl
       have hs3 : s3 = { s2 with nodes := s2.nodes.modify v fun n => NF.set (NF.set n 0 .first) 0 .last } := by
         simp only [s3, hfl, beq_self_eq_true, ite_true]; rfl
       rw [← hs3] at w
@@ -543,7 +543,7 @@ theorem dsMutS_ok {κ : Caps} {s : Core} {L : Loc} {v old new : Nat}
       by_cases hl : goesLeft s v
       · have w := evalF_wrN_ok (κ := κ) (s := s2) (L := L3) (k := .first) (i := .var "v") (e := .rd (.c .next) "y")
           (j := v) (w := cy.next) (by simp [Exp.ev, h3v]) (by simp [Exp.ev, h3y, hyC, Fld.cap, Fld.get, CF.get, hs2y])
-          (by rw [hs2v]; exact hvs) hvN rfl
+          (by rw [hs2v]; exact hvs)  rfl
         have hs3 : s3 = { s2 with nodes := s2.nodes.modify v (NF.set · cy.next .first) } := by
           simp only [s3, ite_eq_right (show ¬ (V.first == V.last) = true by simpa using hfl),
             ite_eq_left hl]; rfl
@@ -552,7 +552,7 @@ theorem dsMutS_ok {κ : Caps} {s : Core} {L : Loc} {v old new : Nat}
           by simp [Exp.cost]⟩
       · have w := evalF_wrN_ok (κ := κ) (s := s2) (L := L3) (k := .last) (i := .var "v") (e := .rd (.c .prev) "y")
           (j := v) (w := cy.prev) (by simp [Exp.ev, h3v]) (by simp [Exp.ev, h3y, hyC, Fld.cap, Fld.get, CF.get, hs2y])
-          (by rw [hs2v]; exact hvs) hvN rfl
+          (by rw [hs2v]; exact hvs)  rfl
         have hs3 : s3 = { s2 with nodes := s2.nodes.modify v (NF.set · cy.prev .last) } := by
           simp only [s3, ite_eq_right (show ¬ (V.first == V.last) = true by simpa using hfl),
             ite_eq_right hl]; rfl
@@ -576,7 +576,7 @@ theorem dsMutS_ok {κ : Caps} {s : Core} {L : Loc} {v old new : Nat}
         by_cases hT : T.first = 0
         · have hT' : (s.nodes.getX t).first = 0 := hT
           have w := evalF_wrN_ok (κ := κ) (s := s3) (L := L3) (k := .first) (i := .var "t") (e := .var "y")
-            (j := t) (w := y) (by simp [Exp.ev, h3t]) (by simp [Exp.ev, h3y]) (by rw [hs3n]; exact hts) htN rfl
+            (j := t) (w := y) (by simp [Exp.ev, h3t]) (by simp [Exp.ev, h3y]) (by rw [hs3n]; exact hts)  rfl
           have hs4 : s4 = { s3 with nodes := s3.nodes.modify t (NF.set · y .first) } := by
             simp only [s4, show (T.first == NIL) = true from beq_iff_eq.mpr hT, ite_true]; rfl
           rw [← hs4] at w
@@ -592,7 +592,7 @@ theorem dsMutS_ok {κ : Caps} {s : Core} {L : Loc} {v old new : Nat}
       obtain ⟨c8, e8, hc8⟩ := e8
       have hs4n : s4.nodes.size = s.nodes.size := by simp only [s4]; split <;> simp [hs3n]
       have w := evalF_wrN_ok (κ := κ) (s := s4) (L := L3) (k := .last) (i := .var "t") (e := .var "y")
-        (j := t) (w := y) (by simp [Exp.ev, h3t]) (by simp [Exp.ev, h3y]) (by rw [hs4n]; exact hts) htN rfl
+        (j := t) (w := y) (by simp [Exp.ev, h3t]) (by simp [Exp.ev, h3y]) (by rw [hs4n]; exact hts)  rfl
       rw [hfin]
       exact ⟨_, evalF_ite_t (v := 1) (by simp [Exp.ev, h3lf, hl, b2n]) one_ne_zero (evalF_seq_ok2 e8 w),
         by simp [Exp.cost]; omega⟩
@@ -604,7 +604,7 @@ theorem dsMutS_ok {κ : Caps} {s : Core} {L : Loc} {v old new : Nat}
         by_cases hT : T.last = 0
         · have hT' : (s.nodes.getX t).last = 0 := hT
           have w := evalF_wrN_ok (κ := κ) (s := s3) (L := L3) (k := .last) (i := .var "t") (e := .var "y")
-            (j := t) (w := y) (by simp [Exp.ev, h3t]) (by simp [Exp.ev, h3y]) (by rw [hs3n]; exact hts) htN rfl
+            (j := t) (w := y) (by simp [Exp.ev, h3t]) (by simp [Exp.ev, h3y]) (by rw [hs3n]; exact hts)  rfl
           have hs4 : s4 = { s3 with nodes := s3.nodes.modify t (NF.set · y .last) } := by
             simp only [s4, show (T.last == NIL) = true from beq_iff_eq.mpr hT, ite_true]; rfl
           rw [← hs4] at w
@@ -620,7 +620,7 @@ theorem dsMutS_ok {κ : Caps} {s : Core} {L : Loc} {v old new : Nat}
       obtain ⟨c8, e8, hc8⟩ := e8
       have hs4n : s4.nodes.size = s.nodes.size := by simp only [s4]; split <;> simp [hs3n]
       have w := evalF_wrN_ok (κ := κ) (s := s4) (L := L3) (k := .first) (i := .var "t") (e := .var "y")
-        (j := t) (w := y) (by simp [Exp.ev, h3t]) (by simp [Exp.ev, h3y]) (by rw [hs4n]; exact hts) htN rfl
+        (j := t) (w := y) (by simp [Exp.ev, h3t]) (by simp [Exp.ev, h3y]) (by rw [hs4n]; exact hts)  rfl
       rw [hfin]
       exact ⟨_, evalF_ite_f (by simp [Exp.ev, h3lf, hl, b2n]) (evalF_seq_ok2 e8 w), by simp [Exp.cost]; omega⟩
   obtain ⟨c7, e7, hc7⟩ := e7
@@ -974,7 +974,7 @@ theorem walkS_agree {κ : Caps} {S : Core} {L : Loc} {j : Job} {v D1 D2 : Nat} (
     -- the weight
     have e2 := evalF_wrN_ok (κ := κ) (s := S) (L := L5) (k := .weight) (i := .var "wv") (e := "wt" + 2) (j := v)
       (w := V.weight + 2) (by simp [Exp.ev, h5v]) (by simp [Exp.ev, L5, OrderMaintenance.Machine.State.upd, OrderMaintenance.Machine.BinOp.eval])
-      hvs' hvN' rfl
+      hvs'  rfl
     have hW : ({ S with nodes := S.nodes.modify v (NF.set · (V.weight + 2) .weight) } : Core) = wiC S v := by
       simp only [wiC]; congr 1; apply Array.modify_congr_getX; rfl
     rw [hW] at e2
@@ -1308,7 +1308,7 @@ theorem sdAgree_ok {κ : Caps} {t : Core} {v B : Nat} {side : List (Nat × Side)
   injection h with _ hS; subst hS
   obtain ⟨L', c, e, hc⟩ := startDrainS_ok (κ := κ) (L := OrderMaintenance.Machine.State.setLocs (fun _ => 0) ["v"] [v]) hk2 hk0
     hside hroom hnd hpar hv hvT hvk hK hKN hks hksl hp hpv hB (by simp [OrderMaintenance.Machine.State.setLocs, OrderMaintenance.Machine.State.upd]) hcN
-    hcrc hcrs hcrt hcri hcrcin hcl hcT hcS hcTv hcI hc4 hcC hcP
+    hcrc hcrs hcrt hcri hcT hcS hcTv hcI hc4 hcC hcP
   exact ⟨L', c, e, hc, evalF_resJob sdP_noJob e⟩
 
 end OrderMaintenance.Impl

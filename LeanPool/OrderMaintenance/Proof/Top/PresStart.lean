@@ -33,7 +33,7 @@ theorem sdOK : SDOK := by
   obtain ⟨side, hside, hlook⟩ := sp_side hpc hv0 hI hlp hTP hof hW
   have C : SDCtx s cl ord dr n0 j v side :=
     ⟨hpc, hv0, hI, hlp, hTP, hof, hW, hside, fun c hc => ((hCL.2 c).mp hc).1, hlook⟩
-  have hvn := C.nN v C.vl.1
+  have hvn := SDCtx.nN (s := s) v C.vl.1
   refine ⟨_, _, _, _, sr_run hpc hv0 hI hlp hTP hof hW hside hlook,
     sr_topRel hpc hv0 hI hlp hTP hof hW hside hlook, C.inv, ?_⟩
   rw [C.ht v, ite_eq_right (fun h => h.elim hvn.1 hvn.2)]

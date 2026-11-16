@@ -55,7 +55,7 @@ theorem csP_agree {κ : Caps} {s : Core} {L : Loc} {c : Nat} (hc : L "c" = c) (h
   set L2 := upd (upd L "old" C.size) "new" (C.size + 1)
   have h2c : L2 "c" = c := by simp [L2, OrderMaintenance.Machine.State.upd, hc]
   have w3 := evalF_wrC_ok (κ := κ) (s := s) (L := L2) (k := .size) (i := .var "c") (e := .var "new") (j := c)
-    (w := C.size + 1) (by simp [Exp.ev, h2c]) (by simp [Exp.ev, L2, OrderMaintenance.Machine.State.upd]) hcs hcT rfl
+    (w := C.size + 1) (by simp [Exp.ev, h2c]) (by simp [Exp.ev, L2, OrderMaintenance.Machine.State.upd]) hcs  rfl
   set s1 : Core := { s with C := s.C.modify c fun C' => { C' with size := C.size + 1 } }
   have hs1 : ({ s with C := s.C.modify c (CF.set · (C.size + 1) .size) } : Core) = s1 := rfl
   rw [hs1] at w3

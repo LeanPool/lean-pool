@@ -25,12 +25,14 @@ open OrderMaintenance.Model OrderMaintenance.Proof
 
 /-- A key's position in a table is unique. -/
 theorem split_unique {A A' Bs Bs' : List (Nat × Nat)} {e le le' : Nat}
-    (h : A ++ (e, le) :: Bs = A' ++ (e, le') :: Bs') (hA : e ∉ A.map (·.1)) (hA' : e ∉ A'.map (·.1)) :
+    (h : A ++ (e, le) :: Bs = A' ++ (e, le') :: Bs') (hA : e ∉ A.map (·.1)) (hA' : e ∉ A'.map
+      (·.1)) :
     A = A' ∧ le = le' ∧ Bs = Bs' := by
   induction A generalizing A' with
   | nil =>
     cases A' with
-    | nil => simp only [List.nil_append, List.cons.injEq, Prod.mk.injEq, true_and] at h; exact ⟨rfl, h.1, h.2⟩
+    | nil => simp only [List.nil_append, List.cons.injEq, Prod.mk.injEq, true_and] at h; exact
+      ⟨rfl, h.1, h.2⟩
     | cons a A' =>
       simp only [List.nil_append, List.cons_append, List.cons.injEq] at h
       exact absurd (by rw [← h.1]; simp) hA'
@@ -98,7 +100,8 @@ local notation "O'" => ordSD ord (Top.ht (ts s) v) v s.nodes.size
 
 theorem ordh : ∃ A B, ord (Top.ht (ts s) v) = A ++ v :: B ∧ v ∉ A ∧ v ∉ B ∧
     O' (Top.ht (ts s) v) = A ++ s.nodes.size :: v :: (s.nodes.size + 1) :: B := by
-  have hm : v ∈ ord (Top.ht (ts s) v) := (C.S.ordMem _ C.h1 (C.S.htN v C.vl.1).2 v).mpr ⟨C.vl.1, rfl⟩
+  have hm : v ∈ ord (Top.ht (ts s) v) := (C.S.ordMem _ C.h1 (C.S.htN v C.vl.1).2 v).mpr ⟨C.vl.1,
+    rfl⟩
   obtain ⟨A, B, hAB⟩ := List.mem_iff_append.mp hm
   have hnd := C.S.ordNodup (Top.ht (ts s) v)
   rw [hAB] at hnd
@@ -111,7 +114,8 @@ theorem ordh : ∃ A B, ord (Top.ht (ts s) v) = A ++ v :: B ∧ v ∉ A ∧ v �
 theorem fresh {k u : Nat} (hk : 1 ≤ k) (hk' : k ≤ s.P.H) (hu : u ∈ ord k) : u < s.nodes.size :=
   ((C.S.ordMem k hk hk' u).mp hu).1.2.1
 
-theorem ord_mem (k u : Nat) : u ∈ O' k ↔ u ∈ ord k ∨ (k = Top.ht (ts s) v ∧ (u = s.nodes.size ∨ u = s.nodes.size + 1)) := by
+theorem ord_mem (k u : Nat) : u ∈ O' k ↔ u ∈ ord k ∨ (k = Top.ht (ts s) v ∧ (u = s.nodes.size ∨
+  u = s.nodes.size + 1)) := by
   by_cases hk : k = Top.ht (ts s) v
   · subst hk
     obtain ⟨A, B, hAB, -, -, h'⟩ := C.ordh
@@ -128,7 +132,7 @@ theorem ord_sub (k : Nat) : (ord k).Sublist (O' k) := by
 
 theorem order_sup {X : Nat} (hX : Top.isN (ts s) X) (e : Nat) (he : e ∈ Top.order (ts s) X) :
     e ∈ Top.order S' X := by
-  have hn := C.nN X hX
+  have hn := SDCtx.nN (s := s) X hX
   rw [C.order, ite_eq_right hn.1, ite_eq_right hn.2]
   split
   · next hT =>
@@ -144,10 +148,12 @@ theorem order_sup {X : Nat} (hX : Top.isN (ts s) X) (e : Nat) (he : e ∈ Top.or
 /-- The labels of a table holding `v`, after `v1`, `v2` join it. -/
 theorem labs_tab {X : Nat} (hT : X ∈ (nd (ts s) v).inTables) :
     ∃ A le Bs, (nd (ts s) X).table = A ++ (v, le) :: Bs ∧ v ∉ A.map (·.1) ∧
-      Top.labs S' X = (A ++ (s.nodes.size, (roomLo A le true + roomHi s.P.beta Bs le true - 1) / 2) :: (v, le) ::
-        (s.nodes.size + 1, (roomLo A le false + roomHi s.P.beta Bs le false - 1) / 2) :: Bs).map (·.2) := by
+      Top.labs S' X = (A ++ (s.nodes.size, (roomLo A le true + roomHi s.P.beta Bs le true - 1) /
+        2) :: (v, le) ::
+        (s.nodes.size + 1, (roomLo A le false + roomHi s.P.beta Bs le false - 1) / 2) :: Bs).map
+          (·.2) := by
   have hX := (C.inTab X hT).1
-  have hn := C.nN X hX
+  have hn := SDCtx.nN (s := s) X hX
   obtain ⟨A, le, Bs, htab, hA⟩ := table_split (C.inTab X hT).2.2
   refine ⟨A, le, Bs, htab, hA, ?_⟩
   unfold Top.labs
@@ -160,13 +166,15 @@ theorem shapeT : ShapeT S' cl O' := by
   have S := C.S
   have h3 := S.H3
   have hP : (ts s).P = s.P := rfl
-  have hP' := C.H.P
+  have hP' := SDHyps.P (s := s) (v := v) (side := side)
   have hvlt := C.H.hv
   have hh := C.h1
   have hhH := C.hH
   have h0 : O' 0 = ord 0 := by unfold ordSD; rw [ite_eq_right (by omega)]
-  refine ⟨by rw [hP']; exact h3, by rw [h0]; exact S.ord0, fun k => ?_, fun k hk1 hk u => ?_, fun k hk => ?_,
-    fun u hu => ?_, ⟨?_, ?_, ?_⟩, fun c hc j hj => ?_, fun c hc j hj1 hj => ?_, fun j hj c d hcd => ?_,
+  refine ⟨(by rw [hP']; exact h3), (by rw [h0]; exact S.ord0), fun k => ?_, fun k hk1 hk u =>
+    ?_, fun k hk => ?_,
+    fun u hu => ?_, ⟨?_, ?_, ?_⟩, fun c hc j hj => ?_, fun c hc j hj1 hj => ?_, fun j hj c d hcd
+      => ?_,
     fun X hX => ?_, fun X hX => ?_⟩
   · -- ordNodup
     by_cases hk : k = Top.ht (ts s) v
@@ -180,8 +188,12 @@ theorem shapeT : ShapeT S' cl O' := by
       have h1 := List.nodup_append.mp hnd
       have hNA : s.nodes.size ∉ A := fun h => by have := hfr s.nodes.size (by simp [h]); omega
       have hNB : s.nodes.size ∉ B := fun h => by have := hfr s.nodes.size (by simp [h]); omega
-      have hN1A : s.nodes.size + 1 ∉ A := fun h => by have := hfr (s.nodes.size + 1) (by simp [h]); omega
-      have hN1B : s.nodes.size + 1 ∉ B := fun h => by have := hfr (s.nodes.size + 1) (by simp [h]); omega
+      have hN1A : s.nodes.size + 1 ∉ A := fun h => by
+        have := hfr (s.nodes.size + 1) (by simp [h])
+        omega
+      have hN1B : s.nodes.size + 1 ∉ B := fun h => by
+        have := hfr (s.nodes.size + 1) (by simp [h])
+        omega
       have hvN : v ≠ s.nodes.size := by have := C.H.hv; omega
       rw [List.nodup_append]
       refine ⟨h1.1, ?_, ?_⟩
@@ -200,7 +212,7 @@ theorem shapeT : ShapeT S' cl O' := by
     rw [C.ord_mem, S.ordMem k hk1 hk, C.isN, C.ht]
     constructor
     · rintro (⟨hn, hk'⟩ | ⟨rfl, hu⟩)
-      · have := C.nN u hn
+      · have := SDCtx.nN (s := s) u hn
         exact ⟨Or.inl hn, by rw [ite_eq_right (fun h => h.elim this.1 this.2)]; exact hk'⟩
       · exact ⟨Or.inr hu, by rw [ite_eq_left hu]⟩
     · rintro ⟨hn, hk'⟩
@@ -216,7 +228,8 @@ theorem shapeT : ShapeT S' cl O' := by
   · -- htN
     rw [C.isN] at hu; rw [C.ht, hP']
     rcases hu with hu | hu | hu
-    · have := C.nN u hu; rw [ite_eq_right (fun h => h.elim this.1 this.2)]; exact S.htN u hu
+    · have := SDCtx.nN (s := s) u hu; rw [ite_eq_right (fun h => h.elim this.1 this.2)]; exact
+        S.htN u hu
     all_goals rw [ite_eq_left (by tauto)]; exact ⟨hh, by omega⟩
   · -- root
     rw [hP']; unfold ordSD; rw [ite_eq_right (by omega)]; exact S.root.1
@@ -236,24 +249,25 @@ theorem shapeT : ShapeT S' cl O' := by
     exact S.root.2.2
   · -- pathEnt
     rw [hP'] at hj
-    rw [C.pp]; exact (C.ord_sub j).subset (S.pathEnt c hc j hj)
+    rw [SDCtx.pp]; exact (C.ord_sub j).subset (S.pathEnt c hc j hj)
   · -- W3
     rw [hP'] at hj
-    rw [C.pp, C.pp]
+    rw [SDCtx.pp, SDCtx.pp]
     have hn := ((S.ordMem j hj1 hj _).mp (S.pathEnt c hc j hj)).1
     exact C.order_sup hn _ (S.W3 c hc j hj1 hj)
   · -- O2
     rw [hP'] at hj
-    rw [C.pp, C.pp]
+    rw [SDCtx.pp, SDCtx.pp]
     rcases S.O2 j hj c d hcd with h | h
     · exact Or.inl h
     · exact Or.inr (h.mono (C.ord_sub j))
   · -- O1
     rw [C.isN] at hX
     rcases hX with hX | rfl | rfl
-    · have hn := C.nN X hX
+    · have hn := SDCtx.nN (s := s) X hX
       rw [C.ht,
-        ite_eq_right (show ¬(X = s.nodes.size ∨ X = s.nodes.size + 1) from fun h => h.elim hn.1 hn.2),
+        ite_eq_right (show ¬(X = s.nodes.size ∨ X = s.nodes.size + 1) from fun h => h.elim hn.1
+          hn.2),
         C.order, ite_eq_right hn.1, ite_eq_right hn.2]
       split
       · next hT =>
@@ -288,16 +302,18 @@ theorem shapeT : ShapeT S' cl O' := by
     have hroom := C.TP.room _ hh
     have hpos : 1 ≤ 2 ^ Dmax s.P (Top.ht (ts s) v) := Nat.one_le_two_pow
     have hm1 : n0max s.P (Top.ht (ts s) v) + 1 ≤ 2 ^ s.P.beta := by
-      calc n0max s.P (Top.ht (ts s) v) + 1 ≤ 2 ^ Dmax s.P (Top.ht (ts s) v) * (n0max s.P (Top.ht (ts s) v) + 1) :=
+      calc n0max s.P (Top.ht (ts s) v) + 1 ≤ 2 ^ Dmax s.P (Top.ht (ts s) v) * (n0max s.P (Top.ht
+        (ts s) v) + 1) :=
             Nat.le_mul_of_pos_left _ hpos
         _ ≤ 2 ^ s.P.beta := hroom
     rw [C.isN] at hX
     rcases hX with hX | rfl | rfl
-    · have hn := C.nN X hX
+    · have hn := SDCtx.nN (s := s) X hX
       by_cases hT : X ∈ (nd (ts s) v).inTables
       · obtain ⟨A, le, Bs, htab, hA, hl⟩ := C.labs_tab hT
         rw [hl]
-        obtain ⟨A', le', Bs', htab', hA', -, -, -, hB, hg⟩ := room_up C.I C.TP C.vl.1 hT s.nodes.size (s.nodes.size + 1)
+        obtain ⟨A', le', Bs', htab', hA', -, -, -, hB, hg⟩ := room_up C.I C.TP C.vl.1 hT
+          s.nodes.size (s.nodes.size + 1)
         rw [htab] at htab'
         obtain ⟨rfl, rfl, rfl⟩ := split_unique htab' hA hA'
         exact gapsGe_mono (by omega) hg

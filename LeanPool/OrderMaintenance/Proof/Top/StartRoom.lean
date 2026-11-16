@@ -22,12 +22,15 @@ namespace OrderMaintenance.Proof.Top
 
 open OrderMaintenance.Model OrderMaintenance.Proof
 /-- **A table one level up has room on both sides of an entry.** -/
-theorem room_up {s : TS} {cl : List Nat} {ord : Nat → List Nat} {dr n0 : Nat → Nat} {oj : Option Job}
-    (hI : InvJ s cl ord dr n0 oj) (hTP : TopParams s.P) {e T : Nat} (he : isN s e) (hT : T ∈ (nd s e).inTables)
+theorem room_up {s : TS} {cl : List Nat} {ord : Nat → List Nat} {dr n0 : Nat → Nat} {oj : Option
+  Job}
+    (hI : InvJ s cl ord dr n0 oj) (hTP : TopParams s.P) {e T : Nat} (he : isN s e) (hT : T ∈ (nd
+      s e).inTables)
     (y z : Nat) :
     ∃ A le Bs, (nd s T).table = A ++ (e, le) :: Bs ∧ e ∉ A.map (·.1) ∧
       ((nd s T).draining = true → (lookup (nd s T).side e).isSome) ∧
-      roomLo A le true < roomHi s.P.beta Bs le true ∧ roomLo A le false < roomHi s.P.beta Bs le false ∧
+      roomLo A le true < roomHi s.P.beta Bs le true ∧ roomLo A le false < roomHi s.P.beta Bs le
+        false ∧
       2 ≤ gapB s.P.beta (n0 T) (dr T) ∧
       GapsGe s.P.beta (gapB s.P.beta (n0 T) (dr T) / 2)
         ((A ++ (y, (roomLo A le true + roomHi s.P.beta Bs le true - 1) / 2) :: (e, le) ::

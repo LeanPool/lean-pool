@@ -80,7 +80,7 @@ theorem driveLoop_pk {q : Proc} {g : Reg} {k : PF} {Γq : Reg → Nat} (hq : q.p
     have hargs : evList κ S L2 [.var g] = some [p] := by simp [evList, Exp.ev, h2g]
     have hG0 : Gd K KH κ (ΓK K) S (OrderMaintenance.Machine.State.setLocs (fun _ => 0) [g] [p]) :=
       ⟨hG2.enc, hG2.vb, setLocs_lt (zero_locs _) (fun _ _ => le_refl K)
-        (by intro v hv; simp at hv; subst hv; rw [← h2g]; exact hG2.loc g)⟩
+        (by intro v hv; simp? at hv; subst hv; rw [← h2g]; exact hG2.loc g)⟩
     have hCall : PKok K KH κ (ΓK K) W (q.call [.var g] ["ok"]) S L2 :=
       PKok.call hG2 hargs (hG2.pkList hC (by safe_tac) hargs) (by rw [hq]; exact hPK hG0)
         (by rw [hr]; simpa using hrK) (by simp)

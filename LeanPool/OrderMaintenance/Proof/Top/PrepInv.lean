@@ -61,7 +61,8 @@ include F
 
 theorem hP : (ts s).P = P := F.low.rest.1
 
-theorem nd_eq (k : Nat) : nd (ts s) k = if 1 ≤ k ∧ k ≤ P.H then chainNd P P.H k else default := F.nodes k
+theorem nd_eq (k : Nat) : nd (ts s) k = if 1 ≤ k ∧ k ≤ P.H then chainNd P P.H k else default :=
+  F.nodes k
 
 theorem nd_of {k : Nat} (h1 : 1 ≤ k) (hH : k ≤ P.H) : nd (ts s) k = chainNd P P.H k := by
   rw [F.nd_eq, ite_eq_left ⟨h1, hH⟩]
@@ -103,7 +104,7 @@ theorem anc_eq : ∀ j, 1 ≤ j → j ≤ P.H → anc (ts s) 1 j = j
   | 0, h, _ => absurd h (by omega)
   | 1, _, _ => F.lpr1
   | j + 2, _, hj => by
-    show (nd (ts s) (anc (ts s) 1 (j + 1))).livePar = j + 2
+    change (nd (ts s) (anc (ts s) 1 (j + 1))).livePar = j + 2
     rw [anc_eq (j + 1) (by omega) (by omega), F.nd_of (by omega) (by omega)]
     simp [chainNd, show j + 1 < P.H by omega]
 
@@ -113,7 +114,8 @@ theorem tw_eq {u : Nat} (h1 : 1 ≤ u) (hH : u ≤ P.H) : tw (ts s) [1] u = 1 :=
 theorem rng_eq {u : Nat} (h1 : 1 ≤ u) (hH : u ≤ P.H) : rng (ts s) [1] u = [1] := by
   unfold rng; rw [F.ht_of h1 hH]; simp [F.pp_eq hH, show u ≠ 0 by omega]
 
-theorem order_eq {X : Nat} (h1 : 1 ≤ X) (hH : X ≤ P.H) : order (ts s) X = [if X = 1 then 1 else X - 1] := by
+theorem order_eq {X : Nat} (h1 : 1 ≤ X) (hH : X ≤ P.H) : order (ts s) X = [if X = 1 then 1 else
+  X - 1] := by
   unfold order Node.order; rw [F.nd_of h1 hH]; simp [chainNd]
 
 theorem labs_eq {X : Nat} (h1 : 1 ≤ X) (hH : X ≤ P.H) : labs (ts s) X = [center P] := by
@@ -124,7 +126,8 @@ theorem srcOf_eq (v : Nat) : srcOf (ts s) v = NIL := by
 
 theorem tabs0 : tabs (ts s) 0 1 = [1] := by unfold tabs; rw [ite_eq_left rfl]; exact F.cin1
 
-theorem tabsH {h : Nat} (h1 : 1 ≤ h) (hH : h ≤ P.H) : tabs (ts s) h h = if h < P.H then [h + 1] else [] := by
+theorem tabsH {h : Nat} (h1 : 1 ≤ h) (hH : h ≤ P.H) : tabs (ts s) h h = if h < P.H then [h + 1]
+  else [] := by
   unfold tabs; rw [ite_eq_right (by omega), F.nd_of h1 hH]; rfl
 
 theorem par_eq {h e : Nat} (h1 : 1 ≤ h) (he1 : 1 ≤ e) (heH : e ≤ P.H) :
@@ -158,7 +161,10 @@ theorem shapeT (H3 : 3 ≤ P.H) (hb : 1 ≤ P.beta) : ShapeT (ts s) [1] (chainOr
     rw [F.hP] at hH
     unfold chainOrd; rw [ite_eq_right (by omega), ite_eq_left hH, F.isN_iff]
     constructor
-    · intro hv; simp at hv; subst hv; exact ⟨⟨h1, hH⟩, F.ht_of h1 hH⟩
+    · intro hv
+      simp only [List.mem_cons, List.not_mem_nil, or_false] at hv
+      subst hv
+      exact ⟨⟨h1, hH⟩, F.ht_of h1 hH⟩
     · rintro ⟨⟨a, b⟩, c⟩; rw [F.ht_of a b] at c; simp [c]
   ordHigh h hh := by
     rw [F.hP] at hh; unfold chainOrd; rw [ite_eq_right (by omega), ite_eq_right (by omega)]
@@ -172,7 +178,7 @@ theorem shapeT (H3 : 3 ≤ P.H) (hb : 1 ≤ P.beta) : ShapeT (ts s) [1] (chainOr
   pathEnt c hc j hj := by
     simp only [List.mem_singleton] at hc; subst hc
     rw [F.hP] at hj
-    show pp (ts s) 1 j ∈ chainOrd P j
+    change pp (ts s) 1 j ∈ chainOrd P j
     rw [F.pp_eq hj]; unfold chainOrd
     by_cases h0 : j = 0
     · rw [ite_eq_left h0, ite_eq_left h0]; simp
@@ -200,6 +206,7 @@ theorem shapeT (H3 : 3 ≤ P.H) (hb : 1 ≤ P.beta) : ShapeT (ts s) [1] (chainOr
     apply gaps_center hb
     unfold center; rw [Nat.shiftLeft_eq, one_mul]; exact Nat.one_le_two_pow
 
+omit F in
 theorem ord_sub {u : Nat} (h1 : 1 ≤ u) (hH : u ≤ P.H) :
     [if u = 1 then 1 else u - 1].Sublist (chainOrd P (u - 1)) := by
   unfold chainOrd
@@ -224,9 +231,10 @@ theorem shape (H3 : 3 ≤ P.H) (hb : 1 ≤ P.beta) : Shape (ts s) [1] (chainOrd 
   kids u hu := by
     rw [F.liveN_iff] at hu
     rw [F.ht_of hu.1 hu.2]
-    have hc : (nd (ts s) u).children = [if u = 1 then 1 else u - 1] := by rw [F.nd_of hu.1 hu.2]; rfl
+    have hc : (nd (ts s) u).children = [if u = 1 then 1 else u - 1] := by
+      rw [F.nd_of hu.1 hu.2]; rfl
     rw [hc]
-    refine ⟨by simp, F.ord_sub hu.1 hu.2, fun e he => ?_⟩
+    refine ⟨by simp, ord_sub hu.1 hu.2, fun e he => ?_⟩
     simp only [List.mem_singleton] at he
     by_cases hu1 : u = 1
     · subst hu1; rw [ite_eq_left rfl] at he; subst he
@@ -305,7 +313,7 @@ theorem shape (H3 : 3 ≤ P.H) (hb : 1 ≤ P.beta) : Shape (ts s) [1] (chainOrd 
     exact ⟨rfl, rfl⟩
   tags c hc := by
     simp only [List.mem_singleton] at hc; subst hc
-    show (s.C.getX 1).tag = tagUp (ts s) 1 (ts s).P.H
+    change (s.C.getX 1).tag = tagUp (ts s) 1 (ts s).P.H
     rw [F.hP, F.tagUp_eq P.H le_rfl]; exact F.tag
 
 theorem ew_eq {u : Nat} (h1 : 1 ≤ u) (hH : u ≤ P.H) : ew (ts s) [1] u = 1 := by
@@ -318,7 +326,8 @@ theorem time (hTP : TopParams P) : Timing (ts s) [1] none := by
   have ha : 2 ≤ P.a := by have := hTP.lamK 1 le_rfl; simp [lamd] at this; omega
   refine ⟨fun u hu => ?_, fun u hu _ _ => ?_, fun g hg => absurd hg (F.not_ghost g),
     fun g hg => absurd hg (F.not_ghost g), fun g hg => absurd hg (F.not_ghost g),
-    fun g hg => absurd hg (F.not_ghost g), fun u hu hH => ?_, fun t _ hs => absurd (F.srcOf_eq t) hs,
+    fun g hg => absurd hg (F.not_ghost g), fun u hu hH => ?_, fun t _ hs => absurd (F.srcOf_eq
+      t) hs,
     fun u hu _ => ?_, fun u hu => ?_⟩
   · rw [F.liveN_iff] at hu
     simp only [pend, List.not_mem_nil, ite_false, Nat.add_zero]
@@ -332,7 +341,7 @@ theorem time (hTP : TopParams P) : Timing (ts s) [1] none := by
   · rw [F.isN_iff] at hu; exact F.ht_of hu.1 hu.2
   · rw [F.liveN_iff] at hu; rw [F.tw_eq hu.1 hu.2]
 
-theorem room (hTP : TopParams P) (hb : 1 ≤ P.beta) : Room (ts s) [1] (fun _ => 0) (fun _ => 1) := by
+theorem room (hb : 1 ≤ P.beta) : Room (ts s) [1] (fun _ => 0) (fun _ => 1) := by
   refine ⟨fun X hX => ?_, fun X hX => ?_, fun X hX h1 => ?_, fun X hX h2 => ?_⟩
   · rw [F.isN_iff] at hX
     rw [F.labs_eq hX.1 hX.2, F.hP]
@@ -352,7 +361,8 @@ theorem room (hTP : TopParams P) (hb : 1 ≤ P.beta) : Room (ts s) [1] (fun _ =>
     have hol : oldLive (ts s) X = 1 := by
       unfold oldLive; rw [F.order_eq hX.1 hX.2, ite_eq_right (by omega)]
       simp only [List.filter_cons, List.filter_nil]
-      rw [ite_eq_left (by simp; exact ⟨(F.liveN_iff _).mpr ⟨by omega, by omega⟩, by omega⟩)]; rfl
+      rw [ite_eq_left (by simp only [tsub_lt_self_iff, zero_lt_one, and_true, Bool.and_eq_true,
+          decide_eq_true_eq]; exact ⟨(F.liveN_iff _).mpr ⟨by omega, by omega⟩, by omega⟩)]; rfl
     rw [hgr, hol, F.ew_eq hX.1 hX.2, F.hP, ite_eq_right (by omega)]
     simp
 
@@ -371,15 +381,17 @@ theorem topInv (hTP : TopParams P) (H3 : 3 ≤ P.H) : TopInv s := by
   have hC1 : s.C.getX 1 = { (initState P).C.getX 1 with tag := (s.C.getX 1).tag } := F.low.C 1
   have hfc : s.firstChunk = 1 := F.low.rest.2.2.2.2.2.1
   unfold TopInv; rw [F.res]; simp only [finS]
-  refine ⟨by rw [hP]; exact hTP, [1], chainOrd P, fun _ => 0, fun _ => 1, ⟨by simp, by simp [NIL], ?_, ?_, ?_⟩,
-    fun c => ?_, ⟨F.shape H3 hb, F.time hTP, F.room hTP hb, fun _ h => absurd h (by simp), ?_, fun X => ?_⟩⟩
+  refine ⟨by rw [hP]; exact hTP, [1], chainOrd P, fun _ => 0, fun _ => 1, ⟨by simp, by simp
+    [NIL], ?_, ?_, ?_⟩,
+    fun c => ?_, ⟨F.shape H3 hb, F.time hTP, F.room hb, fun _ h => absurd h (by simp), ?_, fun X
+      => ?_⟩⟩
   · rw [hfc]; rfl
   · intro x hx; simp only [List.mem_singleton] at hx; subst hx
-    show (s.C.getX 1).next = _; rw [hC1]; rfl
+    change (s.C.getX 1).next = _; rw [hC1]; rfl
   · intro x hx; simp only [List.mem_singleton] at hx; subst hx
-    show (s.C.getX 1).prev = _; rw [hC1]; rfl
+    change (s.C.getX 1).prev = _; rw [hC1]; rfl
   · rw [hCs]; simp; omega
-  · show 1 + 2 ≤ Wd (ts s).P ((ts s).P.H - 1)
+  · change 1 + 2 ≤ Wd (ts s).P ((ts s).P.H - 1)
     rw [F.hP]; unfold Wd
     have : 2 ^ (P.H - 1) ≤ P.a ^ (P.H - 1) := Nat.pow_le_pow_left ha _
     have : 2 ≤ 2 ^ (P.H - 1) := by

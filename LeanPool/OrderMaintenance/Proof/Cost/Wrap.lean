@@ -1003,7 +1003,7 @@ theorem mirrorInsert_cost (S : CostSetup mk TI PI μ ν PP Jf capf nf Rf) {om : 
     simp only [ite_true]
     obtain ⟨y', n', B', hr, hRB', hok', hfill', hP'⟩ := hins n.head hRB.head
     simp only [bind, Except.bind, hr]
-    exact ⟨_, rfl, rfl, by simp? [], rfl, rfl, rfl, n', B', rfl, hRB', hok', hfill', hP'⟩
+    exact ⟨_, rfl, rfl, by simp only, rfl, rfl, rfl, n', B', rfl, hRB', hok', hfill', hP'⟩
   | some x =>
     simp only
     by_cases hc : (om.nxtIdx.getX x != 0) = true
@@ -1011,7 +1011,7 @@ theorem mirrorInsert_cost (S : CostSetup mk TI PI μ ν PP Jf capf nf Rf) {om : 
       have hx0 : om.nxtIdx.getX x ≠ 0 := by simpa using hc
       obtain ⟨y', n', B', hr, hRB', hok', hfill', hP'⟩ := hins _ (hIB x (hzB x hx0)).1
       simp only [bind, Except.bind, hr]
-      exact ⟨_, rfl, rfl, by simp? [], rfl, rfl, rfl, n', B', rfl, hRB', hok', hfill', hP'⟩
+      exact ⟨_, rfl, rfl, by simp only, rfl, rfl, rfl, n', B', rfl, hRB', hok', hfill', hP'⟩
     · rw [ite_eq_right hc]
       exact ⟨om, rfl, rfl, by simp only [hset], rfl, rfl, rfl, n, B, hn, hRB, hok, hfill, rfl⟩
 

@@ -46,7 +46,8 @@ structure Stage (P : Params) (h : Nat) (s : Core) : Prop where
   low : TopRelR (initState P) s
   res : s.resJob = none
   pr : ∃ pa : Array Nat, s.prep = some
-      { chunk := 1, h := h, below := if h = 1 then 1 else h - 1, tag := chainTag P (h - 1), path := pa } ∧
+      { chunk := 1, h := h, below := if h = 1 then 1 else h - 1, tag := chainTag P (h - 1), path
+        := pa } ∧
     pa.size = P.H + 1 ∧ ∀ j, pa.getX j = if 1 ≤ j ∧ j < h then j else NIL
   nsz : 2 ≤ h → s.nodes.size = h
   nodes : 2 ≤ h → ∀ k, s.nodes.getX k = if 1 ≤ k ∧ k < h then chainNd P (h - 1) k else default
@@ -77,7 +78,7 @@ theorem chainTag_lt {P : Params} (hb : 1 ≤ P.beta) : ∀ m, chainTag P m < 2 ^
   | m + 1 => by
     have ih := chainTag_lt hb m
     have hc := center_lt hb
-    show chainTag P m + center P * 2 ^ (m * P.beta) < 2 ^ ((m + 1) * P.beta)
+    change chainTag P m + center P * 2 ^ (m * P.beta) < 2 ^ ((m + 1) * P.beta)
     rw [Nat.add_mul, one_mul, Nat.pow_add, Nat.mul_comm (2 ^ (m * P.beta))]
     have : (center P + 1) * 2 ^ (m * P.beta) ≤ 2 ^ P.beta * 2 ^ (m * P.beta) :=
       Nat.mul_le_mul_right _ hc
@@ -86,14 +87,15 @@ theorem chainTag_lt {P : Params} (hb : 1 ≤ P.beta) : ∀ m, chainTag P m < 2 ^
 
 theorem chainTag_succ {P : Params} (hb : 1 ≤ P.beta) (m : Nat) :
     chainTag P m ||| (center P <<< (m * P.beta)) = chainTag P (m + 1) := by
-  rw [Nat.lor_comm, ← Nat.shiftLeft_add_eq_or_of_lt (chainTag_lt hb m), Nat.shiftLeft_eq]
-  show _ = chainTag P m + center P * 2 ^ (m * P.beta)
+  rw [Nat.or_comm, ← Nat.shiftLeft_add_eq_or_of_lt (chainTag_lt hb m), Nat.shiftLeft_eq]
+  change _ = chainTag P m + center P * 2 ^ (m * P.beta)
   omega
 
 /-- A step that only rewrites the top structure keeps the relation to the initial state. -/
 theorem TopRelR.top {P : Params} {s : Core} (h : TopRelR (initState P) s) (nodes : Array Node)
     (path : Array (Array Nat)) (cin : Array (List Nat)) (lpar : Array Nat) (pr : Option Prep) :
-    TopRelR (initState P) { s with nodes := nodes, path := path, cin := cin, lpar := lpar, prep := pr } :=
+    TopRelR (initState P) { s with nodes := nodes, path := path, cin := cin, lpar := lpar, prep
+      := pr } :=
   h.trans (TopRel.topRelR ⟨rfl, rfl, rfl, fun _ => rfl, ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩,
     ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩⟩)
 
@@ -114,7 +116,8 @@ theorem stage_one (s : Core) (r : Bool) : Stage s.P 1
     fun h => absurd h (by omega), fun h => absurd h (by omega), fun h => absurd h (by omega)⟩
   · exact TopRel.topRelR ⟨rfl, rfl, rfl, fun _ => rfl, ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩,
       ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩⟩ |>.trans (by
-        unfold TopRelR; exact ⟨rfl, rfl, rfl, fun _ => rfl, ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩,
+        unfold TopRelR; exact ⟨rfl, rfl, rfl, fun _ => rfl, ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl,
+          rfl⟩,
           ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩⟩)
   · rw [ite_eq_right (by omega)]
     simp only [Array.getX, Array.getD_eq_getD_getElem?, Array.getElem?_replicate]
@@ -127,7 +130,8 @@ theorem stage_first {P : Params} {s : Core} (S : Stage P 1 s) (hH : 1 ≤ P.H) (
   have hP := S.P
   rw [ite_eq_left rfl] at hp
   refine ⟨_, initStep_first s _ hp rfl (by rw [hP]; exact hH), ?_, rfl⟩
-  refine ⟨TopRelR.top S.low _ _ _ _ _, S.res, ⟨pa.setX 1 1, ?_, ?_, fun j => ?_⟩, fun _ => ?_, fun _ k => ?_,
+  refine ⟨TopRelR.top S.low _ _ _ _ _, S.res, ⟨pa.setX 1 1, ?_, ?_, fun j => ?_⟩, fun _ => ?_,
+    fun _ k => ?_,
     fun _ => ?_, fun _ => ?_⟩
   · simp only [prepNext, hP]
     congr 2
@@ -154,7 +158,8 @@ theorem stage_first {P : Params} {s : Core} (S : Stage P 1 s) (hH : 1 ≤ P.H) (
 
 /-- A middle step: stage `h` to stage `h + 1`. -/
 theorem stage_mid {P : Params} {h : Nat} {s : Core} (S : Stage P h s) (h2 : 2 ≤ h) (hH : h ≤ P.H)
-    (hb : 1 ≤ P.beta) : ∃ s', initStep.run s = .ok false s' ∧ Stage P (h + 1) s' ∧ s'.ready = s.ready := by
+    (hb : 1 ≤ P.beta) : ∃ s', initStep.run s = .ok false s' ∧ Stage P (h + 1) s' ∧ s'.ready =
+      s.ready := by
   obtain ⟨pa, hp, hsz, hpa⟩ := S.pr
   have hP := S.P
   have hn := S.nsz h2
@@ -184,7 +189,8 @@ theorem stage_mid {P : Params} {h : Nat} {s : Core} (S : Stage P h s) (h2 : 2 �
     by_cases hk : k = h - 1
     · rw [ite_eq_left ⟨hk, by omega⟩, ite_eq_right (show ¬(k = h ∧ h < h + 1) by omega),
       ite_eq_right (show ¬(k = h) by omega),
-        hold k, ite_eq_left (show 1 ≤ k ∧ k < h by omega), ite_eq_left (show 1 ≤ k ∧ k < h + 1 by omega), hk]
+        hold k, ite_eq_left (show 1 ≤ k ∧ k < h by omega), ite_eq_left (show 1 ≤ k ∧ k < h + 1
+          by omega), hk]
       simp [chainNd, show h - 1 < h by omega]; omega
     · rw [ite_eq_right (fun e => hk e.1)]
       by_cases hkh : k = h
@@ -202,29 +208,38 @@ theorem stage_last {P : Params} {s : Core} (S : Stage P (P.H + 1) s) (hH : 1 ≤
   obtain ⟨pa, hp, hsz, hpa⟩ := S.pr
   have hP := S.P
   rw [ite_eq_right (by omega)] at hp
-  refine ⟨_, initStep_last s _ hp (show P.H + 1 ≠ 1 by omega) (by rw [hP]; show P.H < P.H + 1; omega), ?_, rfl⟩
+  refine ⟨_, initStep_last s _ hp (show P.H + 1 ≠ 1 by omega) (by
+    rw [hP]
+    change P.H < P.H + 1
+    omega), ?_, rfl⟩
   have hCs : s.C.size = 2 := by rw [S.low.Csize]; rfl
-  refine ⟨?_, S.res, rfl, S.nsz (by omega), fun k => ?_, S.cin (by omega), S.lpar (by omega), ?_, fun j => ?_, ?_⟩
+  refine ⟨?_, S.res, rfl, S.nsz (by omega), fun k => ?_, S.cin (by omega), S.lpar (by omega),
+    ?_, fun j => ?_, ?_⟩
   · refine S.low.trans (TopRel.topRelR ?_)
     exact (⟨rfl, rfl, rfl, fun _ => rfl, ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩,
-      ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩⟩ : TopRel s { s with path := s.path.setX 1 pa, prep := none }).trans
+      ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩⟩ : TopRel s {
+        s with
+        path := s.path.setX 1 pa
+        prep := none
+      }).trans
       (TopRel.of_tag _ 1 _)
   · rw [S.nodes (by omega) k, Nat.add_sub_cancel]
     by_cases hk : 1 ≤ k ∧ k ≤ P.H
     · rw [ite_eq_left (by omega), ite_eq_left hk]
     · rw [ite_eq_right (by omega), ite_eq_right hk]
-  · show ((s.path.setX 1 pa).getX 1).size = _; rw [getX_setX', ite_eq_left rfl, hsz]
-  · show ((s.path.setX 1 pa).getX 1).getX j = _
+  · change ((s.path.setX 1 pa).getX 1).size = _; rw [getX_setX', ite_eq_left rfl, hsz]
+  · change ((s.path.setX 1 pa).getX 1).getX j = _
     rw [getX_setX', ite_eq_left rfl, hpa]
     by_cases hj : 1 ≤ j ∧ j ≤ P.H
     · rw [ite_eq_left (by omega), ite_eq_left hj]
     · rw [ite_eq_right (by omega), ite_eq_right hj]
-  · show ((s.C.modify 1 fun C => { C with tag := chainTag P (P.H + 1 - 1) }).getX 1).tag = _
+  · change ((s.C.modify 1 fun C => { C with tag := chainTag P (P.H + 1 - 1) }).getX 1).tag = _
     rw [getX_modify', ite_eq_left ⟨rfl, by omega⟩, Nat.add_sub_cancel]
 
 /-- A building step: stage `h` to stage `h + 1`. -/
 theorem stage_next {P : Params} {h : Nat} {s : Core} (S : Stage P h s) (h1 : 1 ≤ h) (hH : h ≤ P.H)
-    (hb : 1 ≤ P.beta) : ∃ s', initStep.run s = .ok false s' ∧ Stage P (h + 1) s' ∧ s'.ready = s.ready := by
+    (hb : 1 ≤ P.beta) : ∃ s', initStep.run s = .ok false s' ∧ Stage P (h + 1) s' ∧ s'.ready =
+      s.ready := by
   by_cases e : h = 1
   · subst e; exact stage_first S hH hb
   · exact stage_mid S (by omega) hH hb

@@ -36,7 +36,8 @@ def sideStep (b : Nat) (acc : List (Nat × Side) × Side) (e : Nat) : List (Nat 
   let sd' := if e == b then Side.right else acc.2
   (assocSet acc.1 e sd', sd')
 
-theorem sidesOf_eq (order : List Nat) (b : Nat) : sidesOf order b = (order.foldl (sideStep b) ([], .left)).1 := rfl
+theorem sidesOf_eq (order : List Nat) (b : Nat) : sidesOf order b = (order.foldl (sideStep b)
+  ([], .left)).1 := rfl
 
 theorem sideStep_fold {b : Nat} : ∀ (l : List Nat), b ∉ l → ∀ (acc : List (Nat × Side)) (sd : Side),
     (l.foldl (sideStep b) (acc, sd)).2 = sd ∧
@@ -70,7 +71,8 @@ theorem sidesOf_spec {P Q : List Nat} {b : Nat} (hnd : (P ++ b :: Q).Nodup) (e :
       (assocSet (P.foldl (sideStep b) ([], .left)).1 b .right, .right) := by
     unfold sideStep; simp
   rw [hb]
-  obtain ⟨-, q2⟩ := sideStep_fold Q hbQ (assocSet (P.foldl (sideStep b) ([], .left)).1 b .right) .right
+  obtain ⟨-, q2⟩ := sideStep_fold Q hbQ (assocSet (P.foldl (sideStep b) ([], .left)).1 b .right)
+    .right
   rw [q2, lookup_assocSet, p2]
   by_cases heP : e ∈ P
   · have heQ : e ∉ Q := fun h => h1.2.2 e heP e (by simp [h]) rfl
@@ -79,7 +81,7 @@ theorem sidesOf_spec {P Q : List Nat} {b : Nat} (hnd : (P ++ b :: Q).Nodup) (e :
   · by_cases heQ : e ∈ Q
     · simp [heP, heQ]
     · by_cases heb : e = b
-      · simp [heP, heQ, heb, hbP]
+      · simp [  heb, hbP]
       · simp [heP, heQ, heb, lookup]
 
 /-- **`fixSides`**: a ghost entry takes the side of its first target (a live node). -/
@@ -93,7 +95,8 @@ theorem fixSides_spec (ns : Array Node) : ∀ (es : List Nat) (side : List (Nat 
     by_cases hd : (ns.getX e).draining = true
     · obtain ⟨hl, hs⟩ := h e (by simp) hd
       obtain ⟨st, hst⟩ := Option.isSome_iff_exists.mp hs
-      have hrest : ∀ e' ∈ es, (ns.getX e').draining = true → (ns.getX (ns.getX e').t1).draining = false ∧
+      have hrest : ∀ e' ∈ es, (ns.getX e').draining = true → (ns.getX (ns.getX e').t1).draining
+        = false ∧
           (lookup (assocSet side e st) (ns.getX e').t1).isSome := by
         intro e' he' hd'
         obtain ⟨a, b⟩ := h e' (by simp [he']) hd'
@@ -119,7 +122,8 @@ theorem fixSides_spec (ns : Array Node) : ∀ (es : List Nat) (side : List (Nat 
           rintro ⟨hm, hd'⟩
           simp only [List.mem_cons, hxe, false_or] at hm
           exact hx ⟨hm, hd'⟩
-    · have hrest : ∀ e' ∈ es, (ns.getX e').draining = true → (ns.getX (ns.getX e').t1).draining = false ∧
+    · have hrest : ∀ e' ∈ es, (ns.getX e').draining = true → (ns.getX (ns.getX e').t1).draining
+        = false ∧
           (lookup side (ns.getX e').t1).isSome := fun e' he' hd' => h e' (by simp [he']) hd'
       obtain ⟨side', h1, h2⟩ := fixSides_spec ns es side hrest
       refine ⟨side', by simp only [fixSides, hd]; exact h1, fun x => ?_⟩
@@ -163,8 +167,9 @@ theorem length_sidesOf (order : List Nat) (b : Nat) : (sidesOf order b).length �
   rw [sidesOf_eq]; have := length_sideStep_fold b order ([], .left); simpa using this
 
 theorem length_fixSides (ns : Array Node) : ∀ (es : List Nat) (side side' : List (Nat × Side)),
-    (∀ e ∈ es, (lookup side e).isSome) → fixSides ns es side = some side' → side'.length = side.length
-  | [], side, side', _, h => by simp [fixSides] at h; rw [h]
+    (∀ e ∈ es, (lookup side e).isSome) → fixSides ns es side = some side' → side'.length =
+      side.length
+  | [], side, side', _, h => by simp only [fixSides, Option.some.injEq] at h; rw [h]
   | e :: es, side, side', hk, h => by
     simp only [fixSides] at h
     split at h
