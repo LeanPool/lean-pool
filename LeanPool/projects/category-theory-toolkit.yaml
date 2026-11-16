@@ -1,0 +1,86 @@
+slug: category-theory-toolkit
+title: Category theory toolkit
+summary: A collection of general results in category theory. Any adjunction restricts to
+  an equivalence between the objects fixed by its unit and those fixed by its counit;
+  the four usual conditions defining an idempotent adjunction are equivalent, and then
+  the fixed objects form a reflective and a coreflective subcategory. Additive functors out of the
+  Karoubi envelope into an idempotent complete category are equivalent to additive
+  functors out of the original category. A category is direct exactly when the relation
+  "there is a non-identity morphism" is well-founded, and the semi-simplex category is
+  direct. Restriction of representations along a group homomorphism is full iff the
+  homomorphism is surjective, and an equivalence iff it is bijective. In abelian
+  categories, a pullback with an epimorphism opposite is a pushout, and semi-cartesian
+  squares (pushout-to-corner mono, equivalently corner-to-pullback epi)
+  are characterized by exactness and as composites of a pushout and a pullback square.
+  Finally, a category with zero morphisms and binary biproducts in which every morphism
+  with zero kernel and zero cokernel is invertible is preadditive. Two supporting files
+  package results Mathlib already proves in other forms, for use by these statements,
+  Beck's monadicity and comonadicity theorems as equivalences (a variant of Mac Lane,
+  Theorem VI.7.1, for an equivalence rather than an isomorphism of categories), and the
+  exactness criteria for pullback and pushout squares in abelian categories.
+branch: category theory
+entry_module: LeanPool.CategoryTheoryToolkit
+authors:
+- Michel Hua
+source:
+  url: https://ncatlab.org/nlab/show/idempotent+adjunction
+  github_repo: mycaule/lean-pool
+  commit: 210cb3fdc18bac5b3d1741a5c7f8435f29388ab6
+license: Apache-2.0
+status: verified
+provenance: mix
+main_declarations:
+- CategoryTheory.Adjunction.fixedEquiv
+- CategoryTheory.Adjunction.idempotent_tfae
+- CategoryTheory.Adjunction.fixedLeftReflective
+- CategoryTheory.Idempotents.karoubiUniversalAdditive
+- Rep.isEquivalence_resFunctor_iff
+- CategoryTheory.CommSq.isSemiCartesian_iff_exists_factorisation
+- CategoryTheory.SemiadditiveOfBinaryBiproducts.preadditiveOfWeakMonoEpiInvertible
+main_results:
+- declaration: CategoryTheory.Adjunction.fixedEquiv
+  informal: Every adjunction L ⊣ R restricts to an equivalence between the full
+    subcategory of objects at which the unit is an isomorphism and the full subcategory
+    of objects at which the counit is an isomorphism.
+  source_ref: 'nLab, "idempotent adjunction" (https://ncatlab.org/nlab/show/idempotent+adjunction).'
+- declaration: CategoryTheory.Adjunction.idempotent_tfae
+  informal: For an adjunction L ⊣ R with unit η and counit ε, the conditions ηR, Rε, εL
+    and Lη invertible are equivalent.
+  source_ref: 'nLab, "idempotent adjunction" (https://ncatlab.org/nlab/show/idempotent+adjunction).'
+- declaration: CategoryTheory.Adjunction.fixedLeftReflective
+  informal: For an idempotent adjunction L ⊣ R, the objects at which the unit is an
+    isomorphism form a reflective subcategory with reflector L ⋙ R (and dually the
+    objects at which the counit is an isomorphism form a coreflective subcategory).
+- declaration: CategoryTheory.Idempotents.karoubiUniversalAdditive
+  informal: For preadditive C and idempotent complete preadditive D, precomposition
+    with C → Karoubi C is an equivalence between additive functors Karoubi C ⥤ D and
+    additive functors C ⥤ D.
+- declaration: Rep.isEquivalence_resFunctor_iff
+  informal: For a group homomorphism f from H to G and a nontrivial commutative ring k,
+    restriction of k-linear representations along f is an equivalence of categories iff
+    f is bijective; it is full iff f is surjective.
+- declaration: CategoryTheory.CommSq.isSemiCartesian_iff_exists_factorisation
+  informal: In an abelian category, a commutative square is semi-cartesian (the map from
+    the pushout of its top-left corner is a monomorphism, equivalently the map to the
+    pullback of its bottom-right corner is an epimorphism, equivalently its biproduct
+    sequence is exact in the middle) iff it factors as a pushout square followed by a
+    pullback square.
+- declaration: CategoryTheory.SemiadditiveOfBinaryBiproducts.preadditiveOfWeakMonoEpiInvertible
+  informal: In a category with zero morphisms and binary biproducts in which every
+    morphism with zero kernel and zero cokernel is invertible, the commutative monoid
+    structure on hom-sets given by the biproducts has additive inverses, so the category
+    is preadditive.
+tags:
+- adjunctions
+- monadicity
+- karoubi-envelope
+- reedy
+- representations
+- abelian-categories
+msc:
+- 18A40
+- 18C15
+- 18E10
+- 18E05
+- 18N40
+- 20C99
