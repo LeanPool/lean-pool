@@ -62,8 +62,6 @@ structure RunSpec (k : ℕ) where
 
 section Runs
 
-variable [DecidableEq α]
-
 /-- `r` is a designated run of `U`: a piece of period `≤ D` and length `≥ 2D`. -/
 def IsBoundedRun (U : Fin k → List α) (D : ℕ) (r : RunSpec k) : Prop :=
   IsPeriodicPiece U r.period r.coordinate r.start r.stop ∧ r.period ≤ D ∧ 2 * D ≤ r.stop - r.start
@@ -87,18 +85,18 @@ def uncoveredTailPositions (M : StructuralReader α S k) (U : Fin k → List α)
 
 /-- At most `n` designated runs of period `≤ D` and length `≥ 2D`, and at most `E` uncovered
 tail positions in the immortal words. -/
-def HasBoundedRunCover [Fintype α] [Fintype S] [DecidableEq S] (M : StructuralReader α S k)
+def HasBoundedRunCover (M : StructuralReader α S k)
     (U : Fin k → List α)
-    (n D E : ℕ) : Prop :=
-  ∃ runs : Finset (RunSpec k), runs.card ≤ n ∧ (∀ r ∈ runs, IsBoundedRun U D r) ∧
+    (n D E : ℕ) : Prop := by
+  classical
+  exact ∃ runs : Finset (RunSpec k), runs.card ≤ n ∧ (∀ r ∈ runs, IsBoundedRun U D r) ∧
     ∑ i, (if M.Immortal (M.endState U i) then (uncoveredTailPositions M U runs i).card else 0) ≤ E
 
-/-- A run cover with at most `k · R` designated runs, at most `R` for each word. -/
-def HasScaledRunCover [Fintype α] [Fintype S] [DecidableEq S] (M : StructuralReader α S k)
+/-- A run cover with a global budget of at most `k · R` designated runs. -/
+def HasScaledRunCover (M : StructuralReader α S k)
     (U : Fin k → List α) (R D E : ℕ) : Prop :=
   HasBoundedRunCover M U (k * R) D E
 
-omit [DecidableEq α] in
 /-- Periodic factors to designated runs: a factor of length `≥ 2D` lies in a maximal piece of
 period dividing its period; a shorter one is charged by its length. -/
 theorem exists_runs_of_cover (U : Fin k → List α) (i : Fin k) {D : ℕ} :
@@ -148,8 +146,6 @@ theorem exists_runs_of_cover (U : Fin k → List α) (i : Fin k) {D : ℕ} :
           · exact Or.inl h
           · exact Or.inr (Finset.mem_union_right _ h)
 
-omit [DecidableEq α] in
-omit [DecidableEq α] in
 /-- Uncovered tail positions after the conversion: uncovered by the factors, or charged. -/
 theorem card_uncoveredTailPositions_le (M : StructuralReader α S k) (U : Fin k → List α)
     {runs rs : Finset (RunSpec k)}
@@ -168,7 +164,7 @@ theorem card_uncoveredTailPositions_le (M : StructuralReader α S k) (U : Fin k 
 
 /-- A cover of every immortal tail by `≤ P` factors of period `≤ D` and `≤ T` letters gives
 `HasBoundedRunCover` with `k·P` runs and `k (T + P·2D)` letters. -/
-theorem hasBoundedRunCover_of_covers [Fintype α] [Fintype S] [DecidableEq S]
+theorem hasBoundedRunCover_of_covers
     (M : StructuralReader α S k)
     (U : Fin k → List α) {P D T : ℕ}
     (h : ∀ i, M.Immortal (M.endState U i) → PeriodicCover (U i) (M.firstRejection U i) P D T) :

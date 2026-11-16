@@ -922,79 +922,14 @@ theorem exists_preserved_piece_of_nonconjugate_root (hN : 0 < N) (R : Piece W dR
   have hright : R.stop ∉ deletedPositions W ρ N x R.coordinate :=
     hret (by have := R.start_lt_stop; omega) le_rfl
   refine ⟨hin, hleft, fun _ => hright, ?_⟩
-  let s := keepCut W ρ N x R.coordinate R.start
-  let e := keepCut W ρ N x R.coordinate R.stop
-  have hlenR := R.start_add_len
-  have hlong := R.len_ge
-  have hdpos := R.period_pos
-  have hkeep : ∀ o ≤ R.len, keepCut W ρ N x R.coordinate (R.start + o) = s + o := by
-    intro o ho
-    exact retainedCount_add_of_not_mem (fun i hi => hin _ (by omega) (by omega))
-  have he : e = s + R.len := by
-    have := hkeep R.len le_rfl
-    rwa [hlenR] at this
-  have hget : ∀ o < R.len, (editedTuple W ρ N x R.coordinate)[s + o]? =
-      (W R.coordinate)[R.start + o]? := by
-    intro o ho
-    rw [← hkeep o ho.le, editedTuple]
-    exact getElem?_deletePositions _ (hin _ (by omega) (by omega))
-        (by have := R.stop_le_length; omega)
-  have hroot : ((editedTuple W ρ N x R.coordinate).drop s).take dR = R.root := by
-    apply List.ext_getElem?
-    intro i
-    by_cases hi : i < dR
-    · rw [List.getElem?_take_of_lt hi, List.getElem?_drop, hget i (by omega),
-        Piece.root, List.getElem?_take_of_lt hi, List.getElem?_drop]
-    · rw [List.getElem?_eq_none (by simp; omega),
-        List.getElem?_eq_none (by rw [R.root_length]; omega)]
-  have hmaxL : s = 0 ∨ (editedTuple W ρ N x R.coordinate)[s - 1]? ≠
-      (editedTuple W ρ N x R.coordinate)[s - 1 + dR]? := by
-    rcases R.left_maximal with hs | hs
-    · left; dsimp [s, keepCut]; rw [hs, retainedCount_zero]
-    · by_cases hs0 : R.start = 0
-      · left; dsimp [s, keepCut]; rw [hs0, retainedCount_zero]
-      · right
-        have hk := retainedCount_succ_of_not_mem (hleft hs0)
-        rw [show R.start - 1 + 1 = R.start by omega] at hk
-        change s = retainedCount (deletedPositions W ρ N x R.coordinate) (R.start - 1) + 1 at hk
-        have hprev : (editedTuple W ρ N x R.coordinate)[s - 1]? =
-            (W R.coordinate)[R.start - 1]? := by
-          rw [hk, Nat.add_sub_cancel, editedTuple]
-          exact getElem?_deletePositions _ (hleft hs0) (by have := R.stop_le_length; omega)
-        rw [hprev, show s - 1 + dR = s + (dR - 1) by omega,
-          hget (dR - 1) (by omega), show R.start + (dR - 1) = R.start - 1 + dR by omega]
-        exact hs
-  have hmaxR : e = (editedTuple W ρ N x R.coordinate).length ∨
-      (editedTuple W ρ N x R.coordinate)[e]? ≠ (editedTuple W ρ N x R.coordinate)[e - dR]? := by
-    rcases R.right_maximal with hE | hE
-    · left; dsimp [e, keepCut]; rw [hE, editedTuple, length_deletePositions]
-    · by_cases hend : R.stop = (W R.coordinate).length
-      · left; dsimp [e, keepCut]; rw [hend, editedTuple, length_deletePositions]
-      · right
-        have hlast : (editedTuple W ρ N x R.coordinate)[e]? = (W R.coordinate)[R.stop]? :=
-          getElem?_deletePositions _ hright (lt_of_le_of_ne R.stop_le_length hend)
-        rw [hlast, he, show s + R.len - dR = s + (R.len - dR) by omega,
-          hget (R.len - dR) (by omega), show R.start + (R.len - dR) = R.stop - dR by omega]
-        exact hE
-  let R' : Piece (editedTuple W ρ N x) dR :=
-    { coordinate := R.coordinate
-      start := s
-      stop := e
-      long := by omega
-      stop_le_length := by rw [AdmissibleDeletion.length_editedTuple];
-                           exact retainedCount_mono R.stop_le_length
-      periodic := by
-        intro p hp hpe
-        have h1 := hget (p - s) (by omega)
-        have h2 := hget (p - s + dR) (by omega)
-        rw [show s + (p - s) = p by omega] at h1
-        rw [show s + (p - s + dR) = p + dR by omega] at h2
-        rw [h1, h2]
-        simpa only [Nat.add_assoc] using R.periodic (R.start + (p - s)) (by omega) (by omega)
-      primitive := hroot ▸ R.primitive
-      left_maximal := hmaxL
-      right_maximal := hmaxR }
-  exact ⟨R', rfl, by change e - s = R.len; omega, hroot⟩
+  obtain ⟨hpiece, hlength, hroot⟩ :=
+    isPeriodicPiece_deletePositions_with_root (U' := editedTuple W ρ N x) rfl
+      R.isPeriodicPiece hin hleft (fun _ => hright)
+  refine ⟨Piece.ofIsPeriodicPiece hpiece, rfl, ?_, ?_⟩
+  · change retainedCount (deletedPositions W ρ N x R.coordinate) R.stop -
+      retainedCount (deletedPositions W ρ N x R.coordinate) R.start = R.stop - R.start
+    omega
+  · exact hroot
 
 end Site
 

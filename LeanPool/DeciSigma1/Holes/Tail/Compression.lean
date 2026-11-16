@@ -100,64 +100,9 @@ theorem isPeriodicPiece_deletePositions {U U' : Fin k → List α} {l : Fin k}
     (hright : e < (U l).length → e ∉ Dl) :
     IsPeriodicPiece U' d l (retainedCount Dl s) (retainedCount Dl e) ∧ retainedCount Dl e =
         retainedCount Dl s + (e - s) := by
-  classical
-  obtain ⟨hlong, hle, hper, hprim, hmaxL, hmaxR⟩ := hc
-  have hd : 0 < d := by
-    rcases Nat.eq_zero_or_pos d with h | h
-    · exact absurd (by simp [h]) hprim.ne_nil
-    · exact h
-  have hkeep : ∀ o ≤ e - s, retainedCount Dl (s + o) = retainedCount Dl s + o :=
-    fun o ho => retainedCount_add_of_not_mem (fun i hi => hin _ (by omega) (by omega))
-  have he : retainedCount Dl e = retainedCount Dl s + (e - s) := by
-    have := hkeep (e - s) le_rfl
-    rwa [show s + (e - s) = e by omega] at this
-  have hget : ∀ o < e - s, (U' l)[retainedCount Dl s + o]? = (U l)[s + o]? := by
-    intro o ho
-    rw [← hkeep o ho.le, hU']
-    exact getElem?_deletePositions _ (hin _ (by omega) (by omega)) (by omega)
-  have hlen' : (U' l).length = retainedCount Dl (U l).length := by rw [hU', length_deletePositions]
-  refine ⟨⟨by omega, by rw [hlen']; exact retainedCount_mono hle, ?_, ?_, ?_, ?_⟩, he⟩
-  · intro p _ hp hpe
-    have h1 := hget (p - retainedCount Dl s) (by omega)
-    have h2 := hget (p - retainedCount Dl s + d) (by omega)
-    rw [show retainedCount Dl s + (p - retainedCount Dl s) = p by omega] at h1
-    rw [show retainedCount Dl s + (p - retainedCount Dl s + d) = p + d by omega] at h2
-    rw [h1, h2]
-    simpa only [Nat.add_assoc] using hper (s + (p - retainedCount Dl s)) (by omega) (by omega)
-        (by omega)
-  · have hroot : ((U' l).drop (retainedCount Dl s)).take d = ((U l).drop s).take d := by
-      apply List.ext_getElem?
-      intro i
-      by_cases hi : i < d
-      · rw [List.getElem?_take_of_lt hi, List.getElem?_drop, hget i (by omega),
-          List.getElem?_take_of_lt hi, List.getElem?_drop]
-      · rw [List.getElem?_eq_none (by simp; omega), List.getElem?_eq_none (by simp; omega)]
-    rw [hroot]; exact hprim
-  · rcases hmaxL with hs | hs
-    · left; rw [hs, retainedCount_zero]
-    · by_cases hs0 : s = 0
-      · left; rw [hs0, retainedCount_zero]
-      · right
-        have hk := retainedCount_succ_of_not_mem (hleft hs0)
-        rw [show s - 1 + 1 = s by omega] at hk
-        have hprev : (U' l)[retainedCount Dl s - 1]? = (U l)[s - 1]? := by
-          rw [hk, Nat.add_sub_cancel, hU']
-          exact getElem?_deletePositions _ (hleft hs0) (by omega)
-        rw [hprev, show retainedCount Dl s - 1 + d = retainedCount Dl s + (d - 1) by omega,
-            hget (d - 1) (by omega),
-          show s + (d - 1) = s - 1 + d by omega]
-        exact hs
-  · rcases hmaxR with hE | hE
-    · left; rw [hlen', hE]
-    · by_cases hend : e = (U l).length
-      · left; rw [hlen', hend]
-      · right
-        have hlast : (U' l)[retainedCount Dl e]? = (U l)[e]? := by
-          rw [hU']; exact getElem?_deletePositions _ (hright (by omega)) (by omega)
-        rw [hlast, he,
-            show retainedCount Dl s + (e - s) - d = retainedCount Dl s + (e - s - d) by omega,
-          hget (e - s - d) (by omega), show s + (e - s - d) = e - d by omega]
-        exact hE
+  obtain ⟨hpiece, hlength, -⟩ :=
+    isPeriodicPiece_deletePositions_with_root hU' hc hin hleft hright
+  exact ⟨hpiece, hlength⟩
 
 /-! ## Counting lemmas -/
 
@@ -323,9 +268,10 @@ theorem card_tail_le (M : StructuralReader α S k) {ρ : List α} (runs : Finset
       simp only at he
       omega
 
+open Classical in
 /-- Pieces ending at or before first rejection, and pieces of mortal words, have bounded comparable
 height. The remaining pieces are counted by designated runs and uncovered tail positions. -/
-noncomputable def occurrenceSplit [Fintype α] [Fintype S] (M : StructuralReader α S k)
+noncomputable def occurrenceSplit [Fintype S] (M : StructuralReader α S k)
     (hU : M.IsHole U) (ρ : List α) (runs : Finset (RunSpec k))
     (hruns : ∀ r ∈ runs,
       IsPeriodicPiece U r.period r.coordinate r.start r.stop ∧ r.period ≤ ρ.length)
@@ -413,8 +359,9 @@ theorem pieceLengthBound_mono {N d d' h t : ℕ} (hd : d ≤ d') :
 
 section Pass
 
-variable [Fintype α] [DecidableEq α] [Fintype S] [DecidableEq S]
+variable [DecidableEq α] [Fintype S] [DecidableEq S]
 
+open Classical in
 /-- One pass of compression: shorten the class of a designated run of largest period. The other
 designated runs survive at their retained cuts, and the processed runs become uncovered
 positions, at most `pieceLengthBound N D (k * (N - 1)) (2 * (n + 1) + E)` each. -/
@@ -580,6 +527,9 @@ theorem exists_hole_compressed_step (M : StructuralReader α S k) {U : Fin k →
           rw [Nat.mul_comm (n + 1)]
           omega
 
+end Pass
+
+open Classical in
 /-- The tail bound when no designated run is left: every immortal tail is uncovered. -/
 theorem tail_le_of_empty (M : StructuralReader α S k) {U : Fin k → List α} {E : ℕ}
     (hE : ∑ i,
@@ -591,8 +541,6 @@ theorem tail_le_of_empty (M : StructuralReader α S k) {U : Fin k → List α} {
     (uncoveredTailPositions M U ∅ j).card else 0) (fun j _ => Nat.zero_le _) (Finset.mem_univ i)
   simp only [ite_eq_left hi] at h2
   omega
-
-end Pass
 
 /-- The bound after the passes, for `n` remaining designated runs and `E` uncovered positions; a
 pass adds the split cap for each of at most `n + 1` processed runs. The head height is
@@ -612,7 +560,7 @@ def compressionLengthBound (k N R D E : ℕ) : ℕ := compressionLengthBoundIter
 
 section Passes
 
-variable [Fintype α] [DecidableEq α] [Fintype S] [DecidableEq S]
+variable [DecidableEq α] [Fintype S] [DecidableEq S]
 
 /-- At most `n` passes bound every immortal rejected tail by
 `compressionLengthBoundIter k N D n E`. -/

@@ -4,8 +4,9 @@ summary: >-
   Computable decision procedures for Boolean combinations of existential and
   universal non-structural subtype sentences, with one constructor of arbitrary
   finite arity and variance, over finite, regular, and arbitrary trees. Includes
-  disjunctive entailment, finite countermodels, automata, word compression, and
-  an elementary bound for structural-reader holes.
+  disjunctive entailment, finite-countermodel transfer under finite
+  satisfiability, automata, word compression, and an elementary total-length
+  bound for holes of finite-state structural readers over finite alphabets.
 branch: Computer science
 entry_module: LeanPool.DeciSigma1
 authors:
@@ -21,8 +22,9 @@ source:
   provenance_notes: >-
     The paper credits Yaoyu Zhao and discloses LLM assistance with proof attempts,
     argument checking, exploratory programs, and formalization in its Use of
-    LLM-Based Tools section. The relative shares of human and generated Lean
-    proofs are not quantified upstream.
+    LLM-Based Tools section. Mixed provenance is a qualitative inference from
+    this disclosure; it does not distinguish proof checking and suggestions
+    from substantial generation of Lean proofs.
 status: verified
 license: Apache-2.0
 provenance: mix
@@ -45,7 +47,10 @@ main_results:
       Decides the corresponding theory without top for a covariant constructor
       over finite, regular, or arbitrary trees.
   - declaration: DeciSigma1.exists_small_hole
-    informal: Every structural reader having a hole has one within a computable length bound.
+    informal: >-
+      Every finite-state structural reader over a finite alphabet, with decidable
+      equality, that has a hole has one whose total word length satisfies a
+      computable bound.
   - declaration: DeciSigma1.smallHoleBound_le
     informal: The hole-length bound is bounded by four iterated exponentials.
 tags:
