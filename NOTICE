@@ -33,6 +33,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/AiyagariEquilibrium       https://github.com/LeanEconomics/LeanEconomics
   LeanPool/AndersonConjecture        https://github.com/frenzymath/Anderson-Conjecture
   LeanPool/AnomalousDiffusion        https://github.com/scottnarmstrong/AVAnomalousDiffusion
+  LeanPool/ApollonianSuperharmonic   https://github.com/wpegden/superharmonic
   LeanPool/Apportionment             https://github.com/mdbrnowski/apportionmentlib
   LeanPool/ArchonFirstProofResults   https://github.com/frenzymath/Archon-FirstProof-Results
   LeanPool/ArithmeticTriangleRemovalInVectorSpaces
@@ -59,6 +60,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/CIVAxisymmetric           https://github.com/scottnarmstrong/CIVAxisymmetric
   LeanPool/CaffarelliKohnNirenberg   https://github.com/scottnarmstrong/CaffarelliKohnNirenberg
   LeanPool/CarlsonFunctions          https://github.com/bjbraams/lean-codes
+  LeanPool/CategoryTheoryToolkit     https://github.com/mycaule/lean-pool
   LeanPool/CencovPetz                https://github.com/abenenson/cencov-petz
   LeanPool/CenteredMaximal           https://github.com/CoolRmal/centered-maximal-constant
   LeanPool/Champernowne              https://github.com/OldMathematician/ChampernowneNormality
@@ -70,6 +72,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/ClassicalGraphColouring   https://github.com/jtraverso/galvin-dinitz
   LeanPool/ClassicalMatchingFactors  https://github.com/jtraverso/tutte-f-factor
   LeanPool/ClassificationOfSurfaces  https://github.com/mccorvie/classification-of-surfaces
+  LeanPool/CommutativeAlgebraToolkit https://github.com/mycaule/lean-pool
   LeanPool/CompactSpectral           https://github.com/abenenson/compact-spectral
   LeanPool/CompactnessAndDegeneracy  https://github.com/openai/ten-proofs
   LeanPool/CompositionAlgebras       https://github.com/ehrlich-b/composition-algebras
