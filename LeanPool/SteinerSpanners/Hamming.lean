@@ -1062,6 +1062,31 @@ private def zeroCube (d : ℕ) : Fin d → Bool := fun _ => false
 private lemma hammingDist_le_dim {d : ℕ} (u v : Fin d → Bool) : hammingDist u v ≤ d :=
   le_trans (Finset.card_le_univ _) (by simp)
 
+private lemma cube_hub_path {V : Type} {d : ℕ} {p C : ℝ}
+    (hp : 1 ≤ p) (hC : 1 ≤ C) (H : SimpleGraph V) (w : Sym2 V → ℝ)
+    (emb : V → (Fin d → Bool))
+    (hw : ∀ a b : V, w s(a, b) = cubeLpDist p (emb a) (emb b))
+    (x z y : V) (hne : x ≠ y)
+    (hx : x ≠ z → H.Adj x z) (hy : z ≠ y → H.Adj z y)
+    (hd : (d : ℝ) ≤ C * (hammingDist (emb x) (emb y) : ℝ)) :
+    ∃ q : H.Walk x y, q.IsPath ∧ q.length ≤ 2 ∧
+      walkWeight w q ≤ (2 * C) * cubeLpDist p (emb x) (emb y) := by
+  have hnonneg : ∀ a b : V, 0 ≤ w s(a, b) := by
+    intro a b
+    rw [hw]
+    exact cubeLpDist_nonneg hp _ _
+  obtain ⟨q, hpath, hlength, hweight⟩ :=
+    exists_path_le_two H w hnonneg x z y hne hx hy
+  have hx_bound : cubeLpDist p (emb x) (emb z) ≤ C * cubeLpDist p (emb x) (emb y) :=
+    cubeLpDist_le_of_hamming_le hp hC _ _ _ _
+      (le_trans (by exact_mod_cast hammingDist_le_dim (emb x) (emb z)) hd)
+  have hy_bound : cubeLpDist p (emb z) (emb y) ≤ C * cubeLpDist p (emb x) (emb y) :=
+    cubeLpDist_le_of_hamming_le hp hC _ _ _ _
+      (le_trans (by exact_mod_cast hammingDist_le_dim (emb z) (emb y)) hd)
+  refine ⟨q, hpath, hlength, ?_⟩
+  rw [hw, hw] at hweight
+  linarith only [hweight, hx_bound, hy_bound]
+
 private lemma star_zero_hub {d : ℕ} {p : ℝ} (hp : 1 ≤ p) (P : Finset (Fin d → Bool)) :
     ∃ (S : Finset (Fin d → Bool)),
       Disjoint P S ∧
@@ -1118,21 +1143,12 @@ private lemma star_zero_hub {d : ℕ} {p : ℝ} (hp : 1 ≤ p) (P : Finset (Fin 
     have hux_ne_uy : ux ≠ uy := fun h => hne (Subtype.mk.inj h)
     have hadj_x : ux ≠ uz → H.Adj ux uz := fun h => ⟨h, Or.inl ⟨hx, rfl⟩⟩
     have hadj_y : uz ≠ uy → H.Adj uz uy := fun h => ⟨h, Or.inr ⟨hy, rfl⟩⟩
-    have hw_nn : ∀ a b : ↥(P ∪ S), 0 ≤ w s(a, b) := by
-      intro a b; dsimp [w]; rw [cubeSubgraphWeight_mk]; exact cubeLpDist_nonneg hp a.val b.val
-    obtain ⟨q, hpath, hlen2, hw_le⟩ :=
-      exists_path_le_two H w hw_nn ux uz uy hux_ne_uy hadj_x hadj_y
     have hd_bound : (d : ℝ) ≤ 2880 * (hammingDist x y : ℝ) := by linarith
-    have hwx : cubeLpDist p x z₀ ≤ 2880 * cubeLpDist p x y := by
-      apply cubeLpDist_le_of_hamming_le hp (by norm_num)
-      exact le_trans (by exact_mod_cast hammingDist_le_dim x z₀) hd_bound
-    have hwy : cubeLpDist p z₀ y ≤ 2880 * cubeLpDist p x y := by
-      apply cubeLpDist_le_of_hamming_le hp (by norm_num)
-      exact le_trans (by exact_mod_cast hammingDist_le_dim z₀ y) hd_bound
-    refine ⟨q, hpath, le_trans hlen2 (by norm_num), ?_⟩
-    have hw_sum : w s(ux, uz) + w s(uz, uy) = cubeLpDist p x z₀ + cubeLpDist p z₀ y := by
-      simp only [w, cubeSubgraphWeight_mk, ux, uy, uz]
-    linarith
+    obtain ⟨q, hpath, hlength, hweight⟩ :=
+      cube_hub_path hp (by norm_num : (1 : ℝ) ≤ 2880) H w Subtype.val
+        (cubeSubgraphWeight_mk p (P ∪ S)) ux uz uy hux_ne_uy hadj_x hadj_y hd_bound
+    refine ⟨q, hpath, le_trans hlength (by norm_num), ?_⟩
+    simpa only [show (2 : ℝ) * 2880 = 5760 by norm_num] using hweight
 
 private noncomputable def bReal (r : ℕ) : ℝ := (2 : ℝ) ^ r - 1
 private noncomputable def rhoReal (r : ℕ) : ℝ := 1 / (64 * bReal r)
@@ -1553,19 +1569,11 @@ private lemma density_spanners {p : ℝ} (hp : 1 ≤ p) : ∀ ρ : ℝ, 0 < ρ �
           have hux_ne_uy : ux ≠ uy := fun h => hne (Subtype.mk.inj h)
           have hadj_x : ux ≠ uz → H.Adj ux uz := fun h => Or.inl ⟨h, Or.inl ⟨hx, rfl⟩⟩
           have hadj_y : uz ≠ uy → H.Adj uz uy := fun h => Or.inl ⟨h, Or.inr ⟨hy, rfl⟩⟩
-          have hw_nn := fun (a b : ↥(P ∪ S)) => cubeLpDist_nonneg hp a.val b.val
-          obtain ⟨q, hpath, hlen2, hw_le⟩ :=
-            exists_path_le_two H w hw_nn ux uz uy hux_ne_uy hadj_x hadj_y
-          have hwx : cubeLpDist p x z₀ ≤ 2880 * cubeLpDist p x y := by
-            apply cubeLpDist_le_of_hamming_le hp (by norm_num)
-            exact le_trans (by exact_mod_cast hammingDist_le_dim x z₀) hd_bound
-          have hwy : cubeLpDist p z₀ y ≤ 2880 * cubeLpDist p x y := by
-            apply cubeLpDist_le_of_hamming_le hp (by norm_num)
-            exact le_trans (by exact_mod_cast hammingDist_le_dim z₀ y) hd_bound
-          refine ⟨q, hpath, le_trans hlen2 (by norm_num), ?_⟩
-          have hw_sum : w s(ux, uz) + w s(uz, uy) = cubeLpDist p x z₀ + cubeLpDist p z₀ y := by
-            simp only [w, cubeSubgraphWeight_mk, ux, uy, uz]
-          linarith
+          obtain ⟨q, hpath, hlength, hweight⟩ :=
+            cube_hub_path hp (by norm_num : (1 : ℝ) ≤ 2880) H w Subtype.val
+              (cubeSubgraphWeight_mk p (P ∪ S)) ux uz uy hux_ne_uy hadj_x hadj_y hd_bound
+          refine ⟨q, hpath, le_trans hlength (by norm_num), ?_⟩
+          simpa only [show (2 : ℝ) * 2880 = 5760 by norm_num] using hweight
         · -- Handled by some Hamming layer `r_star ∈ [4, r₀]`
           push Not at h_top
           let S_cov := I.filter (fun r => (1 : ℝ) / 3 * rhoReal r * (d : ℝ) ≤ (hammingDist x y
@@ -1717,25 +1725,16 @@ theorem prop_3_4_proof :
     · intro x y
       exact graphDist_noncontracting hp id H w_full hw_full_mk x y
     · intro x y hne
-      have hw_nn : ∀ a b : Fin d → Bool, 0 ≤ w_full s(a, b) := by
-        intro a b; rw [hw_full_mk]; exact cubeLpDist_nonneg hp a b
-      obtain ⟨q, hpath, hlen2, hw_le⟩ :=
-        exists_path_le_two H w_full hw_nn x z₀ y hne
-          (fun h => ⟨h, Or.inr rfl⟩) (fun h => ⟨h, Or.inl rfl⟩)
       have hpos : 1 ≤ hammingDist x y := Nat.succ_le_of_lt (hammingDist_pos.mpr hne)
       have hd_bound : (d : ℝ) ≤ 2880 * (hammingDist x y : ℝ) := by
         have h1 : (d : ℝ) ≤ 3 := by exact_mod_cast hd3
         have h2 : (1 : ℝ) ≤ (hammingDist x y : ℝ) := by exact_mod_cast hpos
         linarith
-      have hwx : cubeLpDist p x z₀ ≤ 2880 * cubeLpDist p x y := by
-        apply cubeLpDist_le_of_hamming_le hp (by norm_num)
-        exact le_trans (by exact_mod_cast hammingDist_le_dim x z₀) hd_bound
-      have hwy : cubeLpDist p z₀ y ≤ 2880 * cubeLpDist p x y := by
-        apply cubeLpDist_le_of_hamming_le hp (by norm_num)
-        exact le_trans (by exact_mod_cast hammingDist_le_dim z₀ y) hd_bound
-      refine ⟨q, hpath, le_trans hlen2 (by norm_num), ?_⟩
-      rw [hw_full_mk, hw_full_mk] at hw_le
-      linarith
+      obtain ⟨q, hpath, hlength, hweight⟩ :=
+        cube_hub_path hp (by norm_num : (1 : ℝ) ≤ 2880) H w_full id hw_full_mk x z₀ y hne
+          (fun h => ⟨h, Or.inr rfl⟩) (fun h => ⟨h, Or.inl rfl⟩) hd_bound
+      refine ⟨q, hpath, le_trans hlength (by norm_num), ?_⟩
+      simpa only [id_eq, show (2 : ℝ) * 2880 = 5760 by norm_num] using hweight
   · -- Dimensions `d ≥ 4`: apply Part 1(b) to `P = Finset.univ` at `ρ = 3 / d`
     push Not at hd3
     have hd_pos : (0 : ℝ) < (d : ℝ) := by exact_mod_cast (by omega : 0 < d)

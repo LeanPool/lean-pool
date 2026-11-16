@@ -764,7 +764,6 @@ private lemma witnessMoments_h_s_term :
 theorem witness_list_step_query_sum_bound (C₁ : ℕ) (hC₁ : 3 ≤ C₁) (r_star : ℕ) (hr : 1000 * C₁ <
     r_star)
     (hσ_pos : 0 < cspSigmaEdge C₁ r_star)
-    (_hp_edge_pos : 0 < cspPEdge C₁ r_star)
     (hσ_up : cspSigmaEdge C₁ r_star * (r_star : ℝ) / 2 ≤
       (10001 / 10000 : ℝ) * (cspBeta0 C₁ : ℝ))
     (h_binom_edge : ∀ s : ℕ,
@@ -775,7 +774,7 @@ theorem witness_list_step_query_sum_bound (C₁ : ℕ) (hC₁ : 3 ≤ C₁) (r_s
     (hp_keep_up : cspPKeep C₁ r_star ≤
       (2 : ℝ) ^ (- (747 / 1000 : ℝ) * (cspLam0 C₁ : ℝ) * (r_star : ℝ)))
     (a b : Fin (2 ^ cspL C₁ * r_star) → Fin (cspQ C₁))
-    (_hab : a ≠ b) (hd_ab : dHam a b ≤ C₁ * r_star) :
+    (hd_ab : dHam a b ≤ C₁ * r_star) :
     ∃ (M_wit : (m : ℕ) → (Fin m → (Fin (2 ^ cspL C₁ * r_star) → Fin (cspQ C₁))) →
         (Fin (2 ^ cspL C₁ * r_star) → Fin (cspQ C₁)) →
         Finset (candWitType (2 ^ cspL C₁ * r_star) C₁))
@@ -784,7 +783,6 @@ theorem witness_list_step_query_sum_bound (C₁ : ℕ) (hC₁ : 3 ≤ C₁) (r_s
         candWitType (2 ^ cspL C₁ * r_star) C₁ →
         Finset (cspIota (2 ^ cspL C₁ * r_star) (cspQ C₁))),
       (∀ m < cspKMom C₁, ∀ z_prev : Fin m → (Fin (2 ^ cspL C₁ * r_star) → Fin (cspQ C₁)),
-        Function.Injective z_prev →
         (∀ t : Fin m, z_prev t ∈ cspPoolCand C₁ r_star a b) →
         ∀ x ∈ cspPoolCand C₁ r_star a b \ Finset.univ.image z_prev,
         ∀ w ∈ M_wit m z_prev x,
@@ -792,14 +790,12 @@ theorem witness_list_step_query_sum_bound (C₁ : ℕ) (hC₁ : 3 ≤ C₁) (r_s
             cspUCand a b (m + 1) (Fin.snoc z_prev x) \ cspUCand a b m z_prev) ∧
       (∀ (ω : cspIota (2 ^ cspL C₁ * r_star) (cspQ C₁) → Bool) (m : ℕ), m < cspKMom C₁ →
         ∀ z_prev : Fin m → (Fin (2 ^ cspL C₁ * r_star) → Fin (cspQ C₁)),
-        Function.Injective z_prev →
         (∀ t : Fin m, z_prev t ∈ cspPoolCand C₁ r_star a b) →
         ∀ x ∈ cspPoolCand C₁ r_star a b \ Finset.univ.image z_prev,
           ω (Sum.inr x) = true →
           x ∈ bicliqueWitnessList (symROf ω) C₁ r_star a b →
           ∃ w ∈ M_wit m z_prev x, ∀ i ∈ Q_cand m z_prev x w, ω i = true) ∧
       (∀ m < cspKMom C₁, ∀ z_prev : Fin m → (Fin (2 ^ cspL C₁ * r_star) → Fin (cspQ C₁)),
-        Function.Injective z_prev →
         (∀ t : Fin m, z_prev t ∈ cspPoolCand C₁ r_star a b) →
         ∑ x ∈ cspPoolCand C₁ r_star a b \ Finset.univ.image z_prev,
           ∑ w ∈ M_wit m z_prev x, (∏ i ∈ Q_cand m z_prev x w, cspPIota C₁ r_star i) ≤
@@ -815,16 +811,15 @@ by
       p_keep ≤ (2 : ℝ) ^ (- (747 / 1000 : ℝ) * (cspLam0 C₁ : ℝ) * (r_star : ℝ)) →
       ∀ (a₀ b₀ : Fin N → Fin q), dHam a₀ b₀ ≤ C₁ * r_star →
       ∀ m < cspKMom C₁, ∀ z_prev : Fin m → (Fin N → Fin q),
-        Function.Injective z_prev →
         (∀ t : Fin m, z_prev t ∈ cspPoolCand C₁ r_star a₀ b₀) →
         ∑ x ∈ cspPoolCand C₁ r_star a₀ b₀ \ Finset.univ.image z_prev,
           ∑ w ∈ candMWit C₁ r_star a₀ b₀ m z_prev x,
             (∏ i ∈ candQCand C₁ a₀ b₀ m z_prev x w,
               Sum.elim (fun _ => (2 : ℝ) ^ (- σ)) (fun _ => p_keep) i) ≤
           (2 : ℝ) ^ (- (72 / 100 : ℝ) * (cspLam0 C₁ : ℝ) * (r_star : ℝ)) := by
-    clear hσ_pos _hp_edge_pos hσ_up h_binom_edge hp_keep_pos hp_keep_up _hab hd_ab a b
+    clear hσ_pos hσ_up h_binom_edge hp_keep_pos hp_keep_up hd_ab a b
     intro N q σ p_keep hσ_pos_loc hσ_up_loc h_bin_loc hp_keep_pos_loc hp_keep_up_loc
-      a₀ b₀ hd_ab_loc m hm z_prev _ hz_pool
+      a₀ b₀ hd_ab_loc m hm z_prev hz_pool
     have hlam_ge : 3000 ≤ cspLam0 C₁ := by
       have h := (lam0_ge_1000_C1 C₁ hC₁).2.1
       omega
@@ -990,9 +985,9 @@ by
       (le_trans h_tot_2 (Real.rpow_le_rpow_of_exponent_le (by norm_num) h_exp_le))
   refine ⟨fun m z_prev x => candMWit C₁ r_star a b m z_prev x,
     fun m z_prev x w => candQCand C₁ a b m z_prev x w, ?_, ?_, ?_⟩
-  · intro m _ z_prev _ _ x hx w hw
+  · intro m _ z_prev _ x hx w hw
     exact (candidateQueriesFreshAndSupported C₁ r_star m hC₁ hr a b z_prev x hx).2.1 w hw
-  · intro ω m _ z_prev _ _ x hx hω hClean
+  · intro ω m _ z_prev _ x hx hω hClean
     exact (candidateQueriesFreshAndSupported C₁ r_star m hC₁ hr a b z_prev x hx).2.2.1 ω hω hClean
   · unfold cspPEdge at h_binom_edge
     unfold cspPIota cspPEdge

@@ -846,7 +846,6 @@ private lemma existence_hBD3_exp :
     else (0 : ℝ)) =
     cspPKeep C₁ r_star ^ V_keep.card * cspPEdge C₁ r_star ^ Q_edges.card) →
     (∀ (x u : Assignment C₁ r_star),
-    x ≠ u →
     dHam x u ≤ C₁ * r_star →
     ∑ z : Assignment C₁ r_star with
     dHam x z ≤ C₁ * r_star ∧ r_star < cspInvEta0 C₁ * (threeWayDisagree x u z).card,
@@ -980,7 +979,7 @@ private lemma existence_hBD3_exp :
             (2 : ℝ) ^ (- (12 * (C₁ ^ 2 : ℕ) : ℝ) * (cspLam0 C₁ : ℝ) * (r_star : ℝ)) := by
             refine Finset.sum_le_sum (fun xu hxu => ?_)
             simp only [BallPairs, Finset.mem_filter, Finset.mem_univ, true_and] at hxu
-            exact mul_le_mul_of_nonneg_left (h_s5_d3 xu.1 xu.2 hxu.1 hxu.2) (by positivity)
+            exact mul_le_mul_of_nonneg_left (h_s5_d3 xu.1 xu.2 hxu.2) (by positivity)
       _ = (∑ xu ∈ BallPairs, (cspPKeep C₁ r_star) ^ 2 *
             (cspPEdge C₁ r_star) ^ (homQueries xu.1 ∪ homQueries xu.2).card) *
             (2 : ℝ) ^ (- (12 * (C₁ ^ 2 : ℕ) : ℝ) * (cspLam0 C₁ : ℝ) * (r_star : ℝ)) :=
@@ -1063,11 +1062,9 @@ private lemma existence_hBch_exp :
     ∏ i ∈ Finset.image Sum.inr V_keep ∪ Finset.image Sum.inl Q_edges, cspPIota C₁ r_star i =
     cspPKeep C₁ r_star ^ V_keep.card * cspPEdge C₁ r_star ^ Q_edges.card) →
     (∀ (x w₀ : Assignment C₁ r_star),
-    x ≠ w₀ →
     dHam x w₀ ≤ C₁ * r_star →
     ∀ m < cspKCh C₁,
     ∀ (y_prev : Fin m → Assignment C₁ r_star),
-    Function.Injective y_prev →
     (∀ (t : Fin m), y_prev t ∈ cspPoolCh C₁ r_star x w₀) →
     ∑ y ∈ cspPoolCh C₁ r_star x w₀ \ Finset.image y_prev Finset.univ,
     ∏
@@ -1194,9 +1191,9 @@ private lemma existence_hBch_exp :
         rcases hi.1 with ⟨_, rfl, rfl⟩ | ⟨t, ht, rfl⟩
         · exact hzm.2.1
         · exact hzm.2.2 t ht
-    · intro m hm y_prev hinj hpool
+    · intro m hm y_prev _ hpool
       simp only [Finset.sum_singleton, Q_ch]
-      exact h_s5_ch x w₀ hxw.1 hxw.2 m hm y_prev hinj hpool
+      exact h_s5_ch x w₀ hxw.2 m hm y_prev hpool
   have hstep2 : ∑ xw ∈ BallPairs, ∑ ω : cspIota (2 ^ cspL C₁ * r_star) (cspQ C₁) → Bool,
       (if (xw.1 ∈ cspPRaw ω ∧ xw.2 ∈ cspPRaw ω) ∧
           cspKCh C₁ ≤ ((cspPoolCh C₁ r_star xw.1 xw.2).filter (fun y => y ∈ cspPRaw ω)).card
@@ -1237,7 +1234,6 @@ private lemma existence_hBcand_exp :
     (9 : ℝ) ≤ (↑(C₁ ^ (2 : ℕ)) : ℝ) →
     (1000 : ℝ) ≤ (↑(cspLam0 C₁) : ℝ) →
     (0 : ℝ) < cspSigmaEdge C₁ r_star →
-    (0 : ℝ) < cspPEdge C₁ r_star →
     (∀ (s : ℕ),
     (↑((2 ^ cspL C₁ * r_star).choose s) : ℝ) * (↑(cspQ C₁ - (1 : ℕ)) : ℝ) ^ s *
     cspPEdge C₁ r_star ^ (s * ((2 : ℕ) ^ cspL C₁ * r_star - (1 : ℕ))) ≤
@@ -1271,7 +1267,7 @@ private lemma existence_hBcand_exp :
     bernWeight (cspPIota C₁ r_star) ω * (↑(cspBCand C₁ r_star ω).card : ℝ) ≤
     (1 / 4 : ℝ) * cspDeltaBad C₁ r_star * cspN0 C₁ r_star := by
   classical
-  intro C₁ hC₁ r_star hr hr_ge3001_real hC₁_sq_real hlam0_real hσ_pos hp_edge_pos h_binom_edge
+  intro C₁ hC₁ r_star hr hr_ge3001_real hC₁_sq_real hlam0_real hσ_pos h_binom_edge
       hp_keep_pos hp_keep_up h_ball_sum hσ_up hn0_pos hW_nn hp_iota h_prod_iota
   have h_seq :=
     (finite_bernoulli_cylinder_and_sequential_moment (cspPIota C₁ r_star) hp_iota).2.2.2
@@ -1321,8 +1317,8 @@ private lemma existence_hBcand_exp :
     rintro ⟨a, b⟩ hab_mem
     simp only [BallPairs, Finset.mem_filter, Finset.mem_univ, true_and] at hab_mem
     obtain ⟨M_wit, Q_cand, hQ_fresh, hQ_wit, hQ_step⟩ :=
-      witness_list_step_query_sum_bound C₁ hC₁ r_star hr hσ_pos hp_edge_pos hσ_up
-        h_binom_edge hp_keep_pos hp_keep_up a b hab_mem.1 hab_mem.2
+      witness_list_step_query_sum_bound C₁ hC₁ r_star hr hσ_pos hσ_up
+        h_binom_edge hp_keep_pos hp_keep_up a b hab_mem.2
     let S₀ : Finset (cspIota (2 ^ cspL C₁ * r_star) (cspQ C₁)) :=
       ({a, b} : Finset _).image Sum.inr ∪ (homQueries a ∪ homQueries b).image Sum.inl
     have hS₀_prod : ∏ i ∈ S₀, cspPIota C₁ r_star i =
@@ -1367,7 +1363,8 @@ private lemma existence_hBcand_exp :
       · exact Or.inl (Or.inl h)
       · exact Or.inl (Or.inr ⟨t.castSucc, by simp [Fin.snoc_castSucc]⟩)
       · exact Or.inr ⟨t, ⟨huv, hrvc_sub h1, hrvc_sub h2⟩, rfl⟩
-    · exact hQ_fresh
+    · intro m hm z_prev _ hpool
+      exact hQ_fresh m hm z_prev hpool
     · intro ω hBase
       refine ⟨?_, ?_⟩
       · intro i hi
@@ -1382,9 +1379,6 @@ private lemma existence_hBcand_exp :
       · intro z hinj hz m
         let z_prev : Fin m.1 → (Fin (2 ^ cspL C₁ * r_star) → Fin (cspQ C₁)) :=
           fun t => z (t.castLE (Nat.le_of_lt m.isLt))
-        have hinj_prev : Function.Injective z_prev := by
-          intro t₁ t₂ heq
-          exact Fin.castLE_injective _ (hinj heq)
         have hpool_prev : ∀ t : Fin m.1, z_prev t ∈ cspPoolCand C₁ r_star a b := by
           intro t
           have hzt := hz (t.castLE (Nat.le_of_lt m.isLt))
@@ -1406,8 +1400,9 @@ private lemma existence_hBcand_exp :
             rcases Finset.mem_image.mp himg with ⟨t, _, heq⟩
             have ht_eq := congr_arg Fin.val (hinj heq)
             exact absurd ht_eq (Nat.ne_of_lt t.isLt)
-        exact hQ_wit ω m.1 m.isLt z_prev hinj_prev hpool_prev (z m) hx_mem hzm.1.1 hzm.2
-    · exact hQ_step
+        exact hQ_wit ω m.1 m.isLt z_prev hpool_prev (z m) hx_mem hzm.1.1 hzm.2
+    · intro m hm z_prev _ hpool
+      exact hQ_step m hm z_prev hpool
   have hstep2 : ∑ ab ∈ BallPairs, ∑ ω : cspIota (2 ^ cspL C₁ * r_star) (cspQ C₁) → Bool,
       (if (ab.1 ∈ cspPRaw ω ∧ ab.2 ∈ cspPRaw ω) ∧
           cspKMom C₁ ≤ ((cspPRaw ω).filter (fun x => x ∈ bicliqueWitnessList (symROf ω) C₁
@@ -1982,7 +1977,7 @@ by
         hp_iota h_prod_iota h_s5_ch
   have hBcand_exp :=
     @existence_hBcand_exp C₁ hC₁ r_star hr hr_ge3001_real hC₁_sq_real hlam0_real hσ_pos
-        hp_edge_pos h_binom_edge hp_keep_pos hp_keep_up h_ball_sum hσ_up hn0_pos hW_nn hp_iota
+        h_binom_edge hp_keep_pos hp_keep_up h_ball_sum hσ_up hn0_pos hW_nn hp_iota
           h_prod_iota
   have hBDist_exp :=
     @existence_hBDist_exp C₁ hC₁ r_star hr hσ_pos hp_edge_pos hDOm_s hp_keep_pos hp_keep_up

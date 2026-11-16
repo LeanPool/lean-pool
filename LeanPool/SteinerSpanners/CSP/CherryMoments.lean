@@ -812,7 +812,6 @@ private lemma cherryMoments_h_d3_sum :
                         (2 : ℝ) ^ (-((12 : ℝ) * (↑(C₁ ^ (2 : ℕ)) : ℝ)) * (↑(cspLam0 C₁) : ℝ) *
                             (↑r_star : ℝ))) →
                 ∀ (x u : Fin ((2 : ℕ) ^ cspL C₁ * r_star) → Fin (cspQ C₁)),
-                  x ≠ u →
                     dHam x u ≤ C₁ * r_star →
                       ∑ z : Fin ((2 : ℕ) ^ cspL C₁ * r_star) → Fin (cspQ C₁) with
                           dHam x z ≤ C₁ * r_star ∧
@@ -821,7 +820,7 @@ private lemma cherryMoments_h_d3_sum :
                         (2 : ℝ) ^ (-((12 : ℝ) * (↑(C₁ ^ (2 : ℕ)) : ℝ)) * (↑(cspLam0 C₁) : ℝ) *
                             (↑r_star : ℝ)) := by
   classical
-  intro C₁ hC₁ r_star hp_edge_pos hp_edge_lt1 h_s3a x u _hxu hd_xu
+  intro C₁ hC₁ r_star hp_edge_pos hp_edge_lt1 h_s3a x u hd_xu
   let Z_bad := Finset.univ.filter (fun z : Fin (2 ^ cspL C₁ * r_star) → Fin (cspQ C₁) =>
     dHam x z ≤ C₁ * r_star ∧
     r_star < cspInvEta0 C₁ * (threeWayDisagree x u z).card)
@@ -1179,15 +1178,14 @@ theorem d3_and_cherry_query_sum_bounds (C₁ : ℕ) (hC₁ : 3 ≤ C₁) (r_star
     (hp_keep_pos : 0 < cspPKeep C₁ r_star)
     (hp_keep_up : cspPKeep C₁ r_star ≤
       (2 : ℝ) ^ (- (747 / 1000 : ℝ) * (cspLam0 C₁ : ℝ) * (r_star : ℝ))) :
-    (∀ x u : Fin (2 ^ cspL C₁ * r_star) → Fin (cspQ C₁), x ≠ u → dHam x u ≤ C₁ * r_star →
+    (∀ x u : Fin (2 ^ cspL C₁ * r_star) → Fin (cspQ C₁), dHam x u ≤ C₁ * r_star →
       ∑ z ∈ Finset.univ.filter (fun z : Fin (2 ^ cspL C₁ * r_star) → Fin (cspQ C₁) =>
           dHam x z ≤ C₁ * r_star ∧
           r_star < cspInvEta0 C₁ * (threeWayDisagree x u z).card),
         (cspPEdge C₁ r_star) ^ ((homQueries z \ (homQueries x ∪ homQueries u)).card) ≤
         (2 : ℝ) ^ (- (12 * (C₁ ^ 2 : ℕ) : ℝ) * (cspLam0 C₁ : ℝ) * (r_star : ℝ))) ∧
-    (∀ x w₀ : Fin (2 ^ cspL C₁ * r_star) → Fin (cspQ C₁), x ≠ w₀ → dHam x w₀ ≤ C₁ * r_star →
+    (∀ x w₀ : Fin (2 ^ cspL C₁ * r_star) → Fin (cspQ C₁), dHam x w₀ ≤ C₁ * r_star →
       ∀ m < cspKCh C₁, ∀ y_prev : Fin m → (Fin (2 ^ cspL C₁ * r_star) → Fin (cspQ C₁)),
-        Function.Injective y_prev →
         (∀ t : Fin m, y_prev t ∈ cspPoolCh C₁ r_star x w₀) →
         ∑ y ∈ cspPoolCh C₁ r_star x w₀ \ Finset.univ.image y_prev,
           (∏ i ∈ (({y} : Finset (Fin (2 ^ cspL C₁ * r_star) → Fin (cspQ C₁))).image Sum.inr ∪
@@ -1205,7 +1203,7 @@ by
     @cherryMoments_h_d3_sum C₁ hC₁ r_star hp_edge_pos hp_edge_lt1 h_s3a
   constructor
   · exact h_d3_sum
-  · intro x w₀ _hxw₀ hd_xw₀ m hm y_prev _hinj hpool
+  · intro x w₀ hd_xw₀ m hm y_prev hpool
     let P_rem := cspPoolCh C₁ r_star x w₀ \ Finset.univ.image y_prev
     let S_old : Finset (Fin (2 ^ cspL C₁ * r_star) → Fin (cspQ C₁)) :=
       ({x, w₀} : Finset _) ∪ Finset.univ.image y_prev
