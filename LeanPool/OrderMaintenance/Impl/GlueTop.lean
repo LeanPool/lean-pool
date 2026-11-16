@@ -58,92 +58,7 @@ theorem Shape.drain_move_hyps {s : Core} {cl : List Nat} {ord : Nat → List Nat
       s.nodes.size ∧
     dsY s v ∈ cl ∧ (s.nodes.getX v).height < s.P.H ∧
     (s.path.getX (dsY s v)).getX ((s.nodes.getX v).height + 1) < s.nodes.size := by
-  intro y h pv vb pt tb
-  obtain ⟨hvt, hv, htz, hlive, hht, hh1, hhH⟩ := S.ds_basics hg hne
-  obtain ⟨hy, hanc, hLe, hRi, hside⟩ := S.pick hg hne
-  obtain ⟨hycl, hypp, -, hbel, -⟩ := S.rng_ghost hg hy
-  obtain ⟨m1, m2, m3, m4⟩ := S.ds_mem hg hne
-  have hXN := (S.isN_pp hycl (by omega) (show h + 1 ≤ _ by omega)).1
-  have hcl : cl.Nodup := S.ord0 ▸ S.ordNodup 0
-  -- the tag of the new path
-  set tag := dsTag s v pt tb pv vb with htag
-  have T := dsS_sameTree (tag := tag) hvt hv htz
-  have hpp := S.ds_pp hg hne tag
-  have hd1 : digit (ts (dsS s v tag)) y (h + 1) = pt := by
-    unfold digit; rw [T.lab?, hpp, hpp, ite_eq_right (fun e => by omega), ite_eq_left ⟨rfl, rfl⟩]
-  have hd0 : digit (ts (dsS s v tag)) y h = tb := by
-    unfold digit; rw [T.lab?, hpp, hpp, ite_eq_left ⟨rfl, rfl⟩, ite_eq_right (fun e => by omega)]
-  have hP : (ts (dsS s v tag)).P = (ts s).P := dsS_P s v tag
-  have hrep := tagUp_replace2 (s := ts s) (s' := ts (dsS s v tag)) (c := y) (c' := y)
-    (by rw [hP]) (h := h) (k := (ts s).P.H) hh1 (by omega)
-    (fun i _ _ hi1 hi2 => S.ds_digit hg hne tag y i hi1 (Or.inl hi2))
-  have hvbl : vb < 2 ^ s.P.beta := S.digit_lt hycl hh1 (by omega)
-  have htbl : tb < 2 ^ s.P.beta := lab_lt S.toShapeT hlive.1 (getD_of_mem m2)
-  have hor1 := lor_shift_eq_add (pv := pv) (h := h) hvbl hh1
-  have hor2 := lor_shift_eq_add (pv := pt) (h := h) htbl hh1
-  have htagy : (s.C.getX y).tag = tagF (ts s) y := S.tags y hycl
-  have e1 : tagF (ts (dsS s v tag)) y = tagF (ts s) y -
-      (pv * 2 ^ (h * s.P.beta) + vb * 2 ^ ((h - 1) * s.P.beta)) +
-      (pt * 2 ^ (h * s.P.beta) + tb * 2 ^ ((h - 1) * s.P.beta)) := by
-    unfold tagF; rw [hP, hrep.2, hd1, hd0]; rfl
-  have e2 : tag = (s.C.getX y).tag - (pv * 2 ^ (h * s.P.beta) + vb * 2 ^ ((h - 1) * s.P.beta)) +
-      (pt * 2 ^ (h * s.P.beta) + tb * 2 ^ ((h - 1) * s.P.beta)) := by
-    rw [htag]; unfold dsTag
-    change (s.C.getX y).tag - ((pv <<< (h * s.P.beta)) ||| (vb <<< ((h - 1) * s.P.beta))) +
-      ((pt <<< (h * s.P.beta)) ||| (tb <<< ((h - 1) * s.P.beta))) = _
-    rw [hor1, hor2]
-  have hnew : tag = tagF (ts (dsS s v tag)) y := by rw [e1, e2, htagy]
-  have hpv : pv = ((nd (ts s) (pp (ts s) y (h + 1))).lab? v).getD 0 := by
-    simp only [pv, digit, Nat.add_sub_cancel]; rw [show pp (ts s) y h = v from hypp]
-  have hvb' : vb = ((nd (ts s) v).lab? (pp (ts s) y (h - 1))).getD 0 := by
-    simp only [vb, digit]; rw [show pp (ts s) y h = v from hypp]
-  refine ⟨hg.1.2.2, ?_, hside, ?_, getD_of_mem m1, ?_, (by
-    rw [hpv]
-    exact getD_of_mem m3), ?_, ?_, ?_,
-    hh1, S.pathSize y hycl, htbl, hvbl, Ne.symm hvt, hv, htz, hycl, hhH, ?_⟩
-  · obtain ⟨hf, -⟩ := S.ends v hg.1
-    change (nd (ts s) v).first ≠ NIL
-    rw [hf]
-    exact fun e => hL.nonil (e ▸ (rng_sub (s := s) (cl := cl) v).subset (headD_mem hne NIL))
-  · change h + 1 < ((ts s).path.getX y).size
-    rw [S.pathSize y hycl]; omega
-  · change (nd (ts s) (dsT s v)).lab? (belowY s v y) = some tb
-    rw [hbel]; exact getD_of_mem m2
-  · change (nd (ts s) v).lab? (belowY s v y) = some vb
-    rw [hbel, hvb']; exact getD_of_mem m4
-  · change (pv <<< (h * s.P.beta)) ||| (vb <<< ((h - 1) * s.P.beta)) ≤ (s.C.getX y).tag
-    rw [hor1, htagy]; unfold tagF; exact hrep.1
-  · -- the guard: the new tag lies between the neighbours' tags (Lemma T1 after the step)
-    have ST := S.drain_shapeT hg hne tag
-    refine ⟨fun hp => ?_, fun hn => ?_⟩
-    · rw [hL.prev y hycl] at hp ⊢
-      generalize hq : predOf cl y = q at hp ⊢
-      obtain ⟨l1, l2, e⟩ := predOf_split hq hp
-      have hb : Before cl q y := by
-        rw [e]
-        have : l1 ++ q :: y :: l2 = (l1 ++ [q]) ++ y :: l2 := by simp
-        rw [this]; exact before_split (by simp)
-      have hpcl := hb.mem_left
-      have hpy := hb.ne hcl
-      change (s.C.getX q).tag < tag
-      rw [show (s.C.getX q).tag = (ts s).tag q from rfl, S.tags _ hpcl,
-        ← S.ds_tagF_other hg hne tag _ hpy]
-      exact lt_of_lt_of_eq (ST.tagF_lt hb) hnew.symm
-    · rw [hL.next y hycl] at hn ⊢
-      generalize hq : succOf cl y = q at hn ⊢
-      obtain ⟨l1, l2, e⟩ := succOf_split hq hn
-      have hb : Before cl y q := by
-        rw [e]
-        have : l1 ++ y :: q :: l2 = (l1 ++ [y]) ++ q :: l2 := by simp
-        rw [this]; exact before_split (by simp)
-      have hpcl := hb.mem_right
-      have hpy := hb.ne hcl
-      change tag < (s.C.getX q).tag
-      rw [show (s.C.getX q).tag = (ts s).tag q from rfl, S.tags _ hpcl,
-        ← S.ds_tagF_other hg hne tag _ (Ne.symm hpy)]
-      exact lt_of_eq_of_lt hnew (ST.tagF_lt hb)
-  · have h2 := hXN.2.1
-    unfold pp at h2; rw [ite_eq_right (by omega)] at h2; exact h2
+  exact (S.drain_move_facts hg hne hL).1
 
 
 theorem len_le_two_of {l : List Nat} {a b : Nat} (hnd : l.Nodup) (h : ∀ x ∈ l, x = a ∨ x = b) :
@@ -244,45 +159,16 @@ theorem ins_hyps {s : Core} {A : Abs} {x : Nat} (hA : INV s A) (hT : TopInv s)
   have hcl : cl = A.chunks := NList.unique hL.nlist hA.cList.nlist
   have hxA : x ∈ A.chunks := hcl ▸ hx
   have hent : Ent ord 0 x := by unfold Ent; rw [S.ord0]; exact hx
-  have hnd : (s.cin.getX x).Nodup := by
-    have := S.tabsNodup 0 x hent; unfold tabs at this; rw [ite_eq_left rfl] at this; exact this
   -- the split's data
   have hT1 := ins_pp1 hI hx
   obtain ⟨i1, hi1⟩ := idx?_some_of_mem hT1
   set f1x := digit (ts s) x 1 with hf1
-  have hdist : ∀ i i', 1 ≤ i → i ≤ s.P.H → 1 ≤ i' → i' ≤ s.P.H → pth (ts s) x i = pth (ts s) x i' →
-      i = i' := by
-    intro i i' h1 h2 h1' h2' e
-    have a := (ins_pp_ht hI hx h1 h2).2
-    have b := (ins_pp_ht hI hx h1' h2').2
-    unfold pp at a b; rw [ite_eq_right (by omega)] at a; rw [ite_eq_right (by omega)] at b
-    rw [e] at a; omega
-  have hex : ∀ i, 1 ≤ i → i ≤ s.P.H → pth (ts s) x i < s.nodes.size := by
-    intro i h1 h2
-    have a := (ins_pp_ht hI hx h1 h2).1
-    unfold pp at a; rw [ite_eq_right (by omega)] at a; exact a.2.1
-  have F := insFin_frame s x f1x i1 hxs hnd hdist hex
+  obtain ⟨F, hnd⟩ := insFin_frame_of_invariant (f1x := f1x) (i1 := i1) hI hx hxs
   have SH := ins_shape hI hC hx F hTP rfl hi1
-  have htags := ins_tags hI hC hx F hTP rfl hi1
   have T1 : ∀ c d, Before (clIns cl x s.C.size (s.C.size + 1)) c d →
       tagF (insFin s x f1x i1) c < tagF (insFin s x f1x i1) d := fun c d h => SH.toShapeT.tagF_lt h
   obtain ⟨Al, Bl, hcl1, hA1, hB1, hcl'⟩ := ins_cl hI hC hx
-  have hmem' : ∀ c, c ∈ clIns cl x s.C.size (s.C.size + 1) ↔ c ∈ cl ∨ c = s.C.size ∨ c =
-    s.C.size + 1 := by
-    intro c; rw [hcl', hcl1]; simp only [List.mem_append, List.mem_cons]; tauto
-  -- the tags after the split are `tagF`
-  have hty : tagY (ins0 s x) x f1x i1 = tagF (insFin s x f1x i1) s.C.size := by
-    have := htags s.C.size ((hmem' _).mpr (Or.inr (Or.inl rfl)))
-    rw [F.tag, ite_eq_right (by omega), ite_eq_left rfl] at this; exact this
-  have htz : tagZ (ins0 s x) x f1x i1 = tagF (insFin s x f1x i1) (s.C.size + 1) := by
-    have := htags (s.C.size + 1) ((hmem' _).mpr (Or.inr (Or.inr rfl)))
-    rw [F.tag, ite_eq_left rfl] at this; exact this
-  have hto : ∀ c ∈ cl, cT (ins0 s x) c = tagF (insFin s x f1x i1) c := by
-    intro c hc
-    have hcs := (hC c).mp hc
-    have := htags c ((hmem' _).mpr (Or.inl hc))
-    rw [F.tag, ite_eq_right (by omega), ite_eq_right (by omega)] at this
-    unfold cT; rw [ins0_tag s x hcs.2, this]
+  obtain ⟨hty, htz, hto⟩ := ins_tag_interpretation hI hC hx F hTP rfl hi1
   have hnd1 : cl.Nodup := S.ord0 ▸ S.ordNodup 0
   -- the links around the new chunks
   obtain ⟨hLk, hp2, hn2⟩ := linkCOK_push2 hA hxA

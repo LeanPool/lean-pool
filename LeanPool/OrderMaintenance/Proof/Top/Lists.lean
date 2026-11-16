@@ -535,17 +535,6 @@ theorem before_succ {l : List Nat} (hl : l.Nodup) {b c x : Nat} (h : [b, c] <:+:
     (hx : Before l b x) : x = c ∨ Before l c x := by
   obtain ⟨u, w, rfl⟩ := h
   have hm := hx.mem_right
-  have hb : b ∉ u := fun hu => by
-    have := List.nodup_append.mp hl
-    exact (List.nodup_append.mp this.1).2.2 b hu b (by simp) rfl
-  have hbw : b ∉ c :: w := by
-    intro hm'
-    have h1 := List.nodup_append.mp hl
-    have h2 := (List.nodup_append.mp h1.1).2.1
-    rcases List.mem_cons.mp hm' with e | e
-    · subst e; simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false,
-        not_true_eq_false, not_false_eq_true, List.nodup_nil, and_self, and_true] at h2
-    · exact h1.2.2 b (by simp) b e rfl
   rcases List.mem_append.mp hm with h1 | h1
   · rcases List.mem_append.mp h1 with h2 | h2
     · exfalso
