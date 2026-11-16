@@ -36,6 +36,8 @@ IMPORTS = re.compile(
 STATE = "documentation-progress.json"
 # Bump when stored analysis must be discarded, e.g. a changed database contract.
 STATE_VERSION = 2
+# A Lake worker limit alone does not bound jobs resuming from dependency waits.
+ANALYSIS_TARGETS = 8
 TOOLCHAIN_ROOTS = frozenset({"Init", "Std", "Lean", "Lake"})
 COMPILED = Path(".lake/build/lib/lean")
 IR = Path(".lake/build/ir")
@@ -341,9 +343,17 @@ def stop_build(process: subprocess.Popen) -> None:
     process.wait()
 
 
-def run_build(command: list[str], directory: Path, timeout: float) -> None:
+def run_build(
+    command: list[str], directory: Path, timeout: float, *, check_only: bool = False
+) -> bool:
     """Bound a native build and reap its entire process group before rollback."""
-    process = subprocess.Popen(command, cwd=directory, start_new_session=True)
+    process = subprocess.Popen(
+        command,
+        cwd=directory,
+        start_new_session=True,
+        stdout=subprocess.DEVNULL if check_only else None,
+        stderr=subprocess.STDOUT if check_only else None,
+    )
     try:
         status = process.wait(timeout=timeout)
     except BaseException:
@@ -351,7 +361,37 @@ def run_build(command: list[str], directory: Path, timeout: float) -> None:
         raise
     if status:
         stop_build(process)
-        raise subprocess.CalledProcessError(status, command)
+        if not check_only:
+            raise subprocess.CalledProcessError(status, command)
+    return status == 0
+
+
+def analyze_batch(
+    modules: list[str], lake: str, directory: Path, deadline: float
+) -> None:
+    """Check warm targets together; limit cold builds without shrinking checkpoints.
+
+    Lake's --no-build checks its traces but refuses to launch stale build jobs.
+    This avoids reloading a large import graph for every small group of cached
+    targets. Cold groups follow the caller's dependency order, so a local
+    aggregate cannot launch its entire cold import closure at once.
+    """
+    targets = [f"+{name}:docInfo" for name in modules]
+    if len(targets) > ANALYSIS_TARGETS and run_build(
+        [lake, "--no-build", "build", *targets],
+        directory,
+        max(1, deadline - time.monotonic()),
+        check_only=True,
+    ):
+        return
+    for position in range(0, len(targets), ANALYSIS_TARGETS):
+        if time.monotonic() >= deadline:
+            raise subprocess.TimeoutExpired(lake, 0)
+        run_build(
+            [lake, "build", *targets[position : position + ANALYSIS_TARGETS]],
+            directory,
+            max(1, deadline - time.monotonic()),
+        )
 
 
 def build_batches(root: Path, lake: str, seconds: float, batch_size: int) -> bool:
@@ -385,12 +425,9 @@ def build_batches(root: Path, lake: str, seconds: float, batch_size: int) -> boo
     position = 0
     while position < len(pending) and time.monotonic() < deadline:
         batch = pending[position : position + batch_size]
-        command = [lake, "build", *(f"+{name}:docInfo" for name in batch)]
         try:
             with batch_checkpoint(build):
-                run_build(
-                    command, root / "docbuild", max(1, deadline - time.monotonic())
-                )
+                analyze_batch(batch, lake, root / "docbuild", deadline)
                 validate_database(build)
         except subprocess.TimeoutExpired:
             if position == 0:
