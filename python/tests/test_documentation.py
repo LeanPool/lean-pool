@@ -309,7 +309,9 @@ def test_native_build_failure_stops_child_writers(
         subprocess.CalledProcessError if failed_parent else subprocess.TimeoutExpired
     )
     with pytest.raises(error):
-        documentation.run_build([sys.executable, str(script)], tmp_path, 0.2)
+        documentation.run_build(
+            [sys.executable, str(script)], tmp_path, 5 if failed_parent else 0.2
+        )
     subprocess.run([sys.executable, "-c", "import time; time.sleep(1.1)"], check=True)
     assert not result.exists()
 
