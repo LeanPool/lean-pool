@@ -109,6 +109,79 @@ def test_import_order_ignores_comments_and_strings(repository: Path) -> None:
     assert documentation.external_modules(repository) == ["Init", "Lake", "Lean", "Std"]
 
 
+def test_cli_default_bounds_cold_analysis(repository: Path, monkeypatch) -> None:
+    """A cold project must finish without launching a 128-process analysis wave."""
+    for number in range(20):
+        (repository / "LeanPool" / f"Independent{number}.lean").write_text("module\n")
+    commands: list = []
+    build = recording_build(commands)
+
+    def memory_limited_build(command, directory, timeout, *, check_only=False):
+        if check_only:
+            assert command[1:3] == ["--no-build", "build"]
+            return False
+        if len(command[2:]) > 8:
+            raise subprocess.CalledProcessError(1, command, stderr="not enough memory")
+        build(command, directory, timeout)
+
+    monkeypatch.setattr(documentation, "run_build", memory_limited_build)
+    monkeypatch.setattr(
+        sys, "argv", ["documentation", "batch", "--repo", str(repository)]
+    )
+    documentation.main()
+    documentation.require_complete(repository)
+    analyzed = [target for command in commands for target in command[2:]]
+    assert len(analyzed) == len(set(analyzed)) == 23
+
+
+def test_cached_batch_checks_traces_without_analyzing(
+    tmp_path: Path, monkeypatch
+) -> None:
+    """A warm checkpoint needs one Lake check, even when it has many targets."""
+    commands = []
+
+    def cached_build(command, directory, timeout, *, check_only=False):
+        assert check_only
+        commands.append(command)
+        return True
+
+    monkeypatch.setattr(documentation, "run_build", cached_build)
+    monkeypatch.setattr(documentation.time, "monotonic", lambda: 0)
+    modules = [f"LeanPool.Module{number}" for number in range(128)]
+    documentation.analyze_batch(modules, "lake", tmp_path, 60)
+    assert commands == [
+        ["lake", "--no-build", "build", *(f"+{name}:docInfo" for name in modules)]
+    ]
+
+
+def test_late_cold_group_failure_restores_whole_checkpoint(
+    repository: Path, monkeypatch
+) -> None:
+    """A failed subgroup cannot leave fresh markers paired with older progress."""
+    for number in range(20):
+        (repository / "LeanPool" / f"Independent{number}.lean").write_text("module\n")
+    directory = repository / "docbuild" / ".lake" / "build"
+    populate(directory)
+    commands = []
+    build = recording_build(commands)
+
+    def failing_build(command, directory, timeout, *, check_only=False):
+        if check_only:
+            return False
+        if commands:
+            raise subprocess.CalledProcessError(1, command)
+        build(command, directory, timeout)
+
+    monkeypatch.setattr(documentation, "run_build", failing_build)
+    with pytest.raises(subprocess.CalledProcessError):
+        documentation.build_batches(repository, "lake", 60, 128)
+    with sqlite3.connect(directory / "api-docs.db") as connection:
+        assert connection.execute("SELECT * FROM modules").fetchall() == []
+    assert (directory / "doc-data/module.doc").read_text() == "previous"
+    with pytest.raises(ValueError, match="incomplete"):
+        documentation.require_complete(repository)
+
+
 def test_render_builds_uncached_dependencies(repository: Path) -> None:
     """Tau Ceti has no olean cache, so rendering must compile what it links to."""
     (repository / "LeanPool" / "Z.lean").write_text(

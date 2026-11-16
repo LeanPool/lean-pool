@@ -21,6 +21,9 @@ permissions:
   contents: read
   actions: write
 env:
+  # Limit ordinary Lake workers and inherited Lean threads. Dependency waits
+  # can temporarily exceed this, so documentation.py also bounds target batches.
+  LEAN_NUM_THREADS: '2'
   DOCGEN_LOCAL_MODULE_ROOTS: LeanPool
   DOCGEN_DEPS_DOCS_URL: https://leanprover-community.github.io/mathlib4_docs
   DOCGEN_DEPS_DOCS_URLS: TauCeti=https://taucetiproject.github.io/TauCeti/docs
