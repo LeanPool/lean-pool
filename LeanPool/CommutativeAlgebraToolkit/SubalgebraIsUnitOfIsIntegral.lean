@@ -6,6 +6,7 @@ Authors: Michel Hua
 module
 
 public import Mathlib.RingTheory.Artinian.Algebra
+public import Mathlib.RingTheory.IntegralClosure.IsIntegral.Basic
 
 /-!
 # Inverses of integral units in subalgebras over an Artinian ring

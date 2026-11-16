@@ -259,7 +259,7 @@ theorem analyticAt_of_analyticAt_pow [CompleteSpace K] {π : K}
     · exact (le_self_pow₀ (by linarith) hp0.ne').trans (h1.trans (le_max_right _ _))
   have hQpos : 0 < Q.radius := lt_of_lt_of_le (by exact_mod_cast hρ0) hQ
   have hfrob : Continuous (frobenius K p) := by
-    show Continuous fun a ↦ frobenius K p a
+    change Continuous fun a ↦ frobenius K p a
     simp only [frobenius_def]
     exact continuous_pow p
   have heq : ∀ᶠ y in 𝓝 (0 : K), h (x + y) = Q.sum y := by

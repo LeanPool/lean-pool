@@ -9,7 +9,6 @@ public import Mathlib.Algebra.Group.ForwardDiff
 public import Mathlib.Algebra.Polynomial.Roots
 public import Mathlib.LinearAlgebra.Basis.Basic
 public import Mathlib.RingTheory.Binomial
-public import TauCeti.RingTheory.Polynomial.BinomialBasis
 
 /-!
 # Integer-valued polynomials
@@ -18,7 +17,8 @@ We define the `ℤ`-subalgebra `Polynomial.intValued` of `ℚ[X]` of polynomials
 values at all integers, and show that the binomial polynomials `Ring.choose X n` form a `ℤ`-basis
 of it (Pólya). Tau Ceti's `TauCeti.ringChooseSpanBasisX` is the integral basis of the additive
 span of the `Ring.choose X n`; the content here is that this span is exactly the subalgebra of
-integer-valued polynomials.
+integer-valued polynomials. Linear independence over `ℤ` is proved directly here by forward
+differences.
 
 ## Main statements
 
@@ -122,7 +122,25 @@ theorem mem_intValued_iff_forall_natCast {P : ℚ[X]} :
 
 private theorem linearIndependent_choose_X_int :
     LinearIndependent ℤ fun n ↦ Ring.choose (X : ℚ[X]) n := by
-  convert TauCeti.linearIndependent_ringChoose_X_int ℚ
+  classical
+  rw [linearIndependent_iff']
+  intro s g hs i hi
+  have hval : (fun m : ℕ ↦ ∑ k ∈ s, g k * (m.choose k : ℤ)) = 0 := by
+    funext m
+    have := congr(eval (m : ℚ) $hs)
+    simp only [eval_finsetSum, eval_zero, eval_smul, eval_natCast_choose_X] at this
+    simp only [zsmul_eq_mul] at this
+    simpa using (by exact_mod_cast this : ∑ k ∈ s, g k * (m.choose k : ℤ) = 0)
+  have hf : (fun m : ℕ ↦ ∑ k ∈ s, g k * (m.choose k : ℤ)) =
+      ∑ k ∈ s, g k • fun m : ℕ ↦ (m.choose k : ℤ) := by
+    funext m
+    simp [Finset.sum_apply]
+  have h0 : (Δ_[1])^[i] (fun m : ℕ ↦ ∑ k ∈ s, g k * (m.choose k : ℤ)) 0 = 0 := by
+    simp [hval, fwdDiff_iter_eq_sum_shift]
+  rw [hf, fwdDiff_iter_finsetSum, Finset.sum_apply] at h0
+  simp only [fwdDiff_iter_const_smul, Pi.smul_apply, fwdDiff_iter_choose_zero, smul_eq_mul,
+    mul_ite, mul_one, mul_zero] at h0
+  simpa [hi] using h0
 
 /-- **Pólya's basis**: the binomial polynomials `Ring.choose X n` form a `ℤ`-basis of the
 integer-valued polynomials. -/

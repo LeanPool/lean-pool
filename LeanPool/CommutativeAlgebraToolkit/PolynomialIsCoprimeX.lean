@@ -31,7 +31,8 @@ theorem isCoprime_X_sub_C_iff {p : R[X]} :
   refine ⟨fun h ↦ by simpa [isCoprime_zero_left] using h.map (evalRingHom a), fun h ↦ ?_⟩
   have ⟨q, hq⟩ := X_sub_C_dvd_sub_C_eval (a := a) (p := p)
   rw [eq_add_of_sub_eq' hq]
-  simp [isCoprime_one_right.of_isCoprime_of_dvd_right, h]
+  exact (isCoprime_one_right.of_isCoprime_of_dvd_right
+    (isUnit_iff_dvd_one.1 (h.map C))).add_mul_left_right q
 
 @[simp]
 theorem isCoprime_X_sub_C_iff_isUnit_sub :
