@@ -11,7 +11,7 @@ summary: A collection of general results centred on linear algebra. For linear m
   quasi-sober spaces, an almost-everywhere diagonal bound for inner products of a
   non-measurable map, that C¹ self-maps of a finite-dimensional real space send meagre sets to
   meagre sets, and the congruence choose (p^a − 1) k ≡ (−1)^k mod p. Supporting files restate,
-  in the forms these proofs use, results that also exist elsewhere: Cauchy–Binet for minors
+  in the forms these proofs use, results that also exist elsewhere, namely Cauchy–Binet for minors
   (in the pool and Tau Ceti), perfectness of E(n, A) and the Whitehead lemma (Tau Ceti), the
   finite q-binomial theorem (in the pool) and the class-two power formula (Tau Ceti); they are
   not headline claims.
