@@ -30,7 +30,8 @@ whose potential `U` has temperate growth and all exponential moments, let
 
 `C_c^∞(V)` is an operator core of `A` (`exists_seq_smooth_tendsto_adjointComp`): there are
 `fₙ ∈ C_c^∞` with `[fₙ] → F` and `A [fₙ] → A F`. Since `‖Tbar u‖² = ⟪A u, u⟫` on `D(A)`, also
-`Tbar [fₙ] → Tbar F`. For smooth compactly supported `f` the integrated Bochner inequality on the class
+`Tbar [fₙ] → Tbar F`. For smooth compactly supported `f` the integrated Bochner inequality on the
+class
 `𝒜` (`integral_hessianSq_add_le_of_hasTemperateGrowth`) reads, in `L²` norms,
 `Σᵢ ‖Tbar [∂ᵢ f]‖² + ρ ‖Tbar [f]‖² ≤ ‖A [f]‖²`, because `Σᵢ ‖∇∂ᵢ f‖² = Σᵢ Σⱼ (∇²f(eᵢ, eⱼ))²`.
 Applied to `fₙ - fₖ`, it shows that `Tbar [∂ᵢ fₙ]` is Cauchy, while
@@ -404,7 +405,8 @@ theorem compLp_innerSL_mem_closedWeightedOperator_domain (hνU : (ν : Measure V
   exact (hD i).1
 
 /-- **the weak Hessian estimate, symmetry of the weak Hessian.** Under the hypotheses of
-`compLp_innerSL_mem_closedWeightedOperator_domain`, `⟪eⱼ, Tbar ∂ᵢ F⟫ = ⟪eᵢ, Tbar ∂ⱼ F⟫` in `L²(ν)`. -/
+`compLp_innerSL_mem_closedWeightedOperator_domain`, `⟪eⱼ, Tbar ∂ᵢ F⟫ = ⟪eᵢ, Tbar ∂ⱼ F⟫` in
+`L²(ν)`. -/
 theorem compLp_innerSL_closedWeightedOperator_comm
     (hνU : (ν : Measure V) = m.tilted (-U)) (hUt : U.HasTemperateGrowth)
     (hexp : ∀ r : ℝ, Integrable (fun x => Real.exp (r * ‖x‖)) (ν : Measure V))

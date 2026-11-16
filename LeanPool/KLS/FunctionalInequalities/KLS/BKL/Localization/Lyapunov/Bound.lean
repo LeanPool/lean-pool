@@ -378,6 +378,71 @@ theorem sum_sq_fderiv_stdTrace_ringInverse_cov_noise_le (hiso : KLS.Isotropic μ
       ring_nf
       rfl
 
+private theorem generator_resolvent_trace_sq
+    {n : ℕ}
+    (μ : ProbabilityMeasure (EuclideanSpace ℝ (Fin n)))
+    (hc : IsCompact (μ : Measure (EuclideanSpace ℝ (Fin n))).support)
+    (p : Param n)
+    (hG : 0 ≤ stdTrace (Ring.inverse (cov μ hc p)))
+    (hGgen : generator μ hc (fun q => stdTrace (Ring.inverse (cov μ hc q))) p ≤ (1 + 8 *
+      (n : ℝ)) * stdTrace (Ring.inverse (cov μ hc p)))
+    (hGcarre : ∑ k, (fderiv ℝ (fun q => stdTrace (Ring.inverse (cov μ hc q))) p)
+      (noise μ hc p k) ^ 2 ≤ 8 * (n : ℝ) * stdTrace (Ring.inverse (cov μ hc p)) ^ 2)
+    (hGdiff : ContDiff ℝ 2 fun q => stdTrace (Ring.inverse (cov μ hc q))) :
+    generator μ hc
+        (fun q : Param n => stdTrace (Ring.inverse (cov μ hc q)) ^ 2) p ≤
+      (2 * (1 + 8 * n) + 8 * n) * stdTrace (Ring.inverse (cov μ hc p)) ^ 2 := by
+  classical
+  let G := stdTrace (Ring.inverse (cov μ hc p))
+  have hmul :=
+    diffusionGenerator_mul (drift μ hc) (noise μ hc) (x := p)
+      hGdiff.contDiffAt hGdiff.contDiffAt
+  have hfirst :
+      2 * G *
+          generator μ hc
+            (fun q : Param n => stdTrace (Ring.inverse (cov μ hc q))) p ≤
+        2 * (1 + 8 * n) * G ^ 2 := by
+    have h :=
+      mul_le_mul_of_nonneg_left hGgen (by positivity : 0 ≤ 2 * G)
+    calc
+      2 * G *
+          generator μ hc
+            (fun q : Param n => stdTrace (Ring.inverse (cov μ hc q))) p ≤
+          2 * G * ((1 + 8 * n) * G) := h
+      _ = 2 * (1 + 8 * n) * G ^ 2 := by ring
+  change diffusionGenerator (drift μ hc) (noise μ hc)
+      (fun q : Param n => stdTrace (Ring.inverse (cov μ hc q)) ^ 2) p ≤ _
+  rw [show
+      (fun q : Param n => stdTrace (Ring.inverse (cov μ hc q)) ^ 2) =
+        (fun q => stdTrace (Ring.inverse (cov μ hc q)) *
+          stdTrace (Ring.inverse (cov μ hc q))) by
+    funext q
+    rw [pow_two]]
+  rw [hmul]
+  change
+    G * generator μ hc
+          (fun q : Param n => stdTrace (Ring.inverse (cov μ hc q))) p +
+        G * generator μ hc
+          (fun q : Param n => stdTrace (Ring.inverse (cov μ hc q))) p +
+        ∑ k, (fderiv ℝ
+            (fun q : Param n => stdTrace (Ring.inverse (cov μ hc q))) p
+            (noise μ hc p k)) *
+          (fderiv ℝ
+            (fun q : Param n => stdTrace (Ring.inverse (cov μ hc q))) p
+            (noise μ hc p k)) ≤ _
+  calc
+    _ = 2 * G *
+          generator μ hc
+            (fun q : Param n => stdTrace (Ring.inverse (cov μ hc q))) p +
+          ∑ k, (fderiv ℝ
+            (fun q : Param n => stdTrace (Ring.inverse (cov μ hc q))) p
+            (noise μ hc p k)) ^ 2 := by
+      simp only [pow_two]
+      ring
+    _ ≤ 2 * (1 + 8 * n) * G ^ 2 + 8 * n * G ^ 2 :=
+      add_le_add hfirst hGcarre
+    _ = (2 * (1 + 8 * n) + 8 * n) * G ^ 2 := by ring
+
 theorem exists_generator_lyapunov_le (hiso : KLS.Isotropic μ) (hLC : KLS.LogConcave μ)
     (h8 : LogConcave.Suspension.CumulantBoundCompact 2 8) {r : ℝ} (hr : 0 ≤ r)
     (hsupp : (μ : Measure (EuclideanSpace ℝ (Fin n))).support ⊆ Metric.closedBall 0 r) :
@@ -388,7 +453,6 @@ theorem exists_generator_lyapunov_le (hiso : KLS.Isotropic μ) (hLC : KLS.LogCon
   · dsimp [K]
     positivity
   · intro p hSym hQ
-
     -- Control the resolvent and the posterior mean.
     let R : EuclideanSpace ℝ (Fin n) →L[ℝ] EuclideanSpace ℝ (Fin n) :=
       Ring.inverse (cov μ hc p)
@@ -483,7 +547,6 @@ theorem exists_generator_lyapunov_le (hiso : KLS.Isotropic μ) (hLC : KLS.LogCon
           8 * n * G ^ 2 := by
       simpa [G, R] using
         sum_sq_fderiv_stdTrace_ringInverse_cov_noise_le μ hc hiso hLC h8 p hSym hQ
-
     -- Compute the generator on the remaining coordinate terms.
     have hC : ContDiff ℝ 2 (fun q : Param n => ‖q.1‖ ^ 2) := by
       have hf : ContDiff ℝ 2 (fun q : Param n => q.1) := contDiff_fst
@@ -536,56 +599,8 @@ theorem exists_generator_lyapunov_le (hiso : KLS.Isotropic μ) (hLC : KLS.LogCon
     have hsquare :
         generator μ hc
             (fun q : Param n => stdTrace (Ring.inverse (cov μ hc q)) ^ 2) p ≤
-          (2 * (1 + 8 * n) + 8 * n) * G ^ 2 := by
-      have hmul :=
-        diffusionGenerator_mul (drift μ hc) (noise μ hc) (x := p)
-          hGdiff.contDiffAt hGdiff.contDiffAt
-      have hfirst :
-          2 * G *
-              generator μ hc
-                (fun q : Param n => stdTrace (Ring.inverse (cov μ hc q))) p ≤
-            2 * (1 + 8 * n) * G ^ 2 := by
-        have h :=
-          mul_le_mul_of_nonneg_left hGgen (by positivity : 0 ≤ 2 * G)
-        calc
-          2 * G *
-              generator μ hc
-                (fun q : Param n => stdTrace (Ring.inverse (cov μ hc q))) p ≤
-              2 * G * ((1 + 8 * n) * G) := h
-          _ = 2 * (1 + 8 * n) * G ^ 2 := by ring
-      change diffusionGenerator (drift μ hc) (noise μ hc)
-          (fun q : Param n => stdTrace (Ring.inverse (cov μ hc q)) ^ 2) p ≤ _
-      rw [show
-          (fun q : Param n => stdTrace (Ring.inverse (cov μ hc q)) ^ 2) =
-            (fun q => stdTrace (Ring.inverse (cov μ hc q)) *
-              stdTrace (Ring.inverse (cov μ hc q))) by
-        funext q
-        rw [pow_two]]
-      rw [hmul]
-      change
-        G * generator μ hc
-              (fun q : Param n => stdTrace (Ring.inverse (cov μ hc q))) p +
-            G * generator μ hc
-              (fun q : Param n => stdTrace (Ring.inverse (cov μ hc q))) p +
-            ∑ k, (fderiv ℝ
-                (fun q : Param n => stdTrace (Ring.inverse (cov μ hc q))) p
-                (noise μ hc p k)) *
-              (fderiv ℝ
-                (fun q : Param n => stdTrace (Ring.inverse (cov μ hc q))) p
-                (noise μ hc p k)) ≤ _
-      calc
-        _ = 2 * G *
-              generator μ hc
-                (fun q : Param n => stdTrace (Ring.inverse (cov μ hc q))) p +
-              ∑ k, (fderiv ℝ
-                (fun q : Param n => stdTrace (Ring.inverse (cov μ hc q))) p
-                (noise μ hc p k)) ^ 2 := by
-          simp only [pow_two]
-          ring
-        _ ≤ 2 * (1 + 8 * n) * G ^ 2 + 8 * n * G ^ 2 :=
-          add_le_add hfirst hGcarre
-        _ = (2 * (1 + 8 * n) + 8 * n) * G ^ 2 := by ring
-
+          (2 * (1 + 8 * n) + 8 * n) * G ^ 2 :=
+      generator_resolvent_trace_sq μ hc p hG hGgen hGcarre hGdiff
     -- Combine the bounds under a single Lyapunov constant.
     have hbound :
         generator μ hc (lyapunov μ hc) p ≤

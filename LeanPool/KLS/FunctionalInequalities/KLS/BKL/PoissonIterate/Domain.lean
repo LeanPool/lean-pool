@@ -454,7 +454,8 @@ theorem normSq_genField_iter_succ (f : Lp ℝ 2 (ν : Measure V)) (k : ℕ) :
 include hνU hU hC in
 /-- **BKL (35).** `v_{k+1} - v_{k+2} = p_{k+1}`. -/
 theorem energy_sub_energy_iter_succ (f : Lp ℝ 2 (ν : Measure V)) (k : ℕ) :
-    energy Tbar (iter Tbar f k) - energy Tbar (iter Tbar f (k + 1)) = meanGradSq Tbar (iter Tbar f k) :=
+    energy Tbar (iter Tbar f k) - energy Tbar (iter Tbar f (k + 1)) = meanGradSq Tbar
+      (iter Tbar f k) :=
   energy_sub_energy_step m hν hi hνU hU hC _
 
 include hνU hU hC in

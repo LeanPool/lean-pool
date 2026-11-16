@@ -39,8 +39,10 @@ space
 and whiten it by a self-adjoint whitening `W` of the intrinsic covariance
 (`Covariance.exists_whitening`,
 positive definite by `lem:ambient-intrinsic-covariance`); the result is an isotropic log-concave law
-`νtilde` with `C_P^aff(μ) = C_P(νtilde, covariance relaxation) = C_P(νtilde, Lipschitz gradient relaxation) =
-C_P^lit(νtilde)` by translation and linear transport of the covariance relaxation and by the Lipschitz
+`νtilde` with `C_P^aff(μ) = C_P(νtilde, covariance relaxation) = C_P(νtilde, Lipschitz gradient
+relaxation) =
+C_P^lit(νtilde)` by translation and linear transport of the covariance relaxation and by the
+Lipschitz
 bridge with the literature constant. (3) ⇒ (2): `C_P^lit(μ)` is the optimal constant of the
 Lipschitz
 gradient relaxation of `ν`, the covariance relaxation is at most `‖Σ‖` times it, and
@@ -353,7 +355,8 @@ the intrinsic law (`exists_isotropic_localSlope_constant_eq`) and moves it to
 `EuclideanSpace ℝ (Fin d)` by a linear isometry. -/
 theorem conjecture_iff_isotropic :
     Conjecture ↔ ∃ C : NNReal, ∀ (n : ℕ) (μ : ProbabilityMeasure (EuclideanSpace ℝ (Fin n))),
-      LogConcave μ → Isotropic μ → Poincare.LocalSlope.Intrinsic.optimalConstant μ ≤ (C : ENNReal) := by
+      LogConcave μ → Isotropic μ → Poincare.LocalSlope.Intrinsic.optimalConstant μ ≤
+        (C : ENNReal) := by
   constructor
   · rintro ⟨C, hC⟩
     refine ⟨C, fun n μ hμ hiso ↦ (hC n μ hμ hiso.memLp_two).trans ?_⟩

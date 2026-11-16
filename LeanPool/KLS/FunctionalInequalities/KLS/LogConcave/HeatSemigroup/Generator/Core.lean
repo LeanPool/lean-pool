@@ -48,7 +48,8 @@ Ingredient 2 is what this module proves, in the quantitative form
 `‖χ_r u‖ ≤ (M / r) ‖u‖` for the scaled cutoffs `χ_r` (`norm_toLp_mul_cutoff_le`); letting
 `r → ∞` gives `u = 0`. The cutoff is tested against the equation through the already available
 Leibniz rule `Tbar (χ x) = χ (Tbar x) + x (B ∇χ)` for an arbitrary form-domain `x`, the sequential
-smooth graph core of `Tbar`, and the weak integration by parts `⟪A f, x⟫ = ⟪Tbar f, Tbar x⟫`. Only the
+smooth graph core of `Tbar`, and the weak integration by parts `⟪A f, x⟫ = ⟪Tbar f, Tbar x⟫`. Only
+the
 **first derivative** of the cutoff appears, so the unbounded commutator `⟪∇U, ∇χ⟫` that obstructs
 a naive truncation of `F ∈ D(A)` never occurs.
 
@@ -284,6 +285,137 @@ private theorem exists_seq_localized_tendsto_graph
     exact h.congr fun n => (hgradf n).symm
   exact ⟨g, hg, hgc, hcvf, hcvg⟩
 
+private theorem inner_localized_gradient_eq_neg
+    (hνU : (ν : Measure V) = m.tilted (-U)) (hU : ContDiff ℝ 1 U) (u : (Lp ℝ 2 (ν : Measure V)))
+    (horth : ∀ (f : V → ℝ) (hf : ContDiff ℝ ∞ f) (hfc : HasCompactSupport f),
+      ⟪((adjointComp (hν.closedWeightedOperator m (ContinuousLinearMap.id ℝ V) hi))
+        ⟨_, hν.toLp_mem_adjointComp_domain m hi hνU hU hf hfc⟩ : (Lp ℝ 2 (ν : Measure V))), u⟫ +
+        ⟪((memLp_of_contDiff_hasCompactSupport ν hf hfc).toLp f : (Lp ℝ 2 (ν : Measure V))), u⟫ = 0)
+    {r : ℝ} (w z : (hν.closedWeightedOperator m (ContinuousLinearMap.id ℝ V) hi).domain)
+    (hw_ae : (w.val : V → ℝ) =ᵐ[(ν : Measure V)] fun y => cutoff (4 * r) y * u y)
+    (hz_support : ∀ᵐ y ∂(ν : Measure V),
+      y ∉ tsupport (cutoff (V := V) r) → (z.val : V → ℝ) y = 0)
+    (hTz_support : ∀ᵐ y ∂(ν : Measure V),
+      y ∉ tsupport (cutoff (V := V) r) →
+        ((hν.closedWeightedOperator m (ContinuousLinearMap.id ℝ V) hi z :
+          Lp V 2 (ν : Measure V)) : V → V) y = 0)
+    (hd : Dense ((hν.closedWeightedOperator m (ContinuousLinearMap.id ℝ V) hi).domain :
+      Set (Lp ℝ 2 (ν : Measure V))))
+    (hξs : ContDiff ℝ ∞ (cutoff (V := V) (2 * r)))
+    (hξc : HasCompactSupport (cutoff (V := V) (2 * r)))
+    (hξm : AEStronglyMeasurable (cutoff (V := V) (2 * r)) (ν : Measure V))
+    (hξb : ∀ᵐ y ∂(ν : Measure V), |cutoff (V := V) (2 * r) y| ≤ 1)
+    (hgξm : AEStronglyMeasurable (gradient (cutoff (V := V) (2 * r))) (ν : Measure V))
+    {Nξ : ℝ} (hgξb : ∀ᵐ y ∂(ν : Measure V), ‖gradient (cutoff (V := V) (2 * r)) y‖ ≤ Nξ)
+    (hξone : ∀ y ∈ tsupport (cutoff (V := V) r), cutoff (V := V) (2 * r) y = 1)
+    (hgξzero : ∀ y ∈ tsupport (cutoff (V := V) r), gradient (cutoff (V := V) (2 * r)) y = 0)
+    (hζone : ∀ y ∈ tsupport (cutoff (V := V) (2 * r)), cutoff (V := V) (4 * r) y = 1) :
+    ⟪hν.closedWeightedOperator m (ContinuousLinearMap.id ℝ V) hi z,
+      hν.closedWeightedOperator m (ContinuousLinearMap.id ℝ V) hi w⟫ = -⟪z.val, u⟫ := by
+  classical
+  have hξz : L2.bddSmulL (H := ℝ) hξm hξb z.val
+      = z.val := by
+    refine Lp.ext ?_
+    filter_upwards [L2.coeFn_bddSmulL (H := ℝ) hξm hξb
+      z.val, hz_support] with y e1 e2
+    rw [e1, smul_eq_mul]
+    by_cases hy : y ∈ tsupport (cutoff (V := V) r)
+    · rw [hξone y hy]; ring
+    · rw [e2 hy, mul_zero]
+  have hξTz : L2.bddSmulL (H := V) hξm hξb
+    ((hν.closedWeightedOperator m (ContinuousLinearMap.id ℝ V) hi) z)
+      = (hν.closedWeightedOperator m (ContinuousLinearMap.id ℝ V) hi) z := by
+    refine Lp.ext ?_
+    filter_upwards [L2.coeFn_bddSmulL (H := V) hξm hξb
+      ((hν.closedWeightedOperator m (ContinuousLinearMap.id ℝ V) hi) z), hTz_support] with y e1 e2
+    rw [e1]
+    by_cases hy : y ∈ tsupport (cutoff (V := V) r)
+    · rw [hξone y hy, one_smul]
+    · rw [e2 hy, smul_zero]
+  have hgξ0 : L2.bddSmulRightL (H := V) hgξm hgξb z.val = 0 := by
+    refine Lp.ext ?_
+    filter_upwards [L2.coeFn_bddSmulRightL (H := V) hgξm hgξb
+        z.val, hz_support,
+      Lp.coeFn_zero (E := V) (p := 2) (μ := (ν : Measure V))] with y e1 e2 e3
+    rw [e1, e3, Pi.zero_apply]
+    by_cases hy : y ∈ tsupport (cutoff (V := V) r)
+    · rw [hgξzero y hy, smul_zero]
+    · rw [e2 hy, zero_smul]
+  obtain ⟨g, hg, hgc, hcvf, hcvg⟩ := exists_seq_localized_tendsto_graph m hν hi
+    z
+    hξs hξc hξm hξb hgξm hgξb hξz hξTz hgξ0
+  have hfs : ∀ n, ContDiff ℝ ∞ fun y => cutoff (V := V) (2 * r) y * g n y :=
+    fun n => hξs.mul (hg n)
+  have hfc : ∀ n, HasCompactSupport fun y => cutoff (V := V) (2 * r) y * g n y :=
+    fun n => hξc.mul_right
+  -- the generator image of the localized test function, and where it lives
+  have hAae : ∀ n, (((adjointComp (hν.closedWeightedOperator m (ContinuousLinearMap.id ℝ V) hi))
+    ⟨_, hν.toLp_mem_adjointComp_domain m hi hνU hU (hfs n)
+        (hfc n)⟩ : (Lp ℝ 2 (ν : Measure V))) : V → ℝ)
+      =ᵐ[(ν : Measure V)] fun y => -weightedLaplacian U
+        (fun z => cutoff (V := V) (2 * r) z * g n z) y := by
+    intro n
+    rw [hν.adjointComp_toLp_eq m hi hνU hU (hfs n) (hfc n)]
+    exact (memLp_neg_weightedLaplacian (ν := ν) hU (hfs n) (hfc n)).coeFn_toLp
+  have hζ16 : ∀ (n : ℕ) (y : V),
+      y ∈ tsupport (fun z => cutoff (V := V) (2 * r) z * g n z) →
+      cutoff (V := V) (4 * r) y = 1 := fun n y hy => hζone y (tsupport_mul_subset_left hy)
+  have hpair : ∀ n, ⟪((adjointComp
+    (hν.closedWeightedOperator m (ContinuousLinearMap.id ℝ V) hi))
+      ⟨_, hν.toLp_mem_adjointComp_domain m hi hνU hU (hfs n)
+        (hfc n)⟩ : (Lp ℝ 2 (ν : Measure V))), u⟫
+      = ⟪((adjointComp (hν.closedWeightedOperator m (ContinuousLinearMap.id ℝ V) hi))
+        ⟨_, hν.toLp_mem_adjointComp_domain m hi hνU hU (hfs n) (hfc n)⟩ : (Lp ℝ 2
+          (ν : Measure V))),
+          w.val⟫ := by
+    intro n
+    have h0 : ⟪((adjointComp (hν.closedWeightedOperator m (ContinuousLinearMap.id ℝ V) hi))
+      ⟨_, hν.toLp_mem_adjointComp_domain m hi hνU hU (hfs n)
+        (hfc n)⟩ : (Lp ℝ 2 (ν : Measure V))), u - w.val⟫ = 0 := by
+      rw [L2.inner_def]
+      refine integral_eq_zero_of_ae ?_
+      filter_upwards [hAae n, Lp.coeFn_sub u w.val,
+        hw_ae] with y e1 e2 e3
+      rw [Pi.zero_apply, Real.inner_apply, e1, e2, Pi.sub_apply, e3]
+      by_cases hy : y ∈ tsupport (fun z => cutoff (V := V) (2 * r) z * g n z)
+      · rw [hζ16 n y hy]; ring
+      · rw [weightedLaplacian_eq_zero_of_notMem_tsupport U hy]; ring
+    rw [inner_sub_right, sub_eq_zero] at h0
+    exact h0
+  have hIBP : ∀ n, ⟪((adjointComp (hν.closedWeightedOperator m (ContinuousLinearMap.id ℝ V) hi))
+    ⟨_, hν.toLp_mem_adjointComp_domain m hi hνU hU (hfs n)
+        (hfc n)⟩ : (Lp ℝ 2 (ν : Measure V))), w.val⟫
+      = ⟪(memLp_gradient_of_contDiff_hasCompactSupport (hfs n) (hfc n)).toLp
+          (gradient fun y => cutoff (V := V) (2 * r) y * g n y),
+        (hν.closedWeightedOperator m (ContinuousLinearMap.id ℝ V) hi) w⟫ := by
+    intro n
+    rw [inner_adjointComp hd (⟨_, hν.toLp_mem_adjointComp_domain m hi hνU hU (hfs n)
+      (hfc n)⟩ : ((adjointComp
+        (hν.closedWeightedOperator m (ContinuousLinearMap.id ℝ V) hi))).domain) w.property]
+    congr 1
+    exact hν.closedWeightedOperator_toLp_eq m hi (hfs n) (hfc n)
+  have hkey : ∀ n, ⟪(memLp_gradient_of_contDiff_hasCompactSupport (hfs n) (hfc n)).toLp
+        (gradient fun y => cutoff (V := V) (2 * r) y * g n y),
+        (hν.closedWeightedOperator m (ContinuousLinearMap.id ℝ V) hi) w⟫
+      = -⟪((memLp_of_contDiff_hasCompactSupport ν (hfs n) (hfc n)).toLp
+          (fun y => cutoff (V := V) (2 * r) y * g n y) : (Lp ℝ 2 (ν : Measure V))), u⟫ := by
+    intro n
+    have h := horth _ (hfs n) (hfc n)
+    rw [← hIBP n, ← hpair n]
+    linarith [h]
+  have hlim1 : Tendsto (fun n => ⟪(memLp_gradient_of_contDiff_hasCompactSupport (hfs n)
+        (hfc n)).toLp (gradient fun y => cutoff (V := V) (2 * r) y * g n y),
+        (hν.closedWeightedOperator m (ContinuousLinearMap.id ℝ V) hi) w⟫) atTop
+      (𝓝 (⟪(hν.closedWeightedOperator m (ContinuousLinearMap.id ℝ V) hi) z,
+          (hν.closedWeightedOperator m (ContinuousLinearMap.id ℝ V) hi) w⟫)) :=
+    hcvg.inner tendsto_const_nhds
+  have hlim2 : Tendsto (fun n => -⟪((memLp_of_contDiff_hasCompactSupport ν (hfs n)
+        (hfc n)).toLp (fun y => cutoff (V := V) (2 * r) y * g n y) : (Lp ℝ 2
+          (ν : Measure V))), u⟫) atTop
+      (𝓝 (-⟪z.val, u⟫)) :=
+    (hcvf.inner tendsto_const_nhds).neg
+  exact tendsto_nhds_unique (hlim1.congr hkey) hlim2
+
 /-- The scaled-cutoff estimate behind the criterion: a class annihilating `(A + 1) C_c^∞(V)`
 whose localizations all lie in `D(Tbar)` has `‖χ_r u‖ ≤ (M / r) ‖u‖` for the cutoff family. -/
 private theorem norm_toLp_mul_cutoff_le
@@ -458,133 +590,21 @@ private theorem norm_toLp_mul_cutoff_le
         (hν.closedWeightedOperator m (ContinuousLinearMap.id ℝ V) hi).domain)⟫
       = -⟪(((⟨_, hzmem⟩ : (hν.closedWeightedOperator m (ContinuousLinearMap.id ℝ V) hi).domain)) :
         (Lp ℝ 2 (ν : Measure V))), u⟫ := by
-    have hξz : L2.bddSmulL (H := ℝ) hξm hξb ((((⟨_, hzmem⟩ :
-      (hν.closedWeightedOperator m (ContinuousLinearMap.id ℝ V) hi).domain)) : (Lp ℝ 2
-        (ν : Measure V))))
-        = (((⟨_, hzmem⟩ : (hν.closedWeightedOperator m (ContinuousLinearMap.id ℝ V) hi).domain)) :
-          (Lp ℝ 2 (ν : Measure V))) := by
-      refine Lp.ext ?_
-      filter_upwards [L2.coeFn_bddSmulL (H := ℝ) hξm hξb
-        ((((⟨_, hzmem⟩ : (hν.closedWeightedOperator m (ContinuousLinearMap.id ℝ V) hi).domain)) :
-          (Lp ℝ 2 (ν : Measure V)))), hz_ae] with y e1 e2
-      rw [e1, e2, smul_eq_mul]
-      by_cases hy : y ∈ tsupport (cutoff (V := V) r)
-      · rw [hξone y hy]; ring
-      · rw [image_eq_zero_of_notMem_tsupport hy]; ring
-    have hξTz : L2.bddSmulL (H := V) hξm hξb
-      ((hν.closedWeightedOperator m (ContinuousLinearMap.id ℝ V) hi) (⟨_, hzmem⟩ :
-        (hν.closedWeightedOperator m (ContinuousLinearMap.id ℝ V) hi).domain))
-        = (hν.closedWeightedOperator m (ContinuousLinearMap.id ℝ V) hi) (⟨_, hzmem⟩ :
-          (hν.closedWeightedOperator m (ContinuousLinearMap.id ℝ V) hi).domain) := by
-      refine Lp.ext ?_
-      filter_upwards [L2.coeFn_bddSmulL (H := V) hξm hξb
-        ((hν.closedWeightedOperator m (ContinuousLinearMap.id ℝ V) hi) (⟨_, hzmem⟩ :
-          (hν.closedWeightedOperator m (ContinuousLinearMap.id ℝ V) hi).domain)), hTz] with y e1 e2
-      rw [e1, e2]
-      by_cases hy : y ∈ tsupport (cutoff (V := V) r)
-      · rw [hξone y hy, one_smul]
-      · rw [image_eq_zero_of_notMem_tsupport hy, apply_id,
-          Analysis.BakryEmery.gradient_eq_zero_of_notMem_tsupport hy]
-        simp
-    have hgξ0 : L2.bddSmulRightL (H := V) hgξm hgξb ((((⟨_, hzmem⟩ :
-      (hν.closedWeightedOperator m (ContinuousLinearMap.id ℝ V) hi).domain)) : (Lp ℝ 2
-        (ν : Measure V)))) = 0 := by
-      refine Lp.ext ?_
-      filter_upwards [L2.coeFn_bddSmulRightL (H := V) hgξm hgξb
-          ((((⟨_, hzmem⟩ : (hν.closedWeightedOperator m (ContinuousLinearMap.id ℝ V)
-            hi).domain)) : (Lp ℝ 2 (ν : Measure V)))), hz_ae,
-        Lp.coeFn_zero (E := V) (p := 2) (μ := (ν : Measure V))] with y e1 e2 e3
-      rw [e1, e3, Pi.zero_apply, e2]
-      by_cases hy : y ∈ tsupport (cutoff (V := V) r)
-      · rw [hgξzero y hy, smul_zero]
-      · rw [image_eq_zero_of_notMem_tsupport hy]; simp
-    obtain ⟨g, hg, hgc, hcvf, hcvg⟩ := exists_seq_localized_tendsto_graph m hν hi
-      (⟨_, hzmem⟩ : (hν.closedWeightedOperator m (ContinuousLinearMap.id ℝ V) hi).domain)
-      hξs hξc hξm hξb hgξm hgξb hξz hξTz hgξ0
-    have hfs : ∀ n, ContDiff ℝ ∞ fun y => cutoff (V := V) (2 * r) y * g n y :=
-      fun n => hξs.mul (hg n)
-    have hfc : ∀ n, HasCompactSupport fun y => cutoff (V := V) (2 * r) y * g n y :=
-      fun n => hξc.mul_right
-    -- the generator image of the localized test function, and where it lives
-    have hAae : ∀ n, (((adjointComp (hν.closedWeightedOperator m (ContinuousLinearMap.id ℝ V) hi))
-      ⟨_, hν.toLp_mem_adjointComp_domain m hi hνU hU (hfs n)
-          (hfc n)⟩ : (Lp ℝ 2 (ν : Measure V))) : V → ℝ)
-        =ᵐ[(ν : Measure V)] fun y => -weightedLaplacian U
-          (fun z => cutoff (V := V) (2 * r) z * g n z) y := by
-      intro n
-      rw [hν.adjointComp_toLp_eq m hi hνU hU (hfs n) (hfc n)]
-      exact (memLp_neg_weightedLaplacian (ν := ν) hU (hfs n) (hfc n)).coeFn_toLp
-    have hζ16 : ∀ (n : ℕ) (y : V),
-        y ∈ tsupport (fun z => cutoff (V := V) (2 * r) z * g n z) →
-        cutoff (V := V) (4 * r) y = 1 := fun n y hy => hζone y (tsupport_mul_subset_left hy)
-    have hpair : ∀ n, ⟪((adjointComp
-      (hν.closedWeightedOperator m (ContinuousLinearMap.id ℝ V) hi))
-        ⟨_, hν.toLp_mem_adjointComp_domain m hi hνU hU (hfs n)
-          (hfc n)⟩ : (Lp ℝ 2 (ν : Measure V))), u⟫
-        = ⟪((adjointComp (hν.closedWeightedOperator m (ContinuousLinearMap.id ℝ V) hi))
-          ⟨_, hν.toLp_mem_adjointComp_domain m hi hνU hU (hfs n) (hfc n)⟩ : (Lp ℝ 2
-            (ν : Measure V))),
-            (((⟨_, hwmem⟩ : (hν.closedWeightedOperator m (ContinuousLinearMap.id ℝ V)
-              hi).domain)) : (Lp ℝ 2 (ν : Measure V)))⟫ := by
-      intro n
-      have h0 : ⟪((adjointComp (hν.closedWeightedOperator m (ContinuousLinearMap.id ℝ V) hi))
-        ⟨_, hν.toLp_mem_adjointComp_domain m hi hνU hU (hfs n)
-          (hfc n)⟩ : (Lp ℝ 2 (ν : Measure V))), u - (((⟨_, hwmem⟩ :
-            (hν.closedWeightedOperator m (ContinuousLinearMap.id ℝ V) hi).domain)) : (Lp ℝ 2
-              (ν : Measure V)))⟫ = 0 := by
-        rw [L2.inner_def]
-        refine integral_eq_zero_of_ae ?_
-        filter_upwards [hAae n, Lp.coeFn_sub u (((⟨_, hwmem⟩ :
-          (hν.closedWeightedOperator m (ContinuousLinearMap.id ℝ V) hi).domain)) : (Lp ℝ 2
-            (ν : Measure V))),
-          hw_ae] with y e1 e2 e3
-        rw [Pi.zero_apply, Real.inner_apply, e1, e2, Pi.sub_apply, e3]
-        by_cases hy : y ∈ tsupport (fun z => cutoff (V := V) (2 * r) z * g n z)
-        · rw [hζ16 n y hy]; ring
-        · rw [weightedLaplacian_eq_zero_of_notMem_tsupport U hy]; ring
-      rw [inner_sub_right, sub_eq_zero] at h0
-      exact h0
-    have hIBP : ∀ n, ⟪((adjointComp (hν.closedWeightedOperator m (ContinuousLinearMap.id ℝ V) hi))
-      ⟨_, hν.toLp_mem_adjointComp_domain m hi hνU hU (hfs n)
-          (hfc n)⟩ : (Lp ℝ 2 (ν : Measure V))), (((⟨_, hwmem⟩ :
-            (hν.closedWeightedOperator m (ContinuousLinearMap.id ℝ V) hi).domain)) : (Lp ℝ 2
-              (ν : Measure V)))⟫
-        = ⟪(memLp_gradient_of_contDiff_hasCompactSupport (hfs n) (hfc n)).toLp
-            (gradient fun y => cutoff (V := V) (2 * r) y * g n y),
-          (hν.closedWeightedOperator m (ContinuousLinearMap.id ℝ V) hi) (⟨_, hwmem⟩ :
-            (hν.closedWeightedOperator m (ContinuousLinearMap.id ℝ V) hi).domain)⟫ := by
-      intro n
-      rw [inner_adjointComp hd (⟨_, hν.toLp_mem_adjointComp_domain m hi hνU hU (hfs n)
-        (hfc n)⟩ : ((adjointComp
-          (hν.closedWeightedOperator m (ContinuousLinearMap.id ℝ V) hi))).domain) hwmem]
-      congr 1
-      exact hν.closedWeightedOperator_toLp_eq m hi (hfs n) (hfc n)
-    have hkey : ∀ n, ⟪(memLp_gradient_of_contDiff_hasCompactSupport (hfs n) (hfc n)).toLp
-          (gradient fun y => cutoff (V := V) (2 * r) y * g n y),
-          (hν.closedWeightedOperator m (ContinuousLinearMap.id ℝ V) hi) (⟨_, hwmem⟩ :
-            (hν.closedWeightedOperator m (ContinuousLinearMap.id ℝ V) hi).domain)⟫
-        = -⟪((memLp_of_contDiff_hasCompactSupport ν (hfs n) (hfc n)).toLp
-            (fun y => cutoff (V := V) (2 * r) y * g n y) : (Lp ℝ 2 (ν : Measure V))), u⟫ := by
-      intro n
-      have h := horth _ (hfs n) (hfc n)
-      rw [← hIBP n, ← hpair n]
-      linarith [h]
-    have hlim1 : Tendsto (fun n => ⟪(memLp_gradient_of_contDiff_hasCompactSupport (hfs n)
-          (hfc n)).toLp (gradient fun y => cutoff (V := V) (2 * r) y * g n y),
-          (hν.closedWeightedOperator m (ContinuousLinearMap.id ℝ V) hi) (⟨_, hwmem⟩ :
-            (hν.closedWeightedOperator m (ContinuousLinearMap.id ℝ V) hi).domain)⟫) atTop
-        (𝓝 (⟪(hν.closedWeightedOperator m (ContinuousLinearMap.id ℝ V) hi) (⟨_, hzmem⟩ :
-          (hν.closedWeightedOperator m (ContinuousLinearMap.id ℝ V) hi).domain),
-            (hν.closedWeightedOperator m (ContinuousLinearMap.id ℝ V) hi) (⟨_, hwmem⟩ :
-              (hν.closedWeightedOperator m (ContinuousLinearMap.id ℝ V) hi).domain)⟫)) :=
-      hcvg.inner tendsto_const_nhds
-    have hlim2 : Tendsto (fun n => -⟪((memLp_of_contDiff_hasCompactSupport ν (hfs n)
-          (hfc n)).toLp (fun y => cutoff (V := V) (2 * r) y * g n y) : (Lp ℝ 2
-            (ν : Measure V))), u⟫) atTop
-        (𝓝 (-⟪(((⟨_, hzmem⟩ : (hν.closedWeightedOperator m (ContinuousLinearMap.id ℝ V)
-          hi).domain)) : (Lp ℝ 2 (ν : Measure V))), u⟫)) :=
-      (hcvf.inner tendsto_const_nhds).neg
-    exact tendsto_nhds_unique (hlim1.congr hkey) hlim2
+    let w : (hν.closedWeightedOperator m (ContinuousLinearMap.id ℝ V) hi).domain := ⟨_, hwmem⟩
+    let z : (hν.closedWeightedOperator m (ContinuousLinearMap.id ℝ V) hi).domain := ⟨_, hzmem⟩
+    have hz_support : ∀ᵐ y ∂(ν : Measure V),
+        y ∉ tsupport (cutoff (V := V) r) → (z.val : V → ℝ) y = 0 := by
+      filter_upwards [hz_ae] with y hy hz
+      rw [hy, image_eq_zero_of_notMem_tsupport hz, zero_mul]
+    have hTz_support : ∀ᵐ y ∂(ν : Measure V),
+        y ∉ tsupport (cutoff (V := V) r) →
+          ((hν.closedWeightedOperator m (ContinuousLinearMap.id ℝ V) hi z :
+            Lp V 2 (ν : Measure V)) : V → V) y = 0 := by
+      filter_upwards [hTz] with y hy hz
+      rw [hy, image_eq_zero_of_notMem_tsupport hz, apply_id,
+        Analysis.BakryEmery.gradient_eq_zero_of_notMem_tsupport hz, zero_smul, smul_zero, add_zero]
+    exact inner_localized_gradient_eq_neg m hν hi hνU hU u horth w z hw_ae
+      hz_support hTz_support hd hξs hξc hξm hξb hgξm hgξb hξone hgξzero hζone
   -- the resulting quadratic estimate
 
   -- Convert the resulting energy comparison into the norm bound.

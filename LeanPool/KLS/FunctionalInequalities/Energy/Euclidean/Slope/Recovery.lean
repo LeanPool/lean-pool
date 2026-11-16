@@ -204,7 +204,8 @@ end AsymptoticLipschitz
 /-!
 ### Local Lipschitz products and bounded-support estimates
 
-The local Lipschitz product rule and the bounded-support Lipschitz bound are the two reduction tools.
+The local Lipschitz product rule and the bounded-support Lipschitz bound are the two reduction
+tools.
 -/
 
 section Reduction

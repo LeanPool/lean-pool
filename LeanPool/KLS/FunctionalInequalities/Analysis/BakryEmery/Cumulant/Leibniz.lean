@@ -167,6 +167,40 @@ theorem iteratedFDeriv_inner_centeredGradient_zero_of_compact (μ : ProbabilityM
     simp [hi] at hfalse
   simp [hqne, hqne']
 
+private theorem one_le_selected_length_iff {α : Type*} {m : ℕ} (h : Fin m → α) (q : Fin m → Bool) :
+    1 ≤ (selected h q).length ↔ ∃ i : Fin m, q i = true := by
+  constructor
+  · intro hq
+    by_contra hno
+    push Not at hno
+    have hall : ∀ i : Fin m, q i = false := by
+      intro i
+      cases hi : q i with
+      | false => rfl
+      | true => exact False.elim (hno i hi)
+    have he : selected h q = [] := (selected_eq_nil_iff h q).2 hall
+    have hz : (selected h q).length = 0 := by simp [he]
+    omega
+  · rintro ⟨i, hi⟩
+    have hz : (selected h q).length ≠ 0 := by
+      intro hz
+      have he : selected h q = [] := List.length_eq_zero_iff.mp hz
+      have hall := (selected_eq_nil_iff h q).mp he
+      simpa [hi] using hall i
+    omega
+
+private theorem inner_inverse_covariance_comm (mu : ProbabilityMeasure E) (x y : E) :
+    ⟪x, Ring.inverse (Covariance.operator (mu : Measure E)) y⟫ =
+      ⟪y, Ring.inverse (Covariance.operator (mu : Measure E)) x⟫ := by
+  have : CompleteSpace E := FiniteDimensional.complete ℝ E
+  have hs := (Covariance.operator_isSelfAdjoint (mu : Measure E)).ringInverse
+  have hsym := ContinuousLinearMap.isSelfAdjoint_iff_isSymmetric.mp hs
+  calc
+    ⟪x, Ring.inverse (Covariance.operator (mu : Measure E)) y⟫ =
+        ⟪Ring.inverse (Covariance.operator (mu : Measure E)) x, y⟫ :=
+      (hsym x y).symm
+    _ = ⟪y, Ring.inverse (Covariance.operator (mu : Measure E)) x⟫ := real_inner_comm _ _
+
 /-- Exact deterministic grouping of BKL arXiv:2610.05474v1, (72)–(74), at a fixed law: the `2m`
 singleton/complement allocations give `2m * kappa_m`, and all middle allocations pair to twice the
 sum over the
@@ -198,7 +232,6 @@ theorem iteratedFDeriv_inner_centeredGradient_zero_grouped_of_compact
               Ring.inverse (Covariance.operator (mu : Measure E))
                 (cumulantVector (mu : Measure E) (selected h (fun i => !(q i))))⟫ := by
   classical
-
   -- Index the Leibniz terms by the two complementary derivative slots.
   let F : (Fin m → Bool) → ℝ := fun q =>
     ⟪cumulantVector (mu : Measure E) (selected h q),
@@ -213,45 +246,15 @@ theorem iteratedFDeriv_inner_centeredGradient_zero_grouped_of_compact
   let M := Finset.univ.filter C
   let T := Finset.univ.filter (fun q : Fin m → Bool => q i0 = true ∧ C q)
   have hlen (q : Fin m → Bool) : l q + r q = m := by exact (selected_mask_partition h q).1
-  have hinv (x y : E) :
-    ⟪x, Ring.inverse (Covariance.operator (mu : Measure E)) y⟫ =
-      ⟪y, Ring.inverse (Covariance.operator (mu : Measure E)) x⟫ := by
-    have : CompleteSpace E := FiniteDimensional.complete ℝ E
-    have hs := (Covariance.operator_isSelfAdjoint (mu : Measure E)).ringInverse
-    have hsym := ContinuousLinearMap.isSelfAdjoint_iff_isSymmetric.mp hs
-    calc
-      ⟪x, Ring.inverse (Covariance.operator (mu : Measure E)) y⟫ =
-          ⟪Ring.inverse (Covariance.operator (mu : Measure E)) x, y⟫ :=
-        (hsym x y).symm
-      _ = ⟪y, Ring.inverse (Covariance.operator (mu : Measure E)) x⟫ := real_inner_comm _ _
   have hFcomp (q : Fin m → Bool) : F (fun i => !(q i)) = F q := by
     dsimp [F]
     simp only [Bool.not_not]
     exact
-      (hinv (cumulantVector (mu : Measure E) (selected h q))
+      (inner_inverse_covariance_comm mu
+        (cumulantVector (mu : Measure E) (selected h q))
           (cumulantVector (mu : Measure E) (selected h (fun i => !(q i))))).symm
-  have hpos (q : Fin m → Bool) : 1 ≤ l q ↔ ∃ i : Fin m, q i = true := by
-    constructor
-    · intro hq
-      by_contra hno
-      push Not at hno
-      have hall : ∀ i : Fin m, q i = false := by
-        intro i
-        cases hi : q i with
-        | false => rfl
-        | true => exact False.elim (hno i hi)
-      have he : selected h q = [] := (selected_eq_nil_iff h q).2 hall
-      have hz : (selected h q).length = 0 := by simp [he]
-      change 1 ≤ (selected h q).length at hq
-      omega
-    · rintro ⟨i, hi⟩
-      have hz : (selected h q).length ≠ 0 := by
-        intro hz
-        have he : selected h q = [] := List.length_eq_zero_iff.mp hz
-        have hall := (selected_eq_nil_iff h q).mp he
-        simpa [hi] using hall i
-      change 1 ≤ (selected h q).length
-      omega
+  have hpos (q : Fin m → Bool) : 1 ≤ l q ↔ ∃ i : Fin m, q i = true :=
+    one_le_selected_length_iff h q
   have hposFalse (q : Fin m → Bool) : 1 ≤ r q ↔ ∃ i : Fin m, q i = false := by
     constructor
     · intro hq
@@ -274,7 +277,6 @@ theorem iteratedFDeriv_inner_centeredGradient_zero_grouped_of_compact
       exact ⟨(hpos q).2 ht, (hposFalse q).2 hf⟩
     · intro hq
       exact ⟨(hpos q).1 hq.1, (hposFalse q).1 hq.2⟩
-
   -- Identify the singleton contractions before grouping the Boolean partition.
   have bridge :
     ∀ {k : ℕ} (f g : Fin k → E),
@@ -336,7 +338,6 @@ theorem iteratedFDeriv_inner_centeredGradient_zero_grouped_of_compact
           (iteratedFDeriv_inner_centeredGradient_zero_of_compact mu hc
             (Ring.inverse (Covariance.operator (mu : Measure E))) m h)
       _ = ∑ q ∈ U, F q := by rw [hfilter]
-
   -- Partition the surviving terms and sum each contraction class.
   have hUA : U.filter (fun q => l q = 1) = A := by
     ext q

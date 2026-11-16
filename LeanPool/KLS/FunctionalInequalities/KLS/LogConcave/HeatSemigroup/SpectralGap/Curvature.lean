@@ -26,13 +26,15 @@ For the heat semigroup model of `HeatSemigroup/` (`ν = m.tilted (-U)`, closed u
 `A = Tbar†Tbar`), this file proves:
 * the curvature bound `ρ ‖Tbar y‖² ≤ ‖A y‖²` on `C_c^∞` and then on all of `D(A)`, through the
   operator core `exists_seq_smooth_tendsto_adjointComp`;
-* the finite-time Poincaré bound `Var(u) - Var(P_t u) ≤ (1 - e^{-2ρt}) / ρ · ‖Tbar u‖²` on `D(Tbar)`;
+* the finite-time Poincaré bound `Var(u) - Var(P_t u) ≤ (1 - e^{-2ρt}) / ρ · ‖Tbar u‖²` on
+`D(Tbar)`;
 * `literatureConstant_le_inv_of_tendsto`, the bound `C_P(ν) ≤ 1/ρ` under an explicit ergodicity
   hypothesis, kept as an interface;
 * ergodicity itself: `ker Tbar` is the constants (`closedWeightedOperator_eq_zero_iff`, from
   `WeightedGradient/Kernel.lean`), and `Var(P_t u) → 0` for every `u ∈ L²(ν)`
   (`tendsto_norm_center_apply`, from the abstract `Generated.tendsto_apply_of_inner_eq_zero`);
-* Corollary 4.8.2 in the model: `Var(u) ≤ ρ⁻¹ ‖Tbar u‖²` on the whole form domain `D(Tbar)`, the closure
+* Corollary 4.8.2 in the model: `Var(u) ≤ ρ⁻¹ ‖Tbar u‖²` on the whole form domain `D(Tbar)`, the
+closure
   of `C_c^∞` (`norm_center_sq_le_inv_mul`), and `C_P(ν) ≤ 1/ρ` (`literatureConstant_le_inv`);
 * the published form for `ν = volume.tilted (-W)` with `W ∈ C²` and `∇∇W ≥ ρ > 0`, whose
   log-concavity and full support are proved in `Density/Tilted.lean`:
@@ -455,7 +457,8 @@ theorem literatureConstant_le_inv_of_tendsto {ρ : ℝ} (hρ : 0 < ρ)
       rfl
 
 include hνU hU in
-/-- **The kernel of the closed unit gradient is the constants**: `Tbar h = 0` exactly when `h` is the
+/-- **The kernel of the closed unit gradient is the constants**: `Tbar h = 0` exactly when `h` is
+the
 `L²(ν)` constant equal to its mean. -/
 theorem closedWeightedOperator_eq_zero_iff
     (h : (hν.closedWeightedOperator m (ContinuousLinearMap.id ℝ V) hi).domain) :

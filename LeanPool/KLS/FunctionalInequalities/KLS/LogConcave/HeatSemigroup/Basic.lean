@@ -25,8 +25,10 @@ weight `B : V →L[ℝ] V`, the closable weighted gradient
 
 and every abstract law transfers by one `exact`: contraction, symmetry, `P_0 = 1`,
 `P_{t+u} = P_t P_u`, strong continuity on `[0, ∞)`, and the generator identity
-`(P_t f - f)/t → -Tbar†Tbar f` on `D(Tbar†Tbar)`. The bridge to the energy is `inner_adjointComp_self_eq`:
-`⟪Tbar†Tbar f, f⟫ = ‖Tbar f‖²`, which by `weighted_relaxation_of_mem` is the sequential relaxation of
+`(P_t f - f)/t → -Tbar†Tbar f` on `D(Tbar†Tbar)`. The bridge to the energy is
+`inner_adjointComp_self_eq`:
+`⟪Tbar†Tbar f, f⟫ = ‖Tbar f‖²`, which by `weighted_relaxation_of_mem` is the sequential relaxation
+of
 `‖B ∇g‖²`, the repository's closed energy. The intrinsic version for an arbitrary log-concave law
 on any finite-dimensional Euclidean space is `HeatSemigroup.intrinsic`.
 
@@ -142,7 +144,8 @@ theorem generator_limit (f : (adjointComp (hν.closedWeightedOperator m B hi)).d
 end HeatSemigroup
 
 /-- **The Dirichlet form of the heat semigroup is the closed energy**: for `f ∈ D(Tbar†Tbar)`,
-`⟪Tbar†Tbar f, f⟫ = ‖Tbar f‖²`, and by `weighted_relaxation_of_mem` the right-hand side is the sequential
+`⟪Tbar†Tbar f, f⟫ = ‖Tbar f‖²`, and by `weighted_relaxation_of_mem` the right-hand side is the
+sequential
 relaxation of `‖B ∇g‖²` at `f`. -/
 theorem inner_adjointComp_self_eq (f : (adjointComp (hν.closedWeightedOperator m B hi)).domain) :
     ⟪adjointComp (hν.closedWeightedOperator m B hi) f, (f : Lp ℝ 2 (ν : Measure V))⟫ =

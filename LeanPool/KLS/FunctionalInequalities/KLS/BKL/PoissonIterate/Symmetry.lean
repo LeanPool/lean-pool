@@ -38,7 +38,8 @@ transposition of the index positions `ℓ` and `ℓ + 1` (`Equiv.swap ℓ (finRo
 ## The argument
 
 `τ_{ℓ+1}` with `ℓ + 1 < k + 1` fixes the new first position of `∇₀h'` and acts as `τ_ℓ` on the
-others, so `τ_{ℓ+1} ∇₀h' = ∇₀(τ_ℓ h')`. The components of `h'` lie in `D(A) ⊆ D(Tbar)`, where `∇₀` is
+others, so `τ_{ℓ+1} ∇₀h' = ∇₀(τ_ℓ h')`. The components of `h'` lie in `D(A) ⊆ D(Tbar)`, where `∇₀`
+is
 linear, and `(-L)⁻¹` is linear on centered inputs and acts componentwise; this gives (42).
 The norm bound is `‖∇₀u‖² ≤ ‖∇u‖²` (centering removes the squared means) and
 `‖∇(-L)⁻¹g‖² = ⟪g, (-L)⁻¹g⟫ ≤ C ‖g‖²` (`norm_weakGrad_centeredInv_sq_le`). Iterating (42) `ℓ`

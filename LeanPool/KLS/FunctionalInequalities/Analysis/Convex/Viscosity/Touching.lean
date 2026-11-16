@@ -754,7 +754,7 @@ end FunctionalInequalities.Analysis
 end ViscosityTouchingAssembly
 
 namespace FunctionalInequalities.Analysis
-open Classical Matrix
+open Matrix
 
 /-- A bound on positive-definite quadratic lower tests also bounds the determinant
 of every positive-semidefinite C² lower test at the same point. -/

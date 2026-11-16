@@ -63,6 +63,34 @@ variable {P : Measure Ω} [IsProbabilityMeasure P] (W : LevyStochCalc.Brownian.B
   (hmq : ∀ T, 0 < T → ∫⁻ ω, ∫⁻ s in Set.Icc (0 : ℝ) T,
     (‖G.eval s ω * H ω s‖₊ : ℝ≥0∞) ^ 2 ∂volume ∂P < ⊤)
 
+private theorem lintegral_sq_sub_le_zero_of_common_approximation
+    {P : MeasureTheory.Measure Ω} {f g : Ω → ℝ} {a : ℕ → Ω → ℝ}
+    (hm : ∀ n, Measurable fun ω => a n ω - f ω)
+    (hf : Filter.Tendsto
+      (fun n => ∫⁻ ω, (‖a n ω - f ω‖₊ : ℝ≥0∞) ^ 2 ∂P) Filter.atTop (nhds 0))
+    (hg : Filter.Tendsto
+      (fun n => ∫⁻ ω, (‖a n ω - g ω‖₊ : ℝ≥0∞) ^ 2 ∂P) Filter.atTop (nhds 0)) :
+    (∫⁻ ω, (‖f ω - g ω‖₊ : ℝ≥0∞) ^ 2 ∂P) ≤ 0 := by
+  have hlim : Filter.Tendsto (fun n => 2 *
+      ((∫⁻ ω, (‖a n ω - f ω‖₊ : ℝ≥0∞) ^ 2 ∂P) +
+        ∫⁻ ω, (‖a n ω - g ω‖₊ : ℝ≥0∞) ^ 2 ∂P)) Filter.atTop (nhds 0) := by
+    simpa using ENNReal.Tendsto.const_mul (a := 2) (hf.add hg) (Or.inr (by simp))
+  refine ge_of_tendsto hlim (Filter.Eventually.of_forall fun n => ?_)
+  have hmeas : AEMeasurable (fun ω => (‖a n ω - f ω‖₊ : ℝ≥0∞) ^ 2) P :=
+    (((hm n).nnnorm.coe_nnreal_ennreal).pow_const 2).aemeasurable
+  calc
+    (∫⁻ ω, (‖f ω - g ω‖₊ : ℝ≥0∞) ^ 2 ∂P) ≤
+        ∫⁻ ω, 2 * ((‖a n ω - f ω‖₊ : ℝ≥0∞) ^ 2 +
+          (‖a n ω - g ω‖₊ : ℝ≥0∞) ^ 2) ∂P := by
+      refine lintegral_mono fun ω => ?_
+      rw [show f ω - g ω = -(a n ω - f ω) + (a n ω - g ω) by ring]
+      refine (sq_nnnorm_add_le_two_mul_brownian _ _).trans ?_
+      rw [nnnorm_neg]
+    _ = 2 * ((∫⁻ ω, (‖a n ω - f ω‖₊ : ℝ≥0∞) ^ 2 ∂P) +
+        ∫⁻ ω, (‖a n ω - g ω‖₊ : ℝ≥0∞) ^ 2 ∂P) := by
+      rw [MeasureTheory.lintegral_const_mul' 2 _ (by norm_num),
+        MeasureTheory.lintegral_add_left' hmeas]
+
 include hℱ h_adapt in
 /-- **Associativity against a simple integrand.** Summing the increments of the `L²` Itô integral
 of `H` against the coefficients of a simple integrand `G` gives the `L²` Itô integral of the
@@ -217,49 +245,9 @@ theorem stochasticIntegralBrownian_integralAgainst {t : ℝ} (ht : 0 < t) :
       (‖G.integralAgainst (stochasticIntegralBrownian W ℱ hℱ H hm hp hq) t ω
       - stochasticIntegralBrownian W ℱ hℱ (fun ω s => G.eval s ω * H ω s)
           hmm hmp hmq t ω‖₊
-        : ℝ≥0∞) ^ 2 ∂P ≤ 0 := by
-    have hlim2 : Filter.Tendsto (fun n => 2 * ((∫⁻ ω, (‖simpleIntegral W (Q n) t ω
-          - G.integralAgainst (stochasticIntegralBrownian W ℱ hℱ H hm hp hq) t ω‖₊
-            : ℝ≥0∞) ^ 2 ∂P)
-        + ∫⁻ ω, (‖simpleIntegral W (Q n) t ω
-          - stochasticIntegralBrownian W ℱ hℱ (fun ω s => G.eval s ω * H ω s)
-              hmm hmp hmq t ω‖₊ : ℝ≥0∞) ^ 2 ∂P)) Filter.atTop (nhds 0) := by
-      have h3 := ENNReal.Tendsto.const_mul (a := 2) (he.add hd) (Or.inr (by simp))
-      simpa using h3
-    refine ge_of_tendsto hlim2 (Filter.Eventually.of_forall fun n => ?_)
-    have hm2 : AEMeasurable (fun ω => (‖simpleIntegral W (Q n) t ω
-        - G.integralAgainst (stochasticIntegralBrownian W ℱ hℱ H hm hp hq) t ω‖₊
-          : ℝ≥0∞) ^ 2) P :=
-      ((((hQmeas n).sub hIAmeas).nnnorm).coe_nnreal_ennreal).pow_const 2 |>.aemeasurable
-    calc ∫⁻ ω, (‖G.integralAgainst (stochasticIntegralBrownian W ℱ hℱ H hm hp hq) t ω
-          - stochasticIntegralBrownian W ℱ hℱ (fun ω s => G.eval s ω * H ω s)
-              hmm hmp hmq t ω‖₊ : ℝ≥0∞) ^ 2 ∂P
-        ≤ ∫⁻ ω, 2 * ((‖simpleIntegral W (Q n) t ω
-              - G.integralAgainst (stochasticIntegralBrownian W ℱ hℱ H hm hp hq) t ω‖₊
-                : ℝ≥0∞) ^ 2
-            + (‖simpleIntegral W (Q n) t ω
-              - stochasticIntegralBrownian W ℱ hℱ (fun ω s => G.eval s ω * H ω s)
-                  hmm hmp hmq t ω‖₊ : ℝ≥0∞) ^ 2) ∂P := by
-          refine lintegral_mono fun ω => ?_
-          have hrw : G.integralAgainst (stochasticIntegralBrownian W ℱ hℱ H hm hp hq) t ω
-                - stochasticIntegralBrownian W ℱ hℱ (fun ω s => G.eval s ω * H ω s)
-                    hmm hmp hmq t ω
-              = -(simpleIntegral W (Q n) t ω
-                    - G.integralAgainst (stochasticIntegralBrownian W ℱ hℱ H hm hp hq) t ω)
-                + (simpleIntegral W (Q n) t ω
-                    - stochasticIntegralBrownian W ℱ hℱ (fun ω s => G.eval s ω * H ω s)
-                        hmm hmp hmq t ω) := by ring
-          rw [hrw]
-          refine le_trans (sq_nnnorm_add_le_two_mul_brownian _ _) ?_
-          rw [nnnorm_neg]
-      _ = 2 * ((∫⁻ ω, (‖simpleIntegral W (Q n) t ω
-              - G.integralAgainst (stochasticIntegralBrownian W ℱ hℱ H hm hp hq) t ω‖₊
-                : ℝ≥0∞) ^ 2 ∂P)
-            + ∫⁻ ω, (‖simpleIntegral W (Q n) t ω
-              - stochasticIntegralBrownian W ℱ hℱ (fun ω s => G.eval s ω * H ω s)
-                  hmm hmp hmq t ω‖₊ : ℝ≥0∞) ^ 2 ∂P) := by
-          rw [MeasureTheory.lintegral_const_mul' 2 _ (by norm_num),
-            MeasureTheory.lintegral_add_left' hm2]
+        : ℝ≥0∞) ^ 2 ∂P ≤ 0 :=
+    lintegral_sq_sub_le_zero_of_common_approximation
+      (fun n => (hQmeas n).sub hIAmeas) he hd
   have hzero : ∫⁻ ω,
       (‖G.integralAgainst (stochasticIntegralBrownian W ℱ hℱ H hm hp hq) t ω
       - stochasticIntegralBrownian W ℱ hℱ (fun ω s => G.eval s ω * H ω s)
@@ -325,7 +313,7 @@ theorem stepIoc_eval {a b : ℝ} (ha : 0 < a) (hab : a < b) (s : ℝ) (ω : Ω) 
   · rw [Set.indicator_of_mem (Set.mem_Ioc.mpr h)]
     simp [h]
   · rw [Set.indicator_of_notMem fun hm => h (Set.mem_Ioc.mp hm)]
-    show (if (0 : ℝ) < s ∧ s ≤ a then (0 : ℝ) else 0)
+    change (if (0 : ℝ) < s ∧ s ≤ a then (0 : ℝ) else 0)
       + (if a < s ∧ s ≤ b then (1 : ℝ) else 0) = 0
     simp only [ite_self, zero_add]
     exact ite_eq_right h

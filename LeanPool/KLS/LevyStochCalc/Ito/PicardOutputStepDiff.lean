@@ -248,7 +248,8 @@ attribute [local irreducible] LevyStochCalc.Brownian.Ito.stochasticIntegral
 
 -- The statement names the full three-component Picard term twice, once along each path, and
 -- elaborating the second application exceeds the default budget even with the components sealed.
-private theorem lintegral_window_nnnorm_le_sum (measure : Measure Ω) (Z : ℝ → Ω → Fin n → ℝ) (t : ℝ) :
+private theorem lintegral_window_nnnorm_le_sum (measure : Measure Ω) (Z : ℝ → Ω → Fin n → ℝ)
+  (t : ℝ) :
     (∫⁻ ω, ∫⁻ s in Set.Icc (0 : ℝ) t, (‖Z s ω‖₊ : ℝ≥0∞) ^ 2 ∂volume ∂measure)
       ≤ ∫⁻ ω, ∫⁻ s in Set.Icc (0 : ℝ) t, ∑ i, (‖Z s ω i‖₊ : ℝ≥0∞) ^ 2 ∂volume ∂measure :=
   lintegral_mono fun ω => lintegral_mono fun s => sq_coe_nnnorm_le_sum (Z s ω)

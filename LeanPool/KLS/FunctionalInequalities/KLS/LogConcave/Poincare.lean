@@ -51,7 +51,8 @@ theorem smoothTest_constant_eq_intrinsic_and_localSlope {μ : ProbabilityMeasure
 /-- The smooth-test optimum equals the literature optimum for every log-concave law. -/
 theorem smoothTest_constant_eq_localSlope
     {μ : ProbabilityMeasure E} (hμ : KLS.LogConcave μ) :
-    Poincare.SmoothTest.optimalConstant (μ : Measure E) = Poincare.LocalSlope.Intrinsic.optimalConstant μ :=
+    Poincare.SmoothTest.optimalConstant (μ : Measure E) =
+      Poincare.LocalSlope.Intrinsic.optimalConstant μ :=
   (smoothTest_constant_eq_intrinsic_and_localSlope hμ).1.trans
     (smoothTest_constant_eq_intrinsic_and_localSlope hμ).2
 
@@ -59,7 +60,8 @@ theorem smoothTest_constant_eq_localSlope
 all finite-dimensional log-concave probability laws, including singular and Dirac laws. -/
 theorem intrinsicSmooth_constant_eq_localSlope
     {μ : ProbabilityMeasure E} (hμ : KLS.LogConcave μ) :
-    Poincare.SmoothGradient.Intrinsic.optimalConstant μ = Poincare.LocalSlope.Intrinsic.optimalConstant μ :=
+    Poincare.SmoothGradient.Intrinsic.optimalConstant μ =
+      Poincare.LocalSlope.Intrinsic.optimalConstant μ :=
   Poincare.SmoothGradient.Intrinsic.constant_eq_localSlope μ Measure.addHaar
     (hμ.intrinsic_absolutelyContinuous Measure.addHaar)
 

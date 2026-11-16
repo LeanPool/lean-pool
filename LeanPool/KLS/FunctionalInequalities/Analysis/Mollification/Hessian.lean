@@ -241,6 +241,20 @@ private lemma gradient_convolution_normed {U : E → ℝ} (hU : ContDiff ℝ 1 U
               (gradient U (x - t))) ∂volume := by
       simp [f, ContinuousLinearMap.lsmul_apply]
 
+private theorem tendsto_inv_nat_add_one :
+    Tendsto (fun k : ℕ => 1 / ((k : ℝ) + 1)) atTop (𝓝 0) := by
+  have hnat : Tendsto (fun k : ℕ => (k : ℝ) + 1) atTop atTop := by
+    rw [tendsto_atTop]
+    intro a
+    rcases exists_nat_gt a with ⟨n, hn⟩
+    filter_upwards [eventually_ge_atTop n] with k hk
+    have hk' : (n : ℝ) ≤ (k : ℝ) := by
+      exact_mod_cast hk
+    linarith
+  convert tendsto_inv_atTop_zero.comp hnat using 1
+  ext k
+  simp only [Function.comp_apply, one_div]
+
 theorem exists_contDiff_approx_of_lipschitz_gradient
     {U : E → ℝ} (hU : ContDiff ℝ 1 U) {G : NNReal} (hG : LipschitzWith G (gradient U)) :
     ∃ Uk : ℕ → E → ℝ, (∀ k, ContDiff ℝ ∞ (Uk k)) ∧
@@ -250,7 +264,6 @@ theorem exists_contDiff_approx_of_lipschitz_gradient
       (∀ᵐ x ∂(volume : Measure E), Tendsto (fun k => fderiv ℝ (gradient (Uk k)) x) atTop
         (𝓝 (fderiv ℝ (gradient U) x))) := by
   classical
-
   -- Choose shrinking mollifiers and define the smooth approximants.
   let φ : ℕ → ContDiffBump (0 : E) := fun k =>
     ContDiffBump.mk
@@ -265,19 +278,8 @@ theorem exists_contDiff_approx_of_lipschitz_gradient
     convolution
       ((φ k).normed (volume : Measure E)) U
       (ContinuousLinearMap.lsmul ℝ ℝ) (volume : Measure E)
-  have hφ : Tendsto (fun k => (φ k).rOut) atTop (𝓝 0) := by
-    dsimp [φ]
-    have hnat : Tendsto (fun k : ℕ => (k : ℝ) + 1) atTop atTop := by
-      rw [tendsto_atTop]
-      intro a
-      rcases exists_nat_gt a with ⟨n, hn⟩
-      filter_upwards [eventually_ge_atTop n] with k hk
-      have hk' : (n : ℝ) ≤ (k : ℝ) := by
-        exact_mod_cast hk
-      linarith
-    convert tendsto_inv_atTop_zero.comp hnat using 1
-    ext k
-    simp only [Function.comp_apply, one_div]
+  have hφ : Tendsto (fun k => (φ k).rOut) atTop (𝓝 0) :=
+    tendsto_inv_nat_add_one
   have hφ' : ∀ᶠ k : ℕ in atTop, (φ k).rOut ≤ 2 * (φ k).rIn := by
     filter_upwards [] with k
     dsimp [φ]
@@ -291,7 +293,6 @@ theorem exists_contDiff_approx_of_lipschitz_gradient
     locallyIntegrable_fderiv_gradient hG
   have hmeas : AEStronglyMeasurable (gradient U) (volume : Measure E) :=
     (LipschitzWith.continuous hG).aestronglyMeasurable
-
   -- Identify the mollified gradient and retain its uniform Lipschitz bound.
   have hgrad : ∀ k,
       gradient (Uk k) =
@@ -366,7 +367,6 @@ theorem exists_contDiff_approx_of_lipschitz_gradient
               ((φ k).normed (volume : Measure E) t • gradient U (y - t)) ∂volume :=
       (integral_sub h₁ h₂).symm
     rw [hsub]
-
     -- Control the Hessians and assemble the approximation properties.
     have hbound :
         Integrable

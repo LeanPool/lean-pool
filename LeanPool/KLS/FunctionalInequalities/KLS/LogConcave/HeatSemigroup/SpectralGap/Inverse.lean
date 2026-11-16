@@ -112,7 +112,8 @@ include hνU hU in
 constant of `ν` is at most `C`, then for every centered `g ∈ L²(ν)` there is exactly one centered
 `u` in the domain of the generator `A = Tbar†Tbar` with `A u = g` (`A = -ℒ`). -/
 theorem existsUnique_centered_adjointComp_eq {C : NNReal}
-    (hC : Poincare.LocalSlope.Intrinsic.optimalConstant ν ≤ (C : ENNReal)) (g : Lp ℝ 2 (ν : Measure V))
+    (hC : Poincare.LocalSlope.Intrinsic.optimalConstant ν ≤ (C : ENNReal)) (g : Lp ℝ 2
+      (ν : Measure V))
     (hg : L2.mean ν g = 0) :
     ∃! u : (adjointComp (hν.closedWeightedOperator m (ContinuousLinearMap.id ℝ V) hi)).domain,
       L2.mean ν (u : Lp ℝ 2 (ν : Measure V)) = 0 ∧
@@ -395,7 +396,8 @@ every centered `g ∈ L²(ν; G)` and orthonormal basis `b` of `G` there is exac
 centered
 `u_k` in the generator domain with `A u_k = ⟪b k, g⟫`, and `Σ_k ‖u_k‖² ≤ C² ‖g‖²`. -/
 theorem existsUnique_centered_adjointComp_eq_components {C : NNReal}
-    (hC : Poincare.LocalSlope.Intrinsic.optimalConstant ν ≤ (C : ENNReal)) (b : OrthonormalBasis ι ℝ G)
+    (hC : Poincare.LocalSlope.Intrinsic.optimalConstant ν ≤ (C : ENNReal))
+      (b : OrthonormalBasis ι ℝ G)
     (g : Lp G 2 (ν : Measure V)) (hg : ∫ x, g x ∂(ν : Measure V) = 0) :
     ∃! u :
       ι → (adjointComp (hν.closedWeightedOperator m (ContinuousLinearMap.id ℝ V) hi)).domain,

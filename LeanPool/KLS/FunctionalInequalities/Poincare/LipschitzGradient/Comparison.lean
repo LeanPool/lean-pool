@@ -55,7 +55,6 @@ universe u
 
 variable {V : Type u} [NormedAddCommGroup V] [InnerProductSpace ℝ V] [CompleteSpace V]
   [MeasurableSpace V] [BorelSpace V] [SecondCountableTopology V] [FiniteDimensional ℝ V]
-
   (ν : ProbabilityMeasure V) (m : Measure V) [m.IsAddHaarMeasure]
 
 namespace Energy.LipschitzGradient

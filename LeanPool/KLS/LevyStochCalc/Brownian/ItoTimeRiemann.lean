@@ -75,6 +75,62 @@ variable {P : Measure Ω} [IsProbabilityMeasure P] {W : LevyStochCalc.Brownian.B
   {X₀ : Ω → ℝ} {bdrift : Ω → ℝ → ℝ} {X : ℝ → Ω → ℝ}
   {C : ℝ} (hC0 : 0 ≤ C) (hCH : ∀ ω s, |H ω s| ≤ C)
 
+private theorem abs_frozenTime_difference_le
+    {Ω : Type*}
+    [MeasurableSpace Ω]
+    {X : ℝ → Ω → ℝ}
+    (wgt : Ω → ℝ → ℝ)
+    (hwm : Measurable (Function.uncurry wgt))
+    {A : ℝ}
+    (hA : ∀ (ω : Ω) (s : ℝ), |wgt ω s| ≤ A)
+    {φ : ℝ → ℝ}
+    {Kφ : ℝ}
+    (hφbd : ∀ (x : ℝ), |φ x| ≤ Kφ)
+    {T : ℝ}
+    (hT : 0 < T)
+    {m : ℕ}
+    (hm0 : m ≠ 0)
+    (hKφ0 : 0 ≤ Kφ)
+    (hgmeas : ∀ (ω : Ω), Measurable fun s => φ (X s ω) * wgt ω s)
+    (hgbd : ∀ (ω : Ω) (s : ℝ), |φ (X s ω) * wgt ω s| ≤ Kφ * A) : ∀ ω : Ω,
+    |(∑ i ∈ Finset.range m, φ (X (unifGrid T m i) ω)
+          * ∫ s in Set.Ioc (unifGrid T m i) (unifGrid T m (i + 1)), wgt ω s ∂volume)
+        - ∫ s in Set.Ioc (0 : ℝ) T, φ (X s ω) * wgt ω s ∂volume|
+    ≤ 2 * (Kφ * A * T) := by
+  classical
+  intro ω
+  have h1 : |∑ i ∈ Finset.range m, φ (X (unifGrid T m i) ω)
+      * ∫ s in Set.Ioc (unifGrid T m i) (unifGrid T m (i + 1)), wgt ω s ∂volume|
+      ≤ Kφ * A * T := by
+    refine (Finset.abs_sum_le_sum_abs _ _).trans ?_
+    have hterm : ∀ i ∈ Finset.range m, |φ (X (unifGrid T m i) ω)
+        * ∫ s in Set.Ioc (unifGrid T m i) (unifGrid T m (i + 1)), wgt ω s ∂volume|
+        ≤ Kφ * (A * (T / (m : ℝ))) := by
+      intro i _
+      rw [abs_mul]
+      refine mul_le_mul (hφbd _) ?_ (abs_nonneg _) hKφ0
+      have := abs_setIntegral_Ioc_le (Measurable.of_uncurry_left hwm) (hA ω)
+        (unifGrid_lt_succ hT hm0 i).le
+      rwa [unifGrid_succ_sub hm0 i] at this
+    refine (Finset.sum_le_sum hterm).trans ?_
+    rw [Finset.sum_const, Finset.card_range, nsmul_eq_mul]
+    have hTm : (m : ℝ) * (T / (m : ℝ)) = T := by field_simp
+    calc (m : ℝ) * (Kφ * (A * (T / (m : ℝ))))
+        = Kφ * A * ((m : ℝ) * (T / (m : ℝ))) := by ring
+      _ = Kφ * A * T := by rw [hTm]
+      _ ≤ Kφ * A * T := le_rfl
+  have h2 : |∫ s in Set.Ioc (0 : ℝ) T, φ (X s ω) * wgt ω s ∂volume| ≤ Kφ * A * T := by
+    have := abs_setIntegral_Ioc_le (hgmeas ω) (hgbd ω) hT.le
+    simpa using this
+  calc |(∑ i ∈ Finset.range m, φ (X (unifGrid T m i) ω)
+          * ∫ s in Set.Ioc (unifGrid T m i) (unifGrid T m (i + 1)), wgt ω s ∂volume)
+        - ∫ s in Set.Ioc (0 : ℝ) T, φ (X s ω) * wgt ω s ∂volume|
+      ≤ |∑ i ∈ Finset.range m, φ (X (unifGrid T m i) ω)
+          * ∫ s in Set.Ioc (unifGrid T m i) (unifGrid T m (i + 1)), wgt ω s ∂volume|
+        + |∫ s in Set.Ioc (0 : ℝ) T, φ (X s ω) * wgt ω s ∂volume| :=
+        abs_sub_le_abs_add_abs _ _
+    _ ≤ 2 * (Kφ * A * T) := by linarith
+
 include hC0 hCH in
 /-- **A frozen-weight Riemann sum converges in `L¹` at rate `√(T/m)`.** For a Lipschitz
 bounded `φ` and a bounded time density `wgt`, the sum of `φ(X_{tᵢ})` against the cell
@@ -199,39 +255,8 @@ theorem IsItoVersion.integral_abs_frozenRiemann_sub_le
       |(∑ i ∈ Finset.range m, φ (X (unifGrid T m i) ω)
             * ∫ s in Set.Ioc (unifGrid T m i) (unifGrid T m (i + 1)), wgt ω s ∂volume)
           - ∫ s in Set.Ioc (0 : ℝ) T, φ (X s ω) * wgt ω s ∂volume|
-      ≤ 2 * (Kφ * A * T) := by
-    intro ω
-    have h1 : |∑ i ∈ Finset.range m, φ (X (unifGrid T m i) ω)
-        * ∫ s in Set.Ioc (unifGrid T m i) (unifGrid T m (i + 1)), wgt ω s ∂volume|
-        ≤ Kφ * A * T := by
-      refine (Finset.abs_sum_le_sum_abs _ _).trans ?_
-      have hterm : ∀ i ∈ Finset.range m, |φ (X (unifGrid T m i) ω)
-          * ∫ s in Set.Ioc (unifGrid T m i) (unifGrid T m (i + 1)), wgt ω s ∂volume|
-          ≤ Kφ * (A * (T / (m : ℝ))) := by
-        intro i _
-        rw [abs_mul]
-        refine mul_le_mul (hφbd _) ?_ (abs_nonneg _) hKφ0
-        have := abs_setIntegral_Ioc_le (Measurable.of_uncurry_left hwm) (hA ω)
-          (unifGrid_lt_succ hT hm0 i).le
-        rwa [unifGrid_succ_sub hm0 i] at this
-      refine (Finset.sum_le_sum hterm).trans ?_
-      rw [Finset.sum_const, Finset.card_range, nsmul_eq_mul]
-      have hTm : (m : ℝ) * (T / (m : ℝ)) = T := by field_simp
-      calc (m : ℝ) * (Kφ * (A * (T / (m : ℝ))))
-          = Kφ * A * ((m : ℝ) * (T / (m : ℝ))) := by ring
-        _ = Kφ * A * T := by rw [hTm]
-        _ ≤ Kφ * A * T := le_rfl
-    have h2 : |∫ s in Set.Ioc (0 : ℝ) T, φ (X s ω) * wgt ω s ∂volume| ≤ Kφ * A * T := by
-      have := abs_setIntegral_Ioc_le (hgmeas ω) (hgbd ω) hT.le
-      simpa using this
-    calc |(∑ i ∈ Finset.range m, φ (X (unifGrid T m i) ω)
-            * ∫ s in Set.Ioc (unifGrid T m i) (unifGrid T m (i + 1)), wgt ω s ∂volume)
-          - ∫ s in Set.Ioc (0 : ℝ) T, φ (X s ω) * wgt ω s ∂volume|
-        ≤ |∑ i ∈ Finset.range m, φ (X (unifGrid T m i) ω)
-            * ∫ s in Set.Ioc (unifGrid T m i) (unifGrid T m (i + 1)), wgt ω s ∂volume|
-          + |∫ s in Set.Ioc (0 : ℝ) T, φ (X s ω) * wgt ω s ∂volume| :=
-          abs_sub_le_abs_add_abs _ _
-      _ ≤ 2 * (Kφ * A * T) := by linarith
+      ≤ 2 * (Kφ * A * T) :=
+    abs_frozenTime_difference_le wgt hwm hA hφbd hT hm0 hKφ0 hgmeas hgbd
   have hZint : MeasureTheory.Integrable (fun ω : Ω =>
       (∑ i ∈ Finset.range m, φ (X (unifGrid T m i) ω)
             * ∫ s in Set.Ioc (unifGrid T m i) (unifGrid T m (i + 1)), wgt ω s ∂volume)

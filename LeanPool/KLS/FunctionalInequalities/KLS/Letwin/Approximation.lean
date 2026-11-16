@@ -374,7 +374,6 @@ theorem exists_regular_approximation {n : ℕ} (μ : ProbabilityMeasure (Euclide
       (hκ k j) (hWc k j)
       (hζeq k j)
   -- finite family of coordinate monomials of degree `≤ 4`
-
   let mom : (Σ d : Fin 5, Fin d → Fin n) → Measure E → ℝ := fun m ρ => ∫ x, ∏ i, x (m.2 i) ∂ρ
   have hcoord_of (ρ : ℕ → Measure E) (σ : Measure E)
     (h :

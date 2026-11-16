@@ -219,6 +219,198 @@ private theorem abs_sum_sub_le_of_card_support_le_one {ι X : Type*}
       apply mul_le_mul_of_nonneg_right _ (mul_nonneg hM dist_nonneg)
       exact_mod_cast hPcard
 
+private theorem lipschitzOn_cutoff_bridge
+    {V : Type*}
+    [NormedAddCommGroup V]
+    {L : ℝ≥0}
+    (Kc : ℕ → Set V)
+    (c : ℕ → ℝ≥0)
+    (ρ : ℝ) (hρ : 0 < ρ)
+    (φ : ℕ → V → ℝ)
+    (w : ℕ → V → ℝ)
+    (u : ℕ → V → ℝ)
+    (hudef : u = fun n x => φ n x * w n x)
+    (hφ0 : ∀ (n : ℕ) (x : V), 0 ≤ φ n x)
+    (hφ1 : ∀ (n : ℕ) (x : V), φ n x ≤ 1)
+    (hφne : ∀ (n : ℕ) (x : V), φ n x ≠ 0 → Metric.infDist x (Kc n) < ρ)
+    (hφlip : ∀ (n : ℕ) (y z : V), |φ n y - φ n z| ≤ dist y z / ρ)
+    (hwlip : ∀ (n : ℕ) (y z : V), |w n y - w n z| ≤ (↑(c n) + ↑L) * dist y z)
+    (hwabs : ∀ (n : ℕ), (Kc n).Nonempty → ∀ (x : V), |w n x| ≤ (↑(c n) + ↑L) * Metric.infDist x
+      (Kc n)) : ∀ n, (Kc n).Nonempty → ∀ y z,
+    |u n y - u n z| ≤ 2 * ((c n : ℝ) + L) * dist y z := by
+  classical
+  intro n hne y z
+  have hcL : (0 : ℝ) ≤ (c n : ℝ) + L := by positivity
+  -- Control the correction across different cutoff supports.
+  have key : ∀ y' z' : V, φ n z' ≠ 0 →
+      |u n y' - u n z'| ≤ 2 * ((c n : ℝ) + L) * dist y' z' := by
+    intro y' z' hz'
+    have hdz : Metric.infDist z' (Kc n) < ρ := hφne n z' hz'
+    have hwz : |w n z'| ≤ ((c n : ℝ) + L) * ρ :=
+      (hwabs n hne z').trans (by nlinarith [Metric.infDist_nonneg (x := z') (s := Kc n)])
+    have he : u n y' - u n z' = φ n y' * (w n y' - w n z') + w n z' * (φ n y' - φ n z') := by
+      simp only [hudef]; ring
+    rw [he]
+    have h1 : |φ n y' * (w n y' - w n z')| ≤ ((c n : ℝ) + L) * dist y' z' := by
+      rw [abs_mul, abs_of_nonneg (hφ0 n y')]
+      calc φ n y' * |w n y' - w n z'| ≤ 1 * (((c n : ℝ) + L) * dist y' z') := by
+            apply mul_le_mul (hφ1 n y') (hwlip n y' z') (abs_nonneg _) zero_le_one
+        _ = ((c n : ℝ) + L) * dist y' z' := by ring
+    have h2 : |w n z' * (φ n y' - φ n z')| ≤ ((c n : ℝ) + L) * dist y' z' := by
+      rw [abs_mul]
+      calc |w n z'| * |φ n y' - φ n z'| ≤ (((c n : ℝ) + L) * ρ) * (dist y' z' / ρ) := by
+            apply mul_le_mul hwz (hφlip n y' z') (abs_nonneg _) (by positivity)
+        _ = ((c n : ℝ) + L) * dist y' z' := by field_simp
+    calc |φ n y' * (w n y' - w n z') + w n z' * (φ n y' - φ n z')|
+        ≤ |φ n y' * (w n y' - w n z')| + |w n z' * (φ n y' - φ n z')| := abs_add_le _ _
+      _ ≤ ((c n : ℝ) + L) * dist y' z' + ((c n : ℝ) + L) * dist y' z' := add_le_add h1 h2
+      _ = 2 * ((c n : ℝ) + L) * dist y' z' := by ring
+  by_cases hz : φ n z = 0
+  · by_cases hy : φ n y = 0
+    · simp only [hudef, hy, zero_mul, hz, sub_self, abs_zero, ge_iff_le]
+      positivity
+    · have := key z y hy
+      rw [abs_sub_comm, dist_comm]
+      exact this
+  · exact key y z hz
+
+private theorem asymptoticLipschitz_patch_le
+    {V : Type*}
+    [NormedAddCommGroup V]
+    {f : V → ℝ}
+    {L : ℝ≥0}
+    (N : ℕ)
+    (Kc : ℕ → Set V)
+    (c : ℕ → ℝ≥0)
+    (ρ : ℝ)
+    (hρ : 0 < ρ)
+    (hfun : ℕ → V → ℝ)
+    (hfunlip : ∀ (n : ℕ), LipschitzWith (c n) (hfun n))
+    (S : Finset ℕ)
+    (hSdef : open scoped Classical in S = {n ∈ Finset.range N | (Kc n).Nonempty})
+    (φ : ℕ → V → ℝ)
+    (hφdef : ∀ n y, φ n y = max (1 - Metric.infDist y (Kc n) / ρ) 0)
+    (w : ℕ → V → ℝ)
+    (hwdef : w = fun n x => hfun n x - f x)
+    (u : ℕ → V → ℝ)
+    (hudef : u = fun n x => φ n x * w n x)
+    (F : V → ℝ)
+    (hFdef : F = fun x => f x + ∑ n ∈ S, u n x)
+    (hwlip : ∀ (n : ℕ) (y z : V), |w n y - w n z| ≤ (↑(c n) + ↑L) * dist y z)
+    (hwabs : ∀ (n : ℕ), (Kc n).Nonempty → ∀ (x : V), |w n x| ≤ (↑(c n) + ↑L) * Metric.infDist x
+      (Kc n))
+    (hunique : ∀ (x : V), ∀ n ∈ S, ∀ n' ∈ S, φ n x ≠ 0 → φ n' x ≠ 0 → n = n') : ∀ n < N,
+      ∀ x ∈ Kc n, AsymptoticLipschitz.apply F x ≤ (c n : ℝ≥0∞) := by
+  classical
+  intro n hn x hx
+  have hnS : n ∈ S := by
+    rw [hSdef, Finset.mem_filter, Finset.mem_range]
+    exact ⟨hn, ⟨x, hx⟩⟩
+  have hne : (Kc n).Nonempty := ⟨x, hx⟩
+  have hcL : (0 : ℝ) ≤ (c n : ℝ) + L := by positivity
+  -- on a ball of radius `r ≤ ρ` around `x` only the `n`-th block is active
+  have hlocal : ∀ r : ℝ, 0 < r → r ≤ ρ → ∀ y : V, dist y x < r →
+      F y = hfun n y - (Metric.infDist y (Kc n) / ρ) * w n y := by
+    intro r hr0 hrρ y hy
+    have hdy : Metric.infDist y (Kc n) < ρ := by
+      calc Metric.infDist y (Kc n) ≤ dist y x := Metric.infDist_le_dist_of_mem hx
+        _ < r := hy
+        _ ≤ ρ := hrρ
+    have hφy : φ n y = 1 - Metric.infDist y (Kc n) / ρ := by
+      rw [hφdef]
+      refine max_eq_left ?_
+      rw [le_sub_comm, sub_zero, div_le_one hρ]
+      exact hdy.le
+    have hsum : ∑ m ∈ S, u m y = u n y := by
+      refine Finset.sum_eq_single_of_mem n hnS fun m hm hmn ↦ ?_
+      have : φ m y = 0 := by
+        by_contra hcon
+        refine hmn (hunique y m hm n hnS hcon ?_)
+        rw [hφy]
+        intro hzero'
+        rw [sub_eq_zero] at hzero'
+        rw [eq_comm, div_eq_one_iff_eq hρ.ne'] at hzero'
+        exact absurd hzero' hdy.ne
+      simp [hudef, this]
+    have hfy : f y = hfun n y - w n y := by simp [hwdef]
+    rw [hFdef]
+    simp only
+    rw [hsum, hudef]
+    simp only
+    rw [hφy, hfy]
+    ring
+  refine ENNReal.le_of_forall_pos_le_add fun ε hε _ ↦ ?_
+  have hεr : (0 : ℝ) < (ε : ℝ) := hε
+  have hd : (0 : ℝ) < 2 * ((c n : ℝ) + L) + 1 := by positivity
+  set t : ℝ := ((ε : ℝ) * ρ) / (2 * ((c n : ℝ) + L) + 1) with htdef
+  -- Choose the final scale to meet the uniform approximation error.
+  have ht0 : 0 < t := div_pos (mul_pos hεr hρ) hd
+  have hteq : (2 * ((c n : ℝ) + L) + 1) * t = (ε : ℝ) * ρ := by
+    rw [htdef]; field_simp
+  set r : ℝ := min ρ t with hrdef
+  have hr0 : 0 < r := lt_min hρ ht0
+  have hrρ : r ≤ ρ := min_le_left _ _
+  have hsmall : 2 * r * ((c n : ℝ) + L) / ρ ≤ (ε : ℝ) := by
+    have hb : r ≤ t := min_le_right _ _
+    rw [div_le_iff₀ hρ]
+    nlinarith [mul_le_mul_of_nonneg_right hb hcL, ht0.le, hcL]
+  have hball : ∀ y z : V, dist y x < r → dist z x < r →
+      dist (F y) (F z) ≤ ((c n : ℝ) + 2 * r * ((c n : ℝ) + L) / ρ) * dist y z := by
+    intro y z hy hz
+    rw [hlocal r hr0 hrρ y hy, hlocal r hr0 hrρ z hz]
+    set θ : V → ℝ := fun v ↦ Metric.infDist v (Kc n) / ρ with hθ
+    have hθ0 : ∀ v : V, 0 ≤ θ v := fun v ↦ div_nonneg Metric.infDist_nonneg hρ.le
+    have hθy : θ y ≤ r / ρ := by
+      change Metric.infDist y (Kc n) / ρ ≤ r / ρ
+      exact (div_le_div_iff_of_pos_right hρ).mpr
+        ((Metric.infDist_le_dist_of_mem hx).trans hy.le)
+    have hθz : θ z ≤ r / ρ := by
+      change Metric.infDist z (Kc n) / ρ ≤ r / ρ
+      exact (div_le_div_iff_of_pos_right hρ).mpr
+        ((Metric.infDist_le_dist_of_mem hx).trans hz.le)
+    have hθlip : |θ y - θ z| ≤ dist y z / ρ := by
+      change |Metric.infDist y (Kc n) / ρ - Metric.infDist z (Kc n) / ρ| ≤ dist y z / ρ
+      rw [div_sub_div_same, abs_div, abs_of_pos hρ]
+      have hdd : |Metric.infDist y (Kc n) - Metric.infDist z (Kc n)| ≤ dist y z := by
+        have h2 := (Metric.lipschitz_infDist_pt (Kc n)).dist_le_mul y z
+        rw [Real.dist_eq] at h2
+        simpa using h2
+      exact (div_le_div_iff_of_pos_right hρ).mpr hdd
+    have hwz : |w n z| ≤ ((c n : ℝ) + L) * r := by
+      refine (hwabs n hne z).trans ?_
+      apply mul_le_mul_of_nonneg_left _ hcL
+      exact (Metric.infDist_le_dist_of_mem hx).trans hz.le
+    have he : (hfun n y - θ y * w n y) - (hfun n z - θ z * w n z) =
+        (hfun n y - hfun n z) - (θ y * (w n y - w n z) + w n z * (θ y - θ z)) := by ring
+    rw [Real.dist_eq, he]
+    have h1 : |hfun n y - hfun n z| ≤ (c n : ℝ) * dist y z := by
+      simpa [Real.dist_eq] using (hfunlip n).dist_le_mul y z
+    have h2 : |θ y * (w n y - w n z)| ≤ (r / ρ) * (((c n : ℝ) + L) * dist y z) := by
+      rw [abs_mul, abs_of_nonneg (hθ0 y)]
+      exact mul_le_mul hθy (hwlip n y z) (abs_nonneg _) (div_nonneg hr0.le hρ.le)
+    have h3 : |w n z * (θ y - θ z)| ≤ (((c n : ℝ) + L) * r) * (dist y z / ρ) := by
+      rw [abs_mul]
+      exact mul_le_mul hwz hθlip (abs_nonneg _) (mul_nonneg hcL hr0.le)
+    calc |(hfun n y - hfun n z) - (θ y * (w n y - w n z) + w n z * (θ y - θ z))|
+        ≤ |hfun n y - hfun n z| + |θ y * (w n y - w n z) + w n z * (θ y - θ z)| :=
+          abs_sub _ _
+      _ ≤ |hfun n y - hfun n z| + (|θ y * (w n y - w n z)| + |w n z * (θ y - θ z)|) := by
+          gcongr
+          exact abs_add_le _ _
+      _ ≤ (c n : ℝ) * dist y z + ((r / ρ) * (((c n : ℝ) + L) * dist y z) +
+            (((c n : ℝ) + L) * r) * (dist y z / ρ)) := by
+          gcongr
+      _ = ((c n : ℝ) + 2 * r * ((c n : ℝ) + L) / ρ) * dist y z := by field_simp; ring
+  have hbd := AsymptoticLipschitz.secant_le_ofReal
+    (f := F) (r := r) (x := x)
+    (by positivity : (0 : ℝ) ≤ (c n : ℝ) + 2 * r * ((c n : ℝ) + L) / ρ)
+    (fun y z hy hz ↦ hball y z hy hz)
+  refine (AsymptoticLipschitz.apply_le_secant F hr0 x).trans (hbd.trans ?_)
+  rw [← ENNReal.ofReal_coe_nnreal (p := c n), ← ENNReal.ofReal_coe_nnreal (p := ε),
+    ← ENNReal.ofReal_add (c n).coe_nonneg ε.coe_nonneg]
+  refine ENNReal.ofReal_le_ofReal ?_
+  linarith
+
 omit [InnerProductSpace ℝ V] in
 /-- Gluing step.  Finitely many pairwise disjoint compact cores, each carrying a Lipschitz
 constant `c n ≤ L + α` for `f`, produce one globally Lipschitz patch with constant `9 L + 8 α`:
@@ -325,42 +517,8 @@ theorem exists_patch_of_isCompact {f : V → ℝ} {L : ℝ≥0} (hf : LipschitzW
       _ = ((c n : ℝ) + L) * dist x p := by ring
   -- the blocks
   have hublock : ∀ n, (Kc n).Nonempty → ∀ y z,
-      |u n y - u n z| ≤ 2 * ((c n : ℝ) + L) * dist y z := by
-    intro n hne y z
-    have hcL : (0 : ℝ) ≤ (c n : ℝ) + L := by positivity
-
-    -- Control the correction across different cutoff supports.
-    have key : ∀ y' z' : V, φ n z' ≠ 0 →
-        |u n y' - u n z'| ≤ 2 * ((c n : ℝ) + L) * dist y' z' := by
-      intro y' z' hz'
-      have hdz : Metric.infDist z' (Kc n) < ρ := hφne n z' hz'
-      have hwz : |w n z'| ≤ ((c n : ℝ) + L) * ρ :=
-        (hwabs n hne z').trans (by nlinarith [Metric.infDist_nonneg (x := z') (s := Kc n)])
-      have he : u n y' - u n z' = φ n y' * (w n y' - w n z') + w n z' * (φ n y' - φ n z') := by
-        simp only [hudef]; ring
-      rw [he]
-      have h1 : |φ n y' * (w n y' - w n z')| ≤ ((c n : ℝ) + L) * dist y' z' := by
-        rw [abs_mul, abs_of_nonneg (hφ0 n y')]
-        calc φ n y' * |w n y' - w n z'| ≤ 1 * (((c n : ℝ) + L) * dist y' z') := by
-              apply mul_le_mul (hφ1 n y') (hwlip n y' z') (abs_nonneg _) zero_le_one
-          _ = ((c n : ℝ) + L) * dist y' z' := by ring
-      have h2 : |w n z' * (φ n y' - φ n z')| ≤ ((c n : ℝ) + L) * dist y' z' := by
-        rw [abs_mul]
-        calc |w n z'| * |φ n y' - φ n z'| ≤ (((c n : ℝ) + L) * ρ) * (dist y' z' / ρ) := by
-              apply mul_le_mul hwz (hφlip n y' z') (abs_nonneg _) (by positivity)
-          _ = ((c n : ℝ) + L) * dist y' z' := by field_simp
-      calc |φ n y' * (w n y' - w n z') + w n z' * (φ n y' - φ n z')|
-          ≤ |φ n y' * (w n y' - w n z')| + |w n z' * (φ n y' - φ n z')| := abs_add_le _ _
-        _ ≤ ((c n : ℝ) + L) * dist y' z' + ((c n : ℝ) + L) * dist y' z' := add_le_add h1 h2
-        _ = 2 * ((c n : ℝ) + L) * dist y' z' := by ring
-    by_cases hz : φ n z = 0
-    · by_cases hy : φ n y = 0
-      · simp only [hudef, hy, zero_mul, hz, sub_self, abs_zero, ge_iff_le]
-        positivity
-      · have := key z y hy
-        rw [abs_sub_comm, dist_comm]
-        exact this
-    · exact key y z hz
+      |u n y - u n z| ≤ 2 * ((c n : ℝ) + L) * dist y z :=
+    lipschitzOn_cutoff_bridge Kc c ρ hρ φ w u hudef hφ0 hφ1 hφne hφlip hwlip hwabs
   have huabs : ∀ n, (Kc n).Nonempty → ∀ x, |u n x| ≤ ((c n : ℝ) + L) * ρ := by
     intro n hne x
     by_cases hx : φ n x = 0
@@ -469,115 +627,10 @@ theorem exists_patch_of_isCompact {f : V → ℝ} {L : ℝ≥0} (hf : LipschitzW
         simp [hudef, this]
     simp [hFdef, hsum]
   -- the asymptotic Lipschitz constant on the cores
-  have hFslope : ∀ n < N, ∀ x ∈ Kc n, AsymptoticLipschitz.apply F x ≤ (c n : ℝ≥0∞) := by
-    intro n hn x hx
-    have hnS : n ∈ S := by
-      rw [hSdef, Finset.mem_filter, Finset.mem_range]
-      exact ⟨hn, ⟨x, hx⟩⟩
-    have hne : (Kc n).Nonempty := ⟨x, hx⟩
-    have hcL : (0 : ℝ) ≤ (c n : ℝ) + L := by positivity
-    -- on a ball of radius `r ≤ ρ` around `x` only the `n`-th block is active
-    have hlocal : ∀ r : ℝ, 0 < r → r ≤ ρ → ∀ y : V, dist y x < r →
-        F y = hfun n y - (Metric.infDist y (Kc n) / ρ) * w n y := by
-      intro r hr0 hrρ y hy
-      have hdy : Metric.infDist y (Kc n) < ρ := by
-        calc Metric.infDist y (Kc n) ≤ dist y x := Metric.infDist_le_dist_of_mem hx
-          _ < r := hy
-          _ ≤ ρ := hrρ
-      have hφy : φ n y = 1 - Metric.infDist y (Kc n) / ρ := by
-        refine max_eq_left ?_
-        rw [le_sub_comm, sub_zero, div_le_one hρ]
-        exact hdy.le
-      have hsum : ∑ m ∈ S, u m y = u n y := by
-        refine Finset.sum_eq_single_of_mem n hnS fun m hm hmn ↦ ?_
-        have : φ m y = 0 := by
-          by_contra hcon
-          refine hmn (hunique y m hm n hnS hcon ?_)
-          rw [hφy]
-          intro hzero'
-          rw [sub_eq_zero] at hzero'
-          rw [eq_comm, div_eq_one_iff_eq hρ.ne'] at hzero'
-          exact absurd hzero' hdy.ne
-        simp [hudef, this]
-      have hfy : f y = hfun n y - w n y := by simp [hwdef]
-      rw [hFdef]
-      simp only
-      rw [hsum, hudef]
-      simp only
-      rw [hφy, hfy]
-      ring
-    refine ENNReal.le_of_forall_pos_le_add fun ε hε _ ↦ ?_
-    have hεr : (0 : ℝ) < (ε : ℝ) := hε
-    have hd : (0 : ℝ) < 2 * ((c n : ℝ) + L) + 1 := by positivity
-    set t : ℝ := ((ε : ℝ) * ρ) / (2 * ((c n : ℝ) + L) + 1) with htdef
-
-    -- Choose the final scale to meet the uniform approximation error.
-    have ht0 : 0 < t := div_pos (mul_pos hεr hρ) hd
-    have hteq : (2 * ((c n : ℝ) + L) + 1) * t = (ε : ℝ) * ρ := by
-      rw [htdef]; field_simp
-    set r : ℝ := min ρ t with hrdef
-    have hr0 : 0 < r := lt_min hρ ht0
-    have hrρ : r ≤ ρ := min_le_left _ _
-    have hsmall : 2 * r * ((c n : ℝ) + L) / ρ ≤ (ε : ℝ) := by
-      have hb : r ≤ t := min_le_right _ _
-      rw [div_le_iff₀ hρ]
-      nlinarith [mul_le_mul_of_nonneg_right hb hcL, ht0.le, hcL]
-    have hball : ∀ y z : V, dist y x < r → dist z x < r →
-        dist (F y) (F z) ≤ ((c n : ℝ) + 2 * r * ((c n : ℝ) + L) / ρ) * dist y z := by
-      intro y z hy hz
-      rw [hlocal r hr0 hrρ y hy, hlocal r hr0 hrρ z hz]
-      set θ : V → ℝ := fun v ↦ Metric.infDist v (Kc n) / ρ with hθ
-      have hθ0 : ∀ v : V, 0 ≤ θ v := fun v ↦ div_nonneg Metric.infDist_nonneg hρ.le
-      have hθy : θ y ≤ r / ρ := by
-        change Metric.infDist y (Kc n) / ρ ≤ r / ρ
-        exact (div_le_div_iff_of_pos_right hρ).mpr
-          ((Metric.infDist_le_dist_of_mem hx).trans hy.le)
-      have hθz : θ z ≤ r / ρ := by
-        change Metric.infDist z (Kc n) / ρ ≤ r / ρ
-        exact (div_le_div_iff_of_pos_right hρ).mpr
-          ((Metric.infDist_le_dist_of_mem hx).trans hz.le)
-      have hθlip : |θ y - θ z| ≤ dist y z / ρ := by
-        change |Metric.infDist y (Kc n) / ρ - Metric.infDist z (Kc n) / ρ| ≤ dist y z / ρ
-        rw [div_sub_div_same, abs_div, abs_of_pos hρ]
-        have hdd : |Metric.infDist y (Kc n) - Metric.infDist z (Kc n)| ≤ dist y z := by
-          have h2 := (Metric.lipschitz_infDist_pt (Kc n)).dist_le_mul y z
-          rw [Real.dist_eq] at h2
-          simpa using h2
-        exact (div_le_div_iff_of_pos_right hρ).mpr hdd
-      have hwz : |w n z| ≤ ((c n : ℝ) + L) * r := by
-        refine (hwabs n hne z).trans ?_
-        apply mul_le_mul_of_nonneg_left _ hcL
-        exact (Metric.infDist_le_dist_of_mem hx).trans hz.le
-      have he : (hfun n y - θ y * w n y) - (hfun n z - θ z * w n z) =
-          (hfun n y - hfun n z) - (θ y * (w n y - w n z) + w n z * (θ y - θ z)) := by ring
-      rw [Real.dist_eq, he]
-      have h1 : |hfun n y - hfun n z| ≤ (c n : ℝ) * dist y z := by
-        simpa [Real.dist_eq] using (hfunlip n).dist_le_mul y z
-      have h2 : |θ y * (w n y - w n z)| ≤ (r / ρ) * (((c n : ℝ) + L) * dist y z) := by
-        rw [abs_mul, abs_of_nonneg (hθ0 y)]
-        exact mul_le_mul hθy (hwlip n y z) (abs_nonneg _) (div_nonneg hr0.le hρ.le)
-      have h3 : |w n z * (θ y - θ z)| ≤ (((c n : ℝ) + L) * r) * (dist y z / ρ) := by
-        rw [abs_mul]
-        exact mul_le_mul hwz hθlip (abs_nonneg _) (mul_nonneg hcL hr0.le)
-      calc |(hfun n y - hfun n z) - (θ y * (w n y - w n z) + w n z * (θ y - θ z))|
-          ≤ |hfun n y - hfun n z| + |θ y * (w n y - w n z) + w n z * (θ y - θ z)| :=
-            abs_sub _ _
-        _ ≤ |hfun n y - hfun n z| + (|θ y * (w n y - w n z)| + |w n z * (θ y - θ z)|) := by
-            gcongr
-            exact abs_add_le _ _
-        _ ≤ (c n : ℝ) * dist y z + ((r / ρ) * (((c n : ℝ) + L) * dist y z) +
-              (((c n : ℝ) + L) * r) * (dist y z / ρ)) := by
-            gcongr
-        _ = ((c n : ℝ) + 2 * r * ((c n : ℝ) + L) / ρ) * dist y z := by field_simp; ring
-    have hbd := AsymptoticLipschitz.secant_le_ofReal
-      (f := F) (r := r) (x := x)
-      (by positivity : (0 : ℝ) ≤ (c n : ℝ) + 2 * r * ((c n : ℝ) + L) / ρ)
-      (fun y z hy hz ↦ hball y z hy hz)
-    refine (AsymptoticLipschitz.apply_le_secant F hr0 x).trans (hbd.trans ?_)
-    rw [← ENNReal.ofReal_coe_nnreal (p := c n), ← ENNReal.ofReal_coe_nnreal (p := ε),
-      ← ENNReal.ofReal_add (c n).coe_nonneg ε.coe_nonneg]
-    refine ENNReal.ofReal_le_ofReal ?_
-    linarith
+  have hFslope : ∀ n < N, ∀ x ∈ Kc n, AsymptoticLipschitz.apply F x ≤ (c n : ℝ≥0∞) :=
+    asymptoticLipschitz_patch_le N Kc c ρ hρ hfun hfunlip S hSdef φ
+      (fun _ _ => rfl) w hwdef u hudef F hFdef
+      hwlip hwabs hunique
   exact ⟨F, hFlip, hclose, hFeq, hFslope⟩
 
 end Gluing

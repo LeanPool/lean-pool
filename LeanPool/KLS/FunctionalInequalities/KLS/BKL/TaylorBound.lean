@@ -79,7 +79,8 @@ private theorem joint_cumulant_sum_sq_le {n N d : ℕ} {b : ℝ} (hcb : Cumulant
     (hfx : ∀ u, ∫ x, ⟪u, x⟫ * f x ∂(hV.law : Measure _) = 0) :
     (∑ K : Fin d → Option (Fin N × Fin n),
       cumulant (jointLaw (hV.law : Measure _) f β (sigma β) N) (d + 1)
-        (Fin.cons (EuclideanSpace.single none 1) fun k => EuclideanSpace.single (K k) 1) ^ 2) ≤ b := by
+        (Fin.cons (EuclideanSpace.single none 1) fun k => EuclideanSpace.single (K k) 1) ^ 2) ≤
+          b := by
   classical
   let ν : ProbabilityMeasure (JointSpace N n) :=
     ⟨jointLaw (hV.law : Measure _) f β (sigma β) N,

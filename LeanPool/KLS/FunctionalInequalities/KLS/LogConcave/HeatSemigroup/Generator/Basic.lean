@@ -25,7 +25,8 @@ be the closed unit-weight gradient, so that the heat semigroup is `P_t = exp (-t
 
 * weighted integration by parts: `∫ ⟪∇f, ∇g⟫ dν = ∫ (-ℒf) g dν` for every `C¹` function `g`
   (`integral_inner_gradient_eq`);
-* the smooth-test generator identity: `-ℒ f ∈ L²(ν)`, `[f] ∈ D(Tbar†Tbar)` and `Tbar†Tbar [f] = [-ℒ f]`
+* the smooth-test generator identity: `-ℒ f ∈ L²(ν)`, `[f] ∈ D(Tbar†Tbar)` and
+`Tbar†Tbar [f] = [-ℒ f]`
   (`memLp_neg_weightedLaplacian`, `toLp_mem_adjointComp_domain`, `adjointComp_toLp_eq`).
 
 The proof of the smooth-test generator identity goes through the adjoint, not through a pointwise
@@ -33,13 +34,15 @@ computation. The weak identity
 `⟪[-ℒf], [g]⟫ = ⟪[∇f], [∇g]⟫` is weighted integration by parts on smooth compactly supported `g`; by
 `closure_domRestrict_eq_of_smoothCore_le` these classes are a graph-norm core of `Tbar`, and
 `Analysis.Semigroup.inner_eq_inner_closure_apply` extends the identity to every `x ∈ D(Tbar)`. Then
-`[∇f] = Tbar [f]` lies in `D(Tbar†)` with `Tbar† [∇f] = [-ℒf]` (`LinearPMap.adjoint_apply_eq`, using the
+`[∇f] = Tbar [f]` lies in `D(Tbar†)` with `Tbar† [∇f] = [-ℒf]` (`LinearPMap.adjoint_apply_eq`,
+using the
 dense domain), which is exactly membership in `D(Tbar†Tbar)` and the value of `adjointComp`.
 
 ## What this is not
 
 These are statements about individual test functions. They do **not** say that `C_c^∞(V)` is an
-operator core of `Tbar†Tbar` (density in the graph norm of `Tbar†Tbar`), nor that the closure of `-ℒ` on
+operator core of `Tbar†Tbar` (density in the graph norm of `Tbar†Tbar`), nor that the closure of
+`-ℒ` on
 `C_c^∞` equals `Tbar†Tbar`. No
 `Γ`, `Γ₂`, Bochner or gradient estimate, no statement about `P_t f` for `t > 0`, and no Buser
 inequality is made. The hypothesis `(ν : Measure V) = m.tilted (-U)` is an explicit premise: it is
@@ -238,7 +241,8 @@ theorem toLp_mem_adjointComp_domain {f : V → ℝ} (hf : ContDiff ℝ ∞ f)
 
 include hνU hU in
 /--
-**the smooth-test generator identity, value clause**: for `f ∈ C_c^∞(V)`, `Tbar†Tbar [f] = [-ℒ f]` with
+**the smooth-test generator identity, value clause**: for `f ∈ C_c^∞(V)`, `Tbar†Tbar [f] = [-ℒ f]`
+with
 `ℒ f = Δ f - ⟪∇U, ∇f⟫`.
 The generator of the heat semigroup `P_t = exp (-t Tbar†Tbar)` is therefore `ℒ` on smooth compactly
 supported tests: `d/dt P_t f |_{t=0} = ℒ f`. -/

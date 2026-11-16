@@ -213,22 +213,22 @@ theorem integrable_hessian_increment_energy {n : ℕ}
       simp only [pow_two]
       exact hmd.mul hmd
     apply hw.bdd_mul hms.aestronglyMeasurable
-    apply Filter.Eventually.of_forall
-    intro x
-    have hb :
-        ‖hessianMatrix u (T x) i j - hessianMatrix u x i j‖ ≤
-          (G : ℝ) + (G : ℝ) :=
-      calc
-        ‖hessianMatrix u (T x) i j - hessianMatrix u x i j‖ ≤
-            ‖hessianMatrix u (T x) i j‖ + ‖hessianMatrix u x i j‖ :=
-          norm_sub_le _ _
-        _ ≤ (G : ℝ) + (G : ℝ) :=
-          add_le_add
-            (norm_hessianMatrix_entry_le_of_lipschitz_gradient hG (T x) i j)
-            (norm_hessianMatrix_entry_le_of_lipschitz_gradient hG x i j)
-    exact
-      (norm_pow _ 2).le.trans
-        (pow_le_pow_left₀ (norm_nonneg _) hb 2)
+    · apply Filter.Eventually.of_forall
+      intro x
+      have hb :
+          ‖hessianMatrix u (T x) i j - hessianMatrix u x i j‖ ≤
+            (G : ℝ) + (G : ℝ) :=
+        calc
+          ‖hessianMatrix u (T x) i j - hessianMatrix u x i j‖ ≤
+              ‖hessianMatrix u (T x) i j‖ + ‖hessianMatrix u x i j‖ :=
+            norm_sub_le _ _
+          _ ≤ (G : ℝ) + (G : ℝ) :=
+            add_le_add
+              (norm_hessianMatrix_entry_le_of_lipschitz_gradient hG (T x) i j)
+              (norm_hessianMatrix_entry_le_of_lipschitz_gradient hG x i j)
+      exact
+        (norm_pow _ 2).le.trans
+          (pow_le_pow_left₀ (norm_nonneg _) hb 2)
   have hsum
       (T : EuclideanSpace ℝ (Fin n) → EuclideanSpace ℝ (Fin n))
       (hT : Continuous T) :

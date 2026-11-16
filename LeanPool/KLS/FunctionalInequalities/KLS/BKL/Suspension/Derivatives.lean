@@ -97,7 +97,8 @@ private theorem graph_log_integral_hasDerivAt_zero {n : ℕ}
     cases o with
     | none => exact hf
     | some j => exact (measurable_pi_apply j).comp (WithLp.measurable_ofLp 2 _)
-  let _ : IsProbabilityMeasure Γ := (Measure.isProbabilityMeasure_map_iff hgm.aemeasurable).2 inferInstance
+  let _ : IsProbabilityMeasure Γ := (Measure.isProbabilityMeasure_map_iff hgm.aemeasurable
+    ).2 inferInstance
   let q : EuclideanSpace ℝ (Option (Fin n)) :=
     WithLp.toLp 2 fun o => Option.elim o 0 fun j => z j
   let e0 : EuclideanSpace ℝ (Option (Fin n)) := EuclideanSpace.basisFun (Option (Fin n)) ℝ none

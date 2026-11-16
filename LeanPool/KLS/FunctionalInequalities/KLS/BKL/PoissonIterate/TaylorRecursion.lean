@@ -14,7 +14,8 @@ public import LeanPool.KLS.FunctionalInequalities.KLS.BKL.PoissonIterate.Symmetr
 Bizeul–Klartag–Lehec (arXiv:2610.05474v1), Lemma 3.8, pp. 15–16, (55)–(59), for the iterates
 `iter Tbar f k` (the source's `h_{k+1}`) of `PoissonIterate/Basic.lean` in the heat model
 `ν = m.tilted (-U)`, `U` of temperate growth with all exponential moments, `Tbar` the closed
-unit-weight gradient, `A = Tbar†Tbar = -ℒ` and `C_P(ν) ≤ C` with `0 < C`. Coefficient arrays are taken
+unit-weight gradient, `A = Tbar†Tbar = -ℒ` and `C_P(ν) ≤ C` with `0 < C`. Coefficient arrays are
+taken
 in `stdOrthonormalBasis ℝ V`, with the Hilbert–Schmidt norm; `taylorField d u` puts the `d` Taylor
 indices first.
 
@@ -37,7 +38,8 @@ on `L²` classes; the Taylor indices of `T_d u` are symmetric; and (29) componen
 
 ## The argument
 
-Write `T = T_d(∇₀h_{k+1})` and `Ttilde = T_d(S_{2d} ∇₀h_{k+1})`. Since `S_{d+e+1} = S_{d+e+1} S_{d+1}`
+Write `T = T_d(∇₀h_{k+1})` and `Ttilde = T_d(S_{2d} ∇₀h_{k+1})`. Since
+`S_{d+e+1} = S_{d+e+1} S_{d+1}`
 and `S_{d+1} T_d(∇₀h_{k+2}) = α_{k+2} T_{d+1}(∇₀h_{k+1})` (Corollary 3.7), induction on `e` gives
 (56)–(57), and with `e = d`, `|S_{2d} T|² ≤ (β/C)^d |T_{2d}(∇₀h_{k+1-d})|²`. The tensor `Ttilde` has
 `d + k + 1 ≥ 3d` indices and is symmetric in its first `d` (Taylor) and its next `2d` indices, so

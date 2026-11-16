@@ -51,13 +51,13 @@ universe u
 
 variable {E : Type u} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [CompleteSpace E]
   [MeasurableSpace E] [BorelSpace E] [SecondCountableTopology E] [FiniteDimensional ℝ E]
-
   (μ : ProbabilityMeasure E) (b : E)
 
 omit [CompleteSpace E] in
 /--
 The affine covariance Poincaré constant is invariant under ambient translations of the law. -/
-theorem constant_translateLaw : optimalConstant (Probability.translateLaw μ b) = optimalConstant μ := by
+theorem constant_translateLaw : optimalConstant (Probability.translateLaw μ b) =
+  optimalConstant μ := by
   unfold optimalConstant
   rw [energy_eq_relaxation_intrinsicMeasure (Probability.translateLaw μ b),
     energy_eq_relaxation_intrinsicMeasure μ, Probability.intrinsicMeasure_translateLaw,

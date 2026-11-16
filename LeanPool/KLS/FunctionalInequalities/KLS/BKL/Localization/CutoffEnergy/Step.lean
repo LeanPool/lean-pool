@@ -241,7 +241,6 @@ theorem cutoffEnergyClaim_succ (hL : LogConcave.Suspension.LetwinCompactBound)
   intro n μ hc hiso hLC u hu ε hε T hT
   obtain ⟨ρ, hρpos, hsupp⟩ := hc.isBounded.subset_closedBall_lt 0 (0 : EuclideanSpace ℝ (Fin n))
   have hρ : 0 ≤ ρ := hρpos.le
-
   -- Obtain the lower-order bounds needed by the induction step.
   obtain ⟨KL, hKL0, hKL⟩ := exists_generator_lyapunov_le μ hc hiso hLC h8 hρ hsupp
   obtain ⟨C, hC0, hCall⟩ := exists_cumulantEnergy_le μ hc hiso hLC hρ hsupp r
@@ -261,7 +260,6 @@ theorem cutoffEnergyClaim_succ (hL : LogConcave.Suspension.LetwinCompactBound)
   have hδmain : inductionMain K (r + 1) δ ≤ envelope K (r + 1) + ε / 3 := by
     have hz := inductionMain_zero_le hK hm
     linarith
-
   -- Choose the time and spatial cutoffs before estimating their errors.
   let T₀ : ℝ := max (max T 1) (6 * (envelope K r + δ) / ε)
   have hT₀one : 1 ≤ T₀ := (le_max_right T 1).trans (le_max_left _ _)
@@ -317,7 +315,6 @@ theorem cutoffEnergyClaim_succ (hL : LogConcave.Suspension.LetwinCompactBound)
     have hclaim := hthreshold R hRa' W ℱ hW hℱ0 hnull hp
     have hindex : a - 1 + 1 = a := Nat.sub_add_cancel (by omega)
     rw [hindex] at hclaim
-
     -- Apply the energy estimate and bound the lower-order recurrence terms.
     have hnonneg := energy_nonneg_aux (μ : Measure (EuclideanSpace ℝ (Fin n))) (a - 1) u
     linarith

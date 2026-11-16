@@ -19,7 +19,8 @@ public import LeanPool.KLS.FunctionalInequalities.Analysis.BakryEmery.TensorEner
 In the heat model `ν = m.tilted (-U)` with `U` of temperate growth and all exponential moments, the
 `L²` class of a function `f` of temperate growth (the source class `𝒜`) lies in the domain of the
 closed
-unit gradient with `Tbar [f] = [∇f]`, and in the domain of the generator `A = Tbar†Tbar` with `A [f] =
+unit gradient with `Tbar [f] = [∇f]`, and in the domain of the generator `A = Tbar†Tbar` with
+`A [f] =
 [-ℒf]`.
 Hence a centered temperate solution of `-ℒu = g` is the centered operator-domain inverse of `[g]`
 (Bizeul–Klartag–Lehec, arXiv:2610.05474v1, Lemma 2.1). With `C_P(ν) ≤ C`, the Poincaré inequality

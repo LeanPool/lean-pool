@@ -291,7 +291,8 @@ end CoefficientExtraction
 section DefectDomination
 
 /--
-**Pointwise defect domination** (Letwin Lemma A.4, p. 17, `Lχ_R = R⁻¹η′(W/R) LW + R⁻²η''(W/R) Γ(W)`):
+**Pointwise defect domination** (Letwin Lemma A.4, p. 17, `Lχ_R = R⁻¹η′(W/R) LW + R⁻²η''(W/R)
+Γ(W)`):
 for `C²` `φ`
 and a `C²` profile `e`, all real `c`, `R` (total conventions), the generator of `e((φ − c)/R)` is
 dominated by the

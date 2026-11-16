@@ -34,6 +34,136 @@ open FunctionalInequalities.Probability.MomentMeasure
 variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
   [FiniteDimensional ℝ E] [MeasurableSpace E] [BorelSpace E]
 
+private theorem perturbation_mass_eq {q : E → EReal} {ψ : E → ℝ}
+    (hqproper : ProperPotential q) (hleg : ∀ x, legendre q x ≠ ⊤)
+    (hψdef : ψ = fun x => (legendre q x).toReal)
+    (hint : Integrable (fun x => Real.exp (-ψ x)) (volume : Measure E))
+    (hnorm : (∫ x, Real.exp (-ψ x) ∂(volume : Measure E)) = 1)
+    (b : E → ℝ) {bound : ℝ} (hbound_nonneg : 0 ≤ bound) (hM : ∀ z, |b z| ≤ bound) :
+    let Z : ℝ → ℝ := fun t =>
+      ∫ x, Real.exp (-(legendre (fun z => q z + ((t * b z : ℝ) : EReal)) x).toReal)
+        ∂(volume : Measure E)
+    ∀ t, 0 < Z t ∧
+      mass (volume : Measure E) (legendre (fun z => q z + ((t * b z : ℝ) : EReal))) =
+        ENNReal.ofReal (Z t) := by
+  intro Z t
+  let φt : E → EReal := fun z => q z + ((t * b z : ℝ) : EReal)
+  let ψt : E → ℝ := fun x => (legendre φt x).toReal
+  have htop : ∀ x, legendre φt x ≠ ⊤ := by
+    intro x
+    exact
+      (legendre_bounded_perturbation_finite_curve q hqproper x
+        (hleg x) b bound hbound_nonneg hM t).1
+  have hbot : ∀ x, legendre φt x ≠ ⊥ := by
+    intro x
+    exact
+      (legendre_bounded_perturbation_finite_curve q hqproper x
+        (hleg x) b bound hbound_nonneg hM t).2.1
+  have hc : ∀ x, |ψt x - ψ x| ≤ |t| * bound := by
+    intro x
+    dsimp [ψt, φt]
+    simpa [hψdef] using
+      (legendre_bounded_perturbation_finite_curve q hqproper x
+        (hleg x) b bound hbound_nonneg hM t).2.2
+  let c : ℝ := |t| * bound
+  have hmeas : AEStronglyMeasurable
+      (fun x => Real.exp (-(legendre φt x).toReal))
+      (volume : Measure E) := by
+    apply Measurable.aestronglyMeasurable
+    exact
+      (Continuous.measurable
+        (Continuous.comp Real.continuous_exp continuous_neg)).comp
+      (Measurable.ereal_toReal
+        (LowerSemicontinuous.measurable
+          (lowerSemicontinuous_legendre φt)))
+  have hbound : ∀ᵐ x ∂(volume : Measure E),
+      ‖Real.exp (-(legendre φt x).toReal)‖ ≤
+        Real.exp c * Real.exp (-ψ x) := by
+    filter_upwards [] with x
+    have hx := hc x
+    have hle : -ψt x ≤ -ψ x + c := by
+      have hx' := (abs_le.mp hx).1
+      dsimp [c] at hx' ⊢
+      linarith
+    have he : Real.exp (-ψt x) ≤ Real.exp (-ψ x + c) :=
+      Real.exp_le_exp.mpr hle
+    dsimp [ψt] at he
+    rw [Real.norm_eq_abs, abs_of_pos (Real.exp_pos _)]
+    calc
+      Real.exp (-(legendre φt x).toReal) = Real.exp (-ψt x) := rfl
+      _ ≤ Real.exp (-ψ x + c) := he
+      _ = Real.exp c * Real.exp (-ψ x) := by
+        rw [Real.exp_add]
+        exact mul_comm _ _
+  have hInt : Integrable
+      (fun x => Real.exp (-(legendre φt x).toReal))
+      (volume : Measure E) :=
+    (hint.const_mul (Real.exp c)).mono' hmeas hbound
+  have hnonneg : 0 ≤ᵐ[(volume : Measure E)]
+      fun x => Real.exp (-(legendre φt x).toReal) :=
+    Filter.Eventually.of_forall fun x => (Real.exp_pos _).le
+  have hlow : ∀ᵐ x ∂(volume : Measure E),
+      Real.exp (-c) * Real.exp (-ψ x) ≤
+        Real.exp (-(legendre φt x).toReal) := by
+    filter_upwards [] with x
+    have hx := hc x
+    have hle : -ψ x - c ≤ -ψt x := by
+      have hx' := (abs_le.mp hx).2
+      dsimp [c] at hx' ⊢
+      linarith
+    have he : Real.exp (-ψ x - c) ≤ Real.exp (-ψt x) :=
+      Real.exp_le_exp.mpr hle
+    dsimp [ψt] at he
+    calc
+      Real.exp (-c) * Real.exp (-ψ x) =
+          Real.exp (-ψ x - c) := by
+            rw [← Real.exp_add]
+            congr 1
+            ring
+      _ ≤ Real.exp (-ψt x) := he
+      _ = Real.exp (-(legendre φt x).toReal) := rfl
+  have hlowint := integral_mono_ae
+    (hint.const_mul (Real.exp (-c))) hInt hlow
+  have hZpos : 0 < Z t := by
+    have hlowint' :
+        Real.exp (-c) * 1 ≤ Z t := by
+      calc
+        Real.exp (-c) * 1 =
+            ∫ x, Real.exp (-c) * Real.exp (-ψ x) ∂(volume : Measure E) := by
+              rw [integral_const_mul, hnorm]
+        _ ≤ Z t := hlowint
+    exact lt_of_lt_of_le (by positivity) hlowint'
+  constructor
+  · exact hZpos
+  · rw [mass]
+    calc
+      (∫⁻ x, density (legendre φt) x ∂(volume : Measure E)) =
+          ∫⁻ x, ENNReal.ofReal
+            (Real.exp (-(legendre φt x).toReal)) ∂(volume : Measure E) := by
+        apply lintegral_congr
+        intro x
+        rw [density]
+        have hr :
+            legendre φt x =
+              ((legendre φt x).toReal : EReal) :=
+          (EReal.coe_toReal (htop x) (hbot x)).symm
+        have hneg :
+            -(legendre φt x) =
+              ((-(legendre φt x).toReal : ℝ) : EReal) := by
+          calc
+            -(legendre φt x) =
+                -((legendre φt x).toReal : EReal) :=
+              congrArg Neg.neg hr
+            _ = ((-(legendre φt x).toReal : ℝ) : EReal) := by
+              rw [EReal.coe_neg]
+        rw [hneg]
+        exact EReal.exp_coe _
+      _ = ENNReal.ofReal
+            (∫ x, Real.exp (-(legendre φt x).toReal)
+              ∂(volume : Measure E)) :=
+        (ofReal_integral_eq_lintegral_ofReal hInt hnonneg).symm
+      _ = ENNReal.ofReal (Z t) := rfl
+
 /-- **Weak moment map of a bounded isotropic law** (Cordero-Erausquin–Klartag arXiv:1304.0630v1,
 Theorem 2, existence, via the bounded CEK primal `bounded_source_lipschitz_primal` and the first
 variation): for an isotropic probability law `μ` supported in the
@@ -46,7 +176,6 @@ private theorem exists_momentMap_aux (μ : ProbabilityMeasure E)
       (∫ x, Real.exp (-ψ x) ∂(volume : Measure E)) = 1 ∧
       ((volume : Measure E).tilted (fun x => -ψ x)).map (gradient ψ) = (μ : Measure E) := by
   classical
-
   -- Obtain the variational moment potential and normalize its law.
   obtain ⟨q, a, m, ψ, hq, hlsc, hqint, hqball, ha, hqa, hfloor, hleg, hupper,
     hψdef, hψ, hmass, hconv, hlip, hcont, hint, hnorm, hprob, hmax⟩ :=
@@ -79,7 +208,6 @@ private theorem exists_momentMap_aux (μ : ProbabilityMeasure E)
     have hM : ∀ z, |b z| ≤ (‖b‖ : ℝ) := by
       intro z
       simpa only [Real.norm_eq_abs] using b.norm_coe_le_norm z
-
     -- Perturb the dual potential by a bounded continuous test function.
     let Z : ℝ → ℝ := fun t =>
       ∫ x, Real.exp
@@ -88,124 +216,8 @@ private theorem exists_momentMap_aux (μ : ProbabilityMeasure E)
     have hZdata : ∀ t : ℝ, 0 < Z t ∧
         mass (volume : Measure E)
             (legendre (fun z => q z + ((t * b z : ℝ) : EReal))) =
-          ENNReal.ofReal (Z t) := by
-      intro t
-      let φt : E → EReal := fun z => q z + ((t * b z : ℝ) : EReal)
-      let ψt : E → ℝ := fun x => (legendre φt x).toReal
-      have htop : ∀ x, legendre φt x ≠ ⊤ := by
-        intro x
-        exact
-          (legendre_bounded_perturbation_finite_curve q hqproper x
-            (hleg x).1 b (‖b‖ : ℝ) (norm_nonneg _) hM t).1
-      have hbot : ∀ x, legendre φt x ≠ ⊥ := by
-        intro x
-        exact
-          (legendre_bounded_perturbation_finite_curve q hqproper x
-            (hleg x).1 b (‖b‖ : ℝ) (norm_nonneg _) hM t).2.1
-      have hc : ∀ x, |ψt x - ψ x| ≤ |t| * (‖b‖ : ℝ) := by
-        intro x
-        dsimp [ψt, φt]
-        simpa [hψdef] using
-          (legendre_bounded_perturbation_finite_curve q hqproper x
-            (hleg x).1 b (‖b‖ : ℝ) (norm_nonneg _) hM t).2.2
-      let c : ℝ := |t| * (‖b‖ : ℝ)
-      have hmeas : AEStronglyMeasurable
-          (fun x => Real.exp (-(legendre φt x).toReal))
-          (volume : Measure E) := by
-        apply Measurable.aestronglyMeasurable
-        exact
-          (Continuous.measurable
-            (Continuous.comp Real.continuous_exp continuous_neg)).comp
-          (Measurable.ereal_toReal
-            (LowerSemicontinuous.measurable
-              (lowerSemicontinuous_legendre φt)))
-      have hbound : ∀ᵐ x ∂(volume : Measure E),
-          ‖Real.exp (-(legendre φt x).toReal)‖ ≤
-            Real.exp c * Real.exp (-ψ x) := by
-        filter_upwards [] with x
-        have hx := hc x
-        have hle : -ψt x ≤ -ψ x + c := by
-          have hx' := (abs_le.mp hx).1
-          dsimp [c] at hx' ⊢
-          linarith
-        have he : Real.exp (-ψt x) ≤ Real.exp (-ψ x + c) :=
-          Real.exp_le_exp.mpr hle
-        dsimp [ψt] at he
-        rw [Real.norm_eq_abs, abs_of_pos (Real.exp_pos _)]
-        calc
-          Real.exp (-(legendre φt x).toReal) = Real.exp (-ψt x) := rfl
-          _ ≤ Real.exp (-ψ x + c) := he
-          _ = Real.exp c * Real.exp (-ψ x) := by
-            rw [Real.exp_add]
-            exact mul_comm _ _
-      have hInt : Integrable
-          (fun x => Real.exp (-(legendre φt x).toReal))
-          (volume : Measure E) :=
-        (hint.const_mul (Real.exp c)).mono' hmeas hbound
-      have hnonneg : 0 ≤ᵐ[(volume : Measure E)]
-          fun x => Real.exp (-(legendre φt x).toReal) :=
-        Filter.Eventually.of_forall fun x => (Real.exp_pos _).le
-      have hlow : ∀ᵐ x ∂(volume : Measure E),
-          Real.exp (-c) * Real.exp (-ψ x) ≤
-            Real.exp (-(legendre φt x).toReal) := by
-        filter_upwards [] with x
-        have hx := hc x
-        have hle : -ψ x - c ≤ -ψt x := by
-          have hx' := (abs_le.mp hx).2
-          dsimp [c] at hx' ⊢
-          linarith
-        have he : Real.exp (-ψ x - c) ≤ Real.exp (-ψt x) :=
-          Real.exp_le_exp.mpr hle
-        dsimp [ψt] at he
-        calc
-          Real.exp (-c) * Real.exp (-ψ x) =
-              Real.exp (-ψ x - c) := by
-                rw [← Real.exp_add]
-                congr 1
-                ring
-          _ ≤ Real.exp (-ψt x) := he
-          _ = Real.exp (-(legendre φt x).toReal) := rfl
-      have hlowint := integral_mono_ae
-        (hint.const_mul (Real.exp (-c))) hInt hlow
-      have hZpos : 0 < Z t := by
-        have hlowint' :
-            Real.exp (-c) * 1 ≤ Z t := by
-          calc
-            Real.exp (-c) * 1 =
-                ∫ x, Real.exp (-c) * Real.exp (-ψ x) ∂(volume : Measure E) := by
-                  rw [integral_const_mul, hnorm]
-            _ ≤ Z t := hlowint
-        exact lt_of_lt_of_le (by positivity) hlowint'
-      constructor
-      · exact hZpos
-      · rw [mass]
-        calc
-          (∫⁻ x, density (legendre φt) x ∂(volume : Measure E)) =
-              ∫⁻ x, ENNReal.ofReal
-                (Real.exp (-(legendre φt x).toReal)) ∂(volume : Measure E) := by
-            apply lintegral_congr
-            intro x
-            rw [density]
-            have hr :
-                legendre φt x =
-                  ((legendre φt x).toReal : EReal) :=
-              (EReal.coe_toReal (htop x) (hbot x)).symm
-            have hneg :
-                -(legendre φt x) =
-                  ((-(legendre φt x).toReal : ℝ) : EReal) := by
-              calc
-                -(legendre φt x) =
-                    -((legendre φt x).toReal : EReal) :=
-                  congrArg Neg.neg hr
-                _ = ((-(legendre φt x).toReal : ℝ) : EReal) := by
-                  rw [EReal.coe_neg]
-            rw [hneg]
-            exact EReal.exp_coe _
-          _ = ENNReal.ofReal
-                (∫ x, Real.exp (-(legendre φt x).toReal)
-                  ∂(volume : Measure E)) :=
-            (ofReal_integral_eq_lintegral_ofReal hInt hnonneg).symm
-          _ = ENNReal.ofReal (Z t) := rfl
+          ENNReal.ofReal (Z t) :=
+      perturbation_mass_eq hqproper (fun x => (hleg x).1) hψdef hint hnorm b (norm_nonneg _) hM
     have hpot : ∀ t : ℝ,
         PotentialIntegrable
           (fun z => q z + ((t * b z : ℝ) : EReal)) (μ : Measure E) := by
@@ -308,7 +320,6 @@ private theorem exists_momentMap_aux (μ : ProbabilityMeasure E)
           linarith
         simpa [hZ0] using hi''
       · exact Filter.univ_mem
-
     -- Differentiate the partition function and use the Euler-Lagrange identity.
     have hderiv :=
       hasDerivAt_integral_exp_neg_legendre_add_smul q hqproper hlsc ψ hψ hlip hint

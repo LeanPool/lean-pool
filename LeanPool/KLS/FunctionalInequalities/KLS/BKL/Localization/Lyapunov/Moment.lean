@@ -39,6 +39,107 @@ variable {n : ℕ} {μ : ProbabilityMeasure (EuclideanSpace ℝ (Fin n))}
   {W : MultidimBrownianMotion P n} {ℱ : Filtration ℝ ‹MeasurableSpace Ω›}
   {hW : ∀ k, IsBrownianFiltration (W.W k) ℱ} {γ : Param n → ℝ} {p : ℝ → Ω → Param n}
 
+private theorem integral_cutoff_lyapunov_generator_le
+    {n : ℕ}
+    {μ : ProbabilityMeasure (EuclideanSpace ℝ (Fin n))}
+    {hc : IsCompact (μ : Measure (EuclideanSpace ℝ (Fin n))).support}
+    {Ω : Type*}
+    [MeasurableSpace Ω]
+    {P : Measure Ω}
+    [IsProbabilityMeasure P]
+    {W : MultidimBrownianMotion P n}
+    {ℱ : Filtration ℝ ‹MeasurableSpace Ω›}
+    {hW : ∀ (k : Fin n), IsBrownianFiltration (W.W k) ℱ}
+    {γ : Param n → ℝ}
+    {p : ℝ → Ω → Param n}
+    (hiso : Isotropic μ)
+    (hγ : IsCutoff γ)
+    (h : IsEldanCutoff μ hc W ℱ hW γ p)
+    {K : ℝ}
+    (hK0 : 0 ≤ K)
+    (hK : ∀ (q : Param n),
+        IsSelfAdjoint q.2 →
+          (∀ (x : EuclideanSpace ℝ (Fin n)), 0 ≤ ⟪q.2 x, x⟫) → generator μ hc (lyapunov μ hc) q ≤
+            K * lyapunov μ hc q)
+    (hF : ContDiff ℝ 2 (lyapunov μ hc))
+    (hgc : Continuous (fun q => γ q ^ 2 * generator μ hc (lyapunov μ hc) q))
+    (B : ℝ)
+    (hgb : ∀ᵐ (ω : Ω) ∂P, ∀ (s : ℝ), 0 ≤ s → |γ (p s ω) ^ 2 * generator μ hc (lyapunov μ hc)
+      (p s ω)| ≤ B)
+    (hprodF : ∀ (u : ℝ), 0 ≤ u → Integrable (fun z => lyapunov μ hc (p z.2 z.1)) (P.prod
+      (volume.restrict (Set.Ioc 0 u))))
+    (u : ℝ) (hu : 0 ≤ u) :
+    ∫ ω, ∫ s in Set.Ioc (0 : ℝ) u, γ (p s ω) ^ 2 * generator μ hc (lyapunov μ hc)
+      (p s ω) ∂volume ∂P ≤
+      K * ∫ ω, ∫ s in Set.Ioc (0 : ℝ) u, lyapunov μ hc (p s ω) ∂volume ∂P := by
+  classical
+  let F : Param n → ℝ := lyapunov μ hc
+  let g : Param n → ℝ := fun q => γ q ^ 2 * generator μ hc F q
+  -- Use positivity and the generator bound in the scalar integral inequality.
+  have hQ := h.ae_Q_posSemidef hiso hγ
+  have hle :
+      ∀ᵐ ω ∂P, ∫ s in Set.Ioc (0 : ℝ) u, g (p s ω) ≤
+        K * ∫ s in Set.Ioc (0 : ℝ) u, F (p s ω) := by
+    filter_upwards [hQ] with ω hω
+    have hset :
+        ∫ s in Set.Ioc (0 : ℝ) u, g (p s ω) ≤
+          ∫ s in Set.Ioc (0 : ℝ) u, K * F (p s ω) := by
+      apply setIntegral_mono_on
+      · exact (hgc.comp (h.continuous ω)).integrableOn_Ioc
+      · exact
+          (continuous_const.mul
+            (hF.continuous.comp (h.continuous ω))).integrableOn_Ioc
+      · exact measurableSet_Ioc
+      · intro s hs
+        have hq := hω s hs.1.le
+        have hgen' :
+            generator μ hc F (p s ω) ≤ K * F (p s ω) := by
+          simpa only [F] using hK (p s ω) hq.1 hq.2
+        have hγ0 : 0 ≤ γ (p s ω) :=
+          (hγ.mem_Icc (p s ω)).1
+        have hγ1 : γ (p s ω) ≤ 1 :=
+          (hγ.mem_Icc (p s ω)).2
+        have hγsq : γ (p s ω) ^ 2 ≤ 1 := by
+          nlinarith [mul_nonneg hγ0 (sub_nonneg.mpr hγ1)]
+        by_cases hg : 0 ≤ generator μ hc F (p s ω)
+        · dsimp [g]
+          calc
+            γ (p s ω) ^ 2 * generator μ hc F (p s ω) ≤
+                generator μ hc F (p s ω) := by
+              nlinarith [mul_le_mul_of_nonneg_right hγsq hg]
+            _ ≤ K * F (p s ω) := hgen'
+        · have hleft :
+              g (p s ω) ≤ 0 := by
+            dsimp [g]
+            exact
+              mul_nonpos_of_nonneg_of_nonpos (sq_nonneg _)
+                (le_of_not_ge hg)
+          have hright : 0 ≤ K * F (p s ω) := by
+            exact
+              mul_nonneg hK0
+                (le_trans (by norm_num) (one_le_lyapunov μ hc _))
+          exact hleft.trans hright
+    rw [integral_const_mul] at hset
+    exact hset
+  have hgi :=
+    h.integrable_integral_of_ae_bound hgc hgb hu
+  have hFi :
+      Integrable
+        (fun ω => ∫ s in Set.Ioc (0 : ℝ) u, F (p s ω))
+        P := by
+    simpa using (hprodF u hu).integral_prod_left
+  have hKFi :
+      Integrable
+        (fun ω => K * ∫ s in Set.Ioc (0 : ℝ) u, F (p s ω))
+        P :=
+    hFi.const_mul K
+  calc
+    ∫ ω, ∫ s in Set.Ioc (0 : ℝ) u, g (p s ω) ∂volume ∂P ≤
+        ∫ ω, K * ∫ s in Set.Ioc (0 : ℝ) u, F (p s ω) ∂volume ∂P :=
+      integral_mono_ae hgi hKFi hle
+    _ = K * ∫ ω, ∫ s in Set.Ioc (0 : ℝ) u, F (p s ω) ∂volume ∂P := by
+      rw [integral_const_mul]
+
 theorem IsEldanCutoff.integral_lyapunov_le (hiso : KLS.Isotropic μ) (hγ : IsCutoff γ)
     (hℱ0 : ∀ t : ℝ, t ≤ 0 → ℱ 0 ≤ ℱ t)
     (hnull : ∀ s : Set Ω, MeasurableSet s → P s = 0 → MeasurableSet[ℱ 0] s)
@@ -49,7 +150,6 @@ theorem IsEldanCutoff.integral_lyapunov_le (hiso : KLS.Isotropic μ) (hγ : IsCu
     Integrable (fun ω => lyapunov μ hc (p t ω)) P ∧
       ∫ ω, lyapunov μ hc (p t ω) ∂P ≤ lyapunov μ hc 0 * Real.exp (K * t) := by
   classical
-
   -- Define the Lyapunov observable along the actual cutoff process.
   let F : Param n → ℝ := lyapunov μ hc
   let g : Param n → ℝ := fun q => γ q ^ 2 * generator μ hc F q
@@ -81,7 +181,6 @@ theorem IsEldanCutoff.integral_lyapunov_le (hiso : KLS.Isotropic μ) (hγ : IsCu
   have hgb : ∀ᵐ ω ∂P, ∀ s : ℝ, 0 ≤ s → |g (p s ω)| ≤ B := by
     filter_upwards [] with ω s hs
     simpa only [Real.norm_eq_abs] using hB (p s ω)
-
   -- Apply the cutoff Dynkin identity.
   have hdyn (s : ℝ) (hs : 0 ≤ s) :
       Integrable (fun ω => F (p s ω)) P ∧
@@ -197,71 +296,8 @@ theorem IsEldanCutoff.integral_lyapunov_le (hiso : KLS.Isotropic μ) (hγ : IsCu
       integral_integral_swap (hprodF u hu)
   have hmono (u : ℝ) (hu : 0 ≤ u) :
       ∫ ω, ∫ s in Set.Ioc (0 : ℝ) u, g (p s ω) ∂volume ∂P ≤
-        K * ∫ ω, ∫ s in Set.Ioc (0 : ℝ) u, F (p s ω) ∂volume ∂P := by
-    -- Use positivity and the generator bound in the scalar integral inequality.
-    have hQ := h.ae_Q_posSemidef hiso hγ
-    have hle :
-        ∀ᵐ ω ∂P, ∫ s in Set.Ioc (0 : ℝ) u, g (p s ω) ≤
-          K * ∫ s in Set.Ioc (0 : ℝ) u, F (p s ω) := by
-      filter_upwards [hQ] with ω hω
-      have hset :
-          ∫ s in Set.Ioc (0 : ℝ) u, g (p s ω) ≤
-            ∫ s in Set.Ioc (0 : ℝ) u, K * F (p s ω) := by
-        apply setIntegral_mono_on
-        · exact (hgc.comp (h.continuous ω)).integrableOn_Ioc
-        · exact
-            (continuous_const.mul
-              (hF.continuous.comp (h.continuous ω))).integrableOn_Ioc
-        · exact measurableSet_Ioc
-        · intro s hs
-          have hq := hω s hs.1.le
-          have hgen' :
-              generator μ hc F (p s ω) ≤ K * F (p s ω) := by
-            simpa only [F] using hK (p s ω) hq.1 hq.2
-          have hγ0 : 0 ≤ γ (p s ω) :=
-            (hγ.mem_Icc (p s ω)).1
-          have hγ1 : γ (p s ω) ≤ 1 :=
-            (hγ.mem_Icc (p s ω)).2
-          have hγsq : γ (p s ω) ^ 2 ≤ 1 := by
-            nlinarith [mul_nonneg hγ0 (sub_nonneg.mpr hγ1)]
-          by_cases hg : 0 ≤ generator μ hc F (p s ω)
-          · dsimp [g]
-            calc
-              γ (p s ω) ^ 2 * generator μ hc F (p s ω) ≤
-                  generator μ hc F (p s ω) := by
-                nlinarith [mul_le_mul_of_nonneg_right hγsq hg]
-              _ ≤ K * F (p s ω) := hgen'
-          · have hleft :
-                g (p s ω) ≤ 0 := by
-              dsimp [g]
-              exact
-                mul_nonpos_of_nonneg_of_nonpos (sq_nonneg _)
-                  (le_of_not_ge hg)
-            have hright : 0 ≤ K * F (p s ω) := by
-              exact
-                mul_nonneg hK0
-                  (le_trans (by norm_num) (one_le_lyapunov μ hc _))
-            exact hleft.trans hright
-      rw [integral_const_mul] at hset
-      exact hset
-    have hgi :=
-      h.integrable_integral_of_ae_bound hgc hgb hu
-    have hFi :
-        Integrable
-          (fun ω => ∫ s in Set.Ioc (0 : ℝ) u, F (p s ω))
-          P := by
-      simpa using (hprodF u hu).integral_prod_left
-    have hKFi :
-        Integrable
-          (fun ω => K * ∫ s in Set.Ioc (0 : ℝ) u, F (p s ω))
-          P :=
-      hFi.const_mul K
-    calc
-      ∫ ω, ∫ s in Set.Ioc (0 : ℝ) u, g (p s ω) ∂volume ∂P ≤
-          ∫ ω, K * ∫ s in Set.Ioc (0 : ℝ) u, F (p s ω) ∂volume ∂P :=
-        integral_mono_ae hgi hKFi hle
-      _ = K * ∫ ω, ∫ s in Set.Ioc (0 : ℝ) u, F (p s ω) ∂volume ∂P := by
-        rw [integral_const_mul]
+        K * ∫ ω, ∫ s in Set.Ioc (0 : ℝ) u, F (p s ω) ∂volume ∂P :=
+    integral_cutoff_lyapunov_generator_le hiso hγ h hK0 hK hF hgc B hgb hprodF u hu
   have hineq : ∀ s ∈ Set.Icc (0 : ℝ) t,
       φ s ≤ F 0 + K * ∫ r in Set.Ioc (0 : ℝ) s, φ r := by
     intro s hs

@@ -420,7 +420,8 @@ theorem integral_mul_fderiv_eq_zero_of_closedWeightedOperator_eq_zero (hν : Log
   ] with x _
   simp
 
-/-- **The kernel of the closed unit gradient consists of constants**: if `Tbar h = 0`, then `h` is the
+/-- **The kernel of the closed unit gradient consists of constants**: if `Tbar h = 0`, then `h` is
+the
 `L²(ν)` constant equal to its mean. -/
 theorem eq_const_mean_of_closedWeightedOperator_eq_zero (hν : LogConcave ν)
     (hi : (interior (ν : Measure V).support).Nonempty) (hνU : (ν : Measure V) = m.tilted (-U))

@@ -148,9 +148,9 @@ private theorem bochner_temperate_generator_zero (m : Measure E) [m.IsAddHaarMea
     (hV.1.of_le (WithTop.coe_le_coe.mpr le_top))
     (fun x => by simpa only [norm_gradient_eq_norm_iteratedFDeriv_one] using hVb x)
     hexp (hg.1.of_le (WithTop.coe_le_coe.mpr le_top))
-  intro x
-  exact ⟨by simpa only [norm_iteratedFDeriv_zero, Real.norm_eq_abs] using hb 0 (by omega) x,
-    hb 1 (by omega) x, hb 2 le_rfl x⟩
+  · intro x
+    exact ⟨by simpa only [norm_iteratedFDeriv_zero, Real.norm_eq_abs] using hb 0 (by omega) x,
+      hb 1 (by omega) x, hb 2 le_rfl x⟩
 
 /-- `∫ Γ₂(u) dμ = ∫ (ℒu)² dμ` for `u` and `V` of temperate growth. -/
 theorem integral_gammaTwo_eq_of_hasTemperateGrowth {V f : E → ℝ} (hV : V.HasTemperateGrowth)

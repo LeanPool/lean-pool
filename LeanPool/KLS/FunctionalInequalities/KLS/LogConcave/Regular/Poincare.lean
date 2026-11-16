@@ -51,7 +51,8 @@ private theorem covariance_constant_eq_localSlope {V : E → ℝ} {a b : ℝ}
 
 private theorem localSlope_le_covariance_norm_of_covariance_constant {V : E → ℝ} {a b : ℝ}
     (hV : KLS.RegularPotential V a b) {K : NNReal}
-    (hK : Poincare.L2Energy.optimalConstant hV.law (Energy.CovarianceGradient.relaxation hV.law) ≤ K) :
+    (hK : Poincare.L2Energy.optimalConstant hV.law (Energy.CovarianceGradient.relaxation hV.law) ≤
+      K) :
     Poincare.LocalSlope.Intrinsic.optimalConstant hV.law ≤
       (K : ENNReal) * ENNReal.ofReal ‖Covariance.operator (hV.law : Measure E)‖ := by
   have hlit : Poincare.LocalSlope.Intrinsic.optimalConstant hV.law =
@@ -84,7 +85,8 @@ theorem localSlope_le_covariance_norm {K : NNReal}
     (hBound :
       ∀ {U : E → ℝ} {α β : ℝ} (hU : KLS.RegularPotential U α β),
         0 < β →
-          KLS.Isotropic hU.law → Poincare.LocalSlope.Intrinsic.optimalConstant hU.law ≤ (K : ENNReal))
+          KLS.Isotropic hU.law → Poincare.LocalSlope.Intrinsic.optimalConstant hU.law ≤
+            (K : ENNReal))
     {V : E → ℝ} {a b : ℝ} (hV : KLS.RegularPotential V a b) :
     Poincare.LocalSlope.Intrinsic.optimalConstant hV.law ≤
       (K : ENNReal) * ENNReal.ofReal ‖Covariance.operator (hV.law : Measure E)‖ := by
@@ -114,7 +116,8 @@ theorem localSlope_le_covariance_envelope {K : NNReal}
     (hBound :
       ∀ {U : E → ℝ} {α β : ℝ} (hU : KLS.RegularPotential U α β),
         0 < β →
-          KLS.Isotropic hU.law → Poincare.LocalSlope.Intrinsic.optimalConstant hU.law ≤ (K : ENNReal))
+          KLS.Isotropic hU.law → Poincare.LocalSlope.Intrinsic.optimalConstant hU.law ≤
+            (K : ENNReal))
     {V : E → ℝ} {a b : ℝ} (hV : KLS.RegularPotential V a b) :
     Poincare.LocalSlope.Intrinsic.optimalConstant hV.law ≤
       ENNReal.ofReal

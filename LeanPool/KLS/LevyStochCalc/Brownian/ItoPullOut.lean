@@ -86,7 +86,7 @@ theorem stepIocMul_eval {a b : ℝ} (ha : 0 < a) (hab : a < b) {V : Ω → ℝ}
   · rw [Set.indicator_of_mem (Set.mem_Ioc.mpr h)]
     simp [h]
   · rw [Set.indicator_of_notMem fun hmem => h (Set.mem_Ioc.mp hmem)]
-    show (if (0 : ℝ) < s ∧ s ≤ a then (0 : ℝ) else 0)
+    change (if (0 : ℝ) < s ∧ s ≤ a then (0 : ℝ) else 0)
       + (if a < s ∧ s ≤ b then V ω else 0) = V ω * 0
     simp only [ite_self, zero_add]
     rw [ite_eq_right h]
@@ -105,7 +105,7 @@ theorem stepIocMul₀_eval {b : ℝ} (hb : 0 < b) {V : Ω → ℝ}
   · rw [Set.indicator_of_mem (Set.mem_Ioc.mpr h)]
     simp [h]
   · rw [Set.indicator_of_notMem fun hmem => h (Set.mem_Ioc.mp hmem)]
-    show (if (0 : ℝ) < s ∧ s ≤ b then V ω else 0) = V ω * 0
+    change (if (0 : ℝ) < s ∧ s ≤ b then V ω else 0) = V ω * 0
     rw [ite_eq_right h]
     ring
 

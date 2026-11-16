@@ -323,6 +323,63 @@ lemma setIntegral_eval_sq_Icc_clamped {T : ℝ} (G : SimplePredictable Ω T) (ω
     ENNReal.toReal_ofReal
       (Finset.sum_nonneg (fun i _ => mul_nonneg (h_len_nn i) (sq_nonneg _)))]
 
+private theorem integrable_sq_simplePredictableCoefficient {P : MeasureTheory.Measure Ω}
+    [MeasureTheory.IsProbabilityMeasure P] {T : ℝ} (G : SimplePredictable Ω T) (i : Fin G.N) :
+    MeasureTheory.Integrable (fun ω => (G.ξ i ω) ^ 2) P := by
+  obtain ⟨M, hM⟩ := G.ξ_bounded i
+  refine MeasureTheory.Integrable.mono' (MeasureTheory.integrable_const (M ^ 2))
+    ((G.ξ_measurable i).pow_const 2).aestronglyMeasurable ?_
+  filter_upwards with ω
+  rw [Real.norm_eq_abs, abs_of_nonneg (sq_nonneg _)]
+  exact sq_le_sq' (neg_le_of_abs_le (hM ω)) (le_of_abs_le (hM ω))
+
+private theorem integrable_simpleCompensator {P : MeasureTheory.Measure Ω}
+    [MeasureTheory.IsProbabilityMeasure P] {T u : ℝ} (G : SimplePredictable Ω T) :
+    MeasureTheory.Integrable
+      (fun ω => ∫ v in Set.Icc (0 : ℝ) u, (G.eval v ω) ^ 2 ∂volume) P := by
+  rcases le_or_gt 0 u with _ | hu
+  · have heq : (fun ω => ∫ v in Set.Icc (0 : ℝ) u, (G.eval v ω) ^ 2 ∂volume)
+        = fun ω => ∑ i : Fin G.N,
+            (min (G.partition i.succ) u - min (G.partition i.castSucc) u) * (G.ξ i ω) ^ 2 :=
+      funext (fun ω => setIntegral_eval_sq_Icc_clamped G ω)
+    rw [heq]
+    exact MeasureTheory.integrable_finsetSum _
+      (fun i _ => (integrable_sq_simplePredictableCoefficient G i).const_mul _)
+  · have heq : (fun ω => ∫ v in Set.Icc (0 : ℝ) u, (G.eval v ω) ^ 2 ∂volume)
+        = fun _ => (0 : ℝ) := by
+      funext ω; rw [Set.Icc_eq_empty (not_le.mpr hu)]; simp
+    rw [heq]; exact MeasureTheory.integrable_const 0
+
+private theorem stronglyMeasurable_simpleCompensator {T u : ℝ}
+    (ℱ : Filtration ℝ ‹MeasurableSpace Ω›) (G : SimplePredictable Ω T)
+    (h_adapt : ∀ i : Fin G.N, @MeasureTheory.StronglyMeasurable Ω ℝ _
+      (ℱ (G.partition i.castSucc)) (G.ξ i)) :
+    @MeasureTheory.StronglyMeasurable Ω ℝ _ (ℱ.seq u)
+      (fun ω => ∫ v in Set.Icc (0 : ℝ) u, (G.eval v ω) ^ 2 ∂volume) := by
+  rcases le_or_gt 0 u with _ | hu
+  · have heq : (fun ω => ∫ v in Set.Icc (0 : ℝ) u, (G.eval v ω) ^ 2 ∂volume)
+        = fun ω => ∑ i : Fin G.N,
+            (min (G.partition i.succ) u - min (G.partition i.castSucc) u) * (G.ξ i ω) ^ 2 :=
+      funext (fun ω => setIntegral_eval_sq_Icc_clamped G ω)
+    rw [heq]
+    refine Finset.stronglyMeasurable_fun_sum _ (fun i _ => ?_)
+    by_cases hc : G.partition i.castSucc < u
+    · have hle : ℱ.seq (G.partition i.castSucc) ≤ ℱ.seq u := ℱ.mono (le_of_lt hc)
+      have hξ2 : @MeasureTheory.StronglyMeasurable Ω ℝ _ (ℱ.seq u) (fun ω => (G.ξ i ω) ^ 2) := by
+        simpa [pow_two, Pi.mul_def] using ((h_adapt i).mono hle).mul ((h_adapt i).mono hle)
+      exact hξ2.const_mul _
+    · push Not at hc
+      have hcoef : min (G.partition i.succ) u - min (G.partition i.castSucc) u = 0 := by
+        rw [min_eq_right hc, min_eq_right
+          (le_trans hc (le_of_lt (G.partition_strictMono Fin.castSucc_lt_succ)))]; ring
+      rw [show (fun ω => (min (G.partition i.succ) u - min (G.partition i.castSucc) u)
+            * (G.ξ i ω) ^ 2) = fun _ => (0 : ℝ) from by funext ω; rw [hcoef, zero_mul]]
+      exact stronglyMeasurable_const
+  · have heq : (fun ω => ∫ v in Set.Icc (0 : ℝ) u, (G.eval v ω) ^ 2 ∂volume)
+        = fun _ => (0 : ℝ) := by
+      funext ω; rw [Set.Icc_eq_empty (not_le.mpr hu)]; simp
+    rw [heq]; exact stronglyMeasurable_const
+
 /-- **Simple-level quadratic-variation martingale.** For a simple integrand `G`
 (horizon `T > 0`) adapted to a filtration `ℱ` for which `W` is a Brownian
 motion, the compensated square
@@ -367,56 +424,8 @@ lemma martingale_simpleIntegral_sq_sub_compensator
         rw [heq]
         exact simpleIntegral_memLp_intermediate_brownian W ℱ hℱ hT G h_adapt (le_of_lt hT)
           (le_refl T)
-  -- `ξᵢ²` integrable.
-  have hξ2int : ∀ i : Fin G.N, MeasureTheory.Integrable (fun ω => (G.ξ i ω) ^ 2) P := fun i => by
-    obtain ⟨M, hM⟩ := G.ξ_bounded i
-    refine MeasureTheory.Integrable.mono' (MeasureTheory.integrable_const (M ^ 2))
-      ((G.ξ_measurable i).pow_const 2).aestronglyMeasurable ?_
-    filter_upwards with ω
-    rw [Real.norm_eq_abs, abs_of_nonneg (sq_nonneg _)]
-    exact sq_le_sq' (neg_le_of_abs_le (hM ω)) (le_of_abs_le (hM ω))
-  -- The compensator `A_u = ∫₀ᵘ G²` is integrable …
-  have hAint : ∀ u, MeasureTheory.Integrable
-      (fun ω => ∫ v in Set.Icc (0 : ℝ) u, (G.eval v ω) ^ 2 ∂volume) P := by
-    intro u
-    rcases le_or_gt 0 u with _ | hu
-    · have heq : (fun ω => ∫ v in Set.Icc (0 : ℝ) u, (G.eval v ω) ^ 2 ∂volume)
-          = fun ω => ∑ i : Fin G.N,
-              (min (G.partition i.succ) u - min (G.partition i.castSucc) u) * (G.ξ i ω) ^ 2 :=
-        funext (fun ω => setIntegral_eval_sq_Icc_clamped G ω)
-      rw [heq]
-      exact MeasureTheory.integrable_finsetSum _ (fun i _ => (hξ2int i).const_mul _)
-    · have heq : (fun ω => ∫ v in Set.Icc (0 : ℝ) u, (G.eval v ω) ^ 2 ∂volume)
-          = fun _ => (0 : ℝ) := by
-        funext ω; rw [Set.Icc_eq_empty (not_le.mpr hu)]; simp
-      rw [heq]; exact MeasureTheory.integrable_const 0
-  -- … and `ℱ_u`-adapted.
-  have hA_adapt : ∀ u, @MeasureTheory.StronglyMeasurable Ω ℝ _ (ℱ.seq u)
-      (fun ω => ∫ v in Set.Icc (0 : ℝ) u, (G.eval v ω) ^ 2 ∂volume) := by
-    intro u
-    rcases le_or_gt 0 u with _ | hu
-    · have heq : (fun ω => ∫ v in Set.Icc (0 : ℝ) u, (G.eval v ω) ^ 2 ∂volume)
-          = fun ω => ∑ i : Fin G.N,
-              (min (G.partition i.succ) u - min (G.partition i.castSucc) u) * (G.ξ i ω) ^ 2 :=
-        funext (fun ω => setIntegral_eval_sq_Icc_clamped G ω)
-      rw [heq]
-      refine Finset.stronglyMeasurable_fun_sum _ (fun i _ => ?_)
-      by_cases hc : G.partition i.castSucc < u
-      · have hle : ℱ.seq (G.partition i.castSucc) ≤ ℱ.seq u := ℱ.mono (le_of_lt hc)
-        have hξ2 : @MeasureTheory.StronglyMeasurable Ω ℝ _ (ℱ.seq u) (fun ω => (G.ξ i ω) ^ 2) := by
-          simpa [pow_two, Pi.mul_def] using ((h_adapt i).mono hle).mul ((h_adapt i).mono hle)
-        exact hξ2.const_mul _
-      · push Not at hc
-        have hcoef : min (G.partition i.succ) u - min (G.partition i.castSucc) u = 0 := by
-          rw [min_eq_right hc, min_eq_right
-            (le_trans hc (le_of_lt (G.partition_strictMono Fin.castSucc_lt_succ)))]; ring
-        rw [show (fun ω => (min (G.partition i.succ) u - min (G.partition i.castSucc) u)
-              * (G.ξ i ω) ^ 2) = fun _ => (0 : ℝ) from by funext ω; rw [hcoef, zero_mul]]
-        exact stronglyMeasurable_const
-    · have heq : (fun ω => ∫ v in Set.Icc (0 : ℝ) u, (G.eval v ω) ^ 2 ∂volume)
-          = fun _ => (0 : ℝ) := by
-        funext ω; rw [Set.Icc_eq_empty (not_le.mpr hu)]; simp
-      rw [heq]; exact stronglyMeasurable_const
+  have hAint (u : ℝ) := integrable_simpleCompensator (P := P) (u := u) G
+  have hA_adapt (u : ℝ) := stronglyMeasurable_simpleCompensator (u := u) ℱ G h_adapt
   -- the per-point clamp identity `(Δᵗ − Δˢ) = max s (min p t) − …`.
   have hclamp : ∀ (s t : ℝ), s ≤ t → ∀ p : ℝ,
       max s (min p t) = s + min p t - min p s := by
@@ -524,7 +533,8 @@ lemma martingale_simpleIntegral_sq_sub_compensator
                   * (Set.indicator B (fun _ => (1 : ℝ)) ω * (G.ξ i ω) ^ 2) from by
           funext ω; rw [Finset.mul_sum]; exact Finset.sum_congr rfl (fun i _ => by ring)]
       rw [MeasureTheory.integral_finsetSum _ (fun i _ =>
-        (((hξ2int i).bdd_mul (c := 1) hgmeas.aestronglyMeasurable
+        (((integrable_sq_simplePredictableCoefficient (P := P) G i).bdd_mul (c := 1)
+          hgmeas.aestronglyMeasurable
           (Filter.Eventually.of_forall
             (fun ω => (Real.norm_eq_abs _).le.trans (hg_bdd ω)))).const_mul _))]
       exact Finset.sum_congr rfl (fun i _ => by rw [MeasureTheory.integral_const_mul])

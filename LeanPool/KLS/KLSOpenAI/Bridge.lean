@@ -149,7 +149,8 @@ theorem smoothTest_holds_of_localSlope_le_covariance (hρ : IsLogConcaveDensity 
   let μ : ProbabilityMeasure (Space n) := ⟨densityMeasure ρ, hρ.probability⟩
   have hcov : FunctionalInequalities.Covariance.operator (densityMeasure ρ) =
       ContinuousLinearMap.id ℝ (Space n) := (isotropic hρ hi).covariance_identity
-  have hlit : FunctionalInequalities.Poincare.LocalSlope.Intrinsic.optimalConstant μ ≤ (C : ENNReal) := by
+  have hlit : FunctionalInequalities.Poincare.LocalSlope.Intrinsic.optimalConstant μ ≤
+    (C : ENNReal) := by
     refine hC.trans (mul_le_of_le_one_right zero_le ?_)
     rw [hcov]
     exact ENNReal.ofReal_le_one.mpr ContinuousLinearMap.norm_id_le

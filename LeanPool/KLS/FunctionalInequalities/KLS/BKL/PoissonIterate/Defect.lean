@@ -187,7 +187,8 @@ include hνU hUt hexp hC in
 `α = scale h`: `‖∇²h‖² = ‖L h'‖² + ‖∇²h - α ∇h'‖²`. -/
 theorem normSq_gradField_gradField_step {k : ℕ} (h : Field ν k)
     (hh : ∀ I, h I ∈ (adjointComp Tbar).domain) :
-    normSq (gradField Tbar (gradField Tbar h)) = normSq (genField Tbar (step Tbar h)) + defect Tbar h := by
+    normSq (gradField Tbar (gradField Tbar h)) = normSq (genField Tbar (step Tbar h))
+      + defect Tbar h := by
   have hU : ContDiff ℝ 2 U := hUt.1.of_le (WithTop.coe_le_coe.mpr le_top)
   set α := scale Tbar h
   have hu : ∀ J, gradField Tbar h J ∈ (Tbar).domain := fun J =>
@@ -222,7 +223,8 @@ include hνU hUt hexp in
 private theorem sum_norm_sq_weakGrad_partialDeriv_add_le {a : ℝ}
     (ha : ∀ x v, a * ‖v‖ ^ 2 ≤ bilinearIteratedFDerivTwo ℝ U x v v)
     {u : Lp ℝ 2 (ν : Measure V)} (hu : u ∈ (adjointComp Tbar).domain) :
-    ∑ j, ‖weakGrad Tbar (partialDeriv Tbar j u)‖ ^ 2 + a * ‖weakGrad Tbar u‖ ^ 2 ≤ ‖gen Tbar u‖ ^ 2 := by
+    ∑ j, ‖weakGrad Tbar (partialDeriv Tbar j u)‖ ^ 2 + a * ‖weakGrad Tbar u‖ ^ 2 ≤
+      ‖gen Tbar u‖ ^ 2 := by
   have hD : ∀ l, (innerSL ℝ (stdOrthonormalBasis ℝ V l)).compLp (Tbar ⟨u, hu.2⟩) ∈ (Tbar).domain :=
     compLp_innerSL_mem_closedWeightedOperator_domain m hν hi hνU hUt hexp ⟨u, hu⟩
   have h := sum_norm_sq_closedWeightedOperator_add_le m hν hi hνU hUt hexp ha ⟨u, hu⟩ hD
@@ -238,7 +240,8 @@ include hνU hUt hexp hC in
 theorem normSq_genField_step_add_defect_le {a : ℝ}
     (ha : ∀ x v, a * ‖v‖ ^ 2 ≤ bilinearIteratedFDerivTwo ℝ U x v v) {k : ℕ} (h : Field ν k)
     (hh : ∀ I, h I ∈ (adjointComp Tbar).domain) :
-    normSq (genField Tbar (step Tbar h)) + defect Tbar h + a * energy Tbar h ≤ normSq (genField Tbar h) := by
+    normSq (genField Tbar (step Tbar h)) + defect Tbar h + a * energy Tbar h ≤ normSq
+      (genField Tbar h) := by
   rw [← normSq_gradField_gradField_step m hν hi hνU hUt hexp hC h hh]
   have hH : normSq (gradField Tbar (gradField Tbar h)) =
       ∑ I, ∑ j, ‖weakGrad Tbar (partialDeriv Tbar j (h I))‖ ^ 2 := by
@@ -255,7 +258,8 @@ positions: `∂_{J₀} ∂_{J₁} h_I = ∂_{J₁} ∂_{J₀} h_I`. -/
 theorem gradField_gradField_comp_swap {k : ℕ} (h : Field ν k)
     (hh : ∀ I, h I ∈ (adjointComp Tbar).domain)
     (J : Fin (k + 2) → Fin (Module.finrank ℝ V)) :
-    gradField Tbar (gradField Tbar h) (J ∘ Equiv.swap 0 1) = gradField Tbar (gradField Tbar h) J := by
+    gradField Tbar (gradField Tbar h) (J ∘ Equiv.swap 0 1) = gradField Tbar
+      (gradField Tbar h) J := by
   have ht : Fin.tail (Fin.tail (J ∘ Equiv.swap 0 1)) = Fin.tail (Fin.tail J) := by
     funext i
     simp only [Fin.tail, Function.comp_apply]
@@ -274,7 +278,8 @@ theorem gradField_gradField_comp_swap {k : ℕ} (h : Field ν k)
 private theorem normSq_grad0_step_sub_le {k : ℕ} (h : Field ν k) :
     normSq (grad0 Tbar (step Tbar h) -
         fun J => (scale Tbar h)⁻¹ • L2.center ν (gradField Tbar (gradField Tbar h) J)) ≤
-      normSq (gradField Tbar (step Tbar h) - (scale Tbar h)⁻¹ • gradField Tbar (gradField Tbar h)) := by
+      normSq (gradField Tbar (step Tbar h) - (scale Tbar h)⁻¹ • gradField Tbar
+        (gradField Tbar h)) := by
   unfold normSq
   refine Finset.sum_le_sum fun J _ => ?_
   simp only [Pi.sub_apply, Pi.smul_apply, grad0]
@@ -296,7 +301,8 @@ theorem exists_symm_normSq_grad0_step_sub_le (hCpos : 0 < C) {k : ℕ} (h : Fiel
   have hdef : 0 ≤ defect Tbar h := normSq_nonneg _
   rcases (scale_nonneg (Tbar) h).eq_or_lt with h0 | hpos
   · rw [← h0, inv_zero, zero_smul, sub_zero,
-      show normSq (gradField Tbar (step Tbar h)) = energy Tbar (step Tbar h) from rfl, step, energy_smul,
+      show normSq (gradField Tbar (step Tbar h)) = energy Tbar (step Tbar h) from rfl, step,
+        energy_smul,
       ← h0]
     simp only [ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow, zero_mul]
     exact mul_nonneg C.2 hdef
@@ -341,7 +347,8 @@ theorem tendsto_energy_iter_zero {a : ℝ} (ha₀ : 0 < a)
     {f : Lp ℝ 2 (ν : Measure V)} (hf : f ∈ (adjointComp Tbar).domain) :
     Tendsto (fun k => energy Tbar (iter Tbar f k)) atTop (𝓝 0) :=
   (Analysis.BakryEmery.summable_and_tendsto_zero_of_energy
-    (L := fun k => normSq (genField Tbar (iter Tbar f k))) (χ := fun k => defect Tbar (iter Tbar f k))
+    (L := fun k => normSq (genField Tbar (iter Tbar f k))) (χ := fun k => defect Tbar
+      (iter Tbar f k))
     (v := fun k => energy Tbar (iter Tbar f k)) ha₀ (fun _ => normSq_nonneg _)
     (fun _ => normSq_nonneg _) (fun _ => energy_nonneg _ _)
     (normSq_genField_iter_succ_add_defect_le m hν hi hνU hUt hexp hC ha hf)).2.2
@@ -354,7 +361,8 @@ theorem sum_defect_iter_le {a : ℝ} (ha₀ : 0 ≤ a)
     {f : Lp ℝ 2 (ν : Measure V)} (hf : f ∈ (adjointComp Tbar).domain) (N : ℕ) :
     ∑ k ∈ Finset.range N, defect Tbar (iter Tbar f k) ≤ normSq (genField Tbar (iter Tbar f 0)) := by
   have h := Analysis.BakryEmery.telescope_energy
-    (L := fun k => normSq (genField Tbar (iter Tbar f k))) (χ := fun k => defect Tbar (iter Tbar f k))
+    (L := fun k => normSq (genField Tbar (iter Tbar f k))) (χ := fun k => defect Tbar
+      (iter Tbar f k))
     (v := fun k => energy Tbar (iter Tbar f k))
     (normSq_genField_iter_succ_add_defect_le m hν hi hνU hUt hexp hC ha hf) N
   have hv : 0 ≤ a * ∑ k ∈ Finset.range N, energy Tbar (iter Tbar f k) :=

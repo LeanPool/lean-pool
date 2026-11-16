@@ -56,7 +56,8 @@ section Core
 variable {ν : ProbabilityMeasure V} (m : Measure V) [m.IsAddHaarMeasure] (B : V →L[ℝ] V)
   (hν : LogConcave ν) (hi : (interior (ν : Measure V).support).Nonempty)
 
-/-- **Smooth compactly supported classes are a graph-norm core of `Tbar`.** Every `x ∈ D(Tbar)` is the
+/-- **Smooth compactly supported classes are a graph-norm core of `Tbar`.** Every `x ∈ D(Tbar)` is
+the
 `L²` limit of classes `[gₙ]` of smooth compactly supported functions whose weighted gradients
 `[B ∇gₙ]` converge in `L²` to `Tbar x`. This is the sequential form of
 `closure_domRestrict_eq_of_smoothCore_le`; it controls the function and its **first** derivative
@@ -131,7 +132,8 @@ theorem memLp_mul_of_contDiff_hasCompactSupport {φ : V → ℝ} (hφ : ContDiff
     L2.memLp_bddSmul (H := ℝ) hφ.continuous.aestronglyMeasurable hb u
 
 /-- **Leibniz rule for the closed weighted gradient against a smooth compactly supported
-multiplier.** For `φ ∈ C_c^∞(V)` and **every** `x ∈ D(Tbar)` the class of `φ x` lies in `D(Tbar)`, and
+multiplier.** For `φ ∈ C_c^∞(V)` and **every** `x ∈ D(Tbar)` the class of `φ x` lies in `D(Tbar)`,
+and
 
 `Tbar (φ x) = φ (Tbar x) + x (B ∇φ)`  almost everywhere.
 

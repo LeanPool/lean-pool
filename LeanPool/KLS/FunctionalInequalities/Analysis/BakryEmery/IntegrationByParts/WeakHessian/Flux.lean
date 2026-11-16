@@ -290,6 +290,13 @@ open MeasureTheory
 namespace FunctionalInequalities.Analysis
 
 /-- Finite integral balance of paired integrable arrays; one-use support of the flux identity. -/
+private theorem integral_finsetSum_finsetSum {Ω : Type*} [MeasurableSpace Ω]
+    {ι κ : Type*} [Fintype ι] [Fintype κ] {μ : Measure Ω} (f : ι → κ → Ω → ℝ)
+    (hf : ∀ a b, Integrable (f a b) μ) :
+    (∫ x, ∑ a, ∑ b, f a b x ∂μ) = ∑ a, ∑ b, ∫ x, f a b x ∂μ := by
+  rw [integral_finsetSum _ (fun a _ => integrable_finsetSum _ fun b _ => hf a b)]
+  exact Finset.sum_congr rfl fun a _ => integral_finsetSum _ fun b _ => hf a b
+
 private theorem integral_array_pair_balance {n : ℕ}
     (A B C D : Fin n → Fin n → EuclideanSpace ℝ (Fin n) → ℝ)
     (F : EuclideanSpace ℝ (Fin n) → ℝ)
@@ -309,140 +316,14 @@ private theorem integral_array_pair_balance {n : ℕ}
     -(∫ x, F x - (∑ a : Fin n, ∑ b : Fin n, C a b x) +
       ∑ a : Fin n, ∑ b : Fin n, A a b x
       ∂(volume : Measure (EuclideanSpace ℝ (Fin n)))) := by
-  -- Identify the pointwise array contractions.
-  have hA_inner :
-      ∀ a : Fin n,
-        Integrable (fun x => ∑ b : Fin n, A a b x)
-          (volume : Measure (EuclideanSpace ℝ (Fin n))) := by
-    intro a
-    apply integrable_finsetSum (μ := (volume : Measure (EuclideanSpace ℝ (Fin n))))
-      Finset.univ
-    intro b _
-    exact hA a b
-  have hB_inner :
-      ∀ a : Fin n,
-        Integrable (fun x => ∑ b : Fin n, B a b x)
-          (volume : Measure (EuclideanSpace ℝ (Fin n))) := by
-    intro a
-    apply integrable_finsetSum (μ := (volume : Measure (EuclideanSpace ℝ (Fin n))))
-      Finset.univ
-    intro b _
-    exact hB a b
-  have hC_inner :
-      ∀ a : Fin n,
-        Integrable (fun x => ∑ b : Fin n, C a b x)
-          (volume : Measure (EuclideanSpace ℝ (Fin n))) := by
-    intro a
-    apply integrable_finsetSum (μ := (volume : Measure (EuclideanSpace ℝ (Fin n))))
-      Finset.univ
-    intro b _
-    exact hC a b
-  have hD_inner :
-      ∀ a : Fin n,
-        Integrable (fun x => ∑ b : Fin n, D a b x)
-          (volume : Measure (EuclideanSpace ℝ (Fin n))) := by
-    intro a
-    apply integrable_finsetSum (μ := (volume : Measure (EuclideanSpace ℝ (Fin n))))
-      Finset.univ
-    intro b _
-    exact hD a b
-  have hA_total :
-      Integrable (fun x => ∑ a : Fin n, ∑ b : Fin n, A a b x)
-        (volume : Measure (EuclideanSpace ℝ (Fin n))) := by
-    apply integrable_finsetSum (μ := (volume : Measure (EuclideanSpace ℝ (Fin n))))
-      Finset.univ
-    intro a _
-    exact hA_inner a
-  have hC_total :
-      Integrable (fun x => ∑ a : Fin n, ∑ b : Fin n, C a b x)
-        (volume : Measure (EuclideanSpace ℝ (Fin n))) := by
-    apply integrable_finsetSum (μ := (volume : Measure (EuclideanSpace ℝ (Fin n))))
-      Finset.univ
-    intro a _
-    exact hC_inner a
-
-  -- Integrate the four contractions using weak integration by parts.
-  have hIA :
-      (∫ x, ∑ a : Fin n, ∑ b : Fin n, A a b x
-        ∂(volume : Measure (EuclideanSpace ℝ (Fin n)))) =
-        ∑ a : Fin n, ∑ b : Fin n,
-          ∫ x, A a b x ∂(volume : Measure (EuclideanSpace ℝ (Fin n))) := by
-    calc
-      (∫ x, ∑ a : Fin n, ∑ b : Fin n, A a b x
-          ∂(volume : Measure (EuclideanSpace ℝ (Fin n)))) =
-          ∑ a : Fin n, ∫ x, ∑ b : Fin n, A a b x
-            ∂(volume : Measure (EuclideanSpace ℝ (Fin n))) := by
-        exact integral_finsetSum
-          (μ := (volume : Measure (EuclideanSpace ℝ (Fin n)))) Finset.univ
-          (fun a _ => hA_inner a)
-      _ = ∑ a : Fin n, ∑ b : Fin n,
-          ∫ x, A a b x ∂(volume : Measure (EuclideanSpace ℝ (Fin n))) := by
-        apply Finset.sum_congr rfl
-        intro a _
-        exact integral_finsetSum
-          (μ := (volume : Measure (EuclideanSpace ℝ (Fin n)))) Finset.univ
-          (fun b _ => hA a b)
-  have hIB :
-      (∫ x, ∑ a : Fin n, ∑ b : Fin n, B a b x
-        ∂(volume : Measure (EuclideanSpace ℝ (Fin n)))) =
-        ∑ a : Fin n, ∑ b : Fin n,
-          ∫ x, B a b x ∂(volume : Measure (EuclideanSpace ℝ (Fin n))) := by
-    calc
-      (∫ x, ∑ a : Fin n, ∑ b : Fin n, B a b x
-          ∂(volume : Measure (EuclideanSpace ℝ (Fin n)))) =
-          ∑ a : Fin n, ∫ x, ∑ b : Fin n, B a b x
-            ∂(volume : Measure (EuclideanSpace ℝ (Fin n))) := by
-        exact integral_finsetSum
-          (μ := (volume : Measure (EuclideanSpace ℝ (Fin n)))) Finset.univ
-          (fun a _ => hB_inner a)
-      _ = ∑ a : Fin n, ∑ b : Fin n,
-          ∫ x, B a b x ∂(volume : Measure (EuclideanSpace ℝ (Fin n))) := by
-        apply Finset.sum_congr rfl
-        intro a _
-        exact integral_finsetSum
-          (μ := (volume : Measure (EuclideanSpace ℝ (Fin n)))) Finset.univ
-          (fun b _ => hB a b)
-  have hIC :
-      (∫ x, ∑ a : Fin n, ∑ b : Fin n, C a b x
-        ∂(volume : Measure (EuclideanSpace ℝ (Fin n)))) =
-        ∑ a : Fin n, ∑ b : Fin n,
-          ∫ x, C a b x ∂(volume : Measure (EuclideanSpace ℝ (Fin n))) := by
-    calc
-      (∫ x, ∑ a : Fin n, ∑ b : Fin n, C a b x
-          ∂(volume : Measure (EuclideanSpace ℝ (Fin n)))) =
-          ∑ a : Fin n, ∫ x, ∑ b : Fin n, C a b x
-            ∂(volume : Measure (EuclideanSpace ℝ (Fin n))) := by
-        exact integral_finsetSum
-          (μ := (volume : Measure (EuclideanSpace ℝ (Fin n)))) Finset.univ
-          (fun a _ => hC_inner a)
-      _ = ∑ a : Fin n, ∑ b : Fin n,
-          ∫ x, C a b x ∂(volume : Measure (EuclideanSpace ℝ (Fin n))) := by
-        apply Finset.sum_congr rfl
-        intro a _
-        exact integral_finsetSum
-          (μ := (volume : Measure (EuclideanSpace ℝ (Fin n)))) Finset.univ
-          (fun b _ => hC a b)
-  have hID :
-      (∫ x, ∑ a : Fin n, ∑ b : Fin n, D a b x
-        ∂(volume : Measure (EuclideanSpace ℝ (Fin n)))) =
-        ∑ a : Fin n, ∑ b : Fin n,
-          ∫ x, D a b x ∂(volume : Measure (EuclideanSpace ℝ (Fin n))) := by
-    calc
-      (∫ x, ∑ a : Fin n, ∑ b : Fin n, D a b x
-          ∂(volume : Measure (EuclideanSpace ℝ (Fin n)))) =
-          ∑ a : Fin n, ∫ x, ∑ b : Fin n, D a b x
-            ∂(volume : Measure (EuclideanSpace ℝ (Fin n))) := by
-        exact integral_finsetSum
-          (μ := (volume : Measure (EuclideanSpace ℝ (Fin n)))) Finset.univ
-          (fun a _ => hD_inner a)
-      _ = ∑ a : Fin n, ∑ b : Fin n,
-          ∫ x, D a b x ∂(volume : Measure (EuclideanSpace ℝ (Fin n))) := by
-        apply Finset.sum_congr rfl
-        intro a _
-        exact integral_finsetSum
-          (μ := (volume : Measure (EuclideanSpace ℝ (Fin n)))) Finset.univ
-          (fun b _ => hD a b)
-
+  have hA_total := integrable_finsetSum Finset.univ
+    (fun a _ => integrable_finsetSum Finset.univ (fun b _ => hA a b))
+  have hC_total := integrable_finsetSum Finset.univ
+    (fun a _ => integrable_finsetSum Finset.univ (fun b _ => hC a b))
+  have hIA := integral_finsetSum_finsetSum A hA
+  have hIB := integral_finsetSum_finsetSum B hB
+  have hIC := integral_finsetSum_finsetSum C hC
+  have hID := integral_finsetSum_finsetSum D hD
   -- Combine the pair balance and identify its trace contribution.
   have hPairSum :
       (∑ a : Fin n, ∑ b : Fin n,

@@ -625,13 +625,14 @@ namespace FunctionalInequalities.Analysis
 bump `φ` with
 `φ.rOut ≤ r` and every `x ∈ S`, the mollified vector `((φ.normed ⋆ f k) x)ₖ` lies in `C`. -/
 theorem convolution_mem_of_ae_mem {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
-    [FiniteDimensional ℝ E] [MeasurableSpace E] [BorelSpace E] {ι : Type*} [Fintype ι]
+    [FiniteDimensional ℝ E] [MeasurableSpace E] [BorelSpace E] {ι : Type*} [Finite ι]
     {f : ι → E → ℝ} (hf : ∀ k, LocallyIntegrable (f k) (volume : Measure E)) {C : Set (ι → ℝ)}
     (hCc : Convex ℝ C) (hCcl : IsClosed C) {S : Set E} {r : ℝ}
     (hfC : ∀ᵐ x ∂((volume : Measure E).restrict (cthickening r S)), (fun k => f k x) ∈ C)
     (φ : ContDiffBump (0 : E)) (hφ : φ.rOut ≤ r) {x : E} (hx : x ∈ S) :
     (fun k => convolution (φ.normed volume) (f k) (ContinuousLinearMap.lsmul ℝ ℝ) volume x) ∈
       C := by
+  let _ : Fintype ι := Fintype.ofFinite ι
   let ρ : E → ℝ := fun y => φ.normed volume (x - y)
   let P : Measure E := volume.withDensity (fun y => ENNReal.ofReal (ρ y))
   have hρ_cont : Continuous ρ := by

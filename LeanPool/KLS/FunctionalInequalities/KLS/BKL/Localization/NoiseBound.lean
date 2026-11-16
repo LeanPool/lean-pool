@@ -14,9 +14,11 @@ public import LeanPool.KLS.FunctionalInequalities.KLS.BKL.Posterior.Covariance
 
 `cumulantEnergy_succ_eq` reindexes `E_{r+2}` (BKL arXiv:2610.05474v1, (90)); `conjugatedNoiseMatrix
 μ hc p i` has entries
-`κ₃(μ_p)(σ e_a, σ e_b, σ e_i)`, `σ = A(p)^{-1/2}` (BKL (85), `Htilde_i = P H_i P`), and the bound (79)
+`κ₃(μ_p)(σ e_a, σ e_b, σ e_i)`, `σ = A(p)^{-1/2}` (BKL (85), `Htilde_i = P H_i P`), and the bound
+(79)
 in conjugated form,
-`Σ_i |Htilde_i v|² ≤ 8|v|²`, follows from `CumulantBoundCompact 2 8` for symmetric positive semidefinite
+`Σ_i |Htilde_i v|² ≤ 8|v|²`, follows from `CumulantBoundCompact 2 8` for symmetric positive
+semidefinite
 `Q`.
 -/
 

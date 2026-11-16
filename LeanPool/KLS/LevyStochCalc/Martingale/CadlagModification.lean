@@ -4,7 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Christian Garry
 -/
 -- Lean Pool port: project-qualified imports and Lean Pool style.
--- Modified by kls-lean for synchronized BrownianMotion interfaces; see formalization/vendor/port.patch.
+-- Modified by kls-lean for synchronized BrownianMotion interfaces; see
+-- formalization/vendor/port.patch.
 
 -- Modified 2026-10-31 by the KLS formalization project: ported to the Lean module system
 -- (module header, public imports, exposed public section) for Lean/Mathlib v4.35.0, with

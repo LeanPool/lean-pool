@@ -41,6 +41,88 @@ namespace FunctionalInequalities.Analysis
 Letwin2607.24164v1 (2.6). These are scalar weak-calculus supports; they do not
 establish the moment-law evolution, energy comparison, Theorem2.5 or compact8. -/
 
+private theorem integral_weakDeriv_mul_fderiv_eq_swap
+    {n : ℕ}
+    {f : EuclideanSpace ℝ (Fin n) → ℝ}
+    {p : EuclideanSpace ℝ (Fin n) → ℝ}
+    {q : EuclideanSpace ℝ (Fin n) → ℝ}
+    {v : EuclideanSpace ℝ (Fin n)}
+    {w : EuclideanSpace ℝ (Fin n)}
+    (hp : HasWeakDerivAlong f p v)
+    (hq : HasWeakDerivAlong f q w) :
+    ∀ chi : EuclideanSpace ℝ (Fin n) → ℝ,
+      ContDiff ℝ ∞ chi → HasCompactSupport chi →
+        (∫ x, p x * fderiv ℝ chi x w
+            ∂(volume : Measure (EuclideanSpace ℝ (Fin n)))) =
+          ∫ x, q x * fderiv ℝ chi x v
+            ∂(volume : Measure (EuclideanSpace ℝ (Fin n))) := by
+  classical
+  intro chi hchi hchic
+  have hchi2 : ContDiff ℝ (2 : WithTop ℕ∞) chi :=
+    hchi.of_le (WithTop.coe_le_coe.mpr le_top)
+  have hfd : ContDiff ℝ 1 (fderiv ℝ chi) :=
+    hchi2.fderiv_right (by norm_num)
+  have hchi_v : ContDiff ℝ 1 (fun x => fderiv ℝ chi x v) :=
+    hfd.clm_apply
+      (contDiff_const : ContDiff ℝ 1
+        (fun _ : EuclideanSpace ℝ (Fin n) => v))
+  have hchi_w : ContDiff ℝ 1 (fun x => fderiv ℝ chi x w) :=
+    hfd.clm_apply
+      (contDiff_const : ContDiff ℝ 1
+        (fun _ : EuclideanSpace ℝ (Fin n) => w))
+  have hchi_vc : HasCompactSupport (fun x => fderiv ℝ chi x v) := by
+    change HasCompactSupport
+      ((fun L : EuclideanSpace ℝ (Fin n) →L[ℝ] ℝ => L v) ∘ fderiv ℝ chi)
+    exact (hchic.fderiv ℝ).comp_left (by simp)
+  have hchi_wc : HasCompactSupport (fun x => fderiv ℝ chi x w) := by
+    change HasCompactSupport
+      ((fun L : EuclideanSpace ℝ (Fin n) →L[ℝ] ℝ => L w) ∘ fderiv ℝ chi)
+    exact (hchic.fderiv ℝ).comp_left (by simp)
+  have hsymm (x : EuclideanSpace ℝ (Fin n)) :
+      fderiv ℝ (fun y => fderiv ℝ chi y v) x w =
+        fderiv ℝ (fun y => fderiv ℝ chi y w) x v := by
+    have hfdx : DifferentiableAt ℝ (fderiv ℝ chi) x :=
+      (hfd.differentiable (by simp)).differentiableAt
+    have hcv :
+        DifferentiableAt ℝ
+          (fun _ : EuclideanSpace ℝ (Fin n) => v) x :=
+      (differentiable_const v : Differentiable ℝ
+        (fun _ : EuclideanSpace ℝ (Fin n) => v)).differentiableAt
+    have hcw :
+        DifferentiableAt ℝ
+          (fun _ : EuclideanSpace ℝ (Fin n) => w) x :=
+      (differentiable_const w : Differentiable ℝ
+        (fun _ : EuclideanSpace ℝ (Fin n) => w)).differentiableAt
+    have hv := fderiv_clm_apply hfdx hcv
+    have hw := fderiv_clm_apply hfdx hcw
+    have hv' := congrArg
+      (fun L : EuclideanSpace ℝ (Fin n) →L[ℝ] ℝ => L w) hv
+    have hw' := congrArg
+      (fun L : EuclideanSpace ℝ (Fin n) →L[ℝ] ℝ => L v) hw
+    simp only [fderiv_fun_const, Pi.zero_apply, ContinuousLinearMap.comp_zero, zero_add,
+      ContinuousLinearMap.flip_apply] at hv' hw'
+    have hs :=
+      second_derivative_symmetric
+        (fun y => (hchi2.differentiable (by norm_num) y).hasFDerivAt)
+        hfdx.hasFDerivAt w v
+    calc
+      fderiv ℝ (fun y => fderiv ℝ chi y v) x w =
+          ((fderiv ℝ (fderiv ℝ chi) x) w) v := hv'
+      _ = ((fderiv ℝ (fderiv ℝ chi) x) v) w := hs
+      _ = fderiv ℝ (fun y => fderiv ℝ chi y w) x v := hw'.symm
+  -- Apply the two weak derivative identities to the smooth tests.
+  have ep := hp.2.2 (fun x => fderiv ℝ chi x w) hchi_w hchi_wc
+  have eq := hq.2.2 (fun x => fderiv ℝ chi x v) hchi_v hchi_vc
+  have hleft :
+      (∫ x, f x * fderiv ℝ (fun y => fderiv ℝ chi y w) x v
+          ∂(volume : Measure (EuclideanSpace ℝ (Fin n)))) =
+        ∫ x, f x * fderiv ℝ (fun y => fderiv ℝ chi y v) x w
+          ∂(volume : Measure (EuclideanSpace ℝ (Fin n))) := by
+    apply integral_congr_ae
+    exact Filter.Eventually.of_forall (fun x =>
+      congrArg (fun z : ℝ => f x * z) (hsymm x).symm)
+  linarith [ep, eq, hleft]
+
 /-- Compact rough H1 tests preserve the curl identity of two weak derivatives
 of the same scalar function. Supporting interface for Letwin2607.24164v1 (2.6). -/
 theorem integral_weakDeriv_mul_eq_swap {n : ℕ}
@@ -60,109 +142,35 @@ theorem integral_weakDeriv_mul_eq_swap {n : ℕ}
   rcases exists_contDiff_compact_weak_deriv_approximation
       hηv hηw hηc hac hbc ha2 hb2 with
     ⟨S, hS, _hηS, haS, hbS, θ, hθ, hconvv, hconvw⟩
-
-
   -- Check the localized L2 products used in the test identities.
   have hpS : MemLp (S.indicator p) 2
       (volume : Measure (EuclideanSpace ℝ (Fin n))) :=
     (memLp_indicator_iff_restrict hS.measurableSet.nullMeasurableSet).2 (hp2 S hS)
-
   have hqS : MemLp (S.indicator q) 2
       (volume : Measure (EuclideanSpace ℝ (Fin n))) :=
     (memLp_indicator_iff_restrict hS.measurableSet.nullMeasurableSet).2 (hq2 S hS)
-
   have hθvS (m : ℕ) :
       Function.support (fun x => fderiv ℝ (θ m) x v) ⊆ S :=
     (hθ m).2.2.2.1
-
   have hθwS (m : ℕ) :
       Function.support (fun x => fderiv ℝ (θ m) x w) ⊆ S :=
     (hθ m).2.2.2.2.1
-
   have hu_v (m : ℕ) :
       MemLp (fun x => fderiv ℝ (θ m) x v) 2
         (volume : Measure (EuclideanSpace ℝ (Fin n))) :=
     (hθ m).2.2.2.2.2.1
-
   have hu_w (m : ℕ) :
       MemLp (fun x => fderiv ℝ (θ m) x w) 2
         (volume : Measure (EuclideanSpace ℝ (Fin n))) :=
     (hθ m).2.2.2.2.2.2
-
   have hsmooth :
       ∀ chi : EuclideanSpace ℝ (Fin n) → ℝ,
         ContDiff ℝ ∞ chi → HasCompactSupport chi →
           (∫ x, p x * fderiv ℝ chi x w
               ∂(volume : Measure (EuclideanSpace ℝ (Fin n)))) =
             ∫ x, q x * fderiv ℝ chi x v
-              ∂(volume : Measure (EuclideanSpace ℝ (Fin n))) := by
-    intro chi hchi hchic
-    have hchi2 : ContDiff ℝ (2 : WithTop ℕ∞) chi :=
-      hchi.of_le (WithTop.coe_le_coe.mpr le_top)
-    have hfd : ContDiff ℝ 1 (fderiv ℝ chi) :=
-      hchi2.fderiv_right (by norm_num)
-    have hchi_v : ContDiff ℝ 1 (fun x => fderiv ℝ chi x v) :=
-      hfd.clm_apply
-        (contDiff_const : ContDiff ℝ 1
-          (fun _ : EuclideanSpace ℝ (Fin n) => v))
-    have hchi_w : ContDiff ℝ 1 (fun x => fderiv ℝ chi x w) :=
-      hfd.clm_apply
-        (contDiff_const : ContDiff ℝ 1
-          (fun _ : EuclideanSpace ℝ (Fin n) => w))
-    have hchi_vc : HasCompactSupport (fun x => fderiv ℝ chi x v) := by
-      change HasCompactSupport
-        ((fun L : EuclideanSpace ℝ (Fin n) →L[ℝ] ℝ => L v) ∘ fderiv ℝ chi)
-      exact (hchic.fderiv ℝ).comp_left (by simp)
-    have hchi_wc : HasCompactSupport (fun x => fderiv ℝ chi x w) := by
-      change HasCompactSupport
-        ((fun L : EuclideanSpace ℝ (Fin n) →L[ℝ] ℝ => L w) ∘ fderiv ℝ chi)
-      exact (hchic.fderiv ℝ).comp_left (by simp)
-    have hsymm (x : EuclideanSpace ℝ (Fin n)) :
-        fderiv ℝ (fun y => fderiv ℝ chi y v) x w =
-          fderiv ℝ (fun y => fderiv ℝ chi y w) x v := by
-      have hfdx : DifferentiableAt ℝ (fderiv ℝ chi) x :=
-        (hfd.differentiable (by simp)).differentiableAt
-      have hcv :
-          DifferentiableAt ℝ
-            (fun _ : EuclideanSpace ℝ (Fin n) => v) x :=
-        (differentiable_const v : Differentiable ℝ
-          (fun _ : EuclideanSpace ℝ (Fin n) => v)).differentiableAt
-      have hcw :
-          DifferentiableAt ℝ
-            (fun _ : EuclideanSpace ℝ (Fin n) => w) x :=
-        (differentiable_const w : Differentiable ℝ
-          (fun _ : EuclideanSpace ℝ (Fin n) => w)).differentiableAt
-      have hv := fderiv_clm_apply hfdx hcv
-      have hw := fderiv_clm_apply hfdx hcw
-      have hv' := congrArg
-        (fun L : EuclideanSpace ℝ (Fin n) →L[ℝ] ℝ => L w) hv
-      have hw' := congrArg
-        (fun L : EuclideanSpace ℝ (Fin n) →L[ℝ] ℝ => L v) hw
-      simp only [fderiv_fun_const, Pi.zero_apply, ContinuousLinearMap.comp_zero, zero_add,
-        ContinuousLinearMap.flip_apply] at hv' hw'
-      have hs :=
-        second_derivative_symmetric
-          (fun y => (hchi2.differentiable (by norm_num) y).hasFDerivAt)
-          hfdx.hasFDerivAt w v
-      calc
-        fderiv ℝ (fun y => fderiv ℝ chi y v) x w =
-            ((fderiv ℝ (fderiv ℝ chi) x) w) v := hv'
-        _ = ((fderiv ℝ (fderiv ℝ chi) x) v) w := hs
-        _ = fderiv ℝ (fun y => fderiv ℝ chi y w) x v := hw'.symm
-
-    -- Apply the two weak derivative identities to the smooth tests.
-    have ep := hp.2.2 (fun x => fderiv ℝ chi x w) hchi_w hchi_wc
-    have eq := hq.2.2 (fun x => fderiv ℝ chi x v) hchi_v hchi_vc
-    have hleft :
-        (∫ x, f x * fderiv ℝ (fun y => fderiv ℝ chi y w) x v
-            ∂(volume : Measure (EuclideanSpace ℝ (Fin n)))) =
-          ∫ x, f x * fderiv ℝ (fun y => fderiv ℝ chi y v) x w
-            ∂(volume : Measure (EuclideanSpace ℝ (Fin n))) := by
-      apply integral_congr_ae
-      exact Filter.Eventually.of_forall (fun x =>
-        congrArg (fun z : ℝ => f x * z) (hsymm x).symm)
-    linarith [ep, eq, hleft]
-
+              ∂(volume : Measure (EuclideanSpace ℝ (Fin n))) :=
+    integral_weakDeriv_mul_fderiv_eq_swap hp hq
   have hpair (m : ℕ) :
       (∫ x, S.indicator p x * fderiv ℝ (θ m) x w
           ∂(volume : Measure (EuclideanSpace ℝ (Fin n)))) =
@@ -204,8 +212,6 @@ theorem integral_weakDeriv_mul_eq_swap {n : ℕ}
         hsmooth (θ m) (hθ m).1 (hθ m).2.1
       _ = ∫ x, S.indicator q x * fderiv ℝ (θ m) x v
             ∂(volume : Measure (EuclideanSpace ℝ (Fin n))) := hqind.symm
-
-
   -- Pass to the mollification limits and remove the localization factors.
   have ht_p :
       Tendsto
@@ -219,7 +225,6 @@ theorem integral_weakDeriv_mul_eq_swap {n : ℕ}
       (a := S.indicator p) (b := b)
       (u := fun m x => fderiv ℝ (θ m) x w)
       hpS hb2 hu_w hconvw
-
   have ht_q :
       Tendsto
           (fun m => ∫ x, S.indicator q x * fderiv ℝ (θ m) x v
@@ -232,7 +237,6 @@ theorem integral_weakDeriv_mul_eq_swap {n : ℕ}
       (a := S.indicator q) (b := a)
       (u := fun m x => fderiv ℝ (θ m) x v)
       hqS ha2 hu_v hconvv
-
   have hseq :
       (fun m => ∫ x, S.indicator p x * fderiv ℝ (θ m) x w
         ∂(volume : Measure (EuclideanSpace ℝ (Fin n)))) =
@@ -240,7 +244,6 @@ theorem integral_weakDeriv_mul_eq_swap {n : ℕ}
           ∂(volume : Measure (EuclideanSpace ℝ (Fin n)))) := by
     funext m
     exact hpair m
-
   have ht_q' :
       Tendsto
           (fun m => ∫ x, S.indicator p x * fderiv ℝ (θ m) x w
@@ -250,14 +253,12 @@ theorem integral_weakDeriv_mul_eq_swap {n : ℕ}
           ∂(volume : Measure (EuclideanSpace ℝ (Fin n))))) := by
     rw [hseq]
     exact ht_q
-
   have hind :
       (∫ x, S.indicator p x * b x
           ∂(volume : Measure (EuclideanSpace ℝ (Fin n)))) =
         ∫ x, S.indicator q x * a x
           ∂(volume : Measure (EuclideanSpace ℝ (Fin n))) :=
     tendsto_nhds_unique ht_p ht_q'
-
   have hremove_b :
       (∫ x, S.indicator p x * b x
           ∂(volume : Measure (EuclideanSpace ℝ (Fin n)))) =
@@ -271,7 +272,6 @@ theorem integral_weakDeriv_mul_eq_swap {n : ℕ}
           by_contra hbx
           exact hx (hbS hbx)
         simp only [Set.indicator_of_notMem hx, hbx, mul_zero])
-
   have hremove_a :
       (∫ x, S.indicator q x * a x
           ∂(volume : Measure (EuclideanSpace ℝ (Fin n)))) =
@@ -285,7 +285,6 @@ theorem integral_weakDeriv_mul_eq_swap {n : ℕ}
           by_contra hax
           exact hx (haS hax)
         simp only [Set.indicator_of_notMem hx, hax, mul_zero])
-
   calc
     (∫ x, p x * b x ∂(volume : Measure (EuclideanSpace ℝ (Fin n)))) =
         ∫ x, S.indicator p x * b x

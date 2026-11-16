@@ -195,6 +195,185 @@ theorem vectorItoProcess_ae_eq_zero (W : Multidim.MultidimBrownianMotion P d)
   rw [hsum]
   ring
 
+private theorem norm_sq_dyadic_version_difference_le
+    {Ω : Type*}
+    [MeasurableSpace Ω]
+    {P : Measure Ω}
+    [IsProbabilityMeasure P]
+    {n : ℕ}
+    {d : ℕ}
+    (W : MultidimBrownianMotion P d)
+    (ℱ : Filtration ℝ ‹MeasurableSpace Ω›)
+    (hcoord : ∀ (k : Fin d), IsBrownianFiltration (W.W k) ℱ)
+    (H : Fin n → Fin d → Ω → ℝ → ℝ)
+    (hHm : ∀ (p : Fin n) (k : Fin d), Measurable (Function.uncurry (H p k)))
+    (hHp : ∀ p k, Probability.ProgressivelyMeasurable ℱ (H p k))
+    {X₀ : Ω → Fin n → ℝ}
+    (bdrift : Fin n → Ω → ℝ → ℝ)
+    (hbm : ∀ (p : Fin n), Measurable (Function.uncurry (bdrift p)))
+    (ms : ℕ → ℕ)
+    (hmslt : ∀ (i : ℕ), clampMesh P H bdrift (↑i + 1) (ms i) < 2⁻¹ ^ (2 * i))
+    (Xj : ℕ → ℝ → Ω → Fin n → ℝ)
+    (hXj : ∀ j : ℕ, IsVectorItoVersion W ℱ hcoord (clampCoeff H j)
+      (fun p k => measurable_clampCoeff hHm j p k)
+      (fun p k => progressivelyMeasurable_clampCoeff hHp j p k)
+      (fun p k T' hT' => energy_clampCoeff_lt_top j p k T' hT') X₀ (clampDrift bdrift j) (Xj j))
+    (Sraw : ℕ → ℕ → Ω → ℝ≥0∞)
+    (S : ℕ → ℕ → Ω → ℝ≥0∞)
+    (hSdef : S = fun m i ω => if m ≤ i then Sraw m i ω else 0)
+    (hSrawEq : ∀ (m i : ℕ) (ω : Ω), Sraw m i ω =
+      ⨆ t : Set.Icc (0 : ℝ) ((m : ℝ) + 1),
+        (‖Xj (ms (i + 1)) (t : ℝ) ω - Xj (ms i) (t : ℝ) ω‖₊ : ℝ≥0∞)) : ∀ m i : ℕ, m ≤ i →
+    ∫⁻ ω, (S m i ω) ^ 2 ∂P ≤ 64 * (n : ℝ≥0∞) ^ 2 * ((2 : ℝ≥0∞)⁻¹) ^ (2 * i) := by
+  classical
+  intro m i hmi
+  have hTpos : (0 : ℝ) < (m : ℝ) + 1 := by positivity
+  have hkey := lintegral_iSup_sq_norm_clamp_version_sub_le W ℱ hcoord (H := H)
+    (hm := hHm) (hpg := hHp) hbm (hXj (ms i)) (hXj (ms (i + 1))) hTpos
+  have hmr : (m : ℝ) ≤ (i : ℝ) := by exact_mod_cast hmi
+  have hmle : ((m : ℝ) + 1) ≤ (i : ℝ) + 1 := by linarith
+  have hle1 : clampMesh P H bdrift ((m : ℝ) + 1) (ms i) ≤ ((2 : ℝ≥0∞)⁻¹) ^ (2 * i) :=
+    le_trans (clampMesh_mono_window P H bdrift hmle (ms i)) (hmslt i).le
+  have hmle2 : ((m : ℝ) + 1) ≤ ((i + 1 : ℕ) : ℝ) + 1 := by push_cast; linarith
+  have hle2 : clampMesh P H bdrift ((m : ℝ) + 1) (ms (i + 1))
+      ≤ ((2 : ℝ≥0∞)⁻¹) ^ (2 * i) := by
+    refine le_trans (clampMesh_mono_window P H bdrift hmle2 (ms (i + 1))) ?_
+    exact le_trans (hmslt (i + 1)).le (pow_inv_two_antitone (by omega))
+  have hrw : ∀ ω : Ω, S m i ω
+      = ⨆ t : Set.Icc (0 : ℝ) ((m : ℝ) + 1),
+        (‖Xj (ms (i + 1)) (t : ℝ) ω - Xj (ms i) (t : ℝ) ω‖₊ : ℝ≥0∞) := by
+    intro ω
+    simp only [hSdef]
+    rw [ite_eq_left hmi]
+    exact hSrawEq m i ω
+  calc ∫⁻ ω, (S m i ω) ^ 2 ∂P
+      = ∫⁻ ω, (⨆ t : Set.Icc (0 : ℝ) ((m : ℝ) + 1),
+          (‖Xj (ms (i + 1)) (t : ℝ) ω - Xj (ms i) (t : ℝ) ω‖₊ : ℝ≥0∞)) ^ 2 ∂P := by
+        exact MeasureTheory.lintegral_congr fun ω => by rw [hrw ω]
+    _ ≤ 32 * (n : ℝ≥0∞) ^ 2 * (clampMesh P H bdrift ((m : ℝ) + 1) (ms i)
+          + clampMesh P H bdrift ((m : ℝ) + 1) (ms (i + 1))) := hkey
+    _ ≤ 32 * (n : ℝ≥0∞) ^ 2 * (((2 : ℝ≥0∞)⁻¹) ^ (2 * i) + ((2 : ℝ≥0∞)⁻¹) ^ (2 * i)) := by
+        gcongr
+    _ = 64 * (n : ℝ≥0∞) ^ 2 * ((2 : ℝ≥0∞)⁻¹) ^ (2 * i) := by ring
+
+private theorem tendsto_uniformly_dyadic_version
+    {Ω : Type*}
+    {n : ℕ}
+    (ms : ℕ → ℕ)
+    (Xj : ℕ → ℝ → Ω → Fin n → ℝ)
+    (Sraw : ℕ → ℕ → Ω → ℝ≥0∞)
+    (S : ℕ → ℕ → Ω → ℝ≥0∞)
+    (hSdef : S = fun m i ω => if m ≤ i then Sraw m i ω else 0)
+    (hSrawEq : ∀ (m i : ℕ) (ω : Ω), Sraw m i ω =
+      ⨆ t : Set.Icc (0 : ℝ) ((m : ℝ) + 1),
+        (‖Xj (ms (i + 1)) (t : ℝ) ω - Xj (ms i) (t : ℝ) ω‖₊ : ℝ≥0∞))
+    (G : Set Ω)
+    (hGdef : G = {ω | ∀ (m : ℕ), ∑' (i : ℕ), S m i ω ≠ ∞}) : ∀ ω : Ω, ω ∈ G → ∀ m : ℕ, ∃ L : ℝ →
+      Fin n → ℝ,
+    TendstoUniformlyOn (fun N (t : ℝ) => Xj (ms N) (max t 0) ω) L Filter.atTop
+      (Set.Iic ((m : ℝ) + 1)) := by
+  classical
+  intro ω hωG m
+  have hω : ∀ m' : ℕ, ∑' i : ℕ, S m' i ω ≠ ⊤ := by rw [hGdef] at hωG; exact hωG
+  have hsum0 : Summable fun i : ℕ => (S m i ω).toReal := ENNReal.summable_toReal (hω m)
+  have hsum1 : Summable fun i : ℕ => (S m (i + m) ω).toReal :=
+    (summable_nat_add_iff m).mpr hsum0
+  have hne : ∀ i : ℕ, S m i ω ≠ ⊤ := ENNReal.ne_top_of_tsum_ne_top (hω m)
+  have hbnd : ∀ (i : ℕ) (x : ℝ), x ∈ Set.Iic ((m : ℝ) + 1) →
+      ‖Xj (ms (i + 1 + m)) (max x 0) ω - Xj (ms (i + m)) (max x 0) ω‖
+        ≤ (S m (i + m) ω).toReal := by
+    intro i x hx
+    have hmem : max x 0 ∈ Set.Icc (0 : ℝ) ((m : ℝ) + 1) :=
+      ⟨le_max_right x 0, max_le (Set.mem_Iic.mp hx) (by positivity)⟩
+    rw [show i + 1 + m = i + m + 1 from by omega]
+    have hle : (‖Xj (ms (i + m + 1)) (max x 0) ω
+        - Xj (ms (i + m)) (max x 0) ω‖₊ : ℝ≥0∞) ≤ S m (i + m) ω := by
+      simp only [hSdef]
+      rw [ite_eq_left (Nat.le_add_left m i), hSrawEq]
+      exact le_iSup (fun t : Set.Icc (0 : ℝ) ((m : ℝ) + 1) =>
+        (‖Xj (ms (i + m + 1)) (t : ℝ) ω - Xj (ms (i + m)) (t : ℝ) ω‖₊ : ℝ≥0∞))
+        ⟨max x 0, hmem⟩
+    have := ENNReal.toReal_mono (hne (i + m)) hle
+    simpa using this
+  have hMT := tendstoUniformlyOn_tsum_nat (u := fun i : ℕ => (S m (i + m) ω).toReal) hsum1
+    (s := Set.Iic ((m : ℝ) + 1))
+    (f := fun (i : ℕ) (x : ℝ) =>
+      Xj (ms (i + 1 + m)) (max x 0) ω - Xj (ms (i + m)) (max x 0) ω) hbnd
+  have heq : (fun (N : ℕ) (x : ℝ) => ∑ i ∈ Finset.range N,
+        (Xj (ms (i + 1 + m)) (max x 0) ω - Xj (ms (i + m)) (max x 0) ω))
+      = fun (N : ℕ) (x : ℝ) =>
+        Xj (ms (N + m)) (max x 0) ω - Xj (ms (0 + m)) (max x 0) ω := by
+    funext N x
+    exact Finset.sum_range_sub (fun i => Xj (ms (i + m)) (max x 0) ω) N
+  rw [heq] at hMT
+  refine ⟨_, tendstoUniformlyOn_of_shift (fun N (t : ℝ) => Xj (ms N) (max t 0) ω) m
+    (tendstoUniformlyOn_of_sub_const (fun N (t : ℝ) => Xj (ms (N + m)) (max t 0) ω)
+      (fun t : ℝ => Xj (ms (0 + m)) (max t 0) ω) hMT)⟩
+
+omit [MeasurableSpace Ω] in
+private theorem continuous_path_of_uniform_limits {G : Set Ω}
+    {X : ℕ → ℝ → Ω → Fin n → ℝ} {Xlim : ℝ → Ω → Fin n → ℝ}
+    (hXcont : ∀ ω N, Continuous (fun t => X N t ω))
+    (hUnif : ∀ ω ∈ G, ∀ m : ℕ, ∃ L : ℝ → Fin n → ℝ, TendstoUniformlyOn
+      (fun N (t : ℝ) => X N (max t 0) ω) L Filter.atTop (Set.Iic ((m : ℝ) + 1)))
+    (hPt : ∀ ω ∈ G, ∀ t, Filter.Tendsto (fun N => X N (max t 0) ω) Filter.atTop (𝓝 (Xlim t ω)))
+    (hXzero : ∀ ω ∉ G, ∀ t, Xlim t ω = 0) :
+    ∀ ω, Continuous (fun t => Xlim t ω) := by
+  intro ω
+  by_cases hωG : ω ∈ G
+  · rw [continuous_iff_continuousAt]
+    intro t
+    obtain ⟨L, hL⟩ := hUnif ω hωG ⌈|t|⌉₊
+    have hEq : Set.EqOn L (fun s => Xlim s ω) (Set.Iic ((⌈|t|⌉₊ : ℝ) + 1)) := by
+      intro s hs
+      exact tendsto_nhds_unique (hL.tendsto_at hs) (hPt ω hωG s)
+    have hL' : TendstoUniformlyOn (fun N (s : ℝ) => X N (max s 0) ω)
+        (fun s => Xlim s ω) Filter.atTop (Set.Iic ((⌈|t|⌉₊ : ℝ) + 1)) := hL.congr_right hEq
+    have hCon : ContinuousOn (fun s => Xlim s ω) (Set.Iic ((⌈|t|⌉₊ : ℝ) + 1)) := by
+      refine hL'.continuousOn (Filter.Eventually.frequently
+        (Filter.Eventually.of_forall fun N => ?_))
+      have hmax : Continuous fun s : ℝ => max s 0 := continuous_id.max continuous_const
+      exact ((hXcont ω N).comp hmax).continuousOn
+    refine hCon.continuousAt (Iic_mem_nhds ?_)
+    have h1 : |t| ≤ (⌈|t|⌉₊ : ℝ) := Nat.le_ceil _
+    have h2 : t ≤ |t| := le_abs_self t
+    linarith
+  · have hz : (fun t => Xlim t ω) = fun _ => (0 : Fin n → ℝ) := by
+      funext t
+      exact hXzero ω hωG t
+    rw [hz]
+    exact continuous_const
+
+private theorem stronglyMeasurable_limit_of_localized_paths {G : Set Ω}
+    (ℱ : Filtration ℝ ‹MeasurableSpace Ω›) (hle0 : ∀ t, ℱ 0 ≤ ℱ t) (hG0 : MeasurableSet[ℱ 0] G)
+    {X : ℕ → ℝ → Ω → Fin n → ℝ} {Xlim : ℝ → Ω → Fin n → ℝ}
+    (hXadapt : ∀ N t, Measurable[ℱ t] (X N t))
+    (hPt : ∀ ω ∈ G, ∀ t, Filter.Tendsto (fun N => X N (max t 0) ω) Filter.atTop (𝓝 (Xlim t ω)))
+    (hXzero : ∀ ω ∉ G, ∀ t, Xlim t ω = 0) :
+    ∀ t, StronglyMeasurable[ℱ t] (Xlim t) := by
+  intro t
+  have hmaxle : ℱ (max t 0) ≤ ℱ t := by
+    rcases le_or_gt 0 t with ht | ht
+    · rw [max_eq_left ht]
+    · rw [max_eq_right ht.le]
+      exact hle0 t
+  have hGt : MeasurableSet[ℱ t] G := hle0 t _ hG0
+  have hFN : ∀ N : ℕ,
+      Measurable[ℱ t] (Set.indicator G fun ω => X N (max t 0) ω) := by
+    intro N
+    refine Measurable.indicator ?_ hGt
+    exact (hXadapt N (max t 0)).mono hmaxle le_rfl
+  refine Measurable.stronglyMeasurable ?_
+  let : MeasurableSpace Ω := ℱ t
+  refine measurable_of_tendsto_metrizable' Filter.atTop hFN ?_
+  rw [tendsto_pi_nhds]
+  intro ω
+  by_cases hωG : ω ∈ G
+  · simpa [Set.indicator_of_mem hωG] using hPt ω hωG t
+  · simp only [Set.indicator_of_notMem hωG]
+    rw [hXzero ω hωG t]
+    exact tendsto_const_nhds
+
 /-- **A continuous adapted version of a vector Itô process exists** when the coefficients have
 finite energy on every bounded window, the filtration is constant before time `0` and contains
 the measurable null sets. -/
@@ -275,36 +454,9 @@ theorem exists_isVectorItoVersion_of_unbounded
     exact iSup_congr fun t => by rw [nnnorm_norm]
   -- the geometric decay of the window energies
   have hSsq : ∀ m i : ℕ, m ≤ i →
-      ∫⁻ ω, (S m i ω) ^ 2 ∂P ≤ 64 * (n : ℝ≥0∞) ^ 2 * ((2 : ℝ≥0∞)⁻¹) ^ (2 * i) := by
-    intro m i hmi
-    have hTpos : (0 : ℝ) < (m : ℝ) + 1 := by positivity
-    have hkey := lintegral_iSup_sq_norm_clamp_version_sub_le W ℱ hcoord (H := H)
-      (hm := hHm) (hpg := hHp) hbm (hXj (ms i)) (hXj (ms (i + 1))) hTpos
-    have hmr : (m : ℝ) ≤ (i : ℝ) := by exact_mod_cast hmi
-    have hmle : ((m : ℝ) + 1) ≤ (i : ℝ) + 1 := by linarith
-    have hle1 : clampMesh P H bdrift ((m : ℝ) + 1) (ms i) ≤ ((2 : ℝ≥0∞)⁻¹) ^ (2 * i) :=
-      le_trans (clampMesh_mono_window P H bdrift hmle (ms i)) (hmslt i).le
-    have hmle2 : ((m : ℝ) + 1) ≤ ((i + 1 : ℕ) : ℝ) + 1 := by push_cast; linarith
-    have hle2 : clampMesh P H bdrift ((m : ℝ) + 1) (ms (i + 1))
-        ≤ ((2 : ℝ≥0∞)⁻¹) ^ (2 * i) := by
-      refine le_trans (clampMesh_mono_window P H bdrift hmle2 (ms (i + 1))) ?_
-      exact le_trans (hmslt (i + 1)).le (pow_inv_two_antitone (by omega))
-    have hrw : ∀ ω : Ω, S m i ω
-        = ⨆ t : Set.Icc (0 : ℝ) ((m : ℝ) + 1),
-          (‖Xj (ms (i + 1)) (t : ℝ) ω - Xj (ms i) (t : ℝ) ω‖₊ : ℝ≥0∞) := by
-      intro ω
-      simp only [hSdef]
-      rw [ite_eq_left hmi]
-      exact hSrawEq m i ω
-    calc ∫⁻ ω, (S m i ω) ^ 2 ∂P
-        = ∫⁻ ω, (⨆ t : Set.Icc (0 : ℝ) ((m : ℝ) + 1),
-            (‖Xj (ms (i + 1)) (t : ℝ) ω - Xj (ms i) (t : ℝ) ω‖₊ : ℝ≥0∞)) ^ 2 ∂P := by
-          exact MeasureTheory.lintegral_congr fun ω => by rw [hrw ω]
-      _ ≤ 32 * (n : ℝ≥0∞) ^ 2 * (clampMesh P H bdrift ((m : ℝ) + 1) (ms i)
-            + clampMesh P H bdrift ((m : ℝ) + 1) (ms (i + 1))) := hkey
-      _ ≤ 32 * (n : ℝ≥0∞) ^ 2 * (((2 : ℝ≥0∞)⁻¹) ^ (2 * i) + ((2 : ℝ≥0∞)⁻¹) ^ (2 * i)) := by
-          gcongr
-      _ = 64 * (n : ℝ≥0∞) ^ 2 * ((2 : ℝ≥0∞)⁻¹) ^ (2 * i) := by ring
+      ∫⁻ ω, (S m i ω) ^ 2 ∂P ≤ 64 * (n : ℝ≥0∞) ^ 2 * ((2 : ℝ≥0∞)⁻¹) ^ (2 * i) :=
+    norm_sq_dyadic_version_difference_le W ℱ hcoord H hHm hHp bdrift hbm ms hmslt Xj hXj Sraw S
+      hSdef hSrawEq
   have hSint : ∀ m i : ℕ, m ≤ i →
       ∫⁻ ω, S m i ω ∂P ≤ (1 + 64 * (n : ℝ≥0∞) ^ 2) * ((2 : ℝ≥0∞)⁻¹) ^ i := by
     intro m i hmi
@@ -360,43 +512,8 @@ theorem exists_isVectorItoVersion_of_unbounded
   -- uniform convergence of the clamped versions on every bounded window
   have hUnif : ∀ ω : Ω, ω ∈ G → ∀ m : ℕ, ∃ L : ℝ → Fin n → ℝ,
       TendstoUniformlyOn (fun N (t : ℝ) => Xj (ms N) (max t 0) ω) L Filter.atTop
-        (Set.Iic ((m : ℝ) + 1)) := by
-    intro ω hωG m
-    have hω : ∀ m' : ℕ, ∑' i : ℕ, S m' i ω ≠ ⊤ := by rw [hGdef] at hωG; exact hωG
-    have hsum0 : Summable fun i : ℕ => (S m i ω).toReal := ENNReal.summable_toReal (hω m)
-    have hsum1 : Summable fun i : ℕ => (S m (i + m) ω).toReal :=
-      (summable_nat_add_iff m).mpr hsum0
-    have hne : ∀ i : ℕ, S m i ω ≠ ⊤ := ENNReal.ne_top_of_tsum_ne_top (hω m)
-    have hbnd : ∀ (i : ℕ) (x : ℝ), x ∈ Set.Iic ((m : ℝ) + 1) →
-        ‖Xj (ms (i + 1 + m)) (max x 0) ω - Xj (ms (i + m)) (max x 0) ω‖
-          ≤ (S m (i + m) ω).toReal := by
-      intro i x hx
-      have hmem : max x 0 ∈ Set.Icc (0 : ℝ) ((m : ℝ) + 1) :=
-        ⟨le_max_right x 0, max_le (Set.mem_Iic.mp hx) (by positivity)⟩
-      rw [show i + 1 + m = i + m + 1 from by omega]
-      have hle : (‖Xj (ms (i + m + 1)) (max x 0) ω
-          - Xj (ms (i + m)) (max x 0) ω‖₊ : ℝ≥0∞) ≤ S m (i + m) ω := by
-        simp only [hSdef]
-        rw [ite_eq_left (Nat.le_add_left m i), hSrawEq]
-        exact le_iSup (fun t : Set.Icc (0 : ℝ) ((m : ℝ) + 1) =>
-          (‖Xj (ms (i + m + 1)) (t : ℝ) ω - Xj (ms (i + m)) (t : ℝ) ω‖₊ : ℝ≥0∞))
-          ⟨max x 0, hmem⟩
-      have := ENNReal.toReal_mono (hne (i + m)) hle
-      simpa using this
-    have hMT := tendstoUniformlyOn_tsum_nat (u := fun i : ℕ => (S m (i + m) ω).toReal) hsum1
-      (s := Set.Iic ((m : ℝ) + 1))
-      (f := fun (i : ℕ) (x : ℝ) =>
-        Xj (ms (i + 1 + m)) (max x 0) ω - Xj (ms (i + m)) (max x 0) ω) hbnd
-    have heq : (fun (N : ℕ) (x : ℝ) => ∑ i ∈ Finset.range N,
-          (Xj (ms (i + 1 + m)) (max x 0) ω - Xj (ms (i + m)) (max x 0) ω))
-        = fun (N : ℕ) (x : ℝ) =>
-          Xj (ms (N + m)) (max x 0) ω - Xj (ms (0 + m)) (max x 0) ω := by
-      funext N x
-      exact Finset.sum_range_sub (fun i => Xj (ms (i + m)) (max x 0) ω) N
-    rw [heq] at hMT
-    refine ⟨_, tendstoUniformlyOn_of_shift (fun N (t : ℝ) => Xj (ms N) (max t 0) ω) m
-      (tendstoUniformlyOn_of_sub_const (fun N (t : ℝ) => Xj (ms (N + m)) (max t 0) ω)
-        (fun t : ℝ => Xj (ms (0 + m)) (max t 0) ω) hMT)⟩
+        (Set.Iic ((m : ℝ) + 1)) :=
+    tendsto_uniformly_dyadic_version ms Xj Sraw S hSdef hSrawEq G hGdef
   -- the limit process
   obtain ⟨Xlim, hXlim⟩ : ∃ f : ℝ → Ω → Fin n → ℝ, f = fun t ω =>
       if ω ∈ G then Filter.limUnder Filter.atTop (fun N => Xj (ms N) (max t 0) ω)
@@ -416,57 +533,14 @@ theorem exists_isVectorItoVersion_of_unbounded
     rw [hval]
     exact hLt
   -- continuity of the limit paths
-  have hcont : ∀ ω : Ω, Continuous fun t => Xlim t ω := by
-    intro ω
-    by_cases hωG : ω ∈ G
-    · rw [continuous_iff_continuousAt]
-      intro t
-      obtain ⟨L, hL⟩ := hUnif ω hωG ⌈|t|⌉₊
-      have hEq : Set.EqOn L (fun s => Xlim s ω) (Set.Iic ((⌈|t|⌉₊ : ℝ) + 1)) := by
-        intro s hs
-        exact tendsto_nhds_unique (hL.tendsto_at hs) (hPt ω hωG s)
-      have hL' : TendstoUniformlyOn (fun N (s : ℝ) => Xj (ms N) (max s 0) ω)
-          (fun s => Xlim s ω) Filter.atTop (Set.Iic ((⌈|t|⌉₊ : ℝ) + 1)) := hL.congr_right hEq
-      have hCon : ContinuousOn (fun s => Xlim s ω) (Set.Iic ((⌈|t|⌉₊ : ℝ) + 1)) := by
-        refine hL'.continuousOn (Filter.Eventually.frequently
-          (Filter.Eventually.of_forall fun N => ?_))
-        have hmax : Continuous fun s : ℝ => max s 0 := continuous_id.max continuous_const
-        exact (((hXj (ms N)).continuous_path ω).comp hmax).continuousOn
-      refine hCon.continuousAt (Iic_mem_nhds ?_)
-      have h1 : |t| ≤ (⌈|t|⌉₊ : ℝ) := Nat.le_ceil _
-      have h2 : t ≤ |t| := le_abs_self t
-      linarith
-    · have hz : (fun t => Xlim t ω) = fun _ => (0 : Fin n → ℝ) := by
-        funext t
-        simp only [hXlim]
-        exact ite_eq_right hωG
-      rw [hz]
-      exact continuous_const
+  have hXzero : ∀ ω ∉ G, ∀ t, Xlim t ω = 0 := by
+    intro ω hωG t
+    simp only [hXlim, ite_eq_right hωG]
+  have hcont := continuous_path_of_uniform_limits
+    (fun ω N => (hXj (ms N)).continuous_path ω) hUnif hPt hXzero
   -- adaptedness of the limit
-  have hadapt : ∀ t : ℝ, StronglyMeasurable[ℱ t] (Xlim t) := by
-    intro t
-    have hmaxle : ℱ (max t 0) ≤ ℱ t := by
-      rcases le_or_gt 0 t with ht | ht
-      · rw [max_eq_left ht]
-      · rw [max_eq_right ht.le]
-        exact hle0 t
-    have hGt : MeasurableSet[ℱ t] G := hle0 t _ hG0
-    have hFN : ∀ N : ℕ,
-        Measurable[ℱ t] (Set.indicator G fun ω => Xj (ms N) (max t 0) ω) := by
-      intro N
-      refine Measurable.indicator ?_ hGt
-      exact ((hXj (ms N)).adapted (max t 0)).measurable.mono hmaxle le_rfl
-    refine Measurable.stronglyMeasurable ?_
-    let : MeasurableSpace Ω := ℱ t
-    refine measurable_of_tendsto_metrizable' Filter.atTop hFN ?_
-    rw [tendsto_pi_nhds]
-    intro ω
-    by_cases hωG : ω ∈ G
-    · simpa [Set.indicator_of_mem hωG] using hPt ω hωG t
-    · simp only [Set.indicator_of_notMem hωG]
-      simp only [hXlim]
-      rw [ite_eq_right hωG]
-      exact tendsto_const_nhds
+  have hadapt := stronglyMeasurable_limit_of_localized_paths ℱ hle0 hG0
+    (fun N t => ((hXj (ms N)).adapted t).measurable) hPt hXzero
   refine ⟨Xlim, hcont, hadapt, ?_⟩
   intro t ht
   rcases eq_or_lt_of_le ht with h0 | htpos

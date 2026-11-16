@@ -43,9 +43,7 @@ section TraceExtensions
 
 open Matrix MeasureTheory
 
-variable {ι : Type*} [Fintype ι] [DecidableEq ι]
-
-omit [DecidableEq ι] in
+variable {ι : Type*} [Fintype ι]
 /--
 Arbitrary real coefficient, almost-everywhere positive semidefinite field: if every positive
 semidefinite `A`

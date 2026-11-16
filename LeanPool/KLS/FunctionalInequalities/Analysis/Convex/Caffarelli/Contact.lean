@@ -642,6 +642,174 @@ section MeasurableSpace
 
 variable [Nontrivial E] [MeasurableSpace E] [BorelSpace E]
 
+omit [FiniteDimensional ℝ E] [Nontrivial E] [MeasurableSpace E] [BorelSpace E] in
+private theorem exists_contact_with_small_width {C : Set E} {w : E → ℝ} {xe x₁ θ : E}
+    (hwconv : ConvexOn ℝ univ w) (hw_nonneg : ∀ x, 0 ≤ w x)
+    (hw_zero_iff : ∀ x, w x = 0 ↔ x ∈ C) (hwxe : w xe = 0) (hwx₁ : w x₁ = 0)
+    (hx₁pair : ⟪x₁ - xe, θ⟫ < 0) {h : ℝ} (hh : 0 < h) :
+    ∃ y ∈ C, 0 < -⟪y - xe, θ⟫ ∧ -⟪y - xe, θ⟫ ≤ h / 2 := by
+  let s : ℝ := min (1 / 2) (h / (2 * |⟪x₁ - xe, θ⟫|))
+  have habs : 0 < |⟪x₁ - xe, θ⟫| := abs_pos.mpr hx₁pair.ne
+  have hs : 0 < s := by
+    dsimp only [s]
+    exact lt_min (by norm_num) (div_pos hh (mul_pos (by norm_num) habs))
+  have hsone : s ≤ 1 := by
+    have hs' : s ≤ 1 / 2 := min_le_left _ _
+    linarith
+  have hswidth : s * (2 * |⟪x₁ - xe, θ⟫|) ≤ h :=
+    (le_div_iff₀ (mul_pos (by norm_num) habs)).mp (min_le_right _ _)
+  let y : E := xe + s • (x₁ - xe)
+  have hyC : y ∈ C := by
+    have hyform : (1 - s) • xe + s • x₁ = y := by
+      dsimp only [y]
+      module
+    have hc :=
+      hwconv.2 (mem_univ xe) (mem_univ x₁) (sub_nonneg.mpr hsone) hs.le
+        (by ring : (1 - s) + s = 1)
+    rw [hyform, hwxe, hwx₁] at hc
+    simp only [smul_zero, add_zero] at hc
+    exact (hw_zero_iff y).mp (le_antisymm hc (hw_nonneg y))
+  have hypair_raw : ⟪y - xe, θ⟫ = s * ⟪x₁ - xe, θ⟫ := by
+    dsimp only [y]
+    rw [add_sub_cancel_left, real_inner_smul_left]
+  let β : ℝ := -⟪y - xe, θ⟫
+  have hβeq : β = s * |⟪x₁ - xe, θ⟫| := by
+    dsimp only [β]
+    rw [hypair_raw, abs_of_neg hx₁pair]
+    ring
+  have hβ : 0 < β := by
+    rw [hβeq]
+    exact mul_pos hs habs
+  have hβhalf : β ≤ h / 2 := by
+    rw [hβeq]
+    nlinarith only [hswidth]
+  exact ⟨y, hyC, hβ, hβhalf⟩
+
+omit [Nontrivial E] in
+private theorem normalized_section_measure_bounds {u v : E → ℝ} {Q S : Set E}
+    {a b : ℝ} (ha : 0 < a) (hb : 0 < b) (hS : Bornology.IsBounded S) (hSQ : closure S ⊆ Q)
+    (hbounds : ∀ G : Set E, IsOpen G → closure G ⊆ Q →
+      ENNReal.ofReal a * (volume : Measure E) G ≤ volume (subgradientImage u G) ∧
+      volume (subgradientImage u G) ≤ ENNReal.ofReal b * volume G)
+    (hvolume : ∀ G : Set E, (volume : Measure E) (subgradientImage v G) =
+      volume (subgradientImage u G)) (e : E ≃ᵃ[ℝ] E) :
+    let D : ℝ := |LinearMap.det (e.linear : E →ₗ[ℝ] E)|
+    ∀ G' : Set E, IsOpen G' → G' ⊆ e '' S →
+      (volume : Measure E) (subgradientImage (v ∘ e.symm) G') ≠ ∞ ∧
+      (a / D ^ 2) * (volume G').toReal ≤ (volume (subgradientImage (v ∘ e.symm) G')).toReal ∧
+      (volume (subgradientImage (v ∘ e.symm) G')).toReal ≤ (b / D ^ 2) * (volume G').toReal := by
+  intro D G' hG'o hG'S
+  let G : Set E := e.symm '' G'
+  have hGo : IsOpen G :=
+    (AffineEquiv.toContinuousAffineEquiv e).toHomeomorph.symm.isOpenMap G' hG'o
+  have hGS : G ⊆ S := by
+    rintro x ⟨z, hz, rfl⟩
+    rcases hG'S hz with ⟨y, hy, he⟩
+    rw [← he, e.symm_apply_apply]
+    exact hy
+  have hGcl : closure G ⊆ Q := (closure_mono hGS).trans hSQ
+  obtain ⟨hlo, hhi⟩ := hbounds G hGo hGcl
+  have hGfin : (volume : Measure E) G ≠ ∞ := (hS.subset hGS).measure_lt_top.ne
+  obtain ⟨hfin, hrealLo, hrealHi⟩ :=
+    contact_real_bounds (volume : Measure E) ha.le hb.le hGfin hlo hhi
+  rw [← hvolume G] at hfin hrealLo hrealHi
+  have himage : e '' G = G' := e.toEquiv.image_symm_image G'
+  have ht := contact_transport_real_bounds v e G a b hfin hrealLo hrealHi
+  simpa only [himage] using ht
+
+omit [FiniteDimensional ℝ E] [Nontrivial E] [MeasurableSpace E] [BorelSpace E] in
+private theorem inner_sub_le_of_mem_cthickening {P : Set E} {xe θ x : E} {δ : ℝ}
+    (hPcompact : IsCompact P) (hPne : P.Nonempty) (hθ : ‖θ‖ = 1) (hδ : 0 ≤ δ)
+    (hcontactWidth : ∀ r ∈ P, ⟪r - xe, θ⟫ ≤ 0) (hx : x ∈ cthickening δ P) :
+    ⟪x - xe, θ⟫ ≤ δ := by
+  have ht := ENNReal.toReal_mono ENNReal.ofReal_ne_top (mem_cthickening_iff.mp (hx))
+  have hdist : infDist x P ≤ δ := by
+    simpa only [Metric.infDist, ENNReal.toReal_ofReal hδ] using ht
+  obtain ⟨r, hr, heq⟩ := hPcompact.exists_infDist_eq_dist hPne x
+  have hrdist : ‖x - r‖ ≤ δ := by
+    rw [heq, dist_eq_norm] at hdist
+    exact hdist
+  have hrwidth := hcontactWidth r hr
+  have hinner : ⟪x - r, θ⟫ ≤ ‖x - r‖ := by
+    calc
+      ⟪x - r, θ⟫ ≤ |⟪x - r, θ⟫| := le_abs_self _
+      _ ≤ ‖x - r‖ * ‖θ‖ := abs_real_inner_le_norm _ _
+      _ = ‖x - r‖ := by rw [hθ, mul_one]
+  rw [show x - xe = (x - r) + (r - xe) by abel, inner_add_left]
+  linarith
+
+omit [InnerProductSpace ℝ E] [FiniteDimensional ℝ E] [Nontrivial E] [MeasurableSpace E]
+  [BorelSpace E] in
+private theorem eq_zero_on_frontier_neg {v : E → ℝ} (hv : Continuous v) :
+    let S : Set E := {x | v x < 0}
+    ∀ x ∈ frontier S, v x = 0 := by
+  intro S
+  have hSo : IsOpen S := isOpen_lt hv continuous_const
+  have hsub : S ⊆ {x | v x ≤ 0} := by
+    intro z hz
+    exact le_of_lt (show v z < 0 from hz)
+  have hcl : closure S ⊆ {x | v x ≤ 0} :=
+    closure_minimal hsub (isClosed_le hv continuous_const)
+  intro x hx
+  have hlo : v x ≤ 0 := hcl (frontier_subset_closure hx)
+  have hnotS : x ∉ S := (hSo.frontier_eq ▸ hx).2
+  have hhi : 0 ≤ v x := le_of_not_gt hnotS
+  exact le_antisymm hlo hhi
+
+omit [FiniteDimensional ℝ E] [Nontrivial E] [MeasurableSpace E] [BorelSpace E] in
+private theorem perturbed_section_value_bounds {w v : E → ℝ} {S : Set E}
+    {xe θ : E} {δ ε h : ℝ} (e : E ≃ᵃ[ℝ] E)
+    (hε : 0 ≤ ε) (hδ : δ ≤ h) (hw : ∀ x, 0 ≤ w x)
+    (hv_eq : ∀ x, v x = w x - ε * (⟪x - xe, θ⟫ + h))
+    (hup : ∀ x ∈ S, ⟪x - xe, θ⟫ ≤ δ) (hv : ∀ x ∈ S, v x < 0) :
+    (∀ x ∈ e '' S, -2 * (ε * h) ≤ (v ∘ e.symm) x) ∧
+      (∀ x ∈ e '' S, (v ∘ e.symm) x ≤ 0) := by
+  constructor
+  · rintro x ⟨z, hz, rfl⟩
+    change -2 * (ε * h) ≤ v (e.symm (e z))
+    rw [e.symm_apply_apply, hv_eq]
+    have hi : ⟪z - xe, θ⟫ + h ≤ 2 * h := by linarith [hup z hz]
+    have hm := mul_le_mul_of_nonneg_left hi hε
+    linarith [hw z]
+  · rintro x ⟨z, hz, rfl⟩
+    change v (e.symm (e z)) ≤ 0
+    rw [e.symm_apply_apply]
+    exact (hv z hz).le
+
+omit [Nontrivial E] [MeasurableSpace E] [BorelSpace E] in
+private theorem ball_subset_normalized_section {S : Set E} (e : E ≃ᵃ[ℝ] E)
+    (heball : closedBall (0 : E) 1 ⊆ e '' closure S) (hreg : interior (closure S) = S) :
+    ball (0 : E) 1 ⊆ e '' S := by
+  intro x hx
+  let eh := (AffineEquiv.toContinuousAffineEquiv e).toHomeomorph
+  have hi : x ∈ interior (e '' closure S) :=
+    interior_mono heball (ball_subset_interior_closedBall hx)
+  have him : eh '' interior (closure S) = interior (e '' closure S) :=
+    eh.image_interior (closure S)
+  rw [← him, hreg] at hi
+  exact hi
+
+omit [Nontrivial E] in
+private theorem volume_subgradientImage_le_scaled_ball {v : E → ℝ} {S : Set E}
+    {C B : ℝ} (hB : 0 ≤ B) (hS : S ⊆ closedBall (0 : E) C)
+    (hupper : (volume (subgradientImage v S)).toReal ≤ B * (volume S).toReal) :
+    (volume (subgradientImage v S)).toReal ≤ B * (volume (closedBall (0 : E) C)).toReal :=
+  hupper.trans (mul_le_mul_of_nonneg_left
+    (ENNReal.toReal_mono Metric.isBounded_closedBall.measure_lt_top.ne (measure_mono hS)) hB)
+
+omit [Nontrivial E] [MeasurableSpace E] [BorelSpace E] in
+private theorem comp_symm_eq_zero_on_frontier_image {v : E → ℝ} {S : Set E}
+    (e : E ≃ᵃ[ℝ] E) (hvfront : ∀ x ∈ frontier S, v x = 0) :
+    ∀ x ∈ frontier (e '' S), (v ∘ e.symm) x = 0 := by
+  intro x hx
+  let eh := (AffineEquiv.toContinuousAffineEquiv e).toHomeomorph
+  have him : eh '' frontier S = frontier (e '' S) := eh.image_frontier S
+  rw [← him] at hx
+  rcases hx with ⟨z, hz, rfl⟩
+  change v (e.symm (e z)) = 0
+  rw [e.symm_apply_apply]
+  exact hvfront z hz
+
 /-- **Caffarelli's contact-set lemma, localised form**: let `C` be the
 compact contact set of a supporting affine function of the convex `u`, `z ∈ C` strictly exposed in
 the unit
@@ -686,7 +854,6 @@ theorem contactSet_eq_singleton_of_exposed_of_local_bounds {u : E → ℝ}
     by_cases he : x = xe
     · simp only [he, sub_self, inner_zero_left, le_refl]
     · exact (hexp x hx he).le
-
   -- Subtract the supporting affine function and locate a second contact point.
   let c₀ : ℝ := u x₀ - ⟪p, x₀⟫
   let w : E → ℝ := fun x => u x - (c₀ + ⟪p, x⟫)
@@ -703,45 +870,12 @@ theorem contactSet_eq_singleton_of_exposed_of_local_bounds {u : E → ℝ}
   have hwxe : w xe = 0 := (hw_zero_iff xe).mpr hxe
   have hwx₁ : w x₁ = 0 := (hw_zero_iff x₁).mpr hx₁
   have hwconv : ConvexOn ℝ univ w := contact_sub_affine_convex hconv c₀ p
-  let s : ℝ := min (1 / 2) (h / (2 * |⟪x₁ - xe, θ⟫|))
-  have habs : 0 < |⟪x₁ - xe, θ⟫| := abs_pos.mpr hx₁pair.ne
-  have hs : 0 < s := by
-    dsimp only [s]
-    exact lt_min (by norm_num) (div_pos hh (mul_pos (by norm_num) habs))
-  have hsone : s ≤ 1 := by
-    have hs' : s ≤ 1 / 2 := min_le_left _ _
-    linarith
-  have hswidth : s * (2 * |⟪x₁ - xe, θ⟫|) ≤ h :=
-    (le_div_iff₀ (mul_pos (by norm_num) habs)).mp (min_le_right _ _)
-  let y : E := xe + s • (x₁ - xe)
-  have hyC : y ∈ C := by
-    have hyform : (1 - s) • xe + s • x₁ = y := by
-      dsimp only [y]
-      module
-    have hc :=
-      hwconv.2 (mem_univ xe) (mem_univ x₁) (sub_nonneg.mpr hsone) hs.le
-        (by ring : (1 - s) + s = 1)
-    rw [hyform, hwxe, hwx₁] at hc
-    simp only [smul_zero, add_zero] at hc
-    exact (hw_zero_iff y).mp (le_antisymm hc (hw_nonneg y))
-  have hypair_raw : ⟪y - xe, θ⟫ = s * ⟪x₁ - xe, θ⟫ := by
-    dsimp only [y]
-    rw [add_sub_cancel_left, real_inner_smul_left]
+  obtain ⟨y, hyC, hβ, hβhalf⟩ :=
+    exists_contact_with_small_width hwconv hw_nonneg hw_zero_iff hwxe hwx₁ hx₁pair hh
   let β : ℝ := -⟪y - xe, θ⟫
-  have hβeq : β = s * |⟪x₁ - xe, θ⟫| := by
-    dsimp only [β]
-    rw [hypair_raw, abs_of_neg hx₁pair]
-    ring
-  have hβ : 0 < β := by
-    rw [hβeq]
-    exact mul_pos hs habs
-  have hβhalf : β ≤ h / 2 := by
-    rw [hβeq]
-    nlinarith only [hswidth]
-  have hypair : ⟪y - xe, θ⟫ = -β := by
-    dsimp only [β]
-    ring
-
+  change 0 < β at hβ
+  change β ≤ h / 2 at hβhalf
+  have hypair : ⟪y - xe, θ⟫ = -β := by simp [β]
   -- Choose compact neighborhoods and a small affine perturbation.
   let P : Set E := C ∩ {x | -h ≤ ⟪x - xe, θ⟫}
   have hPcompact : IsCompact P := hC.inter_right (isClosed_le continuous_const (by fun_prop))
@@ -833,40 +967,16 @@ theorem contactSet_eq_singleton_of_exposed_of_local_bounds {u : E → ℝ}
     rw [hv_eq, (hw_zero_iff y).mpr hyC, hypair]
     have hgap : 0 < -β + h := by linarith
     exact sub_neg.mpr (mul_pos hε hgap)
-  have hup (x : E) (hx : x ∈ S) : ⟪x - xe, θ⟫ ≤ δ := by
-    have ht := ENNReal.toReal_mono ENNReal.ofReal_ne_top (mem_cthickening_iff.mp (hSthick hx))
-    have hdist : infDist x P ≤ δ := by
-      simpa only [Metric.infDist, ENNReal.toReal_ofReal hδ.le] using ht
-    obtain ⟨r, hr, heq⟩ := hPcompact.exists_infDist_eq_dist hPne x
-    have hrdist : ‖x - r‖ ≤ δ := by
-      rw [heq, dist_eq_norm] at hdist
-      exact hdist
-    have hrwidth := hcontactWidth r hr.1
-    have hinner : ⟪x - r, θ⟫ ≤ ‖x - r‖ := by
-      calc
-        ⟪x - r, θ⟫ ≤ |⟪x - r, θ⟫| := le_abs_self _
-        _ ≤ ‖x - r‖ * ‖θ‖ := abs_real_inner_le_norm _ _
-        _ = ‖x - r‖ := by rw [hθ, mul_one]
-    rw [show x - xe = (x - r) + (r - xe) by abel, inner_add_left]
-    linarith
-  have hvfront : ∀ x ∈ frontier S, v x = 0 := by
-    have hsub : S ⊆ {x | v x ≤ 0} := by
-      intro z hz
-      exact le_of_lt (show v z < 0 from hz)
-    have hcl : closure S ⊆ {x | v x ≤ 0} :=
-      closure_minimal hsub (isClosed_le hvc continuous_const)
-    intro x hx
-    have hlo : v x ≤ 0 := hcl (frontier_subset_closure hx)
-    have hnotS : x ∉ S := (hSo.frontier_eq ▸ hx).2
-    have hhi : 0 ≤ v x := le_of_not_gt hnotS
-    exact le_antisymm hlo hhi
+  have hup (x : E) (hx : x ∈ S) : ⟪x - xe, θ⟫ ≤ δ :=
+    inner_sub_le_of_mem_cthickening hPcompact hPne hθ hδ.le
+      (fun r hr => hcontactWidth r hr.1) (hSthick hx)
+  have hvfront : ∀ x ∈ frontier S, v x = 0 := eq_zero_on_frontier_neg hvc
   have hSne : S.Nonempty := ⟨xe, hxeS⟩
   have hreg : interior (closure S) = S := by
     rw [hSc.interior_closure_eq_interior_of_nonempty_interior
         (by rw [hSo.interior_eq]; exact hSne),
       hSo.interior_eq]
   have hclosureCompact : IsCompact (closure S) := hQ.of_isClosed_subset isClosed_closure hSclQ
-
   -- Normalize the perturbed section and transport the local measure bounds.
   obtain ⟨e, heball, heouter⟩ :=
     hnormalize (closure S) hclosureCompact hSc.closure (by rw [hreg]; exact hSne)
@@ -879,86 +989,28 @@ theorem contactSet_eq_singleton_of_exposed_of_local_bounds {u : E → ℝ}
   have hS'c : Convex ℝ S' := hSc.affine_image e.toAffineMap
   have hS'outer : S' ⊆ closedBall (0 : E) C₀ := (Set.image_mono subset_closure).trans heouter
   have hS'b : Bornology.IsBounded S' := Metric.isBounded_closedBall.subset hS'outer
-  have hS'ball : ball (0 : E) 1 ⊆ S' := by
-    intro x hx
-    have hi : x ∈ interior (e '' closure S) :=
-      interior_mono heball (ball_subset_interior_closedBall hx)
-    have him : eh '' interior (closure S) = interior (e '' closure S) :=
-      eh.image_interior (closure S)
-    rw [← him, hreg] at hi
-    exact hi
+  have hS'ball : ball (0 : E) 1 ⊆ S' := ball_subset_normalized_section e heball hreg
   have hv'conv : ConvexOn ℝ univ v' := by
     simpa [v', Function.comp_def] using hvconv.comp_affineMap e.symm.toAffineMap
-  have hv'front : ∀ x ∈ frontier S', v' x = 0 := by
-    intro x hx
-    have him : eh '' frontier S = frontier S' := eh.image_frontier S
-    rw [← him] at hx
-    rcases hx with ⟨z, hz, rfl⟩
-    change v (e.symm (e z)) = 0
-    rw [e.symm_apply_apply]
-    exact hvfront z hz
-  have hloc :
-    ∀ G' : Set E,
-      IsOpen G' →
-        G' ⊆ S' →
-          (volume : Measure E) (subgradientImage v' G') ≠ ∞ ∧
-            (a / D ^ 2) * (volume G').toReal ≤ (volume (subgradientImage v' G')).toReal ∧
-              (volume (subgradientImage v' G')).toReal ≤ (b / D ^ 2) * (volume G').toReal := by
-    intro G' hG'o hG'S
-    let G : Set E := e.symm '' G'
-    have hGo : IsOpen G := eh.symm.isOpenMap G' hG'o
-    have hGS : G ⊆ S := by
-      rintro x ⟨z, hz, rfl⟩
-      rcases hG'S hz with ⟨y, hy, he⟩
-      rw [← he, e.symm_apply_apply]
-      exact hy
-    have hGcl : closure G ⊆ Q := (closure_mono hGS).trans hSclQ
-    obtain ⟨hlo, hhi⟩ := hbounds G hGo hGcl
-    have hhi' : (volume : Measure E) (subgradientImage u G) ≤ ENNReal.ofReal b * volume G :=
-      hhi.trans (mul_le_mul_left (ENNReal.ofReal_le_ofReal (le_max_left b₀ 1)) _)
-    have hvvolume :
-      (volume : Measure E) (subgradientImage v G) = volume (subgradientImage u G) := by
-      rw [contact_volume_sub_affine w c₁ q G, contact_volume_sub_affine u c₀ p G]
-    have hGfin : (volume : Measure E) G ≠ ∞ := (hSb.subset hGS).measure_lt_top.ne
-    obtain ⟨hfin, hrealLo, hrealHi⟩ :=
-      contact_real_bounds (volume : Measure E) ha.le hb.le hGfin hlo hhi'
-    rw [← hvvolume] at hfin hrealLo hrealHi
-    have himage : e '' G = G' := e.toEquiv.image_symm_image G'
-    have ht := contact_transport_real_bounds v e G a b hfin hrealLo hrealHi
-    simpa only [himage] using ht
-
+  have hv'front : ∀ x ∈ frontier S', v' x = 0 := comp_symm_eq_zero_on_frontier_image e hvfront
+  have hloc := normalized_section_measure_bounds ha hb hSb hSclQ
+    (fun G hGo hGcl => by
+      obtain ⟨hlo, hhi⟩ := hbounds G hGo hGcl
+      exact ⟨hlo, hhi.trans (mul_le_mul_left (ENNReal.ofReal_le_ofReal (le_max_left b₀ 1)) _)⟩)
+    (v := v) (fun G => by
+      rw [contact_volume_sub_affine w c₁ q G, contact_volume_sub_affine u c₀ p G]) e
   -- Compare the maximum-principle lower bound with the shrinking-section upper bound.
   let t : ℝ := ε * h
   have ht : 0 < t := mul_pos hε hh
-  have hv'lo : ∀ x ∈ S', -2 * t ≤ v' x := by
-    rintro x ⟨z, hz, rfl⟩
-    change -2 * t ≤ v (e.symm (e z))
-    rw [e.symm_apply_apply, hv_eq]
-    have hzlo := hw_nonneg z
-    have hzup := hup z hz
-    have hi : ⟪z - xe, θ⟫ + h ≤ 2 * h := by linarith
-    have hm := mul_le_mul_of_nonneg_left hi hε.le
-    dsimp only [t]
-    nlinarith
-  have hv'hi : ∀ x ∈ S', v' x ≤ 0 := by
-    rintro x ⟨z, hz, rfl⟩
-    change v (e.symm (e z)) ≤ 0
-    rw [e.symm_apply_apply]
-    exact le_of_lt hz
+  obtain ⟨hv'lo, hv'hi⟩ := perturbed_section_value_bounds e hε.le hδh hw_nonneg hv_eq hup
+    (fun _ hx => hx)
   have hhalfS : ball (0 : E) (1 / 2) ⊆ S' :=
     (ball_subset_ball (by norm_num : (1 / 2 : ℝ) ≤ 1)).trans hS'ball
   have hA : a / D ^ 2 ≤ (8 * t) ^ n :=
     contact_stepA ht hS'ball hv'lo hv'hi (hloc (ball (0 : E) (1 / 2)) isOpen_ball hhalfS).2.1
   obtain ⟨hfinite, _, hupper⟩ := hloc S' hS'o (Subset.refl S')
-  have hupper' :
-    ((volume : Measure E) (subgradientImage v' S')).toReal ≤
-      (b / D ^ 2) * (volume (closedBall (0 : E) C₀)).toReal := by
-    apply hupper.trans
-    apply mul_le_mul_of_nonneg_left
-    · exact
-        ENNReal.toReal_mono Metric.isBounded_closedBall.measure_lt_top.ne
-          (measure_mono hS'outer)
-    · positivity
+  have hupper' := volume_subgradientImage_le_scaled_ball
+    (B := b / D ^ 2) (by positivity) hS'outer hupper
   have hxeS' : e xe ∈ S' := ⟨xe, hxeS, rfl⟩
   have hv'xe : v' (e xe) = -t := by
     change v (e.symm (e xe)) = -(ε * h)

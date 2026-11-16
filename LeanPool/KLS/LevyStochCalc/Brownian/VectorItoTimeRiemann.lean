@@ -51,6 +51,135 @@ variable {Ω : Type u} [MeasurableSpace Ω] {P : Measure Ω} [IsProbabilityMeasu
   {C : ℝ} (hC0 : 0 ≤ C)
   (hCH : ∀ (m : Fin n) (k : Fin d) (ω : Ω) (s : ℝ), |H m k ω s| ≤ C)
 
+private theorem abs_frozenVectorTime_difference_le
+    {Ω : Type*}
+    [MeasurableSpace Ω]
+    {n : ℕ}
+    {X : ℝ → Ω → Fin n → ℝ}
+    (wgt : Ω → ℝ → ℝ)
+    (hwm : Measurable (Function.uncurry wgt))
+    {A : ℝ}
+    (hA : ∀ (ω : Ω) (s : ℝ), |wgt ω s| ≤ A)
+    {φ : (Fin n → ℝ) → ℝ}
+    {Kφ : ℝ}
+    (hφbd : ∀ (x : Fin n → ℝ), |φ x| ≤ Kφ)
+    {T : ℝ}
+    (hT : 0 < T)
+    {m : ℕ}
+    (hm0 : m ≠ 0)
+    (hKφ0 : 0 ≤ Kφ)
+    (hgmeas : ∀ (ω : Ω), Measurable fun s => φ (X s ω) * wgt ω s)
+    (hgbd : ∀ (ω : Ω) (s : ℝ), |φ (X s ω) * wgt ω s| ≤ Kφ * A) : ∀ ω : Ω,
+    |(∑ i ∈ Finset.range m, φ (X (unifGrid T m i) ω)
+          * ∫ s in Set.Ioc (unifGrid T m i) (unifGrid T m (i + 1)), wgt ω s ∂volume)
+        - ∫ s in Set.Ioc (0 : ℝ) T, φ (X s ω) * wgt ω s ∂volume|
+    ≤ 2 * (Kφ * A * T) := by
+  classical
+  intro ω
+  have h1 : |∑ i ∈ Finset.range m, φ (X (unifGrid T m i) ω)
+      * ∫ s in Set.Ioc (unifGrid T m i) (unifGrid T m (i + 1)), wgt ω s ∂volume|
+      ≤ Kφ * A * T := by
+    refine (Finset.abs_sum_le_sum_abs _ _).trans ?_
+    have hterm : ∀ i ∈ Finset.range m, |φ (X (unifGrid T m i) ω)
+        * ∫ s in Set.Ioc (unifGrid T m i) (unifGrid T m (i + 1)), wgt ω s ∂volume|
+        ≤ Kφ * (A * (T / (m : ℝ))) := by
+      intro i _
+      rw [abs_mul]
+      refine mul_le_mul (hφbd _) ?_ (abs_nonneg _) hKφ0
+      have := abs_setIntegral_Ioc_le (Measurable.of_uncurry_left hwm) (hA ω)
+        (unifGrid_lt_succ hT hm0 i).le
+      rwa [unifGrid_succ_sub hm0 i] at this
+    refine (Finset.sum_le_sum hterm).trans ?_
+    rw [Finset.sum_const, Finset.card_range, nsmul_eq_mul]
+    have hTm : (m : ℝ) * (T / (m : ℝ)) = T := by field_simp
+    calc (m : ℝ) * (Kφ * (A * (T / (m : ℝ))))
+        = Kφ * A * ((m : ℝ) * (T / (m : ℝ))) := by ring
+      _ = Kφ * A * T := by rw [hTm]
+      _ ≤ Kφ * A * T := le_rfl
+  have h2 : |∫ s in Set.Ioc (0 : ℝ) T, φ (X s ω) * wgt ω s ∂volume| ≤ Kφ * A * T := by
+    have := abs_setIntegral_Ioc_le (hgmeas ω) (hgbd ω) hT.le
+    simpa using this
+  calc |(∑ i ∈ Finset.range m, φ (X (unifGrid T m i) ω)
+          * ∫ s in Set.Ioc (unifGrid T m i) (unifGrid T m (i + 1)), wgt ω s ∂volume)
+        - ∫ s in Set.Ioc (0 : ℝ) T, φ (X s ω) * wgt ω s ∂volume|
+      ≤ |∑ i ∈ Finset.range m, φ (X (unifGrid T m i) ω)
+          * ∫ s in Set.Ioc (unifGrid T m i) (unifGrid T m (i + 1)), wgt ω s ∂volume|
+        + |∫ s in Set.Ioc (0 : ℝ) T, φ (X s ω) * wgt ω s ∂volume| :=
+        abs_sub_le_abs_add_abs _ _
+    _ ≤ 2 * (Kφ * A * T) := by linarith
+
+private theorem lintegral_vectorTime_mesh_error_le
+    {Ω : Type*}
+    [MeasurableSpace Ω]
+    {P : Measure Ω}
+    {n : ℕ}
+    {d : ℕ}
+    {X : ℝ → Ω → Fin n → ℝ}
+    {C : ℝ}
+    {B : ℝ}
+    {A : ℝ}
+    {L : ℝ}
+    {T : ℝ}
+    {m : ℕ}
+    (hm0 : m ≠ 0) (hT : 0 < T) (hB0 : 0 ≤ B) (hC0 : 0 ≤ C)
+    (hLA0 : 0 ≤ L * A)
+    (hcellL : ∀ (ω : Ω) (i : ℕ),
+        IntegrableOn (fun s => L * A * ‖X (unifGrid T m i) ω - X s ω‖) (Set.Ioc (unifGrid T m i)
+          (unifGrid T m (i + 1))) volume)
+    (hwin : ∀ (i : ℕ),
+        ∫⁻ (ω : Ω),
+            ∫⁻ (s : ℝ) in Set.Ioc (unifGrid T m i) (unifGrid T m (i + 1)), ENNReal.ofReal ‖X
+              (unifGrid T m i) ω - X s ω‖ ∂volume ∂P ≤
+          ENNReal.ofReal (T / ↑m * (↑n * (B * (T / ↑m) + ↑d * (C * √(T / ↑m))))))
+    (hmeasCell : ∀ (i : ℕ),
+        Measurable fun ω =>
+          ENNReal.ofReal
+            (∫ (s : ℝ) in Set.Ioc (unifGrid T m i) (unifGrid T m (i + 1)), L * A * ‖X
+              (unifGrid T m i) ω - X s ω‖)) : ∫⁻ ω, ∑ i ∈ Finset.range m, ENNReal.ofReal
+      (∫ s in Set.Ioc (unifGrid T m i) (unifGrid T m (i + 1)),
+        L * A * ‖X (unifGrid T m i) ω - X s ω‖ ∂volume) ∂P
+    ≤ ENNReal.ofReal (L * A * (T * ((n : ℝ) * (B * (T / (m : ℝ))
+      + (d : ℝ) * (C * Real.sqrt (T / (m : ℝ))))))) := by
+  classical
+  calc ∫⁻ ω, ∑ i ∈ Finset.range m, ENNReal.ofReal
+          (∫ s in Set.Ioc (unifGrid T m i) (unifGrid T m (i + 1)),
+          L * A * ‖X (unifGrid T m i) ω - X s ω‖ ∂volume) ∂P
+      = ∑ i ∈ Finset.range m, ∫⁻ ω, ENNReal.ofReal
+          (∫ s in Set.Ioc (unifGrid T m i) (unifGrid T m (i + 1)),
+            L * A * ‖X (unifGrid T m i) ω - X s ω‖ ∂volume) ∂P :=
+      MeasureTheory.lintegral_finsetSum _ fun i _ => hmeasCell i
+  _ = ∑ i ∈ Finset.range m, ENNReal.ofReal (L * A)
+        * ∫⁻ ω, ∫⁻ s in Set.Ioc (unifGrid T m i) (unifGrid T m (i + 1)),
+            ENNReal.ofReal ‖X (unifGrid T m i) ω - X s ω‖ ∂volume ∂P := by
+      refine Finset.sum_congr rfl fun i _ => ?_
+      rw [← MeasureTheory.lintegral_const_mul' _ _ (by simp : ENNReal.ofReal (L * A) ≠ ⊤)]
+      refine lintegral_congr fun ω => ?_
+      rw [MeasureTheory.ofReal_integral_eq_lintegral_ofReal (hcellL ω i)
+        (Filter.Eventually.of_forall fun s => by positivity),
+        ← MeasureTheory.lintegral_const_mul' _ _ (by simp : ENNReal.ofReal (L * A) ≠ ⊤)]
+      refine lintegral_congr fun s => ?_
+      rw [← ENNReal.ofReal_mul hLA0]
+  _ ≤ ∑ i ∈ Finset.range m, ENNReal.ofReal (L * A)
+        * ENNReal.ofReal ((T / (m : ℝ)) * ((n : ℝ) * (B * (T / (m : ℝ))
+          + (d : ℝ) * (C * Real.sqrt (T / (m : ℝ)))))) :=
+      Finset.sum_le_sum fun i _ => by gcongr; exact hwin i
+  _ = ENNReal.ofReal (L * A * (T * ((n : ℝ) * (B * (T / (m : ℝ))
+        + (d : ℝ) * (C * Real.sqrt (T / (m : ℝ))))))) := by
+      have hwnn : (0 : ℝ) ≤ (T / (m : ℝ)) * ((n : ℝ) * (B * (T / (m : ℝ))
+          + (d : ℝ) * (C * Real.sqrt (T / (m : ℝ))))) := by positivity
+      rw [Finset.sum_const, Finset.card_range, nsmul_eq_mul,
+        ← ENNReal.ofReal_mul hLA0]
+      rw [show ((m : ℕ) : ℝ≥0∞) = ENNReal.ofReal ((m : ℝ)) from
+        (ENNReal.ofReal_natCast m).symm, ← ENNReal.ofReal_mul (Nat.cast_nonneg m)]
+      congr 1
+      field_simp
+
+private theorem mul_setIntegral_sub_eq {s : Set ℝ} {f g : ℝ → ℝ} (c : ℝ)
+    (hs : MeasurableSet s) (hg : IntegrableOn g s) (hfg : IntegrableOn (fun x => f x * g x) s) :
+    c * (∫ x in s, g x) - (∫ x in s, f x * g x) = ∫ x in s, (c - f x) * g x := by
+  rw [← MeasureTheory.integral_const_mul, ← MeasureTheory.integral_sub (hg.const_mul _) hfg]
+  exact MeasureTheory.setIntegral_congr_fun hs (fun x _ => (sub_mul c (f x) (g x)).symm)
+
 include hC0 hCH in
 /-- **A frozen-weight Riemann sum converges in `L¹` at rate `√(T/m)`.** For a bounded
 `L`-Lipschitz `φ` on the state space and a bounded time density `wgt`, the sum of `φ(X_{tᵢ})`
@@ -133,12 +262,8 @@ theorem IsVectorItoVersion.integral_abs_frozenRiemann_sub_le
           * (∫ s in Set.Ioc (unifGrid T m i) (unifGrid T m (i + 1)), wgt ω s ∂volume)
         - ∫ s in Set.Ioc (unifGrid T m i) (unifGrid T m (i + 1)), φ (X s ω) * wgt ω s ∂volume
       = ∫ s in Set.Ioc (unifGrid T m i) (unifGrid T m (i + 1)),
-          (φ (X (unifGrid T m i) ω) - φ (X s ω)) * wgt ω s ∂volume := by
-    intro ω i
-    rw [← MeasureTheory.integral_const_mul,
-      ← MeasureTheory.integral_sub ((hcellb ω i).const_mul _) (hcellg ω i)]
-    refine MeasureTheory.setIntegral_congr_fun measurableSet_Ioc fun s _ => ?_
-    ring
+          (φ (X (unifGrid T m i) ω) - φ (X s ω)) * wgt ω s ∂volume :=
+    fun ω i => mul_setIntegral_sub_eq _ measurableSet_Ioc (hcellb ω i) (hcellg ω i)
   have hcellvol : ∀ i : ℕ,
       (volume : Measure ℝ).real (Set.Ioc (unifGrid T m i) (unifGrid T m (i + 1)))
         = T / (m : ℝ) := by
@@ -207,39 +332,8 @@ theorem IsVectorItoVersion.integral_abs_frozenRiemann_sub_le
       |(∑ i ∈ Finset.range m, φ (X (unifGrid T m i) ω)
             * ∫ s in Set.Ioc (unifGrid T m i) (unifGrid T m (i + 1)), wgt ω s ∂volume)
           - ∫ s in Set.Ioc (0 : ℝ) T, φ (X s ω) * wgt ω s ∂volume|
-      ≤ 2 * (Kφ * A * T) := by
-    intro ω
-    have h1 : |∑ i ∈ Finset.range m, φ (X (unifGrid T m i) ω)
-        * ∫ s in Set.Ioc (unifGrid T m i) (unifGrid T m (i + 1)), wgt ω s ∂volume|
-        ≤ Kφ * A * T := by
-      refine (Finset.abs_sum_le_sum_abs _ _).trans ?_
-      have hterm : ∀ i ∈ Finset.range m, |φ (X (unifGrid T m i) ω)
-          * ∫ s in Set.Ioc (unifGrid T m i) (unifGrid T m (i + 1)), wgt ω s ∂volume|
-          ≤ Kφ * (A * (T / (m : ℝ))) := by
-        intro i _
-        rw [abs_mul]
-        refine mul_le_mul (hφbd _) ?_ (abs_nonneg _) hKφ0
-        have := abs_setIntegral_Ioc_le (Measurable.of_uncurry_left hwm) (hA ω)
-          (unifGrid_lt_succ hT hm0 i).le
-        rwa [unifGrid_succ_sub hm0 i] at this
-      refine (Finset.sum_le_sum hterm).trans ?_
-      rw [Finset.sum_const, Finset.card_range, nsmul_eq_mul]
-      have hTm : (m : ℝ) * (T / (m : ℝ)) = T := by field_simp
-      calc (m : ℝ) * (Kφ * (A * (T / (m : ℝ))))
-          = Kφ * A * ((m : ℝ) * (T / (m : ℝ))) := by ring
-        _ = Kφ * A * T := by rw [hTm]
-        _ ≤ Kφ * A * T := le_rfl
-    have h2 : |∫ s in Set.Ioc (0 : ℝ) T, φ (X s ω) * wgt ω s ∂volume| ≤ Kφ * A * T := by
-      have := abs_setIntegral_Ioc_le (hgmeas ω) (hgbd ω) hT.le
-      simpa using this
-    calc |(∑ i ∈ Finset.range m, φ (X (unifGrid T m i) ω)
-            * ∫ s in Set.Ioc (unifGrid T m i) (unifGrid T m (i + 1)), wgt ω s ∂volume)
-          - ∫ s in Set.Ioc (0 : ℝ) T, φ (X s ω) * wgt ω s ∂volume|
-        ≤ |∑ i ∈ Finset.range m, φ (X (unifGrid T m i) ω)
-            * ∫ s in Set.Ioc (unifGrid T m i) (unifGrid T m (i + 1)), wgt ω s ∂volume|
-          + |∫ s in Set.Ioc (0 : ℝ) T, φ (X s ω) * wgt ω s ∂volume| :=
-          abs_sub_le_abs_add_abs _ _
-      _ ≤ 2 * (Kφ * A * T) := by linarith
+      ≤ 2 * (Kφ * A * T) :=
+    abs_frozenVectorTime_difference_le wgt hwm hA hφbd hT hm0 hKφ0 hgmeas hgbd
   have hZint : Integrable (fun ω : Ω =>
       (∑ i ∈ Finset.range m, φ (X (unifGrid T m i) ω)
             * ∫ s in Set.Ioc (unifGrid T m i) (unifGrid T m (i + 1)), wgt ω s ∂volume)
@@ -277,39 +371,8 @@ theorem IsVectorItoVersion.integral_abs_frozenRiemann_sub_le
         (∫ s in Set.Ioc (unifGrid T m i) (unifGrid T m (i + 1)),
           L * A * ‖X (unifGrid T m i) ω - X s ω‖ ∂volume) ∂P
       ≤ ENNReal.ofReal (L * A * (T * ((n : ℝ) * (B * (T / (m : ℝ))
-        + (d : ℝ) * (C * Real.sqrt (T / (m : ℝ))))))) := by
-    calc ∫⁻ ω, ∑ i ∈ Finset.range m, ENNReal.ofReal
-            (∫ s in Set.Ioc (unifGrid T m i) (unifGrid T m (i + 1)),
-            L * A * ‖X (unifGrid T m i) ω - X s ω‖ ∂volume) ∂P
-        = ∑ i ∈ Finset.range m, ∫⁻ ω, ENNReal.ofReal
-            (∫ s in Set.Ioc (unifGrid T m i) (unifGrid T m (i + 1)),
-              L * A * ‖X (unifGrid T m i) ω - X s ω‖ ∂volume) ∂P :=
-        MeasureTheory.lintegral_finsetSum _ fun i _ => hmeasCell i
-    _ = ∑ i ∈ Finset.range m, ENNReal.ofReal (L * A)
-          * ∫⁻ ω, ∫⁻ s in Set.Ioc (unifGrid T m i) (unifGrid T m (i + 1)),
-              ENNReal.ofReal ‖X (unifGrid T m i) ω - X s ω‖ ∂volume ∂P := by
-        refine Finset.sum_congr rfl fun i _ => ?_
-        rw [← MeasureTheory.lintegral_const_mul' _ _ (by simp : ENNReal.ofReal (L * A) ≠ ⊤)]
-        refine lintegral_congr fun ω => ?_
-        rw [MeasureTheory.ofReal_integral_eq_lintegral_ofReal (hcellL ω i)
-          (Filter.Eventually.of_forall fun s => by positivity),
-          ← MeasureTheory.lintegral_const_mul' _ _ (by simp : ENNReal.ofReal (L * A) ≠ ⊤)]
-        refine lintegral_congr fun s => ?_
-        rw [← ENNReal.ofReal_mul hLA0]
-    _ ≤ ∑ i ∈ Finset.range m, ENNReal.ofReal (L * A)
-          * ENNReal.ofReal ((T / (m : ℝ)) * ((n : ℝ) * (B * (T / (m : ℝ))
-            + (d : ℝ) * (C * Real.sqrt (T / (m : ℝ)))))) :=
-        Finset.sum_le_sum fun i _ => by gcongr; exact hwin i
-    _ = ENNReal.ofReal (L * A * (T * ((n : ℝ) * (B * (T / (m : ℝ))
-          + (d : ℝ) * (C * Real.sqrt (T / (m : ℝ))))))) := by
-        have hwnn : (0 : ℝ) ≤ (T / (m : ℝ)) * ((n : ℝ) * (B * (T / (m : ℝ))
-            + (d : ℝ) * (C * Real.sqrt (T / (m : ℝ))))) := by positivity
-        rw [Finset.sum_const, Finset.card_range, nsmul_eq_mul,
-          ← ENNReal.ofReal_mul hLA0]
-        rw [show ((m : ℕ) : ℝ≥0∞) = ENNReal.ofReal ((m : ℝ)) from
-          (ENNReal.ofReal_natCast m).symm, ← ENNReal.ofReal_mul (Nat.cast_nonneg m)]
-        congr 1
-        field_simp
+        + (d : ℝ) * (C * Real.sqrt (T / (m : ℝ))))))) :=
+    lintegral_vectorTime_mesh_error_le hm0 hT hB0 hC0 hLA0 hcellL hwin hmeasCell
   have hMAT0 : (0 : ℝ) ≤ Mφ * A * T := by positivity
   have hLAT0 : (0 : ℝ) ≤ L * A * (T * ((n : ℝ) * (B * (T / (m : ℝ))
       + (d : ℝ) * (C * Real.sqrt (T / (m : ℝ)))))) := by

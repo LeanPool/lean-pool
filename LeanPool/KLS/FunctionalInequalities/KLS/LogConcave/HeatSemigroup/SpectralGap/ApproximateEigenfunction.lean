@@ -12,7 +12,8 @@ public import LeanPool.KLS.FunctionalInequalities.KLS.LogConcave.HeatSemigroup.S
 # Approximate first eigenfunctions of the heat-model generator
 
 In the heat model `ν = m.tilted (-U)` with `U ∈ C²`, closed unit gradient `Tbar` and generator
-`A = Tbar†Tbar = -ℒ`, suppose the literature Poincaré constant is `C_P(ν) = C` with `0 < C < ∞` and put
+`A = Tbar†Tbar = -ℒ`, suppose the literature Poincaré constant is `C_P(ν) = C` with `0 < C < ∞`
+and put
 `λ = C⁻¹`. For every `η > 0` there is a centered `f ∈ D(A)` with `‖f‖₂ = 1` and
 `‖A f - λ f‖₂ ≤ λ η` (`exists_centered_approx_eigenfunction`). This replaces the first
 eigenfunction `L f = -λ₁ f` of Bizeul–Klartag–Lehec (arXiv:2610.05474v1), (19).

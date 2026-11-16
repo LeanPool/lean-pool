@@ -56,7 +56,6 @@ noncomputable section
 
 open MeasureTheory Finset
 open FunctionalInequalities.Analysis.Tensor
-open scoped Classical
 
 namespace FunctionalInequalities.KLS.LogConcave.PoissonIterate
 

@@ -415,7 +415,8 @@ private theorem coe_le_of_eq
     (h29 : ∀ (u : Lp ℝ 2 (ν : Measure V)) (d : ℕ), 1 ≤ d →
       ‖coordTensor (stdOrthonormalBasis ℝ V) (taylorTensor (ν : Measure V) (⇑u) d)‖ ≤
         R ^ d * ‖u‖)
-    {C : NNReal} (hCpos : 0 < C) (hCP : Poincare.LocalSlope.Intrinsic.optimalConstant ν = (C : ENNReal)) :
+    {C : NNReal} (hCpos : 0 < C) (hCP : Poincare.LocalSlope.Intrinsic.optimalConstant ν =
+      (C : ENNReal)) :
     (C : ℝ) ≤ taylorCriterionConstant * R ^ 2 := by
   have hU2 : ContDiff ℝ 2 U := hU.1.of_le (WithTop.coe_le_coe.mpr le_top)
   obtain ⟨f, hfm, hfn, hfA⟩ := exists_centered_approx_eigenfunction m hν hi hνU hU2 hCpos hCP

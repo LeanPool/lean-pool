@@ -12,7 +12,8 @@ public import LeanPool.KLS.FunctionalInequalities.Analysis.Mollification.Basic
 # Interior regularity of deficiency elements, and the operator core
 
 `HeatSemigroup/Generator/Core.lean` reduces the operator-core property of `C_c^∞(V)` for
-`A = Tbar†Tbar` — the hypothesis `hcore` of the heat-flow weak `Γ₂` theorem — to one local statement:
+`A = Tbar†Tbar` — the hypothesis `hcore` of the heat-flow weak `Γ₂` theorem — to one local
+statement:
 every `u ∈ L²(ν)` orthogonal to `(A + 1) C_c^∞(V)` has all of its localizations `[χ u]`,
 `χ ∈ C_c^∞(V)`, in the form domain `D(Tbar)`. This module proves that statement and draws the
 consequence.
@@ -696,6 +697,204 @@ private theorem localized_toLp_tendsto (hνU : (ν : Measure V) = m.tilted (-U))
       (Or.inr (ENNReal.rpow_ne_top_of_nonneg (by norm_num) ENNReal.ofReal_ne_top))
   rwa [mul_zero, mul_zero] at h
 
+omit [BorelSpace V] [SecondCountableTopology V] [FiniteDimensional ℝ V] in
+private theorem cauchySeq_of_eLpNorm_gradient_difference
+    {ν : ProbabilityMeasure V} (m : Measure V) (F : ℕ → Lp V 2 (ν : Measure V))
+    {v : ℕ → V → ℝ} {w : V → ℝ} {H : ℕ → V → V} {G : V → V}
+    (hvL : ∀ n, MemLp (v n) 2 m) (hwL : MemLp w 2 m)
+    (hHL : ∀ n, MemLp (H n) 2 m) (hGL : MemLp G 2 m)
+    (hvconv : Tendsto (fun n => eLpNorm (v n - w) 2 m) atTop (𝓝 0))
+    (hHconv : Tendsto (fun n => eLpNorm (H n - G) 2 m) atTop (𝓝 0))
+    {K₀ K₁ K₂ : ℝ≥0∞} (hK₀ : K₀ ≠ ⊤) (hK₁ : K₁ ≠ ⊤) (hK₂ : K₂ ≠ ⊤)
+    {gfun : ℕ → V → ℝ}
+    (hdist : ∀ n k, dist (F n) (F k) =
+      (eLpNorm (fun x => gradient (gfun n) x - gradient (gfun k) x) 2 (ν : Measure V)).toReal)
+    (hbound : ∀ n k, eLpNorm (fun x => gradient (gfun n) x - gradient (gfun k) x) 2
+      (ν : Measure V) ≤ K₀ * (K₁ * eLpNorm (v n - v k) 2 m + K₂ * eLpNorm (H n - H k) 2 m)) :
+    CauchySeq F := by
+  -- the bound tends to zero along `atTop` on pairs
+  have hfst : Tendsto (fun p : ℕ × ℕ => p.1) atTop atTop := by
+    rw [← Filter.prod_atTop_atTop_eq]; exact tendsto_fst
+  have hsnd : Tendsto (fun p : ℕ × ℕ => p.2) atTop atTop := by
+    rw [← Filter.prod_atTop_atTop_eq]; exact tendsto_snd
+  have hvw : ∀ n, eLpNorm (v n - w) 2 m ≠ ⊤ := fun n => ((hvL n).sub hwL).eLpNorm_lt_top.ne
+  have hHG : ∀ n, eLpNorm (H n - G) 2 m ≠ ⊤ := fun n => ((hHL n).sub hGL).eLpNorm_lt_top.ne
+  set B : ℕ × ℕ → ℝ≥0∞ := fun p => K₀ * (K₁ * (eLpNorm (v p.1 - w) 2 m + eLpNorm (v p.2 - w) 2 m)
+    + K₂ * (eLpNorm (H p.1 - G) 2 m + eLpNorm (H p.2 - G) 2 m)) with hB_def
+  have hBfin : ∀ p, B p ≠ ⊤ := fun p =>
+    ENNReal.mul_ne_top hK₀ (ENNReal.add_ne_top.mpr
+      ⟨ENNReal.mul_ne_top hK₁ (ENNReal.add_ne_top.mpr ⟨hvw _, hvw _⟩),
+        ENNReal.mul_ne_top hK₂ (ENNReal.add_ne_top.mpr ⟨hHG _, hHG _⟩)⟩)
+  have hBlim : Tendsto B atTop (𝓝 0) := by
+    have h1 : Tendsto (fun p : ℕ × ℕ => eLpNorm (v p.1 - w) 2 m + eLpNorm (v p.2 - w) 2 m) atTop
+        (𝓝 (0 + 0)) := (hvconv.comp hfst).add (hvconv.comp hsnd)
+    have h2 : Tendsto (fun p : ℕ × ℕ => eLpNorm (H p.1 - G) 2 m + eLpNorm (H p.2 - G) 2 m) atTop
+        (𝓝 (0 + 0)) := (hHconv.comp hfst).add (hHconv.comp hsnd)
+    rw [add_zero] at h1 h2
+    have h3 := (ENNReal.Tendsto.const_mul h1 (Or.inr hK₁)).add
+      (ENNReal.Tendsto.const_mul h2 (Or.inr hK₂))
+    rw [mul_zero, mul_zero, add_zero] at h3
+    have h4 := ENNReal.Tendsto.const_mul h3 (Or.inr hK₀)
+    rw [mul_zero] at h4
+    exact h4
+  have hdist_le (p : ℕ × ℕ) : dist (F p.1) (F p.2) ≤ (B p).toReal := by
+    rw [hdist p.1 p.2]
+    refine ENNReal.toReal_mono (hBfin p) ((hbound p.1 p.2).trans ?_)
+    simp only [hB_def]
+    gcongr
+    · have : v p.1 - v p.2 = (v p.1 - w) - (v p.2 - w) := by abel
+      rw [this]
+      exact eLpNorm_sub_le one_le_two
+    · have : H p.1 - H p.2 = (H p.1 - G) - (H p.2 - G) := by abel
+      rw [this]
+      exact eLpNorm_sub_le one_le_two
+  rw [cauchySeq_iff_tendsto_dist_atTop_0]
+  refine squeeze_zero (fun _ => dist_nonneg) hdist_le ?_
+  have := (ENNReal.tendsto_toReal ENNReal.zero_ne_top).comp hBlim
+  rw [ENNReal.toReal_zero] at this
+  exact this
+
+private theorem eLpNorm_gradient_difference_le
+    {V : Type*}
+    [NormedAddCommGroup V]
+    [InnerProductSpace ℝ V]
+    [CompleteSpace V]
+    [MeasurableSpace V]
+    [BorelSpace V]
+    [SecondCountableTopology V]
+    {ν : ProbabilityMeasure V}
+    (m : Measure V)
+    {U : V → ℝ}
+    (hνU : ↑ν = m.tilted (-U))
+    {χ : V → ℝ}
+    (hχ : ContDiff ℝ ∞ χ)
+    (ρinv : V → ℝ)
+    (hρinvc : ContDiff ℝ 1 ρinv)
+    (hχ1 : ContDiff ℝ 1 χ)
+    (v : ℕ → V → ℝ)
+    (H : ℕ → V → V)
+    (hvs : ∀ (n : ℕ), ContDiff ℝ ∞ (v n))
+    (hHc : ∀ (n : ℕ),
+        Continuous (H n))
+    (hcacc : ∀ (n k : ℕ),
+        eLpNorm (fun x => χ x • gradient (v n - v k) x) 2 m ≤
+          3 * eLpNorm (fun x => (v n - v k) x • gradient χ x) 2 m + 2 * eLpNorm (fun x => χ x •
+            (H n - H k) x) 2 m)
+    (M₁ : ℝ)
+    (hM₁ : ∀ (x : V), ‖gradient χ x‖ ≤ M₁)
+    (hM₁0 : 0 ≤ M₁)
+    (M₂ : ℝ)
+    (hM₂ : ∀ (x : V), ‖χ x‖ ≤ M₂)
+    (hM₂0 : 0 ≤ M₂)
+    (C₃ : ℝ)
+    (C₄ : ℝ)
+    (hC₄0 : 0 ≤ C₄)
+    (M₆ : ℝ)
+    (hM₆ : ∀ (x : V), ‖(χ • gradient ρinv) x‖ ≤ M₆)
+    (hM₆0 : 0 ≤ M₆)
+    (hρle : ∀ x ∈ tsupport χ, tiltedDensity m U x ≤ C₃)
+    (hρinvle : ∀ x ∈ tsupport χ, ‖ρinv x‖ ≤ C₄)
+    (hgradχ : ∀ x ∉ tsupport χ, gradient χ x = 0)
+    (gfun : ℕ → V → ℝ)
+    (hgradsub : ∀ (n k : ℕ) (x : V),
+        gradient (gfun n) x - gradient (gfun k) x =
+          (χ x * (v n - v k) x) • gradient ρinv x + ρinv x • χ x • gradient (v n - v k) x +
+            ρinv x • (v n - v k) x • gradient χ x)
+    (K₁ : ℝ≥0∞)
+    (hK₁_def : K₁ = ENNReal.ofReal M₆ + ENNReal.ofReal C₄ * (3 * ENNReal.ofReal M₁)
+      + ENNReal.ofReal (C₄ * M₁))
+    (K₂ : ℝ≥0∞)
+    (hK₂_def : K₂ = ENNReal.ofReal C₄ * (2 * ENNReal.ofReal M₂)) :
+    let K₀ : ℝ≥0∞ := ENNReal.ofReal C₃ ^ (1 / 2 : ℝ)
+    ∀ n k, eLpNorm (fun x => gradient (gfun n) x - gradient (gfun k) x) 2
+    (ν : Measure V) ≤ K₀ * (K₁ * eLpNorm (v n - v k) 2 m + K₂ * eLpNorm (H n - H k) 2 m) := by
+  classical
+  intro K₀ n k
+  set d : V → ℝ := v n - v k with hd_def
+  set Hd : V → V := H n - H k with hHd_def
+  have hdc : Continuous d := ((hvs n).sub (hvs k)).continuous
+  have hdgc : Continuous (gradient d) :=
+    continuous_gradient (((hvs n).sub (hvs k)).of_le (WithTop.coe_le_coe.mpr le_top))
+  have hHdc : Continuous Hd := (hHc n).sub (hHc k)
+  set P₁ : V → V := fun x => (χ x * d x) • gradient ρinv x with hP₁_def
+  set P₂ : V → V := fun x => ρinv x • (χ x • gradient d x) with hP₂_def
+  set P₃ : V → V := fun x => ρinv x • (d x • gradient χ x) with hP₃_def
+  have hP₁m : AEStronglyMeasurable P₁ m :=
+    ((hχ.continuous.mul hdc).smul (continuous_gradient hρinvc)).aestronglyMeasurable
+  have hP₂m : AEStronglyMeasurable P₂ m :=
+    (hρinvc.continuous.smul (hχ.continuous.smul hdgc)).aestronglyMeasurable
+  have hP₃m : AEStronglyMeasurable P₃ m :=
+    (hρinvc.continuous.smul (hdc.smul (continuous_gradient hχ1))).aestronglyMeasurable
+  have hsum : (fun x => gradient (gfun n) x - gradient (gfun k) x) = P₁ + P₂ + P₃ := by
+    funext x
+    simp only [Pi.add_apply, hP₁_def, hP₂_def, hP₃_def, hd_def]
+    exact hgradsub n k x
+  -- outside the support of `χ` all three pieces vanish
+  have hzero : ∀ x ∉ tsupport χ, gradient (gfun n) x - gradient (gfun k) x = 0 := by
+    intro x hx
+    rw [hgradsub, image_eq_zero_of_notMem_tsupport hx, hgradχ x hx]
+    simp
+  -- the transfer to `ν`
+  have hν_le : eLpNorm (fun x => gradient (gfun n) x - gradient (gfun k) x) 2 (ν : Measure V) ≤
+      K₀ * eLpNorm (fun x => gradient (gfun n) x - gradient (gfun k) x) 2 m := by
+    refine eLpNorm_tilted_le m hνU fun x hx => hρle x ?_
+    by_contra hx'
+    exact hx (hzero x hx')
+  -- the three pieces in `L²(m)`
+  have h₁ : eLpNorm P₁ 2 m ≤ ENNReal.ofReal M₆ * eLpNorm d 2 m := by
+    refine eLpNorm_le_of_norm_le m hM₆0 hP₁m fun x => ?_
+    change ‖(χ x * d x) • gradient ρinv x‖ ≤ M₆ * ‖d x‖
+    rw [mul_comm (χ x), mul_smul, norm_smul, mul_comm]
+    exact mul_le_mul_of_nonneg_right (hM₆ x) (norm_nonneg _)
+  have h₂ : eLpNorm P₂ 2 m ≤ ENNReal.ofReal C₄ * eLpNorm (fun x => χ x • gradient d x) 2 m := by
+    refine eLpNorm_le_of_norm_le m hC₄0 hP₂m fun x => ?_
+    simp only [hP₂_def]
+    rw [norm_smul]
+    by_cases hx : x ∈ tsupport χ
+    · exact mul_le_mul_of_nonneg_right (hρinvle x hx) (norm_nonneg _)
+    · rw [image_eq_zero_of_notMem_tsupport hx, zero_smul, norm_zero, mul_zero, mul_zero]
+  have h₃ : eLpNorm P₃ 2 m ≤ ENNReal.ofReal (C₄ * M₁) * eLpNorm d 2 m := by
+    refine eLpNorm_le_of_norm_le m (mul_nonneg hC₄0 hM₁0) hP₃m fun x => ?_
+    simp only [hP₃_def]
+    rw [norm_smul, norm_smul]
+    by_cases hx : x ∈ tsupport χ
+    · calc ‖ρinv x‖ * (‖d x‖ * ‖gradient χ x‖) ≤ C₄ * (‖d x‖ * M₁) := by
+            gcongr
+            · exact hρinvle x hx
+            · exact hM₁ x
+        _ = C₄ * M₁ * ‖d x‖ := by ring
+    · rw [hgradχ x hx, norm_zero, mul_zero, mul_zero]
+      positivity
+  have hBd : eLpNorm (fun x => d x • gradient χ x) 2 m ≤ ENNReal.ofReal M₁ * eLpNorm d 2 m := by
+    refine eLpNorm_le_of_norm_le m hM₁0
+      (hdc.smul (continuous_gradient hχ1)).aestronglyMeasurable fun x => ?_
+    rw [norm_smul, mul_comm]
+    exact mul_le_mul_of_nonneg_right (hM₁ x) (norm_nonneg _)
+  have hCd : eLpNorm (fun x => χ x • Hd x) 2 m ≤ ENNReal.ofReal M₂ * eLpNorm Hd 2 m := by
+    refine eLpNorm_le_of_norm_le m hM₂0 (hχ.continuous.smul hHdc).aestronglyMeasurable
+      fun x => ?_
+    rw [norm_smul]
+    exact mul_le_mul_of_nonneg_right (hM₂ x) (norm_nonneg _)
+  have hcac := hcacc n k
+  calc eLpNorm (fun x => gradient (gfun n) x - gradient (gfun k) x) 2 (ν : Measure V)
+      ≤ K₀ * eLpNorm (fun x => gradient (gfun n) x - gradient (gfun k) x) 2 m := hν_le
+    _ ≤ K₀ * (eLpNorm P₁ 2 m + eLpNorm P₂ 2 m + eLpNorm P₃ 2 m) := by
+        gcongr
+        rw [hsum]
+        exact (eLpNorm_add_le one_le_two).trans
+          (add_le_add_left (eLpNorm_add_le one_le_two) _)
+    _ ≤ K₀ * (ENNReal.ofReal M₆ * eLpNorm d 2 m +
+          ENNReal.ofReal C₄ * (3 * (ENNReal.ofReal M₁ * eLpNorm d 2 m) +
+            2 * (ENNReal.ofReal M₂ * eLpNorm Hd 2 m)) +
+          ENNReal.ofReal (C₄ * M₁) * eLpNorm d 2 m) := by
+        gcongr
+        refine h₂.trans ?_
+        gcongr
+        exact hcac.trans (by gcongr)
+    _ = K₀ * (K₁ * eLpNorm d 2 m + K₂ * eLpNorm Hd 2 m) := by
+        simp only [hK₁_def, hK₂_def]
+        ring
+
 /-- **Interior regularity of deficiency elements.** For `ν = m.tilted (-U)` with a `C¹` potential
 and unit weight, let `u ∈ L²(ν)` be orthogonal to `(A + 1) C_c^∞(V)`, that is,
 `⟪A [f], u⟫ + ⟪[f], u⟫ = 0` for every smooth compactly supported `f`. Then every localization
@@ -912,142 +1111,14 @@ theorem toLp_mul_mem_closedWeightedOperator_domain_of_orthogonal
         ENNReal.ofReal_ne_top)⟩, ENNReal.ofReal_ne_top⟩
   have hK₂ : K₂ ≠ ⊤ := ENNReal.mul_ne_top ENNReal.ofReal_ne_top
     (ENNReal.mul_ne_top ENNReal.ofNat_ne_top ENNReal.ofReal_ne_top)
-
   -- Bound the gradient differences and prove the operator images are Cauchy.
   have hbound : ∀ n k, eLpNorm (fun x => gradient (gfun n) x - gradient (gfun k) x) 2
-      (ν : Measure V) ≤ K₀ * (K₁ * eLpNorm (v n - v k) 2 m + K₂ * eLpNorm (H n - H k) 2 m) := by
-    intro n k
-    set d : V → ℝ := v n - v k with hd_def
-    set Hd : V → V := H n - H k with hHd_def
-    have hdc : Continuous d := ((hvs n).sub (hvs k)).continuous
-    have hdgc : Continuous (gradient d) :=
-      continuous_gradient (((hvs n).sub (hvs k)).of_le (WithTop.coe_le_coe.mpr le_top))
-    have hHdc : Continuous Hd := (hHc n).sub (hHc k)
-    set P₁ : V → V := fun x => (χ x * d x) • gradient ρinv x with hP₁_def
-    set P₂ : V → V := fun x => ρinv x • (χ x • gradient d x) with hP₂_def
-    set P₃ : V → V := fun x => ρinv x • (d x • gradient χ x) with hP₃_def
-    have hP₁m : AEStronglyMeasurable P₁ m :=
-      ((hχ.continuous.mul hdc).smul (continuous_gradient hρinvc)).aestronglyMeasurable
-    have hP₂m : AEStronglyMeasurable P₂ m :=
-      (hρinvc.continuous.smul (hχ.continuous.smul hdgc)).aestronglyMeasurable
-    have hP₃m : AEStronglyMeasurable P₃ m :=
-      (hρinvc.continuous.smul (hdc.smul (continuous_gradient hχ1))).aestronglyMeasurable
-    have hsum : (fun x => gradient (gfun n) x - gradient (gfun k) x) = P₁ + P₂ + P₃ := by
-      funext x
-      simp only [Pi.add_apply, hP₁_def, hP₂_def, hP₃_def, hd_def]
-      exact hgradsub n k x
-    -- outside the support of `χ` all three pieces vanish
-    have hzero : ∀ x ∉ tsupport χ, gradient (gfun n) x - gradient (gfun k) x = 0 := by
-      intro x hx
-      rw [hgradsub, image_eq_zero_of_notMem_tsupport hx, hgradχ x hx]
-      simp
-    -- the transfer to `ν`
-    have hν_le : eLpNorm (fun x => gradient (gfun n) x - gradient (gfun k) x) 2 (ν : Measure V) ≤
-        K₀ * eLpNorm (fun x => gradient (gfun n) x - gradient (gfun k) x) 2 m := by
-      refine eLpNorm_tilted_le m hνU fun x hx => hρle x ?_
-      by_contra hx'
-      exact hx (hzero x hx')
-    -- the three pieces in `L²(m)`
-    have h₁ : eLpNorm P₁ 2 m ≤ ENNReal.ofReal M₆ * eLpNorm d 2 m := by
-      refine eLpNorm_le_of_norm_le m hM₆0 hP₁m fun x => ?_
-      change ‖(χ x * d x) • gradient ρinv x‖ ≤ M₆ * ‖d x‖
-      rw [mul_comm (χ x), mul_smul, norm_smul, mul_comm]
-      exact mul_le_mul_of_nonneg_right (hM₆ x) (norm_nonneg _)
-    have h₂ : eLpNorm P₂ 2 m ≤ ENNReal.ofReal C₄ * eLpNorm (fun x => χ x • gradient d x) 2 m := by
-      refine eLpNorm_le_of_norm_le m hC₄0 hP₂m fun x => ?_
-      simp only [hP₂_def]
-      rw [norm_smul]
-      by_cases hx : x ∈ tsupport χ
-      · exact mul_le_mul_of_nonneg_right (hρinvle x hx) (norm_nonneg _)
-      · rw [image_eq_zero_of_notMem_tsupport hx, zero_smul, norm_zero, mul_zero, mul_zero]
-    have h₃ : eLpNorm P₃ 2 m ≤ ENNReal.ofReal (C₄ * M₁) * eLpNorm d 2 m := by
-      refine eLpNorm_le_of_norm_le m (mul_nonneg hC₄0 hM₁0) hP₃m fun x => ?_
-      simp only [hP₃_def]
-      rw [norm_smul, norm_smul]
-      by_cases hx : x ∈ tsupport χ
-      · calc ‖ρinv x‖ * (‖d x‖ * ‖gradient χ x‖) ≤ C₄ * (‖d x‖ * M₁) := by
-              gcongr
-              · exact hρinvle x hx
-              · exact hM₁ x
-          _ = C₄ * M₁ * ‖d x‖ := by ring
-      · rw [hgradχ x hx, norm_zero, mul_zero, mul_zero]
-        positivity
-    have hBd : eLpNorm (fun x => d x • gradient χ x) 2 m ≤ ENNReal.ofReal M₁ * eLpNorm d 2 m := by
-      refine eLpNorm_le_of_norm_le m hM₁0
-        (hdc.smul (continuous_gradient hχ1)).aestronglyMeasurable fun x => ?_
-      rw [norm_smul, mul_comm]
-      exact mul_le_mul_of_nonneg_right (hM₁ x) (norm_nonneg _)
-    have hCd : eLpNorm (fun x => χ x • Hd x) 2 m ≤ ENNReal.ofReal M₂ * eLpNorm Hd 2 m := by
-      refine eLpNorm_le_of_norm_le m hM₂0 (hχ.continuous.smul hHdc).aestronglyMeasurable
-        fun x => ?_
-      rw [norm_smul]
-      exact mul_le_mul_of_nonneg_right (hM₂ x) (norm_nonneg _)
-    have hcac := hcacc n k
-    calc eLpNorm (fun x => gradient (gfun n) x - gradient (gfun k) x) 2 (ν : Measure V)
-        ≤ K₀ * eLpNorm (fun x => gradient (gfun n) x - gradient (gfun k) x) 2 m := hν_le
-      _ ≤ K₀ * (eLpNorm P₁ 2 m + eLpNorm P₂ 2 m + eLpNorm P₃ 2 m) := by
-          gcongr
-          rw [hsum]
-          exact (eLpNorm_add_le one_le_two).trans
-            (add_le_add_left (eLpNorm_add_le one_le_two) _)
-      _ ≤ K₀ * (ENNReal.ofReal M₆ * eLpNorm d 2 m +
-            ENNReal.ofReal C₄ * (3 * (ENNReal.ofReal M₁ * eLpNorm d 2 m) +
-              2 * (ENNReal.ofReal M₂ * eLpNorm Hd 2 m)) +
-            ENNReal.ofReal (C₄ * M₁) * eLpNorm d 2 m) := by
-          gcongr
-          refine h₂.trans ?_
-          gcongr
-          exact hcac.trans (by gcongr)
-      _ = K₀ * (K₁ * eLpNorm d 2 m + K₂ * eLpNorm Hd 2 m) := by
-          simp only [hK₁_def, hK₂_def]
-          ring
-  -- the bound tends to zero along `atTop` on pairs
-  have hfst : Tendsto (fun p : ℕ × ℕ => p.1) atTop atTop := by
-    rw [← Filter.prod_atTop_atTop_eq]; exact tendsto_fst
-  have hsnd : Tendsto (fun p : ℕ × ℕ => p.2) atTop atTop := by
-    rw [← Filter.prod_atTop_atTop_eq]; exact tendsto_snd
-  have hvw : ∀ n, eLpNorm (v n - w) 2 m ≠ ⊤ := fun n => ((hvL n).sub hwL).eLpNorm_lt_top.ne
-  have hHG : ∀ n, eLpNorm (H n - G) 2 m ≠ ⊤ := fun n => ((hHL n).sub hGL).eLpNorm_lt_top.ne
-  set B : ℕ × ℕ → ℝ≥0∞ := fun p => K₀ * (K₁ * (eLpNorm (v p.1 - w) 2 m + eLpNorm (v p.2 - w) 2 m)
-    + K₂ * (eLpNorm (H p.1 - G) 2 m + eLpNorm (H p.2 - G) 2 m)) with hB_def
-  have hBfin : ∀ p, B p ≠ ⊤ := fun p =>
-    ENNReal.mul_ne_top hK₀ (ENNReal.add_ne_top.mpr
-      ⟨ENNReal.mul_ne_top hK₁ (ENNReal.add_ne_top.mpr ⟨hvw _, hvw _⟩),
-        ENNReal.mul_ne_top hK₂ (ENNReal.add_ne_top.mpr ⟨hHG _, hHG _⟩)⟩)
-  have hBlim : Tendsto B atTop (𝓝 0) := by
-    have h1 : Tendsto (fun p : ℕ × ℕ => eLpNorm (v p.1 - w) 2 m + eLpNorm (v p.2 - w) 2 m) atTop
-        (𝓝 (0 + 0)) := (hvconv.comp hfst).add (hvconv.comp hsnd)
-    have h2 : Tendsto (fun p : ℕ × ℕ => eLpNorm (H p.1 - G) 2 m + eLpNorm (H p.2 - G) 2 m) atTop
-        (𝓝 (0 + 0)) := (hHconv.comp hfst).add (hHconv.comp hsnd)
-    rw [add_zero] at h1 h2
-    have h3 := (ENNReal.Tendsto.const_mul h1 (Or.inr hK₁)).add
-      (ENNReal.Tendsto.const_mul h2 (Or.inr hK₂))
-    rw [mul_zero, mul_zero, add_zero] at h3
-    have h4 := ENNReal.Tendsto.const_mul h3 (Or.inr hK₀)
-    rw [mul_zero] at h4
-    exact h4
-  have hdist_le : ∀ p : ℕ × ℕ, dist (hν.closedWeightedOperator m (ContinuousLinearMap.id ℝ V) hi
-      ⟨_, hmem p.1⟩) (hν.closedWeightedOperator m (ContinuousLinearMap.id ℝ V) hi ⟨_, hmem p.2⟩)
-      ≤ (B p).toReal := by
-    intro p
-    rw [hdist]
-    refine ENNReal.toReal_mono (hBfin p) ((hbound p.1 p.2).trans ?_)
-    simp only [hB_def]
-    gcongr
-    · have : v p.1 - v p.2 = (v p.1 - w) - (v p.2 - w) := by abel
-      rw [this]
-      exact eLpNorm_sub_le one_le_two
-    · have : H p.1 - H p.2 = (H p.1 - G) - (H p.2 - G) := by abel
-      rw [this]
-      exact eLpNorm_sub_le one_le_two
-  have hcauchy : CauchySeq fun n =>
-      hν.closedWeightedOperator m (ContinuousLinearMap.id ℝ V) hi ⟨_, hmem n⟩ := by
-    rw [cauchySeq_iff_tendsto_dist_atTop_0]
-    refine squeeze_zero (fun _ => dist_nonneg) hdist_le ?_
-    have := (ENNReal.tendsto_toReal ENNReal.zero_ne_top).comp hBlim
-    rw [ENNReal.toReal_zero] at this
-    exact this
-
+      (ν : Measure V) ≤ K₀ * (K₁ * eLpNorm (v n - v k) 2 m + K₂ * eLpNorm (H n - H k) 2 m) :=
+    eLpNorm_gradient_difference_le m hνU hχ ρinv hρinvc hχ1 v H hvs hHc hcacc M₁ hM₁ hM₁0 M₂ hM₂
+      hM₂0 C₃ C₄ hC₄0 M₆ hM₆ hM₆0 hρle hρinvle hgradχ gfun hgradsub K₁ hK₁_def K₂ hK₂_def
+  have hcauchy := cauchySeq_of_eLpNorm_gradient_difference m
+    (fun n => hν.closedWeightedOperator m (ContinuousLinearMap.id ℝ V) hi ⟨_, hmem n⟩)
+    hvL hwL hHL hGL hvconv hHconv hK₀ hK₁ hK₂ hdist hbound
   -- Use closedness to recover the original localized function in the domain.
   obtain ⟨b, hb⟩ := cauchySeq_tendsto_of_complete hcauchy
   -- convergence `[gₙ] → [χ u]` in `L²(ν)`
@@ -1066,7 +1137,8 @@ theorem toLp_mul_mem_closedWeightedOperator_domain_of_orthogonal
     (hν.closedWeightedOperator_isClosed m (ContinuousLinearMap.id ℝ V) hi) hmem hxa hb
   exact hmem'
 
-/-- **`C_c^∞(V)` is an operator core of the generator `A = Tbar†Tbar`.** For `ν = m.tilted (-U)` with
+/-- **`C_c^∞(V)` is an operator core of the generator `A = Tbar†Tbar`.** For `ν = m.tilted (-U)`
+with
 a `C¹` potential and unit weight, every `F ∈ D(A)` is the limit of smooth compactly supported
 classes in the graph norm of `A`: there are `fₙ ∈ C_c^∞(V)` with `[fₙ] → F` and `A [fₙ] → A F` in
 `L²(ν)`. Equivalently, `ℒ = Δ - ⟪∇U, ∇·⟫` is essentially self-adjoint on `C_c^∞(V)` in `L²(ν)`.

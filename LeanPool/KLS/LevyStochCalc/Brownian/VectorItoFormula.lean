@@ -108,6 +108,100 @@ variable {Ω : Type u} [MeasurableSpace Ω] {P : Measure Ω} [IsProbabilityMeasu
   {C : ℝ} (hC0 : 0 ≤ C)
   (hCH : ∀ (p : Fin n) (k : Fin d) (ω : Ω) (s : ℝ), |H p k ω s| ≤ C)
 
+private theorem integral_abs_quadratic_difference_le
+    {Ω : Type*}
+    [MeasurableSpace Ω]
+    {P : Measure Ω}
+    {n : ℕ}
+    {d : ℕ}
+    {H : Fin n → Fin d → Ω → ℝ → ℝ}
+    {X : ℝ → Ω → Fin n → ℝ}
+    {C : ℝ}
+    {B : ℝ}
+    {f'' : (Fin n → ℝ) → (Fin n → ℝ) →L[ℝ] (Fin n → ℝ) →L[ℝ] ℝ}
+    {K₂ : ℝ}
+    {A : ℝ}
+    {K : ℝ}
+    {T : ℝ}
+    {m : ℕ}
+    (hZ4 : ∀ (p q : Fin n),
+        Integrable
+            (fun ω =>
+              ∑ i ∈ Finset.range m,
+                  coordDeriv₂ f'' p q (X (unifGrid T m i) ω) *
+                    ((X (unifGrid T m (i + 1)) ω p - X (unifGrid T m i) ω p) *
+                      (X (unifGrid T m (i + 1)) ω q - X (unifGrid T m i) ω q)) -
+                ∫ (s : ℝ) in Set.Ioc 0 T, coordDeriv₂ f'' p q (X s ω) * ∑ k, H p k ω s * H q k ω s)
+            P ∧
+          ∫ (ω : Ω),
+              |∑ i ∈ Finset.range m,
+                    coordDeriv₂ f'' p q (X (unifGrid T m i) ω) *
+                      ((X (unifGrid T m (i + 1)) ω p - X (unifGrid T m i) ω p) *
+                        (X (unifGrid T m (i + 1)) ω q - X (unifGrid T m i) ω q)) -
+                  ∫ (s : ℝ) in Set.Ioc 0 T, coordDeriv₂ f'' p q (X s ω) * ∑ k,
+                    H p k ω s * H q k ω s| ∂P ≤
+            K₂ * B ^ 2 * T * (T / ↑m) + K₂ * B * ↑d * C * T * √(T / ↑m)
+              + K₂ * B * ↑d * C * T * √(T / ↑m) +
+                  ↑d * √(K₂ ^ 2 * (3 * ((2 * (6 + gaussianFourthMoment) + 2) * (2 * C) ^ 4)) *
+                    (T * (T / ↑m))) +
+                ↑d ^ 2 * √(K₂ ^ 2 * ((6 + gaussianFourthMoment) * (C ^ 4 + C ^ 4) / 2) * (T *
+                  (T / ↑m))) +
+              (A * (↑d * C ^ 2) * T + K * (↑d * C ^ 2) * (T * (↑n * (B * (T / ↑m) + ↑d *
+                (C * √(T / ↑m))))))) : ∫ ω, |1 / 2 * ∑ p : Fin n, ∑ q : Fin n,
+      ((∑ i ∈ Finset.range m, coordDeriv₂ f'' p q (X (unifGrid T m i) ω)
+          * ((X (unifGrid T m (i + 1)) ω p - X (unifGrid T m i) ω p)
+            * (X (unifGrid T m (i + 1)) ω q - X (unifGrid T m i) ω q)))
+        - ∫ s in Set.Ioc (0 : ℝ) T,
+            coordDeriv₂ f'' p q (X s ω) * ∑ k : Fin d, H p k ω s * H q k ω s ∂volume)| ∂P
+    ≤ 1 / 2 * ((n : ℝ) * ((n : ℝ) * (K₂ * B ^ 2 * T * (T / (m : ℝ))
+      + K₂ * B * (d : ℝ) * C * T * Real.sqrt (T / (m : ℝ))
+      + K₂ * B * (d : ℝ) * C * T * Real.sqrt (T / (m : ℝ))
+      + (d : ℝ) * Real.sqrt (K₂ ^ 2
+          * (3 * ((2 * (6 + gaussianFourthMoment) + 2) * (2 * C) ^ 4))
+          * (T * (T / (m : ℝ))))
+      + (d : ℝ) ^ 2 * Real.sqrt (K₂ ^ 2
+          * ((6 + gaussianFourthMoment) * (C ^ 4 + C ^ 4) / 2) * (T * (T / (m : ℝ))))
+      + (A * ((d : ℝ) * C ^ 2) * T
+        + K * ((d : ℝ) * C ^ 2) * (T * ((n : ℝ) * (B * (T / (m : ℝ))
+          + (d : ℝ) * (C * Real.sqrt (T / (m : ℝ)))))))))) := by
+  classical
+  have habs : ∀ ω : Ω, |1 / 2 * ∑ p : Fin n, ∑ q : Fin n,
+        ((∑ i ∈ Finset.range m, coordDeriv₂ f'' p q (X (unifGrid T m i) ω)
+            * ((X (unifGrid T m (i + 1)) ω p - X (unifGrid T m i) ω p)
+              * (X (unifGrid T m (i + 1)) ω q - X (unifGrid T m i) ω q)))
+          - ∫ s in Set.Ioc (0 : ℝ) T,
+              coordDeriv₂ f'' p q (X s ω) * ∑ k : Fin d, H p k ω s * H q k ω s ∂volume)|
+      = 1 / 2 * |∑ p : Fin n, ∑ q : Fin n,
+        ((∑ i ∈ Finset.range m, coordDeriv₂ f'' p q (X (unifGrid T m i) ω)
+            * ((X (unifGrid T m (i + 1)) ω p - X (unifGrid T m i) ω p)
+              * (X (unifGrid T m (i + 1)) ω q - X (unifGrid T m i) ω q)))
+          - ∫ s in Set.Ioc (0 : ℝ) T,
+              coordDeriv₂ f'' p q (X s ω)
+                * ∑ k : Fin d, H p k ω s * H q k ω s ∂volume)| := by
+    intro ω
+    rw [abs_mul, abs_of_nonneg (by norm_num : (0 : ℝ) ≤ 1 / 2)]
+  simp_rw [habs]
+  rw [MeasureTheory.integral_const_mul]
+  refine mul_le_mul_of_nonneg_left ?_ (by norm_num)
+  refine (integral_abs_finsetSum_le _ _
+    (fun p _ => MeasureTheory.integrable_finsetSum _ fun q _ => (hZ4 p q).1)
+    (fun _ => (n : ℝ) * (K₂ * B ^ 2 * T * (T / (m : ℝ))
+      + K₂ * B * (d : ℝ) * C * T * Real.sqrt (T / (m : ℝ))
+      + K₂ * B * (d : ℝ) * C * T * Real.sqrt (T / (m : ℝ))
+      + (d : ℝ) * Real.sqrt (K₂ ^ 2
+          * (3 * ((2 * (6 + gaussianFourthMoment) + 2) * (2 * C) ^ 4))
+          * (T * (T / (m : ℝ))))
+      + (d : ℝ) ^ 2 * Real.sqrt (K₂ ^ 2
+          * ((6 + gaussianFourthMoment) * (C ^ 4 + C ^ 4) / 2) * (T * (T / (m : ℝ))))
+      + (A * ((d : ℝ) * C ^ 2) * T
+        + K * ((d : ℝ) * C ^ 2) * (T * ((n : ℝ) * (B * (T / (m : ℝ))
+          + (d : ℝ) * (C * Real.sqrt (T / (m : ℝ)))))))))
+    (fun p _ => ?_)).trans ?_
+  · refine (integral_abs_finsetSum_le _ _ (fun q _ => (hZ4 p q).1) _
+      (fun q _ => (hZ4 p q).2)).trans ?_
+    rw [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
+  · rw [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
+
 include hC0 hCH in
 /-- **The `L¹` defect of Itô's formula for a vector Itô process on a uniform grid.** -/
 theorem IsVectorItoVersion.integral_abs_vectorItoFormula_le
@@ -316,43 +410,8 @@ theorem IsVectorItoVersion.integral_abs_vectorItoFormula_le
             * ((6 + gaussianFourthMoment) * (C ^ 4 + C ^ 4) / 2) * (T * (T / (m : ℝ))))
         + (A * ((d : ℝ) * C ^ 2) * T
           + K * ((d : ℝ) * C ^ 2) * (T * ((n : ℝ) * (B * (T / (m : ℝ))
-            + (d : ℝ) * (C * Real.sqrt (T / (m : ℝ)))))))))) := by
-    have habs : ∀ ω : Ω, |1 / 2 * ∑ p : Fin n, ∑ q : Fin n,
-          ((∑ i ∈ Finset.range m, coordDeriv₂ f'' p q (X (unifGrid T m i) ω)
-              * ((X (unifGrid T m (i + 1)) ω p - X (unifGrid T m i) ω p)
-                * (X (unifGrid T m (i + 1)) ω q - X (unifGrid T m i) ω q)))
-            - ∫ s in Set.Ioc (0 : ℝ) T,
-                coordDeriv₂ f'' p q (X s ω) * ∑ k : Fin d, H p k ω s * H q k ω s ∂volume)|
-        = 1 / 2 * |∑ p : Fin n, ∑ q : Fin n,
-          ((∑ i ∈ Finset.range m, coordDeriv₂ f'' p q (X (unifGrid T m i) ω)
-              * ((X (unifGrid T m (i + 1)) ω p - X (unifGrid T m i) ω p)
-                * (X (unifGrid T m (i + 1)) ω q - X (unifGrid T m i) ω q)))
-            - ∫ s in Set.Ioc (0 : ℝ) T,
-                coordDeriv₂ f'' p q (X s ω)
-                  * ∑ k : Fin d, H p k ω s * H q k ω s ∂volume)| := by
-      intro ω
-      rw [abs_mul, abs_of_nonneg (by norm_num : (0 : ℝ) ≤ 1 / 2)]
-    simp_rw [habs]
-    rw [MeasureTheory.integral_const_mul]
-    refine mul_le_mul_of_nonneg_left ?_ (by norm_num)
-    refine (integral_abs_finsetSum_le _ _
-      (fun p _ => MeasureTheory.integrable_finsetSum _ fun q _ => (hZ4 p q).1)
-      (fun _ => (n : ℝ) * (K₂ * B ^ 2 * T * (T / (m : ℝ))
-        + K₂ * B * (d : ℝ) * C * T * Real.sqrt (T / (m : ℝ))
-        + K₂ * B * (d : ℝ) * C * T * Real.sqrt (T / (m : ℝ))
-        + (d : ℝ) * Real.sqrt (K₂ ^ 2
-            * (3 * ((2 * (6 + gaussianFourthMoment) + 2) * (2 * C) ^ 4))
-            * (T * (T / (m : ℝ))))
-        + (d : ℝ) ^ 2 * Real.sqrt (K₂ ^ 2
-            * ((6 + gaussianFourthMoment) * (C ^ 4 + C ^ 4) / 2) * (T * (T / (m : ℝ))))
-        + (A * ((d : ℝ) * C ^ 2) * T
-          + K * ((d : ℝ) * C ^ 2) * (T * ((n : ℝ) * (B * (T / (m : ℝ))
-            + (d : ℝ) * (C * Real.sqrt (T / (m : ℝ)))))))))
-      (fun p _ => ?_)).trans ?_
-    · refine (integral_abs_finsetSum_le _ _ (fun q _ => (hZ4 p q).1) _
-        (fun q _ => (hZ4 p q).2)).trans ?_
-      rw [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
-    · rw [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
+            + (d : ℝ) * (C * Real.sqrt (T / (m : ℝ)))))))))) :=
+    integral_abs_quadratic_difference_le hZ4
   refine ⟨(((hZ1int.add hZ2int).add hZ3int).add hZ4int).congr hdecomp.symm, ?_⟩
   refine le_trans (le_of_eq (MeasureTheory.integral_congr_ae (hdecomp.fun_comp abs))) ?_
   refine le_trans (integral_abs_add_four_le hZ1int hZ2int hZ3int hZ4int hZ1le hZ2le hZ3le hZ4le)

@@ -41,7 +41,7 @@ noncomputable section
 open MeasureTheory
 open FunctionalInequalities.Analysis.Semigroup FunctionalInequalities.Analysis.BakryEmery
 open FunctionalInequalities.Analysis.Tensor
-open scoped RealInnerProductSpace Classical
+open scoped RealInnerProductSpace
 
 namespace FunctionalInequalities.KLS.LogConcave.PoissonIterate
 
@@ -61,10 +61,12 @@ def normSq {k : ℕ} (u : Field ν k) : ℝ :=
 
 /-- The gradient `T u` on the domain of `T`, and `0` elsewhere. -/
 def weakGrad (u : Lp ℝ 2 (ν : Measure V)) : Lp V 2 (ν : Measure V) :=
+  open scoped Classical in
   if h : u ∈ T.domain then T ⟨u, h⟩ else 0
 
 /-- The generator `T†T u` (`= -ℒ u` in the heat model) on its domain, and `0` elsewhere. -/
 def gen (u : Lp ℝ 2 (ν : Measure V)) : Lp ℝ 2 (ν : Measure V) :=
+  open scoped Classical in
   if h : u ∈ (adjointComp T).domain then adjointComp T ⟨u, h⟩ else 0
 
 /-- The weak partial derivative `∂_j u = ⟪e_j, T u⟫` in the standard orthonormal basis. -/
@@ -75,6 +77,7 @@ def partialDeriv (j : Fin (Module.finrank ℝ V)) (u : Lp ℝ 2 (ν : Measure V)
 /-- The centered inverse `(-L)⁻¹ g`: the centered `u ∈ D(T†T)` with `T†T u = g` when one exists
 (it is unique when `T` is the closed heat-model gradient), and `0` otherwise. -/
 def centeredInv (g : Lp ℝ 2 (ν : Measure V)) : Lp ℝ 2 (ν : Measure V) :=
+  open scoped Classical in
   if h : ∃ u : (adjointComp T).domain,
       L2.mean ν (u : Lp ℝ 2 (ν : Measure V)) = 0 ∧ adjointComp T u = g then
     (h.choose : Lp ℝ 2 (ν : Measure V))
@@ -100,6 +103,7 @@ def invField {k : ℕ} (g : Field ν k) : Field ν k :=
 `‖∇₀h‖ / ‖∇(-L)⁻¹∇₀h‖`, and `0` when the denominator vanishes (in particular when `∇₀h = 0`,
 the source's linear case). -/
 def scale {k : ℕ} (h : Field ν k) : ℝ :=
+  open scoped Classical in
   if normSq (gradField T (invField T (grad0 T h))) = 0 then 0
   else Real.sqrt (normSq (grad0 T h) / normSq (gradField T (invField T (grad0 T h))))
 

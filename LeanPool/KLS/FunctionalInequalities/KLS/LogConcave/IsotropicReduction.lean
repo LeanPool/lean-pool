@@ -75,7 +75,8 @@ theorem localSlope_le_of_regular_isotropic_bound {K : NNReal}
     (hBound :
       ∀ {V : E → ℝ} {a b : ℝ} (hV : KLS.RegularPotential V a b),
         0 < b →
-          KLS.Isotropic hV.law → Poincare.LocalSlope.Intrinsic.optimalConstant hV.law ≤ (K : ENNReal))
+          KLS.Isotropic hV.law → Poincare.LocalSlope.Intrinsic.optimalConstant hV.law ≤
+            (K : ENNReal))
     (μ : ProbabilityMeasure E) (hLC : KLS.LogConcave μ) (hiso : KLS.Isotropic μ) :
     Poincare.LocalSlope.Intrinsic.optimalConstant μ ≤ (K : ENNReal) := by
   by_cases hdim : Module.finrank ℝ E = 0

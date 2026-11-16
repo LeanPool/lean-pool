@@ -211,7 +211,8 @@ theorem poincare_le_of_cumulantBound :
               ∀ (n : ℕ) (V : EuclideanSpace ℝ (Fin n) → ℝ) (a b : ℝ)
                 (hV : KLS.RegularPotential V a b),
                 KLS.Isotropic hV.law →
-                  Poincare.LocalSlope.Intrinsic.optimalConstant hV.law ≤ ENNReal.ofReal (2 * C * K) := by
+                  Poincare.LocalSlope.Intrinsic.optimalConstant hV.law ≤ ENNReal.ofReal
+                    (2 * C * K) := by
   obtain ⟨C, hC, hT⟩ := poincare_le_of_taylor
   refine ⟨C, hC, fun K hK hcb n V a b hV hiso => ?_⟩
   let E := EuclideanSpace ℝ (Fin n)
@@ -332,7 +333,8 @@ theorem localSlope_le_of_cumulantBound_all :
                 [FiniteDimensional ℝ E] (μ : ProbabilityMeasure E),
                 KLS.LogConcave μ →
                   KLS.Isotropic μ →
-                    Poincare.LocalSlope.Intrinsic.optimalConstant μ ≤ ENNReal.ofReal (2 * C * K) := by
+                    Poincare.LocalSlope.Intrinsic.optimalConstant μ ≤ ENNReal.ofReal
+                      (2 * C * K) := by
   obtain ⟨C, hC, hRegular⟩ := KLS.RegularPotential.poincare_le_of_cumulantBound
   refine ⟨C, hC, ?_⟩
   intro K hK hcb E _ _ _ _ _ _ _ μ hLC hiso

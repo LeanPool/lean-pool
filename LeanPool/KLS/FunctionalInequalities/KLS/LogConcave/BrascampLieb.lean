@@ -27,7 +27,8 @@ lower bound). For a `C¹` test `f` in `L²(ν)`, not necessarily compactly suppo
 
 Route: by Young, compact integration by parts and the ordinary-diffusion coercivity
 (`compact_variational_estimate`), the
-centered class of `f` satisfies `2⟪fbar, w⟫ − ‖w‖² ≤ ∫ energy` on the compact smooth diffusion images
+centered class of `f` satisfies `2⟪fbar, w⟫ − ‖w‖² ≤ ∫ energy` on the compact smooth diffusion
+images
 `w`, which are dense in the
 centered classes (`center_mem_closure_compactSmoothDiffusionImage`). This is the inequality of
 Letwin, arXiv:2607.24164v1,

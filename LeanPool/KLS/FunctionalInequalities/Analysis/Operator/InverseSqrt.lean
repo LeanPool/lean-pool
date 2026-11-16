@@ -45,7 +45,11 @@ open scoped MatrixOrder RealInnerProductSpace
 namespace FunctionalInequalities.Analysis
 
 variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [FiniteDimensional ℝ E]
-  {ι : Type*} [Fintype ι] [DecidableEq ι]
+  {ι : Type*} [Fintype ι]
+
+section
+
+variable [DecidableEq ι]
 
 /--
 The principal (positive) inverse square root of `A` computed in the orthonormal basis `b`: the
@@ -176,13 +180,18 @@ theorem inverseSqrt_mul_mul_inverseSqrt (A : E →L[ℝ] E) (hpos : A.IsPositive
       _ = 1 * inverseSqrt A := by simp
   exact hσ.mul_right_cancel heq
 
+end
+
 section LocalLipschitz
 
 open Matrix Set Filter Topology
 open scoped Matrix.Norms.L2Operator NNReal ContDiff
 
 private theorem continuousOn_matrix_sqrt :
-    ContinuousOn (CFC.sqrt : Matrix ι ι ℝ → Matrix ι ι ℝ) {M | 0 ≤ M} := CFC.continuousOn_sqrt
+    open scoped Classical in
+    ContinuousOn (CFC.sqrt : Matrix ι ι ℝ → Matrix ι ι ℝ) {M | 0 ≤ M} :=
+  open scoped Classical in
+  CFC.continuousOn_sqrt
 
 /--
 **Local Lipschitz property of the canonical matrix square root** along a positive definite profile
@@ -195,7 +204,9 @@ regularity of the root is assumed. -/
 theorem locallyLipschitz_matrixEntries_sqrt {X : Type*} [PseudoMetricSpace X]
     (M : X → Matrix ι ι ℝ) (hM : Continuous M) (hPD : ∀ x, (M x).PosDef)
     (hInput : LocallyLipschitz (fun x => matrixEntries (M x))) :
+    open scoped Classical in
     LocallyLipschitz (fun x => matrixEntries (CFC.sqrt (M x))) := by
+  classical
   have hroot : Continuous (fun x => CFC.sqrt (M x)) :=
     continuousOn_matrix_sqrt.comp_continuous hM (fun x => (hPD x).posSemidef.nonneg)
   have hE : Continuous (fun x => matrixEntries (CFC.sqrt (M x))) :=
@@ -239,7 +250,7 @@ theorem locallyLipschitz_matrixEntries_sqrt {X : Type*} [PseudoMetricSpace X]
     _ = ((K : ℝ) / a) * dist x y := by ring
 
 /-- The same, with the root read back as an operator in the operator norm. -/
-theorem locallyLipschitz_operatorOfMatrix_sqrt {X : Type*} [PseudoMetricSpace X]
+theorem locallyLipschitz_operatorOfMatrix_sqrt {X : Type*} [PseudoMetricSpace X] [DecidableEq ι]
     (b : OrthonormalBasis ι ℝ E) (M : X → Matrix ι ι ℝ)
     (hM : Continuous M) (hPD : ∀ x, (M x).PosDef)
     (hInput : LocallyLipschitz (fun x => matrixEntries (M x))) :
@@ -268,10 +279,9 @@ theorem locallyLipschitz_inverseSqrt_of_contDiff_ringInverse {P : Type*} [Normed
     apply (operatorMatrix_isUnit_iff b _).mpr
     exact (hunit p).ringInverse
   have hM : Continuous M := by
-    exact
-      (((LinearMap.toMatrixOrthonormal b).toAlgEquiv.toLinearMap.comp
-              LinearMap.toContinuousLinearMap.symm.toLinearMap).toContinuousLinearMap).continuous.comp
-        hInverse.continuous
+    let matrixChart := (LinearMap.toMatrixOrthonormal b).toAlgEquiv.toLinearMap.comp
+      LinearMap.toContinuousLinearMap.symm.toLinearMap
+    exact matrixChart.toContinuousLinearMap.continuous.comp hInverse.continuous
   have h := locallyLipschitz_operatorOfMatrix_sqrt b M hM hPD hChart.locallyLipschitz
   have heq : (fun p => operatorOfMatrix b (CFC.sqrt (M p))) = (fun p => inverseSqrt (A p)) := by
     funext p

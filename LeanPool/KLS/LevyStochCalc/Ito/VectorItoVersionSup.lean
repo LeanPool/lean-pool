@@ -134,6 +134,71 @@ theorem martingale_vectorItoMartingale
   exact martingale_finsetSum Finset.univ _ fun k _ =>
     martingale_stochasticIntegralBrownian (W.W k) ℱ (hcoord k) (H p k) (hm p k) (hp p k) (hq p k)
 
+private theorem lintegral_iSup_sq_drift_step_le
+    {Ω : Type*}
+    [MeasurableSpace Ω]
+    {P : Measure Ω}
+    {n : ℕ}
+    {b₁ : Fin n → Ω → ℝ → ℝ}
+    {b₂ : Fin n → Ω → ℝ → ℝ}
+    (hbm₁ : ∀ (p : Fin n), Measurable (Function.uncurry (b₁ p)))
+    (hbm₂ : ∀ (p : Fin n), Measurable (Function.uncurry (b₂ p)))
+    (hbq₁ : ∀ (p : Fin n) (T : ℝ), 0 < T → ∫⁻ (ω : Ω), ∫⁻ (s : ℝ) in Set.Icc 0 T,
+      ↑‖b₁ p ω s‖₊ ^ 2 ∂volume ∂P < ∞)
+    (hbq₂ : ∀ (p : Fin n) (T : ℝ), 0 < T → ∫⁻ (ω : Ω), ∫⁻ (s : ℝ) in Set.Icc 0 T,
+      ↑‖b₂ p ω s‖₊ ^ 2 ∂volume ∂P < ∞)
+    {T : ℝ}
+    (hT : 0 < T)
+    (p : Fin n)
+    (D : ℝ → Ω → ℝ)
+    (hDdef : D = fun t ω => (∫ (s : ℝ) in Set.Icc 0 t, b₂ p ω s) - ∫ (s : ℝ) in Set.Icc 0 t,
+      b₁ p ω s)
+    (hΔbfin : ∫⁻ (ω : Ω), ∫⁻ (s : ℝ) in Set.Icc 0 T, ↑‖|b₂ p ω s
+      - b₁ p ω s|‖₊ ^ 2 ∂volume ∂P < ∞) : ∫⁻ ω, (⨆ m : ℕ, (‖dyadicRunMax D T m ω‖₊ : ℝ≥0∞)) ^ 2 ∂P
+    ≤ ENNReal.ofReal T * ∫⁻ ω, ∫⁻ s in Set.Icc (0 : ℝ) T,
+        (‖b₂ p ω s - b₁ p ω s‖₊ : ℝ≥0∞) ^ 2 ∂volume ∂P := by
+  classical
+  have hint₁ : ∀ᵐ ω ∂P, MeasureTheory.IntegrableOn (b₁ p ω) (Set.Icc (0 : ℝ) T) volume :=
+    ae_integrableOn_of_energy_lt_top (hbm₁ p) (hbq₁ p T hT)
+  have hint₂ : ∀ᵐ ω ∂P, MeasureTheory.IntegrableOn (b₂ p ω) (Set.Icc (0 : ℝ) T) volume :=
+    ae_integrableOn_of_energy_lt_top (hbm₂ p) (hbq₂ p T hT)
+  have hptw : ∀ᵐ ω ∂P, (⨆ m : ℕ, (‖dyadicRunMax D T m ω‖₊ : ℝ≥0∞))
+      ≤ (‖∫ s in Set.Icc (0 : ℝ) T, |b₂ p ω s - b₁ p ω s| ∂volume‖₊ : ℝ≥0∞) := by
+    filter_upwards [hint₁, hint₂] with ω h1 h2
+    refine iSup_dyadicRunMax_le_of_bound hT.le fun t ht => ?_
+    have hsub : Set.Icc (0 : ℝ) t ⊆ Set.Icc (0 : ℝ) T := Set.Icc_subset_Icc le_rfl ht.2
+    have hDt : D t ω = ∫ s in Set.Icc (0 : ℝ) t, (b₂ p ω s - b₁ p ω s) ∂volume := by
+      simp only [hDdef]
+      rw [MeasureTheory.integral_sub (h2.mono_set hsub) (h1.mono_set hsub)]
+    have habs : |D t ω| ≤ ∫ s in Set.Icc (0 : ℝ) t, |b₂ p ω s - b₁ p ω s| ∂volume := by
+      rw [hDt]
+      exact MeasureTheory.abs_integral_le_integral_abs
+    have hmono : ∫ s in Set.Icc (0 : ℝ) t, |b₂ p ω s - b₁ p ω s| ∂volume
+        ≤ ∫ s in Set.Icc (0 : ℝ) T, |b₂ p ω s - b₁ p ω s| ∂volume :=
+      MeasureTheory.setIntegral_mono_set (h2.sub h1).abs
+        (Filter.Eventually.of_forall fun s => abs_nonneg _) hsub.eventuallySubset
+    have hnn : ‖D t ω‖₊ ≤ ‖∫ s in Set.Icc (0 : ℝ) T, |b₂ p ω s - b₁ p ω s| ∂volume‖₊ := by
+      rw [← NNReal.coe_le_coe]
+      simp only [coe_nnnorm, Real.norm_eq_abs]
+      have hAnn : (0 : ℝ) ≤ ∫ s in Set.Icc (0 : ℝ) T, |b₂ p ω s - b₁ p ω s| ∂volume :=
+        MeasureTheory.integral_nonneg_of_ae
+          (Filter.Eventually.of_forall fun s => abs_nonneg _)
+      rw [abs_of_nonneg hAnn]
+      exact habs.trans hmono
+    exact_mod_cast hnn
+  calc ∫⁻ ω, (⨆ m : ℕ, (‖dyadicRunMax D T m ω‖₊ : ℝ≥0∞)) ^ 2 ∂P
+      ≤ ∫⁻ ω, (‖∫ s in Set.Icc (0 : ℝ) T,
+          |b₂ p ω s - b₁ p ω s| ∂volume‖₊ : ℝ≥0∞) ^ 2 ∂P :=
+        MeasureTheory.lintegral_mono_ae (hptw.mono fun ω h => pow_le_pow_left' h 2)
+    _ ≤ ENNReal.ofReal T * ∫⁻ ω, ∫⁻ s in Set.Icc (0 : ℝ) T,
+          (‖|b₂ p ω s - b₁ p ω s|‖₊ : ℝ≥0∞) ^ 2 ∂volume ∂P :=
+        LevyStochCalc.Ito.Picard.lintegral_sq_setIntegral_le
+          (f := fun ω s => |b₂ p ω s - b₁ p ω s|)
+          (continuous_abs.measurable.comp ((hbm₂ p).sub (hbm₁ p))) hT.le hΔbfin
+    _ = ENNReal.ofReal T * ∫⁻ ω, ∫⁻ s in Set.Icc (0 : ℝ) T,
+          (‖b₂ p ω s - b₁ p ω s‖₊ : ℝ≥0∞) ^ 2 ∂volume ∂P := by
+        simp
+
 include hcoord in
 /-- **The second moment of the window supremum of the difference of two vector Itô versions.**
 The drift part is controlled pathwise by Cauchy–Schwarz and the martingale part by Doob's `L²`
@@ -267,47 +332,8 @@ theorem lintegral_iSup_sq_norm_version_sub_le
     exact lintegral_energy_lt_top_of_bound hbd (hbm₂ p) (hbm₁ p) (hbq₂ p) (hbq₁ p) T hT
   have hDrift : ∫⁻ ω, (⨆ m : ℕ, (‖dyadicRunMax D T m ω‖₊ : ℝ≥0∞)) ^ 2 ∂P
       ≤ ENNReal.ofReal T * ∫⁻ ω, ∫⁻ s in Set.Icc (0 : ℝ) T,
-          (‖b₂ p ω s - b₁ p ω s‖₊ : ℝ≥0∞) ^ 2 ∂volume ∂P := by
-    have hint₁ : ∀ᵐ ω ∂P, MeasureTheory.IntegrableOn (b₁ p ω) (Set.Icc (0 : ℝ) T) volume :=
-      ae_integrableOn_of_energy_lt_top (hbm₁ p) (hbq₁ p T hT)
-    have hint₂ : ∀ᵐ ω ∂P, MeasureTheory.IntegrableOn (b₂ p ω) (Set.Icc (0 : ℝ) T) volume :=
-      ae_integrableOn_of_energy_lt_top (hbm₂ p) (hbq₂ p T hT)
-    have hptw : ∀ᵐ ω ∂P, (⨆ m : ℕ, (‖dyadicRunMax D T m ω‖₊ : ℝ≥0∞))
-        ≤ (‖∫ s in Set.Icc (0 : ℝ) T, |b₂ p ω s - b₁ p ω s| ∂volume‖₊ : ℝ≥0∞) := by
-      filter_upwards [hint₁, hint₂] with ω h1 h2
-      refine iSup_dyadicRunMax_le_of_bound hT.le fun t ht => ?_
-      have hsub : Set.Icc (0 : ℝ) t ⊆ Set.Icc (0 : ℝ) T := Set.Icc_subset_Icc le_rfl ht.2
-      have hDt : D t ω = ∫ s in Set.Icc (0 : ℝ) t, (b₂ p ω s - b₁ p ω s) ∂volume := by
-        simp only [hDdef]
-        rw [MeasureTheory.integral_sub (h2.mono_set hsub) (h1.mono_set hsub)]
-      have habs : |D t ω| ≤ ∫ s in Set.Icc (0 : ℝ) t, |b₂ p ω s - b₁ p ω s| ∂volume := by
-        rw [hDt]
-        exact MeasureTheory.abs_integral_le_integral_abs
-      have hmono : ∫ s in Set.Icc (0 : ℝ) t, |b₂ p ω s - b₁ p ω s| ∂volume
-          ≤ ∫ s in Set.Icc (0 : ℝ) T, |b₂ p ω s - b₁ p ω s| ∂volume :=
-        MeasureTheory.setIntegral_mono_set (h2.sub h1).abs
-          (Filter.Eventually.of_forall fun s => abs_nonneg _) hsub.eventuallySubset
-      have hnn : ‖D t ω‖₊ ≤ ‖∫ s in Set.Icc (0 : ℝ) T, |b₂ p ω s - b₁ p ω s| ∂volume‖₊ := by
-        rw [← NNReal.coe_le_coe]
-        simp only [coe_nnnorm, Real.norm_eq_abs]
-        have hAnn : (0 : ℝ) ≤ ∫ s in Set.Icc (0 : ℝ) T, |b₂ p ω s - b₁ p ω s| ∂volume :=
-          MeasureTheory.integral_nonneg_of_ae
-            (Filter.Eventually.of_forall fun s => abs_nonneg _)
-        rw [abs_of_nonneg hAnn]
-        exact habs.trans hmono
-      exact_mod_cast hnn
-    calc ∫⁻ ω, (⨆ m : ℕ, (‖dyadicRunMax D T m ω‖₊ : ℝ≥0∞)) ^ 2 ∂P
-        ≤ ∫⁻ ω, (‖∫ s in Set.Icc (0 : ℝ) T,
-            |b₂ p ω s - b₁ p ω s| ∂volume‖₊ : ℝ≥0∞) ^ 2 ∂P :=
-          MeasureTheory.lintegral_mono_ae (hptw.mono fun ω h => pow_le_pow_left' h 2)
-      _ ≤ ENNReal.ofReal T * ∫⁻ ω, ∫⁻ s in Set.Icc (0 : ℝ) T,
-            (‖|b₂ p ω s - b₁ p ω s|‖₊ : ℝ≥0∞) ^ 2 ∂volume ∂P :=
-          LevyStochCalc.Ito.Picard.lintegral_sq_setIntegral_le
-            (f := fun ω s => |b₂ p ω s - b₁ p ω s|)
-            (continuous_abs.measurable.comp ((hbm₂ p).sub (hbm₁ p))) hT.le hΔbfin
-      _ = ENNReal.ofReal T * ∫⁻ ω, ∫⁻ s in Set.Icc (0 : ℝ) T,
-            (‖b₂ p ω s - b₁ p ω s‖₊ : ℝ≥0∞) ^ 2 ∂volume ∂P := by
-          simp
+          (‖b₂ p ω s - b₁ p ω s‖₊ : ℝ≥0∞) ^ 2 ∂volume ∂P :=
+    lintegral_iSup_sq_drift_step_le hbm₁ hbm₂ hbq₁ hbq₂ hT p D hDdef hΔbfin
   -- the martingale part, by Doob's inequality
   have hMart : MeasureTheory.Martingale M ℱ P :=
     (martingale_vectorItoMartingale W ℱ hcoord hm₂ hp₂ hq₂ p).sub

@@ -59,7 +59,8 @@ private theorem exists_supporting_vector_of_linear_minorant
   rw [← hpair] at hminorant
   linarith
 
-private theorem differenceQuotient_mono {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] {u : E → ℝ}
+private theorem differenceQuotient_mono {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+  {u : E → ℝ}
     (hconv : ConvexOn ℝ Set.univ u) (x : E) {w : E} {a b : ℝ}
     (ha : 0 < a) (hab : a ≤ b) :
     (u (x + a • w) - u x) / a ≤ (u (x + b • w) - u x) / b := by
@@ -87,7 +88,8 @@ private theorem differenceQuotient_mono {E : Type*} [NormedAddCommGroup E] [Norm
   apply (div_le_div_iff₀ ha hb).2
   nlinarith [hc']
 
-private theorem differenceQuotient_lower {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] {u : E → ℝ}
+private theorem differenceQuotient_lower {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+  {u : E → ℝ}
     (hconv : ConvexOn ℝ Set.univ u) (x : E) {w : E} {t : ℝ}
     (ht : 0 < t) :
     u x - u (x - w) ≤ (u (x + t • w) - u x) / t := by
@@ -122,7 +124,8 @@ private theorem differenceQuotient_lower {E : Type*} [NormedAddCommGroup E] [Nor
   apply (le_div_iff₀ ht).2
   nlinarith [hc']
 
-private theorem differenceQuotient_add {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] {u : E → ℝ}
+private theorem differenceQuotient_add {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+  {u : E → ℝ}
     (hconv : ConvexOn ℝ Set.univ u) (x : E) {w₁ w₂ : E} {t : ℝ}
     (ht : 0 < t) :
     (u (x + t • (w₁ + w₂)) - u x) / t ≤
@@ -255,7 +258,6 @@ theorem exists_subgradient_slope_le_inner_add {E : Type*} [NormedAddCommGroup E]
     apply le_antisymm
     · simpa [slope] using hp_le 0 ⟨1, by norm_num⟩
     · simpa [slope] using hp_lower 0
-
   -- Prove positive homogeneity and subadditivity of the slope envelope.
   have hslope_scale :
       ∀ {w : E} {c t : ℝ}, 0 < c → 0 < t →

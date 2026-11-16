@@ -124,7 +124,6 @@ the integral is dominated by a geometric series. -/
 theorem exists_integrable_exp_norm {ν : ProbabilityMeasure V} (hν : BorelLogConcave ν) :
     ∃ t : ℝ, 0 < t ∧ Integrable (fun v ↦ Real.exp (t * ‖v‖)) (ν : Measure V) := by
   -- a ball of integer radius carrying mass at least 3/4
-
   have hmono : Monotone fun n : ℕ ↦ Metric.ball (0 : V) n := fun i j hij ↦
     Metric.ball_subset_ball (by exact_mod_cast hij)
   have htend := tendsto_measure_iUnion_atTop (μ := (ν : Measure V)) hmono
@@ -140,7 +139,6 @@ theorem exists_integrable_exp_norm {ν : ProbabilityMeasure V} (hν : BorelLogCo
     hν.measure_norm_ge_le
       hball'
   -- the rate and the dominating series
-
   set t₀ : ℝ := Real.log 3 / (4 * R) with ht₀_def
   have hlog3 : 0 < Real.log 3 := Real.log_pos (by norm_num)
   have ht₀ : 0 < t₀ := by positivity
@@ -155,7 +153,6 @@ theorem exists_integrable_exp_norm {ν : ProbabilityMeasure V} (hν : BorelLogCo
     Real.rpow_pos_of_pos (by norm_num)
       _
   -- pointwise domination
-
   have hpt : ∀ v : V, ENNReal.ofReal (Real.exp (t₀ * ‖v‖)) ≤ ∑' k, f k v := by
     intro v
     set n := ⌊‖v‖ / R⌋₊ with hn_def
@@ -175,7 +172,6 @@ theorem exists_integrable_exp_norm {ν : ProbabilityMeasure V} (hν : BorelLogCo
       _ ≤ ∑' k, f k v :=
         ENNReal.le_tsum (f := fun k : ℕ ↦ f k v) n
   -- the series
-
   have hcb : ∀ k, c k * b k = (3 : ℝ) ^ ((3 : ℝ) / 4) * ((3 : ℝ) ^ (-(1 / 4 : ℝ))) ^ k := by
     intro k
     have hc : c k = (3 : ℝ) ^ (((k : ℝ) + 1) / 4) := by
@@ -195,7 +191,6 @@ theorem exists_integrable_exp_norm {ν : ProbabilityMeasure V} (hν : BorelLogCo
     ((summable_geometric_of_lt_one hq0 hq1).mul_left _).congr fun k ↦
       (hcb k).symm
   -- the integral bound
-
   have hbound : ∫⁻ v, ENNReal.ofReal (Real.exp (t₀ * ‖v‖)) ∂(ν : Measure V) < ⊤ := by
     calc
       ∫⁻ v, ENNReal.ofReal (Real.exp (t₀ * ‖v‖)) ∂(ν : Measure V) ≤
@@ -274,7 +269,6 @@ theorem integral_exp_norm_le_of_ball {ν : ProbabilityMeasure V} (hν : KLS.Bore
     hν.measure_norm_ge_le
       hball
   -- the rate and the dominating series
-
   set t₀ : ℝ := Real.log 3 / (4 * R) with ht₀_def
   have hlog3 : 0 < Real.log 3 := Real.log_pos (by norm_num)
   have ht₀ : 0 < t₀ := by positivity
@@ -289,7 +283,6 @@ theorem integral_exp_norm_le_of_ball {ν : ProbabilityMeasure V} (hν : KLS.Bore
     Real.rpow_pos_of_pos (by norm_num)
       _
   -- pointwise domination
-
   have hpt : ∀ v : V, ENNReal.ofReal (Real.exp (t₀ * ‖v‖)) ≤ ∑' k, f k v := by
     intro v
     set n := ⌊‖v‖ / R⌋₊ with hn_def
@@ -309,7 +302,6 @@ theorem integral_exp_norm_le_of_ball {ν : ProbabilityMeasure V} (hν : KLS.Bore
       _ ≤ ∑' k, f k v :=
         ENNReal.le_tsum (f := fun k : ℕ ↦ f k v) n
   -- the series
-
   have hcb : ∀ k, c k * b k = (3 : ℝ) ^ ((3 : ℝ) / 4) * ((3 : ℝ) ^ (-(1 / 4 : ℝ))) ^ k := by
     intro k
     have hc : c k = (3 : ℝ) ^ (((k : ℝ) + 1) / 4) := by
@@ -329,7 +321,6 @@ theorem integral_exp_norm_le_of_ball {ν : ProbabilityMeasure V} (hν : KLS.Bore
     ((summable_geometric_of_lt_one hq0 hq1).mul_left _).congr fun k ↦
       (hcb k).symm
   -- the integral bound
-
   have hbound :
     ∫⁻ v, ENNReal.ofReal (Real.exp (t₀ * ‖v‖)) ∂(ν : Measure V) ≤
       ENNReal.ofReal (∑' k, c k * b k) := by

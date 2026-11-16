@@ -63,7 +63,8 @@ theorem comp_sum_ite {M : ℕ} {π : Fin (M + 1) → ℝ} (hπ : StrictMono π)
   · push Not at h
     have hz : ∀ h' : Fin M → ℝ,
         (∑ j : Fin M, if π j.castSucc < s ∧ s ≤ π j.succ then h' j else 0) = 0 :=
-      fun h' => Finset.sum_eq_zero fun j _ => ite_eq_right fun hc => absurd hc.2 (not_le.mpr (h j hc.1))
+      fun h' => Finset.sum_eq_zero fun j _ => ite_eq_right fun hc => absurd hc.2 (not_le.mpr
+        (h j hc.1))
     rw [hz f, hz fun j => g (f j), hg0]
 
 /-- The coefficients of a simple integrand clamped to `[-C, C]`. -/
