@@ -14,12 +14,11 @@ public import Mathlib.Topology.Constructions
 An arbitrary product of quasi-sober spaces is quasi-sober: the generic point of an irreducible
 closed set `S` has for coordinates the generic points of the closures of the projections of `S`.
 The file also defines scattered spaces (every nonempty subset has a relatively isolated point)
-and proves they are `T0` and quasi-sober, and records the way-below relation on opens and
-core-compact spaces.
+and proves they are `T0` and quasi-sober.
 
 ## Main definitions
 
-* `WayBelowOpen`, `CoreCompact`, `Scattered`
+* `Scattered`
 
 ## Main statements
 
@@ -30,16 +29,6 @@ core-compact spaces.
 @[expose] public section
 
 open Set Function
-
-/-- `V` is way below `U` among the opens: `V ⊆ U`, and every nonempty directed family of opens
-whose union contains `U` has a member containing `V`. -/
-def WayBelowOpen {X : Type*} [TopologicalSpace X] (V U : Set X) : Prop :=
-  V ⊆ U ∧ ∀ 𝒲 : Set (Set X), 𝒲.Nonempty → DirectedOn (· ⊆ ·) 𝒲 → (∀ W ∈ 𝒲, IsOpen W) →
-    U ⊆ ⋃₀ 𝒲 → ∃ W ∈ 𝒲, V ⊆ W
-
-/-- Core-compactness: every point `x` of an open `U` has an open neighbourhood way below `U`. -/
-def CoreCompact (X : Type*) [TopologicalSpace X] : Prop :=
-  ∀ U : Set X, IsOpen U → ∀ x ∈ U, ∃ V, IsOpen V ∧ x ∈ V ∧ WayBelowOpen V U
 
 /-- Every nonempty subset has a relatively isolated point. -/
 def Scattered (X : Type*) [TopologicalSpace X] : Prop :=

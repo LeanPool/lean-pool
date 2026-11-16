@@ -634,20 +634,6 @@ theorem norm_sum_inner_le_sum_singularValues {ι : Type*} (s : Finset ι) {x : �
   have : (#s : ℝ) ≤ n := by exact_mod_cast hn
   linarith
 
-private theorem sum_range_singularValues_eq (T : E →ₗ[𝕜] F) (n : ℕ) :
-    ∑ j ∈ Finset.range n, T.singularValues j =
-      ∑ j ∈ univ.filter (fun j : Fin (finrank 𝕜 E) ↦ (j : ℕ) < n), T.singularValues j := by
-  rw [sum_filter, Fin.sum_univ_eq_sum_range (fun k ↦ if k < n then T.singularValues k else 0),
-    ← sum_filter]
-  symm
-  apply sum_subset
-  · intro k hk
-    simp only [mem_filter, Finset.mem_range] at hk ⊢
-    exact hk.2
-  · intro k hk hk'
-    simp only [mem_filter, Finset.mem_range, not_and, not_lt] at hk hk'
-    exact T.singularValues_of_finrank_le (not_lt.mp fun h ↦ (not_lt.mpr (hk' h)) hk)
-
 /-- **Ky Fan's inequality**: the sum of the `n` largest singular values is subadditive. -/
 theorem sum_singularValues_add_le (u v : E →ₗ[𝕜] F) (n : ℕ) :
     ∑ j ∈ Finset.range n, (u + v).singularValues j ≤

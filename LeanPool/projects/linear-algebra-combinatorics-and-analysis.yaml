@@ -1,20 +1,20 @@
 slug: linear-algebra-combinatorics-and-analysis
 title: Singular values, minors and elementary matrices, with lemmas in combinatorics and analysis
 summary: A collection of general results centred on linear algebra. For linear maps between
-  finite-dimensional inner product spaces over ℝ or ℂ, proves Ky Fan's maximum principle and
-  Ky Fan's inequality (the sum of the n largest singular values is subadditive) and an analogue
-  for the second elementary symmetric function of the n largest singular values. Proves the
-  Cauchy–Binet formula via exterior powers, the factorisation and unit determinant of the
-  symmetric Pascal matrix, and the trace of odd powers of a difference of two idempotent
-  matrices. Over an arbitrary (noncommutative) ring, proves that the elementary subgroup E(n, A)
-  is perfect for n ≥ 3 and the Whitehead lemma diag(θ, θ⁻¹) ∈ E(2n, A). Around these, it proves
-  the q-binomial theorem for Gaussian binomial coefficients, the congruence
-  choose (p^a − 1) k ≡ (−1)^k mod p, the power formula (uv)^n = u^n v^n d^(n choose 2) in
-  nilpotency class two, a characterisation of finite monoids with a right zero, continuity of
-  currying for compact-open topologies out of an R1 space, quasi-sobriety of arbitrary products
-  of quasi-sober spaces, an almost-everywhere diagonal bound for inner products of a
-  non-measurable map, and that C¹ self-maps of a finite-dimensional real space send meagre sets
-  to meagre sets.
+  finite-dimensional inner product spaces over ℝ or ℂ, proves Ky Fan's maximum principle for
+  orthonormal-type families and, its main result, an analogue of Ky Fan's subadditivity for the
+  second elementary symmetric function of the n largest singular values (Ky Fan's inequality
+  itself is reused from the pool). Proves the factorisation and unit determinant of the
+  symmetric Pascal matrix and the trace of odd powers of a difference of two idempotent
+  matrices, a characterisation of finite monoids with a right zero, continuity of currying for
+  compact-open topologies out of an R1 space, quasi-sobriety of arbitrary products of
+  quasi-sober spaces, an almost-everywhere diagonal bound for inner products of a
+  non-measurable map, that C¹ self-maps of a finite-dimensional real space send meagre sets to
+  meagre sets, and the congruence choose (p^a − 1) k ≡ (−1)^k mod p. Supporting files restate,
+  in the forms these proofs use, results that also exist elsewhere: Cauchy–Binet for minors
+  (in the pool and Tau Ceti), perfectness of E(n, A) and the Whitehead lemma (Tau Ceti), the
+  finite q-binomial theorem (in the pool) and the class-two power formula (Tau Ceti); they are
+  not headline claims.
 branch: linear algebra
 entry_module: LeanPool.LinearAlgebraCombinatoricsAndAnalysis
 authors:
@@ -27,24 +27,12 @@ license: Apache-2.0
 status: verified
 provenance: mix
 main_declarations:
-- LinearMap.sum_singularValues_add_le
 - LinearMap.sum_powersetCard_two_prod_singularValues_add_le
-- Matrix.det_mul_eq_sum_powersetCard
 - Matrix.det_pascal
-- Matrix.isPerfect_elementarySubgroup
-- Matrix.exists_mem_elementarySubgroup_fromBlocks_inv
-- prod_one_add_pow_mul_eq_sum_qBinomial
 - Monoid.exists_forall_mul_eq_self_iff_of_finite
 - Homeomorph.curryOfR1Space
 - ContDiffOn.isMeagre_image
 main_results:
-- declaration: LinearMap.sum_singularValues_add_le
-  informal: For linear maps u, v between finite-dimensional inner product spaces over ℝ or ℂ
-    and every n, the sum of the n largest singular values of u + v is at most the sum of the n
-    largest singular values of u plus that of v (Ky Fan's inequality).
-  source_ref: K. Fan, "Maximum properties and inequalities for the eigenvalues of completely
-    continuous operators", Proc. Natl. Acad. Sci. USA 37 (1951), 760–766, inequality (20) in
-    the proof of Theorem 5.
 - declaration: LinearMap.norm_sum_inner_le_sum_singularValues
   informal: For pairwise orthogonal families (x_i) in E and (y_i) in F of vectors of norm at
     most 1, indexed by a finite set with at most n elements, the norm of the sum of the inner
@@ -55,12 +43,6 @@ main_results:
 - declaration: LinearMap.sum_powersetCard_two_prod_singularValues_add_le
   informal: Writing σ₂(T) for the second elementary symmetric function of the n largest
     singular values of T, σ₂(u + v) ≤ σ₂(u) + (∑_{j<n} s_j(u)) (∑_{j<n} s_j(v)) + σ₂(v).
-- declaration: Matrix.det_mul_eq_sum_powersetCard
-  informal: For an n × ι matrix A and an ι × n matrix B over a commutative ring, with ι a
-    finite linear order, det (A B) is the sum over the n-element subsets s of ι of the product
-    of the minor of A on the columns s and the minor of B on the rows s (Cauchy–Binet).
-  source_ref: R. A. Horn and C. R. Johnson, Matrix Analysis, 2nd ed., Cambridge University
-    Press (2013), Section 0.8.7.
 - declaration: Matrix.det_pascal
   informal: Over every commutative ring, the n × n symmetric Pascal matrix with entries
     choose (i + j) i has determinant 1; it is the product of the lower unitriangular matrix
@@ -68,27 +50,8 @@ main_results:
 - declaration: Matrix.trace_sub_pow_odd_of_isIdempotentElem
   informal: For idempotent square matrices P and Q over a commutative ring and every k, the
     trace of (P − Q)^(2k+1) is tr P − tr Q.
-- declaration: Matrix.isPerfect_elementarySubgroup
-  informal: Over any ring A with unit, the subgroup E(n, A) of GL(n, A) generated by the
-    elementary matrices 1 + a e_ij, i ≠ j, is perfect when n has at least three elements.
-  source_ref: J. Milnor, Introduction to Algebraic K-Theory, Annals of Mathematics Studies 72,
-    Princeton University Press (1971), §3.
-- declaration: Matrix.exists_mem_elementarySubgroup_fromBlocks_inv
-  informal: For any ring A with unit and every unit θ of the n × n matrix ring over A, the
-    block diagonal matrix diag(θ, θ⁻¹) lies in the elementary subgroup E(n ⊕ n, A) (the
-    Whitehead lemma).
-  source_ref: J. Milnor, Introduction to Algebraic K-Theory, Annals of Mathematics Studies 72,
-    Princeton University Press (1971), §3.
-- declaration: prod_one_add_pow_mul_eq_sum_qBinomial
-  informal: For q and t in a commutative ring, ∏_{i<n} (1 + q^i t) equals the sum over k ≤ n
-    of q^(k choose 2) [n, k]_q t^k, where [n, k]_q is the Gaussian binomial coefficient (the
-    q-binomial theorem).
-  source_ref: G. E. Andrews, The Theory of Partitions, Addison-Wesley (1976), Chapter 3.
 - declaration: Choose.choose_pow_sub_one_modEq_neg_one_pow
   informal: For a prime p and k ≤ p^a − 1, choose (p^a − 1) k is congruent to (−1)^k modulo p.
-- declaration: mul_pow_eq_of_commute_commutator
-  informal: In a group, if v u = d u v and d commutes with u and v, then
-    (u v)^n = u^n v^n d^(n choose 2).
 - declaration: Monoid.exists_forall_mul_eq_self_iff_of_finite
   informal: A finite monoid has an element p with u p = p for every u if and only if any two
     of its principal right ideals meet and every monoid morphism from it to a group is

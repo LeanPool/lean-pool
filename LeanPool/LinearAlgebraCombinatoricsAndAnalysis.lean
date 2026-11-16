@@ -25,10 +25,7 @@ public import LeanPool.LinearAlgebraCombinatoricsAndAnalysis.SingularValuesSigma
 Source: url:https://doi.org/10.1073/pnas.37.11.760
 Authors: Michel Hua
 Status: verified
-Main declarations: `LinearMap.sum_singularValues_add_le`,
-  `LinearMap.sum_powersetCard_two_prod_singularValues_add_le`, `Matrix.det_mul_eq_sum_powersetCard`,
-  `Matrix.det_pascal`, `Matrix.isPerfect_elementarySubgroup`,
-  `Matrix.exists_mem_elementarySubgroup_fromBlocks_inv`, `prod_one_add_pow_mul_eq_sum_qBinomial`,
+Main declarations: `LinearMap.sum_powersetCard_two_prod_singularValues_add_le`, `Matrix.det_pascal`,
   `Monoid.exists_forall_mul_eq_self_iff_of_finite`, `Homeomorph.curryOfR1Space`,
   `ContDiffOn.isMeagre_image`
 Tags: singular-values, ky-fan-inequality, cauchy-binet, elementary-matrices, whitehead-lemma
