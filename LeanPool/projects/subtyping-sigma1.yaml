@@ -1,0 +1,64 @@
+slug: subtyping-sigma1
+title: Decidability of the Sigma-one theory of non-structural subtyping
+summary: >-
+  Computable decision procedures for Boolean combinations of existential and
+  universal non-structural subtype sentences, with one constructor of arbitrary
+  finite arity and variance, over finite, regular, and arbitrary trees. Includes
+  disjunctive entailment, finite-countermodel transfer under finite
+  satisfiability, automata, word compression, and an elementary total-length
+  bound for holes of finite-state structural readers over finite alphabets.
+branch: Computer science
+entry_module: LeanPool.DeciSigma1
+authors:
+  - Yaoyu Zhao
+source:
+  title: Decidability of the Sigma-one theory of non-structural subtyping
+  url: https://github.com/noti0na1/deci-sigma1/tree/4d1702fd657be4d7bb3203e2e7302856353124c7
+  github_repo: noti0na1/deci-sigma1
+  upstream_commit: 4d1702fd657be4d7bb3203e2e7302856353124c7
+  license: Apache-2.0
+  announcement_url: https://github.com/noti0na1/deci-sigma1/commit/f3f0126db99ad47cc90f1c6a396a65e0178258bc
+  announcement_date: '2026-11-10'
+  provenance_notes: >-
+    The paper credits Yaoyu Zhao and discloses LLM assistance with proof attempts,
+    argument checking, exploratory programs, and formalization in its Use of
+    LLM-Based Tools section. Mixed provenance is a qualitative inference from
+    this disclosure; it does not distinguish proof checking and suggestions
+    from substantial generation of Lean proofs.
+status: verified
+license: Apache-2.0
+provenance: mix
+main_declarations:
+  - DeciSigma1.decideBooleanSentence
+  - DeciSigma1.booleanSentence_regular_iff
+  - DeciSigma1.decideBooleanSentenceTopFree
+  - DeciSigma1.exists_small_hole
+  - DeciSigma1.smallHoleBound_le
+main_results:
+  - declaration: DeciSigma1.decideBooleanSentence
+    informal: >-
+      Decides Boolean combinations of existential and universal subtype sentences
+      for every finite constructor arity and variance over finite, regular, or
+      arbitrary trees with bottom and top.
+  - declaration: DeciSigma1.booleanSentence_regular_iff
+    informal: Regular and arbitrary trees have the same Boolean existential theory.
+  - declaration: DeciSigma1.decideBooleanSentenceTopFree
+    informal: >-
+      Decides the corresponding theory without top for a covariant constructor
+      over finite, regular, or arbitrary trees.
+  - declaration: DeciSigma1.exists_small_hole
+    informal: >-
+      Every finite-state structural reader over a finite alphabet, with decidable
+      equality, that has a hole has one whose total word length satisfies a
+      computable bound.
+  - declaration: DeciSigma1.smallHoleBound_le
+    informal: The hole-length bound is bounded by four iterated exponentials.
+tags:
+  - subtyping
+  - decidability
+  - automata
+  - infinite-trees
+msc:
+  - '03B25'
+  - '68N18'
+  - '68Q45'
