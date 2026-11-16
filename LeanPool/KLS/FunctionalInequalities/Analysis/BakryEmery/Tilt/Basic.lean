@@ -574,8 +574,8 @@ theorem taylorTensor_neg_weightedLaplacian {V f : E → ℝ} (hV : ContDiff ℝ 
         obtain ⟨M, hM⟩ :=
           hnorm_cont.bounded_above_of_compact_support hgrad_compact.norm
         apply contDiff_tiltAverage μ hexp hgrad_cont.aestronglyMeasurable
-        intro x
-        simpa using hM x
+        · intro x
+          simpa using hM x
       · have hμ : m.tilted (-V) = 0 := tilted_of_not_integrable hi
         have hG0 : G = fun _ => (0 : E) := by
           funext x

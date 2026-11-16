@@ -15,6 +15,8 @@ public import LeanPool.KLS.FunctionalInequalities.Analysis.WeakDerivative.Basic
 public import LeanPool.KLS.FunctionalInequalities.Analysis.WeakDerivative.Testing
 public import LeanPool.KLS.FunctionalInequalities.KLS.LogConcave.Density.BorellRepresentation.Moments
 
+/-! # Moments and covariance under Gaussian smoothing -/
+
 @[expose] public section
 
 section

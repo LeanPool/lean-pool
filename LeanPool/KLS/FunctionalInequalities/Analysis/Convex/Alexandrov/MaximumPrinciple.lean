@@ -493,7 +493,6 @@ theorem exists_pos_volume_convexHull_closedBall_union_singleton_ge {E : Type*}
     refine ⟨c, hc, ?_⟩
     intro r hr q hq
     have hqpos : 0 < ‖q‖ := lt_of_lt_of_le hr hq
-
     -- Normalize the direction of the added point.
     let e : E := ‖q‖⁻¹ • q
     have he : ‖e‖ = 1 := by
@@ -512,7 +511,6 @@ theorem exists_pos_volume_convexHull_closedBall_union_singleton_ge {E : Type*}
     have hN : (N : ℝ) ≤ ‖q‖ / (4 * r) := by
       dsimp [N]
       exact Nat.floor_le (by positivity)
-
     have hball := packedBalls_subset_cone hr hqpos hqe hN
     have hdisj := packedBalls_pairwiseDisjoint N hr he
     have hmeas :
@@ -520,7 +518,6 @@ theorem exists_pos_volume_convexHull_closedBall_union_singleton_ge {E : Type*}
           MeasurableSet (closedBall (C k) (r / 2)) := by
       intro k hk
       exact isClosed_closedBall.measurableSet
-
     -- Estimate the volume of the packed balls and restore the dimensional constant.
     have hunion :
         volume (⋃ k ∈ Finset.range (N + 1), closedBall (C k) (r / 2)) =

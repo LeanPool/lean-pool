@@ -286,7 +286,8 @@ theorem tendsto_integral_scaled_mul {μ : Measure E} [IsFiniteMeasure μ] {f : E
     simp
   have hsecond :=
     MeasureTheory.tendsto_integral_of_dominated_convergence (bound := fun x => f x ^ 2)
-      (F_measurable := hmeas₂) (bound_integrable := (memLp_two_iff_integrable_sq hf.aestronglyMeasurable).1 hf)
+      (F_measurable := hmeas₂)
+      (bound_integrable := (memLp_two_iff_integrable_sq hf.aestronglyMeasurable).1 hf)
       (h_bound := hbound₂) (h_lim := hlim₂)
   exact ⟨hfirst, hsecond⟩
 

@@ -9,6 +9,8 @@ module
 public import LeanPool.KLS.KolmogorovExtension4.CompactSystem
 public import Mathlib.MeasureTheory.Measure.AddContent
 
+/-! # Regularity of additive contents on compact systems -/
+
 @[expose] public section
 
 open scoped ENNReal

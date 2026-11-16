@@ -46,9 +46,11 @@ open scoped MatrixOrder
 
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
+omit [Fintype ι] in
 /-- Positivity of a real diagonal matrix, proved by an explicit Gram factor. -/
-private theorem diagonal_posSemidef (d : ι → ℝ) (hd : ∀ i, 0 ≤ d i) :
+private theorem diagonal_posSemidef [Finite ι] (d : ι → ℝ) (hd : ∀ i, 0 ≤ d i) :
     (Matrix.diagonal d).PosSemidef := by
+  let : Fintype ι := Fintype.ofFinite ι
   let D : Matrix ι ι ℝ := Matrix.diagonal (fun i => Real.sqrt (d i))
   have he : D.conjTranspose * D = Matrix.diagonal d := by
     rw [Matrix.conjTranspose_eq_transpose_of_trivial]

@@ -154,7 +154,7 @@ private theorem blocks_injective {ι κ : Type*} {d : ℕ} (hd : 0 < d) :
 section FiniteIndex
 
 variable {ι κ : Type*}
-  [Fintype ι] [Fintype κ] [DecidableEq ι] [DecidableEq κ]
+  [Fintype ι] [Fintype κ]
 
 /--
 **Disjoint copy blocks** (BKL Proposition 7.1, the Hilbert–Schmidt estimate after (112)). For `d >
@@ -162,6 +162,7 @@ variable {ι κ : Type*}
 so the block entries of `A` are a subfamily of all entries. -/
 theorem sum_sq_blocks_le {d : ℕ} (hd : 0 < d) (A : (Fin d → Option (κ × ι)) → ℝ) :
     ∑ i : κ, ∑ j : Fin d → ι, A (fun k => some (i, j k)) ^ 2 ≤ ∑ J, A J ^ 2 := by
+  classical
   let f : κ × (Fin d → ι) → (Fin d → Option (κ × ι)) := fun p k => some (p.1, p.2 k)
   have hf : Function.Injective f := by
     dsimp [f]

@@ -13,7 +13,8 @@ public import Mathlib.Topology.Algebra.Module.LinearPMap
 
 Let `T : H₀ →ₗ.[ℝ] H₁` be a closable operator between real Hilbert spaces. If two fixed vectors
 `w : H₀` and `v : H₁` satisfy the weak identity `⟪w, x⟫ = ⟪v, T x⟫` for every `x ∈ D(T)`, the same
-identity holds for every `x ∈ D(Tbar)` with `Tbar x` in place of `T x`: the set of pairs `(x, y)` with
+identity holds for every `x ∈ D(Tbar)` with `Tbar x` in place of `T x`: the set of pairs
+`(x, y)` with
 `⟪w, x⟫ = ⟪v, y⟫` is closed and contains the graph of `T`, hence its closure, which is the graph
 of `Tbar` (`LinearPMap.IsClosable.graph_closure_eq_closure_graph`).
 

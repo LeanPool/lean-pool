@@ -84,7 +84,8 @@ def ofValues (Test : Type u) (variance energy : Test → NNReal) : TestFamily.{u
 Poincaré constant. -/
 theorem constant_anti_mono_energy {Test : Type u} (variance : Test → NNReal)
     {energy energy' : Test → NNReal} (h : ∀ f, energy f ≤ energy' f) :
-    (ofValues Test variance energy').optimalConstant ≤ (ofValues Test variance energy).optimalConstant := by
+    (ofValues Test variance energy').optimalConstant ≤
+      (ofValues Test variance energy).optimalConstant := by
   let e : RayleighMap (ofValues Test variance energy')
       (ofValues Test variance energy) :=
     { toFun := id

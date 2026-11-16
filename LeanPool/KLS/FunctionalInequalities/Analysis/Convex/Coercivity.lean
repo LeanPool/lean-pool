@@ -18,7 +18,8 @@ Letwin arXiv:2607.24164v1, Lemma A.4 (p. 17), first sentence of the proof: a fin
 finite-dimensional real inner product space with `e^{-φ}` integrable for an additive Haar measure
 attains its minimum, and every sublevel set is compact
 (`exists_forall_le_and_isCompact_sublevel_of_convexOn_integrable_exp_neg`). No minimum, coercivity
-or bounded-sublevel premise; the source normalisation `∫ e^{-φ} = 1` only supplies the integrability.
+or bounded-sublevel premise; the source normalisation `∫ e^{-φ} = 1` only supplies
+the integrability.
 Dimension zero is included.
 
 Route: every sublevel has finite Haar volume; a convex set of finite volume containing a ball is

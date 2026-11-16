@@ -219,7 +219,8 @@ theorem gradient_density_l1_of_coordinate_l2 {μ : Measure X} [IsFiniteMeasure �
       _ = _ := by
         apply Finset.sum_congr rfl
         intro i _
-        simpa only [Real.norm_eq_abs] using eLpNorm_norm (e m i) (he1 m i).aestronglyMeasurable (p := 1) (μ := μ)
+        simpa only [Real.norm_eq_abs] using
+          eLpNorm_norm (e m i) (he1 m i).aestronglyMeasurable (p := 1) (μ := μ)
   let B : ℝ≥0∞ := μ Set.univ ^ (1 / (1 : ℝ≥0∞).toReal - 1 / (2 : ℝ≥0∞).toReal)
   have hB : B ≠ ∞ := ENNReal.rpow_ne_top_of_nonneg (by norm_num) (measure_ne_top μ Set.univ)
   have hconv1 (i : Fin n) : Tendsto (fun m => eLpNorm (e m i) 1 μ) atTop (𝓝 0) := by

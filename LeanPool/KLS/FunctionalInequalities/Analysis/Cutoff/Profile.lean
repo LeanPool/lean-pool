@@ -363,7 +363,8 @@ theorem inv_mul_intervalIntegral_div_three_cutoff {w : ℝ → ℝ} (hw : ContDi
 /--
 **Affine rescaling of derivatives** (Letwin Lemma A.4, p. 17, `η(W/R)` with `W = φ − c`): for
 arbitrary `f`, `c`,
-`R`, `t`, `(f((· − c)/R))′(t) = R⁻¹ f′((t − c)/R)` and `(f((· − c)/R))''(t) = (R⁻¹)² f''((t − c)/R)`,
+`R`, `t`, `(f((· − c)/R))′(t) = R⁻¹ f′((t − c)/R)` and
+`(f((· − c)/R))''(t) = (R⁻¹)² f''((t − c)/R)`,
 with Lean's
 total-derivative conventions (no differentiability or `R ≠ 0` hypothesis). -/
 theorem deriv_comp_sub_div_and_deriv_deriv (f : ℝ → ℝ) (c R t : ℝ) :

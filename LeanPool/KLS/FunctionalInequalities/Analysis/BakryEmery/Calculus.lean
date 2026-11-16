@@ -429,13 +429,13 @@ theorem bilinearIteratedFDerivTwo_add_quadratic {f : E → ℝ} (hf : ContDiff �
       funext y
       dsimp only [q]
       rw [fderiv_const_mul]
-      rfl
-      exact
-        (show ContDiff ℝ 2 (fun z : E => ‖z‖ ^ 2) from contDiff_norm_sq ℝ).differentiable
-          (by norm_num) y
+      · rfl
+      · exact
+          (show ContDiff ℝ 2 (fun z : E => ‖z‖ ^ 2) from contDiff_norm_sq ℝ).differentiable
+            (by norm_num) y
     rw [hfun, fderiv_const_mul]
-    rfl
-    exact differentiable_fderiv_apply (contDiff_norm_sq ℝ) v x
+    · rfl
+    · exact differentiable_fderiv_apply (contDiff_norm_sq ℝ) v x
   rw [← bilinearIteratedFDerivTwo_eq_iteratedFDeriv, heq, bilinearIteratedFDerivTwo_norm_sq]
   ring
 

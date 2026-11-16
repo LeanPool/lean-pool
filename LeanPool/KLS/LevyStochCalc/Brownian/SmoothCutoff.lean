@@ -70,7 +70,8 @@ noncomputable def boxCut (k : ℝ) (z : Fin n → ℝ) : ℝ := ∏ i, smoothCut
 
 theorem contDiff_boxCut (k : ℝ) {N : ℕ∞} : ContDiff ℝ N (boxCut (n := n) k) := by
   unfold boxCut
-  exact contDiff_prod fun i _ => (contDiff_smoothCut k).comp (contDiff_apply (𝕜 := ℝ) (F' := fun _ => ℝ) i)
+  exact contDiff_prod fun i _ =>
+    (contDiff_smoothCut k).comp (contDiff_apply (𝕜 := ℝ) (F' := fun _ => ℝ) i)
 
 theorem boxCut_eq_one {k : ℝ} (hk : 0 < k) {z : Fin n → ℝ} (hz : ‖z‖ ≤ 3 * k / 2) :
     boxCut k z = 1 := by

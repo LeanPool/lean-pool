@@ -47,7 +47,8 @@ lemma finIdx_lt_of_lt (hkl : k < l) (hl : l < #F) : finIdx F t k < finIdx F t l 
 
 lemma finIdx_lt_finIdx_iff (hk : k < #F) (hl : l < #F) :
     finIdx F t k < finIdx F t l ↔ k < l := by
-  rw [finIdx, finIdx, dite_eq_left hk, dite_eq_left hl, Subtype.coe_lt_coe, OrderIso.lt_iff_lt, Fin.mk_lt_mk]
+  rw [finIdx, finIdx, dite_eq_left hk, dite_eq_left hl, Subtype.coe_lt_coe,
+    OrderIso.lt_iff_lt, Fin.mk_lt_mk]
 
 @[gcongr]
 lemma finIdx_monotone (hF : ∀ s ∈ F, s ≤ t) : Monotone (finIdx F t) := by

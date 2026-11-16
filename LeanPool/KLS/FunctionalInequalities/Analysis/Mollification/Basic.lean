@@ -287,7 +287,8 @@ theorem tendsto_eLpNorm_convolution_sub {φ : ℕ → ContDiffBump (0 : V)}
           (add_le_add_left (eLpNorm_add_le one_le_two) _)
     _ ≤ ε / 3 + ε / 3 + ε / 3 := by
         gcongr
-        · exact (eLpNorm_convolution_le (φ n) (hf.aestronglyMeasurable.sub hg.aestronglyMeasurable)).trans hfg
+        · exact (eLpNorm_convolution_le (φ n)
+            (hf.aestronglyMeasurable.sub hg.aestronglyMeasurable)).trans hfg
         · rw [eLpNorm_sub_comm]; exact hfg
     _ = ε := ENNReal.add_thirds ε
 

@@ -287,7 +287,6 @@ theorem operator_isClosable_of_isOpen (hac : (ν : Measure V) ≪ m)
     (continuous_snd.tendsto _).comp
       hf
   -- concrete representatives
-
   have hrep :
     ∀ n, ∃ (g : V → ℝ) (h : IsTest ν B g), ((f n : Lp ℝ 2 (ν : Measure V))) = h.memLp.toLp g :=
     fun n ↦ (mem_domain_operator_iff ν B hac _).mp (f n).2
@@ -297,7 +296,6 @@ theorem operator_isClosable_of_isOpen (hac : (ν : Measure V) ≪ m)
   have hΩo : IsOpen Ω :=
     hΩ
   -- y is locally integrable on Ω
-
   have hyloc : LocallyIntegrableOn (fun x ↦ (y : V → V) x) Ω m := by
     rw [locallyIntegrableOn_iff ⟨Ω, Set.univ, hΩo, isClosed_univ, (Set.inter_univ _).symm⟩]
     intro k hkΩ hk
@@ -305,7 +303,6 @@ theorem operator_isClosable_of_isOpen (hac : (ν : Measure V) ≪ m)
       integrableOn_of_locallyDominates hloc hk hkΩ (Lp.stronglyMeasurable y)
         (Lp.eLpNorm_ne_top y)
   -- the key vanishing of all test integrals
-
   have hvan :
     ∀ φ : V → ℝ,
       ContDiff ℝ ∞ φ → HasCompactSupport φ → tsupport φ ⊆ Ω → ∫ x, φ x • (y : V → V) x ∂m = 0 := by
@@ -338,7 +335,6 @@ theorem operator_isClosable_of_isOpen (hac : (ν : Measure V) ≪ m)
       exists_norm_integral_smul_le ℝ hloc hKc
         hφΩ
     -- the integrals against the operator values converge to the integral against y
-
     have hlim1 :
       Tendsto (fun n ↦ ∫ x, φ x • (operator ν B hac (f n) : V → V) x ∂m) atTop
         (𝓝 (∫ x, φ x • (y : V → V) x ∂m)) := by
@@ -376,7 +372,6 @@ theorem operator_isClosable_of_isOpen (hac : (ν : Measure V) ≪ m)
       simpa using
         (tendsto_const_nhds.mul (tendsto_const_nhds.mul this))
     -- the integrals against the operator values tend to zero
-
     have hlim2 :
       Tendsto (fun n ↦ ∫ x, φ x • (operator ν B hac (f n) : V → V) x ∂m) atTop (𝓝 0) := by
       have hval :
@@ -449,7 +444,6 @@ theorem operator_isClosable_of_isOpen (hac : (ν : Measure V) ≪ m)
       tendsto_nhds_unique hlim1
         hlim2
   -- fundamental lemma on Ω, then transfer to ν
-
   have hae_m : ∀ᵐ x ∂m, x ∈ Ω → (y : V → V) x = 0 :=
     hΩo.ae_eq_zero_of_integral_contDiff_smul_eq_zero hyloc hvan
   have hae_ν : ∀ᵐ x ∂(ν : Measure V), x ∈ Ω → (y : V → V) x = 0 := hac.ae_le hae_m

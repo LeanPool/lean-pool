@@ -80,7 +80,8 @@ def translate
   memLp_two := by
     have := g.memLp_two
     rw [← hmp.map_eq] at this
-    exact (memLp_map_measure_iff (hmp.map_eq ▸ g.memLp_two.aestronglyMeasurable) hmp.aemeasurable).mp this
+    exact (memLp_map_measure_iff
+      (hmp.map_eq ▸ g.memLp_two.aestronglyMeasurable) hmp.aemeasurable).mp this
   integrable := by
     have hdens : density ν₁ (fun x ↦ g (c + x)) =
         density ν₂ g.toFun ∘ fun x ↦ c + x := by

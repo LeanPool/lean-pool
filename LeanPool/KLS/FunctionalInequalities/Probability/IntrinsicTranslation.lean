@@ -22,7 +22,6 @@ universe u
 
 variable {E : Type u} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
   [MeasurableSpace E] [BorelSpace E] [SecondCountableTopology E] [FiniteDimensional ℝ E]
-
   (μ : ProbabilityMeasure E) (b : E)
 
 omit [BorelSpace E] [FiniteDimensional ℝ E] in

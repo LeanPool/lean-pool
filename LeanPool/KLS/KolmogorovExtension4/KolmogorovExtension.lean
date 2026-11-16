@@ -16,6 +16,8 @@ public import Mathlib.MeasureTheory.Measure.RegularityCompacts
 public import Mathlib.MeasureTheory.OuterMeasure.OfAddContent
 public import Mathlib.Topology.MetricSpace.Polish
 
+/-! # Extension of consistent finite-dimensional laws -/
+
 @[expose] public section
 
 open Set

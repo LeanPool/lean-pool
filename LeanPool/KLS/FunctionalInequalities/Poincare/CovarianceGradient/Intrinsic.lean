@@ -16,7 +16,8 @@ Source: Blueprint `def:affine-poincare-constant`, constant part. Read `optimalCo
 
 `Poincare.CovarianceGradient.Intrinsic.constant μ` is `C_P^aff(μ)`: the generic `L²` Poincaré
 optimizer
-`Poincare.L2Energy.optimalConstant` of the intrinsic law `ν` of `μ` evaluated at the affine covariance
+`Poincare.L2Energy.optimalConstant` of the intrinsic law `ν` of `μ` evaluated at the
+affine covariance
 relaxation `Energy.CovarianceGradient.Intrinsic.energy μ`, the sequential `L²(ν)` relaxation of the
 globally Lipschitz
 covariance pre-energy with `Σ = Covariance.operator ν`. `Holds μ C` is validity of the finite
@@ -52,7 +53,8 @@ variable {E : Type u} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [Complete
 /-- The affine covariance Poincaré constant `C_P^aff(μ)`: the optimal extended constant of the
 affine covariance relaxation on the intrinsic law. -/
 def optimalConstant (μ : ProbabilityMeasure E) : ENNReal :=
-  L2Energy.optimalConstant (Probability.intrinsicMeasure μ) (Energy.CovarianceGradient.Intrinsic.energy μ)
+  L2Energy.optimalConstant (Probability.intrinsicMeasure μ)
+    (Energy.CovarianceGradient.Intrinsic.energy μ)
 
 /-- Validity of a finite constant on the finite-energy domain of the affine covariance
 relaxation of the intrinsic law. -/

@@ -311,7 +311,8 @@ theorem exists_smooth_compactSupport_L2
         ENNReal.ofReal (K * (2 * radius j)) := by
       intro j
       have := eLpNorm_le_of_ae_bound (μ := (ν : Measure E)) (p := 2)
-        (f := fun x => mollify m (radius j) g x - g x) ((continuous_mollify m (radius_pos j) hg.continuous).sub
+        (f := fun x => mollify m (radius j) g x - g x)
+        ((continuous_mollify m (radius_pos j) hg.continuous).sub
           hg.continuous).aestronglyMeasurable
         (ae_of_all _ (norm_mollify_sub_le m (radius_pos j) hg))
       simpa [measure_univ] using this
@@ -467,7 +468,8 @@ theorem exists_smooth_bounded_L1
         ENNReal.ofReal (K * (2 * radius j)) := by
       intro j
       have := eLpNorm_le_of_ae_bound (μ := (ν : Measure E)) (p := 1)
-        (f := fun x => mollify m (radius j) g x - g x) ((continuous_mollify m (radius_pos j) hg.continuous).sub
+        (f := fun x => mollify m (radius j) g x - g x)
+        ((continuous_mollify m (radius_pos j) hg.continuous).sub
           hg.continuous).aestronglyMeasurable
         (ae_of_all _ (norm_mollify_sub_le m (radius_pos j) hg))
       simpa [measure_univ] using this

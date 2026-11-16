@@ -42,7 +42,8 @@ theorem density_legendre_norm :
   by_cases hy : ‖y‖ ≤ 1
   · have hm : y ∈ Metric.closedBall (0 : E) 1 := by
       simpa only [Metric.mem_closedBall, dist_zero_right] using hy
-    simp only [density, legendre_norm, ite_eq_left hy, neg_zero, EReal.exp_zero, indicator_of_mem hm]
+    simp only [density, legendre_norm, ite_eq_left hy, neg_zero, EReal.exp_zero,
+      indicator_of_mem hm]
   · have hm : y ∉ Metric.closedBall (0 : E) 1 := by
       simpa only [Metric.mem_closedBall, dist_zero_right] using hy
     simp only [density, legendre_norm, ite_eq_right hy, EReal.neg_top, EReal.exp_bot,

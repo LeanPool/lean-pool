@@ -422,12 +422,10 @@ theorem lipschitzWith_gradient_of_second_difference_le {E : Type*} [NormedAddCom
         -inner ℝ (gradient u x) h ≤ u (x - h) - u x := by
       simpa [sub_eq_add_neg] using hh
     linarith [hsd x h, hh']
-
   -- Separate zero curvature from the positive-curvature estimate.
   by_cases hCzero : C = 0
   · exact lipschitzWith_gradient_of_zero_curvature hCzero hfirst hupper
   · have hCpos : 0 < C := lt_of_le_of_ne hC (Ne.symm hCzero)
-
     -- Use the coercive quadratic estimate to compare gradients at two points.
     have hcoercive (x y : E) :
         ‖gradient u x - gradient u y‖ ^ 2 ≤

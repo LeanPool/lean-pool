@@ -570,7 +570,6 @@ theorem exists_affine_normalization {E : Type*} [NormedAddCommGroup E] [InnerPro
     ∃ C : ℝ, 0 < C ∧ ∀ K : Set E, IsCompact K → Convex ℝ K → (interior K).Nonempty →
       ∃ e : E ≃ᵃ[ℝ] E, closedBall (0 : E) 1 ⊆ e '' K ∧ e '' K ⊆ closedBall (0 : E) C := by
   classical
-
   -- Pass to Euclidean coordinates and separate the zero-dimensional case.
   let n : ℕ := Module.finrank ℝ E
   let L : E ≃ₗᵢ[ℝ] EuclideanSpace ℝ (Fin n) :=
@@ -618,7 +617,6 @@ theorem exists_affine_normalization {E : Type*} [NormedAddCommGroup E] [InnerPro
         L.toHomeomorph.image_interior K
       rw [← hInt]
       exact Set.Nonempty.image L hint
-
     -- Choose a simplex of maximal determinant in the compact convex set.
     obtain ⟨v, hv, hdet, hmax⟩ :=
       exists_max_simplexEdgeMatrix_det hKF hintF
@@ -708,7 +706,6 @@ theorem exists_affine_normalization {E : Type*} [NormedAddCommGroup E] [InnerPro
     let H : F ≃ᵃ[ℝ] F :=
       (LinearEquiv.smulOfNeZero ℝ F ρ⁻¹ (inv_ne_zero hρ.ne')).toAffineEquiv
     let B : F ≃ᵃ[ℝ] F := (A.trans V).trans H
-
     -- Rescale the simplex coordinates to obtain the two ball inclusions.
     have hBapply (z : F) : B z = ρ⁻¹ • (A z - c) := by
       change ρ⁻¹ • (-c + A z) = ρ⁻¹ • (A z - c)

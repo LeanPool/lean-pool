@@ -59,6 +59,151 @@ private theorem exists_supporting_vector_of_linear_minorant
   rw [← hpair] at hminorant
   linarith
 
+private theorem differenceQuotient_mono {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] {u : E → ℝ}
+    (hconv : ConvexOn ℝ Set.univ u) (x : E) {w : E} {a b : ℝ}
+    (ha : 0 < a) (hab : a ≤ b) :
+    (u (x + a • w) - u x) / a ≤ (u (x + b • w) - u x) / b := by
+  have hb : 0 < b := lt_of_lt_of_le ha hab
+  have hab0 : 0 ≤ a / b := div_nonneg ha.le hb.le
+  have hab1 : 0 ≤ 1 - a / b := sub_nonneg.mpr ((div_le_one hb).2 hab)
+  have hsum : a / b + (1 - a / b) = 1 := by
+    abel
+  have hab' : (a / b) * b = a := div_mul_cancel₀ a (ne_of_gt hb)
+  have heq :
+      (a / b) • (x + b • w) + (1 - a / b) • x = x + a • w := by
+    calc
+      (a / b) • (x + b • w) + (1 - a / b) • x =
+          (a / b + (1 - a / b)) • x + (a / b * b) • w := by
+            module
+      _ = x + a • w := by rw [hsum, hab', one_smul]
+  have hc := hconv.2 (x := x + b • w) (y := x) (by simp) (by simp)
+    hab0 hab1 hsum
+  rw [heq] at hc
+  simp only [smul_eq_mul] at hc
+  have hc' :
+      b * (u (x + a • w) - u x) ≤ a * (u (x + b • w) - u x) := by
+    field_simp [ne_of_gt hb] at hc
+    nlinarith [hc]
+  apply (div_le_div_iff₀ ha hb).2
+  nlinarith [hc']
+
+private theorem differenceQuotient_lower {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] {u : E → ℝ}
+    (hconv : ConvexOn ℝ Set.univ u) (x : E) {w : E} {t : ℝ}
+    (ht : 0 < t) :
+    u x - u (x - w) ≤ (u (x + t • w) - u x) / t := by
+  have htp : 0 < t + 1 := by linarith
+  have ha : 0 ≤ t / (t + 1) := div_nonneg ht.le htp.le
+  have hb : 0 ≤ (1 : ℝ) / (t + 1) := by positivity
+  have hsum : t / (t + 1) + (1 : ℝ) / (t + 1) = 1 := by
+    calc
+      t / (t + 1) + (1 : ℝ) / (t + 1) =
+          (t + 1) / (t + 1) := by
+            ring
+      _ = 1 := div_self (ne_of_gt htp)
+  have hcoef : (1 : ℝ) / (t + 1) * t = t / (t + 1) := by
+    ring
+  have heq :
+      (t / (t + 1)) • (x - w) +
+          ((1 : ℝ) / (t + 1)) • (x + t • w) = x := by
+    calc
+      (t / (t + 1)) • (x - w) +
+            ((1 : ℝ) / (t + 1)) • (x + t • w) =
+          (t / (t + 1) + (1 : ℝ) / (t + 1)) • x +
+            (-(t / (t + 1)) + (1 : ℝ) / (t + 1) * t) • w := by
+              module
+      _ = x := by rw [hsum, hcoef]; simp
+  have hc := hconv.2 (x := x - w) (y := x + t • w) (by simp) (by simp)
+    ha hb hsum
+  rw [heq] at hc
+  simp only [smul_eq_mul] at hc
+  have hc' : t * (u x - u (x - w)) ≤ u (x + t • w) - u x := by
+    field_simp [ne_of_gt htp] at hc
+    nlinarith [hc]
+  apply (le_div_iff₀ ht).2
+  nlinarith [hc']
+
+private theorem differenceQuotient_add {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] {u : E → ℝ}
+    (hconv : ConvexOn ℝ Set.univ u) (x : E) {w₁ w₂ : E} {t : ℝ}
+    (ht : 0 < t) :
+    (u (x + t • (w₁ + w₂)) - u x) / t ≤
+      (u (x + (2 * t) • w₁) - u x) / (2 * t) +
+        (u (x + (2 * t) • w₂) - u x) / (2 * t) := by
+  have heq :
+      (1 / 2 : ℝ) • (x + (2 * t) • w₁) +
+          (1 / 2 : ℝ) • (x + (2 * t) • w₂) =
+        x + t • (w₁ + w₂) := by
+    module
+  have hc := hconv.2 (x := x + (2 * t) • w₁) (y := x + (2 * t) • w₂)
+    (by simp) (by simp)
+    (by norm_num : 0 ≤ (1 / 2 : ℝ))
+    (by norm_num : 0 ≤ (1 / 2 : ℝ))
+    (by norm_num : (1 / 2 : ℝ) + 1 / 2 = 1)
+  rw [heq] at hc
+  simp only [smul_eq_mul] at hc
+  apply (div_le_iff₀ ht).2
+  have hid :
+      ((u (x + (2 * t) • w₁) - u x) / (2 * t) +
+          (u (x + (2 * t) • w₂) - u x) / (2 * t)) * t =
+        (u (x + (2 * t) • w₁) + u (x + (2 * t) • w₂) - 2 * u x) / 2 := by
+    field_simp [ne_of_gt ht]
+    ring
+  rw [hid]
+  linarith [hc]
+
+private theorem differenceQuotient_smul {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    (u : E → ℝ) (x : E) {w : E} {c t : ℝ}
+    (hc : 0 < c) (ht : 0 < t) :
+    (u (x + t • (c • w)) - u x) / t = c * ((u (x + (c * t) • w) - u x) / (c * t)) := by
+  rw [smul_smul, mul_comm t c]
+  have hct : 0 < c * t := mul_pos hc ht
+  field_simp [ne_of_gt hc, ne_of_gt ht, ne_of_gt hct]
+
+private theorem directionalEnvelope_subadditive {E : Type*} [Add E]
+    (p : E → ℝ) (slope : E → ℝ → ℝ)
+    (hp_le : ∀ (w : E) (t : {t : ℝ // 0 < t}), p w ≤ slope w t)
+    (hexists : ∀ (w : E) {ε : ℝ}, 0 < ε →
+      ∃ t : {t : ℝ // 0 < t}, slope w t < p w + ε)
+    (hslope_mono : ∀ {w : E} {a b : ℝ}, 0 < a → a ≤ b → slope w a ≤ slope w b)
+    (slope_add : ∀ {w₁ w₂ : E} {t : ℝ}, 0 < t →
+      slope (w₁ + w₂) t ≤ slope w₁ (2 * t) + slope w₂ (2 * t)) :
+    ∀ w₁ w₂ : E, p (w₁ + w₂) ≤ p w₁ + p w₂ := by
+  intro w₁ w₂
+  by_contra h
+  have hlt : p w₁ + p w₂ < p (w₁ + w₂) := lt_of_not_ge h
+  let ε : ℝ := (p (w₁ + w₂) - p w₁ - p w₂) / 4
+  have hε : 0 < ε := by
+    dsimp [ε]
+    linarith
+  obtain ⟨t₁, ht₁⟩ := hexists w₁ hε
+  obtain ⟨t₂, ht₂⟩ := hexists w₂ hε
+  have htmin : 0 < min (t₁ : ℝ) (t₂ : ℝ) :=
+    lt_min t₁.property t₂.property
+  let t : {t : ℝ // 0 < t} :=
+    ⟨min (t₁ : ℝ) t₂ / 2, div_pos htmin (by norm_num)⟩
+  have h2t₁ : 2 * (t : ℝ) ≤ (t₁ : ℝ) := by
+    dsimp [t]
+    linarith [min_le_left (t₁ : ℝ) t₂]
+  have h2t₂ : 2 * (t : ℝ) ≤ (t₂ : ℝ) := by
+    dsimp [t]
+    linarith [min_le_right (t₁ : ℝ) t₂]
+  have hpos : 0 < 2 * (t : ℝ) := mul_pos (by norm_num) t.property
+  have h₁ := hslope_mono (w := w₁) (a := 2 * (t : ℝ)) (b := t₁)
+    hpos h2t₁
+  have h₂ := hslope_mono (w := w₂) (a := 2 * (t : ℝ)) (b := t₂)
+    hpos h2t₂
+  have hsum := slope_add (w₁ := w₁) (w₂ := w₂) t.property
+  have hp := hp_le (w₁ + w₂) t
+  have hbound :
+      p (w₁ + w₂) < p w₁ + p w₂ + 2 * ε := by
+    calc
+      p (w₁ + w₂) ≤ slope (w₁ + w₂) t := hp
+      _ ≤ slope w₁ (2 * (t : ℝ)) + slope w₂ (2 * (t : ℝ)) := hsum
+      _ ≤ slope w₁ (t₁ : ℝ) + slope w₂ (t₂ : ℝ) := add_le_add h₁ h₂
+      _ < (p w₁ + ε) + (p w₂ + ε) := add_lt_add ht₁ ht₂
+      _ = p w₁ + p w₂ + 2 * ε := by ring
+  dsimp [ε] at hε hbound ⊢
+  linarith
+
 /-- **Max formula for the one-sided directional derivative of a finite convex function** ("singleton
 subdifferential ⇒ C¹"): for a convex `u : E → ℝ` on a
 finite-dimensional inner product space, every point `x` and every direction `v`, there is a
@@ -80,69 +225,12 @@ theorem exists_subgradient_slope_le_inner_add {E : Type*} [NormedAddCommGroup E]
   let slope : E → ℝ → ℝ := fun w t => (u (x + t • w) - u x) / t
   let p : E → ℝ := fun w =>
     sInf (Set.range (fun t : {t : ℝ // 0 < t} => slope w t))
-  have hconvex :
-      ∀ {z₁ z₂ : E} {a b : ℝ}, z₁ ∈ Set.univ → z₂ ∈ Set.univ →
-        0 ≤ a → 0 ≤ b → a + b = 1 →
-          u (a • z₁ + b • z₂) ≤ a * u z₁ + b * u z₂ := by
-    intro z₁ z₂ a b hz₁ hz₂ ha hb hab
-    exact hconv.2 hz₁ hz₂ ha hb hab
   have hslope_mono :
-      ∀ {w : E} {a b : ℝ}, 0 < a → a ≤ b → slope w a ≤ slope w b := by
-    intro w a b ha hab
-    have hb : 0 < b := lt_of_lt_of_le ha hab
-    have hab0 : 0 ≤ a / b := div_nonneg ha.le hb.le
-    have hab1 : 0 ≤ 1 - a / b := sub_nonneg.mpr ((div_le_one hb).2 hab)
-    have hsum : a / b + (1 - a / b) = 1 := by
-      abel
-    have hab' : (a / b) * b = a := div_mul_cancel₀ a (ne_of_gt hb)
-    have heq :
-        (a / b) • (x + b • w) + (1 - a / b) • x = x + a • w := by
-      calc
-        (a / b) • (x + b • w) + (1 - a / b) • x =
-            (a / b + (1 - a / b)) • x + (a / b * b) • w := by
-              module
-        _ = x + a • w := by rw [hsum, hab', one_smul]
-    have hc := hconvex (z₁ := x + b • w) (z₂ := x) (by simp) (by simp)
-      hab0 hab1 hsum
-    rw [heq] at hc
-    have hc' :
-        b * (u (x + a • w) - u x) ≤ a * (u (x + b • w) - u x) := by
-      field_simp [ne_of_gt hb] at hc
-      nlinarith [hc]
-    apply (div_le_div_iff₀ ha hb).2
-    nlinarith [hc']
+      ∀ {w : E} {a b : ℝ}, 0 < a → a ≤ b → slope w a ≤ slope w b :=
+    fun {_ _ _} => differenceQuotient_mono hconv x
   have hslope_lower :
-      ∀ {w : E} {t : ℝ}, 0 < t → u x - u (x - w) ≤ slope w t := by
-    intro w t ht
-    have htp : 0 < t + 1 := by linarith
-    have ha : 0 ≤ t / (t + 1) := div_nonneg ht.le htp.le
-    have hb : 0 ≤ (1 : ℝ) / (t + 1) := by positivity
-    have hsum : t / (t + 1) + (1 : ℝ) / (t + 1) = 1 := by
-      calc
-        t / (t + 1) + (1 : ℝ) / (t + 1) =
-            (t + 1) / (t + 1) := by
-              ring
-        _ = 1 := div_self (ne_of_gt htp)
-    have hcoef : (1 : ℝ) / (t + 1) * t = t / (t + 1) := by
-      ring
-    have heq :
-        (t / (t + 1)) • (x - w) +
-            ((1 : ℝ) / (t + 1)) • (x + t • w) = x := by
-      calc
-        (t / (t + 1)) • (x - w) +
-              ((1 : ℝ) / (t + 1)) • (x + t • w) =
-            (t / (t + 1) + (1 : ℝ) / (t + 1)) • x +
-              (-(t / (t + 1)) + (1 : ℝ) / (t + 1) * t) • w := by
-                module
-        _ = x := by rw [hsum, hcoef]; simp
-    have hc := hconvex (z₁ := x - w) (z₂ := x + t • w) (by simp) (by simp)
-      ha hb hsum
-    rw [heq] at hc
-    have hc' : t * (u x - u (x - w)) ≤ u (x + t • w) - u x := by
-      field_simp [ne_of_gt htp] at hc
-      nlinarith [hc]
-    apply (le_div_iff₀ ht).2
-    nlinarith [hc']
+      ∀ {w : E} {t : ℝ}, 0 < t → u x - u (x - w) ≤ slope w t :=
+    fun {_ _} => differenceQuotient_lower hconv x
   have hnonempty (w : E) :
       (Set.range (fun t : {t : ℝ // 0 < t} => slope w t)).Nonempty := by
     let t : {t : ℝ // 0 < t} := ⟨1, by norm_num⟩
@@ -171,14 +259,8 @@ theorem exists_subgradient_slope_le_inner_add {E : Type*} [NormedAddCommGroup E]
   -- Prove positive homogeneity and subadditivity of the slope envelope.
   have hslope_scale :
       ∀ {w : E} {c t : ℝ}, 0 < c → 0 < t →
-        slope (c • w) t = c * slope w (c * t) := by
-    intro w c t hc ht
-    change
-      (u (x + t • (c • w)) - u x) / t =
-        c * ((u (x + (c * t) • w) - u x) / (c * t))
-    rw [smul_smul, mul_comm t c]
-    have hct : 0 < c * t := mul_pos hc ht
-    field_simp [ne_of_gt hc, ne_of_gt ht, ne_of_gt hct]
+        slope (c • w) t = c * slope w (c * t) :=
+    fun {_ _ _} => differenceQuotient_smul u x
   -- Positive homogeneity and subadditivity make p a sublinear envelope.
   have hp_scale :
       ∀ {w : E} {c : ℝ}, 0 < c → p (c • w) = c * p w := by
@@ -216,29 +298,8 @@ theorem exists_subgradient_slope_le_inner_add {E : Type*} [NormedAddCommGroup E]
   have slope_add :
       ∀ {w₁ w₂ : E} {t : ℝ}, 0 < t →
         slope (w₁ + w₂) t ≤
-          slope w₁ (2 * t) + slope w₂ (2 * t) := by
-    intro w₁ w₂ t ht
-    have heq :
-        (1 / 2 : ℝ) • (x + (2 * t) • w₁) +
-            (1 / 2 : ℝ) • (x + (2 * t) • w₂) =
-          x + t • (w₁ + w₂) := by
-      module
-    have hc := hconvex (z₁ := x + (2 * t) • w₁) (z₂ := x + (2 * t) • w₂)
-      (by simp) (by simp)
-      (by norm_num : 0 ≤ (1 / 2 : ℝ))
-      (by norm_num : 0 ≤ (1 / 2 : ℝ))
-      (by norm_num : (1 / 2 : ℝ) + 1 / 2 = 1)
-    rw [heq] at hc
-    dsimp [slope]
-    apply (div_le_iff₀ ht).2
-    have hid :
-        ((u (x + (2 * t) • w₁) - u x) / (2 * t) +
-            (u (x + (2 * t) • w₂) - u x) / (2 * t)) * t =
-          (u (x + (2 * t) • w₁) + u (x + (2 * t) • w₂) - 2 * u x) / 2 := by
-      field_simp [ne_of_gt ht]
-      ring
-    rw [hid]
-    linarith [hc]
+          slope w₁ (2 * t) + slope w₂ (2 * t) :=
+    fun {_ _ _} => differenceQuotient_add hconv x
   have hexists :
       ∀ (w : E) {ε : ℝ}, 0 < ε →
         ∃ t : {t : ℝ // 0 < t}, slope w t < p w + ε := by
@@ -254,43 +315,7 @@ theorem exists_subgradient_slope_le_inner_add {E : Type*} [NormedAddCommGroup E]
       rintro z ⟨t, rfl⟩
       exact hforall t
     linarith
-  have hp_add : ∀ w₁ w₂ : E, p (w₁ + w₂) ≤ p w₁ + p w₂ := by
-    intro w₁ w₂
-    by_contra h
-    have hlt : p w₁ + p w₂ < p (w₁ + w₂) := lt_of_not_ge h
-    let ε : ℝ := (p (w₁ + w₂) - p w₁ - p w₂) / 4
-    have hε : 0 < ε := by
-      dsimp [ε]
-      linarith
-    obtain ⟨t₁, ht₁⟩ := hexists w₁ hε
-    obtain ⟨t₂, ht₂⟩ := hexists w₂ hε
-    have htmin : 0 < min (t₁ : ℝ) (t₂ : ℝ) :=
-      lt_min t₁.property t₂.property
-    let t : {t : ℝ // 0 < t} :=
-      ⟨min (t₁ : ℝ) t₂ / 2, div_pos htmin (by norm_num)⟩
-    have h2t₁ : 2 * (t : ℝ) ≤ (t₁ : ℝ) := by
-      dsimp [t]
-      linarith [min_le_left (t₁ : ℝ) t₂]
-    have h2t₂ : 2 * (t : ℝ) ≤ (t₂ : ℝ) := by
-      dsimp [t]
-      linarith [min_le_right (t₁ : ℝ) t₂]
-    have hpos : 0 < 2 * (t : ℝ) := mul_pos (by norm_num) t.property
-    have h₁ := hslope_mono (w := w₁) (a := 2 * (t : ℝ)) (b := t₁)
-      hpos h2t₁
-    have h₂ := hslope_mono (w := w₂) (a := 2 * (t : ℝ)) (b := t₂)
-      hpos h2t₂
-    have hsum := slope_add (w₁ := w₁) (w₂ := w₂) t.property
-    have hp := hp_le (w₁ + w₂) t
-    have hbound :
-        p (w₁ + w₂) < p w₁ + p w₂ + 2 * ε := by
-      calc
-        p (w₁ + w₂) ≤ slope (w₁ + w₂) t := hp
-        _ ≤ slope w₁ (2 * (t : ℝ)) + slope w₂ (2 * (t : ℝ)) := hsum
-        _ ≤ slope w₁ (t₁ : ℝ) + slope w₂ (t₂ : ℝ) := add_le_add h₁ h₂
-        _ < (p w₁ + ε) + (p w₂ + ε) := add_lt_add ht₁ ht₂
-        _ = p w₁ + p w₂ + 2 * ε := by ring
-    dsimp [ε] at hε hbound ⊢
-    linarith
+  have hp_add := directionalEnvelope_subadditive p slope hp_le hexists hslope_mono slope_add
   -- The unit difference quotient bounds the envelope by the actual increment.
 
   -- Apply the supporting-functional argument to obtain a subgradient.

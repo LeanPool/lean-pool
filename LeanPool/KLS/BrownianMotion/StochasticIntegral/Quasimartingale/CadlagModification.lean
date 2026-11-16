@@ -4,7 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Kexing Ying, Rohit Manokaran, Rémy Degenne
 -/
 -- Lean Pool port: project-qualified imports and Lean Pool style.
--- Modified by kls-lean for the selected proved dependency closure; see formalization/vendor/port.patch.
+-- Modified by kls-lean for the selected proved dependency closure.
+-- See formalization/vendor/port.patch in the source repository.
 
 -- Modified 2026-10-31 by the KLS formalization project: Lean/Mathlib v4.35.0 adaptations
 -- (deprecated names; four proof bodies for the new MemLp/eLpNorm API); see vendor/port.patch.
@@ -72,7 +73,8 @@ section UniformIntegrableStability
 
 variable {ι κ Ω E F : Type*} {mΩ : MeasurableSpace Ω} {μ : Measure Ω}
 
-private lemma MeasureTheory.UniformIntegrable.add [NormedAddCommGroup E] {X Y : ι → Ω → E} {p : ℝ≥0∞} (hp : 1 ≤ p)
+private lemma MeasureTheory.UniformIntegrable.add [NormedAddCommGroup E]
+    {X Y : ι → Ω → E} {p : ℝ≥0∞} (hp : 1 ≤ p)
     (hX : UniformIntegrable X p μ) (hY : UniformIntegrable Y p μ) :
     UniformIntegrable (X + Y) p μ := by
   refine ⟨hX.1.add hY.1 hp, ?_⟩
@@ -81,7 +83,8 @@ private lemma MeasureTheory.UniformIntegrable.add [NormedAddCommGroup E] {X Y : 
   exact ⟨C_X + C_Y, fun i ↦
     le_trans (eLpNorm_add_le hp) (add_le_add (hC_X i) (hC_Y i))⟩
 
-private lemma MeasureTheory.uniformIntegrable_of_dominated [NormedAddCommGroup E] [NormedAddCommGroup F]
+private lemma MeasureTheory.uniformIntegrable_of_dominated
+    [NormedAddCommGroup E] [NormedAddCommGroup F]
     {X : ι → Ω → E} {Y : κ → Ω → F} {p : ℝ≥0∞}
     (hY : UniformIntegrable Y p μ) (mX : ∀ i, AEStronglyMeasurable (X i) μ)
     (hX : ∀ i, ∃ j, ∀ᵐ ω ∂μ, ‖X i ω‖ ≤ ‖Y j ω‖) :

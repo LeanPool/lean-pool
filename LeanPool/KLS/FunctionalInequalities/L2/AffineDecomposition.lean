@@ -276,6 +276,13 @@ theorem memLp_affineOrthPart (μ : Measure (EuclideanSpace ℝ (Fin n))) [IsProb
     funext x
     simp [affineOrthPart, a]
 
+private theorem integral_inner_eq_zero_of_mean_zero
+    (μ : Measure (EuclideanSpace ℝ (Fin n))) [IsProbabilityMeasure μ]
+    (hμ2 : MemLp id 2 μ) (hμ0 : ∫ x, x ∂μ = 0) (v : EuclideanSpace ℝ (Fin n)) :
+    ∫ x, ⟪v, x⟫ ∂μ = 0 := by
+  simpa [Function.comp_def, hμ0] using
+    (innerSL ℝ v).integral_comp_comm (hμ2.integrable one_le_two)
+
 /-- The affine-orthogonal part is orthogonal to every linear function. -/
 theorem integral_inner_mul_affineOrthPart (μ : Measure (EuclideanSpace ℝ (Fin n)))
     [IsProbabilityMeasure μ] (hμ2 : MemLp id 2 μ) (hμ0 : ∫ x, x ∂μ = 0)
@@ -285,10 +292,7 @@ theorem integral_inner_mul_affineOrthPart (μ : Measure (EuclideanSpace ℝ (Fin
     -- Check integrability of the products in the affine projection.
     have hu : MemLp (fun x : EuclideanSpace ℝ (Fin n) => ⟪u, x⟫) 2 μ := by
       simpa [Function.comp_def] using (innerSL ℝ u).comp_memLp' hμ2
-    have hlin : ∀ v : EuclideanSpace ℝ (Fin n), ∫ x, ⟪v, x⟫ ∂μ = 0 := by
-      intro v
-      simpa [Function.comp_def, hμ0] using
-        (innerSL ℝ v).integral_comp_comm (hμ2.integrable one_le_two)
+    have hlin := integral_inner_eq_zero_of_mean_zero μ hμ2 hμ0
     have hbasis :
         ∀ j : Fin n,
           MemLp (fun x : EuclideanSpace ℝ (Fin n) =>
@@ -324,7 +328,6 @@ theorem integral_inner_mul_affineOrthPart (μ : Measure (EuclideanSpace ℝ (Fin
                   ⟪EuclideanSpace.basisFun (Fin n) ℝ j, x⟫) μ := by
       simpa only [Finset.mul_sum] using
         (integrable_finsetSum _ (fun j hj => h₃ j))
-
     -- Evaluate the projection sum using the covariance identity.
     have hsum_eval :
         ∫ x, ⟪u, x⟫ *

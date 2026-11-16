@@ -70,12 +70,13 @@ namespace FunctionalInequalities.Analysis
 
 variable {ι κ : Type*} [Fintype ι] [Fintype κ]
 
+omit [Fintype κ] in
 /--
 **Weighted Gram matrix**: for a positive semidefinite `A` and any family of matrices `T_i`, the
 matrix
 `G_{ij} = Σ_{a,b,c,d} A_{ac} A_{bd} (T_i)_{ab} (T_j)_{cd} = (F (A ⊗ A) Fᵀ)_{ij}` is positive
 semidefinite. -/
-theorem posSemidef_weightedGram (A : Matrix ι ι ℝ) (hA : A.PosSemidef) (T : κ → Matrix ι ι ℝ) :
+theorem posSemidef_weightedGram [Finite κ] (A : Matrix ι ι ℝ) (hA : A.PosSemidef) (T : κ → Matrix ι ι ℝ) :
     (Matrix.of fun i j => ∑ a, ∑ b, ∑ c, ∑ d, A a c * A b d * T i a b * T j c d).PosSemidef := by
   let F : Matrix κ (ι × ι) ℝ := fun i ab => T i ab.1 ab.2
   have h := (hA.kronecker hA).mul_mul_conjTranspose_same F
@@ -428,7 +429,7 @@ theorem trace_mul_nonneg {ι : Type*} [Fintype ι]
 
 /-- The matrix indexed by derivative directions with entries `tr(B Tᵤ B Tᵥ)`
 is a genuine PSD weighted Gram matrix. -/
-theorem traceGram_posSemidef {ι κ : Type*} [Fintype ι] [Fintype κ]
+theorem traceGram_posSemidef {ι κ : Type*} [Fintype ι] [Finite κ]
     (B : Matrix ι ι ℝ) (hB : B.PosSemidef)
     (T : κ → Matrix ι ι ℝ) (hT : ∀ a, (T a).IsSymm) :
     (Matrix.of fun a b => (B * T a * B * T b).trace).PosSemidef := by
@@ -875,7 +876,10 @@ theorem exists_orthogonal_basis_fixing_axis {n : ℕ} (H : Matrix (Fin n) (Fin n
     ho.exists_orthonormalBasis_extension_of_card_eq
       (by simp : Module.finrank ℝ (Fin n → ℝ) = Fintype.card (Fin n))
   let s : Fin n → ℝˣ := fun i =>
-    Units.mk0 (if i = k then a else 1) (by split_ifs; exact ha.ne'; exact one_ne_zero)
+    Units.mk0 (if i = k then a else 1) (by
+      split_ifs
+      · exact ha.ne'
+      · exact one_ne_zero)
   let b := B.toBasis.unitsSMul s
   refine ⟨b, ?_, ?_⟩
   · dsimp [b]
@@ -1023,7 +1027,6 @@ theorem norm_symmetricPart_le_of_quadratic_le {ι : Type*} [Fintype ι]
     fun a b => by
     simp [Matrix.mulVec, dotProduct, Pi.single_apply]
   -- diagonal ceiling from the quadratic ceiling at `eᵢ`
-
   have hdiag : ∀ i : ι, S i i ≤ M := fun i => by
     rw [← hent, ← quadratic_eq_dotProduct, hquad]
     calc
@@ -1033,7 +1036,6 @@ theorem norm_symmetricPart_le_of_quadratic_le {ι : Type*} [Fintype ι]
   intro i
     j
   -- canonical PSD Young inequality at `ε = 1` on `eᵢ` and `±eⱼ`
-
   have hp := posSemidef_quadratic_young S hS (Pi.single i 1) (Pi.single j 1) one_pos
   have hm := posSemidef_quadratic_young S hS (Pi.single i 1) (-Pi.single j 1) one_pos
   simp only [Matrix.mulVec_neg, dotProduct_neg, neg_dotProduct, neg_neg] at hm

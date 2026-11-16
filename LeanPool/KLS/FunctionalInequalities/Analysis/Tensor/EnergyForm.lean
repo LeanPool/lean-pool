@@ -945,7 +945,6 @@ theorem deriv_deriv_energyForm_line (T : (Fin r → Fin n) → ℝ)
         + (1 / 2 : ℝ) * inner (actSum (stdMatrix H) T) (actSum (stdMatrix H) T)
         + (1 / 2 : ℝ) * ∑ s, inner (actOn (stdMatrix H) s T) (actOn (stdMatrix H) s T)) := by
   have hM : (stdMatrix H).IsSymm := stdMatrix_isSymm H hH
-
   -- Differentiate the inverse-frame coefficients along the line.
   let a (i k : Fin n) (t : ℝ) : ℝ :=
     ⟪EuclideanSpace.basisFun (Fin n) ℝ i,
@@ -1017,7 +1016,6 @@ theorem deriv_deriv_energyForm_line (T : (Fin r → Fin n) → ℝ)
   -- second derivative at `0`
   let P (J K : Fin r → Fin n) : ℝ :=
     ∏ s, if J s = K s then (1 : ℝ) else 0
-
   -- Differentiate the products of tensor coefficients.
   let Q (J K : Fin r → Fin n) : ℝ :=
     ∑ s, (∏ u ∈ Finset.univ.erase s, if J u = K u then (1 : ℝ) else 0) *

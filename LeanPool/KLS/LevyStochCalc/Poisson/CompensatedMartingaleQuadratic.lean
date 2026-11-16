@@ -272,6 +272,44 @@ private lemma condExp_sq_increment_of_martingale
     MeasureTheory.integral_const_mul 2 _
   rw [e1, e1', hexp, e2a, e2b, e2c, hcross]; ring
 
+private theorem stronglyMeasurable_simpleCompensator
+    {ν : Measure E} [SigmaFinite ν] {T : ℝ} (φ : SimplePredictable Ω E ν T)
+    (ℱ : Filtration ℝ ‹MeasurableSpace Ω›)
+    (h_adapt : ∀ i : Fin φ.N, @MeasureTheory.StronglyMeasurable Ω ℝ _
+      (ℱ (φ.partition i.castSucc)) (φ.ξ i)) :
+    ∀ u, @MeasureTheory.StronglyMeasurable Ω ℝ _ (ℱ.seq u)
+      (fun ω => ∫ s in Set.Icc (0 : ℝ) u, ∫ e, (φ.eval s e ω) ^ 2 ∂ν ∂volume) := by
+  let c : Fin φ.N → ℝ → ℝ :=
+    fun i u => (LevyStochCalc.Poisson.referenceIntensity ν (φ.timeRect i u)).toReal
+  -- The compensator coefficient vanishes once `u < tᵢ`.
+  have hc_zero : ∀ i : Fin φ.N, ∀ u : ℝ, u < φ.partition i.castSucc → c i u = 0 := by
+    intro i u hu
+    have hps : φ.partition i.castSucc < φ.partition i.succ :=
+      φ.partition_strictMono Fin.castSucc_lt_succ
+    have hrect : φ.timeRect i u = ∅ := by
+      rw [SimplePredictable.timeRect, min_eq_right hu.le,
+        min_eq_right (hu.le.trans hps.le), Set.Ioc_self, Set.empty_prod]
+    change (LevyStochCalc.Poisson.referenceIntensity ν (φ.timeRect i u)).toReal = 0
+    rw [hrect]; simp
+  intro u
+  rcases le_or_gt 0 u with hu | hu
+  · rw [show (fun ω => ∫ s in Set.Icc (0 : ℝ) u, ∫ e, (φ.eval s e ω) ^ 2 ∂ν ∂volume)
+          = fun ω => ∑ i : Fin φ.N, c i u * (φ.ξ i ω) ^ 2 from
+      funext (fun ω => setIntegral_eval_sq_Icc_clamped φ ω hu)]
+    refine Finset.stronglyMeasurable_fun_sum _ (fun i _ => ?_)
+    by_cases hpc : φ.partition i.castSucc ≤ u
+    · have hξ2 : @MeasureTheory.StronglyMeasurable Ω ℝ _ (ℱ.seq u)
+          (fun ω => (φ.ξ i ω) ^ 2) := by
+        simpa [pow_two, Pi.mul_def] using ((h_adapt i).mono (ℱ.mono hpc)).mul ((h_adapt i).mono
+          (ℱ.mono hpc))
+      exact hξ2.const_mul _
+    · push Not at hpc
+      rw [show (fun ω => c i u * (φ.ξ i ω) ^ 2) = fun _ => (0 : ℝ) from by
+        funext ω; rw [hc_zero i u hpc, zero_mul]]
+      exact stronglyMeasurable_const
+  · simp only [Set.Icc_eq_empty (not_le.mpr hu), setIntegral_empty]
+    exact stronglyMeasurable_const
+
 /-- **Simple-level quadratic-variation martingale (compensated).** For an adapted
 simple integrand `φ`, the compensated square
 `t ↦ (simpleIntegral N φ t)² − ∫₀ᵗ ∫_E |φ(s,e)|² ν(de) ds` is a martingale wrt the
@@ -307,16 +345,6 @@ lemma martingale_simpleIntegral_sq_sub_compensator
     filter_upwards with ω
     rw [Real.norm_eq_abs, abs_of_nonneg (sq_nonneg _)]
     exact sq_le_sq' (neg_le_of_abs_le (hM ω)) (le_of_abs_le (hM ω))
-  -- The compensator coefficient vanishes once `u < tᵢ`.
-  have hc_zero : ∀ i : Fin φ.N, ∀ u : ℝ, u < φ.partition i.castSucc → c i u = 0 := by
-    intro i u hu
-    have hps : φ.partition i.castSucc < φ.partition i.succ :=
-      φ.partition_strictMono Fin.castSucc_lt_succ
-    have hrect : φ.timeRect i u = ∅ := by
-      rw [SimplePredictable.timeRect, min_eq_right hu.le,
-        min_eq_right (hu.le.trans hps.le), Set.Ioc_self, Set.empty_prod]
-    change (LevyStochCalc.Poisson.referenceIntensity ν (φ.timeRect i u)).toReal = 0
-    rw [hrect]; simp
   -- `A u = ∑ᵢ c i u · ξᵢ²` for `u ≥ 0`; `A u = 0` for `u < 0`.
   have hA_clamped : ∀ u : ℝ, 0 ≤ u → ∀ ω,
       (∫ s in Set.Icc (0 : ℝ) u, ∫ e, (φ.eval s e ω) ^ 2 ∂ν ∂volume)
@@ -336,27 +364,7 @@ lemma martingale_simpleIntegral_sq_sub_compensator
     · rw [show (fun ω => ∫ s in Set.Icc (0 : ℝ) u, ∫ e, (φ.eval s e ω) ^ 2 ∂ν ∂volume)
             = fun _ => (0 : ℝ) from funext (hA_neg u hu)]
       exact MeasureTheory.integrable_const 0
-  -- Compensator adaptedness.
-  have hA_adapt : ∀ u, @MeasureTheory.StronglyMeasurable Ω ℝ _ (ℱ.seq u)
-      (fun ω => ∫ s in Set.Icc (0 : ℝ) u, ∫ e, (φ.eval s e ω) ^ 2 ∂ν ∂volume) := by
-    intro u
-    rcases le_or_gt 0 u with hu | hu
-    · rw [show (fun ω => ∫ s in Set.Icc (0 : ℝ) u, ∫ e, (φ.eval s e ω) ^ 2 ∂ν ∂volume)
-            = fun ω => ∑ i : Fin φ.N, c i u * (φ.ξ i ω) ^ 2 from funext (hA_clamped u hu)]
-      refine Finset.stronglyMeasurable_fun_sum _ (fun i _ => ?_)
-      by_cases hpc : φ.partition i.castSucc ≤ u
-      · have hξ2 : @MeasureTheory.StronglyMeasurable Ω ℝ _ (ℱ.seq u)
-            (fun ω => (φ.ξ i ω) ^ 2) := by
-          simpa [pow_two, Pi.mul_def] using ((h_adapt i).mono (ℱ.mono hpc)).mul ((h_adapt i).mono
-            (ℱ.mono hpc))
-        exact hξ2.const_mul _
-      · push Not at hpc
-        rw [show (fun ω => c i u * (φ.ξ i ω) ^ 2) = fun _ => (0 : ℝ) from by
-          funext ω; rw [hc_zero i u hpc, zero_mul]]
-        exact stronglyMeasurable_const
-    · rw [show (fun ω => ∫ s in Set.Icc (0 : ℝ) u, ∫ e, (φ.eval s e ω) ^ 2 ∂ν ∂volume)
-            = fun _ => (0 : ℝ) from funext (hA_neg u hu)]
-      exact stronglyMeasurable_const
+  have hA_adapt := stronglyMeasurable_simpleCompensator φ ℱ h_adapt
   -- The compensator increment matches the increment-box intensities.
   have hnu_sub : ∀ i : Fin φ.N, ∀ {s t : ℝ}, 0 ≤ s → s ≤ t →
       c i t - c i s = (LevyStochCalc.Poisson.referenceIntensity ν
