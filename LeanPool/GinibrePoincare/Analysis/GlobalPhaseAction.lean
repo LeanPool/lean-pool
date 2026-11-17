@@ -815,26 +815,14 @@ theorem finiteZeroHermiteL2_coeFn (n : ℕ) (hn : 0 < n)
     (S : Finset (Fin n → ℕ)) (c : (Fin n → ℕ) → ℂ) :
     finiteZeroHermiteL2 n hn S c =ᵐ[complexGaussianMeasure n]
       finiteZeroAntiholomorphicHermiteSum n hn S c := by
-  unfold finiteZeroHermiteL2 finiteZeroAntiholomorphicHermiteSum
-  induction S using Finset.induction_on with
-  | empty =>
-      filter_upwards [Lp.coeFn_zero ℂ 2 (complexGaussianMeasure n)] with z hz
-      change (0 : Lp ℂ 2 (complexGaussianMeasure n)) z = 0
-      rw [hz]
-      exact Pi.zero_apply z
-  | @insert p S hp ih =>
-      filter_upwards [Lp.coeFn_add
-          (c p • ComplexHermite.hermiteL2Family n hn (p, 0))
-          (∑ q ∈ S, c q • ComplexHermite.hermiteL2Family n hn (q, 0)),
-        Lp.coeFn_smul (c p) (ComplexHermite.hermiteL2Family n hn (p, 0)),
-        ComplexHermite.hermiteL2Family_coeFn n hn (p, 0), ih] with
-          z hadd hsmul hmode hsum
-      simp only [Finset.sum_insert hp]
-      rw [hadd]
-      simp only [Pi.add_apply]
-      rw [hsmul]
-      simp only [Pi.smul_apply, smul_eq_mul]
-      rw [hmode, hsum]
+  have h := (Lp.coeFn_finsetSum S
+    (fun p => c p • ComplexHermite.hermiteL2Family n hn (p, 0))).trans
+      (eventuallyEq_sum fun p _ =>
+        (Lp.coeFn_smul (c p) (ComplexHermite.hermiteL2Family n hn (p, 0))).trans
+          ((ComplexHermite.hermiteL2Family_coeFn n hn (p, 0)).const_smul (c p)))
+  filter_upwards [h] with z hz
+  simpa only [finiteZeroHermiteL2, finiteZeroAntiholomorphicHermiteSum,
+    Finset.sum_apply, Pi.smul_apply, smul_eq_mul] using hz
 
 theorem finiteZeroHermiteL2_mem_gaussianAlternating {n : ℕ} (hn : 0 < n)
     (S : Finset (Fin n → ℕ)) (c : (Fin n → ℕ) → ℂ)

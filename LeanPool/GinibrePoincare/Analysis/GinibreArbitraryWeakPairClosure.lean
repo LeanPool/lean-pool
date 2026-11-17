@@ -221,24 +221,10 @@ theorem ginibreInteriorSmoothPair_average_mem_coreClosure {n : ℕ} (hn : 0 < n)
         ((∑ σ ∈ s, ginibreRealPermutationL2 σ p.1 : Lp ℝ 2 (ginibreMeasure n)) :
           Configuration n → ℝ) =ᵐ[ginibreMeasure n]
           fun z => ∑ σ ∈ s, f (permute σ z) := by
-      classical
-      induction s using Finset.induction_on with
-      | empty =>
-          filter_upwards [] with z
-          simp
-      | @insert σ s hσ ih =>
-          filter_upwards [Lp.coeFn_add (ginibreRealPermutationL2 σ p.1)
-            (∑ τ ∈ s, ginibreRealPermutationL2 τ p.1), hterm σ, ih] with z hadd ht hs
-          simp only [Finset.sum_insert hσ]
-          calc
-            (↑(ginibreRealPermutationL2 σ p.1 +
-              ∑ τ ∈ s, ginibreRealPermutationL2 τ p.1) : Configuration n → ℝ) z =
-                ((↑(ginibreRealPermutationL2 σ p.1) +
-                  ↑(∑ τ ∈ s, ginibreRealPermutationL2 τ p.1)) : Configuration n → ℝ) z := hadd
-            _ = f (permute σ z) + ∑ τ ∈ s, f (permute τ z) := by
-              change (ginibreRealPermutationL2 σ p.1) z +
-                (∑ τ ∈ s, ginibreRealPermutationL2 τ p.1) z = _
-              rw [ht, hs]
+      refine (Lp.coeFn_fun_finsetSum s
+        (fun σ => ginibreRealPermutationL2 σ p.1)).trans ?_
+      filter_upwards [eventuallyEq_sum (s := s) (fun σ _ => hterm σ)] with z hz
+      simpa only [Finset.sum_apply] using hz
     unfold ginibreRealPermutationAverageL2
     simp only [smul_apply, sum_apply]
     filter_upwards [Lp.coeFn_smul
@@ -274,26 +260,10 @@ theorem ginibreInteriorSmoothPair_average_mem_coreClosure {n : ℕ} (hn : 0 < n)
           Lp (EuclideanSpace ℝ (Fin n × Fin 2)) 2 (ginibreMeasure n)) :
           Configuration n → EuclideanSpace ℝ (Fin n × Fin 2)) =ᵐ[ginibreMeasure n]
           fun z => ∑ σ ∈ s, ginibreEuclideanGradient (fun y => f (permute σ y)) z := by
-      classical
-      induction s using Finset.induction_on with
-      | empty =>
-          filter_upwards [] with z
-          simp
-      | @insert σ s hσ ih =>
-          filter_upwards [Lp.coeFn_add (ginibreGradientPermutationL2 σ p.2)
-            (∑ τ ∈ s, ginibreGradientPermutationL2 τ p.2), hterm σ, ih] with z hadd ht hs
-          simp only [Finset.sum_insert hσ]
-          calc
-            (↑(ginibreGradientPermutationL2 σ p.2 +
-              ∑ τ ∈ s, ginibreGradientPermutationL2 τ p.2) :
-                Configuration n → EuclideanSpace ℝ (Fin n × Fin 2)) z =
-                ((↑(ginibreGradientPermutationL2 σ p.2) +
-                  ↑(∑ τ ∈ s, ginibreGradientPermutationL2 τ p.2)) :
-                    Configuration n → EuclideanSpace ℝ (Fin n × Fin 2)) z := hadd
-            _ = _ := by
-              change (ginibreGradientPermutationL2 σ p.2) z +
-                (∑ τ ∈ s, ginibreGradientPermutationL2 τ p.2) z = _
-              rw [ht, hs]
+      refine (Lp.coeFn_fun_finsetSum s
+        (fun σ => ginibreGradientPermutationL2 σ p.2)).trans ?_
+      filter_upwards [eventuallyEq_sum (s := s) (fun σ _ => hterm σ)] with z hz
+      simpa only [Finset.sum_apply] using hz
     unfold ginibreGradientPermutationAverageL2
     simp only [smul_apply, sum_apply]
     filter_upwards [Lp.coeFn_smul

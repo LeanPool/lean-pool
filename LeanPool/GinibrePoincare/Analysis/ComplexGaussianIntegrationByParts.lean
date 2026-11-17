@@ -624,21 +624,10 @@ theorem complexGaussianIntegrationByParts_real {n : ℕ} (hn : 0 < n)
       ∂(complexCoordinateGaussianProbability n : Measure ℂ)) =
       (2 * n : ℝ) * ∫ z, (z.re : ℂ) * F z
         ∂(complexCoordinateGaussianProbability n : Measure ℂ) := by
-  rw [integral_complexGaussian_eq_integral_prod_swap
-      (integrable_complexGaussian_fderiv_real hF hFc),
-    integral_complexGaussian_eq_integral_prod_swap
-      (integrable_complexGaussian_re_mul hF.continuous hFc)]
-  simp only [Complex.add_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re,
-    Complex.I_im, mul_zero]
-  rw [← MeasureTheory.integral_const_mul]
-  congr 1
-  funext y
-  change (∫ x, (fderiv ℝ F (complexRealSlice y x)) (1 : ℂ)
-      ∂(realCoordinateGaussianProbability n : Measure ℝ)) = _
-  simp_rw [← deriv_comp_complexRealSlice hF y]
-  simpa [complexRealSlice] using
-    realGaussianIntegrationByParts hn (contDiff_comp_complexRealSlice hF y)
-      (hasCompactSupport_comp_complexRealSlice hFc y)
+  exact complexGaussianIntegrationByParts_real_of_integrable hn hF
+    (integrable_complexGaussian_of_continuous_hasCompactSupport hF.continuous hFc)
+    (integrable_complexGaussian_fderiv_real hF hFc)
+    (integrable_complexGaussian_re_mul hF.continuous hFc)
 
 theorem complexGaussianIntegrationByParts_imag {n : ℕ} (hn : 0 < n)
     {F : ℂ → ℂ} (hF : ContDiff ℝ 1 F) (hFc : HasCompactSupport F) :
@@ -646,21 +635,10 @@ theorem complexGaussianIntegrationByParts_imag {n : ℕ} (hn : 0 < n)
       ∂(complexCoordinateGaussianProbability n : Measure ℂ)) =
       (2 * n : ℝ) * ∫ z, (z.im : ℂ) * F z
         ∂(complexCoordinateGaussianProbability n : Measure ℂ) := by
-  rw [integral_complexGaussian_eq_integral_prod
-      (integrable_complexGaussian_fderiv_imag hF hFc),
-    integral_complexGaussian_eq_integral_prod
-      (integrable_complexGaussian_im_mul hF.continuous hFc)]
-  simp only [Complex.add_im, Complex.ofReal_im, Complex.mul_im, Complex.I_re,
-    Complex.I_im, zero_add, mul_one]
-  rw [← MeasureTheory.integral_const_mul]
-  congr 1
-  funext x
-  change (∫ y, (fderiv ℝ F (complexImagSlice x y)) Complex.I
-      ∂(realCoordinateGaussianProbability n : Measure ℝ)) = _
-  simp_rw [← deriv_comp_complexImagSlice hF x]
-  simpa [complexImagSlice] using
-    realGaussianIntegrationByParts hn (contDiff_comp_complexImagSlice hF x)
-      (hasCompactSupport_comp_complexImagSlice hFc x)
+  exact complexGaussianIntegrationByParts_imag_of_integrable hn hF
+    (integrable_complexGaussian_of_continuous_hasCompactSupport hF.continuous hFc)
+    (integrable_complexGaussian_fderiv_imag hF hFc)
+    (integrable_complexGaussian_im_mul hF.continuous hFc)
 
 theorem complexRealSlice_gaussianIntegrationByParts {n : ℕ} (hn : 0 < n)
     {F : ℂ → ℂ} (hF : ContDiff ℝ 1 F) (hFc : HasCompactSupport F)

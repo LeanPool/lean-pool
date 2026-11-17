@@ -371,19 +371,9 @@ theorem finiteHermiteCombination_coeFn (n : ℕ) (hn : 0 < n)
         complexGaussianMeasure n]
       ∑ pq ∈ c.support,
         fun z => c pq • (hermiteL2Family n hn pq : Configuration n → ℂ) z := by
-    induction c.support using Finset.induction_on with
-    | empty => simpa only [Finset.sum_empty] using
-        (Lp.coeFn_zero ℂ 2 (complexGaussianMeasure n))
-    | @insert pq s hpq ih =>
-        filter_upwards [Lp.coeFn_add
-          (c pq • hermiteL2Family n hn pq)
-          (∑ x ∈ s, c x • hermiteL2Family n hn x),
-          Lp.coeFn_smul (c pq) (hermiteL2Family n hn pq), ih] with z hAdd hSmul hSum
-        simp only [Finset.sum_insert hpq]
-        rw [hAdd]
-        simp only [Pi.add_apply]
-        rw [hSmul, hSum]
-        simp only [Pi.smul_apply]
+    filter_upwards [Lp.coeFn_linearCombination c (hermiteL2Family n hn)] with z hz
+    simpa only [Finsupp.linearCombination_apply, Finsupp.sum, Finset.sum_apply,
+      Pi.smul_apply] using hz
   filter_upwards [hcoe, h] with z hcz hz
   unfold Finsupp.sum
   rw [hcz]

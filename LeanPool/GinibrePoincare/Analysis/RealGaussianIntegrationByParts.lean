@@ -114,36 +114,6 @@ theorem integrable_deriv_product_realCoordinateDensity {n : ℕ} {f : ℝ → �
   (integrable_deriv_mul_realCoordinateDensity hf hfc).add
     (integrable_mul_realCoordinateDensity_deriv hf.continuous hfc)
 
-theorem realGaussianIntegrationByPartsLebesgue {n : ℕ}
-    {f : ℝ → ℂ} (hf : ContDiff ℝ 1 f) (hfc : HasCompactSupport f) :
-    (∫ x, deriv f x * realCoordinateDensity n x) =
-      ∫ x, (((2 * n : ℝ) * x : ℝ) : ℂ) * f x * realCoordinateDensity n x := by
-  let ρ : ℝ → ℂ := fun x ↦ realCoordinateDensity n x
-  let ρ' : ℝ → ℂ := fun x ↦
-    ((-2 * (n : ℝ) * x * realCoordinateDensity n x : ℝ) : ℂ)
-  have hfder (x : ℝ) : HasDerivAt f (deriv f x) x :=
-    (hf.differentiable (by norm_num) x).hasDerivAt
-  have hρ (x : ℝ) : HasDerivAt ρ (ρ' x) x := by
-    exact (hasDerivAt_realCoordinateDensity n x).ofReal_comp
-  have hibp := integral_mul_deriv_eq_deriv_mul_of_integrable
-    (u := f) (u' := deriv f) (v := ρ) (v' := ρ')
-    (fun x hx ↦ hfder x) (fun x hx ↦ hρ x)
-    (integrable_mul_realCoordinateDensity_deriv hf.continuous hfc)
-    (integrable_deriv_mul_realCoordinateDensity hf hfc)
-    (integrable_mul_realCoordinateDensity hf.continuous hfc)
-  change (∫ x, deriv f x * ρ x) = _
-  calc
-    (∫ x, deriv f x * ρ x) = -(∫ x, f x * ρ' x) := by
-      rw [hibp]
-      simp
-    _ = ∫ x, (((2 * n : ℝ) * x : ℝ) : ℂ) * f x * realCoordinateDensity n x := by
-      rw [← integral_neg]
-      apply integral_congr_ae
-      filter_upwards with x
-      dsimp [ρ']
-      push_cast
-      ring
-
 /-- Integration by parts without compact support.  This formulation is
 tailored to polynomial test functions: Gaussian moment estimates discharge
 the three explicit integrability hypotheses. -/
@@ -178,6 +148,16 @@ theorem realGaussianIntegrationByPartsLebesgue_of_integrable {n : ℕ}
       dsimp [ρ']
       push_cast
       ring
+
+theorem realGaussianIntegrationByPartsLebesgue {n : ℕ}
+    {f : ℝ → ℂ} (hf : ContDiff ℝ 1 f) (hfc : HasCompactSupport f) :
+    (∫ x, deriv f x * realCoordinateDensity n x) =
+      ∫ x, (((2 * n : ℝ) * x : ℝ) : ℂ) * f x * realCoordinateDensity n x := by
+  exact realGaussianIntegrationByPartsLebesgue_of_integrable
+    (hf.differentiable (by norm_num))
+    (integrable_deriv_mul_realCoordinateDensity hf hfc)
+    (integrable_mul_realCoordinateDensity_deriv hf.continuous hfc)
+    (integrable_mul_realCoordinateDensity hf.continuous hfc)
 
 theorem integral_realCoordinateGaussian_eq_density {n : ℕ} (hn : 0 < n)
     (f : ℝ → ℂ) :
@@ -219,22 +199,6 @@ theorem integrable_mul_realCoordinateDensity_of_integrable
   rw [norm_mul]
   simp [abs_of_nonneg hd]
 
-/-- Gaussian integration by parts in the exact variance `1/(2n)`
-normalization used for each real coordinate. -/
-theorem realGaussianIntegrationByParts {n : ℕ} (hn : 0 < n)
-    {f : ℝ → ℂ} (hf : ContDiff ℝ 1 f) (hfc : HasCompactSupport f) :
-    (∫ x, deriv f x ∂(realCoordinateGaussianProbability n : Measure ℝ)) =
-      (2 * n : ℝ) *
-        ∫ x, (x : ℂ) * f x
-          ∂(realCoordinateGaussianProbability n : Measure ℝ) := by
-  rw [integral_realCoordinateGaussian_eq_density hn,
-    integral_realCoordinateGaussian_eq_density hn,
-    realGaussianIntegrationByPartsLebesgue hf hfc, ← integral_const_mul]
-  apply integral_congr_ae
-  filter_upwards with x
-  push_cast
-  ring
-
 /-- Gaussian-measure form of the non-compactly-supported integration by
 parts theorem. -/
 theorem realGaussianIntegrationByParts_of_integrable {n : ℕ} (hn : 0 < n)
@@ -255,6 +219,20 @@ theorem realGaussianIntegrationByParts_of_integrable {n : ℕ} (hn : 0 < n)
   filter_upwards with x
   push_cast
   ring
+
+/-- Gaussian integration by parts in the exact variance `1/(2n)`
+normalization used for each real coordinate. -/
+theorem realGaussianIntegrationByParts {n : ℕ} (hn : 0 < n)
+    {f : ℝ → ℂ} (hf : ContDiff ℝ 1 f) (hfc : HasCompactSupport f) :
+    (∫ x, deriv f x ∂(realCoordinateGaussianProbability n : Measure ℝ)) =
+      (2 * n : ℝ) *
+        ∫ x, (x : ℂ) * f x
+          ∂(realCoordinateGaussianProbability n : Measure ℝ) := by
+  exact realGaussianIntegrationByParts_of_integrable hn
+    (hf.differentiable (by norm_num))
+    (integrable_deriv_mul_realCoordinateDensity hf hfc)
+    (integrable_mul_realCoordinateDensity_deriv hf.continuous hfc)
+    (integrable_mul_realCoordinateDensity hf.continuous hfc)
 
 theorem realGaussianIntegrationByParts_of_gaussian_integrable
     {n : ℕ} (hn : 0 < n) {f : ℝ → ℂ}
