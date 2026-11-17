@@ -193,7 +193,7 @@ theorem pathVertex_positionEquiv (edge : Fin p)
     simp only [interiorOffsetOfPosition]
     split_ifs
     all_goals simp [Fin.rev]
-    all_goals omega
+    omega
 
 /-- In an orientation-preserving slot, left unit-step endpoints retain their
 left position. -/

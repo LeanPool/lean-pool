@@ -109,23 +109,23 @@ private lemma post_lt_trans (asps : AspSet) {l m n : ℤ}
     · by_cases hl : l < n
       · left
         refine ⟨hl, ?_⟩
-        contrapose! lm_nI with hln
+        contrapose lm_nI with hln
         apply asps.closed l n m <;> assumption
       · right
         have n_lt_l : n < l := lt_of_le_of_ne (le_of_not_gt hl) fun h => lm_nI (h ▸ nm_I)
         refine ⟨n_lt_l, ?_⟩
-        contrapose! nm_I with nl_nI
+        contrapose nm_I with nl_nI
         apply asps.coclosed n l m <;> assumption
   · rcases hmn with (⟨m_lt_n, mn_nI⟩ | ⟨n_lt_m, nm_I⟩)
     · by_cases hl : l < n
       · left
         refine ⟨hl, ?_⟩
-        contrapose! mn_nI with ln_I
+        contrapose mn_nI with ln_I
         apply asps.closed m l n <;> assumption
       · right
         have n_lt_l : n < l := lt_of_le_of_ne (le_of_not_gt hl) fun h => mn_nI (h ▸ ml_I)
         refine ⟨n_lt_l, ?_⟩
-        contrapose! ml_I with nl_nI
+        contrapose ml_I with nl_nI
         apply asps.coclosed m n l <;> assumption
     · right
       refine ⟨lt_trans n_lt_m m_lt_l, ?_⟩

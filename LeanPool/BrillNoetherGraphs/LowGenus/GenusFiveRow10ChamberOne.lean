@@ -478,12 +478,12 @@ theorem fCoeff_eq {d : DegSpec 8 12} (hCore : d.core = row10Core)
       Int.reduceNeg, sub_self, contribForm, heightFlat, tailContribution_same,
       headContribution_same, zero_add, fCoeff, positiveChip, add_left_inj, Fin.mk_one,
       one_ne_zero, hT4, tsub_pos_iff_lt, zeroChip, Fin.reduceFinMk, sub_zero, hH4]
-  all_goals (try ring_nf)
-  all_goals (try split_ifs)
-  all_goals (try simp_all only [Fin.isValue, zero_le, Int.reduceNeg, add_neg_cancel, add_zero,
+  all_goals ring_nf
+  all_goals split_ifs
+  all_goals simp_all only [Fin.isValue, zero_le, Int.reduceNeg, add_neg_cancel, add_zero,
     nonpos_iff_eq_zero, tsub_self, ↓reduceIte, sub_self, sub_zero, not_true_eq_false,
-    Std.le_refl, zero_add, tsub_zero, not_false_eq_true, one_ne_zero, not_le, tsub_lt_self_iff])
-  all_goals (try omega)
+    Std.le_refl, zero_add, tsub_zero, not_false_eq_true, one_ne_zero, not_le, tsub_lt_self_iff]
+  omega
 
 theorem fCoeff_owner_three {d : DegSpec 8 12} : 1 ≤ fCoeff d 3 := by
   change (1 : ℤ) ≤
@@ -589,12 +589,12 @@ theorem bCoeff_eq {d : DegSpec 8 12} (hCore : d.core = row10Core)
       headContribution_same, zero_add, bCoeff, positiveChip, add_left_inj, Fin.mk_one,
       one_ne_zero, hT4, tsub_pos_iff_lt, zeroChip, Fin.reduceFinMk, sub_zero, add_right_inj,
       hH4]
-  all_goals (try (first | ring1 | ring_nf))
-  all_goals (try split_ifs)
-  all_goals (try simp_all only [Fin.isValue, zero_le, Int.reduceNeg, add_neg_cancel, add_zero,
+  all_goals (first | ring1 | ring_nf)
+  all_goals split_ifs
+  all_goals simp_all only [Fin.isValue, zero_le, Int.reduceNeg, add_neg_cancel, add_zero,
     nonpos_iff_eq_zero, tsub_self, ↓reduceIte, sub_self, sub_zero, not_true_eq_false,
-    Std.le_refl, zero_add, tsub_zero, not_false_eq_true, one_ne_zero, not_le, tsub_lt_self_iff])
-  all_goals (try omega)
+    Std.le_refl, zero_add, tsub_zero, not_false_eq_true, one_ne_zero, not_le, tsub_lt_self_iff]
+  omega
 
 theorem htB_le_three {d : DegSpec 8 12} : htB d ≤ d.length 3 := by
   simp only [htB, resB]; omega
@@ -760,14 +760,14 @@ theorem pCoeff_eq {d : DegSpec 8 12} (hCore : d.core = row10Core)
       headContribution_same, zero_add, pCoeff, positiveChip, add_left_inj, Fin.mk_one,
       one_ne_zero, hT4, tsub_pos_iff_lt, zeroChip, Fin.reduceFinMk, sub_zero, hH4, shift,
       add_right_inj]
-  all_goals (try (first | ring1 | ring_nf))
-  all_goals (try split_ifs)
-  all_goals (try simp_all only [Fin.isValue, zero_le, Int.reduceNeg, add_neg_cancel, add_zero,
+  all_goals (first | ring1 | ring_nf)
+  all_goals split_ifs
+  all_goals simp_all only [Fin.isValue, zero_le, Int.reduceNeg, add_neg_cancel, add_zero,
     nonpos_iff_eq_zero, tsub_self, ↓reduceIte, sub_self, sub_zero, not_true_eq_false, zero_add,
     headContribution_same, add_sub_cancel_left, Std.le_refl, tsub_zero, not_false_eq_true,
     one_ne_zero, not_le, tsub_lt_self_iff, Int.reduceAdd, Int.reduceSub, not_and, not_lt,
-    zero_sub])
-  all_goals (try omega)
+    zero_sub]
+  all_goals omega
 
 /-- The nested minima of the target-`P` profile, in the shape
 `ConfigurationEleven` consumes. -/
@@ -955,12 +955,11 @@ theorem tCoeff_eq {d : DegSpec 8 12} (hCore : d.core = row10Core)
       Int.reduceNeg, sub_self, contribForm, heightT, tailContribution_same, zero_add, tCoeff,
       positiveChip, add_left_inj, Fin.mk_one, one_ne_zero, sub_zero, hT4, zeroChip,
       Fin.reduceFinMk, headContribution_same, hH4, tsub_lt_self_iff]
-  all_goals (try ring_nf)
-  all_goals (try split_ifs)
-  all_goals (try simp_all only [Fin.isValue, rowMark_four, Int.reduceNeg, add_neg_cancel,
-    add_zero, Int.reduceAdd, ↓reduceIte, zero_add, not_le, tsub_lt_self_iff])
-  all_goals (try split_ifs)
-  all_goals (try omega)
+  all_goals ring_nf
+  all_goals split_ifs
+  all_goals simp_all only [Fin.isValue, rowMark_four, Int.reduceNeg, add_neg_cancel,
+    add_zero, Int.reduceAdd, ↓reduceIte, zero_add, not_le, tsub_lt_self_iff]
+  all_goals omega
 
 theorem tCoeff_owner {d : DegSpec 8 12} : 1 ≤ tCoeff d 1 := by
   change (1 : ℤ) ≤

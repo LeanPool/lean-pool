@@ -63,10 +63,9 @@ private theorem simpleReflection_lt_of_lt_of_ne
     simpleReflection i a < simpleReflection i b := by
   rw [simpleReflection_apply, simpleReflection_apply]
   split_ifs <;> try omega
-  all_goals
-    exfalso
-    apply hne
-    apply Prod.ext <;> omega
+  exfalso
+  apply hne
+  apply Prod.ext <;> omega
 
 /-- Apply the adjacent reflection to both coordinates of an inversion pair. -/
 noncomputable def swapPair (i : ℤ) (p : ℤ × ℤ) : ℤ × ℤ :=

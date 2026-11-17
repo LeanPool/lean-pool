@@ -79,7 +79,7 @@ def dProfile : WindowProfile.Data (Spec length hLength) where
     intro edge
     fin_cases edge
     all_goals simp [B, Delta, X, m]
-    all_goals omega
+    omega
   endpoint_compatible := by
     intro edge
     fin_cases edge
@@ -110,7 +110,7 @@ def efProfile : WindowProfile.Data (Spec length hLength) where
     intro edge
     fin_cases edge
     all_goals simp [B, Delta, X, m]
-    all_goals omega
+    omega
   endpoint_compatible := by
     intro edge
     fin_cases edge
@@ -369,8 +369,8 @@ theorem reaches_two : StrongSeparator.Reaches (Spec length hLength).graph
   rw [efProfile_endpointDivisors length hLength hNorm hBC hmy]
   convert (Eff _).add_mem (eff_one_chip ((Spec length hLength).coreVertex 3))
     (effective_dStarts_sub_one length hLength hBC hmy) using 2
-  all_goals simp only [threeChipDivisor, mem_Eff]
-  all_goals abel_nf
+  simp only [threeChipDivisor, mem_Eff]
+  abel_nf
 
 theorem reaches_three : StrongSeparator.Reaches (Spec length hLength).graph
     (threeChipDivisor ((Spec length hLength).coreVertex 4) (q length hLength hNorm) (r length
@@ -380,8 +380,8 @@ theorem reaches_three : StrongSeparator.Reaches (Spec length hLength).graph
   rw [efProfile_endpointDivisors length hLength hNorm hBC hmy]
   convert (Eff _).add_mem (eff_one_chip ((Spec length hLength).coreVertex 2))
     (effective_dStarts_sub_one length hLength hBC hmy) using 2
-  all_goals simp only [threeChipDivisor, mem_Eff]
-  all_goals abel_nf
+  simp only [threeChipDivisor, mem_Eff]
+  abel_nf
 
 theorem bnExists_one_three (hNorm : length 0 ≤ length 5) (hBC : B length < C length)
     (hmy : m length ≤ Y length) : BNExists (Spec length hLength).graph 1 3 := by
@@ -468,7 +468,7 @@ def dProfile : WindowProfile.Data (Spec length hLength) where
     intro edge
     fin_cases edge
     all_goals simp [core]
-    all_goals omega
+    omega
 
 /-- Case-3 window profile which reaches `e=2` and `f=3`. -/
 def efProfile : WindowProfile.Data (Spec length hLength) where

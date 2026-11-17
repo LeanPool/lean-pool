@@ -129,7 +129,7 @@ private theorem linearEquiv_sub_pair {G : CFGraph}
     linearEquiv G (A - B) (C - D) := by
   unfold linearEquiv at hAC hBD ⊢
   convert (principalDivisors G).sub_mem hAC hBD using 1
-  all_goals abel
+  abel
 
 end Generic
 
@@ -166,7 +166,7 @@ theorem bananaStrandLengthRelation_image_principal {g : ℕ} (B : Banana g)
   have hPositive := (principalDivisors B.graph).neg_mem hNegative
   rw [bananaCoordinateDivisorHom_strandLengthRelation]
   convert hPositive using 1
-  all_goals abel
+  abel
 
 /-- Hence the paper's pairwise strand-length generators belong to the exact
 relation subgroup of the graph-level class map. -/

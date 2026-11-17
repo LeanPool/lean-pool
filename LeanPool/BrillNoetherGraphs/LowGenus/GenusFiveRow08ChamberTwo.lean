@@ -261,7 +261,7 @@ theorem profileRB {d : DegSpec 8 12} (hCore : d.core = row08Core)
   intro e
   fin_cases e
   all_goals simp [heightRB, row08Core]
-  all_goals omega
+  omega
 
 theorem profileT4 {d : DegSpec 8 12} (hCore : d.core = row08Core)
     (hB : d.length 3 ≤ d.length 4) (hC : d.length 2 ≤ d.length 7) :
@@ -514,12 +514,12 @@ theorem lbCoeff_eq {d : DegSpec 8 12} (hCore : d.core = row08Core)
       zero_ne_one, ite_self, add_zero, contribForm, heightLB, one_ne_zero,
       tailContribution_same, zero_add, lbCoeff, Fin.mk_one, hT4, headContribution_same,
       zeroChip, add_left_inj, Fin.reduceFinMk, hH4, hT7, hH7]
-  all_goals (try ring_nf)
-  all_goals (try split_ifs)
-  all_goals (try simp_all only [Fin.isValue, zero_le, ↓reduceIte, add_zero, not_lt,
-    nonpos_iff_eq_zero, headContribution_same, lt_self_iff_false, add_right_inj, not_le])
-  all_goals (try split_ifs)
-  all_goals (try omega)
+  all_goals ring_nf
+  all_goals split_ifs
+  all_goals simp_all only [Fin.isValue, zero_le, ↓reduceIte, add_zero, not_lt,
+    nonpos_iff_eq_zero, headContribution_same, lt_self_iff_false, add_right_inj, not_le]
+  all_goals split_ifs
+  all_goals omega
 
 theorem lbCoeff_nonneg {d : DegSpec 8 12} (hB : d.length 3 ≤ d.length 4)
     (v : Fin 8) : 0 ≤ lbCoeff d v := by
@@ -629,11 +629,11 @@ theorem rbCoeff_eq {d : DegSpec 8 12} (hCore : d.core = row08Core)
       zero_ne_one, ite_self, add_zero, contribForm, heightRB, tailContribution_same,
       headContribution_same, rbCoeff, Fin.mk_one, zero_add, one_ne_zero, hT4, zeroChip,
       Fin.reduceFinMk, hH4, hT7, hH7]
-  all_goals (try ring_nf)
-  all_goals (try split_ifs)
-  all_goals (try simp_all only [Fin.isValue, zero_le, ↓reduceIte, not_le])
-  all_goals (try split_ifs)
-  all_goals (try omega)
+  all_goals ring_nf
+  all_goals split_ifs
+  all_goals simp_all only [Fin.isValue, zero_le, ↓reduceIte, not_le]
+  split_ifs
+  all_goals omega
 
 theorem rbCoeff_nonneg {d : DegSpec 8 12} (hC : d.length 2 ≤ d.length 7)
     (v : Fin 8) : 0 ≤ rbCoeff d v := by
@@ -798,14 +798,14 @@ theorem t4Coeff_eq {d : DegSpec 8 12} (hCore : d.core = row08Core)
       heightT4, tailContribution_same, headContribution_same, t4Coeff, Fin.mk_one, zero_add,
       zero_sub, Int.reduceNeg, one_ne_zero, hT4, zeroChip, Fin.reduceFinMk, sub_zero, lend,
       positiveChip, add_left_inj, hH4, armAl, hT7, hH7]
-  all_goals (try ring_nf)
-  all_goals (try split_ifs)
-  all_goals (try simp_all only [Fin.isValue, Std.le_refl, zero_tsub, nonpos_iff_eq_zero,
+  all_goals ring_nf
+  all_goals split_ifs
+  all_goals simp_all only [Fin.isValue, Std.le_refl, zero_tsub, nonpos_iff_eq_zero,
     zero_le, zero_add, lt_self_iff_false, not_false_eq_true, Int.reduceNeg, add_neg_cancel,
     tailContribution_same, add_zero, ↓reduceIte, sub_self, sub_zero, not_lt, Int.reduceAdd,
     headContribution_same, not_and, tsub_self, not_true_eq_false, tsub_zero,
-    Nat.sub_eq_zero_of_le, not_le, left_eq_add, one_ne_zero])
-  all_goals (try omega)
+    Nat.sub_eq_zero_of_le, not_le, left_eq_add, one_ne_zero]
+  all_goals omega
 
 theorem t4Coeff_nonneg {d : DegSpec 8 12} (hB : d.length 3 ≤ d.length 4)
     (hC : d.length 2 ≤ d.length 7) (v : Fin 8) : 0 ≤ t4Coeff d v := by
@@ -1031,16 +1031,15 @@ theorem t5Coeff_eq {d : DegSpec 8 12} (hCore : d.core = row08Core)
       contribForm, heightT5, tailContribution_same, headContribution_same, t5Coeff, Fin.mk_one,
       zero_add, zero_sub, Int.reduceNeg, one_ne_zero, hT4, zeroChip, Fin.reduceFinMk, sub_zero,
       lend, positiveChip, add_left_inj, hH4, hT7, hH7]
-  all_goals (try ring_nf)
-  all_goals (try split_ifs)
-  all_goals (try simp_all only [Fin.isValue, Std.le_refl, zero_tsub, nonpos_iff_eq_zero,
+  all_goals ring_nf
+  all_goals split_ifs
+  all_goals simp_all only [Fin.isValue, Std.le_refl, zero_tsub, nonpos_iff_eq_zero,
     zero_add, zero_le, lt_self_iff_false, not_false_eq_true, Int.reduceNeg, add_neg_cancel,
     tailContribution_same, add_zero, ↓reduceIte, sub_self, sub_zero, not_lt, tsub_pos_iff_lt,
     Int.reduceAdd, and_self, not_and, tsub_le_iff_right, tsub_self, and_false,
     headContribution_same, not_true_eq_false, tsub_zero, left_eq_add, ite_eq_right_iff,
-    one_ne_zero, imp_false, implies_true, not_lt_zero, Nat.sub_eq_zero_of_le, not_le])
-  all_goals (try split_ifs)
-  all_goals (try omega)
+    one_ne_zero, imp_false, implies_true, not_lt_zero, Nat.sub_eq_zero_of_le, not_le]
+  all_goals omega
 
 theorem t5Coeff_nonneg {d : DegSpec 8 12} (hB : d.length 3 ≤ d.length 4)
     (hC : d.length 2 ≤ d.length 7) (v : Fin 8) : 0 ≤ t5Coeff d v := by
