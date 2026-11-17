@@ -12,6 +12,7 @@ public import Mathlib.MeasureTheory.Covering.Vitali
 public import Mathlib.MeasureTheory.Group.LIntegral
 public import Mathlib.MeasureTheory.Integral.Layercake
 public import Mathlib.MeasureTheory.Measure.Haar.Basic
+import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
 
 /-!
 # The Hardy–Littlewood maximal theorem for a homogeneous gauge

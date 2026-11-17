@@ -35,6 +35,7 @@ public meta import Mathlib.Tactic.SplitIfs
 public meta import Mathlib.Tactic.WLOG
 public import LeanPool.CarlesonLT.Auto.ParametricIntegralContDiff
 public import LeanPool.CarlesonLT.Auto.HardyLittlewoodMaximal
+import Mathlib.MeasureTheory.Integral.Pi
 
 /-!
 # Bounds for anisotropic Carleson operators: the model operator (Theorem 3.2)

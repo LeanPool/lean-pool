@@ -780,7 +780,7 @@ theorem memLp_Ioc_shift {f : ℝ → ℂ} (hper : Function.Periodic f 1)
     (hf : MemLp f 2 (volume.restrict (Set.Ioc 0 1))) (k : ℤ) :
     MemLp ((Set.Ioc (k : ℝ) (k + 1)).indicator f) 2 volume := by
   have h0 : MemLp ((Set.Ioc (0 : ℝ) 1).indicator f) 2 volume :=
-    (memLp_indicator_iff_restrict measurableSet_Ioc).mpr hf
+    (memLp_indicator_iff_restrict measurableSet_Ioc.nullMeasurableSet).mpr hf
   have h1 := h0.comp_measurePreserving (measurePreserving_sub_right volume (k : ℝ))
   refine h1.ae_eq (Filter.Eventually.of_forall fun x => ?_)
   simp only [Function.comp, Set.indicator_apply, Set.mem_Ioc]
@@ -812,7 +812,8 @@ theorem memLp_window {f : ℝ → ℂ} (hper : Function.Periodic f 1)
 
 theorem integrable_window {f : ℝ → ℂ} (hper : Function.Periodic f 1)
     (hf : MemLp f 2 (volume.restrict (Set.Ioc 0 1))) (a : ℤ) : Integrable (window f a) := by
-  have h := (memLp_indicator_iff_restrict (measurableSet_Ioc (a := (a : ℝ) - 1) (b := a + 2))).mp
+  have h := (memLp_indicator_iff_restrict
+    (measurableSet_Ioc (a := (a : ℝ) - 1) (b := a + 2)).nullMeasurableSet).mp
     (memLp_window hper hf a)
   have : IsFiniteMeasure (volume.restrict (Set.Ioc ((a : ℝ) - 1) (a + 2))) :=
     ⟨by simp⟩
@@ -992,7 +993,7 @@ theorem memLp_rescale {f : ℝ → ℂ} (hf : MemLp f 2 (volume.restrict (Set.Ic
     MemLp (fun t => f (2 * π * t)) 2 (volume.restrict (Set.Ioc 0 1)) := by
   have hπ : (0 : ℝ) < 2 * π := by positivity
   have h0 : MemLp ((Set.Ico 0 (2 * π)).indicator f) 2 volume :=
-    (memLp_indicator_iff_restrict measurableSet_Ico).mpr hf
+    (memLp_indicator_iff_restrict measurableSet_Ico.nullMeasurableSet).mpr hf
   have hG : MemLp ((Set.Ico (0 : ℝ) 1).indicator fun t => f (2 * π * t)) 2 volume := by
     refine (memLp_comp_mul_left h0 hπ.ne').ae_eq (Eventually.of_forall fun t => ?_)
     have e1 : 0 ≤ 2 * π * t ↔ 0 ≤ t := by
@@ -1001,7 +1002,7 @@ theorem memLp_rescale {f : ℝ → ℂ} (hf : MemLp f 2 (volume.restrict (Set.Ic
       constructor <;> intro h <;> nlinarith [Real.pi_pos]
     simp only [Set.indicator_apply, Set.mem_Ico, e1, e2]
   rw [← Measure.restrict_congr_set Ico_ae_eq_Ioc]
-  exact (memLp_indicator_iff_restrict measurableSet_Ico).mp hG
+  exact (memLp_indicator_iff_restrict measurableSet_Ico.nullMeasurableSet).mp hG
 
 /-- Mathlib's Fourier coefficients on `[0, 2π]` are those of the rescaled function. -/
 theorem fourierCoeffOn_eq_fourierCoeff1 (f : ℝ → ℂ) (n : ℤ) :
