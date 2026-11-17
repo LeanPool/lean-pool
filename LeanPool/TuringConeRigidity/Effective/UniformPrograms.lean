@@ -120,7 +120,9 @@ theorem initial_program (g : X → ℕ → ℕ)
   | zero => rfl
   | succ n ih =>
     simp only [ih]
-    simp [UniformOracle.appendEncoded,UniformOracle.oraclePrefix,List.range_succ]
+    simp [UniformOracle.appendEncoded,
+      PrefixComputability.appendEncoded,UniformOracle.oraclePrefix,
+      PrefixComputability.oraclePrefix,List.range_succ]
 
 private def flag (e : ℕ) : ℕ :=
   if ((decode (α := Option ℕ) e).getD none).isSome then 0 else 1

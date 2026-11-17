@@ -68,7 +68,8 @@ theorem foldNumeral_prefix (B : Oracle) (n : ℕ) :
   induction n with
   | zero => rfl
   | succ n ih =>
-    simpa [foldNumeral, oraclePrefix, List.range_succ, List.foldl_append, numeral] using
+    simpa [foldNumeral, oraclePrefix, PrefixComputability.oraclePrefix, List.range_succ,
+      List.foldl_append, numeral] using
       congrArg (fun a => 2*a+bit B n) ih
 
 theorem numeral_recursive (B : Oracle) :

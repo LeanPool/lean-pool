@@ -67,17 +67,18 @@ theorem prefix_iff (B : Oracle) (m c : ℕ) :
   constructor
   · rintro ⟨hlen,he⟩
     apply List.ext_getElem
-    · simpa [oraclePrefix] using hlen
+    · simpa [oraclePrefix, PrefixComputability.oraclePrefix] using hlen
     · intro k hk hk'
-      have hkm : k < m := by simpa [oraclePrefix] using hk'
+      have hkm : k < m := by simpa [oraclePrefix, PrefixComputability.oraclePrefix] using hk'
       have hh := he k hkm
       simpa [item,List.getD_eq_getElem?_getD,List.getElem?_eq_getElem hk,
-        oraclePrefix] using hh
+        oraclePrefix, PrefixComputability.oraclePrefix] using hh
   · intro he
     constructor
-    · simp [he,oraclePrefix]
+    · simp [he,oraclePrefix, PrefixComputability.oraclePrefix]
     · intro k hk
-      simp [item,he,oraclePrefix,List.getD_eq_getElem?_getD,List.getElem?_range hk]
+      simp [item,he,oraclePrefix,
+        PrefixComputability.oraclePrefix,List.getD_eq_getElem?_getD,List.getElem?_range hk]
 
 theorem prefix_arith {B : OracleFamily} (hB : ArithmeticOracle B)
     {c m l : ℕ → ℕ} (hc : Primrec c) (hm : Primrec m) (hl : Primrec l) :

@@ -62,7 +62,8 @@ theorem zero_represents (Y : Oracle) : Represents Y (machine zeroIndex) (fun _ =
     obtain ⟨t, ht⟩ := Nat.Partrec.Code.evaln_complete.mp
       (show 0 ∈ Nat.Partrec.Code.zero.eval (Nat.pair (encode ([] : List ℕ)) n) from Part.mem_some 0)
     refine ⟨Nat.pair 0 t, 0, ?_⟩
-    simpa [TableIndices.run, UniformOracle.trial, UniformOracle.oraclePrefix] using ht
+    simpa [TableIndices.run, UniformOracle.trial, UniformOracle.oraclePrefix,
+      PrefixComputability.oraclePrefix] using ht
 
 theorem zero_dom (Y : Oracle) : Dom Y zeroIndex :=
   (valid_iff_represents _ _).mpr ⟨_, zero_represents Y⟩

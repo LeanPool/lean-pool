@@ -369,6 +369,10 @@ public import LeanPool.TuringConeRigidity.Effective.RecursiveInfiniteSubset
 public import LeanPool.TuringConeRigidity.Effective.SetCoding
 public import LeanPool.TuringConeRigidity.Effective.StablePair
 public import LeanPool.TuringConeRigidity.Effective.StageComputability
+public import LeanPool.TuringConeRigidity.Effective.StageEngine
+public import LeanPool.TuringConeRigidity.Effective.StageEngineComputability
+public import LeanPool.TuringConeRigidity.Effective.StageEngineLimits
+public import LeanPool.TuringConeRigidity.Effective.StageEngineScan
 public import LeanPool.TuringConeRigidity.Effective.StageLimits
 public import LeanPool.TuringConeRigidity.Effective.StageNormalization
 public import LeanPool.TuringConeRigidity.Effective.StageRecords

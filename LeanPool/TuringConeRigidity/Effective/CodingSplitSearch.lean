@@ -14,7 +14,6 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.Effective.CodingLocations
-public import LeanPool.TuringConeRigidity.Effective.PrefixComputability
 
 /-!
 # Coding Split Search
@@ -152,7 +151,7 @@ theorem trial_complete (Y : Oracle) (e : OracleCode) (base : List Bool)
   refine ⟨Nat.pair M (encode w), ?_⟩
   have ht₀' := Option.mem_def.mp ht₀
   have ht₁' := Option.mem_def.mp ht₁
-  simp only [UniformOracle.oraclePrefix] at ht₀' ht₁'
+  simp only [UniformOracle.oraclePrefix, PrefixComputability.oraclePrefix] at ht₀' ht₁'
   simp [trial, finiteTrial, oraclePrefix, w, ht₀', ht₁', hi, hac, hmi]
 
 theorem splittingLocations_enumerable (Y : Oracle) (e : OracleCode) (base : List Bool) :

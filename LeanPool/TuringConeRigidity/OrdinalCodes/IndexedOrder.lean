@@ -39,11 +39,11 @@ theorem reads_values {Y A : Oracle} {e : Nat.Partrec.Code}
     (he : Represents Y e A) (L : List (ℕ × ℕ)) (hL : Reads Y e L) :
     values L = oraclePrefix (fun k => bit (A k)) L.length := by
   apply List.ext_getElem
-  · simp [values, oraclePrefix]
+  · simp [values, oraclePrefix, PrefixComputability.oraclePrefix]
   · intro j hj hj'
     have hjL : j < L.length := by simpa [values] using hj
     have hh := he.1 j (L[j].2) (L[j].1) (Option.mem_def.mpr (hL ⟨j, by simpa [values] using hj⟩))
-    simpa [values, oraclePrefix] using hh
+    simpa [values, oraclePrefix, PrefixComputability.oraclePrefix] using hh
 
 theorem exists_reads {Y A : Oracle} {e : Nat.Partrec.Code}
     (he : Represents Y e A) (m : ℕ) :

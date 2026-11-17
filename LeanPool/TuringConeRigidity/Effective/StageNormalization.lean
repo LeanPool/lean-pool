@@ -63,6 +63,7 @@ theorem prefix_eq (A : Oracle) (k n : ℕ) :
   | succ n ih =>
     change prefixStep A (Nat.pair k (Nat.pair n (columnPrefix A k n))) = _
     simp only [prefixStep,Nat.unpair_pair,ih,UniformOracle.appendEncoded,
+      PrefixComputability.appendEncoded,
       Introreducible.prefixCode,encodek,Option.getD_some,
       PrefixComputability.oraclePrefix,List.range_succ,List.map_append,List.map_cons,List.map_nil]
     rfl

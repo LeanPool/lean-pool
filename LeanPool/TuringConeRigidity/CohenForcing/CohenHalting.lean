@@ -135,7 +135,7 @@ theorem agrees_table {Y G : Oracle} {p : List Bool} {L : List ℕ}
     (hp : Prefix G p) (h : Agrees Y p L) : L = oraclePrefix (fun i => bit (join Y G i)) L.length
       := by
   apply List.ext_getElem
-  · simp [oraclePrefix]
+  · simp [oraclePrefix, PrefixComputability.oraclePrefix]
   · intro i hi hj
     have hh := h i hi
     have he : L.getD i 0 = bit (join Y G i) := by
@@ -144,7 +144,8 @@ theorem agrees_table {Y G : Oracle} {p : List Bool} {L : List ℕ}
       | true =>
         simp only [hb,↓reduceIte] at hh
         simpa [join,hb,hp (i/2) hh.1] using hh.2
-    simpa [List.getD_eq_getElem?_getD,List.getElem?_eq_getElem hi,oraclePrefix,hi] using he
+    simpa [List.getD_eq_getElem?_getD,List.getElem?_eq_getElem hi,oraclePrefix,
+      PrefixComputability.oraclePrefix,hi] using he
 
 theorem openHalts_sound {Y G : Oracle} {x : ℕ} {p : List Bool}
     (hp : Prefix G p) (h : OpenHalts Y x (encode p)) : Halts (join Y G) (Nat.unpair x).1
@@ -165,10 +166,11 @@ theorem openHalts_complete {Y G : Oracle} {x : ℕ}
   refine ⟨m,Nat.pair (encode L) (Nat.unpair z).2,?_,?_⟩
   · simp only [Nat.unpair_pair,word,table,encodek,Option.getD_some]
     intro i hi
-    have him : i < m := by simpa [L,oraclePrefix] using hi
+    have him : i < m := by simpa [L,oraclePrefix, PrefixComputability.oraclePrefix] using hi
     have hh : i/2 < m := (Nat.div_le_self i 2).trans_lt him
     have hv : L.getD i 0 = bit (join Y G i) := by
-      simp [L,oraclePrefix,List.getD_eq_getElem?_getD,List.getElem?_range him]
+      simp [L,oraclePrefix,
+        PrefixComputability.oraclePrefix,List.getD_eq_getElem?_getD,List.getElem?_range him]
     cases hb : i.bodd with
     | false => simpa only [hb,Bool.false_eq_true,↓reduceIte,join] using hv
     | true =>

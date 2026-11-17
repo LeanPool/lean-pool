@@ -54,28 +54,9 @@ theorem candidate_decisive (A : Oracle) (t : ℕ) (p : Condition)
 theorem limits_extend_action {A : Oracle} {s t : ℕ}
     (ha : stageAction A s (construction A s) = some t) :
     CommonIdeal.Extends (GuardedLimits.G₀ A) (candidate A t (generic A (construction A s))).left ∧
-    CommonIdeal.Extends (GuardedLimits.G₁ A) (candidate A t (generic A (construction A s))).right
-      := by
-  have hl : (candidate A t (generic A (construction A s))).left <+: (conditions A (s+1)).left := by
-    change _ <+: (stageWord A s (construction A s)).left ++ [false]
-    simp only [stageWord,ha]
-    exact List.prefix_append _ _
-  have hr : (candidate A t (generic A (construction A s))).right <+: (conditions A (s+1)).right :=
-    by
-    change _ <+: (stageWord A s (construction A s)).right ++ [false]
-    simp only [stageWord,ha]
-    exact List.prefix_append _ _
-  constructor
-  · intro m hm
-    exact ((limits_extend (word_growth A) (length_bound A) (s+1) m (hm.trans_le
-      hl.length_le)).1).trans
-      (getD_of_prefix hl hm)
-  · intro m hm
-    have hn : m < (conditions A (s+1)).left.length := by
-      rw [(conditions A (s+1)).sameLength]
-      exact hm.trans_le hr.length_le
-    exact ((limits_extend (word_growth A) (length_bound A) (s+1) m hn).2).trans (getD_of_prefix hr
-      hm)
+    CommonIdeal.Extends (GuardedLimits.G₁ A) (candidate A t (generic A (construction A s))).right :=
+  StageEngineLimits.limits_extend_action GuardedStage.stateInterface (GuardedStage.procedures A)
+    (GuardedStage.candidate_extends A) (GuardedStage.open_extends A) ha
 
 theorem action_excludes_common {A Y Z : Oracle} {s t : ℕ}
     (hbase : OracleCode.eval (oracleFunction A) (meaning (machine (item t 0))) = oracleFunction Y)
@@ -90,22 +71,8 @@ theorem action_excludes_common {A Y Z : Oracle} {s t : ℕ}
   exact StablePair.decisive_excludes_common hbase h₀ h₁ he₀ he₁ (candidate_decisive A t _ hc)
 
 theorem done_witness (A : Oracle) {s t : ℕ} (ht : t ∈ (construction A s).done) :
-    ∃ u, u < s ∧ stageAction A u (construction A u) = some t := by
-  induction s with
-  | zero => simp [construction] at ht
-  | succ s ih =>
-    change t ∈
-      FiniteInjury.update (construction A s).done (stageAction A s (construction A s)) at ht
-    cases ha : stageAction A s (construction A s) with
-    | none =>
-      obtain ⟨u,hu,he⟩ := ih (by simpa [ha,FiniteInjury.update] using ht)
-      exact ⟨u,by omega,he⟩
-    | some i =>
-      simp only [ha,FiniteInjury.update,Finset.mem_insert,Finset.mem_filter] at ht
-      rcases ht with rfl | ⟨ht,_⟩
-      · exact ⟨s,by omega,ha⟩
-      · obtain ⟨u,hu,he⟩ := ih ht
-        exact ⟨u,by omega,he⟩
+    ∃ u, u < s ∧ stageAction A u (construction A u) = some t :=
+  StageEngine.done_witness GuardedStage.stateInterface (GuardedStage.procedures A) ht
 
 theorem common_not_done {A Y Z : Oracle} {s t : ℕ}
     (hbase : OracleCode.eval (oracleFunction A) (meaning (machine (item t 0))) = oracleFunction Y)
@@ -120,15 +87,8 @@ theorem common_not_done {A Y Z : Oracle} {s t : ℕ}
 
 theorem scan_hits {A : Oracle} {p : Condition} {d : Finset ℕ} {start n t : ℕ}
     (hlo : start ≤ t) (hhi : t < start + n) (hd : t ∉ d) (hc : Changes A t p) :
-    ∃ i, i ≤ t ∧ scan A p d start n = some i := by
-  induction n generalizing start with
-  | zero => omega
-  | succ n ih =>
-    by_cases h : start ∉ d ∧ Changes A start p
-    · exact ⟨start,hlo,by simp only [scan,ite_eq_left h]⟩
-    · have hne : start ≠ t := by rintro rfl; exact h ⟨hd,hc⟩
-      obtain ⟨i,hi,he⟩ := ih (start := start+1) (by omega) (by omega)
-      exact ⟨i,hi,by simpa only [scan,ite_eq_right h] using he⟩
+    ∃ i, i ≤ t ∧ scan A p d start n = some i :=
+  StageEngine.scan_hits hlo hhi hd hc
 
 theorem common_eventually_unchanged {A Y Z : Oracle} {t : ℕ}
     (hbase : OracleCode.eval (oracleFunction A) (meaning (machine (item t 0))) = oracleFunction Y)
@@ -142,7 +102,8 @@ theorem common_eventually_unchanged {A Y Z : Oracle} {t : ℕ}
   obtain ⟨i,hi,he⟩ := scan_hits (start := 0) (n := s) (Nat.zero_le t)
     (by omega) (common_not_done (s := s) hbase he₀ he₁) hc
   apply hS s ((le_max_left _ _).trans hs) i (by omega)
-  simpa only [action_eq,stageAction] using he
+  rw [action_eq]
+  exact he
 
 theorem nonchanging_outcome {A Y Z : Oracle} {s t : ℕ}
     (hbase : OracleCode.eval (oracleFunction A) (meaning (machine (item t 0))) = oracleFunction Y)

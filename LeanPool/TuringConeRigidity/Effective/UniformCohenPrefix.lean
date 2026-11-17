@@ -41,14 +41,16 @@ theorem numericPrefix_iff (G : Oracle) (p : ℕ) :
   · intro h i hi
     have he := congrArg (fun l : List ℕ => l.getD i 0) h
     have hbit : bit (G i) = bit ((word p).getD i false) := by
-      simpa [oraclePrefix,List.getD,hi] using he
+      simpa [oraclePrefix, PrefixComputability.oraclePrefix,List.getD,hi] using he
     exact (bit_eq_iff _ _).mp hbit
   · intro h
     apply List.ext_getElem
-    · simp [oraclePrefix]
+    · simp [oraclePrefix, PrefixComputability.oraclePrefix]
     · intro i hi hj
-      have hi' : i < (word p).length := by simpa [oraclePrefix] using hi
-      simpa [oraclePrefix,List.getD,hi'] using congrArg bit (h i hi')
+      have hi' : i < (word p).length := by simpa [oraclePrefix,
+        PrefixComputability.oraclePrefix] using hi
+      simpa [oraclePrefix, PrefixComputability.oraclePrefix,List.getD,hi'] using congrArg bit
+        (h i hi')
 
 theorem prefix_program {X : Type*} {O : X → ℕ →. ℕ} (G : X → Oracle)
     (hG : Runs O (fun x => oracleFunction (G x))) :

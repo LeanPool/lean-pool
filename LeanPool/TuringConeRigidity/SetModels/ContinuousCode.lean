@@ -32,7 +32,8 @@ theorem table_agreement {A B : Oracle} {n : ℕ}
     (h : oraclePrefix (bit A) n = oraclePrefix (bit B) n) : Agree n A B := by
   intro i hi
   have hh := congrArg (fun L : List ℕ => L.getD i 0) h
-  have hb : bit A i = bit B i := by simpa [oraclePrefix,List.getD,hi] using hh
+  have hb : bit A i = bit B i := by simpa [oraclePrefix,
+    PrefixComputability.oraclePrefix,List.getD,hi] using hh
   cases ha : A i <;> cases hb' : B i <;> simp_all [bit]
 
 /-- Every oracle in the specified prefix neighborhood inside `U` has the same output bit
@@ -65,7 +66,7 @@ theorem trial_sound (U : Set Oracle) (f : Oracle → Oracle) (A : Oracle) (hA : 
     have hl : LocalAnswer U f n (oraclePrefix (bit A) (Nat.unpair k).1) (Nat.unpair k).2 := by
       simp only [parameter, decide_eq_true_eq] at hp
       simpa [queryIndex] using hp
-    have hs := hl A hA (by simp [oraclePrefix])
+    have hs := hl A hA (by simp [oraclePrefix, PrefixComputability.oraclePrefix])
     exact hval.trans hs.symm
   · simp at ha
 
@@ -112,7 +113,8 @@ theorem local_answer_exists (U : Set Oracle) (f : Oracle → Oracle) (hf : Conti
   refine ⟨m,?_⟩
   intro B hB htable
   have ht : oraclePrefix (bit B) m = oraclePrefix (bit A) m := by
-    simpa only [oraclePrefix,List.length_map,List.length_range] using htable
+    simpa only [oraclePrefix,
+      PrefixComputability.oraclePrefix,List.length_map,List.length_range] using htable
   have he : f B n = f A n := hsub ⟨hm B (table_agreement ht).symm,hB⟩
   simp [bit,he]
 

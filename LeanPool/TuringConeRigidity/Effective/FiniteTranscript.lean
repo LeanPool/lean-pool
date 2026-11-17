@@ -57,10 +57,12 @@ theorem eval_prefix_stable (g : ℕ → ℕ) (h : ℕ →. ℕ) (m : ℕ)
   have hk : k < m := by
     by_contra hn
     have hnone : (UniformOracle.oraclePrefix g m)[k]? = none :=
-      List.getElem?_eq_none (by simpa [UniformOracle.oraclePrefix] using Nat.le_of_not_gt hn)
+      List.getElem?_eq_none (by
+        simpa [UniformOracle.oraclePrefix, PrefixComputability.oraclePrefix]
+          using Nat.le_of_not_gt hn)
     simp [hnone] at hb
   have hv : (UniformOracle.oraclePrefix g m)[k]? = some (g k) := by
-    simp [UniformOracle.oraclePrefix, List.getElem?_range hk]
+    simp [UniformOracle.oraclePrefix, PrefixComputability.oraclePrefix, List.getElem?_range hk]
   have heq : b = g k := by simpa [hv] using hb
   subst b
   exact he k hk

@@ -15,8 +15,7 @@ module
 
 public import LeanPool.TuringConeRigidity.Effective.UniformPair
 public import LeanPool.TuringConeRigidity.CohenForcing.EffectiveForcing
-public import LeanPool.TuringConeRigidity.Effective.FiniteInjuryLimits
-public import LeanPool.TuringConeRigidity.Effective.FiniteInjurySchedule
+public import LeanPool.TuringConeRigidity.Effective.StageEngine
 
 /-!
 # Priority Stage
@@ -39,40 +38,6 @@ theorem pairProcedure_recursive (A : Oracle) :
     Nat.RecursiveIn {oracleFunction (OracleJump.jump A)} (fun v => Part.some (pairProcedure A v)) :=
   (Classical.choose_spec (UniformPair.pair_exists A)).1
 
-/-- The pair-procedure candidate at priority `t`, normalized to level `t`. -/
-def candidate (A : Oracle) (t : ℕ) (p : Condition) : Condition :=
-  atLevel (condition (pairProcedure A (Nat.pair t (code (atLevel p t))))) t
-
-theorem candidate_extends (A : Oracle) (t : ℕ) (p : Condition) :
-    Extends (columns A) (atLevel p t) (candidate A t p) := by
-  have h := ((Classical.choose_spec (UniformPair.pair_exists A)).2 t (code (atLevel p t))).1
-  rw [condition_code] at h
-  exact ⟨h.1,h.2.1,le_rfl,h.2.2.2⟩
-
-/-- The priority candidate changes at least one of the two condition words. -/
-def Changes (A : Oracle) (t : ℕ) (p : Condition) : Prop :=
-  (candidate A t p).left ≠ p.left ∨ (candidate A t p).right ≠ p.right
-
-/-- Search a bounded range for an unfinished priority that changes the condition. -/
-def scan (A : Oracle) (p : Condition) (done : Finset ℕ) (t : ℕ) : ℕ → Option ℕ
-  | 0 => none
-  | n+1 => if t ∉ done ∧ Changes A t p then some t else scan A p done (t+1) n
-
-theorem scan_spec {A : Oracle} {p : Condition} {done : Finset ℕ} {t n i : ℕ}
-    (h : scan A p done t n = some i) :
-    t ≤ i ∧ i < t+n ∧ i ∉ done ∧ Changes A i p := by
-  induction n generalizing t with
-  | zero => simp [scan] at h
-  | succ n ih =>
-    simp only [scan] at h
-    split at h
-    · rename_i ht
-      have he := Option.some.inj h
-      subst i
-      exact ⟨le_rfl,by omega,ht⟩
-    · obtain ⟨hlo,hhi,hd,hc⟩ := ih h
-      exact ⟨by omega,by omega,hd,hc⟩
-
 /-- Select a uniform procedure deciding open requirements relative to `A`. -/
 def openProcedure (A : Oracle) : ℕ → ℕ :=
   Classical.choose (EffectiveForcing.uniform_open_decision A A (reduces_refl A))
@@ -83,6 +48,49 @@ theorem open_extends (A : Oracle) (e : ℕ) (p : Condition) :
     A))).2 e (code p)).1
   simpa only [condition_code,openProcedure] using h
 
+/-- The two selected procedures supplied to the shared stage engine. -/
+def procedures (A : Oracle) : StageEngine.Procedures :=
+  ⟨pairProcedure A, openProcedure A⟩
+
+/-- The pair-procedure candidate at priority `t`, normalized to level `t`. -/
+def candidate (A : Oracle) (t : ℕ) (p : Condition) : Condition :=
+  StageEngine.candidate (procedures A) t p
+
+theorem candidate_extends (A : Oracle) (t : ℕ) (p : Condition) :
+    Extends (columns A) (atLevel p t) (candidate A t p) := by
+  have h := ((Classical.choose_spec (UniformPair.pair_exists A)).2 t (code (atLevel p t))).1
+  rw [condition_code] at h
+  exact ⟨h.1,h.2.1,le_rfl,h.2.2.2⟩
+
+/-- The priority candidate changes at least one of the two condition words. -/
+def Changes (A : Oracle) (t : ℕ) (p : Condition) : Prop :=
+  StageEngine.Changes (procedures A) t p
+
+/-- Search a bounded range for an unfinished priority that changes the condition. -/
+def scan (A : Oracle) (p : Condition) (done : Finset ℕ) (t : ℕ) : ℕ → Option ℕ :=
+  StageEngine.scan (procedures A) p done t
+
+/-- A bounded scan of length zero selects no action. -/
+theorem scan_zero (A : Oracle) (p : Condition) (done : Finset ℕ) (t : ℕ) :
+    scan A p done t 0 = none := rfl
+
+/-- A nonempty scan first examines its least priority. -/
+theorem scan_succ (A : Oracle) (p : Condition) (done : Finset ℕ) (t n : ℕ) :
+    scan A p done t (n+1) =
+      if t ∉ done ∧ Changes A t p then some t else scan A p done (t+1) n := rfl
+
+/-- The two defining cases of the bounded scan, with a stable public equation name. -/
+theorem scan_eq_match (A : Oracle) (p : Condition) (done : Finset ℕ) (t n : ℕ) :
+    scan A p done t n = match n with
+      | 0 => none
+      | n+1 => if t ∉ done ∧ Changes A t p then some t else scan A p done (t+1) n := by
+  cases n <;> rfl
+
+theorem scan_spec {A : Oracle} {p : Condition} {done : Finset ℕ} {t n i : ℕ}
+    (h : scan A p done t n = some i) :
+    t ≤ i ∧ i < t+n ∧ i ∉ done ∧ Changes A i p :=
+  StageEngine.scan_spec h
+
 /-- A priority state containing its condition, completed priorities, and visited priorities. -/
 structure State where
   /-- The current priority-construction condition. -/
@@ -92,142 +100,110 @@ structure State where
   /-- The priorities visited since their last injury reset. -/
   seen : Finset ℕ
 
+/-- The unchanged public state representation, exposed to the shared engine. -/
+def stateInterface : StageEngine.StateInterface State where
+  condition := State.condition
+  done := State.done
+  seen := State.seen
+  make := State.mk
+  condition_make := fun _ _ _ => rfl
+  done_make := fun _ _ _ => rfl
+  seen_make := fun _ _ _ => rfl
+
 /-- Extend the condition to meet the least unvisited open requirement. -/
 def generic (A : Oracle) (p : State) : Condition :=
-  EncodedForcing.condition (openProcedure A (Nat.pair (FiniteInjurySchedule.visit p.seen) (code
-    p.condition)))
+  StageEngine.generic stateInterface (procedures A) p
 
 /-- The bounded priority action selected after the generic extension. -/
-def stageAction (A : Oracle) (s : ℕ) (p : State) : Option ℕ := scan A (generic A p) p.done 0 s
+def stageAction (A : Oracle) (s : ℕ) (p : State) : Option ℕ :=
+  StageEngine.stageAction stateInterface (procedures A) s p
 
 /-- Select the stage condition from the generic extension and any priority candidate. -/
 def stageWord (A : Oracle) (s : ℕ) (p : State) : Condition :=
-  match stageAction A s p with
-  | none => generic A p
-  | some t => candidate A t (generic A p)
+  StageEngine.stageWord stateInterface (procedures A) s p
 
 /-- Advance the priority condition and update its completed and visited records. -/
-def advance (A : Oracle) (s : ℕ) (p : State) : State where
-  condition := atLevel (append (stageWord A s p) [false]) (s+1)
-  done := FiniteInjury.update p.done (stageAction A s p)
-  seen := FiniteInjurySchedule.reset (insert (FiniteInjurySchedule.visit p.seen) p.seen)
-    (stageAction A s p)
+def advance (A : Oracle) (s : ℕ) (p : State) : State :=
+  StageEngine.advance stateInterface (procedures A) s p
 
 /-- The priority state sequence starting from the empty condition and empty records. -/
-def construction (A : Oracle) : ℕ → State
-  | 0 => ⟨⟨[],[],rfl,0⟩,∅,∅⟩
-  | s+1 => advance A s (construction A s)
+def construction (A : Oracle) : ℕ → State :=
+  StageEngine.construction stateInterface (procedures A)
+
+/-- The construction begins at the original empty state. -/
+theorem construction_zero (A : Oracle) : construction A 0 = ⟨⟨[], [], rfl, 0⟩, ∅, ∅⟩ := rfl
+
+/-- Each construction step applies the stage transition to its predecessor. -/
+theorem construction_succ (A : Oracle) (s : ℕ) :
+    construction A (s+1) = advance A s (construction A s) := rfl
+
+/-- The two construction cases, with a stable public equation name. -/
+theorem construction_eq_match (A : Oracle) (s : ℕ) :
+    construction A s = match s with
+      | 0 => ⟨⟨[], [], rfl, 0⟩, ∅, ∅⟩
+      | s+1 => advance A s (construction A s) := by
+  cases s <;> rfl
 
 /-- The condition component of the priority state at stage `s`. -/
-def conditions (A : Oracle) (s : ℕ) := (construction A s).condition
+def conditions (A : Oracle) (s : ℕ) :=
+  StageEngine.conditions stateInterface (procedures A) s
 
 /-- The finite-injury action proposal produced by the priority state at stage `s`. -/
 def proposal (A : Oracle) (s : ℕ) (_ : Finset ℕ) : Option ℕ :=
-  stageAction A s (construction A s)
+  StageEngine.proposal stateInterface (procedures A) s ∅
 
 theorem action_not_done (A : Oracle) (s : ℕ) (p : State) (t : ℕ)
-    (h : stageAction A s p = some t) : t ∉ p.done := (scan_spec h).2.2.1
+    (h : stageAction A s p = some t) : t ∉ p.done :=
+  StageEngine.action_not_done stateInterface (procedures A) s p t h
 
 theorem accept_action (A : Oracle) (s : ℕ) (p : State) :
-    FiniteInjury.accept p.done (stageAction A s p) = stageAction A s p := by
-  cases ha : stageAction A s p with
-  | none => simp [FiniteInjury.accept]
-  | some t => simp [FiniteInjury.accept,action_not_done A s p t ha]
+    FiniteInjury.accept p.done (stageAction A s p) = stageAction A s p :=
+  StageEngine.accept_action stateInterface (procedures A) s p
 
 theorem done_eq (A : Oracle) (s : ℕ) :
-    (construction A s).done = FiniteInjury.state (proposal A) s := by
-  induction s with
-  | zero => rfl
-  | succ s ih =>
-    change FiniteInjury.update (construction A s).done (stageAction A s (construction A s)) = _
-    rw [FiniteInjury.state]
-    rw [← ih]
-    simp only [proposal,accept_action]
+    (construction A s).done = FiniteInjury.state (proposal A) s :=
+  StageEngine.done_eq stateInterface (procedures A) s
 
 theorem action_eq (A : Oracle) (s : ℕ) :
-    FiniteInjury.action (proposal A) s = stageAction A s (construction A s) := by
-  rw [FiniteInjury.action,← done_eq]
-  exact accept_action A s _
+    FiniteInjury.action (proposal A) s = stageAction A s (construction A s) :=
+  StageEngine.action_eq stateInterface (procedures A) s
 
 theorem seen_eq (A : Oracle) (s : ℕ) :
-    (construction A s).seen = FiniteInjurySchedule.seen (proposal A) s := by
-  induction s with
-  | zero => rfl
-  | succ s ih =>
-    change FiniteInjurySchedule.reset _ _ = _
-    rw [FiniteInjurySchedule.seen,action_eq,← ih]
+    (construction A s).seen = FiniteInjurySchedule.seen (proposal A) s :=
+  StageEngine.seen_eq stateInterface (procedures A) s
 
-theorem active_eq (A : Oracle) (s : ℕ) : (conditions A s).active = s := by
-  cases s <;> rfl
+theorem active_eq (A : Oracle) (s : ℕ) : (conditions A s).active = s :=
+  StageEngine.active_eq stateInterface (procedures A) s
 
 theorem stage_words (A : Oracle) (s : ℕ) (p : State) :
     p.condition.left <+: (stageWord A s p).left ∧ p.condition.right <+: (stageWord A s p).right :=
-      by
-  have ho := open_extends A (FiniteInjurySchedule.visit p.seen) p.condition
-  cases ha : stageAction A s p with
-  | none =>
-    exact ⟨by simpa [stageWord, ha, generic] using ho.1,
-      by simpa [stageWord, ha, generic] using ho.2.1⟩
-  | some t =>
-    have hc := candidate_extends A t (generic A p)
-    exact ⟨by simpa [stageWord,ha] using ho.1.trans hc.1,
-      by simpa [stageWord,ha] using ho.2.1.trans hc.2.1⟩
+  StageEngine.stage_words stateInterface (procedures A) (candidate_extends A) (open_extends A) s p
 
 theorem word_growth (A : Oracle) (s : ℕ) :
     (conditions A s).left <+: (conditions A (s+1)).left ∧
-    (conditions A s).right <+: (conditions A (s+1)).right := by
-  have h := stage_words A s (construction A s)
-  exact ⟨h.1.trans (List.prefix_append _ _),h.2.trans (List.prefix_append _ _)⟩
+    (conditions A s).right <+: (conditions A (s+1)).right :=
+  StageEngine.word_growth stateInterface (procedures A) (candidate_extends A) (open_extends A) s
 
-theorem length_bound (A : Oracle) (s : ℕ) : s ≤ (conditions A s).left.length := by
-  induction s with
-  | zero => exact Nat.zero_le _
-  | succ s ih =>
-    have h := (stage_words A s (construction A s)).1.length_le
-    change s+1 ≤ ((stageWord A s (construction A s)).left ++ [false]).length
-    simp only [List.length_append,List.length_singleton]
-    exact Nat.add_le_add_right (ih.trans h) 1
+theorem length_bound (A : Oracle) (s : ℕ) : s ≤ (conditions A s).left.length :=
+  StageEngine.length_bound stateInterface (procedures A) (candidate_extends A) (open_extends A) s
 
 theorem level_step (A : Oracle) (s k : ℕ) (hk : k ≤ s)
     (hact : ∀ t, FiniteInjury.action (proposal A) s = some t → k ≤ t) :
-    Extends (columns A) (atLevel (conditions A s) k) (atLevel (conditions A (s+1)) k) := by
-  let p := construction A s
-  have ho := open_extends A (FiniteInjurySchedule.visit p.seen) p.condition
-  have hg : Extends (columns A) (atLevel p.condition k) (atLevel (generic A p) k) := by
-    refine ⟨ho.1,ho.2.1,le_rfl,?_⟩
-    intro m hm hlen
-    apply ho.2.2.2 m ⟨hm.1,?_,hm.2.2⟩ hlen
-    exact hm.2.1.trans_le (by
-      change k ≤ (conditions A s).active
-      rw [active_eq]
-      exact hk)
-  have hw : Extends (columns A) (atLevel (generic A p) k) (atLevel (stageWord A s p) k) := by
-    cases ha : stageAction A s p with
-    | none => simpa [stageWord,ha] using extends_refl (columns A) (atLevel (generic A p) k)
-    | some t =>
-      have hkt : k ≤ t := hact t (by simpa [action_eq,p] using ha)
-      have hc := candidate_extends A t (generic A p)
-      have hc' : Extends (columns A) (atLevel (generic A p) t) (atLevel (candidate A t (generic A
-        p)) t) := hc
-      simpa [stageWord,ha] using level_mono hc' hkt
-  have htail : Extends (columns A) (atLevel (stageWord A s p) k)
-      (atLevel (conditions A (s+1)) k) := append_extends _ _ [false]
-  exact extends_trans hg (extends_trans hw htail)
+    Extends (columns A) (atLevel (conditions A s) k) (atLevel (conditions A (s+1)) k) :=
+  StageEngine.level_step stateInterface (procedures A) (candidate_extends A) (open_extends A)
+    s k hk hact
 
 theorem surviving_columns (A : Oracle) (k : ℕ) : ∃ S, ∀ m,
     (conditions A S).left.length ≤ m → (Nat.unpair m).1 < k →
     columns A (Nat.unpair m).1 (Nat.unpair m).2 = true →
     leftLimit (conditions A) m = rightLimit (conditions A) m :=
-  eventual_column_agreement (columns A) (proposal A) (conditions A)
-    (word_growth A) (length_bound A) (level_step A) k
+  StageEngine.surviving_columns stateInterface (procedures A) (candidate_extends A) (open_extends A)
+    k
 
 theorem surviving_generic_visit (A : Oracle) (t : ℕ) : ∃ s,
     FiniteInjurySchedule.visit (construction A s).seen = t ∧
-      ∀ u, s ≤ u → ∀ i < t, stageAction A u (construction A u) ≠ some i := by
-  obtain ⟨s,hs,hh⟩ := FiniteInjurySchedule.surviving_visit (proposal A) t
-  refine ⟨s,?_,?_⟩
-  · simpa [seen_eq,FiniteInjurySchedule.scheduled] using hs
-  · simpa only [action_eq] using hh
+      ∀ u, s ≤ u → ∀ i < t, stageAction A u (construction A u) ≠ some i :=
+  StageEngine.surviving_generic_visit stateInterface (procedures A) t
 
 end
 end TuringRigidity.PriorityStage

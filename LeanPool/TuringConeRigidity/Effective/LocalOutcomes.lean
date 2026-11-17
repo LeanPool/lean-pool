@@ -56,27 +56,8 @@ theorem limits_extend_action {D : LocalInputs.Data} {s t : ℕ}
     (ha : stageAction D s (construction D s) = some t) :
     CommonIdeal.Extends (LocalLimits.G₀ D) (candidate D t (generic D (construction D s))).left ∧
     CommonIdeal.Extends (LocalLimits.G₁ D) (candidate D t (generic D (construction D s))).right :=
-      by
-  have hl : (candidate D t (generic D (construction D s))).left <+: (conditions D (s+1)).left := by
-    change _ <+: (stageWord D s (construction D s)).left ++ [false]
-    simp only [stageWord,ha]
-    exact List.prefix_append _ _
-  have hr : (candidate D t (generic D (construction D s))).right <+: (conditions D (s+1)).right :=
-    by
-    change _ <+: (stageWord D s (construction D s)).right ++ [false]
-    simp only [stageWord,ha]
-    exact List.prefix_append _ _
-  constructor
-  · intro m hm
-    exact ((limits_extend (word_growth D) (length_bound D) (s+1) m (hm.trans_le
-      hl.length_le)).1).trans
-      (getD_of_prefix hl hm)
-  · intro m hm
-    have hn : m < (conditions D (s+1)).left.length := by
-      rw [(conditions D (s+1)).sameLength]
-      exact hm.trans_le hr.length_le
-    exact ((limits_extend (word_growth D) (length_bound D) (s+1) m hn).2).trans (getD_of_prefix hr
-      hm)
+  StageEngineLimits.limits_extend_action LocalStage.stateInterface (LocalStage.procedures D)
+    (LocalStage.candidate_extends D) (LocalStage.open_extends D) ha
 
 theorem action_excludes_common {D : LocalInputs.Data} {Y Z : Oracle} {s t : ℕ}
     (hbase : OracleCode.eval (oracleFunction D.B) (meaning (machine (item t 0))) = oracleFunction Y)
@@ -92,22 +73,8 @@ theorem action_excludes_common {D : LocalInputs.Data} {Y Z : Oracle} {s t : ℕ}
     _ hc)
 
 theorem done_witness (D : LocalInputs.Data) {s t : ℕ} (ht : t ∈ (construction D s).done) :
-    ∃ u, u < s ∧ stageAction D u (construction D u) = some t := by
-  induction s with
-  | zero => simp [construction] at ht
-  | succ s ih =>
-    change t ∈ FiniteInjury.update
-      (construction D s).done (stageAction D s (construction D s)) at ht
-    cases ha : stageAction D s (construction D s) with
-    | none =>
-      obtain ⟨u,hu,he⟩ := ih (by simpa [ha,FiniteInjury.update] using ht)
-      exact ⟨u,by omega,he⟩
-    | some i =>
-      simp only [ha,FiniteInjury.update,Finset.mem_insert,Finset.mem_filter] at ht
-      rcases ht with rfl | ⟨ht,_⟩
-      · exact ⟨s,by omega,ha⟩
-      · obtain ⟨u,hu,he⟩ := ih ht
-        exact ⟨u,by omega,he⟩
+    ∃ u, u < s ∧ stageAction D u (construction D u) = some t :=
+  StageEngine.done_witness LocalStage.stateInterface (LocalStage.procedures D) ht
 
 theorem common_not_done {D : LocalInputs.Data} {Y Z : Oracle} {s t : ℕ}
     (hbase : OracleCode.eval (oracleFunction D.B) (meaning (machine (item t 0))) = oracleFunction Y)
@@ -122,15 +89,8 @@ theorem common_not_done {D : LocalInputs.Data} {Y Z : Oracle} {s t : ℕ}
 
 theorem scan_hits {D : LocalInputs.Data} {p : Condition} {d : Finset ℕ} {start n t : ℕ}
     (hlo : start ≤ t) (hhi : t < start + n) (hd : t ∉ d) (hc : Changes D t p) :
-    ∃ i, i ≤ t ∧ scan D p d start n = some i := by
-  induction n generalizing start with
-  | zero => omega
-  | succ n ih =>
-    by_cases h : start ∉ d ∧ Changes D start p
-    · exact ⟨start,hlo,by simp only [scan,ite_eq_left h]⟩
-    · have hne : start ≠ t := by rintro rfl; exact h ⟨hd,hc⟩
-      obtain ⟨i,hi,he⟩ := ih (start := start+1) (by omega) (by omega)
-      exact ⟨i,hi,by simpa only [scan,ite_eq_right h] using he⟩
+    ∃ i, i ≤ t ∧ scan D p d start n = some i :=
+  StageEngine.scan_hits hlo hhi hd hc
 
 theorem common_eventually_unchanged {D : LocalInputs.Data} {Y Z : Oracle} {t : ℕ}
     (hbase : OracleCode.eval (oracleFunction D.B) (meaning (machine (item t 0))) = oracleFunction Y)
@@ -144,7 +104,8 @@ theorem common_eventually_unchanged {D : LocalInputs.Data} {Y Z : Oracle} {t : �
   obtain ⟨i,hi,he⟩ := scan_hits (start := 0) (n := s) (Nat.zero_le t)
     (by omega) (common_not_done (s := s) hbase he₀ he₁) hc
   apply hS s ((le_max_left _ _).trans hs) i (by omega)
-  simpa only [action_eq,stageAction] using he
+  rw [action_eq]
+  exact he
 
 theorem nonchanging_outcome {D : LocalInputs.Data} {Y Z : Oracle} {s t : ℕ}
     (hbase : OracleCode.eval (oracleFunction D.B) (meaning (machine (item t 0))) = oracleFunction Y)

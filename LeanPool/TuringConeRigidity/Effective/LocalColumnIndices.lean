@@ -94,7 +94,8 @@ theorem prefix_recursive_in {O : Set (ℕ →. ℕ)} (g : ℕ → ℕ)
   | zero => rfl
   | succ n ih =>
     simp only [ih]
-    simp [appendEncoded,oraclePrefix,List.range_succ]
+    simp [appendEncoded, PrefixComputability.appendEncoded,oraclePrefix,
+      PrefixComputability.oraclePrefix,List.range_succ]
 
 theorem selected_prefixes {B A X : Oracle} (h : Reduces A B) (select : ℕ → ℕ)
     (hs : Nat.RecursiveIn {oracleFunction X} (fun n => Part.some (select n))) :
@@ -108,7 +109,7 @@ theorem selected_prefixes {B A X : Oracle} (h : Reduces A B) (select : ℕ → �
   refine ⟨fun n => encode (oraclePrefix g n),prefix_recursive_in g hg,?_⟩
   intro n k hk
   have he : item (encode (oraclePrefix g n)) k = g k := by
-    simp [item,oraclePrefix,List.getD_eq_getElem?_getD,hk]
+    simp [item,oraclePrefix, PrefixComputability.oraclePrefix,List.getD_eq_getElem?_getD,hk]
   rw [he]
   exact hindex (select k)
 

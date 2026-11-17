@@ -13,8 +13,9 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.Effective.StageRecords
 public import LeanPool.TuringConeRigidity.Effective.PriorityStage
+
+public import LeanPool.TuringConeRigidity.Effective.StageEngineScan
 
 /-!
 # Stage Scan
@@ -31,115 +32,70 @@ noncomputable section
 attribute [local instance] Classical.propDecidable
 
 /-- Primitive-recursive first projection of a natural-number pair code. -/
-abbrev f := Primrec.fst.comp Primrec.unpair
+abbrev f:=
+  StageEngineScan.f
+
 /-- Primitive-recursive second projection of a natural-number pair code. -/
-abbrev r := Primrec.snd.comp Primrec.unpair
+abbrev r:=
+  StageEngineScan.r
 
 /-- Re-encode the condition words with the specified active level. -/
-def levelCode (p t : ℕ) : ℕ := Nat.pair (encode (left p)) (Nat.pair (encode (right p)) t)
+def levelCode (p t : ℕ) : ℕ:=
+  StageEngineScan.levelCode p t
 
-theorem levelCode_primrec : Primrec₂ levelCode := Primrec₂.natPair.comp
-  (Primrec.encode.comp (left_primrec.comp Primrec.fst))
-  (Primrec₂.natPair.comp (Primrec.encode.comp (right_primrec.comp Primrec.fst)) Primrec.snd)
+theorem levelCode_primrec : Primrec₂ levelCode:=
+  StageEngineScan.levelCode_primrec
 
-theorem levelCode_eq (p t : ℕ) : levelCode p t = code (atLevel (condition p) t) := rfl
+theorem levelCode_eq (p t : ℕ) : levelCode p t = code (atLevel (condition p) t):=
+  StageEngineScan.levelCode_eq p t
 
 @[simp] theorem condition_levelCode (p t : ℕ) : condition (levelCode p t) = atLevel (condition p)
-  t :=
-  condition_code (atLevel (condition p) t)
+  t:=
+  StageEngineScan.condition_levelCode p t
 
 /-- Compute and normalize the priority candidate encoded by the request. -/
-def candidate (A : Oracle) (v : ℕ) : ℕ :=
-  levelCode (PriorityStage.pairProcedure A (Nat.pair (Nat.unpair v).1
-    (levelCode (Nat.unpair v).2 (Nat.unpair v).1))) (Nat.unpair v).1
+def candidate (A : Oracle) (v : ℕ) : ℕ:=
+  StageEngineScan.candidate (PriorityStage.procedures A) v
 
 theorem candidate_recursive (A : Oracle) :
-    Nat.RecursiveIn {oracleFunction (OracleJump.jump A)} (fun v => Part.some (candidate A v)) := by
-  have h := total_comp (PriorityStage.pairProcedure_recursive A)
-    (total_primrec (Primrec₂.natPair.comp f (levelCode_primrec.comp r f)))
-  have hh := total_comp (total_primrec (levelCode_primrec.comp f r)) (total_pair h (total_primrec
-    f))
-  exact hh.of_eq (fun v => by simp only [Nat.unpair_pair]; rfl)
+    Nat.RecursiveIn {oracleFunction (OracleJump.jump A)} (fun v => Part.some (candidate A v)):=
+  StageEngineScan.candidate_recursive (PriorityStage.procedures A)
+    (PriorityStage.pairProcedure_recursive A)
 
 @[simp] theorem candidate_eq (A : Oracle) (t p : ℕ) :
-    condition (candidate A (Nat.pair t p)) = PriorityStage.candidate A t (condition p) := by
-  simp only [candidate,Nat.unpair_pair,levelCode_eq,PriorityStage.candidate,condition_code]
+    condition (candidate A (Nat.pair t p)) = PriorityStage.candidate A t (condition p):=
+  StageEngineScan.candidate_eq (PriorityStage.procedures A) t p
 
 /-- Record the first unfinished candidate that changes either word in the bounded scan. -/
-def scanStep (A : Oracle) (v : ℕ) : ℕ :=
-  let p := (Nat.unpair (Nat.unpair v).1).1
-  let d := (Nat.unpair (Nat.unpair v).1).2
-  let t := (Nat.unpair (Nat.unpair v).2).1
-  let prev := (Nat.unpair (Nat.unpair v).2).2
-  let c := candidate A (Nat.pair t p)
-  if prev = 0 ∧ t ∉ record d ∧ (left c ≠ left p ∨ right c ≠ right p) then t+1 else prev
+def scanStep (A : Oracle) (v : ℕ) : ℕ:=
+  StageEngineScan.scanStep (PriorityStage.procedures A) v
 
 theorem scanStep_recursive (A : Oracle) :
-    Nat.RecursiveIn {oracleFunction (OracleJump.jump A)} (fun v => Part.some (scanStep A v)) := by
-  have hc := total_comp (candidate_recursive A)
-    (total_primrec (Primrec₂.natPair.comp (f.comp r) (f.comp f)))
-  let v := f
-  let c := r
-  let p := f.comp (f.comp v)
-  let d := r.comp (f.comp v)
-  let t := f.comp (r.comp v)
-  let prev := r.comp (r.comp v)
-  have hm := (mem_primrec.comp d t).not
-  have hl := (Primrec.eq.comp (left_primrec.comp c) (left_primrec.comp p)).not
-  have hr := (Primrec.eq.comp (right_primrec.comp c) (right_primrec.comp p)).not
-  have hpost := Primrec.ite ((Primrec.eq.comp prev (Primrec.const 0)).and (hm.and (hl.or hr)))
-    (Primrec.succ.comp t) prev
-  have hh := total_comp (total_primrec hpost) (total_pair (total_primrec Primrec.id) hc)
-  exact hh.of_eq (fun v => by simp only [Nat.unpair_pair]; rfl)
+    Nat.RecursiveIn {oracleFunction (OracleJump.jump A)} (fun v => Part.some (scanStep A v)):=
+  StageEngineScan.scanStep_recursive (PriorityStage.procedures A)
+    (PriorityStage.pairProcedure_recursive A)
 
 /-- Iterate the priority scan through the first `n` candidate levels. -/
-def scan (A : Oracle) (p d n : ℕ) : ℕ := recur (fun _ => 0) (scanStep A) (Nat.pair p d) n
+def scan (A : Oracle) (p d n : ℕ) : ℕ:=
+  StageEngineScan.scan (PriorityStage.procedures A) p d n
 
 theorem scan_recursive (A : Oracle) :
     Nat.RecursiveIn {oracleFunction (OracleJump.jump A)} (fun v =>
       Part.some (scan A (Nat.unpair (Nat.unpair v).1).1 (Nat.unpair (Nat.unpair v).1).2
-        (Nat.unpair v).2)) := by
-  simpa only [scan,Nat.pair_unpair] using recur_recursive (total_primrec (Primrec.const 0))
-    (scanStep_recursive A)
+        (Nat.unpair v).2)):=
+  StageEngineScan.scan_recursive (PriorityStage.procedures A)
+    (PriorityStage.pairProcedure_recursive A)
 
 theorem source_scan_succ (A : Oracle) (p : Condition) (d : Finset ℕ) (t n : ℕ) :
     PriorityStage.scan A p d t (n+1) =
       match PriorityStage.scan A p d t n with
       | some i => some i
-      | none => if t+n ∉ d ∧ PriorityStage.Changes A (t+n) p then some (t+n) else none := by
-  induction n generalizing t with
-  | zero => simp [PriorityStage.scan]
-  | succ n ih =>
-    change (if t ∉ d ∧ PriorityStage.Changes A t p then some t else PriorityStage.scan A p d (t+1)
-      (n+1)) =
-      match (if t ∉ d ∧ PriorityStage.Changes A t p then some t else PriorityStage.scan A p d
-        (t+1) n) with
-      | some i => some i
-      | none => if t+(n+1) ∉ d ∧ PriorityStage.Changes A (t+(n+1)) p then some (t+(n+1)) else none
-    by_cases ht : t ∉ d ∧ PriorityStage.Changes A t p
-    · simp only [ite_eq_left ht]
-    · simpa only [ite_eq_right ht,Nat.add_assoc,Nat.add_comm,Nat.add_left_comm] using ih (t+1)
+      | none => if t+n ∉ d ∧ PriorityStage.Changes A (t+n) p then some (t+n) else none:=
+  StageEngineScan.source_scan_succ (PriorityStage.procedures A) p d t n
 
 theorem scan_eq (A : Oracle) (p d n : ℕ) :
-    scan A p d n = actionCode (PriorityStage.scan A (condition p) (members d) 0 n) := by
-  induction n with
-  | zero => rfl
-  | succ n ih =>
-    rw [source_scan_succ]
-    change scanStep A (Nat.pair (Nat.pair p d) (Nat.pair n (scan A p d n))) = _
-    simp only [scanStep,Nat.unpair_pair,ih,Nat.zero_add]
-    have hc : left (candidate A (Nat.pair n p)) ≠ left p ∨
-        right (candidate A (Nat.pair n p)) ≠ right p ↔ PriorityStage.Changes A n (condition p) := by
-      change (condition (candidate A (Nat.pair n p))).left ≠ (condition p).left ∨
-        (condition (candidate A (Nat.pair n p))).right ≠ (condition p).right ↔ _
-      rw [candidate_eq]
-      rfl
-    cases he : PriorityStage.scan A (condition p) (members d) 0 n with
-    | none =>
-      by_cases hn : n ∉ record d ∧ PriorityStage.Changes A n (condition p)
-      · simp_all only [actionCode,members,List.mem_toFinset,true_and]; simp
-      · simp_all only [actionCode,members,List.mem_toFinset,true_and]; simp
-    | some i => simp [actionCode]
+    scan A p d n = actionCode (PriorityStage.scan A (condition p) (members d) 0 n):=
+  StageEngineScan.scan_eq (PriorityStage.procedures A) p d n
 
 end
 end TuringRigidity.StageComputability
