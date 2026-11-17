@@ -91,7 +91,7 @@ def reverseTM : TM 1 where
         cases iHead <;>
           exact ⟨by first | exact fun _ => rfl | exact idleDir_right_of_start,
             by first | exact fun _ _ => rfl | exact fun _ => moveLeftDir_right_of_start,
-            by first | exact fun _ => rfl | exact idleDir_right_of_start⟩
+            idleDir_right_of_start⟩
     | .emit =>
         dsimp only []
         split

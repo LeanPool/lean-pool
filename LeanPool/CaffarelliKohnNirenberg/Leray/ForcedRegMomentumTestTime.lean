@@ -5,6 +5,8 @@ Authors: Scott Armstrong, Vlad Vicol
 -/
 module
 
+public import Mathlib.Analysis.Calculus.Deriv.Prod
+
 public import LeanPool.CaffarelliKohnNirenberg.Leray.ForcedRegMomentumTest
 
 /-!

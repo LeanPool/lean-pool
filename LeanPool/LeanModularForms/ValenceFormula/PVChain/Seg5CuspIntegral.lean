@@ -11,8 +11,6 @@ import LeanPool.LeanModularForms.ForMathlib.QExpansion
 import LeanPool.LeanModularForms.ValenceFormula.Boundary.Smooth
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 import Mathlib.CategoryTheory.Category.Init
-import Mathlib.MeasureTheory.Covering.Besicovitch
-import Mathlib.NumberTheory.ArithmeticFunction.Misc
 
 /-!
 # Seg5 Cusp Integral
@@ -62,7 +60,7 @@ private lemma qExpFMS_ne_zero (hf : f ≠ 0) :
     UpperHalfPlane.qExpansionFormalMultilinearSeries 1 f ≠ 0 := by
   intro h
   have hp := ModularFormClass.hasFPowerSeries_cuspFunction
-    (f := f) one_pos (by simp)
+    (f := f) one_pos (by simp only [strictPeriods_Gamma, Nat.cast_one, AddSubgroup.mem_zmultiples])
   have hp0 : HasFPowerSeriesOnBall (UpperHalfPlane.cuspFunction (1 : ℝ) f)
       (0 : FormalMultilinearSeries ℂ ℂ ℂ) 0 1 := h ▸ hp
   have hF_analytic : AnalyticOnNhd ℂ (UpperHalfPlane.cuspFunction (1 : ℝ) f)
@@ -75,7 +73,8 @@ private lemma qExpFMS_ne_zero (hf : f ≠ 0) :
   have : ∀ τ : UpperHalfPlane, f τ = 0 := by
     intro τ
     have := SlashInvariantFormClass.eq_cuspFunction f τ
-      (by simp) (by norm_num : (1 : ℝ) ≠ 0)
+      (by simp only [strictPeriods_Gamma, Nat.cast_one,
+        AddSubgroup.mem_zmultiples]) (by norm_num : (1 : ℝ) ≠ 0)
     rw [← this]
     exact hF_eq_zero (by simpa using τ.norm_qParam_lt_one 1)
   exact hf (ModularForm.ext (fun τ => this τ))
@@ -297,7 +296,7 @@ lemma circleIntegral_logDeriv_cuspFunction_of_radius (hf : f ≠ 0)
     change (↑((orderAtCusp' f).toNat) : ℂ) = ↑(orderAtCusp' f)
     unfold orderAtCusp'
     push_cast [Int.toNat_natCast]; rfl
-  rw [hm_cast]; ring
+  rw [hm_cast]; ac_rfl
 
 /-! ### Height-Parameterized Seg5 Helpers -/
 
@@ -345,7 +344,8 @@ private lemma logDeriv_modularForm_eq_logDeriv_cuspFn_mul_qderiv_H
     have h_rw : F (q_fn w) = F (q_fn (↑(UpperHalfPlane.ofComplex w))) := by rw [h_ofC]
     rw [h_rw]
     exact (SlashInvariantFormClass.eq_cuspFunction f
-      (UpperHalfPlane.ofComplex w) (by simp)
+      (UpperHalfPlane.ofComplex w) (by simp only [strictPeriods_Gamma, Nat.cast_one,
+        AddSubgroup.mem_zmultiples])
       (by norm_num : (1 : ℝ) ≠ 0)).symm
   have hq_norm : ‖q_fn z‖ < 1 := by
     simp only [q_fn, Function.Periodic.norm_qParam]

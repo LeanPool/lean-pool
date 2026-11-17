@@ -9,7 +9,6 @@ public import LeanPool.LeanModularForms.ValenceFormula.RectHomotopy.RadialHomoto
 import LeanPool.LeanModularForms.GeneralizedResidueTheory.Homotopy.Invariance
 import LeanPool.LeanModularForms.ValenceFormula.RectHomotopy.PolygonSlope
 import Mathlib.CategoryTheory.Category.Init
-import Mathlib.NumberTheory.ArithmeticFunction.Misc
 
 /-!
 # Angle analysis and winding number invariance
@@ -101,8 +100,12 @@ lemma v1_quadrant (p : ℂ) (hp_norm : ‖p‖ > 1) (hp_re : |p.re| < 1 / 2)
   rw [fdPolygon_at_one]
   have hpre : p.re < 1/2 := (abs_lt.mp hp_re).2
   have hbound := interior_point_im_bound p hp_norm hp_re hp_im_pos
-  have hre : (rho' - p).re = 1/2 - p.re := by simp [rho']
-  have him : (rho' - p).im = Real.sqrt 3 / 2 - p.im := by simp [rho']
+  have hre : (rho' - p).re = 1/2 - p.re := by simp only [rho', one_div, sub_re, add_re, inv_re,
+    re_ofNat, normSq_ofNat, div_self_mul_self', mul_re, div_ofNat_re, ofReal_re, I_re, mul_zero,
+    div_ofNat_im, ofReal_im, zero_div, I_im, mul_one, sub_self, add_zero]
+  have him : (rho' - p).im = Real.sqrt 3 / 2 - p.im := by simp only [rho', one_div, sub_im, add_im,
+    inv_im, im_ofNat, neg_zero, normSq_ofNat, zero_div, mul_im, div_ofNat_re, ofReal_re, I_im,
+    mul_one, div_ofNat_im, ofReal_im, I_re, mul_zero, add_zero, zero_add]
   exact ⟨by linarith only [hpre, hre], by linarith only [hbound, him]⟩
 
 /-- Polygon vertex at t=3: rho. -/
@@ -116,8 +119,12 @@ lemma v3_quadrant (p : ℂ) (hp_norm : ‖p‖ > 1) (hp_re : |p.re| < 1 / 2)
   rw [fdPolygon_at_three]
   have hpre : -1/2 < p.re := by linarith only [hp_re, (abs_lt.mp hp_re).1]
   have hbound := interior_point_im_bound p hp_norm hp_re hp_im_pos
-  have hre : (rho - p).re = -1/2 - p.re := by simp [rho]
-  have him : (rho - p).im = Real.sqrt 3 / 2 - p.im := by simp [rho]
+  have hre : (rho - p).re = -1/2 - p.re := by simp only [rho, sub_re, add_re, div_ofNat_re, neg_re,
+    one_re, mul_re, ofReal_re, I_re, mul_zero, div_ofNat_im, ofReal_im, zero_div, I_im, mul_one,
+    sub_self, add_zero]
+  have him : (rho - p).im = Real.sqrt 3 / 2 - p.im := by simp only [rho, sub_im, add_im,
+    div_ofNat_im, neg_im, one_im, neg_zero, zero_div, mul_im, div_ofNat_re, ofReal_re, I_im,
+    mul_one, ofReal_im, I_re, mul_zero, add_zero, zero_add]
   exact ⟨by linarith only [hpre, hre], by linarith only [hbound, him]⟩
 
 /-- Direction from p to fdPolygon 4 is in Q2 (re < 0, im > 0). -/
@@ -182,9 +189,9 @@ lemma tL_mem_Ioo (p : ℂ) (hp_norm : ‖p‖ > 1) (hp_re : |p.re| < 1 / 2)
     tL p ∈ Set.Ioo (3 : ℝ) 4 := by
   have hbound := interior_point_im_bound p hp_norm hp_re hp_im_pos
   have hH : HHeight = Real.sqrt 3 / 2 + 1 := rfl
-  have hdenom_pos : HHeight - Real.sqrt 3 / 2 > 0 := by rw [hH]; linarith
-  have hnum_pos : p.im - Real.sqrt 3 / 2 > 0 := by linarith
-  have hnum_lt : p.im - Real.sqrt 3 / 2 < HHeight - Real.sqrt 3 / 2 := by linarith
+  have hdenom_pos : HHeight - Real.sqrt 3 / 2 > 0 := by rw [hH]; linarith only [hp_im, hbound, hH]
+  have hnum_pos : p.im - Real.sqrt 3 / 2 > 0 := by exact sub_pos.mpr hbound
+  have hnum_lt : p.im - Real.sqrt 3 / 2 < HHeight - Real.sqrt 3 / 2 := by linarith only [hp_im]
   simp only [tL, Set.mem_Ioo]
   constructor
   · linarith [div_pos hnum_pos hdenom_pos]
@@ -455,8 +462,8 @@ lemma winding_fdPolygon_center_invariant (p₁ p₂ : ℂ)
           continuous_const |>.add
         ((Complex.continuous_ofReal.comp continuous_snd).mul
           continuous_const))
-  · intro t _ht; simp [H, γ₀]
-  · intro t _ht; simp [H, γ₁]
+  · intro t _ht; simp only [ofReal_zero, sub_zero, one_mul, zero_mul, add_zero, H, γ₀]
+  · intro t _ht; simp only [ofReal_one, sub_self, zero_mul, one_mul, zero_add, H, γ₁]
   · intro s _hs; simp only [H]; rw [fdPolygon_closed]
   · intro t ht s hs
     simp only [H]; rw [sub_ne_zero]; exact havoid s hs t ht

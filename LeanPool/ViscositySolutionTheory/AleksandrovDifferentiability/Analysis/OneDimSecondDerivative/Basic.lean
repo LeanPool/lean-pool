@@ -83,7 +83,8 @@ theorem rightDerivStieltjesSecondDerivativeMeasure_Ioc
       ENNReal.ofReal
         (rightDerivStieltjesSecondDerivativeFunction v hmono b -
           rightDerivStieltjesSecondDerivativeFunction v hmono a) := by
-  simp [rightDerivStieltjesSecondDerivativeMeasure,
+  simp only [rightDerivStieltjesSecondDerivativeMeasure,
+    monotoneStieltjesSecondDerivativeMeasure_Ioc, monotoneStieltjesSecondDerivativeFunction_apply,
     rightDerivStieltjesSecondDerivativeFunction]
 
 @[simp]
@@ -129,7 +130,7 @@ theorem sourceDerivativeClamp_eq_of_mem_sourceMaximalDomain {s : ℝ}
     (hs : s ∈ sourceMaximalDomain) :
     sourceDerivativeClamp s = s := by
   rcases hs with ⟨hs_left, hs_right⟩
-  simp [sourceDerivativeClamp, min_eq_right hs_right.le, max_eq_right hs_left.le]
+  simp only [sourceDerivativeClamp, min_eq_right hs_right.le, max_eq_right hs_left.le]
 
 /-- The source-local right derivative extended to all of `ℝ` by clamping the line parameter to
 `[-2,2]`. -/
@@ -139,7 +140,7 @@ def sourceRightDerivExtension (v : ℝ → ℝ) (s : ℝ) : ℝ :=
 theorem sourceRightDerivExtension_eq_of_mem_sourceMaximalDomain {v : ℝ → ℝ} {s : ℝ}
     (hs : s ∈ sourceMaximalDomain) :
     sourceRightDerivExtension v s = rightDeriv v s := by
-  simp [sourceRightDerivExtension, sourceDerivativeClamp_eq_of_mem_sourceMaximalDomain hs]
+  simp only [sourceRightDerivExtension, sourceDerivativeClamp_eq_of_mem_sourceMaximalDomain hs]
 
 /-- To the left of a point strictly inside the source interval, the clamp is eventually the
 identity. -/
@@ -167,7 +168,7 @@ theorem sourceRightDerivExtension_eventuallyEq_rightDeriv_nhdsLT
     {v : ℝ → ℝ} {s : ℝ} (hs : s ∈ sourceMaximalDomain) :
     sourceRightDerivExtension v =ᶠ[nhdsWithin s (Set.Iio s)] rightDeriv v := by
   filter_upwards [sourceDerivativeClamp_eventuallyEq_id_nhdsLT hs] with y hy
-  simp [sourceRightDerivExtension, hy]
+  simp only [sourceRightDerivExtension, hy, id_eq]
 
 /-- To the right of a point strictly inside the source interval, the clamped right-derivative
 extension is eventually the ordinary right derivative. -/
@@ -175,7 +176,7 @@ theorem sourceRightDerivExtension_eventuallyEq_rightDeriv_nhdsGT
     {v : ℝ → ℝ} {s : ℝ} (hs : s ∈ sourceMaximalDomain) :
     sourceRightDerivExtension v =ᶠ[nhdsWithin s (Set.Ioi s)] rightDeriv v := by
   filter_upwards [sourceDerivativeClamp_eventuallyEq_id_nhdsGT hs] with y hy
-  simp [sourceRightDerivExtension, hy]
+  simp only [sourceRightDerivExtension, hy, id_eq]
 
 /-- A left limit of the ordinary right derivative transfers to the clamped source extension at
 points strictly inside the source interval. -/
@@ -412,9 +413,11 @@ theorem ConvexOn.monotoneOn_projectRightDeriv_sourceIcc
   rcases hb with ⟨hb_left, hb_right⟩
   have hmono := AleksandrovDifferentiability.ConvexOn.monotoneOn_projectRightDeriv hv
   have ha' : a ∈ interior (Set.Ioo (-3 : ℝ) 3) := by
-    simpa using (show a ∈ Set.Ioo (-3 : ℝ) 3 by constructor <;> linarith)
+    simpa only [interior_Ioo, Set.mem_Ioo] using (show a ∈ Set.Ioo (-3 : ℝ) 3 by constructor <;>
+      linarith)
   have hb' : b ∈ interior (Set.Ioo (-3 : ℝ) 3) := by
-    simpa using (show b ∈ Set.Ioo (-3 : ℝ) 3 by constructor <;> linarith)
+    simpa only [interior_Ioo, Set.mem_Ioo] using (show b ∈ Set.Ioo (-3 : ℝ) 3 by constructor <;>
+      linarith)
   exact hmono ha' hb' hab
 
 /-- If all value differences on `(-3,3)` are bounded above by `osc`, then a forward secant from
@@ -432,21 +435,22 @@ theorem exists_right_secant_two_le_add_of_pairwise_sub_le
   · refine ⟨(5 / 2 : ℝ), by norm_num, ?_⟩
     have hdiff :
         v (5 / 2 : ℝ) - v (2 : ℝ) ≤ 0 := by
-      simpa [hosc_zero] using
+      simpa only [tsub_le_iff_right, zero_add, hosc_zero] using
         hbound (x := (2 : ℝ)) (y := (5 / 2 : ℝ))
           (by norm_num : (2 : ℝ) ∈ Set.Ioo (-3 : ℝ) 3)
           (by norm_num : (5 / 2 : ℝ) ∈ Set.Ioo (-3 : ℝ) 3)
     have hslope : slope v (2 : ℝ) (5 / 2 : ℝ) ≤ 0 := by
       rw [slope_def_field]
-      exact (div_le_iff₀ (by norm_num : 0 < (5 / 2 : ℝ) - 2)).mpr (by simpa using hdiff)
-    linarith
+      exact (div_le_iff₀ (by norm_num : 0 < (5 / 2 : ℝ) - 2)).mpr (by simpa only [zero_mul,
+        tsub_le_iff_right, zero_add] using hdiff)
+    linarith only [hosc, hε, hslope]
   · have hosc_pos : 0 < osc := lt_of_le_of_ne hosc (Ne.symm hosc_zero)
     let d : ℝ := osc / (osc + ε)
     have hden_pos : 0 < osc + ε := add_pos hosc_pos hε
     have hd_pos : 0 < d := div_pos hosc_pos hden_pos
     have hd_lt_one : d < 1 := by
       rw [div_lt_one hden_pos]
-      linarith
+      linarith only [hε]
     let y : ℝ := 2 + d
     have hy : y ∈ Set.Ioo (2 : ℝ) 3 := by
       constructor <;> dsimp [y] <;> linarith
@@ -462,8 +466,8 @@ theorem exists_right_secant_two_le_add_of_pairwise_sub_le
       field_simp [hden_pos.ne']
       ring
     rw [slope_def_field]
-    exact (div_le_iff₀ (by dsimp [y]; linarith)).mpr (by
-      simpa [hmul_eq] using hdiff)
+    exact (div_le_iff₀ (by dsimp [y]; linarith only [hd_pos])).mpr (by
+      simpa only [hmul_eq, tsub_le_iff_right] using hdiff)
 
 /-- If all value differences on `(-3,3)` are bounded above by `osc`, then a backward secant
 from a point near `-3` to `-2` has slope at least `-osc - ε`. -/
@@ -477,22 +481,22 @@ theorem exists_neg_add_le_left_secant_neg_two_of_pairwise_sub_le
   · refine ⟨(-5 / 2 : ℝ), by norm_num, ?_⟩
     have hdiff :
         v (-5 / 2 : ℝ) - v (-2 : ℝ) ≤ 0 := by
-      simpa [hosc_zero] using
+      simpa only [tsub_le_iff_right, zero_add, hosc_zero] using
         hbound (x := (-2 : ℝ)) (y := (-5 / 2 : ℝ))
           (by norm_num : (-2 : ℝ) ∈ Set.Ioo (-3 : ℝ) 3)
           (by norm_num : (-5 / 2 : ℝ) ∈ Set.Ioo (-3 : ℝ) 3)
-    have hnum : 0 ≤ v (-2 : ℝ) - v (-5 / 2 : ℝ) := by linarith
+    have hnum : 0 ≤ v (-2 : ℝ) - v (-5 / 2 : ℝ) := by linarith only [hdiff]
     have hslope_nonneg : 0 ≤ slope v (-5 / 2 : ℝ) (-2 : ℝ) := by
       rw [slope_def_field]
       exact div_nonneg hnum (by norm_num : 0 ≤ (-2 : ℝ) - (-5 / 2 : ℝ))
-    linarith
+    linarith only [hosc, hε, hslope_nonneg]
   · have hosc_pos : 0 < osc := lt_of_le_of_ne hosc (Ne.symm hosc_zero)
     let d : ℝ := osc / (osc + ε)
     have hden_pos : 0 < osc + ε := add_pos hosc_pos hε
     have hd_pos : 0 < d := div_pos hosc_pos hden_pos
     have hd_lt_one : d < 1 := by
       rw [div_lt_one hden_pos]
-      linarith
+      linarith only [hε]
     let y : ℝ := -2 - d
     have hy : y ∈ Set.Ioo (-3 : ℝ) (-2) := by
       constructor <;> dsimp [y] <;> linarith
@@ -503,14 +507,14 @@ theorem exists_neg_add_le_left_secant_neg_two_of_pairwise_sub_le
         v y - v (-2 : ℝ) ≤ osc :=
       hbound (x := (-2 : ℝ)) (y := y)
         (by norm_num : (-2 : ℝ) ∈ Set.Ioo (-3 : ℝ) 3) hy_domain
-    have hnum_lower : -osc ≤ v (-2 : ℝ) - v y := by linarith
+    have hnum_lower : -osc ≤ v (-2 : ℝ) - v y := by linarith only [hdiff]
     have hmul_eq : (-osc - ε) * ((-2 : ℝ) - y) = -osc := by
       dsimp [y, d]
       field_simp [hden_pos.ne']
       ring
     rw [slope_def_field]
-    exact (le_div_iff₀ (by dsimp [y]; linarith)).mpr (by
-      simpa [hmul_eq] using hnum_lower)
+    exact (le_div_iff₀ (by dsimp [y]; linarith only [hd_pos])).mpr (by
+      simpa only [hmul_eq, neg_le_sub_iff_le_add] using hnum_lower)
 
 /-- Forward secants approaching the right source endpoint control the right derivative at `2`.
 
@@ -524,7 +528,7 @@ theorem ConvexOn.rightDeriv_two_le_of_forall_exists_secant_le_add
   refine le_of_forall_pos_le_add fun ε hε => ?_
   rcases hsec ε hε with ⟨y, hy, hslope⟩
   have htwo : (2 : ℝ) ∈ interior (Set.Ioo (-3 : ℝ) 3) := by
-    simpa using (show (2 : ℝ) ∈ Set.Ioo (-3 : ℝ) 3 by norm_num)
+    simpa only [interior_Ioo, Set.mem_Ioo] using (show (2 : ℝ) ∈ Set.Ioo (-3 : ℝ) 3 by norm_num)
   have hy_domain : y ∈ Set.Ioo (-3 : ℝ) 3 := by
     constructor <;> linarith [hy.1, hy.2]
   exact (AleksandrovDifferentiability.ConvexOn.rightDeriv_le_slope
@@ -543,7 +547,8 @@ theorem ConvexOn.neg_osc_le_rightDeriv_neg_two_of_forall_exists_secant_add_le
   have hy_domain : y ∈ Set.Ioo (-3 : ℝ) 3 := by
     constructor <;> linarith [hy.1, hy.2]
   have hneg_two : (-2 : ℝ) ∈ interior (Set.Ioo (-3 : ℝ) 3) := by
-    simpa using (show (-2 : ℝ) ∈ Set.Ioo (-3 : ℝ) 3 by norm_num)
+    simpa only [interior_Ioo, Set.mem_Ioo, neg_lt_neg_iff] using (show (-2 : ℝ) ∈ Set.Ioo (-3 : ℝ)
+      3 by norm_num)
   have hslope_le_left :
       slope v y (-2 : ℝ) ≤ leftDeriv v (-2 : ℝ) :=
     AleksandrovDifferentiability.ConvexOn.slope_le_leftDeriv
@@ -554,7 +559,7 @@ theorem ConvexOn.neg_osc_le_rightDeriv_neg_two_of_forall_exists_secant_add_le
       (S := Set.Ioo (-3 : ℝ) 3) (f := v) hv hneg_two
   have hmain : -osc - ε ≤ rightDeriv v (-2 : ℝ) :=
     hslope.trans (hslope_le_left.trans hleft_le_right)
-  linarith
+  linarith only [hslope, hslope_le_left, hleft_le_right]
 
 /-- Forward affine remainders of a one-dimensional convex function are controlled by the gap
 between the right derivative at the endpoint and the chosen subgradient. -/
@@ -648,7 +653,8 @@ theorem SubgradientOn.affineRemainder_pm_le_mul_rightDeriv_sub
       affineRemainder v x p (x - h) ≤
         h * (rightDeriv v (x + h) - rightDeriv v (x - h)) := by
   by_cases hzero : h = 0
-  · simp [hzero]
+  · simp only [hzero, add_zero, affineRemainder_self, sub_zero, sub_self, mul_zero, Std.le_refl,
+    and_self]
   have hh_pos : 0 < h := lt_of_le_of_ne hh (Ne.symm hzero)
   have hmono : MonotoneOn (rightDeriv v) (interior S) :=
     ConvexOn.monotoneOn_projectRightDeriv (S := S) (f := v) hv
@@ -657,19 +663,19 @@ theorem SubgradientOn.affineRemainder_pm_le_mul_rightDeriv_sub
         rightDeriv v (x - h) ≤ slope v (x - h) x :=
       ConvexOn.rightDeriv_le_slope
         (S := S) (f := v) (x := x - h) (y := x)
-        hv hxmh (interior_subset hx) (by linarith)
+        hv hxmh (interior_subset hx) (by linarith only [hh_pos])
     have hslope_le_left :
         slope v (x - h) x ≤ leftDeriv v x :=
       ConvexOn.slope_le_leftDeriv
         (S := S) (f := v) (x := x - h) (y := x)
-        hv (interior_subset hxmh) hx (by linarith)
+        hv (interior_subset hxmh) hx (by linarith only [hh_pos])
     exact (hrd_le_slope.trans hslope_le_left).trans
       (SubgradientOn.leftDeriv_le_of_convex
         (S := S) (f := v) (x := x) hp hv hx)
   have hp_le_right : p ≤ rightDeriv v (x + h) := by
     exact (SubgradientOn.le_rightDeriv_of_convex
       (S := S) (f := v) (x := x) hp hv hx).trans
-      (hmono hx hxph (by linarith))
+      (hmono hx hxph (by linarith only [hh_pos]))
   constructor
   · exact (hp.affineRemainder_add_le_mul_rightDeriv_sub hv hx hxph hh).trans
       (mul_le_mul_of_nonneg_left (sub_le_sub_left hleft_le_p (rightDeriv v (x + h))) hh)
@@ -689,19 +695,19 @@ theorem SubgradientOn.affineRemainder_pm_le_mul_leftDeriv_sub_rightDeriv
       affineRemainder v x p (x - h) ≤
         h * (leftDeriv v (x + h) - rightDeriv v (x - h)) := by
   by_cases hzero : h = 0
-  · simp [hzero]
+  · simp only [hzero, add_zero, affineRemainder_self, sub_zero, zero_mul, Std.le_refl, and_self]
   have hh_pos : 0 < h := lt_of_le_of_ne hh (Ne.symm hzero)
   have hleft_le_p : rightDeriv v (x - h) ≤ p := by
     have hrd_le_slope :
         rightDeriv v (x - h) ≤ slope v (x - h) x :=
       ConvexOn.rightDeriv_le_slope
         (S := S) (f := v) (x := x - h) (y := x)
-        hv hxmh (interior_subset hx) (by linarith)
+        hv hxmh (interior_subset hx) (by linarith only [hh_pos])
     have hslope_le_left :
         slope v (x - h) x ≤ leftDeriv v x :=
       ConvexOn.slope_le_leftDeriv
         (S := S) (f := v) (x := x - h) (y := x)
-        hv (interior_subset hxmh) hx (by linarith)
+        hv (interior_subset hxmh) hx (by linarith only [hh_pos])
     exact (hrd_le_slope.trans hslope_le_left).trans
       (SubgradientOn.leftDeriv_le_of_convex
         (S := S) (f := v) (x := x) hp hv hx)
@@ -713,12 +719,12 @@ theorem SubgradientOn.affineRemainder_pm_le_mul_leftDeriv_sub_rightDeriv
         rightDeriv v x ≤ slope v x (x + h) :=
       ConvexOn.rightDeriv_le_slope
         (S := S) (f := v) (x := x) (y := x + h)
-        hv hx (interior_subset hxph) (by linarith)
+        hv hx (interior_subset hxph) (by linarith only [hh_pos])
     have hslope_le_left :
         slope v x (x + h) ≤ leftDeriv v (x + h) :=
       ConvexOn.slope_le_leftDeriv
         (S := S) (f := v) (x := x) (y := x + h)
-        hv (interior_subset hx) hxph (by linarith)
+        hv (interior_subset hx) hxph (by linarith only [hh_pos])
     exact hp_le_right.trans (hright_le_slope.trans hslope_le_left)
   constructor
   · exact (hp.affineRemainder_add_le_mul_leftDeriv_sub hv hx hxph hh).trans

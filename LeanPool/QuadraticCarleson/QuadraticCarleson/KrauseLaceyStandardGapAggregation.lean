@@ -41,7 +41,7 @@ theorem scale_le_of_mem_energyStandard_physicalTail
   have htail := (Finset.mem_filter.mp hI).2
   rw [hlen] at htail
   have hpow : ell ≤ scale I + 2 :=
-    (zpow_le_zpow_iff_right₀ (by norm_num : (1 : ℝ) < 2)).mp
+    (zpow_le_zpow_iff_right₀ (by norm_num1 : (1 : ℝ) < 2)).mp
       htail
   omega
 
@@ -65,7 +65,7 @@ theorem sum_energyStandard_physicalTail_diagonalEnergy_le
     hlam hsub (N.filter fun I ↦ (2 : ℝ) ^ ell ≤ I.length)
     ((Finset.filter_subset _ N).trans hN)
     (fun I hI ↦ scale_le_of_mem_energyStandard_physicalTail I₀ k₀ s ell scale N hN hI)
-  convert h using 1; congr 1; ring
+  convert h using 1; congr 1; ring_nf
 
 
 end KrauseLaceyBadScale

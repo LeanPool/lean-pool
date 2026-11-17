@@ -84,7 +84,7 @@ theorem schwartz_hermite_expansion_CLF
   -- h states: inner 1 (φ f) = ∑' n, hermiteCoeff1D n f * inner 1 (φ (schwartzHermiteBasis1D n))
   -- On ℝ, RCLike.inner_apply tells us: inner x y = y * conj x
   -- For real numbers, conj x = x, so inner 1 x = x * 1 = x
-  simp_all
+  simp_all only [RCLike.inner_apply, conj_trivial, mul_one]
 
 /-! ## Seminorm Bounds
 

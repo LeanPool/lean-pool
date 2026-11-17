@@ -48,9 +48,20 @@ def cell387 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 2, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell387_check_indexed : cell387.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [14, 15, 16, 15], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 17, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 19, 20,
+     19], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 6, 22, 23], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 5, 24]] = true := by
+  decide +kernel
+
 theorem cell387_check :
     cell387.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 11, 2, 2, 3, 21, 29, 6] witnessGeometryChecked (by decide))
+      cell387_check_indexed
 
 /-- Closed-cover cell 388 for the fixed row-06 divisor, with 24 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 11, 2, 2, 3, 21, 30, 6]`; `cell388_check` verifies
@@ -73,9 +84,20 @@ def cell388 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 2, 1, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -2, 0, 0, 1, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, 2, 0, 1, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell388_check_indexed : cell388.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [14, 15, 16, 15], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 17, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 19, 20,
+     19], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 22, 23, 22], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 5, 24]] = true := by
+  decide +kernel
+
 theorem cell388_check :
     cell388.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 11, 2, 2, 3, 21, 30, 6] witnessGeometryChecked (by decide))
+      cell388_check_indexed
 
 /-- Closed-cover cell 389 for the fixed row-06 divisor, with 18 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 1, 2, 2, 22, 4, 27, 6]`; `cell389_check` verifies
@@ -95,9 +117,19 @@ def cell389 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 2, -1, 0, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1, 0, 0],
       aff [0, 0, 0, 0, 0, 2, 0, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell389_check_indexed : cell389.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 4], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 15, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 9], [0, 0, 0,
+     0, 0, 0, 0, 0, 17, 8], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 18]] = true := by
+  decide +kernel
+
 theorem cell389_check :
     cell389.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 1, 2, 2, 22, 4, 27, 6] witnessGeometryChecked (by decide))
+      cell389_check_indexed
 
 /-- Closed-cover cell 390 for the fixed row-06 divisor, with 20 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 1, 2, 2, 22, 4, 28, 6]`; `cell390_check` verifies
@@ -118,9 +150,20 @@ def cell390 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell390_check_indexed : cell390.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 4], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 15, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 9], [0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 6, 18, 19], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 20]]
+     = true := by
+  decide +kernel
+
 theorem cell390_check :
     cell390.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 1, 2, 2, 22, 4, 28, 6] witnessGeometryChecked (by decide))
+      cell390_check_indexed
 
 /-- Closed-cover cell 391 for the fixed row-06 divisor, with 20 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 1, 2, 2, 22, 4, 29, 6]`; `cell391_check` verifies
@@ -141,9 +184,20 @@ def cell391 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 2, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell391_check_indexed : cell391.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 4], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 15, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 9], [0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 6, 18, 19], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 20]]
+     = true := by
+  decide +kernel
+
 theorem cell391_check :
     cell391.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 1, 2, 2, 22, 4, 29, 6] witnessGeometryChecked (by decide))
+      cell391_check_indexed
 
 /-- Closed-cover cell 392 for the fixed row-06 divisor, with 20 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 1, 2, 2, 22, 4, 30, 6]`; `cell392_check` verifies
@@ -164,9 +218,20 @@ def cell392 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 2, 1, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -2, 0, 0, 1, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, 2, 0, 1, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell392_check_indexed : cell392.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 4], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 15, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 9], [0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 17, 18, 19, 18], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 20]]
+     = true := by
+  decide +kernel
+
 theorem cell392_check :
     cell392.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 1, 2, 2, 22, 4, 30, 6] witnessGeometryChecked (by decide))
+      cell392_check_indexed
 
 /-- Closed-cover cell 393 for the fixed row-06 divisor, with 20 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 1, 2, 2, 23, 4, 27, 6]`; `cell393_check` verifies
@@ -187,9 +252,20 @@ def cell393 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1, 0, 0],
       aff [0, 0, 0, 0, 0, 2, 0, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell393_check_indexed : cell393.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 4], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 15, 16, 0, 0, 11, 17], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 18, 9], [0, 0, 0, 0, 0, 0, 0, 0, 19, 8], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5,
+     20]] = true := by
+  decide +kernel
+
 theorem cell393_check :
     cell393.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 1, 2, 2, 23, 4, 27, 6] witnessGeometryChecked (by decide))
+      cell393_check_indexed
 
 /-- Closed-cover cell 394 for the fixed row-06 divisor, with 22 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 1, 2, 2, 23, 4, 28, 6]`; `cell394_check` verifies
@@ -211,9 +287,20 @@ def cell394 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell394_check_indexed : cell394.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 4], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 15, 16, 0, 0, 11, 17], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 18, 9], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 6, 20, 21], [0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 5, 22]] = true := by
+  decide +kernel
+
 theorem cell394_check :
     cell394.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 1, 2, 2, 23, 4, 28, 6] witnessGeometryChecked (by decide))
+      cell394_check_indexed
 
 /-- Closed-cover cell 395 for the fixed row-06 divisor, with 22 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 1, 2, 2, 23, 4, 29, 6]`; `cell395_check` verifies
@@ -235,9 +322,20 @@ def cell395 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 2, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell395_check_indexed : cell395.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 4], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 15, 16, 0, 0, 11, 17], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 18, 9], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 6, 20, 21], [0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 5, 22]] = true := by
+  decide +kernel
+
 theorem cell395_check :
     cell395.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 1, 2, 2, 23, 4, 29, 6] witnessGeometryChecked (by decide))
+      cell395_check_indexed
 
 /-- Closed-cover cell 396 for the fixed row-06 divisor, with 22 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 1, 2, 2, 23, 4, 30, 6]`; `cell396_check` verifies
@@ -259,9 +357,20 @@ def cell396 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 2, 1, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -2, 0, 0, 1, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, 2, 0, 1, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell396_check_indexed : cell396.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 4], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 15, 16, 0, 0, 11, 17], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 18, 9], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 20, 21, 20], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 5, 22]] = true := by
+  decide +kernel
+
 theorem cell396_check :
     cell396.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 1, 2, 2, 23, 4, 30, 6] witnessGeometryChecked (by decide))
+      cell396_check_indexed
 
 /-- Closed-cover cell 397 for the fixed row-06 divisor, with 20 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 1, 2, 2, 24, 4, 27, 6]`; `cell397_check` verifies
@@ -282,9 +391,20 @@ def cell397 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1, 0, 0],
       aff [0, 0, 0, 0, 0, 2, 0, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell397_check_indexed : cell397.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 4], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 15, 16, 0, 0, 11, 17], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 18, 9], [0, 0, 0, 0, 0, 0, 0, 0, 19, 8], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5,
+     20]] = true := by
+  decide +kernel
+
 theorem cell397_check :
     cell397.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 1, 2, 2, 24, 4, 27, 6] witnessGeometryChecked (by decide))
+      cell397_check_indexed
 
 /-- Closed-cover cell 398 for the fixed row-06 divisor, with 19 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 1, 2, 2, 25, 4, 27, 6]`; `cell398_check` verifies
@@ -305,9 +425,19 @@ def cell398 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1, 0, 0], aff [0, 0, 0, 0, 0, 2, 0, 0, -1, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell398_check_indexed : cell398.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 4], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 13, 14, 15, 16], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 9], [0, 0,
+     0, 0, 0, 0, 0, 0, 18, 8], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 19]] = true := by
+  decide +kernel
+
 theorem cell398_check :
     cell398.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 1, 2, 2, 25, 4, 27, 6] witnessGeometryChecked (by decide))
+      cell398_check_indexed
 
 /-- Closed-cover cell 399 for the fixed row-06 divisor, with 20 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 1, 2, 2, 26, 4, 27, 6]`; `cell399_check` verifies
@@ -328,9 +458,20 @@ def cell399 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 2, -1, 0, 1], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1, 0, 0],
       aff [0, 0, 0, 0, 0, 2, 0, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell399_check_indexed : cell399.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 4], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 15, 16, 15, 17], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 18, 9], [0, 0, 0, 0, 0, 0, 0, 0, 19, 8], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5,
+     20]] = true := by
+  decide +kernel
+
 theorem cell399_check :
     cell399.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 1, 2, 2, 26, 4, 27, 6] witnessGeometryChecked (by decide))
+      cell399_check_indexed
 
 /-- Closed-cover cell 400 for the fixed row-06 divisor, with 22 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 1, 2, 2, 24, 4, 28, 6]`; `cell400_check` verifies
@@ -352,9 +493,20 @@ def cell400 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell400_check_indexed : cell400.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 4], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 15, 16, 0, 0, 11, 17], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 18, 9], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 6, 20, 21], [0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 5, 22]] = true := by
+  decide +kernel
+
 theorem cell400_check :
     cell400.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 1, 2, 2, 24, 4, 28, 6] witnessGeometryChecked (by decide))
+      cell400_check_indexed
 
 /-- Closed-cover cell 401 for the fixed row-06 divisor, with 21 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 1, 2, 2, 25, 4, 28, 6]`; `cell401_check` verifies
@@ -376,9 +528,20 @@ def cell401 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -2, -1, 0, 1, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell401_check_indexed : cell401.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 4], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 13, 14, 15, 16], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 9], [0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 6, 19, 20], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5,
+     21]] = true := by
+  decide +kernel
+
 theorem cell401_check :
     cell401.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 1, 2, 2, 25, 4, 28, 6] witnessGeometryChecked (by decide))
+      cell401_check_indexed
 
 /-- Closed-cover cell 402 for the fixed row-06 divisor, with 22 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 1, 2, 2, 26, 4, 28, 6]`; `cell402_check` verifies
@@ -400,9 +563,20 @@ def cell402 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell402_check_indexed : cell402.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 4], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 15, 16, 15, 17], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 18, 9], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 6, 20, 21], [0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 5, 22]] = true := by
+  decide +kernel
+
 theorem cell402_check :
     cell402.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 1, 2, 2, 26, 4, 28, 6] witnessGeometryChecked (by decide))
+      cell402_check_indexed
 
 /-- Closed-cover cell 403 for the fixed row-06 divisor, with 22 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 1, 2, 2, 24, 4, 29, 6]`; `cell403_check` verifies
@@ -424,9 +598,20 @@ def cell403 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 2, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell403_check_indexed : cell403.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 4], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 15, 16, 0, 0, 11, 17], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 18, 9], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 6, 20, 21], [0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 5, 22]] = true := by
+  decide +kernel
+
 theorem cell403_check :
     cell403.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 1, 2, 2, 24, 4, 29, 6] witnessGeometryChecked (by decide))
+      cell403_check_indexed
 
 /-- Closed-cover cell 404 for the fixed row-06 divisor, with 21 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 1, 2, 2, 25, 4, 29, 6]`; `cell404_check` verifies
@@ -448,9 +633,20 @@ def cell404 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -2, -1, 0, 2, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell404_check_indexed : cell404.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 4], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 13, 14, 15, 16], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 9], [0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 6, 19, 20], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5,
+     21]] = true := by
+  decide +kernel
+
 theorem cell404_check :
     cell404.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 1, 2, 2, 25, 4, 29, 6] witnessGeometryChecked (by decide))
+      cell404_check_indexed
 
 /-- Closed-cover cell 405 for the fixed row-06 divisor, with 22 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 1, 2, 2, 26, 4, 29, 6]`; `cell405_check` verifies
@@ -472,9 +668,20 @@ def cell405 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 2, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell405_check_indexed : cell405.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 4], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 15, 16, 15, 17], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 18, 9], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 6, 20, 21], [0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 5, 22]] = true := by
+  decide +kernel
+
 theorem cell405_check :
     cell405.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 1, 2, 2, 26, 4, 29, 6] witnessGeometryChecked (by decide))
+      cell405_check_indexed
 
 /-- Closed-cover cell 406 for the fixed row-06 divisor, with 22 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 1, 2, 2, 24, 4, 30, 6]`; `cell406_check` verifies
@@ -496,9 +703,20 @@ def cell406 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 2, 1, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -2, 0, 0, 1, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, 2, 0, 1, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell406_check_indexed : cell406.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 4], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 15, 16, 0, 0, 11, 17], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 18, 9], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 20, 21, 20], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 5, 22]] = true := by
+  decide +kernel
+
 theorem cell406_check :
     cell406.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 1, 2, 2, 24, 4, 30, 6] witnessGeometryChecked (by decide))
+      cell406_check_indexed
 
 /-- Closed-cover cell 407 for the fixed row-06 divisor, with 22 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 1, 2, 2, 26, 4, 30, 6]`; `cell407_check` verifies
@@ -520,9 +738,20 @@ def cell407 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 2, 1, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -2, 0, 0, 1, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, 2, 0, 1, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell407_check_indexed : cell407.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 4], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 15, 16, 15, 17], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 18, 9], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 20, 21, 20], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 5, 22]] = true := by
+  decide +kernel
+
 theorem cell407_check :
     cell407.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 1, 2, 2, 26, 4, 30, 6] witnessGeometryChecked (by decide))
+      cell407_check_indexed
 
 /-- Closed-cover cell 408 for the fixed row-06 divisor, with 19 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 7, 2, 2, 22, 4, 27, 6]`; `cell408_check` verifies
@@ -543,9 +772,19 @@ def cell408 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1, 0, 0], aff [0, 0, 0, 0, 0, 2, 0, 0, -1, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell408_check_indexed : cell408.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 15], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 16, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 9], [0, 0, 0,
+     0, 0, 0, 0, 0, 18, 8], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 19]] = true := by
+  decide +kernel
+
 theorem cell408_check :
     cell408.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 7, 2, 2, 22, 4, 27, 6] witnessGeometryChecked (by decide))
+      cell408_check_indexed
 
 /-- Closed-cover cell 409 for the fixed row-06 divisor, with 18 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 8, 2, 2, 22, 4, 27, 6]`; `cell409_check` verifies
@@ -565,9 +804,19 @@ def cell409 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 2, -1, 0, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1, 0, 0],
       aff [0, 0, 0, 0, 0, 2, 0, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell409_check_indexed : cell409.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 4], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 15, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 9], [0, 0, 0,
+     0, 0, 0, 0, 0, 17, 8], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 18]] = true := by
+  decide +kernel
+
 theorem cell409_check :
     cell409.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 8, 2, 2, 22, 4, 27, 6] witnessGeometryChecked (by decide))
+      cell409_check_indexed
 
 /-- Closed-cover cell 410 for the fixed row-06 divisor, with 20 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 9, 2, 2, 22, 4, 27, 6]`; `cell410_check` verifies
@@ -588,9 +837,20 @@ def cell410 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 2, -1, 0, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1, 0, 0],
       aff [0, 0, 0, 0, 0, 2, 0, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell410_check_indexed : cell410.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 14, 1, 0, 0, 15, 16], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 17, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 9],
+     [0, 0, 0, 0, 0, 0, 0, 0, 19, 8], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 20]]
+     = true := by
+  decide +kernel
+
 theorem cell410_check :
     cell410.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 9, 2, 2, 22, 4, 27, 6] witnessGeometryChecked (by decide))
+      cell410_check_indexed
 
 /-- Closed-cover cell 411 for the fixed row-06 divisor, with 20 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 10, 2, 2, 22, 4, 27, 6]`; `cell411_check` verifies
@@ -611,9 +871,20 @@ def cell411 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 2, -1, 0, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1, 0, 0],
       aff [0, 0, 0, 0, 0, 2, 0, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell411_check_indexed : cell411.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 14, 1, 0, 0, 15, 16], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 17, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 9],
+     [0, 0, 0, 0, 0, 0, 0, 0, 19, 8], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 20]]
+     = true := by
+  decide +kernel
+
 theorem cell411_check :
     cell411.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 10, 2, 2, 22, 4, 27, 6] witnessGeometryChecked (by decide))
+      cell411_check_indexed
 
 /-- Closed-cover cell 412 for the fixed row-06 divisor, with 20 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 11, 2, 2, 22, 4, 27, 6]`; `cell412_check` verifies
@@ -634,9 +905,19 @@ def cell412 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 2, -1, 0, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1, 0, 0],
       aff [0, 0, 0, 0, 0, 2, 0, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell412_check_indexed : cell412.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [14, 15, 16, 15], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 17, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 9], [0, 0, 0, 0,
+     0, 0, 0, 0, 19, 8], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 20]] = true := by
+  decide +kernel
+
 theorem cell412_check :
     cell412.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 11, 2, 2, 22, 4, 27, 6] witnessGeometryChecked (by decide))
+      cell412_check_indexed
 
 /-- Closed-cover cell 413 for the fixed row-06 divisor, with 21 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 7, 2, 2, 22, 4, 28, 6]`; `cell413_check` verifies
@@ -658,9 +939,20 @@ def cell413 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -2, -1, 0, 1, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell413_check_indexed : cell413.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 15], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 16, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 9], [0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 6, 19, 20], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 21]]
+     = true := by
+  decide +kernel
+
 theorem cell413_check :
     cell413.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 7, 2, 2, 22, 4, 28, 6] witnessGeometryChecked (by decide))
+      cell413_check_indexed
 
 /-- Closed-cover cell 414 for the fixed row-06 divisor, with 20 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 8, 2, 2, 22, 4, 28, 6]`; `cell414_check` verifies
@@ -681,9 +973,20 @@ def cell414 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell414_check_indexed : cell414.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 4], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 15, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 9], [0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 6, 18, 19], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 20]]
+     = true := by
+  decide +kernel
+
 theorem cell414_check :
     cell414.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 8, 2, 2, 22, 4, 28, 6] witnessGeometryChecked (by decide))
+      cell414_check_indexed
 
 /-- Closed-cover cell 415 for the fixed row-06 divisor, with 22 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 9, 2, 2, 22, 4, 28, 6]`; `cell415_check` verifies
@@ -705,9 +1008,20 @@ def cell415 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell415_check_indexed : cell415.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 14, 1, 0, 0, 15, 16], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 17, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 9],
+     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 6, 20, 21], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 5, 22]] = true := by
+  decide +kernel
+
 theorem cell415_check :
     cell415.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 9, 2, 2, 22, 4, 28, 6] witnessGeometryChecked (by decide))
+      cell415_check_indexed
 
 /-- Closed-cover cell 416 for the fixed row-06 divisor, with 22 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 10, 2, 2, 22, 4, 28, 6]`; `cell416_check` verifies
@@ -729,9 +1043,20 @@ def cell416 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell416_check_indexed : cell416.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 14, 1, 0, 0, 15, 16], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 17, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 9],
+     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 6, 20, 21], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 5, 22]] = true := by
+  decide +kernel
+
 theorem cell416_check :
     cell416.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 10, 2, 2, 22, 4, 28, 6] witnessGeometryChecked (by decide))
+      cell416_check_indexed
 
 /-- Closed-cover cell 417 for the fixed row-06 divisor, with 22 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 11, 2, 2, 22, 4, 28, 6]`; `cell417_check` verifies
@@ -753,9 +1078,20 @@ def cell417 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell417_check_indexed : cell417.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [14, 15, 16, 15], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 17, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 9], [0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 19, 6, 20, 21], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 22]]
+     = true := by
+  decide +kernel
+
 theorem cell417_check :
     cell417.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 11, 2, 2, 22, 4, 28, 6] witnessGeometryChecked (by decide))
+      cell417_check_indexed
 
 /-- Closed-cover cell 418 for the fixed row-06 divisor, with 21 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 7, 2, 2, 22, 4, 29, 6]`; `cell418_check` verifies
@@ -777,9 +1113,20 @@ def cell418 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -2, -1, 0, 2, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell418_check_indexed : cell418.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 15], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 16, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 9], [0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 6, 19, 20], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 21]]
+     = true := by
+  decide +kernel
+
 theorem cell418_check :
     cell418.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 7, 2, 2, 22, 4, 29, 6] witnessGeometryChecked (by decide))
+      cell418_check_indexed
 
 /-- Closed-cover cell 419 for the fixed row-06 divisor, with 20 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 8, 2, 2, 22, 4, 29, 6]`; `cell419_check` verifies
@@ -800,9 +1147,20 @@ def cell419 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 2, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell419_check_indexed : cell419.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 4], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 15, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 9], [0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 6, 18, 19], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 20]]
+     = true := by
+  decide +kernel
+
 theorem cell419_check :
     cell419.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 8, 2, 2, 22, 4, 29, 6] witnessGeometryChecked (by decide))
+      cell419_check_indexed
 
 /-- Closed-cover cell 420 for the fixed row-06 divisor, with 22 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 9, 2, 2, 22, 4, 29, 6]`; `cell420_check` verifies
@@ -824,9 +1182,20 @@ def cell420 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 2, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell420_check_indexed : cell420.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 14, 1, 0, 0, 15, 16], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 17, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 9],
+     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 6, 20, 21], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 5, 22]] = true := by
+  decide +kernel
+
 theorem cell420_check :
     cell420.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 9, 2, 2, 22, 4, 29, 6] witnessGeometryChecked (by decide))
+      cell420_check_indexed
 
 /-- Closed-cover cell 421 for the fixed row-06 divisor, with 22 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 10, 2, 2, 22, 4, 29, 6]`; `cell421_check` verifies
@@ -848,9 +1217,20 @@ def cell421 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 2, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell421_check_indexed : cell421.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 14, 1, 0, 0, 15, 16], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 17, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 9],
+     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 6, 20, 21], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 5, 22]] = true := by
+  decide +kernel
+
 theorem cell421_check :
     cell421.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 10, 2, 2, 22, 4, 29, 6] witnessGeometryChecked (by decide))
+      cell421_check_indexed
 
 /-- Closed-cover cell 422 for the fixed row-06 divisor, with 22 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 11, 2, 2, 22, 4, 29, 6]`; `cell422_check` verifies
@@ -872,9 +1252,20 @@ def cell422 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 2, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell422_check_indexed : cell422.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [14, 15, 16, 15], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 17, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 9], [0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 19, 6, 20, 21], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 22]]
+     = true := by
+  decide +kernel
+
 theorem cell422_check :
     cell422.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 11, 2, 2, 22, 4, 29, 6] witnessGeometryChecked (by decide))
+      cell422_check_indexed
 
 /-- Closed-cover cell 423 for the fixed row-06 divisor, with 21 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 7, 2, 2, 22, 4, 30, 6]`; `cell423_check` verifies
@@ -896,9 +1287,20 @@ def cell423 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, -2, 0, 0, 1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 0, 1, -1, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell423_check_indexed : cell423.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 15], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 16, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 9], [0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 18, 19, 20, 19], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 21]]
+     = true := by
+  decide +kernel
+
 theorem cell423_check :
     cell423.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 7, 2, 2, 22, 4, 30, 6] witnessGeometryChecked (by decide))
+      cell423_check_indexed
 
 /-- Closed-cover cell 424 for the fixed row-06 divisor, with 20 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 8, 2, 2, 22, 4, 30, 6]`; `cell424_check` verifies
@@ -919,9 +1321,20 @@ def cell424 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 2, 1, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -2, 0, 0, 1, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, 2, 0, 1, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell424_check_indexed : cell424.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 4], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 15, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 9], [0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 17, 18, 19, 18], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 20]]
+     = true := by
+  decide +kernel
+
 theorem cell424_check :
     cell424.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 8, 2, 2, 22, 4, 30, 6] witnessGeometryChecked (by decide))
+      cell424_check_indexed
 
 /-- Closed-cover cell 425 for the fixed row-06 divisor, with 22 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 9, 2, 2, 22, 4, 30, 6]`; `cell425_check` verifies
@@ -943,9 +1356,20 @@ def cell425 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 2, 1, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -2, 0, 0, 1, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, 2, 0, 1, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell425_check_indexed : cell425.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 14, 1, 0, 0, 15, 16], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 17, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 9],
+     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 20, 21, 20], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5,
+     22]] = true := by
+  decide +kernel
+
 theorem cell425_check :
     cell425.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 9, 2, 2, 22, 4, 30, 6] witnessGeometryChecked (by decide))
+      cell425_check_indexed
 
 /-- Closed-cover cell 426 for the fixed row-06 divisor, with 22 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 10, 2, 2, 22, 4, 30, 6]`; `cell426_check` verifies
@@ -967,9 +1391,20 @@ def cell426 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 2, 1, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -2, 0, 0, 1, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, 2, 0, 1, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell426_check_indexed : cell426.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 14, 1, 0, 0, 15, 16], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 17, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 9],
+     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 20, 21, 20], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5,
+     22]] = true := by
+  decide +kernel
+
 theorem cell426_check :
     cell426.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 10, 2, 2, 22, 4, 30, 6] witnessGeometryChecked (by decide))
+      cell426_check_indexed
 
 /-- Closed-cover cell 427 for the fixed row-06 divisor, with 22 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 11, 2, 2, 22, 4, 30, 6]`; `cell427_check` verifies
@@ -991,9 +1426,20 @@ def cell427 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 2, 1, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -2, 0, 0, 1, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, 2, 0, 1, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell427_check_indexed : cell427.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [14, 15, 16, 15], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 17, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 9], [0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 19, 20, 21, 20], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 22]]
+     = true := by
+  decide +kernel
+
 theorem cell427_check :
     cell427.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 11, 2, 2, 22, 4, 30, 6] witnessGeometryChecked (by decide))
+      cell427_check_indexed
 
 /-- Closed-cover cell 428 for the fixed row-06 divisor, with 21 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 7, 2, 2, 23, 4, 27, 6]`; `cell428_check` verifies
@@ -1015,9 +1461,20 @@ def cell428 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1, 0, 0], aff [0, 0, 0, 0, 0, 2, 0, 0, -1, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell428_check_indexed : cell428.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 15], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 16, 17, 0, 0, 11, 18], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 19, 9], [0, 0, 0, 0, 0, 0, 0, 0, 20, 8], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5,
+     21]] = true := by
+  decide +kernel
+
 theorem cell428_check :
     cell428.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 7, 2, 2, 23, 4, 27, 6] witnessGeometryChecked (by decide))
+      cell428_check_indexed
 
 /-- Closed-cover cell 429 for the fixed row-06 divisor, with 20 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 8, 2, 2, 23, 4, 27, 6]`; `cell429_check` verifies
@@ -1038,9 +1495,20 @@ def cell429 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1, 0, 0],
       aff [0, 0, 0, 0, 0, 2, 0, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell429_check_indexed : cell429.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 4], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 15, 16, 0, 0, 11, 17], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 18, 9], [0, 0, 0, 0, 0, 0, 0, 0, 19, 8], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5,
+     20]] = true := by
+  decide +kernel
+
 theorem cell429_check :
     cell429.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 8, 2, 2, 23, 4, 27, 6] witnessGeometryChecked (by decide))
+      cell429_check_indexed
 
 /-- Closed-cover cell 430 for the fixed row-06 divisor, with 22 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 9, 2, 2, 23, 4, 27, 6]`; `cell430_check` verifies
@@ -1062,9 +1530,20 @@ def cell430 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1, 0, 0],
       aff [0, 0, 0, 0, 0, 2, 0, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell430_check_indexed : cell430.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 14, 1, 0, 0, 15, 16], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 18, 0, 0, 11, 19], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 20, 9], [0, 0, 0, 0, 0, 0, 0, 0, 21, 8], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 5, 22]] = true := by
+  decide +kernel
+
 theorem cell430_check :
     cell430.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 9, 2, 2, 23, 4, 27, 6] witnessGeometryChecked (by decide))
+      cell430_check_indexed
 
 /-- Closed-cover cell 431 for the fixed row-06 divisor, with 22 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 10, 2, 2, 23, 4, 27, 6]`; `cell431_check` verifies
@@ -1086,9 +1565,20 @@ def cell431 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1, 0, 0],
       aff [0, 0, 0, 0, 0, 2, 0, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell431_check_indexed : cell431.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 14, 1, 0, 0, 15, 16], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 18, 0, 0, 11, 19], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 20, 9], [0, 0, 0, 0, 0, 0, 0, 0, 21, 8], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 5, 22]] = true := by
+  decide +kernel
+
 theorem cell431_check :
     cell431.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 10, 2, 2, 23, 4, 27, 6] witnessGeometryChecked (by decide))
+      cell431_check_indexed
 
 /-- Closed-cover cell 432 for the fixed row-06 divisor, with 22 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 11, 2, 2, 23, 4, 27, 6]`; `cell432_check` verifies
@@ -1110,9 +1600,20 @@ def cell432 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1, 0, 0],
       aff [0, 0, 0, 0, 0, 2, 0, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell432_check_indexed : cell432.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [14, 15, 16, 15], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 17, 18, 0, 0, 11, 19], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     20, 9], [0, 0, 0, 0, 0, 0, 0, 0, 21, 8], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 22]]
+     = true := by
+  decide +kernel
+
 theorem cell432_check :
     cell432.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 11, 2, 2, 23, 4, 27, 6] witnessGeometryChecked (by decide))
+      cell432_check_indexed
 
 /-- Closed-cover cell 433 for the fixed row-06 divisor, with 23 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 7, 2, 2, 23, 4, 28, 6]`; `cell433_check` verifies
@@ -1135,9 +1636,20 @@ def cell433 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -2, -1, 0, 1, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell433_check_indexed : cell433.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 15], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 16, 17, 0, 0, 11, 18], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 19, 9], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 20, 6, 21, 22], [0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 5, 23]] = true := by
+  decide +kernel
+
 theorem cell433_check :
     cell433.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 7, 2, 2, 23, 4, 28, 6] witnessGeometryChecked (by decide))
+      cell433_check_indexed
 
 /-- Closed-cover cell 434 for the fixed row-06 divisor, with 22 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 8, 2, 2, 23, 4, 28, 6]`; `cell434_check` verifies
@@ -1159,9 +1671,20 @@ def cell434 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell434_check_indexed : cell434.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 4], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 15, 16, 0, 0, 11, 17], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 18, 9], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 6, 20, 21], [0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 5, 22]] = true := by
+  decide +kernel
+
 theorem cell434_check :
     cell434.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 8, 2, 2, 23, 4, 28, 6] witnessGeometryChecked (by decide))
+      cell434_check_indexed
 
 /-- Closed-cover cell 435 for the fixed row-06 divisor, with 24 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 9, 2, 2, 23, 4, 28, 6]`; `cell435_check` verifies
@@ -1184,9 +1707,20 @@ def cell435 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell435_check_indexed : cell435.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 14, 1, 0, 0, 15, 16], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 18, 0, 0, 11, 19], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 20, 9], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 6, 22, 23], [0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 5, 24]] = true := by
+  decide +kernel
+
 theorem cell435_check :
     cell435.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 9, 2, 2, 23, 4, 28, 6] witnessGeometryChecked (by decide))
+      cell435_check_indexed
 
 /-- Closed-cover cell 436 for the fixed row-06 divisor, with 24 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 10, 2, 2, 23, 4, 28, 6]`; `cell436_check` verifies
@@ -1209,9 +1743,20 @@ def cell436 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell436_check_indexed : cell436.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 14, 1, 0, 0, 15, 16], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 18, 0, 0, 11, 19], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 20, 9], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 6, 22, 23], [0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 5, 24]] = true := by
+  decide +kernel
+
 theorem cell436_check :
     cell436.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 10, 2, 2, 23, 4, 28, 6] witnessGeometryChecked (by decide))
+      cell436_check_indexed
 
 /-- Closed-cover cell 437 for the fixed row-06 divisor, with 24 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 11, 2, 2, 23, 4, 28, 6]`; `cell437_check` verifies
@@ -1234,9 +1779,20 @@ def cell437 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell437_check_indexed : cell437.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [14, 15, 16, 15], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 17, 18, 0, 0, 11, 19], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     20, 9], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 6, 22, 23], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 5, 24]] = true := by
+  decide +kernel
+
 theorem cell437_check :
     cell437.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 11, 2, 2, 23, 4, 28, 6] witnessGeometryChecked (by decide))
+      cell437_check_indexed
 
 /-- Closed-cover cell 438 for the fixed row-06 divisor, with 23 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 7, 2, 2, 23, 4, 29, 6]`; `cell438_check` verifies
@@ -1259,9 +1815,20 @@ def cell438 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -2, -1, 0, 2, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell438_check_indexed : cell438.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 15], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 16, 17, 0, 0, 11, 18], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 19, 9], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 20, 6, 21, 22], [0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 5, 23]] = true := by
+  decide +kernel
+
 theorem cell438_check :
     cell438.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 7, 2, 2, 23, 4, 29, 6] witnessGeometryChecked (by decide))
+      cell438_check_indexed
 
 /-- Closed-cover cell 439 for the fixed row-06 divisor, with 22 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 8, 2, 2, 23, 4, 29, 6]`; `cell439_check` verifies
@@ -1283,9 +1850,20 @@ def cell439 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 2, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell439_check_indexed : cell439.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 4], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 15, 16, 0, 0, 11, 17], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 18, 9], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 6, 20, 21], [0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 5, 22]] = true := by
+  decide +kernel
+
 theorem cell439_check :
     cell439.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 8, 2, 2, 23, 4, 29, 6] witnessGeometryChecked (by decide))
+      cell439_check_indexed
 
 /-- Closed-cover cell 440 for the fixed row-06 divisor, with 24 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 9, 2, 2, 23, 4, 29, 6]`; `cell440_check` verifies
@@ -1308,9 +1886,20 @@ def cell440 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 2, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell440_check_indexed : cell440.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 14, 1, 0, 0, 15, 16], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 18, 0, 0, 11, 19], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 20, 9], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 6, 22, 23], [0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 5, 24]] = true := by
+  decide +kernel
+
 theorem cell440_check :
     cell440.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 9, 2, 2, 23, 4, 29, 6] witnessGeometryChecked (by decide))
+      cell440_check_indexed
 
 /-- Closed-cover cell 441 for the fixed row-06 divisor, with 24 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 10, 2, 2, 23, 4, 29, 6]`; `cell441_check` verifies
@@ -1333,9 +1922,20 @@ def cell441 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 2, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell441_check_indexed : cell441.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 14, 1, 0, 0, 15, 16], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 18, 0, 0, 11, 19], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 20, 9], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 6, 22, 23], [0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 5, 24]] = true := by
+  decide +kernel
+
 theorem cell441_check :
     cell441.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 10, 2, 2, 23, 4, 29, 6] witnessGeometryChecked (by decide))
+      cell441_check_indexed
 
 /-- Closed-cover cell 442 for the fixed row-06 divisor, with 24 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 11, 2, 2, 23, 4, 29, 6]`; `cell442_check` verifies
@@ -1358,9 +1958,20 @@ def cell442 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 2, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell442_check_indexed : cell442.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [14, 15, 16, 15], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 17, 18, 0, 0, 11, 19], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     20, 9], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 6, 22, 23], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 5, 24]] = true := by
+  decide +kernel
+
 theorem cell442_check :
     cell442.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 11, 2, 2, 23, 4, 29, 6] witnessGeometryChecked (by decide))
+      cell442_check_indexed
 
 /-- Closed-cover cell 443 for the fixed row-06 divisor, with 23 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 7, 2, 2, 23, 4, 30, 6]`; `cell443_check` verifies
@@ -1383,9 +1994,20 @@ def cell443 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, -2, 0, 0, 1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 0, 1, -1, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell443_check_indexed : cell443.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 15], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 16, 17, 0, 0, 11, 18], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 19, 9], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 20, 21, 22, 21], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 5, 23]] = true := by
+  decide +kernel
+
 theorem cell443_check :
     cell443.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 7, 2, 2, 23, 4, 30, 6] witnessGeometryChecked (by decide))
+      cell443_check_indexed
 
 /-- Closed-cover cell 444 for the fixed row-06 divisor, with 22 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 8, 2, 2, 23, 4, 30, 6]`; `cell444_check` verifies
@@ -1407,9 +2029,20 @@ def cell444 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 2, 1, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -2, 0, 0, 1, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, 2, 0, 1, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell444_check_indexed : cell444.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 4], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 15, 16, 0, 0, 11, 17], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 18, 9], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 20, 21, 20], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 5, 22]] = true := by
+  decide +kernel
+
 theorem cell444_check :
     cell444.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 8, 2, 2, 23, 4, 30, 6] witnessGeometryChecked (by decide))
+      cell444_check_indexed
 
 /-- Closed-cover cell 445 for the fixed row-06 divisor, with 24 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 9, 2, 2, 23, 4, 30, 6]`; `cell445_check` verifies
@@ -1432,9 +2065,20 @@ def cell445 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 2, 1, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -2, 0, 0, 1, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, 2, 0, 1, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell445_check_indexed : cell445.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 14, 1, 0, 0, 15, 16], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 18, 0, 0, 11, 19], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 20, 9], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 22, 23, 22], [0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 5, 24]] = true := by
+  decide +kernel
+
 theorem cell445_check :
     cell445.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 9, 2, 2, 23, 4, 30, 6] witnessGeometryChecked (by decide))
+      cell445_check_indexed
 
 /-- Closed-cover cell 446 for the fixed row-06 divisor, with 24 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 10, 2, 2, 23, 4, 30, 6]`; `cell446_check` verifies
@@ -1457,9 +2101,20 @@ def cell446 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 2, 1, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -2, 0, 0, 1, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, 2, 0, 1, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell446_check_indexed : cell446.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 14, 1, 0, 0, 15, 16], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 18, 0, 0, 11, 19], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 20, 9], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 22, 23, 22], [0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 5, 24]] = true := by
+  decide +kernel
+
 theorem cell446_check :
     cell446.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 10, 2, 2, 23, 4, 30, 6] witnessGeometryChecked (by decide))
+      cell446_check_indexed
 
 /-- Closed-cover cell 447 for the fixed row-06 divisor, with 24 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 11, 2, 2, 23, 4, 30, 6]`; `cell447_check` verifies
@@ -1482,9 +2137,20 @@ def cell447 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 2, 1, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -2, 0, 0, 1, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, 2, 0, 1, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell447_check_indexed : cell447.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [14, 15, 16, 15], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 17, 18, 0, 0, 11, 19], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     20, 9], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 22, 23, 22], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 5, 24]] = true := by
+  decide +kernel
+
 theorem cell447_check :
     cell447.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 11, 2, 2, 23, 4, 30, 6] witnessGeometryChecked (by decide))
+      cell447_check_indexed
 
 /-- Closed-cover cell 448 for the fixed row-06 divisor, with 21 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 7, 2, 2, 24, 4, 27, 6]`; `cell448_check` verifies
@@ -1506,9 +2172,20 @@ def cell448 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1, 0, 0], aff [0, 0, 0, 0, 0, 2, 0, 0, -1, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell448_check_indexed : cell448.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 15], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 16, 17, 0, 0, 11, 18], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 19, 9], [0, 0, 0, 0, 0, 0, 0, 0, 20, 8], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5,
+     21]] = true := by
+  decide +kernel
+
 theorem cell448_check :
     cell448.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 7, 2, 2, 24, 4, 27, 6] witnessGeometryChecked (by decide))
+      cell448_check_indexed
 
 /-- Closed-cover cell 449 for the fixed row-06 divisor, with 20 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 8, 2, 2, 24, 4, 27, 6]`; `cell449_check` verifies
@@ -1529,9 +2206,20 @@ def cell449 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1, 0, 0],
       aff [0, 0, 0, 0, 0, 2, 0, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell449_check_indexed : cell449.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 4], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 15, 16, 0, 0, 11, 17], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 18, 9], [0, 0, 0, 0, 0, 0, 0, 0, 19, 8], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5,
+     20]] = true := by
+  decide +kernel
+
 theorem cell449_check :
     cell449.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 8, 2, 2, 24, 4, 27, 6] witnessGeometryChecked (by decide))
+      cell449_check_indexed
 
 /-- Closed-cover cell 450 for the fixed row-06 divisor, with 22 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 9, 2, 2, 24, 4, 27, 6]`; `cell450_check` verifies
@@ -1553,9 +2241,20 @@ def cell450 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1, 0, 0],
       aff [0, 0, 0, 0, 0, 2, 0, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell450_check_indexed : cell450.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 14, 1, 0, 0, 15, 16], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 18, 0, 0, 11, 19], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 20, 9], [0, 0, 0, 0, 0, 0, 0, 0, 21, 8], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 5, 22]] = true := by
+  decide +kernel
+
 theorem cell450_check :
     cell450.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 9, 2, 2, 24, 4, 27, 6] witnessGeometryChecked (by decide))
+      cell450_check_indexed
 
 /-- Closed-cover cell 451 for the fixed row-06 divisor, with 22 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 10, 2, 2, 24, 4, 27, 6]`; `cell451_check` verifies
@@ -1577,9 +2276,20 @@ def cell451 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1, 0, 0],
       aff [0, 0, 0, 0, 0, 2, 0, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell451_check_indexed : cell451.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 14, 1, 0, 0, 15, 16], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 18, 0, 0, 11, 19], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 20, 9], [0, 0, 0, 0, 0, 0, 0, 0, 21, 8], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 5, 22]] = true := by
+  decide +kernel
+
 theorem cell451_check :
     cell451.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 10, 2, 2, 24, 4, 27, 6] witnessGeometryChecked (by decide))
+      cell451_check_indexed
 
 /-- Closed-cover cell 452 for the fixed row-06 divisor, with 22 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 11, 2, 2, 24, 4, 27, 6]`; `cell452_check` verifies
@@ -1601,9 +2311,20 @@ def cell452 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1, 0, 0],
       aff [0, 0, 0, 0, 0, 2, 0, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell452_check_indexed : cell452.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [14, 15, 16, 15], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 17, 18, 0, 0, 11, 19], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     20, 9], [0, 0, 0, 0, 0, 0, 0, 0, 21, 8], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 22]]
+     = true := by
+  decide +kernel
+
 theorem cell452_check :
     cell452.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 11, 2, 2, 24, 4, 27, 6] witnessGeometryChecked (by decide))
+      cell452_check_indexed
 
 /-- Closed-cover cell 453 for the fixed row-06 divisor, with 23 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 7, 2, 2, 24, 4, 28, 6]`; `cell453_check` verifies
@@ -1626,9 +2347,20 @@ def cell453 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -2, -1, 0, 1, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell453_check_indexed : cell453.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 15], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 16, 17, 0, 0, 11, 18], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 19, 9], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 20, 6, 21, 22], [0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 5, 23]] = true := by
+  decide +kernel
+
 theorem cell453_check :
     cell453.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 7, 2, 2, 24, 4, 28, 6] witnessGeometryChecked (by decide))
+      cell453_check_indexed
 
 /-- Closed-cover cell 454 for the fixed row-06 divisor, with 22 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 8, 2, 2, 24, 4, 28, 6]`; `cell454_check` verifies
@@ -1650,9 +2382,20 @@ def cell454 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell454_check_indexed : cell454.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 4], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 15, 16, 0, 0, 11, 17], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 18, 9], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 6, 20, 21], [0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 5, 22]] = true := by
+  decide +kernel
+
 theorem cell454_check :
     cell454.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 8, 2, 2, 24, 4, 28, 6] witnessGeometryChecked (by decide))
+      cell454_check_indexed
 
 /-- Closed-cover cell 455 for the fixed row-06 divisor, with 24 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 9, 2, 2, 24, 4, 28, 6]`; `cell455_check` verifies
@@ -1675,9 +2418,20 @@ def cell455 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell455_check_indexed : cell455.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 14, 1, 0, 0, 15, 16], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 18, 0, 0, 11, 19], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 20, 9], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 6, 22, 23], [0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 5, 24]] = true := by
+  decide +kernel
+
 theorem cell455_check :
     cell455.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 9, 2, 2, 24, 4, 28, 6] witnessGeometryChecked (by decide))
+      cell455_check_indexed
 
 /-- Closed-cover cell 456 for the fixed row-06 divisor, with 24 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 10, 2, 2, 24, 4, 28, 6]`; `cell456_check` verifies
@@ -1700,9 +2454,20 @@ def cell456 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell456_check_indexed : cell456.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 14, 1, 0, 0, 15, 16], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 18, 0, 0, 11, 19], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 20, 9], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 6, 22, 23], [0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 5, 24]] = true := by
+  decide +kernel
+
 theorem cell456_check :
     cell456.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 10, 2, 2, 24, 4, 28, 6] witnessGeometryChecked (by decide))
+      cell456_check_indexed
 
 /-- Closed-cover cell 457 for the fixed row-06 divisor, with 24 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 11, 2, 2, 24, 4, 28, 6]`; `cell457_check` verifies
@@ -1725,9 +2490,20 @@ def cell457 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell457_check_indexed : cell457.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [14, 15, 16, 15], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 17, 18, 0, 0, 11, 19], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     20, 9], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 6, 22, 23], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 5, 24]] = true := by
+  decide +kernel
+
 theorem cell457_check :
     cell457.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 11, 2, 2, 24, 4, 28, 6] witnessGeometryChecked (by decide))
+      cell457_check_indexed
 
 /-- Closed-cover cell 458 for the fixed row-06 divisor, with 23 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 7, 2, 2, 24, 4, 29, 6]`; `cell458_check` verifies
@@ -1750,9 +2526,20 @@ def cell458 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -2, -1, 0, 2, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell458_check_indexed : cell458.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 15], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 16, 17, 0, 0, 11, 18], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 19, 9], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 20, 6, 21, 22], [0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 5, 23]] = true := by
+  decide +kernel
+
 theorem cell458_check :
     cell458.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 7, 2, 2, 24, 4, 29, 6] witnessGeometryChecked (by decide))
+      cell458_check_indexed
 
 /-- Closed-cover cell 459 for the fixed row-06 divisor, with 22 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 8, 2, 2, 24, 4, 29, 6]`; `cell459_check` verifies
@@ -1774,9 +2561,20 @@ def cell459 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 2, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell459_check_indexed : cell459.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 4], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 15, 16, 0, 0, 11, 17], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 18, 9], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 6, 20, 21], [0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 5, 22]] = true := by
+  decide +kernel
+
 theorem cell459_check :
     cell459.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 8, 2, 2, 24, 4, 29, 6] witnessGeometryChecked (by decide))
+      cell459_check_indexed
 
 /-- Closed-cover cell 460 for the fixed row-06 divisor, with 24 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 9, 2, 2, 24, 4, 29, 6]`; `cell460_check` verifies
@@ -1799,9 +2597,20 @@ def cell460 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 2, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell460_check_indexed : cell460.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 14, 1, 0, 0, 15, 16], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 18, 0, 0, 11, 19], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 20, 9], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 6, 22, 23], [0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 5, 24]] = true := by
+  decide +kernel
+
 theorem cell460_check :
     cell460.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 9, 2, 2, 24, 4, 29, 6] witnessGeometryChecked (by decide))
+      cell460_check_indexed
 
 /-- Closed-cover cell 461 for the fixed row-06 divisor, with 24 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 10, 2, 2, 24, 4, 29, 6]`; `cell461_check` verifies
@@ -1824,9 +2633,20 @@ def cell461 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 2, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell461_check_indexed : cell461.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 14, 1, 0, 0, 15, 16], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 18, 0, 0, 11, 19], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 20, 9], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 6, 22, 23], [0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 5, 24]] = true := by
+  decide +kernel
+
 theorem cell461_check :
     cell461.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 10, 2, 2, 24, 4, 29, 6] witnessGeometryChecked (by decide))
+      cell461_check_indexed
 
 /-- Closed-cover cell 462 for the fixed row-06 divisor, with 24 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 11, 2, 2, 24, 4, 29, 6]`; `cell462_check` verifies
@@ -1849,9 +2669,20 @@ def cell462 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 2, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell462_check_indexed : cell462.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [14, 15, 16, 15], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 17, 18, 0, 0, 11, 19], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     20, 9], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 6, 22, 23], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 5, 24]] = true := by
+  decide +kernel
+
 theorem cell462_check :
     cell462.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 11, 2, 2, 24, 4, 29, 6] witnessGeometryChecked (by decide))
+      cell462_check_indexed
 
 /-- Closed-cover cell 463 for the fixed row-06 divisor, with 22 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 8, 2, 2, 24, 4, 30, 6]`; `cell463_check` verifies
@@ -1873,9 +2704,20 @@ def cell463 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 2, 1, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -2, 0, 0, 1, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, 2, 0, 1, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell463_check_indexed : cell463.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 4], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 15, 16, 0, 0, 11, 17], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 18, 9], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 20, 21, 20], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 5, 22]] = true := by
+  decide +kernel
+
 theorem cell463_check :
     cell463.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 8, 2, 2, 24, 4, 30, 6] witnessGeometryChecked (by decide))
+      cell463_check_indexed
 
 /-- Closed-cover cell 464 for the fixed row-06 divisor, with 24 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 9, 2, 2, 24, 4, 30, 6]`; `cell464_check` verifies
@@ -1898,9 +2740,20 @@ def cell464 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 2, 1, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -2, 0, 0, 1, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, 2, 0, 1, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell464_check_indexed : cell464.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 14, 1, 0, 0, 15, 16], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 18, 0, 0, 11, 19], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 20, 9], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 22, 23, 22], [0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 5, 24]] = true := by
+  decide +kernel
+
 theorem cell464_check :
     cell464.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 9, 2, 2, 24, 4, 30, 6] witnessGeometryChecked (by decide))
+      cell464_check_indexed
 
 /-- Closed-cover cell 465 for the fixed row-06 divisor, with 24 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 10, 2, 2, 24, 4, 30, 6]`; `cell465_check` verifies
@@ -1923,9 +2776,20 @@ def cell465 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 2, 1, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -2, 0, 0, 1, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, 2, 0, 1, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell465_check_indexed : cell465.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 14, 1, 0, 0, 15, 16], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 18, 0, 0, 11, 19], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 20, 9], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 22, 23, 22], [0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 5, 24]] = true := by
+  decide +kernel
+
 theorem cell465_check :
     cell465.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 10, 2, 2, 24, 4, 30, 6] witnessGeometryChecked (by decide))
+      cell465_check_indexed
 
 /-- Closed-cover cell 466 for the fixed row-06 divisor, with 24 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 11, 2, 2, 24, 4, 30, 6]`; `cell466_check` verifies
@@ -1948,9 +2812,20 @@ def cell466 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 2, 1, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -2, 0, 0, 1, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, 2, 0, 1, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell466_check_indexed : cell466.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [14, 15, 16, 15], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 17, 18, 0, 0, 11, 19], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     20, 9], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 22, 23, 22], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 5, 24]] = true := by
+  decide +kernel
+
 theorem cell466_check :
     cell466.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 11, 2, 2, 24, 4, 30, 6] witnessGeometryChecked (by decide))
+      cell466_check_indexed
 
 /-- Closed-cover cell 467 for the fixed row-06 divisor, with 20 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 8, 2, 2, 26, 4, 27, 6]`; `cell467_check` verifies
@@ -1971,9 +2846,20 @@ def cell467 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 2, -1, 0, 1], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1, 0, 0],
       aff [0, 0, 0, 0, 0, 2, 0, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell467_check_indexed : cell467.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 4], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 15, 16, 15, 17], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 18, 9], [0, 0, 0, 0, 0, 0, 0, 0, 19, 8], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5,
+     20]] = true := by
+  decide +kernel
+
 theorem cell467_check :
     cell467.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 8, 2, 2, 26, 4, 27, 6] witnessGeometryChecked (by decide))
+      cell467_check_indexed
 
 /-- Closed-cover cell 468 for the fixed row-06 divisor, with 22 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 8, 2, 2, 26, 4, 28, 6]`; `cell468_check` verifies
@@ -1995,9 +2881,20 @@ def cell468 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell468_check_indexed : cell468.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 4], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 15, 16, 15, 17], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 18, 9], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 6, 20, 21], [0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 5, 22]] = true := by
+  decide +kernel
+
 theorem cell468_check :
     cell468.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 8, 2, 2, 26, 4, 28, 6] witnessGeometryChecked (by decide))
+      cell468_check_indexed
 
 /-- Closed-cover cell 469 for the fixed row-06 divisor, with 22 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 8, 2, 2, 26, 4, 29, 6]`; `cell469_check` verifies
@@ -2019,9 +2916,20 @@ def cell469 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 2, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell469_check_indexed : cell469.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 4], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 15, 16, 15, 17], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 18, 9], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 6, 20, 21], [0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 5, 22]] = true := by
+  decide +kernel
+
 theorem cell469_check :
     cell469.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 8, 2, 2, 26, 4, 29, 6] witnessGeometryChecked (by decide))
+      cell469_check_indexed
 
 /-- Closed-cover cell 470 for the fixed row-06 divisor, with 22 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 8, 2, 2, 26, 4, 30, 6]`; `cell470_check` verifies
@@ -2043,9 +2951,20 @@ def cell470 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 2, 1, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -2, 0, 0, 1, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, 2, 0, 1, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell470_check_indexed : cell470.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 4], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 15, 16, 15, 17], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 18, 9], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 20, 21, 20], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 5, 22]] = true := by
+  decide +kernel
+
 theorem cell470_check :
     cell470.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 8, 2, 2, 26, 4, 30, 6] witnessGeometryChecked (by decide))
+      cell470_check_indexed
 
 /-- Closed-cover cell 471 for the fixed row-06 divisor, with 22 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 9, 2, 2, 26, 4, 27, 6]`; `cell471_check` verifies
@@ -2067,9 +2986,20 @@ def cell471 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 2, -1, 0, 1], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1, 0, 0],
       aff [0, 0, 0, 0, 0, 2, 0, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell471_check_indexed : cell471.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 14, 1, 0, 0, 15, 16], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 18, 17, 19], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 20, 9], [0, 0, 0, 0, 0, 0, 0, 0, 21, 8], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 5, 22]] = true := by
+  decide +kernel
+
 theorem cell471_check :
     cell471.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 9, 2, 2, 26, 4, 27, 6] witnessGeometryChecked (by decide))
+      cell471_check_indexed
 
 /-- Closed-cover cell 472 for the fixed row-06 divisor, with 24 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 9, 2, 2, 26, 4, 28, 6]`; `cell472_check` verifies
@@ -2092,9 +3022,20 @@ def cell472 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell472_check_indexed : cell472.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 14, 1, 0, 0, 15, 16], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 18, 17, 19], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 20, 9], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 6, 22, 23], [0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 5, 24]] = true := by
+  decide +kernel
+
 theorem cell472_check :
     cell472.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 9, 2, 2, 26, 4, 28, 6] witnessGeometryChecked (by decide))
+      cell472_check_indexed
 
 /-- Closed-cover cell 473 for the fixed row-06 divisor, with 24 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 9, 2, 2, 26, 4, 29, 6]`; `cell473_check` verifies
@@ -2117,9 +3058,20 @@ def cell473 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 2, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell473_check_indexed : cell473.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 14, 1, 0, 0, 15, 16], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 18, 17, 19], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 20, 9], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 6, 22, 23], [0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 5, 24]] = true := by
+  decide +kernel
+
 theorem cell473_check :
     cell473.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 9, 2, 2, 26, 4, 29, 6] witnessGeometryChecked (by decide))
+      cell473_check_indexed
 
 /-- Closed-cover cell 474 for the fixed row-06 divisor, with 24 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 9, 2, 2, 26, 4, 30, 6]`; `cell474_check` verifies
@@ -2142,9 +3094,20 @@ def cell474 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 2, 1, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -2, 0, 0, 1, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, 2, 0, 1, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell474_check_indexed : cell474.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 14, 1, 0, 0, 15, 16], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 18, 17, 19], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 20, 9], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 22, 23, 22], [0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 5, 24]] = true := by
+  decide +kernel
+
 theorem cell474_check :
     cell474.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 9, 2, 2, 26, 4, 30, 6] witnessGeometryChecked (by decide))
+      cell474_check_indexed
 
 /-- Closed-cover cell 475 for the fixed row-06 divisor, with 22 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 10, 2, 2, 26, 4, 27, 6]`; `cell475_check` verifies
@@ -2166,9 +3129,20 @@ def cell475 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 2, -1, 0, 1], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1, 0, 0],
       aff [0, 0, 0, 0, 0, 2, 0, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell475_check_indexed : cell475.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 14, 1, 0, 0, 15, 16], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 18, 17, 19], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 20, 9], [0, 0, 0, 0, 0, 0, 0, 0, 21, 8], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 5, 22]] = true := by
+  decide +kernel
+
 theorem cell475_check :
     cell475.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 10, 2, 2, 26, 4, 27, 6] witnessGeometryChecked (by decide))
+      cell475_check_indexed
 
 /-- Closed-cover cell 476 for the fixed row-06 divisor, with 24 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 10, 2, 2, 26, 4, 28, 6]`; `cell476_check` verifies
@@ -2191,9 +3165,20 @@ def cell476 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell476_check_indexed : cell476.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 14, 1, 0, 0, 15, 16], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 18, 17, 19], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 20, 9], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 6, 22, 23], [0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 5, 24]] = true := by
+  decide +kernel
+
 theorem cell476_check :
     cell476.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 10, 2, 2, 26, 4, 28, 6] witnessGeometryChecked (by decide))
+      cell476_check_indexed
 
 /-- Closed-cover cell 477 for the fixed row-06 divisor, with 24 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 10, 2, 2, 26, 4, 29, 6]`; `cell477_check` verifies
@@ -2216,9 +3201,20 @@ def cell477 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 2, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell477_check_indexed : cell477.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 14, 1, 0, 0, 15, 16], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 18, 17, 19], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 20, 9], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 6, 22, 23], [0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 5, 24]] = true := by
+  decide +kernel
+
 theorem cell477_check :
     cell477.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 10, 2, 2, 26, 4, 29, 6] witnessGeometryChecked (by decide))
+      cell477_check_indexed
 
 /-- Closed-cover cell 478 for the fixed row-06 divisor, with 24 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 10, 2, 2, 26, 4, 30, 6]`; `cell478_check` verifies
@@ -2241,9 +3237,20 @@ def cell478 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 2, 1, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -2, 0, 0, 1, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, 2, 0, 1, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell478_check_indexed : cell478.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 14, 1, 0, 0, 15, 16], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 18, 17, 19], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 20, 9], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 22, 23, 22], [0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 5, 24]] = true := by
+  decide +kernel
+
 theorem cell478_check :
     cell478.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 10, 2, 2, 26, 4, 30, 6] witnessGeometryChecked (by decide))
+      cell478_check_indexed
 
 /-- Closed-cover cell 479 for the fixed row-06 divisor, with 22 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 11, 2, 2, 26, 4, 27, 6]`; `cell479_check` verifies
@@ -2265,9 +3272,20 @@ def cell479 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 2, -1, 0, 1], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1, 0, 0],
       aff [0, 0, 0, 0, 0, 2, 0, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell479_check_indexed : cell479.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [14, 15, 16, 15], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 17, 18, 17, 19], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     20, 9], [0, 0, 0, 0, 0, 0, 0, 0, 21, 8], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 22]]
+     = true := by
+  decide +kernel
+
 theorem cell479_check :
     cell479.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 11, 2, 2, 26, 4, 27, 6] witnessGeometryChecked (by decide))
+      cell479_check_indexed
 
 /-- Closed-cover cell 480 for the fixed row-06 divisor, with 24 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 11, 2, 2, 26, 4, 28, 6]`; `cell480_check` verifies
@@ -2290,9 +3308,20 @@ def cell480 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell480_check_indexed : cell480.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [14, 15, 16, 15], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 17, 18, 17, 19], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     20, 9], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 6, 22, 23], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 5, 24]] = true := by
+  decide +kernel
+
 theorem cell480_check :
     cell480.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 11, 2, 2, 26, 4, 28, 6] witnessGeometryChecked (by decide))
+      cell480_check_indexed
 
 /-- Closed-cover cell 481 for the fixed row-06 divisor, with 24 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 11, 2, 2, 26, 4, 29, 6]`; `cell481_check` verifies
@@ -2315,9 +3344,20 @@ def cell481 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 2, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell481_check_indexed : cell481.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [14, 15, 16, 15], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 17, 18, 17, 19], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     20, 9], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 6, 22, 23], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 5, 24]] = true := by
+  decide +kernel
+
 theorem cell481_check :
     cell481.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 11, 2, 2, 26, 4, 29, 6] witnessGeometryChecked (by decide))
+      cell481_check_indexed
 
 /-- Closed-cover cell 482 for the fixed row-06 divisor, with 24 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 11, 2, 2, 26, 4, 30, 6]`; `cell482_check` verifies
@@ -2340,9 +3380,20 @@ def cell482 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 2, 1, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -2, 0, 0, 1, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, 2, 0, 1, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell482_check_indexed : cell482.certificate.checkClosedRows 4
+    [[0, 0, 0, 0, 0, 0, 3, 13], [14, 15, 16, 15], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 17, 18, 17, 19], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     20, 9], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 22, 23, 22], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 5, 24]] = true := by
+  decide +kernel
+
 theorem cell482_check :
     cell482.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row06Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 11, 2, 2, 26, 4, 30, 6] witnessGeometryChecked (by decide))
+      cell482_check_indexed
 
 /-- The ordered row-06 closed-cover cell block with global indices 387 through 482, used when
 assembling the full 483-cell cover. -/

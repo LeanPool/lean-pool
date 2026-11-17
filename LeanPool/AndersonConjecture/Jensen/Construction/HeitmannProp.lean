@@ -9,6 +9,7 @@ public import Mathlib.RingTheory.Ideal.Height
 public import Mathlib.RingTheory.Regular.RegularSequence
 public import Mathlib.RingTheory.AdicCompletion.Algebra
 import Mathlib.RingTheory.AdicCompletion.RingHom
+import Mathlib.RingTheory.Nakayama
 
 /-!
 # Heitmann's Proposition 1

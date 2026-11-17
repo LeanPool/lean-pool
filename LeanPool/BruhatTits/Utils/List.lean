@@ -6,6 +6,7 @@ Authors: Judith Ludwig, Christian Merten
 module
 
 public import Batteries.Data.List.Basic
+import all Batteries.Data.List.Basic
 import Mathlib.Tactic.TypeStar
 
 /-!

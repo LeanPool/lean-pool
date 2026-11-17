@@ -20,7 +20,7 @@ only the fragments the Courant–Fischer proofs needed.
 module
 
 public import Mathlib.Analysis.InnerProductSpace.PiL2
-public import Mathlib.Analysis.InnerProductSpace.Projection.FiniteDimensional
+import Mathlib.Analysis.InnerProductSpace.Projection.FiniteDimensional
 
 /-! # Spans of orthonormal subfamilies
 

@@ -173,6 +173,6 @@ theorem fixed_near_force_source_morrey_lt_top_of_sws
       exact (norm_mul (η w.1) (f w j)).le.trans
         (mul_le_of_le_one_left (norm_nonneg _) he)
   exact pressure_source_morrey_lt_top_of_memLp (by norm_num) hκ
-    ((memLp_indicator_iff_restrict hQ).mpr hprod)
+    ((memLp_indicator_iff_restrict hQ.nullMeasurableSet).mpr hprod)
 
 end CKN.Core.Step4

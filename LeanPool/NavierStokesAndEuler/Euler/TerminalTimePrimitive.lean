@@ -7,6 +7,7 @@ Authors: OpenAI
 module
 
 import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
+import Mathlib.MeasureTheory.Integral.IntervalIntegral.LebesgueDifferentiationThm
 public import LeanPool.NavierStokesAndEuler.Euler.TimeLpLinearity
 public import Mathlib.MeasureTheory.Function.AbsolutelyContinuous
 import Mathlib.Algebra.Order.Star.Real
@@ -44,7 +45,7 @@ omit [NormedSpace ℝ E] in
 /-- Zero extension preserves genuine square integrability. -/
 theorem zeroExtension_memLp (T : ℝ) (u : TimeLp T E) :
     MemLp (zeroExtension T u) 2 volume := by
-  exact (memLp_indicator_iff_restrict measurableSet_Icc).2 (Lp.memLp u)
+  exact (memLp_indicator_iff_restrict measurableSet_Icc.nullMeasurableSet).2 (Lp.memLp u)
 
 omit [NormedSpace ℝ E] in
 /-- The finite time interval makes the zero extension Bochner integrable. -/
@@ -57,7 +58,7 @@ omit [NormedSpace ℝ E] in
 /-- The zero extension is the original time field almost everywhere on its interval. -/
 theorem zeroExtension_ae (T : ℝ) (u : TimeLp T E) :
     zeroExtension T u =ᵐ[timeMeasure T] fun t => u t :=
-  indicator_ae_eq_restrict measurableSet_Icc
+  indicator_ae_eq_restrict measurableSet_Icc.nullMeasurableSet
 
 /-- The actual real-valued-time representative, with terminal value zero. -/
 def realPrimitive (T : ℝ) (u : TimeLp T E) (t : ℝ) : E :=

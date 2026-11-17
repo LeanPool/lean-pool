@@ -97,7 +97,7 @@ theorem explicitPermutation_prefix (n m : ℕ) (hm : m ≤ (algorithmStage n).le
   · intro i hi hj
     have hi' : i < m := by simpa using hi
     simp only [List.getElem_map, List.getElem_range, List.getElem_take]
-    exact explicitPermutation_eq_getElem n i (lt_of_lt_of_le hi' hm)
+    exact explicitPermutation_eq_getElem n i (Nat.lt_of_lt_of_le hi' hm)
 
 /-- Add one to the executable permutation, as in the last sentence of the
 proof and the second displayed prefix in the final remark. Positions remain

@@ -6,6 +6,7 @@ Authors: Samuel Schlesinger
 module
 
 public import LeanPool.Shannon1948Formalization.Entropy.Uniform
+public import Mathlib.Algebra.BigOperators.Field
 import LeanPool.Shannon1948Formalization.Entropy.Rational
 import Mathlib.Algebra.Order.Algebra
 import Mathlib.Analysis.SpecialFunctions.Pow.NNReal

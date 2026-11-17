@@ -9,6 +9,7 @@ module
 import Mathlib.FieldTheory.KummerExtension
 public import Mathlib.NumberTheory.NumberField.Cyclotomic.Basic
 import Mathlib.NumberTheory.NumberField.Cyclotomic.Ideal
+import Mathlib.RingTheory.RootsOfUnity.CyclotomicUnits
 
 import LeanPool.FltRegular.NumberTheory.Unramified
 

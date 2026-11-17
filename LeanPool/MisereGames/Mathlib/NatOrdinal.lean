@@ -214,7 +214,7 @@ theorem succ_of (a : Ordinal) : Order.succ (of a) = of (a + 1) :=
 theorem succ_ne_zero (a : NatOrdinal) : Order.succ a ≠ 0 := Order.succ_ne_bot a
 theorem succ_zero : Order.succ (0 : NatOrdinal) = 1 := by
   change Order.succ (0 : Ordinal) = 1
-  simp
+  simp only [succ_eq_add_one, zero_add]
 
 /-- Recursor through the underlying ordinal representation. -/
 @[elab_as_elim, cases_eliminator, induction_eliminator]
@@ -325,7 +325,7 @@ theorem lt_add_iff : a < b + c ↔ (∃ b' < b, a ≤ b' + c) ∨ ∃ c' < c, a 
 
 theorem add_le_iff : b + c ≤ a ↔ (∀ b' < b, b' + c < a) ∧ ∀ c' < c, b + c' < a := by
   rw [← not_lt, lt_add_iff]
-  simp
+  simp only [not_or, not_exists, not_and, not_le]
 
 instance : AddLeftStrictMono NatOrdinal where
   elim _a _b _c h := lt_add_iff.2 (.inr ⟨_, h, le_rfl⟩)
@@ -359,9 +359,12 @@ private theorem iSup_add_of_monotone (f : NatOrdinal.{u} → NatOrdinal.{u}) (h 
     obtain ⟨x, hx, hi⟩ | ⟨x, hx, hi⟩ := lt_add_iff.1 hi
     · exact le_max_of_le_left ((h hi).trans <| le_iSup (fun x : Iio a ↦ _) ⟨x, hx⟩)
     · exact le_max_of_le_right ((h hi).trans <| le_iSup (fun x : Iio b ↦ _) ⟨x, hx⟩)
-  all_goals
-    refine csSup_le_csSup' (bddAbove_of_small _) fun _ ↦ ?_
-    aesop
+  · refine csSup_le_csSup' (bddAbove_of_small _) ?_
+    rintro _ ⟨x, rfl⟩
+    exact ⟨⟨x + b, lt_add_iff.2 (.inl ⟨x, x.property, le_rfl⟩)⟩, rfl⟩
+  · refine csSup_le_csSup' (bddAbove_of_small _) ?_
+    rintro _ ⟨x, rfl⟩
+    exact ⟨⟨a + x, lt_add_iff.2 (.inr ⟨x, x.property, le_rfl⟩)⟩, rfl⟩
 
 private theorem add_assoc' (a b c : NatOrdinal) : a + b + c = a + (b + c) := by
   rw [add_def, add_def a (b + c)]
@@ -383,8 +386,8 @@ instance : IsOrderedCancelAddMonoid NatOrdinal where
     by_contra! h'
     exact h.not_gt (add_lt_add_right h' a)
 
-theorem le_add_left : a ≤ b + a := by simp
-theorem le_add_right : a ≤ a + b := by simp
+theorem le_add_left : a ≤ b + a := by simp only [le_add_iff_nonneg_left, zero_le]
+theorem le_add_right : a ≤ a + b := by simp only [le_add_iff_nonneg_right, zero_le]
 
 @[simp]
 theorem add_eq_zero_iff : a + b = 0 ↔ a = 0 ∧ b = 0 := by
@@ -422,7 +425,7 @@ protected theorem succ_one : succ (1 : NatOrdinal) = 2 := by
   exact one_add_one_eq_two
 
 theorem natCast_image_Iio' (n : ℕ) : Nat.cast '' Iio n = Iio (n : Ordinal) := by
-  simp_all
+  simp_all only [Ordinal.natCast_image_Iio]
 
 @[simp]
 theorem natCast_image_Iio (n : ℕ) : Nat.cast '' Iio n = Iio (n : NatOrdinal) :=
@@ -452,7 +455,7 @@ instance : CharZero NatOrdinal where
 @[simp]
 theorem of_add_natCast (a : Ordinal) (n : ℕ) : of (a + n) = of a + n := by
   induction n with
-  | zero => simp
+  | zero => simp only [Nat.cast_zero, add_zero]
   | succ n IH => simp [← add_assoc, IH]
 
 @[simp]

@@ -11,7 +11,17 @@ public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
 public import Mathlib.LinearAlgebra.Matrix.AbsoluteValue
 public import Mathlib.LinearAlgebra.Matrix.SchurComplement
-public import Mathlib.Tactic
+import Mathlib.Algebra.BigOperators.Field
+import Mathlib.Tactic.Choose -- shake: keep
+import Mathlib.Tactic.Convert -- shake: keep
+import Mathlib.Tactic.Ext -- shake: keep
+import Mathlib.Tactic.FieldSimp -- shake: keep
+import Mathlib.Tactic.GCongr -- shake: keep
+import Mathlib.Tactic.Linarith -- shake: keep
+import Mathlib.Tactic.NormNum -- shake: keep
+import Mathlib.Tactic.Positivity -- shake: keep
+import Mathlib.Tactic.Ring -- shake: keep
+import Mathlib.Tactic.SimpRw -- shake: keep
 
 /-! # Rational Ellipsoid -/
 
@@ -125,33 +135,16 @@ theorem finiteDot_add_right {d : ℕ} (x y z : Fin d → ℝ) :
 
 theorem finiteDot_smul_left {d : ℕ} (a : ℝ) (x y : Fin d → ℝ) :
     finiteDot (fun i ↦ a * x i) y = a * finiteDot x y := by
-  rw [finiteDot, finiteDot]
-  calc
-    (∑ i, a * x i * y i) = ∑ i, a * (x i * y i) := by
-      apply Finset.sum_congr rfl
-      intro i _
-      ring
-    _ = a * ∑ i, x i * y i := by rw [Finset.mul_sum]
+  simp only [finiteDot, Finset.mul_sum, mul_assoc]
 
 theorem finiteDot_smul_right {d : ℕ} (a : ℝ) (x y : Fin d → ℝ) :
     finiteDot x (fun i ↦ a * y i) = a * finiteDot x y := by
-  rw [finiteDot, finiteDot]
-  calc
-    (∑ i, x i * (a * y i)) = ∑ i, a * (x i * y i) := by
-      apply Finset.sum_congr rfl
-      intro i _
-      ring
-    _ = a * ∑ i, x i * y i := by rw [Finset.mul_sum]
+  simp only [finiteDot, Finset.mul_sum, mul_left_comm]
 
 theorem finiteNormSq_smul {d : ℕ} (a : ℝ) (x : Fin d → ℝ) :
     finiteNormSq (fun i ↦ a * x i) = a ^ 2 * finiteNormSq x := by
-  rw [finiteNormSq, finiteDot, finiteNormSq, finiteDot]
-  calc
-    (∑ i, a * x i * (a * x i)) = ∑ i, a ^ 2 * (x i * x i) := by
-      apply Finset.sum_congr rfl
-      intro i _
-      ring
-    _ = a ^ 2 * ∑ i, x i * x i := by rw [Finset.mul_sum]
+  rw [finiteNormSq, finiteDot_smul_left, finiteDot_smul_right,
+    finiteNormSq, pow_two, mul_assoc]
 
 theorem finiteNormSq_add {d : ℕ} (x y : Fin d → ℝ) :
     finiteNormSq (fun i ↦ x i + y i) =
@@ -190,19 +183,21 @@ theorem rationalEllipsoidAlpha_le_quarter {d : ℕ} (hd : 0 < d) :
     rationalEllipsoidAlpha d ≤ 1 / 4 := by
   have hdq : (1 : ℚ) ≤ d := by exact_mod_cast hd
   change (1 : ℚ) / (4 * (d : ℚ) ^ 2) ≤ 1 / 4
-  rw [div_le_div_iff₀ (by positivity) (by norm_num)]
-  nlinarith [sq_nonneg ((d : ℚ) - 1)]
+  exact one_div_le_one_div_of_le (by norm_num) (by
+    simpa only [mul_one] using
+      mul_le_mul_of_nonneg_left (one_le_pow₀ (n := 2) hdq)
+        (by norm_num : (0 : ℚ) ≤ 4))
+
+private theorem rationalEllipsoidAlpha_div_le_quarter {d : ℕ} (hd : 0 < d) :
+    rationalEllipsoidAlpha d / d ≤ 1 / 4 :=
+  (div_le_self (rationalEllipsoidAlpha_pos hd).le (by exact_mod_cast hd)).trans
+    (rationalEllipsoidAlpha_le_quarter hd)
 
 theorem rationalEllipsoidParallelScale_pos {d : ℕ} (hd : 0 < d) :
     0 < rationalEllipsoidParallelScale d := by
-  have ha0 := rationalEllipsoidAlpha_pos hd
-  have ha1 := rationalEllipsoidAlpha_le_quarter hd
-  have hdq : (1 : ℚ) ≤ d := by exact_mod_cast hd
   rw [rationalEllipsoidParallelScale]
-  have had : rationalEllipsoidAlpha d / d ≤ 1 / 4 := by
-    exact (div_le_iff₀ (by positivity : (0 : ℚ) < d)).2
-      (by nlinarith)
-  linarith
+  exact sub_pos.mpr
+    ((rationalEllipsoidAlpha_div_le_quarter hd).trans_lt (by norm_num))
 
 theorem rationalEllipsoidParallelScale_le_one (d : ℕ) :
     rationalEllipsoidParallelScale d ≤ 1 := by
@@ -217,13 +212,8 @@ theorem rationalEllipsoidParallelScale_le_one (d : ℕ) :
 theorem rationalEllipsoidParallelScale_ge_three_quarters
     {d : ℕ} (hd : 0 < d) :
     (3 / 4 : ℚ) ≤ rationalEllipsoidParallelScale d := by
-  have ha := rationalEllipsoidAlpha_le_quarter hd
-  have hdq : (1 : ℚ) ≤ d := by exact_mod_cast hd
-  have had : rationalEllipsoidAlpha d / d ≤ 1 / 4 := by
-    rw [div_le_iff₀ (by positivity : (0 : ℚ) < d)]
-    nlinarith
   rw [rationalEllipsoidParallelScale]
-  linarith
+  linarith only [rationalEllipsoidAlpha_div_le_quarter hd]
 
 theorem rationalEllipsoidPerpScale_pos (d : ℕ) :
     0 < rationalEllipsoidPerpScale d := by
@@ -235,8 +225,8 @@ theorem rationalEllipsoidParallel_lt_perp {d : ℕ} (hd : 0 < d) :
   have ha := rationalEllipsoidAlpha_pos hd
   have hdq : (0 : ℚ) < d := by exact_mod_cast hd
   rw [rationalEllipsoidParallelScale, rationalEllipsoidPerpScale]
-  have had : 0 < rationalEllipsoidAlpha d / d := div_pos ha hdq
-  nlinarith [sq_nonneg (rationalEllipsoidAlpha d)]
+  exact (sub_lt_self 1 (div_pos ha hdq)).trans_le
+    (le_add_of_nonneg_right (mul_nonneg (by norm_num) (sq_nonneg _)))
 
 /-- A coarse lower bound on the exact determinant multiplier.  It is used
 for an all-input bit-growth bound; unlike the contraction estimate, no
@@ -508,48 +498,50 @@ theorem rationalEllipsoid_scalar_containment
       Rat.cast_le.mpr hq
     norm_num at hc ⊢
     simpa only [α] using hc
-  have hdR : (1 : ℝ) ≤ d := by exact_mod_cast hd
   have hp0 : 0 < p := by
     simpa [p] using (Rat.cast_pos (K := ℝ)).mpr (rationalEllipsoidParallelScale_pos hd)
-  have hp1 : p ≤ 1 := by
-    simpa [p] using Rat.cast_le.mpr (rationalEllipsoidParallelScale_le_one d)
   have hA0 : 0 < A := by
     simpa [A] using (Rat.cast_pos (K := ℝ)).mpr (rationalEllipsoidPerpScale_pos d)
   have hpA : p < A := by
     simpa [p, A] using (Rat.cast_lt (K := ℝ)).mpr (rationalEllipsoidParallel_lt_perp hd)
   have hh0' : α / d ≤ h := by simpa [α] using hh0
   have hh1' : h ≤ α := by simpa [α] using hh1
-  have hhpos : 0 ≤ h := by
-    have : 0 < α / (d : ℝ) := div_pos hα0 (by positivity)
-    linarith
+  have hhpos : 0 ≤ h :=
+    (div_pos hα0 (Nat.cast_pos.mpr hd)).le.trans hh0'
   have hh_le_one : h ≤ 1 := hh1'.trans (hα1.trans (by norm_num))
   have hp : p = 1 - α / d := by
     simp [p, α, rationalEllipsoidParallelScale]
   have hA : A = 1 + 2 * α ^ 2 := by
     simp [A, α, rationalEllipsoidPerpScale]
   have hendpointNeg : (1 - h) ^ 2 / p ^ 2 ≤ 1 := by
-    have hph : 1 - h ≤ p := by rw [hp]; linarith
+    have hph : 1 - h ≤ p := by rw [hp]; exact sub_le_sub_left hh0' 1
     have honeh0 : 0 ≤ 1 - h := sub_nonneg.mpr hh_le_one
-    rw [div_le_iff₀ (sq_pos_of_pos hp0)]
-    nlinarith
+    rw [div_le_iff₀ (sq_pos_of_pos hp0), one_mul]
+    exact (sq_le_sq₀ honeh0 hp0.le).2 hph
   have hp_ge_three_quarters : 3 / 4 ≤ p := by
-    rw [hp]
-    have : α / (d : ℝ) ≤ 1 / 4 := by
-      exact (div_le_iff₀ (by positivity : (0 : ℝ) < d)).2 (by nlinarith)
-    linarith
+    simpa [p] using (Rat.cast_le (K := ℝ)).2
+      (rationalEllipsoidParallelScale_ge_three_quarters hd)
   have hendpointZero : 1 / A ^ 2 + h ^ 2 / p ^ 2 ≤ 1 := by
-    have hh_sq : h ^ 2 ≤ α ^ 2 := by nlinarith
-    have hp_sq : (9 / 16 : ℝ) ≤ p ^ 2 := by nlinarith
-    have hA_sq : 1 + 4 * α ^ 2 ≤ A ^ 2 := by rw [hA]; nlinarith [sq_nonneg α]
-    have hαsq : α ^ 2 ≤ 1 / 16 := by nlinarith
+    have hh_sq : h ^ 2 ≤ α ^ 2 := (sq_le_sq₀ hhpos hα0.le).2 hh1'
+    have hp_sq : (9 / 16 : ℝ) ≤ p ^ 2 := by
+      have hs := pow_le_pow_left₀ (by norm_num : (0 : ℝ) ≤ 3 / 4)
+        hp_ge_three_quarters 2
+      norm_num at hs
+      exact hs
+    have hA_sq : 1 + 4 * α ^ 2 ≤ A ^ 2 := by
+      rw [hA]
+      nlinarith only [sq_nonneg (α ^ 2)]
+    have hαsq : α ^ 2 ≤ 1 / 16 := by
+      have hs := pow_le_pow_left₀ hα0.le hα1 2
+      norm_num at hs
+      exact hs
     have hfirst : 1 / A ^ 2 ≤ 1 / (1 + 4 * α ^ 2) := by
       exact one_div_le_one_div_of_le (by positivity) hA_sq
     have hsecond : h ^ 2 / p ^ 2 ≤ (16 / 9) * α ^ 2 := by
-      have := (div_le_div_iff₀ (by positivity : (0 : ℝ) < p ^ 2)
-        (by norm_num : (0 : ℝ) < 9 / 16)).2
-          (by nlinarith : h ^ 2 * (9 / 16 : ℝ) ≤ α ^ 2 * p ^ 2)
-      norm_num at this ⊢
-      linarith
+      calc
+        h ^ 2 / p ^ 2 ≤ α ^ 2 / (9 / 16) :=
+          div_le_div₀ (sq_nonneg α) hh_sq (by norm_num) hp_sq
+        _ = (16 / 9) * α ^ 2 := by ring
     have hsum : 1 / (1 + 4 * α ^ 2) + (16 / 9) * α ^ 2 ≤ 1 := by
       have hden : 0 < 1 + 4 * α ^ 2 := by positivity
       have hid :
@@ -557,12 +549,14 @@ theorem rationalEllipsoid_scalar_containment
             (1 + (16 / 9) * α ^ 2 * (1 + 4 * α ^ 2)) /
               (1 + 4 * α ^ 2) := by field_simp
       rw [hid, div_le_one hden]
-      nlinarith
-    linarith
+      nlinarith only [sq_nonneg α,
+        mul_le_mul_of_nonneg_left hαsq (sq_nonneg α)]
+    exact (add_le_add hfirst hsecond).trans hsum
   have hcoef : 0 ≤ 1 / p ^ 2 - 1 / A ^ 2 := by
-    have hp2 : p ^ 2 ≤ A ^ 2 := by nlinarith [hp0, hA0]
-    exact sub_nonneg.mpr (one_div_le_one_div_of_le (by positivity) hp2)
-  have htprod : t * (t + 1) ≤ 0 := mul_nonpos_of_nonpos_of_nonneg ht0 (by linarith)
+    have hp2 : p ^ 2 ≤ A ^ 2 := (sq_le_sq₀ hp0.le hA0.le).2 hpA.le
+    exact sub_nonneg.mpr (one_div_le_one_div_of_le (sq_pos_of_pos hp0) hp2)
+  have htprod : t * (t + 1) ≤ 0 :=
+    mul_nonpos_of_nonpos_of_nonneg ht0 (by linarith only [ht1])
   have hchord :
       (1 - t ^ 2) / A ^ 2 + (t + h) ^ 2 / p ^ 2 ≤
         (-t) * ((1 - h) ^ 2 / p ^ 2) +
@@ -586,8 +580,8 @@ theorem rationalEllipsoid_scalar_containment
           (1 + t) * (1 / A ^ 2 + h ^ 2 / p ^ 2) := hchord
     _ ≤ (-t) * 1 + (1 + t) * 1 := by
       exact add_le_add
-        (mul_le_mul_of_nonneg_left hendpointNeg (by linarith))
-        (mul_le_mul_of_nonneg_left hendpointZero (by linarith))
+        (mul_le_mul_of_nonneg_left hendpointNeg (neg_nonneg.mpr ht0))
+        (mul_le_mul_of_nonneg_left hendpointZero (by linarith only [ht1]))
     _ = 1 := by ring
 /-- Full-dimensional containment for the rational update.  The hypotheses on
 `u` say that it approximates the Euclidean norm of `b` between factors `1`

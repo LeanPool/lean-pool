@@ -9,6 +9,7 @@ import all LeanPool.HopfProblem.CuspFibre.CuspCentralHomology2
 
 public import LeanPool.HopfProblem.InternalPrelude
 public import LeanPool.HopfProblem.Uniformization.SpecialPeriods8
+import Mathlib.AlgebraicTopology.FundamentalGroupoid.InducedMaps
 import LeanPool.HopfProblem.HomologyTheory.SingularMayerVietoris
 import LeanPool.HopfProblem.Foundations.Core2
 import all LeanPool.HopfProblem.PeriodFamily.PeriodPoint

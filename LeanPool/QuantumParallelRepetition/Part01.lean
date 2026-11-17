@@ -5,15 +5,17 @@ Authors: OpenAI, Dean Cureton
 -/
 module
 
-public import Mathlib.Algebra.Order.Archimedean.Real.Hom
 public import Mathlib.Analysis.CStarAlgebra.Module.Constructions
 public import Mathlib.Analysis.InnerProductSpace.StarOrder
 public import Mathlib.Analysis.Matrix.Order
 public import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
+public import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
 public import Mathlib.LinearAlgebra.FreeModule.PID
 public import Mathlib.MeasureTheory.Function.L2Space
 public import Mathlib.MeasureTheory.SpecificCodomains.Pi
-public import Mathlib.Tactic.NormNum.RealSqrt
+public import Mathlib.Tactic.NormNum.RealSqrt -- shake: keep
+
+import Mathlib.Algebra.Order.Archimedean.Real.Hom
 
 /-! # Quantum parallel repetition, part 01 -/
 
@@ -27,19 +29,15 @@ namespace QuantumParallelRepetition
 noncomputable local instance matrixComplexContinuousENormPartOne
     {m n : Type*} [Fintype m] [Fintype n] :
     ContinuousENorm (Matrix m n ℂ) :=
-  @SeminormedAddGroup.toContinuousENorm (Matrix m n ℂ)
-    (Matrix.normedAddCommGroup.toSeminormedAddCommGroup.toSeminormedAddGroup)
+  (@SeminormedAddGroup.toESeminormedAddMonoid (Matrix m n ℂ)
+    Matrix.normedAddCommGroup.toSeminormedAddCommGroup.toSeminormedAddGroup).toContinuousENorm
 
 /-- The local matrix norm instance used while elaborating part one. -/
 noncomputable local instance matrixComplexESeminormedAddCommMonoidPartOne
     {m n : Type*} [Fintype m] [Fintype n] :
     ESeminormedAddCommMonoid (Matrix m n ℂ) :=
-  let base := @NormedAddCommGroup.toENormedAddCommMonoid (Matrix m n ℂ)
-    Matrix.normedAddCommGroup
-  { toContinuousENorm := inferInstance
-    toAddCommMonoid := base.toAddCommMonoid
-    enorm_zero := base.enorm_zero
-    enorm_add_le := base.enorm_add_le }
+  (@NormedAddCommGroup.toENormedAddCommMonoid (Matrix m n ℂ)
+    Matrix.normedAddCommGroup).toESeminormedAddCommMonoid
 
 section
 
@@ -359,7 +357,7 @@ theorem quadraticExpectation_sub_le
   have h_expand :
       ⟪z, W z⟫_ℂ - ⟪w, W w⟫_ℂ =
         ⟪z - w, W z⟫_ℂ + ⟪w, W (z - w)⟫_ℂ := by
-    simp only [CStarModule.inner_sub_left, map_sub, CStarModule.inner_sub_right,
+    simp only [CStarModule.inner_sub_left, map_sub W, CStarModule.inner_sub_right,
       sub_add_sub_cancel]
   have hz := norm_le_of_operator_contraction W hW z
   have hdiff := norm_le_of_operator_contraction W hW (z - w)
@@ -376,9 +374,10 @@ theorem quadraticExpectation_sub_le
       norm_add_le _ _
     _ ≤ ‖z - w‖ * ‖W z‖ + ‖w‖ * ‖W (z - w)‖ :=
       add_le_add (norm_inner_le_norm _ _) (norm_inner_le_norm _ _)
-    _ ≤ ‖z - w‖ * ‖z‖ + ‖w‖ * ‖z - w‖ := by
-      gcongr
-    _ = (‖z‖ + ‖w‖) * ‖z - w‖ := by ring
+    _ ≤ ‖z - w‖ * ‖z‖ + ‖w‖ * ‖z - w‖ :=
+      add_le_add (mul_le_mul_of_nonneg_left hz (norm_nonneg _))
+        (mul_le_mul_of_nonneg_left hdiff (norm_nonneg _))
+    _ = (‖z‖ + ‖w‖) * ‖z - w‖ := by rw [add_mul, mul_comm ‖z‖]
 
 theorem weighted_real_cauchy
     {ι : Type*} [Fintype ι]
@@ -790,9 +789,8 @@ private theorem convexMixtureStrategy_winProbability
       _ = ∑ j : J, ∑ x : X, ∑ y : Y, ∑ a : A, ∑ b : B,
             f x y a b j := Finset.sum_comm
   unfold Strategy.winProbability
-  simp_rw [convexMixtureStrategy_outcomeProbability p hp h_normalized S]
-  simp_rw [h_branch]
-  simp_rw [Finset.mul_sum]
+  simp only [convexMixtureStrategy_outcomeProbability p hp h_normalized S,
+    h_branch, Finset.mul_sum]
   rw [h_swap (fun x y a b j =>
     G.questionWeight x y *
       (p j * (if G.predicate x y a b = true then
@@ -1414,6 +1412,14 @@ theorem noncommutative_resolvent_second_order
     _ = RM - RM * (F - M) * RM +
       RM * (F - M) * RF * (F - M) * RM := by noncomm_ring
 
+private theorem commuting_weight_second_order {R : Type*} [Ring R]
+    (weight mean difference inverse : R) (commutes : weight * mean = mean * weight) :
+    weight * (mean - mean * difference * mean +
+        mean * difference * inverse * difference * mean) =
+      weight * mean - mean * (weight * difference) * mean +
+        mean * (weight * (difference * inverse * difference)) * mean := by
+  simp only [mul_add, mul_sub, ← mul_assoc, commutes]
+
 theorem noncommutative_weighted_resolvent_second_order
     {ι R : Type*} [Fintype ι] [Ring R]
     (weight : ι → R) (F : ι → R) (M S : R)
@@ -1434,22 +1440,8 @@ theorem noncommutative_weighted_resolvent_second_order
           RM * (weight i * ((F i - M) * RF i * (F i - M))) * RM := by
     nth_rewrite 1 [noncommutative_resolvent_second_order
       (F i) M S (RF i) RM (hF_left i) (hF_right i) hM_left hM_right]
-    have hw := commute_mean i
-    calc
-      weight i *
-        (RM - RM * (F i - M) * RM +
-          RM * (F i - M) * RF i * (F i - M) * RM) =
-        weight i * RM -
-          (weight i * RM) * (F i - M) * RM +
-          (weight i * RM) * ((F i - M) * RF i * (F i - M)) * RM := by
-            noncomm_ring
-      _ = weight i * RM -
-          (RM * weight i) * (F i - M) * RM +
-          (RM * weight i) * ((F i - M) * RF i * (F i - M)) * RM := by
-            rw [hw]
-      _ = weight i * RM - RM * (weight i * (F i - M)) * RM +
-          RM * (weight i * ((F i - M) * RF i * (F i - M))) * RM := by
-            noncomm_ring
+    exact commuting_weight_second_order (weight i) RM (F i - M) (RF i)
+      (commute_mean i)
   calc
     (∑ i : ι, weight i * RF i) - RM =
         (∑ i : ι,
@@ -1524,27 +1516,37 @@ section
 open MeasureTheory Filter Set
 open scoped BigOperators Topology
 
+private theorem scalarResolventPurification_hasDerivAt
+    {z x : ℝ} (hz : 0 < z) (hx : 0 ≤ x) :
+    HasDerivAt (fun t : ℝ => -(z ^ 2) / (z + t))
+      ((z / (z + x)) ^ 2) x := by
+  have hden : z + x ≠ 0 := ne_of_gt (add_pos_of_pos_of_nonneg hz hx)
+  have hd := ((hasDerivAt_const x (-(z ^ 2))).div
+    ((hasDerivAt_const x z).add (hasDerivAt_id x)) hden)
+  have hfun :
+      (fun t : ℝ => -(z ^ 2) / (z + t)) =
+        (fun _t : ℝ => -(z ^ 2)) / ((fun _t : ℝ => z) + id) := by
+    funext t
+    rfl
+  rw [hfun]
+  simpa only [div_pow, Pi.add_apply, id_eq, zero_mul, zero_add, mul_one,
+    sub_neg_eq_add] using hd
+
+private theorem scalarResolventPurification_tendsto_zero (z : ℝ) :
+    Tendsto (fun t : ℝ => -(z ^ 2) / (z + t)) atTop (𝓝 (0 : ℝ)) := by
+  have hden : Tendsto (fun t : ℝ => t + z) atTop atTop :=
+    tendsto_atTop_add_const_right atTop z tendsto_id
+  have hzero : Tendsto (fun t : ℝ => -(z ^ 2) / (t + z))
+      atTop (𝓝 (0 : ℝ)) := tendsto_const_nhds.div_atTop hden
+  simpa only [add_comm] using hzero
+
 theorem scalar_resolvent_purification_integrable_of_pos
     {z : ℝ} (hz : 0 < z) :
     IntegrableOn (fun s : ℝ => (z / (z + s)) ^ 2) (Ioi 0) := by
-  have hpower :
-      IntegrableOn (fun s : ℝ => (s + z) ^ (-2 : ℝ)) (Ioi 0) := by
-    exact integrableOn_add_rpow_Ioi_of_lt
-      (a := (-2 : ℝ)) (c := (0 : ℝ)) (m := z)
-      (by norm_num) (by linarith only [hz])
-  have hscaled :
-      IntegrableOn (fun s : ℝ => z ^ 2 * (s + z) ^ (-2 : ℝ))
-        (Ioi 0) :=
-    hpower.const_mul (z ^ 2)
-  refine hscaled.congr_fun (fun s hs => ?_) measurableSet_Ioi
-  have hspos : 0 < s + z := by
-    have : 0 < s := hs
-    linarith only [hz, this]
-  change z ^ 2 * (s + z) ^ (-2 : ℝ) = (z / (z + s)) ^ 2
-  rw [show (-2 : ℝ) = -(2 : ℝ) by norm_num,
-    Real.rpow_neg hspos.le, Real.rpow_two]
-  rw [div_pow]
-  simp only [add_comm, div_eq_mul_inv]
+  exact integrableOn_Ioi_deriv_of_nonneg'
+    (fun x hx => scalarResolventPurification_hasDerivAt hz hx)
+    (fun x _ => sq_nonneg (z / (z + x)))
+    (scalarResolventPurification_tendsto_zero z)
 
 theorem scalar_resolvent_purification_integrable
     {z : ℝ} (hz : 0 ≤ z) :
@@ -1561,42 +1563,16 @@ theorem scalar_resolvent_purification_integral
   rcases hz.eq_or_lt with rfl | hzpos
   · simp only [zero_add, zero_div, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow,
       integral_zero]
-  · have hderiv :
-        ∀ x ∈ Ici (0 : ℝ),
-          HasDerivAt (fun t : ℝ => -(z ^ 2) / (z + t))
-            ((z / (z + x)) ^ 2) x := by
-      intro x hx
-      have hden : z + x ≠ 0 := by
-        have hx_nonneg : 0 ≤ x := hx
-        exact ne_of_gt (by linarith only [hzpos, hx_nonneg])
-      have hd := ((hasDerivAt_const x (-(z ^ 2))).div
-        ((hasDerivAt_const x z).add (hasDerivAt_id x)) hden)
-      have hfun :
-          (fun t : ℝ => -(z ^ 2) / (z + t)) =
-            (fun _t : ℝ => -(z ^ 2)) /
-              ((fun _t : ℝ => z) + id) := by
-        funext t
-        rfl
-      rw [hfun]
-      simpa only [div_pow, Pi.add_apply, id_eq, zero_mul, zero_add, mul_one,
-        sub_neg_eq_add] using hd
-    have hlimit :
-        Tendsto (fun t : ℝ => -(z ^ 2) / (z + t))
-          atTop (𝓝 (0 : ℝ)) := by
-      have hden : Tendsto (fun t : ℝ => t + z) atTop atTop :=
-        tendsto_atTop_add_const_right atTop z tendsto_id
-      have hzero : Tendsto (fun t : ℝ => -(z ^ 2) / (t + z))
-          atTop (𝓝 (0 : ℝ)) :=
-        tendsto_const_nhds.div_atTop hden
-      simpa only [add_comm] using hzero
-    have hftc := integral_Ioi_of_hasDerivAt_of_tendsto'
-      hderiv (scalar_resolvent_purification_integrable_of_pos hzpos) hlimit
+  · have hftc := integral_Ioi_of_hasDerivAt_of_tendsto'
+      (fun x hx => scalarResolventPurification_hasDerivAt hzpos hx)
+      (scalar_resolvent_purification_integrable_of_pos hzpos)
+      (scalarResolventPurification_tendsto_zero z)
     calc
       (∫ s in Ioi (0 : ℝ), (z / (z + s)) ^ 2) =
           (0 : ℝ) - (-(z ^ 2) / (z + 0)) := hftc
       _ = z := by
-        field_simp
-        ring
+        simp only [add_zero, zero_sub, neg_div, neg_neg, pow_two,
+          mul_div_cancel_right₀ _ hzpos.ne']
 
 end
 
@@ -1772,23 +1748,16 @@ private theorem spectralPurificationFilter_gram
     apply Matrix.isHermitian_diagonal_iff.mpr
     intro i
     change star ((eigenvalue i / (eigenvalue i + s) : ℝ) : ℂ) = _
-    simp only [Complex.ofReal_div, Complex.ofReal_add, star_div₀, RCLike.star_def,
-      Complex.conj_ofReal, star_add]
+    simp only [RCLike.star_def, Complex.conj_ofReal]
   have hDstar : star D = D := by
     simpa only [Matrix.star_eq_conjTranspose] using hDhermitian.eq
   have hDsquare : D * D = diagonalPurificationGram eigenvalue s := by
-    dsimp [D]
-    rw [Matrix.diagonal_mul_diagonal]
-    ext i j
-    by_cases h : i = j
-    · subst j
-      simp only [Complex.ofReal_div, Complex.ofReal_add, Matrix.diagonal_apply_eq,
-        diagonalPurificationGram, pow_two, Complex.ofReal_mul]
-    · simp only [Complex.ofReal_div, Complex.ofReal_add, ne_eq, h, not_false_eq_true,
-        Matrix.diagonal_apply_ne, diagonalPurificationGram, Complex.ofReal_pow]
+    simp only [D, diagonalPurificationGram, Matrix.diagonal_mul_diagonal,
+      pow_two, Complex.ofReal_mul]
+  have conjugation_star : e (star D) = star (e D) := e.map_star' D
   change star (e D) * e D = e (diagonalPurificationGram eigenvalue s)
   calc
-    star (e D) * e D = e (star D) * e D := by rw [map_star]
+    star (e D) * e D = e (star D) * e D := by rw [conjugation_star]
     _ = e (star D * D) := (map_mul e (star D) D).symm
     _ = e (diagonalPurificationGram eigenvalue s) := by
       rw [hDstar, hDsquare]
@@ -1964,10 +1933,10 @@ theorem alice_mixed_history_pairing
   apply Finset.sum_congr rfl
   intro x _
   unfold conditionalBobAverage
-  rw [map_sum, Finset.mul_sum]
+  rw [map_sum (pair (H x)), Finset.mul_sum]
   apply Finset.sum_congr rfl
   intro y _
-  rw [map_smul]
+  rw [LinearMap.map_smul]
   simp only [smul_eq_mul]
   rw [← mul_assoc, G.marginalX_mul_conditionalYGivenX x y]
 
@@ -1992,9 +1961,7 @@ theorem bob_mixed_history_pairing
         apply Finset.sum_congr rfl
         intro y _
         unfold conditionalAliceAverage
-        rw [map_sum]
-        simp only [LinearMap.sum_apply, map_smul,
-          LinearMap.smul_apply, smul_eq_mul]
+        simp only [LinearMap.map_sum₂, LinearMap.map_smul₂, smul_eq_mul]
         rw [Finset.mul_sum]
         apply Finset.sum_congr rfl
         intro x _
@@ -2029,7 +1996,7 @@ theorem alice_reveal_increment
   rw [← Finset.sum_sub_distrib]
   apply Finset.sum_congr rfl
   intro y _
-  rw [map_sub]
+  rw [map_sub pair]
   simp only [LinearMap.sub_apply]
   ring
 
@@ -2195,7 +2162,7 @@ theorem spectralSupportFunctional_mul
   let e := Unitary.conjStarAlgAut ℂ (Matrix d d ℂ)
     hF.isHermitian.eigenvectorUnitary
   change e _ * e _ = e _
-  rw [← map_mul, Matrix.diagonal_mul_diagonal]
+  rw [← map_mul e, Matrix.diagonal_mul_diagonal]
   congr 1
   funext i
   push_cast
@@ -2240,9 +2207,10 @@ theorem spectralSupportFunctional_isHermitian
     simp only [RCLike.star_def, Complex.conj_ofReal]
   have hDstar : star D = D := by
     simpa only [Matrix.star_eq_conjTranspose] using hD.eq
+  have conjugation_star : e (star D) = star (e D) := e.map_star' D
   change Matrix.conjTranspose (e D) = e D
   simpa only [Matrix.star_eq_conjTranspose] using
-    (show star (e D) = e D by rw [← map_star, hDstar])
+    (show star (e D) = e D by rw [← conjugation_star, hDstar])
 
 /-- Apply reciprocal eigenvalues to a positive matrix, with zero on its kernel. -/
 def spectralSupportInverse
@@ -3642,8 +3610,7 @@ theorem spectralPurificationFilter_mul_shift
   have hden (i : d) : eigenvalue i + s ≠ 0 :=
     ne_of_gt (add_pos_of_nonneg_of_pos (heigenvalue i) hs)
   have hFspec : F = e D := by
-    simpa [D, eigenvalue, e, Function.comp_def] using
-      hF.isHermitian.spectral_theorem
+    exact hF.isHermitian.spectral_theorem
   have hshift_inner :
       D + s • (1 : Matrix d d ℂ) =
         Matrix.diagonal fun i => ((eigenvalue i + s : ℝ) : ℂ) := by
@@ -3677,7 +3644,7 @@ theorem spectralPurificationFilter_mul_shift
     rw [mul_smul_comm, mul_one, smul_mul_assoc]
     simp only [SetLike.coe_mem, Unitary.mul_star_self_of_mem]
   change e T * (F + s • (1 : Matrix d d ℂ)) = F
-  rw [hFspec, ← hscalar, ← map_add, ← map_mul, hproduct]
+  rw [hFspec, ← hscalar, ← map_add e, ← map_mul e, hproduct]
 
 theorem spectralPurificationFilter_eq_resolvent
     {d : Type*} [Fintype d] [DecidableEq d]
@@ -3728,8 +3695,7 @@ theorem spectralPurificationFilter_square_contraction
     apply Matrix.isHermitian_diagonal_iff.mpr
     intro i
     change star ((eigenvalue i / (eigenvalue i + s) : ℝ) : ℂ) = _
-    simp only [Complex.ofReal_div, Complex.ofReal_add, star_div₀, RCLike.star_def,
-      Complex.conj_ofReal, star_add]
+    simp only [RCLike.star_def, Complex.conj_ofReal]
   have hDstar : star D = D := by
     simpa only [Matrix.star_eq_conjTranspose] using hDhermitian.eq
   have hdiag : (D - D * D).PosSemidef := by
@@ -3749,8 +3715,9 @@ theorem spectralPurificationFilter_square_contraction
         (le_add_of_nonneg_right hs.le)
     exact Complex.nonneg_iff.mpr
       ⟨sub_nonneg.mpr (mul_le_of_le_one_right hnonneg hle), rfl⟩
+  have conjugation_star : e (star D) = star (e D) := e.map_star' D
   change (e D - star (e D) * e D).PosSemidef
-  rw [← map_star, hDstar, ← map_mul, ← map_sub]
+  rw [← conjugation_star, hDstar, ← map_mul e, ← map_sub e]
   change ((U : Matrix d d ℂ) * (D - D * D) *
     star (U : Matrix d d ℂ)).PosSemidef
   simpa only [Matrix.star_eq_conjTranspose] using
@@ -3808,28 +3775,15 @@ theorem bochner_integral_posSemidef
     (hf : Integrable f μ)
     (hpos : ∀ᵐ t ∂μ, (f t).PosSemidef) :
     (∫ t, f t ∂μ).PosSemidef := by
-  have hadjoint :
-      star (∫ t, f t ∂μ) = ∫ t, star (f t) ∂μ := by
-    exact (ContinuousLinearMap.integral_comp_comm
-      matrixAdjointCLM hf).symm
-  have hadjoint_ae : (fun t => star (f t)) =ᵐ[μ] f := by
-    filter_upwards [hpos] with t ht
-    simpa only [Matrix.star_eq_conjTranspose] using ht.isHermitian.eq
-  have hhermitian : (∫ t, f t ∂μ).IsHermitian := by
-    change star (∫ t, f t ∂μ) = ∫ t, f t ∂μ
-    exact hadjoint.trans (integral_congr_ae hadjoint_ae)
-  apply Matrix.PosSemidef.of_dotProduct_mulVec_nonneg hhermitian
-  intro x
-  have hcomm :
-      (∫ t, matrixQuadraticCLM x (f t) ∂μ) =
-        matrixQuadraticCLM x (∫ t, f t ∂μ) :=
-    ContinuousLinearMap.integral_comp_comm
-      (matrixQuadraticCLM x) hf
-  change 0 ≤ matrixQuadraticCLM x (∫ t, f t ∂μ)
-  rw [← hcomm]
-  apply integral_nonneg_of_ae
-  filter_upwards [hpos] with t ht
-  exact ht.dotProduct_mulVec_nonneg x
+  apply Matrix.nonneg_iff_posSemidef.mp
+  simpa only [integral_zero] using
+    (@MeasureTheory.integral_mono_ae α (Matrix d d ℂ)
+      Matrix.normedAddCommGroup Matrix.normedSpace _ μ
+      Matrix.instPartialOrder inferInstance inferInstance
+      (by exact (inferInstance : ClosedIciTopology (Matrix d d ℂ)))
+      (fun _ : α => (0 : Matrix d d ℂ)) f
+      (MeasureTheory.integrable_zero α (Matrix d d ℂ) μ) hf
+      (hpos.mono fun t ht => ht.nonneg))
 
 end
 
@@ -3929,25 +3883,26 @@ theorem spectralPurificationFilter_sub_gram
           ((F + s • (1 : Matrix d d ℂ))⁻¹ *
             (F + s • (1 : Matrix d d ℂ))⁻¹) *
           (F - M) * (M + s • (1 : Matrix d d ℂ))⁻¹) := by
-  let RF : Matrix d d ℂ := (F + s • (1 : Matrix d d ℂ))⁻¹
-  let RM : Matrix d d ℂ := (M + s • (1 : Matrix d d ℂ))⁻¹
-  let D : Matrix d d ℂ := F - M
-  have hRF : star RF = RF := by
-    simpa only [Matrix.star_eq_conjTranspose] using
-      (shifted_posSemidef_matrix_inverse_posSemidef hF hs).isHermitian.eq
-  have hRM : star RM = RM := by
-    simpa only [Matrix.star_eq_conjTranspose] using
-      (shifted_posSemidef_matrix_inverse_posSemidef hM hs).isHermitian.eq
-  have hD : star D = D := by
-    simpa only [Matrix.star_eq_conjTranspose] using
-      (hF.isHermitian.sub hM.isHermitian).eq
-  rw [spectralPurificationFilter_sub_resolvent F M hF hM hs]
-  change star (s • (RF * D * RM)) * (s • (RF * D * RM)) =
-    s ^ 2 • (RM * D * (RF * RF) * D * RM)
-  simp only [star_smul, star_trivial, star_mul, hRF, hRM, hD,
-    smul_mul_assoc, mul_smul_comm, smul_smul, pow_two]
-  congr 1
-  noncomm_ring
+  with_reducible
+    let RF : Matrix d d ℂ := (F + s • (1 : Matrix d d ℂ))⁻¹
+    let RM : Matrix d d ℂ := (M + s • (1 : Matrix d d ℂ))⁻¹
+    let D : Matrix d d ℂ := F - M
+    have hRF : star RF = RF := by
+      simpa only [Matrix.star_eq_conjTranspose] using
+        (shifted_posSemidef_matrix_inverse_posSemidef hF hs).isHermitian.eq
+    have hRM : star RM = RM := by
+      simpa only [Matrix.star_eq_conjTranspose] using
+        (shifted_posSemidef_matrix_inverse_posSemidef hM hs).isHermitian.eq
+    have hD : star D = D := by
+      simpa only [Matrix.star_eq_conjTranspose] using
+        (hF.isHermitian.sub hM.isHermitian).eq
+    rw [spectralPurificationFilter_sub_resolvent F M hF hM hs]
+    change star (s • (RF * D * RM)) * (s • (RF * D * RM)) =
+      s ^ 2 • (RM * D * (RF * RF) * D * RM)
+    simp only [star_smul, star_trivial, star_mul, hRF, hRM, hD,
+      smul_mul_assoc, mul_smul_comm, smul_smul, pow_two]
+    congr 1
+    noncomm_ring
 
 end
 
@@ -4290,9 +4245,7 @@ private theorem spectralEntropyKernel_eq_scalar_sub_filter
     ((eigenvalue i / (1 + s) -
       eigenvalue i / (eigenvalue i + s) : ℝ) : ℂ)
   have hFspec : F = L D := by
-    simpa [L, U, D, eigenvalue, Function.comp_def,
-      Unitary.conjStarAlgAut_apply] using
-      hF.isHermitian.spectral_theorem
+    exact hF.isHermitian.spectral_theorem
   have hdiag : K = (1 / (1 + s) : ℝ) • D - G := by
     ext i j
     by_cases hij : i = j
@@ -5179,7 +5132,7 @@ private theorem leftSpectralBornWeight_sum
         (positiveMatrixSpectralAtom F hF i) G) =
       bornTracePairing ρ.matrix
         (∑ i : dA, positiveMatrixSpectralAtom F hF i) G := by
-          simp only [map_sum, LinearMap.sum_apply]
+          simp only [LinearMap.map_sum₂]
     _ = bornTracePairing ρ.matrix (1 : Matrix dA dA ℂ) G := by
       rw [positiveMatrixSpectralAtom_sum]
 
@@ -5287,7 +5240,7 @@ theorem bornTracePairing_one_le_one
       bornTracePairing ρ.matrix (1 : Matrix dA dA ℂ) G :=
     (bornTracePairing ρ.matrix (1 : Matrix dA dA ℂ)).map_sub 1 G
   rw [hdiff, bornTracePairing_one_one] at hpositive
-  linarith only [hpositive]
+  exact le_add_neg_iff_le.mp hpositive
 
 theorem positiveContraction_eigenvalue_le_one
     {d : Type*} [Fintype d] [DecidableEq d]
@@ -5568,13 +5521,13 @@ theorem spectralAtom_mul
   by_cases hij : i = j
   · subst j
     simp only [ite_true]
-    rw [← map_mul, Matrix.diagonal_mul_diagonal]
+    rw [← map_mul e, Matrix.diagonal_mul_diagonal]
     congr 1
     ext k l
     simp only [Matrix.diagonal_apply, Pi.single_apply]
     split_ifs <;> simp_all
   · simp only [hij, ite_false]
-    rw [← map_mul, Matrix.diagonal_mul_diagonal, ← map_zero e]
+    rw [← map_mul e, Matrix.diagonal_mul_diagonal, ← map_zero e]
     congr 1
     ext k l
     by_cases hik : k = i
@@ -5664,26 +5617,27 @@ theorem coherentBinaryJointOutcome_norm_sq
       (Matrix.trace
         ((pureDensityMatrix z hz).matrix *
           (P.effect a ⊗ₖ Q.effect b))).re := by
-  let K : Matrix (d × e) (d × e) ℂ :=
-    P.effect a ⊗ₖ Q.effect b
-  have hgram : K.conjTranspose * K = K := by
-    dsimp [K]
-    rw [Matrix.conjTranspose_kronecker,
-      (P.positive a).isHermitian.eq,
-      (Q.positive b).isHermitian.eq,
-      ← Matrix.mul_kronecker_mul,
-      hP a, hQ b]
-  calc
-    ‖coherentBinaryJointOutcome P Q z a b‖ ^ 2 =
-      quadraticExpectation
-        (Matrix.toEuclideanCLM (n := d × e) (𝕜 := ℂ)
-          (K.conjTranspose * K)) z :=
-        rectangularMatrix_norm_sq K z
-    _ = quadraticExpectation
-        (Matrix.toEuclideanCLM (n := d × e) (𝕜 := ℂ) K) z := by
-      rw [hgram]
-    _ = (Matrix.trace ((pureDensityMatrix z hz).matrix * K)).re :=
-      (pureDensityMatrix_trace_mul z hz K).symm
+  with_reducible
+    let K : Matrix (d × e) (d × e) ℂ :=
+      P.effect a ⊗ₖ Q.effect b
+    have hgram : K.conjTranspose * K = K := by
+      dsimp [K]
+      rw [Matrix.conjTranspose_kronecker,
+        (P.positive a).isHermitian.eq,
+        (Q.positive b).isHermitian.eq,
+        ← Matrix.mul_kronecker_mul,
+        hP a, hQ b]
+    calc
+      ‖coherentBinaryJointOutcome P Q z a b‖ ^ 2 =
+        quadraticExpectation
+          (Matrix.toEuclideanCLM (n := d × e) (𝕜 := ℂ)
+            (K.conjTranspose * K)) z :=
+          rectangularMatrix_norm_sq K z
+      _ = quadraticExpectation
+          (Matrix.toEuclideanCLM (n := d × e) (𝕜 := ℂ) K) z := by
+        rw [hgram]
+      _ = (Matrix.trace ((pureDensityMatrix z hz).matrix * K)).re :=
+        (pureDensityMatrix_trace_mul z hz K).symm
 
 /-- The state vector representing finite tensor. -/
 def finiteTensorVector
@@ -6600,6 +6554,22 @@ theorem localUnitaryAction_matrix_mem_unitary {n : ℕ}
         Matrix.unitaryGroup (Fin n × Fin n) ℂ := by
   exact Matrix.kronecker_mem_unitary U.property V.property
 
+/-- A matrix with identity Gram matrix preserves the self inner product. -/
+theorem matrix_mulVec_inner_self_of_gram
+    {d : Type*} [Fintype d] [DecidableEq d]
+    (K : Matrix d d ℂ) (gram : K.conjTranspose * K = 1)
+    (z : EuclideanSpace ℂ d) :
+    inner ℂ (toLp 2 (K.mulVec (ofLp z))) (toLp 2 (K.mulVec (ofLp z))) =
+      (‖z‖ : ℂ) ^ 2 := by
+  calc
+    _ = inner ℂ z z := by
+      change dotProduct (K.mulVec (ofLp z)) (star (K.mulVec (ofLp z))) =
+        dotProduct (ofLp z) (star (ofLp z))
+      rw [dotProduct_comm (K.mulVec (ofLp z)), Matrix.star_mulVec, Matrix.dotProduct_mulVec,
+        Matrix.vecMul_vecMul, gram, Matrix.vecMul_one]
+      exact dotProduct_comm _ _
+    _ = _ := inner_self_eq_norm_sq_to_K z
+
 theorem localUnitaryAction_norm {n : ℕ}
     (U V : Matrix.unitaryGroup (Fin n) ℂ)
     (ψ : EuclideanSpace ℂ (Fin n × Fin n)) :
@@ -6613,11 +6583,9 @@ theorem localUnitaryAction_norm {n : ℕ}
     simpa only [Matrix.star_eq_conjTranspose] using (Matrix.mem_unitaryGroup_iff'.mp hM)
   apply (sq_eq_sq₀ (norm_nonneg _) (norm_nonneg _)).mp
   change ‖toLp 2 (M.mulVec (ofLp ψ))‖ ^ 2 = ‖ψ‖ ^ 2
-  rw [rectangularMatrix_norm_sq, gram]
-  change (inner ℂ ψ (Matrix.toEuclideanCLM
-    (n := Fin n × Fin n) (𝕜 := ℂ) (1 : Matrix _ _ ℂ) ψ)).re = ‖ψ‖ ^ 2
-  simp only [map_one, one_apply_eq_self, inner_self_eq_norm_sq_to_K,
-    Complex.coe_algebraMap, ← Complex.ofReal_pow, Complex.ofReal_re]
+  simpa only [inner_self_eq_norm_sq_to_K, Complex.coe_algebraMap,
+    ← Complex.ofReal_pow, Complex.ofReal_re] using
+    congrArg Complex.re (matrix_mulVec_inner_self_of_gram M gram ψ)
 
 theorem unitary_row_norm_sq_sum
     {d : Type*} [Fintype d] [DecidableEq d]
@@ -6822,42 +6790,43 @@ theorem schmidtVector_inner
               (X : Matrix (Fin d) (Fin d) ℂ)) i j) *
             (((V : Matrix (Fin d) (Fin d) ℂ).conjTranspose *
               (Y : Matrix (Fin d) (Fin d) ℂ)) i j) := by
-  classical
-  rw [schmidtVector_eq_vec σ U V,
-    schmidtVector_eq_vec μ X Y,
-    matrixVectorization_inner]
-  let S : Matrix (Fin d) (Fin d) ℂ :=
-    Matrix.diagonal fun i => (σ i : ℂ)
-  let T : Matrix (Fin d) (Fin d) ℂ :=
-    Matrix.diagonal fun i => (μ i : ℂ)
-  let A : Matrix (Fin d) (Fin d) ℂ := U
-  let B : Matrix (Fin d) (Fin d) ℂ := V
-  let C : Matrix (Fin d) (Fin d) ℂ := X
-  let D : Matrix (Fin d) (Fin d) ℂ := Y
-  change
-    Matrix.trace ((B * S * A.transpose).conjTranspose *
-      (D * T * C.transpose)) = _
-  calc
-    Matrix.trace ((B * S * A.transpose).conjTranspose *
-        (D * T * C.transpose)) =
-      Matrix.trace
-        (((B * S * A.transpose).conjTranspose *
-          (D * T)) * C.transpose) := by
-            congr 1
-            simp only [Matrix.mul_assoc, Matrix.conjTranspose_mul]
-    _ = Matrix.trace
-        (C.transpose *
-          ((B * S * A.transpose).conjTranspose * (D * T))) :=
-            Matrix.trace_mul_comm _ _
-    _ = Matrix.trace
-        ((A.conjTranspose * C).transpose * S *
-          (B.conjTranspose * D) * T) := by
-            congr 1
-            simp only [Matrix.mul_assoc, Matrix.conjTranspose_mul, Matrix.transpose_conjTranspose,
-              RCLike.star_def, Matrix.diagonal_conjTranspose, Pi.star_def, Complex.conj_ofReal,
-              Matrix.transpose_mul, Matrix.conjTranspose_transpose, S]
-    _ = _ := weightedSchmidtMatrixTrace
-      σ μ (A.conjTranspose * C) (B.conjTranspose * D)
+  with_reducible
+    classical
+    rw [schmidtVector_eq_vec σ U V,
+      schmidtVector_eq_vec μ X Y,
+      matrixVectorization_inner]
+    let S : Matrix (Fin d) (Fin d) ℂ :=
+      Matrix.diagonal fun i => (σ i : ℂ)
+    let T : Matrix (Fin d) (Fin d) ℂ :=
+      Matrix.diagonal fun i => (μ i : ℂ)
+    let A : Matrix (Fin d) (Fin d) ℂ := U
+    let B : Matrix (Fin d) (Fin d) ℂ := V
+    let C : Matrix (Fin d) (Fin d) ℂ := X
+    let D : Matrix (Fin d) (Fin d) ℂ := Y
+    change
+      Matrix.trace ((B * S * A.transpose).conjTranspose *
+        (D * T * C.transpose)) = _
+    calc
+      Matrix.trace ((B * S * A.transpose).conjTranspose *
+          (D * T * C.transpose)) =
+        Matrix.trace
+          (((B * S * A.transpose).conjTranspose *
+            (D * T)) * C.transpose) := by
+              congr 1
+              simp only [Matrix.mul_assoc, Matrix.conjTranspose_mul]
+      _ = Matrix.trace
+          (C.transpose *
+            ((B * S * A.transpose).conjTranspose * (D * T))) :=
+              Matrix.trace_mul_comm _ _
+      _ = Matrix.trace
+          ((A.conjTranspose * C).transpose * S *
+            (B.conjTranspose * D) * T) := by
+              congr 1
+              simp only [Matrix.mul_assoc, Matrix.conjTranspose_mul, Matrix.transpose_conjTranspose,
+                RCLike.star_def, Matrix.diagonal_conjTranspose, Pi.star_def, Complex.conj_ofReal,
+                Matrix.transpose_mul, Matrix.conjTranspose_transpose, S]
+      _ = _ := weightedSchmidtMatrixTrace
+        σ μ (A.conjTranspose * C) (B.conjTranspose * D)
 
 @[simp] theorem unitaryBasisOverlap_apply
     {d : Type*} [Fintype d] [DecidableEq d]
@@ -6895,12 +6864,12 @@ theorem schmidtVector_spectralEnergy_le
     fun i j => unitaryBasisOverlap V Y i j
   have hLrow : ∀ i, (∑ j : Fin d, ‖L i j‖ ^ 2) = 1 := by
     intro i
-    simpa [L] using
+    simpa only [L, norm_star] using
       unitary_row_norm_sq_sum
         (unitaryBasisOverlap U X) i
   have hLcol : ∀ j, (∑ i : Fin d, ‖L i j‖ ^ 2) = 1 := by
     intro j
-    simpa [L] using
+    simpa only [L, norm_star] using
       unitary_col_norm_sq_sum
         (unitaryBasisOverlap U X) j
   have hRrow : ∀ i, (∑ j : Fin d, ‖R i j‖ ^ 2) = 1 := by
@@ -6923,7 +6892,7 @@ theorem schmidtVector_spectralEnergy_le
       (fun i j => unitaryBasisOverlap V Y i j)]
     simpa only [unitaryBasisOverlap_apply] using
       schmidtVector_inner σ μ U V X Y
-  simpa [L] using
+  simpa only [L, norm_star] using
     twoSidedSchmidtSpectralEnergy_le
       (schmidtVector σ U V)
       (schmidtVector μ X Y)

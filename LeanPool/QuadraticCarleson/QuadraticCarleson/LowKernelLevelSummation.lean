@@ -8,7 +8,6 @@ module
 
 public import LeanPool.QuadraticCarleson.QuadraticCarleson.LowKernelBadAtomSharp
 public import LeanPool.QuadraticCarleson.QuadraticCarleson.CalderonZygmundLevelAtoms
-public import Mathlib.MeasureTheory.Integral.Prod
 
 /-!
 # Summing the sharp low-kernel estimate over a magnitude level
@@ -57,8 +56,8 @@ theorem setIntegral_levelAtom_eq_zero
       levelAtom A f k z R := by
     funext y
     by_cases hy : y ∈ centeredInterval z R
-    · simp [hy]
-    · simp [hy, levelAtom_eq_zero_of_not_mem hy]
+    · simp only [hy, indicator_of_mem]
+    · simp only [hy, not_false_eq_true, indicator_of_notMem, levelAtom_eq_zero_of_not_mem hy]
   rw [hind, integral_levelAtom_eq_zero]
 
 /-- Since a level atom is supported on its defining interval, its set and
@@ -72,7 +71,7 @@ theorem setIntegral_norm_levelAtom_eq_integral
   apply integral_congr_ae
   filter_upwards with y
   by_cases hy : y ∈ centeredInterval z R
-  · simp [hy]
+  · simp only [hy, indicator_of_mem]
   · simp [hy, levelAtom_eq_zero_of_not_mem hy]
 
 /-- Off the triple interval, multiplication by the low kernel preserves
@@ -90,7 +89,7 @@ theorem integrableOn_paperLowCZKernel_mul_levelAtom
     (integrable_levelAtom hf hAk z R).integrableOn
   have hxz : 0 < |x - z| := by
     have := not_mem_tripleCenteredInterval_abs hx
-    linarith
+    linarith only [hR, this]
   have hmajorant : IntegrableOn
       (fun y ↦ (2 / |x - z|) * ‖b y‖) (centeredInterval z R) :=
     hb.norm.const_mul (2 / |x - z|)
@@ -113,7 +112,7 @@ theorem integrableOn_paperLowCZKernel_mul_levelAtom
           (sub_ne_zero.mpr (by
             intro h
             rw [h] at hxy
-            simp at hxy))
+            simp only [sub_self, abs_zero, lt_self_iff_false] at hxy))
       _ ≤ 1 / (|x - z| / 2) :=
         one_div_le_one_div_of_le (half_pos hxz) hdist
       _ = 2 / |x - z| := by field_simp [ne_of_gt hxz]
@@ -159,7 +158,7 @@ theorem tsum_integral_norm_paperLowCZKernel_levelAtom_le
   have hC : 0 ≤ C := by
     dsimp [C]
     exact mul_nonneg
-      (mul_nonneg (by norm_num) (by positivity)) lowKernelBadAtomConstant_nonneg
+      (mul_nonneg (by norm_num1) (by positivity)) lowKernelBadAtomConstant_nonneg
   have hlocal : ∀ i : ι,
       ENNReal.ofReal
         (∫ x in (tripleCenteredInterval (z i) (R i))ᶜ,
@@ -189,7 +188,7 @@ theorem tsum_integral_norm_paperLowCZKernel_levelAtom_le
           ENNReal.ofReal
             (C * ∫ y, ‖levelAtom A f k (z i) (R i) y‖) := by
         apply ENNReal.ofReal_le_ofReal
-        simpa only [C, mul_assoc] using hsharp
+        simpa only [mul_assoc, C] using hsharp
       _ = ENNReal.ofReal C * ENNReal.ofReal
           (∫ y, ‖levelAtom A f k (z i) (R i) y‖) := by
         rw [ENNReal.ofReal_mul hC]

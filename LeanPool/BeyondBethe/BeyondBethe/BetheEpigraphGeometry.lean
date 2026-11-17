@@ -9,7 +9,13 @@ module
 public import LeanPool.BeyondBethe.BeyondBethe.BetheEpigraphFeasibility
 public import LeanPool.BeyondBethe.BeyondBethe.ExecutableInterior
 public import LeanPool.BeyondBethe.BeyondBethe.ApproximateKKT
-public import Mathlib.Tactic
+import Mathlib.Tactic.Convert -- shake: keep
+import Mathlib.Tactic.Ext -- shake: keep
+import Mathlib.Tactic.FieldSimp -- shake: keep
+import Mathlib.Tactic.Linarith -- shake: keep
+import Mathlib.Tactic.NormNum -- shake: keep
+import Mathlib.Tactic.Positivity -- shake: keep
+import Mathlib.Tactic.Ring -- shake: keep
 
 /-! # Bethe Epigraph Geometry -/
 

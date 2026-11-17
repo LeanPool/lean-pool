@@ -274,7 +274,7 @@ theorem interior_diffQuot_norm_bound (Op : FullEllipticOp d) (hΩm : MeasurableS
       have hζsupp : ∀ᵐ x ∂volume,
           (extendL2 hΩm gζ : EuclideanSpace ℝ (Fin d) → ℝ) x ≠ 0 → x ∈ tsupport T.ζ :=
         extendL2_supp_of_ae_restrict hΩm gζ (mulTest_ae_eq_zero_off_tsupport T.hζ di)
-      have hqmp : MeasureTheory.Measure.QuasiMeasurePreserving (· + hshift k h) volume volume :=
+      have hqmp : MeasureTheory.QuasiMeasurePreserving (· + hshift k h) volume volume :=
         (measurePreserving_add_right volume (hshift k h)).quasiMeasurePreserving
       -- `extendL2 (ζ · di) = ζ · extendL2 di` a.e., and its shift.
       have hζext : (extendL2 hΩm gζ : EuclideanSpace ℝ (Fin d) → ℝ)

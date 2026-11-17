@@ -260,7 +260,7 @@ private theorem sharpGrowthTerm_le (M : ABKModel d) {C : ℕ}
                 (pow_nonneg (sharpLowerRatio_pos M).le _))
         have hsC := mul_le_mul_of_nonneg_left hs hC0
         convert hsC using 1
-        all_goals first | rfl | ring
+        all_goals ring
       _ = _ := by ring
   have hbridge := scale_mul_shellW1InfGradNorm_le_sharpGradientGauge ell r omega
   have hupperBridge : (3 : ℝ) ^ (2 * ell) *
@@ -307,7 +307,7 @@ private theorem sharpGrowthTerm_le (M : ABKModel d) {C : ℕ}
                 (pow_nonneg (sharpUpperRatio_pos M).le _))
         have hsC := mul_le_mul_of_nonneg_left hs hC0
         convert hsC using 1
-        all_goals first | rfl | ring
+        all_goals ring
       _ = _ := by ring
   linarith only [hvalue', hgrad']
 
@@ -368,7 +368,7 @@ theorem exists_streamGrowthBounded_of_sharpTailGood (M : ABKModel d)
         mul_nonneg (mul_nonneg (Nat.cast_nonneg C₀) (pow_nonneg (by norm_num) _))
           (by norm_num)
       convert mul_le_mul_of_nonneg_left hleft hcoef using 1
-      all_goals first | rfl | ring
+      all_goals ring
     _ = (2 * (C₀ : ℝ) * A * B) * (3 : ℝ) ^ ell := by ring
     _ ≤ (C : ℝ) * (3 : ℝ) ^ ell :=
       mul_le_mul_of_nonneg_right hC (pow_nonneg (by norm_num) _)

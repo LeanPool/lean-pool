@@ -477,7 +477,7 @@ theorem PathIn.flip_flip {Hist X} {tab : Tableau Hist X} (p : PathIn tab) :
     have hnext : HEq next.flip.flip next := by
       rw! [Tableau.flip_flip]; rw [eqRec_heq_iff, eqRec_heq_iff]
     congr 1 <;> first
-      | rfl | exact hIH | exact hr | exact hnext | exact proof_irrel_heq _ _ | simp_all
+      | exact proof_irrel_heq _ _ | simp_all
   | @loc Hist X nflprep nbas lt next Y Y_in tail IH =>
     apply eq_of_heq
     rw [eqRec_heq_iff]

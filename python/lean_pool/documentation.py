@@ -1,9 +1,12 @@
 """Build resumable local API documentation outside pull-request CI.
 
-Only successful batches advance the cursor. A timed-out or failed subprocess
-is stopped together with its children before its database and Lake markers are
-rolled back to the preceding consistent checkpoint. Lake still checks its own
-traces when a new source snapshot invalidates the cursor.
+Lake compiles the pool and doc-gen's prerequisites; the analysis of each module
+then runs as its own doc-gen process, a fixed number at a time. doc-gen replaces
+a module's records in one transaction, so the database only ever holds whole
+modules and needs no rollback. Progress is recorded per project, and per module
+inside an unfinished project: a project whose sources and compiled modules are
+unchanged is never analyzed again, so routine merges, option edits and helper
+changes do not restart the whole pool.
 """
 
 from __future__ import annotations
@@ -15,12 +18,14 @@ import logging
 import os
 import re
 import shutil
-import signal
 import sqlite3
 import subprocess
-import tempfile
+import sys
+import threading
 import time
-from contextlib import contextmanager
+from collections import Counter
+from concurrent.futures import ThreadPoolExecutor
+from dataclasses import dataclass
 from graphlib import TopologicalSorter
 from pathlib import Path
 
@@ -32,6 +37,26 @@ IMPORTS = re.compile(
     r"(?m)^\s*(?:(?:public|private|meta)\s+)*import\s+(?:all\s+)?([^\n]+)"
 )
 STATE = "documentation-progress.json"
+# Bump when stored analysis must be discarded, e.g. a changed database contract.
+STATE_VERSION = 3
+# One analyzer per hosted-runner core. Lake could not hold this bound: jobs
+# resuming from dependency waits exceeded its worker limit and exhausted memory.
+ANALYZERS = 4
+# Ordinary modules take seconds. A stuck analyzer must fail by name instead of
+# silently consuming the job's remaining time.
+ANALYSIS_SECONDS = 1800
+# What doc-gen's `docInfo` facet builds before it analyzes a local module.
+PREREQUISITES = ("doc-gen4", "doc-gen4/bibPrepass", "doc-gen4/coreDocs")
+SOURCE_TARGET = "lean-pool/LeanPool:srcUri"
+ENVIRONMENT = "import json, os; print(json.dumps(dict(os.environ)))"
+TOOLCHAIN_ROOTS = frozenset({"Init", "Std", "Lean", "Lake"})
+COMPILED = Path(".lake/build/lib/lean")
+IR = Path(".lake/build/ir")
+LINK_POLICY = (
+    "DOCGEN_LOCAL_MODULE_ROOTS",
+    "DOCGEN_DEPS_DOCS_URL",
+    "DOCGEN_DEPS_DOCS_URLS",
+)
 
 
 def module_sources(root: Path) -> dict[str, Path]:
@@ -42,39 +67,174 @@ def module_sources(root: Path) -> dict[str, Path]:
     }
 
 
-def input_identity(root: Path) -> str:
-    """Invalidate the cursor on changes to sources, pins, helpers or link policy."""
-    digest = hashlib.sha256()
-    paths = [
-        *module_sources(root).values(),
-        *(
-            root / name
-            for name in ("lean-toolchain", "lakefile.toml", "lake-manifest.json")
-        ),
-        *(
-            root / "docbuild" / name
-            for name in ("lean-toolchain", "lakefile.toml", "lake-manifest.json")
-        ),
-        Path(__file__),
-        Path(__file__).with_name("indexes.py"),
-        Path(__file__).parent / "exposition" / "source_text.py",
-    ]
-    for path in paths:
-        name = path.relative_to(root) if path.is_relative_to(root) else Path(path.name)
-        digest.update(str(name).encode())
+def _digest_files(digest, root: Path, paths: list[Path]) -> None:
+    for path in sorted(paths):
+        digest.update(str(path.relative_to(root)).encode())
         digest.update(b"\0" + path.read_bytes() + b"\0")
-    for name in (
-        "DOCGEN_LOCAL_MODULE_ROOTS",
-        "DOCGEN_DEPS_DOCS_URL",
-        "DOCGEN_DEPS_DOCS_URLS",
-    ):
+
+
+def input_identity(root: Path) -> str:
+    """Name the toolchain, dependency, doc-gen and link-policy inputs of every page.
+
+    The pool's own `lakefile.toml` is left out: its options reach the analysis
+    only through compiled modules, which `project_fingerprints` hashes directly.
+    """
+    digest = hashlib.sha256(f"version={STATE_VERSION}\0".encode())
+    _digest_files(
+        digest,
+        root,
+        [
+            root / "lean-toolchain",
+            root / "lake-manifest.json",
+            *(
+                root / "docbuild" / name
+                for name in ("lean-toolchain", "lakefile.toml", "lake-manifest.json")
+            ),
+        ],
+    )
+    for name in LINK_POLICY:
         digest.update(name.encode() + b"=" + os.environ.get(name, "").encode() + b"\0")
     return digest.hexdigest()
 
 
-def ordered_modules(root: Path) -> list[str]:
-    """Visit dependencies first so one target cannot hide an unbounded cold closure."""
+def project_of(module: str) -> str:
+    """Group `LeanPool.<Project>...` modules; the empty library root is its own."""
+    parts = module.split(".")
+    return parts[1] if len(parts) > 1 else ""
+
+
+def local_closure(root: Path, project: str, modules: set[str]) -> set[str] | None:
+    """Read the project's local transitive imports from Lake's setup files.
+
+    The entry module and `Imports` aggregate together import every project
+    source, so their inventories cover modules borrowed from other projects.
+    Return None unless they cover all of the project's own modules.
+    """
+    entry = "LeanPool" + (f".{project}" if project else "")
+    own = {module for module in modules if project_of(module) == project}
+    closure = own & {entry, f"{entry}.Imports"}
+    for module in sorted(closure):
+        setup = root / IR / (module.replace(".", "/") + ".setup.json")
+        try:
+            inventory = json.loads(setup.read_text())
+            if inventory["name"] != module or not isinstance(
+                inventory["importArts"], dict
+            ):
+                return None
+        except (OSError, ValueError, KeyError, TypeError):
+            return None
+        closure |= modules & set(inventory["importArts"])
+    return closure if own <= closure else None
+
+
+def compiled_module_hashes(root: Path, source: Path) -> dict[str, str | None]:
+    """Identify each consumed module artifact, including absent legacy companions.
+
+    Lake's cached content hash is used when available. Otherwise stream the
+    artifact itself, so a missing hash never hides a changed companion.
+    """
+    identities = {}
+    for suffix in ("olean", "olean.server", "olean.private"):
+        artifact = root / COMPILED / source.relative_to(root).with_suffix(f".{suffix}")
+        if not artifact.is_file():
+            identities[suffix] = None
+            continue
+        cached = Path(f"{artifact}.hash")
+        identity = cached if cached.is_file() and cached.stat().st_size else artifact
+        with identity.open("rb") as stream:
+            digest = hashlib.file_digest(stream, "sha256").hexdigest()
+        kind = "cached" if identity == cached else "artifact"
+        identities[suffix] = f"{kind}:{digest}"
+    return identities
+
+
+def project_fingerprints(
+    root: Path, projects: set[str] | None = None
+) -> dict[str, str]:
+    """Hash the sources and compiled modules each project's pages depend on.
+
+    That is the project's modules plus every pool module they import, from other
+    projects too. Without Lake's import inventory the whole pool is included.
+    Missing public artifacts retain the pool configuration as a fallback; present
+    artifacts use cached or directly computed content hashes. Only the closures
+    of `projects` (default: all) are read.
+    """
     sources = module_sources(root)
+    modules = set(sources)
+    configuration = hashlib.sha256((root / "lakefile.toml").read_bytes()).hexdigest()
+    digests: dict[str, tuple[str, dict[str, str | None]]] = {}
+
+    def digest(module: str) -> tuple[str, dict[str, str | None]]:
+        if module not in digests:
+            path = sources[module]
+            digests[module] = (
+                hashlib.sha256(path.read_bytes()).hexdigest(),
+                compiled_module_hashes(root, path),
+            )
+        return digests[module]
+
+    fingerprints = {}
+    for project in sorted(projects or {project_of(module) for module in modules}):
+        closure = local_closure(root, project, modules) or modules
+        entries = {module: digest(module) for module in sorted(closure)}
+        if any(compiled["olean"] is None for _, compiled in entries.values()):
+            entries["lakefile.toml"] = (configuration, None)
+        encoded = json.dumps(entries, sort_keys=True).encode()
+        fingerprints[project] = hashlib.sha256(encoded).hexdigest()
+    return fingerprints
+
+
+def read_state(build: Path, identity: str) -> dict:
+    """Return the checkpoint saved under the same shared inputs, else an empty one."""
+    path = build / STATE
+    state = json.loads(path.read_text()) if path.exists() else {}
+    if state.get("identity") != identity:
+        return {}
+    if not all(isinstance(state.get(key, {}), dict) for key in ("projects", "partial")):
+        raise ValueError("invalid documentation checkpoint progress")
+    return state
+
+
+def read_progress(build: Path, identity: str) -> dict[str, str]:
+    """Return completed project fingerprints saved under the same shared inputs."""
+    return read_state(build, identity).get("projects", {})
+
+
+def restore_progress(
+    build: Path,
+    identity: str,
+    fingerprints: dict[str, str],
+    state: dict | None = None,
+) -> tuple[dict[str, str], dict[str, set[str]]]:
+    """Return unchanged completed projects, and analyzed modules of unfinished ones."""
+    state = read_state(build, identity) if state is None else state
+    if state.get("identity") != identity:
+        return {}, {}
+    done = {
+        project: value
+        for project, value in state.get("projects", {}).items()
+        if fingerprints.get(project) == value
+    }
+    partial = {
+        project: set(record["modules"])
+        for project, record in state.get("partial", {}).items()
+        if fingerprints.get(project) == record["fingerprint"] and project not in done
+    }
+    return done, partial
+
+
+def ordered_modules(root: Path, projects: set[str] | None = None) -> list[str]:
+    """List one project after another, each with its dependencies first.
+
+    Analyses are independent, so the order only decides which work is saved
+    first: whole projects finish early instead of all at the very end.
+    Restricting to `projects` skips parsing the rest.
+    """
+    sources = {
+        name: path
+        for name, path in module_sources(root).items()
+        if projects is None or project_of(name) in projects
+    }
     graph = {}
     for name, path in sources.items():
         imports = {
@@ -83,7 +243,7 @@ def ordered_modules(root: Path) -> list[str]:
             for item in line.split()
         }
         graph[name] = sorted(imports & sources.keys())
-    return list(TopologicalSorter(graph).static_order())
+    return sorted(TopologicalSorter(graph).static_order(), key=project_of)
 
 
 def prepare(root: Path) -> None:
@@ -112,7 +272,7 @@ def prepare(root: Path) -> None:
 def external_modules(root: Path) -> list[str]:
     """Collect external links without loading a combined pool environment."""
     sources = module_sources(root)
-    imports = {"Init", "Std", "Lean", "Lake"}
+    imports = set(TOOLCHAIN_ROOTS)
     for path in sources.values():
         imports.update(
             item
@@ -121,6 +281,58 @@ def external_modules(root: Path) -> list[str]:
             if item not in sources
         )
     return sorted(imports)
+
+
+def compiled_dependencies(root: Path) -> list[str]:
+    """Name the external modules whose compiled files Lake must provide.
+
+    The Mathlib cache supplies Mathlib and its dependencies, but nothing supplies
+    Tau Ceti outside analysis batches, so rendering must build it explicitly.
+    """
+    return [
+        name
+        for name in external_modules(root)
+        if name.split(".")[0] not in TOOLCHAIN_ROOTS
+    ]
+
+
+def prune_modules(build: Path, modules: set[str]) -> list[str]:
+    """Delete analysis of local modules that no longer exist.
+
+    doc-gen cascades every table from `modules`.
+    """
+    database = build / "api-docs.db"
+    if not database.is_file():
+        return []
+    with sqlite3.connect(database) as connection:
+        connection.execute("PRAGMA foreign_keys = ON")
+        stored = [
+            name
+            for (name,) in connection.execute(
+                "SELECT name FROM modules WHERE name = 'LeanPool' "
+                "OR name LIKE 'LeanPool.%'"
+            )
+        ]
+        stale = sorted(set(stored) - modules)
+        connection.executemany(
+            "DELETE FROM modules WHERE name = ?", [(name,) for name in stale]
+        )
+    connection.close()
+    return stale
+
+
+def clean_checkpoint(build: Path, modules: set[str]) -> None:
+    """Drop what the pool no longer has, then check the database before adding to it.
+
+    Lake's `docInfo` markers go too: direct analysis never updates them, and a
+    stale one would let a later Lake build skip a module whose records changed.
+    """
+    for marker in (build / "doc-data").glob("LeanPool*.doc*"):
+        marker.unlink()
+    if stale := prune_modules(build, modules):
+        LOGGER.info("Removed %s deleted modules", len(stale))
+    if (build / "api-docs.db").exists():
+        validate_database(build)
 
 
 def validate_database(build: Path) -> None:
@@ -135,117 +347,202 @@ def validate_database(build: Path) -> None:
         raise ValueError(f"invalid documentation checkpoint: {checkpoint}, {integrity}")
 
 
-@contextmanager
-def batch_checkpoint(build: Path):
-    """Restore the last complete database/marker pair if a batch fails or times out."""
-    build.mkdir(parents=True, exist_ok=True)
-    with tempfile.TemporaryDirectory(prefix="lean-pool-docs-") as directory:
-        saved = Path(directory)
-        database = build / "api-docs.db"
-        if database.exists():
-            validate_database(build)
-            shutil.copy2(database, saved / database.name)
-        markers = build / "doc-data"
-        if markers.exists():
-            shutil.copytree(markers, saved / markers.name)
-        try:
-            yield
-        except BaseException:
-            for suffix in ("", "-wal", "-shm", "-journal"):
-                (build / f"api-docs.db{suffix}").unlink(missing_ok=True)
-            shutil.rmtree(markers, ignore_errors=True)
-            if (saved / database.name).exists():
-                shutil.copy2(saved / database.name, database)
-            if (saved / markers.name).exists():
-                shutil.copytree(saved / markers.name, markers)
-            raise
+@dataclass(frozen=True)
+class Analyzer:
+    """Run doc-gen's single-module analysis exactly as its Lake facet would."""
 
+    executable: str
+    environment: dict[str, str]
+    build: Path
+    sources: str
 
-def stop_build(process: subprocess.Popen) -> None:
-    """Stop descendants even when their failed parent has already exited."""
-    try:
-        os.killpg(process.pid, signal.SIGTERM)
-    except ProcessLookupError:
-        pass
-    try:
-        process.wait(timeout=5)
-    except subprocess.TimeoutExpired:
-        pass
-    # A parent can exit before a child that still holds the SQLite database.
-    try:
-        os.killpg(process.pid, signal.SIGKILL)
-    except ProcessLookupError:
-        pass
-    process.wait()
-
-
-def run_build(command: list[str], directory: Path, timeout: float) -> None:
-    """Bound a native build and reap its entire process group before rollback."""
-    process = subprocess.Popen(command, cwd=directory, start_new_session=True)
-    try:
-        status = process.wait(timeout=timeout)
-    except BaseException:
-        stop_build(process)
-        raise
-    if status:
-        stop_build(process)
-        raise subprocess.CalledProcessError(status, command)
-
-
-def build_batches(root: Path, lake: str, seconds: float, batch_size: int) -> bool:
-    """Advance verified module batches until complete or the time allowance ends."""
-    if seconds <= 0 or batch_size <= 0:
-        raise ValueError("batch size and time allowance must be positive")
-    build = root / "docbuild" / ".lake" / "build"
-    state_path = build / STATE
-    identity = input_identity(root)
-    modules = ordered_modules(root)
-    state = json.loads(state_path.read_text()) if state_path.exists() else {}
-    cursor = state.get("cursor", 0) if state.get("identity") == identity else 0
-    if not isinstance(cursor, int) or not 0 <= cursor <= len(modules):
-        raise ValueError("invalid documentation checkpoint cursor")
-    started = cursor
-    deadline = time.monotonic() + seconds
-    while cursor < len(modules) and time.monotonic() < deadline:
-        batch = modules[cursor : cursor + batch_size]
-        command = [lake, "build", *(f"+{name}:docInfo" for name in batch)]
-        try:
-            with batch_checkpoint(build):
-                run_build(
-                    command, root / "docbuild", max(1, deadline - time.monotonic())
-                )
-                validate_database(build)
-        except subprocess.TimeoutExpired:
-            if cursor == started:
-                raise RuntimeError(
-                    "no batch completed within the time allowance"
-                ) from None
-            break
-        cursor += len(batch)
-        state_path.write_text(
-            json.dumps({"identity": identity, "cursor": cursor}) + "\n"
+    def analyze(self, module: str) -> None:
+        """Replace one module's records, which doc-gen commits in one transaction."""
+        location = "/".join([self.sources, *module.split(".")]) + ".lean"
+        command = [self.executable, "single", "--build", str(self.build)]
+        command += [module, "api-docs.db", location]
+        result = subprocess.run(
+            command,
+            cwd=self.build.parents[1],
+            env=self.environment,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+            timeout=ANALYSIS_SECONDS,
         )
-        LOGGER.info("Documentation analysis: %s/%s modules", cursor, len(modules))
-    return cursor == len(modules)
+        if output := result.stdout.strip():
+            LOGGER.info("%s: %s", module, output)
+        if result.returncode:
+            raise subprocess.CalledProcessError(result.returncode, command)
+
+
+def compile_pool(root: Path, lake: str) -> None:
+    """Let Lake bring every compiled module up to date before it is fingerprinted.
+
+    Analysis and rendering restore the same build cache separately. Both
+    compile first, so a module only the analysis stage had to compile cannot
+    make rendering see a different snapshot.
+    """
+    subprocess.run([lake, "build", "LeanPool"], cwd=root, check=True)
+
+
+def prepare_analysis(root: Path, lake: str) -> Analyzer:
+    """Let Lake bring every analysis input up to date, then capture how to analyze.
+
+    Lake still decides whether each compiled module and doc-gen prerequisite is
+    current. Only the per-module analysis leaves it, because one Lake process
+    per group of targets reloaded the import graph and did not bound memory.
+    """
+    docbuild = root / "docbuild"
+    compile_pool(root, lake)
+    subprocess.run([lake, "build", *PREREQUISITES], cwd=docbuild, check=True)
+    sources = subprocess.check_output(
+        [lake, "query", SOURCE_TARGET], cwd=docbuild, text=True
+    ).split()
+    environment = json.loads(
+        subprocess.check_output(
+            [lake, "env", sys.executable, "-c", ENVIRONMENT], cwd=docbuild
+        )
+    )
+    executable = shutil.which("doc-gen4", path=environment.get("PATH"))
+    if not executable or not sources:
+        raise ValueError("Lake did not provide doc-gen or the pool's source location")
+    return Analyzer(executable, environment, docbuild / ".lake" / "build", sources[-1])
+
+
+def analyze_modules(
+    analyzer: Analyzer, modules: list[str], workers: int, deadline: float
+) -> list[str]:
+    """Analyze with a fixed number of processes and return the modules finished.
+
+    No analysis starts after the deadline or after another one failed. Those
+    already running complete first, so no writer outlives this call.
+    """
+    queue = iter(modules)
+    lock = threading.Lock()
+    finished: list[str] = []
+    failures: list[BaseException] = []
+
+    def work() -> None:
+        while not failures and time.monotonic() < deadline:
+            with lock:
+                module = next(queue, None)
+            if module is None:
+                return
+            try:
+                analyzer.analyze(module)
+            except BaseException as error:
+                failures.append(error)
+                return
+            with lock:
+                finished.append(module)
+
+    with ThreadPoolExecutor(max_workers=workers) as pool:
+        for _ in range(workers):
+            pool.submit(work)
+    if failures:
+        raise failures[0]
+    return finished
+
+
+def build_batches(
+    root: Path, lake: str, seconds: float, batch_size: int, workers: int = ANALYZERS
+) -> bool:
+    """Analyze changed projects in recorded batches until done or out of time."""
+    if seconds <= 0 or batch_size <= 0 or workers <= 0:
+        raise ValueError("batch size, workers and time allowance must be positive")
+    build = root / "docbuild" / ".lake" / "build"
+    # Compilation counts against the allowance, so the stage ends on schedule.
+    deadline = time.monotonic() + seconds
+    previous = read_state(build, input_identity(root))
+    # Prerequisites and analyzers may replace rows before a later failure.
+    # Keep the reusable snapshot in memory, never as an on-disk certificate.
+    write_progress(build, "", {}, {}, {})
+    analyzer = prepare_analysis(root, lake)
+    identity = input_identity(root)
+    fingerprints = project_fingerprints(root)
+    done, partial = restore_progress(build, identity, fingerprints, previous)
+    write_progress(build, identity, done, partial, fingerprints)
+    clean_checkpoint(build, set(module_sources(root)))
+    pending = [
+        module
+        for module in ordered_modules(root, set(fingerprints) - set(done))
+        if module not in partial.get(project_of(module), ())
+    ]
+    remaining = Counter(map(project_of, pending))
+    for project in set(fingerprints) - set(done) - set(remaining):
+        done[project] = fingerprints[project]
+    LOGGER.info(
+        "Documentation analysis: %s/%s projects reused, %s modules to analyze",
+        len(done),
+        len(fingerprints),
+        len(pending),
+    )
+    analyzed = 0
+    for position in range(0, len(pending), batch_size):
+        if time.monotonic() >= deadline:
+            break
+        batch = pending[position : position + batch_size]
+        for module in analyze_modules(analyzer, batch, workers, deadline):
+            project = project_of(module)
+            partial.setdefault(project, set()).add(module)
+            remaining[project] -= 1
+            analyzed += 1
+            if not remaining[project]:
+                done[project] = fingerprints[project]
+        write_progress(build, identity, done, partial, fingerprints)
+        LOGGER.info("Documentation analysis: %s/%s modules", analyzed, len(pending))
+    if pending and not analyzed:
+        raise RuntimeError("no module was analyzed within the time allowance")
+    write_progress(build, identity, done, partial, fingerprints)
+    if analyzed:
+        validate_database(build)
+    return done == project_fingerprints(root)
+
+
+def write_progress(
+    build: Path,
+    identity: str,
+    done: dict[str, str],
+    partial: dict[str, set[str]],
+    fingerprints: dict[str, str],
+) -> None:
+    """Record completed projects and the analyzed modules of unfinished ones."""
+    build.mkdir(parents=True, exist_ok=True)
+    state = {
+        "identity": identity,
+        "projects": dict(sorted(done.items())),
+        "partial": {
+            project: {"fingerprint": fingerprints[project], "modules": sorted(modules)}
+            for project, modules in sorted(partial.items())
+            if project not in done
+        },
+    }
+    (build / STATE).write_text(json.dumps(state) + "\n")
 
 
 def require_complete(root: Path) -> None:
     """Refuse to render or publish an incomplete or different source snapshot."""
     build = root / "docbuild" / ".lake" / "build"
-    state = json.loads((build / STATE).read_text())
-    if state != {"identity": input_identity(root), "cursor": len(module_sources(root))}:
+    if read_progress(build, input_identity(root)) != project_fingerprints(root):
         raise ValueError("documentation analysis is incomplete for this snapshot")
     validate_database(build)
 
 
 def render(root: Path, lake: str) -> None:
     """Render fresh local pages from the complete analysis checkpoint."""
+    compile_pool(root, lake)
     require_complete(root)
     build = root / "docbuild" / ".lake" / "build"
     shutil.rmtree(build / "doc" / "LeanPool", ignore_errors=True)
     # Loading one import-all Lean environment would combine the independent
     # projects' memory requirements. The database already holds every local
     # module; only external names need an environment before rendering it.
+    subprocess.run(
+        [lake, "build", *PREREQUISITES, *compiled_dependencies(root)],
+        cwd=root / "docbuild",
+        check=True,
+    )
     commands = [
         [
             "externals",
@@ -299,6 +596,7 @@ def main() -> None:
     parser.add_argument("--lake", default="lake")
     parser.add_argument("--seconds", type=float, default=5400)
     parser.add_argument("--batch-size", type=int, default=128)
+    parser.add_argument("--workers", type=int, default=ANALYZERS)
     arguments = parser.parse_args()
     logging.basicConfig(level=logging.INFO)
     root = arguments.repo.resolve()
@@ -306,7 +604,11 @@ def main() -> None:
         prepare(root)
     elif arguments.command == "batch":
         complete = build_batches(
-            root, arguments.lake, arguments.seconds, arguments.batch_size
+            root,
+            arguments.lake,
+            arguments.seconds,
+            arguments.batch_size,
+            arguments.workers,
         )
         if output := os.environ.get("GITHUB_OUTPUT"):
             with Path(output).open("a") as stream:

@@ -55,7 +55,8 @@ theorem blowupLimitAssemblyPressure_tensor_memLp_of_restrict
     {U : Vec3 × ℝ → Vec3} {S : Set (Vec3 × ℝ)} (hS : MeasurableSet S)
     (hU : MemLp U 3 (volume.restrict S)) (i j : Fin 3) :
     MemLp (S.indicator (fun z => U z i * U z j)) (ENNReal.ofReal (3 / 2 : ℝ)) volume := by
-  have hw : MemLp (S.indicator U) 3 volume := (memLp_indicator_iff_restrict hS).2 hU
+  have hw : MemLp (S.indicator U) 3 volume :=
+    (memLp_indicator_iff_restrict hS.nullMeasurableSet).2 hU
   have h := blowup_velocity_tensor_memLp (S.indicator U) hw i j
   have heq : (fun z => S.indicator U z i * S.indicator U z j) =
       S.indicator (fun z => U z i * U z j) := by
@@ -95,7 +96,7 @@ theorem blowupLimitAssemblyPressure_window_agree
     simp only [blowupLimitAssemblyPressureWindowTensor]
     rw [Set.indicator_indicator, Set.inter_eq_left.mpr hsub]
   have hcongr := blowup_rieszPressureSpaceTime_congr
-    (fun i j => (hG m i j).indicator (MeasurableSet.univ.prod hJ)) (hG n) htensor
+    (fun i j => (hG m i j).indicator (MeasurableSet.univ.prod hJ).nullMeasurableSet) (hG n) htensor
   filter_upwards [hloc] with z hz hzS
   have h := hz
   simp only [Set.indicator_of_mem hzS] at h

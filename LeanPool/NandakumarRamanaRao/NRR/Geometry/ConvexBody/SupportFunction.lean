@@ -6,8 +6,10 @@ Authors: Arseniy Akopyan
 module
 
 
-public import Mathlib.Analysis.InnerProductSpace.Continuous
 public import LeanPool.NandakumarRamanaRao.NRR.Geometry.ConvexBody.Basic
+public import Mathlib.Analysis.InnerProductSpace.Defs
+import Mathlib.Analysis.InnerProductSpace.Continuous
+import Mathlib.Tactic.Measurability.Init
 public import LeanPool.NandakumarRamanaRao.NRR.Geometry.ConvexBody.Topology
 
 /-!

@@ -828,11 +828,11 @@ lemma isIso_of_coprod_eq_whiskerLeft_indOf
       (indOfTensorIso a (x ⨿ y)).inv ≫
       (indOf.obj a ◁ inv (coprodComparison indOf x y)) := by
     apply coprod.hom_ext
-    · rw [hv₁, coprod.inl_map_assoc, coprodComparison_inl_assoc,
+    · rw [hv₁, coprod.inl_map_assoc, inl_coprodComparison_assoc,
         ← Functor.map_comp_assoc, hw₁, ← reassoc_of% nat₁,
         Iso.hom_inv_id_assoc, ← MonoidalCategory.whiskerLeft_comp,
         map_inl_inv_coprodComparison]
-    · rw [hv₂, coprod.inr_map_assoc, coprodComparison_inr_assoc,
+    · rw [hv₂, coprod.inr_map_assoc, inr_coprodComparison_assoc,
         ← Functor.map_comp_assoc, hw₂, ← reassoc_of% nat₂,
         Iso.hom_inv_id_assoc, ← MonoidalCategory.whiskerLeft_comp,
         map_inr_inv_coprodComparison]
@@ -862,11 +862,11 @@ lemma isIso_of_coprod_eq_whiskerRight_indOf
       (indOfTensorIso (x ⨿ y) a).inv ≫
       (inv (coprodComparison indOf x y) ▷ indOf.obj a) := by
     apply coprod.hom_ext
-    · rw [hv₁, coprod.inl_map_assoc, coprodComparison_inl_assoc,
+    · rw [hv₁, coprod.inl_map_assoc, inl_coprodComparison_assoc,
         ← Functor.map_comp_assoc, hw₁, ← reassoc_of% nat₁,
         Iso.hom_inv_id_assoc, ← MonoidalCategory.comp_whiskerRight,
         map_inl_inv_coprodComparison]
-    · rw [hv₂, coprod.inr_map_assoc, coprodComparison_inr_assoc,
+    · rw [hv₂, coprod.inr_map_assoc, inr_coprodComparison_assoc,
         ← Functor.map_comp_assoc, hw₂, ← reassoc_of% nat₂,
         Iso.hom_inv_id_assoc, ← MonoidalCategory.comp_whiskerRight,
         map_inr_inv_coprodComparison]
@@ -898,12 +898,12 @@ lemma isIso_coprodComparison_tensorLeft_indOf₀
     (tensorLeft a)
   exact isIso_of_coprod_eq_whiskerLeft_indOf a x y
     (PreservesColimitPair.iso (tensorLeft a) x y).hom
-    (coprodComparison_inl (tensorLeft a))
-    (coprodComparison_inr (tensorLeft a))
+    (inl_coprodComparison (tensorLeft a) x y)
+    (inr_coprodComparison (tensorLeft a) x y)
     (coprodComparison (tensorLeft (indOf.obj a)) (indOf.obj x)
       (indOf.obj y))
-    (coprodComparison_inl (tensorLeft (indOf.obj a)))
-    (coprodComparison_inr (tensorLeft (indOf.obj a)))
+    (inl_coprodComparison (tensorLeft (indOf.obj a)) (indOf.obj x) (indOf.obj y))
+    (inr_coprodComparison (tensorLeft (indOf.obj a)) (indOf.obj x) (indOf.obj y))
 
 -- The mirror of the left version, with the same
 -- biproduct-preservation search for `tensorRight a`.
@@ -926,12 +926,12 @@ lemma isIso_coprodComparison_tensorRight_indOf₀
     (tensorRight a)
   exact isIso_of_coprod_eq_whiskerRight_indOf a x y
     (PreservesColimitPair.iso (tensorRight a) x y).hom
-    (coprodComparison_inl (tensorRight a))
-    (coprodComparison_inr (tensorRight a))
+    (inl_coprodComparison (tensorRight a) x y)
+    (inr_coprodComparison (tensorRight a) x y)
     (coprodComparison (tensorRight (indOf.obj a)) (indOf.obj x)
       (indOf.obj y))
-    (coprodComparison_inl (tensorRight (indOf.obj a)))
-    (coprodComparison_inr (tensorRight (indOf.obj a)))
+    (inl_coprodComparison (tensorRight (indOf.obj a)) (indOf.obj x) (indOf.obj y))
+    (inr_coprodComparison (tensorRight (indOf.obj a)) (indOf.obj x) (indOf.obj y))
 
 /-- Stage two, left version: the comparison for tensoring on the
 left by an embedded object, at one embedded and one arbitrary

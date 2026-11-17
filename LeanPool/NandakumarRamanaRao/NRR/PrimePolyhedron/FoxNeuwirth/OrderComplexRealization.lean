@@ -7,10 +7,15 @@ module
 
 
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.FiniteSimplex
-public import Mathlib.Tactic
 public import LeanPool.NandakumarRamanaRao.NRR.PrimePolyhedron.FoxNeuwirth.OrderComplex
 public import LeanPool.NandakumarRamanaRao.NRR.PrimePolyhedron.FoxNeuwirth.CanonicalConfiguration
 public import LeanPool.NandakumarRamanaRao.NRR.PrimeModel.Model
+public import LeanPool.NandakumarRamanaRao.NRR.PrimeModel.CoordinateDecomposition
+import LeanPool.NandakumarRamanaRao.NRR.PrimeModel.FixedVectors
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Basify
+import Mathlib.Tactic.Positivity.Finset
+import Mathlib.Tactic.ReduceModChar
 /-!
 # Topological realization of the Fox--Neuwirth order complex
 

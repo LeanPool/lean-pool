@@ -44,7 +44,7 @@ theorem anariRezaeiRightScore_merge
   induction L with
   | nil =>
       simp [anariRezaeiRightScore]
-      ring
+      ring_nf
   | cons x L ih =>
       simp only [List.cons_append, anariRezaeiRightScore]
       have hsum : (x :: (L ++ r :: s :: R)).sum =
@@ -59,7 +59,7 @@ theorem anariRezaeiComplementScore_merge
       (1-r)*Real.log (1-r) + (1-s)*Real.log (1-s) -
         (1-r-s)*Real.log (1-r-s) := by
   simp [anariRezaeiComplementScore]
-  ring
+  ring_nf
 
 /-- The expanded logarithmic gap for merging adjacent masses `r` and `s` with surrounding masses
 `q` and `t`. -/

@@ -42,7 +42,7 @@ def highFullSuffixSparseConstant : ℝ := 6 * directQuadraticOneNodeConstant
 
 theorem highFullSuffixSparseConstant_nonneg :
     0 ≤ highFullSuffixSparseConstant :=
-  mul_nonneg (by norm_num) directQuadraticOneNodeConstant_nonneg
+  mul_nonneg (by norm_num1) directQuadraticOneNodeConstant_nonneg
 
 /-- The high positive suffix estimate has no remaining analytic premise. -/
 theorem hasNativeUnitHighPositiveSuffixSparseBound_directQuadratic :
@@ -61,7 +61,7 @@ theorem hasSparseOnePBound_highFullDyadicSuffixMax
   have hpositive :=
     hasNativeUnitHighPositiveSuffixSparseBound_directQuadratic.2 p hp hp2 j hj N
   have hC : 0 ≤ 3 * directQuadraticOneNodeConstant * holderConjugate p :=
-    mul_nonneg (mul_nonneg (by norm_num) directQuadraticOneNodeConstant_nonneg)
+    mul_nonneg (mul_nonneg (by norm_num1) directQuadraticOneNodeConstant_nonneg)
       (holderConjugate_spec hp).symm.pos.le
   have hfull := hasSparseOnePBound_fullDyadicSuffixMax 1 j N hC hpositive
   convert hfull using 1; unfold highFullSuffixSparseConstant; ring
@@ -101,7 +101,7 @@ theorem dyadicSmoothHighPassMaxEnorm_add_le
   unfold dyadicSmoothHighPassMaxEnorm
   apply iSup_le
   intro m
-  rw [smoothQuadraticHighPass_add lam (zpow_pos (by norm_num) _)]
+  rw [smoothQuadraticHighPass_add lam (zpow_pos (by norm_num1) _)]
   exact (enorm_add_le _ _).trans (add_le_add
     (le_iSup (fun n : ℕ ↦
       ‖smoothQuadraticHighPass lam ((2 : ℝ) ^ (j + (n : ℤ) - 3)) f x‖ₑ) m)
@@ -118,7 +118,7 @@ theorem dyadicSmoothHighPassMaxEnorm_smul
       ‖smoothQuadraticHighPass lam ((2 : ℝ) ^ (j + (m : ℤ) - 3))
         (L0Infinity.smul c f) x‖ₑ =
       ‖c‖ₑ * ‖smoothQuadraticHighPass lam ((2 : ℝ) ^ (j + (m : ℤ) - 3)) f x‖ₑ := by
-    rw [smoothQuadraticHighPass_smul lam (zpow_pos (by norm_num) _) c f x, enorm_mul]
+    rw [smoothQuadraticHighPass_smul lam (zpow_pos (by norm_num1) _) c f x, enorm_mul]
   simp_rw [hterm]
   exact (ENNReal.mul_iSup _ _).symm
 
@@ -166,7 +166,7 @@ theorem fullDyadicConvolution_smul
   apply integral_congr_ae
   filter_upwards with y
   change _ * (c * f y) = _
-  ring
+  ac_rfl
 
 theorem finiteFullDyadicSuffix_add
     (lam : ℝ) (j : ℤ) (N m : ℕ) (f g : L0Infinity) (x : ℝ) :
@@ -209,7 +209,7 @@ theorem norm_finiteFullDyadicSuffixMaxOperator
     (lam : ℝ) (j : ℤ) (N : ℕ) (f : L0Infinity) (x : ℝ) :
     ‖finiteFullDyadicSuffixMaxOperator lam j N f x‖ =
       (finiteFullDyadicSuffixMaxNNNorm lam j N f x : ℝ) := by
-  simp [finiteFullDyadicSuffixMaxOperator]
+  simp only [finiteFullDyadicSuffixMaxOperator, Complex.norm_real, Real.norm_eq_abs, NNReal.abs_eq]
 
 /-- Sublinearity of the finite full-odd maximum needed for finite sparse
 families; no restriction on scales or modulation is required. -/

@@ -43,12 +43,20 @@ private theorem Maintenance.neg_aux
   cases p
   · intro hl hhl
     rcases h_maintenance (-hl) (by simp [moves_neg, hhl]) with hopt | hreply
-    · simp_all
-    · simp_all
+    · simp_all only [
+      Player.neg_left, moves_neg, Player.neg_right, Set.mem_neg, Set.exists_neg_mem,
+      ClosedUnderNeg.neg_ge_neg_iff, true_or]
+    · simp_all only [
+      Player.neg_left, moves_neg, Set.mem_neg, Set.exists_neg_mem,
+      ClosedUnderNeg.neg_ge_neg_iff, or_true]
   · intro gr hgr
     rcases h_maintenance (-gr) (by simp [moves_neg, hgr]) with hopt | hreply
-    · simp_all
-    · simp_all
+    · simp_all only [
+      Player.neg_right, moves_neg, Player.neg_left, Set.mem_neg, Set.exists_neg_mem,
+      ClosedUnderNeg.neg_ge_neg_iff, true_or]
+    · simp_all only [
+      Player.neg_right, moves_neg, Set.mem_neg, Set.exists_neg_mem,
+      ClosedUnderNeg.neg_ge_neg_iff, or_true]
 
 protected theorem Maintenance.neg_iff
     {A : G → Prop} [ClosedUnderNeg A] {g h : G} (p : Player) :
@@ -239,10 +247,7 @@ private theorem auxR (A : G → Prop) [Hereditary A]
     have h11 := h4 h8 x hx h9
     rwa [miserePlayerOutcome_eq_iff_winsGoingFirst]
 termination_by (x, (0 : Nat))
-decreasing_by
-  all_goals
-    first
-    | form_wf
+decreasing_by exact Prod.Lex.left _ _ (MisereGames.Moves.Subposition.of_mem_moves h7)
 
 private theorem auxL (A : G → Prop) [Hereditary A]
     {g h x : G}
@@ -300,10 +305,7 @@ private theorem auxL (A : G → Prop) [Hereditary A]
     have h11 := h5 h8 x hx h9
     rwa [miserePlayerOutcome_eq_iff_winsGoingFirst]
 termination_by (x, (0 : Nat))
-decreasing_by
-  all_goals
-    first
-    | form_wf
+decreasing_by exact Prod.Lex.left _ _ (MisereGames.Moves.Subposition.of_mem_moves h7)
 
 private theorem aux (A : G → Prop) [Hereditary A]
     {g h x : G}
@@ -315,15 +317,12 @@ private theorem aux (A : G → Prop) [Hereditary A]
   intro p; cases p
   · cases h6 : MiserePlayerOutcome (h + x) Player.left
     · simp [auxL A hx h2 h3 h4 h5 h6]
-    · simp
+    · simp only [ge_iff_le, Player.right_le]
   · cases h6 : MiserePlayerOutcome (g + x) Player.right
-    · simp
+    · simp only [ge_iff_le, Player.le_left]
     · simp [auxR A hx h2 h3 h4 h5 h6]
 termination_by (x, (1 : Nat))
-decreasing_by
-  all_goals
-    first
-    | form_wf
+decreasing_by all_goals exact Prod.Lex.right _ (Nat.zero_lt_succ 0)
 
 end
 
@@ -369,9 +368,9 @@ theorem _root_.MisereGames.Form.Hereditary.misereGE_of_moves
     : g ≥m A h := by
   refine misereGE_of_maintenance_proviso A ?_ ?_ ?_ ?_
   · intro gr h1
-    simp_all
+    simp_all only [true_or]
   · intro hl h1
-    simp_all
+    simp_all only [true_or]
   · intro h2 y hy h1
     rw [GameForm.isEndLike_iff_isEnd] at h2 h1
     refine winsGoingFirst_add_of_isEnd (isEnd_of_not_mem ?_) h1

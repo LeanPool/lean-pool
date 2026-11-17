@@ -9,7 +9,7 @@ module
 public import LeanPool.LeanModularForms.Modularforms.Generators.Defs
 import LeanPool.LeanModularForms.Modularforms.DimensionFormulas
 import LeanPool.LeanModularForms.Modularforms.QExpansionLems
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 
 /-!
 # Generators of the graded ring of level 1 modular forms: Surjectivity
@@ -91,7 +91,7 @@ lemma monomial_coeff_zero_eq_one (n a b : ℕ) (hab : 4 * a + 6 * b = n) :
         (DirectSum.of (fun k : ℤ => ModularForm Γ(1) k) 6 E₆) ^ b)
         (↑n : ℤ))).coeff 0 = 1 := by
   subst hab
-  have hab' : (↑(4 * a + 6 * b) : ℤ) = ↑a * 4 + ↑b * 6 := by push_cast; ring
+  have hab' : (↑(4 * a + 6 * b) : ℤ) = ↑a * 4 + ↑b * 6 := by push_cast; ac_rfl
   rw [hab', DirectSum.ofPow, DirectSum.ofPow, DirectSum.of_mul_of]
   convert_to (qExpansion 1 (⇑(GradedMonoid.GMul.mul (GradedMonoid.GMonoid.gnpow a E₄)
       (GradedMonoid.GMonoid.gnpow b E₆)))).coeff 0 = 1 using 2

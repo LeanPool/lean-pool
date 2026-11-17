@@ -5,12 +5,10 @@ Authors: Jon Crall, OpenAI GPT-5.6 Thinking
 -/
 module
 
-
 public import LeanPool.DavisKahan.DavisKahan.SpectralTheory.FormMethod.MaximalDomainTransport
 public import LeanPool.DavisKahan.DavisKahan.SpectralTheory.FormMethod.GraphClosedness
 public import LeanPool.DavisKahan.DavisKahan.SpectralTheory.FormMethod.CompactGraphEmbedding
 public import LeanPool.DavisKahan.DavisKahan.Sources.DavisKahan1970.Section9.FreeBeamAnalyticFoundation
-public import Mathlib.Tactic
 
 /-!
 # Assembly of the paper-facing free-beam analytic foundation

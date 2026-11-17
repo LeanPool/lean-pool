@@ -231,7 +231,7 @@ theorem subTripleShape_of_gridSubTriples (G : SimpleGraph V) [DecidableRel G.Adj
       (y := (G.edgeDensity (W i) (X i) : ℝ)) (z := (G.edgeDensity (U i) (W i) : ℝ))
       (δ := δ) (μ := μ₂) (ε := ε₁ / 8 / α) (e := ε₁ / 8)
       hδ0 hδ1 hy hy1 hz hz1 hx hx1 (hdata i hi).2.2.2.1 (hdata i hi).2.2.2.2 hsC
-      (by linarith) hε₂ hμ0 hμ1 hErr hτ (by ring)).1
+      (by linarith only [hε₁]) hε₂ hμ0 hμ1 hErr hτ (by ring)).1
   · intro i hi
     obtain ⟨-, -, -, -, -, -, -, hsA, hsB, hsC⟩ := hgrid i hi
     obtain ⟨⟨hx, hx1⟩, ⟨hy, hy1⟩, ⟨hz, hz1⟩⟩ := hclus i hi
@@ -239,7 +239,7 @@ theorem subTripleShape_of_gridSubTriples (G : SimpleGraph V) [DecidableRel G.Adj
       (y := (G.edgeDensity (W i) (X i) : ℝ)) (z := (G.edgeDensity (U i) (W i) : ℝ))
       (δ := δ) (μ := μ₂) (ε := ε₁ / 8 / α) (e := ε₁ / 8)
       hδ0 hδ1 hy hy1 hz hz1 hx hx1 (hdata i hi).2.2.2.1 (hdata i hi).2.2.2.2 hsC
-      (by linarith) hε₂ hμ0 hμ1 hErr hτ (by ring)).2
+      (by linarith only [hε₁]) hε₂ hμ0 hμ1 hErr hτ (by ring)).2
   · intro i hi
     obtain ⟨-, -, -, -, -, -, -, hsA, hsB, hsC⟩ := hgrid i hi
     obtain ⟨⟨hx, hx1⟩, ⟨hy, hy1⟩, ⟨hz, hz1⟩⟩ := hclus i hi
@@ -247,7 +247,7 @@ theorem subTripleShape_of_gridSubTriples (G : SimpleGraph V) [DecidableRel G.Adj
       (y := (G.edgeDensity (W i) (X i) : ℝ)) (z := (G.edgeDensity (U i) (X i) : ℝ))
       (δ := δ) (μ := μ₂) (ε := ε₁ / 8 / α) (e := ε₁ / 8)
       hδ0 hδ1 hx hx1 hz hz1 hy hy1 (hdata i hi).2.2.1 (hdata i hi).2.2.2.2 hsB
-      (by linarith) hε₂ hμ0 hμ1 hErr hτ (by ring)).1
+      (by linarith only [hε₁]) hε₂ hμ0 hμ1 hErr hτ (by ring)).1
   · intro i hi
     obtain ⟨-, -, -, -, -, -, -, hsA, hsB, hsC⟩ := hgrid i hi
     obtain ⟨⟨hx, hx1⟩, ⟨hy, hy1⟩, ⟨hz, hz1⟩⟩ := hclus i hi
@@ -255,7 +255,7 @@ theorem subTripleShape_of_gridSubTriples (G : SimpleGraph V) [DecidableRel G.Adj
       (y := (G.edgeDensity (W i) (X i) : ℝ)) (z := (G.edgeDensity (U i) (X i) : ℝ))
       (δ := δ) (μ := μ₂) (ε := ε₁ / 8 / α) (e := ε₁ / 8)
       hδ0 hδ1 hx hx1 hz hz1 hy hy1 (hdata i hi).2.2.1 (hdata i hi).2.2.2.2 hsB
-      (by linarith) hε₂ hμ0 hμ1 hErr hτ (by ring)).2
+      (by linarith only [hε₁]) hε₂ hμ0 hμ1 hErr hτ (by ring)).2
   · intro i hi
     obtain ⟨-, -, -, -, -, -, -, hsA, hsB, hsC⟩ := hgrid i hi
     obtain ⟨⟨hx, hx1⟩, ⟨hy, hy1⟩, ⟨hz, hz1⟩⟩ := hclus i hi
@@ -263,7 +263,7 @@ theorem subTripleShape_of_gridSubTriples (G : SimpleGraph V) [DecidableRel G.Adj
       (y := (G.edgeDensity (U i) (X i) : ℝ)) (z := (G.edgeDensity (W i) (X i) : ℝ))
       (δ := δ) (μ := μ₂) (ε := ε₁ / 8 / α) (e := ε₁ / 8)
       hδ0 hδ1 hx hx1 hy hy1 hz hz1 (hdata i hi).2.2.1 (hdata i hi).2.2.2.1 hsA
-      (by linarith) hε₂ hμ0 hμ1 hErr hτ rfl).1
+      (by linarith only [hε₁]) hε₂ hμ0 hμ1 hErr hτ rfl).1
   · intro i hi
     obtain ⟨-, -, -, -, -, -, -, hsA, hsB, hsC⟩ := hgrid i hi
     obtain ⟨⟨hx, hx1⟩, ⟨hy, hy1⟩, ⟨hz, hz1⟩⟩ := hclus i hi
@@ -271,7 +271,7 @@ theorem subTripleShape_of_gridSubTriples (G : SimpleGraph V) [DecidableRel G.Adj
       (y := (G.edgeDensity (U i) (X i) : ℝ)) (z := (G.edgeDensity (W i) (X i) : ℝ))
       (δ := δ) (μ := μ₂) (ε := ε₁ / 8 / α) (e := ε₁ / 8)
       hδ0 hδ1 hx hx1 hy hy1 hz hz1 (hdata i hi).2.2.1 (hdata i hi).2.2.2.1 hsA
-      (by linarith) hε₂ hμ0 hμ1 hErr hτ rfl).2
+      (by linarith only [hε₁]) hε₂ hμ0 hμ1 hErr hτ rfl).2
   · intro i hi j hj hij x y hxy
     exact tripleGraph_edgeDisjoint_of_rect_disjoint H (hdisj i hi j hj hij) x y hxy
 

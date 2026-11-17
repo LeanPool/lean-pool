@@ -10,7 +10,10 @@ public import LeanPool.BeyondBethe.BeyondBethe.DyadicRounding
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import Mathlib.Algebra.Order.BigOperators.Ring.Finset
 public import Mathlib.LinearAlgebra.Matrix.Adjugate
-public import Mathlib.Tactic
+import Mathlib.Tactic.GCongr -- shake: keep
+import Mathlib.Tactic.Linarith -- shake: keep
+import Mathlib.Tactic.NormNum -- shake: keep
+import Mathlib.Tactic.Ring -- shake: keep
 
 /-! # Matrix Perturbation -/
 
@@ -121,7 +124,8 @@ theorem abs_det_sub_det_le_of_entrywise {d : ℕ}
       change (AbsoluteValue.abs : AbsoluteValue ℝ ℝ)
           (σ.sign • ((∏ i, A (σ i) i) - ∏ i, B (σ i) i)) ≤ _
       rw [(AbsoluteValue.abs : AbsoluteValue ℝ ℝ).map_units_int_smul]
-      simpa [AbsoluteValue.abs, Fintype.card_fin] using
+      rw [AbsoluteValue.abs, AbsoluteValue.coe_mk, MulHom.coe_mk]
+      simpa only [Finset.card_univ, Fintype.card_fin] using
         (abs_finset_prod_sub_prod_le
           (s := (Finset.univ : Finset (Fin d)))
           (fun i ↦ A (σ i) i) (fun i ↦ B (σ i) i)

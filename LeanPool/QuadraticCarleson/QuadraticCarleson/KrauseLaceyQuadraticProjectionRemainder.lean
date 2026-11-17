@@ -73,7 +73,7 @@ theorem remainderFrequencyCutoff_eq_one {ξ : ℝ}
     remainderFrequencyCutoff ξ = 1 := by
   have hmem : ξ ∈ closedBall (17 / 16 : ℝ) (15 / 16) := by
     rw [mem_closedBall, Real.dist_eq, abs_le]
-    constructor <;> linarith [hξ.1, hξ.2]
+    constructor <;> linarith only [hξ, hξ.1, hξ.2]
   have hbump : remainderFrequencyCutoffData ξ = 1 :=
     remainderFrequencyCutoffData.one_of_mem_closedBall hmem
   change (remainderFrequencyCutoffData ξ : ℂ) = 1
@@ -86,11 +86,11 @@ theorem positiveDyadicBase_mul_remainderFrequencyCutoff_two (v : ℝ) :
     positiveDyadicBase v * remainderFrequencyCutoff (2 * v) =
       positiveDyadicBase v := by
   by_cases hv : positiveDyadicBase v = 0
-  · simp [hv]
+  · simp only [hv, zero_mul]
   · have hs := positiveDyadicBase_support_subset hv
     rw [remainderFrequencyCutoff_eq_one]
     · ring
-    · constructor <;> linarith [hs.1, hs.2]
+    · constructor <;> linarith only [hs, hs.1, hs.2]
 
 /-- The fixed cutoff bundled as a Schwartz function. -/
 def remainderFrequencyCutoffSchwartz : SchwartzMap ℝ ℂ :=
@@ -112,7 +112,7 @@ def scaledProjectionKernel (k : ℤ) (t : ℝ) : ℂ :=
 
 theorem integrable_scaledProjectionKernel (k : ℤ) :
     Integrable (scaledProjectionKernel k) := by
-  have hk : (2 : ℝ) ^ k ≠ 0 := zpow_ne_zero _ (by norm_num)
+  have hk : (2 : ℝ) ^ k ≠ 0 := zpow_ne_zero _ (by norm_num1)
   exact (projectionKernelSchwartz.integrable.comp_mul_left' hk).const_mul _
 
 /-- The scaled physical kernel has exactly the cutoff used to define
@@ -132,7 +132,7 @@ theorem fourier_scaledProjectionKernel (k : ℤ) (ξ : ℝ) :
       fun t ↦ (R : ℂ) * g (R * t) := by
     funext t
     unfold scaledProjectionKernel g
-    simp only [R, smul_eq_mul]
+    simp only [smul_eq_mul, R]
     have hphase :
         (((-2 * Real.pi * t * ξ : ℝ) : ℂ) * Complex.I) =
           (((-2 * Real.pi * ((2 : ℝ) ^ k * t) *
@@ -244,7 +244,7 @@ theorem quadraticScaleKernel_two_zpow (k : ℤ) (x : ℝ) :
     quadraticScaleKernel ((2 : ℝ) ^ k) x =
       annularQuadraticKernel (positiveDyadicAmplitude k) 1 x := by
   unfold quadraticScaleKernel annularQuadraticKernel positiveDyadicAmplitude
-  simp only [one_mul, div_eq_inv_mul, inv_zpow]
+  simp only [div_eq_inv_mul, inv_zpow, one_mul]
 
 /-- The normalized integral formula for the smooth projection `P_R κ_R`. -/
 def smoothProjectedQuadraticScaleKernel (R x : ℝ) : ℂ :=
@@ -287,7 +287,7 @@ theorem scaledProjectionConvolution_quadraticScaleKernel_eq
     calc
       _ = ((R : ℂ) * ((R⁻¹ : ℝ) : ℂ)) *
           projectionKernelSchwartz (R * t) *
-            positiveDyadicBase ((x - t) / R) * phase ((x - t) ^ 2) := by ring
+            positiveDyadicBase ((x - t) / R) * phase ((x - t) ^ 2) := by ac_rfl
       _ = _ := by rw [hcancel]; ring
   have hq : (∫ u : ℝ, q u) = phase (x ^ 2) *
       ∫ u : ℝ, projectionKernelSchwartz u * phase (-2 * (x / R) * u) *
@@ -335,7 +335,7 @@ theorem hasCompactSupport_quadraticScaleKernel_two_zpow (k : ℤ) :
   intro ha
   exact hx (by
     rw [quadraticScaleKernel_two_zpow]
-    simp [annularQuadraticKernel, ha])
+    simp only [annularQuadraticKernel, ha, one_mul, zero_mul])
 
 theorem integrable_quadraticScaleKernel_two_zpow (k : ℤ) :
     Integrable (quadraticScaleKernel ((2 : ℝ) ^ k)) :=
@@ -393,9 +393,9 @@ theorem projectionKernelFirstMoment_integrable :
   have h1 := projectionKernelSchwartz.integrable_pow_mul volume 1
   have h2 := projectionKernelSchwartz.integrable_pow_mul volume 2
   have h1' : Integrable (fun u : ℝ ↦ ‖projectionKernelSchwartz u‖ * |u|) := by
-    simpa only [Real.norm_eq_abs, pow_one, mul_comm] using h1
+    simpa only [mul_comm, Real.norm_eq_abs, pow_one] using h1
   have h2' : Integrable (fun u : ℝ ↦ ‖projectionKernelSchwartz u‖ * u ^ 2) := by
-    simpa only [Real.norm_eq_abs, sq_abs, mul_comm] using h2
+    simpa only [mul_comm, Real.norm_eq_abs, sq_abs] using h2
   have hsum : Integrable (fun u : ℝ ↦
       ‖projectionKernelSchwartz u‖ * |u| +
         ‖projectionKernelSchwartz u‖ * u ^ 2) := h1'.add h2'
@@ -404,7 +404,7 @@ theorem projectionKernelFirstMoment_integrable :
 theorem projectionKernelSecondMoment_integrable :
     Integrable (fun u : ℝ ↦ ‖projectionKernelSchwartz u‖ * u ^ 2) := by
   have h2 := projectionKernelSchwartz.integrable_pow_mul volume 2
-  simpa only [Real.norm_eq_abs, sq_abs, mul_comm] using h2
+  simpa only [mul_comm, Real.norm_eq_abs, sq_abs] using h2
 
 theorem projectionKernelFirstMoment_nonneg : 0 ≤ projectionKernelFirstMoment := by
   exact integral_nonneg fun u ↦ mul_nonneg (norm_nonneg _) (by positivity)
@@ -656,7 +656,7 @@ theorem norm_positiveDyadicBase_sub_le (v w : ℝ) :
     ‖positiveDyadicBase v - positiveDyadicBase w‖ ≤
       positiveDyadicAmplitudeBound * |v - w| := by
   have hdiff : ∀ z : ℝ, DifferentiableAt ℝ positiveDyadicBase z :=
-    fun z ↦ positiveDyadicBase_smooth.differentiable (by norm_num) z
+    fun z ↦ positiveDyadicBase_smooth.differentiable (by decide +kernel) z
   simpa only [Real.norm_eq_abs] using
     (convex_univ.norm_image_sub_le_of_norm_deriv_le
       (s := (Set.univ : Set ℝ)) (f := positiveDyadicBase)
@@ -709,7 +709,6 @@ theorem norm_projectionRemainderBracket_le
     _ ≤ (positiveDyadicAmplitudeBound * (1 + 2 * Real.pi)) / R ^ 2 *
         (|u| + u ^ 2) := by
       have huabs : 0 ≤ |u| := abs_nonneg u
-      have hu2 : 0 ≤ u ^ 2 := sq_nonneg u
       rw [show positiveDyadicAmplitudeBound * (|u| / R ^ 2) +
           positiveDyadicAmplitudeBound * (2 * Real.pi * (u ^ 2 / R ^ 2)) =
           (positiveDyadicAmplitudeBound / R ^ 2) *
@@ -765,7 +764,7 @@ theorem norm_quadraticProjectionRemainder_le_central
           _ ≤ ‖projectionKernelSchwartz u‖ *
               ((C₀ / R ^ 2) * (|u| + u ^ 2)) :=
             mul_le_mul_of_nonneg_left hb (norm_nonneg _)
-          _ = _ := by ring
+          _ = _ := by ac_rfl
       _ = (C₀ / R ^ 2) * projectionKernelFirstMoment := by
         rw [integral_const_mul]
         rfl
@@ -785,9 +784,9 @@ theorem positiveDyadicBase_eq_zero_of_one_le_abs
     {v : ℝ} (hv : 1 ≤ |v|) : positiveDyadicBase v = 0 := by
   by_contra hne
   have hs := positiveDyadicBase_support_subset hne
-  have hv0 : 0 ≤ v := by linarith [hs.1]
+  have hv0 : 0 ≤ v := by linarith only [hs, hs.1]
   rw [abs_of_nonneg hv0] at hv
-  linarith [hs.2]
+  linarith only [hv, hs, hs.2]
 
 /-- Outside the fixed amplitude support, a nonzero translated amplitude
 forces the integration variable to be large. -/
@@ -798,7 +797,7 @@ theorem scale_sq_mul_v_sq_le_four_mul_u_sq_of_translatedAmplitude_ne_zero
   have hRpos : 0 < R := zero_lt_one.trans_le hR
   have hR2 : 0 < R ^ 2 := sq_pos_of_pos hRpos
   have hs := positiveDyadicBase_support_subset ha
-  have hw0 : 0 ≤ v - u / R ^ 2 := by linarith [hs.1]
+  have hw0 : 0 ≤ v - u / R ^ 2 := by linarith only [hs, hs.1]
   have hwabs : |v - u / R ^ 2| ≤ 1 / 2 := by
     rw [abs_of_nonneg hw0]
     exact hs.2
@@ -808,11 +807,11 @@ theorem scale_sq_mul_v_sq_le_four_mul_u_sq_of_translatedAmplitude_ne_zero
       _ ≤ _ := abs_add_le _ _
   have hhalf : |v| / 2 ≤ |u| / R ^ 2 := by
     rw [abs_div, abs_of_pos hR2] at htri
-    linarith
+    linarith only [hv, hwabs, htri]
   have hsq := pow_le_pow_left₀ (by positivity : 0 ≤ |v| / 2) hhalf 2
   rw [div_pow, div_pow, sq_abs, sq_abs] at hsq
   field_simp at hsq
-  nlinarith
+  linarith only [hsq]
 
 /-- The support geometry converts the crude amplitude bound into the
 second-moment majorant used for spatial decay. -/
@@ -829,7 +828,7 @@ theorem norm_projectionRemainderBracket_le_tail
   · rw [projectionRemainderBracket, hz, ha]
     simp only [zero_mul, sub_zero, norm_zero]
     exact mul_nonneg
-      (div_nonneg (mul_nonneg (by norm_num) positiveDyadicAmplitudeBound_nonneg)
+      (div_nonneg (mul_nonneg (by norm_num1) positiveDyadicAmplitudeBound_nonneg)
         hden.le)
       (sq_nonneg u)
   · have hgeom :=
@@ -844,7 +843,7 @@ theorem norm_projectionRemainderBracket_le_tail
           norm_phase, mul_one]
       _ ≤ positiveDyadicAmplitudeBound :=
         norm_positiveDyadicBase_le (v - u / R ^ 2)
-      _ = positiveDyadicAmplitudeBound * 1 := by ring
+      _ = positiveDyadicAmplitudeBound * 1 := by ac_rfl
       _ ≤ positiveDyadicAmplitudeBound *
           (4 * u ^ 2 / (R ^ 4 * v ^ 2)) :=
         mul_le_mul_of_nonneg_left hfactor positiveDyadicAmplitudeBound_nonneg
@@ -859,7 +858,7 @@ theorem projectionRemainderTailConstant_nonneg :
     0 ≤ projectionRemainderTailConstant := by
   unfold projectionRemainderTailConstant
   exact mul_nonneg
-    (mul_nonneg (by norm_num) positiveDyadicAmplitudeBound_nonneg)
+    (mul_nonneg (by norm_num1) positiveDyadicAmplitudeBound_nonneg)
     projectionKernelSecondMoment_nonneg
 
 /-- The support of the amplitude gives two powers of spatial decay. This
@@ -877,7 +876,7 @@ theorem norm_quadraticProjectionRemainder_le_tail
   let C₁ : ℝ := 4 * positiveDyadicAmplitudeBound
   have hC₁ : 0 ≤ C₁ := by
     dsimp [C₁]
-    exact mul_nonneg (by norm_num) positiveDyadicAmplitudeBound_nonneg
+    exact mul_nonneg (by norm_num1) positiveDyadicAmplitudeBound_nonneg
   have hden : 0 < R ^ 4 * (x / R) ^ 2 :=
     mul_pos (pow_pos hRpos 4) hv2
   have hmajorant : Integrable (fun u : ℝ ↦
@@ -904,7 +903,7 @@ theorem norm_quadraticProjectionRemainder_le_tail
           _ ≤ ‖projectionKernelSchwartz u‖ *
               ((C₁ / (R ^ 4 * (x / R) ^ 2)) * u ^ 2) :=
             mul_le_mul_of_nonneg_left hb (norm_nonneg _)
-          _ = _ := by ring
+          _ = _ := by ac_rfl
       _ = (C₁ / (R ^ 4 * (x / R) ^ 2)) *
           projectionKernelSecondMoment := by
         rw [integral_const_mul]
@@ -928,7 +927,7 @@ private theorem one_le_four_mul_one_add_abs_inv_sq_of_abs_le_one
   have hp : 0 < 1 + |v| := by positivity
   rw [inv_pow]
   rw [le_mul_inv_iff₀ (pow_pos hp 2)]
-  nlinarith [abs_nonneg v]
+  nlinarith only [hv, hp, abs_nonneg v]
 
 private theorem inv_sq_le_four_mul_one_add_abs_inv_sq_of_one_le_abs
     {v : ℝ} (hv : 1 ≤ |v|) :
@@ -939,11 +938,11 @@ private theorem inv_sq_le_four_mul_one_add_abs_inv_sq_of_one_le_abs
   rw [inv_pow, inv_pow]
   rw [← mul_one (v ^ 2)⁻¹, inv_mul_le_iff₀ hv2]
   rw [show v ^ 2 * (4 * ((1 + |v|) ^ 2)⁻¹) =
-      (4 * v ^ 2) * ((1 + |v|) ^ 2)⁻¹ by ring]
+      (4 * v ^ 2) * ((1 + |v|) ^ 2)⁻¹ by ac_rfl]
   rw [le_mul_inv_iff₀ hp]
-  have hadd : 1 + |v| ≤ 2 * |v| := by linarith
+  have hadd : 1 + |v| ≤ 2 * |v| := by linarith only [hv]
   have hsq := pow_le_pow_left₀ (by positivity : 0 ≤ 1 + |v|) hadd 2
-  nlinarith [sq_abs v]
+  linarith only [hsq, sq_abs v]
 
 /-- A single fixed constant for the full spatially decaying estimate. -/
 def projectionRemainderConstant : ℝ :=
@@ -951,7 +950,7 @@ def projectionRemainderConstant : ℝ :=
 
 theorem projectionRemainderConstant_nonneg : 0 ≤ projectionRemainderConstant := by
   unfold projectionRemainderConstant
-  exact mul_nonneg (by norm_num) <|
+  exact mul_nonneg (by norm_num1) <|
     projectionRemainderCentralConstant_nonneg.trans (le_max_left _ _)
 
 /-- The explicit smooth-projection remainder bound from the direct
@@ -1025,7 +1024,7 @@ theorem norm_quadraticProjectionRemainder_le_weight
         quadraticRemainderWeight R x := by
   have hr := norm_quadraticProjectionRemainder_le hR x
   have hden : 1 + (x / R) ^ 2 ≤ (1 + |x / R|) ^ 2 := by
-    nlinarith [abs_nonneg (x / R), sq_abs (x / R)]
+    linarith only [abs_nonneg (x / R), sq_abs (x / R)]
   have hinv : (1 + |x / R|)⁻¹ ^ 2 ≤ (1 + (x / R) ^ 2)⁻¹ := by
     rw [inv_pow]
     exact (inv_le_inv₀ (by positivity) (by positivity)).2 hden
@@ -1068,12 +1067,12 @@ theorem quadraticRemainderWeight_sub_le_two_mul
     rw [show (x - z) / R - (x - t) / R = (t - z) / R by ring,
       abs_div, abs_of_pos hRpos]
     rw [div_le_iff₀ hRpos]
-    nlinarith
+    linarith only [hR, htz]
   have hdsq : (b - a) ^ 2 ≤ (1 / 2 : ℝ) ^ 2 := by
     have hp := pow_le_pow_left₀ (abs_nonneg (b - a)) hd 2
     simpa only [sq_abs] using hp
   have hden : 1 + b ^ 2 ≤ 2 * (1 + a ^ 2) := by
-    nlinarith [sq_nonneg (2 * a - b)]
+    linarith only [hdsq, sq_nonneg (2 * a - b)]
   have ha : 0 < 1 + a ^ 2 := by positivity
   have hb : 0 < 1 + b ^ 2 := by positivity
   unfold quadraticRemainderWeight
@@ -1081,8 +1080,8 @@ theorem quadraticRemainderWeight_sub_le_two_mul
   calc
     (1 + a ^ 2)⁻¹ = 1 / (1 + a ^ 2) := by rw [one_div]
     _ ≤ 2 / (1 + b ^ 2) :=
-      (div_le_div_iff₀ ha hb).2 (by simpa using hden)
-    _ = 2 * (1 + b ^ 2)⁻¹ := by ring
+      (div_le_div_iff₀ ha hb).2 (by simpa only [one_mul] using hden)
+    _ = 2 * (1 + b ^ 2)⁻¹ := by rfl
 
 /-- Local mass on the centered unit interval, in the exact form supplied
 by the direct quadratic decomposition. -/
@@ -1111,7 +1110,7 @@ theorem integral_weight_mul_norm_le_of_centeredUnitMass
   have hq_norm_le_one (z : ℝ) : ‖q z‖ ≤ 1 := by
     rw [Real.norm_eq_abs, abs_of_nonneg (hq_nonneg z)]
     dsimp [q, quadraticRemainderWeight]
-    exact inv_le_one_of_one_le₀ (by nlinarith [sq_nonneg ((x - z) / R)])
+    exact inv_le_one_of_one_le₀ (by linarith only [sq_nonneg ((x - z) / R)])
   have hS : MeasurableSet S := by
     dsimp [S]
     exact isClosed_le (continuous_fst.sub continuous_snd).abs continuous_const |>.measurableSet
@@ -1129,8 +1128,8 @@ theorem integral_weight_mul_norm_le_of_centeredUnitMass
     have heq : z ∈ Set.Icc (t - 1 / 2) (t + 1 / 2) ↔
         |t - z| ≤ (1 / 2 : ℝ) := by
       rw [Set.mem_Icc, abs_le]
-      constructor <;> intro hz <;> constructor <;> linarith [hz.1, hz.2]
-    simp only [H, S, g, Set.indicator_apply, Set.mem_ofPred_eq, heq]
+      constructor <;> intro hz <;> constructor <;> linarith only [hz, hz.1, hz.2]
+    simp only [indicator_apply, mem_ofPred_eq, heq, H, S, g]
   have hinner_right (z : ℝ) :
       (∫ t : ℝ, H (t, z)) = q z * centeredUnitMass f z := by
     rw [centeredUnitMass, ← integral_const_mul,
@@ -1140,15 +1139,15 @@ theorem integral_weight_mul_norm_le_of_centeredUnitMass
     have heq : t ∈ Set.Icc (z - 1 / 2) (z + 1 / 2) ↔
         |t - z| ≤ (1 / 2 : ℝ) := by
       rw [Set.mem_Icc, abs_le]
-      constructor <;> intro ht <;> constructor <;> linarith [ht.1, ht.2]
-    simp only [H, S, g, Set.indicator_apply, Set.mem_ofPred_eq, heq]
+      constructor <;> intro ht <;> constructor <;> linarith only [ht, ht.1, ht.2]
+    simp only [indicator_apply, mem_ofPred_eq, heq, H, S, g]
   have hfixed (t : ℝ) :
       q t * g t ≤ 2 * ∫ z : ℝ, H (t, z) := by
     have hright : IntegrableOn (fun z : ℝ ↦ 2 * q z * g t)
         (Set.Icc (t - 1 / 2) (t + 1 / 2)) := by
       have hi := hq.const_mul (2 * g t)
       apply Integrable.integrableOn
-      simpa only [mul_assoc, mul_comm, mul_left_comm] using hi
+      simpa only [mul_comm, mul_assoc] using hi
     calc
       q t * g t = ∫ _z : ℝ in Set.Icc (t - 1 / 2) (t + 1 / 2), q t * g t := by
         rw [setIntegral_const]
@@ -1164,14 +1163,14 @@ theorem integral_weight_mul_norm_le_of_centeredUnitMass
         intro z hz
         have htz : |t - z| ≤ (1 / 2 : ℝ) := by
           rw [abs_le]
-          constructor <;> linarith [hz.1, hz.2]
+          constructor <;> linarith only [hz, hz.1, hz.2]
         exact mul_le_mul_of_nonneg_right
           (quadraticRemainderWeight_sub_le_two_mul hR htz) (hg_nonneg t)
       _ = 2 * ∫ z : ℝ in Set.Icc (t - 1 / 2) (t + 1 / 2), q z * g t := by
         rw [← MeasureTheory.integral_const_mul]
         apply integral_congr_ae
         filter_upwards [] with z
-        ring
+        ac_rfl
       _ = 2 * ∫ z : ℝ, H (t, z) := by rw [hinner_left]
   have hqg : Integrable (fun t : ℝ ↦ q t * g t) := by
     have hi := hg.bdd_mul hq.aestronglyMeasurable
@@ -1201,7 +1200,7 @@ theorem integral_weight_mul_norm_le_of_centeredUnitMass
       filter_upwards [] with z
       exact hinner_right z
     _ ≤ 2 * ∫ z : ℝ, q z * M := by
-      apply mul_le_mul_of_nonneg_left _ (by norm_num)
+      apply mul_le_mul_of_nonneg_left _ (by norm_num1)
       apply integral_mono hqmass hqM
       intro z
       exact mul_le_mul_of_nonneg_left (hlocal z) (hq_nonneg z)
@@ -1210,11 +1209,11 @@ theorem integral_weight_mul_norm_le_of_centeredUnitMass
         rw [← integral_const_mul]
         apply integral_congr_ae
         filter_upwards [] with z
-        ring]
+        ac_rfl]
     _ = 2 * (R * Real.pi) * M := by
       rw [show (∫ z : ℝ, q z) = R * Real.pi by
         exact integral_quadraticRemainderWeight_sub_left hRpos x]
-      ring
+      ac_rfl
 
 /-- The pointwise kernel estimate integrates to the paper's `R⁻²` mass
 bound at every nonnegative dyadic scale. -/
@@ -1224,8 +1223,7 @@ theorem integral_norm_quadraticProjectionRemainder_two_zpow_le
       Real.pi * projectionRemainderConstant * ((2 : ℝ) ^ k)⁻¹ ^ 2 := by
   let R : ℝ := (2 : ℝ) ^ k
   have hR : 1 ≤ R := by
-    simpa only [R, zpow_zero] using
-      zpow_le_zpow_right₀ (by norm_num : (1 : ℝ) ≤ 2) hk
+    simpa only [zpow_zero] using zpow_le_zpow_right₀ (by norm_num : (1 : ℝ) ≤ 2) hk
   have hRpos : 0 < R := zero_lt_one.trans_le hR
   let p : ℝ → ℝ := fun x ↦ (1 + (x / R) ^ 2)⁻¹
   have hp : Integrable p := by
@@ -1238,7 +1236,7 @@ theorem integral_norm_quadraticProjectionRemainder_two_zpow_le
       ‖quadraticProjectionRemainder R x‖ ≤ A * p x := by
     have hr := norm_quadraticProjectionRemainder_le hR x
     have hden : 1 + (x / R) ^ 2 ≤ (1 + |x / R|) ^ 2 := by
-      nlinarith [abs_nonneg (x / R), sq_abs (x / R)]
+      linarith only [abs_nonneg (x / R), sq_abs (x / R)]
     have hinv : (1 + |x / R|)⁻¹ ^ 2 ≤ (1 + (x / R) ^ 2)⁻¹ := by
       rw [inv_pow]
       exact (inv_le_inv₀ (by positivity) (by positivity)).2 hden
@@ -1282,7 +1280,7 @@ theorem norm_quadraticProjectionRemainderOutput_le
         ∫ y : ℝ, ‖f y‖ := by
   have hR : 1 ≤ (2 : ℝ) ^ k := by
     simpa only [zpow_zero] using
-      zpow_le_zpow_right₀ (by norm_num : (1 : ℝ) ≤ 2) hk
+      zpow_le_zpow_right₀ (by norm_num1 : (1 : ℝ) ≤ 2) hk
   have hmajorant : Integrable (fun y : ℝ ↦
       (projectionRemainderCentralConstant * ((2 : ℝ) ^ k)⁻¹ ^ 3) *
         ‖f y‖) :=
@@ -1368,8 +1366,7 @@ theorem norm_quadraticProjectionRemainderOutput_le_of_centeredUnitMass
   let R : ℝ := (2 : ℝ) ^ k
   let A : ℝ := projectionRemainderConstant * R⁻¹ ^ 3
   have hR : 1 ≤ R := by
-    simpa only [R, zpow_zero] using
-      zpow_le_zpow_right₀ (by norm_num : (1 : ℝ) ≤ 2) hk
+    simpa only [zpow_zero] using zpow_le_zpow_right₀ (by norm_num : (1 : ℝ) ≤ 2) hk
   have hRpos : 0 < R := zero_lt_one.trans_le hR
   have hA : 0 ≤ A := by
     unfold A
@@ -1384,7 +1381,7 @@ theorem norm_quadraticProjectionRemainderOutput_le_of_centeredUnitMass
       positivity)]
     unfold quadraticRemainderWeight
     exact inv_le_one_of_one_le₀ (by
-      nlinarith [sq_nonneg ((x - y) / R)])
+      linarith only [sq_nonneg ((x - y) / R)])
   have hweighted : Integrable (fun y : ℝ ↦
       quadraticRemainderWeight R (x - y) * ‖f y‖) := by
     have hi := hf.norm.bdd_mul hw.aestronglyMeasurable
@@ -1410,7 +1407,7 @@ theorem norm_quadraticProjectionRemainderOutput_le_of_centeredUnitMass
             (norm_nonneg (f y))
         _ = A * (quadraticRemainderWeight R (x - y) * ‖f y‖) := by
           unfold A
-          ring
+          ac_rfl
     _ = A * ∫ y : ℝ,
         quadraticRemainderWeight R (x - y) * ‖f y‖ :=
       integral_const_mul A _
@@ -1449,7 +1446,7 @@ theorem norm_quadraticProjectionRemainderOutput_le_of_bound
         ‖quadraticProjectionRemainder ((2 : ℝ) ^ k) y‖ * ‖f (x - y)‖ ≤
             ‖quadraticProjectionRemainder ((2 : ℝ) ^ k) y‖ * K :=
           mul_le_mul_of_nonneg_left (hfK (x - y)) (norm_nonneg _)
-        _ = K * q y := by unfold q; ring
+        _ = K * q y := by unfold q; ac_rfl
     _ = K * ∫ y : ℝ, q y := integral_const_mul K q
     _ ≤ K * (Real.pi * projectionRemainderConstant *
         ((2 : ℝ) ^ k)⁻¹ ^ 2) :=
@@ -1530,7 +1527,7 @@ theorem integral_sq_norm_quadraticProjectionRemainderOutput_le_of_centeredUnitMa
     filter_upwards [] with x
     have hx := norm_quadraticProjectionRemainderOutput_le_of_centeredUnitMass
       hk hf hlocal x
-    simpa only [L] using hx.trans_eq (by ring)
+    simpa only [L] using hx.trans_eq (by ac_rfl)
   have hbound' : ∀ᵐ x : ℝ ∂volume,
       ‖‖quadraticProjectionRemainderOutput k f x‖‖ ≤ 2 * M * L := by
     filter_upwards [hbound] with x hx
@@ -1548,7 +1545,7 @@ theorem integral_sq_norm_quadraticProjectionRemainderOutput_le_of_centeredUnitMa
     rw [pow_two]
     exact mul_le_mul_of_nonneg_right
       (norm_quadraticProjectionRemainderOutput_le_of_centeredUnitMass
-        hk hf hlocal x |>.trans_eq (by unfold L; ring))
+        hk hf hlocal x |>.trans_eq (by unfold L; ac_rfl))
       (norm_nonneg _)
   calc
     (∫ x : ℝ, ‖quadraticProjectionRemainderOutput k f x‖ ^ 2) ≤
@@ -1561,7 +1558,7 @@ theorem integral_sq_norm_quadraticProjectionRemainderOutput_le_of_centeredUnitMa
     _ ≤ (2 * M * L) * (L * ∫ x : ℝ, ‖f x‖) :=
       mul_le_mul_of_nonneg_left
         (integral_norm_quadraticProjectionRemainderOutput_two_zpow_le hk hf)
-        (mul_nonneg (mul_nonneg (by norm_num) hM) hL)
+        (mul_nonneg (mul_nonneg (by norm_num1) hM) hL)
     _ = 2 * L ^ 2 * M * ∫ x : ℝ, ‖f x‖ := by ring
     _ = _ := rfl
 
@@ -1666,7 +1663,7 @@ theorem norm_quadraticProjectionRemainderOutputL2_le_of_centeredUnitMass
     rw [hx]
   refine (sq_le_sq₀ (norm_nonneg u)
     (mul_nonneg
-      (mul_nonneg (mul_nonneg (by norm_num) hL) (Real.sqrt_nonneg M))
+      (mul_nonneg (mul_nonneg (by norm_num1) hL) (Real.sqrt_nonneg M))
       (Real.sqrt_nonneg m))).mp ?_
   rw [hu_sq]
   calc
@@ -1677,7 +1674,7 @@ theorem norm_quadraticProjectionRemainderOutputL2_le_of_centeredUnitMass
           hk hf hM hlocal
     _ ≤ 4 * L ^ 2 * M * m := by
       have hLMm : 0 ≤ L ^ 2 * M * m := by positivity
-      nlinarith
+      linarith only [hLMm]
     _ = (2 * L * Real.sqrt M * Real.sqrt m) ^ 2 := by
       unfold L
       simp only [mul_pow, Real.sq_sqrt hM, Real.sq_sqrt hm]
@@ -1920,14 +1917,14 @@ private theorem sum_sixteenth_shift_le
       (1 / 16 : ℝ) ^ s * (1 / 16 : ℝ) ^ j₀ ≤
           (1 / 16 : ℝ) ^ s * 1 := by
         gcongr
-        exact pow_le_one₀ (by norm_num) (by norm_num)
-      _ = _ := by ring
+        exact pow_le_one₀ (by norm_num1) (by norm_num1)
+      _ = _ := by ac_rfl
   have hgeom : (∑ n ∈ Finset.range N, (1 / 16 : ℝ) ^ n) ≤ 2 := by
     calc
       _ ≤ ∑ n ∈ Finset.range N, (1 / 2 : ℝ) ^ n := by
         exact Finset.sum_le_sum fun n _ ↦
-          pow_le_pow_left₀ (by norm_num : 0 ≤ (1 / 16 : ℝ))
-            (by norm_num : (1 / 16 : ℝ) ≤ 1 / 2) n
+          pow_le_pow_left₀ (by norm_num1 : 0 ≤ (1 / 16 : ℝ))
+            (by norm_num1 : (1 / 16 : ℝ) ≤ 1 / 2) n
       _ ≤ 2 := sum_geometric_two_le N
   simp_rw [show ∀ n : ℕ, (1 / 16 : ℝ) ^ (s + j₀ + n) =
       (1 / 16 : ℝ) ^ (s + j₀) * (1 / 16 : ℝ) ^ n by
@@ -1942,7 +1939,7 @@ private theorem sum_sixteenth_shift_le
         (Finset.sum_nonneg fun _ _ ↦ by positivity)
     _ ≤ (1 / 16 : ℝ) ^ s * 2 :=
       mul_le_mul_of_nonneg_left hgeom (by positivity)
-    _ = 2 * (1 / 16 : ℝ) ^ s := by ring
+    _ = 2 * (1 / 16 : ℝ) ^ s := by ac_rfl
 
 private theorem sqrt_sum_sixteenth_shift_le
     (N s j₀ : ℕ) :
@@ -1957,7 +1954,7 @@ private theorem sqrt_sum_sixteenth_shift_le
       rw [pow_two, ← mul_pow]
       norm_num
     rw [mul_pow, hpow]
-    nlinarith [show 0 ≤ (1 / 16 : ℝ) ^ s by positivity]
+    linarith only [h, show 0 ≤ (1 / 16 : ℝ) ^ s by positivity]
 
 /-- Finite `L²` summation of projection errors. The hypothesis is exactly
 the per-scale bound obtained by interpolating the paper's
@@ -1979,7 +1976,7 @@ theorem norm_finset_sum_projectionErrors_le
   have hCS := Real.sum_sqrt_mul_sqrt_le
     (f := fun n ↦ (1 / 16 : ℝ) ^ (s + j₀ + n)) (g := m)
     (Finset.range N)
-    (fun n ↦ pow_nonneg (by norm_num : (0 : ℝ) ≤ 1 / 16) _)
+    (fun n ↦ pow_nonneg (by norm_num1 : (0 : ℝ) ≤ 1 / 16) _)
     hm
   have hmassSqrt :
       Real.sqrt (∑ n ∈ Finset.range N, m n) ≤ Real.sqrt V :=
@@ -1998,7 +1995,7 @@ theorem norm_finset_sum_projectionErrors_le
       rw [Finset.mul_sum]
       apply Finset.sum_congr rfl
       intro n hn
-      ring
+      ac_rfl
     _ ≤ (C * Real.sqrt K) *
         (Real.sqrt (∑ n ∈ Finset.range N,
           (1 / 16 : ℝ) ^ (s + j₀ + n)) *
@@ -2009,7 +2006,7 @@ theorem norm_finset_sum_projectionErrors_le
       apply mul_le_mul_of_nonneg_left _ hCK
       exact mul_le_mul hweightSqrt hmassSqrt
         (Real.sqrt_nonneg _) (by positivity)
-    _ = 2 * C * Real.sqrt K * (1 / 4 : ℝ) ^ s * Real.sqrt V := by ring
+    _ = 2 * C * Real.sqrt K * (1 / 4 : ℝ) ^ s * Real.sqrt V := by ac_rfl
 
 private theorem inv_two_pow_sq_eq_sqrt_sixteenth_pow (q : ℕ) :
     ((2 : ℝ) ^ q)⁻¹ ^ 2 = Real.sqrt ((1 / 16 : ℝ) ^ q) := by
@@ -2068,7 +2065,7 @@ theorem norm_finset_sum_nonnegativeDyadicProjectionRemainderOutputL2_le
     _ = (Real.pi * projectionRemainderConstant) * Real.sqrt K *
           Real.sqrt ((1 / 16 : ℝ) ^ (s + j₀ + n)) * Real.sqrt (m n) := by
       rw [inv_two_pow_sq_eq_sqrt_sixteenth_pow]
-      ring
+      ac_rfl
 
 
 end

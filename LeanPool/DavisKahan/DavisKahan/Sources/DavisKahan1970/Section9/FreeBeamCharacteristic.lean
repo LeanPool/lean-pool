@@ -5,12 +5,16 @@ Authors: Jon Crall, OpenAI GPT-5.6 Thinking
 -/
 module
 
-
 public import Mathlib.Analysis.Calculus.IteratedDeriv.Defs
+-- Preserve the real normed-space instance in the exported derivative statements.
+public import Mathlib.Analysis.InnerProductSpace.Basic -- shake: keep
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
-public import Mathlib.Tactic
+import Mathlib.Tactic.Linarith -- shake: keep
+import Mathlib.Tactic.LinearCombination -- shake: keep
+import Mathlib.Tactic.NormNum -- shake: keep
+import Mathlib.Tactic.Ring -- shake: keep
 
 /-!
 # Characteristic equation for the free--free beam

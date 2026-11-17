@@ -122,19 +122,19 @@ theorem cor1_part : ∃ C, 0 ≤ C ∧ ∀ (lower : Bool) (y s : ℝ), 1 < y →
         (primesLT (y ^ (1 / max s 3))).filter (fun p : ℕ => y ^ (1 / xi y) ≤ p) := by
       ext p
       simp only [mem_filter, mem_rosserPrimes, mem_primesLT, Bool.false_eq_true, false_or]
-      rw [lt_rpow_one_div_max_three hy (by linarith) (Nat.cast_nonneg p)]
+      rw [lt_rpow_one_div_max_three hy (by linarith only [hs1]) (Nat.cast_nonneg p)]
       tauto
     rw [hset]
     have hα : max s 3 ≤ xi y := max_le hsξ hξ3
-    have h := hC fSieve y (max s 3) (xi y) hy (by linarith [le_max_right s 3]) hα hw2
+    have h := hC fSieve y (max s 3) (xi y) hy (by linarith only [le_max_right s 3]) hα hw2
       (fSieve_antitone.antitoneOn _) (fun t _ => (fSieve_pos t).le)
     refine h.trans (add_le_add ?_ ?_)
     · have hint := intervalIntegral_le_integral_Ioi hα
         (integrableOn_fSieve_shift (le_max_right s 3))
-        (fun t ht => div_nonneg (fSieve_pos _).le (by linarith [ht.out, le_max_right s 3]))
+        (fun t ht => div_nonneg (fSieve_pos _).le (by linarith only [ht.out, le_max_right s 3, ht]))
       have heq := mainMaj_false_eq_integral s
-      exact div_le_div_of_nonneg_right (by linarith) hL.le
-    · have h1 := mainMaj_sub_one_le true false (by linarith [le_max_right s 3] : 1 ≤ max s 3)
+      exact div_le_div_of_nonneg_right (by linarith only [hint, heq]) hL.le
+    · have h1 := mainMaj_sub_one_le true false (by linarith only [le_max_right s 3] : 1 ≤ max s 3)
       rw [mainMaj_true] at h1
       have hG : errMaj false (max s 3) = errMaj false s := by
         rcases le_total s 3 with h | h
@@ -143,10 +143,10 @@ theorem cor1_part : ∃ C, 0 ≤ C ∧ ∀ (lower : Bool) (y s : ℝ), 1 < y →
       rw [hG] at h1
       have hsq : max s 3 ^ 2 ≤ 9 * s ^ 2 := by
         rcases le_total s 3 with h | h
-        · rw [max_eq_right h]; nlinarith
-        · rw [max_eq_left h]; nlinarith
+        · rw [max_eq_right h]; nlinarith only [hs1]
+        · rw [max_eq_left h]; nlinarith only []
       have hGs := errMaj_pos false s
-      have : fSieve (max s 3 - 1) ≤ 432 * s ^ 2 * errMaj false s := by nlinarith
+      have : fSieve (max s 3 - 1) ≤ 432 * s ^ 2 * errMaj false s := by nlinarith only [h1, hsq, hGs]
       apply div_le_div_of_nonneg_right _ hL.le
       calc C * fSieve (max s 3 - 1) * pntE (y ^ (1 / xi y))
           ≤ C * (432 * s ^ 2 * errMaj false s) * pntE (y ^ (1 / xi y)) := by gcongr
@@ -158,7 +158,7 @@ theorem cor1_part : ∃ C, 0 ≤ C ∧ ∀ (lower : Bool) (y s : ℝ), 1 < y →
       ((mainMaj_antitone false).antitoneOn _) (fun t _ => mainMaj_nonneg false t)
     refine h.trans (add_le_add ?_ ?_)
     · have hint := intervalIntegral_le_integral_Ioi hsξ (integrableOn_mainMaj_false_shift hs2)
-        (fun t ht => div_nonneg (mainMaj_nonneg _ _) (by linarith [ht.out]))
+        (fun t ht => div_nonneg (mainMaj_nonneg _ _) (by linarith only [ht.out, hs1, ht]))
       rw [mainMaj_true, fSieve_eq_integral_mainMaj hs2]
       exact div_le_div_of_nonneg_right hint hL.le
     · have h1 := mainMaj_sub_one_le false true hs1
@@ -166,7 +166,7 @@ theorem cor1_part : ∃ C, 0 ≤ C ∧ ∀ (lower : Bool) (y s : ℝ), 1 < y →
       apply div_le_div_of_nonneg_right _ hL.le
       calc C * mainMaj false (s - 1) * pntE (y ^ (1 / xi y))
           ≤ C * (432 * s ^ 2 * errMaj true s) * pntE (y ^ (1 / xi y)) := by
-            gcongr; nlinarith
+            gcongr; nlinarith only [h1, hGs]
         _ = 432 * C * s ^ 2 * errMaj true s * pntE (y ^ (1 / xi y)) := by ring
 
 /-- The source term in the form needed for the induction. -/
@@ -193,15 +193,15 @@ theorem src_le_of_le_xi {cR CR : ℝ} (hR : ∀ z ≥ 2, |R z * log z - cR| ≤ 
         rw [mem_filter, mem_primesLT] at hp
         have hlt : (p : ℝ) < y ^ (1 / (3 : ℝ)) := hp.1.2.trans_le
           (rpow_one_div_le_rpow_one_div hy.le (by norm_num) h3)
-        exact absurd ((not_cube_lt_iff (by linarith) p.cast_nonneg).1 hp.2) (not_le.2 hlt)
-      rw [this, max_eq_right (by linarith)]
+        exact absurd ((not_cube_lt_iff (by linarith only [hy]) p.cast_nonneg).1 hp.2) (not_le.2 hlt)
+      rw [this, max_eq_right (by linarith only [h3])]
       simpa using hE
-    · refine (src_le hR hy hs1 hw2 (rpow_one_div_le_rpow_one_div hy.le (by linarith) hsξ)
+    · refine (src_le hR hy hs1 hw2 (rpow_one_div_le_rpow_one_div hy.le (by linarith only [hs1]) hsξ)
         (rpow_one_div_le_rpow_one_div hy.le (by norm_num) hξ3)).trans ?_
       simp only [Bool.false_eq_true, ite_false]
       rw [errMaj_false_of_le_three h3]
       have : 6 * CR * pntE (y ^ (1 / xi y)) ≤ 6 * CR * s ^ 2 * 1 * pntE (y ^ (1 / xi y)) := by
-        have : 1 ≤ s ^ 2 := by nlinarith
+        have : 1 ≤ s ^ 2 := by nlinarith only [hs1]
         have := mul_nonneg hCR hpE.le
         nlinarith
       gcongr
@@ -242,18 +242,18 @@ theorem fail_le_exp_SLT (lower : Bool) (r : ℕ) (y z : ℝ) : fail lower r y z 
 theorem xi_le_of_le {y Y : ℝ} (hy : 1 < y) (hyY : y ≤ Y) :
     xi y ≤ log Y / log (log 3) ^ (11 / 5 : ℝ) := by
   have hl3 : 1 < log 3 := by
-    rw [lt_log_iff_exp_lt (by norm_num)]; have := exp_one_lt_d9; linarith
+    rw [lt_log_iff_exp_lt (by norm_num)]; have := exp_one_lt_d9; linarith only [this]
   have hll : 0 < log (log 3) := log_pos hl3
   have hL : 0 < log y := log_pos hy
   have hP : 0 < log (log 3) ^ (11 / 5 : ℝ) := rpow_pos_of_pos hll _
   have hle : log (log 3) ^ (11 / 5 : ℝ) ≤ log (log (3 * y)) ^ (11 / 5 : ℝ) := by
-    refine rpow_le_rpow hll.le (log_le_log (by linarith) (log_le_log (by norm_num) ?_))
+    refine rpow_le_rpow hll.le (log_le_log (by linarith only [hl3]) (log_le_log (by norm_num) ?_))
       (by norm_num)
-    linarith
+    linarith only [hy]
   rw [xi]
   calc log y / log (log (3 * y)) ^ (11 / 5 : ℝ) ≤ log y / log (log 3) ^ (11 / 5 : ℝ) :=
         div_le_div_of_nonneg_left hL.le hP hle
-    _ ≤ _ := div_le_div_of_nonneg_right (log_le_log (by linarith) hyY) hP.le
+    _ ≤ _ := div_le_div_of_nonneg_right (log_le_log (by linarith only [hy]) hyY) hP.le
 
 /-- [I71, (4.8)]: for `1 < y ≤ Y` the claim at depth `r + 1` holds once `c₇` is large in terms
 of `Y`. -/
@@ -268,14 +268,14 @@ theorem small_y {cR c₇ Y : ℝ} (hcR : 0 < cR) (hY : 1 < Y)
   set Ξ := log Y / log (log 3) ^ (11 / 5 : ℝ)
   have hs1 : 1 ≤ s := (one_le_sMin lower).trans hs
   have hL : 0 < log y := log_pos hy
-  have hLY : log y ≤ log Y := log_le_log (by linarith) hyY
+  have hLY : log y ≤ log Y := log_le_log (by linarith only [hy]) hyY
   have hMΞ := bigM_pos Ξ
   have hG : bigM Ξ / 3 ≤ errMaj lower s :=
     le_trans (by gcongr; exact bigM_antitone (hsξ.trans (xi_le_of_le hy hyY)))
       (errMaj_mem lower s).1
   have hδ := one_le_delta hs1 y
   have hρ : (1 : ℝ) / 2 ≤ ((r + 1 : ℕ) : ℝ) / ((r + 1 : ℕ) + 1) := by
-    rw [div_le_div_iff₀ (by norm_num) (by positivity)]; push_cast; linarith
+    rw [div_le_div_iff₀ (by norm_num) (by positivity)]; push_cast; linarith only []
   have hz : y ^ (1 / s) ≤ Y := by
     refine le_trans ?_ hyY
     calc y ^ (1 / s) ≤ y ^ (1 / (1 : ℝ)) := rpow_one_div_le_rpow_one_div hy.le one_pos hs1
@@ -291,7 +291,7 @@ theorem small_y {cR c₇ Y : ℝ} (hcR : 0 < cR) (hY : 1 < Y)
       have hK : 6 * exp (SLT Y) * log Y ^ 2 ≤ c₇ * (cR * bigM Ξ) :=
         (div_le_iff₀ (mul_pos hcR hMΞ)).1 hc₇
       rw [le_div_iff₀ (by have := log_pos hY; positivity)]
-      linarith
+      linarith only [hK]
     have hnum : cR * c₇ * ((1 / 2) * (bigM Ξ / 3)) ≤
         cR * c₇ * ((((r + 1 : ℕ) : ℝ) / ((r + 1 : ℕ) + 1)) * delta s y * errMaj lower s) := by
       refine mul_le_mul_of_nonneg_left ?_ (mul_nonneg hcR.le hc₇0)
@@ -300,7 +300,7 @@ theorem small_y {cR c₇ Y : ℝ} (hcR : 0 < cR) (hY : 1 < Y)
       calc (1 / 2 : ℝ) * (bigM Ξ / 3) ≤ (((r + 1 : ℕ) : ℝ) / ((r + 1 : ℕ) + 1)) *
             (delta s y * errMaj lower s) := by
             refine mul_le_mul hρ ?_ (by positivity) (by positivity)
-            nlinarith
+            nlinarith only [hG, hMΞ, hδ]
         _ = _ := by ring
     have hc0 : 0 ≤ cR * c₇ * ((((r + 1 : ℕ) : ℝ) / ((r + 1 : ℕ) + 1)) * delta s y *
         errMaj lower s) := le_trans (by positivity) hnum
@@ -308,7 +308,7 @@ theorem small_y {cR c₇ Y : ℝ} (hcR : 0 < cR) (hY : 1 < Y)
     refine h1.trans ((div_le_div₀ hc0 hnum (by positivity) hLL).trans_eq (by ring))
   have : 0 ≤ cR * (mainMaj lower s / log y) := by positivity
   calc fail lower (r + 1) y (y ^ (1 / s)) ≤ exp (SLT Y) := hfail
-    _ ≤ _ := by rw [mul_add]; linarith
+    _ ≤ _ := by rw [mul_add]; linarith only [key, this]
 
 /-! ### The small primes: the crude bound against Lemma 9 -/
 
@@ -329,16 +329,16 @@ theorem crude_le : ∃ y₁ : ℝ, ∀ y ≥ y₁, ∀ (lower : Bool) (n : ℕ) 
   set ξ := xi y
   set X := log (log (y ^ (1 / ξ))) + C'
   have hs1 : 1 ≤ s := (one_le_sMin lower).trans hs
-  have hξ4 : 6 ≤ ξ := by linarith [add_one_le_exp (32 : ℝ)]
+  have hξ4 : 6 ≤ ξ := by linarith only [add_one_le_exp (32 : ℝ), hξ32]
   have hL4 : 0 < log y ^ 4 := by have := log_pos hy1; positivity
   -- the crude bound
   have hfail : fail lower n y (y ^ (1 / ξ)) ≤
       2 * (exp 1 * X / (ξ - 2)) ^ (ξ - 2) := by
     rw [one_div]
-    refine fail_rpow_le_tail hy1 (by linarith) ?_ h2e
+    refine fail_rpow_le_tail hy1 (by linarith only [hξ4]) ?_ h2e
     rw [← one_div]
     have := hCS _ hw2
-    have : CS ≤ C' := by simp only [C']; linarith [le_abs_self CS]
+    have : CS ≤ C' := by simp only [C']; linarith only [le_abs_self CS]
     simp only [X]
     linarith
   -- Lemma 9
@@ -346,19 +346,19 @@ theorem crude_le : ∃ y₁ : ℝ, ∀ y ≥ y₁, ∀ (lower : Bool) (n : ℕ) 
     intro t ht
     rw [errMaj_eq_majG_succ]
     refine le_trans (exp_le_exp.2 ?_) (hc _ t ht)
-    have : c * t ≤ c' * t := mul_le_mul_of_nonneg_right (le_max_left _ _) (by linarith)
-    linarith
+    have : c * t ≤ c' * t := mul_le_mul_of_nonneg_right (le_max_left _ _) (by linarith only [ht])
+    linarith only [this]
   have hGs := errMaj_pos lower s
   have hmain : 2 * (exp 1 * X / (ξ - 2)) ^ (ξ - 2) * log y ^ 4 ≤ delta s y * errMaj lower s := by
     rcases le_total s (ξ / 2) with h | h
-    · refine hA.trans ((hG _ (by linarith)).trans ?_)
+    · refine hA.trans ((hG _ (by linarith only [hξ4])).trans ?_)
       calc errMaj lower (ξ / 2) ≤ errMaj lower s := errMaj_antitone lower h
         _ ≤ delta s y * errMaj lower s := le_mul_of_one_le_left hGs.le (one_le_delta hs1 y)
     · refine hB.trans ?_
-      have hδ := delta_le_delta (by linarith : 1 ≤ ξ / 2) h y
+      have hδ := delta_le_delta (by linarith only [hξ4] : 1 ≤ ξ / 2) h y
       have hGG : exp (-(ξ * log ξ) - ξ * log (log ξ) - c' * ξ) ≤ errMaj lower s :=
-        (hG ξ (by linarith)).trans (errMaj_antitone lower hsξ)
-      exact mul_le_mul hδ hGG (exp_pos _).le (by linarith [one_le_delta hs1 y])
+        (hG ξ (by linarith only [hξ4])).trans (errMaj_antitone lower hsξ)
+      exact mul_le_mul hδ hGG (exp_pos _).le (by linarith only [one_le_delta hs1 y, hs1])
   rw [le_div_iff₀ hL4]
   calc fail lower n y (y ^ (1 / ξ)) * log y ^ 4
       ≤ 2 * (exp 1 * X / (ξ - 2)) ^ (ξ - 2) * log y ^ 4 := by gcongr
@@ -372,7 +372,7 @@ theorem ratio_le {r : ℕ} {ε : ℝ} (hε : ε * ((r : ℝ) + 1) ^ 2 ≤ 1) :
   rw [show ((r + 1 : ℕ) : ℝ) / ((r + 1 : ℕ) + 1) * (1 - ε) = ((r : ℝ) + 1) * (1 - ε) / (r + 2) by
     push_cast; ring]
   rw [div_le_div_iff₀ (by positivity) (by positivity)]
-  nlinarith
+  nlinarith only [hε]
 
 /-- The depth condition supplies the relative gain `(log L)²/(4L²)` used in [I71, (4.6)].
 Here `Λ` stands for `log L`; the estimate only needs `Λ > 0`. -/
@@ -398,15 +398,15 @@ theorem combine {cR c₇ L D M F cr E T ρ ρ' ε : ℝ}
     (hε0 : 0 ≤ ε) (hεL : 1 / (4 * L ^ 2) ≤ ε) (hρ' : 1 / 2 ≤ ρ') (hc : 32 ≤ cR * c₇)
     (hD : 0 ≤ D) (hL : 0 < L) :
     F ≤ cR * M / L + cR * c₇ * ρ' * D := by
-  have hcc : 0 ≤ cR * c₇ := by linarith
+  have hcc : 0 ≤ cR * c₇ := by linarith only [hc]
   have hD' : 0 ≤ D * (1 + ε / 2) := by positivity
   have h1 : cR * c₇ * ρ * T ≤ cR * c₇ * ρ' * D * ((1 - ε) * (1 + ε / 2)) := by
     calc cR * c₇ * ρ * T ≤ cR * c₇ * ρ * (D * (1 + ε / 2)) :=
           mul_le_mul_of_nonneg_left hT (by positivity)
       _ ≤ cR * c₇ * (ρ' * (1 - ε)) * (D * (1 + ε / 2)) := by gcongr
       _ = _ := by ring
-  have h2 : (1 - ε) * (1 + ε / 2) ≤ 1 - ε / 2 := by nlinarith
-  have hρ'0 : 0 ≤ ρ' := by linarith
+  have h2 : (1 - ε) * (1 + ε / 2) ≤ 1 - ε / 2 := by nlinarith only [hε0]
+  have hρ'0 : 0 ≤ ρ' := by linarith only [hρ']
   have h3 : cR * c₇ * ρ' * D * ((1 - ε) * (1 + ε / 2)) ≤ cR * c₇ * ρ' * D * (1 - ε / 2) :=
     mul_le_mul_of_nonneg_left h2 (by positivity)
   have hL2 : 0 < L ^ 2 := by positivity
@@ -417,9 +417,9 @@ theorem combine {cR c₇ L D M F cr E T ρ ρ' ε : ℝ}
   have h5 : 2 * (D / L ^ 2) ≤ cR * c₇ * ρ' * D * (ε / 2) := by
     have := mul_le_mul_of_nonneg_left h4 hD
     calc 2 * (D / L ^ 2) = D * (4 / L ^ 2) / 2 := by ring
-      _ ≤ D * (cR * c₇ * ρ' * ε) / 2 := by linarith
+      _ ≤ D * (cR * c₇ * ρ' * ε) / 2 := by linarith only [this]
       _ = _ := by ring
-  nlinarith
+  nlinarith only [hF, hcr, hE, h1, h3, h5]
 
 /-- The main case of the inductive step: `y` large and `r + 2 ≤ 2 L / log L`. All analytic
 inputs are hypotheses at the given `y`, `s`. -/
@@ -499,12 +499,12 @@ theorem main_step {cR c₇ CR C₁ C₃ : ℝ} {r : ℕ} (IH : Bound cR c₇ r) 
     exact div_le_div_of_nonneg_right (by nlinarith only [hΛ]) (by positivity)
   have hρ' : 1 / 2 ≤ ρ' := by
     simp only [ρ']
-    rw [div_le_div_iff₀ (by norm_num) (by positivity)]; push_cast; linarith
+    rw [div_le_div_iff₀ (by norm_num) (by positivity)]; push_cast; linarith only []
   have hcr : fail lower (r + 1) y w ≤ D / L ^ 2 := by
     refine hcrude.trans_eq ?_
     rw [hD, div_div]; ring
   -- Split at `w`, apply the inner induction bounds, then combine the main sum and source.
-  have hwz : w ≤ y ^ (1 / s) := rpow_one_div_le_rpow_one_div hy.le (by linarith) hsξ
+  have hwz : w ≤ y ^ (1 / s) := rpow_one_div_le_rpow_one_div hy.le (by linarith only [hs1]) hsξ
   have hF : fail lower (r + 1) y (y ^ (1 / s)) ≤ fail lower (r + 1) y w +
       (cR * mainMaj lower s / L + K * s ^ 2 * G * pntE w / L) +
       cR * c₇ * ((r : ℝ) / (r + 1)) * T := by
@@ -558,7 +558,7 @@ theorem theorem4 {cR CR : ℝ} (hcR : 0 < cR) (hR : ∀ z ≥ 2, |R z * log z - 
   have hc₇ : 32 ≤ cR * c₇ := by
     have := le_max_left (32 / cR) (6 * exp (SLT y₀) * log y₀ ^ 2 / (cR * bigM Ξ))
     rw [div_le_iff₀ hcR] at this
-    linarith
+    linarith only [this]
   refine ⟨c₇, hc₇0, fun r => ?_⟩
   change Bound cR c₇ r
   induction r with
@@ -584,14 +584,14 @@ theorem theorem4 {cR CR : ℝ} (hcR : 0 < cR) (hR : ∀ z ≥ 2, |R z * log z - 
       rw [hyd y hyd' lower r (y ^ (1 / s)) hdeep 1]
       refine (IH lower y s hy hs hsξ).trans ?_
       have hab : (r : ℝ) / (r + 1) ≤ ((r + 1 : ℕ) : ℝ) / ((r + 1 : ℕ) + 1) := by
-        rw [div_le_div_iff₀ (by positivity) (by positivity)]; push_cast; nlinarith
+        rw [div_le_div_iff₀ (by positivity) (by positivity)]; push_cast; nlinarith only []
       have hL2 : 0 < log y ^ 2 := by have := log_pos hy; positivity
       refine mul_le_mul_of_nonneg_left (add_le_add_right (div_le_div_of_nonneg_right
         (mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_right
           (mul_le_mul_of_nonneg_left hab hc₇0) (zero_le_one.trans (one_le_delta hs1 y)))
           (errMaj_pos lower s).le) hL2.le) _) hcR.le
     · obtain ⟨-, hξ32, -, hw2⟩ := hyx y hyx'
-      have hξ3 : 3 ≤ xi y := by linarith [add_one_le_exp (32 : ℝ)]
+      have hξ3 : 3 ≤ xi y := by linarith only [add_one_le_exp (32 : ℝ), hξ32]
       obtain ⟨⟨hΛ, hδ⟩, hK⟩ := hye y hye'
       exact main_step IH hcR hc₇ hCR hC₁0 hC₃0 hy hs hsξ (hC₁ lower y s hy hs hsξ hξ3 hw2)
         (src_le_of_le_xi hR hy hs hsξ hξ3 hw2) (hC₃ lower y s hy₃ hs)

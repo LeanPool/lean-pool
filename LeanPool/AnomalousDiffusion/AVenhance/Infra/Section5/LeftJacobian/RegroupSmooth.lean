@@ -31,7 +31,7 @@ variable {β : ℝ} (I : Ingredients β) {Φ : ℕ → ℝ → Vec 2 → ℝ}
 theorem contDiff_gradMatrix_entry {f : Vec 2 → Vec 2} (hf : ContDiff ℝ ∞ f) (i j : Fin 2) :
     ContDiff ℝ ∞ (fun x => gradMatrix f x i j) :=
   Integration.contDiff_spaceGrad_component (f := fun y => f y j)
-    ((contDiff_apply ℝ ℝ j).comp hf) i
+    ((contDiff_apply ℝ (fun _ => ℝ) j).comp hf) i
 
 theorem contDiff_psi_infty (m : ℕ) (k : ℤ) : ContDiff ℝ ∞ (psi β I.Λ m k) := by
   unfold psi

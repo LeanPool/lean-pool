@@ -6,12 +6,11 @@ Authors: Arseniy Akopyan
 module
 
 
-public import Mathlib.AlgebraicTopology.SingularHomology.Basic
 public import Mathlib.Topology.Homotopy.Basic
-public import Mathlib.AlgebraicTopology.SimplicialSet.StdSimplex
-public import Mathlib.AlgebraicTopology.SimplicialSet.TopAdj
-public import Mathlib.CategoryTheory.Limits.Preserves.Shapes.BinaryProducts
-public import Mathlib.Analysis.Convex.StdSimplex
+public import Mathlib.AlgebraicTopology.SingularSet
+public import Mathlib.Topology.Category.TopCat.Monoidal
+import Mathlib.Algebra.Order.Algebra
+import Mathlib.AlgebraicTopology.SimplicialSet.TopAdj
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.HomotopyToChainHomotopy
 /-!
 # Singular prism construction

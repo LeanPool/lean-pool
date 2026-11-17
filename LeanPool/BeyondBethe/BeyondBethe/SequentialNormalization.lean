@@ -8,7 +8,7 @@ module
 
 public import LeanPool.BeyondBethe.BeyondBethe.Entropy
 public import Mathlib.GroupTheory.Perm.Fin
-public import Mathlib.Tactic
+import Mathlib.Tactic.SimpRw -- shake: keep
 
 /-! # Sequential Normalization -/
 

@@ -6,6 +6,8 @@ Authors: JD Jones
 module
 
 public import LeanPool.PlanarMidpoint.Basic
+public import Mathlib.Analysis.Calculus.Deriv.Add
+public import Mathlib.Analysis.Calculus.Deriv.Mul
 public import Mathlib.Analysis.Calculus.Deriv.Polynomial
 public import Mathlib.Tactic.Convert
 public import Mathlib.Tactic.Module

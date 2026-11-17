@@ -6,10 +6,12 @@ Authors: Arseniy Akopyan
 module
 
 
-public import Mathlib.Algebra.Order.Archimedean.Real.Hom
-public import Mathlib.Algebra.Order.Star.Real
-public import Mathlib.Tactic
+public import LeanPool.NandakumarRamanaRao.NRR.BodySpace.Topology
 public import LeanPool.NandakumarRamanaRao.NRR.BodySpace.ConvexClosed
+import Mathlib.Algebra.Order.Archimedean.Real.Hom
+import Mathlib.Algebra.Order.Star.Real
+import Mathlib.Tactic.Polynomial.Basic
+import Mathlib.Tactic.ReduceModChar
 
 /-!
 # Pointwise membership stability for Hausdorff-convergent convex subbodies

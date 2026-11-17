@@ -11,8 +11,18 @@ public import Mathlib.Analysis.Complex.JensenFormula
 public import Mathlib.Analysis.Analytic.Polynomial
 public import Mathlib.Algebra.Polynomial.Roots
 public import Mathlib.Algebra.MvPolynomial.Funext
+public import Mathlib.Algebra.MvPolynomial.Polynomial
 public import Mathlib.Algebra.Polynomial.Degree.SmallDegree
-public import Mathlib.Tactic
+import Mathlib.Algebra.MvPolynomial.CommRing
+import Mathlib.Topology.Algebra.Polynomial
+import Mathlib.Tactic.Convert -- shake: keep
+import Mathlib.Tactic.Ext -- shake: keep
+import Mathlib.Tactic.FieldSimp -- shake: keep
+import Mathlib.Tactic.FunProp -- shake: keep
+import Mathlib.Tactic.Linarith -- shake: keep
+import Mathlib.Tactic.LinearCombination -- shake: keep
+import Mathlib.Tactic.Positivity -- shake: keep
+import Mathlib.Tactic.Ring -- shake: keep
 
 /-! # Source Stable Closure -/
 

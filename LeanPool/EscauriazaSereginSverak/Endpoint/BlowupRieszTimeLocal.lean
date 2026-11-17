@@ -34,7 +34,7 @@ theorem blowup_rieszPressureSpaceTime_time_indicator_ae
     let hG : ∀ i j, MemLp (G i j) (ENNReal.ofReal (3 / 2 : ℝ))
       (volume : Measure (Vec3 × ℝ)) :=
         fun i j => (hF i j).indicator
-          (MeasurableSet.univ.prod hJ)
+          (MeasurableSet.univ.prod hJ).nullMeasurableSet
     S.indicator (CKN.Leray.rieszPressureSpaceTime
       (3 / 2 : ℝ) (by norm_num) F hF) =ᵐ[volume]
       S.indicator (CKN.Leray.rieszPressureSpaceTime
@@ -44,7 +44,7 @@ theorem blowup_rieszPressureSpaceTime_time_indicator_ae
   have hS : MeasurableSet S := MeasurableSet.univ.prod hJ
   let G : Fin 3 → Fin 3 → Vec3 × ℝ → ℝ := fun i j => S.indicator (F i j)
   let hG : ∀ i j, MemLp (G i j) (ENNReal.ofReal (3 / 2 : ℝ))
-    (volume : Measure (Vec3 × ℝ)) := fun i j => (hF i j).indicator hS
+    (volume : Measure (Vec3 × ℝ)) := fun i j => (hF i j).indicator hS.nullMeasurableSet
   let PF := CKN.Leray.rieszPressureSpaceTime (3 / 2 : ℝ) (by norm_num) F hF
   let PG := CKN.Leray.rieszPressureSpaceTime (3 / 2 : ℝ) (by norm_num) G hG
   have hSliceF := ae_restrict_of_ae (s := J)

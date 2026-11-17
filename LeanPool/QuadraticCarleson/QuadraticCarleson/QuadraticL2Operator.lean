@@ -89,7 +89,7 @@ theorem integrable_row (K : FiniteRangeKernel) (x : ℝ) : Integrable (K x) := b
       by_contra hn
       have hh := abs_le.mp (le_of_not_gt hn)
       apply ht
-      constructor <;> linarith
+      constructor <;> linarith only [hh]
     rw [K.eq_zero x t hdist, norm_zero]
 
 theorem integrable_column (K : FiniteRangeKernel) (t : ℝ) : Integrable (fun x ↦ K x t) := by
@@ -130,7 +130,7 @@ theorem integral_norm_row_le (K : FiniteRangeKernel) (x : ℝ) :
     by_contra hn
     have hh := abs_le.mp (le_of_not_gt hn)
     apply ht
-    constructor <;> linarith
+    constructor <;> linarith only [hh]
   calc
     _ = ∫ t in s, ‖K x t‖ :=
       (setIntegral_eq_integral_of_forall_compl_eq_zero
@@ -143,7 +143,7 @@ theorem integral_norm_row_le (K : FiniteRangeKernel) (x : ℝ) :
     _ = _ := by
       rw [setIntegral_const]
       change (volume (Icc (x - K.radius) (x + K.radius))).toReal * K.bound = _
-      rw [Real.volume_Icc, ENNReal.toReal_ofReal (by linarith [K.radius_pos] :
+      rw [Real.volume_Icc, ENNReal.toReal_ofReal (by linarith only [K.radius_pos] :
         0 ≤ x + K.radius - (x - K.radius))]
       ring
 
@@ -191,7 +191,7 @@ theorem integrable_correlation_integrand (K : FiniteRangeKernel)
     Filter.Eventually.of_forall (fun z ↦ by simpa only [RCLike.norm_conj] using K.norm_le z.2 z.1)
   convert hi.mul_bdd hm.aestronglyMeasurable hb using 1
   funext z
-  ring
+  ac_rfl
 
 /-- The pointwise integral representation of the actual composition `TT*` on
 integrable inputs. -/
@@ -210,7 +210,7 @@ theorem applyIntegral_adjoint_eq_correlation (K : FiniteRangeKernel)
       filter_upwards [] with t
       apply integral_congr_ae
       filter_upwards [] with y
-      ring
+      ac_rfl
     _ = ∫ y, ∫ t, K x t * conj (K y t) * g y := hswap
     _ = _ := by simp_rw [integral_mul_const]
 
@@ -232,7 +232,7 @@ theorem integral_pairing_adjoint (K : FiniteRangeKernel)
       (volume.prod volume) := by
     convert hi.bdd_mul hm.aestronglyMeasurable hb using 1
     funext z
-    ring
+    ac_rfl
   unfold applyIntegral
   simp_rw [← integral_mul_const]
   rw [← integral_integral_swap (f := fun t x ↦ K x t * f t * conj (g x)) hint]
@@ -242,7 +242,7 @@ theorem integral_pairing_adjoint (K : FiniteRangeKernel)
   apply integral_congr_ae
   filter_upwards [] with x
   simp only [adjoint_apply, map_mul, starRingEnd_self_apply]
-  ring
+  ac_rfl
 
 /-- The exact quadratic-form identity underlying the `TT*` method. The left
 side is the squared `L²` mass of the adjoint applied to the input; the right
@@ -273,7 +273,7 @@ theorem integrable_adjoint_energy (K : FiniteRangeKernel)
   dsimp only [Pi.pow_apply]
   rw [Real.norm_of_nonneg (sq_nonneg _)]
   have hh := mul_le_mul_of_nonneg_right (hbound t) (norm_nonneg (K.adjoint.applyIntegral g t))
-  nlinarith
+  linarith only [hh]
 
 /-- A measurable finite selector produces an actual finite-range integral
 kernel. The common bound and radius are elementary finite-family bounds;
@@ -320,13 +320,13 @@ theorem exists_of_finite_convolution {N : ℕ} (κ : Fin N → ℝ → ℂ)
   have hradius : 0 < radius := by
     dsimp [radius]
     have hh : 0 ≤ ∑ i, R i := Finset.sum_nonneg (fun i _ ↦ (hR i).le)
-    linarith
+    linarith only [hh]
   have hbound : 0 ≤ bound := Finset.sum_nonneg (fun i _ ↦ le_max_right _ _)
   have hRi (i : Fin N) : R i ≤ radius := by
     have hh : R i ≤ ∑ j, R j :=
       Finset.single_le_sum (fun j _ ↦ (hR j).le) (Finset.mem_univ i)
     dsimp [radius]
-    linarith
+    linarith only [hh]
   have hCi (i : Fin N) (t : ℝ) : ‖κ i t‖ ≤ bound := by
     apply (hC i t).trans ((le_max_left (C i) 0).trans _)
     exact Finset.single_le_sum (fun j _ ↦ le_max_right _ _) (Finset.mem_univ i)
@@ -357,7 +357,7 @@ theorem exists_finite_maximal_linearization (n : ℕ) (κ : Fin (n + 1) → ℝ 
   refine ⟨σκ, K, hσ, hK, ?_⟩
   intro x i
   have h := measurableMaximizingIndex_isMax n F x i
-  simpa only [applyIntegral, hK, F] using h
+  simpa only [applyIntegral, hK] using h
 
 end FiniteRangeKernel
 

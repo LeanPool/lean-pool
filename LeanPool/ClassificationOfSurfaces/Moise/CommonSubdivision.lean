@@ -695,7 +695,7 @@ theorem affineMap_injective_of_injOn_of_interior_nonempty
   have hxA : x ∈ A := interior_subset hx
   have hgy : g y = g x := by
     change g (t • d +ᵥ x) = g x
-    rw [g.map_vadd, map_smul, show d = q -ᵥ p by rfl, g.linearMap_vsub, hpq,
+    rw [g.map_vadd, map_smul, show d = q -ᵥ p by rfl, g.linear_apply_vsub, hpq,
       vsub_self, smul_zero, zero_vadd]
   have hyx : y = x := hinj hyA hxA hgy
   have htd : t • d = 0 := by

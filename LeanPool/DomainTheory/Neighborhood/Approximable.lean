@@ -6,7 +6,6 @@ Authors: Catskills Research Company
 module
 
 public import LeanPool.DomainTheory.Neighborhood.Basic
-import Mathlib.Data.Set.Basic
 import Mathlib.Tactic.Set
 
 /-!
@@ -462,7 +461,7 @@ theorem exists_principal_eq_apply_principal (e : V₀.Element ≃o V₁.Element)
       rwa [e.apply_symm_apply] at this
     exact h2 Y ⟨hY, subset_rfl⟩
   have hX_le_z : V₀.principal hX ≤ z := by
-    simp_all
+    simp_all only [exists_and_left, OrderIso.symm_apply_apply, map_le_map_iff]
   -- Hence `z = ↑X`, so `X ∈ z` lands in some member `e⁻¹(↑Y)`.
   have hz_eq : z = V₀.principal hX := le_antisymm hz_le hX_le_z
   have hXz : z.mem X := hz_eq ▸ ⟨hX, subset_rfl⟩
@@ -477,6 +476,18 @@ theorem exists_principal_eq_apply_principal (e : V₀.Element ≃o V₁.Element)
     rw [e.apply_symm_apply] at this
     rwa [← hw] at this
   exact le_antisymm hw_le_prinY (hprin_le_w hY hYw)
+
+/-- Diagonal witnesses and containment in set inclusion characterize the
+canonical inclusion relation. Monotonicity supplies every larger output. -/
+theorem relation_iff_subset_of_diagonal {α : Type*} {V W : NeighborhoodSystem α}
+    (f : ApproximableMap V W) (diagonal : ∀ X, V.mem X → f.rel X X)
+    (contained : ∀ X Y, f.rel X Y → X ⊆ Y) {X Y : Set α} :
+    f.rel X Y ↔ V.mem X ∧ W.mem Y ∧ X ⊆ Y := by
+  constructor
+  · intro relation
+    exact ⟨f.rel_dom relation, f.rel_cod relation, contained X Y relation⟩
+  · rintro ⟨hX, hY, hXY⟩
+    exact f.mono (diagonal X hX) subset_rfl hXY hX hY
 
 end ApproximableMap
 

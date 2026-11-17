@@ -34,7 +34,7 @@ theorem affineLeftInverse_apply {k : Type*} [Field k] {m n : ℕ}
     (q : Fin m → k) : affineLeftInverse A (A q) = q := by
   change A.linear.leftInverse (A q - A 0) = q
   have hlin : A q - A 0 = A.linear q := by
-    simpa using (A.linearMap_vsub q 0).symm
+    simpa using (A.linear_apply_vsub q 0).symm
   rw [hlin]
   exact LinearMap.leftInverse_apply_of_inj (LinearMap.ker_eq_bot.mpr
     (A.linear_injective_iff.mpr hA)) q

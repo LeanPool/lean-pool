@@ -257,7 +257,7 @@ theorem tendsto_setIntegral_mul_of_tendsto_eLpNorm_two
     Filter.Eventually.of_forall (fun x => by rw [nnnorm_mul]; simp)
   have hHolder :
       eLpNorm (fun x => (f n x - g x) * h x) 1 μ ≤ B n := by
-    have := eLpNorm_le_eLpNorm_mul_eLpNorm_of_nnnorm
+    have := eLpNorm_le_eLpNorm_mul_eLpNorm
       (μ := μ) (p := (2 : ℝ≥0∞)) (q := (2 : ℝ≥0∞)) (r := (1 : ℝ≥0∞))
       (fun a b => a * b) 1 continuous_mul ((hf n).sub hg).aestronglyMeasurable
       hh.aestronglyMeasurable hae

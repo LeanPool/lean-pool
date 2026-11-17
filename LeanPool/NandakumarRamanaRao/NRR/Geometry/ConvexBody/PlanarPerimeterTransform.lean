@@ -7,6 +7,7 @@ module
 
 
 public import LeanPool.NandakumarRamanaRao.NRR.Geometry.ConvexBody.PlanarPerimeter
+public import LeanPool.NandakumarRamanaRao.NRR.Geometry.ConvexBody.SupportFunctionTransform
 public import LeanPool.NandakumarRamanaRao.NRR.Geometry.ConvexBody.WidthIdentities
 
 /-!

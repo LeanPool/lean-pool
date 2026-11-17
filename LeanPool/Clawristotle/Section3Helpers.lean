@@ -8,6 +8,7 @@ module
 public import LeanPool.Clawristotle.Defs
 import LeanPool.Clawristotle.Section2
 import Mathlib.Algebra.Order.Star.Real
+import Mathlib.Analysis.Calculus.Deriv.Prod
 import Mathlib.Analysis.Calculus.FDeriv.Symmetric
 import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 import Mathlib.Data.Nat.Choose.Multinomial
@@ -381,7 +382,7 @@ lemma parallel_curl_free_affine (g : (Fin 3 → ℝ) → (Fin 3 → ℝ))
         simp [this, h_zero_deriv]
       have h_diff_c : Differentiable ℝ c := by
         have : ContDiff ℝ 1 (fun v => (fderiv ℝ g v) (Pi.single 0 1) 0) :=
-          (contDiff_apply ℝ ℝ 0).comp (h_diff_fderiv.clm_apply contDiff_const)
+          (contDiff_apply ℝ (fun _ => ℝ) 0).comp (h_diff_fderiv.clm_apply contDiff_const)
         have heq : c = (fun v => (fderiv ℝ g v) (Pi.single 0 1) 0) := by
           funext v; simp [hc, smul_eq_mul]
         rw [heq]

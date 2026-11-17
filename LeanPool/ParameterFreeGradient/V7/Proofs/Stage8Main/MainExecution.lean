@@ -76,7 +76,7 @@ private theorem one_le_log_ratio {L M0 : ℝ} (hM0 : 0 < M0)
     1 = Real.log (Real.exp 1) := by rw [Real.log_exp]
     _ ≤ Real.log (Real.exp 1 + L / M0) :=
       Real.strictMonoOn_log.monotoneOn (Real.exp_pos 1)
-        (add_pos_of_pos_of_nonneg (Real.exp_pos 1) hratio) (by linarith)
+        (add_pos_of_pos_of_nonneg (Real.exp_pos 1) hratio) (by linarith only [hratio])
 
 theorem currentExecution (input : MethodInput d)
     (hp : 1 < input.p) (heps : 0 < input.eps) (hM0 : 0 < input.M0)
@@ -125,11 +125,11 @@ theorem currentExecution (input : MethodInput d)
       simp only [List.length_singleton, Nat.cast_one]
       have hfirst : 1 ≤ rateCoefficient *
           conditionBar inst input.eps ^ localCostExponent input.p := by
-        nlinarith
+        nlinarith only [hKpow, hrate]
       have hsecond : 0 ≤ rateCoefficient *
           Real.log (Real.exp 1 + inst.L / input.M0) :=
         mul_nonneg (hrate.trans' zero_le_one) (zero_le_one.trans hlog)
-      linarith
+      linarith only [hfirst, hsecond]
   · have hlarge : input.eps < lpNorm (conjugateExponent input.p)
         (inst.oracle.gradient input.x0) := lt_of_not_ge hsmall
     let P := toAdmissible input inst hp heps hsec
@@ -208,7 +208,7 @@ theorem currentExecution (input : MethodInput d)
       change (1 : ℝ) + anchorResult.observations.length ≤
         (1 + O3.anchorLogConstant) *
           Real.log (Real.exp 1 + inst.L / input.M0)
-      nlinarith [hprefixAnchor]
+      linarith only [hlog, hprefixAnchor]
     have hcount : (run.postInitializationCallCount : ℝ) =
         (1 + anchorResult.observations.length : ℕ) +
           ((finish.reports.map (fun report => report.calls)).sum : ℕ) := by

@@ -226,7 +226,7 @@ theorem stage4'_isAlgebraic_of_normalized_column
     apply IntermediateField.adjoin_induction (F := k)
       (E := ResidueField V.toSubring)
       (s := Set.range fun a => ρ (c a))
-      (p := fun x hx => x ∈ Lq)
+      (motive := fun x _ => x ∈ Lq)
     · intro x hx
       rcases hx with ⟨a, rfl⟩
       exact hcLq a

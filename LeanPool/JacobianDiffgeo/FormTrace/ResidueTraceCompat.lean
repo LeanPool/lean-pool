@@ -16,6 +16,7 @@ public import LeanPool.JacobianDiffgeo.MappingDegree.Degree
 public import LeanPool.JacobianDiffgeo.ProjectiveLine.Charts
 import LeanPool.JacobianDiffgeo.FormTrace.TraceZkForm
 import LeanPool.JacobianDiffgeo.ResidueCalculus.ChangeOfVariables
+import Mathlib.Analysis.Calculus.Deriv.Pow
 import Mathlib.Combinatorics.Matroid.Init
 import Mathlib.MeasureTheory.Integral.Bochner.Basic
 

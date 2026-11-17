@@ -6,10 +6,14 @@ Authors: Arseniy Akopyan
 module
 
 
-public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
 public import LeanPool.NandakumarRamanaRao.NRR.PrimePolyhedron.FoxNeuwirth.OrderComplexChain
 public import LeanPool.NandakumarRamanaRao.NRR.PrimePolyhedron.FoxNeuwirth.ReferenceZero
 public import LeanPool.NandakumarRamanaRao.NRR.PrimePolyhedron.FiniteCells
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Basify
+import Mathlib.Tactic.ENatToNat
+import Mathlib.Tactic.Positivity.Finset
+import Mathlib.Tactic.ReduceModChar
 
 /-!
 # Finite affine zero counts on Fox--Neuwirth incidence cycles

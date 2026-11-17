@@ -6,10 +6,15 @@ Authors: Arseniy Akopyan
 module
 
 
-public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.FiniteSimplex
 public import LeanPool.NandakumarRamanaRao.NRR.PrimePolyhedron.FoxNeuwirth.RelativeSubdivisionOneStepBoundaryBase
 public import LeanPool.NandakumarRamanaRao.NRR.PrimePolyhedron.FoxNeuwirth.RelativeSubdivisionCylinderBoundary
 public import LeanPool.NandakumarRamanaRao.NRR.PrimePolyhedron.FoxNeuwirth.EquivariantPrismNonhorizontalCancellation
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Basify
+import Mathlib.Tactic.Polynomial.Basic
+import Mathlib.Tactic.Positivity.Finset
+import Mathlib.Tactic.ReduceModChar
+public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.FiniteSimplex
 /-!
 # Pointwise boundary of the one-step relative subdivision cylinder
 
@@ -794,7 +799,7 @@ private theorem sidePairing_summand_zero (d : ℕ) (hp : Nat.Prime (d + 2)) (N :
   rw [hbridge]
   simp only [RefinedAffineMap.coefficient, SimplicialChain.faceSign,
     RelativeSubdivisionCylinderCombinatorics.sideCell]
-  ring
+  ring_nf
   rfl
 
 private theorem sideBasePairing_eq_zero_dim

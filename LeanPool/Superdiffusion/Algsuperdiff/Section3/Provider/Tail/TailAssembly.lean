@@ -311,11 +311,9 @@ theorem tailAmplitudeGate_middle {Ccg Ctail cstar gamma s : ℝ}
     have hl : (2 * (Ccg * cstar⁻¹ * s * gamma * (2 * s - gamma)⁻¹ ^ 3)) *
         (s ^ 2 * (2 * s - gamma) ^ 3) = cstar⁻¹ * gamma * (2 * Ccg * s ^ 3) := by
       field_simp
-      try ring
     have hr : (Ctail ^ 2 * cstar⁻¹ * (s⁻¹) ^ 2 * gamma) * (s ^ 2 * (2 * s - gamma) ^ 3) =
         cstar⁻¹ * gamma * (Ctail ^ 2 * (2 * s - gamma) ^ 3) := by
       field_simp
-      try ring
     rw [hl, hr]
     exact mul_le_mul_of_nonneg_left hnum
       (mul_nonneg (inv_nonneg.2 hcstar.le) hgamma.le)
@@ -413,7 +411,6 @@ theorem tailWindowGate {Ccg Ctail E gamma s : ℝ} (hCcg : 0 < Ccg)
     have hdiv : 4 / y ^ 2 = 4 * Ccg ^ 2 * E ^ 4 * gamma ^ 2 := by
       rw [hydef]
       field_simp
-      try ring
     rw [hdiv]
     have hkey : 4 * Ccg ^ 2 * (E ^ 4 * gamma) ≤ 7 / 2 := by
       have h1 : 4 * Ccg ^ 2 * (E ^ 4 * gamma) ≤ 4 * Ccg ^ 2 * E⁻¹ :=

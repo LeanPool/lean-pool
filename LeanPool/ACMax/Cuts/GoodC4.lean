@@ -5,8 +5,6 @@ Authors: Zeru Zhu, Jinzheng Li, Yuanjie Ren
 -/
 module
 
-public import Mathlib.Tactic.Ring
-public import LeanPool.ACMax.Spectral.AlgConn
 public import LeanPool.ACMax.Cuts.WeightedCut
 
 /-!

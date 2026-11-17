@@ -12,7 +12,7 @@ public import Mathlib.Analysis.Calculus.FDeriv.Equiv
 public import Mathlib.Dynamics.Ergodic.MeasurePreserving
 public import Mathlib.MeasureTheory.Constructions.Pi
 public import Mathlib.MeasureTheory.Integral.Bochner.Set
-public import Mathlib.Topology.Algebra.Module.Equiv
+public import Mathlib.Topology.Algebra.Module.Equiv.Pi
 
 /-!
 # Coarse-graining support: Support.Sobolev.H1.OriginCubeSymmetry

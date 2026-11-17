@@ -247,7 +247,8 @@ theorem Dset_goes_down (α : Program) φ {Fs δ} (in_D : (Fs, δ) ∈ Dset α) {
         have IHα := Dset_goes_down α φ in_D in_Fs
         cases α
         all_goals
-          simp_all [Dset, testsOfProgram, lmOfFormula] <;> linarith
+          simp_all [Dset, testsOfProgram, lmOfFormula]
+        all_goals linarith
   case union α β =>
     simp only [Dset, List.mem_union_iff] at in_D
     rcases in_D with hyp|hyp

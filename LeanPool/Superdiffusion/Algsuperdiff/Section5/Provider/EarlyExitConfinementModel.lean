@@ -645,9 +645,8 @@ private theorem le_percolationRate
   have hg0 : gamma ≠ 0 := hgamma.ne'
   have hL0 : |Real.log gamma| ≠ 0 := hLpos.ne'
   have hlow : 0 < Cfloor * Real.sqrt gamma * Real.rpow |Real.log gamma| (7 / 2) := by
-    have := Real.sqrt_pos.2 hgamma
-    have := Real.rpow_pos_of_pos hLpos (7 / 2 : ℝ)
-    positivity
+    exact mul_pos (mul_pos hCfloor (Real.sqrt_pos.2 hgamma))
+      (Real.rpow_pos_of_pos hLpos _)
   have hsq : (Cfloor * Real.sqrt gamma * Real.rpow |Real.log gamma| (7 / 2)) ^ (2 : ℕ) ≤
       ep ^ (2 : ℕ) := pow_le_pow_left₀ hlow.le hep 2
   have hrp : (Real.rpow |Real.log gamma| (7 / 2)) ^ (2 : ℕ) = |Real.log gamma| ^ (7 : ℕ) := by

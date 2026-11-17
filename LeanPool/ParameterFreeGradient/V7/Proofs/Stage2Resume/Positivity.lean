@@ -47,8 +47,8 @@ theorem localCostExponent_le_one {p : ℝ} (_hp : 1 < p) :
   split_ifs with hp2
   · norm_num
   · have htwo : 2 < p := lt_of_not_ge hp2
-    have hden : 0 < p + 2 := by linarith
-    exact (div_le_one hden).2 (by linarith)
+    have hden : 0 < p + 2 := by linarith only [hp2]
+    exact (div_le_one hden).2 (by linarith only)
 
 theorem localCostExponent_eq_half_of_le_two {p : ℝ} (hp : p ≤ 2) :
     localCostExponent p = 1 / 2 := by
@@ -68,7 +68,7 @@ theorem amortizationConstant_pos {a : ℝ} (ha : 0 < a) :
   unfold amortizationConstant
   have hq : 0 ≤ 4 / (1 - (2 : ℝ) ^ (-a)) ^ (2 : ℕ) :=
     div_nonneg (by norm_num) (sq_nonneg _)
-  linarith
+  linarith only [hq]
 
 theorem endpointCoefficient_le_constant {a : ℝ} (ha : 0 < a)
     (hale : a ≤ 1) :
@@ -78,7 +78,7 @@ theorem endpointCoefficient_le_constant {a : ℝ} (ha : 0 < a)
   have hpowLe : (2 : ℝ) ^ a ≤ 2 := by
     have := Real.rpow_le_rpow_of_exponent_le (show (1 : ℝ) ≤ 2 by norm_num) hale
     simpa using this
-  have hsq : ((2 : ℝ) ^ a) ^ (2 : ℕ) ≤ 4 := by nlinarith
+  have hsq : ((2 : ℝ) ^ a) ^ (2 : ℕ) ≤ 4 := by nlinarith only [hpowLe, hpowPos]
   have hden := V7.Stage2.one_sub_two_neg_rpow_pos ha
   have hdenSq : 0 < (1 - (2 : ℝ) ^ (-a)) ^ (2 : ℕ) := sq_pos_of_pos hden
   unfold amortizationConstant

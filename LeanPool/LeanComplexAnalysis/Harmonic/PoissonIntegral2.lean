@@ -10,6 +10,7 @@ public import Mathlib.Analysis.Calculus.DiffContOnCl
 public import Mathlib.Analysis.InnerProductSpace.Harmonic.Basic
 public import Mathlib.LinearAlgebra.Complex.FiniteDimensional
 import LeanPool.LeanComplexAnalysis.Harmonic.PoissonIntegral
+import Mathlib.Analysis.Complex.CauchyIntegral
 import Mathlib.Analysis.Complex.Harmonic.Analytic
 
 /-!

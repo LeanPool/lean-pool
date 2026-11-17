@@ -22,7 +22,7 @@ import LeanPool.MatchingLogic.EntryIII.Conclusion
 import LeanPool.MatchingLogic.EntryIII.SignatureRestriction
 import LeanPool.MatchingLogic.Soundness
 import Mathlib.Algebra.Order.Ring.Nat
-import Mathlib.Data.Nat.SuccPred
+import Mathlib.Order.SuccPred.Nat
 
 /-!
 # MatchingLogic.EntryIII.Regression

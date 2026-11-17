@@ -6,7 +6,9 @@ Authors: Arseniy Akopyan
 module
 
 
+public import LeanPool.NandakumarRamanaRao.NRR.Geometry.ConvexBody.SupportFunction
 public import LeanPool.NandakumarRamanaRao.NRR.Geometry.ConvexBody.SupportFunctionBasic
+import Mathlib.Tactic.Measurability.Init
 /-!
 # `NRR.Geometry.ConvexBody` — continuity of the support function
 

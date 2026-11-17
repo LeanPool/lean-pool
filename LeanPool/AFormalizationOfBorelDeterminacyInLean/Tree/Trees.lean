@@ -9,7 +9,7 @@ public import Mathlib.SetTheory.Descriptive.Tree
 public import Mathlib.Algebra.Group.End
 import LeanPool.AFormalizationOfBorelDeterminacyInLean.Basic.General
 import LeanPool.AFormalizationOfBorelDeterminacyInLean.Basic.Meta
-import Mathlib.Data.Nat.SuccPred
+import Mathlib.Order.SuccPred.Nat
 import Mathlib.Data.Rat.Cast.Order
 import Mathlib.Tactic.NormNum.Abs
 import Mathlib.Tactic.NormNum.DivMod

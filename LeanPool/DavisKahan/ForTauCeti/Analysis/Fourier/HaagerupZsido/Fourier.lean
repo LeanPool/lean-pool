@@ -5,6 +5,11 @@ Authors: Jon Crall, GPT 5.6 High
 -/
 module
 
+import Mathlib.MeasureTheory.Group.Integral
+import Mathlib.MeasureTheory.Integral.Bochner.ContinuousLinearMap
+import Mathlib.MeasureTheory.Integral.Prod
+import Mathlib.MeasureTheory.Measure.Lebesgue.Integral
+
 public import LeanPool.DavisKahan.ForTauCeti.Analysis.Fourier.ExponentialAbs
 public import LeanPool.DavisKahan.ForTauCeti.Analysis.Fourier.HaagerupZsido.Defs
 public import LeanPool.DavisKahan.ForTauCeti.Analysis.SpecialFunctions.Integral.RationalQuadratic

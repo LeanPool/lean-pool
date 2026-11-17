@@ -68,6 +68,12 @@ open Algsuperdiff.Section3.Cutoff
 open Algsuperdiff.Section3.Provider.Stream
 open scoped ENNReal Matrix.Norms.Elementwise
 
+local instance (d : ℕ) : IsNormableSpace ℝ (Mat d) :=
+  isNormableSpace_of_finiteDimensional
+
+local instance (d : ℕ) : IsNormableSpace ℝ (Vec d →L[ℝ] Mat d) :=
+  ⟨⟨normSeminorm ℝ _, norm_withSeminorms ℝ _⟩⟩
+
 noncomputable section
 
 variable {d : ℕ}

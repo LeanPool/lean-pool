@@ -7,6 +7,7 @@ module
 
 
 public import LeanPool.NandakumarRamanaRao.HumanVerification.InternalModel
+public import LeanPool.NandakumarRamanaRao.NRR.AreaPerimeter
 
 /-! # Cauchy Crofton Statement -/
 

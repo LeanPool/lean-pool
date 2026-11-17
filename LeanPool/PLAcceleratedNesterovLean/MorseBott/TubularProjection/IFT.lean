@@ -85,14 +85,7 @@ private lemma contDiff_adjoint
     [NormedAddCommGroup F₂] [InnerProductSpace ℝ F₂] [FiniteDimensional ℝ F₂] :
     ContDiff ℝ n
       (ContinuousLinearMap.adjoint : (F₁ →L[ℝ] F₂) → (F₂ →L[ℝ] F₁)) :=
-  IsBoundedLinearMap.contDiff {
-    map_add := fun A B => by
-      simp_all
-    map_smul := fun c A => by
-      simp_all
-    bound := ⟨1, one_pos, fun A => by
-      simp_all⟩
-  }
+  (ContinuousLinearMap.adjoint : (F₁ →L[ℝ] F₂) ≃ₗᵢ[ℝ] (F₂ →L[ℝ] F₁)).contDiff
 
 lemma optimalityEqn_contDiff
     {V : Submodule ℝ E} {φ : V → V.orthogonal}

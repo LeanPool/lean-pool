@@ -85,7 +85,7 @@ lemma hasFDerivAt_kernelGradientVector_of_ne_zero {r theta : ℝ}
   apply hscaled.congr_fderiv
   ext h
   simp [kernelHessian, kernelHessianCoord]
-  ring
+  ring_nf
 
 lemma kernelGradientVector_fderiv_of_ne_zero {r theta : ℝ}
     (hr : 2 < r) (x : Point d) (hx : x ≠ 0) :

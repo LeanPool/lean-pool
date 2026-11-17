@@ -5,7 +5,7 @@ Authors: Jon Crall, Claude Fable 5, Claude Opus 4.8
 -/
 module
 
-public import Mathlib.Analysis.InnerProductSpace.Projection.Basic
+import Mathlib.Analysis.InnerProductSpace.Projection.Basic
 public import Mathlib.Analysis.InnerProductSpace.PiL2
 
 

@@ -8,6 +8,7 @@ module
 public import LeanPool.CarlsonFunctions.Carlson.L.Basic
 public import LeanPool.CarlsonFunctions.Dirichlet.Average.Deriv
 public import Mathlib.Analysis.SpecialFunctions.Complex.Analytic
+public import Mathlib.Analysis.SpecialFunctions.Complex.LogDeriv
 
 /-!
 # Node derivatives and the Euler–Poisson system for L

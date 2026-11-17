@@ -9,6 +9,7 @@ public import LeanPool.Vlasov.Basic
 public import LeanPool.Vlasov.OT.Coupling
 public import Mathlib.Analysis.ODE.Gronwall
 import LeanPool.Vlasov.ForMathlib.PicardLindelof
+import Mathlib.Analysis.Calculus.Deriv.Prod
 import Mathlib.MeasureTheory.Integral.Prod
 
 /-!

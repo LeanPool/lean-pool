@@ -125,7 +125,7 @@ theorem integrable_indicator_openCubeSet_of_memL2 (Q : TriadicCube d) {f : Vec d
     exact lt_top_iff_ne_top.mpr (volume_openCubeSet_ne_top Q)
   have h1 : MemLp f 1 (volume.restrict (openCubeSet Q)) := hf.mono_exponent (by norm_num)
   have h2 : MemLp (Set.indicator (openCubeSet Q) f) 1 volume :=
-    (memLp_indicator_iff_restrict (measurableSet_openCubeSet Q)).2 h1
+    (memLp_indicator_iff_restrict (measurableSet_openCubeSet Q).nullMeasurableSet).2 h1
   exact memLp_one_iff_integrable.mp h2
 
 /-! ## 2. The frame of an `H¹₀` function -/

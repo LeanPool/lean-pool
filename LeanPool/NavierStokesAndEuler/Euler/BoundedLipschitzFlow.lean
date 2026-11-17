@@ -7,6 +7,7 @@ Authors: OpenAI
 module
 
 public import Mathlib.Analysis.Calculus.Deriv.Basic
+import Mathlib.Analysis.ODE.Gronwall
 public import Mathlib.Analysis.Complex.Exponential
 import LeanPool.NavierStokesAndEuler.Euler.Foundations.PacketExistence
 import Mathlib.Analysis.ODE.ExistUnique

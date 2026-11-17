@@ -42,7 +42,7 @@ def directionalQuadraticOperator (v : E) : E →L[ℝ] E :=
 @[simp]
 theorem directionalQuadraticOperator_apply (v z : E) :
     directionalQuadraticOperator v z = inner ℝ v z • v := by
-  simp [directionalQuadraticOperator]
+  simp only [directionalQuadraticOperator, InnerProductSpace.rankOne_apply]
 
 /-- The directional rank-one operator is symmetric. -/
 theorem isSymmetricOperator_directionalQuadraticOperator (v : E) :
@@ -66,7 +66,8 @@ def mixedDirectionalQuadraticOperator (v w : E) : E →L[ℝ] E :=
 theorem mixedDirectionalQuadraticOperator_apply (v w z : E) :
     mixedDirectionalQuadraticOperator v w z =
       (1 / 2 : ℝ) • (inner ℝ w z • v + inner ℝ v z • w) := by
-  simp [mixedDirectionalQuadraticOperator]
+  simp only [mixedDirectionalQuadraticOperator, one_div, smul_add, add_apply, smul_apply,
+    InnerProductSpace.rankOne_apply]
 
 /-- The mixed directional operator is symmetric. -/
 theorem isSymmetricOperator_mixedDirectionalQuadraticOperator (v w : E) :
@@ -75,7 +76,8 @@ theorem isSymmetricOperator_mixedDirectionalQuadraticOperator (v w : E) :
   change inner ℝ (mixedDirectionalQuadraticOperator v w x) y =
     inner ℝ x (mixedDirectionalQuadraticOperator v w y)
   rw [mixedDirectionalQuadraticOperator_apply, mixedDirectionalQuadraticOperator_apply]
-  simp [inner_add_left, inner_add_right, real_inner_smul_right, real_inner_comm]
+  simp only [one_div, smul_add, inner_add_left, real_inner_comm, real_inner_smul_right,
+    inner_add_right]
   ring
 
 /-- The mixed directional operator is symmetric in its two direction arguments. -/
@@ -91,7 +93,7 @@ theorem inner_mixedDirectionalQuadraticOperator_self (v w z : E) :
     inner ℝ z (mixedDirectionalQuadraticOperator v w z) =
       inner ℝ v z * inner ℝ w z := by
   rw [mixedDirectionalQuadraticOperator_apply]
-  simp [inner_add_right, real_inner_smul_right, real_inner_comm]
+  simp only [one_div, smul_add, inner_add_right, real_inner_smul_right, real_inner_comm]
   ring
 
 /-- Quadratic-form polarization for the mixed directional operator. -/
@@ -106,7 +108,7 @@ theorem inner_mixedDirectionalQuadraticOperator_self_eq_half_sub
     inner_directionalQuadraticOperator_self,
     inner_directionalQuadraticOperator_self,
     inner_directionalQuadraticOperator_self]
-  simp [inner_add_left]
+  simp only [one_div, inner_add_left]
   ring
 
 /-- Operator-level polarization for the mixed directional operator. -/
@@ -118,7 +120,8 @@ theorem mixedDirectionalQuadraticOperator_eq_half_sub
           directionalQuadraticOperator v - directionalQuadraticOperator w) := by
   ext z
   rw [mixedDirectionalQuadraticOperator_apply]
-  simp [directionalQuadraticOperator_apply, inner_add_left, sub_eq_add_neg]
+  simp only [one_div, smul_add, sub_eq_add_neg, smul_neg, add_apply, smul_apply,
+    directionalQuadraticOperator_apply, inner_add_left, neg_apply]
   module
 
 /-- The mixed operator with the same direction twice is the pure directional rank-one operator. -/
@@ -167,7 +170,7 @@ theorem mixedDirectionalQuadraticSum_zero
     {ι : Type*} (s : Finset ι) (v : ι → E) :
     mixedDirectionalQuadraticSum s v (fun _ _ => 0) = 0 := by
   unfold mixedDirectionalQuadraticSum
-  simp
+  simp only [zero_smul, Finset.sum_const_zero]
 
 /-- The mixed-directional sum is additive in the coefficient matrix. -/
 theorem mixedDirectionalQuadraticSum_add
@@ -176,7 +179,8 @@ theorem mixedDirectionalQuadraticSum_add
       mixedDirectionalQuadraticSum s v a + mixedDirectionalQuadraticSum s v b := by
   unfold mixedDirectionalQuadraticSum
   ext z
-  simp [add_smul, Finset.sum_add_distrib]
+  simp only [add_smul, Finset.sum_add_distrib, add_apply, sum_apply, smul_apply,
+    mixedDirectionalQuadraticOperator_apply, one_div, smul_add]
 
 /-- The mixed-directional sum is homogeneous in the coefficient matrix. -/
 theorem mixedDirectionalQuadraticSum_smul
@@ -185,7 +189,8 @@ theorem mixedDirectionalQuadraticSum_smul
       c • mixedDirectionalQuadraticSum s v a := by
   unfold mixedDirectionalQuadraticSum
   ext z
-  simp [mul_smul, Finset.smul_sum]
+  simp only [mul_smul, sum_apply, smul_apply, mixedDirectionalQuadraticOperator_apply, one_div,
+    smul_add, Finset.smul_sum]
 
 /-- Finite coefficient matrices of mixed directional quadratic operators are symmetric. -/
 theorem isSymmetricOperator_mixedDirectionalQuadraticSum
@@ -328,10 +333,11 @@ theorem mixedDirectionalQuadraticSum_diagonal
   rw [sum_apply]
   by_cases his : i ∈ s
   · rw [Finset.sum_eq_single i]
-    · simp [mixedDirectionalQuadraticOperator_self]
+    · simp only [↓reduceIte, mixedDirectionalQuadraticOperator_self, smul_apply,
+      directionalQuadraticOperator_apply]
     · intro j hj hji
       have hij : i ≠ j := fun h => hji h.symm
-      simp [hij]
+      simp only [hij, ↓reduceIte, zero_smul, zero_apply]
     · intro hi_not
       exact (hi_not his).elim
   · exact (his hi).elim
@@ -348,13 +354,13 @@ def polarizedMixedCoefficient {ι : Type*} [DecidableEq ι]
 theorem polarizedMixedCoefficient_self
     {ι : Type*} [DecidableEq ι] (q : ι → ℝ) (r : ι → ι → ℝ) (i : ι) :
     polarizedMixedCoefficient q r i i = q i := by
-  simp [polarizedMixedCoefficient]
+  simp only [polarizedMixedCoefficient, ↓reduceIte]
 
 theorem polarizedMixedCoefficient_of_ne
     {ι : Type*} [DecidableEq ι] (q : ι → ℝ) (r : ι → ι → ℝ)
     {i j : ι} (hij : i ≠ j) :
     polarizedMixedCoefficient q r i j = (r i j - q i - q j) / 2 := by
-  simp [polarizedMixedCoefficient, hij]
+  simp only [polarizedMixedCoefficient, hij, ↓reduceIte]
 
 /-- The polarized mixed coefficient matrix is symmetric on a finite set when the supplied
 pairwise-sum coefficients are symmetric there. -/
@@ -365,7 +371,7 @@ theorem polarizedMixedCoefficient_symm_on
     polarizedMixedCoefficient q r j i = polarizedMixedCoefficient q r i j := by
   by_cases hij : i = j
   · subst j
-    simp
+    simp only [polarizedMixedCoefficient_self]
   · have hji : j ≠ i := fun h => hij h.symm
     rw [polarizedMixedCoefficient_of_ne q r hji,
       polarizedMixedCoefficient_of_ne q r hij, hr hi hj]

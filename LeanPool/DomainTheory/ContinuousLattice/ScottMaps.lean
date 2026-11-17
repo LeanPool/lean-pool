@@ -29,7 +29,7 @@ theorem preservesDirectedSup_monotone {f : D → D'} (hf : PreservesDirectedSup 
   have hdir : DirectedOn (· ≤ ·) ({x, y} : Set D) := directedOn_pair hxy
   have hS : ({x, y} : Set D).Nonempty := ⟨x, Set.mem_insert _ _⟩
   have hsup : sSup ({x, y} : Set D) = y := by
-    simp_all
+    simp_all only [insert_nonempty, sSup_insert, sSup_singleton, sup_of_le_right]
   have heq := hf hS hdir
   rw [hsup, Set.image_pair] at heq
   exact le_trans (le_sSup (Set.mem_insert _ _)) heq.symm.le
@@ -102,7 +102,7 @@ theorem proposition_2_6 (f : D × D' → D'') :
         rintro _ ⟨a, ha, rfl⟩ _ ⟨b, hb, rfl⟩
         obtain ⟨c, hc, hac, hbc⟩ := hSdir a ha b hb
         exact ⟨(c, y), Set.mem_image_of_mem _ hc, ⟨hac, le_rfl⟩, ⟨hbc, le_rfl⟩⟩
-      have hfst : Prod.fst '' T = S := by rw [hT, Set.image_image]; simp
+      have hfst : Prod.fst '' T = S := by rw [hT, Set.image_image]; simp only [image_id']
       have hsnd : Prod.snd '' T = {y} := by rw [hT, Set.image_image]; exact hS.image_const y
       have hsupT : sSup T = (sSup S, y) := by
         have e1 : (sSup T).1 = sSup S := by rw [Prod.fst_sSup, hfst]
@@ -110,7 +110,7 @@ theorem proposition_2_6 (f : D × D' → D'') :
         exact Prod.ext_iff.mpr ⟨e1, e2⟩
       have h := hf hTne hTdir
       rw [hsupT, hT, Set.image_image] at h
-      simpa using h
+      simpa only using h
     · set T : Set (D × D') := (fun y => (x, y)) '' S with hT
       have hTne : T.Nonempty := hS.image _
       have hTdir : DirectedOn (· ≤ ·) T := by
@@ -118,14 +118,14 @@ theorem proposition_2_6 (f : D × D' → D'') :
         obtain ⟨c, hc, hac, hbc⟩ := hSdir a ha b hb
         exact ⟨(x, c), Set.mem_image_of_mem _ hc, ⟨le_rfl, hac⟩, ⟨le_rfl, hbc⟩⟩
       have hfst : Prod.fst '' T = {x} := by rw [hT, Set.image_image]; exact hS.image_const x
-      have hsnd : Prod.snd '' T = S := by rw [hT, Set.image_image]; simp
+      have hsnd : Prod.snd '' T = S := by rw [hT, Set.image_image]; simp only [image_id']
       have hsupT : sSup T = (x, sSup S) := by
         have e1 : (sSup T).1 = x := by rw [Prod.fst_sSup, hfst, sSup_singleton]
         have e2 : (sSup T).2 = sSup S := by rw [Prod.snd_sSup, hsnd]
         exact Prod.ext_iff.mpr ⟨e1, e2⟩
       have h := hf hTne hTdir
       rw [hsupT, hT, Set.image_image] at h
-      simpa using h
+      simpa only using h
   · -- separate continuity ⟹ joint continuity (Scott 1972's directedness argument)
     rintro ⟨h1, h2⟩ Sstar hne hdir
     have hmono1 : ∀ y, Monotone fun x => f (x, y) := fun y => preservesDirectedSup_monotone (h1 y)
@@ -177,7 +177,7 @@ theorem proposition_2_7_sup :
       p.1 ⊔ p.2) :=
   continuous_of_preservesDirectedSup <| by
     intro S hS hSdir
-    simpa using (ScottContinuous.sup₂ (β := D) (d := S) hS hSdir (isLUB_sSup S)).sSup_eq.symm
+    simpa only using (ScottContinuous.sup₂ (β := D) (d := S) hS hSdir (isLUB_sSup S)).sSup_eq.symm
 
 theorem meet_preservesDirectedSup (x : D) (hD : IsContinuousLattice D) :
     PreservesDirectedSup (fun z => x ⊓ z) := by

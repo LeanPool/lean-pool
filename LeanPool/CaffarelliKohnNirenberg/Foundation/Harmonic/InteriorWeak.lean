@@ -286,7 +286,7 @@ theorem weaklyHarmonicOn_mollify_spatialLaplacian_eq_zero
     CKN.spatialLaplacian (mollify (U.indicator h) ε hε) x = 0 := by
   let g : Vec3 → ℝ := U.indicator h
   have hgmem : MemLp g (ENNReal.ofReal (3 / 2 : ℝ)) volume := by
-    exact (memLp_indicator_iff_restrict hU).2 hmem
+    exact (memLp_indicator_iff_restrict hU.nullMeasurableSet).2 hmem
   have hgloc : LocallyIntegrable g volume :=
     hgmem.locallyIntegrable (by norm_num)
   have hweakGlobal : ∀ ψ : Vec3 → ℝ, ContDiff ℝ (⊤ : ℕ∞) ψ →

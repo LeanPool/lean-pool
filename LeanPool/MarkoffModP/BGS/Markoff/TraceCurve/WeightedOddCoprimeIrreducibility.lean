@@ -124,7 +124,7 @@ theorem splitTraceCoverPolynomial_absolutelyIrreducible_of_positiveExponents
   let : NeZero e := ⟨he.ne'⟩
   let : NeZero (e : AlgebraicClosure K) := ⟨heCharL⟩
   obtain ⟨zeta, hzeta⟩ :=
-    HasEnoughRootsOfUnity.exists_primitiveRoot (AlgebraicClosure K) e
+    HasEnoughRootsOfUnity.exists_isPrimitiveRoot (AlgebraicClosure K) e
   obtain ⟨sqrtNegOne, hsqrtNegOne⟩ :=
     IsAlgClosed.exists_pow_nat_eq (-1 : AlgebraicClosure K) zero_lt_two
   obtain ⟨c, hc⟩ := IsAlgClosed.exists_pow_nat_eq (phi alpha) he

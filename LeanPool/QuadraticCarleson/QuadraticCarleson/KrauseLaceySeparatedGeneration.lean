@@ -47,7 +47,7 @@ theorem sum_intervalLength_le_of_disjoint
       hunion.eventuallyLE
   have hvol (J : RealInterval) : volume.real J.carrier = J.length :=
     J.volume_carrier_toReal
-  simpa only [setIntegral_const, smul_eq_mul, mul_one, hvol] using hsum
+  simpa only [setIntegral_const, hvol, smul_eq_mul, mul_one] using hsum
 
 /-- The sum over a finite interval collection, with the actual input
 allowed to depend on the interval's bad scale. -/
@@ -163,7 +163,7 @@ theorem integral_localizedPiece_cross_eq_zero_of_disjoint
     by_cases hx : x ∈ I.carrier
     · have hxJ : x ∉ J.carrier := fun hxJ ↦ Set.disjoint_left.mp hdisj hx hxJ
       rw [krauseLaceyLocalizedPiece_eq_zero_of_notMem 1 j J g hJ hxJ]
-      simp
+      simp only [map_zero, mul_zero]
     · rw [krauseLaceyLocalizedPiece_eq_zero_of_notMem 1 k I f hI hx, zero_mul]
   simp_rw [hz, integral_zero]
 

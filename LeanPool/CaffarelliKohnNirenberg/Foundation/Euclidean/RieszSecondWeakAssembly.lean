@@ -236,8 +236,8 @@ theorem dyadic_bad_part_memLp_two
     change volume (dyadicCube Q.1.scale Q.1.corner) ≠ ∞
     rw [volume_dyadicCube_eq_pow]
     exact ENNReal.ofReal_ne_top
-  have hF' := hF₂.indicator hmeas
-  have hc := memLp_indicator_const (2 : ℝ≥0∞) hmeas
+  have hF' := hF₂.indicator hmeas.nullMeasurableSet
+  have hc := memLp_indicator_const (2 : ℝ≥0∞) hmeas.nullMeasurableSet
     (dyadicAverage F Q.1) (Or.inr hvol)
   have hsub := hF'.sub hc
   convert hsub using 1

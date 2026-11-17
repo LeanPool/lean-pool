@@ -137,7 +137,7 @@ def test_integration_cannot_drop_findings_or_questions():
     """A reassuring final verdict is insufficient without explicit resolutions."""
     payloads = [
         {
-            "verdict": "discuss",
+            "verdict": "block",
             "bottom_line": "Check definition",
             "findings": [{"detail": "possible weakened hypothesis"}],
             "evidence_summary": "contract",
@@ -149,7 +149,7 @@ def test_integration_cannot_drop_findings_or_questions():
     assert json.loads(evidence)["portion_reviews"] == payloads
     assert (
         review_portions.enforce_resolutions({"verdict": "pass"}, obligations)["verdict"]
-        == "discuss"
+        == "block"
     )
     resolved = {
         "verdict": "pass",
@@ -166,7 +166,7 @@ def test_integration_cannot_drop_findings_or_questions():
     )
     resolved["resolutions"].append({"id": "invented", "evidence": "irrelevant"})
     answer = review_portions.enforce_resolutions(resolved, obligations)
-    assert answer["verdict"] == "discuss"
+    assert answer["verdict"] == "block"
     assert "unknown obligation 'invented'" in str(answer["findings"])
 
 
@@ -348,7 +348,7 @@ def test_unresolved_evidence_stays_visible(kind):
         calls=4,
     )
     assert "Target is defined as True" in body
-    assert "needs_discussion" in body
+    assert "request_changes" in body
     assert "3 source portions" in body
     assert "test coverage" in body
 
@@ -402,9 +402,7 @@ def test_integration_can_retrieve_exact_missing_definitions(monkeypatch):
         text = messages[1]["content"]
         calls.append(text)
         if len(calls) == 1:
-            return result(
-                {"verdict": "discuss", "source_requests": ["P.ActualMeaning"]}
-            )
+            return result({"verdict": "block", "source_requests": ["P.ActualMeaning"]})
         assert "+def ActualMeaning : Prop := True" in text
         return result(
             {
@@ -434,7 +432,7 @@ def test_source_requests_cannot_approve_without_answers():
     answer = review._integrate_portions(
         "+def Known := 0", "{}", {}, 10_000, prepare, send
     )
-    assert answer.payload["verdict"] == "discuss"
+    assert answer.payload["verdict"] == "block"
     assert "MissingDefinition" in str(answer.payload["findings"])
 
 
@@ -470,7 +468,7 @@ def test_integration_followup_preserves_previous_concerns(resolve):
         if len(calls) == 1:
             return result(
                 {
-                    "verdict": "discuss",
+                    "verdict": "block",
                     "bottom_line": "Cross-module meaning needs checking",
                     "findings": [{"comment": "Potentially vacuous definition"}],
                     "open_questions": ["Does the premise have a witness?"],
@@ -499,7 +497,7 @@ def test_integration_followup_preserves_previous_concerns(resolve):
         "+def Known := 0", "{}", {}, 10_000, prepare, send
     )
     assert len(calls) == 2
-    assert answer.payload["verdict"] == ("pass" if resolve else "discuss")
+    assert answer.payload["verdict"] == ("pass" if resolve else "block")
     if not resolve:
         assert "Potentially vacuous definition" in str(answer.payload["findings"])
         assert "MissingDefinition" in str(answer.payload["findings"])
@@ -510,7 +508,7 @@ def test_final_integration_concerns_prevent_approval(field):
     """A final pass cannot override unresolved concerns in that same report."""
     payload = {"verdict": "pass", field: ["Unresolved semantic question"]}
     answer = review_portions.enforce_resolutions(payload, {})
-    assert answer["verdict"] == "discuss"
+    assert answer["verdict"] == "block"
     assert "Unresolved semantic question" in str(answer["findings"])
 
 
@@ -559,7 +557,7 @@ def test_many_source_requests_are_not_discarded(monkeypatch):
     monkeypatch.setattr(review_portions, "source_excerpts", excerpt)
     answer = review._integrate_portions("", "{}", {}, 10_000, prepare, send)
     assert retrieved == requested
-    assert answer.payload["verdict"] == "discuss"
+    assert answer.payload["verdict"] == "block"
 
 
 def test_completed_calls_are_saved_before_later_failure(monkeypatch, tmp_path):
@@ -600,7 +598,7 @@ def test_followup_budget_includes_serialized_metadata_and_escaping(monkeypatch):
     monkeypatch.setattr(review_portions, "source_excerpts", excerpt)
     answer = review._integrate_portions("", "{}", {}, 10_000, prepare, send)
     assert len(calls) == 2
-    assert answer.payload["verdict"] == "discuss"
+    assert answer.payload["verdict"] == "block"
 
 
 def test_final_findings_are_reported_once():
@@ -609,7 +607,7 @@ def test_final_findings_are_reported_once():
     answer = review_portions.enforce_resolutions(
         {"verdict": "pass", "findings": [finding]}, {}
     )
-    assert answer["verdict"] == "discuss"
+    assert answer["verdict"] == "block"
     assert answer["findings"] == [finding]
 
 
@@ -622,7 +620,7 @@ def test_unknown_resolution_cannot_resolve_its_own_diagnostic():
         ],
     }
     answer = review_portions.enforce_resolutions(payload, {})
-    assert answer["verdict"] == "needs_discussion"
+    assert answer["verdict"] == "request_changes"
     assert "unknown obligation" in str(answer["findings"])
 
 
@@ -693,7 +691,7 @@ def test_integration_keeps_answers_across_followups_unless_reopened(reopen):
         prepare,
         send,
     )
-    assert answer.payload["verdict"] == ("discuss" if reopen else "pass")
+    assert answer.payload["verdict"] == ("block" if reopen else "pass")
     if reopen:
         assert "Is the foundation standard?" in str(answer.payload["findings"])
     else:
@@ -709,7 +707,7 @@ def test_unknown_resolution_does_not_enter_the_accepted_ledger():
     }
     updated = review_portions.accumulate_resolutions(payload, {}, accepted)
     assert accepted == {}
-    assert review_portions.enforce_resolutions(updated, {})["verdict"] == "discuss"
+    assert review_portions.enforce_resolutions(updated, {})["verdict"] == "block"
 
 
 def test_unknown_reopened_obligation_cannot_approve():
@@ -717,7 +715,7 @@ def test_unknown_reopened_obligation_cannot_approve():
     updated = review_portions.accumulate_resolutions(
         {"verdict": "pass", "reopened_obligations": ["invented"]}, {}, {}
     )
-    assert review_portions.enforce_resolutions(updated, {})["verdict"] == "discuss"
+    assert review_portions.enforce_resolutions(updated, {})["verdict"] == "block"
 
 
 @pytest.mark.parametrize("azure", [False, True])

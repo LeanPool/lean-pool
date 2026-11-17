@@ -102,7 +102,7 @@ theorem streamFieldSmallLocalConst_zero_triadic_le (M : ABKModel d)
     streamBoundaryRoughConst
   simp only [euclideanNorm_zero, add_zero]
   convert mul_le_mul_of_nonneg_left hlog hC using 1
-  all_goals first | rfl | ring
+  all_goals ring
 
 omit [NeZero d] in
 /-- The smooth-divergence constant on the active cutoff support is at most
@@ -121,7 +121,7 @@ theorem streamFieldLargeDivLocalConst_zero_triadic_le (M : ABKModel d)
     streamBoundarySmoothDivConst
   simp only [euclideanNorm_zero, add_zero]
   convert mul_le_mul_of_nonneg_left hlog hC using 1
-  all_goals first | rfl | ring
+  all_goals ring
 
 end
 

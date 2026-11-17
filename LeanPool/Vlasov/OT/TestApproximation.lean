@@ -10,6 +10,7 @@ public import Mathlib.Analysis.Calculus.BumpFunction.FiniteDimension
 public import Mathlib.Analysis.Calculus.BumpFunction.Normed
 import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Analysis.Calculus.BumpFunction.Convolution
+import Mathlib.Analysis.Calculus.UniformLimitsDeriv
 
 /-!
 # Compactly supported test approximation for weak Vlasov solutions

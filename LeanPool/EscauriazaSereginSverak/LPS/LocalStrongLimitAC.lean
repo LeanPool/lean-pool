@@ -7,6 +7,7 @@ Authors: Scott Armstrong
 module
 
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.AbsolutelyContinuousFun
+public import Mathlib.MeasureTheory.Integral.IntervalIntegral.LebesgueDifferentiationThm
 public import Mathlib.MeasureTheory.Integral.Prod
 public import LeanPool.CaffarelliKohnNirenberg.Foundation.Parabolic.Basic
 

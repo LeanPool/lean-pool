@@ -183,9 +183,9 @@ theorem interpolation_weak11_strong22_of_l2_classes_ae {T : (Vec3 → ℝ) → (
   have hint₁ : Integrable ((absE f ⁻¹' Ioi (ENNReal.ofReal (t / 2))).indicator f) volume :=
     integrable_indicator_gt_of_memLp hf hp1 hfp ht2
   have hmem₁ : MemLp ((absE f ⁻¹' Ioi (ENNReal.ofReal (t / 2))).indicator f) 2 volume :=
-    hf2.indicator hsm
+    hf2.indicator hsm.nullMeasurableSet
   have hmem₂ : MemLp ((absE f ⁻¹' Ioi (ENNReal.ofReal (t / 2)))ᶜ.indicator f) 2 volume :=
-    hf2.indicator hsm.compl
+    hf2.indicator hsm.compl.nullMeasurableSet
   have hcore := tail_bound_of_pieces (T := T) (A₁ := A₁) (A₂ := A₂) (f := f) ht hsm
     (hTsub _ _ hf₁ hint₁ hmem₁ hf₂ hmem₂) (hTmeas _ hf₂ hmem₂)
     (hweak _ hf₁ hint₁ hmem₁ (t / 2) ht2) (hstrong _ hf₂ hmem₂)

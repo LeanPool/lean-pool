@@ -504,7 +504,7 @@ private theorem
     covering_monodromy_naturality p.quotientCovering.isCoveringMap hq.isCoveringMap
       ⟨exponentialLift ε s hs, exponentialLift_continuous ε s hs⟩
       ⟨fibreMap C ε s hs hlog hRp, fibreMap_continuous C ε s hs hlog hRp⟩ (fun _ => rfl)
-      (0 : ComplexPlane₂) γ
+      (0 : ComplexPlane₂) γ.toPath
   have hper := p.fundamentalGroupEquiv_monodromy γ
   have htrans := exponentialLift_period_translate C ε s hs 0 c.1 c.2
   have he :
@@ -516,7 +516,7 @@ private theorem
     rw [CuspQuotient.fundamentalGroupEquivAt_monodromy]
     change
       (hq.isCoveringMap.monodromy
-            (Path.Homotopic.Quotient.map γ
+            (Path.Homotopic.Quotient.map γ.toPath
               ⟨fibreMap C ε s hs hlog hRp, fibreMap_continuous C ε s hs hlog hRp⟩)
             ⟨exponentialLift ε s hs 0, rfl⟩ :
           ToricSpace.Tube (CuspQuotient.disc ε)) =
@@ -594,7 +594,7 @@ private theorem CuspUniformization.fibre_integerPeriod_loop_nullhomotopic
     (fibreFundamentalGroupMap_eq_one_iff C ε s hs hlog hRp hε hε1 hC hR
           (FundamentalGroup.fromPath ⟦(periodData C s hlog hRp).periodLoop (m, 0)⟧)).mpr
       (by rw [FullPeriodMatrix.fundamentalGroupEquiv_periodLoop]; rfl)
-  exact Path.Homotopic.Quotient.eq.mp he
+  exact Path.Homotopic.Quotient.eq.mp (congrArg FundamentalGroup.toPath he)
 
 private def CuspUniformization.fibreBasePoint (C : ℂ → Matrix (Fin 2) (Fin 2) ℂ) (ε : ℝ) (s : ℂ)
     (hs : ‖exponential s‖ < ε) (hlog : Real.log ‖exponential s‖ < 0)
@@ -626,7 +626,8 @@ private theorem CuspUniformization.fibreInclusionFundamentalGroupMap_comp_homeom
     fibreInclusionFundamentalGroupMap C ε s hs hlog hRp
         (homeomorphFundamentalGroupEquiv (fibreHomeomorph C ε s hs hlog hRp hε hε1 hC hR) 0 γ) =
       fibreFundamentalGroupMap C ε s hs hlog hRp γ := by
-  obtain ⟨γ⟩ := γ
+  obtain ⟨⟨γ⟩⟩ := γ
+  apply CategoryTheory.End.ext
   apply congrArg Path.Homotopic.Quotient.mk
   ext t
   rfl

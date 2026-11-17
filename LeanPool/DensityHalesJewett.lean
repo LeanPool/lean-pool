@@ -7,6 +7,7 @@ Authors: Gabriel Dahia
 module
 
 public import LeanPool.DensityHalesJewett.DensityHalesJewett
+public import LeanPool.DensityHalesJewett.DensityHalesJewett.Ackermann
 public import LeanPool.DensityHalesJewett.DensityHalesJewett.Canonization
 public import LeanPool.DensityHalesJewett.DensityHalesJewett.DensityIncrement
 public import LeanPool.DensityHalesJewett.DensityHalesJewett.DensityIncrement.CorrelatedFibers
@@ -14,6 +15,8 @@ public import LeanPool.DensityHalesJewett.DensityHalesJewett.DensityIncrement.Pa
 public import LeanPool.DensityHalesJewett.DensityHalesJewett.DensityIncrement.StructuredCorrelation
 public import LeanPool.DensityHalesJewett.DensityHalesJewett.FiniteUnions
 public import LeanPool.DensityHalesJewett.DensityHalesJewett.GrahamRothschild
+public import LeanPool.DensityHalesJewett.DensityHalesJewett.HalesJewett
+public import LeanPool.DensityHalesJewett.DensityHalesJewett.Induction
 public import LeanPool.DensityHalesJewett.DensityHalesJewett.Insensitive
 public import LeanPool.DensityHalesJewett.DensityHalesJewett.Main
 public import LeanPool.DensityHalesJewett.DensityHalesJewett.Subspace
@@ -30,7 +33,9 @@ public import LeanPool.DensityHalesJewett.Solution
 Source: url:https://github.com/gdahia/densityhalesjewett
 Authors: Gabriel Dahia
 Status: verified
-Main declarations: `Combinatorics.Line.exists_of_density_atTop`
+Main declarations: `Combinatorics.Line.exists_of_density_atTop`,
+  `Combinatorics.Line.exists_of_density`,
+  `Combinatorics.ArithmeticProgression.exists_of_density_nat`
 Tags: combinatorics
 MSC: 05D10, 05A05, 11B75, 68R15
 -/

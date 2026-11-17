@@ -58,7 +58,7 @@ theorem integral_abelKernel_exp_le {lam t : ℝ} (hlam : 0 < lam) (ht : 0 ≤ t)
 
 theorem continuous_forcedTruncTensor (ρ : RegMollifierProfile) (ε : ℝ) (hε : 0 < ε) {R : ℝ}
     (hR : 0 ≤ R) : Continuous (forcedTruncTensor ρ ε hε R) := by
-  have hK := (ENNReal.toReal_nonneg : 0 ≤ regularizedMildMollifierConstant ρ ε)
+  have hK : 0 ≤ regularizedMildMollifierConstant ρ ε := ENNReal.toReal_nonneg
   refine (LipschitzWith.of_dist_le_mul (K := ⟨4 * regularizedMildMollifierConstant ρ ε * R,
     by positivity⟩) fun v w => ?_).continuous
   rw [dist_eq_norm, dist_eq_norm]
@@ -297,7 +297,7 @@ theorem forcedMildMap_existsUnique_fixedPoint (ρ : RegMollifierProfile) (ε : �
   set A := 4 * regularizedMildMollifierConstant ρ ε * R / Real.sqrt (2 * Real.exp 1) *
     Real.Gamma (1 / 2) with hAdef
   have hA : 0 ≤ A := by
-    have := (ENNReal.toReal_nonneg : 0 ≤ regularizedMildMollifierConstant ρ ε)
+    have hK : 0 ≤ regularizedMildMollifierConstant ρ ε := ENNReal.toReal_nonneg
     have hΓ : 0 < Real.Gamma (1 / 2) := Real.Gamma_pos_of_pos (by norm_num)
     positivity
   obtain ⟨lam, hlam, hlamA⟩ := exists_forcedWeight A

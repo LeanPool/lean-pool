@@ -786,8 +786,8 @@ theorem pi_le_id_div_log_of_eps (N : ℕ) (ε : ℝ) (_hε_pos : ε > 0) (hε : 
     apply le_trans h
     gcongr (?_ + ?_)
     · apply le_of_eq
-      field_simp
-      ring_nf
+      simp only [div_eq_mul_inv, mul_inv_rev]
+      ring
     · exact le_refl _
 
 theorem pi_le_id_div_log (N : ℕ) :

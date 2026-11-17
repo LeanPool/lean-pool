@@ -7,7 +7,8 @@ module
 
 
 public import LeanPool.BeyondBethe.BeyondBethe.NumericalTransfer
-public import Mathlib.Tactic
+import Mathlib.Tactic.Linarith -- shake: keep
+import Mathlib.Tactic.Ring -- shake: keep
 
 /-! # Numerical Potentials -/
 
@@ -49,7 +50,7 @@ theorem abs_sub_sub_add_le_four
     (hc : abs c ≤ δ) (hd : abs d ≤ δ) :
     abs (a - b - c + d) ≤ 4 * δ := by
   calc
-    abs (a - b - c + d) = abs ((a - b) + (d - c)) := by ring
+    abs (a - b - c + d) = abs ((a - b) + (d - c)) := by ring_nf
     _ ≤ abs (a - b) + abs (d - c) := abs_add_le _ _
     _ ≤ (abs a + abs b) + (abs d + abs c) :=
       add_le_add (abs_sub a b) (abs_sub d c)

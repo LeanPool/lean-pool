@@ -121,6 +121,7 @@ theorem IsConservative.measurable_killedKernelOn :
   have hB' : MeasurableSet (Subtype.val '' B) :=
     (MeasurableEmbedding.subtype_coe hU.measurableSet).measurableSet_image.mpr hB
   exact (Measure.measurable_coe hB').comp ((IsConservative.measurable_killedKernel P hP U hU).comp
+      (f := fun q : NNReal × U ↦ (q.1, (q.2 : alpha)))
     (measurable_fst.prodMk (measurable_subtype_coe.comp measurable_snd)))
 
 /-- At time zero the killed kernel on `U` is the identity kernel of `U`. -/

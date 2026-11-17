@@ -7,10 +7,6 @@ module
 
 public import LeanPool.InfinitaryLogic.Descriptive.LogicAction
 import LeanPool.InfinitaryLogic.Methods.LopezEscobar.Separation
-import Mathlib.Analysis.Normed.Group.Basic
-import Mathlib.Data.EReal.Inv
-import Mathlib.Topology.Algebra.InfiniteSum.Order
-import Mathlib.Topology.MetricSpace.Bounded
 /-!
 # The López–Escobar theorem (issue #10, Unit 6)
 

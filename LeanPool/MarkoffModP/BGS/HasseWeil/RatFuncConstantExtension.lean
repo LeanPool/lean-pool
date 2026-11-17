@@ -6,6 +6,7 @@ Authors: Yuma Mizuno
 module
 
 
+public import Mathlib.RingTheory.Localization.Finiteness
 public import Mathlib.Algebra.Polynomial.Module.TensorProduct
 public import Mathlib.FieldTheory.RatFunc.Basic
 public import Mathlib.LinearAlgebra.Dimension.Localization

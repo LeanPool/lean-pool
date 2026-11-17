@@ -19,8 +19,8 @@ namespace QuantumParallelRepetition
 noncomputable local instance matrixComplexContinuousENormPartThree
     {m n : Type*} [Fintype m] [Fintype n] :
     ContinuousENorm (Matrix m n ℂ) :=
-  @SeminormedAddGroup.toContinuousENorm (Matrix m n ℂ)
-    (Matrix.normedAddCommGroup.toSeminormedAddCommGroup.toSeminormedAddGroup)
+  (@SeminormedAddGroup.toESeminormedAddMonoid (Matrix m n ℂ)
+    Matrix.normedAddCommGroup.toSeminormedAddCommGroup.toSeminormedAddGroup).toContinuousENorm
 
 open scoped ComplexOrder Matrix BigOperators InnerProductSpace
 open Complex Matrix Finset
@@ -570,7 +570,8 @@ theorem dSVDensityRationalCompleteProjectiveOutcome_norm_sq_eq
           (ofLp (sharedThresholdResource (d := Fin d) τ)))‖ ^ 2 =
       (∑ k : Fin N, (Matrix.trace (P k * R k)).re) /
         ((d : ℝ) * (N : ℝ))
-  simpa [τ] using
+  simpa only [τ, blockDiagonal'_transpose, one_pow, one_mul, Fintype.card_fin,
+    sum_const, card_univ, nsmul_eq_mul, mul_one] using
     sharedThresholdResource_block_action_norm_sq
       τ P R
       (fun k =>
@@ -817,13 +818,8 @@ theorem dSVDensityRationalCanonicalAcceptedTarget_distance_le
     ‖ξ.val - dSVDensityRationalCanonicalAcceptedTarget
         w N ξ‖ ≤
       Real.sqrt (1 / w + (d : ℝ) * w / (N : ℝ)) := by
-  have nonnegative : 0 ≤ 1 / w + (d : ℝ) * w / (N : ℝ) := by
-    positivity
-  have squared :=
-    dSVDensityRationalCanonicalAcceptedTarget_distance_sq_le
-      width grid ξ
-  have exact_sqrt := Real.sq_sqrt nonnegative
-  nlinarith only [squared, exact_sqrt, Real.sqrt_nonneg (1 / w + (d : ℝ) * w / (N : ℝ))]
+  exact Real.le_sqrt_of_sq_le
+    (dSVDensityRationalCanonicalAcceptedTarget_distance_sq_le width grid ξ)
 
 theorem dSVDensityRationalCanonicalAcceptedTarget_ne_zero
     {d N : ℕ} {w : ℝ} (width : 0 < w) (grid : 0 < N)
@@ -991,7 +987,7 @@ theorem
   have floor_scaled : 1 ≤ 2 * (w + 1) * M := by
     have denominator : 0 < 2 * (w + 1) := by positivity
     have crossed := (div_le_iff₀ denominator).mp mass_floor
-    linarith only [crossed]
+    simpa only [mul_comm] using crossed
   change
     dSVDensityRationalLeftProjectiveThresholdAtomMismatch
       w N ξ ζ ≤ (2 * (w + 1) * D) * M
@@ -999,8 +995,8 @@ theorem
     dSVDensityRationalLeftProjectiveThresholdAtomMismatch
         w N ξ ζ ≤ D := actual
     _ ≤ D * (2 * (w + 1) * M) := by
-      linarith [mul_nonneg defect_nonnegative
-        (show 0 ≤ 2 * (w + 1) * M - 1 by linarith)]
+      simpa only [mul_one] using
+        mul_le_mul_of_nonneg_left floor_scaled defect_nonnegative
     _ = (2 * (w + 1) * D) * M := by ac_rfl
 
 theorem
@@ -1021,7 +1017,7 @@ theorem
   have denominator : 0 < w := width
   have ratio : (w + 1) / w ≤ 2 := by
     apply (div_le_iff₀ denominator).mpr
-    linarith only [large]
+    exact add_one_le_two_mul large
   calc
     dSVDensityRationalLeftProjectiveThresholdAtomMismatch
         w N ξ ζ /
@@ -1062,10 +1058,9 @@ theorem dSVDensityRationalLargeWidth_exists_fine_grid
     lt_trans (div_pos real_dimension denominator) large
   have grid : 0 < N := by exact_mod_cast real_grid
   refine ⟨N, grid, ?_⟩
-  have crossed := (div_lt_iff₀ denominator).mp large
   have small : (d : ℝ) / N < ε / (2 * (w + 1)) := by
     apply (div_lt_iff₀ real_grid).mpr
-    linarith only [crossed]
+    exact (div_lt_iff₀' denominator).mp large
   have positive : 0 < 2 * (w + 1) := by positivity
   have scaled := (lt_div_iff₀ positive).mp small
   linarith only [scaled]
@@ -1810,7 +1805,7 @@ private theorem dSVDensityRationalActualMixed_escape_ge_diagonal
       grid dimension w ξ ζ,
     ← dSVDensityRationalActualMixedAsynchronousMass_eq_crossHazard
       w N ξ ζ] at loss
-  linarith
+  exact tsub_le_iff_left.mp loss
 
 end
 
@@ -2413,29 +2408,30 @@ theorem dSVBobTargetLocalHarmonicCleanup_stable
         (tensorEmbezzlementTarget (n := n) ξ) -
       embezzlementState (d * n)‖ ≤
         ‖ξ.val - ζ.val‖ + ε := by
-  let source := localUnitaryAction U V
-    (tensorEmbezzlementTarget (n := n) ξ)
-  let reference := localUnitaryAction U V
-    (tensorEmbezzlementTarget (n := n) ζ)
-  let residual := embezzlementState (d * n)
-  have preserved : ‖source - reference‖ = ‖ξ.val - ζ.val‖ := by
-    dsimp [source, reference]
-    rw [← localUnitaryAction_sub,
-      localUnitaryAction_norm,
-      tensorEmbezzlementTarget_sub_norm hn]
-  have triangle : ‖source - residual‖ ≤
-      ‖source - reference‖ + ‖reference - residual‖ := by
-    simpa only [dist_eq_norm] using dist_triangle source reference residual
-  change ‖source - residual‖ ≤ ‖ξ.val - ζ.val‖ + ε
-  calc
-    ‖source - residual‖ ≤
-        ‖source - reference‖ + ‖reference - residual‖ := triangle
-    _ ≤ ‖ξ.val - ζ.val‖ + ε := by
-      rw [preserved]
-      simpa only [add_comm] using add_le_add_left
-        (show ‖reference - residual‖ ≤ ε by
-          simpa only [reference, residual] using clean)
-        ‖ξ.val - ζ.val‖
+  with_reducible
+    let source := localUnitaryAction U V
+      (tensorEmbezzlementTarget (n := n) ξ)
+    let reference := localUnitaryAction U V
+      (tensorEmbezzlementTarget (n := n) ζ)
+    let residual := embezzlementState (d * n)
+    have preserved : ‖source - reference‖ = ‖ξ.val - ζ.val‖ := by
+      dsimp [source, reference]
+      rw [← localUnitaryAction_sub,
+        localUnitaryAction_norm,
+        tensorEmbezzlementTarget_sub_norm hn]
+    have triangle : ‖source - residual‖ ≤
+        ‖source - reference‖ + ‖reference - residual‖ := by
+      simpa only [dist_eq_norm] using dist_triangle source reference residual
+    change ‖source - residual‖ ≤ ‖ξ.val - ζ.val‖ + ε
+    calc
+      ‖source - residual‖ ≤
+          ‖source - reference‖ + ‖reference - residual‖ := triangle
+      _ ≤ ‖ξ.val - ζ.val‖ + ε := by
+        rw [preserved]
+        simpa only [add_comm] using add_le_add_left
+          (show ‖reference - residual‖ ≤ ε by
+            simpa only [reference, residual] using clean)
+          ‖ξ.val - ζ.val‖
 
 theorem dSVBobTargetLocalUniformHarmonicWorkCleanup
     {T : Type*}
@@ -2525,7 +2521,7 @@ theorem dSVDensityRationalCanonicalUnitPrefix_relative_distance_sq
       change x ^ 2 ≤ _
       rw [magnitude, denominator]
       norm_num only [Nat.cast_one, div_one]
-      nlinarith [sq_nonneg x]
+      nlinarith only [x_nonnegative, x_two, s_one, sq_nonneg x]
   · have r_positive_nat : 0 < r.val := Nat.pos_of_ne_zero zero
     have r_positive : (0 : ℝ) < r.val := by
       exact_mod_cast r_positive_nat
@@ -2553,8 +2549,13 @@ theorem dSVDensityRationalCanonicalUnitPrefix_relative_distance_sq
       (mul_nonneg x_nonnegative root_positive.le) linear
     have weighted : x ^ 2 * (r.val : ℝ) ≤
         4 * |(r.val : ℝ) - (s.val : ℝ)| := by
-      have root_square := Real.sq_sqrt r_positive.le
-      nlinarith [y_squared]
+      calc
+        x ^ 2 * (r.val : ℝ) = (x * Real.sqrt (r.val : ℝ)) ^ 2 := by
+          rw [mul_pow, Real.sq_sqrt r_positive.le]
+        _ ≤ (2 * y) ^ 2 := by simpa only [pow_two] using square
+        _ = 4 * |(r.val : ℝ) - (s.val : ℝ)| := by
+          rw [mul_pow, y_squared]
+          norm_num
     have rank_relative :
         x ^ 2 ≤ 4 * |(r.val : ℝ) - (s.val : ℝ)| /
           (r.val : ℝ) :=
@@ -2625,7 +2626,7 @@ theorem dSVDensityRationalPublicBucketLocalHarmonicCleanup_sq
               (work (representative phase (bucket phase r))).val‖ + ε := by
       simpa only [same] using stable
     simp only [ite_eq_left same, mul_zero, add_zero]
-    nlinarith [
+    nlinarith only [actual, precision,
       norm_nonneg
         (localUnitaryAction
             (A (phase, bucket phase r))
@@ -5078,7 +5079,7 @@ theorem
               N width schedule ξ ζ k)) * bound := by
       rw [Finset.sum_mul]
     _ ≤ bound := by
-      linarith only [mul_nonneg bound_nonnegative (sub_nonneg.mpr escape_budget)]
+      exact mul_le_of_le_one_left bound_nonnegative escape_budget
 
 /-- The error rate associated with DSV density rational heterogeneous physical uniform escape. -/
 def dSVDensityRationalHeterogeneousPhysicalUniformEscapeRate
@@ -5438,7 +5439,7 @@ private theorem rightSpectralBornWeight_moment
         (cfc_id' ℝ G hG.isHermitian).symm
       _ = _ := positiveMatrix_cfc_spectral_sum G hG (fun z : ℝ => z)
   have h := congrArg (bornTracePairing ρ.matrix F) hspectral
-  simp only [map_sum, map_smul, smul_eq_mul] at h
+  simp only [map_sum, LinearMap.map_smul, smul_eq_mul] at h
   calc
     (∑ i : dB,
       rightSpectralBornWeight ρ F G hG i *
@@ -5469,7 +5470,7 @@ private theorem rightSpectralBornWeight_entropy
   have hspectral := positiveMatrix_cfc_spectral_sum G hG
     (fun z : ℝ => z * Real.log z)
   have h := congrArg (bornTracePairing ρ.matrix F) hspectral
-  simp only [map_sum, map_smul, smul_eq_mul] at h
+  simp only [map_sum, LinearMap.map_smul, smul_eq_mul] at h
   calc
     bornTracePairing ρ.matrix F
         (cfc (fun z : ℝ => z * Real.log z) G) =
@@ -5519,9 +5520,9 @@ theorem bornTracePairing_le_one_one
       bornTracePairing ρ.matrix
         (1 : Matrix dA dA ℂ) (1 : Matrix dB dB ℂ) -
       bornTracePairing ρ.matrix F (1 : Matrix dB dB ℂ) := by
-    simp only [map_sub, LinearMap.sub_apply]
+    simp only [map_sub (bornTracePairing ρ.matrix), LinearMap.sub_apply]
   rw [hdiff, bornTracePairing_one_one] at hpositive
-  linarith only [hpositive]
+  exact le_add_neg_iff_le.mp hpositive
 
 theorem matrixLogEntropy_born_lower_bound_right
     {dA dB : Type*}
@@ -5715,7 +5716,8 @@ theorem fullHistoryWeight_sum
       (∑ y : Rsub → Y,
         ∏ i : Rsub, G.marginalY (y i)) := by
       simp_rw [← Finset.mul_sum, ← Finset.sum_mul]
-      congr 1
+      apply congrArg (fun mass : ℝ => mass *
+        (∑ y : Rsub → Y, ∏ i : Rsub, G.marginalY (y i)))
       simp_rw [← Finset.mul_sum]
       rw [← Finset.sum_mul]
     _ = 1 := by rw [hD, hL, hR]; norm_num
@@ -5822,7 +5824,7 @@ theorem bornTracePairing_contractions_le_one
   have hdiff : bornTracePairing ρ.matrix (1 - F) G =
       bornTracePairing ρ.matrix (1 : Matrix dA dA ℂ) G -
         bornTracePairing ρ.matrix F G := by
-    simp only [map_sub, LinearMap.sub_apply]
+    simp only [map_sub (bornTracePairing ρ.matrix), LinearMap.sub_apply]
   rw [hdiff] at hpositive
   have hone := bornTracePairing_one_le_one ρ G hGcomplement
   linarith only [hpositive, hone]
@@ -6410,9 +6412,8 @@ theorem finitePurificationMatrix_pair_difference_gram_apply
     (∑ k, star (basis.repr u k - basis.repr u₀ k) *
       (basis.repr v k - basis.repr v₀ k)) =
       inner ℂ (u - u₀) (v - v₀)
-  simpa only [OrthonormalBasis.repr_apply_apply, inner_sub_left, inner_sub_right,
-    star_sub, RCLike.star_def, inner_conj_symm]
-    using basis.sum_inner_mul_inner (u - u₀) (v - v₀)
+  simpa only [LinearIsometryEquiv.map_sub, PiLp.sub_apply] using
+    orthonormalBasis_repr_inner basis (u - u₀) (v - v₀)
 
 theorem ensemblePurificationSubspaceEntry_pair_difference_inner_eq_integral
     {ι d : Type*} [Fintype d] [DecidableEq d]

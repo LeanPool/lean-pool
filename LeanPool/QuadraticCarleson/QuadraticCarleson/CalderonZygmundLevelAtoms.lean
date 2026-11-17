@@ -8,8 +8,6 @@ module
 
 public import LeanPool.QuadraticCarleson.QuadraticCarleson.CalderonZygmundBadPart
 public import LeanPool.QuadraticCarleson.QuadraticCarleson.PositiveLevelIntegration
-public import Mathlib.MeasureTheory.Integral.Average
-public import Mathlib.MeasureTheory.Function.LpSeminorm.Basic
 
 /-!
 # Calderón--Zygmund atoms on magnitude levels
@@ -60,7 +58,7 @@ theorem measurable_levelRestricted {A : ℕ → ℝ} {f : ℝ → ℂ}
 
 @[simp] theorem volume_centeredInterval (z R : ℝ) :
     volume (centeredInterval z R) = ENNReal.ofReal R := by
-  simp [centeredInterval, Real.volume_Ico]
+  simp only [centeredInterval, Real.volume_Ico, add_sub_sub_cancel, add_halves]
 
 theorem volume_centeredInterval_lt_top (z R : ℝ) :
     volume (centeredInterval z R) < ∞ := by
@@ -69,17 +67,17 @@ theorem volume_centeredInterval_lt_top (z R : ℝ) :
 
 theorem volumeReal_centeredInterval {z R : ℝ} (hR : 0 ≤ R) :
     volume.real (centeredInterval z R) = R := by
-  simp [Measure.real, volume_centeredInterval, hR]
+  simp only [Measure.real, volume_centeredInterval, hR, ENNReal.toReal_ofReal]
 
 theorem levelRestricted_apply_of_mem {A : ℕ → ℝ} {f : ℝ → ℂ}
     {k : ℕ} {x : ℝ} (hx : x ∈ magnitudeLevelSet A f k) :
     levelRestricted A f k x = f x := by
-  simp [levelRestricted, hx]
+  simp only [levelRestricted, hx, indicator_of_mem]
 
 theorem levelRestricted_apply_of_not_mem {A : ℕ → ℝ} {f : ℝ → ℂ}
     {k : ℕ} {x : ℝ} (hx : x ∉ magnitudeLevelSet A f k) :
     levelRestricted A f k x = 0 := by
-  simp [levelRestricted, hx]
+  simp only [levelRestricted, hx, not_false_eq_true, indicator_of_notMem]
 
 /-- The upper endpoint in the definition of `F_k` is an exact pointwise bound. -/
 theorem norm_levelRestricted_le {A : ℕ → ℝ} {f : ℝ → ℂ}
@@ -88,8 +86,8 @@ theorem norm_levelRestricted_le {A : ℕ → ℝ} {f : ℝ → ℂ}
   by_cases hx : x ∈ magnitudeLevelSet A f k
   · rw [levelRestricted_apply_of_mem hx]
     by_cases hk : k = 0
-    · simp only [mem_magnitudeLevelSet, InMagnitudeLevel, hk, ↓reduceIte] at hx
-      simpa [hk] using hx.2
+    · simp only [hk, mem_magnitudeLevelSet, InMagnitudeLevel, ↓reduceIte] at hx
+      simpa only [hk] using hx.2
     · simp only [mem_magnitudeLevelSet, InMagnitudeLevel, hk, ↓reduceIte] at hx
       exact hx.2
   · rw [levelRestricted_apply_of_not_mem hx, norm_zero]
@@ -173,7 +171,7 @@ theorem norm_levelAtom_le_two_mul {A : ℕ → ℝ} {f : ℝ → ℂ}
         (norm_levelAverage_le hAk hR)
       _ = 2 * A k := by ring
   · rw [levelAtom, indicator_of_notMem hx, norm_zero]
-    exact mul_nonneg (by norm_num) hAk
+    exact mul_nonneg (by norm_num1) hAk
 
 /-- Essential-supremum formulation of the pointwise size estimate. -/
 theorem eLpNormEssSup_levelAtom_le {A : ℕ → ℝ} {f : ℝ → ℂ}
@@ -209,7 +207,7 @@ theorem integral_norm_levelAtom_le_two_mul_levelMass
       (fun x _ ↦ norm_sub_le _ _)
   have hatom :
       (∫ x, ‖levelAtom A f k z R x‖) = ∫ x in I, ‖g x - c‖ := by
-    simp only [levelAtom, I, g, c, norm_indicator_eq_indicator_norm]
+    simp only [levelAtom, norm_indicator_eq_indicator_norm, I, g, c]
     exact integral_indicator hI
   rw [hatom]
   calc
@@ -246,7 +244,7 @@ theorem integral_sq_norm_levelAtom_le_two_mul_integral_norm
     intro x
     simpa [pow_two, mul_assoc] using
       mul_le_mul_of_nonneg_right (norm_levelAtom_le_two_mul hAk hR x) (norm_nonneg (b x))
-  simpa only [integral_const_mul, b] using hmono
+  simpa only [integral_const_mul] using hmono
 
 /-- Combining the factor-two `L¹` estimate with the essential-size bound
 gives the explicit squared `L²` estimate used in the high/low split. -/
@@ -428,7 +426,7 @@ theorem tsum_lacunaryAtomL1Mass_le_global_level_mass
 theorem levelAtom_eq_zero_of_not_mem {A : ℕ → ℝ} {f : ℝ → ℂ}
     {k : ℕ} {z R x : ℝ} (hx : x ∉ centeredInterval z R) :
     levelAtom A f k z R x = 0 := by
-  simp [levelAtom, hx]
+  simp only [levelAtom, hx, not_false_eq_true, indicator_of_notMem]
 
 theorem support_levelAtom_subset {A : ℕ → ℝ} {f : ℝ → ℂ}
     {k : ℕ} {z R : ℝ} :

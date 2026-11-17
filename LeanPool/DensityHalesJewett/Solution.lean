@@ -5,7 +5,8 @@ Authors: Gabriel Dahia
 -/
 module
 
-public import LeanPool.DensityHalesJewett.DensityHalesJewett.Szemeredi
+public import LeanPool.DensityHalesJewett.DensityHalesJewett.Main
+public import Mathlib.Order.Filter.AtTopBot.Basic
 
 /-!
 # Proofs of the asymptotic forms of the density theorems
@@ -34,9 +35,9 @@ over `α` contains a combinatorial line. -/
 theorem exists_of_density_atTop (α : Type*) [Fintype α] (δ : ℝ) (hδ : 0 < δ) :
     ∀ᶠ n in atTop, ∀ A : Finset (Fin n → α), δ * (Fintype.card α : ℝ) ^ n ≤ #A →
       ∃ l : Line α (Fin n), ∀ x : α, l x ∈ A := by
-  refine eventually_atTop.2 ⟨densityTheoremBound (Fintype.card α) δ, ?_⟩
+  refine eventually_atTop.2 ⟨ack (4 * Fintype.card α) (Fintype.card α + ⌈1 / δ⌉₊), ?_⟩
   intro n hn A hAδ
-  exact exists_of_density α δ hδ n hn A hAδ
+  exact exists_of_density hδ hn A hAδ
 
 end Combinatorics.Line
 
@@ -48,9 +49,9 @@ of length `k`, i.e. `k` terms `a, a + d, a + 2 * d, …` with `d ≠ 0`. -/
 theorem exists_of_density_nat_atTop (k : ℕ) (hk : 3 ≤ k) (δ : ℝ) (hδ : 0 < δ) :
     ∀ᶠ n in atTop, ∀ A : Finset ℕ, A ⊆ range n → δ * n ≤ #A →
       ∃ a d : ℕ, d ≠ 0 ∧ ∀ i : Fin k, a + i * d ∈ A := by
-  refine eventually_atTop.2 ⟨densityTheoremBound k δ, ?_⟩
+  refine eventually_atTop.2 ⟨ack (4 * k + 1) (k + ⌈1 / δ⌉₊), ?_⟩
   intro n hn A hAn hAδ
-  obtain ⟨P, hP⟩ := exists_of_density_nat k hk δ hδ n hn A hAn hAδ
+  obtain ⟨P, hP⟩ := exists_of_density_nat hk hδ hn A hAn hAδ
   refine ⟨P.start, P.diff, P.diff_ne_zero, ?_⟩
   intro i
   simpa [term, nsmul_eq_mul] using hP i

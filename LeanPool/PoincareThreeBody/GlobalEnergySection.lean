@@ -9,8 +9,6 @@ public import LeanPool.PoincareThreeBody.NormalizationClosure
 import LeanPool.PoincareThreeBody.Analytic
 import LeanPool.PoincareThreeBody.ParameterizedAnalyticDivision
 import Mathlib.Analysis.Analytic.Uniqueness
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
-import Mathlib.MeasureTheory.Covering.Besicovitch
 
 /-!
 # A global analytic section of the mass-zero energy map

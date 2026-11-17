@@ -6,8 +6,10 @@ Authors: Arseniy Akopyan
 module
 
 
-public import Mathlib.Tactic
 public import LeanPool.NandakumarRamanaRao.NRR.EMP.EqualAreaWeightOutward
+import Mathlib.CategoryTheory.Category.Init
+import Mathlib.Tactic.Positivity.Finset
+import Mathlib.Tactic.ReduceModChar
 public import LeanPool.NandakumarRamanaRao.NRR.EMP.NormalizedAreaDeviation
 /-!
 # Coercivity gauge for the augmented equal-area deviation field

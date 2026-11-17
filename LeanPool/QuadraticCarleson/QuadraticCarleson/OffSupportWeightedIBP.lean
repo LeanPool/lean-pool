@@ -31,7 +31,7 @@ noncomputable def quadraticOscillatoryCoeff (lam : ℝ) : ℂ :=
 theorem quadraticOscillatoryCoeff_ne_zero {lam : ℝ} (hlam : lam ≠ 0) :
     quadraticOscillatoryCoeff lam ≠ 0 := by
   exact mul_ne_zero (Complex.ofReal_ne_zero.mpr
-    (neg_ne_zero.mpr (mul_ne_zero (mul_ne_zero (by norm_num) Real.pi_ne_zero) hlam)))
+    (neg_ne_zero.mpr (mul_ne_zero (mul_ne_zero (by norm_num1) Real.pi_ne_zero) hlam)))
     Complex.I_ne_zero
 
 theorem norm_quadraticOscillatoryCoeff (lam : ℝ) :
@@ -57,7 +57,7 @@ private theorem hasDerivAt_weightedAmplitude (q : ℕ)
       norm_num
   have hzc := Complex.ofReal_ne_zero.mpr hxu
   apply ((hp.ofReal_comp).div (hz.pow (q + 1)) (pow_ne_zero _ hzc)).congr_deriv
-  simp only [Nat.cast_add, Nat.cast_one, Nat.add_sub_cancel, Pi.pow_apply, pow_succ]
+  simp only [Pi.pow_apply, pow_succ, Nat.cast_add, Nat.cast_one, Nat.add_sub_cancel]
   field_simp
   ring
 
@@ -107,8 +107,8 @@ private theorem weighted_interval_integration_by_parts (q : ℕ)
       (hdivcont n v hv).mul hQcont.continuousOn
   have hibp := intervalIntegral.integral_mul_deriv_eq_deriv_mul
     hA hQ hA'cont.intervalIntegrable (hQ'cont.intervalIntegrable l r)
-  have hAl : A l = 0 := by simp [A, hpl]
-  have hAr : A r = 0 := by simp [A, hpr]
+  have hAl : A l = 0 := by simp only [Complex.ofReal_sub, hpl, Complex.ofReal_zero, zero_div, A]
+  have hAr : A r = 0 := by simp only [Complex.ofReal_sub, hpr, Complex.ofReal_zero, zero_div, A]
   have hsplit : (∫ u in l..r, A' u * Q u) =
       (∫ u in l..r, (p' u : ℂ) * Q u / ((x - u : ℝ) : ℂ) ^ (q + 1)) +
         (q + 1 : ℂ) *
@@ -142,9 +142,9 @@ private theorem weighted_integrand_support (r q : ℕ) {lam s t x : ℝ} (ht : 0
   have hp : iteratedWavePacketDeriv r s t u ≠ 0 := by
     intro hp
     apply hu
-    simp [hp]
+    simp only [hp, Complex.ofReal_zero, zero_mul, Complex.ofReal_sub, zero_div]
   have hsupp := iteratedWavePacketDeriv_support r ht hp
-  constructor <;> linarith [hsupp.1, hsupp.2]
+  constructor <;> linarith only [ht, hsupp, hsupp.1, hsupp.2]
 
 theorem offSupportWeightedAction_step (r q : ℕ) {lam s t x : ℝ}
     (hlam : lam ≠ 0) (ht : 0 < t)
@@ -166,7 +166,7 @@ theorem offSupportWeightedAction_step (r q : ℕ) {lam s t x : ℝ}
     have hdistpos : 0 < |x - s| :=
       lt_of_lt_of_le (half_pos ht) (half_length_le_abs_center ht hx)
     apply abs_pos.mp
-    linarith
+    linarith only [hsep, hdistpos]
   · exact continuous_iteratedWavePacketDeriv r s t
   · exact continuous_iteratedWavePacketDeriv (r + 1) s t
   · intro u hu
@@ -188,7 +188,7 @@ theorem offSupportWeightedAction_norm_le_step (r q : ℕ) {lam s t x : ℝ}
   exact (norm_add_le _ _).trans (by
     rw [norm_mul, show (q + 1 : ℂ) = ((q + 1 : ℕ) : ℂ) by push_cast; rfl,
       Complex.norm_natCast]
-    simp)
+    simp only [Nat.cast_add, Nat.cast_one, Std.le_refl])
 
 theorem offSupportWeightedAction_norm_le_zero (r q : ℕ) {lam s t x : ℝ}
     (ht : 0 < t) (hx : x ∉ Icc (s - t / 2) (s + t / 2)) :
@@ -202,10 +202,10 @@ theorem offSupportWeightedAction_norm_le_zero (r q : ℕ) {lam s t x : ℝ}
   have hg : Integrable g :=
     (integrable_abs_iteratedWavePacketDeriv r s ht).const_mul _
   have hg0 : ∀ u, 0 ≤ g u := by intro u; dsimp [g]; positivity
-  have hlr : s - t / 3 ≤ s + t / 3 := by linarith
+  have hlr : s - t / 3 ≤ s + t / 3 := by linarith only [ht]
   have hphase (a : ℝ) : ‖phase a‖ = 1 := by
     rw [phase]
-    simpa [mul_assoc] using Complex.norm_exp_ofReal_mul_I (2 * Real.pi * a)
+    exact Complex.norm_exp_ofReal_mul_I (2 * Real.pi * a)
   rw [offSupportWeightedAction, ← intervalIntegral.integral_eq_integral_of_support_subset
     (weighted_integrand_support r q ht)]
   calc

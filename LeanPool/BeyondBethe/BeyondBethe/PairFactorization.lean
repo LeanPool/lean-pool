@@ -10,7 +10,10 @@ public import LeanPool.BeyondBethe.BeyondBethe.CapacityScaling
 public import LeanPool.BeyondBethe.BeyondBethe.ClusterCertificate
 public import LeanPool.BeyondBethe.BeyondBethe.Gain
 public import LeanPool.BeyondBethe.BeyondBethe.TransferIdentity
-public import Mathlib.Tactic
+import Mathlib.Tactic.Convert -- shake: keep
+import Mathlib.Tactic.FieldSimp -- shake: keep
+import Mathlib.Tactic.Ring -- shake: keep
+import Mathlib.Tactic.SimpRw -- shake: keep
 
 /-! # Pair Factorization -/
 
@@ -49,7 +52,7 @@ theorem hasMultiplicativeKKT_of_logKKT
         (X i j) ^ (1 + τ) * (1 - X i j) := by
       rw [Real.exp_add, Real.exp_add, Real.exp_add,
         Real.rpow_def_of_pos hx, Real.exp_log hcomp]
-      ring
+      ring_nf
 
 theorem multiplicativeKKT_eq_row_column_transfer
     {ι : Type*} [Fintype ι] [DecidableEq ι]

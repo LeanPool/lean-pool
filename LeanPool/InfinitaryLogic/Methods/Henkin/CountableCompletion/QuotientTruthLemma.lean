@@ -272,7 +272,6 @@ private theorem truth_both (hsc : HenkinComplete U S) :
       | exact depth_lt_imp_left
       | exact depth_lt_imp_right
       | exact depth_lt_iSup _
-      | exact depth_lt_iInf _
       | exact depth_instConst_lt _ _
 
 /-! ## The consumer model-existence theorem -/

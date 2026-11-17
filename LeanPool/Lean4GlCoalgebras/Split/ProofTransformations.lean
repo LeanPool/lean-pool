@@ -5,7 +5,7 @@ Authors: Madeleine Gignoux
 -/
 module
 
-public import Mathlib.Data.Sigma.Lex
+public import Mathlib.Order.Sigma.Lex
 public import LeanPool.Lean4GlCoalgebras.Split.Proof
 public import LeanPool.Lean4GlCoalgebras.Split.CutProof
 import Mathlib.Data.Fintype.EquivFin

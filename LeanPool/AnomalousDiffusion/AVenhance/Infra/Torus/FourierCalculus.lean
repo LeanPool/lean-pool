@@ -118,7 +118,7 @@ theorem torusCharacter_contDiff {d : ℕ} (k : Fin d → ℤ) :
   apply contDiff_prod
   intro i hi
   have hcoord : ContDiff ℝ ⊤ (fun x : Vec d => (x i : ℂ)) :=
-    Complex.ofRealCLM.contDiff.comp (contDiff_apply ℝ ℝ i)
+    Complex.ofRealCLM.contDiff.comp (contDiff_apply ℝ (fun _ => ℝ) i)
   have hcont := Complex.contDiff_exp.comp
     ((contDiff_const : ContDiff ℝ ⊤ (fun _ : Vec d =>
       2 * Real.pi * Complex.I * (-(k i : ℂ)))).mul hcoord)

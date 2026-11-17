@@ -12,6 +12,7 @@ import LeanPool.BruhatTits.Lattice.Quotient
 import LeanPool.BruhatTits.Utils.GLSubmoduleAction
 import LeanPool.BruhatTits.Utils.List
 import LeanPool.BruhatTits.Utils.ValuationRings
+import all Batteries.Data.List.Basic
 import Mathlib.Data.List.Enum
 
 /-!
@@ -283,8 +284,7 @@ lemma smul_isSimilar_iff (g : GL (Fin 2) K) (M L : Lattice R) :
     apply Lattice.ext
     change a • M.M = L.M
     rw [Units.smul_def] at ha ⊢
-    rw [scalar_smul_GL_smul, smul_eq_iff] at ha
-    assumption
+    rwa [scalar_smul_GL_smul, smul_eq_iff] at ha
   · intro ⟨a, ha⟩
     use a
     apply Lattice.ext

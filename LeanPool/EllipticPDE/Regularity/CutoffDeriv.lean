@@ -7,6 +7,8 @@ Authors: Alejandro Soto Franco
 -- Adapted for Lean Pool's pinned Lean and Mathlib; upstream commit is recorded in projects.yml.
 module
 
+import LeanPool.EllipticPDE.Analysis.ScalarEstimates
+
 public import LeanPool.EllipticPDE.Regularity.Interior
 public import LeanPool.EllipticPDE.Regularity.WeakLimit
 
@@ -229,10 +231,9 @@ private lemma exists_cutoffMul_diffQuotG_norm_bound (Op : FullEllipticOp d)
     have hXn := norm_nonneg ((cutoffMul T.hξ (diffQuotG ℓ h hΩm (u : H1amb Ω))) i.succ)
     have han := norm_nonneg (mulTest T.hξ (diffQuotD ℓ h hΩm ((u : H1amb Ω) i.succ)))
     have hbn := norm_nonneg (mulTestPartial T.hξ i (diffQuotD ℓ h hΩm ((u : H1amb Ω) 0)))
-    nlinarith [htri, hXn, han, hbn, hnormS i, mul_nonneg (hc0 i) (norm_nonneg
-        ((u : H1amb Ω) ℓ.succ)),
-      sq_nonneg (‖mulTest T.hξ (diffQuotD ℓ h hΩm ((u : H1amb Ω) i.succ))‖
-        - ‖mulTestPartial T.hξ i (diffQuotD ℓ h hΩm ((u : H1amb Ω) 0))‖)]
+    exact Analysis.square_le_twice_squares_of_le_add hXn han
+      (mul_nonneg (hc0 i) (norm_nonneg ((u : H1amb Ω) ℓ.succ)))
+      (htri.trans (add_le_add_right (hnormS i) _))
   -- Sum the coordinates and take the square root.
   have hsum : ∑ i : Fin d, ‖(cutoffMul T.hξ (diffQuotG ℓ h hΩm (u : H1amb Ω))) i.succ‖ ^ 2
       ≤ 2 * (2 * CE * Q / Op.lam) + 2 * ∑ i : Fin d, (c i * Dl) ^ 2 := by

@@ -204,8 +204,9 @@ theorem isConnected_cone_of_convex {A : Set Plane} (hA : Convex ℝ A)
 private theorem mem_cone_quarter {A : Set Plane} (hr : 0 < r) (v : Plane) (hv : ‖v‖ ≤ 2)
     (hvA : (r / 4) • v ∈ A) : x + (r / 4) • v ∈ Plane.cone x A r := by
   refine Plane.mem_cone_iff.2 ⟨?_, ?_⟩
-  · rw [show x + (r / 4) • v - x = (r / 4) • v by module]; exact hvA
-  · rw [dist_eq_norm, show x + (r / 4) • v - x = (r / 4) • v by module, norm_smul,
+  · rw [show x + (r / 4) • v - x = (r / 4) • v by exact add_sub_cancel_left _ _]; exact hvA
+  · rw [dist_eq_norm, show x + (r / 4) • v - x = (r / 4) • v by exact add_sub_cancel_left _ _,
+    norm_smul,
       Real.norm_eq_abs, abs_of_pos (by positivity : (0 : ℝ) < r / 4)]
     nlinarith [norm_nonneg v]
 
@@ -238,13 +239,13 @@ theorem isConnected_ball_diff_radial (hd : Plane.IsDirection d) (hr : 0 < r) :
         change 0 < Plane.det (Plane.perp d) _
         rw [Plane.det_smul_right, det_neg_right, hpd]
         norm_num
-        positivity)
+        exact hr)
   have hBne : x + (r / 4) • (-Plane.perp d) ∈ B :=
     mem_cone_quarter hr _ (by rw [norm_neg, hnp]; norm_num)
       (by
         change Plane.det d _ < 0
         rw [Plane.det_smul_right, det_neg_right, hdp]
-        nlinarith)
+        nlinarith only [hr, hd])
   have hAE : x + (r / 4) • (Plane.perp d - d) ∈ A ∩ E := by
     have hvn : ‖Plane.perp d - d‖ ≤ 2 := by
       refine le_trans (norm_sub_le _ _) ?_
@@ -253,11 +254,11 @@ theorem isConnected_ball_diff_radial (hd : Plane.IsDirection d) (hr : 0 < r) :
     · change 0 < Plane.det d _
       rw [Plane.det_smul_right, det_sub_right, hdp, Plane.det_self]
       norm_num
-      positivity
+      exact hr
     · change 0 < Plane.det (Plane.perp d) _
       rw [Plane.det_smul_right, det_sub_right, Plane.det_self, hpd]
       norm_num
-      positivity
+      exact hr
   have hBE : x + (r / 4) • (-Plane.perp d - d) ∈ B ∩ E := by
     have hvn : ‖-Plane.perp d - d‖ ≤ 2 := by
       refine le_trans (norm_sub_le _ _) ?_
@@ -265,11 +266,11 @@ theorem isConnected_ball_diff_radial (hd : Plane.IsDirection d) (hr : 0 < r) :
     refine ⟨mem_cone_quarter hr _ hvn ?_, mem_cone_quarter hr _ hvn ?_⟩
     · change Plane.det d _ < 0
       rw [Plane.det_smul_right, det_sub_right, det_neg_right, hdp, Plane.det_self]
-      nlinarith
+      nlinarith only [hr, hd]
     · change 0 < Plane.det (Plane.perp d) _
       rw [Plane.det_smul_right, det_sub_right, det_neg_right, Plane.det_self, hpd]
       norm_num
-      positivity
+      exact hr
   -- The three pieces are exactly the slit disk.
   have hsplit : ball x r \ segment ℝ x (x + r • d) = (A ∪ E) ∪ (B ∪ E) := by
     ext w
@@ -288,7 +289,7 @@ theorem isConnected_ball_diff_radial (hd : Plane.IsDirection d) (hr : 0 < r) :
         have hcne : c ≠ 0 := by
           rintro rfl
           refine hz.1 (sub_eq_zero.1 ?_)
-          rw [hc]; module
+          rw [hc]; exact zero_smul _ _
         have hcneg : c < 0 := by
           rcases lt_or_gt_of_ne hcne with h | h
           · exact h
@@ -296,7 +297,7 @@ theorem isConnected_ball_diff_radial (hd : Plane.IsDirection d) (hr : 0 < r) :
         refine Or.inl (Or.inr (Plane.mem_cone_iff.2 ⟨?_, hdist⟩))
         change 0 < Plane.det (Plane.perp d) (w - x)
         rw [hc, Plane.det_smul_right, hpd]
-        nlinarith
+        nlinarith only [hcneg]
       · exact Or.inl (Or.inl (Plane.mem_cone_iff.2 ⟨hgt, hdist⟩))
     · rintro ((hz | hz) | (hz | hz))
       · exact ⟨Plane.cone_subset_ball hz,
@@ -335,7 +336,7 @@ theorem isConnected_ball_diff_singleton (hr : 0 < r) : IsConnected (ball x r \ {
     have h2 : (2 : ℝ) • d = 0 := by
       rw [two_smul]
       nth_rewrite 2 [h]
-      module
+      abel
     rcases smul_eq_zero.1 h2 with h' | h'
     · norm_num at h'
     · exact h'
@@ -360,9 +361,10 @@ theorem isConnected_ball_diff_singleton (hr : 0 < r) : IsConnected (ball x r \ {
   have hdp : Plane.det d (Plane.perp d) = 1 := by rw [Plane.det_perp_self, hd.norm, one_pow]
   have hmem : x + (r / 2) • Plane.perp d ∈ ball x r := by
     rw [mem_ball, dist_eq_norm, show x + (r / 2) • Plane.perp d - x = (r / 2) • Plane.perp d by
-      module, norm_smul, Real.norm_eq_abs, abs_of_pos (by positivity : (0 : ℝ) < r / 2), hnp]
-    linarith
-  have hsub : x + (r / 2) • Plane.perp d - x = (r / 2) • Plane.perp d := by module
+      exact add_sub_cancel_left _ _, norm_smul, Real.norm_eq_abs,
+        abs_of_pos (by positivity : (0 : ℝ) < r / 2), hnp]
+    linarith only [hr]
+  have hsub : x + (r / 2) • Plane.perp d - x = (r / 2) • Plane.perp d := add_sub_cancel_left _ _
   have hdet : Plane.det d (x + (r / 2) • Plane.perp d - x) = r / 2 := by
     rw [hsub, Plane.det_smul_right, hdp, mul_one]
   refine ⟨x + (r / 2) • Plane.perp d, ⟨hmem, ?_⟩, hmem, ?_⟩
@@ -372,7 +374,7 @@ theorem isConnected_ball_diff_singleton (hr : 0 < r) : IsConnected (ball x r \ {
         = -Plane.det d (x + (r / 2) • Plane.perp d - x) by
       rw [show (-d : Plane) = (-1 : ℝ) • d by module, Plane.det_smul_left]; ring, hdet]
     have : (0 : ℝ) < r / 2 := by positivity
-    linarith
+    linarith only [hmem, hsub, hdet, this]
 
 /-! ### The degenerate local disks
 
@@ -697,7 +699,7 @@ theorem IsDrawing.exists_isLocalRadius_union [G.Finite] (h : IsDrawing G drawing
   refine (hballC (mem_ball.2 ?_)).2
   have h1 := mem_closedBall.1 hw
   have h2 : min r₀ (ρ / 2) ≤ ρ / 2 := min_le_right _ _
-  linarith
+  linarith only [hr₀, hρ, h1, h2]
 
 /-- **There are finitely many sectors at every point of `|G|`.** -/
 theorem IsDrawing.localSectors_finite [G.Finite] (h : IsDrawing G drawing)
@@ -816,15 +818,16 @@ theorem exists_access_segment [G.Finite] (h : IsDrawing G drawing)
     -- Any short segment out of `x` will do.
     set d : Plane := Plane.mk 1 0 with hddef
     have hd : Plane.IsDirection d := isDirection_mk_one_zero
-    have hsm : x + (min (min ρ ρ') ε / 2) • d - x = (min (min ρ ρ') ε / 2) • d := by module
+    have hsm : x + (min (min ρ ρ') ε / 2) • d - x = (min (min ρ ρ') ε / 2) • d :=
+      add_sub_cancel_left _ _
     have hdd : dist (x + (min (min ρ ρ') ε / 2) • d) x = min (min ρ ρ') ε / 2 := by
       rw [dist_eq_norm, hsm, norm_smul, Real.norm_eq_abs,
         abs_of_pos (by positivity : (0 : ℝ) < min (min ρ ρ') ε / 2), hd.norm, mul_one]
     have hyball : x + (min (min ρ ρ') ε / 2) • d ∈ ball x (min (min ρ ρ') ε) := by
-      rw [mem_ball, hdd]; linarith
+      rw [mem_ball, hdd]; linarith only [hrpos]
     have hshort : dist (x + (min (min ρ ρ') ε / 2) • d) x < ε := by
       have h1 : min (min ρ ρ') ε ≤ ε := min_le_right _ _
-      rw [hdd]; linarith
+      rw [hdd]; linarith only [hrpos, hbK, h1]
     refine ⟨x + (min (min ρ ρ') ε / 2) • d, hsub hyball, ?_, hshort, ?_⟩
     · intro hh
       have h0 : (min (min ρ ρ') ε / 2) • d = 0 := by rw [← hsm, hh, sub_self]

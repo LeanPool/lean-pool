@@ -194,7 +194,7 @@ theorem probability_success_le_delta
       rw [measure_compl hgood (measure_ne_top μ good), measure_univ]
     _ ≤ 1 - ENNReal.ofReal (1 - delta) := tsub_le_tsub_left hmass 1
     _ = ENNReal.ofReal delta := by
-      rw [← ENNReal.ofReal_one, ← ENNReal.ofReal_sub 1 (by linarith : 0 ≤ 1 - delta)]
+      rw [← ENNReal.ofReal_one, ← ENNReal.ofReal_sub 1 (by linarith only [hdelta1] : 0 ≤ 1 - delta)]
       congr 1
       ring
 

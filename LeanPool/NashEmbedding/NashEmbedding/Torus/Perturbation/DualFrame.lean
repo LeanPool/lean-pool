@@ -116,8 +116,8 @@ lemma gramMatrix_contDiff {e : ι → (Fin n → ℝ) → (Fin N → ℝ)}
     ContDiff ℝ ∞ (fun x => gramMatrix e x i j) := by
   unfold gramMatrix dotProduct
   exact ContDiff.sum fun k _ =>
-    ((contDiff_apply (𝕜 := ℝ) (E := ℝ) k).comp (he i)).mul
-      ((contDiff_apply (𝕜 := ℝ) (E := ℝ) k).comp (he j))
+    ((contDiff_apply ℝ (fun _ => ℝ) k).comp (he i)).mul
+      ((contDiff_apply ℝ (fun _ => ℝ) k).comp (he j))
 
 omit [Fintype ι] [DecidableEq ι] in
 lemma gramMatrix_periodic {e : ι → (Fin n → ℝ) → (Fin N → ℝ)}

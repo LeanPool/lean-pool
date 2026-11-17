@@ -227,8 +227,7 @@ theorem succ_inj_aux {m n a : ZFSet} (h : insert m m = insert n n) (h' : a ∈ m
     have : a ∈ insert m m ↔ a ∈ n ∨ a = n := by
       rw [h, mem_insert_iff]
       exact Or.comm
-    rw [mem_insert_iff, _root_.or_comm] at this
-    assumption
+    rwa [mem_insert_iff, _root_.or_comm] at this
   let h'' := mem_insert m m
   rw [h] at h''
   simp only [mem_insert_iff] at h''
@@ -921,8 +920,7 @@ theorem lt_add_of_pos_left {k n : ZFNat} : 0 < k → n < k + n :=
 
 theorem pos_of_lt_add_right {n k : ZFNat} (h : n < n + k) : 0 < k := by
   apply lt_of_add_lt_add_left
-  rw [add_zero]
-  assumption
+  rwa [add_zero]
 
 theorem pos_of_lt_add_left {n k : ZFNat} : n < k + n → 0 < k := by
   rw [add_comm]; exact pos_of_lt_add_right
@@ -1067,7 +1065,7 @@ theorem add_sub_add_left (k n m : ZFNat) : (k + n) - (k + m) = n - m := by
   rw [add_comm k n, add_comm k m, add_sub_add_right]
 
 theorem add_sub_cancel (n m : ZFNat) : n + m - m = n :=
-  suffices n + m - (0 + m) = n by rw [zero_add] at this; assumption
+  suffices n + m - (0 + m) = n by rwa [zero_add] at this
   by rw [add_sub_add_right, sub_zero]
 
 theorem add_sub_cancel_left (n m : ZFNat) : n + m - n = m := by
@@ -1207,8 +1205,7 @@ theorem pos_mul_pos {k n : ZFNat} (h : 0 < k) : 0 < k*n → 0 < n := by
       rw [not_lt] at contr
       replace contr := le_zero_imp_eq contr
       nomatch succ_ne_zero m contr
-    · rw [← natOne_eq, one_mul] at h'
-      assumption
+    · rwa [← natOne_eq, one_mul] at h'
 
 theorem mul_lt_mono {n m k : ZFNat} (h : 0 < k) : n < m → k*n < k*m := by
   intro h'

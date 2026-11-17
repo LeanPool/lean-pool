@@ -1505,7 +1505,7 @@ theorem localized_divergence_tested_of_sws {Ω : Set Vec3} {I : Set ℝ} {q : �
   have hφsp_ts (j : Fin 3) := @localized_divergence_tested_hφsp_ts_4 φ hφd j
   have hψi (i : Fin 3) : ContDiff ℝ (⊤ : ℕ∞)
       (fun z : Vec3 × ℝ => ψ z i) :=
-    (contDiff_apply ℝ ℝ i).comp hψd
+    (contDiff_apply ℝ (fun _ => ℝ) i).comp hψd
   have hψtime (i : Fin 3) : ContDiff ℝ (⊤ : ℕ∞)
       (fun z : Vec3 × ℝ => timePartial (fun w => ψ w i) z) :=
     timePartial_contDiff_full (hψi i)

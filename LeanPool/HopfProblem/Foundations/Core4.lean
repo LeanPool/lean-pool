@@ -72,14 +72,16 @@ def homeomorphFundamentalGroupEquiv {X Y : Type*} [TopologicalSpace X] [Topologi
   left_inv
     γ := by
     rw [FundamentalGroup.mapOfEq_apply]
-    obtain ⟨γ⟩ := γ
+    obtain ⟨⟨γ⟩⟩ := γ
+    apply CategoryTheory.End.ext
     apply congrArg Path.Homotopic.Quotient.mk
     ext t
     exact e.symm_apply_apply (γ t)
   right_inv
     γ := by
     rw [FundamentalGroup.mapOfEq_apply]
-    obtain ⟨γ⟩ := γ
+    obtain ⟨⟨γ⟩⟩ := γ
+    apply CategoryTheory.End.ext
     apply congrArg Path.Homotopic.Quotient.mk
     ext t
     exact e.apply_symm_apply (γ t)

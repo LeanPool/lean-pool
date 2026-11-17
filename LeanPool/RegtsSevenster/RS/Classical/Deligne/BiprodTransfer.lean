@@ -41,8 +41,8 @@ theorem permAlg_eqToHom
     [Preadditive A] [Linear ℂ A]
     (Z : A) {m n : ℕ} (h : m = n)
     (x : SymGroupAlgebra n) :
-    eqToHom (congrArg (tensorPow A Z) h) ≫ permAlg Z n x =
-      permAlg Z m (symCast (le_of_eq h.symm) x) ≫
+    eqToHom (congrArg (tensorPow A Z) h) ≫ (permAlg Z n x).asHom =
+      (permAlg Z m (symCast (le_of_eq h.symm) x)).asHom ≫
         eqToHom (congrArg (tensorPow A Z) h) := by
   subst h
   rw [symCast_le_refl]
@@ -90,14 +90,14 @@ theorem permMor_comp_permAlg
     (Z : A) {n : ℕ}
     (g : Equiv.Perm (Fin n)) {x : SymGroupAlgebra n}
     (hcen : ∀ y, x * y = y * x) :
-    permMor Z n g ≫ permAlg Z n x =
-      permAlg Z n x ≫ permMor Z n g := by
-  have h1 : permMor Z n g ≫ permAlg Z n x =
-      permAlg Z n (x * MonoidAlgebra.single g 1) := by
+    permMor Z n g ≫ (permAlg Z n x).asHom =
+      (permAlg Z n x).asHom ≫ permMor Z n g := by
+  have h1 : permMor Z n g ≫ (permAlg Z n x).asHom =
+      (permAlg Z n (x * MonoidAlgebra.single g 1)).asHom := by
     rw [map_mul, permAlg_single]
     rfl
-  have h2 : permAlg Z n x ≫ permMor Z n g =
-      permAlg Z n (MonoidAlgebra.single g 1 * x) := by
+  have h2 : (permAlg Z n x).asHom ≫ permMor Z n g =
+      (permAlg Z n (MonoidAlgebra.single g 1 * x)).asHom := by
     rw [map_mul, permAlg_single]
     rfl
   rw [h1, h2, hcen]
@@ -110,8 +110,8 @@ theorem permMor_comp_inverse
     permMor Z n g ≫ permMor Z n g⁻¹ = 𝟙 _ := by
   rw [show permMor Z n g ≫
       permMor Z n g⁻¹ =
-    permAlg Z n (MonoidAlgebra.single (g⁻¹ *
-      g) 1) from by
+    (permAlg Z n (MonoidAlgebra.single (g⁻¹ *
+      g) 1)).asHom from by
     rw [show MonoidAlgebra.single (g⁻¹ *
         g) (1 : ℂ) =
       MonoidAlgebra.single g⁻¹ 1 *
@@ -141,20 +141,22 @@ theorem SchurKilled.biprod
     SchurKilled P (X ⊞ Y) lam := by
   classical
   rw [SchurKilled]
+  apply End.ext
+  rw [End.zero_asHom]
   set n := lam.card with hn
   -- Expand the identity over mixed words.
-  have hexp : permAlg (X ⊞ Y) n (P.e lam) =
+  have hexp : (permAlg (X ⊞ Y) n (P.e lam)).asHom =
       ∑ w : Fin n → Bool, mixedFrom X Y n w ≫
-        (mixedInto X Y n w ≫ permAlg (X ⊞ Y) n (P.e lam)) := by
-    conv_lhs => rw [show permAlg (X ⊞ Y) n (P.e lam) =
-      𝟙 (tensorPow A (X ⊞ Y) n) ≫ permAlg (X ⊞ Y) n (P.e lam) from
+        (mixedInto X Y n w ≫ (permAlg (X ⊞ Y) n (P.e lam)).asHom) := by
+    conv_lhs => rw [show (permAlg (X ⊞ Y) n (P.e lam)).asHom =
+      𝟙 (tensorPow A (X ⊞ Y) n) ≫ (permAlg (X ⊞ Y) n (P.e lam)).asHom from
         (Category.id_comp _).symm]
     rw [← sum_mixedFrom_mixedInto, Preadditive.sum_comp]
     exact Finset.sum_congr rfl fun w _ => Category.assoc _ _ _
   rw [hexp]
   refine Finset.sum_eq_zero fun w _ => ?_
   suffices hzero : mixedInto X Y n w ≫
-      permAlg (X ⊞ Y) n (P.e lam) = 0 by
+      (permAlg (X ⊞ Y) n (P.e lam)).asHom = 0 by
     rw [hzero]
     exact Limits.comp_zero
   -- Sort the inclusion to the standard block.
@@ -171,12 +173,12 @@ theorem SchurKilled.biprod
       P.e lam from by
         unfold Shape.e
         erw [symCast_le_refl]] at this
-  have hfactor : mixedInto X Y n w ≫ permAlg (X ⊞ Y) n (P.e lam) =
+  have hfactor : mixedInto X Y n w ≫ (permAlg (X ⊞ Y) n (P.e lam)).asHom =
       (sortIso X Y n w).hom ≫
         ((tensorPowMap biprod.inl a ⊗ₘ tensorPowMap biprod.inr b) ≫
           (tensorPowConcat (X ⊞ Y) a b).hom ≫
           eqToHom (congrArg (tensorPow A (X ⊞ Y)) hab) ≫
-          permAlg (X ⊞ Y) n (P.e lam)) ≫
+          (permAlg (X ⊞ Y) n (P.e lam)).asHom) ≫
         permMor (X ⊞ Y) n (sortPerm w)⁻¹ := by
     have h1 : mixedInto X Y n w =
         ((sortIso X Y n w).hom ≫
@@ -190,8 +192,8 @@ theorem SchurKilled.biprod
     rw [h1]
     rw [Category.assoc]
     rw [show permMor (X ⊞ Y) n (sortPerm w)⁻¹ ≫
-        permAlg (X ⊞ Y) n (P.e lam) =
-      permAlg (X ⊞ Y) n (P.e lam) ≫ permMor (X ⊞ Y) n (sortPerm w)⁻¹ from
+        (permAlg (X ⊞ Y) n (P.e lam)).asHom =
+      (permAlg (X ⊞ Y) n (P.e lam)).asHom ≫ permMor (X ⊞ Y) n (sortPerm w)⁻¹ from
       permMor_comp_permAlg (X ⊞ Y) _ hcen]
     simp only [Category.assoc]
   rw [hfactor]
@@ -199,12 +201,12 @@ theorem SchurKilled.biprod
       (tensorPowMap biprod.inl a ⊗ₘ tensorPowMap biprod.inr b) ≫
         (tensorPowConcat (X ⊞ Y) a b).hom ≫
         eqToHom (congrArg (tensorPow A (X ⊞ Y)) hab) ≫
-        permAlg (X ⊞ Y) n (P.e lam) = 0 by
+        (permAlg (X ⊞ Y) n (P.e lam)).asHom = 0 by
     rw [show (tensorPowMap biprod.inl a ⊗ₘ
         tensorPowMap biprod.inr b) ≫
         (tensorPowConcat (X ⊞ Y) a b).hom ≫
         eqToHom (congrArg (tensorPow A (X ⊞ Y)) hab) ≫
-        permAlg (X ⊞ Y) n (P.e lam) = 0 from hcore]
+        (permAlg (X ⊞ Y) n (P.e lam)).asHom = 0 from hcore]
     rw [Limits.zero_comp, Limits.comp_zero]
   -- Transport the idempotent to the split arity.
   rw [permAlg_eqToHom (X ⊞ Y) hab]
@@ -216,93 +218,93 @@ theorem SchurKilled.biprod
   have hterm : ∀ (μ' : Shape a) (ν' : Shape b),
       (tensorPowMap biprod.inl a ⊗ₘ tensorPowMap biprod.inr b) ≫
         (tensorPowConcat (X ⊞ Y) a b).hom ≫
-        permAlg (X ⊞ Y) (a + b)
-          (eS * blockAlgEmbed (Shape.e P μ') (Shape.e P ν')) =
+        (permAlg (X ⊞ Y) (a + b)
+          (eS * blockAlgEmbed (Shape.e P μ') (Shape.e P ν'))).asHom =
       0 := by
     intro μ' ν'
     by_cases hind : indMult (⟨lam, hab.symm⟩ : Shape (a + b))
       μ' ν' = 0
     · -- The induction kill.
-      have hz0 : permAlg (X ⊞ Y) (a + b)
-          (eS * blockAlgEmbed (Shape.e P μ') (Shape.e P ν')) =
+      have hz0 : (permAlg (X ⊞ Y) (a + b)
+          (eS * blockAlgEmbed (Shape.e P μ') (Shape.e P ν'))).asHom =
           (0 : tensorPow A (X ⊞ Y) (a + b) ⟶
             tensorPow A (X ⊞ Y) (a + b)) := by
         rw [show eS * blockAlgEmbed (Shape.e P μ') (Shape.e P ν') =
           0 from by
             rw [heSshape]
             exact shape_e_mul_blockAlgEmbed_eq_zero P _ μ' ν' hind]
-        exact map_zero _
+        exact congrArg End.asHom (map_zero _)
       rw [hz0, Limits.comp_zero, Limits.comp_zero]
     · -- A bounding-box cell lands in `μ'` or `ν'`; that factor
       -- is killed and naturality propagates the zero.
       have hcell' := cell_of_indMult_ne_zero
         (⟨lam, hab.symm⟩ : Shape (a + b)) μ' ν'
         (p := p) (q := q) (r := r) (s := s) hind hcell
-      have hsplit : permAlg (X ⊞ Y) (a + b)
-          (eS * blockAlgEmbed (Shape.e P μ') (Shape.e P ν')) =
-          permAlg (X ⊞ Y) (a + b)
-            (blockAlgEmbed (Shape.e P μ') (Shape.e P ν')) ≫
-          permAlg (X ⊞ Y) (a + b) eS := by
+      have hsplit : (permAlg (X ⊞ Y) (a + b)
+          (eS * blockAlgEmbed (Shape.e P μ') (Shape.e P ν'))).asHom =
+          (permAlg (X ⊞ Y) (a + b)
+            (blockAlgEmbed (Shape.e P μ') (Shape.e P ν'))).asHom ≫
+          (permAlg (X ⊞ Y) (a + b) eS).asHom := by
         rw [map_mul]
         rfl
       rw [hsplit]
       rw [show (tensorPowConcat (X ⊞ Y) a b).hom ≫
-          permAlg (X ⊞ Y) (a + b)
-            (blockAlgEmbed (Shape.e P μ') (Shape.e P ν')) ≫
-          permAlg (X ⊞ Y) (a + b) eS =
-        ((permAlg (X ⊞ Y) a (Shape.e P μ') ⊗ₘ
-            permAlg (X ⊞ Y) b (Shape.e P ν')) ≫
+          (permAlg (X ⊞ Y) (a + b)
+            (blockAlgEmbed (Shape.e P μ') (Shape.e P ν'))).asHom ≫
+          (permAlg (X ⊞ Y) (a + b) eS).asHom =
+        (((permAlg (X ⊞ Y) a (Shape.e P μ')).asHom ⊗ₘ
+            (permAlg (X ⊞ Y) b (Shape.e P ν')).asHom) ≫
           (tensorPowConcat (X ⊞ Y) a b).hom) ≫
-          permAlg (X ⊞ Y) (a + b) eS from by
+          (permAlg (X ⊞ Y) (a + b) eS).asHom from by
         rw [← Category.assoc, tensorPowConcat_permAlg]]
       rw [show (tensorPowMap biprod.inl a ⊗ₘ
           tensorPowMap biprod.inr b) ≫
-          ((permAlg (X ⊞ Y) a (Shape.e P μ') ⊗ₘ
-              permAlg (X ⊞ Y) b (Shape.e P ν')) ≫
+          (((permAlg (X ⊞ Y) a (Shape.e P μ')).asHom ⊗ₘ
+              (permAlg (X ⊞ Y) b (Shape.e P ν')).asHom) ≫
             (tensorPowConcat (X ⊞ Y) a b).hom) ≫
-          permAlg (X ⊞ Y) (a + b) eS =
-        ((tensorPowMap biprod.inl a ≫ permAlg (X ⊞ Y) a (Shape.e P μ')) ⊗ₘ
+          (permAlg (X ⊞ Y) (a + b) eS).asHom =
+        ((tensorPowMap biprod.inl a ≫ (permAlg (X ⊞ Y) a (Shape.e P μ')).asHom) ⊗ₘ
           (tensorPowMap biprod.inr b ≫
-            permAlg (X ⊞ Y) b (Shape.e P ν'))) ≫
+            (permAlg (X ⊞ Y) b (Shape.e P ν')).asHom)) ≫
           (tensorPowConcat (X ⊞ Y) a b).hom ≫
-          permAlg (X ⊞ Y) (a + b) eS from by
+          (permAlg (X ⊞ Y) (a + b) eS).asHom from by
         rw [← Category.assoc, ← Category.assoc,
           tensorHom_comp_tensorHom]
         simp only [Category.assoc]]
       rcases hcell' with hcμ | hcν
       · have hkilled : SchurKilled P X μ'.val :=
           hX.mono P (le_of_box_of_cell hμc hμr hcμ)
-        have hz : permAlg X a (Shape.e P μ') =
+        have hz : (permAlg X a (Shape.e P μ')).asHom =
             (0 : tensorPow A X a ⟶ tensorPow A X a) := by
           rw [Shape.e]
-          exact permAlg_compat X _ _ hkilled
+          exact congrArg End.asHom (permAlg_compat X _ _ hkilled)
         rw [show tensorPowMap biprod.inl a ≫
-            permAlg (X ⊞ Y) a (Shape.e P μ') =
-          permAlg X a (Shape.e P μ') ≫
+            (permAlg (X ⊞ Y) a (Shape.e P μ')).asHom =
+          (permAlg X a (Shape.e P μ')).asHom ≫
             tensorPowMap biprod.inl a from
           (permAlg_natural biprod.inl a _).symm, hz,
           Limits.zero_comp]
         rw [show ((0 : tensorPow A X a ⟶ tensorPow A (X ⊞ Y) a) ⊗ₘ
             (tensorPowMap biprod.inr b ≫
-              permAlg (X ⊞ Y) b (Shape.e P ν'))) =
+              (permAlg (X ⊞ Y) b (Shape.e P ν')).asHom)) =
           0 from by
           rw [tensorHom_def, MonoidalPreadditive.zero_whiskerRight,
             Limits.zero_comp]]
         rw [Limits.zero_comp]
       · have hkilled : SchurKilled P Y ν'.val :=
           hY.mono P (le_of_box_of_cell hνc hνr hcν)
-        have hz : permAlg Y b (Shape.e P ν') =
+        have hz : (permAlg Y b (Shape.e P ν')).asHom =
             (0 : tensorPow A Y b ⟶ tensorPow A Y b) := by
           rw [Shape.e]
-          exact permAlg_compat Y _ _ hkilled
+          exact congrArg End.asHom (permAlg_compat Y _ _ hkilled)
         rw [show tensorPowMap biprod.inr b ≫
-            permAlg (X ⊞ Y) b (Shape.e P ν') =
-          permAlg Y b (Shape.e P ν') ≫
+            (permAlg (X ⊞ Y) b (Shape.e P ν')).asHom =
+          (permAlg Y b (Shape.e P ν')).asHom ≫
             tensorPowMap biprod.inr b from
           (permAlg_natural biprod.inr b _).symm, hz,
           Limits.zero_comp]
         rw [show ((tensorPowMap biprod.inl a ≫
-              permAlg (X ⊞ Y) a (Shape.e P μ')) ⊗ₘ
+              (permAlg (X ⊞ Y) a (Shape.e P μ')).asHom) ⊗ₘ
             (0 : tensorPow A Y b ⟶ tensorPow A (X ⊞ Y) b)) =
           0 from by
           rw [tensorHom_def, MonoidalPreadditive.whiskerLeft_zero,
@@ -318,15 +320,14 @@ theorem SchurKilled.biprod
   set F : Shape a → Shape b →
       (tensorPow A (X ⊞ Y) (a + b) ⟶
         tensorPow A (X ⊞ Y) (a + b)) :=
-    fun μ' ν' => permAlg (X ⊞ Y) (a + b)
-      (eS * blockAlgEmbed (Shape.e P μ') (Shape.e P ν')) with hF
-  have hdist : (permAlg (X ⊞ Y) (a + b) eS :
+    fun μ' ν' => (permAlg (X ⊞ Y) (a + b)
+      (eS * blockAlgEmbed (Shape.e P μ') (Shape.e P ν'))).asHom with hF
+  have hdist : ((permAlg (X ⊞ Y) (a + b) eS).asHom :
       tensorPow A (X ⊞ Y) (a + b) ⟶
         tensorPow A (X ⊞ Y) (a + b)) =
       ∑ μ' : Shape a, ∑ ν' : Shape b, F μ' ν' := by
     conv_lhs => rw [hone]
-    rw [map_sum]
-    exact Finset.sum_congr rfl fun μ' _ => map_sum _ _ _
+    simp only [map_sum, End.sum_asHom, F]
   rw [hdist]
   simp only [Preadditive.sum_comp, Preadditive.comp_sum]
   refine Finset.sum_eq_zero fun μ' _ => ?_
@@ -336,8 +337,8 @@ theorem SchurKilled.biprod
       eqToHom (congrArg (tensorPow A (X ⊞ Y)) hab)
       = ((tensorPowMap biprod.inl a ⊗ₘ tensorPowMap biprod.inr b) ≫
         (tensorPowConcat (X ⊞ Y) a b).hom ≫
-        permAlg (X ⊞ Y) (a + b)
-          (eS * blockAlgEmbed (Shape.e P μ') (Shape.e P ν'))) ≫
+        (permAlg (X ⊞ Y) (a + b)
+          (eS * blockAlgEmbed (Shape.e P μ') (Shape.e P ν'))).asHom) ≫
         eqToHom (congrArg (tensorPow A (X ⊞ Y)) hab) := by
         simp only [Category.assoc]
         rfl

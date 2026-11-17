@@ -7,7 +7,7 @@ Authors: Moritz Firsching
 module
 
 public import LeanPool.Zeta5Irrational.Arith.InnerWeights
-import Mathlib.Data.Rat.Star
+import Mathlib.Algebra.Order.Star.Rat
 import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.Linarith

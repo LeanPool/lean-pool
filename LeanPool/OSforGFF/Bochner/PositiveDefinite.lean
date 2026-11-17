@@ -110,7 +110,7 @@ lemma eval_zero_real (hpd : IsPositiveDefinite φ) : (φ 0).im = 0 := by
   -- This means Im(φ 0) = 0
   have := congr_arg Complex.im h
   simp [Complex.conj_im] at this
-  linarith
+  linarith only [this]
 
 /-- Helper: expand the PD condition for m=2. -/
 private lemma pd_two (hpd : IsPositiveDefinite φ) (a b : α) (c₀ c₁ : ℂ) :
@@ -125,7 +125,7 @@ lemma bounded_by_zero (hpd : IsPositiveDefinite φ) (x : α) :
   -- Handle the case φ x = 0
   by_cases hφx : φ x = 0
   · have : ‖φ x‖ = 0 := by rw [hφx]; simp
-    linarith [hpd.eval_zero_nonneg]
+    linarith only [hpd, this, hpd.eval_zero_nonneg]
   -- Use the 2×2 PD condition with c = ![1, -φ(x)/‖φ(x)‖]
   -- which gives φ(0).re - ‖φ(x)‖ ≥ 0
   set t : ℂ := -(φ x / (‖φ x‖ : ℂ))
@@ -163,7 +163,7 @@ lemma bounded_by_zero (hpd : IsPositiveDefinite φ) (x : α) :
   -- = 2 * (φ 0).re - 2 * ‖φ x‖
   simp only [Complex.add_re, Complex.neg_re, Complex.ofReal_re] at h
   have him : (φ 0).im = 0 := hpd.eval_zero_real
-  linarith
+  linarith only [h]
 
 /-- Pointwise product of PD functions is PD (Schur product theorem for functions).
     This is the key fact used in Phase 2 (Gaussian regularization).
@@ -177,16 +177,10 @@ lemma mul (hpd : IsPositiveDefinite φ) {ψ : α → ℂ} (hψ : IsPositiveDefin
   · intro x
     rw [map_mul, hpd.hermitian x, hψ.hermitian x]
   · intro m x c
-    let A : Matrix (Fin m) (Fin m) ℂ := Matrix.of fun i j => φ (x i - x j)
-    let B : Matrix (Fin m) (Fin m) ℂ := Matrix.of fun i j => ψ (x i - x j)
-    let e : Fin m → Fin m × Fin m := fun i => (i, i)
-    have hA : A.PosSemidef := by simpa [A] using kernelMatrix_posSemidef hpd x
-    have hB : B.PosSemidef := by simpa [B] using kernelMatrix_posSemidef hψ x
-    have hK : (A ⊗ₖ B).PosSemidef := hA.kronecker hB
-    have hSub : ((A ⊗ₖ B).submatrix e e).PosSemidef := hK.submatrix e
-    have hnonneg := hSub.dotProduct_mulVec_nonneg c
+    have hnonneg := ((kernelMatrix_posSemidef hpd x).hadamard
+      (kernelMatrix_posSemidef hψ x)).dotProduct_mulVec_nonneg c
     exact (RCLike.nonneg_iff.mp hnonneg).1.trans_eq <| by
-      simp [A, B, e, dotProduct, Matrix.mulVec,
+      simp [Matrix.hadamard, dotProduct, Matrix.mulVec,
         Finset.mul_sum, mul_assoc, mul_left_comm, mul_comm]
 
 end IsPositiveDefinite

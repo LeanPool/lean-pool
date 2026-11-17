@@ -43,9 +43,10 @@ theorem exists_closedSemijet_inequalities_of_quadraticPenaltyIshiiConclusion
       0 <= F y (v y) (quadraticPenaltyGradientLeft α x y) Y := by
   rcases hI with ⟨data⟩
   refine ⟨data.X, data.Y, data.superjet_mem, ?_, data.matrix_relation, ?_, ?_⟩
-  · simpa using data.subjet_mem
+  · simpa only [quadraticPenaltyGradientRight_eq_neg_left, neg_neg] using data.subjet_mem
   · exact hu.closedSuperjet_le_of_operatorContinuous hF data.superjet_mem
-  · simpa using hv.closedSubjet_nonneg_of_operatorContinuous hF data.subjet_mem
+  · simpa only [quadraticPenaltyGradientRight_eq_neg_left, neg_neg] using
+    hv.closedSubjet_nonneg_of_operatorContinuous hF data.subjet_mem
 
 /--
 Assume the conclusion of Ishii's lemma at `(x, y)`. If `v y ≤ u x`, then
@@ -74,7 +75,7 @@ theorem exists_nonnegative_operator_gap_of_quadraticPenaltyIshiiConclusion
       F y (v y) (quadraticPenaltyGradientLeft α x y) Y <=
         F y (u x) (quadraticPenaltyGradientLeft α x y) Y :=
     hproper.mono_value y (quadraticPenaltyGradientLeft α x y) Y hvyux
-  linarith
+  linarith only [hsub, hsuper, hmono]
 
 /--
 Under the specialized structural condition, the same operator gap is bounded
@@ -136,12 +137,13 @@ theorem exists_strict_operator_gap_of_quadraticPenaltyIshiiConclusion
     hu.closedSuperjet_le_neg_of_operatorContinuous hF data.superjet_mem
   have hsuper :
       0 <= F y (v y) (quadraticPenaltyGradientLeft α x y) data.Y := by
-    simpa using hv.closedSubjet_nonneg_of_operatorContinuous hF data.subjet_mem
+    simpa only [quadraticPenaltyGradientRight_eq_neg_left, neg_neg] using
+      hv.closedSubjet_nonneg_of_operatorContinuous hF data.subjet_mem
   have hmono :
       F y (v y) (quadraticPenaltyGradientLeft α x y) data.Y <=
         F y (u x) (quadraticPenaltyGradientLeft α x y) data.Y :=
     hproper.mono_value y (quadraticPenaltyGradientLeft α x y) data.Y hvyux
-  linarith
+  linarith only [hsub, hsuper, hmono]
 
 /--
 Let `ε > 0`, let `u` be a strict subsolution with margin `ε`, and let `v` be
@@ -185,7 +187,7 @@ theorem eventually_comparisonScale_pos_of_strict_eventually_isMaxOn
     have hnorm_nonneg : 0 <= ‖x i - y i‖ := norm_nonneg _
     have hquad_nonneg : 0 <= α i * ‖x i - y i‖ ^ 2 :=
       mul_nonneg hαi.le (sq_nonneg ‖x i - y i‖)
-    nlinarith
+    nlinarith only [hnonpos, hnorm_nonneg, hquad_nonneg]
   have hxy : x i = y i := by
     exact sub_eq_zero.mp (norm_eq_zero.mp hnorm_eq)
   have hlocal : HasQuadraticPenaltyLocalMaximumOn C C u v (α i) (x i) (y i) :=
@@ -205,7 +207,8 @@ theorem eventually_comparisonScale_pos_of_strict_eventually_isMaxOn
         0 := by
     have hgrad : quadraticPenaltyGradientLeft (α i) (x i) (x i) = 0 := by
       ext j
-      simp [quadraticPenaltyGradientLeft]
+      simp only [quadraticPenaltyGradientLeft, sub_self, Pi.smul_apply, Pi.zero_apply,
+        smul_eq_mul, mul_zero]
     rw [← hxy]
     rw [hgrad]
     exact sub_nonpos.mpr hmono
@@ -358,7 +361,7 @@ theorem comparison_of_localizedStrictificationAlong
       hw hv hFcont hproper hcomp hIshii hε hloc
   have huzw : u z <= w z + η := huw z hz
   have hwzv : w z <= v z := hwv z hz
-  linarith
+  linarith only [huzw, hwzv]
 
 /--
 Natural-number indexed constant-shift data imply comparison for a fixed pair

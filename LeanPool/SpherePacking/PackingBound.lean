@@ -25,13 +25,137 @@ import Mathlib.Topology.Instances.ENat
 import Mathlib.Data.Finset.Functor
 import Mathlib.Dynamics.Ergodic.Action.Regular
 import Mathlib.Topology.Connected.Separation
-import Mathlib.Topology.Separation.Lemmas
+import Mathlib.Topology.Separation.CompletelyRegular
 
 /-!
 # PackingBound
 
 Periodic sphere packings, Poisson summation, and the linear-programming bound.
 -/
+
+namespace SpherePackingAuxiliary
+open Filter Metric
+open scoped SchwartzMap
+
+private theorem norm_translate_le_of_decay
+    {E : Type*} [NormedAddCommGroup E] (function : E → ℂ)
+    {exponent : ℕ} {coefficient : ℝ} (hcoefficient : 0 ≤ coefficient)
+    (hdecay : ∀ point, ‖point‖ ^ exponent * ‖function point‖ ≤ coefficient)
+    (translation point : E) (hlarge : 2 * ‖translation‖ < ‖point‖) :
+    ‖function (translation + point)‖ ≤
+      (coefficient * 2 ^ exponent) * (‖point‖⁻¹ ^ exponent) := by
+  have hpositive : 0 < ‖point‖ :=
+    (mul_nonneg (by norm_num : (0 : ℝ) ≤ 2) (norm_nonneg translation)).trans_lt hlarge
+  have htriangle : ‖point‖ - ‖translation‖ ≤ ‖translation + point‖ := by
+    simpa only [norm_neg, sub_neg_eq_add, add_comm] using norm_sub_norm_le point (-translation)
+  have hhalf : ‖point‖ / 2 ≤ ‖translation + point‖ := by
+    linear_combination (htriangle + hlarge / 2)
+  have htranslated : 0 < ‖translation + point‖ := (half_pos hpositive).trans_le hhalf
+  calc
+    ‖function (translation + point)‖ ≤ coefficient / ‖translation + point‖ ^ exponent :=
+      (le_div_iff₀' (pow_pos htranslated exponent)).2 (hdecay _)
+    _ ≤ coefficient / (‖point‖ / 2) ^ exponent :=
+      div_le_div_of_nonneg_left hcoefficient (pow_pos (half_pos hpositive) exponent)
+        (pow_le_pow_left₀ (half_pos hpositive).le hhalf exponent)
+    _ = (coefficient * 2 ^ exponent) * (‖point‖⁻¹ ^ exponent) := by
+      rw [div_pow, div_div_eq_mul_div, div_eq_mul_inv, inv_pow]
+
+private theorem summable_norm_translates_of_decay
+    {E ι : Type*} [NormedAddCommGroup E] (function : E → ℂ)
+    (embedding : ι → E) (translation : E) {exponent : ℕ} {coefficient : ℝ}
+    (hcoefficient : 0 ≤ coefficient)
+    (hdecay : ∀ point, ‖point‖ ^ exponent * ‖function point‖ ≤ coefficient)
+    (hfinite : ∀ radius, {index | ‖embedding index‖ ≤ radius}.Finite)
+    (hsum : Summable (fun index => ‖embedding index‖⁻¹ ^ exponent)) :
+    Summable (fun index => ‖function (translation + embedding index)‖) := by
+  refine Summable.of_norm_bounded_eventually (hsum.mul_left (coefficient * 2 ^ exponent)) ?_
+  filter_upwards [(hfinite (max (2 * ‖translation‖) 1)).eventually_cofinite_notMem]
+    with index hindex
+  have hlarge : 2 * ‖translation‖ < ‖embedding index‖ :=
+    (le_max_left _ _).trans_lt (lt_of_not_ge hindex)
+  simpa only [norm_norm] using
+    norm_translate_le_of_decay function hcoefficient hdecay translation (embedding index) hlarge
+
+private theorem summable_compact_translates_of_decay
+    {E ι : Type*} [NormedAddCommGroup E] (function : E → ℂ) (embedding : ι → E)
+    (maps : ι → C(E, ℂ))
+    (hmap : ∀ index point, maps index point = function (point + embedding index))
+    (compact : TopologicalSpace.Compacts E) {exponent : ℕ} {coefficient : ℝ}
+    (hcoefficient : 0 ≤ coefficient)
+    (hdecay : ∀ point, ‖point‖ ^ exponent * ‖function point‖ ≤ coefficient)
+    (hfinite : ∀ radius, {index | ‖embedding index‖ ≤ radius}.Finite)
+    (hsum : Summable (fun index => ‖embedding index‖⁻¹ ^ exponent)) :
+    Summable (fun index => ‖(maps index).restrict compact‖) := by
+  obtain ⟨radius, hcompact⟩ := compact.isCompact.isBounded.subset_closedBall (0 : E)
+  refine Summable.of_norm_bounded_eventually (hsum.mul_left (coefficient * 2 ^ exponent)) ?_
+  filter_upwards [(hfinite (max (2 * max radius 0) 1)).eventually_cofinite_notMem]
+    with index hindex
+  have hlarge : 2 * max radius 0 < ‖embedding index‖ :=
+    (le_max_left _ _).trans_lt (lt_of_not_ge hindex)
+  have hnonnegative : 0 ≤ (coefficient * 2 ^ exponent) * (‖embedding index‖⁻¹ ^ exponent) :=
+    mul_nonneg (mul_nonneg hcoefficient (pow_nonneg (by norm_num) _))
+      (pow_nonneg (inv_nonneg.mpr (norm_nonneg _)) _)
+  rw [norm_norm]
+  apply (ContinuousMap.norm_le _ hnonnegative).2
+  intro point
+  rw [ContinuousMap.restrict_apply, hmap]
+  have hpoint : ‖(point : E)‖ ≤ max radius 0 :=
+    (mem_closedBall_zero_iff.mp (hcompact point.property)).trans (le_max_left _ _)
+  exact norm_translate_le_of_decay function hcoefficient hdecay point (embedding index)
+    ((mul_le_mul_of_nonneg_left hpoint (by norm_num)).trans_lt hlarge)
+
+private theorem finite_subgroup_norm_le
+    {E : Type*} [NormedAddCommGroup E] [ProperSpace E]
+    (lattice : AddSubgroup E) [DiscreteTopology lattice] (radius : ℝ) :
+    {point : lattice | ‖(point : E)‖ ≤ radius}.Finite := by
+  have hfinite : (closedBall (0 : E) radius ∩ (lattice : Set E)).Finite :=
+    Metric.finite_isBounded_inter_isClosed DiscreteTopology.isDiscrete
+      Metric.isBounded_closedBall AddSubgroup.isClosed_of_discreteTopology
+  refine (hfinite.preimage (f := ((↑) : lattice → E)) Subtype.val_injective.injOn).subset ?_
+  intro point hpoint
+  exact ⟨mem_closedBall_zero_iff.mpr hpoint, point.property⟩
+
+private theorem schwartz_norm_translates_summable
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteDimensional ℝ E]
+    [ProperSpace E] (lattice : Submodule ℤ E) [DiscreteTopology lattice]
+    (function : 𝓢(E, ℂ)) (translation : E) :
+    Summable (fun point : lattice => ‖function (translation + (point : E))‖) := by
+  let exponent := Module.finrank ℤ lattice + 1
+  obtain ⟨coefficient, hcoefficient, hdecay⟩ := function.decay exponent 0
+  have hbound : ∀ point, ‖point‖ ^ exponent * ‖function point‖ ≤ coefficient := by
+    simpa only [norm_iteratedFDeriv_zero] using hdecay
+  have hfinite (radius : ℝ) : {point : lattice | ‖(point : E)‖ ≤ radius}.Finite := by
+    let : DiscreteTopology lattice.toAddSubgroup := inferInstanceAs (DiscreteTopology lattice)
+    exact finite_subgroup_norm_le lattice.toAddSubgroup radius
+  have hsum : Summable (fun point : lattice => ‖(point : E)‖⁻¹ ^ exponent) := by
+    simpa only [inv_pow, AddSubgroupClass.coe_norm] using!
+      ZLattice.summable_norm_pow_inv (L := lattice) (n := exponent)
+        (Nat.lt_succ_self (Module.finrank ℤ lattice))
+  exact summable_norm_translates_of_decay function (fun point : lattice => (point : E)) translation
+    hcoefficient.le hbound hfinite hsum
+
+private theorem schwartz_compact_translates_summable
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteDimensional ℝ E]
+    [ProperSpace E] (lattice : Submodule ℤ E) [DiscreteTopology lattice]
+    (function : 𝓢(E, ℂ)) (maps : lattice → C(E, ℂ))
+    (hmap : ∀ index point, maps index point = function (point + (index : E)))
+    (compact : TopologicalSpace.Compacts E) :
+    Summable (fun index => ‖(maps index).restrict compact‖) := by
+  let exponent := Module.finrank ℤ lattice + 1
+  obtain ⟨coefficient, hcoefficient, hdecay⟩ := function.decay exponent 0
+  have hbound : ∀ point, ‖point‖ ^ exponent * ‖function point‖ ≤ coefficient := by
+    simpa only [norm_iteratedFDeriv_zero] using hdecay
+  have hfinite (radius : ℝ) : {point : lattice | ‖(point : E)‖ ≤ radius}.Finite := by
+    let : DiscreteTopology lattice.toAddSubgroup := inferInstanceAs (DiscreteTopology lattice)
+    exact finite_subgroup_norm_le lattice.toAddSubgroup radius
+  have hsum : Summable (fun point : lattice => ‖(point : E)‖⁻¹ ^ exponent) := by
+    simpa only [inv_pow, AddSubgroupClass.coe_norm] using!
+      ZLattice.summable_norm_pow_inv (L := lattice) (n := exponent)
+        (Nat.lt_succ_self (Module.finrank ℤ lattice))
+  exact summable_compact_translates_of_decay function (fun point : lattice => (point : E)) maps hmap
+    compact hcoefficient.le hbound hfinite hsum
+
+end SpherePackingAuxiliary
 
 section
 
@@ -384,7 +508,7 @@ private theorem SpherePacking.volume_center_ball_union_eq_tsum
   intro ⟨x, hx⟩ ⟨y, hy⟩ h
   apply ball_disjoint_ball
   simp_rw [ne_eq, Subtype.mk.injEq] at h ⊢
-  linarith [S.distinct_centers_separation_bound x y hx.left hy.left h]
+  linarith only [S.distinct_centers_separation_bound x y hx.left hy.left h, hr', hx, hy, h]
 
 private theorem SpherePacking.center_count_in_ball_upper_bound (hd : 0 < d) (R : ℝ) :
     (S.centers ∩ ball 0 R).encard ≤
@@ -397,7 +521,7 @@ private theorem SpherePacking.center_count_in_ball_upper_bound (hd : 0 < d) (R :
     Measure.addHaar_ball_center, ENNReal.tsum_set_const] at h
   have : Nonempty (Fin d) := Fin.pos_iff_nonempty.mp hd
   rwa [← ENNReal.le_div_iff_mul_le] at h <;> left
-  · exact (euclidean_ball_volume_positive _ (by linarith [S.separation_pos])).ne.symm
+  · exact (euclidean_ball_volume_positive _ (half_pos S.separation_pos)).ne.symm
   · exact (euclidean_ball_volume_finite _).ne
 
 private theorem SpherePacking.center_count_in_ball_lower_bound (R : ℝ) :
@@ -413,18 +537,12 @@ private theorem SpherePacking.center_count_in_ball_lower_bound (R : ℝ) :
 
 private theorem SpherePacking.finite_centers_inside_ball (R : ℝ) :
     Finite ↑(S.centers ∩ ball 0 R) := by
-  apply Set.encard_lt_top_iff.mp
-  rcases eq_or_ne d 0 with rfl | hd
-  · exact Set.encard_lt_top_iff.2 <| Set.Finite.of_subsingleton (S.centers ∩ ball 0 R)
-  · have hd' : 0 < d := Nat.pos_of_ne_zero hd
-    have : Nonempty (Fin d) := Fin.pos_iff_nonempty.mp hd'
-    apply ENat.toENNReal_lt.mp
-    refine lt_of_le_of_lt (S.center_count_in_ball_upper_bound hd' R) ?_
-    refine ENNReal.div_lt_top
-      (ne_of_lt <|
-        lt_of_le_of_lt (volume.mono Set.inter_subset_right)
-          (EuclideanSpace.euclidean_ball_volume_finite _))
-      (euclidean_ball_volume_positive _ (by linarith [S.separation_pos])).ne.symm
+  apply Set.finite_coe_iff.mpr
+  rw [Set.inter_comm]
+  exact Metric.finite_isBounded_inter_isClosed
+    (isDiscrete_iff_discreteTopology.mpr inferInstance) isBounded_ball
+    (Metric.isClosed_of_pairwise_le_dist S.separation_pos
+      fun x hx y hy hxy => S.distinct_centers_separation_bound x y hx hy hxy)
 
 private theorem SpherePacking.local_density_lower_bound (hd : 0 < d) (R : ℝ) :
     S.densityInsideRadius R
@@ -435,7 +553,7 @@ private theorem SpherePacking.local_density_lower_bound (hd : 0 < d) (R : ℝ) :
   rw [densityInsideRadius, occupiedBallRegion]
   apply ENNReal.div_le_div_right
   exact (ENNReal.le_div_iff_mul_le
-    (Or.inl (euclidean_ball_volume_positive _ (by linarith [S.separation_pos])).ne.symm)
+    (Or.inl (euclidean_ball_volume_positive _ (half_pos S.separation_pos)).ne.symm)
     (Or.inl (euclidean_ball_volume_finite _).ne)).1 <|
       (by simpa only [Set.iUnion_coe_set,
         sub_add_cancel] using! (S.center_count_in_ball_upper_bound hd (R - S.separation / 2)))
@@ -449,7 +567,7 @@ private theorem SpherePacking.local_density_upper_bound (hd : 0 < d) (R : ℝ) :
   rw [densityInsideRadius, occupiedBallRegion]
   apply ENNReal.div_le_div_right
   exact (ENNReal.div_le_iff_le_mul
-    (Or.inl (euclidean_ball_volume_positive _ (by linarith [S.separation_pos])).ne.symm)
+    (Or.inl (euclidean_ball_volume_positive _ (half_pos S.separation_pos)).ne.symm)
     (Or.inl (euclidean_ball_volume_finite _).ne)).1 <|
       (by simpa only [Set.iUnion_coe_set, add_sub_cancel_right,
         ge_iff_le] using! (S.center_count_in_ball_lower_bound (R + S.separation / 2)))
@@ -696,13 +814,12 @@ private lemma finite_centers_in_bounded_region (hD_isBounded : IsBounded D) (hd 
   refine (Set.finite_coe_iff).2 <| finite_of_bounded_union_with_uniform_volume
       (c := volume (ball (0 : EuclideanSpace ℝ (Fin d)) (S.separation / 2)))
       (hc := by
-        simpa only  using!
-          euclidean_ball_volume_positive (0 : EuclideanSpace ℝ (Fin d)) (by linarith
-            [S.separation_pos]))
+        exact euclidean_ball_volume_positive (0 : EuclideanSpace ℝ (Fin d))
+          (half_pos S.separation_pos))
       (h_measurable := fun _ _ => measurableSet_ball)
       (h_bounded := bounded_union_of_center_balls S D hD_isBounded)
       (h_volume := fun _ _ => by simp only [Measure.addHaar_ball_center, Std.le_refl])
-      (h_disjoint := by simpa only  using! pairwise_disjoint_center_balls S D)
+      (h_disjoint := by exact pairwise_disjoint_center_balls S D)
 
 private lemma finite_centers_in_fundamental_region {ι : Type*} [Finite ι] (b : Basis ι ℤ S.lattice)
     (hd : 0 < d) :
@@ -863,7 +980,7 @@ private theorem PeriodicSpherePacking.card_centers_in_fundamental_region
     haveI := @Fintype.ofFinite _ <| finite_centers_in_bounded_region S D hD_isBounded hd
     (S.centers ∩ D).toFinset.card = S.centerOrbitCardinality := by
   rw [centerOrbitCardinality]
-  convert! Finset.card_eq_of_equiv_fintype ?_
+  convert Finset.card_eq_of_equiv_fintype ?_
   simpa only [mem_toFinset,
     mem_inter_iff] using! (S.centerOrbitEquivFundamentalRegion D hD_unique_covers).symm
 
@@ -873,7 +990,7 @@ private theorem PeriodicSpherePacking.encard_centers_in_fundamental_region
     (hd : 0 < d) :
     (S.centers ∩ D).encard = S.centerOrbitCardinality := by
   rw [← S.card_centers_in_fundamental_region D hD_isBounded hD_unique_covers hd]
-  convert! Set.encard_eq_coe_toFinset_card _
+  convert Set.encard_eq_coe_toFinset_card _
 
 private theorem PeriodicSpherePacking.card_centers_in_translated_region (hd : 0 < d)
     {ι : Type*} [Finite ι] (b : Basis ι ℤ S.lattice) (v : EuclideanSpace ℝ (Fin d)) :
@@ -889,7 +1006,7 @@ private theorem PeriodicSpherePacking.encard_centers_in_translated_region (hd : 
     (S.centers ∩ (v +ᵥ fundamentalDomain (b.ofZLatticeBasis ℝ _))).encard =
       S.centerOrbitCardinality := by
   rw [← S.card_centers_in_translated_region hd b]
-  convert! Set.encard_eq_coe_toFinset_card _
+  convert Set.encard_eq_coe_toFinset_card _
 
 end centerOrbitCardinality
 
@@ -940,7 +1057,7 @@ private theorem iUnion_lattice_inter_ball_sub_vadd_fundamentalDomain_subset_ball
     simpa only [mem_ball, dist_zero_right] using hx.2
   have hynorm : ‖y‖ ≤ L := hL y hy
   have hsum : ‖x + y‖ < R :=
-    lt_of_le_of_lt (norm_add_le x y) (by linarith)
+    lt_of_le_of_lt (norm_add_le x y) (by linarith only [hxnorm, hynorm])
   simpa only [vadd_eq_add, mem_ball, dist_zero_right, gt_iff_lt] using hsum
 
 private theorem fundamental_region_translates_disjoint
@@ -1300,7 +1417,6 @@ private theorem volume_ball_add_div_volume_ball_add_tendsto_one_of_nonneg
       simpa only [add_zero] using tendsto_const_nhds.add herror
     apply Tendsto.congr' (f₁ := fun R : ℝ => 1 + (C - C') / (R + C')) ?_ hsum
     filter_upwards [eventually_ge_atTop (1 : ℝ)] with R hR
-    have hden : R + C' ≠ 0 := ne_of_gt (by linarith)
     field_simp; ring
   have hpow : Tendsto (fun R : ℝ => ((R + C) / (R + C')) ^ d) atTop (𝓝 1) := by
     simpa only [one_pow] using hratio.pow d
@@ -1329,8 +1445,8 @@ private theorem Filter.atTop_invariant_under_translation {β : Type*} {f : ℝ �
 private theorem volume_ball_add_div_volume_ball_add_tendsto_one {d : ℕ} {C C' : ℝ} (hd : 0 < d) :
     Tendsto (fun R ↦ volume (ball (0 : EuclideanSpace ℝ (Fin d)) (R + C))
       / volume (ball (0 : EuclideanSpace ℝ (Fin d)) (R + C'))) atTop (𝓝 1) := by
-  have hC₀ : 0 ≤ max (-C) (-C') + C := by linarith [le_max_left (-C) (-C')]
-  have hC'₀ : 0 ≤ max (-C) (-C') + C' := by linarith [le_max_right (-C) (-C')]
+  have hC₀ : 0 ≤ max (-C) (-C') + C := by linear_combination (le_max_left (-C) (-C'))
+  have hC'₀ : 0 ≤ max (-C) (-C') + C' := by linear_combination (le_max_right (-C) (-C'))
   refine (Filter.atTop_invariant_under_translation (f := fun R ↦
       volume (ball (0 : EuclideanSpace ℝ (Fin d)) (R + C)) /
         volume (ball (0 : EuclideanSpace ℝ (Fin d)) (R + C'))) (max (-C) (-C')) _).mpr ?_
@@ -1371,14 +1487,14 @@ private lemma PeriodicSpherePacking.local_packing_density_tends_to_formula
   · rw [show ∀ a : ENNReal, 𝓝 a = 𝓝 (a * 1) by intro; rw [mul_one]]
     apply ENNReal.Tendsto.const_mul
     · simp_rw [sub_sub, sub_eq_add_neg]
-      convert! volume_ball_add_div_volume_ball_add_tendsto_one hd (C := -(S.separation / 2 + L * 2))
+      convert volume_ball_add_div_volume_ball_add_tendsto_one hd (C := -(S.separation / 2 + L * 2))
       rw [add_zero]
     · left
       exact one_ne_zero
   · rw [show ∀ a : ENNReal, 𝓝 a = 𝓝 (a * 1) by intro; rw [mul_one]]
     apply ENNReal.Tendsto.const_mul
     · simp_rw [add_assoc]
-      convert! volume_ball_add_div_volume_ball_add_tendsto_one hd (C := S.separation / 2 + L * 2)
+      convert volume_ball_add_div_volume_ball_add_tendsto_one hd (C := S.separation / 2 + L * 2)
       rw [add_zero]
     · left
       exact one_ne_zero
@@ -1432,17 +1548,10 @@ private theorem PeriodicSpherePacking.fundamental_region_admits_norm_bound :
 private theorem PeriodicSpherePacking.basis_region_translates_cover_uniquely :
    ∀ x, ∃! g : S.lattice, g +ᵥ x ∈ fundamentalDomain (b.ofZLatticeBasis ℝ _) := by
   intro x
-  obtain ⟨g, hg, h_unique⟩ :=
-    exist_unique_vadd_mem_fundamentalDomain (b.ofZLatticeBasis ℝ _) x
-  have hg_lattice : (g : EuclideanSpace ℝ (Fin d)) ∈ S.lattice :=
-    (S.mem_integral_basis_span_iff b g).mp g.property
-  refine ⟨⟨g, hg_lattice⟩, hg, ?_⟩
-  rintro ⟨h, hh⟩ h_mem
-  apply Subtype.ext
-  exact congrArg
-    (fun z : Submodule.span ℤ (Set.range (b.ofZLatticeBasis ℝ _)) =>
-      (z : EuclideanSpace ℝ (Fin d)))
-    (h_unique ⟨h, (S.mem_integral_basis_span_iff b h).mpr hh⟩ h_mem)
+  exact (congrArg (fun lattice : Submodule ℤ (EuclideanSpace ℝ (Fin d)) =>
+    ∃! g : lattice, g +ᵥ x ∈ fundamentalDomain (b.ofZLatticeBasis ℝ _))
+      (b.ofZLatticeBasis_span ℝ)).mp
+    (exist_unique_vadd_mem_fundamentalDomain (b.ofZLatticeBasis ℝ _) x)
 
 end Fundamental_Domains_in_terms_of_Basis
 
@@ -1462,32 +1571,30 @@ private noncomputable def PeriodicSpherePacking.canonicalPackingLatticeBasis (S 
   (ENat.toENNReal (S.centerOrbitCardinality : ENat)) *
   volume (ball (0 : EuclideanSpace ℝ (Fin d)) (S.separation / 2)) /
   Real.toNNReal (ZLattice.covolume S.lattice) := by
-  obtain ⟨L, hL⟩ := S.fundamental_region_admits_norm_bound S.canonicalPackingLatticeBasis
+  let b : Basis (Fin d) ℤ S.lattice := S.canonicalPackingLatticeBasis
+  obtain ⟨L, hL⟩ := S.fundamental_region_admits_norm_bound b
   rw [S.density_eq_orbitCard_mul_ballVolume_div_domainVolume
-    S.canonicalPackingLatticeBasis hL hd]
-  have : Nonempty (Fin d) := Fin.pos_iff_nonempty.mp hd
+    b hL hd]
   have hfinite :
-      volume (fundamentalDomain (S.canonicalPackingLatticeBasis.ofZLatticeBasis ℝ _)) ≠ ⊤ :=
+      volume (fundamentalDomain (b.ofZLatticeBasis ℝ _)) ≠ ⊤ :=
     (Bornology.IsBounded.measure_lt_top
-      (fundamentalDomain_isBounded (S.canonicalPackingLatticeBasis.ofZLatticeBasis ℝ _))).ne
+      (fundamentalDomain_isBounded (b.ofZLatticeBasis ℝ _))).ne
   have hfund :
       IsAddFundamentalDomain S.lattice
-        (fundamentalDomain (S.canonicalPackingLatticeBasis.ofZLatticeBasis ℝ _)) :=
-    lattice_region_is_additive_fundamental_domain S _
-      (S.basis_region_translates_cover_uniquely S.canonicalPackingLatticeBasis)
-      (fundamentalDomain_measurableSet _)
+        (fundamentalDomain (b.ofZLatticeBasis ℝ _)) :=
+    ZLattice.isAddFundamentalDomain b volume
   rw [ZLattice.covolume_eq_measure_fundamentalDomain S.lattice volume hfund]
   have hdenom :
       (↑(Real.toNNReal
         (volume.real (fundamentalDomain
-          (S.canonicalPackingLatticeBasis.ofZLatticeBasis ℝ _)))) : ENNReal) =
-        volume (fundamentalDomain (S.canonicalPackingLatticeBasis.ofZLatticeBasis ℝ _)) := by
+          (b.ofZLatticeBasis ℝ _)))) : ENNReal) =
+        volume (fundamentalDomain (b.ofZLatticeBasis ℝ _)) := by
     change ENNReal.ofReal
       (volume (fundamentalDomain
-        (S.canonicalPackingLatticeBasis.ofZLatticeBasis ℝ _))).toReal = _
+        (b.ofZLatticeBasis ℝ _))).toReal = _
     exact ENNReal.ofReal_toReal hfinite
   rw [hdenom]
-  norm_num
+  simp only [ENat.toENNReal_coe]
 
 end Periodic_Density_Formula
 
@@ -1497,19 +1604,12 @@ private theorem PeriodicSpherePacking.packing_density_zero_of_empty_centers (S :
   PeriodicSpherePacking d)
     (hd : 0 < d) [instEmpty : IsEmpty S.centers] : S.upperPackingDensity = 0 := by
   rw [S.density_eq_numReps_mul_volume_ball_div_covolume hd]
-  let b := S.canonicalPackingLatticeBasis
-  let D := fundamentalDomain (Basis.ofZLatticeBasis ℝ S.lattice b)
-  have hD_isBounded : IsBounded D :=
-    fundamentalDomain_isBounded (Basis.ofZLatticeBasis ℝ S.lattice b)
-  have hD_unique_covers : ∀ x, ∃! g : S.lattice, g +ᵥ x ∈ D :=
-    S.basis_region_translates_cover_uniquely b
-  rw [← S.card_centers_in_fundamental_region D hD_isBounded hD_unique_covers hd]
-  simp only [Set.toFinset_card, ENat.toENNReal_coe, ENNReal.div_eq_zero_iff, mul_eq_zero,
+  have : IsEmpty (Quotient S.latticeCenterTranslationAction.orbitRel) :=
+    ⟨fun q => Quotient.inductionOn q fun x => instEmpty.false x⟩
+  simp only [ENat.toENNReal_coe, ENNReal.div_eq_zero_iff, mul_eq_zero,
     Nat.cast_eq_zero, ENNReal.coe_ne_top, or_false]
   left
-  let := @Fintype.ofFinite _ <| finite_centers_in_bounded_region S D hD_isBounded hd
-  have : IsEmpty (↥(S.centers ∩ D)) := ⟨fun x => instEmpty.false ⟨x.1, x.2.1⟩⟩
-  simp only [Fintype.card_eq_zero]
+  exact Fintype.card_eq_zero
 
 end Empty_Centers
 
@@ -1550,11 +1650,11 @@ private lemma metric_ball_subset_axis_cell {x : EuclideanSpace ℝ (Fin d)} {r L
   have hsub : |y i - x i| < r := coordinate_difference_small_inside_ball (d := d) hy i
   have hy0 : 0 ≤ y i := by
     have hx0 : 0 ≤ x i - r := sub_nonneg.mpr hxi.1
-    have : x i - r < y i := by linarith [(abs_lt.mp hsub).1]
+    have : x i - r < y i := by linear_combination ((abs_lt.mp hsub).1)
     exact hx0.trans (le_of_lt this)
   have hyL : y i < L := by
-    have : y i < x i + r := by linarith [(abs_lt.mp hsub).2]
-    exact lt_of_lt_of_le this (by linarith [hxi.2])
+    have : y i < x i + r := by linear_combination ((abs_lt.mp hsub).2)
+    exact lt_of_lt_of_le this (by linear_combination (hxi.2))
   exact ⟨hy0, hyL⟩
 
 private lemma center_distance_bound_of_disjoint_regions {x y : EuclideanSpace ℝ (Fin d)} {r : ℝ}
@@ -1562,9 +1662,8 @@ private lemma center_distance_bound_of_disjoint_regions {x y : EuclideanSpace �
     (hx : ball x r ⊆ A) (hy : ball y r ⊆ B) (hAB : Disjoint A B) :
     2 * r ≤ dist x y := by
   by_contra hlt
-  have hlt' : dist x y < 2 * r := lt_of_not_ge hlt
   let m : EuclideanSpace ℝ (Fin d) := midpoint ℝ x y
-  have hhalf : (1 / 2 : ℝ) * dist x y < r := by linarith
+  have hhalf : (1 / 2 : ℝ) * dist x y < r := by linarith only [hlt]
   have hmx : m ∈ ball x r := by
     simpa only [mem_ball, dist_comm, dist_left_midpoint,
       Real.norm_ofNat] using! (by simpa only [dist_midpoint_left, Real.norm_ofNat, one_div,
@@ -1605,8 +1704,8 @@ private lemma translated_ball_subset_translated_region {Λ : Submodule ℤ (Eucl
       (- (g : EuclideanSpace ℝ (Fin d))) +ᵥ y ∈
         (- (g : EuclideanSpace ℝ (Fin d))) +ᵥ ball (g +ᵥ x) r :=
     Set.mem_vadd_set.2 ⟨y, by simpa only [Submodule.vadd_def, vadd_eq_add, mem_ball] using! hy, rfl⟩
-  simpa only [Submodule.vadd_def, NegMemClass.coe_neg, vadd_eq_add, mem_ball, gt_iff_lt, vadd_ball,
-    neg_add_cancel_left] using! this
+  simpa only [Submodule.vadd_def, NegMemClass.coe_neg, vadd_eq_add, mem_ball, gt_iff_lt,
+    Metric.vadd_ball, neg_add_cancel_left] using! this
 
 private noncomputable def replicate_to_periodic_packing
     (S : SpherePacking d)
@@ -1781,7 +1880,7 @@ private lemma axis_cell_eq_coordinate_preimage (L : ℝ) :
 private lemma axis_cell_volume_formula (L : ℝ) :
     volume (axisAlignedCell (d := d) L) = (ENNReal.ofReal L) ^ d := by
   have hmeas : MeasurableSet (Set.pi Set.univ fun _ : Fin d ↦ Set.Ico (0 : ℝ) L) := by
-    simpa only  using! (MeasurableSet.pi Set.countable_univ fun _ _ ↦ measurableSet_Ico)
+    exact (MeasurableSet.pi Set.countable_univ fun _ _ ↦ measurableSet_Ico)
   have hpre :
       volume (axisAlignedCell (d := d) L) =
         volume (Set.pi Set.univ fun _ : Fin d ↦ Set.Ico (0 : ℝ) L) := by
@@ -1873,39 +1972,18 @@ private lemma lattice_points_in_ball_finite (L : ℝ) (hL : 0 < L) (R : ℝ) :
   let : DiscreteTopology (axisCellLattice (d := d) L hL) := by
     unfold axisCellLattice
     infer_instance
-  have hdiscrete := (inferInstance : DiscreteTopology (axisCellLattice (d := d) L hL))
-  rw [discreteTopology_iff_isOpen_singleton_zero, Metric.isOpen_singleton_iff] at hdiscrete
-  obtain ⟨ε, hε, hεzero⟩ := hdiscrete
-  have hzero : ∀ g : axisCellLattice (d := d) L hL, ‖g‖ < ε → g = 0 := by
-    intro g hg
-    apply hεzero g
-    rwa [dist_zero_right]
-  let P : SpherePacking d :=
-    { centers := (axisCellLattice (d := d) L hL : Set (EuclideanSpace ℝ (Fin d)))
-      separation := ε
-      separation_pos := hε
-      centers_dist := by
-        intro x y hxy
-        by_contra hdist
-        have hdist' : dist (x : EuclideanSpace ℝ (Fin d)) y < ε := by
-          change ¬ ε ≤ dist (x : EuclideanSpace ℝ (Fin d)) y at hdist
-          exact lt_of_not_ge hdist
-        let g : axisCellLattice (d := d) L hL :=
-          ⟨(x : EuclideanSpace ℝ (Fin d)) - y, sub_mem x.property y.property⟩
-        have hg : ‖g‖ < ε := by
-          change ‖(x : EuclideanSpace ℝ (Fin d)) - y‖ < ε
-          simpa only [dist_eq_norm] using hdist'
-        have hgeq : g = 0 := hzero g hg
-        apply hxy
-        apply Subtype.ext
-        exact sub_eq_zero.mp (congrArg (fun z : axisCellLattice (d := d) L hL =>
-          (z : EuclideanSpace ℝ (Fin d))) hgeq) }
-  have hfinite : Set.Finite (P.centers ∩ ball (0 : EuclideanSpace ℝ (Fin d)) R) :=
-    (Set.finite_coe_iff).1 (P.finite_centers_inside_ball R)
-  refine (hfinite.preimage (f := fun g : axisCellLattice (d := d) L hL =>
-    (g : EuclideanSpace ℝ (Fin d))) Subtype.val_injective.injOn).subset ?_
-  intro g hg
-  exact ⟨g.property, hg⟩
+  let : DiscreteTopology (axisCellLattice (d := d) L hL).toAddSubgroup :=
+    inferInstanceAs (DiscreteTopology (axisCellLattice (d := d) L hL))
+  have hclosed : IsClosed (axisCellLattice (d := d) L hL :
+      Set (EuclideanSpace ℝ (Fin d))) :=
+    AddSubgroup.isClosed_of_discreteTopology
+      (U := (axisCellLattice (d := d) L hL).toAddSubgroup)
+  have hfinite := Metric.finite_isBounded_inter_isClosed
+    (s := (axisCellLattice (d := d) L hL : Set (EuclideanSpace ℝ (Fin d))))
+    DiscreteTopology.isDiscrete (Metric.isBounded_ball (x := 0) (r := R)) hclosed
+  exact (hfinite.preimage (f := ((↑) : axisCellLattice (d := d) L hL →
+    EuclideanSpace ℝ (Fin d))) Subtype.val_injective.injOn).subset
+      (fun g hg => ⟨hg, g.property⟩)
 
 end PeriodicConstantApprox
 
@@ -2042,8 +2120,8 @@ private lemma lattice_count_mul_cell_volume_le_ball_volume {L : ℝ} (hL : 0 < L
       (PeriodicConstant.axis_cell_translates_cover_uniquely (d := d) L hL) hgh
   have hmeas :
       ∀ g ∈ t, MeasurableSet (g +ᵥ axisAlignedCell (d := d) L) := by
-    intro g _; simpa only  using!
-      (MeasurableSet.const_vadd (PeriodicConstant.axis_cell_is_measurable (d := d) L hL) g)
+    intro g _
+    exact MeasurableSet.const_vadd (PeriodicConstant.axis_cell_is_measurable (d := d) L hL) g
   have hvol_union :
       volume (⋃ g ∈ t, g +ᵥ axisAlignedCell (d := d) L) =
         ∑ g ∈ t, volume (g +ᵥ axisAlignedCell (d := d) L) :=
@@ -2052,8 +2130,10 @@ private lemma lattice_count_mul_cell_volume_le_ball_volume {L : ℝ} (hL : 0 < L
       (⋃ g ∈ t, g +ᵥ axisAlignedCell (d := d) L) ⊆
         ball (0 : EuclideanSpace ℝ (Fin d)) (R + (2 * C)) :=
     finite_cell_union_subset_enclosing_ball (d := d) (hL := hL) (R := R) (C := C) hC
-  have hle := volume.mono hsub
-  simp_all
+  have hle : volume (⋃ g ∈ t, g +ᵥ axisAlignedCell (d := d) L) ≤
+      volume (ball (0 : EuclideanSpace ℝ (Fin d)) (R + (2 * C))) := volume.mono hsub
+  rw [hvol_union] at hle
+  simpa only [MeasureTheory.measure_vadd, Finset.sum_const, nsmul_eq_mul] using hle
 
 end CoverVolumeBound
 
@@ -2208,7 +2288,7 @@ private lemma unit_inset_cell_subset_shifted_shell (L : ℝ) :
     WithLp.ofLp_neg, Pi.add_apply, Pi.neg_apply, neg_neg]
   exact fun i => by
     let hxi := hx' i
-    refine ⟨by linarith [hxi.1], by linarith [hxi.2]⟩
+    refine ⟨by linear_combination (hxi.1), by linear_combination (hxi.2)⟩
 
 private lemma axis_shell_volume_difference (L : ℝ) :
     volume (((uniformShellShift d (- (1 / 2 : ℝ))) +ᵥ insetAxisAlignedCell (d := d) (L + 1) 0) \
@@ -2400,9 +2480,9 @@ private lemma axis_shell_relative_cell_volume_tends_zero :
         (axis_shell_volume_ratio_tends_zero (d := d))
   refine hlimit.congr' ?_
   filter_upwards [eventually_gt_atTop (2 : ℝ)] with L hL
-  have hL0 : 0 < L := by linarith
-  have hLplus : 0 ≤ L + 1 := by linarith
-  have hLminus : 0 ≤ L - 2 := by linarith
+  have hL0 : 0 < L := by linear_combination hL
+  have hLplus : 0 ≤ L + 1 := by linear_combination hL
+  have hLminus : 0 ≤ L - 2 := by linear_combination hL
   rw [axis_shell_volume_power_formula, PeriodicConstant.axis_cell_volume_formula,
     ← ENNReal.ofReal_pow hLplus d, ← ENNReal.ofReal_pow hLminus d,
     ← ENNReal.ofReal_pow hL0.le d,
@@ -2508,7 +2588,7 @@ private theorem exists_periodic_unit_packing_above_density_threshold (hd : 0 < d
       simpa only [piece] using hx
     have hidx : index x = g := (Finset.mem_filter.mp hx').2
     apply (PeriodicConstantApprox.mem_translated_cell_iff_cover_index (d := d) L hL g x).2
-    simpa only  using hidx.symm
+    exact hidx.symm
   have hinner_bound (g : axisCellLattice (d := d) L hL) :
       ((inner g).card : ℝ≥0∞) * V ≤ b * cell L := by
     obtain ⟨P, hPsep, hPdensity⟩ :=
@@ -2542,8 +2622,7 @@ private theorem exists_periodic_unit_packing_above_density_threshold (hd : 0 < d
   have hpiece_bound (g : axisCellLattice (d := d) L hL) :
       ((piece g).card : ℝ≥0∞) * V ≤ A * cell L := by
     have hcard : (inner g).card + (boundary g).card = (piece g).card := by
-      simpa only  using
-        (Finset.card_filter_add_card_filter_not
+      exact (Finset.card_filter_add_card_filter_not
           (s := piece g)
           (fun x : EuclideanSpace ℝ (Fin d) =>
             x ∈ g +ᵥ insetAxisAlignedCell (d := d) L (2⁻¹ : ℝ)))
@@ -3206,123 +3285,19 @@ private noncomputable def latticeTranslatedMap (ℓ : (SchwartzMap.referenceInte
 private lemma finite_reference_lattice_points_of_norm_bound (r : ℝ) :
     ( {ℓ : (SchwartzMap.referenceIntegerLattice d) | ‖(ℓ : (EuclideanSpace ℝ (Fin d)))‖ ≤ r} :
       Set _ ).Finite := by
-  have : DiscreteTopology (((SchwartzMap.referenceIntegerLattice d)).toAddSubgroup) :=
-    (inferInstance : DiscreteTopology (SchwartzMap.referenceIntegerLattice d))
-  have hfinE : Set.Finite (Metric.closedBall (0 : (EuclideanSpace ℝ (Fin d))) r ∩
-    (((SchwartzMap.referenceIntegerLattice d)).toAddSubgroup : Set (EuclideanSpace ℝ (Fin d)))) :=
-    Metric.finite_isBounded_inter_isClosed DiscreteTopology.isDiscrete
-      Metric.isBounded_closedBall AddSubgroup.isClosed_of_discreteTopology
-  let e : (SchwartzMap.referenceIntegerLattice d) ↪ (EuclideanSpace ℝ (Fin d)) := ⟨fun ℓ => (ℓ :
-    (EuclideanSpace ℝ (Fin d))), Subtype.coe_injective⟩
-  have hfin_pre : (e ⁻¹' (Metric.closedBall (0 : (EuclideanSpace ℝ (Fin d))) r ∩
-    ((SchwartzMap.referenceIntegerLattice d) : Set (EuclideanSpace ℝ (Fin d))))).Finite := by
-    simpa only [Set.preimage_inter] using! Set.Finite.preimage_embedding e (by
-      simpa only [AddSubgroup.coe_set_mk, Submodule.coe_toAddSubmonoid] using! hfinE)
-  have :
-      (e ⁻¹' (Metric.closedBall (0 : (EuclideanSpace ℝ (Fin d))) r ∩
-        ((SchwartzMap.referenceIntegerLattice d) : Set (EuclideanSpace ℝ (Fin d))))) = {ℓ :
-        (SchwartzMap.referenceIntegerLattice d) | ‖(ℓ : (EuclideanSpace ℝ (Fin d)))‖ ≤ r} := by
-    ext ℓ
-    simp only [Function.Embedding.coeFn_mk, Set.preimage_inter, Set.mem_inter_iff, Set.mem_preimage,
-      Metric.mem_closedBall, dist_eq_norm, sub_eq_add_neg, neg_zero, add_zero, Subtype.coe_prop,
-        and_true,
-      Set.mem_ofPred_eq, e]
-  simpa only [this] using! hfin_pre
+  let : DiscreteTopology (SchwartzMap.referenceIntegerLattice d).toAddSubgroup :=
+    inferInstanceAs (DiscreteTopology (SchwartzMap.referenceIntegerLattice d))
+  exact SpherePackingAuxiliary.finite_subgroup_norm_le
+    (SchwartzMap.referenceIntegerLattice d).toAddSubgroup r
 
 private lemma summable_restricted_lattice_translate_norms (K : TopologicalSpace.Compacts
   (EuclideanSpace ℝ (Fin d))) :
     Summable (fun ℓ : (SchwartzMap.referenceIntegerLattice d) => ‖(latticeTranslatedMap (d := d)
       f ℓ).restrict K‖) := by
-  let k : ℕ := Module.finrank ℤ (SchwartzMap.referenceIntegerLattice d) + 1
-  obtain ⟨C, hCpos, hC⟩ := f.decay k 0
-  have hC' : ∀ x : (EuclideanSpace ℝ (Fin d)), ‖x‖ ^ k * ‖f x‖ ≤ C := by
-    simpa only [norm_iteratedFDeriv_zero] using! hC
-  obtain ⟨r, hrK⟩ := K.isCompact.isBounded.subset_closedBall (0 : (EuclideanSpace ℝ (Fin d)))
-  let r0 : ℝ := max r 0
-  have hrK0 : (K : Set (EuclideanSpace ℝ (Fin d))) ⊆ Metric.closedBall (0 : (EuclideanSpace ℝ
-    (Fin d))) r0 := by
-    have hr_le : r ≤ r0 := le_max_left r 0
-    have hball : Metric.closedBall (0 : (EuclideanSpace ℝ (Fin d))) r ⊆ Metric.closedBall (0 :
-      (EuclideanSpace ℝ (Fin d))) r0 :=
-      Metric.closedBall_subset_closedBall hr_le
-    exact fun x hx => hball (hrK hx)
-  let R : ℝ := max (2 * r0) 1
-  have hfin :
-      ( {ℓ : (SchwartzMap.referenceIntegerLattice d) | ‖(ℓ : (EuclideanSpace ℝ (Fin d)))‖ ≤ R} :
-        Set _ ).Finite :=
-    finite_reference_lattice_points_of_norm_bound (d := d) (r := R)
-  have h_event :
-      ∀ᶠ ℓ : (SchwartzMap.referenceIntegerLattice d) in Filter.cofinite,
-        ‖(latticeTranslatedMap (d := d) f ℓ).restrict K‖ ≤ (C * (2 ^ k : ℝ)) * (‖(ℓ :
-          (EuclideanSpace ℝ (Fin d)))‖⁻¹ ^ k) := by
-    filter_upwards [hfin.eventually_cofinite_notMem] with ℓ hℓ
-    have hRlt : R < ‖(ℓ : (EuclideanSpace ℝ (Fin d)))‖ := lt_of_not_ge (by simpa only [not_le]
-      using! hℓ)
-    have hnorm_lt : 2 * r0 < ‖(ℓ : (EuclideanSpace ℝ (Fin d)))‖ := lt_of_le_of_lt (le_max_left _
-      _) hRlt
-    have hnorm_pos : 0 < ‖(ℓ : (EuclideanSpace ℝ (Fin d)))‖ := lt_trans (by positivity) hRlt
-    refine (ContinuousMap.norm_le _ (by positivity)).2 ?_
-    rintro ⟨x, hxK⟩
-    have hxball : (x : (EuclideanSpace ℝ (Fin d))) ∈ Metric.closedBall (0 : (EuclideanSpace ℝ
-      (Fin d))) r0 := hrK0 hxK
-    have hxnorm : ‖(x : (EuclideanSpace ℝ (Fin d)))‖ ≤ r0 := by
-      simpa only [Metric.mem_closedBall, dist_eq_norm, sub_eq_add_neg, neg_zero,
-        add_zero] using! hxball
-    have hnorm_ge : (1 / 2 : ℝ) * ‖(ℓ : (EuclideanSpace ℝ (Fin d)))‖ ≤ ‖(x + (ℓ :
-      (EuclideanSpace ℝ (Fin d))))‖ := by
-      have hsub : ‖(ℓ : (EuclideanSpace ℝ (Fin d)))‖ - ‖(x : (EuclideanSpace ℝ (Fin d)))‖ ≤ ‖(ℓ
-        : (EuclideanSpace ℝ (Fin d))) + x‖ := by
-        simpa only [add_comm, tsub_le_iff_right, norm_neg,
-          sub_neg_eq_add] using! (norm_sub_norm_le (ℓ : (EuclideanSpace ℝ (Fin d))) (-x))
-      have hxlt : ‖(x : (EuclideanSpace ℝ (Fin d)))‖ < (1 / 2 : ℝ) * ‖(ℓ : (EuclideanSpace ℝ
-        (Fin d)))‖ := by
-        linarith only [hxnorm, hnorm_lt]
-      have : (1 / 2 : ℝ) * ‖(ℓ : (EuclideanSpace ℝ (Fin d)))‖ ≤ ‖(ℓ : (EuclideanSpace ℝ (Fin
-        d)))‖ - ‖(x : (EuclideanSpace ℝ (Fin d)))‖ := by
-        linarith [le_of_lt hxlt]
-      have : (1 / 2 : ℝ) * ‖(ℓ : (EuclideanSpace ℝ (Fin d)))‖ ≤ ‖(ℓ : (EuclideanSpace ℝ (Fin
-        d))) + x‖ := le_trans this hsub
-      simpa only [one_div, ge_iff_le, add_comm] using! this
-    have hnorm_xℓ_pos : 0 < ‖(x + (ℓ : (EuclideanSpace ℝ (Fin d))))‖ :=
-      (by positivity : 0 < (1 / 2 : ℝ) * ‖(ℓ : (EuclideanSpace ℝ (Fin d)))‖).trans_le hnorm_ge
-    have hpow_pos : 0 < ‖(x + (ℓ : (EuclideanSpace ℝ (Fin d))))‖ ^ k := pow_pos hnorm_xℓ_pos _
-    have hdiv : ‖f (x + (ℓ : (EuclideanSpace ℝ (Fin d))))‖ ≤ C / (‖(x + (ℓ : (EuclideanSpace ℝ
-      (Fin d))))‖ ^ k) :=
-      (le_div_iff₀' hpow_pos).2 (hC' (x + (ℓ : (EuclideanSpace ℝ (Fin d)))))
-    have hpow_le : C / (‖(x + (ℓ : (EuclideanSpace ℝ (Fin d))))‖ ^ k) ≤ (C * (2 ^ k : ℝ)) * (‖(ℓ
-      : (EuclideanSpace ℝ (Fin d)))‖⁻¹ ^ k) := by
-      have hpow_ge : ((1 / 2 : ℝ) * ‖(ℓ : (EuclideanSpace ℝ (Fin d)))‖) ^ k ≤ ‖(x + (ℓ :
-        (EuclideanSpace ℝ (Fin d))))‖ ^ k :=
-        pow_le_pow_left₀ (by positivity) hnorm_ge _
-      have hinv :
-          (‖(x + (ℓ : (EuclideanSpace ℝ (Fin d))))‖ ^ k)⁻¹ ≤ (2 ^ k : ℝ) * (‖(ℓ :
-            (EuclideanSpace ℝ (Fin d)))‖⁻¹ ^ k) := by
-        have hapos : 0 < ((1 / 2 : ℝ) * ‖(ℓ : (EuclideanSpace ℝ (Fin d)))‖) ^ k := by
-          exact pow_pos (mul_pos (by positivity) hnorm_pos) _
-        have :
-            (‖(x + (ℓ : (EuclideanSpace ℝ (Fin d))))‖ ^ k)⁻¹ ≤ (((1 / 2 : ℝ) * ‖(ℓ :
-              (EuclideanSpace ℝ (Fin d)))‖) ^ k)⁻¹ := by
-          simpa only [one_div] using! (one_div_le_one_div_of_le hapos hpow_ge)
-        simpa only [inv_pow, ge_iff_le, one_div, mul_pow, mul_inv_rev, inv_inv,
-          mul_comm] using! this
-      have := mul_le_mul_of_nonneg_left hinv (le_of_lt hCpos)
-      simpa only [div_eq_mul_inv, inv_pow, mul_assoc, ge_iff_le] using! this
-    have : ‖f (x + (ℓ : (EuclideanSpace ℝ (Fin d))))‖ ≤ (C * (2 ^ k : ℝ)) * (‖(ℓ :
-      (EuclideanSpace ℝ (Fin d)))‖⁻¹ ^ k) :=
-      le_trans hdiv hpow_le
-    simpa only [SetLike.coe_sort_coe, latticeTranslatedMap, inv_pow, ge_iff_le] using! this
-  have hsum_pow : Summable (fun ℓ : (SchwartzMap.referenceIntegerLattice d) => (‖(ℓ :
-    (EuclideanSpace ℝ (Fin d)))‖⁻¹ ^ k : ℝ)) := by
-    simpa only [inv_pow, AddSubgroupClass.coe_norm] using!
-      (ZLattice.summable_norm_pow_inv (L := (SchwartzMap.referenceIntegerLattice d)) (n := k)
-        (Nat.lt_succ_self _))
-  have hsum_bd :
-      Summable (fun ℓ : (SchwartzMap.referenceIntegerLattice d) => (C * (2 ^ k : ℝ)) * (‖(ℓ :
-        (EuclideanSpace ℝ (Fin d)))‖⁻¹ ^ k)) :=
-    hsum_pow.mul_left (C * (2 ^ k : ℝ))
-  refine Summable.of_norm_bounded_eventually hsum_bd ?_
-  filter_upwards [h_event] with ℓ hℓ
-  simpa only [SetLike.coe_sort_coe, norm_norm, inv_pow] using! hℓ
+  simpa only [latticeTranslatedMap] using!
+    SpherePackingAuxiliary.schwartz_compact_translates_summable
+    (SchwartzMap.referenceIntegerLattice d) f (latticeTranslatedMap (d := d) f)
+    (fun _ _ => rfl) K
 
 private noncomputable def latticePeriodizedMap : C((EuclideanSpace ℝ (Fin d)), ℂ) :=
   ∑' ℓ : (SchwartzMap.referenceIntegerLattice d), latticeTranslatedMap (d := d) f ℓ
@@ -3576,51 +3551,34 @@ private lemma summable_cell_integrals_of_weighted_translates (n : Fin d → ℤ)
                   (Fin d)))) := by
   let s : Set (EuclideanSpace ℝ (Fin d)) :=
     SchwartzMap.PoissonSummation.Standard.halfOpenUnitCell (d := d)
-  let μ : Measure (EuclideanSpace ℝ (Fin d)) := (volume : Measure (EuclideanSpace ℝ (Fin
-    d))).restrict s
+  let μ : Measure (EuclideanSpace ℝ (Fin d)) := volume.restrict s
   have : IsFiniteMeasure μ := by
     refine ⟨?_⟩
     simpa only [MeasurableSet.univ, Measure.restrict_apply, Set.univ_inter, μ,
       s] using! (half_open_unit_cell_volume_finite (d := d))
-  have hsum_norm :
-      Summable (fun ℓ : (SchwartzMap.referenceIntegerLattice d) =>
-        μ.real Set.univ * ‖(latticeTranslatedMap (d := d) f ℓ).restrict (ball (d := d))‖) := by
+  let integrand (ℓ : SchwartzMap.referenceIntegerLattice d) (x : EuclideanSpace ℝ (Fin d)) :=
+    ‖UnitAddTorus.mFourier (-n)
+      (PoissonSummation.Standard.euclideanTorusProjection (d := d) x) *
+        f (x + (ℓ : EuclideanSpace ℝ (Fin d)))‖
+  have hsum_norm : Summable (fun ℓ : SchwartzMap.referenceIntegerLattice d =>
+      μ.real Set.univ * ‖(latticeTranslatedMap (d := d) f ℓ).restrict (ball (d := d))‖) := by
     simpa only [SetLike.coe_sort_coe, mul_comm] using!
-      (summable_restricted_lattice_translate_norms (d := d) f (ball (d := d))).mul_left (μ.real
-        Set.univ)
-  refine Summable.of_nonneg_of_le (fun _ => by positivity) (fun ℓ => ?_) hsum_norm
-  have hle_ae :
-      (fun x : (EuclideanSpace ℝ (Fin d)) =>
-        ‖UnitAddTorus.mFourier (-n) (PoissonSummation.Standard.euclideanTorusProjection (d := d)
-          x) *
-              f (x + (ℓ : (EuclideanSpace ℝ (Fin d))))‖) ≤ᵐ[μ] fun _ : (EuclideanSpace ℝ (Fin d)) =>
-        ‖(latticeTranslatedMap (d := d) f ℓ).restrict (ball (d := d))‖ := by
+      (summable_restricted_lattice_translate_norms (d := d) f (ball (d := d))).mul_left
+        (μ.real Set.univ)
+  refine Summable.of_nonneg_of_le (fun _ => integral_nonneg fun _ => norm_nonneg _)
+    (fun ℓ => ?_) hsum_norm
+  have hbound : ∀ᵐ x ∂μ, ‖integrand ℓ x‖ ≤
+      ‖(latticeTranslatedMap (d := d) f ℓ).restrict (ball (d := d))‖ := by
     refine ae_restrict_of_forall_mem
       (SchwartzMap.PoissonSummation.Standard.half_open_unit_cell_measurable (d := d)) ?_
     intro x hx
-    exact fourier_weighted_translate_norm_bound (d := d) (f := f) n ℓ x hx
-  have hnonneg :
-      (0 : (EuclideanSpace ℝ (Fin d)) → ℝ) ≤ᵐ[μ] fun x : (EuclideanSpace ℝ (Fin d)) =>
-        ‖UnitAddTorus.mFourier (-n) (PoissonSummation.Standard.euclideanTorusProjection (d := d)
-          x) *
-              f (x + (ℓ : (EuclideanSpace ℝ (Fin d))))‖ :=
-    ae_of_all _ (fun _ => by positivity)
-  have hle' :
-      (∫ x, ‖UnitAddTorus.mFourier (-n) (PoissonSummation.Standard.euclideanTorusProjection (d
-        := d) x) *
-              f (x + (ℓ : (EuclideanSpace ℝ (Fin d))))‖ ∂μ) ≤
-        μ.real Set.univ * ‖(latticeTranslatedMap (d := d) f ℓ).restrict (ball (d := d))‖ := by
-    have hle :
-        (∫ x, ‖UnitAddTorus.mFourier (-n) (PoissonSummation.Standard.euclideanTorusProjection (d
-          := d) x) *
-                f (x + (ℓ : (EuclideanSpace ℝ (Fin d))))‖ ∂μ) ≤
-          ∫ x, ‖(latticeTranslatedMap (d := d) f ℓ).restrict (ball (d := d))‖ ∂μ :=
-      integral_mono_of_nonneg hnonneg
-        (integrable_const ‖(latticeTranslatedMap (d := d) f ℓ).restrict (ball (d := d))‖) hle_ae
-    simpa only [Complex.norm_mul, SetLike.coe_sort_coe, mul_comm, ge_iff_le,
-      MeasureTheory.integral_const (μ := μ), smul_eq_mul] using! hle
-  simpa only [Complex.norm_mul, MeasurableSet.univ, measureReal_restrict_apply, Set.univ_inter,
-    SetLike.coe_sort_coe, mul_comm, ge_iff_le] using! hle'
+    simpa only [integrand, norm_norm] using!
+      fourier_weighted_translate_norm_bound (d := d) (f := f) n ℓ x hx
+  have hnorm := norm_integral_le_of_norm_le_const (μ := μ) (f := integrand ℓ) hbound
+  have hintegral : (∫ x, integrand ℓ x ∂μ) ≤
+      ‖(latticeTranslatedMap (d := d) f ℓ).restrict (ball (d := d))‖ * μ.real Set.univ := by
+    exact (le_abs_self _).trans (by simpa only [Real.norm_eq_abs] using! hnorm)
+  simpa only [integrand, mul_comm] using! hintegral
 
 private lemma fourier_coefficient_torus_periodization (n : Fin d → ℤ) :
     UnitAddTorus.mFourierCoeff (torusDescendedPeriodization (d := d) f) n =
@@ -3759,56 +3717,17 @@ private lemma fourier_coefficient_torus_periodization (n : Fin d → ℤ) :
 
 private lemma summable_fourier_coefficients_torus_periodization :
     Summable (UnitAddTorus.mFourierCoeff (torusDescendedPeriodization (d := d) f)) := by
-  have hsum_norm :
-      Summable (fun n : Fin d → ℤ =>
-        ‖𝓕 (fun x : (EuclideanSpace ℝ (Fin d)) => f x)
-          (SchwartzMap.PoissonSummation.Standard.embeddedIntegerVector (d := d) n)‖) := by
-    let k : ℕ := d + 1
-    have hk : Module.finrank ℤ (SchwartzMap.referenceIntegerLattice d) < k := by
-      have hrank : Module.finrank ℤ (SchwartzMap.referenceIntegerLattice d) = d := by
-        have h := (ZLattice.rank (K := ℝ) (L := (SchwartzMap.referenceIntegerLattice d)))
-        simpa only  using! (h.trans (by simp only [finrank_euclideanSpace, Fintype.card_fin]))
-      simp only [hrank, lt_add_iff_pos_right, Order.lt_one_iff, k]
-    obtain ⟨C, hCpos, hC⟩ := (FourierTransform.fourierCLE ℂ (SchwartzMap (EuclideanSpace ℝ (Fin
-      d)) ℂ) f).decay k 0
-    have hC' : ∀ x : (EuclideanSpace ℝ (Fin d)),
-      ‖x‖ ^ k * ‖𝓕 (fun y : (EuclideanSpace ℝ (Fin d)) => f y) x‖ ≤ C := by
-      simpa only [FourierTransform.fourierCLE_apply, fourier_coe,
-        norm_iteratedFDeriv_zero] using! hC
-    have hsum_pow :
-        Summable (fun ℓ : (SchwartzMap.referenceIntegerLattice d) => (‖(ℓ : (EuclideanSpace ℝ
-          (Fin d)))‖⁻¹ ^ k : ℝ)) := by
-      simpa only [inv_pow, AddSubgroupClass.coe_norm] using! (ZLattice.summable_norm_pow_inv (L
-        := (SchwartzMap.referenceIntegerLattice d)) (n := k) hk)
-    have hsum_bd : Summable (fun ℓ : (SchwartzMap.referenceIntegerLattice d) => (C : ℝ) * (‖(ℓ :
-      (EuclideanSpace ℝ (Fin d)))‖⁻¹ ^ k)) :=
-      hsum_pow.mul_left C
-    have hsum_lattice : Summable (fun ℓ : (SchwartzMap.referenceIntegerLattice d) => ‖𝓕 (fun y :
-      (EuclideanSpace ℝ (Fin d)) => f y) (ℓ : (EuclideanSpace ℝ (Fin d)))‖) := by
-      have hfin : ({ℓ : (SchwartzMap.referenceIntegerLattice d) | ‖(ℓ : (EuclideanSpace ℝ (Fin
-        d)))‖ ≤ (1 : ℝ)} : Set _).Finite :=
-        finite_reference_lattice_points_of_norm_bound (d := d) 1
-      refine Summable.of_norm_bounded_eventually hsum_bd ?_
-      filter_upwards [hfin.compl_mem_cofinite] with ℓ hℓ
-      have hnorm_gt : (1 : ℝ) < ‖(ℓ : (EuclideanSpace ℝ (Fin d)))‖ := lt_of_not_ge (by simpa
-        only [not_le, Set.mem_compl_iff, Set.mem_ofPred_eq] using! hℓ)
-      have hnorm_pos : 0 < ‖(ℓ : (EuclideanSpace ℝ (Fin d)))‖ := lt_trans (by positivity) hnorm_gt
-      have hpow_pos : 0 < ‖(ℓ : (EuclideanSpace ℝ (Fin d)))‖ ^ k := pow_pos hnorm_pos _
-      have hmain := hC' (ℓ : (EuclideanSpace ℝ (Fin d)))
-      have : ‖𝓕 (fun y : (EuclideanSpace ℝ (Fin d)) => f y) (ℓ : (EuclideanSpace ℝ (Fin d)))‖ ≤
-        C / (‖(ℓ : (EuclideanSpace ℝ (Fin d)))‖ ^ k) :=
-        (le_div_iff₀' hpow_pos).2 hmain
-      have hdiv :
-          ‖𝓕 (fun y : (EuclideanSpace ℝ (Fin d)) => f y) (ℓ : (EuclideanSpace ℝ (Fin d)))‖ ≤ (C
-            : ℝ) * (‖(ℓ : (EuclideanSpace ℝ (Fin d)))‖⁻¹ ^ k) := by
-        simpa only [inv_pow, div_eq_mul_inv] using! this
-      simpa only [norm_norm, inv_pow, ge_iff_le] using! hdiv
-    let e := (PoissonSummation.Standard.integerVectorLatticeEquiv (d := d))
-    have : Summable (fun n : Fin d → ℤ => ‖𝓕 (fun y : (EuclideanSpace ℝ (Fin d)) => f y) ((e n :
-      (SchwartzMap.referenceIntegerLattice d)) : (EuclideanSpace ℝ (Fin d)))‖) := by
-      simpa only  using! (Summable.comp_injective hsum_lattice e.injective)
-    simpa only  using! this
-  refine (Summable.of_norm ?_)
+  have hsum_lattice := SpherePackingAuxiliary.schwartz_norm_translates_summable
+    (SchwartzMap.referenceIntegerLattice d)
+      (FourierTransform.fourierCLE ℂ (SchwartzMap (EuclideanSpace ℝ (Fin d)) ℂ) f)
+      (0 : EuclideanSpace ℝ (Fin d))
+  have hsum_norm : Summable (fun n : Fin d → ℤ =>
+      ‖𝓕 (fun x : EuclideanSpace ℝ (Fin d) => f x)
+        (SchwartzMap.PoissonSummation.Standard.embeddedIntegerVector (d := d) n)‖) := by
+    simpa only [zero_add, FourierTransform.fourierCLE_apply, fourier_coe] using!
+      hsum_lattice.comp_injective
+        (PoissonSummation.Standard.integerVectorLatticeEquiv (d := d)).injective
+  refine Summable.of_norm ?_
   simpa only [fourier_coefficient_torus_periodization (d := d) (f := f)] using! hsum_norm
 
 private theorem reference_lattice_poisson_formula (v : (EuclideanSpace ℝ (Fin d))) :
@@ -4212,7 +4131,7 @@ private theorem integer_lattice_poisson_identity (f : SchwartzMap (EuclideanSpac
         𝓕 (fun x : (EuclideanSpace ℝ (Fin d)) => g x) w =
           cC * 𝓕 (fun x : (EuclideanSpace ℝ (Fin d)) => f x) ((dualCoordinateTransport (d := d)
             L) w) := by
-      simpa [g, A, dualCoordinateTransport, detA, cC, Complex.real_smul] using!
+      simpa only [g, A, dualCoordinateTransport, detA, cC, Complex.real_smul] using!
         (SpherePacking.ForMathlib.Fourier.fourier_precompose_linear_equivalence
           (A := A) (f := fun x : (EuclideanSpace ℝ (Fin d)) => f x) w)
     have hexp (w : (EuclideanSpace ℝ (Fin d))) :
@@ -4336,7 +4255,7 @@ private theorem Continuous.nonnegative_integral_vanishes_iff_function_vanishes {
       hopen.measure_pos volume ⟨x, hx⟩
     have hpositive : 0 < ∫ v : E, f v :=
       (integral_pos_iff_support_of_nonneg hnn hf₂).2 hmeasure
-    linarith
+    linarith only [hzero, hpositive]
   · intro hzero
     simp only [hzero, Pi.zero_apply, integral_zero]
 
@@ -4439,102 +4358,7 @@ variable (Λ : Submodule ℤ (EuclideanSpace ℝ (Fin d))) [DiscreteTopology Λ]
 private lemma summable_norm_on_translated_integral_lattice (f : 𝓢(EuclideanSpace ℝ (Fin d), ℂ))
     (a : EuclideanSpace ℝ (Fin d)) :
     Summable (fun ℓ : Λ => ‖f (a + (ℓ : EuclideanSpace ℝ (Fin d)))‖) := by
-  let k : ℕ := Module.finrank ℤ Λ + 1
-  obtain ⟨C, hCpos, hC⟩ := f.decay k 0
-  have hdecay : ∀ x : EuclideanSpace ℝ (Fin d), ‖x‖ ^ k * ‖f x‖ ≤ C := by
-    simpa only [norm_iteratedFDeriv_zero] using! hC
-  let R : ℝ := max (2 * ‖a‖) 1
-  have hfinite : ({ℓ : Λ | ‖(ℓ : EuclideanSpace ℝ (Fin d))‖ ≤ R} : Set Λ).Finite := by
-    have : DiscreteTopology Λ.toAddSubgroup :=
-      (inferInstance : DiscreteTopology Λ)
-    have hfiniteAmbient :
-        (Metric.closedBall (0 : EuclideanSpace ℝ (Fin d)) R ∩
-          (Λ.toAddSubgroup : Set (EuclideanSpace ℝ (Fin d)))).Finite :=
-      Metric.finite_isBounded_inter_isClosed DiscreteTopology.isDiscrete
-        Metric.isBounded_closedBall AddSubgroup.isClosed_of_discreteTopology
-    let e : Λ ↪ EuclideanSpace ℝ (Fin d) :=
-      ⟨fun ℓ => (ℓ : EuclideanSpace ℝ (Fin d)), Subtype.coe_injective⟩
-    have hpreimage :
-        (e ⁻¹' (Metric.closedBall (0 : EuclideanSpace ℝ (Fin d)) R ∩
-          (Λ : Set (EuclideanSpace ℝ (Fin d))))).Finite := by
-      apply Set.Finite.preimage_embedding e
-      simpa only [AddSubgroup.coe_set_mk, Submodule.coe_toAddSubmonoid] using! hfiniteAmbient
-    have hset :
-        e ⁻¹' (Metric.closedBall (0 : EuclideanSpace ℝ (Fin d)) R ∩
-          (Λ : Set (EuclideanSpace ℝ (Fin d)))) =
-            {ℓ : Λ | ‖(ℓ : EuclideanSpace ℝ (Fin d))‖ ≤ R} := by
-      ext ℓ
-      simp only [Function.Embedding.coeFn_mk, Set.preimage_inter, Set.mem_inter_iff,
-        Set.mem_preimage,
-        Metric.mem_closedBall, dist_eq_norm, sub_zero, Subtype.coe_prop, and_true,
-          Set.mem_ofPred_eq, e]
-    simpa only [hset] using! hpreimage
-  have hsumPow :
-      Summable (fun ℓ : Λ =>
-        (‖(ℓ : EuclideanSpace ℝ (Fin d))‖⁻¹ ^ k : ℝ)) := by
-    simpa only [inv_pow, AddSubgroupClass.coe_norm] using!
-      (ZLattice.summable_norm_pow_inv (L := Λ) (n := k)
-        (Nat.lt_succ_self (Module.finrank ℤ Λ)))
-  have hsumBound :
-      Summable (fun ℓ : Λ =>
-        (C * (2 ^ k : ℝ)) *
-          (‖(ℓ : EuclideanSpace ℝ (Fin d))‖⁻¹ ^ k)) :=
-    hsumPow.mul_left (C * (2 ^ k : ℝ))
-  refine Summable.of_norm_bounded_eventually hsumBound ?_
-  filter_upwards [hfinite.eventually_cofinite_notMem] with ℓ hℓ
-  have hR : R < ‖(ℓ : EuclideanSpace ℝ (Fin d))‖ :=
-    lt_of_not_ge (by simpa only [not_le] using! hℓ)
-  have hlarge : 2 * ‖a‖ < ‖(ℓ : EuclideanSpace ℝ (Fin d))‖ :=
-    lt_of_le_of_lt (le_max_left _ _) hR
-  have hpositive : 0 < ‖(ℓ : EuclideanSpace ℝ (Fin d))‖ :=
-    lt_of_lt_of_le zero_lt_one ((le_max_right _ _).trans hR.le)
-  have htranslate :
-      (1 / 2 : ℝ) * ‖(ℓ : EuclideanSpace ℝ (Fin d))‖ ≤
-        ‖a + (ℓ : EuclideanSpace ℝ (Fin d))‖ := by
-    have htriangle :
-        ‖(ℓ : EuclideanSpace ℝ (Fin d))‖ - ‖a‖ ≤
-          ‖a + (ℓ : EuclideanSpace ℝ (Fin d))‖ := by
-      simpa only [tsub_le_iff_right, add_comm, norm_neg, sub_neg_eq_add] using!
-        (norm_sub_norm_le (ℓ : EuclideanSpace ℝ (Fin d)) (-a))
-    linarith
-  have htranslatePositive :
-      0 < ‖a + (ℓ : EuclideanSpace ℝ (Fin d))‖ :=
-    (mul_pos (by norm_num : (0 : ℝ) < 1 / 2) hpositive).trans_le htranslate
-  have hpowPositive :
-      0 < ‖a + (ℓ : EuclideanSpace ℝ (Fin d))‖ ^ k :=
-    pow_pos htranslatePositive _
-  have hbound :
-      ‖f (a + (ℓ : EuclideanSpace ℝ (Fin d)))‖ ≤
-        C / ‖a + (ℓ : EuclideanSpace ℝ (Fin d))‖ ^ k :=
-    (le_div_iff₀' hpowPositive).2
-      (hdecay (a + (ℓ : EuclideanSpace ℝ (Fin d))))
-  have hpower :
-      ((1 / 2 : ℝ) * ‖(ℓ : EuclideanSpace ℝ (Fin d))‖) ^ k ≤
-        ‖a + (ℓ : EuclideanSpace ℝ (Fin d))‖ ^ k :=
-    pow_le_pow_left₀ (by positivity) htranslate _
-  have hsourcePositive :
-      0 < ((1 / 2 : ℝ) * ‖(ℓ : EuclideanSpace ℝ (Fin d))‖) ^ k :=
-    pow_pos (mul_pos (by norm_num : (0 : ℝ) < 1 / 2) hpositive) _
-  have hinverse :
-      (‖a + (ℓ : EuclideanSpace ℝ (Fin d))‖ ^ k)⁻¹ ≤
-        (2 ^ k : ℝ) *
-          (‖(ℓ : EuclideanSpace ℝ (Fin d))‖⁻¹ ^ k) := by
-    have h := one_div_le_one_div_of_le hsourcePositive hpower
-    simpa only [inv_pow, ge_iff_le, one_div, mul_pow, mul_inv_rev, inv_inv, mul_comm]
-      using! h
-  have hfinal :=
-    (mul_le_mul_of_nonneg_left hinverse hCpos.le)
-  have hresult :
-      ‖f (a + (ℓ : EuclideanSpace ℝ (Fin d)))‖ ≤
-        (C * (2 ^ k : ℝ)) *
-          (‖(ℓ : EuclideanSpace ℝ (Fin d))‖⁻¹ ^ k) := by
-    calc
-      ‖f (a + (ℓ : EuclideanSpace ℝ (Fin d)))‖ ≤
-          C / ‖a + (ℓ : EuclideanSpace ℝ (Fin d))‖ ^ k := hbound
-      _ ≤ (C * (2 ^ k : ℝ)) *
-          (‖(ℓ : EuclideanSpace ℝ (Fin d))‖⁻¹ ^ k) := by
-        simpa only [div_eq_mul_inv, inv_pow, mul_assoc] using! hfinal
-  simpa only [norm_norm, inv_pow, ge_iff_le] using! hresult
+  exact SpherePackingAuxiliary.schwartz_norm_translates_summable Λ f a
 
 end SpherePacking.CohnElkies.LPBoundAux.ZLatticeSummability
 
@@ -4663,7 +4487,7 @@ private lemma packing_spectral_sum_exchange (f : 𝓢(EuclideanSpace ℝ (Fin d)
         · simpa only [hx, not_false_eq_true, Finset.sum_insert] using (hg x).add ih.1
         · simpa only [hx, not_false_eq_true, Finset.sum_insert,
           ih.2] using ((hg x).tsum_add ih.1).symm
-    simpa only  using hAux Finset.univ
+    exact hAux Finset.univ
   let c : ℂ := 1 / ZLattice.covolume P.lattice volume
   have hInner (x : ↑(P.centers ∩ D)) :
       Summable (fun m : SchwartzMap.polarIntegerLattice (d := d) P.lattice =>
@@ -5146,19 +4970,12 @@ private theorem test_function_positive_at_origin : 0 < (f 0).re := by
         (integral_re (f := fun v : EuclideanSpace ℝ (Fin d) => 𝓕 (⇑f) v)
           fourier_transform_is_integrable)
     exact hre.trans this
-  have hcont : Continuous (fun x : EuclideanSpace ℝ (Fin d) => (𝓕 f x).re) := by
-    fun_prop
+  have hcont : Continuous (fun x : EuclideanSpace ℝ (Fin d) => (𝓕 f x).re) :=
+    Complex.continuous_re.comp (𝓕 f).continuous
   have hfun : (fun x : EuclideanSpace ℝ (Fin d) => (𝓕 f x).re) = 0 := by
-    refine (Continuous.nonnegative_integral_vanishes_iff_function_vanishes hcont ?_
-      hCohnElkies₂).1 ?_
-    · have h𝓕_int : MeasureTheory.Integrable
-          (fun x : EuclideanSpace ℝ (Fin d) => 𝓕 f x) := by
-        rw [← FourierTransform.fourierCLE_apply (R := ℝ)
-          (E := 𝓢(EuclideanSpace ℝ (Fin d), ℂ)) f]
-        exact ((FourierTransform.fourierCLE ℝ (SchwartzMap (EuclideanSpace ℝ (Fin d)) ℂ))
-          f).integrable
-      exact h𝓕_int.re
-    simpa only  using! hintRe
+    apply (Continuous.nonnegative_integral_vanishes_iff_function_vanishes hcont
+      (𝓕 f).integrable.re hCohnElkies₂).1
+    simpa only using! hintRe
   have h𝓕fzero : 𝓕 f = 0 := by
     ext x
     have hx : (𝓕 f x).re = 0 := by simpa only [Pi.zero_apply] using! congrArg (fun g => g x) hfun
@@ -5257,21 +5074,7 @@ private theorem packing_bound_geometric_estimate (hd : 0 < d) :
           (y : EuclideanSpace ℝ (Fin d))
           (m : EuclideanSpace ℝ (Fin d)))
     rw [hinner]
-    have hsplit :
-        (2 * (π : ℂ) * I *
-          ((⟪(x : EuclideanSpace ℝ (Fin d)),
-              (m : EuclideanSpace ℝ (Fin d))⟫_[ℝ] -
-            ⟪(y : EuclideanSpace ℝ (Fin d)),
-              (m : EuclideanSpace ℝ (Fin d))⟫_[ℝ] : ℝ) : ℂ)) =
-          2 * (π : ℂ) * I *
-            (⟪(x : EuclideanSpace ℝ (Fin d)),
-              (m : EuclideanSpace ℝ (Fin d))⟫_[ℝ] : ℂ) +
-            -(2 * (π : ℂ) * I *
-              (⟪(y : EuclideanSpace ℝ (Fin d)),
-                (m : EuclideanSpace ℝ (Fin d))⟫_[ℝ] : ℂ)) := by
-      push_cast
-      ring
-    rw [hsplit, Complex.exp_add,
+    rw [Complex.ofReal_sub, mul_sub, sub_eq_add_neg, Complex.exp_add,
       Complex.negative_imaginary_exponential_eq_conjugate]
   have hfactor
       (m : SchwartzMap.polarIntegerLattice (d := d) P.lattice) :
@@ -5286,35 +5089,8 @@ private theorem packing_bound_geometric_estimate (hd : 0 < d) :
             ⟪(x : EuclideanSpace ℝ (Fin d)),
               (m : EuclideanSpace ℝ (Fin d))⟫_[ℝ])) ^ 2 : ℝ) := by
     simp_rw [tsum_fintype, hcharacter]
-    calc
-      _ =
-          (∑ x : ↑(P.centers ∩ D),
-            exp (2 * π * I *
-              ⟪(x : EuclideanSpace ℝ (Fin d)),
-                (m : EuclideanSpace ℝ (Fin d))⟫_[ℝ])) *
-            (∑ y : ↑(P.centers ∩ D),
-              (starRingEnd ℂ)
-                (exp (2 * π * I *
-                  ⟪(y : EuclideanSpace ℝ (Fin d)),
-                    (m : EuclideanSpace ℝ (Fin d))⟫_[ℝ]))) := by
-            symm
-            rw [Finset.sum_mul]
-            apply Finset.sum_congr rfl
-            intro x hx
-            rw [Finset.mul_sum]
-      _ =
-          (∑ x : ↑(P.centers ∩ D),
-            exp (2 * π * I *
-              ⟪(x : EuclideanSpace ℝ (Fin d)),
-                (m : EuclideanSpace ℝ (Fin d))⟫_[ℝ])) *
-            (starRingEnd ℂ)
-              (∑ y : ↑(P.centers ∩ D),
-                exp (2 * π * I *
-                  ⟪(y : EuclideanSpace ℝ (Fin d)),
-                    (m : EuclideanSpace ℝ (Fin d))⟫_[ℝ])) := by
-            rw [map_sum]
-      _ = _ := by
-        rw [Complex.mul_conj, Complex.normSq_eq_norm_sq]
+    rw [← Fintype.sum_mul_sum, ← map_sum (starRingEnd ℂ),
+      Complex.mul_conj, Complex.normSq_eq_norm_sq]
   have hFourierNorm :
       Summable (fun m : SchwartzMap.polarIntegerLattice (d := d) P.lattice =>
         ‖(𝓕 f) (m : EuclideanSpace ℝ (Fin d))‖) := by
@@ -5383,7 +5159,7 @@ private theorem packing_bound_geometric_estimate (hd : 0 < d) :
     (f := f) hCohnElkies₁ hP hD_isBounded hd hD_unique_covers
   rw [SpherePacking.CohnElkies.center_double_sum_eq_region_lattice_sum
     (f := f) (P := P) (D := D) hD_isBounded hD_unique_covers hd] at hbound
-  linarith [hgeom]
+  exact hgeom.symm.trans_le hbound
 
 include d f hP hne_zero hReal hRealFourier hCohnElkies₁ hCohnElkies₂ in
 omit hne_zero hReal hRealFourier hCohnElkies₁ hP [Nonempty ↑P.centers] in
@@ -5445,13 +5221,7 @@ private theorem packing_bound_spectral_estimate (hd : 0 < d) :
         norm (∑' x : ↑(P.centers ∩ D),
           exp (2 * π * I *
             ⟪↑x, (m : EuclideanSpace ℝ (Fin d))⟫_[ℝ])) ^ 2 ≤ N ^ 2 := by
-      have hN : 0 ≤ N := by
-        dsimp [N]
-        positivity
-      nlinarith [hCharacterBound m, norm_nonneg
-        (∑' x : ↑(P.centers ∩ D),
-          exp (2 * π * I *
-            ⟪↑x, (m : EuclideanSpace ℝ (Fin d))⟫_[ℝ]))]
+      exact pow_le_pow_left₀ (norm_nonneg _) (hCharacterBound m) 2
     change _ ≤ N ^ 2 * ‖(𝓕 f) (m : EuclideanSpace ℝ (Fin d))‖
     exact (mul_le_mul hcoeff hsq (sq_nonneg _) (norm_nonneg _)).trans_eq (mul_comm _ _)
   have htail :
@@ -5471,7 +5241,7 @@ private theorem packing_bound_spectral_estimate (hd : 0 < d) :
       P hd hD_isBounded]
   have hsum : (𝓕 f 0).re * N ^ 2 ≤ ∑' m, F m := by
     rw [hFsummable.tsum_eq_add_tsum_ite 0, horigin]
-    linarith
+    exact le_add_of_nonneg_right htail
   have hcovol : 0 ≤ ZLattice.covolume P.lattice volume := by
     rw [SchwartzMap.lattice_covolume_eq_coordinate_determinant]
     exact abs_nonneg _
@@ -5581,7 +5351,7 @@ private theorem LinearProgrammingBound' (hd : 0 < d) :
     have h := mul_le_mul_left hnonnegative'
       (volume (Metric.ball (0 : EuclideanSpace ℝ (Fin d)) (1 / 2)))
     simp only [ENat.toENNReal_coe, div_eq_mul_inv] at h ⊢
-    exact le_of_eq_of_le (by ring) (h.trans_eq (by ring))
+    exact le_of_eq_of_le (by (symm; apply mul_right_comm)) (h.trans_eq (by rfl))
 
 end Main_Theorem_For_One_Packing
 

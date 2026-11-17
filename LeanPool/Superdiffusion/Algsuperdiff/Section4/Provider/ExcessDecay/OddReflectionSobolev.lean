@@ -196,7 +196,7 @@ theorem contDiff_faceCutoff (i : Fin d) (a σ : ℝ) (n : ℕ) :
     ContDiff ℝ (⊤ : ℕ∞) (faceCutoff i a σ n) := by
   have hinner : ContDiff ℝ (⊤ : ℕ∞)
       fun y : Vec d => σ * (a - y i) * ((n : ℝ) + 1) - 1 :=
-    (((contDiff_const.mul (contDiff_const.sub (contDiff_apply ℝ ℝ i))).mul
+    (((contDiff_const.mul (contDiff_const.sub (contDiff_apply ℝ (fun _ ↦ ℝ) i))).mul
       contDiff_const).sub contDiff_const)
   exact HCPolySupport.smoothTransitionProfile.smooth.comp hinner
 
@@ -319,7 +319,7 @@ private theorem tendsto_eLpNorm_of_strip {H : Set (Vec d)} {S : ℕ → Set (Vec
     have h1 : eLpNorm (F n) 2 (volume.restrict H) =
         eLpNorm (F n) 2 ((volume.restrict H).restrict (S n)) := by
       rw [MeasureTheory.eLpNorm_congr_ae hae,
-        MeasureTheory.eLpNorm_indicator_eq_eLpNorm_restrict (hS n)]
+        MeasureTheory.eLpNorm_indicator_eq_eLpNorm_restrict (hS n).nullMeasurableSet]
     have h2 : eLpNorm (F n) 2 ((volume.restrict H).restrict (S n)) ≤
         ((volume.restrict H).restrict (S n)) Set.univ ^ ((2 : ℝ≥0∞).toReal)⁻¹ *
           ENNReal.ofReal C :=

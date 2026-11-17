@@ -45,7 +45,7 @@ theorem finitePositiveGlobalTail_eq_positiveDyadicSuffix
   have hcut (depth : ℕ) :
       ((2 : ℝ) ^ (j + (m : ℤ) + 2) ≤
         (2 : ℝ) ^ (j + (N : ℤ) - 1 - (depth : ℤ) + 2)) ↔ depth < N - m := by
-    rw [zpow_le_zpow_iff_right₀ (by norm_num : (1 : ℝ) < 2)]
+    rw [zpow_le_zpow_iff_right₀ (by norm_num1 : (1 : ℝ) < 2)]
     omega
   have hglobal : finitePositiveGlobalTail (j + (N : ℤ) - 1) (Finset.range N) f
       (j + (m : ℤ) + 2) x = ∑ depth ∈ Finset.range (N - m), F depth := by
@@ -53,7 +53,7 @@ theorem finitePositiveGlobalTail_eq_positiveDyadicSuffix
     rw [← Finset.sum_filter]
     congr 1
     ext depth
-    simp only [Finset.mem_filter, Finset.mem_range, hcut]
+    simp only [hcut, Finset.mem_filter, Finset.mem_range]
     omega
   rw [hglobal]
   unfold finitePositiveDyadicSuffix finitePositiveDyadicTail positiveDyadicConvolution
@@ -74,7 +74,7 @@ theorem finitePositiveGlobalTail_eq_positiveDyadicSuffix
   have hscale' : j + (N : ℤ) - 1 -
       (((N - m - 1 : ℕ) : ℤ) - (depth : ℤ)) =
         j + (m : ℤ) + (depth : ℤ) := by
-    linarith [hscale]
+    linarith only [hcast, hscale]
   congr 1
   funext t
   rw [hscale']
@@ -91,7 +91,7 @@ theorem enorm_finitePositiveDyadicSuffixMaxOperator_le_globalTailMaximal
       (finitePositiveDyadicSuffixMaxNNNorm 1 j N f x : ℝ≥0∞) := by
     unfold finitePositiveDyadicSuffixMaxOperator
     rw [← ofReal_norm]
-    simp
+    simp only [Complex.norm_real, Real.norm_eq_abs, NNReal.abs_eq, ENNReal.ofReal_coe_nnreal]
   rw [hnorm]
   unfold finitePositiveDyadicSuffixMaxNNNorm
   rw [ENNReal.coe_finset_sup]

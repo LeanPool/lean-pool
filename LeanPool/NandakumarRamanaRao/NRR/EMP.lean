@@ -25,6 +25,8 @@ public import LeanPool.NandakumarRamanaRao.NRR.EMP.PowerPartitionPieces
 public import LeanPool.NandakumarRamanaRao.NRR.EMP.VariableBody
 public import LeanPool.NandakumarRamanaRao.NRR.EMP.WeightShift
 public import LeanPool.NandakumarRamanaRao.NRR.EMP.WeightSpace
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Supporting modules for Equal-area and equal-perimeter convex partitions. -/
 

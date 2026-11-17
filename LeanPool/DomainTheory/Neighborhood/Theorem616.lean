@@ -9,12 +9,8 @@ public import LeanPool.DomainTheory.Neighborhood.Theorem69
 public import LeanPool.DomainTheory.Neighborhood.Lemma615
 import LeanPool.DomainTheory.Neighborhood.Exercise408
 import LeanPool.DomainTheory.Neighborhood.Proposition67
-import Mathlib.Data.Finset.Attr
-import Mathlib.Data.Rat.Cast.Order
-import Mathlib.Tactic.NormNum.Abs
-import Mathlib.Tactic.NormNum.DivMod
-import Mathlib.Tactic.NormNum.OfScientific
-import Mathlib.Tactic.NormNum.Pow
+
+import Mathlib.Tactic.Set -- shake: keep
 
 /-!
 # Lecture VI — Theorem 6.16 (Scott 1981, PRG-19): an initial algebra embeds in
@@ -217,7 +213,7 @@ theorem trianglelefteq_of_isInitial
         change (toStrictMap (Opk.iterElem 0)).1.rel P Q ↔ _
         rw [iterElem_zero]; exact botStrict_rel
       constructor
-      · simp_all
+      · simp_all only [Subtype.forall, comp_rel, ↓existsAndEq, and_true, and_self, implies_true]
       · intro hK
         rw [hK0] at hK
         obtain ⟨hEX, rfl⟩ := hK

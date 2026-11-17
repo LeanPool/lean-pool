@@ -6,8 +6,9 @@ Authors: Arseniy Akopyan
 module
 
 
-public import Mathlib.Analysis.Normed.Order.Lattice
-public import Mathlib.Tactic
+public import Mathlib.Topology.MetricSpace.Pseudo.Defs
+import Mathlib.Analysis.Normed.Order.Lattice
+import Mathlib.Tactic.Measurability.Init
 
 /-!
 # `NRR.EMP.VariableBody.WeightBox` — a compact codomain for bounded weights

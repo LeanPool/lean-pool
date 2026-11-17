@@ -6,7 +6,11 @@ Authors: Arseniy Akopyan
 module
 
 
+public import LeanPool.NandakumarRamanaRao.NRR.FairPartition.Predicates
+public import LeanPool.NandakumarRamanaRao.NRR.PrimeRefinement.FlexibleCore
 public import LeanPool.NandakumarRamanaRao.NRR.PrimeRefinement.Iteration
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Positivity.Finset
 /-!
 # Model-independent prime-refinement iteration
 

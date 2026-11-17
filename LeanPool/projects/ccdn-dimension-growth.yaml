@@ -1,0 +1,72 @@
+slug: ccdn-dimension-growth
+title: Polynomial degree bounds for rational points on varieties
+summary: >-
+  Proves the six main results of Castryck, Cluckers, Dittmann and Nguyen on
+  dimension growth, uniform rational-point counts on curves and hypersurfaces,
+  a lower-bound curve construction, and two-torsion in number-field class groups.
+  Preserves the determinant method, Hilbert-function degree and dimension,
+  bounded birational projections, and the required Bombieri-Vaaler and Mertens
+  dependencies. Imports the main-result closure, excluding the separate
+  intermediate-statement and counterexample library.
+branch: arithmetic geometry
+entry_module: LeanPool.CCDN
+authors:
+- Jason Davies
+- Ralf Stephan
+- PrimeNumberTheoremAnd contributors
+source:
+  title: The dimension growth conjecture, polynomial in the degree and without logarithmic factors
+  doi: 10.2140/ant.2020.14.2261
+  arxiv: '1904.13109'
+  url: https://github.com/jasondavies/ccdn-dimension-growth/tree/bb025e7207f3a35a21b898629f5678b72aa7e44f
+  github_repo: jasondavies/ccdn-dimension-growth
+  commit: bb025e7207f3a35a21b898629f5678b72aa7e44f
+  announcement_url: https://leanprover.zulipchat.com/#narrow/channel/583339/near/633471181
+  announcement_date: '2026-10-20'
+  bombieri_vaaler_repository: https://github.com/rwst/Subspace-Theorems
+  bombieri_vaaler_commit: 09835cb23557ae5ae0cf55a9c4ab9055f5d60338
+  mertens_repository: https://github.com/AlexKontorovich/PrimeNumberTheoremAnd
+  mertens_commit: c39a751132c88b6e8080b74c74023fd95b3d8be0
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+- CCDN.projective_dimension_growth
+main_results:
+- declaration: CCDN.projective_dimension_growth
+  informal: >-
+    For every ambient projective dimension n, a constant depending only on n
+    bounds the rational points of height at most B on every integral projective
+    variety of degree d at least five by C d^(2n^2+5n-5) B^dim(X), for B at least one.
+- declaration: CCDN.projectiveCurveBound
+  informal: >-
+    In ambient dimension n at least two and for B at least one, every integral
+    projective curve of degree d has at most C(n) d^4 B^(2/d) rational points
+    of height at most B, uniformly in its coefficients.
+- declaration: CCDN.affineCurveBound
+  informal: >-
+    In ambient dimension n at least two and for B at least one, every integral
+    affine curve of degree d has at most C(n) d^3 B^(1/d) (log B+d) integer
+    points in the box of radius B.
+- declaration: CCDN.affine_hypersurface_dimension_growth
+  informal: >-
+    In N at least three variables, an affine hypersurface of degree d at least
+    five whose top form is absolutely irreducible has at most
+    C(N) d^(3N+9) B^(N-2) integer points in the box of radius B, for B at least one.
+- declaration: CCDN.projective_integral_curve_lower_bound
+  informal: >-
+    For every positive degree d, an integral projective plane curve and a radius
+    B at least one attain at least d^2 B^(2/d)/5 rational points of height at most B.
+- declaration: CCDN.classGroup_two_torsion_bound
+  informal: >-
+    For number fields K of degree n at least three, the two-torsion cardinality
+    is at most C(n) |disc K|^(1/2-1/(2n)) (log |disc K|)^(1-(n mod 2)).
+tags:
+- arithmetic-geometry
+- rational-points
+- determinant-method
+- class-groups
+msc:
+- 11D45
+- 14G05
+- 11R29

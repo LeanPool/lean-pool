@@ -1,0 +1,74 @@
+slug: high-dimensional-steiner-spanners
+title: Polynomial lower bounds for high-dimensional Steiner spanners
+summary: >-
+  For every real p at least one and constant stretch, some arbitrarily large
+  point sets in real ell-p spaces force polynomial edge overhead in every
+  non-metric Steiner spanner.
+  Includes CSP code constructions, finite Bernoulli moment estimates, nearest
+  terminal projection, Hamming-code hubs, Gaussian concentration, and linear
+  Euclidean-to-ell-p embeddings.
+branch: Computer science
+entry_module: LeanPool.SteinerSpanners
+authors:
+  - Goran Zuzic
+  - David P. Woodruff
+  - Vahab Mirrokni
+source:
+  title: Constant-Stretch High-Dimensional Spanners Require Polynomial Overhead
+  url: https://github.com/goranzuzic/high-dimensional-steiner-spanners/tree/e75290d4a81dc898469a71414edf5bee43dc1b02
+  github_repo: goranzuzic/high-dimensional-steiner-spanners
+  upstream_commit: e75290d4a81dc898469a71414edf5bee43dc1b02
+  license: Apache-2.0
+  announcement_url: https://github.com/goranzuzic/high-dimensional-steiner-spanners/commit/5b51d12396c91dd0d42d543a86b435a2b639c4f6
+  announcement_date: '2026-11-12'
+  provenance_notes: >-
+    Paper section 1.6 credits Goran Zuzic, David P. Woodruff, and Vahab Mirrokni
+    with preparing the Lean verification. It separately credits Gemini 4 Carbon
+    with discovering the mathematical proof with minimal human steering. The
+    human provenance category follows the explicit Lean-preparation credit;
+    model-based statement auditing and faithfulness assessment are credited
+    separately in the Lean appendix.
+    The paper authors are Rajesh Jayaram, Vahab Mirrokni, Erik Waingarten,
+    David P. Woodruff, and Goran Zuzic.
+status: verified
+license: Apache-2.0
+provenance: human
+main_declarations:
+  - HighDimSteinerSpanners.thm_1_3_non_metric_steiner_spanner_lower_bound
+  - HighDimSteinerSpanners.thm_1_2_geometric_spanner_lower_bound
+  - HighDimSteinerSpanners.cor_1_4_lp_dvoretzky_lower_bound
+  - HighDimSteinerSpanners.thm_2_3_locally_list_bounded_csp_codes
+  - HighDimSteinerSpanners.prop_3_4_three_hop_hypercube_collapse
+main_results:
+  - declaration: HighDimSteinerSpanners.thm_1_3_non_metric_steiner_spanner_lower_bound
+    informal: >-
+      For every real p at least one and constant stretch C at least one, arbitrarily
+      large bounded-aspect-ratio point sets in dimension proportional to log n
+      require at least a constant times n to the power 1+c edges in every
+      non-metric Steiner spanner, with an explicit positive lower bound on c.
+  - declaration: HighDimSteinerSpanners.thm_1_2_geometric_spanner_lower_bound
+    informal: The same polynomial edge lower bound holds for geometric ell-p spanners.
+  - declaration: HighDimSteinerSpanners.cor_1_4_lp_dvoretzky_lower_bound
+    informal: >-
+      For p greater than two, a polynomial edge lower bound holds in dimension
+      proportional to the p-over-two power of log n, with an exponent bound
+      independent of p.
+  - declaration: HighDimSteinerSpanners.thm_2_3_locally_list_bounded_csp_codes
+    informal: >-
+      Constructs arbitrarily large finite codes with many exact-distance pairs,
+      separation, and bounded local witness lists and overlaps.
+  - declaration: HighDimSteinerSpanners.prop_3_4_three_hop_hypercube_collapse
+    informal: >-
+      High-rate hypercube subsets admit sparse three-hop Steiner paths in a
+      prescribed Hamming-distance window. Under minimum separation this extends
+      to all terminal pairs. Also constructs a sparse three-hop spanner for the
+      full hypercube.
+tags:
+  - steiner-spanners
+  - metric-embeddings
+  - coding-theory
+  - concentration
+msc:
+  - '68R10'
+  - '05C12'
+  - '46B07'

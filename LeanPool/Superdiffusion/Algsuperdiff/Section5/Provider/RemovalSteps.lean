@@ -47,7 +47,8 @@ private theorem integral_mul_indicator_le_sqrt (mu : Measure Omega) [IsFiniteMea
   have hmemZ : MemLp Z (ENNReal.ofReal (2 : ℝ)) mu := by
     simpa only [ENNReal.ofReal_ofNat] using (memLp_two_iff_integrable_sq hZ).2 hZsq
   have hmemI : MemLp (A.indicator fun _ => (1 : ℝ)) (ENNReal.ofReal (2 : ℝ)) mu :=
-    memLp_indicator_const (ENNReal.ofReal (2 : ℝ)) hA 1 (Or.inr (measure_ne_top mu A))
+    memLp_indicator_const (ENNReal.ofReal (2 : ℝ)) hA.nullMeasurableSet 1
+      (Or.inr (measure_ne_top mu A))
   have hI0 : 0 ≤ᵐ[mu] A.indicator fun _ => (1 : ℝ) :=
     Filter.Eventually.of_forall fun omega => Set.indicator_nonneg (fun _ _ => zero_le_one) omega
   have h := integral_mul_le_Lp_mul_Lq_of_nonneg Real.HolderConjugate.two_two

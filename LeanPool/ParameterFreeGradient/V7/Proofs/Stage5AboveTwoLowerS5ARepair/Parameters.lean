@@ -30,7 +30,7 @@ lemma one_lt_repairTheta {p : ℝ} {d : ℕ} (hp : 2 < p) (hd : 2 ≤ d) :
   have hr := Stage5AboveTwoLower.two_lt_kernelR0 hp hd
   have hfrac : 0 < (Stage5AboveTwoLower.kernelR0 p d - 2) /
       (100 * Stage5AboveTwoLower.kernelR0 p d) := by positivity
-  linarith
+  linarith only [hfrac]
 
 lemma repairTheta_lt_101_div_100 {p : ℝ} {d : ℕ}
     (hp : 2 < p) (hd : 2 ≤ d) :
@@ -41,8 +41,8 @@ lemma repairTheta_lt_101_div_100 {p : ℝ} {d : ℕ}
   have hfrac : (Stage5AboveTwoLower.kernelR0 p d - 2) /
       (100 * Stage5AboveTwoLower.kernelR0 p d) < 1 / 100 := by
     rw [div_lt_iff₀ hden]
-    nlinarith
-  linarith
+    linarith only
+  linarith only [hfrac]
 
 lemma two_mul_repairTheta_lt_kernelR0 {p : ℝ} {d : ℕ}
     (hp : 2 < p) (hd : 2 ≤ d) :
@@ -54,8 +54,8 @@ lemma two_mul_repairTheta_lt_kernelR0 {p : ℝ} {d : ℕ}
       (50 * Stage5AboveTwoLower.kernelR0 p d) <
         Stage5AboveTwoLower.kernelR0 p d - 2 := by
     rw [div_lt_iff₀ hden]
-    nlinarith [mul_pos (sub_pos.mpr hr)
-      (by nlinarith : 0 < 50 * Stage5AboveTwoLower.kernelR0 p d - 1)]
+    linarith only [hr, mul_pos (sub_pos.mpr hr)
+      (by linarith only [hr] : 0 < 50 * Stage5AboveTwoLower.kernelR0 p d - 1)]
   have hid :
       2 * (1 + (Stage5AboveTwoLower.kernelR0 p d - 2) /
         (100 * Stage5AboveTwoLower.kernelR0 p d)) =
@@ -64,7 +64,7 @@ lemma two_mul_repairTheta_lt_kernelR0 {p : ℝ} {d : ℕ}
     field_simp [ne_of_gt hr]
     ring
   rw [hid]
-  linarith
+  linarith only [hsmall]
 
 lemma repair_hessian_coefficient_lt_101_div_25_mul_r0 {p : ℝ} {d : ℕ}
     (hp : 2 < p) (hd : 2 ≤ d) :
@@ -72,9 +72,9 @@ lemma repair_hessian_coefficient_lt_101_div_25_mul_r0 {p : ℝ} {d : ℕ}
       (101 / 25) * Stage5AboveTwoLower.kernelR0 p d := by
   have hr := Stage5AboveTwoLower.two_lt_kernelR0 hp hd
   have ht := repairTheta_lt_101_div_100 hp hd
-  have hmul := mul_lt_mul_of_pos_right ht (sub_pos.mpr (by linarith :
+  have hmul := mul_lt_mul_of_pos_right ht (sub_pos.mpr (by linarith only [hr] :
     1 < Stage5AboveTwoLower.kernelR0 p d))
-  nlinarith
+  linarith only [hmul]
 
 lemma repair_parameter_package {p : ℝ} {d : ℕ} (hp : 2 < p) (hd : 2 ≤ d) :
     Stage5AboveTwoLower.kernelR0 p d = min p (3 * Real.log d) ∧

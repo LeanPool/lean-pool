@@ -7,6 +7,7 @@ Authors: Scott Armstrong
 module
 
 public import LeanPool.EscauriazaSereginSverak.PartV.HeatEntropyH1
+public import Mathlib.Analysis.Calculus.Deriv.Prod
 
 /-!
 # Heat Entropy Time

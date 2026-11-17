@@ -104,7 +104,7 @@ private theorem lintegral_rpow_sixWay {Omega : Type*} [MeasurableSpace Omega]
     {mu : Measure Omega} {q : ℝ} (hq : 1 ≤ q) (T1 T2 T3 : Omega → ℝ) (N : Omega → Omega)
     (hN : ∀ F : Omega → ℝ≥0∞, AEMeasurable F mu →
       (∫⁻ omega, F (N omega) ∂mu) = ∫⁻ omega, F omega ∂mu)
-    (hNq : Measure.QuasiMeasurePreserving N mu mu)
+    (hNq : QuasiMeasurePreserving N mu mu)
     (hm1 : AEMeasurable T1 mu) (hm2 : AEMeasurable T2 mu) (hm3 : AEMeasurable T3 mu)
     {R1 R2 R3 : ℝ} (hR1 : 0 ≤ R1) (hR2 : 0 ≤ R2) (hR3 : 0 ≤ R3)
     (h1 : (∫⁻ omega, ENNReal.ofReal (T1 omega) ^ q ∂mu) ≤ ENNReal.ofReal R1 ^ q)

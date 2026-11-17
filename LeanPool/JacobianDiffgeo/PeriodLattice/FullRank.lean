@@ -11,6 +11,7 @@ import LeanPool.JacobianDiffgeo.PeriodLattice.Nondegeneracy
 import Mathlib.CategoryTheory.Category.Init
 import Mathlib.Combinatorics.Matroid.Init
 import Mathlib.LinearAlgebra.Complex.FiniteDimensional
+import Mathlib.LinearAlgebra.Dual.Lemmas
 import Mathlib.MeasureTheory.Covering.Besicovitch
 
 /-!

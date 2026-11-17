@@ -9,7 +9,15 @@ module
 public import LeanPool.BeyondBethe.BeyondBethe.Capacity
 public import LeanPool.BeyondBethe.BeyondBethe.Transfer
 public import Mathlib.Analysis.Convex.SpecificFunctions.Basic
-public import Mathlib.Tactic
+import Mathlib.Tactic.Convert -- shake: keep
+import Mathlib.Tactic.Ext -- shake: keep
+import Mathlib.Tactic.FieldSimp -- shake: keep
+import Mathlib.Tactic.Linarith -- shake: keep
+import Mathlib.Tactic.NormNum -- shake: keep
+import Mathlib.Tactic.Positivity -- shake: keep
+import Mathlib.Tactic.Ring -- shake: keep
+import Mathlib.Tactic.SimpRw -- shake: keep
+import Mathlib.Tactic.Tauto -- shake: keep
 
 /-! # Gain -/
 

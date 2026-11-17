@@ -6,6 +6,8 @@ Authors: Arseniy Akopyan
 module
 
 
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Positivity.Finset
 public import LeanPool.NandakumarRamanaRao.NRR.BodySpace
 public import LeanPool.NandakumarRamanaRao.NRR.EMP.VariableBody
 

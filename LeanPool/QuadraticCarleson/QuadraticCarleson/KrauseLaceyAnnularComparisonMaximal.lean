@@ -50,7 +50,7 @@ def finiteAnnularComparisonMaxOperator (lam : ℝ) (s : Finset PositiveSmoothRad
     (lam : ℝ) (s : Finset PositiveSmoothRadius) (f : L0Infinity) (x : ℝ) :
     ‖finiteAnnularComparisonMaxOperator lam s f x‖ =
       (finiteAnnularComparisonMaxNNNorm lam s f x : ℝ) := by
-  simp [finiteAnnularComparisonMaxOperator]
+  simp only [finiteAnnularComparisonMaxOperator, Complex.norm_real, Real.norm_eq_abs, NNReal.abs_eq]
 
 @[simp] theorem enorm_finiteAnnularComparisonMaxOperator
     (lam : ℝ) (s : Finset PositiveSmoothRadius) (f : L0Infinity) (x : ℝ) :
@@ -84,8 +84,8 @@ theorem norm_finiteAnnularComparisonMax_le_boundary
   have h := enorm_finiteAnnularComparisonMax_le_maximal lam s f x
   rw [← enorm_centeredHardyLittlewoodBoundaryOperator] at h
   apply (ENNReal.ofReal_le_ofReal_iff
-    (mul_nonneg (by norm_num : (0 : ℝ) ≤ 24) (norm_nonneg _))).mp
-  simpa only [ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 24),
+    (mul_nonneg (by norm_num1 : (0 : ℝ) ≤ 24) (norm_nonneg _))).mp
+  simpa only [ENNReal.ofReal_mul (by norm_num1 : (0 : ℝ) ≤ 24),
     ENNReal.ofReal_ofNat, ofReal_norm] using h
 
 theorem measurable_finiteAnnularComparisonMaxOperator
@@ -103,7 +103,7 @@ theorem measurable_finiteAnnularComparisonMaxOperator
   have hmax : Measurable (fun x ↦ (finiteAnnularComparisonMaxNNNorm lam s f x : ℝ)) := by
     unfold finiteAnnularComparisonMaxNNNorm
     induction s using Finset.induction_on with
-    | empty => simp
+    | empty => simp only [Finset.sup_empty, bot_eq_zero', NNReal.coe_zero, measurable_const]
     | @insert ρ s hρ ih =>
         simp only [Finset.sup_insert, NNReal.coe_max, coe_nnnorm]
         exact ((hmeas _).sub (hmeas _)).norm.max ih
@@ -154,7 +154,7 @@ theorem hasSparseOnePBound_finiteAnnularComparisonMaxOperator
   refine ⟨R, hR, ?_⟩
   have hc := ENNReal.ofReal_le_ofReal
     (norm_pairing_finiteAnnularComparisonMax_le_boundary lam s f g)
-  rw [ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 24), ENNReal.ofReal_ofNat] at hc
+  rw [ENNReal.ofReal_mul (by norm_num1 : (0 : ℝ) ≤ 24), ENNReal.ofReal_ofNat] at hc
   calc
     _ ≤ 24 * ENNReal.ofReal
         ‖operatorPairing centeredHardyLittlewoodBoundaryOperator f (normInput g)‖ := hc

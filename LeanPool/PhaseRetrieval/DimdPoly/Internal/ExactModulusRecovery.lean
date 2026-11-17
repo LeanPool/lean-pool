@@ -10,6 +10,7 @@ public import LeanPool.PhaseRetrieval.DimdPoly.Internal.ImportedAnalyticInputs
 public import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 import LeanPool.PhaseRetrieval.DimdPoly.Internal.TensorBasis
 import Mathlib.Analysis.Calculus.Deriv.Star
+import Mathlib.Analysis.Calculus.ParametricIntegral
 import Mathlib.Analysis.Fourier.LpSpace
 import Mathlib.MeasureTheory.Integral.Gamma
 import Mathlib.Probability.Distributions.Gaussian.Real
@@ -128,15 +129,13 @@ theorem realHermiteGenerating_hasDerivAt (t : ℝ) (u : ℂ) :
       simpa [id, two_mul] using
         HasDerivAt.div_const ((hasDerivAt_id u).fun_pow 2) 2
     convert ((hlin.add_const (-(((t : ℂ) ^ 2) / 2))).sub hquad) using 1
-    first
-    | rfl
-    | (funext v; simp only [Pi.sub_apply]; ring_nf)
+    funext v
+    simp only [Pi.sub_apply]
+    ring_nf
   unfold realHermiteGenerating
   convert HasDerivAt.const_mul
     (((Real.pi ^ (-(1 / 4 : ℝ)) : ℝ) : ℂ)) hpoly.cexp using 1
-  first
-  | rfl
-  | ring
+  ring
 
 theorem realHermiteGenerating_integral_mul (u w : ℂ) :
     (∫ t : ℝ, realHermiteGenerating t u * realHermiteGenerating t w) =
@@ -2879,7 +2878,7 @@ theorem realHermiteTensorRep_memLp_of_realHermite1D_memLp
             (fun y : Fin d -> ℝ => realHermite1D (alpha q) (y q)) μpi := by
       intro q
       have hqmp :
-          MeasureTheory.Measure.QuasiMeasurePreserving (Function.eval q) μpi
+          MeasureTheory.QuasiMeasurePreserving (Function.eval q) μpi
             (volume : Measure ℝ) := by
         simpa [μpi] using
           (MeasureTheory.Measure.quasiMeasurePreserving_eval

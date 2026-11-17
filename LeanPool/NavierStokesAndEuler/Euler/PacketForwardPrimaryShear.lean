@@ -7,6 +7,7 @@ Authors: OpenAI
 module
 
 public import LeanPool.NavierStokesAndEuler.Euler.PacketForwardFactorization
+import Mathlib.Analysis.Calculus.Deriv.Prod
 public import LeanPool.NavierStokesAndEuler.Euler.PacketPrimaryGlobalShear
 public import LeanPool.NavierStokesAndEuler.Euler.PacketGraphHessian
 import LeanPool.NavierStokesAndEuler.Euler.PacketContinuousInverse

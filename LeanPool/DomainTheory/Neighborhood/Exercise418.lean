@@ -6,12 +6,6 @@ Authors: Catskills Research Company
 module
 
 public import LeanPool.DomainTheory.Neighborhood.Example43
-import Mathlib.Data.Finset.Attr
-import Mathlib.Data.Rat.Cast.Order
-import Mathlib.Tactic.NormNum.Abs
-import Mathlib.Tactic.NormNum.DivMod
-import Mathlib.Tactic.NormNum.OfScientific
-import Mathlib.Tactic.NormNum.Pow
 
 /-!
 # Exercise 4.18 (Scott 1981, PRG-19, Lecture IV)
@@ -60,7 +54,7 @@ theorem not_N_mem_empty : ¬ N.mem (∅ : Set ℕ) := by
 /-- Distinct singletons are disjoint. -/
 private theorem singleton_inter_eq_empty {n m : ℕ} (hmn : m ≠ n) :
     ({n} : Set ℕ) ∩ {m} = ∅ := by
-  simp_all
+  exact Set.singleton_inter_eq_empty.mpr (id (Ne.symm hmn))
 
 /-- **Exercise 4.18 (Scott 1981, PRG-19).** Element classification: every element
 of `|N|` is either
@@ -103,7 +97,7 @@ n = m`. -/
 theorem natElem_injective {n m : ℕ} (h : natElem n = natElem m) : n = m := by
   have hmem : (natElem m).mem {n} := h ▸ (mem_natElem_iff.mpr (Or.inr rfl))
   rw [mem_natElem_iff] at hmem
-  simp_all
+  simp_all only [Set.singleton_ne_univ, Set.singleton_eq_singleton_iff, false_or]
 
 /-- **Exercise 4.18 (Scott 1981, PRG-19).** `succ` is injective on the total
 elements. -/

@@ -204,7 +204,7 @@ theorem prodSigma_bfaSigmaTwo_eq_bfaTau {sigma gam b : ℝ} (hsigma : sigma < 1)
   have hp0 : bfaPower gam b ≠ 0 := by linarith
   rw [bfaSigmaTwo, bfaTau]
   field_simp
-  rw [sub_add_cancel, div_self hp0]
+  rw [sub_add_cancel]
 
 /-- The truncated prefactor, `3^{gamma hsep} 1_{gamma hsep > 3^{-4}}`. -/
 def slstarCollapseTerm (M : ABKModel d) (m : ℤ) (E b gam : ℝ)

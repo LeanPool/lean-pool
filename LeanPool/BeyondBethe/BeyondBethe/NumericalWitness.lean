@@ -8,7 +8,10 @@ module
 
 public import LeanPool.BeyondBethe.BeyondBethe.CleanGain
 public import LeanPool.BeyondBethe.BeyondBethe.NumericalCapacity
-public import Mathlib.Tactic
+import Mathlib.Tactic.Linarith -- shake: keep
+import Mathlib.Tactic.NormNum -- shake: keep
+import Mathlib.Tactic.Ring -- shake: keep
+import Mathlib.Tactic.SimpRw -- shake: keep
 
 /-! # Numerical Witness -/
 

@@ -5,6 +5,7 @@ Authors: Juan Pablo Traverso Gianini
 -/
 module
 
+public import Mathlib.Combinatorics.Hall.Basic
 public import Mathlib.Combinatorics.SimpleGraph.Hall
 public import Mathlib.Combinatorics.SimpleGraph.VertexCover
 public import Mathlib.Data.Finset.Max

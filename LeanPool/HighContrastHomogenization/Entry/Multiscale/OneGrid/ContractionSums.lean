@@ -444,7 +444,7 @@ theorem meanHistory_transport_le (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
           mul_le_mul_of_nonneg_left hs (mul_nonneg (hw _) (sub_nonneg.mpr he))
         _ ≤ B * (e - 1) := by
           have h := mul_le_mul_of_nonneg_right hwL (mul_nonneg (sub_nonneg.mpr he) hB.le)
-          convert h using 1 <;> first | rfl | ring
+          convert h using 1 <;> ring
     exact hterms.trans (add_le_add le_rfl htail)
   exact hmean
 

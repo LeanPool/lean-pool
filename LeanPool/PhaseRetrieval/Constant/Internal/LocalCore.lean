@@ -17,6 +17,7 @@ public import LeanPool.PhaseRetrieval.Constant.Internal.Definitions
 import LeanPool.PhaseRetrieval.Constant.Internal.LipschitzRho
 import LeanPool.PhaseRetrieval.Constant.Internal.MainTheorem
 import Mathlib.Analysis.SpecialFunctions.Gaussian.GaussianIntegral
+import Mathlib.Analysis.SpecialFunctions.PolarCoord
 import Mathlib.MeasureTheory.Integral.Gamma
 import Mathlib.Tactic.NormNum.Parity
 

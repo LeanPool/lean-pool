@@ -8,6 +8,8 @@ module
 
 public import LeanPool.NandakumarRamanaRao.NRR.EMP.VariableBody.Children
 public import LeanPool.NandakumarRamanaRao.NRR.EMP.PartitionFromPowerDiagram
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # `NRR.EMP.VariableBody.Partition` — the variable-body equal-area power partition

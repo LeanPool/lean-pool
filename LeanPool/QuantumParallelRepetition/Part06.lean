@@ -15,6 +15,11 @@ noncomputable section
 
 namespace QuantumParallelRepetition
 
+section
+
+-- Do not expand the context-selection branches during later elaboration.
+attribute [local irreducible] exactReverseBobContextAt exactReverseAliceContextAt
+
 open scoped ComplexOrder Matrix BigOperators InnerProductSpace
 open Complex Matrix Finset
 
@@ -119,58 +124,15 @@ theorem exactAliceQuestionFilter_complement_posSemidef
     (1 - exactAliceQuestionFilter
       G n S D seed history answer x).PosSemidef := by
   classical
-  let w : ExactFullQuestion X Y n → ℝ := fun q =>
-    if exactRevealCode D seed q = history ∧
-      q.1 seed.coordinate.val = x then
-      exactPriorQuestionWeight G n q /
-        exactAliceQuestionMass G n D seed history x
-    else 0
-  let E : ExactFullQuestion X Y n →
-      Matrix S.Alice S.Alice ℂ := fun q =>
-    conditionedAliceEffect G n S D answer q.1
-  have weights_nonnegative (q : ExactFullQuestion X Y n) :
-      0 ≤ w q := by
-    dsimp [w]
-    split
-    · exact div_nonneg
-        (exactPriorQuestionWeight_nonneg G n q)
-        (exactAliceQuestionMass_nonneg G n D seed history x)
-    · exact le_rfl
-  have weights_sum : (∑ q, w q) ≤ 1 := by
-    change
-      (∑ q : ExactFullQuestion X Y n,
-        if exactRevealCode D seed q = history ∧
-          q.1 seed.coordinate.val = x then
-          exactPriorQuestionWeight G n q /
-            exactAliceQuestionMass G n D seed history x
-        else 0) ≤ 1
-    rw [exactAliceQuestionConditionalWeight_sum
-      G n D seed history x]
+  unfold exactAliceQuestionFilter
+  apply posSemidef_conditional_sum_complement
+  · intro q
+    exact div_nonneg (exactPriorQuestionWeight_nonneg G n q)
+      (exactAliceQuestionMass_nonneg G n D seed history x)
+  · rw [exactAliceQuestionConditionalWeight_sum G n D seed history x]
     split <;> norm_num
-  have filter_eq :
-      exactAliceQuestionFilter
-          G n S D seed history answer x =
-        ∑ q, w q • E q := by
-    unfold exactAliceQuestionFilter
-    apply Finset.sum_congr rfl
-    intro q _
-    dsimp [w, E]
-    split <;> simp only [zero_smul]
-  have split :
-      1 - (∑ q, w q • E q) =
-        (1 - (∑ q, w q)) •
-            (1 : Matrix S.Alice S.Alice ℂ) +
-          ∑ q, w q • (1 - E q) := by
-    simp_rw [smul_sub]
-    rw [Finset.sum_sub_distrib, ← Finset.sum_smul]
-    module
-  rw [filter_eq, split]
-  apply Matrix.PosSemidef.add
-  · exact Matrix.PosSemidef.one.smul (sub_nonneg.mpr weights_sum)
-  · apply Matrix.posSemidef_sum Finset.univ
-    intro q _
-    exact (conditionedAliceEffect_complement_positive
-      G n S D answer q.1).smul (weights_nonnegative q)
+  · intro q
+    exact conditionedAliceEffect_complement_positive G n S D answer q.1
 
 theorem exactBobQuestionFilter_complement_posSemidef
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
@@ -182,58 +144,15 @@ theorem exactBobQuestionFilter_complement_posSemidef
     (1 - exactBobQuestionFilter
       G n S D seed history answer y).PosSemidef := by
   classical
-  let w : ExactFullQuestion X Y n → ℝ := fun q =>
-    if exactRevealCode D seed q = history ∧
-      q.2 seed.coordinate.val = y then
-      exactPriorQuestionWeight G n q /
-        exactBobQuestionMass G n D seed history y
-    else 0
-  let E : ExactFullQuestion X Y n →
-      Matrix S.Bob S.Bob ℂ := fun q =>
-    conditionedBobEffect G n S D answer q.2
-  have weights_nonnegative (q : ExactFullQuestion X Y n) :
-      0 ≤ w q := by
-    dsimp [w]
-    split
-    · exact div_nonneg
-        (exactPriorQuestionWeight_nonneg G n q)
-        (exactBobQuestionMass_nonneg G n D seed history y)
-    · exact le_rfl
-  have weights_sum : (∑ q, w q) ≤ 1 := by
-    change
-      (∑ q : ExactFullQuestion X Y n,
-        if exactRevealCode D seed q = history ∧
-          q.2 seed.coordinate.val = y then
-          exactPriorQuestionWeight G n q /
-            exactBobQuestionMass G n D seed history y
-        else 0) ≤ 1
-    rw [exactBobQuestionConditionalWeight_sum
-      G n D seed history y]
+  unfold exactBobQuestionFilter
+  apply posSemidef_conditional_sum_complement
+  · intro q
+    exact div_nonneg (exactPriorQuestionWeight_nonneg G n q)
+      (exactBobQuestionMass_nonneg G n D seed history y)
+  · rw [exactBobQuestionConditionalWeight_sum G n D seed history y]
     split <;> norm_num
-  have filter_eq :
-      exactBobQuestionFilter
-          G n S D seed history answer y =
-        ∑ q, w q • E q := by
-    unfold exactBobQuestionFilter
-    apply Finset.sum_congr rfl
-    intro q _
-    dsimp [w, E]
-    split <;> simp only [zero_smul]
-  have split :
-      1 - (∑ q, w q • E q) =
-        (1 - (∑ q, w q)) •
-            (1 : Matrix S.Bob S.Bob ℂ) +
-          ∑ q, w q • (1 - E q) := by
-    simp_rw [smul_sub]
-    rw [Finset.sum_sub_distrib, ← Finset.sum_smul]
-    module
-  rw [filter_eq, split]
-  apply Matrix.PosSemidef.add
-  · exact Matrix.PosSemidef.one.smul (sub_nonneg.mpr weights_sum)
-  · apply Matrix.posSemidef_sum Finset.univ
-    intro q _
-    exact (conditionedBobEffect_complement_positive
-      G n S D answer q.2).smul (weights_nonnegative q)
+  · intro q
+    exact conditionedBobEffect_complement_positive G n S D answer q.2
 
 theorem exactAliceMeanFilter_complement_posSemidef
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
@@ -391,8 +310,7 @@ theorem exactFairAliceHistoryHighOperatorPotential_nonpos
               G n S D r.seed r.history r.aliceAnswer x))
           (exactBobQuestionFilter
             G n S D r.seed r.history r.bobAnswer y) := by
-              simp only [map_sum, map_smul, LinearMap.sum_apply,
-                LinearMap.smul_apply, smul_eq_mul]
+              simp only [LinearMap.map_sum₂, LinearMap.map_smul₂, smul_eq_mul]
     _ ≤ 0 := by
       apply Finset.sum_nonpos
       intro x _
@@ -436,7 +354,7 @@ theorem exactFairBobHistoryHighOperatorPotential_nonpos
           (cfc (fun z : ℝ => z * Real.log z)
             (exactBobQuestionFilter
               G n S D r.seed r.history r.bobAnswer y)) := by
-              simp only [map_sum, map_smul, smul_eq_mul]
+              simp only [map_sum, LinearMap.map_smul, smul_eq_mul]
     _ ≤ 0 := by
       apply Finset.sum_nonpos
       intro y _
@@ -1836,8 +1754,7 @@ theorem exactFairAliceHistoryHighOperatorPotential_eq_joint
             G n S D r.seed r.history r.bobAnswer y) := by
   classical
   unfold exactFairAliceHistoryHighOperatorPotential
-  simp only [map_sum, map_smul, LinearMap.sum_apply,
-    LinearMap.smul_apply, smul_eq_mul]
+  simp only [LinearMap.map_sum₂, LinearMap.map_smul₂, smul_eq_mul]
   calc
     (∑ y : Y, G.marginalY y *
       (∑ x : X, G.conditionalXGivenY y x *
@@ -1889,7 +1806,7 @@ theorem exactFairBobHistoryHighOperatorPotential_eq_joint
               G n S D r.seed r.history r.bobAnswer y)) := by
   classical
   unfold exactFairBobHistoryHighOperatorPotential
-  simp only [map_sum, map_smul, smul_eq_mul]
+  simp only [map_sum, LinearMap.map_smul, smul_eq_mul]
   apply Finset.sum_congr rfl
   intro x _
   rw [Finset.mul_sum]
@@ -3243,12 +3160,13 @@ private theorem exactReverseAlicePrefixXMask_succ
       insert (context.sideRank.symm marker).val.val
         (exactReverseAlicePrefixXMask D side context
           marker.val) := by
-  classical
-  unfold exactReverseAlicePrefixXMask
-  rw [exactReverseContextQuestionPrefix_succ]
-  ext j
-  simp only [Finset.mem_union, Finset.mem_insert]
-  tauto
+  with_reducible_and_instances
+    classical
+    unfold exactReverseAlicePrefixXMask
+    rw [exactReverseContextQuestionPrefix_succ]
+    ext j
+    simp only [Finset.mem_union, Finset.mem_insert]
+    tauto
 
 private theorem exactReverseBobPrefixYMask_succ
     {n : ℕ} (D : Finset (Fin n))
@@ -3261,12 +3179,13 @@ private theorem exactReverseBobPrefixYMask_succ
       insert (context.sideRank.symm marker).val.val
         (exactReverseBobPrefixYMask D side context
           marker.val) := by
-  classical
-  unfold exactReverseBobPrefixYMask
-  rw [exactReverseContextQuestionPrefix_succ]
-  ext j
-  simp only [Finset.mem_union, Finset.mem_insert]
-  tauto
+  with_reducible_and_instances
+    classical
+    unfold exactReverseBobPrefixYMask
+    rw [exactReverseContextQuestionPrefix_succ]
+    ext j
+    simp only [Finset.mem_union, Finset.mem_insert]
+    tauto
 
 private theorem exactReverseAliceLowQuestionPotential_eq_alignedPrefix
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
@@ -4264,8 +4183,7 @@ theorem exactFairAliceMeanBorn_eq_conditional
           (exactBobQuestionFilter
             G n S D r.seed r.history r.bobAnswer y) := by
   unfold exactAliceMeanFilter
-  simp only [map_sum, map_smul, LinearMap.sum_apply,
-    LinearMap.smul_apply, smul_eq_mul]
+  simp only [LinearMap.map_sum₂, LinearMap.map_smul₂, smul_eq_mul]
 
 theorem exactFairBobMeanBorn_eq_conditional
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
@@ -4284,7 +4202,7 @@ theorem exactFairBobMeanBorn_eq_conditional
           (exactBobQuestionFilter
             G n S D r.seed r.history r.bobAnswer y) := by
   unfold exactBobMeanFilter
-  simp only [map_sum, map_smul, smul_eq_mul]
+  simp only [map_sum, LinearMap.map_smul, smul_eq_mul]
 
 theorem exactFairAliceMeanBornMass_eq_fullOutcome_sum
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
@@ -5242,8 +5160,7 @@ private theorem exists_source_rounding_divisor
     lt_of_le_of_lt (le_max_right _ _) hq
   have hsmall : C / (q : ℝ) < δ ^ 2 := by
     apply (div_lt_iff₀ hqreal).mpr
-    have hcross := (div_lt_iff₀ hsquare).mp hthreshold
-    linarith only [hcross]
+    exact (div_lt_iff₀' hsquare).mp hthreshold
   refine ⟨q, hqnat, ?_⟩
   calc
     8 * K *
@@ -6670,6 +6587,32 @@ section
 open WithLp
 open scoped BigOperators ComplexOrder Kronecker MatrixOrder
 
+/-- Contract the phase and work controls before applying a pair of system matrices. -/
+theorem controlledPairActionSum
+    {phase system work : Type*} [Fintype phase] [Fintype system] [Fintype work]
+    [DecidableEq phase] [DecidableEq work]
+    (U V : Matrix system system ℂ)
+    (shared : phase → phase → ℂ) (state : system → system → ℂ)
+    (residual : work → work → ℂ)
+    (φ ψ : phase) (i j : system) (a b : work) :
+    (∑ χ : phase, ∑ x : system, ∑ k : work,
+      ∑ υ : phase, ∑ y : system, ∑ l : work,
+        (if a = k then if φ = χ then U i x else 0 else 0) *
+          (if b = l then if ψ = υ then V j y else 0 else 0) *
+          (shared χ υ * state x y * residual k l)) =
+      shared φ ψ * (∑ x : system, ∑ y : system, U i x * V j y * state x y) *
+        residual a b := by
+  classical
+  simp only [mul_ite, ite_mul, zero_mul, mul_zero, sum_ite_irrel, sum_ite_eq,
+    mem_univ, ↓reduceIte, sum_const_zero]
+  rw [Finset.mul_sum, Finset.sum_mul]
+  apply Finset.sum_congr rfl
+  intro x _
+  rw [Finset.mul_sum, Finset.sum_mul]
+  apply Finset.sum_congr rfl
+  intro y _
+  ac_rfl
+
 theorem dSVDensityRationalPublicLogPhasePhysicalAlignedLocalAction_apply
     (B N d L m : ℕ)
     (U V : Matrix.unitaryGroup
@@ -6769,12 +6712,8 @@ theorem dSVDensityRationalPublicLogPhasePhysicalAlignedLocalAction_apply
           (D : Matrix (Fin (d * n)) (Fin (d * n)) ℂ))
           (e ((φ, a), i), e ((ψ, b), j)) (e q.1, e q.2) *
           source (e q.1, e q.2) :=
-      (Equiv.sum_comp (Equiv.prodCongr e e)
-        (fun q : Fin (d * n) × Fin (d * n) =>
-          ((A : Matrix (Fin (d * n)) (Fin (d * n)) ℂ) ⊗ₖ
-            (D : Matrix (Fin (d * n)) (Fin (d * n)) ℂ))
-            (e ((φ, a), i), e ((ψ, b), j)) q *
-            source q)).symm
+      (Finset.sum_equiv (Equiv.prodCongr e e)
+        (fun _ => by simp only [mem_univ]) (fun _ _ => rfl)).symm
     _ = _ := by
       simp only [Fintype.sum_prod_type, Matrix.kroneckerMap_apply]
       dsimp only [P, DSVDensityRationalPublicLogPhaseHistoryLocalIndex]
@@ -6791,17 +6730,8 @@ theorem dSVDensityRationalPublicLogPhasePhysicalAlignedLocalAction_apply
                       (D : Matrix (Fin (d * n)) (Fin (d * n)) ℂ)
                         (e ((ψ, b), j)) (e ((υ, y), l)) *
                       source (e ((χ, x), k), e ((υ, y), l))) = _
-      simp_rw [left, right, resource]
-      simp only [mul_ite, ite_mul, zero_mul, mul_zero, ofReal_inv, mul_assoc, sum_ite_irrel,
-        sum_ite_eq, mem_univ, ↓reduceIte, sum_const_zero, sum_mul]
-      split_ifs
-      · simp_rw [Finset.mul_sum]
-        apply Finset.sum_congr rfl
-        intro x _
-        apply Finset.sum_congr rfl
-        intro y _
-        ac_rfl
-      · rfl
+      simp only [left, right, resource]
+      rw [controlledPairActionSum]
 
 /--
 The DSV density rational heterogeneous target first spectral alice construction used in the
@@ -7145,6 +7075,8 @@ theorem
   apply Finset.sum_congr rfl
   intro j _
   ring
+
+end
 
 end
 

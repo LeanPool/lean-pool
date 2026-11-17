@@ -5,6 +5,7 @@ Authors: Luka Opravš
 -/
 module
 
+public import Mathlib.Algebra.Group.TypeTags.Finite
 public import Mathlib.GroupTheory.SpecificGroups.Dihedral
 public import LeanPool.PolyaEnumerationTheorem.Basic
 

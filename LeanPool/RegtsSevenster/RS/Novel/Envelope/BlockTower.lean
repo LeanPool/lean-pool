@@ -115,10 +115,9 @@ theorem blockRep_of (n k : ℕ) (σ : Equiv.Perm (Fin k)) :
 noncomputable def blockTensorEnd {a b : ℕ}
     (u : skeinEnd f a) (v : skeinEnd f b) :
     skeinEnd f (a + b) :=
-  (MonoidalCategoryStruct.tensorHom
+  End.of (MonoidalCategoryStruct.tensorHom
       (X₁ := SkeinObj.mk a) (Y₁ := SkeinObj.mk a)
-      (X₂ := SkeinObj.mk b) (Y₂ := SkeinObj.mk b) u v :
-    End (SkeinObj.mk (a + b)))
+      (X₂ := SkeinObj.mk b) (Y₂ := SkeinObj.mk b) u.asHom v.asHom)
 
 /-- The block-diagonal tensor power: `k` copies of an `n`-strand
 endomorphism.  The index arithmetic is definitional:

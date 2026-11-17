@@ -652,12 +652,6 @@ macro "definability" (config)? : tactic =>
     aesop  (config := { terminal := true })
        (rule_sets := [$(Lean.mkIdent `Definability):ident]))
 
-/-- The tactic Definability? construction in `FFL.FirstOrder.Language`. -/
-macro "definability?" (config)? : tactic =>
-  `(tactic|
-    aesop?  (config := { terminal := true })
-       (rule_sets := [$(Lean.mkIdent `Definability):ident]))
-
 end aesop
 
 end Language

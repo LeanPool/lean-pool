@@ -6,7 +6,9 @@ Authors: OpenAI, Dean Cureton
 
 module
 
-public import LeanPool.GapCVP.Part11
+public import LeanPool.GapCVP.Part11C
+import Mathlib.Algebra.Order.Floor.Semifield
+import Mathlib.CategoryTheory.Category.Init
 
 /-! # GapCVP proof, part 12 -/
 

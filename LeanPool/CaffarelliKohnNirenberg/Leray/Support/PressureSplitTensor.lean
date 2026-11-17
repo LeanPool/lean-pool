@@ -121,7 +121,7 @@ theorem pressureSplitTensor_memLp
   have hglobal : MemLp
       (pressureSplitSourceDomain.indicator (fun z : ParabolicPoint => u z i * u z j))
       (3 / 2 : ℝ≥0∞) (volume : Measure ParabolicPoint) :=
-    (memLp_indicator_iff_restrict hdomain).2 hprod
+    (memLp_indicator_iff_restrict hdomain.nullMeasurableSet).2 hprod
   have hglobalProd := hglobal.comp_measurePreserving
     parabolicHomeomorphSymm_measurePreserving
   rw [hcoeff]

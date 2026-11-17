@@ -6,8 +6,12 @@ Authors: Arseniy Akopyan
 module
 
 
+public import Mathlib.GroupTheory.Perm.Sign
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.AffineBarycentricSubdivision
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.CupProduct
+public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.AlexanderWhitneyFaceMaps
+import Mathlib.Tactic.Basify
+import Mathlib.Tactic.Measurability.Init
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.AlexanderWhitneyChainMap
 
 /-!

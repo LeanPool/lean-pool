@@ -8,6 +8,7 @@ module  -- shake: keep-all --deprecated_module: ignore
 -- Generated project imports; run `lake exe mk_all`.
 public import LeanPool.DensityHalesJewett
 public import LeanPool.DensityHalesJewett.DensityHalesJewett
+public import LeanPool.DensityHalesJewett.DensityHalesJewett.Ackermann
 public import LeanPool.DensityHalesJewett.DensityHalesJewett.Canonization
 public import LeanPool.DensityHalesJewett.DensityHalesJewett.DensityIncrement
 public import LeanPool.DensityHalesJewett.DensityHalesJewett.DensityIncrement.CorrelatedFibers
@@ -15,6 +16,8 @@ public import LeanPool.DensityHalesJewett.DensityHalesJewett.DensityIncrement.Pa
 public import LeanPool.DensityHalesJewett.DensityHalesJewett.DensityIncrement.StructuredCorrelation
 public import LeanPool.DensityHalesJewett.DensityHalesJewett.FiniteUnions
 public import LeanPool.DensityHalesJewett.DensityHalesJewett.GrahamRothschild
+public import LeanPool.DensityHalesJewett.DensityHalesJewett.HalesJewett
+public import LeanPool.DensityHalesJewett.DensityHalesJewett.Induction
 public import LeanPool.DensityHalesJewett.DensityHalesJewett.Insensitive
 public import LeanPool.DensityHalesJewett.DensityHalesJewett.Main
 public import LeanPool.DensityHalesJewett.DensityHalesJewett.Subspace

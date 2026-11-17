@@ -140,7 +140,7 @@ def upSet (m : ℕ) : Set ℕ := {k | m ≤ k}
 
 /-- `[0] = ℕ`: the recursion base of 4.13(3). -/
 theorem upSet_zero : upSet 0 = Set.univ := by
-  ext k; simp [upSet]
+  ext k; simp only [upSet, zero_le, Set.ofPred_true, Set.mem_univ]
 
 /-- `[m⁺] = [m]⁺`: the recursion step of 4.13(3). -/
 theorem upSet_succ (m : ℕ) : upSet (m + 1) = succImage (upSet m) := by
@@ -149,7 +149,7 @@ theorem upSet_succ (m : ℕ) : upSet (m + 1) = succImage (upSet m) := by
   constructor
   · intro h
     exact ⟨k - 1, by omega, by omega⟩
-  · simp_all
+  · simp_all only [forall_exists_index, add_le_add_iff_right, implies_true]
 
 /-- **Exercise 4.21 / 4.13(3) (Scott 1981, PRG-19).** `[·] = upSet` is the
 *unique* function with
@@ -181,7 +181,8 @@ def addIso (m : ℕ) : ℕ ≃ {k : ℕ // k ∈ upSet m} where
 theorem addIso_apply (m n : ℕ) : (addIso m n : ℕ) = m + n := rfl
 
 /-- The isomorphism sends `0` to the distinguished element `m` of `[m]`. -/
-theorem addIso_zero (m : ℕ) : (addIso m 0 : ℕ) = m := by simp [addIso]
+theorem addIso_zero (m : ℕ) : (addIso m 0 : ℕ) = m := by simp only [addIso, Equiv.coe_fn_mk,
+  add_zero]
 
 /-- The isomorphism preserves the successor: `addIso m (n⁺) = (addIso m n)⁺`. -/
 theorem addIso_succ (m n : ℕ) : (addIso m (n + 1) : ℕ) = (addIso m n : ℕ) + 1 := by
@@ -207,7 +208,7 @@ theorem mulOp_lfp_eq_multiples (n : ℕ) :
   · -- `lfpSet ⊆ multiples`: the multiples form a pre-fixed point.
     have hpre : mulOp n {k | ∃ i, k = n * i} ⊆ {k | ∃ i, k = n * i} := by
       rintro k (rfl | ⟨m, ⟨i, rfl⟩, rfl⟩)
-      · exact ⟨0, by simp⟩
+      · exact ⟨0, by simp only [mul_zero]⟩
       · exact ⟨i + 1, by ring⟩
     exact lfpSet_subset (mulOp n) hpre
   · -- `multiples ⊆ lfpSet`: each `n * i` is reached by induction on `i`.
@@ -216,7 +217,7 @@ theorem mulOp_lfp_eq_multiples (n : ℕ) :
     rintro k ⟨i, rfl⟩
     induction i with
     | zero =>
-      rw [← hfix]; exact Or.inl (by simp)
+      rw [← hfix]; exact Or.inl (by simp only [mul_zero, Set.mem_singleton_iff])
     | succ j ih =>
       rw [← hfix]
       exact Or.inr ⟨n * j, ih, by ring⟩

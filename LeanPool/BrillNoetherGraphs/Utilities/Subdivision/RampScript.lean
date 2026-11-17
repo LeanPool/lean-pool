@@ -187,7 +187,6 @@ theorem rampSlope_diff (sgn : Fin p → ℤ) (lo : Fin p → ℕ) (t : ℕ)
     rw [rampSlope_zero_t, rampSlope_zero_t,
       ite_eq_right (show ¬ (k = lo edge ∧ 0 < 0) by omega),
       ite_eq_right (show ¬ (k = lo edge + 0 ∧ 0 < 0) by omega)]
-    try ring
   · simp only [rampSlope]
     by_cases h1 : lo edge ≤ k ∧ k < lo edge + t
     · rw [ite_eq_left h1]
@@ -197,15 +196,12 @@ theorem rampSlope_diff (sgn : Fin p → ℤ) (lo : Fin p → ℕ) (t : ℕ)
         try ring
       · rw [ite_eq_right h2, ite_eq_left (show k = lo edge ∧ 0 < t by omega),
           ite_eq_right (show ¬ (k = lo edge + t ∧ 0 < t) by omega)]
-        try ring
     · rw [ite_eq_right h1]
       by_cases h2 : lo edge ≤ k - 1 ∧ k - 1 < lo edge + t
       · rw [ite_eq_left h2, ite_eq_right (show ¬ (k = lo edge ∧ 0 < t) by omega),
           ite_eq_left (show k = lo edge + t ∧ 0 < t by omega)]
-        try ring
       · rw [ite_eq_right h2,
           ite_eq_right (show ¬ (k = lo edge ∧ 0 < t) by omega),
           ite_eq_right (show ¬ (k = lo edge + t ∧ 0 < t) by omega)]
-        try ring
 
 end Utilities.Certificate.SubdivisionRamp

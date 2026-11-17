@@ -124,7 +124,7 @@ private lemma logCosNumer_deriv_nonneg {t : ℝ} (h0 : 0 < t) (h : t < π / 2) :
     Real.sin_nonneg_of_nonneg_of_le_pi h0.le (by linarith [Real.pi_pos])
   have hsl : Real.sin t ≤ t := Real.sin_le h0.le
   have hc1 : Real.cos t ≤ 1 := Real.cos_le_one t
-  have hkey : Real.sin t * Real.cos t ≤ t := by nlinarith
+  have hkey : Real.sin t * Real.cos t ≤ t := by nlinarith only [h0, hc, hsl, hc1]
   have hsplit : t / Real.cos t ^ 2 - Real.sin t / Real.cos t =
       (t - Real.sin t * Real.cos t) / Real.cos t ^ 2 := by
     field_simp
@@ -199,8 +199,8 @@ theorem cos_sqrt_sq_add_sq_le_cos_mul_cos {a b : ℝ} (ha0 : 0 ≤ a)
   set r := Real.sqrt (a ^ 2 + b ^ 2) with hr
   have hrnn : 0 ≤ r := Real.sqrt_nonneg _
   have hrsq : r ^ 2 = a ^ 2 + b ^ 2 := Real.sq_sqrt (by positivity)
-  have har : a ≤ r := by nlinarith
-  have hbr : b ≤ r := by nlinarith
+  have har : a ≤ r := by nlinarith only [hrnn, hrsq]
+  have hbr : b ≤ r := by nlinarith only [hrnn, hrsq]
   have hcosa : 0 ≤ Real.cos a :=
     Real.cos_nonneg_of_mem_Icc ⟨by linarith [Real.pi_pos], ha⟩
   have hcosb : 0 ≤ Real.cos b :=
@@ -279,7 +279,7 @@ theorem sq_le_sq_add_sq_of_cos_eq_cos_mul_cos {ω a b : ℝ} (hω0 : 0 ≤ ω)
     exact arccos_cos_mul_cos_le_sqrt ha0 ha hb0 hb
   have hsq : Real.sqrt (a ^ 2 + b ^ 2) ^ 2 = a ^ 2 + b ^ 2 :=
     Real.sq_sqrt (by positivity)
-  nlinarith [Real.sqrt_nonneg (a ^ 2 + b ^ 2)]
+  nlinarith only [hω0, hle, hsq, Real.sqrt_nonneg (a ^ 2 + b ^ 2)]
 
 /-! ### The exact identity in an inner product space -/
 

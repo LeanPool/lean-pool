@@ -6,10 +6,14 @@ Authors: Arseniy Akopyan
 module
 
 
-public import Mathlib.MeasureTheory.Integral.DominatedConvergence
-public import Mathlib.Tactic
+public import LeanPool.NandakumarRamanaRao.NRR.BodySpace.Topology
 public import LeanPool.NandakumarRamanaRao.NRR.BodySpace.BoundaryNull
 public import LeanPool.NandakumarRamanaRao.NRR.BodySpace.MembershipStability
+import Mathlib.MeasureTheory.Integral.DominatedConvergence
+import Mathlib.Tactic.Basify
+import Mathlib.Tactic.ENatToNat
+import Mathlib.Tactic.Polynomial.Basic
+import Mathlib.Tactic.ReduceModChar
 
 /-!
 # Continuity of the area functional on `NRR.ConvexSubbody`

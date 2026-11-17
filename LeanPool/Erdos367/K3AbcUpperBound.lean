@@ -187,7 +187,7 @@ theorem integer_core_ineq (habc : ABCConjecture) (ε : ℝ) (hε : 0 < ε) :
   have h_rad_mul' :
       Nat.rad (n * ((n + 2) * (n + 1) ^ 2)) ≤
         Nat.rad n * (Nat.rad (n + 1) * Nat.rad (n + 2)) := by
-    convert h_rad_mul using 1 <;> ring
+    convert h_rad_mul using 1 <;> ring_nf
   exact_mod_cast h_rad_mul'
 
 /-! ## Helper: product of three LEMMA STAR instances (pure ℕ) -/
@@ -280,10 +280,10 @@ theorem real_analytic_rearrangement (habc : ABCConjecture) (ε : ℝ) (hε : 0 <
           (show 0 ≤ (1 + ε / 4) / 2 by positivity)
         using 1
       · rw [← Real.rpow_natCast _ 2, ← Real.rpow_mul (by positivity)]
-        ring
+        ring_nf
       · rw [Real.div_rpow (by positivity) (by positivity), ← Real.rpow_natCast,
           ← Real.rpow_mul (by positivity)]
-        ring
+        ring_nf
     rw [le_div_iff₀] at *
     · norm_cast at *
       simp_all +decide only [cast_mul, cast_pow, cast_add, cast_one, cast_ofNat]
@@ -297,8 +297,8 @@ theorem real_analytic_rearrangement (habc : ABCConjecture) (ε : ℝ) (hε : 0 <
               positivity)
             ((1 + ε / 4) / 2))
         using 1
-      · ring
-      · ring
+      · ring_nf
+      · ring_nf
     · exact
         Real.rpow_pos_of_pos h_powerful_pos_real _
     · positivity
@@ -361,11 +361,11 @@ theorem real_analytic_rearrangement (habc : ABCConjecture) (ε : ℝ) (hε : 0 <
           (Real.rpow_le_rpow (by positivity) h_bound_simplified (by positivity))
     convert this using 1
     rw [Real.mul_rpow (by positivity) (by positivity), ← Real.rpow_mul (by positivity)]
-    ring
+    ring_nf
     rw [Real.mul_rpow (by positivity) (by positivity),
       Real.mul_rpow (by positivity) (by positivity), ← Real.rpow_mul (by positivity),
       ← Real.rpow_mul (by positivity)]
-    ring
+    ring_nf
   refine
     ⟨(C₁ * 27 ^ (1 + ε / 4)) ^ (2 / (1 + ε / 4)), by positivity, fun n hn => ?_⟩
   exact

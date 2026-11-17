@@ -212,7 +212,7 @@ theorem integral_mul_indicator_le_moment_mul_measure [IsFiniteMeasure mu]
         mu.real E ^ (3 / 8 : ℝ) := by
   have hgmem : MemLp (E.indicator fun _ => (1 : ℝ))
       (ENNReal.ofReal (8 / 3 : ℝ)) mu :=
-    memLp_indicator_const (ENNReal.ofReal (8 / 3 : ℝ)) hE 1
+    memLp_indicator_const (ENNReal.ofReal (8 / 3 : ℝ)) hE.nullMeasurableSet 1
       (Or.inr (measure_ne_top mu E))
   have hg0 : 0 ≤ᵐ[mu] E.indicator fun _ => (1 : ℝ) :=
     Filter.Eventually.of_forall fun omega =>

@@ -56,8 +56,8 @@ theorem tendsto_measureReal_Ioo_of_iUnion_eq
     Tendsto (fun n : ℕ => μ.real (Set.Ioo (q n) (r n))) atTop
       (nhds (μ.real (Set.Ioo a b))) := by
   have hfinUnion : μ (⋃ n : ℕ, Set.Ioo (q n) (r n)) < ⊤ := by
-    simpa [hUnion] using hfin
-  simpa [hUnion] using
+    simpa only [hUnion] using hfin
+  simpa only [hUnion] using
     tendsto_measureReal_iUnion_atTop (μ := μ)
       (s := fun n : ℕ => Set.Ioo (q n) (r n)) hmono hfinUnion
 
@@ -111,7 +111,7 @@ theorem exists_rat_strictAnti_tendsto_within
   rcases Rat.denseRange_cast.exists_seq_strictAnti_tendsto_of_lt
       Rat.cast_strictMono.monotone has with
     ⟨q, hqmono, hqmem, hqtend⟩
-  exact ⟨q, hqmono, hqmem, by simpa [Function.comp_def] using hqtend⟩
+  exact ⟨q, hqmono, hqmem, by exact hqtend⟩
 
 /-- Rational points increasing to the right endpoint from inside a prescribed interval. -/
 theorem exists_rat_strictMono_tendsto_within
@@ -123,7 +123,7 @@ theorem exists_rat_strictMono_tendsto_within
   rcases Rat.denseRange_cast.exists_seq_strictMono_tendsto_of_lt
       Rat.cast_strictMono.monotone hsb with
     ⟨r, hrmono, hrmem, hrtend⟩
-  exact ⟨r, hrmono, hrmem, by simpa [Function.comp_def] using hrtend⟩
+  exact ⟨r, hrmono, hrmem, by exact hrtend⟩
 
 /-- Generic rational inner-interval mass approximation by continuity from below. -/
 theorem exists_rat_inner_tendsto_measureReal_Ioo
@@ -322,8 +322,8 @@ theorem exists_sourceRationalIntervalEnumeration :
   · intro q r hqr hsub
     rcases he ⟨(q, r), hqr, hsub⟩ with ⟨k, hk⟩
     refine ⟨k, ?_, ?_⟩
-    · simp [hk]
-    · simp [hk]
+    · simp only [hk]
+    · simp only [hk]
 
 /-- The admissibility part of a rational source interval enumeration. -/
 theorem SourceRationalIntervalEnumeration.admissible
@@ -360,7 +360,7 @@ theorem exists_rat_sourceInterval_subset_of_mem
   rcases hs with ⟨has, hsb⟩
   rcases exists_rat_btwn has with ⟨q, haq, hqs⟩
   rcases exists_rat_btwn hsb with ⟨r, hsr, hrb⟩
-  exact ⟨q, r, haq, hqs, hsr, hrb, by linarith,
+  exact ⟨q, r, haq, hqs, hsr, hrb, by linarith only [hqs, hsr],
     rat_Ioo_subset_sourceMaximalDomain_of_subset hsub haq hrb⟩
 
 /-- Reverse cover obligation for a countable interval model of the source average-exceeds set.
@@ -508,7 +508,7 @@ theorem SourceRealIntervalAverageExceedsRationalRefinement.of_inner
     SourceRealIntervalAverageExceedsRationalRefinement μparam t := by
   intro p a b hab hsub hpinterval havg
   rcases hrefine p hab hsub hpinterval havg with ⟨q, r, haq, hqs, hsr, hrb, hqravg⟩
-  refine ⟨q, r, by linarith, ?_, ⟨hqs, hsr⟩, hqravg⟩
+  refine ⟨q, r, by linarith only [hqs, hsr], ?_, ⟨hqs, hsr⟩, hqravg⟩
   exact rat_Ioo_subset_sourceMaximalDomain_of_subset hsub haq hrb
 
 /-- The real-interval refinement form gives the set-level rational refinement form. -/
@@ -689,7 +689,7 @@ theorem localizedIntervalAverageSet_source_nonempty_of_mem_window
     (μ : Measure ℝ) {s : ℝ} (hs : s ∈ sourceMaximalWindow) :
     (localizedIntervalAverageSet μ sourceMaximalDomain s).Nonempty := by
   refine ⟨openIntervalMeasureAverage μ (s - (1 / 2 : ℝ)) (s + (1 / 2 : ℝ)), ?_⟩
-  refine ⟨s - (1 / 2 : ℝ), s + (1 / 2 : ℝ), by linarith, ?_, ?_, rfl⟩
+  refine ⟨s - (1 / 2 : ℝ), s + (1 / 2 : ℝ), by linarith only [], ?_, ?_, rfl⟩
   · intro y hy
     rcases hs with ⟨hs_left, hs_right⟩
     rcases hy with ⟨hy_left, hy_right⟩

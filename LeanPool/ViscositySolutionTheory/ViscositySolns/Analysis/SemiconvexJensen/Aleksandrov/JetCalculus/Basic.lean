@@ -146,7 +146,7 @@ theorem HasSecondOrderJet.of_semiconvexConvexification
         (A := A)
         h.1
         (by
-          simpa [Q, A] using
+          exact
             hasSecondOrderExpansionWithin_quadraticModel_recenter
               (C := Set.univ) (x0 := 0) (r := 0) (p := 0)
               (X := lambda • (1 : Hessian n)) x)
@@ -159,7 +159,7 @@ theorem HasSecondOrderJet.of_semiconvexConvexification
         (A := A)
         h.2
         (by
-          simpa [Q, A] using
+          exact
             hasSecondOrderExpansionWithin_quadraticModel_recenter
               (C := Set.univ) (x0 := 0) (r := 0) (p := 0)
               (X := lambda • (1 : Hessian n)) x)
@@ -182,8 +182,8 @@ theorem HasSomeSecondOrderJet.of_semiconvexConvexification
       (({ gradient := p, hessian := X } : Jet n) - QJet).hessian, ?_, ?_⟩
   · have hlambdaI : (lambda • (1 : Hessian n)).IsHermitian :=
       Matrix.isHermitian_one.smul (IsSelfAdjoint.all lambda)
-    simpa [QJet, quadraticModelJetAt] using hHerm.sub hlambdaI
-  · simpa [QJet] using hJet.of_semiconvexConvexification (lambda := lambda)
+    exact hHerm.sub hlambdaI
+  · exact hJet.of_semiconvexConvexification (lambda := lambda)
 
 /--
 If `(p, X)` belongs both to the ordinary superjet and to the ordinary subjet
@@ -216,18 +216,18 @@ theorem HasSecondOrderJet.hasSecondOrderExpansionWithin
       simpa [Real.norm_eq_abs, abs_of_nonneg (sq_nonneg (‖y - x‖))] using hsubB
     have hR_le : R y <= rhoSuper y := by
       dsimp [R] at hsuperY ⊢
-      linarith
+      linarith only [hsuperY]
     have hrhoSub_le_R : rhoSub y <= R y := by
       dsimp [R] at hsubY ⊢
-      linarith
+      linarith only [hsubY]
     have hR_upper : R y <= c * ‖y - x‖ ^ 2 := by
       have hρ : rhoSuper y <= ‖rhoSuper y‖ := by
         simpa [Real.norm_eq_abs] using le_abs_self (rhoSuper y)
-      linarith
+      linarith only [hsuperY, hsuperBsq, hρ]
     have hR_lower : - (c * ‖y - x‖ ^ 2) <= R y := by
       have hρ : - (‖rhoSub y‖) <= rhoSub y := by
         simpa [Real.norm_eq_abs] using neg_abs_le (rhoSub y)
-      linarith
+      linarith only [hsubY, hsubBsq, hρ]
     have habs : |R y| <= c * ‖y - x‖ ^ 2 := abs_le.mpr ⟨hR_lower, hR_upper⟩
     simpa [Real.norm_eq_abs, abs_of_nonneg (sq_nonneg (‖y - x‖))] using habs
   · filter_upwards with y
@@ -448,7 +448,7 @@ theorem HasSecondOrderJet.quadraticForm_nonpos_of_isLocalMax
         rw [hnorm_line]
         dsimp [c]
         field_simp [ne_of_gt hnorm_sq_pos]
-      linarith
+      linarith only [hrhoB, habs_lower, hboundQ]
     have hpositive :
         0 < (1 / 4 : Real) * t ^ 2 * Q := by
       have ht_sq_pos : 0 < t ^ 2 := sq_pos_of_pos htpos
@@ -456,8 +456,8 @@ theorem HasSecondOrderJet.quadraticForm_nonpos_of_isLocalMax
     have hvalue_lower :
         f x + (1 / 4 : Real) * t ^ 2 * Q <= f (line t) := by
       rw [hlineEq, hquad_line]
-      linarith
-    linarith
+      linarith only [hlineEq, hlineMax, hquad_line, hrho_lower, hpositive]
+    linarith only [hlineEq, hlineMax, hquad_line, hrho_lower, hpositive]
   rcases Filter.Eventually.exists hcontra_event with ⟨_, hfalse⟩
   exact hfalse
 

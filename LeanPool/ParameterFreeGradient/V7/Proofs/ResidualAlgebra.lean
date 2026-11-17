@@ -701,7 +701,7 @@ lemma function_value_cancel (n : ℕ) (w F : ScalarSeq) :
     have h := Finset.sum_range_succ' f n
     have h' := Finset.sum_range_succ f n
     dsimp [f] at h h' ⊢
-    linarith
+    linarith only [h, h']
   have hdeltaF :
       (∑ k ∈ Finset.range n, (w (k + 1) - w k) * F k) =
       (∑ k ∈ Finset.range n, w (k + 1) * F k) -

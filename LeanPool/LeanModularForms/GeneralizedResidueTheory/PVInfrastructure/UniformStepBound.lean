@@ -13,7 +13,6 @@ import LeanPool.LeanModularForms.GeneralizedResidueTheory.PVInfrastructure.Remai
 import LeanPool.LeanModularForms.GeneralizedResidueTheory.PVInfrastructure.SingularAnnulus
 import LeanPool.LeanModularForms.GeneralizedResidueTheory.PVInfrastructure.StepBounds
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
-import Mathlib.MeasureTheory.Covering.Besicovitch
 
 /-!
 # PV Infrastructure: Uniform Step Bound
@@ -250,7 +249,7 @@ lemma pv_step_bound_ratio_two_uniform
         by_cases hcond :
             ε₂ < ‖γ t - γ t₀‖ ∧
               ‖γ t - γ t₀‖ ≤ ε₁
-        · simp only [ite_eq_left hcond]; ring
+        · simp only [ite_eq_left hcond]; ac_rfl
         · simp only [ite_eq_right hcond, sub_zero])
   have h_annulus_split :
       ∫ t in a..b,
