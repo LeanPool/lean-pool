@@ -1149,7 +1149,6 @@ theorem sh_P : ∀ c ∈ cl, ∀ j, 1 ≤ j → j ≤ (ts (sdS (wiC s v) v side)
       (Top.anc S' c j = (nd S' (Top.pp S' c j)).t1 ∨ Top.anc S' c j = (nd S' (Top.pp S' c
         j)).t2)) := by
   intro c hc j hj1 hj
-  have hvlt := C.H.hv
   rw [SDHyps.P (s := s) (v := v) (side := side)] at hj
   rw [SDCtx.pp, C.anc hc j hj]
   by_cases hb : j = Top.ht (ts s) v ∧ Top.anc (ts s) c (Top.ht (ts s) v) = v

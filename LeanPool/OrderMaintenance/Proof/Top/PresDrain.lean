@@ -665,7 +665,6 @@ theorem Shape.ds_ends (hL : LList (cN s) (cP s) s.firstChunk cl) (tag u : Nat)
   have hcl : cl.Nodup := S.ord0 ▸ S.ordNodup 0
   rw [dsS_first hvt hv htz, dsS_last hvt hv htz, S.ds_rng hg hne tag]
   have hrnd : (rng (ts s) cl v).Nodup := hcl.sublist (rng_sub (s := s) (cl := cl) v)
-  have hrnil : NIL ∉ rng (ts s) cl v := fun h => hL.nonil ((rng_sub (s := s) (cl := cl) v).subset h)
   obtain ⟨hfv, hlv⟩ := S.ends v hg.1
   obtain ⟨hft, hlt⟩ := S.ends (dsT s v) hlive.1
   have hinf := S.rng_infix v hg.1
@@ -723,8 +722,6 @@ theorem Shape.ds_ends (hL : LList (cN s) (cP s) s.firstChunk cl) (tag u : Nat)
           List.getLast?_nil, and_self]
       · rw [List.concat_eq_append] at h0
         subst h0
-        have hzy : z ≠ dsY s u := fun e => hyn (by
-          simp only [e, List.mem_append, List.mem_cons, List.not_mem_nil, or_false, or_true])
         have hF : (r1 ++ [z] ++ [dsY s u]).headD NIL = (r1 ++ [z]).headD NIL := by
           cases r1 <;> simp only [List.nil_append, List.cons_append, List.headD_eq_head?_getD,
               List.head?_cons, Option.getD_some, List.append_assoc]

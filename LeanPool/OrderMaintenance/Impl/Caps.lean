@@ -489,7 +489,6 @@ theorem walk_pz {s : Core} {cl : List Nat} {ord : Nat → List Nat} {dr n0 : Nat
     (hpc : j.pc = .walk (some v)) (hcl : CLok s cl) (hI : InvJ (ts s) cl ord dr n0 (some j))
     {r : Option Job} {t1 : Core} (h : (walkBody j v).run s = .ok r t1) :
     t1.C.size = s.C.size ∧ (PZ s → PZ t1) := by
-  have hW : PCS s (wiC s v) := ⟨rfl, rfl⟩
   by_cases hv0 : v = NIL
   · subst hv0; rw [run_walkBody_nil] at h; injection h with _ e; subst e; exact ⟨rfl, id⟩
   by_cases hd : (nd (ts s) v).livePar ≠ NIL ∧ (nd (ts s) v).draining = false ∧
