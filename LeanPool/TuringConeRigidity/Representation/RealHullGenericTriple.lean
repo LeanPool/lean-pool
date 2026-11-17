@@ -9,6 +9,8 @@ Adapted for Lean Pool from bjoernkjoshanssen/tt-
 auto/OAI/Computability/DegreeRigidity/Representation/RealHullGenericTriple.lean.
 Module paths, interfaces, and proofs are ported to the pool's toolchain and gates.
 Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream port repairs.
+The parameterized triple also shares the relative-base argument from upstream
+RequestProject/TuringConeGenericTransfer.lean (Bjørn Kjos-Hanssen, Apache-2.0).
 -/
 
 module
@@ -59,10 +61,15 @@ theorem exists_prefix_real (M K : ZFSet.{0})
     GroundPrefixOverwrite.overwrite_generic N hN.1 hN.2.1 Y hYg s,
     GroundPrefixOverwrite.overwrite_realizes s Y⟩
 
-theorem exists_generic_prefix_triple (M K : ZFSet.{0})
+/-- Prescribed generic triples with a common-lower-bound base in their generated hull. -/
+theorem exists_generic_prefix_triple_of_base (M K : ZFSet.{0})
     (hM : Transitive M) (hT : SourceT M) (hK : FirstUncountable M K)
     (G : GenericFilter (Conditions (poset K))) (hG : GroundGeneric M G)
     (X : Oracle) (hX : realCode X ∈ genericExtensionSet M (poset K) G.carrier)
+    (F : Oracle → Oracle)
+    (hF : ∀ (Y : Oracle) (H : ZFSet.{0}),
+      RealGeneratedModel.Contains (RealGeneratedModel.hull M (realCode X)) (realCode Y) H →
+      F Y ∈ modelReals H)
     (O : Oracles) (hO : ∀ i, realCode (O i) ∈ RealGeneratedModel.hull M (realCode X))
     (s : List Bool) : ∃ Y L R : Oracle,
       (∀ A ∈ ({Y,L,R} : Set Oracle),
@@ -70,7 +77,7 @@ theorem exists_generic_prefix_triple (M K : ZFSet.{0})
         GroundGeneric (RealGeneratedModel.hull M (realCode X))
           (InternalCohen.pushFilter (CohenBorelForcing.realFilter A))) ∧
       GenericCoding.InfiniteOdd L ∧ GenericCoding.InfiniteOdd R ∧
-      GenericIdentity.PrincipalIntersection Y (join Y L) (join Y R) ∧
+      GenericIdentity.PrincipalIntersection (F Y) (join (F Y) L) (join (F Y) R) ∧
       ArithmeticPrefixForcing.Generic O (join Y (join L R)) ∧
       ShuffleRequirements.Realizes s (join Y (join L R)) := by
   obtain ⟨Y,hYE,hYg,hYs⟩ := exists_prefix_real M K hM hT hK G hG X hX (TriplePrefix.prefixes s).1
@@ -87,7 +94,7 @@ theorem exists_generic_prefix_triple (M K : ZFSet.{0})
   have hRN : GroundGeneric N (InternalCohen.pushFilter (CohenBorelForcing.realFilter R)) :=
     fun D hD hd => hR D (hHF (hH.2.2.1 hD)) hd
   have hideal := IteratedGenericCommonIdeal.ideal_of_iterated_generics H hH.1 hH.2.1
-    Y hH.2.2.2 L R hL hR
+    (F Y) (hF Y H hH) L R hL hR
   refine ⟨Y,L,R,?_,InternalCohen.groundGeneric_infiniteOdd N hN.1 hN.2.1 L hLN,
     InternalCohen.groundGeneric_infiniteOdd N hN.1 hN.2.1 R hRN,hideal,
     GroundIteratedTriple.generic_triple N hN.1 hN.2.1 O hO Y L R hYg hH hL hR,
@@ -99,6 +106,22 @@ theorem exists_generic_prefix_triple (M K : ZFSet.{0})
   · exact ⟨hLE,hLN⟩
   · exact ⟨hRE,hRN⟩
 
+theorem exists_generic_prefix_triple (M K : ZFSet.{0})
+    (hM : Transitive M) (hT : SourceT M) (hK : FirstUncountable M K)
+    (G : GenericFilter (Conditions (poset K))) (hG : GroundGeneric M G)
+    (X : Oracle) (hX : realCode X ∈ genericExtensionSet M (poset K) G.carrier)
+    (O : Oracles) (hO : ∀ i, realCode (O i) ∈ RealGeneratedModel.hull M (realCode X))
+    (s : List Bool) : ∃ Y L R : Oracle,
+      (∀ A ∈ ({Y,L,R} : Set Oracle),
+        realCode A ∈ genericExtensionSet M (poset K) G.carrier ∧
+        GroundGeneric (RealGeneratedModel.hull M (realCode X))
+          (InternalCohen.pushFilter (CohenBorelForcing.realFilter A))) ∧
+      GenericCoding.InfiniteOdd L ∧ GenericCoding.InfiniteOdd R ∧
+      GenericIdentity.PrincipalIntersection Y (join Y L) (join Y R) ∧
+      ArithmeticPrefixForcing.Generic O (join Y (join L R)) ∧
+      ShuffleRequirements.Realizes s (join Y (join L R)) := by
+  exact exists_generic_prefix_triple_of_base M K hM hT hK G hG X hX id
+    (fun _ _ hH => hH.2.2.2) O hO s
 end TuringRigidity.RealHullGenericTriple
 
 end OAI

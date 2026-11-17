@@ -13,9 +13,7 @@ Module paths, interfaces, and proofs are ported to the pool's toolchain and gate
 module
 
 public import LeanPool.TuringConeRigidity.TuringTwoConeModelGraphs
-public import LeanPool.TuringConeRigidity.SetModels.WeakNameAvoidance
-public import LeanPool.TuringConeRigidity.SetModels.CollapseInternalCountingWithoutChoice
-public import LeanPool.TuringConeRigidity.Syntax.WeakExtensionContext
+public import LeanPool.TuringConeRigidity.SetModels.WeakRealDescent
 
 /-!
 # Collapse and descent of persistent two-cone graphs
@@ -53,21 +51,9 @@ theorem real_collapse_reconstructs (M : ZFSet.{u}) (hM : Transitive M)
     (hza : degreeJump a ∈ I.carrier) (hzb : degreeJump b ∈ I.carrier)
     (G : GenericFilter (Conditions c)) (hG : GroundGeneric M G) :
     coneGraph ρ ∈ genericExtensionSet M c G.carrier := by
-  have hω := omega_mem M hM hS.bounded hI
-  have h0 : (∅ : ZFSet.{u}) ∈ c :=
-    (hc ∅).mpr ⟨hM _ hω _ ZFSet.omega_zero, InternalCollapse.prefix_empty R⟩
-  let _ := InternalCollapse.top c h0
-  have htop : ⊤ ∈ G.carrier := by
-    obtain ⟨p, hp⟩ := G.nonempty
-    exact G.upper le_top hp
-  have ho := InternalCollapse.orderSet_mem_without_choice M hM hP hU hPow hS.bounded hcM
-  have C := BoundedForcing.extension_context_without_choice M hM hP hU hPow hS hR hI
-    hcM ho (InternalCollapse.orderSet_pair c) G hG htop
-  have hME := ground_inclusion_set M c hM hP hU hPow hS.bounded hR hI hcM G.carrier htop
-  have hcount := InternalCollapse.internal_counting_without_choice M hM hP hU hPow hS.bounded hR hI
-    hRM hcM hc hne G hG
-  exact TwoConeModelGraphs.persistent_mem_of_counted_reals C (hME hRM) hreal hcount
-    I hIR ρ hρ hza hzb
+  exact InternalCollapse.set_mem_of_counted_real_collapse M hM hP hU hPow hS hR hI
+    hRM hcM hc hne (fun _ C hRE hcount =>
+      TwoConeModelGraphs.persistent_mem_of_counted_reals C hRE hreal hcount I hIR ρ hρ hza hzb) G hG
 
 /-- The full graph descends; internality is a conclusion, not an assumption. -/
 theorem persistent_graph_mem_of_real_family (M N : ZFSet.{u}) [Countable (Conditions N)]
@@ -82,24 +68,15 @@ theorem persistent_graph_mem_of_real_family (M N : ZFSet.{u}) [Countable (Condit
     {a b : Degree} (ρ : Cone I a ≃o Cone I b) (hρ : TwoConePersistence.Persistent I ρ)
     (hza : degreeJump a ∈ I.carrier) (hzb : degreeJump b ∈ I.carrier) :
     coneGraph ρ ∈ M := by
-  have hω := omega_mem M hM hS.bounded hI
-  obtain ⟨c, hc, hcdef⟩ := InternalCollapse.conditions_exist_without_choice
-    M hM hP hU hPow hS.bounded hω hRM
-  have h0 : (∅ : ZFSet.{u}) ∈ c :=
-    (hcdef ∅).mpr ⟨hM _ hω _ ZFSet.omega_zero, InternalCollapse.prefix_empty R⟩
-  let _ := InternalCollapse.top c h0
-  have hoM := InternalCollapse.orderSet_mem_without_choice M hM hP hU hPow hS.bounded hc
   have hprod := product_mem M hM hP hU hPow hS.bounded hIM hIM
   have hbound := coneGraph_subset.{u} ρ
   have hne : ∃ x, x ∈ R := by
     obtain ⟨d, hd⟩ := I.nonempty
     obtain ⟨B, hB, _⟩ := (hIR d).mp hd
     exact ⟨_, hB⟩
-  apply (FullSetForcing.subset_mem_iff_all_generic_extensions_without_choice
-    M N hM hP hU hPow hS hR hI hMN hc hoM hprod hbound
-    (InternalCollapse.orderSet_pair c) (⊤ : Conditions c)).mpr
-  intro G hG _
-  exact real_collapse_reconstructs M hM hP hU hPow hS hR hI hRM hc hcdef
-    hne hreal I hIR ρ hρ hza hzb G (fun D hD hd => hG D (hMN hD) hd)
+  exact FullSetForcing.set_mem_of_real_collapse_reconstruction M N hM hP hU hPow hS hR hI
+    hMN hRM hprod hbound (fun _ hc hcdef G hG =>
+      real_collapse_reconstructs M hM hP hU hPow hS hR hI hRM hc hcdef
+        hne hreal I hIR ρ hρ hza hzb G hG)
 
 end OAI.TuringRigidity.TwoConeForcingDescent

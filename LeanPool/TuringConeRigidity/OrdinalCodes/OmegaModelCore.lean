@@ -12,7 +12,6 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 -/
 
 module
-public import Mathlib.Tactic.ToDual
 public import Mathlib.Data.Nat.Init
 
 

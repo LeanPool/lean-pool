@@ -15,7 +15,6 @@ module
 
 public import LeanPool.TuringConeRigidity.OrdinalCodes.OmegaPowerGraph
 public import LeanPool.TuringConeRigidity.Constructibility.ContextHierarchyGraph
-public import LeanPool.TuringConeRigidity.Syntax.SigmaCollectionClosure
 
 /-!
 # Omega Recursion Schemas

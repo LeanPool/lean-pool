@@ -14,9 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.Representation.RealHullQuotient
-public import LeanPool.TuringConeRigidity.CohenForcing.InternalCohenColumnReading
-public import LeanPool.TuringConeRigidity.SetModels.InternalBooleanIntermediate
-public import LeanPool.TuringConeRigidity.SetModels.InternalColumnExtension
+public import LeanPool.TuringConeRigidity.Representation.OriginalRealGeneratedModel
 
 /-!
 # Original Real Quotient Model
@@ -73,33 +71,23 @@ theorem original_name_quotient (M K : ZFSet.{0})
                     genericExtensionSet M (conditions (ZFSet.prod K ZFSet.omega)) G.carrier ∧
                   ∀ p ∈ G.carrier, ∃ r ∈ Gq.carrier,
                     label q r = label _ (InternalCohenFactor.project _ _ hBA p) := by
-  obtain ⟨C,hCM,hCK,hcount,E,hgraph,hE,_,hBA,hread⟩ :=
-    InternalCohenColumnReading.internal_column_reading M K hM hT hK τ hτ
+  obtain ⟨C,hCM,hCK,hcount,E,hgraph,hE,B,hBM,Q,hQM,A,hAM,
+    hB,hQ,heq,hA,hpos,horder,σ,hσ,hBA,hall⟩ :=
+    OriginalRealGeneratedModel.original_name_hull_with_reading M K hM hT hK τ hτ
   have hω := sourceT_omega_mem M hM hT
   have hKM := product_mem M hM hT.pairing hT.union hT.powerSet
     hT.separation.finitePrefix.bounded hK hω
   have hDM := product_mem M hM hT.pairing hT.union hT.powerSet
     hT.separation.finitePrefix.bounded hCM hω
   have hcM := conditions_mem M _ hM hT hDM
-  obtain ⟨B,hBM,Q,hQM,A,hAM,hB,hQ,heq,hA,σ,hσ,hall⟩ :=
-    InternalBooleanIntermediate.internal_boolean_intermediate M _ hM hT hcM E hE hgraph
   refine ⟨C,hCM,hCK,hcount,E,hgraph,hE,B,hBM,Q,hQM,A,hAM,hB,hQ,heq,hA,σ,hσ,hBA,?_⟩
   intro G hG hreal
-  obtain ⟨hJG,hJval,_,_⟩ := hread G hG hreal
+  obtain ⟨hJG,hJval,H,hHG,hhit,hv,hHull,hprop,_,_,_⟩ := hall G hG hreal
   let J := InternalCohenProjectedGeneric.projected _ _ hBA G
   obtain ⟨p,hp⟩ := J.nonempty
   have hJtop : ⊤ ∈ J.carrier := J.upper le_top hp
-  obtain ⟨H,hHG,hhit,hval,_,_,_,_,_,_⟩ := hall J hJG hJtop
-  have hv : σ.val H.carrier = τ.val G.carrier := hval.trans hJval
   have hcar : H.carrier = (projected M _ B Q A hM hT hcM hBM hAM hB hQ hA J).carrier :=
     Set.ext (fun q => hhit q)
-  have hHull : genericExtensionSet M (positive A) H.carrier = RealGeneratedModel.hull M (τ.val
-    G.carrier) := by
-    rw [hcar,RealGeneratedModel.projected_extension_eq_hull M _ B Q A hM hT hcM hBM hQM hAM hB hQ hA
-      E hE hgraph heq J hJG hJtop,hJval]
-  have hprop := (RealGeneratedModel.hull_properties M _ B Q A hM hT hcM hBM hQM hAM hB hQ hA
-    E hE hgraph heq J hJG hJtop).1
-  rw [hJval] at hprop
   refine ⟨H,hHG,hv,hHull,hprop,?_⟩
   dsimp only
   rw [hcar]

@@ -16,7 +16,6 @@ module
 public import LeanPool.TuringConeRigidity.CohenForcing.CohenRun
 public import LeanPool.TuringConeRigidity.Effective.CodingSplitting
 public import LeanPool.TuringConeRigidity.Effective.EffectiveWitness
-public import Mathlib.Algebra.Order.Ring.Star
 
 /-!
 # Effective Split

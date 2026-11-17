@@ -14,7 +14,6 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.Constructibility.HierarchyWitnessCollection
-public import LeanPool.TuringConeRigidity.Constructibility.CollectionHierarchyInternal
 public import LeanPool.TuringConeRigidity.Constructibility.RelativeDefCertificates
 public import LeanPool.TuringConeRigidity.Constructibility.RelativeSigmaSchemas
 public import LeanPool.TuringConeRigidity.Syntax.CheckedHierarchySyntax

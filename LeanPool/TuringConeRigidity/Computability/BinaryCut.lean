@@ -16,7 +16,6 @@ module
 public import Mathlib.NumberTheory.Real.Irrational
 
 public import LeanPool.TuringConeRigidity.Computability.BinaryMachine
-public import Mathlib.Algebra.Order.Ring.Star
 
 /-!
 # Binary Cut

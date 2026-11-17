@@ -13,7 +13,6 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import Mathlib.Algebra.CharP.Defs
 public import LeanPool.TuringConeRigidity.Computability.RationalCoding
 public import LeanPool.TuringConeRigidity.Effective.UniformOracle
 

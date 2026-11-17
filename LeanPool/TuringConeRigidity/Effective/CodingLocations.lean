@@ -15,7 +15,6 @@ module
 
 public import LeanPool.TuringConeRigidity.Effective.CodingSplitting
 public import LeanPool.TuringConeRigidity.Effective.CodingOnePoint
-public import Mathlib.Algebra.Order.Ring.Star
 
 /-!
 # Coding Locations

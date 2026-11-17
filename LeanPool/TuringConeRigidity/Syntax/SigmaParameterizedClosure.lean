@@ -14,6 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.Syntax.SigmaParameterized
+public import LeanPool.TuringConeRigidity.Syntax.SigmaCollectionClosure
 public import LeanPool.TuringConeRigidity.Representation.SourceTheory
 
 /-!
@@ -82,24 +83,11 @@ theorem SigmaDefinable.impBounded (C : Context M)
 theorem SigmaDefinable.allMem (hM : Transitive M) (hT : SourceT M)
     (h : SigmaDefinable M P) (a : ℕ) :
     SigmaDefinable M (fun e => ∀ x ∈ e a, P (cons x e)) := by
-  obtain ⟨p,d,hd,hp⟩ := h
-  have hC := sigma_collection M hM hT.pairing hT.union hT.powerSet
+  let C : Context M :=
+    ⟨hM,hT.pairing,hT.union,hT.powerSet,hT.separation.finitePrefix.bounded,hT.infinity⟩
+  have hColl := sigma_collection M hM hT.pairing hT.union hT.powerSet
     hT.separation.finitePrefix hT.replacement.finitePrefix hT.infinity hT.choice
-  refine ⟨.allMem (2*a) (p.rename bindSlots),d,hd,?_⟩
-  intro e he
-  rw [SigmaFormula.realize_allMem M hM hT.pairing hT.union hT.separation.finitePrefix.bounded
-    hT.replacement.finitePrefix hT.infinity hC _ _ _ (by
-      intro i; unfold mix; split <;> first | exact he _ | exact hd _),mix_even]
-  apply forall_congr'; intro x
-  apply forall_congr'; intro hx
-  rw [SigmaFormula.realize_rename]
-  change p.Realize M (cons x (mix e d) ∘ bindSlots) ↔ _
-  rw [bind_mix]
-  exact hp (cons x e) (by
-    intro i
-    cases i
-    · exact hM _ (he a) x hx
-    · exact he _)
+  exact h.allMem_collection C hT.replacement.finitePrefix hColl a
 
 end TuringRigidity.BoundedDefinability
 
