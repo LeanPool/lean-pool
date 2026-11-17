@@ -224,7 +224,7 @@ lemma outputPrior_apply_singleton (k : Kernel α β) [IsMarkovKernel k]
     _ = ∑' a : α, (p.toMeasure {a} • k a) {b} := by
           rw [Measure.sum_apply _ (measurableSet_singleton b)]
     _ = ∑' a : α, p.toMeasure {a} * k a {b} := by
-          simp [Measure.smul_apply]
+          simp
     _ = ∑ a, p.toMeasure {a} * k a {b} := by
           rw [tsum_fintype]
 

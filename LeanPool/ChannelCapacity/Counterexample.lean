@@ -249,8 +249,7 @@ lemma priorCode_counterexample :
 lemma prior_ne : prior₁ ≠ prior₂ := by
   intro h
   have h0 := congrArg (fun p : ProbabilityMeasure (Fin 6) => p.toMeasure {0}) h
-  simp [prior₁, prior₂, uniformTriple, ProbabilityMeasure.convexCombination_toMeasure,
-    Measure.add_apply, Measure.smul_apply] at h0
+  simp [prior₁, prior₂, uniformTriple, ProbabilityMeasure.convexCombination_toMeasure] at h0
 
 lemma pushforward_prior₁ :
     ChannelCapacity.Kernel.priorPushforward permutationKernel prior₁ = uniformOutput := by
