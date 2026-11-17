@@ -46,8 +46,9 @@ none is postulated by a declaration.
 
 This module defines the propositions; it does not prove them. Their proofs
 are `groundStateAdmissibility` and `groundStateEnergyIdentity` in
-`Analysis/GroundStateDbar.lean`. `Endgame/FullMainAnalyticProof.lean` supplies
-these proved inputs to the scalar reduction in `MainProofReduction.lean`.
+`Analysis/GroundStateDbar.lean`. The retained endgame uses
+`groundStateEnergyIdentity` in `Endgame/FiniteTheoremOneNine.lean` and
+`Endgame/ConcreteTheoremOneNine.lean`.
 -/
 
 

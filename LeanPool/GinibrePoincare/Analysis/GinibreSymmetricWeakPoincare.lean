@@ -39,6 +39,7 @@ public import LeanPool.GinibrePoincare.Analysis.GinibreArbitraryWeakPairClosure
 public import LeanPool.GinibrePoincare.Endgame.ConcreteTheoremOneNine
 public import LeanPool.GinibrePoincare.Analysis.EquilibriumProbability
 public import LeanPool.GinibrePoincare.Analysis.CenterOfMassEigenfunctions
+public import LeanPool.GinibrePoincare.Analysis.GinibreCoordinateSumL2
 
 /-!
 # Ginibre Symmetric Weak Poincare
@@ -210,40 +211,14 @@ theorem ginibre_symmetric_weak_poincare {n : ℕ} (hn : 0 < n)
 /-- The real center-of-mass observable is square-integrable for every Ginibre law. -/
 theorem memLp_centerOfMassReal (n : ℕ) (hn : 0 < n) :
     MemLp (centerOfMassReal : Configuration n → ℝ) 2 (ginibreMeasure n) := by
-  have hgauss : Integrable (fun s : ℂ => ‖s‖ ^ 2) standardComplexGaussianMeasure := by
-    simpa [standardComplexGaussianMeasure] using
-      (integrable_norm_pow_complexCoordinateGaussianProbability 1 2)
-  have hcomp : Integrable (fun z : Configuration n => ‖coordinateSum z‖ ^ 2)
-      (ginibreMeasure n) := by
-    have hpush : Integrable (fun s : ℂ => ‖s‖ ^ 2)
-        ((ginibreMeasure n).map coordinateSum) := by
-      rw [coordinateSum_ginibre_gaussian n hn]
-      exact hgauss
-    exact hpush.comp_aemeasurable (measurable_coordinateSum n).aemeasurable
-  have hcont : Continuous (centerOfMassReal : Configuration n → ℝ) := by
-    have hsum : (coordinateSum : Configuration n → ℂ) = coordinateSumCLM n := by
-      funext z
-      exact (coordinateSumCLM_apply n z).symm
-    rw [show (centerOfMassReal : Configuration n → ℝ) =
-      Complex.reCLM ∘L coordinateSumCLM n by
-        funext z
-        simp [centerOfMassReal]]
-    exact (Complex.reCLM.comp (coordinateSumCLM n)).continuous
-  apply (memLp_two_iff_integrable_sq_norm (by fun_prop)).mpr
-  apply hcomp.mono'
-  · exact (continuous_norm.comp hcont).pow 2 |>.aestronglyMeasurable
-  · filter_upwards with z
-    change ‖‖centerOfMassReal z‖ ^ 2‖ ≤ ‖coordinateSum z‖ ^ 2
-    rw [Real.norm_of_nonneg (sq_nonneg _)]
-    have hb : ‖centerOfMassReal z‖ ≤ ‖coordinateSum z‖ := by
-      change |(coordinateSum z).re| ≤ ‖coordinateSum z‖
-      exact Complex.abs_re_le_norm _
-    exact (sq_le_sq₀ (norm_nonneg _) (norm_nonneg _)).2 hb
+  exact Complex.reCLM.comp_memLp' (memLp_coordinateSum n hn)
 
-/-- Exact first and second real moments of the standard complex Gaussian. -/
-theorem standardComplexGaussian_real_moments :
-    (∫ s : ℂ, s.re ∂standardComplexGaussianMeasure) = 0 ∧
-      (∫ s : ℂ, s.re ^ 2 ∂standardComplexGaussianMeasure) = 1 / 2 := by
+private theorem standardComplexGaussian_complex_moments :
+    Integrable (fun s : ℂ => s) standardComplexGaussianMeasure ∧
+      Integrable (fun s : ℂ => s ^ 2) standardComplexGaussianMeasure ∧
+      (∫ s : ℂ, s ∂standardComplexGaussianMeasure) = 0 ∧
+      (∫ s : ℂ, s ^ 2 ∂standardComplexGaussianMeasure) = 0 ∧
+      (∫ s : ℂ, Complex.normSq s ∂standardComplexGaussianMeasure) = 1 := by
   have hfirst : complexGaussianMixedMoment 1 1 0 = 0 := by
     rw [complexGaussianMixedMoment_formula (by norm_num) 1 0]
     norm_num [complexGaussianMixedMoment]
@@ -264,6 +239,13 @@ theorem standardComplexGaussian_real_moments :
   have hsecond' : (∫ s : ℂ, s ^ 2 ∂standardComplexGaussianMeasure) = 0 := by
     unfold complexGaussianMixedMoment at hsecond
     simpa [standardComplexGaussianMeasure] using hsecond
+  exact ⟨hi1, hi2, hfirst', hsecond', hnorm⟩
+
+/-- Exact first and second real moments of the standard complex Gaussian. -/
+theorem standardComplexGaussian_real_moments :
+    (∫ s : ℂ, s.re ∂standardComplexGaussianMeasure) = 0 ∧
+      (∫ s : ℂ, s.re ^ 2 ∂standardComplexGaussianMeasure) = 1 / 2 := by
+  obtain ⟨hi1, hi2, hfirst', hsecond', hnorm⟩ := standardComplexGaussian_complex_moments
   constructor
   · calc
       (∫ s : ℂ, s.re ∂standardComplexGaussianMeasure) =
@@ -307,26 +289,7 @@ theorem standardComplexGaussian_real_moments :
 theorem standardComplexGaussian_imag_moments :
     (∫ s : ℂ, s.im ∂standardComplexGaussianMeasure) = 0 ∧
       (∫ s : ℂ, s.im ^ 2 ∂standardComplexGaussianMeasure) = 1 / 2 := by
-  have hfirst : complexGaussianMixedMoment 1 1 0 = 0 := by
-    rw [complexGaussianMixedMoment_formula (by norm_num) 1 0]
-    norm_num [complexGaussianMixedMoment]
-  have hsecond : complexGaussianMixedMoment 1 2 0 = 0 := by
-    rw [complexGaussianMixedMoment_formula (by norm_num) 2 0]
-    norm_num [complexGaussianMixedMoment]
-  have hnorm : (∫ s : ℂ, Complex.normSq s ∂standardComplexGaussianMeasure) = 1 := by
-    simpa [standardComplexGaussianMeasure] using integral_normSq_pow_coordinate 1 1 (by norm_num)
-  have hi1 : Integrable (fun s : ℂ => s) standardComplexGaussianMeasure := by
-    simpa [standardComplexGaussianMeasure, complexGaussianMixedMoment] using
-      integrable_mixedComplexMonomial 1 1 0
-  have hi2 : Integrable (fun s : ℂ => s ^ 2) standardComplexGaussianMeasure := by
-    simpa [standardComplexGaussianMeasure, complexGaussianMixedMoment] using
-      integrable_mixedComplexMonomial 1 2 0
-  have hfirst' : (∫ s : ℂ, s ∂standardComplexGaussianMeasure) = 0 := by
-    unfold complexGaussianMixedMoment at hfirst
-    simpa [standardComplexGaussianMeasure] using hfirst
-  have hsecond' : (∫ s : ℂ, s ^ 2 ∂standardComplexGaussianMeasure) = 0 := by
-    unfold complexGaussianMixedMoment at hsecond
-    simpa [standardComplexGaussianMeasure] using hsecond
+  obtain ⟨hi1, hi2, hfirst', hsecond', hnorm⟩ := standardComplexGaussian_complex_moments
   constructor
   · calc
       (∫ s : ℂ, s.im ∂standardComplexGaussianMeasure) =
@@ -367,21 +330,23 @@ theorem standardComplexGaussian_imag_moments :
         rw [hnorm, hreal2']
         norm_num
 
+private theorem coordinateSumLinear_gradient_const (n : ℕ) (L : ℂ →L[ℝ] ℝ)
+    (z : Configuration n) :
+    ginibreEuclideanGradient (fun w => L (coordinateSum w)) z =
+      ginibreEuclideanGradient (fun w => L (coordinateSum w)) 0 := by
+  have hlin : (fun w : Configuration n => L (coordinateSum w)) =
+      (L.comp (coordinateSumCLM n) : Configuration n → ℝ) := by
+    funext w
+    simp only [ContinuousLinearMap.coe_comp, Function.comp_apply, coordinateSumCLM_apply]
+  apply PiLp.ext
+  intro k
+  simp only [ginibreEuclideanGradient_coordinate, hlin, ContinuousLinearMap.fderiv]
+
 /-- The classical gradient of the real sum coordinate is a fixed vector. -/
 theorem centerOfMassReal_gradient_const (n : ℕ) (z : Configuration n) :
     ginibreEuclideanGradient centerOfMassReal z =
       ginibreEuclideanGradient centerOfMassReal 0 := by
-  apply PiLp.ext
-  intro k
-  rw [ginibreEuclideanGradient_coordinate, ginibreEuclideanGradient_coordinate]
-  have hlin : (centerOfMassReal : Configuration n → ℝ) =
-      (Complex.reCLM.comp (coordinateSumCLM n) : Configuration n → ℝ) := by
-    funext w
-    simp [centerOfMassReal, coordinateSumCLM_apply]
-  rw [hlin, ContinuousLinearMap.fderiv]
-  simp [ginibreCoordinateDirection, coordinateSumCLM_apply,
-    realCoordinateDirection,
-    imaginaryCoordinateDirection]
+  exact coordinateSumLinear_gradient_const n Complex.reCLM z
 
 theorem centerOfMassReal_gradient_norm_sq (n : ℕ) (z : Configuration n) :
     ‖ginibreEuclideanGradient centerOfMassReal z‖ ^ 2 = (n : ℝ) := by
@@ -396,22 +361,27 @@ theorem centerOfMassReal_gradient_norm_sq (n : ℕ) (z : Configuration n) :
     coordinateSum_coordinateDirection, realCoordinateDirection,
     imaginaryCoordinateDirection]
 
-/-- The noncompact real center-of-mass observable belongs to the full symmetric
-weak-H¹ domain and attains equality in the sharp Poincaré inequality. -/
-theorem centerOfMassReal_attains_symmetric_weak_poincare (n : ℕ) (hn : 0 < n) :
+/-- A real-linear sum coordinate with Gaussian variance one half and gradient
+norm squared `n` gives a symmetric weak-H¹ equality witness. -/
+private theorem coordinateSumLinear_attains_symmetric_weak_poincare
+    (n : ℕ) (hn : 0 < n) (L : ℂ →L[ℝ] ℝ)
+    (hmoments : (∫ s : ℂ, L s ∂standardComplexGaussianMeasure) = 0 ∧
+      (∫ s : ℂ, (L s) ^ 2 ∂standardComplexGaussianMeasure) = 1 / 2)
+    (hnorm : ∀ z : Configuration n,
+      ‖ginibreEuclideanGradient (fun w => L (coordinateSum w)) z‖ ^ 2 = (n : ℝ)) :
     ∃ u : Lp ℝ 2 (ginibreMeasure n),
       ∃ g : Lp (EuclideanSpace ℝ (Fin n × Fin 2)) 2 (ginibreMeasure n),
         IsGinibreDistributionalGradient n u g ∧ IsGinibreSymmetricWeakPair (u, g) ∧
-          (u : Configuration n → ℝ) =ᵐ[ginibreMeasure n] centerOfMassReal ∧
+          (u : Configuration n → ℝ) =ᵐ[ginibreMeasure n] (fun z => L (coordinateSum z)) ∧
           ginibreL2Variance n hn u = ginibreWeakEnergy n g / 2 := by
-  let hu := memLp_centerOfMassReal n hn
-  let f : Configuration n → ℝ := centerOfMassReal
+  let f : Configuration n → ℝ := fun z => L (coordinateSum z)
+  let hu : MemLp f 2 (ginibreMeasure n) := L.comp_memLp' (memLp_coordinateSum n hn)
   let hcont : ContDiff ℝ ∞ f := by
-    have hlin : f = (Complex.reCLM.comp (coordinateSumCLM n) : Configuration n → ℝ) := by
+    have hlin : f = (L.comp (coordinateSumCLM n) : Configuration n → ℝ) := by
       funext z
-      simp [f, centerOfMassReal, coordinateSumCLM_apply]
+      simp [f, coordinateSumCLM_apply]
     rw [hlin]
-    exact (Complex.reCLM.comp (coordinateSumCLM n)).contDiff
+    exact (L.comp (coordinateSumCLM n)).contDiff
   let v : EuclideanSpace ℝ (Fin n × Fin 2) := ginibreEuclideanGradient f 0
   let := ginibreMeasure_isProbabilityMeasure hn
   have hgmem : MemLp (fun _ : Configuration n => v) 2 (ginibreMeasure n) := memLp_const v
@@ -420,7 +390,7 @@ theorem centerOfMassReal_attains_symmetric_weak_poincare (n : ℕ) (hn : 0 < n) 
   have hgrad : (g : Configuration n → EuclideanSpace ℝ (Fin n × Fin 2)) =ᵐ[
       ginibreMeasure n] ginibreEuclideanGradient f := by
     filter_upwards [hgmem.coeFn_toLp] with z hz
-    rw [hz, centerOfMassReal_gradient_const]
+    rw [hz, coordinateSumLinear_gradient_const n L]
   have hweak : IsGinibreDistributionalGradient n u g :=
     ginibre_smooth_distributional_gradient n hn u g f hcont hu.coeFn_toLp hgrad
   have hsym : IsGinibreSymmetricWeakPair (u, g) := by
@@ -432,13 +402,13 @@ theorem centerOfMassReal_attains_symmetric_weak_poincare (n : ℕ) (hn : 0 < n) 
       filter_upwards [ginibreRealPermutationL2_ae σ u, hcomp, hu.coeFn_toLp]
         with z hperm huval huval0
       rw [hperm]
-      change (hu.toLp centerOfMassReal : Configuration n → ℝ) (permute σ z) =
-        (hu.toLp centerOfMassReal : Configuration n → ℝ) z
-      have huval' : (hu.toLp centerOfMassReal : Configuration n → ℝ)
-          (permute σ z) = centerOfMassReal (permute σ z) := by
+      change (hu.toLp f : Configuration n → ℝ) (permute σ z) =
+        (hu.toLp f : Configuration n → ℝ) z
+      have huval' : (hu.toLp f : Configuration n → ℝ)
+          (permute σ z) = f (permute σ z) := by
         simpa only [Function.comp_apply] using huval
       rw [huval', huval0]
-      simp [centerOfMassReal, coordinateSum_permute]
+      simp [f, coordinateSum_permute]
     · apply Lp.ext
       have hgcomp := (ginibre_measurePreserving_permute σ).quasiMeasurePreserving.ae_eq_comp
         hgmem.coeFn_toLp
@@ -456,16 +426,13 @@ theorem centerOfMassReal_attains_symmetric_weak_poincare (n : ℕ) (hn : 0 < n) 
       apply PiLp.ext
       intro k
       change v (σ.symm k.1, k.2) = v k
-      have hlin : (centerOfMassReal : Configuration n → ℝ) =
-          (Complex.reCLM.comp (coordinateSumCLM n) : Configuration n → ℝ) := by
+      have hlin : (f : Configuration n → ℝ) =
+          (L.comp (coordinateSumCLM n) : Configuration n → ℝ) := by
         funext w
-        simp [centerOfMassReal, coordinateSumCLM_apply]
+        simp [f, coordinateSumCLM_apply]
       have hv : v (σ.symm k.1, k.2) = v k := by
         dsimp [v]
         rw [ginibreEuclideanGradient_coordinate, ginibreEuclideanGradient_coordinate]
-        change (fderiv ℝ centerOfMassReal 0)
-          (ginibreCoordinateDirection (σ.symm k.1, k.2)) =
-          (fderiv ℝ centerOfMassReal 0) (ginibreCoordinateDirection k)
         rw [hlin, ContinuousLinearMap.fderiv]
         by_cases hk : k.2 = 0
         · simp [ginibreCoordinateDirection, hk, realCoordinateDirection,
@@ -476,16 +443,16 @@ theorem centerOfMassReal_attains_symmetric_weak_poincare (n : ℕ) (hn : 0 < n) 
   have hmean : ginibreL2Mean n u = 0 := by
     unfold ginibreL2Mean
     rw [integral_congr_ae hu.coeFn_toLp]
-    have hmap : (∫ s : ℂ, s.re ∂((ginibreMeasure n).map coordinateSum)) =
-        ∫ z, (coordinateSum z).re ∂ginibreMeasure n :=
+    have hmap : (∫ s : ℂ, L s ∂((ginibreMeasure n).map coordinateSum)) =
+        ∫ z, L (coordinateSum z) ∂ginibreMeasure n :=
       integral_map (μ := ginibreMeasure n) (measurable_coordinateSum n).aemeasurable
-        (Complex.continuous_re.aestronglyMeasurable)
+        (L.continuous.aestronglyMeasurable)
     calc
-      (∫ z, (coordinateSum z).re ∂ginibreMeasure n) =
-          ∫ s, s.re ∂((ginibreMeasure n).map coordinateSum) := hmap.symm
+      (∫ z, L (coordinateSum z) ∂ginibreMeasure n) =
+          ∫ s, L s ∂((ginibreMeasure n).map coordinateSum) := hmap.symm
       _ = 0 := by
         rw [coordinateSum_ginibre_gaussian n hn]
-        exact standardComplexGaussian_real_moments.1
+        exact hmoments.1
   have hvar : ginibreL2Variance n hn u = 1 / 2 := by
     have hc0 : ginibreRealConstantL2 n hn 0 = 0 := by
       apply Lp.ext
@@ -493,21 +460,21 @@ theorem centerOfMassReal_attains_symmetric_weak_poincare (n : ℕ) (hn : 0 < n) 
       simp [hz]
     rw [ginibreL2Variance, hmean, hc0, sub_zero]
     rw [← integral_square_eq_L2_norm_sq]
-    have hsecond : (∫ z, centerOfMassReal z ^ 2 ∂ginibreMeasure n) = 1 / 2 := by
-      have hmap : (∫ s : ℂ, s.re ^ 2 ∂((ginibreMeasure n).map coordinateSum)) =
-          ∫ z, (coordinateSum z).re ^ 2 ∂ginibreMeasure n :=
+    have hsecond : (∫ z, f z ^ 2 ∂ginibreMeasure n) = 1 / 2 := by
+      have hmap : (∫ s : ℂ, L s ^ 2 ∂((ginibreMeasure n).map coordinateSum)) =
+          ∫ z, L (coordinateSum z) ^ 2 ∂ginibreMeasure n :=
         integral_map (μ := ginibreMeasure n) (measurable_coordinateSum n).aemeasurable
-          ((Complex.continuous_re.pow 2).aestronglyMeasurable)
+          ((L.continuous.pow 2).aestronglyMeasurable)
       calc
-        (∫ z, centerOfMassReal z ^ 2 ∂ginibreMeasure n) =
-            ∫ z, (coordinateSum z).re ^ 2 ∂ginibreMeasure n := by rfl
-        _ = ∫ s, s.re ^ 2 ∂((ginibreMeasure n).map coordinateSum) := hmap.symm
+        (∫ z, f z ^ 2 ∂ginibreMeasure n) =
+            ∫ z, L (coordinateSum z) ^ 2 ∂ginibreMeasure n := by rfl
+        _ = ∫ s, L s ^ 2 ∂((ginibreMeasure n).map coordinateSum) := hmap.symm
         _ = 1 / 2 := by
           rw [coordinateSum_ginibre_gaussian n hn]
-          exact standardComplexGaussian_real_moments.2
+          exact hmoments.2
     calc
       (∫ z, u z ^ 2 ∂ginibreMeasure n) =
-          ∫ z, centerOfMassReal z ^ 2 ∂ginibreMeasure n := by
+          ∫ z, f z ^ 2 ∂ginibreMeasure n := by
             apply integral_congr_ae
             filter_upwards [hu.coeFn_toLp] with z hz
             rw [hz]
@@ -522,57 +489,31 @@ theorem centerOfMassReal_attains_symmetric_weak_poincare (n : ℕ) (hn : 0 < n) 
     rw [show (fun z => ‖ginibreEuclideanGradient f z‖ ^ 2) =
       fun _ => (n : ℝ) by
         funext z
-        simpa [f] using centerOfMassReal_gradient_norm_sq n z]
+        simpa [f] using hnorm z]
     norm_num [probReal_univ, hn.ne']
   refine ⟨u, g, hweak, hsym, hu.coeFn_toLp, ?_⟩
   rw [hvar, henergy]
 
+/-- The noncompact real center-of-mass observable belongs to the full symmetric
+weak-H¹ domain and attains equality in the sharp Poincaré inequality. -/
+theorem centerOfMassReal_attains_symmetric_weak_poincare (n : ℕ) (hn : 0 < n) :
+    ∃ u : Lp ℝ 2 (ginibreMeasure n),
+      ∃ g : Lp (EuclideanSpace ℝ (Fin n × Fin 2)) 2 (ginibreMeasure n),
+        IsGinibreDistributionalGradient n u g ∧ IsGinibreSymmetricWeakPair (u, g) ∧
+          (u : Configuration n → ℝ) =ᵐ[ginibreMeasure n] centerOfMassReal ∧
+          ginibreL2Variance n hn u = ginibreWeakEnergy n g / 2 := by
+  exact coordinateSumLinear_attains_symmetric_weak_poincare n hn Complex.reCLM
+    standardComplexGaussian_real_moments (centerOfMassReal_gradient_norm_sq n)
+
 /-- The imaginary center-of-mass observable is square-integrable for every Ginibre law. -/
 theorem memLp_centerOfMassImag (n : ℕ) (hn : 0 < n) :
     MemLp (centerOfMassImag : Configuration n → ℝ) 2 (ginibreMeasure n) := by
-  have hgauss : Integrable (fun s : ℂ => ‖s‖ ^ 2) standardComplexGaussianMeasure := by
-    simpa [standardComplexGaussianMeasure] using
-      (integrable_norm_pow_complexCoordinateGaussianProbability 1 2)
-  have hcomp : Integrable (fun z : Configuration n => ‖coordinateSum z‖ ^ 2)
-      (ginibreMeasure n) := by
-    have hpush : Integrable (fun s : ℂ => ‖s‖ ^ 2)
-        ((ginibreMeasure n).map coordinateSum) := by
-      rw [coordinateSum_ginibre_gaussian n hn]
-      exact hgauss
-    exact hpush.comp_aemeasurable (measurable_coordinateSum n).aemeasurable
-  have hcont : Continuous (centerOfMassImag : Configuration n → ℝ) := by
-    have hsum : (coordinateSum : Configuration n → ℂ) = coordinateSumCLM n := by
-      funext z
-      exact (coordinateSumCLM_apply n z).symm
-    rw [show (centerOfMassImag : Configuration n → ℝ) =
-      Complex.imCLM ∘L coordinateSumCLM n by
-        funext z
-        simp [centerOfMassImag]]
-    exact (Complex.imCLM.comp (coordinateSumCLM n)).continuous
-  apply (memLp_two_iff_integrable_sq_norm hcont.aestronglyMeasurable).mpr
-  apply hcomp.mono'
-  · exact (continuous_norm.comp hcont).pow 2 |>.aestronglyMeasurable
-  · filter_upwards with z
-    change ‖‖centerOfMassImag z‖ ^ 2‖ ≤ ‖coordinateSum z‖ ^ 2
-    rw [Real.norm_of_nonneg (sq_nonneg _)]
-    have hb : ‖centerOfMassImag z‖ ≤ ‖coordinateSum z‖ := by
-      change |(coordinateSum z).im| ≤ ‖coordinateSum z‖
-      exact Complex.abs_im_le_norm _
-    exact (sq_le_sq₀ (norm_nonneg _) (norm_nonneg _)).2 hb
+  exact Complex.imCLM.comp_memLp' (memLp_coordinateSum n hn)
 
 theorem centerOfMassImag_gradient_const (n : ℕ) (z : Configuration n) :
     ginibreEuclideanGradient centerOfMassImag z =
       ginibreEuclideanGradient centerOfMassImag 0 := by
-  apply PiLp.ext
-  intro k
-  rw [ginibreEuclideanGradient_coordinate, ginibreEuclideanGradient_coordinate]
-  have hlin : (centerOfMassImag : Configuration n → ℝ) =
-      (Complex.imCLM.comp (coordinateSumCLM n) : Configuration n → ℝ) := by
-    funext w
-    simp [centerOfMassImag, coordinateSumCLM_apply]
-  rw [hlin, ContinuousLinearMap.fderiv]
-  simp [ginibreCoordinateDirection, coordinateSumCLM_apply,
-    realCoordinateDirection, imaginaryCoordinateDirection]
+  exact coordinateSumLinear_gradient_const n Complex.imCLM z
 
 theorem centerOfMassImag_gradient_norm_sq (n : ℕ) (z : Configuration n) :
     ‖ginibreEuclideanGradient centerOfMassImag z‖ ^ 2 = (n : ℝ) := by
@@ -594,128 +535,8 @@ theorem centerOfMassImag_attains_symmetric_weak_poincare (n : ℕ) (hn : 0 < n) 
         IsGinibreDistributionalGradient n u g ∧ IsGinibreSymmetricWeakPair (u, g) ∧
           (u : Configuration n → ℝ) =ᵐ[ginibreMeasure n] centerOfMassImag ∧
           ginibreL2Variance n hn u = ginibreWeakEnergy n g / 2 := by
-  let hu := memLp_centerOfMassImag n hn
-  let f : Configuration n → ℝ := centerOfMassImag
-  let hcont : ContDiff ℝ ∞ f := by
-    have hlin : f = (Complex.imCLM.comp (coordinateSumCLM n) : Configuration n → ℝ) := by
-      funext z
-      simp [f, centerOfMassImag, coordinateSumCLM_apply]
-    rw [hlin]
-    exact (Complex.imCLM.comp (coordinateSumCLM n)).contDiff
-  let v : EuclideanSpace ℝ (Fin n × Fin 2) := ginibreEuclideanGradient f 0
-  let := ginibreMeasure_isProbabilityMeasure hn
-  have hgmem : MemLp (fun _ : Configuration n => v) 2 (ginibreMeasure n) := memLp_const v
-  let u : Lp ℝ 2 (ginibreMeasure n) := hu.toLp f
-  let g : Lp (EuclideanSpace ℝ (Fin n × Fin 2)) 2 (ginibreMeasure n) := hgmem.toLp (fun _ => v)
-  have hgrad : (g : Configuration n → EuclideanSpace ℝ (Fin n × Fin 2)) =ᵐ[
-      ginibreMeasure n] ginibreEuclideanGradient f := by
-    filter_upwards [hgmem.coeFn_toLp] with z hz
-    rw [hz, centerOfMassImag_gradient_const]
-  have hweak : IsGinibreDistributionalGradient n u g :=
-    ginibre_smooth_distributional_gradient n hn u g f hcont hu.coeFn_toLp hgrad
-  have hsym : IsGinibreSymmetricWeakPair (u, g) := by
-    intro σ
-    constructor
-    · apply Lp.ext
-      have hcomp := (ginibre_measurePreserving_permute σ).quasiMeasurePreserving.ae_eq_comp
-        hu.coeFn_toLp
-      filter_upwards [ginibreRealPermutationL2_ae σ u, hcomp, hu.coeFn_toLp]
-        with z hperm huval huval0
-      rw [hperm]
-      change (hu.toLp centerOfMassImag : Configuration n → ℝ) (permute σ z) =
-        (hu.toLp centerOfMassImag : Configuration n → ℝ) z
-      have huval' : (hu.toLp centerOfMassImag : Configuration n → ℝ)
-          (permute σ z) = centerOfMassImag (permute σ z) := by
-        simpa only [Function.comp_apply] using huval
-      rw [huval', huval0]
-      simp [centerOfMassImag, coordinateSum_permute]
-    · apply Lp.ext
-      have hgcomp := (ginibre_measurePreserving_permute σ).quasiMeasurePreserving.ae_eq_comp
-        hgmem.coeFn_toLp
-      filter_upwards [ginibreGradientPermutationL2_ae σ g, hgcomp, hgmem.coeFn_toLp]
-        with z hperm hgval hgval0
-      rw [hperm]
-      change WithLp.toLp 2 (fun k : Fin n × Fin 2 =>
-        (hgmem.toLp (fun _ => v) : Configuration n → EuclideanSpace ℝ (Fin n × Fin 2))
-          (permute σ z) (σ.symm k.1, k.2)) =
-        (hgmem.toLp (fun _ => v) : Configuration n → EuclideanSpace ℝ (Fin n × Fin 2)) z
-      have hgval' : (hgmem.toLp (fun _ => v) :
-          Configuration n → EuclideanSpace ℝ (Fin n × Fin 2)) (permute σ z) = v := by
-        simpa only [Function.comp_apply] using hgval
-      rw [hgval', hgval0]
-      apply PiLp.ext
-      intro k
-      change v (σ.symm k.1, k.2) = v k
-      have hlin : (centerOfMassImag : Configuration n → ℝ) =
-          (Complex.imCLM.comp (coordinateSumCLM n) : Configuration n → ℝ) := by
-        funext w
-        simp [centerOfMassImag, coordinateSumCLM_apply]
-      have hv : v (σ.symm k.1, k.2) = v k := by
-        dsimp [v]
-        rw [ginibreEuclideanGradient_coordinate, ginibreEuclideanGradient_coordinate]
-        change (fderiv ℝ centerOfMassImag 0)
-          (ginibreCoordinateDirection (σ.symm k.1, k.2)) =
-          (fderiv ℝ centerOfMassImag 0) (ginibreCoordinateDirection k)
-        rw [hlin, ContinuousLinearMap.fderiv]
-        by_cases hk : k.2 = 0
-        · simp [ginibreCoordinateDirection, hk, realCoordinateDirection,
-            coordinateSum_coordinateDirection]
-        · simp [ginibreCoordinateDirection, hk,
-            imaginaryCoordinateDirection, coordinateSum_coordinateDirection]
-      exact hv
-  have hmean : ginibreL2Mean n u = 0 := by
-    unfold ginibreL2Mean
-    rw [integral_congr_ae hu.coeFn_toLp]
-    have hmap : (∫ s : ℂ, s.im ∂((ginibreMeasure n).map coordinateSum)) =
-        ∫ z, (coordinateSum z).im ∂ginibreMeasure n :=
-      integral_map (μ := ginibreMeasure n) (measurable_coordinateSum n).aemeasurable
-        (Complex.continuous_im.aestronglyMeasurable)
-    calc
-      (∫ z, (coordinateSum z).im ∂ginibreMeasure n) =
-          ∫ s, s.im ∂((ginibreMeasure n).map coordinateSum) := hmap.symm
-      _ = 0 := by
-        rw [coordinateSum_ginibre_gaussian n hn]
-        exact standardComplexGaussian_imag_moments.1
-  have hvar : ginibreL2Variance n hn u = 1 / 2 := by
-    have hc0 : ginibreRealConstantL2 n hn 0 = 0 := by
-      apply Lp.ext
-      filter_upwards [ginibreRealConstantL2_ae n hn 0] with z hz
-      simp [hz]
-    rw [ginibreL2Variance, hmean, hc0, sub_zero]
-    rw [← integral_square_eq_L2_norm_sq]
-    have hsecond : (∫ z, centerOfMassImag z ^ 2 ∂ginibreMeasure n) = 1 / 2 := by
-      have hmap : (∫ s : ℂ, s.im ^ 2 ∂((ginibreMeasure n).map coordinateSum)) =
-          ∫ z, (coordinateSum z).im ^ 2 ∂ginibreMeasure n :=
-        integral_map (μ := ginibreMeasure n) (measurable_coordinateSum n).aemeasurable
-          ((Complex.continuous_im.pow 2).aestronglyMeasurable)
-      calc
-        (∫ z, centerOfMassImag z ^ 2 ∂ginibreMeasure n) =
-            ∫ z, (coordinateSum z).im ^ 2 ∂ginibreMeasure n := by rfl
-        _ = ∫ s, s.im ^ 2 ∂((ginibreMeasure n).map coordinateSum) := hmap.symm
-        _ = 1 / 2 := by
-          rw [coordinateSum_ginibre_gaussian n hn]
-          exact standardComplexGaussian_imag_moments.2
-    calc
-      (∫ z, u z ^ 2 ∂ginibreMeasure n) =
-          ∫ z, centerOfMassImag z ^ 2 ∂ginibreMeasure n := by
-            apply integral_congr_ae
-            filter_upwards [hu.coeFn_toLp] with z hz
-            rw [hz]
-      _ = 1 / 2 := hsecond
-  have henergy : ginibreWeakEnergy n g = 1 := by
-    rw [ginibreWeakEnergy, ← integral_norm_sq_eq_L2_norm_sq]
-    have hae : (fun z => ‖g z‖ ^ 2) =ᵐ[ginibreMeasure n]
-        fun z => ‖ginibreEuclideanGradient f z‖ ^ 2 := by
-      filter_upwards [hgrad] with z hz
-      rw [hz]
-    rw [integral_congr_ae hae]
-    rw [show (fun z => ‖ginibreEuclideanGradient f z‖ ^ 2) =
-      fun _ => (n : ℝ) by
-        funext z
-        simpa [f] using centerOfMassImag_gradient_norm_sq n z]
-    norm_num [probReal_univ, hn.ne']
-  refine ⟨u, g, hweak, hsym, hu.coeFn_toLp, ?_⟩
-  rw [hvar, henergy]
+  exact coordinateSumLinear_attains_symmetric_weak_poincare n hn Complex.imCLM
+    standardComplexGaussian_imag_moments (centerOfMassImag_gradient_norm_sq n)
 
 end
 end GinibrePoincare
