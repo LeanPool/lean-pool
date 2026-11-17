@@ -52,13 +52,13 @@ def boundedMultilinearLift {m : ℕ}
         ext x
         change p (fun j => Function.update v i (a + b) j x) =
           p (fun j => Function.update v i a j x) + p (fun j => Function.update v i b j x)
-        simp only [eval_update, BoundedContinuousFunction.add_apply, p.map_update_add]
+        simp only [eval_update, add_apply, p.map_update_add]
       map_update_smul' := by
         intro _ v i c a
         ext x
         change p (fun j => Function.update v i (c • a) j x) =
           c • p (fun j => Function.update v i a j x)
-        simp only [eval_update, BoundedContinuousFunction.smul_apply, p.map_update_smul]
+        simp only [eval_update, smul_apply, p.map_update_smul]
         }
     ‖p‖ (fun v => (BoundedContinuousFunction.norm_le (by positivity)).mpr
       (by exact lift_bound p v))
