@@ -29,6 +29,7 @@ namespace TuringRigidity.BoundedSetTheory
 open TransitiveNameModel
 universe u
 
+/-- An element of `M` satisfying its internal finite-ordinal formula. -/
 def InternalNatural (M : ZFSet.{u}) :=
   {x : ZFSet.{u} // x ∈ M ∧ (Formula.finiteOrdinal 0).Realize M (fun _ => x)}
 
@@ -40,6 +41,7 @@ theorem internal_natural_iff (M : ZFSet.{u}) (hM : Transitive M)
 theorem sourceT_omega_mem (M : ZFSet.{u}) (hM : Transitive M) (hT : SourceT M) :
     ZFSet.omega.{u} ∈ M := omega_mem M hM hT.separation.finitePrefix.bounded hT.infinity
 
+/-- The equivalence between natural numbers and the model's internal finite ordinals. -/
 noncomputable def naturalNumberEquiv (M : ZFSet.{u}) (hM : Transitive M) (hT : SourceT M) :
     ℕ ≃ InternalNatural M := by
   have hω := sourceT_omega_mem M hM hT

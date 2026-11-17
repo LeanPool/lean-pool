@@ -29,6 +29,8 @@ namespace TuringRigidity.EffectiveSplitConditions
 open Encodable UniformOracle ArithmeticHierarchy EncodedForcing OracleJump EffectiveSplit
 open CodingForcing CodingAgreement CodingLocations
 
+/-- For a divergence certificate, append the certified extension's suffix to both condition
+words. -/
 def update (p w : ℕ) : ℕ :=
   if (Nat.unpair w).1 = 2 then
     code (append (condition p) ((word (item (Nat.unpair w).2 1)).drop (left p).length))
@@ -50,6 +52,7 @@ theorem update_primrec : Primrec₂ update := by
   exact Primrec.ite (Primrec.eq.comp (f.comp Primrec.snd) (Primrec.const 2)) ha (hc.comp
     Primrec.fst)
 
+/-- Update a condition using the selected splitting certificate for its left word. -/
 noncomputable def next (Y : Oracle) (e : OracleCode) (p : ℕ) : ℕ :=
   update p (step Y e (encode (left p)))
 

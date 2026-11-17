@@ -13,7 +13,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.Representation.GenericSourceTransfer
+public import LeanPool.TuringConeRigidity.Representation.PairGenericSelection
 
 /-!
 # Triple Prefix
@@ -46,6 +46,7 @@ theorem join_columns (H : Oracle) : join (column false H) (column true H) = H :=
     rw [he,join_odd]
     rfl
 
+/-- Extract three finite prefixes through the nested even and odd coordinate decomposition. -/
 def prefixes (s : List Bool) : List Bool × List Bool × List Bool :=
   let H : Oracle := fun i => s.getD i false
   (initial (column false H) s.length,

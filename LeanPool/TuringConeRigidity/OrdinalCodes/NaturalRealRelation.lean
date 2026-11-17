@@ -14,7 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.SetModels.InternalNaturalRelationReal
-public import LeanPool.TuringConeRigidity.SetModels.ModelArithmeticComprehension
+public import LeanPool.TuringConeRigidity.SetModels.ColumnSetFormula
 
 /-!
 # Natural Real Relation
@@ -30,6 +30,7 @@ namespace TuringRigidity.BoundedSetTheory
 open TransitiveNameModel RelationCollapse EncodedForcing
 universe u
 
+/-- The binary relation on von Neumann naturals represented by the paired bits of `B`. -/
 noncomputable def realRelation (B : Oracle) : ZFSet.{u} :=
   ZFSet.sep (fun p => ∃ n k : ℕ, p = ZFSet.pair (natSet n) (natSet k) ∧ B (Nat.pair n k) = true)
     (ZFSet.prod ZFSet.omega ZFSet.omega)
@@ -51,6 +52,7 @@ theorem realRelation_pair (B : Oracle) (n k : ℕ) :
       natSet k,(mem_omega _).mpr ⟨k,rfl⟩,rfl⟩,n,k,rfl,hb⟩
 
 namespace Formula
+/-- Bounded formula expressing membership in the binary relation coded by an oracle. -/
 def realRelationMember (o Q B p : ℕ) : Formula :=
   .existsMem o (.existsMem (o+1) (.conj (.orderedPair (p+2) 1 0)
     (columnBit (o+2) (Q+2) 1 (B+2) 0)))

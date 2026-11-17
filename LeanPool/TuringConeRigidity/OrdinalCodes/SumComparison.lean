@@ -26,11 +26,15 @@ namespace OAI
 
 namespace TuringRigidity.RationalCoding
 
+/-- The left natural-number cross-product for comparing one rational with the sum of two
+others. -/
 def sumLeft (z : ℕ × ℕ × ℕ) : ℕ :=
   positiveNumerator z.1 * denominator z.2.1 * denominator z.2.2 +
     negativeNumerator z.2.1 * denominator z.1 * denominator z.2.2 +
     negativeNumerator z.2.2 * denominator z.1 * denominator z.2.1
 
+/-- The right natural-number cross-product for comparing one rational with the sum of two
+others. -/
 def sumRight (z : ℕ × ℕ × ℕ) : ℕ :=
   negativeNumerator z.1 * denominator z.2.1 * denominator z.2.2 +
     positiveNumerator z.2.1 * denominator z.1 * denominator z.2.2 +

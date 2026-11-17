@@ -33,9 +33,11 @@ namespace OAI.TuringRigidity.TwoConeRigidity
 
 open ConeRigidity (coneJoin fourTuple_bound_of_monotone le_of_residual_le_join)
 
+/-- Apply the cone isomorphism after joining the input degree with the source base. -/
 def imageJoin {a b : Degree} (e : Set.Ici a ≃o Set.Ici b) (x : Degree) : Degree :=
   (e (coneJoin a x)).val
 
+/-- Apply the inverse cone isomorphism after joining the input degree with the target base. -/
 def pullback {a b : Degree} (e : Set.Ici a ≃o Set.Ici b) (x : Degree) : Degree :=
   imageJoin e.symm x
 

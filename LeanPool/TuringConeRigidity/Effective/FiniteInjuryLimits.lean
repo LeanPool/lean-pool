@@ -27,8 +27,10 @@ namespace OAI
 namespace TuringRigidity.FiniteInjury
 open CodingForcing
 
+/-- The left oracle obtained by reading the diagonal bits of the condition sequence. -/
 def leftLimit (p : ℕ → Condition) : Oracle := fun n => (p (n+1)).left.getD n false
 
+/-- The right oracle obtained by reading the diagonal bits of the condition sequence. -/
 def rightLimit (p : ℕ → Condition) : Oracle := fun n => (p (n+1)).right.getD n false
 
 theorem word_prefix {p : ℕ → Condition}

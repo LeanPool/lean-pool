@@ -14,7 +14,6 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.Representation.GenericCoding
-public import LeanPool.TuringConeRigidity.Representation.BorelGeneric
 
 /-!
 # Finite Shuffle
@@ -28,6 +27,7 @@ namespace OAI
 namespace TuringRigidity.FiniteShuffle
 open GenericCoding UniformOracle BinarySeries
 
+/-- Two oracles agree on their first `n` bits. -/
 def Agree (n : ℕ) (A B : Oracle) : Prop := ∀ i, i < n → A i = B i
 
 theorem Agree.mono {n m : ℕ} {A B : Oracle} (h : Agree n A B) (hm : m ≤ n) :
@@ -39,12 +39,18 @@ theorem Agree.symm {n : ℕ} {A B : Oracle} (h : Agree n A B) : Agree n B A :=
 theorem Agree.trans {n : ℕ} {A B C : Oracle} (h : Agree n A B) (h' : Agree n B C) :
     Agree n A C := fun i hi => (h i hi).trans (h' i hi)
 
+/-- The first `n` bits of the oracle as a finite word. -/
 def initial (A : Oracle) (n : ℕ) : List Bool := (List.range n).map A
 
 @[simp] theorem prefix_length (A : Oracle) (n : ℕ) : (initial A n).length = n := by
   simp [initial]
 
-@[simp] theorem prefix_getD (A : Oracle) (n i : ℕ) (hi : i < n) :
+/-- A bounded entry of the initial oracle word is the corresponding oracle bit. -/
+@[simp] theorem prefix_getElem (A : Oracle) (n i : ℕ) (hi : i < n) :
+    (initial A n)[i]'(by simpa using hi) = A i := by
+  simp [initial]
+
+theorem prefix_getD (A : Oracle) (n i : ℕ) (hi : i < n) :
     (initial A n).getD i false = A i := by
   simp [initial,List.getD,hi]
 
@@ -61,6 +67,7 @@ theorem prefix_agree {A B : Oracle} {n : ℕ} (h : Agree n A B) : initial A n = 
     have hi' : i < n := by simpa using hi
     simpa [initial] using h i hi'
 
+/-- All odd-coordinate bits from index `n` onward are false. -/
 def OddBound (n : ℕ) (G : Oracle) : Prop := ∀ i, n ≤ i → G (2*i+1) = false
 
 theorem count_agree {n : ℕ} {G H : Oracle} (h : ∀ i, i < n → G (2 * i + 1) = H (2 * i + 1)) :
@@ -104,6 +111,8 @@ theorem code_agree_inserted {n : ℕ} {A B G : Oracle} (hg : OddBound n G) (ha :
     exact ha _ (lt_of_le_of_lt (count_le G i) hi)
   · rfl
 
+/-- Preserve the even coordinates and the initial odd coordinates, clearing the remaining odd
+coordinates. -/
 def freeze (n : ℕ) (G : Oracle) : Oracle :=
   join (fun i => G (2*i)) (fun i => if i < n then G (2*i+1) else false)
 
@@ -128,6 +137,8 @@ theorem freeze_agree (n : ℕ) (G : Oracle) : Agree (2*n) G (freeze n G) := by
   · intro i hi; simp [freeze]
   · intro i hi; simp [freeze,hi]
 
+/-- Preserve the initial even coordinates, fill later even coordinates from shifted `T`, and
+retain odd coordinates. -/
 def extendEven (n : ℕ) (G T : Oracle) : Oracle :=
   join (fun i => if i < n then G (2*i) else T (i + count G n)) (fun i => G (2*i+1))
 
@@ -185,8 +196,9 @@ theorem agree_of_prefix {A : Oracle} {n : ℕ} {t : List Bool} (h : initial A n 
   obtain ⟨u,hu⟩ := h
   intro i hi
   rw [←hu]
-  simpa [List.getD,List.getElem?_append,hi] using (prefix_getD A n i hi).symm
+  simp [List.getD,List.getElem?_append,hi]
 
+/-- A word family is dense under extension and closed under further extension. -/
 def DenseOpen (D : List Bool → Prop) : Prop :=
   (∀ s, ∃ t, s <+: t ∧ D t) ∧ (∀ s t, s <+: t → D s → D t)
 

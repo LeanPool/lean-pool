@@ -28,6 +28,7 @@ namespace TuringRigidity.TransitiveNameModel
 open RecursiveNames BoundedSetTheory
 universe u
 
+/-- The recursive set code of the canonical checked name with every child tagged by `t`. -/
 noncomputable def checkedCode (t x : ZFSet.{u}) : ZFSet.{u} :=
   ZFSet.range (fun y : Shrink x =>
     ZFSet.pair (checkedCode t ((equivShrink x).symm y).val) t)
@@ -71,10 +72,12 @@ theorem encode_check {P : Type u} [Top P] (l : P → ZFSet.{u}) (x : ZFSet.{u}) 
     (Name.check x : Name P).encode l = checkedCode (l ⊤) x := by
   rw [Name.check,encode_checkPSet,ZFSet.mk_out]
 
+/-- The value `v` consists exactly of the tagged graph values of the members of `x`. -/
 def RecursionStep (f r t x v : ZFSet.{u}) : Prop :=
   (∀ z ∈ v, ∃ y ∈ x, ∃ w ∈ r, ZFSet.pair y w ∈ f ∧ z = ZFSet.pair w t) ∧
   (∀ y ∈ x, ∀ w ∈ r, ZFSet.pair y w ∈ f → ZFSet.pair w t ∈ v)
 
+/-- A total single-valued graph on a transitive domain obeying the checked-name recursion. -/
 def CheckGraph (d r f t : ZFSet.{u}) : Prop :=
   Transitive d ∧
   (∀ z ∈ f, ∃ x ∈ d, ∃ y ∈ r, z = ZFSet.pair x y) ∧
@@ -115,6 +118,7 @@ theorem CheckGraph.unique {d r s f g t : ZFSet.{u}}
 namespace CheckFormula
 open BoundedSetTheory.Formula
 
+/-- Bounded formula expressing one tagged checked-name recursion step. -/
 def step (f r t x v : ℕ) : Formula :=
   .conj (allMem v (.existsMem (x+1) (.existsMem (r+2)
     (.conj (pairMem 1 0 (f+3)) (orderedPair 2 0 (t+3))))))
@@ -127,6 +131,8 @@ theorem eval_step (f r t x v : ℕ) (e : ℕ → ZFSet.{u}) :
     eval_imp, cons_zero, cons_succ, RecursionStep]
   simp only [exists_eq_right]
 
+/-- Bounded formula expressing the domain, function graph, and checked-name recursion
+equations. -/
 def graph (d r f t : ℕ) : Formula :=
   .conj (transitive d) (.conj (functionGraph f d r)
     (allMem d (allMem (r+1) (imp (pairMem 1 0 (f+2)) (step (f+2) (r+2) (t+2) 1 0)))))

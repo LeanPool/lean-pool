@@ -28,8 +28,10 @@ namespace OAI
 namespace TuringRigidity.AntichainCoding
 open CodingForcing CodingColumns CodingDiagonal CodingGeneric CodingRequirements
 
+/-- Indices for the diagonal and common-computation requirements in antichain coding. -/
 abbrev Index := (ℕ × ℕ × OracleCode) ⊕ (OracleCode × OracleCode × OracleCode)
 
+/-- Decode an antichain-coding requirement, treating invalid codes as vacuous requirements. -/
 def requirements (A : ℕ → Oracle) (hA : ∀ k, {a | A k a = true}.Infinite)
     (B : Oracle) (n : ℕ) (p : Condition) : Prop :=
   match Encodable.decode (α := Index) n with

@@ -13,7 +13,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.OrdinalCodes.OrdinalOrderPresentation
+public import LeanPool.TuringConeRigidity.SetModels.CollapseCertificate
 
 /-!
 # Ordinal Product Sets
@@ -28,10 +28,13 @@ namespace TuringRigidity.OrdinalArithmetic
 open TransitiveNameModel BoundedSetTheory RelationCollapse
 universe u
 
+/-- Lexicographic membership order on the set-coded product with the second ordinal as the
+outer coordinate. -/
 def ProductLess (a b x y : ZFSet.{u}) : Prop :=
   ∃ s ∈ b, ∃ t ∈ a, ∃ v ∈ b, ∃ w ∈ a,
     x = ZFSet.pair s t ∧ y = ZFSet.pair v w ∧ (s ∈ v ∨ (s = v ∧ t ∈ w))
 
+/-- The set-coded lexicographic relation presenting an ordinal product. -/
 noncomputable def productRelation (a b : ZFSet.{u}) : ZFSet.{u} :=
   ZFSet.sep (fun p => ∃ x ∈ ZFSet.prod b a, ∃ y ∈ ZFSet.prod b a,
     p = ZFSet.pair x y ∧ ProductLess a b x y)
@@ -61,6 +64,7 @@ theorem productLess_pair (a b s t v w : ZFSet.{u}) :
   · rintro ⟨hs,ht,hv,hw,h⟩
     exact ⟨s,hs,t,ht,v,hv,w,hw,⟨rfl,rfl⟩,⟨rfl,rfl⟩,h⟩
 
+/-- Bounded formula expressing the lexicographic comparison of two product elements. -/
 def productLessFormula (a b x y : ℕ) : Formula :=
   .existsMem b (.existsMem (a+1) (.existsMem (b+2) (.existsMem (a+3)
     (.conj (.orderedPair (x+4) 3 2) (.conj (.orderedPair (y+4) 1 0)
@@ -70,6 +74,7 @@ theorem productLessFormula_eval (a b x y : ℕ) (e : ℕ → ZFSet.{u}) :
     (productLessFormula a b x y).Eval e ↔ ProductLess (e a) (e b) (e x) (e y) := by
   simp [productLessFormula,Formula.Eval,ProductLess]
 
+/-- Bounded formula describing membership in the ordinal-product relation. -/
 def productRelationFormula : Formula :=
   .existsMem 1 (.existsMem 2 (.conj (.orderedPair 2 1 0)
     (productLessFormula 4 5 1 0)))

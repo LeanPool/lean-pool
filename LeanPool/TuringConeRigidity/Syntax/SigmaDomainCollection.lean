@@ -14,6 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.Syntax.SigmaTransitiveWitness
+public import LeanPool.TuringConeRigidity.Syntax.SigmaCollection
 
 /-!
 # Sigma Domain Collection
@@ -30,10 +31,13 @@ open TransitiveNameModel
 universe u
 namespace SigmaFormula
 
+/-- Variable renaming reserving the slots of a sigma witness-domain request. -/
 def domainVars : ℕ → ℕ
   | 0 => 1
   | i+1 => i+3
 
+/-- A bounded request for a transitive domain containing all members of the supplied set and
+realizing the relativized formula. -/
 def domainRequest (φ : SigmaFormula) : SigmaFormula := .bounded
   (.conj (.transitive 0) (.conj (.subset 2 0) (FiniteTuple.relativizeSigma 0 (φ.rename
     domainVars))))

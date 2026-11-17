@@ -13,8 +13,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.Syntax.FiniteModelGraph
-public import LeanPool.TuringConeRigidity.Representation.GenericFilterName
+public import LeanPool.TuringConeRigidity.SetModels.ModelNaturalNumbers
 
 /-!
 # Internal Collapse Conditions
@@ -30,6 +29,7 @@ namespace TuringRigidity.BoundedSetTheory.InternalCollapse
 open TransitiveNameModel
 universe u
 
+/-- A set-coded finite initial-segment function with values in `A`. -/
 def Prefix (A p : ZFSet.{u}) : Prop :=
   ∃ n : ℕ, TransitiveNameModel.FunctionGraph (natSet n) A p
 
@@ -43,6 +43,7 @@ theorem prefix_subset {A p : ZFSet.{u}} (hp : Prefix A p) : p ⊆ ZFSet.prod ZFS
 theorem prefix_empty (A : ZFSet.{u}) : Prefix A ∅ :=
   ⟨0,fun _ h => False.elim (ZFSet.notMem_empty _ h),fun _ h => False.elim (ZFSet.notMem_empty _ h)⟩
 
+/-- Append the pair consisting of index `n` and value `x` to the graph `p`. -/
 noncomputable def append (p : ZFSet.{u}) (n : ℕ) (x : ZFSet.{u}) : ZFSet.{u} :=
   p ∪ ({ZFSet.pair (natSet n) x} : ZFSet.{u})
 
@@ -86,6 +87,7 @@ theorem append_mem (M : ZFSet.{u}) (hM : Transitive M) (hT : SourceT M)
     (singleton_mem M hM hT.pairing (orderedPair_mem M hM hT.pairing
       (hM _ (sourceT_omega_mem M hM hT) _ ((mem_omega _).mpr ⟨n,rfl⟩)) hx))
 
+/-- Bounded formula asserting that `p` is a finite initial-segment function into `A`. -/
 def prefixFormula (o A p : ℕ) : Formula := .existsMem o (.functionGraph (p+1) 0 (A+1))
 
 theorem eval_prefixFormula (o A p : ℕ) (e : ℕ → ZFSet.{u}) (ho : e o = ZFSet.omega) :
@@ -109,6 +111,7 @@ theorem conditions_exist (M : ZFSet.{u}) (hM : Transitive M) (hT : SourceT M)
   rw [ZFSet.mem_sep,eval_prefixFormula 1 2 0 (cons p e) rfl,hQ]
   exact ⟨fun h => ⟨h.1.1,h.2⟩,fun h => ⟨⟨h.1,prefix_subset h.2⟩,h.2⟩⟩
 
+/-- The reverse-inclusion partial order on the ground-model labels of conditions. -/
 @[instance_reducible] noncomputable def order (c : ZFSet.{u}) : PartialOrder (Conditions c) where
   le p q := label c q ⊆ label c p
   lt left right := label c right ⊆ label c left ∧ ¬ label c left ⊆ label c right
@@ -119,12 +122,15 @@ theorem conditions_exist (M : ZFSet.{u}) (hM : Transitive M) (hT : SourceT M)
 
 attribute [local instance] order
 
+/-- The preorder induced by the reverse-inclusion partial order on condition labels. -/
 @[instance_reducible] noncomputable def collapsePreorder
     (conditionSet : ZFSet.{u}) : Preorder (Conditions conditionSet) :=
   (order conditionSet).toPreorder
 
 attribute [local instance] collapsePreorder
 
+/-- The `OrderTop` instance on set-coded conditions when the empty condition belongs to the
+poset. -/
 @[instance_reducible] noncomputable def top (c : ZFSet.{u}) (h0 : (∅ : ZFSet.{u}) ∈ c) : OrderTop
   (Conditions c) where
   top := equivShrink c ⟨∅,h0⟩
@@ -134,6 +140,7 @@ attribute [local instance] collapsePreorder
     rw [he]
     exact fun z hz => False.elim (ZFSet.notMem_empty z hz)
 
+/-- The set-coded reverse-inclusion order relation on `c`. -/
 noncomputable def orderSet (c : ZFSet.{u}) : ZFSet.{u} :=
   ZFSet.sep (fun z => ∃ p ∈ c, ∃ q ∈ c, z = ZFSet.pair p q ∧ q ⊆ p) (ZFSet.prod c c)
 

@@ -29,6 +29,7 @@ namespace TuringRigidity.FixedArithmetic
 open Encodable EncodedForcing ArithmeticHierarchy UniformOracle OracleJump
 open ArithmeticModelDecoding SetCoding RelationCoding BoundedDecoding
 
+/-- The constantly false oracle. -/
 def zero : Oracle := fun _ => false
 
 theorem low_columns : ∃ C : Oracle,
@@ -44,6 +45,8 @@ theorem low_columns : ∃ C : Oracle,
     have h := (hind ⊥ ⊥ bot_le bot_le i {j}).mp (by simpa using he.le)
     simpa only [Finset.mem_singleton] using h.2
 
+/-- Reindex the columns so that the distinguished arithmetic column is retained and the
+remaining columns shift. -/
 def rows (C : Oracle) : Oracle := fun v =>
   C (Nat.pair (if (Nat.unpair (Nat.unpair v).1).1 = 0 then (Nat.unpair (Nat.unpair v).1).2
     else (Nat.unpair (Nat.unpair v).1).2+1) (Nat.unpair v).2)
@@ -79,10 +82,14 @@ theorem successor_code (C : Oracle) : ∃ p : RelationCode 2,
     refine ⟨k,trivial,fun i => ?_⟩
     fin_cases i <;> simp [two]
 
+/-- A low oracle family with distinct column degrees and a coded successor relation below the
+zero jump. -/
 structure Frame where
+  /-- The low oracle family whose columns carry the arithmetic frame. -/
   C : Oracle
   low : Reduces (jump C) (jump zero)
   injective : Function.Injective (fun k => degree (columns C k))
+  /-- The degree relation code representing successor among the frame's column degrees. -/
   successor : RelationCode 2
   below : RelationBelow successor (degree (jump zero))
   spec : ∀ a b, successor.Holds (two a b) ↔

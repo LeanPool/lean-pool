@@ -14,6 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.Effective.StageLimits
+public import LeanPool.TuringConeRigidity.Computability.Introreducible
 
 /-!
 # Stage Normalization
@@ -27,6 +28,7 @@ namespace OAI
 namespace TuringRigidity.StageNormalization
 open Encodable UniformOracle EncodedForcing StageRecords
 
+/-- Normalize every column by replacing it with the oracle coding its finite prefixes. -/
 def normalized (A : Oracle) : Oracle := fun v =>
   Introreducible.prefixSet (columns A (Nat.unpair v).1) (Nat.unpair v).2
 
@@ -35,6 +37,7 @@ def normalized (A : Oracle) : Oracle := fun v =>
   funext n
   simp [normalized,columns]
 
+/-- Append one selected oracle bit to a coded finite prefix. -/
 def prefixStep (A : Oracle) (v : ℕ) : ℕ := UniformOracle.appendEncoded
   (Nat.unpair (Nat.unpair v).2).2
   (CommonIdeal.bit (A (Nat.pair (Nat.unpair v).1 (Nat.unpair (Nat.unpair v).2).1)))
@@ -49,6 +52,7 @@ private theorem prefixStep_recursive (A : Oracle) :
     (total_pair (total_primrec (r.comp r)) h)
   exact hh.of_eq (fun v => by simp only [Nat.unpair_pair]; rfl)
 
+/-- The code of the first `n` bits of column `k`. -/
 def columnPrefix (A : Oracle) (k n : ℕ) : ℕ :=
   recur (fun _ => encode ([] : List ℕ)) (prefixStep A) k n
 

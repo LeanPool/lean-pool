@@ -13,14 +13,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import Mathlib.Algebra.Order.Archimedean.Real.Basic
 public import Mathlib.Data.Rat.Encodable
 public import Mathlib.NumberTheory.Real.Irrational
-public import Mathlib.Data.Set.Countable
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import Mathlib.Tactic.Linarith
-public import Mathlib.Tactic.Ring
-public import Mathlib.Tactic.FieldSimp
 
 /-!
 # Recurrence
@@ -33,12 +27,15 @@ namespace OAI
 
 namespace TuringRigidity
 
+/-- Read the Boolean test at a real state as the real number zero or one. -/
 def choiceBit (test : ℝ → Bool) (s : ℝ) : ℝ := if test s then 1 else 0
 
+/-- The state recursion with increment `δ * (t - choiceBit test currentState)`. -/
 def state (test : ℝ → Bool) (δ t : ℝ) : ℕ → ℝ
   | 0 => 0
   | n + 1 => state test δ t n + δ * (t - choiceBit test (state test δ t n))
 
+/-- The real-valued Boolean choice made at the specified state-recursion stage. -/
 def branch (test : ℝ → Bool) (δ t : ℝ) (n : ℕ) : ℝ :=
   choiceBit test (state test δ t n)
 
@@ -100,6 +97,7 @@ theorem frequency_error (test : ℝ → Bool) (δ t : ℝ) (n : ℕ)
   rw [heq, abs_div, abs_of_pos hden]
   exact (div_lt_div_iff_of_pos_right hden).mpr hs
 
+/-- The rational affine span consisting of numbers of the form `a + b * t`. -/
 def rationalSpan (t : ℝ) : Set ℝ := {s | ∃ a b : ℚ, s = a + b * t}
 
 theorem rationalSpan_countable (t : ℝ) : (rationalSpan t).Countable := by

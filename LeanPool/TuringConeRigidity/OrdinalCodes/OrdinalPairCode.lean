@@ -28,6 +28,8 @@ namespace TuringRigidity.OrdinalCoding
 universe u
 open Ordinal
 
+/-- Encode an ordered ordinal pair using leading and trailing omega powers and a branch
+coefficient. -/
 noncomputable def pairCode (x y : Ordinal.{u}) : Ordinal.{u} :=
   if y ≤ x then omega0 ^ (x+1) + omega0 ^ y
   else omega0 ^ (y+1) * 2 + omega0 ^ x
@@ -55,6 +57,7 @@ theorem pairCode_cnf_right (x y : Ordinal.{u}) (hy : ¬ y ≤ x) :
       ((lt_of_not_ge hy).trans (lt_add_one y)))
   simpa only [cnf_monomial] using h
 
+/-- Decode an ordinal-pair code from the first two terms of its Cantor normal form. -/
 noncomputable def unpairCode (a : Ordinal.{u}) : Ordinal.{u} × Ordinal.{u} :=
   let h := (CNF omega0 a).getD 0 (0,0)
   let t := (CNF omega0 a).getD 1 (0,0)

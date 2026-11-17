@@ -28,6 +28,8 @@ namespace TuringRigidity.RelativeConstructible
 open ElementaryModel BoundedSetTheory TransitiveNameModel
 universe u
 
+/-- A full formula asserting that the distinguished parameter is a largest ordinal in the
+model. -/
 noncomputable def largestOrdinalSentence : SentenceForm :=
   .conj ordinalSentence (.all (.imp ordinalSentence (.disj (.member 0 1) (.equal 0 1))))
 
@@ -82,6 +84,7 @@ theorem largestOrdinalSentence_level (R : ZFSet.{u}) (o : Ordinal.{u})
   exact largestOrdinalSentence_unique _ (level_transitive R _) _ hm.1
     (fun b hb => (hm.2 b).mp hb) e he
 
+/-- Existentially bind a largest ordinal before evaluating the formula body. -/
 noncomputable def bindLargestOrdinal (p : SentenceForm) : SentenceForm :=
   .ex (.conj largestOrdinalSentence p)
 

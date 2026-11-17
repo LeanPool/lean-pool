@@ -50,6 +50,8 @@ theorem tuplePrefix_sound (A G x s : ZFSet.{u}) {n : ℕ}
   rw [hs,hm,hh]
   rfl
 
+/-- A family of set-coded finite tuples containing the empty tuple and closed under prepending
+entries. -/
 def TupleSystem (A G T : ZFSet.{u}) : Prop :=
   (∀ t ∈ T, ∃ n ∈ ZFSet.omega, ∃ g ∈ G,
     t = ZFSet.pair n g ∧ FunctionGraph n A g) ∧

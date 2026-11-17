@@ -29,6 +29,7 @@ namespace TuringRigidity.CountedRegularBasis
 open TransitiveNameModel BoundedSetTheory InternalRegularOperations InternalRegularAlgebra
 open InternalBooleanDense
 
+/-- Bounded formula identifying a least basis neighborhood of `p` among those containing it. -/
 def basicFormula (B p U : ℕ) : Formula :=
   .conj (.member U B) (.conj (.member p U)
     (.allMem B (.imp (.member (p+1) 0) (.subset (U+1) 0))))

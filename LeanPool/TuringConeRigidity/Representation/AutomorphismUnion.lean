@@ -28,8 +28,11 @@ namespace OAI
 namespace TuringRigidity.AutomorphismUnion
 open Set PersistentRestrictions CountableForcing
 
+/-- A countable degree ideal equipped with an order automorphism. -/
 structure Approximation where
+  /-- The countable ideal supporting this automorphism approximation. -/
   ideal : CountableIdeal
+  /-- The order automorphism on the supporting ideal. -/
   map : ideal ≃o ideal
 
 instance : Preorder Approximation where
@@ -41,9 +44,11 @@ instance : Preorder Approximation where
     refine ⟨fun _ h => hpq (hqr h), fun a => ?_⟩
     exact (epq ⟨a.val,hqr a.property⟩).trans (eqr a)
 
+/-- The union of the ideal carriers of the approximations in the filter. -/
 def Domain (G : GenericFilter Approximation) : Set Degree :=
   {a | ∃ p ∈ G.carrier, a ∈ p.ideal.carrier}
 
+/-- The union of the automorphism graphs of the approximations in the filter. -/
 def Graph (G : GenericFilter Approximation) (a b : Degree) : Prop :=
   ∃ p ∈ G.carrier, ∃ ha : a ∈ p.ideal.carrier, (p.map ⟨a,ha⟩).val = b
 
@@ -87,6 +92,7 @@ theorem graph_injective (G : GenericFilter Approximation) {a b c : Degree}
     (hac : Graph G a c) (hbc : Graph G b c) : a = b :=
   le_antisymm ((graph_order G hac hbc).mpr le_rfl) ((graph_order G hbc hac).mpr le_rfl)
 
+/-- The automorphism value selected from the union graph on its domain. -/
 noncomputable def value (G : GenericFilter Approximation) (a : Domain G) : Domain G :=
   ⟨Classical.choose (graph_total G a.property),
     (graph_domain (Classical.choose_spec (graph_total G a.property))).2⟩
@@ -94,6 +100,7 @@ noncomputable def value (G : GenericFilter Approximation) (a : Domain G) : Domai
 theorem value_graph (G : GenericFilter Approximation) (a : Domain G) :
     Graph G a.val (value G a).val := Classical.choose_spec (graph_total G a.property)
 
+/-- The inverse value selected from the surjective union graph. -/
 noncomputable def inverse (G : GenericFilter Approximation) (b : Domain G) : Domain G :=
   ⟨Classical.choose (graph_surjective G b.property),
     (graph_domain (Classical.choose_spec (graph_surjective G b.property))).1⟩
@@ -101,6 +108,8 @@ noncomputable def inverse (G : GenericFilter Approximation) (b : Domain G) : Dom
 theorem inverse_graph (G : GenericFilter Approximation) (b : Domain G) :
     Graph G (inverse G b).val b.val := Classical.choose_spec (graph_surjective G b.property)
 
+/-- The order automorphism obtained by uniting the compatible ideal automorphism
+approximations. -/
 noncomputable def automorphism (G : GenericFilter Approximation) : Domain G ≃o Domain G where
   toFun := value G
   invFun := inverse G

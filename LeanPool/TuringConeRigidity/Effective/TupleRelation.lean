@@ -31,6 +31,7 @@ open TransitiveNameModel
 universe u
 namespace FiniteTuple
 
+/-- Variable renaming placing the output after the tuple's `n` argument slots. -/
 def outputFirst (n k : ℕ) : ℕ → ℕ
   | 0 => n
   | i+1 => if i < n then i else i+k+1
@@ -52,6 +53,7 @@ theorem prepend_outputFirst (xs junk : List ZFSet.{u}) (y : ZFSet.{u})
       have harith : xs.length+j+junk.length+1 = xs.length+(junk.length+j+1) := by omega
       rw [harith,prepend_tail,prepend_tail,cons_succ,prepend_tail]
 
+/-- Set-coded relation between finite tuple codes and outputs satisfying the formula. -/
 noncomputable def relation (d : ZFSet.{u}) (n : ℕ) (φ : Formula)
     (e : ℕ → ZFSet.{u}) : ZFSet.{u} :=
   ZFSet.sep (fun z => ∃ xs : List ZFSet.{u}, xs.length = n ∧
@@ -71,6 +73,7 @@ theorem relation_pair (d y : ZFSet.{u}) (xs : List ZFSet.{u}) (φ : Formula)
     exact ⟨ZFSet.mem_prod.mpr ⟨_,code_mem_space d xs hxs,y,hy,rfl⟩,
       xs,rfl,hxs,y,hy,rfl,hφ⟩
 
+/-- Bounded formula expressing the finite-tuple relation defined by `φ`. -/
 def relationFormula (n : ℕ) (φ : Formula) : Formula :=
   .existsMem 1 (.existsMem 3 (.conj (.orderedPair 2 1 0)
     (unpack n 1 5 6 (φ.rename (outputFirst n 6)))))

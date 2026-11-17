@@ -27,19 +27,25 @@ namespace OAI
 namespace TuringRigidity.ArithmeticHierarchy
 open UniformOracle
 
+/-- A predicate has a total Boolean characteristic function recursive relative to `Y`. -/
 noncomputable def RecursivePred (Y : Oracle) (P : ℕ → Prop) : Prop := by
   classical
   exact Nat.RecursiveIn {oracleFunction Y} (fun x => Part.some (if P x then 1 else 0))
 
+/-- Choose existential quantification when the polarity is true, and universal quantification
+otherwise. -/
 def Quant (s : Bool) (P : ℕ → Prop) : Prop :=
   if s then ∃ a, P a else ∀ a, P a
 
+/-- Alternating arithmetic hierarchy over the predicates recursive relative to `Y`. -/
 def Form (Y : Oracle) : ℕ → Bool → (ℕ → Prop) → Prop
   | 0, _, P => RecursivePred Y P
   | n+1, s, P => ∃ Q : ℕ → Prop, Form Y n (!s) Q ∧
       ∀ x, P x ↔ Quant s (fun a => Q (Nat.pair x a))
 
+/-- The existential-polarity level of the arithmetic hierarchy relative to `Y`. -/
 abbrev Sigma (Y : Oracle) (n : ℕ) (P : ℕ → Prop) := Form Y n true P
+/-- The universal-polarity level of the arithmetic hierarchy relative to `Y`. -/
 abbrev Pi (Y : Oracle) (n : ℕ) (P : ℕ → Prop) := Form Y n false P
 
 theorem Form.congr {Y n s P Q} (h : Form Y n s P) (he : ∀ x, P x ↔ Q x) :

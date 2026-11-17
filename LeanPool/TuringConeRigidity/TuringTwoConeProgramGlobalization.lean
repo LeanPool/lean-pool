@@ -14,7 +14,10 @@ module
 
 public import LeanPool.TuringConeRigidity.TuringTwoConeRepresentation
 public import LeanPool.TuringConeRigidity.TuringTwoConeLocality
-public import LeanPool.TuringConeRigidity.TuringConeProgramGlobalization
+public import LeanPool.TuringConeRigidity.CohenForcing.InternalCohenRequirements
+public import LeanPool.TuringConeRigidity.Representation.GroundArithmeticGeneric
+public import LeanPool.TuringConeRigidity.Representation.ParameterCoveringModels
+public import LeanPool.TuringConeRigidity.SetModels.ModelRealOperations
 
 /-!
 # Globalizing two-cone programs from countable tests
@@ -36,10 +39,14 @@ open TwoConeLocality (forwardAnchor)
 
 noncomputable section
 
+/-- The program is total at `X` and computes a representative of the cone isomorphism's
+pullback degree. -/
 def RepresentsInverseAt {a b : Degree} (e : Set.Ici a ≃o Set.Ici b)
     (p : OracleCode) (P X : Oracle) : Prop :=
   Total p P X ∧ degree (value p P X) = pullback e (degree X)
 
+/-- For each countable test sequence, one anchored oracle and program represent the join-based
+pullback on its arithmetic-generic members. -/
 def CountableTests {a b : Degree} (e : Set.Ici a ≃o Set.Ici b) : Prop :=
   ∀ W : ℕ → Oracle, ∃ (R : Oracle) (p : OracleCode),
     degree R = forwardAnchor e ∧

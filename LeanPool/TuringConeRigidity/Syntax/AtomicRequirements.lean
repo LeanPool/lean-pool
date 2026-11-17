@@ -13,8 +13,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.Syntax.AtomicEncoding
-public import LeanPool.TuringConeRigidity.SetModels.NameExtension
+public import LeanPool.TuringConeRigidity.CohenForcing.AtomicForcing
+public import LeanPool.TuringConeRigidity.CohenForcing.CountableForcing
 
 /-!
 # Atomic Requirements
@@ -30,18 +30,25 @@ open Set RecursiveNames CountableForcing
 universe u
 variable {P : Type u} [Preorder P]
 
+/-- A child of the target name has a tag above `p` and is forced equal to the source name at
+`p`. -/
 def Witness (a : Name P) : Name P → P → Prop
   | .mk _ b t, p => ∃ j, p ≤ t j ∧ EqForces a (b j) p
 
+/-- Every condition extending `p` fails to force membership of the first name in the second. -/
 def NegMem (a b : Name P) (p : P) : Prop := ∀ q, q ≤ p → ¬ MemForces a b q
 
+/-- Conditions giving an explicit membership witness or forcing persistent nonmembership. -/
 def MemTest (a b : Name P) : Set P := {p | Witness a b p ∨ NegMem a b p}
 
+/-- A child of either name, active at `p`, is persistently absent from the other name below
+`p`. -/
 def Refute : Name P → Name P → P → Prop
   | .mk _ a s, .mk _ b t, p =>
     (∃ i, p ≤ s i ∧ NegMem (a i) (.mk _ b t) p) ∨
     (∃ j, p ≤ t j ∧ NegMem (b j) (.mk _ a s) p)
 
+/-- Conditions forcing equality or supplying a child refutation of equality. -/
 def EqTest (a b : Name P) : Set P := {p | EqForces a b p ∨ Refute a b p}
 
 theorem witness_mono (a b : Name P) {p q : P} (hq : q ≤ p)
@@ -93,6 +100,7 @@ theorem eqTest_dense (a b : Name P) : Dense (EqTest a b) := by
           obtain ⟨w,hw,i,hi,hf⟩ := hm r le_rfl
           exact hn ⟨w,hw.trans hr,i,hi,eq_symm _ _ _ hf⟩
 
+/-- The filter meets both atomic membership and equality decision families for names in `N`. -/
 structure Generic (N : Set (Name P)) (G : GenericFilter P) : Prop where
   memTest : ∀ a ∈ N, ∀ b ∈ N, ∃ p ∈ G.carrier, p ∈ MemTest a b
   eqTest : ∀ a ∈ N, ∀ b ∈ N, ∃ p ∈ G.carrier, p ∈ EqTest a b

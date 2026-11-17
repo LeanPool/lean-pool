@@ -30,18 +30,25 @@ namespace TuringRigidity.ArithmeticPrefixForcing
 open Encodable UniformArithmetic FiniteShuffle ShuffleRequirements
 open EncodedForcing (word word_primrec)
 
+/-- Predicates of oracle parameters, a natural-number index, and a finite binary word. -/
 abbrev PrefixPredicate := Oracles → ℕ → List Bool → Prop
+/-- Arithmetic definability of a prefix predicate after coding its index and word by one
+number. -/
 abbrev ArithmeticPrefix (Q : PrefixPredicate) :=
   Arith (fun O v => Q O (left v) (word (right v)))
 
+/-- A word property is preserved by extending the word. -/
 def Upward (Q : List Bool → Prop) : Prop :=
   ∀ s t, s <+: t → Q s → Q t
 
+/-- No extension of the given word has the property `Q`. -/
 def Avoid (Q : List Bool → Prop) (s : List Bool) : Prop :=
   ∀ t, s <+: t → ¬ Q t
 
+/-- The word either satisfies `Q` or excludes `Q` on every extension. -/
 def Decides (Q : List Bool → Prop) (s : List Bool) : Prop := Q s ∨ Avoid Q s
 
+/-- The oracle meets every arithmetically definable dense open family of finite words. -/
 def Generic (O : Oracles) (G : Oracle) : Prop :=
   ∀ D : Oracles → List Bool → Prop,
     Arith (fun O n => D O (word n)) → DenseOpen (D O) →

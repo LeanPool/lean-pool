@@ -14,6 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.Effective.StageRecords
+public import LeanPool.TuringConeRigidity.Effective.PriorityStage
 
 /-!
 # Stage Scan
@@ -29,9 +30,12 @@ open Encodable UniformOracle EncodedForcing CodingForcing FiniteInjury StageReco
 noncomputable section
 attribute [local instance] Classical.propDecidable
 
+/-- Primitive-recursive first projection of a natural-number pair code. -/
 abbrev f := Primrec.fst.comp Primrec.unpair
+/-- Primitive-recursive second projection of a natural-number pair code. -/
 abbrev r := Primrec.snd.comp Primrec.unpair
 
+/-- Re-encode the condition words with the specified active level. -/
 def levelCode (p t : ℕ) : ℕ := Nat.pair (encode (left p)) (Nat.pair (encode (right p)) t)
 
 theorem levelCode_primrec : Primrec₂ levelCode := Primrec₂.natPair.comp
@@ -44,6 +48,7 @@ theorem levelCode_eq (p t : ℕ) : levelCode p t = code (atLevel (condition p) t
   t :=
   condition_code (atLevel (condition p) t)
 
+/-- Compute and normalize the priority candidate encoded by the request. -/
 def candidate (A : Oracle) (v : ℕ) : ℕ :=
   levelCode (PriorityStage.pairProcedure A (Nat.pair (Nat.unpair v).1
     (levelCode (Nat.unpair v).2 (Nat.unpair v).1))) (Nat.unpair v).1
@@ -60,6 +65,7 @@ theorem candidate_recursive (A : Oracle) :
     condition (candidate A (Nat.pair t p)) = PriorityStage.candidate A t (condition p) := by
   simp only [candidate,Nat.unpair_pair,levelCode_eq,PriorityStage.candidate,condition_code]
 
+/-- Record the first unfinished candidate that changes either word in the bounded scan. -/
 def scanStep (A : Oracle) (v : ℕ) : ℕ :=
   let p := (Nat.unpair (Nat.unpair v).1).1
   let d := (Nat.unpair (Nat.unpair v).1).2
@@ -86,6 +92,7 @@ theorem scanStep_recursive (A : Oracle) :
   have hh := total_comp (total_primrec hpost) (total_pair (total_primrec Primrec.id) hc)
   exact hh.of_eq (fun v => by simp only [Nat.unpair_pair]; rfl)
 
+/-- Iterate the priority scan through the first `n` candidate levels. -/
 def scan (A : Oracle) (p d n : ℕ) : ℕ := recur (fun _ => 0) (scanStep A) (Nat.pair p d) n
 
 theorem scan_recursive (A : Oracle) :

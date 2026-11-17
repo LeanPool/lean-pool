@@ -14,6 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.Syntax.BooleanExpressionTruth
+public import LeanPool.TuringConeRigidity.Syntax.BooleanExpressionCertificate
 
 /-!
 # Boolean Truth Reading
@@ -76,6 +77,7 @@ theorem certificate_value (M c B Q S K g R : ZFSet.{0})
         exact ⟨s,hs,(ih s ((ZFSet.rank_lt_of_mem hs).trans (FiniteTerm.pair_rank_right _ _)) V
           hchild).mpr hv⟩
 
+/-- The seed Boolean codes corresponding to true numeral bits of `X`. -/
 noncomputable def seedTruth (c B : ZFSet.{0}) (E : ℕ → ZFSet.{0}) (X : ZFSet.{0}) : ZFSet.{0} :=
   B.sep (fun U => ∃ n, natSet n ∈ X ∧ U = bitCode c (E n))
 

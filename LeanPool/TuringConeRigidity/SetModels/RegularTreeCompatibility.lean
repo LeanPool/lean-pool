@@ -13,7 +13,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.SetModels.RegularBinaryTree
+public import Mathlib.SetTheory.ZFC.Basic
 
 /-!
 # Regular Tree Compatibility
@@ -75,7 +75,7 @@ theorem subset_iff_prefix (f : List Bool → ZFSet.{0})
     cases u with
     | nil =>
       have he : t = s := by simpa only [List.append_nil] using hu
-      rw [←he]
+      exact ⟨[], by simpa only [List.append_nil] using he.symm⟩
     | cons b u =>
       have hx : f (t ++ [!b]) ⊆ f t := hm _ _ ⟨[!b],rfl⟩
       obtain he|⟨q,hq⟩ := ZFSet.eq_empty_or_nonempty (f (t ++ [!b]))

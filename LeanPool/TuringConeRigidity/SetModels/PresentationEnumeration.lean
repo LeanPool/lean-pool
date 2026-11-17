@@ -29,6 +29,7 @@ namespace TuringRigidity.BoundedSetTheory
 open TransitiveNameModel EncodedForcing
 universe u
 
+/-- The set-coded enumeration of the column degree classes of `H` inside `R`. -/
 noncomputable def presentationEnumeration (R : ZFSet.{u}) (H : Oracle) : ZFSet.{u} :=
   ZFSet.range (fun n : ℕ => ZFSet.pair (natSet n) (degreeCode R (columns H n)))
 
@@ -68,6 +69,7 @@ theorem presentationEnumeration_onto (R : ZFSet.{u}) (H : Oracle) :
   exact ⟨natSet n,(mem_omega _).mpr ⟨n,rfl⟩,(presentationEnumeration_pair R H n _).mpr rfl⟩
 
 namespace Formula
+/-- Bounded formula identifying the degree code of the selected column of `H`. -/
 def presentationValue (φ : Formula) (o Q z R H n D : ℕ) : Formula :=
   .existsMem R (.conj (columnSet (o+1) (Q+1) (n+1) (H+1) 0)
     (degreeSet φ (o+1) (Q+1) (z+1) (R+1) 0 (D+1)))
@@ -92,6 +94,7 @@ theorem presentationValue_spec {φ : Formula} (hφ : DegreeEqualityFormula.{u} �
     · exact (degreeSet_spec hφ (o+1) (Q+1) (z+1) (R+1) 0 (D+1)
         (cons (realCode (columns A N)) e) ho hQ hz hR (columns A N) rfl).mpr hd
 
+/-- Bounded formula describing membership in the column-degree enumeration graph. -/
 def enumerationMember (φ : Formula) (o Q z R H I Z : ℕ) : Formula :=
   .existsMem o (.existsMem (I+1) (.conj (.orderedPair (Z+2) 1 0)
     (presentationValue φ (o+2) (Q+2) (z+2) (R+2) (H+2) 1 0)))

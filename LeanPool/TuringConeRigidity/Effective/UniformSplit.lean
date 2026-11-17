@@ -15,6 +15,8 @@ module
 
 public import LeanPool.TuringConeRigidity.Effective.UniformRun
 public import LeanPool.TuringConeRigidity.Effective.CodingSplitting
+public import LeanPool.TuringConeRigidity.Effective.EffectiveWitness
+public import Mathlib.Algebra.Order.Ring.Star
 
 /-!
 # Uniform Split
@@ -30,10 +32,14 @@ open Encodable UniformOracle ArithmeticHierarchy OracleJump EncodedForcing Effec
   IndexMatrix
 open UniformProgram
 
+/-- The background program extracted from a uniform splitting request. -/
 def base (x : ℕ) := machine (item x 0)
+/-- The target program extracted from a uniform splitting request. -/
 def program (x : ℕ) := machine (item x 1)
+/-- The starting finite word extracted from a uniform splitting request. -/
 def start (x : ℕ) := word (item x 2)
 
+/-- Two extensions of the starting word give different outputs for one uniform program input. -/
 def SplitCert (A : Oracle) (v : ℕ) : Prop :=
   let x := (Nat.unpair v).1
   let w := (Nat.unpair v).2
@@ -55,6 +61,7 @@ theorem splitCert_sigma (A : Oracle) : Sigma A 1 (SplitCert A) := by
     ((Form.raise (n := 0) (s := true) hq).and ((Form.raise (n := 0) (s := true) hn).and (hl.and
       hr)))
 
+/-- Changing one new bit in an extension changes the uniform program's output. -/
 def PointCert (A : Oracle) (v : ℕ) : Prop :=
   let x := (Nat.unpair v).1
   let w := (Nat.unpair v).2
@@ -84,6 +91,8 @@ theorem pointCert_sigma (A : Oracle) : Sigma A 1 (PointCert A) := by
       ((Form.raise (n := 0) (s := true) hhi).and ((Form.raise (n := 0) (s := true) hn).and (hl.and
         hr))))
 
+/-- Some extension of the coded word makes the uniform program converge on the specified
+input. -/
 def ConvergesAbove (A : Oracle) (v : ℕ) : Prop :=
   let x := (Nat.unpair v).1
   let w := (Nat.unpair v).2
@@ -102,6 +111,8 @@ theorem convergesAbove_sigma (A : Oracle) : Sigma A 1 (ConvergesAbove A) := by
   unfold ConvergesAbove
   simpa only [base,program,Nat.unpair_pair] using h
 
+/-- A starting-word extension has no further extension on which the uniform computation
+converges. -/
 def DivCert (A : Oracle) (v : ℕ) : Prop :=
   start (Nat.unpair v).1 <+: word (item (Nat.unpair v).2 1) ∧ ¬ ConvergesAbove A v
 
@@ -113,6 +124,7 @@ theorem divCert_recursive (A : Oracle) : RecursivePred (jump A) (DivCert A) := b
     (word_primrec.comp (item_primrec.comp r (Primrec.const 1)))
   exact recursive_and hp (recursive_not (form_recursive (convergesAbove_sigma A)))
 
+/-- A tagged uniform splitting certificate for no split, a one-point split, or divergence. -/
 def Accept (A : Oracle) (v : ℕ) : Prop :=
   let x := (Nat.unpair v).1
   let tag := (Nat.unpair (Nat.unpair v).2).1
@@ -164,6 +176,7 @@ theorem accept_total (A : Oracle) : ∀ x, ∃ w, Accept A (Nat.pair x w) := by
         exact hd u a (hu ▸ ha)
   · exact ⟨Nat.pair 0 0,Or.inl ⟨by simp,by simpa using hs⟩⟩
 
+/-- Select the least accepted uniform splitting certificate for each request. -/
 noncomputable def step (A : Oracle) : ℕ → ℕ := least (Accept A) (accept_total A)
 
 theorem step_recursive (A : Oracle) :

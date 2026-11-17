@@ -15,6 +15,7 @@ module
 
 public import LeanPool.TuringConeRigidity.SetModels.InternalContainer
 public import LeanPool.TuringConeRigidity.SetModels.InternalCheckRecursion
+public import LeanPool.TuringConeRigidity.SetModels.ExtensionBasicAxioms
 
 /-!
 # Ground Inclusion

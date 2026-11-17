@@ -28,18 +28,23 @@ namespace OAI
 namespace TuringRigidity.BoundedSetTheory
 universe u
 
+/-- A bounded formula defines the natural-number function under every adequate finite-graph
+bound. -/
 def DefinesNatural (φ : Formula) (f : ℕ → ℕ) : Prop :=
   ∀ e : ℕ → ZFSet.{u}, e 2 = ZFSet.omega →
     (∀ g : ℕ → ℕ, ∀ k, finiteNaturalGraph g k ∈ e 3) → ∀ n, e 1 = natSet n →
       (φ.Eval e ↔ e 0 = natSet (f n))
 
 namespace Formula
+/-- Variable renaming supplying the input, output, omega, and graph-bound slots of a unary
+definition. -/
 def unaryVars (o Q x y : ℕ) : ℕ → ℕ
   | 0 => y
   | 1 => x
   | 2 => o
   | _+3 => Q
 
+/-- Place a unary numerical definition in the specified variable slots. -/
 def unary (φ : Formula) (o Q x y : ℕ) : Formula := φ.rename (unaryVars o Q x y)
 
 theorem unary_spec {φ : Formula} {f : ℕ → ℕ} (hφ : DefinesNatural.{u} φ f)
@@ -49,12 +54,15 @@ theorem unary_spec {φ : Formula} {f : ℕ → ℕ} (hφ : DefinesNatural.{u} φ
   rw [unary,eval_rename]
   exact hφ (fun i => e (unaryVars o Q x y i)) ho hQ n hx
 
+/-- Compose two unary numerical definitions through an intermediate natural number. -/
 def numericComposition (φ ψ : Formula) : Formula := .existsMem 2
   (.conj (unary ψ 3 4 2 0) (unary φ 3 4 0 1))
 
+/-- Compute two unary outputs and encode their ordered natural-number pair. -/
 def numericPair (φ ψ : Formula) : Formula := .existsMem 2 (.existsMem 3
   (.conj (unary φ 4 5 3 1) (.conj (unary ψ 4 5 3 0) (naturalPair 4 5 1 0 2))))
 
+/-- Apply a unary definition to the natural-number pair of two supplied inputs. -/
 def pairedUnary (φ : Formula) (o Q a b y : ℕ) : Formula := .existsMem o
   (.conj (naturalPair (o+1) (Q+1) (a+1) (b+1) 0) (unary φ (o+1) (Q+1) 0 (y+1)))
 

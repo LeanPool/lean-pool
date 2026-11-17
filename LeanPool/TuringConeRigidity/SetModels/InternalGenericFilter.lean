@@ -14,7 +14,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.SetModels.InternalGenericSequence
-public import LeanPool.TuringConeRigidity.SetModels.InternalAtomicTruth
+public import LeanPool.TuringConeRigidity.Representation.GenericFilterName
+public import LeanPool.TuringConeRigidity.SetModels.CountableSetReal
 
 /-!
 # Internal Generic Filter
@@ -33,6 +34,7 @@ universe u
 namespace Code
 open Formula
 
+/-- Bounded formula asserting that the coded sequence reaches a condition below `p`. -/
 def reaches (ω c s g o p : ℕ) : Formula :=
   .existsMem ω (.existsMem (s+1) (.conj (.pairMem 1 0 (g+2))
     (.existsMem (ω+2) (.existsMem (c+3) (.conj (.orderedPair 2 1 0) (.pairMem 0 (p+4) (o+4)))))))

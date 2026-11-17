@@ -31,12 +31,15 @@ open TransitiveNameModel
 universe u
 namespace FiniteTerm
 
+/-- Tag a set with a von Neumann natural-number constructor label. -/
 noncomputable def tag (n : ℕ) (x : ZFSet.{u}) : ZFSet.{u} := ZFSet.pair (natSet n) x
 
 theorem tag_inj (n m : ℕ) (x y : ZFSet.{u}) : tag n x = tag m y ↔ n = m ∧ x = y := by
   rw [tag,tag,ZFSet.pair_inj]
   exact and_congr ⟨fun h => natSet_injective h,fun h => congrArg natSet h⟩ Iff.rfl
 
+/-- Evaluation of finite tagged terms using the leaf relation, operation relation, and ordered
+pairing. -/
 inductive Eval (A B L O D : ZFSet.{u}) : ZFSet.{u} → ZFSet.{u} → Prop
   | leaf {a x : ZFSet.{u}} : a ∈ A → x ∈ D → ZFSet.pair a x ∈ L → Eval A B L O D (tag 0 a) x
   | app {o c x y : ZFSet.{u}} : o ∈ B → Eval A B L O D c x → y ∈ D →
@@ -61,6 +64,7 @@ theorem Eval.code_finite {A B L O D t c x : ZFSet.{u}}
   | pair _ _ _ iha ihb =>
     exact (FiniteTuple.FiniteCode.atom _ (hn 2)).orderedPair (iha.orderedPair ihb)
 
+/-- One tagged finite-term evaluation step using already recorded child values. -/
 def Step (A B L O K D f c v : ZFSet.{u}) : Prop :=
   (∃ a ∈ A, c = tag 0 a ∧ ZFSet.pair a v ∈ L) ∨
   (∃ o ∈ B, ∃ a ∈ K, ∃ x ∈ D, c = tag 1 (ZFSet.pair o a) ∧
@@ -68,6 +72,8 @@ def Step (A B L O K D f c v : ZFSet.{u}) : Prop :=
   (∃ a ∈ K, ∃ b ∈ K, ∃ x ∈ D, ∃ y ∈ D, c = tag 2 (ZFSet.pair a b) ∧
     ZFSet.pair a x ∈ f ∧ ZFSet.pair b y ∈ f ∧ v = ZFSet.pair x y)
 
+/-- Every entry of the finite-term graph has a bounded term and value satisfying an evaluation
+step. -/
 def Certificate (A B L O K D f : ZFSet.{u}) : Prop :=
   ∀ z ∈ f, ∃ c ∈ K, ∃ v ∈ D, z = ZFSet.pair c v ∧ Step A B L O K D f c v
 

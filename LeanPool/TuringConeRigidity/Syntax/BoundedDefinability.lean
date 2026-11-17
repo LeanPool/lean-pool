@@ -29,6 +29,7 @@ open BoundedSetTheory TransitiveNameModel SetModelReals SetModelFunctions
 universe u
 noncomputable section
 
+/-- Interleave the variable environment with the fixed parameter environment. -/
 def mix (e d : ℕ → ZFSet.{u}) (n : ℕ) : ZFSet.{u} :=
   if n % 2 = 0 then e (n/2) else d (n/2)
 
@@ -50,6 +51,8 @@ theorem parity_ext {α : Sort*} {f g : ℕ → α} (he : ∀ n, f (2 * n) = g (2
     rw [hn]
     exact ho _
 
+/-- Interleave the two variable renamings while preserving the environment and parameter
+channels. -/
 def slotMap (r s : ℕ → ℕ) (n : ℕ) : ℕ :=
   if n%2=0 then 2*r (n/2) else 2*s (n/2)+1
 
@@ -62,6 +65,7 @@ def slotMap (r s : ℕ → ℕ) (n : ℕ) : ℕ :=
     mix e d ∘ slotMap r s = mix (e ∘ r) (d ∘ s) := by
   apply parity_ext <;> intro n <;> simp
 
+/-- A bounded formula defines the predicate using a fixed parameter sequence from `M`. -/
 def Definable (M : ZFSet.{u}) (P : (ℕ → ZFSet.{u}) → Prop) : Prop :=
   ∃ p : Formula, ∃ d : ℕ → ZFSet.{u}, (∀ i, d i ∈ M) ∧
     ∀ e, p.Eval (mix e d) ↔ P e
@@ -98,6 +102,8 @@ theorem Definable.and (hP : Definable M P) (hQ : Definable M Q) :
     have hc' : mix d c ∘ (fun i => 2*i+1) = c := by funext i; simp
     rw [hd',hc',hp,hq]
 
+/-- Variable renaming that brings a newly bound environment value into the mixed-variable
+arrangement. -/
 def bindSlots (n : ℕ) : ℕ :=
   if n%2=0 then if n/2=0 then 0 else 2*(n/2-1)+1 else 2*(n/2)+2
 

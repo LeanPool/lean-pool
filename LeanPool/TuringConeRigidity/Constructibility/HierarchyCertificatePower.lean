@@ -13,8 +13,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.Constructibility.DefSystemCertificate
 public import LeanPool.TuringConeRigidity.Constructibility.RelativeModelPower
+public import LeanPool.TuringConeRigidity.Constructibility.RelativeModelClosure
 
 /-!
 # Hierarchy Certificate Power
@@ -30,9 +30,11 @@ open ElementaryModel BoundedSetTheory TransitiveNameModel SentenceCoding Bounded
   SetModelFunctions
 universe u
 
+/-- The set `Q` consists exactly of the subsets of `a` that belong to `M`. -/
 def PowerBound (M a Q : ZFSet.{u}) : Prop :=
   ∀ x, x ∈ Q ↔ x ∈ M ∧ x ⊆ a
 
+/-- Bounds containing the model's real codes and its binary natural-number relation codes. -/
 def CertificateBounds (M Q B : ZFSet.{u}) : Prop :=
   PowerBound M ZFSet.omega Q ∧ PowerBound M (ZFSet.prod ZFSet.omega ZFSet.omega) B
 

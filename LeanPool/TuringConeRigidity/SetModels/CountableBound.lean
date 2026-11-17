@@ -28,6 +28,7 @@ namespace OAI
 namespace TuringRigidity.CountableBound
 open UniformOracle
 
+/-- Join a countable family of oracles as paired columns of a single oracle. -/
 def sum (A : ℕ → Oracle) : Oracle := fun n => A (Nat.unpair n).1 (Nat.unpair n).2
 
 theorem reduces_sum (A : ℕ → Oracle) (k : ℕ) : Reduces (A k) (sum A) := by

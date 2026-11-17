@@ -13,7 +13,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.SetModels.InternalCountableFiniteUnion
+public import LeanPool.TuringConeRigidity.SetModels.InternalFunctionOrbit
 
 /-!
 # Internal Relation Selection
@@ -27,9 +27,11 @@ namespace OAI
 namespace TuringRigidity.InternalRelationSelection
 open TransitiveNameModel BoundedSetTheory
 
+/-- The fiber of the relation `R` at `x`, restricted to `Y`. -/
 noncomputable def fiber (Y R x : ZFSet.{0}) : ZFSet.{0} :=
   Y.sep (fun y => ZFSet.pair x y ∈ R)
 
+/-- Bounded formula describing exactly the relation fiber inside `Y`. -/
 def fiberFormula (Y R x a : ℕ) : Formula := .conj (.subset a Y)
   (.allMem Y (.iff (.member 0 (a+1)) (.pairMem (x+1) 0 (R+1))))
 

@@ -13,7 +13,10 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.Computability.OracleEnumeration
+public import Mathlib.Data.Set.Finite.Basic
+
+public import LeanPool.TuringConeRigidity.Effective.PrefixComputability
+public import LeanPool.TuringConeRigidity.Model
 
 /-!
 # Recursive Infinite Subset
@@ -27,6 +30,7 @@ namespace OAI
 namespace TuringRigidity.RecursiveInfiniteSubset
 open Encodable PrefixComputability
 
+/-- The values returned by `E` are unbounded in the natural numbers. -/
 def Unbounded (E : ℕ → Option ℕ) : Prop := ∀ n, ∃ z m, n ≤ m ∧ m ∈ E z
 
 theorem accepted_exists (E : ℕ → Option ℕ) (h : Unbounded E) (n : ℕ) :
@@ -34,9 +38,11 @@ theorem accepted_exists (E : ℕ → Option ℕ) (h : Unbounded E) (n : ℕ) :
   obtain ⟨z, m, hm, hz⟩ := h n
   exact ⟨z, by simp [Option.mem_def.mp hz, hm]⟩
 
+/-- The least accepted search index supplying a value at least `n`. -/
 noncomputable def index (E : ℕ → Option ℕ) (h : Unbounded E) (n : ℕ) : ℕ :=
   Nat.find (accepted_exists E h n)
 
+/-- Read the selected value of `E` that lies at or above `n`. -/
 noncomputable def above (E : ℕ → Option ℕ) (h : Unbounded E) (n : ℕ) : ℕ :=
   (E (index E h n)).getD 0
 
@@ -84,6 +90,8 @@ theorem above_recursive {O : Set (ℕ →. ℕ)} (E : ℕ → Option ℕ) (h : U
   exact (total_comp hv (total_comp hE (index_recursive E h hE))).of_eq
     (fun n => by simp [above])
 
+/-- An increasing sequence of returned values, obtained by repeatedly searching above the
+previous value. -/
 noncomputable def growing (E : ℕ → Option ℕ) (h : Unbounded E) : ℕ → ℕ
   | 0 => above E h 0
   | n+1 => above E h (growing E h n + 1)

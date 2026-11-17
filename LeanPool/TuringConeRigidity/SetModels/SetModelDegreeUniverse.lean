@@ -13,7 +13,9 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.SetModels.SetModelCountableExtensions
+public import LeanPool.TuringConeRigidity.SetModels.SetDegreeDecoding
+public import LeanPool.TuringConeRigidity.SetModels.SetModelArithmeticClosure
+public import LeanPool.TuringConeRigidity.SetModels.SetModelInternalRelations
 
 /-!
 # Set Model Degree Universe

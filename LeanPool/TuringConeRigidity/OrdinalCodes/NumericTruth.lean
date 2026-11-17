@@ -13,8 +13,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.OrdinalCodes.NumericFamilySupport
 public import LeanPool.TuringConeRigidity.Effective.TupleSystemCertificate
+public import LeanPool.TuringConeRigidity.OrdinalCodes.NumericParameters
 
 /-!
 # Numeric Truth

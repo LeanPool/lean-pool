@@ -13,7 +13,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.SetModels.SkolemOperations
+public import LeanPool.TuringConeRigidity.SetModels.InternalCoverInjection
 
 /-!
 # Generated Hull
@@ -66,6 +66,7 @@ theorem eval_tuple {A B L O D : ZFSet.{u}} (hD : Transitive D)
     obtain ⟨b,hb⟩ := ih (fun y hy => hxs y (List.mem_cons_of_mem _ hy)) htail
     exact ⟨_,Eval.pair ha hb hcode⟩
 
+/-- The values in `d` paired by `E` with a term code in `K`. -/
 noncomputable def generatedRange (d K E : ZFSet.{u}) : ZFSet.{u} :=
   ZFSet.sep (fun x => ∃ c ∈ K, ZFSet.pair c x ∈ E) d
 

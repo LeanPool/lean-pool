@@ -13,7 +13,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.CohenForcing.CountedCohenConditions
+public import LeanPool.TuringConeRigidity.SetModels.InternalCountableMap
+public import LeanPool.TuringConeRigidity.SetModels.InternalCountableProduct
 
 /-!
 # Tagged Product Conditions
@@ -28,6 +29,7 @@ namespace TuringRigidity.TaggedProductConditions
 open TransitiveNameModel BoundedSetTheory
 attribute [local instance] InternalCollapse.order
 
+/-- Code a pair of sets by tagging the first with zero and the second with one. -/
 noncomputable def code (p s : ZFSet.{0}) : ZFSet.{0} :=
   ZFSet.prod {natSet 0} p ∪ ZFSet.prod {natSet 1} s
 
@@ -80,6 +82,7 @@ theorem code_mem (M p s : ZFSet.{0}) (hM : Transitive M) (hT : SourceT M)
     (product_mem M hM hT.pairing hT.union hT.powerSet hT.separation.finitePrefix.bounded
       (singleton_mem M hM hT.pairing (hn 1)) hs)
 
+/-- Bounded formula characterizing the tagged code of a pair of sets. -/
 def codeFormula (p s z z0 z1 : ℕ) : Formula :=
   .conj (.allMem z (.disj
     (.existsMem (p+1) (.orderedPair 1 (z0+2) 0))
@@ -102,6 +105,7 @@ theorem codeFormula_spec (p s z z0 z1 : ℕ) (e : ℕ → ZFSet.{0})
     exact ⟨fun x hx => (mem_code _ _ _).mp hx,
       fun x hx => (left_mem _ _ _).mpr hx,fun x hx => (right_mem _ _ _).mpr hx⟩
 
+/-- A common superset of the tagged product codes formed from members of `a` and `b`. -/
 noncomputable def bound (a b : ZFSet.{0}) : ZFSet.{0} :=
   code (ZFSet.sUnion a) (ZFSet.sUnion b)
 

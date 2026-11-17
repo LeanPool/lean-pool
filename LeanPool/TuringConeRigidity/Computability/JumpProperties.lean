@@ -86,6 +86,7 @@ theorem iterate_mono {Y Z : Oracle} (hYZ : Reduces Y Z) (n : ℕ) :
   | zero => exact hYZ
   | succ n ih => exact jump_mono ih
 
+/-- The Turing jump operation on degrees, independent of the chosen oracle representative. -/
 noncomputable def degreeJump (x : Degree) : Degree :=
   Quotient.liftOn x (fun Y => degree (jump Y)) (fun Y Z h =>
     (degree_eq_iff (jump Y) (jump Z)).mpr ⟨jump_mono h.1, jump_mono h.2⟩)

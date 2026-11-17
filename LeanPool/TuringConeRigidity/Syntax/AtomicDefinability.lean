@@ -14,6 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.Syntax.AtomicCertificate
+public import LeanPool.TuringConeRigidity.SetModels.InternalContainer
 
 /-!
 # Atomic Definability
@@ -29,6 +30,7 @@ open Set RecursiveNames TransitiveNameModel BoundedSetTheory
 universe u
 variable {c : ZFSet.{u}} [Preorder (Conditions c)]
 
+/-- Select membership forcing or equality forcing according to the Boolean flag. -/
 def Atomic (isMem : Bool) (a b : Name (Conditions c)) (p : Conditions c) : Prop :=
   if isMem then MemForces a b p else EqForces a b p
 

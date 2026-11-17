@@ -13,8 +13,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.OrdinalCodes.CanonicalOmegaSyntax
 public import LeanPool.TuringConeRigidity.SetModels.SetModelPairing
+public import LeanPool.TuringConeRigidity.SetModels.UnionIteration
 
 /-!
 # Canonical Addition Syntax
@@ -26,9 +26,10 @@ public import LeanPool.TuringConeRigidity.SetModels.SetModelPairing
 namespace OAI
 
 namespace TuringRigidity.RelativeConstructible
-open ElementaryModel BoundedSetTheory TransitiveNameModel SetModelArithmetic SetModelIteration
+open BoundedSetTheory TransitiveNameModel SetModelArithmetic SetModelIteration
 universe u
 
+/-- A set-coded function satisfying the zero and successor recursion equations for addition. -/
 def AdditionSystem (w d A : ZFSet.{u}) : Prop :=
   TransitiveNameModel.FunctionGraph d w A ∧
   (∃ z ∈ w, z = ∅ ∧ ∀ x ∈ w, ZFSet.pair (ZFSet.pair x z) x ∈ A) ∧
@@ -100,6 +101,7 @@ theorem AdditionSystem.exact {A : ZFSet.{u}} (h : AdditionSystem ZFSet.omega pai
     obtain ⟨n,m,rfl⟩ := (additionSet_members z).mp hz
     exact computes n m
 
+/-- Bounded formula expressing the addition-system recursion equations. -/
 def additionSystemFormula (w d A : ℕ) : Formula :=
   .conj (.functionGraph A d w)
     (.conj (.existsMem w (.conj (.empty 0)

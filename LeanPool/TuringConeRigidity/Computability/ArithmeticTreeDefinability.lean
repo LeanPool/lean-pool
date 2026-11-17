@@ -14,7 +14,6 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.Computability.ArithmeticWitnessTree
-public import Mathlib.Computability.Primrec.List
 
 /-!
 # Arithmetic Tree Definability
@@ -112,6 +111,7 @@ theorem Test.accepts_arith (t : Test) {s : ℕ → List ℕ} (hs : Primrec s)
   exact (hlen.imp ht.neg).all.congr (fun O k => by
     simp only [Test.accepts,left,right,Nat.unpair_pair])
 
+/-- Decode a finite witness-tree node, using the empty list for an invalid code. -/
 def decodeNode (n : ℕ) : List ℕ := (decode (α := List ℕ) n).getD []
 
 theorem decodeNode_primrec : Primrec decodeNode :=
@@ -120,6 +120,7 @@ theorem decodeNode_primrec : Primrec decodeNode :=
 @[simp] theorem decodeNode_encode (s : List ℕ) : decodeNode (encode s) = s := by
   simp [decodeNode]
 
+/-- An oracle coding the finite nodes accepted by the arithmetic test. -/
 def Test.nodeCode (t : Test) (O : Oracles) (v : ℕ) : Oracle :=
   fun n => decide (t.accepts O v (decodeNode n))
 

@@ -13,7 +13,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.SetModels.SetModelArithmeticDischarge
+public import LeanPool.TuringConeRigidity.SetModels.SetModelInternalRelations
 
 /-!
 # Set Model Countability
@@ -26,16 +26,17 @@ namespace OAI
 
 namespace TuringRigidity.SetModelCountability
 open BoundedSetTheory TransitiveNameModel SetModelReals SetModelFunctions
-open BoundedDefinability SetModelSyntax SetDegreeDecoding SetModelSequences
-open PersistentRestrictions PersistentPresentation EncodedForcing
+open BoundedDefinability SetModelSyntax SetModelSequences
 universe u
 noncomputable section
 
+/-- A set-coded total single-valued function from `a` to `b`. -/
 def FunctionGraph (f a b : ZFSet.{u}) : Prop :=
   (∀ z ∈ f, ∃ x ∈ a, ∃ y ∈ b, z = ZFSet.pair x y) ∧
   (∀ x ∈ a, ∃ y ∈ b, ZFSet.pair x y ∈ f ∧
     ∀ z ∈ b, ZFSet.pair x z ∈ f → z = y)
 
+/-- Bounded formula asserting that a function graph from `a` to `b` is onto. -/
 def ontoFormula (f a b : ℕ) : Formula :=
   .conj (.functionGraph f a b) (.allMem b (.existsMem (a+1) (.pairMem 0 1 (f+2))))
 
@@ -45,9 +46,12 @@ def ontoFormula (f a b : ℕ) : Formula :=
   simp only [ontoFormula,Formula.Eval,Formula.eval_functionGraph,Formula.eval_allMem,
     Formula.eval_pairMem,cons_zero,cons_succ,FunctionGraph]
 
+/-- The model contains a graph it internally recognizes as a surjection from omega onto `a`. -/
 def InternallyCountable (M a : ZFSet.{u}) : Prop :=
   ∃ f ∈ M, (ontoFormula 0 1 2).Realize M (cons f (cons ZFSet.omega (fun _ => a)))
 
+/-- Bounded formula asserting a function from `a` to `b` whose chosen value belongs to each
+input set. -/
 def choiceFormula (f a b : ℕ) : Formula :=
   .conj (.functionGraph f a b) (.allMem a (.existsMem 0 (.pairMem 1 0 (f+2))))
 
@@ -57,6 +61,8 @@ def choiceFormula (f a b : ℕ) : Formula :=
   simp only [choiceFormula,Formula.Eval,Formula.eval_functionGraph,Formula.eval_allMem,
     Formula.eval_pairMem,cons_zero,cons_succ,FunctionGraph]
 
+/-- The model internally supplies a choice function for every internally nonempty family
+belonging to it. -/
 def InternalChoice (M : ZFSet.{u}) : Prop :=
   ∀ a ∈ M, (∀ x ∈ M, x ∈ a → ∃ y ∈ M, y ∈ x) →
     ∃ f ∈ M, (choiceFormula 0 1 2).Realize M

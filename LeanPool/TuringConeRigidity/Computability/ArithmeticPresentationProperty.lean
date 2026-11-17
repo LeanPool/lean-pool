@@ -29,11 +29,13 @@ open EncodedForcing OracleJump UniformArithmetic PersistentRestrictions
 open PersistentPresentation NumericalAutomorphism
 noncomputable section
 
+/-- The columns enumerate a degree ideal closed downward and under binary joins. -/
 def IdealCode (A : Oracle) : Prop :=
   (∀ n e, IndexPresentation.Dom (columns A n) e →
     ∃ m, IndexPresentation.value (columns A n) e = degree (columns A m)) ∧
   ∀ n m, ∃ k, degree (columns A n) ⊔ degree (columns A m) = degree (columns A k)
 
+/-- The countable degree ideal represented by the columns of the code. -/
 def idealOfCode (A : Oracle) (h : IdealCode A) : CountableIdeal where
   carrier := Set.range (fun n => degree (columns A n))
   nonempty := ⟨degree (columns A 0),0,rfl⟩
@@ -61,10 +63,13 @@ theorem ideal_code {I : CountableIdeal} {A : Oracle} (hA : Presented I A) : Idea
     obtain ⟨k,hk⟩ := (hA _).mp (I.join_mem (entry hA n).property (entry hA m).property)
     exact ⟨k,hk.symm⟩
 
+/-- A coded ideal containing the zero jump, together with an action coded by `R`. -/
 def Base (A R : Oracle) : Prop :=
   IdealCode A ∧ (∃ n, degree (jump FixedArithmetic.zero) = degree (columns A n)) ∧
     Action A (fun v => R v = true)
 
+/-- A persistent automorphism of a presented countable ideal containing the zero jump, with
+graph coded by `R`. -/
 def Property (A R : Oracle) : Prop :=
   ∃ I : CountableIdeal, ∃ hA : Presented I A,
     degree (jump FixedArithmetic.zero) ∈ I.carrier ∧
@@ -96,11 +101,14 @@ theorem base_arith : Arith (fun O (_ : ℕ) => Base (O 0) (O 1)) := by
   exact (hi.and (hz'.and (action_arith hA hR))).congr
     (fun _ _ => by simp only [Base,IdealCode,UniformArithmetic.right,Nat.unpair_pair])
 
+/-- The three-oracle environment containing the ideal, action, and test-extension codes. -/
 def parameters (A R H : Oracle) : Oracles
   | 0 => A
   | 1 => R
   | _ => H
 
+/-- A two-oracle predicate has an arithmetic matrix universally quantified over one further
+oracle. -/
 def PiOneOne (P : Oracle → Oracle → Prop) : Prop :=
   ∃ Q : Predicate, Arith Q ∧ ∀ A R, P A R ↔ ∀ H : Oracle, Q (parameters A R H) 0
 

@@ -62,6 +62,7 @@ theorem levy_sigma_schemas (M : ZFSet.{u}) (hM : Transitive M)
     apply exists_congr; intro x
     exact and_congr_right (fun hx => eq x y (hM a ha x hx) hy)
 
+/-- Embed existential-prefix sigma syntax into Levy-sigma syntax. -/
 def SigmaFormula.toLevy : SigmaFormula → LevySigma
   | .bounded φ => .bounded φ
   | .existsSet φ => .existsSet φ.toLevy

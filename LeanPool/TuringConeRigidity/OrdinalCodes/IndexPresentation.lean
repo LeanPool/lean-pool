@@ -13,8 +13,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.Effective.OrderMatrixRecursive
 public import LeanPool.TuringConeRigidity.OrdinalCodes.IndexJoin
+public import LeanPool.TuringConeRigidity.Effective.OrderNormalForm
 
 /-!
 # Index Presentation
@@ -28,14 +28,20 @@ namespace OAI
 namespace TuringRigidity.IndexPresentation
 open Encodable TableIndices IndexMatrix OrderNormalForm
 
+/-- The domain of valid total Boolean machine indices relative to `Y`. -/
 abbrev Dom (Y : Oracle) (e : ℕ) := Valid Y (machine e)
+/-- The challenge-response presentation of Turing reducibility between two represented oracle
+indices. -/
 def LE (Y : Oracle) (e f : ℕ) : Prop := ∃ d, ∀ q, ∃ r, orderMatrix Y e f d q r
+/-- The index of the program joining the oracles represented by `e` and `f`. -/
 noncomputable def joinIndex (e f : ℕ) : ℕ := encode (IndexJoin.joined (machine e) (machine f))
 
 theorem joinIndex_primrec : Primrec₂ joinIndex :=
   Primrec.encode.comp (IndexJoin.joined_primrec.comp (machine_primrec.comp Primrec.fst)
     (machine_primrec.comp Primrec.snd))
 
+/-- The degree represented by a valid machine index, with bottom as the fallback for an
+invalid index. -/
 noncomputable def value (Y : Oracle) (e : ℕ) : Degree := by
   classical
   exact if h : Dom Y e then degree (output Y ⟨machine e, h⟩) else ⊥

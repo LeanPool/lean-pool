@@ -15,6 +15,8 @@ public import LeanPool.TuringConeRigidity.TuringConeProjectedProgram
 public import LeanPool.TuringConeRigidity.CohenForcing.CohenGroundProgram
 public import LeanPool.TuringConeRigidity.Syntax.DefinedPrefixRemoval
 public import LeanPool.TuringConeRigidity.CohenForcing.CohenProgramTotality
+public import LeanPool.TuringConeRigidity.Constructibility.RelativeDegreeIdeal
+public import LeanPool.TuringConeRigidity.Representation.CommonGenericModels
 
 /-!
 # An actual oracle program from a uniform inverse-graph name

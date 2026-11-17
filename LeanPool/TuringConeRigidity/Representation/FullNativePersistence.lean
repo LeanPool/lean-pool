@@ -14,7 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.SetModels.FullSetTruth
-public import LeanPool.TuringConeRigidity.Representation.SourceTGenericPersistence
+public import LeanPool.TuringConeRigidity.Representation.SourceTNativeComparison
 
 /-!
 # Full Native Persistence
@@ -32,6 +32,7 @@ open ElementaryModel SentenceForm SetModelSatisfaction SetDegreeDecoding SetMode
 open PersistentRestrictions ArithmeticTree
 universe u
 
+/-- Translate internal formula syntax into full set-theoretic sentence syntax. -/
 noncomputable def fromInternal : InternalFormula → SentenceForm
   | .bounded p => fromBounded p
   | .conj p q => .conj (fromInternal p) (fromInternal q)

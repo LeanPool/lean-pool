@@ -14,7 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.SetModels.IdealInterpretation
-public import LeanPool.TuringConeRigidity.Effective.CodingBounds
+public import LeanPool.TuringConeRigidity.Computability.ArithmeticModelDecoding
 
 /-!
 # Ideal Lift
@@ -28,6 +28,8 @@ namespace OAI
 namespace TuringRigidity.IdealInterpretation
 open SetCoding RelationCoding BoundedDecoding ArithmeticModelDecoding
 
+/-- Regard an antichain code as internal to an ideal when all parameters lie below one ideal
+element. -/
 def ACode.ofBelow {I : DegreeIdeal} (p : AntichainCode) (b : I) (hp : AntichainBelow p b.val) :
   ACode I :=
   ⟨⟨p.bound,I.lower hp.1 b.property⟩,⟨p.left,I.lower hp.2.1 b.property⟩,
@@ -36,6 +38,7 @@ def ACode.ofBelow {I : DegreeIdeal} (p : AntichainCode) (b : I) (hp : AntichainB
 @[simp] theorem ACode.external_ofBelow {I : DegreeIdeal} (p : AntichainCode) (b : I)
     (hp : AntichainBelow p b.val) : (ACode.ofBelow p b hp).external = p := by cases p; rfl
 
+/-- Regard a set code as internal to an ideal using a common bound on its parameters. -/
 def SCode.ofBelow {I : DegreeIdeal} (p : SetCode) (b : I) (hp : SetBelow p b.val) : SCode I :=
   ⟨⟨p.bound,I.lower hp.1 b.property⟩,ACode.ofBelow p.tags b hp.2.1,ACode.ofBelow p.decorated b
     hp.2.2⟩
@@ -43,6 +46,7 @@ def SCode.ofBelow {I : DegreeIdeal} (p : SetCode) (b : I) (hp : SetBelow p b.val
 @[simp] theorem SCode.external_ofBelow {I : DegreeIdeal} (p : SetCode) (b : I)
     (hp : SetBelow p b.val) : (SCode.ofBelow p b hp).external = p := by cases p; rfl
 
+/-- Regard a relation code as internal to an ideal using a common bound on all its parameters. -/
 def RCode.ofBelow {I : DegreeIdeal} {n : ℕ} (p : RelationCode n) (b : I)
     (hp : RelationBelow p b.val) : RCode I n :=
   ⟨fun i => SCode.ofBelow (p.coordinates i) b (hp.1 i),ACode.ofBelow p.tuples b hp.2⟩

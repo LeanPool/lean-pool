@@ -32,6 +32,7 @@ open InternalProjectedGeneric InternalBooleanTop InternalBooleanName InternalBoo
 attribute [local instance] InternalCollapse.order InternalCollapse.collapsePreorder
 attribute [local instance] codeOrder codePreorder
 
+/-- The nonempty Boolean codes in `A` hit by some condition in `g`. -/
 noncomputable def hitSet (A g : ZFSet.{0}) : ZFSet.{0} :=
   (positive A).sep (fun U => ∃ p ∈ g, p ∈ U)
 

@@ -13,7 +13,10 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.SetModels.SetModelCountablePresentation
+public import LeanPool.TuringConeRigidity.SetModels.SetDegreeDecoding
+public import LeanPool.TuringConeRigidity.SetModels.SetModelArithmeticClosure
+public import LeanPool.TuringConeRigidity.SetModels.SetModelColumns
+public import LeanPool.TuringConeRigidity.SetModels.SetModelCountability
 
 /-!
 # Set Model Presented Countability
@@ -45,10 +48,11 @@ theorem ideal_mem_of_presentation (C : Context M) {I : CountableIdeal} {A : Orac
   have he := quotient_eq_idealSet M (lower_mem C) hrc hEc hA (mem_columnRange A) hcols
   exact he ▸ hi
 
+/-- The set-coded enumeration of the degree sets of the columns of `A`. -/
 def degreeSequence (A : Oracle) : ZFSet.{u} :=
   ZFSet.range (fun n : ℕ => ZFSet.pair (natSet n) (degreeSet (degree (columns A n))))
 
-@[simp] theorem mem_degreeSequence (A : Oracle) (z : ZFSet.{u}) :
+theorem mem_degreeSequence (A : Oracle) (z : ZFSet.{u}) :
     z ∈ degreeSequence A ↔ ∃ n, z = ZFSet.pair (natSet n) (degreeSet (degree (columns A n))) := by
   rw [degreeSequence,ZFSet.mem_range]
   exact exists_congr (fun n => eq_comm)
@@ -63,6 +67,7 @@ def degreeSequence (A : Oracle) : ZFSet.{u} :=
   · intro h
     exact ⟨n,by rw [h]⟩
 
+/-- Bounded formula describing membership in the column-degree-set sequence. -/
 def degreeSequenceFormula : Formula :=
   .existsMem 1 (.existsMem 3 (.existsMem 6
     (.conj (.orderedPair 3 2 0) (.conj (.pairMem 2 1 6) (classFormula 0 1 5 8)))))

@@ -14,6 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.SetModels.InternalDenseInclusion
+public import LeanPool.TuringConeRigidity.SetModels.RegularTreeExtension
 
 /-!
 # Dense Inclusion Extension
@@ -28,9 +29,12 @@ namespace TuringRigidity.DenseInclusionExtension
 open TransitiveNameModel BoundedSetTheory CountableForcing InternalDenseInclusion
 attribute [local instance] InternalCollapse.order InternalCollapse.collapsePreorder
 
+/-- The conditions in `b` weaker than some condition in `g`, using reverse inclusion as the
+forcing order. -/
 noncomputable def upperSet (b g : ZFSet.{0}) : ZFSet.{0} :=
   b.sep (fun q => ∃ p ∈ g, q ⊆ p)
 
+/-- Restrict the set of conditions `k` to members of `a`. -/
 noncomputable def restrictSet (a k : ZFSet.{0}) : ZFSet.{0} := a.sep (fun p => p ∈ k)
 
 theorem upperSet_mem (N b g : ZFSet.{0}) (hN : Transitive N) (hT : SourceT N)

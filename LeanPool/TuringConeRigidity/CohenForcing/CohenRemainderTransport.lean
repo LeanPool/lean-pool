@@ -13,8 +13,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.CohenForcing.CohenUnusedTransport
-public import LeanPool.TuringConeRigidity.SetModels.InternalInverseIso
+public import LeanPool.TuringConeRigidity.CohenForcing.CohenFreshColumn
+public import LeanPool.TuringConeRigidity.SetModels.InternalOrderIsoTransport
 
 /-!
 # Cohen Remainder Transport

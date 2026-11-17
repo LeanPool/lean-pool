@@ -13,8 +13,9 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.SetModels.ColumnSetFormula
 public import LeanPool.TuringConeRigidity.Representation.SourceTDependentChoice
+public import LeanPool.TuringConeRigidity.OrdinalCodes.NaturalPairingFormula
+public import LeanPool.TuringConeRigidity.SetModels.ModelReals
 
 /-!
 # Internal Natural Relation Real
@@ -30,6 +31,7 @@ namespace TuringRigidity.BoundedSetTheory
 open TransitiveNameModel RelationCollapse
 universe u
 
+/-- The oracle representing the binary relation on naturals coded by the set `G`. -/
 noncomputable def naturalRelationReal (G : ZFSet.{u}) : Oracle := fun v => by
   classical
   exact decide (ZFSet.pair (natSet (Nat.unpair v).1) (natSet (Nat.unpair v).2) ∈ G)
@@ -40,6 +42,8 @@ theorem naturalRelationReal_pair (G : ZFSet.{u}) (n k : ℕ) :
   simp [naturalRelationReal]
 
 namespace Formula
+/-- Bounded formula reading a bit of the oracle associated with a natural-number relation
+graph. -/
 def naturalRelationBit (o Q G v : ℕ) : Formula := .existsMem o (.existsMem (o+1)
   (.conj (naturalPair (o+2) (Q+2) 1 0 (v+2)) (.pairMem 1 0 (G+2))))
 

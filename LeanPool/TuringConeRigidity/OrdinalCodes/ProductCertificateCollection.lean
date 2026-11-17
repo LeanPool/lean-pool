@@ -13,7 +13,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.Constructibility.RelativeOmegaCertificates
+public import LeanPool.TuringConeRigidity.OrdinalCodes.OrdinalProductClosure
+public import LeanPool.TuringConeRigidity.OrdinalCodes.OrdinalProductSyntax
 
 /-!
 # Product Certificate Collection
@@ -29,6 +30,8 @@ open TransitiveNameModel BoundedSetTheory RelationCollapse ElementaryModel Relat
 open BoundedDefinability SetModelFunctions SentenceCoding
 universe u
 
+/-- A sigma formula requesting an ordinal-product certificate with all auxiliary sets inside
+the given bound. -/
 def productBundleSigma : SigmaFormula :=
   .existsSet (.existsSet (.existsSet (.existsSet (.bounded
     (.conj (productMatrix 3 5 6 2 1 0)

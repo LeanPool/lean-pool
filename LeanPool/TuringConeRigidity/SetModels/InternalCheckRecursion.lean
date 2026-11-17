@@ -29,6 +29,7 @@ namespace TuringRigidity.TransitiveNameModel
 open RecursiveNames BoundedSetTheory
 universe u
 
+/-- A sigma formula requesting a hull and a checked-name graph certificate. -/
 def checkCertificate : SigmaFormula := .existsSet (.existsSet (.bounded
   (.conj (.isHull 1 3 4 5) (CheckFormula.graph 1 0 2 6))))
 

@@ -28,9 +28,13 @@ namespace OAI
 namespace TuringRigidity.SentenceCoding
 open ElementaryModel
 
+/-- The natural-number code of an atomic syntax label. -/
 def atom (n : ℕ) : ℕ := Nat.pair 0 n
+/-- The natural-number code of a binary tree cell. -/
 def cell (a b : ℕ) : ℕ := Nat.pair (a+1) b
+/-- Encode a tagged binary syntax constructor with its two child codes. -/
 def binary (tag a b : ℕ) : ℕ := cell (atom tag) (cell a (cell b (atom 0)))
+/-- Encode a tagged unary syntax constructor with its child code. -/
 def unary (tag a : ℕ) : ℕ := cell (atom tag) (cell a (atom 0))
 
 theorem encode_equal (i j : ℕ) :
@@ -58,6 +62,7 @@ theorem binary_right_lt (t a b : ℕ) : b < binary t a b :=
 theorem unary_child_lt (t a : ℕ) : a < unary t a :=
   lt_of_lt_of_le (cell_left_lt a _) (cell_right_le _ _)
 
+/-- A code is a valid formula constructor whose immediate child codes satisfy `C`. -/
 def Step (C : ℕ → Prop) (c : ℕ) : Prop :=
   (∃ i j, c = binary 0 (atom i) (atom j)) ∨
   (∃ i j, c = binary 1 (atom i) (atom j)) ∨
@@ -65,6 +70,7 @@ def Step (C : ℕ → Prop) (c : ℕ) : Prop :=
   (∃ a, c = unary 3 a ∧ C a) ∨
   (∃ a, c = unary 4 a ∧ C a)
 
+/-- Every immediate subformula code satisfies the predicate `C`. -/
 def Children (C : ℕ → Prop) : SentenceForm → Prop
   | .equal _ _ | .member _ _ => True
   | .conj p q => C (Encodable.encode p) ∧ C (Encodable.encode q)
@@ -76,6 +82,7 @@ theorem step_encode (C : ℕ → Prop) (p : SentenceForm) :
     simp [Step,Children,encode_equal,encode_member,encode_conj,encode_neg,encode_ex,
       binary,unary,cell,atom,Nat.pair_eq_pair]
 
+/-- Every member of `C` is a valid constructor with its children again in `C`. -/
 def Closed (C : ℕ → Prop) : Prop := ∀ c, C c → Step C c
 
 theorem Closed.valid {C : ℕ → Prop} (h : Closed C) (c : ℕ) (hc : C c) :

@@ -14,6 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.SetModels.FiniteClosure
+public import LeanPool.TuringConeRigidity.SetModels.InternalContainer
 
 /-!
 # Skolem Hull
@@ -30,12 +31,15 @@ open TransitiveNameModel
 universe u
 namespace FiniteTuple
 
+/-- The elements of `d` in every candidate from `q` containing the seed and closed under the
+tuple graph. -/
 noncomputable def hull (d q s : ZFSet.{u}) (n : ℕ) (g : ZFSet.{u}) : ZFSet.{u} :=
   ZFSet.sep (fun x => ∀ h ∈ q, s ⊆ h → Closed n g h → x ∈ h) d
 
 theorem mem_hull (d q s x : ZFSet.{u}) (n : ℕ) (g : ZFSet.{u}) :
     x ∈ hull d q s n g ↔ x ∈ d ∧ ∀ h ∈ q, s ⊆ h → Closed n g h → x ∈ h := ZFSet.mem_sep
 
+/-- Bounded formula expressing membership in every suitable finite-tuple closure candidate. -/
 def hullFormula (n : ℕ) : Formula :=
   .allMem 1 (.imp (.subset 3 0) (.imp (closedFormula n 4 5 6 7 8 0) (.member 1 0)))
 

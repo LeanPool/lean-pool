@@ -96,6 +96,8 @@ theorem antichain_ici {a : Degree} (b g₀ g₁ x : Set.Ici a) :
     intro y hy hyx
     exact hm y.val (Set.mem_Ici.mp y.property) ((nontrivial_ici _ _ _ _).mp hy) hyx
 
+/-- Transport the three antichain parameters through an isomorphism from all degrees to a
+principal cone. -/
 def mapAntichain {a : Degree} (e : Degree ≃o Set.Ici a) (p : AntichainCode) :
     AntichainCode := ⟨image e p.bound, image e p.left, image e p.right⟩
 
@@ -109,6 +111,7 @@ theorem map_antichain_holds {a : Degree} (e : Degree ≃o Set.Ici a)
 def Graph (a : Degree) (p : SetCode) (x c : Degree) : Prop :=
   a ≤ x ∧ x ≤ p.bound ∧ Antichain a p.tags c ∧ Antichain a p.decorated (x ⊔ c)
 
+/-- Transport the bound and antichain parameters of a set code into the principal cone. -/
 def mapSet {a : Degree} (e : Degree ≃o Set.Ici a) (p : SetCode) : SetCode :=
   ⟨image e p.bound, mapAntichain e p.tags, mapAntichain e p.decorated⟩
 
@@ -125,6 +128,7 @@ def Holds {n : ℕ} (a : Degree) (p : RelationCode n) (v : Fin n → Degree) : P
   ∃ c : Fin n → Degree, (∀ i, Graph a (p.coordinates i) (v i) (c i)) ∧
     Antichain a p.tuples (a ⊔ Finset.univ.sup c)
 
+/-- Transport all coordinate and tuple parameters of a relation code into the principal cone. -/
 def mapRelation {a : Degree} (e : Degree ≃o Set.Ici a) {n : ℕ}
     (p : RelationCode n) : RelationCode n :=
   ⟨fun i => mapSet e (p.coordinates i), mapAntichain e p.tuples⟩
@@ -188,9 +192,12 @@ theorem map_relation_below {a : Degree} (e : Degree ≃o Set.Ici a)
 
 /-- A coded copy whose nodes and quantifiers live in the target cone. -/
 structure Copy (a : Degree) (U : ℕ → Prop) where
+  /-- The injective sequence of cone elements representing the natural-number nodes. -/
   node : ℕ → Set.Ici a
   injective : Function.Injective node
+  /-- The relation code representing successor between the cone nodes. -/
   successor : RelationCode 2
+  /-- The relation code representing the distinguished predicate on cone nodes. -/
   predicate : RelationCode 1
   successor_spec : ∀ x y : Set.Ici a,
     Holds a successor (two x.val y.val) ↔ ∃ k, x = node k ∧ y = node (k + 1)

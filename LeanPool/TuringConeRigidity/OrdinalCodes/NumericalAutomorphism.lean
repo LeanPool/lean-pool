@@ -13,7 +13,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.Constructibility.PersistentExtension
+public import LeanPool.TuringConeRigidity.Constructibility.PersistentPresentation
 
 /-!
 # Numerical Automorphism
@@ -28,6 +28,8 @@ namespace TuringRigidity.NumericalAutomorphism
 open EncodedForcing PersistentRestrictions PersistentPresentation
 noncomputable section
 
+/-- A total, surjective, order-preserving relation on represented degrees, saturated under
+equality of output degrees. -/
 structure Action (H : Oracle) (P : ℕ → Prop) : Prop where
   total : ∀ n, ∃ m, P (Nat.pair n m)
   onto : ∀ m, ∃ n, P (Nat.pair n m)

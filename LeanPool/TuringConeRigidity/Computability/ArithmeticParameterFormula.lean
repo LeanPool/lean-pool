@@ -13,7 +13,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.Computability.JumpSetFormula
+public import LeanPool.TuringConeRigidity.Computability.ArithmeticRelations
+public import LeanPool.TuringConeRigidity.Computability.ArithmeticSetSyntax
 
 /-!
 # Arithmetic Parameter Formula
@@ -30,12 +31,14 @@ open UniformArithmetic
 universe u
 namespace Formula
 
+/-- Place arithmetic and oracle parameters in the variable slots of a bounded formula. -/
 def oracleParameterVars (o Q n : ℕ) (r : ℕ → ℕ) : ℕ → ℕ
   | 0 => n
   | 1 => o
   | 2 => Q
   | i+3 => r i
 
+/-- Rename a bounded formula to use the supplied arithmetic and oracle parameter slots. -/
 def oracleParameters (φ : Formula) (o Q n : ℕ) (r : ℕ → ℕ) : Formula :=
   φ.rename (oracleParameterVars o Q n r)
 
@@ -57,6 +60,7 @@ theorem oracleParameters_spec {φ : Formula} {P : Predicate} (hφ : DefinesArith
   rw [he]
   exact hφ _ hQ _ _
 
+/-- Specialize an arithmetic formula to two oracle parameter slots. -/
 def twoOracles (φ : Formula) (o Q n x y : ℕ) : Formula :=
   oracleParameters φ o Q n (fun i => if i = 0 then x else y)
 

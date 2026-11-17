@@ -13,8 +13,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.SetModels.EnumerationConstruction
 public import LeanPool.TuringConeRigidity.Representation.GlobalLocality
+public import LeanPool.TuringConeRigidity.SetModels.EnumerationDecoding
 
 /-!
 # Enumeration Transport
@@ -30,16 +30,21 @@ open SetCoding RelationCoding BoundedDecoding ArithmeticModelDecoding Enumeratio
 open IdealInterpretation GlobalLocality
 noncomputable section
 
+/-- Regard an arbitrary degree as an element of the full degree ideal. -/
 def elem (a : Degree) : fullIdeal := ⟨a,Set.mem_univ _⟩
+/-- Lift an external antichain code to a code internal to the full ideal. -/
 def liftAntichain (p : AntichainCode) : ACode fullIdeal := ⟨elem p.bound,elem p.left,elem p.right⟩
+/-- Lift an external degree-set code to a code internal to the full ideal. -/
 def liftSet (p : SetCode) : SCode fullIdeal := ⟨elem p.bound,liftAntichain p.tags,liftAntichain
   p.decorated⟩
+/-- Lift an external relation code to a code internal to the full ideal. -/
 def liftRelation {n : ℕ} (p : RelationCode n) : RCode fullIdeal n :=
   ⟨fun i => liftSet (p.coordinates i),liftAntichain p.tuples⟩
 
 @[simp] theorem lift_external {n : ℕ} (p : RelationCode n) : (liftRelation p).external = p := by
   cases p; rfl
 
+/-- Transport a degree relation code through a global degree automorphism. -/
 def mapRelation {n : ℕ} (π : Degree ≃o Degree) (p : RelationCode n) : RelationCode n :=
   ((liftRelation p).map (GlobalLocality.lift π)).external
 
@@ -63,6 +68,7 @@ theorem inverse_eq (π : Degree ≃o Degree) (a b : Degree) : π.symm a = b ↔ 
   · intro h
     rw [h,π.symm_apply_apply]
 
+/-- Transport an entire degree-coded enumeration through a global degree automorphism. -/
 def mapEnumeration (π : Degree ≃o Degree) (c : Enumeration) : Enumeration where
   node := fun n => π (c.node n)
   injective := π.injective.comp c.injective

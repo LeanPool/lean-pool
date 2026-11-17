@@ -13,7 +13,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.SetModels.SetModelArithmeticClosure
+public import LeanPool.TuringConeRigidity.Computability.ArithmeticRelations
+public import LeanPool.TuringConeRigidity.SetModels.SetModelArithmeticSyntax
 
 /-!
 # Set Model Internal Relations

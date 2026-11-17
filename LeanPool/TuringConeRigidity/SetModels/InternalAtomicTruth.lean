@@ -31,6 +31,7 @@ open Set RecursiveNames TransitiveNameModel BoundedSetTheory CountableForcing
 universe u
 variable {c : ZFSet.{u}} [Preorder (Conditions c)]
 
+/-- The condition filter meets every dense family whose set code belongs to the ground model. -/
 def GroundGeneric (M : ZFSet.{u}) (G : GenericFilter (Conditions c)) : Prop :=
   ∀ D ∈ M, Dense {q | label c q ∈ D} → ∃ q ∈ G.carrier, label c q ∈ D
 

@@ -15,8 +15,10 @@ module
 
 public import LeanPool.TuringConeRigidity.SetModels.ChoiceFromOrdinalCover
 public import LeanPool.TuringConeRigidity.SetModels.NameEvaluationGraph
-public import LeanPool.TuringConeRigidity.SetModels.ExtensionSigmaReplacement
 public import LeanPool.TuringConeRigidity.SetModels.ExtensionPowerSet
+public import LeanPool.TuringConeRigidity.SetModels.ExtensionSigmaSeparation
+public import LeanPool.TuringConeRigidity.SetModels.ExtensionWitnessCover
+public import LeanPool.TuringConeRigidity.SetModels.InternalOrdinalEnumeration
 
 /-!
 # Extension Choice

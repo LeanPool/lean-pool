@@ -14,6 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.Syntax.SentenceSupportFormula
+public import LeanPool.TuringConeRigidity.Syntax.SentenceFamilyFormula
 
 /-!
 # Uniform Sentence Support
@@ -38,6 +39,7 @@ theorem leastFamily_param (C : Context M) {Q : ZFSet.{u}} (hQ : Q ∈ M) (c s : 
   exact (((equal_param hQ 0).and (leastFamily_definable C 0 (c+1) (s+1))).existsParam hs).congr
     (fun e => by simp only [ZFSet.mem_singleton,cons_zero,cons_succ]; simp)
 
+/-- A finite support recursion supplies the bound associated with the formula code `c`. -/
 def BoundWitness (Q B c b : ZFSet.{u}) : Prop :=
   ∃ F ∈ Q, ∃ G ∈ B, LeastFamily Q c F ∧ SetSupportRecursion F G ∧ ZFSet.pair c b ∈ G
 

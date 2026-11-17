@@ -16,6 +16,7 @@ module
 public import LeanPool.TuringConeRigidity.Effective.UniformOracle
 public import LeanPool.TuringConeRigidity.Computability.RecoverySetup
 public import LeanPool.TuringConeRigidity.Representation.Assembly
+public import Mathlib.Algebra.Order.Star.Real
 
 /-!
 # Branch Recovery
@@ -36,8 +37,10 @@ namespace TuringRigidity
 namespace RecoveryData
 variable {F : ℝ → Oracle} {t u v : ℝ}
 
+/-- The test value at the upper recovery endpoint, encoded as a natural Boolean. -/
 def highBit (d : RecoveryData F t u v) : ℕ := if F (u+d.hi) d.bit then 1 else 0
 
+/-- The Boolean sequence obtained by applying the recovery test along its state recursion. -/
 def branchOracle (d : RecoveryData F t u v) : Oracle :=
   fun n => d.test (state d.test (d.delta : ℝ) t n)
 

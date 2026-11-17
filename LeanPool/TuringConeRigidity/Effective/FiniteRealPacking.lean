@@ -29,10 +29,12 @@ namespace TuringRigidity.RelativeConstructible
 open TransitiveNameModel BoundedSetTheory
 universe u
 
+/-- Pack a finite tuple of oracles by recursively joining its head with its tail. -/
 def packedReal : {n : ℕ} → (Fin n → Oracle) → Oracle
   | 0, _ => FixedArithmetic.zero
   | n+1, v => join (v 0) (packedReal (fun i : Fin n => v i.succ))
 
+/-- Extract the indexed oracle component from the recursive binary packing. -/
 def realPart (P : Oracle) : ℕ → Oracle
   | 0 => fun k => P (2*k)
   | i+1 => realPart (fun k => P (2*k+1)) i

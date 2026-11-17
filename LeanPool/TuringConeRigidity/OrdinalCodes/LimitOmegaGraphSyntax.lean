@@ -30,6 +30,7 @@ open TransitiveNameModel BoundedSetTheory RelationCollapse ElementaryModel Relat
 open OrdinalCoding
 universe u
 
+/-- A full formula coding the successor-ordinal input and its next omega-power pair. -/
 noncomputable def omegaNextPairSentence : SentenceForm :=
   .ex (.ex (.ex (.conj
     (fromBounded (.conj (ordinalFormula 2) (.conj (.successor 0 2) (.orderedPair 3 2 1))))

@@ -51,6 +51,7 @@ theorem recursive_bounded_all {Y P} (h : RecursivePred Y P) {b : ℕ → ℕ} (h
     have hz : allBelow f x (b x) = 0 := hbin.resolve_right hn
     rw [ite_eq_right hp,hz]
 
+/-- Read an entry from a coded finite natural-number list, using zero outside its range. -/
 def item (t i : ℕ) : ℕ := ((decode (α := List ℕ) t).getD []).getD i 0
 
 theorem item_primrec : Primrec₂ item :=

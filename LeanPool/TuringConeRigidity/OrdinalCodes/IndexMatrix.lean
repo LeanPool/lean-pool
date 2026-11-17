@@ -14,6 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.Effective.TableIndices
+public import LeanPool.TuringConeRigidity.Representation.CommonIdealSearch
 
 /-!
 # Index Matrix
@@ -27,6 +28,7 @@ namespace OAI
 namespace TuringRigidity.IndexMatrix
 open Encodable UniformOracle CommonIdeal TableIndices
 
+/-- Decode a partial-recursive machine code, using the zero program for an invalid code. -/
 def machine (e : ℕ) : Nat.Partrec.Code := (decode e).getD .zero
 
 theorem machine_primrec : Primrec machine :=
@@ -57,6 +59,7 @@ theorem run_uniform_recursive (Y : Oracle) :
   exact (total_comp hdecode (total_pair ht (total_pair he (total_pair hL hn)))).of_eq
     (fun v => by simp [TableIndices.run, trial])
 
+/-- A challenge-response matrix for total Boolean output and agreement of trial values. -/
 def validMatrix (Y : Oracle) (e q r : ℕ) : Prop :=
   run Y (machine e) (Nat.unpair q).1 (Nat.unpair r).1 =
       some (bit (Nat.unpair r).2.bodd) ∧
@@ -97,6 +100,7 @@ theorem valid_normal_form (Y : Oracle) (e : ℕ) :
       · rw [Option.mem_def.mp ha, Option.mem_def.mp hb] at hc
         exact Option.some.inj hc
 
+/-- Decide the coded Boolean-output and trial-agreement checks as a natural-number Boolean. -/
 def checkMatrix (v : ℕ) : ℕ :=
   let wanted := (Nat.unpair v).1
   let s := (decode (α := Option ℕ) (Nat.unpair (Nat.unpair v).2).1).getD none

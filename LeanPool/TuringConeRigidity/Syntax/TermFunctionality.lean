@@ -13,7 +13,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.Syntax.TermEvaluationGraph
+public import LeanPool.TuringConeRigidity.Syntax.FiniteTerm
 
 /-!
 # Term Functionality
@@ -30,6 +30,7 @@ open TransitiveNameModel
 universe u
 namespace FiniteTerm
 
+/-- Any two graph values with the same input are equal. -/
 def Functional (f : ZFSet.{u}) : Prop :=
   ∀ a x y, ZFSet.pair a x ∈ f → ZFSet.pair a y ∈ f → x = y
 

@@ -30,8 +30,11 @@ namespace TuringRigidity.RelationCollapse
 open TransitiveNameModel BoundedSetTheory RelationHull
 universe u
 
+/-- The relation predecessor lies in `d` and is paired with its successor in `r`. -/
 def Rel (d r : ZFSet.{u}) (y x : ZFSet.{u}) : Prop := y ∈ d ∧ ZFSet.pair y x ∈ r
 
+/-- The well-founded collapse value obtained by collecting the values of all relation
+predecessors. -/
 noncomputable def value (d r : ZFSet.{u}) (wf : WellFounded (Rel d r)) : ZFSet.{u} → ZFSet.{u} :=
   wf.fix (fun x ih => ZFSet.range (fun y : Conditions (predecessors d r x) =>
     ih (label (predecessors d r x) y)
@@ -50,10 +53,13 @@ theorem mem_value (d r : ZFSet.{u}) (wf : WellFounded (Rel d r)) (x z : ZFSet.{u
       ((mem_predecessors _ _ _ _).mpr ⟨hyd,hyx⟩)
     exact ⟨s,rfl⟩
 
+/-- The value `v` consists exactly of the graph values of the relation predecessors of `x`. -/
 def Step (d r f x v : ZFSet.{u}) : Prop :=
   (∀ z ∈ v, ∃ y ∈ d, ZFSet.pair y x ∈ r ∧ ZFSet.pair y z ∈ f) ∧
   (∀ y ∈ d, ZFSet.pair y x ∈ r → ∀ z, ZFSet.pair y z ∈ f → z ∈ v)
 
+/-- A single-valued collapse graph on a predecessor-closed subdomain, satisfying the recursive
+predecessor-value equations. -/
 def Graph (d r a b f : ZFSet.{u}) : Prop :=
   a ⊆ d ∧ Closed d r a ∧
   (∀ z ∈ f, ∃ x ∈ a, ∃ y ∈ b, z = ZFSet.pair x y) ∧
@@ -135,12 +141,15 @@ theorem graph_of_mem_iff (d r a f : ZFSet.{u}) (wf : WellFounded (Rel d r))
 namespace Code
 open Formula
 
+/-- Bounded formula expressing one recursive step of a collapse graph. -/
 def step (d r b f x v : ℕ) : Formula :=
   .conj (allMem v (.existsMem (d+1)
     (.conj (pairMem 0 (x+2) (r+2)) (pairMem 0 1 (f+2)))))
     (allMem d (imp (pairMem 0 (x+1) (r+1))
       (allMem (b+1) (imp (pairMem 1 0 (f+2)) (.member 0 (v+2))))))
 
+/-- Bounded formula expressing the closed domain, function graph, and recursive collapse
+equations. -/
 def graph (d r a b f : ℕ) : Formula :=
   .conj (subset a d) (.conj (RelationHull.Code.closed d r a)
     (.conj (functionGraph f a b)

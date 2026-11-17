@@ -15,6 +15,7 @@ module
 
 public import LeanPool.TuringConeRigidity.SetModels.SetModelJoin
 public import LeanPool.TuringConeRigidity.SetModels.SetModelPersistence
+public import LeanPool.TuringConeRigidity.SetModels.SetModelOmegaJump
 
 /-!
 # Set Model Arithmetic Interface

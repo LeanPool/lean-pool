@@ -14,6 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.SetModels.IntersectionName
+public import LeanPool.TuringConeRigidity.SetModels.ExtensionBasicAxioms
 
 /-!
 # Extension Power Set
@@ -29,6 +30,7 @@ open Set RecursiveNames TransitiveNameModel BoundedSetTheory CountableForcing
 universe u
 variable {c : ZFSet.{u}} [Preorder (Conditions c)] [Top (Conditions c)]
 
+/-- A name whose children are the restrictions of `a` selected by labels in `W`. -/
 noncomputable def powerName (a : Name (Conditions c)) (W : ZFSet.{u}) : Name (Conditions c) :=
   .mk (Conditions W) (fun s => a.restrict (label c) (label W s)) (fun _ => ⊤)
 

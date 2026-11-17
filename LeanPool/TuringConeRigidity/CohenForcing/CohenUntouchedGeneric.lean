@@ -15,7 +15,9 @@ module
 
 public import LeanPool.TuringConeRigidity.CohenForcing.CohenFactorRequirement
 public import LeanPool.TuringConeRigidity.SetModels.InternalBooleanGeneric
-public import LeanPool.TuringConeRigidity.SetModels.InternalColumnExtension
+public import LeanPool.TuringConeRigidity.CohenForcing.CheckedForcingRelation
+public import LeanPool.TuringConeRigidity.CohenForcing.CohenNiceNameConstruction
+public import LeanPool.TuringConeRigidity.CohenForcing.InternalCohenProjectedGeneric
 
 /-!
 # Cohen Untouched Generic

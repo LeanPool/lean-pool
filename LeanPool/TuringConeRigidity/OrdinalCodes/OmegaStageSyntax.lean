@@ -13,7 +13,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.OrdinalCodes.OmegaPowerDefinability
+public import LeanPool.TuringConeRigidity.OrdinalCodes.OrdinalProductSyntax
 
 /-!
 # Omega Stage Syntax
@@ -28,6 +28,8 @@ namespace TuringRigidity.OrdinalArithmetic
 open TransitiveNameModel BoundedSetTheory RelationCollapse ElementaryModel RelativeConstructible
 universe u
 
+/-- Bounded formula for the seed together with all members of predecessor values in a stage
+graph. -/
 def omegaStageMatrix (s f r x A : ℕ) : Formula :=
   .conj (.subset s A)
     (.conj (.allMem A (.disj (.member 0 (s+1))
@@ -41,6 +43,7 @@ theorem omegaStageMatrix_eval (s f r x A : ℕ) (e : ℕ → ZFSet.{u}) :
   simp only [omegaStageMatrix,Formula.Eval,Formula.eval_subset,Formula.eval_allMem,
     Formula.eval_disj,Formula.eval_pairMem,Formula.eval_imp,cons_zero,cons_succ,StageStep]
 
+/-- Bounded universal quantification expressed in the full sentence language. -/
 def ordinalAllMem (i : ℕ) (p : SentenceForm) : SentenceForm :=
   .all (.imp (.member 0 (i+1)) p)
 
@@ -52,6 +55,7 @@ theorem ordinalAllMem_sat (M : ZFSet.{u}) (hM : Transitive M)
     SentenceForm.Sat,cons_zero,cons_succ]
   exact ⟨fun h x hx => h x (hM _ hi x hx) hx,fun h x _ hx => h x hx⟩
 
+/-- Place the ordinal-product definition in the supplied value and input slots. -/
 noncomputable def ordinalProductAt (v a b : ℕ) : SentenceForm :=
   productSentence.rename (fun i => if i = 0 then v else if i = 1 then a else b)
 

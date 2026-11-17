@@ -15,7 +15,6 @@ module
 
 public import LeanPool.TuringConeRigidity.SetModels.CountableElementaryHull
 public import LeanPool.TuringConeRigidity.SetModels.InternalStructureCollapse
-public import LeanPool.TuringConeRigidity.SetModels.ModelReals
 
 /-!
 # Elementary Collapse
@@ -31,6 +30,7 @@ namespace TuringRigidity.ElementaryModel
 open BoundedSetTheory TransitiveNameModel RelationCollapse
 universe u
 
+/-- The elementary hull represented as a set using its countable smallness witness. -/
 noncomputable def hullSet (a : ℕ → ZFSet.{u}) : ZFSet.{u} := by
   letI : Countable (hull a) := (hull_countable a).to_subtype
   letI : Small.{u} (hull a) := Countable.toSmall _
@@ -64,6 +64,7 @@ theorem hullSet_extensional (a : ℕ → ZFSet.{u}) : StructureExtensional (hull
     cons_zero,cons_succ,e,Set.mem_univ,forall_const] at ht
   exact ZFSet.ext ht
 
+/-- The set of collapse values of all elements of the coded domain. -/
 noncomputable def collapsed (d : ZFSet.{u}) : ZFSet.{u} :=
   ZFSet.range (fun x : Conditions d => structureMap d (label d x))
 

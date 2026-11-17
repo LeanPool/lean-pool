@@ -30,14 +30,17 @@ open TransitiveNameModel
 universe u
 namespace SigmaFormula
 
+/-- The bounded matrix beneath the existential set prefix of a sigma formula. -/
 def matrix : SigmaFormula → Formula
   | .bounded φ => φ
   | .existsSet φ => matrix φ
 
+/-- The number of existential set quantifiers in the sigma prefix. -/
 def prefixLength : SigmaFormula → ℕ
   | .bounded _ => 0
   | .existsSet φ => prefixLength φ+1
 
+/-- Feed the witness list into the variable environment in quantifier-prefix order. -/
 def feed : List ZFSet.{u} → (ℕ → ZFSet.{u}) → (ℕ → ZFSet.{u})
   | [],e => e
   | x::xs,e => feed xs (cons x e)
@@ -80,6 +83,7 @@ theorem realize_iff_prefix (φ : SigmaFormula) (d : ZFSet.{u}) (e : ℕ → ZFSe
 end SigmaFormula
 namespace FiniteTuple
 
+/-- The set of elements occurring in the finite list. -/
 noncomputable def elements : List ZFSet.{u} → ZFSet.{u}
   | [] => ∅
   | x::xs => ({x} : ZFSet.{u}) ∪ elements xs

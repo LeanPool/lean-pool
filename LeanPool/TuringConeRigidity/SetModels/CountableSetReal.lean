@@ -14,7 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.SetModels.ModelDegreeUniverse
-public import LeanPool.TuringConeRigidity.SetModels.InternalPresentationEnumeration
+public import LeanPool.TuringConeRigidity.SetModels.ModelPresentationSets
 
 /-!
 # Countable Set Real
@@ -31,6 +31,8 @@ open TransitiveNameModel EncodedForcing
 universe u
 
 namespace Formula
+/-- Bounded formula reading a bit from an oracle selected through an internal enumeration and
+graph. -/
 def selectedEnumerationBit (o Q I E F v : ℕ) : Formula :=
   .existsMem o (.existsMem (o+1) (.conj (naturalPair (o+2) (Q+2) 1 0 (v+2))
     (.existsMem (I+2) (.conj (.pairMem 2 0 (E+3))
@@ -110,6 +112,7 @@ theorem internal_selected_enumeration_real (M : ZFSet.{u}) (hM : Transitive M) (
           (natSet_mem_realCode A k).mpr hk⟩
     cases hx : columns (decodeReal B) n k <;> cases hy : A k <;> simp_all
 
+/-- The model contains a function graph from omega onto the set `I`. -/
 def InternallyCountable (M I : ZFSet.{u}) : Prop :=
   ∃ E ∈ M, TransitiveNameModel.FunctionGraph ZFSet.omega I E ∧
     ∀ D ∈ I, ∃ n ∈ ZFSet.omega, ZFSet.pair n D ∈ E

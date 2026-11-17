@@ -15,7 +15,7 @@ module
 
 public import LeanPool.TuringConeRigidity.Constructibility.HierarchyGraph
 public import LeanPool.TuringConeRigidity.Syntax.SigmaParameterizedClosure
-public import LeanPool.TuringConeRigidity.SetModels.InternalHull
+public import LeanPool.TuringConeRigidity.Constructibility.UniformDefSuccessor
 
 /-!
 # Hierarchy Syntax

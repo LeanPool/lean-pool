@@ -15,7 +15,6 @@ module
 
 public import LeanPool.TuringConeRigidity.CohenForcing.CohenGroundPoset
 public import LeanPool.TuringConeRigidity.Representation.CountableGroundGeneric
-public import LeanPool.TuringConeRigidity.Representation.AutomorphismName
 
 /-!
 # Cohen Ground Generic
@@ -31,6 +30,7 @@ open Set TransitiveNameModel BoundedSetTheory CountableForcing RecursiveNames Au
 open CohenSymmetry CohenConditionCode CohenGroundPoset
 attribute [local instance] InternalCollapse.order InternalCollapse.collapsePreorder
 
+/-- The set of graphs coding the conditions in the family `E`. -/
 noncomputable def codeSet (A : ZFSet.{0}) (E : Set (Condition (Conditions A))) : ZFSet.{0} :=
   ZFSet.range (fun p : E => graph A p.val)
 

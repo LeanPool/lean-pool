@@ -14,7 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.OrdinalCodes.OmegaPowerSyntax
-public import LeanPool.TuringConeRigidity.SetModels.InternalOrdinalCodes
+public import LeanPool.TuringConeRigidity.OrdinalCodes.OrdinalSumClosure
 
 /-!
 # Ordinal Code Operations
@@ -30,15 +30,19 @@ open TransitiveNameModel BoundedSetTheory RelationCollapse ElementaryModel Relat
   OrdinalArithmetic
 universe u
 
+/-- Place the omega-power definition in the specified input and output slots. -/
 noncomputable def codePowerAt (y x : ℕ) : SentenceForm :=
   omegaPowerSentence.rename (fun i => if i = 0 then y else x)
 
+/-- Place the ordinal-sum definition in the specified input and output slots. -/
 noncomputable def codeSumAt (c a b : ℕ) : SentenceForm :=
   sumSentence.rename (fun i => if i = 0 then c else if i = 1 then a else b)
 
+/-- Either equate the two slots or assert that the output is twice the input ordinal. -/
 noncomputable def codeScaleAt (twice : Bool) (y x : ℕ) : SentenceForm :=
   if twice then doubleSentence.rename (fun i => if i = 0 then y else x) else .equal y x
 
+/-- Double the ordinal when the branch flag is true, and leave it unchanged otherwise. -/
 noncomputable def codeScale (twice : Bool) (a : Ordinal.{u}) : Ordinal.{u} :=
   if twice then a*2 else a
 

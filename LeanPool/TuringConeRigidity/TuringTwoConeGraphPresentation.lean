@@ -12,7 +12,7 @@ Module paths, interfaces, and proofs are ported to the pool's toolchain and gate
 
 module
 
-public import LeanPool.TuringConeRigidity.TuringTwoConePresentationCountability
+public import LeanPool.TuringConeRigidity.TuringTwoConePersistentPresentation
 
 /-!
 # The conventional (unjoined) index graph has the same arithmetic bound
@@ -33,6 +33,7 @@ open ConePersistence (Cone)
 
 noncomputable section
 
+/-- The raw graph of the cone isomorphism on the two represented column degrees. -/
 def RawGraph {I : CountableIdeal} {a b : Degree}
     (ρ : Cone I a ≃o Cone I b) (H : Oracle) (v : ℕ) : Prop :=
   ∃ x : Cone I a, x.val = degree (columns H (Nat.unpair v).1) ∧

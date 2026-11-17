@@ -29,10 +29,13 @@ open UniformArithmetic
 noncomputable section
 attribute [local instance] Classical.propDecidable
 
+/-- A partial natural-number-valued approximation to a witness function. -/
 abbrev Approx := ℕ → Option ℕ
 
+/-- The second approximation preserves every value defined by the first. -/
 def Extends (s t : Approx) : Prop := ∀ i a, s i = some a → t i = some a
 
+/-- The approximation agrees with the witness function on its first `N` values. -/
 def Captures (s : Approx) (f : ℕ → ℕ) (N : ℕ) : Prop := ∀ i < N, s i = some (f i)
 
 theorem Captures.mono {s f N K} (h : Captures s f N) (hK : K ≤ N) : Captures s f K :=
@@ -40,6 +43,8 @@ theorem Captures.mono {s f N K} (h : Captures s f N) (hK : K ≤ N) : Captures s
 
 namespace Term
 
+/-- Evaluate a term partially, returning no value when a required witness entry is
+unavailable. -/
 def approx (s : Approx) (v : ℕ) : Term → Option ℕ
   | .input => some v
   | .const n => some n
@@ -96,6 +101,7 @@ end Term
 
 namespace Test
 
+/-- Evaluate an arithmetic test partially from a witness approximation. -/
 def approx (O : Oracles) (s : Approx) (v : ℕ) : Test → Option Bool
   | .pure P _ t => (t.approx s v).bind (fun a => some (decide (P a)))
   | .query i t => (t.approx s v).bind (fun a => some (O i a))

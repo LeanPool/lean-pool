@@ -15,7 +15,7 @@ module
 
 public import LeanPool.TuringConeRigidity.CohenForcing.InternalCohenConditions
 public import LeanPool.TuringConeRigidity.CohenForcing.EncodedForcing
-public import LeanPool.TuringConeRigidity.SetModels.SetModelArithmeticSyntax
+public import LeanPool.TuringConeRigidity.SetModels.SetModelPrimrec
 
 /-!
 # Cohen Word Code Graph
@@ -31,6 +31,7 @@ namespace TuringRigidity.InternalCohen
 open TransitiveNameModel BoundedSetTheory SetModelFunctions SetModelArithmetic SetModelReals
 open Encodable EncodedForcing
 
+/-- Read one bit from a coded finite word, returning its natural-number Boolean value. -/
 def wordBit (v : ℕ) : ℕ :=
   if (word (Nat.unpair v).1).getD (Nat.unpair v).2 false then 1 else 0
 
@@ -39,6 +40,7 @@ theorem wordBit_primrec : Primrec wordBit :=
     (word_primrec.comp (Primrec.fst.comp Primrec.unpair))
     (Primrec.snd.comp Primrec.unpair))
 
+/-- Bounded formula describing the graph connecting word codes to their set representations. -/
 def wordGraphFormula : Formula :=
   .existsMem 4 (.conj (.pairMem 2 0 3)
     (.conj (.functionGraph 1 0 6)
@@ -46,6 +48,7 @@ def wordGraphFormula : Formula :=
         (.conj (tripleFormula 5 2 1 11 10)
           (.conj (.pairMem 1 0 7) (.pairMem 2 0 4))))))))
 
+/-- The parameter environment used to interpret the word-graph formula. -/
 noncomputable def wordGraphEnv (q n gl gb : ZFSet.{0}) : ℕ → ZFSet.{0} :=
   cons q (cons n (cons gl (cons gb (cons ZFSet.omega
     (cons alphabet (cons pairNumbers (fun _ => pairingSet)))))))
@@ -92,6 +95,8 @@ theorem wordGraphFormula_spec (gl gb : ZFSet.{0})
     simp only [wordBit,Nat.unpair_pair]
     exact (pair_mem_wordCode _ _ _).mpr ⟨hi,by simp [List.getD,hi]⟩
 
+/-- Set-coded graph sending each natural word code to the corresponding finite condition
+graph. -/
 noncomputable def wordCodeGraph : ZFSet.{0} :=
   ZFSet.range (fun n : ℕ => ZFSet.pair (natSet n) (wordCode (word n)))
 

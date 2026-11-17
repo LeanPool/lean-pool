@@ -13,9 +13,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.CohenForcing.SparseCohenRealName
 public import LeanPool.TuringConeRigidity.CohenForcing.CohenNiceNameConstruction
-public import LeanPool.TuringConeRigidity.CohenForcing.CohenGenericUnion
 
 /-!
 # Cohen Column Real Name
@@ -31,14 +29,17 @@ open TransitiveNameModel BoundedSetTheory InternalCollapse CountableForcing Recu
 attribute [local instance] InternalCollapse.order CohenNiceNameConstruction.cohenTop
 open InternalCohen (bitSet)
 
+/-- The set-coded Cohen poset with columns indexed by `K` and rows by the natural numbers. -/
 noncomputable abbrev poset (K : ZFSet.{0}) : ZFSet.{0} :=
   CohenGroundPoset.conditions (ZFSet.prod K ZFSet.omega)
 
+/-- The forcing name for the real in column `a`. -/
 noncomputable def realName (K a : ZFSet.{0}) : Name (Conditions (poset K)) :=
   .mk {t : Conditions (poset K) × ℕ //
     ZFSet.pair (ZFSet.pair a (natSet t.2)) (bitSet true) ∈ label (poset K) t.1}
     (fun t => Name.check (natSet t.val.2)) (fun t => t.val.1)
 
+/-- Bounded formula describing the set-coded name of a Cohen column real. -/
 def realNameFormula : BoundedSetTheory.Formula :=
   .existsMem 1 (.existsMem 3 (.existsMem 6 (.existsMem 9
     (.conj (.pairMem 2 1 7) (.conj (.orderedPair 0 11 2)
@@ -53,6 +54,7 @@ theorem eval_realNameFormula (z c f r one C a : ZFSet.{0}) (e : ℕ → ZFSet.{0
   simp only [realNameFormula,BoundedSetTheory.Formula.Eval,BoundedSetTheory.Formula.eval_pairMem,
     BoundedSetTheory.Formula.eval_orderedPair,cons_zero,cons_succ]
 
+/-- Set-coded name for column `a`, using the supplied graph of natural-number labels. -/
 noncomputable def realNameCode (K a f : ZFSet.{0}) : ZFSet.{0} :=
   ZFSet.sep (fun z => ∃ q ∈ poset K, ∃ n ∈ ZFSet.omega, ∃ v ∈ iterUnion 2 f,
     ∃ x ∈ ZFSet.prod K ZFSet.omega, ZFSet.pair n v ∈ f ∧ x = ZFSet.pair a n ∧ ZFSet.pair x (bitSet

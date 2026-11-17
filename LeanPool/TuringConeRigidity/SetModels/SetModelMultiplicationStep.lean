@@ -29,6 +29,7 @@ open BoundedSetTheory TransitiveNameModel SetModelReals SetModelIteration
 universe u
 noncomputable section
 
+/-- The ordered pair of the two von Neumann natural-number codes. -/
 def numberPair (q : ℕ × ℕ) : ZFSet.{u} := ZFSet.pair (natSet q.1) (natSet q.2)
 
 theorem numberPair_injective : Function.Injective numberPair.{u} := by
@@ -36,6 +37,7 @@ theorem numberPair_injective : Function.Injective numberPair.{u} := by
   obtain ⟨hl,hr⟩ := ZFSet.pair_inj.mp h
   exact Prod.ext (natSet_injective hl) (natSet_injective hr)
 
+/-- The Cartesian square of omega, used as the domain of binary numerical operations. -/
 def pairNumbers := ZFSet.prod ZFSet.omega.{u} ZFSet.omega
 
 theorem mem_pairNumbers (x : ZFSet.{u}) : x ∈ pairNumbers ↔ ∃ q, x = numberPair q := by
@@ -48,6 +50,7 @@ theorem mem_pairNumbers (x : ZFSet.{u}) : x ∈ pairNumbers ↔ ∃ q, x = numbe
   · rintro ⟨q,rfl⟩
     exact ZFSet.pair_mem_prod.mpr ⟨(mem_omega _).mpr ⟨q.1,rfl⟩,(mem_omega _).mpr ⟨q.2,rfl⟩⟩
 
+/-- The set-coded transition sending a number pair `(n,m)` to `(n,n+m)`. -/
 def addStep (x : ZFSet.{u}) : ZFSet.{u} :=
   let q := Function.invFun numberPair x
   numberPair (q.1,q.1+q.2)
@@ -64,6 +67,7 @@ theorem addStep_closed : ∀ x ∈ pairNumbers.{u}, addStep x ∈ pairNumbers :=
   rw [addStep_numberPair]
   exact (mem_pairNumbers _).mpr ⟨(n,n+m),rfl⟩
 
+/-- The graph of the repeated-addition transition on natural-number pairs. -/
 def addStepSet : ZFSet.{u} := ZFSet.sep (fun z => ∃ x ∈ pairNumbers, z = ZFSet.pair x (addStep x))
   (ZFSet.prod pairNumbers pairNumbers)
 
@@ -76,6 +80,7 @@ theorem pair_mem_addStepSet {x y : ZFSet.{u}} (hx : x ∈ pairNumbers) (hy : y �
   · intro h
     exact ⟨x,hx,rfl,h⟩
 
+/-- Bounded formula describing the repeated-addition transition graph. -/
 def addStepFormula : Formula :=
   .existsMem 1 (.existsMem 2 (.existsMem 3 (.existsMem 5 (.existsMem 6
     (.conj (.orderedPair 5 1 0) (.conj (.orderedPair 1 4 3)
@@ -129,6 +134,7 @@ theorem iterate_addStep (n m : ℕ) :
   | zero => simp only [Function.iterate_zero,Function.id_def,Nat.zero_mul]
   | succ n ih => rw [Function.iterate_succ_apply',ih,addStep_numberPair,Nat.succ_mul,Nat.add_comm]
 
+/-- The finite-iteration graph of repeated addition, used in the multiplication construction. -/
 def multiplicationIteration : ZFSet.{u} := iterationSet pairNumbers addStep
 
 theorem multiplicationIteration_mem (M : ZFSet.{u}) (hM : Transitive M)

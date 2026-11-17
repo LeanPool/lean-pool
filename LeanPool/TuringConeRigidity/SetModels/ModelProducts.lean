@@ -59,6 +59,8 @@ theorem pair_bound (M : ZFSet.{u}) (hM : Transitive M)
     · exact ZFSet.mem_union.mpr (Or.inl hx)
     · exact ZFSet.mem_union.mpr (Or.inr hy)
 
+/-- Bounded formula describing membership in a Cartesian product through an ordered-pair
+witness. -/
 def productFormula : Formula := .existsMem 1 (.existsMem 3 (.orderedPair 2 1 0))
 
 theorem eval_productFormula (z a b : ZFSet.{u}) (env : ℕ → ZFSet.{u}) :

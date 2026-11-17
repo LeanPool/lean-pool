@@ -29,6 +29,7 @@ namespace TuringRigidity.BoundedSetTheory
 open TransitiveNameModel EncodedForcing
 universe u
 
+/-- The relation on presented degree classes selected by the paired bits of `S`. -/
 noncomputable def presentationGraph (R : ZFSet.{u}) (H S : Oracle) : ZFSet.{u} :=
   ZFSet.sep (fun z => ∃ i j, z = ZFSet.pair (degreeCode R (columns H i)) (degreeCode R (columns H
     j)) ∧
@@ -45,6 +46,7 @@ theorem mem_presentationGraph (R : ZFSet.{u}) (H S : Oracle) (z : ZFSet.{u}) :
     _,(mem_presentationSet R H _).mpr ⟨j,rfl⟩,rfl⟩,i,j,rfl,hs⟩
 
 namespace Formula
+/-- Bounded formula describing membership in the relation graph on presented degree classes. -/
 def presentationGraphMember : Formula :=
   .existsMem 1 (.existsMem 2 (.existsMem 6 (.existsMem 7
     (.conj (.orderedPair 4 3 2) (.conj (.pairMem 1 3 6)

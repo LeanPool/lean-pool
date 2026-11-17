@@ -11,8 +11,10 @@ Module paths, interfaces, and proofs are ported to the pool's toolchain and gate
 
 module
 
-public import LeanPool.TuringConeRigidity.TuringConeInternalPersistence
-public import LeanPool.TuringConeRigidity.SetModels.SetModelPersistence
+public import LeanPool.TuringConeRigidity.Constructibility.PersistenceRealClosure
+public import LeanPool.TuringConeRigidity.SetModels.SetDegreeDecoding
+public import LeanPool.TuringConeRigidity.SetModels.SetModelGraphImage
+public import LeanPool.TuringConeRigidity.TuringConePresentation
 
 /-!
 # Set-valued graphs of partial cone isomorphisms
@@ -36,6 +38,7 @@ open PersistentRestrictions ConePersistence ConePresentation
 universe u
 noncomputable section
 
+/-- The set-coded graph of the ideal-to-cone isomorphism on degree-set representations. -/
 def coneGraph {I : CountableIdeal} {a : Degree} (ρ : I ≃o Cone I a) : ZFSet.{u} :=
   ZFSet.sep (fun z => ∃ b : I, z = ZFSet.pair (degreeSet b.val) (degreeSet (ρ b).val))
     (ZFSet.prod (idealSet I) (idealSet I))

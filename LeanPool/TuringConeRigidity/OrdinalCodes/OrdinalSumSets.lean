@@ -13,7 +13,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.OrdinalCodes.OrdinalOrderPresentation
+public import LeanPool.TuringConeRigidity.SetModels.CollapseCertificate
 
 /-!
 # Ordinal Sum Sets
@@ -28,7 +28,9 @@ namespace TuringRigidity.OrdinalArithmetic
 open TransitiveNameModel BoundedSetTheory RelationCollapse
 universe u
 
+/-- Tag an element as belonging to the first summand using the empty-set tag. -/
 def leftNode (x : ZFSet.{u}) : ZFSet.{u} := ZFSet.pair ∅ x
+/-- Tag an element as belonging to the second summand using the singleton-empty tag. -/
 def rightNode (x : ZFSet.{u}) : ZFSet.{u} := ZFSet.pair {∅} x
 
 theorem leftNode_inj {x y : ZFSet.{u}} : leftNode x = leftNode y ↔ x = y := by
@@ -44,6 +46,7 @@ theorem leftNode_ne_rightNode (x y : ZFSet.{u}) : leftNode x ≠ rightNode y := 
   rw [← hz] at hm
   exact ZFSet.notMem_empty _ hm
 
+/-- The disjoint tagged union of the two ordinal-sum domains. -/
 noncomputable def sumDomain (a b : ZFSet.{u}) : ZFSet.{u} :=
   ZFSet.prod {∅} a ∪ ZFSet.prod {{∅}} b
 
@@ -52,11 +55,14 @@ theorem mem_sumDomain (a b x : ZFSet.{u}) : x ∈ sumDomain a b ↔
   simp only [sumDomain, ZFSet.mem_union, ZFSet.mem_prod, ZFSet.mem_singleton,
     exists_eq_left, leftNode, rightNode]
 
+/-- The ordinal-sum comparison: each summand keeps its order and the entire first precedes the
+second. -/
 def SumLess (a b x y : ZFSet.{u}) : Prop :=
   (∃ s ∈ a, ∃ t ∈ a, x = leftNode s ∧ y = leftNode t ∧ s ∈ t) ∨
   (∃ s ∈ a, ∃ t ∈ b, x = leftNode s ∧ y = rightNode t) ∨
   (∃ s ∈ b, ∃ t ∈ b, x = rightNode s ∧ y = rightNode t ∧ s ∈ t)
 
+/-- The set-coded order relation presenting the tagged ordinal sum. -/
 noncomputable def sumRelation (a b : ZFSet.{u}) : ZFSet.{u} :=
   ZFSet.sep (fun p => ∃ x ∈ sumDomain a b, ∃ y ∈ sumDomain a b,
     p = ZFSet.pair x y ∧ SumLess a b x y) (ZFSet.prod (sumDomain a b) (sumDomain a b))
@@ -75,6 +81,8 @@ theorem pair_mem_sumRelation (a b x y : ZFSet.{u}) :
   · rintro ⟨hx,hy,h⟩
     exact ⟨ZFSet.mem_prod.mpr ⟨x,hx,y,hy,rfl⟩,x,hx,y,hy,rfl,h⟩
 
+/-- Bounded formula selecting two tagged entries, optionally requiring membership comparison
+of their payloads. -/
 def taggedClause (a b t v x y : ℕ) (cmp : Bool) : Formula :=
   .existsMem a (.existsMem (b+1)
     (.conj (.orderedPair (x+2) (t+2) 1)
@@ -87,6 +95,7 @@ theorem taggedClause_eval (a b t v x y : ℕ) (cmp : Bool) (e : ℕ → ZFSet.{u
         e y = ZFSet.pair (e v) q ∧ (if cmp then s ∈ q else True) := by
   cases cmp <;> simp [taggedClause, Formula.Eval]
 
+/-- Bounded formula expressing the three comparison cases of the tagged ordinal sum. -/
 def sumLessFormula (a b z o x y : ℕ) : Formula :=
   .disj (taggedClause a a z z x y true)
     (.disj (taggedClause a b z o x y false) (taggedClause b b o o x y true))
@@ -96,6 +105,7 @@ theorem sumLessFormula_eval (a b z o x y : ℕ) (e : ℕ → ZFSet.{u})
     (sumLessFormula a b z o x y).Eval e ↔ SumLess (e a) (e b) (e x) (e y) := by
   simp [sumLessFormula, taggedClause_eval, hz, ho, SumLess, leftNode, rightNode]
 
+/-- Bounded formula describing membership in the tagged ordinal-sum relation. -/
 def sumRelationFormula : Formula :=
   .existsMem 1 (.existsMem 2 (.conj (.orderedPair 2 1 0)
     (sumLessFormula 4 5 6 7 1 0)))

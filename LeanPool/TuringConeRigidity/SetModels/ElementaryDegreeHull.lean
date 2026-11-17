@@ -14,6 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.SetModels.ElementaryDefinableSets
+public import LeanPool.TuringConeRigidity.SetModels.ElementaryRealModel
 
 /-!
 # Elementary Degree Hull
@@ -80,6 +81,7 @@ theorem pair_components_mem_hull (a : ℕ → ZFSet.{u}) {x y : ZFSet.{u}}
       have he := (Formula.eval_orderedPair _ _ _ _).mp ((bounded_univ _ _).mp hw)
       exact (ZFSet.pair_inj.mp he).2.symm
 
+/-- The set-coded graph of the global degree automorphism on set representations of degrees. -/
 noncomputable def globalGraph (π : Degree ≃o Degree) : ZFSet.{u} :=
   ZFSet.range (fun b : Degree => ZFSet.pair (degreeSet b) (degreeSet (π b)))
 

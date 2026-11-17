@@ -29,10 +29,12 @@ open Encodable UniformOracle EncodedForcing CodingForcing FiniteInjury StageReco
 noncomputable section
 attribute [local instance] Classical.propDecidable
 
+/-- Decode a local-stage state from its condition and two finite priority records. -/
 def state (v : ℕ) : LocalStage.State :=
   ⟨condition (Nat.unpair v).1,members (Nat.unpair (Nat.unpair v).2).1,members (Nat.unpair
     (Nat.unpair v).2).2⟩
 
+/-- Compute the local generic extension for the next unvisited requirement. -/
 def generic (D : LocalInputs.Data) (v : ℕ) : ℕ := LocalStage.openProcedure D
   (Nat.pair (nextVisit (Nat.unpair (Nat.unpair v).2).2) (Nat.unpair v).1)
 
@@ -41,9 +43,12 @@ theorem open_recursive (D : LocalInputs.Data) :
       :=
   D.open_recursive
 
+/-- Canonicalize a local condition code at its current active level. -/
 def canonical (p : ℕ) : ℕ := levelCode p (active p)
 theorem canonical_eq (p : ℕ) : canonical p = code (condition p) := rfl
 
+/-- Compute the local open extension from the canonical condition and next unvisited
+requirement. -/
 def genericCanonical (D : LocalInputs.Data) (v : ℕ) : ℕ := LocalStage.openProcedure D
   (Nat.pair (nextVisit (Nat.unpair (Nat.unpair v).2).2) (canonical (Nat.unpair v).1))
 
@@ -59,6 +64,7 @@ theorem generic_recursive (D : LocalInputs.Data) :
 @[simp] theorem generic_eq (D : LocalInputs.Data) (v : ℕ) :
     condition (genericCanonical D v) = LocalStage.generic D (state v) := rfl
 
+/-- Scan the coded local state for an eligible action at the given stage. -/
 def stageAction (D : LocalInputs.Data) (s v : ℕ) : ℕ :=
   scan D (genericCanonical D v) (Nat.unpair (Nat.unpair v).2).1 s
 
@@ -75,6 +81,7 @@ theorem stageAction_recursive (D : LocalInputs.Data) :
   rw [stageAction,scan_eq,action_actionCode,generic_eq]
   rfl
 
+/-- Select the generic condition or the local candidate named by the stage action. -/
 def stageWord (D : LocalInputs.Data) (z : ℕ) : ℕ :=
   let s := (Nat.unpair z).1
   let v := (Nat.unpair z).2
@@ -105,6 +112,7 @@ theorem stageWord_eq (D : LocalInputs.Data) (s v : ℕ) :
       simpa only [StageRecords.action,ite_eq_right ha] using he.symm
     simp [ha,LocalStage.stageWord,hn,candidate_eq,generic_eq]
 
+/-- Append one false bit to both local words and set the next active stage. -/
 def grow (p s : ℕ) : ℕ := Nat.pair (encode (left p ++ [false]))
   (Nat.pair (encode (right p ++ [false])) (s+1))
 
@@ -120,6 +128,7 @@ theorem grow_primrec : Primrec₂ grow := Primrec₂.natPair.comp
     condition (grow p s) = atLevel (append (condition p) [false]) (s+1) := condition_code (atLevel
       (append (condition p) [false]) (s+1))
 
+/-- Advance the coded local state and update its completed and visited priority records. -/
 def advance (D : LocalInputs.Data) (z : ℕ) : ℕ :=
   let s := (Nat.unpair z).1
   let v := (Nat.unpair z).2
@@ -150,9 +159,11 @@ theorem advance_eq (D : LocalInputs.Data) (s v : ℕ) :
     members_seenReset,members_seenInsert,stageAction_eq]
   rfl
 
+/-- The coded empty local state. -/
 def initial : ℕ := Nat.pair (code ⟨[],[],rfl,0⟩) (Nat.pair (encode ([] : List ℕ)) (encode ([] :
   List ℕ)))
 
+/-- Iterate the coded local-state transition from the empty initial state. -/
 def construction (D : LocalInputs.Data) : ℕ → ℕ :=
   recur (fun _ => initial) (fun v => advance D (Nat.unpair v).2) 0
 

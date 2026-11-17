@@ -13,7 +13,6 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.CohenForcing.CountableForcing
 public import Mathlib.SetTheory.ZFC.Basic
 
 /-!
@@ -26,14 +25,17 @@ public import Mathlib.SetTheory.ZFC.Basic
 namespace OAI
 
 namespace TuringRigidity.RecursiveNames
-open Set CountableForcing
+open Set
 universe u
 variable {P : Type u}
 
+/-- Well-founded forcing names with an index type of children and a condition tag for each
+child. -/
 inductive Name (P : Type u) : Type (u + 1) where
   | mk (ι : Type u) (child : ι → Name P) (tag : ι → P) : Name P
 
 namespace Name
+/-- Evaluate a name by retaining exactly those children whose tags belong to `G`. -/
 noncomputable def val (G : Set P) : Name P → ZFSet.{u}
   | .mk _ child tag => ZFSet.range (fun i : {i // tag i ∈ G} => val G (child i.val))
 
@@ -43,6 +45,7 @@ theorem mem_val (G : Set P) (ι : Type u) (child : ι → Name P) (tag : ι → 
   simp only [val, ZFSet.mem_range]
   exact ⟨fun ⟨i,h⟩ => ⟨i.val,i.property,h⟩, fun ⟨i,hi,h⟩ => ⟨⟨i,hi⟩,h⟩⟩
 
+/-- Transport every condition tag of a name through the map `e`. -/
 def rename {Q : Type u} (e : P → Q) : Name P → Name Q
   | .mk ι child tag => .mk ι (fun i => rename e (child i)) (e ∘ tag)
 
@@ -55,9 +58,11 @@ theorem val_rename {Q : Type u} (e : P → Q) (G : Set P) (H : Set Q)
     intro x
     simp only [rename, mem_val, Function.comp_apply, h, ih]
 
+/-- Recursively form the canonical checked name of a pre-set, tagging every child by top. -/
 def checkPSet [Top P] : PSet.{u} → Name P
   | .mk ι child => .mk ι (fun i => checkPSet (child i)) (fun _ => ⊤)
 
+/-- The canonical checked forcing name of a set. -/
 noncomputable def check [Top P] (x : ZFSet.{u}) : Name P := checkPSet x.out
 
 theorem val_checkPSet [Top P] (G : Set P) (hG : ⊤ ∈ G) (x : PSet.{u}) :

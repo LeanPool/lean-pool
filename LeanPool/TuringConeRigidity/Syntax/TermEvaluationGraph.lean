@@ -14,6 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.Syntax.TermFormula
+public import LeanPool.TuringConeRigidity.Syntax.TermCertificate
 
 /-!
 # Term Evaluation Graph
@@ -30,6 +31,8 @@ open TransitiveNameModel
 universe u
 namespace FiniteTerm
 
+/-- Bounded formula describing an input-output pair in a certified finite-term evaluation
+graph. -/
 def graphFormula : Formula :=
   .existsMem 6 (.existsMem 8 (.conj (.orderedPair 2 1 0)
     (.existsMem 3 (.conj (certificateFormula 5 6 7 8 9 10 0 11 12 13) (.pairMem 2 1 0)))))

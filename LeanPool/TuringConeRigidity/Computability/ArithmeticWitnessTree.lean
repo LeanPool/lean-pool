@@ -15,7 +15,6 @@ module
 
 public import LeanPool.TuringConeRigidity.Computability.ArithmeticTestApproximation
 public import Mathlib.SetTheory.Descriptive.Tree
-public import Mathlib.Order.WellFounded
 
 /-!
 # Arithmetic Witness Tree
@@ -31,6 +30,7 @@ open UniformArithmetic
 noncomputable section
 attribute [local instance] Classical.propDecidable
 
+/-- Regard a finite list as a partial witness function. -/
 abbrev listApprox (s : List ℕ) : Approx := fun i => s[i]?
 
 theorem listApprox_append (s t : List ℕ) : Extends (listApprox s) (listApprox (s ++ t)) := by
@@ -38,6 +38,7 @@ theorem listApprox_append (s t : List ℕ) : Extends (listApprox s) (listApprox 
   obtain ⟨hi,_⟩ := List.getElem?_eq_some_iff.mp ha
   simpa only [listApprox,List.getElem?_append_left hi] using ha
 
+/-- The list of the first `n` values of a witness function. -/
 def initialSegment (f : ℕ → ℕ) (n : ℕ) : List ℕ := List.ofFn (fun i : Fin n => f i.val)
 
 @[simp] theorem prefix_length (f : ℕ → ℕ) (n : ℕ) : (initialSegment f n).length = n := by
@@ -62,9 +63,12 @@ theorem prefix_extends (f : ℕ → ℕ) (n : ℕ) :
 
 namespace Test
 
+/-- No test indexed below the node length is rejected by the finite witness approximation. -/
 def accepts (t : Test) (O : Oracles) (v : ℕ) (s : List ℕ) : Prop :=
   ∀ n < s.length, t.approx O (listApprox s) (Nat.pair v n) ≠ some false
 
+/-- The prefix-closed tree of finite witness approximations not rejected by the arithmetic
+test. -/
 def tree (t : Test) (O : Oracles) (v : ℕ) : Descriptive.tree ℕ :=
   ⟨{s | t.accepts O v s},by
     intro s a h n hn he
@@ -85,6 +89,7 @@ theorem branch_iff (t : Test) (O : Oracles) (v : ℕ) (f : ℕ → ℕ) :
     have ha := (t.approx_sound O (prefix_extends f N) _ false he).mp (h n)
     exact Bool.false_ne_true ha
 
+/-- The first accepted node extends the second by one witness value. -/
 def Child (t : Test) (O : Oracles) (v : ℕ) (s r : t.tree O v) : Prop :=
   ∃ a, s.val = r.val ++ [a]
 

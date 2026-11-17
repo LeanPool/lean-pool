@@ -14,6 +14,7 @@ module
 
 public import LeanPool.TuringConeRigidity.TuringConeIdealCoding
 public import LeanPool.TuringConeRigidity.TuringConeRelativeAntichain
+public import LeanPool.TuringConeRigidity.SetModels.IdealLift
 
 /-!
 # Pulling cone codes back to an ordinary degree ideal
@@ -35,10 +36,13 @@ open ConeRelativeCoding
 noncomputable section
 variable {I : DegreeIdeal} {a : I}
 
+/-- Regard a degree between the cone base and `b` as an element of the ideal's principal cone. -/
 def targetElement (b : Set.Ici a) (x : Degree) (hlo : a.val ≤ x) (hhi : x ≤ b.val.val) : Set.Ici a
   :=
   ⟨⟨x, I.lower hhi b.val.property⟩, Set.mem_Ici.mpr hlo⟩
 
+/-- Pull an intermediate degree back through the isomorphism from the ideal to its principal
+cone. -/
 def backElement (ρ : I ≃o Set.Ici a) (b : Set.Ici a)
     (x : Degree) (hlo : a.val ≤ x) (hhi : x ≤ b.val.val) : I :=
   ρ.symm (targetElement b x hlo hhi)
@@ -53,6 +57,7 @@ theorem backElement_le (ρ : I ≃o Set.Ici a) (b : Set.Ici a)
     (backElement ρ b x hlo hhi).val ≤ (ρ.symm b).val :=
   show ρ.symm (targetElement b x hlo hhi) ≤ ρ.symm b from ρ.symm.monotone hhi
 
+/-- Pull a cone-bounded antichain code back to an ideal-internal code. -/
 def backAntichain (ρ : I ≃o Set.Ici a) (b : Set.Ici a) (p : AntichainCode)
     (ha : AntichainAbove p a.val) (hb : AntichainBelow p b.val.val) : ACode I :=
   ⟨backElement ρ b p.bound ha.1 hb.1, backElement ρ b p.left ha.2.1 hb.2.1,
@@ -69,6 +74,7 @@ theorem backAntichain_below (ρ : I ≃o Set.Ici a) (b : Set.Ici a) (p : Anticha
   ⟨backElement_le ρ b p.bound ha.1 hb.1, backElement_le ρ b p.left ha.2.1 hb.2.1,
     backElement_le ρ b p.right ha.2.2 hb.2.2⟩
 
+/-- Pull a cone-bounded set code back to an ideal-internal code. -/
 def backSet (ρ : I ≃o Set.Ici a) (b : Set.Ici a) (p : SetCode)
     (ha : SetAbove p a.val) (hb : SetBelow p b.val.val) : SCode I :=
   ⟨backElement ρ b p.bound ha.1 hb.1,
@@ -86,6 +92,7 @@ theorem backSet_below (ρ : I ≃o Set.Ici a) (b : Set.Ici a) (p : SetCode)
     backAntichain_below ρ b p.tags ha.2.1 hb.2.1,
     backAntichain_below ρ b p.decorated ha.2.2 hb.2.2⟩
 
+/-- Pull a cone-bounded relation code back to an ideal-internal code. -/
 def backRelation (ρ : I ≃o Set.Ici a) (b : Set.Ici a) {n : ℕ} (p : RelationCode n)
     (ha : RelationAbove p a.val) (hb : RelationBelow p b.val.val) : RCode I n :=
   ⟨fun i => backSet ρ b (p.coordinates i) (ha.1 i) (hb.1 i),

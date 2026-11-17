@@ -14,6 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.Computability.ArithmeticParameterFormula
+public import LeanPool.TuringConeRigidity.SetModels.ModelRealOperations
 
 /-!
 # Model Degree Codes
@@ -29,6 +30,7 @@ namespace TuringRigidity.BoundedSetTheory
 open TransitiveNameModel
 universe u
 
+/-- The members of `R` that code oracles of the same Turing degree as `A`. -/
 noncomputable def degreeCode (R : ZFSet.{u}) (A : Oracle) : ZFSet.{u} :=
   ZFSet.sep (fun z => ∃ B : Oracle, z = realCode B ∧ degree B = degree A) R
 

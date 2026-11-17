@@ -15,7 +15,6 @@ module
 
 public import LeanPool.TuringConeRigidity.SetModels.InternalCommonRequirements
 public import LeanPool.TuringConeRigidity.CohenForcing.TaggedProductGeneric
-public import LeanPool.TuringConeRigidity.CohenForcing.InternalCohenFilters
 
 /-!
 # Iterated Generic Common Ideal

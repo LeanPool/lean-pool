@@ -13,9 +13,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.Representation.FullNativePersistence
-public import LeanPool.TuringConeRigidity.Representation.NativeModelCompatibility
-public import LeanPool.TuringConeRigidity.SetModels.ModelDegreeOrder
+public import LeanPool.TuringConeRigidity.SetModels.ElementarySatisfaction
 
 /-!
 # Ambient Degree Syntax
@@ -31,6 +29,8 @@ namespace TuringRigidity.FullSetForcing
 open BoundedSetTheory TransitiveNameModel ElementaryModel SentenceForm
 universe u
 
+/-- Assert that the set in slot `s` consists exactly of the elements satisfying the bounded
+body. -/
 noncomputable def definedSet (s : ℕ) (p : Formula) : SentenceForm :=
   all (SentenceForm.iff (.member 0 (s+1)) (fromBounded p))
 
@@ -48,6 +48,7 @@ theorem definedSet_spec (M : ZFSet.{u}) (hM : Transitive M)
       · exact hx
       · exact he _))
 
+/-- Define the model's own power set of the set in slot `a`. -/
 noncomputable def ownPower (a s : ℕ) : SentenceForm :=
   definedSet s (.subset 0 (a+1))
 
@@ -64,6 +65,7 @@ theorem ownPower_spec (M : ZFSet.{u}) (hM : Transitive M)
   · intro h x hx
     exact (h x).trans (and_iff_right hx)
 
+/-- Bounded formula asserting that an element is an ordered pair from the indicated product. -/
 def productMember (a b x : ℕ) : Formula :=
   .existsMem a (.existsMem (b+1) (.orderedPair (x+2) 1 0))
 

@@ -14,6 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.SetModels.InternalRegularOrder
+public import LeanPool.TuringConeRigidity.SetModels.InternalBooleanSyntax
 
 /-!
 # Internal Boolean Projection
@@ -26,8 +27,9 @@ namespace OAI
 
 namespace TuringRigidity.InternalBooleanProjection
 open TransitiveNameModel BoundedSetTheory InternalRegularOperations InternalRegularAlgebra
-open InternalRegularOrder InternalBooleanSyntax InternalGeneratedAlgebra
+open InternalRegularOrder InternalBooleanSyntax
 
+/-- The members of `B` that are regular complements of members of `F`. -/
 noncomputable def complements (c B F : ZFSet.{0}) : ZFSet.{0} :=
   B.sep (fun V => ∃ U ∈ F, V = neg c U)
 
@@ -87,8 +89,10 @@ theorem closed_inf (M c B Q A F : ZFSet.{0}) (hM : Transitive M) (hT : SourceT M
     (fun U hU => hA.1 (hA.2.1 U (hFA hU)))]
   exact hA.2.1 _ (hA.2.2 _ hNQ hNF)
 
+/-- The members of `A` containing `U` as a subset. -/
 noncomputable def uppers (A U : ZFSet.{0}) : ZFSet.{0} := A.sep (fun V => U ⊆ V)
 
+/-- The meet of all Boolean codes in `A` that contain `U`. -/
 noncomputable def project (c A U : ZFSet.{0}) : ZFSet.{0} := infCode c (uppers A U)
 
 theorem uppers_mem (M A U : ZFSet.{0}) (hM : Transitive M) (hT : SourceT M)

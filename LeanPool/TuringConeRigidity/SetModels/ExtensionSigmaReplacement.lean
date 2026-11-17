@@ -31,11 +31,14 @@ open TransitiveNameModel
 universe u
 namespace SigmaFormula
 
+/-- Variable renaming reserving a witness slot for a sigma-defined image. -/
 def imageVars : ℕ → ℕ
   | 0 => 1
   | 1 => 0
   | i+2 => i+3
 
+/-- A sigma formula defining the image of a relation with its witness restricted to the
+designated set. -/
 def image (φ : SigmaFormula) : SigmaFormula :=
   .existsSet (andBounded (.member 0 2) (φ.rename imageVars))
 

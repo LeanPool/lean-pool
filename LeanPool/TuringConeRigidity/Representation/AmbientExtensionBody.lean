@@ -15,6 +15,9 @@ module
 
 public import LeanPool.TuringConeRigidity.Representation.AmbientDegreeActual
 public import LeanPool.TuringConeRigidity.SetModels.ElementaryModelIdeal
+public import LeanPool.TuringConeRigidity.Representation.AmbientDegreeBinding
+public import LeanPool.TuringConeRigidity.Representation.SourceTTreeAbsoluteness
+public import LeanPool.TuringConeRigidity.SetModels.SetModelActionDecoding
 
 /-!
 # Ambient Extension Body
@@ -43,6 +46,8 @@ theorem ownDegreeUniverse_eq_idealSet (M : ZFSet.{u}) [Countable (Conditions M)]
   · rintro ⟨d,⟨A,hA,rfl⟩,rfl⟩
     exact ⟨A,hA,rfl⟩
 
+/-- A full formula defining a degree action extending the specified source and target
+parameters. -/
 noncomputable def extensionBody (eqf lef : Formula) : SentenceForm :=
   .conj (degreeSetup eqf lef)
     (fromBounded (.conj (actionFormula 8 1 0)

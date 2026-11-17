@@ -14,7 +14,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.Syntax.SentenceSupportCertificate
-public import LeanPool.TuringConeRigidity.Syntax.SentenceFamilyFormula
+public import LeanPool.TuringConeRigidity.Syntax.SentenceCodeDefinability
+public import LeanPool.TuringConeRigidity.Syntax.SentenceCodeFamily
 
 /-!
 # Sentence Support Formula
@@ -33,6 +34,7 @@ universe u
 
 variable {M : ZFSet.{u}}
 
+/-- The set-coded recursive equation for a formula's numerical support bound. -/
 def SetSupportStep (G c b : ZFSet.{u}) : Prop :=
   (∃ i ∈ ZFSet.omega, ∃ j ∈ ZFSet.omega,
     BinaryGraph (fun i j => binary 0 (atom i) (atom j)) i j c ∧ BinaryGraph (fun i j => max i j +
@@ -88,6 +90,7 @@ theorem setSupportStep_definable (C : Context M) (g c b : ℕ) :
       C.omega_mem).existsParam C.omega_mem
   exact defOr (ha 0) (defOr (ha 1) (defOr hc (defOr hn hx)))
 
+/-- A set-coded graph of support bounds satisfying the recursion on the formula family `F`. -/
 def SetSupportRecursion (F G : ZFSet.{u}) : Prop :=
   (∀ z ∈ G, ∃ c ∈ F, ∃ b ∈ ZFSet.omega, z = ZFSet.pair c b) ∧
     ∀ c ∈ F, ∀ b ∈ ZFSet.omega, ZFSet.pair c b ∈ G ↔ SetSupportStep G c b

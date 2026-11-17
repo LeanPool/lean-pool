@@ -14,7 +14,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.CohenForcing.InternalCohenTailHomogeneity
-public import LeanPool.TuringConeRigidity.SetModels.InternalHomogeneousTruth
+public import LeanPool.TuringConeRigidity.Representation.SourceTGenericExistence
+public import LeanPool.TuringConeRigidity.SetModels.InternalOrderIsoTransport
 
 /-!
 # Internal Cohen Tail Truth

@@ -14,6 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.CohenForcing.ForcingProjection
+public import Mathlib.CategoryTheory.Countable
 
 /-!
 # Quotient Dense
@@ -29,6 +30,8 @@ open Set CountableForcing ForcingProjection
 universe u v
 variable {P : Type u} {Q : Type v} [Preorder P] [Preorder Q]
 
+/-- Projected conditions either incompatible with the given image or below an image of a
+stronger condition in `D`. -/
 def requirement (π : Projection P Q) (D : Set P) (p : P) : Set Q :=
   {a | (¬ ∃ b, b ≤ a ∧ b ≤ π.map p) ∨
     ∃ r, r ≤ p ∧ r ∈ D ∧ a ≤ π.map r}
@@ -45,6 +48,7 @@ theorem requirement_dense (π : Projection P Q) (D : Set P) (hD : Dense D)
       Or.inr ⟨s,hsr.trans hrp,hsD,le_rfl⟩⟩
   · exact ⟨a,le_rfl,Or.inl h⟩
 
+/-- Restrict a family of conditions to the quotient poset over `H`. -/
 def restriction (π : Projection P Q) (H : GenericFilter Q) (D : Set P) :
     Set (QuotientConditions π H) := {p | p.val ∈ D}
 

@@ -61,11 +61,14 @@ theorem relativeModel_sigma_separation (M R : ZFSet.{u}) (hM : Transitive M)
     exact hψ
   exact ⟨b,hb,fun _ _ => ZFSet.mem_sep⟩
 
+/-- Variable placement for a sigma-defined replacement image. -/
 def replacementImageVars : ℕ → ℕ
   | 0 => 1
   | 1 => 0
   | n+2 => n+3
 
+/-- A sigma formula defining the image of a relation with its witness in the prescribed
+domain. -/
 def replacementImageFormula (φ : SigmaFormula) : SigmaFormula :=
   .existsSet (SigmaFormula.andBounded (.member 0 2) (φ.rename replacementImageVars))
 

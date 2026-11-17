@@ -13,8 +13,10 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.CohenForcing.CohenPartitionJoint
 public import LeanPool.TuringConeRigidity.CohenForcing.CohenColumnRealValue
+public import LeanPool.TuringConeRigidity.CohenForcing.CohenPartitionBridge
+public import LeanPool.TuringConeRigidity.CohenForcing.TaggedProductExtension
+public import LeanPool.TuringConeRigidity.SetModels.InternalOrderIsoTransport
 
 /-!
 # Cohen Partition Realization

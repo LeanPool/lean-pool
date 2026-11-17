@@ -14,6 +14,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.SetModels.SetModelSequences
+public import LeanPool.TuringConeRigidity.CohenForcing.EncodedForcing
+public import LeanPool.TuringConeRigidity.Effective.CodingExtraction
 
 /-!
 # Set Model Columns
@@ -30,6 +32,7 @@ open EncodedForcing
 universe u
 noncomputable section
 
+/-- Bounded formula describing one oracle column through the natural-pairing graph. -/
 def columnFormula (n b a p w d : ℕ) : Formula :=
   .allMem w (.allMem (w+1) (.allMem (d+2)
     (.imp (.conj (.orderedPair 0 (n+3) 2) (.pairMem 0 1 (p+3)))
@@ -61,6 +64,7 @@ theorem eval_columnFormula (n b a p w d : ℕ) (e : ℕ → ZFSet.{u})
     have hl := (hp k j l).mp hpkl
     simp only [nat_mem_realSet,h,columns,hl]
 
+/-- Bounded formula describing membership in the graph of all oracle columns. -/
 def columnsFormula : Formula :=
   .existsMem 1 (.existsMem 3 (.conj (.orderedPair 2 1 0) (columnFormula 1 0 5 6 3 7)))
 
@@ -114,6 +118,7 @@ theorem columns_mem (M : ZFSet.{u}) (hM : Transitive M)
         (hrdef _).mpr ⟨_,hcn,rfl⟩⟩,⟨n,rfl⟩⟩
   exact eq ▸ hs
 
+/-- The set of real codes of all columns of `A`. -/
 def columnRange (A : Oracle) : ZFSet.{u} := ZFSet.range (fun n : ℕ => realSet (columns A n))
 
 @[simp] theorem mem_columnRange (A : Oracle) (x : ZFSet.{u}) :

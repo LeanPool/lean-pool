@@ -30,9 +30,12 @@ open Encodable UniformOracle EncodedForcing CodingForcing FiniteInjury StageReco
 noncomputable section
 attribute [local instance] Classical.propDecidable
 
+/-- Primitive-recursive first projection of a natural-number pair code. -/
 abbrev f := Primrec.fst.comp Primrec.unpair
+/-- Primitive-recursive second projection of a natural-number pair code. -/
 abbrev r := Primrec.snd.comp Primrec.unpair
 
+/-- Re-encode a condition's two words with the specified active level. -/
 def levelCode (p t : ℕ) : ℕ := Nat.pair (encode (left p)) (Nat.pair (encode (right p)) t)
 
 theorem levelCode_primrec : Primrec₂ levelCode := Primrec₂.natPair.comp
@@ -45,6 +48,7 @@ theorem levelCode_eq (p t : ℕ) : levelCode p t = code (atLevel (condition p) t
   t :=
   condition_code (atLevel (condition p) t)
 
+/-- Compute and normalize the guarded candidate at the priority encoded in `v`. -/
 def candidate (A : Oracle) (v : ℕ) : ℕ :=
   levelCode (GuardedStage.pairProcedure A (Nat.pair (Nat.unpair v).1
     (levelCode (Nat.unpair v).2 (Nat.unpair v).1))) (Nat.unpair v).1
@@ -61,6 +65,7 @@ theorem candidate_recursive (A : Oracle) :
     condition (candidate A (Nat.pair t p)) = GuardedStage.candidate A t (condition p) := by
   simp only [candidate,Nat.unpair_pair,levelCode_eq,GuardedStage.candidate,condition_code]
 
+/-- Keep the first unfinished candidate that changes a condition word during the scan. -/
 def scanStep (A : Oracle) (v : ℕ) : ℕ :=
   let p := (Nat.unpair (Nat.unpair v).1).1
   let d := (Nat.unpair (Nat.unpair v).1).2
@@ -87,6 +92,7 @@ theorem scanStep_recursive (A : Oracle) :
   have hh := total_comp (total_primrec hpost) (total_pair (total_primrec Primrec.id) hc)
   exact hh.of_eq (fun v => by simp only [Nat.unpair_pair]; rfl)
 
+/-- Iterate the guarded candidate scan through the first `n` priorities. -/
 def scan (A : Oracle) (p d n : ℕ) : ℕ := recur (fun _ => 0) (scanStep A) (Nat.pair p d) n
 
 theorem scan_recursive (A : Oracle) :

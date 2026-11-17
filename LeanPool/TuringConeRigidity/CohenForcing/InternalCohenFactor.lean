@@ -30,6 +30,7 @@ open TransitiveNameModel BoundedSetTheory CohenGroundPoset InternalCohenRestrict
 open InternalCohen (alphabet)
 attribute [local instance] InternalCollapse.order InternalCollapse.collapsePreorder
 
+/-- Project a set-coded condition onto a subset of its coordinates. -/
 noncomputable def project (A B : ZFSet.{0}) (hBA : B ⊆ A)
     (p : Conditions (conditions A)) : Conditions (conditions B) :=
   equivShrink _ ⟨restrict B (label _ p),restrict_condition A B _ hBA (label_mem _ p)⟩
@@ -37,6 +38,7 @@ noncomputable def project (A B : ZFSet.{0}) (hBA : B ⊆ A)
 theorem label_project (A B : ZFSet.{0}) (hBA : B ⊆ A) (p : Conditions (conditions A)) :
     label _ (project A B hBA p) = restrict B (label _ p) := by simp [project,label]
 
+/-- Combine conditions on a coordinate subset and its complement by taking their union. -/
 noncomputable def combine (A B : ZFSet.{0}) (hBA : B ⊆ A)
     (p : Conditions (conditions B)) (q : Conditions (conditions (A \ B))) :
     Conditions (conditions A) :=
@@ -46,6 +48,7 @@ theorem label_combine (A B : ZFSet.{0}) (hBA : B ⊆ A)
     (p : Conditions (conditions B)) (q : Conditions (conditions (A \ B))) :
     label _ (combine A B hBA p q) = label _ p ∪ label _ q := by simp [combine,label]
 
+/-- Factor the set-coded condition poset into the posets on a subset and its complement. -/
 noncomputable def factorIso (A B : ZFSet.{0}) (hBA : B ⊆ A) :
     Conditions (conditions A) ≃o (Conditions (conditions B) × Conditions (conditions (A \ B))) where
   toFun p := (project A B hBA p,project A (A \ B) (fun _ h => (ZFSet.mem_sdiff.mp h).1) p)
@@ -67,9 +70,11 @@ noncomputable def factorIso (A B : ZFSet.{0}) (hBA : B ⊆ A) :
     rw [label_project,label_project,label_project,label_project]
     exact (subset_iff_restrict A B _ _ (label_mem _ q) (label_mem _ p)).symm
 
+/-- The set-coded product of the two factors in the coordinate decomposition. -/
 noncomputable def productCode (A B : ZFSet.{0}) : ZFSet.{0} :=
   ZFSet.prod (conditions B) (conditions (A \ B))
 
+/-- Set-coded graph pairing each condition with its two coordinate restrictions. -/
 noncomputable def factorGraph (A B : ZFSet.{0}) : ZFSet.{0} :=
   (ZFSet.prod (conditions A) (productCode A B)).sep (fun z =>
     ∃ p ∈ conditions A, ∃ q ∈ conditions B, ∃ r ∈ conditions (A \ B),

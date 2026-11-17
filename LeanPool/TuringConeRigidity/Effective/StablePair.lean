@@ -165,11 +165,13 @@ UniformSplit.program, request, v, item, encodek, Option.getD_some, List.getD_con
     · simpa [word,w,hl] using hrq.1
     · simpa [UniformSplit.base,UniformSplit.program,request,v,item,word] using ha
 
+/-- A stable pair requirement is settled by disagreement or permanent divergence of one side. -/
 def Decisive (A : Oracle) (x : ℕ) (p : Condition) : Prop :=
   Disagreement A x p ∨ ∃ i n, (i = 1 ∨ i = 2) ∧ ∀ q, Extends (columns A) p q →
     ∀ a, a ∉ UniformRun.run A (machine (item x 0)) (machine (item x i))
       (if i = 1 then q.left else q.right) n
 
+/-- Select the pair procedure supplied by the stable-pair existence theorem. -/
 noncomputable def procedure (A : Oracle) : ℕ → ℕ := Classical.choose (pair_stable_exists A)
 
 theorem procedure_recursive (A : Oracle) :

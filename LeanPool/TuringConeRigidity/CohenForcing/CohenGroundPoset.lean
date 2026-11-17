@@ -31,6 +31,8 @@ open CohenSymmetry CohenCoordinates CohenChainCondition
 open InternalCohen (alphabet mem_alphabet)
 attribute [local instance] InternalCollapse.order InternalCollapse.collapsePreorder
 
+/-- Bounded formula asserting that a relation is single-valued on the given domain and
+alphabet. -/
 def singleValuedFormula (A B p : ℕ) : Formula :=
   .allMem A (.allMem (B+1) (.allMem (B+2)
     (.imp (.pairMem 2 1 (p+3)) (.imp (.pairMem 2 0 (p+3)) (.equal 1 0)))))
@@ -40,6 +42,7 @@ theorem singleValuedFormula_spec (A B p : ℕ) (e : ℕ → ZFSet.{0}) (hB : e B
   simp only [singleValuedFormula,Formula.eval_allMem,Formula.eval_imp,
     Formula.eval_pairMem,Formula.Eval,cons_zero,cons_succ,hB,SingleValued]
 
+/-- The set of finite Boolean-valued partial functions with coordinates in `A`. -/
 noncomputable def conditions (A : ZFSet.{0}) : ZFSet.{0} :=
   (finiteSubsets (ZFSet.prod A alphabet)).sep (SingleValued A)
 
@@ -66,6 +69,7 @@ theorem conditions_mem (M A : ZFSet.{0}) (hM : Transitive M)
     exact and_congr Iff.rfl (singleValuedFormula_spec 1 2 0 _ rfl)
   exact heq ▸ hs
 
+/-- Encode a finitely supported condition as an element of the set-coded condition poset. -/
 noncomputable def encode (A : ZFSet.{0}) (p : Condition (Conditions A)) : Conditions (conditions
   A) :=
   equivShrink (conditions A) ⟨graph A p,(mem_conditions A _).mpr (graph_isCondition A p)⟩
@@ -73,6 +77,7 @@ noncomputable def encode (A : ZFSet.{0}) (p : Condition (Conditions A)) : Condit
 theorem label_encode (A : ZFSet.{0}) (p : Condition (Conditions A)) :
     label (conditions A) (encode A p) = graph A p := by simp [encode,label]
 
+/-- Order isomorphism between finitely supported conditions and their set-coded graphs. -/
 noncomputable def conditionEquiv (A : ZFSet.{0}) :
     Condition (Conditions A) ≃o Conditions (conditions A) :=
   { Equiv.ofBijective (encode A) ⟨by
@@ -108,6 +113,7 @@ theorem antichain_countable (A : ZFSet.{0}) (E : Set (Conditions (conditions A))
   have heq : e '' (e ⁻¹' E) = E := Set.image_preimage_eq _ e.surjective
   rwa [heq] at hh
 
+/-- Equivalence between an indexed column coordinate and its set-coded ordered pair. -/
 noncomputable def coordinateEquiv (K : ZFSet.{0}) :
     (Conditions K × ℕ) ≃ Conditions (ZFSet.prod K ZFSet.omega) :=
   Equiv.ofBijective (fun i => equivShrink (ZFSet.prod K ZFSet.omega)
@@ -124,6 +130,7 @@ noncomputable def coordinateEquiv (K : ZFSet.{0}) :
     refine ⟨(equivShrink K ⟨x,hx⟩,n),label_injective _ ?_⟩
     simpa [label] using h.symm⟩
 
+/-- Order isomorphism coding many-column Cohen conditions as ground-model sets. -/
 noncomputable def manyColumnEquiv (K : ZFSet.{0}) :
     Condition (Conditions K × ℕ) ≃o Conditions (conditions (ZFSet.prod K ZFSet.omega)) :=
   (reindex (coordinateEquiv K)).trans (conditionEquiv _)

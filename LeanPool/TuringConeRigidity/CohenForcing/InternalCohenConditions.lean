@@ -14,7 +14,6 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.SetModels.CollapsePrefixAbsolute
-public import LeanPool.TuringConeRigidity.CohenForcing.CohenRecursiveName
 
 /-!
 # Internal Cohen Conditions
@@ -28,8 +27,10 @@ namespace OAI
 namespace TuringRigidity.InternalCohen
 open TransitiveNameModel BoundedSetTheory InternalCollapse CohenBorelForcing
 
+/-- Represent a Boolean as the corresponding von Neumann numeral zero or one. -/
 noncomputable def bitSet (b : Bool) : ZFSet.{0} := natSet (if b then 1 else 0)
 
+/-- The two-element set used as the Boolean alphabet. -/
 noncomputable def alphabet : ZFSet.{0} := {bitSet false, bitSet true}
 
 theorem bitSet_injective : Function.Injective bitSet := by
@@ -45,6 +46,7 @@ theorem mem_alphabet (x : ZFSet.{0}) : x ∈ alphabet ↔ ∃ b : Bool, x = bitS
     · exact ⟨true,h⟩
   · rintro ⟨b,rfl⟩; cases b <;> simp
 
+/-- Set-coded graph of the finite binary word. -/
 noncomputable def wordCode (s : List Bool) : ZFSet.{0} :=
   ZFSet.range (fun i : Fin s.length => ZFSet.pair (natSet i.val) (bitSet s[i.val]))
 
@@ -127,6 +129,7 @@ theorem prefix_iff_wordCode (p : ZFSet.{0}) : Prefix alphabet p ↔ ∃ s, wordC
       exact (mem_wordCode _ _).mpr ⟨⟨i,hs.symm ▸ hi⟩,by simp [s]⟩
   · rintro ⟨s,rfl⟩; exact ⟨s.length,wordCode_function s⟩
 
+/-- The set of finite initial-segment functions into the Boolean alphabet. -/
 noncomputable def conditions : ZFSet.{0} :=
   ZFSet.sep (Prefix alphabet) (ZFSet.powerset (ZFSet.prod ZFSet.omega alphabet))
 
@@ -148,6 +151,7 @@ theorem conditions_mem (M : ZFSet.{0}) (hM : Transitive M) (hT : SourceT M) : co
 
 attribute [local instance] InternalCollapse.order InternalCollapse.collapsePreorder
 
+/-- Encode a word condition as an element of the set-coded condition poset. -/
 noncomputable def encodeCondition (p : Condition) : Conditions conditions :=
   equivShrink conditions ⟨wordCode p.word,(mem_conditions _).mpr ⟨_,wordCode_function _⟩⟩
 
@@ -155,6 +159,7 @@ theorem label_encodeCondition (p : Condition) : label conditions (encodeConditio
   p.word := by
   simp [encodeCondition,label]
 
+/-- Order isomorphism between word conditions and their set-coded initial-segment graphs. -/
 noncomputable def conditionEquiv : Condition ≃o Conditions conditions := by
   have bijective : Function.Bijective encodeCondition := by
     constructor

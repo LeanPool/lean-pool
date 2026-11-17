@@ -54,7 +54,9 @@ theorem cut_prefix_left (x : ℝ) (m : ℕ) :
 
 namespace CategorySearch
 
+/-- Join the fixed oracle with the cut oracles of the two real coordinates. -/
 noncomputable def pairOracle (A : Oracle) (p : ℝ × ℝ) : Oracle := join (join A (cut p.1)) (cut p.2)
+/-- Read one bit of the joined category-search oracle as a natural number. -/
 noncomputable def value (A : Oracle) (p : ℝ × ℝ) (k : ℕ) : ℕ := if pairOracle A p k then 1 else 0
 
 theorem value_prefix (A : Oracle) (p q : ℝ × ℝ) (m : ℕ)
@@ -79,9 +81,11 @@ theorem halting_left (A : Oracle) (c : OracleCode) (p : ℝ × ℝ) (n a : ℕ)
   intro q hq1 hq1' hq2 hq2'
   exact hm (value A q) (value_prefix A p q m (he1 _ hq1 hq1') (he2 _ hq2 hq2'))
 
+/-- The open rectangle determined by rational lower and upper coordinate bounds. -/
 def rectangle (l r : ℚ × ℚ) : Set (ℝ × ℝ) :=
   Ioo (l.1 : ℝ) (r.1 : ℝ) ×ˢ Ioo (l.2 : ℝ) (r.2 : ℝ)
 
+/-- Real pairs at which the program computes exactly the target oracle. -/
 def success (A Y : Oracle) (c : OracleCode) : Set (ℝ × ℝ) :=
   {p | OracleCode.eval (oracleFunction (pairOracle A p)) c = oracleFunction Y}
 

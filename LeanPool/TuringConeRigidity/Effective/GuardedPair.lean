@@ -31,10 +31,13 @@ open CodingForcing UniformProgram UniformPair
 noncomputable section
 attribute [local instance] Classical.propDecidable
 
+/-- A one-point split certificate occurs at a position not protected by the coding
+requirement. -/
 def BadCert (A : Oracle) (v : ℕ) : Prop :=
   UniformSplit.PointCert A (Nat.pair (request (Nat.unpair v).1) (Nat.unpair v).2) ∧
     ¬ IsCoding A (Nat.pair (Nat.unpair (Nat.unpair v).1).2 (Nat.pair 1 (Nat.unpair v).2))
 
+/-- No bad splitting certificate exists for this requirement and condition. -/
 def NoBad (A : Oracle) (x : ℕ) (p : Condition) : Prop :=
   ¬ ∃ w, BadCert A (Nat.pair (Nat.pair x (code p)) w)
 
@@ -79,6 +82,7 @@ theorem bad_decisive (A : Oracle) (x p w : ℕ)
   rw [he]
   exact Or.inr ⟨2,item w 0,Or.inr rfl,by simpa using hd.resolve_left hnc'⟩
 
+/-- Either no split exists or a one-point split is witnessed at a protected coding position. -/
 def Outcome (A : Oracle) (x p : ℕ) : Prop :=
   (¬ ∃ z, UniformSplit.SplitCert A (Nat.pair (request (Nat.pair x p)) z)) ∨
     ∃ w, UniformSplit.PointCert A (Nat.pair (request (Nat.pair x p)) w) ∧
@@ -142,6 +146,7 @@ theorem pair_exists (A : Oracle) : ∃ f : ℕ → ℕ,
     · exact Or.inl (by simpa only [f,Nat.unpair_pair] using disagreement_mono hq.1 hm)
     · simpa only [f,Nat.unpair_pair,he] using Or.inr ⟨(hge x p).2,hn,hgs x p hn⟩
 
+/-- Select the procedure supplied by the guarded pair-existence theorem. -/
 noncomputable def procedure (A : Oracle) : ℕ → ℕ := Classical.choose (pair_exists A)
 
 theorem procedure_recursive (A : Oracle) :

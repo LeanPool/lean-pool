@@ -30,14 +30,19 @@ namespace TuringRigidity.AutomorphismName
 open Set CountableForcing AutomorphismUnion
 variable {P Q α : Type*} [Preorder P] [Preorder Q]
 
+/-- A set-valued forcing name represented as a relation between conditions and possible
+values. -/
 abbrev SetName (P α : Type*) := Set (P × α)
 
+/-- Interpret a set name by the values whose tagging conditions belong to the filter. -/
 def interpret (N : SetName P α) (G : GenericFilter P) : Set α :=
   {x | ∃ p ∈ G.carrier, (p,x) ∈ N}
 
+/-- Transport a set name along an order isomorphism of forcing posets. -/
 def rename (e : P ≃o Q) (N : SetName P α) : SetName Q α :=
   {t | (e.symm t.1,t.2) ∈ N}
 
+/-- Transport a condition filter along an order isomorphism. -/
 def mapFilter (e : P ≃o Q) (G : GenericFilter P) : GenericFilter Q where
   carrier := {q | e.symm q ∈ G.carrier}
   nonempty := by
@@ -58,6 +63,7 @@ theorem interpret_rename (e : P ≃o Q) (N : SetName P α) (G : GenericFilter P)
   · rintro ⟨p,hp,hN⟩
     exact ⟨e p,by simpa [mapFilter] using hp,by simpa [rename] using hN⟩
 
+/-- The set name for the union of the graphs of the partial ideal automorphisms. -/
 def graphName : SetName Approximation (Degree × Degree) :=
   {t | ∃ ha : t.2.1 ∈ t.1.ideal.carrier, (t.1.map ⟨t.2.1,ha⟩).val = t.2.2}
 
@@ -68,6 +74,7 @@ theorem graphName_represents (G : GenericFilter Approximation) (a : Domain G) (b
     (a.val,b) ∈ interpret graphName G ↔ (automorphism G a).val = b :=
   (automorphism_graph G a b).symm
 
+/-- Lift a set name to a product poset by tagging it with top in the second factor. -/
 def liftFirst [OrderTop Q] (N : SetName P α) : SetName (P × Q) α :=
   {t | t.1.2 = ⊤ ∧ (t.1.1,t.2) ∈ N}
 

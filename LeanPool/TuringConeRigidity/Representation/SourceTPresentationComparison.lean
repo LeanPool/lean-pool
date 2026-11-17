@@ -32,6 +32,7 @@ universe u
 noncomputable section
 attribute [local instance] Classical.propDecidable
 
+/-- Combine the base presentation conditions with the arithmetic persistence matrix. -/
 def PresentationMatrix (O : Oracles) (v : ℕ) : Prop := Base (O 0) (O 1) ∧ Matrix O v
 
 theorem presentationMatrix_arith : Arith PresentationMatrix := base_arith.and matrix_arith
@@ -42,9 +43,12 @@ theorem presentationMatrix_iff (A R : Oracle) :
   change (∀ H, Base A R ∧ Matrix (parameters A R H) 0) ↔ Base A R ∧ Criterion A R
   exact ⟨fun h => ⟨(h (fun _ => false)).1,fun H => (h H).2⟩,fun h H => ⟨h.1,h.2 H⟩⟩
 
+/-- The presentation matrix holds against every test oracle belonging to `M`. -/
 def InternalPresentation (M : ZFSet.{u}) (A R : Oracle) : Prop :=
   ∀ H ∈ reals M, PresentationMatrix (parameters A R H) 0
 
+/-- Some action code in `M` gives an internal persistent presentation and moves a represented
+degree. -/
 def InternalNonidentity (M : ZFSet.{u}) (A : Oracle) : Prop :=
   ∃ R ∈ reals M, InternalPresentation M A R ∧ Moved A R
 

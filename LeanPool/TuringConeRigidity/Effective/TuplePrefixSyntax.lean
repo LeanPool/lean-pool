@@ -29,6 +29,7 @@ namespace TuringRigidity.RelativeConstructible
 open ElementaryModel BoundedSetTheory TransitiveNameModel
 universe u
 
+/-- The graph `h` prepends `x` at zero and shifts the entries of `g` by successor. -/
 def PrefixGraphs (A n g m h x : ZFSet.{u}) : Prop :=
   m = insert n n ∧ FunctionGraph m A h ∧ ZFSet.pair (natSet 0) x ∈ h ∧
     ∀ i ∈ n, ∃ j ∈ m, j = insert i i ∧
@@ -77,6 +78,7 @@ theorem prefixGraphs_spec (A g m h x : ZFSet.{u}) {n : ℕ}
       exact (tupleGraph_pair (Fin.cases (motive := fun _ => ZFSet.{u}) x v) (Fin.succ ⟨k,hk⟩)
         y).mpr he
 
+/-- Bounded formula describing the graph of prepending one tuple entry. -/
 def prefixGraphsFormula (A n g m h x z : ℕ) : Formula :=
   .conj (.successor m n) (.conj (.functionGraph h m A)
     (.conj (.pairMem z x h)
@@ -91,6 +93,7 @@ theorem prefixGraphsFormula_spec (A n g m h x z : ℕ) (e : ℕ → ZFSet.{u})
 Formula.eval_pairMem, Formula.eval_allMem, Formula.eval_imp, cons_zero, cons_succ, hz,
   PrefixGraphs, FunctionGraph]
 
+/-- Bounded formula describing the length-and-graph codes of a tuple and its prefixed tuple. -/
 def tuplePrefixFormula (A o Q t x u z : ℕ) : Formula :=
   .existsMem o (.existsMem (Q+1) (.existsMem (o+2) (.existsMem (Q+3)
     (.conj (.orderedPair (t+4) 3 2) (.conj (.orderedPair (u+4) 1 0)

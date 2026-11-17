@@ -35,18 +35,24 @@ theorem table_agreement {A B : Oracle} {n : ℕ}
   have hb : bit A i = bit B i := by simpa [oraclePrefix,List.getD,hi] using hh
   cases ha : A i <;> cases hb' : B i <;> simp_all [bit]
 
+/-- Every oracle in the specified prefix neighborhood inside `U` has the same output bit
+value. -/
 def LocalAnswer (U : Set Oracle) (f : Oracle → Oracle) (n : ℕ) (L : List ℕ) (a : ℕ) : Prop :=
   ∀ A ∈ U, oraclePrefix (bit A) L.length = L → bit (f A) n = a
 
+/-- An oracle encoding the local constant-answer relation for the map `f` on `U`. -/
 noncomputable def parameter (U : Set Oracle) (f : Oracle → Oracle) : Oracle := by
   classical
   exact fun k => decide (LocalAnswer U f (Nat.unpair k).1
     ((decode (α := List ℕ) (Nat.unpair (Nat.unpair k).2).1).getD [])
     (Nat.unpair (Nat.unpair k).2).2)
 
+/-- Code a query about the output bit and a finite input prefix. -/
 def queryIndex (A : Oracle) (n k : ℕ) : ℕ :=
   Nat.pair n (Nat.pair (encode (oraclePrefix (bit A) (Nat.unpair k).1)) (Nat.unpair k).2)
 
+/-- Return the proposed output value when the parameter oracle certifies the local-answer
+query. -/
 def trial (A P : Oracle) (n k : ℕ) : Option ℕ :=
   if P (queryIndex A n k) then some (Nat.unpair k).2 else none
 

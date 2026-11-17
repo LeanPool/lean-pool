@@ -15,6 +15,7 @@ module
 
 public import LeanPool.TuringConeRigidity.Constructibility.ConstructibleBase
 public import Mathlib.SetTheory.ZFC.Ordinal
+public import LeanPool.TuringConeRigidity.Syntax.DefinablePower
 
 /-!
 # Constructible Stages
@@ -30,6 +31,8 @@ namespace TuringRigidity.RelativeConstructible
 open TransitiveNameModel
 universe u
 
+/-- The relative constructible stage generated from the seed and definable powers of earlier
+stages. -/
 noncomputable def stage (R o : ZFSet.{u}) : ZFSet.{u} :=
   seed R ∪ ZFSet.sUnion (ZFSet.range (fun i : Shrink o =>
     definablePower (stage R ((equivShrink o).symm i).val)))
@@ -89,6 +92,7 @@ theorem stage_succ (R o : ZFSet.{u}) :
       · exact subset_definablePower (stage_transitive R o) (definablePower_subset_stage R hi hdef)
   · intro hx; exact definablePower_subset_stage R (ZFSet.mem_insert o o) hx
 
+/-- The relative constructible level indexed by the ordinal `o`. -/
 noncomputable def level (R : ZFSet.{u}) (o : Ordinal.{u}) : ZFSet.{u} := stage R o.toZFSet
 
 theorem level_zero (R : ZFSet.{u}) : level R 0 = seed R := by
@@ -120,6 +124,7 @@ theorem mem_level_limit (R x : ZFSet.{u}) (o : Ordinal.{u}) (ho : Order.IsSuccLi
   · rintro ⟨i,hi,hx⟩
     exact level_mono R hi.le hx
 
+/-- Membership in some ordinal level of the relative constructible hierarchy. -/
 def InRelativeL (R x : ZFSet.{u}) : Prop := ∃ o : Ordinal.{u}, x ∈ level R o
 
 theorem parameter_in_relativeL (R : ZFSet.{u}) : InRelativeL R R := by

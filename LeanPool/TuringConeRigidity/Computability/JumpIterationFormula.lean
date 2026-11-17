@@ -30,12 +30,15 @@ namespace TuringRigidity.BoundedSetTheory
 open UniformArithmetic OracleJump
 universe u
 
+/-- The bounded formula defines the graph of the oracle jump for every adequate finite-graph
+bound. -/
 def JumpFormula (φ : Formula) : Prop := ∀ o Q x y : ℕ, ∀ e : ℕ → ZFSet.{u},
     e o = ZFSet.omega → (∀ f : ℕ → ℕ, ∀ k, finiteNaturalGraph f k ∈ e Q) →
     ∀ A B : Oracle, e x = realCode A → e y = realCode B →
       ((Formula.oracleGraph φ o Q x y).Eval e ↔ B = jump A)
 
 namespace Formula
+/-- Bounded formula expressing a finite iteration of the jump graph. -/
 def jumpIteration (φ : Formula) (o R Qf Qn n A B : ℕ) : Formula :=
   modelIteration o R Qf n A B (oracleGraph φ (o+3) (Qn+3) 1 0)
 

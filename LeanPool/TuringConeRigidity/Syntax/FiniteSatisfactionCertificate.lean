@@ -30,6 +30,7 @@ namespace TuringRigidity.RelativeConstructible
 open ElementaryModel BoundedSetTheory TransitiveNameModel
 universe u
 
+/-- List the full formula and all its subformulas recursively. -/
 def subformulas : SentenceForm → List SentenceForm
   | .equal i j => [.equal i j]
   | .member i j => [.member i j]
@@ -66,6 +67,7 @@ theorem subformulas_closed (p q : SentenceForm) (hq : q ∈ subformulas p) :
     · intro r hr; simpa only [subformulas,List.mem_cons] using hr
     · intro r hr; exact Or.inr (ih hq r hr)
 
+/-- The set-coded satisfaction relation for the formulas in the finite list over `A`. -/
 noncomputable def finiteSatisfaction (A : ZFSet.{u}) (ps : List SentenceForm) : ZFSet.{u} :=
   ZFSet.sUnion (ZFSet.range (fun i : Fin ps.length =>
     ZFSet.prod ({natSet (Encodable.encode ps[i])} : ZFSet.{u}) (truthSlice A ps[i])))
@@ -123,6 +125,7 @@ theorem finiteSatisfaction_covers (A : ZFSet.{u}) (p : SentenceForm)
   rw [finiteSatisfaction_record A _ p v hv,satisfactionSet_record A p v hv]
   exact and_iff_right (self_mem_subformulas p)
 
+/-- The formula-and-tuple code belongs to the supplied satisfaction relation. -/
 def accepts (S : ZFSet.{u}) (p : SentenceForm) {n : ℕ} (v : Fin n → ZFSet.{u}) : Prop :=
   ZFSet.pair (natSet (Encodable.encode p)) (tupleCode v) ∈ S
 

@@ -30,6 +30,7 @@ namespace TuringRigidity.RelativeConstructible
 open ElementaryModel SentenceForm BoundedSetTheory TransitiveNameModel
 universe u
 
+/-- Shift the non-distinguished parameter slots to reserve one additional variable. -/
 def parameterShift : ℕ → ℕ | 0 => 0 | i+1 => i+2
 
 theorem shifted_parameters (p : SentenceForm) (D : Set ZFSet.{u})

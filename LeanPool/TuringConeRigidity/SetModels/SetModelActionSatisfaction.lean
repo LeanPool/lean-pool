@@ -14,6 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.SetModels.SetModelIdealSatisfaction
+public import LeanPool.TuringConeRigidity.SetModels.SetModelCountability
 
 /-!
 # Set Model Action Satisfaction
@@ -31,12 +32,14 @@ universe u
 noncomputable section
 variable {M : ZFSet.{u}}
 
+/-- Bounded formula expressing a surjective action preserving and reflecting the relation `l`. -/
 def actionFormula (f i l : ℕ) : Formula :=
   .conj (ontoFormula f i i)
     (.allMem i (.allMem (i+1) (.allMem (i+2) (.allMem (i+3)
       (.imp (.conj (.pairMem 3 1 (f+4)) (.pairMem 2 0 (f+4)))
         (.iff (.pairMem 3 2 (l+4)) (.pairMem 1 0 (l+4))))))))
 
+/-- A surjective function graph on `i` preserving and reflecting its coded relation. -/
 def IsAction (f i l : ZFSet.{u}) : Prop :=
   (FunctionGraph f i i ∧ ∀ y ∈ i, ∃ x ∈ i, ZFSet.pair x y ∈ f) ∧
     ∀ x ∈ i, ∀ y ∈ i, ∀ a ∈ i, ∀ b ∈ i,

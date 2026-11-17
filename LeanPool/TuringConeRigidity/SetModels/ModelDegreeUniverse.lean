@@ -29,6 +29,7 @@ namespace TuringRigidity.BoundedSetTheory
 open TransitiveNameModel
 universe u
 
+/-- The set of nonempty degree classes represented by real codes in `R`. -/
 noncomputable def degreeUniverse (R : ZFSet.{u}) : ZFSet.{u} :=
   ZFSet.sep (fun D => ∃ A : Oracle, realCode A ∈ R ∧ D = degreeCode R A) (ZFSet.powerset R)
 
@@ -45,6 +46,7 @@ theorem degreeUniverse_nonempty_member (R D : ZFSet.{u}) (hD : D ∈ degreeUnive
   exact ⟨A,(realCode_mem_degreeCode R A A).mpr ⟨hA,rfl⟩,rfl⟩
 
 namespace Formula
+/-- Bounded formula describing membership in the degree universe represented by `R`. -/
 def degreeUniverseMember (φ : Formula) (o Q z R D : ℕ) : Formula :=
   .existsMem R (degreeSet φ (o+1) (Q+1) (z+1) (R+1) 0 (D+1))
 

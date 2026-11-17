@@ -31,6 +31,7 @@ open TransitiveNameModel
 universe u
 namespace FiniteTuple
 
+/-- The tuple codes in the designated space that occur as inputs of the relation `r`. -/
 noncomputable def requests (d : ZFSet.{u}) (n : ℕ) (r : ZFSet.{u}) : ZFSet.{u} :=
   ZFSet.sep (fun t => ∃ y ∈ d, ZFSet.pair t y ∈ r) (space d n)
 
@@ -43,6 +44,7 @@ theorem requests_mem (M : ZFSet.{u}) (hM : Transitive M)
       (cons d (fun _ => r)) (by intro i; cases i <;> assumption)
       (space_mem M hM hP hU hPow hS hd n)
 
+/-- A subrelation selecting exactly one witness for every satisfiable finite-tuple input. -/
 def SkolemGraph (d : ZFSet.{u}) (n : ℕ) (φ : Formula)
     (e : ℕ → ZFSet.{u}) (g : ZFSet.{u}) : Prop :=
   g ⊆ relation d n φ e ∧

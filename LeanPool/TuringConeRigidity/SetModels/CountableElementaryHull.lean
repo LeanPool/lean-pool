@@ -14,7 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.SetModels.ElementaryLanguage
-public import Mathlib.Data.Set.Countable
+public import Mathlib.Order.CompletePartialOrder
 
 /-!
 # Countable Elementary Hull
@@ -30,11 +30,14 @@ namespace TuringRigidity.ElementaryModel
 open BoundedSetTheory
 universe u
 
+/-- Extend a finite list to an environment by filling all remaining positions with the empty
+set. -/
 noncomputable def listEnv : List ZFSet.{u} → ℕ → ZFSet.{u}
   | [], _ => ∅
   | x :: _, 0 => x
   | _ :: xs, n+1 => listEnv xs n
 
+/-- The first `n` entries of a set-valued variable environment. -/
 noncomputable def envPrefix : ℕ → (ℕ → ZFSet.{u}) → List ZFSet.{u}
   | 0, _ => []
   | n+1, e => e 0 :: envPrefix n (fun i => e (i+1))
@@ -59,6 +62,8 @@ theorem prefix_members (n : ℕ) (e : ℕ → ZFSet.{u}) (D : Set ZFSet.{u})
     · exact he 0
     · exact ih _ (fun i => he (i+1)) x hx
 
+/-- Choose an ambient witness for the formula with the given finite parameters, or empty set
+if none exists. -/
 noncomputable def witness (p : SentenceForm) (xs : List ZFSet.{u}) : ZFSet.{u} := by
   classical
   exact if h : ∃ x : ZFSet.{u}, p.Sat Set.univ (cons x (listEnv xs)) then Classical.choose h else ∅
@@ -70,11 +75,13 @@ theorem witness_spec (p : SentenceForm) (xs : List ZFSet.{u})
   simp only [witness,dite_eq_left h]
   exact Classical.choose_spec h
 
+/-- Adjoin the selected formula witnesses to the previous elementary-hull stage. -/
 noncomputable def stage (a : ℕ → ZFSet.{u}) : ℕ → Set ZFSet.{u}
   | 0 => Set.range a
   | n+1 => stage a n ∪ {x | ∃ p : SentenceForm, ∃ xs : List ZFSet.{u},
       (∀ y ∈ xs, y ∈ stage a n) ∧ x = witness p xs}
 
+/-- The union of the countably many witness-closure stages. -/
 noncomputable def hull (a : ℕ → ZFSet.{u}) : Set ZFSet.{u} := ⋃ n, stage a n
 
 theorem stage_mono (a : ℕ → ZFSet.{u}) : Monotone (stage a) := by

@@ -14,6 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.OrdinalCodes.OrdinalPairSyntax
+public import LeanPool.TuringConeRigidity.SetModels.InternalOrdinalCodes
 
 /-!
 # Ordinal Vector Syntax
@@ -29,10 +30,12 @@ open TransitiveNameModel BoundedSetTheory RelationCollapse ElementaryModel Relat
   OrdinalArithmetic
 universe u
 
+/-- Variable renaming reserving the slots introduced while recursively coding the vector tail. -/
 def vectorTailSlots : ℕ → ℕ
   | 0 => 0
   | i+1 => i+3
 
+/-- A full formula defining a finite ordinal-vector code by recursively pairing its entries. -/
 noncomputable def vectorCodeSentence : ℕ → SentenceForm
   | 0 => fromBounded (ordinalOneMatrix 0)
   | n+1 => .ex (.conj

@@ -29,6 +29,7 @@ open Set
 namespace Sentence
 variable {P Q : Type*} [Preorder P] [Preorder Q]
 
+/-- Transport a forcing sentence along an order isomorphism of posets. -/
 def rename (e : P ≃o Q) : Sentence P → Sentence Q
   | .ground a => .ground a
   | .member p => .member (e p)
@@ -79,6 +80,7 @@ theorem weak_incompatible {a : Sentence P} {p q r : P}
   obtain ⟨t,ht,htn⟩ := (weak_iff_dense_below q (.neg a)).mp hq s (hs.trans hrq)
   exact htn t le_rfl (forces_mono a ht hsa)
 
+/-- Lift a sentence to a product poset using the first coordinate and top in the second. -/
 def liftFirst [OrderTop Q] : Sentence P → Sentence (P × Q)
   | .ground a => .ground a
   | .member p => .member (p,⊤)

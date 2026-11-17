@@ -13,7 +13,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.Syntax.TermCertificate
+public import LeanPool.TuringConeRigidity.Syntax.FiniteTerm
 
 /-!
 # Term Formula
@@ -30,9 +30,11 @@ open TransitiveNameModel
 universe u
 namespace Formula
 
+/-- Bounded formula recognizing the nested ordered pair `(a, (b, c))`. -/
 def rightPair (s a b c : ℕ) : Formula := .existsMem s (.existsMem 0
   (.conj (.orderedPair (s+2) (a+2) 0) (.orderedPair 0 (b+2) (c+2))))
 
+/-- Bounded formula recognizing the nested ordered pair `((a, b), c)`. -/
 def leftPair (s a b c : ℕ) : Formula := .existsMem s (.existsMem 0
   (.conj (.orderedPair (s+2) 0 (c+2)) (.orderedPair 0 (a+2) (b+2))))
 
@@ -56,6 +58,7 @@ theorem eval_leftPair (s a b c : ℕ) (e : ℕ → ZFSet.{u}) :
     · rw [h]; exact ZFSet.mem_pair.mpr (Or.inr rfl)
     · exact ZFSet.mem_pair.mpr (Or.inl rfl)
 
+/-- Bounded formula asserting that the pair input `(a,b)` has output `c` in `f`. -/
 def appMem (a b c f : ℕ) : Formula := .existsMem f (leftPair 0 (a+1) (b+1) (c+1))
 
 theorem eval_appMem (a b c f : ℕ) (e : ℕ → ZFSet.{u}) :
@@ -66,6 +69,8 @@ end Formula
 namespace FiniteTerm
 open Formula
 
+/-- Bounded formula describing the leaf, application, and pair cases of a finite-term
+evaluation step. -/
 def stepFormula (c v A B L O K D f z o t : ℕ) : Formula :=
   .disj (.existsMem A (.conj (.orderedPair (c+1) (z+1) 0) (.pairMem 0 (v+1) (L+1))))
     (.disj
@@ -84,6 +89,8 @@ theorem eval_stepFormula (c v A B L O K D f z o t : ℕ) (e : ℕ → ZFSet.{u})
   simp only [stepFormula,Formula.Eval,eval_disj,eval_orderedPair,eval_rightPair,eval_pairMem,
     eval_appMem,cons_zero,cons_succ,hz,ho,ht,Step,tag]
 
+/-- Bounded formula asserting that every graph entry satisfies the finite-term evaluation
+certificate. -/
 def certificateFormula (A B L O K D f z o t : ℕ) : Formula :=
   .allMem f (.existsMem (K+1) (.existsMem (D+2) (.conj (.orderedPair 2 1 0)
     (stepFormula 1 0 (A+3) (B+3) (L+3) (O+3) (K+3) (D+3) (f+3) (z+3) (o+3) (t+3)))))

@@ -26,9 +26,13 @@ namespace OAI
 
 namespace TuringRigidity.AntichainParameters
 
+/-- The degree lies below `b` and its joins with both parameters have a common lower degree
+not below it. -/
 def NontrivialCommonLower (b g₀ g₁ x : Degree) : Prop :=
   x ≤ b ∧ ∃ z : Degree, z ≤ g₀ ⊔ x ∧ z ≤ g₁ ⊔ x ∧ ¬ z ≤ x
 
+/-- A minimal degree satisfying the nontrivial common-lower property for the two coding
+parameters. -/
 def CodedAntichain (b g₀ g₁ x : Degree) : Prop :=
   NontrivialCommonLower b g₀ g₁ x ∧
     ∀ y : Degree, NontrivialCommonLower b g₀ g₁ y → y ≤ x → x ≤ y

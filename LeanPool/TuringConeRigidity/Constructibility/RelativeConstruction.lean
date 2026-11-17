@@ -30,24 +30,30 @@ namespace TuringRigidity.RelativeConstructible
 open TransitiveNameModel BoundedSetTheory ElementaryModel
 universe u
 
+/-- Finite relative constructions from a real set, a real parameter, and definable subsets of
+ordinal stages. -/
 inductive Construction : Type (u + 1)
   | reals : Construction
   | parameter : Construction
   | define (o : Ordinal.{u}) (n : ℕ) (p : SentenceForm)
       (children : Fin n → Construction) : Construction
 
+/-- Evaluate a relative construction using the real set and projected oracle parameters. -/
 noncomputable def Construction.value (R : ZFSet.{u}) (P : Oracle) : Construction.{u} → ZFSet.{u}
   | .reals => R
   | .parameter => realCode P
   | .define o n p c => definedSubset (level R o) p
       (fun i : Fin n => (c i).value R (realPart P i))
 
+/-- Certification of parameter membership, formula support bounds, and recursive membership of
+child values in their defining stages. -/
 def Construction.Certified (R : ZFSet.{u}) (P : Oracle) : Construction.{u} → Prop
   | .reals => True
   | .parameter => realCode P ∈ R
   | .define o n p c => p.bound ≤ n+1 ∧
       ∀ i, (c i).Certified R (realPart P i) ∧ (c i).value R (realPart P i) ∈ level R o
 
+/-- Every ordinal stage used by the construction has its set code in `M`. -/
 def Construction.Indexed (M : ZFSet.{u}) : Construction.{u} → Prop
   | .reals => True
   | .parameter => True

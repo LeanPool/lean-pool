@@ -31,6 +31,7 @@ universe u
 namespace InternalWellOrder
 open Formula
 
+/-- Bounded formula expressing the residual-set property `Remaining`. -/
 def remainingFormula (a f i r : ℕ) : Formula :=
   .conj (.subset r a) (.allMem a (.iff (.member 0 (r+1))
     (.neg (.existsMem (i+1) (.pairMem 0 1 (f+2))))))
@@ -40,6 +41,7 @@ theorem eval_remainingFormula (a f i r : ℕ) (e : ℕ → ZFSet.{u}) :
   simp only [remainingFormula,Remaining,Formula.Eval,eval_subset,eval_allMem,eval_iff,
     eval_pairMem,cons_zero,cons_succ]
 
+/-- Bounded formula expressing the shape, initiality, and choices of a selection trace. -/
 def traceFormula (α a q s f : ℕ) : Formula := .conj
   (.allMem f (.existsMem (α+1) (.existsMem (a+2) (.orderedPair 2 1 0))))
   (.conj
@@ -87,6 +89,7 @@ theorem internal_maximal_trace (M : ZFSet.{u}) (hM : Transitive M)
   intro f hf htrace z hz
   exact ZFSet.mem_sUnion.mpr ⟨f,(hCdef f).mpr ⟨hf,htrace⟩,hz⟩
 
+/-- The subset of `a` not occurring as an output of `f` at an index in `i`. -/
 noncomputable def residual (a f i : ZFSet.{u}) : ZFSet.{u} :=
   ZFSet.sep (fun x => ¬ ∃ j ∈ i, ZFSet.pair j x ∈ f) a
 

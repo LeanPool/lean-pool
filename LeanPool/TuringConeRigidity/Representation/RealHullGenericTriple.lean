@@ -14,7 +14,10 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.Representation.RealHullIteration
-public import LeanPool.TuringConeRigidity.Representation.SameExtensionGenericTriple
+public import LeanPool.TuringConeRigidity.CohenForcing.InternalCohenOddHits
+public import LeanPool.TuringConeRigidity.Effective.TriplePrefix
+public import LeanPool.TuringConeRigidity.Representation.GroundIteratedTriple
+public import LeanPool.TuringConeRigidity.Representation.IteratedGenericCommonIdeal
 
 /-!
 # Real Hull Generic Triple

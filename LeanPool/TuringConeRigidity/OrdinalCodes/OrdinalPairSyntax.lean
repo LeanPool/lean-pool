@@ -14,6 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.OrdinalCodes.OrdinalCodeBranch
+public import LeanPool.TuringConeRigidity.OrdinalCodes.OrdinalPairCode
 
 /-!
 # Ordinal Pair Syntax
@@ -29,6 +30,7 @@ open TransitiveNameModel BoundedSetTheory RelationCollapse ElementaryModel Relat
   OrdinalArithmetic
 universe u
 
+/-- A full formula expressing the two branches of the ordered ordinal-pair encoding. -/
 noncomputable def pairCodeSentence : SentenceForm :=
   .conj (fromBounded (.conj (ordinalFormula 1) (ordinalFormula 2)))
     (.disj (.conj (fromBounded (.subset 2 1)) (codeBranchSentence false))

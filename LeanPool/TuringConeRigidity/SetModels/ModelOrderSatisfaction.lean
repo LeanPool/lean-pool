@@ -29,6 +29,7 @@ namespace TuringRigidity.BoundedSetTheory
 open TransitiveNameModel
 universe u
 
+/-- A set-coded surjective function preserving and reflecting the relation `L` on `I`. -/
 def SetAutomorphism (I L F : ZFSet.{u}) : Prop :=
   TransitiveNameModel.FunctionGraph I I F ∧
   (∀ E ∈ I, ∃ D ∈ I, ZFSet.pair D E ∈ F) ∧
@@ -38,6 +39,7 @@ def SetAutomorphism (I L F : ZFSet.{u}) : Prop :=
 
 namespace Formula
 
+/-- Bounded formula expressing the nonempty lower directed-subset property `SetIdeal`. -/
 def setIdeal (U L I : ℕ) : Formula := .conj (.subset I U)
   (.conj (.existsMem I (.equal 0 0))
     (.conj (allMem U (allMem (I+1) (imp (pairMem 1 0 (L+2)) (.member 1 (I+2)))))
@@ -49,12 +51,16 @@ theorem eval_setIdeal (U L I : ℕ) (e : ℕ → ZFSet.{u}) :
   simp only [setIdeal,SetIdeal,Formula.Eval,eval_subset,eval_allMem,eval_imp,eval_pairMem,
     cons_zero,cons_succ,and_true]
 
+/-- Bounded formula asserting that every codomain element occurs as a value of the relation
+graph. -/
 def onto (d r f : ℕ) : Formula := allMem r (.existsMem (d+1) (pairMem 0 1 (f+2)))
 
 theorem eval_onto (d r f : ℕ) (e : ℕ → ZFSet.{u}) :
     (onto d r f).Eval e ↔ ∀ y ∈ e r, ∃ x ∈ e d, ZFSet.pair x y ∈ e f := by
   simp only [onto,Formula.Eval,eval_allMem,eval_pairMem,cons_zero,cons_succ]
 
+/-- Bounded formula asserting that the function graph is surjective onto the designated
+codomain. -/
 def surjection (d r f : ℕ) : Formula := .conj (functionGraph f d r) (onto d r f)
 
 theorem eval_surjection (d r f : ℕ) (e : ℕ → ZFSet.{u}) :
@@ -62,6 +68,7 @@ theorem eval_surjection (d r f : ℕ) (e : ℕ → ZFSet.{u}) :
       ∀ y ∈ e r, ∃ x ∈ e d, ZFSet.pair x y ∈ e f := by
   simp only [surjection,Formula.Eval,eval_functionGraph,eval_onto,TransitiveNameModel.FunctionGraph]
 
+/-- Bounded formula expressing a surjective relation-preserving automorphism graph. -/
 def setAutomorphism (I L F : ℕ) : Formula := .conj (functionGraph F I I)
   (.conj (onto I I F)
     (allMem I (allMem (I+1) (allMem (I+2) (allMem (I+3)
@@ -86,6 +93,8 @@ end Formula
 
 namespace LevySigma
 
+/-- A Levy-sigma formula asserting existence of a function graph from the designated omega
+onto `I`. -/
 def countable (o I : ℕ) : LevySigma := .existsSet (.bounded (.surjection (o+1) (I+1) 0))
 
 theorem realize_countable (M : ZFSet.{u}) (hM : Transitive M)

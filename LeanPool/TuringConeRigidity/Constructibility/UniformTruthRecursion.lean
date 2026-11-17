@@ -32,6 +32,8 @@ universe u
 
 variable {M : ZFSet.{u}}
 
+/-- A set-coded truth relation obeys the recursive truth clauses on an adequate subformula
+family. -/
 def SetTruthRecursion (Q B G A T F S : ZFSet.{u}) : Prop :=
   (∀ z ∈ S, ∃ c ∈ F, ∃ t ∈ T, TupleAdequate Q B G c t ∧ z = ZFSet.pair c t) ∧
     ∀ c ∈ F, ∀ t ∈ T, TupleAdequate Q B G c t →
@@ -78,6 +80,7 @@ theorem setTruthRecursion_spec (Q B G A S : ZFSet.{u})
       have hb := (tupleAdequate_spec Q B G hQ hB p v (hG n v hv)).mp ha
       exact (hr p hp n v hv hb).trans (setTruthStep_encode A G S hG p v hv hb).symm
 
+/-- A truth relation on the least subformula family containing the formula code `c`. -/
 def TruthWitness (Q B G A T c S : ZFSet.{u}) : Prop :=
   ∃ F ∈ Q, LeastFamily Q c F ∧ SetTruthRecursion Q B G A T F S
 

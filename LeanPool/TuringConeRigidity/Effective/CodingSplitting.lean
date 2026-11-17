@@ -13,7 +13,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.Effective.CodingOnePoint
+public import LeanPool.TuringConeRigidity.Representation.CommonIdeal
 
 /-!
 # Coding Splitting
@@ -25,8 +25,9 @@ public import LeanPool.TuringConeRigidity.Effective.CodingOnePoint
 namespace OAI
 
 namespace TuringRigidity.CodingSplitting
-open CodingForcing
 
+
+/-- An extension of the base word has two different outputs after changing one bit. -/
 def OnePoint (base : List Bool) (f : List Bool → Part ℕ) : Prop :=
   ∃ s m b v w, base <+: s ∧ base.length ≤ m ∧ m < s.length ∧ v ≠ w ∧
     v ∈ f s ∧ w ∈ f (s.set m b)

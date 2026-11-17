@@ -27,6 +27,8 @@ namespace OAI
 namespace TuringRigidity.OrderNormalForm
 open Encodable TableIndices IndexMatrix IndexedOrder CertificateMatrix
 
+/-- A challenge-response matrix expressing compatible certified outputs for a proposed Turing
+reduction. -/
 def orderMatrix (Y : Oracle) (e₀ e₁ d q r : ℕ) : Prop :=
   let n := (Nat.unpair q).1
   let challenge := (Nat.unpair q).2

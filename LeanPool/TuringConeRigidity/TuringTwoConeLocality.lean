@@ -11,7 +11,9 @@ Module paths, interfaces, and proofs are ported to the pool's toolchain and gate
 
 module
 
-public import LeanPool.TuringConeRigidity.TuringTwoConePersistentLocality
+public import LeanPool.TuringConeRigidity.Constructibility.PersistentLocality
+public import LeanPool.TuringConeRigidity.TuringTwoConeIdealLocality
+public import LeanPool.TuringConeRigidity.TuringTwoConePersistence
 
 /-!
 # Global two-cone locality with two fixed distinguished degrees
@@ -34,14 +36,18 @@ open ConePersistence (Cone)
 
 noncomputable section
 
+/-- The degree ideal containing all ordinary Turing degrees. -/
 def whole : DegreeIdeal where
   carrier := Set.univ
   nonempty := ⟨⊥, Set.mem_univ _⟩
   lower := fun _ _ => Set.mem_univ _
   join_mem := fun _ _ => Set.mem_univ _
 
+/-- The degree `a` regarded as an element of the full ideal. -/
 def wholeBase (a : Degree) : whole := ⟨a, Set.mem_univ _⟩
 
+/-- The identity-on-values order isomorphism between the ambient cone and its full-ideal
+representation. -/
 def wholeBridge (a : Degree) : Set.Ici a ≃o Set.Ici (wholeBase a) where
   toFun x := ⟨⟨x.val, Set.mem_univ _⟩, Set.mem_Ici.mpr (Set.mem_Ici.mp x.property)⟩
   invFun x := ⟨x.val.val, Set.mem_Ici.mpr (Set.mem_Ici.mp x.property)⟩
@@ -49,16 +55,20 @@ def wholeBridge (a : Degree) : Set.Ici a ≃o Set.Ici (wholeBase a) where
   right_inv _ := rfl
   map_rel_iff' := Iff.rfl
 
+/-- Transport an ambient two-cone isomorphism to the corresponding cones in the full ideal. -/
 def liftGlobal {a b : Degree} (e : Set.Ici a ≃o Set.Ici b) :
     Set.Ici (wholeBase a) ≃o Set.Ici (wholeBase b) :=
   (wholeBridge a).symm.trans (e.trans (wholeBridge b))
 
+/-- The Turing jump of the base as an element of its principal cone. -/
 def jumpPoint (a : Degree) : Set.Ici a :=
   ⟨degreeJump a, Set.mem_Ici.mpr (degree_le_jump a)⟩
 
+/-- The image of the source base's jump under the cone isomorphism. -/
 def forwardAnchor {a b : Degree} (e : Set.Ici a ≃o Set.Ici b) : Degree :=
   (e (jumpPoint a)).val
 
+/-- The inverse image of the target base's jump under the cone isomorphism. -/
 def inverseAnchor {a b : Degree} (e : Set.Ici a ≃o Set.Ici b) : Degree :=
   (e.symm (jumpPoint b)).val
 

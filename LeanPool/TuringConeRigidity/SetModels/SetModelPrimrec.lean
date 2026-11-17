@@ -14,7 +14,6 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.SetModels.SetModelFunctionIteration
-public import Mathlib.Computability.Primrec.Basic
 
 /-!
 # Set Model Primrec
@@ -35,12 +34,17 @@ variable {M : ZFSet.{u}}
 theorem HasGraph.congr {f g : ℕ → ℕ} (hf : HasGraph M f) (h : ∀ n, f n = g n) :
     HasGraph M g := (funext h) ▸ hf
 
+/-- The primitive-recursion value with base `f z` and step input coding the parameter, index,
+and previous value. -/
 def recValue (f g : ℕ → ℕ) (z n : ℕ) : ℕ :=
   n.rec (f z) (fun y ih => g (Nat.pair z (Nat.pair y ih)))
 
+/-- Advance the paired recursion state by one index and apply the step function to its current
+code. -/
 def recStep (g : ℕ → ℕ) (s : ℕ) : ℕ :=
   Nat.pair (Nat.unpair s).1 (Nat.pair ((Nat.unpair (Nat.unpair s).2).1+1) (g s))
 
+/-- The initial paired recursion state containing the parameter, index zero, and base value. -/
 def recStart (f : ℕ → ℕ) (z : ℕ) : ℕ := Nat.pair z (Nat.pair 0 (f z))
 
 theorem iterate_recStep (f g : ℕ → ℕ) (z n : ℕ) :

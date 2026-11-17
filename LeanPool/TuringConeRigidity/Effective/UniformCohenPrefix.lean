@@ -13,8 +13,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.Effective.UniformOracleSimulation
 public import LeanPool.TuringConeRigidity.CohenForcing.CohenHalting
+public import LeanPool.TuringConeRigidity.Effective.UniformPrograms
 
 /-!
 # Uniform Cohen Prefix

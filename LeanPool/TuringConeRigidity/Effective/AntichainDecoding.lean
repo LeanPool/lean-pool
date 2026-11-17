@@ -28,13 +28,17 @@ namespace OAI
 namespace TuringRigidity.AntichainDecoding
 open IndexPresentation ArithmeticHierarchy SetCoding BoundedDecoding
 
+/-- The represented degree lies below `b` and has a nontrivial common lower degree after both
+joins. -/
 def Nontrivial (Y : Oracle) (b l r x : ℕ) : Prop :=
   LE Y x b ∧ ∃ z, Dom Y z ∧ LE Y z (joinIndex l x) ∧
     LE Y z (joinIndex r x) ∧ ¬ LE Y z x
 
+/-- Minimality among the represented degrees satisfying the nontrivial common-lower property. -/
 def Minimal (Y : Oracle) (b l r x : ℕ) : Prop :=
   ∀ w, Dom Y w → Nontrivial Y b l r w → LE Y w x → LE Y x w
 
+/-- The conjunction of the represented nontriviality and minimality properties. -/
 def Antichain (Y : Oracle) (b l r x : ℕ) : Prop :=
   Nontrivial Y b l r x ∧ Minimal Y b l r x
 

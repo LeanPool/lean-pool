@@ -57,6 +57,7 @@ theorem ordinal_mul_two_internal (M : ZFSet.{u}) (hM : Transitive M) (hT : Sourc
   rw [Ordinal.mul_two]
   exact (ordinal_add_internal M hM hT a a ha ha).1
 
+/-- The ordinal-sum formula specialized to two equal inputs. -/
 noncomputable def doubleSentence : SentenceForm :=
   sumSentence.rename (fun i => if i = 0 then 0 else 1)
 

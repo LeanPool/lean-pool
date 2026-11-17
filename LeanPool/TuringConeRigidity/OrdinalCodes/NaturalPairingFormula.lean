@@ -14,7 +14,6 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.OrdinalCodes.NaturalTermFormula
-public import Mathlib.Data.Nat.Pairing
 
 /-!
 # Natural Pairing Formula
@@ -30,14 +29,18 @@ namespace TuringRigidity.BoundedSetTheory
 universe u
 namespace Formula
 
+/-- Variable renaming supplying the two inputs of the numerical pairing terms. -/
 def pairVars (a b : ℕ) : ℕ → ℕ
   | 0 => a
   | _+1 => b
 
+/-- The arithmetic term used by the increasing-coordinate branch of natural-number pairing. -/
 def pairLeftTerm : NaturalTerm := .binary false (.binary true (.var 1) (.var 1)) (.var 0)
+/-- The arithmetic term used by the other branch of natural-number pairing. -/
 def pairRightTerm : NaturalTerm := .binary false
   (.binary false (.binary true (.var 0) (.var 0)) (.var 0)) (.var 1)
 
+/-- Bounded formula computing natural-number pairing by its two arithmetic branches. -/
 def naturalPair (o Q x n y : ℕ) : Formula := .disj
   (.conj (.member x n) (pairLeftTerm.graph o Q y (pairVars x n)))
   (.conj (.neg (.member x n)) (pairRightTerm.graph o Q y (pairVars x n)))

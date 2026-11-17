@@ -13,6 +13,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
+public import Mathlib.NumberTheory.Real.Irrational
+
 public import LeanPool.TuringConeRigidity.OrdinalCodes.SumComparison
 public import LeanPool.TuringConeRigidity.Computability.Joins
 
@@ -29,6 +31,7 @@ namespace TuringRigidity
 namespace CutAddition
 open RationalCoding UniformOracle
 
+/-- Decide a sum cut bit when the two queried cut bits and rational bounds separate the sum. -/
 def decision (z : ℕ × (ℕ × ℕ) × (ℕ × ℕ)) : Option ℕ :=
   if z.2.2.1=1 ∧ z.2.2.2=1 ∧ sumLeft (z.1,z.2.1.1,z.2.1.2)<sumRight (z.1,z.2.1.1,z.2.1.2)
     then some 1 else
@@ -51,6 +54,7 @@ theorem decision_primrec : Primrec decision := by
         (Primrec.nat_lt.comp (sumRight_primrec.comp hargs) (sumLeft_primrec.comp hargs))))
       (Primrec.const (some 0)) (Primrec.const none))
 
+/-- Try to decide a cut bit of `x + y` using a coded pair of cut queries. -/
 noncomputable def trial (x y : ℝ) (n m : ℕ) : Option ℕ :=
   decision (n,Nat.unpair m,
     (if cut x (Nat.unpair m).1 then 1 else 0,if cut y (Nat.unpair m).2 then 1 else 0))

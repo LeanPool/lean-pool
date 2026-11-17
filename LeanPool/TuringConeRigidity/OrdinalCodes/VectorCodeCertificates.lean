@@ -30,6 +30,8 @@ open TransitiveNameModel BoundedSetTheory RelationCollapse ElementaryModel Relat
   OrdinalArithmetic
 universe u
 
+/-- Recursive model-membership and pair-code certificates for the entries and tails of an
+ordinal vector. -/
 def VectorCodeCertificates (M : ZFSet.{u}) : {n : ℕ} → (Fin n → Ordinal.{u}) → Prop
   | 0, _ => True
   | _+1, v =>
@@ -71,6 +73,7 @@ theorem vectorCodeSentence_of_certificates (M : ZFSet.{u}) (hM : Transitive M)
         · exact ht
         · exact he _) _ (fun i => hv i.succ) hs rfl
 
+/-- Certificates for an ordinal padding parameter and the corresponding padded vector code. -/
 def PaddedCodeCertificates (M : ZFSet.{u}) {n : ℕ} (v : Fin n → Ordinal.{u}) (β : Ordinal.{u}) :
   Prop :=
   β.toZFSet ∈ M ∧ (vectorCode v).toZFSet ∈ M ∧

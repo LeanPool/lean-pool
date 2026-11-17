@@ -32,12 +32,14 @@ open Encodable CodingForcing EncodedForcing FiniteInjury
 noncomputable section
 attribute [local instance] Classical.propDecidable
 
+/-- Select the uniform pair procedure used by the priority construction. -/
 def pairProcedure (A : Oracle) : ℕ → ℕ := Classical.choose (UniformPair.pair_exists A)
 
 theorem pairProcedure_recursive (A : Oracle) :
     Nat.RecursiveIn {oracleFunction (OracleJump.jump A)} (fun v => Part.some (pairProcedure A v)) :=
   (Classical.choose_spec (UniformPair.pair_exists A)).1
 
+/-- The pair-procedure candidate at priority `t`, normalized to level `t`. -/
 def candidate (A : Oracle) (t : ℕ) (p : Condition) : Condition :=
   atLevel (condition (pairProcedure A (Nat.pair t (code (atLevel p t))))) t
 
@@ -47,9 +49,11 @@ theorem candidate_extends (A : Oracle) (t : ℕ) (p : Condition) :
   rw [condition_code] at h
   exact ⟨h.1,h.2.1,le_rfl,h.2.2.2⟩
 
+/-- The priority candidate changes at least one of the two condition words. -/
 def Changes (A : Oracle) (t : ℕ) (p : Condition) : Prop :=
   (candidate A t p).left ≠ p.left ∨ (candidate A t p).right ≠ p.right
 
+/-- Search a bounded range for an unfinished priority that changes the condition. -/
 def scan (A : Oracle) (p : Condition) (done : Finset ℕ) (t : ℕ) : ℕ → Option ℕ
   | 0 => none
   | n+1 => if t ∉ done ∧ Changes A t p then some t else scan A p done (t+1) n
@@ -69,6 +73,7 @@ theorem scan_spec {A : Oracle} {p : Condition} {done : Finset ℕ} {t n i : ℕ}
     · obtain ⟨hlo,hhi,hd,hc⟩ := ih h
       exact ⟨by omega,by omega,hd,hc⟩
 
+/-- Select a uniform procedure deciding open requirements relative to `A`. -/
 def openProcedure (A : Oracle) : ℕ → ℕ :=
   Classical.choose (EffectiveForcing.uniform_open_decision A A (reduces_refl A))
 
@@ -78,34 +83,45 @@ theorem open_extends (A : Oracle) (e : ℕ) (p : Condition) :
     A))).2 e (code p)).1
   simpa only [condition_code,openProcedure] using h
 
+/-- A priority state containing its condition, completed priorities, and visited priorities. -/
 structure State where
+  /-- The current priority-construction condition. -/
   condition : Condition
+  /-- The priorities currently marked completed. -/
   done : Finset ℕ
+  /-- The priorities visited since their last injury reset. -/
   seen : Finset ℕ
 
+/-- Extend the condition to meet the least unvisited open requirement. -/
 def generic (A : Oracle) (p : State) : Condition :=
   EncodedForcing.condition (openProcedure A (Nat.pair (FiniteInjurySchedule.visit p.seen) (code
     p.condition)))
 
+/-- The bounded priority action selected after the generic extension. -/
 def stageAction (A : Oracle) (s : ℕ) (p : State) : Option ℕ := scan A (generic A p) p.done 0 s
 
+/-- Select the stage condition from the generic extension and any priority candidate. -/
 def stageWord (A : Oracle) (s : ℕ) (p : State) : Condition :=
   match stageAction A s p with
   | none => generic A p
   | some t => candidate A t (generic A p)
 
+/-- Advance the priority condition and update its completed and visited records. -/
 def advance (A : Oracle) (s : ℕ) (p : State) : State where
   condition := atLevel (append (stageWord A s p) [false]) (s+1)
   done := FiniteInjury.update p.done (stageAction A s p)
   seen := FiniteInjurySchedule.reset (insert (FiniteInjurySchedule.visit p.seen) p.seen)
     (stageAction A s p)
 
+/-- The priority state sequence starting from the empty condition and empty records. -/
 def construction (A : Oracle) : ℕ → State
   | 0 => ⟨⟨[],[],rfl,0⟩,∅,∅⟩
   | s+1 => advance A s (construction A s)
 
+/-- The condition component of the priority state at stage `s`. -/
 def conditions (A : Oracle) (s : ℕ) := (construction A s).condition
 
+/-- The finite-injury action proposal produced by the priority state at stage `s`. -/
 def proposal (A : Oracle) (s : ℕ) (_ : Finset ℕ) : Option ℕ :=
   stageAction A s (construction A s)
 

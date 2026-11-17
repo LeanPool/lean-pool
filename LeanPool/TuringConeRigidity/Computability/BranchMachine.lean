@@ -29,21 +29,28 @@ namespace OAI
 namespace TuringRigidity
 open Computable
 
+/-- Interleave two partial functions, using the first at even and the second at odd inputs. -/
 def partialJoin (f g : ℕ →. ℕ) (k : ℕ) : Part ℕ :=
   if k.bodd then g (k/2) else f (k/2)
 
 namespace BranchMachine
 
+/-- Read the initial-state channel of a partial oracle. -/
 def initial (g : ℕ →. ℕ) (k : ℕ) : Part ℕ := g (8*k)
+/-- Read the anchor channel of a partial oracle. -/
 def anchor (g : ℕ →. ℕ) (k : ℕ) : Part ℕ := g (8*k+4)
+/-- Read the branch-dependent increment channel of a partial oracle. -/
 def increment (g : ℕ →. ℕ) (h b k : ℕ) : Part ℕ :=
   g (if b = h then 2*k+1 else 4*k+2)
 
+/-- One branch-machine step, composing the two programs with the selected increment and anchor
+channels. -/
 def step (p q : OracleCode) (j h : ℕ) (g old : ℕ →. ℕ) (k : ℕ) : Part ℕ :=
   old j >>= fun b =>
     OracleCode.eval
       (partialJoin (OracleCode.eval (partialJoin old (increment g h b)) p) (anchor g)) q k
 
+/-- Iterate the branch-machine transition from the initial partial state. -/
 def stage (p q : OracleCode) (j h : ℕ) (g : ℕ →. ℕ) : ℕ → ℕ →. ℕ
   | 0 => initial g
   | n+1 => step p q j h g (stage p q j h g n)
@@ -116,6 +123,7 @@ theorem step_partrec (p q : OracleCode) (j h : ℕ)
   exact (OracleCode.eval_partrec (partialJoin_partrec hforward hanchor) q).comp
     Computable.id (snd.comp fst)
 
+/-- Partial lookup of an entry in a finite natural-number list. -/
 def lookup (L : List ℕ) (k : ℕ) : Part ℕ := (L[k]? : Part ℕ)
 
 theorem lookup_partrec : Partrec₂ lookup :=

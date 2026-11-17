@@ -25,7 +25,7 @@ public import LeanPool.TuringConeRigidity.OrdinalCodes.TrimmedPresentation
 namespace OAI
 
 namespace TuringRigidity.RelationCollapse
-open TransitiveNameModel BoundedSetTheory ElementaryModel RelativeConstructible OrdinalArithmetic
+open TransitiveNameModel BoundedSetTheory ElementaryModel RelativeConstructible
 universe u
 
 theorem presentation_graph_at_successor_of_pairs (R : ZFSet.{u}) (γ : Ordinal.{u})

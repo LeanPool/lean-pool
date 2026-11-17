@@ -14,6 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.Effective.CodingDiagonal
+public import LeanPool.TuringConeRigidity.Computability.Introreducible
 
 /-!
 # Coding Generic
@@ -27,6 +28,7 @@ namespace OAI
 namespace TuringRigidity.CodingGeneric
 open CodingForcing CodingColumns CodingDiagonal
 
+/-- Every condition has a permitted extension satisfying the requirement. -/
 def Dense (A : ℕ → Oracle) (R : Condition → Prop) : Prop :=
   ∀ p, ∃ q, Extends A p q ∧ R q
 
@@ -40,6 +42,8 @@ theorem extend_dense (A : ℕ → Oracle) (R : Condition → Prop)
     ha.trans_le hsq.2.2.1,
     (Nat.lt_succ_self n).trans_le (hn.trans (hrs.1.length_le.trans hsq.1.length_le))⟩
 
+/-- A chain meeting the enumerated dense coding requirements and activating successive
+columns. -/
 noncomputable def stage (A : ℕ → Oracle) (R : ℕ → Condition → Prop)
     (hR : ∀ n, Dense A (R n)) : ℕ → Condition
   | 0 => ⟨[], [], rfl, 0⟩
@@ -59,8 +63,10 @@ theorem stage_mono (A : ℕ → Oracle) (R : ℕ → Condition → Prop)
   | refl => exact extends_refl A _
   | step h ih => exact extends_trans ih (stage_spec A R hR _).1
 
+/-- The left real obtained from the increasing chain of coding conditions. -/
 noncomputable def leftReal (A : ℕ → Oracle) (R : ℕ → Condition → Prop)
     (hR : ∀ n, Dense A (R n)) : Oracle := fun n => (stage A R hR (n+1)).left.getD n false
+/-- The right real obtained from the increasing chain of coding conditions. -/
 noncomputable def rightReal (A : ℕ → Oracle) (R : ℕ → Condition → Prop)
     (hR : ∀ n, Dense A (R n)) : Oracle := fun n => (stage A R hR (n+1)).right.getD n false
 
@@ -94,8 +100,10 @@ theorem coding_agreement (A : ℕ → Oracle) (R : ℕ → Condition → Prop)
   rw [leftReal_extends A R hR t m hlen, rightReal_extends A R hR t m hlen]
   exact hst.2.2.2 m hm hlen
 
+/-- Indices specifying a coding column, a cutoff, and an oracle program. -/
 abbrev RequirementIndex := ℕ × ℕ × OracleCode
 
+/-- The family of diagonal requirements decoded from natural-number indices. -/
 def requirements (A : ℕ → Oracle) (hA : ∀ k, {a | A k a = true}.Infinite)
     (n : ℕ) (p : Condition) : Prop :=
   match Encodable.decode (α := RequirementIndex) n with

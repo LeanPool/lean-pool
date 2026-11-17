@@ -13,8 +13,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.Constructibility.ConstructibleSeparation
 public import LeanPool.TuringConeRigidity.SetModels.ModelReals
+public import LeanPool.TuringConeRigidity.Constructibility.ConstructibleStages
 
 /-!
 # Constructible Ground Reals
@@ -30,6 +30,7 @@ namespace TuringRigidity.RelativeConstructible
 open BoundedSetTheory TransitiveNameModel
 universe u
 
+/-- The set of real codes belonging to the ground-model set `M`. -/
 noncomputable def groundReals (M : ZFSet.{u}) : ZFSet.{u} :=
   (ZFSet.powerset ZFSet.omega).sep (fun x => x ∈ M)
 

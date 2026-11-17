@@ -14,7 +14,6 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.Representation.SourceTAbsolutenessEndpoint
-public import LeanPool.TuringConeRigidity.Representation.SourceTGenericExistence
 
 /-!
 # Source TGeneric Persistence
@@ -32,6 +31,8 @@ open SetModelSatisfaction PersistentRestrictions CountableForcing
 universe u
 noncomputable section
 
+/-- The model contains the correct degree universe and order and satisfies the native
+persistence formula. -/
 def NativePersistent (M : ZFSet.{u}) (I : CountableIdeal) (ρ : I ≃o I) : Prop :=
   ∃ D ∈ M, ∃ L ∈ M,
     (∀ x, x ∈ D ↔ ∃ A ∈ reals M, x = degreeSet (degree A)) ∧

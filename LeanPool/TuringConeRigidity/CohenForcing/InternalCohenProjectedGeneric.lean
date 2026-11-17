@@ -15,7 +15,6 @@ module
 
 public import LeanPool.TuringConeRigidity.CohenForcing.InternalCohenFactor
 public import LeanPool.TuringConeRigidity.CohenForcing.CohenProductFilters
-public import LeanPool.TuringConeRigidity.Representation.CountableGroundGeneric
 
 /-!
 # Internal Cohen Projected Generic
@@ -31,6 +30,7 @@ open TransitiveNameModel BoundedSetTheory CountableForcing AutomorphismName
 open CohenGroundPoset InternalCohenRestriction InternalCohenPartition InternalCohenFactor
 attribute [local instance] InternalCollapse.order InternalCollapse.collapsePreorder
 
+/-- Project a condition filter onto the coordinates in `B`. -/
 noncomputable def projected (A B : ZFSet.{0}) (hBA : B ⊆ A)
     (G : GenericFilter (Conditions (conditions A))) : GenericFilter (Conditions (conditions B)) :=
   CohenProductFilters.first (mapFilter (factorIso A B hBA) G)
@@ -47,6 +47,7 @@ theorem mem_projected (A B : ZFSet.{0}) (hBA : B ⊆ A)
     change (factorIso A B hBA).symm (factorIso A B hBA p) ∈ G.carrier
     simpa using hp
 
+/-- Conditions whose restriction to `B` belongs to the specified dense set. -/
 noncomputable def densePreimage (A B D : ZFSet.{0}) : ZFSet.{0} :=
   (conditions A).sep (fun p => ∃ q ∈ conditions B,
     ZFSet.pair p q ∈ restrictionGraph A B ∧ q ∈ D)

@@ -15,8 +15,9 @@ module
 
 public import LeanPool.TuringConeRigidity.Computability.ArithmeticIteratedJoin
 public import LeanPool.TuringConeRigidity.Representation.GroundArithmeticGeneric
-public import LeanPool.TuringConeRigidity.CohenForcing.CohenPrefixHull
-public import LeanPool.TuringConeRigidity.Representation.GenericSourceTransfer
+public import LeanPool.TuringConeRigidity.CohenForcing.InternalCohenValue
+public import LeanPool.TuringConeRigidity.Representation.RealGeneratedModel
+public import LeanPool.TuringConeRigidity.SetModels.RegularTreeExtension
 
 /-!
 # Ground Iterated Triple

@@ -29,6 +29,7 @@ namespace TuringRigidity.RelativeConstructible
 open ElementaryModel BoundedSetTheory TransitiveNameModel SetModelArithmetic
 universe u
 
+/-- Reorder construction parameters into the slots expected by arithmetic binding. -/
 def arithmeticSlots : ℕ → ℕ
   | 0 => 3
   | 1 => 4
@@ -38,9 +39,12 @@ def arithmeticSlots : ℕ → ℕ
   | 5 => 1
   | i+6 => i+6
 
+/-- Bind the arithmetic parameters in a construction's single-membership sentence. -/
 noncomputable def Construction.arithmeticFreeMembership (t : Construction.{u}) : SentenceForm :=
   bindArithmetic (t.singleMembership.rename arithmeticSlots)
 
+/-- The parameter environment for a construction with arithmetic and real parameters made
+explicit. -/
 noncomputable def Construction.arithmeticFreeInputs (t : Construction.{u}) (R : ZFSet.{u})
     (P : Oracle) : ℕ → ZFSet.{u} := cons R (cons (realCode P) (t.stageInputs R))
 

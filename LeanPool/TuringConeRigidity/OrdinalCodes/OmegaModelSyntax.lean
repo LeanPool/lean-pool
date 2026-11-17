@@ -13,7 +13,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.OrdinalCodes.OmegaModelCoreClosure
+public import LeanPool.TuringConeRigidity.OrdinalCodes.OmegaModelCollapse
 
 /-!
 # Omega Model Syntax
@@ -30,10 +30,12 @@ universe u
 noncomputable section
 variable {α : Type u} (S : OmegaData α)
 
+/-- Prepend a value to the variable environment. -/
 def push {β : Type*} (x : β) (e : ℕ → β) : ℕ → β
   | 0 => x
   | n+1 => e n
 
+/-- Evaluate a bounded formula in the abstract membership structure. -/
 def Eval (e : ℕ → α) : Formula → Prop
   | .equal i j => e i = e j
   | .member i j => S.mem (e i) (e j)
@@ -71,10 +73,14 @@ theorem collapse_eval (p : Formula) (e : ℕ → S.Core) :
       exact ⟨S.collapse y,(S.mem_collapse (e i) _).mpr ⟨y,hx,rfl⟩,
         (hstep y).mpr hp'⟩
 
+/-- The membership structure has a set containing exactly either of two supplied elements. -/
 def PairingAxiom : Prop := ∀ a b : α, ∃ c, ∀ x, S.mem x c ↔ x=a ∨ x=b
 
+/-- The membership structure has a union set for every element. -/
 def UnionAxiom : Prop := ∀ a : α, ∃ b, ∀ x, S.mem x b ↔ ∃ y, S.mem y a ∧ S.mem x y
 
+/-- The membership structure admits separation for each bounded formula and parameter
+environment. -/
 def SeparationAxiom : Prop := ∀ (p : Formula) (e : ℕ → α) (a : α),
   ∃ b, ∀ x, S.mem x b ↔ S.mem x a ∧ S.Eval (push x e) p
 

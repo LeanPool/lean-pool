@@ -13,8 +13,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.SetModels.ElementaryCollapsePoset
-public import LeanPool.TuringConeRigidity.Syntax.CheckGraphConstruction
+public import LeanPool.TuringConeRigidity.Representation.ParameterCoveringModels
+public import LeanPool.TuringConeRigidity.SetModels.ElementaryDefinableSets
 
 /-!
 # Elementary Checked Code
@@ -60,6 +60,7 @@ theorem ambient_checkGraph (d t : ZFSet.{u}) (hd : Transitive d) :
     obtain ⟨i,rfl⟩ := label_surjective d hx
     exact ⟨i,hz.symm⟩
 
+/-- A full formula selecting the value of a checked name through its coded graph. -/
 noncomputable def checkedValueFormula : SentenceForm :=
   .ex (.ex (.ex (fromBounded (.conj (CheckFormula.graph 2 1 0 5)
     (.conj (.member 4 2) (.conj (.member 3 1) (.pairMem 4 3 0)))))))

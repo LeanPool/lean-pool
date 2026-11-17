@@ -14,6 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.Representation.CommonIdeal
+public import LeanPool.TuringConeRigidity.Representation.BorelGeneric
 
 /-!
 # Common Ideal Search
@@ -36,6 +37,7 @@ theorem table_partrec : Partrec₂ table :=
   BranchMachine.lookup_partrec.comp
     ((Primrec.list_map Primrec.id (bit_primrec.comp Primrec.snd).to₂).to_comp.comp fst) snd
 
+/-- Evaluate the program using a finite background table and a coded extension of the word. -/
 def finiteRun (p : OracleCode) (s : List Bool) (L : List ℕ) (w : ℕ) : Part ℕ :=
   OracleCode.eval (partialJoin (BranchMachine.lookup L)
     (table (s ++ BorelGeneric.word (Nat.unpair w).1))) p (Nat.unpair w).2
@@ -68,6 +70,8 @@ theorem finiteRun_approximates (A : Oracle) (p : OracleCode) (s : List Bool) (w 
   · exact prefix_approximates (fun k => bit (A k))
   · intro k; exact Approximates.const _
 
+/-- Run a bounded search trial with a coded oracle-prefix length, extension index, and
+execution bound. -/
 def searchTrial (A : Oracle) (d : Nat.Partrec.Code) (n z : ℕ) : Option ℕ :=
   d.evaln (Nat.unpair (Nat.unpair z).2).2
     (Nat.pair (encode (oraclePrefix (fun k => bit (A k)) (Nat.unpair z).1))

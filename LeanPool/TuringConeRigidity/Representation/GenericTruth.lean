@@ -13,10 +13,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.Representation.GenericTopology
 public import LeanPool.TuringConeRigidity.Representation.GenericIdentity
 public import LeanPool.TuringConeRigidity.Representation.PairGenericSelection
-public import Mathlib.Topology.Baire.BaireMeasurable
 
 /-!
 # Generic Truth
@@ -30,6 +28,7 @@ namespace OAI
 namespace TuringRigidity.GenericTruth
 open FiniteShuffle ShuffleRequirements GenericTopology Set Filter Encodable
 
+/-- The cylinder determined by `s` is contained in the set `U`. -/
 def CylinderIn (U : Set Oracle) (s : List Bool) : Prop := ∀ G, Realizes s G → G ∈ U
 
 theorem cylinderIn_denseOpen (U : Set Oracle) (ho : IsOpen U) (hd : Dense U) :
@@ -77,6 +76,7 @@ theorem borel_generic_truth (S : Set Oracle) (hS : MeasurableSet S) :
     (Filter.eventuallyEqSet_iff.mp hSU)
   exact ⟨U,hU,D,hD,hDS⟩
 
+/-- Split one oracle into three components through nested even and odd projections. -/
 def triple (G : Oracle) : Oracle × Oracle × Oracle :=
   (PairGenericSelection.column false G,
     PairGenericSelection.column false (PairGenericSelection.column true G),

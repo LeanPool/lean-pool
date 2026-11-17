@@ -13,7 +13,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.SetModels.ModelAutomorphismInterpretation
+public import LeanPool.TuringConeRigidity.OrdinalCodes.NumericalAutomorphism
+public import LeanPool.TuringConeRigidity.SetModels.ModelOrderSatisfaction
 
 /-!
 # Set Automorphism Reconstruction
@@ -30,6 +31,7 @@ open TransitiveNameModel EncodedForcing PersistentRestrictions PersistentPresent
 open NumericalAutomorphism
 universe u
 
+/-- The Boolean oracle coding membership in the set-coded degree action graph. -/
 noncomputable def setGraphReal (R H F : ZFSet.{u}) : Oracle := fun v => by
   classical
   exact decide (ZFSet.pair (degreeCode R (columns (decodeReal H) (Nat.unpair v).1))

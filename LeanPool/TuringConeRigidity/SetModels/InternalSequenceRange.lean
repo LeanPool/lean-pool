@@ -13,7 +13,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.SetModels.InternalRelationSelection
+public import LeanPool.TuringConeRigidity.SetModels.InternalFunctionOrbit
 
 /-!
 # Internal Sequence Range
@@ -27,6 +27,7 @@ namespace OAI
 namespace TuringRigidity.InternalSequenceRange
 open TransitiveNameModel BoundedSetTheory
 
+/-- The range of the natural-number-indexed graph `B`, restricted to `X`. -/
 noncomputable def rangeSet (X B : ZFSet.{0}) : ZFSet.{0} :=
   X.sep (fun x => ∃ n ∈ ZFSet.omega, ZFSet.pair n x ∈ B)
 
@@ -51,6 +52,7 @@ theorem mem_rangeSet (X : ZFSet.{0}) (E : ℕ → ZFSet.{0}) (hE : ∀ n, E n �
   · rintro ⟨n,rfl⟩
     exact ⟨hE n,natSet n,(mem_omega _).mpr ⟨n,rfl⟩,(orbitGraph_pair E n _).mpr rfl⟩
 
+/-- The union of the family `S`, restricted to the ambient set `U`. -/
 noncomputable def unionSet (U S : ZFSet.{0}) : ZFSet.{0} :=
   U.sep (fun x => ∃ E ∈ S, x ∈ E)
 

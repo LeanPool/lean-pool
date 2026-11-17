@@ -28,6 +28,7 @@ namespace TuringRigidity.RelativeConstructible
 open ElementaryModel BoundedSetTheory TransitiveNameModel SetModelArithmetic
 universe u
 
+/-- Project an oracle along the natural-number indexing path encoded by `bs`. -/
 def bitOracle (P : Oracle) (bs : List Bool) : Oracle := fun n => P (bitIndex bs n)
 
 theorem bitOracle_part (P : Oracle) (bs : List Bool) (i : ℕ) :
@@ -36,6 +37,7 @@ theorem bitOracle_part (P : Oracle) (bs : List Bool) (i : ℕ) :
   rw [realPart_bits]
   simp only [bitOracle,bitIndex_append]
 
+/-- The ordinal-stage inputs of a construction, using the real set for non-stage slots. -/
 noncomputable def Construction.stageInputs (R : ZFSet.{u}) (t : Construction.{u}) (k : ℕ) :
   ZFSet.{u} :=
   match t.inputData k with
@@ -63,6 +65,7 @@ theorem Construction.stageInputs_mem (t : Construction.{u}) (M R : ZFSet.{u})
     rw [hd] at hk
     exact level_mem M R hM hT hR o hk
 
+/-- Define a construction using one real parameter and its explicit binary projections. -/
 noncomputable def Construction.singleFormula : Construction.{u} → List Bool →
     ℕ → ℕ → ℕ → ℕ → ℕ → ℕ → (ℕ → ℕ) → SentenceForm
   | .reals, _, out, R, _, _, _, _, _ => .equal out R
@@ -123,9 +126,11 @@ theorem Construction.singleFormula_spec (t : Construction.{u}) (M R : ZFSet.{u})
     rw [hvs]
     rfl
 
+/-- Express membership in a construction defined from one real parameter. -/
 noncomputable def Construction.singleMembership (t : Construction.{u}) : SentenceForm :=
   .ex (.conj (t.singleFormula [] 0 2 3 4 5 6 (fun k => k+7)) (.member 1 0))
 
+/-- The parameter environment for the single-real construction formula. -/
 noncomputable def Construction.singleInputs (t : Construction.{u}) (R : ZFSet.{u}) (P : Oracle) :
   ℕ → ZFSet.{u} :=
   cons R (cons (realCode P) (cons ZFSet.omega (cons additionSet

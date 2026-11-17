@@ -13,8 +13,9 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.Representation.SameExtensionCommonIdeal
 public import LeanPool.TuringConeRigidity.Effective.FiniteOverwriteHull
+public import LeanPool.TuringConeRigidity.CohenForcing.CohenDisjointPrefixPair
+public import LeanPool.TuringConeRigidity.Representation.OriginalRealCohenFactorization
 
 /-!
 # Same Extension Iteration

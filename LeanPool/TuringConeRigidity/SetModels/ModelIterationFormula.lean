@@ -30,12 +30,14 @@ open TransitiveNameModel
 universe u
 namespace Formula
 
+/-- Shift outer model-iteration parameters past the auxiliary trace variables. -/
 def modelIterationOuterVars : ℕ → ℕ
   | 0 => 0
   | 1 => 1
   | 2 => 2
   | i+3 => i+6
 
+/-- Bounded formula selecting the endpoint of a finite iteration with values in `R`. -/
 def modelIteration (o R Q n b y : ℕ) (θ : Formula) : Formula :=
   .existsMem o (.existsMem (o+1) (.existsMem (Q+2)
     (.conj (modelIterationTrace (o+3) (R+3) 1 2 (n+3) (b+3) 0 (θ.rename modelIterationOuterVars))

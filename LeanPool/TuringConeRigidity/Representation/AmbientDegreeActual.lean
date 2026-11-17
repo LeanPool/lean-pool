@@ -13,7 +13,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.Representation.AmbientDegreeBinding
+public import LeanPool.TuringConeRigidity.Representation.NativeModelCompatibility
+public import LeanPool.TuringConeRigidity.SetModels.ModelDegreeOrder
 
 /-!
 # Ambient Degree Actual

@@ -28,6 +28,7 @@ namespace TuringRigidity.InternalCohenRestriction
 open TransitiveNameModel BoundedSetTheory InternalFiniteSubsets CohenConditionCode CohenGroundPoset
 open InternalCohen (alphabet)
 
+/-- Restrict a condition graph to pairs whose first coordinate belongs to `B`. -/
 noncomputable def restrict (B p : ZFSet.{0}) : ZFSet.{0} :=
   p.sep (fun z => ∃ x ∈ B, ∃ b ∈ alphabet, z = ZFSet.pair x b)
 
@@ -73,6 +74,7 @@ theorem restrict_eq_self (B p : ZFSet.{0}) (hp : p ∈ conditions B) : restrict 
   rw [mem_restrict]
   exact ⟨And.left,fun hz => ⟨hz,hsub hz⟩⟩
 
+/-- Bounded formula identifying the restriction of a condition graph to `B`. -/
 def restrictionFormula (B V p q : ℕ) : Formula := .conj (.subset q p)
   (.allMem p (.iff (.member 0 (q+1))
     (.existsMem (B+1) (.existsMem (V+2) (.orderedPair 2 1 0)))))
@@ -91,6 +93,7 @@ theorem restrictionFormula_spec (B V p q : ℕ) (e : ℕ → ZFSet.{0}) (hV : e 
     exact ⟨fun _ hz => (ZFSet.mem_sep.mp hz).1,
       fun z hz => ZFSet.mem_sep.trans (and_iff_right hz)⟩
 
+/-- Set-coded graph of restriction from conditions on `A` to conditions on `B`. -/
 noncomputable def restrictionGraph (A B : ZFSet.{0}) : ZFSet.{0} :=
   (ZFSet.prod (conditions A) (conditions B)).sep (fun z =>
     ∃ p ∈ conditions A, ∃ q ∈ conditions B, z = ZFSet.pair p q ∧ q = restrict B p)

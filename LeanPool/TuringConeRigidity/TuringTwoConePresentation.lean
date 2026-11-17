@@ -37,12 +37,16 @@ open TwoConeIdealCodes (val)
 
 noncomputable section
 
+/-- The ideal cone element obtained by joining the base with the degree of the selected oracle
+column. -/
 def idealEntry {J : DegreeIdeal} (a : J) (H : Oracle)
     (hH : degree H ∈ J.carrier) (n : ℕ) : Set.Ici a :=
   ⟨⟨a.val ⊔ degree (columns H n), J.join_mem a.property
     (J.lower (CodingExtraction.column_projection_reduces H n) hH)⟩,
     Set.mem_Ici.mpr (show a.val ≤ a.val ⊔ degree (columns H n) from le_sup_left)⟩
 
+/-- The graph of the ideal cone isomorphism on base-joined input columns and represented
+output columns. -/
 def IdealGraph {I J : DegreeIdeal} {a : I} {b : J}
     (ρ : Set.Ici a ≃o Set.Ici b) (H : Oracle) (hH : degree H ∈ I.carrier)
     (v : ℕ) : Prop :=
@@ -82,6 +86,7 @@ def presentationEntry {I : CountableIdeal} {a : Degree} {H : Oracle}
     (hpres : ConePresentation.Presented I H) (ha : a ∈ I.carrier) (n : ℕ) : Cone I a :=
   ⟨a ⊔ degree (columns H n), I.join_mem ha ((hpres _).mpr ⟨n, rfl⟩), le_sup_left⟩
 
+/-- The graph of the countable-ideal cone isomorphism in its base-joined column presentation. -/
 def Graph {I : CountableIdeal} {a b : Degree} {H : Oracle}
     (ρ : Cone I a ≃o Cone I b) (hpres : ConePresentation.Presented I H)
     (ha : a ∈ I.carrier) (v : ℕ) : Prop :=

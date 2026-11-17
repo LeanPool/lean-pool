@@ -15,6 +15,7 @@ module
 
 public import LeanPool.TuringConeRigidity.Effective.FiniteJoinSections
 public import LeanPool.TuringConeRigidity.Computability.ArithmeticRelations
+public import LeanPool.TuringConeRigidity.Computability.ArithmeticCommonRequirement
 
 /-!
 # Arithmetic Join Sections

@@ -13,7 +13,6 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.SetModels.ExtensionBasicAxioms
 public import LeanPool.TuringConeRigidity.Syntax.BoundedRelations
 
 /-!
@@ -29,6 +28,7 @@ namespace TuringRigidity.BoundedSetTheory
 open TransitiveNameModel
 universe u
 
+/-- The von Neumann natural number corresponding to `n`. -/
 def natSet : ℕ → ZFSet.{u}
   | 0 => ∅
   | n+1 => insert (natSet n) (natSet n)
@@ -89,7 +89,9 @@ theorem omega_transitive : Transitive ZFSet.omega.{u} := by
   exact (mem_omega _).mpr ⟨i,rfl⟩
 
 namespace Formula
+/-- Bounded formula asserting that the set in slot `x` has no members. -/
 def empty (x : ℕ) : Formula := allMem x (.neg (.equal 0 0))
+/-- Bounded formula asserting that `s` is the von Neumann successor of `n`. -/
 def successor (s n : ℕ) : Formula :=
   .conj (.member n s) (.conj (subset n s)
     (allMem s (disj (.equal 0 (n+1)) (.member 0 (n+1)))))
@@ -114,9 +116,12 @@ def successor (s n : ℕ) : Formula :=
     exact ⟨ZFSet.mem_insert _ _,fun _ hz => ZFSet.mem_insert_of_mem _ hz,
       fun _ hz => ZFSet.mem_insert_iff.mp hz⟩
 
+/-- Bounded formula asserting that the set is empty or is a successor of one of its members. -/
 def zeroOrSuccessor (x : ℕ) : Formula :=
   disj (empty x) (.existsMem x (successor (x+1) 0))
 
+/-- Bounded formula characterizing a finite ordinal by transitivity and zero-or-successor
+clauses. -/
 def finiteOrdinal (x : ℕ) : Formula := .conj (transitive x)
   (.conj (allMem x (transitive 0))
     (.conj (zeroOrSuccessor x) (allMem x (zeroOrSuccessor 0))))
@@ -126,6 +131,7 @@ theorem eval_zeroOrSuccessor (x : ℕ) (e : ℕ → ZFSet.{u}) :
   simp only [zeroOrSuccessor,eval_disj,eval_empty,Eval,eval_successor,cons_zero,cons_succ]
 end Formula
 
+/-- Transitivity and zero-or-successor clauses characterizing the von Neumann finite ordinals. -/
 def FiniteOrdinal (x : ZFSet.{u}) : Prop := Transitive x ∧ (∀ y ∈ x, Transitive y) ∧
   (x = ∅ ∨ ∃ y ∈ x, x = insert y y) ∧
   ∀ y ∈ x, y = ∅ ∨ ∃ z ∈ y, y = insert z z
@@ -162,6 +168,7 @@ theorem finiteOrdinal_iff (x : ZFSet.{u}) : FiniteOrdinal x ↔ ∃ n, x = natSe
         exact ⟨n+1,he⟩
   · rintro ⟨n,rfl⟩; exact finiteOrdinal_natSet n
 
+/-- The model contains an internally inductive set with an internally empty element. -/
 def Infinity (M : ZFSet.{u}) : Prop :=
   ∃ a ∈ M, (∃ e ∈ M, e ∈ a ∧ ∀ z ∈ M, z ∉ e) ∧
     ∀ x ∈ M, x ∈ a → ∃ s ∈ M, s ∈ a ∧

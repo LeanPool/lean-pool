@@ -28,8 +28,11 @@ namespace OAI
 namespace TuringRigidity.CommonIdeal
 open Set Encodable
 
+/-- The oracle formed from the even positions of `G`. -/
 def even (G : Oracle) : Oracle := fun n => G (2*n)
+/-- The oracle formed from the odd positions of `G`. -/
 def odd (G : Oracle) : Oracle := fun n => G (2*n+1)
+/-- Extend a finite word to a total oracle by filling missing positions with false. -/
 def pad (s : List Bool) : Oracle := fun n => s.getD n false
 
 theorem pad_extends (s : List Bool) : Extends (pad s) s := fun _ _ => rfl
@@ -52,6 +55,7 @@ theorem join_columns (G : Oracle) : join (even G) (odd G) = G := by
     have he : 2*(n/2)+1 = n := by simpa [hb,Nat.div2_val,Nat.add_comm] using hn
     simp [join,odd,hb,he]
 
+/-- Every oracle realizing `r` has even and odd components realizing `s` and `t` respectively. -/
 def Embeds (r s t : List Bool) : Prop :=
   ∀ G : Oracle, Extends G r → Extends (even G) s ∧ Extends (odd G) t
 
@@ -88,6 +92,8 @@ theorem join_extends_input (r u v : List Bool)
   rw [heq,join_columns]
   rfl
 
+/-- A coded word embeds finite factor words that settle the designated common-ideal
+requirement. -/
 def family (A : Oracle) (n c : ℕ) : Prop :=
   ∃ s t : List Bool, Embeds (BorelGeneric.word c) s t ∧
     Requirement A (codeEnumeration (Nat.unpair n).1) (codeEnumeration (Nat.unpair n).2) s t

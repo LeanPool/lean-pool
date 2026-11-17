@@ -13,7 +13,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.SetModels.NameUnionCode
+public import LeanPool.TuringConeRigidity.SetModels.NameEncoding
+public import LeanPool.TuringConeRigidity.SetModels.NameExtension
 
 /-!
 # Restricted Name
@@ -29,14 +30,18 @@ open Set CountableForcing
 universe u
 variable {P : Type u} [Preorder P]
 
+/-- An immediate child index together with a condition extending that child's tag. -/
 abbrev Name.Entry (a : Name P) := Σ i : a.arity, {q : P // q ≤ a.tag i}
 
+/-- The set-coded pair of the child's name code and the stronger condition label. -/
 noncomputable def Name.entryCode (l : P → ZFSet.{u}) (a : Name P) (s : a.Entry) : ZFSet.{u} :=
   ZFSet.pair ((a.child s.1).encode l) (l s.2.val)
 
+/-- The set of all child-condition codes obtained by strengthening the original name tags. -/
 noncomputable def Name.support (l : P → ZFSet.{u}) (a : Name P) : ZFSet.{u} :=
   ZFSet.range (a.entryCode l)
 
+/-- Restrict the name to strengthened child-condition entries whose codes belong to `B`. -/
 noncomputable def Name.restrict (l : P → ZFSet.{u}) (a : Name P) (B : ZFSet.{u}) : Name P :=
   .mk {s : a.Entry // a.entryCode l s ∈ B} (fun s => a.child s.val.1) (fun s => s.val.2.val)
 

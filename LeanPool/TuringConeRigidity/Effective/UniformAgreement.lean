@@ -14,7 +14,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.Effective.UniformRun
-public import LeanPool.TuringConeRigidity.Effective.CodingOnePoint
+public import LeanPool.TuringConeRigidity.Effective.EffectiveWitness
+public import Mathlib.Algebra.Order.Ring.Star
 
 /-!
 # Uniform Agreement
@@ -30,14 +31,17 @@ open Encodable UniformOracle ArithmeticHierarchy OracleJump EncodedForcing Effec
   IndexMatrix
 open CodingForcing UniformProgram
 
+/-- The two designated uniform computations disagree on some input at this condition. -/
 def Disagreement (A : Oracle) (x : ℕ) (p : Condition) : Prop :=
   ∃ n a b, a ≠ b ∧
     a ∈ UniformRun.run A (machine (item x 0)) (machine (item x 1)) p.left n ∧
     b ∈ UniformRun.run A (machine (item x 0)) (machine (item x 2)) p.right n
 
+/-- No permitted extension of the condition produces the designated uniform disagreement. -/
 def NoDisagreement (A : Oracle) (x : ℕ) (p : Condition) : Prop :=
   ∀ q, Extends (columns A) p q → ¬ Disagreement A x q
 
+/-- A finite certificate of a permitted extension and disagreeing uniform computation outputs. -/
 def Cert (A : Oracle) (v : ℕ) : Prop :=
   let x := (Nat.unpair (Nat.unpair v).1).1
   let p := (Nat.unpair (Nat.unpair v).1).2

@@ -14,7 +14,9 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.Computability.ArithmeticOutputSyntax
-public import LeanPool.TuringConeRigidity.Syntax.DefinedOutputTailCone
+public import LeanPool.TuringConeRigidity.CohenForcing.CohenNiceNameConstruction
+public import LeanPool.TuringConeRigidity.CohenForcing.InternalCohenProjectionSymmetry
+public import LeanPool.TuringConeRigidity.CohenForcing.InternalCohenTailTruth
 
 /-!
 # Fixed Arithmetic Tail Cone

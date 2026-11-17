@@ -13,7 +13,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.Syntax.SigmaSyntax
+public import LeanPool.TuringConeRigidity.SetModels.ModelProducts
+public import LeanPool.TuringConeRigidity.Syntax.BoundedRelations
 
 /-!
 # Set Presentation Decoding
@@ -28,12 +29,14 @@ namespace TuringRigidity.SetPresentationDecoding
 open BoundedSetTheory TransitiveNameModel
 universe u
 
+/-- The relation class of `x` inside `d`. -/
 noncomputable def classSet (d E x : ZFSet.{u}) : ZFSet.{u} :=
   ZFSet.sep (fun y => ZFSet.pair x y ∈ E) d
 
 @[simp] theorem mem_classSet (d E x y : ZFSet.{u}) :
     y ∈ classSet d E x ↔ y ∈ d ∧ ZFSet.pair x y ∈ E := ZFSet.mem_sep
 
+/-- Bounded formula asserting that `c` is exactly the relation class of `x` inside `d`. -/
 def classFormula (c x d E : ℕ) : Formula :=
   .conj (.subset c d) (.allMem d (.iff (.member 0 (c+1)) (.pairMem (x+1) 0 (E+1))))
 
@@ -63,6 +66,7 @@ theorem class_mem (M : ZFSet.{u}) (hM : Transitive M) (hS : Separation M)
   simpa only [Formula.eval_pairMem,e,cons_zero,cons_succ,classSet] using
     sep_mem M hM hS (.pairMem 1 0 2) e he hd
 
+/-- The family of relation classes represented by the elements of `a`. -/
 noncomputable def quotientSet (d E a : ZFSet.{u}) : ZFSet.{u} :=
   ZFSet.sep (fun c => ∃ x ∈ a, c = classSet d E x) (ZFSet.powerset d)
 
@@ -98,6 +102,7 @@ theorem quotient_mem (M : ZFSet.{u}) (hM : Transitive M)
       exact (mem_classSet _ _ _ _).mp hy |>.1
   exact eq ▸ h
 
+/-- The relation on classes induced by pairs in `R` whose two representatives belong to `a`. -/
 noncomputable def actionGraph (d E a R : ZFSet.{u}) : ZFSet.{u} :=
   ZFSet.sep (fun z => ∃ x ∈ a, ∃ y ∈ a,
     ZFSet.pair x y ∈ R ∧ z = ZFSet.pair (classSet d E x) (classSet d E y))
@@ -114,6 +119,7 @@ noncomputable def actionGraph (d E a R : ZFSet.{u}) : ZFSet.{u} :=
     exact ⟨ZFSet.pair_mem_prod.mpr ⟨(mem_quotientSet _ _ _ _).mpr ⟨x,hx,rfl⟩,
       (mem_quotientSet _ _ _ _).mpr ⟨y,hy,rfl⟩⟩,⟨x,hx,y,hy,hxy,rfl⟩⟩
 
+/-- Bounded formula describing the induced relation graph on represented classes. -/
 def actionFormula : Formula :=
   .existsMem 1 (.existsMem 2 (.conj (.pairMem 1 0 6)
     (.existsMem 7 (.existsMem 8 (.conj (classFormula 1 3 6 7)

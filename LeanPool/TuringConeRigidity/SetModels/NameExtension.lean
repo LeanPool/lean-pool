@@ -13,8 +13,10 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.SetModels.RecursiveNames
 public import Mathlib.Data.Set.Countable
+
+public import LeanPool.TuringConeRigidity.SetModels.RecursiveNames
+public import LeanPool.TuringConeRigidity.CohenForcing.CountableForcing
 
 /-!
 # Name Extension
@@ -30,11 +32,14 @@ open Set CountableForcing
 universe u
 variable {P : Type u}
 
+/-- The first name occurs as an immediate child of the second name. -/
 def Name.Child : Name P → Name P → Prop
   | σ, .mk _ child _ => ∃ i, child i = σ
 
+/-- The set of values of all names in `M` under the condition family `G`. -/
 def extension (M : Set (Name P)) (G : Set P) : Set ZFSet.{u} := Name.val G '' M
 
+/-- The name family contains every immediate child of each of its members. -/
 def ChildClosed (M : Set (Name P)) : Prop :=
   ∀ τ ∈ M, ∀ σ, Name.Child σ τ → σ ∈ M
 
@@ -55,6 +60,7 @@ theorem ground_subset_extension [Top P] (M : Set (Name P)) (V : Set ZFSet.{u})
 
 namespace Name
 
+/-- The unordered-pair name with the two supplied children tagged by top. -/
 def pair [Top P] (σ τ : Name P) : Name P :=
   .mk (ULift Bool) (fun i => if i.down then σ else τ) (fun _ => ⊤)
 
@@ -72,15 +78,19 @@ theorem val_pair [Top P] (G : Set P) (hG : ⊤ ∈ G) (σ τ : Name P) :
     · exact ⟨⟨true⟩,h.symm⟩
     · exact ⟨⟨false⟩,h.symm⟩
 
+/-- The index type of immediate children of a name. -/
 def arity : Name P → Type u
   | .mk ι _ _ => ι
 
+/-- The immediate child at the specified name index. -/
 def child : (τ : Name P) → arity τ → Name P
   | .mk _ c _, i => c i
 
+/-- The forcing condition tagging the specified name child. -/
 def tag : (τ : Name P) → arity τ → P
   | .mk _ _ t, i => t i
 
+/-- The union name, tagged by common extensions of parent and child conditions. -/
 def union [Preorder P] (τ : Name P) : Name P :=
   .mk (Σ i : arity τ, Σ j : arity (child τ i),
       {p : P // p ≤ tag τ i ∧ p ≤ tag (child τ i) j})

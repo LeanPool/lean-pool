@@ -34,12 +34,15 @@ namespace OAI.TuringRigidity.TwoConeRigidity
 
 open FiniteShuffle ShuffleRequirements PairGenericSelection
 
+/-- The pullback has a continuous oracle lift on a countable dense-open generic domain. -/
 def InverseGenericContinuousLift {a b : Degree}
     (e : Set.Ici a ≃o Set.Ici b) : Prop :=
   ∃ D : ℕ → List Bool → Prop, (∀ n, DenseOpen (D n)) ∧
     ∃ F : Oracle → Oracle, ContinuousOn F {X | GenericFor D X} ∧
       ∀ X, GenericFor D X → degree (F X) = pullback e (degree X)
 
+/-- One program with a fixed oracle parameter computes the pullback on a countable dense-open
+generic domain. -/
 def InverseGenericProgramLift {a b : Degree}
     (e : Set.Ici a ≃o Set.Ici b) : Prop :=
   ∃ D : ℕ → List Bool → Prop, (∀ n, DenseOpen (D n)) ∧

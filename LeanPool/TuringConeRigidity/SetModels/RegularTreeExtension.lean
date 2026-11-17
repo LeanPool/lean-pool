@@ -15,6 +15,7 @@ module
 
 public import LeanPool.TuringConeRigidity.SetModels.RegularTreeRecovery
 public import LeanPool.TuringConeRigidity.SetModels.InternalNameEvaluation
+public import LeanPool.TuringConeRigidity.SetModels.CountedRegularBasis
 
 /-!
 # Regular Tree Extension

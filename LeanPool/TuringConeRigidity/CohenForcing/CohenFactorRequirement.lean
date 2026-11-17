@@ -13,8 +13,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.CohenForcing.InternalCohenProjectedGeneric
-public import LeanPool.TuringConeRigidity.CohenForcing.CheckedForcingRelation
+public import LeanPool.TuringConeRigidity.CohenForcing.InternalCohenFactor
 
 /-!
 # Cohen Factor Requirement
@@ -30,6 +29,7 @@ open TransitiveNameModel BoundedSetTheory CohenGroundPoset
 open InternalCohenFactor InternalCohenRestriction InternalCohenPartition
 attribute [local instance] InternalCollapse.order InternalCollapse.collapsePreorder
 
+/-- Conditions whose two coordinate restrictions extend a pair in the supplied relation `R`. -/
 noncomputable def requirement (A B R : ZFSet.{0}) : ZFSet.{0} :=
   (conditions A).sep (fun p =>
     ∃ b ∈ conditions B, ZFSet.pair p b ∈ restrictionGraph A B ∧

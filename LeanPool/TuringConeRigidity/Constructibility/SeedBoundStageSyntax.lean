@@ -15,6 +15,7 @@ module
 
 public import LeanPool.TuringConeRigidity.Syntax.BoundedHierarchyCertificates
 public import LeanPool.TuringConeRigidity.Constructibility.RelativeConstruction
+public import LeanPool.TuringConeRigidity.Constructibility.RelativeHierarchyInternal
 
 /-!
 # Seed Bound Stage Syntax
@@ -46,6 +47,7 @@ theorem insertedSelf_definable {M : ZFSet.{u}} (C : Context M) (s R : ℕ) :
     exact ⟨ZFSet.mem_insert_iff.mpr (Or.inl rfl),
       fun _ hz => ZFSet.mem_insert_iff.mpr (Or.inr hz),fun _ hz => ZFSet.mem_insert_iff.mp hz⟩
 
+/-- A checked hierarchy inside `N` supplies the stage base at the index `x`. -/
 def SeedBoundStage (N w sq R x A : ZFSet.{u}) : Prop :=
   ∃ s ∈ N, ∃ d ∈ N, ∃ f ∈ N, ∃ r ∈ N,
     s = insert R R ∧ x ∈ d ∧ CheckedHierarchyGraph N w sq s d r f ∧ StageStep s f r x A

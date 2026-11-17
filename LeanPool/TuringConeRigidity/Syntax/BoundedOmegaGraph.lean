@@ -13,8 +13,9 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.OrdinalCodes.LimitOmegaCertificates
-public import LeanPool.TuringConeRigidity.SetModels.FinitePresentation
+public import LeanPool.TuringConeRigidity.Constructibility.FiniteStageSetBounds
+public import LeanPool.TuringConeRigidity.OrdinalCodes.LimitOmegaGraphSyntax
+public import LeanPool.TuringConeRigidity.SetModels.ExactOmegaGraph
 
 /-!
 # Bounded Omega Graph
@@ -30,6 +31,7 @@ open TransitiveNameModel BoundedSetTheory RelationCollapse ElementaryModel Relat
   OrdinalCoding
 universe u
 
+/-- Add a bounded-coordinate witness to the full omega-successor-pair definition. -/
 noncomputable def boundedOmegaNextPairSentence : SentenceForm :=
   .conj (.ex (.conj (.member 0 2) (.ex (fromBounded (.orderedPair 2 1 0))))) omegaNextPairSentence
 

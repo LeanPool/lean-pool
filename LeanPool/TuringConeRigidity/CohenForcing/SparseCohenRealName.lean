@@ -15,7 +15,6 @@ module
 
 public import LeanPool.TuringConeRigidity.CohenForcing.InternalCohenName
 public import LeanPool.TuringConeRigidity.CohenForcing.CohenNiceNameConstruction
-public import LeanPool.TuringConeRigidity.CohenForcing.CohenGenericUnion
 
 /-!
 # Sparse Cohen Real Name
@@ -32,13 +31,16 @@ attribute [local instance] InternalCollapse.order InternalCollapse.collapsePreor
   CohenNiceNameConstruction.cohenTop
 open InternalCohen (bitSet realNameFormula eval_realNameFormula)
 
+/-- The set-coded Cohen poset of finite Boolean partial functions on the natural numbers. -/
 noncomputable abbrev poset : ZFSet.{0} := CohenGroundPoset.conditions ZFSet.omega
 
+/-- The canonical real name for the sparse natural-number Cohen poset. -/
 noncomputable def realName : Name (Conditions poset) :=
   .mk {t : Conditions poset × ℕ //
     ZFSet.pair (natSet t.2) (bitSet true) ∈ label poset t.1}
     (fun t => Name.check (natSet t.val.2)) (fun t => t.val.1)
 
+/-- Set-coded sparse generic-real name using the supplied numeral-name graph. -/
 noncomputable def realNameCode (f : ZFSet.{0}) : ZFSet.{0} :=
   ZFSet.sep (fun z => ∃ q ∈ poset, ∃ n ∈ ZFSet.omega, ∃ v ∈ iterUnion 2 f,
     ZFSet.pair n v ∈ f ∧ ZFSet.pair n (bitSet true) ∈ q ∧ z = ZFSet.pair v q)

@@ -13,8 +13,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.OrdinalCodes.RankDefinability
 public import Mathlib.SetTheory.ZFC.Ordinal
+public import LeanPool.TuringConeRigidity.OrdinalCodes.RankRecursion
 
 /-!
 # Rank Ordinal

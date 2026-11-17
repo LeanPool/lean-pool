@@ -15,6 +15,7 @@ module
 
 public import LeanPool.TuringConeRigidity.OrdinalCodes.OmegaModelSyntax
 public import LeanPool.TuringConeRigidity.SetModels.SetModelFunctionGraphs
+public import LeanPool.TuringConeRigidity.OrdinalCodes.OmegaModelCoreClosure
 
 /-!
 # Omega Model Axiom Transport

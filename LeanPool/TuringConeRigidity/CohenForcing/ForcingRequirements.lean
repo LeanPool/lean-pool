@@ -13,7 +13,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.CohenForcing.ForcingSymmetry
+public import LeanPool.TuringConeRigidity.CohenForcing.CountableForcing
 
 /-!
 # Forcing Requirements
@@ -28,6 +28,7 @@ namespace TuringRigidity.CountableForcing
 open Set
 variable {P : Type*} [Preorder P]
 
+/-- Interleave two countable families of forcing requirements. -/
 def mergeRequirements (D E : ℕ → Set P) (n : ℕ) : Set P :=
   if n % 2 = 0 then D (n/2) else E (n/2)
 

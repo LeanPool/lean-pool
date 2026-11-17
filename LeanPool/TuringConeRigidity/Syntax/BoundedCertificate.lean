@@ -14,6 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.Syntax.BoundedSupport
+public import LeanPool.TuringConeRigidity.CohenForcing.BoundedForcingCode
 
 /-!
 # Bounded Certificate
@@ -31,6 +32,8 @@ universe u
 
 namespace CertificateCode
 
+/-- Bounded formula asserting that each of the first `n` selected parameter values belongs to
+the domain. -/
 def slots : ℕ → ℕ → (ℕ → ℕ) → Formula
   | 0, d, _v => .equal d d
   | n+1, d, v => .conj (slots n d v) (.member (v n) d)
@@ -48,6 +51,8 @@ theorem eval_slots (n d : ℕ) (v : ℕ → ℕ) (env : ℕ → ZFSet.{u}) :
       · exact hlast
     · intro h; exact ⟨fun i hi => h i (by omega),h n (by omega)⟩
 
+/-- The bounded matrix containing a transitive domain and a forcing certificate for the
+formula. -/
 def matrix (φ : Formula) (ci oi pi : ℕ) (v : ℕ → ℕ) : Formula :=
   .conj (.transitive 2) (.conj (AtomicFormula.product 2 1)
     (.conj (AtomicFormula.graph 2 (ci+3) 1 (oi+3) 0)
@@ -55,6 +60,8 @@ def matrix (φ : Formula) (ci oi pi : ℕ) (v : ℕ → ℕ) : Formula :=
         (code φ 2 (ci+3) 1 (oi+3) 0
           (fun i => truncate (bound φ+1) v i+3) (pi+3)))))
 
+/-- A sigma formula requesting the three auxiliary sets in a bounded-formula forcing
+certificate. -/
 def certificate (φ : Formula) (ci oi pi : ℕ) (v : ℕ → ℕ) : SigmaFormula :=
   .existsSet (.existsSet (.existsSet (.bounded (matrix φ ci oi pi v))))
 end CertificateCode

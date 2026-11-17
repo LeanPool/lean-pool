@@ -14,7 +14,10 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.Syntax.BooleanEvaluationWitness
-public import LeanPool.TuringConeRigidity.Representation.SameRealBooleanFilter
+public import LeanPool.TuringConeRigidity.SetModels.InternalNameEvaluation
+public import LeanPool.TuringConeRigidity.SetModels.InternalProjectedGeneric
+public import LeanPool.TuringConeRigidity.Syntax.BooleanExpressionCoverage
+public import LeanPool.TuringConeRigidity.Syntax.BooleanTruthReading
 
 /-!
 # Boolean Filter Reconstruction

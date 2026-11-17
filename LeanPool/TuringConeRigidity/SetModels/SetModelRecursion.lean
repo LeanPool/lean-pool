@@ -14,6 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.SetModels.SetModelIteration
+public import LeanPool.TuringConeRigidity.SetModels.SetModelReals
 
 /-!
 # Set Model Recursion
@@ -29,6 +30,8 @@ open BoundedSetTheory TransitiveNameModel SetModelReals
 universe u
 noncomputable section
 
+/-- The set-coded relation of finite iterates of `F` whose initial and final values lie in
+`v`. -/
 def iterationSet (v : ZFSet.{u}) (F : ZFSet.{u} → ZFSet.{u}) : ZFSet.{u} :=
   ZFSet.sep (fun z => ∃ n : ℕ, ∃ x ∈ v,
     z = ZFSet.pair (ZFSet.pair (natSet n) x) (F^[n] x))
@@ -45,6 +48,7 @@ theorem mem_iterationSet {v : ZFSet.{u}} (F : ZFSet.{u} → ZFSet.{u})
     exact ⟨ZFSet.pair_mem_prod.mpr ⟨ZFSet.pair_mem_prod.mpr
       ⟨(mem_omega _).mpr ⟨n,rfl⟩,hx⟩,iterate_mem F hF hx n⟩,⟨n,x,hx,rfl⟩⟩
 
+/-- Bounded formula describing the iteration relation through a finite trace witness. -/
 def iterationFormula : Formula :=
   .existsMem 1 (.existsMem 3 (.existsMem 4 (.existsMem 9 (.existsMem 8
     (.conj (.orderedPair 5 1 2) (.conj (.orderedPair 1 4 3)

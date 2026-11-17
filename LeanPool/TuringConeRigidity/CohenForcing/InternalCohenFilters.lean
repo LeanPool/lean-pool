@@ -15,7 +15,7 @@ module
 
 public import LeanPool.TuringConeRigidity.CohenForcing.InternalCohenConditions
 public import LeanPool.TuringConeRigidity.SetModels.InternalCollapseDense
-public import LeanPool.TuringConeRigidity.SetModels.InternalAtomicTruth
+public import LeanPool.TuringConeRigidity.CohenForcing.CohenRecursiveName
 
 /-!
 # Internal Cohen Filters
@@ -47,6 +47,7 @@ theorem label_top : label conditions (⊤ : Conditions conditions) = ∅ := by
 
 theorem conditionEquiv_top : conditionEquiv (⊤ : Condition) = ⊤ := conditionEquiv.map_top
 
+/-- Pull a filter on set-coded conditions back to word conditions. -/
 noncomputable def pullFilter (G : GenericFilter (Conditions conditions)) : GenericFilter Condition
   where
   carrier := {p | conditionEquiv p ∈ G.carrier}
@@ -59,6 +60,7 @@ noncomputable def pullFilter (G : GenericFilter (Conditions conditions)) : Gener
       by simpa using conditionEquiv.symm.monotone hrp,
       by simpa using conditionEquiv.symm.monotone hrq⟩
 
+/-- Push a filter on word conditions forward to set-coded conditions. -/
 noncomputable def pushFilter (G : GenericFilter Condition) : GenericFilter (Conditions conditions)
   where
   carrier := {p | conditionEquiv.symm p ∈ G.carrier}

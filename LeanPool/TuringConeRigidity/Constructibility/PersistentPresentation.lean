@@ -30,12 +30,15 @@ open EncodedForcing OracleJump ArithmeticHierarchy IdealInterpretation IdealLoca
   PersistentRestrictions PersistentLocality
 noncomputable section
 
+/-- The oracle's columns enumerate exactly the carrier of the countable ideal. -/
 def Presented (I : CountableIdeal) (H : Oracle) : Prop :=
   ∀ x, x ∈ I.carrier ↔ ∃ k, degree (columns H k) = x
 
+/-- The ideal element represented by the `n`th oracle column. -/
 def entry {I : CountableIdeal} {H : Oracle} (hpres : Presented I H) (n : ℕ) : I :=
   ⟨degree (columns H n),(hpres _).mpr ⟨n,rfl⟩⟩
 
+/-- The graph of the ideal automorphism, expressed through pairs of presentation indices. -/
 def Graph {I : CountableIdeal} (ρ : I ≃o I) {H : Oracle} (hpres : Presented I H) (v : ℕ) : Prop :=
   (ρ (entry hpres (Nat.unpair v).1)).val = degree (columns H (Nat.unpair v).2)
 

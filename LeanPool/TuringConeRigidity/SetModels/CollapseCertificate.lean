@@ -81,6 +81,7 @@ theorem internal_graph (M d r : ZFSet.{u}) (hM : Transitive M)
     exact ⟨f,(hBg f).mpr ⟨x,hx,_,iterUnion_mem M hM hU hf 2,hfg⟩,
       (hfg.mem_iff wf z).mpr ⟨x,RelationHull.self_mem d r q hx,hz⟩⟩
 
+/-- The relation has both coordinates inside the designated domain. -/
 def On (d r : ZFSet.{u}) : Prop := r ⊆ ZFSet.prod d d
 
 theorem right_mem {d r x y : ZFSet.{u}} (hr : On d r) (hyx : ZFSet.pair y x ∈ r) : x ∈ d := by
@@ -104,6 +105,7 @@ theorem Graph.wellFounded {d r b f : ZFSet.{u}} (hr : On d r)
 
 namespace Code
 
+/-- A sigma formula requesting a set range for the specified collapse graph. -/
 def full (d r f : ℕ) : SigmaFormula :=
   .existsSet (.bounded (graph (d+1) (r+1) (d+1) 0 (f+1)))
 

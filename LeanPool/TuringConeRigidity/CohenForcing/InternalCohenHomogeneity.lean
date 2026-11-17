@@ -29,11 +29,13 @@ open TransitiveNameModel BoundedSetTheory CohenGroundPoset CohenConditionCode Co
 open InternalCohen (alphabet bitSet mem_alphabet)
 attribute [local instance] InternalCollapse.order InternalCollapse.collapsePreorder
 
+/-- The coordinates at which the two graphs differ in their true-valued assignments. -/
 noncomputable def matchingSet (A p q : ZFSet.{0}) : ZFSet.{0} :=
   A.sep (fun x =>
     (ZFSet.pair x (bitSet true) ∈ p ∧ ZFSet.pair x (bitSet true) ∉ q) ∨
     (ZFSet.pair x (bitSet true) ∉ p ∧ ZFSet.pair x (bitSet true) ∈ q))
 
+/-- Bounded formula detecting disagreement of the true-valued assignments at one coordinate. -/
 def matchingFormula (x p q z1 : ℕ) : Formula :=
   .disj (.conj (.pairMem x z1 p) (.neg (.pairMem x z1 q)))
     (.conj (.neg (.pairMem x z1 p)) (.pairMem x z1 q))

@@ -30,6 +30,7 @@ open FiniteShuffle ShuffleRequirements
 attribute [local instance] BoundedSetTheory.InternalCollapse.order
   BoundedSetTheory.InternalCollapse.collapsePreorder
 
+/-- A word extends some condition whose set code belongs to `E`. -/
 def openRequirement (E : ZFSet.{0}) (s : List Bool) : Prop :=
   ∃ t : Condition, t.word <+: s ∧ wordCode t.word ∈ E
 

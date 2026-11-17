@@ -32,10 +32,13 @@ universe u
 
 namespace Formula
 
+/-- Bounded formula universally testing the arithmetic matrix over the supplied real-code
+family. -/
 def piOneOneMatrix (φ : Formula) : Formula :=
   allMem 0 (oracleParameters φ 2 3 4 (fun i => match i with | 0 => 5 | 1 => 6 | _+2 => 0))
 end Formula
 
+/-- The parameter environment for the universally quantified arithmetic predicate matrix. -/
 noncomputable def piOneOneEnv (S Q : ZFSet.{u}) (A R : Oracle) (v : ℕ) : ℕ → ZFSet.{u} :=
   cons S (cons ZFSet.omega (cons Q (cons (natSet v) (cons (realCode A) (fun _ => realCode R)))))
 

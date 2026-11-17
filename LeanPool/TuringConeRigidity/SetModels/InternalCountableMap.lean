@@ -13,7 +13,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.SetModels.InternalRelationSelection
+public import LeanPool.TuringConeRigidity.SetModels.CountableSetReal
 
 /-!
 # Internal Countable Map
@@ -27,6 +27,7 @@ namespace OAI
 namespace TuringRigidity.InternalCountableMap
 open TransitiveNameModel BoundedSetTheory
 
+/-- Compose two set-coded relations through an intermediate element of `B`. -/
 noncomputable def composite (A B C f g : ZFSet.{0}) : ZFSet.{0} :=
   (ZFSet.prod A C).sep (fun z => ∃ x ∈ A, ∃ y ∈ C,
     z = ZFSet.pair x y ∧ ∃ t ∈ B, ZFSet.pair x t ∈ f ∧ ZFSet.pair t y ∈ g)

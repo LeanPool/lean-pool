@@ -14,7 +14,9 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.OrdinalCodes.NumericalCohenSets
-public import LeanPool.TuringConeRigidity.CohenForcing.InternalCohenValue
+public import LeanPool.TuringConeRigidity.CohenForcing.InternalCohenFilters
+public import LeanPool.TuringConeRigidity.Representation.GenericFilterName
+public import LeanPool.TuringConeRigidity.SetModels.ModelArithmeticComprehension
 
 /-!
 # Cohen Prefix Reconstruction
@@ -49,6 +51,7 @@ theorem realizes_arith : Arith (fun O n => Realizes (word n) (O 0)) := by
     have hh : (word n).getD i false = O 0 i := h i hi
     rw [hh]
 
+/-- An oracle coding all finite words realized by `A`. -/
 noncomputable def prefixCodes (A : Oracle) : Oracle :=
   arithmeticReal (fun O n => Realizes (word n) (O 0)) (fun _ => A)
 

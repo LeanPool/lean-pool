@@ -13,7 +13,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.SetModels.InternalDefinablePower
+public import LeanPool.TuringConeRigidity.Constructibility.UniformInternalSatisfaction
+public import LeanPool.TuringConeRigidity.Syntax.DefinableSubsetCertificates
 
 /-!
 # Variable Truth Syntax

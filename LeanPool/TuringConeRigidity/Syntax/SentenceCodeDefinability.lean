@@ -55,9 +55,11 @@ theorem defMemberParam {a : ZFSet.{u}} (ha : a ∈ M) (i : ℕ) :
 theorem defSubset (C : Context M) (i j : ℕ) : Definable M (fun e => e i ⊆ e j) :=
   defAllMem (member_definable C 0 (j+1)) i
 
+/-- The graph of a numerical unary function on von Neumann numeral codes. -/
 def UnaryGraph (f : ℕ → ℕ) (x y : ZFSet.{u}) : Prop :=
   ∃ n : ℕ, x = natSet n ∧ y = natSet (f n)
 
+/-- The graph of a numerical binary function on von Neumann numeral codes. -/
 def BinaryGraph (f : ℕ → ℕ → ℕ) (x y z : ZFSet.{u}) : Prop :=
   ∃ n m : ℕ, x = natSet n ∧ y = natSet m ∧ z = natSet (f n m)
 

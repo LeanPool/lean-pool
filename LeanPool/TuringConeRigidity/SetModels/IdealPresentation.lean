@@ -30,9 +30,12 @@ open OracleJump ArithmeticHierarchy EncodedForcing BoundedDecoding IdealInterpre
 open EnumerationDecoding EnumerationConstruction
 noncomputable section
 
+/-- The ideal element represented by column `n` of an oracle whose degree belongs to the
+ideal. -/
 def entry {J : DegreeIdeal} (H : Oracle) (hH : degree H ∈ J.carrier) (n : ℕ) : J :=
   ⟨degree (columns H n),J.lower (CodingExtraction.column_projection_reduces H n) hH⟩
 
+/-- The graph of an ideal automorphism on the degrees represented by the columns of `H`. -/
 def Graph {J : DegreeIdeal} (ρ : J ≃o J) (H : Oracle) (hH : degree H ∈ J.carrier) (v : ℕ) : Prop :=
   (ρ (entry H hH (Nat.unpair v).1)).val = degree (columns H (Nat.unpair v).2)
 

@@ -14,6 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.Syntax.SigmaSyntax
+public import LeanPool.TuringConeRigidity.SetModels.ModelProducts
 
 /-!
 # Finite Tuple
@@ -49,14 +50,17 @@ theorem eval_rename (φ : Formula) (v : ℕ → ℕ) (e : ℕ → ZFSet.{u}) :
 end Formula
 
 namespace FiniteTuple
+/-- Encode a list of sets as nested ordered pairs ending in the empty set. -/
 noncomputable def code : List ZFSet.{u} → ZFSet.{u}
   | [] => ∅
   | x :: xs => ZFSet.pair x (code xs)
 
+/-- The set of nested-pair codes for tuples of the specified length with entries in `d`. -/
 noncomputable def space (d : ZFSet.{u}) : ℕ → ZFSet.{u}
   | 0 => {∅}
   | n+1 => ZFSet.prod d (space d n)
 
+/-- Prepend a finite list of values to a variable environment. -/
 def prepend (xs : List ZFSet.{u}) (e : ℕ → ZFSet.{u}) : ℕ → ZFSet.{u} :=
   xs.foldr cons e
 
@@ -142,6 +146,8 @@ theorem prepend_congr (xs : List ZFSet.{u}) (e f : ℕ → ZFSet.{u})
     | zero => rfl
     | succ i => exact ih i (Nat.lt_of_succ_lt_succ hi)
 
+/-- Map slot zero to `n + 1`, shift slots one through `n` down by one, and shift later slots
+up by one. -/
 def rotate (n : ℕ) : ℕ → ℕ
   | 0 => n+1
   | i+1 => if i < n then i else i+2

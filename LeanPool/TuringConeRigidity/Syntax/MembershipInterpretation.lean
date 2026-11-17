@@ -13,8 +13,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.SetModels.ExtensionBasicAxioms
 public import LeanPool.TuringConeRigidity.SetModels.RecursiveNameSymmetry
+public import LeanPool.TuringConeRigidity.Syntax.BoundedSetTheory
 
 /-!
 # Membership Interpretation
@@ -28,6 +28,8 @@ namespace OAI
 namespace TuringRigidity.BoundedSetTheory
 universe u
 
+/-- Translate membership-bounded quantification into unrestricted syntax with an explicit
+membership guard. -/
 def Formula.toMembership : Formula → RecursiveNames.Formula
   | .equal i j => .equal i j
   | .member i j => .member i j

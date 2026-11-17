@@ -30,6 +30,7 @@ namespace TuringRigidity.RelativeConstructible
 open ElementaryModel BoundedSetTheory TransitiveNameModel
 universe u
 
+/-- Code a finite tuple by its length and its natural-number-indexed graph. -/
 noncomputable def tupleCode {n : ℕ} (v : Fin n → ZFSet.{u}) : ZFSet.{u} :=
   ZFSet.pair (natSet n) (ZFSet.range (fun i : Fin n => ZFSet.pair (natSet i.val) (v i)))
 
@@ -51,6 +52,8 @@ theorem tupleCode_injective (n : ℕ) : Function.Injective (@tupleCode.{u} n) :=
   subst j
   exact hv.symm
 
+/-- The set of coded formula-and-tuple pairs satisfying the full set-theoretic truth relation
+over `A`. -/
 noncomputable def satisfactionSet (A : ZFSet.{u}) : ZFSet.{u} :=
   ZFSet.range (fun t : {t : Σ n : ℕ, SentenceForm × (Fin n → Conditions A) //
       t.2.1.bound ≤ t.1 ∧ t.2.1.Sat (A : Set ZFSet)

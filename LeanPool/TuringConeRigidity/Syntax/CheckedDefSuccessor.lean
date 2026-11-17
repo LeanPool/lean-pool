@@ -31,6 +31,8 @@ open ElementaryModel BoundedSetTheory TransitiveNameModel SentenceCoding
 open BoundedDefinability SetModelFunctions
 universe u
 
+/-- Internal power bounds and satisfaction-system certificates for one definable-power
+successor stage. -/
 def CheckedDefSuccessor (N w s A D : ZFSet.{u}) : Prop :=
   ∃ Q ∈ N, ∃ B ∈ N, (PowerBound N w Q ∧ PowerBound N s B) ∧
     ∃ G ∈ N, ∃ T ∈ N, ∃ H ∈ N, ∃ Z ∈ N, DefSystem Q B A G T H Z D

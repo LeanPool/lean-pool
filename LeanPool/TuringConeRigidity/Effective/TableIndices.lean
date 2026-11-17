@@ -13,7 +13,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.Representation.CommonIdealSearch
+public import LeanPool.TuringConeRigidity.Representation.CommonIdeal
 
 /-!
 # Table Indices
@@ -27,13 +27,16 @@ namespace OAI
 namespace TuringRigidity.TableIndices
 open Encodable UniformOracle CommonIdeal
 
+/-- Run a bounded finite-table trial of the oracle machine relative to `Y`. -/
 def run (Y : Oracle) (d : Nat.Partrec.Code) (n z : ℕ) : Option ℕ :=
   trial (fun k => bit (Y k)) d n z
 
+/-- All finite trial outputs agree with the target oracle, and every input has a trial output. -/
 def Represents (Y : Oracle) (d : Nat.Partrec.Code) (A : Oracle) : Prop :=
   (∀ n z a, a ∈ run Y d n z → a = bit (A n)) ∧
     ∀ n, ∃ z a, a ∈ run Y d n z
 
+/-- Every input has a Boolean trial output and all trial outputs on each input agree. -/
 def Valid (Y : Oracle) (d : Nat.Partrec.Code) : Prop :=
   (∀ n, ∃ z b, run Y d n z = some (bit b)) ∧
     ∀ n z w a b, a ∈ run Y d n z → b ∈ run Y d n w → a = b
@@ -94,6 +97,7 @@ theorem represents_unique {Y A B : Oracle} {d : Nat.Partrec.Code}
   have hh := (hA.1 n z a ha).symm.trans (hB.1 n z a ha)
   exact congrArg Part.some hh
 
+/-- Choose the total Boolean oracle represented by a valid machine code. -/
 noncomputable def output (Y : Oracle) (d : {d : Nat.Partrec.Code // Valid Y d}) : Oracle :=
   Classical.choose ((valid_iff_represents Y d.val).mp d.property)
 

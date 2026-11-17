@@ -13,6 +13,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
+public import Mathlib.Algebra.CharP.Defs
 public import LeanPool.TuringConeRigidity.Computability.RationalCoding
 public import LeanPool.TuringConeRigidity.Effective.UniformOracle
 
@@ -28,7 +29,9 @@ namespace OAI
 namespace TuringRigidity
 namespace RationalCoding
 
+/-- The positive part of the canonical numerator. -/
 def positiveNumerator (n : ℕ) : ℕ := if negative n then 0 else numeratorMagnitude n
+/-- The absolute value of the negative part of the canonical numerator. -/
 def negativeNumerator (n : ℕ) : ℕ := if negative n then numeratorMagnitude n else 0
 
 theorem positiveNumerator_primrec : Primrec positiveNumerator :=
@@ -44,6 +47,7 @@ theorem signed_query_value (n : ℕ) : (rationalEnumeration n : ℝ) =
   rw [query_value]
   cases hn : negative n <;> simp [positiveNumerator,negativeNumerator,hn]
 
+/-- Strict comparison of two rational codes using natural-number cross-products. -/
 def ltCode (i j : ℕ) : Prop :=
   positiveNumerator i*denominator j + negativeNumerator j*denominator i <
     positiveNumerator j*denominator i + negativeNumerator i*denominator j

@@ -13,7 +13,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.OrdinalCodes.TrimmedOrderDomains
+public import LeanPool.TuringConeRigidity.Constructibility.FiniteStageSetBounds
+public import LeanPool.TuringConeRigidity.OrdinalCodes.OrdinalOrderTypeSyntax
 
 /-!
 # Trimmed Presentation
@@ -25,7 +26,7 @@ public import LeanPool.TuringConeRigidity.OrdinalCodes.TrimmedOrderDomains
 namespace OAI
 
 namespace TuringRigidity.RelationCollapse
-open TransitiveNameModel BoundedSetTheory ElementaryModel RelativeConstructible OrdinalArithmetic
+open TransitiveNameModel BoundedSetTheory ElementaryModel RelativeConstructible
 universe u
 
 theorem order_certificate_of_exact_pairs (d r f : ZFSet.{u}) (o : Ordinal.{u})

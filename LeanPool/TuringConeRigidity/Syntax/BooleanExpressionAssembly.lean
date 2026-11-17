@@ -90,6 +90,7 @@ theorem Certificate.sUnion {c B Q S K a : ZFSet.{0}}
   obtain ⟨t,ht,U,hU,he,hs⟩ := ha g hga z hzg
   exact ⟨t,ht,U,hU,he,hs.mono (fun _ h => h) (fun z hz => ZFSet.mem_sUnion.mpr ⟨g,hga,hz⟩)⟩
 
+/-- The members of `a` that satisfy the Boolean-expression graph certificate. -/
 noncomputable def goodGraphs (a c B Q S K : ZFSet.{0}) : ZFSet.{0} :=
   a.sep (Certificate c B Q S K)
 
@@ -108,6 +109,7 @@ theorem goodGraphs_mem (M a c B Q S K : ZFSet.{0}) (hM : Transitive M) (hT : Sou
     (certificateFormula 2 3 4 5 1 0 6 7 8) e he ha
   simpa only [spec,goodGraphs] using hs
 
+/-- The term codes in `K` paired by `g` with values belonging to `F`. -/
 noncomputable def children (K F g : ZFSet.{0}) : ZFSet.{0} :=
   K.sep (fun t => ∃ U ∈ F, ZFSet.pair t U ∈ g)
 

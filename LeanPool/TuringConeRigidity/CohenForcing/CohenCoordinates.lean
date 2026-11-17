@@ -29,6 +29,7 @@ open Set CohenSymmetry
 universe u v
 variable {ι : Type u} {κ : Type v}
 
+/-- Restrict a finitely supported condition along an embedding of coordinates. -/
 def restrict (f : κ ↪ ι) (p : Condition ι) : Condition κ where
   val i := p.val (f i)
   finite := p.finite.preimage_embedding f
@@ -36,6 +37,7 @@ def restrict (f : κ ↪ ι) (p : Condition ι) : Condition κ where
 theorem restrict_mono (f : κ ↪ ι) {p q : Condition ι} (h : p ≤ q) :
     restrict f p ≤ restrict f q := fun i b hb => h (f i) b hb
 
+/-- Order isomorphism transporting conditions along an equivalence of coordinates. -/
 def reindex (e : ι ≃ κ) : Condition ι ≃o Condition κ where
   toFun := restrict e.symm.toEmbedding
   invFun := restrict e.toEmbedding
@@ -48,6 +50,7 @@ def reindex (e : ι ≃ κ) : Condition ι ≃o Condition κ where
       simpa [restrict] using h (e i) b (by simpa [restrict] using hb)
     · exact restrict_mono _
 
+/-- Combine two conditions on the disjoint union of their coordinate types. -/
 def combine (p : Condition ι) (q : Condition κ) : Condition (ι ⊕ κ) where
   val := Sum.elim p.val q.val
   finite := (p.finite.image Sum.inl |>.union (q.finite.image Sum.inr)).subset (by
@@ -56,6 +59,7 @@ def combine (p : Condition ι) (q : Condition κ) : Condition (ι ⊕ κ) where
     | inl i => exact Or.inl ⟨i,hi,rfl⟩
     | inr i => exact Or.inr ⟨i,hi,rfl⟩)
 
+/-- Split conditions on a disjoint union into the product of the two condition posets. -/
 def sumIso : Condition (ι ⊕ κ) ≃o (Condition ι × Condition κ) where
   toFun p := (restrict ⟨Sum.inl,Sum.inl_injective⟩ p,
     restrict ⟨Sum.inr,Sum.inr_injective⟩ p)
@@ -72,16 +76,19 @@ def sumIso : Condition (ι ⊕ κ) ≃o (Condition ι × Condition κ) where
     · intro h
       exact ⟨restrict_mono _ h,restrict_mono _ h⟩
 
+/-- Split a condition into its coordinates in `S` and in the complement of `S`. -/
 noncomputable def partitionIso (S : Set ι) :
     Condition ι ≃o (Condition S × Condition (Sᶜ : Set ι)) := by
   classical
   exact (reindex (Equiv.Set.sumCompl S).symm).trans sumIso
 
+/-- The finite set of coordinates assigned a Boolean value by a condition. -/
 noncomputable def support (p : Condition ι) : Finset ι := p.finite.toFinset
 
 theorem mem_support (p : Condition ι) (i : ι) : i ∈ support p ↔ p.val i ≠ none :=
   p.finite.mem_toFinset
 
+/-- Remove the assignment at one coordinate of a condition. -/
 noncomputable def erase (i : ι) (p : Condition ι) : Condition ι := by
   classical
   exact ⟨fun j => if j = i then none else p.val j,

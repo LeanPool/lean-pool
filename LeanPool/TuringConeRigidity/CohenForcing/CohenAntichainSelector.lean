@@ -14,7 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.SetModels.InternalRelationSelection
-public import LeanPool.TuringConeRigidity.CohenForcing.CohenInternalDecision
+public import LeanPool.TuringConeRigidity.CohenForcing.CohenCountedAntichain
 
 /-!
 # Cohen Antichain Selector
@@ -29,9 +29,11 @@ namespace TuringRigidity.CohenAntichainSelector
 open TransitiveNameModel BoundedSetTheory CohenAntichainStages CohenGroundPoset
 open InternalRelationSelection
 
+/-- An antichain inside `U` that is compatible with every condition in `U`. -/
 def Selected (c U E : ZFSet.{0}) : Prop := E ⊆ U ∧ Anti c E ∧
   ∀ p ∈ U, ∃ q ∈ E, Comp c p q
 
+/-- Bounded formula expressing the antichain selection property `Selected`. -/
 def selectedFormula (c U E : ℕ) : Formula := .conj (.subset E U)
   (.conj (antiFormula c E)
     (.allMem U (.existsMem (E+1) (compFormula (c+2) 1 0))))
@@ -41,6 +43,7 @@ theorem selectedFormula_spec (c U E : ℕ) (e : ℕ → ZFSet.{0}) :
   simp only [selectedFormula,Selected,Formula.Eval,Formula.eval_subset,
     antiFormula_spec,Formula.eval_allMem,compFormula_spec,cons_zero,cons_succ]
 
+/-- Set-coded relation between candidate sets and their selected predense antichains. -/
 noncomputable def selectionRelation (c Q : ZFSet.{0}) : ZFSet.{0} :=
   (ZFSet.prod Q Q).sep (fun z => ∃ U ∈ Q, ∃ E ∈ Q, z = ZFSet.pair U E ∧ Selected c U E)
 

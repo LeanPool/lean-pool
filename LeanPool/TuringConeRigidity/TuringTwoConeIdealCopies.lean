@@ -34,9 +34,11 @@ noncomputable section
 
 variable {I : DegreeIdeal} {a : I}
 
+/-- Regard a degree between the cone base and `z` as an element of the ideal's principal cone. -/
 def boundedElement (z : Set.Ici a) (x : Degree) (ha : a.val ≤ x) (hz : x ≤ val z) :
     Set.Ici a := ⟨⟨x, I.lower hz z.val.property⟩, Set.mem_Ici.mpr ha⟩
 
+/-- Lift an externally bounded antichain code into the ideal's principal cone. -/
 def liftAntichain (z : Set.Ici a) (p : AntichainCode)
     (ha : AntichainAbove p a.val) (hz : AntichainBelow p (val z)) : ACode a :=
   ⟨boundedElement z p.bound ha.1 hz.1, boundedElement z p.left ha.2.1 hz.2.1,
@@ -46,6 +48,7 @@ def liftAntichain (z : Set.Ici a) (p : AntichainCode)
     (ha : AntichainAbove p a.val) (hz : AntichainBelow p (val z)) :
     (liftAntichain z p ha hz).external = p := by cases p; rfl
 
+/-- Lift an externally bounded set code into the ideal's principal cone. -/
 def liftSet (z : Set.Ici a) (p : SetCode)
     (ha : SetAbove p a.val) (hz : SetBelow p (val z)) : SCode a :=
   ⟨boundedElement z p.bound ha.1 hz.1,
@@ -56,6 +59,7 @@ def liftSet (z : Set.Ici a) (p : SetCode)
     (ha : SetAbove p a.val) (hz : SetBelow p (val z)) :
     (liftSet z p ha hz).external = p := by cases p; rfl
 
+/-- Lift an externally bounded relation code into the ideal's principal cone. -/
 def liftRelation (z : Set.Ici a) {n : ℕ} (p : RelationCode n)
     (ha : RelationAbove p a.val) (hz : RelationBelow p (val z)) : RCode a n :=
   ⟨fun i => liftSet z (p.coordinates i) (ha.1 i) (hz.1 i),

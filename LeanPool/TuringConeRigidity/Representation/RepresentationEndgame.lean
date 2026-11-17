@@ -15,7 +15,6 @@ module
 
 public import LeanPool.TuringConeRigidity.Representation.GenericAssembly
 public import LeanPool.TuringConeRigidity.Representation.GenericCodingBorel
-public import LeanPool.TuringConeRigidity.Representation.BorelGeneric
 
 /-!
 # Representation Endgame

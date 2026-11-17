@@ -13,7 +13,9 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.SetModels.InternalMinimalSelector
+public import LeanPool.TuringConeRigidity.SetModels.ChoiceTraceExtension
+public import LeanPool.TuringConeRigidity.SetModels.ChoiceTraceFormula
+public import LeanPool.TuringConeRigidity.SetModels.InternalHartogs
 
 /-!
 # Selector Ordinal Enumeration

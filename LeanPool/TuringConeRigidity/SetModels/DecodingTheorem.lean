@@ -29,6 +29,7 @@ namespace TuringRigidity.DecodingTheorem
 open IndexPresentation IndexTuples ArithmeticHierarchy RelationPresentation
 open SetCoding RelationCoding BoundedDecoding OracleJump
 
+/-- A tuple of valid presentation indices whose represented degrees satisfy the relation code. -/
 def Presented {n} (Y : Oracle) (p : RelationCode n) (t : ℕ) : Prop :=
   (∀ i : Fin n, Dom Y (entry i.val t)) ∧ p.Holds (fun i => value Y (entry i.val t))
 

@@ -15,6 +15,7 @@ module
 
 public import LeanPool.TuringConeRigidity.OrdinalCodes.TrimmedPresentation
 public import LeanPool.TuringConeRigidity.OrdinalCodes.CodeOperationCertificates
+public import LeanPool.TuringConeRigidity.OrdinalCodes.TrimmedOrderDomains
 
 /-!
 # Trimmed Product Graph
@@ -30,6 +31,7 @@ open TransitiveNameModel BoundedSetTheory RelationCollapse ElementaryModel Relat
   OrdinalCoding
 universe u
 
+/-- A full formula describing the collapse graph for the trimmed ordinal-product presentation. -/
 noncomputable def trimmedProductGraphSentence : SentenceForm :=
   .ex (.ex (.ex (.ex (.ex (.conj
     (fromBounded (.conj (.member 4 7) (.conj (.member 3 6)

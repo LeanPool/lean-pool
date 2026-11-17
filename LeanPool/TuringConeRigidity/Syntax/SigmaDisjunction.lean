@@ -13,7 +13,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.Syntax.SigmaBoundedUniversal
+public import LeanPool.TuringConeRigidity.Syntax.SigmaSyntax
 
 /-!
 # Sigma Disjunction
@@ -29,10 +29,13 @@ namespace TuringRigidity.BoundedSetTheory
 universe u
 namespace SigmaFormula
 
+/-- Disjoin a bounded formula with a sigma formula while moving through its existential
+prefix. -/
 def boundedDisj (b : Formula) : SigmaFormula → SigmaFormula
   | .bounded c => .bounded (.disj b c)
   | .existsSet φ => .existsSet (boundedDisj (b.rename Nat.succ) φ)
 
+/-- Disjoin two sigma formulas while combining their existential prefixes. -/
 def disj : SigmaFormula → SigmaFormula → SigmaFormula
   | .bounded b,ψ => boundedDisj b ψ
   | .existsSet φ,ψ => .existsSet (disj φ (ψ.rename Nat.succ))
@@ -73,6 +76,7 @@ theorem realize_disj (M : ZFSet.{u}) (h0 : (∅ : ZFSet.{u}) ∈ M)
       · exact ⟨x,hx,Or.inl h⟩
       · exact ⟨∅,h0,Or.inr h⟩
 
+/-- Membership-bounded existential quantification in sigma syntax. -/
 def existsMem (a : ℕ) (φ : SigmaFormula) : SigmaFormula :=
   .existsSet (.andBounded (.member 0 (a+1)) φ)
 

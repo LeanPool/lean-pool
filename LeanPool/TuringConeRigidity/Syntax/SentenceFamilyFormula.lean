@@ -32,6 +32,7 @@ universe u
 
 variable {M : ZFSet.{u}}
 
+/-- The set-coded form of the valid-constructor and child-closure step. -/
 def SetStep (S c : ZFSet.{u}) : Prop :=
   (∃ x ∈ ZFSet.omega, ∃ y ∈ ZFSet.omega, BinaryGraph (fun i j => binary 0 (atom i) (atom j)) x y
     c) ∨

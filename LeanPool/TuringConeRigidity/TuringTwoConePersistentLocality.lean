@@ -40,6 +40,8 @@ open TwoConeIdealCodes (val)
 
 noncomputable section
 
+/-- Transport a two-cone isomorphism from the countable-ideal representation to the
+degree-ideal representation. -/
 def lift {I : CountableIdeal} {a b : Degree} (ρ : Cone I a ≃o Cone I b)
     (ha : a ∈ I.carrier) (hb : b ∈ I.carrier) :
     Set.Ici (⟨a, ha⟩ : PersistentLocality.ideal I) ≃o
@@ -47,6 +49,8 @@ def lift {I : CountableIdeal} {a b : Degree} (ρ : Cone I a ≃o Cone I b)
   (ConePresentation.coneBridge I a ha).symm.trans
     (ρ.trans (ConePresentation.coneBridge I b hb))
 
+/-- Transport a two-cone isomorphism from the degree-ideal representation to the
+countable-ideal representation. -/
 def unlift {I : CountableIdeal} {a b : Degree}
     (ha : a ∈ I.carrier) (hb : b ∈ I.carrier)
     (σ : Set.Ici (⟨a, ha⟩ : PersistentLocality.ideal I) ≃o

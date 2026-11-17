@@ -14,7 +14,8 @@ module
 
 public import LeanPool.TuringConeRigidity.TuringConeForcingDescent
 public import LeanPool.TuringConeRigidity.Constructibility.RelativeDegreeIdeal
-public import LeanPool.TuringConeRigidity.Constructibility.ConstructionDefinition
+public import LeanPool.TuringConeRigidity.Constructibility.RelativeConstruction
+public import LeanPool.TuringConeRigidity.Constructibility.RelativeSigmaSchemas
 
 /-!
 # Persistent cone extensions in the relative constructible model

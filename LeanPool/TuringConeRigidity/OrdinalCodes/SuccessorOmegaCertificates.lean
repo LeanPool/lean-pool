@@ -15,6 +15,7 @@ module
 
 public import LeanPool.TuringConeRigidity.SetModels.ExactOmegaGraph
 public import LeanPool.TuringConeRigidity.Constructibility.FiniteStageSetBounds
+public import LeanPool.TuringConeRigidity.OrdinalCodes.OmegaPowerCertificates
 
 /-!
 # Successor Omega Certificates

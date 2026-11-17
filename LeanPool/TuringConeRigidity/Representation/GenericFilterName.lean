@@ -13,7 +13,9 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.Representation.GroundInclusion
+public import LeanPool.TuringConeRigidity.SetModels.ExtensionBasicAxioms
+public import LeanPool.TuringConeRigidity.SetModels.InternalCheckRecursion
+public import LeanPool.TuringConeRigidity.SetModels.InternalContainer
 
 /-!
 # Generic Filter Name
@@ -28,9 +30,11 @@ namespace TuringRigidity.TransitiveNameModel
 open RecursiveNames BoundedSetTheory
 universe u
 
+/-- The canonical forcing name for the set of labels of conditions in the generic filter. -/
 noncomputable def genericFilterName (p : ZFSet.{u}) [Top (Conditions p)] : Name (Conditions p) :=
   .mk (Conditions p) (fun q => Name.check (label p q)) id
 
+/-- The set of ground-model labels of conditions belonging to `G`. -/
 noncomputable def genericFilterSet (p : ZFSet.{u}) (G : Set (Conditions p)) : ZFSet.{u} :=
   ZFSet.range (fun q : {q // q ∈ G} => label p q.val)
 
@@ -45,6 +49,7 @@ theorem val_genericFilterName (p : ZFSet.{u}) [Top (Conditions p)]
   apply ZFSet.ext; intro x
   simp only [genericFilterName,Name.mem_val,Name.val_check G hG,mem_genericFilterSet,id_eq]
 
+/-- Bounded formula describing the transposed graph code of the generic filter name. -/
 def filterCodeFormula : Formula :=
   .existsMem 1 (.existsMem 4 (.conj (.pairMem 1 0 4) (.orderedPair 2 0 1)))
 
@@ -54,6 +59,7 @@ theorem eval_filterCodeFormula (z p f r : ZFSet.{u}) (e : ℕ → ZFSet.{u}) :
   simp only [filterCodeFormula,Formula.Eval,Formula.eval_pairMem,
     Formula.eval_orderedPair,cons_zero,cons_succ]
 
+/-- Set-coded generic-filter name formed from the supplied graph of checked-name codes. -/
 noncomputable def filterCode (p f : ZFSet.{u}) : ZFSet.{u} :=
   ZFSet.sep (fun z => ∃ x ∈ p, ∃ v ∈ iterUnion 2 f,
     ZFSet.pair x v ∈ f ∧ z = ZFSet.pair v x) (ZFSet.prod (iterUnion 2 f) p)

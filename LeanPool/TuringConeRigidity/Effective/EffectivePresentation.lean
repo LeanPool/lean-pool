@@ -30,6 +30,7 @@ open SetCoding RelationCoding BoundedDecoding AntichainParameters
 noncomputable section
 attribute [local instance] Classical.propDecidable
 
+/-- Keep an index satisfying `P`, and otherwise replace it by the fixed fallback index. -/
 def pick (P : ℕ → Prop) (j₀ j : ℕ) : ℕ := if P j then j else j₀
 
 theorem pick_recursive {A : Oracle} {P : ℕ → Prop} (hP : RecursivePred A P) (j₀ : ℕ) :
@@ -40,6 +41,8 @@ theorem pick_recursive {A : Oracle} {P : ℕ → Prop} (hP : RecursivePred A P) 
   exact (total_comp (total_primrec hp) (total_pair (total_primrec Primrec.id) hP)).of_eq
     (fun j => by by_cases h : P j <;> simp [pick,h])
 
+/-- Select presentation entries through `P`, replacing rejected indices by the chosen
+fallback. -/
 def selected (A : Oracle) (P : ℕ → Prop) (j₀ : ℕ) : Oracle := fun v =>
   A (Nat.pair (Nat.pair (Nat.unpair (Nat.unpair v).1).1
     (pick P j₀ (Nat.unpair (Nat.unpair v).1).2)) (Nat.unpair v).2)
@@ -58,11 +61,13 @@ theorem selected_reduces {A : Oracle} {P : ℕ → Prop} (hP : RecursivePred A P
   funext n
   simp [selected,columns]
 
+/-- The bottom-valued antichain code representing an empty coding family. -/
 def emptyAntichain : AntichainCode := ⟨⊥,⊥,⊥⟩
 
 theorem emptyAntichain_holds (x : Degree) : ¬ emptyAntichain.Holds x := by
   simp [emptyAntichain,AntichainCode.Holds,CodedAntichain,NontrivialCommonLower]
 
+/-- The bottom-valued relation code of the specified arity. -/
 def emptyRelation (n : ℕ) : RelationCode n :=
   ⟨fun _ => ⟨⊥,emptyAntichain,emptyAntichain⟩,emptyAntichain⟩
 

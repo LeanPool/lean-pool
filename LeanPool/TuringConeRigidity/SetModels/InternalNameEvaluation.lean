@@ -14,7 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.Representation.SourceTheory
-public import LeanPool.TuringConeRigidity.SetModels.MostowskiCollapse
+public import LeanPool.TuringConeRigidity.Representation.GenericFilterName
 
 /-!
 # Internal Name Evaluation
@@ -30,6 +30,7 @@ namespace TuringRigidity.BoundedSetTheory.InternalNameEvaluation
 open TransitiveNameModel RecursiveNames RelationCollapse
 universe u
 
+/-- The relation between a name and its children whose tagging conditions belong to `g`. -/
 noncomputable def activeRelation (d g : ZFSet.{u}) : ZFSet.{u} :=
   ZFSet.sep (fun z => ∃ x ∈ d, ∃ y ∈ d, z = ZFSet.pair x y ∧
     ∃ p ∈ g, ZFSet.pair x p ∈ y) (ZFSet.prod d d)
@@ -44,6 +45,7 @@ theorem active_pair (d g x y : ZFSet.{u}) :
   · rintro ⟨hx,hy,hrest⟩
     exact ⟨ZFSet.mem_prod.mpr ⟨x,hx,y,hy,rfl⟩,x,hx,y,hy,rfl,hrest⟩
 
+/-- Bounded formula describing the active-child relation used in name evaluation. -/
 def activeFormula : Formula := .existsMem 1 (.existsMem 2
   (.conj (.orderedPair 2 1 0) (.existsMem 4 (.pairMem 2 0 1))))
 

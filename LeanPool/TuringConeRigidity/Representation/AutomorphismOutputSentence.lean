@@ -29,6 +29,8 @@ open TransitiveNameModel BoundedSetTheory ElementaryModel SentenceForm
 open SetDegreeDecoding PersistentRestrictions SetModelSatisfaction
 universe u
 
+/-- A full formula asserting that two supplied parameters form a pair in the designated output
+relation. -/
 noncomputable def outputSentence : SentenceForm :=
   .ex (.ex (.conj (.member 3 1)
     (.conj (.member 4 0) (fromBounded (.pairMem 1 0 2)))))

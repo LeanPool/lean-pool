@@ -14,7 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.CohenForcing.InternalCohenFactor
-public import LeanPool.TuringConeRigidity.CohenForcing.TaggedProductGeneric
+public import LeanPool.TuringConeRigidity.CohenForcing.CohenProductSplitting
 
 /-!
 # Cohen Partition Bridge
@@ -30,6 +30,7 @@ open TransitiveNameModel BoundedSetTheory CohenGroundPoset InternalCohenFactor
 open TaggedProductConditions CohenProductSplitting
 attribute [local instance] InternalCollapse.order InternalCollapse.collapsePreorder
 
+/-- Set-coded relation transporting coordinates through the common index set `T`. -/
 noncomputable def bridge (a b T f g : ZFSet.{0}) : ZFSet.{0} :=
   (ZFSet.prod a b).sep (fun z => ∃ x ∈ a, ∃ y ∈ b,
     z = ZFSet.pair x y ∧ ∃ t ∈ T, ZFSet.pair t x ∈ f ∧ ZFSet.pair y t ∈ g)

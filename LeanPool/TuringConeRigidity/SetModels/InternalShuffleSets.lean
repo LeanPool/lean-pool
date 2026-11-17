@@ -15,7 +15,7 @@ module
 
 public import LeanPool.TuringConeRigidity.Computability.ArithmeticShuffleCertificate
 public import LeanPool.TuringConeRigidity.OrdinalCodes.NumericalCohenSets
-public import LeanPool.TuringConeRigidity.CohenForcing.InternalCohenFilters
+public import LeanPool.TuringConeRigidity.SetModels.ModelArithmeticComprehension
 
 /-!
 # Internal Shuffle Sets
@@ -31,9 +31,11 @@ namespace TuringRigidity.InternalCohen
 open TransitiveNameModel BoundedSetTheory Encodable UniformArithmetic
 open FiniteShuffleCertificate FiniteShuffle CohenBorelForcing CountableForcing
 
+/-- A finite word extends a word whose set code belongs to `D`. -/
 def shuffleOpen (D : ZFSet.{0}) (t : List Bool) : Prop :=
   ∃ r : List Bool, wordCode r ∈ D ∧ r <+: t
 
+/-- An oracle coding the open closure of the set-coded word family `D`. -/
 noncomputable def shuffleOpenCodes (D : ZFSet.{0}) : Oracle :=
   arithmeticReal (fun O n => ∃ r : List Bool, O 0 (encode r) = true ∧ r <+: EncodedForcing.word n)
     (fun _ => wordPullback D)
@@ -48,6 +50,7 @@ theorem shuffleOpenCodes_mem (M : ZFSet.{0}) (hM : Transitive M) (hT : SourceT M
   sourceT_arithmetic_comprehension M hM hT ArithmeticShuffleCertificate.open_arith
     (fun _ => wordPullback D) (fun _ => wordPullback_mem M hM hT D hD)
 
+/-- An oracle coding finite-shuffle certificates for the open closure of `D`. -/
 noncomputable def shuffleCertificateCodes (D : ZFSet.{0}) : Oracle :=
   arithmeticReal (fun O n => Certificate (fun t => O 0 (encode t) = true) (EncodedForcing.word n))
     (fun _ => shuffleOpenCodes D)
@@ -62,6 +65,8 @@ theorem shuffleCertificateCodes_mem (M : ZFSet.{0}) (hM : Transitive M) (hT : So
   sourceT_arithmetic_comprehension M hM hT ArithmeticShuffleCertificate.certificate_arith
     (fun _ => shuffleOpenCodes D) (fun _ => shuffleOpenCodes_mem M hM hT D hD)
 
+/-- The set-coded word conditions carrying finite-shuffle certificates for the open closure of
+`D`. -/
 noncomputable def shuffleStar (D : ZFSet.{0}) : ZFSet.{0} :=
   conditions.sep (fun q => ∃ w : List Bool, q = wordCode w ∧ Certificate (shuffleOpen D) w)
 

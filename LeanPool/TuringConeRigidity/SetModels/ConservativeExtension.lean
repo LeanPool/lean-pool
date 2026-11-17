@@ -27,6 +27,8 @@ namespace OAI
 namespace TuringRigidity.ConservativeExtension
 open CommonIdeal
 
+/-- The finite word either gives a wrong computed bit or makes every successful future output
+agree with `Y`. -/
 def Decide (A Y : Oracle) (e : OracleCode) (s : List Bool) : Prop :=
   (∃ n a, a ∈ run A e s n ∧ a ≠ bit (Y n)) ∨
   ∀ t, s <+: t → ∀ n a, a ∈ run A e t n → a = bit (Y n)
@@ -56,6 +58,8 @@ theorem removes_oracle {A Y G : Oracle} {e : OracleCode} {s : List Bool}
   intro u v n a b hu' hv' ha hb
   exact (hu u hu' n a ha).trans (hu v hv' n b hb).symm
 
+/-- A finite word disagrees with the designated computation from `B`, including when that
+computation is undefined. -/
 def Diagonal (B : Oracle) (e : OracleCode) (s : List Bool) : Prop :=
   ∃ n, n < s.length ∧
     OracleCode.eval (oracleFunction B) e n ≠ Part.some (bit (s.getD n false))

@@ -30,6 +30,7 @@ namespace TuringRigidity.RelationCollapse
 open TransitiveNameModel BoundedSetTheory
 universe u
 
+/-- The set-coded membership relation restricted to the domain `d`. -/
 noncomputable def membershipRelation (d : ZFSet.{u}) : ZFSet.{u} :=
   ZFSet.sep (fun z => ∃ x ∈ d, ∃ y ∈ d, z = ZFSet.pair x y ∧ x ∈ y) (ZFSet.prod d d)
 
@@ -56,6 +57,7 @@ theorem membershipRelation_wellFounded (d : ZFSet.{u}) :
   intro x y h
   exact ((membershipRelation_pair d x y).mp h.2).2.2
 
+/-- Elements of `d` are determined by their members that also lie in `d`. -/
 def StructureExtensional (d : ZFSet.{u}) : Prop :=
   ∀ x ∈ d, ∀ y ∈ d, (∀ z ∈ d, z ∈ x ↔ z ∈ y) → x = y
 
@@ -67,6 +69,7 @@ theorem membershipRelation_extensional {d : ZFSet.{u}} (he : StructureExtensiona
   simpa only [membershipRelation_pair,and_iff_right hz,and_iff_right hx,and_iff_right hy] using
     hxy z hz
 
+/-- The collapse map for the membership relation restricted to `d`. -/
 noncomputable def structureMap (d : ZFSet.{u}) : ZFSet.{u} → ZFSet.{u} :=
   value d (membershipRelation d) (membershipRelation_wellFounded d)
 

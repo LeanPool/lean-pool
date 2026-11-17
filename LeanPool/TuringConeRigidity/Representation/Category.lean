@@ -15,8 +15,6 @@ module
 
 public import LeanPool.TuringConeRigidity.OrdinalCodes.Recurrence
 public import Mathlib.Topology.Baire.BaireMeasurable
-public import Mathlib.Topology.Baire.Lemmas
-public import Mathlib.Topology.Algebra.Group.Basic
 
 /-!
 # Category
@@ -55,6 +53,7 @@ theorem measurable_continuousOn_residual {X Y : Type*}
   · rintro ⟨hx, hd⟩
     exact ⟨(hd n).mpr hx, hd⟩
 
+/-- The homeomorphism sending `(u,v)` to `(u+s, v-u+a)`. -/
 def forwardShift (s a : ℝ) : (ℝ × ℝ) ≃ₜ (ℝ × ℝ) where
   toFun p := (p.1 + s, p.2 - p.1 + a)
   invFun p := (p.1 - s, p.2 + (p.1 - s) - a)
@@ -67,6 +66,7 @@ def forwardShift (s a : ℝ) : (ℝ × ℝ) ≃ₜ (ℝ × ℝ) where
     (continuous_fst.sub continuous_const).prodMk
       ((continuous_snd.add (continuous_fst.sub continuous_const)).sub continuous_const)
 
+/-- The homeomorphism sending `(u,v)` to `(v+s, u-v)`. -/
 def backwardShift (s : ℝ) : (ℝ × ℝ) ≃ₜ (ℝ × ℝ) where
   toFun p := (p.2 + s, p.1 - p.2)
   invFun p := (p.2 + (p.1 - s), p.1 - s)
@@ -78,6 +78,8 @@ def backwardShift (s : ℝ) : (ℝ × ℝ) ≃ₜ (ℝ × ℝ) where
     (continuous_snd.add (continuous_fst.sub continuous_const)).prodMk
       (continuous_fst.sub continuous_const)
 
+/-- Pairs satisfying all rational-span translate and difference constraints imposed by `D` and
+`E`. -/
 def goodPairs (t : ℝ) (D : Set ℝ) (E : Set (ℝ × ℝ)) : Set (ℝ × ℝ) :=
   {p | ∀ s ∈ rationalSpan t,
     p.1 + s ∈ D ∧ (∀ a ∈ rationalSpan t, (p.1+s, p.2-p.1+a) ∈ E) ∧

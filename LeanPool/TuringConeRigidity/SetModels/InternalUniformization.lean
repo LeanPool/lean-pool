@@ -14,6 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.SetModels.InternalChoice
+public import LeanPool.TuringConeRigidity.SetModels.ModelProducts
 
 /-!
 # Internal Uniformization
@@ -29,6 +30,7 @@ namespace TuringRigidity.BoundedSetTheory
 open TransitiveNameModel
 universe u
 
+/-- The relation fiber at `x`, restricted to the set `b`. -/
 noncomputable def relationFiber (b r x : ZFSet.{u}) : ZFSet.{u} :=
   ZFSet.sep (fun y => ZFSet.pair x y ∈ r) b
 
@@ -38,6 +40,7 @@ theorem relationFiber_mem (M : ZFSet.{u}) (hM : Transitive M) (hS : Separation M
     sep_mem M hM hS (.pairMem 1 0 2) (cons x (fun _ => r))
       (by intro i; cases i <;> assumption) hb
 
+/-- Bounded formula selecting from a relation fiber through the supplied selection graph. -/
 def selectionFormula : Formula :=
   .existsMem 1 (.existsMem 3 (.conj (.orderedPair 2 1 0)
     (.existsMem 5 (.conj

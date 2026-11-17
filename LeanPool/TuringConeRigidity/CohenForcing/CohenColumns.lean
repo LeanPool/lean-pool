@@ -14,9 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.CohenForcing.CohenConservative
-public import LeanPool.TuringConeRigidity.Effective.CodingOnePoint
 public import LeanPool.TuringConeRigidity.Effective.CodingExtraction
-public import Mathlib.Data.Finset.Lattice.Fold
 
 /-!
 # Cohen Columns
@@ -30,8 +28,10 @@ namespace OAI
 namespace TuringRigidity.CohenColumns
 open Encodable UniformOracle ArithmeticHierarchy EncodedForcing CohenHalting EffectiveCohen
 
+/-- Replace column `i` of an oracle by zeros while preserving all other columns. -/
 def erase (i : ℕ) (G : Oracle) : Oracle := fun m => if (Nat.unpair m).1 = i then false else G m
 
+/-- Erase column `i` in a finite word without changing its length. -/
 def eraseWord (i : ℕ) (s : List Bool) : List Bool :=
   (List.range s.length).map (fun m => if (Nat.unpair m).1 = i then false else s.getD m false)
 
@@ -82,6 +82,8 @@ theorem eraseWord_set (i : ℕ) (s : List Bool) (m : ℕ) (hi : (Nat.unpair m).1
     simpa only [List.getD_eq_getElem?_getD,List.getElem?_eq_getElem hn,
       List.getElem?_eq_getElem hn',Option.getD_some] using he
 
+/-- A finite computation using `B` and a word with column `i` zeroed disagrees with a bit
+assigned in that column. -/
 def Disagrees (B : Oracle) (i : ℕ) (e : OracleCode) (p : ℕ) : Prop :=
   ∃ n a, Nat.pair i n < (word p).length ∧
     a ∈ CommonIdeal.run B e (eraseWord i (word p)) n ∧

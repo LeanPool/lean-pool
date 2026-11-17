@@ -30,6 +30,7 @@ open BoundedSetTheory TransitiveNameModel SetModelReals SetModelIteration SetMod
 universe u
 noncomputable section
 
+/-- Bounded formula asserting that the ordered input pair has output `k` in the relation `r`. -/
 def tripleFormula (i j k r d : ℕ) : Formula := .existsMem d
   (.conj (.orderedPair 0 (i+1) (j+1)) (.pairMem 0 (k+1) (r+1)))
 
@@ -52,6 +53,7 @@ theorem multiplication_code' (n m k : ℕ) :
     ZFSet.pair (ZFSet.pair (natSet.{u} n) (natSet m)) (natSet k) ∈ multiplicationSet ↔ k = n*m :=
   multiplication_code n m k
 
+/-- Bounded formula for numerical pairing, split according to the order of the two inputs. -/
 def pairFormula (n m k a b d w : ℕ) : Formula :=
   .disj (.conj (.member n m) (.existsMem w
     (.conj (tripleFormula (m+1) (m+1) 0 (b+1) (d+1))
@@ -72,6 +74,7 @@ theorem eval_pairFormula (n m k a b d w : ℕ) (e : ℕ → ZFSet.{u}) (i j l : 
   simp only [natPair_mem,true_and,addition_code,multiplication_code']
   by_cases h : i < j <;> simp [h,Nat.pair]
 
+/-- The set-coded graph of natural-number pairing. -/
 def pairingSet : ZFSet.{u} := ZFSet.sep
   (fun z => ∃ n m, z = ZFSet.pair (numberPair (n,m)) (natSet (Nat.pair n m)))
   (ZFSet.prod pairNumbers ZFSet.omega)
@@ -89,6 +92,7 @@ theorem pairingSet_code : PairingCode pairingSet.{u} := by
   · intro hk
     exact ⟨(mem_omega _).mpr ⟨k,rfl⟩,n,m,by simp only [hk,numberPair]⟩
 
+/-- Bounded formula describing membership in the natural-number pairing graph. -/
 def pairingFormula : Formula :=
   .existsMem 1 (.existsMem 2 (.existsMem 3 (.existsMem 5
     (.conj (.orderedPair 4 0 1) (.conj (.orderedPair 0 3 2)

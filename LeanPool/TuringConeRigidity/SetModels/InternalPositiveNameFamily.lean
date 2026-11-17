@@ -15,7 +15,6 @@ module
 
 public import LeanPool.TuringConeRigidity.SetModels.InternalNaturalCheckSequence
 public import LeanPool.TuringConeRigidity.SetModels.InternalSubsetSequence
-public import LeanPool.TuringConeRigidity.Syntax.AtomicDefinability
 
 /-!
 # Internal Positive Name Family
@@ -30,6 +29,7 @@ namespace TuringRigidity.InternalPositiveNameFamily
 open TransitiveNameModel BoundedSetTheory RecursiveNames AtomicForcing
 variable {c : ZFSet.{0}} [Preorder (Conditions c)] [Top (Conditions c)]
 
+/-- The set of condition labels forcing the numeral `n` to belong to the name `τ`. -/
 noncomputable def positive (τ : Name (Conditions c)) (n : ℕ) : ZFSet.{0} :=
   c.sep (fun p => ∃ q : Conditions c, label c q = p ∧ MemForces (Name.check (natSet n)) τ q)
 

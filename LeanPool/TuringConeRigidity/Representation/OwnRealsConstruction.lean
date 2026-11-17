@@ -30,15 +30,19 @@ namespace TuringRigidity.RelativeConstructible
 open ElementaryModel BoundedSetTheory TransitiveNameModel
 universe u
 
+/-- Variable placement replacing non-ordinal construction inputs by the single real parameter. -/
 noncomputable def Construction.ownRealsSlots (t : Construction.{u}) : ℕ → ℕ
   | 0 => 1
   | 1 => 0
   | 2 => 2
   | k+3 => match t.ordinalData k with | none => 0 | some _ => k+3
 
+/-- Express construction membership after binding the model's own real set. -/
 noncomputable def Construction.ownRealsMembership (t : Construction.{u}) : SentenceForm :=
   .ex (.conj (canonicalReals 0) (t.arithmeticFreeMembership.rename t.ownRealsSlots))
 
+/-- The single real parameter and ordinal-stage values used by the own-reals membership
+formula. -/
 noncomputable def Construction.ownRealsInputs (t : Construction.{u}) (R : ZFSet.{u})
     (P : Oracle) : ℕ → ZFSet.{u} :=
   cons (realCode P) (fun k => match t.ordinalData k with

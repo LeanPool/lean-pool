@@ -13,7 +13,8 @@ Module paths, interfaces, and proofs are ported to the pool's toolchain and gate
 module
 
 public import LeanPool.TuringConeRigidity.TuringConeNumerical
-public import LeanPool.TuringConeRigidity.Computability.ArithmeticPersistence
+public import LeanPool.TuringConeRigidity.Computability.ArithmeticActions
+public import LeanPool.TuringConeRigidity.TuringConePersistentExtension
 
 /-!
 # An arithmetic matrix for cone persistence
@@ -82,6 +83,8 @@ theorem graph_program {I : CountableIdeal} {a : Degree} {H Y : Oracle}
   rw [tableOracle_eq hd']
   simp [graphOracle]
 
+/-- Every coded jump-closed ideal extension admits an arithmetic action onto the prescribed
+principal cone. -/
 def Criterion (A R : Oracle) (k : ℕ) : Prop :=
   ∀ H : Oracle, JumpCode H → Includes A H →
     ∃ e : ℕ, ConeNumerical.Action (columns A k) H
@@ -124,6 +127,8 @@ theorem persistent_iff {I : CountableIdeal} {A R : Oracle} (hA : Presented I A)
     intro i j n m hr hp hin
     exact hcompat i j n m ((hR _).mpr hr) ((hσ _).mpr hp) hin
 
+/-- The arithmetic matrix expressing the cone persistence criterion for a test-extension
+oracle. -/
 def Matrix (O : Oracles) (k : ℕ) : Prop :=
   JumpCode (O 2) → Includes (O 0) (O 2) →
     ∃ e : ℕ, ConeNumerical.Action (columns (O 0) k) (O 2)

@@ -30,9 +30,11 @@ namespace TuringRigidity.BoundedSetTheory
 universe u
 namespace Formula
 
+/-- Bounded formula encoding the step function of a primitive recursion. -/
 def primitiveStep (ψ : Formula) : Formula := .existsMem 8
   (.conj (naturalPair 9 10 3 2 0) (pairedUnary ψ 9 10 6 0 1))
 
+/-- Bounded formula implementing primitive recursion from its base and step definitions. -/
 def primitiveRecursion (φ ψ : Formula) : Formula := .existsMem 2 (.existsMem 3 (.existsMem 4
   (.conj (naturalPair 5 6 2 1 4) (.conj (unary φ 5 6 2 0)
     (iteration 5 6 1 0 3 (primitiveStep ψ))))))

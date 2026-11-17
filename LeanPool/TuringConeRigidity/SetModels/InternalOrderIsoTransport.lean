@@ -14,7 +14,6 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.SetModels.DenseInclusionExtension
-public import LeanPool.TuringConeRigidity.Representation.AutomorphismName
 
 /-!
 # Internal Order Iso Transport
@@ -29,9 +28,11 @@ namespace TuringRigidity.InternalOrderIsoTransport
 open TransitiveNameModel BoundedSetTheory CountableForcing
 attribute [local instance] InternalCollapse.order InternalCollapse.collapsePreorder
 
+/-- The image of the set `g` under the set-coded relation `f`, restricted to `b`. -/
 noncomputable def imageSet (b f g : ZFSet.{0}) : ZFSet.{0} :=
   b.sep (fun y => ∃ x ∈ g, ZFSet.pair x y ∈ f)
 
+/-- The preimage of the set `k` under the set-coded relation `f`, restricted to `a`. -/
 noncomputable def preimageSet (a f k : ZFSet.{0}) : ZFSet.{0} :=
   a.sep (fun x => ∃ y ∈ k, ZFSet.pair x y ∈ f)
 

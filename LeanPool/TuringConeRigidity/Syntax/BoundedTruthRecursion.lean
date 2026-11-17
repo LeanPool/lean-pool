@@ -14,7 +14,6 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.Representation.SourceTheory
-public import LeanPool.TuringConeRigidity.Syntax.FiniteTerm
 public import LeanPool.TuringConeRigidity.Syntax.BoundedFormulaRename
 
 /-!
@@ -29,11 +28,13 @@ namespace OAI
 namespace TuringRigidity.BoundedTruthRecursion
 open TransitiveNameModel BoundedSetTheory
 
+/-- The truth formula at `t` depends only on lower-rank members of the proposed truth set. -/
 def Local (φ : Formula) (e : ℕ → ZFSet.{0}) : Prop :=
   ∀ D : ZFSet.{0}, Transitive D → ∀ t ∈ D, ∀ Y Z : ZFSet.{0},
     (∀ s ∈ D, ZFSet.rank s < ZFSet.rank t → (s ∈ Y ↔ s ∈ Z)) →
       (φ.Eval (cons t (cons Y e)) ↔ φ.Eval (cons t (cons Z e)))
 
+/-- A truth subset on a transitive part of `K` satisfies the recursive truth equation. -/
 def Partial (φ : Formula) (e : ℕ → ZFSet.{0}) (K D Y : ZFSet.{0}) : Prop :=
   Transitive D ∧ D ⊆ K ∧ Y ⊆ D ∧
     ∀ t ∈ D, t ∈ Y ↔ φ.Eval (cons t (cons Y e))
@@ -51,11 +52,13 @@ theorem partial_sound (φ : Formula) (e : ℕ → ZFSet.{0}) (K D Y Z : ZFSet.{0
     exact (hp.2.2.2 t ht).trans ((hl D hp.1 t ht Y Z
       (fun s hs hst => ih s hst hs)).trans (hz t (hp.2.1 ht)).symm)
 
+/-- Variable renaming reserving slots for the partial domain and truth-set witnesses. -/
 def dropSlots : ℕ → ℕ
   | 0 => 0
   | 1 => 1
   | n+2 => n+4
 
+/-- Bounded formula expressing the partial truth-recursion property. -/
 def partialFormula (φ : Formula) : Formula :=
   .conj (.transitive 1) (.conj (.subset 1 2) (.conj (.subset 0 1)
     (.allMem 1 (.iff (.member 0 1) (φ.rename dropSlots)))))
@@ -69,17 +72,21 @@ theorem partialFormula_spec (φ : Formula) (e : ℕ → ZFSet.{0}) (K D Y : ZFSe
     funext i; rcases i with _|_|i <;> rfl
   simp only [eq]
 
+/-- The union of domains of partial truth recursions whose domain and truth set belong to `Q`. -/
 noncomputable def domain (φ : Formula) (e : ℕ → ZFSet.{0}) (K Q : ZFSet.{0}) : ZFSet.{0} :=
   K.sep (fun t => ∃ D ∈ Q, ∃ Y ∈ Q, Partial φ e K D Y ∧ t ∈ D)
 
+/-- The union of truth sets of partial recursions whose domain and truth set belong to `Q`. -/
 noncomputable def truth (φ : Formula) (e : ℕ → ZFSet.{0}) (K Q : ZFSet.{0}) : ZFSet.{0} :=
   K.sep (fun t => ∃ D ∈ Q, ∃ Y ∈ Q, Partial φ e K D Y ∧ t ∈ Y)
 
+/-- Variable placement for the domain and truth witnesses in the union formula. -/
 def candidateSlots : ℕ → ℕ
   | 0 => 0
   | 1 => 1
   | n+2 => n+4
 
+/-- Bounded formula selecting membership in a partial recursion's domain or truth set. -/
 def unionFormula (φ : Formula) (which : ℕ) : Formula :=
   .existsMem 1 (.existsMem 2 (.conj ((partialFormula φ).rename candidateSlots) (.member 2 which)))
 

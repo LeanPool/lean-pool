@@ -16,7 +16,6 @@ module
 public import LeanPool.TuringConeRigidity.Effective.LocalComputability
 public import LeanPool.TuringConeRigidity.CohenForcing.CohenCompleteness
 public import LeanPool.TuringConeRigidity.Effective.CodingDiagonal
-public import LeanPool.TuringConeRigidity.Effective.CodingExtraction
 
 /-!
 # Local Limits
@@ -33,7 +32,9 @@ open LocalStage
 noncomputable section
 attribute [local instance] Classical.propDecidable
 
+/-- The left limit oracle of the local condition construction. -/
 def G₀ (D : LocalInputs.Data) : Oracle := leftLimit (conditions D)
+/-- The right limit oracle of the local condition construction. -/
 def G₁ (D : LocalInputs.Data) : Oracle := rightLimit (conditions D)
 
 theorem generic_prefix_next (D : LocalInputs.Data) (s : ℕ) :

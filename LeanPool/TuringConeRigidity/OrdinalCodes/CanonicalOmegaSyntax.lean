@@ -13,8 +13,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.Syntax.SentenceInlining
 public import LeanPool.TuringConeRigidity.SetModels.SetModelAddition
+public import LeanPool.TuringConeRigidity.SetModels.ElementarySatisfaction
 
 /-!
 # Canonical Omega Syntax
@@ -29,6 +29,7 @@ namespace TuringRigidity.RelativeConstructible
 open ElementaryModel BoundedSetTheory TransitiveNameModel
 universe u
 
+/-- Bounded formula asserting that a set contains the empty set and is closed under successor. -/
 def inductiveSetFormula (w : ℕ) : Formula :=
   .conj (.existsMem w (.empty 0))
     (.allMem w (.existsMem (w+1) (.successor 0 1)))
@@ -49,6 +50,7 @@ theorem omega_subset_inductive {W : ZFSet.{u}}
   | zero => exact h.1
   | succ n ih => exact h.2 _ ih
 
+/-- A full formula characterizing omega as the least inductive set. -/
 noncomputable def canonicalOmega (w : ℕ) : SentenceForm :=
   .conj (fromBounded (inductiveSetFormula w))
     (SentenceForm.all (SentenceForm.imp (fromBounded (inductiveSetFormula 0))

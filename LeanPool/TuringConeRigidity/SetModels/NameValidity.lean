@@ -15,6 +15,7 @@ module
 
 public import LeanPool.TuringConeRigidity.SetModels.InternalFixedPoint
 public import LeanPool.TuringConeRigidity.SetModels.NameUnionCode
+public import LeanPool.TuringConeRigidity.Syntax.BoundedRelations
 
 /-!
 # Name Validity
@@ -30,12 +31,16 @@ namespace TuringRigidity.NameValidity
 open RecursiveNames TransitiveNameModel BoundedSetTheory
 universe u
 
+/-- Every member of `x` is a pair of a child in `h` and a condition in `c`. -/
 def Step (c h x : ZFSet.{u}) : Prop :=
   ∀ z ∈ x, ∃ y ∈ h, ∃ q ∈ c, z = ZFSet.pair y q
 
+/-- The subset `h` of `d` consists exactly of elements whose members are child-condition pairs
+over `h`. -/
 def Certificate (d c h : ZFSet.{u}) : Prop :=
   h ⊆ d ∧ ∀ x ∈ d, x ∈ h ↔ Step c h x
 
+/-- The coded name `y` occurs as a child in a tagged pair belonging to `x`. -/
 def Child (y x : ZFSet.{u}) : Prop := ∃ q, ZFSet.pair y q ∈ x
 
 theorem child_wellFounded : WellFounded (Child : ZFSet.{u} → ZFSet.{u} → Prop) := by
@@ -98,6 +103,7 @@ theorem Certificate.correct {d c h : ZFSet.{u}} (hd : Transitive d)
 
 namespace Code
 open Formula
+/-- Bounded formula expressing the valid-name step condition. -/
 def step (c h x : ℕ) : Formula :=
   allMem x (.existsMem (h+1) (.existsMem (c+2) (orderedPair 2 1 0)))
 
@@ -105,6 +111,7 @@ theorem eval_step (c h x : ℕ) (e : ℕ → ZFSet.{u}) :
     (step c h x).Eval e ↔ Step (e c) (e h) (e x) := by
   simp only [step,Step,eval_allMem,Formula.Eval,eval_orderedPair,cons_zero,cons_succ]
 
+/-- Bounded formula expressing the valid-name certificate on the domain `d`. -/
 def certificate (d c h : ℕ) : Formula :=
   .conj (subset h d) (allMem d (iff (.member 0 (h+1)) (step (c+1) (h+1) 0)))
 

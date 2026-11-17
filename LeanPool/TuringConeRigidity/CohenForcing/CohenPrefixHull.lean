@@ -16,6 +16,7 @@ module
 public import LeanPool.TuringConeRigidity.CohenForcing.CohenPrefixReconstruction
 public import LeanPool.TuringConeRigidity.Representation.RealGeneratedModel
 public import LeanPool.TuringConeRigidity.SetModels.RegularTreeExtension
+public import LeanPool.TuringConeRigidity.CohenForcing.InternalCohenValue
 
 /-!
 # Cohen Prefix Hull

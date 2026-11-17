@@ -28,8 +28,10 @@ namespace OAI
 namespace TuringRigidity.OracleJump
 open Encodable UniformOracle CommonIdeal TableIndices IndexMatrix ArithmeticHierarchy
 
+/-- The indexed oracle machine has a halting computation on input `n`. -/
 def Halts (Y : Oracle) (e n : ℕ) : Prop := ∃ z a, a ∈ TableIndices.run Y (machine e) n z
 
+/-- The Boolean halting oracle relative to `Y`, with machine and input encoded by pairing. -/
 noncomputable def jump (Y : Oracle) : Oracle := by
   classical
   exact fun v => decide (Halts Y (Nat.unpair v).1 (Nat.unpair v).2)
@@ -88,6 +90,7 @@ theorem forall_recursive_jump {Y : Oracle} {P : ℕ → Prop} (hP : RecursivePre
   have h := recursive_not (exists_recursive_jump (recursive_not hP))
   simpa only [not_exists, not_not] using h
 
+/-- The finite iterates of the oracle jump, starting at `Y`. -/
 noncomputable def iterate (Y : Oracle) : ℕ → Oracle
   | 0 => Y
   | n+1 => jump (iterate Y n)

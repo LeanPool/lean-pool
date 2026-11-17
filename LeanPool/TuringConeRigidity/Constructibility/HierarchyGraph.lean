@@ -13,9 +13,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.Constructibility.UniformDefSuccessor
 public import LeanPool.TuringConeRigidity.Constructibility.ConstructibleStages
-public import LeanPool.TuringConeRigidity.Syntax.CheckGraphConstruction
+public import LeanPool.TuringConeRigidity.Syntax.SentenceSupportFormula
 
 /-!
 # Hierarchy Graph
@@ -32,11 +31,15 @@ open ElementaryModel BoundedSetTheory TransitiveNameModel SentenceCoding
 open BoundedDefinability SetModelFunctions
 universe u
 
+/-- The stage base `s` together with all members of hierarchy values at predecessor indices in
+`x`. -/
 def StageStep (s f r x A : ZFSet.{u}) : Prop :=
   s ⊆ A ∧
   (∀ z ∈ A, z ∈ s ∨ ∃ y ∈ x, ∃ w ∈ r, ZFSet.pair y w ∈ f ∧ z ∈ w) ∧
   ∀ y ∈ x, ∀ w ∈ r, ZFSet.pair y w ∈ f → w ⊆ A
 
+/-- A function graph on a transitive domain whose values are the definable powers of the
+prescribed stage bases. -/
 def HierarchyGraph (M s d r f : ZFSet.{u}) : Prop :=
   Transitive d ∧ FunctionGraph d r f ∧
   ∀ x ∈ d, ∀ v ∈ r, ZFSet.pair x v ∈ f →
@@ -81,6 +84,7 @@ theorem HierarchyGraph.unique {M N R d r t f g : ZFSet.{u}}
   apply ZFSet.ext; intro z
   exact (hf.mem_iff z).trans (hg.mem_iff z).symm
 
+/-- Union the seed with the members of hierarchy values at indices in `x`. -/
 noncomputable def stageImage (s x f : ZFSet.{u}) : ZFSet.{u} :=
   s ∪ (ZFSet.sUnion (iterUnion 2 f)).sep
     (fun z => ∃ y ∈ x, ∃ w ∈ iterUnion 2 f, ZFSet.pair y w ∈ f ∧ z ∈ w)

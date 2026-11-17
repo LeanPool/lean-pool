@@ -40,9 +40,12 @@ open BoundedDecoding EnumerationConstruction ConeIdealCoding
 
 noncomputable section
 
+/-- The ideal element represented by the indicated column of `H`. -/
 def idealEntry {J : DegreeIdeal} (H : Oracle) (hH : degree H ∈ J.carrier) (n : ℕ) : J :=
   ⟨degree (columns H n), J.lower (CodingExtraction.column_projection_reduces H n) hH⟩
 
+/-- The graph of the ideal-to-cone isomorphism on the degrees represented by the columns of
+`H`. -/
 def IdealGraph {J : DegreeIdeal} {a : J} (ρ : J ≃o Set.Ici a)
     (H : Oracle) (hH : degree H ∈ J.carrier) (v : ℕ) : Prop :=
   image ρ (idealEntry H hH (Nat.unpair v).1) = degree (columns H (Nat.unpair v).2)
@@ -102,10 +105,12 @@ open PersistentRestrictions
 def Presented (I : CountableIdeal) (H : Oracle) : Prop :=
   ∀ x, x ∈ I.carrier ↔ ∃ k, degree (columns H k) = x
 
+/-- The countable-ideal element represented by the selected column of its presentation. -/
 def presentationEntry {I : CountableIdeal} {H : Oracle}
     (hpres : Presented I H) (n : ℕ) : I :=
   ⟨degree (columns H n), (hpres _).mpr ⟨n, rfl⟩⟩
 
+/-- The graph of the countable-ideal cone isomorphism in its oracle-column presentation. -/
 def Graph {I : CountableIdeal} {a : Degree} (ρ : I ≃o ConePersistence.Cone I a)
     {H : Oracle} (hpres : Presented I H) (v : ℕ) : Prop :=
   (ρ (presentationEntry hpres (Nat.unpair v).1)).val = degree (columns H (Nat.unpair v).2)
@@ -135,6 +140,7 @@ def coneBridge (I : CountableIdeal) (a : Degree) (ha : a ∈ I.carrier) :
   right_inv _ := rfl
   map_rel_iff' := Iff.rfl
 
+/-- Transport a countable-ideal cone isomorphism to the degree-ideal representation. -/
 def lift {I : CountableIdeal} {a : Degree} (ρ : I ≃o ConePersistence.Cone I a)
     (ha : a ∈ I.carrier) : PersistentLocality.ideal I ≃o
       Set.Ici (⟨a, ha⟩ : PersistentLocality.ideal I) :=

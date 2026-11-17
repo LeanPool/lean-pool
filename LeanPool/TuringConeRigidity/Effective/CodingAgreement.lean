@@ -28,9 +28,12 @@ namespace OAI
 namespace TuringRigidity.CodingAgreement
 open CodingForcing
 
+/-- The two finite oracle computations return different values on some common input. -/
 def Disagreement (Y : Oracle) (e₀ e₁ : OracleCode) (p : Condition) : Prop :=
   ∃ n a b, a ≠ b ∧ a ∈ CommonIdeal.run Y e₀ p.left n ∧ b ∈ CommonIdeal.run Y e₁ p.right n
 
+/-- No permitted extension of the condition produces a disagreement between the two
+computations. -/
 def NoDisagreement (A : ℕ → Oracle) (Y : Oracle) (e₀ e₁ : OracleCode) (p : Condition) : Prop :=
   ∀ q, Extends A p q → ¬ Disagreement Y e₀ e₁ q
 
@@ -64,6 +67,8 @@ theorem noDisagreement_of_common_output {A : ℕ → Oracle} {Y G₀ G₁ Z : Or
     exact False.elim (hab (Part.mem_unique hta htb))
   · exact hn
 
+/-- Whenever the left computation converges on a fixed input along two permitted extensions,
+its outputs agree. -/
 def UniqueValues (A : ℕ → Oracle) (Y : Oracle) (e : OracleCode) (p : Condition) : Prop :=
   ∀ q r, Extends A p q → Extends A p r → ∀ n a b,
     a ∈ CommonIdeal.run Y e q.left n → b ∈ CommonIdeal.run Y e r.left n → a = b

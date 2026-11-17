@@ -51,6 +51,8 @@ theorem requirements_topology (D : ℕ → List Bool → Prop) (hd : ∀ n, Dens
       MeasurableSet (OpenSet (Requirements D n)) :=
   ⟨openSet_dense _ (requirements_denseOpen D hd n),openSet_isOpen _,openSet_measurable _⟩
 
+/-- Interleave the dense-open genericity requirements with the additional parameterized
+requirements. -/
 def Combined {X : Type*} (D : ℕ → List Bool → Prop) (R : X → ℕ → ℕ → Prop)
     (x : X) (n t : ℕ) : Prop :=
   if n % 2 = 0 then Requirements D (n/2) (BorelGeneric.word t) else R x (n/2) t

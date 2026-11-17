@@ -15,6 +15,7 @@ module
 
 public import LeanPool.TuringConeRigidity.OrdinalCodes.NumericDomain
 public import LeanPool.TuringConeRigidity.Constructibility.SeedBoundStageSyntax
+public import LeanPool.TuringConeRigidity.OrdinalCodes.NumericDefSystem
 
 /-!
 # Numeric Hierarchy

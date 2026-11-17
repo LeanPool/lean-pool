@@ -13,7 +13,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.OrdinalCodes.NumericalIdeal
+public import LeanPool.TuringConeRigidity.Constructibility.PersistentPresentation
 
 /-!
 # Numerical Extension
@@ -25,9 +25,10 @@ public import LeanPool.TuringConeRigidity.OrdinalCodes.NumericalIdeal
 namespace OAI
 
 namespace TuringRigidity.NumericalExtension
-open EncodedForcing PersistentRestrictions PersistentPresentation NumericalAutomorphism
+open EncodedForcing PersistentRestrictions PersistentPresentation
 noncomputable section
 
+/-- The two coded actions agree whenever their input columns represent the same degree. -/
 def Compatible (A H : Oracle) (R P : ℕ → Prop) : Prop :=
   ∀ i j n m, R (Nat.pair i j) → P (Nat.pair n m) →
     degree (columns A i) = degree (columns H n) →

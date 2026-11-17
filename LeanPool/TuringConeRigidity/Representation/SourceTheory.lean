@@ -15,6 +15,7 @@ module
 
 public import LeanPool.TuringConeRigidity.Syntax.LevySigmaSchemas
 public import LeanPool.TuringConeRigidity.SetModels.ExtensionChoice
+public import LeanPool.TuringConeRigidity.SetModels.ExtensionSigmaReplacement
 
 /-!
 # Source Theory
@@ -30,6 +31,8 @@ namespace TuringRigidity.BoundedSetTheory
 open TransitiveNameModel
 universe u
 
+/-- The set-theoretic fragment with basic axioms, choice, and Levy-sigma separation and
+replacement. -/
 structure SourceT (M : ZFSet.{u}) : Prop where
   extensionality : BasicAxioms.Extensionality M
   empty : BasicAxioms.EmptySet M

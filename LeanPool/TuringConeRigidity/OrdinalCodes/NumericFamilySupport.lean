@@ -14,7 +14,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.OrdinalCodes.NumericParameters
-public import LeanPool.TuringConeRigidity.Constructibility.UniformSentenceSupport
+public import LeanPool.TuringConeRigidity.Syntax.SentenceFamilyFormula
+public import LeanPool.TuringConeRigidity.Syntax.SentenceSupportFormula
 
 /-!
 # Numeric Family Support

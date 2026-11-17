@@ -29,9 +29,11 @@ namespace TuringRigidity.RelativeConstructible
 open BoundedSetTheory TransitiveNameModel
 universe u
 
+/-- The set belongs to a relative constructible level whose ordinal code belongs to `M`. -/
 def InRelativeModel (M R x : ZFSet.{u}) : Prop :=
   ∃ o : Ordinal.{u}, o.toZFSet ∈ M ∧ x ∈ level R o
 
+/-- The part of `M` belonging to its indexed relative constructible levels. -/
 noncomputable def relativeModel (M R : ZFSet.{u}) : ZFSet.{u} :=
   M.sep (InRelativeModel M R)
 

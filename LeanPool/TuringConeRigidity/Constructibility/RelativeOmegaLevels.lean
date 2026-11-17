@@ -15,6 +15,7 @@ module
 
 public import LeanPool.TuringConeRigidity.OrdinalCodes.ProductCertificateCollection
 public import LeanPool.TuringConeRigidity.OrdinalCodes.OrdinalDecoderDomains
+public import LeanPool.TuringConeRigidity.Constructibility.RelativeOmegaCertificates
 
 /-!
 # Relative Omega Levels

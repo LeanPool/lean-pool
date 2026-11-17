@@ -14,6 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.SetModels.NameSupport
+public import LeanPool.TuringConeRigidity.SetModels.InternalAtomicTruth
 
 /-!
 # Intersection Name
@@ -31,6 +32,7 @@ universe u
 namespace AtomicFormula
 open Formula
 
+/-- Bounded formula selecting a child and condition witness for the atomic forcing relation. -/
 def select (d c k o f y z : ℕ) : Formula :=
   .existsMem d (.existsMem (c+1) (.conj (orderedPair (z+2) 1 0)
     (witness (d+2) (c+2) (k+2) (o+2) (f+2) 1 (y+2) 0)))

@@ -14,6 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.SetModels.InternalBooleanBits
+public import LeanPool.TuringConeRigidity.SetModels.InternalRegularOrder
 
 /-!
 # Internal Boolean Generic
@@ -29,9 +30,11 @@ open Set TransitiveNameModel BoundedSetTheory CountableForcing
 open InternalRegularOperations InternalRegularAlgebra InternalRegularOrder
 attribute [local instance] InternalCollapse.order InternalCollapse.collapsePreorder
 
+/-- Some condition of the filter has its ground-model label in `U`. -/
 def Hit {c : ZFSet.{0}} (G : GenericFilter (Conditions c)) (U : ZFSet.{0}) : Prop :=
   ∃ p ∈ G.carrier, label c p ∈ U
 
+/-- The union of a Boolean code and its regular complement. -/
 noncomputable def decision (c U : ZFSet.{0}) : ZFSet.{0} := U ∪ neg c U
 
 theorem decision_mem (M c U : ZFSet.{0}) (hM : Transitive M) (hT : SourceT M)

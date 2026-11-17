@@ -30,6 +30,7 @@ open Set CountableForcing CohenSymmetry CohenCoordinates AutomorphismName
 universe u v
 variable {P : Type u} {Q : Type v} [Preorder P] [Preorder Q]
 
+/-- Project a filter on a product poset to its first coordinate. -/
 def first (K : GenericFilter (P × Q)) : GenericFilter P where
   carrier := {p | ∃ q, (p,q) ∈ K.carrier}
   nonempty := by obtain ⟨p,hp⟩ := K.nonempty; exact ⟨p.1,p.2,hp⟩
@@ -39,6 +40,7 @@ def first (K : GenericFilter (P × Q)) : GenericFilter P where
     obtain ⟨t,ht,htp,htq⟩ := K.directed hr hs
     exact ⟨t.1,⟨t.2,ht⟩,htp.1,htq.1⟩
 
+/-- Project a filter on a product poset to its second coordinate. -/
 def second (K : GenericFilter (P × Q)) : GenericFilter Q where
   carrier := {q | ∃ p, (p,q) ∈ K.carrier}
   nonempty := by obtain ⟨p,hp⟩ := K.nonempty; exact ⟨p.2,p.1,hp⟩
@@ -73,9 +75,11 @@ theorem first_generic (D : ℕ → Set P) (K : GenericFilter (P × Q))
   obtain ⟨p,hp,hpD⟩ := hK n
   exact ⟨p.1,⟨p.2,hp⟩,hpD⟩
 
+/-- The second-coordinate fiber of `D` over conditions belonging to `G`. -/
 def fiber (D : Set (P × Q)) (G : GenericFilter P) : Set Q :=
   {q | ∃ p ∈ G.carrier, (p,q) ∈ D}
 
+/-- First coordinates admitting a pair in `D` below the prescribed second condition. -/
 def fiberRequirement (D : Set (P × Q)) (q : Q) : Set P :=
   {p | ∃ r, r ≤ q ∧ (p,r) ∈ D}
 

@@ -27,6 +27,7 @@ namespace OAI
 namespace TuringRigidity.IndexJoin
 open Encodable Computable UniformOracle CommonIdeal TableIndices
 
+/-- Evaluate the first or second indexed program according to the parity of the joined input. -/
 def dispatch (v : (Nat.Partrec.Code × Nat.Partrec.Code) × ℕ) : Part ℕ :=
   let n := (Nat.unpair v.2).2
   let c := if n.bodd then v.1.2 else v.1.1
@@ -43,12 +44,14 @@ theorem dispatch_partrec : Partrec dispatch := by
   exact (Nat.Partrec.Code.eval_part.comp hc hi).of_eq (fun v => by
     cases hb : (Nat.unpair v.2).2.bodd <;> simp [dispatch, hb])
 
+/-- A selected partial-recursive code for the join dispatcher. -/
 noncomputable def dispatcher : Nat.Partrec.Code := Classical.choose (partrec_code dispatch_partrec)
 
 theorem dispatcher_spec (e f : Nat.Partrec.Code) (x : ℕ) :
     dispatcher.eval (Nat.pair (encode (e, f)) x) = dispatch ((e, f), x) :=
   Classical.choose_spec (partrec_code dispatch_partrec) ((e, f), x)
 
+/-- The program code joining the outputs of the two supplied program codes. -/
 noncomputable def joined (e f : Nat.Partrec.Code) : Nat.Partrec.Code :=
   dispatcher.curry (encode (e, f))
 

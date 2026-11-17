@@ -29,6 +29,7 @@ open BoundedSetTheory TransitiveNameModel SetModelReals SetModelIteration
 universe u
 noncomputable section
 
+/-- The von Neumann successor of a set. -/
 def setSucc (x : ZFSet.{u}) : ZFSet.{u} := insert x x
 
 theorem setSucc_nat (n : ℕ) : setSucc (natSet.{u} n) = natSet (n+1) := rfl
@@ -38,6 +39,7 @@ theorem setSucc_omega : ∀ x ∈ ZFSet.omega.{u}, setSucc x ∈ ZFSet.omega := 
   obtain ⟨n,rfl⟩ := (mem_omega x).mp hx
   exact (mem_omega _).mpr ⟨n+1,rfl⟩
 
+/-- The set-coded successor graph on the natural numbers. -/
 def successorSet : ZFSet.{u} := ZFSet.sep
   (fun z => ∃ x ∈ ZFSet.omega, z = ZFSet.pair x (setSucc x))
   (ZFSet.prod ZFSet.omega ZFSet.omega)
@@ -51,6 +53,7 @@ theorem pair_mem_successorSet {x y : ZFSet.{u}} (hx : x ∈ ZFSet.omega) (hy : y
   · intro h
     exact ⟨x,hx,rfl,h⟩
 
+/-- Bounded formula describing membership in the natural-number successor graph. -/
 def successorFormula : Formula :=
   .existsMem 1 (.existsMem 2 (.conj (.orderedPair 2 1 0) (.successor 0 1)))
 
@@ -74,6 +77,7 @@ theorem successorSet_mem (M : ZFSet.{u}) (hM : Transitive M)
       exact ⟨x,hx,setSucc x,setSucc_omega x hx,rfl,rfl⟩
   exact eq ▸ hs
 
+/-- The iteration graph of successor on omega, used to represent addition. -/
 def additionSet : ZFSet.{u} := iterationSet ZFSet.omega setSucc
 
 theorem iterate_setSucc (n m : ℕ) : setSucc^[n] (natSet.{u} m) = natSet (m+n) := by

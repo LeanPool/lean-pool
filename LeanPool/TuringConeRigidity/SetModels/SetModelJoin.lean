@@ -48,6 +48,7 @@ theorem join_true_iff (A B : Oracle) (v : ℕ) : join A B v = true ↔
     · exact (join_even A B n).trans hA
     · exact (join_odd A B n).trans hB
 
+/-- Bounded formula describing the Turing join through even and odd natural-number positions. -/
 def joinFormula : Formula :=
   .existsMem 1 (.disj (.conj (tripleFormula 0 0 1 5 6) (.member 0 3))
     (.existsMem 2 (.conj (tripleFormula 1 1 0 6 7)

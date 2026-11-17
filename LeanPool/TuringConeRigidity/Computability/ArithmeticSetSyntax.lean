@@ -31,14 +31,19 @@ namespace TuringRigidity.BoundedSetTheory
 open UniformArithmetic
 universe u
 
+/-- Set-theoretic environment containing the input numeral, omega, finite-graph bound, and
+oracle codes. -/
 noncomputable def arithmeticEnv (Q : ZFSet.{u}) (O : Oracles) (n : ℕ) : ℕ → ZFSet.{u} :=
   cons (natSet n) (cons ZFSet.omega (cons Q (fun i => realCode (O i))))
 
+/-- A bounded formula defines the arithmetic predicate for every sufficient finite-graph
+bound. -/
 def DefinesArithmetic (φ : Formula) (P : Predicate) : Prop :=
   ∀ Q : ZFSet.{u}, (∀ f : ℕ → ℕ, ∀ k, finiteNaturalGraph f k ∈ Q) → ∀ O n,
     (φ.Eval (arithmeticEnv Q O n) ↔ P O n)
 
 namespace Formula
+/-- Shift oracle parameter slots while keeping the distinguished arithmetic input slot fixed. -/
 def arithmeticVars (k : ℕ) : ℕ → ℕ
   | 0 => 0
   | i+1 => i+k+1
@@ -62,9 +67,13 @@ theorem eval_arithmetic_shift_two (φ : Formula) (Q : ZFSet.{u}) (O : Oracles) (
     funext i; cases i <;> rfl
   rw [he]
 
+/-- Bounded formula implementing existential number quantification through natural-pair
+coding. -/
 def arithmeticExists (φ : Formula) : Formula := .existsMem 1 (.existsMem 2
   (.conj (naturalPair 3 4 2 1 0) (φ.rename (arithmeticVars 2))))
 
+/-- Bounded formula composing two arithmetic definitions through an existential intermediate
+value. -/
 def arithmeticComp (φ ψ : Formula) : Formula := .existsMem 1
   (.conj (unary ψ 2 3 1 0) (φ.rename (arithmeticVars 1)))
 end Formula

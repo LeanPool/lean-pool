@@ -13,7 +13,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.SetModels.NameEncoding
+public import LeanPool.TuringConeRigidity.SetModels.RecursiveNames
 
 /-!
 # Atomic Forcing
@@ -25,18 +25,21 @@ public import LeanPool.TuringConeRigidity.SetModels.NameEncoding
 namespace OAI
 
 namespace TuringRigidity.AtomicForcing
-open Set RecursiveNames CountableForcing
+open Set RecursiveNames
 universe u
 variable {P : Type u} [Preorder P]
 
+/-- Density of `A` below every common extension of `p` and `t`. -/
 def Below (p t : P) (A : P → Prop) : Prop :=
   ∀ q, q ≤ p → q ≤ t → ∃ r, r ≤ q ∧ A r
 
+/-- Recursive forcing relation for equality of names, matching children in both directions. -/
 def EqForces : Name P → Name P → P → Prop
   | .mk _ a s, .mk _ b t, p =>
     (∀ i, Below p (s i) (fun r => ∃ j, r ≤ t j ∧ EqForces (a i) (b j) r)) ∧
     (∀ j, Below p (t j) (fun r => ∃ i, r ≤ s i ∧ EqForces (a i) (b j) r))
 
+/-- Atomic membership forcing, witnessed densely by a matching child of the target name. -/
 def MemForces (a : Name P) : Name P → P → Prop
   | .mk _ b t, p => ∀ q, q ≤ p → ∃ r, r ≤ q ∧ ∃ j, r ≤ t j ∧ EqForces a (b j) r
 

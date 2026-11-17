@@ -30,6 +30,7 @@ namespace TuringRigidity.InternalRank
 open TransitiveNameModel BoundedSetTheory
 universe u
 
+/-- A sigma formula requesting a hull and an internal rank graph certificate. -/
 def rankCertificate : SigmaFormula := .existsSet (.existsSet (.bounded
   (.conj (.isHull 1 3 4 5) (Code.graph 1 0 2))))
 

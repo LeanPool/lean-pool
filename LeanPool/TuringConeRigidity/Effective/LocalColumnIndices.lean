@@ -27,6 +27,7 @@ namespace OAI
 namespace TuringRigidity.LocalColumnIndices
 open Encodable UniformOracle EncodedForcing ArithmeticHierarchy
 
+/-- Specialize a partial-recursive code by fixing its selected oracle-column parameter. -/
 def specialized (d : Nat.Partrec.Code) (k : ℕ) : Nat.Partrec.Code :=
   (Nat.Partrec.Code.comp d (.pair (.comp .left .right) (.pair .left (.comp .right .right)))).curry k
 

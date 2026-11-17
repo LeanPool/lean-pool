@@ -15,6 +15,8 @@ module
 
 public import LeanPool.TuringConeRigidity.CohenForcing.CohenRun
 public import LeanPool.TuringConeRigidity.Effective.CodingSplitting
+public import LeanPool.TuringConeRigidity.Effective.EffectiveWitness
+public import Mathlib.Algebra.Order.Ring.Star
 
 /-!
 # Effective Split
@@ -29,6 +31,8 @@ namespace TuringRigidity.EffectiveSplit
 open Encodable UniformOracle CommonIdeal ArithmeticHierarchy OracleJump EncodedForcing
 open CohenRun EffectiveWitness CodingSplitting
 
+/-- A finite certificate that two extensions yield different outputs for the same oracle
+program and input. -/
 def SplitCert (Y : Oracle) (e : OracleCode) (v : ℕ) : Prop :=
   let p := word (Nat.unpair v).1
   let w := (Nat.unpair v).2
@@ -52,6 +56,7 @@ theorem splitCert_sigma (Y : Oracle) (e : OracleCode) : Sigma Y 1 (SplitCert Y e
     ((Form.raise (n := 0) (s := true) hq).and ((Form.raise (n := 0) (s := true) hn).and (hl.and
       hr)))
 
+/-- A certificate that changing one bit of an extended word changes a computed output. -/
 def PointCert (Y : Oracle) (e : OracleCode) (v : ℕ) : Prop :=
   let p := word (Nat.unpair v).1
   let w := (Nat.unpair v).2
@@ -82,6 +87,7 @@ theorem pointCert_sigma (Y : Oracle) (e : OracleCode) : Sigma Y 1 (PointCert Y e
       ((Form.raise (n := 0) (s := true) hhi).and ((Form.raise (n := 0) (s := true) hn).and (hl.and
         hr))))
 
+/-- Some extension of the coded word makes the specified computation converge. -/
 def ConvergesAbove (Y : Oracle) (e : OracleCode) (v : ℕ) : Prop :=
   ∃ q, word (item v 1) <+: word q ∧ (CommonIdeal.run Y e (word q) (item v 0)).Dom
 
@@ -95,6 +101,7 @@ theorem convergesAbove_sigma (Y : Oracle) (e : OracleCode) : Sigma Y 1 (Converge
   unfold ConvergesAbove
   simpa only [Nat.unpair_pair] using ((Form.raise (n := 0) (s := true) hp).and hh).ex
 
+/-- A coded extension above which the specified input has no convergent extension. -/
 def DivCert (Y : Oracle) (e : OracleCode) (v : ℕ) : Prop :=
   word (Nat.unpair v).1 <+: word (item (Nat.unpair v).2 1) ∧
     ¬ ConvergesAbove Y e (Nat.unpair v).2
@@ -107,6 +114,8 @@ theorem divCert_recursive (Y : Oracle) (e : OracleCode) : RecursivePred (jump Y)
   exact recursive_and hp (recursive_comp (recursive_not (form_recursive (convergesAbove_sigma Y
     e))) r)
 
+/-- A tagged certificate settling a splitting requirement by no split, a one-point split, or
+divergence. -/
 def Accept (Y : Oracle) (e : OracleCode) (v : ℕ) : Prop :=
   let p := (Nat.unpair v).1
   let tag := (Nat.unpair (Nat.unpair v).2).1
@@ -152,6 +161,7 @@ theorem accept_total (Y : Oracle) (e : OracleCode) : ∀ p, ∃ w, Accept Y e (N
         exact hd u a (hu ▸ ha)
   · exact ⟨Nat.pair 0 0,Or.inl ⟨by simp,by simpa using hs⟩⟩
 
+/-- Choose the least accepted certificate for the given splitting requirement. -/
 noncomputable def step (Y : Oracle) (e : OracleCode) : ℕ → ℕ :=
   least (Accept Y e) (accept_total Y e)
 

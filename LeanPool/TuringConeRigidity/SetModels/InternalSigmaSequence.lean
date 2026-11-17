@@ -14,6 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.Syntax.SigmaSequenceTrace
+public import LeanPool.TuringConeRigidity.Constructibility.HierarchySyntax
 
 /-!
 # Internal Sigma Sequence

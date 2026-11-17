@@ -13,7 +13,7 @@ Module paths, interfaces, and proofs are ported to the pool's toolchain and gate
 module
 
 public import LeanPool.TuringConeRigidity.TuringConeRelativeAntichain
-public import LeanPool.TuringConeRigidity.Effective.EffectiveRelations
+public import LeanPool.TuringConeRigidity.CohenForcing.CohenColumns
 
 /-!
 # Uniform relation codes inside a principal cone

@@ -31,6 +31,7 @@ universe u
 noncomputable section
 attribute [local instance] Classical.propDecidable
 
+/-- Read coordinate `i` from the decoded node at stage `i + 1` of a chain. -/
 def unionRead (c : ℕ → ℕ) (i : ℕ) : ℕ := (decodeNode (c (i+1)))[i]?.getD 0
 
 private theorem length_chain (c : ℕ → ℕ)

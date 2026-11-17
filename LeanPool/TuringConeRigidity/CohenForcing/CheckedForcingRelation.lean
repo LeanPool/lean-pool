@@ -14,7 +14,6 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.Syntax.CheckedMembershipSeparation
-public import LeanPool.TuringConeRigidity.Syntax.SigmaDisjunction
 
 /-!
 # Checked Forcing Relation
@@ -29,6 +28,8 @@ namespace TuringRigidity.CheckedForcingRelation
 open TransitiveNameModel BoundedSetTheory CountableForcing RecursiveNames AtomicForcing
 variable {c : ZFSet.{0}} [Preorder (Conditions c)] [Top (Conditions c)]
 
+/-- Set-coded graph pairing a ground-model element with conditions forcing its membership in
+`τ`. -/
 noncomputable def relation (a : ZFSet.{0}) (τ : Name (Conditions c)) : ZFSet.{0} :=
   (ZFSet.prod a c).sep (fun z => ∃ x ∈ a, ∃ p : Conditions c,
     z = ZFSet.pair x (label c p) ∧ MemForces (Name.check x) τ p)

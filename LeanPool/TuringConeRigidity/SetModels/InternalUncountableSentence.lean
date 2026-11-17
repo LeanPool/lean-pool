@@ -13,8 +13,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.SetModels.InternalCountableOrdinals
 public import LeanPool.TuringConeRigidity.SetModels.ElementarySatisfaction
+public import LeanPool.TuringConeRigidity.SetModels.InternalCountableFamily
 
 /-!
 # Internal Uncountable Sentence
@@ -28,6 +28,7 @@ namespace OAI
 namespace TuringRigidity.InternalUncountableSentence
 open TransitiveNameModel BoundedSetTheory ElementaryModel
 
+/-- Bounded formula asserting that a function graph maps omega onto the designated set. -/
 def ontoMatrix (f ω A : ℕ) : Formula :=
   .conj (.functionGraph f ω A) (.allMem A (.existsMem (ω+1) (.pairMem 0 1 (f+2))))
 
@@ -37,6 +38,7 @@ theorem ontoMatrix_spec (f ω A : ℕ) (e : ℕ → ZFSet.{0}) :
   simp only [ontoMatrix,Formula.Eval,Formula.eval_functionGraph,Formula.eval_allMem,
     Formula.eval_pairMem,FunctionGraph,cons_zero,cons_succ]
 
+/-- A full formula asserting existence of a function graph from omega onto `A`. -/
 noncomputable def countableSentence (A ω : ℕ) : SentenceForm :=
   .ex (fromBounded (ontoMatrix 0 (ω+1) (A+1)))
 
@@ -54,6 +56,8 @@ theorem countableSentence_spec (M : ZFSet.{0}) (hM : Transitive M) (A ω : ℕ)
     · exact he _),ontoMatrix_spec]
   simp only [cons_zero,cons_succ,hω]
 
+/-- A full formula asserting that the parameter is a nonempty ordinal admitting no surjection
+from omega. -/
 noncomputable def uncountableOrdinalSentence : SentenceForm :=
   .conj (fromBounded (.conj (.transitive 0) (.allMem 0 (.transitive 0))))
     (.conj (.neg (fromBounded (.empty 0))) (.neg (countableSentence 0 1)))

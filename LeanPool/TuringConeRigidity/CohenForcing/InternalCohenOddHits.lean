@@ -15,6 +15,7 @@ module
 
 public import LeanPool.TuringConeRigidity.OrdinalCodes.NumericalCohenSets
 public import LeanPool.TuringConeRigidity.CohenForcing.InternalCohenFilters
+public import LeanPool.TuringConeRigidity.SetModels.ModelArithmeticComprehension
 
 /-!
 # Internal Cohen Odd Hits
@@ -42,6 +43,7 @@ theorem oddHit_arith (N : ℕ) : Arith (fun (_ : Oracles) v => OddHit N (word v)
   exact (hn.and (hlen.and hb)).ex.congr (fun _ _ => by
     simp only [OddHit,left,right,Nat.unpair_pair])
 
+/-- An arithmetic oracle coding words satisfying the odd-coordinate hitting requirement. -/
 noncomputable def oddHitCodes (N : ℕ) : Oracle :=
   arithmeticReal (fun (_ : Oracles) v => OddHit N (word v)) (fun _ => decodeReal (∅ : ZFSet.{0}))
 

@@ -28,6 +28,8 @@ namespace TuringRigidity.TransitiveNameModel
 open BoundedSetTheory
 universe u
 
+/-- A sigma formula requesting a finite iteration certificate for the specified iterated union
+value. -/
 def unionCertificate : SigmaFormula := .existsSet (.existsSet (.existsSet (.bounded
   (.conj (.successor 2 4) (.conj (IterationFormula.iteration 2 1 0 5 6) (.pairMem 4 3 0))))))
 

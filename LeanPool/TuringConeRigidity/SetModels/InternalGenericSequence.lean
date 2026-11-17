@@ -14,7 +14,6 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.Representation.SourceTDependentChoice
-public import LeanPool.TuringConeRigidity.SetModels.CountableSetReal
 
 /-!
 # Internal Generic Sequence
@@ -33,6 +32,8 @@ universe u
 namespace Code
 open Formula
 
+/-- Bounded formula for one numbered condition step meeting the next enumerated dense
+requirement. -/
 def step (ω c E D o s z : ℕ) : Formula :=
   .existsMem ω (.existsMem (c+1) (.existsMem (ω+2) (.existsMem (c+3)
     (.existsMem (D+4) (.existsMem (s+5) (.existsMem (s+6)
@@ -57,6 +58,7 @@ theorem eval_step (ω c E D o s z : ℕ) (e : ℕ → ZFSet.{u})
     · rw [hs]; exact ZFSet.mem_prod.mpr ⟨m,hm,q,hq,rfl⟩
 end Code
 
+/-- The set-coded transition relation for the internal generic-filter construction. -/
 noncomputable def stepRelation (c E D o : ZFSet.{u}) : ZFSet.{u} :=
   let s := ZFSet.prod ZFSet.omega c
   ZFSet.sep (fun z => (Code.step 1 2 3 4 5 6 0).Eval

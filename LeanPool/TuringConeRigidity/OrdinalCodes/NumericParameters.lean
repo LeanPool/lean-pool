@@ -29,11 +29,14 @@ namespace TuringRigidity.NumericSyntax
 open BoundedSetTheory TransitiveNameModel BoundedDefinability SentenceCoding
 universe u
 
+/-- The numerical parameter environment containing omega, the finite-graph bound, and zero. -/
 def params (Q : ZFSet.{u}) : ℕ → ZFSet.{u} :=
   cons ZFSet.omega (cons Q (fun _ => natSet 0))
 
+/-- The set contains every finite initial graph of every natural-number function. -/
 def Covers (Q : ZFSet.{u}) : Prop := ∀ f : ℕ → ℕ, ∀ k, finiteNaturalGraph f k ∈ Q
 
+/-- A bounded formula defines the predicate uniformly for every adequate finite-graph bound. -/
 def Numeric (P : (ℕ → ZFSet.{u}) → Prop) : Prop :=
   ∃ p : Formula, ∀ Q, Covers Q → ∀ e, p.Eval (mix e (params Q)) ↔ P e
 

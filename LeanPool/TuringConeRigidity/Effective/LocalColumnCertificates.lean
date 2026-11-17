@@ -13,7 +13,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.SetModels.FiniteSupport
+public import LeanPool.TuringConeRigidity.Effective.UniformPair
 
 /-!
 # Local Column Certificates
@@ -27,6 +27,8 @@ namespace OAI
 namespace TuringRigidity.LocalColumnCertificates
 open Encodable UniformOracle ArithmeticHierarchy EncodedForcing CodingForcing
 
+/-- The indexed machine has a finite computation returning the coded output on the coded
+input. -/
 def Output (B : Oracle) (v : ℕ) : Prop :=
   ∃ z, (Nat.unpair (Nat.unpair v).2).2 ∈ TableIndices.run B
     (IndexMatrix.machine (Nat.unpair v).1) (Nat.unpair (Nat.unpair v).2).1 z
@@ -48,6 +50,7 @@ theorem output_sigma (B : Oracle) : Sigma B 1 (Output B) := by
   intro v
   simp only [Output,Nat.unpair_pair]
 
+/-- The first `count` program codes compute the corresponding columns of `F` relative to `B`. -/
 def Presents (B : Oracle) (F : ℕ → Oracle) (codes count : ℕ) : Prop :=
   ∀ k, k < count → TableIndices.Represents B (IndexMatrix.machine (item codes k)) (F k)
 
@@ -62,6 +65,8 @@ theorem output_iff {B : Oracle} {F : ℕ → Oracle} {codes count k : ℕ}
     have he := (h k hk).1 a z b hb
     exact ⟨z,by simpa only [Nat.unpair_pair,hv,he] using hb⟩
 
+/-- A position is already assigned, inactive, or certified to be outside the true coding
+positions. -/
 def Noncoding (B : Oracle) (v : ℕ) : Prop :=
   let codes := (Nat.unpair v).1
   let p := (Nat.unpair (Nat.unpair v).2).1
@@ -98,6 +103,7 @@ theorem noncoding_iff {B : Oracle} {F : ℕ → Oracle} {codes : ℕ} {p : Condi
     simpa only [condition_code] using h
   simpa only [condition_code] using noncoding_condition_iff hh m
 
+/-- The two assigned bits agree unless the position is certified noncoding. -/
 def Allowed (B : Oracle) (v : ℕ) : Prop :=
   let req := (Nat.unpair v).1
   let m := (Nat.unpair v).2
@@ -115,6 +121,7 @@ theorem allowed_sigma (B : Oracle) : Sigma B 1 (Allowed B) := by
     1) r))
   exact (Form.raise (n := 0) (s := true) he).or hn
 
+/-- Extend both words and the active level while respecting all coded position permissions. -/
 def Extension (B : Oracle) (req : ℕ) : Prop :=
   left (item req 1) <+: left (item req 2) ∧ right (item req 1) <+: right (item req 2) ∧
     active (item req 1) ≤ active (item req 2) ∧
@@ -159,6 +166,7 @@ theorem extension_iff {B : Oracle} {F : ℕ → Oracle} {codes : ℕ} {p q : Con
     simpa only [condition_code] using h
   simpa only [condition_code] using extension_condition_iff (q := code q) hh
 
+/-- A one-point splitting certificate is located at a certified noncoding position. -/
 def Bad (B : Oracle) (v : ℕ) : Prop :=
   let req := (Nat.unpair v).1
   let w := (Nat.unpair v).2

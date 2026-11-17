@@ -29,9 +29,13 @@ namespace TuringRigidity.ArithmeticModelDecoding
 open IndexPresentation IndexTuples ArithmeticHierarchy DecodingTheorem
 open SetCoding RelationCoding BoundedDecoding OracleJump
 
+/-- The singleton degree tuple used to query a unary relation code. -/
 def one (a : Degree) : Fin 1 → Degree := ![a]
+/-- The ordered degree pair used to query a binary relation code. -/
 def two (a b : Degree) : Fin 2 → Degree := ![a,b]
+/-- Natural-number code of a singleton index tuple. -/
 def oneIndex (a : ℕ) : ℕ := Nat.pair a 0
+/-- Natural-number code of a pair of indices. -/
 def twoIndex (a b : ℕ) : ℕ := Nat.pair a (Nat.pair b 0)
 
 theorem oneIndex_primrec : Primrec oneIndex := Primrec₂.natPair.comp Primrec.id (Primrec.const 0)
@@ -63,18 +67,25 @@ theorem presented_two {Y p a b} (ha : Dom Y a) (hb : Dom Y b) :
     · simpa [entry,twoIndex] using hb
   simp only [Presented,hd,forall_const,true_and,ht]
 
+/-- A copy of a natural-number successor structure with a distinguished predicate in the
+degrees. -/
 structure Copy (U : ℕ → Prop) where
+  /-- The degree representing each natural number in the copy. -/
   node : ℕ → Degree
   injective : Function.Injective node
+  /-- The binary relation code representing successor on the copy. -/
   successor : RelationCode 2
+  /-- The unary relation code representing the distinguished predicate on the copy. -/
   predicate : RelationCode 1
   successor_spec : ∀ a b, successor.Holds (two a b) ↔ ∃ k, a = node k ∧ b = node (k+1)
   predicate_spec : ∀ a, predicate.Holds (one a) ↔ ∃ k, U k ∧ a = node k
 
+/-- A coded successor path starting at an index equivalent to `z` in the presentation. -/
 def Path (Y : Oracle) (S : RelationCode 2) (z n t : ℕ) : Prop :=
   Dom Y (item t 0) ∧ LE Y (item t 0) z ∧ LE Y z (item t 0) ∧
     ∀ i < n, Presented Y S (twoIndex (item t i) (item t (i+1)))
 
+/-- The predicate holds at the endpoint of a coded successor path of length `n`. -/
 def Defined (Y : Oracle) (S : RelationCode 2) (P : RelationCode 1) (z n : ℕ) : Prop :=
   ∃ t, Path Y S z n t ∧ Presented Y P (oneIndex (item t n))
 

@@ -13,7 +13,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.Representation.SourceTGenericPresentation
+public import LeanPool.TuringConeRigidity.Representation.SourceTheory
 
 /-!
 # Source TGeneric Existence
@@ -25,8 +25,8 @@ public import LeanPool.TuringConeRigidity.Representation.SourceTGenericPresentat
 namespace OAI
 
 namespace TuringRigidity.ArithmeticTree
-open UniformArithmetic ArithmeticPersistence BoundedSetTheory TransitiveNameModel
-open SetModelReals CountableForcing
+open BoundedSetTheory TransitiveNameModel
+open CountableForcing
 universe u
 noncomputable section
 

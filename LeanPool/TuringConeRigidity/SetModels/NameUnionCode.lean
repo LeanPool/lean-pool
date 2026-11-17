@@ -28,6 +28,7 @@ namespace TuringRigidity.TransitiveNameModel
 open Set RecursiveNames BoundedSetTheory
 universe u
 
+/-- Apply set union the specified number of times. -/
 def iterUnion : ℕ → ZFSet.{u} → ZFSet.{u}
   | 0, a => a
   | n+1, a => ZFSet.sUnion (iterUnion n a)
@@ -83,12 +84,15 @@ theorem pair_mem_encode {P : Type u} (l : P → ZFSet.{u}) (τ : Name P)
     simp only [ZFSet.pair_inj,Name.child,Name.tag]
     rfl
 
+/-- A child-condition pair satisfies the coded union-name construction through compatible
+parent and child tags. -/
 def unionPredicate (t p r z : ZFSet.{u}) : Prop :=
   ∃ d ∈ iterUnion 5 t, ∃ s ∈ p, z = ZFSet.pair d s ∧
     ∃ c ∈ iterUnion 2 t, ∃ q ∈ p, ∃ v ∈ p,
       ZFSet.pair c q ∈ t ∧ ZFSet.pair d v ∈ c ∧
         ZFSet.pair s q ∈ r ∧ ZFSet.pair s v ∈ r
 
+/-- Bounded formula describing the child and condition witnesses in a union-name code. -/
 def unionFormula : Formula :=
   .existsMem 3 (.existsMem 5
     (.conj (.orderedPair 2 1 0)
@@ -102,6 +106,7 @@ theorem eval_unionFormula (t p r z : ZFSet.{u}) (env : ℕ → ZFSet.{u}) :
   simp only [unionFormula,Formula.Eval,cons_succ,cons_zero,
     Formula.eval_orderedPair,Formula.eval_pairMem,unionPredicate]
 
+/-- The set code obtained by selecting all union-name pairs from the bounded product. -/
 noncomputable def unionCode (t p r : ZFSet.{u}) : ZFSet.{u} :=
   ZFSet.sep (unionPredicate t p r) (ZFSet.prod (iterUnion 5 t) p)
 

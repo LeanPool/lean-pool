@@ -28,11 +28,14 @@ namespace TuringRigidity.RelativeConstructible
 open ElementaryModel BoundedSetTheory TransitiveNameModel SetModelArithmetic
 universe u
 
+/-- The ordinal associated with a construction input, when the input is an ordinal stage. -/
 noncomputable def Construction.ordinalData (t : Construction.{u}) (k : ℕ) : Option Ordinal.{u} :=
   match t.inputData k with
   | .stage o => some o
   | _ => none
 
+/-- Interpret an optional stage parameter as the corresponding level, or as the real set when
+absent. -/
 noncomputable def stageParameter (R : ZFSet.{u}) : Option Ordinal.{u} → ZFSet.{u}
   | none => R
   | some o => level R o

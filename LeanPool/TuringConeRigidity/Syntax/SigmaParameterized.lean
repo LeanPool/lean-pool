@@ -14,7 +14,6 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.Syntax.BoundedDefinability
-public import LeanPool.TuringConeRigidity.Syntax.SigmaSyntax
 
 /-!
 # Sigma Parameterized
@@ -30,6 +29,8 @@ namespace TuringRigidity.BoundedDefinability
 open BoundedSetTheory TransitiveNameModel SetModelFunctions
 universe u
 
+/-- A sigma formula defines the predicate on model-valued environments using fixed parameters
+from `M`. -/
 def SigmaDefinable (M : ZFSet.{u}) (P : (ℕ → ZFSet.{u}) → Prop) : Prop :=
   ∃ p : SigmaFormula, ∃ d : ℕ → ZFSet.{u}, (∀ i, d i ∈ M) ∧
     ∀ e, (∀ i, e i ∈ M) → (p.Realize M (mix e d) ↔ P e)
@@ -79,7 +80,7 @@ theorem SigmaDefinable.binary (F : ZFSet.{u} → ZFSet.{u})
     · intro n
       cases n with
       | zero => rfl
-      | succ n => simp [r,show ¬ 2 * (n+1) ≤ 1 by omega]
+      | succ n => simp [r]
     · intro n; simp [r,Nat.add_div]
   change p.Realize M (cons y (cons x d) ∘ r) ↔ _
   rw [he]

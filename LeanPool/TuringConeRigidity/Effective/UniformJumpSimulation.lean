@@ -53,6 +53,7 @@ theorem run_program (Y : X → Oracle) :
   exact (total_comp hdecode (total_pair ht (total_pair he (total_pair hL hn)))).of_eq
     (fun x v => by simp [TableIndices.run,UniformOracle.trial])
 
+/-- Return zero for a decoded successful computation and one for an absent result. -/
 def haltFlag (v : ℕ) : ℕ :=
   if ((decode (α := Option ℕ) v).getD none).isSome then 0 else 1
 
@@ -65,6 +66,7 @@ theorem haltFlag_primrec : Primrec haltFlag := by
   cases h : ((decode (α := Option ℕ) n).getD none).isSome <;>
     simp only [haltFlag,h] <;> rfl
 
+/-- Search for a finite trial witnessing halting of the indexed oracle machine. -/
 def haltingSearch (Y : Oracle) (v : ℕ) : Part ℕ :=
   Nat.rfind (fun z => Part.some (run Y (machine (Nat.unpair v).1) (Nat.unpair v).2 z).isSome)
 

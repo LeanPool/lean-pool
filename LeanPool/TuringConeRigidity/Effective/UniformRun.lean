@@ -14,7 +14,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.Effective.UniformProgram
-public import LeanPool.TuringConeRigidity.CohenForcing.CohenRun
+public import LeanPool.TuringConeRigidity.CohenForcing.EncodedForcing
+public import LeanPool.TuringConeRigidity.Computability.ArithmeticAtoms
 
 /-!
 # Uniform Run
@@ -26,14 +27,18 @@ public import LeanPool.TuringConeRigidity.CohenForcing.CohenRun
 namespace OAI
 
 namespace TuringRigidity.UniformRun
-open Encodable Computable UniformOracle CommonIdeal ArithmeticHierarchy OracleJump EncodedForcing
+open Encodable Computable UniformOracle CommonIdeal ArithmeticHierarchy EncodedForcing
   IndexMatrix
 open UniformProgram
 
+/-- Evaluate a uniform program using the computed background oracle joined with a finite word
+table. -/
 def run (A : Oracle) (b e : Code) (p : List Bool) (n : ℕ) : Part ℕ :=
   OracleCode.eval (partialJoin (OracleCode.eval (oracleFunction A) (meaning b)) (table p))
     (meaning e) n
 
+/-- Evaluate the same uniform computation from a finite numerical approximation to the
+background oracle. -/
 def finiteRun (z : List ℕ × Code × Code × List Bool × ℕ) : Part ℕ :=
   OracleCode.eval (partialJoin (OracleCode.eval (BranchMachine.lookup z.1) (meaning z.2.1))
     (table z.2.2.2.1)) (meaning z.2.2.1) z.2.2.2.2
@@ -113,6 +118,7 @@ theorem run_table (A : Oracle) : ∃ d : Nat.Partrec.Code,
     rw [hd'] at hh
     exact ha.1 (Nat.unpair z).1 a hh
 
+/-- The natural-number-coded graph of uniform evaluation with a finite word oracle. -/
 def Graph (A : Oracle) (v : ℕ) : Prop :=
   item v 4 ∈ run A (machine (item v 0)) (machine (item v 1)) (word (item v 2)) (item v 3)
 

@@ -16,6 +16,7 @@ module
 public import LeanPool.TuringConeRigidity.Computability.ArithmeticPrefixForcing
 public import LeanPool.TuringConeRigidity.OrdinalCodes.NumericalCohenSets
 public import LeanPool.TuringConeRigidity.CohenForcing.InternalCohenFilters
+public import LeanPool.TuringConeRigidity.SetModels.ModelArithmeticComprehension
 
 /-!
 # Ground Arithmetic Generic

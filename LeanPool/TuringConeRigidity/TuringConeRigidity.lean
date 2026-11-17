@@ -11,7 +11,10 @@ Module paths, interfaces, and proofs are ported to the pool's toolchain and gate
 
 module
 
-public import LeanPool.TuringConeRigidity.Representation.CoverageMain
+public import LeanPool.TuringConeRigidity.Computability.CutArithmetic
+public import LeanPool.TuringConeRigidity.Computability.DegreeCoverage
+public import LeanPool.TuringConeRigidity.Computability.EffectiveRecovery
+public import LeanPool.TuringConeRigidity.Representation.CategoryAvoidance
 
 /-!
 # A one-sided Borel obstruction to isomorphisms with proper Turing cones

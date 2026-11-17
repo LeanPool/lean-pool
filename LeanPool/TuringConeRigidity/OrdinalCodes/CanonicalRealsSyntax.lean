@@ -30,6 +30,7 @@ namespace TuringRigidity.RelativeConstructible
 open ElementaryModel BoundedSetTheory TransitiveNameModel
 universe u
 
+/-- A full formula characterizing the model's own power set of its canonical omega. -/
 noncomputable def canonicalReals (r : ℕ) : SentenceForm :=
   .ex (.conj (canonicalOmega 0) (FullSetForcing.ownPower 0 (r+1)))
 

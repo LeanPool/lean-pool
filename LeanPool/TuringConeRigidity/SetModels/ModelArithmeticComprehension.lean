@@ -29,6 +29,7 @@ namespace TuringRigidity.BoundedSetTheory
 open TransitiveNameModel UniformArithmetic
 universe u
 
+/-- The characteristic oracle of predicate `P` under the oracle environment `O`. -/
 noncomputable def arithmeticReal (P : Predicate) (O : Oracles) : Oracle := fun n => by
   classical
   exact decide (P O n)

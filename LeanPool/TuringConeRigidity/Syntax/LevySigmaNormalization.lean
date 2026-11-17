@@ -14,6 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.Syntax.SigmaDisjunction
+public import LeanPool.TuringConeRigidity.Syntax.SigmaBoundedUniversal
 
 /-!
 # Levy Sigma Normalization
@@ -29,6 +30,8 @@ namespace TuringRigidity.BoundedSetTheory
 open TransitiveNameModel
 universe u
 
+/-- Levy-sigma syntax with bounded formulas, positive Boolean operations, and existential or
+bounded quantifiers. -/
 inductive LevySigma where
   | bounded (φ : Formula)
   | conj (φ ψ : LevySigma)
@@ -38,6 +41,7 @@ inductive LevySigma where
   | allMem (a : ℕ) (φ : LevySigma)
 
 namespace LevySigma
+/-- Interpret Levy-sigma syntax with set witnesses restricted to the model. -/
 def Realize (M : ZFSet.{u}) (e : ℕ → ZFSet.{u}) : LevySigma → Prop
   | .bounded φ => φ.Realize M e
   | .conj φ ψ => φ.Realize M e ∧ ψ.Realize M e
@@ -46,6 +50,7 @@ def Realize (M : ZFSet.{u}) (e : ℕ → ZFSet.{u}) : LevySigma → Prop
   | .existsMem a φ => ∃ x ∈ M, x ∈ e a ∧ φ.Realize M (cons x e)
   | .allMem a φ => ∀ x ∈ M, x ∈ e a → φ.Realize M (cons x e)
 
+/-- Normalize Levy-sigma syntax to an existential set prefix over a bounded matrix. -/
 def normalize : LevySigma → SigmaFormula
   | .bounded φ => .bounded φ
   | .conj φ ψ => .conj φ.normalize ψ.normalize
@@ -89,10 +94,13 @@ theorem normalize_correct (M : ZFSet.{u}) (hM : Transitive M)
       exact (ih (cons x e) (by intro i; cases i <;> simp [cons,he,hx])).mpr (h x hx hxa)
 end LevySigma
 
+/-- The model admits separation for Levy-sigma formulas with model parameters. -/
 def LevySigmaSeparation (M : ZFSet.{u}) : Prop :=
   ∀ (φ : LevySigma) (e : ℕ → ZFSet.{u}), (∀ i, e i ∈ M) → ∀ a ∈ M,
     ∃ b ∈ M, ∀ x ∈ M, x ∈ b ↔ x ∈ a ∧ φ.Realize M (cons x e)
 
+/-- The model admits replacement for internally single-valued Levy-sigma relations with model
+parameters. -/
 def LevySigmaReplacement (M : ZFSet.{u}) : Prop :=
   ∀ (φ : LevySigma) (e : ℕ → ZFSet.{u}), (∀ i, e i ∈ M) → ∀ a ∈ M,
     (∀ x ∈ a, ∃ y ∈ M, φ.Realize M (cons y (cons x e)) ∧

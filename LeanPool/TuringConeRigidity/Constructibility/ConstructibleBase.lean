@@ -13,7 +13,6 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.Syntax.DefinablePower
 public import LeanPool.TuringConeRigidity.SetModels.NameUnionCode
 
 /-!
@@ -30,6 +29,7 @@ namespace TuringRigidity.RelativeConstructible
 open TransitiveNameModel
 universe u
 
+/-- The least transitive set containing `R` as an element. -/
 noncomputable def seed (R : ZFSet.{u}) : ZFSet.{u} :=
   ZFSet.sUnion (ZFSet.range (fun n : ℕ => iterUnion n ({R} : ZFSet)))
 

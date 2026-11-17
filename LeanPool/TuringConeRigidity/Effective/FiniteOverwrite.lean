@@ -13,8 +13,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.Effective.UniformOracleSimulation
 public import LeanPool.TuringConeRigidity.Effective.FiniteShuffle
+public import LeanPool.TuringConeRigidity.Effective.UniformPrograms
 
 /-!
 # Finite Overwrite
@@ -29,6 +29,7 @@ namespace OAI
 namespace TuringRigidity.FiniteOverwrite
 open UniformPrograms
 
+/-- Replace the initial segment of `A` by the finite word `s`. -/
 def overwrite (s : List Bool) (A : Oracle) (n : ℕ) : Bool :=
   if n < s.length then s.getD n false else A n
 

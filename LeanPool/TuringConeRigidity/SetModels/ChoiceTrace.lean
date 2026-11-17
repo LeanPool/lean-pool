@@ -13,9 +13,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.SetModels.InternalHartogs
-public import LeanPool.TuringConeRigidity.SetModels.InternalChoice
 public import LeanPool.TuringConeRigidity.Syntax.TermFunctionality
+public import Mathlib.SetTheory.ZFC.Ordinal
 
 /-!
 # Choice Trace
@@ -32,9 +31,11 @@ open TransitiveNameModel
 universe u
 namespace InternalWellOrder
 
+/-- The members of `a` not yet selected by the graph at indices belonging to `i`. -/
 def Remaining (a f i r : ZFSet.{u}) : Prop := r ⊆ a ∧
   ∀ x ∈ a, x ∈ r ↔ ¬ ∃ j ∈ i, ZFSet.pair j x ∈ f
 
+/-- A set-coded initial trace choosing from the remaining elements at every recorded index. -/
 structure Trace (α a q s f : ZFSet.{u}) : Prop where
   shape : ∀ z ∈ f, ∃ i ∈ α, ∃ x ∈ a, z = ZFSet.pair i x
   initial : ∀ i ∈ α, ∀ x ∈ a, ZFSet.pair i x ∈ f →

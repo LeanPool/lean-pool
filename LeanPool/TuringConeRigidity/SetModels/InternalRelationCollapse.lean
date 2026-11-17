@@ -29,6 +29,7 @@ namespace TuringRigidity.RelationCollapse
 open TransitiveNameModel BoundedSetTheory
 universe u
 
+/-- The set of values already assigned to the relation predecessors of `x`. -/
 noncomputable def nextValue (d r x f : ZFSet.{u}) : ZFSet.{u} :=
   ZFSet.sep (fun z => ∃ y ∈ d, ZFSet.pair y x ∈ r ∧ ZFSet.pair y z ∈ f) (iterUnion 2 f)
 
@@ -41,6 +42,7 @@ theorem mem_nextValue (d r x f z : ZFSet.{u}) :
     obtain ⟨y,hy,hyx,hyz⟩ := h
     exact ⟨second_mem_doubleUnion hyz,y,hy,hyx,hyz⟩
 
+/-- Bounded formula describing membership in the predecessor-value set. -/
 def nextFormula : Formula := .existsMem 1 (.conj (.pairMem 0 3 4) (.pairMem 0 1 5))
 
 theorem nextValue_mem (M : ZFSet.{u}) (hM : Transitive M)
@@ -62,6 +64,7 @@ theorem nextValue_mem (M : ZFSet.{u}) (hM : Transitive M)
   simpa only [nextFormula,Formula.Eval,Formula.eval_pairMem,cons_zero,cons_succ,e,nextValue] using
     sep_mem M hM hS nextFormula e he (iterUnion_mem M hM hU hf 2)
 
+/-- A sigma formula requesting a relation hull and a collapse graph certificate. -/
 def certificate : SigmaFormula := .existsSet (.existsSet (.bounded
   (.conj (RelationHull.Code.isHull 1 3 4 5 6) (Code.graph 5 6 1 0 2))))
 

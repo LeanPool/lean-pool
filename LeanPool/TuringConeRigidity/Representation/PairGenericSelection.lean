@@ -27,6 +27,7 @@ namespace OAI
 namespace TuringRigidity.PairGenericSelection
 open FiniteShuffle ShuffleRequirements GenericTopology GenericCoding Set
 
+/-- Extract the even column when the flag is false, and the odd column when it is true. -/
 def column (b : Bool) (G : Oracle) : Oracle :=
   fun n => if b then G (2*n+1) else G (2*n)
 
@@ -40,6 +41,7 @@ theorem column_measurable (b : Bool) : Measurable (column b) := by
   intro n
   cases b <;> exact measurable_pi_apply _
 
+/-- A finite word ensures that the selected column realizes some word in `D`. -/
 def ColumnRequirement (D : List Bool → Prop) (b : Bool) (s : List Bool) : Prop :=
   ∃ t, D t ∧ ∀ G, Realizes s G → Realizes t (column b G)
 
@@ -78,6 +80,7 @@ theorem column_denseOpen (D : List Bool → Prop) (hd : DenseOpen D) (b : Bool) 
     rintro ⟨u,hD,hu⟩
     exact ⟨u,hD,fun G hG => hu G (realizes_mono hst hG)⟩
 
+/-- Enumerate both column projections of the dense-open requirement family. -/
 def PairRequirements (D : ℕ → List Bool → Prop) (n : ℕ) : List Bool → Prop :=
   ColumnRequirement (Requirements D (n/2)) (decide (n%2 = 1))
 

@@ -13,8 +13,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.Syntax.SigmaDefinability
-public import LeanPool.TuringConeRigidity.SetModels.ElementarySchemas
+public import LeanPool.TuringConeRigidity.Representation.SourceTheory
+public import LeanPool.TuringConeRigidity.SetModels.ElementarySatisfaction
 
 /-!
 # Full Set Forcing
@@ -32,6 +32,8 @@ open ElementaryModel SentenceForm BoundedForcing
 universe u
 variable {c : ZFSet.{u}} [Preorder (Conditions c)]
 
+/-- Forcing for full set-theoretic sentences, with quantified names restricted to codes in
+`M`. -/
 def Forces (M : ZFSet.{u}) (e : ℕ → Name (Conditions c)) : SentenceForm → Conditions c → Prop
   | .equal i j, p => EqForces (e i) (e j) p
   | .member i j, p => MemForces (e i) (e j) p
@@ -48,6 +50,7 @@ theorem forces_mono (M : ZFSet.{u}) (φ : SentenceForm) (e : ℕ → Name (Condi
   | neg φ ih => exact fun r hr => h r (hr.trans hqp)
   | ex φ ih => obtain ⟨a,ha,hf⟩ := h; exact ⟨a,ha,ih _ hf⟩
 
+/-- Full set-theoretic formula encoding the forcing relation for a sentence. -/
 noncomputable def code : SentenceForm → ℕ → ℕ → ℕ → (ℕ → ℕ) → SentenceForm
   | .equal i j, ci,oi,pi,v => fromSigma (SigmaCode.forcing (.bounded (.equal i j)) ci oi pi v)
   | .member i j, ci,oi,pi,v => fromSigma (SigmaCode.forcing (.bounded (.member i j)) ci oi pi v)

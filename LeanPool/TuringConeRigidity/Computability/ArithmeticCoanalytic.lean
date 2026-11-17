@@ -13,8 +13,9 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.Computability.ArithmeticPresentationProperty
 public import Mathlib.MeasureTheory.Constructions.Polish.Basic
+
+public import LeanPool.TuringConeRigidity.Computability.ArithmeticPresentationProperty
 
 /-!
 # Arithmetic Coanalytic

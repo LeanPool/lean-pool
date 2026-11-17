@@ -28,12 +28,15 @@ namespace OAI
 namespace TuringRigidity.BoundedSetTheory
 universe u
 
+/-- The arithmetic formula defines equality of the Turing degrees of two real codes. -/
 def DegreeEqualityFormula (φ : Formula) : Prop := ∀ o Q z x y : ℕ, ∀ e : ℕ → ZFSet.{u},
     e o = ZFSet.omega → (∀ f : ℕ → ℕ, ∀ k, finiteNaturalGraph f k ∈ e Q) →
     e z = natSet 0 → ∀ A B : Oracle, e x = realCode A → e y = realCode B →
       ((Formula.twoOracles φ o Q z x y).Eval e ↔ degree A = degree B)
 
 namespace Formula
+/-- Bounded formula selecting exactly the real codes in `R` equivalent to the oracle
+parameter. -/
 def degreeSet (φ : Formula) (o Q z R A D : ℕ) : Formula :=
   .conj (.subset D R) (allMem R (iff (.member 0 (D+1)) (twoOracles φ (o+1) (Q+1) (z+1) 0 (A+1))))
 

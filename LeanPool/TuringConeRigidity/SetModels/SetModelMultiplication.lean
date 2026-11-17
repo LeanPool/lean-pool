@@ -29,6 +29,7 @@ open BoundedSetTheory TransitiveNameModel SetModelReals SetModelIteration
 universe u
 noncomputable section
 
+/-- Bounded formula extracting a multiplication value from an iterated-addition graph. -/
 def mulFormula (n m k i d D z : ℕ) : Formula :=
   .existsMem d (.existsMem (d+1) (.existsMem (D+2)
     (.conj (.orderedPair 2 (m+3) (z+3)) (.conj (.orderedPair 1 (m+3) (k+3))
@@ -62,6 +63,7 @@ theorem eval_mulFormula (n m k i d D z : ℕ) (e : ℕ → ZFSet.{u}) (a b c : �
     exact (mem_iterationSet addStep addStep_closed _).mpr
       ⟨a,numberPair (b,0),hs,by rw [iterate_addStep,hc]⟩
 
+/-- The set-coded multiplication graph on pairs of natural numbers. -/
 def multiplicationSet : ZFSet.{u} := ZFSet.sep
   (fun z => ∃ n m, z = ZFSet.pair (numberPair (n,m)) (natSet (n*m)))
   (ZFSet.prod pairNumbers ZFSet.omega)
@@ -80,6 +82,7 @@ theorem multiplication_code (n m k : ℕ) :
     exact ⟨⟨(mem_pairNumbers _).mpr ⟨_,rfl⟩,(mem_omega _).mpr ⟨k,rfl⟩⟩,
       n,m,by rw [hk]⟩
 
+/-- Bounded formula describing membership in the set-coded multiplication graph. -/
 def multiplicationFormula : Formula :=
   .existsMem 1 (.existsMem 2 (.existsMem 3 (.existsMem 5
     (.conj (.orderedPair 4 0 1) (.conj (.orderedPair 0 3 2)

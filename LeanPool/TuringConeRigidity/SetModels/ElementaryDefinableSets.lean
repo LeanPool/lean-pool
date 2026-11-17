@@ -13,8 +13,9 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.SetModels.ElementaryRealModel
-public import LeanPool.TuringConeRigidity.Representation.NativeModelCompatibility
+public import LeanPool.TuringConeRigidity.SetModels.DegreeSetFormula
+public import LeanPool.TuringConeRigidity.SetModels.ElementarySatisfaction
+public import LeanPool.TuringConeRigidity.SetModels.SetDegreeDecoding
 
 /-!
 # Elementary Definable Sets
@@ -82,7 +83,9 @@ theorem collapse_orderedPair (a : ℕ → ZFSet.{u}) {x y : ZFSet.{u}}
   rw [collapse_unorderedPair a hx hx,collapse_unorderedPair a hx hy] at hh
   simpa [ZFSet.pair] using hh
 
+/-- The ambient set of all subsets of omega. -/
 noncomputable def ambientRealSet : ZFSet.{u} := ZFSet.powerset ZFSet.omega
+/-- The ambient set of all binary relations on omega. -/
 noncomputable def ambientGraphBound : ZFSet.{u} := ZFSet.powerset (ZFSet.prod ZFSet.omega
   ZFSet.omega)
 

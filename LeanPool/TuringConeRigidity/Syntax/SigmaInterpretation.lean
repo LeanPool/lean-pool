@@ -13,8 +13,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.Representation.GenericFilterName
 public import LeanPool.TuringConeRigidity.Syntax.MembershipInterpretation
+public import LeanPool.TuringConeRigidity.Representation.GroundInclusion
 
 /-!
 # Sigma Interpretation
@@ -29,6 +29,7 @@ namespace TuringRigidity.BoundedSetTheory
 open TransitiveNameModel
 universe u
 
+/-- Translate a sigma formula into full membership-formula syntax. -/
 def SigmaFormula.toMembership : SigmaFormula → RecursiveNames.Formula
   | .bounded φ => φ.toMembership
   | .existsSet φ => .existsSet φ.toMembership
@@ -44,6 +45,7 @@ theorem SigmaFormula.realize_toMembership (φ : SigmaFormula) (M : ZFSet.{u})
     simp only [toMembership,RecursiveNames.Formula.Realize,SigmaFormula.Realize,hc]
     exact exists_congr (fun x => and_congr_right (fun _ => ih (cons x e)))
 
+/-- The model admits separation for existential-prefix sigma formulas with model parameters. -/
 def SigmaSeparation (M : ZFSet.{u}) : Prop :=
   ∀ (φ : SigmaFormula) (e : ℕ → ZFSet.{u}), (∀ i, e i ∈ M) →
     ∀ a ∈ M, ∃ b ∈ M, ∀ x ∈ M, x ∈ b ↔ x ∈ a ∧ φ.Realize M (cons x e)

@@ -14,6 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.OrdinalCodes.TrimmedOrderDomains
+public import LeanPool.TuringConeRigidity.OrdinalCodes.OrdinalSumSets
 
 /-!
 # Trimmed Sum Domains
@@ -28,9 +29,11 @@ namespace TuringRigidity.OrdinalArithmetic
 open TransitiveNameModel BoundedSetTheory RelationCollapse ElementaryModel RelativeConstructible
 universe u
 
+/-- A bounded full-sentence definition of the trimmed tagged ordinal-sum domain. -/
 noncomputable def trimmedSumDomainSentence : SentenceForm := fromBounded
   (.disj (.existsMem 1 (.orderedPair 1 4 0)) (.existsMem 2 (.orderedPair 1 5 0)))
 
+/-- A full formula describing the trimmed ordinal-sum relation. -/
 noncomputable def trimmedSumRelationSentence : SentenceForm :=
   .ex (.ex (fromBounded (.conj (.orderedPair 2 1 0) (sumLessFormula 3 4 5 6 1 0))))
 

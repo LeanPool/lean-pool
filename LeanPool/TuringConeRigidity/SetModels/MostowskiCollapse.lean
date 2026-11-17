@@ -29,6 +29,7 @@ namespace TuringRigidity.RelationCollapse
 open TransitiveNameModel BoundedSetTheory
 universe u
 
+/-- The relation's predecessor sets distinguish any two elements of the designated domain. -/
 def Extensional (d r : ZFSet.{u}) : Prop :=
   ∀ x ∈ d, ∀ y ∈ d, (∀ z ∈ d, ZFSet.pair z x ∈ r ↔ ZFSet.pair z y ∈ r) → x = y
 
@@ -64,6 +65,7 @@ theorem value_mem_iff {d r : ZFSet.{u}} (wf : WellFounded (Rel d r))
   · intro hxy
     exact ⟨x,hx,hxy,rfl⟩
 
+/-- The output values assigned by the graph `f` to inputs in `d`. -/
 noncomputable def graphRange (d f : ZFSet.{u}) : ZFSet.{u} :=
   ZFSet.sep (fun v => ∃ x ∈ d, ZFSet.pair x v ∈ f) (iterUnion 2 f)
 

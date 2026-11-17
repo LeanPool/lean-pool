@@ -30,6 +30,8 @@ namespace TuringRigidity.ElementaryModel
 open BoundedSetTheory
 universe u
 
+/-- Full first-order set-theoretic syntax with equality, membership, conjunction, negation,
+and existential quantification. -/
 inductive SentenceForm where
   | equal (i j : ℕ)
   | member (i j : ℕ)
@@ -47,6 +49,7 @@ def toTree : SentenceForm → EncodableTree
   | .neg p => .cons (.nat 3) (.cons (toTree p) (.nat 0))
   | .ex p => .cons (.nat 4) (.cons (toTree p) (.nat 0))
 
+/-- Decode full formula syntax from the explicit finite-tree representation. -/
 def fromTree : EncodableTree → Option SentenceForm
   | .cons (.nat 0) (.cons (.nat i) (.cons (.nat j) (.nat 0))) => some (.equal i j)
   | .cons (.nat 1) (.cons (.nat i) (.cons (.nat j) (.nat 0))) => some (.member i j)
@@ -69,6 +72,8 @@ instance : Encodable SentenceForm :=
 
 namespace SentenceForm
 
+/-- Satisfaction of a full set-theoretic formula with quantifiers restricted to the domain
+`D`. -/
 def Sat (D : Set ZFSet.{u}) (e : ℕ → ZFSet.{u}) : SentenceForm → Prop
   | .equal i j => e i = e j
   | .member i j => e i ∈ e j
@@ -76,6 +81,7 @@ def Sat (D : Set ZFSet.{u}) (e : ℕ → ZFSet.{u}) : SentenceForm → Prop
   | .neg p => ¬ p.Sat D e
   | .ex p => ∃ x ∈ D, p.Sat D (cons x e)
 
+/-- An upper bound on the free-variable indices used by a formula. -/
 def bound : SentenceForm → ℕ
   | .equal i j | .member i j => max i j + 1
   | .conj p q => max p.bound q.bound
@@ -107,9 +113,13 @@ theorem finite_support (p : SentenceForm) (D : Set ZFSet.{u})
     | zero => rfl
     | succ i => exact h i (by simp only [bound] at h ⊢; omega)
 
+/-- Disjunction expressed using conjunction and negation. -/
 def disj (p q : SentenceForm) : SentenceForm := .neg (.conj (.neg p) (.neg q))
+/-- Implication expressed using conjunction and negation. -/
 def imp (p q : SentenceForm) : SentenceForm := .neg (.conj p (.neg q))
+/-- Biconditional expressed as the conjunction of the two implications. -/
 def iff (p q : SentenceForm) : SentenceForm := .conj (imp p q) (imp q p)
+/-- Universal quantification expressed using negation and existential quantification. -/
 def all (p : SentenceForm) : SentenceForm := .neg (.ex (.neg p))
 
 @[simp] theorem sat_disj (p q : SentenceForm) (D : Set ZFSet.{u}) (e : ℕ → ZFSet.{u}) :
@@ -121,6 +131,7 @@ def all (p : SentenceForm) : SentenceForm := .neg (.ex (.neg p))
 @[simp] theorem sat_all (p : SentenceForm) (D : Set ZFSet.{u}) (e : ℕ → ZFSet.{u}) :
     (all p).Sat D e ↔ ∀ x ∈ D, p.Sat D (cons x e) := by classical simp [all,Sat]
 
+/-- Rename free variables, lifting the renaming under each bound set variable. -/
 def rename (v : ℕ → ℕ) : SentenceForm → SentenceForm
   | .equal i j => .equal (v i) (v j)
   | .member i j => .member (v i) (v j)
@@ -144,6 +155,8 @@ theorem sat_rename (p : SentenceForm) (v : ℕ → ℕ)
     exact (ih _ _).trans (he ▸ Iff.rfl)
 end SentenceForm
 
+/-- Every formula with parameters in `D` has the same truth value in `D` and in the ambient
+universe. -/
 def Elementary (D : Set ZFSet.{u}) : Prop :=
   ∀ p : SentenceForm, ∀ e : ℕ → ZFSet.{u}, (∀ i, e i ∈ D) →
     (p.Sat D e ↔ p.Sat Set.univ e)

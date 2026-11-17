@@ -14,8 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.SetModels.InternalSubsetSequence
-public import LeanPool.TuringConeRigidity.SetModels.InternalCountableClosure
-public import Mathlib.Data.Set.Finite.Powerset
+public import LeanPool.TuringConeRigidity.SetModels.InternalCountableFamily
 
 /-!
 # Internal Finite Exhaustion
@@ -29,6 +28,7 @@ namespace OAI
 namespace TuringRigidity.InternalFiniteExhaustion
 open TransitiveNameModel BoundedSetTheory InternalFiniteSubsets
 
+/-- The set of the first `n` values of a set-valued sequence. -/
 noncomputable def initial (f : ℕ → ZFSet.{0}) (n : ℕ) : ZFSet.{0} :=
   ZFSet.range (fun i : Fin n => f i.val)
 
@@ -48,6 +48,7 @@ theorem initial_subset (A : ZFSet.{0}) (f : ℕ → ZFSet.{0})
   obtain ⟨k,_,rfl⟩ := (mem_initial f n x).mp hx
   exact hf k
 
+/-- Bounded formula asserting that `x` occurs in the graph before the index `n`. -/
 def initialFormula (g n x : ℕ) : Formula := .existsMem n (.pairMem 0 (x+1) (g+1))
 
 theorem initialFormula_spec (g n x : ℕ) (e : ℕ → ZFSet.{0})

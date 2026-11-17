@@ -13,7 +13,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.Computability.ArithmeticGenericTruth
+public import LeanPool.TuringConeRigidity.Computability.ArithmeticPrefixForcing
 
 /-!
 # Arithmetic Prefix Families

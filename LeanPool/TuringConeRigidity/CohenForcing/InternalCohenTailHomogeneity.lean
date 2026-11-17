@@ -14,7 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.CohenForcing.InternalCohenHomogeneity
-public import LeanPool.TuringConeRigidity.CohenForcing.InternalCohenPartition
+public import LeanPool.TuringConeRigidity.CohenForcing.InternalCohenRestriction
 
 /-!
 # Internal Cohen Tail Homogeneity
@@ -32,6 +32,7 @@ open InternalCohen (alphabet bitSet mem_alphabet)
 attribute [local instance] InternalCollapse.order InternalCollapse.collapsePreorder
   Classical.propDecidable
 
+/-- The matching flip mask restricted to coordinates outside `B`. -/
 noncomputable def tailMatchingSet (A B p q : ZFSet.{0}) : ZFSet.{0} :=
   (matchingSet A p q).sep (fun x => x ∉ B)
 

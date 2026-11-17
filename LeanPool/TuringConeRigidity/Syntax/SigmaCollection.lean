@@ -14,7 +14,6 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.Constructibility.UniformSigmaHull
-public import LeanPool.TuringConeRigidity.Syntax.BoundedSupport
 
 /-!
 # Sigma Collection
@@ -31,6 +30,7 @@ open TransitiveNameModel
 universe u
 namespace SigmaFormula
 
+/-- A bound on the free-variable slots used by a sigma formula. -/
 def scope : SigmaFormula → ℕ
   | .bounded φ => φ.scope
   | .existsSet φ => φ.scope-1
@@ -95,6 +95,8 @@ theorem internal_sigma_request_bound (M : ZFSet.{u}) (hM : Transitive M)
     exact ⟨y,hy,(congr x y).mp hφ⟩)
   exact ⟨z,hz,(congr x z).mpr hφ⟩
 
+/-- The model contains a set collecting witnesses for every satisfiable sigma request over a
+model set. -/
 def SigmaCollection (M : ZFSet.{u}) : Prop :=
   ∀ (φ : SigmaFormula) (e : ℕ → ZFSet.{u}), (∀ i, e i ∈ M) → ∀ a ∈ M,
     (∀ x ∈ a, ∃ y ∈ M, φ.Realize M (cons y (cons x e))) →

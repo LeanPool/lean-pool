@@ -13,8 +13,9 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.OrdinalCodes.NumericDefSystem
-public import LeanPool.TuringConeRigidity.Constructibility.DomainSyntaxClosure
+public import LeanPool.TuringConeRigidity.Constructibility.HierarchyCertificatePower
+public import LeanPool.TuringConeRigidity.OrdinalCodes.NumericParameters
+public import LeanPool.TuringConeRigidity.Representation.AmbientDegreeSyntax
 
 /-!
 # Numeric Domain
@@ -29,6 +30,8 @@ namespace TuringRigidity.NumericSyntax
 open ElementaryModel BoundedSetTheory TransitiveNameModel BoundedDefinability
 universe u
 
+/-- A full formula defines the domain-dependent predicate uniformly over adequate numerical
+bounds. -/
 def Domain (P : ZFSet.{u} → (ℕ → ZFSet.{u}) → Prop) : Prop :=
   ∃ p : SentenceForm, ∀ B, Covers B → ∀ N : ZFSet.{u}, Transitive N →
     (∀ i, params B i ∈ N) → ∀ e, (∀ i, e i ∈ N) →

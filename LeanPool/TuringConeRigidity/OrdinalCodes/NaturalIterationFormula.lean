@@ -41,12 +41,14 @@ theorem addition_spec (o Q x n y : ℕ) (e : ℕ → ZFSet.{u})
   rw [eval_addition,ho,ha,hb]
   exact h
 
+/-- Shift outer parameters to reserve the auxiliary slots used by a finite iteration trace. -/
 def iterationOuterVars : ℕ → ℕ
   | 0 => 0
   | 1 => 1
   | 2 => 2
   | i+3 => i+6
 
+/-- Bounded formula selecting the endpoint of a finite iteration with step formula `θ`. -/
 def iteration (o Q n b y : ℕ) (θ : Formula) : Formula :=
   .existsMem o (.existsMem (o+1) (.existsMem (Q+2)
     (.conj (iterationTrace (o+3) 1 2 (n+3) (b+3) 0 (θ.rename iterationOuterVars))

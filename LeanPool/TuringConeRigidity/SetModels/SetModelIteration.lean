@@ -13,7 +13,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.SetModels.SetModelReals
+public import LeanPool.TuringConeRigidity.SetModels.InternalInfinity
+public import LeanPool.TuringConeRigidity.SetModels.ModelProducts
 
 /-!
 # Set Model Iteration
@@ -25,14 +26,15 @@ public import LeanPool.TuringConeRigidity.SetModels.SetModelReals
 namespace OAI
 
 namespace TuringRigidity.SetModelIteration
-open BoundedSetTheory TransitiveNameModel SetModelReals
+open BoundedSetTheory TransitiveNameModel
 universe u
 noncomputable section
 
+/-- The graph of the first `n` values of the set-valued sequence `f`. -/
 def finiteGraph (n : ℕ) (f : ℕ → ZFSet.{u}) : ZFSet.{u} :=
   ZFSet.range (fun i : Fin n => ZFSet.pair (natSet i.val) (f i.val))
 
-@[simp] theorem mem_finiteGraph (n : ℕ) (f : ℕ → ZFSet.{u}) (z : ZFSet.{u}) :
+theorem mem_finiteGraph (n : ℕ) (f : ℕ → ZFSet.{u}) (z : ZFSet.{u}) :
     z ∈ finiteGraph n f ↔ ∃ i < n, z = ZFSet.pair (natSet i) (f i) := by
   rw [finiteGraph,ZFSet.mem_range]
   exact ⟨fun ⟨i,hi⟩ => ⟨i.val,i.isLt,hi.symm⟩,fun ⟨i,hi,h⟩ => ⟨⟨i,hi⟩,h.symm⟩⟩
@@ -87,6 +89,7 @@ theorem finiteGraph_mem (M : ZFSet.{u}) (hM : Transitive M)
       simp only [ZFSet.mem_union,ZFSet.mem_singleton,ZFSet.mem_insert_iff]
     exact he ▸ hu
 
+/-- Bounded formula expressing a finite graph trace from `x` to the endpoint `y`. -/
 def traceFormula (n x y p v g w z : ℕ) : Formula :=
   .conj (.pairMem z x p)
     (.conj (.allMem n (.allMem (v+1) (.imp (.pairMem 1 0 (p+2))
@@ -94,6 +97,8 @@ def traceFormula (n x y p v g w z : ℕ) : Formula :=
         (.existsMem (v+3) (.conj (.pairMem 1 0 (p+4)) (.pairMem 2 0 (g+4)))))))))
       (.allMem v (.imp (.pairMem (n+1) 0 (p+1)) (.equal 0 (y+1)))))
 
+/-- A trace starts at `x`, follows the graph `g`, and has `y` as every recorded value at stage
+`n`. -/
 def Trace (v g : ZFSet.{u}) (n : ℕ) (x y p : ZFSet.{u}) : Prop :=
   ZFSet.pair (natSet 0) x ∈ p ∧
   (∀ i < n, ∀ a ∈ v, ZFSet.pair (natSet i) a ∈ p →

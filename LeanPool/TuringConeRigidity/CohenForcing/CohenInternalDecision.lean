@@ -28,6 +28,7 @@ namespace TuringRigidity.CohenInternalDecision
 open Set TransitiveNameModel BoundedSetTheory CohenAntichainStages CohenGroundPoset
 open CohenCountedAntichain CohenConditionCode CohenSymmetry CohenCoordinates
 
+/-- Conditions extending some member of `U`, represented as a ground-model set. -/
 noncomputable def below (c U : ZFSet.{0}) : ZFSet.{0} :=
   c.sep (fun q => ∃ p ∈ U, p ⊆ q)
 
@@ -42,6 +43,7 @@ theorem below_mem (M c U : ZFSet.{0}) (hM : Transitive M) (hT : SourceT M)
   have hs := sep_mem M hM hT.separation.finitePrefix.bounded (.existsMem 1 (.subset 0 1)) e he hc
   simpa only [below,Formula.Eval,Formula.eval_subset,cons_zero,cons_succ,e] using hs
 
+/-- Conditions either extending `E` or having no extension in `U`. -/
 noncomputable def decision (c U E : ZFSet.{0}) : ZFSet.{0} :=
   c.sep (fun q => (∃ p ∈ E, p ⊆ q) ∨ ∀ p ∈ U, ¬ q ⊆ p)
 

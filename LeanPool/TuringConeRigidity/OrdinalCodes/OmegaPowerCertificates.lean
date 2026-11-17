@@ -14,6 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.OrdinalCodes.OmegaPowerSyntax
+public import LeanPool.TuringConeRigidity.OrdinalCodes.OmegaPowerDefinability
 
 /-!
 # Omega Power Certificates
@@ -28,6 +29,8 @@ namespace TuringRigidity.OrdinalArithmetic
 open TransitiveNameModel BoundedSetTheory RelationCollapse ElementaryModel RelativeConstructible
 universe u
 
+/-- Model-membership and order-type certificates for the lexicographic presentation of an
+ordinal product. -/
 def ProductCertificates (M : ZFSet.{u}) (a b : Ordinal.{u}) : Prop :=
   ZFSet.prod b.toZFSet a.toZFSet ∈ M ∧ productRelation a.toZFSet b.toZFSet ∈ M ∧
     ∃ f ∈ M, OrderTypeCertificate (ZFSet.prod b.toZFSet a.toZFSet)
@@ -55,6 +58,8 @@ theorem ordinalProductAt_of_certificates (M : ZFSet.{u}) (hM : Transitive M)
     (fun i => e (if i = 0 then v else if i = 1 then a else b)) (fun i => he _) α β ha hb
     hc.1 hc.2.1 hc.2.2).mpr hv
 
+/-- An omega-power hierarchy graph together with certificates for its intermediate ordinal
+products. -/
 def OmegaPowerCertificates (M x : ZFSet.{u}) : Prop :=
   x ∈ M ∧ ∃ f ∈ M, ∃ r ∈ M, OmegaGraph M (x) r f ∧
     ∀ t ∈ x, ProductCertificates M (Ordinal.omega0 ^ t.rank) Ordinal.omega0

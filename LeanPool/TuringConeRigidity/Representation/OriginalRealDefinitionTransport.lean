@@ -14,8 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.Representation.OriginalRealCohenFactorization
-public import LeanPool.TuringConeRigidity.Constructibility.OneRealDefinitionSentence
-public import LeanPool.TuringConeRigidity.Representation.GroundInclusion
+public import LeanPool.TuringConeRigidity.Constructibility.ConstructibleGroundReals
 
 /-!
 # Original Real Definition Transport
@@ -32,6 +31,8 @@ open CohenGroundPoset InternalCountableOrdinals RelativeConstructible Elementary
 attribute [local instance] InternalCollapse.order InternalCollapse.collapsePreorder
 attribute [local instance] CohenNiceNameConstruction.cohenTop
 
+/-- Transport data relating a real-generated hull and an alternative generic filter to the
+prescribed real definition. -/
 def Transported (M K : ZFSet.{0})
     (G : GenericFilter (Conditions (conditions (ZFSet.prod K ZFSet.omega))))
     (f : Name (Conditions (conditions (ZFSet.prod K ZFSet.omega))))

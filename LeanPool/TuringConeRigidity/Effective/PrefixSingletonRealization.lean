@@ -15,7 +15,7 @@ module
 
 public import LeanPool.TuringConeRigidity.CohenForcing.CohenPrefixHull
 public import LeanPool.TuringConeRigidity.CohenForcing.CohenColumnPrefixGeneric
-public import LeanPool.TuringConeRigidity.SetModels.InternalInverseIso
+public import LeanPool.TuringConeRigidity.SetModels.InternalInverseGraph
 
 /-!
 # Prefix Singleton Realization

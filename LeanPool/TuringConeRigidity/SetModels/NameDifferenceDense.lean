@@ -13,7 +13,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.Constructibility.UniformNameDescent
+public import LeanPool.TuringConeRigidity.Syntax.CheckedMembershipSeparation
 
 /-!
 # Name Difference Dense
@@ -30,6 +30,8 @@ open RecursiveNames TransitiveNameModel BoundedSetTheory AtomicForcing Countable
 universe u
 variable {c : ZFSet.{u}} [Preorder (Conditions c)] [OrderTop (Conditions c)]
 
+/-- Conditions witnessing a discrepancy between the checked set `S` and the name's membership
+on some element of `a`. -/
 def NameDifference (a S : ZFSet.{u}) (t : Name (Conditions c)) : Set (Conditions c) :=
   {p | ∃ x ∈ a, (x ∈ S ∧ ∀ q, q ≤ p → ¬ MemForces (Name.check x) t q) ∨
     (x ∉ S ∧ MemForces (Name.check x) t p)}

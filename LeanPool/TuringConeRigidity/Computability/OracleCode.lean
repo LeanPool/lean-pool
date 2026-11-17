@@ -13,9 +13,10 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
+public import Mathlib.Data.Set.Countable
+
 public import LeanPool.TuringConeRigidity.SetModels.Degrees
 public import LeanPool.TuringConeRigidity.Effective.EncodableTree
-public import Mathlib.Data.Set.Countable
 
 /-!
 # Oracle Code
@@ -28,6 +29,8 @@ namespace OAI
 
 namespace TuringRigidity
 
+/-- Codes for oracle-recursive programs built from basic functions, pairing, composition,
+recursion, and minimization. -/
 inductive OracleCode where
   | zero | succ | left | right | query
   | pair : OracleCode → OracleCode → OracleCode
@@ -77,6 +80,7 @@ instance : Encodable OracleCode :=
 
 namespace OracleCode
 
+/-- Partial evaluation of an oracle program with the supplied partial oracle. -/
 def eval (g : ℕ →. ℕ) : OracleCode → ℕ →. ℕ
   | .zero => fun _ => 0
   | .succ => Nat.succ

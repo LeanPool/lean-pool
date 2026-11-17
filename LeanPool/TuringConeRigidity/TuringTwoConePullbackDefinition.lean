@@ -14,6 +14,7 @@ module
 
 public import LeanPool.TuringConeRigidity.TuringTwoConePullbackProgram
 public import LeanPool.TuringConeRigidity.TuringConePullbackDefinition
+public import LeanPool.TuringConeRigidity.TuringTwoConeConstructibleExtension
 
 /-!
 # Relative constructibility of the joined inverse relation

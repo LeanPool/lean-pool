@@ -15,7 +15,7 @@ module
 
 public import LeanPool.TuringConeRigidity.Representation.OwnRealsConstruction
 public import LeanPool.TuringConeRigidity.Constructibility.FiniteDefinitionTransfer
-public import LeanPool.TuringConeRigidity.OrdinalCodes.LevelSubsetDefinition
+public import LeanPool.TuringConeRigidity.OrdinalCodes.LevelInlinedDefinition
 
 /-!
 # Own Reals Level Definition

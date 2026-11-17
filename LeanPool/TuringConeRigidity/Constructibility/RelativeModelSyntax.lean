@@ -30,6 +30,7 @@ namespace TuringRigidity.RelativeConstructible
 open BoundedSetTheory TransitiveNameModel BoundedDefinability SetModelFunctions
 universe u
 
+/-- Bounded formula asserting transitivity of a set and all its members. -/
 def ordinalFormula (i : ℕ) : Formula :=
   .conj (.transitive i) (Formula.allMem i (.transitive 0))
 

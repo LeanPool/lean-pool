@@ -27,10 +27,13 @@ namespace OAI
 namespace TuringRigidity.OrdinalCoding
 universe u
 
+/-- Encode a finite ordinal vector by iterated ordinal pairing, using one for the empty
+vector. -/
 noncomputable def vectorCode : {n : ℕ} → (Fin n → Ordinal.{u}) → Ordinal.{u}
   | 0, _ => 1
   | _+1, v => pairCode (v 0) (vectorCode (fun i => v i.succ))
 
+/-- Decode the specified number of entries from an ordinal-vector code. -/
 noncomputable def vectorDecode : (n : ℕ) → Ordinal.{u} → Fin n → Ordinal.{u}
   | 0, _, i => Fin.elim0 i
   | n+1, a, i => Fin.cases (unpairCode a).1
@@ -67,9 +70,11 @@ theorem vectorCode_pos {n : ℕ} (v : Fin n → Ordinal.{u}) : 0 < vectorCode v 
   | zero => exact zero_lt_one
   | succ n => exact (show 0 ≤ v 0 from zero_le).trans_lt (left_lt_pairCode _ _)
 
+/-- Pair an ordinal padding parameter with the vector's ordinal code. -/
 noncomputable def paddedCode {n : ℕ} (v : Fin n → Ordinal.{u}) (β : Ordinal.{u}) : Ordinal.{u} :=
   pairCode β (vectorCode v)
 
+/-- Decode the vector portion of a padded ordinal code. -/
 noncomputable def paddedDecode (n : ℕ) (a : Ordinal.{u}) : Fin n → Ordinal.{u} :=
   vectorDecode n (unpairCode a).2
 

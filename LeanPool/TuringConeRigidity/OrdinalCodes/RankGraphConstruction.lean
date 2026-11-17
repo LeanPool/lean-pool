@@ -30,6 +30,7 @@ namespace TuringRigidity.InternalRank
 open TransitiveNameModel BoundedSetTheory
 universe u
 
+/-- The union of successor values assigned by `f` to the members of `x`. -/
 noncomputable def rankImage (x f : ZFSet.{u}) : ZFSet.{u} :=
   ZFSet.sep (fun z => ∃ y ∈ x, ∃ w ∈ iterUnion 2 f,
     ZFSet.pair y w ∈ f ∧ (z = w ∨ z ∈ w))
@@ -47,6 +48,7 @@ theorem mem_rankImage (x f z : ZFSet.{u}) :
     exact hz.elim (fun h => Or.inl (h ▸ hw))
       (fun h => Or.inr (ZFSet.mem_sUnion.mpr ⟨w,hw,h⟩))
 
+/-- Bounded formula describing membership in the union of successor rank values. -/
 def imageFormula : Formula :=
   .existsMem 1 (.existsMem 4 (.conj (.pairMem 1 0 4)
     (.disj (.equal 2 0) (.member 2 0))))

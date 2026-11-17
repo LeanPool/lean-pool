@@ -13,7 +13,6 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.Effective.CodingForcing
 public import LeanPool.TuringConeRigidity.Computability.OracleEnumeration
 public import LeanPool.TuringConeRigidity.Computability.Joins
 
@@ -29,6 +28,7 @@ namespace OAI
 namespace TuringRigidity.CodingColumns
 open PrefixComputability OracleEnumeration
 
+/-- Place the true bits of `A` in column `k` beyond the cutoff, and put false elsewhere. -/
 def column (A : Oracle) (k cutoff : ℕ) (m : ℕ) : Bool :=
   if cutoff ≤ m ∧ (Nat.unpair m).1 = k then A (Nat.unpair m).2 else false
 
@@ -68,6 +68,7 @@ theorem column_reduces (A : Oracle) (k cutoff : ℕ) : Reduces (column A k cutof
   by_cases hc : cutoff ≤ m ∧ (Nat.unpair m).1 = k <;>
     simp [columnStep, column, oracleFunction, hc]
 
+/-- The increasing enumeration of the active positions in the coded column. -/
 noncomputable def location (A : Oracle) (hA : {a | A a = true}.Infinite)
     (k cutoff : ℕ) : ℕ → ℕ := enumerate (column A k cutoff) (column_infinite A hA k cutoff)
 
@@ -85,6 +86,7 @@ theorem location_recursive (A : Oracle) (hA : {a | A a = true}.Infinite) (k cuto
   subst f
   exact RecursiveIn.iff_nat.mp (column_reduces A k cutoff)
 
+/-- Read the bits of `G` at the active positions in the coded column. -/
 noncomputable def readColumn (A : Oracle) (hA : {a | A a = true}.Infinite)
     (k cutoff : ℕ) (G : Oracle) : Oracle := fun n => G (location A hA k cutoff n)
 

@@ -30,6 +30,8 @@ open SetDegreeDecoding PersistentRestrictions SetModelCountability ArithmeticTre
 universe u
 noncomputable section
 
+/-- Rename variables recursively in internal formula syntax, lifting the renaming beneath set
+quantifiers. -/
 def InternalFormula.rename : InternalFormula → (ℕ → ℕ) → InternalFormula
   | .bounded p, v => .bounded (p.rename v)
   | .conj p q, v => .conj (p.rename v) (q.rename v)
@@ -52,6 +54,7 @@ theorem InternalFormula.realize_rename (p : InternalFormula) (M : ZFSet.{u})
     have he : cons x e ∘ liftMap v = cons x (e ∘ v) := by funext i; cases i <;> rfl
     exact (hp (liftMap v) (cons x e)).trans (he ▸ Iff.rfl)
 
+/-- Bounded formula asserting that the set-coded action moves some element of `i`. -/
 def setMovedFormula (f i : ℕ) : Formula :=
   .existsMem i (.existsMem (i+1) (.conj (.pairMem 1 0 (f+2)) (.neg (.equal 1 0))))
 
@@ -59,9 +62,12 @@ def setMovedFormula (f i : ℕ) : Formula :=
     (setMovedFormula f i).Eval e ↔ SetMoved (e f) (e i) := by
   simp only [setMovedFormula,Formula.Eval,Formula.eval_pairMem,cons_zero,cons_succ,SetMoved]
 
+/-- Variable placement for the native nonidentity and persistence formula. -/
 def nativeSlots : ℕ → ℕ
   | 0 => 1 | 1 => 2 | 2 => 3 | 3 => 0 | _+4 => 4
 
+/-- An internal formula asserting existence of a nonidentity action satisfying the persistence
+condition. -/
 def nonidentityFormula : InternalFormula :=
   .existsSet (.conj (.bounded (actionFormula 0 3 2))
     (.conj (.bounded (setMovedFormula 0 3)) (persistenceFormula.rename nativeSlots)))

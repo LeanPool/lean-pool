@@ -14,6 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.OrdinalCodes.OmegaModelCore
+public import LeanPool.TuringConeRigidity.SetModels.SetModelReals
 
 /-!
 # Omega Model Collapse
@@ -31,6 +32,7 @@ noncomputable section
 namespace OmegaData
 variable {α : Type u} (S : OmegaData α)
 
+/-- The well-founded set collapse of an element of the finite-power core. -/
 def collapse : S.Core → ZFSet.{u} := S.core_wellFounded.fix
   (fun x rec => ZFSet.range (fun y : {y : S.Core // S.Rel y x} => rec y.val y.property))
 
@@ -38,7 +40,7 @@ theorem collapse_eq (x : S.Core) :
     S.collapse x = ZFSet.range (fun y : {y : S.Core // S.Rel y x} => S.collapse y.val) := by
   rw [collapse,WellFounded.fix_eq]
 
-@[simp] theorem mem_collapse (x : S.Core) (z : ZFSet.{u}) :
+theorem mem_collapse (x : S.Core) (z : ZFSet.{u}) :
     z ∈ S.collapse x ↔ ∃ y : S.Core, S.Rel y x ∧ z = S.collapse y := by
   rw [S.collapse_eq,ZFSet.mem_range]
   constructor
@@ -74,6 +76,7 @@ theorem collapse_injective : Function.Injective S.collapse := by
   · intro h
     exact ⟨x,h,rfl⟩
 
+/-- The set of all collapsed core elements. -/
 def collapsedModel : ZFSet.{u} := ZFSet.range S.collapse
 
 @[simp] theorem mem_collapsedModel (z : ZFSet.{u}) :
@@ -87,6 +90,7 @@ theorem collapsedModel_transitive : Transitive S.collapsedModel := by
   obtain ⟨b,hb,rfl⟩ := (S.mem_collapse a y).mp hy
   exact (S.mem_collapsedModel _).mpr ⟨b,rfl⟩
 
+/-- The core element representing the natural number `n`. -/
 def numNode (n : ℕ) : S.Core := ⟨S.num n,0,(S.omega_mem _).mpr ⟨n,rfl⟩⟩
 
 theorem rel_numNode (x : S.Core) (n : ℕ) :
@@ -112,6 +116,7 @@ theorem collapse_num (n : ℕ) : S.collapse (S.numNode n) = natSet n := by
     · rintro ⟨k,hk,rfl⟩
       exact ⟨S.numNode k,(S.rel_numNode _ n).mpr ⟨k,hk,rfl⟩,(ih k hk).symm⟩
 
+/-- The core element representing omega. -/
 def omegaNode : S.Core := ⟨S.omega,1,(S.mem_power S.omega S.omega).mpr (fun _ h => h)⟩
 
 theorem collapse_omega : S.collapse S.omegaNode = ZFSet.omega := by

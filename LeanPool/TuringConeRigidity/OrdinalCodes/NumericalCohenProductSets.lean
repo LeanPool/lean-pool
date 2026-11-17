@@ -13,8 +13,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.OrdinalCodes.NumericalCohenSets
 public import LeanPool.TuringConeRigidity.CohenForcing.TaggedProductConditions
+public import LeanPool.TuringConeRigidity.CohenForcing.CohenWordCodeGraph
 
 /-!
 # Numerical Cohen Product Sets
@@ -32,6 +32,7 @@ open InternalCohen Encodable UniformArithmetic
 open EncodedForcing (word)
 open TaggedProductConditions (code)
 
+/-- The set-coded tagged word pairs whose natural-number codes are selected by `B`. -/
 noncomputable def image (c : ZFSet.{0}) (B : Oracle) : ZFSet.{0} :=
   c.sep (fun z => ∃ n : ℕ, B n = true ∧
     z = code (wordCode (word (left n))) (wordCode (word (right n))))

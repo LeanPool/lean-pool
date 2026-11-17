@@ -56,7 +56,8 @@ theorem sum_certificates_finite_bound (M : ZFSet.{u}) (hM : Transitive M)
     apply result.mono (level_mono R ?_)
     dsimp [γ]
     rw [add_assoc]
-    exact add_le_add le_rfl (by norm_num : (1 : Ordinal.{u})+5 ≤ 8)
+    exact add_le_add le_rfl (by exact_mod_cast (show (1 : ℕ) + 5 ≤ 8 by omega) :
+      (1 : Ordinal.{u}) + 5 ≤ 8)
 
 end TuringRigidity.OrdinalArithmetic
 

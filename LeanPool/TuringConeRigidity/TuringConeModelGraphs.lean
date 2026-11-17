@@ -13,6 +13,7 @@ module
 
 public import LeanPool.TuringConeRigidity.TuringConeSetGraphs
 public import LeanPool.TuringConeRigidity.SetModels.CountedRealsPresentation
+public import LeanPool.TuringConeRigidity.TuringConeRealClosure
 
 /-!
 # Persistent cone graphs inside models

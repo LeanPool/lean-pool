@@ -14,8 +14,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.OrdinalCodes.OrdinalOrderType
-public import LeanPool.TuringConeRigidity.OrdinalCodes.OrdinalCut
-public import LeanPool.TuringConeRigidity.Representation.SourceTheory
+public import LeanPool.TuringConeRigidity.Constructibility.RelativeModelSyntax
+public import LeanPool.TuringConeRigidity.SetModels.ElementarySatisfaction
 
 /-!
 # Ordinal Order Type Syntax
@@ -30,6 +30,7 @@ namespace TuringRigidity.RelationCollapse
 open TransitiveNameModel BoundedSetTheory ElementaryModel RelativeConstructible
 universe u
 
+/-- A collapse graph onto an ordinal, with every ordinal element in its range. -/
 def OrderTypeCertificate (d r a f : ZFSet.{u}) : Prop :=
   a.IsOrdinal ∧ Graph d r d a f ∧
     ∀ z ∈ a, ∃ x ∈ d, ZFSet.pair x z ∈ f
@@ -57,6 +58,7 @@ theorem orderTypeCertificate_exists (M d r : ZFSet.{u}) (hM : Transitive M)
     hT.separation.finitePrefix.bounded hT.replacement.finitePrefix hd hr wf ht
   exact ⟨ha,f,hf,ZFSet.isOrdinal_toZFSet _,hg,ho⟩
 
+/-- Bounded formula expressing an ordinal range and a surjective collapse graph. -/
 def orderTypeMatrix (a d r f : ℕ) : Formula :=
   .conj (ordinalFormula a) (.conj (Code.graph d r d a f)
     (Formula.allMem a (.existsMem (d+1) (Formula.pairMem 0 1 (f+2)))))
@@ -66,6 +68,7 @@ theorem orderTypeMatrix_eval (a d r f : ℕ) (e : ℕ → ZFSet.{u}) :
   simp only [orderTypeMatrix,OrderTypeCertificate,Formula.Eval,eval_ordinalFormula,
     Code.eval_graph,Formula.eval_allMem,Formula.eval_pairMem,cons_zero,cons_succ]
 
+/-- A full formula asserting existence of a collapse graph onto the designated ordinal. -/
 noncomputable def orderTypeSentence : SentenceForm :=
   .ex (fromBounded (orderTypeMatrix 1 2 3 0))
 

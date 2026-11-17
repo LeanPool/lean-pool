@@ -29,6 +29,7 @@ namespace TuringRigidity.BoundedSetTheory
 universe u
 namespace Formula
 
+/-- Bounded formula computing either projection of a natural-number pair. -/
 def naturalProjection (right : Bool) : Formula := .existsMem 2 (.existsMem 3
   (.conj (naturalPair 4 5 1 0 3) (.equal 2 (if right then 0 else 1))))
 

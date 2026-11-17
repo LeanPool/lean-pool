@@ -23,6 +23,9 @@ MSC: 03D28, 03B35
 
 
 /-
+Upstream NOTICE, reproduced verbatim. Repository paths in this notice refer
+to the upstream repository.
+
 Turing cone rigidity and truth-table degree formalization
 
 This repository includes OpenAI's DegreeRigidity development, distributed

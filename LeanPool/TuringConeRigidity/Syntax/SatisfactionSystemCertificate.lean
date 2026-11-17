@@ -30,6 +30,8 @@ open ElementaryModel BoundedSetTheory TransitiveNameModel SentenceCoding
 open BoundedDefinability SetModelFunctions
 universe u
 
+/-- A tuple system and bounded truth witnesses whose collected relation records the witnessed
+satisfaction pairs. -/
 def SatisfactionSystem (Q B A G T H Z : ZFSet.{u}) : Prop :=
   TupleSystem A G T ∧
   (∀ c ∈ ZFSet.omega, ∀ F ∈ Q, LeastFamily Q c F →

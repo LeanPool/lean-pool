@@ -29,6 +29,7 @@ open TransitiveNameModel BoundedSetTheory RelationCollapse ElementaryModel Relat
   OrdinalArithmetic
 universe u
 
+/-- Bind the specified number of existential set variables around the sentence body. -/
 def codeBindEntries : ℕ → SentenceForm → SentenceForm
   | 0, p => p
   | n+1, p => .ex (codeBindEntries n p)
@@ -73,10 +74,13 @@ theorem codeBindEntries_sat (M : ZFSet.{u}) (n : ℕ) (p : SentenceForm)
     · rintro ⟨w,hw,hp⟩
       exact ⟨w n,hw n (by omega),(ih _).mpr ⟨w,fun i hi => hw i (by omega),hp⟩⟩
 
+/-- Variable placement for selecting an entry from a padded ordinal-vector code. -/
 def entryCodeSlots (n : ℕ) : ℕ → ℕ
   | 0 => n+1
   | i+1 => if i < n then i else n+1
 
+/-- A full formula relating an output slot to the selected entry of a padded ordinal-vector
+code. -/
 noncomputable def paddedEntrySentence (n : ℕ) (k : Fin n) : SentenceForm :=
   codeBindEntries n (.conj (.equal n k.val)
     ((paddedCodeSentence n).rename (entryCodeSlots n)))

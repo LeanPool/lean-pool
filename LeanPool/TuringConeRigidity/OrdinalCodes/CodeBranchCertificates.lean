@@ -30,6 +30,7 @@ open TransitiveNameModel BoundedSetTheory RelationCollapse ElementaryModel Relat
   OrdinalArithmetic
 universe u
 
+/-- Model-membership and arithmetic certificates for one branch of the ordinal-pair encoding. -/
 def CodeBranchCertificates (M : ZFSet.{u}) (twice : Bool) (a b : Ordinal.{u}) : Prop :=
   (a+1).toZFSet ∈ M ∧ (Ordinal.omega0 ^ (a+1)).toZFSet ∈ M ∧
     (Ordinal.omega0 ^ b).toZFSet ∈ M ∧
@@ -76,6 +77,7 @@ theorem codeBranchSentence_of_certificates (M : ZFSet.{u}) (hM : Transitive M)
   · exact codeScaleAt_of_certificates M hM hω twice 0 2 E hE _ rfl hd rfl
   · exact codeSumAt_of_certificates M hM hω 4 0 1 E hE _ _ rfl rfl hs hc
 
+/-- Choose the ordinal-pair branch certificates according to the order of the two ordinals. -/
 def PairCodeCertificates (M : ZFSet.{u}) (a b : Ordinal.{u}) : Prop :=
   if b ≤ a then CodeBranchCertificates M false a b else CodeBranchCertificates M true b a
 

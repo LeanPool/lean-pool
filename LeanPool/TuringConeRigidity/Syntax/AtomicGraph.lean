@@ -14,6 +14,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.Syntax.AtomicFormula
+public import LeanPool.TuringConeRigidity.SetModels.InternalFixedPoint
+public import LeanPool.TuringConeRigidity.SetModels.ModelProducts
 
 /-!
 # Atomic Graph
@@ -28,6 +30,8 @@ namespace TuringRigidity.AtomicForcing
 open TransitiveNameModel BoundedSetTheory
 universe u
 
+/-- The graph contains exactly the triples satisfying its recursive atomic equality-forcing
+equation. -/
 def Graph (d c o f : ZFSet.{u}) : Prop :=
   f ⊆ ZFSet.prod (ZFSet.prod d d) c ∧
     ∀ x ∈ d, ∀ y ∈ d, ∀ q ∈ c,

@@ -32,6 +32,8 @@ open CohenColumnRealName ElementaryModel PersistentRestrictions SetDegreeDecodin
 open GenericIdentity
 attribute [local instance] InternalCollapse.order InternalCollapse.collapsePreorder
 
+/-- A ground-generic filter realizes the extension `E` and gives column `a` the real value
+`A`. -/
 def ColumnRealizesExtension (M K a E : ZFSet.{0}) (A : Oracle) : Prop :=
   ∃ H : GenericFilter (Conditions (poset K)), GroundGeneric M H ∧
     genericExtensionSet M (poset K) H.carrier = E ∧

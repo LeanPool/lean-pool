@@ -15,7 +15,6 @@ module
 
 public import LeanPool.TuringConeRigidity.CohenForcing.InternalCohenTailTruth
 public import LeanPool.TuringConeRigidity.CohenForcing.InternalCohenProjectionSymmetry
-public import LeanPool.TuringConeRigidity.Constructibility.UniformDefinitionSymmetry
 public import LeanPool.TuringConeRigidity.Effective.UniformDegreeUniverseName
 public import LeanPool.TuringConeRigidity.Syntax.BoundedAutomorphismOutput
 public import LeanPool.TuringConeRigidity.CohenForcing.CohenNiceNameConstruction

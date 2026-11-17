@@ -15,6 +15,7 @@ module
 
 public import LeanPool.TuringConeRigidity.Constructibility.ContextDefinablePower
 public import LeanPool.TuringConeRigidity.Constructibility.HierarchyGraph
+public import LeanPool.TuringConeRigidity.Syntax.SigmaParameterized
 
 /-!
 # Context Hierarchy Graph

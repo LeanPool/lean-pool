@@ -26,6 +26,7 @@ namespace OAI
 
 namespace TuringRigidity
 
+/-- The approximants are sound and eventually contain every value of the partial result. -/
 def Approximates {α : Type*} (p : Part α) (ps : ℕ → Part α) : Prop :=
   (∀ m a, a ∈ ps m → a ∈ p) ∧
   (∀ a, a ∈ p → ∃ M, ∀ m, M ≤ m → a ∈ ps m)

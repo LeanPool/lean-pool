@@ -29,12 +29,14 @@ namespace TuringRigidity.RelativeConstructible
 open ElementaryModel BoundedSetTheory TransitiveNameModel
 universe u
 
+/-- Variable renaming reserving a new slot while preserving the distinguished output slot. -/
 def skipValue (i : ℕ) : ℕ := match i with | 0 => 0 | j+1 => j+2
 
 theorem skipValue_env (x y : ZFSet.{u}) (e : ℕ → ZFSet.{u}) :
     (fun i => cons x (cons y e) (skipValue i)) = cons x e := by
   funext i; cases i <;> rfl
 
+/-- Existentially bind a sequence of computed values before evaluating the body. -/
 def bindComputed : ℕ → (ℕ → SentenceForm) → SentenceForm → SentenceForm
   | 0, _, p => p
   | n+1, f, p => .ex (.conj (f n)
@@ -66,6 +68,8 @@ theorem bindComputed_spec (M : ZFSet.{u}) (n : ℕ)
       exact ⟨w n,hw n (by omega),(hf n (by omega) _ (hw n (by omega))).mpr rfl,
         (ih _ _ (fun i hi => hw i (by omega)) (hf' (w n))).mpr hp⟩
 
+/-- A full formula defining the subset of the designated domain specified by the relativized
+body. -/
 noncomputable def subsetBody (n out a : ℕ) (p : SentenceForm) : SentenceForm :=
   SentenceForm.all (SentenceForm.iff (.member 0 (n+out+1))
     (.conj (.member 0 (n+a+1)) (fromBounded (setBounded p (n+a+1) id))))

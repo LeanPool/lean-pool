@@ -15,6 +15,7 @@ module
 
 public import LeanPool.TuringConeRigidity.Syntax.SigmaDefinability
 public import LeanPool.TuringConeRigidity.Syntax.SigmaInterpretation
+public import LeanPool.TuringConeRigidity.SetModels.NameSupport
 
 /-!
 # Sigma Separation Name

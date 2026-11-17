@@ -30,6 +30,7 @@ open TransitiveNameModel RelationCollapse
 universe u
 namespace FiniteTuple
 
+/-- Finite codes generated from elements of `t`, the empty set, and unordered pairing. -/
 inductive FiniteCode (t : ZFSet.{u}) : ZFSet.{u} → Prop
   | atom (x : ZFSet.{u}) (hx : x ∈ t) : FiniteCode t x
   | empty : FiniteCode t ∅

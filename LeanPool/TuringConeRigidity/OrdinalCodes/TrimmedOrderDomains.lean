@@ -15,7 +15,7 @@ module
 
 public import LeanPool.TuringConeRigidity.Constructibility.FiniteStageSetBounds
 public import LeanPool.TuringConeRigidity.OrdinalCodes.OrdinalProductSets
-public import LeanPool.TuringConeRigidity.OrdinalCodes.OrdinalSumSets
+public import LeanPool.TuringConeRigidity.SetModels.ElementarySatisfaction
 
 /-!
 # Trimmed Order Domains
@@ -43,9 +43,11 @@ theorem defined_set_at_successor (R : ZFSet.{u}) (γ : Ordinal.{u})
   rw [eq] at h
   rwa [level_succ]
 
+/-- A bounded full-sentence definition of the trimmed ordinal-product domain. -/
 noncomputable def trimmedProductDomainSentence : SentenceForm :=
   fromBounded (.existsMem 2 (.existsMem 2 (.orderedPair 2 1 0)))
 
+/-- A full formula describing the trimmed ordinal-product relation. -/
 noncomputable def trimmedProductRelationSentence : SentenceForm :=
   .ex (.ex (fromBounded (.conj (.orderedPair 2 1 0) (productLessFormula 3 4 1 0))))
 

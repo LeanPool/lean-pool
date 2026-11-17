@@ -31,6 +31,7 @@ open Encodable UniformOracle ArithmeticHierarchy OracleJump EncodedForcing Effec
   IndexMatrix
 open CodingForcing UniformProgram
 
+/-- Encode the base program, target program, and current left word into a splitting request. -/
 def request (v : ℕ) : ℕ := encode [item (Nat.unpair v).1 0,item (Nat.unpair v).1 1,encode (left
   (Nat.unpair v).2)]
 
@@ -41,6 +42,8 @@ theorem request_primrec : Primrec request := by
     (Primrec.list_cons.comp (item_primrec.comp f (Primrec.const 1))
       (Primrec.list_cons.comp (Primrec.encode.comp (left_primrec.comp r)) (Primrec.const []))))
 
+/-- The splitting certificate's selected position is protected by the active coding
+requirement. -/
 def IsCoding (A : Oracle) (v : ℕ) : Prop :=
   CodingLocation (columns A) (condition (Nat.unpair v).1) (item (Nat.unpair (Nat.unpair v).2).2 2)
 
@@ -62,6 +65,8 @@ theorem coding_recursive (A : Oracle) : RecursivePred A (IsCoding A) := by
   simpa only [CodingLocation,columns,condition,Nat.pair_unpair] using recursive_and hl
     (recursive_and hk ha)
 
+/-- Select a uniform splitting outcome, assigning a separate tag to an unprotected one-point
+split. -/
 noncomputable def outcome (A : Oracle) (v : ℕ) : ℕ := by
   classical
   let w := UniformSplit.step A (request v)
@@ -85,6 +90,7 @@ theorem outcome_recursive (A : Oracle) :
     by_cases h : IsCoding A (Nat.pair (Nat.unpair v).2 (UniformSplit.step A (request v))) <;> simp
       [h])
 
+/-- Retag the unprotected-split outcome as the extension-update case. -/
 def retag (w : ℕ) : ℕ :=
   if (Nat.unpair w).1 = 3 then Nat.pair 2 (Nat.unpair w).2 else w
 
@@ -92,8 +98,10 @@ theorem retag_primrec : Primrec retag := Primrec.ite
   (Primrec.eq.comp (Primrec.fst.comp Primrec.unpair) (Primrec.const 3))
   (Primrec₂.natPair.comp (Primrec.const 2) (Primrec.snd.comp Primrec.unpair)) Primrec.id
 
+/-- Update a condition using the retagged uniform splitting outcome. -/
 def update (p w : ℕ) : ℕ := EffectiveSplitConditions.update p (retag w)
 
+/-- The next coded condition obtained from the selected uniform pair outcome. -/
 noncomputable def next (A : Oracle) (v : ℕ) : ℕ := update (Nat.unpair v).2 (outcome A v)
 
 theorem next_recursive (A : Oracle) :

@@ -13,8 +13,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.OrdinalCodes.OrdinalProductReplacement
-public import LeanPool.TuringConeRigidity.Constructibility.HierarchySyntax
+public import LeanPool.TuringConeRigidity.Constructibility.HierarchyGraph
 
 /-!
 # Omega Power Stage
@@ -30,6 +29,7 @@ open TransitiveNameModel BoundedSetTheory RelationCollapse ElementaryModel Relat
 open BoundedDefinability SetModelFunctions
 universe u
 
+/-- The set code of omega raised to the successor of the input set's rank. -/
 noncomputable def omegaNext (x : ZFSet.{u}) : ZFSet.{u} :=
   (Ordinal.omega0 ^ (x.rank+1)).toZFSet
 
@@ -54,6 +54,7 @@ theorem omegaPower_members (a : Ordinal.{u}) (z : ZFSet.{u}) :
       exact Ordinal.toZFSet_monotone
         (Ordinal.opow_le_opow_right Ordinal.omega0_pos (Order.succ_le_of_lt hb)) hz
 
+/-- A function graph on an ordinal domain obeying the omega-power stage recursion. -/
 def OmegaGraph (M d r f : ZFSet.{u}) : Prop :=
   d.IsOrdinal ∧ FunctionGraph d r f ∧
   ∀ x ∈ d, ∀ v ∈ r, ZFSet.pair x v ∈ f →

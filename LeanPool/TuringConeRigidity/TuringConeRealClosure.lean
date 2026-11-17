@@ -11,8 +11,9 @@ Module paths, interfaces, and proofs are ported to the pool's toolchain and gate
 
 module
 
-public import LeanPool.TuringConeRigidity.TuringConeArithmeticCriterion
 public import LeanPool.TuringConeRigidity.Constructibility.PersistenceRealClosure
+public import LeanPool.TuringConeRigidity.TuringConeNumerical
+public import LeanPool.TuringConeRigidity.TuringConePersistentExtension
 
 /-!
 # Persistent cone graphs in arithmetically closed real collections

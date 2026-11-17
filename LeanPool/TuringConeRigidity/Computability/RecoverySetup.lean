@@ -27,22 +27,32 @@ namespace OAI
 open Set Filter Topology
 namespace TuringRigidity
 
+/-- Local separation and oracle-program data used to recover a real from the branch
+construction. -/
 structure RecoveryData (F : ℝ → Oracle) (t u v : ℝ) where
+  /-- The positive radius bounding the rational-span displacements allowed in the local
+  program equations. -/
   radius : ℝ
   radius_pos : 0 < radius
   radius_lt_one : radius < 1
+  /-- The negative lower endpoint of the recovery interval. -/
   lo : ℝ
+  /-- The positive upper endpoint of the recovery interval. -/
   hi : ℝ
   lo_gt : -radius < lo
   lo_neg : lo < 0
   hi_pos : 0 < hi
   hi_lt : hi < radius
+  /-- The positive rational step size, smaller than the radius and the endpoint gap. -/
   delta : ℚ
   delta_pos : 0 < delta
   delta_lt : (delta : ℝ) < radius
   delta_gap : 3*(delta : ℝ) < hi-lo
+  /-- The bit index separating the two endpoint regions. -/
   bit : ℕ
+  /-- The index of the forward oracle program in the local addition computation. -/
   forward : ℕ
+  /-- The index of the backward oracle program recovering the shifted input. -/
   backward : ℕ
   left : ∀ s ∈ rationalSpan t, s ∈ Icc lo (lo+(delta : ℝ)) →
     F (u+s) bit ≠ F (u+hi) bit
@@ -78,6 +88,7 @@ theorem recovery_data_exists (F : ℝ → Oracle) (hF : Measurable F)
 namespace RecoveryData
 variable {F : ℝ → Oracle} {t u v : ℝ}
 
+/-- Test whether the selected bit agrees with its value at the upper recovery endpoint. -/
 def test (d : RecoveryData F t u v) (s : ℝ) : Bool :=
   decide (F (u+s) d.bit = F (u+d.hi) d.bit)
 

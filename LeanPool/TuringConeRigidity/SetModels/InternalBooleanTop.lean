@@ -13,7 +13,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.SetModels.InternalSameNameGeneric
+public import LeanPool.TuringConeRigidity.SetModels.InternalProjectedGeneric
 
 /-!
 # Internal Boolean Top
@@ -43,6 +43,8 @@ theorem top_mem_part (M c B Q A : ZFSet.{0}) (hM : Transitive M) (hT : SourceT M
     simp only [infCode,ZFSet.mem_sep,ZFSet.notMem_empty,false_implies,implies_true,and_true]
   rwa [he] at h
 
+/-- The `Top` instance on positive Boolean codes, choosing the full condition set as the
+distinguished top element. -/
 @[instance_reducible]
 noncomputable def booleanTop (c A : ZFSet.{0}) (hcA : c ∈ A) (hc0 : c ≠ ∅) :
     Top (Conditions (positive A)) :=

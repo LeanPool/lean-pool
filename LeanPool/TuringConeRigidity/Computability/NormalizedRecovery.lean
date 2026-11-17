@@ -27,6 +27,8 @@ namespace OAI
 namespace TuringRigidity.NormalizedRecovery
 open EncodedForcing Encodable UniformOracle Introreducible StageNormalization
 
+/-- Read a decoded list entry when its code is selected by the indicated column of `B` and the
+entry is in range. -/
 def trial (B : Oracle) (n c : ℕ) : Option ℕ :=
   if B (Nat.pair (Nat.unpair n).1 c) = true ∧ (Nat.unpair n).2 < codeLength c
     then some (codeBit (Nat.unpair n).2 c) else none

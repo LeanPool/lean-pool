@@ -13,7 +13,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.Computability.ArithmeticPrefixForcing
+public import LeanPool.TuringConeRigidity.SetModels.ShuffleRequirements
 
 /-!
 # Finite Join Sections
@@ -26,8 +26,9 @@ namespace OAI
 
 
 namespace TuringRigidity.FiniteJoinSections
-open FiniteShuffle ShuffleRequirements ArithmeticPrefixForcing
+open FiniteShuffle ShuffleRequirements
 
+/-- The finite words `s` and `t` provide enough bits to realize `u` in their interleaved join. -/
 def Cover (s t u : List Bool) : Prop :=
   u.length ≤ 2 * s.length ∧ u.length ≤ 2 * t.length ∧
     Realizes u (join (fun i => s.getD i false) (fun i => t.getD i false))
@@ -52,6 +53,7 @@ theorem cover_mono {s t u s' t' : List Bool} (h : Cover s t u)
   exact cover_realizes h (realizes_mono hs (realizes_default s'))
     (realizes_mono ht (realizes_default t'))
 
+/-- Some word in `D` is covered by the two finite factor words. -/
 def Product (D : List Bool → Prop) (s t : List Bool) : Prop :=
   ∃ u, D u ∧ Cover s t u
 
@@ -101,6 +103,7 @@ theorem product_dense {D : List Bool → Prop} (hD : DenseOpen D)
     simp only [join]
     split <;> exact (prefix_getD _ _ _ (by omega)).symm
 
+/-- Some extension of the second word forms a product witness with the first word. -/
 def Section (D : List Bool → Prop) (t s : List Bool) : Prop :=
   ∃ t', t <+: t' ∧ Product D s t'
 
@@ -113,6 +116,7 @@ theorem section_dense {D : List Bool → Prop} (hD : DenseOpen D) (t : List Bool
   · rintro s s' hs ⟨t',ht,h⟩
     exact ⟨t',ht,product_mono h hs List.prefix_rfl⟩
 
+/-- Some prefix of `A` forms a product witness with the given second word. -/
 def Fiber (D : List Bool → Prop) (A : Oracle) (t : List Bool) : Prop :=
   ∃ s, Realizes s A ∧ Product D s t
 

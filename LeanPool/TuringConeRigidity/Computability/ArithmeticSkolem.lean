@@ -28,6 +28,7 @@ namespace TuringRigidity.ArithmeticTree
 open UniformArithmetic
 noncomputable section
 
+/-- The predicate has a presentation by a finite arithmetic test. -/
 def HasTest (P : Predicate) : Prop := ∃ t : Test, t.Presents P
 
 namespace HasTest

@@ -14,7 +14,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.Effective.UniformCohenPrefix
-public import LeanPool.TuringConeRigidity.Constructibility.RelativeCohenJump
+public import LeanPool.TuringConeRigidity.CohenForcing.CohenLowness
+public import LeanPool.TuringConeRigidity.Effective.UniformOracleSimulation
 
 /-!
 # Uniform Cohen Jump
@@ -32,10 +33,14 @@ open ArithmeticHierarchy CohenHalting CohenLowness EffectiveCohen
 noncomputable section
 attribute [local instance] Classical.propDecidable
 
+/-- Return a decided jump bit when the finite prefix satisfies the halting-decision
+certificate. -/
 def searchTrial (Y G : Oracle) (x p : ℕ) : Option ℕ :=
   if Deciding Y G (Nat.pair x p) then
     some (if OpenHalts Y x (encode (word p)) then 1 else 0) else none
 
+/-- Return the second decision flag when the first is one and either the second is one or the
+third is zero. -/
 def trialAnswer (v : ℕ) : Option ℕ :=
   if (Nat.unpair v).1 = 1 ∧
       ((Nat.unpair (Nat.unpair v).2).1 = 1 ∨ (Nat.unpair (Nat.unpair v).2).2 = 0)

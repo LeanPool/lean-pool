@@ -44,6 +44,7 @@ theorem internal_tuple_graph_bound (C : Context M) {A : ZFSet.{u}} (hA : A ∈ M
     obtain ⟨i,rfl⟩ := ZFSet.mem_range.mp hz
     exact ZFSet.mem_prod.mpr ⟨_,(mem_omega _).mpr ⟨i.val,rfl⟩,_,hv i,rfl⟩
 
+/-- Read a tuple entry through its length-and-graph set code. -/
 def TupleLookup (G t i x : ZFSet.{u}) : Prop :=
   ∃ n ∈ ZFSet.omega, ∃ g ∈ G, t = ZFSet.pair n g ∧ ZFSet.pair i x ∈ g
 
@@ -78,6 +79,7 @@ theorem tupleLookup_nat (G : ZFSet.{u}) {n : ℕ} (v : Fin n → ZFSet.{u})
   · rintro ⟨hi,hx⟩
     exact ⟨⟨i,hi⟩,rfl,by simpa [tupleEnv,hi] using hx⟩
 
+/-- The tuple's coded length is at least a witnessed support bound for the formula. -/
 def TupleAdequate (Q B G c t : ZFSet.{u}) : Prop :=
   ∃ n ∈ ZFSet.omega, ∃ g ∈ G, ∃ b ∈ ZFSet.omega,
     t = ZFSet.pair n g ∧ BoundWitness Q B c b ∧ b ⊆ n
@@ -107,6 +109,7 @@ theorem tupleAdequate_spec (Q B G : ZFSet.{u})
       (boundWitness_spec Q B _ _ hQ hB).mpr ⟨p,rfl,rfl⟩,
       (natSet_subset_iff p.bound n).mpr hb⟩
 
+/-- The tuple-prefix formula holds for the supplied set-coded tuple and new first entry. -/
 def TuplePrefix (A G t x s : ZFSet.{u}) : Prop :=
   (tuplePrefixFormula 0 1 2 3 4 5 6).Eval
     (cons A (cons ZFSet.omega (cons G (cons t (cons x (cons s (fun _ => natSet 0)))))))

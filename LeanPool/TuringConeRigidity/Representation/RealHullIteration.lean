@@ -14,7 +14,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.SetModels.TwoRealHull
-public import LeanPool.TuringConeRigidity.Representation.SameExtensionIteration
+public import LeanPool.TuringConeRigidity.CohenForcing.CohenDisjointPrefixPair
+public import LeanPool.TuringConeRigidity.Effective.FiniteOverwriteHull
 
 /-!
 # Real Hull Iteration

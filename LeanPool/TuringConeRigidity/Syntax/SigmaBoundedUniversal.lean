@@ -30,6 +30,8 @@ open TransitiveNameModel
 universe u
 namespace Formula
 
+/-- Bounded formula asserting membership of the first `n` parameter slots in the distinguished
+domain. -/
 def envBound : ℕ → Formula
   | 0 => .equal 0 0
   | n+1 => .conj (envBound n) (.member (n+1) 0)
@@ -50,15 +52,20 @@ theorem eval_envBound (n : ℕ) (e : ℕ → ZFSet.{u}) :
 end Formula
 namespace SigmaFormula
 
+/-- Variable renaming reserving the domain slot in a sigma formula. -/
 def skipDomain : ℕ → ℕ
   | 0 => 0
   | i+1 => i+2
 
+/-- A bounded matrix finding a transitive domain in which every member of `a` satisfies the
+relativized sigma formula. -/
 def allDomainMatrix (a : ℕ) (φ : SigmaFormula) : Formula :=
   .conj (.transitive 0) (.conj (.existsMem 0 (.empty 0))
     (.conj (.envBound φ.scope) (.conj (.member (a+1) 0)
       (.allMem (a+1) (FiniteTuple.relativizeSigma 1 (φ.rename skipDomain))))))
 
+/-- Normalize membership-bounded universal quantification by requesting a sufficient
+transitive witness domain. -/
 def allMem (a : ℕ) (φ : SigmaFormula) : SigmaFormula := .existsSet (.bounded (allDomainMatrix a φ))
 
 theorem eval_allDomainMatrix (a : ℕ) (φ : SigmaFormula) (d : ZFSet.{u}) (e : ℕ → ZFSet.{u}) :

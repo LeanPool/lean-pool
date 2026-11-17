@@ -14,6 +14,7 @@ module
 public import LeanPool.TuringConeRigidity.TuringConeIdealCoding
 public import LeanPool.TuringConeRigidity.TuringConeLocality
 public import LeanPool.TuringConeRigidity.SetModels.EnumerationDecoding
+public import LeanPool.TuringConeRigidity.SetModels.IdealLift
 
 /-!
 # Enumeration graphs in a principal cone
@@ -34,11 +35,17 @@ open IndexPresentation IndexTuples ArithmeticHierarchy
 open ArithmeticModelDecoding (two twoIndex twoIndex_primrec)
 open SetCoding RelationCoding BoundedDecoding OracleJump ConeLocality
 
+/-- A degree enumeration with successor and payload relations interpreted relative to the cone
+base. -/
 structure Enumeration (a : Degree) where
+  /-- The injective degree sequence indexing the cone-relative enumeration. -/
   node : ℕ → Degree
   injective : Function.Injective node
+  /-- The degree value attached to each cone-relative enumeration node. -/
   output : ℕ → Degree
+  /-- The cone-relative relation code representing successor on the node sequence. -/
   successor : RelationCode 2
+  /-- The cone-relative relation code pairing nodes with their output degrees. -/
   payload : RelationCode 2
   successor_spec : ∀ x y, ConeCoding.Holds a successor (two x y) ↔
     ∃ k, x = node k ∧ y = node (k + 1)
@@ -83,8 +90,10 @@ theorem path_sigma (a : Degree) (Y : Oracle) (ha : a ≤ degree Y)
     (twoIndex_primrec.comp (item_primrec.comp (r.comp f) r)
       (item_primrec.comp (r.comp f) (Primrec.succ.comp r)))).bounded_all f
   exact (hd.and (hl.and (hr.and hs))).congr (fun v => by
-    simp only [Nat.unpair_pair] ; rfl)
+    simp only [Nat.unpair_pair]; rfl)
 
+/-- A cone-relative successor path ends at a node with the degree represented by index `j` as
+payload. -/
 def Defined (a : Degree) (Y : Oracle) (S P : RelationCode 2) (z n j : ℕ) : Prop :=
   ∃ t, Path a Y S z n t ∧ Presented a Y P (twoIndex (item t n) j)
 

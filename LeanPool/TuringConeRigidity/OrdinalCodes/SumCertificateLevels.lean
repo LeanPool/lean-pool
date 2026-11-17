@@ -15,6 +15,8 @@ module
 
 public import LeanPool.TuringConeRigidity.OrdinalCodes.SumCertificates
 public import LeanPool.TuringConeRigidity.OrdinalCodes.OrdinalSumLevels
+public import LeanPool.TuringConeRigidity.Constructibility.RelativeDefCertificates
+public import LeanPool.TuringConeRigidity.Constructibility.RelativeModelOrdinals
 
 /-!
 # Sum Certificate Levels

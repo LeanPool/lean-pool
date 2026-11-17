@@ -28,9 +28,11 @@ namespace TuringRigidity.GlobalLocality
 open OracleJump IdealInterpretation IdealLocality
 noncomputable section
 
+/-- The degree ideal whose carrier is the entire degree order. -/
 def fullIdeal : DegreeIdeal :=
   ⟨Set.univ,⟨⊥,Set.mem_univ _⟩,fun {_ _} _ _ => Set.mem_univ _,fun {_ _} _ _ => Set.mem_univ _⟩
 
+/-- Lift a global degree automorphism to an automorphism of the full ideal. -/
 def lift (π : Degree ≃o Degree) : fullIdeal ≃o fullIdeal :=
   { toEquiv :=
       { toFun := fun x => ⟨π x.val,Set.mem_univ _⟩
@@ -39,6 +41,7 @@ def lift (π : Degree ≃o Degree) : fullIdeal ≃o fullIdeal :=
         right_inv := fun x => Element.ext _ _ (π.apply_symm_apply x.val) }
     map_rel_iff' := by intro a b; exact π.le_iff_le }
 
+/-- The finite iterates of the Turing jump on degrees. -/
 def degreeIterate (x : Degree) : ℕ → Degree
   | 0 => x
   | n+1 => degreeJump (degreeIterate x n)

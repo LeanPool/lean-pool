@@ -13,8 +13,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.Representation.OwnStageSourceTheory
-public import LeanPool.TuringConeRigidity.Syntax.SetSatisfactionBounded
+public import LeanPool.TuringConeRigidity.Constructibility.RelativeModelSyntax
+public import LeanPool.TuringConeRigidity.OrdinalCodes.CanonicalRealsSyntax
 
 /-!
 # One Real Definition Sentence
@@ -29,6 +29,8 @@ namespace TuringRigidity.RelativeConstructible
 open ElementaryModel BoundedSetTheory TransitiveNameModel SentenceForm
 universe u
 
+/-- A full formula asserting that the indicated parameter is a member of the canonical real
+set. -/
 noncomputable def modelRealSentence (i : ℕ) : SentenceForm :=
   .ex (.conj (canonicalReals 0) (.member (i+1) 0))
 
@@ -51,6 +53,8 @@ theorem modelRealSentence_spec (M : ZFSet.{u}) (hM : Transitive M) (hT : SourceT
   · intro h
     exact ⟨_,hR,(hf _ hR).mpr rfl,h⟩
 
+/-- Define a subset of a stage using `p` with one repeated parameter, where `s` specifies the
+stage. -/
 noncomputable def oneRealGraphSentence (s p : SentenceForm) : SentenceForm :=
   .ex (.conj (s.rename (fun i => if i = 0 then 0 else 2))
     (.conj (.member 3 0)
@@ -102,6 +106,8 @@ theorem oneRealGraphSentence_spec (s p : SentenceForm) (M : ZFSet.{u})
     have hA := stage_mem M _ _ hM hT (groundReals_mem M hM hT) (he 1)
     exact ⟨_,hA,(hstage _ hA).mpr rfl,hP,(hdef _ hA hP).mpr hf⟩
 
+/-- A full formula combining an ordinal parameter, a model real, and its one-real definition
+graph. -/
 noncomputable def oneRealSentence (s p : SentenceForm) : SentenceForm :=
   .conj (fromBounded (ordinalFormula 1))
     (.conj (modelRealSentence 2) (oneRealGraphSentence s p))

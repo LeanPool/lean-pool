@@ -13,8 +13,11 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.CohenForcing.CohenChainCondition
 public import Mathlib.Order.Zorn
+
+public import LeanPool.TuringConeRigidity.CohenForcing.CohenChainCondition
+public import Mathlib.Order.CompletePartialOrder
+public import Mathlib.SetTheory.ZFC.PSet
 
 /-!
 # Cohen Nice Names
@@ -65,14 +68,19 @@ theorem countable_predense_antichain (U : Set (Condition ι)) :
   have hpA : p ∈ A := hA.2 hins (Set.subset_insert _ _) (Set.mem_insert _ _)
   exact hnone p hpA (compatible_refl p)
 
+/-- A name for a real, assigning a family of forcing conditions to each natural number. -/
 def RealName (ι : Type u) := ℕ → Set (Condition ι)
 
+/-- Interpret a real name by the indices whose condition families meet the filter. -/
 def value (N : RealName ι) (G : GenericFilter (Condition ι)) : Set ℕ :=
   {n | ∃ p ∈ G.carrier, p ∈ N n}
 
+/-- The downward closure of a family of forcing conditions. -/
 def below (U : Set (Condition ι)) : Set (Condition ι) :=
   {q | ∃ p ∈ U, q ≤ p}
 
+/-- Conditions lying below a member of `A n`, or admitting no stronger condition below a
+member of `N n`. -/
 def decision (N A : RealName ι) (n : ℕ) : Set (Condition ι) :=
   {q | (∃ a ∈ A n, q ≤ a) ∨ ∀ p, p ≤ q → p ∉ below (N n)}
 

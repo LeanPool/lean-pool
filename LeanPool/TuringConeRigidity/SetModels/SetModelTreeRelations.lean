@@ -13,8 +13,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.SetModels.SetModelArithmeticTree
-public import LeanPool.TuringConeRigidity.Syntax.SetRankCertificate
+public import LeanPool.TuringConeRigidity.Computability.ArithmeticTreeDefinability
+public import LeanPool.TuringConeRigidity.SetModels.SetModelArithmeticClosure
 
 /-!
 # Set Model Tree Relations
@@ -32,9 +32,11 @@ universe u
 noncomputable section
 attribute [local instance] Classical.propDecidable
 
+/-- The code round-trips through node decoding and the decoded node is accepted by the test. -/
 def Test.canonicalNode (t : Test) (O : Oracles) (v n : ℕ) : Prop :=
   encode (decodeNode n) = n ∧ t.accepts O v (decodeNode n)
 
+/-- Two canonical accepted node codes are related by adding one final witness entry. -/
 def Test.edgePredicate (t : Test) (O : Oracles) (v n m : ℕ) : Prop :=
   t.canonicalNode O v n ∧ t.canonicalNode O v m ∧ ∃ a, decodeNode n = decodeNode m ++ [a]
 
@@ -54,6 +56,7 @@ theorem Test.edge_arith (t : Test) (v : ℕ) :
   exact (hc.and he.ex).congr (fun _ _ => by
     simp only [Test.edgePredicate, left, right, Nat.unpair_pair, and_assoc])
 
+/-- The relation on numeral pairs whose natural pairing values are selected by the oracle `A`. -/
 def relationSet (A : Oracle) : ZFSet.{u} :=
   ZFSet.sep (fun z => ∃ x ∈ realSet A, ZFSet.pair z x ∈ pairingSet) pairNumbers
 

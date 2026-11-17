@@ -14,7 +14,9 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.Representation.RealHullQuotient
-public import LeanPool.TuringConeRigidity.Representation.OriginalRealGeneratedModel
+public import LeanPool.TuringConeRigidity.CohenForcing.InternalCohenColumnReading
+public import LeanPool.TuringConeRigidity.SetModels.InternalBooleanIntermediate
+public import LeanPool.TuringConeRigidity.SetModels.InternalColumnExtension
 
 /-!
 # Original Real Quotient Model

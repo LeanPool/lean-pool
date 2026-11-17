@@ -14,6 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.OrdinalCodes.NaturalPrimitiveRecursion
+public import LeanPool.TuringConeRigidity.SetModels.ModelNaturalNumbers
 
 /-!
 # Internal Primitive Graph
@@ -30,6 +31,7 @@ open TransitiveNameModel
 universe u
 namespace Formula
 
+/-- Bounded formula describing the graph of a numerical function defined by `φ`. -/
 def numericalGraph (φ : Formula) : Formula := .existsMem 1 (.existsMem 2
   (.conj (.orderedPair 2 1 0) (unary φ 3 4 1 0)))
 end Formula

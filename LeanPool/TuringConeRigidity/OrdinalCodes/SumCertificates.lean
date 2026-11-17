@@ -13,8 +13,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.Constructibility.RelativeOmegaCertificates
-public import LeanPool.TuringConeRigidity.OrdinalCodes.OrdinalCodeOperations
+public import LeanPool.TuringConeRigidity.OrdinalCodes.OrdinalSumClosure
 
 /-!
 # Sum Certificates
@@ -30,6 +29,8 @@ open TransitiveNameModel BoundedSetTheory RelationCollapse ElementaryModel Relat
 open BoundedDefinability SetModelFunctions
 universe u
 
+/-- Model-membership and order-type certificates for the tagged presentation of an ordinal
+sum. -/
 def SumCertificates (M : ZFSet.{u}) (a b : Ordinal.{u}) : Prop :=
   sumDomain a.toZFSet b.toZFSet ∈ M ∧ sumRelation a.toZFSet b.toZFSet ∈ M ∧
     ∃ f ∈ M, OrderTypeCertificate (sumDomain a.toZFSet b.toZFSet)

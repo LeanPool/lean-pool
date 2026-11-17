@@ -30,11 +30,14 @@ open TransitiveNameModel
 universe u
 namespace InternalWellOrder
 
+/-- The element `x` belongs to `a` and has no predecessor in `a` under `r`. -/
 def MinimalIn (r a x : ZFSet.{u}) : Prop := x ∈ a ∧ ∀ y ∈ a, ¬ ZFSet.pair y x ∈ r
 
+/-- Every nonempty subset of `d` belonging to `M` has an `r`-minimal element. -/
 def InternallyWellFounded (M d r : ZFSet.{u}) : Prop :=
   ∀ a ∈ M, a ⊆ d → (∃ x, x ∈ a) → ∃ x, MinimalIn r a x
 
+/-- An `r`-minimal member of `a` chosen at the earliest index of the enumeration graph `F`. -/
 def LeastMinimal (δ F r a x : ZFSet.{u}) : Prop := MinimalIn r a x ∧
   ∃ i ∈ δ, ZFSet.pair i x ∈ F ∧
     ∀ j ∈ i, ∀ y ∈ a, ZFSet.pair j y ∈ F → ¬ MinimalIn r a y
@@ -69,6 +72,7 @@ theorem LeastMinimal.unique {δ d F r a x y : ZFSet.{u}} (hδ : δ.IsOrdinal)
 
 open Formula
 
+/-- Bounded formula expressing membership and relation-minimality inside `a`. -/
 def minimalInFormula (r a x : ℕ) : Formula :=
   .conj (.member x a) (allMem a (.neg (pairMem 0 (x+1) (r+1))))
 
@@ -76,6 +80,7 @@ theorem eval_minimalInFormula (r a x : ℕ) (e : ℕ → ZFSet.{u}) :
     (minimalInFormula r a x).Eval e ↔ MinimalIn (e r) (e a) (e x) := by
   simp only [minimalInFormula,MinimalIn,Formula.Eval,eval_allMem,eval_pairMem,cons_zero,cons_succ]
 
+/-- Bounded formula expressing the earliest enumerated relation-minimal member of a set. -/
 def leastMinimalFormula (δ F r a x : ℕ) : Formula := .conj (minimalInFormula r a x)
   (.existsMem δ (.conj (pairMem 0 (x+1) (F+1))
     (allMem 0 (allMem (a+2) (imp (pairMem 1 0 (F+3))
@@ -86,6 +91,7 @@ theorem eval_leastMinimalFormula (δ F r a x : ℕ) (e : ℕ → ZFSet.{u}) :
   simp only [leastMinimalFormula,LeastMinimal,Formula.Eval,eval_minimalInFormula,
     eval_pairMem,eval_allMem,eval_imp,cons_zero,cons_succ]
 
+/-- Bounded formula describing the graph of the earliest-minimal-element selector. -/
 def minimalSelectorFormula : Formula := .existsMem 1 (.existsMem 3
   (.conj (.orderedPair 2 1 0) (leastMinimalFormula 5 6 7 1 0)))
 

@@ -33,6 +33,7 @@ universe u
 
 variable {M : ZFSet.{u}}
 
+/-- One recursive truth clause for a coded full set-theoretic formula and tuple. -/
 def SetTruthStep (A G T S c t : ZFSet.{u}) : Prop :=
   (∃ i ∈ ZFSet.omega, ∃ j ∈ ZFSet.omega, ∃ x ∈ A, ∃ y ∈ A,
     BinaryGraph (fun i j => binary 0 (atom i) (atom j)) i j c ∧

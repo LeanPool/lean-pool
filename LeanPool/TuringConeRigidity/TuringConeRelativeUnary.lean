@@ -12,7 +12,7 @@ Module paths, interfaces, and proofs are ported to the pool's toolchain and gate
 module
 
 public import LeanPool.TuringConeRigidity.TuringConeRelativeRelations
-public import LeanPool.TuringConeRigidity.Effective.LocalUnary
+public import LeanPool.TuringConeRigidity.SetModels.FixedArithmetic
 
 /-!
 # Localized unary coding in a principal cone
@@ -35,6 +35,7 @@ open SetCoding RelationCoding BoundedDecoding ArithmeticModelDecoding
 noncomputable section
 attribute [local instance] Classical.propDecidable
 
+/-- Regard a set code as a unary relation code. -/
 def unaryCode (p : SetCode) : RelationCode 1 := ⟨fun _ => p, p.tags⟩
 
 theorem unaryCode_holds (a : Degree) (p : SetCode) (x : Degree) :
@@ -60,6 +61,7 @@ theorem unaryCode_above {p : SetCode} {a : Degree} (h : SetAbove p a) :
 theorem unaryCode_below {p : SetCode} {b : Degree} (h : SetBelow p b) :
     RelationBelow (unaryCode p) b := ⟨fun _ => h, h.2.1⟩
 
+/-- The empty antichain code with all three parameters equal to the cone base. -/
 def emptyAntichain (a : Degree) : AntichainCode := ⟨a, a, a⟩
 
 theorem emptyAntichain_holds (a x : Degree) :
@@ -68,6 +70,7 @@ theorem emptyAntichain_holds (a x : Degree) :
   apply hn
   simpa only [emptyAntichain, sup_eq_right.mpr hax] using hz
 
+/-- The empty relation code of the specified arity with all parameters at the cone base. -/
 def emptyRelation (a : Degree) (n : ℕ) : RelationCode n :=
   ⟨fun _ => ⟨a, emptyAntichain a, emptyAntichain a⟩, emptyAntichain a⟩
 

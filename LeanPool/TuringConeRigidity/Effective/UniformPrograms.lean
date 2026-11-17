@@ -27,6 +27,8 @@ namespace OAI
 namespace TuringRigidity.UniformPrograms
 open Encodable
 
+/-- One oracle program uniformly computes the family of partial functions from the given
+oracle family. -/
 def Runs {X : Type*} (O : X → ℕ →. ℕ) (f : X → ℕ →. ℕ) : Prop :=
   ∃ p : OracleCode, ∀ x, OracleCode.eval (O x) p = f x
 

@@ -13,6 +13,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
+public import Mathlib.MeasureTheory.Constructions.Polish.Basic
 public import LeanPool.TuringConeRigidity.Effective.ProgramSelection
 public import LeanPool.TuringConeRigidity.Representation.Assembly
 
@@ -28,6 +29,7 @@ namespace OAI
 open Set
 namespace TuringRigidity
 
+/-- The Boolean oracle recording whether the program returns one on each input. -/
 noncomputable def programOutput (c : OracleCode) (A : Oracle) : Oracle :=
   fun n => by classical exact decide (1 ∈ OracleCode.eval (oracleFunction A) c n)
 

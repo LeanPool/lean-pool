@@ -15,7 +15,6 @@ module
 
 public import LeanPool.TuringConeRigidity.CohenForcing.CountableForcing
 public import LeanPool.TuringConeRigidity.Representation.GenericTruth
-public import LeanPool.TuringConeRigidity.Representation.GenericFiberIdeal
 public import LeanPool.TuringConeRigidity.Representation.GenericSourceTransfer
 
 /-!
@@ -30,7 +29,9 @@ namespace OAI
 namespace TuringRigidity.CohenBorelForcing
 open Set FiniteShuffle ShuffleRequirements GenericTopology GenericTruth CountableForcing
 
+/-- A finite binary word, ordered as a Cohen forcing condition. -/
 @[ext] structure Condition where
+  /-- The finite binary word specified by this condition. -/
   word : List Bool
 
 instance : PartialOrder Condition where
@@ -39,6 +40,7 @@ instance : PartialOrder Condition where
   le_trans _ _ _ h₁ h₂ := h₂.trans h₁
   le_antisymm _ _ h₁ h₂ := Condition.ext (List.Sublist.antisymm h₂.sublist h₁.sublist)
 
+/-- The filter of all finite conditions agreeing with the oracle `A`. -/
 def realFilter (A : Oracle) : GenericFilter Condition where
   carrier := {p | Realizes p.word A}
   nonempty := ⟨⟨[]⟩,by intro i hi; simp at hi⟩
@@ -54,6 +56,7 @@ def realFilter (A : Oracle) : GenericFilter Condition where
       rw [←prefix_default q.word]
       exact initial_prefix (n := q.word.length) (m := n) (le_max_right _ _) hq
 
+/-- The word conditions in the `n`th requirement of a forcing sentence. -/
 def Family (a : Sentence Condition) (n : ℕ) (s : List Bool) : Prop :=
   (⟨s⟩ : Condition) ∈ a.Requirements n
 
@@ -73,6 +76,7 @@ theorem realFilter_generic (a : Sentence Condition) (A : Oracle)
   obtain ⟨s,hs,hAs⟩ := hA n
   exact ⟨⟨s⟩,hAs,hs⟩
 
+/-- A set of oracles is represented by the truth of one forcing sentence. -/
 def Represented (S : Set Oracle) : Prop :=
   ∃ a : Sentence Condition, ∀ A, a.Truth (realFilter A) ↔ A ∈ S
 

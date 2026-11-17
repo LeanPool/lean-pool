@@ -28,6 +28,7 @@ namespace OAI
 namespace TuringRigidity.GenericIdentity
 open Set FiniteShuffle ShuffleRequirements GenericTruth
 
+/-- The computation halts on the specified input with one of the two Boolean values. -/
 def BinaryHalts (p : OracleCode) (P A : Oracle) (n : ℕ) : Prop :=
   0 ∈ OracleCode.eval (oracleFunction (join A P)) p n ∨
   1 ∈ OracleCode.eval (oracleFunction (join A P)) p n

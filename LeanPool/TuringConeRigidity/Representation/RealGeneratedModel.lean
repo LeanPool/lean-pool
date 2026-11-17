@@ -14,6 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.Syntax.BooleanFilterReconstruction
+public import LeanPool.TuringConeRigidity.SetModels.InternalBooleanExtension
 
 /-!
 # Real Generated Model
@@ -29,9 +30,12 @@ open TransitiveNameModel BoundedSetTheory CountableForcing
 open InternalRegularOperations InternalRegularAlgebra InternalBooleanSyntax InternalBooleanBits
 open InternalGeneratedAlgebra InternalProjectedGeneric InternalBooleanTop
 
+/-- A transitive SourceT model contains the ground model and the distinguished set `X`. -/
 def Contains (M X N : ZFSet.{0}) : Prop :=
   Transitive N ∧ SourceT N ∧ M ⊆ N ∧ X ∈ N
 
+/-- Intersect all suitable transitive extensions inside one chosen witness, using empty set if
+none exists. -/
 noncomputable def hull (M X : ZFSet.{0}) : ZFSet.{0} := by
   classical
   exact if h : ∃ N, Contains M X N then

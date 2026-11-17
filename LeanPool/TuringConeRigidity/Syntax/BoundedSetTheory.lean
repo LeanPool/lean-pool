@@ -29,6 +29,8 @@ open Set
 open TransitiveNameModel (Transitive)
 universe u
 
+/-- Bounded set-theoretic syntax with equality, membership, conjunction, negation, and
+membership-bounded existential quantifiers. -/
 inductive Formula where
   | equal (i j : ℕ)
   | member (i j : ℕ)
@@ -36,6 +38,7 @@ inductive Formula where
   | neg (φ : Formula)
   | existsMem (i : ℕ) (φ : Formula)
 
+/-- Prepend a set value to the variable environment. -/
 def cons (x : ZFSet.{u}) (env : ℕ → ZFSet.{u}) : ℕ → ZFSet.{u}
   | 0 => x
   | n+1 => env n
@@ -44,6 +47,8 @@ def cons (x : ZFSet.{u}) (env : ℕ → ZFSet.{u}) : ℕ → ZFSet.{u}
 @[simp] theorem cons_succ (x : ZFSet.{u}) (env : ℕ → ZFSet.{u}) (n : ℕ) :
     cons x env (n+1) = env n := rfl
 
+/-- Interpret a bounded formula using ambient membership and membership-bounded
+quantification. -/
 def Formula.Eval (env : ℕ → ZFSet.{u}) : Formula → Prop
   | .equal i j => env i = env j
   | .member i j => env i ∈ env j
@@ -51,6 +56,8 @@ def Formula.Eval (env : ℕ → ZFSet.{u}) : Formula → Prop
   | .neg φ => ¬ Eval env φ
   | .existsMem i φ => ∃ x ∈ env i, Eval (cons x env) φ
 
+/-- Interpret a bounded formula with quantified witnesses additionally restricted to the
+model. -/
 def Formula.Realize (M : ZFSet.{u}) (env : ℕ → ZFSet.{u}) : Formula → Prop
   | .equal i j => env i = env j
   | .member i j => env i ∈ env j
@@ -74,15 +81,19 @@ theorem Formula.absolute (φ : Formula) (M : ZFSet.{u}) (hM : Transitive M)
       have hx := hM _ (he i) _ hi
       exact ⟨x,hx,hi,(ih (cons x env) (fun n => by cases n <;> simp [cons,he,hx])).mpr hφ⟩
 
+/-- The model internally contains the unordered pair of any two of its elements. -/
 def Pairing (M : ZFSet.{u}) : Prop :=
   ∀ a ∈ M, ∀ b ∈ M, ∃ c ∈ M, ∀ x ∈ M, x ∈ c ↔ x = a ∨ x = b
 
+/-- The model internally contains the union of each of its elements. -/
 def Union (M : ZFSet.{u}) : Prop :=
   ∀ a ∈ M, ∃ b ∈ M, ∀ x ∈ M, x ∈ b ↔ ∃ y ∈ M, y ∈ a ∧ x ∈ y
 
+/-- The model internally contains a power set for each of its elements. -/
 def PowerSet (M : ZFSet.{u}) : Prop :=
   ∀ a ∈ M, ∃ b ∈ M, ∀ x ∈ M, x ∈ b ↔ ∀ y ∈ M, y ∈ x → y ∈ a
 
+/-- The model admits separation for bounded formulas with parameters belonging to it. -/
 def Separation (M : ZFSet.{u}) : Prop :=
   ∀ (φ : Formula) (env : ℕ → ZFSet.{u}), (∀ i, env i ∈ M) →
     ∀ a ∈ M, ∃ b ∈ M, ∀ x ∈ M, x ∈ b ↔ x ∈ a ∧ φ.Realize M (cons x env)
@@ -161,7 +172,10 @@ theorem sep_mem (M : ZFSet.{u}) (hM : Transitive M) (hS : Separation M)
 
 namespace Formula
 
+/-- Disjunction expressed through negation and conjunction in bounded syntax. -/
 def disj (φ ψ : Formula) : Formula := .neg (.conj (.neg φ) (.neg ψ))
+/-- Membership-bounded universal quantification expressed through negated existential
+quantification. -/
 def allMem (i : ℕ) (φ : Formula) : Formula := .neg (.existsMem i (.neg φ))
 
 @[simp] theorem eval_disj (φ ψ : Formula) (env : ℕ → ZFSet.{u}) :
@@ -181,9 +195,11 @@ def allMem (i : ℕ) (φ : Formula) : Formula := .neg (.existsMem i (.neg φ))
   classical
   simp [allMem,Eval]
 
+/-- Bounded formula asserting that `s` is the singleton containing `a`. -/
 def singleton (s a : ℕ) : Formula :=
   .conj (.member a s) (allMem s (.equal 0 (a+1)))
 
+/-- Bounded formula asserting that `s` is the unordered pair of `a` and `b`. -/
 def unorderedPair (s a b : ℕ) : Formula :=
   .conj (.member a s) (.conj (.member b s)
     (allMem s (disj (.equal 0 (a+1)) (.equal 0 (b+1)))))
@@ -212,6 +228,7 @@ def unorderedPair (s a b : ℕ) : Formula :=
   · intro h
     simp [h]
 
+/-- Bounded formula asserting that `s` is the Kuratowski ordered pair of `a` and `b`. -/
 def orderedPair (s a b : ℕ) : Formula :=
   .conj (allMem s (disj (singleton 0 (a+1)) (unorderedPair 0 (a+1) (b+1))))
     (.conj (.existsMem s (singleton 0 (a+1)))
@@ -232,6 +249,7 @@ def orderedPair (s a b : ℕ) : Formula :=
     rw [h]
     simp [ZFSet.pair]
 
+/-- Bounded formula asserting that the ordered pair of `a` and `b` belongs to `s`. -/
 def pairMem (a b s : ℕ) : Formula := .existsMem s (orderedPair 0 (a+1) (b+1))
 
 @[simp] theorem eval_pairMem (a b s : ℕ) (env : ℕ → ZFSet.{u}) :

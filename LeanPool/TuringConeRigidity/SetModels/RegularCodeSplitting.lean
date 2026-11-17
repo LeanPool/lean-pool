@@ -13,7 +13,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.SetModels.CountedRegularBasis
+public import LeanPool.TuringConeRigidity.SetModels.InternalBooleanDense
 
 /-!
 # Regular Code Splitting
@@ -51,6 +51,7 @@ theorem basic_disjoint (c p q : ZFSet.{0})
   obtain ⟨s,hs,hrs,hqs⟩ := ((mem_basic_iff c q r).mp hrq).2 r hr (fun _ h => h)
   exact hinc ⟨s,hs,fun _ h => hrs (hpr h),hqs⟩
 
+/-- The part of `U` lying in the regular complement of `V` inside `c`. -/
 noncomputable def remainder (U : ZFSet.{0}) (c V : ZFSet.{0}) : ZFSet.{0} :=
   U.sep (fun p => p ∈ neg c V)
 
@@ -73,11 +74,13 @@ theorem remainder_mem (M c U V : ZFSet.{0}) (hM : Transitive M) (hT : SourceT M)
     sep_mem M hM hT.separation.finitePrefix.bounded (.member 0 1)
       (fun _ => neg c V) (fun _ => neg_mem M c V hM hT hc hV) hU
 
+/-- Two nonempty disjoint subsets of `U` whose union is dense below every condition of `U`. -/
 def Partition (U V W : ZFSet.{0}) : Prop :=
   V ⊆ U ∧ W ⊆ U ∧ V ≠ ∅ ∧ W ≠ ∅ ∧
     (∀ p ∈ V, p ∉ W) ∧
     ∀ p ∈ U, ∃ r ∈ U, p ⊆ r ∧ (r ∈ V ∨ r ∈ W)
 
+/-- Bounded formula expressing the nonempty disjoint dense-partition property. -/
 def partitionFormula (U V W : ℕ) : Formula :=
   .conj (.subset V U) (.conj (.subset W U)
     (.conj (.neg (.empty V)) (.conj (.neg (.empty W))

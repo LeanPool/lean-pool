@@ -29,6 +29,8 @@ namespace TuringRigidity.BoundedDefinability
 open ElementaryModel BoundedSetTheory TransitiveNameModel SetModelFunctions RelativeConstructible
 universe u
 
+/-- A full formula with finitely many parameters from `M` defines the domain-dependent
+predicate in every suitable transitive set. -/
 def DomainDefinable (M : ZFSet.{u})
     (P : ZFSet.{u} → (ℕ → ZFSet.{u}) → Prop) : Prop :=
   ∃ p : SentenceForm, ∃ d : ℕ → ZFSet.{u}, ∃ k : ℕ,

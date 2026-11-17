@@ -13,7 +13,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.SetModels.ModelAutomorphismInterpretation
+public import LeanPool.TuringConeRigidity.SetModels.ModelOrderSatisfaction
 
 /-!
 # Model Persistence Satisfaction
@@ -29,16 +29,22 @@ namespace TuringRigidity.BoundedSetTheory
 open TransitiveNameModel
 universe u
 
+/-- A countably enumerated larger ideal and an automorphism graph extending the original while
+including `x`. -/
 def SetExtensionWitness (o U L I F x J S E : ZFSet.{u}) : Prop :=
   SetIdeal U L J ∧
   (TransitiveNameModel.FunctionGraph o J E ∧ ∀ y ∈ J, ∃ n ∈ o, ZFSet.pair n y ∈ E) ∧
   SetAutomorphism J L S ∧ I ⊆ J ∧ x ∈ J ∧ F ⊆ S
 
+/-- A set-coded automorphism admits a countably enumerated extension inside `M` containing
+each degree-universe element. -/
 def ModelPersistent (M U L I F : ZFSet.{u}) : Prop := SetAutomorphism I L F ∧
   ∀ x ∈ U, ∃ J ∈ M, ∃ S ∈ M, ∃ E ∈ M, SetExtensionWitness ZFSet.omega U L I F x J S E
 
 namespace Formula
 
+/-- Bounded formula expressing the data and inclusions of a set-coded persistence extension
+witness. -/
 def setExtensionWitness (o U L I F x J S E : ℕ) : Formula :=
   .conj (setIdeal U L J) (.conj (surjection o J E) (.conj (setAutomorphism J L S)
     (.conj (.subset I J) (.conj (.member x J) (.subset F S)))))
@@ -52,6 +58,8 @@ end Formula
 
 namespace LevySigma
 
+/-- A Levy-sigma formula expressing the set-coded automorphism and all required persistence
+extensions. -/
 def persistent (o U L I F : ℕ) : LevySigma := .conj (.bounded (.setAutomorphism I L F))
   (.allMem U (.existsSet (.existsSet (.existsSet
     (.bounded (.setExtensionWitness (o+4) (U+4) (L+4) (I+4) (F+4) 3 2 1 0))))))

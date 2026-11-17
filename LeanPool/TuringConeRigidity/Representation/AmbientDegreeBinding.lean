@@ -14,6 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.Representation.AmbientDegreeSyntax
+public import LeanPool.TuringConeRigidity.SetModels.ModelDegreeOrder
 
 /-!
 # Ambient Degree Binding
@@ -28,6 +29,7 @@ namespace TuringRigidity.FullSetForcing
 open BoundedSetTheory TransitiveNameModel ElementaryModel SentenceForm
 universe u
 
+/-- A full formula defining the model's collection of natural-number binary relation graphs. -/
 noncomputable def ownGraphBound (o Q : ℕ) : SentenceForm :=
   definedSet Q (.allMem 0 (productMember (o+2) (o+2) 0))
 
@@ -54,6 +56,8 @@ theorem graphBound_certificates (M : ZFSet.{u}) (hM : Transitive M) (hT : Source
   obtain ⟨i,_,rfl⟩ := (mem_finiteNaturalGraph f n z).mp hz
   exact ZFSet.mem_prod.mpr ⟨_,(mem_omega _).mpr ⟨i,rfl⟩,_,(mem_omega _).mpr ⟨f i,rfl⟩,rfl⟩
 
+/-- A full formula defining the model's real set, graph bound, degree universe, and degree
+order. -/
 noncomputable def degreeSetup (eqf lef : Formula) : SentenceForm :=
   .conj (ownPower 6 3) (.conj (ownGraphBound 6 2)
     (.conj (definedSet 1 (Formula.degreeUniverseMember eqf 7 3 8 4 0))

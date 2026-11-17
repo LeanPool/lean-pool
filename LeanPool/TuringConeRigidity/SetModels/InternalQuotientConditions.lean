@@ -13,7 +13,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.SetModels.InternalBooleanTop
+public import LeanPool.TuringConeRigidity.Representation.GenericFilterName
+public import LeanPool.TuringConeRigidity.SetModels.InternalSameNameGeneric
 
 /-!
 # Internal Quotient Conditions
@@ -31,6 +32,7 @@ open InternalBooleanProjection InternalBooleanDense InternalProjectedGeneric Int
 attribute [local instance] InternalCollapse.order InternalCollapse.collapsePreorder
 attribute [local instance] codeOrder codePreorder
 
+/-- The conditions belonging to every member of `A` that contains `p`. -/
 noncomputable def cover (c A p : ZFSet.{0}) : ZFSet.{0} :=
   c.sep (fun r => ∀ U ∈ A, p ∈ U → r ∈ U)
 
@@ -45,6 +47,7 @@ theorem cover_eq_project (c A p : ZFSet.{0}) (hp : p ∈ c)
   · intro h U hU hpU
     exact h U ⟨hU,(basicCode_le_iff c p U hp (hA U hU)).mpr hpU⟩
 
+/-- Bounded formula describing the common-neighborhood cover of the condition `p`. -/
 def coverFormula (c A p V : ℕ) : Formula :=
   .conj (.subset V c) (.allMem c (.iff (.member 0 (V+1))
     (.allMem (A+1) (.imp (.member (p+2) 0) (.member 1 0)))))
@@ -62,6 +65,7 @@ theorem coverFormula_spec (c A p V : ℕ) (e : ℕ → ZFSet.{0}) :
     exact ⟨fun _ hr => (ZFSet.mem_sep.mp hr).1,fun r hr =>
       ZFSet.mem_sep.trans (and_iff_right hr)⟩
 
+/-- The conditions whose projected basic Boolean values belong to `h`. -/
 noncomputable def conditions (c A h : ZFSet.{0}) : ZFSet.{0} :=
   c.sep (fun p => project c A (basicCode c p) ∈ h)
 

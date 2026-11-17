@@ -14,7 +14,6 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.SetModels.InternalCountableClosure
-public import Mathlib.SetTheory.ZFC.Ordinal
 
 /-!
 # Internal Countable Ordinals
@@ -28,6 +27,8 @@ namespace OAI
 namespace TuringRigidity.InternalCountableOrdinals
 open TransitiveNameModel BoundedSetTheory InternalCountableClosure
 
+/-- An ordinal in `M` that is internally uncountable while each of its elements is empty or
+internally countable. -/
 def FirstUncountable (M K : ZFSet.{0}) : Prop :=
   K.IsOrdinal ∧ K ∈ M ∧ ¬ (K = ∅ ∨ InternallyCountable M K) ∧
     ∀ a ∈ K, a = ∅ ∨ InternallyCountable M a

@@ -29,6 +29,7 @@ namespace TuringRigidity.InternalFiniteSubsets
 open Set TransitiveNameModel BoundedSetTheory InternalCollapse RelativeConstructible
 universe u
 
+/-- The set of all finite subsets of `A`, represented by finite enumerations. -/
 noncomputable def finiteSubsets (A : ZFSet.{u}) : ZFSet.{u} :=
   ZFSet.range (fun t : Σ n : ℕ, Fin n → Conditions A =>
     ZFSet.range (fun i => label A (t.2 i)))
@@ -67,6 +68,8 @@ theorem finite_subset_mem (M A x : ZFSet.{u}) (hM : Transitive M)
     (hM _ (sourceT_omega_mem M hM hT) _ ZFSet.omega_zero) n v
     (fun i => hM A hA _ (hv i))
 
+/-- Bounded formula asserting that `x` is the range inside `A` of the graph on indices in
+omega. -/
 def rangeFormula (o A x g : ℕ) : Formula :=
   .conj (.subset x A) (.allMem A
     (.iff (.member 0 (x+1)) (.existsMem (o+1) (.pairMem 0 1 (g+2)))))

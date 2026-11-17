@@ -14,7 +14,6 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.Computability.Cuts
-public import Mathlib.Computability.Primrec.List
 
 /-!
 # Rational Coding
@@ -30,6 +29,7 @@ open Encodable
 
 namespace RationalCoding
 
+/-- Decode the absolute value of an integer numerator code. -/
 def magnitude (n : ℕ) : ℕ := n/2+n%2
 
 theorem magnitude_primrec : Primrec magnitude :=
@@ -54,6 +54,7 @@ theorem magnitude_encode_int (z : ℤ) : magnitude (encode z) = z.natAbs := by
 
 theorem encode_rat (q : ℚ) : encode q = Nat.pair (encode q.num) q.den := rfl
 
+/-- A rational code has positive denominator and coprime numerator magnitude and denominator. -/
 def valid (n : ℕ) : Prop :=
   0 < (Nat.unpair n).2 ∧ (magnitude (Nat.unpair n).1).Coprime (Nat.unpair n).2
 
@@ -110,6 +111,7 @@ theorem valid_primrec : PrimrecPred valid :=
   coprime_positive_primrec.comp ((magnitude_primrec.comp (Primrec.fst.comp Primrec.unpair)).pair
     (Primrec.snd.comp Primrec.unpair))
 
+/-- Keep a valid rational code, replacing an invalid code by the canonical code of zero. -/
 def canonicalCode (n : ℕ) : ℕ := if valid n then n else encode (0 : ℚ)
 
 theorem canonicalCode_primrec : Primrec canonicalCode :=
@@ -141,9 +143,13 @@ theorem canonicalCode_eq (n : ℕ) : canonicalCode n = encode (rationalEnumerati
   · have hn := decode_invalid n hv
     simp only [canonicalCode,ite_eq_right hv,rationalEnumeration,hn,Option.getD_none]
 
+/-- The integer numerator code of the canonicalized rational code. -/
 def numeratorCode (n : ℕ) : ℕ := (Nat.unpair (canonicalCode n)).1
+/-- The absolute numerator of the canonicalized rational code. -/
 def numeratorMagnitude (n : ℕ) : ℕ := magnitude (numeratorCode n)
+/-- The denominator of the canonicalized rational code. -/
 def denominator (n : ℕ) : ℕ := (Nat.unpair (canonicalCode n)).2
+/-- The sign bit of the numerator of the canonicalized rational code. -/
 def negative (n : ℕ) : Bool := (numeratorCode n).bodd
 
 theorem numeratorCode_primrec : Primrec numeratorCode :=

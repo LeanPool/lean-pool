@@ -15,6 +15,9 @@ module
 
 public import LeanPool.TuringConeRigidity.SetModels.InternalQuotientRequirement
 public import LeanPool.TuringConeRigidity.CohenForcing.RestrictedForcingFilter
+public import LeanPool.TuringConeRigidity.CohenForcing.CheckedForcingRelation
+public import LeanPool.TuringConeRigidity.SetModels.InternalBooleanTop
+public import LeanPool.TuringConeRigidity.SetModels.InternalQuotientLifting
 
 /-!
 # Internal Quotient Generic
@@ -94,6 +97,8 @@ theorem meets_named_dense (M c B Q A : ZFSet.{0}) [Top (Conditions (positive A))
       (CheckedForcingRelation.pair_relation c (label c r) τ a).mpr ⟨label_mem c r,hforce⟩⟩
     exact False.elim ((ZFSet.mem_sep.mp hpn).2 (label c s) hsU (hsr.trans hpr))
 
+/-- Regard the original condition filter as a filter on the quotient poset over its projected
+filter. -/
 noncomputable def quotient (M c B Q A : ZFSet.{0})
     (hM : Transitive M) (hT : SourceT M) (hc : c ∈ M) (hBM : B ∈ M) (hAM : A ∈ M)
     (hB : ∀ U, U ∈ B ↔ U ∈ M ∧ IsCode c U)

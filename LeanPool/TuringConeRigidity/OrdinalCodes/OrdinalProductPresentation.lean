@@ -14,6 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.OrdinalCodes.OrdinalProductSets
+public import LeanPool.TuringConeRigidity.OrdinalCodes.OrdinalOrderPresentation
 
 /-!
 # Ordinal Product Presentation
@@ -28,6 +29,8 @@ namespace TuringRigidity.OrdinalArithmetic
 open TransitiveNameModel BoundedSetTheory RelationCollapse
 universe u
 
+/-- The ordinal-product collapse value of a set-coded pair, with empty set as a non-pair
+fallback. -/
 noncomputable def productValue (a : Ordinal.{u}) (x : ZFSet.{u}) : ZFSet.{u} := by
   classical
   exact if h : ∃ s t, x = ZFSet.pair s t then

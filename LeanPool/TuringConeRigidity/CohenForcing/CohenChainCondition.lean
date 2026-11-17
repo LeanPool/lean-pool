@@ -13,9 +13,10 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.CohenForcing.CohenCoordinates
-public import Mathlib.Data.Set.Countable
 public import Mathlib.Data.Set.Finite.Lattice
+public import Mathlib.Data.Set.Countable
+
+public import LeanPool.TuringConeRigidity.CohenForcing.CohenCoordinates
 
 /-!
 # Cohen Chain Condition
@@ -31,6 +32,7 @@ open Set CohenSymmetry CohenCoordinates
 universe u
 variable {ι : Type u}
 
+/-- Pairwise incompatibility of distinct conditions in a family. -/
 def Antichain (A : Set (Condition ι)) : Prop :=
   A.Pairwise (fun p q => ¬ Compatible p q)
 

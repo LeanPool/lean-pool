@@ -28,6 +28,7 @@ namespace OAI
 namespace TuringRigidity.CategorySearch
 open Computable Encodable
 
+/-- The rational-cut bit comparing the rational at index `k` with that at index `i`. -/
 def rationalBit (i k : ℕ) : ℕ := if RationalCoding.ltCode k i then 1 else 0
 
 theorem rationalBit_primrec : Primrec₂ rationalBit :=
@@ -38,8 +39,10 @@ theorem rationalBit_eq (i k : ℕ) :
     Part.some (rationalBit i k) = oracleFunction (cut (rationalEnumeration i : ℝ)) k := by
   simp only [rationalBit,oracleFunction,cut_eq_true,RationalCoding.ltCode_iff]
 
+/-- The real pair given by the two enumerated rational samples. -/
 def sample (i j : ℕ) : ℝ × ℝ := (rationalEnumeration i,rationalEnumeration j)
 
+/-- Join a finite partial background table with the total cut oracles of two rational samples. -/
 def finiteOracle (L : List ℕ) (i j : ℕ) : ℕ →. ℕ :=
   partialJoin (partialJoin (BranchMachine.lookup L) (fun k => Part.some (rationalBit i k)))
     (fun k => Part.some (rationalBit j k))
@@ -49,6 +52,7 @@ theorem partialJoin_oracle (A B : Oracle) :
   funext k
   cases h : k.bodd <;> simp [partialJoin,oracleFunction,join,h]
 
+/-- Read a bit of `A` as the natural number zero or one. -/
 noncomputable def Avalue (A : Oracle) (k : ℕ) : ℕ := if A k then 1 else 0
 
 theorem finiteOracle_approximates (A : Oracle) (i j k : ℕ) :
@@ -68,6 +72,7 @@ theorem finiteOracle_approximates (A : Oracle) (i j k : ℕ) :
   simpa only [finiteOracle,hi,hj,show (fun k => Part.some (Avalue A k)) = oracleFunction A from rfl,
     partialJoin_oracle,pairOracle,sample] using h
 
+/-- Both rational samples lie strictly inside their prescribed rational coordinate intervals. -/
 def inside (l r : ℚ × ℚ) (i j : ℕ) : Prop :=
   RationalCoding.ltCode (encode l.1) i ∧ RationalCoding.ltCode i (encode r.1) ∧
   RationalCoding.ltCode (encode l.2) j ∧ RationalCoding.ltCode j (encode r.2)
@@ -83,6 +88,8 @@ theorem inside_iff (l r : ℚ × ℚ) (i j : ℕ) :
     inside l r i j ↔ sample i j ∈ rectangle l r := by
   simp [inside,RationalCoding.ltCode_iff,rationalEnumeration,sample,rectangle,and_assoc]
 
+/-- Evaluate the program at a coded rational sample and input when the sample lies inside the
+rectangle. -/
 def finiteRun (c : OracleCode) (l r : ℚ × ℚ) (L : List ℕ) (w : ℕ) : Part ℕ :=
   let i := (Nat.unpair w).1
   let j := (Nat.unpair (Nat.unpair w).2).1

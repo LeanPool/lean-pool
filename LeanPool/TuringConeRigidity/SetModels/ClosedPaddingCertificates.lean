@@ -13,9 +13,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.SetModels.RecursiveOmegaBound
-public import LeanPool.TuringConeRigidity.Constructibility.InternalOmegaFixedPoint
-public import LeanPool.TuringConeRigidity.OrdinalCodes.VectorCodeLevels
+public import LeanPool.TuringConeRigidity.Effective.FiniteBlockProducts
+public import LeanPool.TuringConeRigidity.OrdinalCodes.VectorCodeCertificates
 
 /-!
 # Closed Padding Certificates

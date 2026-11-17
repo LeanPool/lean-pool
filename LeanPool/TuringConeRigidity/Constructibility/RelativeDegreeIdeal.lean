@@ -14,9 +14,10 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.SetModels.DegreeUniverseWithoutChoice
-public import LeanPool.TuringConeRigidity.Constructibility.RelativeModelComparison
 public import LeanPool.TuringConeRigidity.SetModels.ElementaryModelIdeal
 public import LeanPool.TuringConeRigidity.Representation.NativeModelCompatibility
+public import LeanPool.TuringConeRigidity.Constructibility.RelativeModelClosure
+public import LeanPool.TuringConeRigidity.Constructibility.RelativeModelPower
 
 /-!
 # Relative Degree Ideal

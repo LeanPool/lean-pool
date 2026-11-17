@@ -13,7 +13,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.Computability.BranchMachine
+public import LeanPool.TuringConeRigidity.Computability.OracleCode
+public import LeanPool.TuringConeRigidity.Effective.PartialComputability
 
 /-!
 # Uniform Program
@@ -26,9 +27,13 @@ namespace OAI
 
 namespace TuringRigidity.UniformProgram
 open Encodable Computable
+/-- Partial-recursive syntax used as the external code type for uniform oracle programs. -/
 abbrev Code := Nat.Partrec.Code
+/-- Decidable equality on the uniform program code type, obtained from its encoding. -/
 local instance : DecidableEq Code := Encodable.decidableEqOfEncodable Code
 
+/-- Interpret external partial-recursive syntax as oracle-program syntax, reserving a special
+minimization code for queries. -/
 def meaning : Code → OracleCode
   | .zero => .zero
   | .succ => .succ
@@ -39,6 +44,8 @@ def meaning : Code → OracleCode
   | .prec c d => .prec (meaning c) (meaning d)
   | .rfind' c => if c = .zero then .query else .find (meaning c)
 
+/-- Represent an oracle program in external syntax, using the reserved code for oracle
+queries. -/
 def represent : OracleCode → Code
   | .zero => .zero
   | .succ => .succ
@@ -67,14 +74,17 @@ theorem represent_correct (g : ℕ →. ℕ) (e : OracleCode) :
     exact congrArg (Part.map (fun value : ℕ => decide (value = 0)))
       (Part.bind_some (Nat.pair n candidate) (OracleCode.eval g c))
 
+/-- The constructor tag of an external program code. -/
 def tag : Code → ℕ
   | .zero => 0 | .succ => 1 | .left => 2 | .right => 3
   | .pair _ _ => 4 | .comp _ _ => 5 | .prec _ _ => 6 | .rfind' _ => 7
 
+/-- The first immediate program component, or the zero code for a leaf. -/
 def first : Code → Code
   | .pair c _ | .comp c _ | .prec c _ | .rfind' c => c
   | _ => .zero
 
+/-- The second immediate program component, or the zero code when no second component exists. -/
 def second : Code → Code
   | .pair _ d | .comp _ d | .prec _ d => d
   | _ => .zero
@@ -110,6 +120,7 @@ theorem second_primrec : Primrec second := by
 
 variable {α : Type*} [Primcodable α] (g : α → ℕ →. ℕ)
 
+/-- One evaluator layer using `self` for recursive evaluation of immediate program components. -/
 def layer (self : Code) (z : Code × α × ℕ) : Part ℕ :=
   let e := z.1
   let a := z.2.1

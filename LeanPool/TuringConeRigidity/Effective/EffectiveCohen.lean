@@ -63,6 +63,7 @@ theorem word_decision (Y : Oracle) :
         Halts Y e (encode (word (g (Nat.pair e p)-1))) := by simpa [P] using hw
     exact ⟨hh.1,Or.inl hh.2⟩
 
+/-- A selected procedure extending each coded word to decide its oracle halting question. -/
 noncomputable def decider (Y : Oracle) : ℕ → ℕ := Classical.choose (word_decision Y)
 
 theorem decider_recursive (Y : Oracle) :
@@ -75,11 +76,13 @@ theorem decider_spec (Y : Oracle) (e p : ℕ) :
         ∀ q : List Bool, word (decider Y (Nat.pair e p)) <+: q → ¬ Halts Y e (encode q)) :=
   (Classical.choose_spec (word_decision Y)).2 e p
 
+/-- Extend the coded word by one false bit. -/
 def grow (p : ℕ) : ℕ := encode (word p ++ [false])
 
 theorem grow_primrec : Primrec grow := Primrec.encode.comp
   (Primrec.list_append.comp word_primrec (Primrec.const [false]))
 
+/-- Iteratively decide the next halting question and then increase the word length. -/
 noncomputable def stage (Y : Oracle) : ℕ → ℕ
   | 0 => encode ([] : List Bool)
   | s+1 => grow (decider Y (Nat.pair s (stage Y s)))
@@ -127,6 +130,7 @@ theorem stage_prefix_of_le (Y : Oracle) {s t : ℕ} (h : s ≤ t) : word (stage 
   | base => exact List.prefix_rfl
   | succ t ht ih => exact ih.trans (stage_prefix Y t)
 
+/-- The oracle obtained as the union of the effective Cohen word stages. -/
 noncomputable def generic (Y : Oracle) : Oracle := fun n => (word (stage Y (n+1))).getD n false
 
 theorem generic_extends (Y : Oracle) (s : ℕ) :
@@ -146,6 +150,8 @@ theorem generic_reduces (Y : Oracle) : Reduces (generic Y) (jump Y) := by
   apply RecursiveIn.iff_nat.mpr
   exact hv.of_eq (fun n => by simp [oracleFunction,generic,CommonIdeal.bit])
 
+/-- For each program with oracle `Y`, some prefix of `G` is a halting input or has no
+extension that is a halting input. -/
 def OneGeneric (Y G : Oracle) : Prop := ∀ e, ∃ p : List Bool,
   (∀ n < p.length, G n = p.getD n false) ∧
     (Halts Y e (encode p) ∨ ∀ q : List Bool, p <+: q → ¬ Halts Y e (encode q))

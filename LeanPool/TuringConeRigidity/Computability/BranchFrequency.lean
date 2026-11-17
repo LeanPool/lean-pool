@@ -28,6 +28,7 @@ namespace TuringRigidity
 
 namespace UniformOracle
 
+/-- The sums of the first `n` values of a natural-number sequence. -/
 def runningSum (f : ℕ → ℕ) : ℕ → ℕ
   | 0 => 0
   | n+1 => runningSum f n + f n
@@ -62,6 +63,7 @@ end UniformOracle
 namespace RecoveryData
 variable {F : ℝ → Oracle} {t u v : ℝ}
 
+/-- Count true bits in the initial segments of the recovery branch oracle. -/
 def count (d : RecoveryData F t u v) : ℕ → ℕ :=
   UniformOracle.runningSum (fun n => if d.branchOracle n then 1 else 0)
 

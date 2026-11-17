@@ -14,6 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.Computability.JumpIterationFormula
+public import LeanPool.TuringConeRigidity.SetModels.ModelRealOperations
 
 /-!
 # Model Omega Jump
@@ -30,12 +31,15 @@ open TransitiveNameModel OracleJump
 universe u
 
 namespace Formula
+/-- Bounded formula reading a paired bit of the join of finite jump iterates. -/
 def omegaJumpBits (φ : Formula) : Formula :=
   .existsMem 1 (.existsMem 2 (.existsMem 4
     (.conj (naturalPair 4 7 2 1 3)
       (.conj (jumpIteration φ 4 5 6 7 2 8 0) (.member 1 0)))))
 end Formula
 
+/-- The environment supplying the input, omega, real universe, graph bounds, and base oracle
+for omega-jump bits. -/
 noncomputable def omegaJumpEnv (R Qf Qn : ZFSet.{u}) (A : Oracle) (n : ℕ) : ℕ → ZFSet.{u} :=
   cons (natSet n) (cons ZFSet.omega (cons R (cons Qf (cons Qn (fun _ => realCode A)))))
 

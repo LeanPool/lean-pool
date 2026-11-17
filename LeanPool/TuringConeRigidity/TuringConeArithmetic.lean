@@ -36,6 +36,8 @@ def Minimal (Y : Oracle) (k b l r x : ℕ) : Prop :=
   ∀ w, Dom Y w → LE Y k w → AntichainDecoding.Nontrivial Y b l r w →
     LE Y w x → LE Y x w
 
+/-- The represented degree lies above the cone base and is minimal for the cone-relative
+nontriviality property. -/
 def Antichain (Y : Oracle) (k b l r x : ℕ) : Prop :=
   LE Y k x ∧ AntichainDecoding.Nontrivial Y b l r x ∧ Minimal Y k b l r x
 
@@ -83,6 +85,7 @@ theorem antichain_iff {Y : Oracle} {k b l r x : ℕ}
     exact (le_iff hx hw).mpr (hm (value Y w) ((le_iff hk hw).mp hkw) (value_below Y w)
       ((AntichainDecoding.nontrivial_iff hb hl hr hw).mp hn) ((le_iff hw hx).mp hle))
 
+/-- The presentation-index antichain code holds above the represented cone base. -/
 def ACodeHolds (Y : Oracle) (k : ℕ) (p : ACode) (x : ℕ) : Prop :=
   Antichain Y k p.bound p.left p.right x
 
@@ -94,6 +97,8 @@ theorem acode_sigma (Y : Oracle) (k : ℕ) (p : ACode) {x : ℕ → ℕ} (hx : P
     Sigma Y 5 (fun v => ACodeHolds Y k p (x v)) :=
   antichain_sigma Y (Primrec.const _) (Primrec.const _) (Primrec.const _) (Primrec.const _) hx
 
+/-- The represented value lies between the cone base and bound, with cone-relative tag and
+decoration predicates. -/
 def SCodeGraph (Y : Oracle) (k : ℕ) (p : SCode) (x c : ℕ) : Prop :=
   LE Y k x ∧ LE Y x p.bound ∧ ACodeHolds Y k p.tags c ∧
     ACodeHolds Y k p.decorated (joinIndex x c)
@@ -111,6 +116,8 @@ theorem scode_sigma (Y : Oracle) (k : ℕ) (p : SCode) {x c : ℕ → ℕ}
       ((acode_sigma Y k p.tags hc).and (acode_sigma Y k p.decorated (joinIndex_primrec.comp hx
         hc))))
 
+/-- The represented tuple has valid indices and cone-relative tags satisfying the tuple
+predicate after joining the base. -/
 def RCodeHolds {n : ℕ} (Y : Oracle) (k : ℕ) (p : RCode n) (v : ℕ) : Prop :=
   (∀ i : Fin n, Dom Y (entry i.val v)) ∧ ∃ t : ℕ,
     (∀ i : Fin n, Dom Y (entry i.val t) ∧

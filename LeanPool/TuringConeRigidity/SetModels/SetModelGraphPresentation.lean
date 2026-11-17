@@ -14,6 +14,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.SetModels.SetModelActionSatisfaction
+public import LeanPool.TuringConeRigidity.Constructibility.PersistentCountability
+public import LeanPool.TuringConeRigidity.SetModels.SetModelColumns
 
 /-!
 # Set Model Graph Presentation
@@ -31,12 +33,14 @@ open SetModelSequences SetModelColumns SetModelArithmetic EncodedForcing
 universe u
 noncomputable section
 
+/-- Bounded formula describing the numerical presentation of an ideal automorphism graph. -/
 def graphPresentationFormula : Formula :=
   .existsMem 1 (.existsMem 2 (.existsMem 5 (.existsMem 6 (.existsMem 8 (.existsMem 9 (.existsMem 13
     (.conj (.orderedPair 0 6 5) (.conj (.pairMem 0 7 13)
       (.conj (.pairMem 6 4 9) (.conj (.pairMem 5 3 9)
         (.conj (.member 4 2) (.conj (.member 3 1) (.pairMem 2 1 12)))))))))))))
 
+/-- The parameter environment for the automorphism-graph presentation formula. -/
 def graphPresentationEnv (I : CountableIdeal) (A : Oracle) (ρ : I ≃o I) : ℕ → ZFSet.{u} :=
   cons ZFSet.omega (cons (sequenceSet (columns A)) (cons (columnRange A)
     (cons (idealSet I) (cons (automorphismSet ρ) (cons pairingSet (fun _ => pairNumbers))))))

@@ -13,7 +13,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.OrdinalCodes.OmegaPowerCertificates
+public import LeanPool.TuringConeRigidity.OrdinalCodes.OmegaPowerDefinability
 
 /-!
 # Exact Omega Graph

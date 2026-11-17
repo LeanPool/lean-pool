@@ -29,6 +29,7 @@ namespace TuringRigidity.BoundedSetTheory
 open TransitiveNameModel
 universe u
 
+/-- A finite function graph starting at `x` and following successor for `n` steps. -/
 def AdditionTrace (o z k n x f : ZFSet.{u}) : Prop :=
   TransitiveNameModel.FunctionGraph k o f ∧ k = insert n n ∧ z = ∅ ∧ ZFSet.pair z x ∈ f ∧
     ∀ i ∈ n, ∀ j ∈ o, j = insert i i → ∀ v ∈ o, ∀ w ∈ o,
@@ -72,6 +73,7 @@ theorem AdditionTrace.correct {z k f : ZFSet.{u}} (a n : ℕ)
     le_rfl)
 
 namespace Formula
+/-- Bounded formula expressing the finite successor trace for addition. -/
 def additionTrace (o z k n x f : ℕ) : Formula :=
   .conj (.functionGraph f k o) (.conj (.successor k n) (.conj (.empty z)
     (.conj (.pairMem z x f)
@@ -86,6 +88,7 @@ theorem eval_additionTrace (o z k n x f : ℕ) (e : ℕ → ZFSet.{u}) :
       eval_functionGraph, eval_successor,
     eval_empty,eval_pairMem,eval_allMem,eval_imp,cons_zero,cons_succ]
 
+/-- Bounded formula computing addition by selecting the endpoint of a successor trace. -/
 def addition (o Q x n y : ℕ) : Formula := .existsMem o (.existsMem (o+1) (.existsMem (Q+2)
   (.conj (additionTrace (o+3) 1 2 (n+3) (x+3) 0) (.pairMem (n+3) (y+3) 0))))
 

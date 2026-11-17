@@ -13,7 +13,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.Syntax.SigmaSeparationName
+public import LeanPool.TuringConeRigidity.Syntax.BoundedRelations
 
 /-!
 # Internal Choice
@@ -29,17 +29,20 @@ namespace TuringRigidity.BoundedSetTheory
 open TransitiveNameModel
 universe u
 
+/-- A single-valued set-coded function choosing an element of every set in `a`. -/
 def ChoiceGraph (a f : ZFSet.{u}) : Prop :=
   (∀ z ∈ f, ∃ x ∈ a, ∃ y ∈ x, z = ZFSet.pair x y) ∧
   (∀ x ∈ a, ∃ y ∈ x, ZFSet.pair x y ∈ f ∧
     ∀ z ∈ x, ZFSet.pair x z ∈ f → z = y)
 
+/-- The model contains a choice graph for every family of nonempty sets belonging to it. -/
 def Choice (M : ZFSet.{u}) : Prop :=
   ∀ a ∈ M, (∀ x ∈ a, ∃ y, y ∈ x) → ∃ f ∈ M, ChoiceGraph a f
 
 namespace ChoiceCode
 open Formula
 
+/-- Bounded formula describing a single-valued choice graph. -/
 def graph (a f : ℕ) : Formula :=
   .conj (allMem f (.existsMem (a+1) (.existsMem 0 (orderedPair 2 1 0))))
     (allMem a (.existsMem 0 (.conj (pairMem 1 0 (f+2))

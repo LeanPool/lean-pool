@@ -16,6 +16,7 @@ module
 public import LeanPool.TuringConeRigidity.CohenForcing.CohenAntichainFamilySupport
 public import LeanPool.TuringConeRigidity.SetModels.InternalPositiveNameFamily
 public import LeanPool.TuringConeRigidity.SetModels.InternalNiceName
+public import LeanPool.TuringConeRigidity.CohenForcing.CohenInternalDecision
 
 /-!
 # Cohen Nice Name Construction
@@ -31,6 +32,7 @@ open TransitiveNameModel BoundedSetTheory RecursiveNames AtomicForcing Countable
 open CohenGroundPoset CohenAntichainSelector CohenInternalDecision InternalPositiveNameFamily
 attribute [local instance] InternalCollapse.order InternalCollapse.collapsePreorder
 
+/-- The `OrderTop` instance on set-coded Cohen conditions, with the empty condition as top. -/
 @[instance_reducible]
 noncomputable def cohenTop (A : ZFSet.{0}) : OrderTop (Conditions (conditions A)) :=
   InternalCollapse.top (conditions A) (CohenGroundGeneric.empty_mem_conditions A)

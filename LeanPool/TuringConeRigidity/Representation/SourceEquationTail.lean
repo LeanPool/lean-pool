@@ -29,6 +29,8 @@ namespace TuringRigidity.SourceEquationTail
 open Set CountableForcing
 variable {P Q : Type*} [Preorder P] [Preorder Q]
 
+/-- The product filter consisting of pairs whose two coordinates belong to the corresponding
+filters. -/
 def productFilter (G : GenericFilter P) (H : GenericFilter Q) : GenericFilter (P × Q) where
   carrier := {p | p.1 ∈ G.carrier ∧ p.2 ∈ H.carrier}
   nonempty := by

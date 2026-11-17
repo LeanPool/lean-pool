@@ -42,9 +42,11 @@ theorem column_arith {B : OracleFamily} (hB : ArithmeticOracle B)
     ArithmeticOracle (fun O v => columns (B O v) (k v)) :=
   query_at hB left_primrec (Primrec₂.natPair.comp (hk.comp left_primrec) right_primrec)
 
+/-- The indexed oracle machine halts with Boolean output one on the given input. -/
 def tableGraph (B : Oracle) (e n : ℕ) : Prop :=
   ∃ z, run B (machine e) n z = some 1
 
+/-- The Boolean oracle whose true inputs are accepted by the indexed oracle machine. -/
 def tableOracle (B : Oracle) (e : ℕ) : Oracle := by
   classical
   exact fun n => decide (tableGraph B e n)

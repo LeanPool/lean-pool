@@ -31,6 +31,7 @@ open PersistentRestrictions PersistentLocality PersistentPresentation Persistent
 open NumericalAutomorphism NumericalIdeal NumericalExtension
 noncomputable section
 
+/-- Every coded ideal extension admits an arithmetically presented compatible action. -/
 def Criterion (A R : Oracle) : Prop :=
   ∀ H : Oracle, JumpCode H → Includes A H →
     ∃ e : ℕ, Action H (fun v => tableOracle (iterate H 11) e v = true) ∧
@@ -78,6 +79,8 @@ theorem persistent_iff {I : CountableIdeal} {A R : Oracle} (hA : Presented I A)
     intro i j n m hr hp hin
     exact hcompat i j n m ((hR _).mpr hr) ((hσ _).mpr hp) hin
 
+/-- Arithmetic matrix for the persistence criterion, with three distinguished oracle
+parameters. -/
 def Matrix (O : Oracles) (_ : ℕ) : Prop :=
   JumpCode (O 2) → Includes (O 0) (O 2) →
     ∃ e : ℕ, Action (O 2) (fun v => tableOracle (iterate (O 2) 11) e v = true) ∧

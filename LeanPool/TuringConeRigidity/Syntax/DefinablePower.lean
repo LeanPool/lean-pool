@@ -29,12 +29,15 @@ namespace TuringRigidity.RelativeConstructible
 open ElementaryModel BoundedSetTheory TransitiveNameModel
 universe u
 
+/-- Extend a finite tuple to an environment using the empty set outside its length. -/
 noncomputable def tupleEnv {n : ℕ} (v : Fin n → ZFSet.{u}) (i : ℕ) : ZFSet.{u} :=
   if h : i < n then v ⟨i,h⟩ else ∅
 
 theorem tupleEnv_lt {n : ℕ} (v : Fin n → ZFSet.{u}) (i : Fin n) :
     tupleEnv v i = v i := by simp [tupleEnv]
 
+/-- The subset of `A` defined over `A` by the full formula with the supplied finite
+parameters. -/
 noncomputable def definedSubset (A : ZFSet.{u}) (p : SentenceForm)
     {n : ℕ} (v : Fin n → ZFSet.{u}) : ZFSet.{u} :=
   A.sep (fun x => p.Sat (A : Set ZFSet) (cons x (tupleEnv v)))
@@ -44,10 +47,12 @@ theorem mem_definedSubset (A x : ZFSet.{u}) (p : SentenceForm)
     x ∈ definedSubset A p v ↔ x ∈ A ∧ p.Sat (A : Set ZFSet) (cons x (tupleEnv v)) :=
   ZFSet.mem_sep
 
+/-- A subset is definable over `A` by a full formula with finitely many parameters in `A`. -/
 def DefinableOver (A S : ZFSet.{u}) : Prop :=
   ∃ (n : ℕ) (p : SentenceForm) (v : Fin n → ZFSet.{u}),
     p.bound ≤ n + 1 ∧ (∀ i, v i ∈ A) ∧ S = definedSubset A p v
 
+/-- The set of all subsets of `A` definable over `A` with finite parameters from `A`. -/
 noncomputable def definablePower (A : ZFSet.{u}) : ZFSet.{u} :=
   (ZFSet.powerset A).sep (DefinableOver A)
 

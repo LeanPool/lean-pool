@@ -30,6 +30,8 @@ open BoundedSetTheory TransitiveNameModel SetModelReals SetModelIteration SetMod
 universe u
 noncomputable section
 
+/-- Transitivity and set-existence axioms needed for the set-coded natural-function
+constructions. -/
 structure Context (M : ZFSet.{u}) : Prop where
   transitive : Transitive M
   pairing : Pairing M
@@ -51,9 +53,11 @@ theorem Context.prod_mem {a b : ZFSet.{u}} (ha : a ∈ M) (hb : b ∈ M) :
     ZFSet.prod a b ∈ M :=
   product_mem M C.transitive C.pairing C.union C.power C.separation ha hb
 
+/-- The graph's natural-number pairs agree exactly with the values of `f`. -/
 abbrev GraphCode (g : ZFSet.{u}) (f : ℕ → ℕ) : Prop :=
   ∀ n m, ZFSet.pair (natSet n) (natSet m) ∈ g ↔ m = f n
 
+/-- The model contains a set whose natural-number pairs code the function `f`. -/
 def HasGraph (M : ZFSet.{u}) (f : ℕ → ℕ) : Prop :=
   ∃ g ∈ M, GraphCode g f
 
@@ -89,7 +93,12 @@ theorem graph_of_relation (f : ℕ → ℕ) (p : Formula) (e : ℕ → ZFSet.{u}
           (cons (ZFSet.pair (natSet n) (natSet m)) (cons ZFSet.omega e))) ∘ r =
           cons (natSet m) (cons (natSet n) e) := by
         funext i
-        rcases i with _|_|i <;> simp [r,cons]
+        rcases i with _|_|i
+        · rfl
+        · rfl
+        · simp only [Function.comp_apply, r,
+            ite_eq_right (show ¬ i + 1 + 1 < 2 by omega)]
+          rfl
       rw [hh] at hp'
       exact (hp n m).mp hp'
     · intro h
@@ -99,7 +108,12 @@ theorem graph_of_relation (f : ℕ → ℕ) (p : Formula) (e : ℕ → ZFSet.{u}
           (cons (ZFSet.pair (natSet n) (natSet m)) (cons ZFSet.omega e))) ∘ r =
           cons (natSet m) (cons (natSet n) e) := by
         funext i
-        rcases i with _|_|i <;> simp [r,cons]
+        rcases i with _|_|i
+        · rfl
+        · rfl
+        · simp only [Function.comp_apply, r,
+            ite_eq_right (show ¬ i + 1 + 1 < 2 by omega)]
+          rfl
       rw [hh]
       exact (hp n m).mpr h
 

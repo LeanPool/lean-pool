@@ -29,10 +29,12 @@ namespace TuringRigidity.RelationCollapse
 open TransitiveNameModel BoundedSetTheory
 universe u
 
+/-- The set-coded relation is transitive on the designated domain. -/
 def TransitiveOn (d r : ZFSet.{u}) : Prop :=
   ∀ x ∈ d, ∀ y ∈ d, ∀ z ∈ d,
     ZFSet.pair x y ∈ r → ZFSet.pair y z ∈ r → ZFSet.pair x z ∈ r
 
+/-- Any two domain elements are equal or related in one of the two directions. -/
 def TotalOn (d r : ZFSet.{u}) : Prop :=
   ∀ x ∈ d, ∀ y ∈ d, x = y ∨ ZFSet.pair x y ∈ r ∨ ZFSet.pair y x ∈ r
 
@@ -59,6 +61,7 @@ theorem total_extensional {d r : ZFSet.{u}} (wf : WellFounded (Rel d r))
   · exact False.elim (wf.irrefl.irrefl x ⟨hx,(he x hx).mpr h⟩)
   · exact False.elim (wf.irrefl.irrefl y ⟨hy,(he y hy).mp h⟩)
 
+/-- The set of collapse values of the well-founded relation on its domain. -/
 noncomputable def ordinalRange (d r : ZFSet.{u}) (wf : WellFounded (Rel d r)) : ZFSet.{u} :=
   ZFSet.range (fun s : Conditions d => value d r wf (label d s))
 
@@ -83,6 +86,7 @@ theorem ordinalRange_isOrdinal {d r : ZFSet.{u}} (wf : WellFounded (Rel d r))
     obtain ⟨a,ha,rfl⟩ := (mem_ordinalRange d r wf x).mp hx
     exact value_isOrdinal wf ht a ha
 
+/-- The ordinal rank of the collapse range of the well-founded relation. -/
 noncomputable def orderType (d r : ZFSet.{u}) (wf : WellFounded (Rel d r)) : Ordinal.{u} :=
   (ordinalRange d r wf).rank
 

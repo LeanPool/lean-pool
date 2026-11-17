@@ -31,6 +31,8 @@ namespace TuringRigidity.BoundedSetTheory
 open TransitiveNameModel EncodedForcing PersistentRestrictions PersistentPresentation
 universe u
 
+/-- A nonempty subset of `U` that is lower and directed with respect to the coded relation
+`L`. -/
 def SetIdeal (U L I : ZFSet.{u}) : Prop := I ⊆ U ∧ (∃ D, D ∈ I) ∧
   (∀ D ∈ U, ∀ E ∈ I, ZFSet.pair D E ∈ L → D ∈ I) ∧
   (∀ D ∈ I, ∀ E ∈ I, ∃ F ∈ I, ZFSet.pair D F ∈ L ∧ ZFSet.pair E F ∈ L)

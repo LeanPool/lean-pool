@@ -14,8 +14,6 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.Model
-public import Mathlib.Computability.TuringDegree
-public import Mathlib.Order.Hom.Basic
 
 /-!
 # Degrees
@@ -32,6 +30,7 @@ theorem reduces_refl (A : Oracle) : Reduces A A := TuringReducible.refl _
 theorem reduces_trans {A B C : Oracle} (h : Reduces A B) (k : Reduces B C) :
     Reduces A C := TuringReducible.trans h k
 
+/-- The equivalence class of an oracle under mutual Turing reducibility. -/
 def degree (A : Oracle) : Degree := toAntisymmetrization Reduces A
 
 @[simp] theorem degree_le_iff (A B : Oracle) : degree A ≤ degree B ↔ Reduces A B := Iff.rfl

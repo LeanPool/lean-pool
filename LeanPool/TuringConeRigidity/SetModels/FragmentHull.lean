@@ -80,6 +80,7 @@ theorem closed_witnesses (d h g : ZFSet.{u}) (n : ℕ) (φ : Formula)
   have hb := (hf.correct xs hlen hy).2.2
   exact ⟨y,hyh,(eval_witnessBody n i ψ hin hψn d y e).mp hb⟩
 
+/-- Bounded formula expressing disagreement of membership in two sets. -/
 def differenceBody : Formula := .neg (.iff (.member 0 1) (.member 0 2))
 
 theorem eval_differenceBody (x y z : ZFSet.{u}) (e : ℕ → ZFSet.{u}) :

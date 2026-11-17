@@ -28,6 +28,7 @@ namespace OAI
 namespace TuringRigidity.FiniteShuffleCertificate
 open FiniteShuffle ShuffleRequirements GenericCoding
 
+/-- A finite certificate uniformly meets `D` for every word of the selected length. -/
 def Certificate (D : List Bool → Prop) (q : List Bool) : Prop :=
   ∃ k : ℕ, 2*k ≤ q.length ∧ ∀ s : List Bool, s.length = k →
     ∃ l ≤ k, D (initial (code (fun i => s.getD i false) (fun i => q.getD i false)) l)

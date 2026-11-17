@@ -29,6 +29,7 @@ namespace TuringRigidity.BoundedSetTheory
 open TransitiveNameModel UniformArithmetic
 universe u
 
+/-- Some oracle represented in `D` is Turing reducible to some oracle represented in `E`. -/
 def degreeCodeLE (D E : ZFSet.{u}) : Prop :=
   ∃ A B : Oracle, realCode A ∈ D ∧ realCode B ∈ E ∧ Reduces A B
 
@@ -45,6 +46,7 @@ theorem degreeCodeLE_actual (R : ZFSet.{u}) {A B : Oracle}
     exact ⟨A,B,(realCode_mem_degreeCode R A A).mpr ⟨hA,rfl⟩,
       (realCode_mem_degreeCode R B B).mpr ⟨hB,rfl⟩,h⟩
 
+/-- The set-coded Turing-reducibility relation on the degree classes represented in `R`. -/
 noncomputable def degreeOrder (R : ZFSet.{u}) : ZFSet.{u} :=
   ZFSet.sep (fun p => ∃ D ∈ degreeUniverse R, ∃ E ∈ degreeUniverse R,
     p = ZFSet.pair D E ∧ degreeCodeLE D E) (ZFSet.prod (degreeUniverse R) (degreeUniverse R))
@@ -67,6 +69,7 @@ theorem degreeOrder_actual (R : ZFSet.{u}) {A B : Oracle}
   exact ⟨fun h => h.2.2,fun h => ⟨(mem_degreeUniverse _ _).mpr ⟨A,hA,rfl⟩,
     (mem_degreeUniverse _ _).mpr ⟨B,hB,rfl⟩,h⟩⟩
 
+/-- The arithmetic formula defines Turing reducibility between two oracle parameters. -/
 def DegreeOrderFormula (φ : Formula) : Prop := ∀ o Q z x y : ℕ, ∀ e : ℕ → ZFSet.{u},
     e o = ZFSet.omega → (∀ f : ℕ → ℕ, ∀ k, finiteNaturalGraph f k ∈ e Q) →
     e z = natSet 0 → ∀ A B : Oracle, e x = realCode A → e y = realCode B →
@@ -80,6 +83,7 @@ theorem degree_order_bounded : ∃ φ : Formula, DegreeOrderFormula.{u} φ := by
   simpa using Formula.twoOracles_spec hφ o Q z x y e ho hQ A B hx hy 0 hz
 
 namespace Formula
+/-- Bounded formula expressing degree reducibility through representative real codes. -/
 def degreeLE (φ : Formula) (o Q z D E : ℕ) : Formula :=
   .existsMem D (.existsMem (E+1) (twoOracles φ (o+2) (Q+2) (z+2) 1 0))
 
@@ -100,6 +104,7 @@ theorem degreeLE_spec {φ : Formula} (hφ : DegreeOrderFormula.{u} φ)
     exact ⟨realCode A,hA,realCode B,hB,(hφ (o+2) (Q+2) (z+2) 1 0
       (cons (realCode B) (cons (realCode A) e)) ho hQ hz A B rfl rfl).mpr hle⟩
 
+/-- Bounded formula describing membership in the set-coded degree order. -/
 def degreeOrderMember (φ : Formula) (o Q z U p : ℕ) : Formula :=
   .existsMem U (.existsMem (U+1) (.conj (.orderedPair (p+2) 1 0)
     (degreeLE φ (o+2) (Q+2) (z+2) 1 0)))

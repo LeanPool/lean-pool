@@ -30,9 +30,11 @@ open ElementaryModel BoundedSetTheory TransitiveNameModel
 universe u
 attribute [local irreducible] Construction.ownRealsMembership SentenceForm.bound
 
+/-- The ordinal offset associated with the rank of the natural-number seed. -/
 noncomputable def realSeedOffset : Ordinal.{u} :=
   (insert ZFSet.omega ZFSet.omega : ZFSet.{u}).rank
 
+/-- The hierarchy-domain index obtained by subtracting the real-seed offset and adding one. -/
 noncomputable def heightDomainIndex (a : Ordinal.{u}) : Ordinal.{u} := a - realSeedOffset + 1
 
 theorem ground_seed_offset (M : ZFSet.{u}) (hM : Transitive M) (hT : SourceT M) :

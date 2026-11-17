@@ -27,6 +27,7 @@ namespace OAI
 namespace TuringRigidity.InternalInverseGraph
 open TransitiveNameModel BoundedSetTheory
 
+/-- Transpose the set-coded graph from `A` to `B` to obtain its inverse relation. -/
 noncomputable def inverse (A B f : ZFSet.{0}) : ZFSet.{0} :=
   (ZFSet.prod B A).sep (fun z => ∃ y ∈ B, ∃ x ∈ A,
     z = ZFSet.pair y x ∧ ZFSet.pair x y ∈ f)

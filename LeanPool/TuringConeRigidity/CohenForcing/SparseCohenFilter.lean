@@ -13,7 +13,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.CohenForcing.CohenGenericUnion
+public import LeanPool.TuringConeRigidity.CohenForcing.CohenGroundPoset
+public import LeanPool.TuringConeRigidity.SetModels.InternalCollapseCounting
 
 /-!
 # Sparse Cohen Filter

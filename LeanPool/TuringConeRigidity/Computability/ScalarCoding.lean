@@ -27,11 +27,15 @@ namespace OAI
 namespace TuringRigidity
 namespace RationalCoding
 
+/-- The left natural-number cross-product for comparing a rational with a rational scalar
+multiple. -/
 def scalarLeft (r : ℕ) (z : ℕ × ℕ) : ℕ :=
   (positiveNumerator r*positiveNumerator z.2 + negativeNumerator r*negativeNumerator
     z.2)*denominator z.1 +
     negativeNumerator z.1*denominator r*denominator z.2
 
+/-- The right natural-number cross-product for comparing a rational with a rational scalar
+multiple. -/
 def scalarRight (r : ℕ) (z : ℕ × ℕ) : ℕ :=
   (positiveNumerator r*negativeNumerator z.2 + negativeNumerator r*positiveNumerator
     z.2)*denominator z.1 +
@@ -72,6 +76,7 @@ theorem scalar_eq_iff (r i j : ℕ) : scalarLeft r (i,j)=scalarRight r (i,j) ↔
   rw [he]
   exact Nat.cast_inj.symm
 
+/-- The rational-enumeration index obtained by dividing the indexed rational by `r`. -/
 def divideIndex (r : ℚ) (i : ℕ) : ℕ := Encodable.encode (rationalEnumeration i/r)
 
 theorem divideIndex_value (r : ℚ) (i : ℕ) :

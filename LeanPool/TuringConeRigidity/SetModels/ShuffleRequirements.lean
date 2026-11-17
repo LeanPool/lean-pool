@@ -13,7 +13,9 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
+public import Mathlib.Topology.MetricSpace.Polish
 public import LeanPool.TuringConeRigidity.Effective.FiniteShuffle
+public import LeanPool.TuringConeRigidity.Representation.BorelGeneric
 
 /-!
 # Shuffle Requirements
@@ -27,6 +29,7 @@ namespace OAI
 namespace TuringRigidity.ShuffleRequirements
 open FiniteShuffle GenericCoding Set
 
+/-- The oracle realizes every bit of the finite word. -/
 def Realizes (s : List Bool) (G : Oracle) : Prop :=
   Agree s.length (fun i => s.getD i false) G
 
@@ -65,6 +68,7 @@ theorem realizes_isOpen (s : List Bool) : IsOpen {G | Realizes s G} := by
   simpa only [Set.preimage,Set.mem_singleton_iff] using
     (isOpen_discrete ({s.getD i false} : Set Bool)).preimage hc
 
+/-- For every oracle `A`, the word ensures that the generic code realizes some word in `D`. -/
 def Transfer (D : List Bool → Prop) (s : List Bool) : Prop :=
   ∀ A, ∃ t, D t ∧ ∀ G, Realizes s G → Realizes t (code A G)
 
@@ -91,6 +95,7 @@ theorem transfer_denseOpen (D : List Bool → Prop) (hd : DenseOpen D) : DenseOp
     exact code_agree (fun _ _ => rfl)
       (((realizes_initial H K (2*m)).mp hK).mono (by omega))
 
+/-- The open union of the cylinders specified by words in `D`. -/
 def OpenSet (D : List Bool → Prop) : Set Oracle := {G | ∃ s, D s ∧ Realizes s G}
 
 theorem openSet_isOpen (D : List Bool → Prop) : IsOpen (OpenSet D) := by
@@ -102,6 +107,7 @@ theorem openSet_isOpen (D : List Bool → Prop) : IsOpen (OpenSet D) := by
 theorem openSet_measurable (D : List Bool → Prop) : MeasurableSet (OpenSet D) :=
   (openSet_isOpen D).measurableSet
 
+/-- The oracle belongs to every open set in the specified requirement family. -/
 def GenericFor (D : ℕ → List Bool → Prop) (G : Oracle) : Prop := ∀ n, G ∈ OpenSet (D n)
 
 theorem generic_transfer (D : ℕ → List Bool → Prop) (G : Oracle)
@@ -111,6 +117,7 @@ theorem generic_transfer (D : ℕ → List Bool → Prop) (G : Oracle)
   obtain ⟨t,ht,hGt⟩ := hs A
   exact ⟨t,ht,hGt G hGs⟩
 
+/-- The finite word has a true odd-coordinate marker at an index at least `N`. -/
 def OddHit (N : ℕ) (s : List Bool) : Prop :=
   ∃ i, N ≤ i ∧ 2*i+1 < s.length ∧ s.getD (2*i+1) false = true
 
@@ -135,6 +142,8 @@ theorem infiniteOdd_of_hits (G : Oracle) (hg : GenericFor OddHit G) : InfiniteOd
   obtain ⟨s,⟨i,hNi,hi,hb⟩,hs⟩ := hg N
   exact ⟨i,hNi,(hs _ hi).symm.trans hb⟩
 
+/-- Combine original dense requirements, generic-code transfer requirements, and odd-marker
+hitting requirements. -/
 def Requirements (D : ℕ → List Bool → Prop) (n : ℕ) (s : List Bool) : Prop :=
   if (Nat.unpair n).2 = 0 then D (Nat.unpair n).1 s
   else if (Nat.unpair n).2 = 1 then Transfer (D (Nat.unpair n).1) s

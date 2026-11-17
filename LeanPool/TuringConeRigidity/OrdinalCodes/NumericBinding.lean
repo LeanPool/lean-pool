@@ -13,8 +13,10 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.OrdinalCodes.NumericHierarchy
 public import LeanPool.TuringConeRigidity.SetModels.BindCanonicalArithmetic
+public import LeanPool.TuringConeRigidity.Constructibility.HierarchyCertificatePower
+public import LeanPool.TuringConeRigidity.OrdinalCodes.NumericParameters
+public import LeanPool.TuringConeRigidity.Representation.AmbientDegreeSyntax
 
 /-!
 # Numeric Binding
@@ -29,6 +31,8 @@ namespace TuringRigidity.NumericSyntax
 open ElementaryModel BoundedSetTheory TransitiveNameModel BoundedDefinability RelativeConstructible
 universe u
 
+/-- Bind canonical omega, its square, the model's power set of that square, and zero before
+evaluating the body. -/
 noncomputable def bindNumbers (p : SentenceForm) : SentenceForm :=
   .ex (.conj (canonicalOmega 0)
     (.ex (.conj (fromBounded (squareFormula 1 0))

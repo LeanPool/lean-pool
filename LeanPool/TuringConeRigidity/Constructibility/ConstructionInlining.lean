@@ -14,7 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.Syntax.SentenceInlining
-public import LeanPool.TuringConeRigidity.Constructibility.ConstructionDefinition
+public import LeanPool.TuringConeRigidity.Constructibility.RelativeConstruction
 
 /-!
 # Construction Inlining
@@ -29,6 +29,7 @@ namespace TuringRigidity.RelativeConstructible
 open ElementaryModel BoundedSetTheory TransitiveNameModel
 universe u
 
+/-- The concrete parameter environment needed to evaluate a relative construction. -/
 noncomputable def Construction.inputs (R : ZFSet.{u}) (P : Oracle) :
     Construction.{u} → ℕ → ZFSet.{u}
   | .reals, _ => R
@@ -64,6 +65,7 @@ theorem Construction.inputs_mem (t : Construction.{u}) (M R : ZFSet.{u})
           (hi.2 ⟨(Nat.unpair k).1,h⟩) (Nat.unpair k).2
       next => exact hR
 
+/-- The full formula defining a construction from its recursively supplied parameter slots. -/
 noncomputable def Construction.formula : Construction.{u} → ℕ → (ℕ → ℕ) → SentenceForm
   | .reals, out, r => .equal out (r 0)
   | .parameter, out, r => .equal out (r 0)

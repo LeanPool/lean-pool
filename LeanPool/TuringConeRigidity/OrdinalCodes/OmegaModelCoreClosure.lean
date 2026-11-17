@@ -29,6 +29,7 @@ universe u
 noncomputable section
 variable {α : Type u} (S : OmegaData α)
 
+/-- Every member of a member of `a` also belongs to `a`. -/
 def TransitiveAt (a : α) : Prop := ∀ x, S.mem x a → ∀ y, S.mem y x → S.mem y a
 
 theorem omega_transitive : S.TransitiveAt S.omega := by

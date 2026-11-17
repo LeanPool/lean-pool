@@ -14,7 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.SetModels.InternalInfinity
-public import LeanPool.TuringConeRigidity.SetModels.SetPresentationDecoding
+public import LeanPool.TuringConeRigidity.Model
 
 /-!
 # Set Model Reals
@@ -26,10 +26,11 @@ public import LeanPool.TuringConeRigidity.SetModels.SetPresentationDecoding
 namespace OAI
 
 namespace TuringRigidity.SetModelReals
-open BoundedSetTheory TransitiveNameModel SetPresentationDecoding
+open BoundedSetTheory TransitiveNameModel
 universe u
 noncomputable section
 
+/-- The subset of omega representing the true bits of the oracle. -/
 def realSet (A : Oracle) : ZFSet.{u} :=
   ZFSet.sep (fun x => ∃ n, x = natSet n ∧ A n = true) ZFSet.omega
 
@@ -51,6 +52,7 @@ theorem realSet_injective : Function.Injective realSet.{u} := by
   have h : A n = true ↔ B n = true := by rw [← nat_mem_realSet,he,nat_mem_realSet]
   cases ha : A n <;> cases hb : B n <;> simp_all
 
+/-- The oracle reading membership of numeral codes in the given set. -/
 def oracleOf (x : ZFSet.{u}) : Oracle := by
   classical
   exact fun n => decide (natSet n ∈ x)
@@ -73,6 +75,7 @@ theorem realSet_oracleOf {x : ZFSet.{u}} (hx : x ⊆ ZFSet.omega) :
     apply (nat_mem_realSet _ _).mpr
     simpa [oracleOf] using hy
 
+/-- The oracles whose set representations belong to the model. -/
 def reals (M : ZFSet.{u}) : Set Oracle := {A | realSet A ∈ M}
 
 theorem internal_reals (M : ZFSet.{u}) (hM : Transitive M)

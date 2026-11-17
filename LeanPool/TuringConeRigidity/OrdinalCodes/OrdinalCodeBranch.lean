@@ -52,14 +52,18 @@ theorem code_rename_bound (p : SentenceForm) (r : ℕ → ℕ) (n : ℕ)
       | succ i => have hh := h i (by change i < p.bound-1; omega); simp; omega)
     exact (Nat.sub_le_sub_right ht 1).trans (by omega)
 
+/-- One branch of the ordinal-pair code, combining a scaled leading omega power and a trailing
+omega power. -/
 noncomputable def codeBranchValue (twice : Bool) (a b : Ordinal.{u}) : Ordinal.{u} :=
   codeScale twice (Ordinal.omega0 ^ (a+1)) + Ordinal.omega0 ^ b
 
+/-- The full formula body for one branch of the ordinal-pair encoding. -/
 noncomputable def codeBranchBody (twice : Bool) : SentenceForm :=
   .conj (fromBounded (.successor 3 5))
     (.conj (codePowerAt 2 3) (.conj (codePowerAt 1 6)
       (.conj (codeScaleAt twice 0 2) (codeSumAt 4 0 1))))
 
+/-- Existentially bind the auxiliary ordinal values for the selected pair-code branch. -/
 noncomputable def codeBranchSentence (twice : Bool) : SentenceForm :=
   .ex (.ex (.ex (.ex (codeBranchBody twice))))
 

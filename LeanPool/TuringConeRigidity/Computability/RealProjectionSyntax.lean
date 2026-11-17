@@ -29,14 +29,18 @@ namespace TuringRigidity.RelativeConstructible
 open ElementaryModel BoundedSetTheory TransitiveNameModel SetModelArithmetic SetModelReals
 universe u
 
+/-- The natural-number index obtained by following a finite sequence of binary real
+projections. -/
 def bitIndex : List Bool → ℕ → ℕ
   | [], n => n
   | b::bs, n => 2 * bitIndex bs n + if b then 1 else 0
 
+/-- The binary projection path selecting the `i`th component of an oracle. -/
 def partBits : ℕ → List Bool
   | 0 => [false]
   | i+1 => true :: partBits i
 
+/-- Concatenate the component-selection paths along a finite sequence of indices. -/
 def pathBits : List ℕ → List Bool
   | [] => []
   | i::is => partBits i ++ pathBits is
@@ -59,6 +63,7 @@ theorem pathReal_bits (P : Oracle) (path : List ℕ) (n : ℕ) :
   | nil => rfl
   | cons i is ih => rw [pathReal,ih,realPart_bits,pathBits,bitIndex_append]
 
+/-- Bounded formula for one doubling step, adding one when the selected bit is true. -/
 def bitStep (b : Bool) (w a d x y : ℕ) : Formula :=
   if b then .existsMem w (.conj (tripleFormula (x+1) (x+1) 0 (a+1) (d+1))
     (.successor (y+1) 0)) else tripleFormula x x y a d
@@ -77,6 +82,7 @@ theorem bitStep_spec (b : Bool) (w a d x y : ℕ) (e : ℕ → ZFSet.{u})
     · rintro ⟨k,hk,hm⟩; omega
     · intro hm; exact ⟨n+n,rfl,by omega⟩
 
+/-- Bounded formula computing the natural index associated with a binary projection path. -/
 def bitIndexFormula : List Bool → ℕ → ℕ → ℕ → ℕ → ℕ → Formula
   | [], _, _, _, x, y => .equal y x
   | b::bs, w, a, d, x, y => .existsMem w
@@ -98,6 +104,7 @@ theorem bitIndexFormula_spec (bs : List Bool) (w a d x y : ℕ) (e : ℕ → ZFS
       hw ha hd k hx rfl
     simp only [hi,hb,exists_eq_left,bitIndex]
 
+/-- Bounded formula expressing membership in a binary projection of an oracle code. -/
 def projectionMember (bs : List Bool) (w a d P x : ℕ) : Formula :=
   .conj (.member x w) (.existsMem w
     (.conj (bitIndexFormula bs (w+1) (a+1) (d+1) (x+1) 0) (.member 0 (P+1))))
@@ -123,6 +130,7 @@ theorem projectionMember_spec (bs : List Bool) (w a d P x : ℕ)
     exact (bitIndexFormula_spec bs (w+1) (a+1) (d+1) (x+1) 0
       (cons (natSet (bitIndex bs n)) e) hw ha hd n _ hn rfl).mpr rfl
 
+/-- Full set-theoretic formula defining the oracle projection selected by the binary path. -/
 noncomputable def projectionFormula (bs : List Bool) (out w a d P : ℕ) : SentenceForm :=
   SentenceForm.all (SentenceForm.iff (.member 0 (out+1))
     (fromBounded (projectionMember bs (w+1) (a+1) (d+1) (P+1) 0)))

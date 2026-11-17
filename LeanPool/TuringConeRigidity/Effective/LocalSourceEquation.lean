@@ -14,7 +14,6 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.Representation.AutomorphismName
-public import LeanPool.TuringConeRigidity.Representation.GenericIdentity
 
 /-!
 # Local Source Equation
@@ -84,6 +83,8 @@ theorem graph_intersection (G : CountableForcing.GenericFilter Approximation)
     have hc : c ≤ a := (h c).mpr ⟨(graph_order G hcb hl).mpr hbl,(graph_order G hcb hr).mpr hbr⟩
     exact (graph_order G hcb ha).mp hc
 
+/-- The program is total at `A` and its input-output degree pair belongs to the interpreted
+graph name. -/
 def Represented (G : CountableForcing.GenericFilter Approximation)
     (p : OracleCode) (P A : Oracle) : Prop :=
   Total p P A ∧ (degree A,degree (GenericIdentity.value p P A)) ∈ interpret graphName G

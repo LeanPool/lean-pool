@@ -28,6 +28,7 @@ namespace TuringRigidity.InternalGeneratedAlgebra
 open TransitiveNameModel BoundedSetTheory InternalRegularOperations InternalRegularAlgebra
 open InternalBooleanSyntax
 
+/-- The intersection of all candidate Boolean subalgebras containing the seeds. -/
 noncomputable def generated (c B Q S : ZFSet.{0}) : ZFSet.{0} :=
   B.sep (fun U => ∀ A ∈ candidates c B Q S, U ∈ A)
 

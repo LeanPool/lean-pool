@@ -28,6 +28,7 @@ namespace TuringRigidity.RegularDecisionPartition
 open TransitiveNameModel BoundedSetTheory InternalRegularOperations InternalRegularAlgebra
 open InternalRegularOrder RegularCodeSplitting
 
+/-- The intersection of the two condition-set codes. -/
 noncomputable def meet (U V : ZFSet.{0}) : ZFSet.{0} := U.sep (fun p => p ∈ V)
 
 theorem meet_mem (M U V : ZFSet.{0}) (hM : Transitive M) (hT : SourceT M)
@@ -65,9 +66,11 @@ theorem remainder_empty_le (c U D : ZFSet.{0}) (hU : IsCode c U) (hD : IsCode c 
       ZFSet.mem_sep.mpr ⟨hq,fun r hr hqr => hn ⟨r,hr,hqr⟩⟩⟩
   exact ZFSet.notMem_empty q (he ▸ hqR)
 
+/-- A partition of `U` whose two parts each lie wholly in `D` or its regular complement. -/
 def Refines (c U D V W : ZFSet.{0}) : Prop :=
   Partition U V W ∧ (V ⊆ D ∨ V ⊆ neg c D) ∧ (W ⊆ D ∨ W ⊆ neg c D)
 
+/-- Bounded formula asserting that a condition-set code decides the Boolean value of `D`. -/
 def decidesFormula (c D V : ℕ) : Formula :=
   .disj (.subset V D) (.allMem V (.conj (.member 0 (c+1))
     (.allMem (D+1) (.neg (.subset 1 0)))))
@@ -80,6 +83,7 @@ theorem decidesFormula_spec (c D V : ℕ) (e : ℕ → ZFSet.{0}) :
   exact ⟨fun h p hp => ZFSet.mem_sep.mpr (h p hp),
     fun h p hp => ZFSet.mem_sep.mp (h hp)⟩
 
+/-- Bounded formula expressing a partition refining the decision of `D`. -/
 def refiningFormula (c U D V W : ℕ) : Formula :=
   .conj (partitionFormula U V W) (.conj (decidesFormula c D V) (decidesFormula c D W))
 

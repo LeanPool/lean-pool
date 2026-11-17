@@ -15,7 +15,6 @@ module
 
 public import LeanPool.TuringConeRigidity.CohenForcing.CohenPrefixOverwrite
 public import LeanPool.TuringConeRigidity.Effective.UniformTableSimulation
-public import LeanPool.TuringConeRigidity.SetModels.ModelDegreeUniverse
 public import LeanPool.TuringConeRigidity.Constructibility.ConstructibleGroundReals
 
 /-!

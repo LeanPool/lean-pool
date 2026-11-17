@@ -13,7 +13,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.Effective.PriorityStage
+public import LeanPool.TuringConeRigidity.Effective.FiniteInjurySchedule
+public import LeanPool.TuringConeRigidity.Effective.UniformOracle
 
 /-!
 # Stage Records
@@ -25,8 +26,10 @@ public import LeanPool.TuringConeRigidity.Effective.PriorityStage
 namespace OAI
 
 namespace TuringRigidity.StageRecords
-open Encodable UniformOracle EncodedForcing FiniteInjurySchedule
+open Encodable UniformOracle FiniteInjurySchedule
 
+/-- Iterate a natural-number state transition with the parameter and stage explicitly paired
+into its input. -/
 def recur (z : ℕ → ℕ) (f : ℕ → ℕ) (a : ℕ) : ℕ → ℕ
   | 0 => z a
   | n+1 => f (Nat.pair a (Nat.pair n (recur z f a n)))
@@ -45,10 +48,12 @@ theorem recur_recursive {O : Set (ℕ →. ℕ)} {z f : ℕ → ℕ}
   | zero => rfl
   | succ n ih => simp only [ih,Part.bind_some,recur]
 
+/-- Decode a finite priority record, using the empty list for an invalid code. -/
 def record (n : ℕ) : List ℕ := (decode n).getD []
 theorem record_primrec : Primrec record := Primrec.option_getD.comp Primrec.decode (Primrec.const
   [])
 
+/-- The finite set of priorities occurring in the decoded record. -/
 def members (n : ℕ) : Finset ℕ := (record n).toFinset
 
 theorem mem_primrec : PrimrecRel (fun n i => i ∈ record n) := by
@@ -57,6 +62,7 @@ theorem mem_primrec : PrimrecRel (fun n i => i ∈ record n) := by
     (Primrec.list_length.comp (record_primrec.comp Primrec.fst))
   exact h.of_eq (fun p => List.idxOf_lt_length_iff)
 
+/-- The least priority absent from the decoded visited record. -/
 noncomputable def nextVisit (n : ℕ) : ℕ := visit (members n)
 
 theorem nextVisit_recursive {O : Set (ℕ →. ℕ)} :
@@ -76,14 +82,20 @@ theorem nextVisit_recursive {O : Set (ℕ →. ℕ)} :
     have hi' : i ∈ record n := by simpa [members] using before_visit (members n) hi
     simp [hi']
 
+/-- Mark a positive-coded action done and retain only smaller prior completions. -/
 def doneUpdate (n a : ℕ) : ℕ :=
   if a = 0 then n else encode ((a-1) :: (record n).filter (fun i => i < a-1))
 
+/-- Insert a priority into the encoded visited record. -/
 def seenInsert (n t : ℕ) : ℕ := encode (t :: record n)
+/-- After a positive-coded action, retain only visited priorities at or below the acting
+priority. -/
 def seenReset (n a : ℕ) : ℕ :=
   if a = 0 then n else encode ((record n).filter (fun i => i < a))
 
+/-- Decode an action code, with zero meaning no action. -/
 def action (n : ℕ) : Option ℕ := if n = 0 then none else some (n-1)
+/-- Encode an optional priority, reserving zero for no action. -/
 def actionCode : Option ℕ → ℕ | none => 0 | some n => n+1
 
 @[simp] theorem action_actionCode (a : Option ℕ) : action (actionCode a) = a := by

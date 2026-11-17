@@ -46,8 +46,10 @@ theorem total_primrec {f : ℕ → ℕ} (hf : Primrec f) :
     Nat.RecursiveIn O (fun n => Part.some (f n)) :=
   RecursiveIn.iff_nat.mp hf.computableIn
 
+/-- The finite list of the first `m` values of a numerical oracle. -/
 def oraclePrefix (g : ℕ → ℕ) (m : ℕ) : List ℕ := (List.range m).map g
 
+/-- Decode a finite numerical list, append a value, and re-encode it. -/
 def appendEncoded (a b : ℕ) : ℕ := encode ((decode (α := List ℕ) a).getD [] ++ [b])
 
 theorem appendEncoded_primrec : Primrec₂ appendEncoded :=
@@ -165,6 +167,8 @@ theorem total_search {E : ℕ → ℕ → Option ℕ}
     rw [hea]
     simpa only [answer, Encodable.encodek, Option.getD_some] using hval.symm
 
+/-- Run the program for a bounded time using the finite oracle prefix specified by the trial
+code. -/
 def trial (g : ℕ → ℕ) (c : Nat.Partrec.Code) (n z : ℕ) : Option ℕ :=
   c.evaln (Nat.unpair z).2 (Nat.pair (encode (oraclePrefix g (Nat.unpair z).1)) n)
 

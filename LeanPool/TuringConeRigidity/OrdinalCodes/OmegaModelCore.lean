@@ -12,8 +12,10 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 -/
 
 module
+public import Mathlib.Tactic.ToDual
+public import Mathlib.Data.Nat.Init
 
-public import LeanPool.TuringConeRigidity.SetModels.SetModelReals
+
 
 /-!
 # Omega Model Core
@@ -28,11 +30,16 @@ namespace TuringRigidity.OmegaModelCore
 universe u
 noncomputable section
 
+/-- An extensional membership structure with standard finite ordinals, standard omega, and
+internal power sets. -/
 structure OmegaData (α : Type u) where
+  /-- The membership relation of the abstract omega structure. -/
   mem : α → α → Prop
   extensional : ∀ x y, (∀ z, mem z x ↔ mem z y) → x = y
+  /-- The designated element representing each natural number. -/
   num : ℕ → α
   num_mem : ∀ x n, mem x (num n) ↔ ∃ k < n, x = num k
+  /-- The designated element representing the set of all natural numbers. -/
   omega : α
   omega_mem : ∀ x, mem x omega ↔ ∃ n, x = num n
   power_exists : ∀ a, ∃ b, ∀ x, mem x b ↔ ∀ y, mem y x → mem y a
@@ -40,15 +47,18 @@ structure OmegaData (α : Type u) where
 namespace OmegaData
 variable {α : Type u} (S : OmegaData α)
 
+/-- Choose an internal power set of the supplied element. -/
 def power (a : α) : α := (S.power_exists a).choose
 
 theorem mem_power (a x : α) : S.mem x (S.power a) ↔ ∀ y, S.mem y x → S.mem y a :=
   (S.power_exists a).choose_spec x
 
+/-- The finite iterates of the internal power-set operation, starting at omega. -/
 def level : ℕ → α
   | 0 => S.omega
   | n+1 => S.power (level n)
 
+/-- Membership in some finite power-set level above omega. -/
 def InCore (x : α) : Prop := ∃ n, S.mem x (S.level n)
 
 theorem num_accessible (n : ℕ) : Acc S.mem (S.num n) := by
@@ -84,7 +94,9 @@ theorem core_transitive {x y : α} (hx : S.InCore x) (hy : S.mem y x) : S.InCore
     exact ⟨0,(S.omega_mem _).mpr ⟨j,rfl⟩⟩
   | succ n => exact ⟨n,(S.mem_power _ x).mp hn y hy⟩
 
+/-- The subtype of elements belonging to the finite-power core. -/
 abbrev Core := {x : α // S.InCore x}
+/-- The abstract membership relation restricted to core elements. -/
 def Rel (x y : S.Core) : Prop := S.mem x.val y.val
 
 theorem core_wellFounded : WellFounded S.Rel := by

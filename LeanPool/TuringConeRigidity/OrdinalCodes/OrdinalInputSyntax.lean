@@ -13,8 +13,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.Constructibility.ParameterFreeOrdinalStage
-public import LeanPool.TuringConeRigidity.Representation.OwnRealsLevelDefinition
+public import LeanPool.TuringConeRigidity.Representation.OwnRealsConstruction
 
 /-!
 # Ordinal Input Syntax
@@ -29,6 +28,7 @@ namespace TuringRigidity.RelativeConstructible
 open ElementaryModel BoundedSetTheory TransitiveNameModel
 universe u
 
+/-- Bind the model's own real set before applying the renamed stage definition. -/
 noncomputable def ownStageFormula (p : SentenceForm) : SentenceForm :=
   .ex (.conj (canonicalReals 0) (p.rename (fun i => match i with | 0 => 1 | 1 => 2 | _ => 0)))
 
@@ -61,22 +61,26 @@ theorem ownStageFormula_spec (p : SentenceForm) (N R x A : ZFSet.{u}) (hN : Tran
   · intro hp
     exact ⟨R,hRN,(hf R hRN).mpr rfl,hp⟩
 
+/-- The real parameter and the ordinal set codes required by the construction. -/
 noncomputable def Construction.ordinalInputs (t : Construction.{u}) (P : Oracle) : ℕ → ZFSet.{u} :=
   cons (realCode P) (fun k => if k < t.ownRealsMembership.bound then
     match t.ordinalData k with | none => realCode P | some o => o.toZFSet
     else realCode P)
 
+/-- Define the selected ordinal input slot, or use the real parameter for a non-ordinal slot. -/
 noncomputable def Construction.ordinalInputFormula (t : Construction.{u}) (p : SentenceForm) (k :
   ℕ) : SentenceForm :=
   match t.ordinalData k with
   | none => .equal 0 2
   | some _ => (ownStageFormula p).rename (fun i => if i = 0 then 0 else k+3)
 
+/-- Variable placement for a construction body after its ordinal inputs have been bound. -/
 def ordinalBodySlots (n : ℕ) : ℕ → ℕ
   | 0 => n
   | 1 => n+1
   | k+2 => if k < n then k else n+1
 
+/-- Express construction membership after defining and binding its ordinal input values. -/
 noncomputable def Construction.ordinalMembership (t : Construction.{u}) (p : SentenceForm) :
   SentenceForm :=
   bindComputed t.ownRealsMembership.bound (t.ordinalInputFormula p)

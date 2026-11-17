@@ -14,8 +14,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.Syntax.AtomicGraph
-public import LeanPool.TuringConeRigidity.Syntax.AtomicEncoding
 public import LeanPool.TuringConeRigidity.SetModels.NameUnionCode
+public import LeanPool.TuringConeRigidity.CohenForcing.AtomicForcing
 
 /-!
 # Atomic Graph Correct

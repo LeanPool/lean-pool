@@ -28,6 +28,7 @@ namespace TuringRigidity.RelativeConstructible
 open ElementaryModel BoundedSetTheory TransitiveNameModel
 universe u
 
+/-- An ordinal bound exceeding all stages used by the construction and its sub-constructions. -/
 noncomputable def Construction.stageBound : Construction.{u} → Ordinal.{u}
   | .reals => 0
   | .parameter => 0

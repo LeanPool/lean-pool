@@ -16,6 +16,7 @@ module
 public import LeanPool.TuringConeRigidity.Effective.LocalExtraction
 public import LeanPool.TuringConeRigidity.Effective.StageNormalization
 public import LeanPool.TuringConeRigidity.Effective.AntichainParameters
+public import LeanPool.TuringConeRigidity.Effective.LocalColumnIndices
 
 /-!
 # Local Coding

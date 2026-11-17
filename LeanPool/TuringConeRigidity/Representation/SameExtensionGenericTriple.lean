@@ -16,6 +16,8 @@ module
 public import LeanPool.TuringConeRigidity.Representation.SameExtensionIteration
 public import LeanPool.TuringConeRigidity.Representation.GroundIteratedTriple
 public import LeanPool.TuringConeRigidity.Effective.TriplePrefix
+public import LeanPool.TuringConeRigidity.CohenForcing.InternalCohenOddHits
+public import LeanPool.TuringConeRigidity.Representation.IteratedGenericCommonIdeal
 
 /-!
 # Same Extension Generic Triple

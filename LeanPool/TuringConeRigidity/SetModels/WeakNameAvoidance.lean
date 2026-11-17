@@ -15,7 +15,6 @@ module
 
 public import LeanPool.TuringConeRigidity.SetModels.CountableNameAvoidance
 public import LeanPool.TuringConeRigidity.SetModels.WeakNameDifference
-public import LeanPool.TuringConeRigidity.Representation.GroundGenericRequirements
 
 /-!
 # Weak Name Avoidance

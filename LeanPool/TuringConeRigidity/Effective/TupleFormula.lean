@@ -30,6 +30,7 @@ open TransitiveNameModel
 universe u
 namespace FiniteTuple
 
+/-- Unpack a nested-pair tuple code into bound variables before evaluating the renamed body. -/
 def unpack : ℕ → ℕ → ℕ → ℕ → Formula → Formula
   | 0,t,_c,z,φ => .conj (.equal t z) φ
   | n+1,t,c,z,φ => .existsMem c (.existsMem (c+1)
@@ -68,6 +69,7 @@ theorem eval_unpack (xs : List ZFSet.{u}) (t c z : ℕ) (φ : Formula)
       rw [Formula.eval_rename,prepend_rotate]
       exact h
 
+/-- Relativize every bounded existential quantifier to the specified domain slot. -/
 def relativizeBounded (d : ℕ) : Formula → Formula
   | .equal i j => .equal i j
   | .member i j => .member i j
@@ -88,6 +90,7 @@ theorem eval_relativizeBounded (φ : Formula) (d : ℕ) (e : ℕ → ZFSet.{u}) 
     apply and_congr_right; intro _
     exact and_congr_right (fun _ => ih (d+1) (cons x e))
 
+/-- Turn sigma existential set quantifiers into bounded quantifiers over the specified domain. -/
 def relativizeSigma (d : ℕ) : SigmaFormula → Formula
   | .bounded φ => relativizeBounded d φ
   | .existsSet φ => .existsMem d (relativizeSigma (d+1) φ)

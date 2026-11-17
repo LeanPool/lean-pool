@@ -32,6 +32,7 @@ open InternalCohen (alphabet mem_alphabet bitSet)
 open InternalCollapse (unionGraph mem_unionGraph)
 attribute [local instance] InternalCollapse.order InternalCollapse.collapsePreorder
 
+/-- The set-coded conditions assigning a value at coordinate `x`. -/
 noncomputable def definedAt (A x : ZFSet.{0}) : ZFSet.{0} :=
   (conditions A).sep (fun p => ∃ b ∈ alphabet, ZFSet.pair x b ∈ p)
 

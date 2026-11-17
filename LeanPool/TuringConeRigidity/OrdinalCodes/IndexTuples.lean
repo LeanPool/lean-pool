@@ -14,7 +14,6 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.OrdinalCodes.IndexPresentation
-public import Mathlib.Data.Finset.Lattice.Fold
 
 /-!
 # Index Tuples
@@ -28,6 +27,7 @@ namespace OAI
 namespace TuringRigidity.IndexTuples
 open Encodable IndexPresentation IndexMatrix TableIndices
 
+/-- Read the indexed component from a nested natural-number tuple code. -/
 def entry : ℕ → ℕ → ℕ
   | 0, t => (Nat.unpair t).1
   | i+1, t => entry i (Nat.unpair t).2
@@ -48,6 +48,7 @@ theorem tuple_surjective {n : ℕ} (v : Fin n → ℕ) : ∃ t, ∀ i, entry i.v
     · simp [entry]
     · simpa only [Fin.val_succ, entry, Nat.unpair_pair] using ht j
 
+/-- The machine index for the zero program. -/
 def zeroIndex : ℕ := encode Nat.Partrec.Code.zero
 
 theorem zero_represents (Y : Oracle) : Represents Y (machine zeroIndex) (fun _ => false) := by
@@ -68,6 +69,7 @@ theorem zero_dom (Y : Oracle) : Dom Y zeroIndex :=
 
 theorem zero_value (Y : Oracle) : value Y zeroIndex = ⊥ := value_eq (zero_represents Y)
 
+/-- The machine index for the join of the first `n` entries of an index tuple. -/
 noncomputable def supIndex : ℕ → ℕ → ℕ
   | 0, _ => zeroIndex
   | n+1, t => joinIndex ((Nat.unpair t).1) (supIndex n (Nat.unpair t).2)

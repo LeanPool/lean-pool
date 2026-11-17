@@ -36,6 +36,7 @@ theorem nat_iteration_add (a n : ℕ) : Nat.rec 0 (fun _ v => v+a) n = a*n := by
     rw [ih,Nat.mul_succ]
 
 namespace Formula
+/-- Bounded formula computing multiplication by iterated addition from zero. -/
 def multiplication (o Q x n y : ℕ) : Formula := .existsMem o
   (.conj (.empty 0) (iteration (o+1) (Q+1) (n+1) 0 (y+1)
     (addition (o+4) (Q+4) 1 (x+4) 0)))

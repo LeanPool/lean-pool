@@ -13,7 +13,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.Computability.ArithmeticPresentationProperty
+public import LeanPool.TuringConeRigidity.Computability.OracleJump
+public import LeanPool.TuringConeRigidity.Computability.UniformArithmetic
 
 /-!
 # Arithmetic Jump Bound

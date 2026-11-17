@@ -13,7 +13,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.Syntax.SigmaParameterizedClosure
+public import LeanPool.TuringConeRigidity.Representation.SourceTheory
+public import LeanPool.TuringConeRigidity.Syntax.BoundedDefinability
 
 /-!
 # Uniform Sigma Definability
@@ -28,6 +29,8 @@ namespace TuringRigidity.BoundedDefinability
 open BoundedSetTheory TransitiveNameModel SetModelFunctions
 universe u
 
+/-- A uniform sigma formula defines the predicate over transitive SourceT extensions
+containing `M`. -/
 def UniformSigmaDefinable (M : ZFSet.{u})
     (P : ZFSet.{u} → (ℕ → ZFSet.{u}) → Prop) : Prop :=
   ∃ p : SigmaFormula, ∃ d : ℕ → ZFSet.{u}, (∀ i, d i ∈ M) ∧

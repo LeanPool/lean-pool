@@ -14,7 +14,6 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.SetModels.ModelNaturalNumbers
-public import LeanPool.TuringConeRigidity.SetModels.Degrees
 
 /-!
 # Model Reals
@@ -30,6 +29,7 @@ namespace TuringRigidity.BoundedSetTheory
 open TransitiveNameModel
 universe u
 
+/-- The subset of omega whose numeral members correspond to true bits of the oracle. -/
 noncomputable def realCode (A : Oracle) : ZFSet.{u} :=
   ZFSet.sep (fun x => ∃ n, x = natSet n ∧ A n = true) ZFSet.omega
 
@@ -45,6 +45,7 @@ theorem natSet_mem_realCode (A : Oracle) (n : ℕ) : natSet.{u} n ∈ realCode A
   · intro hn
     exact ⟨(mem_omega _).mpr ⟨n,rfl⟩,n,rfl,hn⟩
 
+/-- The Boolean oracle whose true positions are the numerals belonging to the set. -/
 noncomputable def decodeReal (x : ZFSet.{u}) : Oracle := fun n => by
   classical
   exact decide (natSet n ∈ x)
@@ -71,6 +72,7 @@ theorem realCode_injective : Function.Injective (realCode.{u}) := by
 theorem decodeReal_realCode (A : Oracle) : decodeReal (realCode.{u} A) = A :=
   realCode_injective (realCode_decodeReal (realCode_subset A))
 
+/-- The oracles whose real codes belong to the model. -/
 def modelReals (M : ZFSet.{u}) : Set Oracle := {A | realCode A ∈ M}
 
 theorem internal_real_power (M : ZFSet.{u}) (hM : Transitive M) (hT : SourceT M) :

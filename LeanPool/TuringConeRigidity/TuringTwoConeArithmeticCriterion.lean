@@ -13,7 +13,8 @@ Module paths, interfaces, and proofs are ported to the pool's toolchain and gate
 module
 
 public import LeanPool.TuringConeRigidity.TuringTwoConeNumerical
-public import LeanPool.TuringConeRigidity.Computability.ArithmeticPersistence
+public import LeanPool.TuringConeRigidity.Computability.ArithmeticActions
+public import LeanPool.TuringConeRigidity.TuringTwoConePersistentExtension
 
 /-!
 # Natural-number indices for extensions between two cones
@@ -87,6 +88,8 @@ theorem graph_program {I : CountableIdeal} {a b : Degree} {H Y : Oracle}
   rw [tableOracle_eq hd']
   exact TwoConeNumerical.graphOracle_true ρ H v
 
+/-- Every coded jump-closed extension admits an arithmetic action between the two prescribed
+principal cones. -/
 def Criterion (A R : Oracle) (k : ℕ) : Prop :=
   ∀ H : Oracle, JumpCode H → Includes A H →
     ∃ e : ℕ, TwoConeNumerical.Action (columns A (Nat.unpair k).1)
@@ -131,6 +134,8 @@ theorem persistent_iff {I : CountableIdeal} {A R : Oracle} (hA : Presented I A)
     intro i j n m hr hp hin
     exact hcompat i j n m ((hR _).mpr hr) ((hσ _).mpr hp) hin
 
+/-- The arithmetic matrix expressing the two-cone persistence criterion in a test-extension
+oracle. -/
 def Matrix (O : Oracles) (k : ℕ) : Prop :=
   JumpCode (O 2) → Includes (O 0) (O 2) →
     ∃ e : ℕ, TwoConeNumerical.Action (columns (O 0) (Nat.unpair k).1)

@@ -13,10 +13,11 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
+public import Mathlib.Data.Set.Countable
+
 public import LeanPool.TuringConeRigidity.CohenForcing.ForcingProjection
 public import Mathlib.Order.CompleteSublattice
-public import Mathlib.Order.CompleteBooleanAlgebra
-public import Mathlib.Data.Set.Countable
+public import Mathlib.Order.CompletePartialOrder
 
 /-!
 # Boolean Projection
@@ -32,6 +33,7 @@ open Set CountableForcing ForcingProjection
 universe u
 variable {B : Type u} [CompleteBooleanAlgebra B]
 
+/-- The infimum of all members of `A` lying above `b`. -/
 noncomputable def project (A : CompleteSublattice B) (b : B) : B :=
   sInf {a | a ∈ A ∧ b ≤ a}
 
@@ -78,16 +80,20 @@ theorem project_inf (A : CompleteSublattice B)
       _ = c ⊓ a := by rw [inf_sup_right]; simp
       _ ≤ c := inf_le_left
 
+/-- The subtype of elements different from bottom. -/
 def Positive (B : Type u) [Bot B] := {b : B // b ≠ ⊥}
 
 instance positiveOrder : PartialOrder (Positive B) :=
   inferInstanceAs (PartialOrder {b : B // b ≠ ⊥})
 
+/-- The nonbottom elements belonging to the complete sublattice `A`. -/
 def PartPositive (A : CompleteSublattice B) := {a : B // a ∈ A ∧ a ≠ ⊥}
 
 instance partPositiveOrder (A : CompleteSublattice B) : PartialOrder (PartPositive A) :=
   inferInstanceAs (PartialOrder {a : B // a ∈ A ∧ a ≠ ⊥})
 
+/-- The forcing projection from positive Boolean elements to positive elements of the
+complement-closed sublattice. -/
 noncomputable def forcingProjection (A : CompleteSublattice B)
     (hcompl : ∀ a ∈ A, aᶜ ∈ A) : Projection (Positive B) (PartPositive A) where
   map b := ⟨project A b.val,project_mem A _,project_nonzero A b.property⟩

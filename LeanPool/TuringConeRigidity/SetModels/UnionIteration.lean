@@ -29,6 +29,7 @@ namespace TuringRigidity.TransitiveNameModel
 open BoundedSetTheory
 universe u
 
+/-- A set-coded total single-valued function graph from `d` to `r`. -/
 def FunctionGraph (d r f : ZFSet.{u}) : Prop :=
   (∀ z ∈ f, ∃ x ∈ d, ∃ y ∈ r, z = ZFSet.pair x y) ∧
   (∀ x ∈ d, ∃ y ∈ r, ZFSet.pair x y ∈ f ∧
@@ -46,6 +47,8 @@ theorem FunctionGraph.functional {d r f x y z : ZFSet.{u}}
   obtain ⟨v,_,_,hu⟩ := h.2 x hx
   exact (hu y (h.value_mem hy) hy).trans (hu z (h.value_mem hz) hz).symm
 
+/-- A function graph starting at `a` and following the set-union operation at successor
+indices. -/
 def UnionIteration (k r f a : ZFSet.{u}) : Prop := FunctionGraph k r f ∧
   ZFSet.pair ∅ a ∈ f ∧
   ∀ i ∈ k, ∀ j ∈ k, j = insert i i → ∀ v ∈ r, ∀ w ∈ r,
@@ -64,6 +67,7 @@ theorem UnionIteration.correct {n : ℕ} {r f a : ZFSet.{u}}
     rw [ih (Nat.le_of_succ_le hi) w hfw] at he
     exact he
 
+/-- The graph of the first `n + 1` iterated unions of `a`. -/
 noncomputable def unionGraph (a : ZFSet.{u}) (n : ℕ) : ZFSet.{u} :=
   ZFSet.range (fun i : Fin (n+1) => ZFSet.pair (natSet i.val) (iterUnion i.val a))
 
@@ -134,6 +138,7 @@ theorem unionGraph_valid (a : ZFSet.{u}) (n : ℕ) :
 namespace IterationFormula
 open Formula
 
+/-- Bounded formula asserting that `b` is exactly the union of `a`. -/
 def unionOf (b a : ℕ) : Formula := .conj
   (allMem b (.existsMem (a+1) (.member 1 0)))
   (allMem a (allMem 0 (.member 0 (b+2))))
@@ -149,6 +154,7 @@ def unionOf (b a : ℕ) : Formula := .conj
     exact ⟨fun z hz => ZFSet.mem_sUnion.mp hz,
       fun y hy z hz => ZFSet.mem_sUnion.mpr ⟨y,hy,hz⟩⟩
 
+/-- Bounded formula expressing a function trace of iterated union from the initial value. -/
 def iteration (k r f a e : ℕ) : Formula := .conj (functionGraph f k r)
   (.conj (pairMem e a f)
     (allMem k (allMem (k+1) (imp (successor 0 1)

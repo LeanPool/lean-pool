@@ -14,7 +14,6 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.Effective.CodingForcing
-public import Mathlib.Data.Finset.Filter
 
 /-!
 # Finite Injury
@@ -27,18 +26,23 @@ namespace OAI
 
 namespace TuringRigidity.FiniteInjury
 
+/-- Accept a proposed injury only if its priority is not already marked done. -/
 def accept (done : Finset ℕ) (proposal : Option ℕ) : Option ℕ :=
   proposal.bind (fun t => if t ∈ done then none else some t)
 
+/-- If a priority acts, mark it done and retain prior completions only at smaller indices;
+otherwise leave the set unchanged. -/
 def update (done : Finset ℕ) (action : Option ℕ) : Finset ℕ :=
   match action with
   | none => done
   | some t => insert t (done.filter (fun i => i < t))
 
+/-- The sequence of completed-priority sets produced by the finite-injury updates. -/
 def state (proposal : ℕ → Finset ℕ → Option ℕ) : ℕ → Finset ℕ
   | 0 => ∅
   | s+1 => update (state proposal s) (accept (state proposal s) (proposal s (state proposal s)))
 
+/-- The accepted injury action at the given stage. -/
 def action (proposal : ℕ → Finset ℕ → Option ℕ) (s : ℕ) : Option ℕ :=
   accept (state proposal s) (proposal s (state proposal s))
 
@@ -111,6 +115,7 @@ theorem finite_injury (proposal : ℕ → Finset ℕ → Option ℕ) (t : ℕ) :
 
 open CodingForcing
 
+/-- Set the active level of a condition without changing either word. -/
 def atLevel (p : Condition) (t : ℕ) : Condition :=
   ⟨p.left, p.right, p.sameLength, t⟩
 

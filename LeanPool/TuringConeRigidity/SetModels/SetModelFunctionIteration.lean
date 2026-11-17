@@ -31,6 +31,7 @@ noncomputable section
 variable {M : ZFSet.{u}} (C : Context M)
 include C
 
+/-- Lift a natural-number function to set codes through the inverse of the numeral embedding. -/
 def natLift (f : ℕ → ℕ) (x : ZFSet.{u}) : ZFSet.{u} :=
   natSet (f (Function.invFun natSet x))
 
@@ -52,6 +53,7 @@ theorem iterate_natLift (f : ℕ → ℕ) (n m : ℕ) :
   | zero => rfl
   | succ n ih => rw [Function.iterate_succ_apply',ih,natLift_nat,Function.iterate_succ_apply']
 
+/-- The set-coded finite-iteration relation of the lifted natural-number function. -/
 def natIteration (f : ℕ → ℕ) : ZFSet.{u} := iterationSet ZFSet.omega (natLift f)
 
 omit C in

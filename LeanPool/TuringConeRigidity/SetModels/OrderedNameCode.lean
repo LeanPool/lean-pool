@@ -13,8 +13,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.Representation.GroundInclusion
-public import LeanPool.TuringConeRigidity.Syntax.SigmaSyntax
+public import LeanPool.TuringConeRigidity.SetModels.ExtensionBasicAxioms
+public import LeanPool.TuringConeRigidity.Syntax.BoundedRelations
 
 /-!
 # Ordered Name Code
@@ -30,9 +30,11 @@ namespace TuringRigidity.TransitiveNameModel
 open RecursiveNames BoundedSetTheory
 universe u
 
+/-- The set code of an unordered-pair name with both children tagged by `t`. -/
 noncomputable def pairNameCode (t x y : ZFSet.{u}) : ZFSet.{u} :=
   {ZFSet.pair x t, ZFSet.pair y t}
 
+/-- The set code of an ordered-pair name built from nested unordered-pair names. -/
 noncomputable def orderedNameCode (t x y : ZFSet.{u}) : ZFSet.{u} :=
   pairNameCode t (pairNameCode t x x) (pairNameCode t x y)
 
@@ -48,6 +50,7 @@ theorem orderedNameCode_mem (M : ZFSet.{u}) (hM : Transitive M) (hP : Pairing M)
 namespace NameCodeFormula
 open Formula
 
+/-- Bounded formula characterizing the code of an unordered-pair name. -/
 def pairName (t x y z : ℕ) : Formula :=
   .conj (allMem z (disj (orderedPair 0 (x+1) (t+1)) (orderedPair 0 (y+1) (t+1))))
     (.conj (.existsMem z (orderedPair 0 (x+1) (t+1)))
@@ -71,6 +74,7 @@ theorem eval_pairName (t x y z : ℕ) (e : ℕ → ZFSet.{u}) :
       ⟨_,ZFSet.mem_pair.mpr (Or.inl rfl),rfl⟩,
       ⟨_,ZFSet.mem_pair.mpr (Or.inr rfl),rfl⟩⟩
 
+/-- A sigma formula characterizing the nested code of an ordered-pair name. -/
 def orderedName (t x y z : ℕ) : SigmaFormula := .existsSet (.existsSet (.bounded
   (.conj (pairName (t+2) (x+2) (x+2) 1)
     (.conj (pairName (t+2) (x+2) (y+2) 0) (pairName (t+2) 1 0 (z+2))))))
@@ -102,6 +106,7 @@ theorem realize_orderedName (M : ZFSet.{u}) (hM : Transitive M) (hP : Pairing M)
     exact ⟨_,ha,_,hb,(matrix _ _ ha hb).mpr ⟨rfl,rfl,h⟩⟩
 end NameCodeFormula
 
+/-- The forcing name for the Kuratowski ordered pair of two names. -/
 noncomputable def orderedPairName {P : Type u} [Top P] (a b : Name P) : Name P :=
   Name.pair (Name.pair a a) (Name.pair a b)
 

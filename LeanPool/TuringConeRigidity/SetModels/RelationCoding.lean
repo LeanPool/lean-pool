@@ -53,10 +53,15 @@ theorem tuple_join_injective {n : ℕ} {S : Type*} (b : Degree)
       Finset.univ.sup (fun i => column b (index (i, v i)))) :=
   fun _ _ h => tuple_join_le_eq b index hinj h.le
 
+/-- A relation code using one set code per coordinate and an antichain code for the joined
+tags. -/
 structure RelationCode (n : ℕ) where
+  /-- The set code governing the value and tag at each relation coordinate. -/
   coordinates : Fin n → SetCode
+  /-- The antichain code governing the join of the coordinate tags. -/
   tuples : AntichainCode
 
+/-- Choose a tag for each coordinate and test their join against the tuple antichain code. -/
 def RelationCode.Holds {n : ℕ} (p : RelationCode n) (v : Fin n → Degree) : Prop :=
   ∃ c : Fin n → Degree,
     (∀ i, (p.coordinates i).Graph (v i) (c i)) ∧

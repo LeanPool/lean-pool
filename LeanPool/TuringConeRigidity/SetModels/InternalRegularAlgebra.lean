@@ -28,6 +28,7 @@ namespace TuringRigidity.InternalRegularAlgebra
 open Set TransitiveNameModel BoundedSetTheory RegularCompletion InternalRegularOperations
 attribute [local instance] InternalCollapse.order InternalCollapse.collapsePreorder
 
+/-- A subset of `c` fixed by the regularization operation. -/
 def IsCode (c U : ZFSet.{0}) : Prop := U ⊆ c ∧ regular c U = U
 
 theorem mem_regular (c U p : ZFSet.{0}) :
@@ -57,6 +58,7 @@ theorem isCode_iff (c U : ZFSet.{0}) : IsCode c U ↔
     rw [mem_regular]
     exact ⟨fun h => (hU p h.1).mpr h.2,fun h => ⟨hUc h,(hU p (hUc h)).mp h⟩⟩
 
+/-- Bounded formula asserting that a condition-set code is fixed by regularization. -/
 def codeFormula (c U : ℕ) : Formula :=
   .conj (.subset U c) (.allMem c (.iff (.member 0 (U+1))
     (.allMem (c+1) (.imp (.subset 1 0) (.existsMem (U+2) (.subset 1 0))))))
@@ -84,6 +86,8 @@ theorem code_lower (c U : ZFSet.{0}) (hU : IsCode c U) : Lower c U := by
   rw [← hU.2]
   exact neg_lower c _
 
+/-- Interpret a regular set code as an element of the regular Boolean algebra of the condition
+poset. -/
 def interpret (c U : ZFSet.{0}) (hU : IsCode c U) : Algebra (Conditions c) :=
   ⟨decode c U (code_lower c U hU),by
     change (decode c U _)ᶜᶜ = decode c U _

@@ -13,8 +13,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.Computability.OracleCode
-public import Mathlib.Computability.Primrec.List
+public import Mathlib.Computability.RecursiveIn
 
 /-!
 # Prefix Computability
@@ -46,8 +45,10 @@ theorem total_primrec {f : ℕ → ℕ} (hf : Primrec f) :
     Nat.RecursiveIn O (fun n => Part.some (f n)) :=
   RecursiveIn.iff_nat.mp hf.computableIn
 
+/-- The list of the first `m` values of a natural-number-valued oracle. -/
 def oraclePrefix (g : ℕ → ℕ) (m : ℕ) : List ℕ := (List.range m).map g
 
+/-- Decode a finite list, append `b`, and encode the resulting list. -/
 def appendEncoded (a b : ℕ) : ℕ := encode ((decode (α := List ℕ) a).getD [] ++ [b])
 
 theorem appendEncoded_primrec : Primrec₂ appendEncoded :=

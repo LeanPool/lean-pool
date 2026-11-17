@@ -28,6 +28,8 @@ namespace OAI
 namespace TuringRigidity.GenericFactor
 open FiniteShuffle ShuffleRequirements PairGenericSelection Set
 
+/-- Interleave common-ideal requirements with open-set fiber requirements over the selected
+first oracle. -/
 def IdealFiber (D : ℕ → List Bool → Prop)
     (Y : {Y : Oracle // GenericFor (FirstFamily D) Y}) (n t : ℕ) : Prop :=
   if n % 2 = 0 then CommonIdeal.family Y.val (n/2) t

@@ -12,7 +12,6 @@ Module paths, interfaces, and proofs are ported to the pool's toolchain and gate
 module
 
 public import LeanPool.TuringConeRigidity.TuringConeCoding
-public import LeanPool.TuringConeRigidity.SetModels.IdealLift
 
 /-!
 # Bounded coding for partial cone isomorphisms
@@ -32,6 +31,7 @@ open IdealInterpretation SetCoding RelationCoding BoundedDecoding ArithmeticMode
 
 variable {I : DegreeIdeal} {a : I}
 
+/-- The underlying degree of an ideal element's image in the principal cone. -/
 def image (ρ : I ≃o Set.Ici a) (x : I) : Degree := (ρ x).val.val
 
 theorem base_le_image (ρ : I ≃o Set.Ici a) (x : I) : a.val ≤ image ρ x :=
@@ -90,6 +90,7 @@ theorem antichain_target (b g₀ g₁ x : Set.Ici a) :
       hm y.val.val (Set.mem_Ici.mp y.property)
         ((nontrivial_target _ _ _ _).mp hy) hyx⟩
 
+/-- Transport an ideal-internal antichain code through the cone isomorphism. -/
 def mapAntichain (ρ : I ≃o Set.Ici a) (p : ACode I) : AntichainCode :=
   ⟨image ρ p.bound, image ρ p.left, image ρ p.right⟩
 
@@ -98,6 +99,7 @@ theorem map_antichain_holds (ρ : I ≃o Set.Ici a) (p : ACode I) (x : I) :
   exact (antichain_target (ρ p.bound) (ρ p.left) (ρ p.right) (ρ x)).symm.trans
     ((IdealInterpretation.map_antichain ρ _ _ _ _).trans (ideal_antichain I _ _ _ _))
 
+/-- Transport an ideal-internal set code through the cone isomorphism. -/
 def mapSet (ρ : I ≃o Set.Ici a) (p : SCode I) : SetCode :=
   ⟨image ρ p.bound, mapAntichain ρ p.tags, mapAntichain ρ p.decorated⟩
 
@@ -110,6 +112,7 @@ theorem map_graph (ρ : I ≃o Set.Ici a) (p : SCode I) (x c : I) :
   rw [← image_sup, map_antichain_holds, map_antichain_holds, image_le_iff]
   exact and_iff_right (base_le_image ρ x)
 
+/-- Transport an ideal-internal relation code through the cone isomorphism. -/
 def mapRelation (ρ : I ≃o Set.Ici a) {n : ℕ} (p : RCode I n) : RelationCode n :=
   ⟨fun i => mapSet ρ (p.coordinates i), mapAntichain ρ p.tuples⟩
 

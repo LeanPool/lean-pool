@@ -14,9 +14,9 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.Effective.UniformTableSimulation
-public import LeanPool.TuringConeRigidity.Syntax.BoundedAutomorphismOutput
-public import LeanPool.TuringConeRigidity.Representation.GenericIdentity
 public import LeanPool.TuringConeRigidity.Constructibility.ConstructibleGroundReals
+public import LeanPool.TuringConeRigidity.SetModels.ModelDegreeUniverse
+public import LeanPool.TuringConeRigidity.SetModels.SetDegreeDecoding
 
 /-!
 # Own Program Value
@@ -32,6 +32,7 @@ namespace TuringRigidity.RelativeConstructible
 open TransitiveNameModel BoundedSetTheory PersistentRestrictions SetDegreeDecoding
 open GenericIdentity TableIndices IndexMatrix
 
+/-- A total program's input-output degree classes belong to the extension's own action graph. -/
 def OwnProgramAt (E f : ZFSet.{0}) (p : OracleCode) (R A : Oracle) : Prop :=
   Total p R A ∧
     ∃ u ∈ degreeUniverse (groundReals E), ∃ v ∈ degreeUniverse (groundReals E),

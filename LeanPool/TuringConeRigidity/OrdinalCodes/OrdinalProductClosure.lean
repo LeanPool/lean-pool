@@ -13,8 +13,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.OrdinalCodes.OrdinalProductSyntax
-public import Mathlib.SetTheory.Ordinal.Exponential
+public import LeanPool.TuringConeRigidity.OrdinalCodes.OrdinalProductPresentation
 
 /-!
 # Ordinal Product Closure

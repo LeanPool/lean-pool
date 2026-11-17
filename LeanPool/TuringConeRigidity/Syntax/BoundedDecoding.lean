@@ -27,12 +27,15 @@ namespace OAI
 namespace TuringRigidity.BoundedDecoding
 open AntichainParameters SetCoding RelationCoding
 
+/-- All three parameters of the antichain code lie below `y`. -/
 def AntichainBelow (p : AntichainCode) (y : Degree) : Prop :=
   p.bound ≤ y ∧ p.left ≤ y ∧ p.right ≤ y
 
+/-- The nontrivial common-lower witness is additionally required to lie below `y`. -/
 def LocalNontrivial (y b g₀ g₁ x : Degree) : Prop :=
   x ≤ b ∧ ∃ z : Degree, z ≤ y ∧ z ≤ g₀ ⊔ x ∧ z ≤ g₁ ⊔ x ∧ ¬ z ≤ x
 
+/-- The locally nontrivial element is minimal among competing elements below `y`. -/
 def LocalAntichain (y : Degree) (p : AntichainCode) (x : Degree) : Prop :=
   LocalNontrivial y p.bound p.left p.right x ∧
     ∀ w : Degree, w ≤ y → LocalNontrivial y p.bound p.left p.right w →
@@ -56,12 +59,15 @@ theorem local_antichain_iff (y : Degree) (p : AntichainCode) (hp : AntichainBelo
   · rintro ⟨hx, hmin⟩
     exact ⟨hx, fun w _ hw hle => hmin w hw hle⟩
 
+/-- Every bound and antichain parameter of the set code lies below `y`. -/
 def SetBelow (p : SetCode) (y : Degree) : Prop :=
   p.bound ≤ y ∧ AntichainBelow p.tags y ∧ AntichainBelow p.decorated y
 
+/-- The set-code graph interpreted using local antichain predicates below `y`. -/
 def LocalGraph (y : Degree) (p : SetCode) (x c : Degree) : Prop :=
   x ≤ p.bound ∧ LocalAntichain y p.tags c ∧ LocalAntichain y p.decorated (x ⊔ c)
 
+/-- The value has a tag below `y` satisfying the local set-code graph. -/
 def LocalSet (y : Degree) (p : SetCode) (x : Degree) : Prop :=
   ∃ c : Degree, c ≤ y ∧ LocalGraph y p x c
 
@@ -79,9 +85,12 @@ theorem local_set_iff (y : Degree) (p : SetCode) (hp : SetBelow p y) (x : Degree
   simp only [LocalSet, local_graph_iff y p hp, SetCode.Holds]
   exact ⟨fun ⟨c, _, hc⟩ => ⟨c, hc⟩, fun ⟨c, hc⟩ => ⟨c, (graph_bounded hp hc).2, hc⟩⟩
 
+/-- Every coordinate-set parameter and tuple-antichain parameter lies below `y`. -/
 def RelationBelow {n : ℕ} (p : RelationCode n) (y : Degree) : Prop :=
   (∀ i, SetBelow (p.coordinates i) y) ∧ AntichainBelow p.tuples y
 
+/-- The relation has coordinate tags below `y` satisfying all local graph and tuple
+predicates. -/
 def LocalRelation {n : ℕ} (y : Degree) (p : RelationCode n) (v : Fin n → Degree) : Prop :=
   ∃ c : Fin n → Degree, (∀ i, c i ≤ y ∧ LocalGraph y (p.coordinates i) (v i) (c i)) ∧
     LocalAntichain y p.tuples (Finset.univ.sup c)

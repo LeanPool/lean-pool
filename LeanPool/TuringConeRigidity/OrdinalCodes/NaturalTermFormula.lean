@@ -28,15 +28,18 @@ namespace OAI
 namespace TuringRigidity.BoundedSetTheory
 universe u
 
+/-- Natural-number terms built from variables, addition, and multiplication. -/
 inductive NaturalTerm where
   | var (i : ℕ)
   | binary (mul : Bool) (a b : NaturalTerm)
 
 namespace NaturalTerm
+/-- Evaluate a natural-number term in the given numerical environment. -/
 def eval (v : ℕ → ℕ) : NaturalTerm → ℕ
   | .var i => v i
   | .binary m a b => if m then eval v a * eval v b else eval v a + eval v b
 
+/-- Select the bounded multiplication or addition formula according to the operation flag. -/
 def operation (m : Bool) (o Q a b y : ℕ) : Formula :=
   if m then .multiplication o Q a b y else .addition o Q a b y
 
@@ -48,6 +51,7 @@ theorem operation_spec (m : Bool) (o Q x n y : ℕ) (e : ℕ → ZFSet.{u})
   | false => exact Formula.addition_spec o Q x n y e ho hQ a b ha hb
   | true => exact Formula.multiplication_spec o Q x n y e ho hQ a b ha hb
 
+/-- Bounded formula expressing the value of a natural-number term. -/
 def graph (o Q y : ℕ) (v : ℕ → ℕ) : NaturalTerm → Formula
   | .var i => .equal y (v i)
   | .binary m a b => .existsMem o (.existsMem (o+1)

@@ -28,6 +28,7 @@ namespace TuringRigidity.OrdinalArithmetic
 open TransitiveNameModel BoundedSetTheory RelationCollapse ElementaryModel
 universe u
 
+/-- Bounded formula asserting that `d` is exactly the designated product domain. -/
 def productDomainMatrix (d a b : ℕ) : Formula :=
   .conj (.allMem d (.existsMem (b+1) (.existsMem (a+2) (.orderedPair 2 1 0))))
     (.allMem b (.allMem (a+1) (.pairMem 1 0 (d+2))))
@@ -49,6 +50,8 @@ theorem productDomainMatrix_eval (d a b : ℕ) (e : ℕ → ZFSet.{u}) :
     exact ⟨fun x hx => ZFSet.mem_prod.mp hx,
       fun s hs t ht => ZFSet.mem_prod.mpr ⟨s,hs,t,ht,rfl⟩⟩
 
+/-- Bounded formula asserting that `r` is exactly the designated lexicographic product
+relation. -/
 def productRelationMatrix (r d a b : ℕ) : Formula :=
   .conj (.allMem r (.existsMem (d+1) (.existsMem (d+2)
     (.conj (.orderedPair 2 1 0) (productLessFormula (a+3) (b+3) 1 0)))))
@@ -80,6 +83,8 @@ theorem productRelationMatrix_eval (r d a b : ℕ) (e : ℕ → ZFSet.{u})
     exact ⟨fun p hp => (ZFSet.mem_sep.mp hp).2,
       fun x hx y hy hxy => (pair_mem_productRelation _ _ _ _).mpr ⟨hx,hy,hxy⟩⟩
 
+/-- Bounded formula combining the product domain, product relation, and ordinal order-type
+certificate. -/
 def productMatrix (c a b d r f : ℕ) : Formula :=
   .conj (productDomainMatrix d a b)
     (.conj (productRelationMatrix r d a b) (orderTypeMatrix c d r f))
@@ -92,6 +97,8 @@ theorem productMatrix_eval (c a b d r f : ℕ) (e : ℕ → ZFSet.{u}) :
   apply and_congr_right; intro hd
   rw [productRelationMatrix_eval r d a b e hd,orderTypeMatrix_eval]
 
+/-- A full formula defining an ordinal product through its lexicographic order-type
+presentation. -/
 noncomputable def productSentence : SentenceForm :=
   .ex (.ex (.ex (fromBounded (productMatrix 3 4 5 2 1 0))))
 

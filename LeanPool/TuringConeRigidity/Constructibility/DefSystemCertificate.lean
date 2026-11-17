@@ -30,6 +30,8 @@ open ElementaryModel BoundedSetTheory TransitiveNameModel SentenceCoding
 open BoundedDefinability SetModelFunctions
 universe u
 
+/-- A satisfaction system with witnesses for exactly the subsets definable by adequate coded
+parameters. -/
 def DefSystem (Q B A G T H Z D : ZFSet.{u}) : Prop :=
   SatisfactionSystem Q B A G T H Z ∧
   (∀ S ∈ D, DefinitionWitness Q B G A T Z S) ∧

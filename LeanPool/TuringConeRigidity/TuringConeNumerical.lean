@@ -11,8 +11,8 @@ Module paths, interfaces, and proofs are ported to the pool's toolchain and gate
 
 module
 
-public import LeanPool.TuringConeRigidity.TuringConePersistentExtension
-public import LeanPool.TuringConeRigidity.Computability.ArithmeticActions
+public import LeanPool.TuringConeRigidity.OrdinalCodes.NumericalExtension
+public import LeanPool.TuringConeRigidity.TuringConePresentation
 
 /-!
 # Numerical graphs of partial cone isomorphisms
@@ -34,6 +34,8 @@ open EncodedForcing PersistentRestrictions ConePersistence ConePresentation
 
 noncomputable section
 
+/-- A total order-preserving action on column degrees whose image is exactly the represented
+principal cone. -/
 structure Action (B H : Oracle) (P : ℕ → Prop) : Prop where
   total : ∀ n, ∃ m, P (Nat.pair n m)
   above : ∀ n m, P (Nat.pair n m) → degree B ≤ degree (columns H m)

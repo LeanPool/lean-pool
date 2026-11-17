@@ -30,11 +30,14 @@ universe u
 
 namespace BasicAxioms
 
+/-- Extensionality with element comparisons restricted to members of the model. -/
 def Extensionality (M : ZFSet.{u}) : Prop :=
   ∀ a ∈ M, ∀ b ∈ M, (∀ x ∈ M, x ∈ a ↔ x ∈ b) → a = b
 
+/-- The model contains an element with no members inside the model. -/
 def EmptySet (M : ZFSet.{u}) : Prop := ∃ a ∈ M, ∀ x ∈ M, x ∉ a
 
+/-- Every internally nonempty model element has an internally membership-minimal element. -/
 def Foundation (M : ZFSet.{u}) : Prop :=
   ∀ a ∈ M, (∃ x ∈ M, x ∈ a) →
     ∃ y ∈ M, y ∈ a ∧ ∀ z ∈ M, ¬ (z ∈ y ∧ z ∈ a)
@@ -69,6 +72,7 @@ theorem empty_mem_ground (M : ZFSet.{u}) (hM : Transitive M) (hne : M ≠ ∅) :
     · exact fun hx => False.elim (ZFSet.notMem_empty x hx)
   exact he ▸ ha
 
+/-- The forcing name with no children, representing the empty set. -/
 def emptyName (P : Type u) : Name P :=
   .mk (ULift Empty) (fun i => i.down.elim) (fun i => i.down.elim)
 

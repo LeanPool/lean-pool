@@ -30,6 +30,8 @@ open Set CountableForcing ForcingProjection BooleanProjection RegularCompletion
 universe u
 variable {P : Type u} [Preorder P]
 
+/-- The forcing projection from original conditions to the positive part of a
+complement-closed complete sublattice. -/
 noncomputable def originalProjection (A : CompleteSublattice (Algebra P))
     (hc : ∀ a ∈ A, aᶜ ∈ A) : Projection P (PartPositive A) where
   map p := (forcingProjection A hc).map (positiveBasic p)

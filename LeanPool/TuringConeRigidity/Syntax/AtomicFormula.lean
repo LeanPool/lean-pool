@@ -13,7 +13,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.SetModels.InternalFixedPoint
+public import LeanPool.TuringConeRigidity.Syntax.BoundedRelations
 
 /-!
 # Atomic Formula
@@ -28,21 +28,27 @@ namespace TuringRigidity.AtomicForcing
 open TransitiveNameModel BoundedSetTheory
 universe u
 
+/-- The pair of name codes and condition occurs in the graph `f` through the pair domain `k`. -/
 def Triple (k f a b q : ZFSet.{u}) : Prop :=
   ∃ v ∈ k, v = ZFSet.pair a b ∧ ZFSet.pair v q ∈ f
 
+/-- A stronger condition matches the chosen child with a child of `y` in the coded equality
+graph. -/
 def Match (flip : Bool) (d c k o f a y q : ZFSet.{u}) : Prop :=
   ∃ r ∈ c, ZFSet.pair r q ∈ o ∧ ∃ b ∈ d, ∃ t ∈ c,
     ZFSet.pair b t ∈ y ∧ ZFSet.pair r t ∈ o ∧
       Triple k f (if flip then b else a) (if flip then a else b) r
 
+/-- Every child on one side can be matched below every common extension of its tag and `p`. -/
 def Side (flip : Bool) (d c k o f x y p : ZFSet.{u}) : Prop :=
   ∀ a ∈ d, ∀ s ∈ c, ZFSet.pair a s ∈ x →
     ∀ q ∈ c, ZFSet.pair q p ∈ o → ZFSet.pair q s ∈ o → Match flip d c k o f a y q
 
+/-- Both directions of the coded child-matching equation for atomic equality forcing. -/
 def Step (d c k o f x y p : ZFSet.{u}) : Prop :=
   Side false d c k o f x y p ∧ Side true d c k o f y x p
 
+/-- A nested pair of name codes and a condition satisfying the coded forcing step. -/
 def Vertex (d c k o f z : ZFSet.{u}) : Prop :=
   ∃ x ∈ d, ∃ y ∈ d, ∃ q ∈ c, ∃ v ∈ k,
     v = ZFSet.pair x y ∧ z = ZFSet.pair v q ∧ Step d c k o f x y q
@@ -50,6 +56,8 @@ def Vertex (d c k o f z : ZFSet.{u}) : Prop :=
 namespace AtomicFormula
 open Formula
 
+/-- Bounded formula asserting membership of a name-pair and condition in the coded forcing
+graph. -/
 def triple (k f a b q : ℕ) : Formula :=
   .existsMem k (.conj (orderedPair 0 (a+1) (b+1)) (pairMem 0 (q+1) (f+1)))
 
@@ -57,6 +65,7 @@ theorem eval_triple (k f a b q : ℕ) (e : ℕ → ZFSet.{u}) :
     (triple k f a b q).Eval e ↔ Triple (e k) (e f) (e a) (e b) (e q) := by
   simp only [triple,Formula.Eval,eval_orderedPair,eval_pairMem,cons_zero,cons_succ,Triple]
 
+/-- Bounded formula expressing a stronger-condition child match in the selected orientation. -/
 def matchF (flip : Bool) (d c k o f a y q : ℕ) : Formula :=
   .existsMem c (.conj (pairMem 0 (q+1) (o+1))
     (.existsMem (d+1) (.existsMem (c+2)
@@ -69,6 +78,7 @@ theorem eval_matchF (flip : Bool) (d c k o f a y q : ℕ) (e : ℕ → ZFSet.{u}
   cases flip <;> simp only [matchF,Formula.Eval,eval_pairMem,eval_triple,
     cons_zero,cons_succ,Match,Bool.false_eq_true,ite_false,ite_true]
 
+/-- Bounded formula expressing one direction of the dense child-matching equation. -/
 def side (flip : Bool) (d c k o f x y p : ℕ) : Formula :=
   allMem d (allMem (c+1) (imp (pairMem 1 0 (x+2))
     (allMem (c+2) (imp (.conj (pairMem 0 (p+3) (o+3)) (pairMem 0 1 (o+3)))
@@ -80,6 +90,7 @@ theorem eval_side (flip : Bool) (d c k o f x y p : ℕ) (e : ℕ → ZFSet.{u}) 
   simp only [side,eval_allMem,eval_imp,Formula.Eval,eval_pairMem,eval_matchF,
     cons_zero,cons_succ,Side,and_imp]
 
+/-- Bounded formula combining the two directions of coded atomic equality forcing. -/
 def step (d c k o f x y p : ℕ) : Formula :=
   .conj (side false d c k o f x y p) (side true d c k o f y x p)
 
@@ -88,6 +99,7 @@ theorem eval_step (d c k o f x y p : ℕ) (e : ℕ → ZFSet.{u}) :
       Step (e d) (e c) (e k) (e o) (e f) (e x) (e y) (e p) := by
   simp only [step,Formula.Eval,eval_side,Step]
 
+/-- Bounded formula describing a vertex of the coded atomic forcing graph. -/
 def vertex (d c k o f z : ℕ) : Formula :=
   .existsMem d (.existsMem (d+1) (.existsMem (c+2) (.existsMem (k+3)
     (.conj (orderedPair 0 3 2) (.conj (orderedPair (z+4) 0 1)

@@ -15,6 +15,7 @@ module
 
 public import LeanPool.TuringConeRigidity.Computability.ArithmeticHierarchy
 public import LeanPool.TuringConeRigidity.OrdinalCodes.IndexPresentation
+public import LeanPool.TuringConeRigidity.Effective.OrderMatrixRecursive
 
 /-!
 # Arithmetic Atoms

@@ -13,9 +13,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.CohenForcing.InternalCohenHomogeneity
 public import LeanPool.TuringConeRigidity.SetModels.InternalOrderIsoTransport
-public import LeanPool.TuringConeRigidity.SetModels.InternalBoundedTruth
 public import LeanPool.TuringConeRigidity.Representation.SourceTGenericExistence
 
 /-!

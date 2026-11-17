@@ -14,6 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.OrdinalCodes.CanonicalAdditionSyntax
+public import LeanPool.TuringConeRigidity.OrdinalCodes.CanonicalOmegaSyntax
 
 /-!
 # Bind Canonical Arithmetic
@@ -28,6 +29,7 @@ namespace TuringRigidity.RelativeConstructible
 open ElementaryModel BoundedSetTheory TransitiveNameModel SetModelArithmetic
 universe u
 
+/-- Bounded formula asserting that `d` is exactly the Cartesian square of `w`. -/
 def squareFormula (w d : ℕ) : Formula :=
   .conj (.allMem d (.existsMem (w+1) (.existsMem (w+2) (.orderedPair 2 1 0))))
     (.allMem w (.allMem (w+1) (.existsMem (d+2) (.orderedPair 0 2 1))))
@@ -51,6 +53,8 @@ theorem squareFormula_spec (w d : ℕ) (e : ℕ → ZFSet.{u}) :
     exact ⟨fun _ hx => ZFSet.mem_prod.mp hx,
       fun a ha b hb => ⟨ZFSet.pair a b,ZFSet.pair_mem_prod.mpr ⟨ha,hb⟩,rfl⟩⟩
 
+/-- Bind canonical omega, its square, and an addition-system graph before evaluating the
+sentence body. -/
 noncomputable def bindArithmetic (p : SentenceForm) : SentenceForm :=
   .ex (.conj (canonicalOmega 0)
     (.ex (.conj (fromBounded (squareFormula 1 0))

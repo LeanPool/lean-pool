@@ -13,7 +13,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.Constructibility.UniformInternalSatisfaction
+public import LeanPool.TuringConeRigidity.Effective.TupleLookupAdequacy
 
 /-!
 # Definable Subset Certificates
@@ -32,6 +32,8 @@ universe u
 
 variable {M : ZFSet.{u}}
 
+/-- The tuple's length accommodates the formula-support bound, including the distinguished
+subset variable. -/
 def ParameterAdequate (Q B G c t : ZFSet.{u}) : Prop :=
   ∃ n ∈ ZFSet.omega, ∃ g ∈ G, ∃ b ∈ ZFSet.omega,
     t = ZFSet.pair n g ∧ BoundWitness Q B c b ∧ ∀ x ∈ b, x ∈ n ∨ x = n
@@ -66,6 +68,8 @@ theorem parameterAdequate_spec (Q B G c : ZFSet.{u})
     have hs := (natSet_subset_iff p.bound (n+1)).mpr hp hx
     exact (ZFSet.mem_insert_iff.mp hs).symm
 
+/-- The subset `S` consists exactly of members whose prefixed tuple satisfies the coded truth
+relation. -/
 def DefinesSubset (A G T Z c t S : ZFSet.{u}) : Prop :=
   S ⊆ A ∧ ∀ x ∈ A, x ∈ S ↔
     ∃ s ∈ T, TuplePrefix A G t x s ∧ ZFSet.pair c s ∈ Z
@@ -111,6 +115,7 @@ theorem definesSubset_spec (A G S : ZFSet.{u})
     rw [mem_definedSubset]
     exact (and_iff_right hx).trans (hstep x hx).symm
 
+/-- A formula code and adequate tuple witness the definition of `S` over `A`. -/
 def DefinitionWitness (Q B G A T Z S : ZFSet.{u}) : Prop :=
   ∃ c ∈ ZFSet.omega, ∃ t ∈ T,
     ParameterAdequate Q B G c t ∧ DefinesSubset A G T Z c t S

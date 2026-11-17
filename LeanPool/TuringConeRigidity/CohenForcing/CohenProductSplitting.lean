@@ -14,6 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.CohenForcing.TaggedProductConditions
+public import LeanPool.TuringConeRigidity.CohenForcing.CohenGroundPoset
 
 /-!
 # Cohen Product Splitting
@@ -29,6 +30,7 @@ open TransitiveNameModel BoundedSetTheory TaggedProductConditions CohenGroundPos
 open CohenSymmetry
 attribute [local instance] InternalCollapse.order InternalCollapse.collapsePreorder
 
+/-- Encode a pair of conditions as an element of the supplied product code `c`. -/
 noncomputable def productMap (a b c : ZFSet.{0})
     (hc : ∀ z, z ∈ c ↔ ∃ p ∈ a, ∃ s ∈ b, z = code p s)
     (x : Conditions a × Conditions b) : Conditions c :=
@@ -41,6 +43,7 @@ theorem label_productMap (a b c : ZFSet.{0})
     label c (productMap a b c hc x) = code (label a x.1) (label b x.2) := by
   simp only [productMap,label,Equiv.symm_apply_apply]
 
+/-- Order isomorphism between a product of condition posets and its set-coded product. -/
 noncomputable def productIso (a b c : ZFSet.{0})
     (hc : ∀ z, z ∈ c ↔ ∃ p ∈ a, ∃ s ∈ b, z = code p s) :
     (Conditions a × Conditions b) ≃o Conditions c :=
@@ -60,6 +63,7 @@ noncomputable def productIso (a b c : ZFSet.{0})
       rw [label_productMap,label_productMap,code_subset]
       rfl }
 
+/-- Assign the Boolean value `b` at coordinate `i`, overwriting any previous assignment there. -/
 noncomputable def putBit {ι : Type} (p : Condition ι) (i : ι) (b : Bool) : Condition ι := by
   classical
   exact ⟨fun j => if j = i then some b else p.val j,

@@ -15,6 +15,7 @@ module
 
 public import LeanPool.TuringConeRigidity.SetModels.WeakRealDescent
 public import LeanPool.TuringConeRigidity.Constructibility.RelativeDegreeIdeal
+public import LeanPool.TuringConeRigidity.Constructibility.RelativeSigmaSchemas
 
 /-!
 # Relative Persistent Descent

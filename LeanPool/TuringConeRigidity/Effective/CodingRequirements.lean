@@ -27,6 +27,8 @@ namespace OAI
 namespace TuringRigidity.CodingRequirements
 open CodingForcing CodingAgreement CodingLocations CodingExtraction
 
+/-- A coding requirement is settled by disagreement, divergence, uniqueness, or a reducible
+coded column. -/
 def Good (A : ℕ → Oracle) (Y : Oracle) (e₀ e₁ : OracleCode) (p : Condition) : Prop :=
   Disagreement Y e₀ e₁ p ∨
     (∃ n, ∀ q, Extends A p q → ∀ v, v ∉ CommonIdeal.run Y e₀ q.left n) ∨
@@ -97,6 +99,8 @@ theorem good_common_output {A : ℕ → Oracle} {Y G₀ G₁ Z : Oracle}
   · exact Or.inl (case1_reduces hu h₀ he₀)
   · exact Or.inr ha
 
+/-- Every oracle computed by the designated program from `B` satisfies the common-computation
+requirement. -/
 def GoodForCode (A : ℕ → Oracle) (B : Oracle) (c e₀ e₁ : OracleCode) (p : Condition) : Prop :=
   ∀ Y : Oracle, OracleCode.eval (oracleFunction B) c = oracleFunction Y → Good A Y e₀ e₁ p
 

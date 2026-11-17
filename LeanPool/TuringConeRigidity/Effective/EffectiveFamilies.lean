@@ -14,7 +14,6 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.Effective.GuardedCoding
-public import LeanPool.TuringConeRigidity.CohenForcing.CohenColumns
 public import LeanPool.TuringConeRigidity.Syntax.BoundedDecoding
 
 /-!
@@ -35,6 +34,7 @@ theorem reindex_reduces (A : Oracle) {f : ℕ → ℕ} (hf : Primrec f) :
   have hq : Nat.RecursiveIn {oracleFunction A} (oracleFunction A) := .oracle _ (Set.mem_singleton _)
   exact total_comp hq (total_primrec hf)
 
+/-- Extract an indexed two-dimensional slice from the paired coordinates of `A`. -/
 def slice (A : Oracle) (i : ℕ) : Oracle := fun m =>
   A (Nat.pair (Nat.pair i (Nat.unpair m).1) (Nat.unpair m).2)
 
@@ -48,6 +48,7 @@ theorem slice_reduces (A : Oracle) (i : ℕ) : Reduces (slice A i) A :=
     (Primrec₂.natPair.comp (Primrec.const i) (Primrec.fst.comp Primrec.unpair))
     (Primrec.snd.comp Primrec.unpair))
 
+/-- Join corresponding columns of two oracle families. -/
 def mix (A B : Oracle) : Oracle := fun m =>
   join (columns A (Nat.unpair m).1) (columns B (Nat.unpair m).1) (Nat.unpair m).2
 
@@ -70,6 +71,7 @@ theorem mix_reduces (A B : Oracle) : Reduces (mix A B) (join A B) := by
   congr 1
   omega
 
+/-- Iteratively combine the first `n` slices of `G`, starting with the zero oracle. -/
 def tuples (G : Oracle) : ℕ → Oracle
   | 0 => fun _ => false
   | n+1 => mix (tuples G n) (slice G n)

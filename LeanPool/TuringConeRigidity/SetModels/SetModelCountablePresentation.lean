@@ -14,6 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.SetModels.SetModelCountability
+public import LeanPool.TuringConeRigidity.SetModels.SetModelArithmeticDischarge
 
 /-!
 # Set Model Countable Presentation

@@ -29,6 +29,7 @@ namespace TuringRigidity.InternalRank
 open TransitiveNameModel BoundedSetTheory
 universe u
 
+/-- The set-valued rank obtained by recursively taking unions of successor ranks. -/
 noncomputable def rankSet (x : ZFSet.{u}) : ZFSet.{u} :=
   ZFSet.sUnion (ZFSet.range (fun y : Shrink x =>
     insert (rankSet ((equivShrink x).symm y).val) (rankSet ((equivShrink x).symm y).val)))
@@ -57,10 +58,12 @@ theorem rankSet_transitive (x : ZFSet.{u}) : Transitive (rankSet x) := by
     · exact (mem_rankSet x w).mpr ⟨y,hy,Or.inr hw⟩
     · exact (mem_rankSet x w).mpr ⟨y,hy,Or.inr (ih y hy z hz w hw)⟩
 
+/-- The value `v` is exactly the union of the successor values assigned to members of `x`. -/
 def Step (f r x v : ZFSet.{u}) : Prop :=
   (∀ z ∈ v, ∃ y ∈ x, ∃ w ∈ r, ZFSet.pair y w ∈ f ∧ (z = w ∨ z ∈ w)) ∧
   (∀ y ∈ x, ∀ w ∈ r, ZFSet.pair y w ∈ f → w ∈ v ∧ w ⊆ v)
 
+/-- A total single-valued rank-recursion graph on a transitive domain with values in `r`. -/
 def Graph (d r f : ZFSet.{u}) : Prop :=
   Transitive d ∧
   (∀ z ∈ f, ∃ x ∈ d, ∃ y ∈ r, z = ZFSet.pair x y) ∧
@@ -103,6 +106,7 @@ theorem Graph.unique {d r s f g : ZFSet.{u}}
 namespace Code
 open Formula
 
+/-- Bounded formula expressing one internal rank-recursion step. -/
 def step (f r x v : ℕ) : Formula :=
   .conj (allMem v (.existsMem (x+1) (.existsMem (r+2)
     (.conj (pairMem 1 0 (f+3)) (disj (.equal 2 0) (.member 2 0))))))
@@ -114,6 +118,7 @@ theorem eval_step (f r x v : ℕ) (e : ℕ → ZFSet.{u}) :
   simp only [step,Formula.Eval,eval_allMem,eval_pairMem,eval_disj,
     eval_imp,eval_subset,cons_zero,cons_succ,Step]
 
+/-- Bounded formula expressing the transitive domain, function graph, and internal rank steps. -/
 def graph (d r f : ℕ) : Formula :=
   .conj (transitive d) (.conj (functionGraph f d r)
     (allMem d (allMem (r+1) (imp (pairMem 1 0 (f+2)) (step (f+2) (r+2) 1 0)))))

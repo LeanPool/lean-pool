@@ -14,6 +14,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.Effective.CodingColumns
+public import LeanPool.TuringConeRigidity.Computability.OracleCode
+public import LeanPool.TuringConeRigidity.Effective.CodingForcing
 
 /-!
 # Coding Diagonal
@@ -25,8 +27,10 @@ public import LeanPool.TuringConeRigidity.Effective.CodingColumns
 namespace OAI
 
 namespace TuringRigidity.CodingDiagonal
-open CodingForcing CodingColumns Introreducible
+open CodingForcing CodingColumns
 
+/-- At some assigned coding position, the designated program does not return the left-word
+bit, including when it diverges. -/
 def Diagonal (A : ℕ → Oracle) (hA : ∀ k, {a | A k a = true}.Infinite)
     (k cutoff : ℕ) (e : OracleCode) (p : Condition) : Prop :=
   ∃ n, location (A k) (hA k) k cutoff n < p.left.length ∧

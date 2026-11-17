@@ -47,9 +47,11 @@ theorem extend_length (M : ZFSet.{u}) (hM : Transitive M) (hT : SourceT M)
         append_function hq hx,fun z hz => ?_⟩
       exact (mem_append _ _ _ _).mpr (Or.inl (hpq hz))
 
+/-- The conditions assigning the specified value `x` at some natural-number index. -/
 noncomputable def covers (c x : ZFSet.{u}) : ZFSet.{u} :=
   ZFSet.sep (fun p => ∃ n ∈ ZFSet.omega, ZFSet.pair n x ∈ p) c
 
+/-- The conditions assigning some value in `A` at the specified natural-number index. -/
 noncomputable def definedAt (c A : ZFSet.{u}) (n : ℕ) : ZFSet.{u} :=
   ZFSet.sep (fun p => ∃ x ∈ A, ZFSet.pair (natSet n) x ∈ p) c
 

@@ -14,6 +14,9 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.OrdinalCodes.NumericalExtension
+public import LeanPool.TuringConeRigidity.Constructibility.PersistentExtension
+public import LeanPool.TuringConeRigidity.OrdinalCodes.NumericalAutomorphism
+public import LeanPool.TuringConeRigidity.OrdinalCodes.NumericalIdeal
 
 /-!
 # Persistence Criterion
@@ -30,9 +33,11 @@ open PersistentPresentation PersistentCountability NumericalAutomorphism Numeric
   NumericalExtension
 noncomputable section
 
+/-- The Boolean-one acceptance graph of an oracle program. -/
 def ProgramGraph (Y : Oracle) (p : OracleCode) (v : ℕ) : Prop :=
   1 ∈ OracleCode.eval (oracleFunction Y) p v
 
+/-- Every suitable coded ideal extension admits a program-coded action compatible with `R`. -/
 def Criterion (A : Oracle) (R : ℕ → Prop) : Prop :=
   ∀ H : Oracle, JumpCode H → Includes A H →
     ∃ p : OracleCode, Action H (ProgramGraph (iterate H 11) p) ∧

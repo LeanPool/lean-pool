@@ -27,6 +27,7 @@ namespace OAI
 namespace TuringRigidity.BooleanExpressionCertificate
 open TransitiveNameModel BoundedSetTheory InternalBooleanSyntax
 
+/-- Bounded formula expressing the seed, complement, and supremum evaluation cases. -/
 def stepFormula (c B Q S K g t U z0 z1 z2 : ℕ) : Formula :=
   .disj (.conj (.member U S) (.orderedPair t z0 U))
     (.disj
@@ -47,6 +48,8 @@ theorem stepFormula_spec (c B Q S K g t U z0 z1 z2 : ℕ) (e : ℕ → ZFSet.{0}
     Formula.eval_pairMem,Formula.eval_allMem,negFormula_spec,supFormula_spec,
     cons_zero,cons_succ,h0,h1,h2,Step,FiniteTerm.tag]
 
+/-- Bounded formula asserting that each entry of the graph satisfies the expression-evaluation
+certificate. -/
 def certificateFormula (c B Q S K g z0 z1 z2 : ℕ) : Formula :=
   .allMem g (.existsMem (K+1) (.existsMem (B+2)
     (.conj (.orderedPair 2 1 0)
@@ -67,10 +70,12 @@ theorem certificateFormula_spec (c B Q S K g z0 z1 z2 : ℕ) (e : ℕ → ZFSet.
   apply and_congr_right; intro _
   exact stepFormula_spec _ _ _ _ _ _ _ _ _ _ _ _ h0 h1 h2
 
+/-- A transitive set containing a certified graph and an expression evaluated to `U`. -/
 def Witness (c B Q S K U : ZFSet.{0}) : Prop :=
   Transitive K ∧ ∃ g ∈ K, Certificate c B Q S K g ∧
     ∃ t ∈ K, ZFSet.pair t U ∈ g
 
+/-- Bounded formula expressing a transitive expression-evaluation witness for the value `U`. -/
 def witnessFormula (c B Q S K U z0 z1 z2 : ℕ) : Formula :=
   .conj (.allMem K (.subset 0 (K+1)))
     (.existsMem K (.conj
@@ -88,6 +93,7 @@ theorem witnessFormula_spec (c B Q S K U z0 z1 z2 : ℕ) (e : ℕ → ZFSet.{0})
   apply and_congr_right; intro _
   exact and_congr (certificateFormula_spec _ _ _ _ _ _ _ _ _ _ h0 h1 h2) Iff.rfl
 
+/-- The parameter environment for Boolean-expression certificates and their constructor tags. -/
 def parameters (c B Q S : ZFSet.{0}) : ℕ → ZFSet.{0} :=
   cons c (cons B (cons Q (cons S (cons (natSet 0) (cons (natSet 1) (fun _ => natSet 2))))))
 
@@ -102,6 +108,7 @@ theorem parameters_mem (M c B Q S : ZFSet.{0}) (hM : Transitive M) (hT : SourceT
   · exact hS
   all_goals exact hM _ (sourceT_omega_mem M hM hT) _ ((mem_omega _).mpr ⟨_,rfl⟩)
 
+/-- The certificate-witness formula in its standard variable arrangement. -/
 def witnessBody : Formula := witnessFormula 2 3 4 5 0 1 6 7 8
 
 theorem witnessBody_realize (M c B Q S K U : ZFSet.{0}) (hM : Transitive M)
@@ -115,6 +122,7 @@ theorem witnessBody_realize (M c B Q S K U : ZFSet.{0}) (hM : Transitive M)
     · exact he i)]
   exact witnessFormula_spec _ _ _ _ _ _ _ _ _ _ rfl rfl rfl
 
+/-- The Boolean codes in `B` having an expression certificate in some member of `M`. -/
 noncomputable def certified (M c B Q S : ZFSet.{0}) : ZFSet.{0} :=
   B.sep (fun U => ∃ K ∈ M, Witness c B Q S K U)
 

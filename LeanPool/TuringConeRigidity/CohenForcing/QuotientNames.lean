@@ -13,8 +13,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.CohenForcing.QuotientDense
 public import LeanPool.TuringConeRigidity.SetModels.RecursiveNames
+public import LeanPool.TuringConeRigidity.CohenForcing.ForcingProjection
 
 /-!
 # Quotient Names
@@ -30,6 +30,7 @@ open Set CountableForcing ForcingProjection RecursiveNames
 universe u
 variable {P Q : Type u} [Preorder P] [Preorder Q]
 
+/-- Restrict a forcing name to children tagged by conditions whose projections belong to `H`. -/
 def restrict (π : Projection P Q) (H : GenericFilter Q) :
     Name P → Name (QuotientConditions π H)
   | .mk ι child tag => .mk {i : ι // π.map (tag i) ∈ H.carrier}

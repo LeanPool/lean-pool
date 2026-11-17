@@ -30,6 +30,7 @@ open TransitiveNameModel RelationHull
 universe u
 namespace Formula
 
+/-- Bounded formula defining the predecessor set of `x` inside `d` for relation `r`. -/
 def predecessorSet (d r x a : ℕ) : Formula := .conj (.subset a d)
   (allMem d (iff (.member 0 (a+1)) (.pairMem 0 (x+1) (r+1))))
 
@@ -47,6 +48,8 @@ theorem eval_predecessorSet (d r x a : ℕ) (e : ℕ → ZFSet.{u}) :
     exact ⟨fun _ h => (mem_predecessors _ _ _ _).mp h |>.1,
       fun y hy => (mem_predecessors _ _ _ _).trans (and_iff_right hy)⟩
 
+/-- Bounded formula selecting a predecessor through the supplied choice relation on
+predecessor sets. -/
 def serialSelector (d r q s z : ℕ) : Formula := .existsMem d (.existsMem (d+1)
   (.conj (.orderedPair (z+2) 1 0) (.existsMem (q+2)
     (.conj (predecessorSet (d+3) (r+3) 2 0) (.pairMem 0 1 (s+3))))))

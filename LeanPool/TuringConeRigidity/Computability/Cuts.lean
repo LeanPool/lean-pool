@@ -13,9 +13,10 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
+
+public import Mathlib.Analysis.Normed.Group.Basic
+public import Mathlib.MeasureTheory.Constructions.BorelSpace.Order
 public import LeanPool.TuringConeRigidity.Computability.OracleCode
-public import LeanPool.TuringConeRigidity.Representation.Category
-public import Mathlib.MeasureTheory.Constructions.BorelSpace.Real
 
 /-!
 # Cuts
@@ -29,6 +30,7 @@ namespace OAI
 open Set Filter Topology
 namespace TuringRigidity
 
+/-- Enumerate the rational numbers by decoding natural codes, with zero as the fallback. -/
 def rationalEnumeration (n : ℕ) : ℚ := (Encodable.decode (α := ℚ) n).getD 0
 
 theorem rationalEnumeration_surjective : Function.Surjective rationalEnumeration := by
@@ -36,6 +38,7 @@ theorem rationalEnumeration_surjective : Function.Surjective rationalEnumeration
   refine ⟨Encodable.encode q, ?_⟩
   simp [rationalEnumeration]
 
+/-- The lower rational cut of a real, represented as a Boolean oracle. -/
 noncomputable def cut (x : ℝ) : Oracle := fun n => decide ((rationalEnumeration n : ℝ) < x)
 
 @[simp] theorem cut_eq_true (x : ℝ) (n : ℕ) :
@@ -73,6 +76,7 @@ theorem cut_measurable : Measurable cut := by
   funext x
   by_cases hq : (rationalEnumeration n : ℝ) < x <;> simp [cut, hq]
 
+/-- The Turing degree of the lower rational cut of a real. -/
 noncomputable def realDegree (x : ℝ) : Degree := degree (cut x)
 
 theorem represented_real_map_countable_fibers (π : Degree ≃o Degree) (F : ℝ → Oracle)

@@ -29,11 +29,13 @@ open TransitiveNameModel BoundedSetTheory InternalCollapse CohenBorelForcing Cou
   RecursiveNames
 attribute [local instance] InternalCollapse.order
 
+/-- The canonical name for the generic real in the set-coded word poset. -/
 noncomputable def realName : Name (Conditions conditions) :=
   .mk {t : Conditions conditions × ℕ //
     ZFSet.pair (natSet t.2) (bitSet true) ∈ label conditions t.1}
     (fun t => Name.check (natSet t.val.2)) (fun t => t.val.1)
 
+/-- Bounded formula describing the set-coded canonical generic-real name. -/
 def realNameFormula : BoundedSetTheory.Formula :=
   .existsMem 1 (.existsMem 3 (.existsMem 6
     (.conj (.pairMem 1 0 6) (.conj (.pairMem 1 8 2) (.orderedPair 3 0 2)))))
@@ -46,6 +48,7 @@ theorem eval_realNameFormula (z c f r one : ZFSet.{0}) (e : ℕ → ZFSet.{0}) :
     [realNameFormula, BoundedSetTheory.Formula.Eval, BoundedSetTheory.Formula.eval_pairMem,
       BoundedSetTheory.Formula.eval_orderedPair, cons_zero, cons_succ]
 
+/-- Set-coded generic-real name using the supplied graph of numeral-name codes. -/
 noncomputable def realNameCode (f : ZFSet.{0}) : ZFSet.{0} :=
   ZFSet.sep (fun z => ∃ q ∈ conditions, ∃ n ∈ ZFSet.omega, ∃ v ∈ iterUnion 2 f,
     ZFSet.pair n v ∈ f ∧ ZFSet.pair n (bitSet true) ∈ q ∧ z = ZFSet.pair v q)

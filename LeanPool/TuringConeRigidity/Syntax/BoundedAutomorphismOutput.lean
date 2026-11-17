@@ -13,7 +13,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.Representation.AutomorphismOutputSentence
+public import LeanPool.TuringConeRigidity.SetModels.ModelReals
+public import LeanPool.TuringConeRigidity.SetModels.SetDegreeDecoding
 
 /-!
 # Bounded Automorphism Output
@@ -28,6 +29,8 @@ namespace TuringRigidity.BoundedForcing
 open TransitiveNameModel BoundedSetTheory SetDegreeDecoding PersistentRestrictions
 universe u
 
+/-- Bounded formula finding an input-output pair in the designated relation within the
+supplied bounds. -/
 def boundedOutputFormula : Formula :=
   .existsMem 3 (.existsMem 4 (.conj (.member 3 1)
     (.conj (.member 4 0) (.pairMem 1 0 2))))

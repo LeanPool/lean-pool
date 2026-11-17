@@ -32,6 +32,7 @@ open Set CountableForcing TransitiveNameModel BoundedSetTheory RecursiveNames
 open ForcingProjection RegularCompletion BooleanProjection
 attribute [local instance] InternalCollapse.order InternalCollapse.collapsePreorder
 
+/-- Read the set-coded tag families as sets of condition-label elements. -/
 def tags (c : ZFSet.{0}) (E : ℕ → ZFSet.{0}) : ℕ → Set (Conditions c) :=
   fun n => {p | label c p ∈ E n}
 

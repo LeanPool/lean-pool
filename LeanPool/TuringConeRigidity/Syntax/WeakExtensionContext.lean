@@ -15,7 +15,6 @@ module
 
 public import LeanPool.TuringConeRigidity.SetModels.ExtensionSigmaSeparation
 public import LeanPool.TuringConeRigidity.SetModels.ExtensionPowerSet
-public import LeanPool.TuringConeRigidity.Representation.SourceTheory
 public import LeanPool.TuringConeRigidity.SetModels.SetModelFunctionGraphs
 
 /-!

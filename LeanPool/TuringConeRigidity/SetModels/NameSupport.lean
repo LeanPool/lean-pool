@@ -14,7 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.SetModels.RestrictedName
-public import LeanPool.TuringConeRigidity.Syntax.AtomicDefinability
+public import LeanPool.TuringConeRigidity.SetModels.NameUnionCode
 
 /-!
 # Name Support
@@ -29,6 +29,8 @@ namespace TuringRigidity.AtomicForcing
 open Set RecursiveNames TransitiveNameModel BoundedSetTheory
 universe u
 
+/-- A child-condition pair is supported by a stronger condition than one tagging that child in
+`x`. -/
 def SupportPredicate (d c o x z : ZFSet.{u}) : Prop :=
   ∃ a ∈ d, ∃ q ∈ c, z = ZFSet.pair a q ∧ ∃ s ∈ c,
     ZFSet.pair a s ∈ x ∧ ZFSet.pair q s ∈ o
@@ -36,6 +38,7 @@ def SupportPredicate (d c o x z : ZFSet.{u}) : Prop :=
 namespace AtomicFormula
 open Formula
 
+/-- Bounded formula describing the supported child-condition pairs of a name code. -/
 def support (d c o x z : ℕ) : Formula :=
   .existsMem d (.existsMem (c+1) (.conj (orderedPair (z+2) 1 0)
     (.existsMem (c+2) (.conj (pairMem 2 0 (x+3)) (pairMem 1 0 (o+3))))))

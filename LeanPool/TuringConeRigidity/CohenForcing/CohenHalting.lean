@@ -13,7 +13,9 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.CohenForcing.CohenCompleteness
+public import LeanPool.TuringConeRigidity.CohenForcing.EncodedForcing
+public import LeanPool.TuringConeRigidity.Computability.ArithmeticAtoms
+public import LeanPool.TuringConeRigidity.Computability.OracleJump
 
 /-!
 # Cohen Halting
@@ -27,9 +29,11 @@ namespace OAI
 namespace TuringRigidity.CohenHalting
 open Encodable UniformOracle CommonIdeal ArithmeticHierarchy OracleJump EncodedForcing IndexMatrix
 
+/-- Decode a finite table of natural numbers, using the empty table for an invalid code. -/
 def table (c : ℕ) : List ℕ := (decode c).getD []
 theorem table_primrec : Primrec table := Primrec.option_getD.comp Primrec.decode (Primrec.const [])
 
+/-- A computation table agrees with the fixed oracle and the finite Cohen word at every query. -/
 def Agrees (Y : Oracle) (p : List Bool) (L : List ℕ) : Prop :=
   ∀ i < L.length, if i.bodd then i/2 < p.length ∧ L.getD i 0 = bit (p.getD (i/2) false)
     else L.getD i 0 = bit (Y (i/2))
@@ -73,6 +77,8 @@ theorem agrees_recursive (Y : Oracle) : RecursivePred Y (fun v =>
   intro _
   cases i.bodd <;> simp
 
+/-- A coded, bounded halting computation with a table consistent with the oracle and finite
+word. -/
 def Certificate (Y : Oracle) (v : ℕ) : Prop :=
   Agrees Y (word (Nat.unpair (Nat.unpair v).1).2) (table (Nat.unpair (Nat.unpair v).2).1) ∧
     ((machine (Nat.unpair (Nat.unpair (Nat.unpair v).1).1).1).evaln
@@ -92,14 +98,17 @@ theorem certificate_recursive (Y : Oracle) : RecursivePred Y (Certificate Y) := 
   simpa only [Nat.unpair_pair] using recursive_and ha (recursive_primrecPred Y
     (Primrec.eq.comp (Primrec.option_isSome.comp he) (Primrec.const true)))
 
+/-- A finite word admits a halting computation certificate for the specified machine input. -/
 def OpenHalts (Y : Oracle) (x p : ℕ) : Prop := ∃ z, Certificate Y (Nat.pair (Nat.pair x p) z)
 
 theorem openHalts_sigma (Y : Oracle) : Sigma Y 1 (fun v => OpenHalts Y (Nat.unpair v).1
   (Nat.unpair v).2) := by
   simpa only [OpenHalts,Nat.pair_unpair] using exists_form (n := 0) (certificate_recursive Y)
 
+/-- The oracle extends the finite binary word. -/
 def Prefix (G : Oracle) (p : List Bool) : Prop := ∀ i < p.length, G i = p.getD i false
 
+/-- The initial word of length `m` of an oracle. -/
 def initial (G : Oracle) (m : ℕ) : List Bool := (List.range m).map G
 
 @[simp] theorem initial_length (G : Oracle) (m : ℕ) : (initial G m).length = m := by simp [initial]

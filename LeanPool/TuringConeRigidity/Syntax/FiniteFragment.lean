@@ -30,6 +30,7 @@ open TransitiveNameModel
 universe u
 namespace Formula
 
+/-- A bound on the free-variable slots needed by the bounded formula. -/
 def scope : Formula → ℕ
   | .equal i j | .member i j => max (i+1) (j+1)
   | .conj φ ψ => max φ.scope ψ.scope
@@ -39,8 +40,12 @@ def scope : Formula → ℕ
 theorem realize_congr (φ : Formula) (d : ZFSet.{u}) (e f : ℕ → ZFSet.{u})
     (h : ∀ i, i < φ.scope → e i = f i) : φ.Realize d e ↔ φ.Realize d f := by
   induction φ generalizing e f with
-  | equal i j => simp only [Realize,h i (by simp [scope]),h j (by simp [scope])]
-  | member i j => simp only [Realize,h i (by simp [scope]),h j (by simp [scope])]
+  | equal i j =>
+    simp only [Realize,h i (by simp only [scope]; omega),
+      h j (by simp only [scope]; omega)]
+  | member i j =>
+    simp only [Realize,h i (by simp only [scope]; omega),
+      h j (by simp only [scope]; omega)]
   | conj φ ψ ihφ ihψ =>
     exact and_congr (ihφ e f (fun i hi => h i (by simp only [scope]; omega)))
       (ihψ e f (fun i hi => h i (by simp only [scope]; omega)))
@@ -55,6 +60,7 @@ theorem realize_congr (φ : Formula) (d : ZFSet.{u}) (e f : ℕ → ZFSet.{u})
     | zero => rfl
     | succ j => exact h j (by simp only [scope]; omega)
 
+/-- A structural width bound used to allocate environments for bounded formulas. -/
 def width : Formula → ℕ
   | .equal i j | .member i j => max (i+1) (j+1)
   | .conj φ ψ => max φ.width ψ.width
@@ -66,6 +72,7 @@ theorem scope_le_width (φ : Formula) : φ.scope ≤ φ.width := by
 end Formula
 namespace FiniteTuple
 
+/-- The first `n` entries of a set-valued environment as a finite list. -/
 def takeEnv : ℕ → (ℕ → ZFSet.{u}) → List ZFSet.{u}
   | 0,_ => []
   | n+1,e => e 0 :: takeEnv n (fun i => e (i+1))
@@ -93,6 +100,8 @@ theorem takeEnv_agree (n : ℕ) (e f : ℕ → ZFSet.{u}) (i : ℕ) (hi : i < n)
     | zero => rfl
     | succ i => exact ih (fun j => e (j+1)) i (Nat.lt_of_succ_lt_succ hi)
 
+/-- The bounded body requesting a witness in the designated source set under a relativized
+formula. -/
 def witnessBody (n i : ℕ) (φ : Formula) : Formula :=
   .conj (.member 0 (i+1)) (relativizeBounded (n+1) φ)
 
@@ -111,12 +120,14 @@ theorem eval_witnessBody (n i : ℕ) (φ : Formula) (hn : i < n) (hφ : φ.scope
   | zero => rfl
   | succ j => exact takeEnv_agree n e _ j (by omega)
 
+/-- List the membership-quantifier indices and bodies occurring in the bounded formula. -/
 def occurrences : Formula → List (ℕ × Formula)
   | .equal _ _ | .member _ _ => []
   | .conj φ ψ => occurrences φ ++ occurrences ψ
   | .neg φ => occurrences φ
   | .existsMem i φ => (i,φ) :: occurrences φ
 
+/-- The finite family of witness bodies associated with the formula's membership quantifiers. -/
 def fragment (n : ℕ) (φ : Formula) : List Formula :=
   (occurrences φ).map (fun p => witnessBody n p.1 p.2)
 
@@ -137,6 +148,8 @@ theorem occurrence_width (φ : Formula) (i : ℕ) (ψ : Formula)
       simp only [Formula.width]; omega
     · have hh := ih hm; simp only [Formula.width]; omega
 
+/-- Every existential subformula witness over `d` with parameters in `h` can also be found in
+`h`. -/
 def Witnesses (d h : ZFSet.{u}) (φ : Formula) : Prop :=
   ∀ i ψ, (i, ψ) ∈ occurrences φ →
     ∀ e : ℕ → ZFSet.{u}, (∀ j, e j ∈ h) →

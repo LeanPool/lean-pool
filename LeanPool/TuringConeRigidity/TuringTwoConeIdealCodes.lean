@@ -31,11 +31,13 @@ namespace OAI.TuringRigidity.TwoConeIdealCodes
 open IdealInterpretation SetCoding RelationCoding BoundedDecoding ConeRelativeCoding
 open ArithmeticModelDecoding
 
+/-- The underlying degree of an ideal element lying in the principal cone. -/
 abbrev val {I : DegreeIdeal} {a : I} (x : Set.Ici a) : Degree := x.val.val
 
 theorem base_le {I : DegreeIdeal} {a : I} (x : Set.Ici a) : a.val ≤ val x :=
   Set.mem_Ici.mp x.property
 
+/-- Regard an ideal's cone element as an element of the corresponding ambient degree cone. -/
 def ambient {I : DegreeIdeal} {a : I} (x : Set.Ici a) : Set.Ici a.val :=
   ⟨val x, Set.mem_Ici.mpr (base_le x)⟩
 
@@ -68,14 +70,21 @@ theorem map_finset_sup {I J : DegreeIdeal} {a : I} {b : J}
   | empty => exact ρ.map_bot
   | @insert i s hi ih => simp only [Finset.sup_insert, ρ.map_sup, ih]
 
+/-- An antichain code with all parameters in a principal cone of the ideal. -/
 structure ACode {I : DegreeIdeal} (a : I) where
+  /-- The antichain bound as an element of the ideal's principal cone. -/
   bound : Set.Ici a
+  /-- The first antichain join parameter as an element of the ideal's principal cone. -/
   left : Set.Ici a
+  /-- The second antichain join parameter as an element of the ideal's principal cone. -/
   right : Set.Ici a
 
+/-- Forget the ideal and cone membership witnesses from the antichain-code parameters. -/
 def ACode.external {I : DegreeIdeal} {a : I} (p : ACode a) : AntichainCode :=
   ⟨val p.bound, val p.left, val p.right⟩
 
+/-- Transport the antichain-code parameters through an isomorphism between ideal principal
+cones. -/
 def ACode.map {I J : DegreeIdeal} {a : I} {b : J}
     (ρ : Set.Ici a ≃o Set.Ici b) (p : ACode a) : ACode b :=
   ⟨ρ p.bound, ρ p.left, ρ p.right⟩
@@ -97,14 +106,20 @@ theorem ACode.map_below {I J : DegreeIdeal} {a : I} {b : J}
     AntichainBelow (p.map ρ).external (val (ρ z)) :=
   ⟨ρ.monotone hp.1, ρ.monotone hp.2.1, ρ.monotone hp.2.2⟩
 
+/-- A set code whose bound and antichain parameters belong to the ideal's principal cone. -/
 structure SCode {I : DegreeIdeal} (a : I) where
+  /-- The set-code bound as an element of the ideal's principal cone. -/
   bound : Set.Ici a
+  /-- The tag antichain code internal to the ideal's principal cone. -/
   tags : ACode a
+  /-- The decoration antichain code internal to the ideal's principal cone. -/
   decorated : ACode a
 
+/-- Forget the ideal and cone membership witnesses from the set-code parameters. -/
 def SCode.external {I : DegreeIdeal} {a : I} (p : SCode a) : SetCode :=
   ⟨val p.bound, p.tags.external, p.decorated.external⟩
 
+/-- Transport the set-code bound and antichain parameters through the cone isomorphism. -/
 def SCode.map {I J : DegreeIdeal} {a : I} {b : J}
     (ρ : Set.Ici a ≃o Set.Ici b) (p : SCode a) : SCode b :=
   ⟨ρ p.bound, p.tags.map ρ, p.decorated.map ρ⟩
@@ -132,13 +147,19 @@ theorem SCode.map_below {I J : DegreeIdeal} {a : I} {b : J}
     (hp : SetBelow p.external (val z)) : SetBelow (p.map ρ).external (val (ρ z)) :=
   ⟨ρ.monotone hp.1, p.tags.map_below ρ z hp.2.1, p.decorated.map_below ρ z hp.2.2⟩
 
+/-- A relation code with coordinate set codes and a tuple antichain code inside the ideal's
+principal cone. -/
 structure RCode {I : DegreeIdeal} (a : I) (n : ℕ) where
+  /-- The principal-cone set code for each relation coordinate. -/
   coordinates : Fin n → SCode a
+  /-- The principal-cone antichain code for the joined coordinate tags. -/
   tuples : ACode a
 
+/-- Forget the ideal and cone membership witnesses from the relation-code parameters. -/
 def RCode.external {I : DegreeIdeal} {a : I} {n : ℕ} (p : RCode a n) : RelationCode n :=
   ⟨fun i => (p.coordinates i).external, p.tuples.external⟩
 
+/-- Transport every relation-code parameter through the isomorphism between principal cones. -/
 def RCode.map {I J : DegreeIdeal} {a : I} {b : J} {n : ℕ}
     (ρ : Set.Ici a ≃o Set.Ici b) (p : RCode a n) : RCode b n :=
   ⟨fun i => (p.coordinates i).map ρ, p.tuples.map ρ⟩

@@ -49,6 +49,7 @@ theorem extension_mapFilter (M : Set (Name P)) (e : P ≃o P)
   · rintro ⟨τ,hτ,rfl⟩
     exact ⟨Name.rename e τ,hf τ hτ,val_mapFilter e G τ⟩
 
+/-- The subsets of omega belonging to the specified set of sets. -/
 def reals (U : Set ZFSet.{u}) : Set ZFSet.{u} := {x | x ∈ U ∧ x ⊆ ZFSet.omega}
 
 theorem reals_mapFilter (M : Set (Name P)) (e : P ≃o P)
@@ -57,6 +58,7 @@ theorem reals_mapFilter (M : Set (Name P)) (e : P ≃o P)
     reals (extension M (AutomorphismName.mapFilter e G).carrier) =
       reals (extension M G.carrier) := by rw [extension_mapFilter M e hf hb G]
 
+/-- First-order set-theoretic formula syntax with unrestricted existential set quantification. -/
 inductive Formula where
   | equal (i j : ℕ)
   | member (i j : ℕ)
@@ -64,6 +66,7 @@ inductive Formula where
   | neg (φ : Formula)
   | existsSet (φ : Formula)
 
+/-- Interpret the formula with existential quantifiers ranging over the supplied set universe. -/
 def Formula.Realize (U : Set ZFSet.{u}) (env : ℕ → ZFSet.{u}) : Formula → Prop
   | .equal i j => env i = env j
   | .member i j => env i ∈ env j
@@ -89,6 +92,7 @@ theorem definable_subset_mapFilter (M : Set (Name P)) (e : P ≃o P)
       φ.Realize (extension M G.carrier) (fun n => if n = 0 then x else env (n-1))} := by
   rw [extension_mapFilter M e hf hb G]
 
+/-- The set of values of the enumerated forcing names under `G`. -/
 noncomputable def extensionSet (M : ℕ → Name P) (G : Set P) : ZFSet.{u} :=
   ZFSet.range (fun n => Name.val G (M n))
 
@@ -102,6 +106,7 @@ theorem extensionSet_coe (M : ℕ → Name P) (G : Set P) :
   exact ⟨fun ⟨n,hn⟩ => ⟨M n,⟨n,rfl⟩,hn⟩,
     fun ⟨τ,⟨n,hn⟩,hx⟩ => ⟨n,hn ▸ hx⟩⟩
 
+/-- The subset of `U` defined by the formula with the supplied parameter environment. -/
 noncomputable def definedSet (U : ZFSet.{u}) (env : ℕ → ZFSet.{u}) (φ : Formula) :
     ZFSet.{u} := ZFSet.sep
       (fun x => φ.Realize (U : Set ZFSet) (fun n => if n = 0 then x else env (n-1))) U

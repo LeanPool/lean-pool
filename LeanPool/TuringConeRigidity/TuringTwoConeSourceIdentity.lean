@@ -13,7 +13,6 @@ Module paths, interfaces, and proofs are ported to the pool's toolchain and gate
 module
 
 public import LeanPool.TuringConeRigidity.TuringTwoConeProgramGlobalization
-public import LeanPool.TuringConeRigidity.Representation.SourceIdentity
 
 /-!
 # The arithmetic source equation for joined inverses between two cones

@@ -28,6 +28,7 @@ namespace OAI
 namespace TuringRigidity.InternalOrdinalSubset
 open TransitiveNameModel BoundedSetTheory RelationCollapse
 
+/-- The membership-order relation on the elements of `D`. -/
 noncomputable def memberOrder (D : ZFSet.{0}) : ZFSet.{0} :=
   (ZFSet.prod D D).sep (fun z => ∃ x ∈ D, ∃ y ∈ D, z = ZFSet.pair x y ∧ x ∈ y)
 

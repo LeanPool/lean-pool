@@ -13,7 +13,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.Syntax.BoundedDecoding
+public import LeanPool.TuringConeRigidity.SetModels.RelationCoding
 
 /-!
 # Ideal Interpretation
@@ -27,13 +27,17 @@ namespace OAI
 namespace TuringRigidity.IdealInterpretation
 open AntichainParameters SetCoding RelationCoding
 
+/-- A nonempty lower set of degrees closed under binary joins. -/
 structure DegreeIdeal where
+  /-- The set of degrees belonging to the ideal. -/
   carrier : Set Degree
   nonempty : carrier.Nonempty
   lower : ∀ {x y}, x ≤ y → y ∈ carrier → x ∈ carrier
   join_mem : ∀ {x y}, x ∈ carrier → y ∈ carrier → x ⊔ y ∈ carrier
 
+/-- A degree together with its membership in the designated ideal. -/
 structure Element (I : DegreeIdeal) where
+  /-- The underlying Turing degree of an ideal element. -/
   val : Degree
   property : val ∈ I.carrier
 
@@ -81,9 +85,12 @@ theorem coe_finset_sup {I : DegreeIdeal} {α : Type*} (F : Finset α) (f : α �
 section Formula
 variable {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
 
+/-- A bounded element whose joins with both parameters have a common lower element not below
+it. -/
 def nontrivial (b g₀ g₁ x : α) : Prop :=
   x ≤ b ∧ ∃ z, z ≤ g₀ ⊔ x ∧ z ≤ g₁ ⊔ x ∧ ¬ z ≤ x
 
+/-- Minimality among elements with the designated nontrivial common-lower property. -/
 def antichain (b g₀ g₁ x : α) : Prop :=
   nontrivial b g₀ g₁ x ∧ ∀ y, nontrivial b g₀ g₁ y → y ≤ x → x ≤ y
 
@@ -136,13 +143,19 @@ theorem transport_antichain {I J : DegreeIdeal} (ρ : I ≃o J) (b g₀ g₁ x :
       CodedAntichain b.val g₀.val g₁.val x.val := by
   rw [← ideal_antichain,← ideal_antichain,map_antichain]
 
+/-- An antichain code whose three parameters belong to the degree ideal. -/
 structure ACode (I : DegreeIdeal) where
+  /-- The ideal element bounding the antichain predicate. -/
   bound : I
+  /-- The first ideal-valued join parameter of the antichain code. -/
   left : I
+  /-- The second ideal-valued join parameter of the antichain code. -/
   right : I
 
+/-- Forget ideal membership from the three parameters of an antichain code. -/
 def ACode.external {I : DegreeIdeal} (p : ACode I) : AntichainCode :=
   ⟨p.bound.val,p.left.val,p.right.val⟩
+/-- Transport all three antichain-code parameters through the ideal order isomorphism. -/
 def ACode.map {I J : DegreeIdeal} (ρ : I ≃o J) (p : ACode I) : ACode J := ⟨ρ p.bound,ρ p.left,ρ
   p.right⟩
 
@@ -150,13 +163,20 @@ theorem ACode.transport {I J : DegreeIdeal} (ρ : I ≃o J) (p : ACode I) (x : I
     (p.map ρ).external.Holds (ρ x).val ↔ p.external.Holds x.val :=
   transport_antichain ρ _ _ _ _
 
+/-- A bounded set code whose value bound and antichain parameters belong to the ideal. -/
 structure SCode (I : DegreeIdeal) where
+  /-- The ideal-valued bound on represented set elements. -/
   bound : I
+  /-- The ideal-valued antichain code for the set's tags. -/
   tags : ACode I
+  /-- The ideal-valued antichain code for joins of values with their tags. -/
   decorated : ACode I
 
+/-- Forget ideal membership from the parameters of a set code. -/
 def SCode.external {I : DegreeIdeal} (p : SCode I) : SetCode :=
   ⟨p.bound.val,p.tags.external,p.decorated.external⟩
+/-- Transport the bound and both antichain codes of a set code through an ideal order
+isomorphism. -/
 def SCode.map {I J : DegreeIdeal} (ρ : I ≃o J) (p : SCode I) : SCode J :=
   ⟨ρ p.bound,p.tags.map ρ,p.decorated.map ρ⟩
 
@@ -167,12 +187,18 @@ theorem SCode.transport {I J : DegreeIdeal} (ρ : I ≃o J) (p : SCode I) (x c :
   rw [← coe_sup,← ρ.map_sup,p.tags.transport ρ c,p.decorated.transport ρ (x ⊔ c)]
   exact and_congr ρ.le_iff_le Iff.rfl
 
+/-- A finite-arity relation code with coordinate set codes and a tuple antichain code internal
+to the ideal. -/
 structure RCode (I : DegreeIdeal) (n : ℕ) where
+  /-- The ideal-valued set code for each coordinate of the relation. -/
   coordinates : Fin n → SCode I
+  /-- The ideal-valued antichain code selecting joined coordinate tags. -/
   tuples : ACode I
 
+/-- Forget ideal membership from a relation code's coordinate and tuple parameters. -/
 def RCode.external {I : DegreeIdeal} {n : ℕ} (p : RCode I n) : RelationCode n :=
   ⟨fun i => (p.coordinates i).external,p.tuples.external⟩
+/-- Transport every relation-code parameter through the ideal order isomorphism. -/
 def RCode.map {I J : DegreeIdeal} {n : ℕ} (ρ : I ≃o J) (p : RCode I n) : RCode J n :=
   ⟨fun i => (p.coordinates i).map ρ,p.tuples.map ρ⟩
 

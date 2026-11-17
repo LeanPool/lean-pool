@@ -14,6 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.OrdinalCodes.NumericBinding
+public import LeanPool.TuringConeRigidity.OrdinalCodes.NumericHierarchy
 
 /-!
 # Numeric Stage
@@ -28,11 +29,13 @@ namespace TuringRigidity.NumericSyntax
 open ElementaryModel BoundedSetTheory TransitiveNameModel BoundedDefinability RelativeConstructible
 universe u
 
+/-- Variable placement for the numerical parameters used in the stage construction syntax. -/
 def stageSlots (n : ℕ) : ℕ :=
   if n % 2 = 0 then
     match n / 2 with | 0 => 4 | 1 => 5 | 2 => 6 | 3 => 3 | _ => 2
   else match n / 2 with | 0 => 3 | 1 => 1 | _ => 0
 
+/-- The stage environment containing its three inputs, omega, and the square of omega. -/
 def stageInputs (e : ℕ → ZFSet.{u}) : ℕ → ZFSet.{u} :=
   cons (e 0) (cons (e 1) (cons (e 2) (cons ZFSet.omega
     (fun _ => ZFSet.prod ZFSet.omega ZFSet.omega))))

@@ -13,7 +13,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.Constructibility.RelativeHierarchyInternal
+public import LeanPool.TuringConeRigidity.Constructibility.ContextDefinablePower
+public import LeanPool.TuringConeRigidity.Constructibility.HierarchySyntax
 
 /-!
 # Hierarchy Witness Collection
@@ -29,6 +30,8 @@ open ElementaryModel BoundedSetTheory TransitiveNameModel SentenceCoding
 open BoundedDefinability SetModelFunctions
 universe u
 
+/-- A bounded collection of satisfaction and definition witnesses for the hierarchy value at
+`x`. -/
 def HierarchyRequest (Q B s f r x c : ZFSet.{u}) : Prop :=
   ∃ A ∈ c, ∃ v ∈ r, ∃ G ∈ c, ∃ T ∈ c, ∃ H ∈ c, ∃ Z ∈ c,
     ZFSet.pair x v ∈ f ∧ StageStep s f r x A ∧ DefSystem Q B A G T H Z v

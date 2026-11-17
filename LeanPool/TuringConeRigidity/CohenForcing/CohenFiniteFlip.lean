@@ -14,8 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.CohenForcing.InternalCohenBitFlip
-public import LeanPool.TuringConeRigidity.SetModels.InternalOrderIsoTransport
-public import LeanPool.TuringConeRigidity.CohenForcing.CohenColumnRealValue
+public import LeanPool.TuringConeRigidity.SetModels.InternalCollapseCounting
 
 /-!
 # Cohen Finite Flip
@@ -33,6 +32,7 @@ open CohenGroundPoset InternalCohenBitFlip
 open InternalCohen (bitSet)
 attribute [local instance] InternalCollapse.order InternalCollapse.collapsePreorder
 
+/-- The finite column mask changing the initial segment of `A` to the word `s`. -/
 noncomputable def prefixMask (a : ZFSet.{0}) (s : List Bool) (A : Oracle) : ZFSet.{0} :=
   ZFSet.range (fun i : {n : Fin s.length // A n.val ≠ s[n.val]} =>
     ZFSet.pair a (natSet i.val.val))

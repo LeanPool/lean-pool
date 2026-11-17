@@ -15,6 +15,7 @@ module
 
 public import LeanPool.TuringConeRigidity.CohenForcing.CohenUntouchedGeneric
 public import LeanPool.TuringConeRigidity.CohenForcing.CohenFactorReconstruction
+public import LeanPool.TuringConeRigidity.SetModels.InternalColumnExtension
 
 /-!
 # Cohen Factor Iteration

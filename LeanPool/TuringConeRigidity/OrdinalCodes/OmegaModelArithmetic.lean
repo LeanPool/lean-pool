@@ -31,6 +31,8 @@ universe u
 noncomputable section
 variable {α : Type u} (S : OmegaData α)
 
+/-- An element of the internal power of omega whose numeral membership agrees with the oracle
+`A`. -/
 def RealCode (a : α) (A : Oracle) : Prop :=
   S.mem a (S.power S.omega) ∧ ∀ n, S.mem (S.num n) a ↔ A n = true
 

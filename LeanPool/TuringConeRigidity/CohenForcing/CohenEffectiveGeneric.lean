@@ -34,6 +34,8 @@ open TransitiveNameModel BoundedSetTheory Encodable OracleJump
 open UniformArithmetic CohenBorelForcing CountableForcing
 attribute [local instance] InternalCollapse.order InternalCollapse.collapsePreorder
 
+/-- The program with oracle `Y` halts on the code of `p`, or halts on the code of no extension
+of `p`. -/
 def WordDecision (Y : Oracle) (e : ℕ) (p : List Bool) : Prop :=
   Halts Y e (encode p) ∨ ∀ q : List Bool, p <+: q → ¬ Halts Y e (encode q)
 
@@ -62,6 +64,7 @@ theorem wordDecision_arith (e : ℕ) :
     · exact Or.inl h
     · exact Or.inr (fun k hk => h (w k) hk)
 
+/-- An oracle coding the finite words that decide the indicated halting question. -/
 noncomputable def decisionCodes (Y : Oracle) (e : ℕ) : Oracle :=
   arithmeticReal (fun O n => WordDecision (O 0) e (EncodedForcing.word n)) (fun _ => Y)
 
@@ -73,6 +76,7 @@ theorem decisionCodes_mem (M : ZFSet.{0}) (hM : Transitive M) (hT : SourceT M)
     (Y : Oracle) (hY : realCode Y ∈ M) (e : ℕ) : realCode (decisionCodes Y e) ∈ M :=
   sourceT_arithmetic_comprehension M hM hT (wordDecision_arith e) (fun _ => Y) (fun _ => hY)
 
+/-- The set-coded Cohen conditions whose word codes decide the indicated halting question. -/
 noncomputable def decisionSet (Y : Oracle) (e : ℕ) : ZFSet.{0} :=
   ZFSet.sep (fun q => ∃ n ∈ realCode (decisionCodes Y e),
     ZFSet.pair n q ∈ wordCodeGraph) conditions

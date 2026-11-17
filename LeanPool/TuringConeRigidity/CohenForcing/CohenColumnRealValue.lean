@@ -16,6 +16,7 @@ module
 public import LeanPool.TuringConeRigidity.CohenForcing.CohenColumnRealName
 public import LeanPool.TuringConeRigidity.CohenForcing.SparseCohenFilter
 public import LeanPool.TuringConeRigidity.CohenForcing.InternalCohenProjectedGeneric
+public import LeanPool.TuringConeRigidity.CohenForcing.CohenGenericUnion
 
 /-!
 # Cohen Column Real Value

@@ -15,6 +15,8 @@ module
 
 public import LeanPool.TuringConeRigidity.CohenForcing.CohenFiniteFlip
 public import LeanPool.TuringConeRigidity.Effective.FiniteOverwrite
+public import LeanPool.TuringConeRigidity.CohenForcing.CohenColumnRealValue
+public import LeanPool.TuringConeRigidity.SetModels.InternalOrderIsoTransport
 
 /-!
 # Cohen Prefix Overwrite
@@ -33,6 +35,7 @@ open InternalCohen (bitSet)
 attribute [local instance] InternalCollapse.order InternalCollapse.collapsePreorder
   CohenNiceNameConstruction.cohenTop
 
+/-- Transport a condition filter through the Boolean flip determined by `prefixMask a s A`. -/
 noncomputable def prefixFilter (K a : ZFSet.{0}) (s : List Bool) (A : Oracle)
     (G : GenericFilter (Conditions (poset K))) : GenericFilter (Conditions (poset K)) :=
   AutomorphismName.mapFilter (flipIso (ZFSet.prod K ZFSet.omega) (prefixMask a s A)) G

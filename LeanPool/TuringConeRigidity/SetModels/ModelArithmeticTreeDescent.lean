@@ -16,6 +16,7 @@ module
 public import LeanPool.TuringConeRigidity.Computability.ArithmeticTreeSequence
 public import LeanPool.TuringConeRigidity.Constructibility.PersistenceWitnessTree
 public import LeanPool.TuringConeRigidity.OrdinalCodes.NaturalRealRelation
+public import LeanPool.TuringConeRigidity.SetModels.ModelArithmeticComprehension
 
 /-!
 # Model Arithmetic Tree Descent
@@ -48,6 +49,8 @@ theorem Test.sourceT_chain (t : Test) (M : ZFSet.{u}) (hM : Transitive M) (hT : 
     ⟨s,fun n => (hb _ _).mpr (hs n)⟩
   exact ⟨s,G,hGM,hG,t.code_chain_eval O v s (fun n => (hb _ _).mp (hs n))⟩
 
+/-- Read one value from a decoded finite witness-tree node, using zero when the entry is
+absent. -/
 def nodeValue (k i : ℕ) : ℕ := ((decodeNode k)[i]?).getD 0
 
 theorem nodeValue_primrec : Primrec (fun p : ℕ × ℕ => nodeValue p.1 p.2) :=
@@ -55,6 +58,7 @@ theorem nodeValue_primrec : Primrec (fun p : ℕ × ℕ => nodeValue p.1 p.2) :=
     (Primrec.list_getElem?.comp (decodeNode_primrec.comp Primrec.fst) Primrec.snd)
     (Primrec.const 0)
 
+/-- The coded chain has a node at stage `i + 1` whose `i`th entry is the proposed value. -/
 def chainGraphPredicate (O : Oracles) (v : ℕ) : Prop :=
   ∃ k, O 0 (Nat.pair (left v + 1) k) = true ∧ nodeValue k (left v) = right v
 

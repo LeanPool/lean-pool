@@ -15,7 +15,6 @@ module
 
 public import LeanPool.TuringConeRigidity.Syntax.CheckedDefSuccessor
 public import LeanPool.TuringConeRigidity.Constructibility.DomainSyntaxClosure
-public import LeanPool.TuringConeRigidity.Constructibility.UniformHierarchyStage
 
 /-!
 # Checked Hierarchy Syntax
@@ -31,6 +30,7 @@ open ElementaryModel BoundedSetTheory TransitiveNameModel SentenceCoding
 open BoundedDefinability SetModelFunctions
 universe u
 
+/-- A hierarchy graph whose stage successors carry the internal definable-power certificates. -/
 def CheckedHierarchyGraph (N w sq s d r f : ZFSet.{u}) : Prop :=
   Transitive d ∧ FunctionGraph d r f ∧
     ∀ x ∈ d, ∀ v ∈ r, ZFSet.pair x v ∈ f →

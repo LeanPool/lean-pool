@@ -30,6 +30,7 @@ open InternalRegularAlgebra InternalBooleanGeneric InternalBooleanDense RegularT
 open InternalCohen
 attribute [local instance] InternalCollapse.order InternalCollapse.collapsePreorder
 
+/-- The tree-node codes lying below `U` under subset inclusion. -/
 noncomputable def nodesBelow (B A U : ZFSet.{0}) : ZFSet.{0} :=
   B.sep (fun V => ∃ w ∈ conditions, ZFSet.pair w V ∈ A ∧ V ⊆ U)
 

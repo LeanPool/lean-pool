@@ -13,8 +13,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.SetModels.InternalRegularSplitter
-public import Mathlib.Data.List.Induction
+public import LeanPool.TuringConeRigidity.SetModels.InternalProjectedGeneric
+public import LeanPool.TuringConeRigidity.SetModels.RegularDecisionPartition
 
 /-!
 # Regular Binary Tree
@@ -29,6 +29,8 @@ namespace TuringRigidity.RegularBinaryTree
 open TransitiveNameModel BoundedSetTheory InternalRegularOperations InternalRegularAlgebra
 open InternalProjectedGeneric RegularDecisionPartition RegularCodeSplitting
 
+/-- Select two positive child codes satisfying the splitting relation, with empty codes as the
+fallback. -/
 noncomputable def children (B T U D : ZFSet.{0}) : Bool → ZFSet.{0} := by
   classical
   exact if h : ∃ f : Bool → ZFSet.{0}, (∀ b, f b ∈ positive B) ∧
@@ -62,6 +64,7 @@ theorem children_unique (B T U D V W : ZFSet.{0})
   ZFSet.pair_inj.mp (hf.functional (ZFSet.pair_mem_prod.mpr ⟨hU,hD⟩) hp
     (children_spec B T U D hf hU hD).2)
 
+/-- Follow a finite binary path through the selected regular-code splitting tree. -/
 noncomputable def tree (c B T : ZFSet.{0}) (E : ℕ → ZFSet.{0}) (s : List Bool) : ZFSet.{0} :=
   s.reverseRecOn c (fun t b U => children B T U (E t.length) b)
 

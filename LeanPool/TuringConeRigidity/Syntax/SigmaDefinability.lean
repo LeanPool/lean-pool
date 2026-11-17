@@ -34,6 +34,8 @@ universe u
 
 namespace SigmaCode
 
+/-- A sigma formula encoding forcing through bounded certificates and valid existential name
+witnesses. -/
 def forcing : SigmaFormula → ℕ → ℕ → ℕ → (ℕ → ℕ) → SigmaFormula
   | .bounded φ, ci,oi,pi,v => CertificateCode.certificate φ ci oi pi v
   | .existsSet φ, ci,oi,pi,v => .existsSet

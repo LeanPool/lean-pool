@@ -14,6 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.SetModels.SetModelActionSatisfaction
+public import LeanPool.TuringConeRigidity.SetModels.SetModelCountableExtensions
 
 /-!
 # Set Model Persistent Satisfaction
@@ -30,18 +31,22 @@ open SetDegreeDecoding PersistentRestrictions SetModelCountability
 universe u
 noncomputable section
 
+/-- Internal set-theoretic syntax extending bounded formulas by Boolean operations and set
+quantification. -/
 inductive InternalFormula where
   | bounded (p : Formula)
   | conj (p q : InternalFormula)
   | neg (p : InternalFormula)
   | existsSet (p : InternalFormula)
 
+/-- Interpret internal syntax with set quantifiers restricted to members of `M`. -/
 def InternalFormula.Realize (M : ZFSet.{u}) (e : ℕ → ZFSet.{u}) : InternalFormula → Prop
   | .bounded p => p.Realize M e
   | .conj p q => p.Realize M e ∧ q.Realize M e
   | .neg p => ¬ p.Realize M e
   | .existsSet p => ∃ x ∈ M, p.Realize M (cons x e)
 
+/-- Bounded universal quantification within internal formula syntax. -/
 def InternalFormula.allMem (i : ℕ) (p : InternalFormula) : InternalFormula :=
   .neg (.existsSet (.conj (.bounded (.member 0 (i+1))) (.neg p)))
 
@@ -52,11 +57,15 @@ def InternalFormula.allMem (i : ℕ) (p : InternalFormula) : InternalFormula :=
   classical
   simp [InternalFormula.allMem,InternalFormula.Realize,Formula.Realize]
 
+/-- The bounded matrix describing an enumerated ideal extension and its extending action
+graph. -/
 def persistenceMatrix : Formula :=
   .conj (idealFormula 2 4 5) (.conj (ontoFormula 0 8 2)
     (.conj (actionFormula 1 2 5) (.conj (.subset 6 2)
       (.conj (.subset 7 1) (.member 3 2)))))
 
+/-- The internal formula asserting a suitable extension witness for every degree-universe
+element. -/
 def persistenceFormula : InternalFormula :=
   .allMem 0 (.existsSet (.existsSet (.existsSet (.bounded persistenceMatrix))))
 

@@ -13,8 +13,9 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.CohenForcing.InternalCohenSupportedValue
 public import LeanPool.TuringConeRigidity.SetModels.InternalNameEvaluation
+public import LeanPool.TuringConeRigidity.CohenForcing.CohenNiceNameConstruction
+public import LeanPool.TuringConeRigidity.CohenForcing.InternalCohenProjectedGeneric
 
 /-!
 # Internal Column Extension
@@ -31,6 +32,7 @@ open CohenGroundPoset InternalCohenRestriction InternalCohenFactor InternalCohen
 attribute [local instance] InternalCollapse.order InternalCollapse.collapsePreorder
 attribute [local instance] CohenNiceNameConstruction.cohenTop
 
+/-- The set of restrictions to `B` of condition graphs belonging to `g`. -/
 noncomputable def filterImage (A B g : ZFSet.{0}) : ZFSet.{0} :=
   (conditions B).sep (fun q => ∃ p ∈ g, ZFSet.pair p q ∈ restrictionGraph A B)
 

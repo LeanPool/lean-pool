@@ -13,8 +13,9 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.Computability.Cuts
 public import Mathlib.Analysis.Real.OfDigits
+public import LeanPool.TuringConeRigidity.Model
+public import Mathlib.Algebra.Order.Star.Real
 
 /-!
 # Binary Series
@@ -27,12 +28,16 @@ namespace OAI
 
 namespace TuringRigidity.BinarySeries
 
+/-- Read an oracle bit as the natural number zero or one. -/
 def bit (B : Oracle) (n : ℕ) : ℕ := if B n then 1 else 0
 
+/-- The binary digit sequence associated with an oracle. -/
 def digits (B : Oracle) (n : ℕ) : Fin 2 := ⟨bit B n, by unfold bit; split <;> omega⟩
 
+/-- The real number represented by the oracle's binary digit sequence. -/
 noncomputable def value (B : Oracle) : ℝ := Real.ofDigits (digits B)
 
+/-- The natural-number numeral represented by the first `n` oracle bits. -/
 def numeral (B : Oracle) : ℕ → ℕ
   | 0 => 0
   | n+1 => 2 * numeral B n + bit B n
@@ -78,6 +83,7 @@ theorem lt_one (B : Oracle) (h : ∃ n, B n = false) : value B < 1 := by
   have hc := complement B
   linarith
 
+/-- Both Boolean values occur arbitrarily far out in the oracle. -/
 def Mixed (B : Oracle) : Prop := ∀ N, (∃ n, N ≤ n ∧ B n = true) ∧ (∃ n, N ≤ n ∧ B n = false)
 
 theorem strict_bracket (B : Oracle) (h : Mixed B) (n : ℕ) :

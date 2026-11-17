@@ -14,6 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.Computability.BinaryMachine
+public import Mathlib.Algebra.Order.Ring.Star
 
 /-!
 # Binary Recovery
@@ -27,6 +28,7 @@ namespace OAI
 namespace TuringRigidity.BinarySeries
 open UniformOracle RationalCoding Encodable
 
+/-- Rational endpoints match the two prescribed adjacent dyadic boundaries. -/
 def recoverGuard (z : ℕ × ℕ × ℕ × ℕ) : Prop :=
   fracLeft (z.2.2.1,z.2.1,2^(z.1+1)) = fracRight (z.2.2.1,z.2.1,2^(z.1+1)) ∧
   fracLeft (z.2.2.2,z.2.1+1,2^(z.1+1)) = fracRight (z.2.2.2,z.2.1+1,2^(z.1+1))
@@ -45,6 +47,7 @@ theorem recoverGuard_primrec : PrimrecPred recoverGuard := by
     (Primrec.eq.comp (fracLeft_primrec.comp (hj.pair ((Primrec.succ.comp hk).pair hn)))
       (fracRight_primrec.comp (hj.pair ((Primrec.succ.comp hk).pair hn))))
 
+/-- Recover a binary digit when both boundary tests certify the required dyadic interval. -/
 def recoverDecision (z : (ℕ × ℕ × ℕ × ℕ) × (ℕ × ℕ)) : Option ℕ :=
   if recoverGuard z.1 ∧ z.2.1=1 ∧ z.2.2=0 then some (z.1.2.1%2) else none
 
@@ -55,6 +58,7 @@ theorem recoverDecision_primrec : Primrec recoverDecision :=
     (Primrec.option_some.comp (Primrec.nat_mod.comp
       (Primrec.fst.comp (Primrec.snd.comp Primrec.fst)) (Primrec.const 2))) (Primrec.const none)
 
+/-- Try to recover a binary digit from two queried cut bits and a coded dyadic interval. -/
 noncomputable def recoverTrial (B : Oracle) (n m : ℕ) : Option ℕ :=
   let k := (Nat.unpair m).1
   let i := (Nat.unpair (Nat.unpair m).2).1

@@ -30,6 +30,7 @@ namespace TuringRigidity.OrdinalArithmetic
 open TransitiveNameModel BoundedSetTheory RelationCollapse ElementaryModel RelativeConstructible
 universe u
 
+/-- Bounded formula asserting that the set is the singleton containing the empty set. -/
 def ordinalOneMatrix (s : ℕ) : Formula :=
   .conj (.allMem s (.empty 0)) (.existsMem s (.empty 0))
 
@@ -48,12 +49,15 @@ theorem ordinalOneMatrix_eval (s : ℕ) (e : ℕ → ZFSet.{u}) :
     rw [he]
     exact ⟨fun z hz => ZFSet.mem_singleton.mp hz,∅,ZFSet.mem_singleton.mpr rfl,rfl⟩
 
+/-- The full formula body combining canonical omega, the ordinal one, and the omega-power
+graph. -/
 noncomputable def omegaPowerBody : SentenceForm :=
   .conj (canonicalOmega 4)
     (.conj (fromBounded (.conj (ordinalOneMatrix 3) (.equal 0 6)))
       (.conj (omegaGraphSentence 3 4 0 1 2)
         (fromBounded (omegaStageMatrix 3 2 1 6 5))))
 
+/-- The existential closure of the auxiliary parameters in the omega-power definition. -/
 noncomputable def omegaPowerSentence : SentenceForm :=
   .ex (.ex (.ex (.ex (.ex omegaPowerBody))))
 

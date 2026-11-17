@@ -13,7 +13,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.SetModels.ExtensionSeparation
+public import LeanPool.TuringConeRigidity.SetModels.ExtensionBasicAxioms
+public import LeanPool.TuringConeRigidity.SetModels.InternalBoundedTruth
 
 /-!
 # Sigma Forcing
@@ -29,6 +30,7 @@ open Set RecursiveNames TransitiveNameModel BoundedSetTheory AtomicForcing Count
 universe u
 variable {c : ZFSet.{u}} [Preorder (Conditions c)]
 
+/-- Forcing for sigma formulas, with existential name codes drawn from `M`. -/
 def SigmaForces (M : ZFSet.{u}) (e : ℕ → Name (Conditions c)) : SigmaFormula → Conditions c → Prop
   | .bounded φ, p => Forces e φ p
   | .existsSet φ, p => ∃ a : Name (Conditions c), a.encode (label c) ∈ M ∧ SigmaForces M (push a

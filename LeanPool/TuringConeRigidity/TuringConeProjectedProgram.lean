@@ -13,9 +13,10 @@ Module paths, interfaces, and proofs are ported to the pool's toolchain and gate
 module
 
 public import LeanPool.TuringConeRigidity.TuringConePullbackProgram
-public import LeanPool.TuringConeRigidity.SetModels.ProjectedArithmeticOutputCone
-public import LeanPool.TuringConeRigidity.CohenForcing.CohenColumnRealValue
 public import LeanPool.TuringConeRigidity.CohenForcing.CohenColumnPrefixCone
+public import LeanPool.TuringConeRigidity.CohenForcing.CohenProjectedNameLift
+public import LeanPool.TuringConeRigidity.SetModels.FixedArithmeticTailCone
+public import LeanPool.TuringConeRigidity.Syntax.DefinedOutputTailCone
 
 /-!
 # Selecting a single program for a uniformly defined degree relation

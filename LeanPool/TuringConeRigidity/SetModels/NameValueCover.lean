@@ -30,6 +30,7 @@ open RecursiveNames TransitiveNameModel BoundedSetTheory AtomicForcing Countable
 universe u
 variable {c : ZFSet.{u}}
 
+/-- Choose the forcing name represented by the selected member of the code set `W`. -/
 noncomputable def coverChild (W : ZFSet.{u})
     (hW : ∀ x ∈ W, ∃ a : Name (Conditions c), a.encode (label c) = x)
     (i : Conditions W) : Name (Conditions c) := (hW _ (label_mem W i)).choose
@@ -38,6 +39,7 @@ theorem coverChild_code (W : ZFSet.{u})
     (hW : ∀ x ∈ W, ∃ a : Name (Conditions c), a.encode (label c) = x) (i : Conditions W) :
     (coverChild W hW i).encode (label c) = label W i := (hW _ (label_mem W i)).choose_spec
 
+/-- The name containing all names coded by `W`, with the same tagging condition `p`. -/
 noncomputable def coverName (W : ZFSet.{u})
     (hW : ∀ x ∈ W, ∃ a : Name (Conditions c), a.encode (label c) = x)
     (p : Conditions c) : Name (Conditions c) := .mk (Conditions W) (coverChild W hW) (fun _ => p)

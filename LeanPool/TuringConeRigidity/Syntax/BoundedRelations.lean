@@ -13,7 +13,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.SetModels.ModelProducts
+public import LeanPool.TuringConeRigidity.Syntax.BoundedSetTheory
 
 /-!
 # Bounded Relations
@@ -29,7 +29,9 @@ open TransitiveNameModel
 universe u
 
 namespace Formula
+/-- Implication in bounded formula syntax. -/
 def imp (φ ψ : Formula) : Formula := disj (.neg φ) ψ
+/-- Biconditional in bounded formula syntax. -/
 def iff (φ ψ : Formula) : Formula := .conj (imp φ ψ) (imp ψ φ)
 
 @[simp] theorem eval_imp (φ ψ : Formula) (e : ℕ → ZFSet.{u}) :
@@ -46,7 +48,9 @@ def iff (φ ψ : Formula) : Formula := .conj (imp φ ψ) (imp ψ φ)
     (iff φ ψ).Eval e ↔ (φ.Eval e ↔ ψ.Eval e) := by
   simp only [iff, Eval, eval_imp, iff_def]
 
+/-- Bounded formula expressing subset inclusion. -/
 def subset (a b : ℕ) : Formula := allMem a (.member 0 (b+1))
+/-- Bounded formula expressing transitivity of the designated set. -/
 def transitive (a : ℕ) : Formula := allMem a (subset 0 (a+1))
 
 @[simp] theorem eval_subset (a b : ℕ) (e : ℕ → ZFSet.{u}) :
@@ -59,6 +63,8 @@ def transitive (a : ℕ) : Formula := allMem a (subset 0 (a+1))
   simp only [transitive, eval_allMem, eval_subset, cons_zero, cons_succ]
   rfl
 
+/-- Bounded formula describing a total single-valued function graph on the given domain and
+codomain. -/
 def functionGraph (f d v : ℕ) : Formula :=
   .conj (allMem f (.existsMem (d+1) (.existsMem (v+2) (orderedPair 2 1 0))))
     (allMem d (.existsMem (v+1)
@@ -75,14 +81,18 @@ def functionGraph (f d v : ℕ) : Formula :=
 
 end Formula
 
+/-- Sigma formulas consisting of a bounded matrix preceded by existential set quantifiers. -/
 inductive SigmaFormula where
   | bounded (φ : Formula)
   | existsSet (φ : SigmaFormula)
 
+/-- Interpret a sigma formula with existential set witnesses restricted to the model. -/
 def SigmaFormula.Realize (M : ZFSet.{u}) (e : ℕ → ZFSet.{u}) : SigmaFormula → Prop
   | .bounded φ => φ.Realize M e
   | .existsSet φ => ∃ x ∈ M, φ.Realize M (cons x e)
 
+/-- The model contains the image of each internally single-valued sigma-definable relation on
+one of its sets. -/
 def SigmaReplacement (M : ZFSet.{u}) : Prop :=
   ∀ (φ : SigmaFormula) (e : ℕ → ZFSet.{u}), (∀ i, e i ∈ M) →
     ∀ a ∈ M,

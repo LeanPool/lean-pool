@@ -14,6 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.CohenForcing.CohenHalting
+public import LeanPool.TuringConeRigidity.CohenForcing.CohenCompleteness
 
 /-!
 # Cohen Lowness
@@ -58,6 +59,7 @@ theorem prefix_recursive (G : Oracle) : RecursivePred G (fun p => Prefix G (word
   simpa only [Prefix,Nat.unpair_pair] using
     recursive_bounded_all hh (Primrec.list_length.comp word_primrec)
 
+/-- Some extension of the coded word admits a halting computation certificate. -/
 def Extension (Y : Oracle) (x p : ℕ) : Prop :=
   ∃ q, word p <+: word q ∧ OpenHalts Y x (encode (word q))
 
@@ -70,6 +72,8 @@ theorem extension_sigma (Y : Oracle) : Sigma Y 1 (fun v => Extension Y (Nat.unpa
     (Primrec.encode.comp (word_primrec.comp r)))
   simpa only [Extension,Nat.unpair_pair] using ((Form.raise (n := 0) (s := true) hp).and hh).ex
 
+/-- The oracle has a finite prefix that either certifies halting or excludes every halting
+extension. -/
 def Deciding (Y G : Oracle) (v : ℕ) : Prop :=
   Prefix G (word (Nat.unpair v).2) ∧
     (OpenHalts Y (Nat.unpair v).1 (encode (word (Nat.unpair v).2)) ∨

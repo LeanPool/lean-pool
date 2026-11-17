@@ -39,6 +39,7 @@ theorem set_prefix_set {s t : List Bool} (h : s <+: t) (m : ℕ)
   rw [List.set_append_left _ _ hm]
   exact List.prefix_append _ _
 
+/-- Change one position of the left word while preserving its length and the right word. -/
 def changeLeft (q : Condition) (m : ℕ) (b : Bool) : Condition where
   left := q.left.set m b
   right := q.right

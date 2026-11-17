@@ -15,6 +15,7 @@ module
 
 public import LeanPool.TuringConeRigidity.SetModels.InternalBooleanTop
 public import LeanPool.TuringConeRigidity.SetModels.InternalSubsetSequence
+public import LeanPool.TuringConeRigidity.SetModels.InternalSameNameGeneric
 
 /-!
 # Internal Boolean Name
@@ -32,6 +33,7 @@ open InternalBooleanBits InternalProjectedGeneric InternalBooleanTop
 attribute [local instance] InternalCollapse.order InternalCollapse.collapsePreorder
 attribute [local instance] codeOrder codePreorder
 
+/-- The positive Boolean codes equal to the value of the `n`th name-bit family. -/
 noncomputable def tags (c A : ZFSet.{0}) (E : ℕ → ZFSet.{0}) (n : ℕ) : ZFSet.{0} :=
   (positive A).sep (fun U => U = bitCode c (E n))
 
@@ -75,6 +77,7 @@ theorem tags_graph_mem (M c A : ZFSet.{0}) (hM : Transitive M) (hT : SourceT M)
   · intro h
     exact ⟨E n,(hR _).mpr (hE n),(orbitGraph_pair E n _).mpr rfl,h⟩
 
+/-- The Boolean-poset name built from the bit-value tag families. -/
 noncomputable def booleanName (c A : ZFSet.{0}) [Top (Conditions (positive A))]
     (E : ℕ → ZFSet.{0}) : Name (Conditions (positive A)) :=
   InternalNiceName.nice (tags c A E)

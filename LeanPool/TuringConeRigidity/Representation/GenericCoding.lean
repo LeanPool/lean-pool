@@ -13,10 +13,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.Computability.BinaryMachine
 public import LeanPool.TuringConeRigidity.Computability.BranchFrequency
-public import LeanPool.TuringConeRigidity.Effective.ProgramSelection
-public import Mathlib.Order.Interval.Finset.Basic
+public import LeanPool.TuringConeRigidity.Computability.BinarySeries
 
 /-!
 # Generic Coding
@@ -30,8 +28,10 @@ namespace OAI
 namespace TuringRigidity.GenericCoding
 open UniformOracle BinarySeries Encodable
 
+/-- Count the true odd-coordinate bits before index `n`. -/
 def count (G : Oracle) : ℕ → ℕ := runningSum (fun n => bit G (2*n+1))
 
+/-- Interleave bits of `A` at true odd markers with the unused even-channel bits of `G`. -/
 def code (A G : Oracle) (n : ℕ) : Bool :=
   if G (2*n+1) then A (count G n) else G (2*(n-count G n))
 
@@ -49,6 +49,7 @@ theorem count_mono (G : Oracle) : Monotone (count G) := by
   change count G n ≤ count G n + bit G (2*n+1)
   omega
 
+/-- True odd-coordinate markers occur arbitrarily far out in `G`. -/
 def InfiniteOdd (G : Oracle) : Prop := ∀ N, ∃ n, N ≤ n ∧ G (2*n+1) = true
 
 theorem infiniteOdd_iff (G : Oracle) : InfiniteOdd G ↔ {n | G (2*n+1) = true}.Infinite := by
@@ -122,6 +123,8 @@ theorem code_reduces (A G : Oracle) : Reduces (code A G) (join A G) := by
   exact code_recursive A G (RecursiveIn.iff_nat.mp (reduces_join_left A G))
     (RecursiveIn.iff_nat.mp (reduces_join_right A G))
 
+/-- Return the coded bit when the requested index matches the marker count and the marker is
+true. -/
 def recoverDecision (z : ℕ × ℕ × ℕ × ℕ) : Option ℕ :=
   if z.1=z.2.1 ∧ z.2.2.1=1 then some z.2.2.2 else none
 
@@ -131,6 +134,7 @@ theorem recoverDecision_primrec : Primrec recoverDecision :=
     (Primrec.option_some.comp (Primrec.snd.comp (Primrec.snd.comp Primrec.snd))) (Primrec.const
       none)
 
+/-- Try to recover the `k`th bit of `A` from a true marker in its generic code. -/
 def recoverTrial (A G : Oracle) (k n : ℕ) : Option ℕ :=
   recoverDecision (k,count G n,bit G (2*n+1),bit (code A G) n)
 

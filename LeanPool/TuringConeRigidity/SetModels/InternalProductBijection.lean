@@ -13,7 +13,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.SetModels.InternalGraphEquiv
+public import LeanPool.TuringConeRigidity.Representation.SourceTheory
 
 /-!
 # Internal Product Bijection
@@ -27,6 +27,8 @@ namespace OAI
 namespace TuringRigidity.InternalProductBijection
 open TransitiveNameModel BoundedSetTheory
 
+/-- The product relation applying `f` to the first coordinate and fixing the coordinate in
+`W`. -/
 noncomputable def productGraph (A B W f : ZFSet.{0}) : ZFSet.{0} :=
   (ZFSet.prod (ZFSet.prod A W) (ZFSet.prod B W)).sep (fun z =>
     ∃ u ∈ ZFSet.prod A W, ∃ v ∈ ZFSet.prod B W, z = ZFSet.pair u v ∧

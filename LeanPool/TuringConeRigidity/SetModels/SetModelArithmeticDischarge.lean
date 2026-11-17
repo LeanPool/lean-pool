@@ -15,6 +15,7 @@ module
 
 public import LeanPool.TuringConeRigidity.SetModels.SetModelInternalRelations
 public import LeanPool.TuringConeRigidity.SetModels.SetModelArithmeticInterface
+public import LeanPool.TuringConeRigidity.SetModels.SetModelArithmeticClosure
 
 /-!
 # Set Model Arithmetic Discharge

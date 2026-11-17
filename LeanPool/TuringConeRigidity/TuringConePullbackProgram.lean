@@ -12,8 +12,8 @@ Module paths, interfaces, and proofs are ported to the pool's toolchain and gate
 
 module
 
-public import LeanPool.TuringConeRigidity.TuringConePrescribedModels
 public import LeanPool.TuringConeRigidity.Representation.OwnProgramValue
+public import LeanPool.TuringConeRigidity.TuringConeExtensionBounds
 
 /-!
 # The inverse-join graph and oracle-program semantics
@@ -36,6 +36,7 @@ open ConePersistence OracleJump RelativeConstructible GenericIdentity
 noncomputable section
 universe u
 
+/-- Apply the inverse cone isomorphism to the join of the base with the ideal element. -/
 def inverseAt {I : CountableIdeal} {a : Degree} (ρ : I ≃o Cone I a) (x : I) : I :=
   ρ.symm ⟨a ⊔ x.val, I.join_mem (ConePresentation.base_mem ρ) x.property, le_sup_left⟩
 
@@ -49,6 +50,7 @@ theorem inverseAt_prescribed {I : CountableIdeal} {a : Degree}
     congrArg Subtype.val (ρ.apply_symm_apply _)
   exact (he (inverseAt ρ x)).trans (hv.trans (ConeRigidity.apply_pullback_val e x.val).symm)
 
+/-- The set-coded graph of the ideal cone isomorphism's join-based pullback. -/
 def pullbackGraph {I : CountableIdeal} {a : Degree} (ρ : I ≃o Cone I a) : ZFSet.{u} :=
   ZFSet.sep (fun z => ∃ x : I,
     z = ZFSet.pair (degreeSet x.val) (degreeSet (inverseAt ρ x).val))

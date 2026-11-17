@@ -28,17 +28,24 @@ namespace OAI
 namespace TuringRigidity.EncodedForcing
 open Encodable UniformOracle ArithmeticHierarchy CodingForcing
 
+/-- Decode a finite binary word, using the empty word for an invalid code. -/
 def word (e : ℕ) : List Bool := (decode e).getD []
+/-- The left word extracted from a condition code. -/
 def left (e : ℕ) : List Bool := word (Nat.unpair e).1
+/-- The uncorrected right word extracted from a condition code. -/
 def rawRight (e : ℕ) : List Bool := word (Nat.unpair (Nat.unpair e).2).1
+/-- The right word, replaced by the left word if their lengths differ. -/
 def right (e : ℕ) : List Bool := if (rawRight e).length = (left e).length then rawRight e else
   left e
+/-- The active index extracted from a condition code. -/
 def active (e : ℕ) : ℕ := (Nat.unpair (Nat.unpair e).2).2
 
+/-- Decode a coding condition, repairing unequal word lengths. -/
 def condition (e : ℕ) : Condition := ⟨left e, right e, by
   unfold right
   split <;> simp_all, active e⟩
 
+/-- Encode both words and the active index of a coding condition. -/
 def code (p : Condition) : ℕ := Nat.pair (encode p.left) (Nat.pair (encode p.right) p.active)
 
 theorem condition_code (p : Condition) : condition (code p) = p := by
@@ -68,6 +75,7 @@ theorem prefix_recursive (Y : Oracle) {l r : ℕ → List Bool} (hl : Primrec l)
     (Primrec.eq.comp hl (Primrec.list_take.comp (Primrec.list_length.comp hl) hr))
   exact Form.congr (n := 0) (s := true) h (fun v => List.prefix_iff_eq_take.symm)
 
+/-- View an oracle as a family of columns through natural-number pairing. -/
 def columns (B : Oracle) (k n : ℕ) : Bool := B (Nat.pair k n)
 
 private theorem bounded_conjunction_iff {n : ℕ} {P Q R S : ℕ → Prop} :

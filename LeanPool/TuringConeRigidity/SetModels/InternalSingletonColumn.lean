@@ -28,6 +28,7 @@ namespace TuringRigidity.InternalSingletonColumn
 open TransitiveNameModel BoundedSetTheory CohenGroundPoset
 attribute [local instance] InternalCollapse.order InternalCollapse.collapsePreorder
 
+/-- The graph deleting the fixed first coordinate from the singleton column `{a} × W`. -/
 noncomputable def graph (a W : ZFSet.{0}) : ZFSet.{0} :=
   (ZFSet.prod (ZFSet.prod {a} W) W).sep (fun z =>
     ∃ u ∈ ZFSet.prod {a} W, ∃ n ∈ W, z = ZFSet.pair u n ∧ u = ZFSet.pair a n)

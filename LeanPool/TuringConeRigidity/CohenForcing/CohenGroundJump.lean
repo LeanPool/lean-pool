@@ -15,7 +15,6 @@ module
 
 public import LeanPool.TuringConeRigidity.CohenForcing.CohenEffectiveGeneric
 public import LeanPool.TuringConeRigidity.CohenForcing.CohenColumnPrefixGeneric
-public import LeanPool.TuringConeRigidity.SetModels.ModelRealOperations
 public import LeanPool.TuringConeRigidity.Constructibility.RelativeCohenJump
 
 /-!

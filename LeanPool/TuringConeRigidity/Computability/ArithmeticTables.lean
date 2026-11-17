@@ -14,6 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.Computability.UniformArithmetic
+public import LeanPool.TuringConeRigidity.OrdinalCodes.IndexMatrix
 
 /-!
 # Arithmetic Tables
@@ -27,7 +28,9 @@ namespace OAI
 namespace TuringRigidity.UniformArithmetic
 open Encodable UniformOracle CommonIdeal IndexMatrix
 
+/-- A family of oracles indexed by oracle environments and natural numbers. -/
 abbrev OracleFamily := Oracles → ℕ → Oracle
+/-- Arithmetic definability of all bits of the indexed oracle family. -/
 abbrev ArithmeticOracle (B : OracleFamily) :=
   Arith (fun O v => B O (left v) (right v) = true)
 
@@ -45,7 +48,9 @@ theorem bit_equal {B : OracleFamily} (hB : ArithmeticOracle B)
     (h.neg.and (equal ha (Primrec.const 0)))).congr (fun O v => by
       cases B O (c v) (n v) <;> simp [bit])
 
+/-- Decode a finite table, using the empty table when decoding fails. -/
 def table (c : ℕ) : List ℕ := (decode c).getD []
+/-- Read a table entry, using zero outside the decoded table. -/
 def item (c k : ℕ) : ℕ := (table c).getD k 0
 
 theorem table_primrec : Primrec table :=
@@ -53,6 +58,7 @@ theorem table_primrec : Primrec table :=
 theorem item_primrec : Primrec₂ item :=
   (Primrec.list_getD 0).comp (table_primrec.comp Primrec.fst) Primrec.snd
 
+/-- The coded table is exactly the length-`m` Boolean prefix of the oracle. -/
 def Prefix (B : Oracle) (m c : ℕ) : Prop :=
   (table c).length = m ∧ ∀ k, k < m → item c k = bit (B k)
 
@@ -82,6 +88,7 @@ theorem prefix_arith {B : OracleFamily} (hB : ArithmeticOracle B)
   exact ((equal (Primrec.list_length.comp (table_primrec.comp hl)) hm).and ht).congr
     (fun _ _ => by simp only [Prefix,left,right,Nat.unpair_pair])
 
+/-- A bounded execution of the indexed machine on the coded table and input returns `a`. -/
 def trialTest (e n m t a : ℕ) : Prop :=
   (machine e).evaln t (Nat.pair (encode (table m)) n) = some a
 

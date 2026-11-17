@@ -35,6 +35,7 @@ theorem finite_product (A B : ZFSet.{0})
   obtain ⟨x,hx,y,hy,hz⟩ := ZFSet.mem_prod.mp hz
   exact ⟨(x,y),⟨hx,hy⟩,hz.symm⟩
 
+/-- Bounded formula pairing entries in two finite initial segments of enumeration graphs. -/
 def rectangleFormula (A B f g n p : ℕ) : Formula :=
   .existsMem A (.existsMem (B+1) (.conj (.orderedPair (p+2) 1 0)
     (.conj (initialFormula (f+2) (n+2) 1) (initialFormula (g+2) (n+2) 0))))

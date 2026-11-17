@@ -29,18 +29,23 @@ namespace TuringRigidity.AtomicForcing
 open Set RecursiveNames TransitiveNameModel BoundedSetTheory
 universe u
 
+/-- A child of `y` has a compatible tag and its pair with `x` occurs in the coded equality
+graph. -/
 def CodeWitness (d c k o f x y p : ZFSet.{u}) : Prop :=
   ∃ b ∈ d, ∃ t ∈ c, ZFSet.pair b t ∈ y ∧ ZFSet.pair p t ∈ o ∧ Triple k f x b p
 
+/-- No extension of `p` has a coded child witness for membership of `x` in `y`. -/
 def CodeNeg (d c k o f x y p : ZFSet.{u}) : Prop :=
   ∀ q ∈ c, ZFSet.pair q p ∈ o → ¬ CodeWitness d c k o f x y q
 
+/-- A child of `x` tagged above `p` has coded nonmembership in `y` below `p`. -/
 def CodeRefute (d c k o f x y p : ZFSet.{u}) : Prop :=
   ∃ a ∈ d, ∃ s ∈ c, ZFSet.pair a s ∈ x ∧ ZFSet.pair p s ∈ o ∧ CodeNeg d c k o f a y p
 
 namespace AtomicFormula
 open Formula
 
+/-- Bounded formula expressing the coded child witness for atomic membership forcing. -/
 def witness (d c k o f x y p : ℕ) : Formula :=
   .existsMem d (.existsMem (c+1)
     (.conj (pairMem 1 0 (y+2)) (.conj (pairMem (p+2) 0 (o+2))
@@ -51,6 +56,7 @@ theorem eval_witness (d c k o f x y p : ℕ) (e : ℕ → ZFSet.{u}) :
       CodeWitness (e d) (e c) (e k) (e o) (e f) (e x) (e y) (e p) := by
   simp only [witness,Formula.Eval,eval_pairMem,eval_triple,cons_zero,cons_succ,CodeWitness]
 
+/-- Bounded formula expressing absence of a coded membership witness below every extension. -/
 def negMem (d c k o f x y p : ℕ) : Formula :=
   allMem c (imp (pairMem 0 (p+1) (o+1))
     (.neg (witness (d+1) (c+1) (k+1) (o+1) (f+1) (x+1) (y+1) 0)))
@@ -61,6 +67,7 @@ theorem eval_negMem (d c k o f x y p : ℕ) (e : ℕ → ZFSet.{u}) :
   simp only [negMem,eval_allMem,eval_imp,Formula.Eval,eval_pairMem,eval_witness,
     cons_zero,cons_succ,CodeNeg]
 
+/-- Bounded formula expressing a child witness refuting coded equality. -/
 def refute (d c k o f x y p : ℕ) : Formula :=
   .existsMem d (.existsMem (c+1)
     (.conj (pairMem 1 0 (x+2)) (.conj (pairMem (p+2) 0 (o+2))
@@ -71,9 +78,12 @@ theorem eval_refute (d c k o f x y p : ℕ) (e : ℕ → ZFSet.{u}) :
       CodeRefute (e d) (e c) (e k) (e o) (e f) (e x) (e y) (e p) := by
   simp only [refute,Formula.Eval,eval_pairMem,eval_negMem,cons_zero,cons_succ,CodeRefute]
 
+/-- Bounded formula deciding between a coded membership witness and coded nonmembership. -/
 def memTest (d c k o f x y p : ℕ) : Formula :=
   disj (witness d c k o f x y p) (negMem d c k o f x y p)
 
+/-- Bounded formula deciding between coded equality and a child refutation in either
+direction. -/
 def eqTest (d c k o f x y p : ℕ) : Formula :=
   disj (triple k f x y p) (disj (refute d c k o f x y p) (refute d c k o f y x p))
 end AtomicFormula

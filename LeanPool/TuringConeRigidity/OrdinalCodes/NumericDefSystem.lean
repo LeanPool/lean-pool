@@ -14,7 +14,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.OrdinalCodes.NumericTruth
-public import LeanPool.TuringConeRigidity.Syntax.VariableCertificateBounds
+public import LeanPool.TuringConeRigidity.Constructibility.DefSystemCertificate
+public import LeanPool.TuringConeRigidity.OrdinalCodes.NumericFamilySupport
 
 /-!
 # Numeric Def System

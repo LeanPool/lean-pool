@@ -13,9 +13,10 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
+public import Mathlib.Data.Set.Finite.Basic
+
 public import LeanPool.TuringConeRigidity.Effective.PrefixComputability
-public import Mathlib.Data.Set.Finite.Range
-public import Lean.Elab.Tactic.Omega
+public import LeanPool.TuringConeRigidity.Model
 
 /-!
 # Oracle Enumeration
@@ -37,6 +38,7 @@ theorem exists_ge {A : Oracle} (hA : {n | A n = true}.Infinite) (n : ℕ) :
   intro m hm
   exact Nat.le_of_lt (Nat.lt_of_not_ge (fun hnm => h ⟨m, hnm, hm⟩))
 
+/-- The least true position of the infinite oracle at or beyond `n`. -/
 noncomputable def next (A : Oracle) (hA : {n | A n = true}.Infinite) (n : ℕ) : ℕ :=
   Nat.find (exists_ge hA n)
 
@@ -75,6 +77,7 @@ theorem next_recursive (A : Oracle) (hA : {n | A n = true}.Infinite) :
     have hh : ¬(n ≤ m ∧ A m = true) := Nat.find_min (exists_ge hA n) hm'
     cases ha : A m <;> simp_all [searchFlag]
 
+/-- The increasing enumeration of the true positions of an infinite oracle. -/
 noncomputable def enumerate (A : Oracle) (hA : {n | A n = true}.Infinite) : ℕ → ℕ
   | 0 => next A hA 0
   | n+1 => next A hA (enumerate A hA n + 1)

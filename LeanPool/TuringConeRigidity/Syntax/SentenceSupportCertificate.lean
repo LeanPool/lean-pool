@@ -13,7 +13,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.Syntax.SentenceCodeFamily
+public import LeanPool.TuringConeRigidity.Syntax.FiniteSatisfactionCertificate
 
 /-!
 # Sentence Support Certificate
@@ -29,6 +29,7 @@ namespace TuringRigidity.SentenceCoding
 open ElementaryModel RelativeConstructible BoundedSetTheory TransitiveNameModel
 universe u
 
+/-- The set-coded graph assigning each subformula its free-variable support bound. -/
 noncomputable def supportGraph (p : SentenceForm) : ZFSet.{u} :=
   ZFSet.range (fun i : Fin (subformulas p).length =>
     ZFSet.pair (natSet (Encodable.encode (subformulas p)[i])) (natSet (subformulas p)[i].bound))
@@ -43,6 +44,7 @@ theorem mem_supportGraph (p : SentenceForm) (z : ZFSet.{u}) :
     obtain ⟨i,hi,rfl⟩ := List.mem_iff_getElem.mp hq
     exact ⟨⟨i,hi⟩,rfl⟩
 
+/-- The graph records the supplied numerical support bound for the formula code. -/
 def HasBound (G : ZFSet.{u}) (p : SentenceForm) (n : ℕ) : Prop :=
   ZFSet.pair (natSet (Encodable.encode p)) (natSet n) ∈ G
 
@@ -57,12 +59,15 @@ theorem supportGraph_bound (p q : SentenceForm) (n : ℕ) :
     exact ⟨hr,natSet_injective hb⟩
   · rintro ⟨hq,rfl⟩; exact ⟨q,hq,rfl⟩
 
+/-- One recursive support-bound equation for full formula syntax. -/
 def SupportStep (G : ZFSet.{u}) : SentenceForm → ℕ → Prop
   | .equal i j, b | .member i j, b => b = max i j + 1
   | .conj p q, b => ∃ i j, HasBound G p i ∧ HasBound G q j ∧ b = max i j
   | .neg p, b => HasBound G p b
   | .ex p, b => ∃ i, HasBound G p i ∧ b = i-1
 
+/-- A graph of support bounds satisfying the recursive equations on all subformulas of the
+root. -/
 def SupportRecursion (root : SentenceForm) (G : ZFSet.{u}) : Prop :=
   (∀ z ∈ G, ∃ p ∈ subformulas root, ∃ n : ℕ,
     z = ZFSet.pair (natSet (Encodable.encode p)) (natSet n)) ∧

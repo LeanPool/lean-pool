@@ -14,6 +14,9 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.OrdinalCodes.OrdinalInputSyntax
+public import LeanPool.TuringConeRigidity.Constructibility.FiniteDefinitionTransfer
+public import LeanPool.TuringConeRigidity.Constructibility.ParameterFreeOrdinalStage
+public import LeanPool.TuringConeRigidity.OrdinalCodes.LevelInlinedDefinition
 
 /-!
 # Ordinal Construction

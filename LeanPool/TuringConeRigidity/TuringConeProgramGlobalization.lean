@@ -12,9 +12,12 @@ Module paths, interfaces, and proofs are ported to the pool's toolchain and gate
 
 module
 
-public import LeanPool.TuringConeRigidity.TuringConeOracleProgram
 public import LeanPool.TuringConeRigidity.Representation.GroundArithmeticGeneric
 public import LeanPool.TuringConeRigidity.CohenForcing.InternalCohenRequirements
+public import LeanPool.TuringConeRigidity.Representation.ParameterCoveringModels
+public import LeanPool.TuringConeRigidity.SetModels.FixedArithmetic
+public import LeanPool.TuringConeRigidity.SetModels.ModelRealOperations
+public import LeanPool.TuringConeRigidity.TuringConeRepresentation
 
 /-!
 # From countable tests to a global generic inverse program
@@ -38,6 +41,8 @@ open ConeRigidity
 
 noncomputable section
 
+/-- The program is total at `X` and its output degree equals the cone isomorphism's pullback
+value. -/
 def RepresentsInverseAt {a : Degree} (e : Degree ≃o Set.Ici a)
     (p : OracleCode) (P X : Oracle) : Prop :=
   Total p P X ∧ degree (value p P X) = pullback e (degree X)

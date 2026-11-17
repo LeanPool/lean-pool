@@ -13,7 +13,9 @@ Module paths, interfaces, and proofs are ported to the pool's toolchain and gate
 module
 
 public import LeanPool.TuringConeRigidity.TuringConeSourceIdentity
-public import LeanPool.TuringConeRigidity.Representation.RealHullPrescribedTruth
+public import LeanPool.TuringConeRigidity.Computability.ArithmeticSourceTruth
+public import LeanPool.TuringConeRigidity.Representation.RealHullColumnRealization
+public import LeanPool.TuringConeRigidity.Representation.RealHullGenericTriple
 
 /-!
 # Transferring inverse representation from columns to arithmetic generics

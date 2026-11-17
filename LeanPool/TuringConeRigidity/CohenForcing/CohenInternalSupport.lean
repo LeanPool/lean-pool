@@ -28,6 +28,7 @@ namespace TuringRigidity.CohenInternalSupport
 open Set TransitiveNameModel BoundedSetTheory InternalFiniteSubsets
 open CohenGroundPoset CohenConditionCode CohenSymmetry CohenCoordinates InternalCohen
 
+/-- The set of coordinates in `A` assigned a Boolean value by the graph `p`. -/
 noncomputable def supportSet (A p : ZFSet.{0}) : ZFSet.{0} :=
   A.sep (fun x => ∃ b ∈ alphabet, ZFSet.pair x b ∈ p)
 
@@ -57,6 +58,7 @@ theorem support_finite (A p : ZFSet.{0}) (hp : p ∈ conditions A) :
   rw [support_graph, ZFSet.coe_range]
   exact Set.finite_range _
 
+/-- Bounded formula identifying the domain of a set-coded condition graph. -/
 def supportFormula (A B p S : ℕ) : Formula := .conj (.subset S A)
   (.allMem A (.iff (.member 0 (S+1)) (.existsMem (B+1) (.pairMem 1 0 (p+2)))))
 
@@ -74,6 +76,7 @@ theorem supportFormula_spec (A B p S : ℕ) (e : ℕ → ZFSet.{0}) (hB : e B = 
     exact ⟨fun _ hx => (ZFSet.mem_sep.mp hx).1,
       fun x hx => ZFSet.mem_sep.trans (and_iff_right hx)⟩
 
+/-- The coordinates used by some condition in the family `E`. -/
 noncomputable def used (A E : ZFSet.{0}) : ZFSet.{0} :=
   A.sep (fun x => ∃ p ∈ E, x ∈ supportSet A p)
 

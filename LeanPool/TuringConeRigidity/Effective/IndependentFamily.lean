@@ -14,7 +14,6 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.SetModels.ConservativeExtension
-public import Mathlib.Data.Finset.Lattice.Fold
 
 /-!
 # Independent Family
@@ -27,6 +26,7 @@ namespace OAI
 
 namespace TuringRigidity.IndependentFamily
 
+/-- Choose a degree supplied by the conservative-extension existence theorem over `b`. -/
 noncomputable def fresh (b : Degree) : Degree :=
   Classical.choose (ConservativeExtension.exists_conservative_degree b)
 
@@ -34,10 +34,12 @@ theorem fresh_spec (b : Degree) : ¬ fresh b ≤ b ∧
     ∀ a y : Degree, a ≤ b → y ≤ b → y ≤ a ⊔ fresh b → y ≤ a :=
   Classical.choose_spec (ConservativeExtension.exists_conservative_degree b)
 
+/-- The tower obtained by repeatedly joining in a fresh conservative degree. -/
 noncomputable def tower (b : Degree) : ℕ → Degree
   | 0 => b
   | n+1 => tower b n ⊔ fresh (tower b n)
 
+/-- The fresh conservative degree chosen relative to the `n`th tower stage. -/
 noncomputable def column (b : Degree) (n : ℕ) : Degree := fresh (tower b n)
 
 theorem tower_mono (b : Degree) : Monotone (tower b) := by

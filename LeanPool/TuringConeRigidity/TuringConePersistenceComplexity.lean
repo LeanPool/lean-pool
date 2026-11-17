@@ -36,6 +36,8 @@ open ConePersistence ConePresentation
 
 noncomputable section
 
+/-- A coded ideal containing the base jump and carrying a coded action onto its principal
+cone. -/
 def Base (A R : Oracle) (k : ℕ) : Prop :=
   ArithmeticPersistence.IdealCode A ∧
     (∃ n, degreeJump (degree (columns A k)) = degree (columns A n)) ∧
@@ -76,6 +78,7 @@ theorem base_arith : Arith (fun O k => Base (O 0) (O 1) k) := by
     (fun _ _ => by simp only [Base, ArithmeticPersistence.IdealCode,
       UniformArithmetic.left, UniformArithmetic.right, Nat.unpair_pair, degreeJump_degree, id_eq])
 
+/-- Combine the cone presentation's base conditions with its arithmetic persistence matrix. -/
 def PresentationMatrix (O : Oracles) (k : ℕ) : Prop :=
   Base (O 0) (O 1) k ∧ ConeArithmeticCriterion.Matrix O k
 

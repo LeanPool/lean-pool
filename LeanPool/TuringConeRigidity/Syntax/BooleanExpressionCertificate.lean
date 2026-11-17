@@ -14,7 +14,6 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.SetModels.InternalBooleanGeneric
-public import LeanPool.TuringConeRigidity.Syntax.FiniteTerm
 
 /-!
 # Boolean Expression Certificate
@@ -30,6 +29,7 @@ open TransitiveNameModel BoundedSetTheory InternalRegularOperations InternalRegu
 open InternalBooleanGeneric CountableForcing
 attribute [local instance] InternalCollapse.order InternalCollapse.collapsePreorder
 
+/-- One expression-evaluation step: a seed value, a complement, or a supremum of child values. -/
 def Step (c B Q S K g t U : ZFSet.{0}) : Prop :=
   (U ∈ S ∧ t = FiniteTerm.tag 0 U) ∨
   (∃ s ∈ K, ∃ V ∈ B, t = FiniteTerm.tag 1 s ∧
@@ -38,6 +38,8 @@ def Step (c B Q S K g t U : ZFSet.{0}) : Prop :=
     (∀ s ∈ T, ∃ V ∈ F, ZFSet.pair s V ∈ g) ∧
     (∀ V ∈ F, ∃ s ∈ T, ZFSet.pair s V ∈ g))
 
+/-- Every pair in `g` has its term and value in the prescribed bounds and satisfies the
+evaluation step. -/
 def Certificate (c B Q S K g : ZFSet.{0}) : Prop :=
   ∀ z ∈ g, ∃ t ∈ K, ∃ U ∈ B, z = ZFSet.pair t U ∧ Step c B Q S K g t U
 

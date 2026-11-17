@@ -27,6 +27,7 @@ namespace OAI
 namespace TuringRigidity.EffectiveWitness
 open UniformOracle ArithmeticHierarchy OracleJump
 
+/-- The least witness for a total natural-number relation. -/
 noncomputable def least (P : ℕ → Prop) (ht : ∀ x, ∃ a, P (Nat.pair x a)) (x : ℕ) : ℕ :=
   by
     classical
@@ -51,6 +52,7 @@ theorem least_recursive {Y : Oracle} {P : ℕ → Prop} (hP : RecursivePred Y P)
     have hn := Nat.find_min (ht x) (show a < Nat.find (ht x) from ha)
     simp [hn]
 
+/-- Either zero certifies absence of witnesses, or a positive code names an actual witness. -/
 def Accept (P : ℕ → Prop) (v : ℕ) : Prop :=
   ((Nat.unpair v).2 = 0 ∧ ¬ ∃ a, P (Nat.pair (Nat.unpair v).1 a)) ∨
     (0 < (Nat.unpair v).2 ∧ P (Nat.pair (Nat.unpair v).1 ((Nat.unpair v).2 - 1)))
@@ -80,6 +82,7 @@ theorem accept_recursive {Y : Oracle} {P : ℕ → Prop} (hP : RecursivePred Y P
     (Primrec₂.natPair.comp f (Primrec.nat_sub.comp s (Primrec.const 1)))
   exact Form.or (n := 0) (s := true) (recursive_and hz hn) (recursive_and hp hy)
 
+/-- Select a witness code, with zero reserved for the no-witness case. -/
 noncomputable def witness (P : ℕ → Prop) (x : ℕ) : ℕ :=
   least (Accept P) (accept_total P) x
 

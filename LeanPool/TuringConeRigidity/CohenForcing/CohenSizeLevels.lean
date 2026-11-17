@@ -28,6 +28,7 @@ namespace TuringRigidity.CohenSizeLevels
 open Set TransitiveNameModel BoundedSetTheory InternalFiniteSubsets
 open RelativeConstructible CohenSymmetry CohenCoordinates CohenConditionCode
 
+/-- A set has a finite enumeration of length strictly less than `n`. -/
 def Small (n : ℕ) (p : ZFSet.{0}) : Prop :=
   ∃ k < n, ∃ v : Fin k → ZFSet.{0}, p = ZFSet.range v
 
@@ -61,6 +62,7 @@ theorem graph_small (A : ZFSet.{0}) (p : Condition (Conditions A)) :
   exact ⟨fun ⟨i,hi⟩ => ⟨e.symm i,by simpa using hi⟩,
     fun ⟨i,hi⟩ => ⟨e i,hi⟩⟩
 
+/-- Bounded formula expressing a finite cardinality bound through an enumerating graph. -/
 def smallFormula (ω B C n p : ℕ) : Formula :=
   .existsMem n (.existsMem (C+1) (.conj (.functionGraph 0 1 (B+2))
     (rangeFormula (ω+2) (B+2) (p+2) 0)))
@@ -86,6 +88,7 @@ theorem smallFormula_spec (ω B C n p : ℕ) (e : ℕ → ZFSet.{0}) (N : ℕ)
     exact (rangeFormula_spec (ω+2) (B+2) (p+2) 0
       (cons (tupleGraph v) (cons (natSet k) e)) hω hvB rfl).mpr hv
 
+/-- Set-coded size levels of the finite Cohen condition poset. -/
 noncomputable def levels (A : ZFSet.{0}) : ZFSet.{0} :=
   (ZFSet.prod ZFSet.omega (CohenGroundPoset.conditions A)).sep
     (fun z => ∃ n p, z = ZFSet.pair (natSet n) p ∧ Small n p)

@@ -15,6 +15,7 @@ module
 
 public import LeanPool.TuringConeRigidity.Computability.ArithmeticIdeals
 public import LeanPool.TuringConeRigidity.OrdinalCodes.NumericalExtension
+public import LeanPool.TuringConeRigidity.OrdinalCodes.NumericalAutomorphism
 
 /-!
 # Arithmetic Actions

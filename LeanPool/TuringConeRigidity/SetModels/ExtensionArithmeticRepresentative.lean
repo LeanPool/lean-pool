@@ -14,7 +14,6 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.Constructibility.PersistentLocality
-public import LeanPool.TuringConeRigidity.Computability.JumpProperties
 
 /-!
 # Extension Arithmetic Representative

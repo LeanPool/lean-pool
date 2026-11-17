@@ -39,6 +39,7 @@ theorem rankSet_mem_ground (M : ZFSet.{u}) (hM : Transitive M)
 
 namespace Code
 
+/-- A sigma formula expressing the value of a certified internal rank graph at one argument. -/
 def value (x v : ℕ) : SigmaFormula := .existsSet (.existsSet (.existsSet (.bounded
   (.conj (graph 2 1 0) (.conj (.member (x+3) 2) (.pairMem (x+3) (v+3) 0))))))
 end Code

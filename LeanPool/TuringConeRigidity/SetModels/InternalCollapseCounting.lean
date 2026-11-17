@@ -15,6 +15,7 @@ module
 
 public import LeanPool.TuringConeRigidity.SetModels.InternalCollapseDense
 public import LeanPool.TuringConeRigidity.SetModels.CountableSetReal
+public import LeanPool.TuringConeRigidity.Representation.GenericFilterName
 
 /-!
 # Internal Collapse Counting
@@ -31,6 +32,7 @@ open TransitiveNameModel CountableForcing
 universe u
 attribute [local instance] order collapsePreorder
 
+/-- The union of all condition graphs represented in the filter. -/
 noncomputable def unionGraph {c : ZFSet.{u}} (G : GenericFilter (Conditions c)) : ZFSet.{u} :=
   ZFSet.sUnion (genericFilterSet c G.carrier)
 

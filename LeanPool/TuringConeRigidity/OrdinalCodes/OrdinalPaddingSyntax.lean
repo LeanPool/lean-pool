@@ -29,6 +29,7 @@ open TransitiveNameModel BoundedSetTheory RelationCollapse ElementaryModel Relat
   OrdinalArithmetic
 universe u
 
+/-- A full formula defining a padded ordinal-vector code through an ordinal-pair code. -/
 noncomputable def paddedCodeSentence (n : ℕ) : SentenceForm :=
   .ex (.ex (.conj
     (pairCodeSentence.rename (fun i => if i = 0 then 2 else if i = 1 then 1 else 0))

@@ -38,6 +38,7 @@ theorem presentation_exists (I : CountableIdeal) : ∃ H, Presented I H := by
     simp only [columns,CountableBound.sum,Nat.unpair_pair]
   simp only [hc,hA,hf,Set.mem_range]
 
+/-- The Boolean oracle coding the graph of an automorphism in the chosen presentation. -/
 def graphOracle {I : CountableIdeal} {H : Oracle} (hpres : Presented I H)
     (ρ : I ≃o I) : Oracle := fun n => decide (Graph ρ hpres n)
 

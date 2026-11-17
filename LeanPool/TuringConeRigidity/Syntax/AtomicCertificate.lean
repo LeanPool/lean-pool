@@ -13,7 +13,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.SetModels.InternalAtomicTruth
+public import LeanPool.TuringConeRigidity.Syntax.AtomicGraphCorrect
+public import LeanPool.TuringConeRigidity.Syntax.AtomicRequirements
 
 /-!
 # Atomic Certificate
@@ -31,6 +32,7 @@ universe u
 namespace AtomicFormula
 open Formula
 
+/-- Bounded formula asserting that `k` is exactly the Cartesian square of `d`. -/
 def product (d k : ℕ) : Formula :=
   .conj (allMem k (.existsMem (d+1) (.existsMem (d+2) (orderedPair 2 1 0))))
     (allMem d (allMem (d+1) (.existsMem (k+2) (orderedPair 0 2 1))))
@@ -58,6 +60,7 @@ theorem eval_product (d k : ℕ) (e : ℕ → ZFSet.{u}) :
     · intro x hx y hy
       exact ⟨_,hk ▸ ZFSet.mem_prod.mpr ⟨x,hx,y,hy,rfl⟩,rfl⟩
 
+/-- Bounded formula expressing the recursive graph equations for atomic equality forcing. -/
 def graph (d c k o f : ℕ) : Formula :=
   .conj (allMem f (.existsMem (k+1) (.existsMem (c+2) (orderedPair 2 1 0))))
     (allMem d (allMem (d+1) (allMem (c+2)
@@ -78,17 +81,22 @@ theorem eval_graph (d c k o f : ℕ) (e : ℕ → ZFSet.{u})
     intro x hx y hy q hq
     exact (triple_pair hx hy).trans (h₂ x hx y hy q hq)
 
+/-- Bounded formula expressing the membership-forcing query through dense matching witnesses. -/
 def membership (d c k o f x y p : ℕ) : Formula :=
   allMem c (imp (pairMem 0 (p+1) (o+1))
     (matchF false (d+1) (c+1) (k+1) (o+1) (f+1) (x+1) (y+1) 0))
 
+/-- Select the bounded membership-forcing or equality-forcing query according to the flag. -/
 def query (isMem : Bool) (d c k o f x y p : ℕ) : Formula :=
   if isMem then membership d c k o f x y p else triple k f x y p
 
+/-- The bounded matrix containing a transitive domain, product and forcing graph, and the
+selected atomic query. -/
 def matrix (isMem : Bool) : Formula :=
   .conj (transitive 2) (.conj (.member 4 2) (.conj (.member 5 2)
     (.conj (product 2 1) (.conj (graph 2 6 1 7 0) (query isMem 2 6 1 7 0 4 5 3)))))
 
+/-- A sigma formula requesting the auxiliary sets certifying an atomic forcing query. -/
 def certificate (isMem : Bool) : SigmaFormula :=
   .existsSet (.existsSet (.existsSet (.bounded (matrix isMem))))
 end AtomicFormula

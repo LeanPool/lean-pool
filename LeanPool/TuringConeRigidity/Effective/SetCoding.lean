@@ -29,11 +29,16 @@ namespace OAI
 namespace TuringRigidity.SetCoding
 open AntichainParameters IndependentFamily
 
+/-- Three degree parameters defining a minimal common-lower antichain predicate. -/
 structure AntichainCode where
+  /-- The upper bound in the antichain code. -/
   bound : Degree
+  /-- The first join parameter in the antichain code. -/
   left : Degree
+  /-- The second join parameter in the antichain code. -/
   right : Degree
 
+/-- Membership in the minimal common-lower antichain described by the three degree parameters. -/
 def AntichainCode.Holds (p : AntichainCode) (x : Degree) : Prop :=
   CodedAntichain p.bound p.left p.right x
 
@@ -44,14 +49,20 @@ theorem exists_antichainCode (S : Set Degree) (hS : S.Countable)
   obtain ⟨g₀, g₁, hg⟩ := countable_antichain_parameters S b hS hb hAnti
   exact ⟨⟨b, g₀, g₁⟩, hg⟩
 
+/-- A bounded degree-set code using tag and decorated antichain codes. -/
 structure SetCode where
+  /-- The upper degree bound on values represented by the set code. -/
   bound : Degree
+  /-- The antichain code for the tags attached to represented values. -/
   tags : AntichainCode
+  /-- The antichain code for joins of represented values with their tags. -/
   decorated : AntichainCode
 
+/-- A value is below the bound, its tag is valid, and their join satisfies the decorated code. -/
 def SetCode.Graph (p : SetCode) (x c : Degree) : Prop :=
   x ≤ p.bound ∧ p.tags.Holds c ∧ p.decorated.Holds (x ⊔ c)
 
+/-- The value has a tag satisfying the set code's graph relation. -/
 def SetCode.Holds (p : SetCode) (x : Degree) : Prop := ∃ c, p.Graph x c
 
 theorem codes_with_tags (S : Set Degree) (hS : S.Countable) (b : Degree)

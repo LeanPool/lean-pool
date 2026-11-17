@@ -58,6 +58,7 @@ theorem satisfactionSet_record (A : ZFSet.{u}) (p : SentenceForm)
   · rintro ⟨hb,hs⟩
     exact (satisfactionSet_spec A p v hv hb).mpr hs
 
+/-- The finite tuple codes satisfying the fixed full formula over `A`. -/
 noncomputable def truthSlice (A : ZFSet.{u}) (p : SentenceForm) : ZFSet.{u} :=
   (tupleSpace A).sep (fun t => ZFSet.pair (natSet (Encodable.encode p)) t ∈ satisfactionSet A)
 
@@ -67,6 +68,7 @@ theorem truthSlice_record (A : ZFSet.{u}) (p : SentenceForm)
   rw [truthSlice,ZFSet.mem_sep,satisfactionSet_record A p v hv]
   exact and_iff_right ((mem_tupleSpace A _).mpr ⟨n,v,hv,rfl⟩)
 
+/-- Bounded formula interpreting a full formula through an adequately long tuple graph. -/
 def tupleTruth (p : SentenceForm) (o A Q b t : ℕ) (idx : ℕ → ℕ) : Formula :=
   .existsMem o (.existsMem (Q+1)
     (.conj (.orderedPair (t+2) 1 0)

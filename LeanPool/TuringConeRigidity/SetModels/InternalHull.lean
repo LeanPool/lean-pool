@@ -14,6 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.Syntax.BoundedRelations
+public import LeanPool.TuringConeRigidity.SetModels.ModelProducts
 
 /-!
 # Internal Hull
@@ -28,6 +29,7 @@ namespace TuringRigidity.BoundedSetTheory
 open TransitiveNameModel
 universe u
 
+/-- The elements of `d` lying in every transitive member of `q` that contains `x`. -/
 noncomputable def hull (d q x : ZFSet.{u}) : ZFSet.{u} :=
   ZFSet.sep (fun z => ∀ c ∈ q, Transitive c → x ∈ c → z ∈ c) d
 
@@ -35,6 +37,7 @@ theorem mem_hull (d q x z : ZFSet.{u}) :
     z ∈ hull d q x ↔ z ∈ d ∧ ∀ c ∈ q, Transitive c → x ∈ c → z ∈ c :=
   ZFSet.mem_sep
 
+/-- Bounded formula expressing membership in every suitable transitive hull candidate. -/
 def hullMemberFormula : Formula :=
   .allMem 2 (.imp (.conj (.transitive 0) (.member 2 0)) (.member 1 0))
 
@@ -78,6 +81,7 @@ theorem hull_least (d q x c : ZFSet.{u}) (hcq : c ∈ q)
   fun _ hz => (mem_hull _ _ _ _).mp hz |>.2 c hcq hc hx
 
 namespace Formula
+/-- Bounded formula identifying a least transitive member of `q` containing `x`. -/
 def isHull (c x _d q : ℕ) : Formula :=
   .conj (.member c q) (.conj (transitive c) (.conj (.member x c)
     (allMem q (imp (.conj (transitive 0) (.member (x+1) 0)) (subset (c+1) 0)))))

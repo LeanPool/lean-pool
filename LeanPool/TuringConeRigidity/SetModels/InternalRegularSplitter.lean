@@ -16,6 +16,8 @@ module
 public import LeanPool.TuringConeRigidity.SetModels.RegularDecisionPartition
 public import LeanPool.TuringConeRigidity.SetModels.InternalProjectedGeneric
 public import LeanPool.TuringConeRigidity.CohenForcing.CohenProductSplitting
+public import LeanPool.TuringConeRigidity.CohenForcing.CountedCohenConditions
+public import LeanPool.TuringConeRigidity.SetModels.CountedRegularBasis
 
 /-!
 # Internal Regular Splitter

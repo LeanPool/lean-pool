@@ -14,6 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.SetModels.EnumerationTransport
+public import LeanPool.TuringConeRigidity.SetModels.EnumerationConstruction
 
 /-!
 # Arithmetic Presentation
@@ -34,6 +35,7 @@ theorem reduces_iterate (H : Oracle) (n : ℕ) : Reduces H (iterate H n) := by
   | zero => exact reduces_refl H
   | succ n ih => exact reduces_trans ih (reduces_jump _)
 
+/-- The automorphism sends the degree of the first indexed column to that of the second. -/
 def Graph (π : Degree ≃o Degree) (H : Oracle) (v : ℕ) : Prop :=
   π (degree (columns H (Nat.unpair v).1)) = degree (columns H (Nat.unpair v).2)
 

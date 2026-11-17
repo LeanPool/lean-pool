@@ -13,8 +13,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.SetModels.InternalBooleanProjection
 public import LeanPool.TuringConeRigidity.SetModels.InternalRealQuotient
+public import LeanPool.TuringConeRigidity.SetModels.InternalGeneratedAlgebra
 
 /-!
 # Internal Boolean Bits
@@ -30,6 +30,8 @@ open TransitiveNameModel BoundedSetTheory InternalRegularOperations InternalRegu
 open InternalBooleanSyntax InternalGeneratedAlgebra
 attribute [local instance] InternalCollapse.order InternalCollapse.collapsePreorder
 
+/-- Bounded formula describing the regular Boolean-algebra value associated with a condition
+family. -/
 def bitFormula (c E V : ℕ) : Formula :=
   .conj (.subset V c) (.allMem c (.iff (.member 0 (V+1))
     (.allMem (c+1) (.imp (.subset 1 0)
@@ -58,6 +60,7 @@ theorem bitFormula_spec (c E V : ℕ) (e : ℕ → ZFSet.{0}) :
     rw [h]
     exact ⟨(regular_isCode _ _).1,fun p hp => (mem_regular _ _ p).trans (and_iff_right hp)⟩
 
+/-- The members of `B` that code the Boolean values of the name's individual bit families. -/
 noncomputable def seeds (c B : ZFSet.{0}) (E : ℕ → ZFSet.{0}) : ZFSet.{0} :=
   B.sep (fun U => ∃ n, U = bitCode c (E n))
 

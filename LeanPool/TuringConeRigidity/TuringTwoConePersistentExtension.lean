@@ -13,6 +13,7 @@ Module paths, interfaces, and proofs are ported to the pool's toolchain and gate
 module
 
 public import LeanPool.TuringConeRigidity.TuringTwoConeGraphPresentation
+public import LeanPool.TuringConeRigidity.TuringTwoConePresentationCountability
 
 /-!
 # Persistent extensions of partial two-cone isomorphisms

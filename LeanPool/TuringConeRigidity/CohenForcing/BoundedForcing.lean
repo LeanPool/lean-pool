@@ -14,7 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.Syntax.AtomicTruth
-public import LeanPool.TuringConeRigidity.Syntax.BoundedRelations
+public import LeanPool.TuringConeRigidity.Syntax.BoundedSetTheory
 
 /-!
 # Bounded Forcing
@@ -31,6 +31,7 @@ open BoundedSetTheory (Formula)
 universe u
 variable {P : Type u} [Preorder P]
 
+/-- Prepend one value to a natural-number-indexed environment. -/
 def push {α : Sort*} (x : α) (e : ℕ → α) : ℕ → α
   | 0 => x
   | n+1 => e n
@@ -43,6 +44,7 @@ theorem child_relation (a : Name P) (i : a.arity) : Name.Child (a.child i) a := 
   cases a
   exact ⟨i,rfl⟩
 
+/-- Forcing for bounded set-theoretic formulas, with names as the variable environment. -/
 def Forces (e : ℕ → Name P) : Formula → P → Prop
   | .equal i j, p => EqForces (e i) (e j) p
   | .member i j, p => MemForces (e i) (e j) p
@@ -61,6 +63,7 @@ theorem forces_mono (φ : Formula) (e : ℕ → Name P) {p q : P} (hqp : q ≤ p
     obtain ⟨j,hj,hf⟩ := h
     exact ⟨j,hqp.trans hj,ih _ hf⟩
 
+/-- Conditions deciding the formula or its negation in the given name environment. -/
 def Decision (e : ℕ → Name P) (φ : Formula) : Set P := {p | Forces e φ p ∨ Forces e (.neg φ) p}
 
 theorem decision_dense (e : ℕ → Name P) (φ : Formula) : Dense (Decision e φ) := by
@@ -71,6 +74,7 @@ theorem decision_dense (e : ℕ → Name P) (φ : Formula) : Dense (Decision e �
     exact ⟨q,hq,Or.inl hf⟩
   · exact ⟨p,le_rfl,Or.inr (fun q hq hf => h ⟨q,hq,hf⟩)⟩
 
+/-- A filter decides every bounded formula whose parameter names belong to `N`. -/
 def Generic (N : Set (Name P)) (G : GenericFilter P) : Prop :=
   ∀ φ e, (∀ i, e i ∈ N) → ∃ p ∈ G.carrier, p ∈ Decision e φ
 

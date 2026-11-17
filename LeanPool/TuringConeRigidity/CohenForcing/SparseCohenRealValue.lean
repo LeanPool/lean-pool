@@ -15,6 +15,7 @@ module
 
 public import LeanPool.TuringConeRigidity.CohenForcing.SparseCohenRealName
 public import LeanPool.TuringConeRigidity.CohenForcing.SparseCohenFilter
+public import LeanPool.TuringConeRigidity.CohenForcing.CohenGenericUnion
 
 /-!
 # Sparse Cohen Real Value

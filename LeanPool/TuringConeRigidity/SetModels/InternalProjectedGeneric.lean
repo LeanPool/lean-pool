@@ -14,6 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.SetModels.InternalBooleanDense
+public import LeanPool.TuringConeRigidity.SetModels.InternalBooleanGraph
 
 /-!
 # Internal Projected Generic
@@ -30,6 +31,7 @@ open InternalRegularOperations InternalRegularAlgebra InternalRegularOrder Inter
 open InternalGeneratedAlgebra InternalBooleanProjection InternalBooleanGeneric InternalBooleanDense
 attribute [local instance] InternalCollapse.order InternalCollapse.collapsePreorder
 
+/-- The nonempty members of `A`. -/
 noncomputable def positive (A : ZFSet.{0}) : ZFSet.{0} := A.sep (fun U => U ≠ ∅)
 
 theorem positive_mem (M A : ZFSet.{0}) (hM : Transitive M) (hT : SourceT M)
@@ -52,6 +54,7 @@ theorem positive_mem (M A : ZFSet.{0}) (hM : Transitive M) (hT : SourceT M)
       · exact ⟨p,hp,True.intro⟩
   exact he ▸ hs
 
+/-- The partial order on positive Boolean codes induced by subset inclusion of their labels. -/
 @[instance_reducible]
 noncomputable def codeOrder (A : ZFSet.{0}) : PartialOrder (Conditions (positive A)) where
   le p q := label (positive A) p ⊆ label (positive A) q
@@ -63,6 +66,7 @@ noncomputable def codeOrder (A : ZFSet.{0}) : PartialOrder (Conditions (positive
   le_antisymm _ _ hpq hqp := label_injective _ (ZFSet.ext (fun _ => ⟨fun h => hpq h,fun h => hqp
     h⟩))
 
+/-- The preorder induced by the partial order on positive Boolean-code labels. -/
 @[instance_reducible]
 noncomputable def codePreorder (algebraSet : ZFSet.{0}) :
     Preorder (Conditions (positive algebraSet)) :=
@@ -74,6 +78,7 @@ theorem label_info (A : ZFSet.{0}) (p : Conditions (positive A)) :
     label (positive A) p ∈ A ∧ label (positive A) p ≠ ∅ :=
   ZFSet.mem_sep.mp (label_mem (positive A) p)
 
+/-- Project a condition filter to the positive Boolean codes hit by its members. -/
 noncomputable def projected (M c B Q A : ZFSet.{0}) (hM : Transitive M) (hT : SourceT M)
     (hc : c ∈ M) (hBM : B ∈ M) (hAM : A ∈ M)
     (hB : ∀ U, U ∈ B ↔ U ∈ M ∧ IsCode c U)

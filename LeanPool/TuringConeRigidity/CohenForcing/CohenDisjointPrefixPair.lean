@@ -17,6 +17,7 @@ public import LeanPool.TuringConeRigidity.CohenForcing.CohenUntouchedGeneric
 public import LeanPool.TuringConeRigidity.CohenForcing.CohenColumnPrefixGeneric
 public import LeanPool.TuringConeRigidity.CohenForcing.CohenPrefixHull
 public import LeanPool.TuringConeRigidity.CohenForcing.CohenFreshColumn
+public import LeanPool.TuringConeRigidity.SetModels.InternalColumnExtension
 
 /-!
 # Cohen Disjoint Prefix Pair

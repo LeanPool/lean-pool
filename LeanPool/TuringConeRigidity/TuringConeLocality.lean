@@ -69,10 +69,12 @@ theorem presented_two {a Y p x z} (hx : Dom Y x) (hz : Dom Y z) :
     · simpa [entry, twoIndex] using hz
   simp only [Presented, hd, forall_const, true_and, ht]
 
+/-- A coded successor path using relation interpretations relative to the cone base. -/
 def Path (a : Degree) (Y : Oracle) (S : RelationCode 2) (z n t : ℕ) : Prop :=
   Dom Y (item t 0) ∧ LE Y (item t 0) z ∧ LE Y z (item t 0) ∧
     ∀ i < n, Presented a Y S (twoIndex (item t i) (item t (i + 1)))
 
+/-- The cone-relative predicate holds at the endpoint of a coded successor path. -/
 def Defined (a : Degree) (Y : Oracle) (S : RelationCode 2) (P : RelationCode 1)
     (z n : ℕ) : Prop :=
   ∃ t, Path a Y S z n t ∧ Presented a Y P (oneIndex (item t n))

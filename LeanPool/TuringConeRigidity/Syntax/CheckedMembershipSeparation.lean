@@ -32,6 +32,8 @@ open ElementaryModel SentenceForm
 universe u
 variable {c : ZFSet.{u}} [Preorder (Conditions c)] [Top (Conditions c)]
 
+/-- A full formula combining a checked-name value certificate with its membership-forcing
+assertion. -/
 noncomputable def checkedMembershipFormula : SentenceForm :=
   .ex (.conj (checkedValueFormula.rename (fun i => match i with | 0 => 0 | 1 => 1 | _ => 6))
     (code (.member 0 1) 2 3 4 (fun i => match i with | 0 => 0 | _ => 5)))
@@ -79,10 +81,12 @@ theorem checkedMembership_spec (M : ZFSet.{u}) (hM : Transitive M) (hT : SourceT
   · intro hf
     exact ⟨_,hcheck,(checked _ hcheck).mpr rfl,(forcing _ hcheck rfl).mpr hf⟩
 
+/-- A sigma formula selecting a checked-name value through its certified graph. -/
 noncomputable def checkedValueSigma : SigmaFormula :=
   .existsSet (.existsSet (.existsSet (.bounded (.conj (CheckFormula.graph 2 1 0 5)
     (.conj (.member 4 2) (.conj (.member 3 1) (.pairMem 4 3 0)))))))
 
+/-- A sigma formula combining the checked value certificate with bounded membership forcing. -/
 noncomputable def checkedMembershipSigma : SigmaFormula :=
   .existsSet (.conj
     (checkedValueSigma.rename (fun i => match i with | 0 => 0 | 1 => 1 | _ => 6))

@@ -28,6 +28,7 @@ namespace TuringRigidity.OrdinalArithmetic
 open TransitiveNameModel BoundedSetTheory RelationCollapse ElementaryModel
 universe u
 
+/-- Bounded formula asserting membership in a tagged copy of the supplied set. -/
 def nodeMember (a t x : ℕ) : Formula :=
   .existsMem a (.orderedPair (x+1) (t+1) 0)
 
@@ -35,6 +36,7 @@ theorem nodeMember_eval (a t x : ℕ) (e : ℕ → ZFSet.{u}) :
     (nodeMember a t x).Eval e ↔ ∃ s ∈ e a, e x = ZFSet.pair (e t) s := by
   simp [nodeMember,Formula.Eval]
 
+/-- Bounded formula asserting that the domain is exactly the tagged union of the two inputs. -/
 def sumDomainMatrix (d a b z o : ℕ) : Formula :=
   .conj (.allMem d (.disj (nodeMember (a+1) (z+1) 0) (nodeMember (b+1) (o+1) 0)))
     (.conj (.allMem a (.existsMem (d+1) (.orderedPair 0 (z+2) 1)))
@@ -62,6 +64,7 @@ theorem sumDomainMatrix_eval (d a b z o : ℕ) (e : ℕ → ZFSet.{u})
       fun s hs => ⟨leftNode s,(mem_sumDomain _ _ _).mpr (Or.inl ⟨s,hs,rfl⟩),rfl⟩,
       fun s hs => ⟨rightNode s,(mem_sumDomain _ _ _).mpr (Or.inr ⟨s,hs,rfl⟩),rfl⟩⟩
 
+/-- Bounded formula asserting that the relation is exactly the tagged ordinal-sum order. -/
 def sumRelationMatrix (r d a b z o : ℕ) : Formula :=
   .conj (.allMem r (.existsMem (d+1) (.existsMem (d+2)
     (.conj (.orderedPair 2 1 0) (sumLessFormula (a+3) (b+3) (z+3) (o+3) 1 0)))))
@@ -93,6 +96,8 @@ theorem sumRelationMatrix_eval (r d a b z o : ℕ) (e : ℕ → ZFSet.{u})
     exact ⟨fun p hp => (ZFSet.mem_sep.mp hp).2,
       fun x hx y hy hxy => (pair_mem_sumRelation _ _ _ _).mpr ⟨hx,hy,hxy⟩⟩
 
+/-- Bounded formula combining the two tags, sum domain, sum relation, and order-type
+certificate. -/
 def sumMatrix (c a b d r f z o : ℕ) : Formula :=
   .conj (.allMem z (.neg (.equal 0 0)))
     (.conj (.singleton o z) (.conj (sumDomainMatrix d a b z o)
@@ -114,6 +119,7 @@ theorem sumMatrix_eval (c a b d r f z o : ℕ) (e : ℕ → ZFSet.{u}) :
   apply and_congr_right; intro hd
   rw [sumRelationMatrix_eval r d a b z o e hz ho hd,orderTypeMatrix_eval]
 
+/-- A full formula defining an ordinal sum through its tagged order-type presentation. -/
 noncomputable def sumSentence : SentenceForm :=
   .ex (.ex (.ex (.ex (.ex (fromBounded (sumMatrix 5 6 7 4 3 2 1 0))))))
 

@@ -50,6 +50,8 @@ theorem SentenceForm.collapse_sat (p : SentenceForm) (d : ZFSet.{u})
       refine ⟨x,hx,(ih (cons x e) (hen x hx)).mpr ?_⟩
       rwa [map_cons]
 
+/-- Every universally true ambient formula is true in the model for all model parameter
+environments. -/
 def Valid (M : ZFSet.{u}) : Prop :=
   ∀ p : SentenceForm, (∀ e : ℕ → ZFSet.{u}, p.Sat Set.univ e) →
     ∀ e : ℕ → ZFSet.{u}, (∀ i, e i ∈ M) → p.Sat (M : Set ZFSet) e
@@ -66,6 +68,7 @@ theorem collapsed_hull_valid (a : ℕ → ZFSet.{u}) : Valid (collapsed (hullSet
   have ht := (p.collapse_sat (hullSet a) (hullSet_extensional a) f hf).mp hs
   rwa [hfe] at ht
 
+/-- Embed bounded formula syntax into full set-theoretic syntax. -/
 noncomputable def fromBounded : Formula → SentenceForm
   | .equal i j => .equal i j
   | .member i j => .member i j
@@ -97,6 +100,7 @@ theorem bounded_univ (p : Formula) (e : ℕ → ZFSet.{u}) :
     apply exists_congr; intro x
     exact and_congr_right (fun _ => ih (cons x e))
 
+/-- Embed sigma formula syntax into full set-theoretic syntax. -/
 noncomputable def fromSigma : SigmaFormula → SentenceForm
   | .bounded p => fromBounded p
   | .existsSet p => .ex (fromSigma p)

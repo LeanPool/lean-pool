@@ -13,9 +13,9 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.Computability.OracleCode
 public import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
-public import Mathlib.Topology.Instances.Nat
+
+public import LeanPool.TuringConeRigidity.Computability.OracleCode
 
 /-!
 # Program Topology
@@ -29,6 +29,7 @@ namespace OAI
 open Set
 namespace TuringRigidity
 
+/-- Every individual output value has an open fiber under the partial-function-valued map. -/
 def OpenFiber {X α : Type*} [TopologicalSpace X] (f : X → Part α) : Prop :=
   ∀ a, IsOpen {x | a ∈ f x}
 

@@ -12,7 +12,6 @@ Module paths, interfaces, and proofs are ported to the pool's toolchain and gate
 module
 
 public import LeanPool.TuringConeRigidity.TuringConeProgramGlobalization
-public import LeanPool.TuringConeRigidity.Representation.SourceIdentity
 
 /-!
 # The source equation for inverse cone maps

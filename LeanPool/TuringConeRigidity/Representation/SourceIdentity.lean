@@ -27,9 +27,12 @@ namespace OAI
 
 namespace TuringRigidity.GenericIdentity
 
+/-- The program is total at `A` and its output degree equals the automorphism's value at
+`degree A`. -/
 def RepresentsAt (π : Degree ≃o Degree) (p : OracleCode) (P A : Oracle) : Prop :=
   Total p P A ∧ degree (value p P A) = π (degree A)
 
+/-- Join the program's output on the generic code of `Y` with its output on `G`. -/
 noncomputable def ImageJoin (p : OracleCode) (P Y G : Oracle) : Oracle :=
   join (value p P (GenericCoding.code Y G)) (value p P G)
 

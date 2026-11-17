@@ -77,6 +77,8 @@ theorem collapsed_hull_reals (a : ℕ → ZFSet.{u})
   · intro hA
     exact (mem_collapsed _ _).mpr ⟨realCode A,hA,(hull_real_fixed a hn hA).symm⟩
 
+/-- A countable seed containing numerals, the supplied oracle codes, the supplied set
+parameters, and omega. -/
 noncomputable def mixedSeed (a : ℕ → ZFSet.{u}) (A : ℕ → Oracle) (n : ℕ) : ZFSet.{u} :=
   match n.unpair.1 with
   | 0 => natSet n.unpair.2

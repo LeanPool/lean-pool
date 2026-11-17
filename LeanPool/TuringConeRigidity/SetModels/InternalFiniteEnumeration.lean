@@ -27,6 +27,7 @@ namespace OAI
 namespace TuringRigidity.InternalFiniteEnumeration
 open Set TransitiveNameModel BoundedSetTheory InternalFiniteSubsets RelativeConstructible
 
+/-- The set `E` is exactly the range of `g` inside the designated universe `U`. -/
 def Ranges (U E g : ZFSet.{0}) : Prop := E ⊆ U ∧
   ∀ p ∈ U, p ∈ E ↔ ∃ i ∈ ZFSet.omega, ZFSet.pair i p ∈ g
 
@@ -36,8 +37,10 @@ theorem rangeFormula_ranges (ω U E g : ℕ) (e : ℕ → ZFSet.{0})
   simp only [rangeFormula,Ranges,Formula.eval_subset,Formula.eval_allMem,
     Formula.eval_iff,Formula.Eval,Formula.eval_pairMem,cons_zero,cons_succ,hω]
 
+/-- The members of `C` whose graphs enumerate precisely `E` inside `U`. -/
 noncomputable def candidates (U C E : ZFSet.{0}) : ZFSet.{0} := C.sep (Ranges U E)
 
+/-- Bounded formula identifying all candidate graphs with the specified range. -/
 def candidateFormula (ω U C E a : ℕ) : Formula := .conj (.subset a C)
   (.allMem C (.iff (.member 0 (a+1)) (rangeFormula (ω+1) (U+1) (E+1) 0)))
 

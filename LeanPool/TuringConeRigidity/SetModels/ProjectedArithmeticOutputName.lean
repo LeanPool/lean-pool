@@ -16,7 +16,6 @@ module
 public import LeanPool.TuringConeRigidity.CohenForcing.CohenProjectedNameLift
 public import LeanPool.TuringConeRigidity.SetModels.ExtensionArithmeticRepresentative
 public import LeanPool.TuringConeRigidity.Representation.SourceTTreeAbsoluteness
-public import LeanPool.TuringConeRigidity.Representation.SourceTheory
 public import LeanPool.TuringConeRigidity.SetModels.SetModelJoin
 
 /-!

@@ -31,8 +31,10 @@ open Set TransitiveNameModel BoundedSetTheory InternalFiniteSubsets
 open CohenSymmetry CohenCoordinates CohenConditionCode CohenGroundPoset
 open CohenGroundGeneric CohenChainCondition CohenNiceNames
 
+/-- Two set-coded conditions have a common extension in `c`. -/
 def Comp (c p q : ZFSet.{0}) : Prop := ∃ r ∈ c, p ⊆ r ∧ q ⊆ r
 
+/-- Bounded formula expressing compatibility of two set-coded conditions. -/
 def compFormula (c p q : ℕ) : Formula :=
   .existsMem c (.conj (.subset (p+1) 0) (.subset (q+1) 0))
 
@@ -54,9 +56,11 @@ theorem comp_graph (A : ZFSet.{0}) (p q : Condition (Conditions A)) :
       (graph_subset_iff A _ p).mpr (merge_le_left p q),
       (graph_subset_iff A _ q).mpr (merge_le_right h)⟩
 
+/-- Distinct members of `E` have no common extension in `c`. -/
 def Anti (c E : ZFSet.{0}) : Prop :=
   ∀ p ∈ E, ∀ q ∈ E, p ≠ q → ¬ Comp c p q
 
+/-- Bounded formula expressing the antichain property `Anti`. -/
 def antiFormula (c E : ℕ) : Formula := .allMem E (.allMem (E+1)
   (.imp (.neg (.equal 1 0)) (.neg (compFormula (c+2) 1 0))))
 
@@ -65,6 +69,7 @@ theorem antiFormula_spec (c E : ℕ) (e : ℕ → ZFSet.{0}) :
   simp only [antiFormula,Anti,Formula.eval_allMem,Formula.eval_imp,
     Formula.Eval,compFormula_spec,cons_zero,cons_succ]
 
+/-- The finite antichains contained in `U`. -/
 noncomputable def stages (c U : ZFSet.{0}) : ZFSet.{0} :=
   (finiteSubsets U).sep (Anti c)
 

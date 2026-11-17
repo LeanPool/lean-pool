@@ -35,6 +35,7 @@ theorem second_mem_doubleUnion {a b f : ZFSet.{u}} (h : ZFSet.pair a b ∈ f) :
   refine ⟨({a,b} : ZFSet.{u}),?_,ZFSet.mem_pair.mpr (Or.inr rfl)⟩
   exact ZFSet.mem_sUnion.mpr ⟨_,h,ZFSet.mem_pair.mpr (Or.inr rfl)⟩
 
+/-- Bounded formula describing the tagged image of a graph value. -/
 def taggedImageFormula : Formula :=
   .existsMem 1 (.existsMem 4 (.conj (.pairMem 1 0 4) (.orderedPair 2 0 6)))
 
@@ -44,6 +45,7 @@ theorem eval_taggedImageFormula (z x f r t : ZFSet.{u}) (e : ℕ → ZFSet.{u}) 
   simp only [taggedImageFormula,Formula.Eval,Formula.eval_pairMem,
     Formula.eval_orderedPair,cons_zero,cons_succ]
 
+/-- The image values of `x` under `f`, each paired with the common condition tag `t`. -/
 noncomputable def taggedImage (x f t : ZFSet.{u}) : ZFSet.{u} :=
   ZFSet.sep (fun z => ∃ y ∈ x, ∃ w ∈ iterUnion 2 f,
     ZFSet.pair y w ∈ f ∧ z = ZFSet.pair w t)

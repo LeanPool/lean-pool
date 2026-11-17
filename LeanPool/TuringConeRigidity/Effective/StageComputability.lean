@@ -29,10 +29,12 @@ open Encodable UniformOracle EncodedForcing CodingForcing FiniteInjury StageReco
 noncomputable section
 attribute [local instance] Classical.propDecidable
 
+/-- Decode a priority state from its condition and finite priority records. -/
 def state (v : ℕ) : PriorityStage.State :=
   ⟨condition (Nat.unpair v).1,members (Nat.unpair (Nat.unpair v).2).1,members (Nat.unpair
     (Nat.unpair v).2).2⟩
 
+/-- Compute the generic extension for the next unvisited requirement in the coded state. -/
 def generic (A : Oracle) (v : ℕ) : ℕ := PriorityStage.openProcedure A
   (Nat.pair (nextVisit (Nat.unpair (Nat.unpair v).2).2) (Nat.unpair v).1)
 
@@ -41,9 +43,11 @@ theorem open_recursive (A : Oracle) :
       (PriorityStage.openProcedure A v)) :=
   (Classical.choose_spec (EffectiveForcing.uniform_open_decision A A (reduces_refl A))).1
 
+/-- Canonicalize the condition code at its current active level. -/
 def canonical (p : ℕ) : ℕ := levelCode p (active p)
 theorem canonical_eq (p : ℕ) : canonical p = code (condition p) := rfl
 
+/-- Compute the generic extension after canonicalizing the coded condition. -/
 def genericCanonical (A : Oracle) (v : ℕ) : ℕ := PriorityStage.openProcedure A
   (Nat.pair (nextVisit (Nat.unpair (Nat.unpair v).2).2) (canonical (Nat.unpair v).1))
 
@@ -60,6 +64,7 @@ theorem generic_recursive (A : Oracle) :
 @[simp] theorem generic_eq (A : Oracle) (v : ℕ) :
     condition (genericCanonical A v) = PriorityStage.generic A (state v) := rfl
 
+/-- Scan the coded priority state for an action at the given stage. -/
 def stageAction (A : Oracle) (s v : ℕ) : ℕ :=
   scan A (genericCanonical A v) (Nat.unpair (Nat.unpair v).2).1 s
 
@@ -76,6 +81,7 @@ theorem stageAction_recursive (A : Oracle) :
   rw [stageAction,scan_eq,action_actionCode,generic_eq]
   rfl
 
+/-- Select either the generic coded condition or its chosen priority candidate. -/
 def stageWord (A : Oracle) (z : ℕ) : ℕ :=
   let s := (Nat.unpair z).1
   let v := (Nat.unpair z).2
@@ -106,6 +112,7 @@ theorem stageWord_eq (A : Oracle) (s v : ℕ) :
       simpa only [StageRecords.action,ite_eq_right ha] using he.symm
     simp [ha,PriorityStage.stageWord,hn,candidate_eq,generic_eq]
 
+/-- Append false to both words and set the next active stage. -/
 def grow (p s : ℕ) : ℕ := Nat.pair (encode (left p ++ [false]))
   (Nat.pair (encode (right p ++ [false])) (s+1))
 
@@ -121,6 +128,7 @@ theorem grow_primrec : Primrec₂ grow := Primrec₂.natPair.comp
     condition (grow p s) = atLevel (append (condition p) [false]) (s+1) := condition_code (atLevel
       (append (condition p) [false]) (s+1))
 
+/-- Advance the coded priority state and update its completed and visited records. -/
 def advance (A : Oracle) (z : ℕ) : ℕ :=
   let s := (Nat.unpair z).1
   let v := (Nat.unpair z).2
@@ -151,9 +159,11 @@ theorem advance_eq (A : Oracle) (s v : ℕ) :
     members_seenReset,members_seenInsert,stageAction_eq]
   rfl
 
+/-- The coded empty priority state. -/
 def initial : ℕ := Nat.pair (code ⟨[],[],rfl,0⟩) (Nat.pair (encode ([] : List ℕ)) (encode ([] :
   List ℕ)))
 
+/-- Iterate the coded priority-state transition from the empty state. -/
 def construction (A : Oracle) : ℕ → ℕ :=
   recur (fun _ => initial) (fun v => advance A (Nat.unpair v).2) 0
 

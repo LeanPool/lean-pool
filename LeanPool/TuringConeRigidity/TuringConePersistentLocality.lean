@@ -48,6 +48,8 @@ theorem zero_jump_mem {I : CountableIdeal} {a : Degree}
     degreeJump_mono (show degree FixedArithmetic.zero ≤ a from bot_le)
   exact I.lower hz hza
 
+/-- Transport an ideal-representation cone isomorphism back to the countable-ideal
+representation. -/
 def unlift {I : CountableIdeal} {a : Degree} (ha : a ∈ I.carrier)
     (σ : PersistentLocality.ideal I ≃o Set.Ici (⟨a, ha⟩ : PersistentLocality.ideal I)) :
     I ≃o Cone I a :=

@@ -14,7 +14,6 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.SetModels.ElementaryCheckedCode
-public import LeanPool.TuringConeRigidity.Representation.GroundInclusion
 
 /-!
 # Internal Checked Value

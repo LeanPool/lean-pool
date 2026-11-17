@@ -35,6 +35,7 @@ theorem iterate_monotone (x : Degree) : Monotone (degreeIterate x) := by
   intro n
   exact degree_le_jump _
 
+/-- The countable ideal of degrees below some finite jump iterate of `x`. -/
 def generated (x : Degree) : CountableIdeal where
   carrier := {y | ∃ n, y ≤ degreeIterate x n}
   nonempty := ⟨x,0,le_rfl⟩

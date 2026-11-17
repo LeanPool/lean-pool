@@ -13,9 +13,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.OrdinalCodes.OmegaPowerDefinability
 public import LeanPool.TuringConeRigidity.Syntax.SigmaParameterizedClosure
-public import LeanPool.TuringConeRigidity.SetModels.SetModelIteration
 
 /-!
 # Sigma Sequence Trace
@@ -28,9 +26,11 @@ namespace OAI
 
 namespace TuringRigidity.BoundedSetTheory
 open TransitiveNameModel BoundedDefinability SetModelFunctions SetModelIteration
-  RelativeConstructible
+
 universe u
 
+/-- A sequence graph on `insert n n` starting at `x`, ending at `y`, and following `S` through
+the recorded successor indices in `M`. -/
 def SequenceTrace (M : ZFSet.{u}) (S : ZFSet.{u} → ZFSet.{u} → Prop)
     (n x y d r f z : ZFSet.{u}) : Prop :=
   d = insert n n ∧ FunctionGraph d r f ∧ z = ∅ ∧

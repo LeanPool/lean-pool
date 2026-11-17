@@ -13,9 +13,10 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
+public import Mathlib.Data.Set.Finite.Basic
+
 public import LeanPool.TuringConeRigidity.Effective.PrefixComputability
-public import Mathlib.Data.Set.Finite.Range
-public import Lean.Elab.Tactic.Omega
+public import LeanPool.TuringConeRigidity.SetModels.Degrees
 
 /-!
 # Introreducible
@@ -30,13 +31,18 @@ namespace TuringRigidity
 namespace Introreducible
 open Encodable PrefixComputability
 
+/-- Read an oracle bit as the natural number zero or one. -/
 def bit (X : Oracle) (n : ℕ) : ℕ := if X n then 1 else 0
 
+/-- The natural-number encoding of the first `n` oracle bits. -/
 def prefixCode (X : Oracle) (n : ℕ) : ℕ := encode (oraclePrefix (bit X) n)
 
+/-- Decode a finite natural-number list, using the empty list for an invalid code. -/
 def codeList (c : ℕ) : List ℕ := (decode (α := List ℕ) c).getD []
+/-- The length of the decoded finite list. -/
 def codeLength (c : ℕ) : ℕ := (codeList c).length
 
+/-- The characteristic oracle of the codes of finite prefixes of `X`. -/
 def prefixSet (X : Oracle) (c : ℕ) : Bool := decide (prefixCode X (codeLength c) = c)
 
 @[simp] theorem codeList_prefix (X : Oracle) (n : ℕ) :
@@ -101,6 +107,7 @@ theorem prefixSet_reduces (X : Oracle) : Reduces (prefixSet X) X := by
   · simp [oracleFunction, prefixSet, equalBit, prefixCode, h]
   · simp [oracleFunction, prefixSet, equalBit, prefixCode, h]
 
+/-- Read the `n`th entry of a decoded prefix code, using zero outside its range. -/
 def codeBit (n c : ℕ) : ℕ := (codeList c).getD n 0
 
 @[simp] theorem codeBit_prefix (X : Oracle) (n m : ℕ) (h : n < m) :
@@ -110,6 +117,7 @@ def codeBit (n c : ℕ) : ℕ := (codeList c).getD n 0
 theorem codeBit_primrec : Primrec₂ codeBit :=
   (Primrec.list_getD 0).comp (codeList_primrec.comp Primrec.snd) Primrec.fst
 
+/-- Read entry `n` from a sufficiently long decoded list whose code is marked true by `Z`. -/
 def trial (Z : Oracle) (n c : ℕ) : Option ℕ :=
   if Z c = true ∧ n < codeLength c then some (codeBit n c) else none
 

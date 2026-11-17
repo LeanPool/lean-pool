@@ -31,10 +31,13 @@ open RecursiveNames TransitiveNameModel BoundedSetTheory CountableForcing Atomic
 open RelativeConstructible SetModelSatisfaction
 attribute [local instance] InternalCollapse.order InternalCollapse.collapsePreorder
 
+/-- A set-coded action on the extension's own degree universe extends the designated partial
+action. -/
 def OwnDegreeExtension (E I ρ f : ZFSet.{0}) : Prop :=
   IsAction f (degreeUniverse (groundReals E)) (degreeOrder (groundReals E)) ∧
     I ⊆ degreeUniverse (groundReals E) ∧ ρ ⊆ f
 
+/-- Bounded formula expressing an action with the required source subset and extending graph. -/
 def degreeExtensionFormula : BoundedSetTheory.Formula :=
   .conj (actionFormula 0 1 2) (.conj (.subset 3 1) (.subset 4 0))
 

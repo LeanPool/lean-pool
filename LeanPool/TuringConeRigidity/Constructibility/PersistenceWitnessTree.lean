@@ -33,6 +33,7 @@ attribute [local instance] Classical.propDecidable
 
 namespace Test
 
+/-- Replace oracle-query leaves of a test by the supplied tests. -/
 def bindOracle (q : ℕ → Term → Test) : Test → Test
   | .pure P hP t => .pure P hP t
   | .query i t => q i t
@@ -49,16 +50,21 @@ theorem eval_bindOracle (t : Test) (q : ℕ → Term → Test)
   | neg t ih => exact not_congr ih
   | and t s ih ik => exact and_congr ih ik
 
+/-- Keep the first two oracle channels and read remaining queries from the numerical witness's
+real channel. -/
 def realQuery : ℕ → Term → Test
   | 0, t => .query 0 t
   | 1, t => .query 1 t
   | _+2, t => .pure (fun n => n = 1)
       (Primrec.eq.comp Primrec.id (Primrec.const 1)) (.witness (.pair (.const 0) t))
 
+/-- Combine real queries and witness queries into separate channels of one numerical witness. -/
 def mergeReal (t : Test) : Test :=
   (t.subst .input (fun s => .witness (.pair (.const 1) s))).bindOracle realQuery
 
+/-- The Boolean real encoded in channel zero of a numerical witness. -/
 def realPart (f : ℕ → ℕ) : Oracle := fun n => decide (f (Nat.pair 0 n) = 1)
+/-- The numerical witness function encoded in channel one. -/
 def witnessPart (f : ℕ → ℕ) : ℕ → ℕ := fun n => f (Nat.pair 1 n)
 
 theorem mergeReal_eval (t : Test) (A R : Oracle) (f : ℕ → ℕ) (v : ℕ) :

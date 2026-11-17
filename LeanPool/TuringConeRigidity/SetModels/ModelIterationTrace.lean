@@ -14,7 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.Syntax.FiniteModelGraph
-public import LeanPool.TuringConeRigidity.Effective.TupleFormula
+public import LeanPool.TuringConeRigidity.Effective.FiniteTuple
 
 /-!
 # Model Iteration Trace
@@ -30,6 +30,8 @@ namespace TuringRigidity.BoundedSetTheory
 open TransitiveNameModel
 universe u
 
+/-- A graph into `R` with domain `insert n n`, starting at `b` at the empty index and obeying
+indexed transitions. -/
 def ModelIterationTrace (o R z k n b f : ZFSet.{u}) (S : ZFSet.{u} → ZFSet.{u} → ZFSet.{u} → Prop)
   : Prop :=
   TransitiveNameModel.FunctionGraph k R f ∧ k = insert n n ∧ z = ∅ ∧ ZFSet.pair z b ∈ f ∧
@@ -75,12 +77,15 @@ theorem ModelIterationTrace.correct {R z k f : ZFSet.{u}} (a : ℕ → ZFSet.{u}
     le_rfl)
 
 namespace Formula
+/-- Variable renaming supplying the index and adjacent values in a model iteration trace. -/
 def modelIterationVars : ℕ → ℕ
   | 0 => 0
   | 1 => 1
   | 2 => 3
   | i+3 => i+4
 
+/-- Bounded formula expressing the function graph, initial value, and transitions of a model
+iteration trace. -/
 def modelIterationTrace (o R z k n b f : ℕ) (θ : Formula) : Formula :=
   .conj (.functionGraph f k R) (.conj (.successor k n) (.conj (.empty z)
     (.conj (.pairMem z b f)

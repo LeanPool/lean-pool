@@ -15,7 +15,6 @@ module
 
 public import LeanPool.TuringConeRigidity.Constructibility.UniformSeparationName
 public import LeanPool.TuringConeRigidity.Syntax.SetSatisfactionBounded
-public import LeanPool.TuringConeRigidity.Representation.GroundInclusion
 public import LeanPool.TuringConeRigidity.Representation.SourceTheory
 
 /-!

@@ -14,7 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.CohenForcing.CohenWordCodeGraph
-public import LeanPool.TuringConeRigidity.SetModels.ModelArithmeticComprehension
+public import LeanPool.TuringConeRigidity.SetModels.ModelReals
 
 /-!
 # Numerical Cohen Sets
@@ -29,6 +29,7 @@ namespace OAI
 namespace TuringRigidity.InternalCohen
 open TransitiveNameModel BoundedSetTheory Encodable
 
+/-- The Boolean oracle selecting word codes whose condition graphs belong to `D`. -/
 noncomputable def wordPullback (D : ZFSet.{0}) : Oracle := fun n => by
   classical
   exact decide (wordCode (EncodedForcing.word n) ∈ D)
@@ -66,6 +67,7 @@ theorem wordPullback_mem (M : ZFSet.{0}) (hM : Transitive M) (hT : SourceT M)
         (pair_mem_wordCodeGraph _ _).mpr rfl⟩
   exact heq ▸ hh
 
+/-- The set-coded word conditions whose codes are selected by the oracle `A`. -/
 noncomputable def wordImage (A : Oracle) : ZFSet.{0} :=
   ZFSet.sep (fun q => ∃ n ∈ realCode A, ZFSet.pair n q ∈ wordCodeGraph) conditions
 

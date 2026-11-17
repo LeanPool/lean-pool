@@ -29,6 +29,7 @@ namespace TuringRigidity.IdealLocality
 open OracleJump ArithmeticHierarchy ArithmeticModelDecoding BoundedDecoding IdealInterpretation
 noncomputable section
 
+/-- The degree ideal is closed under the Turing jump. -/
 def JumpClosed (J : DegreeIdeal) : Prop := ∀ x, x ∈ J.carrier → degreeJump x ∈ J.carrier
 
 theorem image_arithmetic {I : DegreeIdeal} (ρ : I ≃o I) (z : I)

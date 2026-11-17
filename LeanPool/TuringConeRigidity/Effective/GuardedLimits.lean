@@ -16,7 +16,6 @@ module
 public import LeanPool.TuringConeRigidity.Effective.GuardedComputability
 public import LeanPool.TuringConeRigidity.CohenForcing.CohenCompleteness
 public import LeanPool.TuringConeRigidity.Effective.CodingDiagonal
-public import LeanPool.TuringConeRigidity.Effective.CodingExtraction
 
 /-!
 # Guarded Limits
@@ -33,7 +32,9 @@ open GuardedStage
 noncomputable section
 attribute [local instance] Classical.propDecidable
 
+/-- The left limit oracle of the guarded condition construction. -/
 def G₀ (A : Oracle) : Oracle := leftLimit (conditions A)
+/-- The right limit oracle of the guarded condition construction. -/
 def G₁ (A : Oracle) : Oracle := rightLimit (conditions A)
 
 theorem generic_prefix_next (A : Oracle) (s : ℕ) :

@@ -13,7 +13,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.OrdinalCodes.OrdinalProductClosure
+public import LeanPool.TuringConeRigidity.OrdinalCodes.OrdinalProductSyntax
 
 /-!
 # Ordinal Product Replacement
@@ -28,6 +28,7 @@ namespace TuringRigidity.OrdinalArithmetic
 open TransitiveNameModel BoundedSetTheory RelationCollapse ElementaryModel
 universe u
 
+/-- A sigma formula requesting a domain, relation, and collapse graph for an ordinal product. -/
 def productSigma : SigmaFormula :=
   .existsSet (.existsSet (.existsSet (.bounded (productMatrix 3 4 5 2 1 0))))
 
@@ -40,6 +41,7 @@ theorem productSigma_sourceT (M : ZFSet.{u}) (hM : Transitive M) (hT : SourceT M
   rw [← sigma_sat,productSigma_sentence]
   exact productSentence_sourceT M hM hT e he a b ha hb
 
+/-- A sigma formula pairing an ordinal input with its product value. -/
 def multiplePairSigma : SigmaFormula :=
   .existsSet (.conj (.bounded (.orderedPair 1 2 0))
     (productSigma.rename (fun i => if i = 0 then 0 else if i = 1 then 3 else 2)))

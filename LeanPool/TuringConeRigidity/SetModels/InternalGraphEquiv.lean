@@ -13,7 +13,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.SetModels.InternalInverseGraph
+public import LeanPool.TuringConeRigidity.SetModels.UnionIteration
 
 /-!
 # Internal Graph Equiv
@@ -27,6 +27,7 @@ namespace OAI
 namespace TuringRigidity.InternalGraphEquiv
 open TransitiveNameModel BoundedSetTheory
 
+/-- The function on condition labels selected from the single-valued graph `f`. -/
 noncomputable def graphMap (A B f : ZFSet.{0}) (hf : FunctionGraph A B f)
     (x : Conditions A) : Conditions B :=
   equivShrink B ⟨(hf.2 (label A x) (label_mem A x)).choose,
@@ -50,6 +51,7 @@ theorem graphMap_bijective (A B f : ZFSet.{0}) (hf : FunctionGraph A B f)
     obtain ⟨x,rfl⟩ := label_surjective A hx
     exact ⟨x,label_injective B (hf.functional (label_mem A x) (graphMap_spec A B f hf x) hxy)⟩
 
+/-- The equivalence of condition-label types induced by a bijective set-coded function graph. -/
 noncomputable def graphEquiv (A B f : ZFSet.{0}) (hf : FunctionGraph A B f)
     (hi : ∀ x ∈ A, ∀ x' ∈ A, ∀ y ∈ B, ZFSet.pair x y ∈ f → ZFSet.pair x' y ∈ f → x = x')
     (hs : ∀ y ∈ B, ∃ x ∈ A, ZFSet.pair x y ∈ f) : Conditions A ≃ Conditions B :=

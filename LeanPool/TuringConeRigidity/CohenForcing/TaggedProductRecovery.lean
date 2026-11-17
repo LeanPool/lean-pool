@@ -29,6 +29,7 @@ open TransitiveNameModel BoundedSetTheory CountableForcing TaggedProductConditio
 open CohenProductSplitting TaggedProductGeneric
 attribute [local instance] InternalCollapse.order InternalCollapse.collapsePreorder
 
+/-- The set of tagged conditions formed from pairs of members of the two filters. -/
 noncomputable def jointSet (c g h : ZFSet.{0}) : ZFSet.{0} :=
   c.sep (fun z => ∃ p ∈ g, ∃ s ∈ h, z = code p s)
 

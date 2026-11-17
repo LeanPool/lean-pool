@@ -13,7 +13,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.Effective.TupleRelation
+public import LeanPool.TuringConeRigidity.Effective.TupleFormula
 
 /-!
 # Finite Closure
@@ -30,10 +30,13 @@ open TransitiveNameModel
 universe u
 namespace FiniteTuple
 
+/-- The set `h` is closed under the outputs of the `n`-ary graph `g`. -/
 def Closed (n : ℕ) (g h : ZFSet.{u}) : Prop :=
   ∀ xs : List ZFSet.{u}, xs.length = n → (∀ x ∈ xs, x ∈ h) →
     ∀ y, ZFSet.pair (code xs) y ∈ g → y ∈ h
 
+/-- Bounded formula asserting that the first `n` variable values belong to the set in slot
+`h`. -/
 def memberPrefix : ℕ → ℕ → Formula
   | 0,_ => .equal 0 0
   | n+1,h => .conj (memberPrefix n h) (.member n h)
@@ -66,6 +69,7 @@ theorem prepend_members (xs : List ZFSet.{u}) (e : ℕ → ZFSet.{u}) (h : ZFSet
       | zero => exact ha x (by simp)
       | succ i => exact ih.mpr (fun y hy => ha y (by simp [hy])) i (Nat.lt_of_succ_lt_succ hi)
 
+/-- Bounded formula asserting closure under the coded finite-tuple function graph. -/
 def closedFormula (n a d c z g h : ℕ) : Formula :=
   .allMem a (.allMem (d+1) (.imp (.pairMem 1 0 (g+2))
     (.imp (unpack n 1 (c+2) (z+2) (memberPrefix n (n+h+2))) (.member 0 (h+2)))))

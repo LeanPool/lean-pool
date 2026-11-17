@@ -29,6 +29,7 @@ namespace TuringRigidity.RelationCollapse
 open TransitiveNameModel BoundedSetTheory
 universe u
 
+/-- The set-coded graph `f` consists exactly of the pairs `(x, j x)` for `x` in `a`. -/
 def Presents (a f : ZFSet.{u}) (j : ZFSet.{u} → ZFSet.{u}) : Prop :=
   ∀ z, z ∈ f ↔ ∃ x ∈ a, z = ZFSet.pair x (j x)
 
@@ -43,10 +44,12 @@ theorem Presents.pair_iff {a f : ZFSet.{u}} {j : ZFSet.{u} → ZFSet.{u}}
   · rintro ⟨hx,rfl⟩
     exact ⟨x,hx,rfl⟩
 
+/-- Transport membership on `a` to a relation on `d` through the graph `f`. -/
 noncomputable def codedRelation (d a f : ZFSet.{u}) : ZFSet.{u} :=
   ZFSet.sep (fun z => ∃ u ∈ d, ∃ v ∈ d, z = ZFSet.pair u v ∧
     ∃ x ∈ a, ∃ y ∈ a, x ∈ y ∧ ZFSet.pair x u ∈ f ∧ ZFSet.pair y v ∈ f) (ZFSet.prod d d)
 
+/-- Bounded formula describing the membership relation transported through a coded graph. -/
 def codedFormula : Formula :=
   .existsMem 1 (.existsMem 2 (.conj (.orderedPair 2 1 0)
     (.existsMem 4 (.existsMem 5 (.conj (.member 1 0)

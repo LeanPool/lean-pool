@@ -11,8 +11,10 @@ Module paths, interfaces, and proofs are ported to the pool's toolchain and gate
 
 module
 
-public import LeanPool.TuringConeRigidity.TuringTwoConeInternalPersistence
-public import LeanPool.TuringConeRigidity.SetModels.SetModelPersistence
+public import LeanPool.TuringConeRigidity.Constructibility.PersistenceRealClosure
+public import LeanPool.TuringConeRigidity.SetModels.SetDegreeDecoding
+public import LeanPool.TuringConeRigidity.SetModels.SetModelGraphImage
+public import LeanPool.TuringConeRigidity.TuringTwoConeGraphPresentation
 
 /-!
 # Native set graphs of partial two-cone isomorphisms
@@ -38,6 +40,7 @@ open TwoConePresentation (RawGraph)
 universe u
 noncomputable section
 
+/-- The set-coded graph of the isomorphism between the ideal's two principal cones. -/
 def coneGraph {I : CountableIdeal} {a b : Degree}
     (ρ : Cone I a ≃o Cone I b) : ZFSet.{u} :=
   ZFSet.sep (fun z => ∃ x : Cone I a,

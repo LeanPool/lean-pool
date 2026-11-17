@@ -14,6 +14,9 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.SetModels.OrderedNameCode
+public import LeanPool.TuringConeRigidity.SetModels.InternalCheckRecursion
+public import LeanPool.TuringConeRigidity.SetModels.InternalContainer
+public import LeanPool.TuringConeRigidity.Syntax.SigmaSyntax
 
 /-!
 # Evaluation Name Code
@@ -29,6 +32,7 @@ namespace TuringRigidity.TransitiveNameModel
 open RecursiveNames BoundedSetTheory
 universe u
 
+/-- A sigma formula selecting a value through a coded name-evaluation relation. -/
 def evaluationOutputFormula : SigmaFormula := .existsSet
   (.andBounded (.conj (.member 0 4) (.pairMem 2 0 3))
     (NameCodeFormula.orderedName 5 0 2 1))

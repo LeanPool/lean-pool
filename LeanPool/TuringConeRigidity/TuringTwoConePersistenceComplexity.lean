@@ -36,6 +36,8 @@ open TwoConePresentation (RawGraph)
 
 noncomputable section
 
+/-- A coded ideal containing both base jumps and a coded action between its two principal
+cones. -/
 def Base (A R : Oracle) (k : ℕ) : Prop :=
   ArithmeticPersistence.IdealCode A ∧
     (∃ n, degreeJump (degree (columns A (Nat.unpair k).1)) = degree (columns A n)) ∧
@@ -86,6 +88,8 @@ theorem base_arith : Arith (fun O k => Base (O 0) (O 1) k) := by
     (fun _ _ => by simp only [Base, ArithmeticPersistence.IdealCode,
       UniformArithmetic.left, UniformArithmetic.right, Nat.unpair_pair, degreeJump_degree])
 
+/-- Combine the two-cone presentation's base conditions with its arithmetic persistence
+matrix. -/
 def PresentationMatrix (O : Oracles) (k : ℕ) : Prop :=
   Base (O 0) (O 1) k ∧ TwoConeArithmeticCriterion.Matrix O k
 

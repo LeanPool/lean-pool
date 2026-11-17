@@ -34,6 +34,7 @@ noncomputable section
 
 variable {M : ZFSet.{u}}
 
+/-- Shift all non-input variable slots past a block of `k` reserved slots. -/
 def skipInput (k : ℕ) : ℕ → ℕ
   | 0 => 0
   | i+1 => i+k+1
@@ -41,11 +42,13 @@ def skipInput (k : ℕ) : ℕ → ℕ
 @[simp] theorem skipInput_zero (k : ℕ) : skipInput k 0 = 0 := rfl
 @[simp] theorem skipInput_succ (k i : ℕ) : skipInput k (i+1) = i+k+1 := rfl
 
+/-- The predicate `P` is definable in the model through its set-coded oracle parameters. -/
 def ArithmeticDefinition (M : ZFSet.{u}) (P : Predicate) : Prop :=
   ∃ Q : (ℕ → ZFSet.{u}) → Prop, Definable M Q ∧
     ∀ e n, e 0 = natSet n →
       (Q e ↔ P (fun i => oracleOf (e (i+1))) n)
 
+/-- The two natural set inputs are paired and their numerical pairing value is `z`. -/
 def PairCode (x y z : ZFSet.{u}) : Prop :=
   ZFSet.pair x y ∈ pairNumbers ∧ ZFSet.pair (ZFSet.pair x y) z ∈ pairingSet
 

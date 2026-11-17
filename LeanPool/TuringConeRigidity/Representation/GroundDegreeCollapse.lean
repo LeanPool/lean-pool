@@ -15,7 +15,8 @@ module
 
 public import LeanPool.TuringConeRigidity.Representation.GroundDegreePresentation
 public import LeanPool.TuringConeRigidity.Representation.GlobalJumpRestriction
-public import LeanPool.TuringConeRigidity.Computability.ArithmeticPersistenceDegreeModel
+public import LeanPool.TuringConeRigidity.Representation.SourceTModelBridge
+public import LeanPool.TuringConeRigidity.SetModels.InternalCollapseExistence
 
 /-!
 # Ground Degree Collapse

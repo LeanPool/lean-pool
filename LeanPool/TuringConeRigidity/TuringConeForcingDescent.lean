@@ -12,8 +12,9 @@ Module paths, interfaces, and proofs are ported to the pool's toolchain and gate
 module
 
 public import LeanPool.TuringConeRigidity.TuringConeModelGraphs
-public import LeanPool.TuringConeRigidity.Representation.RealCollapseReconstruction
 public import LeanPool.TuringConeRigidity.SetModels.WeakNameAvoidance
+public import LeanPool.TuringConeRigidity.SetModels.CollapseInternalCountingWithoutChoice
+public import LeanPool.TuringConeRigidity.Syntax.WeakExtensionContext
 
 /-!
 # Collapse and descent of persistent cone graphs

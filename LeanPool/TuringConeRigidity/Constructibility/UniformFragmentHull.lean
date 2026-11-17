@@ -14,6 +14,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.SetModels.GeneratedHull
+public import LeanPool.TuringConeRigidity.SetModels.SkolemOperations
+public import LeanPool.TuringConeRigidity.Syntax.TermEvaluationGraph
 
 /-!
 # Uniform Fragment Hull

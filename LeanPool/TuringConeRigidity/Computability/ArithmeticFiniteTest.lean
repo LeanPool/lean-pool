@@ -27,6 +27,8 @@ namespace OAI
 namespace TuringRigidity.ArithmeticTree
 open UniformArithmetic
 
+/-- Arithmetic terms with primitive-recursive operations and queries to a numerical witness
+function. -/
 inductive Term where
   | input : Term
   | const : ℕ → Term
@@ -36,6 +38,7 @@ inductive Term where
 
 namespace Term
 
+/-- Evaluate a term with the given input and witness function. -/
 def eval (O : ℕ → ℕ) (v : ℕ) : Term → ℕ
   | .input => v
   | .const n => n
@@ -43,9 +46,12 @@ def eval (O : ℕ → ℕ) (v : ℕ) : Term → ℕ
   | .pair t s => Nat.pair (t.eval O v) (s.eval O v)
   | .witness t => O (t.eval O v)
 
+/-- Apply the primitive-recursive left projection of natural-number pairing to a term. -/
 def left (t : Term) : Term := .prim UniformArithmetic.left left_primrec t
+/-- Apply the primitive-recursive right projection of natural-number pairing to a term. -/
 def right (t : Term) : Term := .prim UniformArithmetic.right right_primrec t
 
+/-- Substitute the input term and transform witness queries throughout a term. -/
 def subst (t : Term) (inputTerm : Term) (query : Term → Term) : Term :=
   match t with
   | .input => inputTerm
@@ -66,6 +72,8 @@ theorem eval_subst (t inputTerm : Term) (query : Term → Term)
   | witness t ih => simp only [subst,eval,hq,ih]
 end Term
 
+/-- Finite arithmetic tests using primitive-recursive predicates, oracle queries, negation,
+and conjunction. -/
 inductive Test where
   | pure (P : ℕ → Prop) (hP : PrimrecPred P) : Term → Test
   | query : ℕ → Term → Test
@@ -74,12 +82,14 @@ inductive Test where
 
 namespace Test
 
+/-- Interpret an arithmetic test using its oracles, witness function, and input. -/
 def eval (O : Oracles) (f : ℕ → ℕ) (v : ℕ) : Test → Prop
   | .pure P _ t => P (t.eval f v)
   | .query i t => O i (t.eval f v) = true
   | .neg t => ¬ t.eval O f v
   | .and t s => t.eval O f v ∧ s.eval O f v
 
+/-- Substitute input and witness-query terms throughout an arithmetic test. -/
 def subst (inputTerm : Term) (query : Term → Term) : Test → Test
   | .pure P hP t => .pure P hP (t.subst inputTerm query)
   | .query i t => .query i (t.subst inputTerm query)
@@ -96,6 +106,7 @@ theorem eval_subst (t : Test) (inputTerm : Term) (query : Term → Term)
   | neg t ih => exact not_congr ih
   | and t s ih ik => exact and_congr ih ik
 
+/-- Disjunction of two tests, expressed using negation and conjunction. -/
 def or (t s : Test) : Test := .neg (.and (.neg t) (.neg s))
 
 @[simp] theorem eval_or (t s : Test) (O : Oracles) (f : ℕ → ℕ) (v : ℕ) :
@@ -104,6 +115,8 @@ def or (t s : Test) : Test := .neg (.and (.neg t) (.neg s))
   change (¬ (¬ t.eval O f v ∧ ¬ s.eval O f v)) ↔ _
   tauto
 
+/-- The test presents a predicate by existence of a numerical witness satisfying every
+numbered test. -/
 def Presents (t : Test) (P : Predicate) : Prop :=
   ∀ O v, P O v ↔ ∃ f : ℕ → ℕ, ∀ n, t.eval O f (Nat.pair v n)
 end Test

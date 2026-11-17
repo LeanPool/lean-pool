@@ -14,10 +14,6 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.Representation.SourceTheory
-public import LeanPool.TuringConeRigidity.SetModels.NameEncoding
-public import LeanPool.TuringConeRigidity.Syntax.FiniteTerm
-public import LeanPool.TuringConeRigidity.OrdinalCodes.RankOrdinal
-public import LeanPool.TuringConeRigidity.SetModels.NameExtension
 
 /-!
 # No New Ordinals

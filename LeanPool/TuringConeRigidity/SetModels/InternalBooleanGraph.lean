@@ -13,7 +13,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.SetModels.InternalBooleanGeneric
+public import LeanPool.TuringConeRigidity.SetModels.InternalBooleanProjection
 
 /-!
 # Internal Boolean Graph
@@ -28,6 +28,8 @@ namespace TuringRigidity.InternalBooleanGraph
 open TransitiveNameModel BoundedSetTheory InternalRegularOperations InternalRegularAlgebra
 open InternalRegularOrder InternalBooleanSyntax InternalBooleanProjection
 
+/-- Bounded formula describing the intersection within `c` of all members of `A` containing
+`U`. -/
 def projectFormula (c A U V : ℕ) : Formula :=
   .conj (.subset V c) (.allMem c (.iff (.member 0 (V+1))
     (.allMem (A+1) (.imp (.subset (U+2) 0) (.member 1 0)))))
@@ -50,6 +52,7 @@ theorem projectFormula_spec (c A U V : ℕ) (e : ℕ → ZFSet.{0}) :
     rw [h]
     exact ⟨fun _ hp => ((hs _).mp hp).1,fun p hp => (hs p).trans (and_iff_right hp)⟩
 
+/-- The set-coded graph of the Boolean projection from codes in `B` to codes in `A`. -/
 noncomputable def graph (c B A : ZFSet.{0}) : ZFSet.{0} :=
   (ZFSet.prod B A).sep (fun z => ∃ U ∈ B, ∃ V ∈ A, z = ZFSet.pair U V ∧ V = project c A U)
 
@@ -79,6 +82,7 @@ theorem graph_mem (M c B A : ZFSet.{0}) (hM : Transitive M) (hT : SourceT M)
   simpa only [graph,Formula.Eval,Formula.eval_orderedPair,projectFormula_spec,
     cons_zero,cons_succ,e] using hs
 
+/-- The set-coded subset-inclusion relation on `A`. -/
 noncomputable def inclusionOrder (A : ZFSet.{0}) : ZFSet.{0} :=
   (ZFSet.prod A A).sep (fun z => ∃ U ∈ A, ∃ V ∈ A, z = ZFSet.pair U V ∧ U ⊆ V)
 

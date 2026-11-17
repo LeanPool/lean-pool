@@ -14,6 +14,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.Effective.CodingSplitting
+public import LeanPool.TuringConeRigidity.Effective.CodingOnePoint
+public import Mathlib.Algebra.Order.Ring.Star
 
 /-!
 # Coding Locations
@@ -27,12 +29,17 @@ namespace OAI
 namespace TuringRigidity.CodingLocations
 open CodingForcing CodingAgreement CodingOnePoint CodingSplitting
 
+/-- Below each permitted extension, every input has a further extension on which the left
+computation halts. -/
 def DenseLeft (A : ℕ → Oracle) (Y : Oracle) (e : OracleCode) (p : Condition) : Prop :=
   ∀ q, Extends A p q → ∀ n, ∃ r v, Extends A q r ∧ v ∈ CommonIdeal.run Y e r.left n
 
+/-- Below each permitted extension, every input has a further extension on which the right
+computation halts. -/
 def DenseRight (A : ℕ → Oracle) (Y : Oracle) (e : OracleCode) (p : Condition) : Prop :=
   ∀ q, Extends A p q → ∀ n, ∃ r v, Extends A q r ∧ v ∈ CommonIdeal.run Y e r.right n
 
+/-- Changing one bit in an extended word changes a computed output. -/
 def SplittingLocation (Y : Oracle) (e : OracleCode) (base : List Bool) (m : ℕ) : Prop :=
   ∃ s b n v w, base <+: s ∧ base.length ≤ m ∧ m < s.length ∧ v ≠ w ∧
     v ∈ CommonIdeal.run Y e s n ∧ w ∈ CommonIdeal.run Y e (s.set m b) n

@@ -13,7 +13,9 @@ Module paths, interfaces, and proofs are ported to the pool's toolchain and gate
 module
 
 public import LeanPool.TuringConeRigidity.TuringConePullbackProgram
-public import LeanPool.TuringConeRigidity.SetModels.ModelDegreeOrder
+public import LeanPool.TuringConeRigidity.Constructibility.OneRealConstructionDefinition
+public import LeanPool.TuringConeRigidity.Representation.AmbientDegreeActual
+public import LeanPool.TuringConeRigidity.TuringConeConstructibleExtension
 
 /-!
 # Constructibility of the inverse-join graph
@@ -37,10 +39,13 @@ open RelativeConstructible OrdinalCoding
 universe u
 noncomputable section
 
+/-- The element `Z` is an upper bound for `A` and `X` under `L` and lies below every common
+upper bound in `D`. -/
 def JoinCode (D L A X Z : ZFSet.{u}) : Prop :=
   ZFSet.pair A Z ∈ L ∧ ZFSet.pair X Z ∈ L ∧
     ∀ W ∈ D, (ZFSet.pair A W ∈ L ∧ ZFSet.pair X W ∈ L) → ZFSet.pair Z W ∈ L
 
+/-- Bounded formula expressing the coded least-upper-bound property. -/
 def joinFormula (d l a x z : ℕ) : Formula :=
   .conj (.pairMem a z l) (.conj (.pairMem x z l)
     (.allMem d (.imp (.conj (.pairMem (a+1) 0 (l+1)) (.pairMem (x+1) 0 (l+1)))
@@ -71,10 +76,12 @@ theorem joinCode_iff (I : CountableIdeal) (L : ZFSet.{u})
     exact (hL _ hs w hw).mpr
       (sup_le ((hL a ha w hw).mp hAW.1) ((hL x hx w hw).mp hAW.2))
 
+/-- The relation pairs `x` with a preimage whose image under `F` is the join of `A` and `x`. -/
 def Relation (D L A F p : ZFSet.{u}) : Prop :=
   ∃ x ∈ D, ∃ y ∈ D, p = ZFSet.pair x y ∧
     ∃ z ∈ D, ZFSet.pair y z ∈ F ∧ JoinCode D L A x z
 
+/-- Bounded formula describing the cone-isomorphism pullback through the join with the base. -/
 def relationFormula (d l a f p : ℕ) : Formula :=
   .existsMem d (.existsMem (d+1) (.conj (.orderedPair (p+2) 1 0)
     (.existsMem (d+2) (.conj (.pairMem 1 0 (f+3))

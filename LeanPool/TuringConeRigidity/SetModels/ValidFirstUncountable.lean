@@ -16,6 +16,7 @@ module
 public import LeanPool.TuringConeRigidity.SetModels.InternalUncountableSentence
 public import LeanPool.TuringConeRigidity.SetModels.InternalGraphEquiv
 public import LeanPool.TuringConeRigidity.SetModels.ElementarySchemas
+public import LeanPool.TuringConeRigidity.SetModels.InternalCountableOrdinals
 
 /-!
 # Valid First Uncountable

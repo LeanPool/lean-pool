@@ -14,6 +14,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.OrdinalCodes.OmegaStageSyntax
+public import LeanPool.TuringConeRigidity.OrdinalCodes.OmegaPowerStage
+public import LeanPool.TuringConeRigidity.OrdinalCodes.OrdinalProductClosure
 
 /-!
 # Omega Graph Syntax
@@ -28,6 +30,7 @@ namespace TuringRigidity.OrdinalArithmetic
 open TransitiveNameModel BoundedSetTheory RelationCollapse ElementaryModel RelativeConstructible
 universe u
 
+/-- A full formula describing a graph of the omega-power recursion on ordinals. -/
 noncomputable def omegaGraphSentence (s w d r f : ℕ) : SentenceForm :=
   .conj (fromBounded (ordinalFormula d))
     (.conj (fromBounded (.functionGraph f d r))

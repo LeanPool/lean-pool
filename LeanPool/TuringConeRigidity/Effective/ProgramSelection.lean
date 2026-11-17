@@ -29,6 +29,7 @@ namespace OAI
 open Set Filter Topology
 namespace TuringRigidity
 
+/-- Choose the least successful natural-number witness for each parameter value. -/
 noncomputable def leastSuccess {X : Type*} (R : X → ℕ → Prop)
     (hex : ∀ x, ∃ n, R x n) (x : X) : ℕ := by
   classical
@@ -61,6 +62,8 @@ theorem leastSuccess_measurable {X : Type*} [MeasurableSpace X] (R : X → ℕ �
   rw [heq]
   exact (hR n).inter (MeasurableSet.iInter (fun k : Fin n => (hR k.val).compl))
 
+/-- Enumerate oracle programs by decoding natural numbers, using the zero program for invalid
+codes. -/
 def codeEnumeration (n : ℕ) : OracleCode :=
   (Encodable.decode (α := OracleCode) n).getD .zero
 

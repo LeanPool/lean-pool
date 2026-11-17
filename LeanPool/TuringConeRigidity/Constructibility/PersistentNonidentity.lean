@@ -29,6 +29,7 @@ open EncodedForcing OracleJump UniformArithmetic PersistentRestrictions
 open PersistentPresentation PersistentCountability NumericalAutomorphism
 noncomputable section
 
+/-- The coded action relates two columns with different Turing degrees. -/
 def Moved (A R : Oracle) : Prop :=
   ∃ n m, R (Nat.pair n m) = true ∧ degree (columns A n) ≠ degree (columns A m)
 

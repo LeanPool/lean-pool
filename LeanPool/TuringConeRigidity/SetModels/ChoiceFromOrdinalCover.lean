@@ -13,7 +13,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.SetModels.InternalOrdinalEnumeration
+public import LeanPool.TuringConeRigidity.Syntax.TermFunctionality
+public import Mathlib.SetTheory.ZFC.Ordinal
 
 /-!
 # Choice From Ordinal Cover
@@ -30,6 +31,8 @@ open TransitiveNameModel
 universe u
 namespace InternalWellOrder
 
+/-- The value `y` belongs to `x` and has a witness at an index with no earlier competing
+witness. -/
 def LeastValue (δ V F H x y : ZFSet.{u}) : Prop := y ∈ x ∧
   ∃ i ∈ δ, ∃ v ∈ V, ZFSet.pair i v ∈ F ∧ ZFSet.pair v y ∈ H ∧
     ∀ j ∈ i, ∀ w ∈ V, ∀ z ∈ x, ¬ (ZFSet.pair j w ∈ F ∧ ZFSet.pair w z ∈ H)
@@ -66,6 +69,7 @@ theorem LeastValue.unique {δ V F H x y z : ZFSet.{u}} (hδ : δ.IsOrdinal)
   · exact False.elim (hmin j hji w hw z hzx ⟨hjw,hwz⟩)
 
 open Formula
+/-- Bounded formula expressing the earliest-witness value selection property. -/
 def leastValueFormula (δ V F H x y : ℕ) : Formula := .conj (.member y x)
   (.existsMem δ (.existsMem (V+1) (.conj (.pairMem 1 0 (F+2))
     (.conj (.pairMem 0 (y+2) (H+2))
@@ -77,6 +81,7 @@ theorem eval_leastValueFormula (δ V F H x y : ℕ) (e : ℕ → ZFSet.{u}) :
       LeastValue (e δ) (e V) (e F) (e H) (e x) (e y) := by
   simp only [leastValueFormula,LeastValue,Formula.Eval,eval_pairMem,eval_allMem,cons_zero,cons_succ]
 
+/-- Bounded formula describing the graph of earliest-witness value selection. -/
 def selectionFormula : Formula := .existsMem 1 (.existsMem 3
   (.conj (.orderedPair 2 1 0) (leastValueFormula 5 6 7 8 1 0)))
 

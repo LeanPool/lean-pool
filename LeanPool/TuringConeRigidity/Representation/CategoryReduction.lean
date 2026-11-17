@@ -13,7 +13,10 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
+public import Mathlib.NumberTheory.Real.Irrational
+
 public import LeanPool.TuringConeRigidity.Representation.CategoryMachine
+public import Mathlib.Order.CompletePartialOrder
 
 /-!
 # Category Reduction
@@ -27,6 +30,8 @@ namespace OAI
 namespace TuringRigidity.CategorySearch
 open Encodable Set
 
+/-- Reassociate the coded input, sample coordinates, and execution bound into the finite-trial
+input code. -/
 def trialInput (z : ℕ) : ℕ :=
   let n := (Nat.unpair z).1
   let s := (Nat.unpair z).2
@@ -43,6 +48,7 @@ theorem trialInput_primrec : Primrec trialInput := by
   have ht := Primrec.snd.comp (Primrec.unpair.comp (Primrec.snd.comp (Primrec.unpair.comp hs)))
   exact Primrec₂.natPair.comp (Primrec₂.natPair.comp hi (Primrec₂.natPair.comp hj hn)) ht
 
+/-- Run a finite-table category-search trial using the reassociated sample and execution code. -/
 noncomputable def searchTrial (A : Oracle) (d : Nat.Partrec.Code) (n s : ℕ) : Option ℕ :=
   UniformOracle.trial (Avalue A) d
     (Nat.unpair (trialInput (Nat.pair n s))).1

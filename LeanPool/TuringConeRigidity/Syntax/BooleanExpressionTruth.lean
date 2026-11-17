@@ -13,8 +13,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.Syntax.BooleanExpressionCoverage
 public import LeanPool.TuringConeRigidity.Syntax.BoundedTruthRecursion
+public import LeanPool.TuringConeRigidity.SetModels.ModelNaturalNumbers
 
 /-!
 # Boolean Expression Truth
@@ -31,6 +31,8 @@ open TransitiveNameModel BoundedSetTheory
 theorem rankWF : WellFounded (fun a b : ZFSet.{0} => ZFSet.rank a < ZFSet.rank b) :=
   InvImage.wf ZFSet.rank Ordinal.lt_wf
 
+/-- The rank-recursive truth body for seeds, negated expressions, and existential choices of
+supremum children. -/
 def body (B R t : ZFSet.{0}) (rec : ∀ s : ZFSet.{0}, ZFSet.rank s < ZFSet.rank t → Prop) : Prop :=
   (∃ U ∈ B, t = FiniteTerm.tag 0 U ∧ U ∈ R) ∨
   (∃ s, ∃ h : t = FiniteTerm.tag 1 s,
@@ -38,6 +40,7 @@ def body (B R t : ZFSet.{0}) (rec : ∀ s : ZFSet.{0}, ZFSet.rank s < ZFSet.rank
   (∃ T, ∃ h : t = FiniteTerm.tag 2 T, ∃ s, ∃ hs : s ∈ T,
     rec s (by rw [h]; exact (ZFSet.rank_lt_of_mem hs).trans (FiniteTerm.pair_rank_right _ _)))
 
+/-- The truth value of a Boolean expression defined by well-founded recursion on set rank. -/
 noncomputable def value (B R : ZFSet.{0}) : ZFSet.{0} → Prop := rankWF.fix (body B R)
 
 theorem value_unfold (B R t : ZFSet.{0}) : value B R t ↔
@@ -53,16 +56,19 @@ theorem payload_mem (D : ZFSet.{0}) (hD : Transitive D) (n : ℕ) (s : ZFSet.{0}
   have hp := hD _ ht _ (ZFSet.mem_pair.mpr (Or.inr rfl))
   exact hD _ hp _ (ZFSet.mem_pair.mpr (Or.inr rfl))
 
+/-- The one-step truth relation using the proposed truth set for child expressions. -/
 def step (K B R Y t : ZFSet.{0}) : Prop :=
   (∃ U ∈ B, t = FiniteTerm.tag 0 U ∧ U ∈ R) ∨
   (∃ s ∈ K, t = FiniteTerm.tag 1 s ∧ s ∉ Y) ∨
   (∃ T ∈ K, t = FiniteTerm.tag 2 T ∧ ∃ s ∈ T, s ∈ Y)
 
+/-- Bounded formula expressing the one-step Boolean-expression truth relation. -/
 def formula : Formula :=
   .disj (.existsMem 3 (.conj (.orderedPair 1 6 0) (.member 0 5)))
     (.disj (.existsMem 2 (.conj (.orderedPair 1 7 0) (.neg (.member 0 2))))
       (.existsMem 2 (.conj (.orderedPair 1 8 0) (.existsMem 0 (.member 0 3)))))
 
+/-- The parameter environment for the Boolean-expression truth relation. -/
 def parameters (K B R : ZFSet.{0}) : ℕ → ZFSet.{0} :=
   cons K (cons B (cons R (cons (natSet 0) (cons (natSet 1) (fun _ => natSet 2)))))
 
@@ -93,6 +99,7 @@ theorem formula_local (K B R : ZFSet.{0}) : BoundedTruthRecursion.Local formula 
       rw [he]; exact (ZFSet.rank_lt_of_mem hs).trans (FiniteTerm.pair_rank_right _ _)
     exact ha s (hD T hTD s hs) hlt
 
+/-- The members of `K` whose rank-recursive Boolean-expression truth value holds. -/
 noncomputable def valueSet (K B R : ZFSet.{0}) : ZFSet.{0} := K.sep (value B R)
 
 theorem valueSet_fixed (K B R : ZFSet.{0}) (hK : Transitive K) :

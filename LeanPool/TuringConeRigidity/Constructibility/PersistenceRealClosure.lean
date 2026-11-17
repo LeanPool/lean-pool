@@ -14,6 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.Computability.JumpIdealPresentation
+public import LeanPool.TuringConeRigidity.Constructibility.PersistenceCriterion
 
 /-!
 # Persistence Real Closure
@@ -30,6 +31,8 @@ open PersistentRestrictions PersistentPresentation PersistentCountability Numeri
 open NumericalAutomorphism NumericalExtension
 noncomputable section
 
+/-- Closure of a real family under Turing reduction, binary join, and the join of finite
+jumps. -/
 structure Closed (M : Set Oracle) : Prop where
   lower : ∀ {A B}, B ∈ M → Reduces A B → A ∈ M
   join : ∀ {A B}, A ∈ M → B ∈ M → TuringRigidity.join A B ∈ M

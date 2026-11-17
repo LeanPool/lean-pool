@@ -26,17 +26,19 @@ namespace OAI
 
 namespace TuringRigidity.SetModelSatisfaction
 open BoundedSetTheory TransitiveNameModel SetModelReals SetModelFunctions SetModelSyntax
-open SetDegreeDecoding PersistentRestrictions SetModelCountability
+open SetDegreeDecoding PersistentRestrictions
 universe u
 noncomputable section
 variable {M : ZFSet.{u}}
 
+/-- Bounded formula expressing a nonempty lower directed subset of a coded degree order. -/
 def idealFormula (i d l : ℕ) : Formula :=
   .conj (.subset i d) (.conj (.existsMem i (.equal 0 0))
     (.conj (.allMem i (.allMem (d+1) (.imp (.pairMem 0 1 (l+2)) (.member 0 (i+2)))))
       (.allMem i (.allMem (i+1) (.existsMem (i+2)
         (.conj (.pairMem 2 0 (l+3)) (.pairMem 1 0 (l+3))))))))
 
+/-- A nonempty lower directed subset of the coded order on `d`. -/
 def IsIdeal (a d l : ZFSet.{u}) : Prop :=
   a ⊆ d ∧ (∃ x, x ∈ a) ∧
     (∀ x ∈ a, ∀ y ∈ d, ZFSet.pair y x ∈ l → y ∈ a) ∧

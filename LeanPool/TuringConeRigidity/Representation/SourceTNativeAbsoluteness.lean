@@ -13,7 +13,6 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.Representation.SourceTPresentationComparison
 public import LeanPool.TuringConeRigidity.Representation.SourceTCountability
 public import LeanPool.TuringConeRigidity.SetModels.SetModelPersistenceDecoding
 

@@ -15,6 +15,7 @@ module
 
 public import LeanPool.TuringConeRigidity.SetModels.InternalCountableProduct
 public import LeanPool.TuringConeRigidity.CohenForcing.CohenGroundPoset
+public import LeanPool.TuringConeRigidity.SetModels.InternalCountableClosure
 
 /-!
 # Counted Cohen Conditions

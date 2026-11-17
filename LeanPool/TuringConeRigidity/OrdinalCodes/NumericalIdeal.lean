@@ -13,7 +13,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.OrdinalCodes.NumericalAutomorphism
+public import LeanPool.TuringConeRigidity.Constructibility.PersistentPresentation
 
 /-!
 # Numerical Ideal
@@ -29,12 +29,15 @@ open EncodedForcing OracleJump IndexPresentation IdealInterpretation IdealLocali
 open PersistentRestrictions PersistentLocality PersistentPresentation
 noncomputable section
 
+/-- The oracle columns enumerate a lower, join-closed family also closed under the Turing
+jump. -/
 structure JumpCode (H : Oracle) : Prop where
   lower : ∀ n e, Dom (columns H n) e →
     ∃ m, value (columns H n) e = degree (columns H m)
   join : ∀ n m, ∃ k, degree (columns H n) ⊔ degree (columns H m) = degree (columns H k)
   jump : ∀ n, ∃ m, degreeJump (degree (columns H n)) = degree (columns H m)
 
+/-- Decode a jump-closed column presentation as a countable degree ideal. -/
 def decode (H : Oracle) (hc : JumpCode H) : CountableIdeal where
   carrier := Set.range (fun n => degree (columns H n))
   nonempty := ⟨degree (columns H 0),0,rfl⟩
@@ -74,6 +77,7 @@ theorem code_of_ideal {J : CountableIdeal} {H : Oracle} (hp : Presented J H)
     obtain ⟨m,hm⟩ := (hp _).mp (hj _ (entry hp n).property)
     exact ⟨m,hm.symm⟩
 
+/-- Every column degree represented by `A` is represented by some column of `H`. -/
 def Includes (A H : Oracle) : Prop := ∀ n, ∃ m, degree (columns A n) = degree (columns H m)
 
 theorem includes_iff {I J : CountableIdeal} {A H : Oracle}

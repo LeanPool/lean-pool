@@ -30,15 +30,22 @@ namespace TuringRigidity.RelationPresentation
 open IndexPresentation IndexTuples ArithmeticHierarchy AntichainDecoding
 open SetCoding RelationCoding BoundedDecoding
 
+/-- Three presentation indices for the bound and two join parameters of an antichain code. -/
 structure ACode where
+  /-- The presentation index of the antichain bound. -/
   bound : ℕ
+  /-- The presentation index of the first join parameter. -/
   left : ℕ
+  /-- The presentation index of the second join parameter. -/
   right : ℕ
 
+/-- All three antichain parameter indices are valid in the oracle presentation. -/
 def ACode.Good (Y : Oracle) (p : ACode) : Prop :=
   Dom Y p.bound ∧ Dom Y p.left ∧ Dom Y p.right
+/-- Decode the three presentation indices into an external degree antichain code. -/
 noncomputable def ACode.decode (Y : Oracle) (p : ACode) : AntichainCode :=
   ⟨value Y p.bound, value Y p.left, value Y p.right⟩
+/-- The represented index satisfies the antichain predicate in the oracle presentation. -/
 def ACode.Holds (Y : Oracle) (p : ACode) (x : ℕ) : Prop :=
   Antichain Y p.bound p.left p.right x
 
@@ -57,15 +64,23 @@ theorem ACode.exists_code (Y : Oracle) (p : AntichainCode) (hp : AntichainBelow 
   obtain ⟨r, hr, er⟩ := value_surjective Y p.right hp.2.2
   exact ⟨⟨b,l,r⟩, ⟨hb,hl,hr⟩, by cases p; simp_all [ACode.decode]⟩
 
+/-- A presentation-index set code with a bound and two antichain parameter codes. -/
 structure SCode where
+  /-- The presentation index bounding represented values. -/
   bound : ℕ
+  /-- The presentation-index antichain code for tags. -/
   tags : ACode
+  /-- The presentation-index antichain code for joins of values with their tags. -/
   decorated : ACode
 
+/-- The value bound and every tag and decoration parameter are valid presentation indices. -/
 def SCode.Good (Y : Oracle) (p : SCode) : Prop :=
   Dom Y p.bound ∧ p.tags.Good Y ∧ p.decorated.Good Y
+/-- Decode the presentation-index set code into its external degree-set code. -/
 noncomputable def SCode.decode (Y : Oracle) (p : SCode) : SetCode :=
   ⟨value Y p.bound, p.tags.decode Y, p.decorated.decode Y⟩
+/-- The value index is below the bound, the tag satisfies its antichain predicate, and their
+join satisfies the decoration predicate. -/
 def SCode.Graph (Y : Oracle) (p : SCode) (x c : ℕ) : Prop :=
   LE Y x p.bound ∧ p.tags.Holds Y c ∧ p.decorated.Holds Y (joinIndex x c)
 
@@ -86,15 +101,22 @@ theorem SCode.exists_code (Y : Oracle) (p : SetCode) (hp : SetBelow p (degree Y)
   obtain ⟨d, hd, ed⟩ := ACode.exists_code Y p.decorated hp.2.2
   exact ⟨⟨b,t,d⟩, ⟨hb,ht,hd⟩, by cases p; simp_all [SCode.decode]⟩
 
+/-- A presentation-index relation code with coordinate set codes and a tuple antichain code. -/
 structure RCode (n : ℕ) where
+  /-- The presentation-index set code for each relation coordinate. -/
   coordinates : Fin n → SCode
+  /-- The presentation-index antichain code for joined coordinate tags. -/
   tuples : ACode
 
+/-- All coordinate and tuple-code parameters are valid presentation indices. -/
 def RCode.Good {n} (Y : Oracle) (p : RCode n) : Prop :=
   (∀ i, (p.coordinates i).Good Y) ∧ p.tuples.Good Y
+/-- Decode the presentation-index relation code into an external degree relation code. -/
 noncomputable def RCode.decode {n} (Y : Oracle) (p : RCode n) : RelationCode n :=
   ⟨fun i => (p.coordinates i).decode Y, p.tuples.decode Y⟩
 
+/-- The represented tuple has valid coordinate indices and tags whose join satisfies the tuple
+antichain code. -/
 def RCode.Holds {n} (Y : Oracle) (p : RCode n) (v : ℕ) : Prop :=
   (∀ i : Fin n, Dom Y (entry i.val v)) ∧ ∃ t : ℕ,
     (∀ i : Fin n, Dom Y (entry i.val t) ∧

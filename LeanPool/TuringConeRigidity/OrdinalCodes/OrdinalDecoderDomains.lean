@@ -47,6 +47,7 @@ theorem padded_entry_height_sound (M : ZFSet.{u}) (hM : Transitive M) (hT : Sour
       · exact hz
       · exact hc) v β rfl
 
+/-- Decode a selected padded ordinal entry using a largest-ordinal parameter. -/
 noncomputable def largestPaddedEntrySentence (n : ℕ) (k : Fin n) : SentenceForm :=
   bindLargestOrdinal ((paddedEntrySentence n k).rename (fun i => if i = 0 then 1 else 0))
 

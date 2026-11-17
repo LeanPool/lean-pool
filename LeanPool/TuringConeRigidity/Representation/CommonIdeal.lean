@@ -14,7 +14,6 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.Effective.FiniteTranscript
-public import LeanPool.TuringConeRigidity.Representation.BorelGeneric
 public import LeanPool.TuringConeRigidity.Computability.Joins
 
 /-!
@@ -29,13 +28,17 @@ namespace OAI
 namespace TuringRigidity.CommonIdeal
 open Set Encodable
 
+/-- Encode a Boolean as the natural number zero or one. -/
 def bit (b : Bool) : ℕ := if b then 1 else 0
 
+/-- The partial natural-valued oracle given by a finite binary word. -/
 def table (s : List Bool) : ℕ →. ℕ := BranchMachine.lookup (s.map bit)
 
+/-- Evaluate a program relative to the join of a total oracle and a finite word oracle. -/
 def run (A : Oracle) (p : OracleCode) (s : List Bool) : ℕ →. ℕ :=
   OracleCode.eval (partialJoin (oracleFunction A) (table s)) p
 
+/-- The oracle agrees with every assigned position of the finite word. -/
 def Extends (G : Oracle) (s : List Bool) : Prop :=
   ∀ i, i < s.length → G i = s.getD i false
 
@@ -86,12 +89,18 @@ theorem run_total {A G : Oracle} {p : OracleCode} {s : List Bool}
     have ht : b ∈ table s (k/2) := by simpa [partialJoin,hk] using hb
     simpa [oracleFunction,join,hk] using table_total h _ _ ht
 
+/-- The first `m` bits of an oracle as a finite word. -/
 def initialWord (G : Oracle) (m : ℕ) : List Bool := (List.range m).map G
 
 @[simp] theorem prefix_length (G : Oracle) (m : ℕ) : (initialWord G m).length = m := by
   simp [initialWord]
 
-@[simp] theorem prefix_getD (G : Oracle) (m i : ℕ) (hi : i < m) :
+/-- A bounded entry of the initial oracle word is the corresponding oracle bit. -/
+@[simp] theorem prefix_getElem (G : Oracle) (m i : ℕ) (hi : i < m) :
+    (initialWord G m)[i]'(by simpa using hi) = G i := by
+  simp [initialWord]
+
+theorem prefix_getD (G : Oracle) (m i : ℕ) (hi : i < m) :
     (initialWord G m).getD i false = G i := by
   simp [initialWord,List.getD,List.getElem?_range hi]
 
@@ -143,13 +152,17 @@ theorem run_finite_extension {A G : Oracle} {p : OracleCode} {s : List Bool}
   exact ⟨initialWord G (max m s.length),prefix_of_extends h (le_max_right _ _),
     hm _ (le_max_left _ _)⟩
 
+/-- The two finite-word computations produce different values on a common input. -/
 def Disagree (A : Oracle) (p q : OracleCode) (s t : List Bool) : Prop :=
   ∃ n a b, a ≠ b ∧ a ∈ run A p s n ∧ b ∈ run A q t n
 
+/-- All successful computations on all extensions of the two words agree on common inputs. -/
 def Agree (A : Oracle) (p q : OracleCode) (s t : List Bool) : Prop :=
   ∀ u v n a b, s <+: u → t <+: v →
     a ∈ run A p u n → b ∈ run A q v n → a = b
 
+/-- The words either already witness disagreement or enforce agreement on every further
+extension. -/
 def Requirement (A : Oracle) (p q : OracleCode) (s t : List Bool) : Prop :=
   Disagree A p q s t ∨ Agree A p q s t
 

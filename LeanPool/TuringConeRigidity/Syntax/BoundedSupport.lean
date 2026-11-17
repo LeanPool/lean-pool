@@ -13,8 +13,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.CohenForcing.BoundedForcingCode
 public import LeanPool.TuringConeRigidity.SetModels.InternalContainer
+public import LeanPool.TuringConeRigidity.CohenForcing.BoundedForcing
 
 /-!
 # Bounded Support
@@ -29,6 +29,7 @@ namespace TuringRigidity.BoundedForcing
 open Set RecursiveNames TransitiveNameModel BoundedSetTheory
 universe u
 
+/-- An upper bound on the free-variable slots needed by a bounded formula. -/
 def bound : BoundedSetTheory.Formula → ℕ
   | .equal i j => max (i+1) (j+1)
   | .member i j => max (i+1) (j+1)
@@ -40,8 +41,12 @@ theorem forces_congr {P : Type u} [Preorder P] (φ : BoundedSetTheory.Formula)
     (e e' : ℕ → Name P) (h : ∀ i, i < bound φ → e i = e' i) (p : P) :
     Forces e φ p ↔ Forces e' φ p := by
   induction φ generalizing e e' p with
-  | equal i j => simp only [Forces,h i (by simp [bound]),h j (by simp [bound])]
-  | member i j => simp only [Forces,h i (by simp [bound]),h j (by simp [bound])]
+  | equal i j =>
+    simp only [Forces,h i (by simp only [bound]; omega),
+      h j (by simp only [bound]; omega)]
+  | member i j =>
+    simp only [Forces,h i (by simp only [bound]; omega),
+      h j (by simp only [bound]; omega)]
   | conj φ ψ ihφ ihψ =>
     exact and_congr (ihφ e e' (fun i hi => h i (by simp only [bound]; omega)) p)
       (ihψ e e' (fun i hi => h i (by simp only [bound]; omega)) p)
@@ -67,8 +72,12 @@ theorem forces_congr {P : Type u} [Preorder P] (φ : BoundedSetTheory.Formula)
 theorem eval_congr (φ : BoundedSetTheory.Formula) (e e' : ℕ → ZFSet.{u})
     (h : ∀ i, i < bound φ → e i = e' i) : φ.Eval e ↔ φ.Eval e' := by
   induction φ generalizing e e' with
-  | equal i j => simp only [Formula.Eval,h i (by simp [bound]),h j (by simp [bound])]
-  | member i j => simp only [Formula.Eval,h i (by simp [bound]),h j (by simp [bound])]
+  | equal i j =>
+    simp only [Formula.Eval,h i (by simp only [bound]; omega),
+      h j (by simp only [bound]; omega)]
+  | member i j =>
+    simp only [Formula.Eval,h i (by simp only [bound]; omega),
+      h j (by simp only [bound]; omega)]
   | conj φ ψ ihφ ihψ =>
     exact and_congr (ihφ e e' (fun i hi => h i (by simp only [bound]; omega)))
       (ihψ e e' (fun i hi => h i (by simp only [bound]; omega)))
@@ -86,6 +95,7 @@ theorem eval_congr (φ : BoundedSetTheory.Formula) (e e' : ℕ → ZFSet.{u})
     | zero => rfl
     | succ n => exact h n (by simp only [bound]; omega)
 
+/-- Keep the first `n` environment entries, replacing later entries by the entry at zero. -/
 def truncate {α : Sort*} (n : ℕ) (e : ℕ → α) (i : ℕ) : α := if i < n then e i else e 0
 
 theorem truncate_forces {P : Type u} [Preorder P] (φ : BoundedSetTheory.Formula)

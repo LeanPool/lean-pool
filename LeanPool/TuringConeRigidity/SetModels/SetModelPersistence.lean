@@ -15,7 +15,7 @@ module
 
 public import LeanPool.TuringConeRigidity.SetModels.SetModelGraphImage
 public import LeanPool.TuringConeRigidity.SetModels.SetDegreeDecoding
-public import LeanPool.TuringConeRigidity.SetModels.SetModelOmegaJump
+public import LeanPool.TuringConeRigidity.Constructibility.PersistenceRealClosure
 
 /-!
 # Set Model Persistence

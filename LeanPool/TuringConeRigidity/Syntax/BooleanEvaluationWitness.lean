@@ -13,7 +13,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.Syntax.BooleanTruthReading
+public import LeanPool.TuringConeRigidity.Syntax.BooleanExpressionSyntax
+public import LeanPool.TuringConeRigidity.Syntax.BooleanExpressionTruth
 
 /-!
 # Boolean Evaluation Witness
@@ -27,6 +28,7 @@ namespace OAI
 namespace TuringRigidity.BooleanExpressionTruth
 open TransitiveNameModel BoundedSetTheory BooleanExpressionCertificate
 
+/-- The truth subset of `K` obeys the recursive Boolean-expression truth equation. -/
 def GoodTruth (K B R Y : ZFSet.{0}) : Prop :=
   Y ⊆ K ∧ ∀ t ∈ K, t ∈ Y ↔ step K B R Y t
 
@@ -43,10 +45,12 @@ theorem valueSet_good (K B R : ZFSet.{0}) (hK : Transitive K) : GoodTruth K B R 
   ⟨fun _ h => (ZFSet.mem_sep.mp h).1,
     fun t ht => (valueSet_fixed K B R hK t ht).trans (formula_spec K B R _ t)⟩
 
+/-- A certified expression graph contains a true term whose Boolean code is `U`. -/
 def Evaluated (c B Q S R K Y U : ZFSet.{0}) : Prop :=
   Transitive K ∧ GoodTruth K B R Y ∧ ∃ g ∈ K, Certificate c B Q S K g ∧
     ∃ t ∈ K, ZFSet.pair t U ∈ g ∧ t ∈ Y
 
+/-- Variable placement for the Boolean-expression truth-step formula. -/
 def truthSlots (t Y K B R z0 z1 z2 : ℕ) : ℕ → ℕ
   | 0 => t
   | 1 => Y
@@ -57,6 +61,7 @@ def truthSlots (t Y K B R z0 z1 z2 : ℕ) : ℕ → ℕ
   | 6 => z1
   | _ => z2
 
+/-- Place the Boolean-expression truth formula in the supplied parameter slots. -/
 def truthAt (t Y K B R z0 z1 z2 : ℕ) : Formula := formula.rename (truthSlots t Y K B R z0 z1 z2)
 
 theorem truthAt_spec (t Y K B R z0 z1 z2 : ℕ) (e : ℕ → ZFSet.{0})
@@ -76,6 +81,7 @@ theorem truthAt_spec (t Y K B R z0 z1 z2 : ℕ) (e : ℕ → ZFSet.{0})
     · exact h2
   rw [truthAt,Formula.eval_rename_comp,eq,formula_spec]
 
+/-- Bounded formula asserting the recursive truth equation for the subset `Y` of `K`. -/
 def goodTruthFormula (K B R Y z0 z1 z2 : ℕ) : Formula :=
   .conj (.subset Y K) (.allMem K (.iff (.member 0 (Y+1))
     (truthAt 0 (Y+1) (K+1) (B+1) (R+1) (z0+1) (z1+1) (z2+1))))
@@ -90,6 +96,8 @@ theorem goodTruthFormula_spec (K B R Y z0 z1 z2 : ℕ) (e : ℕ → ZFSet.{0})
   apply imp_congr_right; intro _
   exact iff_congr Iff.rfl (truthAt_spec _ _ _ _ _ _ _ _ _ h0 h1 h2)
 
+/-- Bounded formula expressing existence of a true certified expression with Boolean value
+`U`. -/
 def evaluatedFormula (c B Q S R K Y U z0 z1 z2 : ℕ) : Formula :=
   .conj (.transitive K) (.conj (goodTruthFormula K B R Y z0 z1 z2)
     (.existsMem K (.conj (certificateFormula (c+1) (B+1) (Q+1) (S+1) (K+1) 0 (z0+1) (z1+1) (z2+1))
@@ -107,10 +115,13 @@ theorem evaluatedFormula_spec (c B Q S R K Y U z0 z1 z2 : ℕ) (e : ℕ → ZFSe
   apply and_congr_right; intro _
   exact and_congr (certificateFormula_spec _ _ _ _ _ _ _ _ _ _ h0 h1 h2) Iff.rfl
 
+/-- The parameter environment for evaluating certified Boolean expressions and their truth
+sets. -/
 def evaluationParameters (W c B Q S R : ZFSet.{0}) : ℕ → ZFSet.{0} :=
   cons W (cons c (cons B (cons Q (cons S (cons R
     (cons (natSet 0) (cons (natSet 1) (fun _ => natSet 2))))))))
 
+/-- The bounded body requesting an evaluated-expression witness inside the specified bound. -/
 def evaluationBody : Formula := .existsMem 2 (evaluatedFormula 4 5 6 7 8 0 1 2 9 10 11)
 
 theorem evaluationBody_realize (N W c B Q S R Y U : ZFSet.{0}) (hN : Transitive N)

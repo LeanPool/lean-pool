@@ -14,7 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.SetModels.SetModelArithmeticSyntax
-public import LeanPool.TuringConeRigidity.Computability.ArithmeticRelations
+public import LeanPool.TuringConeRigidity.Computability.ArithmeticOracles
 
 /-!
 # Set Model Arithmetic Closure

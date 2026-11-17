@@ -29,9 +29,12 @@ open Encodable UniformOracle ArithmeticHierarchy OracleJump EncodedForcing Effec
   IndexMatrix
 open CodingForcing UniformProgram LocalColumnCertificates
 
+/-- No permitted extension yields the designated local computation disagreement. -/
 def NoDisagreement (B : Oracle) (F : ℕ → Oracle) (x : ℕ) (p : Condition) : Prop :=
   ∀ q, Extends F p q → ¬ UniformAgreement.Disagreement B x q
 
+/-- A finite certificate of differing outputs from the two local computations on an allowed
+extension. -/
 def Cert (B : Oracle) (v : ℕ) : Prop :=
   let req := (Nat.unpair v).1
   let x := item req 1

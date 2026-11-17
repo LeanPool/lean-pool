@@ -28,6 +28,7 @@ namespace OAI
 namespace TuringRigidity.CohenFilterReal
 open Set FiniteShuffle ShuffleRequirements CountableForcing CohenBorelForcing
 
+/-- Word conditions of length at least `n`. -/
 def Long (n : ℕ) : Set Condition := {p | n ≤ p.word.length}
 
 theorem long_dense (n : ℕ) : CountableForcing.Dense (Long n) := by

@@ -14,6 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.Constructibility.ConstructionInlining
+public import LeanPool.TuringConeRigidity.Constructibility.ConstructionDefinition
 
 /-!
 # Construction Input Data
@@ -28,21 +29,26 @@ namespace TuringRigidity.RelativeConstructible
 open ElementaryModel BoundedSetTheory TransitiveNameModel
 universe u
 
+/-- Kinds of construction inputs: the real set, an ordinal stage, or a projected real
+parameter. -/
 inductive ConstructionInput : Type (u + 1)
   | reals
   | stage (o : Ordinal.{u})
   | realPath (path : List ℕ)
 
+/-- Follow a sequence of component projections through the oracle parameter. -/
 def pathReal (P : Oracle) : List ℕ → Oracle
   | [] => P
   | i::is => pathReal (realPart P i) is
 
+/-- Interpret a construction input using the real set and the oracle parameter. -/
 noncomputable def ConstructionInput.value (R : ZFSet.{u}) (P : Oracle) :
     ConstructionInput.{u} → ZFSet.{u}
   | .reals => R
   | .stage o => level R o
   | .realPath path => realCode (pathReal P path)
 
+/-- Prepend a component index to a real-path input, leaving other input kinds unchanged. -/
 def ConstructionInput.prefix (i : ℕ) : ConstructionInput.{u} → ConstructionInput.{u}
   | .reals => .reals
   | .stage o => .stage o
@@ -53,6 +59,7 @@ theorem ConstructionInput.prefix_value (d : ConstructionInput.{u})
     (d.prefix i).value R P = d.value R (realPart P i) := by
   cases d <;> rfl
 
+/-- Every ordinal stage appearing in the input has its set code in `M`. -/
 def ConstructionInput.Indexed (M : ZFSet.{u}) : ConstructionInput.{u} → Prop
   | .reals => True
   | .stage o => o.toZFSet ∈ M
@@ -62,6 +69,7 @@ theorem ConstructionInput.prefix_indexed (d : ConstructionInput.{u})
     (M : ZFSet.{u}) (i : ℕ) : (d.prefix i).Indexed M ↔ d.Indexed M := by
   cases d <;> rfl
 
+/-- Extract the symbolic input associated with each parameter slot of a construction. -/
 noncomputable def Construction.inputData : Construction.{u} → ℕ → ConstructionInput.{u}
   | .reals, _ => .reals
   | .parameter, _ => .realPath []
@@ -102,6 +110,7 @@ theorem Construction.inputData_indexed (t : Construction.{u}) (M : ZFSet.{u})
         exact ih _ (hi.2 _) _
       next => trivial
 
+/-- A formula expressing membership in the set produced by the construction. -/
 noncomputable def Construction.membershipFormula (t : Construction.{u}) : SentenceForm :=
   .ex (.conj (t.formula 0 (fun k => k+2)) (.member 1 0))
 

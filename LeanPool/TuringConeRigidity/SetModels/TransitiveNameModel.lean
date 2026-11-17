@@ -29,8 +29,10 @@ namespace TuringRigidity.TransitiveNameModel
 open Set RecursiveNames
 universe u
 
+/-- The small type of elements of the set-coded condition poset `p`. -/
 abbrev Conditions (p : ZFSet.{u}) : Type u := Shrink p
 
+/-- The ground-model set label corresponding to a condition-type element. -/
 noncomputable def label (p : ZFSet.{u}) (q : Conditions p) : ZFSet.{u} :=
   ((equivShrink p).symm q).val
 
@@ -40,11 +42,14 @@ theorem label_injective (p : ZFSet.{u}) : Function.Injective (label p) :=
 theorem label_mem (p : ZFSet.{u}) (q : Conditions p) : label p q ∈ p :=
   ((equivShrink p).symm q).property
 
+/-- The forcing names whose set codes belong to `M`. -/
 def names (M p : ZFSet.{u}) : Set (Name (Conditions p)) :=
   {τ | Name.encode (label p) τ ∈ M}
 
+/-- Every member of every element of `M` also belongs to `M`. -/
 def Transitive (M : ZFSet.{u}) : Prop := ∀ x ∈ M, ∀ y ∈ x, y ∈ M
 
+/-- The values of names coded in `M`, interpreted using `G`. -/
 def genericExtension (M p : ZFSet.{u}) (G : Set (Conditions p)) : Set ZFSet.{u} :=
   extension (names M p) G
 
@@ -66,6 +71,7 @@ theorem genericExtension_transitive (M p : ZFSet.{u}) (hM : Transitive M)
     ∀ x ∈ genericExtension M p G, ∀ y ∈ x, y ∈ genericExtension M p G :=
   extension_transitive _ (names_childClosed M p hM) G
 
+/-- Interpret a set-coded forcing name, using the empty set for codes that represent no name. -/
 noncomputable def valueOnCode (p : ZFSet.{u}) (G : Set (Conditions p))
     (x : ZFSet.{u}) : ZFSet.{u} := by
   classical
@@ -88,6 +94,8 @@ theorem genericExtension_countable (M p : ZFSet.{u})
   rintro x ⟨τ,hτ,rfl⟩
   exact ⟨Name.encode (label p) τ,hτ,valueOnCode_encode p G τ⟩
 
+/-- The generic-extension value family represented as a set through its ground-model name
+codes. -/
 noncomputable def genericExtensionSet (M p : ZFSet.{u}) (G : Set (Conditions p)) :
     ZFSet.{u} := ZFSet.range
       (fun x : {x : M // ∃ τ : Name (Conditions p), Name.encode (label p) τ = x.val} =>

@@ -15,7 +15,6 @@ module
 
 public import LeanPool.TuringConeRigidity.Effective.LocalPair
 public import LeanPool.TuringConeRigidity.Effective.LocalOpen
-public import LeanPool.TuringConeRigidity.Effective.LocalColumnIndices
 
 /-!
 # Local Inputs
@@ -30,14 +29,21 @@ namespace TuringRigidity.LocalInputs
 open Encodable UniformOracle ArithmeticHierarchy OracleJump EncodedForcing CodingForcing
 noncomputable section
 
+/-- Oracle parameters and uniformly selected program codes for the local priority
+construction. -/
 structure Data where
+  /-- The background oracle relative to which the column programs are evaluated. -/
   B : Oracle
+  /-- The oracle computing the sequence of column-program codes. -/
   X : Oracle
+  /-- The family of oracle columns represented by the program codes. -/
   F : ℕ → Oracle
+  /-- The finite-list codes presenting the first `n` columns relative to `B`. -/
   codes : ℕ → ℕ
   codes_recursive : Nat.RecursiveIn {oracleFunction X} (fun n => Part.some (codes n))
   codes_valid : ∀ n, LocalColumnCertificates.Presents B F (codes n) n
 
+/-- The join of the code-selection oracle with the jump of the background oracle. -/
 def Data.bound (D : Data) : Oracle := join D.X (jump D.B)
 
 theorem total_transfer {Y Z : Oracle} {f : ℕ → ℕ}
@@ -45,6 +51,7 @@ theorem total_transfer {Y Z : Oracle} {f : ℕ → ℕ}
     Nat.RecursiveIn {oracleFunction Z} (fun n => Part.some (f n)) :=
   RecursiveIn.iff_nat.mp (TuringReducible.trans (RecursiveIn.iff_nat.mpr h) hYZ)
 
+/-- Encode the current column codes, requirement index, and condition into a local request. -/
 def Data.request (D : Data) (v : ℕ) : ℕ :=
   encode [D.codes (active (Nat.unpair v).2),(Nat.unpair v).1,(Nat.unpair v).2]
 
@@ -59,6 +66,7 @@ theorem Data.request_recursive (D : Data) :
   exact (total_comp (total_primrec hm) (total_pair hc (total_primrec Primrec.id))).of_eq
     (fun n => by simp only [Nat.unpair_pair]; rfl)
 
+/-- Select the local pair procedure for the encoded request. -/
 def Data.pairProcedure (D : Data) (v : ℕ) : ℕ :=
   Classical.choose (LocalPair.pair_exists D.B) (D.request v)
 
@@ -80,6 +88,7 @@ theorem Data.pair_spec (D : Data) (x p : ℕ) :
     (Classical.choose_spec (LocalPair.pair_exists D.B)).2 D.F (D.codes (active p)) x p
       (D.codes_valid _)
 
+/-- Select the local open-decision procedure for the encoded request. -/
 def Data.openProcedure (D : Data) (v : ℕ) : ℕ :=
   Classical.choose (LocalOpen.uniform_open_decision D.B) (D.request v)
 

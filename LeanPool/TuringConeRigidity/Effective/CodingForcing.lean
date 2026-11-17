@@ -13,7 +13,9 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.Computability.Introreducible
+public import Mathlib.Data.Set.Finite.Basic
+
+public import LeanPool.TuringConeRigidity.Model
 
 /-!
 # Coding Forcing
@@ -26,16 +28,23 @@ namespace OAI
 
 namespace TuringRigidity.CodingForcing
 
+/-- Two equal-length binary words with an index marking the active coding requirements. -/
 structure Condition where
+  /-- The left finite binary word of the coding condition. -/
   left : List Bool
+  /-- The right finite binary word of the coding condition. -/
   right : List Bool
   sameLength : left.length = right.length
+  /-- The number of coding columns currently activated. -/
   active : ℕ
 
+/-- A position beyond the current word length belonging to an active true-coded column. -/
 def CodingLocation (A : ℕ → Oracle) (p : Condition) (m : ℕ) : Prop :=
   p.left.length ≤ m ∧ (Nat.unpair m).1 < p.active ∧
     A (Nat.unpair m).1 (Nat.unpair m).2 = true
 
+/-- Extend both words and the active index while preserving agreement at newly assigned coding
+positions. -/
 def Extends (A : ℕ → Oracle) (p q : Condition) : Prop :=
   p.left <+: q.left ∧ p.right <+: q.right ∧ p.active ≤ q.active ∧
     ∀ m, CodingLocation A p m → m < q.left.length →
@@ -71,6 +80,7 @@ theorem extends_antisymm {A : ℕ → Oracle} {p q : Condition}
   cases q
   simp_all
 
+/-- Increase the active coding index without changing the two words. -/
 def activate (p : Condition) (k : ℕ) : Condition :=
   ⟨p.left, p.right, p.sameLength, max p.active k⟩
 
@@ -85,6 +95,7 @@ theorem active_dense (A : ℕ → Oracle) (p : Condition) (k : ℕ) :
   ⟨activate p (k+1), activate_extends A p (k+1),
     Nat.lt_of_lt_of_le (Nat.lt_succ_self k) (Nat.le_max_right _ _)⟩
 
+/-- Append the same finite suffix to both words of a coding condition. -/
 def append (p : Condition) (s : List Bool) : Condition where
   left := p.left ++ s
   right := p.right ++ s

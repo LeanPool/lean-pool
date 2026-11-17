@@ -13,7 +13,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.SetModels.InternalHull
+public import LeanPool.TuringConeRigidity.SetModels.ModelProducts
+public import LeanPool.TuringConeRigidity.Syntax.BoundedRelations
 
 /-!
 # Relation Hull
@@ -29,12 +30,14 @@ namespace TuringRigidity.RelationHull
 open TransitiveNameModel BoundedSetTheory
 universe u
 
+/-- The set `b` contains every relation predecessor in `d` of each of its members. -/
 def Closed (d r b : ZFSet.{u}) : Prop :=
   ∀ x ∈ b, ∀ y ∈ d, ZFSet.pair y x ∈ r → y ∈ b
 
 namespace Code
 open Formula
 
+/-- Bounded formula asserting predecessor closure of the designated set. -/
 def closed (d r b : ℕ) : Formula :=
   allMem b (allMem (d+1) (imp (pairMem 0 1 (r+2)) (.member 0 (b+2))))
 
@@ -42,6 +45,8 @@ theorem eval_closed (d r b : ℕ) (e : ℕ → ZFSet.{u}) :
     (closed d r b).Eval e ↔ Closed (e d) (e r) (e b) := by
   simp only [closed,Closed,eval_allMem,eval_imp,eval_pairMem,Formula.Eval,cons_zero,cons_succ]
 
+/-- Bounded formula expressing membership in every predecessor-closed hull candidate
+containing the parameter. -/
 def member : Formula := allMem 2
   (imp (.conj (closed 4 5 0) (.member 2 0)) (.member 1 0))
 
@@ -51,6 +56,7 @@ theorem eval_member (z x q d r : ZFSet.{u}) (e : ℕ → ZFSet.{u}) :
   simp only [member,eval_allMem,eval_imp,Formula.Eval,eval_closed,cons_zero,cons_succ]
   exact forall_congr' (fun b => forall_congr' (fun _ => and_imp))
 
+/-- Bounded formula identifying a least predecessor-closed member of `q` containing `x`. -/
 def isHull (b x q d r : ℕ) : Formula :=
   .conj (.member b q) (.conj (closed d r b) (.conj (.member x b)
     (allMem q (imp (.conj (closed (d+1) (r+1) 0) (.member (x+1) 0)) (subset (b+1) 0)))))
@@ -62,6 +68,7 @@ theorem eval_isHull (b x q d r : ℕ) (e : ℕ → ZFSet.{u}) :
   simp only [and_imp]
 end Code
 
+/-- The elements of `d` belonging to every predecessor-closed member of `q` that contains `x`. -/
 noncomputable def hull (d r q x : ZFSet.{u}) : ZFSet.{u} :=
   ZFSet.sep (fun z => ∀ b ∈ q, Closed d r b → x ∈ b → z ∈ b) d
 
@@ -122,6 +129,7 @@ theorem isHull_iff (M d r q : ZFSet.{u}) (hM : Transitive M) (hS : Separation M)
     exact ⟨hhq,hull_closed d r q x,self_mem d r q hx,
       fun a ha hc hx => hull_least d r q x a ha hc hx⟩
 
+/-- The relation predecessors of `x`, restricted to `d`. -/
 noncomputable def predecessors (d r x : ZFSet.{u}) : ZFSet.{u} :=
   ZFSet.sep (fun y => ZFSet.pair y x ∈ r) d
 

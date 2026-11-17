@@ -14,6 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.SetModels.InternalRelationSelection
+public import LeanPool.TuringConeRigidity.SetModels.InternalCountableFiniteUnion
 
 /-!
 # Internal Countable Enumeration
@@ -28,10 +29,12 @@ namespace TuringRigidity.InternalCountableEnumeration
 open TransitiveNameModel BoundedSetTheory InternalRelationSelection
 open InternalCountableFiniteUnion InternalFiniteEnumeration
 
+/-- The empty enumeration of an empty set, or a graph from omega surjecting onto `E`. -/
 def Enumerates (E g : ZFSet.{0}) : Prop :=
   (E = ∅ ∧ g = ∅) ∨ (FunctionGraph ZFSet.omega E g ∧
     ∀ x ∈ E, ∃ n ∈ ZFSet.omega, ZFSet.pair n x ∈ g)
 
+/-- Bounded formula expressing the empty-or-surjective enumeration relation. -/
 def enumeratesFormula (ω E g : ℕ) : Formula :=
   .disj (.conj (.empty E) (.empty g))
     (.conj (.functionGraph g ω E) (.allMem E (.existsMem (ω+1) (.pairMem 0 1 (g+2)))))

@@ -27,18 +27,21 @@ namespace OAI
 namespace TuringRigidity.BorelGeneric
 open Set
 
+/-- Decode a finite binary word, with the empty word as the fallback. -/
 def word (n : ℕ) : List Bool := (Encodable.decode (α := List Bool) n).getD []
 
 theorem word_surjective : Function.Surjective word := by
   intro s
   exact ⟨Encodable.encode s,by simp [word]⟩
 
+/-- The second coded word strictly extends the first. -/
 def Ext (s t : ℕ) : Prop := word s <+: word t ∧ (word s).length < (word t).length
 
 variable {X : Type*} [MeasurableSpace X]
 variable (R : X → ℕ → ℕ → Prop)
 variable (hd : ∀ x n s, ∃ t, Ext s t ∧ R x n t)
 
+/-- Choose the least coded strict extension meeting the next requirement for the parameter. -/
 noncomputable def next (n : ℕ) (z : X × ℕ) : ℕ :=
   leastSuccess (fun z t => Ext z.2 t ∧ R z.1 n t) (fun z => hd z.1 n z.2) z
 
@@ -55,6 +58,7 @@ theorem next_measurable (hR : ∀ n t, MeasurableSet {x | R x n t}) (n : ℕ) :
   exact ((Set.to_countable {s : ℕ | Ext s t}).measurableSet.preimage measurable_snd).inter
     ((hR n t).preimage measurable_fst)
 
+/-- The sequence of chosen word codes meeting successive parameterized requirements. -/
 noncomputable def stage : ℕ → X → ℕ
   | 0 => fun _ => Encodable.encode ([] : List Bool)
   | n+1 => fun x => next R hd n (x,stage n x)
@@ -87,6 +91,7 @@ theorem stage_prefix_of_le (x : X) {n m : ℕ} (h : n ≤ m) :
   | base => exact List.prefix_rfl
   | succ m h ih => exact ih.trans (stage_prefix R hd x m)
 
+/-- The oracle obtained from the diagonal bits of the increasing coded-word sequence. -/
 noncomputable def generic (x : X) : Oracle :=
   fun i => (word (stage R hd (i+1) x)).getD i false
 
@@ -97,6 +102,7 @@ theorem generic_measurable (hR : ∀ n t, MeasurableSet {x | R x n t}) :
   exact (measurable_of_countable (fun k : ℕ => (word k).getD i false)).comp
     (stage_measurable R hd hR (i+1))
 
+/-- The oracle realizes every bit of the coded finite word. -/
 def Meets (A : Oracle) (s : ℕ) : Prop :=
   ∀ i, i < (word s).length → A i = (word s).getD i false
 

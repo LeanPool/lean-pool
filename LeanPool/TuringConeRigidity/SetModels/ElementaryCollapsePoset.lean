@@ -16,6 +16,7 @@ module
 public import LeanPool.TuringConeRigidity.SetModels.ElementaryDefinableSets
 public import LeanPool.TuringConeRigidity.Representation.AmbientDegreeSyntax
 public import LeanPool.TuringConeRigidity.SetModels.InternalCollapseConditions
+public import LeanPool.TuringConeRigidity.SetModels.ElementaryRealModel
 
 /-!
 # Elementary Collapse Poset
@@ -45,6 +46,7 @@ theorem collapse_bounded_eval (a : ℕ → ZFSet.{u}) (p : Formula)
     (fun i => (mem_collapsed _ _).mpr ⟨e i,he i,rfl⟩),bounded_univ] at h
   exact h
 
+/-- The set-coded finite initial-segment functions into `A`. -/
 noncomputable def ambientConditions (A : ZFSet.{u}) : ZFSet.{u} :=
   ZFSet.sep (Prefix A) (ZFSet.powerset (ZFSet.prod ZFSet.omega A))
 
@@ -97,6 +99,7 @@ theorem collapse_ambientConditions (a : ℕ → ZFSet.{u})
   exact ⟨fun hp => ⟨hm _ (hei 0) _ hp,(hs p (hm _ (hei 0) _ hp)).mp hp⟩,
     fun hp => (hs p hp.1).mpr hp.2⟩
 
+/-- Bounded formula describing a reverse-inclusion pair of coded conditions. -/
 def orderMember (c z : ℕ) : Formula :=
   .existsMem c (.existsMem (c+1) (.conj (.orderedPair (z+2) 1 0) (.subset 0 1)))
 

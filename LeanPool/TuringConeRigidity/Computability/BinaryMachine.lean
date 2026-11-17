@@ -55,6 +55,7 @@ theorem mixed_of_noncomputable (B : Oracle) (h : ¬ Reduces B (fun _ => false)) 
     exact eventually_constant_reduces B _ true N (fun n hN => Bool.eq_true_of_not_eq_false (hn n
       hN))
 
+/-- Interpret a finite list of binary values as a binary numeral. -/
 def foldNumeral (L : List ℕ) : ℕ := L.foldl (fun a b => 2*a+b) 0
 
 theorem foldNumeral_primrec : Primrec foldNumeral :=
@@ -88,7 +89,11 @@ theorem powTwo_primrec : Primrec (fun n : ℕ => 2^n) := by
     simp only [List.range_succ, List.foldl_append, List.foldl_cons, List.foldl_nil]
     rw [ih, pow_succ, Nat.mul_comm]
 
+/-- The left natural-number cross-product in the rational comparison for binary cut
+computation. -/
 def fracLeft (z : ℕ × ℕ × ℕ) : ℕ := positiveNumerator z.1 * z.2.2
+/-- The right natural-number cross-product in the rational comparison for binary cut
+computation. -/
 def fracRight (z : ℕ × ℕ × ℕ) : ℕ := z.2.1 * denominator z.1 + negativeNumerator z.1 * z.2.2
 
 theorem fracLeft_primrec : Primrec fracLeft := Primrec.nat_mul.comp

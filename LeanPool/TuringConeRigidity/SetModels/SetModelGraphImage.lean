@@ -30,6 +30,7 @@ open EncodedForcing
 universe u
 noncomputable section
 
+/-- The set-coded relation on column real codes selected by the bits of `G`. -/
 def graphImage (A G : Oracle) : ZFSet.{u} :=
   ZFSet.sep (fun z => ∃ n m, G (Nat.pair n m) = true ∧
     z = ZFSet.pair (realSet (columns A n)) (realSet (columns A m)))
@@ -45,6 +46,7 @@ def graphImage (A G : Oracle) : ZFSet.{u} :=
     exact ⟨ZFSet.pair_mem_prod.mpr ⟨(mem_columnRange _ _).mpr ⟨n,rfl⟩,
       (mem_columnRange _ _).mpr ⟨m,rfl⟩⟩,⟨n,m,hG,rfl⟩⟩
 
+/-- Bounded formula describing the image of a numerical relation on oracle columns. -/
 def graphImageFormula : Formula :=
   .existsMem 1 (.existsMem 2 (.existsMem 4 (.existsMem 5 (.existsMem 10 (.existsMem 7
     (.conj (.orderedPair 6 5 4) (.conj (.pairMem 3 5 9) (.conj (.pairMem 2 4 9)

@@ -13,8 +13,9 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.OrdinalCodes.OrdinalOrderPresentation
-public import LeanPool.TuringConeRigidity.Constructibility.RelativeLevySchemas
+public import LeanPool.TuringConeRigidity.Constructibility.RelativeModelPower
+public import LeanPool.TuringConeRigidity.Constructibility.RelativeSigmaSchemas
+public import LeanPool.TuringConeRigidity.OrdinalCodes.OrdinalOrderTypeSyntax
 
 /-!
 # Ordinal Order Type Levels

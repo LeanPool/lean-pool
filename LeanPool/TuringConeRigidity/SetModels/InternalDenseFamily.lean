@@ -32,6 +32,7 @@ universe u
 namespace Code
 open Formula
 
+/-- Bounded formula asserting density of the family in the set-coded condition order. -/
 def dense (c o t : ℕ) : Formula := allMem c (.existsMem (c+1)
   (.conj (.member 0 (t+2)) (.pairMem 0 1 (o+2))))
 

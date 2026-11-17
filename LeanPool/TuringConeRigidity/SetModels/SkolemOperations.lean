@@ -13,8 +13,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.SetModels.InternalCoverInjection
-public import LeanPool.TuringConeRigidity.SetModels.FiniteSkolem
+public import LeanPool.TuringConeRigidity.Syntax.TermFormula
+public import LeanPool.TuringConeRigidity.Syntax.TermFunctionality
 
 /-!
 # Skolem Operations
@@ -31,6 +31,7 @@ open TransitiveNameModel
 universe u
 namespace FiniteTerm
 
+/-- Tag the inputs of a graph with a fixed label `o`. -/
 noncomputable def labelGraph (a b g o : ZFSet.{u}) : ZFSet.{u} :=
   ZFSet.sep (fun z => ∃ x ∈ a, ∃ y ∈ b, z = ZFSet.pair (ZFSet.pair o x) y ∧ ZFSet.pair x y ∈ g)
     (ZFSet.prod (ZFSet.prod {o} a) b)

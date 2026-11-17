@@ -14,7 +14,6 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.Syntax.TermFunctionality
-public import LeanPool.TuringConeRigidity.SetModels.InternalUniformization
 
 /-!
 # Internal Cover Injection
@@ -31,6 +30,7 @@ open TransitiveNameModel RelationCollapse
 universe u
 namespace FiniteTerm
 
+/-- The inverse relation assigning each represented value in `h` its term codes in `K`. -/
 noncomputable def inverseCover (h K E : ZFSet.{u}) : ZFSet.{u} :=
   ZFSet.sep (fun z => ∃ x ∈ h, ∃ c ∈ K, z = ZFSet.pair x c ∧ ZFSet.pair c x ∈ E) (ZFSet.prod h K)
 

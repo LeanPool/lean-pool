@@ -34,6 +34,7 @@ open TaggedProductConditions (code)
 open CountableForcing CohenProductSplitting
 attribute [local instance] InternalCollapse.order InternalCollapse.collapsePreorder
 
+/-- An oracle coding pairs of words satisfying the common-ideal requirement relative to `A`. -/
 noncomputable def requirementCodes (A : Oracle) (p q : OracleCode) : Oracle :=
   arithmeticReal (fun O n => CommonIdeal.Requirement (O 0) p q
     (word (left n)) (word (right n))) (fun _ => A)
@@ -50,6 +51,7 @@ theorem requirementCodes_mem (M : ZFSet.{0}) (hM : Transitive M) (hT : SourceT M
     (ArithmeticCommonRequirement.requirement_arith p q left_primrec right_primrec)
     (fun _ => A) (fun _ => hA)
 
+/-- The tagged word pairs in `c` satisfying the designated common-ideal requirement. -/
 noncomputable def denseSet (c : ZFSet.{0}) (A : Oracle) (p q : OracleCode) : ZFSet.{0} :=
   c.sep (fun z => ∃ s t : List Bool,
     z = code (wordCode s) (wordCode t) ∧ CommonIdeal.Requirement A p q s t)

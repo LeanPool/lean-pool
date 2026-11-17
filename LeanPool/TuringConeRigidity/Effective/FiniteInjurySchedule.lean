@@ -14,7 +14,6 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.Effective.FiniteInjury
-public import Mathlib.Data.Finset.Lattice.Fold
 
 /-!
 # Finite Injury Schedule
@@ -34,6 +33,7 @@ theorem exists_missing (seen : Finset ℕ) : ∃ t, t ∉ seen := by
   have hh : seen.sup id + 1 ≤ seen.sup id := Finset.le_sup (f := id) h
   omega
 
+/-- The least priority not yet present in the visited set. -/
 noncomputable def visit (seen : Finset ℕ) : ℕ := Nat.find (exists_missing seen)
 
 theorem visit_missing (seen : Finset ℕ) : visit seen ∉ seen := Nat.find_spec (exists_missing seen)
@@ -42,14 +42,17 @@ theorem before_visit (seen : Finset ℕ) {t : ℕ} (h : t < visit seen) : t ∈ 
   have hh := Nat.find_min (exists_missing seen) h
   simpa using hh
 
+/-- After an action, forget visits to priorities strictly above the acting priority. -/
 def reset (seen : Finset ℕ) (a : Option ℕ) : Finset ℕ := match a with
   | none => seen
   | some t => seen.filter (fun i => i ≤ t)
 
+/-- The visited-priority sets under the least-unvisited scheduling rule and injury resets. -/
 noncomputable def seen (proposal : ℕ → Finset ℕ → Option ℕ) : ℕ → Finset ℕ
   | 0 => ∅
   | s+1 => reset (insert (visit (seen proposal s)) (seen proposal s)) (action proposal s)
 
+/-- The least unvisited priority scheduled at the given stage. -/
 noncomputable def scheduled (proposal : ℕ → Finset ℕ → Option ℕ) (s : ℕ) : ℕ :=
   visit (seen proposal s)
 

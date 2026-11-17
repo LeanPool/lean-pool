@@ -13,8 +13,9 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.CohenForcing.ForcingSymmetry
 public import Mathlib.Data.Set.Finite.Basic
+
+public import LeanPool.TuringConeRigidity.CohenForcing.ForcingSymmetry
 
 /-!
 # Cohen Symmetry
@@ -28,7 +29,9 @@ namespace OAI
 namespace TuringRigidity.CohenSymmetry
 open Set CountableForcing
 
+/-- A Boolean partial function with finite support, used as a Cohen condition. -/
 @[ext] structure Condition (ι : Type*) where
+  /-- The partial Boolean assignment underlying a Cohen condition. -/
   val : ι → Option Bool
   finite : {i | val i ≠ none}.Finite
 
@@ -52,6 +55,7 @@ instance : OrderTop (Condition ι) where
   top := ⟨fun _ => none, by simp⟩
   le_top _ := by intro i b h; cases h
 
+/-- Flip each assigned Boolean value according to the mask `m`. -/
 def flip (m : ι → Bool) (p : Condition ι) : Condition ι where
   val i := (p.val i).map (fun b => b.xor (m i))
   finite := p.finite.subset (by intro i hi; simpa using hi)
@@ -73,6 +77,7 @@ theorem flip_mono (m : ι → Bool) {p q : Condition ι} (hpq : p ≤ q) :
     simpa [flip,hp] using (show (some c).map (fun d => d.xor (m i)) = some b from by
       simpa [flip,hq] using hb)
 
+/-- The involutive order automorphism induced by a Boolean coordinate mask. -/
 def flipIso (m : ι → Bool) : Condition ι ≃o Condition ι where
   toFun := flip m
   invFun := flip m
@@ -83,9 +88,11 @@ def flipIso (m : ι → Bool) : Condition ι ≃o Condition ι where
     change flip m p ≤ flip m q ↔ p ≤ q
     exact ⟨fun h => by simpa only [flip_involutive] using flip_mono m h,flip_mono m⟩
 
+/-- Two conditions agree at every coordinate where both assign a value. -/
 def Compatible (p q : Condition ι) : Prop :=
   ∀ i a b, p.val i = some a → q.val i = some b → a = b
 
+/-- Merge two partial assignments, preferring the first assignment on overlapping coordinates. -/
 def merge (p q : Condition ι) : Condition ι where
   val i := (p.val i).orElse (fun _ => q.val i)
   finite := (p.finite.union q.finite).subset (by
@@ -104,6 +111,8 @@ theorem merge_le_right {p q : Condition ι} (h : Compatible p q) : merge p q ≤
   | none => simp [merge,hp,hb]
   | some a => simpa [merge,hp] using congrArg some (h i a b hp hb)
 
+/-- The coordinate mask comparing the assigned values of two conditions, with missing values
+read as false. -/
 def matchingMask (p q : Condition ι) (i : ι) : Bool :=
   (p.val i).getD false |>.xor ((q.val i).getD false)
 
@@ -119,6 +128,7 @@ theorem homogeneous (p q : Condition ι) :
   exact ⟨matchingMask p q,merge (flip (matchingMask p q) p) q,
     merge_le_left _ _,merge_le_right (matching_compatible p q)⟩
 
+/-- Apply a Boolean flip to the Cohen factor while leaving the other product coordinate fixed. -/
 def tailIso {P : Type*} [Preorder P] (m : ι → Bool) :
     (P × Condition ι) ≃o (P × Condition ι) where
   toFun p := (p.1,flipIso m p.2)

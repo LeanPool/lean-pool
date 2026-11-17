@@ -30,6 +30,8 @@ namespace TuringRigidity
 namespace EffectiveRecovery
 open RationalCoding
 
+/-- Decide a rational comparison from a Boolean shortcut or two separating integer
+inequalities. -/
 def window (A B : ℕ) (z : Bool × (ℕ × ℕ) × (ℕ × ℕ)) : Option ℕ :=
   if z.1 then some 1 else
   if z.2.1.1*z.2.2.1*A + z.2.1.2*B < z.2.1.2*z.2.2.2*A then some 1 else
@@ -122,6 +124,7 @@ theorem radius_fraction (d : RecoveryData F t u v) (N : ℕ) (hN : 0 < N) :
   rw [d.delta_fraction]
   field_simp
 
+/-- Try a cut query using the recovery step size and the observed frequency of branch bits. -/
 def cutTrial (d : RecoveryData F t u v) (i m : ℕ) : Option ℕ :=
   window d.delta.num.natAbs d.delta.den
     (negative i,(numeratorMagnitude i,denominator i),(m+1,d.count (m+1)))

@@ -29,11 +29,14 @@ namespace TuringRigidity.CohenAntichainSequence
 open Set TransitiveNameModel BoundedSetTheory CohenAntichainStages
 open CohenGroundPoset CohenConditionCode CohenSizeLevels
 
+/-- Extend a numbered member of `s` to the next stage while meeting the corresponding level of
+`L`. -/
 def Step (s c U L x y : ZFSet.{0}) : Prop :=
   ∃ n ∈ ZFSet.omega, ∃ E ∈ s, ∃ m ∈ ZFSet.omega, ∃ F ∈ s,
     x = ZFSet.pair n E ∧ y = ZFSet.pair m F ∧ m = insert n n ∧ E ⊆ F ∧
       ∀ p ∈ U, ZFSet.pair n p ∈ L → ∃ q ∈ F, Comp c p q
 
+/-- Bounded formula expressing the antichain extension step `Step`. -/
 def stepFormula (ω s c U L x y : ℕ) : Formula :=
   .existsMem ω (.existsMem (s+1) (.existsMem (ω+2) (.existsMem (s+3)
     (.conj (.orderedPair (x+4) 3 2) (.conj (.orderedPair (y+4) 1 0)
@@ -48,6 +51,7 @@ theorem stepFormula_spec (ω s c U L x y : ℕ) (e : ℕ → ZFSet.{0})
     Formula.eval_successor,Formula.eval_subset,Formula.eval_allMem,Formula.eval_imp,
     Formula.eval_pairMem,compFormula_spec,cons_zero,cons_succ,hω]
 
+/-- Reverse graph of the antichain extension step on numbered finite stages. -/
 noncomputable def relation (s c U L : ZFSet.{0}) : ZFSet.{0} :=
   let d := ZFSet.prod ZFSet.omega s
   (ZFSet.prod d d).sep (fun z => ∃ x ∈ d, ∃ y ∈ d,

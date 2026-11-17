@@ -13,7 +13,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.Syntax.SigmaCollection
+public import LeanPool.TuringConeRigidity.Syntax.SigmaHull
 
 /-!
 # Sigma Transitive Witness

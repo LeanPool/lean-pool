@@ -30,6 +30,7 @@ namespace TuringRigidity.SentenceCoding
 open ElementaryModel RelativeConstructible BoundedSetTheory TransitiveNameModel
 universe u
 
+/-- The set of numeral codes of all subformulas of the full formula. -/
 noncomputable def family (p : SentenceForm) : ZFSet.{u} :=
   ZFSet.range (fun i : Fin (subformulas p).length =>
     natSet (Encodable.encode (subformulas p)[i]))
@@ -108,6 +109,7 @@ theorem Closed.subformulas {C : ℕ → Prop} (h : Closed C) (p : SentenceForm)
     · exact hp
     · exact ih hc q hq
 
+/-- A set of numeral codes closed under the formula-constructor child conditions. -/
 def SetClosed (S : ZFSet.{u}) : Prop :=
   S ⊆ ZFSet.omega ∧ Closed (fun n => natSet n ∈ S)
 
@@ -120,6 +122,8 @@ theorem family_least (p : SentenceForm) (S : ZFSet.{u}) (hS : SetClosed S)
   obtain ⟨q,hq,rfl⟩ := (mem_family p z).mp hz
   exact hS.2.subformulas p hp q hq
 
+/-- A closed family containing `c` and contained in every closed candidate from `Q` that
+contains `c`. -/
 def LeastFamily (Q c S : ZFSet.{u}) : Prop :=
   c ∈ S ∧ SetClosed S ∧
     ∀ T ∈ Q, c ∈ T → SetClosed T → S ⊆ T

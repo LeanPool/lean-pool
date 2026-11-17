@@ -12,9 +12,8 @@ Module paths, interfaces, and proofs are ported to the pool's toolchain and gate
 
 module
 
-public import LeanPool.TuringConeRigidity.TuringTwoConeForcingDefinition
 public import LeanPool.TuringConeRigidity.TuringTwoConeLocality
-public import LeanPool.TuringConeRigidity.Representation.ParameterCoveringModels
+public import LeanPool.TuringConeRigidity.TuringTwoConeConstructibleExtension
 
 /-!
 # Prescribed models for arbitrary global two-cone maps

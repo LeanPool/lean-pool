@@ -31,6 +31,7 @@ open Set TransitiveNameModel BoundedSetTheory InternalFiniteSubsets
 open CohenSymmetry CohenCoordinates
 open InternalCohen (bitSet alphabet bitSet_injective mem_alphabet)
 
+/-- Set-coded graph of the finitely supported Boolean condition `p`. -/
 noncomputable def graph (A : ZFSet.{0}) (p : Condition (Conditions A)) : ZFSet.{0} :=
   ZFSet.range (fun i : ↥(support p) =>
     ZFSet.pair (label A i.val) (bitSet ((p.val i.val).getD false)))
@@ -77,10 +78,12 @@ theorem graph_injective (A : ZFSet.{0}) : Function.Injective (graph A) := by
   · exact (graph_subset_iff A p q).mp (by rw [h])
   · exact (graph_subset_iff A q p).mp (by rw [h])
 
+/-- The relation `p` assigns at most one alphabet value to each coordinate in `A`. -/
 def SingleValued (A p : ZFSet.{0}) : Prop :=
   ∀ x ∈ A, ∀ b ∈ alphabet, ∀ c ∈ alphabet,
     ZFSet.pair x b ∈ p → ZFSet.pair x c ∈ p → b = c
 
+/-- A finite, single-valued relation from coordinates in `A` to the Boolean alphabet. -/
 def IsCondition (A p : ZFSet.{0}) : Prop :=
   p ∈ finiteSubsets (ZFSet.prod A alphabet) ∧ SingleValued A p
 

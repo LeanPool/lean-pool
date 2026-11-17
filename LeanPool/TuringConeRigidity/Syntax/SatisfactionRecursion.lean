@@ -29,6 +29,8 @@ namespace TuringRigidity.RelativeConstructible
 open ElementaryModel BoundedSetTheory TransitiveNameModel
 universe u
 
+/-- One satisfaction-recursion step for a full formula, using the proposed relation for child
+formulas. -/
 def truthStep (A S : ZFSet.{u}) {n : ℕ} (v : Fin n → ZFSet.{u}) : SentenceForm → Prop
   | .equal i j => tupleEnv v i = tupleEnv v j
   | .member i j => tupleEnv v i ∈ tupleEnv v j
@@ -36,6 +38,8 @@ def truthStep (A S : ZFSet.{u}) {n : ℕ} (v : Fin n → ZFSet.{u}) : SentenceFo
   | .neg p => ¬ accepts S p v
   | .ex p => ∃ x ∈ A, accepts S p (Fin.cases x v)
 
+/-- A satisfaction relation on exactly the adequately parameterized subformulas of the root
+formula. -/
 def TruthRecursion (A : ZFSet.{u}) (root : SentenceForm) (S : ZFSet.{u}) : Prop :=
   (∀ z ∈ S, ∃ p ∈ subformulas root, ∃ (n : ℕ) (v : Fin n → ZFSet.{u}),
     (∀ i, v i ∈ A) ∧ p.bound ≤ n ∧ z = ZFSet.pair (natSet (Encodable.encode p)) (tupleCode v)) ∧

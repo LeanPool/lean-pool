@@ -31,6 +31,8 @@ open TransitiveNameModel BoundedSetTheory RelationCollapse ElementaryModel Relat
   OrdinalCoding
 universe u
 
+/-- A full formula describing the collapse graph for the trimmed tagged ordinal-sum
+presentation. -/
 noncomputable def trimmedSumGraphSentence : SentenceForm := .ex (.ex (.ex
   (.disj (fromBounded (.conj (.member 2 4) (.conj (.orderedPair 1 6 2)
     (.conj (.orderedPair 3 1 0) (.equal 0 2)))))

@@ -32,6 +32,8 @@ universe u
 
 namespace Code
 
+/-- A sigma formula requesting a transitive domain and a certificate that `x` is a valid name
+code. -/
 def valid (c x : ℕ) : SigmaFormula := .existsSet (.existsSet (.bounded
   (.conj (.transitive 1) (.conj (.member (x+2) 1)
     (.conj (certificate 1 (c+2) 0) (.member (x+2) 0))))))

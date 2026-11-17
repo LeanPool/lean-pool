@@ -28,6 +28,7 @@ namespace TuringRigidity.InternalNiceName
 open TransitiveNameModel BoundedSetTheory RecursiveNames CountableForcing
 variable {c : ZFSet.{0}} [Top (Conditions c)]
 
+/-- A real name tagged by the condition-label sets `E n`. -/
 noncomputable def nice (E : ℕ → ZFSet.{0}) : Name (Conditions c) :=
   .mk (Σ n : ℕ, {p : Conditions c // label c p ∈ E n})
     (fun i => Name.check (natSet i.1)) (fun i => i.2.val)

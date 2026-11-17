@@ -13,7 +13,9 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.SetModels.DegreeSetFormula
+public import LeanPool.TuringConeRigidity.CohenForcing.EncodedForcing
+public import LeanPool.TuringConeRigidity.OrdinalCodes.NaturalPairingFormula
+public import LeanPool.TuringConeRigidity.SetModels.ModelReals
 
 /-!
 # Column Set Formula
@@ -30,6 +32,7 @@ open EncodedForcing
 universe u
 namespace Formula
 
+/-- Bounded formula reading the `k`th bit of the `n`th column of an oracle code. -/
 def columnBit (o Q n H k : ℕ) : Formula := .existsMem o
   (.conj (naturalPair (o+1) (Q+1) (n+1) (k+1) 0) (.member 0 (H+1)))
 
@@ -51,6 +54,7 @@ theorem columnBit_spec (o Q n H k : ℕ) (e : ℕ → ZFSet.{u}) (ho : e o = ZFS
         ho hQ N K hn hk).mpr rfl
     · rw [hA,natSet_mem_realCode]; exact h
 
+/-- Bounded formula asserting that `B` is exactly the selected column of the oracle code. -/
 def columnSet (o Q n H B : ℕ) : Formula := .conj (.subset B o)
   (allMem o (iff (.member 0 (B+1)) (columnBit (o+1) (Q+1) (n+1) (H+1) 0)))
 

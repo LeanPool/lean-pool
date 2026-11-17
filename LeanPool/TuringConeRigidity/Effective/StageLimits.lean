@@ -33,7 +33,9 @@ open PriorityStage
 noncomputable section
 attribute [local instance] Classical.propDecidable
 
+/-- The left limit oracle of the priority condition construction. -/
 def G₀ (A : Oracle) : Oracle := leftLimit (conditions A)
+/-- The right limit oracle of the priority condition construction. -/
 def G₁ (A : Oracle) : Oracle := rightLimit (conditions A)
 
 theorem generic_prefix_next (A : Oracle) (s : ℕ) :

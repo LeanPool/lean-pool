@@ -13,8 +13,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.SetModels.InternalQuotientLifting
-public import LeanPool.TuringConeRigidity.CohenForcing.CheckedForcingRelation
+public import LeanPool.TuringConeRigidity.SetModels.InternalRegularAlgebra
 
 /-!
 # Internal Quotient Requirement
@@ -27,9 +26,10 @@ namespace OAI
 
 namespace TuringRigidity.InternalQuotientRequirement
 open TransitiveNameModel BoundedSetTheory CountableForcing
-open InternalRegularOperations InternalRegularAlgebra InternalRegularOrder InternalBooleanSyntax
+open InternalRegularOperations InternalRegularAlgebra
 attribute [local instance] InternalCollapse.order
 
+/-- Conditions lying in some Boolean code paired by `R` with a weaker original condition. -/
 noncomputable def requirement (c a R : ZFSet.{0}) : ZFSet.{0} :=
   c.sep (fun p => ∃ r ∈ c, r ⊆ p ∧ ∃ V ∈ a, p ∈ V ∧ ZFSet.pair r V ∈ R)
 

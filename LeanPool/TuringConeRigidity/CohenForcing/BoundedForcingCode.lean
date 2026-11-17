@@ -29,6 +29,7 @@ namespace TuringRigidity.BoundedForcing
 open Set RecursiveNames TransitiveNameModel BoundedSetTheory AtomicForcing
 universe u
 
+/-- Bounded set-theoretic formula encoding the recursive bounded forcing relation. -/
 def code : BoundedSetTheory.Formula → ℕ → ℕ → ℕ → ℕ → ℕ → (ℕ → ℕ) → ℕ → BoundedSetTheory.Formula
   | .equal i j, _d,_c,k,_o,f,v,p => AtomicFormula.triple k f (v i) (v j) p
   | .member i j, d,c,k,o,f,v,p => AtomicFormula.membership d c k o f (v i) (v j) p

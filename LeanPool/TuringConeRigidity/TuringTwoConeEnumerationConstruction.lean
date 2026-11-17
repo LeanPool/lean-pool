@@ -12,9 +12,9 @@ Module paths, interfaces, and proofs are ported to the pool's toolchain and gate
 
 module
 
-public import LeanPool.TuringConeRigidity.TuringConeRelativeUnary
 public import LeanPool.TuringConeRigidity.TuringConeEnumeration
 public import LeanPool.TuringConeRigidity.SetModels.EnumerationConstruction
+public import LeanPool.TuringConeRigidity.TuringConeRelativeRelations
 
 /-!
 # Relative enumeration of a presentation joined with its source base

@@ -29,6 +29,8 @@ namespace TuringRigidity.RelativeConstructible
 open ElementaryModel BoundedSetTheory TransitiveNameModel
 universe u
 
+/-- Relativize every full-formula set quantifier to a designated domain and rename its free
+variables. -/
 def setBounded : SentenceForm → ℕ → (ℕ → ℕ) → Formula
   | .equal i j, _, v => .equal (v i) (v j)
   | .member i j, _, v => .member (v i) (v j)

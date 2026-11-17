@@ -14,6 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.SetModels.RegularTreeCofinality
+public import LeanPool.TuringConeRigidity.Representation.GenericFilterName
 
 /-!
 # Regular Tree Recovery
@@ -30,6 +31,7 @@ open InternalRegularAlgebra InternalBooleanGeneric InternalBooleanDense RegularT
 open RegularTreeCofinality InternalCohen
 attribute [local instance] InternalCollapse.order InternalCollapse.collapsePreorder
 
+/-- The word conditions whose attached regular-code nodes meet `g`. -/
 noncomputable def branchSet (B A g : ZFSet.{0}) : ZFSet.{0} :=
   conditions.sep (fun s => ∃ U ∈ B, ZFSet.pair s U ∈ A ∧ ∃ p ∈ g, p ∈ U)
 
@@ -47,6 +49,7 @@ theorem branchSet_mem (N B A g : ZFSet.{0}) (hN : Transitive N) (hT : SourceT N)
       (.existsMem 1 (.conj (.pairMem 1 0 3) (.existsMem 4 (.member 0 1)))) e he
       (conditions_mem N hN hT)
 
+/-- Conditions whose coded neighborhoods contain a node selected by the branch set `w`. -/
 noncomputable def recoverySet (c B A S k w : ZFSet.{0}) : ZFSet.{0} :=
   c.sep (fun p => ∃ U ∈ B, ∃ V ∈ S, ∃ s ∈ w,
     ZFSet.pair s U ∈ A ∧ ZFSet.pair p V ∈ k ∧ U ⊆ V)

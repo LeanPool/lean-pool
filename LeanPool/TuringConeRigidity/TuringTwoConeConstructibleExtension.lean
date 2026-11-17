@@ -14,7 +14,8 @@ module
 
 public import LeanPool.TuringConeRigidity.TuringTwoConeForcingDescent
 public import LeanPool.TuringConeRigidity.Constructibility.RelativeDegreeIdeal
-public import LeanPool.TuringConeRigidity.Constructibility.ConstructionDefinition
+public import LeanPool.TuringConeRigidity.Constructibility.RelativeConstruction
+public import LeanPool.TuringConeRigidity.Constructibility.RelativeSigmaSchemas
 
 /-!
 # Persistent two-cone graphs in relative L(R)

@@ -28,9 +28,11 @@ namespace OAI
 namespace TuringRigidity.PersistentLocality
 open IdealInterpretation IdealLocality PersistentRestrictions OracleJump
 
+/-- The degree ideal containing all Turing degrees. -/
 def fullIdeal : DegreeIdeal :=
   ⟨Set.univ,⟨⊥,Set.mem_univ _⟩,fun _ _ => Set.mem_univ _,fun _ _ => Set.mem_univ _⟩
 
+/-- The identity-on-values order isomorphism between all degrees and the full ideal. -/
 def fullEquiv : Degree ≃o fullIdeal where
   toFun a := ⟨a,Set.mem_univ _⟩
   invFun a := a.val

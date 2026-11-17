@@ -32,11 +32,13 @@ universe u
 variable {c : ZFSet.{u}} [Preorder (Conditions c)]
 namespace WitnessCode
 
+/-- Variable placement for a forcing witness request, reserving slots for its new witnesses. -/
 def vars : ℕ → ℕ
   | 0 => 2
   | 1 => 1
   | i+2 => i+6
 
+/-- A sigma formula requesting a valid name together with the corresponding forcing witness. -/
 def request (φ : SigmaFormula) : SigmaFormula :=
   .existsSet (.existsSet (SigmaFormula.andBounded (.orderedPair 3 1 0)
     (SigmaFormula.conj (NameValidity.Code.valid 4 2) (SigmaCode.forcing φ 4 5 0 vars))))

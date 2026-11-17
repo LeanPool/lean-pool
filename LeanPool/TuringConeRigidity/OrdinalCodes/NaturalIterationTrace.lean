@@ -14,7 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.Effective.FiniteNaturalGraph
-public import LeanPool.TuringConeRigidity.Effective.TupleFormula
+public import LeanPool.TuringConeRigidity.Effective.FiniteTuple
 
 /-!
 # Natural Iteration Trace
@@ -30,6 +30,7 @@ namespace TuringRigidity.BoundedSetTheory
 open TransitiveNameModel
 universe u
 
+/-- A finite function graph starting at `b` and obeying the indexed step relation `S`. -/
 def IterationTrace (o z k n b f : ZFSet.{u}) (S : ZFSet.{u} → ZFSet.{u} → ZFSet.{u} → Prop) : Prop
   :=
   TransitiveNameModel.FunctionGraph k o f ∧ k = insert n n ∧ z = ∅ ∧ ZFSet.pair z b ∈ f ∧
@@ -75,12 +76,14 @@ theorem IterationTrace.correct {z k f : ZFSet.{u}} (b n : ℕ) (g : ℕ → ℕ 
     le_rfl)
 
 namespace Formula
+/-- Variable renaming supplying the step index and adjacent values inside an iteration trace. -/
 def iterationVars : ℕ → ℕ
   | 0 => 0
   | 1 => 1
   | 2 => 3
   | i+3 => i+4
 
+/-- Bounded formula expressing the initial value and every adjacent iteration step. -/
 def iterationTrace (o z k n b f : ℕ) (θ : Formula) : Formula :=
   .conj (.functionGraph f k o) (.conj (.successor k n) (.conj (.empty z)
     (.conj (.pairMem z b f)

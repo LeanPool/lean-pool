@@ -28,6 +28,7 @@ namespace OAI
 namespace TuringRigidity.GenericIdentity
 open Set
 
+/-- The principal lower cone of `U` is exactly the intersection of those of `L` and `R`. -/
 def PrincipalIntersection (U L R : Oracle) : Prop :=
   ∀ b : Degree, b ≤ degree U ↔ b ≤ degree L ∧ b ≤ degree R
 
@@ -72,8 +73,11 @@ theorem principal_measurable {X : Type*} [MeasurableSpace X]
   ext x
   simp only [mem_inter_iff,mem_ofPred_eq,principal_iff_countable]
 
+/-- The Boolean oracle recording whether program `p`, with oracle `A` joined with `P`, returns
+one on each input. -/
 noncomputable def value (p : OracleCode) (P A : Oracle) : Oracle := programOutput p (join A P)
 
+/-- The program with oracle `A` joined with `P` computes a total Boolean oracle. -/
 def Total (p : OracleCode) (P A : Oracle) : Prop :=
   ∃ B, OracleCode.eval (oracleFunction (join A P)) p = oracleFunction B
 
@@ -93,6 +97,8 @@ theorem total_measurable (p : OracleCode) (P : Oracle) : MeasurableSet {A | Tota
   exact OracleCode.success_measurable p _ _
     (join_measurable _ _ measurable_id measurable_const) (value_measurable p P)
 
+/-- Totality at five relevant inputs together with the required principal-intersection source
+equation. -/
 def SourceEquation (p : OracleCode) (P : Oracle) (z : Oracle × Oracle × Oracle) : Prop :=
   Total p P z.1 ∧ Total p P z.2.1 ∧ Total p P z.2.2 ∧
   Total p P (GenericCoding.code z.1 z.2.1) ∧ Total p P (GenericCoding.code z.1 z.2.2) ∧

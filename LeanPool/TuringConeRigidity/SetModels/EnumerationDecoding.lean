@@ -13,8 +13,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.Effective.CodingBounds
 public import LeanPool.TuringConeRigidity.Effective.LocalColumnIndices
+public import LeanPool.TuringConeRigidity.Computability.ArithmeticModelDecoding
 
 /-!
 # Enumeration Decoding
@@ -29,11 +29,16 @@ namespace TuringRigidity.EnumerationDecoding
 open IndexPresentation IndexTuples ArithmeticHierarchy DecodingTheorem
 open SetCoding RelationCoding BoundedDecoding OracleJump ArithmeticModelDecoding
 
+/-- A degree-coded successor chain together with a degree payload at every node. -/
 structure Enumeration where
+  /-- The injective sequence of degree nodes indexing the enumeration. -/
   node : ℕ → Degree
   injective : Function.Injective node
+  /-- The degree value attached to each enumeration node. -/
   output : ℕ → Degree
+  /-- The binary relation code for successor on the node sequence. -/
   successor : RelationCode 2
+  /-- The binary relation code pairing each node with its enumerated degree value. -/
   payload : RelationCode 2
   successor_spec : ∀ a b, successor.Holds (two a b) ↔ ∃ k, a = node k ∧ b = node (k+1)
   payload_spec : ∀ a b, payload.Holds (two a b) ↔ ∃ k, a = node k ∧ b = output k
@@ -77,6 +82,7 @@ theorem path_sigma (Y : Oracle) (S : RelationCode 2) (z : ℕ)
   exact (hd.and (hl.and (hr.and hs))).congr (fun v => by
     simp only [ArithmeticModelDecoding.Path,Presented,Nat.unpair_pair])
 
+/-- A successor path from `z` ends at a node whose payload is the degree represented by `j`. -/
 def Defined (Y : Oracle) (S P : RelationCode 2) (z n j : ℕ) : Prop :=
   ∃ t, Path Y S z n t ∧ Presented Y P (twoIndex (item t n) j)
 

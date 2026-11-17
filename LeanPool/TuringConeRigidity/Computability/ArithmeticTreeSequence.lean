@@ -29,6 +29,7 @@ namespace TuringRigidity.ArithmeticTree
 open UniformArithmetic Encodable
 noncomputable section
 
+/-- The decoded nodes are accepted and the first extends the second by one entry. -/
 def Test.codeChild (t : Test) (O : Oracles) (v x y : ℕ) : Prop :=
   t.accepts O v (decodeNode x) ∧ t.accepts O v (decodeNode y) ∧
     ∃ a, decodeNode x = decodeNode y ++ [a]
@@ -45,6 +46,7 @@ theorem Test.codeChild_arith (t : Test) (v : ℕ) :
   exact (hx.and (hy.and he.ex)).congr (fun _ _ => by
     simp only [Test.codeChild,left,right,Nat.unpair_pair])
 
+/-- Read the diagonal entries of a coded chain to obtain its witness function. -/
 def chainValue (s : ℕ → ℕ) (i : ℕ) : ℕ := ((decodeNode (s (i+1)))[i]?).getD 0
 
 theorem code_chain_extends (s : ℕ → ℕ)

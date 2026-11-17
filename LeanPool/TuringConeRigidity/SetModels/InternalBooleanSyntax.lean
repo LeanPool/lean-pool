@@ -27,6 +27,7 @@ namespace OAI
 namespace TuringRigidity.InternalBooleanSyntax
 open TransitiveNameModel BoundedSetTheory InternalRegularOperations InternalRegularAlgebra
 
+/-- Bounded formula describing the regular complement of a condition-set code. -/
 def negFormula (c U V : ℕ) : Formula :=
   .conj (.subset V c) (.allMem c (.iff (.member 0 (V+1))
     (.allMem (U+1) (.neg (.subset 1 0)))))
@@ -46,6 +47,7 @@ theorem negFormula_spec (c U V : ℕ) (e : ℕ → ZFSet.{0}) :
     refine ⟨neg_subset _ _,fun p hp => ?_⟩
     exact (ZFSet.mem_sep).trans (and_iff_right hp)
 
+/-- Bounded formula describing the regular supremum of a family of condition-set codes. -/
 def supFormula (c F V : ℕ) : Formula :=
   .conj (.subset V c) (.allMem c (.iff (.member 0 (V+1))
     (.allMem (c+1) (.imp (.subset 1 0)
@@ -73,10 +75,14 @@ theorem supFormula_spec (c F V : ℕ) (e : ℕ → ZFSet.{0}) :
     refine ⟨(join_isCode _ _).1,fun p hp => ?_⟩
     exact (mem_regular _ _ p).trans (and_iff_right hp)
 
+/-- The subset `A` of `B` is closed under regular complements and the indexed suprema supplied
+by `Q`. -/
 def Closed (c B Q A : ZFSet.{0}) : Prop :=
   A ⊆ B ∧ (∀ U ∈ A, neg c U ∈ A) ∧
     ∀ F ∈ Q, F ⊆ A → supCode c F ∈ A
 
+/-- Bounded formula expressing closure under regular complement and the prescribed family
+suprema. -/
 def closedFormula (c B Q A : ℕ) : Formula :=
   .conj (.subset A B) (.conj
     (.allMem A (.existsMem (A+1) (negFormula (c+2) 1 0)))
@@ -89,6 +95,8 @@ theorem closedFormula_spec (c B Q A : ℕ) (e : ℕ → ZFSet.{0}) :
     Formula.eval_imp,negFormula_spec,supFormula_spec,cons_zero,cons_succ,Closed]
   simp only [exists_eq_right]
 
+/-- The candidate subsets in `Q` that contain the seeds and satisfy the Boolean closure
+conditions. -/
 noncomputable def candidates (c B Q S : ZFSet.{0}) : ZFSet.{0} :=
   Q.sep (fun A => S ⊆ A ∧ Closed c B Q A)
 

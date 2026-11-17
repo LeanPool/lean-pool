@@ -14,6 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.SetModels.ElementarySchemas
+public import LeanPool.TuringConeRigidity.SetModels.ModelReals
 
 /-!
 # Parameter Covering Models
@@ -29,6 +30,7 @@ namespace TuringRigidity.ElementaryModel
 open BoundedSetTheory TransitiveNameModel RelationCollapse
 universe u
 
+/-- The countable seed containing every numeral and every supplied oracle's real code. -/
 noncomputable def realSeed (A : ℕ → Oracle) (n : ℕ) : ZFSet.{u} :=
   if n.unpair.1 = 0 then natSet n.unpair.2 else realCode (A n.unpair.2)
 

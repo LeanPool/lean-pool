@@ -12,8 +12,9 @@ Module paths, interfaces, and proofs are ported to the pool's toolchain and gate
 
 module
 
-public import LeanPool.TuringConeRigidity.TuringTwoConePrescribedModels
-public import LeanPool.TuringConeRigidity.TuringConeRealParameterProgram
+public import LeanPool.TuringConeRigidity.Constructibility.RelativeDegreeIdeal
+public import LeanPool.TuringConeRigidity.TuringConePullbackProgram
+public import LeanPool.TuringConeRigidity.TuringTwoConeLocality
 
 /-!
 # The joined inverse of a two-cone map as a native relation
@@ -39,6 +40,7 @@ open TwoConeLocality (forwardAnchor)
 universe u
 noncomputable section
 
+/-- Apply the inverse cone isomorphism to the join of the target base with the ideal element. -/
 def inverseAt {I : CountableIdeal} {a b : Degree}
     (ρ : Cone I a ≃o Cone I b) (hb : b ∈ I.carrier) (x : I) : Cone I a :=
   ρ.symm ⟨b ⊔ x.val, I.join_mem hb x.property, le_sup_left⟩
@@ -62,6 +64,7 @@ theorem inverseAt_prescribed {I : CountableIdeal} {a b : Degree}
   have hh := congrArg (fun z => (e.symm z).val) hm
   simpa only [TwoConeRigidity.pullback, TwoConeRigidity.imageJoin, e.symm_apply_apply] using hh
 
+/-- The set-coded graph on the whole ideal of the join-based pullback into the source cone. -/
 def pullbackGraph {I : CountableIdeal} {a b : Degree}
     (ρ : Cone I a ≃o Cone I b) (hb : b ∈ I.carrier) : ZFSet.{u} :=
   ZFSet.sep (fun z => ∃ x : I,

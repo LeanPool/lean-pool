@@ -13,7 +13,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.SetModels.InternalProjectedGeneric
+public import LeanPool.TuringConeRigidity.Representation.GenericFilterName
+public import LeanPool.TuringConeRigidity.SetModels.InternalCollapseConditions
 
 /-!
 # Restricted Forcing Filter
@@ -28,6 +29,7 @@ namespace TuringRigidity.RestrictedForcingFilter
 open TransitiveNameModel BoundedSetTheory CountableForcing
 attribute [local instance] InternalCollapse.order InternalCollapse.collapsePreorder
 
+/-- Include an element of the smaller set-coded poset in the larger one. -/
 noncomputable def inclusion (c q : ZFSet.{0}) (hqc : q ⊆ c) (p : Conditions q) : Conditions c :=
   equivShrink c ⟨label q p,hqc (label_mem q p)⟩
 
@@ -39,6 +41,7 @@ theorem inclusion_le_iff (c q : ZFSet.{0}) (hqc : q ⊆ c) (p r : Conditions q) 
   change label c (inclusion c q hqc r) ⊆ label c (inclusion c q hqc p) ↔ _
   rw [label_inclusion,label_inclusion]; rfl
 
+/-- Regard a filter supported entirely in `q` as a filter on the smaller poset. -/
 noncomputable def restrict (c q : ZFSet.{0}) (hqc : q ⊆ c)
     (G : GenericFilter (Conditions c)) (hGq : ∀ p ∈ G.carrier, label c p ∈ q) :
     GenericFilter (Conditions q) where

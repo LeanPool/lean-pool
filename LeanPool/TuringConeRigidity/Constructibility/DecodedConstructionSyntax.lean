@@ -13,7 +13,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.SetModels.CofinalPaddedDecoder
+public import LeanPool.TuringConeRigidity.OrdinalCodes.VectorCodeCertificates
 
 /-!
 # Decoded Construction Syntax
@@ -29,6 +29,7 @@ open ElementaryModel BoundedSetTheory TransitiveNameModel OrdinalCoding
 universe u
 attribute [local irreducible] Construction.ownRealsMembership SentenceForm.bound
 
+/-- The vector of ordinal parameters, using zero in slots that do not carry an ordinal. -/
 noncomputable def Construction.ordinalVector (t : Construction.{u}) :
     Fin t.ownRealsMembership.bound → Ordinal.{u} := fun k => (t.ordinalData k).getD 0
 
@@ -43,6 +44,8 @@ theorem Construction.ordinalVector_internal (t : Construction.{u}) (M : ZFSet.{u
     simpa only [Construction.ordinalVector, ho, Option.getD_some] using
       t.ordinalData_mem M hi k o ho
 
+/-- Recover a construction's ordinal input from its padded code, using the real-set slot
+otherwise. -/
 noncomputable def Construction.decodedOrdinalInput (t : Construction.{u}) (k : ℕ) : SentenceForm :=
   if hk : k < t.ownRealsMembership.bound then
     match t.ordinalData k with
@@ -50,6 +53,7 @@ noncomputable def Construction.decodedOrdinalInput (t : Construction.{u}) (k : �
     | some _ => largestPaddedEntrySentence t.ownRealsMembership.bound ⟨k,hk⟩
   else .equal 0 2
 
+/-- Bind decoded ordinal inputs before evaluating the renamed construction body. -/
 noncomputable def Construction.decodedOrdinalBody (t : Construction.{u}) (q : SentenceForm) :
   SentenceForm :=
   bindComputed t.ownRealsMembership.bound t.decodedOrdinalInput

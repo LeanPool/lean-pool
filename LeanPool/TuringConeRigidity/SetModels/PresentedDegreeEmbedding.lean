@@ -30,6 +30,7 @@ namespace TuringRigidity.BoundedSetTheory
 open EncodedForcing PersistentRestrictions PersistentPresentation
 universe u
 
+/-- The real-set degree code of an ideal element, selected through its column presentation. -/
 noncomputable def presentedDegreeCode (R : ZFSet.{u}) {I : CountableIdeal} {H : Oracle}
     (hH : Presented I H) (x : I) : ZFSet.{u} :=
   degreeCode R (columns H (Classical.choose ((hH x.val).mp x.property)))

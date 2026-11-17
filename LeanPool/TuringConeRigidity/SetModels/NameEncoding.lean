@@ -29,6 +29,8 @@ open Set
 universe u
 variable {P : Type u}
 
+/-- Recursively encode a forcing name as the set of pairs of encoded children and condition
+labels. -/
 noncomputable def Name.encode (label : P → ZFSet.{u}) : Name P → ZFSet.{u}
   | .mk _ child tag => ZFSet.range (fun i => ZFSet.pair (encode label (child i)) (label (tag i)))
 
@@ -60,11 +62,15 @@ theorem Name.val_eq_of_encode_eq (label : P → ZFSet.{u})
         refine ⟨i,by simpa only [hl ht] using hj,?_⟩
         exact (ih i (other j) hc).trans hx
 
+/-- Set codes that arise from recursively encoding a forcing name with the supplied condition
+labels. -/
 def EncodedName (label : P → ZFSet.{u}) := {x : ZFSet.{u} // ∃ τ, Name.encode label τ = x}
 
+/-- Regard a name as its set code together with the encoding witness. -/
 noncomputable def Name.toEncoded (label : P → ZFSet.{u}) (τ : Name P) : EncodedName label :=
   ⟨Name.encode label τ,τ,rfl⟩
 
+/-- Interpret an encoded name by choosing a name with that code and evaluating it in `G`. -/
 noncomputable def EncodedName.val {label : P → ZFSet.{u}}
     (G : Set P) (τ : EncodedName label) : ZFSet.{u} := Name.val G τ.property.choose
 

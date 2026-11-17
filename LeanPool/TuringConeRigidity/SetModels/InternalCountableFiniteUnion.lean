@@ -29,9 +29,11 @@ namespace OAI
 namespace TuringRigidity.InternalCountableFiniteUnion
 open Set TransitiveNameModel BoundedSetTheory InternalFiniteSubsets InternalFiniteEnumeration
 
+/-- A graph entry at `k`, using `d` as the fallback when no value in `U` is recorded there. -/
 def Entry (U g d k x : ZFSet.{0}) : Prop := ZFSet.pair k x ∈ g ∨
   (x = d ∧ ∀ y ∈ U, ¬ ZFSet.pair k y ∈ g)
 
+/-- Bounded formula expressing graph lookup with a designated fallback value. -/
 def entryFormula (U g d k x : ℕ) : Formula := .disj (.pairMem k x g)
   (.conj (.equal x d) (.allMem U (.neg (.pairMem (k+1) 0 (g+1)))))
 
@@ -57,6 +59,8 @@ theorem entry_exists_unique (U g d k : ZFSet.{0}) (hg : InternalCollapse.Prefix 
   · exact ⟨d,hd,Or.inr ⟨rfl,fun y hy hky => h ⟨y,hy,hky⟩⟩,
       fun y hy he => he.elim (fun hky => False.elim (h ⟨y,hy,hky⟩)) And.left⟩
 
+/-- Bounded formula flattening a coded sequence of enumerated finite sets through
+natural-number pairing. -/
 def flattenFormula (ω Q S C B T U d k x : ℕ) : Formula :=
   .existsMem ω (.existsMem (ω+1) (.conj (Formula.naturalPair (ω+2) (Q+2) 1 0 (k+2))
     (.existsMem (S+2) (.conj (.pairMem 2 0 (B+3))

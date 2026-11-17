@@ -27,6 +27,7 @@ namespace OAI
 namespace TuringRigidity.InternalColumnProjection
 open TransitiveNameModel BoundedSetTheory InternalCountableMap
 
+/-- The coordinates in `K` that occur in some natural-number row of `S`. -/
 noncomputable def columns (K S : ZFSet.{0}) : ZFSet.{0} :=
   K.sep (fun x => ∃ n ∈ ZFSet.omega, ZFSet.pair x n ∈ S)
 
@@ -50,6 +51,7 @@ theorem support_subset_columns (K S : ZFSet.{0}) (hS : S ⊆ ZFSet.prod K ZFSet.
   obtain ⟨x,hx,n,hn,rfl⟩ := ZFSet.mem_prod.mp (hS hz)
   exact ZFSet.pair_mem_prod.mpr ⟨(mem_columns K S x).mpr ⟨hx,n,hn,hz⟩,hn⟩
 
+/-- The graph projecting each row coordinate in `S` to its column coordinate. -/
 noncomputable def projection (K S : ZFSet.{0}) : ZFSet.{0} :=
   (ZFSet.prod S (columns K S)).sep (fun z => ∃ s ∈ S, ∃ x ∈ columns K S,
     z = ZFSet.pair s x ∧ ∃ n ∈ ZFSet.omega, s = ZFSet.pair x n)

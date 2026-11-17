@@ -32,8 +32,10 @@ instance : OrderTop Condition where
   top := ⟨[]⟩
   le_top _ := List.nil_prefix
 
+/-- The von Neumann natural number corresponding to `n`. -/
 def numeral (n : ℕ) : ZFSet := ZFSet.mk (PSet.ofNat n)
 
+/-- The set of von Neumann numerals at which the oracle is true. -/
 noncomputable def realSet (A : Oracle) : ZFSet :=
   ZFSet.range (fun n : {n // A n = true} => numeral n.val)
 
@@ -46,6 +48,7 @@ theorem realSet_subset_omega (A : Oracle) : realSet A ⊆ ZFSet.omega := by
   obtain ⟨n,rfl⟩ := ZFSet.mem_range.mp hx
   exact numeral_mem_omega n.val
 
+/-- The canonical forcing name for the generic binary real. -/
 noncomputable def genericReal : Name Condition :=
   .mk {t : Condition × ℕ // t.2 < t.1.word.length ∧ t.1.word.getD t.2 false = true}
     (fun t => Name.check (numeral t.val.2)) (fun t => t.val.1)

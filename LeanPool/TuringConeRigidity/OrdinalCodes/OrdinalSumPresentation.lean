@@ -14,6 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.OrdinalCodes.OrdinalSumSets
+public import LeanPool.TuringConeRigidity.OrdinalCodes.OrdinalOrderPresentation
 
 /-!
 # Ordinal Sum Presentation
@@ -49,6 +50,7 @@ theorem sumLess_right_right (a b s t : ZFSet.{u}) :
     SumLess a b (rightNode s) (rightNode t) ↔ s ∈ b ∧ t ∈ b ∧ s ∈ t := by
   simp [SumLess]
 
+/-- The ordinal-sum collapse value of a tagged element, with empty set as the fallback. -/
 noncomputable def sumValue (a : Ordinal.{u}) (x : ZFSet.{u}) : ZFSet.{u} := by
   classical
   exact if h : ∃ s, x = leftNode s then h.choose

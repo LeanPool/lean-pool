@@ -11,8 +11,8 @@ Module paths, interfaces, and proofs are ported to the pool's toolchain and gate
 
 module
 
-public import LeanPool.TuringConeRigidity.TuringTwoConePersistentExtension
-public import LeanPool.TuringConeRigidity.Computability.ArithmeticActions
+public import LeanPool.TuringConeRigidity.OrdinalCodes.NumericalExtension
+public import LeanPool.TuringConeRigidity.TuringTwoConeGraphPresentation
 
 /-!
 # Numerical graphs between two cones
@@ -37,6 +37,8 @@ open TwoConePresentation (RawGraph)
 noncomputable section
 attribute [local instance] Classical.propDecidable
 
+/-- A total, surjective, order-preserving coded action between the represented source and
+target cones. -/
 structure Action (B C H : Oracle) (P : ℕ → Prop) : Prop where
   total : ∀ n, degree B ≤ degree (columns H n) → ∃ m, P (Nat.pair n m)
   above : ∀ n m, P (Nat.pair n m) →
@@ -53,6 +55,7 @@ theorem action_congr {B C H : Oracle} {P Q : ℕ → Prop} (h : ∀ v, P v ↔ Q
   have he : P = Q := funext (fun v => propext (h v))
   rw [he]
 
+/-- The cone element represented by a valid column whose degree lies above the base. -/
 def entry {I : CountableIdeal} {H : Oracle} (hpres : Presented I H)
     {a : Degree} (n : ℕ) (hn : a ≤ degree (columns H n)) : Cone I a :=
   ⟨degree (columns H n), (hpres _).mpr ⟨n, rfl⟩, hn⟩
@@ -168,6 +171,7 @@ theorem compatible_iff {I J : CountableIdeal} {a b : Degree} {A H : Oracle}
     rw [hi] at hh
     exact hy.symm.trans (hh.symm.trans hy')
 
+/-- The Boolean oracle coding the raw graph of the isomorphism between the ideal's two cones. -/
 def graphOracle {I : CountableIdeal} {a b : Degree}
     (ρ : Cone I a ≃o Cone I b) (H : Oracle) : Oracle := fun n => decide (RawGraph ρ H n)
 

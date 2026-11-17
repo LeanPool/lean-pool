@@ -14,6 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.Effective.CodingLocations
+public import LeanPool.TuringConeRigidity.Effective.PrefixComputability
 
 /-!
 # Coding Split Search
@@ -27,8 +28,12 @@ namespace OAI
 namespace TuringRigidity.CodingSplitSearch
 open Encodable PrefixComputability CodingLocations
 
+/-- A finite splitting-search witness: word, changed position and bit, input, and two
+execution bounds. -/
 abbrev Witness := (List Bool × (ℕ × Bool)) × (ℕ × (ℕ × ℕ))
 
+/-- Test two bounded executions for a one-bit output disagreement and return its absolute
+position. -/
 def finiteTrial (d : Nat.Partrec.Code) (base : List Bool) (L : List ℕ) (w : Witness) : Option ℕ :=
   let a := d.evaln w.2.2.1 (Nat.pair (encode L) (Nat.pair (encode w.1.1) w.2.1))
   let b := d.evaln w.2.2.2 (Nat.pair (encode L) (Nat.pair (encode (w.1.1.set w.1.2.1 w.1.2.2))
@@ -68,6 +73,7 @@ theorem finiteTrial_primrec (d : Nat.Partrec.Code) (base : List Bool) : Primrec�
     (Primrec.option_some.comp (Primrec.nat_add.comp (Primrec.const base.length) hi))
     (Primrec.const none)
 
+/-- Try a coded splitting witness using a finite prefix of the oracle `Y`. -/
 def trial (Y : Oracle) (d : Nat.Partrec.Code) (base : List Bool) (z : ℕ) : Option ℕ :=
   finiteTrial d base (oraclePrefix (fun n => CommonIdeal.bit (Y n)) (Nat.unpair z).1)
     ((decode (α := Witness) (Nat.unpair z).2).getD default)

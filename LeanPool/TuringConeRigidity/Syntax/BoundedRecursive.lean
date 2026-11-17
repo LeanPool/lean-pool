@@ -27,6 +27,7 @@ namespace OAI
 namespace TuringRigidity.BoundedRecursive
 open UniformOracle
 
+/-- Return one exactly when every input below the bound has value one under the indexed test. -/
 def allBelow (f : ℕ → ℕ) (a : ℕ) : ℕ → ℕ
   | 0 => 1
   | n+1 => if allBelow f a n = 1 ∧ f (Nat.pair a n) = 1 then 1 else 0

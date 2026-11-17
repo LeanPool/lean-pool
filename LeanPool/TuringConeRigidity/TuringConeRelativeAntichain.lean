@@ -41,9 +41,11 @@ noncomputable section
 def AntichainAbove (p : AntichainCode) (a : Degree) : Prop :=
   a ≤ p.bound ∧ a ≤ p.left ∧ a ≤ p.right
 
+/-- Every degree parameter of the set code lies above the cone base. -/
 def SetAbove (p : SetCode) (a : Degree) : Prop :=
   a ≤ p.bound ∧ AntichainAbove p.tags a ∧ AntichainAbove p.decorated a
 
+/-- Every coordinate-set and tuple-antichain parameter lies above the cone base. -/
 def RelationAbove {n : ℕ} (p : RelationCode n) (a : Degree) : Prop :=
   (∀ i, SetAbove (p.coordinates i) a) ∧ AntichainAbove p.tuples a
 
@@ -116,6 +118,7 @@ theorem antichain_code {F B : Oracle} (a : Degree) (hFB : Reduces F B)
     exact sup_eq_right.mpr (reduces_jump B)
   exact ⟨p, ha, he ▸ hp, hs⟩
 
+/-- Repeat `A` in every column of a paired oracle. -/
 def repeatOracle (A : Oracle) : Oracle := fun n => A (Nat.unpair n).2
 
 @[simp] theorem repeat_column (A : Oracle) (k : ℕ) : columns (repeatOracle A) k = A := by

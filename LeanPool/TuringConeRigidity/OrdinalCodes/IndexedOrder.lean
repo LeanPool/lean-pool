@@ -13,7 +13,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.OrdinalCodes.IndexMatrix
+public import LeanPool.TuringConeRigidity.Effective.TableIndices
 
 /-!
 # Indexed Order
@@ -25,11 +25,14 @@ public import LeanPool.TuringConeRigidity.OrdinalCodes.IndexMatrix
 namespace OAI
 
 namespace TuringRigidity.IndexedOrder
-open Encodable CommonIdeal UniformOracle TableIndices IndexMatrix
+open Encodable CommonIdeal UniformOracle TableIndices
 
+/-- Every recorded value and trial bound is a successful finite computation of the indexed
+oracle. -/
 def Reads (Y : Oracle) (e : Nat.Partrec.Code) (L : List (ℕ × ℕ)) : Prop :=
   ∀ j : Fin L.length, TableIndices.run Y e j.val (L[j].2) = some (L[j].1)
 
+/-- Extract the output values from a finite list of value-and-trial records. -/
 def values (L : List (ℕ × ℕ)) : List ℕ := L.map Prod.fst
 
 theorem reads_values {Y A : Oracle} {e : Nat.Partrec.Code}
@@ -55,6 +58,8 @@ theorem exists_reads {Y A : Oracle} {e : Nat.Partrec.Code}
   intro j
   simpa [L] using hz j.val
 
+/-- A bounded computation certificate using a finite table certified by the source oracle
+program. -/
 def Certificate (Y : Oracle) (e d : Nat.Partrec.Code) (n a z : ℕ) : Prop :=
   let L := (decode (α := List (ℕ × ℕ)) (Nat.unpair z).1).getD []
   Reads Y e L ∧ d.evaln (Nat.unpair z).2 (Nat.pair (encode (values L)) n) = some a
@@ -77,6 +82,8 @@ theorem certificate_iff_run {Y A : Oracle} {e : Nat.Partrec.Code}
     rw [reads_values he L hL, hlen]
     exact hz
 
+/-- A reduction program has consistent certificates and computes every value of the target
+oracle program. -/
 def OrderWitness (Y : Oracle) (e₀ e₁ d : Nat.Partrec.Code) : Prop :=
   (∀ n a b z w, Certificate Y e₁ d n a z → Certificate Y e₁ d n b w → a = b) ∧
     ∀ n, ∃ a z w, Certificate Y e₁ d n a z ∧ TableIndices.run Y e₀ n w = some a

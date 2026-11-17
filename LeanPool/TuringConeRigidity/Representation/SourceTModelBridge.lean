@@ -30,6 +30,8 @@ namespace TuringRigidity.BoundedSetTheory
 open TransitiveNameModel EncodedForcing PersistentRestrictions PersistentPresentation OracleJump
 universe u
 
+/-- Set-theoretic environment containing omega, the degree universe, degree order, ideal, and
+action graph. -/
 noncomputable def modelDegreeEnv (R I F : ZFSet.{u}) : ℕ → ZFSet.{u} :=
   cons ZFSet.omega (cons (degreeUniverse R) (cons (degreeOrder R) (cons I (fun _ => F))))
 

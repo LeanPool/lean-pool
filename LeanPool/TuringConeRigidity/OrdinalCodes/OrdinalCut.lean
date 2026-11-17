@@ -29,6 +29,7 @@ namespace TuringRigidity.RelativeConstructible
 open ElementaryModel BoundedSetTheory TransitiveNameModel
 universe u
 
+/-- The subset of ordinal elements of `A`. -/
 noncomputable def ordinalCut (A : ZFSet.{u}) : ZFSet.{u} := A.sep ZFSet.IsOrdinal
 
 theorem mem_ordinalCut (A x : ZFSet.{u}) :
@@ -43,6 +44,7 @@ theorem ordinalCut_isOrdinal (A : ZFSet.{u}) (hA : Transitive A) :
     exact (mem_ordinalCut A y).mpr ⟨hA x hx y hy,ho.mem hy⟩
   · intro x hx; exact ((mem_ordinalCut A x).mp hx).2
 
+/-- The rank of the ordinal cut of `A`. -/
 noncomputable def ordinalHeight (A : ZFSet.{u}) : Ordinal.{u} := (ordinalCut A).rank
 
 theorem ordinalHeight_toZFSet (A : ZFSet.{u}) (hA : Transitive A) :
@@ -61,6 +63,7 @@ theorem ordinal_subset_iff_height (A : ZFSet.{u}) (hA : Transitive A) (o : Ordin
     exact (mem_ordinalCut A x).mpr ⟨h hx,(ZFSet.isOrdinal_toZFSet o).mem hx⟩
   · intro h x hx; exact ((mem_ordinalCut A x).mp (h hx)).1
 
+/-- The full-sentence version of the bounded ordinal predicate. -/
 noncomputable def ordinalSentence : SentenceForm := fromBounded (ordinalFormula 0)
 
 theorem ordinalSentence_bound : ordinalSentence.bound = 1 := by rfl

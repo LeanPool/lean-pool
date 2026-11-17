@@ -14,6 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.SetModels.ElementaryDegreeHull
+public import LeanPool.TuringConeRigidity.Representation.GroundDegreePresentation
 
 /-!
 # Elementary Model Ideal
@@ -39,6 +40,8 @@ theorem model_reals_countable (M : ZFSet.{u}) [Countable (Conditions M)] : (mode
   intro A hA
   exact ⟨realCode A,hA,decodeReal_realCode A⟩
 
+/-- The countable ideal of degrees represented by real codes belonging to the transitive
+model. -/
 noncomputable def modelIdeal (M : ZFSet.{u}) [Countable (Conditions M)] (hM : Transitive M) (hT :
   SourceT M) :
     CountableIdeal where

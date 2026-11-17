@@ -13,7 +13,10 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
+public import Mathlib.NumberTheory.Real.Irrational
+
 public import LeanPool.TuringConeRigidity.Computability.BinaryMachine
+public import Mathlib.Algebra.Order.Ring.Star
 
 /-!
 # Binary Cut
@@ -27,6 +30,8 @@ namespace OAI
 namespace TuringRigidity.BinarySeries
 open UniformOracle RationalCoding Encodable Filter
 
+/-- Compare rational bounds with a dyadic interval, returning a decided cut bit when
+separated. -/
 def approxDecision (z : ℕ × ℕ × ℕ) : Option ℕ :=
   if fracLeft (z.1,z.2.2,2^z.2.1) < fracRight (z.1,z.2.2,2^z.2.1) then some 1
   else if fracRight (z.1,z.2.2+1,2^z.2.1) < fracLeft (z.1,z.2.2+1,2^z.2.1) then some 0
@@ -42,6 +47,7 @@ theorem approxDecision_primrec : Primrec approxDecision := by
     (Primrec.ite (Primrec.nat_lt.comp (fracRight_primrec.comp hhi) (fracLeft_primrec.comp hhi))
       (Primrec.const (some 0)) (Primrec.const none))
 
+/-- Try to decide a cut bit using the first `n` binary digits of the oracle. -/
 def approxTrial (B : Oracle) (q n : ℕ) : Option ℕ := approxDecision (q,n,numeral B n)
 
 theorem approxTrial_recursive (B : Oracle) :

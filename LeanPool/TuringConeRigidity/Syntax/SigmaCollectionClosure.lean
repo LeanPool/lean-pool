@@ -13,7 +13,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.Syntax.SigmaParameterizedClosure
+public import LeanPool.TuringConeRigidity.Syntax.SigmaBoundedUniversal
+public import LeanPool.TuringConeRigidity.Syntax.SigmaParameterized
 
 /-!
 # Sigma Collection Closure

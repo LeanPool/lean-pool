@@ -28,6 +28,7 @@ namespace OAI
 namespace TuringRigidity.EffectiveForcing
 open UniformOracle ArithmeticHierarchy OracleJump EffectiveWitness EncodedForcing CodingForcing
 
+/-- Decode the answer component, using the first component when the second is zero. -/
 def answer (v : ℕ) : ℕ := if (Nat.unpair v).2 = 0 then (Nat.unpair v).1 else (Nat.unpair v).2 - 1
 
 theorem answer_primrec : Primrec answer := Primrec.ite

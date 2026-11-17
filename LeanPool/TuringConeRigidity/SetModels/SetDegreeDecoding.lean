@@ -15,6 +15,7 @@ module
 
 public import LeanPool.TuringConeRigidity.SetModels.SetModelReals
 public import LeanPool.TuringConeRigidity.Constructibility.PersistentPresentation
+public import LeanPool.TuringConeRigidity.SetModels.SetPresentationDecoding
 
 /-!
 # Set Degree Decoding
@@ -31,6 +32,7 @@ open PersistentRestrictions PersistentPresentation
 universe u
 noncomputable section
 
+/-- The set of all real codes whose decoded oracle has degree `a`. -/
 def degreeSet (a : Degree) : ZFSet.{u} :=
   ZFSet.sep (fun x => degree (oracleOf x) = a) (ZFSet.powerset ZFSet.omega)
 
@@ -71,6 +73,7 @@ theorem class_eq_degreeSet (M : ZFSet.{u})
     have hB : B ∈ reals M := hLower hA ((degree_eq_iff B A).mp hBA).1
     exact ⟨(hd _).mpr ⟨B,hB,rfl⟩,(hE A hA B hB).mpr hBA.symm⟩
 
+/-- The set-coded family of degree sets corresponding to the countable ideal. -/
 def idealSet (I : CountableIdeal) : ZFSet.{u} :=
   ZFSet.sep (fun x => ∃ a ∈ I.carrier, x = degreeSet a)
     (ZFSet.powerset (ZFSet.powerset ZFSet.omega))
@@ -107,6 +110,7 @@ theorem quotient_eq_idealSet (M : ZFSet.{u})
     refine ⟨realSet (EncodedForcing.columns A n),(ha _).mpr ⟨n,rfl⟩,?_⟩
     rw [class_eq_degreeSet M hLower hd hE (hcols n),hn]
 
+/-- The set-coded graph of the ideal automorphism on degree-set representations. -/
 def automorphismSet {I : CountableIdeal} (ρ : I ≃o I) : ZFSet.{u} :=
   ZFSet.sep (fun z => ∃ b : I, z = ZFSet.pair (degreeSet b.val) (degreeSet (ρ b).val))
     (ZFSet.prod (idealSet I) (idealSet I))

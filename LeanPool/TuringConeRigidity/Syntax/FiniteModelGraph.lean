@@ -13,7 +13,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.SetModels.ModelReals
+public import LeanPool.TuringConeRigidity.SetModels.UnionIteration
 
 /-!
 # Finite Model Graph
@@ -29,6 +29,7 @@ namespace TuringRigidity.BoundedSetTheory
 open TransitiveNameModel
 universe u
 
+/-- The set-coded graph of the values of `f` from index zero through the supplied bound. -/
 noncomputable def finiteModelGraph (f : ℕ → ZFSet.{u}) : ℕ → ZFSet.{u}
   | 0 => {ZFSet.pair (natSet 0) (f 0)}
   | n+1 => finiteModelGraph f n ∪ ({ZFSet.pair (natSet (n+1)) (f (n+1))} : ZFSet.{u})

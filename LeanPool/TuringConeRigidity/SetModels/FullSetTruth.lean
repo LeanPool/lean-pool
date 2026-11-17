@@ -14,6 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.CohenForcing.FullSetForcing
+public import LeanPool.TuringConeRigidity.SetModels.ElementarySchemas
 
 /-!
 # Full Set Truth
@@ -31,6 +32,7 @@ open ElementaryModel SentenceForm BoundedForcing
 universe u
 variable {c : ZFSet.{u}} [Preorder (Conditions c)]
 
+/-- Conditions deciding the full sentence or its negation relative to the model's name codes. -/
 def Decision (M : ZFSet.{u}) (e : ℕ → Name (Conditions c)) (φ : SentenceForm) : Set (Conditions c)
   :=
   {p | Forces M e φ p ∨ Forces M e (.neg φ) p}

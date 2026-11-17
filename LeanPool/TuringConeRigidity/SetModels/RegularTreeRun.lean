@@ -14,7 +14,6 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.SetModels.RegularBinaryTree
-public import LeanPool.TuringConeRigidity.SetModels.ModelIterationFormula
 
 /-!
 # Regular Tree Run
@@ -28,6 +27,7 @@ namespace OAI
 namespace TuringRigidity.RegularTreeRun
 open TransitiveNameModel BoundedSetTheory InternalProjectedGeneric RegularBinaryTree
 
+/-- The Boolean value assigned to index `i` by the set-coded word `w`. -/
 noncomputable def bit (w i : ZFSet.{0}) : Bool := by
   classical
   exact decide (ZFSet.pair i (InternalCohen.bitSet true) ∈ w)
@@ -38,6 +38,7 @@ theorem bit_word (s : List Bool) (n : ℕ) (hn : n < s.length) :
   simp only [bit,InternalCohen.pair_mem_wordCode]
   cases h : s[n] <;> simp [h,hn]
 
+/-- Follow the regular splitting tree using the successive bits of the coded word. -/
 noncomputable def run (c B T : ZFSet.{0}) (E : ℕ → ZFSet.{0}) (w : ZFSet.{0}) : ℕ → ZFSet.{0}
   | 0 => c
   | n+1 => children B T (run c B T E w n) (E n) (bit w (natSet n))
@@ -64,6 +65,7 @@ theorem run_word (c B T : ZFSet.{0}) (E : ℕ → ZFSet.{0}) (s : List Bool) :
     run c B T E (InternalCohen.wordCode s) s.length = tree c B T E s := by
   simpa only [List.take_length] using run_take c B T E s s.length le_rfl
 
+/-- Bounded formula describing one bit-directed step in the regular splitting tree. -/
 def stepFormula (B P X Y T E w b1 i U V : ℕ) : Formula :=
   .existsMem B (.existsMem (P+1) (.existsMem (P+2)
     (.existsMem (X+3) (.existsMem (Y+4)

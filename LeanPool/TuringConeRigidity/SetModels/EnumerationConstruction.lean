@@ -29,6 +29,8 @@ namespace TuringRigidity.EnumerationConstruction
 open Encodable EncodedForcing ArithmeticHierarchy UniformOracle OracleJump
 open ArithmeticModelDecoding SetCoding RelationCoding BoundedDecoding EnumerationDecoding
 
+/-- Combine the two column families, reserving the first row tag for `C` and other row tags
+for `H`. -/
 def rows (C H : Oracle) : Oracle := fun v =>
   if (Nat.unpair (Nat.unpair v).1).1 = 0 then C (Nat.pair (Nat.unpair (Nat.unpair v).1).2
     (Nat.unpair v).2)

@@ -30,10 +30,12 @@ open TransitiveNameModel BoundedSetTheory CohenGroundPoset CohenConditionCode Co
 open InternalCohen (alphabet bitSet mem_alphabet)
 attribute [local instance] InternalCollapse.order InternalCollapse.collapsePreorder
 
+/-- Two condition graphs assign the same bits at coordinates corresponding through `f`. -/
 def Matches (A B f p q : ZFSet.{0}) : Prop :=
   ∀ x ∈ A, ∀ y ∈ B, ZFSet.pair x y ∈ f → ∀ b ∈ alphabet,
     (ZFSet.pair x b ∈ p ↔ ZFSet.pair y b ∈ q)
 
+/-- Bounded formula expressing agreement of condition graphs under coordinate reindexing. -/
 def matchesFormula (A B f p q bit : ℕ) : Formula :=
   .allMem A (.allMem (B+1) (.imp (.pairMem 1 0 (f+2))
     (.allMem (bit+2) (.iff (.pairMem 2 0 (p+3)) (.pairMem 1 0 (q+3))))))
@@ -65,10 +67,12 @@ theorem matches_graph_iff (A B f : ZFSet.{0}) (e : Conditions A ≃ Conditions B
     change p.val i = some b ↔ p.val (e.symm (e i)) = some b
     rw [e.symm_apply_apply]
 
+/-- Order isomorphism reindexing set-coded conditions along the coordinate equivalence. -/
 noncomputable def reindexIso (A B : ZFSet.{0}) (e : Conditions A ≃ Conditions B) :
     Conditions (conditions A) ≃o Conditions (conditions B) :=
   (conditionEquiv A).symm.trans ((CohenCoordinates.reindex e).trans (conditionEquiv B))
 
+/-- Set-coded graph of the condition reindexing relation. -/
 noncomputable def reindexGraph (A B f : ZFSet.{0}) : ZFSet.{0} :=
   (ZFSet.prod (conditions A) (conditions B)).sep (fun z =>
     ∃ p ∈ conditions A, ∃ q ∈ conditions B, z = ZFSet.pair p q ∧ Matches A B f p q)

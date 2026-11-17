@@ -30,6 +30,7 @@ open BoundedSetTheory TransitiveNameModel
 universe u
 noncomputable section
 
+/-- A total single-valued map sending relation edges to membership edges in the target bound. -/
 def RankMap (d r b g : ZFSet.{u}) : Prop :=
   ((∀ z ∈ g, ∃ x ∈ d, ∃ y ∈ b, z = ZFSet.pair x y) ∧
     (∀ x ∈ d, ∃ y ∈ b, ZFSet.pair x y ∈ g ∧
@@ -37,6 +38,7 @@ def RankMap (d r b g : ZFSet.{u}) : Prop :=
   (∀ x ∈ d, ∀ y ∈ d, ∀ a ∈ b, ∀ c ∈ b,
     ZFSet.pair x y ∈ r → ZFSet.pair x a ∈ g → ZFSet.pair y c ∈ g → a ∈ c)
 
+/-- Bounded formula expressing the membership-increasing rank-map condition. -/
 def rankFormula (d r b g : ℕ) : Formula :=
   .conj (.functionGraph g d b)
     (.allMem d (.allMem (d+1) (.allMem (b+2) (.allMem (b+3)
@@ -61,6 +63,8 @@ theorem rankMap_sound {α : Type u} {rel : α → α → Prop} {d r b g : ZFSet.
   exact Subrelation.wf (fun {x y} hxy => ZFSet.rank_lt_of_mem (hm x y hxy))
     (InvImage.wf (fun x => (rank x).rank) Ordinal.lt_wf)
 
+/-- A sigma formula requesting a target bound and a membership-increasing map for the
+relation. -/
 def rankedFormula : SigmaFormula :=
   .existsSet (.existsSet (.bounded (rankFormula 2 3 1 0)))
 

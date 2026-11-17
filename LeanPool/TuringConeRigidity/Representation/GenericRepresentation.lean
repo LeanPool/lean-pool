@@ -42,6 +42,8 @@ theorem selected_generic_ideal (D : ℕ → List Bool → Prop) (hd : ∀ n, Den
   intro A a
   exact CommonIdeal.ideal_of_family A (Z A) (hfamily A) a
 
+/-- The automorphism has a continuous oracle lift on a set meeting a countable dense-open
+family. -/
 def GenericContinuousRepresentation (π : Degree ≃o Degree) : Prop :=
   ∃ D : ℕ → List Bool → Prop, (∀ n, DenseOpen (D n)) ∧
     ∃ f : Oracle → Oracle, ContinuousOn f {A | GenericFor D A} ∧
@@ -65,6 +67,8 @@ theorem generic_continuous_of_subtype (π : Degree ≃o Degree)
   intro A hA
   simpa [F,hA] using hπ ⟨A,hA⟩
 
+/-- One program with a fixed oracle parameter represents the automorphism on a countable
+dense-open generic domain. -/
 def GenericProgramRepresentation (π : Degree ≃o Degree) : Prop :=
   ∃ D : ℕ → List Bool → Prop, (∀ n, DenseOpen (D n)) ∧
     ∃ P : Oracle, ∃ p : OracleCode, ∀ A, GenericFor D A →

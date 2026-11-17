@@ -13,7 +13,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.SetModels.InternalPrimitiveGraph
+public import LeanPool.TuringConeRigidity.OrdinalCodes.NaturalPrimitiveRecursion
 
 /-!
 # Primitive Predicate Formula
@@ -28,11 +28,14 @@ namespace OAI
 namespace TuringRigidity.BoundedSetTheory
 universe u
 
+/-- A bounded formula defines a numerical predicate uniformly for every adequate finite-graph
+bound. -/
 def DefinesPredicate (φ : Formula) (P : ℕ → Prop) : Prop :=
   ∀ e : ℕ → ZFSet.{u}, e 1 = ZFSet.omega →
     (∀ g : ℕ → ℕ, ∀ k, finiteNaturalGraph g k ∈ e 2) → ∀ n, e 0 = natSet n →
       (φ.Eval e ↔ P n)
 
+/-- Turn a numerical function definition into the predicate that its output is nonzero. -/
 def Formula.numericalPredicate (φ : Formula) : Formula := .existsMem 1
   (.conj (unary φ 2 3 1 0) (.neg (.empty 0)))
 

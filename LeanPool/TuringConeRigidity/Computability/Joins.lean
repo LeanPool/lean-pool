@@ -13,8 +13,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.Computability.OracleCode
-public import Lean.Elab.Tactic.Omega
+public import LeanPool.TuringConeRigidity.SetModels.Degrees
 
 /-!
 # Joins
@@ -27,6 +26,8 @@ namespace OAI
 
 namespace TuringRigidity
 
+/-- The Turing join of two oracles, with the first in even positions and the second in odd
+positions. -/
 def join (A B : Oracle) (n : ℕ) : Bool := if n.bodd then B (n / 2) else A (n / 2)
 
 private theorem total_comp {O : Set (ℕ →. ℕ)} {f g : ℕ → ℕ}
@@ -106,6 +107,7 @@ theorem join_mono {A B C D : Oracle} (hA : Reduces A C) (hB : Reduces B D) :
   join_reduces (reduces_trans hA (reduces_join_left C D))
     (reduces_trans hB (reduces_join_right C D))
 
+/-- The join operation on Turing degrees induced by interleaving oracle representatives. -/
 def degreeJoin (a b : Degree) : Degree :=
   Quotient.liftOn₂ a b (fun A B => degree (join A B))
     (fun _ _ _ _ hA hB => (degree_eq_iff _ _).mpr

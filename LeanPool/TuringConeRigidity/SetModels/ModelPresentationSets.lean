@@ -14,6 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.SetModels.ColumnSetFormula
+public import LeanPool.TuringConeRigidity.SetModels.DegreeSetFormula
 
 /-!
 # Model Presentation Sets
@@ -34,6 +35,7 @@ theorem sourceT_real_column (M : ZFSet.{u}) (hM : Transitive M) (hT : SourceT M)
   sourceT_arithmetic_oracle M hM hT (column_arith (parameter_arith 0) (Primrec.const n))
     (fun _ => A) (fun _ => hA) 0
 
+/-- The set of degree classes of the columns of `H`, represented inside `R`. -/
 noncomputable def presentationSet (R : ZFSet.{u}) (H : Oracle) : ZFSet.{u} :=
   ZFSet.range (fun n : ℕ => degreeCode R (columns H n))
 
@@ -43,6 +45,7 @@ theorem mem_presentationSet (R : ZFSet.{u}) (H : Oracle) (D : ZFSet.{u}) :
   exact ⟨fun ⟨n,hn⟩ => ⟨n,hn.symm⟩,fun ⟨n,hn⟩ => ⟨n,hn.symm⟩⟩
 
 namespace Formula
+/-- Bounded formula describing membership in the column-degree presentation set. -/
 def presentationMember (φ : Formula) (o Q z R H D : ℕ) : Formula :=
   .existsMem o (.existsMem (R+1) (.conj (columnSet (o+2) (Q+2) 1 (H+2) 0)
     (degreeSet φ (o+2) (Q+2) (z+2) (R+2) 0 (D+2))))

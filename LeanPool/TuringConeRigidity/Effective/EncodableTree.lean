@@ -22,7 +22,8 @@ that deriving handler's private helper type across module boundaries.
 -/
 module
 
-public import Mathlib
+public import Mathlib.Logic.Encodable.Basic
+
 
 /-!
 # An explicit finite-tree encoding for the module-system port
@@ -40,12 +41,14 @@ Lean definition or proof, not a new deriving handler or an axiom.
 
 namespace OAI.TuringRigidity
 
+/-- Natural-labelled finite binary trees used for explicit encodings of syntax. -/
 inductive EncodableTree : Type where
   | nat (n : ℕ)
   | cons (a b : EncodableTree)
 
 namespace EncodableTree
 
+/-- Encode a tree by natural pairing, distinguishing leaves from binary nodes. -/
 def encode : EncodableTree → ℕ
   | nat n => Nat.pair 0 n
   | cons a b => Nat.pair (encode a + 1) (encode b)
@@ -59,6 +62,7 @@ theorem unpair_right_lt {n : ℕ} (h : (Nat.unpair n).1 ≠ 0) :
   have := Nat.le_mul_self b
   split <;> lia
 
+/-- Decode a natural number into a tree using the decreasing unpairing recursion. -/
 def decode (n : ℕ) : EncodableTree :=
   let p := Nat.unpair n
   if h : p.1 = 0 then

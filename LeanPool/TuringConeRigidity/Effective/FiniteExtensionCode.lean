@@ -14,8 +14,6 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.Syntax.SigmaHull
-public import LeanPool.TuringConeRigidity.SetModels.CollapseCoding
-public import Mathlib.Data.List.Basic
 
 /-!
 # Finite Extension Code
@@ -32,9 +30,12 @@ open TransitiveNameModel RelationCollapse
 universe u
 namespace FiniteTuple
 
+/-- The tagged union of the atom set and the natural-number indices. -/
 noncomputable def indexSpace (t : ZFSet.{u}) : ZFSet.{u} :=
   ZFSet.prod {natSet 0} t ∪ ZFSet.prod {natSet 1} ZFSet.omega
 
+/-- Use a tagged atom when `x` belongs to `t`; otherwise use its tagged `List.idxOf` index in
+`xs`. -/
 noncomputable def finiteIndex (t : ZFSet.{u}) (xs : List ZFSet.{u}) (x : ZFSet.{u}) : ZFSet.{u} :=
   by
   classical

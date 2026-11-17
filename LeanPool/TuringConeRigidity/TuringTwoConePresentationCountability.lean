@@ -35,6 +35,7 @@ open ConePersistence (Cone)
 noncomputable section
 attribute [local instance] Classical.propDecidable
 
+/-- The Boolean oracle coding the two-cone isomorphism graph in its column presentation. -/
 def graphOracle {I : CountableIdeal} {a b : Degree} {H : Oracle}
     (hpres : ConePresentation.Presented I H) (ha : a ∈ I.carrier)
     (ρ : Cone I a ≃o Cone I b) : Oracle := fun n => decide (Graph ρ hpres ha n)

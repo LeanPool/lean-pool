@@ -15,6 +15,7 @@ module
 
 public import LeanPool.TuringConeRigidity.Effective.FiniteShuffleComputation
 public import LeanPool.TuringConeRigidity.Computability.UniformArithmetic
+public import LeanPool.TuringConeRigidity.Effective.FiniteShuffleCertificate
 
 /-!
 # Arithmetic Shuffle Certificate

@@ -13,8 +13,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.SetModels.Degrees
 public import Mathlib.Data.Nat.Pairing
+
 
 /-!
 # Countable Forcing
@@ -28,14 +28,18 @@ namespace OAI
 namespace TuringRigidity.CountableForcing
 open Set
 
+/-- A nonempty upward-closed family of conditions directed toward common extensions. -/
 structure GenericFilter (P : Type*) [Preorder P] where
+  /-- The set of conditions belonging to the filter. -/
   carrier : Set P
   nonempty : carrier.Nonempty
   upper : ∀ {p q}, p ≤ q → p ∈ carrier → q ∈ carrier
   directed : ∀ {p q}, p ∈ carrier → q ∈ carrier → ∃ r ∈ carrier, r ≤ p ∧ r ≤ q
 
+/-- Every condition has a stronger condition belonging to `D`. -/
 def Dense {P : Type*} [Preorder P] (D : Set P) : Prop := ∀ p, ∃ q, q ≤ p ∧ q ∈ D
 
+/-- The filter meets each member of the countable family of requirements `D`. -/
 def GenericFor {P : Type*} [Preorder P] (D : ℕ → Set P) (G : GenericFilter P) : Prop :=
   ∀ n, ∃ p ∈ G.carrier, p ∈ D n
 
@@ -57,6 +61,8 @@ theorem exists_generic {P : Type*} [Preorder P] (D : ℕ → Set P)
         (hanti (le_max_left _ _)).trans hn,(hanti (le_max_right _ _)).trans hm⟩ }
   exact ⟨G,⟨0,le_rfl⟩,fun n => ⟨seq (n+1),⟨n+1,le_rfl⟩,(hseq n).2⟩⟩
 
+/-- Forcing sentences built from ground propositions, filter membership, conjunction,
+countable existential quantification, and negation. -/
 inductive Sentence (P : Type*) where
   | ground : Prop → Sentence P
   | member : P → Sentence P
@@ -67,6 +73,7 @@ inductive Sentence (P : Type*) where
 namespace Sentence
 variable {P : Type*} [Preorder P]
 
+/-- Interpret a forcing sentence in a filter. -/
 def Truth (G : GenericFilter P) : Sentence P → Prop
   | .ground a => a
   | .member p => p ∈ G.carrier
@@ -74,6 +81,7 @@ def Truth (G : GenericFilter P) : Sentence P → Prop
   | .existsNat a => ∃ n, Truth G (a n)
   | .neg a => ¬ Truth G a
 
+/-- Recursive forcing semantics for countable forcing sentences. -/
 def Forces (p : P) : Sentence P → Prop
   | .ground a => a
   | .member q => p ≤ q
@@ -90,6 +98,7 @@ theorem forces_mono (a : Sentence P) {p q : P} (hqp : q ≤ p)
   | existsNat a ha => obtain ⟨n,hn⟩ := h; exact ⟨n,ha n hn⟩
   | neg a ha => exact fun r hr => h r (hr.trans hqp)
 
+/-- Conditions forcing the sentence or its negation. -/
 def Decision (a : Sentence P) : Set P := {p | Forces p a ∨ Forces p (.neg a)}
 
 theorem decision_dense (a : Sentence P) : Dense (Decision a) := by
@@ -100,6 +109,7 @@ theorem decision_dense (a : Sentence P) : Dense (Decision a) := by
     exact ⟨q,hqp,Or.inl hq⟩
   · exact ⟨p,le_rfl,Or.inr (fun q hq hf => h ⟨q,hq,hf⟩)⟩
 
+/-- A countable family of decision requirements sufficient for the sentence's truth lemma. -/
 def Requirements : Sentence P → ℕ → Set P
   | .ground _, _ => univ
   | .member _, _ => univ
@@ -187,6 +197,7 @@ theorem generic_truth (a : Sentence P) (G : GenericFilter P)
       obtain ⟨r,hr,hrp,hrq⟩ := G.directed hp hq
       exact hpn r hrp (forces_mono a hrq hqa)
 
+/-- Double-negation forcing of the sentence. -/
 def WeakForces (p : P) (a : Sentence P) : Prop := Forces p (.neg (.neg a))
 
 theorem weak_iff_all_generic (p : P) (a : Sentence P) :

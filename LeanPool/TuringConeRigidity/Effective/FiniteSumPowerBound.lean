@@ -15,6 +15,7 @@ module
 
 public import LeanPool.TuringConeRigidity.SetModels.RecursiveSumBound
 public import LeanPool.TuringConeRigidity.OrdinalCodes.TrimmedPaddedSum
+public import Mathlib.SetTheory.Ordinal.Principal
 
 /-!
 # Finite Sum Power Bound

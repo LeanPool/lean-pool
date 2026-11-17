@@ -38,6 +38,7 @@ theorem RelationBelow.mono {n : ℕ} {p : RelationCode n} {x y : Degree}
     (hp : RelationBelow p x) (h : x ≤ y) : RelationBelow p y :=
   ⟨fun i => (hp.1 i).mono h,hp.2.mono h⟩
 
+/-- Represent a set code as a unary relation code. -/
 def unary (p : SetCode) : RelationCode 1 := ⟨fun _ => p,p.tags⟩
 
 theorem unary_below {p : SetCode} {y : Degree} (hp : SetBelow p y) : RelationBelow (unary p) y :=

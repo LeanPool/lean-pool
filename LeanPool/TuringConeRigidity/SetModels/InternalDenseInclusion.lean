@@ -13,7 +13,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.SetModels.RegularTreeExtension
+public import LeanPool.TuringConeRigidity.SetModels.InternalCollapseConditions
 
 /-!
 # Internal Dense Inclusion
@@ -28,6 +28,7 @@ namespace TuringRigidity.InternalDenseInclusion
 open TransitiveNameModel BoundedSetTheory CountableForcing
 attribute [local instance] InternalCollapse.order InternalCollapse.collapsePreorder
 
+/-- Include a condition from a subset poset in the larger set-coded poset. -/
 noncomputable def embed (a b : ZFSet.{0}) (hab : a ⊆ b) (p : Conditions a) : Conditions b :=
   equivShrink b ⟨label a p,hab (label_mem a p)⟩
 
@@ -39,6 +40,7 @@ theorem embed_le_iff (a b : ZFSet.{0}) (hab : a ⊆ b) (p q : Conditions a) :
   change label b (embed a b hab q) ⊆ label b (embed a b hab p) ↔ _
   rw [label_embed,label_embed]; rfl
 
+/-- The set-coded identity graph from `a` into `b`. -/
 noncomputable def inclusionGraph (a b : ZFSet.{0}) : ZFSet.{0} :=
   (ZFSet.prod a b).sep (fun z => ∃ p ∈ a, z = ZFSet.pair p p)
 
@@ -68,6 +70,7 @@ theorem inclusionGraph_function (a b : ZFSet.{0}) (hab : a ⊆ b) :
   exact ⟨x,hab hx,(pair_inclusionGraph a b x x hab).mpr ⟨hx,rfl⟩,
     fun y _ hy => (pair_inclusionGraph a b x y hab).mp hy |>.2⟩
 
+/-- Push a filter along the condition inclusion and take its upward closure. -/
 noncomputable def push (a b : ZFSet.{0}) (hab : a ⊆ b) (G : GenericFilter (Conditions a)) :
     GenericFilter (Conditions b) where
   carrier := {q | ∃ p ∈ G.carrier, embed a b hab p ≤ q}
@@ -87,6 +90,7 @@ theorem embed_mem_push (a b : ZFSet.{0}) (hab : a ⊆ b)
   · rintro ⟨q,hq,hqp⟩; exact G.upper ((embed_le_iff a b hab q p).mp hqp) hq
   · intro hp; exact ⟨p,hp,le_rfl⟩
 
+/-- The members of `a` having a weaker condition in the family `D` inside `b`. -/
 noncomputable def densePull (a b D : ZFSet.{0}) : ZFSet.{0} :=
   a.sep (fun p => ∃ q ∈ b, q ∈ D ∧ q ⊆ p)
 

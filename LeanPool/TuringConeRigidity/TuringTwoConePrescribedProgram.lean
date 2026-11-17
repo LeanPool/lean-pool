@@ -15,6 +15,8 @@ module
 public import LeanPool.TuringConeRigidity.TuringTwoConePullbackDefinition
 public import LeanPool.TuringConeRigidity.TuringTwoConeGenericTransfer
 public import LeanPool.TuringConeRigidity.SetModels.NoNewOrdinals
+public import LeanPool.TuringConeRigidity.TuringConeRealParameterProgram
+public import LeanPool.TuringConeRigidity.TuringTwoConePrescribedModels
 
 /-!
 # A prescribed joined-inverse program in a Cohen extension

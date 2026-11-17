@@ -13,7 +13,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.SetModels.InternalGeneratedAlgebra
+public import LeanPool.TuringConeRigidity.SetModels.InternalRegularAlgebra
 
 /-!
 # Internal Regular Order
@@ -66,6 +66,7 @@ theorem subset_supCode (c F : ZFSet.{0}) (hF : ∀ U ∈ F, IsCode c U)
     {U : ZFSet.{0}} (hU : U ∈ F) : U ⊆ supCode c F :=
   (supCode_le_iff c F _ hF (join_isCode c F)).mp (fun _ h => h) U hU
 
+/-- The conditions in `c` belonging to every member of `F`. -/
 noncomputable def infCode (c F : ZFSet.{0}) : ZFSet.{0} :=
   c.sep (fun p => ∀ U ∈ F, p ∈ U)
 

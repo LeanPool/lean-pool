@@ -14,7 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.Constructibility.ConstructibleSatisfaction
-public import LeanPool.TuringConeRigidity.SetModels.ModelReals
+public import LeanPool.TuringConeRigidity.SetModels.ModelNaturalNumbers
 
 /-!
 # Constructible Tuple Space
@@ -30,6 +30,7 @@ namespace TuringRigidity.RelativeConstructible
 open ElementaryModel BoundedSetTheory TransitiveNameModel
 universe u
 
+/-- The natural-number-indexed graph of a finite tuple of sets. -/
 noncomputable def tupleGraph {n : ℕ} (v : Fin n → ZFSet.{u}) : ZFSet.{u} :=
   ZFSet.range (fun i : Fin n => ZFSet.pair (natSet i.val) (v i))
 
@@ -103,6 +104,7 @@ theorem tupleCode_mem (M : ZFSet.{u}) (hM : Transitive M)
   orderedPair_mem M hM hP (hM _ hω _ ((mem_omega _).mpr ⟨n,rfl⟩))
     (tupleGraph_mem M hM hP hU hω v hv)
 
+/-- The set of codes of all finite tuples with entries in `A`. -/
 noncomputable def tupleSpace (A : ZFSet.{u}) : ZFSet.{u} :=
   ZFSet.range (fun t : Σ n : ℕ, Fin n → Conditions A =>
     tupleCode (fun i => label A (t.2 i)))
@@ -119,6 +121,8 @@ theorem mem_tupleSpace (A t : ZFSet.{u}) :
     refine ⟨⟨n,w⟩,?_⟩
     congr 1; funext i; simp [w,label]
 
+/-- Bounded formula asserting that a code consists of a finite length and a tuple graph into
+`A`. -/
 def tupleFormula (o A Q t : ℕ) : Formula :=
   .existsMem o (.existsMem (Q+1)
     (.conj (.orderedPair (t+2) 1 0) (.functionGraph 0 1 (A+2))))

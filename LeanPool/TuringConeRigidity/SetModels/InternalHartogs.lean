@@ -15,6 +15,7 @@ module
 
 public import LeanPool.TuringConeRigidity.SetModels.CollapseCoding
 public import LeanPool.TuringConeRigidity.OrdinalCodes.RankOrdinal
+public import LeanPool.TuringConeRigidity.OrdinalCodes.RankDefinability
 
 /-!
 # Internal Hartogs

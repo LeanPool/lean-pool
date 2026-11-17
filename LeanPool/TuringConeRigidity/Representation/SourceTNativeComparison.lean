@@ -47,6 +47,7 @@ theorem native_persistence_absolute (M : ZFSet.{u}) (hM : Transitive M) (hT : So
   exact sourceT_native_persistence_iff M hM hT hDM hLM hD hL I hI hct ρ hρ hA hAM hRM
     (fun n => by simp [graphOracle]) hz
 
+/-- The set-coded graph moves some member of the designated set to a different member. -/
 def SetMoved (f i : ZFSet.{u}) : Prop := ∃ x ∈ i, ∃ y ∈ i, ZFSet.pair x y ∈ f ∧ x ≠ y
 
 theorem setMoved_iff (I : CountableIdeal) (ρ : I ≃o I) :
@@ -64,6 +65,7 @@ theorem setMoved_iff (I : CountableIdeal) (ρ : I ≃o I) :
       (action_code ρ a (ρ a)).mpr rfl,
       fun he => ha (Subtype.ext (degreeSet_injective he).symm)⟩
 
+/-- The model contains a nonidentity action satisfying its native persistence formula. -/
 def NativeNonidentity (M D L i : ZFSet.{u}) : Prop :=
   ∃ f ∈ M, IsAction f i L ∧ SetMoved f i ∧
     persistenceFormula.Realize M (cons D (cons L (cons i (cons f (fun _ => ZFSet.omega)))))

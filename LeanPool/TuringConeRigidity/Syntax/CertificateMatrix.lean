@@ -15,6 +15,7 @@ module
 
 public import LeanPool.TuringConeRigidity.OrdinalCodes.IndexedOrder
 public import LeanPool.TuringConeRigidity.Syntax.BoundedRecursive
+public import LeanPool.TuringConeRigidity.OrdinalCodes.IndexMatrix
 
 /-!
 # Certificate Matrix
@@ -28,15 +29,18 @@ namespace OAI
 namespace TuringRigidity.CertificateMatrix
 open Encodable UniformOracle TableIndices IndexMatrix IndexedOrder BoundedRecursive
 
+/-- Decode a finite list of value-and-trial pairs, using the empty list for an invalid code. -/
 def table (c : ℕ) : List (ℕ × ℕ) := (decode c).getD []
 
 theorem table_primrec : Primrec table := Primrec.option_getD.comp Primrec.decode (Primrec.const [])
 
+/-- Read a value-and-trial record from the decoded table, using `(0,0)` outside its range. -/
 def entry (c j : ℕ) : ℕ × ℕ := (table c).getD j (0, 0)
 
 theorem entry_primrec : Primrec₂ entry :=
   (Primrec.list_getD (0, 0)).comp (table_primrec.comp Primrec.fst) Primrec.snd
 
+/-- Check one table entry against the indexed finite oracle computation. -/
 def entryCheck (Y : Oracle) (v : ℕ) : ℕ :=
   let e := (Nat.unpair (Nat.unpair v).1).1
   let c := (Nat.unpair (Nat.unpair v).1).2
@@ -62,6 +66,7 @@ theorem entryCheck_recursive (Y : Oracle) :
   exact (total_comp heq (total_pair hv hw)).of_eq (fun v => by
     simp only [entryCheck, Nat.unpair_pair, Encodable.encode_injective.eq_iff])
 
+/-- Check every recorded table entry using the bounded all-below test. -/
 def readsCheck (Y : Oracle) (v : ℕ) : ℕ :=
   allBelow (entryCheck Y) v (table (Nat.unpair v).2).length
 

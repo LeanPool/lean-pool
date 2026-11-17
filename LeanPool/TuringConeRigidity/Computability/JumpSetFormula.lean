@@ -13,7 +13,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.SetModels.ModelRealOperations
+public import LeanPool.TuringConeRigidity.Computability.ArithmeticOracles
+public import LeanPool.TuringConeRigidity.Computability.ArithmeticSetSyntax
 
 /-!
 # Jump Set Formula
@@ -30,12 +31,14 @@ open UniformArithmetic OracleJump
 universe u
 
 namespace Formula
+/-- Variable renaming that supplies one oracle parameter to every oracle query slot. -/
 def singleOracleVars (o Q A n : ℕ) : ℕ → ℕ
   | 0 => n
   | 1 => o
   | 2 => Q
   | _+3 => A
 
+/-- Specialize an arithmetic formula to a single oracle parameter. -/
 def singleOracle (φ : Formula) (o Q A n : ℕ) : Formula := φ.rename (singleOracleVars o Q A n)
 
 theorem singleOracle_spec {φ : Formula} {P : Predicate} (hφ : DefinesArithmetic.{u} φ P)
@@ -56,6 +59,8 @@ theorem singleOracle_spec {φ : Formula} {P : Predicate} (hφ : DefinesArithmeti
   rw [he]
   exact hφ _ hQ _ _
 
+/-- On the domain in slot `o`, match membership in slot `B` with the arithmetic formula for
+the oracle in slot `A`. -/
 def oracleGraph (φ : Formula) (o Q A B : ℕ) : Formula :=
   allMem o (iff (.member 0 (B+1)) (singleOracle φ (o+1) (Q+1) (A+1) 0))
 

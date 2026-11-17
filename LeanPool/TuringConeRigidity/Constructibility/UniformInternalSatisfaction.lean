@@ -33,6 +33,7 @@ universe u
 
 variable {M : ZFSet.{u}}
 
+/-- A coded formula-and-tuple pair has a checked truth witness in the supplied bounds. -/
 def SatisfactionWitness (Q B G H A T z : ZFSet.{u}) : Prop :=
   ∃ c ∈ ZFSet.omega, ∃ t ∈ T, ∃ S ∈ H,
     TruthWitness Q B G A T c S ∧ ZFSet.pair c t ∈ S ∧ z = ZFSet.pair c t

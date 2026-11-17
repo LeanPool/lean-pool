@@ -12,7 +12,8 @@ Module paths, interfaces, and proofs are ported to the pool's toolchain and gate
 
 module
 
-public import LeanPool.TuringConeRigidity.TuringConeForcingExtension
+public import LeanPool.TuringConeRigidity.TuringConeIdealLocality
+public import LeanPool.TuringConeRigidity.TuringConePresentation
 
 /-!
 # A fixed inverse arithmetic bound through extensions

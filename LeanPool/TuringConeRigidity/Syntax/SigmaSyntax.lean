@@ -28,12 +28,15 @@ namespace OAI
 namespace TuringRigidity.BoundedSetTheory
 universe u
 
+/-- Lift a variable renaming past one newly bound variable. -/
 def liftMap (v : ℕ → ℕ) : ℕ → ℕ
   | 0 => 0
   | i+1 => v i+1
 
 namespace Formula
 
+/-- Rename variables throughout bounded formula syntax, lifting the renaming under each bound
+variable. -/
 def rename (v : ℕ → ℕ) : Formula → Formula
   | .equal i j => .equal (v i) (v j)
   | .member i j => .member (v i) (v j)
@@ -63,6 +66,8 @@ end Formula
 
 namespace SigmaFormula
 
+/-- Rename variables throughout sigma syntax, lifting the renaming under each existential set
+variable. -/
 def rename (v : ℕ → ℕ) : SigmaFormula → SigmaFormula
   | .bounded φ => .bounded (φ.rename v)
   | .existsSet φ => .existsSet (rename (liftMap v) φ)
@@ -81,6 +86,8 @@ theorem realize_rename (φ : SigmaFormula) (M : ZFSet.{u}) (v : ℕ → ℕ)
       funext i; cases i <;> rfl
     exact (ih (liftMap v) (cons x e)).trans (he ▸ Iff.rfl)
 
+/-- Conjoin a bounded formula with a sigma formula while moving through its existential
+prefix. -/
 def andBounded (b : Formula) : SigmaFormula → SigmaFormula
   | .bounded φ => .bounded (.conj b φ)
   | .existsSet φ => .existsSet (andBounded (b.rename Nat.succ) φ)
@@ -96,6 +103,7 @@ theorem realize_andBounded (b : Formula) (φ : SigmaFormula) (M : ZFSet.{u})
     · rintro ⟨x,hx,hb,hφ⟩; exact ⟨hb,x,hx,hφ⟩
     · rintro ⟨hb,x,hx,hφ⟩; exact ⟨x,hx,hb,hφ⟩
 
+/-- Conjoin two sigma formulas while combining their existential prefixes. -/
 def conj : SigmaFormula → SigmaFormula → SigmaFormula
   | .bounded b, ψ => andBounded b ψ
   | .existsSet φ, ψ => .existsSet (conj φ (ψ.rename Nat.succ))

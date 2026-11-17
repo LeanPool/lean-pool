@@ -84,6 +84,8 @@ theorem countable_insert (M A a : ZFSet.{0}) (hM : Transitive M) (hT : SourceT M
   · exact False.elim (ZFSet.notMem_empty a (h ▸ ZFSet.mem_insert a A))
   · exact h
 
+/-- The relation fixing members of `A` that belong to `B` and relating other members of `A` to
+`d` when `d` belongs to `B`. -/
 noncomputable def retractGraph (A B d : ZFSet.{0}) : ZFSet.{0} :=
   (ZFSet.prod A B).sep (fun z => ∃ x ∈ A, ∃ y ∈ B,
     z = ZFSet.pair x y ∧ ((x ∈ B ∧ y = x) ∨ (x ∉ B ∧ y = d)))

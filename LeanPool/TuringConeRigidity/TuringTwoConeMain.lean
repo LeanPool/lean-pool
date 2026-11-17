@@ -13,7 +13,6 @@ module
 
 public import LeanPool.TuringConeRigidity.TuringTwoConePrescribedProgram
 public import LeanPool.TuringConeRigidity.SetModels.ValidFirstUncountable
-public import LeanPool.TuringConeRigidity.CohenForcing.CohenGroundGeneric
 
 /-!
 # Pairwise rigidity of principal Turing cones

@@ -14,6 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.CohenForcing.AtomicForcing
+public import LeanPool.TuringConeRigidity.SetModels.NameEncoding
 
 /-!
 # Atomic Encoding
@@ -86,8 +87,10 @@ theorem mem_encode_congr (l : P → ZFSet.{u}) (hl : Function.Injective l)
   exact ⟨fun h => mem_congr_right hb (mem_congr_left ha h),
     fun h => mem_congr_right (eq_symm _ _ _ hb) (mem_congr_left (eq_symm _ _ _ ha) h)⟩
 
+/-- Equality forcing between representatives chosen for two encoded names. -/
 noncomputable def EncodedEq {l : P → ZFSet.{u}} (a b : EncodedName l) (p : P) : Prop :=
   EqForces a.property.choose b.property.choose p
+/-- Membership forcing between representatives chosen for two encoded names. -/
 noncomputable def EncodedMem {l : P → ZFSet.{u}} (a b : EncodedName l) (p : P) : Prop :=
   MemForces a.property.choose b.property.choose p
 

@@ -29,10 +29,13 @@ open Encodable UniformOracle EncodedForcing CodingForcing FiniteInjury StageReco
 noncomputable section
 attribute [local instance] Classical.propDecidable
 
+/-- Decode a guarded-stage state from its condition, completed priorities, and visited
+priorities. -/
 def state (v : ℕ) : GuardedStage.State :=
   ⟨condition (Nat.unpair v).1,members (Nat.unpair (Nat.unpair v).2).1,members (Nat.unpair
     (Nat.unpair v).2).2⟩
 
+/-- Compute the guarded generic extension for the least unvisited requirement. -/
 def generic (A : Oracle) (v : ℕ) : ℕ := GuardedStage.openProcedure A
   (Nat.pair (nextVisit (Nat.unpair (Nat.unpair v).2).2) (Nat.unpair v).1)
 
@@ -41,9 +44,11 @@ theorem open_recursive (A : Oracle) :
       (GuardedStage.openProcedure A v)) :=
   (Classical.choose_spec (EffectiveForcing.uniform_open_decision A A (reduces_refl A))).1
 
+/-- Canonicalize a condition code at its currently active level. -/
 def canonical (p : ℕ) : ℕ := levelCode p (active p)
 theorem canonical_eq (p : ℕ) : canonical p = code (condition p) := rfl
 
+/-- Compute the generic extension using the canonicalized condition code. -/
 def genericCanonical (A : Oracle) (v : ℕ) : ℕ := GuardedStage.openProcedure A
   (Nat.pair (nextVisit (Nat.unpair (Nat.unpair v).2).2) (canonical (Nat.unpair v).1))
 
@@ -60,6 +65,7 @@ theorem generic_recursive (A : Oracle) :
 @[simp] theorem generic_eq (A : Oracle) (v : ℕ) :
     condition (genericCanonical A v) = GuardedStage.generic A (state v) := rfl
 
+/-- Scan for an eligible guarded action at the given stage. -/
 def stageAction (A : Oracle) (s v : ℕ) : ℕ :=
   scan A (genericCanonical A v) (Nat.unpair (Nat.unpair v).2).1 s
 
@@ -76,6 +82,7 @@ theorem stageAction_recursive (A : Oracle) :
   rw [stageAction,scan_eq,action_actionCode,generic_eq]
   rfl
 
+/-- Select either the generic condition or the candidate indicated by the stage action. -/
 def stageWord (A : Oracle) (z : ℕ) : ℕ :=
   let s := (Nat.unpair z).1
   let v := (Nat.unpair z).2
@@ -106,6 +113,7 @@ theorem stageWord_eq (A : Oracle) (s v : ℕ) :
       simpa only [StageRecords.action,ite_eq_right ha] using he.symm
     simp [ha,GuardedStage.stageWord,hn,candidate_eq,generic_eq]
 
+/-- Append one false bit to both words and set the next active stage. -/
 def grow (p s : ℕ) : ℕ := Nat.pair (encode (left p ++ [false]))
   (Nat.pair (encode (right p ++ [false])) (s+1))
 
@@ -121,6 +129,7 @@ theorem grow_primrec : Primrec₂ grow := Primrec₂.natPair.comp
     condition (grow p s) = atLevel (append (condition p) [false]) (s+1) := condition_code (atLevel
       (append (condition p) [false]) (s+1))
 
+/-- Advance the coded guarded state, updating its condition and priority records. -/
 def advance (A : Oracle) (z : ℕ) : ℕ :=
   let s := (Nat.unpair z).1
   let v := (Nat.unpair z).2
@@ -151,9 +160,12 @@ theorem advance_eq (A : Oracle) (s v : ℕ) :
     members_seenReset,members_seenInsert,stageAction_eq]
   rfl
 
+/-- The coded empty initial guarded state. -/
 def initial : ℕ := Nat.pair (code ⟨[],[],rfl,0⟩) (Nat.pair (encode ([] : List ℕ)) (encode ([] :
   List ℕ)))
 
+/-- The coded guarded-state sequence, obtained by iterating the transition from the empty
+initial state. -/
 def construction (A : Oracle) : ℕ → ℕ :=
   recur (fun _ => initial) (fun v => advance A (Nat.unpair v).2) 0
 

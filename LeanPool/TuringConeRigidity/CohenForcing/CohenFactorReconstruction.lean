@@ -13,7 +13,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.SetModels.InternalColumnExtension
+public import LeanPool.TuringConeRigidity.CohenForcing.InternalCohenProjectedGeneric
+public import LeanPool.TuringConeRigidity.Representation.GenericFilterName
 
 /-!
 # Cohen Factor Reconstruction
@@ -52,6 +53,8 @@ theorem mem_iff_projections (A B : ZFSet.{0}) (hBA : B ⊆ A)
     rw [hdp] at h₂
     exact G.upper (e.le_iff_le.mp ⟨h₁,h₂⟩) hs
 
+/-- Reconstruct a condition filter from its restrictions to a coordinate set and its
+complement. -/
 noncomputable def reconstruct (A B j l : ZFSet.{0}) : ZFSet.{0} :=
   (conditions A).sep (fun p => ∃ b ∈ j, ∃ d ∈ l,
     ZFSet.pair p b ∈ restrictionGraph A B ∧ ZFSet.pair p d ∈ restrictionGraph A (A \ B))

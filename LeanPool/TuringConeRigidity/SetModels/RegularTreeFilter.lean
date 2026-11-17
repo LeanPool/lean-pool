@@ -15,6 +15,7 @@ module
 
 public import LeanPool.TuringConeRigidity.SetModels.RegularTreeCompatibility
 public import LeanPool.TuringConeRigidity.CohenForcing.InternalCohenFilters
+public import LeanPool.TuringConeRigidity.SetModels.InternalBooleanDense
 
 /-!
 # Regular Tree Filter
@@ -41,6 +42,7 @@ theorem refines_condition (c U p : ZFSet.{0}) (hU : IsCode c U) (hU0 : U ≠ ∅
   have hsp := ZFSet.mem_singleton.mp hs
   exact ⟨r,code_lower c U hU q hq r hrc hqr,hsp ▸ hsr⟩
 
+/-- The word-condition filter recording the tree nodes hit by the original condition filter. -/
 noncomputable def branch (c : ZFSet.{0}) (f : List Bool → ZFSet.{0})
     (hroot : f [] = c) (hcode : ∀ s, IsCode c (f s))
     (hm : ∀ s t, s <+: t → f t ⊆ f s)
@@ -66,6 +68,7 @@ noncomputable def branch (c : ZFSet.{0}) (f : List Bool → ZFSet.{0})
     · exact ⟨q,⟨s,hs,hsq⟩,h,le_rfl⟩
     · exact ⟨p,⟨r,hr,hrp⟩,le_rfl,h⟩
 
+/-- The regular codes attached by `A` to word conditions belonging to `D`. -/
 noncomputable def nodeFamily (B A D : ZFSet.{0}) : ZFSet.{0} :=
   B.sep (fun U => ∃ w ∈ D, ZFSet.pair w U ∈ A)
 

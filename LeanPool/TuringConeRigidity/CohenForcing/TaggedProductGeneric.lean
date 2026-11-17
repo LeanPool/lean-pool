@@ -15,8 +15,6 @@ module
 
 public import LeanPool.TuringConeRigidity.CohenForcing.CohenProductSplitting
 public import LeanPool.TuringConeRigidity.SetModels.RegularTreeExtension
-public import LeanPool.TuringConeRigidity.Representation.SourceEquationTail
-public import LeanPool.TuringConeRigidity.Representation.AutomorphismName
 
 /-!
 # Tagged Product Generic
@@ -32,6 +30,7 @@ open TransitiveNameModel BoundedSetTheory CountableForcing TaggedProductConditio
 open CohenProductSplitting
 attribute [local instance] InternalCollapse.order InternalCollapse.collapsePreorder
 
+/-- Combine two filters and transport their product to the tagged condition poset. -/
 noncomputable def joint (a b c : ZFSet.{0})
     (hcs : ∀ z, z ∈ c ↔ ∃ p ∈ a, ∃ s ∈ b, z = code p s)
     (G : GenericFilter (Conditions a)) (H : GenericFilter (Conditions b)) :
@@ -49,9 +48,11 @@ theorem joint_mem (a b c : ZFSet.{0})
   rw [OrderIso.symm_apply_apply]
   rfl
 
+/-- First-factor conditions admitting a member of `D` whose second factor extends `r`. -/
 noncomputable def sectionSet (a b D r : ZFSet.{0}) : ZFSet.{0} :=
   a.sep (fun p => ∃ s ∈ b, ∃ z ∈ D, z = code p s ∧ r ⊆ s)
 
+/-- Second-factor conditions whose tagged pair with some member of `g` belongs to `D`. -/
 noncomputable def fiberSet (b D g : ZFSet.{0}) : ZFSet.{0} :=
   b.sep (fun s => ∃ p ∈ g, ∃ z ∈ D, z = code p s)
 

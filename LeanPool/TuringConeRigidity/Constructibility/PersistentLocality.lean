@@ -15,7 +15,6 @@ module
 
 public import LeanPool.TuringConeRigidity.SetModels.IdealLocality
 public import LeanPool.TuringConeRigidity.Constructibility.PersistentRestrictions
-public import LeanPool.TuringConeRigidity.SetModels.CountableBound
 
 /-!
 # Persistent Locality
@@ -30,10 +29,12 @@ namespace TuringRigidity.PersistentLocality
 open IdealInterpretation IdealLocality PersistentRestrictions OracleJump
 noncomputable section
 
+/-- Regard a countable degree ideal as the corresponding degree-ideal structure. -/
 def ideal (I : CountableIdeal) : DegreeIdeal :=
   ⟨I.carrier,I.nonempty,fun {_ _} h hmem => I.lower h hmem,
     fun {_ _} h₁ h₂ => I.join_mem h₁ h₂⟩
 
+/-- The identity-on-values order isomorphism between the two ideal representations. -/
 def bridge (I : CountableIdeal) : I ≃o ideal I where
   toFun x := ⟨x.val,x.property⟩
   invFun x := ⟨x.val,x.property⟩
@@ -41,9 +42,13 @@ def bridge (I : CountableIdeal) : I ≃o ideal I where
   right_inv _ := rfl
   map_rel_iff' := Iff.rfl
 
+/-- Transport an automorphism from the countable-ideal representation to the degree-ideal
+representation. -/
 def lift {I : CountableIdeal} (ρ : I ≃o I) : ideal I ≃o ideal I :=
   (bridge I).symm.trans (ρ.trans (bridge I))
 
+/-- Transport an automorphism from the degree-ideal representation to the countable-ideal
+representation. -/
 def unlift {I : CountableIdeal} (ρ : ideal I ≃o ideal I) : I ≃o I :=
   (bridge I).trans (ρ.trans (bridge I).symm)
 

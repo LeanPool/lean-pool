@@ -29,9 +29,12 @@ open TransitiveNameModel BoundedSetTheory CohenGroundPoset CohenConditionCode Co
 open InternalCohen (alphabet bitSet mem_alphabet)
 attribute [local instance] InternalCollapse.order InternalCollapse.collapsePreorder
 
+/-- The Boolean mask indicating which set-coded coordinates belong to `B`. -/
 noncomputable def mask (A B : ZFSet.{0}) (i : Conditions A) : Bool :=
   @decide (label A i ∈ B) (Classical.propDecidable _)
 
+/-- On coordinates in `A`, the Boolean assignments in `q` match those in `p` with bits flipped
+on `B`. -/
 def FlipMatches (A B p q : ZFSet.{0}) : Prop :=
   ∀ x ∈ A,
     (ZFSet.pair x (bitSet false) ∈ q ↔
@@ -41,6 +44,7 @@ def FlipMatches (A B p q : ZFSet.{0}) : Prop :=
       (x ∈ B ∧ ZFSet.pair x (bitSet false) ∈ p) ∨
       (x ∉ B ∧ ZFSet.pair x (bitSet true) ∈ p))
 
+/-- Bounded formula expressing the set-coded bit-flip relation `FlipMatches`. -/
 def flipMatchesFormula (A B p q z0 z1 : ℕ) : Formula :=
   .allMem A (.conj
     (.iff (.pairMem 0 (z0+1) (q+1))
@@ -76,11 +80,13 @@ theorem flipMatches_graph_iff (A B : ZFSet.{0})
     cases hp : p.val i <;> by_cases hi : label A i ∈ B <;>
       simp_all [CohenSymmetry.flip,mask]
 
+/-- The order automorphism of set-coded conditions induced by flipping coordinates in `B`. -/
 noncomputable def flipIso (A B : ZFSet.{0}) :
     Conditions (conditions A) ≃o Conditions (conditions A) :=
   (conditionEquiv A).symm.trans
     ((CohenSymmetry.flipIso (mask A B)).trans (conditionEquiv A))
 
+/-- Set-coded graph of the Boolean flip on condition graphs. -/
 noncomputable def flipGraph (A B : ZFSet.{0}) : ZFSet.{0} :=
   (ZFSet.prod (conditions A) (conditions A)).sep (fun z =>
     ∃ p ∈ conditions A, ∃ q ∈ conditions A,

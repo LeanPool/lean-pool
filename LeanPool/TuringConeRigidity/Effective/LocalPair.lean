@@ -31,11 +31,14 @@ open CodingForcing UniformProgram UniformPair LocalColumnCertificates
 noncomputable section
 attribute [local instance] Classical.propDecidable
 
+/-- The local requirement is settled by disagreement or permanent divergence of one side on
+some input. -/
 def Decisive (B : Oracle) (F : ℕ → Oracle) (x : ℕ) (p : Condition) : Prop :=
   UniformAgreement.Disagreement B x p ∨ ∃ i n, (i = 1 ∨ i = 2) ∧ ∀ q, Extends F p q →
     ∀ a, a ∉ UniformRun.run B (machine (item x 0)) (machine (item x i))
       (if i = 1 then q.left else q.right) n
 
+/-- Every one-point split certificate lies at a coding-protected location. -/
 def NoBad (B : Oracle) (F : ℕ → Oracle) (x p : ℕ) : Prop :=
   ∀ w, UniformSplit.PointCert B (Nat.pair (request (Nat.pair x p)) w) →
     CodingLocation F (condition p) (item w 2)
@@ -97,6 +100,7 @@ theorem bad_decisive (B : Oracle) (F : ℕ → Oracle) (x p w : ℕ)
   rw [he]
   exact Or.inr ⟨2,item w 0,Or.inr rfl,by simpa using hd.resolve_left hnc'⟩
 
+/-- Either no split exists or a one-point split occurs at a coding-protected location. -/
 def Outcome (B : Oracle) (F : ℕ → Oracle) (x p : ℕ) : Prop :=
   (¬ ∃ z, UniformSplit.SplitCert B (Nat.pair (request (Nat.pair x p)) z)) ∨
     ∃ w, UniformSplit.PointCert B (Nat.pair (request (Nat.pair x p)) w) ∧

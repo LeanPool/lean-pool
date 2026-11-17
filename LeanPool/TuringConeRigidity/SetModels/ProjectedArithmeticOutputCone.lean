@@ -18,6 +18,7 @@ public import LeanPool.TuringConeRigidity.SetModels.FixedArithmeticTailCone
 public import LeanPool.TuringConeRigidity.Representation.OwnDegreeExtensionMeaning
 public import LeanPool.TuringConeRigidity.SetModels.InternalColumnExtension
 public import LeanPool.TuringConeRigidity.Representation.CommonGenericModels
+public import LeanPool.TuringConeRigidity.Syntax.DefinedOutputTailCone
 
 /-!
 # Projected Arithmetic Output Cone
