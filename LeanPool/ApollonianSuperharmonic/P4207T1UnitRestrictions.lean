@@ -152,12 +152,12 @@ theorem P4207T1UnitRestrictions (K : DiamondParameter) :
     have hs := square ⟨n - 1, n⟩ 1 (n - 1) (-1) B row.1
       (by rw [row.2.1]; omega) (by rw [row.2.2.1]; ring)
       (by rw [row.2.2.2]; omega)
-    convert hs using 1 <;> simp [n]; ring
+    convert hs using 1 <;> simp [n]; ring_nf
   · have row := table.1
     have hs := square ⟨-n, n - 1⟩ 1 0 (-n) (-A) row.1
       (by rw [row.2.1]; ring) (by rw [row.2.2.1]; ring)
       (by rw [row.2.2.2]; ring)
-    convert hs using 1 <;> simp [n]; ring
+    convert hs using 1 <;> simp [n]; ring_nf
   · have row := table.2.2.2
     have hs := square ⟨-n, n⟩ 0 1 (-n) (-C) row.1
       (by rw [row.2.1] ) (by simpa only [sub_eq_add_neg] using row.2.2.1)

@@ -334,7 +334,7 @@ private theorem common_edge :
     simp [add_comm, add_left_comm, add_assoc]
   · refine ⟨{x, x + 1}, ⟨x, hx, Or.inl rfl⟩,
       ⟨x - ⟨0, 1⟩, hy, Or.inr (Or.inr (Or.inr ?_))⟩⟩
-    congr 1 <;> abel
+    congr 1 <;> abel_nf
 
 private theorem boundary :
     (by

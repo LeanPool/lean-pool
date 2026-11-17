@@ -110,7 +110,7 @@ private theorem valueEast :
   rw [arg] at hv
   change f ⟨q+1,r+t⟩ = FordOdometer A ⟨1,t⟩ + a*(q+1) + p*(r+t) + B at hv
   rw [parentBd 1 t (by omega) (by omega) ht0 (by omega) (by omega), hB] at hv
-  convert hv using 1; ring
+  convert hv using 1; ring_nf
 
 private theorem valueWest :
     ∀ (P : FordFareyParameter),

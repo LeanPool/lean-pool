@@ -175,7 +175,7 @@ theorem P5300T1CanonicalRowArithmetic (K : DiamondParameter)
           image_add, Fin.zero_eta, Nat.mod_succ, decide_true, Zsqrtd.add_def,
           sub_add_add_cancel, neg_add_cancel, Finset.singleton_inj, Zsqrtd.ext_iff, true_and,
           zero_add, Nat.reduceMod, Nat.zero_mod] <;>
-      ring
+      ring_nf
   · change M.1.2.cells = (TileTranslation (P j) tZ).cells
     fin_cases i <;> fin_cases s <;>
       simp only [P5260T1PlacementLedger, Nat.mod_self, zero_ne_one, decide_false,
@@ -187,7 +187,7 @@ theorem P5300T1CanonicalRowArithmetic (K : DiamondParameter)
           hp2, sub_add_add_cancel, neg_add_cancel, Fin.zero_eta, hp0, image_add, add_zero,
           Nat.mod_succ, decide_true, Nat.even_iff, one_ne_zero, hn1, hn2, hn0, Nat.reduceMod,
           Nat.zero_mod, Even.zero] <;>
-      ring
+      ring_nf
   · change TileCentroid (TileTranslation (P i)
         (if s.val < 2 then tW else C - tW - c i)) -
       TileCentroid (DiamondTile K.1) = _

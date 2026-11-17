@@ -888,10 +888,10 @@ private theorem hEeqAt936 :
     constructor
     · intro h
       apply hEabsent
-      convert cyclicToEdge _ _ h using 1; simp [c3, Finset.pair_comm]; ring
+      convert cyclicToEdge _ _ h using 1; simp [c3, Finset.pair_comm]; ring_nf
     · intro h
       apply hEabsent
-      convert cyclicToEdge _ _ h using 1; simp [c3, Finset.pair_comm]; ring
+      convert cyclicToEdge _ _ h using 1; simp [c3, Finset.pair_comm]; ring_nf
   have h := crossNorthEq c3 hnc
   simpa [I, c0, c3, c3i] using h
 
@@ -943,7 +943,7 @@ private theorem hSeqAt999 :
     constructor
     · intro h
       apply hSabsent
-      convert cyclicToEdge _ _ h using 1; simp [c2]; ring
+      convert cyclicToEdge _ _ h using 1; simp [c2]; ring_nf
     · intro h
       apply hSabsent
       simpa [c2, c2add, c2addi, Finset.pair_comm] using cyclicToEdge _ _ h
@@ -973,7 +973,7 @@ private theorem hWeqAt1029 :
       simpa [c2, c2addi, c2i, Finset.pair_comm] using cyclicToEdge _ _ h
     · intro h
       apply hWabsent
-      convert cyclicToEdge _ _ h using 1; simp [c2]; ring
+      convert cyclicToEdge _ _ h using 1; simp [c2]; ring_nf
   have h := crossNorthEq c2 hnc
   simpa [I, c1, c2, c2i] using h
 
@@ -1184,9 +1184,9 @@ private theorem indexAdjacentExterior :
         (a + ⟨0, 1⟩, a + 1 + ⟨0, 1⟩) ∉ p.zip p.tail ++ [(v, u)] := by
       constructor
       · intro h
-        exact hn (by convert cyclicToEdge _ _ h using 1; simp [Finset.pair_comm]; ring)
+        exact hn (by convert cyclicToEdge _ _ h using 1; simp [Finset.pair_comm]; ring_nf)
       · intro h
-        exact hn (by convert cyclicToEdge _ _ h using 1; simp [Finset.pair_comm]; ring)
+        exact hn (by convert cyclicToEdge _ _ h using 1; simp [Finset.pair_comm]; ring_nf)
     have h := crossNorthEq a hnc
     simpa only [I] using h.symm
   · have hbCell : a - ⟨0, 1⟩ ∈ (↑(U.cells ∪ V.cells) : Set GaussianInt)ᶜ := by
@@ -1204,7 +1204,7 @@ private theorem indexAdjacentExterior :
     have hnc' :
         (b + 1 + ⟨0, 1⟩, b + ⟨0, 1⟩) ∉ p.zip p.tail ++ [(v, u)] ∧
         (b + ⟨0, 1⟩, b + 1 + ⟨0, 1⟩) ∉ p.zip p.tail ++ [(v, u)] := by
-      convert hnc using 1 <;> rw [hab] <;> simp <;> ring
+      convert hnc using 1 <;> rw [hab] <;> simp <;> ring_nf
     have h := crossNorthEq b hnc'
     have hq : b + ⟨0, 1⟩ = a := by rw [hab]; ring
     change GridRayCrossingIndex (b + ⟨0, 1⟩) p = GridRayCrossingIndex b p at h
@@ -1341,7 +1341,7 @@ private theorem no12 :
   rintro ⟨hu, hv⟩
   apply hedge
   exact ⟨{x - 1, x}, ⟨by simpa [c1] using edgeBottom U c1 hu,
-    by convert edgeTop V c2 hv using 1; simp [c2]; ring⟩⟩
+    by convert edgeTop V c2 hv using 1; simp [c2]; ring_nf⟩⟩
 
 private theorem no21 :
     ∀ (U : ProtoTile), ∀ (V : ProtoTile), (¬(FootprintEdges U ∩ FootprintEdges V).Nonempty) → (∀
@@ -1356,7 +1356,7 @@ private theorem no21 :
   intro U V hedge x c1 c2 edgeBottom edgeTop
   rintro ⟨hu, hv⟩
   apply hedge
-  exact ⟨{x - 1, x}, ⟨by convert edgeTop U c2 hu using 1; simp [c2]; ring,
+  exact ⟨{x - 1, x}, ⟨by convert edgeTop U c2 hu using 1; simp [c2]; ring_nf,
     by simpa [c1] using edgeBottom V c1 hv⟩⟩
 
 private theorem no23 :
@@ -1372,7 +1372,7 @@ private theorem no23 :
   intro U V hedge x c2 c3 edgeLeft edgeRight
   rintro ⟨hu, hv⟩
   apply hedge
-  exact ⟨{x - ⟨0, 1⟩, x}, ⟨by convert edgeRight U c2 hu using 1; simp [c2]; ring,
+  exact ⟨{x - ⟨0, 1⟩, x}, ⟨by convert edgeRight U c2 hu using 1; simp [c2]; ring_nf,
     by simpa [c3] using edgeLeft V c3 hv⟩⟩
 
 private theorem no32 :
@@ -1389,7 +1389,7 @@ private theorem no32 :
   rintro ⟨hu, hv⟩
   apply hedge
   exact ⟨{x - ⟨0, 1⟩, x}, ⟨by simpa [c3] using edgeLeft U c3 hu,
-    by convert edgeRight V c2 hv using 1; simp [c2]; ring⟩⟩
+    by convert edgeRight V c2 hv using 1; simp [c2]; ring_nf⟩⟩
 
 private theorem no30 :
     ∀ (U : ProtoTile), ∀ (V : ProtoTile), (¬(FootprintEdges U ∩ FootprintEdges V).Nonempty) → (∀
@@ -1404,7 +1404,7 @@ private theorem no30 :
   intro U V hedge x c0 c3 edgeBottom edgeTop
   rintro ⟨hu, hv⟩
   apply hedge
-  exact ⟨{x, x + 1}, ⟨by convert edgeTop U c3 hu using 1; simp [c3]; ring,
+  exact ⟨{x, x + 1}, ⟨by convert edgeTop U c3 hu using 1; simp [c3]; ring_nf,
     by simpa [c0] using edgeBottom V c0 hv⟩⟩
 
 private theorem no03 :
@@ -1421,7 +1421,7 @@ private theorem no03 :
   rintro ⟨hu, hv⟩
   apply hedge
   exact ⟨{x, x + 1}, ⟨by simpa [c0] using edgeBottom U c0 hu,
-    by convert edgeTop V c3 hv using 1; simp [c3]; ring⟩⟩
+    by convert edgeTop V c3 hv using 1; simp [c3]; ring_nf⟩⟩
 
 private theorem noSame0 :
     ∀ (U : ProtoTile), ∀ (V : ProtoTile), ∀ (x : GaussianInt),

@@ -94,7 +94,7 @@ theorem P5124T1UnitParents (k : Nat) (hk : 0 < k) :
     ((unitEdge z _).mpr (Or.inr (Or.inr (Or.inr rfl))))
     (Or.inr (Or.inr (Or.inl rfl)))
   have lv := finish (TileTranslation D b) w b (b + 1) bottom
-    ((unitEdge w _).mpr (Or.inr (Or.inr (Or.inl (by rw [bi]; congr 1; abel)))))
+    ((unitEdge w _).mpr (Or.inr (Or.inr (Or.inl (by rw [bi]; congr 1; abel_nf)))))
     (Or.inl rfl)
   have ulVertices : BoundaryFootprintVertices (unit z) ∩
       BoundaryFootprintVertices (unit l) = {z, z + ⟨0, 1⟩} := by

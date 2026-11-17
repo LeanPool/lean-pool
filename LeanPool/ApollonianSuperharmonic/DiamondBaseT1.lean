@@ -216,7 +216,7 @@ theorem DiamondBaseT1 (K : DiamondParameter)
           congr 1
       · cases s
         · refine ⟨z - ⟨0, 1⟩, hzin, Or.inr (Or.inr (Or.inr ?_))⟩
-          congr 1 <;> abel
+          congr 1 <;> abel_nf
         · exact ⟨z, hzin, Or.inl rfl⟩
     · have hk1 : K.1 = 1 := by omega
       have hempty : (S 2 s).cells = ∅ := by

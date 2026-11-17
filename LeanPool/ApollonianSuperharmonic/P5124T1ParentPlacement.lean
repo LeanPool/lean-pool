@@ -69,7 +69,7 @@ theorem P5124T1ParentPlacement (K : DiamondParameter) (i : Fin 3) (s : Bool) :
     fin_cases i <;> cases s <;>
       simp [P5124T1ParentModel, singleton_centroid, centroid, ht,
         hv0, hv1, hv2, GaussianRealPoint, Prod.ext_iff, Nat.cast_sub hk] <;>
-      ring <;> simp
+      ring_nf <;> simp
 
 end ApollonianSuperharmonic
 

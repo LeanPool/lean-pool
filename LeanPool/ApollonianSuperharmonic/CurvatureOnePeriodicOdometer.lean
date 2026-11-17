@@ -253,15 +253,15 @@ theorem CurvatureOnePeriodicOdometer (C : BandCircle)
           add_sub_cancel_right, Zsqrtd.im_add, Zsqrtd.im_one, add_zero, Zsqrtd.re_sub,
           Zsqrtd.im_sub, sub_zero, tsub_le_iff_right]
       have hp : (x.re + 1) * x.re / 2 = x.re * (x.re - 1) / 2 + 1 * 0 / 2 + x.re * 1 := by
-        convert triangular x.re 1 using 1 <;> ring
+        convert triangular x.re 1 using 1 <;> ring_nf
       have hm : (x.re - 1) * (x.re - 1 - 1) / 2 = x.re * (x.re - 1) / 2 + (-1) * (-1 - 1) / 2 +
           x.re * (-1) := by
-        convert triangular x.re (-1) using 1; ring
+        convert triangular x.re (-1) using 1; ring_nf
       have hpi : (x.im + 1) * x.im / 2 = x.im * (x.im - 1) / 2 + 1 * 0 / 2 + x.im * 1 := by
-        convert triangular x.im 1 using 1 <;> ring
+        convert triangular x.im 1 using 1 <;> ring_nf
       have hmi : (x.im - 1) * (x.im - 1 - 1) / 2 = x.im * (x.im - 1) / 2 + (-1) * (-1 - 1) / 2 +
           x.im * (-1) := by
-        convert triangular x.im (-1) using 1; ring
+        convert triangular x.im (-1) using 1; ring_nf
       rw [hp, hm, hpi, hmi]
       ring_nf
       omega

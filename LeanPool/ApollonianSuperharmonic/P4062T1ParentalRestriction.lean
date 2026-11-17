@@ -183,10 +183,10 @@ private theorem hchild1Lap :
     ⟨(P.q₂ : Int), (P.q₂ : Int)⟩ P.p₂ P.p₂
     (-P.p₂ * (P.q₂ : Int) + 1)
   · convert hrec₁ x hmem.1 using 1; ring
-  · convert hrec₁ (x - 1) hmem.2.1 using 1; ring
-  · convert hrec₁ (x + 1) hmem.2.2.1 using 1; ring
-  · convert hrec₁ (x - ⟨0, 1⟩) hmem.2.2.2.1 using 1; ring
-  · convert hrec₁ (x + ⟨0, 1⟩) hmem.2.2.2.2 using 1; ring
+  · convert hrec₁ (x - 1) hmem.2.1 using 1; ring_nf
+  · convert hrec₁ (x + 1) hmem.2.2.1 using 1; ring_nf
+  · convert hrec₁ (x - ⟨0, 1⟩) hmem.2.2.2.1 using 1; ring_nf
+  · convert hrec₁ (x + ⟨0, 1⟩) hmem.2.2.2.2 using 1; ring_nf
 
 private theorem hchild2Lap :
     ∀ (P : FordFareyParameter), (P.q = P.q₁ + P.q₂) → (∀ (P₁ : FordFareyParameter), ∀ (P₂ :
@@ -229,10 +229,10 @@ private theorem hchild2Lap :
   apply hlapAffine (FordOdometer P) (FordOdometer P₂) x
     ⟨(P.q₁ : Int), 0⟩ 0 P.p₁ 0
   · convert hrec₂ x hmem.1 using 1; ring
-  · convert hrec₂ (x - 1) hmem.2.1 using 1; ring
-  · convert hrec₂ (x + 1) hmem.2.2.1 using 1; ring
-  · convert hrec₂ (x - ⟨0, 1⟩) hmem.2.2.2.1 using 1; ring
-  · convert hrec₂ (x + ⟨0, 1⟩) hmem.2.2.2.2 using 1; ring
+  · convert hrec₂ (x - 1) hmem.2.1 using 1; ring_nf
+  · convert hrec₂ (x + 1) hmem.2.2.1 using 1; ring_nf
+  · convert hrec₂ (x - ⟨0, 1⟩) hmem.2.2.2.1 using 1; ring_nf
+  · convert hrec₂ (x + ⟨0, 1⟩) hmem.2.2.2.2 using 1; ring_nf
 
 private theorem hchild3Lap :
     ∀ (P : FordFareyParameter), (P.q = P.q₁ + P.q₂) → (∀ (P₁ : FordFareyParameter), ∀ (P₂ :
@@ -275,10 +275,10 @@ private theorem hchild3Lap :
   apply hlapAffine (FordOdometer P) (FordOdometer P₂) x
     ⟨0, (P.q₁ : Int)⟩ P.p₁ 0 0
   · convert hrec₃ x hmem.1 using 1; ring
-  · convert hrec₃ (x - 1) hmem.2.1 using 1; ring
-  · convert hrec₃ (x + 1) hmem.2.2.1 using 1; ring
-  · convert hrec₃ (x - ⟨0, 1⟩) hmem.2.2.2.1 using 1; ring
-  · convert hrec₃ (x + ⟨0, 1⟩) hmem.2.2.2.2 using 1; ring
+  · convert hrec₃ (x - 1) hmem.2.1 using 1; ring_nf
+  · convert hrec₃ (x + 1) hmem.2.2.1 using 1; ring_nf
+  · convert hrec₃ (x - ⟨0, 1⟩) hmem.2.2.2.1 using 1; ring_nf
+  · convert hrec₃ (x + ⟨0, 1⟩) hmem.2.2.2.2 using 1; ring_nf
 
 end ParentalRestrictionProof
 
