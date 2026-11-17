@@ -32,7 +32,7 @@ theorem mem_Gamma0R_iff {N : ℕ} {g : SL(2, ℝ)} :
     refine ⟨A, ?_, ?_⟩
     · exact (ZMod.intCast_zmod_eq_zero_iff_dvd _ _).1 (CongruenceSubgroup.Gamma0_mem.1 hA)
     · ext i j
-      simp [Matrix.SpecialLinearGroup.map_apply_coe, RingHom.mapMatrix_apply]
+      simp [Matrix.SpecialLinearGroup.map_apply_coe]
   · rintro ⟨M, hM, hg⟩
     have hdet : M.det = 1 := by
       have h1 := g.2
