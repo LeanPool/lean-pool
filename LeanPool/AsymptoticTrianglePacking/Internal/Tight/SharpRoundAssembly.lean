@@ -1928,8 +1928,8 @@ theorem cubeMeasure_apply {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1) (A : Set (ι
   classical
   have hind : ∀ ω : ι → Bool, (0 : ℝ) ≤ Set.indicator A (1 : (ι → Bool) → ℝ) ω := by
     intro ω; by_cases h : ω ∈ A <;> simp [h]
-  rw [cubeMeasure, Measure.coe_finsetSum]
-  simp only [Finset.sum_apply, Measure.smul_apply, smul_eq_mul, MeasureTheory.Measure.dirac_apply]
+  rw [cubeMeasure, FunLike.coe_sum]
+  simp only [Finset.sum_apply, smul_apply, smul_eq_mul, MeasureTheory.Measure.dirac_apply]
   rw [ENNReal.ofReal_sum_of_nonneg (fun ω _ => mul_nonneg (wt_nonneg hp0 hp1 ω) (hind ω))]
   refine Finset.sum_congr rfl fun ω _ => ?_
   rw [ENNReal.ofReal_mul (wt_nonneg hp0 hp1 ω)]
