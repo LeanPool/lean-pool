@@ -541,7 +541,7 @@ theorem caccioppoli_I4_heat_cutoff_raw_ne_top
         (1 / 3 : ℝ) * (volume Q) ^
           (1 / (q / (q - 1)) - 1 / 3 : ℝ) := by
     rw [← hmeasure]
-    simpa only [eLpNorm'_eq_lintegral_enorm, enorm_eq_self] using hcompare
+    simpa only [eLpNorm'_eq_lintegral_eNorm, eNorm_eq_self] using hcompare
   have hvolume : (volume Q) ≠ ∞ := by
     exact (volume_parabolicCylinder_lt_top (x := x₀) (t := t₀) (r := ρ)).ne
   have hexp : 0 ≤ 1 / (q / (q - 1)) - 1 / 3 := by

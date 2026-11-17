@@ -34,7 +34,7 @@ theorem pressure_source_spatial_mass_power_bound
     rw [Real.holderConjugate_iff]
     norm_num
   have h := ENNReal.lintegral_mul_le_Lp_mul_Lq (volume.restrict B) hpq
-    hG.enorm (aemeasurable_const : AEMeasurable (fun _ : Vec3 => (1 : ℝ≥0∞)) _)
+    hG.eNorm (aemeasurable_const : AEMeasurable (fun _ : Vec3 => (1 : ℝ≥0∞)) _)
   simp only [Pi.mul_apply, mul_one, ENNReal.one_rpow, lintegral_const,
     one_mul, Measure.restrict_apply_univ] at h
   have hr := ENNReal.rpow_le_rpow h (by norm_num : (0 : ℝ) ≤ 6 / 5)
@@ -82,7 +82,7 @@ theorem pressure_source_spatial_mass_time_power_bound
       mul_le_mul_right (lintegral_mono' (Measure.restrict_mono_set volume hwin) (fun _ => le_rfl)) _
     _ = _ := by
       rw [cylinderPowerIntegral_eq_lintegral_slices (by norm_num) hF.restrict]
-      simp only [Real.enorm_eq_ofReal_abs]
+      simp only [Real.eNorm_eq_ofReal_abs]
 
 /-- The inverse-cube exterior kernel factor converts the integrated source
 mass into the Morrey tail power `ρ^{5/3 - 5/κ}`. -/
@@ -143,10 +143,10 @@ theorem pressure_source_slice_norm_aemeasurable
       change AEMeasurable F (volume : Measure (Vec3 × ℝ))
       exact hF
     exact h.mono_measure (Measure.prod_mono Measure.restrict_le_self le_rfl)
-  have hm := ((hprod.enorm.pow_const (6 / 5 : ℝ)).lintegral_prod_left').pow_const (5 / 6 : ℝ)
+  have hm := ((hprod.eNorm.pow_const (6 / 5 : ℝ)).lintegral_prod_left').pow_const (5 / 6 : ℝ)
   apply hm.congr
   filter_upwards [hprod.aestronglyMeasurable.prodMk_right] with s hs
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) ENNReal.ofReal_ne_top hs]
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) ENNReal.ofReal_ne_top hs]
   norm_num
 
 /-- The time integral of a spatial slice norm over a cell window is
@@ -172,7 +172,7 @@ theorem pressure_source_slice_norm_time_power_bound
         ∫⁻ y in vec3Ball x ρ, ‖F (y, s)‖ₑ ^ (6 / 5 : ℝ) := by
       apply lintegral_congr_ae
       filter_upwards [ae_restrict_of_ae hprod.aestronglyMeasurable.prodMk_right] with s hs
-      rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) ENNReal.ofReal_ne_top hs]
+      rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) ENNReal.ofReal_ne_top hs]
       norm_num only [ENNReal.toReal_ofReal (by norm_num : (0 : ℝ) ≤ 6 / 5), one_div_div]
       rw [← ENNReal.rpow_mul]
       norm_num
@@ -181,7 +181,7 @@ theorem pressure_source_slice_norm_time_power_bound
       lintegral_mono' (Measure.restrict_mono_set volume hwin) (fun _ => le_rfl)
     _ = _ := by
       rw [cylinderPowerIntegral_eq_lintegral_slices (by norm_num) hF.restrict]
-      simp only [Real.enorm_eq_ofReal_abs]
+      simp only [Real.eNorm_eq_ofReal_abs]
 
 /-- Removing the Morrey normalization recovers the source's cell mass
 with its exact positive radius power. -/

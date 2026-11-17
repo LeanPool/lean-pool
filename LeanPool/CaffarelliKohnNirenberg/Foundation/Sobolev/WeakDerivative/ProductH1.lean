@@ -37,7 +37,7 @@ private theorem eLpNorm_mul_two_two_le
     (by exact continuous_mul) hf hg (by
       filter_upwards [] with x
       simp only [one_mul]
-      simp [nnnorm_mul])
+      simp)
   simpa using h
 
 private theorem tendsto_eLpNorm_mul_sub_mul_zero
@@ -178,7 +178,7 @@ private theorem tendsto_eLpNorm_mul_test_zero
     (p := (1 : ℝ≥0∞)) (b := fun a b : ℝ => a * b) (c := (1 : NNReal))
     (by exact continuous_mul) hφ.aestronglyMeasurable (by
       filter_upwards [] with x
-      simp [nnnorm_mul])
+      simp)
   have hfun : (fun x => F n x * φ x - f x * φ x) =
       (fun x => φ x * (F n x - f x)) := by
     funext x

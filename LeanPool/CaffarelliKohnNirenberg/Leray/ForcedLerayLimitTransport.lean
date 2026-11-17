@@ -80,10 +80,10 @@ private theorem forcedLerayLimit_eLpNorm_rpow_prod {ν : Measure ℝ} [SFinite �
     (hg.comp_measurable (measurable_id.prodMk measurable_const)).aestronglyMeasurable
   have hpow (x : ℝ≥0∞) : (x ^ (1 / p.toReal)) ^ p.toReal = x := by
     rw [← ENNReal.rpow_mul, one_div_mul_cancel hq.ne', ENNReal.rpow_one]
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal hp0 hptop hg.aestronglyMeasurable, hpow,
-    lintegral_prod_symm' _ (hg.measurable.enorm.pow_const _)]
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal hp0 hptop hg.aestronglyMeasurable, hpow,
+    lintegral_prod_symm' _ (hg.measurable.eNorm.pow_const _)]
   refine lintegral_congr fun t => ?_
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal hp0 hptop (hslice t), hpow]
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal hp0 hptop (hslice t), hpow]
 
 /-- The space-time `L^p` bound of the regularized transport velocity on a
 slab over a time set `I`: each component is controlled by the three velocity

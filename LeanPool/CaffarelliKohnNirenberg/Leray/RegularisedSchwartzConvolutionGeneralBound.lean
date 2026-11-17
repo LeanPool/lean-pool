@@ -41,10 +41,10 @@ theorem regularised_schwartz_convolution_norm_le
       apply ContinuousLinearMap.opENorm_le_bound
       intro z
       change ‖c • z‖ₑ ≤ _
-      exact enorm_smul_le
+      exact eNorm_smul_le
     rw [one_mul]
     exact hc
-  have hConv := MeasureTheory.enorm_convolution_le
+  have hConv := MeasureTheory.eNorm_convolution_le
     (L := (ContinuousLinearMap.lsmul ℂ ℂ :
       ℂ →L[ℂ] ComplexVec3 →L[ℂ] ComplexVec3))
     (p := (2 : ℝ≥0∞)) (q := 2) (μ := volume)
@@ -69,7 +69,7 @@ theorem regularised_schwartz_convolution_norm_le
     (ENNReal.mul_lt_top (κ.memLp 2 volume).eLpNorm_lt_top
       (ψ.memLp 2 volume).eLpNorm_lt_top).ne
   have hReal := ENNReal.toReal_mono hFinite hBound
-  simpa only [toReal_enorm, ENNReal.toReal_mul,
+  simpa only [toReal_eNorm, ENNReal.toReal_mul,
     SchwartzMap.norm_toLp] using hReal
 
 end CKN.Leray

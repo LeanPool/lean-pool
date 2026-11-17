@@ -152,7 +152,7 @@ private theorem force_slice_norm_power_le
     (hb : ∀ᵐ y ∂volume.restrict S, ‖g y‖ₑ ≤ M) :
     eLpNorm g (ENNReal.ofReal (6/5 : ℝ)) (volume.restrict S)^(6/5 : ℝ) ≤
       volume S * M^(6/5 : ℝ) := by
-  have hh := eLpNorm_le_of_ae_enorm_bound (p := ENNReal.ofReal (6/5 : ℝ)) hg hb
+  have hh := eLpNorm_le_of_ae_eNorm_bound (p := ENNReal.ofReal (6/5 : ℝ)) hg hb
   simp only [smul_eq_mul, Measure.restrict_apply_univ] at hh
   norm_num only [ENNReal.toReal_ofReal, show (0 : ℝ) ≤ 6/5 by norm_num] at hh
   have hp := ENNReal.rpow_le_rpow hh (by norm_num : (0 : ℝ) ≤ 6/5)

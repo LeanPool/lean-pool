@@ -231,11 +231,11 @@ private lemma h1_global_sobolev_bound_hGbound_1 :
     filter_upwards [] with x
     by_cases hx : x ∈ U
     · simp only [Set.indicator_of_mem hx]
-      simp only [enorm_eq_nnnorm]
+      simp only [eNorm_eq_nnNorm]
       rw [← ENNReal.coe_mul]
       have hpoint : ‖B x‖₊ ≤
         Real.toNNReal (32 / r) * ‖u.toFun x‖₊ := by
-        rw [nnnorm_smul]
+        rw [nnNorm_smul]
         have hgradη' : ‖classicalGradient η x‖₊ ≤ Real.toNNReal (32 / r) := by
           rw [← NNReal.coe_le_coe]
           have hscale : (Real.toNNReal (32 / r) : ℝ) = 32 / r := by
@@ -430,7 +430,7 @@ private lemma h1_global_sobolev_bound_hboundEventually_4 :
     refine eLpNorm_le_nnreal_smul_eLpNorm_of_ae_le_mul'
       (hm.continuous_fderiv (by norm_num)).aestronglyMeasurable ?_ 2
     exact Filter.Eventually.of_forall (fun x => by
-      simp only [enorm_eq_nnnorm]
+      simp only [eNorm_eq_nnNorm]
       rw [← ENNReal.coe_mul]
       have hpoint : ‖fderiv ℝ m x‖₊ ≤
           (3 : NNReal) * ‖D (ns k) x‖₊ := by

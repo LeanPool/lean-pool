@@ -170,7 +170,7 @@ private theorem eLpNorm_four_pow_eq_lintegral {α E : Type} [MeasurableSpace α]
     [TopologicalSpace E] [ContinuousENorm E] {μ : Measure α} {f : α → E}
     (hf : AEStronglyMeasurable f μ) :
     eLpNorm f 4 μ ^ (4 : ℝ) = ∫⁻ x, ‖f x‖ₑ ^ (4 : ℝ) ∂μ := by
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hf,
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num) hf,
     ← ENNReal.rpow_mul]
   norm_num
 
@@ -178,7 +178,7 @@ private theorem eLpNorm_two_pow_eq_lintegral {α E : Type} [MeasurableSpace α]
     [TopologicalSpace E] [ContinuousENorm E] {μ : Measure α} {f : α → E}
     (hf : AEStronglyMeasurable f μ) :
     eLpNorm f 2 μ ^ (2 : ℝ) = ∫⁻ x, ‖f x‖ₑ ^ (2 : ℝ) ∂μ := by
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hf,
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num) hf,
     ← ENNReal.rpow_mul]
   norm_num
 
@@ -187,7 +187,7 @@ theorem eLpNorm_three_pow_eq_lintegral {α E : Type} [MeasurableSpace α]
     [TopologicalSpace E] [ContinuousENorm E] {μ : Measure α} {f : α → E}
     (hf : AEStronglyMeasurable f μ) :
     eLpNorm f 3 μ ^ (3 : ℝ) = ∫⁻ x, ‖f x‖ₑ ^ (3 : ℝ) ∂μ := by
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hf,
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num) hf,
     ← ENNReal.rpow_mul]
   norm_num
 
@@ -212,7 +212,7 @@ theorem scalarTimeL2Energy_eq {E : Type} [TopologicalSpace E] [ContinuousENorm E
     exact eLpNorm_two_pow_eq_lintegral ht
   have hmeas : AEMeasurable (fun z : Vec3 × ℝ => ‖f z‖ₑ ^ (2 : ℝ))
       (μx.prod μt) :=
-    ENNReal.continuous_rpow_const.measurable.comp_aemeasurable hf.enorm
+    ENNReal.continuous_rpow_const.measurable.comp_aemeasurable hf.eNorm
   calc
     (∫⁻ t, eLpNorm (fun x : Vec3 => f (x, t)) 2 μx ^ (2 : ℝ) ∂μt) =
         ∫⁻ t, ∫⁻ x, ‖f (x, t)‖ₑ ^ (2 : ℝ) ∂μx ∂μt :=
@@ -361,7 +361,7 @@ theorem scalarCylinderL4_of_sliceBounds {x₀ : Vec3} {r : ℝ} {J : Set ℝ}
     exact lt_of_le_of_lt hle (ENNReal.mul_lt_top hK_top henergy')
   have hf4meas : AEMeasurable (fun z : ParabolicPoint => ‖f z‖ₑ ^ (4 : ℝ))
       (μx.prod μt) := by
-    exact ENNReal.continuous_rpow_const.measurable.comp_aemeasurable hf.enorm
+    exact ENNReal.continuous_rpow_const.measurable.comp_aemeasurable hf.eNorm
   have hprodEq : (∫⁻ z, ‖f z‖ₑ ^ (4 : ℝ) ∂(μx.prod μt)) =
       ∫⁻ t, ∫⁻ x, ‖f (x, t)‖ₑ ^ (4 : ℝ) ∂μx ∂μt := by
     have hf4meas' : AEMeasurable (fun z : ParabolicPoint => ‖f z‖ₑ ^ (4 : ℝ))
@@ -386,7 +386,7 @@ theorem scalarCylinderL4_of_sliceBounds {x₀ : Vec3} {r : ℝ} {J : Set ℝ}
     have hle := lintegral_mono_ae hinner_bound
     exact lt_of_le_of_lt hle htime
   change MemLp f 4 (μx.prod μt)
-  rw [memLp_iff, eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hf]
+  rw [memLp_iff, eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num) hf]
   exact ENNReal.rpow_lt_top_of_nonneg (by norm_num) hprod_top.ne
 
 /-- The cylinder estimate needs only the local space-time L² energy: Tonelli turns it into the
@@ -408,10 +408,10 @@ theorem scalarCylinderL4_of_jointEnergy {x₀ : Vec3} {r : ℝ} {J : Set ℝ}
     MemLp f 4 ((volume.restrict (euclideanBall x₀ r)).prod (volume.restrict J)) := by
   have hf2meas : AEMeasurable (fun z : Vec3 × ℝ => ‖f z‖ₑ ^ (2 : ℝ))
       ((volume.restrict (euclideanBall x₀ r)).prod (volume.restrict J)) :=
-    ENNReal.continuous_rpow_const.measurable.comp_aemeasurable hf.enorm
+    ENNReal.continuous_rpow_const.measurable.comp_aemeasurable hf.eNorm
   have hg2meas : AEMeasurable (fun z : Vec3 × ℝ => ‖g z‖ₑ ^ (2 : ℝ))
       ((volume.restrict (euclideanBall x₀ r)).prod (volume.restrict J)) :=
-    ENNReal.continuous_rpow_const.measurable.comp_aemeasurable hg.enorm
+    ENNReal.continuous_rpow_const.measurable.comp_aemeasurable hg.eNorm
   have hsum_eq : (∫⁻ z, ‖f z‖ₑ ^ (2 : ℝ) + ‖g z‖ₑ ^ (2 : ℝ)
       ∂((volume.restrict (euclideanBall x₀ r)).prod (volume.restrict J))) =
       (∫⁻ z, ‖f z‖ₑ ^ (2 : ℝ)
@@ -563,12 +563,12 @@ theorem velocityComponent_memLp_four_of_essLocalData
     rw [hmeasureSmall]
     exact hset
   have hsmallU2 : MemLp uP 2 (μx.prod μt) := by
-    rw [memLp_iff, eLpNorm_eq_lintegral_rpow_enorm_toReal
+    rw [memLp_iff, eLpNorm_eq_lintegral_rpow_eNorm_toReal
       (by norm_num) (by norm_num) hsmallU]
     simp only [ENNReal.toReal_ofNat]
     exact ENNReal.rpow_lt_top_of_nonneg (by norm_num) hsmallU2int.ne
   have hsmallDu2 : MemLp DuP 2 (μx.prod μt) := by
-    rw [memLp_iff, eLpNorm_eq_lintegral_rpow_enorm_toReal
+    rw [memLp_iff, eLpNorm_eq_lintegral_rpow_eNorm_toReal
       (by norm_num) (by norm_num) hsmallDu]
     simp only [ENNReal.toReal_ofNat]
     exact ENNReal.rpow_lt_top_of_nonneg (by norm_num) hsmallDu2int.ne

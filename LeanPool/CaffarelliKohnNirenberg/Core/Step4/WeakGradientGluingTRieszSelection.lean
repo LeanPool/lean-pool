@@ -101,7 +101,8 @@ theorem exists_measurable_riesz_extension_field_of_aemeasurable (j i : Fin 3)
     · exact hz.trans (Set.indicator_of_mem (show z ∈ K ×ˢ (univ : Set ℝ) from
         ⟨hx, mem_univ _⟩) (hF.mk F)).symm
     · rw [hsupport z.1 z.2 hx]
-      exact (Set.indicator_of_notMem (fun h => hx h.1) (hF.mk F)).symm
+      exact (Set.indicator_of_notMem
+        (fun h : z ∈ K ×ˢ (univ : Set ℝ) => hx h.1) (hF.mk F)).symm
   have hs : ∀ᵐ s ∂volume, (fun y => F (y, s)) =ᵐ[volume] (fun y => F₀ (y, s)) := by
     have heq' := heq
     rw [volume_eq_prod] at heq'
@@ -110,7 +111,8 @@ theorem exists_measurable_riesz_extension_field_of_aemeasurable (j i : Fin 3)
     apply HasCompactSupport.of_support_subset_isCompact hK
     intro y hy
     by_contra hyK
-    exact hy (Set.indicator_of_notMem (fun h => hyK h.1) (hF.mk F))
+    exact hy (Set.indicator_of_notMem
+      (fun h : (y, s) ∈ K ×ˢ (univ : Set ℝ) => hyK h.1) (hF.mk F))
   have hF₀s : ∀ᵐ s ∂volume,
       MemLp (fun y => F₀ (y, s)) (ENNReal.ofReal (6 / 5 : ℝ)) volume ∧
       HasCompactSupport (fun y => F₀ (y, s)) := by

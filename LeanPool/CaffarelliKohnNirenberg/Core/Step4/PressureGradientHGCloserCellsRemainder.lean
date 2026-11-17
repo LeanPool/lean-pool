@@ -89,7 +89,7 @@ theorem pressure_remainder_cylinder_power_bound
         apply lintegral_mono
         intro y
         change ENNReal.ofReal |F (y, s)| ^ (6 / 5 : ℝ) ≤ H s ^ (6 / 5 : ℝ)
-        rw [← Real.enorm_eq_ofReal_abs]
+        rw [← Real.eNorm_eq_ofReal_abs]
         exact ENNReal.rpow_le_rpow (hs y) (by norm_num)
       _ = _ := by rw [lintegral_const, Measure.restrict_apply_univ, mul_comm]
   calc

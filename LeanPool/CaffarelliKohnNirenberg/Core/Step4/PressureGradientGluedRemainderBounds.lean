@@ -50,7 +50,7 @@ theorem glued_clipped_slice_time_bound
   have hi := lintegral_mono_set (μ := volume) (f := fun w : ParabolicPoint => ‖F w‖ₑ ^ (6/5 : ℝ))
     hsub
   apply hi.trans
-  simpa only [cylinderPowerIntegral, Real.enorm_eq_ofReal_abs] using
+  simpa only [cylinderPowerIntegral, Real.eNorm_eq_ofReal_abs] using
     (cylinderPowerIntegral_le_morreyNorm_pow (q := κ) (by norm_num) hF hr)
 
 /-- A bounded cylindrical source with finite Morrey norm has full-space
@@ -79,7 +79,7 @@ theorem glued_supported_source_slice_memLp
     have hb := cylinderPowerIntegral_le_morreyNorm_pow (p := (6/5 : ℝ)) (q := κ) (z := z₀) (by
       norm_num) hF hR
     apply (show (∫⁻ w in parabolicCylinder z₀.1 z₀.2 R, ‖F w‖ₑ ^ (6/5 : ℝ)) ≤ _ from
-      by simpa only [cylinderPowerIntegral, Real.enorm_eq_ofReal_abs] using hb).trans_lt
+      by simpa only [cylinderPowerIntegral, Real.eNorm_eq_ofReal_abs] using hb).trans_lt
     exact ENNReal.mul_lt_top
       (lt_top_iff_ne_top.mpr (ENNReal.rpow_ne_top_of_ne_zero
         (ENNReal.ofReal_pos.mpr hR).ne' ENNReal.ofReal_ne_top))

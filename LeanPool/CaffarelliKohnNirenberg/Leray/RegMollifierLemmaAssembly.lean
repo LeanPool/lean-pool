@@ -336,7 +336,7 @@ theorem regMollifyVector_iteratedDerivative_enorm_le
     rw [regMollifierAssemblyVectorConvolution_iterated ρ ε hε n v
       (hf.locallyIntegrable (by norm_num)) x]
     rfl
-  have hconv := MeasureTheory.enorm_convolution_le
+  have hconv := MeasureTheory.eNorm_convolution_le
     (L := allDerivativeScalarVectorAction) (p := (2 : ℝ≥0∞)) (q := 2)
     hdk.aestronglyMeasurable hf.aestronglyMeasurable x
   have hL : ‖allDerivativeScalarVectorAction‖ₑ ≤ 1 := by
@@ -346,7 +346,7 @@ theorem regMollifyVector_iteratedDerivative_enorm_le
       apply ContinuousLinearMap.opENorm_le_bound
       intro z
       change ‖c • z‖ₑ ≤ _
-      exact enorm_smul_le
+      exact eNorm_smul_le
     calc
       ‖allDerivativeScalarVectorAction c‖ₑ ≤ ‖c‖ₑ := hc
       _ = 1 * ‖c‖ₑ := by simp
@@ -432,7 +432,7 @@ theorem regUniformMollifiedInitial_coordinateDerivative_bound
   have hk : MemLp dk (2 : ℝ≥0∞) volume := by
     simpa [dk, κ] using
       regUniformMollifierKernel_coordinateDerivative_memLp ρ ε hε n w
-  have hconv := MeasureTheory.enorm_convolution_le
+  have hconv := MeasureTheory.eNorm_convolution_le
     (L := ContinuousLinearMap.lsmul ℝ ℝ) (p := (2 : ℝ≥0∞)) (q := 2)
     hk.aestronglyMeasurable hf.aestronglyMeasurable x
   have hL : ‖(ContinuousLinearMap.lsmul ℝ ℝ : ℝ →L[ℝ] ℝ →L[ℝ] ℝ)‖ₑ ≤ 1 := by
@@ -442,7 +442,7 @@ theorem regUniformMollifiedInitial_coordinateDerivative_bound
       apply ContinuousLinearMap.opENorm_le_bound
       intro z
       change ‖c • z‖ₑ ≤ _
-      exact enorm_smul_le
+      exact eNorm_smul_le
     calc
       ‖ContinuousLinearMap.lsmul ℝ ℝ c‖ₑ ≤ ‖c‖ₑ := hc
       _ = 1 * ‖c‖ₑ := by simp

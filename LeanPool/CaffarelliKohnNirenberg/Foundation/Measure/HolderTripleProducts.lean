@@ -43,7 +43,7 @@ theorem eLpNorm_mul_le_two_three {f g : α → ℝ}
     (c := (1 : NNReal)) (by exact continuous_mul) hf hg (by
       filter_upwards [] with x
       simp only [one_mul]
-      simp [nnnorm_mul])
+      simp)
   simpa using h
 
 /-- Hölder's inequality for the exponent triple `(3, 3; 3/2)`: for `f, g ∈ L³`,
@@ -65,7 +65,7 @@ theorem eLpNorm_mul_le_three_three {f g : α → ℝ}
     (c := (1 : NNReal)) (by exact continuous_mul) hf hg (by
       filter_upwards [] with x
       simp only [one_mul]
-      simp [nnnorm_mul])
+      simp)
   simpa using h
 
 /-- Multiplying an Lᵖ function by an a.e.-bounded function `a` with `|a| ≤ C` a.e.
@@ -85,6 +85,6 @@ theorem eLpNorm_mul_le_ofReal_mul {a f : α → ℝ} {C : ℝ}
     funext x
     rfl
   rw [hsmul, eLpNorm_const_smul] at hmono
-  simpa only [Real.enorm_eq_ofReal_abs, abs_of_nonneg hC] using hmono
+  simpa only [Real.eNorm_eq_ofReal_abs, abs_of_nonneg hC] using hmono
 
 end CKN.Foundation.Measure

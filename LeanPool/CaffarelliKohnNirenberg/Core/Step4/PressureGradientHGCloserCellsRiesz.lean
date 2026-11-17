@@ -84,7 +84,7 @@ theorem pressure_riesz_component_exterior_bound
   rw [hx]
   calc
     _ ≤ ∫⁻ y, ‖(-spatialDeriv (spatialDeriv newtonianKernel i) j) (x - y) * G y‖ₑ :=
-      enorm_integral_le_lintegral_enorm _
+      eNorm_integral_le_lintegral_eNorm _
     _ ≤ ∫⁻ y, ENNReal.ofReal (4 * (4 * Real.pi)⁻¹ * (δ ^ 3)⁻¹) * ‖G y‖ₑ := by
       apply lintegral_mono
       intro y
@@ -99,10 +99,10 @@ theorem pressure_riesz_component_exterior_bound
           simp only [Pi.neg_apply, abs_neg]
           exact (newtonianKernel_spatialDeriv_second_size_bound hxy i j).trans
             (mul_le_mul_of_nonneg_left hinv (by positivity))
-        rw [enorm_mul, Real.enorm_eq_ofReal_abs]
+        rw [eNorm_mul, Real.eNorm_eq_ofReal_abs]
         exact mul_le_mul_left (ENNReal.ofReal_le_ofReal hk) _
       · rw [hGA y hy]
         simp
-    _ = _ := lintegral_const_mul'' _ hG.aestronglyMeasurable.aemeasurable.enorm
+    _ = _ := lintegral_const_mul'' _ hG.aestronglyMeasurable.aemeasurable.eNorm
 
 end CKN.Core.Step4

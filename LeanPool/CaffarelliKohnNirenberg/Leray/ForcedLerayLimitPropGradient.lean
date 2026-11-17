@@ -95,7 +95,7 @@ private theorem forcedLerayLimitGradient_eLpNorm_le_of_lintegral
     (f : α → E) (hf : AEStronglyMeasurable f ν) (B : ℝ≥0∞)
     (hB : (∫⁻ x, ‖f x‖ₑ ^ (2 : ℝ) ∂ν) ≤ B) :
     eLpNorm f 2 ν ≤ B ^ (1 / 2 : ℝ) := by
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hf]
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num) hf]
   simp only [ENNReal.toReal_ofNat]
   exact ENNReal.rpow_le_rpow hB (by norm_num)
 
@@ -106,7 +106,7 @@ private theorem forcedLerayLimitGradient_lintegral_le_of_eLpNorm
     (f : α → E) (hf : AEStronglyMeasurable f ν) (B : ℝ≥0∞)
     (hB : eLpNorm f 2 ν ≤ B ^ (1 / 2 : ℝ)) :
     (∫⁻ x, ‖f x‖ₑ ^ (2 : ℝ) ∂ν) ≤ B := by
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hf] at hB
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num) hf] at hB
   simp only [ENNReal.toReal_ofNat] at hB
   exact (ENNReal.rpow_le_rpow_iff (by norm_num : (0 : ℝ) < 1 / 2)).1 hB
 
@@ -208,7 +208,7 @@ theorem forcedLerayLimit_globalGradient_outputs
       exact mem_iUnion.2 ⟨m, hm⟩
     have hae' : ∀ᵐ z ∂(volume : Measure (Vec3 × ℝ)), z ∈ S → z ∈ ⋃ m, K m :=
       (ae_restrict_iff' hSmeas).1 hae
-    refine (EventuallyLE.antisymm ?_ (Eventually.of_forall fun z hz => hUS hz))
+    refine (EventuallySubset.antisymm ?_ (Eventually.of_forall fun z hz => hUS hz))
     filter_upwards [hae'] with z hz
     exact hz
   have hμU : μ = (volume : Measure (Vec3 × ℝ)).restrict (⋃ m, K m) :=
@@ -324,14 +324,14 @@ theorem forcedLerayLimit_globalGradient_outputs
       have hlim0 : (∫⁻ _z : Vec3 × ℝ, (0 : ℝ≥0∞) ∂μ) = 0 := lintegral_zero
       rw [← hlim0]
       refine tendsto_lintegral_of_dominated_convergence' (fun z => ‖w z‖ₑ ^ (2 : ℝ))
-        (fun m => ((hw.aestronglyMeasurable.indicator (hKmeas m).compl).enorm.pow_const _))
+        (fun m => ((hw.aestronglyMeasurable.indicator (hKmeas m).compl).eNorm.pow_const _))
         (fun m => Eventually.of_forall fun z => ?_) ?_ ?_
       · by_cases hz : z ∈ (K m)ᶜ
         · simp [hz]
-        · simp only [indicator_of_notMem hz, enorm_zero]
+        · simp only [indicator_of_notMem hz, eNorm_zero]
           exact (ENNReal.zero_rpow_of_pos (by norm_num)).le.trans bot_le
       · have hfin := hw.eLpNorm_lt_top
-        rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)
+        rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num)
           hw.aestronglyMeasurable] at hfin
         simp only [ENNReal.toReal_ofNat] at hfin
         exact (ENNReal.rpow_lt_top_iff_of_pos (by norm_num)).1 hfin |>.ne
@@ -347,7 +347,7 @@ theorem forcedLerayLimit_globalGradient_outputs
     refine hrpow.congr' (Eventually.of_forall fun m => ?_)
     dsimp only
     rw [hdiff m, eLpNorm_neg,
-      eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)
+      eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num)
         (hw.aestronglyMeasurable.indicator (hKmeas m).compl)]
     simp only [ENNReal.toReal_ofNat]
   have hy : Tendsto (fun m => (hwK m).toLp ((K m).indicator w)) atTop (𝓝 (hw.toLp w)) := by

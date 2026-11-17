@@ -184,7 +184,7 @@ private lemma singularSet_null_of_gradient_criterion_closed_hSA_1 :
   have hUmeas : MeasurableSet (U z.1) := (hUopen z.1).measurableSet
   have hG : Measurable G := by
     apply Measurable.indicator
-    · have hnorm : Measurable (fun w => ‖Du' w‖ₑ) := hDu.measurable_mk.enorm
+    · have hnorm : Measurable (fun w => ‖Du' w‖ₑ) := hDu.measurable_mk.eNorm
       have hpow : Measurable (fun w => ‖Du' w‖ₑ ^ (2 : ℝ)) :=
         (ENNReal.continuous_rpow_const (y := (2 : ℝ))).measurable.comp hnorm
       exact hpow.const_mul (9 : ℝ≥0∞)

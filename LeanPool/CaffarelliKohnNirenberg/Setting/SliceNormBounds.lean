@@ -82,7 +82,7 @@ so the `toReal` reading of that lintegral is faithful. -/
 private lemma lintegral_ofReal_ne_top_of_integrableOn {s : Set ParabolicPoint}
     {g : ParabolicPoint → ℝ} (hg : IntegrableOn g s volume) :
     (∫⁻ w in s, ENNReal.ofReal (g w)) ≠ ⊤ := by
-  have hle := lintegral_ofReal_le_lintegral_enorm (μ := volume.restrict s) g
+  have hle := lintegral_ofReal_le_lintegral_eNorm (μ := volume.restrict s) g
   exact ne_of_lt (lt_of_le_of_lt hle hg.2)
 
 /-! ### The time-slice energy identity for `alpha` -/

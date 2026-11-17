@@ -165,13 +165,13 @@ private theorem eLpNorm_cube_eq_lintegral_abs_cube_cyl
     (hf : AEStronglyMeasurable f (volume.restrict s)) :
     eLpNorm f (3 : ℝ≥0∞) (volume.restrict s) ^ (3 : ℕ) =
       ∫⁻ x in s, ENNReal.ofReal |f x| ^ (3 : ℝ) := by
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal
       (p := (3 : ℝ≥0∞)) (by norm_num) ENNReal.coe_ne_top hf,
     ← ENNReal.rpow_natCast, ← ENNReal.rpow_mul]
   norm_num
   apply lintegral_congr
   intro x
-  rw [Real.enorm_eq_ofReal_abs]
+  rw [Real.eNorm_eq_ofReal_abs]
 
 private theorem h1_vec3_l3_cyl
     {x₀ : Vec3} {r : ℝ} (hr : 0 < r) {u : Vec3 → Vec3}
@@ -214,7 +214,7 @@ private theorem h1_vec3_l3_cyl
             ∫⁻ x in euclideanBall x₀ r, ENNReal.ofReal |u x i| ^ (3 : ℝ) := by
               apply lintegral_congr
               intro x
-              rw [Real.enorm_eq_ofReal_abs,
+              rw [Real.eNorm_eq_ofReal_abs,
                 ENNReal.ofReal_rpow_of_nonneg (abs_nonneg (u x i)) (by norm_num)]
         _ = eLpNorm (fun x => u x i) (3 : ℝ≥0∞)
               (volume.restrict (euclideanBall x₀ r)) ^ (3 : ℕ) := by
@@ -456,7 +456,7 @@ private lemma step2_cylinder_l3_bound_hpoint_2 :
         filter_upwards [] with y
         exact norm_le_pi_norm (u (y, s)) i
       _ = A s := by
-        rw [eLpNorm_eq_lintegral_rpow_enorm_toReal
+        rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal
           (p := (2 : ℝ≥0∞)) (by norm_num) ENNReal.coe_ne_top
           (hs.1.1.mono_measure
             (Measure.restrict_mono_set volume houter)).aestronglyMeasurable]
@@ -470,7 +470,7 @@ private lemma step2_cylinder_l3_bound_hpoint_2 :
           ENNReal.ofReal (spatialGradientSq u Du (y, s)) := by
       intro y
       exact component_sq_le_spatialGradientSq_cyl (y, s) i
-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal
+    rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal
       (p := (2 : ℝ≥0∞)) (by norm_num) ENNReal.coe_ne_top
       ((MemLp.eval hs.1.2 i).mono_measure
         (Measure.restrict_mono_set volume houter)).aestronglyMeasurable]
@@ -708,7 +708,7 @@ theorem step2_cylinder_l3_bound
     have hUprod : AEMeasurable (fun z => ‖u z‖ₑ ^ (2 : ℝ))
         ((volume.restrict Ω').prod (volume.restrict J)) := by
       rw [Measure.prod_restrict Ω' J]
-      exact ENNReal.continuous_rpow_const.measurable.comp_aemeasurable hU.enorm
+      exact ENNReal.continuous_rpow_const.measurable.comp_aemeasurable hU.eNorm
     exact hUprod.mono_measure (Measure.prod_mono
       (Measure.restrict_mono_set volume houter) le_rfl)
   have hprod_D : AEMeasurable (fun z : Vec3 × ℝ =>

@@ -216,7 +216,7 @@ private theorem rieszPressure_exists_slice_subsequence
         (fun z : Vec3 × ℝ => ‖F (n k) z - f z‖ₑ ^ r)
         ((volume : Measure Vec3).prod (volume : Measure ℝ)) := by
       exact ENNReal.continuous_rpow_const.measurable.comp_aemeasurable
-        hDiffProd.aemeasurable.enorm
+        hDiffProd.aemeasurable.eNorm
     let G : ℝ → ℝ≥0∞ := fun t =>
       ∫⁻ x : Vec3, ‖F (n k) (x, t) - f (x, t)‖ₑ ^ r ∂(volume : Measure Vec3)
     have hGmeas : AEMeasurable G (volume : Measure ℝ) := by
@@ -230,7 +230,7 @@ private theorem rieszPressure_exists_slice_subsequence
             (ENNReal.ofReal r) (volume : Measure Vec3) ^ r from rfl,
         eLpNorm_eq_eLpNorm' hp0 ENNReal.ofReal_ne_top ht,
         ENNReal.toReal_ofReal (le_trans zero_le_one hr.le),
-        ← lintegral_rpow_enorm_eq_rpow_eLpNorm'
+        ← lintegral_rpow_eNorm_eq_rpow_eLpNorm'
           (f := fun x : Vec3 => F (n k) (x, t) - f (x, t))
           (lt_trans zero_lt_one hr)]
     exact hGmeas.congr hEq.symm
@@ -250,7 +250,7 @@ private theorem rieszPressure_exists_slice_subsequence
     calc
       ∑' k : ℕ, ∫⁻ t, H k t ∂(volume : Measure ℝ) ≤
           ∑' k : ℕ, (ENNReal.ofReal (1 / 2 : ℝ)) ^ k :=
-        ENNReal.tsum_le_tsum hIntegralBound
+        tsum_le_tsum hIntegralBound
       _ < ⊤ := by
         rw [ENNReal.tsum_geometric]
         norm_num
@@ -302,7 +302,7 @@ private theorem rieszPressure_exists_slice_subsequence
   intro k
   rw [memLp_iff]
   have hHk : H k t < ⊤ := lt_of_le_of_lt
-    (ENNReal.le_tsum (f := fun j : ℕ => H j t) k) ht
+    (le_tsum (fun j : ℕ => H j t) k) ht
   have hpowfin :
       eLpNorm (fun x : Vec3 => F (n k) (x, t) - f (x, t))
           (ENNReal.ofReal r) (volume : Measure Vec3) ^ r < ⊤ := by

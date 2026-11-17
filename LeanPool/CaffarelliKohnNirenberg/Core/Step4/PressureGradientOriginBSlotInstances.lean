@@ -327,7 +327,7 @@ theorem bslot_carrier_time_mass_le
           (vector_time_slice_norm_power_eq (by norm_num) hDm2).symm
       _ ≤ _ := hmain
   refine (bslot_carrier_mass_le_cell_sum hR₁0 hR₁ _).trans ?_
-  refine (ENNReal.tsum_le_tsum hcell).trans ?_
+  refine (tsum_le_tsum hcell).trans ?_
   rw [tsum_fintype, Finset.sum_const, Finset.card_univ, Fintype.card_coe, nsmul_eq_mul,
     bslotCarrierConstant, ← mul_assoc]
   refine mul_le_mul' (mul_le_mul' ?_ le_rfl) le_rfl

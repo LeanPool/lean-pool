@@ -195,7 +195,7 @@ theorem ofReal_vec3EuclideanNorm_rpow_le_sum {u : Vec3} {p : ℝ} (hp : 1 ≤ p)
           ∑ i : Fin 3, ‖u i‖ₑ ^ p := by
           congr 1
           exact Finset.sum_congr rfl (fun i _ => by
-            rw [Real.enorm_eq_ofReal_abs,
+            rw [Real.eNorm_eq_ofReal_abs,
               ENNReal.ofReal_rpow_of_nonneg (abs_nonneg (u i)) hp0])
 
 /-- Integrated form of the sharp comparison: the `Lᵖ` mass of the Euclidean density is

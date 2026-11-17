@@ -149,7 +149,7 @@ private theorem caccioppoli_spatial_l3_bound_fixed
       intro i _
       apply lintegral_congr
       intro x
-      rw [Real.enorm_eq_ofReal_abs,
+      rw [Real.eNorm_eq_ofReal_abs,
         ENNReal.ofReal_rpow_of_nonneg (abs_nonneg _) (by norm_num)]
     _ ≤ ENNReal.ofReal (Real.sqrt 3) *
           (3 * C₆ * G ^ (3 / 2 : ℝ) * L ^ (3 / 2 : ℝ) +
@@ -597,7 +597,7 @@ private theorem caccioppoli_velocity_integral_ne_top_local
       dsimp [E, timeSliceBallEnergy]
       apply lintegral_congr
       intro y
-      rw [Real.enorm_eq_ofReal (vec3EuclideanNorm_nonneg _)]
+      rw [Real.eNorm_eq_ofReal (vec3EuclideanNorm_nonneg _)]
     rw [hEeq]
     simpa [T, timeSliceEnergyEssSup] using hEtopRaw
   let A₀ : ℝ≥0∞ := (essSup E (volume.restrict T)) ^ (1 / 2 : ℝ)

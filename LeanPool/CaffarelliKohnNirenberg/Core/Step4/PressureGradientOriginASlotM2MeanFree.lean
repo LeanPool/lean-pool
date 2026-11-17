@@ -132,7 +132,7 @@ theorem originASlot_meanFree_clipped_slice_bound
       simp only [hG]
       by_cases hy : y ∈ vec3Ball z.1 ρ
       · exact (Set.indicator_of_mem (h1mem y t hy htJ) _).trans (Set.indicator_of_mem hy W).symm
-      · exact (Set.indicator_of_notMem (fun hc => hy hc.1)
+      · exact (Set.indicator_of_notMem (fun hc : (y, t) ∈ S => hy hc.1)
           (fun w : ParabolicPoint => u w k - sourceSliceCentredMean z.1 ρ u w.2 k)).trans
           (Set.indicator_of_notMem hy W).symm
     have hBm : MeasurableSet (vec3Ball z.1 ρ) := (isOpen_vec3Ball _ _).measurableSet
@@ -165,7 +165,7 @@ theorem originASlot_meanFree_clipped_slice_bound
     have hz : (fun y => G (y, t)) = fun _ => (0 : ℝ) := by
       funext y
       simp only [hG]
-      exact Set.indicator_of_notMem (fun hc => htJ hc.2) _
+      exact Set.indicator_of_notMem (fun hc : (y, t) ∈ S => htJ hc.2) _
     rw [hz]
     simp only [eLpNorm_fun_zero]
     exact bot_le
@@ -250,7 +250,7 @@ theorem originASlot_meanFree_morreyNorm_le
       ∫⁻ t in Ioc (z'.2 - r ^ 2) z'.2,
         eLpNorm (fun y => G (y, t)) 2 (volume.restrict (vec3Ball z'.1 r)) ^ (2 : ℝ) := by
     rw [hid]
-    simp only [cylinderPowerIntegral, parabolicCylinder, Real.enorm_eq_ofReal_abs]
+    simp only [cylinderPowerIntegral, parabolicCylinder, Real.eNorm_eq_ofReal_abs]
     rfl
   set A : ℝ≥0∞ := ENNReal.ofReal (min r ρ) * V13 with hA
   have hAtop : A ≠ ⊤ := ENNReal.mul_ne_top ENNReal.ofReal_ne_top hV13top
@@ -326,7 +326,7 @@ theorem originASlot_gradient_time_mass_eq
     congr 1
     exact (eLpNorm_norm (f := fun y => Du (y, t) k) ht).symm
   rw [hcong, hid]
-  simp only [cylinderPowerIntegral, parabolicCylinder, Real.enorm_eq_ofReal_abs]
+  simp only [cylinderPowerIntegral, parabolicCylinder, Real.eNorm_eq_ofReal_abs]
   rfl
 
 end CKN.Core.Step4

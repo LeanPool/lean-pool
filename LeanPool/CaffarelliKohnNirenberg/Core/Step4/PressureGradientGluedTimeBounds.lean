@@ -40,9 +40,9 @@ theorem glued_slice_norm_power_integral {B : Set Vec3} {J : Set ℝ}
       eLpNorm (fun x => F (x,t)) (ENNReal.ofReal a) (volume.restrict B) =
         (∫⁻ x in B, ‖F (x,t)‖ₑ ^ a) ^ (1/a) := by
     filter_upwards [hF.prodMk_right] with t ht
-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (ENNReal.ofReal_pos.mpr ha).ne'
+    rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (ENNReal.ofReal_pos.mpr ha).ne'
       ENNReal.ofReal_ne_top ht, ENNReal.toReal_ofReal ha.le]
-  have hm := ((hF.aemeasurable.enorm.pow_const a).lintegral_prod_left').pow_const (1/a)
+  have hm := ((hF.aemeasurable.eNorm.pow_const a).lintegral_prod_left').pow_const (1/a)
   refine ⟨hm.congr (Filter.EventuallyEq.symm hnorm), ?_⟩
   calc
     _ = ∫⁻ t in J, ∫⁻ x in B, ‖F (x,t)‖ₑ ^ a := by
@@ -50,7 +50,7 @@ theorem glued_slice_norm_power_integral {B : Set Vec3} {J : Set ℝ}
       filter_upwards [hnorm] with t ht
       rw [ht, ← ENNReal.rpow_mul, one_div, inv_mul_cancel₀ ha.ne', ENNReal.rpow_one]
     _ = _ := by
-      rw [← lintegral_prod_symm (fun z => ‖F z‖ₑ ^ a) (hF.aemeasurable.enorm.pow_const a)]
+      rw [← lintegral_prod_symm (fun z => ‖F z‖ₑ ^ a) (hF.aemeasurable.eNorm.pow_const a)]
       rw [← originClauseRestrict_prod_eq]
 
 /-- Finite fixed coefficients preserve the `3/2` time bound. -/

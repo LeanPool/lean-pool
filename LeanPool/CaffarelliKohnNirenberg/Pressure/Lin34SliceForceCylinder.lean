@@ -331,7 +331,7 @@ theorem lin34_force_cylinder_lintegral_bound
     have hH : ENNReal.ofReal (r ^ (-4 / 3 : ℝ)) * B ^ (2 / 3 : ℝ) ≤
         ENNReal.ofReal (lin34ForceCylinderConstant q * ((r / ρ) * lambda q f z ρ)) := by
       have h := hmain
-      rw [eLpNorm'_eq_lintegral_enorm] at h
+      rw [eLpNorm'_eq_lintegral_eNorm] at h
       rw [show (1 : ℝ) / (3 / 2) = 2 / 3 by norm_num] at h
       exact h
     have hXpow : (ENNReal.ofReal (r ^ (-4 / 3 : ℝ))) ^ (3 / 2 : ℝ) =
@@ -383,7 +383,7 @@ theorem lin34_force_cylinder_lintegral_bound
                 (3 / 2 : ℝ)) := by
           apply lintegral_congr
           intro w
-          rw [Real.enorm_eq_ofReal_abs,
+          rw [Real.eNorm_eq_ofReal_abs,
             ENNReal.ofReal_rpow_of_nonneg (abs_nonneg _) (by norm_num)]
     _ ≤ _ := hB
 

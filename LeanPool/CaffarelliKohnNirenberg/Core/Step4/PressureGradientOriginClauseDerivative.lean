@@ -338,7 +338,7 @@ theorem originClause_clipped_growth_of_shared_remainder
   rw [cylinderPowerIntegral_carrier_eq (by norm_num) hQm,
     parabolicCylinder_inter_origin_eq_prod] at hbound
   convert hbound using 1
-  simp only [Real.enorm_eq_ofReal_abs]
+  simp only [Real.eNorm_eq_ofReal_abs]
   rfl
 
 end CKN.Core.Step4

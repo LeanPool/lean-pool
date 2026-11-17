@@ -43,7 +43,8 @@ theorem pressure_source_annulus_hasCompactSupport
   intro y hy
   apply subset_closure
   by_contra hyB
-  exact hy (Set.indicator_of_notMem (fun h => hyB h.1) G)
+  exact hy (Set.indicator_of_notMem
+    (fun h : y ∈ vec3Ball x (2 * ρ) \ vec3Ball x ρ => hyB h.1) G)
 
 /-- The annular component of the concrete Riesz operator has a pointwise
 bound on a smaller ball, with an explicit inverse-cube scale factor. -/
@@ -85,7 +86,8 @@ theorem pressure_riesz_annulus_enorm_bound
       funext z
       by_cases hz : z ∈ A <;> simp [hz]]
     rw [lintegral_indicator hA]
-    exact lintegral_mono' (Measure.restrict_mono_set volume (fun _ hz => hz.1))
+    exact lintegral_mono' (Measure.restrict_mono_set volume
+      (show A ⊆ vec3Ball x (2 * ρ) from fun _ hz => hz.1))
       (fun _ => le_rfl)
   have hc : ENNReal.ofReal (4 * (4 * Real.pi)⁻¹ * ((ρ / 6) ^ 3)⁻¹) =
       ENNReal.ofReal (6912 * (4 * Real.pi)⁻¹) * ENNReal.ofReal (2 * ρ) ^ (-3 : ℝ) := by
@@ -117,7 +119,7 @@ theorem pressure_riesz_annulus_eLpNorm_bound
     (hG.indicator ((vec3Ball_measurable _ _).diff
       (vec3Ball_measurable _ _)).nullMeasurableSet)
     (pressure_source_annulus_hasCompactSupport G x hρ)
-  have h := eLpNorm_le_of_ae_enorm_bound (p := ENNReal.ofReal (6 / 5 : ℝ))
+  have h := eLpNorm_le_of_ae_eNorm_bound (p := ENNReal.ofReal (6 / 5 : ℝ))
     hmem.aestronglyMeasurable.restrict
     (pressure_riesz_annulus_enorm_bound i j hG x hr hrρ)
   simpa only [Measure.restrict_apply_univ, ENNReal.toReal_ofReal (by norm_num : (0 : ℝ) ≤ 6 / 5),

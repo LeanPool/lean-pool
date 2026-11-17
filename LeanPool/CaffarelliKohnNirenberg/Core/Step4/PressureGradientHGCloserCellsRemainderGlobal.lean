@@ -48,7 +48,7 @@ theorem pressure_remainder_supported_cylinder_power_bound
         intro y
         change ENNReal.ofReal |F (y, s)| ^ (6 / 5 : ℝ) ≤ _
         by_cases hy : y ∈ S
-        · rw [Set.indicator_of_mem hy, ← Real.enorm_eq_ofReal_abs]
+        · rw [Set.indicator_of_mem hy, ← Real.eNorm_eq_ofReal_abs]
           exact ENNReal.rpow_le_rpow (hs y) (by norm_num)
         · rw [Set.indicator_of_notMem hy, hsupport y hy s]
           simp

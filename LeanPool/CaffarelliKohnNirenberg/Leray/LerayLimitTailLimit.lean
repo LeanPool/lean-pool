@@ -40,7 +40,7 @@ theorem lerayLimit_lintegral_bound_of_compactExhaustion
     (hG : AEMeasurable G (μ.restrict S)) :
     (∫⁻ x in S, ‖G x‖ₑ ^ (2 : ℝ) ∂μ) ≤ B := by
   have hdensity : AEMeasurable (fun x : α => ‖G x‖ₑ ^ (2 : ℝ))
-      (μ.restrict S) := hG.enorm.pow_const _
+      (μ.restrict S) := hG.eNorm.pow_const _
   have hconverge : Tendsto
       (fun m => ∫⁻ x in K m, ‖G x‖ₑ ^ (2 : ℝ) ∂(μ.restrict S))
       atTop

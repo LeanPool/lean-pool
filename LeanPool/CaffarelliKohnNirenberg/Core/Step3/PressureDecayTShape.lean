@@ -58,7 +58,7 @@ private lemma pressure_delta_sq_eq_scale_toReal_T
       (volume.restrict (parabolicCylinder z.1 z.2 r)) =
       (∫⁻ w in parabolicCylinder z.1 z.2 r,
         ENNReal.ofReal |p w| ^ (3 / 2 : ℝ)) ^ (2 / 3 : ℝ) := by
-    rw [eLpNorm'_eq_lintegral_enorm]
+    rw [eLpNorm'_eq_lintegral_eNorm]
     norm_num only [Nat.cast_ofNat]
     congr 1
     apply lintegral_congr_ae

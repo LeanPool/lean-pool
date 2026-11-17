@@ -204,7 +204,9 @@ theorem originASlot_correction_mass_of_morrey_bound
       y ∉ closure (vec3Ball (0 : Vec3) R₀) → G j (y, s) = 0 := by
     intro j y s hy
     rw [hG j]
-    exact Set.indicator_of_notMem (fun hc => hy (subset_closure hc.1)) _
+    exact Set.indicator_of_notMem
+      (fun hc : (y, s) ∈ vec3Ball (0 : Vec3) R₀ ×ˢ
+        Ioc (z.2 - ((R₀-R₁)/2) ^ 2) z.2 => hy (subset_closure hc.1)) _
   have hmain := originASlot_literal_riesz_sum_clipped_le_slot q τ C_CZ ε KU KD Cbig hq hτ hτhi hcoef
     i hF hFs hK hsupp hN (vec3Ball (0 : Vec3) R₁) (Ioc (-(R₁ ^ 2)) 0) z hr
   refine le_trans (le_of_eq ?_) hmain

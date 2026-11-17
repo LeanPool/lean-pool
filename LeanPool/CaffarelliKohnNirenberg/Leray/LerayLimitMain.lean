@@ -46,7 +46,7 @@ theorem lerayLimit_eLpNorm_two_sq_eq_lintegral
     (hf : AEStronglyMeasurable f μ) :
     eLpNorm f (2 : ℝ≥0∞) μ ^ (2 : ℝ) =
       ∫⁻ x, ‖f x‖ₑ ^ (2 : ℝ) ∂μ := by
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal
       (by norm_num : (2 : ℝ≥0∞) ≠ 0)
       (by norm_num : (2 : ℝ≥0∞) ≠ ∞) hf,
     ENNReal.toReal_ofNat, ← ENNReal.rpow_mul]

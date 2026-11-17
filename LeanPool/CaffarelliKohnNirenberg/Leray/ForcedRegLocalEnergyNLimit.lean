@@ -37,14 +37,14 @@ theorem abs_integral_mul_le_eLpNorm_two {f g : Vec3 → ℝ} (hf : MemLp f 2 vol
     (by exact continuous_mul) hf.aestronglyMeasurable hg.aestronglyMeasurable (by
       filter_upwards [] with x
       simp only [one_mul]
-      simp [nnnorm_mul])
+      simp)
   have hH' : eLpNorm (fun x => f x * g x) 1 volume ≤ eLpNorm f 2 volume * eLpNorm g 2 volume := by
     simpa using hH
   rw [← Real.norm_eq_abs, ← ENNReal.toReal_mul]
   refine (norm_integral_le_lintegral_norm _).trans ?_
   refine ENNReal.toReal_mono (ENNReal.mul_ne_top hf.eLpNorm_ne_top hg.eLpNorm_ne_top) ?_
   refine le_trans (le_of_eq ?_) hH'
-  rw [eLpNorm_one_eq_lintegral_enorm]
+  rw [eLpNorm_one_eq_lintegral_eNorm]
   · simp_rw [ofReal_norm]
   · exact hf.aestronglyMeasurable.mul hg.aestronglyMeasurable
 

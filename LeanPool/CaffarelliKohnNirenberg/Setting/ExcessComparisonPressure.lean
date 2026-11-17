@@ -91,7 +91,7 @@ private theorem sws_integrable_pressure_on_cylinder
   change (∫⁻ w in parabolicCylinder z.1 z.2 r, ‖p w‖ₑ) < ⊤
   have h := hp1'.hasFiniteIntegral
   change (∫⁻ w in parabolicCylinder z.1 z.2 r, ‖‖p w‖‖ₑ) < ⊤ at h
-  simpa only [Real.enorm_eq_ofReal_abs, Real.norm_eq_abs, abs_abs,
+  simpa only [Real.eNorm_eq_ofReal_abs, Real.norm_eq_abs, abs_abs,
     abs_of_nonneg (norm_nonneg _)] using h
 
 private lemma scalar_spatial_excess_lintegral_bound
@@ -503,7 +503,7 @@ private theorem tsaiPsi_le_C3_gamma_of_integrability
         (volume (parabolicCylinder z.1 z.2 r)).toReal := by
     convert hJ1 using 1 <;> simp [vec3EuclideanNorm_eq_l2, hL,
       div_eq_mul_inv]
-    all_goals ring
+    ring
   have hvol : (volume (parabolicCylinder z.1 z.2 r)).toReal =
       (4 * Real.pi / 3) * r ^ 5 := by
     rw [volume_parabolicCylinder, volume_vec3Ball_eq, ENNReal.toReal_mul,
