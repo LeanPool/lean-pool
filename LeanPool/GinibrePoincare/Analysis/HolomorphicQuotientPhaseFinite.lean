@@ -51,53 +51,6 @@ namespace GinibrePoincare
 open ComplexHermite
 noncomputable section
 
-theorem finiteZeroHermiteL2_alternating_polynomial {n : ℕ} (hn : 0 < n)
-    (S : Finset (Fin n → ℕ)) (c : (Fin n → ℕ) → ℂ)
-    (hAlt : finiteZeroHermiteL2 n hn S c ∈ gaussianAlternatingL2 n) :
-    IsAlternatingConfigurationPolynomial (finiteZeroAntiholomorphicHermitePolynomial n S c) := by
-  apply (finiteHermiteSum_isAlternating_iff hn S c).1
-  intro σ
-  have heq : (fun z ↦ finiteZeroAntiholomorphicHermiteSum n hn S c (permute σ z)) =
-      fun z ↦ permutationSign σ * finiteZeroAntiholomorphicHermiteSum n hn S c z := by
-    apply continuous_eq_of_ae_eq_complexGaussian hn
-    · have hc : Continuous (finiteZeroAntiholomorphicHermiteSum n hn S c) := by
-        convert MvPolynomial.continuous_eval
-          (finiteZeroAntiholomorphicHermitePolynomial n S c) using 1
-        funext z
-        exact (eval_finiteZeroAntiholomorphicHermitePolynomial n hn S c z).symm
-      apply hc.comp
-      exact continuous_pi (fun i ↦ continuous_apply (σ i))
-    · have hc : Continuous (finiteZeroAntiholomorphicHermiteSum n hn S c) := by
-        convert MvPolynomial.continuous_eval
-          (finiteZeroAntiholomorphicHermitePolynomial n S c) using 1
-        funext z
-        exact (eval_finiteZeroAntiholomorphicHermitePolynomial n hn S c z).symm
-      exact continuous_const.mul hc
-    have hLp := hAlt σ
-    have hclass :
-        (gaussianPermutationL2 σ (finiteZeroHermiteL2 n hn S c) :
-          Configuration n → ℂ) =ᵐ[complexGaussianMeasure n]
-        (permutationSign σ • finiteZeroHermiteL2 n hn S c :
-          Configuration n → ℂ) := by
-      rw [hLp]
-      exact Lp.coeFn_smul _ _
-    have hcoe := finiteZeroHermiteL2_coeFn n hn S c
-    have hcomp := (gaussian_measurePreserving_permute σ).quasiMeasurePreserving.ae_eq_comp hcoe
-    filter_upwards [hclass, Lp.coeFn_compMeasurePreserving (finiteZeroHermiteL2 n hn S c)
-        (gaussian_measurePreserving_permute σ), hcomp, hcoe] with
-        z hpoint hpull hsrc htgt
-    rw [show (gaussianPermutationL2 σ (finiteZeroHermiteL2 n hn S c)) z =
-      finiteZeroHermiteL2 n hn S c (permute σ z) by exact hpull] at hpoint
-    simp only [Pi.smul_apply, smul_eq_mul] at hpoint
-    change finiteZeroHermiteL2 n hn S c (permute σ z) =
-      finiteZeroAntiholomorphicHermiteSum n hn S c (permute σ z) at hsrc
-    change finiteZeroHermiteL2 n hn S c (permute σ z) =
-      permutationSign σ * finiteZeroHermiteL2 n hn S c z at hpoint
-    rw [hsrc, htgt] at hpoint
-    exact hpoint
-  exact fun z ↦ congrFun heq z
-
-
 /-- Every nonzero vector of the actual closed homogeneous quotient space is
 itself a finite homogeneous quotient, without a polynomial assumption. -/
 theorem ginibre_holomorphic_phase_nonzero_isFinite {n r : ℕ} (hn : 0 < n)

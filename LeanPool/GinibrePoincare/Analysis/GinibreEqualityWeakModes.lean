@@ -95,36 +95,8 @@ lemma ginibreEquality_core_pair_mode_bound {n : ℕ} (hn : 0 < n)
     unfold ginibreFullHigherMode concretePositiveHermiteModeMass positiveHermiteModeMass
     rw [ginibreFullCenteredTransform_core hn f hf _ hv,
       gaussianHermiteMode_eq_antiDegreeProjection]
-  have he : ginibreWeakEnergy n p.2 = smoothGinibreEnergy n f := by
-    unfold ginibreWeakEnergy smoothGinibreEnergy
-    rw [← integral_norm_sq_eq_L2_norm_sq (ginibreMeasure n) p.2]
-    congr 1
-    apply integral_congr_ae
-    filter_upwards [hg] with z hz
-    rw [hz, ginibreEuclideanGradient_norm_sq]
-  have hc : ginibreFullComplexOfReal n (ginibreFullCenter n hn p.1) =
-      centeredObservableL2 hn f hf := by
-    apply Lp.ext
-    rw [ginibreFullCenter_apply]
-    have hm : ginibreL2Mean n p.1 = smoothGinibreMean n f := integral_congr_ae hv
-    filter_upwards [ginibreFullComplexOfReal_ae n (p.1 - ginibreRealConstantL2 n hn (ginibreL2Mean
-      n p.1)),
-      Lp.coeFn_sub p.1 (ginibreRealConstantL2 n hn (ginibreL2Mean n p.1)),
-      ginibreRealConstantL2_ae n hn (ginibreL2Mean n p.1), hv,
-      centeredObservableL2_coeFn hn f hf] with z hz hs hc hfz hcenter
-    rw [hz, hs]
-    change ((p.1 z - (ginibreRealConstantL2 n hn (ginibreL2Mean n p.1)) z : ℝ) : ℂ) = _
-    rw [hc, hfz, hm, hcenter]
-    rfl
-  have hvar : ginibreL2Variance n hn p.1 = smoothGinibreVariance n f := by
-    rw [← ginibreFullCenter_variance, ← norm_sq_centeredObservableL2 hn f hf, ← hc]
-    rw [← integral_norm_sq_eq_L2_norm_sq (ginibreMeasure n) (ginibreFullCenter n hn p.1),
-      ← integral_norm_sq_eq_L2_norm_sq (ginibreMeasure n) (ginibreFullComplexOfReal n
-        (ginibreFullCenter n hn p.1))]
-    apply integral_congr_ae
-    filter_upwards [ginibreFullComplexOfReal_ae n (ginibreFullCenter n hn p.1)] with z hz
-    rw [hz]
-    simp
+  have he := ginibreWeakEnergy_eq_smoothGinibreEnergy p.2 f hg
+  have hvar := ginibreL2Variance_eq_smoothGinibreVariance hn p.1 f hv
   rw [hmode, he, hvar]
   exact ginibreEquality_core_mode_bound hn f hf k
 

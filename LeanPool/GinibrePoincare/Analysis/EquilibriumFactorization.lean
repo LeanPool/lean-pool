@@ -100,8 +100,15 @@ def radialObservable (n : ℕ) (z : Configuration n) : ℝ :=
 
 /-- Unnormalized Ginibre density with respect to configuration Lebesgue measure. -/
 def rawGinibreDensity' (n : ℕ) (z : Configuration n) : ℝ :=
-  ((n : ℝ) / Real.pi) ^ n * Real.exp (-n * configurationNormSq z) *
-  Complex.normSq (vandermonde z)
+  ginibreLebesgueDensityReal n z
+
+/-- The historical factorization order agrees with the canonical real density. -/
+theorem rawGinibreDensity'_eq (n : ℕ) (z : Configuration n) :
+    rawGinibreDensity' n z =
+      ((n : ℝ) / Real.pi) ^ n * Real.exp (-n * configurationNormSq z) *
+        Complex.normSq (vandermonde z) := by
+  unfold rawGinibreDensity' ginibreLebesgueDensityReal gaussianWeight vandermondeWeight
+  ring
 
 /-- The recentered configuration belongs to the zero-sum hyperplane. -/
 theorem coordinateSum_recentered (n : ℕ) (z : Configuration n) :
@@ -254,7 +261,7 @@ theorem equilibrium_factorization (n : ℕ) (hn : 0 < n) (z : Configuration n) :
     rawGinibreDensity' n z =
       Real.exp (-centerOfMassSqNorm n z) * rawGinibreDensity' n (recenteredConfiguration n z) := by
   have hnR : (n : ℝ) ≠ 0 := by exact_mod_cast (Nat.ne_of_gt hn)
-  unfold rawGinibreDensity'
+  simp only [rawGinibreDensity'_eq]
   rw [pythagorean_identity n z, vandermonde_translation_invariant n z]
   have he : -(n : ℝ) * (centerOfMassSqNorm n z / (n : ℝ) + recenteredSqNorm n z) =
       -centerOfMassSqNorm n z + -(n : ℝ) * recenteredSqNorm n z := by
@@ -269,23 +276,26 @@ def equilibriumGinibreDensity (n : ℕ) (z : Configuration n) : ℝ :=
   (ginibreNormalizingMass n).toReal⁻¹ * rawGinibreDensity' n z
 
 theorem rawGinibreDensity_nonneg (n : ℕ) (z : Configuration n) :
-    0 ≤ rawGinibreDensity' n z := by
-  unfold rawGinibreDensity'
-  exact mul_nonneg (by positivity) (Complex.normSq_nonneg _)
+    0 ≤ rawGinibreDensity' n z :=
+  ginibreLebesgueDensityReal_nonneg n z
 
-theorem measurable_rawGinibreDensity (n : ℕ) :
-    Measurable (rawGinibreDensity' n) := by
-  unfold rawGinibreDensity' configurationNormSq
+/-- The canonical real density is measurable. -/
+theorem measurable_ginibreLebesgueDensityReal (n : ℕ) :
+    Measurable (ginibreLebesgueDensityReal n) := by
+  unfold ginibreLebesgueDensityReal gaussianWeight vandermondeWeight configurationNormSq
   have hv := continuous_vandermonde (n := n)
   fun_prop
+
+theorem measurable_rawGinibreDensity (n : ℕ) :
+    Measurable (rawGinibreDensity' n) :=
+  measurable_ginibreLebesgueDensityReal n
 
 /-- The raw density is the product of the existing Gaussian and Vandermonde densities. -/
 theorem ofReal_rawGinibreDensity (n : ℕ) (z : Configuration n) :
     ENNReal.ofReal (rawGinibreDensity' n z) =
       complexGaussianDensity n z * vandermondeDensity z := by
-  unfold rawGinibreDensity' complexGaussianDensity vandermondeDensity
-    gaussianWeight vandermondeWeight
-  rw [ENNReal.ofReal_mul (by positivity)]
+  simpa only [rawGinibreDensity', mul_comm] using
+    (vandermondeDensity_mul_complexGaussianDensity n z).symm
 
 /-- The density in the factorization is the density of the concrete raw measure. -/
 theorem rawGinibreMeasure_eq_equilibriumDensity (n : ℕ) (hn : 0 < n) :

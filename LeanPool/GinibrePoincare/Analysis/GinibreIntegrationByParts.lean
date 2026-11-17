@@ -303,29 +303,6 @@ theorem integral_fderiv_configuration_imag_eq_zero {n : ℕ}
       (hΦ.comp (contDiff_configurationCoordinateSlice b j))
       (hasCompactSupport_comp_configurationCoordinateSlice_real hΦc b j)
 
-/-- The ordinary real density whose `ENNReal.ofReal` is the product of the
-Vandermonde and explicit complex-Gaussian densities. -/
-def ginibreLebesgueDensityReal (n : ℕ) (z : Configuration n) : ℝ :=
-  (((n : ℝ) / Real.pi) ^ n) * vandermondeWeight z * gaussianWeight n z
-
-/-- The real Ginibre Lebesgue density is nonnegative. -/
-theorem ginibreLebesgueDensityReal_nonneg (n : ℕ) (z : Configuration n) :
-    0 ≤ ginibreLebesgueDensityReal n z := by
-  unfold ginibreLebesgueDensityReal
-  exact mul_nonneg (mul_nonneg (pow_nonneg (div_nonneg (Nat.cast_nonneg n)
-    Real.pi_pos.le) _) (vandermondeWeight_nonneg z)) (gaussianWeight_nonneg n z)
-
-/-- The two extended nonnegative density factors multiply to the `ofReal`
-of the ordinary real density. -/
-theorem vandermondeDensity_mul_complexGaussianDensity (n : ℕ)
-    (z : Configuration n) :
-    vandermondeDensity z * complexGaussianDensity n z =
-      ENNReal.ofReal (ginibreLebesgueDensityReal n z) := by
-  unfold vandermondeDensity complexGaussianDensity ginibreLebesgueDensityReal
-  rw [← ENNReal.ofReal_mul (vandermondeWeight_nonneg z)]
-  congr 1
-  ring
-
 /-- Integration against normalized Ginibre measure as ordinary Lebesgue
 integration against the explicit real density. -/
 theorem integral_ginibreMeasure_eq_density_volume {n : ℕ} (hn : 0 < n)

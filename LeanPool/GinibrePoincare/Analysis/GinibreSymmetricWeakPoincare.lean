@@ -126,6 +126,47 @@ theorem ginibreWeakEnergy_continuous (n : ℕ) :
     Continuous (ginibreWeakEnergy n) := by
   exact continuous_const.mul (continuous_norm.pow 2)
 
+/-- A weak gradient representative has the corresponding smooth Dirichlet energy. -/
+theorem ginibreWeakEnergy_eq_smoothGinibreEnergy {n : ℕ}
+    (g : Lp (EuclideanSpace ℝ (Fin n × Fin 2)) 2 (ginibreMeasure n))
+    (f : Configuration n → ℝ)
+    (hg : (g : Configuration n → EuclideanSpace ℝ (Fin n × Fin 2)) =ᵐ[ginibreMeasure n]
+      ginibreEuclideanGradient f) :
+    ginibreWeakEnergy n g = smoothGinibreEnergy n f := by
+  rw [ginibreWeakEnergy, ← integral_norm_sq_eq_L2_norm_sq]
+  unfold smoothGinibreEnergy
+  congr 1
+  apply integral_congr_ae
+  filter_upwards [hg] with z hz
+  rw [hz, ginibreEuclideanGradient_norm_sq]
+
+/-- An L² representative has the variance of its almost-everywhere equal observable. -/
+theorem ginibreL2Variance_eq_smoothGinibreVariance {n : ℕ} (hn : 0 < n)
+    (u : Lp ℝ 2 (ginibreMeasure n)) (f : Configuration n → ℝ)
+    (hu : (u : Configuration n → ℝ) =ᵐ[ginibreMeasure n] f) :
+    ginibreL2Variance n hn u = smoothGinibreVariance n f := by
+  have hmean : ginibreL2Mean n u = smoothGinibreMean n f := integral_congr_ae hu
+  rw [ginibreL2Variance, hmean]
+  calc
+    ‖u - ginibreRealConstantL2 n hn (smoothGinibreMean n f)‖ ^ 2 =
+        ∫ z, (u z - smoothGinibreMean n f) ^ 2 ∂ginibreMeasure n := by
+          rw [← integral_square_eq_L2_norm_sq]
+          apply integral_congr_ae
+          filter_upwards [Lp.coeFn_sub u
+              (ginibreRealConstantL2 n hn (smoothGinibreMean n f)),
+            hu, ginibreRealConstantL2_ae n hn (smoothGinibreMean n f)]
+            with z hsub hz hc
+          rw [hsub]
+          change ((u : Configuration n → ℝ) z -
+            (ginibreRealConstantL2 n hn (smoothGinibreMean n f) :
+              Configuration n → ℝ) z) ^ 2 = _
+          rw [hz, hc]
+    _ = smoothGinibreVariance n f := by
+      unfold smoothGinibreVariance
+      apply integral_congr_ae
+      filter_upwards [hu] with z hz
+      rw [hz]
+
 /-- The sharp Poincaré inequality on the full symmetric distributional weak-H¹ domain. -/
 theorem ginibre_symmetric_weak_poincare {n : ℕ} (hn : 0 < n)
     (u : Lp ℝ 2 (ginibreMeasure n))
@@ -139,39 +180,8 @@ theorem ginibre_symmetric_weak_poincare {n : ℕ} (hn : 0 < n)
       (hp : p ∈ ginibreTheoremOneNineCorePairs n) :
       ginibreL2Variance n hn p.1 ≤ ginibreWeakEnergy n p.2 / 2 := by
     obtain ⟨f, hf, hv, hgrad⟩ := hp
-    let := ginibreMeasure_isProbabilityMeasure hn
-    have hmean : ginibreL2Mean n p.1 = smoothGinibreMean n f := by
-      unfold ginibreL2Mean smoothGinibreMean
-      apply integral_congr_ae
-      exact hv
-    have hvar : ginibreL2Variance n hn p.1 = smoothGinibreVariance n f := by
-      rw [ginibreL2Variance, hmean]
-      calc
-        ‖p.1 - ginibreRealConstantL2 n hn (smoothGinibreMean n f)‖ ^ 2 =
-            ∫ z, (p.1 z - smoothGinibreMean n f) ^ 2 ∂ginibreMeasure n := by
-              rw [← integral_square_eq_L2_norm_sq]
-              apply integral_congr_ae
-              filter_upwards [Lp.coeFn_sub p.1
-                  (ginibreRealConstantL2 n hn (smoothGinibreMean n f)),
-                hv, ginibreRealConstantL2_ae n hn (smoothGinibreMean n f)]
-                with z hsub hz hc
-              rw [hsub]
-              change ((p.1 : Configuration n → ℝ) z -
-                (ginibreRealConstantL2 n hn (smoothGinibreMean n f) :
-                  Configuration n → ℝ) z) ^ 2 = _
-              rw [hz, hc]
-        _ = smoothGinibreVariance n f := by
-          unfold smoothGinibreVariance
-          apply integral_congr_ae
-          filter_upwards [hv] with z hz
-          rw [hz]
-    have henergy : ginibreWeakEnergy n p.2 = smoothGinibreEnergy n f := by
-      rw [ginibreWeakEnergy, ← integral_norm_sq_eq_L2_norm_sq]
-      unfold smoothGinibreEnergy
-      congr 1
-      apply integral_congr_ae
-      filter_upwards [hgrad] with z hz
-      rw [hz, ginibreEuclideanGradient_norm_sq]
+    have hvar := ginibreL2Variance_eq_smoothGinibreVariance hn p.1 f hv
+    have henergy := ginibreWeakEnergy_eq_smoothGinibreEnergy p.2 f hgrad
     have hdef := concrete_theoremOneNine hn f hf
     have hm : ∀ k : ℕ, 0 ≤ concretePositiveHermiteModeMass hn f hf k := by
       intro k

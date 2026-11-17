@@ -8,6 +8,8 @@ Authors: Djalil Chafaï
 Adapted for Lean Pool from djalilchafai/ginibre-
 poincare/GinibrePoincare/Analysis/GinibreConjugationGeometry.lean.
 Module paths, interfaces, and proofs are ported to the pool's toolchain and gates.
+The finite polynomial-alternation bridge also comes from
+GinibrePoincare/Analysis/HolomorphicQuotientPhaseFinite.lean.
 The original source is MIT licensed; its notice follows.
 
 MIT License
@@ -34,6 +36,8 @@ SOFTWARE.
 -/
 
 module
+
+public import LeanPool.GinibrePoincare.Analysis.GinibreL2Norm
 
 public import LeanPool.GinibrePoincare.Analysis.GlobalPhaseAction
 public import LeanPool.GinibrePoincare.Analysis.L2RepresentativeBridges
@@ -107,37 +111,6 @@ def ginibreSymmetricConjugation (n : ℕ) :
   fun u ↦ ⟨star u.1, by
     intro σ
     rw [ginibrePermutationL2_star, u.2 σ]⟩
-
-private theorem Lp_star_add {n : ℕ}
-    (u v : Lp ℂ 2 (ginibreMeasure n)) : star (u + v) = star u + star v := by
-  apply Lp.ext
-  filter_upwards [Lp.coeFn_star (u + v), Lp.coeFn_star u, Lp.coeFn_star v,
-    Lp.coeFn_add u v, Lp.coeFn_add (star u) (star v)] with z huv hu hv hadd hstaradd
-  change (u + v) z = u z + v z at hadd
-  change (star u + star v) z = star u z + star v z at hstaradd
-  rw [huv, hstaradd]
-  calc
-    star ((u + v) z) = star (u z + v z) := congrArg star hadd
-    _ = star (u z) + star (v z) := by simp
-    _ = star u z + star v z := congrArg₂ (· + ·) hu.symm hv.symm
-
-private theorem Lp_star_real_smul {n : ℕ} (r : ℝ)
-    (u : Lp ℂ 2 (ginibreMeasure n)) : star (r • u) = r • star u := by
-  apply Lp.ext
-  filter_upwards [Lp.coeFn_star (r • u), Lp.coeFn_star u,
-    Lp.coeFn_smul r u, Lp.coeFn_smul r (star u)] with z hru hu hsmul hstarsmul
-  change (r • u) z = r • u z at hsmul
-  change (r • star u) z = r • star u z at hstarsmul
-  rw [hru, hstarsmul]
-  calc
-    star ((r • u) z) = star (r • u z) := congrArg star hsmul
-    _ = r • star (u z) := by simp
-    _ = r • star u z := congrArg (r • ·) hu.symm
-
-private theorem Lp_norm_star {n : ℕ} (u : Lp ℂ 2 (ginibreMeasure n)) :
-    ‖star u‖ = ‖u‖ := by
-  rw [Lp.norm_def, Lp.norm_def]
-  exact congrArg ENNReal.toReal AEEqFun.eLpNorm_star
 
 /-- Global-phase pullback commutes with value conjugation. -/
 theorem ginibreGlobalPhaseL2_star {n : ℕ} (hn : 0 < n)
@@ -649,15 +622,11 @@ theorem totalHolomorphicDegree_eq_of_mem_orbitSupport {n : ℕ}
   rcases Finset.mem_image.mp hq with ⟨σ, hσ, rfl⟩
   exact totalHolomorphicDegree_orbitIndex p σ
 
-/-- The orbit-fiber polynomial is algebraically alternating. -/
-theorem isAlternating_alternatedHolomorphicPolynomial
-    (n : ℕ) (hn : 0 < n) (p : Fin n → ℕ) :
-    IsAlternatingConfigurationPolynomial
-      (finiteZeroAntiholomorphicHermitePolynomial n
-        (holomorphicPermutationOrbitSupport p)
-        (alternatedHolomorphicCoefficient p)) := by
-  let S := holomorphicPermutationOrbitSupport p
-  let c := alternatedHolomorphicCoefficient p
+/-- Alternation of the finite Hermite L² class implies algebraic polynomial alternation. -/
+theorem finiteZeroHermiteL2_alternating_polynomial {n : ℕ} (hn : 0 < n)
+    (S : Finset (Fin n → ℕ)) (c : (Fin n → ℕ) → ℂ)
+    (hAlt : finiteZeroHermiteL2 n hn S c ∈ gaussianAlternatingL2 n) :
+    IsAlternatingConfigurationPolynomial (finiteZeroAntiholomorphicHermitePolynomial n S c) := by
   apply (finiteHermiteSum_isAlternating_iff hn S c).1
   intro σ
   have heq : (fun z ↦ finiteZeroAntiholomorphicHermiteSum n hn S c (permute σ z)) =
@@ -676,10 +645,7 @@ theorem isAlternating_alternatedHolomorphicPolynomial
         funext z
         exact (eval_finiteZeroAntiholomorphicHermitePolynomial n hn S c z).symm
       exact continuous_const.mul hc
-    have hv : finiteZeroHermiteL2 n hn S c ∈ gaussianAlternatingL2 n := by
-      rw [finiteZeroHermiteL2_alternatedHolomorphicCoefficient]
-      exact ComplexHermite.gaussianAlternationOperator_mem n _
-    have hLp := hv σ
+    have hLp := hAlt σ
     have hclass :
         (gaussianPermutationL2 σ (finiteZeroHermiteL2 n hn S c) :
           Configuration n → ℂ) =ᵐ[complexGaussianMeasure n]
@@ -702,6 +668,19 @@ theorem isAlternating_alternatedHolomorphicPolynomial
     rw [hsrc, htgt] at hpoint
     exact hpoint
   exact fun z ↦ congrFun heq z
+
+
+/-- The orbit-fiber polynomial is algebraically alternating. -/
+theorem isAlternating_alternatedHolomorphicPolynomial
+    (n : ℕ) (hn : 0 < n) (p : Fin n → ℕ) :
+    IsAlternatingConfigurationPolynomial
+      (finiteZeroAntiholomorphicHermitePolynomial n
+        (holomorphicPermutationOrbitSupport p)
+        (alternatedHolomorphicCoefficient p)) := by
+  apply finiteZeroHermiteL2_alternating_polynomial hn
+    (holomorphicPermutationOrbitSupport p) (alternatedHolomorphicCoefficient p)
+  rw [finiteZeroHermiteL2_alternatedHolomorphicCoefficient]
+  exact ComplexHermite.gaussianAlternationOperator_mem n _
 
 /-- The inverse Vandermonde image of an alternated holomorphic Hermite basis
 vector belongs to its shifted homogeneous quotient closure. -/
