@@ -98,7 +98,7 @@ lemma subtree_induction {S S' : PreStrategy T p} {x} (h : x ∈ S.subtree)
 
 /-- restrict a `PreStrategy` to a subtree of the game tree -/
 def restrictTree (rto : tree A) (hr : rto ≤ T) :
-  PreStrategy rto p := fun x hx a ↦ S ⟨x.val, hr x.prop⟩ hx ⟨a.val, hr a.prop⟩
+  PreStrategy rto p := fun x hx ↦ {a | ⟨a.val, hr a.prop⟩ ∈ S ⟨x.val, hr x.prop⟩ hx}
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
 abbrev restrict (rto : PreStrategy T p.swap) :
   PreStrategy rto.subtree p := S.restrictTree rto.subtree rto.subtree_sub
