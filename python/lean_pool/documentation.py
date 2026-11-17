@@ -1,11 +1,12 @@
 """Build resumable local API documentation outside pull-request CI.
 
-Progress is recorded per project: a project whose sources and compiled modules
-are unchanged is never handed to Lake again, so routine merges, option edits and
-helper changes do not restart the whole pool. Only successful batches record
-progress. A timed-out or failed subprocess is stopped together with its children
-before its database and Lake markers are rolled back to the preceding consistent
-checkpoint. Lake still checks its own traces for every project it is given.
+Lake compiles the pool and doc-gen's prerequisites; the analysis of each module
+then runs as its own doc-gen process, a fixed number at a time. doc-gen replaces
+a module's records in one transaction, so the database only ever holds whole
+modules and needs no rollback. Progress is recorded per project, and per module
+inside an unfinished project: a project whose sources and compiled modules are
+unchanged is never analyzed again, so routine merges, option edits and helper
+changes do not restart the whole pool.
 """
 
 from __future__ import annotations
@@ -17,12 +18,14 @@ import logging
 import os
 import re
 import shutil
-import signal
 import sqlite3
 import subprocess
-import tempfile
+import sys
+import threading
 import time
-from contextlib import contextmanager
+from collections import Counter
+from concurrent.futures import ThreadPoolExecutor
+from dataclasses import dataclass
 from graphlib import TopologicalSorter
 from pathlib import Path
 
@@ -35,9 +38,17 @@ IMPORTS = re.compile(
 )
 STATE = "documentation-progress.json"
 # Bump when stored analysis must be discarded, e.g. a changed database contract.
-STATE_VERSION = 2
-# A Lake worker limit alone does not bound jobs resuming from dependency waits.
-ANALYSIS_TARGETS = 8
+STATE_VERSION = 3
+# One analyzer per hosted-runner core. Lake could not hold this bound: jobs
+# resuming from dependency waits exceeded its worker limit and exhausted memory.
+ANALYZERS = 4
+# Ordinary modules take seconds. A stuck analyzer must fail by name instead of
+# silently consuming the job's remaining time.
+ANALYSIS_SECONDS = 1800
+# What doc-gen's `docInfo` facet builds before it analyzes a local module.
+PREREQUISITES = ("doc-gen4", "doc-gen4/bibPrepass", "doc-gen4/coreDocs")
+SOURCE_TARGET = "lean-pool/LeanPool:srcUri"
+ENVIRONMENT = "import json, os; print(json.dumps(dict(os.environ)))"
 TOOLCHAIN_ROOTS = frozenset({"Init", "Std", "Lean", "Lake"})
 COMPILED = Path(".lake/build/lib/lean")
 IR = Path(".lake/build/ir")
@@ -173,24 +184,51 @@ def project_fingerprints(
     return fingerprints
 
 
-def read_progress(build: Path, identity: str) -> dict[str, str]:
-    """Return completed project fingerprints saved under the same shared inputs."""
+def read_state(build: Path, identity: str) -> dict:
+    """Return the checkpoint saved under the same shared inputs, else an empty one."""
     path = build / STATE
     state = json.loads(path.read_text()) if path.exists() else {}
     if state.get("identity") != identity:
         return {}
-    projects = state.get("projects")
-    if not isinstance(projects, dict):
+    if not all(isinstance(state.get(key, {}), dict) for key in ("projects", "partial")):
         raise ValueError("invalid documentation checkpoint progress")
-    return projects
+    return state
+
+
+def read_progress(build: Path, identity: str) -> dict[str, str]:
+    """Return completed project fingerprints saved under the same shared inputs."""
+    return read_state(build, identity).get("projects", {})
+
+
+def restore_progress(
+    build: Path,
+    identity: str,
+    fingerprints: dict[str, str],
+    state: dict | None = None,
+) -> tuple[dict[str, str], dict[str, set[str]]]:
+    """Return unchanged completed projects, and analyzed modules of unfinished ones."""
+    state = read_state(build, identity) if state is None else state
+    if state.get("identity") != identity:
+        return {}, {}
+    done = {
+        project: value
+        for project, value in state.get("projects", {}).items()
+        if fingerprints.get(project) == value
+    }
+    partial = {
+        project: set(record["modules"])
+        for project, record in state.get("partial", {}).items()
+        if fingerprints.get(project) == record["fingerprint"] and project not in done
+    }
+    return done, partial
 
 
 def ordered_modules(root: Path, projects: set[str] | None = None) -> list[str]:
-    """Visit dependencies first so one target cannot hide an unbounded cold closure.
+    """List one project after another, each with its dependencies first.
 
-    Restricting to `projects` skips parsing the rest. Lake still fetches the
-    analysis of any module imported from another project; that project's own
-    record says whether its pages are already current.
+    Analyses are independent, so the order only decides which work is saved
+    first: whole projects finish early instead of all at the very end.
+    Restricting to `projects` skips parsing the rest.
     """
     sources = {
         name: path
@@ -205,7 +243,7 @@ def ordered_modules(root: Path, projects: set[str] | None = None) -> list[str]:
             for item in line.split()
         }
         graph[name] = sorted(imports & sources.keys())
-    return list(TopologicalSorter(graph).static_order())
+    return sorted(TopologicalSorter(graph).static_order(), key=project_of)
 
 
 def prepare(root: Path) -> None:
@@ -259,10 +297,9 @@ def compiled_dependencies(root: Path) -> list[str]:
 
 
 def prune_modules(build: Path, modules: set[str]) -> list[str]:
-    """Delete analysis of local modules that no longer exist, with their markers.
+    """Delete analysis of local modules that no longer exist.
 
-    doc-gen cascades every table from `modules`. Removing the marker too keeps a
-    module that later reappears unchanged from being skipped by Lake's trace.
+    doc-gen cascades every table from `modules`.
     """
     database = build / "api-docs.db"
     if not database.is_file():
@@ -281,10 +318,21 @@ def prune_modules(build: Path, modules: set[str]) -> list[str]:
             "DELETE FROM modules WHERE name = ?", [(name,) for name in stale]
         )
     connection.close()
-    for name in stale:
-        for marker in (build / "doc-data").glob(f"{name}.doc*"):
-            marker.unlink()
     return stale
+
+
+def clean_checkpoint(build: Path, modules: set[str]) -> None:
+    """Drop what the pool no longer has, then check the database before adding to it.
+
+    Lake's `docInfo` markers go too: direct analysis never updates them, and a
+    stale one would let a later Lake build skip a module whose records changed.
+    """
+    for marker in (build / "doc-data").glob("LeanPool*.doc*"):
+        marker.unlink()
+    if stale := prune_modules(build, modules):
+        LOGGER.info("Removed %s deleted modules", len(stale))
+    if (build / "api-docs.db").exists():
+        validate_database(build)
 
 
 def validate_database(build: Path) -> None:
@@ -299,161 +347,177 @@ def validate_database(build: Path) -> None:
         raise ValueError(f"invalid documentation checkpoint: {checkpoint}, {integrity}")
 
 
-@contextmanager
-def batch_checkpoint(build: Path):
-    """Restore the last complete database/marker pair if a batch fails or times out."""
-    build.mkdir(parents=True, exist_ok=True)
-    with tempfile.TemporaryDirectory(prefix="lean-pool-docs-") as directory:
-        saved = Path(directory)
-        database = build / "api-docs.db"
-        if database.exists():
-            validate_database(build)
-            shutil.copy2(database, saved / database.name)
-        markers = build / "doc-data"
-        if markers.exists():
-            shutil.copytree(markers, saved / markers.name)
-        try:
-            yield
-        except BaseException:
-            for suffix in ("", "-wal", "-shm", "-journal"):
-                (build / f"api-docs.db{suffix}").unlink(missing_ok=True)
-            shutil.rmtree(markers, ignore_errors=True)
-            if (saved / database.name).exists():
-                shutil.copy2(saved / database.name, database)
-            if (saved / markers.name).exists():
-                shutil.copytree(saved / markers.name, markers)
-            raise
+@dataclass(frozen=True)
+class Analyzer:
+    """Run doc-gen's single-module analysis exactly as its Lake facet would."""
 
+    executable: str
+    environment: dict[str, str]
+    build: Path
+    sources: str
 
-def stop_build(process: subprocess.Popen) -> None:
-    """Stop descendants even when their failed parent has already exited."""
-    try:
-        os.killpg(process.pid, signal.SIGTERM)
-    except ProcessLookupError:
-        pass
-    try:
-        process.wait(timeout=5)
-    except subprocess.TimeoutExpired:
-        pass
-    # A parent can exit before a child that still holds the SQLite database.
-    try:
-        os.killpg(process.pid, signal.SIGKILL)
-    except ProcessLookupError:
-        pass
-    process.wait()
-
-
-def run_build(
-    command: list[str], directory: Path, timeout: float, *, check_only: bool = False
-) -> bool:
-    """Bound a native build and reap its entire process group before rollback."""
-    process = subprocess.Popen(
-        command,
-        cwd=directory,
-        start_new_session=True,
-        stdout=subprocess.DEVNULL if check_only else None,
-        stderr=subprocess.STDOUT if check_only else None,
-    )
-    try:
-        status = process.wait(timeout=timeout)
-    except BaseException:
-        stop_build(process)
-        raise
-    if status:
-        stop_build(process)
-        if not check_only:
-            raise subprocess.CalledProcessError(status, command)
-    return status == 0
-
-
-def analyze_batch(
-    modules: list[str], lake: str, directory: Path, deadline: float
-) -> None:
-    """Check warm targets together; limit cold builds without shrinking checkpoints.
-
-    Lake's --no-build checks its traces but refuses to launch stale build jobs.
-    This avoids reloading a large import graph for every small group of cached
-    targets. Cold groups follow the caller's dependency order, so a local
-    aggregate cannot launch its entire cold import closure at once.
-    """
-    targets = [f"+{name}:docInfo" for name in modules]
-    if len(targets) > ANALYSIS_TARGETS and run_build(
-        [lake, "--no-build", "build", *targets],
-        directory,
-        max(1, deadline - time.monotonic()),
-        check_only=True,
-    ):
-        return
-    for position in range(0, len(targets), ANALYSIS_TARGETS):
-        if time.monotonic() >= deadline:
-            raise subprocess.TimeoutExpired(lake, 0)
-        run_build(
-            [lake, "build", *targets[position : position + ANALYSIS_TARGETS]],
-            directory,
-            max(1, deadline - time.monotonic()),
+    def analyze(self, module: str) -> None:
+        """Replace one module's records, which doc-gen commits in one transaction."""
+        location = "/".join([self.sources, *module.split(".")]) + ".lean"
+        command = [self.executable, "single", "--build", str(self.build)]
+        command += [module, "api-docs.db", location]
+        result = subprocess.run(
+            command,
+            cwd=self.build.parents[1],
+            env=self.environment,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+            timeout=ANALYSIS_SECONDS,
         )
+        if output := result.stdout.strip():
+            LOGGER.info("%s: %s", module, output)
+        if result.returncode:
+            raise subprocess.CalledProcessError(result.returncode, command)
 
 
-def build_batches(root: Path, lake: str, seconds: float, batch_size: int) -> bool:
-    """Analyze changed projects in verified batches until done or out of time."""
-    if seconds <= 0 or batch_size <= 0:
-        raise ValueError("batch size and time allowance must be positive")
+def compile_pool(root: Path, lake: str) -> None:
+    """Let Lake bring every compiled module up to date before it is fingerprinted.
+
+    Analysis and rendering restore the same build cache separately. Both
+    compile first, so a module only the analysis stage had to compile cannot
+    make rendering see a different snapshot.
+    """
+    subprocess.run([lake, "build", "LeanPool"], cwd=root, check=True)
+
+
+def prepare_analysis(root: Path, lake: str) -> Analyzer:
+    """Let Lake bring every analysis input up to date, then capture how to analyze.
+
+    Lake still decides whether each compiled module and doc-gen prerequisite is
+    current. Only the per-module analysis leaves it, because one Lake process
+    per group of targets reloaded the import graph and did not bound memory.
+    """
+    docbuild = root / "docbuild"
+    compile_pool(root, lake)
+    subprocess.run([lake, "build", *PREREQUISITES], cwd=docbuild, check=True)
+    sources = subprocess.check_output(
+        [lake, "query", SOURCE_TARGET], cwd=docbuild, text=True
+    ).split()
+    environment = json.loads(
+        subprocess.check_output(
+            [lake, "env", sys.executable, "-c", ENVIRONMENT], cwd=docbuild
+        )
+    )
+    executable = shutil.which("doc-gen4", path=environment.get("PATH"))
+    if not executable or not sources:
+        raise ValueError("Lake did not provide doc-gen or the pool's source location")
+    return Analyzer(executable, environment, docbuild / ".lake" / "build", sources[-1])
+
+
+def analyze_modules(
+    analyzer: Analyzer, modules: list[str], workers: int, deadline: float
+) -> list[str]:
+    """Analyze with a fixed number of processes and return the modules finished.
+
+    No analysis starts after the deadline or after another one failed. Those
+    already running complete first, so no writer outlives this call.
+    """
+    queue = iter(modules)
+    lock = threading.Lock()
+    finished: list[str] = []
+    failures: list[BaseException] = []
+
+    def work() -> None:
+        while not failures and time.monotonic() < deadline:
+            with lock:
+                module = next(queue, None)
+            if module is None:
+                return
+            try:
+                analyzer.analyze(module)
+            except BaseException as error:
+                failures.append(error)
+                return
+            with lock:
+                finished.append(module)
+
+    with ThreadPoolExecutor(max_workers=workers) as pool:
+        for _ in range(workers):
+            pool.submit(work)
+    if failures:
+        raise failures[0]
+    return finished
+
+
+def build_batches(
+    root: Path, lake: str, seconds: float, batch_size: int, workers: int = ANALYZERS
+) -> bool:
+    """Analyze changed projects in recorded batches until done or out of time."""
+    if seconds <= 0 or batch_size <= 0 or workers <= 0:
+        raise ValueError("batch size, workers and time allowance must be positive")
     build = root / "docbuild" / ".lake" / "build"
+    # Compilation counts against the allowance, so the stage ends on schedule.
+    deadline = time.monotonic() + seconds
+    previous = read_state(build, input_identity(root))
+    # Prerequisites and analyzers may replace rows before a later failure.
+    # Keep the reusable snapshot in memory, never as an on-disk certificate.
+    write_progress(build, "", {}, {}, {})
+    analyzer = prepare_analysis(root, lake)
     identity = input_identity(root)
     fingerprints = project_fingerprints(root)
-    done = {
-        project: value
-        for project, value in read_progress(build, identity).items()
-        if fingerprints.get(project) == value
-    }
-    with batch_checkpoint(build):
-        if stale := prune_modules(build, set(module_sources(root))):
-            validate_database(build)
-            LOGGER.info("Removed %s deleted modules", len(stale))
-    pending = ordered_modules(root, set(fingerprints) - set(done))
-    remaining: dict[str, int] = {}
-    for module in pending:
-        remaining[project_of(module)] = remaining.get(project_of(module), 0) + 1
+    done, partial = restore_progress(build, identity, fingerprints, previous)
+    write_progress(build, identity, done, partial, fingerprints)
+    clean_checkpoint(build, set(module_sources(root)))
+    pending = [
+        module
+        for module in ordered_modules(root, set(fingerprints) - set(done))
+        if module not in partial.get(project_of(module), ())
+    ]
+    remaining = Counter(map(project_of, pending))
+    for project in set(fingerprints) - set(done) - set(remaining):
+        done[project] = fingerprints[project]
     LOGGER.info(
-        "Documentation analysis: %s/%s projects reused, %s modules to check",
+        "Documentation analysis: %s/%s projects reused, %s modules to analyze",
         len(done),
         len(fingerprints),
         len(pending),
     )
-    write_progress(build, identity, done)
-    deadline = time.monotonic() + seconds
-    position = 0
-    while position < len(pending) and time.monotonic() < deadline:
-        batch = pending[position : position + batch_size]
-        try:
-            with batch_checkpoint(build):
-                analyze_batch(batch, lake, root / "docbuild", deadline)
-                validate_database(build)
-        except subprocess.TimeoutExpired:
-            if position == 0:
-                raise RuntimeError(
-                    "no batch completed within the time allowance"
-                ) from None
+    analyzed = 0
+    for position in range(0, len(pending), batch_size):
+        if time.monotonic() >= deadline:
             break
-        position += len(batch)
-        finished = set()
-        for module in batch:
-            remaining[project_of(module)] -= 1
-            if not remaining[project_of(module)]:
-                finished.add(project_of(module))
-        # Lake may have compiled modules during the batch, so fingerprint the
-        # finished projects as analyzed rather than as they were at the start.
-        if finished:
-            done.update(project_fingerprints(root, finished))
-        write_progress(build, identity, done)
-        LOGGER.info("Documentation analysis: %s/%s modules", position, len(pending))
+        batch = pending[position : position + batch_size]
+        for module in analyze_modules(analyzer, batch, workers, deadline):
+            project = project_of(module)
+            partial.setdefault(project, set()).add(module)
+            remaining[project] -= 1
+            analyzed += 1
+            if not remaining[project]:
+                done[project] = fingerprints[project]
+        write_progress(build, identity, done, partial, fingerprints)
+        LOGGER.info("Documentation analysis: %s/%s modules", analyzed, len(pending))
+    if pending and not analyzed:
+        raise RuntimeError("no module was analyzed within the time allowance")
+    write_progress(build, identity, done, partial, fingerprints)
+    if analyzed:
+        validate_database(build)
     return done == project_fingerprints(root)
 
 
-def write_progress(build: Path, identity: str, done: dict[str, str]) -> None:
-    """Record completed projects, dropping those that no longer exist."""
+def write_progress(
+    build: Path,
+    identity: str,
+    done: dict[str, str],
+    partial: dict[str, set[str]],
+    fingerprints: dict[str, str],
+) -> None:
+    """Record completed projects and the analyzed modules of unfinished ones."""
     build.mkdir(parents=True, exist_ok=True)
-    state = {"identity": identity, "projects": dict(sorted(done.items()))}
+    state = {
+        "identity": identity,
+        "projects": dict(sorted(done.items())),
+        "partial": {
+            project: {"fingerprint": fingerprints[project], "modules": sorted(modules)}
+            for project, modules in sorted(partial.items())
+            if project not in done
+        },
+    }
     (build / STATE).write_text(json.dumps(state) + "\n")
 
 
@@ -467,17 +531,18 @@ def require_complete(root: Path) -> None:
 
 def render(root: Path, lake: str) -> None:
     """Render fresh local pages from the complete analysis checkpoint."""
+    compile_pool(root, lake)
     require_complete(root)
     build = root / "docbuild" / ".lake" / "build"
     shutil.rmtree(build / "doc" / "LeanPool", ignore_errors=True)
     # Loading one import-all Lean environment would combine the independent
     # projects' memory requirements. The database already holds every local
     # module; only external names need an environment before rendering it.
-    dependencies = compiled_dependencies(root)
-    if dependencies:
-        subprocess.run(
-            [lake, "build", *dependencies], cwd=root / "docbuild", check=True
-        )
+    subprocess.run(
+        [lake, "build", *PREREQUISITES, *compiled_dependencies(root)],
+        cwd=root / "docbuild",
+        check=True,
+    )
     commands = [
         [
             "externals",
@@ -531,6 +596,7 @@ def main() -> None:
     parser.add_argument("--lake", default="lake")
     parser.add_argument("--seconds", type=float, default=5400)
     parser.add_argument("--batch-size", type=int, default=128)
+    parser.add_argument("--workers", type=int, default=ANALYZERS)
     arguments = parser.parse_args()
     logging.basicConfig(level=logging.INFO)
     root = arguments.repo.resolve()
@@ -538,7 +604,11 @@ def main() -> None:
         prepare(root)
     elif arguments.command == "batch":
         complete = build_batches(
-            root, arguments.lake, arguments.seconds, arguments.batch_size
+            root,
+            arguments.lake,
+            arguments.seconds,
+            arguments.batch_size,
+            arguments.workers,
         )
         if output := os.environ.get("GITHUB_OUTPUT"):
             with Path(output).open("a") as stream:

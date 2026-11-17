@@ -1,0 +1,22 @@
+/-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+module  -- shake: keep-all --deprecated_module: ignore
+
+-- Generated project imports; run `lake exe mk_all`.
+public import LeanPool.LinearAlgebraCombinatoricsAndAnalysis
+public import LeanPool.LinearAlgebraCombinatoricsAndAnalysis.AeNormSqLeOfInner
+public import LeanPool.LinearAlgebraCombinatoricsAndAnalysis.ChoosePrimePowSubOne
+public import LeanPool.LinearAlgebraCombinatoricsAndAnalysis.ContDiffIsMeagreImage
+public import LeanPool.LinearAlgebraCombinatoricsAndAnalysis.CurryR1Space
+public import LeanPool.LinearAlgebraCombinatoricsAndAnalysis.DetPascalMatrix
+public import LeanPool.LinearAlgebraCombinatoricsAndAnalysis.MatrixDetFinTwoCauchyBinet
+public import LeanPool.LinearAlgebraCombinatoricsAndAnalysis.MatrixElementarySubgroup
+public import LeanPool.LinearAlgebraCombinatoricsAndAnalysis.MatrixTraceSubPowOdd
+public import LeanPool.LinearAlgebraCombinatoricsAndAnalysis.MonoidRightZero
+public import LeanPool.LinearAlgebraCombinatoricsAndAnalysis.MulPowCommutator
+public import LeanPool.LinearAlgebraCombinatoricsAndAnalysis.QBinomial
+public import LeanPool.LinearAlgebraCombinatoricsAndAnalysis.QuasiSoberPiCoreCompact
+public import LeanPool.LinearAlgebraCombinatoricsAndAnalysis.SingularValuesSigmaTwo

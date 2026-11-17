@@ -51,7 +51,8 @@ noncomputable def projector (S : Submodule 𝕜 (EuclideanSpace 𝕜 n)) : Hermi
     ext i j
     have h1 := S.inner_starProjection_left_eq_right (EuclideanSpace.single i 1)
         (EuclideanSpace.single j 1)
-    simp_all? [EuclideanSpace.inner_single_right, EuclideanSpace.inner_single_left]
+    simp_all only [EuclideanSpace.inner_single_right, one_mul, EuclideanSpace.inner_single_left,
+        map_one, Matrix.star_apply, RCLike.star_def]
     exact h1⟩
 
 theorem projector_add_orthogonal : projector S + projector Sᗮ = 1 := by
@@ -203,32 +204,40 @@ lemma projector_support_eq_sum : A.supportProj.mat =
           Submodule.subset_span ⟨ i, hi, rfl ⟩ );
     · rw [ Submodule.span_le, Set.image_subset_iff ];
       intro i hi;
-      simp_all? [ HermitianMat.support ];
+      simp_all only [ne_eq, Set.mem_ofPred_eq, support, Set.mem_preimage, SetLike.mem_coe,
+          LinearMap.mem_range, ContinuousLinearMap.coe_coe];
       use (1 / A.H.eigenvalues i) • A.H.eigenvectorBasis i;
       convert congr_arg ( fun x => ( 1 / A.H.eigenvalues i ) • x ) ( A.H.mulVec_eigenvectorBasis
           i ) using 1
-      simp? [hi]
-      simp? [ funext_iff, Matrix.mulVec, dotProduct ];
+      simp only [one_div, ContinuousLinearMap.map_smul_of_tower, ne_eq, hi, not_false_eq_true,
+          inv_smul_smul₀]
+      simp only [funext_iff, Pi.smul_apply, Matrix.mulVec, dotProduct, mat_apply];
       exact PiLp.ext_iff;
   have h_orthonormal_basis : ∃ b : OrthonormalBasis {i : n | A.H.eigenvalues i ≠ 0} (𝕜)
       (Submodule.span (𝕜) (Set.image (fun i => A.H.eigenvectorBasis i) {i | A.H.eigenvalues i ≠
       0})), ∀ i, b i = A.H.eigenvectorBasis i := by
     refine ⟨OrthonormalBasis.mk (v := fun i =>
       ⟨A.H.eigenvectorBasis i, Submodule.subset_span (Set.mem_image_of_mem _ i.2)⟩) ?_ ?_, ?_⟩
-    all_goals simp? [Orthonormal]
-    · intro i j hij; have := A.H.eigenvectorBasis.orthonormal; simp_all? [ orthonormal_iff_ite ];
+    all_goals simp only [Orthonormal, ne_eq, Set.mem_ofPred_eq, ← Submodule.norm_coe,
+        OrthonormalBasis.norm_eq_one, implies_true, Submodule.coe_inner, true_and, top_le_iff,
+        OrthonormalBasis.coe_mk]
+    · intro i j hij; have := A.H.eigenvectorBasis.orthonormal; simp_all only [ne_eq,
+          orthonormal_iff_ite, ite_eq_right_iff, one_ne_zero, imp_false];
       exact fun h => hij <| Subtype.ext h;
     · rw [ Submodule.eq_top_iff' ];
       rintro ⟨ x, hx ⟩;
       rw [ Submodule.mem_span ] at hx ⊢;
-      intro p hp; specialize hx ( Submodule.map ( Submodule.subtype _ ) p ); simp_all? [
-          Set.range_subset_iff ];
+      intro p hp; specialize hx ( Submodule.map ( Submodule.subtype _ ) p ); simp_all only [ne_eq,
+          Submodule.map_coe, Submodule.subtype_apply, Submodule.coe_subtype, Set.image_subset_iff,
+          Submodule.mem_map, Subtype.exists, exists_and_right, exists_eq_right, exists_true_left,
+          Set.range_subset_iff, SetLike.mem_coe, Subtype.forall, Set.mem_ofPred_eq];
       exact hx fun i hi => ⟨ _, hp i hi, rfl ⟩;
   obtain ⟨ b, hb ⟩ := h_orthonormal_basis
   have h_sum_rankOne : (projector A.support).mat = ∑ i, Matrix.vecMulVec (b i) (star (b i)) := by
     convert! projector_eq_sum_rankOne _ b using 1
     simp [h_support] at *
-  simp_all? [ Finset.sum_ite ];
+  simp_all only [ne_eq, Set.mem_ofPred_eq, Subtype.forall, ite_smul, zero_nsmul, one_smul,
+      Finset.sum_ite, Finset.sum_const_zero, zero_add];
   convert h_sum_rankOne using 1;
   · exact h_support ▸ rfl;
   · refine Finset.sum_bij ( fun i hi => ⟨ i, by simpa using hi ⟩ ) ?_ ?_ ?_ ?_ <;> simp [

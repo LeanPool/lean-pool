@@ -1,0 +1,85 @@
+slug: linear-algebra-combinatorics-and-analysis
+title: Singular values, minors and elementary matrices, with lemmas in combinatorics and analysis
+summary: A collection of general results centred on linear algebra. For linear maps between
+  finite-dimensional inner product spaces over ℝ or ℂ, its main result is an analogue of
+  Ky Fan's subadditivity for the second elementary symmetric function of the n largest
+  singular values. Ky Fan's subadditivity is reused from the pool. The included
+  maximum-principle upper bound is a supporting restatement that follows from the pool's
+  existing contraction-family bound and finite-dimensional gauge identity; no attainment
+  theorem is claimed. Its cited reference remains K. Fan, "Maximum properties and inequalities
+  for the eigenvalues of completely continuous operators", Proc. Natl. Acad. Sci. USA 37
+  (1951), 760–766, Theorem 1 with m = 1. Proves the factorisation and unit determinant of the
+  symmetric Pascal matrix and the trace of odd powers of a difference of two idempotent
+  matrices, a characterisation of finite monoids with a right zero, continuity of currying for
+  compact-open topologies out of an R1 space, quasi-sobriety of arbitrary products of
+  quasi-sober spaces, an almost-everywhere diagonal bound for inner products of a
+  non-measurable map, that C¹ self-maps of a finite-dimensional real space send meagre sets to
+  meagre sets, and the congruence choose (p^a − 1) k ≡ (−1)^k mod p. Supporting files restate,
+  in the forms these proofs use, results that also exist elsewhere, namely Cauchy–Binet for minors
+  (in the pool and Tau Ceti), perfectness of E(n, A) and the Whitehead lemma (Tau Ceti), the
+  finite q-binomial theorem (in the pool) and the class-two power formula (Tau Ceti); they are
+  not headline claims.
+branch: linear algebra
+entry_module: LeanPool.LinearAlgebraCombinatoricsAndAnalysis
+authors:
+- Michel Hua
+source:
+  url: https://doi.org/10.1073/pnas.37.11.760
+  github_repo: mycaule/lean-pool
+  commit: 623506555f2fde7d44c697d9f7d94f21e8015cd1
+license: Apache-2.0
+status: verified
+provenance: mix
+main_declarations:
+- LinearMap.sum_powersetCard_two_prod_singularValues_add_le
+- Matrix.det_pascal
+- Monoid.exists_forall_mul_eq_self_iff_of_finite
+- Homeomorph.curryOfR1Space
+- ContDiffOn.isMeagre_image
+main_results:
+- declaration: LinearMap.sum_powersetCard_two_prod_singularValues_add_le
+  informal: Writing σ₂(T) for the second elementary symmetric function of the n largest
+    singular values of T, σ₂(u + v) ≤ σ₂(u) + (∑_{j<n} s_j(u)) (∑_{j<n} s_j(v)) + σ₂(v).
+- declaration: Matrix.det_pascal
+  informal: Over every commutative ring, the n × n symmetric Pascal matrix with entries
+    choose (i + j) i has determinant 1; it is the product of the lower unitriangular matrix
+    (choose i j) and its transpose.
+- declaration: Matrix.trace_sub_pow_odd_of_isIdempotentElem
+  informal: For idempotent square matrices P and Q over a commutative ring and every k, the
+    trace of (P − Q)^(2k+1) is tr P − tr Q.
+- declaration: Choose.choose_pow_sub_one_modEq_neg_one_pow
+  informal: For a prime p and k ≤ p^a − 1, choose (p^a − 1) k is congruent to (−1)^k modulo p.
+- declaration: Monoid.exists_forall_mul_eq_self_iff_of_finite
+  informal: A finite monoid has an element p with u p = p for every u if and only if any two
+    of its principal right ideals meet and every monoid morphism from it to a group is
+    trivial.
+- declaration: Homeomorph.curryOfR1Space
+  informal: For X an R1 space (for instance Hausdorff) and Y locally compact, currying is a
+    homeomorphism C(X × Y, Z) ≃ C(X, C(Y, Z)) for the compact-open topologies, with no
+    hypothesis on Z.
+- declaration: quasiSober_pi
+  informal: An arbitrary product of quasi-sober topological spaces is quasi-sober.
+- declaration: MeasureTheory.ae_norm_sq_le_of_ae_inner_le
+  informal: For an s-finite measure m on T and any map f from T to a separable real inner
+    product space, if ⟪f t, f t'⟫ ≤ M for m ⊗ m-almost every (t, t'), then ‖f t‖² ≤ M for
+    m-almost every t.
+- declaration: ContDiffOn.isMeagre_image
+  informal: If f is C¹ on an open subset A of a finite-dimensional real normed space E, with
+    values in E, then f sends meagre subsets of A to meagre subsets of E.
+tags:
+- singular-values
+- ky-fan-inequality
+- cauchy-binet
+- elementary-matrices
+- whitehead-lemma
+msc:
+- 15A18
+- 15A15
+- 15A42
+- 19B10
+- 05A30
+- 11B65
+- 20F12
+- 20M10
+- 54C35
+- 54E52
