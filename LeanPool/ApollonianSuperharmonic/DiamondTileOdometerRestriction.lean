@@ -265,7 +265,7 @@ private theorem certificates :
   classical
   intro domain value slope unit n
   induction n using Nat.strong_induction_on with
-  | h n ih =>
+  | ind n ih =>
     intro hn
     let K : DiamondParameter := ⟨n, hn⟩
     let q := DiamondRecursiveQuadruple K

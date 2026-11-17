@@ -1307,7 +1307,7 @@ private theorem hsum :
   rw [hvecTarget, hmix']
   cases hn : negative <;>
     cases hr : BandPackingSymmetryReversesOrientation a <;>
-    ext <;> simp [GaussianQuarterTurn] <;> try ring
+    ext <;> simp [GaussianQuarterTurn] <;> ring
 
 private theorem hslopeCov :
     (by

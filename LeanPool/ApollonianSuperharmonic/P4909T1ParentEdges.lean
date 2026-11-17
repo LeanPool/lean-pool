@@ -35,7 +35,7 @@ zero-curvature parent $k$, and the entire lines $X=h_k$ for these zero
 parents. Here $h_k=L$ if $w_k=-1$, and $h_k=L+2$ otherwise.
 It is a boundary carrier, not a claim that every listed segment is an edge.
 -/
-def P4909T1ParentEdges (L : ℝ) (q : Fin 4 → CircleCoordinates) : Set ℂ :=
+noncomputable def P4909T1ParentEdges (L : ℝ) (q : Fin 4 → CircleCoordinates) : Set ℂ :=
 -- BODY
   let p (i : Fin 3) : ℂ := (q i.succ).2 / ((q i.succ).1 : ℝ)
   {z | (∃ i j : Fin 3, i ≠ j ∧ 0 < (q i.succ).1 ∧

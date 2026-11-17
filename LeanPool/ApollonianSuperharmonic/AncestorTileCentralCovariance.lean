@@ -111,7 +111,7 @@ theorem AncestorTileCentralCovariance
           dsimp [GaussianRealPoint] at hfirst hsecond ⊢
           ring_nf at hfirst hsecond ⊢
           apply Prod.ext
-          all_goals try dsimp at *
+          all_goals dsimp at *
           all_goals linarith
   have transformed_link : ∀ X Y : CircleCoordinates × ProtoTile,
       (∃ q : Fin 4 → CircleCoordinates, ∃ i : Fin 3, ∃ s : Bool,

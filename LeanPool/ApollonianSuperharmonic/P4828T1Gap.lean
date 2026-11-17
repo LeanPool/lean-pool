@@ -43,7 +43,7 @@ nondegeneracy assumption is imposed. In particular, the ambient
 interior makes the gap empty whenever the parent hull has empty
 planar interior.
 -/
-def P4828T1Gap (L : Real) (q : Fin 4 → CircleCoordinates) : Set Complex :=
+noncomputable def P4828T1Gap (L : Real) (q : Fin 4 → CircleCoordinates) : Set Complex :=
 -- BODY
   let center (j : Fin 3) : Complex := (q j.succ).2 / ((q j.succ).1 : Real)
   {p | p ∈ interior (P4909T1ParentPolygon L q) ∧

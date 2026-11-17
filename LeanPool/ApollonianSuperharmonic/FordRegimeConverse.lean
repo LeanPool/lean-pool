@@ -224,7 +224,7 @@ private theorem desiredAt325 :
       IsEmpty.forall_iff, and_true, zero_add, sub_zero, add_zero, CharP.cast_eq_zero,
       mul_zero] <;> ring
   repeat' first | constructor | (ext <;> simp; ring)
-  all_goals try (intro hp; have := P.q₂_pos; omega)
+  intro hp; have := P.q₂_pos; omega
 
 
 private theorem actionPredecessorAt357 :
@@ -342,7 +342,7 @@ private theorem desiredAt381 :
         Int.reduceNeg, P.sum_p, Nat.succ_eq_add_one, Nat.reduceAdd, mul_zero, add_zero,
         mul_neg, mul_one, Matrix.vecCons_inj, Prod.mk.injEq, and_true, next2] <;>
     ring
-  all_goals split_ifs <;>
+  split_ifs <;>
     simp_all only [Fin.isValue, Nat.succ_eq_add_one, Nat.reduceAdd, Matrix.cons_val,
         Matrix.cons_val_one, Matrix.cons_val_zero, CharP.cast_eq_zero, zero_mul, ne_eq,
         OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow, add_zero, zero_add, Int.reduceNeg,

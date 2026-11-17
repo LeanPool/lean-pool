@@ -99,9 +99,12 @@ theorem P5250T1ConsecutiveEdges (k : Nat) (hk : 1 < k) :
       ⟨-(k : Int) + t + 1, (k : Int) - 1 - t⟩ := by
     ext <;> simp [r, P5157T1StaircasePoint] <;> omega
   dsimp only
-  change (∀ j < 2 * (k - 1), ({p j, p (j + 1)} : Finset GaussianInt) ∈ _ ∩ _) ∧
-    (∀ j < 2 * (k - 1), ({q j, q (j + 1)} : Finset GaussianInt) ∈ _ ∩ _) ∧
-    (∀ j < 2 * (k - 1), ({r j, r (j + 1)} : Finset GaussianInt) ∈ _ ∩ _)
+  change (∀ j < 2 * (k - 1), ({p j, p (j + 1)} : Finset GaussianInt) ∈
+      (_ : Set (Finset GaussianInt)) ∩ _) ∧
+    (∀ j < 2 * (k - 1), ({q j, q (j + 1)} : Finset GaussianInt) ∈
+      (_ : Set (Finset GaussianInt)) ∩ _) ∧
+    (∀ j < 2 * (k - 1), ({r j, r (j + 1)} : Finset GaussianInt) ∈
+      (_ : Set (Finset GaussianInt)) ∩ _)
   refine ⟨?_, ?_, ?_⟩
   · intro j hj
     obtain ⟨t, ht | ht⟩ : ∃ t : Nat, j = 2 * t ∨ j = 2 * t + 1 :=

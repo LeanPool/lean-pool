@@ -608,7 +608,7 @@ private theorem hdispW :
       Bool.false_eq_true] <;>
     (try rw [iiSq]) <;>
     (try simp only [Nat.reduceSub, Nat.reduceMod]) <;>
-    (try simp only [iiCube, negIiSq, negIiCube,
+    (simp only [iiCube, negIiSq, negIiCube,
       pow_zero, pow_one, one_mul, neg_one_mul])
   all_goals first
     | exact iiCaseA' vR'

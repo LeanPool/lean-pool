@@ -413,7 +413,7 @@ private theorem noThreeNeighbors :
     intro z hz
     rcases hz with ⟨edge, hedge, hze⟩
     exact edgeEndpointInW edge hedge z hze
-  let : Finite (Subtype X) := (hWfinite.subset hXsubset).to_subtype
+  let : Finite X := (hWfinite.subset hXsubset).to_subtype
   have hEsub : E ⊆ F := by intro edge hedge; exact hedge
   have hcycle' : SimpleGridCycle W F := by
     exact ⟨p, u, v, hnodup, hlen, hhead, hlast, hvertices,
@@ -477,10 +477,10 @@ private theorem noThreeNeighbors :
   have hScard : (S : Set X).ncard = 3 := by
     rw [Set.ncard_coe_finset]
     simp [S, habX, hacX, hbcX]
-  have hfiniteX : Finite (Subtype X) := (hWfinite.subset hXsubset).to_subtype
-  let : Finite (Subtype X) := hfiniteX
+  have hfiniteX : Finite X := (hWfinite.subset hXsubset).to_subtype
+  let : Finite X := hfiniteX
   have hle : (S : Set X).ncard ≤ (G.neighborSet xX).ncard :=
-    Set.ncard_mono (α := Subtype X) hSsubset
+    Set.ncard_mono (α := X) hSsubset
   rw [hScard] at hle
   omega
 

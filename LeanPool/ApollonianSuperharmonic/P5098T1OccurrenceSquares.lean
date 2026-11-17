@@ -51,13 +51,14 @@ theorem P5098T1OccurrenceSquares (r s : Nat) (o : PeriodicSubtileIndex) :
         zero_add, Fin.isValue, Matrix.cons_val', Bool.false_eq_true, ↓reduceIte,
         Matrix.cons_val_fin_one, Matrix.cons_val, Matrix.cons_val_one, Finset.image_empty,
         neg_mul, Finset.range_zero, Finset.product_empty, ProtoTile.mk.injEq, Zsqrtd.mk.injEq,
-        add_right_inj, true_and, Matrix.cons_val_zero]
-    try { constructor
-          · apply Finset.image_congr
-            intro x hx
-            apply Zsqrtd.ext <;> simp [Function.comp_def, GaussianTranslation] <;> ring
-          · constructor <;> ring }
-    try { constructor <;> ring }
+        add_right_inj, true_and, Matrix.cons_val_zero];
+      first
+      | constructor
+        · apply Finset.image_congr
+          intro x hx
+          apply Zsqrtd.ext <;> simp [Function.comp_def, GaussianTranslation] <;> ring
+        · constructor <;> ring
+      | constructor <;> ring
 
 end ApollonianSuperharmonic
 

@@ -71,7 +71,7 @@ theorem DiamondTileRecursiveIdentification (K : DiamondParameter) :
         ⟨x - ⟨0, 2⟩, hx, by simp [GaussianTranslation]⟩
   rcases K with ⟨k, hk⟩
   induction k using Nat.strong_induction_on with
-  | h k ih =>
+  | ind k ih =>
     let q := DiamondRecursiveQuadruple ⟨k, hk⟩
     obtain ⟨_, hq, h10, h20, h30, _⟩ := DiamondCoordinateConfiguration ⟨k, hk⟩
     have hs := (VectorRecursionLaws q hq.1).1

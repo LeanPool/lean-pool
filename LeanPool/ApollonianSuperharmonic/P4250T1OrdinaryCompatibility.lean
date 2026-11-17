@@ -1267,8 +1267,7 @@ private theorem noAE :
     simpa [or_comm, and_comm] using hbad
   all_goals
     intro hbad
-    simp [ia, ie] at hbad
-    all_goals omega
+    grind
 
 private theorem noBF :
     (by
@@ -1287,8 +1286,7 @@ private theorem noBF :
     simpa [or_comm, and_comm] using hbad
   all_goals
     intro hbad
-    simp [ib, iff] at hbad
-    all_goals omega
+    grind
 
 private theorem noCD :
     (by
@@ -1307,8 +1305,7 @@ private theorem noCD :
     simpa [or_comm, and_comm] using hbad
   all_goals
     intro hbad
-    simp [ic, id] at hbad
-    all_goals omega
+    grind
 
 private theorem noEF :
     (by
@@ -1346,8 +1343,7 @@ private theorem noCE :
     simpa [or_comm, and_comm] using hbad
   all_goals
     intro hbad
-    simp [ic, ie] at hbad
-    all_goals omega
+    grind
 
 private theorem noDF :
     (by
@@ -1366,8 +1362,7 @@ private theorem noDF :
     simpa [or_comm, and_comm] using hbad
   all_goals
     intro hbad
-    simp [id, iff] at hbad
-    all_goals omega
+    grind
 
 private theorem nAE :
     (by

@@ -82,7 +82,7 @@ theorem P5110T1ParentLocalization (P : FordFareyParameter) (hq : 1 < P.q)
       apply Zsqrtd.ext
       all_goals simp only [Int.reduceNeg, Function.comp_apply, GaussianTranslation,
           Zsqrtd.im_add, add_zero, Zsqrtd.re_add, add_neg_cancel_right]
-      all_goals omega
+    omega
   have square_nonempty (n : Nat) (hn : 0 < n) (u : GaussianInt) :
       (TileTranslation (FordTile n) u).cells.Nonempty := by
     have hbase : (0 : GaussianInt) ∈ (FordTile n).cells :=

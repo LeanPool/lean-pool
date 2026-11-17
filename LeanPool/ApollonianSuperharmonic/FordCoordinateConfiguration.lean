@@ -215,10 +215,10 @@ private theorem hsemiAt342 :
         Matrix.cons_val_zero, Matrix.cons_val, mul_zero, add_zero, Matrix.cons_val_one,
         mul_neg, mul_one, Matrix.vecCons_inj, Prod.mk.injEq, ite_eq_right_iff, zero_eq_mul,
         Int.natCast_eq_zero, or_self, and_true, qd, pd, R]
-  all_goals try rw [Nat.cast_sub (by omega)]
+  rw [Nat.cast_sub (by omega)]
   repeat' first | constructor | (ext <;> simp; ring)
-  all_goals try ring
-  all_goals try (intro hz; omega)
+  all_goals ring
+  (intro hz; omega)
 
 private theorem hv13At359 :
     ∀ (Q : FordFareyParameter),
@@ -583,14 +583,14 @@ private theorem hsemiAt448 :
         Nat.cast_add, Int.reduceNeg, Q.sum_p, rcond, ↓reduceIte, Nat.succ_eq_add_one,
         Nat.reduceAdd, Fin.isValue, Matrix.cons_val_zero, Matrix.cons_val,
         Matrix.cons_val_one, Matrix.vecCons_inj, Prod.mk.injEq, and_true, R]
-  all_goals try simp only [Fin.isValue, Matrix.cons_val_zero, Matrix.cons_val,
+  simp only [Fin.isValue, Matrix.cons_val_zero, Matrix.cons_val,
       Matrix.cons_val_one, Int.reduceNeg, rotatedTuple]
   repeat' first | constructor | (ext <;> simp only [Fin.isValue, Int.reduceNeg, Zsqrtd.im_sub,
       Zsqrtd.im_add, Zsqrtd.im_mul, Zsqrtd.re_ofNat, Nat.cast_ofNat, Zsqrtd.im_ofNat,
       zero_mul, add_zero, Zsqrtd.re_sub, Zsqrtd.re_add, Zsqrtd.re_mul, mul_zero] <;> ring)
   all_goals try ring
-  all_goals try rw [rentry]
-  all_goals try simp only [Fin.isValue, FordCircleCoordinate, Nat.cast_mul, Int.reduceNeg,
+  all_goals rw [rentry]
+  all_goals simp only [Fin.isValue, FordCircleCoordinate, Nat.cast_mul, Int.reduceNeg,
       one_mul]
   all_goals try simp only [FordRecursiveQuadruple, q1pos'.ne', ↓reduceIte, Fin.isValue,
       Matrix.cons_val_zero, Matrix.cons_val, zero_mul, add_zero, R, Int.reduceNeg,
@@ -599,7 +599,7 @@ private theorem hsemiAt448 :
   all_goals try simp only [FordCircleCoordinate, Nat.cast_mul, Int.reduceNeg, qd, pd, one_mul,
       Int.reduceSub]
   all_goals try rw [Nat.cast_sub (by omega)]
-  all_goals try ring
+  all_goals ring
 
 
 private theorem hv32At473 :
@@ -1069,7 +1069,7 @@ theorem FordCoordinateConfiguration (P : FordFareyParameter) :
     rcases systemLaw with ⟨zeroLaw, baseLaw, stepLaw, flipLaw⟩
     intro n
     induction n using Nat.strong_induction_on with
-    | h n ih =>
+    | ind n ih =>
       intro Q hQ hgt
       have q1pos := FordConfigurationDetails.q1pos n Q hQ hgt
       have q2lt := FordConfigurationDetails.q2lt n Q hQ q1pos

@@ -733,7 +733,7 @@ private theorem hlabelAB :
       label_T0' x (jAB + 1) h.2]
   · rw [label_T0' x jAB h.1,
       label_T0 x (jAB + 1) h.2]
-    try simp [Finset.pair_comm]
+    simp [Finset.pair_comm]
 
 private theorem hlabelBR :
     (by
@@ -759,7 +759,7 @@ private theorem hlabelBR :
       label_R R x (jBR + 1) hTm hT'm h.2]
   · rw [label_R R x jBR hTm hT'm h.1,
       label_T0' x (jBR + 1) h.2]
-    try simp [Finset.pair_comm]
+    simp [Finset.pair_comm]
 
 private theorem hlabelRA :
     (by
@@ -785,7 +785,7 @@ private theorem hlabelRA :
       label_T0 x (jRA + 1) h.2]
   · rw [label_T0 x jRA h.1,
       label_R R x (jRA + 1) hTm hT'm h.2]
-    try simp [Finset.pair_comm]
+    simp [Finset.pair_comm]
 
 private theorem hlabelGood :
     (by

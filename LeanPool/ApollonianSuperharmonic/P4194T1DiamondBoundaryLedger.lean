@@ -672,21 +672,21 @@ private theorem hmidClass :
             neg_add_le_iff_le_add, false_and, not_false_eq_true, Nat.add_eq_right,
             Nat.add_eq_zero_iff, OfNat.ofNat_ne_zero, ite_eq_right_iff, imp_false, neg_sub,
             false_iff, not_or, Nat.reduceEqDiff, Nat.add_eq_left, and_self, add_sub_cancel,
-            and_true] <;> (try split_ifs) <;> omega
+            and_true] <;> split_ifs <;> omega
     · by_cases hc : -(m : Int) + 3 ≤ z.re ∧ z.re ≤ (m : Int) - 3 <;>
         simp only [Int.reduceNeg, hl, ↓reduceIte, mul_one, mul_ite, mul_zero,
             le_neg_add_iff_add_le, add_neg_cancel_left, Nat.not_ofNat_le_one,
             neg_add_le_iff_le_add, false_and, not_false_eq_true, Nat.add_eq_right,
             Nat.add_eq_zero_iff, OfNat.ofNat_ne_zero, ite_eq_right_iff, imp_false, neg_sub,
             false_iff, not_or, Nat.reduceEqDiff, Nat.add_eq_left, and_self, add_sub_cancel,
-            and_true] <;> (try split_ifs) <;> omega
+            and_true] <;> split_ifs <;> omega
   · by_cases hr : z.re = (m : Int) - 1
     · by_cases hc : -(m : Int) + 3 ≤ z.re ∧ z.re ≤ (m : Int) - 3 <;>
         simp only [Int.reduceNeg, hr, mul_ite, mul_one, mul_zero, ↓reduceIte,
             neg_add_le_iff_le_add, tsub_le_iff_right, not_and, not_le, sub_right_inj,
             OfNat.one_ne_ofNat, neg_sub, false_or, true_or, iff_true, Nat.add_eq_zero_iff,
             ite_eq_right_iff, OfNat.ofNat_ne_zero, imp_false, and_false, not_imp, not_lt,
-            false_and, false_iff] <;> (try split_ifs) <;> omega
+            false_and, false_iff] <;> split_ifs <;> omega
     · by_cases hc : -(m : Int) + 3 ≤ z.re ∧ z.re ≤ (m : Int) - 3 <;>
         simp only [Int.reduceNeg, hl, ↓reduceIte, mul_zero, hr, add_zero, hc, and_self,
             not_true_eq_false, OfNat.zero_ne_ofNat, neg_sub, false_iff, not_or,
@@ -850,18 +850,18 @@ private theorem hdescent :
           · by_cases hc : -(m : Int) + 3 ≤ z.re ∧ z.re ≤ (m : Int) - 3 <;>
               simp only [Int.reduceNeg, hl, ↓reduceIte, mul_one, mul_ite, mul_zero,
                   le_neg_add_iff_add_le, add_neg_cancel_left, Nat.not_ofNat_le_one,
-                  neg_add_le_iff_le_add, false_and, not_false_eq_true] at hformula <;> (try
-                      split_ifs at hformula) <;> omega
+                  neg_add_le_iff_le_add, false_and, not_false_eq_true] at hformula <;>
+                split_ifs at hformula <;> omega
           · by_cases hc : -(m : Int) + 3 ≤ z.re ∧ z.re ≤ (m : Int) - 3 <;>
               simp only [Int.reduceNeg, hl, ↓reduceIte, mul_one, mul_ite, mul_zero,
                   le_neg_add_iff_add_le, add_neg_cancel_left, Nat.not_ofNat_le_one,
-                  neg_add_le_iff_le_add, false_and, not_false_eq_true] at hformula <;> (try
-                      split_ifs at hformula) <;> omega
+                  neg_add_le_iff_le_add, false_and, not_false_eq_true] at hformula <;>
+                split_ifs at hformula <;> omega
         · by_cases hr : z.re = (m : Int) - 1
           · by_cases hc : -(m : Int) + 3 ≤ z.re ∧ z.re ≤ (m : Int) - 3 <;>
               simp only [Int.reduceNeg, hr, mul_ite, mul_one, mul_zero, ↓reduceIte,
-                  neg_add_le_iff_le_add, tsub_le_iff_right, not_and, not_le] at hformula <;> (try
-                      split_ifs at hformula) <;> omega
+                  neg_add_le_iff_le_add, tsub_le_iff_right, not_and, not_le] at hformula <;>
+                split_ifs at hformula <;> omega
           · by_cases hc : -(m : Int) + 3 ≤ z.re ∧ z.re ≤ (m : Int) - 3 <;>
               simp only [Int.reduceNeg, hl, ↓reduceIte, mul_zero, hr, add_zero, hc, and_self,
                   not_true_eq_false, neg_add_le_iff_le_add, not_and, not_le, mul_ite, mul_one,

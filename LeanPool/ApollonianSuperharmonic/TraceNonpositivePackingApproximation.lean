@@ -88,7 +88,7 @@ theorem TraceNonpositivePackingApproximation
       · convert (himag.const_mul (2 : Real)⁻¹) using 1 <;>
           simp [Aseq, x, r, SymmetricMatrixCoordinates, hsymentry]
       · convert ((hreal.neg.const_add r).const_mul (2 : Real)⁻¹) using 1 <;>
-          simp [Aseq, x, r, SymmetricMatrixCoordinates, htraceeq] <;> try ring
+          simp [Aseq, x, r, SymmetricMatrixCoordinates, htraceeq] <;> ring
     · intro n
       have hsym : (Aseq n).IsSymm := by
         change Matrix.transpose (Aseq n) = Aseq n
