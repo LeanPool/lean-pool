@@ -142,7 +142,7 @@ theorem coordinateAction_mul
     _ = PaperDualCoordinates.dualEquiv
           (dualAction h (dualAction h'
             (PaperDualCoordinates.dualEquiv.symm p))) := by
-          rw [LinearEquiv.mul_apply]
+          rw [mul_apply_eq_comp]
     _ = (coordinateAction dualAction h').trans
           (coordinateAction dualAction h) p := by
           simp [coordinateAction, AddEquiv.trans_apply]

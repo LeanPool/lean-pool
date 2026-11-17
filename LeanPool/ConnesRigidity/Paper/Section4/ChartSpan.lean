@@ -66,8 +66,7 @@ lemma one_mem_polynomialChart_one :
     (1 : R) ∈ polynomialChart 1 := by
   rw [mem_polynomialChart_iff]
   refine ⟨fun _ => 1, ?_⟩
-  apply Polynomial.ext
-  intro n
+  ext n
   by_cases hn : n = 0
   · subst n
     rw [Polynomial.ofFn_coeff_eq_val_of_lt _ (by decide)]

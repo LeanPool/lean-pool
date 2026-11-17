@@ -74,7 +74,7 @@ def paperEllRepresentation : Representation k PaperKernel.Q PaperEll where
             (qVStarActionHom q f + s • OpenAIPort.quadraticDefectLinear q) +
           s • OpenAIPort.quadraticDefectLinear p
       rw [map_mul, PaperKernel.quadraticDefectLinear_cocycle]
-      simp only [LinearEquiv.mul_apply, map_add, map_smul, smul_add]
+      simp only [mul_apply_eq_comp, map_add, map_smul, smul_add]
       abel
     · rfl
 

@@ -93,15 +93,15 @@ noncomputable instance vStarCountable : Countable VStar := by
 
 /-- Coefficientwise product on the polynomial module. Paper: §2. -/
 noncomputable def hadamard (p q : R) : R :=
-  let fp : ℕ →₀ k := AddMonoidAlgebra.coeffEquiv p.toFinsupp
-  let fq : ℕ →₀ k := AddMonoidAlgebra.coeffEquiv q.toFinsupp
-  Polynomial.ofFinsupp <| AddMonoidAlgebra.coeffEquiv.symm
+  let fp : ℕ →₀ k := AddMonoidAlgebra.coeffEquiv p
+  let fq : ℕ →₀ k := AddMonoidAlgebra.coeffEquiv q
+  AddMonoidAlgebra.coeffEquiv.symm
     (Finsupp.zipWith (· * ·) (by simp) fp fq)
 
 /-- Coefficient formula for the polynomial module product. Paper: §2. -/
 @[simp] theorem coeff_hadamard (p q : R) (n : ℕ) :
     (hadamard p q).coeff n = p.coeff n * q.coeff n := by
-  simp [hadamard, Polynomial.toFinsupp_apply]
+  simp [hadamard, AddMonoidAlgebra.coeffEquiv]
 
 /-- Additivity of the first coefficientwise product input. Paper: §2. -/
 theorem hadamard_add_left (p q r : R) :
@@ -121,14 +121,14 @@ theorem hadamard_add_right (p q r : R) :
 theorem hadamard_smul_left (c : k) (p q : R) :
     hadamard (c • p) q = c • hadamard p q := by
   ext n
-  simp only [coeff_hadamard, Polynomial.coeff_smul, smul_eq_mul]
+  simp only [coeff_hadamard, AddMonoidAlgebra.coeff_smul_apply, smul_eq_mul]
   ring
 
 /-- Scalar compatibility of the second coefficientwise product input. Paper: §2. -/
 theorem hadamard_smul_right (c : k) (p q : R) :
     hadamard p (c • q) = c • hadamard p q := by
   ext n
-  simp only [coeff_hadamard, Polynomial.coeff_smul, smul_eq_mul]
+  simp only [coeff_hadamard, AddMonoidAlgebra.coeff_smul_apply, smul_eq_mul]
   ring
 
 /-- Squaring for the coefficientwise product over the Boolean field. Paper: §2. -/
