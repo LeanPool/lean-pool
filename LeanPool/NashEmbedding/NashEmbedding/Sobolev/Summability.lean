@@ -74,7 +74,7 @@ theorem summable_weight_neg {s : ℝ} (hn : 0 < n) (hs : (n : ℝ) < 2 * s) :
     apply inv_anti₀ (Real.rpow_pos_of_pos (Finset.prod_pos fun _ _ => by positivity) _)
     convert Real.rpow_le_rpow (by positivity) h_prod (le_of_lt hs_pos) using 1
     rw [← Real.rpow_mul (Finset.prod_nonneg fun _ _ => by positivity)]
-    ring
+    ring_nf
   -- Since \(s > n/2\), we have \(s/n > 1/2\), and thus \(\sum_{m \in \mathbb{Z}} (1 +
   -- m^2)^{-s/n}\) converges.
   have h_summable_one_dim : Summable (fun m : ℤ => (1 + (m : ℝ) ^ 2) ^ (-s / n)) := by
@@ -94,7 +94,7 @@ theorem summable_weight_neg {s : ℝ} (hn : 0 < n) (hs : (n : ℝ) < 2 * s) :
       rw [ ← Equiv.tsum_eq ( Equiv.intEquivNat.symm ) ];
       rw [ ← tsum_even_add_odd ] <;> norm_num [ Equiv.intEquivNat ];
       · norm_num [ Equiv.intEquivNatSumNat ];
-        exact tsum_congr fun m => by ring;
+        exact tsum_congr fun m => by ring_nf;
       · convert h_summable_one_dim using 1; rfl
       · convert h_summable_one_dim.comp_injective ( show Function.Injective ( fun k : ℕ => k + 1
           ) from fun a b h => by simpa using h ) using 1

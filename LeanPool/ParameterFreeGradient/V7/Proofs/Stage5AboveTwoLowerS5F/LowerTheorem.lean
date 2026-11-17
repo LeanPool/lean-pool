@@ -179,7 +179,7 @@ theorem _root_.V7.knownParameterAboveTwoLower :
       have hK : 0 < 512 * C * min p (Real.log d) := by positivity
       have hpower' : (T : ℝ) <
           (L * R / ((512 * C * min p (Real.log d)) * eps)) ^ (p / (p + 2)) := by
-        convert hpower using 1; ring
+        convert hpower using 1; ring_nf
       have hepsSmall := rate_power_implication hp (by positivity : (0 : ℝ) < T)
         (mul_pos hL hR) hK heps hpower'
       have hMbound : repairMpd p d ≤ C * min p (Real.log d) :=

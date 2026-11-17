@@ -242,7 +242,7 @@ theorem abs_continuousSuffixError_near_zero
     (show (1 / 2 : ℝ) ≤ 3 / 2 by norm_num)
   have hsdev : abs ((u + q) - 1 / 2) ≤ 2 * r := by
     calc
-      abs ((u + q) - 1 / 2) = abs ((u - 1 / 2) + q) := by ring
+      abs ((u + q) - 1 / 2) = abs ((u - 1 / 2) + q) := by ring_nf
       _ ≤ abs (u - 1 / 2) + abs q := abs_add_le _ _
       _ ≤ r + r := add_le_add hu hq
       _ = 2 * r := by ring
@@ -303,14 +303,14 @@ theorem abs_continuousSuffixError_near_half
   have hq' := abs_le.mp hq
   have hxdev : abs ((v + q) - 1 / 2) ≤ 2 * r := by
     calc
-      abs ((v + q) - 1 / 2) = abs ((v - 1 / 2) + q) := by ring
+      abs ((v + q) - 1 / 2) = abs ((v - 1 / 2) + q) := by ring_nf
       _ ≤ abs (v - 1 / 2) + abs q := abs_add_le _ _
       _ ≤ r + r := add_le_add hv hq
       _ = 2 * r := by ring
   have hsdev : abs ((u + (v + q)) - 1) ≤ 3 * r := by
     calc
       abs ((u + (v + q)) - 1) =
-          abs ((u - 1 / 2) + (v - 1 / 2) + q) := by ring
+          abs ((u - 1 / 2) + (v - 1 / 2) + q) := by ring_nf
       _ ≤ abs ((u - 1 / 2) + (v - 1 / 2)) + abs q := abs_add_le _ _
       _ ≤ (abs (u - 1 / 2) + abs (v - 1 / 2)) + abs q := by
         gcongr
@@ -357,7 +357,7 @@ theorem abs_continuousSuffixError_near_half
             Real.negMulLog (1 / 2)) =
         (u - 1 / 2) -
           ((v + q) * Real.log (u + (v + q)) - (1 / 2) * Real.log 1) -
-          (Real.negMulLog (v + q) - Real.negMulLog (1 / 2)) := by ring
+          (Real.negMulLog (v + q) - Real.negMulLog (1 / 2)) := by ring_nf
   rw [hid]
   calc
     abs ((u - 1 / 2) -

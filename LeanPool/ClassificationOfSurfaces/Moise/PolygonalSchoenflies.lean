@@ -200,7 +200,7 @@ theorem PolygonalCircle.edgeSegment_inter_eq_shared_vertices
   · subst j
     have hfin :
         ({i, i + 1} : Finset (ZMod J.n)) ∩ {i + 1, i + 1 + 1} = {i + 1} := by
-      convert hadjacent i using 1; ring
+      convert hadjacent i using 1; ring_nf
     change J.edgeSegment i ∩ J.edgeSegment (i + 1) = _
     rw [hfin, show convexHull ℝ (J.vertex '' (({i + 1} :
       Finset (ZMod J.n)) : Set (ZMod J.n))) = {J.vertex (i + 1)} by simp]
@@ -212,7 +212,7 @@ theorem PolygonalCircle.edgeSegment_inter_eq_shared_vertices
     have hfin :
         ({j + 1, j + 1 + 1} : Finset (ZMod J.n)) ∩ {j, j + 1} = {j + 1} := by
       rw [Finset.inter_comm]
-      convert hadjacent j using 1; ring
+      convert hadjacent j using 1; ring_nf
     rw [hprev]
     change J.edgeSegment (j + 1) ∩ J.edgeSegment j = _
     rw [hfin, show convexHull ℝ (J.vertex '' (({j + 1} :

@@ -152,7 +152,7 @@ theorem strictHard_exactLipschitz {eps H : ℝ} (x0 : StrictPoint)
     change |hardSlope eps H (x 0 - x0 0) - hardSlope eps H (y 0 - x0 0)| ≤
       (2 * eps / H) * |x 0 - y 0|
     have hs := hardSlope_lipschitz heps hH (x 0 - x0 0) (y 0 - x0 0)
-    convert hs using 1; ring
+    convert hs using 1; ring_nf
   · intro L' hL'
     let xH : StrictPoint := fun _ ↦ x0 0 + H
     let x2H : StrictPoint := fun _ ↦ x0 0 + 2 * H

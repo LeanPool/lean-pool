@@ -386,7 +386,7 @@ lemma hensel_lift (p : ℕ) (hp : p.Prime) (hp2 : p ≠ 2) (z : ℤ√2)
     rw [add_comm, add_pow]
     erw [Finset.sum_Ico_eq_sub _]
     · norm_num [Finset.sum_range_succ]
-      ring
+      ring_nf
     · linarith [hp.two_le]
   -- Since $p$ is odd, $(-1)^p = -1$ and $(-1)^{p-1} = 1$.
   have h_odd : (-1 : ℤ√2) ^ p = -1 ∧ (-1 : ℤ√2) ^ (p - 1) = 1 := by
@@ -740,7 +740,7 @@ lemma prod_ratio_bound_nat (S : Finset ℕ) (hS : ∀ p ∈ S, 5 ≤ p ∧ p % 2
       convert Nat.mul_le_mul
         (ratio_bound_per_prime _ (hS p (Finset.mem_insert_self p S)).1
           (hS p (Finset.mem_insert_self p S)).2)
-        (ih (fun q hq => hS q (Finset.mem_insert_of_mem hq))) using 1 <;> ring
+        (ih (fun q hq => hS q (Finset.mem_insert_of_mem hq))) using 1 <;> ring_nf
 
 /-
 **Key lemma.** For every threshold `j₀` and every `N`, there exists `j ≥ j₀` (with
