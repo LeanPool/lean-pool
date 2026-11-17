@@ -178,10 +178,6 @@ FORBIDDEN_TEXT_RULES = (
     (re.compile(r"\b(?:admit|sorry)\b"), None),
     (FORBIDDEN_SOUNDNESS, "unchecked declaration is forbidden"),
     (FORBIDDEN_DIAGNOSTICS, "diagnostic command is forbidden"),
-    (
-        FORBIDDEN_SUGGESTIONS,
-        "suggestion tactic is forbidden; write the tactic it suggests",
-    ),
 )
 FORBIDDEN_TEXT_CANDIDATES = re.compile(
     "|".join(pattern.pattern for pattern, _ in FORBIDDEN_TEXT_RULES)
@@ -370,6 +366,20 @@ def _forbidden_text_errors(path: Path) -> list[_QualityError]:
                     errors.extend(_sorry_errors(path, line_number, line))
                 else:
                     errors.append(_QualityError(path, line_number, message))
+    # A separately written `?` may follow its keyword on a later line, so this
+    # rule reads the whole source instead of one line at a time.
+    suggestion_lines = {
+        stripped.count("\n", 0, match.start()) + 1
+        for match in FORBIDDEN_SUGGESTIONS.finditer(stripped)
+    }
+    errors.extend(
+        _QualityError(
+            path,
+            line_number,
+            "suggestion tactic is forbidden; write the tactic it suggests",
+        )
+        for line_number in sorted(suggestion_lines)
+    )
     return errors
 
 
