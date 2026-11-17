@@ -39,9 +39,9 @@ private lemma coefficientLinearUnivariate_coeff {K A : Type*} [Field K] [CommRin
     (coefficientLinearUnivariate φ p).coeff n = φ (p.coeff n) := by
   classical
   by_cases hn : n ∈ p.support
-  · simp [coefficientLinearUnivariate, coeff_monomial, hn]
+  · simp [coefficientLinearUnivariate, Finsupp.single_apply, hn]
   · have hz := notMem_support_iff.mp hn
-    simp [coefficientLinearUnivariate, coeff_monomial, hn, hz]
+    simp [coefficientLinearUnivariate, Finsupp.single_apply, hn, hz]
 
 /-- Coefficientwise application of a linear functional. -/
 private def coefficientLinearUnivariateMap {K A : Type*} [Field K] [CommRing A] [Algebra K A]

@@ -70,10 +70,11 @@ theorem bivariate_euler_closed_form_eq_zero
     apply Prod.ext
     · simpa only [Prod.smul_fst, bivariate_smul_eq_constant_mul] using hp
     · simpa only [Prod.smul_snd, bivariate_smul_eq_constant_mul] using hq
-  rw [heq, map_smul, coeff_smul, bivariateEulerContraction_gradient_leading f hm hd] at heuler
+  rw [heq, map_smul, AddMonoidAlgebra.coeff_smul_apply,
+    bivariateEulerContraction_gradient_leading f hm hd] at heuler
   have ha : a = 0 := by
     have hh := congrArg (fun P : F[X] => P.coeff 0) heuler
-    rw [coeff_smul, ← C_eq_natCast, coeff_C_zero, coeff_zero] at hh
+    rw [AddMonoidAlgebra.coeff_smul_apply, ← C_eq_natCast, coeff_C_zero, coeff_zero] at hh
     change a * (f.natDegree : F) = 0 at hh
     exact (mul_eq_zero.mp hh).resolve_right (Nat.cast_ne_zero.mpr (Nat.ne_of_gt hd))
   simp only [ha, map_zero, zero_mul] at hp hq

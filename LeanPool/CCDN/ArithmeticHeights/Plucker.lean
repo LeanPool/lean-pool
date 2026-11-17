@@ -278,7 +278,7 @@ scalar is the determinant of the change-of-basis matrix, and in particular a uni
 private lemma exists_plucker_eq_smul (hV : finrank K V = k) (b b' : Basis (Fin k) K V) :
     ∃ c : K, plucker k (fun i ↦ ((b' i : ι → K))) = c • plucker k fun i ↦ ((b i : ι → K)) := by
   have h1 : finrank K (⋀[K]^k V) = 1 := by rw [exteriorPower.finrank_eq, hV, Nat.choose_self]
-  obtain ⟨c, hc⟩ := (finrank_eq_one_iff_of_nonzero' (ιMulti K k ⇑b)
+  obtain ⟨c, hc⟩ := (finrank_eq_one_iff_of_ne_zero' (ιMulti K k ⇑b)
     (ιMulti_ne_zero b.linearIndependent)).1 h1 (ιMulti K k ⇑b')
   refine ⟨c, (plucker_eq_smul_iff ..).2 ?_⟩
   have := congrArg (exteriorPower.map k V.subtype) hc

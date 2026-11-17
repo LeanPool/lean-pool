@@ -66,7 +66,7 @@ private lemma double_cover_irreducible_of_odd_root_multiplicity {F : Type*} [Fie
   apply (Polynomial.Monic.irreducible_iff_irreducible_map_fraction_map
     (K := RatFunc F) (monic_X_pow_sub_C p (by decide : (2 : ℕ) ≠ 0))).mpr
   simp only [Polynomial.map_sub, Polynomial.map_pow, Polynomial.map_X, Polynomial.map_C]
-  exact X_pow_sub_C_irreducible_of_prime Nat.prime_two
+  exact irreducible_X_pow_sub_C_of_prime Nat.prime_two
     (odd_rootMultiplicity_not_square_ratFunc p hp a ha)
 
 private lemma separable_odd_power_double_cover_irreducible
