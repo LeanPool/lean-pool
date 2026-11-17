@@ -11,7 +11,6 @@ public import Mathlib.Combinatorics.SimpleGraph.Acyclic
 public import Mathlib.Combinatorics.SimpleGraph.Extremal.Basic
 import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 import Mathlib.Combinatorics.SimpleGraph.Coloring.Constructions
-import Mathlib.Data.SetLike.Fintype
 import Mathlib.FieldTheory.Finite.GaloisField
 import Mathlib.LinearAlgebra.BilinearForm.IsometryEquiv
 import Mathlib.LinearAlgebra.BilinearForm.Orthogonal
@@ -1642,7 +1641,7 @@ private theorem quadrangle_density_certificate (q : ℕ) :
       Nat.cast_mul, Nat.cast_add, Nat.cast_pow, Nat.cast_ofNat,
       Nat.cast_one]
     ring
-  linarith
+  linarith only [hnonneg, hidentity]
 
 private theorem quadrangle_rpow_density (q : ℕ) :
     (2 : ℝ) ^ (-((4 : ℝ) / 3)) *
@@ -1662,16 +1661,16 @@ private theorem quadrangle_rpow_density (q : ℕ) :
     norm_num [Real.rpow_neg, Real.rpow_natCast]
     ring
   rw [hcubed]
-  nlinarith [quadrangle_density_certificate q]
+  linarith only [quadrangle_density_certificate q]
 
 private theorem quadrangleVertexCount_mul_le
     (q t : ℕ) (ht : 1 ≤ t) :
     quadrangleVertexCount (t * q) ≤
       t ^ 3 * quadrangleVertexCount q := by
   have hfirst : t * q + 1 ≤ t * (q + 1) := by
-    nlinarith
+    linarith only [ht]
   have hsecond : (t * q) ^ 2 + 1 ≤ t ^ 2 * (q ^ 2 + 1) := by
-    nlinarith [sq_nonneg (t - 1)]
+    nlinarith only [ht, sq_nonneg (t - 1)]
   unfold quadrangleVertexCount
   calc
     2 * (t * q + 1) * ((t * q) ^ 2 + 1) ≤
@@ -2940,7 +2939,7 @@ private lemma nat_le_pow_of_two_le
 private theorem quadrangleVertexCount_parameter_lt (q : ℕ) :
     q < quadrangleVertexCount q := by
   unfold quadrangleVertexCount
-  nlinarith [sq_nonneg q]
+  nlinarith only [sq_nonneg q]
 
 private theorem quadrangle_prime_power_bracketing
     {t n : ℕ} (ht : 2 ≤ t)
@@ -4423,7 +4422,7 @@ private lemma not_compact_of_separation
             (certificate.lowerConstant / 2) * extremalScale n := by
       field_simp
     rw [hidentity] at hscaled
-    nlinarith [mul_pos certificate.lowerConstant_pos hs]
+    linarith only [hnlower, hncomparison, hs, hscaled, mul_pos certificate.lowerConstant_pos hs]
   exact himpossible.exists.elim (fun _ h => h)
 
 private theorem proposedFamily_not_compact_of_bounds
@@ -4486,9 +4485,9 @@ private theorem finite_heavy_fiber_mass_half
         apply Finset.sum_le_sum
         intro x _
         split_ifs with hx
-        · linarith
+        · linarith only [hR]
         · have : (weight x : ℝ) < R := lt_of_not_ge hx
-          linarith
+          linarith only [hx]
       _ = _ := by simp only [sum_add_distrib, sum_const, card_univ, nsmul_eq_mul]
   have hcapacityReal : (Fintype.card α : ℝ) ≤ (N : ℝ) := by
     exact_mod_cast hcapacity
@@ -4500,7 +4499,8 @@ private theorem finite_heavy_fiber_mass_half
     exact_mod_cast htotal
   change (p : ℝ) / 2 ≤
     ∑ x : α, if R ≤ (weight x : ℝ) then (weight x : ℝ) else 0
-  nlinarith [mul_le_mul_of_nonneg_right hcapacityReal hR]
+  linarith only [hR, hsum, hcapacityReal, hthreshold, htotalReal, mul_le_mul_of_nonneg_right
+      hcapacityReal hR]
 
 end FiniteHeavyFibers
 
@@ -5114,9 +5114,8 @@ private lemma mem_thetaBaseExtensions_of_two_common_centers
   obtain ⟨first, hfirst, second, hsecond, hdistinct⟩ :=
     Finset.one_lt_card.mp hcard
   let center : Fin 2 → V := ![first, second]
-  have hcenter : Function.Injective center := by
-    intro i j hij
-    fin_cases i <;> fin_cases j <;> simp_all [center]
+  have hcenter : Function.Injective center :=
+    Matrix.injective_pair_iff_ne.mpr hdistinct
   have hrelated : ∀ i j,
       CommonNeighborRelated G (base i) (center j) := by
     intro i j
@@ -5149,9 +5148,9 @@ private lemma choose_three_cubic_lower {t : ℕ} (ht : 3 ≤ t) :
       0 ≤ (t : ℝ) * ((t : ℝ) - 3) *
         (7 * (t : ℝ) - 6) := by
     exact mul_nonneg
-      (mul_nonneg (Nat.cast_nonneg _) (by linarith))
-      (by linarith)
-  nlinarith
+      (mul_nonneg (Nat.cast_nonneg _) (by linarith only [htReal]))
+      (by linarith only [htReal])
+  linarith only [hidentity, hfactor]
 
 end CubicBinomialSupersaturation
 
@@ -5199,10 +5198,8 @@ private lemma four_path_common_second_neighbor_triple_mass_lower
     · have htReal : (3 : ℝ) ≤ (weight v : ℝ) := hRthree.trans hv
       have ht : 3 ≤ weight v := by exact_mod_cast htReal
       have hsquare : R ^ 2 ≤ (weight v : ℝ) ^ 2 := by
-        nlinarith [mul_nonneg hR
-          (sub_nonneg.mpr hv),
-          mul_nonneg (Nat.cast_nonneg (weight v))
-            (sub_nonneg.mpr hv)]
+        linarith only [hR, hv, mul_nonneg hR (sub_nonneg.mpr hv), mul_nonneg (Nat.cast_nonneg
+            (weight v)) (sub_nonneg.mpr hv)]
       have hcubic :
           R ^ 2 * (weight v : ℝ) ≤ (weight v : ℝ) ^ 3 := by
         calc
@@ -5213,7 +5210,7 @@ private lemma four_path_common_second_neighbor_triple_mass_lower
           _ = (weight v : ℝ) ^ 3 := by ring
       calc
         R ^ 2 * (weight v : ℝ) / 27 ≤
-            (weight v : ℝ) ^ 3 / 27 := by linarith
+            (weight v : ℝ) ^ 3 / 27 := by linarith only [hcubic]
         _ ≤ ((weight v).choose 3 : ℝ) :=
           choose_three_cubic_lower ht
     · simp only [mul_zero, zero_div, Nat.cast_nonneg]
@@ -6295,7 +6292,7 @@ private theorem gammaBad_card_mul_fourpath_power_le
   have hbadpoly :
       (bad : ℝ) * (p : ℝ) ^ 3 ≤
         432 * (theta : ℝ) * (n : ℝ) ^ 2 := by
-    nlinarith
+    linarith only [hclear]
   have htheta :
       (theta : ℝ) * (d : ℝ) ≤ (n : ℝ) ^ 3 := by
     exact_mod_cast
@@ -6374,7 +6371,7 @@ private lemma fourPathHeavyThreshold_low_degree_fourth_le
       _ = 8 * ((d * (d - 1) ^ 3 : ℕ) : ℝ) := by
         push_cast
         ring
-  nlinarith
+  linarith only [hp, hfourth]
 
 end TripleIncidence
 
@@ -6506,7 +6503,7 @@ private theorem proposedFamilyFree_minDegree_sixteenth_power_le
   have hhalf : (d : ℝ) ≤ 2 * ((d - 1 : ℕ) : ℝ) := by
     rw [Nat.cast_sub hdone, Nat.cast_one]
     have hdreal : (2 : ℝ) ≤ (d : ℝ) := by exact_mod_cast hd
-    linarith
+    linarith only [hdreal]
   calc
     (d : ℝ) ^ 16 = (d : ℝ) ^ 5 * (d : ℝ) ^ 11 := by ring
     _ ≤ (d : ℝ) ^ 5 *
@@ -7364,7 +7361,7 @@ private lemma symplecticLineNormalizer_apply_left
         (symplecticLineBasis K L).equivFun x 1, 0]
   have h := symplecticLineCoordinateEquiv_apply_add K L M hLM
     x (0 : M.1)
-  simpa only [ZeroMemClass.coe_zero, add_zero, map_zero, Pi.zero_apply]
+  simpa only [ZeroMemClass.coe_zero, add_zero, LinearEquiv.map_zero, Pi.zero_apply]
     using h
 
 private lemma symplecticLineNormalizer_apply_right
@@ -7382,7 +7379,7 @@ private lemma symplecticLineNormalizer_apply_right
         0, symplecticLineDualCoordinates K L M hLM y 1]
   have h := symplecticLineCoordinateEquiv_apply_add K L M hLM
     (0 : L.1) y
-  simpa only [ZeroMemClass.coe_zero, zero_add, map_zero, Pi.zero_apply]
+  simpa only [ZeroMemClass.coe_zero, zero_add, LinearEquiv.map_zero, Pi.zero_apply]
     using h
 
 private def symplecticVerticalLinearMap :

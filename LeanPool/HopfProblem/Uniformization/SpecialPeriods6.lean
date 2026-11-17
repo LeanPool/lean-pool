@@ -1276,18 +1276,18 @@ private theorem SpecialPeriods.Triangle.stripLeft_add_stripRight : stripLeft + s
   ring
 
 private theorem SpecialPeriods.Triangle.stripLeft_lt_neg_one : stripLeft < -1 := by
-  linarith [stripLeft_add_stripRight, stripRight_pos]
+  linarith only [stripLeft_add_stripRight, stripRight_pos]
 
 private theorem
     SpecialPeriods.Triangle.firstExcluded_subset_pingPongOne : firstExcluded ⊆ pingPongOne := by
   intro z hz
   rcases hz with hx | hn
   · change -1 < z.re
-    linarith
+    linarith only [hx]
   · have hr := Complex.re_le_norm (-(z : ℂ))
     simp only [Complex.neg_re, UpperHalfPlane.coe_re, norm_neg] at hr
     change -1 < z.re
-    linarith
+    linarith only [hn, hr]
 
 private theorem SpecialPeriods.Triangle.secondExcluded_subset_pingPongTwo :
     secondExcluded ⊆ pingPongTwo := by
@@ -1297,16 +1297,16 @@ private theorem SpecialPeriods.Triangle.secondExcluded_subset_pingPongTwo :
   · have hr := Complex.re_le_norm ((z : ℂ) - (stripLeft : ℂ))
     simp only [Complex.sub_re, UpperHalfPlane.coe_re, Complex.ofReal_re] at hr
     change z.re < -1
-    linarith [stripLeft_add_stripRight]
+    linarith only [hn, hr, stripLeft_add_stripRight]
 
 private theorem
     SpecialPeriods.Triangle.pingPongTwo_subset_firstSector : pingPongTwo ⊆ firstSector := by
   intro z hz
   change z.re < -1 at hz
-  refine ⟨by linarith, ?_⟩
+  refine ⟨by linarith only [hz], ?_⟩
   have hr := Complex.re_le_norm (-(z : ℂ))
   simp only [Complex.neg_re, UpperHalfPlane.coe_re, norm_neg] at hr
-  linarith
+  linarith only [hz, hr]
 
 private theorem
     SpecialPeriods.Triangle.pingPongOne_subset_secondSector : pingPongOne ⊆ secondSector := by
@@ -1315,7 +1315,7 @@ private theorem
   refine ⟨stripLeft_lt_neg_one.trans hz, ?_⟩
   have hr := Complex.re_le_norm ((z : ℂ) - (stripLeft : ℂ))
   simp only [Complex.sub_re, UpperHalfPlane.coe_re, Complex.ofReal_re] at hr
-  linarith [stripLeft_add_stripRight]
+  linarith only [hz, hr, stripLeft_add_stripRight]
 
 private theorem SpecialPeriods.Triangle.secondExcluded_subset_firstSector :
     secondExcluded ⊆ firstSector :=
@@ -1352,20 +1352,20 @@ private theorem SpecialPeriods.Triangle.generatorOne_firstSector :
   have hd := Complex.normSq_pos.mpr (denominatorOne_ne_zero z)
   have hn : 1 < Complex.normSq (z : ℂ) := by
     rw [Complex.normSq_eq_norm_sq]
-    nlinarith [hz.2]
+    nlinarith only [hz, hz.2]
   simp only [← neg_div]
   apply (lt_div_iff₀ hd).mpr
   simp only [Complex.normSq_apply, Complex.add_re, Complex.one_re, Complex.add_im, Complex.one_im,
     add_zero, UpperHalfPlane.coe_re, UpperHalfPlane.coe_im] at hn ⊢
-  nlinarith
+  linarith only [hn]
 
 private theorem SpecialPeriods.Triangle.norm_add_one_lt_norm_of_re_lt_half (z : ℍ)
     (hz : z.re < -(1 / 2)) : ‖(z : ℂ) + 1‖ < ‖(z : ℂ)‖ := by
   have hsq : ‖(z : ℂ) + 1‖ ^ 2 < ‖(z : ℂ)‖ ^ 2 := by
     simp only [Complex.sq_norm, Complex.normSq_apply, Complex.add_re, Complex.one_re,
       Complex.add_im, Complex.one_im, add_zero, UpperHalfPlane.coe_re, UpperHalfPlane.coe_im]
-    linarith
-  nlinarith [norm_nonneg ((z : ℂ) + 1), norm_nonneg (z : ℂ)]
+    linarith only [hz]
+  nlinarith only [hsq, norm_nonneg ((z : ℂ) + 1), norm_nonneg (z : ℂ)]
 
 private theorem SpecialPeriods.Triangle.generatorOne_sq_firstSector :
     Set.MapsTo (fun z : ℍ => (generatorOneSL ^ 2) • z) firstSector firstExcluded := by
@@ -1383,7 +1383,8 @@ private def SpecialPeriods.Triangle.secondShift_mo1973_18636 (z : ℍ) : ℂ :=
   (z : ℂ) - (stripLeft : ℂ)
 
 private theorem SpecialPeriods.Triangle.secondShift_re_mo1973_18637 (z : ℍ) :
-    (secondShift_mo1973_18636 z).re = z.re - stripLeft := by simp [secondShift_mo1973_18636]
+    (secondShift_mo1973_18636 z).re = z.re - stripLeft := by simp only [secondShift_mo1973_18636,
+      Complex.sub_re, UpperHalfPlane.coe_re, Complex.ofReal_re]
 
 private theorem SpecialPeriods.Triangle.secondShift_add_real_ne_zero_mo1973_18638 (z : ℍ)
     (a : ℝ) : secondShift_mo1973_18636 z + (a : ℂ) ≠ 0 := by
@@ -1394,7 +1395,7 @@ private theorem SpecialPeriods.Triangle.secondShift_add_real_ne_zero_mo1973_1863
   exact z.im_ne_zero hi
 
 private theorem SpecialPeriods.Triangle.stripLeft_eq_neg_stripRight_sub_one_mo1973_18639 :
-    stripLeft = -stripRight - 1 := by linarith [stripLeft_add_stripRight]
+    stripLeft = -stripRight - 1 := by linarith only [stripLeft_add_stripRight]
 
 private theorem SpecialPeriods.Triangle.width_eq_two_stripRight_add_one_mo1973_18640 :
     width = 2 * stripRight + 1 := by
@@ -1460,14 +1461,14 @@ private theorem SpecialPeriods.Triangle.norm_sub_div_add_lt_one_mo1973_18645 {r 
     intro h
     have h' := congrArg Complex.re h
     simp only [Complex.add_re, Complex.ofReal_re, Complex.zero_re] at h'
-    linarith
+    linarith only [hr, hu, h']
   rw [norm_div]
   apply (div_lt_one (norm_pos_iff.mpr hd)).mpr
   have hsq : ‖u - (r : ℂ)‖ ^ 2 < ‖u + (r : ℂ)‖ ^ 2 := by
     simp only [Complex.sq_norm, Complex.normSq_apply, Complex.sub_re, Complex.add_re,
       Complex.sub_im, Complex.add_im, Complex.ofReal_re, Complex.ofReal_im, sub_zero, add_zero]
-    nlinarith [mul_pos hr hu]
-  nlinarith [norm_nonneg (u - (r : ℂ)), norm_nonneg (u + (r : ℂ))]
+    linarith only [hr, hu, mul_pos hr hu]
+  nlinarith only [hsq, norm_nonneg (u - (r : ℂ)), norm_nonneg (u + (r : ℂ))]
 
 private theorem SpecialPeriods.Triangle.re_add_div_sub_pos_mo1973_18646 {r : ℝ} (hr : 0 < r)
     {u : ℂ} (hu : r < ‖u‖) : 0 < ((u + (r : ℂ)) / (u - (r : ℂ))).re := by
@@ -1478,13 +1479,13 @@ private theorem SpecialPeriods.Triangle.re_add_div_sub_pos_mo1973_18646 {r : ℝ
     exact lt_irrefl r hu
   have hsq : r ^ 2 < Complex.normSq u := by
     rw [Complex.normSq_eq_norm_sq]
-    nlinarith
+    nlinarith only [hr, hu]
   rw [Complex.div_re, ← add_div]
   apply div_pos ?_ (Complex.normSq_pos.mpr hd)
   simp only [Complex.add_re, Complex.sub_re, Complex.ofReal_re, Complex.add_im, Complex.sub_im,
     Complex.ofReal_im, add_zero, sub_zero]
   rw [Complex.normSq_apply] at hsq
-  nlinarith
+  linarith only [hsq]
 
 private theorem SpecialPeriods.Triangle.re_neg_sq_div_neg_mo1973_18647 {r : ℝ} (hr : 0 < r)
     {u : ℂ} (hu : 0 < u.re) : (-(r : ℂ) ^ 2 / u).re < 0 := by
@@ -1546,7 +1547,7 @@ private theorem SpecialPeriods.lift_neWord_domain_subset_mo1973_18651 {ι G α :
     calc
       Monoid.CoprodI.lift f (Monoid.CoprodI.NeWord.append w₁ hne w₂).prod • D =
           Monoid.CoprodI.lift f w₁.prod • Monoid.CoprodI.lift f w₂.prod • D := by
-        simp [SemigroupAction.mul_smul]
+        simp only [Monoid.CoprodI.NeWord.append_prod, map_mul, mul_smul]
       _ ⊆ Monoid.CoprodI.lift f w₁.prod • X k := (Set.smul_set_subset_smul_set_iff.mpr ih₂)
       _ ⊆ X i := Monoid.CoprodI.lift_word_ping_pong f X hpp w₁ hne
 
@@ -1624,8 +1625,10 @@ private theorem
       | true => Monoid.Coprod.inr
   have hleft : fromI.comp toI = MonoidHom.id TriangleGroup := by
     apply triangle_hom_ext
-    · simp [toI, fromI, triangleGenerator₁]
-    · simp [toI, fromI, triangleGenerator₂]
+    · simp only [triangleGenerator₁, MonoidHom.coe_comp, comp_apply, Monoid.Coprod.lift_apply_inl,
+        Monoid.CoprodI.lift_of, MonoidHom.id_apply, fromI, toI]
+    · simp only [triangleGenerator₂, MonoidHom.coe_comp, comp_apply, Monoid.Coprod.lift_apply_inr,
+        Monoid.CoprodI.lift_of, MonoidHom.id_apply, fromI, toI]
   have hto_ne : toI g ≠ 1 := by
     intro h
     apply hg
@@ -1776,17 +1779,17 @@ private theorem
   refine ⟨hz.1, ?_⟩
   have hn : 1 < Complex.normSq ((z : ℂ) + 1) := by
     rw [Complex.normSq_eq_norm_sq]
-    nlinarith [hz.2.2.1]
+    nlinarith only [hz, hz.2.2.1]
   have hprod : 0 < stripRight * (z.re - stripLeft) := mul_pos stripRight_pos (sub_pos.mpr hz.1)
   have hs : stripRight ^ 2 < ‖(z : ℂ) - (stripLeft : ℂ)‖ ^ 2 := by
     rw [Complex.sq_norm]
     simp only [Complex.normSq_apply, Complex.sub_re, Complex.ofReal_re, Complex.sub_im,
       Complex.ofReal_im, sub_zero, Complex.add_re, Complex.one_re, Complex.add_im, Complex.one_im,
       add_zero, UpperHalfPlane.coe_re, UpperHalfPlane.coe_im] at hn ⊢
-    have hleft : stripLeft = -1 - stripRight := by linarith [stripLeft_add_stripRight]
+    have hleft : stripLeft = -1 - stripRight := by linarith only [stripLeft_add_stripRight]
     rw [hleft] at hprod ⊢
-    nlinarith [stripRight_sq]
-  nlinarith [norm_nonneg ((z : ℂ) - (stripLeft : ℂ)), stripRight_pos]
+    linarith only [hprod, hn, stripRight_sq]
+  nlinarith only [hs, norm_nonneg ((z : ℂ) - (stripLeft : ℂ)), stripRight_pos]
 
 private theorem SpecialPeriods.Triangle.fordInterior_left_mem_circularDoubleInterior (z : ℍ)
     (hz : z ∈ fordInterior) (hx : z.re < -(1 / 2)) : z ∈ circularDoubleInterior :=
@@ -1810,8 +1813,8 @@ private theorem SpecialPeriods.Triangle.norm_lt_norm_add_one_of_re_gt_half_mo197
   have hsq : ‖(z : ℂ)‖ ^ 2 < ‖(z : ℂ) + 1‖ ^ 2 := by
     simp only [Complex.sq_norm, Complex.normSq_apply, Complex.add_re, Complex.one_re,
       Complex.add_im, Complex.one_im, add_zero, UpperHalfPlane.coe_re, UpperHalfPlane.coe_im]
-    linarith
-  nlinarith [norm_nonneg ((z : ℂ) + 1), norm_nonneg (z : ℂ)]
+    linarith only [hx]
+  nlinarith only [hsq, norm_nonneg ((z : ℂ) + 1), norm_nonneg (z : ℂ)]
 
 private theorem SpecialPeriods.Triangle.norm_real_sub_inv_gt_mo1973_18680 {r : ℝ} (hr : 0 < r)
     (hr2 : r ^ 2 = 1 / 2) {u : ℂ} (hu : u ≠ 0) (hx : u.re < r) : r < ‖(r : ℂ) - u⁻¹‖ := by
@@ -1819,34 +1822,34 @@ private theorem SpecialPeriods.Triangle.norm_real_sub_inv_gt_mo1973_18680 {r : �
   have hnum : r ^ 2 * Complex.normSq u < Complex.normSq ((r : ℂ) * u - 1) := by
     simp only [Complex.normSq_sub, Complex.normSq_mul, Complex.normSq_ofReal, map_one, mul_one,
       Complex.mul_re, Complex.ofReal_re, Complex.ofReal_im, MulZeroClass.zero_mul, sub_zero]
-    nlinarith [mul_lt_mul_of_pos_left hx hr]
+    linarith only [hr, hr2, hx, mul_lt_mul_of_pos_left hx hr]
   have hsq : r ^ 2 < ‖(r : ℂ) - u⁻¹‖ ^ 2 := by
     rw [he, Complex.sq_norm, Complex.normSq_div]
     exact (lt_div_iff₀ (Complex.normSq_pos.mpr hu)).mpr hnum
-  nlinarith [norm_nonneg ((r : ℂ) - u⁻¹)]
+  nlinarith only [hr, hsq, norm_nonneg ((r : ℂ) - u⁻¹)]
 
 private theorem SpecialPeriods.Triangle.fordInterior_right_mem_circularDoubleInterior (z : ℍ)
     (hz : z ∈ fordInterior) (hx : -(1 / 2) < z.re) :
     (generatorOneSL ^ 2 : SL(2, ℝ)) • z ∈ circularDoubleInterior := by
   have hd : 1 < Complex.normSq (z : ℂ) := by
     rw [Complex.normSq_eq_norm_sq]
-    nlinarith [hz.2.2.2]
+    nlinarith only [hz, hz.2.2.2]
   have hp : 0 < Complex.normSq (z : ℂ) := zero_lt_one.trans hd
   have hc : 1 < Complex.normSq ((z : ℂ) + 1) := by
     rw [Complex.normSq_eq_norm_sq]
-    nlinarith [hz.2.2.1]
+    nlinarith only [hz, hz.2.2.1]
   have hshift : 0 < Complex.normSq (z : ℂ) + 2 * z.re := by
     simp only [Complex.normSq_apply, Complex.add_re, Complex.one_re, Complex.add_im,
       Complex.one_im, add_zero, UpperHalfPlane.coe_re, UpperHalfPlane.coe_im] at hc ⊢
-    nlinarith
+    linarith only [hc]
   refine ⟨⟨?_, ?_⟩, ⟨?_, ?_⟩⟩
   · change ((((generatorOneSL ^ 2 : SL(2, ℝ)) • z : ℍ) : ℂ)).re < -(1 / 2)
     rw [generatorOneSL_sq_smul_coe]
     simp only [Complex.sub_re, Complex.neg_re, Complex.one_re, Complex.inv_re,
       UpperHalfPlane.coe_re]
     have hfrac : -(1 / 2 : ℝ) < z.re / Complex.normSq (z : ℂ) :=
-      (lt_div_iff₀ hp).mpr (by linarith)
-    linarith
+      (lt_div_iff₀ hp).mpr (by linarith only [hx, hd])
+    linarith only [hfrac]
   · rw [generatorOneSL_sq_smul_coe]
     have he : (-1 : ℂ) - (z : ℂ)⁻¹ = -(((z : ℂ) + 1) / (z : ℂ)) := by
       field_simp [z.ne_zero]
@@ -1862,9 +1865,9 @@ private theorem SpecialPeriods.Triangle.fordInterior_right_mem_circularDoubleInt
     have hfrac : z.re / Complex.normSq (z : ℂ) < stripRight := by
       apply (div_lt_iff₀ hp).mpr
       exact hz.2.1.trans (by simpa only [mul_one] using mul_lt_mul_of_pos_left hd stripRight_pos)
-    linarith [stripLeft_add_stripRight]
+    linarith only [hfrac, stripLeft_add_stripRight]
   · rw [generatorOneSL_sq_smul_coe]
-    have hL : stripLeft = -stripRight - 1 := by linarith [stripLeft_add_stripRight]
+    have hL : stripLeft = -stripRight - 1 := by linarith only [stripLeft_add_stripRight]
     rw [hL]
     push_cast
     have he : (-1 : ℂ) - (z : ℂ)⁻¹ - (-(stripRight : ℂ) - 1) = (stripRight : ℂ) - (z : ℂ)⁻¹ := by
@@ -2038,13 +2041,13 @@ private theorem SpecialPeriods.Triangle.verticalReflection_fixed_iff (a : ℝ) (
   · intro h
     have hr := congrArg UpperHalfPlane.re h
     rw [verticalReflection_re] at hr
-    linarith
+    linarith only [hr]
   · intro h
     apply UpperHalfPlane.ext
     apply Complex.ext
     · change (verticalReflection a z).re = z.re
       rw [verticalReflection_re]
-      linarith
+      linarith only [h]
     · exact verticalReflection_im a z
 
 private def SpecialPeriods.Triangle.rightReflection : ℍ ≃ₜ ℍ :=
@@ -2055,23 +2058,27 @@ private def SpecialPeriods.Triangle.leftReflection : ℍ ≃ₜ ℍ :=
 
 @[simp]
 private theorem SpecialPeriods.Triangle.rightReflection_coe (z : ℍ) :
-    (rightReflection z : ℂ) = -1 - conj (z : ℂ) := by simp [verticalReflection, rightReflection]
+    (rightReflection z : ℂ) = -1 - conj (z : ℂ) := by simp only [rightReflection,
+      verticalReflection, Complex.ofReal_neg, Complex.ofReal_one,
+        Homeomorph.homeomorph_mk_coe, Equiv.coe_fn_mk]
 
 @[simp]
 private theorem SpecialPeriods.Triangle.leftReflection_coe (z : ℍ) :
     (leftReflection z : ℂ) = -((width : ℂ) + 1) - conj (z : ℂ) := by
-  simp [verticalReflection, leftReflection]
+  simp only [leftReflection, verticalReflection, neg_add_rev, Complex.ofReal_add,
+    Complex.ofReal_neg,
+      Complex.ofReal_one, Homeomorph.homeomorph_mk_coe, Equiv.coe_fn_mk]
 
 @[simp]
 private theorem
     SpecialPeriods.Triangle.rightReflection_re (z : ℍ) : (rightReflection z).re = -1 - z.re :=
-  by simp [rightReflection]
+  by simp only [rightReflection, verticalReflection_re]
 
 private theorem SpecialPeriods.Triangle.rightReflection_norm (z : ℍ) :
     ‖(rightReflection z : ℂ)‖ = ‖(z : ℂ) + 1‖ := by
   rw [rightReflection_coe]
   calc
-    _ = ‖-conj ((z : ℂ) + 1)‖ := by congr 1; simp; ring
+    _ = ‖-conj ((z : ℂ) + 1)‖ := by congr 1; simp only [map_add, map_one, neg_add_rev]; ring
     _ = _ := by rw [norm_neg, Complex.norm_conj]
 
 private theorem SpecialPeriods.Triangle.rightReflection_add_one_norm (z : ℍ) :
@@ -2113,7 +2120,9 @@ private theorem SpecialPeriods.Triangle.circleReflectionMap_involutive_mo1973_18
   intro z
   apply UpperHalfPlane.ext
   change -1 + 1 / (conj (-1 + 1 / (conj (z : ℂ) + 1)) + 1) = (z : ℂ)
-  simp
+  simp only [one_div, map_add, map_neg, map_one, map_inv₀, RingHomCompTriple.comp_apply,
+    RingHom.id_apply,
+      neg_add_cancel_comm, div_inv_eq_mul, one_mul, neg_add_cancel_comm_assoc]
 
 private theorem SpecialPeriods.Triangle.circleReflectionMap_continuous_mo1973_18718 :
     Continuous circleReflectionMap_mo1973_18716 := by
@@ -2164,15 +2173,18 @@ private theorem SpecialPeriods.Triangle.circleReflection_fixed_iff (z : ℍ) :
       apply mul_left_cancel₀ z.im_ne_zero
       simpa only [mul_one] using ((div_eq_iff hd).mp hi).symm
     rw [Complex.normSq_eq_norm_sq] at hs
-    nlinarith [norm_nonneg ((z : ℂ) + 1)]
+    nlinarith only [hs, norm_nonneg ((z : ℂ) + 1)]
   · intro h
     apply UpperHalfPlane.ext
     rw [circleReflection_coe]
     have hs : Complex.normSq (conj (z : ℂ) + 1) = 1 := by
-      rw [show conj (z : ℂ) + 1 = conj ((z : ℂ) + 1) by simp, Complex.normSq_conj,
+      rw [show conj (z : ℂ) + 1 = conj ((z : ℂ) + 1) by simp only [map_add, map_one],
+        Complex.normSq_conj,
         Complex.normSq_eq_norm_sq, h]
       norm_num
-    simp [one_div, Complex.inv_def, hs]
+    simp only [one_div, Complex.inv_def, map_add, RingHomCompTriple.comp_apply, RingHom.id_apply,
+      map_one, hs,
+        inv_one, Complex.ofReal_one, mul_one, neg_add_cancel_comm_assoc]
 
 @[simp]
 private theorem SpecialPeriods.Triangle.rightReflection_mem_fordRegion_iff (z : ℍ) :
@@ -2193,7 +2205,9 @@ private theorem SpecialPeriods.Triangle.rightReflection_mapsTo_fordRegion :
 private theorem SpecialPeriods.Triangle.generatorOne_reflections (z : ℍ) :
     generatorOneSL • z = rightReflection (circleReflection z) := by
   apply UpperHalfPlane.ext
-  simp [generatorOne_coe, neg_div, one_div]
+  simp only [generatorOne_coe, neg_div, one_div, rightReflection_coe, circleReflection_coe,
+    map_add, map_neg,
+      map_one, map_inv₀, RingHomCompTriple.comp_apply, RingHom.id_apply, sub_add_cancel_left]
 
 private theorem SpecialPeriods.Triangle.generatorTwo_reflections (z : ℍ) :
     generatorTwoSL • z = circleReflection (leftReflection z) := by
@@ -2209,7 +2223,9 @@ private theorem SpecialPeriods.Triangle.cusp_reflections (z : ℍ) :
     cuspSL • z = leftReflection (rightReflection z) := by
   apply UpperHalfPlane.ext
   rw [cuspSL_apply]
-  simp [UpperHalfPlane.coe_vadd]
+  simp only [UpperHalfPlane.coe_vadd, Complex.ofReal_neg, leftReflection_coe, neg_add_rev,
+    rightReflection_coe,
+      map_sub, map_neg, map_one, RingHomCompTriple.comp_apply, RingHom.id_apply, add_sub_sub_cancel]
 
 private theorem SpecialPeriods.Triangle.generatorOne_eq_rightReflection_of_norm_add_one (z : ℍ)
     (hz : ‖(z : ℂ) + 1‖ = 1) : generatorOneSL • z = rightReflection z := by
@@ -2219,13 +2235,13 @@ private theorem SpecialPeriods.Triangle.rightReflection_re_eq_stripRight_iff (z 
     (rightReflection z).re = stripRight ↔ z.re = stripLeft := by
   rw [rightReflection_re]
   unfold stripLeft stripRight
-  constructor <;> intro h <;> linarith
+  constructor <;> intro h <;> linarith only [h]
 
 private theorem SpecialPeriods.Triangle.rightReflection_re_eq_stripLeft_iff (z : ℍ) :
     (rightReflection z).re = stripLeft ↔ z.re = stripRight := by
   rw [rightReflection_re]
   unfold stripLeft stripRight
-  constructor <;> intro h <;> linarith
+  constructor <;> intro h <;> linarith only [h]
 
 private theorem SpecialPeriods.Triangle.cusp_eq_rightReflection_of_re_eq_stripRight (z : ℍ)
     (hz : z.re = stripRight) : cuspSL • z = rightReflection z := by
@@ -2254,30 +2270,32 @@ private theorem SpecialPeriods.Triangle.continuous_boundaryHeight : Continuous b
   fun_prop
 
 private theorem SpecialPeriods.Triangle.boundaryHeight_le_one (x : ℝ) : boundaryHeight x ≤ 1 := by
-  have h : 1 - (x + 1) ^ 2 ≤ (1 : ℝ) := by nlinarith [sq_nonneg (x + 1)]
+  have h : 1 - (x + 1) ^ 2 ≤ (1 : ℝ) := by linarith only [sq_nonneg (x + 1)]
   simpa only [boundaryHeight, Real.sqrt_one] using Real.sqrt_le_sqrt h
 
 private theorem SpecialPeriods.Triangle.neg_two_lt_stripLeft : -2 < stripLeft := by
-  have h : width < 3 := by nlinarith [width_sq, width_pos]
+  have h : width < 3 := by nlinarith only [width_sq, width_pos]
   unfold stripLeft
-  linarith
+  linarith only [h]
 
 private theorem SpecialPeriods.Triangle.circle_epigraph_iff (z : ℂ) :
     (0 < z.im ∧ 1 < ‖z + 1‖) ↔ boundaryHeight z.re < z.im := by
   have hnorm : ‖z + 1‖ ^ 2 = (z.re + 1) ^ 2 + z.im ^ 2 := by
     rw [← Complex.normSq_eq_norm_sq]
-    simp [Complex.normSq_apply, pow_two]
+    simp only [Complex.normSq_apply, Complex.add_re, Complex.one_re, Complex.add_im,
+      Complex.one_im, add_zero,
+        pow_two]
   constructor
   · rintro ⟨hy, hn⟩
     apply (Real.sqrt_lt' hy).mpr
     have hs := (sq_lt_sq₀ (show (0 : ℝ) ≤ 1 by norm_num) (norm_nonneg (z + 1))).mpr hn
-    nlinarith
+    linarith only [hnorm, hs]
   · intro h
     have hy : 0 < z.im := lt_of_le_of_lt (Real.sqrt_nonneg _) h
     refine ⟨hy, ?_⟩
     apply (sq_lt_sq₀ (show (0 : ℝ) ≤ 1 by norm_num) (norm_nonneg (z + 1))).mp
     have hs := (Real.sqrt_lt' hy).mp h
-    nlinarith
+    linarith only [hnorm, hs]
 
 private theorem SpecialPeriods.Triangle.mem_triangleInterior_iff_epigraph (z : ℂ) :
     z ∈ triangleInterior ↔ stripLeft < z.re ∧ z.re < -1 / 2 ∧ boundaryHeight z.re < z.im := by
@@ -2390,7 +2408,7 @@ private theorem SpecialPeriods.Triangle.norm_add_one_lt_norm_of_re_lt_neg_half (
   rw [← Complex.normSq_eq_norm_sq, ← Complex.normSq_eq_norm_sq]
   simp only [Complex.normSq_apply, Complex.add_re, Complex.one_re, Complex.add_im, Complex.one_im,
     add_zero, UpperHalfPlane.coe_re, UpperHalfPlane.coe_im]
-  nlinarith
+  linarith only [hzre]
 
 private theorem
     SpecialPeriods.Triangle.one_lt_norm_of_re_lt_neg_half (z : ℍ) (hzre : z.re < -(1 / 2))
@@ -2404,11 +2422,11 @@ private theorem SpecialPeriods.Triangle.strict_ford_left_half_iff_triangleInteri
   change _ ↔ stripLeft < z.re ∧ z.re < -1 / 2 ∧ 0 < z.im ∧ 1 < ‖(z : ℂ) + 1‖
   constructor
   · rintro ⟨⟨hl, _, hn, _⟩, hm⟩
-    exact ⟨hl, by linarith, z.im_pos, hn⟩
+    exact ⟨hl, by linarith only [hm], z.im_pos, hn⟩
   · rintro ⟨hl, hm, _, hn⟩
-    have hm' : z.re < -(1 / 2) := by linarith
+    have hm' : z.re < -(1 / 2) := by linarith only [hm]
     refine ⟨⟨hl, ?_, hn, one_lt_norm_of_re_lt_neg_half z hm' hn⟩, hm'⟩
-    linarith [stripRight_pos]
+    linarith only [hm, stripRight_pos]
 
 private theorem SpecialPeriods.Triangle.halfFordInterior_eq_preimage_triangleInterior :
     halfFordInterior = ((↑) : ℍ → ℂ) ⁻¹' triangleInterior :=
@@ -2454,7 +2472,7 @@ private theorem SpecialPeriods.Triangle.rightReflection_image_halfFordRegion :
     change -(1 / 2) ≤ (rightReflection w).re
     rw [rightReflection_re]
     have hcut : w.re ≤ -(1 / 2) := hw.2
-    linarith
+    linarith only [hcut]
   · rintro ⟨hz, hr⟩
     refine
       ⟨rightReflection z, ⟨rightReflection_mapsTo_fordRegion hz, ?_⟩,
@@ -2462,7 +2480,7 @@ private theorem SpecialPeriods.Triangle.rightReflection_image_halfFordRegion :
     change (rightReflection z).re ≤ -(1 / 2)
     rw [rightReflection_re]
     change -(1 / 2) ≤ z.re at hr
-    linarith
+    linarith only [hr]
 
 private theorem SpecialPeriods.Triangle.halfFordRegion_union_reflection :
     halfFordRegion ∪ rightReflection '' halfFordRegion = fordRegion := by
@@ -2638,7 +2656,7 @@ private theorem TriangleUniformizationGluing.BoundaryMap.real_at_axis
   apply D.boundary_real z ⟨hz, hx.le⟩
   intro hi
   have hh : z.re < -(1 / 2) := hi.2
-  linarith
+  linarith only [hx, hh]
 
 private theorem TriangleUniformizationGluing.BoundaryMap.foldedFordMap_reflected
     (D : TriangleUniformizationGluing.BoundaryMap) (z : ℍ)
@@ -2648,7 +2666,7 @@ private theorem TriangleUniformizationGluing.BoundaryMap.foldedFordMap_reflected
   · have hcut : z.re = -(1 / 2) := by
       rw [SpecialPeriods.Triangle.rightReflection_re] at hx
       have hleft : z.re ≤ -(1 / 2) := hz.2
-      linarith
+      linarith only [hx, hleft]
     have hfix : SpecialPeriods.Triangle.rightReflection z = z :=
       (SpecialPeriods.Triangle.rightReflection_fixed_iff z).mpr hcut
     rw [hfix, D.foldedFordMap_of_left hz.2]
@@ -2703,7 +2721,7 @@ private theorem TriangleUniformizationGluing.BoundaryMap.foldedFordMap_rightRefl
   · have hright : -(1 / 2) < z.re := lt_of_not_ge hx
     have hleft : (SpecialPeriods.Triangle.rightReflection z).re ≤ -(1 / 2) := by
       rw [SpecialPeriods.Triangle.rightReflection_re]
-      linarith
+      linarith only [hx]
     rw [D.foldedFordMap_of_left hleft, D.foldedFordMap_of_right hright, Complex.conj_conj]
 
 private theorem TriangleUniformizationGluing.BoundaryMap.foldedFordMap_real_of_not_mem_interior
@@ -2716,7 +2734,7 @@ private theorem TriangleUniformizationGluing.BoundaryMap.foldedFordMap_real_of_n
   · have hright : -(1 / 2) < z.re := lt_of_not_ge hx
     have hleft : (SpecialPeriods.Triangle.rightReflection z).re ≤ -(1 / 2) := by
       rw [SpecialPeriods.Triangle.rightReflection_re]
-      linarith
+      linarith only [hx]
     have hr :
       SpecialPeriods.Triangle.rightReflection z ∈ SpecialPeriods.Triangle.halfFordRegion :=
       ⟨SpecialPeriods.Triangle.rightReflection_mapsTo_fordRegion hz, hleft⟩
@@ -2805,7 +2823,7 @@ private theorem
   refine ⟨SpecialPeriods.Triangle.rightReflection_mapsTo_fordRegion hz, ?_⟩
   change (SpecialPeriods.Triangle.rightReflection z).re ≤ -(1 / 2)
   rw [SpecialPeriods.Triangle.rightReflection_re]
-  linarith
+  linarith only [hx]
 
 private theorem TriangleUniformizationGluing.HalfPlaneMap.cross_fibre_mo1973_18871
     (D : TriangleUniformizationGluing.HalfPlaneMap) {z w : ℍ}
@@ -2820,8 +2838,9 @@ private theorem TriangleUniformizationGluing.HalfPlaneMap.cross_fibre_mo1973_188
   rw [Complex.conj_im] at him
   have hzpos := D.im_nonneg hz
   have hwpos := D.im_nonneg hrw
-  have hzreal : (D z).im = 0 := by linarith
-  have hwreal : (D (SpecialPeriods.Triangle.rightReflection w)).im = 0 := by linarith
+  have hzreal : (D z).im = 0 := by linarith only [him, hzpos, hwpos]
+  have hwreal : (D (SpecialPeriods.Triangle.rightReflection w)).im = 0 := by linarith only [him,
+    hzpos, hwpos]
   have hf : D z = D (SpecialPeriods.Triangle.rightReflection w) :=
     heq.trans (Complex.conj_eq_iff_im.mpr hwreal)
   have hzw : z = SpecialPeriods.Triangle.rightReflection w := D.injOn hz hrw hf
@@ -2835,7 +2854,7 @@ private theorem TriangleUniformizationGluing.HalfPlaneMap.cross_fibre_mo1973_188
   refine ⟨hi, ?_⟩
   change z.re < -(1 / 2)
   rw [hzw, SpecialPeriods.Triangle.rightReflection_re]
-  linarith
+  linarith only [hwr]
 
 private theorem TriangleUniformizationGluing.HalfPlaneMap.foldedFordMap_eq_iff
     (D : TriangleUniformizationGluing.HalfPlaneMap) {z w : ℍ}
@@ -3023,7 +3042,7 @@ private theorem RiemannSphere.reciprocal_infinityParametrization (z : ℂ) :
   have hinfty : reciprocal (OnePoint.infty) = ((0 : ℂ) : RiemannSphere) := rfl
   by_cases hz : z = 0
   · subst z
-    simp [hinfty]
+    simp only [infinityParametrization_zero, hinfty]
   · rw [infinityParametrization_of_ne hz, reciprocal_coe,
       infinityParametrization_of_ne (inv_ne_zero hz), inv_inv]
 
@@ -3031,8 +3050,8 @@ private theorem RiemannSphere.reciprocal_involutive : Function.Involutive recipr
   have hinfty : reciprocal (OnePoint.infty) = ((0 : ℂ) : RiemannSphere) := rfl
   intro p
   induction p using OnePoint.rec with
-  | infty => simp [hinfty]
-  | coe z => simp []
+  | infty => simp only [hinfty, reciprocal_coe, infinityParametrization_zero]
+  | coe z => simp only [reciprocal_coe, reciprocal_infinityParametrization]
 
 private theorem RiemannSphere.reciprocal_holomorphic :
     ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ) ω reciprocal := by
@@ -3080,7 +3099,7 @@ private theorem RiemannSphere.affineHomeomorph_infinityParametrization (a b z : 
     rfl
   by_cases hz0 : z = 0
   · subst z
-    simp [hinfty]
+    simp only [infinityParametrization_zero, hinfty, mul_zero, add_zero, zero_div]
   · rw [infinityParametrization_of_ne hz0, affineHomeomorph_coe,
       infinityParametrization_of_ne (div_ne_zero hz0 hz)]
     congr 1
@@ -3195,7 +3214,9 @@ private theorem RiemannSphere.threePointBiholomorph_third (a b c : ℂ) (hab : a
     affineBiholomorph _ _ _
         (reciprocalBiholomorph (affineBiholomorph 1 (-c) one_ne_zero (c : RiemannSphere))) =
       _
-  simp [hinfty]
+  simp only [affineBiholomorph_coe, one_mul, add_neg_cancel, reciprocalBiholomorph_apply,
+    reciprocal_coe,
+      infinityParametrization_zero, hinfty]
 
 @[simp]
 private theorem RiemannSphere.threePointBiholomorph_infty (a b c : ℂ) (hab : a ≠ b) (hac : a ≠ c)
@@ -3212,7 +3233,8 @@ private theorem RiemannSphere.threePointBiholomorph_infty (a b c : ℂ) (hab : a
         (reciprocalBiholomorph
           (affineBiholomorph 1 (-c) one_ne_zero ((OnePoint.infty) : RiemannSphere))) =
       _
-  simp [hinfty, hreciprocal]
+  simp only [hinfty, reciprocalBiholomorph_apply, hreciprocal, affineBiholomorph_coe, mul_zero,
+    zero_add]
 
 private def RiemannSphere.MobiusCircle.crossRatio (a b c z : ℂ) : ℂ :=
   ((z - a) * (b - c)) / ((z - c) * (b - a))
@@ -3235,7 +3257,7 @@ private theorem
 
 private theorem RiemannSphere.MobiusCircle.unit_ne_zero {z : ℂ} (hz : ‖z‖ = 1) : z ≠ 0 := by
   intro h
-  simp [h] at hz
+  simp only [h, norm_zero, zero_ne_one] at hz
 
 private theorem RiemannSphere.MobiusCircle.coefficient_mul_eq_conj_mul {a b c : ℂ} (ha : ‖a‖ = 1)
     (hb : ‖b‖ = 1) (hc : ‖c‖ = 1) (hba : b ≠ a) :
@@ -3266,7 +3288,7 @@ private theorem RiemannSphere.MobiusCircle.numerator_im {a c d : ℂ} (hc : ‖c
     ring
   have hconst : conj d * c * conj c = conj d := by
     rw [mul_assoc, Complex.mul_conj, Complex.normSq_eq_norm_sq, hc]
-    simp
+    simp only [one_pow, Complex.ofReal_one, mul_one]
   have heq :
     d * (z - a) * conj (z - c) =
       d * (Complex.normSq z : ℂ) - (d * z * conj c + conj (d * z * conj c)) + conj d := by
@@ -3337,7 +3359,7 @@ private theorem
 
 private theorem
     RiemannSphere.MobiusCircle.crossRatio_at_zero (a b c : ℂ) : crossRatio a b c a = 0 := by
-  simp [crossRatio]
+  simp only [crossRatio, sub_self, zero_mul, zero_div]
 
 private theorem
     RiemannSphere.MobiusCircle.crossRatio_at_one {a b c : ℂ} (hba : b ≠ a) (hbc : b ≠ c) :
@@ -3351,11 +3373,13 @@ private def RiemannSphere.finiteImage (s : Set ℂ) : Set RiemannSphere :=
 
 @[simp]
 private theorem RiemannSphere.coe_mem_finiteImage_iff (s : Set ℂ) (z : ℂ) :
-    (z : RiemannSphere) ∈ finiteImage s ↔ z ∈ s := by simp [finiteImage]
+    (z : RiemannSphere) ∈ finiteImage s ↔ z ∈ s := by simp only [finiteImage, mem_image,
+      OnePoint.some_eq_iff, exists_eq_right]
 
 @[simp]
 private theorem RiemannSphere.infty_not_mem_finiteImage (s : Set ℂ) :
-    ((OnePoint.infty) : RiemannSphere) ∉ finiteImage s := by simp [finiteImage]
+    ((OnePoint.infty) : RiemannSphere) ∉ finiteImage s := by simp only [finiteImage, mem_image,
+      OnePoint.coe_ne_infty, and_false, exists_const, not_false_eq_true]
 
 private theorem
     RiemannSphere.crossRatio_holomorphicOn_disc {a b c : ℂ} (hab : a ≠ b) (hc : ‖c‖ = 1) :
@@ -3410,7 +3434,9 @@ private theorem
   | coe z =>
     by_cases hzc : z = c
     · subst z
-      simp [closedDiscWithoutPole]
+      simp only [threePointBiholomorph_third, infty_not_mem_finiteImage, closedDiscWithoutPole,
+        ne_eq,
+          coe_mem_finiteImage_iff, mem_ofPred_eq, not_true_eq_false, and_false]
     · rw [threePointBiholomorph_coe a b c hab hac hbc z hzc]
       simp only [coe_mem_finiteImage_iff, closedOrientedHalfPlane, closedDiscWithoutPole,
         Set.mem_ofPred_eq, and_iff_left hzc]
@@ -3594,27 +3620,29 @@ private def SpecialPeriods.Triangle.triangleClosedRegion : Set ℂ :=
 private theorem
     SpecialPeriods.Triangle.boundaryHeight_pos_of_closed_bounds {x : ℝ} (hl : stripLeft ≤ x)
     (hr : x ≤ -1 / 2) : 0 < boundaryHeight x := by
-  have hlo : 0 < x + 2 := by linarith [neg_two_lt_stripLeft]
-  have hhi : 0 < -x := by linarith
+  have hlo : 0 < x + 2 := by linarith only [hl, neg_two_lt_stripLeft]
+  have hhi : 0 < -x := by linarith only [hr]
   apply Real.sqrt_pos.mpr
-  nlinarith [mul_pos hlo hhi]
+  linarith only [hlo, hhi, mul_pos hlo hhi]
 
 private theorem SpecialPeriods.Triangle.circle_closed_epigraph_iff {z : ℂ} (hl : stripLeft ≤ z.re)
     (hr : z.re ≤ -1 / 2) : (0 < z.im ∧ 1 ≤ ‖z + 1‖) ↔ boundaryHeight z.re ≤ z.im := by
   have hnorm : ‖z + 1‖ ^ 2 = (z.re + 1) ^ 2 + z.im ^ 2 := by
     rw [← Complex.normSq_eq_norm_sq]
-    simp [Complex.normSq_apply, pow_two]
+    simp only [Complex.normSq_apply, Complex.add_re, Complex.one_re, Complex.add_im,
+      Complex.one_im, add_zero,
+        pow_two]
   constructor
   · rintro ⟨hy, hn⟩
     apply (Real.sqrt_le_left hy.le).mpr
     have hs := (sq_le_sq₀ (show (0 : ℝ) ≤ 1 by norm_num) (norm_nonneg (z + 1))).mpr hn
-    nlinarith
+    linarith only [hnorm, hs]
   · intro hh
     have hy : 0 < z.im := (boundaryHeight_pos_of_closed_bounds hl hr).trans_le hh
     refine ⟨hy, ?_⟩
     apply (sq_le_sq₀ (show (0 : ℝ) ≤ 1 by norm_num) (norm_nonneg (z + 1))).mp
     have hs := (Real.sqrt_le_left hy.le).mp hh
-    nlinarith
+    linarith only [hnorm, hs]
 
 private theorem SpecialPeriods.Triangle.mem_triangleClosedRegion_iff_epigraph (z : ℂ) :
     z ∈ triangleClosedRegion ↔ stripLeft ≤ z.re ∧ z.re ≤ -1 / 2 ∧ boundaryHeight z.re ≤ z.im := by
@@ -3646,7 +3674,7 @@ private theorem SpecialPeriods.Triangle.triangleClosedStrip_eq_reProdIm :
 private theorem SpecialPeriods.Triangle.closure_triangleOpenStrip :
     closure triangleOpenStrip = triangleClosedStrip := by
   rw [triangleOpenStrip_eq_reProdIm, Complex.closure_reProdIm,
-    closure_Ioo (show stripLeft ≠ -1 / 2 by linarith [stripLeft_lt_neg_one]), closure_Ioi, ←
+    closure_Ioo (show stripLeft ≠ -1 / 2 by linarith only [stripLeft_lt_neg_one]), closure_Ioi, ←
     triangleClosedStrip_eq_reProdIm]
 
 private theorem SpecialPeriods.Triangle.triangleClosedRegion_eq_preimage_strip :
@@ -3667,7 +3695,7 @@ private theorem SpecialPeriods.Triangle.triangle_norm_add_one_le_norm {z : ℂ} 
   rw [← Complex.normSq_eq_norm_sq, ← Complex.normSq_eq_norm_sq]
   simp only [Complex.normSq_apply, Complex.add_re, Complex.one_re, Complex.add_im, Complex.one_im,
     add_zero]
-  nlinarith
+  linarith only [hz]
 
 private theorem SpecialPeriods.Triangle.coe_mem_triangleClosedRegion_iff_halfFordRegion (z : ℍ) :
     (z : ℂ) ∈ triangleClosedRegion ↔ z ∈ halfFordRegion := by
@@ -3677,10 +3705,10 @@ private theorem SpecialPeriods.Triangle.coe_mem_triangleClosedRegion_iff_halfFor
         z.re ≤ -(1 / 2))
   constructor
   · rintro ⟨hl, hr, _, hn⟩
-    refine ⟨⟨hl, ?_, hn, hn.trans (triangle_norm_add_one_le_norm hr)⟩, by linarith⟩
-    linarith [stripRight_pos]
+    refine ⟨⟨hl, ?_, hn, hn.trans (triangle_norm_add_one_le_norm hr)⟩, by linarith only [hr]⟩
+    linarith only [hr, stripRight_pos]
   · rintro ⟨hz, hr⟩
-    exact ⟨hz.1, by linarith, z.im_pos, hz.2.2.1⟩
+    exact ⟨hz.1, by linarith only [hr], z.im_pos, hz.2.2.1⟩
 
 private theorem RiemannMapping.isCompact_discHomeomorph_preimage_closedBall {U : Set ℂ}
     (e : U ≃ₜ Metric.ball (0 : ℂ) 1) {r : ℝ} (hr : r < 1) :
@@ -3801,11 +3829,11 @@ private def RiemannBoundary.onePointLogHalfStrip (a c : ℝ) (q : ℂ) : OnePoin
 
 @[simp]
 private theorem RiemannBoundary.onePointLogHalfStrip_zero (a c : ℝ) :
-    onePointLogHalfStrip a c 0 = (OnePoint.infty) := by simp [onePointLogHalfStrip]
+    onePointLogHalfStrip a c 0 = (OnePoint.infty) := by simp only [onePointLogHalfStrip, ↓reduceIte]
 
 private theorem RiemannBoundary.onePointLogHalfStrip_of_ne_zero (a c : ℝ) {q : ℂ} (hq : q ≠ 0) :
     onePointLogHalfStrip a c q = (logHalfStrip a c q : OnePoint ℂ) := by
-  simp [onePointLogHalfStrip, hq]
+  simp only [onePointLogHalfStrip, hq, ↓reduceIte]
 
 private theorem RiemannBoundary.tendsto_logHalfStrip_cocompact (a : ℝ) {c : ℝ} (hc : 0 < c) :
     Filter.Tendsto (logHalfStrip a c) (𝓝[≠] 0) (Filter.cocompact ℂ) := by
@@ -3862,7 +3890,7 @@ private def
 private theorem RiemannBoundary.onePointDomainDiscHomeomorph_apply {D : Set ℂ}
     (e : D ≃ₜ Metric.ball (0 : ℂ) 1) (z : D) :
     onePointDomainDiscHomeomorph e (onePointDomainHomeomorph D z) = e z := by
-  simp [onePointDomainDiscHomeomorph]
+  simp only [onePointDomainDiscHomeomorph, Homeomorph.trans_apply, Homeomorph.symm_apply_apply]
 
 private theorem RiemannBoundary.onePointDomainDiscHomeomorph_representative {D : Set ℂ}
     (e : D ≃ₜ Metric.ball (0 : ℂ) 1) {f : ℂ → ℂ} (he : ∀ z : D, f z = (e z : ℂ)) (b : ℂ)
@@ -3900,7 +3928,7 @@ private theorem SpecialPeriods.Triangle.triangleVerticalRay_mem {t : ℝ} (ht : 
     triangleVerticalRay t ∈ triangleInterior := by
   rw [mem_triangleInterior_iff_epigraph, triangleVerticalRay_re, triangleVerticalRay_im]
   refine ⟨stripLeft_lt_neg_one, by norm_num, ?_⟩
-  linarith [boundaryHeight_le_one (-1)]
+  linarith only [ht, boundaryHeight_le_one (-1)]
 
 private theorem SpecialPeriods.Triangle.triangleVerticalRay_eventually_mem :
     ∀ᶠ t : ℝ in Filter.atTop, triangleVerticalRay t ∈ triangleInterior :=

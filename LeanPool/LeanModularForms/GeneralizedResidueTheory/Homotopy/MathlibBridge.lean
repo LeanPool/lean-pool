@@ -111,7 +111,7 @@ theorem generalizedWindingNumber_circleMap_eq_inv_circleIntegral
       simp [circleMap, Complex.norm_real, abs_of_pos hR,
         Complex.norm_exp_ofReal_mul_I]
     intro heq
-    simp_all
+    simp_all only [ne_eq, mem_Icc]
   -- Apply the classical away theorem
   have hclass := generalizedWindingNumber_eq_classical_away γ w havoids
   simp only [γ] at hclass

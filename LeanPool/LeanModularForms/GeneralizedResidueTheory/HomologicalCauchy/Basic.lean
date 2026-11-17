@@ -12,7 +12,6 @@ import LeanPool.LeanModularForms.GeneralizedResidueTheory.Residue
 import Mathlib.Analysis.Calculus.FDeriv.Mul
 import Mathlib.CategoryTheory.Category.Init
 import Mathlib.Combinatorics.Matroid.Init
-import Mathlib.MeasureTheory.Covering.Besicovitch
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 
 /-!
@@ -87,7 +86,7 @@ private lemma partition_filter_card_lt_left (P : Finset ℝ) {a' b' c : ℝ}
     exact ⟨ht.1, ht.2.1, lt_trans ht.2.2 hcb⟩
   · intro hsub
     have hcmem := hsub (Finset.mem_filter.mpr ⟨hc_part, hac, hcb⟩)
-    simp_all
+    simp_all only [Finset.mem_filter, lt_self_iff_false, and_false]
 
 private lemma partition_filter_card_lt_right (P : Finset ℝ) {a' b' c : ℝ}
     (hc_part : c ∈ P) (hac : a' < c) (hcb : c < b') :
@@ -100,7 +99,7 @@ private lemma partition_filter_card_lt_right (P : Finset ℝ) {a' b' c : ℝ}
     exact ⟨ht.1, lt_trans hac ht.2.1, ht.2.2⟩
   · intro hsub
     have hcmem := hsub (Finset.mem_filter.mpr ⟨hc_part, hac, hcb⟩)
-    simp_all
+    simp_all only [Finset.mem_filter, lt_self_iff_false, and_true, and_false]
 
 private lemma ftc_inductive_step {F : ℂ → ℂ} {f : ℂ → ℂ}
     (γ : PiecewiseC1Curve) (m : ℕ) (a' b' c : ℝ)

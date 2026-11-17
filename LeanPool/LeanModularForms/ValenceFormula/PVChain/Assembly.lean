@@ -13,8 +13,6 @@ import LeanPool.LeanModularForms.ValenceFormula.PVChain.Seg5CuspIntegral
 import LeanPool.LeanModularForms.ValenceFormula.WindingWeights.Common
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 import Mathlib.CategoryTheory.Category.Init
-import Mathlib.MeasureTheory.Covering.Besicovitch
-import Mathlib.NumberTheory.ArithmeticFunction.Misc
 
 /-!
 # PV Chain Assembly
@@ -313,13 +311,15 @@ private theorem tendsto_pvIntegral_seg5
   have h_seg5_im : ∀ t, 4 < t → (fdBoundaryH H t).im = H := by
     intro t ht
     rw [fdBoundary_H_eq_seg5_H ht]
-    simp [fdBoundarySeg5H, add_im, ofReal_im, mul_im, I_re, I_im]
+    simp only [fdBoundarySeg5H, add_im, sub_im, ofReal_im, div_ofNat_im, im_ofNat, zero_div,
+      sub_self, mul_im, ofReal_re, I_im, mul_one, I_re, mul_zero, add_zero, zero_add]
   have h_no_trunc : ∀ᶠ ε in 𝓝[>] (0 : ℝ),
       ∀ t, 4 < t → t ≤ 5 →
         ¬∃ s ∈ sArcOfS S ∪ sVertOfS S, ‖fdBoundaryH H t - s‖ ≤ ε := by
     rcases (sArcOfS S ∪ sVertOfS S).eq_empty_or_nonempty with h_empty | h_ne
     · filter_upwards [self_mem_nhdsWithin] with ε _
-      intro t _ _; simp [h_empty]
+      intro t _ _; simp only [h_empty, Finset.notMem_empty, false_and, exists_const,
+        not_false_eq_true]
     · set δ := (sArcOfS S ∪ sVertOfS S).inf' h_ne (fun s => H - s.im)
       have hδ_pos : 0 < δ :=
         (Finset.lt_inf'_iff h_ne).mpr (fun s hs => by linarith only [h_below, hs, h_below s hs])
@@ -357,7 +357,7 @@ private lemma norm_deriv_fdBoundary_H_le
     (ht_ne1 : t ≠ 1) (ht_ne3 : t ≠ 3) (ht_ne4 : t ≠ 4) :
     ‖deriv (fdBoundaryH H) t‖ ≤ max H 1 := by
   have h_norm_cast : ‖(↑H - ↑(Real.sqrt 3) / 2 : ℂ)‖ = H - Real.sqrt 3 / 2 := by
-    have hcast : (↑H - ↑(Real.sqrt 3) / 2 : ℂ) = ↑(H - Real.sqrt 3 / 2) := by push_cast; ring
+    have hcast : (↑H - ↑(Real.sqrt 3) / 2 : ℂ) = ↑(H - Real.sqrt 3 / 2) := by push_cast; ac_rfl
     rw [hcast, Complex.norm_real, Real.norm_of_nonneg (by
       linarith only [hH, Real.sqrt_pos_of_pos (by norm_num : (3 : ℝ) > 0)])]
   by_cases h1 : t < 1
@@ -372,11 +372,11 @@ private lemma norm_deriv_fdBoundary_H_le
       simp only [norm_mul, Complex.norm_I, mul_one]
       have hexp : ‖exp ((↑Real.pi * (↑t + 1) / 6 : ℂ) * I)‖ = 1 := by
         rw [show (↑Real.pi * (↑t + 1) / 6 : ℂ) * I =
-          ↑(Real.pi * (t + 1) / 6) * I from by push_cast; ring]
+          ↑(Real.pi * (t + 1) / 6) * I from by push_cast; ac_rfl]
         exact Complex.norm_exp_ofReal_mul_I _
       rw [hexp, one_mul]
       have hpi : ‖(↑Real.pi / 6 : ℂ)‖ = Real.pi / 6 := by
-        rw [show (↑Real.pi / 6 : ℂ) = ↑(Real.pi / 6) from by push_cast; ring,
+        rw [show (↑Real.pi / 6 : ℂ) = ↑(Real.pi / 6) from by push_cast; ac_rfl,
           Complex.norm_real, Real.norm_of_nonneg (by positivity)]
       rw [hpi]
       exact le_max_of_le_right (by linarith only [Real.pi_le_four])
@@ -424,7 +424,7 @@ private lemma integrableOn_logDeriv_mul_deriv_farSet
     intro t ⟨ht_Icc, h_far⟩ h_zero
     have h_in := h_capture t ht_Icc h_zero
     rw [Finset.mem_coe] at h_in
-    have := h_far _ h_in; rw [sub_self, norm_zero] at this; linarith
+    have := h_far _ h_in; rw [sub_self, norm_zero] at this; linarith only [hε, this]
   have h_cont : ContinuousOn (fun t => logDeriv g (γ t)) K' := by
     intro t ht
     apply ContinuousAt.continuousWithinAt
@@ -578,7 +578,8 @@ private lemma modFormComp_ne_zero_at_height
       Function.Periodic.qParam (1 : ℝ) (↑(⟨z, hz_pos⟩ : ℍ) : ℂ) ≠ 0 := by
     simpa only [Function.Periodic.qParam, ne_eq] using Complex.exp_ne_zero _
   exact absurd ((SlashInvariantFormClass.eq_cuspFunction f ⟨z, hz_pos⟩
-    (by simp) one_ne_zero).trans
+    (by simp only [strictPeriods_Gamma, Nat.cast_one,
+      AddSubgroup.mem_zmultiples]) one_ne_zero).trans
     (h_bridge ▸ h_zero)) (hcusp _ h_qmem h_qne)
 
 include hf in
@@ -625,7 +626,9 @@ private lemma modular_side_h_capture
       subst h_eq; exfalso
       have h_im : (fdBoundaryH H 0).im = H := by
         rw [fdBoundary_H_eq_seg1_H (show (0 : ℝ) ≤ 1 from by norm_num)]
-        simp [fdBoundarySeg1H, add_im, ofReal_im, mul_im, I_re, I_im]
+        simp only [fdBoundarySeg1H, one_div, ofReal_zero, zero_mul, sub_zero, add_im, inv_im,
+          im_ofNat, neg_zero, normSq_ofNat, zero_div, mul_im, ofReal_re, I_im, mul_one, ofReal_im,
+          I_re, mul_zero, add_zero, zero_add]
       exact modFormComp_ne_zero_at_height f hH_pos hcusp h_im h_zero
   · push Not at h1
     by_cases h3 : t ≤ 3
@@ -646,7 +649,8 @@ private lemma modular_side_h_capture
         · subst h4'; exfalso
           have h_im : (fdBoundaryH H 4).im = H := by
             rw [fdBoundary_H_at_four]
-            simp [add_im, ofReal_im, mul_im, I_re, I_im]
+            simp only [add_im, div_ofNat_im, neg_im, one_im, neg_zero, zero_div, mul_im, ofReal_re,
+              I_im, mul_one, ofReal_im, I_re, mul_zero, add_zero, zero_add]
           exact modFormComp_ne_zero_at_height f hH_pos hcusp h_im h_zero
         · have ht_seg4 : fdBoundaryH H t = fdBoundaryH H (4 - t) - 1 := by
             rw [fdBoundary_H_eq_seg4_H h3 h4]
@@ -657,7 +661,8 @@ private lemma modular_side_h_capture
           have h_F_per : Function.Periodic
               (modularFormCompOfComplex f) (1 : ℂ) := by
             have := SlashInvariantFormClass.periodic_comp_ofComplex f
-              (by simp : (1 : ℝ) ∈
+              (by simp only [strictPeriods_Gamma, Nat.cast_one,
+                AddSubgroup.mem_zmultiples] : (1 : ℝ) ∈
                 (Subgroup.map (Matrix.SpecialLinearGroup.mapGL ℝ) Γ(1)).strictPeriods)
             simpa only [Complex.ofReal_one] using this
           have h_F_zero_shifted :
@@ -678,7 +683,8 @@ private lemma modular_side_h_capture
       · exfalso
         have h_im : (fdBoundaryH H t).im = H := by
           rw [fdBoundary_H_eq_seg5_H (by linarith only [h4] : (4 : ℝ) < t)]
-          simp [fdBoundarySeg5H, add_im, ofReal_im, mul_im, I_re, I_im]
+          simp only [fdBoundarySeg5H, add_im, sub_im, ofReal_im, div_ofNat_im, im_ofNat, zero_div,
+            sub_self, mul_im, ofReal_re, I_im, mul_one, I_re, mul_zero, add_zero, zero_add]
         exact modFormComp_ne_zero_at_height f hH_pos hcusp h_im h_zero
 
 include hf in
@@ -757,7 +763,7 @@ theorem cpv_modular_side_tendsto
     rw [show -(2 * ↑Real.pi * I * ((k : ℂ) / 12 - ↑(orderAtCusp' f))) =
       0 + (-(2 * ↑Real.pi * I * (↑k / 12)) +
         2 * ↑Real.pi * I * ↑(orderAtCusp' f)) from by ring]
-    exact Filter.Tendsto.congr (fun ε => by ring)
+    exact Filter.Tendsto.congr (fun ε => by ac_rfl)
       (h_vert_tendsto.add (h_arc.add h_seg5))
   exact h_sum.congr' (h_split.mono (fun ε h => h.symm))
 

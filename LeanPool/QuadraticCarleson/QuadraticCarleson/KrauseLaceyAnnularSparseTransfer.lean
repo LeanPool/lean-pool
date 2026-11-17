@@ -56,16 +56,16 @@ theorem hasSparseOnePBound_finiteSmoothMax_of_dyadic_and_boundary
     apply (ENNReal.ofReal_le_ofReal
       (norm_pairing_finiteSmoothMax_le_dyadicMax_add_boundary lam s f g)).trans
     rw [ENNReal.ofReal_add (norm_nonneg _)
-      (mul_nonneg (by norm_num) (norm_nonneg _)),
-      ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 24),
-      ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 24), mul_assoc]
+      (mul_nonneg (by norm_num1) (norm_nonneg _)),
+      ENNReal.ofReal_mul (by norm_num1 : (0 : ℝ) ≤ 24),
+      ENNReal.ofReal_mul (by norm_num1 : (0 : ℝ) ≤ 24), mul_assoc]
     exact add_le_add hbS (mul_le_mul' le_rfl hbR)
   rcases le_total (sparseForm p f g S) (sparseForm p f g R) with hSR | hRS
   · refine ⟨R, hR, hb.trans ?_⟩
-    rw [ENNReal.ofReal_add hC (mul_nonneg (by norm_num) hD), add_mul]
+    rw [ENNReal.ofReal_add hC (mul_nonneg (by norm_num1) hD), add_mul]
     exact add_le_add (mul_le_mul' le_rfl hSR) le_rfl
   · refine ⟨S, hS, hb.trans ?_⟩
-    rw [ENNReal.ofReal_add hC (mul_nonneg (by norm_num) hD), add_mul]
+    rw [ENNReal.ofReal_add hC (mul_nonneg (by norm_num1) hD), add_mul]
     exact add_le_add le_rfl (mul_le_mul' le_rfl hRS)
 
 theorem hasSparseOnePBound_finiteSmoothMax_of_positiveSuffix_and_boundary
@@ -76,7 +76,7 @@ theorem hasSparseOnePBound_finiteSmoothMax_of_positiveSuffix_and_boundary
     (hboundary : HasSparseOnePBound D p centeredHardyLittlewoodBoundaryOperator) :
     HasSparseOnePBound (2 * C + 24 * D) p (finiteSmoothMaxOperator lam s) := by
   apply hasSparseOnePBound_finiteSmoothMax_of_dyadic_and_boundary
-    lam s (mul_nonneg (by norm_num) hC) hD
+    lam s (mul_nonneg (by norm_num1) hC) hD
   · exact hasSparseOnePBound_dyadicSmoothHighPassMax_of_uniform_positive_finiteSuffixMax
       lam (adjacentDyadicLowerIndex s) hC (hpositive (adjacentDyadicLowerIndex s))
   · exact hboundary
@@ -94,14 +94,14 @@ theorem hasUnitFiniteSmoothSparseBound_of_native_and_boundary
     {C D : ℝ} (hC : HasNativeUnitPositiveSuffixSparseBound C) (hD : 0 ≤ D)
     (hboundary : HasSparseOnePBound D 1 centeredHardyLittlewoodBoundaryOperator) :
     HasUnitFiniteSmoothSparseBound (2 * C + 24 * D) := by
-  refine ⟨add_nonneg (mul_nonneg (by norm_num) hC.1) (mul_nonneg (by norm_num) hD), ?_⟩
+  refine ⟨add_nonneg (mul_nonneg (by norm_num1) hC.1) (mul_nonneg (by norm_num1) hD), ?_⟩
   intro s p hp hp2
   have hp' : 1 < holderConjugate p := one_lt_holderConjugate_of_one_lt hp
   have hh := hasSparseOnePBound_finiteSmoothMax_of_positiveSuffix_and_boundary
     1 s (mul_nonneg hC.1 (zero_lt_one.trans hp').le) hD (hC.2 p hp hp2)
       (hasSparseOnePBound_of_one hp.le hboundary)
   apply hh.mono
-  nlinarith
+  nlinarith only [hD, hp']
 
 /-- Paper-facing all-nonzero smooth hypothesis from native unit suffixes and
 the ordinary maximal-average sparse theorem. -/
@@ -118,9 +118,9 @@ the explicit extra universal constant is `24 * 480 = 11520`. -/
 theorem hasUnitFiniteSmoothSparseBound_of_native
     {C : ℝ} (hC : HasNativeUnitPositiveSuffixSparseBound C) :
     HasUnitFiniteSmoothSparseBound (2 * C + 11520) := by
-  simpa only [show (24 : ℝ) * 480 = 11520 by norm_num] using
+  simpa only [show (24 : ℝ) * 480 = 11520 by norm_num1] using
     hasUnitFiniteSmoothSparseBound_of_native_and_boundary hC
-    (by norm_num : (0 : ℝ) ≤ 480)
+    (by norm_num1 : (0 : ℝ) ≤ 480)
     hasSparseOneOneBound_centeredHardyLittlewoodBoundaryOperator
 
 /-- This closes the scale-offset and nonzero-modulation adapter without any

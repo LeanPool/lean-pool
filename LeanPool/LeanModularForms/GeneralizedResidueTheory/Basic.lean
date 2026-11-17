@@ -152,7 +152,8 @@ private theorem exists_min_above_in_finite_union
   have hS_above_finite : S_above.Finite :=
     hS_finite.subset (fun s hs => hs.1)
   have hne : hS_above_finite.toFinset.Nonempty := by
-    rw [Set.Finite.toFinset_nonempty]; exact ⟨b, by simp [S_above, S, ht_lt_b]⟩
+    rw [Set.Finite.toFinset_nonempty]; exact ⟨b, by simp only [singleton_union, mem_insert_iff,
+      SetLike.mem_coe, mem_ofPred_eq, true_or, ht_lt_b, and_self, S_above, S]⟩
   set s_min := hS_above_finite.toFinset.min' hne
   have hs_min_in : s_min ∈ S_above :=
     (Set.Finite.mem_toFinset hS_above_finite).mp (Finset.min'_mem _ hne)

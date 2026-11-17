@@ -140,8 +140,8 @@ theorem exists_units_smul_g₂_g₃ (L₁ L₂ : PeriodPair)
   suffices h : ∃ α : ℂ, α ≠ 0 ∧ (α ^ 4)⁻¹ * L₂.g₂ = L₁.g₂ ∧ (α ^ 6)⁻¹ * L₂.g₃ = L₁.g₃ by
     obtain ⟨α, hα, h2, h3⟩ := h
     refine ⟨Units.mk0 α hα, ?_, ?_⟩
-    · rw [PeriodPair.g₂_smul]; simpa using h2
-    · rw [PeriodPair.g₃_smul]; simpa using h3
+    · rw [PeriodPair.g₂_smul]; simpa only [Units.val_mk0] using h2
+    · rw [PeriodPair.g₃_smul]; simpa only [Units.val_mk0] using h3
   by_cases ha2 : L₁.g₂ = 0
   · -- `J₁ = 0`, so `L₂.g₂ = 0`; match the `g₃`'s by a 6th root.
     have ha3 : L₁.g₃ ≠ 0 := fun h ↦ hd₁ (by simp [PeriodPair.discr, ha2, h])
@@ -150,12 +150,12 @@ theorem exists_units_smul_g₂_g₃ (L₁ L₂ : PeriodPair)
       have : L₂.g₂ ^ 3 = 0 := by
         rcases mul_eq_zero.mp hz with h | h
         · exact h
-        · exact absurd (pow_eq_zero_iff (by norm_num) |>.mp h) ha3
-      exact pow_eq_zero_iff (by norm_num) |>.mp this
+        · exact absurd (pow_eq_zero_iff (by norm_num1) |>.mp h) ha3
+      exact pow_eq_zero_iff (by norm_num1) |>.mp this
     have hb3 : L₂.g₃ ≠ 0 := fun h ↦ hd₂ (by simp [PeriodPair.discr, hb2, h])
-    obtain ⟨α, hα6⟩ := IsAlgClosed.exists_pow_nat_eq (L₂.g₃ / L₁.g₃) (n := 6) (by norm_num)
+    obtain ⟨α, hα6⟩ := IsAlgClosed.exists_pow_nat_eq (L₂.g₃ / L₁.g₃) (n := 6) (by norm_num1)
     have hαne : α ≠ 0 := by
-      rintro rfl; rw [zero_pow (by norm_num)] at hα6
+      rintro rfl; rw [zero_pow (by norm_num1)] at hα6
       exact (div_ne_zero hb3 ha3) hα6.symm
     refine ⟨α, hαne, ?_, ?_⟩
     · rw [ha2, hb2]; ring
@@ -166,13 +166,13 @@ theorem exists_units_smul_g₂_g₃ (L₁ L₂ : PeriodPair)
         have hz : L₁.g₂ ^ 3 * L₂.g₃ ^ 2 = 0 := by rw [hR, ha3]; ring
         have : L₂.g₃ ^ 2 = 0 := by
           rcases mul_eq_zero.mp hz with h | h
-          · exact absurd (pow_eq_zero_iff (by norm_num) |>.mp h) ha2
+          · exact absurd (pow_eq_zero_iff (by norm_num1) |>.mp h) ha2
           · exact h
-        exact pow_eq_zero_iff (by norm_num) |>.mp this
+        exact pow_eq_zero_iff (by norm_num1) |>.mp this
       have hb2 : L₂.g₂ ≠ 0 := fun h ↦ hd₂ (by simp [PeriodPair.discr, h, hb3])
-      obtain ⟨α, hα4⟩ := IsAlgClosed.exists_pow_nat_eq (L₂.g₂ / L₁.g₂) (n := 4) (by norm_num)
+      obtain ⟨α, hα4⟩ := IsAlgClosed.exists_pow_nat_eq (L₂.g₂ / L₁.g₂) (n := 4) (by norm_num1)
       have hαne : α ≠ 0 := by
-        rintro rfl; rw [zero_pow (by norm_num)] at hα4
+        rintro rfl; rw [zero_pow (by norm_num1)] at hα4
         exact (div_ne_zero hb2 ha2) hα4.symm
       refine ⟨α, hαne, ?_, ?_⟩
       · rw [hα4, inv_div, div_mul_cancel₀ _ hb2]
@@ -184,9 +184,9 @@ theorem exists_units_smul_g₂_g₃ (L₁ L₂ : PeriodPair)
           have hz : L₁.g₂ ^ 3 * L₂.g₃ ^ 2 = 0 := by rw [hR, h]; ring
           have : L₂.g₃ ^ 2 = 0 := by
             rcases mul_eq_zero.mp hz with h' | h'
-            · exact absurd (pow_eq_zero_iff (by norm_num) |>.mp h') ha2
+            · exact absurd (pow_eq_zero_iff (by norm_num1) |>.mp h') ha2
             · exact h'
-          exact pow_eq_zero_iff (by norm_num) |>.mp this
+          exact pow_eq_zero_iff (by norm_num1) |>.mp this
         exact hd₂ (by simp [PeriodPair.discr, h, hb3z])
       have hb3 : L₂.g₃ ≠ 0 := by
         intro h
@@ -194,28 +194,28 @@ theorem exists_units_smul_g₂_g₃ (L₁ L₂ : PeriodPair)
         have : L₂.g₂ ^ 3 = 0 := by
           rcases mul_eq_zero.mp hz with h' | h'
           · exact h'
-          · exact absurd (pow_eq_zero_iff (by norm_num) |>.mp h') ha3
-        exact hb2 (pow_eq_zero_iff (by norm_num) |>.mp this)
+          · exact absurd (pow_eq_zero_iff (by norm_num1) |>.mp h') ha3
+        exact hb2 (pow_eq_zero_iff (by norm_num1) |>.mp this)
       -- `u = g₂₂/g₂₁`, `v = g₃₂/g₃₁`, and `u³ = v²`; pick `α` with `α² = v/u`.
       have hcube : (L₂.g₂ / L₁.g₂) ^ 3 = (L₂.g₃ / L₁.g₃) ^ 2 := by
-        field_simp
+        field_simp (disch := first | assumption | norm_num1 | positivity)
         linear_combination -hR
       obtain ⟨α, hα2⟩ :=
-        IsAlgClosed.exists_pow_nat_eq ((L₂.g₃ / L₁.g₃) / (L₂.g₂ / L₁.g₂)) (n := 2) (by norm_num)
+        IsAlgClosed.exists_pow_nat_eq ((L₂.g₃ / L₁.g₃) / (L₂.g₂ / L₁.g₂)) (n := 2) (by norm_num1)
       have hu : L₂.g₂ / L₁.g₂ ≠ 0 := div_ne_zero hb2 ha2
       have hv : L₂.g₃ / L₁.g₃ ≠ 0 := div_ne_zero hb3 ha3
       have hαne : α ≠ 0 := by
-        rintro rfl; rw [zero_pow (by norm_num)] at hα2
+        rintro rfl; rw [zero_pow (by norm_num1)] at hα2
         exact (div_ne_zero hv hu) hα2.symm
       -- `α⁴ = (v/u)² = u`  and  `α⁶ = (v/u)³ = v`.
       have h4 : α ^ 4 = L₂.g₂ / L₁.g₂ := by
         have : α ^ 4 = (α ^ 2) ^ 2 := by ring
         rw [this, hα2, div_pow, ← hcube]
-        field_simp
+        field_simp (disch := first | assumption | norm_num1 | positivity)
       have h6 : α ^ 6 = L₂.g₃ / L₁.g₃ := by
         have : α ^ 6 = (α ^ 2) ^ 3 := by ring
         rw [this, hα2, div_pow, hcube]
-        field_simp
+        field_simp (disch := first | assumption | norm_num1 | positivity)
       refine ⟨α, hαne, ?_, ?_⟩
       · rw [h4, inv_div, div_mul_cancel₀ _ hb2]
       · rw [h6, inv_div, div_mul_cancel₀ _ hb3]
@@ -547,7 +547,7 @@ theorem lattice_eq_of_weierstrassP_eventuallyEq (L₁ L₂ : PeriodPair)
   have hScount : S.Countable := (lattice_countable L₁).union (lattice_countable L₂)
   have hUconn : IsPreconnected Sᶜ :=
     (hScount.isConnected_compl_of_one_lt_rank
-      (by rw [Complex.rank_real_complex]; norm_num)).isPreconnected
+      (by rw [Complex.rank_real_complex]; norm_num1)).isPreconnected
   have hUdense : Dense Sᶜ := hScount.dense_compl ℝ
   have ha1 : AnalyticOnNhd ℂ L₁.weierstrassP Sᶜ :=
     (L₁.analyticOnNhd_weierstrassP).mono
@@ -586,7 +586,7 @@ lemma orient_eq {b s t : ℂ} {m₁ n₁ m₂ n₂ : ℤ}
   have e : starRingEnd ℂ b * (b * t) = ↑(Complex.normSq b) * t := by
     rw [← mul_assoc, ← Complex.normSq_eq_conj_mul_self]
   have hcb : starRingEnd ℂ b = ↑m₁ + ↑n₁ * starRingEnd ℂ s := by
-    rw [h1]; simp
+    rw [h1]; simp only [map_add, map_intCast, map_mul]
   rw [hcb, h2] at e
   have him := congrArg Complex.im e
   simp only [Complex.mul_im, Complex.add_im, Complex.add_re, Complex.intCast_im,
@@ -873,7 +873,7 @@ theorem isClosed_range_j : IsClosed (Set.range (j : ℍ → ℂ)) := by
     have him2 : z.im ≤ M := hz.2.2.2
     have habs : ‖z‖ ≤ |z.re| + |z.im| := Complex.norm_le_abs_re_add_abs_im z
     have himabs : |z.im| ≤ |M| := by
-      rw [abs_of_nonneg (le_trans (by norm_num) him1)]
+      rw [abs_of_nonneg (le_trans (by norm_num1) him1)]
       exact him2.trans (le_abs_self M)
     exact habs.trans (add_le_add hre himabs)
   have hKc_compact : IsCompact Kc :=
@@ -885,12 +885,12 @@ theorem isClosed_range_j : IsClosed (Set.range (j : ℍ → ℂ)) := by
     · rw [UpperHalfPlane.coe_im]; exact him_ge n
     · rw [UpperHalfPlane.coe_im]; exact him_le n
   obtain ⟨a, haKc, φ, hφmono, hφlim⟩ := hKc_compact.tendsto_subseq hmem
-  have haim : (0 : ℝ) < a.im := lt_of_lt_of_le (by norm_num) haKc.2.2.1
+  have haim : (0 : ℝ) < a.im := lt_of_lt_of_le (by norm_num1) haKc.2.2.1
   set τstar : ℍ := UpperHalfPlane.mk a haim with hτstar
   have hcoe : (τstar : ℂ) = a := rfl
   have htend : Filter.Tendsto (fun k => τ (φ k)) Filter.atTop (𝓝 τstar) := by
     rw [UpperHalfPlane.isEmbedding_coe.tendsto_nhds_iff]
-    simpa [Function.comp_def, hcoe] using hφlim
+    simpa only [Function.comp_def, hcoe] using hφlim
   have hjcont : Continuous (j : ℍ → ℂ) := mdifferentiable_j.continuous
   have htendj : Filter.Tendsto (fun k => j (τ (φ k))) Filter.atTop (𝓝 (j τstar)) :=
     (hjcont.tendsto τstar).comp htend

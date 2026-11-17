@@ -7,16 +7,8 @@ Authors: Juan Pablo Traverso Gianini, Aristotle
 module
 
 public import LeanPool.AsymptoticTrianglePacking.Internal.Tight.SharpRound
-public import LeanPool.AsymptoticTrianglePacking.Internal.Tight.LossVariance
 public import LeanPool.AsymptoticTrianglePacking.Internal.RegularMost
 public import LeanPool.AsymptoticTrianglePacking.Internal.IterationSeq
-public import LeanPool.AsymptoticTrianglePacking.Internal.Basic
-public import LeanPool.AsymptoticTrianglePacking.Internal.Greedy
-public import LeanPool.AsymptoticTrianglePacking.Internal.Round
-public import Mathlib.Analysis.RCLike.Basic
-public import Mathlib.Analysis.Normed.Ring.Basic
-public import Mathlib.Analysis.Real.Sqrt
-public import Mathlib.Tactic.Bound
 
 
 
@@ -600,21 +592,21 @@ theorem exists_uncovered_le_of_roundOracle (H : Finset (Finset V)) {c β : ℝ}
                 rw [heq]; exact hgc
               have hsucc := uncoveredCount_succ hRsub H k
               have hstepbd : uncoveredCount R H (k + 1) ≤ (1 - c) * uncoveredCount R H k := by
-                rw [hsucc]; linarith
+                rw [hsucc]; linarith only [hcov]
               have hpow : (1 - c) * uncoveredCount R H k
                   ≤ (1 - c) * ((1 - c) ^ k * (Fintype.card V : ℝ)) :=
-                mul_le_mul_of_nonneg_left hbd (by linarith)
+                mul_le_mul_of_nonneg_left hbd (by linarith only [hc1])
               calc uncoveredCount R H (k + 1) ≤ (1 - c) * uncoveredCount R H k := hstepbd
                 _ ≤ (1 - c) * ((1 - c) ^ k * (Fintype.card V : ℝ)) := hpow
                 _ = (1 - c) ^ (k + 1) * (Fintype.card V : ℝ) := by ring
-  obtain ⟨T, hT⟩ := exists_pow_lt_of_lt_one hβ0 (show (1 : ℝ) - c < 1 by linarith)
+  obtain ⟨T, hT⟩ := exists_pow_lt_of_lt_one hβ0 (show (1 : ℝ) - c < 1 by linarith only [hc0])
   refine ⟨R, T, hRsub, ?_⟩
   rcases key T with h | ⟨_, h⟩
   · exact h
   · have hVnn : (0 : ℝ) ≤ (Fintype.card V : ℝ) := Nat.cast_nonneg _
     have : (1 - c) ^ T * (Fintype.card V : ℝ) ≤ β * (Fintype.card V : ℝ) :=
       mul_le_mul_of_nonneg_right hT.le hVnn
-    linarith
+    linarith only [h, this]
 
 /-- **The per-round oracle produces the full adaptive strategy sequence.**  This is exactly the
 per-instance conclusion demanded by
@@ -667,7 +659,7 @@ theorem hasRoundOracle_of_scheduled_invariant (H : Finset (Finset V)) {c β : �
       have : (Fintype.card V : ℝ) - (S.card : ℝ) ≤ β * (Fintype.card V : ℝ) :=
         le_trans hdec (le_trans (mul_le_mul_of_nonneg_right hpow hNnn)
           (mul_le_mul_of_nonneg_right hT hNnn))
-      linarith
+      linarith only [hlt, this]
     obtain ⟨R', hR'sub, hP', hcov⟩ := hstep j hjT H' S hPj hlt
     refine ⟨R', hR'sub, ⟨j + 1, hP', ?_⟩, hcov⟩
     have hXdisj : Disjoint S (support (roundMatching R')) := by
@@ -683,13 +675,13 @@ theorem hasRoundOracle_of_scheduled_invariant (H : Finset (Finset V)) {c β : �
     rw [hcard]
     have h1 : (Fintype.card V : ℝ) - (S.card : ℝ)
         - ((support (roundMatching R')).card : ℝ)
-        ≤ (1 - c) * ((Fintype.card V : ℝ) - (S.card : ℝ)) := by linarith
+        ≤ (1 - c) * ((Fintype.card V : ℝ) - (S.card : ℝ)) := by linarith only [hcov]
     calc (Fintype.card V : ℝ) - ((S.card : ℝ) + ((support (roundMatching R')).card : ℝ))
         = (Fintype.card V : ℝ) - (S.card : ℝ)
             - ((support (roundMatching R')).card : ℝ) := by ring
       _ ≤ (1 - c) * ((Fintype.card V : ℝ) - (S.card : ℝ)) := h1
       _ ≤ (1 - c) * ((1 - c) ^ j * (Fintype.card V : ℝ)) :=
-          mul_le_mul_of_nonneg_left hdec (by linarith)
+          mul_le_mul_of_nonneg_left hdec (by linarith only [hc1])
       _ = (1 - c) ^ (j + 1) * (Fintype.card V : ℝ) := by ring
 
 /-! ### Bridges to the hypergraph bricks
@@ -1147,7 +1139,7 @@ theorem tight_ceiling_step_bound {a gam eps lo hi hi1 d l : ℝ}
     exact mul_le_mul_of_nonneg_left (by linarith) hfac
   have heq : a * gam * (d * lo - eps * gam * (d * hi)) * (d * lo) * (1 - gam) / (d * hi)
       = d * (a * gam * (lo - eps * gam * hi) * lo * (1 - gam) / hi) := by
-    field_simp
+    field_simp [hd.ne', hhi0.ne']
   have hsd : d * (hi - a * gam * (lo - eps * gam * hi) * lo * (1 - gam) / hi + eps * gam * hi)
       ≤ d * hi1 := mul_le_mul_of_nonneg_left hstep hd.le
   linarith only [hmono, heq, hsd]
@@ -1191,15 +1183,19 @@ theorem budget_arith {e b h hh dm tot psi sigj exc sig1 N : ℝ}
     (hEB : e + b ≤ (sigj + exc) * N) (hN : 0 ≤ N)
     (hstep : (2 + psi) ^ 2 * (sigj + exc) ≤ sig1) :
     tot ≤ sig1 * N := by
-  have hs : (0 : ℝ) ≤ e + b := by linarith
+  have hs : (0 : ℝ) ≤ e + b := add_nonneg he hb
   have hps : (0 : ℝ) ≤ psi * (e + b) := mul_nonneg hpsi0 hs
-  have g1 : h ≤ psi * (e + b) := by nlinarith [mul_nonneg hpsi0 hb]
-  have g2 : hh ≤ (1 + psi) * (e + b) := by nlinarith
-  have g3 : dm ≤ psi * ((1 + psi) * (e + b)) := by nlinarith
-  have g4 : tot ≤ (2 + psi) ^ 2 * (e + b) := by nlinarith
+  have g1 : h ≤ psi * (e + b) :=
+    h1.trans (mul_le_mul_of_nonneg_left (le_add_of_nonneg_right hb) hpsi0)
+  have g2 : hh ≤ (1 + psi) * (e + b) := by linarith only [h2, g1]
+  have g3 : dm ≤ psi * ((1 + psi) * (e + b)) :=
+    h3.trans (mul_le_mul_of_nonneg_left g2 hpsi0)
+  have g4 : tot ≤ (2 + psi) ^ 2 * (e + b) := by
+    linarith only [htot, g1, g2, g3, hs, hps]
   have g5 : (2 + psi) ^ 2 * (e + b) ≤ (2 + psi) ^ 2 * ((sigj + exc) * N) :=
     mul_le_mul_of_nonneg_left hEB (sq_nonneg _)
-  nlinarith only [g4, g5, hstep, hN]
+  exact g4.trans (g5.trans (by
+    simpa only [mul_assoc] using mul_le_mul_of_nonneg_right hstep hN))
 
 /-! ## One round of the schedule -/
 
@@ -1235,7 +1231,7 @@ theorem tight_round_step {r : ℕ} (hr : 2 ≤ r) {β : ℝ} (Pm : TightParams r
   classical
   have hr1 : 1 ≤ r := le_trans (by norm_num) hr
   have hrR : (2 : ℝ) ≤ (r : ℝ) := by exact_mod_cast hr
-  have hrpos : (0 : ℝ) < (r : ℝ) := by linarith
+  have hrpos : (0 : ℝ) < (r : ℝ) := by linarith only [hrR]
   have hjT : j ≤ Pm.T := le_of_lt hj
   have hj1T : j + 1 ≤ Pm.T := hj
   have hlo_pos : 0 < Pm.lo j := lt_of_lt_of_le Pm.lomin_pos (Pm.lomin_le j hjT)
@@ -1254,7 +1250,7 @@ theorem tight_round_step {r : ℕ} (hr : 2 ≤ r) {β : ℝ} (Pm : TightParams r
     refine le_trans hE ?_
     exact mul_le_mul_of_nonneg_right hsigj hN0
   have hAhalf : ((Fintype.card W : ℝ) - (S.card : ℝ)) / 2 ≤ (A.card : ℝ) := by linarith
-  have hAbig : β / 2 * N ≤ (A.card : ℝ) := by linarith
+  have hAbig : β / 2 * N ≤ (A.card : ℝ) := by linarith only [huncov, hAcard, hEsmall]
   -- apply the sharp round
   have hlo' : ∀ v ∈ A, d * Pm.lo j ≤ (degree K v : ℝ) := by
     intro v hv
@@ -1299,7 +1295,7 @@ theorem tight_round_step {r : ℕ} (hr : 2 ≤ r) {β : ℝ} (Pm : TightParams r
   set Dam : Finset W :=
     (Finset.univ : Finset W).filter (fun v => ζ < (lostDegree Kres Hi v : ℝ)) with hDamdef
   have hDhi : (0 : ℝ) < d * Pm.hi j := by positivity
-  have hr1' : (0 : ℝ) ≤ (r : ℝ) - 1 := by linarith
+  have hr1' : (0 : ℝ) ≤ (r : ℝ) - 1 := by linarith only [hrR]
   have hg1 : (0 : ℝ) ≤ 1 - Pm.gam := by linarith only [Pm.gam_le]
   have hKres0 : ∀ v : W, v ∈ S ∪ covered R' → degree Kres v = 0 := by
     intro v hv
@@ -1321,12 +1317,12 @@ theorem tight_round_step {r : ℕ} (hr : 2 ≤ r) {β : ℝ} (Pm : TightParams r
       intro h
       rw [hKres0 v (Finset.mem_union_left _ h)] at hdeg
       simp only [Nat.cast_zero] at hdeg
-      linarith
+      linarith only [hpos1, hdeg]
     have hvcov : v ∉ covered R' := by
       intro h
       rw [hKres0 v (Finset.mem_union_right _ h)] at hdeg
       simp only [Nat.cast_zero] at hdeg
-      linarith
+      linarith only [hpos1, hdeg]
     have hvA : v ∈ A := by
       rw [hAdef, Finset.mem_compl, Finset.mem_union]
       push Not
@@ -1361,7 +1357,7 @@ theorem tight_round_step {r : ℕ} (hr : 2 ≤ r) {β : ℝ} (Pm : TightParams r
         intro hlt
         exact hv (Finset.mem_filter.mpr ⟨Finset.mem_univ v, hlt⟩)
       push Not at h2
-      linarith
+      linarith only [h1, h2]
   · -- the new floor
     intro v hvS hvE'
     simp only [Finset.mem_union, not_or] at hvS hvE'
@@ -1383,7 +1379,7 @@ theorem tight_round_step {r : ℕ} (hr : 2 ≤ r) {β : ℝ} (Pm : TightParams r
           - Pm.eps * Pm.gam * (d * Pm.hi j) - ζ := by
       rw [hζdef]
       linarith only [mul_le_mul_of_nonneg_left hstep hd.le]
-    linarith
+    linarith only [hlow, hdrop, hlost, hkey]
   · -- codegrees only decrease
     intro x y hxy
     refine le_trans ?_ (hcodeg x y hxy)
@@ -1468,10 +1464,12 @@ theorem tight_band_step_lo_core {a gam n : ℝ} (ha2 : a ≤ 1)
     (hgam : 0 < gam) (_hgam8 : gam ≤ 1 / 8) (hn : 8 * gam ≤ n) (hn4 : n ≤ 1 / 4) :
     0 ≤ 6 * n - 8 * gam - 8 * gam * n - 8 * a * gam * n := by
   have hn0 : (0 : ℝ) ≤ n := by linarith only [hgam, hn]
-  have h1 : 8 * gam * n ≤ n * n := by nlinarith only [hn, hn0]
+  have h1 : 8 * gam * n ≤ n * n := mul_le_mul_of_nonneg_right hn hn0
   have h2 : 8 * a * gam * n ≤ 8 * gam * n := by
     linarith only [mul_nonneg (by linarith : (0 : ℝ) ≤ 1 - a) (mul_nonneg hgam.le hn0)]
-  nlinarith only [hn, hn4, hn0, h2]
+  have hsq : n * n ≤ n / 4 := by
+    linarith only [mul_le_mul_of_nonneg_right hn4 hn0]
+  linarith only [hn, hn0, h1, h2, hsq]
 
 /-- **Ceiling step (polynomial core).**  With `ε = 4aγ` and `8γ ≤ n ≤ 1/4`, the first-order gain
 `4an + 8an²` of the ceiling dominates all the correction terms. -/
@@ -1483,6 +1481,7 @@ theorem tight_band_step_hi_core {a gam n : ℝ} (ha1 : 1 / 2 ≤ a) (ha2 : a ≤
   have hn0 : (0 : ℝ) ≤ n := by linarith only [hgam, hn]
   have ha0 : (0 : ℝ) ≤ a := by linarith only [ha1]
   have hgn : gam ≤ n / 8 := by linarith only [hn]
+  have hgam32 : gam ≤ 1 / 32 := by linarith only [hgn, hn4]
   have han : (0 : ℝ) ≤ a * n := mul_nonneg ha0 hn0
   have h1 : a * gam * (1 - n) ^ 2 ≤ a * n / 8 := by
     calc a * gam * (1 - n) ^ 2 ≤ a * (n / 8) * 1 := by gcongr; nlinarith only [hn4, hn0]
@@ -1491,7 +1490,7 @@ theorem tight_band_step_hi_core {a gam n : ℝ} (ha1 : 1 / 2 ≤ a) (ha2 : a ≤
     have hb : 8 * a * gam * (1 + n) ≤ 1 / 2 := by
       calc
         8 * a * gam * (1 + n) ≤ 8 * 1 * (1 / 32) * (1 + 1 / 4) :=
-          by gcongr; linarith only [hn4, hgn]
+          by gcongr
         _ ≤ 1 / 2 := by norm_num
     calc 8 * a ^ 2 * gam * n * (1 + n) = (a * n) * (8 * a * gam * (1 + n)) := by ring
       _ ≤ (a * n) * (1 / 2) := mul_le_mul_of_nonneg_left hb han
@@ -1502,9 +1501,10 @@ theorem tight_band_step_hi_core {a gam n : ℝ} (ha1 : 1 / 2 ≤ a) (ha2 : a ≤
       _ ≤ a * n := by linarith only [han]
   have h4 : a * (4 * a * gam) * gam * (1 + n) * (1 - n) * (1 - gam) ≤ a * n / 8 := by
     calc a * (4 * a * gam) * gam * (1 + n) * (1 - n) * (1 - gam)
-        ≤ 1 * (4 * 1 * (n / 8)) * (n / 8) * (1 + 1 / 4) * 1 * 1 := by gcongr <;> nlinarith
-      _ ≤ a * n / 8 := by nlinarith only [ha1, hgam, hn, hn4]
-  nlinarith [mul_nonneg ha0 (mul_nonneg hn0 hn0)]
+        ≤ a * (4 * 1 * (n / 8)) * (1 / 32) * (1 + 1 / 4) * 1 * 1 := by
+          gcongr <;> linarith only [ha1, ha2, hgam, hn0, hn4, hgn, hgam32]
+      _ ≤ a * n / 8 := by linarith only [han]
+  linarith only [h1, h2, h3, h4, han, mul_nonneg ha0 (sq_nonneg n)]
 
 /-- **Floor step (scaled).** The polynomial core
 `LeanPool.AsymptoticTrianglePacking.Internal.tight_band_step_lo_core`, multiplied by
@@ -1551,7 +1551,7 @@ theorem tight_band_step_hi_scaled {a gam eps q qk n : ℝ} (ha1 : 1 / 2 ≤ a) (
         + eps * gam * (1 + n)) * (1 + n)
       = (1 + n) ^ 2 + eps * gam * (1 + n) ^ 2
         - a * gam * ((1 - n - eps * gam * (1 + n)) * (1 - n) * (1 - gam)) := by
-    field_simp
+    field_simp [h1n.ne']
     ring
   have hpoly : (1 + n) ^ 2 + eps * gam * (1 + n) ^ 2
         - a * gam * ((1 - n - eps * gam * (1 + n)) * (1 - n) * (1 - gam))
@@ -1569,7 +1569,7 @@ theorem tight_band_step_hi_scaled {a gam eps q qk n : ℝ} (ha1 : 1 / 2 ≤ a) (
       = qk * ((1 + n)
         - a * gam * ((1 - n - eps * gam * (1 + n)) * (1 - n) * (1 - gam)) / (1 + n)
         + eps * gam * (1 + n)) := by
-    field_simp
+    field_simp [hqk.ne', h1n.ne']
   rw [hLHS]
   calc qk * ((1 + n)
         - a * gam * ((1 - n - eps * gam * (1 + n)) * (1 - n) * (1 - gam)) / (1 + n)
@@ -1724,7 +1724,7 @@ theorem exists_tightParams (r : ℕ) (hr : 2 ≤ r) {β : ℝ} (hβ0 : 0 < β) (
     have hpos : (0 : ℝ) < (r : ℝ) / (eps * gam) := by positivity
     nlinarith only [hpos]
   have hGpow : ∀ k : ℕ, (1 : ℝ) ≤ (2 * Gg) ^ k := by
-    intro k; exact one_le_pow₀ (by linarith)
+    intro k; exact one_le_pow₀ (by linarith only [hgam8, hgam, hGge])
   have hGpowpos : ∀ k : ℕ, (0 : ℝ) < (2 * Gg) ^ k := fun k => lt_of_lt_of_le one_pos (hGpow k)
   obtain ⟨exc, hexcdef⟩ : ∃ x : ℝ, x = β / (8 * (2 * Gg) ^ T) := ⟨_, rfl⟩
   have hexcpos : 0 < exc := by
@@ -1825,7 +1825,7 @@ theorem exists_tightParams (r : ℕ) (hr : 2 ≤ r) {β : ℝ} (hβ0 : 0 < β) (
         = β * (2 * Gg) ^ k / (4 * (2 * Gg) ^ T) := by
       field_simp
       ring
-    rw [hrw, div_le_iff₀ (by linarith : (0 : ℝ) < 4 * (2 * Gg) ^ T)]
+    rw [hrw, div_le_iff₀ (by linarith only [hTpos] : (0 : ℝ) < 4 * (2 * Gg) ^ T)]
     linarith only [mul_le_mul_of_nonneg_left h1 hβ0.le, mul_nonneg hβ0.le hTpos.le]
   · -- the decay
     exact tight_schedule_decay_le hrR hgam hgam8 hβ0 hLdef hMdef hgamT_lb

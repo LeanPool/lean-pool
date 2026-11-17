@@ -1,0 +1,44 @@
+slug: kls
+title: The dimension-free Kannan–Lovász–Simonovits bound
+summary: Formalizes the dimension-free Poincaré bound of Bizeul, Klartag and Lehec
+  via cutoff stochastic localization. The project includes the covariance-normalized
+  bound and two density formulations.
+branch: probability theory and convex geometry
+entry_module: LeanPool.KLS
+authors:
+- kls-lean contributors
+source:
+  arxiv: 2610.05474v1
+  url: https://github.com/human-ai-mathematics/kls-lean/tree/f280ffb3949e275593bb68b9356a70f92d52d1ee
+  github_repo: human-ai-mathematics/kls-lean
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+- FunctionalInequalities.KLS.kls
+- KLSOpenAI.kls
+- KLSOpenAI.kls_locallyLipschitz
+main_results:
+- declaration: FunctionalInequalities.KLS.kls
+  informal: The Poincaré constant of a finite-dimensional log-concave probability
+    measure with finite second moment is bounded by a universal constant times
+    the operator norm of its covariance, including on singular affine supports.
+  source_ref: P. Bizeul, B. Klartag and J. Lehec, arXiv:2610.05474v1, Theorem 1.1.
+- declaration: KLSOpenAI.kls
+  informal: One Poincaré constant works for isotropic log-concave probability
+    densities in all positive dimensions and smooth compactly supported test functions.
+  source_ref: OpenAI KLS model at commit adc7f1241b42e322a6451854ab7e4b4c146bf78a.
+- declaration: KLSOpenAI.kls_locallyLipschitz
+  informal: One Poincaré constant works for isotropic log-concave probability densities
+    in all positive dimensions and locally Lipschitz square-integrable test functions,
+    with extended gradient energy.
+  source_ref: P. Bizeul, B. Klartag and J. Lehec, arXiv:2610.05474v1, Theorem 1.1.
+tags:
+- kls
+- log-concavity
+- poincare-inequality
+- stochastic-localization
+msc:
+- 60E15
+- 46E35
+- 52A23

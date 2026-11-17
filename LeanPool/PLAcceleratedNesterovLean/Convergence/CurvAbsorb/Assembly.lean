@@ -47,12 +47,12 @@ private theorem existsScaledRadius (a b c e M : ℝ)
     ∃ radius > 0, radius ≤ a ∧ M * radius < b ∧ M * radius < c ∧ M * radius < e := by
   let δ := min (min (min a b) c) e
   have hδ : 0 < δ := lt_min (lt_min (lt_min ha hb) hc) he
-  have hden : 0 < M + 1 := by linarith
+  have hden : 0 < M + 1 := by linarith only [hM]
   let radius := δ / (M + 1)
   have hradius : 0 < radius := div_pos hδ hden
   have hscaled : (M + 1) * radius = δ := mul_div_cancel₀ _ (ne_of_gt hden)
   have hsmall : M * radius < δ := by nlinarith
-  have hle : radius ≤ δ := div_le_self (le_of_lt hδ) (by linarith)
+  have hle : radius ≤ δ := div_le_self (le_of_lt hδ) (by linarith only [hM])
   have hδa : δ ≤ a := (min_le_left _ _).trans ((min_le_left _ _).trans (min_le_left _ _))
   have hδb : δ ≤ b := (min_le_left _ _).trans ((min_le_left _ _).trans (min_le_right _ _))
   have hδc : δ ≤ c := (min_le_left _ _).trans (min_le_right _ _)
@@ -71,7 +71,8 @@ private theorem orthogonalCombinationBound (P : E →L[ℝ] E)
   have h1 : ‖(1 - sa) • (v - P v)‖ ≤ ‖v - P v‖ := by
     rw [norm_smul, Real.norm_eq_abs]
     calc |1 - sa| * ‖v - P v‖ ≤ 1 * ‖v - P v‖ := by
-          gcongr; rw [abs_le]; exact ⟨by linarith [hsa_pos], by linarith [hsa_lt1]⟩
+          gcongr; rw [abs_le]
+          exact ⟨by linarith only [hsa_pos, hsa_lt1], by linarith only [hsa_pos, hsa_lt1]⟩
       _ = ‖v - P v‖ := one_mul _
   have hPv_sub : ‖v - P v‖ ≤ ‖v‖ := by
     rw [← Real.sqrt_sq (norm_nonneg v), ← Real.sqrt_sq (norm_nonneg (v - P v))]
@@ -94,7 +95,7 @@ private theorem orthogonalCombinationBound (P : E →L[ℝ] E)
         have hh1 : ‖(1 - sa) • (v - P v)‖ ≤ ‖v‖ := h1.trans hPv_sub
         have hh3 : Real.sqrt η * ‖gn - P gn‖ ≤ Real.sqrt η * ‖gn‖ :=
           mul_le_mul_of_nonneg_left hPg_sub (Real.sqrt_nonneg η)
-        linarith [hsm_e, hη_g, hh1, hh3]
+        linarith only [h1, hPv_sub, hsm_e, hη_g, hh3, hh1]
     _ ≤ Cv * Real.sqrt Ln + sm * (Ce * Real.sqrt Ln) +
         Real.sqrt η * (Cg * Real.sqrt Ln) := by gcongr
     _ = (Cv + sm * Ce + Real.sqrt η * Cg) * Real.sqrt Ln := by ring
@@ -200,10 +201,10 @@ private theorem curvAbsorbAssemblyFamily {ι : Type*}
   obtain ⟨δ_diff, hδ_diff_pos, hπ_diff_ball⟩ := hπ_diff_near
   -- Expansion factor: dist(πx, m*) ≤ 2·dist(x, m*), dist(x'n1, m*) ≤ (1+Ch)·R
   let M := 2 + Ch + 1
-  have hM_ge3 : (3 : ℝ) ≤ M := by linarith [hCh_nn]
+  have hM_ge3 : (3 : ℝ) ≤ M := by linarith only [hCh_nn]
   obtain ⟨R₀, hR₀_pos, hR₀_le_δUp, hMR₀_lt_δU, hMR₀_lt_δDπ, hMR₀_lt_δdiff⟩ :=
     existsScaledRadius δ_Up δ_U δ_Dπ δ_diff M hδ_Up_pos hδ_U_pos hδ_Dπ_pos hδ_diff_pos
-      (by linarith)
+      (by linarith only [hsa_pos, hsa_lt1, hCh_nn])
   refine ⟨R₀, hR₀_pos, ?_⟩
   intro i hsx hslx hLn_le
   -- Abbreviations
@@ -236,16 +237,16 @@ private theorem curvAbsorbAssemblyFamily {ι : Type*}
   rw [hnd] at hcoer
   -- ‖v‖² ≤ C_coer·Ln, ‖e‖² ≤ C_coer/μ'·Ln
   have hv_sq : ‖sn.v‖ ^ 2 ≤ C_coer * Ln := by
-    have := mul_nonneg (le_of_lt hμ') (sq_nonneg ‖en‖); linarith
+    have := mul_nonneg (le_of_lt hμ') (sq_nonneg ‖en‖); linarith only [hcoer, this]
   have he_sq : ‖en‖ ^ 2 ≤ C_coer / μ' * Ln := by
-    have h1 : μ' * ‖en‖ ^ 2 ≤ C_coer * Ln := by have := sq_nonneg ‖sn.v‖; linarith
+    have h1 : μ' * ‖en‖ ^ 2 ≤ C_coer * Ln := by
+      have := sq_nonneg ‖sn.v‖
+      linarith only [hcoer, this]
     rw [div_mul_eq_mul_div]
-    exact (le_div_iff₀ hμ').mpr (by linarith)
+    exact (le_div_iff₀ hμ').mpr (by linarith only [h1])
   -- Ln ≥ 0
-  have hLn_nn : (0 : ℝ) ≤ Ln := by
-    have h1 := sq_nonneg ‖sn.v‖
-    have h2 := mul_nonneg (le_of_lt hμ') (sq_nonneg ‖en‖)
-    exact nonneg_of_mul_nonneg_left (by linarith) hC_coer
+  have hLn_nn : (0 : ℝ) ≤ Ln :=
+    nonneg_of_mul_nonneg_right ((sq_nonneg ‖sn.v‖).trans hv_sq) hC_coer
   -- √Ln ≤ R₀
   have hLn_sqrt : Real.sqrt Ln ≤ R₀ := by
     calc Real.sqrt Ln ≤ Real.sqrt (R₀ ^ 2) := Real.sqrt_le_sqrt hLn_le
@@ -287,7 +288,7 @@ private theorem curvAbsorbAssemblyFamily {ι : Type*}
     have := (hπ_on_U x'n hx'n_U).2
     have hπe : dist x'n (π x'n) ≤ dist x'n mstar :=
       this ▸ Metric.infDist_le_dist_of_mem hmstar
-    linarith [dist_triangle (π x'n) x'n mstar, dist_comm (π x'n) x'n]
+    linarith only [hd1, hπe, dist_triangle (π x'n) x'n mstar, dist_comm (π x'n) x'n]
   -- ── x'_{n+1} ∈ B(mstar, (1+Ch)·R₀) ──
   have hx'n1_eq : (nesterovStep f η ρ sn).lookahead η = x'n + hn := by
     change (nesterovStep f η ρ sn).lookahead η =
@@ -297,19 +298,19 @@ private theorem curvAbsorbAssemblyFamily {ι : Type*}
     have hd1 := Metric.mem_ball.mp hslx
     have hhn_le : ‖hn‖ ≤ Ch * R₀ :=
       le_trans hhn_bound (mul_le_mul_of_nonneg_left hLn_sqrt hCh_nn)
-    linarith [dist_triangle (x'n + hn) x'n mstar,
-              show dist (x'n + hn) x'n = ‖hn‖ from by rw [dist_eq_norm, add_sub_cancel_left]]
+    linarith only [hd1, hhn_le, dist_triangle (x'n + hn) x'n mstar,
+      show dist (x'n + hn) x'n = ‖hn‖ from by rw [dist_eq_norm, add_sub_cancel_left]]
   -- Both points in Dπ-controlled region (dist < M·R₀)
   have hMR₀_ge_2R₀ : 2 * R₀ ≤ M * R₀ :=
-    mul_le_mul_of_nonneg_right (by linarith [hM_ge3]) (le_of_lt hR₀_pos)
+    mul_le_mul_of_nonneg_right (by linarith only [hM_ge3]) hR₀_pos.le
   have hMR₀_ge_1ChR₀ : (1 + Ch) * R₀ ≤ M * R₀ :=
-    mul_le_mul_of_nonneg_right (by linarith [hCh_nn]) (le_of_lt hR₀_pos)
+    mul_le_mul_of_nonneg_right (by linarith only [hsa_pos, hsa_lt1, hCh_nn]) (le_of_lt hR₀_pos)
   have hπx'n_ctrl : dist (π x'n) mstar < M * R₀ := by
-    linarith [hπx'n_dist]
+    linarith only [hπx'n_dist, hMR₀_ge_2R₀]
   have hx'n_ctrl : dist x'n mstar < M * R₀ := by
-    have := Metric.mem_ball.mp hslx; linarith
+    have := Metric.mem_ball.mp hslx; linarith only [hR₀_pos, hMR₀_ge_2R₀, this]
   have hx'n1_ctrl : dist (x'n + hn) mstar < M * R₀ := by
-    linarith [hx'n1_dist]
+    linarith only [hR₀_pos, hx'n1_dist]
   -- ‖Dπ(π(x'n)) - P‖ ≤ ε₁
   have hDπ_πx'n : ‖fderiv ℝ π (π x'n) - P‖ ≤ ε₁ :=
     (hDπ_in_MR₀ (π x'n) hπx'n_ctrl).1
@@ -370,7 +371,7 @@ private theorem curvAbsorbAssemblyFamily {ι : Type*}
     hge θ hθ_pos
   apply le_trans (mul_le_mul_of_nonneg_left (show _ ≤ K from ?_) (le_of_lt hε₁_pos)) hε₁K_le
   dsimp [K]
-  linarith
+  linarith only [hsa_pos, hsa_lt1]
 
 /-- A uniform curvature-absorption radius for Nesterov sequences with zero initial velocity. -/
 theorem curv_absorb_assembly

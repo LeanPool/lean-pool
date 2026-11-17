@@ -28,7 +28,7 @@ noncomputable def fixedHeightRadius (lam : ℝ) (height : ℕ) (hlam : lam ≠ 0
   (2 : ℝ) ^ (oscillatoryScaleIndex lam height hlam - 1)
 
 theorem fixedHeightRadius_pos (lam : ℝ) (height : ℕ) (hlam : lam ≠ 0) :
-    0 < fixedHeightRadius lam height hlam := zpow_pos (by norm_num) _
+    0 < fixedHeightRadius lam height hlam := zpow_pos (by norm_num1) _
 
 /-- The exact scale choice gives the common quadratic height interval
 `[2^(2h)/4, 2^(2h)]` for the outer annular radius. -/
@@ -56,7 +56,7 @@ theorem fixedHeightRadius_height {lam : ℝ} (hlam : 0 < lam) (height : ℕ) :
     omega
   rw [heq, hpow] at hlow
   rw [heq, pow_succ (2 : ℝ) height, mul_pow, hpow] at hupp
-  constructor <;> nlinarith
+  constructor <;> linarith only [hlam, hlow, hupp]
 
 /-- The actual positive half of a fixed-height dyadic quadratic kernel. -/
 noncomputable def positiveFixedHeightQuadraticKernel
@@ -93,7 +93,7 @@ theorem fixedHeight_dyadic_decay_parameter (height : ℕ) (hh : 1 ≤ height) :
     1 ≤ ((2 : ℝ) ^ (2 * height) / 4) * (1 / (2 : ℝ) ^ ((height - 1) / 5)) ^ 5 := by
   have hexp : 5 * ((height - 1) / 5) + 2 ≤ 2 * height := by omega
   have hp : (2 : ℝ) ^ (5 * ((height - 1) / 5) + 2) ≤ (2 : ℝ) ^ (2 * height) :=
-    pow_le_pow_right₀ (by norm_num) hexp
+    pow_le_pow_right₀ (by norm_num1) hexp
   have hid : ((2 : ℝ) ^ (2 * height) / 4) * (1 / (2 : ℝ) ^ ((height - 1) / 5)) ^ 5 =
       (2 : ℝ) ^ (2 * height) / (2 : ℝ) ^ (5 * ((height - 1) / 5) + 2) := by
     rw [pow_add]
@@ -116,7 +116,7 @@ theorem finite_positiveFixedHeightQuadraticKernel_maximal_sq_decay
   convert finite_positiveFixedHeightQuadraticKernel_maximal_sq_lintegral_le n height lam hlam
     (by positivity : 0 < 1 / (2 : ℝ) ^ ((height - 1) / 5))
     ((div_le_one (by positivity : 0 < (2 : ℝ) ^ ((height - 1) / 5))).mpr
-      (one_le_pow₀ (by norm_num : (1 : ℝ) ≤ 2)))
+      (one_le_pow₀ (by norm_num1 : (1 : ℝ) ≤ 2)))
     (fixedHeight_dyadic_decay_parameter height hh) hf using 1
   congr 2
   ring

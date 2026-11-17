@@ -6,7 +6,6 @@ Authors: Max Obreiter, Tobias Steinbrecher, Robert Foerster
 module
 
 public import Mathlib.Analysis.Real.Sqrt
-import LeanPool.PLAcceleratedNesterovLean.Convergence.LyapunovContraction.Step1
 
 /-!
 # Lyapunov Contraction Step 3: Algebraic Assembly Lemmas
@@ -105,12 +104,15 @@ theorem leading_coeff_slack_lower (a F U V : ℝ)
 -- § 2. Lambda-rho identity and tangential coefficient
 -- ════════════════════════════════════════════════════════════════════════════
 
-/-- λρ² = (1-a)/2. Already in Step1; re-exported for convenience. -/
+/-- λρ² = (1-a)/2. The direct calculation keeps this scalar module
+independent of the analytic descent lemmas. -/
 theorem lambda_rho_sq' (a ρ lam : ℝ) (ha_ne : 1 + a ≠ 0) (ha_pos : 1 - a ≠ 0)
     (hρ : ρ = (1 - a) / (1 + a))
     (hlam : lam = (1 + a) ^ 2 / (2 * (1 - a))) :
-    lam * ρ ^ 2 = (1 - a) / 2 :=
-  lambda_rho_sq a ρ lam ha_ne ha_pos hρ hlam
+    lam * ρ ^ 2 = (1 - a) / 2 := by
+  subst hρ
+  subst hlam
+  field_simp
 
 -- ════════════════════════════════════════════════════════════════════════════
 -- § 3. Flat-case function-value bound

@@ -47,7 +47,7 @@ def pointSumEquivBlockPoint (n : Nat) : Point (n + n) ≃ BlockPoint n :=
 @[simp]
 theorem pointSumEquivBlockPoint_apply (z : Point (n + n)) (i : Fin (n + n)) :
     pointSumEquivBlockPoint n z (finSumFinEquiv.symm i) = z i := by
-  simp [pointSumEquivBlockPoint]
+  simp only [pointSumEquivBlockPoint, Equiv.piCongrLeft_apply_apply]
 
 @[simp]
 theorem pointSumEquivBlockPoint_symm_apply (z : BlockPoint n) (i : Fin (n + n)) :
@@ -118,14 +118,16 @@ theorem pointHessianToBlockHessian_blockHessianToPointHessian
     (A : BlockHessian n) :
     pointHessianToBlockHessian (n := n) (blockHessianToPointHessian A) = A := by
   ext i j
-  simp [pointHessianToBlockHessian, blockHessianToPointHessian]
+  simp only [pointHessianToBlockHessian, blockHessianToPointHessian, Matrix.submatrix_apply,
+    Equiv.symm_apply_apply]
 
 @[simp]
 theorem blockHessianToPointHessian_pointHessianToBlockHessian
     (A : Hessian (n + n)) :
     blockHessianToPointHessian (n := n) (pointHessianToBlockHessian A) = A := by
   ext i j
-  simp [pointHessianToBlockHessian, blockHessianToPointHessian]
+  simp only [blockHessianToPointHessian, pointHessianToBlockHessian, Matrix.submatrix_apply,
+    Equiv.apply_symm_apply]
 
 /--
 Reindexing a Hermitian Hessian on `R^(n+n)` as a block Hessian on
@@ -156,7 +158,9 @@ theorem dotProduct_pointSumEquivBlockPoint
   have h :=
     Equiv.sum_comp finSumFinEquiv
       (fun i : Fin (n + n) => z i * w i)
-  simpa [dotProduct, Fintype.sum_sum_type] using h
+  simpa only [dotProduct, Fintype.sum_sum_type, pointSumEquivBlockPoint_apply_inl,
+    pointSumEquivBlockPoint_apply_inr, Fin.natAdd_eq_addNat, finSumFinEquiv_apply_left,
+    finSumFinEquiv_apply_right] using h
 
 /--
 Matrix-vector multiplication is preserved by reindexing a Hessian on
@@ -172,14 +176,17 @@ theorem pointHessianToBlockHessian_mulVec_pointSumEquivBlockPoint
       have h :=
         Equiv.sum_comp finSumFinEquiv
           (fun j : Fin (n + n) => A (Fin.castAdd n i) j * z j)
-      simpa [Matrix.mulVec, dotProduct, pointHessianToBlockHessian,
-        Fintype.sum_sum_type] using h
+      simpa only [Matrix.mulVec, dotProduct, pointHessianToBlockHessian, Matrix.submatrix_apply,
+        finSumFinEquiv_apply_left, Fintype.sum_sum_type, pointSumEquivBlockPoint_apply_inl,
+        finSumFinEquiv_apply_right, Fin.natAdd_eq_addNat, pointSumEquivBlockPoint_apply_inr] using h
   | inr i =>
       have h :=
         Equiv.sum_comp finSumFinEquiv
           (fun j : Fin (n + n) => A (Fin.natAdd n i) j * z j)
-      simpa [Matrix.mulVec, dotProduct, pointHessianToBlockHessian,
-        Fintype.sum_sum_type] using h
+      simpa only [Matrix.mulVec, dotProduct, pointHessianToBlockHessian, Matrix.submatrix_apply,
+        finSumFinEquiv_apply_right, Fin.natAdd_eq_addNat, Fintype.sum_sum_type,
+        finSumFinEquiv_apply_left, pointSumEquivBlockPoint_apply_inl,
+        pointSumEquivBlockPoint_apply_inr] using h
 
 /--
 The quadratic form of a Hessian is unchanged by the coordinate equivalence
@@ -226,12 +233,12 @@ theorem quadraticForm_mono_of_matrix_le
     dotProduct z (Matrix.mulVec A z) <= dotProduct z (Matrix.mulVec B z) := by
   have hpsd : (B - A).PosSemidef := Matrix.le_iff.mp hAB
   have hnonneg : 0 <= dotProduct z (Matrix.mulVec (B - A) z) := by
-    simpa using hpsd.dotProduct_mulVec_nonneg z
+    exact hpsd.dotProduct_mulVec_nonneg z
   have hquad :
       dotProduct z (Matrix.mulVec (B - A) z) =
         dotProduct z (Matrix.mulVec B z) - dotProduct z (Matrix.mulVec A z) := by
-    simp [Matrix.sub_mulVec, dotProduct_sub]
-  linarith
+    simp only [Matrix.sub_mulVec, dotProduct_sub]
+  linarith only [hnonneg, hquad]
 
 /--
 Taking the same principal submatrix on both sides preserves the Loewner order.
@@ -241,7 +248,7 @@ theorem matrix_le_submatrix
     (hAB : A <= B) (e : k -> m) :
     A.submatrix e e <= B.submatrix e e := by
   rw [Matrix.le_iff] at hAB ⊢
-  simpa [Matrix.submatrix_sub] using hAB.submatrix e
+  exact hAB.submatrix e
 
 /--
 The coordinate reindexing from `R^(n+n)` to `R^n × R^n` preserves the
@@ -263,9 +270,8 @@ def blockDiagonalIdentity (n : Nat) : BlockHessian n :=
 /-- The block identity matrix is the ordinary identity matrix on `Fin n ⊕ Fin n`. -/
 theorem blockDiagonalIdentity_eq_one :
     blockDiagonalIdentity n = (1 : BlockHessian n) := by
-  simp [blockDiagonalIdentity,
-    (Matrix.fromBlocks_one :
-      Matrix.fromBlocks (1 : Hessian n) 0 0 (1 : Hessian n) = (1 : BlockHessian n))]
+  simp only [blockDiagonalIdentity, (Matrix.fromBlocks_one : Matrix.fromBlocks (1 : Hessian n) 0 0
+    (1 : Hessian n) = (1 : BlockHessian n))]
 
 /--
 The identity matrix on `R^(n+n)` becomes the block identity matrix on
@@ -281,8 +287,9 @@ theorem pointHessianToBlockHessian_one :
   have h' :
       pointHessianToBlockHessian (n := n) (1 : Hessian (n + n)) =
         (1 : BlockHessian n) := by
-    simp [pointHessianToBlockHessian] at h ⊢
-  simpa [blockDiagonalIdentity_eq_one] using h'
+    simp only [Matrix.coe_reindexLinearEquiv, Matrix.reindex_apply, Equiv.symm_symm,
+      Matrix.submatrix_one_equiv, pointHessianToBlockHessian] at h ⊢
+  simpa only [blockDiagonalIdentity_eq_one] using h'
 
 /--
 A scalar multiple of the identity matrix on `R^(n+n)` becomes the same scalar
@@ -314,7 +321,7 @@ theorem pointHessianToBlockHessian_bounds_of_scalar_identity_bounds
         pointHessianToBlockHessian (n := n) B := by
   constructor
   · have h := pointHessianToBlockHessian_mono (n := n) hlower
-    simpa [pointHessianToBlockHessian_smul_one] using h
+    simpa only [ge_iff_le, pointHessianToBlockHessian_smul_one] using h
   · exact pointHessianToBlockHessian_mono (n := n) hupper
 
 /--
@@ -425,8 +432,9 @@ theorem comparisonBlockDiagonal_quadratic_doubledSameVector
     dotProduct (doubledSameVector z)
         (Matrix.mulVec (comparisonBlockDiagonal X Y) (doubledSameVector z)) =
       dotProduct z (Matrix.mulVec X z) - dotProduct z (Matrix.mulVec Y z) := by
-  simp [doubledSameVector, comparisonBlockDiagonal, Matrix.fromBlocks_mulVec,
-    Matrix.neg_mulVec, dotProduct_neg]
+  simp only [doubledSameVector, comparisonBlockDiagonal, Matrix.fromBlocks_mulVec,
+    Sum.elim_comp_inl, Sum.elim_comp_inr, Matrix.zero_mulVec, add_zero, Matrix.neg_mulVec,
+    zero_add, sumElim_dotProduct_sumElim, dotProduct_neg]
   ring
 
 /--
@@ -464,19 +472,19 @@ theorem hessian_quadraticForm_le_of_entrywise_abs_le
     have hquad_eq :
         quadraticModel (n := n) 0 0 0 A v =
           (1 / 2 : Real) * dotProduct (Matrix.mulVec A v) v := by
-      simp [quadraticModel]
+      simp only [quadraticModel, sub_zero, zero_dotProduct, add_zero, one_div, zero_add]
     have hquad' :
         |(1 / 2 : Real) * dotProduct (Matrix.mulVec A v) v| <=
           ((1 / 2 : Real) * eta * (n : Real) * (n : Real)) * ‖v‖ ^ 2 := by
-      simpa [hquad_eq] using hquad
-    linarith
+      simpa only [one_div, abs_mul, abs_inv, Nat.abs_ofNat, hquad_eq, sub_zero] using hquad
+    linarith only [hle_abs, hquad']
   have hdot_norm : ‖v‖ ^ 2 <= dotProduct v v :=
     norm_sq_le_dotProduct_self v
   have hcoeff_nonneg : 0 <= eta * (n : Real) * (n : Real) := by positivity
   calc
     dotProduct (Matrix.mulVec A v) v <=
         (eta * (n : Real) * (n : Real)) * ‖v‖ ^ 2 := by
-      linarith
+      linarith only [hhalf_le]
     _ <= (eta * (n : Real) * (n : Real)) * dotProduct v v := by
       exact mul_le_mul_of_nonneg_left hdot_norm hcoeff_nonneg
 
@@ -511,16 +519,16 @@ theorem exists_hessian_le_smul_one_of_isHermitian
   · intro v
     have hquad :
         dotProduct (Matrix.mulVec A v) v <= mu * dotProduct v v := by
-      simpa [mu] using
+      exact
         hessian_quadraticForm_le_of_entrywise_abs_le
           (n := n) A heta_nonneg hentry v
     have hdiffQuad :
         star v ⬝ᵥ Matrix.mulVec (mu • (1 : Hessian n) - A) v =
           mu * dotProduct v v - dotProduct (Matrix.mulVec A v) v := by
-      simp [Matrix.sub_mulVec, Matrix.smul_mulVec, dotProduct_sub, Matrix.one_mulVec,
-        dotProduct_comm]
+      simp only [star_trivial, Matrix.sub_mulVec, Matrix.smul_mulVec, Matrix.one_mulVec,
+        dotProduct_sub, dotProduct_smul, smul_eq_mul, dotProduct_comm]
     rw [hdiffQuad]
-    linarith
+    linarith only [hquad]
 
 /--
 Every real symmetric block Hessian on `R^n × R^n` is bounded above by a scalar
@@ -540,7 +548,8 @@ theorem exists_blockHessian_le_smul_blockDiagonalIdentity_of_isHermitian
     ⟨mu, hmu⟩
   refine ⟨mu, ?_⟩
   have hblock := pointHessianToBlockHessian_mono (n := n) hmu
-  simpa [pointHessianToBlockHessian_smul_one] using hblock
+  simpa only [ge_iff_le, pointHessianToBlockHessian_blockHessianToPointHessian,
+    pointHessianToBlockHessian_smul_one] using hblock
 
 /--
 Young's inequality for the coordinate dot product.
@@ -561,14 +570,14 @@ theorem dotProduct_le_young
       dotProduct (epsilon • u - v) (epsilon • u - v) =
         epsilon ^ 2 * dotProduct u u - 2 * epsilon * dotProduct u v +
           dotProduct v v := by
-    simp [dotProduct_sub, dotProduct_smul, dotProduct_comm]
+    simp only [dotProduct_sub, dotProduct_comm, dotProduct_smul, smul_eq_mul]
     ring
   have heps_nonneg : 0 <= epsilon := hepsilon.le
   have hmul :
       2 * epsilon * dotProduct u v <=
         epsilon ^ 2 * dotProduct u u + dotProduct v v := by
     rw [hdot] at hnonneg
-    linarith
+    linarith only [hnonneg]
   have hdiv := div_le_div_of_nonneg_right hmul (by positivity : 0 <= 2 * epsilon)
   have hden_pos : 0 < 2 * epsilon := by positivity
   have hden_ne : 2 * epsilon ≠ 0 := ne_of_gt hden_pos
@@ -581,6 +590,6 @@ theorem dotProduct_le_young
         (epsilon / 2) * dotProduct u u + (epsilon⁻¹ / 2) * dotProduct v v := by
     rw [hinv_eq]
     field_simp [ne_of_gt hepsilon]
-  simpa [hleft, hright] using hdiv
+  simpa only [ge_iff_le, hleft, hright] using hdiv
 
 end ViscositySolns

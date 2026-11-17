@@ -115,7 +115,7 @@ lemma memSobolev_derivCoeff {s : ℝ} {k : ℕ} {α : Fin n → ℕ}
       a m ) 2 ) ( weight_nonneg s m ) using 1
   all_goals (first
     | (ring!; done)
-    | (rw [h_weight_split]; ring))
+    | (rw [h_weight_split]; ring_nf))
 
 /-
 If `a ∈ ℓ²_(s+k)`, `2s > n`, and `|α| ≤ k`, then `m ↦ (im)^α aₘ ∈ ℓ¹`.

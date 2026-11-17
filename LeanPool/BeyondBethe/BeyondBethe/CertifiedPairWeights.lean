@@ -8,7 +8,12 @@ module
 
 public import LeanPool.BeyondBethe.BeyondBethe.DirectedPairCost
 public import LeanPool.BeyondBethe.BeyondBethe.GreedyRowMatching
-public import Mathlib.Tactic
+import Mathlib.Tactic.GCongr -- shake: keep
+import Mathlib.Tactic.Linarith -- shake: keep
+import Mathlib.Tactic.NormNum -- shake: keep
+import Mathlib.Tactic.Positivity -- shake: keep
+import Mathlib.Tactic.Ring -- shake: keep
+import Mathlib.Tactic.SplitIfs -- shake: keep
 
 /-! # Certified Pair Weights -/
 

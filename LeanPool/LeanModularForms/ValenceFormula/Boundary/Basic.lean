@@ -120,7 +120,8 @@ lemma fdBoundary_at_three :
   rw [h, exp_mul_I, ← ofReal_cos, ← ofReal_sin,
     show (2 * Real.pi / 3 : ℝ) = Real.pi - Real.pi / 3 by ring,
     Real.cos_pi_sub, Real.cos_pi_div_three, Real.sin_pi_sub, Real.sin_pi_div_three]
-  simp [ellipticPointRho, ellipticPointRho', UpperHalfPlane.coe_mk]
+  simp only [one_div, ofReal_neg, ofReal_inv, ofReal_ofNat, ofReal_div, ellipticPointRho,
+    ellipticPointRho', UpperHalfPlane.coe_mk, add_left_inj]
   ring
 
 lemma fdBoundary_at_four :
@@ -221,7 +222,8 @@ lemma fdBoundary_H_at_three (H : ℝ) :
   rw [h, exp_mul_I, ← ofReal_cos, ← ofReal_sin,
     show (2 * Real.pi / 3 : ℝ) = Real.pi - Real.pi / 3 by ring,
     Real.cos_pi_sub, Real.cos_pi_div_three, Real.sin_pi_sub, Real.sin_pi_div_three]
-  simp [ellipticPointRho, ellipticPointRho', UpperHalfPlane.coe_mk]
+  simp only [one_div, ofReal_neg, ofReal_inv, ofReal_ofNat, ofReal_div, ellipticPointRho,
+    ellipticPointRho', UpperHalfPlane.coe_mk, add_left_inj]
   ring
 
 lemma fdBoundary_H_at_four (H : ℝ) :

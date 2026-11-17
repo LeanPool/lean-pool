@@ -150,10 +150,10 @@ lemma j₀_ne_zero : (1728 : ℂ) * J τ₁₆₃ ≠ 0 :=
 lemma j₀_ne_1728 : (1728 : ℂ) * J τ₁₆₃ ≠ 1728 := by
   intro hc
   have hJ1 : J τ₁₆₃ = 1 :=
-    mul_left_cancel₀ (show (1728 : ℂ) ≠ 0 by norm_num) (by rw [hc]; ring)
+    mul_left_cancel₀ (show (1728 : ℂ) ≠ 0 by norm_num1) (by rw [hc]; ac_rfl)
   have h := one_lt_norm_J τ₁₆₃_mem_Region
   rw [hJ1, norm_one] at h
-  linarith
+  linarith only [h]
 
 /-- `E₆(τ₁₆₃) ≠ 0` (Estimates `E₆_ne_zero_of_mem_Region`). -/
 lemma E₆_τ₁₆₃_ne_zero : E₆ τ₁₆₃ ≠ 0 :=
@@ -277,7 +277,7 @@ private lemma two_mul_sub_one_ne_zero {z : ℂ} (hz : 0 < z.im) : 2 * z - 1 ≠ 
   have him := congrArg Complex.im h
   simp only [Complex.sub_im, Complex.mul_im, Complex.one_im, Complex.zero_im] at him
   norm_num at him
-  nlinarith [him, hz]
+  linarith [him, hz]
 
 /-- `λ` matches the `GL₂`-action: `↑(Λ • ofComplex z) = λ z` for `z` in the upper half-plane. -/
 private lemma coe_LamGL_smul_ofComplex {z : ℂ} (hz : 0 < z.im) :
@@ -425,7 +425,7 @@ Masser's proof) used below. -/
 private lemma hasDerivAt_poly_comp {P : Polynomial ℂ} {v : ℂ → ℂ} {v' z : ℂ}
     (hv : HasDerivAt v v' z) :
     HasDerivAt (fun y ↦ P.eval (v y)) ((P.derivative).eval (v z) * v') z := by
-  simpa [Function.comp_def] using (P.hasDerivAt (v z)).comp z hv
+  simpa only [Function.comp_def] using (P.hasDerivAt (v z)).comp z hv
 
 private lemma masser_bivariate_derivs
     (s : Finset ℕ) (p : ℕ → Polynomial ℂ) (u v u' v' : ℂ → ℂ) (t u'' v'' : ℂ)
@@ -715,9 +715,9 @@ private lemma masser_norm_form_solve {p k : ℤ} (h : p * p - p * k + 41 * (k * 
     (p = 1 ∧ k = 2) ∨ (p = -1 ∧ k = -2) := by
   -- Completing the square in each variable bounds the finite search.
   have hk : |k| ≤ 2 := abs_le_of_sq_le_sq
-    (by nlinarith only [h, sq_nonneg (2 * p - k)]) (by norm_num)
+    (by linarith only [h, sq_nonneg (2 * p - k)]) (by norm_num1)
   have hp : |p| ≤ 13 := abs_le_of_sq_le_sq
-    (by nlinarith only [h, sq_nonneg (p - 82 * k)]) (by norm_num)
+    (by linarith only [h, sq_nonneg (p - 82 * k)]) (by norm_num1)
   have hfinite : ∀ p ∈ Finset.Icc (-13 : ℤ) 13, ∀ k ∈ Finset.Icc (-2 : ℤ) 2,
       p * p - p * k + 41 * (k * k) = 163 →
         (p = 1 ∧ k = 2) ∨ (p = -1 ∧ k = -2) := by decide +kernel
@@ -744,7 +744,7 @@ private lemma masser_fixes_of_coset {e f g : ℤ} (γ : SL(2, ℤ)) {Aτ τ' : �
       push_cast at h0
       obtain ⟨hc0, hd0⟩ := QF.int_lin_eq_zero Aτ h0
       rw [hc0, hd0] at hdet
-      simp at hdet
+      simp only [Fin.isValue, mul_zero, sub_self, zero_ne_one] at hdet
     rw [eq_div_iff hden, hW] at hco
     simp only [eq_intCast] at hco
     simp only [QF.Fixes]
@@ -763,7 +763,7 @@ private lemma masser_fixes_pm {p q r s : ℤ} (hfix : QF.Fixes p q r s τ₁₆�
     push_cast
     linear_combination τ₁₆₃_sq
   have hprim : QF.IsPrimitive ⟨1, -1, 41⟩ := fun d hd _ _ ↦ isUnit_of_dvd_one hd
-  have hpd : QF.IsPosDef ⟨1, -1, 41⟩ := ⟨one_pos, by norm_num [QF.disc]⟩
+  have hpd : QF.IsPosDef ⟨1, -1, 41⟩ := ⟨one_pos, by norm_num only [QF.disc]⟩
   obtain ⟨k, hr, hsp, hq⟩ := QF.fixes_classification hprim hpd hroot hfix
   dsimp only at hr hsp hq
   have heq : p * p - p * k + 41 * (k * k) = 163 := by

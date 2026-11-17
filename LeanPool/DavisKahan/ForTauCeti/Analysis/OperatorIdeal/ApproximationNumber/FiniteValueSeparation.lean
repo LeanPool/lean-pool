@@ -101,13 +101,13 @@ theorem exists_uniform_positive_separation
   refine ⟨η, hη0, ?_, ?_, ?_⟩
   · have hmin : min (ε / 16) (min δv δp) ≤ ε / 16 := min_le_left _ _
     dsimp only [η]
-    nlinarith
+    nlinarith only [hε, hmin]
   · intro i
     have hmin1 : min (ε / 16) (min δv δp) ≤ min δv δp := min_le_right _ _
     have hmin2 : min δv δp ≤ δv := min_le_left _ _
     have hlt : δv < a i := hδv i (Finset.mem_univ i)
     dsimp only [η]
-    nlinarith
+    nlinarith only [hδv0, hmin1, hmin2, hlt]
   · intro i j hij
     have hp : (i, j) ∈ pairs := by
       apply Finset.mem_filter.mpr
@@ -117,7 +117,7 @@ theorem exists_uniform_positive_separation
     have hmin1 : min (ε / 16) (min δv δp) ≤ min δv δp := min_le_right _ _
     have hmin2 : min δv δp ≤ δp := min_le_right _ _
     dsimp only [η]
-    nlinarith
+    nlinarith only [hδp0, hgap, hmin1, hmin2]
 
 end
 

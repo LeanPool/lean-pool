@@ -34,7 +34,7 @@ noncomputable def minimalLayer (S : Finset RealInterval) : Finset RealInterval :
 theorem mem_minimalLayer_iff {S : Finset RealInterval} {I : RealInterval} :
     I ∈ minimalLayer S ↔ I ∈ S ∧ ∀ J ∈ S, J.carrier ⊆ I.carrier → J = I := by
   classical
-  simp [minimalLayer]
+  simp only [minimalLayer, Finset.mem_filter]
 
 theorem minimalLayer_subset (S : Finset RealInterval) : minimalLayer S ⊆ S := by
   intro I hI

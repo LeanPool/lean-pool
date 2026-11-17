@@ -726,9 +726,9 @@ def rotate (J : PolygonalCircle) (a : ZMod J.n) : PolygonalCircle where
   three_le := J.three_le
   vertex i := J.vertex (i + a)
   adjacent_ne i := by
-    convert J.adjacent_ne (i + a) using 1; ring
+    convert J.adjacent_ne (i + a) using 1; ring_nf
   consecutive_inter i := by
-    convert J.consecutive_inter (i + a) using 1 <;> ring
+    convert J.consecutive_inter (i + a) using 1 <;> ring_nf
   nonadjacent_disjoint i j hij hprev hnext := by
     have h := J.nonadjacent_disjoint (i + a) (j + a)
       (fun h => hij (add_right_cancel h))
@@ -738,7 +738,7 @@ def rotate (J : PolygonalCircle) (a : ZMod J.n) : PolygonalCircle where
       (fun h => hnext (add_right_cancel (by calc
         j + a = i + a + 1 := h
         _ = (i + 1) + a := by ring)))
-    convert h using 1; ring
+    convert h using 1; ring_nf
 
 @[simp] theorem rotate_n (J : PolygonalCircle) (a : ZMod J.n) :
     (J.rotate a).n = J.n := rfl
@@ -762,7 +762,7 @@ theorem rotate_carrier (J : PolygonalCircle) (a : ZMod J.n) :
     obtain ⟨i, hi⟩ := hp
     apply J.edgeSegment_subset_carrier (i + a)
     change p ∈ segment ℝ (J.vertex (i + a)) (J.vertex (i + a + 1))
-    convert hi using 1; ring
+    convert hi using 1; ring_nf
   · intro p hp
     unfold carrier at hp
     rw [Set.mem_iUnion] at hp
@@ -771,7 +771,7 @@ theorem rotate_carrier (J : PolygonalCircle) (a : ZMod J.n) :
     unfold carrier rotate edgeSegment
     rw [Set.mem_iUnion]
     refine ⟨i - a, ?_⟩
-    convert hi using 1; ring
+    convert hi using 1; ring_nf
 
 /-- The bounded and unbounded complementary components depend only on the polygon carrier, not
 on its cyclic indexing. -/
@@ -1915,7 +1915,7 @@ theorem rotate_edgeCrossed_iff (J : PolygonalCircle) (a i : ZMod J.n) (P : Plane
     (J.rotate a).EdgeCrossed i P ↔ J.EdgeCrossed (i + a) P := by
   change SegmentCrossed (J.vertex (i + a)) (J.vertex ((i + 1) + a)) P ↔
     SegmentCrossed (J.vertex (i + a)) (J.vertex (i + a + 1)) P
-  abel
+  abel_nf
 
 namespace ProperChord
 

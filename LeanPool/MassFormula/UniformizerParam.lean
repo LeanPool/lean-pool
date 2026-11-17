@@ -15,7 +15,6 @@ import Mathlib.RingTheory.DedekindDomain.IntegralClosure
 import Mathlib.RingTheory.Henselian
 import Mathlib.RingTheory.Localization.NormTrace
 import Mathlib.RingTheory.Valuation.Integral
-import Mathlib.Topology.UniformSpace.Uniformizable
 
 /-!
 # Auxiliary file: the uniformizer parametrization
@@ -269,7 +268,7 @@ theorem le_addVal_mul_iff (hπ : Irreducible π) (hξ : Irreducible ξ) (hn : 0 
     simp
   · lift v to ℕ using hv with a
     rw [show (n : ℕ∞) * (a : ℕ∞) + ((i : ℕ) : ℕ∞) = ((n * a + (i : ℕ) : ℕ) : ℕ∞) from by
-      push_cast; ring, Nat.cast_le, Nat.cast_le]
+      push_cast; ac_rfl, Nat.cast_le, Nat.cast_le]
     exact mul_le_mul_add_iff i.isLt
 
 omit [IsDomain R] [IsDiscreteValuationRing R] [IsDomain A] [IsDiscreteValuationRing A] in
@@ -339,7 +338,7 @@ private lemma transition_entries (hπ : Irreducible π) (hξ : Irreducible ξ) (
       · rw [hv, ENat.mul_top (by exact_mod_cast hn.ne'), top_add]
         exact le_top
       · lift addVal R (b.repr (η ^ (j : ℕ)) i) to ℕ using hv with c
-        have hcast : (n : ℕ∞) * (c : ℕ∞) = ((n * c : ℕ) : ℕ∞) := by push_cast; ring
+        have hcast : (n : ℕ∞) * (c : ℕ∞) = ((n * c : ℕ) : ℕ∞) := by push_cast; ac_rfl
         have hne : (j : ℕ) ≠ n * c + (i : ℕ) := by
           intro heq
           refine hij (fin_eq_of_mul_add_eq (a := c) (b := 0) ?_)
@@ -1075,8 +1074,8 @@ theorem algebraMap_norm (hπ : Irreducible π) (hint : IsIntegral 𝒪[K] x)
     algebraMap 𝒪[K] K (Algebra.norm 𝒪[K] z) =
       Algebra.norm K (algebraMap ↥(integers (IntermediateField.adjoin K {x}))
         ↥(IntermediateField.adjoin K {x}) z) := by
-  have : IsFractionRing 𝒪[K] K :=
-    inferInstanceAs (IsFractionRing (valuation K).valuationSubring K)
+  have : IsFractionRing 𝒪[K] K := by
+    as_aux_lemma => exact inferInstance
   have : FiniteDimensional K ↥(IntermediateField.adjoin K {x}) :=
     (IntermediateField.adjoin.powerBasis hint.tower_top).finite
   have hIC : IsIntegralClosure ↥(integers (IntermediateField.adjoin K {x})) ↥𝒪[K]
@@ -1102,8 +1101,8 @@ theorem associated_norm_derivative (hπ : Irreducible π) (hint : IsIntegral �
     Associated (Algebra.norm 𝒪[K] (Polynomial.aeval (integralGen hint)
         (Polynomial.derivative (minpoly 𝒪[K] x))))
       (π ^ d (IntermediateField.adjoin K {x})) := by
-  have : IsFractionRing 𝒪[K] K :=
-    inferInstanceAs (IsFractionRing (valuation K).valuationSubring K)
+  have : IsFractionRing 𝒪[K] K := by
+    as_aux_lemma => exact inferInstance
   obtain ⟨N₀, hN₀ne, -, hN₀val, hspan⟩ := discIdeal_eq_span K hπ hint hei
   -- evaluation at `integralGen` agrees with evaluation at the generator of `L`
   have hcoe : ∀ P : Polynomial 𝒪[K],
@@ -1138,8 +1137,8 @@ that coefficient is an associate of `π` (`associated_pi_coeff_zero`). -/
 theorem associated_norm_integralGen (hπ : Irreducible π) (hint : IsIntegral 𝒪[K] x)
     (hei : (minpoly 𝒪[K] x).IsEisensteinAt (Submodule.span 𝒪[K] {π})) :
     Associated (Algebra.norm 𝒪[K] (integralGen hint)) π := by
-  have : IsFractionRing 𝒪[K] K :=
-    inferInstanceAs (IsFractionRing (valuation K).valuationSubring K)
+  have : IsFractionRing 𝒪[K] K := by
+    as_aux_lemma => exact inferInstance
   have : FiniteDimensional K ↥(IntermediateField.adjoin K {x}) :=
     (IntermediateField.adjoin.powerBasis hint.tower_top).finite
   set pb : PowerBasis K ↥(IntermediateField.adjoin K {x}) :=

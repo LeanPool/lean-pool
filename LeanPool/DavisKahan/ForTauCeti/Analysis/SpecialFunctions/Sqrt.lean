@@ -64,8 +64,8 @@ theorem abs_sqrt_sub_one_le_abs_sub_one {μ : ℝ} (hμ : 0 ≤ μ) :
   have key : |Real.sqrt μ - 1| * (Real.sqrt μ + 1) = |μ - 1| := by
     rw [← abs_of_nonneg (by linarith : (0 : ℝ) ≤ Real.sqrt μ + 1), ← abs_mul]
     congr 1
-    nlinarith [hsq]
-  nlinarith [key, mul_nonneg (abs_nonneg (Real.sqrt μ - 1)) hs]
+    nlinarith only [hsq, hsq]
+  nlinarith only [hs, key, key, mul_nonneg (abs_nonneg (Real.sqrt μ - 1)) hs]
 
 /-- If `|μ - 1| ≤ δ ≤ 1 / 2`, then `|1 - (√μ)⁻¹| ≤ δ`.
 
@@ -84,11 +84,11 @@ theorem abs_one_sub_inv_sqrt_le {μ δ : ℝ} (hδ : δ ≤ 1 / 2) (hμ : |μ - 
   have hssq : s ^ 2 = μ := Real.sq_sqrt (le_of_lt hμpos)
   -- `s ≥ 1/2` (since `s² = μ ≥ 1/2`)
   have hssqlb : (1 : ℝ) / 2 ≤ s ^ 2 := by rw [hssq]; linarith
-  have hsge : (1 : ℝ) / 2 ≤ s := by nlinarith [hs0, hssqlb]
+  have hsge : (1 : ℝ) / 2 ≤ s := by nlinarith only [hδ, hμlb, hμpos, hs0, hssq, hs0, hssqlb]
   have hδ0 : 0 ≤ δ := le_trans (abs_nonneg _) hμ
   rw [abs_le] at hμ ⊢
   obtain ⟨hμ1, hμ2⟩ := hμ
-  have hssq' : s * s = μ := by nlinarith [hssq]
+  have hssq' : s * s = μ := by nlinarith only [hssq, hssq]
   -- Lower bound `1 ≤ (1 + δ) * s`: its square is `(1 + δ)² μ ≥ (1 + δ)² (1 - δ) ≥ 1`.
   have hlow : 1 ≤ (1 + δ) * s := by
     have hpos : 0 < (1 + δ) * s := by positivity
@@ -97,8 +97,8 @@ theorem abs_one_sub_inv_sqrt_le {μ δ : ℝ} (hδ : δ ≤ 1 / 2) (hμ : |μ - 
   -- Upper bound `(1 - δ) * s ≤ 1`: equivalently `(1 - δ)² μ ≤ 1` when `1 - δ ≥ 0`.
   have hhigh : (1 - δ) * s ≤ 1 := by
     rcases le_or_gt (1 - δ) 0 with h | h
-    · nlinarith [hs0, h]
-    · nlinarith [hssq', hμ1, hμ2, hδ0, hsge, h, mul_nonneg hδ0 hδ0]
+    · nlinarith only [hδ, h, hs0, h]
+    · nlinarith only [hμlb, hs0, hssq, hμ2, hlow, hssq', hμ1, hμ2, hδ0, hsge, h, mul_nonneg hδ0 hδ0]
   -- Translate the two multiplicative bounds into bounds on `s⁻¹`.
   have hinv_le : s⁻¹ ≤ 1 + δ := by
     rw [inv_eq_one_div, div_le_iff₀ hs0]; linarith [hlow]

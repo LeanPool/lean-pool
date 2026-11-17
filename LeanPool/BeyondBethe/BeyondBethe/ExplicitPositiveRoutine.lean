@@ -9,7 +9,7 @@ module
 public import LeanPool.BeyondBethe.BeyondBethe.FinalAssembly
 public import LeanPool.BeyondBethe.BeyondBethe.ExplicitBetheOptimizer
 public import LeanPool.BeyondBethe.BeyondBethe.SourceStableReindex
-public import Mathlib.Tactic
+import Mathlib.Tactic.Linarith -- shake: keep
 
 /-! # Explicit Positive Routine -/
 

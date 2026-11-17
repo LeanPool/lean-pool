@@ -1,0 +1,34 @@
+slug: lie-trotter-commutator
+title: Lie–Trotter product formula with commutator scaling
+summary: Proves the Lie–Trotter product formula in a complete normed real algebra
+  with norm-one unit, with an explicit error bound proportional to the commutator.
+branch: functional analysis
+entry_module: LeanPool.LieTrotter
+authors:
+- Zayn Blore
+source:
+  url: https://github.com/zblore/lie-trotter-lean
+  github_repo: zblore/lie-trotter-lean
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+- LieTrotter.norm_trotter_sub_le_commutator
+- LieTrotter.trotter_product
+main_results:
+- declaration: LieTrotter.norm_trotter_sub_le_commutator
+  informal: For elements A and B of a complete normed real algebra with norm-one
+    unit and every integer n at least one, the norm of the difference between
+    (exp(A/n) exp(B/n))^n and exp(A+B) is at most
+    norm(AB-BA) exp(norm(A)+norm(B))/(2n).
+- declaration: LieTrotter.trotter_product
+  informal: For any two elements of a complete normed real algebra with norm-one
+    unit, (exp(A/n) exp(B/n))^n converges in norm to exp(A+B).
+tags:
+- functional-analysis
+- banach-algebras
+- operator-splitting
+msc:
+- 46H30
+- 47D06
+- 15A16

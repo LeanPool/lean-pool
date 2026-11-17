@@ -7,11 +7,7 @@ module
 
 public import LeanPool.DomainTheory.Neighborhood.FunctionSpace
 public import LeanPool.DomainTheory.Neighborhood.Theorem74
-import Mathlib.Data.Rat.Cast.Order
-import Mathlib.Tactic.NormNum.Abs
-import Mathlib.Tactic.NormNum.DivMod
-import Mathlib.Tactic.NormNum.OfScientific
-import Mathlib.Tactic.NormNum.Pow
+import Mathlib.Order.ConditionallyCompleteLattice.Basic
 
 /-!
 # Theorem 7.5 (Scott 1981, PRG-19, §7) — `(𝒟₀ → 𝒟₁)` is effectively given
@@ -87,8 +83,8 @@ theorem mem_interList {base : Set β} {M : List (Set β)} {z : β} :
     rw [interList_cons]
     simp only [Set.mem_inter_iff, ih, List.mem_cons]
     constructor
-    · simp_all
-    · simp_all
+    · simp_all only [forall_eq_or_imp, implies_true, and_self]
+    · simp_all only [forall_eq_or_imp, implies_true, and_self]
 
 theorem interList_subset_base {base : Set β} {M : List (Set β)} : interList base M ⊆ base :=
   fun _ hz => (mem_interList.mp hz).1
@@ -199,7 +195,8 @@ theorem stepFun_funListOf_nonempty_iff (el : List ℕ) :
     obtain ⟨Z, hZ, hZle⟩ := hcons
     have hsub' : (sub.map (funPair P₀ P₁)).Sublist (funListOf P₀ P₁ el) := hsub.map _
     have hZle' : ∀ p ∈ sub.map (funPair P₀ P₁), Z ⊆ p.1 := by
-      simp_all
+      simp_all only [List.mem_map, forall_exists_index, and_imp, forall_apply_eq_imp_iff₂,
+        funPair_fst, implies_true]
     have hres := interList_mem_of_stepFun_nonempty h hsub' hZ hZle'
     have hlist : (sub.map (funPair P₀ P₁)).map Prod.snd = sub.map (fun e => P₁.X e.unpair.2) := by
       rw [List.map_map]; rfl
@@ -215,11 +212,12 @@ theorem stepFun_funListOf_nonempty_iff (el : List ℕ) :
       let : DecidablePred (fun e : ℕ => X' ⊆ P₀.X e.unpair.1) := fun e =>
         decidable_of_iff (finc (Nat.pair nx e.unpair.1) = 1) (by
           have h := hfinc (Nat.pair nx e.unpair.1)
-          simp_all)
+          simp_all only [forall_exists_index, and_imp, Prod.forall, Nat.unpair_pair])
       set sub : List ℕ := el.filter (fun e => decide (X' ⊆ P₀.X e.unpair.1)) with hsubdef
       have hsub : sub.Sublist el := List.filter_sublist
       have hmem_iff : ∀ e, e ∈ sub ↔ e ∈ el ∧ X' ⊆ P₀.X e.unpair.1 := by
-        simp_all
+        simp_all only [forall_exists_index, and_imp, Prod.forall, List.filter_sublist,
+          List.mem_filter, decide_eq_true_eq, implies_true]
       have heq : interYs V₁.master (funListOf P₀ P₁ el) X'
           = interList V₁.master (sub.map (fun e => P₁.X e.unpair.2)) := by
         apply Set.ext; intro z
@@ -242,7 +240,8 @@ theorem stepFun_funListOf_nonempty_iff (el : List ℕ) :
           exact hall (P₁.X e.unpair.2) (List.mem_map.mpr ⟨e, hesub, rfl⟩)
       rw [heq]
       refine hcond sub hsub ⟨X', hX', ?_⟩
-      simp_all
+      simp_all only [forall_exists_index, and_imp, Prod.forall, List.filter_sublist,
+        List.mem_filter, decide_eq_true_eq, implies_true]
     exact ⟨leastMap (funListOf P₀ P₁ el) hcons, leastMap_mem_stepFun hL hcons⟩
 
 /-! ### Milestone 3a — deciding consistency of a finite index set via the
@@ -286,8 +285,8 @@ theorem mem_interFrom {A : Set α} {js : List ℕ} {z : α} :
     rw [interFrom, ih]
     simp only [Set.mem_inter_iff, List.mem_cons]
     constructor
-    · simp_all
-    · simp_all
+    · simp_all only [forall_eq_or_imp, implies_true, and_self]
+    · simp_all only [forall_eq_or_imp, and_self, implies_true]
 
 theorem interFrom_subset {A : Set α} {js : List ℕ} : interFrom P A js ⊆ A :=
   fun _ hz => (mem_interFrom P |>.mp hz).1
@@ -298,7 +297,7 @@ theorem interFrom_mem_of_witness {A : Set α} {js : List ℕ} {Z : Set α}
     (hZ : V.mem Z) (hZsub : Z ⊆ interFrom P A js) (hA : V.mem A) :
     V.mem (interFrom P A js) := by
   induction js generalizing A with
-  | nil => simpa [interFrom] using hA
+  | nil => simpa only [interFrom] using hA
   | cons j js ih =>
     rw [interFrom] at hZsub ⊢
     have hAXj : V.mem (A ∩ P.X j) :=
@@ -313,7 +312,7 @@ each prefix is too, by
 theorem interFrom_eq_of_foldl : ∀ (js : List ℕ) (A : Set α) (a : ℕ),
     P.X a = A → V.mem A → V.mem (interFrom P A js) →
     P.X (js.foldl (fun acc j => P.inter acc j) a) = interFrom P A js
-  | [], A, a, hXa, _, _ => by simpa [interFrom] using hXa
+  | [], A, a, hXa, _, _ => by simpa only [List.foldl_nil, interFrom] using hXa
   | j :: js, A, a, hXa, hA, hmem => by
     have hmem' : V.mem (interFrom P (A ∩ P.X j) js) := by rwa [interFrom] at hmem
     have hAXj : V.mem (A ∩ P.X j) :=
@@ -381,7 +380,7 @@ theorem bitSelect_cons (e : ℕ) (L : List ℕ) (b : ℕ) :
 
 theorem bitSelect_sublist (L : List ℕ) (b : ℕ) : (bitSelect L b).Sublist L := by
   induction L generalizing b with
-  | nil => simp
+  | nil => simp only [bitSelect_nil, List.Sublist.refl]
   | cons e L ih =>
     rw [bitSelect_cons]
     split
@@ -472,8 +471,8 @@ theorem consUpd_foldl_flag_zero (projFn fc : ℕ → ℕ) (el : List ℕ) (b a :
   | cons e el ih =>
     rw [List.foldl_cons, consUpd_eval]
     by_cases hb : b % 2 = 1
-    · simp_all
-    · simp_all
+    · simp_all only [selectFn_zero, selectFn_one]
+    · simp_all only [Nat.mod_two_not_eq_one, selectFn_zero]
 
 /-- **Single-pass consistency fold — correctness.** Starting from index `a` (an
 index of `X a`) with
@@ -615,7 +614,7 @@ theorem interList_X_eq_interFrom {V : NeighborhoodSystem α} (P : ComputablePres
     (js : List ℕ) : interList V.master (js.map (fun j => P.X j)) = interFrom P V.master js := by
   apply Set.ext; intro z
   rw [mem_interList, mem_interFrom]
-  simp_all
+  simp_all only [List.mem_map, forall_exists_index, and_imp, forall_apply_eq_imp_iff₂]
 
 /-- The antecedent of Prop 3.9(i) — `{X_{e.1} ∣ e ∈ sub}` admits a common lower
 neighbourhood — is
@@ -730,7 +729,7 @@ theorem decodeList_foldl_appendStp (el : List ℕ) (acc : ℕ) :
     decodeList (List.foldl (fun acc x => appendStp (Nat.pair x (Nat.pair acc 0))) acc el)
       = el.reverse ++ decodeList acc := by
   induction el generalizing acc with
-  | nil => simp
+  | nil => simp only [List.foldl_nil, List.reverse_nil, List.nil_append]
   | cons e el ih =>
     rw [List.foldl_cons, ih, appendStp_eq, decodeList_appendStep, List.reverse_cons,
       List.append_assoc, List.singleton_append]
@@ -751,7 +750,7 @@ theorem primrec_appendCode : Nat.Primrec (fun t => appendCode t.unpair.1 t.unpai
 
 theorem funListOf_append (la lb : List ℕ) :
     funListOf P₀ P₁ (la ++ lb) = funListOf P₀ P₁ la ++ funListOf P₀ P₁ lb := by
-  simp [funListOf, List.map_append]
+  simp only [funListOf, List.map_append]
 
 /-- `stepFun (funListOf (decodeList (appendCode a b)))` is exactly `X a ∩ X b` at
 the level of the
@@ -813,11 +812,15 @@ theorem rel_interYs_funList {f : ApproximableMap V₀ V₁} {el : List ℕ}
         f.mono hp hinc subset_rfl (P₀.mem_X n') (f.rel_cod hp)
       have heq : interYs V₁.master (funPair P₀ P₁ e :: funListOf P₀ P₁ el) (P₀.X n')
           = P₁.X e.unpair.2 ∩ interYs V₁.master (funListOf P₀ P₁ el) (P₀.X n') := by
-        rw [interYs_cons]; simp_all
+        rw [interYs_cons]; simp_all only [imp_self, mem_stepFun, List.mem_cons,
+          forall_eq_or_imp, funPair_fst, funPair_snd, Prod.forall, true_and, Prod.mk.eta,
+          implies_true, forall_const, Set.ofPred_mem_eq]
       rw [heq]; exact f.inter_right hXp2 htail
     · have heq : interYs V₁.master (funPair P₀ P₁ e :: funListOf P₀ P₁ el) (P₀.X n')
           = interYs V₁.master (funListOf P₀ P₁ el) (P₀.X n') := by
-        rw [interYs_cons]; simp_all
+        rw [interYs_cons]; simp_all only [imp_self, mem_stepFun, List.mem_cons,
+          forall_eq_or_imp, funPair_fst, funPair_snd, Prod.forall, Prod.mk.eta, implies_true,
+          IsEmpty.forall_iff, Set.ofPred_true, Set.univ_inter]
       rw [heq]; exact htail
 
 /-- If `stepFun (funListOf ea)` is non-empty, then `interYs Δ₁ (funListOf ea) X`
@@ -913,7 +916,8 @@ theorem mem_condSet {k : ℕ} {A : Set β} {el : List ℕ} {z : β} :
   Iff.rfl
 
 theorem condSet_nil (k : ℕ) (A : Set β) : condSet P₀ P₁ k A [] = A := by
-  ext z; simp [condSet]
+  ext z; simp only [condSet, List.not_mem_nil, IsEmpty.forall_iff, implies_true, and_true,
+    Set.ofPred_mem_eq]
 
 theorem condSet_subset (k : ℕ) (A : Set β) (el : List ℕ) : condSet P₀ P₁ k A el ⊆ A :=
   fun _ hz => hz.1
@@ -927,8 +931,8 @@ theorem condSet_cons_pos {k : ℕ} {A : Set β} {e : ℕ} {el : List ℕ}
   ext z
   simp only [mem_condSet, List.mem_cons, Set.mem_inter_iff]
   constructor
-  · simp_all
-  · simp_all
+  · simp_all only [forall_eq_or_imp, forall_const, and_self, implies_true]
+  · simp_all only [forall_eq_or_imp, imp_self, implies_true, and_self]
 
 /-- `condSet` cons-step when the input does not dominate the head entry's input:
 drop the head. -/
@@ -937,7 +941,7 @@ theorem condSet_cons_neg {k : ℕ} {A : Set β} {e : ℕ} {el : List ℕ}
     condSet P₀ P₁ k A (e :: el) = condSet P₀ P₁ k A el := by
   ext z
   simp only [mem_condSet, List.mem_cons]
-  simp_all
+  simp_all only [forall_eq_or_imp, IsEmpty.forall_iff, true_and]
 
 /-- `condSet k Δ₁ el` is exactly `interYs Δ₁ (funListOf el) (X₀_k)`. -/
 theorem condSet_eq_interYs (k : ℕ) (el : List ℕ) :
@@ -986,7 +990,7 @@ theorem condFoldl_spec (incl0 : ℕ → ℕ)
     by_cases hpred : incl0 (Nat.pair k e.unpair.1) = 1
     · rw [ite_eq_left hpred]
       have hincl : P₀.X k ⊆ P₀.X e.unpair.1 := by
-        simp_all
+        simp_all only [Nat.unpair_pair]
       rw [condSet_cons_pos P₀ P₁ hincl] at hcons ⊢
       have hwit : V₁.mem (A ∩ P₁.X e.unpair.2) :=
         V₁.inter_mem hA (P₁.mem_X _) hcons (condSet_subset P₀ P₁ k (A ∩ P₁.X e.unpair.2) el)
@@ -1064,8 +1068,8 @@ component presentations' consistency chars `fc0`/`fc1`, and prove its spec via
 theorem selectFn_one_iff_imp {A B : ℕ} (hA : A ≤ 1) :
     selectFn A B 1 = 1 ↔ (A = 1 → B = 1) := by
   rcases (show A = 0 ∨ A = 1 by omega) with h | h <;> subst h
-  · rw [selectFn_zero]; simp
-  · rw [selectFn_one]; simp
+  · rw [selectFn_zero]; simp only [zero_ne_one, IsEmpty.forall_iff]
+  · rw [selectFn_one]; simp only [forall_const]
 
 /-- The per-bitmask implication char: `cons₀(selected inputs) → cons₁(selected
 outputs)`. -/
@@ -1132,11 +1136,11 @@ theorem andFoldl_eq_one_iff (g : ℕ → ℕ) :
     rcases (show a = 0 ∨ a = 1 by omega) with h | h <;> subst h
     · rw [selectFn_zero]; simp
     · rw [selectFn_one, List.forall_mem_cons, isOne_eq_one_iff]
-      simp_all
+      simp_all only [Std.le_refl, selectFn_one, true_and]
 
 theorem andFoldl_one (g : ℕ → ℕ) (el : List ℕ) :
     List.foldl (fun acc x => selectFn acc (isOne (g x)) 0) 1 el = 1 ↔ ∀ e ∈ el, g e = 1 := by
-  rw [andFoldl_eq_one_iff g el 1 (le_refl 1)]; simp
+  rw [andFoldl_eq_one_iff g el 1 (le_refl 1)]; simp only [true_and]
 
 /-- One step of the `stepFun`-inclusion fold over `decodeList b`: test
 `interYs-index ⊆ output`. -/
@@ -1659,7 +1663,7 @@ theorem Xenum_isComputableElement_iff (gN : ℕ → ℕ) (hgNp : Nat.Primrec gN)
         : Set (ApproximableMap V₀ V₁)).Nonempty
       rw [stepFun_singleton]
       exact (step_mem (P₀.mem_X _) (P₁.mem_X _)).2
-    simp_all
+    simp_all only [List.mem_cons, List.not_mem_nil, or_false, forall_eq, forall_const]
   · -- map computable ⟹ element computable: guard the bounded-`∀` by the decidable `gN c = 1`.
     intro hmap
     have hR' : REPred (fun s => φ.mem (step (P₀.X s.unpair.1) (P₁.X s.unpair.2))) := hmap
@@ -1825,7 +1829,7 @@ theorem mem_Xenum_iff_map (gN : ℕ → ℕ) (f : ApproximableMap V₀ V₁) (c 
       obtain ⟨e, he, rfl⟩ := hp
       exact himp h e he
   · rw [Xenum_neg P₀ P₁ h]
-    simp_all
+    simp_all only [Set.mem_univ, not_isEmpty_of_nonempty, IsEmpty.forall_iff]
 
 /-- **Bridge for `curry`.** `(X₀ₙ) curry(g) (Xenum c)` iff, *when `c` is
 consistent*, `g` relates
@@ -1842,11 +1846,11 @@ theorem curry_rel_Xenum_iff {V₂ : NeighborhoodSystem γ} (P₂ : ComputablePre
   constructor
   · rintro ⟨hX, _, hmem⟩
     rw [mem_Xenum_iff_map P₁ P₂ gN (gSection g hX) c] at hmem
-    simp_all
+    simp_all only [gSection_rel, implies_true]
   · intro himp
     refine ⟨P₀.mem_X n, Xenum_mem P₁ P₂ gN hgN c, ?_⟩
     rw [mem_Xenum_iff_map P₁ P₂ gN (gSection g (P₀.mem_X n)) c]
-    simp_all
+    simp_all only [gSection_rel, implies_true]
 
 /-- **Theorem 7.5 (Scott 1981, PRG-19) — `curry` is computable (choice-free).** If
 `g : 𝒟₀ × 𝒟₁

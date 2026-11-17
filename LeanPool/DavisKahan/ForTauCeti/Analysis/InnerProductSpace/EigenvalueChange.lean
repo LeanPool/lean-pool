@@ -26,8 +26,8 @@ decomposition in `.mathlib-quality/decomposition.md`.
 -/
 module
 
-public import Mathlib.Analysis.Convex.Birkhoff
-public import Mathlib.GroupTheory.Perm.Support
+import Mathlib.Analysis.Convex.Birkhoff
+import Mathlib.GroupTheory.Perm.Support
 public import LeanPool.DavisKahan.ForTauCeti.Analysis.InnerProductSpace.SchurHorn
 
 

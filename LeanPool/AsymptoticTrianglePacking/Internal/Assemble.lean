@@ -6,10 +6,6 @@ Authors: Juan Pablo Traverso Gianini, Aristotle
 
 module
 
-public import LeanPool.AsymptoticTrianglePacking.Internal.Basic
-public import LeanPool.AsymptoticTrianglePacking.Internal.Greedy
-public import LeanPool.AsymptoticTrianglePacking.Internal.Round
-public import LeanPool.AsymptoticTrianglePacking.Internal.Assembly
 public import LeanPool.AsymptoticTrianglePacking.Internal.IterationSeq
 
 

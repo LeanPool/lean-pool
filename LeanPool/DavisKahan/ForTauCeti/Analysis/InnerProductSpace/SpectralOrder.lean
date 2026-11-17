@@ -9,7 +9,7 @@ public import LeanPool.DavisKahan.ForTauCeti.Analysis.InnerProductSpace.Quadrati
 public import LeanPool.DavisKahan.ForTauCeti.Analysis.InnerProductSpace.ReducingSubspace
 public import LeanPool.DavisKahan.ForTauCeti.Analysis.InnerProductSpace.BoundedOperator.Projector
 public import LeanPool.DavisKahan.ForTauCeti.Analysis.RCLike.ScalarTransportFunctionalCalculus
-public import Mathlib.Analysis.InnerProductSpace.StarOrder
+import Mathlib.Analysis.InnerProductSpace.StarOrder
 
 /-!
 # Spectral order and quadratic forms over `RCLike`

@@ -88,7 +88,7 @@ private lemma homotopy_integrand_continuousOn_t
   have hε'_le : ε' ≤ ε / 2 := min_le_left _ _
   have h_avoid_P : ∀ t' ∈ Ioo (t - ε') (t + ε'), t' ∉ P := fun t' ht' =>
     hε_avoid t' ⟨by linarith [ht'.1], by linarith [ht'.2]⟩
-  have ht_in : t ∈ Ioo (t - ε') (t + ε') := ⟨by linarith, by linarith⟩
+  have ht_in : t ∈ Ioo (t - ε') (t + ε') := ⟨by linarith only [hε'_pos], by linarith only [hε'_pos]⟩
   have h_sub_ab : Ioo (t - ε') (t + ε') ⊆ Ioo a b := by
     intro x hx
     have h1 := (min_le_right (ε / 2) _).trans (min_le_left (t - a) (b - t))
@@ -99,7 +99,7 @@ private lemma homotopy_integrand_continuousOn_t
   exact ContinuousWithinAt.mul
     ((hH_cont.comp (continuous_id.prodMk continuous_const)).continuousAt.sub
       continuousAt_const |>.inv₀ (sub_ne_zero.mpr (hH_avoid t ht_Icc s hs)) |>.continuousWithinAt)
-    (((hH_deriv_cont _ _ (by linarith : t - ε' < t + ε') h_avoid_P h_sub_ab).comp
+    (((hH_deriv_cont _ _ (by linarith only [hε'_pos] : t - ε' < t + ε') h_avoid_P h_sub_ab).comp
       (continuous_id.prodMk continuous_const).continuousOn
       (fun t' ht' => ⟨ht', hs⟩) t ht_in).continuousAt
       (Ioo_mem_nhds ht_in.1 ht_in.2) |>.continuousWithinAt)
@@ -125,7 +125,7 @@ private lemma homotopy_integrand_continuousWithinAt_s
   have hε'_le : ε' ≤ ε / 2 := min_le_left _ _
   have h_avoid_P : ∀ t' ∈ Ioo (t - ε') (t + ε'), t' ∉ P := fun t' ht' =>
     hε_avoid t' ⟨by linarith [ht'.1], by linarith [ht'.2]⟩
-  have ht_in : t ∈ Ioo (t - ε') (t + ε') := ⟨by linarith, by linarith⟩
+  have ht_in : t ∈ Ioo (t - ε') (t + ε') := ⟨by linarith only [hε'_pos], by linarith only [hε'_pos]⟩
   have h_sub_ab : Ioo (t - ε') (t + ε') ⊆ Ioo a b := by
     intro x hx
     have h1 := (min_le_right (ε / 2) _).trans (min_le_left (t - a) (b - t))
@@ -136,7 +136,7 @@ private lemma homotopy_integrand_continuousWithinAt_s
       continuousAt_const |>.inv₀
         (sub_ne_zero.mpr (hH_avoid t ht_Icc s₀ hs₀))
       |>.continuousWithinAt)
-    (((hH_deriv_cont _ _ (by linarith : t - ε' < t + ε') h_avoid_P h_sub_ab).comp
+    (((hH_deriv_cont _ _ (by linarith only [hε'_pos] : t - ε' < t + ε') h_avoid_P h_sub_ab).comp
       (continuous_const.prodMk continuous_id).continuousOn
       (fun s hs => ⟨ht_in, hs⟩)) s₀ hs₀)
 
@@ -253,7 +253,7 @@ private theorem continuous_integer_valued_constant
           rw [hm] at hdist ⊢
           have h1 : dist (m : ℂ) (n : ℂ) < 1 := hdist
           rw [Complex.dist_eq, show (m : ℂ) - (n : ℂ) =
-            ((m - n : ℤ) : ℂ) from by push_cast; ring,
+            ((m - n : ℤ) : ℂ) from by push_cast; ac_rfl,
             Complex.norm_intCast, ← Int.cast_abs] at h1
           have h2 : |m - n| < 1 := by exact_mod_cast h1
           have h3 : m - n = 0 := Int.abs_lt_one_iff.mp h2
@@ -385,7 +385,7 @@ private lemma smooth_winding_integral_continuousOn
   · apply eventually_of_mem self_mem_nhdsWithin
     intro s hs
     have hab' : Icc a b = Icc (min a b) (max a b) := by
-      simp [min_eq_left hab.le, max_eq_right hab.le]
+      simp only [min_eq_left hab.le, max_eq_right hab.le]
     apply (ContinuousOn.mul
       (ContinuousOn.inv₀
         ((hγ_cont.comp (continuous_id.prodMk continuous_const)).sub
@@ -528,7 +528,9 @@ theorem generalizedWindingNumber_eq_classical_away
   have ht' : t ∈ Icc γ.a γ.b := by
     rw [Set.uIoc_of_le (le_of_lt γ.hab)] at ht
     exact Ioc_subset_Icc_self ht
-  simp_all
+  simp_all only [mem_Icc, ne_eq, and_imp, image_nonempty, nonempty_Icc, mem_image, not_exists,
+    not_and, not_false_eq_true, implies_true, uIoc_of_le, mem_Ioc, and_true, gt_iff_lt, ↓reduceIte,
+    deriv_sub_const_fun]
 
 private lemma integral_congr_homotopy_endpoint
     {f : ℂ → ℂ} {γ : ℝ → ℂ} {H : ℝ × ℝ → ℂ} {a b : ℝ} {s : ℝ}

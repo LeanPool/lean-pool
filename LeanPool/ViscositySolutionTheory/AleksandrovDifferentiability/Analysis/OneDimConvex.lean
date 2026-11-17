@@ -99,13 +99,13 @@ theorem mem_rightDerivAverageRemainderSet :
 theorem ConvexOn.hasDerivWithinAt_rightDeriv
     (hf : ConvexOn ℝ S f) (hx : x ∈ interior S) :
     HasDerivWithinAt f (rightDeriv f x) (Ioi x) x := by
-  simpa [rightDeriv] using hf.hasDerivWithinAt_rightDeriv_of_mem_interior hx
+  exact hf.hasDerivWithinAt_rightDeriv_of_mem_interior hx
 
 /-- A convex function has the project-local left derivative at interior points. -/
 theorem ConvexOn.hasDerivWithinAt_leftDeriv
     (hf : ConvexOn ℝ S f) (hx : x ∈ interior S) :
     HasDerivWithinAt f (leftDeriv f x) (Iio x) x := by
-  simpa [leftDeriv] using hf.hasDerivWithinAt_leftDeriv_of_mem_interior hx
+  exact hf.hasDerivWithinAt_leftDeriv_of_mem_interior hx
 
 /-- Right derivatives of a one-dimensional convex function are monotone on the interior. -/
 theorem ConvexOn.monotoneOn_projectRightDeriv (hf : ConvexOn ℝ S f) :
@@ -244,19 +244,19 @@ function. -/
 theorem ConvexOn.leftDeriv_le_rightDeriv
     (hf : ConvexOn ℝ S f) (hx : x ∈ interior S) :
     leftDeriv f x ≤ rightDeriv f x := by
-  simpa [leftDeriv, rightDeriv] using hf.leftDeriv_le_rightDeriv_of_mem_interior hx
+  exact hf.leftDeriv_le_rightDeriv_of_mem_interior hx
 
 /-- At an interior point, the right derivative is bounded above by every forward secant slope. -/
 theorem ConvexOn.rightDeriv_le_slope
     (hf : ConvexOn ℝ S f) (hx : x ∈ interior S) (hy : y ∈ S) (hxy : x < y) :
     rightDeriv f x ≤ slope f x y := by
-  simpa [rightDeriv] using hf.rightDeriv_le_slope_of_mem_interior hx hy hxy
+  exact hf.rightDeriv_le_slope_of_mem_interior hx hy hxy
 
 /-- At an interior point, every backward secant slope is bounded above by the left derivative. -/
 theorem ConvexOn.slope_le_leftDeriv
     (hf : ConvexOn ℝ S f) (hx : x ∈ S) (hy : y ∈ interior S) (hxy : x < y) :
     slope f x y ≤ leftDeriv f y := by
-  simpa [leftDeriv] using hf.slope_le_leftDeriv_of_mem_interior hx hy hxy
+  exact hf.slope_le_leftDeriv_of_mem_interior hx hy hxy
 
 /-- The project-local right derivative of a one-dimensional convex function is right-continuous
 at interior points. -/
@@ -287,7 +287,7 @@ theorem ConvexOn.tendsto_rightDeriv_nhdsGT
       hright_deriv.eventually (Iio_mem_nhds hm)
     rcases (hslope_event.and (hinterior.and self_mem_nhdsWithin)).exists with
       ⟨d, hd_slope, hdS, hxd⟩
-    have hden_ne : d - x ≠ 0 := by linarith
+    have hden_ne : d - x ≠ 0 := by linarith only [hxd]
     have hden_tendsto :
         Tendsto (fun y : ℝ => d - y) (nhdsWithin x (Ioi x)) (nhds (d - x)) := by
       have hcont : ContinuousAt (fun y : ℝ => d - y) x := by fun_prop
@@ -336,7 +336,7 @@ theorem ConvexOn.tendsto_rightDeriv_nhdsLT_leftDeriv
       hleft_deriv.eventually (Ioi_mem_nhds hl)
     rcases (hslope_event.and (hinterior.and self_mem_nhdsWithin)).exists with
       ⟨d, hd_slope, hdS, hdx⟩
-    have hden_ne : x - d ≠ 0 := by linarith
+    have hden_ne : x - d ≠ 0 := by linarith only [hdx]
     have hden_tendsto :
         Tendsto (fun y : ℝ => y - d) (nhdsWithin x (Iio x)) (nhds (x - d)) := by
       have hcont : ContinuousAt (fun y : ℝ => y - d) x := by fun_prop
@@ -631,7 +631,7 @@ theorem ConvexOn.subgradientOn_of_leftDeriv_le_of_le_rightDeriv
     have hmul : f x - f y ≤ p * (x - y) :=
       (div_le_iff₀ hden).mp hslope
     have hsupport : f x + p * (y - x) ≤ f y := by
-      linarith
+      linarith only [hmul]
     simpa [mul_comm] using hsupport
   · simp
   · have hslope : p ≤ slope f x y :=
@@ -642,7 +642,7 @@ theorem ConvexOn.subgradientOn_of_leftDeriv_le_of_le_rightDeriv
     have hmul : p * (y - x) ≤ f y - f x :=
       (le_div_iff₀ hden).mp hslope
     have hsupport : f x + p * (y - x) ≤ f y := by
-      linarith
+      linarith only [hmul]
     simpa [mul_comm] using hsupport
 
 /-- At an interior point of a one-dimensional convex function, being a subgradient is equivalent
@@ -664,10 +664,10 @@ theorem ConvexOn.subgradientOn_of_hasDerivAt
     (hd : HasDerivAt f p x) :
     SubgradientOn S f x p := by
   have hright : rightDeriv f x = p := by
-    simpa [rightDeriv] using
+    exact
       (hd.hasDerivWithinAt.derivWithin (uniqueDiffWithinAt_Ioi x))
   have hleft : leftDeriv f x = p := by
-    simpa [leftDeriv] using
+    exact
       (hd.hasDerivWithinAt.derivWithin (uniqueDiffWithinAt_Iio x))
   exact AleksandrovDifferentiability.ConvexOn.subgradientOn_of_leftDeriv_le_of_le_rightDeriv
     (S := S) (f := f) (x := x) (p := p) hf hx (le_of_eq hleft) (le_of_eq hright.symm)
@@ -684,7 +684,7 @@ theorem HasUpperContactWithSlopeOn.slope_le_of_lt
   have hmul : f y - f x ≤ (p + (a / 2) * (y - x)) * (y - x) := by
     rw [hnorm] at hupper
     simp only [Real.inner_apply] at hupper
-    nlinarith
+    nlinarith only [hupper]
   exact (div_le_iff₀ hden).mpr hmul
 
 /-- A one-dimensional upper quadratic contact gives a lower bound on backward secant slopes. -/
@@ -699,7 +699,7 @@ theorem HasUpperContactWithSlopeOn.le_slope_of_lt
   have hmul : f y - f x ≤ (p + (a / 2) * (y - x)) * (y - x) := by
     rw [hnorm] at hupper
     simp only [Real.inner_apply] at hupper
-    nlinarith
+    nlinarith only [hupper]
   exact (le_div_iff_of_neg hden).mpr hmul
 
 /-- At an interior point of a convex one-dimensional function, an upper quadratic contact bounds

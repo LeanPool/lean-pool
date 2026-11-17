@@ -8,7 +8,6 @@ module
 
 public import Mathlib.Analysis.Calculus.BumpFunction.InnerProduct
 public import Mathlib.MeasureTheory.Measure.Haar.NormedSpace
-public import Mathlib.MeasureTheory.Group.Integral
 public import LeanPool.QuadraticCarleson.QuadraticCarleson.Definitions
 public import Mathlib.Analysis.Calculus.BumpFunction.Normed
 
@@ -64,8 +63,8 @@ theorem baseBump_support :
   intro x hx
   rw [mem_ball, Real.dist_eq] at hx
   have hx' : |x| < (1 / 4 : ℝ) := by
-    simpa [baseBumpData] using hx
-  constructor <;> linarith [abs_lt.mp hx']
+    simpa only [one_div, sub_zero, baseBumpData] using hx
+  constructor <;> linarith only [hx', abs_lt.mp hx']
 
 /-- The rescaled packet `φ_(s,t)(x) = t⁻¹ φ((x-s)/t)` used in Section 3. -/
 noncomputable def wavePacket (s t x : ℝ) : ℝ :=
@@ -90,7 +89,7 @@ theorem wavePacket_integral (s : ℝ) {t : ℝ} (ht : 0 < t) :
   rw [integral_const_mul]
   rw [integral_sub_right_eq_self (fun x : ℝ => baseBump (x / t)) s]
   rw [Measure.integral_comp_div, baseBump_integral, abs_of_pos ht]
-  simp [ht.ne']
+  simp only [smul_eq_mul, mul_one, ne_eq, ht.ne', not_false_eq_true, inv_mul_cancel₀]
 
 theorem wavePacket_support {s t : ℝ} (ht : 0 < t) :
     Function.support (wavePacket s t) ⊆
@@ -99,13 +98,13 @@ theorem wavePacket_support {s t : ℝ} (ht : 0 < t) :
   have hbase : baseBump ((x - s) / t) ≠ 0 := by
     intro hzero
     apply hx
-    simp [wavePacket, hzero]
+    simp only [wavePacket, hzero, mul_zero]
   have hmem := baseBump_support hbase
   constructor
   · have hscaled := (le_div_iff₀ ht).mp hmem.1
-    linarith
+    linarith only [hscaled]
   · have hscaled := (div_le_iff₀ ht).mp hmem.2
-    linarith
+    linarith only [hscaled]
 
 theorem wavePacket_hasCompactSupport (s : ℝ) {t : ℝ} (ht : 0 < t) :
     HasCompactSupport (wavePacket s t) := by
@@ -134,11 +133,11 @@ theorem wavePacket_firstMoment_le (s : ℝ) {t : ℝ} (ht : 0 < t) :
       apply integral_mono hmomentIntegrable hmajorantIntegrable
       intro x
       by_cases hx : wavePacket s t x = 0
-      · simp [hx]
+      · simp only [hx, zero_mul, Std.le_refl]
       · have hsupp := wavePacket_support ht hx
         have habs : |x - s| ≤ t / 4 := by
           rw [abs_le]
-          constructor <;> linarith [hsupp.1, hsupp.2]
+          constructor <;> linarith only [hsupp, hsupp.1, hsupp.2]
         exact mul_le_mul_of_nonneg_left habs (wavePacket_nonneg s x ht)
     _ = t / 4 := by
       rw [integral_mul_const, wavePacket_integral s ht, one_mul]

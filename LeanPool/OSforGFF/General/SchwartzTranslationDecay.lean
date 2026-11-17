@@ -84,8 +84,10 @@ lemma kernel_decomposition (K : E → ℝ) (R₀ : ℝ) :
   ext x
   simp only [kernelSingular, kernelTail]
   by_cases hx : x ∈ closedBall (0 : E) R₀
-  · simp_all
-  · simp_all
+  · simp_all only [mem_closedBall, dist_zero_right, indicator_of_mem, mul_one, mem_compl_iff,
+      not_true_eq_false, not_false_eq_true, indicator_of_notMem, mul_zero, add_zero]
+  · simp_all only [mem_closedBall, dist_zero_right, not_le, indicator_of_notMem, mul_zero,
+      mem_compl_iff, indicator_of_mem, mul_one, zero_add]
 
 omit [MeasurableSpace E] [BorelSpace E] in
 /-- K_tail vanishes at infinity when K has polynomial decay. -/
@@ -113,7 +115,8 @@ lemma kernelTail_tendsto_zero (K : E → ℝ) (R₀ : ℝ)
       have hbound := hK_decay z hz.le
       have : |K z| ≤ 0 := le_trans hbound (div_nonpos_of_nonpos_of_nonneg hC (Real.rpow_nonneg
         (norm_nonneg z) α))
-      simp_all
+      simp_all only [gt_iff_lt, ge_iff_le, mem_compl_iff, mem_closedBall, dist_zero_right, not_le,
+        abs_nonpos_iff, norm_zero]
   · -- C > 0 case
     push Not at hC
     let R := max R₀ ((C / ε) ^ (1 / α) + 1)
@@ -128,12 +131,14 @@ lemma kernelTail_tendsto_zero (K : E → ℝ) (R₀ : ℝ)
       by_cases hz_R₀ : ‖z‖ ≤ R₀
       · -- Inside R₀ ball: kernelTail z = 0
         simp only [kernelTail]
-        simp_all
+        simp_all only [gt_iff_lt, ge_iff_le, mem_compl_iff, mem_closedBall, dist_zero_right,
+          not_true_eq_false, not_false_eq_true, indicator_of_notMem, mul_zero, norm_zero]
       · -- Outside R₀ ball: use decay bound
         push Not at hz_R₀
         simp only [kernelTail]
         have hmem : z ∈ (closedBall (0 : E) R₀)ᶜ := by
-          simp_all
+          simp_all only [gt_iff_lt, ge_iff_le, mem_compl_iff, mem_closedBall, dist_zero_right,
+            not_le]
         rw [indicator_of_mem hmem, mul_one]
         have hbound := hK_decay z hz_R₀.le
         have hz_large : ‖z‖ > (C / ε) ^ (1 / α) := by
@@ -197,7 +202,8 @@ lemma bounded_of_continuous_tendsto_zero
   by_cases hx : x ∈ K
   · have : ‖g x‖ ∈ Set.image (‖g ·‖) K := ⟨x, hx, rfl⟩
     have hle : ‖g x‖ ∈ closedBall (0 : ℝ) M := hM this
-    simp_all
+    simp_all only [gt_iff_lt, dist_zero_right, image_subset_iff, mem_image, mem_closedBall,
+      norm_norm, le_max_iff, true_or]
   · exact le_trans (le_of_lt (hK x hx)) (le_max_right _ _)
 
 /-- For integrable f and ε > 0, there exists a compact set K with small tail integral.
@@ -259,7 +265,7 @@ theorem convolution_vanishes_of_integrable_and_C0
   let If := ∫ x, ‖f x‖
   have hIf_nonneg : 0 ≤ If := integral_nonneg (fun _ => norm_nonneg _)
   let η := ε / (2 * (If + 1))
-  have hη_pos : 0 < η := div_pos hε (mul_pos two_pos (by linarith))
+  have hη_pos : 0 < η := div_pos hε (mul_pos two_pos (by linarith only [hIf_nonneg]))
   rw [Metric.tendsto_nhds] at hg_C0
   have hg_small := hg_C0 η hη_pos
   rw [Filter.eventually_iff_exists_mem] at hg_small
@@ -292,7 +298,7 @@ theorem convolution_vanishes_of_integrable_and_C0
       -- ‖y‖ - ‖x‖ ≤ ‖y - x‖ = ‖x - y‖
       have h1 : ‖y‖ - ‖x‖ ≤ ‖y - x‖ := norm_sub_norm_le y x
       have h2 : ‖y - x‖ = ‖x - y‖ := norm_sub_rev y x
-      linarith
+      linarith only [hy, hx_bound, hxy_bound, h1, h2]
     -- For x ∈ K, |g(x-y)| < η
     have hg_small_on_K : ∀ x ∈ K, ‖g (x - y)‖ < η := by
       intro x hxK
@@ -319,7 +325,8 @@ theorem convolution_vanishes_of_integrable_and_C0
       have hg_meas : AEStronglyMeasurable (fun x => ‖g (x - y)‖) volume :=
         (hg_cont.comp (continuous_id.sub continuous_const)).norm.aestronglyMeasurable
       refine Integrable.mul_bdd (c := max B 1) hf_int.norm hg_meas ?_
-      simp_all
+      simp_all only [gt_iff_lt, dist_zero_right, lt_max_iff, zero_lt_one, or_true, implies_true,
+        le_max_iff, true_or, norm_norm, eventually_true]
     -- Split integral over K and Kᶜ
     have hK_meas : MeasurableSet K := hK_cpct.isClosed.measurableSet
     -- Bound on K using setIntegral_mono_on (which gives us the membership hypothesis)
@@ -353,13 +360,13 @@ theorem convolution_vanishes_of_integrable_and_C0
             have hlt : η * If < η * (If + 1) := mul_lt_mul_of_pos_left (lt_add_one If) hη_pos
             have heq : η * (If + 1) = ε / 2 := by
               simp only [η]
-              have hne : If + 1 ≠ 0 := by linarith
+              have hne : If + 1 ≠ 0 := by linarith only [hIf_nonneg]
               field_simp
-            linarith
+            linarith only [hη_pos, heq]
           have h2 : max B 1 * (ε / (2 * max B 1)) = ε / 2 := by
             have hne : max B 1 ≠ 0 := ne_of_gt hB_pos
             field_simp
-          linarith
+          linarith only [h1, h2]
 
 /-! ## Product Space Integrability for Fubini
 
@@ -513,7 +520,7 @@ theorem schwartz_bilinear_prod_integrable
       Function.uncurry (fun x y => f x * (K_tail (x - y) : ℂ) * g (y - a)) := by
     ext ⟨x, y⟩
     simp only [Function.uncurry, Pi.add_apply, h_split]
-  simp_all
+  simp_all only [gt_iff_lt, integrable_add_iff_integrable_right]
 
 /-! ## Main theorem -/
 
@@ -559,7 +566,8 @@ private lemma schwartz_bilinear_kernelSingular_vanish
         simp only [mem_closedBall, dist_zero_right, not_le] at h
         have : K_sing (x - y) = 0 := by
           simp only [K_sing, kernelSingular]
-          simp_all
+          simp_all only [gt_iff_lt, dist_zero_right, norm_real, Real.norm_eq_abs, ne_eq,
+            mem_closedBall, not_le, indicator_of_notMem, mul_zero]
         exact hK_ne this
       have h1 : ‖x - y‖ ≤ R₀ := by simpa [mem_closedBall, dist_zero_right] using hxy_in_ball
       have h2 : ‖x‖ ≤ R_L := by simpa [mem_closedBall, dist_zero_right] using hR_L hx_in_L
@@ -567,7 +575,7 @@ private lemma schwartz_bilinear_kernelSingular_vanish
         calc ‖y‖ = ‖(y - x) + x‖ := by rw [sub_add_cancel]
           _ ≤ ‖y - x‖ + ‖x‖ := norm_add_le _ _
       have h4 : ‖y - x‖ = ‖x - y‖ := norm_sub_rev y x
-      linarith
+      linarith only [hy, h1, h2, h3, h4]
     have hf_small_on_supp : ∀ x, K_sing (x - y) ≠ 0 → ‖f x‖ < δ := by
       intro x hK_ne
       have hx_not_L : x ∉ L := hxy_outside x hK_ne
@@ -602,7 +610,7 @@ private lemma schwartz_bilinear_kernelSingular_vanish
       _ < ε := by
           have : δ * I_Ksing < δ * (I_Ksing + 1) := mul_lt_mul_of_pos_left (lt_add_one _) hδ_pos
           have heq : δ * (I_Ksing + 1) = ε := by simp only [δ]; field_simp
-          linarith
+          linarith only [hδ_pos, heq]
 
 private lemma schwartz_bilinear_kernelTail_vanish
     (f : SchwartzMap E ℂ) (K : E → ℝ) (hK_meas : Measurable K)
@@ -632,7 +640,9 @@ private lemma schwartz_bilinear_kernelTail_vanish
             apply div_le_div_of_nonneg_left hC.le (Real.rpow_pos_of_pos hR₀ α)
             exact Real.rpow_le_rpow hR₀.le hz' hα.le
         _ ≤ max (C / R₀ ^ α) 1 := le_max_left _ _
-    · simp_all
+    · simp_all only [gt_iff_lt, ge_iff_le, mem_compl_iff, mem_closedBall, dist_zero_right, not_le,
+        not_lt, not_true_eq_false, not_false_eq_true, indicator_of_notMem, mul_zero, norm_zero,
+        le_max_iff, zero_le_one, or_true]
   obtain ⟨M, hM_pos, hM⟩ := hK_tail_bdd
   rw [Metric.tendsto_nhds]
   intro ε hε
@@ -641,7 +651,7 @@ private lemma schwartz_bilinear_kernelTail_vanish
   let If := ∫ x, ‖f x‖
   have hIf_nonneg : 0 ≤ If := integral_nonneg (fun _ => norm_nonneg _)
   let η := ε / (2 * (If + 1))
-  have hη_pos : 0 < η := div_pos hε (mul_pos two_pos (by linarith))
+  have hη_pos : 0 < η := div_pos hε (mul_pos two_pos (by linarith only [hIf_nonneg]))
   rw [Metric.tendsto_nhds] at hK_tail_C0
   have hKt_small := hK_tail_C0 η hη_pos
   rw [Filter.eventually_iff_exists_mem] at hKt_small
@@ -668,11 +678,11 @@ private lemma schwartz_bilinear_kernelTail_vanish
         calc ‖y‖ = ‖(y - x) + x‖ := by rw [sub_add_cancel]
           _ ≤ ‖y - x‖ + ‖x‖ := norm_add_le _ _
       have h2 : ‖y - x‖ = ‖x - y‖ := norm_sub_rev y x
-      linarith
+      linarith only [hy, hx_bound, hxy_bound, h1, h2]
     have hKt_small_on_K : ∀ x ∈ K_set, ‖(K_tail (x - y) : ℂ)‖ < η := by
       intro x hxK
       have : x - y ∈ S := hL_sub (hxy_outside x hxK)
-      simp_all
+      simp_all only [gt_iff_lt, ge_iff_le, dist_zero_right, Real.norm_eq_abs, norm_real]
     have hKt_y_meas : AEStronglyMeasurable (fun x => (K_tail (x - y) : ℂ)) volume := by
       have hind : Measurable ((closedBall (0 : E) R₀)ᶜ.indicator (fun _ => (1 : ℝ))) :=
         measurable_const.indicator isClosed_closedBall.measurableSet.compl
@@ -682,7 +692,8 @@ private lemma schwartz_bilinear_kernelTail_vanish
       exact (measurable_ofReal.comp h2).aestronglyMeasurable
     have h_int : Integrable (fun x => ‖f x‖ * ‖(K_tail (x - y) : ℂ)‖) volume := by
       refine Integrable.mul_bdd (c := M) hf_int.norm hKt_y_meas.norm ?_
-      simp_all
+      simp_all only [gt_iff_lt, ge_iff_le, dist_zero_right, Real.norm_eq_abs, norm_real, abs_abs,
+        eventually_true]
     have hK_meas : MeasurableSet K_set := hK_cpct.isClosed.measurableSet
     have hK_bound : ∫ x in K_set, ‖f x‖ * ‖(K_tail (x - y) : ℂ)‖ ≤ η * If := by
       have h1 : ∫ x in K_set, ‖f x‖ * ‖(K_tail (x - y) : ℂ)‖ ≤ ∫ x in K_set, ‖f x‖ * η := by
@@ -715,13 +726,13 @@ private lemma schwartz_bilinear_kernelTail_vanish
             have hlt : η * If < η * (If + 1) := mul_lt_mul_of_pos_left (lt_add_one If) hη_pos
             have heq : η * (If + 1) = ε / 2 := by
               simp only [η]
-              have hne : If + 1 ≠ 0 := by linarith
+              have hne : If + 1 ≠ 0 := by linarith only [hIf_nonneg]
               field_simp
-            linarith
+            linarith only [hη_pos, heq]
           have h2 : M * (ε / (2 * M)) = ε / 2 := by
             have hne : M ≠ 0 := ne_of_gt hM_pos
             field_simp
-          linarith
+          linarith only [h1, h2]
 
 private lemma schwartz_bilinear_kernel_convolution_continuous
     (f : SchwartzMap E ℂ) (K : E → ℝ) (hK_meas : Measurable K)
@@ -1011,7 +1022,9 @@ theorem schwartz_bilinear_translation_decay_proof
             apply div_le_div_of_nonneg_left hC.le (Real.rpow_pos_of_pos hR₀ α)
             exact Real.rpow_le_rpow hR₀.le hz' hα.le
         _ ≤ max (C / R₀ ^ α) 1 := le_max_left _ _
-    · simp_all
+    · simp_all only [gt_iff_lt, ge_iff_le, lt_max_iff, zero_lt_one, or_true, mem_compl_iff,
+        mem_closedBall, dist_zero_right, not_le, not_lt, not_true_eq_false, not_false_eq_true,
+        indicator_of_notMem, mul_zero, norm_zero, le_max_iff, zero_le_one]
   obtain ⟨M_tail, hM_tail_pos, hM_tail⟩ := hK_tail_bdd
   -- Step 10a: H is continuous (convolution of Schwartz with locally integrable kernel)
   have hH_cont : Continuous H := by
@@ -1031,7 +1044,8 @@ theorem schwartz_bilinear_translation_decay_proof
     refine ⟨-K, hK_cpct.neg, ?_⟩
     intro a ha
     apply hK_sub
-    simp_all
+    simp_all only [gt_iff_lt, ge_iff_le, lt_max_iff, zero_lt_one, or_true, norm_real,
+      Real.norm_eq_abs, mem_compl_iff, Set.mem_neg, not_false_eq_true]
   -- Step 10d: Compose to get decay in -a
   have h_composed : Tendsto (fun a => ∫ w : E, g w * H (w - (-a))) (cocompact E) (nhds 0) :=
     h_decay.comp h_neg_cocompact
@@ -1081,6 +1095,7 @@ theorem schwartz_bilinear_translation_decay_proof
       rw [integral_add_right_eq_self (fun y => g (y - a) * H y) a]
     simpa only [add_sub_cancel_right] using this
   -- Step 10e-iii: Rewrite w + a = w - (-a)
-  simp_all
+  simp_all only [gt_iff_lt, ge_iff_le, lt_max_iff, zero_lt_one, or_true, norm_real,
+    Real.norm_eq_abs, sub_neg_eq_add]
 
 end

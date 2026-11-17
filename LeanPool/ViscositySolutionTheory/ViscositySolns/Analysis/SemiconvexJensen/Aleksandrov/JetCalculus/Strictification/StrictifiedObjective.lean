@@ -103,7 +103,7 @@ theorem abs_hessian_entry_le_half_diag_sum_of_posSemidef
   have hminus :=
     hA.dotProduct_mulVec_nonneg (coordinateVector i - coordinateVector j)
   have hsym : A j i = A i j := by
-    simpa using hA.isHermitian.apply i j
+    exact hA.isHermitian.apply i j
   have hplus' : 0 <= A i i + A j i + (A i j + A j j) := by
     simpa [dotProduct, Matrix.mulVec, coordinateVector, Finset.sum_add_distrib,
       add_mul, mul_add] using hplus
@@ -126,7 +126,7 @@ theorem abs_hessian_entry_le_of_posSemidef_of_diag_le
   have hentry := abs_hessian_entry_le_half_diag_sum_of_posSemidef hA i j
   have hii : A i i <= R := hdiag i
   have hjj : A j j <= R := hdiag j
-  linarith
+  linarith only [hentry, hii, hjj]
 
 /--
 Uniform Loewner lower and upper bounds give eventual entrywise boundedness
@@ -171,7 +171,7 @@ theorem exists_eventually_entrywise_abs_le_of_posSemidef_le_add_tendsto_zero
       (le_abs_self (B i i)).trans hBii_le_sum
     simp only [Matrix.sub_apply, Matrix.add_apply] at hdiagdiff
     dsimp [R]
-    linarith
+    linarith only [hdiagdiff, hQii_le, hBii_le]
   exact abs_hessian_entry_le_of_posSemidef_of_diag_le (hA k) hdiag
 
 /-- The quadratic form associated to a Hessian matrix is continuous in the matrix. -/
@@ -202,7 +202,7 @@ theorem hessian_isHermitian_of_tendsto_isHermitian
       (continuous_hessian_apply_apply (n := n) i j).continuousAt.tendsto.comp hA
     convert hij_raw using 1
     ext k
-    simpa using (hHerm k).apply i j
+    exact (hHerm k).apply i j
   have hlim : Z i j = Z j i := tendsto_nhds_unique hij hji
   simp [hlim]
 
@@ -236,7 +236,7 @@ theorem hessian_le_of_tendsto_le
       ∀ᶠ k in Filter.atTop, 0 <= dotProduct v (Matrix.mulVec (C k - A k) v) := by
     filter_upwards [hle] with k hk
     have hpsd : (C k - A k).PosSemidef := Matrix.le_iff.mp hk
-    simpa using hpsd.dotProduct_mulVec_nonneg v
+    exact hpsd.dotProduct_mulVec_nonneg v
   exact isClosed_Ici.mem_of_tendsto hquad hnonneg
 
 /--
@@ -271,7 +271,7 @@ theorem strictLocalMax_quarticStrictification_of_isMaxOn_univ
   intro x _hx hxne
   have hle : f x <= f 0 := hmax trivial
   have hquartic_pos : 0 < coordinateQuartic x := coordinateQuartic_pos_of_ne_zero hxne
-  have hstrict : f x - coordinateQuartic x < f 0 - 0 := by linarith
+  have hstrict : f x - coordinateQuartic x < f 0 - 0 := by linarith only [hle, hquartic_pos]
   simpa [quarticStrictification] using hstrict
 
 /--
@@ -332,7 +332,7 @@ theorem coordinateSemiconvexOn_strictifiedQuadraticObjective_closedBall_of_entry
     simpa using hsum.congr fun x _hx => by
       unfold strictifiedQuadraticObjective quarticStrictification semiconvexQuadraticObjective
       ring
-  simpa [C] using htarget
+  exact htarget
 
 /--
 The strictified quadratic objective is semiconvex on every closed ball.

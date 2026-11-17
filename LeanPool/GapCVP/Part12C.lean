@@ -7,6 +7,10 @@ Authors: OpenAI, Dean Cureton
 module
 
 public import LeanPool.GapCVP.Part12B
+public import LeanPool.GapCVP.Part12A
+import Mathlib.Algebra.Order.Floor.Semifield
+import Mathlib.Algebra.Order.Star.Int
+import Mathlib.CategoryTheory.Category.Init
 
 /-! # GapCVP proof, part 12, continuation 03 -/
 
@@ -2665,7 +2669,7 @@ private theorem paperVariableArityCanonicalBinaryMatrixCheckFold_valid
     paperVariableArityCanonicalBinaryMatrixCheckFoldPreparation_valid
       shape formula]
   unfold sourcePhysicalWordPackedQueryPreparation
-  simpa only [fourFamilyOriginalMarkerStream] using
+  exact
       boundedRecordFoldOutput_sourceFourFamilyOriginalMarkerQueries
           (paperCanonicalBinaryMatrixCheckMarker worker)
         (paperCanonicalBinaryMatrixCheckQueries shape formula) (lengthPrefixedWord (encodeThreeCNF
@@ -2686,7 +2690,7 @@ private theorem paperVariableArityCanonicalBinaryMatrixRhsFold_valid
     paperVariableArityCanonicalBinaryMatrixRhsFoldPreparation_valid
       shape formula]
   unfold sourcePhysicalWordPackedQueryPreparation
-  simpa only [fourFamilyOriginalMarkerStream] using
+  exact
       boundedRecordFoldOutput_sourceFourFamilyOriginalMarkerQueries
           (paperCanonicalBinaryMatrixRhsMarker worker)
         (paperCanonicalBinaryMatrixRhsQueries shape formula) (lengthPrefixedWord (encodeThreeCNF
@@ -2899,7 +2903,7 @@ private theorem paperVariableArityCanonicalBinaryMatrixComputedRhsBits_valid
               formula).rightHandSide row = (1 : ZMod 2))]) := by
         apply List.flatMap_congr
         intro row _
-        simpa only [column] using paperVariableArityCanonicalBinaryMatrixRhsMarker_valid worker
+        exact paperVariableArityCanonicalBinaryMatrixRhsMarker_valid worker
             formula row column
     _ =
       (List.finRange

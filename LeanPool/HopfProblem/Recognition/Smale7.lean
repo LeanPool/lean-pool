@@ -58,7 +58,8 @@ private theorem
     rw [reverse_one_zero]
     exact hH
   have hcomp : DifferentiableAt ℝ (H ∘ reverse) (1, 0) :=
-    houter.comp (1, 0) (contDiff_reverse.contDiffAt.differentiableAt (by simp))
+    houter.comp (1, 0) (contDiff_reverse.contDiffAt.differentiableAt (by simp only [ne_eq,
+      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
   have hleft := hasDerivAt_verticalSlice hcomp
   have hright := hasDerivAt_verticalSlice hH
   have heq : (fun s : ℝ => (H ∘ reverse) (1, s)) = fun s => H (0, s) := by
@@ -83,25 +84,25 @@ private theorem
 
 private theorem Smale.WhitneyPairModel.cornerTransition_zero {t : ℝ} (ht : t ≤ 1 / 3) :
     cornerTransition t = 0 :=
-  Real.smoothTransition.zero_of_nonpos (by linarith)
+  Real.smoothTransition.zero_of_nonpos (by linarith only [ht])
 
 private theorem Smale.WhitneyPairModel.cornerTransition_one {t : ℝ} (ht : 2 / 3 ≤ t) :
     cornerTransition t = 1 :=
-  Real.smoothTransition.one_of_one_le (by linarith)
+  Real.smoothTransition.one_of_one_le (by linarith only [ht])
 
 private theorem Smale.WhitneyPairModel.cornerScale_pos (t : ℝ) : 0 < cornerScale t := by
   by_cases hlo : t ≤ 1 / 3
   · simp only [cornerScale, cornerTransition_zero hlo, sub_zero, one_mul, MulZeroClass.zero_mul,
       add_zero]
-    linarith
+    linarith only [hlo]
   by_cases hhi : 2 / 3 ≤ t
   · simp only [cornerScale, cornerTransition_one hhi, sub_self, MulZeroClass.zero_mul, one_mul,
       zero_add]
-    linarith
+    linarith only [hlo]
   have h0 : 0 ≤ cornerTransition t := Real.smoothTransition.nonneg _
   have h1 : cornerTransition t ≤ 1 := Real.smoothTransition.le_one _
-  have ht0 : 0 < t := by linarith
-  have ht1 : 0 < 1 - t := by linarith
+  have ht0 : 0 < t := by linarith only [hlo, hhi]
+  have ht1 : 0 < 1 - t := by linarith only [hlo, hhi]
   by_cases hβ : cornerTransition t = 0
   · simp only [cornerScale, hβ, sub_zero, one_mul, MulZeroClass.zero_mul, add_zero]
     exact ht1
@@ -162,13 +163,14 @@ private theorem Smale.WhitneyPairModel.upperStripCoordinates_upper (h t : ℝ) :
 
 private theorem Smale.WhitneyPairModel.lowerStripCoordinates_left (h : ℝ) {p : ℝ × ℝ}
     (hp : arcTime p ≤ 1 / 3) : lowerStripCoordinates h p = leftCornerCoordinates h p := by
-  simp [lowerStripCoordinates, cornerSign, cornerScale, cornerTransition_zero hp,
-    leftCornerCoordinates, sub_eq_add_neg]
+  simp only [lowerStripCoordinates, cornerSign, cornerTransition_zero hp, mul_zero,
+    sub_eq_add_neg, zero_add,
+      cornerScale, neg_zero, add_zero, one_mul, zero_mul, neg_mul, leftCornerCoordinates]
 
 private theorem Smale.WhitneyPairModel.upperStripCoordinates_left {h : ℝ} (hh : h ≠ 0) {p : ℝ × ℝ}
     (hp : arcTime p ≤ 1 / 3) : upperStripCoordinates h p = (leftCornerCoordinates h p).swap := by
   have htime : arcTime (exchangeEdges h p) = arcTime p := rfl
-  have hp' : arcTime p ≠ 1 := by linarith
+  have hp' : arcTime p ≠ 1 := by linarith only [hp]
   change lowerStripCoordinates h (exchangeEdges h p) = _
   rw [lowerStripCoordinates_left h (htime ▸ hp)]
   exact leftCornerCoordinates_exchange hh hp'
@@ -208,7 +210,7 @@ private theorem Smale.WhitneyPairModel.upperStripCoordinates_right {h : ℝ} (hh
   rw [heq]
   apply leftCornerCoordinates_exchange hh
   rw [arcTime_bigonReflection]
-  linarith
+  linarith only [hp]
 
 private def Smale.TransverseCoordinates.cornerLinear {D Z : Type*} [NormedAddCommGroup D]
     [NormedSpace ℝ D] [NormedAddCommGroup Z] [NormedSpace ℝ Z] (u : D) (v : Z) :
@@ -261,7 +263,9 @@ private theorem Smale.TransverseCoordinates.injective_mfderiv_cornerMap {D Z : T
   have hL : ContMDiff 𝓘(ℝ, ℝ × ℝ) 𝓘(ℝ, D × Z) ∞ (cornerLinear u v) :=
     (cornerLinear u v).contDiff.contMDiff
   rw [cornerMap,
-    mfderiv_comp p (Φ.mdifferentiableAt (by simp) hp) (hL.mdifferentiableAt (by simp)),
+    mfderiv_comp p (Φ.mdifferentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
+      ENat.top_ne_zero, not_false_eq_true]) hp) (hL.mdifferentiableAt (by simp only [ne_eq,
+      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])),
     mfderiv_eq_fderiv, (cornerLinear u v).fderiv]
   exact (Smale.PartialChart.bijective_mfderiv Φ hp).1.comp (injective_cornerLinear hu hv)
 
@@ -618,7 +622,9 @@ private theorem
     fderiv ℝ (detector v F) (t, 0) (0, 1) = (0, ⟪v t, v t⟫_ℝ) := by
   have hd : HasDerivAt (fun s : ℝ => (F (t, s)).2) (v t) 0 := by
     have h :=
-      hasDerivAt_verticalSlice (t := t) (s := 0) (hF.snd.contDiffAt.differentiableAt (by simp))
+      hasDerivAt_verticalSlice (t :=
+        t) (s := 0) (hF.snd.contDiffAt.differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
+        ENat.top_ne_zero, not_false_eq_true]))
     change HasDerivAt _ (normalDerivative F t) 0 at h
     rwa [hn t] at h
   have hinner : HasDerivAt (fun s : ℝ => ⟪v t, (F (t, s)).2⟫_ℝ) (⟪v t, v t⟫_ℝ) 0 := by
@@ -627,7 +633,8 @@ private theorem
     (hasDerivAt_const (0 : ℝ) t).prodMk hinner
   exact
     (hasDerivAt_verticalSlice
-          ((contDiff_detector hv hF).contDiffAt.differentiableAt (by simp))).unique
+          ((contDiff_detector hv hF).contDiffAt.differentiableAt (by simp only [ne_eq,
+            WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))).unique
       hslice
 
 private theorem Smale.StripCoordinates.injective_fderiv_detector_at_center {A B : Type*}
@@ -636,7 +643,8 @@ private theorem Smale.StripCoordinates.injective_fderiv_detector_at_center {A B 
     (hc : ∀ t, F (t, 0) = Smale.StripCoordinates.center t) (hn : ∀ t, normalDerivative F t = v t)
     {t : ℝ} (ht : v t ≠ 0) : Function.Injective (fderiv ℝ (detector v F) (t, 0)) := by
   have hQ : DifferentiableAt ℝ (detector v F) (t, 0) :=
-    (contDiff_detector hv hF).contDiffAt.differentiableAt (by simp)
+    (contDiff_detector hv hF).contDiffAt.differentiableAt (by simp only [ne_eq,
+      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
   have hh : fderiv ℝ (detector v F) (t, 0) (1, 0) = (1, 0) := by
     have hd := hasDerivAt_horizontalSlice hQ
     have heq : (fun s : ℝ => detector v F (s, 0)) = fun s => (s, 0) := funext (detector_zero hc)
@@ -650,11 +658,12 @@ private theorem
     Smale.WhitneyPairModel.lowerStripCoordinates_horizontal_derivative {h : ℝ} (hh : h ≠ 0)
     (s : ℝ) : fderiv ℝ (lowerStripCoordinates h) (s, 0) (1, 0) = (1 / 2, 0) := by
   have hf : DifferentiableAt ℝ (lowerStripCoordinates h) (s, 0) :=
-    (contDiff_lowerStripCoordinates hh).contDiffAt.differentiableAt (by simp)
+    (contDiff_lowerStripCoordinates hh).contDiffAt.differentiableAt (by simp only [ne_eq,
+      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
   have hd := Smale.StripCoordinates.hasDerivAt_horizontalSlice hf
   have heq : (fun x : ℝ => lowerStripCoordinates h (x, 0)) = fun x => ((x + 1) / 2, 0) := by
     funext x
-    simp [lowerStripCoordinates, arcTime]
+    simp only [lowerStripCoordinates, arcTime, zero_div, mul_zero, add_zero]
   rw [heq] at hd
   exact
     hd.unique (((hasDerivAt_id s).add_const 1).div_const 2 |>.prodMk (hasDerivAt_const s (0 : ℝ)))
@@ -666,7 +675,8 @@ private theorem
       (cornerSign ((s + 1) / 2) * (1 / (4 * h * cornerScale ((s + 1) / 2))),
         1 / (4 * h * cornerScale ((s + 1) / 2))) := by
   have hf : DifferentiableAt ℝ (lowerStripCoordinates h) (s, 0) :=
-    (contDiff_lowerStripCoordinates hh).contDiffAt.differentiableAt (by simp)
+    (contDiff_lowerStripCoordinates hh).contDiffAt.differentiableAt (by simp only [ne_eq,
+      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
   have hd := Smale.StripCoordinates.hasDerivAt_verticalSlice hf
   have hdiv :
     HasDerivAt (fun u : ℝ => u / (4 * h * cornerScale ((s + 1) / 2)))
@@ -701,8 +711,10 @@ private theorem Smale.WhitneyPairModel.injective_fderiv_exchangeEdges (h : ℝ) 
     (fderiv ℝ (exchangeEdges h) (exchangeEdges h p)).comp (fderiv ℝ (exchangeEdges h) p) =
       ContinuousLinearMap.id ℝ (ℝ × ℝ) := by
     rw [←
-      fderiv_comp p ((contDiff_exchangeEdges h).contDiffAt.differentiableAt (by simp))
-        ((contDiff_exchangeEdges h).contDiffAt.differentiableAt (by simp)),
+      fderiv_comp p ((contDiff_exchangeEdges h).contDiffAt.differentiableAt (by simp only [ne_eq,
+        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
+        ((contDiff_exchangeEdges h).contDiffAt.differentiableAt (by simp only [ne_eq,
+          WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])),
       heq, fderiv_id]
   intro x y hxy
   have he := congrArg (fderiv ℝ (exchangeEdges h) (exchangeEdges h p)) hxy
@@ -716,8 +728,10 @@ private theorem Smale.WhitneyPairModel.injective_fderiv_exchangeEdges (h : ℝ) 
 private theorem Smale.WhitneyPairModel.injective_fderiv_upperStripCoordinates {h : ℝ} (hh : h ≠ 0)
     (s : ℝ) : Function.Injective (fderiv ℝ (upperStripCoordinates h) (s, h * (1 - s ^ 2))) := by
   rw [upperStripCoordinates,
-    fderiv_comp _ ((contDiff_lowerStripCoordinates hh).contDiffAt.differentiableAt (by simp))
-      ((contDiff_exchangeEdges h).contDiffAt.differentiableAt (by simp))]
+    fderiv_comp _ ((contDiff_lowerStripCoordinates hh).contDiffAt.differentiableAt (by simp only
+      [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
+      ((contDiff_exchangeEdges h).contDiffAt.differentiableAt (by simp only [ne_eq,
+        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))]
   have heq : exchangeEdges h (s, h * (1 - s ^ 2)) = (s, 0) := by
     simp only [exchangeEdges, sub_self]
   rw [heq]
@@ -734,7 +748,7 @@ private theorem Smale.WhitneyPairModel.mem_frontier_bigon_iff_exists_time {h : �
     let t := (p.1 + 1) / 2
     have ht : t ∈ Set.Icc (0 : ℝ) 1 := by
       dsimp [t]
-      constructor <;> linarith [hpr.1.1, hpr.1.2]
+      constructor <;> linarith only [hpr, hpr.1.1, hpr.1.2]
     have hbase : p.1 = 2 * t - 1 := by dsimp [t]; ring
     refine ⟨t, ht, ?_⟩
     rcases hpedge with hpzero | hpupper
@@ -747,11 +761,11 @@ private theorem Smale.WhitneyPairModel.mem_frontier_bigon_iff_exists_time {h : �
     · apply (mem_frontier_bigon_iff h _).mpr
       refine ⟨lowerArc_mem_bigon hh.le ?_, Or.inl rfl⟩
       rw [abs_le]
-      constructor <;> linarith [ht.1, ht.2]
+      constructor <;> linarith only [ht, ht.1, ht.2]
     · apply (mem_frontier_bigon_iff h _).mpr
       refine ⟨upperArc_mem_bigon hh.le ?_, Or.inr rfl⟩
       rw [abs_le]
-      constructor <;> linarith [ht.1, ht.2]
+      constructor <;> linarith only [ht, ht.1, ht.2]
 
 private theorem Smale.WhitneyPairModel.injOn_frontier_bigon_of_arcs {M : Type*} {h : ℝ} (hh : 0 < h)
     {f : (ℝ × ℝ) → M} {a b : ℝ → M} (ha : Set.InjOn a (Set.Icc (0 : ℝ) 1))
@@ -828,7 +842,9 @@ private theorem Smale.injective_nativeDerivative_of_strip_germ {E M : Type*} [No
   have hgerm : f =ᶠ[𝓝 p] k.map ∘ r := Filter.mem_of_superset (hU.mem_nhds hp) (fun _ hx => heq hx)
   rw [hgerm.mfderiv_eq']
   have hk := k.smooth.contMDiffAt (k.open_domain.mem_nhds (hmap hp))
-  rw [mfderiv_comp p (hk.mdifferentiableAt (by simp)) (hr.contMDiff.mdifferentiableAt (by simp))]
+  rw [mfderiv_comp p (hk.mdifferentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
+    ENat.top_ne_zero, not_false_eq_true])) (hr.contMDiff.mdifferentiableAt (by simp only [ne_eq,
+    WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))]
   have hri : Function.Injective (mfderiv 𝓘(ℝ, ℝ × ℝ) 𝓘(ℝ, ℝ × ℝ) r p) := by
     rw [mfderiv_eq_fderiv]
     exact hi
@@ -924,7 +940,7 @@ private theorem Smale.WhitneyPairModel.interpolated_strip_time_mem_Ioo {h t β z
     apply (div_le_one hJ).mpr
     rw [hJdef]
     have hr := mul_nonneg (sub_nonneg.mpr hβ.2) (sub_nonneg.mpr ht.2.le)
-    nlinarith
+    linarith only [hr]
   have hid : t + (2 * β - 1) * (z / (4 * h * J)) = (1 - θ) * t + θ * e := by
     dsimp [θ, e, H]
     field_simp [hh.ne', ht.1.ne', (sub_pos.mpr ht.2).ne', hJ.ne']
@@ -936,7 +952,7 @@ private theorem Smale.WhitneyPairModel.interpolated_strip_time_mem_Ioo {h t β z
   · have hpos : 0 < (1 - θ) * (1 - t) + θ * (1 - e) :=
       add_pos_of_pos_of_nonneg (mul_pos (sub_pos.mpr hθ1) (sub_pos.mpr ht.2))
         (mul_nonneg hθ0.le (sub_nonneg.mpr he1))
-    nlinarith
+    linarith only [hpos]
 
 private theorem
     Smale.WhitneyPairModel.lowerStripCoordinates_interior {h : ℝ} (hh : 0 < h) {p : ℝ × ℝ}
@@ -946,10 +962,10 @@ private theorem
   have hheight : 0 < h * (1 - p.1 ^ 2) := hp0.trans hphi
   have hsq : p.1 ^ 2 < 1 := by
     have hpos : 0 < 1 - p.1 ^ 2 := (mul_pos_iff_of_pos_left hh).mp hheight
-    linarith
+    linarith only [hpos]
   have ht : arcTime p ∈ Set.Ioo (0 : ℝ) 1 := by
     dsimp [arcTime]
-    constructor <;> nlinarith [sq_nonneg (p.1 - 1), sq_nonneg (p.1 + 1)]
+    constructor <;> linarith only [hsq, sq_nonneg (p.1 - 1), sq_nonneg (p.1 + 1)]
   have hβ : cornerTransition (arcTime p) ∈ Set.Icc (0 : ℝ) 1 :=
     ⟨Real.smoothTransition.nonneg _, Real.smoothTransition.le_one _⟩
   have hheight_eq : h * (1 - p.1 ^ 2) = 4 * h * arcTime p * (1 - arcTime p) := by
@@ -1164,7 +1180,7 @@ private theorem Smale.DiskCone.point_fibers {E : Type*} [NormedAddCommGroup E] [
     p = q ∨ (p.1 = 1 ∧ q.1 = 1) := by
   have hnorm := congrArg (fun x : Metric.closedBall (0 : E) 1 => ‖(x : E)‖) hpq
   rw [norm_point, norm_point] at hnorm
-  have ht : p.1 = q.1 := Subtype.ext (by linarith)
+  have ht : p.1 = q.1 := Subtype.ext (by linarith only [hnorm])
   rcases p with ⟨t, x⟩
   rcases q with ⟨s, y⟩
   dsimp only at ht
@@ -1187,7 +1203,7 @@ private theorem Smale.DiskCone.surjective_point {E : Type*} [NormedAddCommGroup 
     rw [sub_self, zero_smul, hx]
   · have hxnorm : ‖(x : E)‖ ≤ 1 := mem_closedBall_zero_iff.mp x.property
     let t : unitInterval :=
-      ⟨1 - ‖(x : E)‖, sub_nonneg.mpr hxnorm, by linarith [norm_nonneg (x : E)]⟩
+      ⟨1 - ‖(x : E)‖, sub_nonneg.mpr hxnorm, by linarith only [norm_nonneg (x : E)]⟩
     refine ⟨(t, Smale.RadialExtension.direction (x : E) hx), ?_⟩
     apply Subtype.ext
     change (1 - (1 - ‖(x : E)‖)) • (‖(x : E)‖⁻¹ • (x : E)) = (x : E)
@@ -1383,7 +1399,7 @@ private theorem Smale.AnnularExtension.exteriorVector_eq_zero {E : Type*} [Norme
   have hdiv : 2 ≤ ‖x‖ / a := (le_div_iff₀ ha).mpr hx
   have hf : exteriorFactor a x = 0 := by
     unfold exteriorFactor
-    rw [max_eq_left (by linarith : 2 - ‖x‖ / a ≤ 0), min_eq_right zero_le_one]
+    rw [max_eq_left (by linarith only [hdiv] : 2 - ‖x‖ / a ≤ 0), min_eq_right zero_le_one]
   rw [exteriorVector, hf, zero_smul]
 
 private theorem Smale.AnnularExtension.disk_extension_on_radius {E M : Type*} [NormedAddCommGroup E]
@@ -1475,7 +1491,7 @@ private theorem Smale.AnnularExtension.exists_continuous_annular_extension {E M 
   · intro x hx
     have hxb : x ∉ Metric.closedBall (0 : E) b := by
       rw [mem_closedBall_zero_iff]
-      linarith
+      linarith only [ha, hab, hx]
     change ((Metric.closedBall (0 : E) b).piecewise G₀ outer) x = _
     rw [Set.piecewise_eq_of_notMem _ _ _ hxb]
     change F₁ (exteriorDisk hb x) = F₁ ⟨0, Metric.mem_closedBall_self zero_le_one⟩
@@ -1500,20 +1516,21 @@ private theorem
     ∃ a b : ℝ, 0 < a ∧ a < 1 ∧ 1 < b ∧ {x : E | a ≤ ‖x‖ ∧ ‖x‖ ≤ b} ⊆ W := by
   obtain ⟨δ, hδ, hδW⟩ := (isCompact_sphere (0 : E) 1).exists_cthickening_subset_open hW hSW
   let ε := Min.min (δ / 2) (1 / 2)
-  have hε : 0 < ε := lt_min (by linarith) (by norm_num)
+  have hε : 0 < ε := lt_min (by linarith only [hδ]) (by norm_num)
   have hεsmall : ε ≤ 1 / 2 := min_le_right _ _
-  have hεδ : ε ≤ δ := (min_le_left _ _).trans (by linarith)
-  refine ⟨1 - ε, 1 + ε, by linarith, by linarith, by linarith, ?_⟩
+  have hεδ : ε ≤ δ := (min_le_left _ _).trans (by linarith only [hδ])
+  refine ⟨1 - ε, 1 + ε, by linarith only [hε, hεsmall], by linarith only [hε],
+    by linarith only [hε], ?_⟩
   intro x hx
   have hx0 : x ≠ 0 := by
     intro heq
     have hxlo := hx.1
     rw [heq, norm_zero] at hxlo
-    linarith
+    linarith only [hε, hεsmall, hxlo]
   have hdist : Dist.dist x (Smale.RadialExtension.direction x hx0 : E) ≤ δ := by
     rw [dist_direction]
     apply le_trans (abs_le.mpr ?_) hεδ
-    constructor <;> linarith [hx.1, hx.2]
+    constructor <;> linarith only [hx, hx.1, hx.2]
   exact
     hδW
       (Metric.mem_cthickening_of_dist_le x (Smale.RadialExtension.direction x hx0) δ
@@ -1805,7 +1822,7 @@ private theorem Smale.WhitneyPairModel.bigon_center_mem_interior {h : ℝ} (hh :
   apply (mem_interior_bigon_iff h _).mpr
   change 0 < h / 2 ∧ h / 2 < h * (1 - 0 ^ 2)
   norm_num only [zero_pow (by decide : 2 ≠ 0), sub_zero, mul_one]
-  constructor <;> linarith
+  constructor <;> linarith only [hh]
 
 private theorem Smale.WhitneyPairModel.interior_bigon_nonempty {h : ℝ} (hh : 0 < h) :
     (interior (bigon h)).Nonempty :=
@@ -1817,7 +1834,9 @@ private theorem Smale.WhitneyPairModel.exists_bigon_disk_homeomorph {h : ℝ} (h
         e '' interior (bigon h) = Metric.ball 0 1 ∧ e '' frontier (bigon h) = Metric.sphere 0 1 :=
   by
   let L : (ℝ × ℝ) ≃L[ℝ] Smale.Hemisphere.Ambient 2 :=
-    ContinuousLinearEquiv.ofFinrankEq (by simp [Smale.Hemisphere.Ambient, Module.finrank_prod])
+    ContinuousLinearEquiv.ofFinrankEq (by simp only [Module.finrank_prod, Module.finrank_self,
+      Nat.reduceAdd, Hemisphere.Ambient,
+        finrank_euclideanSpace, Fintype.card_fin])
   let K : Set (Smale.Hemisphere.Ambient 2) := L '' bigon h
   have hK : IsCompact K := (isCompact_bigon hh).image L.continuous
   have hc : Convex ℝ K := (convex_bigon hh.le).linear_image L.toLinearEquiv.toLinearMap
@@ -2186,8 +2205,8 @@ private theorem Smale.PlanarFrame.squareLength_pos {u : Smale.PlaneImmersion.Pla
   have hsq₂ := sq_nonneg u.2
   by_contra h
   have hz : u.1 ^ 2 + u.2 ^ 2 ≤ 0 := le_of_not_gt h
-  have hu₁ : u.1 = 0 := by nlinarith
-  have hu₂ : u.2 = 0 := by nlinarith
+  have hu₁ : u.1 = 0 := by nlinarith only [hz]
+  have hu₂ : u.2 = 0 := by nlinarith only [hz]
   exact hu (Prod.ext hu₁ hu₂)
 
 private theorem
@@ -2210,18 +2229,19 @@ private theorem Smale.PlanarFrame.area_transverse (u : Smale.PlaneImmersion.Plan
 
 private theorem Smale.PlanarFrame.linearMap_first (u v : Smale.PlaneImmersion.Plane) :
     Smale.PlaneImmersion.linearMap (u, v) (1, 0) = u := by
-  simp [Smale.PlaneImmersion.linearMap_apply]
+  simp only [PlaneImmersion.linearMap_apply, one_smul, zero_smul, add_zero]
 
 private theorem Smale.PlanarFrame.linearMap_second (u v : Smale.PlaneImmersion.Plane) :
     Smale.PlaneImmersion.linearMap (u, v) (0, 1) = v := by
-  simp [Smale.PlaneImmersion.linearMap_apply]
+  simp only [PlaneImmersion.linearMap_apply, zero_smul, one_smul, zero_add]
 
 private theorem Smale.PlanarFrame.linearMap_columns
     (L : Smale.PlaneImmersion.Plane →L[ℝ] Smale.PlaneImmersion.Plane) :
     Smale.PlaneImmersion.linearMap (L (1, 0), L (0, 1)) = L := by
   apply ContinuousLinearMap.ext
   intro p
-  have hp : p = p.1 • ((1 : ℝ), 0) + p.2 • (0, 1) := by ext <;> simp
+  have hp : p = p.1 • ((1 : ℝ), 0) + p.2 • (0, 1) := by ext <;> simp only [Prod.smul_mk,
+    smul_eq_mul, mul_one, mul_zero, Prod.mk_add_mk, add_zero, zero_add, Prod.mk.eta]
   rw [Smale.PlaneImmersion.linearMap_apply, ← map_smul, ← map_smul, ← map_add, ← hp]
 
 private theorem Smale.PlanarFrame.determinant_linearMap (u v : Smale.PlaneImmersion.Plane) :
@@ -2295,7 +2315,8 @@ private theorem
 private theorem Smale.IntersectionCoordinates.map_first_axis {A F : Type*} [NormedAddCommGroup A]
     [NormedSpace ℝ A] [NormedAddCommGroup F] [NormedSpace ℝ F]
     (P : (ℝ × A) →L[ℝ] (Smale.PlaneImmersion.Plane × F)) (s : ℝ) : P (s, 0) = s • P (1, 0) := by
-  have hs : (s, (0 : A)) = s • ((1 : ℝ), 0) := by ext <;> simp
+  have hs : (s, (0 : A)) = s • ((1 : ℝ), 0) := by ext <;> simp only [Prod.smul_mk, smul_eq_mul,
+    mul_one, smul_zero]
   rw [hs, map_smul]
 
 private theorem Smale.IntersectionCoordinates.det_jointBlock {A B F : Type*} [NormedAddCommGroup A]
@@ -2316,7 +2337,7 @@ private theorem Smale.IntersectionCoordinates.det_jointBlock {A B F : Type*} [No
     rw [jointBlock_apply]
     change j.symm ((P (w.1, 0) + Q (w.2, 0)).2) = 0
     rw [map_first_axis P w.1, map_first_axis Q w.2, hP, hQ]
-    simp
+    simp only [Prod.smul_mk, smul_zero, Prod.mk_add_mk, add_zero, map_zero]
   have hfirst :
     (ContinuousLinearMap.fst ℝ Smale.PlaneImmersion.Plane (A × B)).comp
         ((jointBlock j P Q).comp (ContinuousLinearMap.inl ℝ Smale.PlaneImmersion.Plane (A × B))) =
@@ -2558,12 +2579,13 @@ private theorem Smale.TubularBigon.upper_sheetFrame_complement_of_finrank {E M A
                   ∀ t ∈ V, Function.Bijective ((d.normalFrame tube.chart t).coprod (C t)) := by
   obtain ⟨⟨U, hU, hIU, hs⟩, hi⟩ := tube.upper_sheetFrame d
   have hstar : StarConvex ℝ (0 : ℝ) (Set.Icc (0 : ℝ) 1) :=
-    (convex_Icc (0 : ℝ) 1).starConvex (by simp)
+    (convex_Icc (0 : ℝ) 1).starConvex (by simp only [mem_Icc, Std.le_refl, zero_le_one, and_self])
   have hdim' : Module.finrank ℝ A + m = Module.finrank ℝ (EuclideanSpace ℝ (Fin n)) := by
     simpa only [finrank_euclideanSpace_fin] using hdim
   obtain ⟨W, hW, hIW, C, hC, hr, hc⟩ :=
     Smale.FrameField.exists_smooth_complement_near_starConvex_on hU hs
-      CompactIccSpace.isCompact_Icc hstar (by simp) hIU hi m hdim'
+      CompactIccSpace.isCompact_Icc hstar (by simp only [mem_Icc, Std.le_refl, zero_le_one,
+        and_self]) hIU hi m hdim'
   exact
     ⟨W ∩ U, hW.inter hU, fun t ht => ⟨hIW ht, hIU ht⟩, hs.mono Set.inter_subset_right, C,
       hC.mono Set.inter_subset_left, hr, fun t ht => hc t ht.1⟩
@@ -2640,7 +2662,8 @@ private theorem Smale.PlanarFrame.first_column_ne_zero {σ : ℝ} (L : determina
         area ((L : Smale.PlaneImmersion.Plane →L[ℝ] Smale.PlaneImmersion.Plane) (1, 0))
           ((L : Smale.PlaneImmersion.Plane →L[ℝ] Smale.PlaneImmersion.Plane) (0, 1)) at h
   rw [hz] at h
-  simp [area] at h
+  simp only [area, Prod.fst_zero, zero_mul, Prod.snd_zero, sub_self, mul_zero,
+    lt_self_iff_false] at h
 
 private theorem Smale.PlanarFrame.signed_transverseCoeff_pos {σ : ℝ} (L : determinantComponent σ) :
     0 <
@@ -2714,14 +2737,14 @@ private theorem Smale.PlanarFrame.nonempty_path_determinantComponent {σ : ℝ}
     congrArg Subtype.val γ.target
   have hF0 : F 0 = (a : Smale.PlaneImmersion.Plane →L[ℝ] Smale.PlaneImmersion.Plane) := by
     change Smale.PlaneImmersion.linearMap (v 0, α 0 • v 0 + β 0 • quarterTurn (v 0)) = _
-    have hα0 : α 0 = α₀ := by simp [α]
-    have hβ0 : β 0 = β₀ := by simp [β]
+    have hα0 : α 0 = α₀ := by simp only [Icc.coe_zero, sub_zero, one_mul, zero_mul, add_zero, α]
+    have hβ0 : β 0 = β₀ := by simp only [Icc.coe_zero, sub_zero, one_mul, zero_mul, add_zero, β]
     rw [hv0, hα0, hβ0, decompose_second_column (first_column_ne_zero a)]
     exact linearMap_columns a
   have hF1 : F 1 = (b : Smale.PlaneImmersion.Plane →L[ℝ] Smale.PlaneImmersion.Plane) := by
     change Smale.PlaneImmersion.linearMap (v 1, α 1 • v 1 + β 1 • quarterTurn (v 1)) = _
-    have hα1 : α 1 = α₁ := by simp [α]
-    have hβ1 : β 1 = β₁ := by simp [β]
+    have hα1 : α 1 = α₁ := by simp only [Icc.coe_one, sub_self, zero_mul, one_mul, zero_add, α]
+    have hβ1 : β 1 = β₁ := by simp only [Icc.coe_one, sub_self, zero_mul, one_mul, zero_add, β]
     rw [hv1, hα1, hβ1, decompose_second_column (first_column_ne_zero b)]
     exact linearMap_columns b
   exact
@@ -2784,7 +2807,7 @@ private theorem Smale.FrameField.exists_smooth_invertible_join_of_finrank_two {D
           (∀ t, 0 < (a 0).toLinearMap.det * (L t).toLinearMap.det) ∧
             (L =ᶠ[𝓝 (0 : ℝ)] a) ∧ (L =ᶠ[𝓝 (1 : ℝ)] b) := by
   have hdim' : Module.finrank ℝ Smale.PlaneImmersion.Plane = Module.finrank ℝ D := by
-    simp [Smale.PlaneImmersion.Plane, Module.finrank_prod, Module.finrank_self, hdim]
+    simp only [PlaneImmersion.Plane, Module.finrank_prod, Module.finrank_self, Nat.reduceAdd, hdim]
   let e : Smale.PlaneImmersion.Plane ≃L[ℝ] D := ContinuousLinearEquiv.ofFinrankEq hdim'
   let a' (t : ℝ) := e.symm.toContinuousLinearMap.comp ((a t).comp e.toContinuousLinearMap)
   let b' (t : ℝ) := e.symm.toContinuousLinearMap.comp ((b t).comp e.toContinuousLinearMap)
@@ -3042,10 +3065,10 @@ private theorem Smale.FrameField.exists_smooth_invertible_join_of_finrank_one {D
         fun_prop
       source' := by
         apply Subtype.ext
-        simp
+        simp only [Icc.coe_zero, sub_zero, one_smul, zero_smul, add_zero]
       target' := by
         apply Subtype.ext
-        simp }
+        simp only [Icc.coe_one, sub_self, zero_smul, one_smul, zero_add] }
   obtain ⟨L, hL, hmem, hleft, hright⟩ :=
     Smale.exists_smooth_open_curve_with_endpoint_germs S ha hb hU hV h0U h1V ha0 hb1 γ
   have hpositive (t : ℝ) : 0 < (a 0).toLinearMap.det * (L t).toLinearMap.det := hmem t
@@ -3103,8 +3126,12 @@ private theorem
   have hT : ∀ t ∈ Set.Icc (0 : ℝ) 1, Function.Bijective (T t) := fun t ht =>
     j.symm.bijective.comp (hi t ht).bijective
   have hpositive := det_mul_endpoints_pos hs.continuousOn hT
-  have h0 := det_frame_eq_det_split_mul_det_coefficient j (G 0) (C 0) (L 0) (hi 0 (by simp))
-  have h1 := det_frame_eq_det_split_mul_det_coefficient j (G 1) (C 1) (L 1) (hi 1 (by simp))
+  have h0 :=
+    det_frame_eq_det_split_mul_det_coefficient j (G 0) (C 0) (L 0) (hi 0 (by simp only [mem_Icc,
+    Std.le_refl, zero_le_one, and_self]))
+  have h1 :=
+    det_frame_eq_det_split_mul_det_coefficient j (G 1) (C 1) (L 1) (hi 1 (by simp only [mem_Icc,
+    zero_le_one, Std.le_refl, and_self]))
   rw [h0, h1]
   have heq :
     ((T 0).toLinearMap.det * ((complementQuotient (G 0) (C 0)).comp (L 0)).toLinearMap.det) *
@@ -3175,8 +3202,9 @@ private theorem
     isInvertible_coprod_of_bijective _ _ (hi t (hIU ht))
   have hcoeff := (same_sign_frames_iff_coefficients j (hG.mono hIU) (hC.mono hIU) hinv).mp hsign
   exact
-    exists_smooth_complement_with_endpoint_germs_of_finrank_one_or_two hdim hU (hIU (by simp))
-      (hIU (by simp)) hG hC hL hi hcoeff
+    exists_smooth_complement_with_endpoint_germs_of_finrank_one_or_two hdim hU (hIU (by simp only
+      [mem_Icc, Std.le_refl, zero_le_one, and_self]))
+      (hIU (by simp only [mem_Icc, zero_le_one, Std.le_refl, and_self])) hG hC hL hi hcoeff
 
 private theorem Smale.WhitneyPairModel.exists_smooth_bigon_boundary_field {F : Type*}
     [NormedAddCommGroup F] [NormedSpace ℝ F] {h : ℝ} (hh : 0 < h) {L H : ℝ → F} {D : Set ℝ}
@@ -3555,7 +3583,7 @@ private theorem Smale.TubularBigon.exists_rankThree_adapted_frame_of_normal_sign
     intro p hp
     have hpr := Smale.WhitneyPairModel.bigon_subset_rectangle tube.height_pos hp
     change 0 ≤ (p.1 + 1) / 2 ∧ (p.1 + 1) / 2 ≤ 1
-    constructor <;> linarith [hpr.1.1, hpr.1.2]
+    constructor <;> linarith only [hpr, hpr.1.1, hpr.1.2]
   have hrK : Set.MapsTo r (Smale.WhitneyPairModel.bigon h) (Smale.WhitneyPairModel.bigon h) :=
     fun _ hp => tube.upperBoundaryArc_mem_bigon (htimeK hp)
   let O₀ := V ∩ (r ⁻¹' V ∩ Smale.WhitneyPairModel.arcTime ⁻¹' D)
@@ -3686,8 +3714,10 @@ private theorem
       Smale.FrameField.rankThreePairDet (e.normalFrame tube.chart 1) (d.normalFrame tube.chart 1)
   have hprod :
     tube.rankThreeSheetPairDet d e 0 * tube.rankThreeSheetPairDet d e 1 = -((8 * h) ^ 2 * n) := by
-    rw [tube.rankThreeSheetPairDet_eq d e (t := 0) (by simp),
-      tube.rankThreeSheetPairDet_eq d e (t := 1) (by simp)]
+    rw [tube.rankThreeSheetPairDet_eq d e (t := 0) (by simp only [mem_Icc, Std.le_refl,
+      zero_le_one, and_self]),
+      tube.rankThreeSheetPairDet_eq d e (t := 1) (by simp only [mem_Icc, zero_le_one, Std.le_refl,
+        and_self])]
     dsimp only [n]
     ring
   have hscale : 0 < (8 * h) ^ 2 := sq_pos_of_pos (mul_pos (by norm_num) tube.height_pos)
@@ -3695,11 +3725,11 @@ private theorem
   rw [hprod]
   constructor
   · intro hn
-    have hp : 0 < (8 * h) ^ 2 * n := by linarith
+    have hp : 0 < (8 * h) ^ 2 * n := by linarith only [hn]
     exact (mul_pos_iff_of_pos_left hscale).mp hp
   · intro hn
     have hp : 0 < (8 * h) ^ 2 * n := mul_pos hscale hn
-    linarith
+    linarith only [hp]
 
 private theorem
     Smale.TubularBigon.exists_rankThree_adapted_frame_of_opposite_corner_signs {E M : Type*}
@@ -3818,11 +3848,13 @@ private theorem Smale.FrameField.opposite_intersectionDet_iff_normalDet {D Z F :
         Smale.TransverseCoordinates.bijective_normal_comp (Q t) (G t) (C t) (hQs t ht)
           (hi t ht).surjective (hQG t ht) rfl)
   have h₀ :=
-    det_intersection_mul_normalComplement j (G 0) (C 0) (L 0) (Q 0) (hi 0 (by simp))
-      (hQG 0 (by simp))
+    det_intersection_mul_normalComplement j (G 0) (C 0) (L 0) (Q 0) (hi 0 (by simp only [mem_Icc,
+      Std.le_refl, zero_le_one, and_self]))
+      (hQG 0 (by simp only [mem_Icc, Std.le_refl, zero_le_one, and_self]))
   have h₁ :=
-    det_intersection_mul_normalComplement j (G 1) (C 1) (L 1) (Q 1) (hi 1 (by simp))
-      (hQG 1 (by simp))
+    det_intersection_mul_normalComplement j (G 1) (C 1) (L 1) (Q 1) (hi 1 (by simp only [mem_Icc,
+      zero_le_one, Std.le_refl, and_self]))
+      (hQG 1 (by simp only [mem_Icc, zero_le_one, Std.le_refl, and_self]))
   let a :=
     (j.symm.toContinuousLinearMap.comp ((G 0).coprod (L 0))).det *
       (j.symm.toContinuousLinearMap.comp ((G 1).coprod (L 1))).det
@@ -3876,7 +3908,8 @@ private theorem Smale.StripNormalData.contDiffOn_sheetDifferential {A B Z E M : 
   have hs : ContDiffAt ℝ ∞ (d.sheetTransition Ψ) (t, 0) :=
     htransition.comp (t, 0) (ContinuousLinearMap.inl ℝ (ℝ × A) B).contDiff.contDiffAt
   have hc : ContDiff ℝ ∞ (fun s : ℝ => (s, (0 : A))) := contDiff_id.prodMk contDiff_const
-  exact ((hs.fderiv_right (by simp)).comp t hc.contDiffAt).contDiffWithinAt
+  exact ((hs.fderiv_right (by simp only [ENat.coe_top_add_one,
+    Std.le_refl])).comp t hc.contDiffAt).contDiffWithinAt
 
 private theorem
     Smale.StripNormalData.contDiffOn_sheetBaseFrame {A B Z E M : Type*} [NormedAddCommGroup A]
@@ -3952,7 +3985,8 @@ private theorem Smale.StripNormalData.contDiffOn_tubularTransitionDerivative {A 
         (d.chart.contMDiffOn_toFun.contMDiffAt (d.chart.open_source.mem_nhds ht.1))).contDiffAt
   have hc : ContDiff ℝ ∞ (Smale.StripCoordinates.center : ℝ → Smale.StripCoordinates.Space A B) :=
     (contDiff_id.prodMk contDiff_const).prodMk contDiff_const
-  exact ((htransition.fderiv_right (by simp)).comp t hc.contDiffAt).contDiffWithinAt
+  exact ((htransition.fderiv_right (by simp only [ENat.coe_top_add_one,
+    Std.le_refl])).comp t hc.contDiffAt).contDiffWithinAt
 
 private theorem Smale.StripNormalData.contDiffOn_sheetComplement {A B Z E M : Type*}
     [NormedAddCommGroup A] [NormedSpace ℝ A] [NormedAddCommGroup B] [NormedSpace ℝ B]
@@ -3980,8 +4014,10 @@ private theorem Smale.StripNormalData.bijective_tubularTransitionDerivative {A B
       (mfderiv 𝓘(ℝ, Smale.StripCoordinates.Space A B) 𝓘(ℝ, (ℝ × ℝ) × Z)
         (Ψ.symm ∘ d.chart) (Smale.StripCoordinates.center t)) := by
     rw [mfderiv_comp (Smale.StripCoordinates.center t)
-      (Ψ.symm.mdifferentiableAt (by simp) htarget)
-      (d.chart.mdifferentiableAt (by simp) (d.line ht))]
+      (Ψ.symm.mdifferentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
+        not_false_eq_true]) htarget)
+      (d.chart.mdifferentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
+        not_false_eq_true]) (d.line ht))]
     exact
       (Smale.PartialChart.bijective_mfderiv Ψ.symm htarget).comp
         (Smale.PartialChart.bijective_mfderiv d.chart (d.line ht))
@@ -4004,7 +4040,7 @@ private theorem Smale.StripNormalData.sheet_coprod_complement_eq {A B Z E M : Ty
     d.tubularTransitionDerivative Ψ t (z.1, 0) + d.tubularTransitionDerivative Ψ t (0, z.2) =
       d.tubularTransitionDerivative Ψ t z
   rw [← map_add]
-  simp
+  simp only [Prod.mk_add_mk, add_zero, zero_add, Prod.mk.eta]
 
 private theorem Smale.StripNormalData.isInvertible_sheet_coprod_complement {A B Z E M : Type*}
     [NormedAddCommGroup A] [NormedSpace ℝ A] [NormedAddCommGroup B] [NormedSpace ℝ B]
@@ -4067,7 +4103,8 @@ private theorem Smale.StripNormalData.contDiffOn_normalDetector {A B Z E M N : T
     (contDiff_id.prodMk contDiff_const).prodMk contDiff_const
   have hx : ContDiffAt ℝ ∞ (fun s => Ψ.symm (d.chart (Smale.StripCoordinates.center s))) t :=
     (d.contDiffAt_tubularTransition Ψ ht (htarget t ht)).comp t hc.contDiffAt
-  exact ((hqΨ.fderiv_right (by simp)).comp t hx).contDiffWithinAt
+  exact ((hqΨ.fderiv_right (by simp only [ENat.coe_top_add_one,
+    Std.le_refl])).comp t hx).contDiffWithinAt
 
 private theorem Smale.StripNormalData.normalDetector_eq_native {A B Z E M N : Type*}
     [NormedAddCommGroup A] [NormedSpace ℝ A] [NormedAddCommGroup B] [NormedSpace ℝ B]
@@ -4091,8 +4128,10 @@ private theorem Smale.StripNormalData.normalDetector_eq_native {A B Z E M N : Ty
   intro v
   simpa only [mfderiv_eq_fderiv] using!
     (mfderiv_comp_apply_of_eq (Ψ.symm (d.chart (Smale.StripCoordinates.center t)))
-      (hq.mdifferentiableAt (by simp))
-      (Ψ.mdifferentiableAt (by simp) (Ψ.map_target' htarget)) hinv v)
+      (hq.mdifferentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
+        not_false_eq_true]))
+      (Ψ.mdifferentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
+        not_false_eq_true]) (Ψ.map_target' htarget)) hinv v)
 
 private theorem Smale.StripNormalData.surjective_normalDetector {A B Z E M N : Type*}
     [NormedAddCommGroup A] [NormedSpace ℝ A] [NormedAddCommGroup B] [NormedSpace ℝ B]
@@ -4138,7 +4177,9 @@ private theorem Smale.StripNormalData.normalDetector_comp_sheet_eq_zero {A B Z E
   have hqΨ := d.contDiffAt_normalMap_in_tube Ψ q htarget (hq.contMDiffAt (hO.mem_nhds hcenter))
   have hsheet := d.contDiffAt_sheetTransition Ψ ht htarget
   have hchain :=
-    fderiv_comp (t, (0 : A)) (hqΨ.differentiableAt (by simp)) (hsheet.differentiableAt (by simp))
+    fderiv_comp (t, (0 : A)) (hqΨ.differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
+      ENat.top_ne_zero, not_false_eq_true])) (hsheet.differentiableAt (by simp only [ne_eq,
+      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
   have hder : fderiv ℝ ((q ∘ Ψ) ∘ d.sheetTransition Ψ) (t, (0 : A)) = 0 := by
     rw [hvanish.fderiv_eq]
     exact (hasFDerivAt_const (𝕜 := ℝ) (0 : N) (t, (0 : A))).fderiv
@@ -4168,7 +4209,9 @@ private theorem Smale.StripNormalData.normalDetector_comp_sheet {A B Z E M N : T
   have hqΨ := d.contDiffAt_normalMap_in_tube Ψ q htarget hq
   have hsheet := d.contDiffAt_sheetTransition Ψ ht htarget
   have hchain :=
-    fderiv_comp (t, (0 : A)) (hqΨ.differentiableAt (by simp)) (hsheet.differentiableAt (by simp))
+    fderiv_comp (t, (0 : A)) (hqΨ.differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
+      ENat.top_ne_zero, not_false_eq_true])) (hsheet.differentiableAt (by simp only [ne_eq,
+      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
   exact hchain.symm.trans heq.fderiv_eq
 
 private theorem
@@ -4191,7 +4234,9 @@ private theorem
           (fderiv ℝ (fun w : ℝ × EuclideanSpace ℝ (Fin 1) => q (d.chart (w, 0))) (1, 0)).det <
         0 := by
   let i : (ℝ × EuclideanSpace ℝ (Fin 1)) ≃L[ℝ] EuclideanSpace ℝ (Fin 2) :=
-    ContinuousLinearEquiv.ofFinrankEq (by simp [Module.finrank_prod])
+    ContinuousLinearEquiv.ofFinrankEq (by simp only [Module.finrank_prod, Module.finrank_self,
+      finrank_euclideanSpace, Fintype.card_unique,
+        Nat.reduceAdd, Fintype.card_fin])
   let j := Smale.IntersectionCoordinates.pairCoordinates Smale.FrameField.rankThreePairCoordinates
   let G := e.sheetDifferential tube.chart
   let L := d.sheetDifferential tube.chart
@@ -4326,7 +4371,9 @@ private theorem
       ContMDiff 𝓘(ℝ, D.chart.NegativeCoordinates) 𝓘(ℝ, ℝ × EuclideanSpace ℝ (Fin 1)) ∞ j.symm :=
       j.symm.contDiff.contMDiff
     rw [beltSheetNormal,
-      mfderiv_comp _ (hjSmooth.mdifferentiableAt (by simp)) (hnormal.mdifferentiableAt (by simp)),
+      mfderiv_comp _ (hjSmooth.mdifferentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
+        ENat.top_ne_zero, not_false_eq_true])) (hnormal.mdifferentiableAt (by simp only [ne_eq,
+        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])),
       hJ]
     exact j.symm.surjective.comp (D.surjective_beltNormal_derivative hf v)
 
@@ -4362,7 +4409,9 @@ private theorem Smale.NativeSheetCoordinates.injective_mfderiv_projection {D B E
     (Φ.contMDiffOn_invFun.contMDiffAt (Φ.open_target.mem_nhds hx)).comp x hF.contMDiffAt
   have hTi : Function.Injective T := by
     change Function.Injective (mfderiv I 𝓘(ℝ, D × B) (Φ.symm ∘ F) x)
-    rw [mfderiv_comp x (Φ.symm.mdifferentiableAt (by simp) hx) (hF.mdifferentiableAt (by simp))]
+    rw [mfderiv_comp x (Φ.symm.mdifferentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
+      ENat.top_ne_zero, not_false_eq_true]) hx) (hF.mdifferentiableAt (by simp only [ne_eq,
+      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))]
     exact (Smale.PartialChart.bijective_mfderiv Φ.symm hx).injective.comp hiF
   have hfst :
     (mfderiv I 𝓘(ℝ, D) (projection Φ F) x : G →L[ℝ] D) = (ContinuousLinearMap.fst ℝ D B).comp T :=
@@ -4373,7 +4422,9 @@ private theorem Smale.NativeSheetCoordinates.injective_mfderiv_projection {D B E
       rw [mfderiv_eq_fderiv]
       exact (ContinuousLinearMap.fst ℝ D B).fderiv
     change mfderiv I 𝓘(ℝ, D) (Prod.fst ∘ C) x = _
-    rw [mfderiv_comp x (hp.mdifferentiableAt (by simp)) (hC.mdifferentiableAt (by simp)), hd]
+    rw [mfderiv_comp x (hp.mdifferentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
+      ENat.top_ne_zero, not_false_eq_true])) (hC.mdifferentiableAt (by simp only [ne_eq,
+      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])), hd]
     rfl
   have hzero : (Prod.snd ∘ C) =ᶠ[𝓝 x] (fun _ => (0 : B)) := by
     filter_upwards [hF.continuous.continuousAt.preimage_mem_nhds (Φ.open_target.mem_nhds hx)] with
@@ -4388,7 +4439,9 @@ private theorem Smale.NativeSheetCoordinates.injective_mfderiv_projection {D B E
     have hz : (mfderiv I 𝓘(ℝ, B) (Prod.snd ∘ C) x : G →L[ℝ] B) = 0 := by
       rw [hzero.mfderiv_eq', mfderiv_const]
       rfl
-    rw [mfderiv_comp x (hp.mdifferentiableAt (by simp)) (hC.mdifferentiableAt (by simp)),
+    rw [mfderiv_comp x (hp.mdifferentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
+      ENat.top_ne_zero, not_false_eq_true])) (hC.mdifferentiableAt (by simp only [ne_eq,
+      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])),
       hd] at hz
     exact hz
   intro u v huv
@@ -4559,8 +4612,11 @@ private theorem
       (inclusionDerivative (c z)).comp
         (mfderiv 𝓘(ℝ, N) (𝓡 n) c z : N →L[ℝ] EuclideanSpace ℝ (Fin n)) := by
     have h :=
-      mfderiv_comp z ((contMDiff_coe_sphere (m := (∞ : ℕ∞ω))).mdifferentiableAt (by simp))
-        (c.mdifferentiableAt (by simp) hz)
+      mfderiv_comp z ((contMDiff_coe_sphere (m :=
+        (∞ : ℕ∞ω))).mdifferentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
+        not_false_eq_true]))
+        (c.mdifferentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
+          not_false_eq_true]) hz)
     rw [mfderiv_eq_fderiv] at h
     exact h
   unfold chartRadialFrame radialFrame
@@ -4576,7 +4632,8 @@ private theorem Smale.SphereNormalCoordinates.contDiffOn_chartRadialFrame {V N :
     ((contMDiff_coe_sphere (m := (∞ : ℕ∞ω))).comp_contMDiffOn c.contMDiffOn_toFun).contDiffOn
   exact
     Smale.FrameField.contDiffOn_coprod (contDiffOn_const.smulRight hc)
-      (hc.fderiv_of_isOpen c.open_source (m := ∞) (by simp))
+      (hc.fderiv_of_isOpen c.open_source (m := ∞) (by simp only [ENat.coe_top_add_one,
+        Std.le_refl]))
 
 private theorem Smale.SphereNormalCoordinates.bijective_chartRadialFrame {V N : Type*}
     [NormedAddCommGroup V] [InnerProductSpace ℝ V] [NormedAddCommGroup N] [NormedSpace ℝ N]
@@ -4621,12 +4678,12 @@ private theorem Smale.SphereNormalCoordinates.opposite_normalJacobians_iff_chart
   have h₀ :
     normalJacobian j (c (a 0)) A * (A.comp C₀).det =
       ((chartRadialFrame c (a 0)).comp j.symm.toContinuousLinearMap).det := by
-    rw [chartRadialFrame_eq c (haS (by simp))]
+    rw [chartRadialFrame_eq c (haS (by simp only [mem_Icc, Std.le_refl, zero_le_one, and_self]))]
     exact normalJacobian_mul_chartDet j (c (a 0)) A hA C₀
   have h₁ :
     normalJacobian j (c (a 1)) B * (B.comp C₁).det =
       ((chartRadialFrame c (a 1)).comp j.symm.toContinuousLinearMap).det := by
-    rw [chartRadialFrame_eq c (haS (by simp))]
+    rw [chartRadialFrame_eq c (haS (by simp only [mem_Icc, zero_le_one, Std.le_refl, and_self]))]
     exact normalJacobian_mul_chartDet j (c (a 1)) B hB C₁
   have hp :
     0 <
@@ -4677,8 +4734,10 @@ private theorem Smale.SphereNormalCoordinates.opposite_normalJacobians_iff_retai
     intro t ht
     rw [hcS]
     exact hline t ht
-  have h₀ : c (a 0) = x₀ := hinjF ((hFc _ (haS (by simp))).trans hx₀.symm)
-  have h₁ : c (a 1) = x₁ := hinjF ((hFc _ (haS (by simp))).trans hx₁.symm)
+  have h₀ : c (a 0) = x₀ := hinjF ((hFc _ (haS (by simp only [mem_Icc, Std.le_refl, zero_le_one,
+    and_self]))).trans hx₀.symm)
+  have h₁ : c (a 1) = x₁ := hinjF ((hFc _ (haS (by simp only [mem_Icc, zero_le_one, Std.le_refl,
+    and_self]))).trans hx₁.symm)
   let A₀ : EuclideanSpace ℝ (Fin n) →L[ℝ] (ℝ × A) := mfderiv (𝓡 n) 𝓘(ℝ, ℝ × A) (q ∘ F) x₀
   let A₁ : EuclideanSpace ℝ (Fin n) →L[ℝ] (ℝ × A) := mfderiv (𝓡 n) 𝓘(ℝ, ℝ × A) (q ∘ F) x₁
   have hsign := opposite_normalJacobians_iff_chartDet c r a ha haS A₀ A₁ hi₀ hi₁
@@ -4691,8 +4750,10 @@ private theorem Smale.SphereNormalCoordinates.opposite_normalJacobians_iff_retai
       rw [hx]
       exact hq.comp x hF.contMDiffAt
     have hchain :=
-      mfderiv_comp (a t) (hqF.mdifferentiableAt (by simp))
-        (c.mdifferentiableAt (by simp) (haS ht))
+      mfderiv_comp (a t) (hqF.mdifferentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
+        ENat.top_ne_zero, not_false_eq_true]))
+        (c.mdifferentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
+          not_false_eq_true]) (haS ht))
     have heq : ((q ∘ F) ∘ c) =ᶠ[𝓝 (a t)] (fun w => q (Φ (w, 0))) := by
       filter_upwards [c.open_source.mem_nhds (haS ht)] with w hw
       exact congrArg q (hFc w hw)
@@ -4711,9 +4772,9 @@ private theorem Smale.SphereNormalCoordinates.opposite_normalJacobians_iff_retai
   let C₀ : (ℝ × A) →L[ℝ] EuclideanSpace ℝ (Fin n) := mfderiv 𝓘(ℝ, ℝ × A) (𝓡 n) c (a 0)
   let C₁ : (ℝ × A) →L[ℝ] EuclideanSpace ℝ (Fin n) := mfderiv 𝓘(ℝ, ℝ × A) (𝓡 n) c (a 1)
   have hc₀ : A₀.comp C₀ = fderiv ℝ (fun w : ℝ × A => q (Φ (w, 0))) (0, 0) :=
-    hcoeff 0 x₀ (by simp) h₀ hq₀
+    hcoeff 0 x₀ (by simp only [mem_Icc, Std.le_refl, zero_le_one, and_self]) h₀ hq₀
   have hc₁ : A₁.comp C₁ = fderiv ℝ (fun w : ℝ × A => q (Φ (w, 0))) (1, 0) :=
-    hcoeff 1 x₁ (by simp) h₁ hq₁
+    hcoeff 1 x₁ (by simp only [mem_Icc, zero_le_one, Std.le_refl, and_self]) h₁ hq₁
   change
     normalJacobian r x₀ A₀ * normalJacobian r x₁ A₁ < 0 ↔
       (A₀.comp C₀).det * (A₁.comp C₁).det < 0 at hsign
@@ -4760,7 +4821,9 @@ private theorem
     ⟨finrank_euclideanSpace_fin⟩
   intro hg hinj hi ht tube d e x₀ x₁ hx₀ hx₁
   let j : (ℝ × EuclideanSpace ℝ (Fin 1)) ≃L[ℝ] D.chart.NegativeCoordinates :=
-    ContinuousLinearEquiv.ofFinrankEq (by simp [Module.finrank_prod, hindex])
+    ContinuousLinearEquiv.ofFinrankEq (by simp only [Module.finrank_prod, Module.finrank_self,
+      finrank_euclideanSpace, Fintype.card_unique,
+        Nat.reduceAdd, hindex])
   let q := D.beltSheetNormal j
   let r' := (ContinuousLinearEquiv.prodCongr (ContinuousLinearEquiv.refl ℝ ℝ) j).trans r
   have hjSmooth :
@@ -4795,8 +4858,10 @@ private theorem
       exact j.symm.toContinuousLinearMap.fderiv
     have hBA : B = j.symm.toContinuousLinearMap.comp A := by
       change mfderiv (𝓡 2) 𝓘(ℝ, ℝ × EuclideanSpace ℝ (Fin 1)) (j.symm ∘ (D.beltNormal ∘ g)) x = _
-      rw [mfderiv_comp x (hjSmooth.mdifferentiableAt (by simp))
-          ((hnormal.comp x hg.contMDiffAt).mdifferentiableAt (by simp))]
+      rw [mfderiv_comp x (hjSmooth.mdifferentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
+        ENat.top_ne_zero, not_false_eq_true]))
+          ((hnormal.comp x hg.contMDiffAt).mdifferentiableAt (by simp only [ne_eq,
+            WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))]
       change
         (mfderiv 𝓘(ℝ, D.chart.NegativeCoordinates) 𝓘(ℝ, ℝ × EuclideanSpace ℝ (Fin 1)) j.symm
                   (D.beltNormal (g x)) :
@@ -4826,7 +4891,9 @@ private theorem
   obtain ⟨hq₁, hi₁, hJ₁⟩ := hdata x₁ (hcross 1 (Or.inr rfl) x₁ hx₁)
   have hsign :=
     Smale.SphereNormalCoordinates.opposite_normalJacobians_iff_retained_sheet d.chart g hg hinj hi
-      d.sheet d.line (by simp [Module.finrank_prod]) q r' x₀ x₁ hx₀ hx₁ hq₀ hq₁ hi₀ hi₁
+      d.sheet d.line (by simp only [Module.finrank_prod, Module.finrank_self,
+        finrank_euclideanSpace, Fintype.card_unique,
+          Nat.reduceAdd]) q r' x₀ x₁ hx₀ hx₁ hq₀ hq₁ hi₀ hi₁
   rw [hJ₀, hJ₁] at hsign
   exact
     (D.beltIntersectionSigns_opposite_iff 2 r g x₀ x₁).trans
@@ -4955,12 +5022,12 @@ private theorem Smale.WhitneyPairModel.exists_inner_bigon_collar_in_open {h : �
   have hδε : δ < ε := by
     dsimp [δ]
     have hm := min_le_left ε 1
-    linarith
+    linarith only [hε, hm]
   have hδ1 : δ < 1 := by
     dsimp [δ]
     have hm := min_le_right ε 1
-    linarith
-  have hr : 1 - δ ∈ Set.Ioo (0 : ℝ) 1 := ⟨by linarith, by linarith⟩
+    linarith only [hm]
+  have hr : 1 - δ ∈ Set.Ioo (0 : ℝ) 1 := ⟨by linarith only [hδ1], by linarith only [hδpos]⟩
   have hrball : 1 - δ ∈ Metric.ball (1 : ℝ) ε := by
     rw [Metric.mem_ball, Real.dist_eq]
     have heq : 1 - δ - 1 = -δ := by ring
@@ -5015,8 +5082,11 @@ private theorem Smale.CleanBigonBoundary.exists_inner_clean_neighborhood {E M : 
     exact c.injective (d.injective hp.1 hq.1 hpq)
   refine ⟨r, hr, hcollar, V, hV, hfront, hsmooth, hinj, ?_, fun _ hp => hp, ?_⟩
   · intro p hp
-    have hdf := (d.smooth.contMDiffAt (d.open_domain.mem_nhds hp.1)).mdifferentiableAt (by simp)
-    rw [mfderiv_comp p hdf (hc.mdifferentiableAt (by simp))]
+    have hdf :=
+      (d.smooth.contMDiffAt (d.open_domain.mem_nhds hp.1)).mdifferentiableAt (by simp only [ne_eq,
+      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
+    rw [mfderiv_comp p hdf (hc.mdifferentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
+      ENat.top_ne_zero, not_false_eq_true]))]
     exact
       (d.derivative_injective _ hp.1).comp
         (Smale.WhitneyPairModel.bijective_mfderiv_innerBigonMap h r hr.1.ne' p).injective
@@ -5083,7 +5153,9 @@ private theorem Smale.CleanBigonBoundary.exists_smooth_inner_extension_in_open {
       rw [heq.mfderiv_eq']
       exact hderiv p (hWV hp)
     have hc : ContMDiff 𝓘(ℝ, E) 𝓘(ℝ, E) ∞ (Subtype.val : U → M) := contMDiff_subtype_val
-    rw [mfderiv_comp p (hc.mdifferentiableAt (by simp)) (hF.mdifferentiableAt (by simp))] at hi
+    rw [mfderiv_comp p (hc.mdifferentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
+      ENat.top_ne_zero, not_false_eq_true])) (hF.mdifferentiableAt (by simp only [ne_eq,
+      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))] at hi
     intro v w hvw
     apply hi
     exact congrArg (mfderiv 𝓘(ℝ, E) 𝓘(ℝ, E) (Subtype.val : U → M) (F p)) hvw
@@ -5134,7 +5206,8 @@ private theorem Smale.CleanBigonBoundary.exists_embedded_inner_extension_in_open
     exact havoid p (hCV hp.2) (Or.inl hmem)
   obtain ⟨G, hG, hhom, hemb, hiG, havoidG⟩ :=
     Smale.ManifoldImmersion.exists_relative_embedded_avoidance_in_open U F g hF hg
-      (by simp [Module.finrank_prod]) hdim (by simpa [Module.finrank_prod] using hobstacle)
+      (by simp only [Module.finrank_prod, Module.finrank_self,
+        Nat.reduceAdd]) hdim (by simpa [Module.finrank_prod] using hobstacle)
       (Smale.WhitneyPairModel.isCompact_bigon d.height_pos) hC (Set.empty_subset _) hinjC hiC
       hclean
   refine ⟨r, hr, hcollar, G, hG, hemb, hiG, ?_, interior C, isOpen_interior, hfrontC, ?_⟩
@@ -5368,8 +5441,10 @@ private theorem Smale.exists_filled_clean_bigon_of_collar_disjoint_inner {E M : 
         Filter.mem_of_superset (hP.mem_nhds (hcoreP hpCore)) (fun _ hx => hjG hx)
       rw [heq.mfderiv_eq']
       change Function.Injective (mfderiv 𝓘(ℝ, ℝ × ℝ) 𝓘(ℝ, E) (F ∘ c.symm) p)
-      rw [mfderiv_comp p (hF.mdifferentiableAt (by simp))
-          (c.symm.contMDiff.mdifferentiableAt (by simp))]
+      rw [mfderiv_comp p (hF.mdifferentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
+        ENat.top_ne_zero, not_false_eq_true]))
+          (c.symm.contMDiff.mdifferentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
+            ENat.top_ne_zero, not_false_eq_true]))]
       have hpin : c.symm p ∈ WhitneyPairModel.bigon h := by
         obtain ⟨z, hz, rfl⟩ := hpCore
         rwa [c.symm_apply_apply]
@@ -5455,7 +5530,9 @@ private theorem
     by
     intro p hp
     change Function.Injective (mfderiv 𝓘(ℝ, ℝ × ℝ) 𝓘(ℝ, E) (Subtype.val ∘ F) p)
-    rw [mfderiv_comp p (hv.mdifferentiableAt (by simp)) (hF.mdifferentiableAt (by simp))]
+    rw [mfderiv_comp p (hv.mdifferentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
+      ENat.top_ne_zero, not_false_eq_true])) (hF.mdifferentiableAt (by simp only [ne_eq,
+      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))]
     exact (Smale.NativeOpenSubmanifold.injective_mfderiv_subtype_val U (F p)).comp (hi p hp)
   have havoidF' : ∀ p ∈ Smale.WhitneyPairModel.bigon h, F' p ∉ Set.range g ∪ T := by
     intro p hp hmem
@@ -5583,7 +5660,8 @@ private theorem Smale.ManifoldImmersion.exists_weighted_immersive_patch_with_pro
     rw [Smale.ChartMapPerturbation.chart_perturb c f β hv (hsource y hyone)]
     simp only [Smale.ChartMapPerturbation.coordinateFamily, Smale.WeightedPerturbation.perturb, k,
       Smale.ChartMapPerturbation.cutoffCoordinates, hyone, one_smul]
-  apply (injective_fderiv_chart_iff c (hsmooth.mdifferentiableAt (by simp)) hgx).mp
+  apply (injective_fderiv_chart_iff c (hsmooth.mdifferentiableAt (by simp only [ne_eq,
+    WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])) hgx).mp
   change Function.Injective (fderiv ℝ (c ∘ g) (b x))
   rw [heqnew.fderiv_eq]
   intro v w hvw
@@ -5591,7 +5669,8 @@ private theorem Smale.ManifoldImmersion.exists_weighted_immersive_patch_with_pro
     rw [map_sub, hvw, sub_self]
   obtain ⟨hkzero, hβzero⟩ := (hkernel x (v - w)).mp hzero
   have hnative : mfderiv 𝓘(ℝ, E) J f (b x) (v - w) = 0 := by
-    apply (fderiv_chart_eq_zero_iff c (hf.mdifferentiableAt (by simp)) hfx (v - w)).mp
+    apply (fderiv_chart_eq_zero_iff c (hf.mdifferentiableAt (by simp only [ne_eq,
+      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])) hfx (v - w)).mp
     rw [← heqold.fderiv_eq]
     exact hkzero
   exact sub_eq_zero.mp (hcommon x hx (v - w) hnative hβzero)
@@ -5613,8 +5692,10 @@ private theorem Smale.ChartMapPerturbation.derivative_eq_zero_iff_of_weight_deri
     have hcd :
       HasFDerivAt (fun y => c (f y) + β y • a) (fderiv ℝ (c ∘ f) x + (fderiv ℝ β x).smulRight a)
         x :=
-      (hcf.differentiableAt (by simp)).hasFDerivAt.add
-        ((hβ.differentiable (by simp) x).hasFDerivAt.smul_const a)
+      (hcf.differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
+        not_false_eq_true])).hasFDerivAt.add
+        ((hβ.differentiable (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
+          not_false_eq_true]) x).hasFDerivAt.smul_const a)
     have heq : (c ∘ perturb c f β a) =ᶠ[𝓝 x] (fun y => c (f y) + β y • a) := by
       filter_upwards [(c.open_source.preimage hf.continuous).mem_nhds hx] with y hy
       exact chart_perturb c f β ha hy
@@ -5622,9 +5703,11 @@ private theorem Smale.ChartMapPerturbation.derivative_eq_zero_iff_of_weight_deri
       fderiv ℝ (c ∘ perturb c f β a) x = fderiv ℝ (c ∘ f) x + (fderiv ℝ β x).smulRight a :=
       heq.fderiv_eq.trans hcd.fderiv
     rw [←
-      Smale.ManifoldImmersion.fderiv_chart_eq_zero_iff c (hsmooth.mdifferentiableAt (by simp)) hgx
+      Smale.ManifoldImmersion.fderiv_chart_eq_zero_iff c (hsmooth.mdifferentiableAt (by simp only
+        [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])) hgx
         v,
-      ← Smale.ManifoldImmersion.fderiv_chart_eq_zero_iff c (hf.mdifferentiableAt (by simp)) hx v,
+      ← Smale.ManifoldImmersion.fderiv_chart_eq_zero_iff c (hf.mdifferentiableAt (by simp only
+        [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])) hx v,
       hderiv]
     change fderiv ℝ (c ∘ f) x v + fderiv ℝ β x v • a = 0 ↔ fderiv ℝ (c ∘ f) x v = 0
     rw [hweight, zero_smul, add_zero]

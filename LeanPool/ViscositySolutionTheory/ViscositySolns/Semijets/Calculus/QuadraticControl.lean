@@ -40,7 +40,7 @@ theorem tendsto_div_self_of_isLittleO_sq
   have hratio :
       Tendsto (fun t : Real => rho t / t ^ 2) l (nhds 0) := by
     rw [Asymptotics.isLittleO_iff_tendsto'] at hrho_l
-    · simpa [div_eq_mul_inv] using hrho_l
+    · exact hrho_l
     · filter_upwards [show ∀ᶠ t in l, t ≠ 0 from hl self_mem_nhdsWithin] with t htne htzero
       exact False.elim (htne (sq_eq_zero_iff.mp htzero))
   have ht : Tendsto (fun t : Real => t) l (nhds 0) := tendsto_id.mono_left hl_nhds
@@ -248,14 +248,14 @@ theorem superjet_zero_univ_quadraticForm_nonneg_of_gradient_eq_zero
         dotProduct_smul]
       ring
     rw [hquad] at ht
-    nlinarith
+    nlinarith only [ht]
   have hlittle :
       Asymptotics.IsLittleO (nhds (0 : Real)) (fun t : Real => rho (x + t • v))
         (fun t : Real => t ^ 2) :=
     semijetRemainder_along_affine_isLittleO_sq (n := n) (z := x) (a := v) hrho
   have hnonpos :=
     nonpos_of_eventually_mul_sq_le_isLittleO_sq hlittle hle
-  linarith
+  linarith only [hnonpos]
 
 /--
 A zero-function superjet with zero gradient has nonnegative Hessian, provided
@@ -304,7 +304,7 @@ theorem quadraticModel_superjet_hessian_le_of_gradient_eq_of_isHermitian_sub
     calc
       (0 : Real) = q y - q y := by ring
       _ <= (quadraticModel x (q x) J.gradient J.hessian y + rho y) - q y := by
-        linarith
+        linarith only [hy]
       _ = (quadraticModel x (q x) J.gradient J.hessian y + rho y) -
           (quadraticModel x (q x) A.gradient A.hessian y + sigma y) := by
         rw [hqy]
@@ -358,7 +358,7 @@ theorem quadraticModel_superjet_control_of_isHermitian_sub
     calc
       (0 : Real) = q y - q y := by ring
       _ <= (quadraticModel x (q x) J.gradient J.hessian y + rho y) - q y := by
-        linarith
+        linarith only [hy]
       _ = (quadraticModel x (q x) J.gradient J.hessian y + rho y) -
           (quadraticModel x (q x) A.gradient A.hessian y + sigma y) := by
         rw [hqy]
@@ -380,10 +380,10 @@ theorem quadraticModel_superjet_control_of_isHermitian_sub
     ext i
     have hi := congrFun hKgrad i
     simp [A] at hi
-    linarith
-  refine ⟨by simpa [A] using hgrad, ?_⟩
+    linarith only [hi]
+  refine ⟨by exact hgrad, ?_⟩
   exact quadraticModel_superjet_hessian_le_of_gradient_eq_of_isHermitian_sub
-    hJ (by simpa [A] using hgrad) hHerm
+    hJ (by exact hgrad) hHerm
 
 /--
 At an interior point of the domain, ordinary superjets over the domain are the
@@ -466,13 +466,13 @@ theorem quadraticModel_superjet_control_symHessian_of_mem_interior
       (quadraticModelJetAt x0 p X x).hessian <= symHessian J.hessian := by
   let Js : Jet n := { gradient := J.gradient, hessian := symHessian J.hessian }
   have hJs : Js ∈ Superjet C (fun y => quadraticModel x0 r p X y) x := by
-    simpa [Js] using superjet_symHessian hJ
+    exact superjet_symHessian hJ
   have hHerm :
       (Js.hessian - (quadraticModelJetAt x0 p X x).hessian).IsHermitian := by
     have hA : ((quadraticModelJetAt x0 p X x).hessian).IsHermitian := by
-      simpa [quadraticModelJetAt] using hX
+      exact hX
     exact (symHessian_isHermitian J.hessian).sub hA
-  simpa [Js] using
+  exact
     quadraticModel_superjet_control_of_mem_interior_of_isHermitian_sub hx hJs hHerm
 
 /--
@@ -500,8 +500,8 @@ theorem hessian_le_of_forall_quadraticForm_le_of_isHermitian_sub
     rw [dotProduct_comm v (Matrix.mulVec Y v),
       dotProduct_comm v (Matrix.mulVec X v)]
   have hnonneg : 0 <= dotProduct v (Matrix.mulVec (Y - X) v) := by
-    linarith
-  simpa using hnonneg
+    linarith only [hv, hrewrite]
+  exact hnonneg
 
 /--
 If `J` is a superjet of `u` and `K` is a superjet of `v`, then `J + K` is a
@@ -517,7 +517,7 @@ theorem superjet_add {C : Set (Point n)} {u v : Point n -> Real}
   refine ⟨fun y => rho y + sigma y, semijetRemainder_add hrho hsigma, ?_⟩
   filter_upwards [hu, hv] with y huy hvy
   rw [Jet.add_gradient, Jet.add_hessian, quadraticModel_add]
-  linarith
+  linarith only [huy, hvy]
 
 /--
 If `J` is a subjet of `u` and `K` is a subjet of `v`, then `J + K` is a subjet
@@ -532,7 +532,7 @@ theorem subjet_add {C : Set (Point n)} {u v : Point n -> Real}
   refine ⟨fun y => rho y + sigma y, semijetRemainder_add hrho hsigma, ?_⟩
   filter_upwards [hu, hv] with y huy hvy
   rw [Jet.add_gradient, Jet.add_hessian, quadraticModel_add]
-  linarith
+  linarith only [huy, hvy]
 
 /--
 A superjet of `max u v` at a point where `u` is an active branch is a superjet
@@ -664,12 +664,12 @@ theorem superjet_sub_const_iff {C : Set (Point n)} {u : Point n -> Real}
     refine ⟨rho, hrho, ?_⟩
     filter_upwards [hineq] with y hy
     simp [quadraticModel] at hy ⊢
-    linarith
+    linarith only [hy]
   · rintro ⟨rho, hrho, hineq⟩
     refine ⟨rho, hrho, ?_⟩
     filter_upwards [hineq] with y hy
     simp [quadraticModel] at hy ⊢
-    linarith
+    linarith only [hy]
 
 /--
 Subtracting a constant from a function does not change its subjet fibers.
@@ -685,12 +685,12 @@ theorem subjet_sub_const_iff {C : Set (Point n)} {u : Point n -> Real}
     refine ⟨rho, hrho, ?_⟩
     filter_upwards [hineq] with y hy
     simp [quadraticModel] at hy ⊢
-    linarith
+    linarith only [hy]
   · rintro ⟨rho, hrho, hineq⟩
     refine ⟨rho, hrho, ?_⟩
     filter_upwards [hineq] with y hy
     simp [quadraticModel] at hy ⊢
-    linarith
+    linarith only [hy]
 
 /--
 Convex combinations of superjets remain superjets. This is the concrete form of
@@ -718,7 +718,7 @@ theorem superjet_convexCombination {C : Set (Point n)} {u : Point n -> Real}
     mul_le_mul_of_nonneg_left hvy hb
   calc
     u y = a * u y + b * u y := by
-      nlinarith [congrArg (fun t => u y * t) hab]
+      nlinarith only [hab, congrArg (fun t => u y * t) hab]
     _ <= a * (quadraticModel x (u x) J.gradient J.hessian y + rho y) +
         b * (quadraticModel x (u x) K.gradient K.hessian y + sigma y) :=
       add_le_add hJmul hKmul
@@ -758,7 +758,7 @@ theorem subjet_convexCombination {C : Set (Point n)} {u : Point n -> Real}
           b * (quadraticModel x (u x) K.gradient K.hessian y + sigma y) := by ring
     _ <= a * u y + b * u y := add_le_add hJmul hKmul
     _ = u y := by
-      nlinarith [congrArg (fun t => u y * t) hab]
+      nlinarith only [hab, congrArg (fun t => u y * t) hab]
 
 /-- Ordinary superjet fibers are convex. -/
 theorem convex_superjet (C : Set (Point n)) (u : Point n -> Real) (x : Point n) :

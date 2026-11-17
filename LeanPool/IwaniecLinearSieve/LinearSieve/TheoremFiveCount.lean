@@ -14,7 +14,6 @@ import LeanPool.IwaniecLinearSieve.LinearSieve.Crude
 import LeanPool.IwaniecLinearSieve.LinearSieve.Depth
 import LeanPool.IwaniecLinearSieve.LinearSieve.LemmaEleven
 import LeanPool.IwaniecLinearSieve.SieveMajorants.Lemmas
-import Mathlib.Algebra.Order.Star.Real
 import Mathlib.Analysis.Complex.ExponentialBounds
 import Mathlib.Data.Finset.Slice
 import Mathlib.Tactic.Polynomial.Basic
@@ -72,10 +71,10 @@ theorem card_rosserSet_le (hy : 1 < y) (hs : 1 ≤ s) :
     exact mem_Ico.2 ⟨pos_of_mem_rosserSet hd, Nat.lt_ceil.2 this⟩
   have h := card_le_card hsub
   rw [Nat.card_Ico] at h
-  have hc := Nat.ceil_lt_add_one (by linarith : (0 : ℝ) ≤ y)
+  have hc := Nat.ceil_lt_add_one (by linarith only [hy] : (0 : ℝ) ≤ y)
   have : ((⌈y⌉₊ - 1 : ℕ) : ℝ) ≤ y := by
     rw [Nat.cast_sub (Nat.one_le_iff_ne_zero.2 (by positivity))]
-    push_cast; linarith
+    push_cast; linarith only [hc]
   exact (Nat.cast_le.2 h).trans this
 
 /-- Lemma 17 split at `w`: the primes `p < w` contribute (with the `1`) at most
@@ -105,7 +104,7 @@ theorem card_filter_succ_le (n : ℕ) (lower : Bool) (y z w : ℝ) :
       (rosserPrimes lower y z).filter (fun p : ℕ ↦ w ≤ p) :=
     filter_congr fun p _ ↦ not_lt
   rw [h2]
-  linarith
+  linarith only [h1]
 
 theorem card_primesLT_le {w : ℝ} (hw : 0 ≤ w) : (#(primesLT w) : ℝ) ≤ w + 1 := by
   have h : #(primesLT w) ≤ ⌈w⌉₊ := by
@@ -137,7 +136,7 @@ theorem card_filter_le_le (lower : Bool) (y : ℝ) {w : ℝ} (hw : 1 ≤ w) (K :
         calc (#(primesLT w) : ℝ) ^ l / l.factorial ≤ (#(primesLT w) : ℝ) ^ l :=
               div_le_self (by positivity) hf
           _ ≤ (2 * w) ^ l := by gcongr
-          _ ≤ (2 * w) ^ K := pow_le_pow_right₀ (by linarith) hlK
+          _ ≤ (2 * w) ^ K := pow_le_pow_right₀ (by linarith only [hw]) hlK
     _ = (K + 1) * (2 * w) ^ K := by simp
 
 /-- The cutoff `u = ξ(1 - 2/λ)` leaves a saving of `1/λ` in the exponent of `w`. -/
@@ -213,8 +212,7 @@ theorem card_rosserSet_rpow_le (hy : 1 < y) (hw : 2 ≤ y ^ (1 / (xi y - 1)))
   · -- Few prime factors: bound the three factors `K + 1`, `2^u`, and `w^u`.
     refine (card_filter_le_le lower y (by linarith only [hw]) K).trans ?_
     have h2w : 1 ≤ 2 * w := by linarith only [hw]
-    have hcount_factor : (K : ℝ) + 1 ≤ exp ξ := by
-      linarith only [hKu, huξ, add_one_le_exp ξ]
+    have hcount_factor : (K : ℝ) + 1 ≤ exp ξ := by linarith only [hKu, huξ, add_one_le_exp ξ]
     have htwo_power : (2 : ℝ) ^ u ≤ exp ξ := by
       rw [rpow_def_of_pos (by norm_num), exp_le_exp]
       have hlogtwo : log 2 ≤ 1 := by linarith only [log_le_sub_one_of_pos two_pos]
@@ -267,7 +265,7 @@ theorem card_rosserSet_rpow_le (hy : 1 < y) (hw : 2 ≤ y ^ (1 / (xi y - 1)))
 
 /-! ### The comparison (4.9), (4.10) -/
 theorem one_le_of_sMin_le (hs : sMin lower ≤ s) : 1 ≤ s := by
-  cases lower <;> simp [sMin] at hs <;> linarith
+  cases lower <;> simp [sMin] at hs <;> linarith only [hs]
 
 theorem one_le_delta (hs : 1 ≤ s) (y : ℝ) : 1 ≤ delta s y :=
   one_le_rpow (by linarith [lsx_nonneg (log y) hs]) (by linarith)
@@ -396,8 +394,8 @@ theorem exists_card_small : ∃ y₀ : ℝ, ∀ y ≥ y₀, ∀ (lower : Bool) (
       exp (-(s * log s) - s * log (log s) - cG * s) ≤ majG r s := by
     intro r s hs
     refine le_trans (exp_le_exp.2 ?_) (hG₀ r s hs)
-    have : cG₀ * s ≤ cG * s := mul_le_mul_of_nonneg_right (le_max_left _ _) (by linarith)
-    linarith
+    have : cG₀ * s ≤ cG * s := mul_le_mul_of_nonneg_right (le_max_left _ _) (by linarith only [hs])
+    linarith only [this]
   obtain ⟨C₅, hC₅⟩ := SLT_le_loglog
   obtain ⟨y₁, hy₁⟩ := exists_xi_large
   set c := max 100 (max (2 * (cG + 5 * log 128)) (max cG (max C₅ 12))) with hc
@@ -413,23 +411,27 @@ theorem exists_card_small : ∃ y₀ : ℝ, ∀ y ≥ y₀, ∀ (lower : Bool) (
     ((eventually_scalar c hc1).and (eventually_ge_atTop y₁))
   refine ⟨y₀, fun y hy lower s hs hsξ ↦ ?_⟩
   obtain ⟨⟨hy3, ha, hμ, hlam, hℓ1, -, h24, h16, h8, h9, h10⟩, hyy₁⟩ := hy₀ y hy
-  obtain ⟨hy1, -, -, hw2⟩ := hy₁ y hyy₁
+  obtain ⟨hy1, hξlarge, -, hw2⟩ := hy₁ y hyy₁
   have hL0 : 0 < log y := log_pos hy1
   have hm0 := lam_pos hy1
   have hξ := xi_pos hy1
+  have hξ32 : 32 + 1 ≤ xi y := (add_one_le_exp (32 : ℝ)).trans hξlarge
+  have hC₅lam : C₅ ≤ lam y := hc7.trans (hc6.trans (hc4.trans (hc2.trans hlam)))
   -- `w = y^{1/(ξ-1)}`
-  have hξ1 : 0 < xi y - 1 := by linarith
+  have hξ1 : 0 < xi y - 1 := by linarith only [hξ32]
   have hw : 2 ≤ y ^ (1 / (xi y - 1)) :=
-    hw2.trans (rpow_one_div_le_rpow_one_div hy1.le hξ1 (by linarith))
+    hw2.trans (rpow_one_div_le_rpow_one_div hy1.le hξ1 (by linarith only []))
   have hwy : y ^ (1 / (xi y - 1)) ≤ y := by
     conv_rhs => rw [← rpow_one y]
-    exact rpow_le_rpow_of_exponent_le hy1.le (by rw [div_le_one hξ1]; linarith)
+    exact rpow_le_rpow_of_exponent_le hy1.le (by
+      rw [div_le_one hξ1]
+      linarith only [hξ32])
   have hSLT : SLT (y ^ (1 / (xi y - 1))) ≤ 2 * lam y := by
     have h1 := hC₅ _ hw
     have h2 : log (log (y ^ (1 / (xi y - 1)))) ≤ log (log y) :=
       log_le_log (log_pos (by linarith)) (log_le_log (by linarith) hwy)
-    linarith
-  have hcard := card_rosserSet_rpow_le (lower := lower) hy1 hw hSLT (by linarith) h24 h10
+    linarith only [h1, h2, hℓ1, hC₅lam]
+  have hcard := card_rosserSet_rpow_le (lower := lower) hy1 hw hSLT (hc1.trans hlam) h24 h10
   -- `4 ξ λ² ≤ L`
   have hxl : 4 * (xi y * lam y ^ 2) ≤ log y := by
     have hsplit : lam y ^ (11 / 5 : ℝ) = lam y ^ 2 * lam y ^ (1 / 5 : ℝ) := by

@@ -9,7 +9,7 @@ module
 public import LeanPool.BeyondBethe.BeyondBethe.MachineListReverse
 public import LeanPool.BeyondBethe.BeyondBethe.MachineMatrixSum
 public import LeanPool.BeyondBethe.BeyondBethe.MachineRationalUnary
-public import Mathlib.Tactic
+import Mathlib.Tactic.Linarith -- shake: keep
 
 /-!
 # Dividing every entry of a rational row by one raw rational

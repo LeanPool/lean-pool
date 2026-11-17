@@ -52,7 +52,7 @@ theorem regularizedDoubledConvolution_eq_sup_add_sup_neg
         compactSupConvolution lambda K u (blockPointLeft q) +
           compactSupConvolution lambda L (fun x : Point n => -v x) (blockPointRight q)) := by
   funext q
-  simp [regularizedDoubledConvolution, compactInfConvolution]
+  simp only [regularizedDoubledConvolution, compactInfConvolution, sub_neg_eq_add]
 
 /--
 The regularized two-function expression is semiconvex on `R^n × R^n`.
@@ -201,7 +201,7 @@ theorem regularizedDoubledConvolution_eq_values_of_isMaxOn_isMinOn
           (lambda / 2) * dotProduct (y - η) (y - η) := by
   rw [regularizedDoubledConvolution_eq_kernels_of_isMaxOn_isMinOn
     (n := n) hx hy hmax hmin]
-  simp [supConvolutionKernel, infConvolutionKernel]
+  simp only [supConvolutionKernel, dotProduct_sub, sub_dotProduct, infConvolutionKernel]
   ring
 
 /--
@@ -252,7 +252,9 @@ theorem regularizedDoubledConvolution_zero_of_pointwise_bound_and_quadratic_cont
   have hsup_nonneg : 0 <= compactSupConvolution lambda K u 0 := by
     rw [hsup_eq]
     have hle := hmax h0K
-    simpa [supConvolutionKernel, hu0, dotProduct] using hle
+    simpa only [supConvolutionKernel, dotProduct, Pi.sub_apply, Pi.zero_apply, sub_zero,
+      sub_nonneg, ge_iff_le, tsub_le_iff_right, Set.mem_ofPred_eq, hu0, mul_zero,
+      Finset.sum_const_zero, add_zero] using hle
   have hinf_eq :
       compactInfConvolution lambda L v 0 =
         infConvolutionKernel lambda v 0 y :=
@@ -260,13 +262,14 @@ theorem regularizedDoubledConvolution_zero_of_pointwise_bound_and_quadratic_cont
   have hinf_nonpos : compactInfConvolution lambda L v 0 <= 0 := by
     rw [hinf_eq]
     have hle := hmin h0L
-    simpa [infConvolutionKernel, hv0, dotProduct] using hle
+    simpa only [infConvolutionKernel, dotProduct, Pi.sub_apply, Pi.zero_apply, sub_zero,
+      ge_iff_le, Set.mem_ofPred_eq, hv0, mul_zero, Finset.sum_const_zero, add_zero] using hle
   have hnonneg :
       0 <= regularizedDoubledConvolution (n := n) lambda K L u v 0 := by
     change 0 <= compactSupConvolution lambda K u (blockPointLeft (0 : BlockPoint n)) -
       compactInfConvolution lambda L v (blockPointRight (0 : BlockPoint n))
-    simp [blockPointLeft, blockPointRight]
-    linarith
+    simp only [blockPointLeft, Pi.zero_comp, blockPointRight, sub_nonneg]
+    linarith only [hsup_nonneg, hinf_nonpos]
   have hvalue :
       regularizedDoubledConvolution (n := n) lambda K L u v 0 =
         u x - v y -
@@ -280,7 +283,7 @@ theorem regularizedDoubledConvolution_zero_of_pointwise_bound_and_quadratic_cont
       regularizedDoubledConvolution_eq_values_of_isMaxOn_isMinOn
         (n := n) (lambda := lambda) (K := K) (L := L) (u := u) (v := v)
         (ξ := (0 : Point n)) (η := (0 : Point n)) hx hy hmax hmin
-    simpa [hzeroBlock, sub_zero] using h
+    simpa only [hzeroBlock, sub_zero] using h
   have hupper : regularizedDoubledConvolution (n := n) lambda K L u v 0 <= 0 := by
     let z : BlockPoint n := doubledPointToBlockPoint (x, y)
     have hdot :
@@ -294,7 +297,7 @@ theorem regularizedDoubledConvolution_zero_of_pointwise_bound_and_quadratic_cont
     have hquad_z :
         blockQuadraticModel A z <=
           (lambda / 2) * (dotProduct x x + dotProduct y y) := by
-      simpa [hdot] using hquad0 z
+      simpa only [hdot] using hquad0 z
     have hle_sum :
         u x - v y <=
           (lambda / 2) * dotProduct x x + (lambda / 2) * dotProduct y y := by
@@ -305,7 +308,7 @@ theorem regularizedDoubledConvolution_zero_of_pointwise_bound_and_quadratic_cont
       rw [hdist] at hquad_z
       exact le_trans hbound_xy hquad_z
     rw [hvalue]
-    linarith
+    linarith only [hbound_xy, hquad_z]
   exact le_antisymm hupper hnonneg
 
 /--
@@ -341,7 +344,8 @@ theorem regularizedDoubledConvolution_zero_of_pointwise_bound_and_cil_quadratic
   have h :=
     blockQuadraticModel_le_add_smul_mul_self_add_of_le_smul_identity
       (n := n) hHerm hepsilon hA z 0
-  simpa [blockQuadraticModel, sub_zero] using h
+  simpa only [blockQuadraticModel, one_div, ge_iff_le, Matrix.mulVec_zero, dotProduct_zero,
+    mul_zero, sub_zero, zero_add] using h
 
 /--
 Pointwise quadratic bounds pass to the regularized doubled convolution.
@@ -414,8 +418,8 @@ theorem regularizedDoubledConvolution_le_blockQuadratic_of_pointwise_bound
             (lambda / 2) * dotProduct (y - ξ₂) (y - ξ₂)) := by
     have h := hquad z ξ
     rw [hdot] at h
-    linarith
-  linarith
+    linarith only [h]
+  linarith only [hvalue, hbound_xy, hquad_z]
 
 /--
 An upper bound by a quadratic form gives a maximum of the difference at the
@@ -436,11 +440,11 @@ theorem isMaxOn_sub_blockQuadraticModel_zero_of_le
   intro ξ _hξ
   have hleξ := hle ξ
   have hquad_zero : blockQuadraticModel B (0 : BlockPoint n) = 0 := by
-    simp [blockQuadraticModel]
+    simp only [blockQuadraticModel, one_div, Matrix.mulVec_zero, dotProduct_zero, mul_zero]
   calc
-    F ξ - blockQuadraticModel B ξ <= 0 := by linarith
+    F ξ - blockQuadraticModel B ξ <= 0 := by linarith only [hleξ]
     _ = F 0 - blockQuadraticModel B (0 : BlockPoint n) := by
-      simp [hzero, hquad_zero]
+      simp only [hzero, hquad_zero, sub_self]
 
 /--
 The compact regularized doubled convolution satisfies the maximum condition

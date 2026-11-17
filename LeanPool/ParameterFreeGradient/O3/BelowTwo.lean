@@ -40,7 +40,7 @@ theorem belowSigma_pos {p : ℝ} (hp : BelowTwoRegime p) :
 theorem belowSigma_lt_one {p : ℝ} (hp : BelowTwoRegime p) :
     belowSigma p < 1 := by
   unfold belowSigma
-  linarith [hp.2]
+  linarith only [hp, hp.2]
 
 /-- The exact regularization parameter `lambda = eps / (4 D)`. -/
 noncomputable def belowLambda (eps D : ℝ) : ℝ := eps / (4 * D)
@@ -63,13 +63,13 @@ theorem belowRho_pos {sigma eps : ℝ} (hsigma : 0 < sigma) (heps : 0 < eps) :
 theorem one_lt_belowQ {kappa sigma : ℝ}
     (hkappa : 1 < kappa) (hsigma : 0 < sigma) (hsigma1 : sigma < 1) :
     1 < belowQ kappa sigma := by
-  have hsigma_sq : sigma ^ 2 < 1 := by nlinarith [sq_nonneg sigma]
+  have hsigma_sq : sigma ^ 2 < 1 := by nlinarith only [hsigma, hsigma1, sq_nonneg sigma]
   have hsigma_four : sigma ^ 4 < 1 := by
-    nlinarith [sq_nonneg (sigma ^ 2)]
-  have hkappa_sq : 1 < kappa ^ 2 := by nlinarith [sq_nonneg kappa]
+    nlinarith only [hsigma_sq, sq_nonneg (sigma ^ 2)]
+  have hkappa_sq : 1 < kappa ^ 2 := by nlinarith only [hkappa, sq_nonneg kappa]
   have hsigma_four_pos : 0 < sigma ^ 4 := pow_pos hsigma 4
   rw [belowQ, lt_div_iff₀ hsigma_four_pos]
-  nlinarith
+  linarith only [hkappa_sq, hsigma, hsigma1, hsigma_four]
 
 /-- The source contraction parameter, with no discretization of `p`. -/
 noncomputable def belowTau (M lambda sigma : ℝ) : ℝ :=
@@ -82,10 +82,10 @@ theorem belowTau_pos {M lambda sigma : ℝ}
   have hrad : 0 < 1 + 4 * M / (lambda * sigma) := by
     have : 0 < 4 * M / (lambda * sigma) :=
       div_pos (mul_pos (by norm_num) hM) hls
-    linarith
+    linarith only [this]
   have hsqrt : 0 ≤ Real.sqrt (1 + 4 * M / (lambda * sigma)) :=
     Real.sqrt_nonneg _
-  exact div_pos (by norm_num) (by linarith)
+  exact div_pos (by norm_num) (by linarith only [hsqrt])
 
 theorem belowTau_lt_one {M lambda sigma : ℝ}
     (hM : 0 < M) (hlambda : 0 < lambda) (hsigma : 0 < sigma) :
@@ -95,12 +95,12 @@ theorem belowTau_lt_one {M lambda sigma : ℝ}
     div_pos (mul_pos (by norm_num) hM) hls
   have hone : 1 < Real.sqrt (1 + 4 * M / (lambda * sigma)) := by
     have hsqrt := Real.sqrt_lt_sqrt (show (0 : ℝ) ≤ 1 by norm_num)
-      (show (1 : ℝ) < 1 + 4 * M / (lambda * sigma) by linarith)
+      (show (1 : ℝ) < 1 + 4 * M / (lambda * sigma) by linarith only [hfrac])
     simpa using hsqrt
   have hden : 0 < 1 + Real.sqrt (1 + 4 * M / (lambda * sigma)) := by
-    linarith
+    linarith only [hone]
   rw [belowTau, div_lt_one hden]
-  linarith
+  linarith only [hone]
 
 /-- The exact source identity `M * tau^2 = lambda * sigma * (1 - tau)`. -/
 theorem belowTau_equation {M lambda sigma : ℝ}
@@ -110,7 +110,7 @@ theorem belowTau_equation {M lambda sigma : ℝ}
   have hls : 0 < lambda * sigma := mul_pos hlambda hsigma
   have hfrac : 0 < 4 * M / (lambda * sigma) :=
     div_pos (mul_pos (by norm_num) hM) hls
-  have hrad : 0 ≤ 1 + 4 * M / (lambda * sigma) := by linarith
+  have hrad : 0 ≤ 1 + 4 * M / (lambda * sigma) := by linarith only [hfrac]
   set s := Real.sqrt (1 + 4 * M / (lambda * sigma)) with hsdef
   have hsqrt : s ^ 2 = 1 + 4 * M / (lambda * sigma) := by
     rw [hsdef]
@@ -118,7 +118,7 @@ theorem belowTau_equation {M lambda sigma : ℝ}
   have hden : 1 + s ≠ 0 := by
     have := Real.sqrt_nonneg (1 + 4 * M / (lambda * sigma))
     rw [← hsdef] at this
-    linarith
+    linarith only [this]
   have hlsne : lambda * sigma ≠ 0 := ne_of_gt hls
   have hcore :
       4 * M = lambda * sigma * (s ^ 2 - 1) := by
@@ -127,7 +127,7 @@ theorem belowTau_equation {M lambda sigma : ℝ}
     ring
   rw [belowTau, ← hsdef]
   field_simp [hden]
-  nlinarith [hcore]
+  linarith only [hcore]
 
 /--
 The accepted estimate-sequence weight `A_N`.  This recursive definition is
@@ -293,6 +293,6 @@ theorem belowFinalScalarBudget {sigma eps D : ℝ}
   have hD_ne : D ≠ 0 := ne_of_gt hD
   rw [belowLambda, belowRho]
   field_simp [hsigma_ne, hD_ne]
-  nlinarith
+  linarith only [hsigma, hsigma1]
 
 end O3

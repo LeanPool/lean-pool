@@ -1,0 +1,58 @@
+slug: apollonian-superharmonic
+title: Apollonian classification of integer superharmonic matrices
+summary: Characterizes quadratic growths of integer-valued functions on the square
+  lattice with discrete Laplacian at most one by the downsets of matrices associated
+  to circles in the Apollonian band packing, together with nonpositive-trace matrices.
+  Constructs maximal periodic odometers and rotationally symmetric lattice tilings,
+  and identifies the tiling and integrality lattices.
+branch: discrete potential theory
+entry_module: LeanPool.ApollonianSuperharmonic
+authors:
+- Wesley Pegden
+source:
+  title: The Apollonian structure of integer superharmonic matrices
+  arxiv: '1309.3267'
+  url: https://github.com/wpegden/superharmonic
+  github_repo: wpegden/superharmonic
+  commit: 45094b210503f117502dec51caf737e96da221f8
+  announcement_url: https://www.math.cmu.edu/~wes/trellis.php
+  completion_date: '2026-11-08'
+  public_repository_created: '2026-11-10T00:58:00Z'
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+- ApollonianSuperharmonic.IntegerSuperharmonicCharacterization
+- ApollonianSuperharmonic.BandOdometerTheorem
+- ApollonianSuperharmonic.IntegralityTiling
+- ApollonianSuperharmonic.LambdaTiling
+- ApollonianSuperharmonic.BandLatticeEquality
+main_results:
+- declaration: ApollonianSuperharmonic.IntegerSuperharmonicCharacterization
+  informal: A real symmetric two-by-two matrix admits an integer-valued lattice
+    function with its quadratic growth and discrete Laplacian at most one if and
+    only if it is below a band-circle matrix in the positive-semidefinite order
+    or has nonpositive trace.
+- declaration: ApollonianSuperharmonic.BandOdometerTheorem
+  informal: Every band-circle matrix has an integer superharmonic representative
+    with the integrality-lattice cocycle identity, maximal among functions above
+    it with discrete Laplacian at most one, up to a bounded difference.
+- declaration: ApollonianSuperharmonic.IntegralityTiling
+  informal: Every band circle admits a quarter-turn-symmetric lattice tile whose
+    integrality-lattice translates tile the plane, with six neighboring tiles
+    except for circles of curvature one.
+- declaration: ApollonianSuperharmonic.LambdaTiling
+  informal: Every band circle admits the analogous symmetric tiling by translates
+    along its recursively defined tiling lattice.
+- declaration: ApollonianSuperharmonic.BandLatticeEquality
+  informal: For each band circle the recursively defined tiling lattice equals
+    the lattice of integer vectors sent to integer vectors by its circle matrix.
+tags:
+- apollonian-packings
+- superharmonic-functions
+- discrete-potential-theory
+- lattice-tilings
+msc:
+- 31C20
+- 52C15
+- 60G50

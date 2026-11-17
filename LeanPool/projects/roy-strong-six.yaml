@@ -1,0 +1,50 @@
+slug: roy-strong-six
+title: Roy's strong six exponentials theorem
+summary: Proves Roy's strong six exponentials theorem, Waldschmidt's transcendence theorem,
+  and the additive-times-torus form of Philippon's multiplicity estimate over algebraically
+  closed fields of characteristic zero.
+branch: Number theory
+entry_module: LeanPool.RoyStrongSix
+authors:
+- Shawn Krisman
+- Nailin Guan
+- Yongle Hu
+source:
+  title: Matrices whose coefficients are linear forms in logarithms
+  doi: 10.1016/0022-314X(92)90081-Y
+  url: https://github.com/telaviv/strong-six-exponentials/tree/b7f16499df6fa26840c72c1af0121f2ac4a159b5
+  github_repo: telaviv/strong-six-exponentials
+  commit: b7f16499df6fa26840c72c1af0121f2ac4a159b5
+  announcement_url: https://hexagonmath.org/2610.00338v1
+  announcement_date: '2026-10-18'
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+- LeanPool.StrongSix.M2.strongSixExponentials
+- LeanPool.StrongSix.M2.waldschmidtTheorem1
+- LeanPool.StrongSix.M2.multEst_of_isAlgClosed
+main_results:
+- declaration: LeanPool.StrongSix.M2.strongSixExponentials
+  informal: If two complex numbers and three complex numbers are separately linearly independent
+    over the algebraic numbers, at least one of their six products lies outside the algebraic-number
+    span of one and all logarithms of nonzero algebraic numbers.
+- declaration: LeanPool.StrongSix.M2.waldschmidtTheorem1
+  informal: For a proper complex linear subspace containing an algebraic subspace and a finite-dimensional
+    rational space of algebraic coordinates and logarithms, there is a surjective algebraically
+    rational quotient satisfying Waldschmidt's dimension-ratio inequality.
+- declaration: LeanPool.StrongSix.M2.multEst_of_isAlgClosed
+  informal: Over every algebraically closed field of characteristic zero, sufficiently high
+    vanishing along a linear subspace on a finite sumset yields a proper additive-times-torus
+    subgroup satisfying the multiplicity, coset-count and bidegree estimate, with constants
+    depending only on the ambient dimensions.
+tags:
+- transcendence
+- algebraic-groups
+- multiplicity-estimates
+- commutative-algebra
+msc:
+- 11J81
+- 11J86
+- 14L10
+- 13C14

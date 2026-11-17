@@ -76,7 +76,7 @@ theorem CentralPolygonalArc.completePath_eq_middle
   rw [A.parameterization.curve_eq]
   congr 1
   simp only [Path.segment_apply, AffineMap.lineMap_apply_module, smul_eq_mul]
-  ring
+  ring_nf
 
 /-- On the final piece, the complete replacement path is the affine second spoke. -/
 theorem CentralPolygonalArc.completePath_eq_right

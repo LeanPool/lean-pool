@@ -572,24 +572,19 @@ macro (name := definabilityTactic) "definability" (config)? : tactic =>
   `(tactic| aesop (config := { terminal := true }) (rule_sets := [$(Lean.mkIdent
     `Definability):ident]))
 
-/-- Imported declaration from the Incompleteness formalization. -/
-macro (name := definabilityQuestionTactic) "definability?" (config)? : tactic =>
-  `(tactic| aesop? (config := { terminal := true }) (rule_sets := [$(Lean.mkIdent
-    `Definability):ident]))
-
 example (c : V) : BoldfaceBoundedFunction₂ (fun x _y : V ↦ c + 2 * x ^ 2) := by definability
 
 example {ex : V → V} [Sg0.BoldfaceFunction₁ ex] (c : V) :
     Pg0.BoldfaceRel (fun x y : V ↦ ∃ z < x + c * y, (ex x = x ∧ x < y) ↔
         ex x = z ∧ ex (x + 1) = 2 * z) := by
   simp only [Function.Graph.iff_left ex]
-  definability?
+  definability
 
 example {ex : V → V} [h : Dlt1.BoldfaceFunction₁ ex] :
-    Sg1.BoldfaceRel (fun x y : V ↦ ∃ z, x < y ↔ ex (ex x) = z) := by definability?
+    Sg1.BoldfaceRel (fun x y : V ↦ ∃ z, x < y ↔ ex (ex x) = z) := by definability
 
 example {ex : V → V} [h : Sg1.BoldfaceFunction₁ ex] :
-    Sg1.BoldfaceRel (fun x y : V ↦ ∀ z < ex y, x < y ↔ ex (ex x) = z) := by definability?
+    Sg1.BoldfaceRel (fun x y : V ↦ ∀ z < ex y, x < y ↔ ex (ex x) = z) := by definability
 
 end «lp_section_1»
 

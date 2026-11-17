@@ -575,6 +575,7 @@ public import LeanPool.MarkoffModP.BGS.NumberTheory.MaximalDivisorBounds
 public import LeanPool.MarkoffModP.BGS.NumberTheory.NonparabolicComplementCriterion
 public import LeanPool.MarkoffModP.BGS.NumberTheory.OneSidedPrimitiveWitness
 public import LeanPool.MarkoffModP.BGS.NumberTheory.PreliminaryDivisorBound
+public import LeanPool.MarkoffModP.BGS.NumberTheory.PrimeBlockSums
 public import LeanPool.MarkoffModP.BGS.NumberTheory.PrimePowerFactorization
 public import LeanPool.MarkoffModP.BGS.NumberTheory.RankinCanonicalProfile
 public import LeanPool.MarkoffModP.BGS.NumberTheory.RankinCutoff1248Data

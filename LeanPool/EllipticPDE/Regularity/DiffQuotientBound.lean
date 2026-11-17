@@ -280,12 +280,12 @@ private theorem integrable_uncurry_transDiff {ψ : EuclideanSpace ℝ (Fin d) �
     have htnorm : ‖t • v‖ ≤ ‖v‖ := by
       rw [norm_smul]
       have htle : ‖t‖ ≤ 1 := by rw [Real.norm_eq_abs, abs_of_pos ht.1]; exact ht.2
-      nlinarith [norm_nonneg v, htle]
+      nlinarith only [htle, norm_nonneg v]
     have hψx : ψ x = 0 := by
       apply image_eq_zero_of_notMem_tsupport
       intro hmem
       have hle : ‖x‖ ≤ R := by simpa [mem_closedBall, dist_eq_norm] using hR hmem
-      nlinarith [norm_nonneg v]
+      nlinarith only [hxnorm, hle, norm_nonneg v]
     have hψxv : ψ (x + t • v) = 0 := by
       apply image_eq_zero_of_notMem_tsupport
       intro hmem
@@ -639,7 +639,7 @@ private theorem integrable_uncurry_weak (g : EucL2 d) {ψ : EuclideanSpace ℝ (
       have htnorm : ‖p.2 • v‖ ≤ ‖v‖ := by
         rw [norm_smul]
         have htle : ‖p.2‖ ≤ 1 := by rw [Real.norm_eq_abs, abs_of_pos hp.1]; exact hp.2
-        nlinarith [norm_nonneg v, htle]
+        nlinarith only [htle, norm_nonneg v]
       have hxle : ‖p.1‖ ≤ R + ‖v‖ := by
         calc ‖p.1‖ = ‖(p.1 - p.2 • v) + p.2 • v‖ := by congr 1; abel
           _ ≤ ‖p.1 - p.2 • v‖ + ‖p.2 • v‖ := norm_add_le _ _

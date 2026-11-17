@@ -25,13 +25,6 @@ vertices are the parts of `P` and whose edges are the uniform, dense cluster pai
 Must be sorry-free and axiom-clean `[propext, Classical.choice, Quot.sound]`.
 -/
 public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.CoreGapClusterLP
-public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.CoreGapPackingEdges
-public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.CoreGapRegularCover
-public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.YusterEdge
-public import Mathlib.Tactic.IntervalCases
-public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.CoreGapClusterCapacity
-public import Mathlib.Algebra.BigOperators.Field
-public import Mathlib.Algebra.Order.Ring.Star
 
 
 /-! # CoreGapBlowUp -/
@@ -1309,7 +1302,7 @@ theorem nu3star_regularityReduced_le_host (G : SimpleGraph V) [DecidableRel G.Ad
         (hR ▸ SimpleGraph.regularityReduced_le) (Sv : Finset V) (Tv : Finset V)
     have hcapG := hcap (Sv : Finset V) Sv.2 (Tv : Finset V) Tv.2 fun h => hST (Subtype.ext h)
     rw [himg]
-    linarith
+    linarith only [hmono, hcapR, hmono2, hcapG]
   -- the aggregate is a fractional packing of the cluster graph
   have hpack : IsFracPacking Hst wH := by
     refine ⟨fun T => ?_, fun T hT => ?_, fun e => ?_⟩

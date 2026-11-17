@@ -7,7 +7,6 @@ module
 
 public import LeanPool.LeanModularForms.ValenceFormula.RectHomotopy.Geometry
 import Mathlib.CategoryTheory.Category.Init
-import Mathlib.NumberTheory.ArithmeticFunction.Misc
 
 /-!
 # Segment differentiability for the homotopy

@@ -77,25 +77,25 @@ theorem euclidean_interpolation_of_smooth_convex
     change P.f z ≤ P.f x + pairing gx (z - x) +
       (P.L / 2) * (lpNorm 2 (z - x)) ^ (2 : ℕ) at hdes
     rw [hpairx, hnorm] at hdes
-    linarith
+    linarith only [hdes]
   have hconv' : P.f y + pairing gy (x - y) -
       P.L⁻¹ * pairing gy gd ≤ P.f z := by
     change P.f y + pairing gy (z - y) ≤ P.f z at hconv
     rw [hpairy] at hconv
-    linarith
+    linarith only [hconv]
   have hinvSq : P.L * (P.L⁻¹ ^ 2) = P.L⁻¹ := by
     field_simp [hLne]
   have hinvSqN : P.L * (P.L⁻¹ ^ 2) * N = P.L⁻¹ * N := by
     rw [hinvSq]
   have hquad : (P.L / 2) * (P.L⁻¹ ^ 2 * N) = P.L⁻¹ * N / 2 := by
-    nlinarith [hinvSqN]
+    linarith only [hinvSqN]
   rw [hquad] at hdes'
   have hcrossInv : P.L⁻¹ * (pairing gx gd - pairing gy gd) =
       P.L⁻¹ * N := by rw [hcross]
   change N / (2 * P.L) ≤ _
   have hhalf : P.L⁻¹ * N / 2 ≤
       P.f x - P.f y - pairing gy (x - y) := by
-    nlinarith [hdes', hconv', hcrossInv]
+    linarith only [hconv, hcrossInv, hdes', hpairy, hconv']
   have heq : N / (2 * P.L) = P.L⁻¹ * N / 2 := by
     field_simp [hLne]
   rw [heq]
@@ -115,9 +115,9 @@ theorem euclideanInterpolationGuard_holds_of_le
         (lpNorm 2 (P.grad x - P.grad y)) ^ (2 : ℕ) / (2 * P.L) := by
     apply (div_le_div_iff₀ (mul_pos (by norm_num) hM)
       (mul_pos (by norm_num) P.L_pos)).2
-    nlinarith
+    nlinarith only [hLM]
   rw [interpolationGuard_holds_iff]
-  linarith
+  linarith only [hbase, hcoef]
 
 /-- Every actual Phase-A upper-model guard passes under `L ≤ M`. -/
 theorem euclideanEstimateGuard_holds_of_le
@@ -131,9 +131,9 @@ theorem euclideanEstimateGuard_holds_of_le
     P.gradient_spec P.smooth y z
   have hn : 0 ≤ (lpNorm 2 (z - y)) ^ (2 : ℕ) := sq_nonneg _
   have hc : (P.L / 2) * (lpNorm 2 (z - y)) ^ (2 : ℕ) ≤
-      (M / 2) * (lpNorm 2 (z - y)) ^ (2 : ℕ) := by nlinarith
+      (M / 2) * (lpNorm 2 (z - y)) ^ (2 : ℕ) := by nlinarith only [hLM]
   have hf : P.f z ≤ P.f y + pairing (P.grad y) (z - y) +
-      (M / 2) * (lpNorm 2 (z - y)) ^ (2 : ℕ) := by linarith
+      (M / 2) * (lpNorm 2 (z - y)) ^ (2 : ℕ) := by linarith only [hc, hd]
   simpa only [euclideanEstimateGuard, euclideanEstimateObservation,
     AdmissibleInstance.oracle, PairOracle.observe, GuardCheck.Holds,
     upperModelGuard, sub_nonneg, y, z] using hf
@@ -151,9 +151,9 @@ theorem ogmgTerminalDescentCheck_holds_of_le
     P.gradient_spec P.smooth u v
   have hn : 0 ≤ (lpNorm 2 (v - u)) ^ (2 : ℕ) := sq_nonneg _
   have hc : (P.L / 2) * (lpNorm 2 (v - u)) ^ (2 : ℕ) ≤
-      (M / 2) * (lpNorm 2 (v - u)) ^ (2 : ℕ) := by nlinarith
+      (M / 2) * (lpNorm 2 (v - u)) ^ (2 : ℕ) := by nlinarith only [hLM]
   have hf : P.f v ≤ P.f u + pairing (P.grad u) (v - u) +
-      (M / 2) * (lpNorm 2 (v - u)) ^ (2 : ℕ) := by linarith
+      (M / 2) * (lpNorm 2 (v - u)) ^ (2 : ℕ) := by linarith only [hc, hd]
   rw [ogmgTerminalDescentCheck_holds_iff]
   simpa only [ogmgTerminalObservation, ogmgObservation, ogmgGradient,
     hcfg, hcfgM, AdmissibleInstance.oracle, PairOracle.observe, u, v] using hf

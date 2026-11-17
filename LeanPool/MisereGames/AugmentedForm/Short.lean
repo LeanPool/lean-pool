@@ -75,7 +75,10 @@ theorem exists_list_image (S : Set AugmentedForm.{u}) (hfin : S.Finite)
   choose f hf using h_ext
   refine ⟨hfin.toFinset.attach.toList.map (fun y => f y.val (hfin.mem_toFinset.mp y.prop)), ?_⟩
   ext y
-  simp_all
+  simp_all only [
+    List.mem_map, Finset.mem_toList, Finset.mem_attach, true_and, Subtype.exists,
+    Set.Finite.mem_toFinset, Set.mem_image, Set.mem_ofPred_eq, ↓existsAndEq, exists_prop,
+    exists_eq_right]
 
 /--
 Every short augmented form is in the range of `toForm`.

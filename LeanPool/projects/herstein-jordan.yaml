@@ -1,0 +1,57 @@
+slug: herstein-jordan
+title: Herstein–Smiley theorems on Jordan homomorphisms of prime rings
+summary: Classifies surjective Jordan homomorphisms onto prime rings without
+  two-torsion as multiplicative or anti-multiplicative. Also proves Smiley's
+  square-and-triple-identity form in every characteristic and the
+  Jacobson–Rickart domain form without surjectivity, with counterexamples
+  separating the original hypotheses and general biadditive and prime-ring lemmas.
+branch: associative algebra
+entry_module: LeanPool.HersteinJordan
+authors:
+- Stephanie Alexander
+source:
+  title: Jordan homomorphisms onto prime rings
+  doi: 10.1090/S0002-9947-1957-0083484-X
+  url: https://github.com/stalex444/herstein-jordan-homomorphisms/tree/34dffa8aace3a1b565b11cbb561db3a58fa203da
+  github_repo: stalex444/herstein-jordan-homomorphisms
+  commit: 34dffa8aace3a1b565b11cbb561db3a58fa203da
+  announcement_url: https://github.com/stalex444/herstein-jordan-homomorphisms/commit/f12ce4506fb6d1d492baf8f340fcd892a5945fcd
+  announcement_date: '2026-11-10'
+license: MIT
+status: verified
+provenance: AI
+main_declarations:
+- JordanPrime.jordan_onto_prime
+- JordanPrime.twoIdentity_onto_prime
+- JordanPrime.twoIdentity_into_domain
+main_results:
+- declaration: JordanPrime.jordan_onto_prime
+  informal: A surjective additive Jordan homomorphism of possibly nonunital
+    rings onto a prime ring without two-torsion is multiplicative or
+    anti-multiplicative.
+- declaration: JordanPrime.twoIdentity_onto_prime
+  informal: In every characteristic a surjective additive map onto a prime
+    ring that preserves squares and triple products aba is multiplicative
+    or anti-multiplicative.
+- declaration: JordanPrime.twoIdentity_into_domain
+  informal: An additive map preserving squares and triple products into a
+    ring without zero divisors is multiplicative or anti-multiplicative,
+    without assuming surjectivity or excluding any characteristic.
+- declaration: JordanPrime.onto_needed
+  informal: An explicit integer-matrix Jordan homomorphism shows that
+    surjectivity cannot be dropped from the first theorem.
+- declaration: JordanPrime.prime_needed
+  informal: Transposing one factor in a product of integer-matrix rings shows
+    that the prime-target hypothesis cannot be dropped.
+- declaration: JordanPrime.two_needed
+  informal: Addition from two copies of the field with two elements shows
+    that the two-torsion hypothesis cannot be dropped from the first theorem.
+tags:
+- ring-theory
+- jordan-homomorphisms
+- prime-rings
+- nonunital-rings
+msc:
+- 16W10
+- 16N60
+- 17C50

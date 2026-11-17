@@ -1,0 +1,50 @@
+slug: latin-quarter
+title: The smallest critical set in a Latin square
+summary: >-
+  Proves that every partial Latin square of order n with fewer than floor(n²/4)
+  filled cells has an even number of completions. Consequently every defining
+  set has at least floor(n²/4) entries, and the two corner triangles in the cyclic
+  square attain this bound as a critical set. Includes general results on matrix
+  minors, square-zero ideals, and square-free polynomial coefficients.
+branch: Combinatorics
+entry_module: LeanPool.LatinQuarter
+authors:
+  - Richard Bean
+source:
+  arxiv: '2610.18199'
+  url: https://github.com/RichardBean/latin-quarter-lean/tree/9997439dee62e1ede0aa995ddb7160dbceeff7b7
+  github_repo: RichardBean/latin-quarter-lean
+  commit: 9997439dee62e1ede0aa995ddb7160dbceeff7b7
+  announcement_url: https://github.com/RichardBean/latin-quarter-lean/releases/tag/v0.2.0
+  announcement_date: '2026-10-16'
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+  - LatinQuarter.Textbook.completions_even
+  - LatinQuarter.Textbook.scs_eq_quarter
+main_results:
+  - declaration: LatinQuarter.Textbook.completions_even
+    informal: >-
+      Every set of fewer than floor(n²/4) filled triples of an order-n partial
+      Latin square has an even number of labelled Latin-square completions.
+  - declaration: LatinQuarter.Textbook.scs_eq_quarter
+    informal: >-
+      For every positive n, the smallest critical-set size among all Latin
+      squares of order n, and the smallest critical-set size in the cyclic
+      Latin square, both equal floor(n²/4).
+  - declaration: LatinQuarter.defining_set_lower_bound
+    informal: >-
+      Every defining set in every labelled Latin square of order n has at least
+      floor(n²/4) cells.
+  - declaration: LatinQuarter.cornerSet_isCritical
+    informal: >-
+      For every positive n, the two opposite corner triangles form a critical
+      set in the cyclic Latin square.
+tags:
+  - combinatorics
+  - latin-squares
+  - critical-sets
+  - parity
+msc:
+  - 05B15

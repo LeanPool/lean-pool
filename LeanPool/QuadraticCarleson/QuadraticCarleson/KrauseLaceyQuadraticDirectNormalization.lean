@@ -88,7 +88,7 @@ private theorem localizedTailAction_smul
       apply Finset.sum_congr rfl
       intro I hI
       by_cases hlen : (2 : ℝ) ^ ell ≤ I.length
-      · simp only [ite_eq_left hlen, hpiece]
+      · simp only [hpiece, ite_eq_left hlen]
       · simp only [ite_eq_right hlen, mul_zero]
     _ = c * ∑ I ∈ S, if (2 : ℝ) ^ ell ≤ I.length then
           krauseLaceyLocalizedPiece 1 (scale I) I f x else 0 := by

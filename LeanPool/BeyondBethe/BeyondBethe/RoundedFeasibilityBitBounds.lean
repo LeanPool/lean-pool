@@ -8,7 +8,6 @@ module
 
 public import LeanPool.BeyondBethe.BeyondBethe.RoundedFeasibility
 public import LeanPool.BeyondBethe.BeyondBethe.RationalEncodingBounds
-public import Mathlib.Tactic
 
 /-! # Rounded Feasibility Bit Bounds -/
 

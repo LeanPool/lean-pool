@@ -88,23 +88,23 @@ theorem annularQuadraticKernel_correlation_le_ordered
     intro t ht
     have hat : a (x - t) ≠ 0 := by
       intro hz
-      exact ht (by simp [p, hz])
+      exact ht (by simp only [hz, zero_mul, p])
     have hbt : b (y - t) ≠ 0 := by
       intro hz
-      exact ht (by simp [p, hz])
+      exact ht (by simp only [hz, map_zero, mul_zero, p])
     exact ⟨(hasupp hat).1, (hasupp hat).2,
-      (by linarith [(hbsupp hbt).1]), (hbsupp hbt).2⟩
+      (by linarith only [hS, hbsupp, hbt, (hbsupp hbt).1]), (hbsupp hbt).2⟩
   have hP : 0 ≤ P := by dsimp [P]; positivity
   have hpnorm (t : ℝ) : ‖p t‖ ≤ P := by
     calc
-      ‖p t‖ = ‖a (x - t)‖ * ‖b (y - t)‖ := by simp [p]
+      ‖p t‖ = ‖a (x - t)‖ * ‖b (y - t)‖ := by simp only [Complex.norm_mul, RCLike.norm_conj, p]
       _ ≤ (D / R) * (D / S) :=
         mul_le_mul (hab _) (hbb _) (norm_nonneg _) (by positivity)
       _ = D ^ 2 / (R * S) := by ring
       _ ≤ P := by
         dsimp [P]
         rw [mul_div_assoc]
-        nlinarith [div_nonneg (sq_nonneg D) (mul_pos hR hS).le]
+        linarith only [hR, hS, div_nonneg (sq_nonneg D) (mul_pos hR hS).le]
   have hpdnorm (t : ℝ) : ‖p' t‖ ≤ P / R := by
     calc
       ‖p' t‖ ≤ ‖(-a' (x - t)) * conj (b (y - t))‖ +
@@ -124,7 +124,7 @@ theorem annularQuadraticKernel_correlation_le_ordered
     hdecay hμ hRS hlam hlam' hμ' hp hp' hP hsupp hpnorm hpdnorm
   have hPR : P * R = (2 * D ^ 2) / S := by dsimp [P]; field_simp
   simp_rw [annularQuadraticKernel_mul_conj]
-  simpa only [quadraticFixedHeightMajorant, hPR, abs_sub_comm y x, p] using h
+  simpa only [quadraticFixedHeightMajorant, abs_sub_comm y x, hPR] using h
 
 /-- Conjugate symmetry of the whole-line correlation, without any extra
 integrability hypothesis. -/
@@ -137,7 +137,7 @@ theorem norm_integral_mul_conj_symm (f g : ℝ → ℂ) :
       apply integral_congr_ae
       filter_upwards [] with t
       simp only [map_mul, starRingEnd_self_apply]
-      ring
+      ac_rfl
     _ = _ := RCLike.norm_conj _
 
 /-- Symmetric two-scale form of the fixed-height annular correlation bound.
@@ -194,7 +194,7 @@ theorem finite_annularQuadraticKernel_maximal_sq_lintegral_le
     intro t ht
     apply hsupp i
     intro hz
-    exact ht (by simp [annularQuadraticKernel, hz])
+    exact ht (by simp only [annularQuadraticKernel, hz, zero_mul])
   have h := finiteConvolutionMaximal_sq_lintegral_le_of_quadraticFixedHeightMajorant
     n (fun i ↦ annularQuadraticKernel (a i) (lam i)) hc hs r hr
     (show 0 ≤ 2 * D ^ 2 by positivity) hu (fun i j x y ↦

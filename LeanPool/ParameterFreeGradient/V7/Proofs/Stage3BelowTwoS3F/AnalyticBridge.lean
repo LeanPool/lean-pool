@@ -144,7 +144,7 @@ private lemma horizon_inverse_weight_le_budget (p eps M D : ℝ) (hp : 1 < p)
     positivity
   have hMD : 0 < M * D := mul_pos hM hD
   rw [div_le_div_iff₀ hden hMD]
-  nlinarith
+  linarith only [hcore]
 
 theorem terminal_gradient_le (p eps M D : ℝ) (hp : 1 < p) (hp2 : p < 2)
     (heps : 0 < eps) (hM : 0 < M) (hD : 0 < D)
@@ -179,7 +179,7 @@ theorem terminal_gradient_le (p eps M D : ℝ) (hp : 1 < p) (hp2 : p < 2)
     intro y
     dsimp [oracle₁, phaseOneOracle, normalizedPairOracle]
     rw [hzphys]
-    exact div_le_div_of_nonneg_right (by linarith [hxstar (x0 + D • y)])
+    exact div_le_div_of_nonneg_right (by linarith only [hxstar, hxstar (x0 + D • y)])
       (mul_nonneg hM.le (sq_nonneg D))
   have hpguards : ∀ k < n,
       FunctionBregman oracle₁.value oracle₁.gradient
@@ -216,7 +216,7 @@ theorem terminal_gradient_le (p eps M D : ℝ) (hp : 1 < p) (hp2 : p < 2)
   have hh : belowH p z ≤ 1 / (2 * (p - 1)) := by
     unfold belowH
     have hz0 := O3.lpNorm_nonneg p z
-    have hsquare : (lpNorm p z) ^ (2 : ℕ) ≤ 1 := by nlinarith
+    have hsquare : (lpNorm p z) ^ (2 : ℕ) ≤ 1 := by nlinarith only [hp, hp2, hz0, hznorm]
     have hc : 0 ≤ 1 / (2 * (p - 1)) := by positivity
     simpa only [mul_one] using mul_le_mul_of_nonneg_left hsquare hc
   have hgap₁ : oracle₁.value (primalState p n oracle₁ n).x - fstar₁ ≤
@@ -243,7 +243,7 @@ theorem terminal_gradient_le (p eps M D : ℝ) (hp : 1 < p) (hp2 : p < 2)
     intro y
     dsimp [oracle₂, phaseTwoOracle, normalizedPairOracle]
     rw [hz₂phys]
-    exact div_le_div_of_nonneg_right (by linarith [hxstar (center + D • y)])
+    exact div_le_div_of_nonneg_right (by linarith only [hxstar, hxstar (center + D • y)])
       (mul_nonneg hM.le (sq_nonneg D))
   have hqguards : ∀ k < n,
       FunctionBregman oracle₂.value oracle₂.gradient

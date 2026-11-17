@@ -930,7 +930,7 @@ theorem eventually_not_mem_ball_of_not_mem_closedBall
   let ε : Real := (dist z x - r) / 2
   have hεpos : 0 < ε := by
     dsimp [ε]
-    linarith
+    linarith only [hdist]
   have hball : Metric.ball z ε ∈ nhdsWithin z C :=
     mem_nhdsWithin_of_mem_nhds (Metric.ball_mem_nhds z hεpos)
   filter_upwards [hball] with y hyz hyx
@@ -943,8 +943,8 @@ theorem eventually_not_mem_ball_of_not_mem_closedBall
     lt_of_le_of_lt htri (add_lt_add hyz' hyx')
   have hcontra : ε + r < dist z x := by
     dsimp [ε]
-    linarith
-  linarith
+    linarith only [hdist]
+  linarith only [hyz', hyx', htri, hcontra]
 
 /--
 Exterior compact-inactive data supplies the boundary-covered compact-inactive
@@ -995,7 +995,7 @@ theorem eventually_not_mem_ball_or_mem_outerAnnulus
     let ε : Real := r / 4
     have hεpos : 0 < ε := by
       dsimp [ε]
-      linarith
+      linarith only [hr]
     have hball : Metric.ball z ε ∈ nhdsWithin z C :=
       mem_nhdsWithin_of_mem_nhds (Metric.ball_mem_nhds z hεpos)
     filter_upwards [hball] with y hyz
@@ -1010,13 +1010,13 @@ theorem eventually_not_mem_ball_or_mem_outerAnnulus
       have htri : dist z x <= dist z y + dist y x := dist_triangle z y x
       have hlt : r < ε + dist y x := by
         have hltAdd : dist z y + dist y x < ε + dist y x := by
-          linarith
+          linarith only [hyz']
         have hlt' : dist z x < ε + dist y x :=
           lt_of_le_of_lt htri hltAdd
         simpa [hdist_eq] using hlt'
       have hyLower : 3 * r / 4 <= dist y x := by
         dsimp [ε] at hlt
-        linarith
+        linarith only [hlt]
       exact Or.inr (And.intro hyLower hyUpper)
   · filter_upwards
       [eventually_not_mem_ball_of_not_mem_closedBall

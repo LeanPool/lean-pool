@@ -26,7 +26,7 @@ noncomputable def scalarJ (p u : ℝ) : ℝ := |u| ^ (p - 2) * u
 lemma scalarJ_nonneg {p u : ℝ} (hp : 2 < p) (hu : 0 ≤ u) :
     scalarJ p u = u ^ (p - 1) := by
   rw [scalarJ, abs_of_nonneg hu]
-  rw [← Real.rpow_add_one' hu (by linarith : p - 2 + 1 ≠ 0)]
+  rw [← Real.rpow_add_one' hu (by linarith only [hp] : p - 2 + 1 ≠ 0)]
   congr 1
   ring
 
@@ -37,26 +37,26 @@ lemma scalarJ_nonpos {p u : ℝ} (hp : 2 < p) (hu : u ≤ 0) :
   calc
     (-u) ^ (p - 2) * u = -((-u) ^ (p - 2) * (-u)) := by ring
     _ = -((-u) ^ (p - 1)) := by
-      rw [← Real.rpow_add_one' hnu (by linarith : p - 2 + 1 ≠ 0)]
+      rw [← Real.rpow_add_one' hnu (by linarith only [hp] : p - 2 + 1 ≠ 0)]
       congr 2
       ring
 
 lemma scalarJ_strongMonotone_ordered {p u v : ℝ} (hp : 2 < p) (huv : v ≤ u) :
     (2 : ℝ) ^ (2 - p) * |u - v| ^ p ≤ (scalarJ p u - scalarJ p v) * (u - v) := by
-  have hr : 1 ≤ p - 1 := by linarith
+  have hr : 1 ≤ p - 1 := by linarith only [hp]
   have hc1 : (2 : ℝ) ^ (2 - p) ≤ 1 :=
-    Real.rpow_le_one_of_one_le_of_nonpos (by norm_num) (by linarith)
+    Real.rpow_le_one_of_one_le_of_nonpos (by norm_num) (by linarith only [hp])
   rcases le_total 0 v with hv | hv
   · have hu : 0 ≤ u := hv.trans huv
     rw [scalarJ_nonneg hp hu, scalarJ_nonneg hp hv, abs_of_nonneg (sub_nonneg.mpr huv)]
     have hpow := Real.add_rpow_le_rpow_add hv (sub_nonneg.mpr huv) hr
     have huvsum : v + (u - v) = u := by ring
     rw [huvsum] at hpow
-    have hdiff : (u - v) ^ (p - 1) ≤ u ^ (p - 1) - v ^ (p - 1) := by linarith
+    have hdiff : (u - v) ^ (p - 1) ≤ u ^ (p - 1) - v ^ (p - 1) := by linarith only [hpow]
     have hd0 : 0 ≤ u - v := sub_nonneg.mpr huv
     have hmul := mul_le_mul_of_nonneg_right hdiff hd0
     have hrpow : (u - v) ^ (p - 1) * (u - v) = (u - v) ^ p := by
-      rw [← Real.rpow_add_one' hd0 (by linarith : p - 1 + 1 ≠ 0)]
+      rw [← Real.rpow_add_one' hd0 (by linarith only [hp] : p - 1 + 1 ≠ 0)]
       congr 1
       ring
     rw [hrpow] at hmul
@@ -88,7 +88,7 @@ lemma scalarJ_strongMonotone_ordered {p u v : ℝ} (hp : 2 < p) (huv : v ≤ u) 
         simpa only [one_mul] using hcpow
       have hfinal := hcpow'.trans hmul
       ring_nf at hfinal
-      linarith [hfinal]
+      linarith only [hcpow, hmul, hfinal]
     · have hu0 : 0 ≤ u := hu
       have hv0 : v ≤ 0 := hv
       rw [scalarJ_nonneg hp hu0, scalarJ_nonpos hp hv0,
@@ -128,7 +128,7 @@ lemma scalarJ_strongMonotone_ordered {p u v : ℝ} (hp : 2 < p) (huv : v ≤ u) 
         congr 1
         ring
       rw [mul_assoc, hrpow] at hmul
-      nlinarith
+      linarith only [hmul]
 
 lemma scalarJ_strongMonotone {p u v : ℝ} (hp : 2 < p) :
     (2 : ℝ) ^ (2 - p) * |u - v| ^ p ≤ (scalarJ p u - scalarJ p v) * (u - v) := by
@@ -154,7 +154,7 @@ noncomputable def scalarEnergy (p x : ℝ) : ℝ := |x| ^ p / p
 
 lemma hasDerivAt_scalarEnergy {p : ℝ} (hp : 2 < p) (x : ℝ) :
     HasDerivAt (scalarEnergy p) (scalarJ p x) x := by
-  have h := (hasDerivAt_abs_rpow x (by linarith : 1 < p)).div_const p
+  have h := (hasDerivAt_abs_rpow x (by linarith only [hp] : 1 < p)).div_const p
   have heq : scalarJ p x = p * |x| ^ (p - 2) * x / p := by
     unfold scalarJ
     field_simp
@@ -191,7 +191,7 @@ lemma scalarUniformConvexity_of_le {p x y : ℝ} (hp : 2 < p) (hxy : x ≤ y) :
       have hs := scalarJ_strongMonotone (p := p) (u := t) (v := x) hp
       have hjmul : scalarJ p (t - x) * (t - x) = |t - x| ^ p := by
         rw [scalarJ_nonneg hp htxpos.le, abs_of_pos htxpos]
-        rw [← Real.rpow_add_one' htxpos.le (by linarith : p - 1 + 1 ≠ 0)]
+        rw [← Real.rpow_add_one' htxpos.le (by linarith only [hp] : p - 1 + 1 ≠ 0)]
         congr 1
         ring
       have hmul : (c * scalarJ p (t - x)) * (t - x) ≤
@@ -216,10 +216,10 @@ lemma scalarUniformConvexity_of_le {p x y : ℝ} (hp : 2 < p) (hxy : x ≤ y) :
   rw [hlower, intervalIntegral.integral_sub hJint
     (intervalIntegrable_const : IntervalIntegrable (fun _ : ℝ ↦ scalarJ p x)
       MeasureTheory.volume x y), henergy, intervalIntegral.integral_const] at hmono
-  have hp0 : p ≠ 0 := by linarith
+  have hp0 : p ≠ 0 := by linarith only [hp]
   simp [scalarEnergy, scalarJ, c, hp0] at hmono ⊢
   ring_nf at hmono ⊢
-  linarith
+  linarith only [hmono]
 
 lemma scalarJ_neg (p x : ℝ) : scalarJ p (-x) = -scalarJ p x := by
   simp only [scalarJ, abs_neg]
@@ -253,12 +253,11 @@ theorem pUniformConvexity {p : ℝ} (hp : 2 < p) {d : ℕ}
         (2 ^ (2 - p) / p) * (lpNorm p (y - x)) ^ p := by
   have hsum := Finset.sum_le_sum fun i (_hi : i ∈ Finset.univ) ↦
     scalarUniformConvexity (p := p) (x := (x - c) i) (y := (y - c) i) hp
-  rw [lpNorm_rpow_eq_lpPower (by linarith : p ≠ 0)]
+  rw [lpNorm_rpow_eq_lpPower (by linarith only [hp] : p ≠ 0)]
   simpa only [uniformRegularizer, lpPower, pairing, powerDualityMap,
-    scalarEnergy, scalarJ, Pi.sub_apply, Finset.sum_add_distrib,
-    Finset.sum_mul, Finset.mul_sum, div_eq_mul_inv,
-    sub_sub_sub_cancel_right, mul_comm, mul_left_comm, mul_assoc,
-    one_mul, mul_one, add_comm, add_left_comm, add_assoc] using hsum
+    scalarEnergy, scalarJ, Pi.sub_apply, sub_sub_sub_cancel_right,
+    Finset.sum_add_distrib, div_eq_inv_mul, mul_one,
+    ← Finset.mul_sum] using hsum
 
 end O3.Experimental
 

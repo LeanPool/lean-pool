@@ -38,7 +38,7 @@ lemma tendsto_nat (a : ℕ → ℂ) (ha : Summable fun n : ℕ ↦ ‖a n‖ * r
     Tendsto (fun z : ℍ ↦ ∑' n, a n * cexp (2 * π * I * z * n)) atImInfty (𝓝 (a 0)) := by
   convert tendsto_tsum_of_dominated_convergence (f := fun z n ↦ a n * cexp (2 * π * I * z * n))
     (𝓕 := atImInfty) (g := Set.indicator {0} (fun _ ↦ a 0)) ha ?_ ?_
-  · simp
+  · simp only [Set.indicator_singleton, tsum_pi_single]
   · intro k
     rcases eq_or_ne k 0 with (rfl | hk)
     · simp
@@ -85,11 +85,12 @@ lemma tendsto_int (a : ℤ → ℂ) (ha : Summable fun n : ℤ ↦ ‖a n‖ * r
     rw [norm_mul, mul_right_comm _ I, mul_right_comm _ I, norm_exp_mul_I]
     simp
     ring_nf
-    simp
+    simp only [true_or]
   · apply ha.of_nonneg_of_le (fun _ ↦ by positivity) fun b ↦ ?_
     by_cases hb : 0 ≤ b
     · gcongr
-      simp [hz]
-    · simp_all
+      simp only [mul_neg, neg_le_neg_iff, Nat.ofNat_pos, le_mul_iff_one_le_left, hz]
+    · simp_all only [neg_mul, neg_add_rev, Int.reduceNeg, Int.cast_add, Int.cast_neg, Int.cast_one,
+      Int.cast_natCast, not_le, norm_zero, mul_neg, zero_mul, Std.le_refl]
 
 end QExp

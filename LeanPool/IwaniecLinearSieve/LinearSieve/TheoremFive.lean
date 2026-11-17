@@ -93,7 +93,7 @@ theorem inner_le {c₇ : ℝ} {r : ℕ} (ih : Bound c₇ r) {lower : Bool} {y s 
         errMaj (!lower) (log y / log p - 1) / (p * log (y / p) ^ 2)) := by
   obtain ⟨hp1, hpy, hsp⟩ := rosserPrimes_facts hy hs hp
   have hp0 : (0 : ℝ) < p := by exact_mod_cast (zero_lt_one.trans hp1)
-  have hyp : 1 < y / p := by rw [lt_div_iff₀ hp0]; linarith
+  have hyp : 1 < y / p := by rw [lt_div_iff₀ hp0]; linarith only [hpy]
   have h := ih (!lower) (y / p) (log y / log p - 1) hyp hsp (sub_one_le_xi_div hy hp1 hpy ht)
   rw [rpow_inv_sub_one_eq hp1 hpy] at h
   refine h.trans (le_of_eq ?_)
@@ -126,16 +126,16 @@ theorem sum_inner_le {c₇ : ℝ} (hc₇ : 0 ≤ c₇) {r : ℕ} (ih : Bound c�
       have hlp : 0 < log (p : ℝ) := log_pos hp1'
       have ht : log y / log p ≤ xi y := by
         have hlog := log_le_log (by positivity) hwp
-        rw [hw, log_rpow_one_div (by linarith)] at hlog
-        rw [div_le_iff₀ (by linarith)] at hlog
+        rw [hw, log_rpow_one_div (by linarith only [hy])] at hlog
+        rw [div_le_iff₀ (by linarith only [hξ])] at hlog
         rw [div_le_iff₀ hlp]
         nlinarith only [hlog, hlp]
       exact inner_le ih hy hs hpP ht
     _ ≤ ∑ p ∈ P.filter (fun p : ℕ => y ^ (1 / xi y) ≤ p), c₇ * φ * y * term p := by
       refine sum_le_sum_of_subset_of_nonneg (fun p hp => ?_) fun p hp _ => ?_
       · obtain ⟨hpP, hwp⟩ := mem_filter.1 hp
-        exact mem_filter.2 ⟨hpP, (rpow_one_div_le_rpow_one_div hy.le (by linarith)
-          (by linarith)).trans hwp⟩
+        exact mem_filter.2 ⟨hpP, (rpow_one_div_le_rpow_one_div hy.le (by linarith only [hξ])
+          (by linarith only [])).trans hwp⟩
       · obtain ⟨-, -, hsp⟩ := rosserPrimes_facts hy hs (mem_filter.1 hp).1
         have := delta_pos (one_le_of_sMin_le hsp) (y / p)
         have := errMaj_pos (!lower) (log y / log p - 1)
@@ -158,7 +158,7 @@ theorem gap_le {r : ℕ} {L ℓ : ℝ} (hL : 0 < L) (hℓ : 0 < ℓ) (h : (r : �
   rw [e, le_div_iff₀ (by positivity)]
   rw [le_div_iff₀ hℓ] at h
   have h2 : ((r + 3) * ℓ) ^ 2 ≤ (2 * L) ^ 2 := by gcongr
-  have : (r + 2) * (r + 3) * ℓ ^ 2 ≤ 4 * L ^ 2 := by nlinarith [sq_nonneg ℓ]
+  have : (r + 2) * (r + 3) * ℓ ^ 2 ≤ 4 * L ^ 2 := by nlinarith only [sq_nonneg ℓ, h2]
   rw [show 2 * (ℓ ^ 2 / (8 * L ^ 2)) * ((r + 2) * (r + 3)) =
     (r + 2) * (r + 3) * ℓ ^ 2 / (4 * L ^ 2) by field_simp; ring]
   rw [div_le_one (by positivity)]
@@ -170,10 +170,10 @@ theorem close_step {c₇ φ φ' Q X ε : ℝ} (hc₇ : 1 ≤ c₇) (hQ : 0 ≤ Q
     Q * ε + c₇ * φ * Q * (1 + X) ≤ c₇ * φ' * Q := by
   have hε : 0 ≤ ε := hX0.trans hX
   have h1 : φ * X ≤ ε := (mul_le_of_le_one_left hX0 hφ1).trans hX
-  have h2 : ε ≤ φ' - φ - φ * X := by linarith
-  have h3 : c₇ * ε ≤ c₇ * (φ' - φ - φ * X) := mul_le_mul_of_nonneg_left h2 (by linarith)
+  have h2 : ε ≤ φ' - φ - φ * X := by linarith only [hgap, h1]
+  have h3 : c₇ * ε ≤ c₇ * (φ' - φ - φ * X) := mul_le_mul_of_nonneg_left h2 (by linarith only [hc₇])
   have h4 : ε ≤ c₇ * ε := le_mul_of_one_le_left hε hc₇
-  nlinarith [mul_le_mul_of_nonneg_left (h4.trans h3) hQ]
+  nlinarith only [mul_le_mul_of_nonneg_left (h4.trans h3) hQ, h4, h3, hQ]
 
 /-- The main case of the inductive step ([I71, p. 27]): `y` large and
 `r + 3 ≤ 2 log y / log log y`. The hypotheses are the large-`y` facts: the crude count
@@ -209,7 +209,7 @@ theorem step_main {c₇ C : ℝ} (hc₇ : 1 ≤ c₇) {r : ℕ} (ih : Bound c₇
   have hGs := errMaj_pos lower s
   have hQ0 : 0 ≤ Q := by positivity
   have hφ0 : 0 ≤ φ := by positivity
-  have hφ1 : φ ≤ 1 := by rw [hφ, div_le_one (by positivity)]; linarith
+  have hφ1 : φ ≤ 1 := by rw [hφ, div_le_one (by positivity)]; linarith only []
   have hE0 : 0 ≤ E := by have := pntE_pos (y ^ (1 / xi y)); positivity
   have hs₀ : (1 : ℝ) ≤ exp 32 := one_le_exp (by norm_num)
   have hδ₀ := one_le_delta hs₀ y
@@ -283,7 +283,7 @@ theorem small_le {c₈ c₇ : ℝ}
   have hGm0 : 0 < Gm := lt_min (errMaj_pos _ _) (errMaj_pos _ _)
   have hs1 := one_le_of_sMin_le hs
   have hL0 : 0 < log y := log_pos hy
-  have hLc : log y ≤ log c₈ := log_le_log (by linarith) hyc.le
+  have hLc : log y ≤ log c₈ := log_le_log (by linarith only [hy]) hyc.le
   have hG : Gm ≤ errMaj lower s := by
     have h1 : errMaj lower Ξ ≤ errMaj lower s :=
       errMaj_antitone lower (hsξ.trans (xi_le_of_lt hy hyc))
@@ -292,7 +292,7 @@ theorem small_le {c₈ c₇ : ℝ}
     · exact (min_le_left _ _).trans h1
   have hδ := one_le_delta hs1 y
   have hφ : (1 : ℝ) / 2 ≤ ((r : ℝ) + 1) / (r + 2) := by
-    rw [div_le_div_iff₀ (by norm_num) (by positivity)]; linarith [r.cast_nonneg (α := ℝ)]
+    rw [div_le_div_iff₀ (by norm_num) (by positivity)]; linarith only [r.cast_nonneg (α := ℝ)]
   have hc₇' : 2 * log c₈ ^ 2 ≤ c₇ * Gm := by rwa [div_le_iff₀ hGm0] at hc₇
   have hcount : (#{d ∈ rosserSet lower y (y ^ (1 / s)) | #d.primeFactors ≤ r} : ℝ) ≤ y :=
     (Nat.cast_le.2 (card_filter_le _ _)).trans (card_rosserSet_le hy hs1)
@@ -300,15 +300,15 @@ theorem small_le {c₈ c₇ : ℝ}
   rw [le_div_iff₀ (by positivity)]
   have hc₇0 : 0 ≤ c₇ := by
     have := mul_nonneg (by norm_num : (0 : ℝ) ≤ 2) (sq_nonneg (log c₈))
-    nlinarith
+    nlinarith only [hc₇', hGm0]
   have key : log y ^ 2 ≤ c₇ * (((r : ℝ) + 1) / (r + 2)) * delta s y * errMaj lower s := by
     have h1 : log y ^ 2 ≤ log c₈ ^ 2 := by gcongr
     have h2 : c₇ * Gm / 2 ≤ c₇ * (((r : ℝ) + 1) / (r + 2)) * delta s y * errMaj lower s := by
       have : c₇ * Gm / 2 = c₇ * (1 / 2) * 1 * Gm := by ring
       rw [this]
       gcongr
-    linarith
-  nlinarith
+    linarith only [hc₇', h1, h2]
+  nlinarith only [key, hy]
 
 /-! ### Theorem 5 -/
 theorem exists_bound : ∃ c₇ : ℝ, 1 ≤ c₇ ∧ ∀ r, Bound c₇ r := by
@@ -336,28 +336,28 @@ theorem exists_bound : ∃ c₇ : ℝ, 1 ≤ c₇ ∧ ∀ r, Bound c₇ r := by
     obtain ⟨hy3, hsmall, -, -, -, -⟩ := hlarge y hyc
     have hL1 : 1 ≤ log y := by
       have := log_le_log (by norm_num) hy3
-      linarith [one_lt_log_three]
+      linarith only [one_lt_log_three, this]
     have h := hsmall lower s hs hsξ
     rw [card_filter_rosserSet_zero]
     have hN : (0 : ℝ) ≤ #(rosserSet lower y (y ^ (1 / (xi y - 1)))) := Nat.cast_nonneg _
     have hQ : 0 ≤ delta s y * errMaj lower s * y := by
       have := delta_pos (one_le_of_sMin_le hs) y
       have := errMaj_pos lower s
-      have : 0 < y := by linarith
+      have : 0 < y := by linarith only [hy3]
       positivity
     push_cast
     have : delta s y * errMaj lower s * y / (8 * log y ^ 4) ≤
         c₇ * ((0 + 1) / (0 + 2)) * delta s y * errMaj lower s * y / log y ^ 2 := by
       rw [div_le_div_iff₀ (by positivity) (by positivity)]
       have h4 : log y ^ 2 ≤ 4 * log y ^ 4 := by
-        have h1 : 1 ≤ log y ^ 2 := by nlinarith
-        nlinarith [mul_le_mul_of_nonneg_left h1 (sq_nonneg (log y))]
+        have h1 : 1 ≤ log y ^ 2 := by nlinarith only [hL1]
+        nlinarith only [mul_le_mul_of_nonneg_left h1 (sq_nonneg (log y)), h1]
       have h5 : delta s y * errMaj lower s * y * log y ^ 2 ≤
           delta s y * errMaj lower s * y * (4 * log y ^ 4) :=
         mul_le_mul_of_nonneg_left h4 hQ
-      nlinarith [mul_le_mul_of_nonneg_right hc₇1 (mul_nonneg hQ (pow_pos (by linarith :
+      nlinarith [mul_le_mul_of_nonneg_right hc₇1 (mul_nonneg hQ (pow_pos (by linarith only [hL1] :
         (0 : ℝ) < log y) 4).le)]
-    linarith
+    linarith only [h, this]
   | succ r ih =>
     intro lower y s hy hs hsξ
     rcases lt_or_ge y c₈ with hyc | hyc
@@ -372,11 +372,11 @@ theorem exists_bound : ∃ c₇ : ℝ, 1 ≤ c₇ ∧ ∀ r, Bound c₇ r := by
       have hQ : 0 ≤ delta s y * errMaj lower s * y / log y ^ 2 := by
         have := delta_pos (one_le_of_sMin_le hs) y
         have := errMaj_pos lower s
-        have : 0 < y := by linarith
+        have : 0 < y := by linarith only [hy]
         positivity
       have hφ : ((r : ℝ) + 1) / (r + 2) ≤ (((r + 1 : ℕ) : ℝ) + 1) / (((r + 1 : ℕ) : ℝ) + 2) := by
         push_cast
-        rw [div_le_div_iff₀ (by positivity) (by positivity)]; nlinarith
+        rw [div_le_div_iff₀ (by positivity) (by positivity)]; nlinarith only []
       calc c₇ * ((r + 1) / (r + 2)) * delta s y * errMaj lower s * y / log y ^ 2
           = c₇ * ((r + 1) / (r + 2)) * (delta s y * errMaj lower s * y / log y ^ 2) := by ring
         _ ≤ c₇ * ((((r + 1 : ℕ) : ℝ) + 1) / (((r + 1 : ℕ) : ℝ) + 2)) *
@@ -386,7 +386,7 @@ theorem exists_bound : ∃ c₇ : ℝ, 1 ≤ c₇ ∧ ∀ r, Bound c₇ r := by
       obtain ⟨-, hξ32, -, -⟩ := hxi
       obtain ⟨hsl, hℓ⟩ := hslack
       have hmain : (r : ℝ) + 3 ≤ 2 * log y / log (log y) := by
-        push_cast at hdeep; linarith
+        push_cast at hdeep; linarith only [hdeep]
       exact step_main hc₇1 ih hy hs hξ32 (hsmall lower s hs hsξ)
         (hcor lower s hs) hC0 hsl hℓ hmain
 
@@ -405,27 +405,27 @@ theorem theorem5 : ∃ c₇ : ℝ, 0 ≤ c₇ ∧ ∀ (r : ℕ) (lower : Bool) (
     (#{d ∈ rosserSet lower y (y ^ (1 / s)) | #d.primeFactors ≤ r} : ℝ) ≤
       c₇ * ((r + 1) / (r + 2)) * delta s y * errMaj lower s * y / Real.log y ^ 2 := by
   obtain ⟨c₇, hc₇, h⟩ := exists_bound
-  exact ⟨c₇, by linarith, fun r => h r⟩
+  exact ⟨c₇, by linarith only [hc₇], fun r => h r⟩
 
 /-- `δ(s, y) ≤ (1 + 9 log⁵ 3)^{15}` for `1 ≤ s ≤ 3` and `log y ≥ 1`. -/
 theorem delta_le_of_le_three {s y : ℝ} (hs1 : 1 ≤ s) (hs3 : s ≤ 3) (hy : 1 ≤ Real.log y) :
     delta s y ≤ (1 + 9 * Real.log 3 ^ 5) ^ (15 : ℝ) := by
   have hl0 : 0 ≤ Real.log s := Real.log_nonneg hs1
-  have hl3 : Real.log s ≤ Real.log 3 := Real.log_le_log (by linarith) hs3
+  have hl3 : Real.log s ≤ Real.log 3 := Real.log_le_log (by linarith only [hs1]) hs3
   have hx : s ^ 2 * Real.log s ^ 5 / Real.log y ^ 2 ≤ 9 * Real.log 3 ^ 5 := by
     rw [div_le_iff₀ (by positivity)]
-    have h1 : s ^ 2 ≤ 9 := by nlinarith
+    have h1 : s ^ 2 ≤ 9 := by nlinarith only [hs3, hs1]
     have h2 : Real.log s ^ 5 ≤ Real.log 3 ^ 5 := by gcongr
-    have h3 : 1 ≤ Real.log y ^ 2 := by nlinarith
+    have h3 : 1 ≤ Real.log y ^ 2 := by nlinarith only [hy]
     have h4 : s ^ 2 * Real.log s ^ 5 ≤ 9 * Real.log 3 ^ 5 :=
       mul_le_mul h1 h2 (by positivity) (by norm_num)
     have h5 : 0 ≤ Real.log 3 ^ 5 := by positivity
-    nlinarith
+    nlinarith only [h4, h3, h5]
   have hx0 : 0 ≤ s ^ 2 * Real.log s ^ 5 / Real.log y ^ 2 := by positivity
   rw [delta]
   calc (1 + s ^ 2 * Real.log s ^ 5 / Real.log y ^ 2) ^ (5 * s)
       ≤ (1 + 9 * Real.log 3 ^ 5) ^ (5 * s) := Real.rpow_le_rpow (by linarith) (by linarith)
-        (by linarith)
+        (by linarith only [hs1])
     _ ≤ (1 + 9 * Real.log 3 ^ 5) ^ (15 : ℝ) :=
         Real.rpow_le_rpow_of_exponent_le (by linarith) (by linarith)
 
@@ -441,8 +441,8 @@ theorem theorem5_card_rosserSet_le : ∃ K y₀ : ℝ, ∀ y ≥ y₀, ∀ s ∈
   have hy3 : 3 ≤ y := le_of_max_le_right hy
   have hL1 : 1 ≤ Real.log y := by
     have := Real.log_le_log (by norm_num) hy3
-    linarith [one_lt_log_three]
-  have hsξ : s ≤ xi y := hs.2.trans (by linarith [Real.add_one_le_exp (32 : ℝ)])
+    linarith only [one_lt_log_three, this]
+  have hsξ : s ≤ xi y := hs.2.trans (by linarith only [Real.add_one_le_exp (32 : ℝ), hξ])
   set z := y ^ (1 / s)
   have hall : (rosserSet true y z).filter (fun d => #d.primeFactors ≤ #(primesLT z)) =
       rosserSet true y z :=
@@ -450,12 +450,12 @@ theorem theorem5_card_rosserSet_le : ∃ K y₀ : ℝ, ∀ y ≥ y₀, ∀ s ∈
   have h := h5 #(primesLT z) true y s hy1 hs.1 hsξ
   rw [hall] at h
   refine h.trans ?_
-  have hδ := delta_le_of_le_three (by linarith [hs.1]) hs.2 hL1 (y := y)
-  have hδ0 := delta_pos (by linarith [hs.1] : (1 : ℝ) ≤ s) y
+  have hδ := delta_le_of_le_three (by linarith only [hs.1, hs]) hs.2 hL1 (y := y)
+  have hδ0 := delta_pos (by linarith only [hs.1, hs] : (1 : ℝ) ≤ s) y
   have hG := errMaj_le_two true s
   have hG0 := errMaj_pos true s
   have hφ : ((#(primesLT z) : ℕ) + 1 : ℝ) / ((#(primesLT z) : ℕ) + 2) ≤ 1 := by
-    rw [div_le_one (by positivity)]; linarith
+    rw [div_le_one (by positivity)]; linarith only []
   have hφ0 : (0 : ℝ) ≤ ((#(primesLT z) : ℕ) + 1 : ℝ) / ((#(primesLT z) : ℕ) + 2) := by positivity
   have hyL : 0 ≤ y / Real.log y ^ 2 := by positivity
   calc c₇ * ((#(primesLT z) + 1) / (#(primesLT z) + 2)) * delta s y * errMaj true s * y /

@@ -179,7 +179,7 @@ theorem integral_window_sum_indicators_le
     (hmass : ∀ J ∈ T, (∫ x in J.carrier, ‖f x‖) ≤ M * J.length) :
     (∫ x in Icc a b, ‖∑ J ∈ T, J.carrier.indicator f x‖) ≤ M * (b - a + 2 * L) := by
   let U := T.filter fun J ↦ (J.carrier ∩ Icc a b).Nonempty
-  let E : RealInterval := ⟨a - L, b + L, by linarith⟩
+  let E : RealInterval := ⟨a - L, b + L, by linarith only [hL, hab]⟩
   have hUsub : U ⊆ T := Finset.filter_subset _ _
   have hE (J : RealInterval) (hJ : J ∈ U) : J.carrier ⊆ E.carrier := by
     obtain ⟨z, hzJ, hzwin⟩ := (Finset.mem_filter.mp hJ).2
@@ -189,7 +189,7 @@ theorem integral_window_sum_indicators_le
     change J.left < z ∧ z ≤ J.right at hzJ
     change J.left < x ∧ x ≤ J.right at hx
     dsimp [RealInterval.length] at hJlen
-    constructor <;> linarith [hzwin.1, hzwin.2]
+    constructor <;> linarith only [hzwin, hJlen, hzJ, hx, hzwin.1, hzwin.2]
   have heq (x : ℝ) (hx : x ∈ Icc a b) :
       (∑ J ∈ T, J.carrier.indicator f x) = ∑ J ∈ U, J.carrier.indicator f x := by
     symm
@@ -243,17 +243,17 @@ theorem badScaleInput_unitWindowMass_le
     (∫ t in Icc (x - 1 / 2) (x + 1 / 2), ‖badScaleInput S f I₀ k₀ ℓ t‖) ≤
       60 * intervalL1Average f I₀ * (2 : ℝ) ^ ℓ := by
   have hpow : 1 ≤ (2 : ℝ) ^ ℓ := by
-    simpa only [zpow_zero] using zpow_le_zpow_right₀ (by norm_num : (1 : ℝ) ≤ 2) hℓ
+    simpa only [zpow_zero] using zpow_le_zpow_right₀ (by norm_num1 : (1 : ℝ) ≤ 2) hℓ
   have h := integral_window_sum_indicators_le (badScaleCells S f I₀ k₀ ℓ) hf
     (badScaleCells_pairwiseDisjoint f I₀ k₀ ℓ hlam)
     (by positivity : 0 < (2 : ℝ) ^ ℓ)
     (by positivity [intervalL1Average_nonneg f I₀] : 0 ≤ 20 * intervalL1Average f I₀)
-    (by linarith : x - 1 / 2 ≤ x + 1 / 2)
+    (by linarith only [] : x - 1 / 2 ≤ x + 1 / 2)
     (fun J hJ ↦ length_le_of_mem_badScaleCells hJ)
     (fun J hJ ↦ stoppingChild_mass_le hf hparent hsub (badScaleCells_subset S f I₀ k₀ ℓ hJ))
   apply h.trans
   have hnonneg := intervalL1Average_nonneg f I₀
-  nlinarith
+  nlinarith only [hpow, hnonneg]
 
 open Classical in
 theorem exists_mem_badScaleCells_of_ne_zero
@@ -283,7 +283,7 @@ theorem badScale_indices_eq_of_ne_zero
       (badScaleCells_subset S f I₀ k₀ ℓ hJ) (badScaleCells_subset S f I₀ k₀ m hK) hn) hxJ hxK
   have hp : (2 : ℝ) ^ ℓ = (2 : ℝ) ^ m := by
     rw [← (Finset.mem_filter.mp hJ).2, ← (Finset.mem_filter.mp hK).2, heq]
-  exact (zpow_right_inj₀ (by norm_num : (0 : ℝ) < 2) (by norm_num : (2 : ℝ) ≠ 1)).mp hp
+  exact (zpow_right_inj₀ (by norm_num1 : (0 : ℝ) < 2) (by norm_num1 : (2 : ℝ) ≠ 1)).mp hp
 
 open Classical in
 /-- The precise restricted input to an interval's bad-scale piece. -/

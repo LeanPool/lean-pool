@@ -9,7 +9,7 @@ module
 public import LeanPool.BeyondBethe.BeyondBethe.ExecutableScannedBetheOptimizer
 public import LeanPool.BeyondBethe.BeyondBethe.FinalAssembly
 public import LeanPool.BeyondBethe.BeyondBethe.SourceStableReindex
-public import Mathlib.Tactic
+import Mathlib.Tactic.Linarith -- shake: keep
 
 /-!
 # The executable positive-matrix routine

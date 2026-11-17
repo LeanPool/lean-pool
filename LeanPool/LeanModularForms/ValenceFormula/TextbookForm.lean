@@ -9,8 +9,6 @@ public import LeanPool.LeanModularForms.ValenceFormula.TextbookExistence
 import LeanPool.LeanModularForms.ValenceFormula.CoreIdentity
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 import Mathlib.CategoryTheory.Category.Init
-import Mathlib.MeasureTheory.Covering.Besicovitch
-import Mathlib.NumberTheory.ArithmeticFunction.Misc
 
 /-!
 # Textbook Orbit-Finsum Form of the Valence Formula
@@ -49,14 +47,18 @@ private lemma repCanon_ne_elliptic (p : ℍ) (hp : p ∈ repCanon f hf) :
     · intro heq; rw [heq] at h2; linarith [h2.2, ellipticPointRho_norm]
     · intro heq; rw [heq] at h2
       have : (ellipticPointRhoPlusOne' : ℂ).re = 1/2 := by
-        change (1/2 + (Real.sqrt 3 / 2) * I : ℂ).re = 1/2; simp [add_re, mul_re, I_re, I_im]
+        change (1/2 + (Real.sqrt 3 / 2) * I : ℂ).re = 1/2; simp only [one_div, add_re, inv_re,
+          re_ofNat, normSq_ofNat, div_self_mul_self', mul_re, div_ofNat_re, ofReal_re, I_re,
+          mul_zero, div_ofNat_im, ofReal_im, zero_div, I_im, mul_one, sub_self, add_zero]
       linarith [h2.1]
   · have h2 := (Finset.mem_filter.mp h).2; refine ⟨?_, h2.1, ?_⟩
     · intro heq; rw [heq] at h2
       have : (ellipticPointI' : ℂ).re = 0 := Complex.I_re; linarith [h2.2.2]
     · intro heq; rw [heq] at h2
       have : (ellipticPointRhoPlusOne' : ℂ).re = 1/2 := by
-        change (1/2 + (Real.sqrt 3 / 2) * I : ℂ).re = 1/2; simp [add_re, mul_re, I_re, I_im]
+        change (1/2 + (Real.sqrt 3 / 2) * I : ℂ).re = 1/2; simp only [one_div, add_re, inv_re,
+          re_ofNat, normSq_ofNat, div_self_mul_self', mul_re, div_ofNat_re, ofReal_re, I_re,
+          mul_zero, div_ofNat_im, ofReal_im, zero_div, I_im, mul_one, sub_self, add_zero]
       linarith [h2.2.2]
 
 private lemma denom_at_I (g : SL(2, ℤ)) :
@@ -66,7 +68,8 @@ private lemma denom_at_I (g : SL(2, ℤ)) :
     ↑((g : Matrix (Fin 2) (Fin 2) ℤ) 1 1 : ℤ) := by
   simp only [UpperHalfPlane.denom, Matrix.SpecialLinearGroup.coe_GL_coe_matrix]
   rw [Matrix.SpecialLinearGroup.map_apply_coe (Int.castRingHom ℝ) g]
-  simp [RingHom.mapMatrix_apply]
+  simp only [Fin.isValue, RingHom.mapMatrix_apply, Int.coe_castRingHom, Matrix.map_apply,
+    ofReal_intCast]
 
 private lemma normSq_denom_at_I (g : SL(2, ℤ)) :
     Complex.normSq (UpperHalfPlane.denom (Matrix.SpecialLinearGroup.toGL
@@ -74,7 +77,8 @@ private lemma normSq_denom_at_I (g : SL(2, ℤ)) :
     ((g : Matrix (Fin 2) (Fin 2) ℤ) 1 0 : ℝ) ^ 2 +
     ((g : Matrix (Fin 2) (Fin 2) ℤ) 1 1 : ℝ) ^ 2 := by
   rw [denom_at_I, Complex.normSq_apply]
-  simp [add_re, mul_re, add_im, mul_im, Complex.I_re, Complex.I_im]; ring
+  simp only [Fin.isValue, add_re, mul_re, intCast_re, I_re, mul_zero, intCast_im, I_im, mul_one,
+    sub_self, zero_add, add_im, mul_im, add_zero]; ring
 
 private lemma sl2_det (g : SL(2, ℤ)) :
     (g : Matrix (Fin 2) (Fin 2) ℤ) 0 0 * (g : Matrix (Fin 2) (Fin 2) ℤ) 1 1 -
@@ -146,19 +150,27 @@ private theorem fd'_orbit_i_eq_i (p : ℍ) (hp : p ∈ 𝒟) (horb : orb p = oi)
     (by linarith only [h_im, ellipticPointI'_im])
 
 private lemma ellipticPointRho'_re : (ellipticPointRho' : ℍ).re = -1/2 := by
-  change (-1/2 + (Real.sqrt 3 / 2) * I : ℂ).re = -1/2; simp [add_re, mul_re, I_re, I_im]
+  change (-1/2 + (Real.sqrt 3 / 2) * I : ℂ).re = -1/2; simp only [add_re, div_ofNat_re, neg_re,
+    one_re, mul_re, ofReal_re, I_re, mul_zero, div_ofNat_im, ofReal_im, zero_div, I_im, mul_one,
+    sub_self, add_zero]
 
 private lemma ellipticPointRho'_im :
     (ellipticPointRho' : ℍ).im = Real.sqrt 3 / 2 := by
-  change (-1/2 + (Real.sqrt 3 / 2) * I : ℂ).im = Real.sqrt 3 / 2; simp [add_im, mul_im, I_re, I_im]
+  change (-1/2 + (Real.sqrt 3 / 2) * I : ℂ).im = Real.sqrt 3 / 2; simp only [add_im, div_ofNat_im,
+    neg_im, one_im, neg_zero, zero_div, mul_im, div_ofNat_re, ofReal_re, I_im, mul_one, ofReal_im,
+    I_re, mul_zero, add_zero, zero_add]
 
 private lemma ellipticPointRhoPlusOne'_re :
     (ellipticPointRhoPlusOne' : ℍ).re = 1/2 := by
-  change (1/2 + (Real.sqrt 3 / 2) * I : ℂ).re = 1/2; simp [add_re, mul_re, I_re, I_im]
+  change (1/2 + (Real.sqrt 3 / 2) * I : ℂ).re = 1/2; simp only [one_div, add_re, inv_re, re_ofNat,
+    normSq_ofNat, div_self_mul_self', mul_re, div_ofNat_re, ofReal_re, I_re, mul_zero, div_ofNat_im,
+    ofReal_im, zero_div, I_im, mul_one, sub_self, add_zero]
 
 private lemma ellipticPointRhoPlusOne'_im :
     (ellipticPointRhoPlusOne' : ℍ).im = Real.sqrt 3 / 2 := by
-  change (1/2 + (Real.sqrt 3 / 2) * I : ℂ).im = Real.sqrt 3 / 2; simp [add_im, mul_im, I_re, I_im]
+  change (1/2 + (Real.sqrt 3 / 2) * I : ℂ).im = Real.sqrt 3 / 2; simp only [one_div, add_im, inv_im,
+    im_ofNat, neg_zero, normSq_ofNat, zero_div, mul_im, div_ofNat_re, ofReal_re, I_im, mul_one,
+    div_ofNat_im, ofReal_im, I_re, mul_zero, add_zero, zero_add]
 
 private lemma denom_at_rho (g : SL(2, ℤ)) :
     UpperHalfPlane.denom (Matrix.SpecialLinearGroup.toGL
@@ -168,7 +180,8 @@ private lemma denom_at_rho (g : SL(2, ℤ)) :
     ↑((g : Matrix (Fin 2) (Fin 2) ℤ) 1 1 : ℤ) := by
   simp only [UpperHalfPlane.denom, Matrix.SpecialLinearGroup.coe_GL_coe_matrix]
   rw [Matrix.SpecialLinearGroup.map_apply_coe (Int.castRingHom ℝ) g]
-  simp [RingHom.mapMatrix_apply, ellipticPointRho']
+  simp only [Fin.isValue, RingHom.mapMatrix_apply, Int.coe_castRingHom, Matrix.map_apply,
+    ofReal_intCast, ellipticPointRho']
 
 private lemma normSq_denom_at_rho (g : SL(2, ℤ)) :
     Complex.normSq (UpperHalfPlane.denom (Matrix.SpecialLinearGroup.toGL
@@ -348,7 +361,9 @@ private lemma c_abs_le_one_of_smul_fd (g : SL(2, ℤ)) (p₁ p₂ : ℍ)
   by_contra h_gt; push Not at h_gt
   have h_c2 : c ^ 2 ≥ 4 := by nlinarith only [h_gt, sq_abs c]
   have h1 : (↑c : ℝ) ^ 2 * p₂.im ^ 2 ≤ p₂.im / p₁.im := by
-    rw [← h_nsq_eq]; convert p₂.c_mul_im_sq_le_normSq_denom g using 1; simp [c]; ring
+    rw [← h_nsq_eq]; convert p₂.c_mul_im_sq_le_normSq_denom g using 1; simp only [Fin.isValue,
+      Matrix.SpecialLinearGroup.coe_GL_coe_matrix, Matrix.SpecialLinearGroup.map_apply_coe,
+      RingHom.mapMatrix_apply, Int.coe_castRingHom, Matrix.map_apply, c]; ring
   have h2 : (↑c : ℝ) ^ 2 * p₂.im ^ 2 * p₁.im ≤ p₂.im := by
     have := mul_le_mul_of_nonneg_right h1 p₁.im_pos.le
     rwa [div_mul_cancel₀ _ (ne_of_gt p₁.im_pos)] at this
@@ -359,7 +374,7 @@ private lemma c_abs_le_one_of_smul_fd (g : SL(2, ℤ)) (p₁ p₂ : ℍ)
   have h_prod : 4 * (p₂.im * p₁.im) ≤ 1 := by
     have h_c2_real : (↑c : ℝ) ^ 2 ≥ 4 := by exact_mod_cast h_c2
     nlinarith only [h3, h_c2_real,
-      mul_nonneg (show (0 : ℝ) ≤ (↑c : ℝ) ^ 2 - 4 from by linarith)
+      mul_nonneg (show (0 : ℝ) ≤ (↑c : ℝ) ^ 2 - 4 from by exact sub_nonneg.mpr h_c2_real)
         (mul_nonneg p₂.im_pos.le p₁.im_pos.le)]
   have hp1_im : (1 : ℝ) / 2 < p₁.im := by rw [← UpperHalfPlane.coe_im]; exact fd_im_gt_half _ hp₁
   have hp2_im : (1 : ℝ) / 2 < p₂.im := by rw [← UpperHalfPlane.coe_im]; exact fd_im_gt_half _ hp₂

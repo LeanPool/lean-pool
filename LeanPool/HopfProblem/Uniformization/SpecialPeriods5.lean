@@ -3738,7 +3738,7 @@ private theorem HolomorphicCousin.hasDerivAt_cauchyGreenInfinity {f : ℂ → �
       calc
         R * r < R * R⁻¹ := mul_lt_mul_of_pos_left hrR hR
         _ = 1 := mul_inv_cancel₀ hR.ne'
-    linarith
+    linarith only [hlt]
   have hmeas (x : ℂ) :
     MeasureTheory.AEStronglyMeasurable (fun w : ℂ => x * (1 - w * x)⁻¹ * f w)
       MeasureTheory.MeasureSpace.volume := by
@@ -5112,7 +5112,7 @@ private theorem SpecialPeriods.MuGenerator.Root.exists_cusp_root_unit {τ : ℍ 
     apply (UpperHalfPlane.atImInfty_mem _).mpr
     refine ⟨Y + 1, fun z hz => ?_⟩
     change Y < z.im
-    linarith
+    linarith only [hz]
   have hbAt : AnalyticAt ℂ b 0 := hb 0 (Metric.mem_ball_self hR)
   rcases
     (SpecialPeriods.MuGenerator.cuspHorodisc_isPreconnected Y hY).eq_or_eq_neg_of_sq_eq

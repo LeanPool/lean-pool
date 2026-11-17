@@ -225,8 +225,10 @@ theorem _root_.MisereGames.PFreeDeadEnding.a_one_MisereOutcome
     simp only [moves_ofSets, Set.mem_singleton_iff, Player.le_left, Player.neg_right,
       Player.le_left_eq, true_and]
     rw [not_winsGoingFirst_iff]
-    apply And.intro (by simp)
-    simp
+    apply And.intro (by simp only [not_isEndLike_left_one, not_false_eq_true])
+    simp only [
+      leftMoves_one, Set.mem_singleton_iff, Player.neg_left, forall_eq, isEndLike_iff_isEnd,
+      isEnd_zero, winsGoingFirst_of_isEndLike]
   · rw [not_winsGoingFirst_iff]
     simp [isEnd_def, h0]
 
@@ -240,13 +242,19 @@ theorem _root_.MisereGames.PFreeDeadEnding.a_one_pfreeDeadEnding
         apply And.intro <;> intro p <;> cases p
         · simp [isEnd_def]
         · simp [isEnd_def]
-        · simp
-        · simp
+        · simp only [
+          leftMoves_ofSets, Set.mem_singleton_iff, forall_eq, DeadEnding.isDeadEnding_intCast]
+        · simp only [
+          rightMoves_ofSets, Set.mem_singleton_iff, forall_eq, DeadEnding.isDeadEnding_one]
       short := by
         rw [short_def]
         intro p; cases p
-        · simp
-        · simp
+        · simp only [
+          leftMoves_ofSets, Set.finite_singleton, Set.mem_singleton_iff, forall_eq,
+          Short.intCast, and_self]
+        · simp only [
+          rightMoves_ofSets, Set.finite_singleton, Set.mem_singleton_iff, forall_eq, Short.one,
+          and_self]
     }
   · unfold IsPFree
     apply And.intro
@@ -290,7 +298,9 @@ theorem _root_.MisereGames.PFreeDeadEnding.reduction_a_one_int {a : ℤ} (h0 : 0
       rw [misereOutcome_L_iff_winsGoingFirst] at h2
       absurd h2.right
       apply winsGoingFirst_of_moves
-      simp
+      simp only [
+        rightMoves_ofSets, Set.mem_singleton_iff, Player.neg_right, exists_eq_left,
+        not_winsGoingFirst_left_one, not_false_eq_true]
     · simp [isEnd_def]
 
 private theorem reduction_ab_int.auxL {a b : ℤ} (h0 : 0 ≤ a) (h2 : 1 ≤ b)
@@ -509,7 +519,7 @@ private theorem misereEQ_intCast_pred_of_options {g : GameForm.{u}} (n : ℤ) (h
     · intro gl hgl; rw [hLg] at hgl; exact absurd hgl (Set.notMem_empty _)
     · intro hcontra
       rw [GameForm.isEndLike_iff_isEnd, isEnd_def, hRM] at hcontra
-      exact absurd hcontra (by simp)
+      exact absurd hcontra (by simp only [Set.singleton_ne_empty, not_false_eq_true])
     · exact fun _ => strong_of_isEnd hEnd_h
   exact MisereEq.of_antisymm hge hle
 
@@ -548,7 +558,7 @@ private theorem isEnd_left_exists_intCast_misereEQ {g : GameForm}
     have h_g_eq_zero : g = 0 := both_ends_eq_zero h_isEnd_left h_isEnd_right
     subst h_g_eq_zero
     intro x _
-    simp
+    simp only [zero_add, Nat.cast_zero, neg_zero, Form.intCast_ofNat]
   · have h_isDeadEnd_g := isDeadEnd_of_isDeadEnding h_g.isDeadEnding h_isEnd_left
     have h_opt : ∀ gr ∈ moves .right g,
         ∃ n : ℕ, gr =m PFreeDeadEnding ((-(n : ℤ) : ℤ) : GameForm) := by

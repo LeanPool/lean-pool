@@ -14,7 +14,6 @@ import LeanPool.LeanModularForms.ValenceFormula.TrigLemmas
 import LeanPool.LeanModularForms.ValenceFormula.WindingWeights.Common
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Bounds
 import Mathlib.CategoryTheory.Category.Init
-import Mathlib.NumberTheory.ArithmeticFunction.Misc
 
 /-!
 # Winding Number Weight at i
@@ -167,7 +166,7 @@ private lemma g_i_slitPlane_left {t : ℝ} (_ht0 : 0 ≤ t) (ht2 : t < 2) :
   · rw [fdBoundary_H_seg1 H (by linarith only [ht1]) (by linarith only [ht2])]
     set θ := Real.pi / 3 + (t - 1) * (Real.pi / 2 - Real.pi / 3) with hθ_def
     rw [show (↑Real.pi / 3 + (↑t - 1) * (↑Real.pi / 2 - ↑Real.pi / 3)) * I =
-      (↑θ : ℂ) * I from by simp only [hθ_def]; push_cast; ring, exp_real_angle_I]
+      (↑θ : ℂ) * I from by simp only [hθ_def]; push_cast; ac_rfl, exp_real_angle_I]
     simp only [Complex.add_re, Complex.sub_re, Complex.ofReal_re, Complex.mul_re,
       Complex.I_re, Complex.I_im, Complex.ofReal_im, mul_zero, sub_zero, add_zero,
       mul_one]
@@ -335,7 +334,7 @@ private lemma log_neg_half_branch :
   have hm : (-1 : ℂ) / 2 = ↑((1 : ℝ)/2) * (-1 : ℂ) := by push_cast; ring
   rw [hm, Complex.log_ofReal_mul (by norm_num : (0 : ℝ) < 1/2) (by norm_num : (-1 : ℂ) ≠ 0),
       Complex.log_neg_one]
-  rw [show (1 : ℂ)/2 = ↑((1 : ℝ)/2) from by push_cast; ring,
+  rw [show (1 : ℂ)/2 = ↑((1 : ℝ)/2) from by push_cast; ac_rfl,
       ← Complex.ofReal_log (show (0 : ℝ) ≤ 1/2 from by norm_num)]
   ring
 
@@ -346,7 +345,7 @@ private lemma fdBoundary_sub_I_at_one (H : ℝ) :
   rw [show Real.pi * (1 + 1) / 6 = Real.pi / 3 from by ring,
       show (↑(Real.pi / 3) : ℂ) * I = ↑(Real.pi / 3) * I from rfl,
       exp_real_angle_I, Real.cos_pi_div_three, Real.sin_pi_div_three]
-  push_cast; ring
+  push_cast; ac_rfl
 
 private lemma fdBoundary_sub_I_at_three (H : ℝ) :
     fdBoundaryH H 3 - I = exp (↑(Real.pi * (1 + (3 : ℝ)) / 6) * I) - I := by
@@ -355,7 +354,7 @@ private lemma fdBoundary_sub_I_at_three (H : ℝ) :
   rw [show Real.pi * (1 + 3) / 6 = 2 * Real.pi / 3 from by ring]
   rw [show (↑(2 * Real.pi / 3) : ℂ) * I = ↑(2 * Real.pi / 3) * I from rfl,
       exp_real_angle_I, cos_two_pi_div_three, sin_two_pi_div_three]
-  push_cast; ring
+  push_cast; ac_rfl
 
 private lemma h2_at_three_im_neg (H : ℝ) :
     ((-1/2 + ↑(Real.sqrt 3 / 2 - 1 + ((3 : ℝ) - 3) * (H - Real.sqrt 3 / 2)) * I : ℂ)).im < 0 := by
@@ -383,12 +382,12 @@ private lemma hasDerivAt_i_arc (t : ℝ) :
       (↑(Real.pi / 6) * I * exp (↑(Real.pi * (1 + t) / 6) * I)) t := by
   have hf : HasDerivAt (fun s : ℝ => Real.pi * (1 + s) / 6) (Real.pi / 6) t :=
     ((hasDerivAt_id t).add_const (1 : ℝ) |>.const_mul (Real.pi / 6)).congr_of_eventuallyEq
-      (Eventually.of_forall fun s => show _ from by simp [id]; ring)
-      |>.congr_deriv (by ring)
+      (Eventually.of_forall fun s => show _ from by simp only [id]; ring)
+      |>.congr_deriv (by ac_rfl)
   have hci : HasDerivAt (fun s : ℝ => (↑(Real.pi * (1 + s) / 6) : ℂ) * I)
       ((↑(Real.pi / 6) : ℂ) * I) t :=
     (hf.ofReal_comp.mul_const I).congr_deriv (by norm_num [smul_eq_mul])
-  exact (hci.cexp.sub (hasDerivAt_const t I)).congr_deriv (by simp only [sub_zero]; ring)
+  exact (hci.cexp.sub (hasDerivAt_const t I)).congr_deriv (by simp only [sub_zero]; ac_rfl)
 
 private lemma hasDerivAt_i_seg3 (H : ℝ) (t : ℝ) :
     HasDerivAt
@@ -398,10 +397,10 @@ private lemma hasDerivAt_i_seg3 (H : ℝ) (t : ℝ) :
       (H - Real.sqrt 3 / 2) t :=
     ((hasDerivAt_id t).sub_const (3 : ℝ) |>.mul_const (H - Real.sqrt 3 / 2)
       |>.add_const (Real.sqrt 3 / 2 - 1)).congr_of_eventuallyEq
-      (Eventually.of_forall fun s => show _ from by simp [id]; ring)
-      |>.congr_deriv (by ring)
+      (Eventually.of_forall fun s => show _ from by simp only [id]; ac_rfl)
+      |>.congr_deriv (by ac_rfl)
   exact ((hasDerivAt_const t ((-1 : ℂ)/2)).add
-    (hf.ofReal_comp.mul_const I)).congr_deriv (by push_cast; ring)
+    (hf.ofReal_comp.mul_const I)).congr_deriv (by push_cast; ac_rfl)
 
 private lemma hasDerivAt_i_seg4 (H : ℝ) (t : ℝ) :
     HasDerivAt (fun s : ℝ => ↑(s - 9/2) + ↑(H - 1) * I) (1 : ℂ) t := by
@@ -793,7 +792,7 @@ private lemma i_E_tendsto (H : ℝ) (_ : 1 < H) (threshold : ℝ) (hthresh_pos :
   have hpi_pos : 0 < Real.pi := Real.pi_pos
   rw [Metric.tendsto_nhdsWithin_nhds]
   intro r hr
-  refine ⟨min threshold (r/2), lt_min hthresh_pos (by linarith), ?_⟩
+  refine ⟨min threshold (r/2), lt_min hthresh_pos (by linarith only [hr]), ?_⟩
   intro ε hε_mem hε_dist
   simp only [Set.mem_Ioi] at hε_mem
   rw [Real.dist_eq, sub_zero, abs_of_pos hε_mem] at hε_dist
@@ -803,7 +802,7 @@ private lemma i_E_tendsto (H : ℝ) (_ : 1 < H) (threshold : ℝ) (hthresh_pos :
   have hε_lt_2sin : ε < 2 * Real.sin (Real.pi / 12) := lt_of_lt_of_le hε_lt hthresh_le_2sin
   have hε_half_neg : -1 ≤ ε / 2 := by linarith only [hε_pos]
   have hε_half_le : ε / 2 ≤ 1 := by linarith [lt_of_lt_of_le hε_lt hthresh_le_one]
-  have hε_half_pos : 0 < ε / 2 := by linarith
+  have hε_half_pos : 0 < ε / 2 := by linarith only [hε_mem]
   have harcsin_pos : 0 < Real.arcsin (ε / 2) := Real.arcsin_pos.mpr hε_half_pos
   have hδ_pos : 0 < 12 / Real.pi * Real.arcsin (ε / 2) :=
     mul_pos (div_pos (by norm_num) hpi_pos) harcsin_pos
@@ -819,7 +818,7 @@ private lemma i_E_tendsto (H : ℝ) (_ : 1 < H) (threshold : ℝ) (hthresh_pos :
     i_angle_bound H hδ_pos hδ_lt_one (by rw [g_i_norm_left hδ_pos hδ_lt_one]; linarith)
   -- norms at crossing points equal ε
   have h_nL : ‖fdBoundaryH H (2 - 12 / Real.pi * Real.arcsin (ε / 2)) - I‖ = ε := by
-    rw [g_i_norm_left hδ_pos hδ_lt_one]; linarith
+    rw [g_i_norm_left hδ_pos hδ_lt_one]; linarith only [hsin_eq]
   have h_nR : ‖fdBoundaryH H (2 + 12 / Real.pi * Real.arcsin (ε / 2)) - I‖ = ε := by
     rw [g_i_norm_right hδ_pos hδ_lt_one]
     linarith [h_nL, g_i_norm_left (H := H) hδ_pos hδ_lt_one]
@@ -839,7 +838,7 @@ private lemma i_E_tendsto (H : ℝ) (_ : 1 < H) (threshold : ℝ) (hthresh_pos :
     push_cast; ring
   rw [Complex.dist_eq, h_E_eq, norm_neg, norm_mul, Complex.norm_real, Complex.norm_I, mul_one,
       Real.norm_eq_abs, abs_of_pos (by positivity)]
-  linarith
+  linarith only [hε_lt_r2, h_angle_bnd]
 
 /-- The PV integral of `(γ-I)⁻¹ γ'` over `[0,5]` with ε-ball cutoff tends to `-iπ`.
 
@@ -918,7 +917,7 @@ theorem gWN_fdBoundary_H_at_i (H : ℝ) (hH : 1 < H) :
     generalizedWindingNumber' (fdBoundaryH H) 0 5 I = -1/2 := by
   apply ContourIntegral.gWN_eq_neg_half_of_pv_tendsto
   convert pv_integral_at_i_tendsto H hH using 2
-  · simp [sub_zero, gt_iff_lt]
-  · ring
+  · simp only [sub_zero, deriv_sub_const_fun, gt_iff_lt]
+  · ac_rfl
 
 end

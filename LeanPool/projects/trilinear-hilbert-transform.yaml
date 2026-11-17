@@ -1,0 +1,43 @@
+slug: trilinear-hilbert-transform
+title: Boundedness of the trilinear Hilbert transform
+summary: >-
+  Proves the L³ × L³ × L³ to L¹ bound for the principal-value trilinear
+  Hilbert transform on Schwartz functions, together with its unique bounded
+  extension to L³. Preserves the finite inverse theorem, quantitative
+  quadratic charts, dyadic stopping and projection estimates used by the proof.
+branch: harmonic analysis
+entry_module: LeanPool.TrilinearHilbertTransform
+authors:
+- Joris Roos
+source:
+  title: Formalization of boundedness of the trilinear Hilbert transform
+  url: https://github.com/roos-j/lean-trilinearht/tree/7b4209609e6a7fb9d9935973ee8541495f943660
+  github_repo: roos-j/lean-trilinearht
+  commit: 7b4209609e6a7fb9d9935973ee8541495f943660
+  announcement_url: https://leanprover.zulipchat.com/#narrow/channel/583339/near/633184911
+  announcement_date: '2026-10-20T02:00:52Z'
+  manuscript_url: https://github.com/openai/math/blob/adc7f1241b42e322a6451854ab7e4b4c146bf78a/preprints/An-L3-bound-for-the-trilinear-Hilbert-transform-October-5-2026/paper.pdf
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+- TrilinearHT.trilinear_ht_bound
+main_results:
+- declaration: TrilinearHT.trilinear_ht_bound
+  informal: >-
+    There is an absolute real constant C such that the L¹ norm of the
+    principal-value integral of f₁(x+t) f₂(x+2t) f₃(x+3t)/t is at most
+    C times the product of the L³ norms, for all complex Schwartz functions.
+- declaration: TrilinearHT.Auto.tht_main
+  informal: >-
+    The truncations converge pointwise for Schwartz inputs, and the transform
+    has a unique bounded complex trilinear extension from three copies of L³
+    to L¹, agreeing almost everywhere with the Schwartz transform.
+tags:
+- harmonic-analysis
+- singular-integrals
+- additive-combinatorics
+- time-frequency-analysis
+msc:
+- 42B20
+- 42B25

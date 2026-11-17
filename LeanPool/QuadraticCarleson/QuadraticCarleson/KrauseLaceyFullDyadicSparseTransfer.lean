@@ -146,10 +146,10 @@ theorem sparseOnePNorm_fullDyadicTailMax_le_two_mul_positive
     positivity
   have hp := hasSparseOnePBound_of_sparseOnePNorm_lt hpositive
     (show sparseOnePNorm p (finitePositiveDyadicTailMaxOperator lam j N) <
-      sparseOnePNorm p (finitePositiveDyadicTailMaxOperator lam j N) + ε / 2 by linarith)
+      sparseOnePNorm p (finitePositiveDyadicTailMaxOperator lam j N) + ε / 2 by linarith only [hε])
   have hb := sparseOnePNorm_le_of_bound (by positivity)
     (hasSparseOnePBound_fullDyadicTailMax lam j N hC hp)
-  linarith
+  linarith only [hb]
 
 theorem uniform_hasSparseOnePBound_fullDyadicTailMax {C p : ℝ} (hC : 0 ≤ C)
     (hpositive : ∀ (lam : ℝ) (j : ℤ) (N : ℕ),

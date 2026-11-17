@@ -12,7 +12,6 @@ import LeanPool.LeanModularForms.GeneralizedResidueTheory.Homotopy.Invariance
 import Mathlib.Analysis.Complex.RemovableSingularity
 import Mathlib.CategoryTheory.Category.Init
 import Mathlib.Combinatorics.Matroid.Init
-import Mathlib.MeasureTheory.Covering.Besicovitch
 
 
 /-!
@@ -292,14 +291,14 @@ lemma integral_singular_term_eq_winding_times_coeff
     rw [generalizedWindingNumber_eq_classical_away γ s h_avoids]
     field_simp [h_ne]
   have h_integrand : ∀ t, c / (γ.toFun t - s) * deriv γ.toFun t =
-      c * ((γ.toFun t - s)⁻¹ * deriv γ.toFun t) := by intro t; rw [div_eq_mul_inv]; ring
+      c * ((γ.toFun t - s)⁻¹ * deriv γ.toFun t) := by intro t; rw [div_eq_mul_inv]; ac_rfl
   calc ∫ t in γ.a..γ.b, c / (γ.toFun t - s) * deriv γ.toFun t
       = ∫ t in γ.a..γ.b, c * ((γ.toFun t - s)⁻¹ * deriv γ.toFun t) := by
         apply intervalIntegral.integral_congr; intro t _; exact h_integrand t
     _ = c * ∫ t in γ.a..γ.b, (γ.toFun t - s)⁻¹ * deriv γ.toFun t :=
         intervalIntegral.integral_smul c (fun t => (γ.toFun t - s)⁻¹ * deriv γ.toFun t)
     _ = c * (2 * Real.pi * I * generalizedWindingNumber' γ.toFun γ.a γ.b s) := by rw [h_integral]
-    _ = 2 * Real.pi * I * generalizedWindingNumber' γ.toFun γ.a γ.b s * c := by ring
+    _ = 2 * Real.pi * I * generalizedWindingNumber' γ.toFun γ.a γ.b s * c := by ac_rfl
 
 private lemma differentiableAt_singular_sum
     (f : ℂ → ℂ) (S0 : Finset ℂ) (w : ℂ)
@@ -349,7 +348,8 @@ private lemma continuousAt_g_at_pole
                fun hx => by rcases hx with ⟨hx1, _⟩ | ⟨hx1, _⟩ <;> exact hx1⟩
       · exact Finset.disjoint_filter.mpr fun x _ hxz hx_ne_z => hx_ne_z hxz
     have hfilter_eq : S0.filter (· = z) = {z} := by
-      ext x; simp_all
+      ext x; simp_all only [ne_eq, Finset.mem_filter, Finset.mem_singleton, and_iff_right_iff_imp,
+        implies_true]
     have hsingleton : ∑ s ∈ S0.filter (· = z), residueSimplePole f s / (w - s) =
         residueSimplePole f z / (w - z) := by rw [hfilter_eq, Finset.sum_singleton]
     rw [hsum_split, hsingleton]; ring
@@ -504,7 +504,7 @@ theorem integral_eq_sum_residues_of_avoids
     holomorphic_closed_integral_zero U hU hU_convex g hg_diff γ hγ_closed hγ_in_U hγ'_bdd,
     singular_sum_eq_winding_residues f S0 γ hγ_avoids hγ'_bdd, add_zero,
     Finset.mul_sum]
-  exact Finset.sum_congr rfl fun _ _ => by ring
+  exact Finset.sum_congr rfl fun _ _ => by ac_rfl
 
 lemma cauchyPrincipalValueIntegrandOn_eq_of_far
     (S0 : Finset ℂ) (f : ℂ → ℂ) (γ : ℝ → ℂ) (ε : ℝ) (t : ℝ)
@@ -656,7 +656,7 @@ theorem pv_integral_simple_pole
         else 0) * c := by
     intro ε t; simp only [sub_zero, h_deriv_eq]
     split_ifs with h
-    · rw [div_eq_mul_inv]; ring
+    · rw [div_eq_mul_inv]; ac_rfl
     · ring
   have h_integral' : ∀ ε,
       (∫ t in γ.a..γ.b, if ‖γ.toFun t - z₀‖ > ε

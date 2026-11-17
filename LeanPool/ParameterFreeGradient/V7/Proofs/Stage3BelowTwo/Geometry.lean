@@ -35,16 +35,16 @@ private lemma conjugateExponent_involutive {p : ℝ} (hp : 1 < p) :
     conjugateExponent (conjugateExponent p) = p := by
   change O3.conjugateExponent (O3.conjugateExponent p) = p
   rw [O3.conjugateExponent_eq, O3.conjugateExponent_eq]
-  have hne : p - 1 ≠ 0 := by linarith
+  have hne : p - 1 ≠ 0 := by linarith only [hp]
   field_simp [hne]
   ring
 
 private lemma belowH_eq_scaled_energy {p : ℝ} (hp : 1 < p) (x : Point d) :
     belowH p x = (1 / (p - 1)) * O3.Stage2RouteB.squaredLpEnergy p x := by
   rw [belowH, O3.Stage2RouteB.squaredLpEnergy_eq_quadraticRegularizer
-    (by linarith : 0 < p)]
+    (by linarith only [hp] : 0 < p)]
   simp only [O3.quadraticRegularizer, sub_zero]
-  have hne : p - 1 ≠ 0 := by linarith
+  have hne : p - 1 ≠ 0 := by linarith only [hp]
   field_simp [hne]
 
 private lemma belowHstar_eq_scaled_energy {p : ℝ} (hp : 1 < p) (s : Point d) :
@@ -60,13 +60,13 @@ private lemma mirrorMap_norm {p : ℝ} (hp : 1 < p) (s : Point d) :
   rw [belowMirrorMap]
   change O3.lpNorm p ((p - 1) • O3.dualityMap (O3.conjugateExponent p) s) =
     (p - 1) * O3.lpNorm (O3.conjugateExponent p) s
-  rw [O3.Stage2RouteC.lpNorm_smul (by linarith : 1 ≤ p)]
+  rw [O3.Stage2RouteC.lpNorm_smul (by linarith only [hp] : 1 ≤ p)]
   have hq := O3.Stage2RouteB.lpNorm_dualityMap
     (O3.one_lt_conjugateExponent hp) s
   have hinv : O3.conjugateExponent (O3.conjugateExponent p) = p := by
     exact conjugateExponent_involutive hp
   rw [hinv] at hq
-  rw [hq, abs_of_pos (by linarith : 0 < p - 1)]
+  rw [hq, abs_of_pos (by linarith only [hp] : 0 < p - 1)]
 
 private lemma mirrorMap_pairing {p : ℝ} (hp : 1 < p) (s : Point d) :
     pairing s (belowMirrorMap p s) =
@@ -83,14 +83,14 @@ private lemma dualityMap_pos_smul {p a : ℝ} (hp : 1 < p) (ha : 0 < a)
     O3.dualityMap p (a • x) = a • O3.dualityMap p x := by
   by_cases hx : x = 0
   · subst x
-    simp [O3.Stage2RouteB.dualityMap_zero (by linarith : 0 < p)]
+    simp [O3.Stage2RouteB.dualityMap_zero (by linarith only [hp] : 0 < p)]
   · have hax : a • x ≠ 0 := smul_ne_zero ha.ne' hx
     have hnx : 0 < O3.lpNorm p x := O3.lpNorm_pos_of_ne_zero hx
     have hnax : 0 < O3.lpNorm p (a • x) := O3.lpNorm_pos_of_ne_zero hax
     rw [O3.dualityMap, ite_eq_right hnax.ne', O3.dualityMap, ite_eq_right hnx.ne']
     have hnorm : O3.lpNorm p (a • x) = a * O3.lpNorm p x := by
       change O3.lpNorm p (fun i ↦ a * x i) = a * O3.lpNorm p x
-      rw [O3.Stage2RouteB.lpNorm_scalar_mul (by linarith : 0 < p)]
+      rw [O3.Stage2RouteB.lpNorm_scalar_mul (by linarith only [hp] : 0 < p)]
       rw [abs_of_pos ha]
     funext i
     simp only [Pi.smul_apply, smul_eq_mul]
@@ -112,7 +112,7 @@ private lemma dualityMap_pos_smul {p a : ℝ} (hp : 1 < p) (ha : 0 < a)
 private lemma primalGradient_mirrorMap {p : ℝ} (hp : 1 < p) (s : Point d) :
     (1 / (p - 1)) • O3.dualityMap p (belowMirrorMap p s) = s := by
   rw [belowMirrorMap]
-  have hpos : 0 < p - 1 := by linarith
+  have hpos : 0 < p - 1 := by linarith only [hp]
   have hhom := dualityMap_pos_smul hp hpos
     (O3.dualityMap (conjugateExponent p) s)
   rw [hhom]
@@ -131,7 +131,7 @@ lemma fenchel_upper {p : ℝ} (hp : 1 < p) (s x : Point d) :
   let q := conjugateExponent p
   let w : Point d := (p - 1) • s
   have hfy := O3.Stage2RouteB.fenchelYoung_lower hp w x
-  have hpos : 0 < p - 1 := by linarith
+  have hpos : 0 < p - 1 := by linarith only [hp]
   have hwenergy := O3.Stage2RouteB.squaredLpEnergy_scalar_mul
     (p := q) (a := p - 1) (lt_trans zero_lt_one (O3.one_lt_conjugateExponent hp)) s
   have hpair : O3.pairing w x = (p - 1) * O3.pairing s x := by
@@ -144,7 +144,7 @@ lemma fenchel_upper {p : ℝ} (hp : 1 < p) (s x : Point d) :
   have hne : p - 1 ≠ 0 := hpos.ne'
   apply (le_of_mul_le_mul_left (a := p - 1) ?_ hpos)
   field_simp [hne]
-  nlinarith
+  linarith only [hfy]
 
 private lemma fenchel_attained {p : ℝ} (hp : 1 < p) (s : Point d) :
     pairing s (belowMirrorMap p s) - belowH p (belowMirrorMap p s) =
@@ -173,29 +173,29 @@ private lemma squaredLpEnergy_remainder_nonneg {q : ℝ} (hq : 1 < q)
   rw [O3.Stage2RouteB.squaredLpEnergy_dualityMap hq] at hfy
   have hpair := O3.Stage2RouteB.pairing_dualityMap_self hq x
   have henergy := O3.Stage2RouteB.squaredLpEnergy_eq_quadraticRegularizer
-    (by linarith : 0 < q) x
+    (by linarith only [hq] : 0 < q) x
   simp only [O3.quadraticRegularizer, sub_zero] at henergy
   rw [O3.Stage2RouteB.pairing_add_right', hpair] at hfy
-  nlinarith
+  linarith only [henergy, hfy]
 
 private lemma squaredLpEnergy_hasFDerivAt {q : ℝ} (hq : 2 < q)
     (x : Point d) :
     HasFDerivAt (fun y : Point d ↦ O3.Stage2RouteB.squaredLpEnergy q y)
       (pairingCLM (O3.dualityMap q x)) x := by
   let _ : Fact (1 ≤ ENNReal.ofReal q) :=
-    ⟨ENNReal.one_le_ofReal.mpr (by linarith : 1 ≤ q)⟩
+    ⟨ENNReal.one_le_ofReal.mpr (by linarith only [hq] : 1 ≤ q)⟩
   let T : Point d →L[ℝ]
       PiLp (ENNReal.ofReal q) (fun _ : Fin d ↦ ℝ) :=
     (PiLp.continuousLinearEquiv (ENNReal.ofReal q) ℝ
       (fun _ : Fin d ↦ ℝ)).symm
   let c : ℝ := (q - 1) / 2
-  have hc : 0 ≤ c := by dsimp [c]; linarith
+  have hc : 0 ≤ c := by dsimp [c]; linarith only [hq]
   have hbound : ∀ h : Point d,
       ‖O3.Stage2RouteB.squaredLpEnergy q (x + h) -
           O3.Stage2RouteB.squaredLpEnergy q x - pairingCLM (O3.dualityMap q x) h‖ ≤
         (c * ‖T‖ ^ (2 : ℕ)) * ‖‖h‖ ^ (2 : ℕ)‖ := by
     intro h
-    have hlo := squaredLpEnergy_remainder_nonneg (by linarith : 1 < q) x h
+    have hlo := squaredLpEnergy_remainder_nonneg (by linarith only [hq] : 1 < q) x h
     have hhi := O3.Stage2Closure.squaredLpEnergy_smooth_above_two hq x (x + h)
     have hsub : x + h - x = h := by abel
     rw [hsub] at hhi
@@ -203,7 +203,7 @@ private lemma squaredLpEnergy_hasFDerivAt {q : ℝ} (hq : 2 < q)
     rw [Real.norm_eq_abs, abs_of_nonneg hlo, Real.norm_eq_abs,
       abs_of_nonneg (sq_nonneg ‖h‖)]
     have hnorm : O3.lpNorm q h = ‖T h‖ := by
-      rw [O3.Stage2RouteC.lpNorm_eq_piLpNorm (by linarith : 1 ≤ q)]
+      rw [O3.Stage2RouteC.lpNorm_eq_piLpNorm (by linarith only [hq] : 1 ≤ q)]
       rfl
     have hTop : ‖T h‖ ≤ ‖T‖ * ‖h‖ := T.le_opNorm h
     calc
@@ -212,7 +212,7 @@ private lemma squaredLpEnergy_hasFDerivAt {q : ℝ} (hq : 2 < q)
           O3.pairing (O3.dualityMap q x) h ≤
           c * O3.lpNorm q h ^ (2 : ℕ) := by
             dsimp [c]
-            linarith
+            linarith only [hhi]
       _ = c * ‖T h‖ ^ (2 : ℕ) := by rw [hnorm]
       _ ≤ c * (‖T‖ * ‖h‖) ^ (2 : ℕ) := by
         gcongr
@@ -230,8 +230,8 @@ private lemma belowHstar_hasFDerivAt {p : ℝ} (hp : 1 < p) (hp2 : p < 2)
     HasFDerivAt (fun t : Point d ↦ belowHstar p t)
       (pairingCLM (belowMirrorMap p s)) s := by
   have hq : 2 < O3.conjugateExponent p := by
-    rw [O3.conjugateExponent_eq, lt_div_iff₀ (by linarith : 0 < p - 1)]
-    linarith
+    rw [O3.conjugateExponent_eq, lt_div_iff₀ (by linarith only [hp] : 0 < p - 1)]
+    linarith only [hp2]
   have hraw := (squaredLpEnergy_hasFDerivAt hq s).const_mul (p - 1)
   have hfun := hraw.congr_of_eventuallyEq
     (Filter.Eventually.of_forall fun t ↦ belowHstar_eq_scaled_energy hp t)
@@ -263,16 +263,16 @@ private lemma belowH_strong {p : ℝ} (hp : 1 < p) (hp2 : p < 2)
       (1 / 2) * (lpNorm p (y - x)) ^ (2 : ℕ) := by
   have hold := O3.belowGeometry p hp hp2.le d x y
   rw [← O3.Stage2RouteB.squaredLpEnergy_eq_quadraticRegularizer
-      (by linarith : 0 < p) x,
+      (by linarith only [hp, hp2] : 0 < p) x,
     ← O3.Stage2RouteB.squaredLpEnergy_eq_quadraticRegularizer
-      (by linarith : 0 < p) y] at hold
+      (by linarith only [hp, hp2] : 0 < p) y] at hold
   rw [belowH_eq_scaled_energy hp, belowH_eq_scaled_energy hp]
   change (1 / (p - 1)) * O3.Stage2RouteB.squaredLpEnergy p y ≥
     (1 / (p - 1)) * O3.Stage2RouteB.squaredLpEnergy p x +
       O3.pairing ((1 / (p - 1)) • O3.dualityMap p x) (y - x) +
       (1 / 2) * O3.lpNorm p (y - x) ^ 2
   rw [O3.Stage2RouteD.pairing_smul_left]
-  have hpos : 0 < p - 1 := by linarith
+  have hpos : 0 < p - 1 := by linarith only [hp]
   have hne : p - 1 ≠ 0 := hpos.ne'
   have hinv : 0 ≤ 1 / (p - 1) := (one_div_pos.mpr hpos).le
   have hscaled := mul_le_mul_of_nonneg_left hold hinv
@@ -322,7 +322,7 @@ private lemma bregman_lower {p : ℝ} (hp : 1 < p) (hp2 : p < 2)
   rw [bregman_duality hp]
   unfold FunctionBregman
   have hstrong := belowH_strong hp hp2 (belowMirrorMap p s) (belowMirrorMap p t)
-  linarith
+  linarith only [hstrong]
 
 theorem belowGeometry : V7.BelowGeometryStatement := by
   intro p hp hp2 d

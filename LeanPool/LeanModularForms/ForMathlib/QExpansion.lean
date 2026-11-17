@@ -47,7 +47,7 @@ theorem periodic_comp_ofComplex' (hΓ : Γ.width ∣ h) : Periodic (f ∘ ofComp
     simp only [comp_apply, ofComplex_apply_of_im_pos this, ofComplex_apply_of_im_pos hw,
       ← vAdd_width_periodic f k (Nat.cast_dvd_cast hΓ) ⟨w, hw⟩]
     congr 1
-    simp [UpperHalfPlane.ext_iff, add_comm]
+    simp only [Int.cast_natCast, UpperHalfPlane.ext_iff, coe_vadd, ofReal_natCast, add_comm]
   · have : im (w + h) ≤ 0 := by simpa only [add_im, natCast_im, add_zero, not_lt] using hw
     simp only [comp_apply, ofComplex_apply_of_im_nonpos this,
       ofComplex_apply_of_im_nonpos (not_lt.mp hw)]

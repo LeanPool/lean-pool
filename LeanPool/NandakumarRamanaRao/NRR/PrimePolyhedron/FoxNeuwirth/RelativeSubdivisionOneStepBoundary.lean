@@ -799,7 +799,7 @@ private theorem sidePairing_summand_zero (d : ℕ) (hp : Nat.Prime (d + 2)) (N :
   rw [hbridge]
   simp only [RefinedAffineMap.coefficient, SimplicialChain.faceSign,
     RelativeSubdivisionCylinderCombinatorics.sideCell]
-  ring
+  ring_nf
   rfl
 
 private theorem sideBasePairing_eq_zero_dim

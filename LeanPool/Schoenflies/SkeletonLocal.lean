@@ -114,11 +114,11 @@ theorem mem_radial_iff (hd : Plane.IsDirection d) (hr : 0 < r) :
     have hsub : x + θ • (x + r • d - x) - x = (θ * r) • d := by module
     have hnorm : dist (x + θ • (x + r • d - x)) x = θ * r := by
       rw [dist_eq_norm, hsub, norm_smul, Real.norm_eq_abs,
-        abs_of_nonneg (by positivity), hd.norm, mul_one]
+        abs_of_nonneg (by exact mul_nonneg hθ0 (le_of_lt hr)), hd.norm, mul_one]
     refine ⟨by rw [hnorm]; nlinarith, ?_⟩
     rcases eq_or_lt_of_le hθ0 with rfl | hθpos
-    · left; simp
-    · exact Or.inr (by rw [hsub, dir_smul_of_isDirection hd (by positivity)])
+    · left; simp only [add_sub_cancel_left, zero_smul, add_zero]
+    · exact Or.inr (by rw [hsub, dir_smul_of_isDirection hd (by exact mul_pos hθpos hr)])
   · rintro ⟨hdist, hz⟩
     rcases eq_or_ne z x with rfl | hzx
     · exact left_mem_segment ℝ _ _
@@ -128,12 +128,13 @@ theorem mem_radial_iff (hd : Plane.IsDirection d) (hr : 0 < r) :
     have hdn : ‖z - x‖ ≤ r := by rwa [dist_eq_norm] at hdist
     -- The parameter is the fraction of the radius already travelled.
     refine ⟨1 - ‖z - x‖ / r, ‖z - x‖ / r, by
-      have := (div_le_one hr).2 hdn; linarith, by positivity, by ring, ?_⟩
+      have := (div_le_one hr).2 hdn; linarith only [this],
+        by exact le_of_lt (div_pos (norm_pos_iff.mpr hne) hr), by ring, ?_⟩
     have hθ : ‖z - x‖ / r * r = ‖z - x‖ := div_mul_cancel₀ _ hr.ne'
     calc (1 - ‖z - x‖ / r) • x + (‖z - x‖ / r) • (x + r • d)
         = x + (‖z - x‖ / r * r) • d := by module
       _ = x + ‖z - x‖ • d := by rw [hθ]
-      _ = z := by rw [hL]; module
+      _ = z := by rw [hL]; exact add_sub_cancel _ _
 
 /-- A radius of length `r` lies in the closed disk of radius `r`. -/
 theorem radial_subset_closedBall (hd : Plane.IsDirection d) (hr : 0 < r) :
@@ -154,7 +155,7 @@ theorem segment_eq_radial (h : c ≠ x) :
   have hne : c - x ≠ 0 := sub_ne_zero.2 h
   have : x + dist x c • Plane.dir (c - x) = c := by
     rw [dist_eq_norm', smul_norm_dir hne]
-    module
+    exact add_sub_cancel _ _
   rw [this]
 
 /-- **Inside a disk too small to reach `c`, the segment `[x, c]` is exactly a radius.** This is
@@ -225,9 +226,9 @@ theorem exists_goodRadius (x : Plane) (P : Piece) : ∃ r > 0, GoodRadius x P r 
       (Set.disjoint_singleton_left.2 hx)
     have hall : ∀ z ∈ P.seg, ρ ≤ dist x z := fun z hz => hd x rfl z hz
     refine ⟨ρ / 2, by positivity, fun _ z hz => ?_, fun _ => ?_, fun _ => ?_⟩
-    · exact lt_of_lt_of_le (by linarith) (hall z hz)
-    · exact le_trans (by linarith) (hall P.1 (left_mem_segment ℝ _ _))
-    · exact le_trans (by linarith) (hall P.2 (right_mem_segment ℝ _ _))
+    · exact lt_of_lt_of_le (half_lt_self hρ) (hall z hz)
+    · exact le_trans (half_le_self hρ.le) (hall P.1 (left_mem_segment ℝ _ _))
+    · exact le_trans (half_le_self hρ.le) (hall P.2 (right_mem_segment ℝ _ _))
 
 /-- Auxiliary: the directions in which the pieces of `ps` leave `x`. Unlike `localDirs` this
 depends on the chosen segment decomposition; the two are proved equal at any good radius. -/
@@ -380,19 +381,22 @@ theorem localDirs_subset_pieceDirs (hS : S = F ∪ cover ps) (hr : 0 < r)
   -- Walk a distance `t` along the germ; the point reached is in `S` and inside the disk.
   have hmem : x + t • d ∈ segment ℝ x (x + ε • d) :=
     (mem_radial_iff hdir hε).2 ⟨by
-        rw [dist_eq_norm, show x + t • d - x = t • d by module, norm_smul, Real.norm_eq_abs,
+        rw [dist_eq_norm, show x + t • d - x = t • d by exact add_sub_cancel_left _ _, norm_smul,
+          Real.norm_eq_abs,
           abs_of_pos htpos, hdir.norm, mul_one]
         exact min_le_left _ _,
-      Or.inr (by rw [show x + t • d - x = t • d by module, dir_smul_of_isDirection hdir htpos])⟩
+      Or.inr (by rw [show x + t • d - x = t • d by exact add_sub_cancel_left _ _,
+        dir_smul_of_isDirection hdir htpos])⟩
   have hdist : dist (x + t • d) x ≤ r := by
-    rw [dist_eq_norm, show x + t • d - x = t • d by module, norm_smul, Real.norm_eq_abs,
+    rw [dist_eq_norm, show x + t • d - x = t • d by exact add_sub_cancel_left _ _, norm_smul,
+      Real.norm_eq_abs,
       abs_of_pos htpos, hdir.norm, mul_one]
     exact min_le_right _ _
   have hne : x + t • d ≠ x := by
     intro h
     have : t • d = 0 := by
       have := sub_eq_zero.2 h
-      rw [show x + t • d - x = t • d by module] at this
+      rw [show x + t • d - x = t • d by exact add_sub_cancel_left _ _] at this
       exact this
     rcases smul_eq_zero.1 this with h' | h'
     · exact absurd h' htpos.ne'
@@ -400,7 +404,8 @@ theorem localDirs_subset_pieceDirs (hS : S = F ∪ cover ps) (hr : 0 < r)
   have := (mem_iff_of_goodRadius hS hr hx hgood hFgood hdist).1 (hsub hmem)
   rcases this with h | h
   · exact absurd h hne
-  · rwa [show x + t • d - x = t • d by module, dir_smul_of_isDirection hdir htpos] at h
+  · rwa [show x + t • d - x = t • d by exact add_sub_cancel_left _ _,
+    dir_smul_of_isDirection hdir htpos] at h
 
 /-- **The local directions of a finite union of segments and points are finitely many.** This
 is the blueprint's "finitely many straight segments from `x` with pairwise distinct
@@ -480,7 +485,7 @@ theorem IsLocalRadius.openSegment_subset_ball_diff (h : IsLocalRadius S x r) (hy
   intro w hw
   rw [openSegment_eq_image'] at hw
   obtain ⟨θ, ⟨hθ0, hθ1⟩, rfl⟩ := hw
-  have hsub : x + θ • (y - x) - x = θ • (y - x) := by module
+  have hsub : x + θ • (y - x) - x = θ • (y - x) := by exact add_sub_cancel_left _ _
   have hne : y - x ≠ 0 := sub_ne_zero.2 hyx
   have hdist : dist (x + θ • (y - x)) x = θ * dist y x := by
     rw [dist_eq_norm, hsub, norm_smul, Real.norm_eq_abs, abs_of_pos hθ0, dist_eq_norm]
@@ -511,17 +516,18 @@ theorem IsLocalRadius.exists_mem_ball_diff (h : IsLocalRadius S x r)
   obtain ⟨u, hu, hdet⟩ := Plane.exists_isDirection_det_ne_zero hfin
   have hhalf : 0 < r / 2 := half_pos h.pos
   have hnorm : dist (x + (r / 2) • u) x = r / 2 := by
-    rw [dist_eq_norm, show x + (r / 2) • u - x = (r / 2) • u by module, norm_smul,
+    rw [dist_eq_norm, show x + (r / 2) • u - x = (r / 2) • u by exact add_sub_cancel_left _ _,
+      norm_smul,
       Real.norm_eq_abs, abs_of_pos hhalf, hu.norm, mul_one]
   refine ⟨x + (r / 2) • u, mem_ball.2 (by rw [hnorm]; linarith [h.pos]), fun hmem => ?_⟩
-  rcases (h.2 _ (by rw [hnorm]; linarith [h.pos])).1 hmem with hzx | hd
+  rcases (h.2 _ (by rw [hnorm]; linarith only [pos h])).1 hmem with hzx | hd
   · have hz : (r / 2) • u = 0 := by
       have := sub_eq_zero.2 hzx
-      rwa [show x + (r / 2) • u - x = (r / 2) • u by module] at this
+      rwa [show x + (r / 2) • u - x = (r / 2) • u by exact add_sub_cancel_left _ _] at this
     rcases smul_eq_zero.1 hz with h' | h'
     · exact absurd h' hhalf.ne'
     · exact hu.ne_zero h'
-  · rw [show x + (r / 2) • u - x = (r / 2) • u by module,
+  · rw [show x + (r / 2) • u - x = (r / 2) • u by exact add_sub_cancel_left _ _,
       dir_smul_of_isDirection hu hhalf] at hd
     exact hdet u hd hu.ne_zero (by rw [Plane.det_self])
 

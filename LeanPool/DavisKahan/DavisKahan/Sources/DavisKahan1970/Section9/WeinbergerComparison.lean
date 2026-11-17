@@ -107,11 +107,11 @@ theorem tangent_sq_le_of_weinberger_sine_sq
       (alphaHat - alphaCheck) / (gap - alphaHat) := by
   have hgapCheck : 0 < gap - alphaCheck := by linarith
   have hgapHat : 0 < gap - alphaHat := by linarith
-  have hsden : 0 < 1 - s ^ 2 := by nlinarith [sq_nonneg s]
+  have hsden : 0 < 1 - s ^ 2 := by nlinarith only [hs0, hs1, sq_nonneg s]
   have hcross : s ^ 2 * (gap - alphaCheck) ≤ alphaHat - alphaCheck :=
     (le_div_iff₀ hgapCheck).mp hweinberger
   apply (div_le_div_iff₀ hsden hgapHat).2
-  nlinarith
+  nlinarith only [hcross]
 
 /-- Exact normalized envelope for the first historical comparison bound. -/
 noncomputable def weinbergerLowerTangentExactBound (ε : ℝ) : ℝ :=
@@ -128,18 +128,17 @@ private theorem historical_ratio_bound
     (((Real.sqrt 15 / 15) / 500) * ε) / (1 - c * ε) <
       ((1291 : ℝ) / 2500000 * ε) / (1 - C * ε) := by
   have hs15 : Real.sqrt 15 < (3873 : ℝ) / 1000 := by
-    nlinarith [Real.sqrt_nonneg (15 : ℝ),
-      Real.sq_sqrt (by norm_num : (0 : ℝ) ≤ 15)]
+    nlinarith only [Real.sqrt_nonneg (15 : ℝ), Real.sq_sqrt (by norm_num : (0 : ℝ) ≤ 15)]
   have ha : (Real.sqrt 15 / 15) / 500 < (1291 : ℝ) / 2500000 := by
-    nlinarith
+    nlinarith only [hs15]
   have hdC : 0 < 1 - C * ε := by linarith
-  have hdc : 0 < 1 - c * ε := by nlinarith
+  have hdc : 0 < 1 - c * ε := by nlinarith only [hε, hc, hC]
   have hfirst :
       (((Real.sqrt 15 / 15) / 500) * ε) / (1 - c * ε) <
         ((1291 : ℝ) / 2500000 * ε) / (1 - c * ε) := by
     apply div_lt_div_of_pos_right _ hdc
     exact mul_lt_mul_of_pos_right ha hε
-  have hden : 1 - C * ε ≤ 1 - c * ε := by nlinarith
+  have hden : 1 - C * ε ≤ 1 - c * ε := by nlinarith only [hε, hc]
   have hnum0 : 0 ≤ (1291 : ℝ) / 2500000 * ε := by positivity
   have hsecond :
       ((1291 : ℝ) / 2500000 * ε) / (1 - c * ε) ≤
@@ -158,8 +157,8 @@ theorem equation_9_8_lower
   apply h.trans_lt
   unfold weinbergerLowerTangentExactBound
   apply historical_ratio_bound hε
-  · nlinarith [ritzLowCoefficient_lt_printed]
-  · nlinarith
+  · nlinarith only [ritzLowCoefficient_lt_printed]
+  · nlinarith only [hε100]
 
 /-- Second line of equation (9.8), conditional on the exact comparison bound. -/
 theorem equation_9_8_upper
@@ -188,12 +187,11 @@ within `ε²/7500` of the lower Ritz value, and that is exactly the margin the
 first line of (9.8) needs. -/
 
 private lemma sqrt_three_gt : (17 : ℝ) / 10 < Real.sqrt 3 := by
-  nlinarith [Real.sqrt_nonneg (3 : ℝ), Real.sq_sqrt (by norm_num : (0 : ℝ) ≤ 3)]
+  nlinarith only [Real.sqrt_nonneg (3 : ℝ), Real.sq_sqrt (by norm_num : (0 : ℝ) ≤ 3)]
 
 private lemma ritzLowCoefficient_pos : 0 < ritzLowCoefficient := by
   unfold ritzLowCoefficient
-  nlinarith [Real.sqrt_nonneg (3 : ℝ), Real.sq_sqrt (by norm_num : (0 : ℝ) ≤ 3),
-    sqrt_three_gt]
+  nlinarith only [Real.sqrt_nonneg (3 : ℝ), Real.sq_sqrt (by norm_num : (0 : ℝ) ≤ 3), sqrt_three_gt]
 
 private lemma continuous_charAt (ε : ℝ) :
     Continuous fun lam => (weinbergerComparisonMatrix ε).charAt lam := by
@@ -238,30 +236,30 @@ theorem exists_weinbergerLowerRootCertificate (ε : ℝ) (hε : 0 < ε) (hε100 
   have hapos : 0 < a := by rw [ha, ritzLow]; positivity
   have halt : a < 25 := by
     rw [ha, ritzLow]
-    nlinarith
+    nlinarith only [hε, hε100, hc0, hc1]
   have hgap : ε * (Real.sqrt 3 / 3) = b - a := (ritzHigh_sub_ritzLow ε).symm
   have hgappos : ε * (17 / 30 : ℝ) ≤ b - a := by
     rw [← hgap]
-    nlinarith [sqrt_three_gt]
-  have hab : a < b := by nlinarith
+    nlinarith only [hε, sqrt_three_gt]
+  have hab : a < b := by nlinarith only [hε, hgappos]
   have hba : (0 : ℝ) ≤ b - a := by linarith
   have hc1pos : 0 < ritzHighCoefficient := by
     unfold ritzHighCoefficient
     positivity
   have hblt : b < 100 := by
     rw [hb, ritzHigh]
-    nlinarith [ritzHighCoefficient_lt_printed]
+    nlinarith only [hε, hε100, hc0, hc1, ritzHighCoefficient_lt_printed]
   have htpos : 0 < t := by rw [ht]; positivity
   -- the three sign evaluations
   have hva : (weinbergerComparisonMatrix ε).charAt a ≤ 0 := by
     rw [ha, charAt_ritzLow]
-    nlinarith
+    nlinarith only [hε, hgappos]
   have hvb : 0 ≤ (weinbergerComparisonMatrix ε).charAt b := by
     rw [hb, charAt_ritzHigh]
-    nlinarith
+    nlinarith only [hε, hgappos]
   have hkey : 500 * t ≤ 150 * (b - a) := by
     rw [ht]
-    nlinarith
+    nlinarith only [hε, hε100, ht, hgappos, htpos]
   have hvat : 0 ≤ (weinbergerComparisonMatrix ε).charAt (a - t) := by
     rw [weinbergerComparisonMatrix_charAt, ← ha, ← hb]
     have hk : ε ^ 2 / 30 = 250 * t := by rw [ht]; ring
@@ -272,16 +270,16 @@ theorem exists_weinbergerLowerRootCertificate (ε : ℝ) (hε : 0 < ε) (hε100 
     rw [hgoal]
     have hA : t * (b - a) * 400 ≤ t * (b - a + t) * (500 - a + t) := by
       refine mul_le_mul ?_ (by linarith) (by norm_num) (by positivity)
-      nlinarith
-    have hB : 500 * t * t ≤ 150 * t * (b - a) := by nlinarith
-    nlinarith [hA, hB]
+      nlinarith only [ht]
+    have hB : 500 * t * t ≤ 150 * t * (b - a) := by nlinarith only [ht, hkey, hgoal]
+    nlinarith only [hA, hB, hA, hB]
   -- the two roots
   obtain ⟨r₀, hr₀mem, hr₀⟩ :=
     intermediate_value_Icc' (by linarith : a - t ≤ a)
       ((continuous_charAt ε).continuousOn) (Set.mem_Icc.2 ⟨hva, hvat⟩)
   have htsmall : t ≤ b - a := by
     rw [ht]
-    nlinarith
+    nlinarith only [ht, htpos, hkey]
   have hvbt : (weinbergerComparisonMatrix ε).charAt (b - t) ≤ 0 := by
     rw [weinbergerComparisonMatrix_charAt, ← ha, ← hb]
     have hk : ε ^ 2 / 30 = 250 * t := by rw [ht]; ring
@@ -294,7 +292,7 @@ theorem exists_weinbergerLowerRootCertificate (ε : ℝ) (hε : 0 < ε) (hε100 
       refine mul_le_mul_of_nonneg_left (by linarith) ?_
       have : (0 : ℝ) ≤ b - a - t := by linarith
       positivity
-    nlinarith [hA, htpos, hkey]
+    nlinarith only [hε, ht, hgappos, hgoal, hA, hA, htpos, hkey]
   obtain ⟨r₁, hr₁mem, hr₁⟩ :=
     intermediate_value_Icc (by linarith : b - t ≤ b)
       ((continuous_charAt ε).continuousOn) (Set.mem_Icc.2 ⟨hvbt, hvb⟩)
@@ -369,15 +367,15 @@ theorem printed_weinberger_low_shift_inequality_reversed
     positivity
   have halt : a < 25 := by
     rw [show a = ritzLow ε from rfl, ritzLow]
-    nlinarith [ritzLowCoefficient_lt_printed]
+    nlinarith only [hε, hε100, hc0, ritzLowCoefficient_lt_printed]
   have hblt : b < 100 := by
     rw [show b = ritzHigh ε from rfl, ritzHigh]
-    nlinarith [ritzHighCoefficient_lt_printed]
+    nlinarith only [hε, hε100, ritzHighCoefficient_lt_printed]
   have hab : a < b := by
     rw [show a = ritzLow ε from rfl, show b = ritzHigh ε from rfl]
     have hgap := ritzHigh_sub_ritzLow ε
     have hsqrt : 0 < Real.sqrt 3 := Real.sqrt_pos.2 (by norm_num)
-    nlinarith
+    nlinarith only [hε, hgap, hsqrt]
   have hq : 0 < q := by
     dsimp [q]
     positivity
@@ -412,14 +410,14 @@ theorem printed_weinberger_low_shift_inequality_reversed
   have hsquare : ε ^ 2 < 10000 := by
     have hsum : 0 < 100 + ε := by linarith
     have hprod := mul_pos (sub_pos.mpr hε100) hsum
-    nlinarith
+    nlinarith only [hprod]
   have hcloseSmall : d < 4 / 3 := by
-    nlinarith
+    nlinarith only [hclose, hsquare]
   have heA : e < A := by
     dsimp [e, A, d] at hcloseSmall ⊢
     linarith
   have heqd : q * (e + d) = d * e * (A + d) := by
-    nlinarith [hroot']
+    nlinarith only [hroot', hroot']
   have hpositiveRemainder : 0 < d ^ 2 * (A - e) := by positivity
   have hfactorIdentity :
       (d * A - q) * (e + d) = d ^ 2 * (A - e) := by
@@ -461,7 +459,7 @@ theorem weinberger_tangent_le_lowerExactBound (ε : ℝ) (hε : 0 < ε) (hε100 
   have hc0 : 0 < ritzLowCoefficient := ritzLowCoefficient_pos
   have hc1 : ritzLowCoefficient < (4227 : ℝ) / 20000 := ritzLowCoefficient_lt_printed
   have hapos : 0 < ritzLow ε := by rw [ritzLow]; positivity
-  have halt : ritzLow ε < 25 := by rw [ritzLow]; nlinarith
+  have halt : ritzLow ε < 25 := by rw [ritzLow]; nlinarith only [hε, hε100, hc0, hc1]
   have hclose : ritzLow ε - C.lower₀ ≤ ε ^ 2 / 7500 :=
     ritzLow_sub_weinbergerLowerRoots_le ε hε hε100
   have hroot_le : C.lower₀ ≤ ritzLow ε := C.lower₀_le_ritz
@@ -477,7 +475,7 @@ theorem weinberger_tangent_le_lowerExactBound (ε : ℝ) (hε : 0 < ε) (hε100 
       = (ε * (Real.sqrt 15 / 15)) / (500 - ritzLow ε) := by
     unfold weinbergerLowerTangentExactBound
     rw [show ritzLow ε = ε * ritzLowCoefficient from rfl] at hden ⊢
-    rw [div_eq_div_iff (by nlinarith) (by linarith)]
+    rw [div_eq_div_iff (by nlinarith only [hden]) (by linarith)]
     ring
   have hWpos : 0 ≤ weinbergerLowerTangentExactBound ε := by
     rw [hW]
@@ -496,7 +494,7 @@ theorem weinberger_tangent_le_lowerExactBound (ε : ℝ) (hε : 0 < ε) (hε100 
         ≤ (ε ^ 2 / 7500) * (500 - ritzLow ε) ^ 2 :=
           mul_le_mul_of_nonneg_right hclose (sq_nonneg _)
       _ ≤ ε ^ 2 / 15 * (500 - ritzLow ε) := by
-          nlinarith [mul_nonneg (mul_nonneg (sq_nonneg ε) hden.le) hapos.le]
+          nlinarith only [hapos, hden, mul_nonneg (mul_nonneg (sq_nonneg ε) hden.le) hapos.le]
   nlinarith [hchain, hWpos, sq_nonneg (tanPhi - weinbergerLowerTangentExactBound ε)]
 
 /-- **The certified middle root is within `ε²/7500` of the upper Ritz value.** -/
@@ -527,7 +525,7 @@ theorem weinberger_tangent_le_upperExactBound (ε : ℝ) (hε : 0 < ε) (hε100 
   have hapos : 0 < ritzHigh ε := by rw [ritzHigh]; positivity
   have halt : ritzHigh ε < 100 := by
     rw [ritzHigh]
-    nlinarith [ritzHighCoefficient_lt_printed]
+    nlinarith only [hε, hε100, hc1pos, ritzHighCoefficient_lt_printed]
   have hclose : ritzHigh ε - C.lower₁ ≤ ε ^ 2 / 7500 :=
     ritzHigh_sub_weinbergerLowerRoots_le ε hε hε100
   have hroot_le : C.lower₁ ≤ ritzHigh ε := C.lower₁_le_ritz
@@ -540,7 +538,7 @@ theorem weinberger_tangent_le_upperExactBound (ε : ℝ) (hε : 0 < ε) (hε100 
       = (ε * (Real.sqrt 15 / 15)) / (500 - ritzHigh ε) := by
     unfold weinbergerUpperTangentExactBound tangentThetaExactBound
     rw [show ritzHigh ε = ε * ritzHighCoefficient from rfl] at hden ⊢
-    rw [div_eq_div_iff (by nlinarith) (by linarith)]
+    rw [div_eq_div_iff (by nlinarith only [hden]) (by linarith)]
     ring
   have hWpos : 0 ≤ weinbergerUpperTangentExactBound ε := by
     rw [hW]
@@ -558,7 +556,7 @@ theorem weinberger_tangent_le_upperExactBound (ε : ℝ) (hε : 0 < ε) (hε100 
         ≤ (ε ^ 2 / 7500) * (500 - ritzHigh ε) ^ 2 :=
           mul_le_mul_of_nonneg_right hclose (sq_nonneg _)
       _ ≤ ε ^ 2 / 15 * (500 - ritzHigh ε) := by
-          nlinarith [mul_nonneg (mul_nonneg (sq_nonneg ε) hden.le) hapos.le]
+          nlinarith only [hapos, hden, mul_nonneg (mul_nonneg (sq_nonneg ε) hden.le) hapos.le]
   nlinarith [hchain, hWpos, sq_nonneg (tanPhi - weinbergerUpperTangentExactBound ε)]
 
 /-- **Equation (9.8), first line, as printed**, from a Weinberger sine estimate at

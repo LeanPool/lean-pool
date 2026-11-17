@@ -500,10 +500,10 @@ theorem norm_borelCalculus_apply_le (hf : IsBddMeasurable f) {M : ℝ} (hM : 0 �
     intro x
     rw [Complex.mul_re, Complex.conj_re, Complex.conj_im]
     have h := hfb x
-    have hnn : ‖f x‖ ^ 2 ≤ M ^ 2 := by nlinarith [norm_nonneg (f x)]
+    have hnn : ‖f x‖ ^ 2 ≤ M ^ 2 := by nlinarith only [hM, h, norm_nonneg (f x)]
     have : ‖f x‖ ^ 2 = (f x).re ^ 2 + (f x).im ^ 2 := by
       rw [← Complex.normSq_eq_norm_sq, Complex.normSq_apply]; ring
-    nlinarith
+    nlinarith only [hnn, this]
   have hbound : ∫ x, ((starRingEnd ℂ) (f x) * f x).re ∂(diagMeasure ha ξ)
       ≤ M ^ 2 * ‖ξ‖ ^ 2 := by
     calc ∫ x, ((starRingEnd ℂ) (f x) * f x).re ∂(diagMeasure ha ξ)

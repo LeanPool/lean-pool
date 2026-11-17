@@ -1,0 +1,37 @@
+slug: siegel
+title: Siegel's lower bound for real Dirichlet L-functions
+summary: Proves the ineffective uniform lower bound for the value at one of
+  every non-principal real Dirichlet character, including imprimitive characters.
+  Preserves bounded-character-sum and Mellin integral infrastructure, positivity
+  of the auxiliary Dirichlet coefficients, and Goldfeld's exceptional-zero argument.
+branch: analytic number theory
+entry_module: LeanPool.Siegel
+authors:
+- Juan Pablo Traverso Gianini
+source:
+  title: A Simple Proof of Siegel's Theorem
+  doi: 10.1073/pnas.71.4.1055
+  url: https://github.com/jtraverso/siegel-theorem/tree/dbe9353374a11317bdd2d436e264536258c5762f
+  github_repo: jtraverso/siegel-theorem
+  commit: dbe9353374a11317bdd2d436e264536258c5762f
+  announcement_url: https://github.com/jtraverso/siegel-theorem/commit/3ed1c988f909b9952882d8219c63c9350857a02e
+  announcement_date: '2026-11-11'
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+- SiegelThmLib.siegel
+main_results:
+- declaration: SiegelThmLib.siegel
+  informal: For every positive epsilon there is a positive constant depending
+    only on epsilon such that the absolute value of L(1, chi) is at least
+    that constant times the modulus to the power minus epsilon, for every
+    non-principal character whose square is principal.
+tags:
+- analytic-number-theory
+- dirichlet-characters
+- l-functions
+- exceptional-zeros
+msc:
+- 11M20
+- 11M06

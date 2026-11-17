@@ -1,0 +1,62 @@
+slug: ehrhard-gaussian-convexity
+title: Ehrhard's inequality and Gaussian log-MGF convexity
+summary: Ehrhard's convex-set inequality for finite-dimensional Gaussian laws,
+  including singular covariance, and convexity at every real order of the
+  normalized logarithmic moment-generating function of a finite convex Gaussian
+  functional with all positive exponential moments. Includes Gaussian interpolation,
+  quantile transport, representation of Ehrhard-type laws as monotone convex
+  Gaussian images, weak closure, and normalized moment bounds.
+branch: probability
+entry_module: LeanPool.EhrhardGaussian
+authors:
+- Scott Armstrong
+- Ahmed Bou-Rabee
+source:
+  title: A Gaussian Convexity for Logarithmic Moment Generating Functions with Applications in Spin Glasses
+  arxiv: '2311.08351'
+  url: https://github.com/scottnarmstrong/Critical2DKPZ/tree/f1c98dacb2a83737096bd976019dfa2c5986ee5a
+  github_repo: scottnarmstrong/Critical2DKPZ
+  commit: f1c98dacb2a83737096bd976019dfa2c5986ee5a
+  announcement_url: https://x.com/scottnarmstrong/status/2114387112820670885
+  announcement_date: '2026-10-25'
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+- EhrhardGaussian.ehrhard_inequality
+- EhrhardGaussian.gaussian_convexity
+- EhrhardGaussian.Provider.ehrhardType_representation
+- EhrhardGaussian.Provider.ehrhardType_weakClosure
+- EhrhardGaussian.Provider.ehrhardType_momentBounds
+main_results:
+- declaration: EhrhardGaussian.ehrhard_inequality
+  informal: For a finite-dimensional Gaussian law, convex sets A and B, and
+    t in [0,1], Gaussian CDF lower thresholds a and b for their probabilities
+    give the CDF lower threshold (1-t)a+tb for the probability of their
+    Minkowski combination. Singular covariance and unit masses are allowed;
+    a zero-mass set has no finite admissible threshold.
+- declaration: EhrhardGaussian.gaussian_convexity
+  informal: For a finite convex real function of a finite-dimensional Gaussian
+    vector with every positive exponential moment finite, log E[exp(qF)]/q,
+    defined at q=0 by E[F], is convex on the whole real line.
+- declaration: EhrhardGaussian.Provider.ehrhardType_representation
+  informal: A real probability law is of Ehrhard type exactly when it is the
+    pushforward of the standard Gaussian law by a finite monotone convex function;
+    constant functions and Dirac laws are included.
+- declaration: EhrhardGaussian.Provider.ehrhardType_weakClosure
+  informal: The weak limit of a sequence of Ehrhard-type real probability laws
+    is again of Ehrhard type.
+- declaration: EhrhardGaussian.Provider.ehrhardType_momentBounds
+  informal: An Ehrhard-type law with integrable exponential and E[exp(X)]=1 has
+    an integrable square, variance at most -2 E[X], and the stated Gaussian
+    negative exponential-moment bounds. A finite second positive exponential
+    moment yields the further normalized moment comparison.
+tags:
+- gaussian-measures
+- convexity
+- ehrhard-inequality
+- moment-generating-functions
+msc:
+- 60D05
+- 60E15
+- 52A40

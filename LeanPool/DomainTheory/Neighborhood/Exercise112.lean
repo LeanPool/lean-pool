@@ -7,7 +7,6 @@ module
 
 public import LeanPool.DomainTheory.Neighborhood.Basic
 import Mathlib.Data.Nat.Find
-import Mathlib.Data.Set.Basic
 
 /-!
 # Exercise 1.12 (Scott 1981, PRG-19, §1) — the final-segment system on `ℕ`
@@ -64,7 +63,7 @@ theorem tail_subset_iff {n m : ℕ} : tail n ⊆ tail m ↔ m ≤ n := by
 shorter one). -/
 theorem tail_inter (n m : ℕ) : tail n ∩ tail m = tail (max n m) := by
   ext k
-  simp_all
+  simp_all only [Set.mem_inter_iff, mem_tail, sup_le_iff]
 
 /-- Membership in the final-segment system: `X` is a neighbourhood iff `X = tail
 n` for some `n`. -/

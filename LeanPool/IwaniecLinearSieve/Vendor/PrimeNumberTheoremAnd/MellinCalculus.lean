@@ -181,7 +181,7 @@ lemma _root_.Filter.TendstoAtZero_of_support_in_Icc {a b : ℝ} (f : ℝ → �
     Tendsto f (𝓝[>]0) (𝓝 0) := by
   apply Tendsto.comp (tendsto_nhds_of_eventually_eq ?_) tendsto_id
   filter_upwards [Ioo_mem_nhdsGT ha] with c hc; replace hc := (mem_Ioo.mp hc).2
-  have h : c ∉ Icc a b := fun h ↦ by linarith [mem_Icc.mp h]
+  have h : c ∉ Icc a b := fun h ↦ by linarith only [mem_Icc.mp h, hc, h]
   convert mt (Function.support_subset_iff.mp fSupp c) h; simp
 
 lemma _root_.Filter.TendstoAtTop_of_support_in_Icc {a b : ℝ} (f : ℝ → 𝕂)
@@ -189,16 +189,16 @@ lemma _root_.Filter.TendstoAtTop_of_support_in_Icc {a b : ℝ} (f : ℝ → 𝕂
     Tendsto f atTop (𝓝 0) := by
   apply Tendsto.comp (tendsto_nhds_of_eventually_eq ?_) tendsto_id
   filter_upwards [Ioi_mem_atTop b] with c hc; rw [mem_Ioi] at hc
-  have h : c ∉ Icc a b := fun h ↦ by linarith [mem_Icc.mp h]
+  have h : c ∉ Icc a b := fun h ↦ by linarith only [mem_Icc.mp h, hc, h]
   convert mt (Function.support_subset_iff.mp fSupp c) h; simp
 
 lemma _root_.Filter.BigO_zero_atZero_of_support_in_Icc {a b : ℝ} (f : ℝ → 𝕂) (ha : 0 < a)
     (fSupp : f.support ⊆ Set.Icc a b) :
     f =O[𝓝[>] 0] fun _ ↦ (0 : ℝ) := by
   refine Eventually.isBigO ?_
-  filter_upwards [Ioo_mem_nhdsGT (by linarith : (0 : ℝ) < a)] with c hc
+  filter_upwards [Ioo_mem_nhdsGT (by linarith only [ha] : (0 : ℝ) < a)] with c hc
   refine norm_le_zero_iff.mpr <| Function.support_subset_iff'.mp fSupp c ?_
-  exact fun h ↦ by linarith [mem_Icc.mp h, (mem_Ioo.mp hc).2]
+  exact fun h ↦ by linarith only [mem_Icc.mp h, (mem_Ioo.mp hc).2, h, hc]
 
 lemma _root_.Filter.BigO_zero_atTop_of_support_in_Icc {a b : ℝ} (f : ℝ → 𝕂)
     (fSupp : f.support ⊆ Set.Icc a b) :
@@ -206,7 +206,7 @@ lemma _root_.Filter.BigO_zero_atTop_of_support_in_Icc {a b : ℝ} (f : ℝ → �
   refine Eventually.isBigO ?_
   filter_upwards [Ioi_mem_atTop b] with c hc; replace hc := mem_Ioi.mp hc
   refine norm_le_zero_iff.mpr <| Function.support_subset_iff'.mp fSupp c ?_
-  exact fun h ↦ by linarith [mem_Icc.mp h]
+  exact fun h ↦ by linarith only [mem_Icc.mp h, hc, h]
 
 lemma _root_.deriv.ofReal_comp' {f : ℝ → ℝ} :
     deriv (fun x : ℝ ↦ (f x : ℂ)) = (fun x ↦ ((deriv f) x : ℂ)) :=
@@ -523,7 +523,7 @@ lemma MellinOfPsi {ν : ℝ → ℝ} (diffν : ContDiff ℝ 1 ν)
   have mainBnd : ∀ (σ₁ : ℝ), 0 < σ₁ → ∀ (s : ℂ), σ₁ ≤ s.re → s.re ≤ 2 →
       ‖𝓜 (fun x ↦ (ν x : ℂ)) s‖ ≤ C * ‖s‖⁻¹ := by
     intro σ₁ σ₁pos s hs₁ hs₂
-    have s_ne_zero: s ≠ 0 := fun h ↦ by linarith [zero_re ▸ h ▸ hs₁]
+    have s_ne_zero: s ≠ 0 := fun h ↦ by linarith only [zero_re ▸ h ▸ hs₁, σ₁pos, hs₁, h]
     simp only [mellin, f, MellinOfPsi_aux diffν suppν s_ne_zero, norm_mul, smul_eq_mul, mul_comm]
     gcongr
     · simp
@@ -546,9 +546,9 @@ lemma MellinOfPsi {ν : ℝ → ℝ} (diffν : ContDiff ℝ 1 ν)
       · intro x hx;
         have f_bound := isMaxOn_iff.mp max x hx
         have pow_bound : ‖(x : ℂ) ^ s‖ ≤ 2 ^ σ₂ := by
-          rw [norm_cpow_eq_rpow_re_of_pos (by linarith [mem_Icc.mp hx])]
-          have xpos : 0 ≤ x := by linarith [(mem_Icc.mp hx).1]
-          have h := rpow_le_rpow xpos (mem_Icc.mp hx).2 (by linarith : 0 ≤ s.re)
+          rw [norm_cpow_eq_rpow_re_of_pos (by linarith only [mem_Icc.mp hx, hx])]
+          have xpos : 0 ≤ x := by linarith only [(mem_Icc.mp hx).1, hx]
+          have h := rpow_le_rpow xpos (mem_Icc.mp hx).2 (by linarith only [σ₁pos, hs₁] : 0 ≤ s.re)
           exact le_trans h <| rpow_le_rpow_of_exponent_le (by norm_num) hs₂
         convert! mul_le_mul f_bound pow_bound (norm_nonneg _) ?_ using 1 <;> simp [f]
   have Cnonneg : 0 ≤ C := by
@@ -558,7 +558,7 @@ lemma MellinOfPsi {ν : ℝ → ℝ} (diffν : ContDiff ℝ 1 ν)
     have := hhh.trans hh
     exact (mul_nonneg_iff_of_pos_right hhhh).mp this
   by_cases CeqZero : C = 0
-  · refine ⟨1, by linarith, ?_⟩
+  · refine ⟨1, by linarith only [], ?_⟩
     intro ε εpos s hs₁ hs₂
     have := mainBnd ε εpos s hs₁ hs₂
     rw [CeqZero, zero_mul] at this
@@ -623,7 +623,7 @@ lemma DeltaSpikeSupport_aux {ν : ℝ → ℝ} {ε : ℝ} (εpos : 0 < ε)
   have hl := (le_rpow_inv_iff_of_pos (by norm_num) hx εpos).mp this.1
   rw [inv_rpow (by norm_num) ε, ← rpow_neg (by norm_num)] at hl
   refine ⟨hl, (rpow_inv_le_iff_of_pos ?_ (by norm_num) εpos).mp this.2⟩
-  linarith [(by apply rpow_nonneg (by norm_num) : 0 ≤ (2 : ℝ) ^ (-ε))]
+  linarith only [(by apply rpow_nonneg (by norm_num) : 0 ≤ (2 : ℝ) ^ (-ε)), hx]
 
 lemma DeltaSpikeSupport' {ν : ℝ → ℝ} {ε x : ℝ} (εpos : 0 < ε) (xnonneg : 0 ≤ x)
     (suppν : ν.support ⊆ Icc (1 / 2) 2) :
@@ -832,15 +832,15 @@ lemma Smooth1Properties_estimate {ε : ℝ} (εpos : 0 < ε) :
   have mono: StrictMonoOn f <| Ici 1 := by
     refine strictMonoOn_of_deriv_pos (convex_Ici _) ?_ ?_
     · apply continuousOn_id.mul (continuousOn_id.log ?_) |>.sub continuousOn_id
-      intro x hx; simp only [mem_Ici] at hx; simp only [id_eq, ne_eq]; linarith
+      intro x hx; simp only [mem_Ici] at hx; simp only [id_eq, ne_eq]; linarith only [hx]
     · intro x hx; simp only [nonempty_Iio, interior_Ici', mem_Ioi] at hx
       dsimp only [f]
       rw [deriv_fun_sub, deriv_fun_mul, Real.deriv_log, deriv_id'', one_mul, mul_inv_cancel₀]
       · simp [log_pos hx]
-      · linarith
+      · linarith only [hx]
       · simp only [differentiableAt_fun_id]
-      · simp only [differentiableAt_log_iff, ne_eq]; linarith
-      · exact differentiableAt_fun_id.mul <| differentiableAt_fun_id.log (by linarith)
+      · simp only [differentiableAt_log_iff, ne_eq]; linarith only [hx]
+      · exact differentiableAt_fun_id.mul <| differentiableAt_fun_id.log (by linarith only [hx])
       · simp only [differentiableAt_fun_id]
   exact mono (by rw [mem_Ici]) (mem_Ici.mpr <| le_of_lt hc) hc
 
@@ -923,7 +923,7 @@ lemma Smooth1Properties_below {ν : ℝ → ℝ} (suppν : ν.support ⊆ Icc (1
     apply DeltaSpikeSupport εpos ?_ suppν
     · simp only [mem_Icc, not_and, not_le]; intro
       linarith [(by apply (div_lt_iff₀ (by linarith)).mpr; nlinarith : x / y < 2 ^ (-ε))]
-    · rw [le_div_iff₀ (by linarith), zero_mul]; exact xpos.le
+    · rw [le_div_iff₀ (by linarith only [hy2]), zero_mul]; exact xpos.le
 
 
 
@@ -1025,7 +1025,7 @@ lemma Smooth1Properties_above {ν : ℝ → ℝ} (suppν : ν.support ⊆ Icc (1
     simp only [mem_Icc, not_and, not_le]
   on_goal 2 =>
     suffices h : 2 ^ ε < x / y by
-      linarith [(by apply rpow_pos_of_pos (by norm_num) : 0 < (2 : ℝ) ^ ε)]
+      linarith only [(by apply rpow_pos_of_pos (by norm_num) : 0 < (2 : ℝ) ^ ε), h]
   all_goals
   try intro
   have : x / y = ((x / y) ^ (1 / ε)) ^ ε := by
@@ -1253,7 +1253,7 @@ lemma MellinOfSmooth1a {ν : ℝ → ℝ} (diffν : ContDiff ℝ 1 ν)
         · exact (DeltaSpikeOfRealContinuous εpos diffν).continuousOn
         · exact continuous_ofReal.continuousOn
         · intro x hx; simp only [mem_Icc] at hx; simp only [ofReal_ne_zero]
-          linarith [(by apply rpow_pos_of_pos (by norm_num) : (0 : ℝ) < 2 ^ (-ε))]
+          linarith only [(by apply rpow_pos_of_pos (by norm_num) : (0 : ℝ) < 2 ^ (-ε)), hx]
   have : 𝓜 (MellinConvolution g f') s = 𝓜 g s * 𝓜 f' s := by
     rw [mul_comm, ← MellinConvolutionTransform f' g s
       (by convert int_F using 1; simp only [f', F, f]; field_simp)]
@@ -1285,10 +1285,10 @@ lemma MellinOfSmooth1b {ν : ℝ → ℝ} (diffν : ContDiff ℝ 1 ν)
   rw [MellinOfSmooth1a diffν suppν εpos <| lt_of_le_of_lt' hs1 σ₁pos]
   have hh1 : ε * σ₁ ≤ (ε * s).re := by
     simp only [mul_re, ofReal_re, ofReal_im, zero_mul, sub_zero]
-    nlinarith
+    nlinarith only [hs1, εpos]
   have hh2 : (ε * s).re ≤ 2 := by
     simp only [mul_re, ofReal_re, ofReal_im, zero_mul, sub_zero]
-    nlinarith
+    nlinarith only [hs2, σ₁pos, ε_lt_one, hs1]
   calc
     ‖s⁻¹ * 𝓜 (fun x ↦ (ν x : ℂ)) (ε * s)‖ =
         ‖s⁻¹‖ * ‖𝓜 (fun x ↦ (ν x : ℂ)) (ε * s)‖ := by simp
@@ -1317,7 +1317,7 @@ lemma MellinOfSmooth1c {ν : ℝ → ℝ} (diffν : ContDiff ℝ 1 ν)
   rw [Asymptotics.isBigO_iff] at h ⊢
   obtain ⟨c, hc⟩ := h
   use c
-  filter_upwards [hc, Ioo_mem_nhdsGT (by linarith : (0 : ℝ) < 1)] with ε hε hε'
+  filter_upwards [hc, Ioo_mem_nhdsGT (by linarith only [] : (0 : ℝ) < 1)] with ε hε hε'
   rw [MellinOfSmooth1a diffν suppν hε'.1 (s := 1) (by norm_num)]
   simp only [inv_one, mul_one, one_mul, id_eq, Real.norm_eq_abs]
   exact hε

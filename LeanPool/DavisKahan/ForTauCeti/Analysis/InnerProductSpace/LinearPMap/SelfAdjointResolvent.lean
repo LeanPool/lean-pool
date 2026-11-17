@@ -157,7 +157,7 @@ theorem injective_shiftMap {A : E →ₗ.[ℂ] E} (hsym : A.IsFormalAdjoint A)
   have h := norm_sub_smul_ge_abs_im hsym z x
   rw [show A x - z • (x : E) = shiftMap A z x from rfl, hx, norm_zero] at h
   have hxz : ‖(x : E)‖ = 0 := by
-    nlinarith [abs_pos.mpr hz, norm_nonneg ((x : E))]
+    nlinarith only [hz, h, abs_pos.mpr hz, norm_nonneg ((x : E))]
   exact Subtype.ext (by simpa using hxz)
 
 /-- The shifted map is surjective.  This is the harder half -- it needs closed range, which comes
@@ -356,7 +356,7 @@ theorem exists_norm_le_two_sided_shifted_inverse_of_spectrum_gap
       have hsle : s ≤ ‖μ‖⁻¹ := hinvnorm ▸ hge
       have hcancel : ‖μ‖⁻¹ * ‖μ‖ = 1 := inv_mul_cancel₀ (ne_of_gt hpos)
       rw [show s⁻¹ = 1 / s by ring, le_div_iff₀ hs]
-      nlinarith [hsle, hpos, hcancel]
+      nlinarith only [hge, hinvnorm, hpos, hcancel, hsle, hpos, hcancel]
   -- for a self-adjoint element the norm *is* the spectral radius
   have hsa : _root_.IsSelfAdjoint (resolvent A (c : ℂ)) := isSelfAdjoint_resolvent_ofReal hA hc
   have hrad : spectralRadius ℂ (resolvent A (c : ℂ)) ≤ ENNReal.ofReal s⁻¹ := by

@@ -5,11 +5,7 @@ Authors: Zeru Zhu, Jinzheng Li, Yuanjie Ren
 -/
 module
 
-public import Mathlib.Tactic.NormNum
-public import Mathlib.Tactic.Push
-public import Mathlib.Tactic.Ring
 public import LeanPool.ACMax.Counting.Cherry
-public import LeanPool.ACMax.Counting.PoorCorner
 
 /-!
 # The M-shape analysis and the complete `Δ ≤ 4` closure

@@ -117,7 +117,7 @@ theorem tendsto_damp {w : ℂ} (hw : w ≠ 1) :
       have hNn : (N : ℝ) ≤ (n : ℝ) := Nat.cast_le.mpr hn
       have : 1 / ‖w - 1‖ < (n : ℝ) := lt_of_lt_of_le hN hNn
       calc (1 : ℝ) = (1 / ‖w - 1‖) * ‖w - 1‖ := by field_simp
-        _ ≤ (n : ℝ) * ‖w - 1‖ := by nlinarith
+        _ ≤ (n : ℝ) * ‖w - 1‖ := by nlinarith only [hpos, hN, hNn]
     exact min_eq_left hle
   exact tendsto_const_nhds.congr' (hev.mono fun n hn => hn.symm)
 
@@ -138,7 +138,7 @@ theorem norm_cayleySymbolFun_le (f : C(ℝ, ℝ)) (hf : ∀ x, f x ∈ Set.Icc (
   have h2 : |damp n w| ≤ 1 := by
     rw [abs_of_nonneg (damp_nonneg n w)]
     exact damp_le_one n w
-  nlinarith [abs_nonneg (f (cayleyCoordFun w)), abs_nonneg (damp n w)]
+  nlinarith only [h1, h2, abs_nonneg (f (cayleyCoordFun w)), abs_nonneg (damp n w)]
 
 /-- **The damped symbol is continuous everywhere, including at `w = 1`.**  This is the point of the
 construction: `cayleyCoordFun` alone is only `ContinuousOn {w ≠ 1}`, and the damping squeezes the

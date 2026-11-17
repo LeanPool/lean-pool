@@ -55,27 +55,31 @@ private lemma normSq_eq_one_of_norm_eq_one {z : ℂ} (h : ‖z‖ = 1) :
 
 /-- Coercion identity for T-translation: `((1 : ℝ) +ᵥ p : ℂ) = (p : ℂ) + 1`. -/
 lemma vAdd_one_coe (p : ℍ) : ((1 : ℝ) +ᵥ p : ℂ) = (p : ℂ) + 1 := by
-  change ((1 : ℝ) : ℂ) + (p : ℂ) = (p : ℂ) + 1; push_cast; ring
+  change ((1 : ℝ) : ℂ) + (p : ℂ) = (p : ℂ) + 1; push_cast; ac_rfl
 
 /-- T-translation shifts real part by 1. -/
 lemma vAdd_one_re (p : ℍ) : ((1 : ℝ) +ᵥ p : ℍ).re = p.re + 1 := by
-  change ((1 : ℝ) +ᵥ p : ℂ).re = p.re + 1; rw [vAdd_one_coe]; simp [add_re]
+  change ((1 : ℝ) +ᵥ p : ℂ).re = p.re + 1; rw [vAdd_one_coe]; simp only [add_re,
+    UpperHalfPlane.coe_re, one_re]
 
 /-- T-translation preserves imaginary part. -/
 lemma vAdd_one_im_eq (p : ℍ) : ((1 : ℝ) +ᵥ p : ℍ).im = p.im := by
-  change ((1 : ℝ) +ᵥ p : ℂ).im = p.im; rw [vAdd_one_coe]; simp [add_im]
+  change ((1 : ℝ) +ᵥ p : ℂ).im = p.im; rw [vAdd_one_coe]; simp only [add_im, UpperHalfPlane.coe_im,
+    one_im, add_zero]
 
 /-- T⁻¹-translation coercion: `((-1 : ℝ) +ᵥ p : ℂ) = (p : ℂ) - 1`. -/
 lemma vAdd_neg_one_coe (p : ℍ) : ((-1 : ℝ) +ᵥ p : ℂ) = (p : ℂ) - 1 := by
-  change ((-1 : ℝ) : ℂ) + (p : ℂ) = (p : ℂ) - 1; push_cast; ring
+  change ((-1 : ℝ) : ℂ) + (p : ℂ) = (p : ℂ) - 1; push_cast; ac_rfl
 
 /-- T⁻¹-translation shifts real part by -1. -/
 lemma vAdd_neg_one_re (p : ℍ) : ((-1 : ℝ) +ᵥ p : ℍ).re = p.re - 1 := by
-  change ((-1 : ℝ) +ᵥ p : ℂ).re = p.re - 1; rw [vAdd_neg_one_coe]; simp [sub_re]
+  change ((-1 : ℝ) +ᵥ p : ℂ).re = p.re - 1; rw [vAdd_neg_one_coe]; simp only [sub_re,
+    UpperHalfPlane.coe_re, one_re]
 
 /-- T⁻¹-translation preserves imaginary part. -/
 lemma vAdd_neg_one_im_eq (p : ℍ) : ((-1 : ℝ) +ᵥ p : ℍ).im = p.im := by
-  change ((-1 : ℝ) +ᵥ p : ℂ).im = p.im; rw [vAdd_neg_one_coe]; simp [sub_im]
+  change ((-1 : ℝ) +ᵥ p : ℂ).im = p.im; rw [vAdd_neg_one_coe]; simp only [sub_im,
+    UpperHalfPlane.coe_im, one_im, sub_zero]
 
 /-- T-translation preserves norm for left-vertical points (`re = -1/2`). -/
 lemma norm_add_one_eq_of_re_neg_half (z : ℂ) (hre : z.re = -1 / 2) :
@@ -130,7 +134,9 @@ theorem vAdd_neg_one_rho_plus_one_eq_rho :
 /-- ρ+1 is in the standard fundamental domain 𝒟. -/
 theorem ellipticPointRhoPlusOne_mem_fd : ellipticPointRhoPlusOne' ∈ 𝒟 :=
   vAdd_one_rho_eq_rho_plus_one ▸ vAdd_one_mem_fd_of_left_vert
-    ellipticPointRho' ellipticPointRho_mem_fd (by simp [ellipticPointRho'])
+    ellipticPointRho' ellipticPointRho_mem_fd (by simp only [ellipticPointRho', add_re,
+      div_ofNat_re, neg_re, one_re, mul_re, ofReal_re, I_re, mul_zero, div_ofNat_im, ofReal_im,
+      zero_div, I_im, mul_one, sub_self, add_zero])
 
 variable {k : ℤ} (f : ModularForm (Gamma 1) k)
 
@@ -267,7 +273,8 @@ theorem sum_ord_rightVert_eq_sum_ord_leftVert (S : Finset ℍ)
     · show ‖((1 : ℝ) +ᵥ q : ℂ)‖ > 1
       rw [vAdd_one_norm_eq_of_re_neg_half q hre]; exact hnorm
     · rw [ord_add_one_eq f q]; exact hord
-    · simp_all
+    · simp_all only [ne_eq, Int.cast_eq_zero, Finset.coe_filter, mem_ofPred_eq, true_and,
+      not_false_eq_true, UpperHalfPlane.coe_re, gt_iff_lt, neg_vadd_vadd]
   · intro p _; rw [ord_vAdd_neg_one_eq f p]
 
 /-- Orders on right arc equal orders on left arc (via S-action). -/
@@ -296,7 +303,7 @@ theorem sum_ord_rightArc_eq_sum_ord_leftArc (S : Finset ℍ) (hS : ∀ p ∈ S, 
         (by rw [ord_S_eq f q]; exact ord_ne_zero_of_cast_ne_zero hord),
       S_smul_norm_of_unit q hnorm, ?_⟩, ?_⟩, S_smul_S_smul q⟩
     · change (ModularGroup.S • q : ℍ).re > 0
-      rw [S_smul_re_neg_of_unit q hnorm, show q.re = (q : ℂ).re from rfl]; linarith
+      rw [S_smul_re_neg_of_unit q hnorm, show q.re = (q : ℂ).re from rfl]; linarith only [hre_neg]
     · rw [ord_S_eq f q]; exact hord
   · intro p _; rw [ord_S_eq f p]
 

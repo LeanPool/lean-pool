@@ -27,7 +27,6 @@ combinatorial problem of *constructing* such a design — see `Nibble.CoreGapGri
 Must be sorry-free and axiom-clean `[propext, Classical.choice, Quot.sound]`.
 -/
 public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.CoreGapPrune
-public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.CoreGapRegularFamily
 
 /-! # CoreGapDesign -/
 

@@ -119,7 +119,7 @@ theorem abs_sub_taylor_two_le (hf : ContDiff ℝ 2 f) (x h C : ℝ)
     rw [hG0, sub_zero] at hkey
     refine hkey.trans ?_
     rw [Real.norm_eq_abs, sub_zero, abs_of_nonneg hs.1]
-    nlinarith [mul_nonneg hCnn (sq_nonneg h), hs.1, hs.2]
+    exact mul_le_of_le_one_right (mul_nonneg hCnn (sq_nonneg h)) hs.2
   have hFbound : ‖F 1 - F 0‖ ≤ C * h ^ 2 * ‖(1 : ℝ) - 0‖ :=
     hconv.norm_image_sub_le_of_norm_hasDerivWithin_le
       (fun u _ ↦ (hFderiv u).hasDerivWithinAt) hGbound (by norm_num) (by norm_num)
@@ -170,9 +170,9 @@ variable {f : ℝ → ℝ}
 /-- A pure-algebra step: away from the origin a constant is dominated by a quadratic. -/
 private theorem le_mul_sq_div {M a b : ℝ} (hM : 0 ≤ M) (hb : 0 < b) (hab : b ≤ |a|) :
     M ≤ M * a ^ 2 / b ^ 2 := by
-  have hsq : b ^ 2 ≤ a ^ 2 := by nlinarith [sq_abs a, abs_nonneg a]
-  rw [le_div_iff₀ (by positivity)]
-  nlinarith
+  have hsq : b ^ 2 ≤ a ^ 2 := by
+    simpa only [sq_abs] using (sq_le_sq₀ hb.le (abs_nonneg a)).mpr hab
+  exact (le_div_iff₀ (pow_pos hb 2)).mpr (mul_le_mul_of_nonneg_left hsq hM)
 
 /-- **The quantitative estimate.**  If the second derivative of `f` is bounded by `M` and varies
 by at most `ε` over distances smaller than `δ`, then the Gaussian difference quotient at scale
@@ -202,26 +202,19 @@ private theorem abs_gaussianQuotient_sub_le (hf : ContDiff ℝ 2 f) {B M ε δ :
     integral_gaussian_eq f hcont x t
   set E : ℝ → ℝ :=
     fun z ↦ f (x + σ * z) - f x - σ * z * deriv f x - (σ * z) ^ 2 / 2 * c with hEdef
-  have h1 : Integrable (fun z : ℝ ↦ σ * z * deriv f x) (gaussianReal 0 1) := by
-    have h := hz1.const_mul (σ * deriv f x)
-    have heq : (fun z : ℝ ↦ σ * deriv f x * z) = fun z : ℝ ↦ σ * z * deriv f x := by
-      funext z; ring
-    rwa [heq] at h
+  have h1 : Integrable (fun z : ℝ ↦ σ * z * deriv f x) (gaussianReal 0 1) :=
+    (hz1.const_mul σ).mul_const (deriv f x)
   have h2 : Integrable (fun z : ℝ ↦ (σ * z) ^ 2 / 2 * c) (gaussianReal 0 1) := by
-    have h := hz2.const_mul (σ ^ 2 * c / 2)
-    have heq : (fun z : ℝ ↦ σ ^ 2 * c / 2 * z ^ 2) = fun z : ℝ ↦ (σ * z) ^ 2 / 2 * c := by
-      funext z; ring
-    rwa [heq] at h
+    simpa only [mul_pow] using ((hz2.const_mul (σ ^ 2)).div_const 2).mul_const c
   have hEint : Integrable E (gaussianReal 0 1) :=
     ((hshift.sub (integrable_const (f x))).sub h1).sub h2
   have hI1 : ∫ z : ℝ, σ * z * deriv f x ∂(gaussianReal 0 1) = 0 := by
-    have heq : (fun z : ℝ ↦ σ * z * deriv f x) = fun z : ℝ ↦ σ * deriv f x * z := by
-      funext z; ring
-    rw [heq, integral_const_mul, integral_id_gaussian, mul_zero]
+    rw [integral_mul_const, integral_const_mul, integral_id_gaussian, mul_zero, zero_mul]
   have hI2 : ∫ z : ℝ, (σ * z) ^ 2 / 2 * c ∂(gaussianReal 0 1) = (t : ℝ) * c / 2 := by
-    have heq : (fun z : ℝ ↦ (σ * z) ^ 2 / 2 * c) = fun z : ℝ ↦ σ ^ 2 * c / 2 * z ^ 2 := by
-      funext z; ring
-    rw [heq, integral_const_mul, integral_sq_gaussian, mul_one, hσ2]
+    simp only [mul_pow]
+    rw [integral_mul_const, integral_div, integral_const_mul, integral_sq_gaussian, mul_one,
+      hσ2]
+    ring
   have hE : ∫ z, E z ∂(gaussianReal 0 1)
       = (∫ z, f (x + σ * z) ∂(gaussianReal 0 1)) - f x - (t : ℝ) * c / 2 := by
     have e1 : ∫ z, E z ∂(gaussianReal 0 1)
@@ -253,15 +246,15 @@ private theorem abs_gaussianQuotient_sub_le (hf : ContDiff ℝ 2 f) {B M ε δ :
             _ = |σ * z| := one_mul _
             _ < δ := hlt
         have hpos : 0 ≤ 2 * M * (σ * z) ^ 2 / δ ^ 2 := by positivity
-        linarith [hunif _ _ hclose]
+        exact (hunif _ _ hclose).trans (le_add_of_nonneg_right hpos)
       · have habs : |iteratedDeriv 2 f (x + s * (σ * z)) - iteratedDeriv 2 f x| ≤ 2 * M := by
           calc |iteratedDeriv 2 f (x + s * (σ * z)) - iteratedDeriv 2 f x|
               ≤ |iteratedDeriv 2 f (x + s * (σ * z))| + |iteratedDeriv 2 f x| := abs_sub _ _
             _ ≤ M + M := add_le_add (hM _) (hM _)
             _ = 2 * M := by ring
         have hstep : 2 * M ≤ 2 * M * (σ * z) ^ 2 / δ ^ 2 :=
-          le_mul_sq_div (by linarith) hδ hge
-        linarith
+          le_mul_sq_div (mul_nonneg (by norm_num) hMnn) hδ hge
+        exact habs.trans (hstep.trans (le_add_of_nonneg_left hε))
     have htaylor := abs_sub_taylor_two_le hf x (σ * z) _ hCbound
     refine le_trans htaylor (le_of_eq ?_)
     have hsq : (σ * z) ^ 2 = (t : ℝ) * z ^ 2 := by rw [mul_pow, hσ2]
@@ -346,12 +339,12 @@ theorem tendstoUniformly_gaussianAverage_sub_div (hf : ContDiff ℝ 2 f)
       < (2 * M * gaussianMoment4 + 1) * T := mul_lt_mul_of_pos_left htT hK
   have hTval : (2 * M * gaussianMoment4 + 1) * T = ε * δ ^ 2 / 2 := by
     rw [hT]; field_simp
-  have hprod : 2 * M * gaussianMoment4 * (t : ℝ) < ε * δ ^ 2 / 2 := by
-    nlinarith [hKt, hTval, htpos'.le]
+  have hprod : 2 * M * gaussianMoment4 * (t : ℝ) < ε * δ ^ 2 / 2 :=
+    (mul_lt_mul_of_pos_right (lt_add_one _) htpos').trans (hKt.trans_eq hTval)
   have hbound : 2 * M * (t : ℝ) * gaussianMoment4 / δ ^ 2 < ε / 2 := by
     rw [div_lt_iff₀ (pow_pos hδ 2)]
-    nlinarith [hprod]
-  linarith
+    convert hprod using 1 <;> ring
+  exact (add_lt_add_right hbound (ε / 2)).trans_eq (add_halves ε)
 
 end Uniform
 

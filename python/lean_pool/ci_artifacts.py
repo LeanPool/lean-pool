@@ -5,7 +5,8 @@ manifest is verified before any artifact is installed; Lake still checks its
 normal build traces afterwards. Missing or incompatible artifacts fall back to
 the ordinary Lake build. PR overlays preserve the shared main cache and contain
 only projects changed in the author's diff, including a manifest-only archive
-for infrastructure changes.
+for infrastructure changes. A cold merge-queue build also publishes its full
+build, which main restores instead of rebuilding after a toolchain bump.
 """
 
 from __future__ import annotations
@@ -38,6 +39,15 @@ ARCHIVE_NAME = "lean-pool-build.tar.zst"
 LEGACY_ARCHIVE_NAME = "lean-pool-build.tar.gz"
 MANIFEST_NAME = "build-manifest.json"
 PROJECT = re.compile(r"[A-Za-z][A-Za-z0-9_]*\Z")
+RECOVERY_ERRORS = (
+    subprocess.SubprocessError,
+    OSError,
+    ValueError,
+    KeyError,
+    tarfile.TarError,
+    EOFError,
+    zipfile.BadZipFile,
+)
 
 
 def _project_output(path: PurePosixPath, projects: list[str]) -> bool:
@@ -283,19 +293,55 @@ def matching_run(repository: str, head: str, event: str) -> dict | None:
     return max(runs, key=lambda run: run["id"]) if runs else None
 
 
+def published_artifact(repository: str, run_id: int) -> int | None:
+    """Return the newest unexpired build archive a run has uploaded."""
+    endpoint = f"repos/{repository}/actions/runs/{run_id}/artifacts?per_page=100"
+    matches = [
+        artifact["id"]
+        for artifact in github_json(endpoint)["artifacts"]
+        if artifact["name"] == ARTIFACT_NAME and not artifact["expired"]
+    ]
+    return max(matches, default=None)
+
+
+def queue_build_artifact(repository: str, head: str) -> int | None:
+    """Find the full build a green merge-queue run published for this commit.
+
+    Main's caches cannot read merge-queue caches, so after a toolchain bump or
+    cache eviction this archive is main's only alternative to a cold rebuild.
+    """
+    run = matching_run(repository, head, "merge_group")
+    if run is None or run.get("conclusion") != "success":
+        return None
+    return published_artifact(repository, run["id"])
+
+
+def reuse_queue_build(
+    root: Path, repository: str, head: str, *, check_only: bool = False
+) -> bool:
+    """Install the merged queue's full build; any miss falls back to Lake."""
+    try:
+        artifact = queue_build_artifact(repository, head)
+        if artifact is None:
+            LOGGER.info("The merge queue published no full build for %s", head)
+            return False
+        if check_only:
+            LOGGER.info("The merge queue published a full build for %s", head)
+            return True
+        return download_build(root, repository, artifact)
+    except RECOVERY_ERRORS:
+        LOGGER.exception("Could not reuse the merge queue build; using Lake")
+        return False
+
+
 def wait_for_artifact(repository: str, run: dict, wait_seconds: int) -> int | None:
     """Wait for compiled output without waiting for later lint/quality stages."""
     deadline = time.monotonic() + wait_seconds
     endpoint = f"repos/{repository}/actions/runs/{run['id']}"
     while True:
-        artifacts = github_json(f"{endpoint}/artifacts?per_page=100")["artifacts"]
-        matches = [
-            artifact
-            for artifact in artifacts
-            if artifact["name"] == ARTIFACT_NAME and not artifact["expired"]
-        ]
-        if matches:
-            return max(matches, key=lambda artifact: artifact["id"])["id"]
+        artifact = published_artifact(repository, run["id"])
+        if artifact is not None:
+            return artifact
         status = github_json(endpoint)
         if status["status"] == "completed" or time.monotonic() >= deadline:
             return None
@@ -403,15 +449,7 @@ def reuse_build(
             )
             return False
         return download_build(root, repository, artifact)
-    except (
-        subprocess.SubprocessError,
-        OSError,
-        ValueError,
-        KeyError,
-        tarfile.TarError,
-        EOFError,
-        zipfile.BadZipFile,
-    ):
+    except RECOVERY_ERRORS:
         LOGGER.exception("Could not reuse CI output; using the regular Lake build")
         return False
 
@@ -434,12 +472,24 @@ def main() -> None:
         command.add_argument("--event", required=True)
         command.add_argument("--wait-seconds", type=int, default=7200)
     restore.add_argument("--pull-request-artifact", action="store_true")
+    queue = commands.add_parser("restore-queue")
+    queue.add_argument("--repository", default=os.environ.get("GITHUB_REPOSITORY"))
+    queue.add_argument("--head", required=True)
+    queue.add_argument("--check", action="store_true")
     arguments = parser.parse_args()
     logging.basicConfig(level=logging.INFO, format="ci-artifacts: %(message)s")
     if arguments.command == "pack":
         pack_build(
             Path.cwd(), arguments.output, base=arguments.base, head=arguments.head
         )
+    elif arguments.command == "restore-queue":
+        restored = reuse_queue_build(
+            Path.cwd(),
+            arguments.repository,
+            arguments.head,
+            check_only=arguments.check,
+        )
+        raise SystemExit(0 if restored else 1)
     elif arguments.command == "wait":
         wait_for_build(
             arguments.repository,

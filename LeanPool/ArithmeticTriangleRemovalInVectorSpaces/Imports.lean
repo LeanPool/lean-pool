@@ -1,0 +1,36 @@
+/-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+module  -- shake: keep-all --deprecated_module: ignore
+
+-- Generated project imports; run `lake exe mk_all`.
+public import LeanPool.ArithmeticTriangleRemovalInVectorSpaces
+public import LeanPool.ArithmeticTriangleRemovalInVectorSpaces.Construction.Behrend
+public import LeanPool.ArithmeticTriangleRemovalInVectorSpaces.Construction.Family
+public import LeanPool.ArithmeticTriangleRemovalInVectorSpaces.Construction.Hash
+public import LeanPool.ArithmeticTriangleRemovalInVectorSpaces.Construction.LowerBound
+public import LeanPool.ArithmeticTriangleRemovalInVectorSpaces.Construction.TypeClass
+public import LeanPool.ArithmeticTriangleRemovalInVectorSpaces.Coupling.Basic
+public import LeanPool.ArithmeticTriangleRemovalInVectorSpaces.Coupling.Decomposition
+public import LeanPool.ArithmeticTriangleRemovalInVectorSpaces.Coupling.Decreasing
+public import LeanPool.ArithmeticTriangleRemovalInVectorSpaces.Coupling.Peeling
+public import LeanPool.ArithmeticTriangleRemovalInVectorSpaces.Coupling.Uniform
+public import LeanPool.ArithmeticTriangleRemovalInVectorSpaces.DisjointTriangles.Embedding
+public import LeanPool.ArithmeticTriangleRemovalInVectorSpaces.DisjointTriangles.MaximalFamily
+public import LeanPool.ArithmeticTriangleRemovalInVectorSpaces.DisjointTriangles.Pruning
+public import LeanPool.ArithmeticTriangleRemovalInVectorSpaces.DisjointTriangles.Sampling
+public import LeanPool.ArithmeticTriangleRemovalInVectorSpaces.DisjointTriangles.TensorPower
+public import LeanPool.ArithmeticTriangleRemovalInVectorSpaces.LinearMap.Card
+public import LeanPool.ArithmeticTriangleRemovalInVectorSpaces.MulticoloredSumFree.Basic
+public import LeanPool.ArithmeticTriangleRemovalInVectorSpaces.MulticoloredSumFree.Exponent
+public import LeanPool.ArithmeticTriangleRemovalInVectorSpaces.MulticoloredSumFree.Monomials
+public import LeanPool.ArithmeticTriangleRemovalInVectorSpaces.MulticoloredSumFree.Product
+public import LeanPool.ArithmeticTriangleRemovalInVectorSpaces.MulticoloredSumFree.SliceRank
+public import LeanPool.ArithmeticTriangleRemovalInVectorSpaces.MulticoloredSumFree.SmallPrimes
+public import LeanPool.ArithmeticTriangleRemovalInVectorSpaces.MulticoloredSumFree.TensorPower
+public import LeanPool.ArithmeticTriangleRemovalInVectorSpaces.SliceRank.Diagonal
+public import LeanPool.ArithmeticTriangleRemovalInVectorSpaces.Tightness.Exponent
+public import LeanPool.ArithmeticTriangleRemovalInVectorSpaces.Triangle.Basic
+public import LeanPool.ArithmeticTriangleRemovalInVectorSpaces.ZMod
