@@ -12,6 +12,11 @@ public import Mathlib.NumberTheory.LSeries.DirichletContinuation
 # Partial sums of a non-principal Dirichlet character
 
 `‖∑_{k=1}^{M} χ k‖ ≤ N` for a non-principal character `χ` modulo `N`.
+
+Newer Tau Ceti also provides `DirichletCharacter.norm_sum_Icc_le_level`. Its module is
+absent from the pool's pinned Tau Ceti revision `4705013d2da8bac010289af92000f4a5b8ffca00`.
+These independent upstream proofs supply prerequisites for Siegel's uniform lower bound
+on that dependency.
 -/
 
 @[expose] public section
@@ -71,7 +76,7 @@ lemma norm_sum_range_le {χ : DirichletCharacter ℂ N} (hχ : χ ≠ 1) (M : �
       rw [h0, add_zero]
       exact ih L (by have := NeZero.pos N; omega)
 
-/-- **Target 3.** Partial sums of a non-principal character are bounded by the modulus. -/
+/-- Partial sums of a non-principal character are bounded by the modulus. -/
 theorem norm_sum_Icc_le {χ : DirichletCharacter ℂ N} (hχ : χ ≠ 1) (M : ℕ) :
     ‖∑ k ∈ Finset.Icc 1 M, χ k‖ ≤ N := by
   rw [sum_Icc_eq_sum_range]

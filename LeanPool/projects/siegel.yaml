@@ -21,20 +21,12 @@ status: verified
 provenance: AI
 main_declarations:
 - SiegelThmLib.siegel
-- SiegelThmLib.LFunction_eq_integral
-- SiegelThmLib.norm_sum_Icc_le
 main_results:
 - declaration: SiegelThmLib.siegel
   informal: For every positive epsilon there is a positive constant depending
     only on epsilon such that the absolute value of L(1, chi) is at least
     that constant times the modulus to the power minus epsilon, for every
     non-principal character whose square is principal.
-- declaration: SiegelThmLib.LFunction_eq_integral
-  informal: On the open right half-plane a non-principal Dirichlet L-function
-    equals s times the Mellin integral of its partial character sums.
-- declaration: SiegelThmLib.norm_sum_Icc_le
-  informal: Every initial sum of a non-principal Dirichlet character is bounded
-    in absolute value by its modulus.
 tags:
 - analytic-number-theory
 - dirichlet-characters

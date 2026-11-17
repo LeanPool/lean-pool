@@ -17,7 +17,12 @@ public import LeanPool.Siegel.CharSum
 # The transforms `J g s = ∫_{t>1} g(t) t^{-(s+1)}`
 
 Integrability, bounds and holomorphy on `Re s > 0` for bounded `g`; the integral
-representation of `L(s, χ)` on `Re s > 0` (target 2) and bounds for `L(s, χ)`.
+representation of `L(s, χ)` on `Re s > 0` and bounds for `L(s, χ)`.
+
+Newer Tau Ceti also provides `DirichletCharacter.LFunction_eq_mul_integral`. Its module is
+absent from the pool's pinned Tau Ceti revision `4705013d2da8bac010289af92000f4a5b8ffca00`.
+These independent upstream proofs supply prerequisites for Siegel's uniform lower bound
+on that dependency.
 -/
 
 @[expose] public section
@@ -189,7 +194,7 @@ lemma LFunction_eq_mul_J {χ : DirichletCharacter ℂ N} (hχ : χ ≠ 1) {s : �
   exact hf.eqOn_of_preconnected_of_eventuallyEq hg (convex_halfSpace_re_gt 0).isPreconnected
     h2 hev hs
 
-/-- **Target 2.** -/
+/-- Partial summation represents the continued L-function on the open right half-plane. -/
 theorem LFunction_eq_integral (N : ℕ) [NeZero N] (χ : DirichletCharacter ℂ N) (hχ : χ ≠ 1)
     (s : ℂ) (hs : 0 < s.re) :
     DirichletCharacter.LFunction χ s =
