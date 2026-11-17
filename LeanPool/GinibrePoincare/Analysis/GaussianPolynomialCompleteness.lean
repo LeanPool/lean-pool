@@ -158,21 +158,15 @@ theorem memLp_configurationRealPairing_of_ne_top {n : ℕ}
   unfold complexGaussianMeasure complexGaussianProbability
   simp only [ProbabilityMeasure.toMeasure_pi]
   unfold configurationRealPairing
-  induction (Finset.univ : Finset (Fin n)) using Finset.induction_on with
-  | empty => simp
-  | @insert i s hi ih =>
-      have hterm : MemLp (fun z : Configuration n ↦
-          (t i).re * (z i).re + (t i).im * (z i).im) p
-          (Measure.pi fun _ : Fin n ↦ μ) := by
-        have hev : MemLp (fun z : Configuration n ↦ z i) p
-            (Measure.pi fun _ : Fin n ↦ μ) := by
-          change MemLp (id ∘ Function.eval i) p
-            (Measure.pi fun _ : Fin n ↦ μ)
-          exact hid.comp_measurePreserving
-            (measurePreserving_eval (μ := fun _ : Fin n ↦ μ) i)
-        exact (hev.re.const_mul (t i).re).add (hev.im.const_mul (t i).im)
-      simp_rw [Finset.sum_insert hi]
-      convert hterm.add ih using 1
+  apply memLp_finsetSum Finset.univ
+  intro i hi
+  have hev : MemLp (fun z : Configuration n ↦ z i) p
+      (Measure.pi fun _ : Fin n ↦ μ) := by
+    change MemLp (id ∘ Function.eval i) p
+      (Measure.pi fun _ : Fin n ↦ μ)
+    exact hid.comp_measurePreserving
+      (measurePreserving_eval (μ := fun _ : Fin n ↦ μ) i)
+  exact (hev.re.const_mul (t i).re).add (hev.im.const_mul (t i).im)
 
 /-- A fixed real linear coordinate pairing belongs to Gaussian `L²`. -/
 theorem memLp_configurationRealPairing {n : ℕ} (t : Configuration n) :

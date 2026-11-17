@@ -131,32 +131,11 @@ theorem ginibrePermutationAverage_smoothCompact {n : ℕ}
     funext z
     change f (permute σ z) = f (e σ z)
     rw [← he]
-  have hsum (s : Finset (ParticlePermutation n)) :
-      HasCompactSupport (fun z => ∑ σ ∈ s, f (permute σ z)) := by
-    classical
-    induction s using Finset.induction_on with
-    | empty =>
-        apply hasCompactSupport_iff_eventuallyEq.mpr
-        exact Eventually.of_forall (fun _ => rfl)
-    | @insert σ s hσ ih =>
-        have hsum_eq : (fun z => ∑ τ ∈ insert σ s, f (permute τ z)) =
-            fun z => f (permute σ z) + ∑ τ ∈ s, f (permute τ z) := by
-          funext z
-          simp [Finset.sum_insert, hσ]
-        rw [hsum_eq]
-        exact (hcomp σ).add ih
-  have hmul : HasCompactSupport (fun z =>
-      (∑ σ : ParticlePermutation n, f (permute σ z)) *
-        (Fintype.card (ParticlePermutation n) : ℝ)⁻¹) :=
-    (hsum Finset.univ).mul_right
-  have heq : (fun z => (Fintype.card (ParticlePermutation n) : ℝ)⁻¹ *
-      (∑ σ : ParticlePermutation n, f (permute σ z))) = ginibrePermutationAverage f := by
-    funext z
-    simp [ginibrePermutationAverage]
-  rw [← heq]
-  convert hmul using 1
+  convert (HasCompactSupport.finset_sum (s := Finset.univ)
+      (f := fun σ z => f (permute σ z)) (fun σ _ => hcomp σ)).mul_left
+        (f := fun _ => (Fintype.card (ParticlePermutation n) : ℝ)⁻¹) using 1
   funext z
-  ring
+  simp only [ginibrePermutationAverage, Pi.mul_apply, Finset.sum_apply]
 
 /-- Averaging a smooth compact weak-pair approximation yields an element of the
 collision-free core closure. -/

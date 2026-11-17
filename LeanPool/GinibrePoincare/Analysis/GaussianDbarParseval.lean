@@ -679,12 +679,7 @@ private theorem prod_indicator_eq_ite {α : Type*}
     (t : Finset α) (P : α → Prop) [DecidablePred P] :
     (∏ i ∈ t, (if P i then (1 : ℂ) else 0)) =
       if ∀ i ∈ t, P i then 1 else 0 := by
-  classical
-  induction t using Finset.induction_on with
-  | empty => simp
-  | @insert a t hat ih =>
-      simp only [Finset.prod_insert hat, ih, Finset.mem_insert]
-      by_cases ha : P a <;> by_cases ht : ∀ i ∈ t, P i <;> simp [ha, ht]
+  exact Finset.prod_boole
 
 private theorem lower_scalar_indicator {n : ℕ} (r s p q : Fin n → ℕ)
     (j : Fin n) :

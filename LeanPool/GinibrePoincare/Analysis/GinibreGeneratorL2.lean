@@ -133,20 +133,9 @@ theorem continuousAt_ginibrePregenerator_of_collisionFree {n : ℕ}
       · subst i; simpa using continuous_apply j
       · simpa [hi] using (continuous_const : Continuous (fun _ : Configuration n => (0 : ℂ)))
   · apply ContinuousAt.const_mul
-    have hsum {ι : Type} (s : Finset ι) (g : ι → Configuration n → ℝ)
-        (hg : ∀ i ∈ s, ContinuousAt (g i) z) :
-        ContinuousAt (fun x => ∑ i ∈ s, g i x) z := by
-      classical
-      induction s using Finset.induction_on with
-      | empty => simpa using (continuousAt_const : ContinuousAt (fun _ : Configuration n => (0 :
-        ℝ)) z)
-      | @insert a s ha ih =>
-          simp only [Finset.sum_insert ha]
-          exact (hg a (Finset.mem_insert_self _ _)).add
-            (ih fun i hi => hg i (Finset.mem_insert_of_mem hi))
-    apply hsum Finset.univ
+    apply tendsto_finsetSum Finset.univ
     intro j hj
-    apply hsum (Finset.Ioi j)
+    apply tendsto_finsetSum (Finset.Ioi j)
     intro k hk
     exact hcoul j k (Finset.mem_Ioi.mp hk)
 
