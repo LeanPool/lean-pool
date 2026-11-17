@@ -207,7 +207,7 @@ theorem binaryEuclid_eq_gcd : ∀ a b : ℕ,
     binaryEuclid a b = Nat.gcd a b := by
   intro a b
   induction b using Nat.strong_induction_on generalizing a with
-  | h b ih =>
+  | ind b ih =>
       cases b with
       | zero => simp [binaryEuclid]
       | succ b =>

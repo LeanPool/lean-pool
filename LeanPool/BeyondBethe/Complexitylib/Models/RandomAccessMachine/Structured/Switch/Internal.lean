@@ -101,8 +101,8 @@ theorem select_exec_internal {count test one : ℕ}
             (max (max initial.space
               ((Basic.sub test test one).exec initial).space) recursiveSpace), ?_⟩
         convert! hrun using 1
-        all_goals simp [stepCount]
-        all_goals omega
+        simp [stepCount]
+        omega
 
 theorem select_measured_internal {count test one indexBound valueBound : ℕ}
     (branch : Fin count → Cmd) (initial final : Store)

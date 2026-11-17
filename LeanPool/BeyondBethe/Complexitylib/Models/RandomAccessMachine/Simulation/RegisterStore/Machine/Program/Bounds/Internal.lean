@@ -1526,15 +1526,15 @@ private theorem instructionCleanupResetBits_le
   | jz source target =>
       fin_cases slot <;>
         simp [instructionCleanupResetBits, instructionCleanupValue,
-          instructionRemainingValue] <;> try nlinarith
+          instructionRemainingValue] <;> nlinarith
   | jmp target =>
       fin_cases slot <;>
         simp [instructionCleanupResetBits, instructionCleanupValue,
-          instructionRemainingValue] <;> try nlinarith
+          instructionRemainingValue] <;> nlinarith
   | halt =>
       fin_cases slot <;>
         simp [instructionCleanupResetBits, instructionCleanupValue,
-          instructionRemainingValue] <;> try nlinarith
+          instructionRemainingValue] <;> nlinarith
 
 private theorem instructionCleanupTime_le {m : ℕ}
     (tapes : ControlInstructionTapes m) (instruction : Instr)

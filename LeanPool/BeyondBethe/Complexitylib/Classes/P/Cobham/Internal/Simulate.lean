@@ -521,7 +521,7 @@ theorem simFn_eq (tm : TM k) {T : ℕ → ℕ} {f : List Bool → List Bool}
 /-- **The completeness direction, for one machine.** -/
 theorem computes_mem_CobhamFP (tm : TM k) {T : ℕ → ℕ} {S D : ℕ}
     (hSD : ∀ n, T n ≤ S * (n + 1) ^ D) {f : List Bool → List Bool}
-    (hcomp : tm.ComputesInTime f T) : CobhamFP f := by
+    (hcomp : tm.ComputesInTime f T) : f ∈ CobhamFP := by
   obtain ⟨C, E, hCE⟩ := exists_clock_bound tm hSD
   obtain ⟨clk, hclk, hclklen⟩ := exists_pow_clock C E
   have hclk1 : Cobham fun w : Fin 1 → List Bool => clk (fun _ => w 0) :=

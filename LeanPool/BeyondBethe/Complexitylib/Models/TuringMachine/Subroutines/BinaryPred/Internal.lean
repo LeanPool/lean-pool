@@ -577,8 +577,8 @@ private theorem binaryPredTM_borrow_terminal_one
   refine ⟨c', ?_, hhalt, hinput', hwork', ?_, hcell0', houtput'⟩
   · have hrun := reachesIn_trans (binaryPredTM idx) hprefix hreach
     convert! hrun using 1
-    all_goals simp [BinaryPred.steps]
-    all_goals omega
+    simp [BinaryPred.steps]
+    omega
   · simpa [BinaryPred.ripple] using hstring
 
 private theorem binaryPredTM_borrow_run
@@ -701,8 +701,8 @@ private theorem binaryPredTM_borrow_run
               houtput
           refine ⟨c', ?_, hhalt, hinput', hwork', ?_, hcell0', houtput'⟩
           · convert! TM.reachesIn.step hstep hreach using 1
-            all_goals simp [BinaryPred.steps, Nat.add_assoc]
-            all_goals omega
+            simp [BinaryPred.steps, Nat.add_assoc]
+            omega
           · simpa [BinaryPred.ripple, List.replicate_add,
               List.append_assoc] using hstring
       | true =>
@@ -790,8 +790,8 @@ private theorem binaryPredTM_borrow_run
               refine ⟨c', ?_, hhalt, hinput', hwork', ?_, hcell0', houtput'⟩
               · have hrun := reachesIn_trans (binaryPredTM idx) hprefix hreach
                 convert! hrun using 1
-                all_goals simp [BinaryPred.steps]
-                all_goals omega
+                simp [BinaryPred.steps]
+                omega
               · simpa [BinaryPred.ripple] using hstring
 
 /-! ## Public-theorem internals -/
