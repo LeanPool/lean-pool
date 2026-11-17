@@ -6,9 +6,7 @@ Authors: OpenAI, Dean Cureton
 module
 
 public import LeanPool.MetricCodes.SpectralDecomposition
-import Mathlib.Algebra.Order.Floor.Semifield
 import Mathlib.LinearAlgebra.Eigenspace.Minpoly
-import Mathlib.Tactic.NormNum.RealSqrt
 
 /-!
 # Binary and spherical code bounds
@@ -1000,7 +998,7 @@ theorem gtStabilizerArrowheadNode_injective_of_interlacing
     have hi : i.val ≤ r := by have := i.isLt; omega
     have hireal : (i.val : ℝ) ≤ r := by exact_mod_cast hi
     push_cast
-    linarith
+    linarith only [hireal]
   · have hanti : Antitone mu := by
       apply Fin.antitone_iff_succ_le.mpr
       intro i
@@ -5739,8 +5737,7 @@ theorem gtRelativeCasimir_normalizedWallSector_additiveColumn
         intro heq
         apply hbranch
         apply fullBranchSignature_injective lam
-        simpa [selected,
-          fullBranchOfInterlaces_signature_eq_appendZeroWeight] using heq
+        simpa only [fullBranchOfInterlaces_signature_eq_appendZeroWeight, selected] using heq
       have hleft :
           (gtFullAxisEmbedding lam hw branch).toLinearMap.adjoint.comp
             ((gtRelativeCasimir (n := n + 1) lam).comp B.toLinearMap) = 0 := by
@@ -6801,8 +6798,7 @@ private theorem gtActualPhysicalColumn_adjoint_row_metriccodes2_f07ed3eb
     B.adjoint.comp (gtRelativeCasimir (n := n + 1) lam) =
       node • B.adjoint + K.adjoint.comp A.adjoint := by
   have hadjoint := congrArg LinearMap.adjoint hcolumn
-  simpa only [LinearMap.adjoint_comp, LinearMap.adjoint_adjoint,
-    gtRelativeCasimir_adjoint, map_add, map_smul] using hadjoint
+  simpa only [LinearMap.adjoint_comp, gtRelativeCasimir_adjoint, map_add, map_smul] using hadjoint
 
 theorem gtAxisCompressedCharacteristicMinor_eval_actualPhysicalNode_eq_zero
     {r n : ℕ} (lam : Fin (r + 2) → ℕ)
