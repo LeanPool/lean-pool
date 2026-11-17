@@ -498,7 +498,7 @@ open Classical in
 open Classical in
 instance (`DecidableEq` is a subsingleton). -/
 theorem classical_inter_eq {α : Type*} [inst : DecidableEq α] (s t : Finset α) :
-    @Inter.inter _ (@Finset.instInter _ (fun a b => Classical.propDecidable (a = b))) s t
+    @Min.min _ (@Finset.instMin _ (fun a b => Classical.propDecidable (a = b))) s t
       = s ∩ t := by
   have h : (fun a b => Classical.propDecidable (a = b) : DecidableEq α) = inst :=
     Subsingleton.elim _ _

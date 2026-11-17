@@ -477,7 +477,7 @@ private theorem internalPairCount_partition {n : ℕ} [DecidableEq (Fin n)] (G :
   simp only [Finset.mem_inter]
 
 open Classical in
-private theorem star_twelve_degree_census : ∀ [Nonempty (Fin (12 : ℕ))] (G : SimpleGraph (Fin (12
+private theorem star_twelve_degree_census : ∀ (G : SimpleGraph (Fin (12
   : ℕ)))
   (_ : ∀ (v : Fin (12 : ℕ)), (3 : ℕ) ≤ G.degree v)
   (_ : ∀ (v w : Fin (12 : ℕ)), G.degree v = (3 : ℕ) → G.degree w = (3 : ℕ) → ¬G.Adj v w) (h t₁ t₂
@@ -521,7 +521,7 @@ private theorem star_twelve_degree_census : ∀ [Nonempty (Fin (12 : ℕ))] (G :
             (3 : ℕ)),
           algConn G ≤ (2 : ℝ) := by
   classical
-  intro inst G h3 hs0 h t₁ t₂ hd1 hd2 ht12 this hht1 hht2 S₁ hS1def F S₂ hS2def hcnt htrans
+  intro G h3 hs0 h t₁ t₂ hd1 hd2 ht12 this hht1 hht2 S₁ hS1def F S₂ hS2def hcnt htrans
     hdisjS1F hS2card he1 hexc hmoat hbulk hpairle A C D hhS1 hAcard hCcard hDcard K hAsubF hCsubF
     hDsubF hAadj hCadj hDadj hKexc hKexcF hFAKcard hF5 hB4 hKcard hEFsplit hEB0 hEF3
   have hBdegree3 : ∀ b ∈ S₂, G.degree b = 3 := by
@@ -748,7 +748,7 @@ private theorem star_case_twelve : ∀ {n : ℕ} [Nonempty (Fin n)] (_ : (10 : �
     (hKexc) (hKexcF) (hFAKcard) (hF5) (hB4) (hKcard) (hEFsplit) (hEB0) (hEF3)
 
 open Classical in
-private theorem star_thirteen_degree_census : ∀ [Nonempty (Fin (13 : ℕ))] (G : SimpleGraph (Fin
+private theorem star_thirteen_degree_census : ∀ (G : SimpleGraph (Fin
   (13 : ℕ)))
   (_ : ∀ (v : Fin (13 : ℕ)), (3 : ℕ) ≤ G.degree v)
   (_ : ∀ (v w : Fin (13 : ℕ)), G.degree v = (3 : ℕ) → G.degree w = (3 : ℕ) → ¬G.Adj v w) (h t₁ t₂
@@ -789,7 +789,7 @@ private theorem star_thirteen_degree_census : ∀ [Nonempty (Fin (13 : ℕ))] (G
           : ℕ))
         (_ : ∑ x ∈ A, (G.degree x - (3 : ℕ)) = (0 : ℕ)), algConn G ≤ (2 : ℝ) := by
   classical
-  intro inst G h3 hs0 h t₁ t₂ hd1 hd2 ht12 this hht1 hht2 S₁ hS1def F S₂ hS2def hcnt htrans
+  intro G h3 hs0 h t₁ t₂ hd1 hd2 ht12 this hht1 hht2 S₁ hS1def F S₂ hS2def hcnt htrans
     hdisjS1F hS2card he1 hexc hmoat hbulk hpairle hF6 hB4 A C D hhS1 hAcard hCcard hDcard hAsubF
     hCsubF hDsubF hAadj hCadj hDadj hEFsplit hEB0 hEF4 hAexc0
   have hBdegree3 : ∀ b ∈ S₂, G.degree b = 3 := by
@@ -1151,7 +1151,7 @@ private theorem star_case_fourteen_hdegree3High_step1 : ∀ (G : SimpleGraph (Fi
   exact ⟨hb.2, hdb4⟩
 
 open Classical in
-private theorem star_fourteen_profiles : ∀ [Nonempty (Fin (14 : ℕ))] (G : SimpleGraph (Fin (14 :
+private theorem star_fourteen_profiles : ∀ (G : SimpleGraph (Fin (14 :
   ℕ)))
   (_ : ∀ (v : Fin (14 : ℕ)), (3 : ℕ) ≤ G.degree v) (h t₁ t₂ : Fin (14 : ℕ)) (_ : G.degree h = (4 :
     ℕ)),
@@ -1209,7 +1209,7 @@ private theorem star_fourteen_profiles : ∀ [Nonempty (Fin (14 : ℕ))] (G : Si
                       = (2 : ℕ)),
           algConn G ≤ (2 : ℝ) := by
   classical
-  intro inst G h3 h t₁ t₂ hdh this S₁ F S₂ hS2card hexc hmoat hbulk hpairle hF6 hB5 A C D hAsubF
+  intro G h3 h t₁ t₂ hdh this S₁ F S₂ hS2card hexc hmoat hbulk hpairle hF6 hB5 A C D hAsubF
     hCexc hDexc hEFsplit a₁ a₂ ha12 hAeq ha1A ha2A hAadj hOneS1 hpartition hqsum hFledger hdegSum
     kB hPBeven H hHcard hdegree3High hprofiles
   rcases hprofiles with hprof0 | hprof10 | hprof12
@@ -1308,7 +1308,7 @@ private theorem star_fourteen_profiles : ∀ [Nonempty (Fin (14 : ℕ))] (G : Si
     · rw [hdh, ha1deg, ha2deg]
 
 open Classical in
-private theorem star_fourteen_ledger : ∀ [Nonempty (Fin (14 : ℕ))] (G : SimpleGraph (Fin (14 : ℕ)))
+private theorem star_fourteen_ledger : ∀ (G : SimpleGraph (Fin (14 : ℕ)))
   (_ : ∀ (v : Fin (14 : ℕ)), (3 : ℕ) ≤ G.degree v)
   (_ : ∀ (v w : Fin (14 : ℕ)), G.degree v = (3 : ℕ) → G.degree w = (3 : ℕ) → ¬G.Adj v w) (h t₁ t₂
     : Fin (14 : ℕ))
@@ -1350,7 +1350,7 @@ private theorem star_fourteen_ledger : ∀ [Nonempty (Fin (14 : ℕ))] (G : Simp
         (_ : (Finset.card {q ∈ S₂ ×ˢ F | G.Adj q.1 q.2}) = ∑ x ∈ F, (G.neighborFinset x ∩ S₂).card),
         algConn G ≤ (2 : ℝ) := by
   classical
-  intro inst G h3 hs0 h t₁ t₂ hdh this S₁ F S₂ hS2card hexc hmoat hbulk hpairle hEFEB hF6 hB5 A C
+  intro G h3 hs0 h t₁ t₂ hdh this S₁ F S₂ hS2card hexc hmoat hbulk hpairle hEFEB hF6 hB5 A C
     D hAsubF hCexc hDexc hEFsplit hEBle a₁ a₂ ha12 hAeq ha1A ha2A hAadj hOneS1 hpartition hqsum
   have hFledger : internalPairCount G F +
       ((S₂ ×ˢ F).filter (fun q => G.Adj q.1 q.2)).card =
@@ -2044,7 +2044,7 @@ private theorem star_case_fifteen_hcol_step1 : ∀ (G : SimpleGraph (Fin (15 : �
   omega
 
 open Classical in
-private theorem star_case_fifteen_fireSame_step1 : ∀ [Nonempty (Fin (15 : ℕ))] (G : SimpleGraph
+private theorem star_case_fifteen_fireSame_step1 : ∀ (G : SimpleGraph
   (Fin (15 : ℕ)))
   (_ _ _ : Fin (15 : ℕ)),
   let _ : DecidableEq (Fin (15 : ℕ)) := Classical.decEq (Fin (15 : ℕ));
@@ -2061,7 +2061,7 @@ private theorem star_case_fifteen_fireSame_step1 : ∀ [Nonempty (Fin (15 : ℕ)
                 G.Adj p x → G.Adj p y → (2 : ℕ) ≤ (Finset.card {b ∈ S₂ | G.Adj x b ∧ G.Adj y b}) →
                   algConn G ≤ (2 : ℝ) := by
   classical
-  intro inst G h t₁ t₂ this S₁ F S₂ hdisjS1F hdisj hFdegree4 hBdegree3 hdisjLayer p x y hpS hxF
+  intro G h t₁ t₂ this S₁ F S₂ hdisjS1F hdisj hFdegree4 hBdegree3 hdisjLayer p x y hpS hxF
     hyF hxy hdp hpx hpy hrep
   have htwo : 1 < (S₂.filter fun b => G.Adj x b ∧ G.Adj y b).card := by omega
   obtain ⟨b₁, b₂, hb1, hb2, hb12⟩ := Finset.one_lt_card_iff.mp htwo
@@ -2122,7 +2122,7 @@ private theorem star_case_fifteen_fireSame_step1 : ∀ [Nonempty (Fin (15 : ℕ)
     hpx hpy hb1'.2.1 hb2'.2.1 hb1'.2.2 hb2'.2.2
 
 open Classical in
-private theorem star_case_fifteen_fireAdjacent_step1 : ∀ [Nonempty (Fin (15 : ℕ))] (G :
+private theorem star_case_fifteen_fireAdjacent_step1 : ∀ (G :
   SimpleGraph (Fin (15 : ℕ)))
   (_ _ _ : Fin (15 : ℕ)),
   let _ : DecidableEq (Fin (15 : ℕ)) := Classical.decEq (Fin (15 : ℕ));
@@ -2143,7 +2143,7 @@ private theorem star_case_fifteen_fireAdjacent_step1 : ∀ [Nonempty (Fin (15 : 
                         G.Adj q y → (2 : ℕ) ≤ (Finset.card {b ∈ S₂ | G.Adj x b ∧ G.Adj y b}) →
                           algConn G ≤ (2 : ℝ) := by
   classical
-  intro inst G h t₁ t₂ this S₁ F S₂ hdisjS1F hdisj hFdegree4 hBdegree3 hdisjLayer p q x y hpS hqS
+  intro G h t₁ t₂ this S₁ F S₂ hdisjS1F hdisj hFdegree4 hBdegree3 hdisjLayer p q x y hpS hqS
     hxF hyF hxy hdp hdq hpq hpx hqy hrep
   have htwo : 1 < (S₂.filter fun b => G.Adj x b ∧ G.Adj y b).card := by omega
   obtain ⟨b₁, b₂, hb1, hb2, hb12⟩ := Finset.one_lt_card_iff.mp htwo
@@ -2232,7 +2232,7 @@ private theorem star_case_fifteen_fireAdjacent_step1 : ∀ [Nonempty (Fin (15 : 
     hpq hpx hqy hb1'.2.1 hb2'.2.1 hb1'.2.2 hb2'.2.2
 
 open Classical in
-private theorem star_fifteen_repeated_pair : ∀ [Nonempty (Fin (15 : ℕ))] (G : SimpleGraph (Fin (15
+private theorem star_fifteen_repeated_pair : ∀ (G : SimpleGraph (Fin (15
   : ℕ)))
   (h t₁ t₂ : Fin (15 : ℕ)) (_ : G.degree h = (4 : ℕ)) (_ : G.Adj h t₁) (_ : G.Adj h t₂)
   (_ : G.degree t₁ = (3 : ℕ)) (_ : G.degree t₂ = (3 : ℕ)),
@@ -2285,7 +2285,7 @@ private theorem star_fifteen_repeated_pair : ∀ [Nonempty (Fin (15 : ℕ))] (G 
                               algConn G ≤ (2 : ℝ)),
       algConn G ≤ (2 : ℝ) := by
   classical
-  intro inst G h t₁ t₂ hdh ht1 ht2 hd1 hd2 this S₁ F S₂ A C D hhS1 ht1S1 ht2S1 hdisjAC hdisjACD a₁
+  intro G h t₁ t₂ hdh ht1 ht2 hd1 hd2 this S₁ F S₂ A C D hhS1 ht1S1 ht2S1 hdisjAC hdisjACD a₁
     a₂ ha12 c₁ c₂ hc12 d₁ d₂ hd12 hAsubF hCsubF hDsubF ha1A ha2A hc1C hc2C hd1D hd2D hAadj hCadj
     hDadj hrepeat fireSame fireAdjacent
   rcases hrepeat with hAA | hrepeat
@@ -2342,7 +2342,7 @@ private theorem star_fifteen_repeated_pair : ∀ [Nonempty (Fin (15 : ℕ))] (G 
       (hAadj a₂ ha2A) (hDadj d₂ hd2D) hAD22
 
 open Classical in
-private theorem star_fifteen_excess_two : ∀ [Nonempty (Fin (15 : ℕ))] (G : SimpleGraph (Fin (15 :
+private theorem star_fifteen_excess_two : ∀ (G : SimpleGraph (Fin (15 :
   ℕ)))
   (_ : ∀ (v : Fin (15 : ℕ)), (3 : ℕ) ≤ G.degree v) (h t₁ t₂ : Fin (15 : ℕ)) (_ : G.degree h = (4 :
     ℕ)),
@@ -2383,7 +2383,7 @@ private theorem star_fifteen_excess_two : ∀ [Nonempty (Fin (15 : ℕ))] (G : S
           (_ : ∀ x ∈ F, G.degree x = (3 : ℕ) → G.neighborFinset x ∩ S₂ ⊆ H)
           (_ : ∑ v ∈ S₂, (G.degree v - (3 : ℕ)) = (2 : ℕ)), algConn G ≤ (2 : ℝ) := by
   classical
-  intro inst G h3 h t₁ t₂ hdh this S₁ F S₂ hdisjS1F hS2card hexc hdisj hmoat hbulk hpairle hF6 hB6
+  intro G h3 h t₁ t₂ hdh this S₁ F S₂ hdisjS1F hS2card hexc hdisj hmoat hbulk hpairle hF6 hB6
     hqeq hqsum hdegSum hFexact A C D hhS1 hAcard a₁ hAsubF ha1A hAadj hCexc hDexc hEFsplit H hHdef
     hHsub hHcard hdisjFS2 hdegree3High hEB2
   have hEF4 : ∑ x ∈ F, (G.degree x - 3) = 4 := by
@@ -2492,7 +2492,7 @@ private theorem star_fifteen_excess_two : ∀ [Nonempty (Fin (15 : ℕ))] (G : S
   exact algConn_le_two_of_order15_cluster_sum G Q ⟨h, hhQ⟩ (Or.inl hQcard) (by omega)
 
 open Classical in
-private theorem star_fifteen_excess_zero : ∀ [Nonempty (Fin (15 : ℕ))] (G : SimpleGraph (Fin (15 :
+private theorem star_fifteen_excess_zero : ∀ (G : SimpleGraph (Fin (15 :
   ℕ)))
   (_ : ∀ (v : Fin (15 : ℕ)), (3 : ℕ) ≤ G.degree v) (h t₁ t₂ : Fin (15 : ℕ)) (_ : G.degree h = (4 :
     ℕ))
@@ -2538,7 +2538,7 @@ private theorem star_fifteen_excess_zero : ∀ [Nonempty (Fin (15 : ℕ))] (G : 
           (_ : ∀ x ∈ F, G.degree x = (3 : ℕ) → G.neighborFinset x ∩ S₂ ⊆ H)
           (_ : ∑ v ∈ S₂, (G.degree v - (3 : ℕ)) = (0 : ℕ)), algConn G ≤ (2 : ℝ) := by
   classical
-  intro inst G h3 h t₁ t₂ hdh ht1 ht2 hd1 hd2 this S₁ F S₂ hS2def hdisjS1F hS2card hexc hdisj hnc
+  intro G h3 h t₁ t₂ hdh ht1 ht2 hd1 hd2 this S₁ F S₂ hS2def hdisjS1F hS2card hexc hdisj hnc
     hmoat hbulk hpairle hEFEB hF6 hB6 hqeq hqsum hdegSum hFexact A C D hhS1 ht1S1 ht2S1 hFsplit
     hdisjAC hdisjACD a₁ a₂ ha12 hAeq c₁ c₂ hc12 hCeq d₁ d₂ hd12 hDeq hAsubF hCsubF hDsubF ha1A
     ha2A hc1C hc2C hd1D hd2D hAadj hCadj hDadj hEFsplit H hHcard hdegree3High hEB0

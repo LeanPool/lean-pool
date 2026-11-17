@@ -375,7 +375,8 @@ private theorem exists_far_deg3_pair_hprofile : ∀ (n : ℕ) (G : SimpleGraph (
     by_cases e4 : (G.neighborFinset h ∩ D).card = 4 <;>
       by_cases e3 : (G.neighborFinset h ∩ D).card = 3 <;>
       by_cases e2 : (G.neighborFinset h ∩ D).card = 2 <;>
-      (simp [e4, e3, e2]; try omega)
+      simp [e4, e3, e2]
+    omega
   have hsum_pt : ∑ h ∈ G.neighborFinset z,
       ((G.neighborFinset h ∩ D).erase z).card
       = 3 * R4 z + 2 * R3 z + R2 z := by
