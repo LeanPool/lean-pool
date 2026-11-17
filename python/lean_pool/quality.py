@@ -1595,16 +1595,29 @@ def _build_log(compiled: Path, source: str) -> list[dict[str, str]] | None:
     return log
 
 
-def _is_compiler_command(entry: dict[str, str], source: str) -> bool:
-    """Whether Lake wrote this entry to record the compiler run for `source`.
+# `Lake.Util.Proc.mkCmdLog` writes `<cwd>> [NAME=value ...] <command> <arguments>`,
+# with a bare `PATH` in place of its value.
+_COMMAND_ENVIRONMENT = re.compile(r"PATH|[A-Za-z_][A-Za-z0-9_]*=\S*")
 
-    Lake logs the command line at `trace` level as `.> ENV=... lean <source> ...`.
+
+def _is_compiler_command(entry: dict[str, str], source: str) -> bool:
+    """Whether Lake wrote this entry to record compiling `source`.
+
+    That is a `trace` entry whose command is the Lean compiler and whose first
+    argument is the module's source. Lake logs other external commands in the
+    same form, so the prefix alone proves nothing.
     """
-    return (
-        entry["level"] == "trace"
-        and entry["message"].startswith(".> ")
-        and re.search(rf"(?:^|[\s/]){re.escape(source)}(?:\s|$)", entry["message"])
-        is not None
+    if entry["level"] != "trace":
+        return False
+    _, separator, command = entry["message"].partition("> ")
+    words = command.split(" ") if separator else []
+    while words and _COMMAND_ENVIRONMENT.fullmatch(words[0]):
+        words.pop(0)
+    if len(words) < 2:
+        return False
+    executable, argument = words[:2]
+    return Path(executable).name in {"lean", "lean.exe"} and (
+        argument == source or argument.endswith(f"/{source}")
     )
 
 

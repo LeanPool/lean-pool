@@ -227,11 +227,36 @@ def test_build_message_audit_reports_the_printed_suggestion(tmp_path: Path) -> N
     )
 
 
-def test_build_message_audit_accepts_a_silent_module(tmp_path: Path) -> None:
+@pytest.mark.parametrize(
+    "command",
+    [
+        COMPILER_COMMAND["message"],
+        ".> lean LeanPool/Basic.lean -o Basic.olean",
+        ".> PATH LEAN_PATH=/a:/b ELAN= /bin/lean /pool/LeanPool/Basic.lean -o x",
+    ],
+)
+def test_build_message_audit_accepts_a_silent_module(
+    tmp_path: Path, command: str
+) -> None:
     """The compiler command that Lake records for itself is not a message."""
     _write_minimal_repo(tmp_path)
-    _write_build_log(tmp_path, "LeanPool.Basic", [COMPILER_COMMAND])
+    _write_build_log(
+        tmp_path, "LeanPool.Basic", [{"level": "trace", "message": command}]
+    )
     assert _audit_build_messages(tmp_path, ["LeanPool.Basic"]) == []
+
+
+def test_build_message_audit_reports_other_commands_beside_the_compiler(
+    tmp_path: Path,
+) -> None:
+    """A command that only mentions the source is not the compiler's record."""
+    _write_minimal_repo(tmp_path)
+    other = {"level": "trace", "message": ".> printf %s LeanPool/Basic.lean"}
+    _write_build_log(tmp_path, "LeanPool.Basic", [COMPILER_COMMAND, other])
+    [error] = _audit_build_messages(tmp_path, ["LeanPool.Basic"])
+    assert error.message == (
+        "prints a message on every build (trace): .> printf %s LeanPool/Basic.lean"
+    )
 
 
 @pytest.mark.parametrize(
@@ -249,6 +274,14 @@ def test_build_message_audit_accepts_a_silent_module(tmp_path: Path) -> None:
             {
                 "level": "trace",
                 "message": ".> lean /pool/LeanPool/Other.lean -o Other.olean",
+            }
+        ],
+        [{"level": "trace", "message": ".> echo LeanPool/Basic.lean"}],
+        [{"level": "trace", "message": ".> lean Other.lean -o LeanPool/Basic.lean"}],
+        [
+            {
+                "level": "trace",
+                "message": "lean /pool/LeanPool/Basic.lean -o Basic.olean",
             }
         ],
         [COMPILER_COMMAND, {"level": "info"}],
