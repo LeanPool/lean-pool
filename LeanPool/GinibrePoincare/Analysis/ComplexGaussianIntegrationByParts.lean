@@ -285,14 +285,12 @@ theorem integral_piFinTwo_eq_integral_prod_swap {n : ℕ} {H : (Fin 2 → ℝ) �
     measurePreserving_piFinTwo μ
   have hprod : Integrable (H ∘ e.symm) ((μ 0).prod (μ 1)) :=
     he.symm.integrable_comp_of_integrable hH
-  calc
-    _ = ∫ p : ℝ × ℝ, H (e.symm p) ∂((μ 0).prod (μ 1)) :=
-      (he.symm.integral_comp' H).symm
-    _ = ∫ y : ℝ, ∫ x : ℝ, H (e.symm (x, y)) ∂(μ 0) ∂(μ 1) :=
-      integral_prod_symm _ hprod
-    _ = _ := by
-      simp only [e, MeasurableEquiv.piFinTwo_symm_apply, μ]
-      congr 2 with y
+  rw [integral_piFinTwo_eq_integral_prod hH]
+  have hexy (x y : ℝ) : e.symm (x, y) = ![x, y] := by
+    ext i
+    fin_cases i <;> rfl
+  simpa only [hexy, μ] using
+    (integral_integral_swap (f := fun x y => H (e.symm (x, y))) hprod)
 
 theorem integral_configuration_finSucc_split {k : ℕ} (j : Fin (k + 1))
     {H : Configuration (k + 1) → ℂ}
@@ -340,19 +338,13 @@ theorem integral_configuration_finSucc_split_swap {k : ℕ} (j : Fin (k + 1))
   have he : MeasurePreserving e (Measure.pi μ)
       ((μ j).prod (Measure.pi fun i : Fin k ↦ μ (j.succAbove i))) :=
     measurePreserving_piFinSuccAbove μ j
-  unfold complexGaussianMeasure complexGaussianProbability at hH ⊢
-  simp only [ProbabilityMeasure.toMeasure_pi] at hH ⊢
   have hprod : Integrable (H ∘ e.symm)
       ((μ j).prod (Measure.pi fun i : Fin k ↦ μ (j.succAbove i))) :=
-    he.symm.integrable_comp_of_integrable hH
-  calc
-    _ = ∫ p : ℂ × (Fin k → ℂ), H (e.symm p)
-        ∂((μ j).prod (Measure.pi fun i : Fin k ↦ μ (j.succAbove i))) :=
-      (he.symm.integral_comp' H).symm
-    _ = ∫ r : Fin k → ℂ, ∫ w : ℂ, H (e.symm (w, r))
-        ∂(μ j) ∂(Measure.pi fun i : Fin k ↦ μ (j.succAbove i)) :=
-      integral_prod_symm _ hprod
-    _ = _ := by simp only [μ, e]
+    he.symm.integrable_comp_of_integrable (by
+      simpa only [complexGaussianMeasure, complexGaussianProbability,
+        ProbabilityMeasure.toMeasure_pi] using hH)
+  rw [integral_configuration_finSucc_split j hH]
+  exact integral_integral_swap (f := fun v u => H (e.symm (v, u))) hprod
 
 theorem integrable_configuration_fderiv_apply {m : ℕ}
     {F : Configuration m → ℂ} (hF : ContDiff ℝ 1 F)

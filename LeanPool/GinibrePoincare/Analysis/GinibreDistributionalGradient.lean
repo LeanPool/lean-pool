@@ -7,6 +7,8 @@ Authors: Djalil Chafaï
 /-
 Adapted for Lean Pool from djalilchafai/ginibre-
 poincare/GinibrePoincare/Analysis/GinibreDistributionalGradient.lean.
+Also incorporates the local L¹ integrability theorem from the upstream
+GinibrePoincare/Analysis/GinibreLocalSobolev.lean under the same MIT notice.
 Module paths, interfaces, and proofs are ported to the pool's toolchain and gates.
 The original source is MIT licensed; its notice follows.
 
@@ -99,13 +101,11 @@ theorem integrable_ginibre_iff_density {n : ℕ} (hn : 0 < n)
     (ae_of_all _ (fun _ => ENNReal.ofReal_lt_top))]
   simp only [ENNReal.toReal_ofReal (ginibreLebesgueDensityReal_nonneg n _), mul_comm]
 
-/-- Every Ginibre L² scalar function is locally Lebesgue integrable away from collisions. -/
-theorem ginibre_memLp_locallyIntegrable_collisionFree {n : ℕ} (hn : 0 < n)
-    (f : Configuration n → ℝ) (hf : MemLp f 2 (ginibreMeasure n)) :
+/-- Weighted L¹ functions are locally Lebesgue integrable where the density is positive. -/
+theorem ginibre_integrable_locallyIntegrable_collisionFree {n : ℕ} (hn : 0 < n)
+    (f : Configuration n → ℝ) (hf : Integrable f (ginibreMeasure n)) :
     LocallyIntegrableOn f {z : Configuration n | CollisionFree z} volume := by
-  let := ginibreMeasure_isProbabilityMeasure hn
-  have hi : Integrable (fun z => ginibreLebesgueDensityReal n z * f z) :=
-    (integrable_ginibre_iff_density hn f).mp (hf.integrable (by norm_num))
+  have hi := (integrable_ginibre_iff_density hn f).mp hf
   have hc : ContinuousOn (fun z => (ginibreLebesgueDensityReal n z)⁻¹)
       {z : Configuration n | CollisionFree z} :=
     (contDiff_ginibreLebesgueDensityReal n).continuous.continuousOn.inv₀
@@ -118,6 +118,14 @@ theorem ginibre_memLp_locallyIntegrable_collisionFree {n : ℕ} (hn : 0 < n)
   intro z hz
   dsimp
   field_simp [ginibreLebesgueDensityReal_ne_zero_of_collisionFree hn hz]
+
+/-- Every Ginibre L² scalar function is locally Lebesgue integrable away from collisions. -/
+theorem ginibre_memLp_locallyIntegrable_collisionFree {n : ℕ} (hn : 0 < n)
+    (f : Configuration n → ℝ) (hf : MemLp f 2 (ginibreMeasure n)) :
+    LocallyIntegrableOn f {z : Configuration n | CollisionFree z} volume := by
+  let := ginibreMeasure_isProbabilityMeasure hn
+  exact ginibre_integrable_locallyIntegrable_collisionFree hn f
+    (hf.integrable (by norm_num))
 
 /-- Divide an interior test by the density squared. It remains globally smooth,
 because the test vanishes on a neighbourhood of every collision. -/

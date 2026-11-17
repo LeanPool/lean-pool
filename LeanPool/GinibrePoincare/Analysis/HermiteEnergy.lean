@@ -389,14 +389,9 @@ private theorem differentiable_multivariateNormalized_real (n : ℕ) (hn : 0 < n
     (differentiable_normalizedEval n hn (p i) (q i)).comp
       (ContinuousLinearMap.proj i : Configuration n →L[ℝ] ℂ).differentiable
   change Differentiable ℝ (fun z => ∏ i ∈ Finset.univ, f i z)
-  induction (Finset.univ : Finset (Fin n)) using Finset.induction_on with
-  | empty => simp
-  | @insert i s hi ih =>
-      rw [show (fun z => ∏ k ∈ insert i s, f k z) =
-          f i * fun z => ∏ k ∈ s, f k z by
-        funext z
-        simp [Finset.prod_insert hi]]
-      exact (hf i).mul ih
+  intro z
+  exact (HasFDerivAt.finsetProd (u := Finset.univ) (g := f)
+    (fun i _ => (hf i z).hasFDerivAt)).differentiableAt
 
 private theorem dbarComponent_const_mul {n : ℕ} (a : ℂ)
     (f : Configuration n → ℂ) (hf : Differentiable ℝ f)

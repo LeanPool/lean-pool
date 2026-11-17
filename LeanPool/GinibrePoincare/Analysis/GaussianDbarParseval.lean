@@ -872,22 +872,7 @@ theorem coordinate_mul_multivariateNormalized_creation_ae
 
 theorem contDiff_normalizedEval_real (n : ℕ) (hn : 0 < n) (p q : ℕ) :
     ContDiff ℝ 1 (normalizedEval n hn p q) := by
-  unfold normalizedEval normalized raw
-  simp only [map_mul, map_sum, map_pow, MvPolynomial.eval_C,
-    Z, W, MvPolynomial.eval_X, Matrix.cons_val_zero,
-    Matrix.cons_val_one]
-  have hsum : ContDiff ℝ 1 (fun z : ℂ ↦
-      ∑ k ∈ Finset.range (min p q + 1),
-        ((-((n : ℝ)⁻¹) : ℂ) ^ k) * (k.factorial : ℂ) *
-          (Nat.choose p k : ℂ) * (Nat.choose q k : ℂ) *
-          z ^ (p - k) * conj z ^ (q - k)) := by
-    apply ContDiff.sum
-    intro k hk
-    exact ((contDiff_const.mul (contDiff_id.pow (p - k))).mul
-      ((ContinuousLinearEquiv.contDiff Complex.conjCLE).pow (q - k)))
-  exact (show ContDiff ℝ 1 (fun _ : ℂ ↦
-      ((oneDimNormalization n p * oneDimNormalization n q : ℝ) : ℂ)) from
-    contDiff_const).mul hsum
+  exact contDiff_diagonalEval_public (normalized n hn p q)
 
 theorem contDiff_multivariateNormalized_real (n : ℕ) (hn : 0 < n)
     (p q : Fin n → ℕ) :
@@ -899,10 +884,7 @@ theorem contDiff_multivariateNormalized_real (n : ℕ) (hn : 0 < n)
     (contDiff_normalizedEval_real n hn (p i) (q i)).comp
       (ContinuousLinearMap.proj i : Configuration n →L[ℝ] ℂ).contDiff
   change ContDiff ℝ 1 (fun z ↦ ∏ i ∈ Finset.univ, f i z)
-  induction (Finset.univ : Finset (Fin n)) using Finset.induction_on with
-  | empty => simpa using (contDiff_const : ContDiff ℝ 1 (fun _ : Configuration n ↦ (1 : ℂ)))
-  | @insert i t hit ih =>
-      simpa only [Finset.prod_insert hit] using (hf i).mul ih
+  exact contDiff_prod fun i _ => hf i
 
 theorem C_mul_Z_pow_mul_W_pow_eq_monomial (c : ℂ) (a b : ℕ) :
     MvPolynomial.C c * Z ^ a * W ^ b =

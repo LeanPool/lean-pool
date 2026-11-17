@@ -53,24 +53,6 @@ open scoped Topology
 namespace GinibrePoincare
 noncomputable section
 
-/-- Weighted L¹ functions are locally Lebesgue integrable where the density is positive. -/
-theorem ginibre_integrable_locallyIntegrable_collisionFree {n : ℕ} (hn : 0 < n)
-    (f : Configuration n → ℝ) (hf : Integrable f (ginibreMeasure n)) :
-    LocallyIntegrableOn f {z : Configuration n | CollisionFree z} volume := by
-  have hi := (integrable_ginibre_iff_density hn f).mp hf
-  have hc : ContinuousOn (fun z => (ginibreLebesgueDensityReal n z)⁻¹)
-      {z : Configuration n | CollisionFree z} :=
-    (contDiff_ginibreLebesgueDensityReal n).continuous.continuousOn.inv₀
-      (fun z hz => ginibreLebesgueDensityReal_ne_zero_of_collisionFree hn hz)
-  have hl := (hi.locallyIntegrable.locallyIntegrableOn
-    {z : Configuration n | CollisionFree z}).mul_continuousOn hc
-      (isOpen_collisionFree n).isLocallyClosed
-  apply hl.congr
-  apply ae_restrict_of_forall_mem (isOpen_collisionFree n).measurableSet
-  intro z hz
-  dsimp
-  field_simp [ginibreLebesgueDensityReal_ne_zero_of_collisionFree hn hz]
-
 theorem ginibre_memLp_norm_sq_locallyIntegrable_collisionFree {n : ℕ} (hn : 0 < n)
     {V : Type*} [NormedAddCommGroup V] (f : Configuration n → V)
     (hf : MemLp f 2 (ginibreMeasure n)) :

@@ -120,15 +120,7 @@ theorem ginibreEquality_weak_mode_bound {n : ℕ} (hn : 0 < n)
         ginibreWeakEnergy n p.2 - 2 * ginibreL2Variance n hn p.1) :=
       ((ginibreWeakEnergy_continuous n).comp continuous_snd).sub
         (continuous_const.mul ((ginibreL2Variance_continuous n hn).comp continuous_fst))
-    have heq : {p : GinibreFullValueL2 n × GinibreFullGradientL2 n |
-        4 * (k : ℝ) * ‖ginibreFullHigherMode n hn k p.1‖ ^ 2 ≤
-          ginibreWeakEnergy n p.2 - 2 * ginibreL2Variance n hn p.1} =
-        (fun p => ginibreWeakEnergy n p.2 - 2 * ginibreL2Variance n hn p.1 -
-          4 * (k : ℝ) * ‖ginibreFullHigherMode n hn k p.1‖ ^ 2) ⁻¹' Set.Ici 0 := by
-      ext p
-      simp only [Set.mem_ofPred_eq, Set.mem_preimage, Set.mem_Ici, sub_nonneg]
-    rw [heq]
-    exact isClosed_Ici.preimage (hright.sub hleft)
+    exact isClosed_le hleft hright
   have hqmem : ∀ m, q m ∈ {p : GinibreFullValueL2 n × GinibreFullGradientL2 n |
       4 * (k : ℝ) * ‖ginibreFullHigherMode n hn k p.1‖ ^ 2 ≤
         ginibreWeakEnergy n p.2 - 2 * ginibreL2Variance n hn p.1} :=
