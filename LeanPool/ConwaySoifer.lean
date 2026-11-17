@@ -236,8 +236,9 @@ python3 "$CODEX_SCRATCH_ROOT/RegenerateConwayCorpus.py" --repository "$PWD" \
   --output "$CODEX_SCRATCH_ROOT/conway-regenerated" --workers 4
 ```
 
-The driver discovers all 100 Data modules and every corresponding Steps/Checked consumer;
-no certificate list, exclusion context, split branch or module output is entered manually.
+The driver discovers all 100 Data modules, every corresponding Steps/Checked consumer, and
+their FanData/FanChecks import closure. No certificate list, exclusion context, split branch or
+module output is entered manually.
 It generates a standalone Lean executable per certificate using the preceding proposal code.
 Each executable recomputes initModel and every Model.insert directly from the exact public
 CertData trace, compares all ten owners' points/caps/flags and every step with the retained
@@ -245,9 +246,11 @@ checkpoint declarations, and emits the complete state payload and every exclusio
 Pairs and support triples are searched again. Retained orientation directions, split intervals
 and hint modes are seeds; they are not proof assumptions.
 
-The output contains 100 unchanged Data inputs and 639 adapted checkpoint/replay consumers.
-Checkpoint point literals, point lists, caps, flags and steps are rendered from the fresh
-payload; exclusion terms and all 24-node shared fan tails are rendered from fresh proposals.
+The current output contains 100 Data inputs, 639 checkpoint/replay consumers, 18 FanData
+modules and 162 FanChecks modules (919 files). Checkpoint point literals, point lists, caps,
+flags and steps are rendered from the fresh payload. Shared fan definitions are recursively
+expanded before proposal generation and comparison; their values and every check-theorem
+context are validated and rendered from the same freshly generated exclusion proposals.
 The retained files supply declaration names, layout and kernel-proof scaffolding. This is
 intentional template-based regeneration of the public certificate cache, not recovery of the
 unpublished search/export pipeline and not a generator of proofs for changed geometry.
@@ -264,11 +267,12 @@ older files in a reused output directory are ignored. The sampled --certificate 
 for diagnosis; the default run covers the complete corpus. Regeneration evidence does not replace
 the kernel acceptance/replay proofs or the complete build, linters, style and quality/trust gates.
 
-The exact embedded driver was executed with four workers: all 100 certificates, 3,288 states,
-3,188 steps, 28,792 exclusions and 739 emitted files passed the complete comparison in
-384.64 seconds in a reused output directory. Its sorted file/hash record has SHA-256
+The earlier driver, before the FanData/FanChecks split, was executed with four workers:
+100 certificates, 3,288 states, 3,188 steps, 28,792 exclusions and 739 emitted files passed in
+384.64 seconds. Its sorted file/hash record was
 1879985340d4368caa2aba8695f22d6a8336def34cac0d49cc7e884602dbbf2a.
-This is a corpus reproduction measurement, not a controlled compile-time comparison.
+That historical run does not validate the split layout. Rerun this updated recipe and retain
+its complete round-trip report for the current revision before claiming its execution.
 
 The retained generated corpus is a sizeable certificate cache. Its maintenance tradeoff is
 accepted here because the underlying research theorem, shared geometric interfaces and verified
@@ -313,35 +317,177 @@ def compact(source: str) -> str:
     return re.sub(r'\((-?\d+)\)', r'\1', re.sub(r'\s+', '', source))
 
 
-def expand_fans(source: str) -> dict[str, str]:
+def fan_declarations(source: str) -> list[re.Match[str]]:
+    pattern = (r'^(?:noncomputable )?def '
+               r'(fan\d+Owner\d+Part\d+|witnessForExcluded\d+Owner\d+)'
+               r' : FanWitness :=\s*(.*?)(?=\n\n|\Z)')
+    return list(re.finditer(pattern, source, re.M | re.S))
+
+
+def fan_definitions(sources: dict[str, str]) -> dict[str, str]:
+    definitions = {}
+    for path, source in sorted(sources.items()):
+        for match in fan_declarations(source):
+            name, value = match[1], match[2]
+            if name in definitions:
+                assert compact(definitions[name]) == compact(value), (path, name)
+            definitions[name] = value
+    return definitions
+
+
+def expand_fans(definitions: dict[str, str]) -> dict[str, str]:
     aliases = {}
-    pattern = r'^def (fan\d+Owner\d+Part\d+) : FanWitness := (.*?)\n\n'
-    for match in re.finditer(pattern, source, re.M | re.S):
-        value = match[2]
-        for name, previous in aliases.items():
-            value = re.sub(r'\b' + name + r'\b', lambda _: previous, value)
-        aliases[match[1]] = value
+    pattern = r'\b(?:fan\d+Owner\d+Part\d+|witnessForExcluded\d+Owner\d+)\b'
+
+    def resolve(name: str, active: set[str]) -> str:
+        assert name in definitions, ('Missing fan definition', name)
+        assert name not in active, ('Cyclic fan definitions', name)
+        if name not in aliases:
+            aliases[name] = re.sub(
+                pattern, lambda m: resolve(m[0], active | {name}), definitions[name])
+        return aliases[name]
+
+    for name in sorted(definitions):
+        resolve(name, set())
     return aliases
 
 
-def exclusion_rows(path: Path) -> tuple[str, list[dict[str, Any]]]:
-    source = path.read_text()
-    aliases = expand_fans(source)
+def expand_hint(value: str, aliases: dict[str, str]) -> str:
+    pattern = r'\b(?:fan\d+Owner\d+Part\d+|witnessForExcluded\d+Owner\d+)\b'
+
+    def replace(match: re.Match[str]) -> str:
+        assert match[0] in aliases, ('Missing fan definition', match[0])
+        return aliases[match[0]]
+
+    return re.sub(pattern, replace, value)
+
+
+def fan_templates(consumers: dict[str, str], load_source: Any) -> dict[str, str]:
+    pattern = (r'^(?:public )?import (?:all )?'
+               r'(LeanPool\.ConwaySoifer\.Simplified\.Certificates\.'
+               r'(?:FanData|FanChecks)\.[A-Za-z0-9_]+)(?:\s*--[^\n]*)?$')
+    templates, pending = {}, list(consumers.values())
+    while pending:
+        source = pending.pop()
+        for module in re.findall(pattern, source, re.M):
+            path = module.replace('.', '/') + '.lean'
+            if path not in templates:
+                templates[path] = load_source(path)
+                pending.append(templates[path])
+    return templates
+
+
+
+def complete_inventory(emitted: list[str], expected: set[str]) -> None:
+    assert len(emitted) == len(set(emitted)), 'Duplicate emitted file'
+    assert set(emitted) == expected, ('Incomplete corpus inventory',
+                                     sorted(expected - set(emitted)),
+                                     sorted(set(emitted) - expected))
+
+
+def record_aliases(template: str, fresh: str, definitions: dict[str, str],
+                   aliases: dict[str, str], generated: dict[str, str]) -> None:
+    assert compact(expand_hint(template, aliases)) == compact(fresh)
+    core = template.strip()
+    if core in definitions:
+        if core in generated:
+            assert compact(generated[core]) == compact(fresh), core
+        generated[core] = fresh
+        record_aliases(definitions[core], fresh, definitions, aliases, generated)
+    elif expand_hint(core, aliases) != core:
+        assert core.startswith('(') and core.endswith(')'), core[:80]
+        left, right = arguments(core[1:-1]), arguments(fresh.strip()[1:-1])
+        assert len(left) == len(right) and left[0] == right[0]
+        for old, new in zip(left[1:], right[1:], strict=True):
+            record_aliases(old, new, definitions, aliases, generated)
+
+
+def render_shared(template: str, fresh: str, aliases: dict[str, str]) -> str:
+    assert compact(expand_hint(template, aliases)) == compact(fresh)
+    core = template.strip()
+    if core in aliases:
+        return template
+    if expand_hint(core, aliases) == core:
+        return render_layout(template, fresh)
+    assert core.startswith('(') and core.endswith(')'), core[:80]
+    left, right = arguments(core[1:-1]), arguments(fresh.strip()[1:-1])
+    assert len(left) == len(right) and left[0] == right[0]
+    offset, edits = 1, []
+    for old, new in zip(left[1:], right[1:], strict=True):
+        start = core.index(old, offset)
+        edits.append((start, start + len(old), render_shared(old, new, aliases)))
+        offset = start + len(old)
+    for start, end, value in reversed(edits):
+        core = core[:start] + value + core[end:]
+    padding = len(template) - len(template.lstrip())
+    return template[:padding] + core + template[len(template.rstrip()):]
+
+
+def exclusion_rows_text(source: str, aliases: dict[str, str], label: str = '') -> list[dict[str, Any]]:
     pattern = (r'^theorem (excluded\d+_\d+)\s*:\s*ExcludedOn (.*?) := by\n'
                r'  apply ExclusionHint.sound (.*?)\s+\(den\s*:=.*?\)\s+'
                r'\(fuel\s*:=\s*(\d+)\)')
     matches = list(re.finditer(pattern, source, re.M | re.S))
-    assert len(matches) == source.count('  apply ExclusionHint.sound '), path
+    assert len(matches) == source.count('  apply ExclusionHint.sound '), label
     rows = []
     for match in matches:
         values = arguments(match[2])
-        assert len(values) == 7, (path, match[1])
-        hint = match[3]
-        for name in reversed(aliases):
-            hint = re.sub(r'\b' + name + r'\b', lambda _: aliases[name], hint)
-        rows.append({'name': match[1], 'arguments': values, 'hint': hint,
-                     'fuel': int(match[4]), 'span': match.span(3), 'layout': match[3]})
-    return source, rows
+        assert len(values) == 7, (label, match[1])
+        rows.append({'name': match[1], 'arguments': values,
+                     'hint': expand_hint(match[3], aliases), 'fuel': int(match[4]),
+                     'span': match.span(3), 'layout': match[3]})
+    return rows
+
+
+def check_rows(source: str) -> list[dict[str, Any]]:
+    pattern = (r'^theorem (checkedWitnessForExcluded(\d+)_(\d+))\s*:\s*'
+               r'(.*?)\s*=\s*true\s*:= by\n')
+    matches = list(re.finditer(pattern, source, re.M | re.S))
+    assert len(matches) == len(re.findall(r'^theorem checkedWitnessForExcluded', source, re.M))
+    rows = []
+    for match in matches:
+        values = arguments(match[4])
+        assert len(values) == 10 and values[0] == 'ExclusionHint.check', match[1]
+        offset = 0
+        spans = []
+        for value in values:
+            start = match[4].index(value, offset)
+            spans.append((match.start(4) + start, match.start(4) + start + len(value)))
+            offset = start + len(value)
+        rows.append({'name': f'excluded{match[2]}_{match[3]}', 'check': match[1],
+                     'arguments': values[1:5] + values[7:10],
+                     'fuel': int(compact(values[5])), 'hint': values[6], 'span': spans[6]})
+    return rows
+
+
+def render_fan_sources(templates: dict[str, str], aliases: dict[str, str],
+                       generated: dict[str, str], rows: dict[str, dict[str, Any]],
+                       proposals: dict[str, str]) -> dict[str, str]:
+    rendered = {}
+    for path, template in sorted(templates.items()):
+        edits = []
+        if '/FanData/' in path:
+            for match in fan_declarations(template):
+                assert match[1] in generated, ('Unregenerated fan data', path, match[1])
+                value = render_shared(match[2], generated[match[1]], aliases)
+                edits.append((*match.span(2), value))
+        else:
+            assert '/FanChecks/' in path, path
+            for check in check_rows(template):
+                row = rows[check['name']]
+                assert list(map(compact, check['arguments'])) == list(map(compact, row['arguments'])), (path, check['check'])
+                assert check['fuel'] == row['fuel'], (path, check['check'])
+                value = render_shared(check['hint'], proposals[check['name']], aliases)
+                edits.append((*check['span'], value))
+        for start, end, value in sorted(edits, reverse=True):
+            template = template[:start] + value + template[end:]
+        rendered[path] = template
+    return rendered
+
+
+def exclusion_rows(path: Path, aliases: dict[str, str]) -> tuple[str, list[dict[str, Any]]]:
+    source = path.read_text()
+    return source, exclusion_rows_text(source, aliases, str(path))
 
 
 
@@ -354,36 +500,7 @@ def render_layout(template: str, value: str) -> str:
     return rendered
 
 
-def share_hint(value: str, declaration: str) -> tuple[str, dict[str, str]]:
-    state, owner = re.fullmatch(r'excluded(\d+)_(\d+)', declaration).groups()
-    definitions = {}
 
-    def fan(term: str) -> tuple[str, int]:
-        fields = arguments(term[1:-1])
-        if fields[0] == '.terminal':
-            return term, 0
-        assert fields[0] == '.next' and len(fields) == 5
-        tail, count = fan(fields[4])
-        current = '(.next ' + ' '.join(fields[1:4]) + ' ' + tail + ')'
-        count += 1
-        if count == 24:
-            alias = f'fan{state}Owner{owner}Part{len(definitions)}'
-            definitions[alias] = current
-            return alias, 0
-        return current, count
-
-    def hint(term: str) -> str:
-        if term.startswith('(.witnessedFan '):
-            tree, _ = fan(term[len('(.witnessedFan '):-1])
-            return '(.witnessedFan ' + tree + ')'
-        if term.startswith('(.split '):
-            fields = arguments(term[1:-1])
-            assert len(fields) == 7
-            return ('(.split ' + ' '.join(fields[1:5]) + ' ' + hint(fields[5])
-                    + ' ' + hint(fields[6]) + ')')
-        return term
-
-    return hint(value), definitions
 
 
 def emit_checkpoint(template: str, payload: dict[str, str]) -> str:
@@ -527,11 +644,16 @@ def regenerate(root: Path, output: Path, name: str) -> dict[str, Any]:
         if f'Certificates.Checkpoints.{name}\n' in path.read_text():
             paths.append(path)
     paths.append(certificates / 'Checked' / f'{name}.lean')
+    consumers = {str(path.relative_to(root)): path.read_text() for path in paths}
+    shared = fan_templates(consumers, lambda path: (root / path).read_text())
+    definitions = fan_definitions({**consumers, **shared})
+    aliases = expand_fans(definitions)
     templates, rows = {}, []
     for path in paths:
-        source, current = exclusion_rows(path)
+        source, current = exclusion_rows(path, aliases)
         templates[path] = (source, current)
         rows.extend(current)
+    assert len(rows) == len({row['name'] for row in rows}), name
     source, states, steps = program(root, name, rows)
     runtime = output / 'runtime'
     runtime.mkdir(exist_ok=True)
@@ -553,35 +675,37 @@ def regenerate(root: Path, output: Path, name: str) -> dict[str, Any]:
             proposals[key] = value
     assert ({key for key in proposals if key.startswith('excluded')}
             == {row['name'] for row in rows}), name
+    generated = {}
+    for row in rows:
+        proposed = proposals[row['name']]
+        assert compact(proposed) == compact(row['hint']), row['name']
+        record_aliases(row['layout'], proposed, definitions, aliases, generated)
     for path, (template, current) in templates.items():
-        edits, definitions = [], {}
+        edits = []
         for row in current:
-            proposed = proposals[row['name']]
-            assert compact(proposed) == compact(row['hint']), (path, row['name'])
-            fresh, shared = share_hint(proposed, row['name'])
-            definitions.update(shared)
-            edits.append((*row['span'], render_layout(row['layout'], fresh)))
-        matches = list(re.finditer(
-            r'^def (fan\d+Owner\d+Part\d+) : FanWitness := (.*?)\n\n',
-            template, re.M | re.S))
-        assert set(definitions) == {match[1] for match in matches}
-        for match in matches:
-            edits.append((*match.span(2), render_layout(match[2], definitions[match[1]])))
-        rendered = template
-        for start, end, replacement in sorted(edits, reverse=True):
-            rendered = rendered[:start] + replacement + rendered[end:]
-        relative = path.relative_to(root)
+            edits.append((*row['span'], render_shared(row['layout'], proposals[row['name']], aliases)))
+        for match in fan_declarations(template):
+            assert match[1] in generated, (path, match[1])
+            edits.append((*match.span(2), render_shared(match[2], generated[match[1]], aliases)))
+        for start, end, value in sorted(edits, reverse=True):
+            template = template[:start] + value + template[end:]
+        destination = output / 'corpus' / path.relative_to(root)
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        destination.write_text(template)
+    row_map = {row['name']: row for row in rows}
+    for relative, source in render_fan_sources(shared, aliases, generated, row_map, proposals).items():
         destination = output / 'corpus' / relative
         destination.parent.mkdir(parents=True, exist_ok=True)
-        destination.write_text(rendered)
+        destination.write_text(source)
     for category in ['Data', 'Checkpoints']:
         path = certificates / category / f'{name}.lean'
         destination = output / 'corpus' / path.relative_to(root)
         destination.parent.mkdir(parents=True, exist_ok=True)
         destination.write_text(emit_checkpoint(path.read_text(), proposals)
                                if category == 'Checkpoints' else path.read_text())
-    emitted = paths + [certificates / category / f'{name}.lean'
-                       for category in ['Data', 'Checkpoints']]
+    emitted = paths + [root / relative for relative in shared] + [
+        certificates / category / f'{name}.lean' for category in ['Data', 'Checkpoints']]
+    assert len(emitted) == len(set(emitted))
     return {'certificate': name, 'states': states, 'steps': steps,
             'exclusions': len(rows), 'files': len(emitted),
             'emitted_files': [str(path.relative_to(root)) for path in emitted],
@@ -610,6 +734,11 @@ def main() -> None:
         results = list(executor.map(lambda name: regenerate(root, output, name), names))
     emitted = [relative for row in results for relative in row['emitted_files']]
     assert len(emitted) == len(set(emitted)) == sum(row['files'] for row in results)
+    if not options.certificate:
+        expected = {str(path.relative_to(root))
+                    for category in ('Data', 'Checkpoints', 'Steps', 'Checked', 'FanData', 'FanChecks')
+                    for path in (root / 'LeanPool/ConwaySoifer/Simplified/Certificates' / category).glob('*.lean')}
+        complete_inventory(emitted, expected)
     hashes = []
     for relative in sorted(emitted):
         expected = (root / relative).read_bytes()

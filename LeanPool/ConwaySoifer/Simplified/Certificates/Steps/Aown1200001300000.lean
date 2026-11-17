@@ -71,7 +71,6 @@ theorem excluded0_2 : ExcludedOn (model0.B 2 ++ [step0.q]) 9000000000000 (model0
   apply ExclusionHint.sound (.witnessedFan witnessForExcluded0Owner2)
       (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1 100
       (by decide +kernel)
-  delta witnessForExcluded0Owner2
   as_aux_lemma => exact checkedWitnessForExcluded0_2
 
 theorem excluded0_3 : ExcludedOn (model0.B 3 ++ [step0.q]) 9000000000000 (model0.caps 3) (model0.ord
@@ -79,7 +78,6 @@ theorem excluded0_3 : ExcludedOn (model0.B 3 ++ [step0.q]) 9000000000000 (model0
   apply ExclusionHint.sound (.witnessedFan witnessForExcluded0Owner3)
       (den := 9000000000000) (fuel := 12)
       (by decide +kernel) 0 1 100 (by decide +kernel)
-  delta witnessForExcluded0Owner3
   as_aux_lemma => exact checkedWitnessForExcluded0_3
 
 theorem excluded0_4 : ExcludedOn (model0.B 4 ++ [step0.q]) 9000000000000 (model0.caps 4) (model0.ord
