@@ -220,7 +220,8 @@ def _build_log(root: Path, module: str, *messages: str) -> None:
     """Write the log Lake keeps for one compiled module."""
     path = root / ".lake/build/lib/lean" / (module.replace(".", "/") + ".trace")
     path.parent.mkdir(parents=True, exist_ok=True)
-    log = [{"level": "trace", "message": ".> lean ..."}]
+    source = module.replace(".", "/") + ".lean"
+    log = [{"level": "trace", "message": f".> lean /pool/{source} -o out.olean"}]
     log += [{"level": "info", "message": message} for message in messages]
     path.write_text(json.dumps({"schemaVersion": "2025-09-10", "log": log}))
 

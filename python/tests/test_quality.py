@@ -205,7 +205,10 @@ def _write_build_log(root: Path, module: str, log: object) -> None:
     path.write_text(json.dumps({"schemaVersion": "2025-09-10", "log": log}))
 
 
-COMPILER_COMMAND = {"level": "trace", "message": ".> LEAN_PATH=... lean ..."}
+COMPILER_COMMAND = {
+    "level": "trace",
+    "message": ".> LEAN_PATH=/pool/.lake lean /pool/LeanPool/Basic.lean -o Basic.olean",
+}
 
 
 def test_build_message_audit_reports_the_printed_suggestion(tmp_path: Path) -> None:
@@ -239,6 +242,17 @@ def test_build_message_audit_accepts_a_silent_module(tmp_path: Path) -> None:
         ["not an entry"],
         [],
         [{"level": "info", "message": "no compiler command recorded"}],
+        [{"level": "trace"}],
+        [{"level": "trace", "message": 17}],
+        [{"level": "trace", "message": "ordinary non-command trace record"}],
+        [
+            {
+                "level": "trace",
+                "message": ".> lean /pool/LeanPool/Other.lean -o Other.olean",
+            }
+        ],
+        [COMPILER_COMMAND, {"level": "info"}],
+        [COMPILER_COMMAND, {"message": "no level"}],
     ],
 )
 def test_build_message_audit_fails_without_a_recognised_log(
@@ -256,11 +270,11 @@ def test_build_message_audit_fails_without_a_recognised_log(
     assert error.message == "build log is missing or unreadable"
 
 
-@pytest.mark.parametrize("level", ["warning", "error", "unexpected"])
+@pytest.mark.parametrize("level", ["warning", "error", "unexpected", "trace"])
 def test_build_message_audit_rejects_every_other_level(
     tmp_path: Path, level: str
 ) -> None:
-    """Only Lake's own command record is exempt, whatever a message is called."""
+    """Only the record of this module's compiler run is exempt, whatever its level."""
     _write_minimal_repo(tmp_path)
     entry = {"level": level, "message": "printed from a custom elaborator"}
     _write_build_log(tmp_path, "LeanPool.Basic", [COMPILER_COMMAND, entry])

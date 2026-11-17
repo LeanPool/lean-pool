@@ -1553,43 +1553,66 @@ def _audit_build_messages(root: Path, modules: list[str]) -> list[_QualityError]
     Finished pool code builds silently. A message is a suggestion nobody
     followed (`Try this` from `simp?`, from a `ring` that fell back to
     `ring_nf`, from a linter) or leftover diagnostic output. Reading Lake's
-    logs covers all of them without listing spellings. A module without a
-    readable log fails, so a changed log format cannot pass unnoticed.
+    logs covers all of them without listing spellings. Only Lake's record of
+    compiling this very module is exempt, and a log without that record
+    fails, so a changed log format cannot pass unnoticed.
     """
     errors: list[_QualityError] = []
     for module in modules:
         source = _module_to_path(root, module)
-        log = _build_log(root / BUILD_LOGS / source.relative_to(root))
+        relative = source.relative_to(root)
+        log = _build_log(root / BUILD_LOGS / relative, relative.as_posix())
         if log is None:
             errors.append(_QualityError(source, 1, MISSING_BUILD_LOG))
             continue
         errors.extend(
             _build_message_error(root, source, entry)
             for entry in log
-            if entry.get("level") != "trace"
+            if not _is_compiler_command(entry, relative.as_posix())
         )
     return errors
 
 
-def _build_log(compiled: Path) -> list[dict[str, Any]] | None:
-    """Read one module's Lake log; `None` unless it has the expected shape."""
+def _build_log(compiled: Path, source: str) -> list[dict[str, str]] | None:
+    """Read one module's Lake log; `None` unless it has the expected shape.
+
+    Every entry needs a textual level and message, and one of them must be
+    the record of compiling `source`, which every real build writes.
+    """
     try:
         log = json.loads(compiled.with_suffix(".trace").read_text())["log"]
     except (OSError, ValueError, KeyError, TypeError):
         return None
-    if not isinstance(log, list) or not all(isinstance(entry, dict) for entry in log):
+    if not isinstance(log, list):
         return None
-    # A real build always records its compiler command.
-    if not any(entry.get("level") == "trace" for entry in log):
+    for entry in log:
+        if not isinstance(entry, dict) or not all(
+            isinstance(entry.get(field), str) for field in ("level", "message")
+        ):
+            return None
+    if not any(_is_compiler_command(entry, source) for entry in log):
         return None
     return log
 
 
+def _is_compiler_command(entry: dict[str, str], source: str) -> bool:
+    """Whether Lake wrote this entry to record the compiler run for `source`.
+
+    Lake logs the command line at `trace` level as `.> ENV=... lean <source> ...`.
+    """
+    return (
+        entry["level"] == "trace"
+        and entry["message"].startswith(".> ")
+        and re.search(rf"(?:^|[\s/]){re.escape(source)}(?:\s|$)", entry["message"])
+        is not None
+    )
+
+
 def _build_message_error(
-    root: Path, source: Path, entry: dict[str, Any]
+    root: Path, source: Path, entry: dict[str, str]
 ) -> _QualityError:
     """Point at the source line a build message names, else at its module."""
-    message = str(entry.get("message", ""))
+    message = entry["message"]
     path, line, summary = source, 1, message
     if match := _BUILD_MESSAGE.match(message):
         named = root / match["path"]
@@ -1600,7 +1623,7 @@ def _build_message_error(
     if len(summary) > 160:
         summary = summary[:157] + "..."
     return _QualityError(
-        path, line, f"prints a message on every build ({entry.get('level')}): {summary}"
+        path, line, f"prints a message on every build ({entry['level']}): {summary}"
     )
 
 
