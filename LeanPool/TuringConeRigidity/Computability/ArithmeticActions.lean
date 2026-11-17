@@ -30,12 +30,14 @@ namespace TuringRigidity.UniformArithmetic
 open EncodedForcing NumericalAutomorphism NumericalExtension
 noncomputable section
 
-theorem action_arith {H P : OracleFamily} (hH : ArithmeticOracle H)
-    (hP : ArithmeticOracle P) : Arith (fun O v => Action (H O v) (fun w => P O v w = true)) := by
+/-- The common order clause of numerical actions is uniformly arithmetic. -/
+theorem action_order_arith {H P : OracleFamily} (hH : ArithmeticOracle H)
+    (hP : ArithmeticOracle P) : Arith (fun O v =>
+      ∀ n m n' m', P O v (Nat.pair n m) = true → P O v (Nat.pair n' m') = true →
+        (degree (columns (H O v) n) ≤ degree (columns (H O v) n') ↔
+          degree (columns (H O v) m) ≤ degree (columns (H O v) m'))) := by
   let l := left_primrec
   let r := right_primrec
-  have ht := (query_at hP (l.comp l) (Primrec₂.natPair.comp (r.comp l) r)).ex.all
-  have hs := (query_at hP (l.comp l) (Primrec₂.natPair.comp r (r.comp l))).ex.all
   let c := l.comp (l.comp (l.comp l))
   let n := r.comp (l.comp (l.comp l))
   let m := r.comp (l.comp l)
@@ -45,12 +47,32 @@ theorem action_arith {H P : OracleFamily} (hH : ArithmeticOracle H)
   have hq := query_at hP c (Primrec₂.natPair.comp n' m')
   have hl := reduces_arith (columns_at hH c n) (columns_at hH c n')
   have hr := reduces_arith (columns_at hH c m) (columns_at hH c m')
-  have ho := (hp.imp (hq.imp (hl.iff hr))).all.all.all.all
+  exact (hp.imp (hq.imp (hl.iff hr))).all.all.all.all.congr
+    (fun _ _ => by simp only [left, right, Nat.unpair_pair, degree_le_iff])
+
+/-- Saturating an action at equal output degrees is uniformly arithmetic. -/
+theorem action_saturated_arith {H P : OracleFamily} (hH : ArithmeticOracle H)
+    (hP : ArithmeticOracle P) : Arith (fun O v =>
+      ∀ n m m', P O v (Nat.pair n m) = true →
+        degree (columns (H O v) m) = degree (columns (H O v) m') →
+          P O v (Nat.pair n m') = true) := by
+  let l := left_primrec
+  let r := right_primrec
   let d := l.comp (l.comp l)
-  have hp' := query_at hP d (Primrec₂.natPair.comp (r.comp (l.comp l)) (r.comp l))
+  have hp := query_at hP d (Primrec₂.natPair.comp (r.comp (l.comp l)) (r.comp l))
   have he := degree_equal_arith (columns_at hH d (r.comp l)) (columns_at hH d r)
-  have hq' := query_at hP d (Primrec₂.natPair.comp (r.comp (l.comp l)) r)
-  have hu := (hp'.imp (he.imp hq')).all.all.all
+  have hq := query_at hP d (Primrec₂.natPair.comp (r.comp (l.comp l)) r)
+  exact (hp.imp (he.imp hq)).all.all.all.congr
+    (fun _ _ => by simp only [left, right, Nat.unpair_pair])
+
+theorem action_arith {H P : OracleFamily} (hH : ArithmeticOracle H)
+    (hP : ArithmeticOracle P) : Arith (fun O v => Action (H O v) (fun w => P O v w = true)) := by
+  let l := left_primrec
+  let r := right_primrec
+  have ht := (query_at hP (l.comp l) (Primrec₂.natPair.comp (r.comp l) r)).ex.all
+  have hs := (query_at hP (l.comp l) (Primrec₂.natPair.comp r (r.comp l))).ex.all
+  have ho := action_order_arith hH hP
+  have hu := action_saturated_arith hH hP
   apply (ht.and (hs.and (ho.and hu))).congr
   intro O v
   simp only [left,right,Nat.unpair_pair]

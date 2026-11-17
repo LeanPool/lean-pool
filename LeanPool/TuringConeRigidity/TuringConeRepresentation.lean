@@ -78,41 +78,14 @@ theorem inverse_borel_lift_of_generic_program {a : Degree}
     InverseBorelLift e := by
   obtain ⟨A, hA⟩ := degree_surjective a
   obtain ⟨D, hD, P, p, hp⟩ := h
-  let F : Oracle → Oracle := fun Y => programOutput p (join Y P)
-  have hFmeas : Measurable F := (programOutput_measurable p).comp
-    (join_measurable _ _ measurable_id measurable_const)
-  have hF : ∀ Y, GenericFor D Y → degree (F Y) = pullback e (degree Y) := by
-    intro Y hY
-    obtain ⟨Z, hpZ, hZ⟩ := hp Y hY
-    change degree (programOutput p (join Y P)) = _
-    rw [programOutput_eq p _ Z hpZ]
-    exact hZ
-  obtain ⟨G, hG, hgeneric, hideal⟩ := selected_generic_ideal D hD
-  let K : Bool → Oracle → Oracle := fun b X => G b (join A X)
-  have hK (b : Bool) : Measurable (K b) :=
-    (hG b).comp (join_measurable _ _ measurable_const measurable_id)
-  have hKgen (X : Oracle) (b : Bool) :
-      GenericFor D (K b X) ∧ GenericCoding.InfiniteOdd (K b X) ∧
-        ∀ Y, GenericFor D (GenericCoding.code Y (K b X)) :=
-    hgeneric (join A X) b
-  let L : Bool → Oracle → Oracle := fun b X =>
-    join (F (GenericCoding.code X (K b X))) (F (K b X))
-  have hL (b : Bool) : Measurable (L b) :=
-    join_measurable _ _
-      (hFmeas.comp (GenericCoding.code_measurable.comp (measurable_id.prodMk (hK b))))
-      (hFmeas.comp (hK b))
-  have hdegree (X : Oracle) (b : Bool) :
-      degree (L b X) = pullback e (degree (join X (K b X))) := by
-    change degree (F (GenericCoding.code X (K b X))) ⊔ degree (F (K b X)) = _
-    rw [hF _ ((hKgen X b).2.2 X), hF _ (hKgen X b).1, ← pullback_sup]
-    exact congrArg (pullback e)
-      (GenericCoding.join_degree_eq X (K b X) (hKgen X b).2.1)
+  obtain ⟨K, L, hL, hdegree, hideal⟩ :=
+    joined_generic_program_pair (pullback e) (pullback_sup e) A D hD P p hp
   apply borel_of_ideal_intersection (L false) (L true) (hL false) (hL true)
     (fun X => pullback e (degree X))
   intro X b
   rw [hdegree X false, hdegree X true]
   simp only [le_pullback_iff]
-  have hbase := hideal (join A X) (e b).val
+  have hbase := hideal X (e b).val
   change ((e b).val ≤ degree A ⊔ degree X ↔
     (e b).val ≤ (degree A ⊔ degree X) ⊔ degree (K false X) ∧
     (e b).val ≤ (degree A ⊔ degree X) ⊔ degree (K true X)) at hbase

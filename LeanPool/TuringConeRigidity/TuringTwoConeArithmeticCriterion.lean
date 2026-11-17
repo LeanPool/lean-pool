@@ -55,21 +55,8 @@ theorem action_arith {B C H P : OracleFamily} (hB : ArithmeticOracle B)
   have hTarget := reduces_arith (hC.comp l) (columns_at hH l r)
   have hOnto := (query_at hP (l.comp l) (Primrec₂.natPair.comp r (r.comp l))).ex
   have hs := (hTarget.imp hOnto).all
-  let c := l.comp (l.comp (l.comp l))
-  let n := r.comp (l.comp (l.comp l))
-  let m := r.comp (l.comp l)
-  let n' := r.comp l
-  let m' := r
-  have hp := query_at hP c (Primrec₂.natPair.comp n m)
-  have hq := query_at hP c (Primrec₂.natPair.comp n' m')
-  have hl := reduces_arith (columns_at hH c n) (columns_at hH c n')
-  have hr := reduces_arith (columns_at hH c m) (columns_at hH c m')
-  have ho := (hp.imp (hq.imp (hl.iff hr))).all.all.all.all
-  let d := l.comp (l.comp l)
-  have hp' := query_at hP d (Primrec₂.natPair.comp (r.comp (l.comp l)) (r.comp l))
-  have he := degree_equal_arith (columns_at hH d (r.comp l)) (columns_at hH d r)
-  have hq' := query_at hP d (Primrec₂.natPair.comp (r.comp (l.comp l)) r)
-  have hu := (hp'.imp (he.imp hq')).all.all.all
+  have ho := UniformArithmetic.action_order_arith hH hP
+  have hu := UniformArithmetic.action_saturated_arith hH hP
   apply (ht.and (ha.and (hs.and (ho.and hu)))).congr
   intro O v
   simp only [UniformArithmetic.left, UniformArithmetic.right, Nat.unpair_pair]

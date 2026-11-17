@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 OpenAI. All rights reserved.
+Copyright (c) 2026 OpenAI and Bjørn Kjos-Hanssen. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: OpenAI
+Authors: OpenAI, Bjørn Kjos-Hanssen
 -/
 
 /-
@@ -9,6 +9,8 @@ Adapted for Lean Pool from bjoernkjoshanssen/tt-
 auto/OAI/Computability/DegreeRigidity/Representation/GenericRepresentation.lean.
 Module paths, interfaces, and proofs are ported to the pool's toolchain and gates.
 Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream port repairs.
+The joined-base generic-pair construction is shared from Bjørn Kjos-Hanssen's
+RequestProject/TuringConeRepresentation.lean and TuringTwoConeRepresentation.lean.
 -/
 
 module
@@ -41,6 +43,49 @@ theorem selected_generic_ideal (D : ℕ → List Bool → Prop) (hd : ∀ n, Den
   refine ⟨fun b A => column b (Z A),fun b => (column_measurable b).comp hZ,hgeneric,?_⟩
   intro A a
   exact CommonIdeal.ideal_of_family A (Z A) (hfamily A) a
+
+/-- A generic program for a join-preserving degree map yields measurable pair lifts,
+with common lower bounds selected over the supplied joined anchor. -/
+theorem joined_generic_program_pair (f : Degree → Degree)
+    (hjoin : ∀ x y, f (x ⊔ y) = f x ⊔ f y) (A : Oracle)
+    (D : ℕ → List Bool → Prop) (hD : ∀ n, DenseOpen (D n)) (P : Oracle) (p : OracleCode)
+    (hp : ∀ X, GenericFor D X →
+      ∃ Y, OracleCode.eval (oracleFunction (join X P)) p = oracleFunction Y ∧
+        degree Y = f (degree X)) :
+    ∃ K L : Bool → Oracle → Oracle, (∀ b, Measurable (L b)) ∧
+      (∀ X b, degree (L b X) = f (degree (join X (K b X)))) ∧
+      ∀ X z, z ≤ degree (join A X) ↔
+        z ≤ degree (join (join A X) (K false X)) ∧
+        z ≤ degree (join (join A X) (K true X)) := by
+  let F : Oracle → Oracle := fun Y => programOutput p (join Y P)
+  have hFmeas : Measurable F := (programOutput_measurable p).comp
+    (join_measurable _ _ measurable_id measurable_const)
+  have hF : ∀ Y, GenericFor D Y → degree (F Y) = f (degree Y) := by
+    intro Y hY
+    obtain ⟨Z, hpZ, hZ⟩ := hp Y hY
+    change degree (programOutput p (join Y P)) = _
+    rw [programOutput_eq p _ Z hpZ]
+    exact hZ
+  obtain ⟨G, hG, hgeneric, hideal⟩ := selected_generic_ideal D hD
+  let K : Bool → Oracle → Oracle := fun b X => G b (join A X)
+  have hK (b : Bool) : Measurable (K b) :=
+    (hG b).comp (join_measurable _ _ measurable_const measurable_id)
+  have hKgen (X : Oracle) (b : Bool) :
+      GenericFor D (K b X) ∧ GenericCoding.InfiniteOdd (K b X) ∧
+        ∀ Y, GenericFor D (GenericCoding.code Y (K b X)) :=
+    hgeneric (join A X) b
+  let L : Bool → Oracle → Oracle := fun b X =>
+    join (F (GenericCoding.code X (K b X))) (F (K b X))
+  have hL (b : Bool) : Measurable (L b) :=
+    join_measurable _ _
+      (hFmeas.comp (GenericCoding.code_measurable.comp (measurable_id.prodMk (hK b))))
+      (hFmeas.comp (hK b))
+  have hdegree (X : Oracle) (b : Bool) :
+      degree (L b X) = f (degree (join X (K b X))) := by
+    change degree (F (GenericCoding.code X (K b X))) ⊔ degree (F (K b X)) = _
+    rw [hF _ ((hKgen X b).2.2 X), hF _ (hKgen X b).1, ← hjoin]
+    exact congrArg f (GenericCoding.join_degree_eq X (K b X) (hKgen X b).2.1)
+  exact ⟨K, L, hL, hdegree, fun X z => hideal (join A X) z⟩
 
 /-- The automorphism has a continuous oracle lift on a set meeting a countable dense-open
 family. -/

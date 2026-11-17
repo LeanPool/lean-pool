@@ -64,41 +64,14 @@ theorem inverse_borel_lift_of_generic_program {a b : Degree}
     InverseBorelLift e := by
   obtain ⟨B, hB⟩ := degree_surjective b
   obtain ⟨D, hD, P, p, hp⟩ := h
-  let F : Oracle → Oracle := fun Y => programOutput p (join Y P)
-  have hFmeas : Measurable F := (programOutput_measurable p).comp
-    (join_measurable _ _ measurable_id measurable_const)
-  have hF : ∀ Y, GenericFor D Y → degree (F Y) = pullback e (degree Y) := by
-    intro Y hY
-    obtain ⟨Z, hpZ, hZ⟩ := hp Y hY
-    change degree (programOutput p (join Y P)) = _
-    rw [programOutput_eq p _ Z hpZ]
-    exact hZ
-  obtain ⟨G, hG, hgeneric, hideal⟩ := selected_generic_ideal D hD
-  let K : Bool → Oracle → Oracle := fun bit X => G bit (join B X)
-  have hK (bit : Bool) : Measurable (K bit) :=
-    (hG bit).comp (join_measurable _ _ measurable_const measurable_id)
-  have hKgen (X : Oracle) (bit : Bool) :
-      GenericFor D (K bit X) ∧ GenericCoding.InfiniteOdd (K bit X) ∧
-        ∀ Y, GenericFor D (GenericCoding.code Y (K bit X)) :=
-    hgeneric (join B X) bit
-  let L : Bool → Oracle → Oracle := fun bit X =>
-    join (F (GenericCoding.code X (K bit X))) (F (K bit X))
-  have hL (bit : Bool) : Measurable (L bit) :=
-    join_measurable _ _
-      (hFmeas.comp (GenericCoding.code_measurable.comp (measurable_id.prodMk (hK bit))))
-      (hFmeas.comp (hK bit))
-  have hdegree (X : Oracle) (bit : Bool) :
-      degree (L bit X) = pullback e (degree (join X (K bit X))) := by
-    change degree (F (GenericCoding.code X (K bit X))) ⊔ degree (F (K bit X)) = _
-    rw [hF _ ((hKgen X bit).2.2 X), hF _ (hKgen X bit).1, ← pullback_sup]
-    exact congrArg (pullback e)
-      (GenericCoding.join_degree_eq X (K bit X) (hKgen X bit).2.1)
+  obtain ⟨K, L, hL, hdegree, hideal⟩ :=
+    joined_generic_program_pair (pullback e) (pullback_sup e) B D hD P p hp
   apply borel_of_ideal_intersection (L false) (L true) (hL false) (hL true)
     (fun X => pullback e (degree X))
   intro X z
   rw [hdegree X false, hdegree X true]
   simp only [le_pullback_iff]
-  have hbase := hideal (join B X) (imageJoin e z)
+  have hbase := hideal X (imageJoin e z)
   change (imageJoin e z ≤ degree B ⊔ degree X ↔
     imageJoin e z ≤ (degree B ⊔ degree X) ⊔ degree (K false X) ∧
     imageJoin e z ≤ (degree B ⊔ degree X) ⊔ degree (K true X)) at hbase
