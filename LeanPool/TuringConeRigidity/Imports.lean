@@ -506,6 +506,7 @@ public import LeanPool.TuringConeRigidity.Representation.AmbientDegreeActual
 public import LeanPool.TuringConeRigidity.Representation.AmbientDegreeBinding
 public import LeanPool.TuringConeRigidity.Representation.AmbientDegreeSyntax
 public import LeanPool.TuringConeRigidity.Representation.AmbientExtensionBody
+public import LeanPool.TuringConeRigidity.Representation.ArithmeticProgramGlobalization
 public import LeanPool.TuringConeRigidity.Representation.Assembly
 public import LeanPool.TuringConeRigidity.Representation.AutomorphismName
 public import LeanPool.TuringConeRigidity.Representation.AutomorphismOutputSentence
