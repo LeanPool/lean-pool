@@ -92,7 +92,7 @@ Layout.
   two-identity form onto a prime ring, with no hypothesis on 2.
 
 Primeness of matrix rings (`matrix_prime`) and the three examples are in
-`HersteinJordanExamples.lean`.
+`LeanPool/HersteinJordan/Examples.lean`.
 -/
 
 @[expose] public section

@@ -37,9 +37,9 @@ public import LeanPool.HersteinJordan.Examples
 /-!
 # Herstein's theorem: proofs of the compared statements
 
-Each of the six statements of `Challenge.lean` is proved here, with the identical statement, by
-transfer from the proof library (`HersteinJordan.lean`, `HersteinJordanExamples.lean`, namespace
-`HersteinJordan`). No definition is added.
+Each of the six statements of the upstream `Challenge.lean` is proved here, with the identical
+statement, by transfer from `LeanPool/HersteinJordan/Basic.lean` and
+`LeanPool/HersteinJordan/Examples.lean`, in namespace `HersteinJordan`. No definition is added.
 
 * Statement 1: `HersteinJordan.mul_or_antimul_of_prime`. A Jordan homomorphism into a ring
   without 2-torsion preserves squares and `a * b * a` (`map_sq_of_jordan`,
