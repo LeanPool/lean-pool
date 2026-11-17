@@ -464,10 +464,10 @@ noncomputable def φ0 :
     }
   map_one' := by
     refine LinearMap.ext fun _ ↦ ?_
-    simp only [one_smul, LinearMap.coe_mk, AddHom.coe_mk, Module.End.one_apply]
+    simp only [one_smul, LinearMap.coe_mk, AddHom.coe_mk, one_apply_eq_self]
   map_mul' x y := by
     refine LinearMap.ext fun _ ↦ ?_
-    simp only [LinearMap.coe_mk, AddHom.coe_mk, Module.End.mul_apply]
+    simp only [LinearMap.coe_mk, AddHom.coe_mk, mul_apply_eq_comp]
     rw [mul_smul]
   map_zero' := by
     refine LinearMap.ext fun _ ↦ ?_
@@ -867,8 +867,8 @@ def isoSnd : Additive (RelativeBrGroup K F) ≃+ H2 (galAct F K) :=
     change fromSnd F K (L (px + py)) = fromSnd F K (L px) * fromSnd F K (L py)
     rw [map_add]
     dsimp only [L, px, py]
-    simp only [π_comp_H2Iso_hom_apply,
-      CategoryTheory.Iso.inv_hom_id_apply]
+    erw [π_comp_H2Iso_hom_apply, π_comp_H2Iso_hom_apply,
+      CategoryTheory.Iso.inv_hom_id_apply, CategoryTheory.Iso.inv_hom_id_apply]
     change fromSnd F K (Quotient.mk'' _) =
       fromSnd F K (Quotient.mk'' _) * fromSnd F K (Quotient.mk'' _)
     erw [fromSnd_wd, fromSnd_wd]
