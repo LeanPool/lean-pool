@@ -293,40 +293,19 @@ theorem standardComplexGaussian_real_moments :
 theorem standardComplexGaussian_imag_moments :
     (∫ s : ℂ, s.im ∂standardComplexGaussianMeasure) = 0 ∧
       (∫ s : ℂ, s.im ^ 2 ∂standardComplexGaussianMeasure) = 1 / 2 := by
-  obtain ⟨hi1, hi2, hfirst', hsecond', hnorm⟩ := standardComplexGaussian_complex_moments
+  let e := complexMulMeasurableEquiv (-Complex.I) (by simp)
+  have hrot : MeasurePreserving e standardComplexGaussianMeasure
+      standardComplexGaussianMeasure := by
+    simpa [e, complexMulMeasurableEquiv, standardComplexGaussianMeasure] using
+      measurePreserving_complexCoordinateGaussian_mul (n := 1) (by decide)
+        (-Complex.I) (by simp)
   constructor
-  · calc
-      (∫ s : ℂ, s.im ∂standardComplexGaussianMeasure) =
-          (∫ s : ℂ, s ∂standardComplexGaussianMeasure).im := integral_im hi1
-      _ = 0 := by rw [hfirst']; rfl
-  · have hid (s : ℂ) : s.im ^ 2 = (Complex.normSq s - (s ^ 2).re) / 2 := by
-      rcases s with ⟨a, b⟩
-      have hs : ((⟨a, b⟩ : ℂ) ^ 2).re = a * a - b * b := by
-        rw [pow_two, Complex.mul_re]
-      rw [Complex.normSq_apply, hs]
-      ring
-    have hnI : Integrable (fun s : ℂ => Complex.normSq s) standardComplexGaussianMeasure := by
-      simpa [standardComplexGaussianMeasure, pow_one] using integrable_normSq_pow_coordinate 1 1
-    have hreal2 := integral_re hi2
-    rw [hsecond'] at hreal2
-    have hreal2' : (∫ a : ℂ, (a ^ 2).re ∂standardComplexGaussianMeasure) = 0 := by
-      simpa using hreal2
-    have hadd := integral_sub hnI hi2.re
-    calc
-      (∫ s : ℂ, s.im ^ 2 ∂standardComplexGaussianMeasure) =
-          (∫ s : ℂ, (Complex.normSq s - (s ^ 2).re) / 2
-            ∂standardComplexGaussianMeasure) := by
-              apply integral_congr_ae
-              filter_upwards with s
-              exact hid s
-      _ = 1 / 2 := by
-        rw [integral_div]
-        rw [show (∫ a : ℂ, Complex.normSq a - (a ^ 2).re
-            ∂standardComplexGaussianMeasure) =
-          (∫ a : ℂ, Complex.normSq a ∂standardComplexGaussianMeasure) -
-            ∫ a : ℂ, (a ^ 2).re ∂standardComplexGaussianMeasure by simpa using hadd]
-        rw [hnorm, hreal2']
-        norm_num
+  · have h := hrot.integral_comp' (fun s : ℂ => s.re)
+    simpa [e, complexMulMeasurableEquiv, Complex.mul_re] using
+      h.trans standardComplexGaussian_real_moments.1
+  · have h := hrot.integral_comp' (fun s : ℂ => s.re ^ 2)
+    simpa [e, complexMulMeasurableEquiv, Complex.mul_re] using
+      h.trans standardComplexGaussian_real_moments.2
 
 private theorem coordinateSumLinear_gradient_const (n : ℕ) (L : ℂ →L[ℝ] ℝ)
     (z : Configuration n) :

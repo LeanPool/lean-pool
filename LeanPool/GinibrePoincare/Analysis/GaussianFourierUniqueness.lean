@@ -230,6 +230,27 @@ private theorem configurationFourierCharacter_neg {n : ℕ}
     ring]
   ring
 
+/-- An integrable complex function stays integrable after multiplication by a Fourier character. -/
+theorem integrable_mul_configurationFourierCharacter_of_integrable {n : ℕ}
+    {f : Configuration n → ℂ} (hf : Integrable f (complexGaussianMeasure n))
+    (t : Configuration n) :
+    Integrable (fun z ↦ f z * configurationFourierCharacter t z)
+      (complexGaussianMeasure n) := by
+  exact hf.mul_bdd (c := 1)
+    (continuous_configurationFourierCharacter t).aestronglyMeasurable
+    (Filter.Eventually.of_forall fun z ↦ by simp)
+
+/-- Vanishing Fourier tests also annihilate the conjugated L² representative. -/
+theorem integral_conj_mul_configurationFourierCharacter_eq_zero {n : ℕ}
+    (v : Lp ℂ 2 (complexGaussianMeasure n))
+    (hzero : ∀ t, gaussianL2FourierTest v t = 0) (t : Configuration n) :
+    (∫ z, conj (v z) * configurationFourierCharacter t z
+      ∂complexGaussianMeasure n) = 0 := by
+  have hn := congrArg conj (hzero (-t))
+  unfold gaussianL2FourierTest at hn
+  rw [← integral_conj] at hn
+  simpa only [map_mul, configurationFourierCharacter_neg, map_zero] using hn
+
 theorem integral_re_mul_configurationFourierCharacter_eq_zero {n : ℕ}
     (v : Lp ℂ 2 (complexGaussianMeasure n))
     (hzero : ∀ t, gaussianL2FourierTest v t = 0)
@@ -237,22 +258,14 @@ theorem integral_re_mul_configurationFourierCharacter_eq_zero {n : ℕ}
     (∫ z, ((v z).re : ℂ) * configurationFourierCharacter t z
       ∂complexGaussianMeasure n) = 0 := by
   have hp := hzero t
-  have hn := congrArg conj (hzero (-t))
-  unfold gaussianL2FourierTest at hp hn
-  rw [← integral_conj] at hn
-  have hn' : (∫ z, conj (v z) * configurationFourierCharacter t z
-      ∂complexGaussianMeasure n) = 0 := by
-    simpa only [map_mul, configurationFourierCharacter_neg, map_zero] using hn
+  unfold gaussianL2FourierTest at hp
+  have hn' := integral_conj_mul_configurationFourierCharacter_eq_zero v hzero t
   have hvInt := integrable_mul_configurationFourierCharacter v t
-  have hvL1 : Integrable (fun z ↦ v z) (complexGaussianMeasure n) :=
-    (Lp.memLp v).integrable (by norm_num : (1 : ℝ≥0∞) ≤ 2)
-  have hcv : Integrable (fun z ↦ conj (v z)) (complexGaussianMeasure n) :=
-    Complex.conjCLE.toContinuousLinearMap.integrable_comp hvL1
-  have hcvInt : Integrable (fun z ↦ conj (v z) *
-      configurationFourierCharacter t z) (complexGaussianMeasure n) :=
-    hcv.mul_bdd (c := 1)
-      (continuous_configurationFourierCharacter t).aestronglyMeasurable
-      (Filter.Eventually.of_forall fun z ↦ by simp)
+  have hcvInt : Integrable (fun z ↦ conj (v z) * configurationFourierCharacter t z)
+      (complexGaussianMeasure n) :=
+    integrable_mul_configurationFourierCharacter_of_integrable
+      (Complex.conjCLE.toContinuousLinearMap.integrable_comp
+        ((Lp.memLp v).integrable (by norm_num : (1 : ℝ≥0∞) ≤ 2))) t
   rw [show (fun z ↦ ((v z).re : ℂ) * configurationFourierCharacter t z) =
       fun z ↦ (v z * configurationFourierCharacter t z +
         conj (v z) * configurationFourierCharacter t z) / 2 by
@@ -268,22 +281,14 @@ theorem integral_im_mul_configurationFourierCharacter_eq_zero {n : ℕ}
     (∫ z, ((v z).im : ℂ) * configurationFourierCharacter t z
       ∂complexGaussianMeasure n) = 0 := by
   have hp := hzero t
-  have hn := congrArg conj (hzero (-t))
-  unfold gaussianL2FourierTest at hp hn
-  rw [← integral_conj] at hn
-  have hn' : (∫ z, conj (v z) * configurationFourierCharacter t z
-      ∂complexGaussianMeasure n) = 0 := by
-    simpa only [map_mul, configurationFourierCharacter_neg, map_zero] using hn
+  unfold gaussianL2FourierTest at hp
+  have hn' := integral_conj_mul_configurationFourierCharacter_eq_zero v hzero t
   have hvInt := integrable_mul_configurationFourierCharacter v t
-  have hvL1 : Integrable (fun z ↦ v z) (complexGaussianMeasure n) :=
-    (Lp.memLp v).integrable (by norm_num : (1 : ℝ≥0∞) ≤ 2)
-  have hcv : Integrable (fun z ↦ conj (v z)) (complexGaussianMeasure n) :=
-    Complex.conjCLE.toContinuousLinearMap.integrable_comp hvL1
-  have hcvInt : Integrable (fun z ↦ conj (v z) *
-      configurationFourierCharacter t z) (complexGaussianMeasure n) :=
-    hcv.mul_bdd (c := 1)
-      (continuous_configurationFourierCharacter t).aestronglyMeasurable
-      (Filter.Eventually.of_forall fun z ↦ by simp)
+  have hcvInt : Integrable (fun z ↦ conj (v z) * configurationFourierCharacter t z)
+      (complexGaussianMeasure n) :=
+    integrable_mul_configurationFourierCharacter_of_integrable
+      (Complex.conjCLE.toContinuousLinearMap.integrable_comp
+        ((Lp.memLp v).integrable (by norm_num : (1 : ℝ≥0∞) ≤ 2))) t
   rw [show (fun z ↦ ((v z).im : ℂ) * configurationFourierCharacter t z) =
       fun z ↦ (v z * configurationFourierCharacter t z -
         conj (v z) * configurationFourierCharacter t z) / (2 * Complex.I) by
@@ -299,115 +304,117 @@ private theorem integrable_ofReal_mul_configurationFourierCharacter {n : ℕ}
     (hf : Integrable f (complexGaussianMeasure n)) (t : Configuration n) :
     Integrable (fun z ↦ (f z : ℂ) * configurationFourierCharacter t z)
       (complexGaussianMeasure n) := by
-  exact hf.ofReal.mul_bdd (c := 1)
-    (continuous_configurationFourierCharacter t).aestronglyMeasurable
-    (Filter.Eventually.of_forall fun z ↦ by simp)
+  exact integrable_mul_configurationFourierCharacter_of_integrable hf.ofReal t
+
+/-- A real integrable density with zero Fourier integrals has equal positive/negative tests. -/
+theorem charFun_gaussian_density_parts_eq_of_fourier_integrals_eq_zero {n : ℕ}
+    (f : Configuration n → ℝ) (hf : Integrable f (complexGaussianMeasure n))
+    (hzero : ∀ t, (∫ z, (f z : ℂ) * configurationFourierCharacter t z
+      ∂complexGaussianMeasure n) = 0) :
+    charFun (((complexGaussianMeasure n).withDensity
+      (fun z ↦ ENNReal.ofReal (max (f z) 0))).map (configurationEuclideanEquiv n)) =
+    charFun (((complexGaussianMeasure n).withDensity
+      (fun z ↦ ENNReal.ofReal (max (-(f z)) 0))).map (configurationEuclideanEquiv n)) := by
+  funext x
+  have hneg : Integrable (fun z ↦ max (-(f z)) 0) (complexGaussianMeasure n) :=
+    integrable_max_zero hf.neg
+  rw [charFun_map_gaussian_withDensity _ (fun _ ↦ le_max_right _ _)
+      (integrable_max_zero hf),
+    charFun_map_gaussian_withDensity _ (fun _ ↦ le_max_right _ _) hneg, ← sub_eq_zero]
+  rw [← integral_sub
+    (integrable_ofReal_mul_configurationFourierCharacter (integrable_max_zero hf) _)
+    (integrable_ofReal_mul_configurationFourierCharacter hneg _)]
+  convert hzero ((configurationEuclideanEquiv n).symm x) using 1
+  apply integral_congr_ae
+  filter_upwards with z
+  rw [← sub_mul]
+  norm_cast
+  rw [max_zero_sub_max_neg_zero_eq_self]
+
+/-- Fourier uniqueness identifies the positive and negative measures of an integrable density. -/
+theorem gaussian_density_parts_eq_of_fourier_integrals_eq_zero {n : ℕ}
+    (f : Configuration n → ℝ) (hf : Integrable f (complexGaussianMeasure n))
+    (hzero : ∀ t, (∫ z, (f z : ℂ) * configurationFourierCharacter t z
+      ∂complexGaussianMeasure n) = 0) :
+    (complexGaussianMeasure n).withDensity (fun z ↦ ENNReal.ofReal (max (f z) 0)) =
+      (complexGaussianMeasure n).withDensity (fun z ↦ ENNReal.ofReal (max (-(f z)) 0)) := by
+  let : IsFiniteMeasure ((complexGaussianMeasure n).withDensity
+      (fun z ↦ ENNReal.ofReal (max (f z) 0))) :=
+    isFiniteMeasure_withDensity_ofReal (integrable_max_zero hf).hasFiniteIntegral
+  let : IsFiniteMeasure ((complexGaussianMeasure n).withDensity
+      (fun z ↦ ENNReal.ofReal (max (-(f z)) 0))) :=
+    isFiniteMeasure_withDensity_ofReal (integrable_max_zero hf.neg).hasFiniteIntegral
+  apply (configurationEuclideanEquiv
+    n).toHomeomorph.toMeasurableEquiv.measurableEmbedding.map_injective
+  exact Measure.ext_of_charFun
+    (charFun_gaussian_density_parts_eq_of_fourier_integrals_eq_zero f hf hzero)
+
+/-- Vanishing Fourier integrals force an arbitrary real integrable Gaussian density to vanish. -/
+theorem ae_eq_zero_of_gaussian_fourier_integrals_eq_zero {n : ℕ}
+    (f : Configuration n → ℝ) (hf : Integrable f (complexGaussianMeasure n))
+    (hzero : ∀ t, (∫ z, (f z : ℂ) * configurationFourierCharacter t z
+      ∂complexGaussianMeasure n) = 0) :
+    ∀ᵐ z ∂complexGaussianMeasure n, f z = 0 := by
+  have heq := gaussian_density_parts_eq_of_fourier_integrals_eq_zero f hf hzero
+  have hdens := (withDensity_eq_iff_of_sigmaFinite
+    (integrable_max_zero hf).aemeasurable.ennreal_ofReal
+    (integrable_max_zero hf.neg).aemeasurable.ennreal_ofReal).mp heq
+  filter_upwards [hdens] with z hz
+  have hm : max (f z) 0 = max (-(f z)) 0 :=
+    (ENNReal.ofReal_eq_ofReal_iff (le_max_right _ _) (le_max_right _ _)).mp hz
+  have hsub := max_zero_sub_max_neg_zero_eq_self (f z)
+  rw [hm, sub_self] at hsub
+  exact hsub.symm
 
 theorem charFun_euclideanRealParts_eq_of_fourierTest_eq_zero {n : ℕ}
     (v : Lp ℂ 2 (complexGaussianMeasure n))
     (hzero : ∀ t, gaussianL2FourierTest v t = 0) :
     charFun (euclideanRealPartPositiveMeasure v) =
       charFun (euclideanRealPartNegativeMeasure v) := by
-  funext x
-  have hneg : Integrable (fun z ↦ max (-(v z).re) 0)
-      (complexGaussianMeasure n) := by
-    simpa only [Pi.neg_apply] using integrable_max_zero (integrable_re_Lp_two v).neg
-  rw [charFun_euclideanRealPartPositiveMeasure,
-    charFun_euclideanRealPartNegativeMeasure, ← sub_eq_zero]
-  rw [← integral_sub
-    (integrable_ofReal_mul_configurationFourierCharacter
-      (integrable_max_zero (integrable_re_Lp_two v)) _)
-    (integrable_ofReal_mul_configurationFourierCharacter
-      hneg _)]
-  convert integral_re_mul_configurationFourierCharacter_eq_zero v hzero
-    ((configurationEuclideanEquiv n).symm x) using 1
-  apply integral_congr_ae
-  filter_upwards with z
-  rw [← sub_mul]
-  norm_cast
-  rw [max_zero_sub_max_neg_zero_eq_self]
+  exact charFun_gaussian_density_parts_eq_of_fourier_integrals_eq_zero
+    (fun z ↦ (v z).re) (integrable_re_Lp_two v)
+    (integral_re_mul_configurationFourierCharacter_eq_zero v hzero)
 
 theorem charFun_euclideanImagParts_eq_of_fourierTest_eq_zero {n : ℕ}
     (v : Lp ℂ 2 (complexGaussianMeasure n))
     (hzero : ∀ t, gaussianL2FourierTest v t = 0) :
     charFun (euclideanImagPartPositiveMeasure v) =
       charFun (euclideanImagPartNegativeMeasure v) := by
-  funext x
-  have hneg : Integrable (fun z ↦ max (-(v z).im) 0)
-      (complexGaussianMeasure n) := by
-    simpa only [Pi.neg_apply] using integrable_max_zero (integrable_im_Lp_two v).neg
-  rw [charFun_euclideanImagPartPositiveMeasure,
-    charFun_euclideanImagPartNegativeMeasure, ← sub_eq_zero]
-  rw [← integral_sub
-    (integrable_ofReal_mul_configurationFourierCharacter
-      (integrable_max_zero (integrable_im_Lp_two v)) _)
-    (integrable_ofReal_mul_configurationFourierCharacter
-      hneg _)]
-  convert integral_im_mul_configurationFourierCharacter_eq_zero v hzero
-    ((configurationEuclideanEquiv n).symm x) using 1
-  apply integral_congr_ae
-  filter_upwards with z
-  rw [← sub_mul]
-  norm_cast
-  rw [max_zero_sub_max_neg_zero_eq_self]
+  exact charFun_gaussian_density_parts_eq_of_fourier_integrals_eq_zero
+    (fun z ↦ (v z).im) (integrable_im_Lp_two v)
+    (integral_im_mul_configurationFourierCharacter_eq_zero v hzero)
 
 theorem gaussianRealPartPositiveMeasure_eq_negative_of_fourierTest_eq_zero {n : ℕ}
     (v : Lp ℂ 2 (complexGaussianMeasure n))
     (hzero : ∀ t, gaussianL2FourierTest v t = 0) :
     gaussianRealPartPositiveMeasure v = gaussianRealPartNegativeMeasure v := by
-  let : IsFiniteMeasure (gaussianRealPartPositiveMeasure v) :=
-    isFiniteMeasure_gaussianRealPartPositiveMeasure v
-  let : IsFiniteMeasure (gaussianRealPartNegativeMeasure v) :=
-    isFiniteMeasure_gaussianRealPartNegativeMeasure v
-  apply (configurationEuclideanEquiv
-    n).toHomeomorph.toMeasurableEquiv.measurableEmbedding.map_injective
-  exact Measure.ext_of_charFun
-    (charFun_euclideanRealParts_eq_of_fourierTest_eq_zero v hzero)
+  exact gaussian_density_parts_eq_of_fourier_integrals_eq_zero
+    (fun z ↦ (v z).re) (integrable_re_Lp_two v)
+    (integral_re_mul_configurationFourierCharacter_eq_zero v hzero)
 
 theorem gaussianImagPartPositiveMeasure_eq_negative_of_fourierTest_eq_zero {n : ℕ}
     (v : Lp ℂ 2 (complexGaussianMeasure n))
     (hzero : ∀ t, gaussianL2FourierTest v t = 0) :
     gaussianImagPartPositiveMeasure v = gaussianImagPartNegativeMeasure v := by
-  let : IsFiniteMeasure (gaussianImagPartPositiveMeasure v) :=
-    isFiniteMeasure_gaussianImagPartPositiveMeasure v
-  let : IsFiniteMeasure (gaussianImagPartNegativeMeasure v) :=
-    isFiniteMeasure_gaussianImagPartNegativeMeasure v
-  apply (configurationEuclideanEquiv
-    n).toHomeomorph.toMeasurableEquiv.measurableEmbedding.map_injective
-  exact Measure.ext_of_charFun
-    (charFun_euclideanImagParts_eq_of_fourierTest_eq_zero v hzero)
+  exact gaussian_density_parts_eq_of_fourier_integrals_eq_zero
+    (fun z ↦ (v z).im) (integrable_im_Lp_two v)
+    (integral_im_mul_configurationFourierCharacter_eq_zero v hzero)
 
 theorem ae_re_eq_zero_of_fourierTest_eq_zero {n : ℕ}
     (v : Lp ℂ 2 (complexGaussianMeasure n))
     (hzero : ∀ t, gaussianL2FourierTest v t = 0) :
     ∀ᵐ z ∂complexGaussianMeasure n, (v z).re = 0 := by
-  have heq := gaussianRealPartPositiveMeasure_eq_negative_of_fourierTest_eq_zero v hzero
-  unfold gaussianRealPartPositiveMeasure gaussianRealPartNegativeMeasure at heq
-  have hdens := (withDensity_eq_iff_of_sigmaFinite
-    (integrable_max_zero (integrable_re_Lp_two v)).aemeasurable.ennreal_ofReal
-    (integrable_max_zero (integrable_re_Lp_two v).neg).aemeasurable.ennreal_ofReal).mp heq
-  filter_upwards [hdens] with z hz
-  have hm : max (v z).re 0 = max (-(v z).re) 0 :=
-    (ENNReal.ofReal_eq_ofReal_iff (le_max_right _ _) (le_max_right _ _)).mp hz
-  have hsub := max_zero_sub_max_neg_zero_eq_self ((v z).re)
-  rw [hm, sub_self] at hsub
-  exact hsub.symm
+  exact ae_eq_zero_of_gaussian_fourier_integrals_eq_zero
+    (fun z ↦ (v z).re) (integrable_re_Lp_two v)
+    (integral_re_mul_configurationFourierCharacter_eq_zero v hzero)
 
 theorem ae_im_eq_zero_of_fourierTest_eq_zero {n : ℕ}
     (v : Lp ℂ 2 (complexGaussianMeasure n))
     (hzero : ∀ t, gaussianL2FourierTest v t = 0) :
     ∀ᵐ z ∂complexGaussianMeasure n, (v z).im = 0 := by
-  have heq := gaussianImagPartPositiveMeasure_eq_negative_of_fourierTest_eq_zero v hzero
-  unfold gaussianImagPartPositiveMeasure gaussianImagPartNegativeMeasure at heq
-  have hdens := (withDensity_eq_iff_of_sigmaFinite
-    (integrable_max_zero (integrable_im_Lp_two v)).aemeasurable.ennreal_ofReal
-    (integrable_max_zero (integrable_im_Lp_two v).neg).aemeasurable.ennreal_ofReal).mp heq
-  filter_upwards [hdens] with z hz
-  have hm : max (v z).im 0 = max (-(v z).im) 0 :=
-    (ENNReal.ofReal_eq_ofReal_iff (le_max_right _ _) (le_max_right _ _)).mp hz
-  have hsub := max_zero_sub_max_neg_zero_eq_self ((v z).im)
-  rw [hm, sub_self] at hsub
-  exact hsub.symm
+  exact ae_eq_zero_of_gaussian_fourier_integrals_eq_zero
+    (fun z ↦ (v z).im) (integrable_im_Lp_two v)
+    (integral_im_mul_configurationFourierCharacter_eq_zero v hzero)
 
 theorem eq_zero_of_gaussianL2FourierTest_eq_zero {n : ℕ}
     (v : Lp ℂ 2 (complexGaussianMeasure n))

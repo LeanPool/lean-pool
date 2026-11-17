@@ -174,30 +174,32 @@ theorem integral_realCoordinateGaussian_eq_density {n : ℕ} (hn : 0 < n)
   · exact Filter.Eventually.of_forall fun x ↦
       ProbabilityTheory.gaussianPDF_lt_top
 
+/-- Gaussian integrability suffices for density-weighted Lebesgue integrability. -/
+theorem integrable_mul_realCoordinateDensity_of_gaussian_integrable
+    {n : ℕ} (hn : 0 < n) {f : ℝ → ℂ}
+    (hf : Integrable f (realCoordinateGaussianProbability n : Measure ℝ)) :
+    Integrable (fun x ↦ f x * realCoordinateDensity n x) := by
+  rw [realCoordinateGaussianMeasure_eq_withDensity hn] at hf
+  have h := (integrable_withDensity_iff_integrable_smul'
+    (ProbabilityTheory.measurable_gaussianPDF 0 (realCoordinateVariance n))
+    (Filter.Eventually.of_forall fun x ↦
+      ProbabilityTheory.gaussianPDF_lt_top)).mp hf
+  apply h.congr
+  filter_upwards with x
+  rw [realCoordinateGaussianPDF_formula hn,
+    ENNReal.toReal_ofReal (by positivity)]
+  simp only [Complex.real_smul, realCoordinateDensity, mul_comm]
+
+/-- Compatibility interface retaining the former independent measurability premise. -/
 theorem integrable_mul_realCoordinateDensity_of_integrable
     {n : ℕ} (hn : 0 < n) {f : ℝ → ℂ}
     (hfm : AEStronglyMeasurable f)
     (hf : Integrable f (realCoordinateGaussianProbability n : Measure ℝ)) :
     Integrable (fun x ↦ f x * realCoordinateDensity n x) := by
-  rw [realCoordinateGaussianMeasure_eq_withDensity hn] at hf
-  have h := (integrable_withDensity_iff
-    (ProbabilityTheory.measurable_gaussianPDF 0 (realCoordinateVariance n))
-    (Filter.Eventually.of_forall fun x ↦
-      ProbabilityTheory.gaussianPDF_lt_top)).mp hf.norm
-  apply (integrable_norm_iff
+  exact (integrable_norm_iff
     (hfm.mul ((Complex.continuous_ofReal.comp
       (continuous_realCoordinateDensity n)).aestronglyMeasurable))).mp
-  apply h.congr
-  filter_upwards with x
-  rw [realCoordinateGaussianPDF_formula hn,
-    ENNReal.toReal_ofReal (by positivity)]
-  change ‖f x‖ * realCoordinateDensity n x =
-    ‖f x * (realCoordinateDensity n x : ℂ)‖
-  have hd : 0 ≤ realCoordinateDensity n x := by
-    unfold realCoordinateDensity
-    positivity
-  rw [norm_mul]
-  simp [abs_of_nonneg hd]
+    (integrable_mul_realCoordinateDensity_of_gaussian_integrable hn hf).norm
 
 /-- Gaussian-measure form of the non-compactly-supported integration by
 parts theorem. -/
@@ -247,17 +249,13 @@ theorem realGaussianIntegrationByParts_of_gaussian_integrable
         ∂(realCoordinateGaussianProbability n : Measure ℝ) := by
   apply realGaussianIntegrationByParts_of_integrable hn
     (hf.differentiable (by norm_num))
-  · exact integrable_mul_realCoordinateDensity_of_integrable hn
-      (hf.continuous_deriv le_rfl).aestronglyMeasurable hfdi
-  · have h := (integrable_mul_realCoordinateDensity_of_integrable hn
-        ((Complex.continuous_ofReal.mul hf.continuous).aestronglyMeasurable) hxfi).const_mul
+  · exact integrable_mul_realCoordinateDensity_of_gaussian_integrable hn hfdi
+  · have h := (integrable_mul_realCoordinateDensity_of_gaussian_integrable hn hxfi).const_mul
         ((-2 * (n : ℝ) : ℝ) : ℂ)
     exact h.congr (Filter.Eventually.of_forall fun x ↦ by
-      simp only [Pi.mul_apply]
       push_cast
       ring)
-  · exact integrable_mul_realCoordinateDensity_of_integrable hn
-      hf.continuous.aestronglyMeasurable hfi
+  · exact integrable_mul_realCoordinateDensity_of_gaussian_integrable hn hfi
 
 end
 

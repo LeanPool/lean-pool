@@ -541,15 +541,15 @@ theorem fderiv_gaussianWeight_apply {n : ℕ} (z v : Configuration n) :
   rw [hexp.fderiv]
   simp only [smul_apply, smul_eq_mul]
 
-/-- Real-coordinate derivative of the Gaussian factor. -/
-theorem fderiv_gaussianWeight_realCoordinate {n : ℕ}
-    (z : Configuration n) (j : Fin n) :
-    fderiv ℝ (gaussianWeight n) z (realCoordinateDirection j) =
-      -2 * n * (z j).re * gaussianWeight n z := by
+/-- Gaussian derivative along an arbitrary complex coordinate direction. -/
+theorem fderiv_gaussianWeight_apply_coordinateDirection {n : ℕ}
+    (z : Configuration n) (j : Fin n) (w : ℂ) :
+    fderiv ℝ (gaussianWeight n) z (coordinateDirection j w) =
+      -2 * (n : ℝ) * (conj (z j) * w).re * gaussianWeight n z := by
   rw [fderiv_gaussianWeight_apply, fderiv_configurationNormSq_apply]
-  simp only [realCoordinateDirection, coordinateDirection]
-  rw [show (∑ x : Fin n, (conj (z x) * if x = j then 1 else 0).re) =
-      (z j).re by
+  simp only [coordinateDirection]
+  rw [show (∑ x : Fin n, (conj (z x) * if x = j then w else 0).re) =
+      (conj (z j) * w).re by
     rw [Finset.sum_eq_single j]
     · simp
     · intro b hb hbj
@@ -557,21 +557,21 @@ theorem fderiv_gaussianWeight_realCoordinate {n : ℕ}
     · simp]
   ring
 
+/-- Real-coordinate derivative of the Gaussian factor. -/
+theorem fderiv_gaussianWeight_realCoordinate {n : ℕ}
+    (z : Configuration n) (j : Fin n) :
+    fderiv ℝ (gaussianWeight n) z (realCoordinateDirection j) =
+      -2 * n * (z j).re * gaussianWeight n z := by
+  simpa [realCoordinateDirection] using
+    fderiv_gaussianWeight_apply_coordinateDirection z j 1
+
 /-- Imaginary-coordinate derivative of the Gaussian factor. -/
 theorem fderiv_gaussianWeight_imaginaryCoordinate {n : ℕ}
     (z : Configuration n) (j : Fin n) :
     fderiv ℝ (gaussianWeight n) z (imaginaryCoordinateDirection j) =
       -2 * n * (z j).im * gaussianWeight n z := by
-  rw [fderiv_gaussianWeight_apply, fderiv_configurationNormSq_apply]
-  simp only [imaginaryCoordinateDirection, coordinateDirection]
-  rw [show (∑ x : Fin n, (conj (z x) * if x = j then Complex.I else 0).re) =
-      (z j).im by
-    rw [Finset.sum_eq_single j]
-    · simp [Complex.mul_re]
-    · intro b hb hbj
-      simp [hbj]
-    · simp]
-  ring
+  simpa [imaginaryCoordinateDirection, Complex.mul_re] using
+    fderiv_gaussianWeight_apply_coordinateDirection z j Complex.I
 
 /-- Collision-free logarithmic derivative of the Vandermonde weight. -/
 theorem fderiv_vandermondeWeight_apply_coordinateDirection {n : ℕ}
@@ -766,13 +766,13 @@ private theorem differentiableAt_gaussianWeight (n : ℕ)
           contDiff_configurationNormSq).neg.exp)
   exact (h.differentiable (by simp)).differentiableAt
 
-/-- Real-coordinate logarithmic derivative of the full Ginibre Lebesgue
-density. -/
-theorem fderiv_ginibreLebesgueDensityReal_realCoordinate {n : ℕ}
-    (hn : 0 < n) (z : Configuration n) (hz : CollisionFree z) (j : Fin n) :
-    fderiv ℝ (ginibreLebesgueDensityReal n) z (realCoordinateDirection j) =
-      -(n : ℝ) * ginibreLebesgueDensityReal n z *
-        ginibreRealDriftCoordinate n j z := by
+/-- Full Ginibre density derivative along an arbitrary complex coordinate direction. -/
+theorem fderiv_ginibreLebesgueDensityReal_apply_coordinateDirection {n : ℕ}
+    (z : Configuration n) (hz : CollisionFree z) (j : Fin n) (w : ℂ) :
+    fderiv ℝ (ginibreLebesgueDensityReal n) z (coordinateDirection j w) =
+      ginibreLebesgueDensityReal n z *
+        (-2 * (n : ℝ) * (conj (z j) * w).re +
+          2 * (∑ k ∈ Finset.univ.erase j, w / (z j - z k)).re) := by
   unfold ginibreLebesgueDensityReal
   rw [show (fun y : Configuration n =>
       (n / Real.pi) ^ n * vandermondeWeight y * gaussianWeight n y) =
@@ -787,10 +787,20 @@ theorem fderiv_ginibreLebesgueDensityReal_realCoordinate {n : ℕ}
   rw [fderiv_mul (differentiableAt_vandermondeWeight z)
     (differentiableAt_gaussianWeight n z)]
   simp only [smul_apply, add_apply, smul_eq_mul]
-  change _ * (_ * fderiv ℝ (gaussianWeight n) z (realCoordinateDirection j) +
-    _ * fderiv ℝ vandermondeWeight z (coordinateDirection j 1)) = _
-  rw [fderiv_vandermondeWeight_apply_coordinateDirection z hz j 1,
-    fderiv_gaussianWeight_realCoordinate]
+  rw [fderiv_vandermondeWeight_apply_coordinateDirection z hz j w,
+    fderiv_gaussianWeight_apply_coordinateDirection]
+  ring
+
+/-- Real-coordinate logarithmic derivative of the full Ginibre Lebesgue
+density. -/
+theorem fderiv_ginibreLebesgueDensityReal_realCoordinate {n : ℕ}
+    (hn : 0 < n) (z : Configuration n) (hz : CollisionFree z) (j : Fin n) :
+    fderiv ℝ (ginibreLebesgueDensityReal n) z (realCoordinateDirection j) =
+      -(n : ℝ) * ginibreLebesgueDensityReal n z *
+        ginibreRealDriftCoordinate n j z := by
+  rw [realCoordinateDirection,
+    fderiv_ginibreLebesgueDensityReal_apply_coordinateDirection z hz j 1]
+  simp only [mul_one, Complex.conj_re]
   simp_rw [one_div]
   unfold ginibreRealDriftCoordinate
   have hs : (∑ k ∈ Finset.univ.erase j, (z j - z k)⁻¹).re =
@@ -808,24 +818,10 @@ theorem fderiv_ginibreLebesgueDensityReal_imaginaryCoordinate {n : ℕ}
     fderiv ℝ (ginibreLebesgueDensityReal n) z (imaginaryCoordinateDirection j) =
       -(n : ℝ) * ginibreLebesgueDensityReal n z *
         ginibreImagDriftCoordinate n j z := by
-  unfold ginibreLebesgueDensityReal
-  rw [show (fun y : Configuration n =>
-      (n / Real.pi) ^ n * vandermondeWeight y * gaussianWeight n y) =
-      fun y => (n / Real.pi) ^ n *
-        (vandermondeWeight y * gaussianWeight n y) by funext y; ring]
-  change fderiv ℝ (fun y : Configuration n =>
-    (n / Real.pi) ^ n *
-      ((vandermondeWeight : Configuration n → ℝ) * gaussianWeight n) y) z _ = _
-  rw [fderiv_const_mul
-    ((differentiableAt_vandermondeWeight z).mul
-      (differentiableAt_gaussianWeight n z))]
-  rw [fderiv_mul (differentiableAt_vandermondeWeight z)
-    (differentiableAt_gaussianWeight n z)]
-  simp only [smul_apply, add_apply, smul_eq_mul]
-  change _ * (_ * fderiv ℝ (gaussianWeight n) z (imaginaryCoordinateDirection j) +
-    _ * fderiv ℝ vandermondeWeight z (coordinateDirection j Complex.I)) = _
-  rw [fderiv_vandermondeWeight_apply_coordinateDirection z hz j Complex.I,
-    fderiv_gaussianWeight_imaginaryCoordinate]
+  rw [imaginaryCoordinateDirection,
+    fderiv_ginibreLebesgueDensityReal_apply_coordinateDirection z hz j Complex.I]
+  simp only [Complex.mul_re, Complex.conj_re, Complex.I_re, mul_zero,
+    Complex.conj_im, Complex.I_im, mul_one, zero_sub, neg_neg]
   simp_rw [div_eq_mul_inv]
   unfold ginibreImagDriftCoordinate
   have hs : (∑ k ∈ Finset.univ.erase j,
