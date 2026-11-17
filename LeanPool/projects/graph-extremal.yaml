@@ -1,0 +1,47 @@
+authors:
+- Brian Sanders
+license: Apache-2.0
+status: verified
+provenance: AI
+provenance_evidence: 'Proposal #721 and upstream commit metadata identify human-directed AI-written proofs;
+  the source headers credit Brian Sanders. Port and optimization by Codex.'
+branch: combinatorics
+msc:
+- 05C55
+- 05D10
+slug: graph-extremal
+title: Weight shifting and extremal graph theory
+summary: General convex weight shifting on nonedges, attained Motzkin–Straus and weighted Zykov bounds,
+  finite bipartite matching-cover duality, lexicographic graph products and Paley graphs with strong
+  regularity, clique bounds and diameter two.
+entry_module: LeanPool.GraphExtremal
+source:
+  title: Weight shifting and extremal graph theory
+  authors:
+  - Brian Sanders
+  url: https://github.com/Egly443/lean-graph-extremal
+  github_repo: Egly443/lean-graph-extremal
+  commit: cdd96c43e8cb0a95eba37eeaf8bf3ecf0e93baf9
+main_declarations:
+- SimpleGraph.exists_isClique_support_le
+- SimpleGraph.cliqueWeight_le_choose_mul
+- SimpleGraph.paleyGraph_isSRGWith
+main_results:
+- declaration: SimpleGraph.exists_isClique_support_le
+  informal: A nonnegative weighting is dominated by one supported on a clique for functions convex
+    along nonedge directions.
+  source_ref: 'Upstream lean-graph-extremal at cdd96c43e8cb0a95eba37eeaf8bf3ecf0e93baf9; proposed
+    in #721 in the comment of 2026-10-31T14:28:18Z.'
+- declaration: SimpleGraph.cliqueWeight_le_choose_mul
+  informal: Weighted Zykov bounds control every clique count in a clique-free graph.
+  source_ref: 'Upstream lean-graph-extremal at cdd96c43e8cb0a95eba37eeaf8bf3ecf0e93baf9; proposed
+    in #721 in the comment of 2026-10-31T14:28:18Z.'
+- declaration: SimpleGraph.paleyGraph_isSRGWith
+  informal: A finite-field Paley graph has the classical strongly regular parameters under the stated
+    characteristic and square conditions.
+  source_ref: 'Upstream lean-graph-extremal at cdd96c43e8cb0a95eba37eeaf8bf3ecf0e93baf9; proposed
+    in #721 in the comment of 2026-10-31T14:28:18Z.'
+tags:
+- extremal-graph-theory
+- weight-shifting
+- paley-graphs
