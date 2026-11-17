@@ -7,7 +7,7 @@ Authors: Moritz Firsching
 module
 
 -- Preserve the original explicit public re-export.
-public import LeanPool.Zeta5Irrational.Growth.TablePrime -- shake: keep
+public import LeanPool.Zeta5Irrational.Growth.TablePrime
 public import LeanPool.Zeta5Irrational.Growth.InnerTable.ThreeToSeven
 public import LeanPool.Zeta5Irrational.Growth.InnerTable.SevenToEleven
 public import LeanPool.Zeta5Irrational.Growth.InnerTable.ElevenToFifteen
