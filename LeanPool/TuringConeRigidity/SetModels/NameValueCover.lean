@@ -9,6 +9,7 @@ Adapted for Lean Pool from bjoernkjoshanssen/tt-
 auto/OAI/Computability/DegreeRigidity/SetModels/NameValueCover.lean.
 Module paths, interfaces, and proofs are ported to the pool's toolchain and gates.
 Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream port repairs.
+The shared cover construction also adapts upstream Constructibility/UniformNameValueCover.lean.
 -/
 
 module
@@ -72,14 +73,15 @@ theorem val_mem_coverName (W : ZFSet.{u})
   exact Name.val_eq_of_encode_eq (label c) (label_injective c) G _ b ((coverChild_code W hW
     i).trans hi)
 
-variable [Preorder (Conditions c)]
-
-theorem internal_name_value_cover (M : ZFSet.{u}) (hM : Transitive M)
+/-- One encoded name covers all names whose codes lie in `W`,
+under any valuation containing `p`. -/
+theorem name_value_cover_for_condition (M : ZFSet.{u}) (hM : Transitive M)
     (hP : Pairing M) (hU : BoundedSetTheory.Union M) (hPow : PowerSet M)
     (hS : SigmaSeparation M) (hR : SigmaReplacement M) (hI : Infinity M) (hc : c ∈ M)
-    {W : ZFSet.{u}} (hW : W ∈ M) (G : GenericFilter (Conditions c)) :
+    {W : ZFSet.{u}} (hW : W ∈ M) (p : Conditions c) :
     ∃ N : Name (Conditions c), N.encode (label c) ∈ M ∧
-      ∀ b : Name (Conditions c), b.encode (label c) ∈ W → b.val G.carrier ∈ N.val G.carrier := by
+      ∀ g : Set (Conditions c), p ∈ g → ∀ b : Name (Conditions c),
+        b.encode (label c) ∈ W → b.val g ∈ N.val g := by
   let V := ZFSet.sep (fun x => (NameValidity.Code.valid 1 0).Realize M (cons x (fun _ => c))) W
   have hV : V ∈ M := sigma_sep_mem M hM hS (NameValidity.Code.valid 1 0) (fun _ => c) (fun _ =>
     hc) hW
@@ -90,15 +92,26 @@ theorem internal_name_value_cover (M : ZFSet.{u}) (hM : Transitive M)
       (by intro i; cases i <;> assumption) 1 0
   have hvalid (x : ZFSet.{u}) (hx : x ∈ V) : ∃ a : Name (Conditions c), a.encode (label c) = x :=
     (valid x (hM V hV x hx)).mp (ZFSet.mem_sep.mp hx).2
-  obtain ⟨p,hp⟩ := G.nonempty
   have hN : (coverName V hvalid p).encode (label c) ∈ M := by
     rw [encode_coverName]
     exact product_mem M hM hP hU hPow hS.bounded hV
       (singleton_mem M hM hP (hM c hc _ (label_mem c p)))
   refine ⟨coverName V hvalid p,hN,?_⟩
-  intro b hb
-  apply val_mem_coverName V hvalid G.carrier p hp b
+  intro g ht b hb
+  apply val_mem_coverName V hvalid g p ht b
   exact ZFSet.mem_sep.mpr ⟨hb,(valid _ (hM W hW _ hb)).mpr ⟨b,rfl⟩⟩
+
+variable [Preorder (Conditions c)]
+
+theorem internal_name_value_cover (M : ZFSet.{u}) (hM : Transitive M)
+    (hP : Pairing M) (hU : BoundedSetTheory.Union M) (hPow : PowerSet M)
+    (hS : SigmaSeparation M) (hR : SigmaReplacement M) (hI : Infinity M) (hc : c ∈ M)
+    {W : ZFSet.{u}} (hW : W ∈ M) (G : GenericFilter (Conditions c)) :
+    ∃ N : Name (Conditions c), N.encode (label c) ∈ M ∧
+      ∀ b : Name (Conditions c), b.encode (label c) ∈ W → b.val G.carrier ∈ N.val G.carrier := by
+  obtain ⟨p,hp⟩ := G.nonempty
+  obtain ⟨N,hN,hNv⟩ := name_value_cover_for_condition M hM hP hU hPow hS hR hI hc hW p
+  exact ⟨N,hN,hNv G.carrier hp⟩
 
 end TuringRigidity.BoundedForcing
 
