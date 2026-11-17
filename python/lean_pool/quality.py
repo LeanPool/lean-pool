@@ -130,8 +130,21 @@ SUGGESTION_KEYWORDS = (
     "unfold",
     "variable",
 )
+# These parse `?` (and `!`) as separate tokens, so `simpa ? using h`,
+# `@[simps!?]` and `@[simps ?]` are the same calls as `simpa?` and `@[simps?]`.
+SEPARATE_SUFFIX_KEYWORDS = (
+    "initialize_simps_projections",
+    "observe",
+    "simpa",
+    "simps",
+    "to_additive",
+    "to_dual",
+)
 FORBIDDEN_SUGGESTIONS = re.compile(
-    r"(?<![\w.'!?«])(?:" + "|".join(SUGGESTION_KEYWORDS) + r")\?\??!?(?![\w'?!])"
+    r"(?<![\w.'!?«])(?:"
+    r"(?:" + "|".join(SUGGESTION_KEYWORDS) + r")\?\??!?"
+    r"|(?:" + "|".join(SEPARATE_SUFFIX_KEYWORDS) + r")\s*!?\s*\?!?"
+    r")(?![\w'?!])"
 )
 # Programmatic option manipulation is semantically `set_option` (banned below)
 # but invisible to that textual gate: PR #278 raised `maxRecDepth` from a
