@@ -169,28 +169,8 @@ theorem degreeOrder_mem (N : ZFSet.{u}) (hN : Transitive N)
     (R : ZFSet.{u}) (_hRM : R ∈ N)
     (hR : ∀ w ∈ R, ∃ B : Oracle, realCode B = w)
     (hD : degreeUniverse R ∈ N) : degreeOrder R ∈ N := by
-  have hz : natSet.{u} 0 ∈ N := hN _ hω _ ((mem_omega _).mpr ⟨0, rfl⟩)
-  obtain ⟨Q, hQM, _, hQ⟩ := internal_finite_natural_graph_bound N hN hP hU hPow hS hω
-  obtain ⟨φ, hφ⟩ := degree_order_bounded.{u}
-  let v := cons ZFSet.omega (cons Q (cons (natSet 0) (fun _ => degreeUniverse R)))
-  have hv : ∀ i, v i ∈ N := by
-    intro i
-    rcases i with _ | i
-    · exact hω
-    rcases i with _ | i
-    · exact hQM
-    rcases i with _ | i
-    · exact hz
-    exact hD
-  have hs := sep_mem N hN hS (Formula.degreeOrderMember φ 1 2 3 4 0) v hv
-    (product_mem N hN hP hU hPow hS hD hD)
-  have heq : ZFSet.sep (fun p => (Formula.degreeOrderMember φ 1 2 3 4 0).Eval (cons p v))
-      (ZFSet.prod (degreeUniverse R) (degreeUniverse R)) = degreeOrder R := by
-    apply ZFSet.ext
-    intro p
-    rw [ZFSet.mem_sep, Formula.degreeOrderMember_spec hφ 1 2 3 4 0 (cons p v) rfl hQ rfl R rfl hR]
-    exact ⟨And.right, fun h => ⟨(ZFSet.mem_sep.mp h).1, h⟩⟩
-  exact heq ▸ hs
+  exact BoundedSetTheory.internal_degreeOrder_of_degreeUniverse_mem
+    N hN hP hU hPow hS hω R hR hD
 
 /-- The actual inverse-join graph belongs to relative L(R), not merely a
 pointwise selection of representatives of its values. -/

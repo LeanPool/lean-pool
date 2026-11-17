@@ -37,16 +37,28 @@ theorem satisfactionSet_subset_product (A : ZFSet.{u}) :
     tupleCode (fun i => label A (v i)),
     (mem_tupleSpace A _).mpr ⟨n,_,fun i => label_mem A (v i),rfl⟩,rfl⟩
 
+/-- Closure under the explicit bounded model axioms and internal omega. -/
+theorem internal_certificate_bound_of_axioms (M A : ZFSet.{u}) (hM : Transitive M)
+    (hP : Pairing M) (hU : BoundedSetTheory.Union M) (hPow : PowerSet M)
+    (hS : Separation M) (hω : ZFSet.omega.{u} ∈ M) (hA : A ∈ M) :
+    ∃ Q ∈ M,
+      (∀ S, S ∈ Q ↔ S ∈ M ∧ S ⊆ ZFSet.prod ZFSet.omega (tupleSpace A)) ∧
+      ∀ ps : List SentenceForm, finiteSatisfaction A ps ∈ Q := by
+  obtain ⟨Q,hQ,hdef⟩ := internal_power M hM hPow
+    (product_mem M hM hP hU hPow hS
+      hω (tupleSpace_mem_of_axioms M A hM hP hU hPow hS hω hA))
+  refine ⟨Q,hQ,hdef,fun ps => (hdef _).mpr ⟨finiteSatisfaction_mem_of_axioms M A hM hP hU hPow
+    hS hω hA ps,?_⟩⟩
+  exact fun z hz => satisfactionSet_subset_product A (finiteSatisfaction_subset A ps hz)
+
+
 theorem internal_certificate_bound (M A : ZFSet.{u}) (hM : Transitive M)
     (hT : SourceT M) (hA : A ∈ M) :
     ∃ Q ∈ M,
       (∀ S, S ∈ Q ↔ S ∈ M ∧ S ⊆ ZFSet.prod ZFSet.omega (tupleSpace A)) ∧
       ∀ ps : List SentenceForm, finiteSatisfaction A ps ∈ Q := by
-  obtain ⟨Q,hQ,hdef⟩ := internal_power M hM hT.powerSet
-    (product_mem M hM hT.pairing hT.union hT.powerSet hT.separation.finitePrefix.bounded
-      (sourceT_omega_mem M hM hT) (tupleSpace_mem M A hM hT hA))
-  refine ⟨Q,hQ,hdef,fun ps => (hdef _).mpr ⟨finiteSatisfaction_mem M A hM hT hA ps,?_⟩⟩
-  exact fun z hz => satisfactionSet_subset_product A (finiteSatisfaction_subset A ps hz)
+  exact internal_certificate_bound_of_axioms M A hM hT.pairing hT.union hT.powerSet
+    hT.separation.finitePrefix.bounded (sourceT_omega_mem M hM hT) hA
 
 theorem satisfaction_iff_bounded_recursion (M A : ZFSet.{u}) (hM : Transitive M)
     (hT : SourceT M) (hA : A ∈ M) :

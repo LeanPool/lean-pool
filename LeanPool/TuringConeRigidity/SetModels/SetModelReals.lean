@@ -78,10 +78,11 @@ theorem realSet_oracleOf {x : ZFSet.{u}} (hx : x ⊆ ZFSet.omega) :
 /-- The oracles whose set representations belong to the model. -/
 def reals (M : ZFSet.{u}) : Set Oracle := {A | realSet A ∈ M}
 
-theorem internal_reals (M : ZFSet.{u}) (hM : Transitive M)
-    (hPow : PowerSet M) (hS : Separation M) (hI : Infinity M) :
+/-- Internal real codes need only transitivity, powerset closure and membership of omega. -/
+theorem internal_reals_of_omega_mem (M : ZFSet.{u}) (hM : Transitive M)
+    (hPow : PowerSet M) (hω : ZFSet.omega.{u} ∈ M) :
     ∃ r ∈ M, ∀ x, x ∈ r ↔ ∃ A ∈ reals M, x = realSet A := by
-  obtain ⟨r,hr,hrdef⟩ := internal_power M hM hPow (omega_mem M hM hS hI)
+  obtain ⟨r,hr,hrdef⟩ := internal_power M hM hPow hω
   refine ⟨r,hr,fun x => ?_⟩
   rw [hrdef]
   constructor
@@ -90,6 +91,12 @@ theorem internal_reals (M : ZFSet.{u}) (hM : Transitive M)
       (realSet_oracleOf hx).symm⟩
   · rintro ⟨A,hA,rfl⟩
     exact ⟨hA,realSet_subset A⟩
+
+
+theorem internal_reals (M : ZFSet.{u}) (hM : Transitive M)
+    (hPow : PowerSet M) (hS : Separation M) (hI : Infinity M) :
+    ∃ r ∈ M, ∀ x, x ∈ r ↔ ∃ A ∈ reals M, x = realSet A := by
+  exact internal_reals_of_omega_mem M hM hPow (omega_mem M hM hS hI)
 
 theorem omega_exists (P : ZFSet.{u} → Prop) :
     (∃ x ∈ ZFSet.omega, P x) ↔ ∃ n, P (natSet n) := by

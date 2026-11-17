@@ -42,49 +42,44 @@ theorem addition_spec (o Q x n y : ℕ) (e : ℕ → ZFSet.{u})
   exact h
 
 /-- Shift outer parameters to reserve the auxiliary slots used by a finite iteration trace. -/
-def iterationOuterVars : ℕ → ℕ
-  | 0 => 0
-  | 1 => 1
-  | 2 => 2
-  | i+3 => i+6
+def iterationOuterVars : ℕ → ℕ := modelIterationOuterVars
+
+/-- The first step parameter retains index zero. -/
+theorem iterationOuterVars_zero : iterationOuterVars 0 = 0 := rfl
+
+/-- The second step parameter retains index one. -/
+theorem iterationOuterVars_one : iterationOuterVars 1 = 1 := rfl
+
+/-- The third step parameter retains index two. -/
+theorem iterationOuterVars_two : iterationOuterVars 2 = 2 := rfl
+
+/-- Other parameters shift past the three existential trace witnesses. -/
+theorem iterationOuterVars_add_three (i : ℕ) : iterationOuterVars (i+3) = i+6 := rfl
 
 /-- Bounded formula selecting the endpoint of a finite iteration with step formula `θ`. -/
 def iteration (o Q n b y : ℕ) (θ : Formula) : Formula :=
-  .existsMem o (.existsMem (o+1) (.existsMem (Q+2)
-    (.conj (iterationTrace (o+3) 1 2 (n+3) (b+3) 0 (θ.rename iterationOuterVars))
-      (.pairMem (n+3) (y+3) 0))))
+  modelIteration o o Q n b y θ
 
 theorem eval_iteration (o Q n b y : ℕ) (θ : Formula) (e : ℕ → ZFSet.{u}) :
     (iteration o Q n b y θ).Eval e ↔ ∃ k ∈ e o, ∃ z ∈ e o, ∃ f ∈ e Q,
       IterationTrace (e o) z k (e n) (e b) f
         (fun i v w => θ.Eval (cons w (cons v (cons i e)))) ∧ ZFSet.pair (e n) (e y) ∈ f := by
-  simp only
-    [iteration,Formula.Eval,eval_iterationTrace,eval_pairMem,eval_rename,cons_zero,cons_succ]
-  have eq (k z f i v w : ZFSet.{u}) :
-      (fun n => cons w (cons v (cons i (cons f (cons z (cons k e))))) (iterationOuterVars n)) =
-        cons w (cons v (cons i e)) := by
-    funext n
-    rcases n with _ | n
-    · rfl
-    rcases n with _ | n
-    · rfl
-    rcases n with _|n <;> rfl
-  simp only [eq]
+  exact eval_modelIteration o o Q n b y θ e
 
 theorem iteration_spec (o Q n b y : ℕ) (θ : Formula) (e : ℕ → ZFSet.{u})
     (ho : e o = ZFSet.omega) (hQ : ∀ f : ℕ → ℕ, ∀ k, finiteNaturalGraph f k ∈ e Q)
     (N B : ℕ) (hn : e n = natSet N) (hb : e b = natSet B) (g : ℕ → ℕ → ℕ)
     (hθ : ∀ i v w, θ.Eval (cons w (cons (natSet v) (cons (natSet i) e))) ↔ w = natSet (g i v)) :
     (iteration o Q n b y θ).Eval e ↔ e y = natSet (Nat.rec B g N) := by
-  rw [eval_iteration,ho,hn,hb]
-  constructor
-  · rintro ⟨k,_,z,_,f,_,hf,hy⟩
-    exact hf.correct B N g _ (fun i v w h => (hθ i v w).mp h) hy
-  · intro hy
-    refine ⟨natSet (N+1),(mem_omega _).mpr ⟨N+1,rfl⟩,natSet 0,(mem_omega _).mpr ⟨0,rfl⟩,
-      finiteNaturalGraph (fun i => Nat.rec B g i) N,hQ _ _,?_,?_⟩
-    · exact iterationTrace_exists B g _ (fun i v => (hθ i v _).mpr rfl) N
-    · exact (finiteNaturalGraph_pair _ N N _).mpr ⟨le_rfl,hy⟩
+  let a (i : ℕ) : ZFSet.{u} := natSet (Nat.rec B g i)
+  apply modelIteration_spec_of_graph_mem o o Q n b y θ e ho N hn a
+  · intro i
+    rw [ho]
+    exact (mem_omega _).mpr ⟨Nat.rec B g i, rfl⟩
+  · exact hb
+  · exact hQ (fun i => Nat.rec B g i) N
+  · intro i w _
+    exact hθ i (Nat.rec B g i) w
 
 end Formula
 end TuringRigidity.BoundedSetTheory

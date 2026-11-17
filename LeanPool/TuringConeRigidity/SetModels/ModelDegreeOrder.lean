@@ -131,16 +131,16 @@ theorem degreeOrderMember_spec {φ : Formula} (hφ : DegreeOrderFormula.{u} φ)
       ho hQ hz (hd D hD) (hd E hE)).mpr hle⟩
 end Formula
 
-theorem internal_degreeOrder (M : ZFSet.{u}) (hM : Transitive M) (hT : SourceT M)
-    (R : ZFSet.{u}) (hRM : R ∈ M)
-    (hR : ∀ w ∈ R, ∃ B : Oracle, realCode B = w) : degreeOrder R ∈ M := by
-  have hS := hT.separation.finitePrefix.bounded
-  have hω := sourceT_omega_mem M hM hT
+/-- Degree-order closure from explicit axioms and the already internal degree universe. -/
+theorem internal_degreeOrder_of_degreeUniverse_mem (M : ZFSet.{u}) (hM : Transitive M)
+    (hP : Pairing M) (hU : BoundedSetTheory.Union M) (hPow : PowerSet M)
+    (hS : Separation M) (hω : ZFSet.omega.{u} ∈ M) (R : ZFSet.{u})
+    (hR : ∀ w ∈ R, ∃ B : Oracle, realCode B = w)
+    (hD : degreeUniverse R ∈ M) : degreeOrder R ∈ M := by
   have hz : natSet.{u} 0 ∈ M := hM _ hω _ ((mem_omega _).mpr ⟨0,rfl⟩)
-  obtain ⟨Q,hQM,_,hQ⟩ := internal_finite_natural_graph_bound M hM hT.pairing hT.union hT.powerSet
+  obtain ⟨Q,hQM,_,hQ⟩ := internal_finite_natural_graph_bound M hM hP hU hPow
     hS hω
   obtain ⟨φ,hφ⟩ := degree_order_bounded.{u}
-  have hU := internal_degreeUniverse M hM hT R hRM hR
   let e := cons ZFSet.omega (cons Q (cons (natSet 0) (fun _ => degreeUniverse R)))
   have he : ∀ i, e i ∈ M := by
     intro i
@@ -150,15 +150,23 @@ theorem internal_degreeOrder (M : ZFSet.{u}) (hM : Transitive M) (hT : SourceT M
     · exact hQM
     rcases i with _ | i
     · exact hz
-    exact hU
+    exact hD
   have hs := sep_mem M hM hS (Formula.degreeOrderMember φ 1 2 3 4 0) e he
-    (product_mem M hM hT.pairing hT.union hT.powerSet hS hU hU)
+    (product_mem M hM hP hU hPow hS hD hD)
   have heq : ZFSet.sep (fun p => (Formula.degreeOrderMember φ 1 2 3 4 0).Eval (cons p e))
       (ZFSet.prod (degreeUniverse R) (degreeUniverse R)) = degreeOrder R := by
     apply ZFSet.ext; intro p
     rw [ZFSet.mem_sep,Formula.degreeOrderMember_spec hφ 1 2 3 4 0 (cons p e) rfl hQ rfl R rfl hR]
     exact ⟨And.right,fun h => ⟨(ZFSet.mem_sep.mp h).1,h⟩⟩
   exact heq ▸ hs
+
+
+theorem internal_degreeOrder (M : ZFSet.{u}) (hM : Transitive M) (hT : SourceT M)
+    (R : ZFSet.{u}) (hRM : R ∈ M)
+    (hR : ∀ w ∈ R, ∃ B : Oracle, realCode B = w) : degreeOrder R ∈ M := by
+  exact internal_degreeOrder_of_degreeUniverse_mem M hM hT.pairing hT.union hT.powerSet
+    hT.separation.finitePrefix.bounded (sourceT_omega_mem M hM hT) R hR
+    (internal_degreeUniverse M hM hT R hRM hR)
 
 end TuringRigidity.BoundedSetTheory
 

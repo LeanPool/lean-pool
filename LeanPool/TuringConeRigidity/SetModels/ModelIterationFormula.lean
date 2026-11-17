@@ -61,13 +61,14 @@ theorem eval_modelIteration (o R Q n b y : ℕ) (θ : Formula) (e : ℕ → ZFSe
     rcases n with _|n <;> rfl
   simp only [eq]
 
-theorem modelIteration_spec (o R Q n b y : ℕ) (θ : Formula) (e : ℕ → ZFSet.{u})
+/-- Correctness needs the graph of the selected sequence and bound, without a bound on all
+    sequences. -/
+theorem modelIteration_spec_of_graph_mem (o R Q n b y : ℕ) (θ : Formula) (e : ℕ → ZFSet.{u})
     (ho : e o = ZFSet.omega)
-    (hQ : ∀ a : ℕ → ZFSet.{u}, (∀ i, a i ∈ e R) → ∀ k, finiteModelGraph a k ∈ e Q)
     (N : ℕ) (hn : e n = natSet N) (a : ℕ → ZFSet.{u}) (ha : ∀ i, a i ∈ e R)
-    (hb : e b = a 0)
+    (hb : e b = a 0) (hQ : finiteModelGraph a N ∈ e Q)
     (hθ : ∀ i w, w ∈ e R →
-      (θ.Eval (cons w (cons (a i) (cons (natSet i) e))) ↔ w = a (i+1))) :
+      (θ.Eval (cons w (cons (a i) (cons (natSet i) e))) ↔ w = a (i + 1))) :
     (modelIteration o R Q n b y θ).Eval e ↔ e y = a N := by
   rw [eval_modelIteration,ho,hn,hb]
   constructor
@@ -75,9 +76,20 @@ theorem modelIteration_spec (o R Q n b y : ℕ) (θ : Formula) (e : ℕ → ZFSe
     exact hf.correct a ha N _ (fun i w hw h => (hθ i w hw).mp h) hy
   · intro hy
     refine ⟨natSet (N+1),(mem_omega _).mpr ⟨N+1,rfl⟩,natSet 0,(mem_omega _).mpr ⟨0,rfl⟩,
-      finiteModelGraph a N,hQ a ha N,?_,?_⟩
-    · exact modelIterationTrace_exists (e R) a ha _ (fun i => (hθ i _ (ha (i+1))).mpr rfl) N
+      finiteModelGraph a N,hQ,?_,?_⟩
+    · exact modelIterationTrace_exists (e R) a ha _ (fun i => (hθ i _ (ha (i + 1))).mpr rfl) N
     · exact (finiteModelGraph_pair a N N _).mpr ⟨le_rfl,hy⟩
+
+
+theorem modelIteration_spec (o R Q n b y : ℕ) (θ : Formula) (e : ℕ → ZFSet.{u})
+    (ho : e o = ZFSet.omega)
+    (hQ : ∀ a : ℕ → ZFSet.{u}, (∀ i, a i ∈ e R) → ∀ k, finiteModelGraph a k ∈ e Q)
+    (N : ℕ) (hn : e n = natSet N) (a : ℕ → ZFSet.{u}) (ha : ∀ i, a i ∈ e R)
+    (hb : e b = a 0)
+    (hθ : ∀ i w, w ∈ e R →
+      (θ.Eval (cons w (cons (a i) (cons (natSet i) e))) ↔ w = a (i + 1))) :
+    (modelIteration o R Q n b y θ).Eval e ↔ e y = a N := by
+  exact modelIteration_spec_of_graph_mem o R Q n b y θ e ho N hn a ha hb (hQ a ha N) hθ
 
 end Formula
 end TuringRigidity.BoundedSetTheory

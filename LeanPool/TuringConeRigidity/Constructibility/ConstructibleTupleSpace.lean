@@ -143,15 +143,15 @@ theorem tupleFormula_spec (o A Q t : ℕ) (e : ℕ → ZFSet.{u})
     exact ⟨natSet n,(mem_omega _).mpr ⟨n,rfl⟩,tupleGraph v,hQ n v hv,ht,
       tupleGraph_function (e A) v hv⟩
 
-theorem tupleSpace_mem (M A : ZFSet.{u}) (hM : Transitive M)
-    (hT : SourceT M) (hA : A ∈ M) : tupleSpace A ∈ M := by
-  have hS := hT.separation.finitePrefix.bounded
-  have hω := sourceT_omega_mem M hM hT
-  obtain ⟨Q,hQM,hQdef⟩ := internal_power M hM hT.powerSet
-    (product_mem M hM hT.pairing hT.union hT.powerSet hS hω hA)
+/-- Closure under the explicit bounded model axioms and internal omega. -/
+theorem tupleSpace_mem_of_axioms (M A : ZFSet.{u}) (hM : Transitive M)
+    (hP : Pairing M) (hU : BoundedSetTheory.Union M) (hPow : PowerSet M)
+    (hS : Separation M) (hω : ZFSet.omega.{u} ∈ M) (hA : A ∈ M) : tupleSpace A ∈ M := by
+  obtain ⟨Q,hQM,hQdef⟩ := internal_power M hM hPow
+    (product_mem M hM hP hU hPow hS hω hA)
   have hQ (n : ℕ) (v : Fin n → ZFSet.{u}) (hv : ∀ i, v i ∈ A) : tupleGraph v ∈ Q := by
     apply (hQdef _).mpr
-    refine ⟨tupleGraph_mem M hM hT.pairing hT.union hω v (fun i => hM A hA _ (hv i)),?_⟩
+    refine ⟨tupleGraph_mem M hM hP hU hω v (fun i => hM A hA _ (hv i)),?_⟩
     intro z hz
     obtain ⟨i,rfl⟩ := ZFSet.mem_range.mp hz
     exact ZFSet.mem_prod.mpr ⟨_,(mem_omega _).mpr ⟨i.val,rfl⟩,_,hv i,rfl⟩
@@ -163,7 +163,7 @@ theorem tupleSpace_mem (M A : ZFSet.{u}) (hM : Transitive M)
     · exact hA
     · exact hQM
   have hs := sep_mem M hM hS (tupleFormula 1 2 3 0) e he
-    (product_mem M hM hT.pairing hT.union hT.powerSet hS hω hQM)
+    (product_mem M hM hP hU hPow hS hω hQM)
   have heq : (ZFSet.prod ZFSet.omega Q).sep
       (fun t => (tupleFormula 1 2 3 0).Eval (cons t e)) = tupleSpace A := by
     apply ZFSet.ext; intro t
@@ -173,6 +173,12 @@ theorem tupleSpace_mem (M A : ZFSet.{u}) (hM : Transitive M)
     obtain ⟨n,v,hv,rfl⟩ := (mem_tupleSpace A t).mp ht
     exact ZFSet.mem_prod.mpr ⟨natSet n,(mem_omega _).mpr ⟨n,rfl⟩,tupleGraph v,hQ n v hv,rfl⟩
   exact heq ▸ hs
+
+
+theorem tupleSpace_mem (M A : ZFSet.{u}) (hM : Transitive M)
+    (hT : SourceT M) (hA : A ∈ M) : tupleSpace A ∈ M := by
+  exact tupleSpace_mem_of_axioms M A hM hT.pairing hT.union hT.powerSet
+    hT.separation.finitePrefix.bounded (sourceT_omega_mem M hM hT) hA
 
 end TuringRigidity.RelativeConstructible
 

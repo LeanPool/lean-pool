@@ -95,16 +95,17 @@ theorem tupleTruth_spec (p : SentenceForm) (o A Q b t : ℕ) (idx : ℕ → ℕ)
     · exact (graphTruth_spec p (A+2) 0 (fun i => idx i+2)
         (cons (tupleGraph v) (cons (natSet n) e)) v hv hbn rfl hi).mpr htruth
 
-theorem truthSlice_mem (M A : ZFSet.{u}) (hM : Transitive M)
-    (hT : SourceT M) (hA : A ∈ M) (p : SentenceForm) : truthSlice A p ∈ M := by
-  have hS := hT.separation.finitePrefix.bounded
-  have hω := sourceT_omega_mem M hM hT
+/-- Closure under the explicit bounded model axioms and internal omega. -/
+theorem truthSlice_mem_of_axioms (M A : ZFSet.{u}) (hM : Transitive M)
+    (hP : Pairing M) (hU : BoundedSetTheory.Union M) (hPow : PowerSet M)
+    (hS : Separation M) (hω : ZFSet.omega.{u} ∈ M) (hA : A ∈ M) (p : SentenceForm) : truthSlice
+      A p ∈ M := by
   have hn (n : ℕ) : natSet.{u} n ∈ M := hM _ hω _ ((mem_omega _).mpr ⟨n,rfl⟩)
-  obtain ⟨Q,hQM,hQdef⟩ := internal_power M hM hT.powerSet
-    (product_mem M hM hT.pairing hT.union hT.powerSet hS hω hA)
+  obtain ⟨Q,hQM,hQdef⟩ := internal_power M hM hPow
+    (product_mem M hM hP hU hPow hS hω hA)
   have hQ {n : ℕ} (v : Fin n → ZFSet.{u}) (hv : ∀ i, v i ∈ A) : tupleGraph v ∈ Q := by
     apply (hQdef _).mpr
-    refine ⟨tupleGraph_mem M hM hT.pairing hT.union hω v (fun i => hM A hA _ (hv i)),?_⟩
+    refine ⟨tupleGraph_mem M hM hP hU hω v (fun i => hM A hA _ (hv i)),?_⟩
     intro z hz
     obtain ⟨i,rfl⟩ := ZFSet.mem_range.mp hz
     exact ZFSet.mem_prod.mpr ⟨_,(mem_omega _).mpr ⟨i.val,rfl⟩,_,hv i,rfl⟩
@@ -117,7 +118,8 @@ theorem truthSlice_mem (M A : ZFSet.{u}) (hM : Transitive M)
     · exact hn _
     · exact hn _
   let φ := tupleTruth p 1 2 3 4 0 (fun i => i+5)
-  have hs := sep_mem M hM hS φ e he (tupleSpace_mem M A hM hT hA)
+  have hs := sep_mem M hM hS φ e he
+    (tupleSpace_mem_of_axioms M A hM hP hU hPow hS hω hA)
   have heq : (tupleSpace A).sep (fun t => φ.Eval (cons t e)) = truthSlice A p := by
     apply ZFSet.ext; intro t
     rw [truthSlice,ZFSet.mem_sep,ZFSet.mem_sep]
@@ -126,6 +128,12 @@ theorem truthSlice_mem (M A : ZFSet.{u}) (hM : Transitive M)
     exact (tupleTruth_spec p 1 2 3 4 0 (fun i => i+5) (cons (tupleCode v) e)
       rfl rfl (fun _ _ => rfl) v hv rfl (hQ v hv)).trans (satisfactionSet_record A p v hv).symm
   exact heq ▸ hs
+
+
+theorem truthSlice_mem (M A : ZFSet.{u}) (hM : Transitive M)
+    (hT : SourceT M) (hA : A ∈ M) (p : SentenceForm) : truthSlice A p ∈ M := by
+  exact truthSlice_mem_of_axioms M A hM hT.pairing hT.union hT.powerSet
+    hT.separation.finitePrefix.bounded (sourceT_omega_mem M hM hT) hA p
 
 end TuringRigidity.RelativeConstructible
 

@@ -7,6 +7,9 @@ Authors: OpenAI
 /-
 Adapted for Lean Pool from bjoernkjoshanssen/tt-
 auto/OAI/Computability/DegreeRigidity/Constructibility/UniformInternalSatisfaction.lean.
+Also shares the bounded Context proof from upstream
+OAI/Computability/DegreeRigidity/Constructibility/ContextDefinablePower.lean
+under the same OpenAI Apache-2.0 attribution.
 Module paths, interfaces, and proofs are ported to the pool's toolchain and gates.
 Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream port repairs.
 -/
@@ -69,15 +72,17 @@ theorem satisfactionWitness_spec (Q B G H A z : ZFSet.{u})
         ⟨p,rfl,finiteSatisfaction_recursion A p⟩
     · exact (certificate_correct A p p (self_mem_subformulas p) v hv hb).mpr hp
 
-theorem satisfactionSet_mem (M A : ZFSet.{u}) (hM : Transitive M)
-    (hT : SourceT M) (hA : A ∈ M) : satisfactionSet A ∈ M := by
-  let C : Context M :=
-    ⟨hM,hT.pairing,hT.union,hT.powerSet,hT.separation.finitePrefix.bounded,hT.infinity⟩
-  obtain ⟨Q,hQ,_,hf⟩ := internal_family_bound M hM C.pairing C.union C.power C.omega_mem
+/-- The bounded Context suffices for this closure construction. -/
+theorem satisfactionSet_mem_in_context (M A : ZFSet.{u}) (C : SetModelFunctions.Context M) (hA :
+    A ∈ M) :
+  satisfactionSet A ∈ M := by
+  obtain ⟨Q,hQ,_,hf⟩ := internal_family_bound M C.transitive C.pairing C.union C.power C.omega_mem
   obtain ⟨B,hB,hb⟩ := internal_support_bound C
   obtain ⟨G,hG,hg⟩ := internal_tuple_graph_bound C hA
-  obtain ⟨H,hH,_,hh⟩ := internal_certificate_bound M A hM hT hA
-  have ht := tupleSpace_mem M A hM hT hA
+  obtain ⟨H,hH,_,hh⟩ := internal_certificate_bound_of_axioms M A C.transitive C.pairing C.union
+    C.power C.separation C.omega_mem hA
+  have ht := tupleSpace_mem_of_axioms M A C.transitive C.pairing C.union C.power C.separation
+    C.omega_mem hA
   let e := cons A (cons (tupleSpace A) (fun _ => ZFSet.omega))
   have he : ∀ i, e i ∈ M := by
     intro i; rcases i with _|_|i
@@ -92,6 +97,13 @@ theorem satisfactionSet_mem (M A : ZFSet.{u}) (hM : Transitive M)
     rw [ZFSet.mem_sep,satisfactionWitness_spec Q B G H A z hf hb hg (fun p => hh (subformulas p))]
     exact ⟨And.right,fun hz => ⟨satisfactionSet_subset_product A hz,hz⟩⟩
   exact heq ▸ hs
+
+
+theorem satisfactionSet_mem (M A : ZFSet.{u}) (hM : Transitive M)
+    (hT : SourceT M) (hA : A ∈ M) : satisfactionSet A ∈ M := by
+  let C : SetModelFunctions.Context M :=
+    ⟨hM, hT.pairing, hT.union, hT.powerSet, hT.separation.finitePrefix.bounded, hT.infinity⟩
+  exact satisfactionSet_mem_in_context M A C hA
 
 theorem satisfactionMembership_definable (M A : ZFSet.{u}) (hM : Transitive M)
     (hT : SourceT M) (hA : A ∈ M) (c t : ℕ) :

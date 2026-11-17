@@ -55,15 +55,15 @@ theorem degreeCode_equal (R : ZFSet.{u}) {A B : Oracle} (hA : realCode A ∈ R)
     exact ((realCode_mem_degreeCode R B A).mp ha).2
   · intro h; unfold degreeCode; simp only [h]
 
-theorem internal_degreeCode (M : ZFSet.{u}) (hM : Transitive M) (hT : SourceT M)
+/-- Degree-code closure under explicit axioms, without internal choice. -/
+theorem internal_degreeCode_of_axioms (M : ZFSet.{u}) (hM : Transitive M) (hP : Pairing M)
+  (hU : BoundedSetTheory.Union M)
+    (hPow : PowerSet M) (hS : Separation M) (hω : ZFSet.omega.{u} ∈ M)
     (R : ZFSet.{u}) (hRM : R ∈ M)
     (hR : ∀ x ∈ R, ∃ B : Oracle, realCode B = x)
     {A : Oracle} (hA : A ∈ modelReals M) : degreeCode R A ∈ M := by
-  have hS := hT.separation.finitePrefix.bounded
-  have hω := sourceT_omega_mem M hM hT
   have hz : natSet.{u} 0 ∈ M := hM _ hω _ ((mem_omega _).mpr ⟨0,rfl⟩)
-  obtain ⟨Q,hQM,_,hQ⟩ := internal_finite_natural_graph_bound M hM hT.pairing hT.union hT.powerSet
-    hS hω
+  obtain ⟨Q,hQM,_,hQ⟩ := internal_finite_natural_graph_bound M hM hP hU hPow hS hω
   obtain ⟨φ,hφ⟩ := degree_equality_bounded.{u}
   let e := cons ZFSet.omega (cons Q (cons (natSet 0) (fun _ => realCode A)))
   have he : ∀ i, e i ∈ M := by
@@ -86,6 +86,14 @@ theorem internal_degreeCode (M : ZFSet.{u}) (hM : Transitive M) (hT : SourceT M)
     · simp only [degreeCode,D,ZFSet.mem_sep,hx,false_and]
   rw [hcode]
   exact hD
+
+
+theorem internal_degreeCode (M : ZFSet.{u}) (hM : Transitive M) (hT : SourceT M)
+    (R : ZFSet.{u}) (hRM : R ∈ M)
+    (hR : ∀ x ∈ R, ∃ B : Oracle, realCode B = x)
+    {A : Oracle} (hA : A ∈ modelReals M) : degreeCode R A ∈ M := by
+  exact internal_degreeCode_of_axioms M hM hT.pairing hT.union hT.powerSet
+    hT.separation.finitePrefix.bounded (sourceT_omega_mem M hM hT) R hRM hR hA
 
 theorem actual_degreeCode_membership (M : ZFSet.{u}) (hM : Transitive M) (hT : SourceT M)
     (R : ZFSet.{u}) (hR : ∀ C : Oracle, realCode C ∈ R ↔ C ∈ modelReals M)

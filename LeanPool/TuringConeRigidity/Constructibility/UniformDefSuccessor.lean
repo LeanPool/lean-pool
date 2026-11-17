@@ -15,7 +15,6 @@ module
 
 public import LeanPool.TuringConeRigidity.Constructibility.ContextDefinablePower
 public import LeanPool.TuringConeRigidity.Syntax.SigmaParameterized
-public import LeanPool.TuringConeRigidity.SetModels.InternalDefinablePower
 
 /-!
 # Uniform Def Successor

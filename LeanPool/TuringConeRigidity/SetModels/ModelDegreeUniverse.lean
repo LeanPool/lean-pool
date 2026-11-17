@@ -67,20 +67,21 @@ theorem degreeUniverseMember_spec {φ : Formula} (hφ : DegreeEqualityFormula.{u
       (cons (realCode A) e) ho hQ hz hR A rfl).mpr hd⟩
 end Formula
 
-theorem internal_degreeUniverse (M : ZFSet.{u}) (hM : Transitive M) (hT : SourceT M)
+/-- Degree-universe closure under explicit axioms, without internal choice. -/
+theorem internal_degreeUniverse_of_axioms (M : ZFSet.{u}) (hM : Transitive M) (hP : Pairing
+  M) (hU : BoundedSetTheory.Union M)
+    (hPow : PowerSet M) (hS : Separation M) (hω : ZFSet.omega.{u} ∈ M)
     (R : ZFSet.{u}) (hRM : R ∈ M)
     (hR : ∀ w ∈ R, ∃ B : Oracle, realCode B = w) : degreeUniverse R ∈ M := by
-  have hS := hT.separation.finitePrefix.bounded
-  have hω := sourceT_omega_mem M hM hT
   have hz : natSet.{u} 0 ∈ M := hM _ hω _ ((mem_omega _).mpr ⟨0,rfl⟩)
-  obtain ⟨Q,hQM,_,hQ⟩ := internal_finite_natural_graph_bound M hM hT.pairing hT.union hT.powerSet
-    hS hω
-  obtain ⟨P,hPM,hP⟩ := internal_power M hM hT.powerSet hRM
+  obtain ⟨Q,hQM,_,hQ⟩ := internal_finite_natural_graph_bound M hM hP hU hPow hS hω
+  obtain ⟨P,hPM,hPdef⟩ := internal_power M hM hPow hRM
   obtain ⟨φ,hφ⟩ := degree_equality_bounded.{u}
   have hsub : degreeUniverse R ⊆ P := by
     intro D hD
     obtain ⟨A,hA,rfl⟩ := (mem_degreeUniverse R D).mp hD
-    exact (hP _).mpr ⟨internal_degreeCode M hM hT R hRM hR (hM _ hRM _ hA),
+    exact (hPdef _).mpr ⟨internal_degreeCode_of_axioms M hM hP hU hPow hS hω R hRM hR (hM _
+      hRM _ hA),
       degreeCode_subset R A⟩
   let e := cons ZFSet.omega (cons Q (cons (natSet 0) (fun _ => R)))
   have he : ∀ i, e i ∈ M := by
@@ -99,6 +100,13 @@ theorem internal_degreeUniverse (M : ZFSet.{u}) (hM : Transitive M) (hT : Source
     rw [ZFSet.mem_sep,Formula.degreeUniverseMember_spec hφ 1 2 3 4 0 (cons D e) rfl hQ rfl hR]
     exact ⟨And.right,fun h => ⟨hsub h,h⟩⟩
   exact heq ▸ hs
+
+
+theorem internal_degreeUniverse (M : ZFSet.{u}) (hM : Transitive M) (hT : SourceT M)
+    (R : ZFSet.{u}) (hRM : R ∈ M)
+    (hR : ∀ w ∈ R, ∃ B : Oracle, realCode B = w) : degreeUniverse R ∈ M := by
+  exact internal_degreeUniverse_of_axioms M hM hT.pairing hT.union hT.powerSet
+    hT.separation.finitePrefix.bounded (sourceT_omega_mem M hM hT) R hRM hR
 
 end TuringRigidity.BoundedSetTheory
 

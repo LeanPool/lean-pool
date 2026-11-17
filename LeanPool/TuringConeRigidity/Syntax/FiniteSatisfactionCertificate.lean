@@ -102,15 +102,23 @@ theorem finiteSatisfaction_record (A : ZFSet.{u}) (ps : List SentenceForm)
   · rintro ⟨hp,hb,hs⟩
     exact ⟨p,hp,tupleCode v,(truthSlice_record A p v hv).mpr ⟨hb,hs⟩,rfl⟩
 
+/-- Closure under the explicit bounded model axioms and internal omega. -/
+theorem finiteSatisfaction_mem_of_axioms (M A : ZFSet.{u}) (hM : Transitive M)
+    (hP : Pairing M) (hU : BoundedSetTheory.Union M) (hPow : PowerSet M)
+    (hS : Separation M) (hω : ZFSet.omega.{u} ∈ M) (hA : A ∈ M) (ps : List SentenceForm) :
+      finiteSatisfaction A ps ∈ M := by
+  have hn (n : ℕ) : natSet.{u} n ∈ M := hM _ hω _ ((mem_omega _).mpr ⟨n,rfl⟩)
+  apply union_mem M hM hU
+  apply finite_range_mem M hM hP hU (hn 0)
+  intro i
+  exact product_mem M hM hP hU hPow hS
+    (singleton_mem M hM hP (hn _)) (truthSlice_mem_of_axioms M A hM hP hU hPow hS hω hA ps[i])
+
+
 theorem finiteSatisfaction_mem (M A : ZFSet.{u}) (hM : Transitive M)
     (hT : SourceT M) (hA : A ∈ M) (ps : List SentenceForm) : finiteSatisfaction A ps ∈ M := by
-  have hω := sourceT_omega_mem M hM hT
-  have hn (n : ℕ) : natSet.{u} n ∈ M := hM _ hω _ ((mem_omega _).mpr ⟨n,rfl⟩)
-  apply union_mem M hM hT.union
-  apply finite_range_mem M hM hT.pairing hT.union (hn 0)
-  intro i
-  exact product_mem M hM hT.pairing hT.union hT.powerSet hT.separation.finitePrefix.bounded
-    (singleton_mem M hM hT.pairing (hn _)) (truthSlice_mem M A hM hT hA ps[i])
+  exact finiteSatisfaction_mem_of_axioms M A hM hT.pairing hT.union hT.powerSet
+    hT.separation.finitePrefix.bounded (sourceT_omega_mem M hM hT) hA ps
 
 theorem finiteSatisfaction_subset (A : ZFSet.{u}) (ps : List SentenceForm) :
     finiteSatisfaction A ps ⊆ satisfactionSet A := by

@@ -7,6 +7,9 @@ Authors: OpenAI
 /-
 Adapted for Lean Pool from bjoernkjoshanssen/tt-
 auto/OAI/Computability/DegreeRigidity/Constructibility/DefSystemCertificate.lean.
+Also shares the bounded Context proof from upstream
+OAI/Computability/DegreeRigidity/Constructibility/ContextDefinablePower.lean
+under the same OpenAI Apache-2.0 attribution.
 Module paths, interfaces, and proofs are ported to the pool's toolchain and gates.
 Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream port repairs.
 -/
@@ -78,19 +81,31 @@ theorem defSystem_canonical (Q B A G H : ZFSet.{u})
     exact ⟨definedSubset A p v,(mem_definablePower A _).mpr ⟨n,p,v,hp,hv,rfl⟩,
       (definesSubset_spec A G _ hG p v hv hp).mpr rfl⟩
 
+/-- The bounded Context suffices for this closure construction. -/
+theorem internal_defSystem_in_context (M : ZFSet.{u}) (C : SetModelFunctions.Context M)
+    (Q B A : ZFSet.{u}) (hA : A ∈ M)
+    (hQ : ∀ p : SentenceForm, family p ∈ Q)
+    (hB : ∀ p : SentenceForm, supportGraph p ∈ B) :
+    ∃ G ∈ M, ∃ T ∈ M, ∃ H ∈ M, ∃ Z ∈ M,
+      DefSystem Q B A G T H Z (definablePower A) := by
+  obtain ⟨G,hG,hg⟩ := internal_tuple_graph_bound C hA
+  obtain ⟨H,hH,_,hh⟩ := internal_certificate_bound_of_axioms M A C.transitive C.pairing C.union
+    C.power C.separation C.omega_mem hA
+  exact ⟨G,hG,tupleSpace A,tupleSpace_mem_of_axioms M A C.transitive C.pairing C.union C.power
+    C.separation C.omega_mem hA,H,hH,
+    satisfactionSet A,satisfactionSet_mem_in_context M A C hA,
+    defSystem_canonical Q B A G H hQ hB hg (fun p => hh (subformulas p))⟩
+
+
 theorem internal_defSystem (M : ZFSet.{u}) (hM : Transitive M) (hT : SourceT M)
     (Q B A : ZFSet.{u}) (hA : A ∈ M)
     (hQ : ∀ p : SentenceForm, family p ∈ Q)
     (hB : ∀ p : SentenceForm, supportGraph p ∈ B) :
     ∃ G ∈ M, ∃ T ∈ M, ∃ H ∈ M, ∃ Z ∈ M,
       DefSystem Q B A G T H Z (definablePower A) := by
-  let C : Context M :=
-    ⟨hM,hT.pairing,hT.union,hT.powerSet,hT.separation.finitePrefix.bounded,hT.infinity⟩
-  obtain ⟨G,hG,hg⟩ := internal_tuple_graph_bound C hA
-  obtain ⟨H,hH,_,hh⟩ := internal_certificate_bound M A hM hT hA
-  exact ⟨G,hG,tupleSpace A,tupleSpace_mem M A hM hT hA,H,hH,
-    satisfactionSet A,satisfactionSet_mem M A hM hT hA,
-    defSystem_canonical Q B A G H hQ hB hg (fun p => hh (subformulas p))⟩
+  let C : SetModelFunctions.Context M :=
+    ⟨hM, hT.pairing, hT.union, hT.powerSet, hT.separation.finitePrefix.bounded, hT.infinity⟩
+  exact internal_defSystem_in_context M C Q B A hA hQ hB
 
 end TuringRigidity.RelativeConstructible
 
