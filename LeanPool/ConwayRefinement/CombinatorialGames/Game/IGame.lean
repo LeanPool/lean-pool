@@ -885,8 +885,8 @@ instance : AddRightReflectLE IGame :=
 instance : AddLeftStrictMono IGame where
   elim x y z h := by
     apply lt_of_le_not_ge (add_le_add_right h.le x)
-    contrapose! h
-    exact (le_of_add_le_add_left h).not_gt
+    intro hle
+    exact (le_of_add_le_add_left hle).not_gt h
 
 instance : AddRightStrictMono IGame :=
   addRightStrictMono_of_addLeftStrictMono _

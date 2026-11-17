@@ -42,7 +42,7 @@ theorem countable_of_archimedean {s : Set G} (hs : s.IsPWO) : s.Countable := by
   intro x hx
   refine ⟨hx, ?_⟩
   by_cases hupper : ({y ∈ s | x < y} : Set G).Nonempty
-  · obtain ⟨y, hy⟩ := (hs.mono fun z hz => hz.1).exists_minimal hupper
+  · obtain ⟨y, hy⟩ := (hs.mono fun z (hz : z ∈ {y ∈ s | x < y}) => hz.1).exists_minimal hupper
     refine ⟨f y, ?_, ?_⟩
     · exact hfstrict hy.1.2
     · intro z hz hxz

@@ -49,7 +49,7 @@ def geometricLinearPolynomial : MvPolynomial (Fin 1) ℚ :=
 
 theorem geometricLinearPolynomial_irreducible :
     Irreducible geometricLinearPolynomial := by
-  exact MvPolynomial.X_prime.irreducible
+  exact MvPolynomial.prime_X.irreducible
 
 /-- Extending `U` to `ℚ[V][U]` and quotienting by it leaves a domain. -/
 theorem geometricLinearPolynomial_baseChange_quotient_isDomain :

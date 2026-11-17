@@ -46,19 +46,19 @@ namespace ZFSet
 
 /-- The ZFC class of sets satisfying the game-code grammar and Conway's numeric condition. -/
 def numericGameCodes : ZFClass.{u} :=
-  fun z ↦ ∃ h : IsGameCode z, (GameCode.mk z h).IsNumeric
+  {z | ∃ h : IsGameCode z, (GameCode.mk z h).IsNumeric}
 
 /-- Membership in the numeric-code class is the intrinsic numeric predicate on a game code. -/
 theorem numericGameCodes_iff (z : ZFSet.{u}) :
-    numericGameCodes z ↔ ∃ h : IsGameCode z, (GameCode.mk z h).IsNumeric := (Iff.rfl)
+    z ∈ numericGameCodes ↔ ∃ h : IsGameCode z, (GameCode.mk z h).IsNumeric := (Iff.rfl)
 
 /-- The ZFC class of game codes satisfying Conway's omnific-integer condition. -/
 def omnificGameCodes : ZFClass.{u} :=
-  fun z ↦ ∃ h : IsGameCode z, (GameCode.mk z h).IsOmnificInteger
+  {z | ∃ h : IsGameCode z, (GameCode.mk z h).IsOmnificInteger}
 
 /-- Membership in the omnific-code class is Conway's omnific-integer predicate on a game code. -/
 theorem omnificGameCodes_iff (z : ZFSet.{u}) :
-    omnificGameCodes z ↔ ∃ h : IsGameCode z, (GameCode.mk z h).IsOmnificInteger := (Iff.rfl)
+    z ∈ omnificGameCodes ↔ ∃ h : IsGameCode z, (GameCode.mk z h).IsOmnificInteger := (Iff.rfl)
 
 /-- Every omnific code is numeric. -/
 theorem omnificGameCodes_subset_numericGameCodes :
@@ -70,7 +70,7 @@ theorem omnificGameCodes_subset_numericGameCodes :
 namespace GameCode
 
 /-- A game code belongs to the numeric class exactly when it is numeric. -/
-theorem mem_numericGameCodes (x : GameCode.{u}) : numericGameCodes (x : ZFSet.{u}) ↔
+theorem mem_numericGameCodes (x : GameCode.{u}) : (x : ZFSet.{u}) ∈ numericGameCodes ↔
     x.IsNumeric := by
   rw [numericGameCodes_iff]
   constructor
@@ -80,7 +80,7 @@ theorem mem_numericGameCodes (x : GameCode.{u}) : numericGameCodes (x : ZFSet.{u
     exact ⟨x.isGameCode, by simpa only [mk_coe] using hx⟩
 
 /-- A game code belongs to the omnific class exactly when it is an omnific code. -/
-theorem mem_omnificGameCodes (x : GameCode.{u}) : omnificGameCodes (x : ZFSet.{u}) ↔
+theorem mem_omnificGameCodes (x : GameCode.{u}) : (x : ZFSet.{u}) ∈ omnificGameCodes ↔
     x.IsOmnificInteger := by
   rw [omnificGameCodes_iff]
   constructor
@@ -108,7 +108,7 @@ theorem coe_code_injective :
 
 /-- Every typed numeric code belongs to the intrinsic ZFC class. -/
 theorem mem_numericGameCodes (x : NumericGameCode.{u}) :
-    numericGameCodes (x.code : ZFSet.{u}) := (GameCode.mem_numericGameCodes _).2 x.numeric
+    (x.code : ZFSet.{u}) ∈ numericGameCodes := (GameCode.mem_numericGameCodes _).2 x.numeric
 
 /-- Numeric game codes are not small, because their values cover all surreal numbers. -/
 theorem not_small : ¬Small.{u} NumericGameCode.{u} := by
@@ -120,7 +120,7 @@ end NumericGameCode
 
 /-- The intrinsic numeric-code class consists exactly of the underlying sets of numeric codes. -/
 theorem numericGameCodes_iff_exists (z : ZFSet.{u}) :
-    numericGameCodes z ↔ ∃ c : NumericGameCode.{u}, (c.code : ZFSet.{u}) = z := by
+    z ∈ numericGameCodes ↔ ∃ c : NumericGameCode.{u}, (c.code : ZFSet.{u}) = z := by
   constructor
   · intro hz
     obtain ⟨h, hn⟩ := (numericGameCodes_iff z).1 hz
@@ -145,7 +145,7 @@ theorem coe_code_injective :
 
 /-- Every typed omnific code belongs to the intrinsic ZFC class. -/
 theorem mem_omnificGameCodes (x : OmnificCode.{u}) :
-    omnificGameCodes (x.code : ZFSet.{u}) := (GameCode.mem_omnificGameCodes _).2 x.omnific
+    (x.code : ZFSet.{u}) ∈ omnificGameCodes := (GameCode.mem_omnificGameCodes _).2 x.omnific
 
 /-- Omnific game codes are not small, because their values cover all omnific integers. -/
 theorem not_small : ¬Small.{u} OmnificCode.{u} := by
@@ -157,7 +157,7 @@ end OmnificCode
 
 /-- The intrinsic omnific-code class consists exactly of the underlying sets of omnific codes. -/
 theorem omnificGameCodes_iff_exists (z : ZFSet.{u}) :
-    omnificGameCodes z ↔ ∃ c : OmnificCode.{u}, (c.code : ZFSet.{u}) = z := by
+    z ∈ omnificGameCodes ↔ ∃ c : OmnificCode.{u}, (c.code : ZFSet.{u}) = z := by
   constructor
   · intro hz
     obtain ⟨h, hn⟩ := (omnificGameCodes_iff z).1 hz
@@ -166,7 +166,7 @@ theorem omnificGameCodes_iff_exists (z : ZFSet.{u}) :
     exact c.mem_omnificGameCodes
 
 private theorem class_ne_ofSet_of_not_small {α : Type (u + 1)} (f : α → ZFSet.{u})
-    (hf : Function.Injective f) (C : ZFClass.{u}) (hC : ∀ x, C (f x))
+    (hf : Function.Injective f) (C : ZFClass.{u}) (hC : ∀ x, f x ∈ C)
     (hα : ¬Small.{u} α) (s : ZFSet.{u}) : C ≠ (s : ZFClass.{u}) := by
   intro h
   let g : α → s := fun x ↦ ⟨f x, by

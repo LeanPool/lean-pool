@@ -327,8 +327,7 @@ theorem orderType_add_le_naturalMul [AddCommMonoid α] [IsOrderedCancelAddMonoid
       hs₀_lt hs₁_lt htZero ih
 termination_by NatOrdinal.of hs.orderType * NatOrdinal.of ht.orderType
 decreasing_by
-  all_goals
-    change _ < _
-    assumption
+  change _ < _
+  assumption
 
 end Set.IsPWO

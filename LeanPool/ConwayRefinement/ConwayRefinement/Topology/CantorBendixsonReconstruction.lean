@@ -179,7 +179,8 @@ omit [T1Space X] in
 /-- The isolated points of a closed well-ordered support are dense in that support. -/
 theorem closure_isolated_eq (s : Closeds X) (hs : (s : Set X).IsPWO) :
     closure {x | x ∈ s ∧ x ∉ derivedSet (s : Set X)} = (s : Set X) := by
-  apply Subset.antisymm (closure_minimal (fun _ h ↦ h.1) s.isClosed)
+  apply Subset.antisymm (closure_minimal
+    (s := {x | x ∈ s ∧ x ∉ derivedSet (s : Set X)}) (fun _ h ↦ h.1) s.isClosed)
   intro x hx
   apply mem_closure_iff.mpr
   intro U hU hxU

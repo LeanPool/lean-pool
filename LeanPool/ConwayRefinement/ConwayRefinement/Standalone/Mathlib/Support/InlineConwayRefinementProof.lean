@@ -17,6 +17,8 @@ import LeanPool.ConwayRefinement.ConwayRefinement.Standalone.CombinatorialGames.
 
 public noncomputable section
 
+open scoped Pointwise
+
 namespace ConwayRefinement.Standalone.InlineConwayRefinement
 
 universe u

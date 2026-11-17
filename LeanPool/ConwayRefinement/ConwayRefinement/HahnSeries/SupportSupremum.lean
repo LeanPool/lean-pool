@@ -8,6 +8,7 @@ module
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Nonpositive
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Translation
 public import Mathlib.Algebra.Order.Archimedean.Real.Basic
+public import Mathlib.Order.ConditionallyCompleteLattice.WithTop
 
 /-!
 # Supremum of the support of a nonpositive real Hahn series

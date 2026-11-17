@@ -172,7 +172,7 @@ theorem false_of_aeval_eq_zero_of_leadingCoefficientDegree_eq_zero
       rw [htopterm, translatedTruncLE_smul, σ.pol_smul hx hinj c hpowdrop]
       rw [(xCoeff B₀ D').map_smul, LiftFamily.FreeOfVariable.xCoeff_pol_translatedTruncLE_lift_pow
         (σ := σ) (hx := hx) hσ hinj hg D' hdegHD.le hγ]
-      rw [smul_eq_C_mul, nsmul_eq_mul, ← C_eq_coe_nat]
+      rw [smul_eq_C_mul, nsmul_eq_mul, ← C_eq_natCast]
       have hC : (MvPolynomial.C c : MvPolynomial ι K) *
           MvPolynomial.C ((D' + 1 : ℕ) : K) =
           MvPolynomial.C (((D' + 1 : ℕ) : K) * c) := by
