@@ -4,6 +4,15 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Brian Sanders
 -/
 
+module
+
+public import LeanPool.GraphExtremal.Extremal.MotzkinStraus
+public import LeanPool.GraphExtremal.Extremal.WeightShifting
+public import LeanPool.GraphExtremal.Extremal.Zykov
+public import LeanPool.GraphExtremal.Konig
+public import LeanPool.GraphExtremal.LexProd
+public import LeanPool.GraphExtremal.Paley
+
 /-!
 # Weight shifting and extremal graph theory
 
@@ -16,11 +25,13 @@ Tags: extremal-graph-theory, weight-shifting, paley-graphs
 MSC: 05C55, 05D10
 -/
 
-module
+/-!
+# Classical extremal graph theory beyond Mathlib
 
-public import LeanPool.GraphExtremal.Extremal.MotzkinStraus
-public import LeanPool.GraphExtremal.Extremal.WeightShifting
-public import LeanPool.GraphExtremal.Extremal.Zykov
-public import LeanPool.GraphExtremal.Konig
-public import LeanPool.GraphExtremal.LexProd
-public import LeanPool.GraphExtremal.Paley
+Imports every module of the library: the weight-shifting lemma
+(`LeanPool.GraphExtremal.Extremal.WeightShifting`), the Motzkin–Straus theorem with Turán's and Mantel's
+bounds (`LeanPool.GraphExtremal.Extremal.MotzkinStraus`), Zykov's theorem and Maclaurin's inequality
+(`LeanPool.GraphExtremal.Extremal.Zykov`), Kőnig's theorem and Gallai's identity (`LeanPool.GraphExtremal.Konig`),
+lexicographic products and the Turán graph (`LeanPool.GraphExtremal.LexProd`), and Paley graphs
+(`LeanPool.GraphExtremal.Paley`).
+-/
