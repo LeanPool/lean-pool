@@ -119,7 +119,7 @@ private theorem exists_subset_measure_eq_mul
       change ν {x} = 0
       exact measure_singleton x
     rw [← νf.normalize.ennreal_coeFn_eq_coeFn_toMeasure]
-    rw [νf.normalize_eq_of_nonzero hν_ne]
+    rw [νf.normalize_eq_of_ne_zero hν_ne]
     simp only [hνf_single, mul_zero, ENNReal.coe_zero]
   let F : ℝ → ℝ := ProbabilityTheory.cdf (P : Measure ℝ)
   have hF_mono : Monotone F := ProbabilityTheory.monotone_cdf _
@@ -471,7 +471,7 @@ private theorem exists_large_almostStraightSubset
     have hpμ : ∑' b : C, p b ≤ c * ∑' b : C, μ b := by
       calc
         (∑' b : C, p b) ≤ ∑' b : C, c * μ b :=
-          ENNReal.tsum_le_tsum fun b ↦ (hC_mem.1 b b.2).2.2.le
+          tsum_le_tsum fun b ↦ (hC_mem.1 b b.2).2.2.le
         _ = c * ∑' b : C, μ b := ENNReal.tsum_mul_left
     have hμ_parts : μ e = μ (⋃₀ C) + μ a := by
       rw [hE_union, MeasureTheory.measure_union disjoint_sdiff_right ha_meas]
@@ -558,7 +558,7 @@ private theorem exists_multiscaleAlmostStraightSubset
     calc
       μH[1] u ≤ ∑' n : ℕ, μH[1] (e \ A n) := measure_iUnion_le _
       _ ≤ ∑' n : ℕ, lossWeight n * μH[1] e :=
-        ENNReal.tsum_le_tsum fun n ↦ (hcomplement n).le
+        tsum_le_tsum fun n ↦ (hcomplement n).le
       _ = (∑' n : ℕ, lossWeight n) * μH[1] e := ENNReal.tsum_mul_right
       _ = (4 : ℝ≥0∞)⁻¹ * μH[1] e := by rw [tsum_lossWeight]
       _ < μH[1] e := by

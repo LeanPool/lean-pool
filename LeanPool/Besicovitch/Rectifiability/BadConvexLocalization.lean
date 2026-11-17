@@ -123,10 +123,10 @@ theorem tsum_ediam_touchingBadConvexSets_lt_ediam
         Metric.ediam (diameterThickening 3 (V : Set (EuclideanSpace ℝ (Fin 2))))) ≤
         ∑' V : touchingBadConvexSets 3 chosen C,
           ENNReal.ofReal 7 * Metric.ediam (V : Set (EuclideanSpace ℝ (Fin 2))) :=
-      ENNReal.tsum_le_tsum fun V ↦ by
+      tsum_le_tsum fun V ↦ by
         convert ediam_diameterThickening_le (by norm_num : (0 : ℝ) ≤ 3)
           (isBounded_of_mem_badConvexSets halpha (hchosen V.property.1)) using 1
-        all_goals norm_num
+        norm_num
     _ = ENNReal.ofReal 7 *
         ∑' V : touchingBadConvexSets 3 chosen C,
           Metric.ediam (V : Set (EuclideanSpace ℝ (Fin 2))) :=
