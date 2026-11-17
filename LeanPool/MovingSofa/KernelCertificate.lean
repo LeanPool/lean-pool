@@ -3,7 +3,7 @@ Copyright (c) 2020 Microsoft Corporation and 2026 OpenAI. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Leonardo de Moura, OpenAI
 -/
-module -- shake: keep-downstream
+module
 
 public meta import Lean.Elab.Tactic.ElabTerm
 public meta import Lean.Meta.Tactic.AuxLemma
