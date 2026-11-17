@@ -7,6 +7,9 @@ Authors: OpenAI
 /-
 Adapted for Lean Pool from bjoernkjoshanssen/tt-
 auto/OAI/Computability/DegreeRigidity/SetModels/InternalCountableFiniteUnion.lean.
+Also incorporates the shared flattening proof from the upstream
+OAI/Computability/DegreeRigidity/SetModels/InternalCountableUnion.lean
+under the same Apache-2.0 terms.
 Module paths, interfaces, and proofs are ported to the pool's toolchain and gates.
 Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream port repairs.
 -/
@@ -76,38 +79,33 @@ theorem flattenFormula_spec (ω Q S C B T U d k x : ℕ) (e : ℕ → ZFSet.{0})
         ∃ g ∈ e C, ZFSet.pair E g ∈ e T ∧ Entry (e U) g (e d) (natSet K) (e x) := by
   simp only [flattenFormula,Formula.Eval,Formula.eval_pairMem,entryFormula_spec,cons_zero,cons_succ]
   rw [hω]
-  constructor
-  · rintro ⟨n,hn,j,hj,hpair,hrest⟩
-    obtain ⟨n,rfl⟩ := (mem_omega n).mp hn
-    obtain ⟨j,rfl⟩ := (mem_omega j).mp hj
-    have he := (Formula.naturalPair_spec (ω+2) (Q+2) 1 0 (k+2)
-      (cons (natSet j) (cons (natSet n) e)) hω hQ n j rfl rfl).mp hpair
-    have hh := congrArg Nat.unpair (natSet_injective (hk.symm.trans he))
-    simp only [Nat.unpair_pair,Prod.mk.injEq] at hh
-    obtain ⟨rfl,rfl⟩ := hh
-    exact hrest
-  · intro h
-    exact ⟨natSet N,(mem_omega _).mpr ⟨N,rfl⟩,natSet K,(mem_omega _).mpr ⟨K,rfl⟩,
-      (Formula.naturalPair_spec (ω+2) (Q+2) 1 0 (k+2)
-        (cons (natSet K) (cons (natSet N) e)) hω hQ N K rfl rfl).mpr hk,h⟩
+  exact Formula.naturalPair_exists_payload ω Q k e hω hQ N K hk _
 
-theorem internally_countable_union (M U : ZFSet.{0}) (hM : Transitive M) (hT : SourceT M)
-    (hU : U ∈ M) (E : ℕ → ZFSet.{0}) (hE : ∀ n, E n ∈ finiteSubsets U)
+/-- Flatten a coded cover using selected graphs with unique fallback entries and
+the specified ranges. Selected graphs may be finite prefixes. -/
+theorem internally_countable_union_of_selector (M U S C T : ZFSet.{0})
+    (hM : Transitive M) (hT : SourceT M)
+    (hU : U ∈ M) (hS : S ∈ M) (hCM : C ∈ M) (hTM : T ∈ M)
+    (hTfun : FunctionGraph S C T)
+    (E : ℕ → ZFSet.{0}) (hE : ∀ n, E n ∈ S)
     (hB : orbitGraph E ∈ M) (hcover : ∀ p ∈ U, ∃ n, p ∈ E n)
-    (hne : ∃ p, p ∈ U) : InternallyCountable M U := by
+    (d : ZFSet.{0}) (hd : d ∈ U)
+    (hlookup : ∀ H ∈ S, ∀ g ∈ C, ZFSet.pair H g ∈ T →
+      ∀ k ∈ ZFSet.omega, ∃ x ∈ U, Entry U g d k x ∧
+        ∀ y ∈ U, Entry U g d k y → y = x)
+    (hranges : ∀ H ∈ S, ∀ g, ZFSet.pair H g ∈ T → Ranges U H g) :
+    InternallyCountable M U := by
   classical
-  obtain ⟨d,hd⟩ := hne
-  obtain ⟨C,hCM,hC,T,hTM,hTfun,hTrange⟩ := internal_enumeration_selector M U hM hT hU
   have hω := sourceT_omega_mem M hM hT
   obtain ⟨Q,hQM,_,hQ⟩ := internal_finite_natural_graph_bound M hM hT.pairing hT.union
     hT.powerSet hT.separation.finitePrefix.bounded hω
-  let S := finiteSubsets U
   let B := orbitGraph E
   have hchoice (n k : ℕ) : ∃ x ∈ U, ∃ g ∈ C,
       ZFSet.pair (E n) g ∈ T ∧ Entry U g d (natSet k) x ∧
         ∀ y ∈ U, Entry U g d (natSet k) y → y = x := by
     obtain ⟨g,hg,hEg,_⟩ := hTfun.2 _ (hE n)
-    obtain ⟨x,hx,he,hu⟩ := entry_exists_unique U g d (natSet k) ((hC g).mp hg) hd
+    obtain ⟨x,hx,he,hu⟩ := hlookup (E n) (hE n) g hg hEg
+      (natSet k) ((mem_omega _).mpr ⟨k,rfl⟩)
     exact ⟨x,hx,g,hg,hEg,he,hu⟩
   choose v hv g hg hEg hentry huniq using hchoice
   let f : ℕ → ZFSet.{0} := fun i => v (Nat.unpair i).1 (Nat.unpair i).2
@@ -118,7 +116,7 @@ theorem internally_countable_union (M U : ZFSet.{0}) (hM : Transitive M) (hT : S
     intro i; rcases i with _|_|_|_|_|_|_|i
     · exact hω
     · exact hQM
-    · exact finiteSubsets_mem M U hM hT hU
+    · exact hS
     · exact hCM
     · exact hB
     · exact hTM
@@ -167,7 +165,7 @@ theorem internally_countable_union (M U : ZFSet.{0}) (hM : Transitive M) (hT : S
   refine ⟨orbitGraph f,hG,orbitGraph_function U f (fun _ => hv _ _),?_⟩
   intro p hp
   obtain ⟨n,hpE⟩ := hcover p hp
-  have hr := hTrange (E n) (hE n) (g n 0) (hEg n 0)
+  have hr := hranges (E n) (hE n) (g n 0) (hEg n 0)
   obtain ⟨k,hk,hkp⟩ := (hr.2 p hp).mp hpE
   obtain ⟨k,rfl⟩ := (mem_omega k).mp hk
   have heq := hTfun.functional (hE n) (hEg n 0) (hEg n k)
@@ -175,6 +173,18 @@ theorem internally_countable_union (M U : ZFSet.{0}) (hM : Transitive M) (hT : S
   refine ⟨natSet (Nat.pair n k),(mem_omega _).mpr ⟨Nat.pair n k,rfl⟩,?_⟩
   apply (orbitGraph_pair f _ p).mpr
   simpa only [f,Nat.unpair_pair] using hpv
+
+theorem internally_countable_union (M U : ZFSet.{0}) (hM : Transitive M) (hT : SourceT M)
+    (hU : U ∈ M) (E : ℕ → ZFSet.{0}) (hE : ∀ n, E n ∈ finiteSubsets U)
+    (hB : orbitGraph E ∈ M) (hcover : ∀ p ∈ U, ∃ n, p ∈ E n)
+    (hne : ∃ p, p ∈ U) : InternallyCountable M U := by
+  obtain ⟨d,hd⟩ := hne
+  obtain ⟨C,hCM,hC,T,hTM,hTfun,hTrange⟩ := internal_enumeration_selector M U hM hT hU
+  apply internally_countable_union_of_selector M U (finiteSubsets U) C T
+    hM hT hU (finiteSubsets_mem M U hM hT hU) hCM hTM hTfun E hE hB hcover d hd
+    ?_ hTrange
+  intro _ _ g hg _ k _
+  exact entry_exists_unique U g d k ((hC g).mp hg) hd
 
 end TuringRigidity.InternalCountableFiniteUnion
 

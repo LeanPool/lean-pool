@@ -7,13 +7,15 @@ Authors: OpenAI
 /-
 Adapted for Lean Pool from bjoernkjoshanssen/tt-
 auto/OAI/Computability/DegreeRigidity/Syntax/CheckedMembershipSeparation.lean.
+Also incorporates shared explicit-axiom proofs from upstream
+OAI/Computability/DegreeRigidity/Syntax/WeakCheckedMembership.lean under the same Apache-2.0 terms.
 Module paths, interfaces, and proofs are ported to the pool's toolchain and gates.
 Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream port repairs.
 -/
 
 module
 
-public import LeanPool.TuringConeRigidity.SetModels.InternalCheckedValue
+public import LeanPool.TuringConeRigidity.Syntax.WeakCheckedValue
 public import LeanPool.TuringConeRigidity.CohenForcing.FullSetForcing
 
 /-!
@@ -38,7 +40,10 @@ noncomputable def checkedMembershipFormula : SentenceForm :=
   .ex (.conj (checkedValueFormula.rename (fun i => match i with | 0 => 0 | 1 => 1 | _ => 6))
     (code (.member 0 1) 2 3 4 (fun i => match i with | 0 => 0 | _ => 5)))
 
-theorem checkedMembership_spec (M : ZFSet.{u}) (hM : Transitive M) (hT : SourceT M)
+/-- The explicit set-theoretic axioms suffice without an internal choice axiom. -/
+theorem checkedMembership_spec_of_axioms (M : ZFSet.{u}) (hM : Transitive M) (hP : Pairing M)
+  (hU : BoundedSetTheory.Union M) (hPow : PowerSet M)
+    (hS : SigmaSeparation M) (hR : SigmaReplacement M) (hI : Infinity M)
     {o : ZFSet.{u}} (ho : ∀ r s : Conditions c,
       ZFSet.pair (label c r) (label c s) ∈ o ↔ r ≤ s)
     (t : Name (Conditions c)) (p : Conditions c) (x : ZFSet.{u})
@@ -52,8 +57,8 @@ theorem checkedMembership_spec (M : ZFSet.{u}) (hM : Transitive M) (hT : SourceT
   have hc : c ∈ M := h1 ▸ he 1
   have hx : x ∈ M := h0 ▸ he 0
   have hcheck : (Name.check x : Name (Conditions c)).encode (label c) ∈ M :=
-    encoded_check_mem M c hM hT.pairing hT.union hT.powerSet
-      hT.separation.finitePrefix.bounded hT.replacement.finitePrefix hT.infinity hc hx
+    encoded_check_mem M c hM hP hU hPow
+      hS.bounded hR hI hc hx
   have henv (z : ZFSet.{u}) (hz : z ∈ M) : ∀ i, cons z e i ∈ M := by
     intro i
     cases i
@@ -62,13 +67,15 @@ theorem checkedMembership_spec (M : ZFSet.{u}) (hM : Transitive M) (hT : SourceT
   have checked (z : ZFSet.{u}) (hz : z ∈ M) :
       (checkedValueFormula.rename k).Sat (M : Set ZFSet) (cons z e) ↔
         z = (Name.check x : Name (Conditions c)).encode (label c) := by
-    rw [sat_rename,checkedValue_spec M hM hT _ (fun i => henv z hz (k i))]
+    rw [sat_rename,checkedValue_spec_without_choice M hM hP hU hPow hS hR hI _ (fun i => henv z hz
+      (k i))]
     simp only [k,cons_zero,cons_succ,h0,h5,encode_check]
   have forcing (z : ZFSet.{u}) (hz : z ∈ M)
       (hzv : z = (Name.check x : Name (Conditions c)).encode (label c)) :
       (code (.member 0 1) 2 3 4 v).Sat (M : Set ZFSet) (cons z e) ↔
         MemForces (Name.check x) t p := by
-    exact realize_code M hM hT ho (.member 0 1) names p (cons z e) (henv z hz)
+    exact realize_code_of_axioms M hM hP hU hPow hS hR hI ho (.member 0 1) names p (cons z e)
+      (henv z hz)
       2 3 4 v h1 h2 h3 (by
         intro i
         cases i
@@ -80,6 +87,18 @@ theorem checkedMembership_spec (M : ZFSet.{u}) (hM : Transitive M) (hT : SourceT
     exact (forcing z hz ((checked z hz).mp hzv)).mp hf
   · intro hf
     exact ⟨_,hcheck,(checked _ hcheck).mpr rfl,(forcing _ hcheck rfl).mpr hf⟩
+
+theorem checkedMembership_spec (M : ZFSet.{u}) (hM : Transitive M) (hT : SourceT M)
+    {o : ZFSet.{u}} (ho : ∀ r s : Conditions c,
+      ZFSet.pair (label c r) (label c s) ∈ o ↔ r ≤ s)
+    (t : Name (Conditions c)) (p : Conditions c) (x : ZFSet.{u})
+    (e : ℕ → ZFSet.{u}) (he : ∀ i, e i ∈ M)
+    (h0 : e 0 = x) (h1 : e 1 = c) (h2 : e 2 = o) (h3 : e 3 = label c p)
+    (h4 : e 4 = t.encode (label c)) (h5 : e 5 = label c ⊤) :
+    checkedMembershipFormula.Sat (M : Set ZFSet) e ↔ MemForces (Name.check x) t p := by
+  exact checkedMembership_spec_of_axioms M hM hT.pairing hT.union hT.powerSet
+    hT.separation.finitePrefix hT.replacement.finitePrefix hT.infinity
+    ho t p x e he h0 h1 h2 h3 h4 h5
 
 /-- A sigma formula selecting a checked-name value through its certified graph. -/
 noncomputable def checkedValueSigma : SigmaFormula :=
@@ -106,7 +125,10 @@ theorem checkedMembershipSigma_spec (M : ZFSet.{u}) (e : ℕ → ZFSet.{u}) :
     (sigma_sat (BoundedForcing.SigmaCode.forcing (.bounded (.member 0 1)) 2 3 4
       (fun i => match i with | 0 => 0 | _ => 5)) M _).symm
 
-theorem internal_forced_members (M : ZFSet.{u}) (hM : Transitive M) (hT : SourceT M)
+/-- The explicit set-theoretic axioms suffice without an internal choice axiom. -/
+theorem internal_forced_members_of_axioms (M : ZFSet.{u}) (hM : Transitive M) (hP : Pairing
+  M) (hU : BoundedSetTheory.Union M) (hPow : PowerSet M)
+    (hS : SigmaSeparation M) (hR : SigmaReplacement M) (hI : Infinity M)
     (hc : c ∈ M) {o a : ZFSet.{u}}
     (hoM : o ∈ M) (ha : a ∈ M)
     (ho : ∀ r s : Conditions c, ZFSet.pair (label c r) (label c s) ∈ o ↔ r ≤ s)
@@ -120,8 +142,9 @@ theorem internal_forced_members (M : ZFSet.{u}) (hM : Transitive M) (hT : Source
     · exact hM c hc _ (label_mem c p)
     · exact ht
     · exact hM c hc _ (label_mem c ⊤)
-  obtain ⟨b,hb,hdef⟩ := hT.separation.finitePrefix checkedMembershipSigma e he a ha
-  have spec (x : ZFSet.{u}) (hx : x ∈ M) := checkedMembership_spec M hM hT ho t p x
+  obtain ⟨b,hb,hdef⟩ := hS checkedMembershipSigma e he a ha
+  have spec (x : ZFSet.{u}) (hx : x ∈ M) := checkedMembership_spec_of_axioms M hM hP hU hPow
+    hS hR hI ho t p x
     (cons x e) (by
       intro i
       cases i
@@ -136,6 +159,15 @@ theorem internal_forced_members (M : ZFSet.{u}) (hM : Transitive M) (hT : Source
   · rintro ⟨hxa,hf⟩
     have hxM := hM a ha x hxa
     exact (hdef x hxM).mpr ⟨hxa,(checkedMembershipSigma_spec M _).mpr ((spec x hxM).mpr hf)⟩
+
+theorem internal_forced_members (M : ZFSet.{u}) (hM : Transitive M) (hT : SourceT M)
+    (hc : c ∈ M) {o a : ZFSet.{u}}
+    (hoM : o ∈ M) (ha : a ∈ M)
+    (ho : ∀ r s : Conditions c, ZFSet.pair (label c r) (label c s) ∈ o ↔ r ≤ s)
+    (t : Name (Conditions c)) (ht : t.encode (label c) ∈ M) (p : Conditions c) :
+    ∃ b ∈ M, ∀ x, x ∈ b ↔ x ∈ a ∧ MemForces (Name.check x) t p := by
+  exact internal_forced_members_of_axioms M hM hT.pairing hT.union hT.powerSet
+    hT.separation.finitePrefix hT.replacement.finitePrefix hT.infinity hc hoM ha ho t ht p
 
 end TuringRigidity.FullSetForcing
 

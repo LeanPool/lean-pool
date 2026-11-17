@@ -35,32 +35,7 @@ theorem decide_stable_exists (A : Oracle) : ∃ f : ℕ → ℕ,
     ∀ x p, Extends (columns A) (condition p) (condition (f (Nat.pair x p))) ∧
       (Disagreement A x (condition (f (Nat.pair x p))) ∨ (f (Nat.pair x p) = p ∧ NoDisagreement A
         x (condition p))) := by
-  obtain ⟨search,hs,hsearch⟩ := sigma1_choice (cert_sigma A)
-  let out : ℕ → ℕ := fun v => if search v = 0 then (Nat.unpair v).2 else item (search v-1) 0
-  have hmap : Primrec (fun v : ℕ => if (Nat.unpair v).2 = 0 then (Nat.unpair (Nat.unpair v).1).2
-      else item ((Nat.unpair v).2-1) 0) := by
-    let f := Primrec.fst.comp Primrec.unpair
-    let r := Primrec.snd.comp Primrec.unpair
-    exact Primrec.ite (Primrec.eq.comp r (Primrec.const 0)) (r.comp f)
-      (item_primrec.comp (Primrec.nat_sub.comp r (Primrec.const 1)) (Primrec.const 0))
-  refine ⟨out,?_,fun x p => ?_⟩
-  · exact (total_comp (total_primrec hmap) (total_pair (total_primrec Primrec.id) hs)).of_eq
-      (fun v => by simp only [Nat.unpair_pair]; rfl)
-  · rcases hsearch (Nat.pair x p) with ⟨hz,hn⟩ | ⟨hp,hc⟩
-    · simp only [out,hz,↓reduceIte,Nat.unpair_pair]
-      refine ⟨extends_refl _ _,Or.inr ⟨trivial,fun q hpq hd => ?_⟩⟩
-      obtain ⟨n,a,b,hab,ha,hb⟩ := hd
-      apply hn
-      refine ⟨encode [code q,n,a,b],?_⟩
-      simpa [Cert,item,word,← show left (code q) = q.left from congrArg Condition.left
-        (condition_code q),
-        ← show right (code q) = q.right from congrArg Condition.right (condition_code
-          q),condition_code] using
-        And.intro hpq (And.intro hab (And.intro ha hb))
-    · have hz : search (Nat.pair x p) ≠ 0 := by omega
-      simp only [out,ite_eq_right hz]
-      simp only [Cert,Nat.unpair_pair] at hc
-      exact ⟨hc.1,Or.inl ⟨_,_,_,hc.2⟩⟩
+  exact UniformAgreement.decide_exists_with_unchanged_code A
 
 theorem pair_stable_exists (A : Oracle) : ∃ f : ℕ → ℕ,
     Nat.RecursiveIn {oracleFunction (jump A)} (fun v => Part.some (f v)) ∧
@@ -93,77 +68,7 @@ theorem next_precise (A : Oracle) (x p : ℕ)
       ∃ i n, (i = 1 ∨ i = 2) ∧ ∀ q, Extends (columns A) (condition (next A (Nat.pair x p))) q →
         ∀ a, a ∉ UniformRun.run A (machine (item x 0)) (machine (item x i))
           (if i = 1 then q.left else q.right) n) := by
-  classical
-  let v := Nat.pair x p
-  let raw := UniformSplit.step A (request v)
-  have hs := UniformSplit.step_spec A (request v)
-  change UniformSplit.Accept A (Nat.pair (request v) raw) at hs
-  simp only [UniformSplit.Accept,Nat.unpair_pair] at hs
-  rcases hs with ⟨ht,hno⟩ | ⟨ht,hpoint⟩ | ⟨ht,hdiv⟩
-  · have he : condition (next A v) = condition p := by
-      simp [next,outcome,update,retag,EffectiveSplitConditions.update,← show raw =
-        UniformSplit.step A (request v) from rfl,ht,v,condition_code]
-    change Extends _ _ (condition (next A v)) ∧ _
-    rw [he]
-    exact ⟨extends_refl _ _,rfl,Or.inl ⟨rfl,Or.inl hno⟩⟩
-  · let w := (Nat.unpair raw).2
-    have hp := hpoint
-    simp only [UniformSplit.PointCert,Nat.unpair_pair,UniformSplit.start,UniformSplit.base,
-UniformSplit.program, request, v, item, encodek, Option.getD_some, List.getD_cons_zero,
-  List.getD_cons_succ,
-      word] at hp
-    have hpq : left p <+: word (item w 1) := hp.1
-    let r := append (condition p) ((word (item w 1)).drop (left p).length)
-    have hl : r.left = word (item w 1) := by
-      change left p ++ (word (item w 1)).drop (left p).length = _
-      rw [List.prefix_iff_eq_take] at hpq
-      conv_lhs => lhs; rw [hpq]
-      exact List.take_append_drop _ _
-    by_cases hcoding : IsCoding A (Nat.pair p raw)
-    · have he : condition (next A v) = condition p := by
-        simp [next,outcome,update,retag,EffectiveSplitConditions.update,
-          ← show raw = UniformSplit.step A (request v) from rfl,ht,v,hcoding,condition_code]
-      change Extends _ _ (condition (next A v)) ∧ _
-      rw [he]
-      exact ⟨extends_refl _ _, rfl, Or.inl ⟨rfl, Or.inr ⟨w, hpoint, by simpa only [IsCoding,
-        Nat.unpair_pair] using hcoding⟩⟩⟩
-    · have he : condition (next A v) = r := by
-        simp [next,outcome,update,retag,EffectiveSplitConditions.update,
-          ← show raw = UniformSplit.step A (request v) from rfl,ht,v,hcoding,condition_code]
-        rfl
-      have hnc : ¬ CodingLocation (columns A) (condition p) (item w 2) := by
-        simpa only [IsCoding, Nat.unpair_pair] using hcoding
-      have hpr : Extends (columns A) (condition p) r := append_extends _ _ _
-      have hd := split_coding_or_divergence (r := r) hn hpr
-        (item w 2) hp.2.1 (by simpa [hl,item,word,w] using hp.2.2.1) (item w 3).bodd
-        (item w 0) (item w 4) (item w 5) hp.2.2.2.1
-        (by simpa [hl, item, word, w] using hp.2.2.2.2.1) (by simpa [hl, item, word, w] using
-          hp.2.2.2.2.2)
-      change Extends _ _ (condition (next A v)) ∧ _
-      rw [he]
-      refine ⟨append_extends _ _ _,rfl,Or.inr ⟨2,item w 0,Or.inr rfl,?_⟩⟩
-      simpa using hd.resolve_left hnc
-  · let w := (Nat.unpair raw).2
-    have hpq : left p <+: word (item w 1) := by
-      simpa [UniformSplit.DivCert,UniformSplit.start,request,v,item,word] using hdiv.1
-    let r := append (condition p) ((word (item w 1)).drop (left p).length)
-    have hl : r.left = word (item w 1) := by
-      change left p ++ (word (item w 1)).drop (left p).length = _
-      rw [List.prefix_iff_eq_take] at hpq
-      conv_lhs => lhs; rw [hpq]
-      exact List.take_append_drop _ _
-    have he : condition (next A v) = r := by
-      simp [next,outcome,update,retag,EffectiveSplitConditions.update,
-        ← show raw = UniformSplit.step A (request v) from rfl,ht,v,condition_code]
-      rfl
-    change Extends _ _ (condition (next A v)) ∧ _
-    rw [he]
-    refine ⟨append_extends _ _ _,rfl,Or.inr ⟨1,item w 0,Or.inl rfl,?_⟩⟩
-    intro q hrq a ha
-    apply hdiv.2
-    refine ⟨encode q.left,a,?_,?_⟩
-    · simpa [word,w,hl] using hrq.1
-    · simpa [UniformSplit.base,UniformSplit.program,request,v,item,word] using ha
+  exact UniformPair.next_spec_with_unchanged_condition A x p hn
 
 /-- A stable pair requirement is settled by disagreement or permanent divergence of one side. -/
 def Decisive (A : Oracle) (x : ℕ) (p : Condition) : Prop :=

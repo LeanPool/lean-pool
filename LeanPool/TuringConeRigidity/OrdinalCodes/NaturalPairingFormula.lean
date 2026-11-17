@@ -7,6 +7,9 @@ Authors: OpenAI
 /-
 Adapted for Lean Pool from bjoernkjoshanssen/tt-
 auto/OAI/Computability/DegreeRigidity/OrdinalCodes/NaturalPairingFormula.lean.
+Also incorporates the common natural-pair witness argument from upstream
+SetModels/CountableSetReal.lean, SetModels/InternalNaturalRelationReal.lean and
+SetModels/InternalCountableFiniteUnion.lean under the same Apache-2.0 terms.
 Module paths, interfaces, and proofs are ported to the pool's toolchain and gates.
 Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream port repairs.
 -/
@@ -57,6 +60,28 @@ theorem naturalPair_spec (o Q x n y : ℕ) (e : ℕ → ZFSet.{u})
   change (pairRightTerm.graph o Q y (pairVars x n)).Eval e ↔ e y = natSet (a*a+a+b) at hr
   simp only [naturalPair,eval_disj,Formula.Eval,hl,hr,ha,hb,natSet_mem_natSet,Nat.pair]
   by_cases h : a < b <;> simp [h]
+
+/-- Eliminate two natural witnesses whose paired code is fixed, preserving any payload. -/
+theorem naturalPair_exists_payload (o Q v : ℕ) (e : ℕ → ZFSet.{u})
+    (ho : e o = ZFSet.omega) (hQ : ∀ f : ℕ → ℕ, ∀ k, finiteNaturalGraph f k ∈ e Q)
+    (N K : ℕ) (hv : e v = natSet (Nat.pair N K)) (P : ZFSet.{u} → ZFSet.{u} → Prop) :
+    (∃ n ∈ ZFSet.omega, ∃ k ∈ ZFSet.omega,
+      (naturalPair (o+2) (Q+2) 1 0 (v+2)).Eval (cons k (cons n e)) ∧ P n k) ↔
+      P (natSet N) (natSet K) := by
+  constructor
+  · rintro ⟨n,hn,k,hk,hpair,hrest⟩
+    obtain ⟨n,rfl⟩ := (mem_omega n).mp hn
+    obtain ⟨k,rfl⟩ := (mem_omega k).mp hk
+    have hpair' := (naturalPair_spec (o+2) (Q+2) 1 0 (v+2)
+      (cons (natSet k) (cons (natSet n) e)) ho hQ n k rfl rfl).mp hpair
+    have he := congrArg Nat.unpair (natSet_injective (hv.symm.trans hpair'))
+    simp only [Nat.unpair_pair, Prod.mk.injEq] at he
+    obtain ⟨rfl,rfl⟩ := he
+    exact hrest
+  · intro h
+    exact ⟨natSet N,(mem_omega _).mpr ⟨N,rfl⟩,natSet K,(mem_omega _).mpr ⟨K,rfl⟩,
+      (naturalPair_spec (o+2) (Q+2) 1 0 (v+2)
+        (cons (natSet K) (cons (natSet N) e)) ho hQ N K rfl rfl).mpr hv,h⟩
 
 end Formula
 end TuringRigidity.BoundedSetTheory

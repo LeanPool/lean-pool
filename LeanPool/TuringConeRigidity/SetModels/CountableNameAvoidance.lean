@@ -7,6 +7,8 @@ Authors: OpenAI
 /-
 Adapted for Lean Pool from bjoernkjoshanssen/tt-
 auto/OAI/Computability/DegreeRigidity/SetModels/CountableNameAvoidance.lean.
+Also incorporates shared explicit-axiom proofs from upstream
+OAI/Computability/DegreeRigidity/SetModels/WeakNameAvoidance.lean under the same Apache-2.0 terms.
 Module paths, interfaces, and proofs are ported to the pool's toolchain and gates.
 Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream port repairs.
 -/
@@ -56,6 +58,34 @@ theorem ground_name_sequence (M N : ZFSet.{u}) [Countable (Conditions N)] (hMN :
   obtain ⟨n,rfl⟩ := he m
   exact ⟨n,(hts n).2 t ht hm.symm⟩
 
+/-- The explicit set-theoretic axioms suffice without an internal choice axiom. -/
+theorem exists_generic_omitting_subset_of_axioms (M N : ZFSet.{u}) [Countable (Conditions N)]
+    (hM : Transitive M) (hP : Pairing M) (hU : BoundedSetTheory.Union M) (hPow : PowerSet M)
+    (hS : SigmaSeparation M) (hR : SigmaReplacement M) (hI : Infinity M) (hMN : M ⊆ N)
+    (hc : c ∈ M) {o a S : ZFSet.{u}} (hoM : o ∈ M) (ha : a ∈ M)
+    (hSa : S ⊆ a) (hSM : S ∉ M)
+    (ho : ∀ r s : Conditions c, ZFSet.pair (label c r) (label c s) ∈ o ↔ r ≤ s)
+    (p : Conditions c) :
+    ∃ G : GenericFilter (Conditions c), p ∈ G.carrier ∧ GroundGeneric N G ∧
+      S ∉ genericExtensionSet M c G.carrier := by
+  have ht₀ := encoded_check_mem M c hM hP hU hPow
+    hS.bounded hR hI hc hc
+  obtain ⟨ts,hts,hcover⟩ := ground_name_sequence M N hMN (Name.check c) ht₀
+  let E : ℕ → Set (Conditions c) := fun n => NameDifference a S (ts n)
+  have hE : ∀ n, Dense (E n) := fun n =>
+    nameDifference_dense_of_axioms M hM hP hU hPow hS hR hI hc hoM ha hSa hSM ho (ts n) (hts n)
+  obtain ⟨G,hp,hG,hGE⟩ := ground_generic_with_requirements N ⟨c,hMN hc⟩ E hE p
+  refine ⟨G,hp,hG,?_⟩
+  intro hSG
+  obtain ⟨t,ht,hval⟩ := (mem_extensionSet M c G.carrier S).mp hSG
+  obtain ⟨n,hn⟩ := hcover t ht
+  obtain ⟨q,hq,hqn⟩ := hGE n
+  have hGM : GroundGeneric M G := fun D hD hd => hG D (hMN hD) hd
+  have hne := nameDifference_ne_value_of_axioms M hM hP hU hPow hS hR hI hc hoM ha ho (ts n)
+    (hts n) G hGM hq hqn
+  apply hne
+  exact (Name.val_eq_of_encode_eq (label c) (label_injective c) G.carrier (ts n) t hn).trans hval
+
 theorem exists_generic_omitting_subset (M N : ZFSet.{u}) [Countable (Conditions N)]
     (hM : Transitive M) (hT : SourceT M) (hMN : M ⊆ N)
     (hc : c ∈ M) {o a S : ZFSet.{u}} (hoM : o ∈ M) (ha : a ∈ M)
@@ -64,25 +94,14 @@ theorem exists_generic_omitting_subset (M N : ZFSet.{u}) [Countable (Conditions 
     (p : Conditions c) :
     ∃ G : GenericFilter (Conditions c), p ∈ G.carrier ∧ GroundGeneric N G ∧
       S ∉ genericExtensionSet M c G.carrier := by
-  have ht₀ := encoded_check_mem M c hM hT.pairing hT.union hT.powerSet
-    hT.separation.finitePrefix.bounded hT.replacement.finitePrefix hT.infinity hc hc
-  obtain ⟨ts,hts,hcover⟩ := ground_name_sequence M N hMN (Name.check c) ht₀
-  let E : ℕ → Set (Conditions c) := fun n => NameDifference a S (ts n)
-  have hE : ∀ n, Dense (E n) := fun n =>
-    nameDifference_dense M hM hT hc hoM ha hSa hSM ho (ts n) (hts n)
-  obtain ⟨G,hp,hG,hGE⟩ := ground_generic_with_requirements N ⟨c,hMN hc⟩ E hE p
-  refine ⟨G,hp,hG,?_⟩
-  intro hSG
-  obtain ⟨t,ht,hval⟩ := (mem_extensionSet M c G.carrier S).mp hSG
-  obtain ⟨n,hn⟩ := hcover t ht
-  obtain ⟨q,hq,hqn⟩ := hGE n
-  have hGM : GroundGeneric M G := fun D hD hd => hG D (hMN hD) hd
-  have hne := nameDifference_ne_value M hM hT hc hoM ha ho (ts n) (hts n) G hGM hq hqn
-  apply hne
-  exact (Name.val_eq_of_encode_eq (label c) (label_injective c) G.carrier (ts n) t hn).trans hval
+  exact exists_generic_omitting_subset_of_axioms M N hM hT.pairing hT.union hT.powerSet
+    hT.separation.finitePrefix hT.replacement.finitePrefix hT.infinity hMN hc hoM ha hSa hSM ho p
 
-theorem subset_mem_iff_all_generic_extensions (M N : ZFSet.{u}) [Countable (Conditions N)]
-    (hM : Transitive M) (hT : SourceT M) (hMN : M ⊆ N)
+/-- The explicit set-theoretic axioms suffice without an internal choice axiom. -/
+theorem subset_mem_iff_all_generic_extensions_of_axioms (M N : ZFSet.{u}) [Countable
+  (Conditions N)]
+    (hM : Transitive M) (hP : Pairing M) (hU : BoundedSetTheory.Union M) (hPow : PowerSet M)
+    (hS : SigmaSeparation M) (hR : SigmaReplacement M) (hI : Infinity M) (hMN : M ⊆ N)
     (hc : c ∈ M) {o a S : ZFSet.{u}} (hoM : o ∈ M) (ha : a ∈ M) (hSa : S ⊆ a)
     (ho : ∀ r s : Conditions c, ZFSet.pair (label c r) (label c s) ∈ o ↔ r ≤ s)
     (p : Conditions c) :
@@ -91,13 +110,24 @@ theorem subset_mem_iff_all_generic_extensions (M N : ZFSet.{u}) [Countable (Cond
   classical
   constructor
   · intro hSM G _ hp
-    exact ground_inclusion_set M c hM hT.pairing hT.union hT.powerSet
-      hT.separation.finitePrefix.bounded hT.replacement.finitePrefix hT.infinity hc
+    exact ground_inclusion_set M c hM hP hU hPow
+      hS.bounded hR hI hc
       G.carrier (G.upper le_top hp) hSM
   · intro h
     by_contra hSM
-    obtain ⟨G,hp,hG,hSG⟩ := exists_generic_omitting_subset M N hM hT hMN hc hoM ha hSa hSM ho p
+    obtain ⟨G,hp,hG,hSG⟩ := exists_generic_omitting_subset_of_axioms M N hM hP hU hPow hS hR
+      hI hMN hc hoM ha hSa hSM ho p
     exact hSG (h G hG hp)
+
+theorem subset_mem_iff_all_generic_extensions (M N : ZFSet.{u}) [Countable (Conditions N)]
+    (hM : Transitive M) (hT : SourceT M) (hMN : M ⊆ N)
+    (hc : c ∈ M) {o a S : ZFSet.{u}} (hoM : o ∈ M) (ha : a ∈ M) (hSa : S ⊆ a)
+    (ho : ∀ r s : Conditions c, ZFSet.pair (label c r) (label c s) ∈ o ↔ r ≤ s)
+    (p : Conditions c) :
+    S ∈ M ↔ ∀ G : GenericFilter (Conditions c), GroundGeneric N G → p ∈ G.carrier →
+      S ∈ genericExtensionSet M c G.carrier := by
+  exact subset_mem_iff_all_generic_extensions_of_axioms M N hM hT.pairing hT.union hT.powerSet
+    hT.separation.finitePrefix hT.replacement.finitePrefix hT.infinity hMN hc hoM ha hSa ho p
 
 end TuringRigidity.FullSetForcing
 

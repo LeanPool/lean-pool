@@ -7,6 +7,8 @@ Authors: OpenAI
 /-
 Adapted for Lean Pool from bjoernkjoshanssen/tt-
 auto/OAI/Computability/DegreeRigidity/OrdinalCodes/TrimmedSumDomains.lean.
+Also incorporates shared proofs from the upstream
+OAI/Computability/DegreeRigidity/Effective/FiniteSumDomains.lean under the same Apache-2.0 terms.
 Module paths, interfaces, and proofs are ported to the pool's toolchain and gates.
 Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream port repairs.
 -/
@@ -37,20 +39,12 @@ noncomputable def trimmedSumDomainSentence : SentenceForm := fromBounded
 noncomputable def trimmedSumRelationSentence : SentenceForm :=
   .ex (.ex (fromBounded (.conj (.orderedPair 2 1 0) (sumLessFormula 3 4 5 6 1 0))))
 
-theorem sum_domain_subset_limit (R : ZFSet.{u}) (γ : Ordinal.{u})
-    (hγ : Order.IsSuccLimit γ) {a b : ZFSet.{u}}
+/-- A tagged sum domain lies in the successor level whenever its nodes lie in the base level. -/
+theorem sum_domain_mem_successor_of_subset (R : ZFSet.{u}) (γ : Ordinal.{u})
+    {a b : ZFSet.{u}}
     (ha : a ∈ level R γ) (hb : b ∈ level R γ)
-    (h0 : (∅ : ZFSet.{u}) ∈ level R γ) (h1 : ({∅} : ZFSet.{u}) ∈ level R γ) :
-    sumDomain a b ⊆ level R γ := by
-  intro z hz
-  rcases (mem_sumDomain a b z).mp hz with ⟨s,hs,rfl⟩|⟨s,hs,rfl⟩
-  · exact orderedPair_mem_level_limit R γ hγ h0 (level_transitive R γ _ ha _ hs)
-  · exact orderedPair_mem_level_limit R γ hγ h1 (level_transitive R γ _ hb _ hs)
-
-theorem sum_domain_at_limit_successor (R : ZFSet.{u}) (γ : Ordinal.{u})
-    (hγ : Order.IsSuccLimit γ) {a b : ZFSet.{u}}
-    (ha : a ∈ level R γ) (hb : b ∈ level R γ)
-    (h0 : (∅ : ZFSet.{u}) ∈ level R γ) (h1 : ({∅} : ZFSet.{u}) ∈ level R γ) :
+    (h0 : (∅ : ZFSet.{u}) ∈ level R γ) (h1 : ({∅} : ZFSet.{u}) ∈ level R γ)
+    (hd : sumDomain a b ⊆ level R γ) :
     sumDomain a b ∈ level R (γ+1) := by
   let e := cons a (cons b (cons ∅ (fun _ => {∅})))
   have he (i : ℕ) : e i ∈ level R γ := by
@@ -60,7 +54,7 @@ theorem sum_domain_at_limit_successor (R : ZFSet.{u}) (γ : Ordinal.{u})
     · exact h0
     · exact h1
   apply defined_set_at_successor R γ trimmedSumDomainSentence e he _
-    (sum_domain_subset_limit R γ hγ ha hb h0 h1)
+    hd
   intro z hz
   rw [trimmedSumDomainSentence,bounded_sat,Formula.absolute _ _ (level_transitive R γ) _
     (fun i => by
@@ -70,10 +64,13 @@ theorem sum_domain_at_limit_successor (R : ZFSet.{u}) (γ : Ordinal.{u})
   simp only [Formula.eval_disj,Formula.Eval,Formula.eval_orderedPair,cons_zero,cons_succ,e,
     mem_sumDomain,leftNode,rightNode]
 
-theorem sum_relation_at_limit_successor (R : ZFSet.{u}) (γ : Ordinal.{u})
-    (hγ : Order.IsSuccLimit γ) {a b : ZFSet.{u}}
+/-- A tagged sum relation lies in the successor level under explicit base-level bounds. -/
+theorem sum_relation_mem_successor_of_subset (R : ZFSet.{u}) (γ : Ordinal.{u})
+    {a b : ZFSet.{u}}
     (ha : a ∈ level R γ) (hb : b ∈ level R γ)
-    (h0 : (∅ : ZFSet.{u}) ∈ level R γ) (h1 : ({∅} : ZFSet.{u}) ∈ level R γ) :
+    (h0 : (∅ : ZFSet.{u}) ∈ level R γ) (h1 : ({∅} : ZFSet.{u}) ∈ level R γ)
+    (hd : sumDomain a b ⊆ level R γ)
+    (hsub : sumRelation a b ⊆ level R γ) :
     sumRelation a b ∈ level R (γ+1) := by
   let A := level R γ
   let e := cons a (cons b (cons ∅ (fun _ => {∅})))
@@ -83,11 +80,6 @@ theorem sum_relation_at_limit_successor (R : ZFSet.{u}) (γ : Ordinal.{u})
     · exact hb
     · exact h0
     · exact h1
-  have hd := sum_domain_subset_limit R γ hγ ha hb h0 h1
-  have hsub : sumRelation a b ⊆ A := by
-    intro z hz
-    obtain ⟨x,hx,y,hy,rfl⟩ := ZFSet.mem_prod.mp (sumRelation_on a b hz)
-    exact orderedPair_mem_level_limit R γ hγ (hd hx) (hd hy)
   apply defined_set_at_successor R γ trimmedSumRelationSentence e he _ hsub
   intro z hz
   change (∃ x ∈ A, ∃ y ∈ A, (fromBounded _).Sat _ (cons y (cons x (cons z e)))) ↔ _
@@ -121,6 +113,36 @@ theorem sum_relation_at_limit_successor (R : ZFSet.{u}) (γ : Ordinal.{u})
     obtain ⟨x,hx,y,hy,rfl⟩ := ZFSet.mem_prod.mp (sumRelation_on a b h)
     exact ⟨x,hd hx,y,hd hy,(hspec x y (hd hx) (hd hy)).mpr
       ⟨rfl,((pair_mem_sumRelation a b x y).mp h).2.2⟩⟩
+
+theorem sum_domain_subset_limit (R : ZFSet.{u}) (γ : Ordinal.{u})
+    (hγ : Order.IsSuccLimit γ) {a b : ZFSet.{u}}
+    (ha : a ∈ level R γ) (hb : b ∈ level R γ)
+    (h0 : (∅ : ZFSet.{u}) ∈ level R γ) (h1 : ({∅} : ZFSet.{u}) ∈ level R γ) :
+    sumDomain a b ⊆ level R γ := by
+  intro z hz
+  rcases (mem_sumDomain a b z).mp hz with ⟨s,hs,rfl⟩|⟨s,hs,rfl⟩
+  · exact orderedPair_mem_level_limit R γ hγ h0 (level_transitive R γ _ ha _ hs)
+  · exact orderedPair_mem_level_limit R γ hγ h1 (level_transitive R γ _ hb _ hs)
+
+theorem sum_domain_at_limit_successor (R : ZFSet.{u}) (γ : Ordinal.{u})
+    (hγ : Order.IsSuccLimit γ) {a b : ZFSet.{u}}
+    (ha : a ∈ level R γ) (hb : b ∈ level R γ)
+    (h0 : (∅ : ZFSet.{u}) ∈ level R γ) (h1 : ({∅} : ZFSet.{u}) ∈ level R γ) :
+    sumDomain a b ∈ level R (γ+1) := by
+  exact sum_domain_mem_successor_of_subset R γ ha hb h0 h1
+    (sum_domain_subset_limit R γ hγ ha hb h0 h1)
+
+theorem sum_relation_at_limit_successor (R : ZFSet.{u}) (γ : Ordinal.{u})
+    (hγ : Order.IsSuccLimit γ) {a b : ZFSet.{u}}
+    (ha : a ∈ level R γ) (hb : b ∈ level R γ)
+    (h0 : (∅ : ZFSet.{u}) ∈ level R γ) (h1 : ({∅} : ZFSet.{u}) ∈ level R γ) :
+    sumRelation a b ∈ level R (γ+1) := by
+  have hd := sum_domain_subset_limit R γ hγ ha hb h0 h1
+  have hsub : sumRelation a b ⊆ level R γ := by
+    intro z hz
+    obtain ⟨x,hx,y,hy,rfl⟩ := ZFSet.mem_prod.mp (sumRelation_on a b hz)
+    exact orderedPair_mem_level_limit R γ hγ (hd hx) (hd hy)
+  exact sum_relation_mem_successor_of_subset R γ ha hb h0 h1 hd hsub
 
 end TuringRigidity.OrdinalArithmetic
 

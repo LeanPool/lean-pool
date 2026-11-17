@@ -154,6 +154,13 @@ theorem equal_param {a : ZFSet.{u}} (ha : a ∈ M) (i : ℕ) :
     Definable M (fun e => e i = a) :=
   ⟨.equal (2*i) 1,fun _ => a,fun _ => ha,fun e => by simp [Formula.Eval,mix]⟩
 
+/-- Fix the first environment variable to an internal parameter. -/
+theorem Definable.fixFirst (h : Definable M P) (C : Context M) {a : ZFSet.{u}}
+    (ha : a ∈ M) : Definable M (fun e => P (cons a e)) := by
+  refine (h.existsParam (singleton_mem M C.transitive C.pairing ha)).congr ?_
+  intro e
+  simp only [ZFSet.mem_singleton, exists_eq_left]
+
 theorem pairMem_param {a : ZFSet.{u}} (ha : a ∈ M) (i j : ℕ) :
     Definable M (fun e => ZFSet.pair (e i) (e j) ∈ a) :=
   ⟨.pairMem (2*i) (2*j) 1,fun _ => a,fun _ => ha,fun e => by simp [mix]⟩

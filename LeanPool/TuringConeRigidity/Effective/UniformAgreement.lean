@@ -7,6 +7,9 @@ Authors: OpenAI
 /-
 Adapted for Lean Pool from bjoernkjoshanssen/tt-
 auto/OAI/Computability/DegreeRigidity/Effective/UniformAgreement.lean.
+Also incorporates the stronger decision proof from the upstream
+OAI/Computability/DegreeRigidity/Effective/StablePair.lean
+under the same Apache-2.0 terms.
 Module paths, interfaces, and proofs are ported to the pool's toolchain and gates.
 Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream port repairs.
 -/
@@ -67,11 +70,13 @@ theorem cert_sigma (A : Oracle) : Sigma A 1 (Cert A) := by
   simpa only [Nat.unpair_pair,word,encodek,Option.getD_some] using
     (Form.raise (n := 0) (s := true) he).and ((Form.raise (n := 0) (s := true) hn).and (hl.and hr))
 
-theorem decide_exists (A : Oracle) : ∃ f : ℕ → ℕ,
+/-- A uniform decision procedure either witnesses disagreement or leaves the
+condition code unchanged and certifies permanent agreement. -/
+theorem decide_exists_with_unchanged_code (A : Oracle) : ∃ f : ℕ → ℕ,
     Nat.RecursiveIn {oracleFunction (jump A)} (fun v => Part.some (f v)) ∧
     ∀ x p, Extends (columns A) (condition p) (condition (f (Nat.pair x p))) ∧
-      (Disagreement A x (condition (f (Nat.pair x p))) ∨ NoDisagreement A x (condition (f
-        (Nat.pair x p)))) := by
+      (Disagreement A x (condition (f (Nat.pair x p))) ∨ (f (Nat.pair x p) = p ∧ NoDisagreement A
+        x (condition p))) := by
   obtain ⟨search,hs,hsearch⟩ := sigma1_choice (cert_sigma A)
   let out : ℕ → ℕ := fun v => if search v = 0 then (Nat.unpair v).2 else item (search v-1) 0
   have hmap : Primrec (fun v : ℕ => if (Nat.unpair v).2 = 0 then (Nat.unpair (Nat.unpair v).1).2
@@ -85,7 +90,7 @@ theorem decide_exists (A : Oracle) : ∃ f : ℕ → ℕ,
       (fun v => by simp only [Nat.unpair_pair]; rfl)
   · rcases hsearch (Nat.pair x p) with ⟨hz,hn⟩ | ⟨hp,hc⟩
     · simp only [out,hz,↓reduceIte,Nat.unpair_pair]
-      refine ⟨extends_refl _ _,Or.inr (fun q hpq hd => ?_)⟩
+      refine ⟨extends_refl _ _,Or.inr ⟨trivial,fun q hpq hd => ?_⟩⟩
       obtain ⟨n,a,b,hab,ha,hb⟩ := hd
       apply hn
       refine ⟨encode [code q,n,a,b],?_⟩
@@ -98,6 +103,20 @@ theorem decide_exists (A : Oracle) : ∃ f : ℕ → ℕ,
       simp only [out,ite_eq_right hz]
       simp only [Cert,Nat.unpair_pair] at hc
       exact ⟨hc.1,Or.inl ⟨_,_,_,hc.2⟩⟩
+
+theorem decide_exists (A : Oracle) : ∃ f : ℕ → ℕ,
+    Nat.RecursiveIn {oracleFunction (jump A)} (fun v => Part.some (f v)) ∧
+    ∀ x p, Extends (columns A) (condition p) (condition (f (Nat.pair x p))) ∧
+      (Disagreement A x (condition (f (Nat.pair x p))) ∨ NoDisagreement A x (condition (f
+        (Nat.pair x p)))) := by
+  obtain ⟨f,hf,hs⟩ := decide_exists_with_unchanged_code A
+  refine ⟨f,hf,fun x p => ?_⟩
+  obtain ⟨he,hdec⟩ := hs x p
+  refine ⟨he,?_⟩
+  rcases hdec with hd | ⟨hcode,hn⟩
+  · exact Or.inl hd
+  · rw [hcode]
+    exact Or.inr hn
 
 end TuringRigidity.UniformAgreement
 

@@ -7,6 +7,9 @@ Authors: OpenAI
 /-
 Adapted for Lean Pool from bjoernkjoshanssen/tt-
 auto/OAI/Computability/DegreeRigidity/Effective/UniformPair.lean.
+Also incorporates the precise step proof from the upstream
+OAI/Computability/DegreeRigidity/Effective/StablePair.lean
+under the same Apache-2.0 terms.
 Module paths, interfaces, and proofs are ported to the pool's toolchain and gates.
 Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream port repairs.
 -/
@@ -146,13 +149,16 @@ theorem split_coding_or_divergence {A : Oracle} {x : ℕ} {p r : Condition}
       exact hn (CodingOnePoint.changeLeft q m b) hpc ⟨n,w,c,hne,hwq,hvc⟩
     exact hvw (hveq.trans hweq.symm)
 
-theorem next_spec (A : Oracle) (x p : ℕ)
+/-- A uniform pair step leaves the condition unchanged in the no-split or
+protected-point cases, or establishes permanent divergence of one side. -/
+theorem next_spec_with_unchanged_condition (A : Oracle) (x p : ℕ)
     (hn : UniformAgreement.NoDisagreement A x (condition p)) :
     Extends (columns A) (condition p) (condition (next A (Nat.pair x p))) ∧
     (condition (next A (Nat.pair x p))).active = (condition p).active ∧
-    ((¬ ∃ z, UniformSplit.SplitCert A (Nat.pair (request (Nat.pair x p)) z)) ∨
+    ((condition (next A (Nat.pair x p)) = condition p ∧
+      ((¬ ∃ z, UniformSplit.SplitCert A (Nat.pair (request (Nat.pair x p)) z)) ∨
       (∃ w, UniformSplit.PointCert A (Nat.pair (request (Nat.pair x p)) w) ∧
-        CodingLocation (columns A) (condition p) (item w 2)) ∨
+        CodingLocation (columns A) (condition p) (item w 2)))) ∨
       ∃ i n, (i = 1 ∨ i = 2) ∧ ∀ q, Extends (columns A) (condition (next A (Nat.pair x p))) q →
         ∀ a, a ∉ UniformRun.run A (machine (item x 0)) (machine (item x i))
           (if i = 1 then q.left else q.right) n) := by
@@ -168,12 +174,13 @@ theorem next_spec (A : Oracle) (x p : ℕ)
         UniformSplit.step A (request v) from rfl,ht,v,condition_code]
     change Extends _ _ (condition (next A v)) ∧ _
     rw [he]
-    exact ⟨extends_refl _ _,rfl,Or.inl hno⟩
+    exact ⟨extends_refl _ _,rfl,Or.inl ⟨rfl,Or.inl hno⟩⟩
   · let w := (Nat.unpair raw).2
     have hp := hpoint
-    simp only [UniformSplit.PointCert, Nat.unpair_pair, UniformSplit.start, UniformSplit.base,
-      UniformSplit.program, request, v, item, encodek, Option.getD_some, List.getD_cons_zero,
-      List.getD_cons_succ, word] at hp
+    simp only [UniformSplit.PointCert,Nat.unpair_pair,UniformSplit.start,UniformSplit.base,
+UniformSplit.program, request, v, item, encodek, Option.getD_some, List.getD_cons_zero,
+  List.getD_cons_succ,
+      word] at hp
     have hpq : left p <+: word (item w 1) := hp.1
     let r := append (condition p) ((word (item w 1)).drop (left p).length)
     have hl : r.left = word (item w 1) := by
@@ -187,23 +194,23 @@ theorem next_spec (A : Oracle) (x p : ℕ)
           ← show raw = UniformSplit.step A (request v) from rfl,ht,v,hcoding,condition_code]
       change Extends _ _ (condition (next A v)) ∧ _
       rw [he]
-      exact ⟨extends_refl _ _,rfl,Or.inr (Or.inl ⟨w,hpoint,by simpa only
-        [IsCoding,Nat.unpair_pair] using hcoding⟩)⟩
+      exact ⟨extends_refl _ _, rfl, Or.inl ⟨rfl, Or.inr ⟨w, hpoint, by simpa only [IsCoding,
+        Nat.unpair_pair] using hcoding⟩⟩⟩
     · have he : condition (next A v) = r := by
         simp [next,outcome,update,retag,EffectiveSplitConditions.update,
           ← show raw = UniformSplit.step A (request v) from rfl,ht,v,hcoding,condition_code]
         rfl
       have hnc : ¬ CodingLocation (columns A) (condition p) (item w 2) := by
-        simpa only [IsCoding,Nat.unpair_pair] using hcoding
+        simpa only [IsCoding, Nat.unpair_pair] using hcoding
       have hpr : Extends (columns A) (condition p) r := append_extends _ _ _
       have hd := split_coding_or_divergence (r := r) hn hpr
         (item w 2) hp.2.1 (by simpa [hl,item,word,w] using hp.2.2.1) (item w 3).bodd
         (item w 0) (item w 4) (item w 5) hp.2.2.2.1
-        (by simpa [hl,item,word,w] using hp.2.2.2.2.1) (by simpa [hl,item,word,w] using
+        (by simpa [hl, item, word, w] using hp.2.2.2.2.1) (by simpa [hl, item, word, w] using
           hp.2.2.2.2.2)
       change Extends _ _ (condition (next A v)) ∧ _
       rw [he]
-      refine ⟨append_extends _ _ _,rfl,Or.inr (Or.inr ⟨2,item w 0,Or.inr rfl,?_⟩)⟩
+      refine ⟨append_extends _ _ _,rfl,Or.inr ⟨2,item w 0,Or.inr rfl,?_⟩⟩
       simpa using hd.resolve_left hnc
   · let w := (Nat.unpair raw).2
     have hpq : left p <+: word (item w 1) := by
@@ -220,12 +227,29 @@ theorem next_spec (A : Oracle) (x p : ℕ)
       rfl
     change Extends _ _ (condition (next A v)) ∧ _
     rw [he]
-    refine ⟨append_extends _ _ _,rfl,Or.inr (Or.inr ⟨1,item w 0,Or.inl rfl,?_⟩)⟩
+    refine ⟨append_extends _ _ _,rfl,Or.inr ⟨1,item w 0,Or.inl rfl,?_⟩⟩
     intro q hrq a ha
     apply hdiv.2
     refine ⟨encode q.left,a,?_,?_⟩
     · simpa [word,w,hl] using hrq.1
     · simpa [UniformSplit.base,UniformSplit.program,request,v,item,word] using ha
+
+theorem next_spec (A : Oracle) (x p : ℕ)
+    (hn : UniformAgreement.NoDisagreement A x (condition p)) :
+    Extends (columns A) (condition p) (condition (next A (Nat.pair x p))) ∧
+    (condition (next A (Nat.pair x p))).active = (condition p).active ∧
+    ((¬ ∃ z, UniformSplit.SplitCert A (Nat.pair (request (Nat.pair x p)) z)) ∨
+      (∃ w, UniformSplit.PointCert A (Nat.pair (request (Nat.pair x p)) w) ∧
+        CodingLocation (columns A) (condition p) (item w 2)) ∨
+      ∃ i n, (i = 1 ∨ i = 2) ∧ ∀ q, Extends (columns A) (condition (next A (Nat.pair x p))) q →
+        ∀ a, a ∉ UniformRun.run A (machine (item x 0)) (machine (item x i))
+          (if i = 1 then q.left else q.right) n) := by
+  obtain ⟨hext,hactive,hrest⟩ := next_spec_with_unchanged_condition A x p hn
+  refine ⟨hext,hactive,?_⟩
+  rcases hrest with ⟨_,hno | hpoint⟩ | hdiv
+  · exact Or.inl hno
+  · exact Or.inr (Or.inl hpoint)
+  · exact Or.inr (Or.inr hdiv)
 
 theorem disagreement_mono {A : Oracle} {x : ℕ} {p q : Condition}
     (hpq : Extends (columns A) p q) (h : UniformAgreement.Disagreement A x p) :

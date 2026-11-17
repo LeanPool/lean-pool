@@ -13,7 +13,6 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.Constructibility.UniformNameValueCover
 public import LeanPool.TuringConeRigidity.SetModels.ExtensionWitnessCover
 
 /-!
@@ -47,38 +46,8 @@ theorem uniform_extension_witness_cover (M : ZFSet.{u}) (hM : Transitive M)
         ∃ y ∈ N.val G.carrier,
           φ.Realize (genericExtensionSet M c G.carrier) (cons y (cons x (fun i => (e i).val
             G.carrier))) := by
-  obtain ⟨d,hd,hdt,had⟩ := internal_transitive_container M hM hP hU hS.bounded hR hI ha
-  obtain ⟨W,hW,hbound⟩ := forcing_witness_bound M hM hP hU hPow hS hR hI hAC hc hoM ho φ e he hd
-  obtain ⟨N,hN,hcover⟩ := uniform_name_value_cover M hM hP hU hPow hS hR hI hc hW
-  refine ⟨N,hN,?_⟩
-  intro G hG ht x hx hw
-  obtain ⟨b,hbd,rfl⟩ := name_of_value_member d hdt a had G.carrier x hx
-  have hb := hM d hd _ hbd
-  obtain ⟨y,hy,hφ⟩ := hw
-  obtain ⟨v,hv,rfl⟩ := (mem_extensionSet M c G.carrier y).mp hy
-  have env (v : Name (Conditions c)) (hv : v.encode (label c) ∈ M) :
-      ∀ i, (push v (push b e) i).encode (label c) ∈ M := by
-    intro i
-    rcases i with _ | i
-    · exact hv
-    rcases i with _ | i
-    · exact hb
-    exact he i
-  have values (v : Name (Conditions c)) : (fun i => (push v (push b e) i).val G.carrier) =
-      cons (v.val G.carrier) (cons (b.val G.carrier) (fun i => (e i).val G.carrier)) := by
-    funext i
-    rcases i with _ | i
-    · rfl
-    rcases i with _|i <;> rfl
-  rw [← values v] at hφ
-  obtain ⟨p,hp,hforce⟩ := (internal_sigma_truth M hM hP hU hPow hS.bounded hR hI hc hoM ho G hG
-    φ (push v (push b e)) (env v hv)).mp hφ
-  obtain ⟨w,hw,hforcew⟩ := hbound b hbd p ⟨v,hv,hforce⟩
-  have hwM := hM W hW _ hw
-  have hφw := (internal_sigma_truth M hM hP hU hPow hS.bounded hR hI hc hoM ho G hG
-    φ (push w (push b e)) (env w hwM)).mpr ⟨p,hp,hforcew⟩
-  rw [values w] at hφw
-  exact ⟨w.val G.carrier,hcover G.carrier ht w hw,hφw⟩
+  exact extension_witness_cover_for_condition
+    M hM hP hU hPow hS hR hI hAC hc hoM ho φ e he a ha ⊤
 
 end TuringRigidity.BoundedForcing
 

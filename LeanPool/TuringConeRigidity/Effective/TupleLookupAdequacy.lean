@@ -7,6 +7,8 @@ Authors: OpenAI
 /-
 Adapted for Lean Pool from bjoernkjoshanssen/tt-
 auto/OAI/Computability/DegreeRigidity/Effective/TupleLookupAdequacy.lean.
+Also incorporates shared variable-parameter proofs from upstream
+OAI/Computability/DegreeRigidity/Syntax/VariableTruthSyntax.lean under the same Apache-2.0 terms.
 Module paths, interfaces, and proofs are ported to the pool's toolchain and gates.
 Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream port repairs.
 -/
@@ -48,10 +50,16 @@ theorem internal_tuple_graph_bound (C : Context M) {A : ZFSet.{u}} (hA : A ∈ M
 def TupleLookup (G t i x : ZFSet.{u}) : Prop :=
   ∃ n ∈ ZFSet.omega, ∃ g ∈ G, t = ZFSet.pair n g ∧ ZFSet.pair i x ∈ g
 
-theorem tupleLookup_definable (C : Context M) {G : ZFSet.{u}} (hG : G ∈ M) (t i x : ℕ) :
-    Definable M (fun e => TupleLookup G (e t) (e i) (e x)) :=
-  (((defOrderedPair C (t+2) 1 0).and (defPairMem C (i+2) (x+2) 0)).existsParam hG).existsParam
+/-- Definability with the tuple-graph bound supplied by the variable environment. -/
+theorem tupleLookup_definable_variable (C : Context M) (G t i x : ℕ) :
+    Definable M (fun e => TupleLookup (e G) (e t) (e i) (e x)) :=
+  (((defOrderedPair C (t+2) 1 0).and (defPairMem C (i+2) (x+2) 0)).existsMem (G+1)).existsParam
     C.omega_mem
+
+theorem tupleLookup_definable (C : Context M) {G : ZFSet.{u}} (hG : G ∈ M) (t i x : ℕ) :
+    Definable M (fun e => TupleLookup G (e t) (e i) (e x)) := by
+  simpa only [cons_zero, cons_succ] using
+    (tupleLookup_definable_variable C 0 (t+1) (i+1) (x+1)).fixFirst C hG
 
 theorem tupleLookup_spec (G : ZFSet.{u}) {n : ℕ} (v : Fin n → ZFSet.{u})
     (hG : tupleGraph v ∈ G) (i x : ZFSet.{u}) :
@@ -84,11 +92,18 @@ def TupleAdequate (Q B G c t : ZFSet.{u}) : Prop :=
   ∃ n ∈ ZFSet.omega, ∃ g ∈ G, ∃ b ∈ ZFSet.omega,
     t = ZFSet.pair n g ∧ BoundWitness Q B c b ∧ b ⊆ n
 
+/-- Definability with the tuple-graph bound supplied by the variable environment. -/
+theorem tupleAdequate_definable_variable (C : Context M) {Q B : ZFSet.{u}}
+    (hQ : Q ∈ M) (hB : B ∈ M) (G c t : ℕ) :
+    Definable M (fun e => TupleAdequate Q B (e G) (e c) (e t)) :=
+  ((((defOrderedPair C (t+3) 2 1).and ((boundWitness_definable C hQ hB (c+3) 0).and
+    (defSubset C 0 2))).existsParam C.omega_mem).existsMem (G+1)).existsParam C.omega_mem
+
 theorem tupleAdequate_definable (C : Context M) {Q B G : ZFSet.{u}}
     (hQ : Q ∈ M) (hB : B ∈ M) (hG : G ∈ M) (c t : ℕ) :
-    Definable M (fun e => TupleAdequate Q B G (e c) (e t)) :=
-  ((((defOrderedPair C (t+3) 2 1).and ((boundWitness_definable C hQ hB (c+3) 0).and
-    (defSubset C 0 2))).existsParam C.omega_mem).existsParam hG).existsParam C.omega_mem
+    Definable M (fun e => TupleAdequate Q B G (e c) (e t)) := by
+  simpa only [cons_zero, cons_succ] using
+    (tupleAdequate_definable_variable C hQ hB 0 (c+1) (t+1)).fixFirst C hG
 
 theorem tupleAdequate_spec (Q B G : ZFSet.{u})
     (hQ : ∀ p : SentenceForm, family p ∈ Q)
@@ -120,26 +135,30 @@ theorem tuplePrefix_spec (A G : ZFSet.{u})
     TuplePrefix A G (tupleCode v) x s ↔ s = tupleCode (Fin.cases x v) :=
   tuplePrefixFormula_spec 0 1 2 3 4 5 6 _ rfl rfl hG v hv rfl hx
 
-theorem tuplePrefix_definable (C : Context M) {G : ZFSet.{u}} (hG : G ∈ M) (a t x s : ℕ) :
-    Definable M (fun e => TuplePrefix (e a) G (e t) (e x) (e s)) := by
-  let d := cons ZFSet.omega (cons G (fun _ => natSet 0))
+/-- Definability with the tuple-graph bound supplied by the variable environment. -/
+theorem tuplePrefix_definable_variable (C : Context M) (a G t x s : ℕ) :
+    Definable M (fun e => TuplePrefix (e a) (e G) (e t) (e x) (e s)) := by
+  let d := cons ZFSet.omega (fun _ => natSet 0)
   let r : ℕ → ℕ := fun i => match i with
-    | 0 => 2*a | 1 => 1 | 2 => 3 | 3 => 2*t | 4 => 2*x | 5 => 2*s | _ => 5
+    | 0 => 2*a | 1 => 1 | 2 => 2*G | 3 => 2*t | 4 => 2*x | 5 => 2*s | _ => 3
   refine ⟨(tuplePrefixFormula 0 1 2 3 4 5 6).rename r,d,?_,?_⟩
-  · intro i
-    rcases i with _|_|i
+  · intro i; cases i
     · exact C.omega_mem
-    · exact hG
-    · exact C.transitive _ C.omega_mem _ ((mem_omega _).mpr ⟨0,rfl⟩)
+    · exact C.nat_mem 0
   · intro e
     rw [Formula.eval_rename_comp]
-    have he : mix e d ∘ r = cons (e a) (cons ZFSet.omega (cons G
+    have he : mix e d ∘ r = cons (e a) (cons ZFSet.omega (cons (e G)
         (cons (e t) (cons (e x) (cons (e s) (fun _ => natSet 0)))))) := by
       funext i
       rcases i with _|_|_|_|_|_|i <;> simp only [r, d, Function.comp_apply, mix_even, cons_zero,
         cons_succ] <;> rfl
     rw [he]
     rfl
+
+theorem tuplePrefix_definable (C : Context M) {G : ZFSet.{u}} (hG : G ∈ M) (a t x s : ℕ) :
+    Definable M (fun e => TuplePrefix (e a) G (e t) (e x) (e s)) := by
+  simpa only [cons_zero, cons_succ] using
+    (tuplePrefix_definable_variable C (a+1) 0 (t+1) (x+1) (s+1)).fixFirst C hG
 
 end TuringRigidity.RelativeConstructible
 

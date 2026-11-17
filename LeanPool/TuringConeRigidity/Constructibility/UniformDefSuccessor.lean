@@ -13,7 +13,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.Constructibility.DefSystemCertificate
+public import LeanPool.TuringConeRigidity.Constructibility.ContextDefinablePower
 public import LeanPool.TuringConeRigidity.Syntax.SigmaParameterized
 public import LeanPool.TuringConeRigidity.SetModels.InternalDefinablePower
 
@@ -34,22 +34,8 @@ universe u
 
 theorem definablePower_sigmaDefinable (M : ZFSet.{u}) (hM : Transitive M) (hT : SourceT M) :
     SigmaDefinable M (fun e => e 0 = definablePower (e 1)) := by
-  let C : Context M :=
+  exact definablePower_sigmaDefinable_of_context M
     ⟨hM,hT.pairing,hT.union,hT.powerSet,hT.separation.finitePrefix.bounded,hT.infinity⟩
-  obtain ⟨Q,hQ,_,hq⟩ := internal_family_bound M hM C.pairing C.union C.power C.omega_mem
-  obtain ⟨B,hB,hb⟩ := internal_support_bound C
-  have hc := (defSystem_definable C hQ hB 5 3 2 1 0 4).toSigma hM
-  have hs := hc.existsSet.existsSet.existsSet.existsSet
-  apply hs.congr
-  intro e he
-  change (∃ G ∈ M, ∃ T ∈ M, ∃ H ∈ M, ∃ Z ∈ M,
-    DefSystem Q B (e 1) G T H Z (e 0)) ↔ e 0 = definablePower (e 1)
-  constructor
-  · rintro ⟨G,_,T,_,H,_,Z,_,h⟩
-    exact h.exact hq hb
-  · intro h
-    rw [h]
-    exact internal_defSystem M hM hT Q B (e 1) (he 1) hq hb
 
 theorem uniform_definable_successor (M : ZFSet.{u}) (hM : Transitive M) (hT : SourceT M) :
     ∃ p : SigmaFormula, ∃ d : ℕ → ZFSet.{u}, (∀ i, d i ∈ M) ∧

@@ -14,7 +14,6 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.SetModels.NameDifferenceDense
-public import LeanPool.TuringConeRigidity.Syntax.WeakCheckedMembership
 
 /-!
 # Weak Name Difference
@@ -39,29 +38,7 @@ theorem nameDifference_dense_without_choice (M : ZFSet.{u})
     (ho : ∀ r s : Conditions c, ZFSet.pair (label c r) (label c s) ∈ o ↔ r ≤ s)
     (t : Name (Conditions c)) (ht : t.encode (label c) ∈ M) :
     Dense (NameDifference a S t) := by
-  classical
-  intro p
-  by_contra h
-  have avoid : ∀ q, q ≤ p → ¬ (q ∈ NameDifference a S t) := by
-    simpa only [not_exists,not_and] using h
-  obtain ⟨b,hb,hdef⟩ := internal_forced_members_without_choice M hM hP hU hPow hS hR hI hc hoM ha
-    ho t ht p
-  have hbS : b = S := by
-    apply ZFSet.ext
-    intro x
-    rw [hdef x]
-    constructor
-    · rintro ⟨hxa,hf⟩
-      by_contra hx
-      exact avoid p le_rfl ⟨x,hxa,Or.inr ⟨hx,hf⟩⟩
-    · intro hx
-      refine ⟨hSa hx,mem_of_dense _ _ p ?_⟩
-      intro q hqp
-      by_contra hn
-      have hneg : ∀ r, r ≤ q → ¬ MemForces (Name.check x) t r := by
-        simpa only [not_exists,not_and] using hn
-      exact avoid q hqp ⟨x,hSa hx,Or.inl ⟨hx,hneg⟩⟩
-  exact hSM (hbS ▸ hb)
+  exact nameDifference_dense_of_axioms M hM hP hU hPow hS hR hI hc hoM ha hSa hSM ho t ht
 
 theorem nameDifference_ne_value_without_choice (M : ZFSet.{u}) (hM : Transitive M) (hP : Pairing
   M) (hU : BoundedSetTheory.Union M) (hPow : PowerSet M)
@@ -72,20 +49,7 @@ theorem nameDifference_ne_value_without_choice (M : ZFSet.{u}) (hM : Transitive 
     (G : GenericFilter (Conditions c)) (hG : GroundGeneric M G)
     {p : Conditions c} (hp : p ∈ G.carrier) (hd : p ∈ NameDifference a S t) :
     t.val G.carrier ≠ S := by
-  obtain ⟨x,hxa,hd⟩ := hd
-  have hxM := hM a ha x hxa
-  have hcheck := encoded_check_mem M c hM hP hU hPow hS.bounded hR hI hc hxM
-  have htop : ⊤ ∈ G.carrier := G.upper le_top hp
-  have truth := (internal_atomic_truth M hM hP hU hPow hS.bounded hR hI
-    hc hoM ho G hG (Name.check x) t hcheck ht).2
-  rw [Name.val_check G.carrier htop] at truth
-  intro hval
-  rw [hval] at truth
-  rcases hd with ⟨hx,hneg⟩|⟨hx,hpos⟩
-  · obtain ⟨q,hq,hf⟩ := truth.mp hx
-    obtain ⟨r,_,hrp,hrq⟩ := G.directed hp hq
-    exact hneg r hrp (mem_mono _ _ hrq hf)
-  · exact hx (truth.mpr ⟨p,hp,hpos⟩)
+  exact nameDifference_ne_value_of_axioms M hM hP hU hPow hS hR hI hc hoM ha ho t ht G hG hp hd
 
 end TuringRigidity.FullSetForcing
 

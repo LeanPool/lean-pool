@@ -32,20 +32,7 @@ open BoundedDefinability SetModelFunctions
 universe u
 theorem definablePower_sigmaDefinable_context (M : ZFSet.{u}) (C : Context M) :
     SigmaDefinable M (fun e => e 0 = definablePower (e 1)) := by
-  obtain ⟨Q,hQ,_,hq⟩ := internal_family_bound M C.transitive C.pairing C.union C.power C.omega_mem
-  obtain ⟨B,hB,hb⟩ := internal_support_bound C
-  have hc := (defSystem_definable C hQ hB 5 3 2 1 0 4).toSigma C.transitive
-  have hs := hc.existsSet.existsSet.existsSet.existsSet
-  apply hs.congr
-  intro e he
-  change (∃ G ∈ M, ∃ T ∈ M, ∃ H ∈ M, ∃ Z ∈ M,
-    DefSystem Q B (e 1) G T H Z (e 0)) ↔ e 0 = definablePower (e 1)
-  constructor
-  · rintro ⟨G,_,T,_,H,_,Z,_,h⟩
-    exact h.exact hq hb
-  · intro h
-    rw [h]
-    exact internal_defSystem_of_context M C Q B (e 1) (he 1) hq hb
+  exact definablePower_sigmaDefinable_of_context M C
 
 theorem uniform_definable_successor_context (M : ZFSet.{u}) (C : Context M) :
     ∃ p : SigmaFormula, ∃ d : ℕ → ZFSet.{u}, (∀ i, d i ∈ M) ∧

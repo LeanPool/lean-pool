@@ -7,6 +7,8 @@ Authors: OpenAI
 /-
 Adapted for Lean Pool from bjoernkjoshanssen/tt-
 auto/OAI/Computability/DegreeRigidity/OrdinalCodes/TrimmedSumGraph.lean.
+Also incorporates shared proofs from the upstream
+OAI/Computability/DegreeRigidity/Effective/FiniteSumGraph.lean under the same Apache-2.0 terms.
 Module paths, interfaces, and proofs are ported to the pool's toolchain and gates.
 Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream port repairs.
 -/
@@ -61,16 +63,18 @@ theorem trimmedSumGraphSentence_semantics (A : ZFSet.{u}) (hA : Transitive A)
   simp only [bounded_sat,Formula.absolute _ A hA _ hE,Formula.Eval,
     Formula.eval_orderedPair,cons_zero,cons_succ]
 
-theorem trimmedSumGraphSentence_spec (R : ZFSet.{u}) (γ a b : Ordinal.{u})
-    (hγ : Order.IsSuccLimit γ) (hω : ZFSet.omega.{u} ∈ level R γ)
-    (ha : a.toZFSet ∈ level R γ) (hb : b.toZFSet ∈ level R γ)
-    (h0 : (∅ : ZFSet.{u}) ∈ level R γ) (h1 : ({∅} : ZFSet.{u}) ∈ level R γ)
-    (hlocal : ∀ t < b, (a + t).toZFSet ∈ level R γ ∧ SumCertificates (level R γ) a t)
-    (z : ZFSet.{u}) (hz : z ∈ level R γ) :
-    trimmedSumGraphSentence.Sat (level R γ : Set ZFSet)
+/-- The sum-graph sentence describes the exact graph in any transitive set containing its nodes. -/
+theorem trimmedSumGraphSentence_spec_of_internal_nodes (A : ZFSet.{u}) (hA : Transitive A)
+    (a b : Ordinal.{u})
+  (hω : ZFSet.omega.{u} ∈ A)
+    (ha : a.toZFSet ∈ A) (hb : b.toZFSet ∈ A)
+    (h0 : (∅ : ZFSet.{u}) ∈ A) (h1 : ({∅} : ZFSet.{u}) ∈ A)
+    (hlocal : ∀ t < b, (a + t).toZFSet ∈ A ∧ SumCertificates (A) a t)
+    (hnodes : sumDomain a.toZFSet b.toZFSet ⊆ A)
+    (z : ZFSet.{u}) (hz : z ∈ A) :
+    trimmedSumGraphSentence.Sat (A : Set ZFSet)
       (cons z (cons a.toZFSet (cons b.toZFSet (cons ∅ (fun _ => {∅}))))) ↔
         ∃ x ∈ sumDomain a.toZFSet b.toZFSet, z = ZFSet.pair x (sumValue a x) := by
-  let A := level R γ
   let e := cons z (cons a.toZFSet (cons b.toZFSet (cons ∅ (fun _ => {∅}))))
   have he (i : ℕ) : e i ∈ A := by
     rcases i with _ | _ | _ | _ | i
@@ -79,7 +83,7 @@ theorem trimmedSumGraphSentence_spec (R : ZFSet.{u}) (γ a b : Ordinal.{u})
     · exact hb
     · exact h0
     · exact h1
-  rw [trimmedSumGraphSentence_semantics A (level_transitive R γ) e he]
+  rw [trimmedSumGraphSentence_semantics A hA e he]
   constructor
   · rintro ⟨t,ht,x,hx,y,hy,hleft|⟨hright,hq⟩⟩
     · obtain ⟨hta,hxdef,hzdef,hydef⟩ := hleft
@@ -98,7 +102,7 @@ theorem trimmedSumGraphSentence_spec (R : ZFSet.{u}) (γ a b : Ordinal.{u})
         · exact hx
         · exact ht
         · exact he i
-      have hydef := codeSumAt_sound A (level_transitive R γ) 0 4 2 _ hE a t rfl rfl hq
+      have hydef := codeSumAt_sound A hA 0 4 2 _ hE a t rfl rfl hq
       change x = rightNode t.toZFSet at hxdef
       refine ⟨x,(mem_sumDomain _ _ _).mpr (Or.inr
         ⟨t.toZFSet,Ordinal.toZFSet_mem_toZFSet_iff.mpr htb,hxdef⟩),?_⟩
@@ -107,15 +111,16 @@ theorem trimmedSumGraphSentence_spec (R : ZFSet.{u}) (γ a b : Ordinal.{u})
       rw [hzdef,hydef,hxdef,sumValue_right,Ordinal.rank_toZFSet]
   · rintro ⟨x,hx,hzdef⟩
     rcases (mem_sumDomain _ _ _).mp hx with ⟨t,ht,rfl⟩|⟨t,ht,rfl⟩
-    · have htA := level_transitive R γ _ ha _ ht
-      have hxA := orderedPair_mem_level_limit R γ hγ h0 htA
+    · have htA := hA _ ha _ ht
+      have hxA := hnodes ((mem_sumDomain _ _ _).mpr (Or.inl ⟨t,ht,rfl⟩))
       refine ⟨t,htA,_,hxA,t,htA,Or.inl ⟨ht,rfl,?_,rfl⟩⟩
       rw [sumValue_left] at hzdef
       simpa only [e,cons_zero,leftNode] using hzdef
     · obtain ⟨t,ht,rfl⟩ := Ordinal.mem_toZFSet_iff.mp ht
       have ht := Ordinal.toZFSet_mem_toZFSet_iff.mp ht
-      have htA := level_transitive R γ _ hb _ (Ordinal.toZFSet_mem_toZFSet_iff.mpr ht)
-      have hxA := orderedPair_mem_level_limit R γ hγ h1 htA
+      have htA := hA _ hb _ (Ordinal.toZFSet_mem_toZFSet_iff.mpr ht)
+      have hxA := hnodes ((mem_sumDomain _ _ _).mpr (Or.inr
+        ⟨t.toZFSet,Ordinal.toZFSet_mem_toZFSet_iff.mpr ht,rfl⟩))
       obtain ⟨hy,hq⟩ := hlocal t ht
       let E := cons (a+t).toZFSet (cons (rightNode t.toZFSet) (cons t.toZFSet e))
       have hE (i : ℕ) : E i ∈ A := by
@@ -128,7 +133,20 @@ theorem trimmedSumGraphSentence_spec (R : ZFSet.{u}) (γ a b : Ordinal.{u})
         ⟨⟨Ordinal.toZFSet_mem_toZFSet_iff.mpr ht,rfl,?_⟩,?_⟩⟩
       · rw [sumValue_right,Ordinal.rank_toZFSet] at hzdef
         simpa only [e,cons_zero,rightNode] using hzdef
-      · exact codeSumAt_of_certificates A (level_transitive R γ) hω 0 4 2 E hE a t rfl rfl hq rfl
+      · exact codeSumAt_of_certificates A hA hω 0 4 2 E hE a t rfl rfl hq rfl
+
+theorem trimmedSumGraphSentence_spec (R : ZFSet.{u}) (γ a b : Ordinal.{u})
+    (hγ : Order.IsSuccLimit γ) (hω : ZFSet.omega.{u} ∈ level R γ)
+    (ha : a.toZFSet ∈ level R γ) (hb : b.toZFSet ∈ level R γ)
+    (h0 : (∅ : ZFSet.{u}) ∈ level R γ) (h1 : ({∅} : ZFSet.{u}) ∈ level R γ)
+    (hlocal : ∀ t < b, (a + t).toZFSet ∈ level R γ ∧ SumCertificates (level R γ) a t)
+    (z : ZFSet.{u}) (hz : z ∈ level R γ) :
+    trimmedSumGraphSentence.Sat (level R γ : Set ZFSet)
+      (cons z (cons a.toZFSet (cons b.toZFSet (cons ∅ (fun _ => {∅}))))) ↔
+        ∃ x ∈ sumDomain a.toZFSet b.toZFSet, z = ZFSet.pair x (sumValue a x) := by
+  exact trimmedSumGraphSentence_spec_of_internal_nodes (level R γ)
+    (level_transitive R γ) a b hω ha hb h0 h1 hlocal
+    (sum_domain_subset_limit R γ hγ ha hb h0 h1) z hz
 
 theorem sum_certificates_at_limit_successor (R : ZFSet.{u}) (γ a b : Ordinal.{u})
     (hγ : Order.IsSuccLimit γ) (hω : ZFSet.omega.{u} ∈ level R γ)

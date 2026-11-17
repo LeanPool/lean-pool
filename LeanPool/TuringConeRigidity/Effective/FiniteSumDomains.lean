@@ -34,23 +34,7 @@ theorem sum_domain_at_successor_of_subset (R : ZFSet.{u}) (γ : Ordinal.{u})
     (h0 : (∅ : ZFSet.{u}) ∈ level R γ) (h1 : ({∅} : ZFSet.{u}) ∈ level R γ)
     (hd : sumDomain a b ⊆ level R γ) :
     sumDomain a b ∈ level R (γ+1) := by
-  let e := cons a (cons b (cons ∅ (fun _ => {∅})))
-  have he (i : ℕ) : e i ∈ level R γ := by
-    rcases i with _ | _ | _ | i
-    · exact ha
-    · exact hb
-    · exact h0
-    · exact h1
-  apply defined_set_at_successor R γ trimmedSumDomainSentence e he _
-    hd
-  intro z hz
-  rw [trimmedSumDomainSentence,bounded_sat,Formula.absolute _ _ (level_transitive R γ) _
-    (fun i => by
-      cases i
-      · exact hz
-      · exact he _)]
-  simp only [Formula.eval_disj,Formula.Eval,Formula.eval_orderedPair,cons_zero,cons_succ,e,
-    mem_sumDomain,leftNode,rightNode]
+  exact sum_domain_mem_successor_of_subset R γ ha hb h0 h1 hd
 
 theorem sum_relation_at_successor_of_subset (R : ZFSet.{u}) (γ : Ordinal.{u})
     {a b : ZFSet.{u}}
@@ -59,47 +43,7 @@ theorem sum_relation_at_successor_of_subset (R : ZFSet.{u}) (γ : Ordinal.{u})
     (hd : sumDomain a b ⊆ level R γ)
     (hsub : sumRelation a b ⊆ level R γ) :
     sumRelation a b ∈ level R (γ+1) := by
-  let A := level R γ
-  let e := cons a (cons b (cons ∅ (fun _ => {∅})))
-  have he (i : ℕ) : e i ∈ A := by
-    rcases i with _ | _ | _ | i
-    · exact ha
-    · exact hb
-    · exact h0
-    · exact h1
-  apply defined_set_at_successor R γ trimmedSumRelationSentence e he _ hsub
-  intro z hz
-  change (∃ x ∈ A, ∃ y ∈ A, (fromBounded _).Sat _ (cons y (cons x (cons z e)))) ↔ _
-  have hspec (x y : ZFSet.{u}) (hx : x ∈ A) (hy : y ∈ A) :
-      (fromBounded (.conj (.orderedPair 2 1 0) (sumLessFormula 3 4 5 6 1 0))).Sat
-        (A : Set ZFSet) (cons y (cons x (cons z e))) ↔
-          z = ZFSet.pair x y ∧ SumLess a b x y := by
-    rw [bounded_sat,Formula.absolute _ A (level_transitive R γ) _ (fun i => by
-      rcases i with _ | _ | _ | i
-      · exact hy
-      · exact hx
-      · exact hz
-      · exact he i)]
-    simp only [Formula.Eval,Formula.eval_orderedPair]
-    rw [sumLessFormula_eval _ _ _ _ _ _ _ rfl rfl]
-    rfl
-  constructor
-  · rintro ⟨x,hx,y,hy,h⟩
-    obtain ⟨rfl,hless⟩ := (hspec x y hx hy).mp h
-    have hkeep := hless
-    have hxy : x ∈ sumDomain a b ∧ y ∈ sumDomain a b := by
-      rcases hless with ⟨s,hs,t,ht,rfl,rfl,_⟩|⟨s,hs,t,ht,rfl,rfl⟩|⟨s,hs,t,ht,rfl,rfl,_⟩
-      · exact ⟨(mem_sumDomain _ _ _).mpr (Or.inl ⟨s,hs,rfl⟩),
-          (mem_sumDomain _ _ _).mpr (Or.inl ⟨t,ht,rfl⟩)⟩
-      · exact ⟨(mem_sumDomain _ _ _).mpr (Or.inl ⟨s,hs,rfl⟩),
-          (mem_sumDomain _ _ _).mpr (Or.inr ⟨t,ht,rfl⟩)⟩
-      · exact ⟨(mem_sumDomain _ _ _).mpr (Or.inr ⟨s,hs,rfl⟩),
-          (mem_sumDomain _ _ _).mpr (Or.inr ⟨t,ht,rfl⟩)⟩
-    exact (pair_mem_sumRelation a b x y).mpr ⟨hxy.1,hxy.2,hkeep⟩
-  · intro h
-    obtain ⟨x,hx,y,hy,rfl⟩ := ZFSet.mem_prod.mp (sumRelation_on a b h)
-    exact ⟨x,hd hx,y,hd hy,(hspec x y (hd hx) (hd hy)).mpr
-      ⟨rfl,((pair_mem_sumRelation a b x y).mp h).2.2⟩⟩
+  exact sum_relation_mem_successor_of_subset R γ ha hb h0 h1 hd hsub
 
 end TuringRigidity.OrdinalArithmetic
 

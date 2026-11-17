@@ -7,6 +7,8 @@ Authors: OpenAI
 /-
 Adapted for Lean Pool from bjoernkjoshanssen/tt-
 auto/OAI/Computability/DegreeRigidity/OrdinalCodes/TrimmedPresentation.lean.
+Also incorporates shared proofs from the upstream
+OAI/Computability/DegreeRigidity/SetModels/FinitePresentation.lean under the same Apache-2.0 terms.
 Module paths, interfaces, and proofs are ported to the pool's toolchain and gates.
 Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream port repairs.
 -/
@@ -60,10 +62,11 @@ theorem order_certificate_of_exact_pairs (d r f : ZFSet.{u}) (o : Ordinal.{u})
     obtain ⟨x,hx,rfl⟩ := hs z hz
     exact ⟨x,hx,pair x hx⟩
 
-theorem presentation_graph_at_limit_successor (R : ZFSet.{u}) (γ : Ordinal.{u})
-    (hγ : Order.IsSuccLimit γ) (d r : ZFSet.{u}) (o : Ordinal.{u})
-    (j : ZFSet.{u} → ZFSet.{u}) (hd : d ⊆ level R γ)
-    (hjA : ∀ x ∈ d, j x ∈ level R γ)
+/-- A definable exact-pairs presentation yields an order-type certificate in the successor level. -/
+theorem presentation_graph_mem_successor_of_pairs (R : ZFSet.{u}) (γ : Ordinal.{u})
+    (d r : ZFSet.{u}) (o : Ordinal.{u})
+    (j : ZFSet.{u} → ZFSet.{u})
+    (hpairs : ∀ x ∈ d, ZFSet.pair x (j x) ∈ level R γ)
     (hj : ∀ x ∈ d, j x ∈ o.toZFSet)
     (hs : ∀ z ∈ o.toZFSet, ∃ x ∈ d, j x = z)
     (he : ∀ x ∈ d, ∀ y ∈ d, ZFSet.pair x y ∈ r ↔ j x ∈ j y)
@@ -82,9 +85,24 @@ theorem presentation_graph_at_limit_successor (R : ZFSet.{u}) (γ : Ordinal.{u})
     constructor
     · rintro ⟨hz,h⟩; exact (hp z hz).mp h
     · rintro ⟨x,hx,rfl⟩
-      have hz := orderedPair_mem_level_limit R γ hγ (hd hx) (hjA x hx)
+      have hz := hpairs x hx
       exact ⟨hz,(hp _ hz).mpr ⟨x,hx,rfl⟩⟩
   exact ⟨f,hf,order_certificate_of_exact_pairs d r f o j hj hs he hexact⟩
+
+theorem presentation_graph_at_limit_successor (R : ZFSet.{u}) (γ : Ordinal.{u})
+    (hγ : Order.IsSuccLimit γ) (d r : ZFSet.{u}) (o : Ordinal.{u})
+    (j : ZFSet.{u} → ZFSet.{u}) (hd : d ⊆ level R γ)
+    (hjA : ∀ x ∈ d, j x ∈ level R γ)
+    (hj : ∀ x ∈ d, j x ∈ o.toZFSet)
+    (hs : ∀ z ∈ o.toZFSet, ∃ x ∈ d, j x = z)
+    (he : ∀ x ∈ d, ∀ y ∈ d, ZFSet.pair x y ∈ r ↔ j x ∈ j y)
+    (p : SentenceForm) (e : ℕ → ZFSet.{u}) (henv : ∀ i, e i ∈ level R γ)
+    (hp : ∀ z ∈ level R γ, p.Sat (level R γ : Set ZFSet) (cons z e) ↔
+      ∃ x ∈ d, z = ZFSet.pair x (j x)) :
+    ∃ f ∈ level R (γ+1), OrderTypeCertificate d r o.toZFSet f := by
+  exact presentation_graph_mem_successor_of_pairs R γ d r o j
+    (fun x hx => orderedPair_mem_level_limit R γ hγ (hd hx) (hjA x hx))
+    hj hs he p e henv hp
 
 end TuringRigidity.RelationCollapse
 

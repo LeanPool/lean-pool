@@ -15,7 +15,6 @@ module
 
 public import LeanPool.TuringConeRigidity.Syntax.VariableCertificateBounds
 public import LeanPool.TuringConeRigidity.Constructibility.DomainParameterizedSyntax
-public import LeanPool.TuringConeRigidity.Constructibility.ContextDefinablePower
 
 /-!
 # Checked Def Successor

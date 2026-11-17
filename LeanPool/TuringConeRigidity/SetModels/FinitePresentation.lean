@@ -39,20 +39,8 @@ theorem presentation_graph_at_successor_of_pairs (R : ZFSet.{u}) (γ : Ordinal.{
     (hp : ∀ z ∈ level R γ, p.Sat (level R γ : Set ZFSet) (cons z e) ↔
       ∃ x ∈ d, z = ZFSet.pair x (j x)) :
     ∃ f ∈ level R (γ+1), OrderTypeCertificate d r o.toZFSet f := by
-  let A := level R γ
-  let f := A.sep (fun z => p.Sat (A : Set ZFSet) (cons z e))
-  have hf : f ∈ level R (γ+1) := by
-    rw [level_succ]
-    exact separation_mem_definablePower A p e (fun i _ => henv i)
-  have hexact (z : ZFSet.{u}) : z ∈ f ↔ ∃ x ∈ d, z = ZFSet.pair x (j x) := by
-    change z ∈ A.sep _ ↔ _
-    rw [ZFSet.mem_sep]
-    constructor
-    · rintro ⟨hz,h⟩; exact (hp z hz).mp h
-    · rintro ⟨x,hx,rfl⟩
-      have hz := hpairs x hx
-      exact ⟨hz,(hp _ hz).mpr ⟨x,hx,rfl⟩⟩
-  exact ⟨f,hf,order_certificate_of_exact_pairs d r f o j hj hs he hexact⟩
+  exact presentation_graph_mem_successor_of_pairs
+    R γ d r o j hpairs hj hs he p e henv hp
 
 end TuringRigidity.RelationCollapse
 

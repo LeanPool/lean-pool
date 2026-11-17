@@ -7,6 +7,8 @@ Authors: OpenAI
 /-
 Adapted for Lean Pool from bjoernkjoshanssen/tt-
 auto/OAI/Computability/DegreeRigidity/Constructibility/UniformTruthStep.lean.
+Also incorporates the shared variable truth-clause proof from upstream
+OAI/Computability/DegreeRigidity/Syntax/VariableTruthSyntax.lean under the same Apache-2.0 terms.
 Module paths, interfaces, and proofs are ported to the pool's toolchain and gates.
 Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream port repairs.
 -/
@@ -47,19 +49,19 @@ def SetTruthStep (A G T S c t : ZFSet.{u}) : Prop :=
   (∃ i ∈ ZFSet.omega, UnaryGraph (unary 4) i c ∧
     ∃ x ∈ A, ∃ s ∈ T, TuplePrefix A G t x s ∧ ZFSet.pair i s ∈ S)
 
-theorem setTruthStep_definable (C : Context M) {G : ZFSet.{u}}
-    (hG : G ∈ M) (a T S c t : ℕ) :
-    Definable M (fun e => SetTruthStep (e a) G (e T) (e S) (e c) (e t)) := by
+/-- Each recursive truth clause is definable with a variable tuple-graph bound. -/
+theorem setTruthStep_definable_variable (C : Context M) (a G T S c t : ℕ) :
+    Definable M (fun e => SetTruthStep (e a) (e G) (e T) (e S) (e c) (e t)) := by
   have ha (tag : ℕ) (hr : Definable M (fun e => e 1 = e 0)) :=
     (((((binaryGraph_definable C _ (atomic_primrec tag) 3 2 (c+4)).and
-      ((tupleLookup_definable C hG (t+4) 3 1).and
-        ((tupleLookup_definable C hG (t+4) 2 0).and hr))).existsMem (a+3)).existsMem
+      ((tupleLookup_definable_variable C (G+4) (t+4) 3 1).and
+        ((tupleLookup_definable_variable C (G+4) (t+4) 2 0).and hr))).existsMem (a+3)).existsMem
           (a+2)).existsParam
           C.omega_mem).existsParam C.omega_mem
   have he := ha 0 (equal_definable C 1 0)
   have hm := (((((binaryGraph_definable C _ (atomic_primrec 1) 3 2 (c+4)).and
-    ((tupleLookup_definable C hG (t+4) 3 1).and
-      ((tupleLookup_definable C hG (t+4) 2 0).and (member_definable C 1 0)))).existsMem
+    ((tupleLookup_definable_variable C (G+4) (t+4) 3 1).and
+      ((tupleLookup_definable_variable C (G+4) (t+4) 2 0).and (member_definable C 1 0)))).existsMem
         (a+3)).existsMem
         (a+2)).existsParam C.omega_mem).existsParam C.omega_mem
   have hc := (((binaryGraph_definable C _ (binary_primrec 2) 1 0 (c+2)).and
@@ -67,11 +69,17 @@ theorem setTruthStep_definable (C : Context M) {G : ZFSet.{u}}
       C.omega_mem).existsParam C.omega_mem
   have hn := ((unaryGraph_definable C _ (unary_primrec 3) 0 (c+1)).and
     (defPairMem C 0 (t+1) (S+1)).neg).existsParam C.omega_mem
-  have hbody := (((tuplePrefix_definable C hG (a+3) (t+3) 1 0).and
+  have hbody := (((tuplePrefix_definable_variable C (a+3) (G+3) (t+3) 1 0).and
     (defPairMem C 2 0 (S+3))).existsMem (T+2)).existsMem (a+1)
   have hx := ((unaryGraph_definable C _ (unary_primrec 4) 0 (c+1)).and hbody).existsParam
     C.omega_mem
   exact defOr he (defOr hm (defOr hc (defOr hn hx)))
+
+theorem setTruthStep_definable (C : Context M) {G : ZFSet.{u}}
+    (hG : G ∈ M) (a T S c t : ℕ) :
+    Definable M (fun e => SetTruthStep (e a) G (e T) (e S) (e c) (e t)) := by
+  simpa only [cons_zero, cons_succ] using
+    (setTruthStep_definable_variable C (a+1) 0 (T+1) (S+1) (c+1) (t+1)).fixFirst C hG
 
 theorem setTruthStep_encode (A G S : ZFSet.{u})
     (hG : ∀ (n : ℕ) (v : Fin n → ZFSet.{u}), (∀ i, v i ∈ A) → tupleGraph v ∈ G)

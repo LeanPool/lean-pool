@@ -7,6 +7,9 @@ Authors: OpenAI
 /-
 Adapted for Lean Pool from bjoernkjoshanssen/tt-
 auto/OAI/Computability/DegreeRigidity/Constructibility/ContextDefinablePower.lean.
+Also incorporates the shared Context definability proof from upstream
+OAI/Computability/DegreeRigidity/Constructibility/ContextHierarchyGraph.lean
+under the same Apache-2.0 terms.
 Module paths, interfaces, and proofs are ported to the pool's toolchain and gates.
 Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream port repairs.
 -/
@@ -14,6 +17,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.Constructibility.DefSystemCertificate
+public import LeanPool.TuringConeRigidity.Syntax.SigmaParameterized
 
 /-!
 # Context Definable Power
@@ -171,6 +175,24 @@ theorem internal_defSystem_of_context (M : ZFSet.{u}) (C : Context M)
   exact ⟨G,hG,tupleSpace A,tupleSpace_mem_of_context M A C hA,H,hH,
     satisfactionSet A,satisfactionSet_mem_of_context M A C hA,
     defSystem_canonical Q B A G H hQ hB hg (fun p => hh (subformulas p))⟩
+
+/-- Definable power is sigma definable under the bounded model Context alone. -/
+theorem definablePower_sigmaDefinable_of_context (M : ZFSet.{u}) (C : Context M) :
+    SigmaDefinable M (fun e => e 0 = definablePower (e 1)) := by
+  obtain ⟨Q,hQ,_,hq⟩ := internal_family_bound M C.transitive C.pairing C.union C.power C.omega_mem
+  obtain ⟨B,hB,hb⟩ := internal_support_bound C
+  have hc := (defSystem_definable C hQ hB 5 3 2 1 0 4).toSigma C.transitive
+  have hs := hc.existsSet.existsSet.existsSet.existsSet
+  apply hs.congr
+  intro e he
+  change (∃ G ∈ M, ∃ T ∈ M, ∃ H ∈ M, ∃ Z ∈ M,
+    DefSystem Q B (e 1) G T H Z (e 0)) ↔ e 0 = definablePower (e 1)
+  constructor
+  · rintro ⟨G,_,T,_,H,_,Z,_,h⟩
+    exact h.exact hq hb
+  · intro h
+    rw [h]
+    exact internal_defSystem_of_context M C Q B (e 1) (he 1) hq hb
 
 end TuringRigidity.RelativeConstructible
 

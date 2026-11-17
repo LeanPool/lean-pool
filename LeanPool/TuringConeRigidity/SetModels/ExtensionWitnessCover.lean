@@ -7,6 +7,9 @@ Authors: OpenAI
 /-
 Adapted for Lean Pool from bjoernkjoshanssen/tt-
 auto/OAI/Computability/DegreeRigidity/SetModels/ExtensionWitnessCover.lean.
+Also incorporates the shared witness argument from the upstream
+OAI/Computability/DegreeRigidity/Constructibility/UniformExtensionWitnessCover.lean
+under the same Apache-2.0 terms.
 Module paths, interfaces, and proofs are ported to the pool's toolchain and gates.
 Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream port repairs.
 -/
@@ -43,16 +46,18 @@ theorem name_of_value_member (d : ZFSet.{u}) (hd : Transitive d)
 
 variable [Preorder (Conditions c)]
 
-theorem extension_witness_cover (M : ZFSet.{u}) (hM : Transitive M)
+/-- One name bounds the required witnesses in every ground-generic filter
+containing the chosen condition, without requiring a top condition. -/
+theorem extension_witness_cover_for_condition (M : ZFSet.{u}) (hM : Transitive M)
     (hP : Pairing M) (hU : BoundedSetTheory.Union M) (hPow : PowerSet M)
     (hS : SigmaSeparation M) (hR : SigmaReplacement M) (hI : Infinity M) (hAC : Choice M) (hc : c
       ∈ M)
     {o : ZFSet.{u}} (hoM : o ∈ M)
     (ho : ∀ r s : Conditions c, ZFSet.pair (label c r) (label c s) ∈ o ↔ r ≤ s)
-    (G : GenericFilter (Conditions c)) (hG : GroundGeneric M G)
     (φ : SigmaFormula) (e : ℕ → Name (Conditions c)) (he : ∀ i, (e i).encode (label c) ∈ M)
-    (a : Name (Conditions c)) (ha : a.encode (label c) ∈ M) :
+    (a : Name (Conditions c)) (ha : a.encode (label c) ∈ M) (condition : Conditions c) :
     ∃ N : Name (Conditions c), N.encode (label c) ∈ M ∧
+      ∀ G : GenericFilter (Conditions c), GroundGeneric M G → condition ∈ G.carrier →
       ∀ x ∈ a.val G.carrier,
         (∃ y ∈ genericExtensionSet M c G.carrier,
           φ.Realize (genericExtensionSet M c G.carrier) (cons y (cons x (fun i => (e i).val
@@ -62,9 +67,9 @@ theorem extension_witness_cover (M : ZFSet.{u}) (hM : Transitive M)
             G.carrier))) := by
   obtain ⟨d,hd,hdt,had⟩ := internal_transitive_container M hM hP hU hS.bounded hR hI ha
   obtain ⟨W,hW,hbound⟩ := forcing_witness_bound M hM hP hU hPow hS hR hI hAC hc hoM ho φ e he hd
-  obtain ⟨N,hN,hcover⟩ := internal_name_value_cover M hM hP hU hPow hS hR hI hc hW G
+  obtain ⟨N,hN,hcover⟩ := name_value_cover_for_condition M hM hP hU hPow hS hR hI hc hW condition
   refine ⟨N,hN,?_⟩
-  intro x hx hw
+  intro G hG ht x hx hw
   obtain ⟨b,hbd,rfl⟩ := name_of_value_member d hdt a had G.carrier x hx
   have hb := hM d hd _ hbd
   obtain ⟨y,hy,hφ⟩ := hw
@@ -91,7 +96,29 @@ theorem extension_witness_cover (M : ZFSet.{u}) (hM : Transitive M)
   have hφw := (internal_sigma_truth M hM hP hU hPow hS.bounded hR hI hc hoM ho G hG
     φ (push w (push b e)) (env w hwM)).mpr ⟨p,hp,hforcew⟩
   rw [values w] at hφw
-  exact ⟨w.val G.carrier,hcover w hw,hφw⟩
+  exact ⟨w.val G.carrier,hcover G.carrier ht w hw,hφw⟩
+
+theorem extension_witness_cover (M : ZFSet.{u}) (hM : Transitive M)
+    (hP : Pairing M) (hU : BoundedSetTheory.Union M) (hPow : PowerSet M)
+    (hS : SigmaSeparation M) (hR : SigmaReplacement M) (hI : Infinity M) (hAC : Choice M) (hc : c
+      ∈ M)
+    {o : ZFSet.{u}} (hoM : o ∈ M)
+    (ho : ∀ r s : Conditions c, ZFSet.pair (label c r) (label c s) ∈ o ↔ r ≤ s)
+    (G : GenericFilter (Conditions c)) (hG : GroundGeneric M G)
+    (φ : SigmaFormula) (e : ℕ → Name (Conditions c)) (he : ∀ i, (e i).encode (label c) ∈ M)
+    (a : Name (Conditions c)) (ha : a.encode (label c) ∈ M) :
+    ∃ N : Name (Conditions c), N.encode (label c) ∈ M ∧
+      ∀ x ∈ a.val G.carrier,
+        (∃ y ∈ genericExtensionSet M c G.carrier,
+          φ.Realize (genericExtensionSet M c G.carrier) (cons y (cons x (fun i => (e i).val
+            G.carrier)))) →
+        ∃ y ∈ N.val G.carrier,
+          φ.Realize (genericExtensionSet M c G.carrier) (cons y (cons x (fun i => (e i).val
+            G.carrier))) := by
+  obtain ⟨p,hp⟩ := G.nonempty
+  obtain ⟨N,hN,hcover⟩ := extension_witness_cover_for_condition
+    M hM hP hU hPow hS hR hI hAC hc hoM ho φ e he a ha p
+  exact ⟨N,hN,hcover G hG hp⟩
 
 end TuringRigidity.BoundedForcing
 

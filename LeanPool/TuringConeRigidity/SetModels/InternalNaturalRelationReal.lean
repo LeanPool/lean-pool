@@ -53,21 +53,7 @@ theorem naturalRelationBit_spec (o Q G v : ℕ) (e : ℕ → ZFSet.{u})
     (naturalRelationBit o Q G v).Eval e ↔ ZFSet.pair (natSet N) (natSet K) ∈ e G := by
   simp only [naturalRelationBit,Formula.Eval,eval_pairMem,cons_succ,cons_zero]
   rw [ho]
-  constructor
-  · rintro ⟨n,hn,k,hk,hp,hg⟩
-    obtain ⟨n,rfl⟩ := (mem_omega n).mp hn
-    obtain ⟨k,rfl⟩ := (mem_omega k).mp hk
-    have hp' := (naturalPair_spec (o+2) (Q+2) 1 0 (v+2)
-      (cons (natSet k) (cons (natSet n) e)) ho hQ n k rfl rfl).mp hp
-    have hnk : Nat.pair N K = Nat.pair n k := natSet_injective (hv.symm.trans hp')
-    have he := congrArg Nat.unpair hnk
-    simp only [Nat.unpair_pair,Prod.mk.injEq] at he
-    obtain ⟨rfl,rfl⟩ := he
-    exact hg
-  · intro h
-    exact ⟨natSet N,(mem_omega _).mpr ⟨N,rfl⟩,natSet K,(mem_omega _).mpr ⟨K,rfl⟩,
-      (naturalPair_spec (o+2) (Q+2) 1 0 (v+2)
-        (cons (natSet K) (cons (natSet N) e)) ho hQ N K rfl rfl).mpr hv,h⟩
+  exact naturalPair_exists_payload o Q v e ho hQ N K hv _
 end Formula
 
 theorem sourceT_naturalRelationReal (M : ZFSet.{u}) (hM : Transitive M) (hT : SourceT M)
