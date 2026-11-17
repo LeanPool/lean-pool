@@ -1595,30 +1595,39 @@ def _build_log(compiled: Path, source: str) -> list[dict[str, str]] | None:
     return log
 
 
-# `Lake.Util.Proc.mkCmdLog` writes `<cwd>> [NAME=value ...] <command> <arguments>`,
-# with a bare `PATH` in place of its value.
-_COMMAND_ENVIRONMENT = re.compile(r"PATH|[A-Za-z_][A-Za-z0-9_]*=\S*")
+# `Lake.Util.Proc.mkCmdLog` writes `<cwd>> [NAME=value ...] <command> <arguments>`
+# with a bare `PATH` in place of its value, and quotes nothing. A path may hold
+# spaces, so the record is matched around the module's source instead of being
+# split into words. One assumption keeps that reading unambiguous: no directory
+# name ends in a space, so a space before `/` or `C:/` always starts a new word.
+_ABSOLUTE = r"(?:/|[A-Za-z]:/)"
+_DIRECTORY = rf"{_ABSOLUTE}(?:(?:[^ ]| (?!{_ABSOLUTE}))*/)?"
+_COMPILER_BEFORE_SOURCE = re.compile(
+    r"[^>]*> (?:PATH )*(?:[A-Za-z_][A-Za-z0-9_]*=.*? )?"
+    rf"(?:{_DIRECTORY})?lean(?:\.exe)? (?:{_DIRECTORY})?"
+)
 
 
 def _is_compiler_command(entry: dict[str, str], source: str) -> bool:
     """Whether Lake wrote this entry to record compiling `source`.
 
-    That is a `trace` entry whose command is the Lean compiler and whose first
-    argument is the module's source. Lake logs other external commands in the
-    same form, so the prefix alone proves nothing.
+    That is a `trace` entry which runs the Lean compiler, named bare or by an
+    absolute path, with the module's source as its first argument. Lake logs
+    other external commands in the same form, so the prefix alone proves
+    nothing. An unquoted variable value can still hide where the command
+    begins; no reading of the text can rule that out.
     """
     if entry["level"] != "trace":
         return False
-    _, separator, command = entry["message"].partition("> ")
-    words = command.split(" ") if separator else []
-    while words and _COMMAND_ENVIRONMENT.fullmatch(words[0]):
-        words.pop(0)
-    if len(words) < 2:
-        return False
-    executable, argument = words[:2]
-    return Path(executable).name in {"lean", "lean.exe"} and (
-        argument == source or argument.endswith(f"/{source}")
-    )
+    message = entry["message"].replace("\\", "/")
+    position = -1
+    while (position := message.find(source, position + 1)) >= 0:
+        end = position + len(source)
+        if message[end : end + 1] in ("", " ") and _COMPILER_BEFORE_SOURCE.fullmatch(
+            message, 0, position
+        ):
+            return True
+    return False
 
 
 def _build_message_error(

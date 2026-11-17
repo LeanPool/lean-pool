@@ -14,6 +14,7 @@ from lean_pool.quality import (
     _audit_build_messages,
     _card_is_current,
     _check_build_messages,
+    _is_compiler_command,
     _parse_axiom_output,
     _parse_declarations,
     _parse_option_audit_output,
@@ -244,6 +245,74 @@ def test_build_message_audit_accepts_a_silent_module(
         tmp_path, "LeanPool.Basic", [{"level": "trace", "message": command}]
     )
     assert _audit_build_messages(tmp_path, ["LeanPool.Basic"]) == []
+
+
+def _lake_compiler_record(checkout: str, lean: str) -> dict[str, str]:
+    """Render what Lake 4.35 logs for compiling `LeanPool/Basic.lean`.
+
+    `compileLeanModule` runs `lean` with `LEAN_PATH` as its only variable, and
+    `mkCmdLog` joins the pieces with single spaces without quoting any.
+    """
+    build = f"{checkout}/.lake/build"
+    search = f"{checkout}/.lake/packages/mathlib/.lake/build/lib/lean:{build}/lib/lean"
+    arguments = [
+        f"{checkout}/LeanPool/Basic.lean",
+        f"-o {build}/lib/lean/LeanPool/Basic.olean",
+        f"-i {build}/lib/lean/LeanPool/Basic.ilean",
+        f"-c {build}/ir/LeanPool/Basic.c",
+        f"--setup {build}/ir/LeanPool/Basic.setup.json",
+        "--json",
+    ]
+    message = f".> LEAN_PATH={search} {lean} {' '.join(arguments)}"
+    return {"level": "trace", "message": message}
+
+
+SPACED_LEAN = "/home/Jane Doe/.elan/toolchains/lean 4/bin/lean"
+
+
+def test_build_message_audit_reads_a_checkout_and_toolchain_with_spaces(
+    tmp_path: Path,
+) -> None:
+    """Lake quotes nothing, so spaces in its paths must not hide the record."""
+    root = tmp_path / "pool with space"
+    root.mkdir()
+    _write_minimal_repo(root)
+    record = _lake_compiler_record(root.as_posix(), SPACED_LEAN)
+    _write_build_log(root, "LeanPool.Basic", [record])
+    assert _audit_build_messages(root, ["LeanPool.Basic"]) == []
+    noise = {"level": "info", "message": "LeanPool/Basic.lean:7:4: Try this: simp"}
+    _write_build_log(root, "LeanPool.Basic", [record, noise])
+    [error] = _audit_build_messages(root, ["LeanPool.Basic"])
+    assert error.message == "prints a message on every build (info): Try this: simp"
+
+
+def test_build_message_audit_reads_windows_paths_with_spaces() -> None:
+    """Backslash separators and a drive letter name the same compiler run."""
+    record = _lake_compiler_record(
+        "C:/Users/Jane Doe/pool", "C:/Users/Jane Doe/.elan/bin/lean.exe"
+    )
+    record["message"] = record["message"].replace("/", "\\")
+    assert _is_compiler_command(record, "LeanPool/Basic.lean")
+
+
+@pytest.mark.parametrize(
+    "command",
+    [
+        ".> echo /bin/lean LeanPool/Basic.lean",
+        ".> /usr/bin/cp /bin/lean /pool with space/LeanPool/Basic.lean",
+        ".> /bin/lean /y/Other.lean -o /pool with space/LeanPool/Basic.lean",
+        ".> /bin/lean -o /pool with space/LeanPool/Basic.lean",
+        ".> /bin/lean /pool with space/NotLeanPool/Basic.lean",
+        ".> echo x > /bin/lean /pool with space/LeanPool/Basic.lean",
+        ".> /bin/leanir /pool with space/LeanPool/Basic.lean",
+    ],
+)
+def test_build_message_audit_rejects_other_commands_with_spaced_paths(
+    command: str,
+) -> None:
+    """Allowing spaces in paths must not let another command pass as the compiler."""
+    entry = {"level": "trace", "message": command}
+    assert not _is_compiler_command(entry, "LeanPool/Basic.lean")
 
 
 def test_build_message_audit_reports_other_commands_beside_the_compiler(
