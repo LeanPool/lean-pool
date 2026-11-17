@@ -1,0 +1,189 @@
+/-
+Copyright (c) 2026 OpenAI. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: OpenAI
+-/
+
+/-
+Adapted for Lean Pool from bjoernkjoshanssen/tt-
+auto/OAI/Computability/DegreeRigidity/Constructibility/PersistentRestrictions.lean.
+Module paths, interfaces, and proofs are ported to the pool's toolchain and gates.
+Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream port repairs.
+-/
+
+module
+
+public import LeanPool.TuringConeRigidity.Computability.Joins
+
+/-!
+# Persistent Restrictions
+-/
+
+
+@[expose] public section
+
+namespace OAI
+
+namespace TuringRigidity.PersistentRestrictions
+open Set
+
+theorem countable_principal_lower (a : Degree) : (Set.Iic a).Countable := by
+  obtain ⟨A, rfl⟩ := degree_surjective a
+  apply ((countable_reduces A).image degree).mono
+  intro b hb
+  obtain ⟨B, rfl⟩ := degree_surjective b
+  exact ⟨B, (degree_le_iff B A).mp hb, rfl⟩
+
+structure CountableIdeal where
+  carrier : Set Degree
+  nonempty : carrier.Nonempty
+  countable : carrier.Countable
+  lower : ∀ ⦃a b : Degree⦄, a ≤ b → b ∈ carrier → a ∈ carrier
+  join_mem : ∀ ⦃a b : Degree⦄, a ∈ carrier → b ∈ carrier → a ⊔ b ∈ carrier
+
+instance : CoeSort CountableIdeal Type := ⟨fun I => {a : Degree // a ∈ I.carrier}⟩
+
+def closureStep (π : Degree ≃o Degree) (S : Set Degree) : Set Degree :=
+  S ∪ (π '' S ∪ (π.symm '' S ∪
+    (Set.image2 (· ⊔ ·) S S ∪ ⋃ a ∈ S, Set.Iic a)))
+
+theorem countable_closureStep (π : Degree ≃o Degree) {S : Set Degree}
+    (hS : S.Countable) : (closureStep π S).Countable :=
+  hS.union ((hS.image π).union ((hS.image π.symm).union
+    ((hS.image2 hS (· ⊔ ·)).union (hS.biUnion fun a _ => countable_principal_lower a))))
+
+def stage (π : Degree ≃o Degree) (S : Set Degree) : ℕ → Set Degree
+  | 0 => insert ⊥ S
+  | n + 1 => closureStep π (stage π S n)
+
+theorem countable_stage (π : Degree ≃o Degree) {S : Set Degree}
+    (hS : S.Countable) : ∀ n, (stage π S n).Countable
+  | 0 => hS.insert ⊥
+  | n + 1 => countable_closureStep π (countable_stage π hS n)
+
+theorem stage_mono (π : Degree ≃o Degree) (S : Set Degree) : Monotone (stage π S) := by
+  apply monotone_nat_of_le_succ
+  intro n a ha
+  exact Or.inl ha
+
+def hullSet (π : Degree ≃o Degree) (S : Set Degree) : Set Degree := ⋃ n, stage π S n
+
+theorem subset_hullSet (π : Degree ≃o Degree) (S : Set Degree) : S ⊆ hullSet π S := by
+  intro a ha
+  exact Set.mem_iUnion.mpr ⟨0, Or.inr ha⟩
+
+theorem hullSet_lower (π : Degree ≃o Degree) (S : Set Degree)
+    {a b : Degree} (hab : a ≤ b) (hb : b ∈ hullSet π S) : a ∈ hullSet π S := by
+  obtain ⟨n, hn⟩ := Set.mem_iUnion.mp hb
+  apply Set.mem_iUnion.mpr
+  refine ⟨n + 1, Or.inr (Or.inr (Or.inr (Or.inr ?_)))⟩
+  exact Set.mem_iUnion.mpr ⟨b, Set.mem_iUnion.mpr ⟨hn, hab⟩⟩
+
+theorem hullSet_join (π : Degree ≃o Degree) (S : Set Degree)
+    {a b : Degree} (ha : a ∈ hullSet π S) (hb : b ∈ hullSet π S) :
+    a ⊔ b ∈ hullSet π S := by
+  obtain ⟨m, hm⟩ := Set.mem_iUnion.mp ha
+  obtain ⟨n, hn⟩ := Set.mem_iUnion.mp hb
+  apply Set.mem_iUnion.mpr
+  refine ⟨max m n + 1, Or.inr (Or.inr (Or.inr (Or.inl ?_)))⟩
+  exact ⟨a, stage_mono π S (le_max_left m n) hm,
+    b, stage_mono π S (le_max_right m n) hn, rfl⟩
+
+theorem hullSet_forward (π : Degree ≃o Degree) (S : Set Degree)
+    {a : Degree} (ha : a ∈ hullSet π S) : π a ∈ hullSet π S := by
+  obtain ⟨n, hn⟩ := Set.mem_iUnion.mp ha
+  exact Set.mem_iUnion.mpr ⟨n + 1, Or.inr (Or.inl ⟨a, hn, rfl⟩)⟩
+
+theorem hullSet_backward (π : Degree ≃o Degree) (S : Set Degree)
+    {a : Degree} (ha : a ∈ hullSet π S) : π.symm a ∈ hullSet π S := by
+  obtain ⟨n, hn⟩ := Set.mem_iUnion.mp ha
+  exact Set.mem_iUnion.mpr ⟨n + 1, Or.inr (Or.inr (Or.inl ⟨a, hn, rfl⟩))⟩
+
+def invariantHull (π : Degree ≃o Degree) (S : Set Degree) (hS : S.Countable) :
+    CountableIdeal where
+  carrier := hullSet π S
+  nonempty := ⟨⊥, Set.mem_iUnion.mpr ⟨0, Or.inl rfl⟩⟩
+  countable := Set.countable_iUnion (countable_stage π hS)
+  lower := fun {_ _} hab hb => hullSet_lower π S hab hb
+  join_mem := fun {_ _} ha hb => hullSet_join π S ha hb
+
+theorem countable_invariant_hull (π : Degree ≃o Degree) (S : Set Degree)
+    (hS : S.Countable) : ∃ J : CountableIdeal, S ⊆ J.carrier ∧
+      (∀ a ∈ J.carrier, π a ∈ J.carrier) ∧
+      (∀ a ∈ J.carrier, π.symm a ∈ J.carrier) := by
+  exact ⟨invariantHull π S hS, subset_hullSet π S,
+    fun _ ha => hullSet_forward π S ha, fun _ ha => hullSet_backward π S ha⟩
+
+def restrict (π : Degree ≃o Degree) (I : CountableIdeal)
+    (hf : ∀ a ∈ I.carrier, π a ∈ I.carrier)
+    (hb : ∀ a ∈ I.carrier, π.symm a ∈ I.carrier) : I ≃o I where
+  toFun a := ⟨π a.val, hf a.val a.property⟩
+  invFun a := ⟨π.symm a.val, hb a.val a.property⟩
+  left_inv a := Subtype.ext (π.symm_apply_apply a.val)
+  right_inv a := Subtype.ext (π.apply_symm_apply a.val)
+  map_rel_iff' := π.map_rel_iff
+
+def Extends {I J : CountableIdeal} (hIJ : I.carrier ⊆ J.carrier)
+    (ρ : I ≃o I) (σ : J ≃o J) : Prop :=
+  ∀ a : I, (σ ⟨a.val, hIJ a.property⟩).val = (ρ a).val
+
+def Persistent (I : CountableIdeal) (ρ : I ≃o I) : Prop :=
+  ∀ x : Degree, ∃ (J : CountableIdeal) (hIJ : I.carrier ⊆ J.carrier)
+    (σ : J ≃o J), x ∈ J.carrier ∧ Extends hIJ ρ σ
+
+def RestrictsTo (π : Degree ≃o Degree) (I : CountableIdeal) (ρ : I ≃o I) : Prop :=
+  ∀ a : I, π a.val = (ρ a).val
+
+theorem persistent_of_global_restriction (π : Degree ≃o Degree)
+    (I : CountableIdeal) (ρ : I ≃o I) (hρ : RestrictsTo π I ρ) : Persistent I ρ := by
+  intro x
+  obtain ⟨J, hS, hf, hb⟩ := countable_invariant_hull π (insert x I.carrier)
+    (I.countable.insert x)
+  let hIJ : I.carrier ⊆ J.carrier := fun _ ha => hS (Or.inr ha)
+  refine ⟨J, hIJ, restrict π J hf hb, hS (Or.inl rfl), ?_⟩
+  intro a
+  exact hρ a
+
+theorem global_restriction_set_extension (π : Degree ≃o Degree)
+    (S : Set Degree) (hS : S.Countable) (ρ : S ≃o S)
+    (hρ : ∀ a : S, π a.val = (ρ a).val) (x : Degree) :
+    ∃ (J : CountableIdeal) (hSJ : S ⊆ J.carrier) (σ : J ≃o J),
+      x ∈ J.carrier ∧ ∀ a : S, (σ ⟨a.val, hSJ a.property⟩).val = (ρ a).val := by
+  obtain ⟨J, h, hf, hb⟩ := countable_invariant_hull π (insert x S) (hS.insert x)
+  exact ⟨J, fun _ ha => h (Or.inr ha), restrict π J hf hb, h (Or.inl rfl), hρ⟩
+
+theorem persistent_countable_extension (π : Degree ≃o Degree)
+    (I : CountableIdeal) (ρ : I ≃o I) (hρ : RestrictsTo π I ρ)
+    (S : Set Degree) (hS : S.Countable) :
+    ∃ (J : CountableIdeal) (hIJ : I.carrier ⊆ J.carrier) (σ : J ≃o J),
+      S ⊆ J.carrier ∧ Extends hIJ ρ σ ∧ RestrictsTo π J σ ∧ Persistent J σ := by
+  obtain ⟨J, h, hf, hb⟩ := countable_invariant_hull π (I.carrier ∪ S)
+    (I.countable.union hS)
+  let σ := restrict π J hf hb
+  have hσ : RestrictsTo π J σ := fun _ => rfl
+  exact ⟨J, fun _ ha => h (Or.inl ha), σ, fun _ ha => h (Or.inr ha),
+    hρ, hσ, persistent_of_global_restriction π J σ hσ⟩
+
+theorem nontrivial_persistent_restriction (π : Degree ≃o Degree)
+    (x : Degree) (hx : π x ≠ x) :
+    ∃ (I : CountableIdeal) (ρ : I ≃o I),
+      RestrictsTo π I ρ ∧ Persistent I ρ ∧ ∃ a : I, ρ a ≠ a := by
+  obtain ⟨I, h, hf, hb⟩ := countable_invariant_hull π {x} (Set.countable_singleton x)
+  let ρ := restrict π I hf hb
+  have hρ : RestrictsTo π I ρ := fun _ => rfl
+  refine ⟨I, ρ, hρ, persistent_of_global_restriction π I ρ hρ,
+    ⟨x, h (Set.mem_singleton x)⟩, ?_⟩
+  intro heq
+  exact hx (congrArg Subtype.val heq)
+
+theorem nonrigidity_has_nontrivial_persistent (h : ¬ MainTheorem) :
+    ∃ (I : CountableIdeal) (ρ : I ≃o I), Persistent I ρ ∧ ∃ a : I, ρ a ≠ a := by
+  classical
+  simp only [MainTheorem, not_forall] at h
+  obtain ⟨π, x, hx⟩ := h
+  obtain ⟨I, ρ, _, hp, hn⟩ := nontrivial_persistent_restriction π x hx
+  exact ⟨I, ρ, hp, hn⟩
+
+end TuringRigidity.PersistentRestrictions
+
+end OAI

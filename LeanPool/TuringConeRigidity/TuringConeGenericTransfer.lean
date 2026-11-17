@@ -1,0 +1,163 @@
+/-
+Copyright (c) 2026 Bjørn Kjos-Hanssen. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Bjørn Kjos-Hanssen
+-/
+
+/-
+Adapted for Lean Pool from bjoernkjoshanssen/tt-
+auto/RequestProject/TuringConeGenericTransfer.lean.
+Module paths, interfaces, and proofs are ported to the pool's toolchain and gates.
+-/
+
+module
+
+public import LeanPool.TuringConeRigidity.TuringConeSourceIdentity
+public import LeanPool.TuringConeRigidity.Representation.RealHullPrescribedTruth
+
+/-!
+# Transferring inverse representation from columns to arithmetic generics
+
+All three generic coordinates are chosen as in the original proof. The
+minimal-pair calculation is instead made over A join Y, where A represents
+the cone base and belongs to the parameter model. The arithmetic source
+equation itself is unchanged, so its generic truth-transfer theorem is reused.
+-/
+
+
+@[expose] public section
+
+
+namespace OAI.TuringRigidity.ConeGenericTransfer
+
+open TransitiveNameModel BoundedSetTheory CountableForcing AtomicForcing
+open CohenColumnRealName InternalCountableOrdinals UniformArithmetic RelativeConstructible
+open GenericIdentity ConeProgramGlobalization
+
+attribute [local instance] InternalCollapse.order InternalCollapse.collapsePreorder
+
+/-- The generic triple can satisfy the stronger common-lower-bound identity
+over any fixed real already in the parameter model. -/
+theorem exists_relative_prefix_triple (M K : ZFSet.{0})
+    (hM : Transitive M) (hT : SourceT M) (hK : FirstUncountable M K)
+    (G : GenericFilter (Conditions (poset K))) (hG : GroundGeneric M G)
+    (X A : Oracle) (hX : realCode X ∈ genericExtensionSet M (poset K) G.carrier)
+    (hA : realCode A ∈ RealGeneratedModel.hull M (realCode X))
+    (O : Oracles) (hO : ∀ i, realCode (O i) ∈ RealGeneratedModel.hull M (realCode X))
+    (s : List Bool) : ∃ Y L R : Oracle,
+      (∀ B ∈ ({Y, L, R} : Set Oracle),
+        realCode B ∈ genericExtensionSet M (poset K) G.carrier ∧
+        GroundGeneric (RealGeneratedModel.hull M (realCode X))
+          (InternalCohen.pushFilter (CohenBorelForcing.realFilter B))) ∧
+      GenericCoding.InfiniteOdd L ∧ GenericCoding.InfiniteOdd R ∧
+      PrincipalIntersection (join A Y) (join (join A Y) L) (join (join A Y) R) ∧
+      ArithmeticPrefixForcing.Generic O (join Y (join L R)) ∧
+      ShuffleRequirements.Realizes s (join Y (join L R)) := by
+  obtain ⟨Y, hYE, hYg, hYs⟩ := RealHullGenericTriple.exists_prefix_real
+    M K hM hT hK G hG X hX (TriplePrefix.prefixes s).1
+  obtain ⟨hN, hH, L, R, hLE, hRE, hL, hR, hLs, hRs⟩ :=
+    RealHullIteration.exists_iterated_prefix_pair M K hM hT hK G hG X Y hX hYE
+      (TriplePrefix.prefixes s).2.1 (TriplePrefix.prefixes s).2.2
+  let N := RealGeneratedModel.hull M (realCode X)
+  let H := RealGeneratedModel.hull N (realCode Y)
+  obtain ⟨_, _, hHF, _⟩ := RegularTreeExtension.extension_properties H InternalCohen.conditions
+    hH.1 hH.2.1 (InternalCohen.conditions_mem H hH.1 hH.2.1)
+    (InternalCohen.pushFilter (CohenBorelForcing.realFilter L)) hL
+  have hLN : GroundGeneric N (InternalCohen.pushFilter (CohenBorelForcing.realFilter L)) :=
+    fun D hD hd => hL D (hH.2.2.1 hD) hd
+  have hRN : GroundGeneric N (InternalCohen.pushFilter (CohenBorelForcing.realFilter R)) :=
+    fun D hD hd => hR D (hHF (hH.2.2.1 hD)) hd
+  have hAY : join A Y ∈ modelReals H :=
+    sourceT_real_join H hH.1 hH.2.1 (hH.2.2.1 hA) hH.2.2.2
+  have hideal := IteratedGenericCommonIdeal.ideal_of_iterated_generics H hH.1 hH.2.1
+    (join A Y) hAY L R hL hR
+  refine ⟨Y, L, R, ?_, InternalCohen.groundGeneric_infiniteOdd N hN.1 hN.2.1 L hLN,
+    InternalCohen.groundGeneric_infiniteOdd N hN.1 hN.2.1 R hRN, hideal,
+    GroundIteratedTriple.generic_triple N hN.1 hN.2.1 O hO Y L R hYg hH hL hR,
+    TriplePrefix.realizes_join hYs hLs hRs⟩
+  intro B hB
+  simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hB
+  rcases hB with hB|hB|hB <;> rw [hB]
+  · exact ⟨hYE, hYg⟩
+  · exact ⟨hLE, hLN⟩
+  · exact ⟨hRE, hRN⟩
+
+/-- Correctness on all column realizations of one extension implies
+correctness on its arithmetic-generic real inputs, not merely its columns. -/
+theorem real_hull_prescribed_transfer {a : Degree} (e : Degree ≃o Set.Ici a)
+    (M K i : ZFSet.{0})
+    (hM : Transitive M) (hT : SourceT M) (hK : FirstUncountable M K) (hi : i ∈ K)
+    (G : GenericFilter (Conditions (poset K))) (hG : GroundGeneric M G)
+    (X A : Oracle) (hX : realCode X ∈ genericExtensionSet M (poset K) G.carrier)
+    (hA : degree A = a) (hAN : realCode A ∈ RealGeneratedModel.hull M (realCode X))
+    (p : OracleCode) (P : Oracle)
+    (hP : realCode P ∈ RealGeneratedModel.hull M (realCode X))
+    (hsem : ∀ H : GenericFilter (Conditions (poset K)),
+      GroundGeneric (RealGeneratedModel.hull M (realCode X)) H →
+      genericExtensionSet (RealGeneratedModel.hull M (realCode X)) (poset K) H.carrier =
+        genericExtensionSet M (poset K) G.carrier →
+      ∀ Y : Oracle, (realName K i).val H.carrier = realCode Y →
+        RepresentsInverseAt e p P Y) :
+    (∀ H : Oracle, ArithmeticPrefixForcing.Generic (fun _ => P) H →
+      SourceEquation p P (GenericTruth.triple H)) ∧
+    ∀ Y : Oracle, realCode Y ∈ genericExtensionSet M (poset K) G.carrier →
+      ArithmeticPrefixForcing.Generic (fun _ => P) Y → RepresentsInverseAt e p P Y := by
+  let N := RealGeneratedModel.hull M (realCode X)
+  have hrep : ∀ Y : Oracle,
+      ColumnRealizesExtension N K i (genericExtensionSet M (poset K) G.carrier) Y →
+      RepresentsInverseAt e p P Y := by
+    rintro Y ⟨H, hH, he, hY⟩
+    exact hsem H hH he Y hY
+  have hordinary : ∀ Y : Oracle, realCode Y ∈ genericExtensionSet M (poset K) G.carrier →
+      GroundGeneric N (InternalCohen.pushFilter (CohenBorelForcing.realFilter Y)) →
+      RepresentsInverseAt e p P Y := fun Y hYE hY => hrep Y
+    (real_hull_generic_column_realizes M K i hM hT hK hi G hG X Y hX hYE hY)
+  have hshuffle : ∀ Y L : Oracle,
+      realCode Y ∈ genericExtensionSet M (poset K) G.carrier →
+      realCode L ∈ genericExtensionSet M (poset K) G.carrier →
+      GroundGeneric N (InternalCohen.pushFilter (CohenBorelForcing.realFilter L)) →
+      RepresentsInverseAt e p P (GenericCoding.code Y L) := fun Y L hYE hLE hL => hrep _
+    (real_hull_shuffled_column_realizes M K i hM hT hK hi G hG X Y L hX hYE hLE hL)
+  have hd : ∀ s : List Bool, ∃ H : Oracle,
+      ArithmeticPrefixForcing.Generic (fun _ => P) H ∧
+      ShuffleRequirements.Realizes s H ∧ SourceEquation p P (GenericTruth.triple H) := by
+    intro s
+    obtain ⟨Y, L, R, hbase, hL, hR, hI, hg, hs⟩ := exists_relative_prefix_triple
+      M K hM hT hK G hG X A hX hAN (fun _ => P) (fun _ => hP) s
+    have hy := hbase Y (by simp)
+    have hl := hbase L (by simp)
+    have hr := hbase R (by simp)
+    refine ⟨join Y (join L R), hg, hs, ?_⟩
+    rw [GroundIteratedTriple.triple_join]
+    exact (ConeSourceIdentity.source_equation_iff e p P A Y L R hA
+      (hordinary L hl.1 hl.2) (hordinary R hr.1 hr.2)
+      (hshuffle Y L hy.1 hl.1 hl.2) (hshuffle Y R hy.1 hr.1 hr.2) hL hR hI).mpr
+        (hordinary Y hy.1 hy.2)
+  have ht := ArithmeticSourceTruth.source_equation_of_dense p P hd
+  refine ⟨ht, ?_⟩
+  intro Y hYE hY
+  obtain ⟨hN, hH, L, R, hLE, hRE, hL, hR⟩ :=
+    RealHullIteration.exists_iterated_pair M K hM hT hK G hG X Y hX hYE
+  let H := RealGeneratedModel.hull N (realCode Y)
+  obtain ⟨_, _, hHF, _⟩ := RegularTreeExtension.extension_properties H InternalCohen.conditions
+    hH.1 hH.2.1 (InternalCohen.conditions_mem H hH.1 hH.2.1)
+    (InternalCohen.pushFilter (CohenBorelForcing.realFilter L)) hL
+  have hLN : GroundGeneric N (InternalCohen.pushFilter (CohenBorelForcing.realFilter L)) :=
+    fun D hD hd => hL D (hH.2.2.1 hD) hd
+  have hRN : GroundGeneric N (InternalCohen.pushFilter (CohenBorelForcing.realFilter R)) :=
+    fun D hD hd => hR D (hHF (hH.2.2.1 hD)) hd
+  have hAY : join A Y ∈ modelReals H :=
+    sourceT_real_join H hH.1 hH.2.1 (hH.2.2.1 hAN) hH.2.2.2
+  have hI := IteratedGenericCommonIdeal.ideal_of_iterated_generics H hH.1 hH.2.1
+    (join A Y) hAY L R hL hR
+  have heq := ht (join Y (join L R))
+    (GroundIteratedTriple.generic_triple_of_arithmetic N (fun _ => P) (fun _ => hP)
+      Y L R hY hH hL hR)
+  rw [GroundIteratedTriple.triple_join] at heq
+  exact (ConeSourceIdentity.source_equation_iff e p P A Y L R hA
+    (hordinary L hLE hLN) (hordinary R hRE hRN)
+    (hshuffle Y L hYE hLE hLN) (hshuffle Y R hYE hRE hRN)
+    (InternalCohen.groundGeneric_infiniteOdd N hN.1 hN.2.1 L hLN)
+    (InternalCohen.groundGeneric_infiniteOdd N hN.1 hN.2.1 R hRN) hI).mp heq
+
+end OAI.TuringRigidity.ConeGenericTransfer

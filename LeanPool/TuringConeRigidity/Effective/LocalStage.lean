@@ -1,0 +1,216 @@
+/-
+Copyright (c) 2026 OpenAI. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: OpenAI
+-/
+
+/-
+Adapted for Lean Pool from bjoernkjoshanssen/tt-
+auto/OAI/Computability/DegreeRigidity/Effective/LocalStage.lean.
+Module paths, interfaces, and proofs are ported to the pool's toolchain and gates.
+Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream port repairs.
+-/
+
+module
+
+public import LeanPool.TuringConeRigidity.Effective.LocalInputs
+public import LeanPool.TuringConeRigidity.CohenForcing.EffectiveForcing
+public import LeanPool.TuringConeRigidity.Effective.FiniteInjuryLimits
+public import LeanPool.TuringConeRigidity.Effective.FiniteInjurySchedule
+
+/-!
+# Local Stage
+-/
+
+
+@[expose] public section
+
+namespace OAI
+
+namespace TuringRigidity.LocalStage
+open Encodable CodingForcing EncodedForcing FiniteInjury
+noncomputable section
+attribute [local instance] Classical.propDecidable
+
+def pairProcedure (D : LocalInputs.Data) : ℕ → ℕ := D.pairProcedure
+
+theorem pairProcedure_recursive (D : LocalInputs.Data) :
+    Nat.RecursiveIn {oracleFunction D.bound} (fun v => Part.some (pairProcedure D v)) :=
+      D.pair_recursive
+
+def candidate (D : LocalInputs.Data) (t : ℕ) (p : Condition) : Condition :=
+  atLevel (condition (pairProcedure D (Nat.pair t (code (atLevel p t))))) t
+
+theorem candidate_extends (D : LocalInputs.Data) (t : ℕ) (p : Condition) :
+    Extends D.F (atLevel p t) (candidate D t p) := by
+  have h := (D.pair_spec t (code (atLevel p t))).1
+  rw [condition_code] at h
+  exact ⟨h.1,h.2.1,le_rfl,h.2.2.2⟩
+
+def Changes (D : LocalInputs.Data) (t : ℕ) (p : Condition) : Prop :=
+  (candidate D t p).left ≠ p.left ∨ (candidate D t p).right ≠ p.right
+
+def scan (D : LocalInputs.Data) (p : Condition) (done : Finset ℕ) (t : ℕ) : ℕ → Option ℕ
+  | 0 => none
+  | n+1 => if t ∉ done ∧ Changes D t p then some t else scan D p done (t+1) n
+
+theorem scan_spec {D : LocalInputs.Data} {p : Condition} {done : Finset ℕ} {t n i : ℕ}
+    (h : scan D p done t n = some i) :
+    t ≤ i ∧ i < t+n ∧ i ∉ done ∧ Changes D i p := by
+  induction n generalizing t with
+  | zero => simp [scan] at h
+  | succ n ih =>
+    simp only [scan] at h
+    split at h
+    · rename_i ht
+      have he := Option.some.inj h
+      subst i
+      exact ⟨le_rfl,by omega,ht⟩
+    · obtain ⟨hlo,hhi,hd,hc⟩ := ih h
+      exact ⟨by omega,by omega,hd,hc⟩
+
+def openProcedure (D : LocalInputs.Data) : ℕ → ℕ := D.openProcedure
+
+theorem open_extends (D : LocalInputs.Data) (e : ℕ) (p : Condition) :
+    Extends D.F p (condition (openProcedure D (Nat.pair e (code p)))) := by
+  simpa only [condition_code,openProcedure] using (D.open_spec e (code p)).1
+
+structure State where
+  condition : Condition
+  done : Finset ℕ
+  seen : Finset ℕ
+
+def generic (D : LocalInputs.Data) (p : State) : Condition :=
+  EncodedForcing.condition (openProcedure D (Nat.pair (FiniteInjurySchedule.visit p.seen) (code
+    p.condition)))
+
+def stageAction (D : LocalInputs.Data) (s : ℕ) (p : State) : Option ℕ := scan D (generic D p)
+  p.done 0 s
+
+def stageWord (D : LocalInputs.Data) (s : ℕ) (p : State) : Condition :=
+  match stageAction D s p with
+  | none => generic D p
+  | some t => candidate D t (generic D p)
+
+def advance (D : LocalInputs.Data) (s : ℕ) (p : State) : State where
+  condition := atLevel (append (stageWord D s p) [false]) (s+1)
+  done := FiniteInjury.update p.done (stageAction D s p)
+  seen := FiniteInjurySchedule.reset (insert (FiniteInjurySchedule.visit p.seen) p.seen)
+    (stageAction D s p)
+
+def construction (D : LocalInputs.Data) : ℕ → State
+  | 0 => ⟨⟨[],[],rfl,0⟩,∅,∅⟩
+  | s+1 => advance D s (construction D s)
+
+def conditions (D : LocalInputs.Data) (s : ℕ) := (construction D s).condition
+
+def proposal (D : LocalInputs.Data) (s : ℕ) (_ : Finset ℕ) : Option ℕ :=
+  stageAction D s (construction D s)
+
+theorem action_not_done (D : LocalInputs.Data) (s : ℕ) (p : State) (t : ℕ)
+    (h : stageAction D s p = some t) : t ∉ p.done := (scan_spec h).2.2.1
+
+theorem accept_action (D : LocalInputs.Data) (s : ℕ) (p : State) :
+    FiniteInjury.accept p.done (stageAction D s p) = stageAction D s p := by
+  cases ha : stageAction D s p with
+  | none => simp [FiniteInjury.accept]
+  | some t => simp [FiniteInjury.accept,action_not_done D s p t ha]
+
+theorem done_eq (D : LocalInputs.Data) (s : ℕ) :
+    (construction D s).done = FiniteInjury.state (proposal D) s := by
+  induction s with
+  | zero => rfl
+  | succ s ih =>
+    change FiniteInjury.update (construction D s).done (stageAction D s (construction D s)) = _
+    rw [FiniteInjury.state]
+    rw [← ih]
+    simp only [proposal,accept_action]
+
+theorem action_eq (D : LocalInputs.Data) (s : ℕ) :
+    FiniteInjury.action (proposal D) s = stageAction D s (construction D s) := by
+  rw [FiniteInjury.action,← done_eq]
+  exact accept_action D s _
+
+theorem seen_eq (D : LocalInputs.Data) (s : ℕ) :
+    (construction D s).seen = FiniteInjurySchedule.seen (proposal D) s := by
+  induction s with
+  | zero => rfl
+  | succ s ih =>
+    change FiniteInjurySchedule.reset _ _ = _
+    rw [FiniteInjurySchedule.seen,action_eq,← ih]
+
+theorem active_eq (D : LocalInputs.Data) (s : ℕ) : (conditions D s).active = s := by
+  cases s <;> rfl
+
+theorem stage_words (D : LocalInputs.Data) (s : ℕ) (p : State) :
+    p.condition.left <+: (stageWord D s p).left ∧ p.condition.right <+: (stageWord D s p).right :=
+      by
+  have ho := open_extends D (FiniteInjurySchedule.visit p.seen) p.condition
+  cases ha : stageAction D s p with
+  | none => exact ⟨by simpa [stageWord, ha, generic] using ho.1, by simpa [stageWord, ha, generic]
+      using ho.2.1⟩
+  | some t =>
+    have hc := candidate_extends D t (generic D p)
+    exact ⟨by simpa [stageWord,ha] using ho.1.trans hc.1,
+      by simpa [stageWord,ha] using ho.2.1.trans hc.2.1⟩
+
+theorem word_growth (D : LocalInputs.Data) (s : ℕ) :
+    (conditions D s).left <+: (conditions D (s+1)).left ∧
+    (conditions D s).right <+: (conditions D (s+1)).right := by
+  have h := stage_words D s (construction D s)
+  exact ⟨h.1.trans (List.prefix_append _ _),h.2.trans (List.prefix_append _ _)⟩
+
+theorem length_bound (D : LocalInputs.Data) (s : ℕ) : s ≤ (conditions D s).left.length := by
+  induction s with
+  | zero => exact Nat.zero_le _
+  | succ s ih =>
+    have h := (stage_words D s (construction D s)).1.length_le
+    change s+1 ≤ ((stageWord D s (construction D s)).left ++ [false]).length
+    simp only [List.length_append,List.length_singleton]
+    exact Nat.add_le_add_right (ih.trans h) 1
+
+theorem level_step (D : LocalInputs.Data) (s k : ℕ) (hk : k ≤ s)
+    (hact : ∀ t, FiniteInjury.action (proposal D) s = some t → k ≤ t) :
+    Extends D.F (atLevel (conditions D s) k) (atLevel (conditions D (s+1)) k) := by
+  let p := construction D s
+  have ho := open_extends D (FiniteInjurySchedule.visit p.seen) p.condition
+  have hg : Extends D.F (atLevel p.condition k) (atLevel (generic D p) k) := by
+    refine ⟨ho.1,ho.2.1,le_rfl,?_⟩
+    intro m hm hlen
+    apply ho.2.2.2 m ⟨hm.1,?_,hm.2.2⟩ hlen
+    exact hm.2.1.trans_le (by
+      change k ≤ (conditions D s).active
+      rw [active_eq]
+      exact hk)
+  have hw : Extends D.F (atLevel (generic D p) k) (atLevel (stageWord D s p) k) := by
+    cases ha : stageAction D s p with
+    | none => simpa [stageWord,ha] using extends_refl D.F (atLevel (generic D p) k)
+    | some t =>
+      have hkt : k ≤ t := hact t (by simpa [action_eq,p] using ha)
+      have hc := candidate_extends D t (generic D p)
+      have hc' : Extends D.F (atLevel (generic D p) t) (atLevel (candidate D t (generic D p)) t)
+        := hc
+      simpa [stageWord,ha] using level_mono hc' hkt
+  have htail : Extends D.F (atLevel (stageWord D s p) k)
+      (atLevel (conditions D (s+1)) k) := append_extends _ _ [false]
+  exact extends_trans hg (extends_trans hw htail)
+
+theorem surviving_columns (D : LocalInputs.Data) (k : ℕ) : ∃ S, ∀ m,
+    (conditions D S).left.length ≤ m → (Nat.unpair m).1 < k →
+    D.F (Nat.unpair m).1 (Nat.unpair m).2 = true →
+    leftLimit (conditions D) m = rightLimit (conditions D) m :=
+  eventual_column_agreement D.F (proposal D) (conditions D)
+    (word_growth D) (length_bound D) (level_step D) k
+
+theorem surviving_generic_visit (D : LocalInputs.Data) (t : ℕ) : ∃ s,
+    FiniteInjurySchedule.visit (construction D s).seen = t ∧
+      ∀ u, s ≤ u → ∀ i < t, stageAction D u (construction D u) ≠ some i := by
+  obtain ⟨s,hs,hh⟩ := FiniteInjurySchedule.surviving_visit (proposal D) t
+  refine ⟨s,?_,?_⟩
+  · simpa [seen_eq,FiniteInjurySchedule.scheduled] using hs
+  · simpa only [action_eq] using hh
+
+end
+end TuringRigidity.LocalStage
+
+end OAI

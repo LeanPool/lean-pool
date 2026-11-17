@@ -1,0 +1,115 @@
+/-
+Copyright (c) 2026 OpenAI. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: OpenAI
+-/
+
+/-
+Adapted for Lean Pool from bjoernkjoshanssen/tt-
+auto/OAI/Computability/DegreeRigidity/Computability/JumpIdealPresentation.lean.
+Module paths, interfaces, and proofs are ported to the pool's toolchain and gates.
+Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream port repairs.
+-/
+
+module
+
+public import LeanPool.TuringConeRigidity.Computability.ArithmeticJumpBound
+
+/-!
+# Jump Ideal Presentation
+-/
+
+
+@[expose] public section
+
+namespace OAI
+
+namespace TuringRigidity.JumpIdealPresentation
+open Encodable EncodedForcing OracleJump ArithmeticHierarchy IndexMatrix TableIndices
+open PersistentRestrictions PersistentPresentation UniformArithmetic
+noncomputable section
+
+def omegaJump (X : Oracle) : Oracle := fun v => iterate X (Nat.unpair v).1 (Nat.unpair v).2
+
+@[simp] theorem omegaJump_column (X : Oracle) (n : ℕ) :
+    columns (omegaJump X) n = iterate X n := by
+  funext k
+  simp [columns,omegaJump]
+
+def presentation (X : Oracle) : Oracle := fun v =>
+  tableOracle (iterate X (Nat.unpair (Nat.unpair v).1).1)
+    (Nat.unpair (Nat.unpair v).1).2 (Nat.unpair v).2
+
+@[simp] theorem presentation_column (X : Oracle) (n e : ℕ) :
+    columns (presentation X) (Nat.pair n e) = tableOracle (iterate X n) e := by
+  funext k
+  simp [columns,presentation]
+
+theorem graph_sigma (Y : Oracle) (e : ℕ) : Sigma Y 1 (tableGraph Y e) := by
+  classical
+  have hr := IndexMatrix.run_uniform_recursive Y
+  have hf := UniformOracle.total_comp hr (UniformOracle.total_primrec
+    (Primrec₂.natPair.comp (Primrec.const e)
+      (Primrec₂.natPair.comp UniformArithmetic.left_primrec UniformArithmetic.right_primrec)))
+  have hcheck : Primrec (fun q : ℕ => if q = encode (some (1 : ℕ)) then 1 else 0) :=
+    Primrec.ite (Primrec.eq.comp Primrec.id (Primrec.const _)) (Primrec.const 1) (Primrec.const 0)
+  have h : RecursivePred Y (fun v => run Y (machine e) (Nat.unpair v).1 (Nat.unpair v).2 = some 1)
+    := by
+    exact (UniformOracle.total_comp (UniformOracle.total_primrec hcheck) hf).of_eq
+      (fun v => by
+        simp only [Nat.unpair_pair, Encodable.encode_injective.eq_iff, UniformArithmetic.left,
+          UniformArithmetic.right]; split <;> simp_all)
+  exact (exists_form (n := 0) h).congr
+    (fun _ => by simp only [Nat.unpair_pair,tableGraph])
+
+theorem tableOracle_reduces_jump (Y : Oracle) (e : ℕ) :
+    Reduces (tableOracle Y e) (jump Y) := by
+  apply RecursiveIn.iff_nat.mpr
+  exact (form_recursive (graph_sigma Y e)).of_eq
+    (fun v => by
+      classical
+      simp [oracleFunction,tableOracle])
+
+theorem presents (X : Oracle) : Presented (JumpIdeal.generated (degree X)) (presentation X) := by
+  intro x
+  constructor
+  · rintro ⟨n,hn⟩
+    have hx : x ≤ degree (iterate X n) := by
+      simpa only [GlobalLocality.degreeIterate_degree] using hn
+    obtain ⟨A,rfl⟩ := degree_surjective x
+    obtain ⟨d,hd⟩ := reduces_represents hx
+    have hd' : Represents (iterate X n) (machine (encode d)) A := by simpa using hd
+    refine ⟨Nat.pair n (encode d),?_⟩
+    rw [presentation_column,tableOracle_eq hd']
+  · rintro ⟨k,rfl⟩
+    obtain ⟨⟨n,e⟩,rfl⟩ := Nat.pairEquiv.surjective k
+    change degree (columns (presentation X) (Nat.pair n e)) ∈ _
+    rw [presentation_column]
+    refine ⟨n+1,?_⟩
+    simpa only [GlobalLocality.degreeIterate_degree,iterate,degree_le_iff] using
+      tableOracle_reduces_jump (iterate X n) e
+
+theorem presentation_arith : Arith (fun O v =>
+    tableOracle (columns (O 0) (Nat.unpair (Nat.unpair v).1).1)
+      (Nat.unpair (Nat.unpair v).1).2 (Nat.unpair v).2 = true) := by
+  have hB := column_arith (parameter_arith 0) UniformArithmetic.left_primrec
+  have h := tableOracle_arith hB UniformArithmetic.right_primrec
+  exact h
+
+theorem presentation_bounded (X : Oracle) :
+    ∃ k, Reduces (presentation X) (iterate (omegaJump X) k) := by
+  obtain ⟨k,hk⟩ := presentation_arith.jump_bound
+  refine ⟨k,RecursiveIn.iff_nat.mpr ?_⟩
+  have h := hk (fun _ => omegaJump X) (omegaJump X) (fun _ => reduces_refl _)
+  exact h.of_eq (fun v => by
+    simp only [omegaJump_column]
+    by_cases value : presentation X v = true
+    · simp [oracleFunction,presentation] at value ⊢
+      simp [value]
+    · simp [oracleFunction,presentation] at value ⊢
+      simp [value])
+
+end
+end TuringRigidity.JumpIdealPresentation
+
+end OAI
