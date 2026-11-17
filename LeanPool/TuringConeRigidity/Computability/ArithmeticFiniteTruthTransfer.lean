@@ -13,7 +13,6 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.Computability.ArithmeticTruthRequirements
 public import LeanPool.TuringConeRigidity.Computability.ArithmeticSourceTruth
 
 /-!
@@ -35,11 +34,7 @@ theorem generic_meets_family {D : PrefixPredicate} (hD : ArithmeticPrefix D)
     (O : Oracles) (v : ℕ) (hd : ∀ n, DenseOpen (D O (Nat.pair v n)))
     (G : Oracle) (hG : Generic O G) :
     GenericFor (fun n => D O (Nat.pair v n)) G := by
-  intro n
-  have ha : Arith (fun O s => D O (Nat.pair v n) (word s)) :=
-    (hD.comp _ (Primrec₂.natPair.comp (Primrec.const (Nat.pair v n)) Primrec.id)).congr
-      (fun _ _ => by simp only [left,right,Nat.unpair_pair,id_eq])
-  exact hG (fun O s => D O (Nat.pair v n) s) ha (hd n)
+  exact ArithmeticPrefixFamilies.genericFor_of_generic hD O v hd G hG
 
 theorem finite_family_of_dense {P : Predicate} (hP : Arith P) (O : Oracles) (v : ℕ)
     (hd : ∀ s : List Bool, ∃ H : Oracle,

@@ -37,46 +37,17 @@ theorem internal_omegaGraph_below_schemas (M : ZFSet.{u}) (C : Context M) (hRep 
     (x : ZFSet.{u}) (hx : x ∈ M) (ho : x.IsOrdinal) :
     ∃ f ∈ M, OmegaGraph M x (iterUnion 2 f) f := by
   obtain ⟨f,hf,hg⟩ := internal_omegaGraph_schemas M C hRep hColl x hx ho
-  let p : Formula := .existsMem 1 (.existsMem 3 (.orderedPair 2 1 0))
-  let e : ℕ → ZFSet.{u} := cons x (fun _ => iterUnion 2 f)
-  let g := ZFSet.sep (fun z => p.Eval (cons z e)) f
-  have hgM : g ∈ M := sep_mem M C.transitive C.separation p e
-    (by
-      intro i
-      cases i
-      · exact hx
-      · exact iterUnion_mem M C.transitive C.union hf 2) hf
-  have hm (z : ZFSet.{u}) : z ∈ g ↔ ∃ t ∈ x, z = ZFSet.pair t (omegaNext t) := by
-    change z ∈ ZFSet.sep _ f ↔ _
-    simp only [ZFSet.mem_sep,p,Formula.Eval,Formula.eval_orderedPair,cons_zero,cons_succ]
-    change (z ∈ f ∧ ∃ t ∈ x, ∃ v ∈ iterUnion 2 f, z = ZFSet.pair t v) ↔ _
-    constructor
-    · rintro ⟨hz,t,ht,v,hv,rfl⟩
-      exact ⟨t,ht,by rw [hg.correct t (ZFSet.mem_insert_of_mem x ht) v hv hz]⟩
-    · rintro ⟨t,ht,rfl⟩
-      have hp := (hg.mem_iff _).mpr ⟨t,ZFSet.mem_insert_of_mem x ht,rfl⟩
-      exact ⟨hp,t,ht,_,second_mem_doubleUnion hp,rfl⟩
-  exact ⟨g,hgM,omegaGraph_of_mem_iff_context M x g C hx hgM ho hm⟩
+  exact omegaGraph_below_of_successor_graph M C x hx ho f hf hg
 
 theorem ProductCertificates.context (M : ZFSet.{u}) (C : Context M)
     (hRep : SigmaReplacement M) (a b : Ordinal.{u})
     (ha : a.toZFSet ∈ M) (hb : b.toZFSet ∈ M) : ProductCertificates M a b := by
-  obtain ⟨_,f,hf,hc⟩ := ordinal_mul_internal_schemas M C.transitive C.pairing C.union
-    C.power C.separation hRep a b ha hb
-  exact ⟨product_mem M C.transitive C.pairing C.union C.power C.separation hb ha,
-    productRelation_mem M _ _ C.transitive C.pairing C.union C.power C.separation ha hb,
-    f,hf,hc⟩
+  exact ProductCertificates.of_context M C hRep a b ha hb
 
 theorem OmegaPowerCertificates.schemas (M : ZFSet.{u}) (C : Context M)
     (hRep : SigmaReplacement M) (hColl : SigmaCollection M)
     (x : ZFSet.{u}) (hx : x ∈ M) (ho : x.IsOrdinal) : OmegaPowerCertificates M x := by
-  obtain ⟨f,hf,hg⟩ := internal_omegaGraph_below_schemas M C hRep hColl x hx ho
-  refine ⟨hx,f,hf,_,iterUnion_mem M C.transitive C.union hf 2,hg,?_⟩
-  intro t ht
-  have htM := C.transitive _ hx t ht
-  exact ProductCertificates.context M C hRep _ _
-    (ordinal_omega_opow_schemas M C hRep hColl t.rank
-      ((hg.1.mem ht).toZFSet_rank_eq.symm ▸ htM)) (toZFSet_omega.symm ▸ C.omega_mem)
+  exact OmegaPowerCertificates.of_schemas M C hRep hColl x hx ho
 
 theorem relative_omega_power_certificates (M : ZFSet.{u}) (hM : Transitive M) (hT : SourceT M)
     (a : Ordinal.{u}) (ha : a.toZFSet ∈ M) :

@@ -9,6 +9,7 @@ Adapted for Lean Pool from bjoernkjoshanssen/tt-
 auto/OAI/Computability/DegreeRigidity/Computability/ArithmeticPrefixFamilies.lean.
 Module paths, interfaces, and proofs are ported to the pool's toolchain and gates.
 Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream port repairs.
+The generic-family conversion proof is shared from upstream ArithmeticFiniteTruthTransfer.
 -/
 
 module
@@ -65,6 +66,17 @@ theorem avoid_truth_of_decides (Q : List Bool → Prop) (hQ : Upward Q) (G : Ora
     rcases hs with hs | hs
     · exact False.elim (hn ⟨s,hs,hGs⟩)
     · exact ⟨s,hs,hGs⟩
+
+/-- An arithmetic generic oracle meets each member of an arithmetic dense family. -/
+theorem genericFor_of_generic {D : PrefixPredicate} (hD : ArithmeticPrefix D)
+    (O : Oracles) (v : ℕ) (hd : ∀ n, DenseOpen (D O (Nat.pair v n)))
+    (G : Oracle) (hG : Generic O G) :
+    GenericFor (fun n => D O (Nat.pair v n)) G := by
+  intro n
+  have ha : Arith (fun O s => D O (Nat.pair v n) (EncodedForcing.word s)) :=
+    (hD.comp _ (Primrec₂.natPair.comp (Primrec.const (Nat.pair v n)) Primrec.id)).congr
+      (fun _ _ => by simp only [left,right,Nat.unpair_pair,id_eq])
+  exact hG (fun O s => D O (Nat.pair v n) s) ha (hd n)
 
 end TuringRigidity.ArithmeticPrefixFamilies
 

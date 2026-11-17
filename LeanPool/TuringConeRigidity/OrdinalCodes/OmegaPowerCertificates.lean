@@ -9,6 +9,8 @@ Adapted for Lean Pool from bjoernkjoshanssen/tt-
 auto/OAI/Computability/DegreeRigidity/OrdinalCodes/OmegaPowerCertificates.lean.
 Module paths, interfaces, and proofs are ported to the pool's toolchain and gates.
 Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream port repairs.
+The context certificate proofs are shared from upstream
+Constructibility/RelativeOmegaCertificates.lean.
 -/
 
 module
@@ -36,13 +38,21 @@ def ProductCertificates (M : ZFSet.{u}) (a b : Ordinal.{u}) : Prop :=
     ∃ f ∈ M, OrderTypeCertificate (ZFSet.prod b.toZFSet a.toZFSet)
       (productRelation a.toZFSet b.toZFSet) (a*b).toZFSet f
 
+/-- Ordinal product certificates require only the context and replacement schema. -/
+theorem ProductCertificates.of_context (M : ZFSet.{u}) (C : SetModelFunctions.Context M)
+    (hRep : SigmaReplacement M) (a b : Ordinal.{u})
+    (ha : a.toZFSet ∈ M) (hb : b.toZFSet ∈ M) : ProductCertificates M a b := by
+  obtain ⟨_,f,hf,hc⟩ := ordinal_mul_internal_schemas M C.transitive C.pairing C.union
+    C.power C.separation hRep a b ha hb
+  exact ⟨product_mem M C.transitive C.pairing C.union C.power C.separation hb ha,
+    productRelation_mem M _ _ C.transitive C.pairing C.union C.power C.separation ha hb,
+    f,hf,hc⟩
+
 theorem ProductCertificates.sourceT (M : ZFSet.{u}) (hM : Transitive M) (hT : SourceT M)
     (a b : Ordinal.{u}) (ha : a.toZFSet ∈ M) (hb : b.toZFSet ∈ M) : ProductCertificates M a b := by
-  obtain ⟨_,f,hf,_,hc⟩ := ordinal_mul_internal M hM hT a b ha hb
-  exact ⟨product_mem M hM hT.pairing hT.union hT.powerSet hT.separation.finitePrefix.bounded hb ha,
-    productRelation_mem M _ _ hM hT.pairing hT.union hT.powerSet
-      hT.separation.finitePrefix.bounded ha hb,
-    f,hf,hc⟩
+  let C : SetModelFunctions.Context M :=
+    ⟨hM,hT.pairing,hT.union,hT.powerSet,hT.separation.finitePrefix.bounded,hT.infinity⟩
+  exact ProductCertificates.of_context M C hT.replacement.finitePrefix a b ha hb
 
 theorem ProductCertificates.mono {M N : ZFSet.{u}} {a b : Ordinal.{u}}
     (h : ProductCertificates M a b) (hMN : M ⊆ N) : ProductCertificates N a b :=
@@ -64,16 +74,26 @@ def OmegaPowerCertificates (M x : ZFSet.{u}) : Prop :=
   x ∈ M ∧ ∃ f ∈ M, ∃ r ∈ M, OmegaGraph M (x) r f ∧
     ∀ t ∈ x, ProductCertificates M (Ordinal.omega0 ^ t.rank) Ordinal.omega0
 
+/-- Omega-power certificates follow from the explicit recursion schemas. -/
+theorem OmegaPowerCertificates.of_schemas (M : ZFSet.{u}) (C : SetModelFunctions.Context M)
+    (hRep : SigmaReplacement M) (hColl : SigmaCollection M)
+    (x : ZFSet.{u}) (hx : x ∈ M) (ho : x.IsOrdinal) : OmegaPowerCertificates M x := by
+  obtain ⟨f',hf',hg'⟩ := internal_omegaGraph_of_schemas M C hRep hColl x hx ho
+  obtain ⟨f,hf,hg⟩ := omegaGraph_below_of_successor_graph M C x hx ho f' hf' hg'
+  refine ⟨hx,f,hf,_,iterUnion_mem M C.transitive C.union hf 2,hg,?_⟩
+  intro t ht
+  have htM := C.transitive _ hx t ht
+  exact ProductCertificates.of_context M C hRep _ _
+    (ordinal_omega_opow_of_schemas M C hRep hColl t.rank
+      ((hg.1.mem ht).toZFSet_rank_eq.symm ▸ htM)) (toZFSet_omega.symm ▸ C.omega_mem)
+
 theorem OmegaPowerCertificates.sourceT (M : ZFSet.{u}) (hM : Transitive M) (hT : SourceT M)
     (x : ZFSet.{u}) (hx : x ∈ M) (ho : x.IsOrdinal) : OmegaPowerCertificates M x := by
-  obtain ⟨f,hf,hg⟩ := internal_omegaGraph_below M hM hT x hx ho
-  have hd := hx
-  refine ⟨hd,f,hf,_,iterUnion_mem M hM hT.union hf 2,hg,?_⟩
-  intro t ht
-  have htM := hM _ hd t ht
-  exact ProductCertificates.sourceT M hM hT _ _
-    (ordinal_omega_opow_internal M hM hT t.rank ((hg.1.mem ht).toZFSet_rank_eq.symm ▸ htM))
-    (toZFSet_omega.symm ▸ omega_mem M hM hT.separation.finitePrefix.bounded hT.infinity)
+  let C : SetModelFunctions.Context M :=
+    ⟨hM,hT.pairing,hT.union,hT.powerSet,hT.separation.finitePrefix.bounded,hT.infinity⟩
+  have hColl := sigma_collection M hM hT.pairing hT.union hT.powerSet
+    hT.separation.finitePrefix hT.replacement.finitePrefix hT.infinity hT.choice
+  exact OmegaPowerCertificates.of_schemas M C hT.replacement.finitePrefix hColl x hx ho
 
 theorem OmegaPowerCertificates.mono {M N x : ZFSet.{u}}
     (h : OmegaPowerCertificates M x) (hMN : M ⊆ N) : OmegaPowerCertificates N x := by

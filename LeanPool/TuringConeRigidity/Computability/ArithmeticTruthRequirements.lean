@@ -14,7 +14,6 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.Computability.ArithmeticPrefixFamilies
-public import LeanPool.TuringConeRigidity.Computability.ArithmeticGenericTruth
 
 /-!
 # Arithmetic Truth Requirements
@@ -28,7 +27,7 @@ namespace OAI
 
 namespace TuringRigidity.ArithmeticTruthRequirements
 open UniformArithmetic ArithmeticPrefixForcing ArithmeticPrefixFamilies
-open ArithmeticGenericTruth FiniteShuffle ShuffleRequirements
+open FiniteShuffle ShuffleRequirements
 open EncodedForcing (word word_primrec)
 
 theorem arithmetic_truth_requirements {P : Predicate} (hP : Arith P) :
@@ -44,7 +43,7 @@ theorem arithmetic_truth_requirements {P : Predicate} (hP : Arith P) :
     refine ⟨fun _ v _ => P v, fun _ _ _ => True, .pure _ (hP.comp left_primrec), htrue,
       fun _ _ _ _ _ h => h, fun _ _ _ => dense_true, ?_⟩
     intro O v G _
-    exact (open_constant _ _).symm
+    exact (ArithmeticPrefixForcing.openSet_constant_iff _ _).symm
   | query i =>
     by_cases hi : i = 0
     · subst i
@@ -71,7 +70,8 @@ theorem arithmetic_truth_requirements {P : Predicate} (hP : Arith P) :
       htrue,
         fun _ _ _ _ _ h => h, fun _ _ _ => dense_true, ?_⟩
       intro O v G _
-      simpa only [Function.update_of_ne hi] using (open_constant (O i v = true) G).symm
+      simpa only [Function.update_of_ne hi] using
+        (ArithmeticPrefixForcing.openSet_constant_iff (O i v = true) G).symm
   | neg h ih =>
     obtain ⟨Q,D,hQ,hD,hup,hden,ht⟩ := ih
     let E : PrefixPredicate := fun O v s => D O v s ∧ Decides (Q O (left v)) s

@@ -9,6 +9,7 @@ Adapted for Lean Pool from bjoernkjoshanssen/tt-
 auto/OAI/Computability/DegreeRigidity/Computability/ArithmeticPrefixForcing.lean.
 Module paths, interfaces, and proofs are ported to the pool's toolchain and gates.
 Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream port repairs.
+The constant-open-set proof is shared from the upstream ArithmeticGenericTruth module.
 -/
 
 module
@@ -123,6 +124,13 @@ theorem open_avoid {Q : PrefixPredicate} (hQ : ArithmeticPrefix Q)
     rcases hs with hs | hs
     · exact False.elim (hn ⟨s,hs,hGs⟩)
     · exact ⟨s,hs,hGs⟩
+
+/-- A constant word predicate defines the whole oracle space exactly when it holds. -/
+theorem openSet_constant_iff (p : Prop) (G : Oracle) : G ∈ OpenSet (fun _ => p) ↔ p := by
+  constructor
+  · rintro ⟨_,hp,_⟩; exact hp
+  · intro hp
+    exact ⟨[],hp,fun i hi => by simp at hi⟩
 
 end TuringRigidity.ArithmeticPrefixForcing
 
