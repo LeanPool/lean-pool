@@ -23,6 +23,9 @@ open scoped BigOperators
 
 namespace GapCVP
 
+-- Keep enumeration abstract while elaborating dependent matrix types.
+attribute [local irreducible] List.finRange
+
 open GapCVP.TraceGolf (oneStep rebound)
 
 open GapCVP.PhysicalInterpolationColumnSourceFieldCorrectness
@@ -388,6 +391,9 @@ theorem paperVariableArityPhysicalIntegerTargetNPHardPromise :
 end Factor400BinaryPaperVariableArityUnconditionalPhysicalSourceMachine
 
 namespace Factor400BinaryDecodingPromiseHardness
+
+-- Concrete enumeration proofs in this scope need definitional reduction.
+attribute [local semireducible] List.finRange
 
 open scoped BigOperators
 
