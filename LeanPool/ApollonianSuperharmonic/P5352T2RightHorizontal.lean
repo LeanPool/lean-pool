@@ -363,7 +363,7 @@ private theorem qChildCenter :
     (-n-n)^2/4 = n*(n-1)/2-n^2
   simp only [Int.natCast_natAbs, abs_of_nonpos (show -n ≤ 0 by omega)]
   rw [hsq0']
-  ring
+  ring_nf
 
 private theorem qChildEast :
     (by
@@ -385,7 +385,7 @@ private theorem qChildEast :
     ((1-n)-n)^2/4 = (n-1)*(n-2)/2-(n^2-n)
   simp only [Int.natCast_natAbs, abs_of_nonpos (show 1-n ≤ 0 by omega)]
   rw [hsq1']
-  ring
+  ring_nf
 
 private theorem hLap :
     (by
@@ -457,7 +457,7 @@ private theorem hLap :
     have h1 := tri (n-1)
     have h2 := tri n
     have h1' : 2*((n-1)*(n-2)/2) = (n-1)*(n-2) := by
-      convert h1 using 1 <;> congr 1 <;> ring
+      convert h1 using 1 <;> congr 1 <;> ring_nf
     have hd : 2*((n-1)*(n-2)/2 - n*(n-1)/2) = 2*(1-n) := by
       rw [mul_sub, h1', h2]
       ring
@@ -539,7 +539,7 @@ theorem P5352T2RightHorizontal (K : DiamondParameter) (hk : 1 < K.1)
   have qCenter : Q ⟨n,n⟩ = n*(n-1)/2 := by
     simp [Q, abs_of_nonneg (show 0 ≤ n by omega)]
   have qWest : Q ⟨n-1,n⟩ = (n-1)*(n-2)/2 := by
-    simp [Q, abs_of_nonneg (show 0 ≤ n-1 by omega)]; ring
+    simp [Q, abs_of_nonneg (show 0 ≤ n-1 by omega)]; ring_nf
   have qNorth : Q ⟨n,n+1⟩ = n*(n-1)/2 := by
     simp [Q, abs_of_nonneg (show 0 ≤ n by omega)]
   have qSouth : Q ⟨n,n-1⟩ = n*(n-1)/2 := by

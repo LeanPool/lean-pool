@@ -319,14 +319,14 @@ private theorem hlapshift :
       hkval (x - 1 - u) ((hdomshift (x - 1)).mp hxm)]
     congr 1
     · congr 1
-      abel
+      abel_nf
   have hgp : g (x + 1) = FordOdometer P ((x - u) + 1) +
       a.re * (x + 1).re + a.im * (x + 1).im + b + c := by
     rw [hextval (x + 1) hxp, hvalueshift (x + 1) hxp,
       hkval (x + 1 - u) ((hdomshift (x + 1)).mp hxp)]
     congr 1
     · congr 1
-      abel
+      abel_nf
   have hgi : g (x - ⟨0, 1⟩) =
       FordOdometer P ((x - u) - ⟨0, 1⟩) +
         a.re * (x - ⟨0, 1⟩).re + a.im * (x - ⟨0, 1⟩).im + b + c := by
@@ -336,7 +336,7 @@ private theorem hlapshift :
         ((hdomshift (x - ⟨0, 1⟩)).mp hym)]
     congr 1
     · congr 1
-      abel
+      abel_nf
   have hgo : g (x + ⟨0, 1⟩) =
       FordOdometer P ((x - u) + ⟨0, 1⟩) +
         a.re * (x + ⟨0, 1⟩).re + a.im * (x + ⟨0, 1⟩).im + b + c := by
@@ -346,7 +346,7 @@ private theorem hlapshift :
         ((hdomshift (x + ⟨0, 1⟩)).mp hyp)]
     congr 1
     · congr 1
-      abel
+      abel_nf
   rw [FourNeighborLaplacian, hgm, hgp, hgi, hgo, hg0,
     FourNeighborLaplacian]
   rw [show x - u - 1 = (x - u) - 1 by abel,

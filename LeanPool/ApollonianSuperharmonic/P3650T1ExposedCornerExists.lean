@@ -281,7 +281,7 @@ private theorem hdetAt218 :
     dsimp [z]
     rw [htw, smul_smul]
     congr 1
-    ring
+    ring_nf
   have hseg₁ : z ∈ segment Real B c := by
     have hh := lineMap_mem_segment Real B c (show s ∈ Set.Icc 0 1 from ⟨hs.le, hslt.le⟩)
     rw [hlineMap] at hh
@@ -1049,7 +1049,7 @@ private theorem himageN :
       rw [he]
       exact hzw
   · rintro ⟨hxball, hxu, hxw⟩
-    refine ⟨x - B, ?_, by abel⟩
+    refine ⟨x - B, ?_, by abel_nf⟩
     refine ⟨?_, ?_, ?_⟩
     · rw [Metric.mem_ball, dist_eq_norm] at hxball ⊢
       have he : (x - B : Real × Real) - 0 = x - B := by ext <;> simp
@@ -1106,7 +1106,7 @@ private theorem himageW :
         rw [he]
         exact hzw
   · rintro ⟨hxball, hsign⟩
-    refine ⟨x - B, ?_, by abel⟩
+    refine ⟨x - B, ?_, by abel_nf⟩
     have hx0 : x - B ∈ Metric.ball (0 : Real × Real) r := by
       rw [Metric.mem_ball, dist_eq_norm] at hxball ⊢
       have he : (x - B : Real × Real) - 0 = x - B := by ext <;> simp
@@ -1357,7 +1357,7 @@ private theorem haxisU :
     have hh := lineMap_mem_segment Real B (B + U)
       (show s ∈ Set.Icc 0 1 from ⟨hs, hslt.le⟩)
     rw [hlineMap] at hh
-    have heq : B + s • ((B + U) - B) = B + s • U := by congr 1; abel
+    have heq : B + s • ((B + U) - B) = B + s • U := by congr 1; abel_nf
     rw [heq] at hh
     have hxform : x = B + s • U := by
       calc
@@ -1429,7 +1429,7 @@ private theorem haxisV :
     have hh := lineMap_mem_segment Real B (B + V)
       (show t ∈ Set.Icc 0 1 from ⟨ht, htlt.le⟩)
     rw [hlineMap] at hh
-    have heq : B + t • ((B + V) - B) = B + t • V := by congr 1; abel
+    have heq : B + t • ((B + V) - B) = B + t • V := by congr 1; abel_nf
     rw [heq] at hh
     have hxform : x = B + t • V := by
       calc

@@ -79,7 +79,7 @@ private theorem obs :
     · exact ⟨z, (hc z).mpr (by omega), Or.inl rfl⟩
     · refine ⟨z-⟨0,1⟩, (hc _).mpr ?_, Or.inr (Or.inr (Or.inr ?_))⟩
       · simp only [Zsqrtd.re_sub, Zsqrtd.im_sub]; omega
-      · congr 1 <;> abel
+      · congr 1 <;> abel_nf
   have ve (z : GaussianInt) (hz : z ∈ rect a b n)
       (hw : z + ⟨0,1⟩ ∈ rect a b n) :
       {z, z+⟨0,1⟩} ∈ FootprintEdges T := by
@@ -91,7 +91,7 @@ private theorem obs :
     · exact ⟨z, (hc z).mpr (by omega), Or.inr (Or.inl rfl)⟩
     · refine ⟨z-1, (hc _).mpr ?_, Or.inr (Or.inr (Or.inl ?_))⟩
       · simp only [Zsqrtd.re_sub, Zsqrtd.im_sub, Zsqrtd.re_one, Zsqrtd.im_one]; omega
-      · congr 1 <;> abel
+      · congr 1 <;> abel_nf
   ext e
   constructor
   · rintro ⟨z, hz, heq⟩

@@ -396,7 +396,7 @@ private theorem hPC :
   classical
   intro K f B k d a Q predTranslatedValue t zA hp0
   have hv := predTranslatedValue zA (by simpa [zA,d] using hp0)
-  convert hv using 1; simp [zA,d]; ring
+  convert hv using 1; simp [zA,d]; ring_nf
 
 private theorem hPW :
     (by
@@ -417,7 +417,7 @@ private theorem hPW :
   classical
   intro K f B k d a Q predTranslatedValue t zA hpw
   have hv := predTranslatedValue (zA-1) hpw
-  convert hv using 1; simp [zA,d]; ring
+  convert hv using 1; simp [zA,d]; ring_nf
 
 private theorem hPN :
     (by
@@ -438,7 +438,7 @@ private theorem hPN :
   classical
   intro K f B k d a Q predTranslatedValue t zA hpn
   have hv := predTranslatedValue (zA+⟨0,1⟩) hpn
-  convert hv using 1; simp [zA,d]; ring
+  convert hv using 1; simp [zA,d]; ring_nf
 
 private theorem qC :
     (by

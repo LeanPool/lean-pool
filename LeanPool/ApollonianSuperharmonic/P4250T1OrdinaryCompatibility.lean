@@ -588,7 +588,7 @@ private theorem hC12 :
   rw [ha, hX, hsumV12]
   dsimp [cOff, GaussianRealPoint, I, U, W]
   norm_num [I, GaussianRealPoint, Prod.smul_mk, Prod.add_def,
-    Prod.sub_def, pow_succ]; ring; trivial
+    Prod.sub_def, pow_succ]; ring_nf; trivial
 
 private theorem hC21 :
     (by
@@ -623,7 +623,7 @@ private theorem hC21 :
   rw [ha, hX, hsumV12]
   dsimp [cOff, GaussianRealPoint, I, U, W]
   norm_num [I, GaussianRealPoint, Prod.smul_mk, Prod.add_def,
-    Prod.sub_def, pow_succ]; ring; trivial
+    Prod.sub_def, pow_succ]; ring_nf; trivial
 
 private theorem hC13 :
     (by
@@ -657,7 +657,7 @@ private theorem hC13 :
   rw [ha, hsumV03]
   dsimp [cOff, GaussianRealPoint, I, U, W]
   norm_num [I, GaussianRealPoint, Prod.smul_mk, Prod.add_def,
-    Prod.sub_def, pow_succ]; ring; trivial
+    Prod.sub_def, pow_succ]; ring_nf; trivial
 
 private theorem hC31 :
     (by
@@ -691,7 +691,7 @@ private theorem hC31 :
   rw [ha, hsumV03]
   dsimp [cOff, GaussianRealPoint, I, U, W]
   norm_num [I, GaussianRealPoint, Prod.smul_mk, Prod.add_def,
-    Prod.sub_def, pow_succ]; ring; trivial
+    Prod.sub_def, pow_succ]; ring_nf; trivial
 
 private theorem hC23 :
     (by
@@ -726,7 +726,7 @@ private theorem hC23 :
   rw [ha, hX, hsumVsecond]
   dsimp [cOff, GaussianRealPoint, I, U, W]
   norm_num [I, GaussianRealPoint, Prod.smul_mk, Prod.add_def,
-    Prod.sub_def, pow_succ]; ring; trivial
+    Prod.sub_def, pow_succ]; ring_nf; trivial
 
 private theorem hC32 :
     (by
@@ -761,7 +761,7 @@ private theorem hC32 :
   rw [ha, hX, hsumVsecond]
   dsimp [cOff, GaussianRealPoint, I, U, W]
   norm_num [I, GaussianRealPoint, Prod.smul_mk, Prod.add_def,
-    Prod.sub_def, pow_succ]; ring; trivial
+    Prod.sub_def, pow_succ]; ring_nf; trivial
 
 private theorem slopeCoord :
     (by
@@ -774,7 +774,7 @@ private theorem slopeCoord :
   intro I sOff a
   dsimp [sOff, P4250T1SlopeOffset, GaussianRealPoint, I]
   norm_num [GaussianRealPoint, Prod.smul_mk, Prod.add_def,
-    Prod.sub_def]; ring; trivial
+    Prod.sub_def]; ring_nf; trivial
 
 private theorem hnegI3 :
     (by
@@ -872,7 +872,7 @@ private theorem hS13 :
   rw [hd, hsumA03]
   dsimp [sOff, P4250T1SlopeOffset, GaussianRealPoint, I]
   norm_num [GaussianRealPoint, Prod.smul_mk, Prod.add_def,
-    Prod.sub_def]; ring; trivial
+    Prod.sub_def]; ring_nf; trivial
 
 private theorem hS31 :
     (by
@@ -899,7 +899,7 @@ private theorem hS31 :
   rw [show (-I : GaussianInt) ^ 2 = -1 by rw [neg_pow, hI2]; norm_num]
   dsimp [sOff, P4250T1SlopeOffset, GaussianRealPoint, I]
   norm_num [GaussianRealPoint, Prod.smul_mk, Prod.add_def,
-    Prod.sub_def]; ring; trivial
+    Prod.sub_def]; ring_nf; trivial
 
 private theorem hS23 :
     (by

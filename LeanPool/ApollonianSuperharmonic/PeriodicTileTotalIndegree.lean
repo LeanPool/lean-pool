@@ -257,7 +257,7 @@ private theorem hEset :
       · refine ⟨(c + I, false), ?_⟩
         change ({c + I, c + I + 1} : Finset GaussianInt) =
           {c + I, c + 1 + I}
-        congr 1; ring
+        congr 1; ring_nf
     rcases hrep with ⟨q, hq⟩
     exact ⟨q, (hEmem q).mpr (hq.symm ▸ he), hq⟩
 
@@ -410,7 +410,7 @@ private theorem hEocc :
         rw [he]
         change ({c + I, c + 1 + I} : Finset GaussianInt) =
           {c + I, c + I + 1}
-        congr 1; ring
+        congr 1; ring_nf
       have hq := edgeOf_injective he'
       simp [hq, hc]
   · rcases q with ⟨z, b⟩
@@ -421,7 +421,7 @@ private theorem hEocc :
       · refine ⟨z - I, hz, Or.inr (Or.inr (Or.inr ?_))⟩
         change ({z, z + 1} : Finset GaussianInt) =
           {z - I + I, z - I + 1 + I}
-        congr 1 <;> ring
+        congr 1 <;> ring_nf
     · rcases hz with hz | hz
       · exact ⟨z, hz, Or.inr (Or.inl rfl)⟩
       · refine ⟨z - 1, hz, Or.inr (Or.inr (Or.inl ?_))⟩

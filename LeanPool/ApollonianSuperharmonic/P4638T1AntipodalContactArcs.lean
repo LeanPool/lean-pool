@@ -82,7 +82,7 @@ theorem P4638T1AntipodalContactArcs :
     have hmem (p : Real × Real) (hp : p ∈ TileRealization O) :
         H p ∈ TileRealization O := by
       have h := (hsym _).mp ((hsym p).mp hp)
-      convert h using 1; dsimp [H]; ring
+      convert h using 1; dsimp [H]; ring_nf
     change TileRealization O = H '' TileRealization O
     ext p
     constructor

@@ -1083,7 +1083,7 @@ private theorem sectorCornerX :
             ⟨0, 1⟩ ) := by
   classical
   intro x sector i
-  fin_cases i <;> simp [sector]; abel; simp
+  fin_cases i <;> simp [sector]; abel_nf; simp
 
 private theorem pairCovered :
     (by
