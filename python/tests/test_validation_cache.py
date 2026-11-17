@@ -100,7 +100,7 @@ def test_checker_edits_invalidate_only_dependent_checks(
     repository: Path, name: str
 ) -> None:
     """Unrelated tooling edits preserve passes; shared inputs invalidate all kinds."""
-    kinds = ("lint", "axioms", "backdoors", "declarations", "future-check")
+    kinds = ("lint", "axioms", "backdoors", "declarations", "messages", "future-check")
     directory = repository / ".lake/validation-cache/v1"
     cache = ValidationCache(repository, directory)
     for kind in kinds:
@@ -119,7 +119,13 @@ def test_checker_edits_invalidate_only_dependent_checks(
         "python/lean_pool/registry.py",
         "python/lean_pool/indexes.py",
     }:
-        fresh_kinds = ("axioms", "backdoors", "declarations", "future-check")
+        fresh_kinds = (
+            "axioms",
+            "backdoors",
+            "declarations",
+            "messages",
+            "future-check",
+        )
     elif name in {"scripts/ci/lint-project.lean", "scripts/nolints.json"}:
         fresh_kinds = ("lint", "future-check")
     else:
@@ -130,7 +136,9 @@ def test_checker_edits_invalidate_only_dependent_checks(
     assert len(calls) >= 3
 
 
-@pytest.mark.parametrize("kind", ("lint", "axioms", "backdoors", "declarations"))
+@pytest.mark.parametrize(
+    "kind", ("lint", "axioms", "backdoors", "declarations", "messages")
+)
 def test_source_changes_invalidate_every_check_kind(
     repository: Path, kind: str
 ) -> None:
@@ -154,7 +162,7 @@ def test_quality_check_kinds_reuse_source_comparisons(repository: Path) -> None:
     with patch.object(
         cache, "_fingerprint_inputs", wraps=cache._fingerprint_inputs
     ) as inputs:
-        for kind in ("axioms", "backdoors", "declarations"):
+        for kind in ("axioms", "backdoors", "declarations", "messages"):
             cache.check(kind, ["LeanPool.A"], lambda: [])
         assert inputs.call_count == 1
 
@@ -208,13 +216,39 @@ def test_added_deleted_sources_change_coverage(repository: Path) -> None:
     assert "lint:LeanPool.B" not in cache.used
 
 
+def _build_log(root: Path, module: str, *messages: str) -> None:
+    """Write the log Lake keeps for one compiled module."""
+    path = root / ".lake/build/lib/lean" / (module.replace(".", "/") + ".trace")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    log = [{"level": "trace", "message": ".> lean ..."}]
+    log += [{"level": "info", "message": message} for message in messages]
+    path.write_text(json.dumps({"schemaVersion": "2025-09-10", "log": log}))
+
+
 def test_quality_audits_cover_every_owned_module(repository: Path) -> None:
-    """Cold and warm checks preserve complete axiom/backdoor coverage."""
+    """Cold and warm checks preserve complete axiom, backdoor and message coverage."""
     cache = ValidationCache(repository, repository / ".lake/validation-cache/v1")
+    for modules in pool_units(repository):
+        for module in modules:
+            _build_log(repository, module)
     with (
         patch("lean_pool.quality._audit_axioms", return_value=[]) as axioms,
         patch("lean_pool.quality._run_option_audit", return_value=[]) as backdoors,
     ):
+        _build_log(
+            repository,
+            "LeanPool.A.Detail",
+            "LeanPool/A/Detail.lean:1:2: Try this:\n  [apply] ring_nf",
+        )
+        [noisy] = _cached_pool_audits(repository, cache)
+        assert noisy.path == repository / "LeanPool/A/Detail.lean"
+        assert "Try this: [apply] ring_nf" in noisy.message
+        assert "messages:LeanPool.A" not in cache.used
+        assert "messages:LeanPool.B" in cache.used
+        _build_log(repository, "LeanPool.A.Detail")
+        cache = ValidationCache(repository, cache.directory)
+        axioms.reset_mock()
+        backdoors.reset_mock()
         assert _cached_pool_audits(repository, cache) == []
         # Audits run concurrently, so compare coverage rather than call order.
         assert sorted(call.args[1] for call in axioms.call_args_list) == sorted(
@@ -281,7 +315,9 @@ def test_missing_pool_import_falls_back_after_memoized_lookup(repository: Path) 
     assert len(_run(repository)[1]) == 3
 
 
-@pytest.mark.parametrize("kind", ("lint", "axioms", "backdoors", "declarations"))
+@pytest.mark.parametrize(
+    "kind", ("lint", "axioms", "backdoors", "declarations", "messages")
+)
 def test_inventory_fallback_preserves_discovered_external_dependencies(
     repository: Path, kind: str
 ) -> None:

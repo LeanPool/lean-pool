@@ -11,7 +11,9 @@ import pytest
 
 from lean_pool.quality import (
     _audit_axioms,
+    _audit_build_messages,
     _card_is_current,
+    _check_build_messages,
     _parse_axiom_output,
     _parse_declarations,
     _parse_option_audit_output,
@@ -194,6 +196,86 @@ def test_quality_check_rejects_set_option(tmp_path: Path) -> None:
     errors = run_checks(tmp_path, skip_lean_axioms=True)
 
     assert any("set_option is forbidden" in error.message for error in errors)
+
+
+def _write_build_log(root: Path, module: str, log: object) -> None:
+    """Write what Lake keeps beside one compiled module."""
+    path = root / ".lake/build/lib/lean" / (module.replace(".", "/") + ".trace")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps({"schemaVersion": "2025-09-10", "log": log}))
+
+
+COMPILER_COMMAND = {"level": "trace", "message": ".> LEAN_PATH=... lean ..."}
+
+
+def test_build_message_audit_reports_the_printed_suggestion(tmp_path: Path) -> None:
+    """A fallback or suggestion is an error at the line the compiler named."""
+    _write_minimal_repo(tmp_path)
+    fallback = {
+        "level": "info",
+        "message": "LeanPool/Basic.lean:7:4: Try this:\n  [apply] ring_nf\n\n"
+        "The `ring` tactic failed to close the goal.",
+    }
+    _write_build_log(tmp_path, "LeanPool.Basic", [COMPILER_COMMAND, fallback])
+    [error] = _audit_build_messages(tmp_path, ["LeanPool.Basic"])
+    assert (error.path, error.line) == (tmp_path / "LeanPool/Basic.lean", 7)
+    assert error.message.startswith(
+        "prints a message on every build (info): Try this: [apply] ring_nf The `ring`"
+    )
+
+
+def test_build_message_audit_accepts_a_silent_module(tmp_path: Path) -> None:
+    """The compiler command that Lake records for itself is not a message."""
+    _write_minimal_repo(tmp_path)
+    _write_build_log(tmp_path, "LeanPool.Basic", [COMPILER_COMMAND])
+    assert _audit_build_messages(tmp_path, ["LeanPool.Basic"]) == []
+
+
+@pytest.mark.parametrize(
+    "log",
+    [
+        None,
+        "not a list",
+        ["not an entry"],
+        [],
+        [{"level": "info", "message": "no compiler command recorded"}],
+    ],
+)
+def test_build_message_audit_fails_without_a_recognised_log(
+    tmp_path: Path, log: object
+) -> None:
+    """A missing log or a changed format must not look like a silent build."""
+    _write_minimal_repo(tmp_path)
+    if log is not None:
+        _write_build_log(tmp_path, "LeanPool.Basic", log)
+    [error] = _audit_build_messages(tmp_path, ["LeanPool.Basic"])
+    assert error.message == "build log is missing or unreadable"
+    (tmp_path / ".lake/build/lib/lean/LeanPool").mkdir(parents=True, exist_ok=True)
+    (tmp_path / ".lake/build/lib/lean/LeanPool/Basic.trace").write_text("{broken")
+    [error] = _audit_build_messages(tmp_path, ["LeanPool.Basic"])
+    assert error.message == "build log is missing or unreadable"
+
+
+@pytest.mark.parametrize("level", ["warning", "error", "unexpected"])
+def test_build_message_audit_rejects_every_other_level(
+    tmp_path: Path, level: str
+) -> None:
+    """Only Lake's own command record is exempt, whatever a message is called."""
+    _write_minimal_repo(tmp_path)
+    entry = {"level": level, "message": "printed from a custom elaborator"}
+    _write_build_log(tmp_path, "LeanPool.Basic", [COMPILER_COMMAND, entry])
+    [error] = _audit_build_messages(tmp_path, ["LeanPool.Basic"])
+    assert (error.path, error.line) == (tmp_path / "LeanPool/Basic.lean", 1)
+    assert error.message == (
+        f"prints a message on every build ({level}): printed from a custom elaborator"
+    )
+
+
+def test_unbuilt_pool_reports_one_missing_build(tmp_path: Path) -> None:
+    """Without any build the audit asks for one, not once per module."""
+    _write_minimal_repo(tmp_path)
+    [error] = _check_build_messages(tmp_path)
+    assert "no build logs found" in error.message
 
 
 def test_quality_check_rejects_programmatic_option_manipulation(

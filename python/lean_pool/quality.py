@@ -1510,10 +1510,97 @@ def run_checks(
         if validation_cache is None:
             errors.extend(_check_axioms(root))
             errors.extend(_check_option_backdoors(root))
+            errors.extend(_check_build_messages(root))
         else:
             errors.extend(_cached_pool_audits(root, validation_cache))
     return sorted(
         errors, key=lambda error: (str(error.path), error.line, error.message)
+    )
+
+
+# Lake stores what the compiler printed for each module beside its compiled
+# files and replays it from caches. Its own `trace` entry records the command.
+BUILD_LOGS = Path(".lake/build/lib/lean")
+_BUILD_MESSAGE = re.compile(
+    r"(?P<path>\S+\.lean):(?P<line>\d+):\d+:\s*(?P<text>.*)", re.S
+)
+
+
+MISSING_BUILD_LOG = "build log is missing or unreadable"
+
+
+def _check_build_messages(root: Path) -> list[_QualityError]:
+    """Audit the stored build messages of every pool module."""
+    units = pool_units(root)
+    errors = [
+        error for modules in units for error in _audit_build_messages(root, modules)
+    ]
+    missing = sum(error.message == MISSING_BUILD_LOG for error in errors)
+    if missing and missing == sum(map(len, units)):
+        return [
+            _QualityError(
+                root / "LeanPool.lean",
+                1,
+                "no build logs found; build the pool before auditing its messages",
+            )
+        ]
+    return errors
+
+
+def _audit_build_messages(root: Path, modules: list[str]) -> list[_QualityError]:
+    """Reject every message the compiler printed while building these modules.
+
+    Finished pool code builds silently. A message is a suggestion nobody
+    followed (`Try this` from `simp?`, from a `ring` that fell back to
+    `ring_nf`, from a linter) or leftover diagnostic output. Reading Lake's
+    logs covers all of them without listing spellings. A module without a
+    readable log fails, so a changed log format cannot pass unnoticed.
+    """
+    errors: list[_QualityError] = []
+    for module in modules:
+        source = _module_to_path(root, module)
+        log = _build_log(root / BUILD_LOGS / source.relative_to(root))
+        if log is None:
+            errors.append(_QualityError(source, 1, MISSING_BUILD_LOG))
+            continue
+        errors.extend(
+            _build_message_error(root, source, entry)
+            for entry in log
+            if entry.get("level") != "trace"
+        )
+    return errors
+
+
+def _build_log(compiled: Path) -> list[dict[str, Any]] | None:
+    """Read one module's Lake log; `None` unless it has the expected shape."""
+    try:
+        log = json.loads(compiled.with_suffix(".trace").read_text())["log"]
+    except (OSError, ValueError, KeyError, TypeError):
+        return None
+    if not isinstance(log, list) or not all(isinstance(entry, dict) for entry in log):
+        return None
+    # A real build always records its compiler command.
+    if not any(entry.get("level") == "trace" for entry in log):
+        return None
+    return log
+
+
+def _build_message_error(
+    root: Path, source: Path, entry: dict[str, Any]
+) -> _QualityError:
+    """Point at the source line a build message names, else at its module."""
+    message = str(entry.get("message", ""))
+    path, line, summary = source, 1, message
+    if match := _BUILD_MESSAGE.match(message):
+        named = root / match["path"]
+        if named.is_file():
+            path, line = named, int(match["line"])
+        summary = match["text"]
+    summary = " ".join(summary.split())
+    if len(summary) > 160:
+        summary = summary[:157] + "..."
+    return _QualityError(
+        path, line, f"prints a message on every build ({entry.get('level')}): {summary}"
     )
 
 
@@ -1533,6 +1620,13 @@ def _cached_pool_audits(root: Path, cache: ValidationCache) -> list[_QualityErro
                 lambda modules=modules: _run_option_audit(
                     root, modules, only_modules=modules
                 ),
+            )
+        )
+        checks.append(
+            Check(
+                "messages",
+                modules,
+                lambda modules=modules: _audit_build_messages(root, modules),
             )
         )
     return _run_lean_checks(checks, cache)
