@@ -42,10 +42,7 @@ of ring operations.
 
 @[expose] public section
 
-/-- A tactic for proving goals of the `Commute` relation.
-
-You can use `commutes?` to get a corresponding proof script.
--/
+/-- A tactic for proving goals of the `Commute` relation. -/
 syntax (name := commutesTac) "commutes" : tactic
 macro_rules
   | `(tactic| commutes) => `(tactic|
@@ -53,16 +50,6 @@ macro_rules
       (config := { introsTransparency? := some .reducible, terminal := true,
                    useSimpAll := false, useDefaultSimpSet := false })
       (rule_sets := [$(Lean.mkIdent `Commutes):ident, -default]))) --include `builtin`
-
-/-- A variant of the `commutes` tactic for proving `Commute` goals that produces
-a proof script. -/
-syntax (name := commutesTac?) "commutes?" : tactic
-macro_rules
-  | `(tactic| commutes?) => `(tactic|
-    (aesop?
-      (config := { introsTransparency? := some .reducible, terminal := true,
-                   useSimpAll := false, useDefaultSimpSet := false })
-      (rule_sets := [$(Lean.mkIdent `Commutes):ident, -default])))
 
 attribute [aesop safe apply (rule_sets := [Commutes])]
   Commute.all Commute.refl
@@ -185,7 +172,7 @@ example (l : List ℕ) (R : Type*) [Ring R] (x y : R) (h : Commute y x) :
     Commute (l.map (fun n ↦ n • x + y ^ n - 37)).prod x := by
   commutes --Runs in 5676 heartbeats
 
---Produced proof script from `commutes?` for the above goal. Takes 850 heartbeats
+--A proof script for the above goal, produced with `aesop?`. Takes 850 heartbeats
 example (l : List ℕ) (R : Type*) [Ring R] (x y : R) (h : Commute y x) :
     Commute (l.map (fun n ↦ n • x + y ^ n - 37)).prod x := by
   apply Commute.list_prod_left

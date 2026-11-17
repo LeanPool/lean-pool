@@ -34,13 +34,6 @@ macro (name := aesopDiv) "aesopDiv" c:Aesop.tactic_clause* : tactic =>
     (config := { enableSimp := false })
     (rule_sets := [$(Lean.mkIdent `Divisibility):ident]))
 
-/-- Run `aesop?` using the local divisibility rule set with simplification disabled. -/
-macro (name := aesopDiv?) "aesopDiv?" c:Aesop.tactic_clause* : tactic =>
-`(tactic|
-  aesop? $c*
-    (config := { enableSimp := false })
-    (rule_sets := [$(Lean.mkIdent `Divisibility):ident]))
-
 
 @[aesop safe (rule_sets := [Divisibility])]
 theorem dvd_of_myDvd (a b : ℕ) : MyDvd a b → a ∣ b := (myDvd_iff a b).mp
