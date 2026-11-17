@@ -225,21 +225,23 @@ variable (k : Type*) [CommRing k]
 abbrev _root_.CK.H := MonoidAlgebra k (FreeMonoid RTree)
 
 /-- Extensionality for linear maps out of `H k`, tested on the forest basis. A `Forest`-indexed
-    repackaging of `MonoidAlgebra.lhom_ext'` (`Forest` and `FreeMonoid RTree` are definitionally
-    but not reducibly equal, and `rw` needs the former). -/
+    repackaging of `MonoidAlgebra.lhom_ext'` using `FreeMonoid.ofList`. -/
 theorem _root_.CK.lhom_ext {N : Type*} [AddCommMonoid N] [Module k N] ⦃φ ψ : H k →ₗ[k] N⦄
     (h : ∀ (f : Forest) (b : k),
-      φ (MonoidAlgebra.single f b) = ψ (MonoidAlgebra.single f b)) : φ = ψ :=
+      φ (MonoidAlgebra.single (FreeMonoid.ofList f) b) =
+        ψ (MonoidAlgebra.single (FreeMonoid.ofList f) b)) : φ = ψ :=
   MonoidAlgebra.lhom_ext' fun f => LinearMap.ext fun b => h (FreeMonoid.toList f) b
 
 /-- Pure 2-tensor of a cut `(p, r)`. -/
 noncomputable def _root_.CK.e2 (pr : Forest × Forest) : H k ⊗[k] H k :=
-  MonoidAlgebra.single pr.1 (1 : k) ⊗ₜ[k] MonoidAlgebra.single pr.2 (1 : k)
+  MonoidAlgebra.single (FreeMonoid.ofList pr.1) (1 : k) ⊗ₜ[k]
+    MonoidAlgebra.single (FreeMonoid.ofList pr.2) (1 : k)
 
 /-- Pure 3-tensor of an iterated cut `(a, b, c)`, associated to the right. -/
 noncomputable def _root_.CK.e3 (t : Forest × Forest × Forest) : H k ⊗[k] (H k ⊗[k] H k) :=
-  MonoidAlgebra.single t.1 (1 : k) ⊗ₜ[k]
-    (MonoidAlgebra.single t.2.1 (1 : k) ⊗ₜ[k] MonoidAlgebra.single t.2.2 (1 : k))
+  MonoidAlgebra.single (FreeMonoid.ofList t.1) (1 : k) ⊗ₜ[k]
+    (MonoidAlgebra.single (FreeMonoid.ofList t.2.1) (1 : k) ⊗ₜ[k]
+      MonoidAlgebra.single (FreeMonoid.ofList t.2.2) (1 : k))
 
 /-- Δ on a basis forest. -/
 noncomputable def _root_.CK.Δ₀ (f : Forest) : H k ⊗[k] H k := ((coprodForest f).map (e2 k)).sum
@@ -249,11 +251,13 @@ noncomputable def _root_.CK.E3 (l : Tens3) : H k ⊗[k] (H k ⊗[k] H k) := (l.m
 
 /-- Comultiplication. -/
 noncomputable def _root_.CK.Δ : H k →ₗ[k] H k ⊗[k] H k :=
-  Finsupp.linearCombination k (Δ₀ k) ∘ₗ (MonoidAlgebra.coeffLinearEquiv k).toLinearMap
+  Finsupp.linearCombination k (fun f : FreeMonoid RTree => Δ₀ k f.toList) ∘ₗ
+    (MonoidAlgebra.coeffLinearEquiv k).toLinearMap
 
 theorem _root_.CK.Δ_single (f : Forest) (b : k) :
-    Δ k (MonoidAlgebra.single f b) = b • Δ₀ k f := by
-  change Finsupp.linearCombination k (Δ₀ k) (Finsupp.single f b) = b • Δ₀ k f
+    Δ k (MonoidAlgebra.single (FreeMonoid.ofList f) b) = b • Δ₀ k f := by
+  change Finsupp.linearCombination k (fun f : FreeMonoid RTree => Δ₀ k f.toList)
+    (Finsupp.single (FreeMonoid.ofList f) b) = b • Δ₀ k f
   rw [Finsupp.linearCombination_single]
 
 /-- E3 distributes over `flatMap`. -/
@@ -281,9 +285,10 @@ theorem _root_.CK.elem_lemma (pr : Forest × Forest) :
   -- Ψ : y ↦ assoc (y ⊗ single r 1), linear; push through the list sum.
   let Ψ : H k ⊗[k] H k →ₗ[k] H k ⊗[k] (H k ⊗[k] H k) :=
     (TensorProduct.assoc k (H k) (H k) (H k)).toLinearMap ∘ₗ
-      (TensorProduct.mk k (H k ⊗[k] H k) (H k)).flip (MonoidAlgebra.single r 1)
+      (TensorProduct.mk k (H k ⊗[k] H k) (H k)).flip (MonoidAlgebra.single (FreeMonoid.ofList r) 1)
   have hΨ : (TensorProduct.assoc k (H k) (H k) (H k))
-        ((((coprodForest p).map (e2 k)).sum) ⊗ₜ[k] MonoidAlgebra.single r (1 : k))
+        ((((coprodForest p).map (e2 k)).sum) ⊗ₜ[k]
+          MonoidAlgebra.single (FreeMonoid.ofList r) (1 : k))
       = Ψ (((coprodForest p).map (e2 k)).sum) := rfl
   rw [hΨ, linmap_list_sum, E3, List.map_map]
   apply congrArg List.sum
@@ -300,7 +305,7 @@ theorem _root_.CK.elem_lemma_R (pr : Forest × Forest) :
       = E3 k ((coprodForest pr.2).map (fun bc => (pr.1, bc.1, bc.2))) := by
   rw [e2, LinearMap.lTensor_tmul, Δ_single, one_smul, Δ₀]
   let Θ : H k ⊗[k] H k →ₗ[k] H k ⊗[k] (H k ⊗[k] H k) :=
-    TensorProduct.mk k (H k) (H k ⊗[k] H k) (MonoidAlgebra.single pr.1 1)
+    TensorProduct.mk k (H k) (H k ⊗[k] H k) (MonoidAlgebra.single (FreeMonoid.ofList pr.1) 1)
   change Θ (((coprodForest pr.2).map (e2 k)).sum) = _
   rw [linmap_list_sum, E3, List.map_map]
   apply congrArg List.sum
@@ -348,8 +353,8 @@ theorem _root_.CK.coassoc_map :
   apply CK.lhom_ext
   intro f b
   change (TensorProduct.assoc k (H k) (H k) (H k))
-        (LinearMap.rTensor (H k) (Δ k) (Δ k (MonoidAlgebra.single f b)))
-      = LinearMap.lTensor (H k) (Δ k) (Δ k (MonoidAlgebra.single f b))
+        (LinearMap.rTensor (H k) (Δ k) (Δ k (MonoidAlgebra.single (FreeMonoid.ofList f) b)))
+      = LinearMap.lTensor (H k) (Δ k) (Δ k (MonoidAlgebra.single (FreeMonoid.ofList f) b))
   rw [Δ_single]
   simp only [map_smul]
   rw [lhs_core, rhs_core, perm_E3]
@@ -359,15 +364,18 @@ theorem _root_.CK.coassoc_map :
 /-- Counit monoid hom: every generator ↦ 0, so a word ↦ `0 ^ len` = indicator of empty. -/
 def _root_.CK.εmon : FreeMonoid RTree →* k := FreeMonoid.lift (fun _ => (0 : k))
 
-@[simp] theorem _root_.CK.εmon_nil : εmon k ([] : Forest) = 1 := map_one _
+@[simp] theorem _root_.CK.εmon_nil : εmon k (FreeMonoid.ofList ([] : Forest)) = 1 := map_one _
 
 @[simp] theorem _root_.CK.εmon_of (a : RTree) : εmon k (FreeMonoid.of a) = 0 := rfl
 
-@[simp] theorem _root_.CK.εmon_cons (a : RTree) (l : Forest) : εmon k (a :: l) = 0 := by
+@[simp] theorem _root_.CK.εmon_cons (a : RTree) (l : Forest) :
+    εmon k (FreeMonoid.ofList (a :: l)) = 0 := by
   change εmon k (FreeMonoid.of a * FreeMonoid.ofList l) = 0
   rw [map_mul, εmon_of, zero_mul]
 
-theorem _root_.CK.εmon_append (p p' : Forest) : εmon k (p ++ p') = εmon k p * εmon k p' := by
+theorem _root_.CK.εmon_append (p p' : Forest) :
+    εmon k (FreeMonoid.ofList (p ++ p')) =
+      εmon k (FreeMonoid.ofList p) * εmon k (FreeMonoid.ofList p') := by
   induction p with
   | nil => simp
   | cons a as ih => simp
@@ -380,7 +388,7 @@ noncomputable def _root_.CK.εalg : H k →ₐ[k] k :=
 noncomputable def _root_.CK.ε : H k →ₗ[k] k := (εalg k).toLinearMap
 
 theorem _root_.CK.ε_single (f : Forest) (b : k) :
-    ε k (MonoidAlgebra.single f b) = b * εmon k f := by
+    ε k (MonoidAlgebra.single (FreeMonoid.ofList f) b) = b * εmon k (FreeMonoid.ofList f) := by
   have h : εalg k (MonoidAlgebra.single (FreeMonoid.ofList f) b)
       = b * εmon k (FreeMonoid.ofList f) := by
     rw [εalg, MonoidAlgebra.lift_single, smul_eq_mul]
@@ -423,7 +431,7 @@ theorem _root_.CK.map_flatMap_sum {α β : Type*} {M : Type*} [AddCommMonoid M]
 mutual
   theorem _root_.CK.collapseL_tree {M : Type*} [AddCommMonoid M] [Module k M]
       (t : RTree) (g : Forest → M) :
-      ((coprodTree t).map (fun pr => εmon k pr.1 • g pr.2)).sum = g [t] := by
+      ((coprodTree t).map (fun pr => εmon k (FreeMonoid.ofList pr.1) • g pr.2)).sum = g [t] := by
     cases t with
     | node F =>
       rw [coprodTree_node]
@@ -432,7 +440,7 @@ mutual
       exact collapseL_forest F (fun r => g [RTree.node r])
   theorem _root_.CK.collapseL_forest {M : Type*} [AddCommMonoid M] [Module k M]
       (f : Forest) (g : Forest → M) :
-      ((coprodForest f).map (fun pr => εmon k pr.1 • g pr.2)).sum = g f := by
+      ((coprodForest f).map (fun pr => εmon k (FreeMonoid.ofList pr.1) • g pr.2)).sum = g f := by
     cases f with
     | nil =>
       rw [show coprodForest ([] : Forest) = [([], [])] from rfl]
@@ -442,15 +450,16 @@ mutual
           map_flatMap_sum]
       rw [show ((coprodTree t).map (fun pr =>
             (((coprodForest ts).map (fun pr' => (pr.1 ++ pr'.1, pr.2 ++ pr'.2))).map
-              (fun q => εmon k q.1 • g q.2)).sum)).sum
-          = ((coprodTree t).map (fun pr => εmon k pr.1 • g (pr.2 ++ ts))).sum from ?_]
+              (fun q => εmon k (FreeMonoid.ofList q.1) • g q.2)).sum)).sum
+          = ((coprodTree t).map (fun pr =>
+              εmon k (FreeMonoid.ofList pr.1) • g (pr.2 ++ ts))).sum from ?_]
       · exact collapseL_tree t (fun r => g (r ++ ts))
       · apply congrArg List.sum
         apply List.map_congr_left
         intro pr _
         simp only [List.map_map, Function.comp_def]
-        trans (εmon k pr.1 •
-            ((coprodForest ts).map (fun x => εmon k x.1 • g (pr.2 ++ x.2))).sum)
+        trans (εmon k (FreeMonoid.ofList pr.1) •
+            ((coprodForest ts).map (fun x => εmon k (FreeMonoid.ofList x.1) • g (pr.2 ++ x.2))).sum)
         · rw [smul_list_sum']
           apply congrArg List.sum
           apply List.map_congr_left
@@ -464,7 +473,7 @@ end
 mutual
   theorem _root_.CK.collapseR_tree {M : Type*} [AddCommMonoid M] [Module k M]
       (t : RTree) (g : Forest → M) :
-      ((coprodTree t).map (fun pr => εmon k pr.2 • g pr.1)).sum = g [t] := by
+      ((coprodTree t).map (fun pr => εmon k (FreeMonoid.ofList pr.2) • g pr.1)).sum = g [t] := by
     cases t with
     | node F =>
       simp only [coprodTree_node, List.map_cons, List.sum_cons, List.map_map, Function.comp_def,
@@ -472,7 +481,7 @@ mutual
       simp_all
   theorem _root_.CK.collapseR_forest {M : Type*} [AddCommMonoid M] [Module k M]
       (f : Forest) (g : Forest → M) :
-      ((coprodForest f).map (fun pr => εmon k pr.2 • g pr.1)).sum = g f := by
+      ((coprodForest f).map (fun pr => εmon k (FreeMonoid.ofList pr.2) • g pr.1)).sum = g f := by
     cases f with
     | nil =>
       rw [show coprodForest ([] : Forest) = [([], [])] from rfl]
@@ -482,15 +491,16 @@ mutual
           map_flatMap_sum]
       rw [show ((coprodTree t).map (fun pr =>
             (((coprodForest ts).map (fun pr' => (pr.1 ++ pr'.1, pr.2 ++ pr'.2))).map
-              (fun q => εmon k q.2 • g q.1)).sum)).sum
-          = ((coprodTree t).map (fun pr => εmon k pr.2 • g (pr.1 ++ ts))).sum from ?_]
+              (fun q => εmon k (FreeMonoid.ofList q.2) • g q.1)).sum)).sum
+          = ((coprodTree t).map (fun pr =>
+              εmon k (FreeMonoid.ofList pr.2) • g (pr.1 ++ ts))).sum from ?_]
       · exact collapseR_tree t (fun r => g (r ++ ts))
       · apply congrArg List.sum
         apply List.map_congr_left
         intro pr _
         simp only [List.map_map, Function.comp_def]
-        trans (εmon k pr.2 •
-            ((coprodForest ts).map (fun x => εmon k x.2 • g (pr.1 ++ x.1))).sum)
+        trans (εmon k (FreeMonoid.ofList pr.2) •
+            ((coprodForest ts).map (fun x => εmon k (FreeMonoid.ofList x.2) • g (pr.1 ++ x.1))).sum)
         · rw [smul_list_sum']
           apply congrArg List.sum
           apply List.map_congr_left
@@ -502,12 +512,15 @@ end
 
 /-- `(ε ⊗ id) ∘ Δ` on a basis forest gives `1 ⊗ single f 1`. -/
 theorem _root_.CK.rTensor_ε_Δ₀ (f : Forest) :
-    LinearMap.rTensor (H k) (ε k) (Δ₀ k f) = (1 : k) ⊗ₜ[k] MonoidAlgebra.single f 1 := by
+    LinearMap.rTensor (H k) (ε k) (Δ₀ k f) =
+      (1 : k) ⊗ₜ[k] MonoidAlgebra.single (FreeMonoid.ofList f) 1 := by
   rw [Δ₀, linmap_list_sum]
   rw [show ((coprodForest f).map (fun pr => LinearMap.rTensor (H k) (ε k) (e2 k pr))).sum
         = ((coprodForest f).map (fun pr =>
-            εmon k pr.1 • ((1 : k) ⊗ₜ[k] MonoidAlgebra.single pr.2 1))).sum from ?_]
-  · exact collapseL_forest (k := k) f (fun r => (1 : k) ⊗ₜ[k] MonoidAlgebra.single r 1)
+            εmon k (FreeMonoid.ofList pr.1) •
+              ((1 : k) ⊗ₜ[k] MonoidAlgebra.single (FreeMonoid.ofList pr.2) 1))).sum from ?_]
+  · exact collapseL_forest (k := k) f
+      (fun r => (1 : k) ⊗ₜ[k] MonoidAlgebra.single (FreeMonoid.ofList r) 1)
   · apply congrArg List.sum
     apply List.map_congr_left
     intro pr _
@@ -516,12 +529,15 @@ theorem _root_.CK.rTensor_ε_Δ₀ (f : Forest) :
 
 /-- `(id ⊗ ε) ∘ Δ` on a basis forest gives `single f 1 ⊗ 1`. -/
 theorem _root_.CK.lTensor_ε_Δ₀ (f : Forest) :
-    LinearMap.lTensor (H k) (ε k) (Δ₀ k f) = MonoidAlgebra.single f 1 ⊗ₜ[k] (1 : k) := by
+    LinearMap.lTensor (H k) (ε k) (Δ₀ k f) =
+      MonoidAlgebra.single (FreeMonoid.ofList f) 1 ⊗ₜ[k] (1 : k) := by
   rw [Δ₀, linmap_list_sum]
   rw [show ((coprodForest f).map (fun pr => LinearMap.lTensor (H k) (ε k) (e2 k pr))).sum
         = ((coprodForest f).map (fun pr =>
-            εmon k pr.2 • (MonoidAlgebra.single pr.1 1 ⊗ₜ[k] (1 : k)))).sum from ?_]
-  · exact collapseR_forest (k := k) f (fun r => MonoidAlgebra.single r 1 ⊗ₜ[k] (1 : k))
+            εmon k (FreeMonoid.ofList pr.2) •
+              (MonoidAlgebra.single (FreeMonoid.ofList pr.1) 1 ⊗ₜ[k] (1 : k)))).sum from ?_]
+  · exact collapseR_forest (k := k) f
+      (fun r => MonoidAlgebra.single (FreeMonoid.ofList r) 1 ⊗ₜ[k] (1 : k))
   · apply congrArg List.sum
     apply List.map_congr_left
     intro pr _
@@ -541,27 +557,30 @@ noncomputable instance _root_.CK.instCKCoalg : Coalgebra k (H k) where
   rTensor_counit_comp_comul := by
     apply CK.lhom_ext
     intro f b
-    change LinearMap.rTensor (H k) (ε k) (Δ k (MonoidAlgebra.single f b))
-        = (TensorProduct.mk k k (H k)) 1 (MonoidAlgebra.single f b)
+    change LinearMap.rTensor (H k) (ε k) (Δ k (MonoidAlgebra.single (FreeMonoid.ofList f) b))
+        = (TensorProduct.mk k k (H k)) 1 (MonoidAlgebra.single (FreeMonoid.ofList f) b)
     rw [Δ_single, map_smul,
-        rTensor_ε_Δ₀, TensorProduct.mk_apply, single_smul_one (k := k) (f := f) (b := b)]
-    exact (TensorProduct.tmul_smul b (1 : k) (MonoidAlgebra.single f 1 : H k)).symm
+        rTensor_ε_Δ₀, TensorProduct.mk_apply,
+        single_smul_one (k := k) (f := FreeMonoid.ofList f) (b := b)]
+    exact (TensorProduct.tmul_smul b (1 : k)
+      (MonoidAlgebra.single (FreeMonoid.ofList f) 1 : H k)).symm
   lTensor_counit_comp_comul := by
     apply CK.lhom_ext
     intro f b
-    change LinearMap.lTensor (H k) (ε k) (Δ k (MonoidAlgebra.single f b))
-        = (TensorProduct.mk k (H k) k).flip 1 (MonoidAlgebra.single f b)
+    change LinearMap.lTensor (H k) (ε k) (Δ k (MonoidAlgebra.single (FreeMonoid.ofList f) b))
+        = (TensorProduct.mk k (H k) k).flip 1 (MonoidAlgebra.single (FreeMonoid.ofList f) b)
     rw [Δ_single, map_smul,
         lTensor_ε_Δ₀, LinearMap.flip_apply, TensorProduct.mk_apply,
-        single_smul_one (k := k) (f := f) (b := b)]
-    exact TensorProduct.smul_tmul' b (MonoidAlgebra.single f 1 : H k) (1 : k)
+        single_smul_one (k := k) (f := FreeMonoid.ofList f) (b := b)]
+    exact TensorProduct.smul_tmul' b (MonoidAlgebra.single (FreeMonoid.ofList f) 1 : H k) (1 : k)
 
 /-! ### Bialgebra: `Δ` and `ε` are algebra homs. -/
 
 /-- `single` of a concatenation is the product (algebra structure of `H`). -/
 theorem _root_.CK.single_append (p p' : Forest) :
-    (MonoidAlgebra.single (p ++ p') (1 : k) : H k)
-      = (MonoidAlgebra.single p 1 : H k) * (MonoidAlgebra.single p' 1 : H k) := by
+    (MonoidAlgebra.single (FreeMonoid.ofList (p ++ p')) (1 : k) : H k)
+      = (MonoidAlgebra.single (FreeMonoid.ofList p) 1 : H k) *
+        (MonoidAlgebra.single (FreeMonoid.ofList p') 1 : H k) := by
   have h : (MonoidAlgebra.single (FreeMonoid.ofList p * FreeMonoid.ofList p') (1 : k) : H k)
       = (MonoidAlgebra.single (FreeMonoid.ofList p) (1 : k) : H k) *
         (MonoidAlgebra.single (FreeMonoid.ofList p') (1 : k) : H k) := by
@@ -600,12 +619,12 @@ theorem _root_.CK.Δ_mul (a b : H k) : Δ k (a * b) = Δ k a * Δ k b := by
     induction b using MonoidAlgebra.induction_on with
     | of G =>
       simp only [MonoidAlgebra.of_apply]
-      change Δ k ((MonoidAlgebra.single (FreeMonoid.toList F) (1 : k) : H k) *
-            (MonoidAlgebra.single (FreeMonoid.toList G) (1 : k) : H k))
-          = Δ k (MonoidAlgebra.single (FreeMonoid.toList F) (1 : k) : H k) *
-            Δ k (MonoidAlgebra.single (FreeMonoid.toList G) (1 : k) : H k)
+      change Δ k ((MonoidAlgebra.single (FreeMonoid.ofList (FreeMonoid.toList F)) (1 : k) : H k) *
+            (MonoidAlgebra.single (FreeMonoid.ofList (FreeMonoid.toList G)) (1 : k) : H k))
+          = Δ k (MonoidAlgebra.single (FreeMonoid.ofList (FreeMonoid.toList F)) (1 : k) : H k) *
+            Δ k (MonoidAlgebra.single (FreeMonoid.ofList (FreeMonoid.toList G)) (1 : k) : H k)
       rw [← single_append, Δ_single, Δ_single, Δ_single, one_smul, one_smul, one_smul]
-      exact Δ₀_mul k F G
+      exact Δ₀_mul k F.toList G.toList
     | add b1 b2 h1 h2 => rw [mul_add, map_add, map_add, h1, h2, mul_add]
     | smul r b hb => rw [mul_smul_comm, map_smul, map_smul, hb, mul_smul_comm]
   | add a1 a2 h1 h2 => rw [add_mul, map_add, map_add, h1, h2, add_mul]
@@ -613,7 +632,8 @@ theorem _root_.CK.Δ_mul (a b : H k) : Δ k (a * b) = Δ k a * Δ k b := by
 
 /-- `Δ 1 = 1`. -/
 theorem _root_.CK.Δ_one : Δ k (1 : H k) = 1 := by
-  rw [show (1 : H k) = MonoidAlgebra.single (M := FreeMonoid RTree) ([] : Forest) (1 : k) from rfl,
+  rw [show (1 : H k) =
+        MonoidAlgebra.single (FreeMonoid.ofList ([] : Forest)) (1 : k) from rfl,
       Δ_single, one_smul]
   rw [Δ₀, show coprodForest ([] : Forest) = [([], [])] from rfl]
   simp only [List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, add_zero, e2]
@@ -714,11 +734,13 @@ decreasing_by
 
 /-- The antipode linear map obtained by extending `antipodeF` from the forest basis. -/
 noncomputable def _root_.CK.antipode : H k →ₗ[k] H k :=
-  Finsupp.linearCombination k (antipodeF k) ∘ₗ (MonoidAlgebra.coeffLinearEquiv k).toLinearMap
+  Finsupp.linearCombination k (fun f : FreeMonoid RTree => antipodeF k f.toList) ∘ₗ
+    (MonoidAlgebra.coeffLinearEquiv k).toLinearMap
 
 theorem _root_.CK.antipode_single (f : Forest) (b : k) :
-    antipode k (MonoidAlgebra.single f b) = b • antipodeF k f := by
-  change Finsupp.linearCombination k (antipodeF k) (Finsupp.single f b) = b • antipodeF k f
+    antipode k (MonoidAlgebra.single (FreeMonoid.ofList f) b) = b • antipodeF k f := by
+  change Finsupp.linearCombination k (fun f : FreeMonoid RTree => antipodeF k f.toList)
+    (Finsupp.single (FreeMonoid.ofList f) b) = b • antipodeF k f
   rw [Finsupp.linearCombination_single]
 
 /-- `antipodeF` on a nonempty forest, as a plain (non-`attach`) sum. -/
@@ -819,7 +841,7 @@ theorem _root_.CK.map_sum_filter_split {α : Type*} (L : List α) (P : α → Bo
 /-- **Left convolution axiom** on a basis forest: `(S ⋆ id)(f) = ε(f)·1`. Near-definitional. -/
 theorem _root_.CK.leftConvF (f : Forest) :
     ((coprodForest f).map (fun pr => antipodeF k pr.1 * sf k pr.2)).sum =
-      εmon k f • (1 : H k) := by
+      εmon k (FreeMonoid.ofList f) • (1 : H k) := by
   cases f with
   | nil =>
     rw [show coprodForest ([] : Forest) = [([], [])] from rfl]
@@ -844,7 +866,7 @@ theorem _root_.CK.mul_rTensor_antipode_e2 (pr : Forest × Forest) :
 /-- `μ ∘ (S ⊗ id) ∘ Δ` on a basis forest equals `ε(f)·1` (left antipode identity). -/
 theorem _root_.CK.rTensor_antipode_Δ₀ (f : Forest) :
     (LinearMap.mul' k (H k) ∘ₗ LinearMap.rTensor (H k) (antipode k)) (Δ₀ k f)
-      = εmon k f • (1 : H k) := by
+      = εmon k (FreeMonoid.ofList f) • (1 : H k) := by
   rw [Δ₀, linmap_list_sum]
   rw [show ((coprodForest f).map (fun pr =>
         (LinearMap.mul' k (H k) ∘ₗ LinearMap.rTensor (H k) (antipode k)) (e2 k pr))).sum
@@ -885,7 +907,7 @@ theorem _root_.CK.antipodeF'_cons (t : RTree) (ts : Forest) :
 /-- Right convolution `id ⋆ S'` on a basis forest equals `ε(f)·1`. Near-definitional. -/
 theorem _root_.CK.rightConvF' (f : Forest) :
     ((coprodForest f).map (fun pr => sf k pr.1 * antipodeF' k pr.2)).sum =
-      εmon k f • (1 : H k) := by
+      εmon k (FreeMonoid.ofList f) • (1 : H k) := by
   cases f with
   | nil =>
     rw [show coprodForest ([] : Forest) = [([], [])] from rfl]
@@ -902,11 +924,13 @@ theorem _root_.CK.rightConvF' (f : Forest) :
 
 /-- The mirrored antipode candidate used to prove the right convolution identity. -/
 noncomputable def _root_.CK.antipode' : H k →ₗ[k] H k :=
-  Finsupp.linearCombination k (antipodeF' k) ∘ₗ (MonoidAlgebra.coeffLinearEquiv k).toLinearMap
+  Finsupp.linearCombination k (fun f : FreeMonoid RTree => antipodeF' k f.toList) ∘ₗ
+    (MonoidAlgebra.coeffLinearEquiv k).toLinearMap
 
 theorem _root_.CK.antipode'_single (f : Forest) (b : k) :
-    antipode' k (MonoidAlgebra.single f b) = b • antipodeF' k f := by
-  change Finsupp.linearCombination k (antipodeF' k) (Finsupp.single f b) = b • antipodeF' k f
+    antipode' k (MonoidAlgebra.single (FreeMonoid.ofList f) b) = b • antipodeF' k f := by
+  change Finsupp.linearCombination k (fun f : FreeMonoid RTree => antipodeF' k f.toList)
+    (Finsupp.single (FreeMonoid.ofList f) b) = b • antipodeF' k f
   rw [Finsupp.linearCombination_single]
 
 theorem _root_.CK.mul_lTensor_antipode'_e2 (pr : Forest × Forest) :
@@ -918,7 +942,7 @@ theorem _root_.CK.mul_lTensor_antipode'_e2 (pr : Forest × Forest) :
 /-- `μ ∘ (id ⊗ S') ∘ Δ` on a basis forest equals `ε(f)·1` (right antipode identity). -/
 theorem _root_.CK.lTensor_antipode'_Δ₀ (f : Forest) :
     (LinearMap.mul' k (H k) ∘ₗ LinearMap.lTensor (H k) (antipode' k)) (Δ₀ k f)
-      = εmon k f • (1 : H k) := by
+      = εmon k (FreeMonoid.ofList f) • (1 : H k) := by
   rw [Δ₀, linmap_list_sum]
   rw [show ((coprodForest f).map (fun pr =>
         (LinearMap.mul' k (H k) ∘ₗ LinearMap.lTensor (H k) (antipode' k)) (e2 k pr))).sum
@@ -937,12 +961,12 @@ theorem _root_.CK.leftAntipode_eq :
   apply CK.lhom_ext
   intro f b
   change LinearMap.mul' k (H k)
-        (LinearMap.rTensor (H k) (antipode k) (Δ k (MonoidAlgebra.single f b)))
-      = Algebra.linearMap k (H k) (ε k (MonoidAlgebra.single f b))
+        (LinearMap.rTensor (H k) (antipode k) (Δ k (MonoidAlgebra.single (FreeMonoid.ofList f) b)))
+      = Algebra.linearMap k (H k) (ε k (MonoidAlgebra.single (FreeMonoid.ofList f) b))
   rw [Δ_single, map_smul,
       map_smul,
       show LinearMap.mul' k (H k) (LinearMap.rTensor (H k) (antipode k) (Δ₀ k f))
-        = εmon k f • (1 : H k) from rTensor_antipode_Δ₀ k f,
+        = εmon k (FreeMonoid.ofList f) • (1 : H k) from rTensor_antipode_Δ₀ k f,
       ε_single, Algebra.linearMap_apply, Algebra.algebraMap_eq_smul_one, mul_smul]
 
 /-- Right antipode identity for `S'` as a linear-map equality. -/
@@ -952,12 +976,12 @@ theorem _root_.CK.rightAntipode'_eq :
   apply CK.lhom_ext
   intro f b
   change LinearMap.mul' k (H k)
-        (LinearMap.lTensor (H k) (antipode' k) (Δ k (MonoidAlgebra.single f b)))
-      = Algebra.linearMap k (H k) (ε k (MonoidAlgebra.single f b))
+        (LinearMap.lTensor (H k) (antipode' k) (Δ k (MonoidAlgebra.single (FreeMonoid.ofList f) b)))
+      = Algebra.linearMap k (H k) (ε k (MonoidAlgebra.single (FreeMonoid.ofList f) b))
   rw [Δ_single, map_smul,
       map_smul,
       show LinearMap.mul' k (H k) (LinearMap.lTensor (H k) (antipode' k) (Δ₀ k f))
-        = εmon k f • (1 : H k) from lTensor_antipode'_Δ₀ k f,
+        = εmon k (FreeMonoid.ofList f) • (1 : H k) from lTensor_antipode'_Δ₀ k f,
       ε_single, Algebra.linearMap_apply, Algebra.algebraMap_eq_smul_one, mul_smul]
 
 /-- The left and right antipodes coincide (a left convolution-inverse of `id` that has
@@ -1066,11 +1090,12 @@ theorem _root_.CK.adamsUnit_inv_val : (adamsUnit k)⁻¹.val = WithConv.toConv (
 
 /-- `Δ` on a basis forest, packaged for `sf`. -/
 theorem _root_.CK.Δ_sf (f : Forest) : Δ k (sf k f) = Δ₀ k f := by
-  change Finsupp.linearCombination k (Δ₀ k) (Finsupp.single f (1 : k)) = Δ₀ k f
+  change Finsupp.linearCombination k (fun f : FreeMonoid RTree => Δ₀ k f.toList)
+    (Finsupp.single (FreeMonoid.ofList f) (1 : k)) = Δ₀ k f
   rw [Finsupp.linearCombination_single, one_smul]
 
 /-- `ε` on a basis forest: the counit of `sf f` is `εmon f`. -/
-theorem _root_.CK.ε_sf (p : Forest) : ε k (sf k p) = εmon k p := by
+theorem _root_.CK.ε_sf (p : Forest) : ε k (sf k p) = εmon k (FreeMonoid.ofList p) := by
   have h := ε_single k p 1
   rw [one_mul] at h
   exact h
@@ -1110,18 +1135,18 @@ noncomputable def _root_.CK.Jc : WithConv (H k →ₗ[k] H k) := WithConv.toConv
 
 /-- The convolution unit `1 = u∘ε` on a basis forest: `ε(f)·1`. -/
 theorem _root_.CK.convOne_ofConv_sf (p : Forest) :
-    (1 : WithConv (H k →ₗ[k] H k)).ofConv (sf k p) = εmon k p • (1 : H k) := by
+    (1 : WithConv (H k →ₗ[k] H k)).ofConv (sf k p) = εmon k (FreeMonoid.ofList p) • (1 : H k) := by
   rw [LinearMap.convOne_def]
   change
     (Algebra.linearMap k (H k) ∘ₗ Coalgebra.counit (R := k)) (sf k p)
-      = εmon k p • (1 : H k)
+      = εmon k (FreeMonoid.ofList p) • (1 : H k)
   rw [LinearMap.comp_apply]
-  change Algebra.linearMap k (H k) (ε k (sf k p)) = εmon k p • (1 : H k)
+  change Algebra.linearMap k (H k) (ε k (sf k p)) = εmon k (FreeMonoid.ofList p) • (1 : H k)
   rw [ε_sf, Algebra.linearMap_apply, Algebra.algebraMap_eq_smul_one]
 
 /-- `J = id − u∘ε` on a basis forest: kills the empty forest, identity otherwise. -/
 theorem _root_.CK.Jc_ofConv_sf (p : Forest) :
-    (Jc k).ofConv (sf k p) = sf k p - εmon k p • (1 : H k) := by
+    (Jc k).ofConv (sf k p) = sf k p - εmon k (FreeMonoid.ofList p) • (1 : H k) := by
   rw [Jc, WithConv.ofConv_sub, LinearMap.sub_apply, WithConv.ofConv_toConv,
       LinearMap.id_apply, convOne_ofConv_sf]
 
@@ -1241,10 +1266,12 @@ noncomputable def _root_.CK.eulerian1F (f : Forest) : H k :=
 
 /-- The first Eulerian idempotent `e⁽¹⁾ : H → H`, linear extension of `eulerian1F`. -/
 noncomputable def _root_.CK.eulerian1 : H k →ₗ[k] H k :=
-  Finsupp.linearCombination k (eulerian1F k) ∘ₗ (MonoidAlgebra.coeffLinearEquiv k).toLinearMap
+  Finsupp.linearCombination k (fun f : FreeMonoid RTree => eulerian1F k f.toList) ∘ₗ
+    (MonoidAlgebra.coeffLinearEquiv k).toLinearMap
 
 theorem _root_.CK.eulerian1_sf (f : Forest) : eulerian1 k (sf k f) = eulerian1F k f := by
-  change Finsupp.linearCombination k (eulerian1F k) (Finsupp.single f (1 : k)) = eulerian1F k f
+  change Finsupp.linearCombination k (fun f : FreeMonoid RTree => eulerian1F k f.toList)
+    (Finsupp.single (FreeMonoid.ofList f) (1 : k)) = eulerian1F k f
   rw [Finsupp.linearCombination_single, one_smul]
 
 /-- `e⁽¹⁾` kills the unit: there are no positive-degree terms on the empty forest. -/
@@ -1378,7 +1405,7 @@ theorem _root_.CK.lmap_eq_sum (g : H k →ₗ[k] H k) (y : H k) :
 
 /-- `e⁽¹⁾` agrees with the truncation `logTrunc N` on any element supported in degrees `≤ N`. -/
 theorem _root_.CK.eulerian1_eq_logTrunc (x : H k) (N : ℕ)
-    (hN : ∀ f ∈ x.coeff.support, sizeF f ≤ N) :
+    (hN : ∀ f ∈ x.coeff.support, sizeF f.toList ≤ N) :
     eulerian1 k x = logTrunc k N x := by
   rw [lmap_eq_sum k (eulerian1 k) x, lmap_eq_sum k (logTrunc k N) x]
   refine Finsupp.sum_congr (fun a ha => ?_)
@@ -1393,10 +1420,11 @@ theorem _root_.CK.eulerian1_eq_logTrunc (x : H k) (N : ℕ)
     log series survives (`J(x)=x`; `j=0` has coefficient `0`; `j≥2` vanish), so `e⁽¹⁾(x)=x`. The
     primitives are exactly the eigenvalue-`1` eigenspace of `e⁽¹⁾`. -/
 theorem _root_.CK.eulerian1_primitive {x : H k} (hx : IsPrimitive k x) : eulerian1 k x = x := by
-  set N := x.coeff.support.sup sizeF + 1 with hNdef
-  have hbound : ∀ f ∈ x.coeff.support, sizeF f ≤ N := by
+  set N := x.coeff.support.sup (fun f => sizeF f.toList) + 1 with hNdef
+  have hbound : ∀ f ∈ x.coeff.support, sizeF f.toList ≤ N := by
     intro f hf
-    exact le_trans (Finset.le_sup (f := sizeF) hf) (by rw [hNdef]; exact Nat.le_succ _)
+    exact le_trans (Finset.le_sup (f := fun f => sizeF f.toList) hf)
+      (by rw [hNdef]; exact Nat.le_succ _)
   rw [eulerian1_eq_logTrunc k x N hbound, logTrunc_apply]
   have key : ∑ j ∈ Finset.range (N + 1), eulerCoef k j • ((Jc k ^ j).ofConv x)
       = eulerCoef k 1 • ((Jc k ^ 1).ofConv x) := by
@@ -2245,7 +2273,8 @@ theorem _root_.CK.star_identity (p N : ℕ) (w : Hab k)
 
 /-- `π(e⁽¹⁾ y)` as a truncated convolution-log sum on `H_ab`, for any degree bound
     `M ≥ deg(y)`. -/
-theorem _root_.CK.pi_eulerian1_eq (y : H k) (M : ℕ) (hMy : ∀ a ∈ y.coeff.support, sizeF a ≤ M) :
+theorem _root_.CK.pi_eulerian1_eq (y : H k) (M : ℕ)
+    (hMy : ∀ a ∈ y.coeff.support, sizeF a.toList ≤ M) :
     π k (eulerian1 k y)
       = ∑ j ∈ Finset.range (M + 1),
           PowerSeries.coeff j (PowerSeries.log k) • ((JcAb k ^ j).ofConv (π k y)) := by
@@ -2257,12 +2286,11 @@ theorem _root_.CK.pi_eulerian1_eq (y : H k) (M : ℕ) (hMy : ∀ a ∈ y.coeff.s
     `Ψᵖ(π(e⁽¹⁾(sf f))) = p · π(e⁽¹⁾(sf f))`. -/
 theorem _root_.CK.adamsAb_eigen_basis (p : ℕ) (f : Forest) :
     adamsAb k p (π k (eulerian1 k (sf k f))) = (p : k) • π k (eulerian1 k (sf k f)) := by
-  have hMy : ∀ a ∈ (sf k f).coeff.support, sizeF a ≤ sizeF f := by
+  have hMy : ∀ a ∈ (sf k f).coeff.support, sizeF a.toList ≤ sizeF f := by
     intro a ha
     have ha' : a = FreeMonoid.ofList f :=
       Finset.mem_singleton.mp (Finsupp.support_single_subset ha)
     rw [ha']
-    rfl
   rw [pi_eulerian1_eq k (sf k f) (sizeF f) hMy, map_sum]
   rw [Finset.sum_congr rfl (fun j _ => by rw [map_smul, JcAb, adamsAb_comp_JcAb_pow] :
     ∀ j ∈ Finset.range (sizeF f + 1),
@@ -2338,9 +2366,9 @@ theorem _root_.CK.brickC (v : Hab k) (M : ℕ) (hM : 1 ≤ M)
     eigen-relation `adamsAb_eigen`, and the Brick-C collapse. -/
 theorem _root_.CK.eulerian1_idem_ab (x : H k) :
     π k (eulerian1 k (eulerian1 k x)) = π k (eulerian1 k x) := by
-  set M := (eulerian1 k x).coeff.support.sup sizeF + 1 with hMdef
-  have hMy : ∀ a ∈ (eulerian1 k x).coeff.support, sizeF a ≤ M := fun a ha =>
-    le_trans (Finset.le_sup ha) (by rw [hMdef]; omega)
+  set M := (eulerian1 k x).coeff.support.sup (fun f => sizeF f.toList) + 1 with hMdef
+  have hMy : ∀ a ∈ (eulerian1 k x).coeff.support, sizeF a.toList ≤ M := fun a ha =>
+    le_trans (Finset.le_sup (f := fun f => sizeF f.toList) ha) (by rw [hMdef]; omega)
   rw [pi_eulerian1_eq k (eulerian1 k x) M hMy]
   exact brickC k (π k (eulerian1 k x)) M (by rw [hMdef]; omega) (fun i => adamsAb_eigen k i x)
 
