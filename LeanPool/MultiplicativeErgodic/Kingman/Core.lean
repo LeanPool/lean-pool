@@ -278,17 +278,8 @@ theorem SubadditiveFamily.exists_truncation_limits {μ : Measure Ω} [IsProbabil
     have hgsub : SubadditiveFamily σ (SubadditiveFamily.truncate F (M : ℝ)) :=
       hF.truncate_subadditive (M : ℝ)
     have hbdd : BddBelow (Set.range fun n : ℕ =>
-        (∫ ω, SubadditiveFamily.truncate F (M : ℝ) n ω ∂μ) / n) := by
-      refine ⟨-(M : ℝ), ?_⟩
-      rintro _ ⟨n, rfl⟩
-      rcases Nat.eq_zero_or_pos n with rfl | hn
-      · simp
-      have hn0 : (0 : ℝ) < n := by exact_mod_cast hn
-      rw [le_div_iff₀ hn0]
-      have hge : ∀ ω, -((M : ℝ) * n) ≤ SubadditiveFamily.truncate F (M : ℝ) n ω :=
-        fun ω => le_max_right _ _
-      have := integral_mono (integrable_const (-((M : ℝ) * (n : ℝ)))) (hFint M n) hge
-      simpa using this
+        (∫ ω, SubadditiveFamily.truncate F (M : ℝ) n ω ∂μ) / n) :=
+      SubadditiveFamily.truncate_integral_bddBelow (M : ℝ) (hFint M)
     have husub : Subadditive (fun n => ∫ ω, SubadditiveFamily.truncate F (M : ℝ) n ω ∂μ) :=
       SubadditiveFamily.subadditive_integral μ σ hmp _ hgsub (hFint M)
     refine ⟨husub.lim, husub.tendsto_lim hbdd, ?_, fun n hn => husub.lim_le_div hbdd (by omega)⟩

@@ -364,16 +364,15 @@ private theorem exists_saturated_window_ladder [StandardBorelSpace Ω]
     exact ⟨hsub, hdisj, hnull⟩
   exact ⟨Sel, Piece, hSel0, hSelsucc', hMeas, hPieceSpec⟩
 
-/-- Saturation covers almost every center by a selected window of at least its radius. -/
+/-- Saturation covers almost every center at each radius level by a selected larger window. -/
 private theorem saturated_window_ladder_coverage (μ : Measure Ω)
-    (σ : Ω ≃ᵐ Ω) (A : Set Ω) (w : Ω → ℕ) (B : ℕ) (hwB : ∀ x, w x ≤ B)
+    (σ : Ω ≃ᵐ Ω) (A : Set Ω) (w : Ω → ℕ) (B : ℕ)
     (Sel Piece : ℕ → Set Ω) (hSel0 : Sel 0 = ∅)
     (hSelsucc' : ∀ k, Sel (k + 1) = Sel k ∪
       collectiveOrbitWindow σ (B - k) (Piece k))
     (hPieceSpec : SaturatedWindowSelection μ σ (fun k => B - k)
       (fun k => A ∩ w ⁻¹' {B - k}) Sel Piece) :
-    (∀ k, k ≤ B → μ ((A ∩ w ⁻¹' {B - k}) \ coveredWindowCenters σ A w B Piece) = 0) ∧
-      μ (A \ coveredWindowCenters σ A w B Piece) = 0 := by
+    ∀ k, k ≤ B → μ ((A ∩ w ⁻¹' {B - k}) \ coveredWindowCenters σ A w B Piece) = 0 := by
   classical
   let window : ℕ → Ω → Set Ω := fun r x =>
     (fun t => zIter σ t x) '' Set.Icc (-(r : ℤ)) r
@@ -482,45 +481,7 @@ private theorem saturated_window_ladder_coverage (μ : Measure Ω)
             measure_mono hpart2
         _ = 0 := hexcep0
     exact le_antisymm hchain bot_le
-  -- **Coverage induction.** After processing `k` levels (radii `B, …, B-k+1`), everything with
-  -- `w x + k > B` (i.e. already-processed radii) is covered by `Good` up to a null set.
-  have hCoverage : ∀ k, k ≤ B + 1 → μ ({x ∈ A | B < w x + k} \ Good) = 0 := by
-    intro k
-    induction k with
-    | zero =>
-        intro _
-        have hempty : {x ∈ A | B < w x + 0} = (∅ : Set Ω) := by
-          ext x
-          simp only [Set.mem_ofPred_eq, add_zero, Set.mem_empty_iff_false, iff_false, not_and]
-          intro _
-          exact not_lt.mpr (hwB x)
-        rw [hempty]
-        simp
-    | succ k ih =>
-        intro hk1
-        have hkleB : k ≤ B := by omega
-        have ihk : μ ({x ∈ A | B < w x + k} \ Good) = 0 := ih (by omega)
-        have hsplit : {x ∈ A | B < w x + (k + 1)} \ Good
-            ⊆ ({x ∈ A | B < w x + k} \ Good) ∪ (level k \ Good) := by
-          rintro x ⟨⟨hxA, hxlt⟩, hxnotGood⟩
-          by_cases hcase : B < w x + k
-          · exact Or.inl ⟨⟨hxA, hcase⟩, hxnotGood⟩
-          · have hwx : w x = radius k := by simp only [hradiusdef]; omega
-            exact Or.inr ⟨⟨hxA, hwx⟩, hxnotGood⟩
-        have hchain : μ ({x ∈ A | B < w x + (k + 1)} \ Good) ≤ 0 :=
-          calc μ ({x ∈ A | B < w x + (k + 1)} \ Good)
-              ≤ μ (({x ∈ A | B < w x + k} \ Good) ∪ (level k \ Good)) := measure_mono hsplit
-            _ ≤ μ ({x ∈ A | B < w x + k} \ Good) + μ (level k \ Good) := measure_union_le _ _
-            _ = 0 := by rw [ihk, hLevelNull k hkleB]; simp
-        exact le_antisymm hchain bot_le
-  have hAGoodNull : μ (A \ Good) = 0 := by
-    have hAeq : {x ∈ A | B < w x + (B + 1)} = A := by
-      ext x
-      simp only [Set.mem_ofPred_eq, and_iff_left_iff_imp]
-      intro _; omega
-    have := hCoverage (B + 1) le_rfl
-    rwa [hAeq] at this
-  exact ⟨hLevelNull, hAGoodNull⟩
+  exact hLevelNull
 
 /-- **Rudolph's one-third covering lemma** (one-dimensional Vitali covering step, uses
 `exists_subset_disjoint_iterates_symm`). For a *bounded* measurable window-radius function `w`
@@ -650,8 +611,8 @@ theorem vitali_cover_third [StandardBorelSpace Ω] (μ : Measure Ω)
   -- Meeting `Sel k` means meeting some earlier level's collective window.
   set Good : Set Ω := {x ∈ A | ∃ k ≤ B, w x ≤ radius k ∧
       window (w x) x ⊆ windowUnion (3 * radius k + 1) (Piece k)} with hGooddef
-  obtain ⟨hLevelNull, hAGoodNull⟩ :=
-    saturated_window_ladder_coverage μ σ A w B hwB Sel Piece hSel0 hSelsucc' hPieceSpec
+  have hLevelNull :=
+    saturated_window_ladder_coverage μ σ A w B Sel Piece hSel0 hSelsucc' hPieceSpec
   -- `Piece k`'s collective window is disjoint from `Sel k` (by construction: `Piece k` was
   -- selected from the "not yet touching `Sel k`" candidate set), hence from every earlier
   -- level's collective window too — giving cross-level disjointness.

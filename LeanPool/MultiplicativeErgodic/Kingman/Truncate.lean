@@ -150,10 +150,11 @@ theorem SubadditiveFamily.truncate_integrable {f : ℕ → Ω → ℝ} {μ : Mea
     Integrable (SubadditiveFamily.truncate f M n) μ :=
   hfn.sup (integrable_const (-(M * n)))
 
-/-- Under finite measure, the truncated means have a uniform lower bound obtained by
-integrating their constant floor; the zero index is bounded separately. -/
+/-- Under finite measure and integrability of the truncations, their means have a uniform
+lower bound obtained by integrating their constant floor; the zero index is bounded separately. -/
 theorem SubadditiveFamily.truncate_integral_bddBelow {f : ℕ → Ω → ℝ}
-    {μ : Measure Ω} [IsFiniteMeasure μ] (hL1 : ∀ n, Integrable (f n) μ) (M : ℝ) :
+    {μ : Measure Ω} [IsFiniteMeasure μ] (M : ℝ)
+    (hIntegral : ∀ n, Integrable (SubadditiveFamily.truncate f M n) μ) :
     BddBelow (Set.range fun n : ℕ => (∫ ω, SubadditiveFamily.truncate f M n ω ∂μ) / n) := by
   refine ⟨min 0 (-M * μ.real Set.univ), ?_⟩
   rintro _ ⟨n, rfl⟩
@@ -164,7 +165,7 @@ theorem SubadditiveFamily.truncate_integral_bddBelow {f : ℕ → Ω → ℝ}
   rw [le_div_iff₀ hn0]
   have hge : ∀ ω, -(M * n) ≤ SubadditiveFamily.truncate f M n ω := fun ω => le_max_right _ _
   have hint := integral_mono (integrable_const (-(M * (n : ℝ))))
-    (SubadditiveFamily.truncate_integrable n (hL1 n) M) hge
+    (hIntegral n) hge
   calc
     -M * μ.real Set.univ * n = ∫ _ : Ω, -(M * (n : ℝ)) ∂μ := by
       simp only [integral_const, smul_eq_mul]
