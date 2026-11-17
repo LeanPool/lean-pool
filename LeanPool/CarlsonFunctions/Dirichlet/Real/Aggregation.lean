@@ -233,8 +233,8 @@ theorem measurePreserving_stdSimplexAggregate_dirichletMeasure
           Convexity.StdSimplex.coordinateSet ℝ κ := by
           intro u hu
           exact stdSimplexAggregate_mem_stdSimplex hu
-        refine measure_mono_null (fun u hu huι => hu (hsub huι)) ?_
-        change dirichletMeasure b (Convexity.StdSimplex.coordinateSet ℝ ι)ᶜ = 0
+        refine measure_mono_null (t := (Convexity.StdSimplex.coordinateSet ℝ ι)ᶜ)
+          (fun u hu huι => hu (hsub huι)) ?_
         have hs := (Convexity.StdSimplex.isClosed_coordinateSet ℝ ι).measurableSet
         have h' := congrArg (fun η : Measure (ι → ℝ) => η (Convexity.StdSimplex.coordinateSet ℝ ι)ᶜ)
           (dirichletMeasure_restrict (ι := ι) b)
