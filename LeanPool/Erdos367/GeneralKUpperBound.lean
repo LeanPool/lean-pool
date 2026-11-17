@@ -181,13 +181,13 @@ theorem B2_upper_bound (k : ℕ) (hk : 1 ≤ k) (hRadLB : RadLB k) :
           rw [ pow_mul' ]
           exact pow_le_pow_left₀ (Nat.cast_nonneg _) (F_le_pow hk hn) _
       · exact hC n hn;
-    convert h_B2_le using 1; ring;
+    convert h_B2_le using 1; ring_nf;
     norm_num [ sq, mul_assoc, ← Real.rpow_add ( by positivity : 0 < ( n : ℝ ) ),
-      ← Real.rpow_neg ( by positivity : 0 ≤ ( n : ℝ ) ) ]; ring;
+      ← Real.rpow_neg ( by positivity : 0 ≤ ( n : ℝ ) ) ]; ring_nf;
     exact Or.inl (by
       rw [← Real.rpow_natCast, ← Real.rpow_add (by positivity)]
       push_cast
-      ring)
+      ring_nf)
 
 -- Remark (not part of the proof):
 -- ∏_{i=0}^{k-1} B₂(n+i) ≤ B₂(F(n)) up to a factor depending only on k

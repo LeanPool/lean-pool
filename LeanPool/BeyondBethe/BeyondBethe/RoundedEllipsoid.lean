@@ -325,7 +325,7 @@ theorem abs_det_inflatedDyadicRound_le {d : ℕ}
         (Matrix.det
             (fun i j ↦ ((dyadicFloorMatrix p E.basis i j : ℚ) : ℝ)) -
           Matrix.det (fun i j ↦ ((E.basis i j : ℚ) : ℝ)))
-      convert this using 1; ring
+      convert this using 1; ring_nf
     have hcastRound :
         Matrix.det
             (fun i j ↦ ((dyadicFloorMatrix p E.basis i j : ℚ) : ℝ)) =

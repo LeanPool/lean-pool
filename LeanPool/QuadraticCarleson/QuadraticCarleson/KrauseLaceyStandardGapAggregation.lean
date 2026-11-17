@@ -65,7 +65,7 @@ theorem sum_energyStandard_physicalTail_diagonalEnergy_le
     hlam hsub (N.filter fun I ↦ (2 : ℝ) ^ ell ≤ I.length)
     ((Finset.filter_subset _ N).trans hN)
     (fun I hI ↦ scale_le_of_mem_energyStandard_physicalTail I₀ k₀ s ell scale N hN hI)
-  convert h using 1; congr 1; ring
+  convert h using 1; congr 1; ring_nf
 
 
 end KrauseLaceyBadScale

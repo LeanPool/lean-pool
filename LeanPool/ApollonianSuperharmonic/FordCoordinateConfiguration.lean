@@ -217,7 +217,7 @@ private theorem hsemiAt342 :
         Int.natCast_eq_zero, or_self, and_true, qd, pd, R]
   all_goals try rw [Nat.cast_sub (by omega)]
   repeat' first | constructor | (ext <;> simp; ring)
-  all_goals try ring
+  all_goals try ring_nf
   all_goals try (intro hz; omega)
 
 private theorem hv13At359 :
@@ -587,8 +587,8 @@ private theorem hsemiAt448 :
       Matrix.cons_val_one, Int.reduceNeg, rotatedTuple]
   repeat' first | constructor | (ext <;> simp only [Fin.isValue, Int.reduceNeg, Zsqrtd.im_sub,
       Zsqrtd.im_add, Zsqrtd.im_mul, Zsqrtd.re_ofNat, Nat.cast_ofNat, Zsqrtd.im_ofNat,
-      zero_mul, add_zero, Zsqrtd.re_sub, Zsqrtd.re_add, Zsqrtd.re_mul, mul_zero] <;> ring)
-  all_goals try ring
+      zero_mul, add_zero, Zsqrtd.re_sub, Zsqrtd.re_add, Zsqrtd.re_mul, mul_zero] <;> ring_nf)
+  all_goals try ring_nf
   all_goals try rw [rentry]
   all_goals try simp only [Fin.isValue, FordCircleCoordinate, Nat.cast_mul, Int.reduceNeg,
       one_mul]

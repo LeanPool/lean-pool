@@ -88,7 +88,7 @@ theorem hasDerivAt_fourierSeries_partial
             j : ℂ) * (θ j : ℂ)) ) using 1
         all_goals (first
           | rfl
-          | (simp only [Pi.add_apply, id_eq]; push_cast; ring))
+          | (simp only [Pi.add_apply, id_eq]; push_cast; ring_nf))
       convert h_deriv.tendsto_slope_zero.const_mul ( b m ) using 2 <;> norm_num [
           div_eq_mul_inv, mul_assoc, mul_comm, mul_left_comm, partialCoeff ];
     · -- We'll use the fact that |exp(i * x) - exp(i * y)| ≤ |x - y| for any real numbers x and y.
@@ -98,8 +98,8 @@ theorem hasDerivAt_fourierSeries_partial
         have h_exp_diff : ∀ x y : ℝ, ‖Complex.exp (Complex.I * x) - Complex.exp (Complex.I * y)‖
             = 2 * |Real.sin ((x - y) / 2)| := by
           norm_num [ Complex.norm_def, Complex.normSq, Complex.exp_re, Complex.exp_im ];
-          intro x y; rw [ Real.sqrt_eq_iff_mul_self_eq ] <;> norm_num <;> ring <;> norm_num [
-              Real.sin_sq, Real.cos_sq ] <;> ring;
+          intro x y; rw [ Real.sqrt_eq_iff_mul_self_eq ] <;> norm_num <;> ring_nf <;> norm_num [
+              Real.sin_sq, Real.cos_sq ] <;> ring_nf;
           · rw [ Real.cos_sub ]; ring;
           · nlinarith [ sq_nonneg ( Real.cos x - Real.cos y ), sq_nonneg ( Real.sin x - Real.sin
               y ), Real.cos_sq' x, Real.cos_sq' y ];
@@ -113,9 +113,9 @@ theorem hasDerivAt_fourierSeries_partial
       rw [ div_le_iff₀ ( abs_pos.mpr ht ) ];
       convert mul_le_mul_of_nonneg_left ( h_exp_diff ( ∑ x : Fin n, ( k x : ℝ ) * (
           Function.update θ j ( θ j + t ) x ) ) ( ∑ x : Fin n, ( k x : ℝ ) * ( θ x ) ) ) (
-          norm_nonneg ( b k ) ) using 1; norm_num [ Finset.sum_update_of_mem ]; ring;
-      simp +decide [ Function.update_apply]; ring;
-      simp +decide [Finset.sum_ite, Finset.filter_eq', Finset.filter_ne']; ring;
+          norm_nonneg ( b k ) ) using 1; norm_num [ Finset.sum_update_of_mem ]; ring_nf;
+      simp +decide [ Function.update_apply]; ring_nf;
+      simp +decide [Finset.sum_ite, Finset.filter_eq', Finset.filter_ne']; ring_nf;
       norm_num [ mul_assoc, mul_comm, mul_left_comm, abs_mul ];
   convert h_deriv_sum using 2;
   rw [ ← Summable.tsum_sub ];

@@ -130,7 +130,7 @@ lemma abs_kernelHessianCoord_first_apply_le {r theta : ℝ}
       rw [← Real.rpow_add hn, ← Real.rpow_add hn]
       congr 2
       field_simp [ne_of_gt (by linarith : 0 < r)]
-      ring
+      ring_nf
 
 lemma abs_kernelHessianCoord_second_apply_le {r theta : ℝ}
     (hr : 2 < r) (htheta : 1 < theta) {d : ℕ}
@@ -181,7 +181,7 @@ lemma abs_kernelHessianCoord_second_apply_le {r theta : ℝ}
       rw [← Real.rpow_add hn]
       congr 2
       field_simp [ne_of_gt (by linarith only [hr] : 0 < r)]
-      ring
+      ring_nf
 
 lemma abs_kernelHessianCoord_apply_le {r theta : ℝ}
     (hr : 2 < r) (htheta : 1 < theta) {d : ℕ}

@@ -69,8 +69,7 @@ lemma case1a (dim3 : Module.finrank K L = 3) (h₁ : Module.finrank K (commutato
     · have : ι ⊆ {f, e} ∪ {g} := by
         rw [← Set.sdiff_subset_iff, hg]
       simp only [Set.union_singleton] at this
-      rw [Set.pair_comm, Set.insert_comm, Set.pair_comm]
-      assumption
+      rwa [Set.pair_comm, Set.insert_comm, Set.pair_comm]
     · intro x
       simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
       intro hx

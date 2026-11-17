@@ -121,8 +121,7 @@ theorem zero_add {x : ZFInt} : 0 + x = x := by
 protected abbrev neg (n : ZFInt) : ZFInt :=
   Quotient.liftOn n (fun x => mk (x.2, x.1)) fun x y h => sound (ZFSet.zrel_eq.symm (by
     simp only [ZFSet.zrel]
-    rw [ZFNat.add_comm, ZFNat.add_comm y.1, ← ZFSet.zrel]
-    assumption))
+    rwa [ZFNat.add_comm, ZFNat.add_comm y.1, ← ZFSet.zrel]))
 protected instance : Neg ZFInt := ⟨ZFInt.neg⟩
 theorem neg_eq (n : ZFNat × ZFNat) : -mk n = mk (n.2, n.1) := rfl
 theorem neg_neg (n : ZFInt) : -(-n) = n := by
@@ -402,8 +401,8 @@ theorem le_total {a b : ZFInt} : a ≤ b ∨ b ≤ a := by
   rcases @ZFNat.le_total (a₁ + b₂) (a₂ + b₁) with (_ | _) | (h | h)
   · left; left; assumption
   · left; right; apply sound; assumption
-  · right; left; rw [ZFNat.add_comm a₂, ZFNat.add_comm a₁] at h; assumption
-  · right; right; apply sound; rw [ZFNat.add_comm a₂, ZFNat.add_comm a₁] at h; assumption
+  · right; left; rwa [ZFNat.add_comm a₂, ZFNat.add_comm a₁] at h
+  · right; right; apply sound; rwa [ZFNat.add_comm a₂, ZFNat.add_comm a₁] at h
 theorem lt_iff_le_not_ge {x y : ZFInt} : x < y ↔ x ≤ y ∧ ¬y ≤ x := by
   apply Iff.intro
   · intro

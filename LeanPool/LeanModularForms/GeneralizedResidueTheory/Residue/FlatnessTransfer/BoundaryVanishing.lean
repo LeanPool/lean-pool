@@ -249,7 +249,7 @@ private lemma slope_tendsto_left_of_deriv
   have h_neg : Tendsto (fun ε : ℝ => -((-ε)⁻¹ • (γ.toFun (t₀ - ε) - s)))
       (𝓝[>] 0) (𝓝 (-L)) := h_comp.neg.congr (fun ε => by
     simp only [Function.comp, slope, vsub_eq_sub]
-    rw [hcross]; erw [Complex.real_smul, Complex.real_smul]; ring)
+    rw [hcross]; erw [Complex.real_smul, Complex.real_smul]; ring_nf)
   convert h_neg using 1
   ext ε
   erw [Complex.real_smul, Complex.real_smul]

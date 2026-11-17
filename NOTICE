@@ -173,6 +173,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/IwaniecLinearSieve        https://github.com/jasondavies/iwaniec-linear-sieve
   LeanPool/JacobianDiffgeo           https://github.com/rkirov/jacobian-fable
   LeanPool/JohnsonLindenstraussLean  https://github.com/claytomode/johnson-lindenstrauss-lean
+  LeanPool/KLS                       https://github.com/human-ai-mathematics/kls-lean
   LeanPool/KahnKalai                 https://github.com/dcposch/kahn-kalai-lean
   LeanPool/KasamiCyclicAdditive      https://github.com/dsm054/kasami_cyclic_additive
   LeanPool/KloostermanWeil           https://github.com/charliedorsey/weil-bounds-toolkit
@@ -248,6 +249,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/OneManifold               https://github.com/sweeneyde/1mfld
   LeanPool/OperatorTheory            https://github.com/savarin/lean-operator-theory
   LeanPool/OrderClosures             https://github.com/pedrotradacete/OrderClosures
+  LeanPool/OrderMaintenance          https://github.com/dfirsov/order_maintenance
   LeanPool/OrderPQ                   https://github.com/wupr/order-p-q
   LeanPool/PDL                       https://github.com/m4lvin/lean4-pdl
   LeanPool/PFR                       https://github.com/teorth/pfr
@@ -306,6 +308,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/SetTheory                 https://github.com/znssong/SetTheory
   LeanPool/SeveralComplexVariables   https://github.com/bjbraams/lean-scv
   LeanPool/ShelahHalesJewett         https://github.com/gdahia/ShelahHalesJewett
+  LeanPool/Siegel                    https://github.com/jtraverso/siegel-theorem
   LeanPool/SingularModuli            https://github.com/ElodinLaarz/lean-thesis
   LeanPool/SpectralPositivity        https://github.com/mrdouglasny/spectral-positivity
   LeanPool/SpectralTheory            https://github.com/savarin/lean-spectral-theory
@@ -392,6 +395,7 @@ MIT permission notice that follows them.
                                      https://github.com/long-mathematics/gaussian-moments-counterexamples
   LeanPool/GrahamLPT                 https://github.com/JD-Jones-ASES/graham-lpt-lean
   LeanPool/HSDInteriorPointLP        https://github.com/makoto-yamashita/proof-on-a-homogeneous-self-dual-interior-point-method-for-linear-programming
+  LeanPool/HersteinJordan            https://github.com/stalex444/herstein-jordan-homomorphisms
   LeanPool/InflationTermination      https://github.com/williamjblair/inflation-termination
   LeanPool/KaltonPeck                https://github.com/adas1236/KaltonPeck
   LeanPool/KaltonRoberts             https://github.com/boonsuan/KaltonRoberts

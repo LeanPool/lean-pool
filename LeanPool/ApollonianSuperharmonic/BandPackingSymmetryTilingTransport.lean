@@ -51,7 +51,7 @@ private theorem quarter_symmetryAt181 :
       refine ⟨((TileCentroid T).1 - (q.2 - (TileCentroid T).2),
         (TileCentroid T).2 + (q.1 - (TileCentroid T).1)), (h q).mp hq, ?_⟩
       dsimp
-      ring
+      ring_nf
     · intro hp
       rcases hp with ⟨q, hq, hpq⟩
       have heq' := congrArg Prod.fst hpq
@@ -69,7 +69,7 @@ private theorem quarter_symmetryAt181 :
       · apply (h (p.2, -p.1)).mpr
         exact qeq ▸ hq
       · dsimp
-        ring
+        ring_nf
   · intro h p
     constructor
     · intro hp
@@ -147,7 +147,7 @@ private theorem reflection_symmetry :
         (TileCentroid T).2 - q.1 + (TileCentroid T).1)
       refine ⟨y, ?_, ?_⟩
       · apply (h y).mpr
-        convert hq using 1; dsimp [y]; ring
+        convert hq using 1; dsimp [y]; ring_nf
       · dsimp [y]
         ring_nf
     · intro hp
@@ -174,7 +174,7 @@ private theorem reflection_symmetry :
                 (TileCentroid T).1)) := by
         refine ⟨p, hp, ?_⟩
         dsimp [target]
-        ring
+        ring_nf
       rcases (h (target.1, -target.2)).mpr hc with ⟨q, hq, heq⟩
       have first_eq := congrArg Prod.fst heq
       have second_eq := congrArg Prod.snd heq

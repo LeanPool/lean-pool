@@ -471,7 +471,7 @@ private theorem qCW :
   classical
   intro p q hp1 Q hq valW
   simp [valW, Q, abs_of_nonneg (show 0 ≤ p-1 by omega)]
-  ring
+  ring_nf
 
 private theorem floorEven :
     (by
@@ -516,7 +516,7 @@ private theorem qP0 :
   simp only [valC, Q, Int.natCast_natAbs]
   rw [abs_of_nonpos (show p-k ≤ 0 by omega)]
   rw [show (p-k)-(p-1-(1-k)) = -2*(k-1) by ring, floorEven]
-  congr 1; ring
+  congr 1; ring_nf
 
 private theorem qPeLt :
     (by
@@ -538,7 +538,7 @@ private theorem qPeLt :
   simp only [Q, Int.natCast_natAbs]
   rw [abs_of_nonpos (show p+1-k ≤ 0 by omega)]
   rw [show (p+1-k)-(p-1-(1-k)) = 1-2*(k-1) by ring, floorOdd]
-  congr 1; ring
+  congr 1; ring_nf
 
 private theorem qPeEq :
     (by

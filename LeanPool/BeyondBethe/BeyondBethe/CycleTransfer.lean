@@ -109,7 +109,7 @@ theorem coreOutcome_entropy_eq_coarsenedRowEntropy
         simp
       · simp [hja, Ne.symm hja]
     rw [hsame, hout, shannonEntropy, Real.negMulLog_def]
-    ring
+    ring_nf
   · rw [coreOutcome_entropy_eq_twoCoreCoarsenedEntropy p hab,
       twoCoreCoarsenedEntropy, coarsenedRowEntropy,
       scaledConditionalEntropyOn, binaryEntropy,

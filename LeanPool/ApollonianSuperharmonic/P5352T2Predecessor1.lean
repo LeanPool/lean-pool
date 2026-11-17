@@ -492,7 +492,7 @@ private theorem hqvals :
   constructor
   · simp only [Q,absPm]
     rw [show (p-1)-(2*k+1-p)=2*(p-k-1) by ring, sqEven]
-    congr 1; ring
+    congr 1; ring_nf
   constructor
   · simp only [Q,absP]
     rw [show p-(2*k-p)=2*(p-k) by ring,sqEven]
@@ -502,7 +502,7 @@ private theorem hqvals :
     · simp [hp]
     · simp only [hp, ↓reduceIte]
       rw [show (p+1-k)-(k-p)=2*(p-k)+1 by ring,sqOdd]
-      congr 1; ring
+      congr 1; ring_nf
   · simp only [Q,absKm]
     rw [show (p-k)-(k+1-p)=2*(p-k)-1 by ring]
     have hh := sqOdd (p-k-1)

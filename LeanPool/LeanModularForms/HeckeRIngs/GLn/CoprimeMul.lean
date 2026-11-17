@@ -730,10 +730,10 @@ private lemma coprime_coupling_mem_H (a b : Fin n → ℕ)
     rw [mul_one, ← Matrix.det_mul, ← Units.val_mul, inv_mul_cancel, Units.val_one, Matrix.det_one]
   have h_scale_a : ∀ i j, ∃ z : ℤ,
       (↑(∏ i, a i) : ℚ) * (↑C : Matrix (Fin n) (Fin n) ℚ) i j = z := by
-    intro i j; simp only [C]; convert diagConj_scaling n a ha σ i j using 2; push_cast; ring
+    intro i j; simp only [C]; convert diagConj_scaling n a ha σ i j using 2; push_cast; ring_nf
   have h_scale_b : ∀ i j, ∃ z : ℤ,
       (↑(∏ i, b i) : ℚ) * (↑C : Matrix (Fin n) (Fin n) ℚ) i j = z := by
-    intro i j; rw [h_eq]; convert diagSandwich_scaling n b hb F G E i j using 2; push_cast; ring
+    intro i j; rw [h_eq]; convert diagSandwich_scaling n b hb F G E i j using 2; push_cast; ring_nf
   exact GLnQ_mem_SLnZ_of_coprime_scaling n C (∏ i, a i) (∏ i, b i) hcop h_det
     h_scale_a h_scale_b
 

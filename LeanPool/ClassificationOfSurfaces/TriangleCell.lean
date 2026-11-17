@@ -297,7 +297,7 @@ theorem surjective_boundaryQuotMap : Function.Surjective boundaryQuotMap := by
       simpa [Moise.standardTriangleVertex] using htp
     · have htpos : 0 < t := lt_of_le_of_ne ht.1 (Ne.symm ht0)
       rw [boundaryParam, ite_eq_right (by linarith), ite_eq_left (by linarith [ht.2])]
-      convert htp using 1; ring
+      convert htp using 1; ring_nf
   · change p.1 ∈ segment ℝ
       (Moise.standardTriangleVertex 2) (Moise.standardTriangleVertex 0) at hi
     rw [segment_eq_image_lineMap] at hi
@@ -313,7 +313,7 @@ theorem surjective_boundaryQuotMap : Function.Surjective boundaryQuotMap := by
       simpa [Moise.standardTriangleVertex] using htp
     · have htpos : 0 < t := lt_of_le_of_ne ht.1 (Ne.symm ht0)
       rw [boundaryParam, ite_eq_right (by linarith), ite_eq_right (by linarith)]
-      convert htp using 1; ring
+      convert htp using 1; ring_nf
 
 /-- The additive circle of circumference three is the standard triangular frontier. -/
 noncomputable def addCircleBoundaryHomeomorph :
