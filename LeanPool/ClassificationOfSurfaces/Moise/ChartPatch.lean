@@ -234,7 +234,7 @@ theorem diamondRightRegion_eq_patch_inter_nonneg :
       ring
     · ext i
       fin_cases i <;> simp [w, planePoint]
-      all_goals ring
+      ring
 
 /-- The closed radius-`1/2` half-disk core is covered by the two-triangle half patch. -/
 theorem halfCore_subset_chartHalfDiamond_support :

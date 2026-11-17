@@ -103,7 +103,7 @@ def FaceVertexThickeningsSeparated (G : K.PlaneGraphRealization)
 
 /-- The relatively locally finite set of all vertex images not belonging to one face, made
 ambiently closed by adjoining the complement of the perturbation region. -/
-def outsideVertexImages (G : K.PlaneGraphRealization) (f : K.Face) : Set Plane :=
+noncomputable def outsideVertexImages (G : K.PlaneGraphRealization) (f : K.Face) : Set Plane :=
   (⋃ v : {v : K.Vertex // v ∉ K.faceVertices f}, G.vertexImageCarrier v.1) ∪
     G.regionᶜ
 

@@ -203,7 +203,7 @@ theorem closedRegion_subset_arrangementMesh_support :
   exact J.closedRegion_subset_enclosingMesh_support
 
 /-- Carrier of one maximal triangle in the supporting-line arrangement. -/
-def arrangementTriangleCarrier (t : Finset J.arrangementMesh.Vertex) : Set Plane :=
+noncomputable def arrangementTriangleCarrier (t : Finset J.arrangementMesh.Vertex) : Set Plane :=
   convexHull ℝ (J.arrangementMesh.position '' (t : Set _))
 
 theorem convex_arrangementTriangleCarrier (t : Finset J.arrangementMesh.Vertex) :

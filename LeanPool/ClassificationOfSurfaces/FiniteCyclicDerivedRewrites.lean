@@ -397,7 +397,7 @@ theorem adjacentSource_isRotated_target {n : ℕ} (a : Fin n)
     (List.isRotated_append
       (l := [SignedDart.pos a, SignedDart.pos a] ++ X)
       (l' := Y)) using 1
-  all_goals simp only [List.nil_append, List.cons_append,
+  simp only [List.nil_append, List.cons_append,
     List.append_assoc]
 
 /-- Gallier--Xu's alternate rule `a a X Y ~ a Y a X⁻¹`. -/
@@ -929,7 +929,7 @@ theorem source_isRotated_rotatedSource {n : ℕ} (a : Fin n)
     (List.isRotated_append
       (l := [SignedDart.pos a] ++ H)
       (l' := [SignedDart.neg a] ++ X ++ V)) using 1
-  all_goals simp only [List.cons_append, List.append_assoc]
+  simp only [List.cons_append, List.append_assoc]
 
 /-- The target spelling displays the moved block immediately after the loop. -/
 theorem target_boundary_isRotated_grouped {n : ℕ} (a : Fin n)
@@ -942,7 +942,7 @@ theorem target_boundary_isRotated_grouped {n : ℕ} (a : Fin n)
       (l := X)
       (l' := [SignedDart.pos a] ++ H ++
         [SignedDart.neg a] ++ V)) using 1
-  all_goals simp only [List.cons_append, List.append_assoc]
+  simp only [List.cons_append, List.append_assoc]
 
 /-- Gallier--Xu loop grouping is one negative Dyck rewrite after a cyclic rotation. -/
 theorem normalizationEquivalent {n : ℕ} (a : Fin n)

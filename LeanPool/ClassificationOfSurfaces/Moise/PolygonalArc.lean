@@ -911,7 +911,7 @@ theorem exists_face_on_segment (i : Fin B.n) {x : Plane}
               · exact h0
               · exact h1
             have hprod : (b 1 - a 1) * (M.toPlaneComplex.position v 0 - a 0) = 0 := by
-              simp only [segmentLine, Fin.isValue, AffineMap.coe_sub, AffineMap.coe_smul,
+              simp only [segmentLine, Fin.isValue, FunLike.coe_sub, FunLike.coe_smul,
                 AffineMap.coe_const, Pi.sub_apply, Pi.smul_apply, cartesianX_apply, smul_eq_mul,
                 cartesianY_apply, Function.const_apply] at hvline
               rw [h0] at hvline
@@ -965,7 +965,7 @@ theorem exists_face_on_segment (i : Fin B.n) {x : Plane}
               · exact h0
               · exact h1
             have hprod : (b 0 - a 0) * (M.toPlaneComplex.position v 1 - a 1) = 0 := by
-              simp only [segmentLine, Fin.isValue, AffineMap.coe_sub, AffineMap.coe_smul,
+              simp only [segmentLine, Fin.isValue, FunLike.coe_sub, FunLike.coe_smul,
                 AffineMap.coe_const, Pi.sub_apply, Pi.smul_apply, cartesianX_apply, smul_eq_mul,
                 cartesianY_apply, Function.const_apply] at hvline
               rw [h1] at hvline
@@ -1330,7 +1330,7 @@ theorem resolvedSegment_inter (i j : Fin B.resolvedWalk.length) :
       _ (B.resolvedEdge_mem_simplexes j)
 
 /-- The geometric carrier of the selected graph path. -/
-def resolvedCarrier : Set Plane :=
+noncomputable def resolvedCarrier : Set Plane :=
   if _ : B.resolvedWalk.length = 0 then {B.resolvedVertex 0}
   else ⋃ i : Fin B.resolvedWalk.length,
     segment ℝ (B.resolvedVertex i.castSucc) (B.resolvedVertex i.succ)

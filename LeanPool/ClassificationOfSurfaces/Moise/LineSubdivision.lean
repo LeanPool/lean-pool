@@ -475,7 +475,7 @@ noncomputable def referenceSplitMesh (a b : ℝ) (ha0 : 0 < a) (ha1 : a < 1)
       · intro x hx
         simp only [Finset.mem_insert, Finset.mem_singleton] at hx
         rcases hx with rfl | rfl | rfl <;>
-          simp only [referenceSplitPosition, Fin.isValue, Matrix.cons_val_zero, AffineMap.coe_neg,
+          simp only [referenceSplitPosition, Fin.isValue, Matrix.cons_val_zero, FunLike.coe_neg,
             Pi.neg_apply, referenceVertexAffine_planePoint, mul_zero, add_zero, zero_sub, neg_neg,
             Matrix.cons_val, sub_self, neg_zero, Std.le_refl, zero_add, neg_sub, sub_nonneg] <;>
           (try field_simp) <;> nlinarith
@@ -483,15 +483,15 @@ noncomputable def referenceSplitMesh (a b : ℝ) (ha0 : 0 < a) (ha1 : a < 1)
         simp only [Finset.mem_insert, Finset.mem_singleton] at hx
         rcases hx with rfl | rfl | rfl <;>
           simp only [referenceSplitPosition, Fin.isValue, Matrix.cons_val_one,
-            Matrix.cons_val_zero, AffineMap.coe_neg, Pi.neg_apply,
+            Matrix.cons_val_zero, FunLike.coe_neg, Pi.neg_apply,
             referenceVertexAffine_planePoint, mul_zero, add_zero, neg_sub, tsub_le_iff_right,
             zero_add, Matrix.cons_val, mul_one, sub_self, neg_zero, Std.le_refl] <;>
-          (try field_simp) <;> nlinarith
+          field_simp <;> nlinarith
       · intro x hx
         fin_cases x <;>
           simp only [Fin.isValue, Fin.zero_eta, Finset.mem_insert, Fin.reduceEq,
             Finset.mem_singleton, or_self, or_false, referenceSplitPosition, Matrix.cons_val_zero,
-            AffineMap.coe_neg, Pi.neg_apply, referenceVertexAffine_planePoint, mul_zero, add_zero,
+            FunLike.coe_neg, Pi.neg_apply, referenceVertexAffine_planePoint, mul_zero, add_zero,
             zero_sub, neg_neg, one_ne_zero, not_false_eq_true, Finset.inter_insert_of_notMem,
             or_true, Finset.inter_singleton_of_mem, iff_false, Fin.mk_one, Fin.reduceFinMk,
             Matrix.cons_val, sub_self, neg_zero, zero_add, neg_sub] at hx ⊢ <;>
@@ -500,12 +500,12 @@ noncomputable def referenceSplitMesh (a b : ℝ) (ha0 : 0 < a) (ha1 : a < 1)
         fin_cases x <;>
           simp only [Fin.isValue, Fin.zero_eta, Finset.mem_insert, zero_ne_one, Fin.reduceEq,
             Finset.mem_singleton, or_self, Fin.mk_one, or_false, referenceSplitPosition,
-            Matrix.cons_val_one, Matrix.cons_val_zero, AffineMap.coe_neg, Pi.neg_apply,
+            Matrix.cons_val_one, Matrix.cons_val_zero, FunLike.coe_neg, Pi.neg_apply,
             referenceVertexAffine_planePoint, mul_zero, add_zero, neg_sub, one_ne_zero,
             not_false_eq_true, Finset.inter_insert_of_notMem, or_true,
             Finset.inter_singleton_of_mem, iff_false, Fin.reduceFinMk, Matrix.cons_val, mul_one,
             zero_add, sub_self, neg_zero] at hx ⊢ <;>
-          (try field_simp) <;> nlinarith
+          field_simp <;> nlinarith
     · apply convexHull_image_inter_of_affine_separation _
         (referenceSplitPosition_injective ha0 ha1 hb0 hb1) _ _ (-referenceOuterAffine a b)
       · intro x hx
@@ -515,11 +515,11 @@ noncomputable def referenceSplitMesh (a b : ℝ) (ha0 : 0 < a) (ha1 : a < 1)
       · intro x hx
         simp only [Finset.mem_insert, Finset.mem_singleton] at hx
         rcases hx with rfl | rfl | rfl <;>
-          simp only [referenceSplitPosition, Fin.isValue, Matrix.cons_val, AffineMap.coe_neg,
+          simp only [referenceSplitPosition, Fin.isValue, Matrix.cons_val, FunLike.coe_neg,
             Pi.neg_apply, referenceOuterAffine_planePoint, mul_zero, mul_one, zero_add, neg_sub,
             tsub_le_iff_right, ne_eq, ha0.ne', not_false_eq_true, inv_mul_cancel₀, add_zero,
             sub_self, neg_zero, Std.le_refl, hb0.ne'];
-          (try field_simp); nlinarith
+          field_simp; nlinarith
       · intro x hx
         fin_cases x <;> simp [referenceSplitPosition, referenceOuterAffine_planePoint,
           ha0.ne', hb0.ne'] at hx ⊢
@@ -532,7 +532,7 @@ noncomputable def referenceSplitMesh (a b : ℝ) (ha0 : 0 < a) (ha1 : a < 1)
       · intro x hx
         simp only [Finset.mem_insert, Finset.mem_singleton] at hx
         rcases hx with rfl | rfl | rfl <;>
-          simp only [referenceSplitPosition, Fin.isValue, Matrix.cons_val_zero, AffineMap.coe_neg,
+          simp only [referenceSplitPosition, Fin.isValue, Matrix.cons_val_zero, FunLike.coe_neg,
             Pi.neg_apply, referenceVertexAffine_planePoint, mul_zero, add_zero, zero_sub, neg_neg,
             Matrix.cons_val, sub_self, neg_zero, Std.le_refl, zero_add, neg_sub, sub_nonneg] <;>
           (try field_simp) <;> nlinarith
@@ -540,15 +540,15 @@ noncomputable def referenceSplitMesh (a b : ℝ) (ha0 : 0 < a) (ha1 : a < 1)
         simp only [Finset.mem_insert, Finset.mem_singleton] at hx
         rcases hx with rfl | rfl | rfl <;>
           simp only [referenceSplitPosition, Fin.isValue, Matrix.cons_val_one,
-            Matrix.cons_val_zero, AffineMap.coe_neg, Pi.neg_apply,
+            Matrix.cons_val_zero, FunLike.coe_neg, Pi.neg_apply,
             referenceVertexAffine_planePoint, mul_zero, add_zero, neg_sub, tsub_le_iff_right,
             zero_add, Matrix.cons_val, mul_one, sub_self, neg_zero, Std.le_refl] <;>
-          (try field_simp) <;> nlinarith
+          field_simp <;> nlinarith
       · intro x hx
         fin_cases x <;>
           simp only [Fin.isValue, Fin.zero_eta, Finset.mem_insert, Fin.reduceEq,
             Finset.mem_singleton, or_self, or_false, referenceSplitPosition, Matrix.cons_val_zero,
-            AffineMap.coe_neg, Pi.neg_apply, referenceVertexAffine_planePoint, mul_zero, add_zero,
+            FunLike.coe_neg, Pi.neg_apply, referenceVertexAffine_planePoint, mul_zero, add_zero,
             zero_sub, neg_neg, one_ne_zero, not_false_eq_true, Finset.inter_insert_of_notMem,
             or_true, Finset.inter_singleton_of_mem, iff_false, Fin.mk_one, Fin.reduceFinMk,
             Matrix.cons_val, sub_self, neg_zero, zero_add, neg_sub] at hx ⊢ <;>
@@ -557,12 +557,12 @@ noncomputable def referenceSplitMesh (a b : ℝ) (ha0 : 0 < a) (ha1 : a < 1)
         fin_cases x <;>
           simp only [Fin.isValue, Fin.zero_eta, Finset.mem_insert, zero_ne_one, Fin.reduceEq,
             Finset.mem_singleton, or_self, Fin.mk_one, or_false, referenceSplitPosition,
-            Matrix.cons_val_one, Matrix.cons_val_zero, AffineMap.coe_neg, Pi.neg_apply,
+            Matrix.cons_val_one, Matrix.cons_val_zero, FunLike.coe_neg, Pi.neg_apply,
             referenceVertexAffine_planePoint, mul_zero, add_zero, neg_sub, one_ne_zero,
             not_false_eq_true, Finset.inter_insert_of_notMem, or_true,
             Finset.inter_singleton_of_mem, iff_false, Fin.reduceFinMk, Matrix.cons_val, mul_one,
             zero_add, sub_self, neg_zero] at hx ⊢ <;>
-          (try field_simp) <;> nlinarith
+          field_simp <;> nlinarith
     · simp
     · apply convexHull_image_inter_of_affine_separation _
         (referenceSplitPosition_injective ha0 ha1 hb0 hb1) _ _ (referenceDiagonalAffine a)
@@ -1067,7 +1067,7 @@ theorem neg (f : Plane →ᵃ[ℝ] ℝ) (p q : Plane) :
     affineCutPoint (-f) p q = affineCutPoint f p q := by
   unfold affineCutPoint
   congr 1
-  simp only [AffineMap.coe_neg, Pi.neg_apply]
+  simp only [FunLike.coe_neg, Pi.neg_apply]
   by_cases h : f p - f q = 0
   · have hpq : f p = f q := sub_eq_zero.mp h
     rw [hpq]
@@ -1245,7 +1245,7 @@ theorem crossingPairs_neg : M.crossingPairs (-f) = M.crossingPairs f := by
   unfold crossingPairs
   apply Finset.filter_congr
   intro uv huv
-  simp only [AffineMap.coe_neg, Pi.neg_apply]
+  simp only [FunLike.coe_neg, Pi.neg_apply]
   ring_nf
 
 theorem refinementPoints_neg : M.refinementPoints (-f) = M.refinementPoints f := by
@@ -2094,13 +2094,13 @@ theorem strictNegativeMeshFor_monochromatic (v : Fin 3 → M.Vertex)
     intro x hx
     obtain ⟨y, hy, rfl⟩ := Finset.mem_map.mp hx
     change f ((M.strictMeshFor (-f) v hv (by simpa) (by simpa) (by simpa)).position y) ≤ 0
-    simpa only [strictMeshFor, TriangleMesh.reindex, AffineMap.coe_neg, Pi.neg_apply,
+    simpa only [strictMeshFor, TriangleMesh.reindex, FunLike.coe_neg, Pi.neg_apply,
       neg_nonneg] using hm y hy
   · left
     intro x hx
     obtain ⟨y, hy, rfl⟩ := Finset.mem_map.mp hx
     change 0 ≤ f ((M.strictMeshFor (-f) v hv (by simpa) (by simpa) (by simpa)).position y)
-    simpa only [strictMeshFor, TriangleMesh.reindex, AffineMap.coe_neg, Pi.neg_apply,
+    simpa only [strictMeshFor, TriangleMesh.reindex, FunLike.coe_neg, Pi.neg_apply,
       neg_nonpos] using hm y hy
 
 theorem edgeNegativeMeshFor_monochromatic (v : Fin 3 → M.Vertex)
@@ -2120,13 +2120,13 @@ theorem edgeNegativeMeshFor_monochromatic (v : Fin 3 → M.Vertex)
     intro x hx
     obtain ⟨y, hy, rfl⟩ := Finset.mem_map.mp hx
     change f ((M.edgeMeshFor (-f) v hv (by simpa) (by simpa)).position y) ≤ 0
-    simpa only [edgeMeshFor, TriangleMesh.reindex, AffineMap.coe_neg, Pi.neg_apply,
+    simpa only [edgeMeshFor, TriangleMesh.reindex, FunLike.coe_neg, Pi.neg_apply,
       neg_nonneg] using hm y hy
   · left
     intro x hx
     obtain ⟨y, hy, rfl⟩ := Finset.mem_map.mp hx
     change 0 ≤ f ((M.edgeMeshFor (-f) v hv (by simpa) (by simpa)).position y)
-    simpa only [edgeMeshFor, TriangleMesh.reindex, AffineMap.coe_neg, Pi.neg_apply,
+    simpa only [edgeMeshFor, TriangleMesh.reindex, FunLike.coe_neg, Pi.neg_apply,
       neg_nonpos] using hm y hy
 
 theorem strictPattern_monochromatic_positive (z : Fin 5 → M.RefinedVertex f)

@@ -586,7 +586,7 @@ theorem diamondPatch_eq_inDiamond : diamondPatch = {p | InDiamond p} := by
         ring
       · ext i
         fin_cases i <;> simp [w, planePoint]
-        all_goals ring
+        ring
     · right
       rw [diamondRightRegion]
       have hx' : 0 ≤ p 0 := le_of_not_ge hx
@@ -600,7 +600,7 @@ theorem diamondPatch_eq_inDiamond : diamondPatch = {p | InDiamond p} := by
         ring
       · ext i
         fin_cases i <;> simp [w, planePoint]
-        all_goals ring
+        ring
 
 /-- Points satisfying all four diamond inequalities strictly form an open subset of the patch. -/
 def StrictlyInDiamond : Set Plane :=

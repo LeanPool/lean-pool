@@ -610,7 +610,7 @@ namespace OpenExhaustion
 variable {K : IntrinsicTwoComplex} {U : Set K.realization}
 
 /-- The carrier of one finite stage, viewed in the original realization. -/
-def stageSupport (E : K.OpenExhaustion U) (n : ℕ) : Set K.realization :=
+noncomputable def stageSupport (E : K.OpenExhaustion U) (n : ℕ) : Set K.realization :=
   (E.stage n).support
 
 theorem stageSupport_subset (E : K.OpenExhaustion U) (hUc : Uᶜ.Nonempty) (n : ℕ) :

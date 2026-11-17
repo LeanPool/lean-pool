@@ -666,7 +666,7 @@ theorem circleHomeomorph_exp_index_add'
       have hlength : (weights.length : ℝ) ≠ 0 := by
         exact_mod_cast (List.length_pos_of_ne_nil hne).ne'
       field_simp [hlength]
-      all_goals ring
+      ring
     have htarget :
         Circle.exp
             (2 * Real.pi / weights.sum * (weights.sum : ℝ)) =
@@ -676,7 +676,7 @@ theorem circleHomeomorph_exp_index_add'
       have hsum : (weights.sum : ℝ) ≠ 0 := by
         exact_mod_cast (List.sum_pos weights h hne).ne'
       field_simp [hsum]
-      all_goals ring
+      ring
     have hzero :
         circleHomeomorph weights h hne (Circle.exp 0) =
           Circle.exp 0 := by

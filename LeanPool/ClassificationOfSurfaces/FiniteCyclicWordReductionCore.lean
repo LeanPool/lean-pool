@@ -554,10 +554,9 @@ noncomputable def cancelInversePairsFuel (fuel : ℕ) {n : ℕ}
         equivalent := NormalizationEquivalent.refl _ }
 termination_by fuel
 decreasing_by
-  all_goals
-    apply Nat.sub_lt
-    · exact hfuelPositive
-    · omega
+  apply Nat.sub_lt
+  · exact hfuelPositive
+  · omega
 
 /-- Repeatedly cancel cyclically adjacent inverse pairs in an ordinary-valid one-face word. -/
 noncomputable def cancelInversePairs {n : ℕ}
@@ -1370,7 +1369,7 @@ theorem exists_negativeCrosscapOccurrenceForm {n : ℕ}
   rw [hpositive] at hcount
   cases hfirst : form.firstNegative <;>
     cases hsecond : form.secondNegative
-  all_goals try
+  all_goals
     simp [dart, hfirst, hsecond] at hcount
   exact ⟨
     { negative := true
@@ -1422,8 +1421,7 @@ theorem exists_oppositeOccurrenceForm {n : ℕ}
         (List.isRotated_append
           (l := .neg a :: form.between)
           (l' := .pos a :: form.remainder)) using 1
-      all_goals
-        simp [dart, hfirst, hsecond, List.cons_append]
+      simp [dart, hfirst, hsecond, List.cons_append]
     exact form.rotated.trans hrotateAgain
   · simp [dart, hfirst, hsecond] at hnegCount
 

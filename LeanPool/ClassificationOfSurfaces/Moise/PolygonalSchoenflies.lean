@@ -2337,7 +2337,7 @@ theorem TriangleMesh.exists_two_geometricallyFreeTriangles_of_polygonalDisk
       M.IsGeometricallyFreeTriangle T ∧ M.IsGeometricallyFreeTriangle U := by
   classical
   induction hcardM : M.triangles.card using Nat.strong_induction_on generalizing M J with
-  | h n ih =>
+  | ind n ih =>
     obtain ⟨T, U, hTU, hTfree, hUfree⟩ :=
       M.exists_two_freeTriangles_of_polygonalDisk J hsupport hmore
     obtain ⟨NT, hTNT, hTneighbor⟩ :=
@@ -2947,7 +2947,7 @@ theorem polygonal_schoenflies_rel (U : Set Plane) (hU : IsOpen U)
         (hsupport : M.toPlaneComplex.support = K.closedRegion)
         (hsubset : M.toPlaneComplex.support ⊆ U) : M.PLAmbientShellingIn U := by
       induction hcardM : M.triangles.card using Nat.strong_induction_on generalizing M K with
-      | h n ih =>
+      | ind n ih =>
           have htriangles : M.triangles.Nonempty := by
             by_contra hempty
             have hempty' : M.triangles = ∅ := Finset.not_nonempty_iff_eq_empty.mp hempty

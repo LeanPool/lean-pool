@@ -318,7 +318,7 @@ theorem exists_leftBase_openSegment_mem_kiteTriangle {q : Plane}
       fin_cases i <;>
         simp [w, p, kiteTrianglePosition, AffineMap.lineMap_apply_module,
           planePoint, dx, dy]
-      all_goals ring
+      ring
   exact ⟨p, ⟨hpSegment, by simpa using hpNe⟩, hpTriangle⟩
 
 /-- A ray from the right base vertex whose direction lies in the original triangle cone enters
@@ -369,7 +369,7 @@ theorem exists_rightBase_openSegment_mem_kiteTriangle {q : Plane}
       fin_cases i <;>
         simp [w, p, kiteTrianglePosition, AffineMap.lineMap_apply_module,
           planePoint, dx, dy]
-      all_goals ring
+      ring
   exact ⟨p, ⟨hpSegment, by simpa using hpNe⟩, hpTriangle⟩
 
 /-- If a segment leaves the left base vertex without entering the triangle, its direction is
@@ -700,7 +700,7 @@ theorem thinKiteMap_zero_mem_triangle {q : Plane} (hq : q ∈ diamondPatch) :
     ring
   · ext i
     fin_cases i <;> simp [w, r, kiteTrianglePosition, thinKiteMap, planePoint]
-    all_goals ring
+    ring
 
 /-- Every open neighborhood of the limiting triangle contains all sufficiently thin normalized
 kites. -/

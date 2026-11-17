@@ -1266,7 +1266,7 @@ theorem range_edgeSimplexPath (e : K.Edge) :
     rw [K.edgeSimplexPath_apply_second]
 
 /-- The ambient carrier of an edge. -/
-def edgeCarrier (e : K.Edge) : Set S :=
+noncomputable def edgeCarrier (e : K.Edge) : Set S :=
   Set.range (K.edgeMap e)
 
 theorem range_edgePath (e : K.Edge) :
@@ -1446,7 +1446,7 @@ theorem edgePath_one (e : K.Edge) :
     K.edgeMap_vertex_eq_vertexPoint e]
 
 /-- The one-skeleton carrier of a locally finite triangle complex. -/
-def oneSkeleton : Set S :=
+noncomputable def oneSkeleton : Set S :=
   ⋃ e : K.Edge, K.edgeCarrier e
 
 theorem edgeCarrier_subset_oneSkeleton (e : K.Edge) :

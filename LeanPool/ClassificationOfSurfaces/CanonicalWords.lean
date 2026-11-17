@@ -39,7 +39,7 @@ theorem wordEdgeOccurrences_card_eq_count_edgeName
   let v : List.Vector Edge word.length :=
     List.Vector.ofFn fun i ↦ SignedDart.edgeName (word.get i)
   simpa [wordEdgeOccurrences, v, List.ofFn_comp'] using
-    Fin.card_filter_univ_eq_vector_get_eq_count e v
+    (List.Vector.count_toList e v).symm
 
 end SurfaceCellComplex
 

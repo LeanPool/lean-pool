@@ -939,7 +939,7 @@ variable {K : PlaneComplex} {h : Plane → Plane}
   {D : K.VertexDiskControl h} {i : Fin (Fintype.card K.EdgeFace)}
 
 /-- The `centralCarrier` declaration. -/
-def centralCarrier (T : K.EdgeTrimData h D i) : Set Plane :=
+noncomputable def centralCarrier (T : K.EdgeTrimData h D i) : Set Plane :=
   K.edgeCurve h i '' Set.Icc T.left T.right
 
 theorem isCompact_centralCarrier (T : K.EdgeTrimData h D i)
@@ -1332,7 +1332,7 @@ noncomputable def exitData (A : K.CentralPolygonalArc hcont D C i) :
   · exact D.vertices_disjoint _ _ (K.edgeFirst_ne_edgeSecond i)
 
 /-- The `trimmedCarrier` declaration. -/
-def trimmedCarrier (A : K.CentralPolygonalArc hcont D C i) : Set Plane :=
+noncomputable def trimmedCarrier (A : K.CentralPolygonalArc hcont D C i) : Set Plane :=
   A.parameterization.curve '' Set.Icc A.exitData.left A.exitData.right
 
 theorem trimmedCarrier_subset_resolvedCarrier

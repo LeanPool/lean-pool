@@ -110,7 +110,7 @@ private theorem boundaryIndexCount_eq_faceEdgeMultiplicity
   let v : List.Vector P.Edge (P.boundary f).length :=
     List.Vector.ofFn fun i => edgeOfDart ((P.boundary f).get i)
   simpa [v, List.ofFn_comp'] using
-    Fin.card_filter_univ_eq_vector_get_eq_count e v
+    (List.Vector.count_toList e v).symm
 
 /-- Total edge multiplicity is exactly the cardinality of the corresponding occurrence fiber. -/
 theorem edgeMultiplicity_eq_card_edgeOccurrences

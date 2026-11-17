@@ -179,7 +179,7 @@ noncomputable def adaptiveGlobalFanMapStandardAffine
     ((K.adaptiveLocallyFiniteTriangleComplex U hU).facePlaneInverseAffineLF f)
 
 /-- The standard simplex indexing a global adaptive fan face. -/
-abbrev adaptiveGlobalFanSimplex (hU : IsOpen U) (f : K.AdaptiveFanFace U hU) :=
+noncomputable abbrev adaptiveGlobalFanSimplex (hU : IsOpen U) (f : K.AdaptiveFanFace U hU) :=
   stdSimplex ℝ {v // v ∈ K.adaptiveGlobalFanFaceVertices U hU f}
 
 /-- The intrinsic-coordinate value of a global adaptive fan face map. -/
