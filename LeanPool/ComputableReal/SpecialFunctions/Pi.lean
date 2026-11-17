@@ -107,7 +107,8 @@ theorem sqrtTwoAddSeriesN_bounds (n k : ℕ) (hk : 3 ≤ k) :
   · simp only [CharP.cast_eq_zero, zero_div, mul_zero, add_zero]
     rfl
   rename_i n ih
-  dsimp [lb, ub] at ih
+  change ((sqrtTwoAddSeriesN n).lub k).snd ≤
+    ((sqrtTwoAddSeriesN n).lub k).fst + 18 * n / 2 ^ k at ih
   rify at ih ⊢
   rw [sqrtTwoAddSeriesN_succ_lb, sqrtTwoAddSeriesN_succ_ub]
   set x := ((sqrtTwoAddSeriesN n).lub k)
@@ -185,7 +186,7 @@ theorem sqrtTwoSubSqrtTwoAddSeries_lb (n k : ℕ) (hk : 3 ≤ k) :
     √(2 - Real.sqrtTwoAddSeries 0 n) ≤ (sqrtTwoSubSqrtTwoAddSeriesN n).lb k +
     (18 * n * 2 ^ n + 4) / 2 ^ k
      := by
-  dsimp [lb]
+  change _ ≤ (((sqrtTwoSubSqrtTwoAddSeriesN n).lub k).fst : ℝ) + _
   rw [sqrtTwoSubSqrtTwoAddSeries_eq]
   have h₁ := Sqrt.sqrt_le_sqrtq_add' (2 - Real.sqrtTwoAddSeries 0 n) ((2 - sqrtTwoAddSeriesN
     n).lub k) k
@@ -242,7 +243,7 @@ theorem sqrtTwoSubSqrtTwoAddSeries_lb (n k : ℕ) (hk : 3 ≤ k) :
 theorem sqrtTwoSubSqrtTwoAddSeries_ub (n k : ℕ) (hk : 3 ≤ k) :
     (sqrtTwoSubSqrtTwoAddSeriesN n).ub k - (18 * n * 2 ^ n + 14) / 2 ^ k ≤ √(2 -
       Real.sqrtTwoAddSeries 0 n) := by
-  dsimp [ub]
+  change (((sqrtTwoSubSqrtTwoAddSeriesN n).lub k).snd : ℝ) - _ ≤ _
   rw [sqrtTwoSubSqrtTwoAddSeries_eq]
   have h₁ := Sqrt.sqrtq_sub_le_sqrt' (2 - Real.sqrtTwoAddSeries 0 n) ((2 - sqrtTwoAddSeriesN
     n).lub k) k
