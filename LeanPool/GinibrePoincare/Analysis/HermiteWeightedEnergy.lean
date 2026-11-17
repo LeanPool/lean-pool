@@ -59,14 +59,6 @@ theorem hasSum_norm_sq_gaussianHermiteCoefficient {n : ℕ} (hn : 0 < n)
     (g : Lp ℂ 2 (complexGaussianMeasure n)) :
     HasSum (fun pq : HermiteMultiIndex n => ‖gaussianHermiteCoefficient hn g pq‖ ^ 2)
       (‖g‖ ^ 2) := by
-  have hnorm : ‖(gaussianHermiteHilbertBasis n hn).repr g‖ ^ 2 = ‖g‖ ^ 2 := by
-    rw [(gaussianHermiteHilbertBasis n hn).repr.norm_map]
-  have htsum := lp.norm_rpow_eq_tsum
-    (f := (gaussianHermiteHilbertBasis n hn).repr g) (by norm_num)
-  have heq : (∑' pq : HermiteMultiIndex n,
-      ‖gaussianHermiteCoefficient hn g pq‖ ^ 2) = ‖g‖ ^ 2 := by
-    rw [← hnorm]
-    simpa [gaussianHermiteCoefficient] using htsum.symm
   have hs := lp.hasSum_norm (f := (gaussianHermiteHilbertBasis n hn).repr g)
     (by norm_num)
   convert hs using 1

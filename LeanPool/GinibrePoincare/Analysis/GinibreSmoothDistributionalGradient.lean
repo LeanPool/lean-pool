@@ -36,7 +36,6 @@ SOFTWARE.
 module
 
 public import LeanPool.GinibrePoincare.Analysis.GinibreWeakSobolevMultipliers
-public import Mathlib.Analysis.Calculus.LineDeriv.IntegrationByParts
 
 /-! # Ordinary weak gradients of actual smooth Ginibre L² pairs -/
 

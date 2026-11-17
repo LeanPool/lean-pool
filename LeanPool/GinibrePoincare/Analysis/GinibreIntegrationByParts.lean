@@ -35,7 +35,7 @@ SOFTWARE.
 
 module
 
-public import LeanPool.GinibrePoincare.Analysis.ComplexGaussianIntegrationByParts
+public import Mathlib.Analysis.Calculus.LineDeriv.IntegrationByParts
 public import LeanPool.GinibrePoincare.Analysis.CollisionNull
 public import LeanPool.GinibrePoincare.Analysis.GroundStateDbar
 public import LeanPool.GinibrePoincare.Concrete.Generator
@@ -66,70 +66,33 @@ theorem integral_deriv_eq_zero_of_contDiff_hasCompactSupport
   rw [hgc.integral_Iic_deriv_eq hg 0, hgc.integral_Ioi_deriv_eq hg 0]
   ring
 
-private theorem hasCompactSupport_complexRealSlice {H : ℂ → ℝ}
-    (hH : HasCompactSupport H) (y : ℝ) :
-    HasCompactSupport (fun x : ℝ => H ⟨x, y⟩) := by
-  apply HasCompactSupport.of_support_subset_isCompact
-    (hH.image (Complex.reCLM.continuous))
-  intro x hx
-  exact ⟨⟨x, y⟩, subset_tsupport _ hx, rfl⟩
-
-private theorem deriv_complexRealSlice_real {H : ℂ → ℝ}
-    (hH : ContDiff ℝ 1 H) (y x : ℝ) :
-    deriv (fun r : ℝ => H ⟨r, y⟩) x =
-      fderiv ℝ H ⟨x, y⟩ (1 : ℂ) := by
-  apply HasDerivAt.deriv
-  have hfun : (fun r : ℝ => H ⟨r, y⟩) =
-      H ∘ fun r : ℝ => (r : ℂ) + (y : ℂ) * Complex.I := by
-    funext r
-    congr 1
-    apply Complex.ext <;> simp
-  rw [hfun]
-  have hi : HasDerivAt (fun r : ℝ => (r : ℂ) + (y : ℂ) * Complex.I)
-      (1 : ℂ) x := by
-    simpa using (Complex.ofRealCLM.hasFDerivAt.hasDerivAt.add_const
-      ((y : ℂ) * Complex.I))
-  have heq : (x : ℂ) + (y : ℂ) * Complex.I = ⟨x, y⟩ := by
-    apply Complex.ext <;> simp
-  rw [← heq]
-  change HasDerivAt (H ∘ fun r : ℝ => (r : ℂ) + (y : ℂ) * Complex.I) _ x
-  exact (hH.differentiable (by simp) _).hasFDerivAt.comp_hasDerivAt x hi
+/-- Every directional derivative of a compactly supported `C¹` scalar field
+has zero integral against additive Haar measure. -/
+theorem integral_fderiv_eq_zero_of_contDiff_hasCompactSupport
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [MeasurableSpace E] [BorelSpace E] [FiniteDimensional ℝ E]
+    (μ : Measure E) [Measure.IsAddHaarMeasure μ] (H : E → ℝ)
+    (hH : ContDiff ℝ 1 H) (hHc : HasCompactSupport H) (v : E) :
+    ∫ x, fderiv ℝ H x v ∂μ = 0 := by
+  have hi : Integrable (fun x => fderiv ℝ H x v) μ :=
+    ((hH.continuous_fderiv (by simp)).clm_apply continuous_const)
+      |>.integrable_of_hasCompactSupport
+        (HasCompactSupport.fderiv_apply (𝕜 := ℝ) hHc v)
+  have h := integral_mul_fderiv_eq_neg_fderiv_mul_of_integrable
+    (μ := μ) (f := fun _ : E => (1 : ℝ)) (g := H) (v := v)
+    (by simp)
+    (by simpa using hi)
+    (by simpa using hH.continuous.integrable_of_hasCompactSupport hHc)
+    (fun _ _ => differentiableAt_const _)
+    (fun x _ => hH.differentiable (by simp) x)
+  simpa using h
 
 /-- A compactly supported smooth scalar field on the complex plane has zero
 integral of its real directional derivative. -/
 theorem integral_fderiv_complex_real_eq_zero (H : ℂ → ℝ)
     (hH : ContDiff ℝ 1 H) (hHc : HasCompactSupport H) :
     ∫ z : ℂ, fderiv ℝ H z (1 : ℂ) = 0 := by
-  have hi : Integrable (fun z : ℂ => fderiv ℝ H z (1 : ℂ)) :=
-    ((hH.continuous_fderiv (by simp)).clm_apply continuous_const)
-      |>.integrable_of_hasCompactSupport
-        (HasCompactSupport.fderiv_apply (𝕜 := ℝ) hHc (1 : ℂ))
-  rw [← Complex.volume_preserving_equiv_real_prod.symm.integral_comp']
-  have hip : Integrable (fun p : ℝ × ℝ =>
-      fderiv ℝ H (Complex.measurableEquivRealProd.symm p) (1 : ℂ)) := by
-    rw [← Complex.volume_preserving_equiv_real_prod.symm.map_eq] at hi
-    exact (integrable_map_equiv Complex.measurableEquivRealProd.symm _).mp hi
-  change (∫ p : ℝ × ℝ,
-    fderiv ℝ H (Complex.measurableEquivRealProd.symm p) (1 : ℂ)
-      ∂volume.prod volume) = 0
-  rw [integral_prod_symm _ hip]
-  apply integral_eq_zero_of_ae
-  filter_upwards with y
-  simp only [Complex.measurableEquivRealProd_symm_apply]
-  change (∫ x : ℝ, fderiv ℝ H ⟨x, y⟩ 1) = 0
-  rw [show (fun x : ℝ => fderiv ℝ H ⟨x, y⟩ 1) =
-      fun x => deriv (fun r : ℝ => H ⟨r, y⟩) x by
-    funext x
-    exact (deriv_complexRealSlice_real hH y x).symm]
-  exact integral_deriv_eq_zero_of_contDiff_hasCompactSupport _
-    (by
-      rw [show (fun r : ℝ => H ⟨r, y⟩) =
-          fun r : ℝ => H ((r : ℂ) + (y : ℂ) * Complex.I) by
-        funext r; congr 1; apply Complex.ext <;> simp]
-      apply hH.comp
-      exact Complex.ofRealCLM.contDiff.add
-        (contDiff_const.mul contDiff_const))
-    (hasCompactSupport_complexRealSlice hHc y)
+  exact integral_fderiv_eq_zero_of_contDiff_hasCompactSupport volume H hH hHc 1
 
 /-- Fubini splitting of a finite product measure at an arbitrary coordinate. -/
 theorem integral_configuration_finSucc_split_measure {k : ℕ}
@@ -159,149 +122,26 @@ theorem integral_configuration_finSucc_split_measure {k : ℕ}
       integral_prod_symm _ hprod
     _ = _ := by simp only [ν, e]
 
-private theorem fderiv_comp_configurationCoordinateSlice_apply_real {m : ℕ}
-    {F : Configuration m → ℝ} (hF : ContDiff ℝ 1 F)
-    (r : Configuration m) (j : Fin m) (w v : ℂ) :
-    fderiv ℝ (fun u => F (configurationCoordinateSlice r j u)) w v =
-      fderiv ℝ F (configurationCoordinateSlice r j w) (coordinateDirection j v) := by
-  change fderiv ℝ (F ∘ configurationCoordinateSlice r j) w v = _
-  have hout := (hF.differentiable (by simp)
-    (configurationCoordinateSlice r j w)).hasFDerivAt
-  have hcomp := HasFDerivAt.comp w hout
-    (hasFDerivAt_configurationCoordinateSlice r j w)
-  have hv := congrArg (fun L : ℂ →L[ℝ] ℝ => L v) hcomp.fderiv
-  rw [show coordinateDirection j v = Pi.single j v by
-    funext i; simp [coordinateDirection, Pi.single_apply]]
-  simpa only [ContinuousLinearMap.comp_apply, ContinuousLinearMap.single_apply] using hv
-
-private theorem hasCompactSupport_comp_configurationCoordinateSlice_real {m : ℕ}
-    {F : Configuration m → ℝ} (hF : HasCompactSupport F)
-    (r : Configuration m) (j : Fin m) :
-    HasCompactSupport (fun w => F (configurationCoordinateSlice r j w)) := by
-  apply HasCompactSupport.intro
-    ((isometry_configurationCoordinateSlice r j).isClosedEmbedding.isCompact_preimage hF)
-  intro w hw
-  by_contra hne
-  exact hw (subset_closure hne)
-
 /-- A compactly supported `C¹` function has zero integral of each real
 configuration-coordinate derivative. -/
 theorem integral_fderiv_configuration_real_eq_zero {n : ℕ}
     (Φ : Configuration n → ℝ) (hΦ : ContDiff ℝ 1 Φ)
     (hΦc : HasCompactSupport Φ) (j : Fin n) :
     ∫ z, fderiv ℝ Φ z (realCoordinateDirection j) = 0 := by
-  cases n with
-  | zero => exact Fin.elim0 j
-  | succ k =>
-    have hi : Integrable (fun z => fderiv ℝ Φ z (realCoordinateDirection j)) :=
-      ((hΦ.continuous_fderiv (by simp)).clm_apply continuous_const)
-        |>.integrable_of_hasCompactSupport
-          (HasCompactSupport.fderiv_apply (𝕜 := ℝ) hΦc _)
-    change (∫ z, fderiv ℝ Φ z (realCoordinateDirection j)
-      ∂(Measure.pi fun _ : Fin (k + 1) => (volume : Measure ℂ))) = 0
-    rw [integral_configuration_finSucc_split_measure volume j hi]
-    apply integral_eq_zero_of_ae
-    filter_upwards with r
-    let b : Configuration (k + 1) :=
-      (MeasurableEquiv.piFinSuccAbove
-        (fun _ : Fin (k + 1) => ℂ) j).symm (0, r)
-    rw [show (fun w => fderiv ℝ Φ
-        ((MeasurableEquiv.piFinSuccAbove (fun _ : Fin (k + 1) => ℂ) j).symm (w, r))
-          (realCoordinateDirection j)) =
-        fun w => fderiv ℝ (fun u => Φ (configurationCoordinateSlice b j u)) w 1 by
-      funext w
-      rw [piFinSuccAbove_symm_eq_coordinateSlice j]
-      exact (fderiv_comp_configurationCoordinateSlice_apply_real hΦ b j w 1).symm]
-    exact integral_fderiv_complex_real_eq_zero _
-      (hΦ.comp (contDiff_configurationCoordinateSlice b j))
-      (hasCompactSupport_comp_configurationCoordinateSlice_real hΦc b j)
-
-private theorem hasCompactSupport_complexImagSlice_real {H : ℂ → ℝ}
-    (hH : HasCompactSupport H) (x : ℝ) :
-    HasCompactSupport (fun y : ℝ => H ⟨x, y⟩) := by
-  apply HasCompactSupport.of_support_subset_isCompact
-    (hH.image Complex.imCLM.continuous)
-  intro y hy
-  exact ⟨⟨x, y⟩, subset_tsupport _ hy, rfl⟩
-
-private theorem deriv_complexImagSlice_real {H : ℂ → ℝ}
-    (hH : ContDiff ℝ 1 H) (x y : ℝ) :
-    deriv (fun r : ℝ => H ⟨x, r⟩) y = fderiv ℝ H ⟨x, y⟩ Complex.I := by
-  apply HasDerivAt.deriv
-  have hfun : (fun r : ℝ => H ⟨x, r⟩) =
-      H ∘ fun r : ℝ => (x : ℂ) + (r : ℂ) * Complex.I := by
-    funext r; congr 1; apply Complex.ext <;> simp
-  rw [hfun]
-  have hi : HasDerivAt (fun r : ℝ => (x : ℂ) + (r : ℂ) * Complex.I)
-      Complex.I y := by
-    simpa using ((Complex.ofRealCLM.hasFDerivAt.hasDerivAt.mul_const
-      Complex.I).const_add (x : ℂ))
-  have heq : (x : ℂ) + (y : ℂ) * Complex.I = ⟨x, y⟩ := by
-    apply Complex.ext <;> simp
-  rw [← heq]
-  exact (hH.differentiable (by simp) _).hasFDerivAt.comp_hasDerivAt y hi
+  exact integral_fderiv_eq_zero_of_contDiff_hasCompactSupport
+    volume Φ hΦ hΦc (realCoordinateDirection j)
 
 theorem integral_fderiv_complex_imag_eq_zero (H : ℂ → ℝ)
     (hH : ContDiff ℝ 1 H) (hHc : HasCompactSupport H) :
     ∫ z : ℂ, fderiv ℝ H z Complex.I = 0 := by
-  have hi : Integrable (fun z : ℂ => fderiv ℝ H z Complex.I) :=
-    ((hH.continuous_fderiv (by simp)).clm_apply continuous_const)
-      |>.integrable_of_hasCompactSupport
-        (HasCompactSupport.fderiv_apply (𝕜 := ℝ) hHc Complex.I)
-  rw [← Complex.volume_preserving_equiv_real_prod.symm.integral_comp']
-  rw [← Complex.volume_preserving_equiv_real_prod.symm.map_eq] at hi
-  have hip : Integrable (fun p : ℝ × ℝ =>
-      fderiv ℝ H (Complex.measurableEquivRealProd.symm p) Complex.I)
-      (volume.prod volume) :=
-    (integrable_map_equiv Complex.measurableEquivRealProd.symm _).mp hi
-  change (∫ p : ℝ × ℝ,
-    fderiv ℝ H (Complex.measurableEquivRealProd.symm p) Complex.I
-      ∂volume.prod volume) = 0
-  rw [integral_prod _ hip]
-  apply integral_eq_zero_of_ae
-  filter_upwards with x
-  simp only [Complex.measurableEquivRealProd_symm_apply]
-  change (∫ y : ℝ, fderiv ℝ H ⟨x, y⟩ Complex.I) = 0
-  rw [show (fun y : ℝ => fderiv ℝ H ⟨x, y⟩ Complex.I) =
-      fun y => deriv (fun r : ℝ => H ⟨x, r⟩) y by
-    funext y; exact (deriv_complexImagSlice_real hH x y).symm]
-  exact integral_deriv_eq_zero_of_contDiff_hasCompactSupport _
-    (by
-      rw [show (fun r : ℝ => H ⟨x, r⟩) =
-          fun r : ℝ => H ((x : ℂ) + (r : ℂ) * Complex.I) by
-        funext r; congr 1; apply Complex.ext <;> simp]
-      exact hH.comp (contDiff_const.add
-        (Complex.ofRealCLM.contDiff.mul contDiff_const)))
-    (hasCompactSupport_complexImagSlice_real hHc x)
+  exact integral_fderiv_eq_zero_of_contDiff_hasCompactSupport volume H hH hHc Complex.I
 
 theorem integral_fderiv_configuration_imag_eq_zero {n : ℕ}
     (Φ : Configuration n → ℝ) (hΦ : ContDiff ℝ 1 Φ)
     (hΦc : HasCompactSupport Φ) (j : Fin n) :
     ∫ z, fderiv ℝ Φ z (imaginaryCoordinateDirection j) = 0 := by
-  cases n with
-  | zero => exact Fin.elim0 j
-  | succ k =>
-    have hi : Integrable (fun z => fderiv ℝ Φ z (imaginaryCoordinateDirection j)) :=
-      ((hΦ.continuous_fderiv (by simp)).clm_apply continuous_const)
-        |>.integrable_of_hasCompactSupport
-          (HasCompactSupport.fderiv_apply (𝕜 := ℝ) hΦc _)
-    change (∫ z, fderiv ℝ Φ z (imaginaryCoordinateDirection j)
-      ∂(Measure.pi fun _ : Fin (k + 1) => (volume : Measure ℂ))) = 0
-    rw [integral_configuration_finSucc_split_measure volume j hi]
-    apply integral_eq_zero_of_ae
-    filter_upwards with r
-    let b : Configuration (k + 1) :=
-      (MeasurableEquiv.piFinSuccAbove (fun _ : Fin (k + 1) => ℂ) j).symm (0, r)
-    rw [show (fun w => fderiv ℝ Φ
-        ((MeasurableEquiv.piFinSuccAbove (fun _ : Fin (k + 1) => ℂ) j).symm (w, r))
-          (imaginaryCoordinateDirection j)) =
-        fun w => fderiv ℝ (fun u => Φ (configurationCoordinateSlice b j u)) w Complex.I by
-      funext w
-      rw [piFinSuccAbove_symm_eq_coordinateSlice j]
-      exact (fderiv_comp_configurationCoordinateSlice_apply_real hΦ b j w Complex.I).symm]
-    exact integral_fderiv_complex_imag_eq_zero _
-      (hΦ.comp (contDiff_configurationCoordinateSlice b j))
-      (hasCompactSupport_comp_configurationCoordinateSlice_real hΦc b j)
+  exact integral_fderiv_eq_zero_of_contDiff_hasCompactSupport
+    volume Φ hΦ hΦc (imaginaryCoordinateDirection j)
 
 /-- Integration against normalized Ginibre measure as ordinary Lebesgue
 integration against the explicit real density. -/

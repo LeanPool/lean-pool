@@ -269,12 +269,6 @@ theorem standardComplexGaussian_real_moments :
       ring
     have hnI : Integrable (fun s : ℂ => Complex.normSq s) standardComplexGaussianMeasure := by
       simpa [standardComplexGaussianMeasure, pow_one] using integrable_normSq_pow_coordinate 1 1
-    have hr2 : Integrable (fun s : ℂ => s.re ^ 2) standardComplexGaussianMeasure := by
-      apply hnI.mono'
-      · fun_prop
-      · filter_upwards with s
-        rw [Real.norm_eq_abs, abs_of_nonneg (sq_nonneg s.re), Complex.normSq_apply]
-        nlinarith [sq_nonneg s.im]
     have hreal2 := integral_re hi2
     rw [hsecond'] at hreal2
     have hreal2' : (∫ a : ℂ, (a ^ 2).re ∂standardComplexGaussianMeasure) = 0 := by
@@ -313,12 +307,6 @@ theorem standardComplexGaussian_imag_moments :
       ring
     have hnI : Integrable (fun s : ℂ => Complex.normSq s) standardComplexGaussianMeasure := by
       simpa [standardComplexGaussianMeasure, pow_one] using integrable_normSq_pow_coordinate 1 1
-    have hr2 : Integrable (fun s : ℂ => s.im ^ 2) standardComplexGaussianMeasure := by
-      apply hnI.mono'
-      · fun_prop
-      · filter_upwards with s
-        rw [Real.norm_eq_abs, abs_of_nonneg (sq_nonneg s.im), Complex.normSq_apply]
-        nlinarith [sq_nonneg s.re]
     have hreal2 := integral_re hi2
     rw [hsecond'] at hreal2
     have hreal2' : (∫ a : ℂ, (a ^ 2).re ∂standardComplexGaussianMeasure) = 0 := by
