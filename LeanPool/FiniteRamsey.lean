@@ -40,8 +40,7 @@ public import LeanPool.FiniteRamsey.SimpleGraphTwins
 Source: url:https://github.com/Egly443/lean-ramsey
 Authors: Brian Sanders
 Status: verified
-Main declarations: `SimpleGraph.exists_arrow`, `SimpleGraph.lt_ramseyNumber_of_choose_lt`,
-  `SimpleGraph.schur`
+Main declarations: `SimpleGraph.exists_arrow`, `SimpleGraph.lt_ramseyNumber_of_choose_lt`
 Tags: ramsey-theory, edge-colorings, combinatorics
 MSC: 05C55, 05D10
 -/

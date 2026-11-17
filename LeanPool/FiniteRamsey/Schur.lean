@@ -15,10 +15,13 @@ import LeanPool.FiniteRamsey.OrderedRamsey
 # Schur's theorem
 
 Every finite colouring of the positive naturals has a monochromatic solution to `x + y = z`.
-Classical additive Ramsey theory, and the natural companion to Van der Waerden's theorem (already
-in mathlib as a corollary of Hales–Jewett, `Combinatorics.exists_mono_homothetic_copy`): the two
-are the standard textbook pairing for "Ramsey theory of the integers," of which mathlib currently
-has only one half.
+This file derives that result as an application of the graph Ramsey framework.
+
+The pool already subsumes this conclusion through
+`DensityHalesJewett.FiniteUnions.exists_monochromaticUnions`: colour finite sets by the colour of
+their cardinality and request two disjoint nonempty blocks. The block cardinalities and the
+cardinality of their union give the bounded Schur triple. The application here exhibits the
+framework's difference-colouring and ordered-copy APIs.
 
 ## Main declarations
 
@@ -27,14 +30,14 @@ has only one half.
 
 ## Proof
 
-The classical derivation from graph Ramsey theory (Schur's original 1916 argument, predating even
-the naming of "Ramsey theory"). Given a colouring `c` of the positive naturals, colour the edges of
-`K_N` by `(i, j) ↦ c |i - j|`, the difference colouring. A monochromatic triangle `{a, b, d}` in
-this edge-colouring, sorted `p < q < t`, gives `c (q - p) = c (t - q) = c (p - t) = c (t - p)`, and
-`(q - p) + (t - q) = t - p`: a monochromatic Schur triple. The monochromatic triangle itself comes
-directly from this series' `exists_multicolorCliqueArrow`, instantiated at constant clique target
-`3` for `r` colours; `completeGraph_isContained_iff_orderedIsContained` (`OrderedRamsey.lean`)
-then presents it already sorted, so no case analysis on the order of its vertices is needed.
+A Ramsey-theoretic proof. Given a colouring `c` of the positive naturals, colour the edges of
+`K_N` by `(i, j) ↦ c |i - j|`. A monochromatic triangle with vertices sorted `p < q < t` gives
+`c (q - p) = c (t - q) = c (t - p)` and `(q - p) + (t - q) = t - p`, a monochromatic Schur triple.
+The triangle comes from `exists_multicolorCliqueArrow`, instantiated at constant clique target
+`3` for `r` colours. The ordered-copy bridge presents its vertices already sorted.
+
+Schur's paper below is cited for the theorem. The proof implemented here uses the graph Ramsey
+framework developed in this project.
 
 ## References
 
