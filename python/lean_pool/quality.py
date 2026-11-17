@@ -77,7 +77,8 @@ FORBIDDEN_DIAGNOSTICS = re.compile(
 # to write instead ("Try this", generated declarations). They are interactive
 # tools: a terminal `simp?` passes every linter while leaving an unreviewed
 # search in the proof and a message on every build. `try?` is also the monadic
-# combinator `try? action`, so only its argument-free tactic form is matched.
+# combinator `try? action`, so only its argument-free tactic form is matched;
+# at the end of a line that depends on the next one (see `_ends_with_try`).
 SUGGESTION_KEYWORDS = (
     "aesop",
     "apply",
@@ -120,8 +121,10 @@ SUGGESTION_KEYWORDS = (
 )
 FORBIDDEN_SUGGESTIONS = re.compile(
     r"(?<![\w.'!?«])(?:" + "|".join(SUGGESTION_KEYWORDS) + r")\?\??!?(?![\w'?!])"
-    r"|(?<![\w.'!?«])try\?(?=\s*(?:$|[;)\]]|<;>))"
+    r"|(?<![\w.'!?«])try\?(?=\s*(?:[;)\]]|<;>))"
 )
+TRAILING_TRY = re.compile(r"(?<![\w.'!?«])try\?\s*$")
+SUGGESTION_MESSAGE = "suggestion tactic is forbidden; write the tactic it suggests"
 # Programmatic option manipulation is semantically `set_option` (banned below)
 # but invisible to that textual gate: PR #278 raised `maxRecDepth` from a
 # custom elaborator via `withOptions (fun options => options.set `maxRecDepth
@@ -154,13 +157,13 @@ FORBIDDEN_TEXT_RULES = (
     (re.compile(r"\b(?:admit|sorry)\b"), None),
     (FORBIDDEN_SOUNDNESS, "unchecked declaration is forbidden"),
     (FORBIDDEN_DIAGNOSTICS, "diagnostic command is forbidden"),
-    (
-        FORBIDDEN_SUGGESTIONS,
-        "suggestion tactic is forbidden; write the tactic it suggests",
-    ),
+    (FORBIDDEN_SUGGESTIONS, SUGGESTION_MESSAGE),
 )
 FORBIDDEN_TEXT_CANDIDATES = re.compile(
-    "|".join(pattern.pattern for pattern, _ in FORBIDDEN_TEXT_RULES)
+    "|".join(
+        [pattern.pattern for pattern, _ in FORBIDDEN_TEXT_RULES]
+        + [TRAILING_TRY.pattern]
+    )
 )
 # Strict four-line header. Anchored at the start of the file, no extra lines
 # allowed inside the block: this forbids ad-hoc Source/MSC/Tags/Status fields
@@ -336,8 +339,8 @@ def _check_forbidden_lean_text(root: Path) -> list[_QualityError]:
 
 def _forbidden_text_errors(path: Path) -> list[_QualityError]:
     errors: list[_QualityError] = []
-    stripped = _strip_lean_comments(path.read_text())
-    for line_number, line in enumerate(stripped.splitlines(), start=1):
+    lines = _strip_lean_comments(path.read_text()).splitlines()
+    for line_number, line in enumerate(lines, start=1):
         if not FORBIDDEN_TEXT_CANDIDATES.search(line):
             continue
         for pattern, message in FORBIDDEN_TEXT_RULES:
@@ -346,7 +349,26 @@ def _forbidden_text_errors(path: Path) -> list[_QualityError]:
                     errors.extend(_sorry_errors(path, line_number, line))
                 else:
                     errors.append(_QualityError(path, line_number, message))
+        if _ends_with_try(lines, line_number - 1):
+            errors.append(_QualityError(path, line_number, SUGGESTION_MESSAGE))
     return errors
+
+
+def _ends_with_try(lines: list[str], index: int) -> bool:
+    """Tell a final `try?` tactic from `try?` applied to an action on the next line.
+
+    An argument continues deeper than the line it belongs to; the next tactic
+    of a block does not.
+    """
+    line = lines[index]
+    if not TRAILING_TRY.search(line):
+        return False
+    following = next((item for item in lines[index + 1 :] if item.strip()), "")
+    return _indentation(following) <= _indentation(line)
+
+
+def _indentation(line: str) -> int:
+    return len(line) - len(line.lstrip())
 
 
 def _sorry_errors(path: Path, line_number: int, line: str) -> list[_QualityError]:
