@@ -413,7 +413,7 @@ theorem regIncompleteMellin_mul_pow {α : ℂ} {a : ℝ} {K : ℝ → ℂ} (k : 
     have hne : (t : ℂ) ≠ 0 := ofReal_ne_zero.mpr ht0
     rw [← mul_assoc, ← cpow_natCast, ← cpow_add _ _ hne]
     congr 1
-    ring
+    ring_nf
   unfold regIncompleteMellin
   rw [integral_congr_ae hfun, one_div_Gamma_eq_ascPochhammer_mul_one_div_Gamma_add_nat α k]
   ring_nf

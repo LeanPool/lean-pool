@@ -902,7 +902,7 @@ theorem faceHomeomorph_side_of_not_selected
   unfold PolygonCell.sideAngle
   rw [expandedStartIndex_val]
   push_cast
-  ring
+  ring_nf
 
 /-- Rescale the first half of a source side to a complete target side. -/
 def firstHalfParameter (t : unitInterval) (h : (t : ℝ) ≤ 1 / 2) :
@@ -953,7 +953,7 @@ theorem faceHomeomorph_side_firstHalf
   unfold PolygonCell.sideAngle
   rw [expandedStartIndex_val, firstHalfParameter_val]
   push_cast
-  ring
+  ring_nf
 
 theorem faceHomeomorph_side_secondHalf
     (P : FiniteCyclicPresentation) (a : P.Edge)
@@ -983,7 +983,7 @@ theorem faceHomeomorph_side_secondHalf
   unfold PolygonCell.sideAngle
   rw [secondExpandedIndex_val, secondHalfParameter_val]
   push_cast
-  ring
+  ring_nf
 
 theorem preHomeomorph_occurrenceSide_of_not_selected
     (P : FiniteCyclicPresentation) (a : P.Edge)

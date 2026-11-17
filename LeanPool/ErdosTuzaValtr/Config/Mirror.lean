@@ -75,7 +75,7 @@ theorem Mirror.hasNCap {n : ℕ} {S : Finset α} : C.Mirror.HasNCap n S.Mirror �
     · rw [← Mirror.ncap]; convert c_ncap; simp
     · rw [← @List.ofMirrorMirror α c] at c_in c_ncap
       set co := c.ofMirror
-      rw [← List.Mirror_in]; assumption
+      rwa [← List.Mirror_in]
   · intro h; rcases h with ⟨c, ⟨c_ncap, c_in⟩⟩
     use c.Mirror
     simp_all

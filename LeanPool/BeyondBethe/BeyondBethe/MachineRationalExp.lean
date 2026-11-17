@@ -322,7 +322,7 @@ end RawRat
     machineRationalCeilNatBits_encode]
   congr 2
   rw [RawRat.value_add, RawRat.value_div, RawRat.value_mul]
-  ring
+  ring_nf
 
 @[simp] theorem machineExpStepsBits_encode
     (guard : List Bool) (s loss : RawRat) :

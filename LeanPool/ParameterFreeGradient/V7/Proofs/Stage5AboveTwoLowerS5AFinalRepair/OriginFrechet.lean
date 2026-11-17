@@ -131,7 +131,7 @@ lemma lpNorm_kernelGradientVector {r theta : ℝ} (hr : 2 < r)
     rw [mul_assoc, ← Real.rpow_add hn]
     congr 1
     field_simp [ne_of_gt (by linarith : 0 < r)]
-    ring
+    ring_nf
 
 /-- Uniform ambient growth of the kernel gradient.  The negative-looking
 power of `lpPower` has disappeared before this estimate is used at the

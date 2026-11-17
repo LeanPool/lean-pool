@@ -483,7 +483,7 @@ theorem anariRezaeiPhiThree_le_boundary
 theorem anariRezaeiPhiThree_comm (q s : ℝ) :
     anariRezaeiPhiThree q s = anariRezaeiPhiThree s q := by
   rw [anariRezaeiPhiThree, anariRezaeiPhiThree]
-  ring
+  ring_nf
 
 /-! On the boundary `s = 11/25`, the derivative is nonnegative after
 `q = 1/5`.  The following five positive Bernstein coefficients certify the

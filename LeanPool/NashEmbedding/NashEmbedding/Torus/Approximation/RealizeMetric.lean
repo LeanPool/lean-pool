@@ -1052,7 +1052,7 @@ theorem realizable_approx (hn : 0 < n) {g : (Fin n → ℝ) → Matrix (Fin n) (
                 (∑ k : Fin n → Fin M, sobolevNormSqDistrib n s (D k i j))
             + 2 * ∑ i : Fin n, ∑ j : Fin n, sobolevNormSqDistrib n s (R i j) := by
               simp only [Finset.mul_sum, Finset.sum_add_distrib]
-              ring
+              ring_nf
     have hswap : ∑ i : Fin n, ∑ j : Fin n,
           (∑ k : Fin n → Fin M, sobolevNormSqDistrib n s (D k i j))
         = ∑ k : Fin n → Fin M, ∑ i : Fin n, ∑ j : Fin n,
