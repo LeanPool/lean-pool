@@ -29,9 +29,11 @@ MSC: 05C55, 05D10
 # Classical extremal graph theory beyond Mathlib
 
 Imports every module of the library: the weight-shifting lemma
-(`LeanPool.GraphExtremal.Extremal.WeightShifting`), the Motzkin–Straus theorem with Turán's and Mantel's
+(`LeanPool.GraphExtremal.Extremal.WeightShifting`), the Motzkin–Straus theorem with Turán's and
+Mantel's
 bounds (`LeanPool.GraphExtremal.Extremal.MotzkinStraus`), Zykov's theorem and Maclaurin's inequality
-(`LeanPool.GraphExtremal.Extremal.Zykov`), Kőnig's theorem and Gallai's identity (`LeanPool.GraphExtremal.Konig`),
+(`LeanPool.GraphExtremal.Extremal.Zykov`), Kőnig's theorem and Gallai's identity
+(`LeanPool.GraphExtremal.Konig`),
 lexicographic products and the Turán graph (`LeanPool.GraphExtremal.LexProd`), and Paley graphs
 (`LeanPool.GraphExtremal.Paley`).
 -/
