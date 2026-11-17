@@ -36,7 +36,6 @@ SOFTWARE.
 module
 
 public import LeanPool.GinibrePoincare.Analysis.HermiteMonomialSpan
-public import Mathlib.Algebra.Algebra.Operations
 
 /-! # Pointwise multivariate triangular inversion
 

@@ -37,12 +37,7 @@ module
 
 public import LeanPool.GinibrePoincare.Analysis.MultivariateComplexHermite
 public import LeanPool.GinibrePoincare.Analysis.GinibreMassFiniteness
-public import LeanPool.GinibrePoincare.Concrete.Vandermonde
 public import LeanPool.GinibrePoincare.Concrete.NormalizedGroundState
-public import Mathlib.RingTheory.MvPolynomial.Symmetric.FundamentalTheorem
-public import Mathlib.Algebra.Polynomial.Div
-public import Mathlib.Algebra.Polynomial.RingDivision
-public import Mathlib.RingTheory.Coprime.Lemmas
 public import Mathlib.RingTheory.Polynomial.UniqueFactorization
 public import Mathlib.Algebra.MvPolynomial.Funext
 
@@ -310,7 +305,7 @@ def asPolynomialInVariable {n : ℕ} (j : Fin n) :
 
 /-- In particular, the variable identified with `j` is represented by its
 coefficient-ring indeterminate. -/
-@[simp] theorem asPolynomialInVariable_X_identified {n : ℕ}
+theorem asPolynomialInVariable_X_identified {n : ℕ}
     {i j : Fin n} (hij : i ≠ j) :
     asPolynomialInVariable j (MvPolynomial.X i) =
       Polynomial.C (MvPolynomial.X ⟨i, hij⟩) :=

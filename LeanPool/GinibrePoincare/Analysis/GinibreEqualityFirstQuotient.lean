@@ -37,7 +37,7 @@ module
 
 public import LeanPool.GinibrePoincare.Analysis.GinibreEqualityPolynomial
 public import LeanPool.GinibrePoincare.Analysis.GinibreConjugationGeometry
-public import LeanPool.GinibrePoincare.Analysis.GinibreFullGeneratorCenterEigenvectors
+public import LeanPool.GinibrePoincare.Analysis.GinibreCoordinateSumL2
 
 /-!
 # Ginibre Equality First Quotient
@@ -117,7 +117,7 @@ holomorphic quotient sector. -/
 theorem ginibreEquality_first_quotient_closedSpan_ae_coordinateSum {n : ℕ} (hn : 0 < n)
     (h : Lp ℂ 2 (ginibreMeasure n)) (hh : h ∈ ginibreFiniteQuotientDegreeClosedSpan n 1 hn) :
     ∃ c : ℂ, (h : Configuration n → ℂ) =ᵐ[ginibreMeasure n] fun z => c * coordinateSum z := by
-  obtain ⟨s, hs, _⟩ := ginibreFullGenerator_coordinateSum_eigenvector n hn
+  obtain ⟨s, hs⟩ := ginibreSymmetricL2_coordinateSum n hn
   have hm := ginibreEquality_first_quotient_closedSpan_le_coordinateSum hn s hs hh
   obtain ⟨c, hc⟩ := Submodule.mem_span_singleton.mp hm
   refine ⟨c, ?_⟩

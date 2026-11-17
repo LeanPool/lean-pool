@@ -37,7 +37,6 @@ module
 
 public import LeanPool.GinibrePoincare.Analysis.HermiteBinomialIdentity
 public import LeanPool.GinibrePoincare.Analysis.ComplexGaussianMoments
-public import Mathlib.Analysis.InnerProductSpace.Projection.Submodule
 
 /-!
 # The multivariate Hermite family in Gaussian `L²`

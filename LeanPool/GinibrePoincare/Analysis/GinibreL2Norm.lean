@@ -6,7 +6,8 @@ Authors: Djalil Chafaï
 
 /-
 Adapted for Lean Pool from djalilchafai/ginibre-
-poincare/GinibrePoincare/Analysis/GinibreFullGeneratorSpectrum.lean.
+poincare/GinibrePoincare/Analysis/RadialSobolevClosure.lean and
+GinibrePoincare/Analysis/EntropyL2Closure.lean.
 Module paths, interfaces, and proofs are ported to the pool's toolchain and gates.
 The original source is MIT licensed; its notice follows.
 
@@ -35,33 +36,27 @@ SOFTWARE.
 
 module
 
-public import Mathlib.Analysis.InnerProductSpace.StarOrder
-public import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Order
+public import Mathlib.MeasureTheory.Function.L2Space
 
-/-!
-# Ginibre Full Generator Spectrum
--/
-
+/-! # Integral and Hilbert-space squared norms -/
 
 @[expose] public section
 
-namespace GinibrePoincare
 noncomputable section
+namespace GinibrePoincare
+open MeasureTheory
+open scoped BigOperators
 
-variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
+/-- The actual square moment equals the Hilbert-space squared norm. -/
+theorem integral_square_eq_L2_norm_sq {α : Type*} [MeasurableSpace α]
+    (μ : Measure α) (f : Lp ℝ 2 μ) : (∫ x, f x ^ 2 ∂μ) = ‖f‖ ^ 2 := by
+  rw [← real_inner_self_eq_norm_sq, L2.inner_def]
+  simp only [real_inner_self_eq_norm_sq, Real.norm_eq_abs, sq_abs]
 
-/-- A positive Hilbert-space contraction has real spectrum in the unit interval. -/
-theorem ginibreFull_positive_contraction_spectrum (R : H →L[ℂ] H)
-    (hp : R.IsPositive) (hnorm : ‖R‖ ≤ 1) : spectrum ℝ R ⊆ Set.Icc 0 1 := by
-  rcases subsingleton_or_nontrivial H with hH | hH
-  · let := hH
-    rw [spectrum.of_subsingleton]
-    exact Set.empty_subset _
-  let := hH
-  intro r hr
-  have hpos : 0 ≤ R := ContinuousLinearMap.nonneg_iff_isPositive.mpr hp
-  exact ⟨spectrum_nonneg_of_nonneg hpos hr,
-    (Real.le_norm_self r).trans ((spectrum.norm_le_norm_of_mem hr).trans hnorm)⟩
+theorem integral_norm_sq_eq_L2_norm_sq {α V : Type*} [MeasurableSpace α]
+    [NormedAddCommGroup V] [InnerProductSpace ℝ V] (μ : Measure α) (v : Lp V 2 μ) :
+    (∫ x, ‖v x‖ ^ 2 ∂μ) = ‖v‖ ^ 2 := by
+  rw [← real_inner_self_eq_norm_sq, L2.inner_def]
+  simp only [real_inner_self_eq_norm_sq]
 
-end
 end GinibrePoincare

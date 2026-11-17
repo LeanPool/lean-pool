@@ -80,6 +80,7 @@ private theorem Lp_norm_star {n : ℕ} (u : Lp ℂ 2 (ginibreMeasure n)) :
   rw [Lp.norm_def, Lp.norm_def]
   exact congrArg ENNReal.toReal AEEqFun.eLpNorm_star
 
+/-- Pointwise conjugation on complex Ginibre L², viewed as a real-linear isometry. -/
 def ginibreFullLpConjugationIsometry (n : ℕ) :
     Lp ℂ 2 (ginibreMeasure n) →ₗᵢ[ℝ] Lp ℂ 2 (ginibreMeasure n) where
   toLinearMap :=
@@ -88,6 +89,7 @@ def ginibreFullLpConjugationIsometry (n : ℕ) :
       map_smul' := by exact Lp_star_real_smul }
   norm_map' := by exact Lp_norm_star
 
+/-- Centered residual after subtracting the holomorphic projection and its conjugate. -/
 def ginibreFullHolomorphicRemainder (n : ℕ) (hn : 0 < n) (u : GinibreFullValueL2 n) :=
   let U := ginibreFullComplexOfReal n (ginibreFullCenter n hn u)
   let H := (ginibreHolomorphicAmbientClosedSpan n hn).starProjection U

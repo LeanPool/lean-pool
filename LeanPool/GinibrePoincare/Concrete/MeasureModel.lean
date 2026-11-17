@@ -37,10 +37,6 @@ module
 
 public import LeanPool.GinibrePoincare.Concrete.Weights
 public import LeanPool.GinibrePoincare.Concrete.GaussianProbability
-public import Mathlib.MeasureTheory.Measure.Lebesgue.Complex
-public import Mathlib.MeasureTheory.Measure.Haar.OfBasis
-public import Mathlib.MeasureTheory.Measure.WithDensity
-public import Mathlib.Basic.ENNReal.Real
 
 /-!
 # Concrete Gaussian density and Ginibre measure

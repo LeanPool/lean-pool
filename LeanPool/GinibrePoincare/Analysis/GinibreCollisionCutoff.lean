@@ -36,8 +36,7 @@ SOFTWARE.
 module
 
 public import LeanPool.GinibrePoincare.Analysis.ComplexSquaredGradient
-public import LeanPool.GinibrePoincare.Analysis.GinibreZeroPairCutoff
-public import LeanPool.GinibrePoincare.Concrete.Generator
+public import LeanPool.GinibrePoincare.Analysis.SobolevTruncation
 
 /-! # Actual symmetric cutoff near the full collision locus -/
 
@@ -70,6 +69,8 @@ theorem vandermondeWeight_symmetric (n : ℕ) : IsSymmetric (vandermondeWeight :
     rcases Int.units_eq_one_or (Equiv.Perm.sign σ) with h | h <;> simp [h]
   rw [hs, one_mul]
 
+/-- Smooth symmetric cutoff vanishing near particle collisions, defined using the Vandermonde
+weight. -/
 def ginibreCollisionCutoff (n m : ℕ) (z : Configuration n) : ℝ :=
   1 - sobolevCutoffBump (((m : ℝ) + 1) * vandermondeWeight z)
 

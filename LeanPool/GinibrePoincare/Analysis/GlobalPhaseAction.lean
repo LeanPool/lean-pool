@@ -36,13 +36,7 @@ SOFTWARE.
 module
 
 public import LeanPool.GinibrePoincare.Analysis.HolomorphicVandermondeDivision
-public import Mathlib.Analysis.InnerProductSpace.Basic
-public import Mathlib.MeasureTheory.Measure.Lebesgue.Complex
-public import LeanPool.GinibrePoincare.Analysis.ComplexGaussianDensity
-public import LeanPool.GinibrePoincare.Analysis.MeasureTransport
-public import LeanPool.GinibrePoincare.Analysis.VandermondeL2
 public import LeanPool.GinibrePoincare.Analysis.VandermondeL2Inverse
-public import LeanPool.GinibrePoincare.Analysis.HermiteL2Family
 public import LeanPool.GinibrePoincare.Analysis.HermiteEnergy
 public import Mathlib.RingTheory.RootsOfUnity.Complex
 public import Mathlib.RingTheory.MvPolynomial.Homogeneous
@@ -76,6 +70,7 @@ theorem globalPhase_mul {n : ℕ} (u v : ℂ) (z : Configuration n) :
   ext i
   simp [globalPhase, mul_assoc]
 
+/-- Total holomorphic degree of a particle multi-index. -/
 def totalHolomorphicDegree {n : ℕ} (p : Fin n → ℕ) : ℕ := ∑ i, p i
 
 /-- Total degree of the `n`-particle Vandermonde. -/
@@ -121,7 +116,7 @@ theorem toLin_complexMultiplicationMatrix (u z : ℂ) :
   fin_cases i <;>
     simp only [Matrix.toLin'_apply]
   all_goals simp [complexMultiplicationMatrix, Matrix.mulVec,
-      Complex.mul_re, Complex.mul_im] ; ring
+      Complex.mul_re, Complex.mul_im]; ring
 
 /-- Multiplication by a unit complex number preserves planar Lebesgue
 measure. -/

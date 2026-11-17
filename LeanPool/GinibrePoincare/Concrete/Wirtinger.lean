@@ -34,11 +34,7 @@ SOFTWARE.
 
 module
 
-public import Mathlib.Analysis.Calculus.ContDiff.Defs
-public import LeanPool.GinibrePoincare.Concrete.MeasureModel
-public import Mathlib.Analysis.Calculus.FDeriv.Basic
-public import Mathlib.MeasureTheory.Integral.Bochner.Basic
-public import Mathlib.Order.ConditionallyCompleteLattice.Basic
+public import LeanPool.GinibrePoincare.Concrete.GaussianProbability
 
 /-!
 # Concrete Wirtinger derivatives and Gaussian holomorphic distance

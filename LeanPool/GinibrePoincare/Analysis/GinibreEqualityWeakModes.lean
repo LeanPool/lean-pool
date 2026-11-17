@@ -37,7 +37,7 @@ module
 
 public import LeanPool.GinibrePoincare.Analysis.GinibreEqualityCore
 public import LeanPool.GinibrePoincare.Analysis.GinibreEqualityWeakVariational
-public import LeanPool.GinibrePoincare.Analysis.GinibreFullGeneratorCoreCompatibility
+public import LeanPool.GinibrePoincare.Analysis.GinibreComplexL2
 
 /-!
 # Ginibre Equality Weak Modes

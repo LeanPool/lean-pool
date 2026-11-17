@@ -37,8 +37,6 @@ module
 
 public import LeanPool.GinibrePoincare.Concrete.GroundState
 public import LeanPool.GinibrePoincare.Concrete.MeasureModel
-public import Mathlib.Analysis.SpecialFunctions.Pow.Real
-public import Mathlib.Tactic.Ring
 
 /-!
 # Normalized Vandermonde transform

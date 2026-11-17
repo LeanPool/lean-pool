@@ -36,7 +36,6 @@ SOFTWARE.
 module
 
 public import LeanPool.GinibrePoincare.Concrete.Configuration
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 
 /-!
 # Centre of mass

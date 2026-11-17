@@ -35,8 +35,7 @@ SOFTWARE.
 
 module
 
-public import LeanPool.GinibrePoincare.Analysis.VandermondeL2
-public import Mathlib.MeasureTheory.Function.LpSpace.ContinuousCompMeasurePreserving
+public import LeanPool.GinibrePoincare.Analysis.GinibreMassPositivity
 
 /-! # Permutation actions and symmetric/alternating `L²` subspaces -/
 

@@ -35,7 +35,8 @@ SOFTWARE.
 
 module
 
-public import LeanPool.GinibrePoincare.Analysis.GinibreSymmetricWeakPoincare
+public import LeanPool.GinibrePoincare.Analysis.GinibreDistributionalClosure
+public import LeanPool.GinibrePoincare.Analysis.GinibreWeakPermutation
 
 /-!
 # Ginibre Full Generator Weak Space
@@ -49,7 +50,9 @@ noncomputable section
 open MeasureTheory Filter
 open scoped Topology
 
+/-- Real-valued L² classes for the normalized Ginibre measure. -/
 abbrev GinibreFullValueL2 (n : ℕ) := Lp ℝ 2 (ginibreMeasure n)
+/-- L² vector fields with one real component for each real particle-coordinate direction. -/
 abbrev GinibreFullGradientL2 (n : ℕ) :=
   Lp (EuclideanSpace ℝ (Fin n × Fin 2)) 2 (ginibreMeasure n)
 

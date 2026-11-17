@@ -37,8 +37,7 @@ module
 
 public import LeanPool.GinibrePoincare.Analysis.MultivariateHermiteMonomialSpan
 public import LeanPool.GinibrePoincare.Analysis.GaussianPolynomialCompleteness
-public import Mathlib.Probability.Distributions.Gaussian.Real
-public import Mathlib.Probability.Moments.IntegrableExpMul
+public import LeanPool.GinibrePoincare.Analysis.GaussianPolynomialDensity
 
 /-! # Polynomial Gaussian `L²` vectors and Hermite moments -/
 

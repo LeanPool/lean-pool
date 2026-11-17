@@ -35,11 +35,10 @@ SOFTWARE.
 
 module
 
-public import LeanPool.GinibrePoincare.Analysis.GinibrePermutationAverage
 public import LeanPool.GinibrePoincare.Analysis.GinibreDistributionalGradient
 public import LeanPool.GinibrePoincare.Analysis.GinibreWeakSobolevMultipliers
 public import LeanPool.GinibrePoincare.Analysis.GinibrePermutationGradient
-public import Mathlib.Analysis.Normed.Lp.PiLp
+public import LeanPool.GinibrePoincare.Analysis.GinibreL2Norm
 
 /-! # Particle permutations on actual Ginibre weak-pair spaces -/
 

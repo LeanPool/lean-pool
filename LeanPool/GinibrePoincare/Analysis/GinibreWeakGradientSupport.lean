@@ -35,7 +35,8 @@ SOFTWARE.
 
 module
 
-public import LeanPool.GinibrePoincare.Analysis.RadialInteriorWeakSobolevApproximation
+public import LeanPool.GinibrePoincare.Analysis.GinibreWeakSobolevMultipliers
+public import LeanPool.GinibrePoincare.Analysis.GinibreDensityBound
 
 /-! # Locality and compact representatives of ordinary weak gradients
 
@@ -117,51 +118,6 @@ theorem ginibre_distributional_gradient_exists_supported_representative
   by_cases hmem : z ∈ tsupport f
   · simp [h, hmem]
   · simp [h, hmem, hz hmem]
-
-/-- Interior compact radial weak values belong to the original smooth radial
-completion; compactness and interior support of the gradient are derived. -/
-theorem radial_compact_interior_weak_mem_sobolevClosure
-    (n : ℕ) (hn : 0 < n) (u : Lp ℝ 2 (ginibreMeasure n))
-    (g : Lp (EuclideanSpace ℝ (Fin n × Fin 2)) 2 (ginibreMeasure n))
-    (hg : IsGinibreDistributionalGradient n u g)
-    (f : Configuration n → ℝ) (hf : (u : Configuration n → ℝ) =ᵐ[ginibreMeasure n] f)
-    (hc : HasCompactSupport f) (hfs : tsupport f ⊆ {z | CollisionFree z})
-    (hs : IsSymmetric f)
-    (hr : ∃ F : (Fin n → ℝ) → ℝ, ∀ z, f z = F (fun i => Complex.normSq (z i))) :
-    (u, g) ∈ radialSobolevClosure n := by
-  obtain ⟨h, hh, hhc, hhs⟩ := ginibre_distributional_gradient_exists_supported_representative
-    n hn u g hg f hf hc
-  exact radial_interior_weak_mem_sobolevClosure n hn u g hg f h hf hh
-    hc hhc hfs (hhs.trans hfs) hs hr
-
-/-- Sharp LSI for interior compact radial weak values, with no separate gradient-support premise. -/
-theorem radial_compact_interior_weak_lsi
-    (n : ℕ) (hn : 0 < n) (u : Lp ℝ 2 (ginibreMeasure n))
-    (g : Lp (EuclideanSpace ℝ (Fin n × Fin 2)) 2 (ginibreMeasure n))
-    (hg : IsGinibreDistributionalGradient n u g)
-    (f : Configuration n → ℝ) (hf : (u : Configuration n → ℝ) =ᵐ[ginibreMeasure n] f)
-    (hc : HasCompactSupport f) (hfs : tsupport f ⊆ {z | CollisionFree z})
-    (hs : IsSymmetric f)
-    (hr : ∃ F : (Fin n → ℝ) → ℝ, ∀ z, f z = F (fun i => Complex.normSq (z i))) :
-    Integrable (fun z => u z ^ 2 * Real.log (u z ^ 2)) (ginibreMeasure n) ∧
-      ginibreSquareEntropy n u ≤ (1 / (n : ℝ)) * ‖g‖ ^ 2 :=
-  radial_sobolev_lsi n hn (u, g)
-    (radial_compact_interior_weak_mem_sobolevClosure n hn u g hg f hf hc hfs hs hr)
-
-/-- Actual core approximants exist without a supplied compact gradient representative. -/
-theorem radial_compact_interior_weak_exists_core_sequence
-    (n : ℕ) (hn : 0 < n) (u : Lp ℝ 2 (ginibreMeasure n))
-    (g : Lp (EuclideanSpace ℝ (Fin n × Fin 2)) 2 (ginibreMeasure n))
-    (hg : IsGinibreDistributionalGradient n u g)
-    (f : Configuration n → ℝ) (hf : (u : Configuration n → ℝ) =ᵐ[ginibreMeasure n] f)
-    (hc : HasCompactSupport f) (hfs : tsupport f ⊆ {z | CollisionFree z})
-    (hs : IsSymmetric f)
-    (hr : ∃ F : (Fin n → ℝ) → ℝ, ∀ z, f z = F (fun i => Complex.normSq (z i))) :
-    ∃ q : ℕ → Lp ℝ 2 (ginibreMeasure n) ×
-      Lp (EuclideanSpace ℝ (Fin n × Fin 2)) 2 (ginibreMeasure n),
-      (∀ m, q m ∈ radialSobolevCorePairs n) ∧ Tendsto q atTop (𝓝 (u, g)) :=
-  mem_closure_iff_seq_limit.mp
-    (radial_compact_interior_weak_mem_sobolevClosure n hn u g hg f hf hc hfs hs hr)
 
 end
 end GinibrePoincare

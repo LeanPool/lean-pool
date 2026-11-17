@@ -36,6 +36,7 @@ SOFTWARE.
 module
 
 public import LeanPool.GinibrePoincare.Analysis.GinibreIntegrationByParts
+public import LeanPool.GinibrePoincare.Analysis.L2RepresentativeBridges
 
 /-!
 # Ginibre Generator L2
@@ -213,7 +214,7 @@ theorem norm_sq_ginibrePregeneratorL2 {n : ℕ} (hn : 0 < n)
   have hr : ‖ginibrePregeneratorL2 hn f hf‖ ^ 2 =
       ∫ z, ginibrePregenerator n f z ^ 2 ∂ginibreMeasure n := by
     apply Complex.ofReal_injective
-    convert hinner using 1 ;
+    convert hinner using 1;
       simp [← Complex.ofReal_pow]
   exact hr
 
@@ -230,7 +231,7 @@ theorem memLp_shiftedGinibrePregenerator_of_core {n : ℕ} (hn : 0 < n)
         intro z hz hzero
         apply hz
         simp [hzero])
-  convert hgen.add (hfun.const_mul 2) using 1 ; ext z ; simp
+  convert hgen.add (hfun.const_mul 2) using 1; ext z; simp
 
 /-- The `L²` class represented by `(Aₙ + 2)f`. -/
 def shiftedGinibrePregeneratorL2 {n : ℕ} (hn : 0 < n)
@@ -269,7 +270,7 @@ theorem norm_sq_shiftedGinibrePregeneratorL2 {n : ℕ} (hn : 0 < n)
   have hr : ‖shiftedGinibrePregeneratorL2 hn f hf‖ ^ 2 =
       ∫ z, (ginibrePregenerator n f z + 2 * f z) ^ 2 ∂ginibreMeasure n := by
     apply Complex.ofReal_injective
-    convert hinner using 1 ;
+    convert hinner using 1;
       simp [← Complex.ofReal_pow
         ]
   exact hr

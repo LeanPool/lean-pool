@@ -38,10 +38,8 @@ module
 public import LeanPool.GinibrePoincare.Concrete.Configuration
 public import Mathlib.Analysis.Calculus.BumpFunction.Normed
 public import Mathlib.Analysis.Calculus.BumpFunction.FiniteDimension
-public import Mathlib.MeasureTheory.Constructions.Pi
 public import Mathlib.MeasureTheory.Function.LpSpace.DomAct.Continuous
 public import Mathlib.MeasureTheory.Function.L2Space
-public import Mathlib.MeasureTheory.Measure.Lebesgue.Complex
 
 /-! # Strong L² convergence of normalized bump averages
 
@@ -64,6 +62,7 @@ local instance : Fact ((2 : ℝ≥0∞) ≠ ∞) := ⟨by norm_num⟩
 
 variable {V : Type*} [NormedAddCommGroup V] [NormedSpace ℝ V] [CompleteSpace V]
 
+/-- Translation action on Lebesgue L², parameterized for convolution by a bump kernel. -/
 def lebesgueL2Translate (n : ℕ) (y : Configuration n)
     (u : Lp V 2 (volume : Measure (Configuration n))) : Lp V 2 (volume : Measure (Configuration
       n)) :=
@@ -94,6 +93,7 @@ theorem lebesgueL2Translate_ae (n : ℕ) (y : Configuration n)
   simpa only [lebesgueL2Translate, Equiv.symm_apply_apply, vadd_eq_add, sub_eq_add_neg,
     add_comm] using hx
 
+/-- Bochner average of translated Lebesgue L² classes against a normalized smooth bump. -/
 def lebesgueL2BumpAverage (n : ℕ) (φ : ContDiffBump (0 : Configuration n))
     (u : Lp V 2 (volume : Measure (Configuration n))) : Lp V 2 (volume : Measure (Configuration
       n)) :=

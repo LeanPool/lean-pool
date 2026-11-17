@@ -36,7 +36,6 @@ SOFTWARE.
 module
 
 public import LeanPool.GinibrePoincare.Analysis.GinibreDistributionalGradient
-public import Mathlib.Analysis.Complex.Exponential
 
 /-! # Global boundedness of the actual Ginibre density
 

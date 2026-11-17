@@ -36,7 +36,6 @@ SOFTWARE.
 module
 
 public import LeanPool.GinibrePoincare.Analysis.HermiteOrthogonalityCombinatorics
-public import Mathlib.Algebra.Polynomial.Coeff
 
 /-! # Alternating Vandermonde identities for complex Hermites -/
 

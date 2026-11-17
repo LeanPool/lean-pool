@@ -37,6 +37,7 @@ module
 
 public import LeanPool.GinibrePoincare.Analysis.GinibreWeakSobolevMultipliers
 public import LeanPool.GinibrePoincare.Analysis.GinibreSpatialCutoffs
+public import LeanPool.GinibrePoincare.Analysis.GinibreL2Norm
 
 /-! # Actual spatial truncation of Ginibre weak-H¹ functions
 
@@ -153,6 +154,8 @@ theorem L2_dist_eq_sqrt_integral_norm_error {α V : Type*} [MeasurableSpace α]
     simp only [hx, Pi.sub_apply]
   rw [he, Real.sqrt_sq_eq_abs, abs_of_nonneg (norm_nonneg _), dist_eq_norm]
 
+/-- Truncate a weak value-gradient pair spatially using the product rule and a smooth compact
+cutoff. -/
 def ginibreWeakSpatialTruncation (n : ℕ) (hn : 0 < n)
     (u : Lp ℝ 2 (ginibreMeasure n))
     (g : Lp (EuclideanSpace ℝ (Fin n × Fin 2)) 2 (ginibreMeasure n)) (m : ℕ) :

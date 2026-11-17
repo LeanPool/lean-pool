@@ -36,6 +36,7 @@ SOFTWARE.
 module
 
 public import LeanPool.GinibrePoincare.Analysis.GinibreEqualityMixedHermite
+public import LeanPool.GinibrePoincare.Analysis.GinibreEqualityMixedFactor
 
 /-!
 # Ginibre Equality Conjugate Polynomial Degree

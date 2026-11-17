@@ -36,7 +36,6 @@ SOFTWARE.
 module
 
 public import LeanPool.GinibrePoincare.Analysis.GinibreWeakGradient
-public import Mathlib.Topology.Algebra.Module.Equiv.Basic
 
 /-! # Covariance of the concrete gradient under particle relabelling -/
 

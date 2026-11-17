@@ -35,7 +35,8 @@ SOFTWARE.
 
 module
 
-public import LeanPool.GinibrePoincare.Analysis.GinibreEqualityMixedFactor
+public import LeanPool.GinibrePoincare.Analysis.GinibreEqualityMixedPolynomial
+public import LeanPool.GinibrePoincare.Analysis.HermiteEnergy
 
 /-!
 # Ginibre Equality Mixed Hermite
@@ -49,6 +50,8 @@ namespace GinibrePoincare
 open MvPolynomial ComplexHermite
 open scoped BigOperators ComplexConjugate
 
+/-- The mixed polynomial representing a product of normalized one-coordinate Hermite
+polynomials. -/
 def ginibreMixedHermitePolynomial (n : ℕ) (hn : 0 < n) (p q : Fin n → ℕ) : GinibreMixedPolynomial
   n :=
   ∏ j : Fin n, MvPolynomial.rename (fun k : Fin 2 => (j, k)) (normalized n hn (p j) (q j))
@@ -101,6 +104,7 @@ theorem ginibreMixedHermitePolynomial_specialize_degree (n : ℕ) (hn : 0 < n)
     (Finset.sum_le_sum (fun j _ => ginibreMixedHermiteCoordinate_specialize_degree n hn (p j) (q
       j) j z))
 
+/-- The mixed polynomial associated with a finitely supported Hermite expansion. -/
 def ginibreMixedFiniteHermitePolynomial (n : ℕ) (hn : 0 < n)
     (c : HermiteMultiIndex n →₀ ℂ) : GinibreMixedPolynomial n :=
   c.sum (fun pq a => C a * ginibreMixedHermitePolynomial n hn pq.1 pq.2)

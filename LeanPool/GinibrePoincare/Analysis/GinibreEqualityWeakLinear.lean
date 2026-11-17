@@ -35,7 +35,7 @@ SOFTWARE.
 
 module
 
-public import LeanPool.GinibrePoincare.Analysis.GinibreEqualityWeakDeficit
+public import LeanPool.GinibrePoincare.Analysis.GinibreEqualityWeakVariational
 
 /-!
 # Ginibre Equality Weak Linear

@@ -35,14 +35,9 @@ SOFTWARE.
 
 module
 
-public import Mathlib.Analysis.Calculus.ContDiff.Defs
 public import LeanPool.GinibrePoincare.Concrete.CenterOfMass
 public import LeanPool.GinibrePoincare.Concrete.MeasureModel
 public import LeanPool.GinibrePoincare.Concrete.Wirtinger
-public import Mathlib.Analysis.Calculus.FDeriv.Basic
-public import Mathlib.MeasureTheory.Integral.Bochner.Basic
-public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
-public import Mathlib.Topology.Algebra.Support
 
 /-!
 # Exact smooth-core statement

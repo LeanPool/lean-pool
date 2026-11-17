@@ -36,7 +36,7 @@ SOFTWARE.
 module
 
 public import LeanPool.GinibrePoincare.Analysis.GinibreValueTruncationChainLimits
-public import LeanPool.GinibrePoincare.Analysis.GinibreWeightedRadialInteriorMollification
+public import LeanPool.GinibrePoincare.Analysis.GinibreWeightedInteriorMollification
 public import LeanPool.GinibrePoincare.Analysis.GinibreWeakGradientSupport
 public import LeanPool.GinibrePoincare.Analysis.SmoothTestLocalization
 
@@ -66,10 +66,12 @@ theorem ginibreValueTruncation_chain_interior (n : ℕ) (hn : 0 < n) (m : ℕ)
         (fun z => deriv (sobolevValueTruncation m) (u z) • g z)) := by
   obtain ⟨h, hh, hhc, hhs⟩ := ginibre_distributional_gradient_exists_supported_representative n hn
     u g hg f hf hc
-  obtain ⟨v, w, he, ht⟩ := ginibre_weighted_radial_interior_mollification n hn u g hg f h hf hh hc
-    hhc hs (hhs.trans hs)
+  let φ := ginibreInteriorBump n 1 (by norm_num)
+  obtain ⟨v, w, he, ht⟩ := ginibre_weighted_interior_mollification n hn u g hg
+    f h hf hh hc hhc hs (hhs.trans hs) φ
+    (ginibreInteriorBump_radius_tendsto n 1 (by norm_num))
   exact ginibreValueTruncation_chain_of_smooth_limits n hn m u g v w
-    (fun j => radialMollifierKernel n j ⋆[lsmul ℝ ℝ, volume] f)
+    (fun j => (φ j).normed volume ⋆[lsmul ℝ ℝ, volume] f)
     (fun j => (he j).1) (fun j => (he j).2.2.1) (fun j => (he j).2.2.2)
     (continuous_fst.tendsto _ |>.comp ht) (continuous_snd.tendsto _ |>.comp ht)
 

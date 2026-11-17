@@ -71,10 +71,13 @@ def concretePositiveHermiteModeMass {n : ℕ} (hn : 0 < n)
     (f : Configuration n → ℝ) (hf : IsTheoremOneNineCore f) : ℕ → ℝ :=
   positiveHermiteModeMass hn (transformedCenteredObservableL2 hn f hf)
 
+/-- Normalized Vandermonde transform of an observable before subtracting its Ginibre mean. -/
 def uncenteredGroundStateTransform {n : ℕ} (f : Configuration n → ℝ) :
     Configuration n → ℂ :=
   normalizedVandermondeTransform n (fun z => (f z : ℂ))
 
+/-- The Gaussian L² class of the uncentered normalized Vandermonde transform of a core
+observable. -/
 def uncenteredGroundStateL2 {n : ℕ} (_hn : 0 < n)
     (f : Configuration n → ℝ) (hf : IsTheoremOneNineCore f) :
     Lp ℂ 2 (complexGaussianMeasure n) := by
@@ -204,6 +207,7 @@ theorem transformedCenteredObservable_finiteMode_formCore
   exact HermiteWeightedDomain.finiteMode_formCore
     (transformedCenteredObservable_mem_hermiteWeightedDomain hn f hf)
 
+/-- The centered observable as a class in the particle-symmetric Ginibre L² subspace. -/
 def centeredObservableSymmetricL2 {n : ℕ} (hn : 0 < n)
     (f : Configuration n → ℝ) (hf : IsTheoremOneNineCore f) :
     ginibreSymmetricL2 n := by

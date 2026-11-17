@@ -36,8 +36,8 @@ SOFTWARE.
 module
 
 public import LeanPool.GinibrePoincare.Analysis.GinibreEqualityWeakHolomorphic
-public import LeanPool.GinibrePoincare.Analysis.GinibreEqualityConjugateModeDetection
-public import LeanPool.GinibrePoincare.Analysis.HolomorphicQuotientPhaseProjection
+public import LeanPool.GinibrePoincare.Analysis.GaussianHermitePhaseSpectrum
+public import LeanPool.GinibrePoincare.Analysis.GaussianVandermondePhase
 
 /-!
 # Ginibre Equality Conjugate Projection
@@ -61,6 +61,8 @@ private theorem ginibreLp_star_complex_smul {n : ℕ} (c : ℂ) (f : Lp ℂ 2 (g
   rw [hs, hf]
   simp
 
+/-- Conjugate a Ginibre L² class, apply the Vandermonde isometry and select an antiholomorphic
+degree. -/
 def ginibreFullConjugateAntiMode (n : ℕ) (hn : 0 < n) (k : ℕ) :
     Lp ℂ 2 (ginibreMeasure n) →L[ℝ] Lp ℂ 2 (complexGaussianMeasure n) :=
   ((hermiteAntiDegreeProjection n hn k).restrictScalars ℝ).comp

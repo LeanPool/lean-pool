@@ -35,7 +35,6 @@ SOFTWARE.
 
 module
 
-public import LeanPool.GinibrePoincare.Analysis.HolomorphicVandermondeL2Closure
 public import LeanPool.GinibrePoincare.Analysis.GlobalPhaseAction
 public import LeanPool.GinibrePoincare.Analysis.L2RepresentativeBridges
 
@@ -576,6 +575,7 @@ def alternatedHolomorphicCoefficient {n : ℕ} (p q : Fin n → ℕ) : ℂ :=
     ∑ σ ∈ (Finset.univ : Finset (ParticlePermutation n)) with
       holomorphicPermutationOrbitIndex p σ = q, permutationSign σ
 
+/-- The finite orbit of a holomorphic multi-index under particle permutations. -/
 def holomorphicPermutationOrbitSupport {n : ℕ} (p : Fin n → ℕ) :
     Finset (Fin n → ℕ) :=
   Finset.univ.image (holomorphicPermutationOrbitIndex p)
@@ -987,6 +987,7 @@ theorem ginibreGradedClosedSpan_eq_degreeZero_sup_positive
         ginibreFiniteQuotientDegreeClosedSpan n d hn) 0
     · exact ginibrePositiveQuotientGradedClosedSpan_le_graded n hn
 
+/-- Algebraic sum of the closed positive-degree holomorphic quotient sectors. -/
 def ginibrePositiveQuotientAlgebraicSpan (n : ℕ) (hn : 0 < n) :
     Submodule ℂ (Lp ℂ 2 (ginibreMeasure n)) :=
   ⨆ r : {r : ℕ // 0 < r},

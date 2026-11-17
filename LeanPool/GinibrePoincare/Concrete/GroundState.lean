@@ -36,8 +36,6 @@ SOFTWARE.
 module
 
 public import LeanPool.GinibrePoincare.Concrete.Weights
-public import Mathlib.Basic.ENNReal.Real
-public import Mathlib.Tactic.Ring
 
 /-!
 # Vandermonde ground-state transform

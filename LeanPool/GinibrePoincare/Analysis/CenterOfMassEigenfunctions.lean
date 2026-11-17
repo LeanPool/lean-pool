@@ -36,7 +36,6 @@ SOFTWARE.
 module
 
 public import LeanPool.GinibrePoincare.Concrete.Generator
-public import LeanPool.GinibrePoincare.Concrete.CenterOfMass
 
 /-!
 # Center Of Mass Eigenfunctions

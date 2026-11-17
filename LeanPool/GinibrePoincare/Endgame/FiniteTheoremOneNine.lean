@@ -36,6 +36,8 @@ SOFTWARE.
 module
 
 public import LeanPool.GinibrePoincare.Analysis.L2RepresentativeBridges
+public import LeanPool.GinibrePoincare.Analysis.GroundStateDbar
+public import LeanPool.GinibrePoincare.Analysis.HermiteEnergy
 
 /-! # Realizing finite Hermite expansions in the Ginibre ground-state transform -/
 

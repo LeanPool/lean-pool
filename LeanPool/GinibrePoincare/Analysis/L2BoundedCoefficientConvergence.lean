@@ -36,7 +36,6 @@ SOFTWARE.
 module
 
 public import LeanPool.GinibrePoincare.Analysis.GinibreWeakSobolevTruncation
-public import Mathlib.MeasureTheory.Function.ConvergenceInMeasure
 
 /-! # Strong L² limits for bounded scalar coefficients -/
 

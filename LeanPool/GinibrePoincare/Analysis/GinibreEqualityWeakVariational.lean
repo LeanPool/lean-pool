@@ -36,6 +36,7 @@ SOFTWARE.
 module
 
 public import LeanPool.GinibrePoincare.Analysis.GinibreFullGeneratorWeakSpace
+public import LeanPool.GinibrePoincare.Analysis.GinibreSymmetricWeakPoincare
 
 /-!
 # Ginibre Equality Weak Variational

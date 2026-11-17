@@ -36,7 +36,6 @@ SOFTWARE.
 module
 
 public import LeanPool.GinibrePoincare.Concrete.HolomorphicDistance
-public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
 
 /-!
 # Exact analytic inputs to the main proof

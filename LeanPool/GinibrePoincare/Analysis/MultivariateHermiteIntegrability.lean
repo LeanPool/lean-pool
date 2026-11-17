@@ -36,8 +36,6 @@ SOFTWARE.
 module
 
 public import LeanPool.GinibrePoincare.Analysis.ComplexHermiteOrthogonality
-public import Mathlib.MeasureTheory.Function.L2Space
-public import Mathlib.MeasureTheory.Integral.Pi
 
 /-!
 # Integrability of multivariate complex Hermite functions

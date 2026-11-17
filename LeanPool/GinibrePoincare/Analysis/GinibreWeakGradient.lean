@@ -35,9 +35,10 @@ SOFTWARE.
 
 module
 
-public import LeanPool.GinibrePoincare.Analysis.RadialSobolevClosure
+public import LeanPool.GinibrePoincare.Analysis.GinibreRadialSobolevCore
 public import LeanPool.GinibrePoincare.Analysis.GinibreIntegrationByParts
 public import Mathlib.Analysis.Distribution.AEEqOfIntegralContDiff
+public import LeanPool.GinibrePoincare.Analysis.VandermondeL2Inverse
 
 /-! # Weak gradients and closability for the Ginibre radial completion
 
@@ -58,12 +59,16 @@ open scoped Topology ContDiff
 namespace GinibrePoincare
 noncomputable section
 
+/-- The real coordinate direction indexed by a particle and its real or imaginary component. -/
 def ginibreCoordinateDirection {n : ℕ} (k : Fin n × Fin 2) : Configuration n :=
   if k.2 = 0 then realCoordinateDirection k.1 else imaginaryCoordinateDirection k.1
 
+/-- A test function multiplied by the real density factor used in the weak-gradient
+identities. -/
 def ginibreWeakTest {n : ℕ} (ψ : Configuration n → ℝ) : Configuration n → ℝ :=
   fun z => ginibreLebesgueDensityReal n z * ψ z
 
+/-- Density-weighted adjoint test encoding weak derivatives without division at collisions. -/
 def ginibreWeakAdjointTest {n : ℕ} (k : Fin n × Fin 2)
     (ψ : Configuration n → ℝ) : Configuration n → ℝ :=
   fun z => ginibreLebesgueDensityReal n z * fderiv ℝ ψ z (ginibreCoordinateDirection k) +

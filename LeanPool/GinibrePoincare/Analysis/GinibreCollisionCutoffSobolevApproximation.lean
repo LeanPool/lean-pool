@@ -36,7 +36,7 @@ SOFTWARE.
 module
 
 public import LeanPool.GinibrePoincare.Analysis.GinibreCollisionCutoffEnergy
-public import LeanPool.GinibrePoincare.Analysis.RadialSmoothSobolevApproximation
+public import LeanPool.GinibrePoincare.Analysis.GinibreEuclideanGradientAlgebra
 
 /-! # Collision-cutoff approximation in the symmetric value-gradient norm -/
 

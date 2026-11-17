@@ -35,9 +35,10 @@ SOFTWARE.
 
 module
 
-public import Mathlib.Analysis.Complex.Basic
 public import Mathlib.GroupTheory.Perm.Sign
-public import Mathlib.Data.Set.Basic
+public import Mathlib.Algebra.Order.BigOperators.Expect
+public import Mathlib.Analysis.Complex.Order
+public import Mathlib.Tactic.ContinuousFunctionalCalculus
 
 /-!
 # Configuration space and particle permutations

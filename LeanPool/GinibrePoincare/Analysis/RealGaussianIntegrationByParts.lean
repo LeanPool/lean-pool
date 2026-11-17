@@ -36,8 +36,6 @@ SOFTWARE.
 module
 
 public import LeanPool.GinibrePoincare.Analysis.GaussianDensity
-public import Mathlib.MeasureTheory.Integral.IntegralEqImproper
-public import Mathlib.MeasureTheory.Integral.Bochner.ContinuousLinearMap
 
 /-! # One-dimensional Gaussian integration by parts -/
 

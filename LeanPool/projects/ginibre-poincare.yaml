@@ -4,7 +4,7 @@ summary: Proves the sharp Poincaré inequality for symmetric observables in the 
   domain, using ordinary distributional gradients on the collision-free open set, of the complex
   Ginibre log-gas, with exhaustive affine equality cases. Includes concrete Gaussian and Ginibre
   measures, Hermite and Slater analysis, smooth approximation, distributional gradients, and
-  closed gradient and generator constructions. This import covers Theorem 1.1 and its equality
+  closed weak-gradient spaces. This import covers Theorem 1.1 and its equality
   cases, rather than the upstream full-paper analytic and stochastic endgame.
 branch: probability theory
 entry_module: LeanPool.GinibrePoincare

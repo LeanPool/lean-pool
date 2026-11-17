@@ -54,6 +54,7 @@ namespace GinibrePoincare
 noncomputable section
 
 
+/-- Smooth compact spatial cutoff expanding through the total squared configuration radius. -/
 def ginibreSpatialCutoff (n m : ℕ) (z : Configuration n) : ℝ :=
   sobolevCutoff m (configurationNormSq z)
 

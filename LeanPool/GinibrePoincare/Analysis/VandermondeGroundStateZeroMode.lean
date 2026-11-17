@@ -35,10 +35,10 @@ SOFTWARE.
 
 module
 
-public import LeanPool.GinibrePoincare.Analysis.GaussianHermiteMoments
 public import LeanPool.GinibrePoincare.Analysis.VandermondeL2
-public import LeanPool.GinibrePoincare.Analysis.HermiteParsevalModes
 public import LeanPool.GinibrePoincare.Analysis.HolomorphicVandermondeDivision
+public import LeanPool.GinibrePoincare.Analysis.HermiteL2Family
+public import LeanPool.GinibrePoincare.Analysis.MultivariateHermiteMonomialSpan
 
 /-!
 # Vandermonde Ground State Zero Mode

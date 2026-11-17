@@ -37,6 +37,9 @@ module
 
 public import LeanPool.GinibrePoincare.Analysis.GinibreArbitraryWeakPairApproximation
 public import LeanPool.GinibrePoincare.Analysis.GinibreCollisionCutoffSobolevApproximation
+public import LeanPool.GinibrePoincare.Analysis.GinibrePermutationAverage
+public import LeanPool.GinibrePoincare.Analysis.GinibreValueTruncationWeakChain
+public import LeanPool.GinibrePoincare.Analysis.GinibreWeakPermutation
 
 /-!
 # Ginibre Arbitrary Weak Pair Closure

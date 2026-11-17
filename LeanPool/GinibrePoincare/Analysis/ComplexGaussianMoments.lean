@@ -6,7 +6,8 @@ Authors: Djalil Chafaï
 
 /-
 Adapted for Lean Pool from djalilchafai/ginibre-
-poincare/GinibrePoincare/Analysis/ComplexGaussianMoments.lean.
+poincare/GinibrePoincare/Analysis/ComplexGaussianMoments.lean and
+GinibrePoincare/Analysis/KostlanProductLaw.lean.
 Module paths, interfaces, and proofs are ported to the pool's toolchain and gates.
 The original source is MIT licensed; its notice follows.
 
@@ -37,6 +38,7 @@ module
 
 public import LeanPool.GinibrePoincare.Analysis.GaussianPolynomialIntegrability
 public import LeanPool.GinibrePoincare.Analysis.PolarGaussianMoments
+public import LeanPool.GinibrePoincare.Analysis.ComplexGaussianDensity
 
 /-! # Mixed moments of one complex Gaussian coordinate -/
 
@@ -130,6 +132,30 @@ theorem complexGaussianMixedMoment_formula {n : ℕ} (hn : 0 < n) (a b : ℕ) :
       if a = b then (a.factorial : ℂ) / (n : ℂ) ^ a else 0 := by
   rw [complexGaussianMixedMoment_eq_polar hn]
   exact integral_gaussianMixedIntegrand_polar_eq n a b hn
+
+theorem integrable_normSq_pow_coordinate (n k : ℕ) :
+    Integrable (fun z : ℂ => Complex.normSq z ^ k)
+      (complexCoordinateGaussianProbability n : Measure ℂ) := by
+  simpa only [Complex.normSq_eq_norm_sq, ← pow_mul] using
+    integrable_norm_pow_complexCoordinateGaussianProbability n (2 * k)
+
+theorem integral_normSq_pow_coordinate (n k : ℕ) (hn : 0 < n) :
+    (∫ z : ℂ, Complex.normSq z ^ k ∂(complexCoordinateGaussianProbability n : Measure ℂ)) =
+      (k.factorial : ℝ) / (n : ℝ) ^ k := by
+  have h := complexGaussianMixedMoment_formula hn k k
+  unfold complexGaussianMixedMoment at h
+  have he : (fun z : ℂ => z ^ k * (starRingEnd ℂ) z ^ k) =
+      fun z : ℂ => (Complex.normSq z ^ k : ℂ) := by
+    funext z
+    rw [← mul_pow, Complex.mul_conj]
+  rw [he] at h
+  simp only [← Complex.ofReal_pow, integral_complex_ofReal] at h
+  have heq : (Complex.ofReal (∫ z : ℂ, Complex.normSq z ^ k
+      ∂(complexCoordinateGaussianProbability n : Measure ℂ))) =
+      Complex.ofReal ((k.factorial : ℝ) / (n : ℝ) ^ k) := by
+    simpa only [Complex.ofReal_div, Complex.ofReal_pow, Complex.ofReal_natCast, ite_true] using h
+  exact Complex.ofReal_injective heq
+
 
 end
 

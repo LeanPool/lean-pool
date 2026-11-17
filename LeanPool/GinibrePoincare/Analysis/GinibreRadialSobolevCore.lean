@@ -35,22 +35,17 @@ SOFTWARE.
 
 module
 
-public import LeanPool.GinibrePoincare.Analysis.EntropyL2Closure
-public import LeanPool.GinibrePoincare.Analysis.GaussianRadialLift
-public import Mathlib.Analysis.InnerProductSpace.PiL2
-public import Mathlib.MeasureTheory.Function.LpSpace.Indicator
+public import LeanPool.GinibrePoincare.Analysis.GinibreMassFiniteness
+public import LeanPool.GinibrePoincare.Concrete.SmoothTarget
 
-/-!
-# Radial Sobolev Closure
--/
-
+/-! # Euclidean gradients and radial value-gradient pairs -/
 
 @[expose] public section
 
+noncomputable section
+namespace GinibrePoincare
 open MeasureTheory
 open scoped BigOperators ContDiff
-namespace GinibrePoincare
-noncomputable section
 
 /-- The actual real Euclidean gradient, as a vector with `2n` coordinates. -/
 def ginibreEuclideanGradient {n : ℕ} (f : Configuration n → ℝ) (z : Configuration n) :
@@ -85,6 +80,8 @@ theorem compactSupport_ginibreEuclideanGradient {n : ℕ} (f : Configuration n �
   simp [ginibreEuclideanGradient, hd]
   rfl
 
+/-- Smooth compact symmetric observables depending only on the individual squared particle
+radii. -/
 def IsRadialSobolevCore {n : ℕ} (f : Configuration n → ℝ) : Prop :=
   IsSmoothCompactSymmetric f ∧ ∃ F : (Fin n → ℝ) → ℝ,
     ∀ z, f z = F (fun i => Complex.normSq (z i))
@@ -118,45 +115,4 @@ theorem radialSobolevCore_has_pair (n : ℕ) (hn : 0 < n)
   · exact hv.coeFn_toLp
   · exact hg.coeFn_toLp
 
-/-- Entropy respects equality of representatives almost everywhere. -/
-theorem squareEntropy_congr_ae {α : Type*} [MeasurableSpace α] (μ : Measure α)
-    {f g : α → ℝ} (h : f =ᵐ[μ] g) : squareEntropy μ f = squareEntropy μ g := by
-  apply squareEntropy_eq_of_moments
-  · apply integral_congr_ae
-    exact h.mono (fun x hx => by dsimp; rw [hx])
-  · apply integral_congr_ae
-    exact h.mono (fun x hx => by dsimp; rw [hx])
-
-theorem integral_norm_sq_eq_L2_norm_sq {α V : Type*} [MeasurableSpace α]
-    [NormedAddCommGroup V] [InnerProductSpace ℝ V] (μ : Measure α) (v : Lp V 2 μ) :
-    (∫ x, ‖v x‖ ^ 2 ∂μ) = ‖v‖ ^ 2 := by
-  rw [← real_inner_self_eq_norm_sq, L2.inner_def]
-  simp only [real_inner_self_eq_norm_sq]
-
-/-- Once the actual smooth radial core inequality is proved, its full L²
-value-gradient Sobolev extension follows, including finiteness of entropy. -/
-theorem radialSobolevClosure_lsi_of_core (n : ℕ) (hn : 0 < n)
-    (hcore : ∀ f : Configuration n → ℝ, IsRadialSobolevCore f →
-      ginibreSquareEntropy n f ≤ smoothGinibreEnergy n f) :
-    ∀ p ∈ radialSobolevClosure n,
-      Integrable (fun z => p.1 z ^ 2 * Real.log (p.1 z ^ 2)) (ginibreMeasure n) ∧
-        squareEntropy (ginibreMeasure n) p.1 ≤ (1 / (n : ℝ)) * ‖p.2‖ ^ 2 := by
-  have := ginibreMeasure_isProbabilityMeasure hn
-  apply entropy_bound_on_closure
-  intro p hp
-  obtain ⟨f, hf, hv, hg⟩ := hp
-  have he : squareEntropy (ginibreMeasure n) p.1 = ginibreSquareEntropy n f :=
-    squareEntropy_congr_ae _ hv
-  have hgrad : ‖p.2‖ ^ 2 = ∫ z, realGradientNormSq f z ∂ginibreMeasure n := by
-    rw [← integral_norm_sq_eq_L2_norm_sq]
-    apply integral_congr_ae
-    filter_upwards [hg] with z hz
-    rw [hz, ginibreEuclideanGradient_norm_sq]
-  constructor
-  · apply (integrable_square_mul_log_ginibre hn hf.1.1.continuous hf.1.2.1).congr
-    exact hv.symm.mono (fun z hz => by dsimp; rw [hz])
-  · rw [he, hgrad]
-    exact hcore f hf
-
-end
 end GinibrePoincare

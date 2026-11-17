@@ -37,11 +37,7 @@ module
 
 public import LeanPool.GinibrePoincare.Analysis.GinibreArbitraryWeakPairClosure
 public import LeanPool.GinibrePoincare.Endgame.ConcreteTheoremOneNine
-public import LeanPool.GinibrePoincare.Analysis.EntropyL2Closure
 public import LeanPool.GinibrePoincare.Analysis.EquilibriumProbability
-public import LeanPool.GinibrePoincare.Analysis.ComplexGaussianMoments
-public import LeanPool.GinibrePoincare.Analysis.KostlanProductLaw
-public import LeanPool.GinibrePoincare.Analysis.GinibreSmoothDistributionalGradient
 public import LeanPool.GinibrePoincare.Analysis.CenterOfMassEigenfunctions
 
 /-!

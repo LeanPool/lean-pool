@@ -37,8 +37,6 @@ module
 
 public import LeanPool.GinibrePoincare.Analysis.GinibreMassFiniteness
 public import LeanPool.GinibrePoincare.Concrete.AnalyticStatements
-public import Mathlib.Analysis.Calculus.FDeriv.Mul
-public import Mathlib.Analysis.Calculus.FDeriv.RestrictScalars
 
 /-! # The Vandermonde ground-state transform and `dbar`
 

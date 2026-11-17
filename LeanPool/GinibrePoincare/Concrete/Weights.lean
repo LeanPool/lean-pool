@@ -35,10 +35,11 @@ SOFTWARE.
 module
 
 public import LeanPool.GinibrePoincare.Concrete.Vandermonde
-public import Mathlib.Analysis.SpecialFunctions.Exp
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import Mathlib.Basic.NNReal.Defs
-public import Mathlib.Tactic.Positivity
+public import Mathlib.Algebra.Order.Field.Power
+public import Mathlib.Analysis.Complex.Trigonometric
+public import Mathlib.Analysis.Normed.Field.Basic
+public import Mathlib.Data.EReal.Inv
+public import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # Gaussian and Ginibre weights

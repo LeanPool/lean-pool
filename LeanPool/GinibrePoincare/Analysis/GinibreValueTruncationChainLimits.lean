@@ -39,7 +39,6 @@ public import LeanPool.GinibrePoincare.Analysis.GinibreValueTruncationL2
 public import LeanPool.GinibrePoincare.Analysis.L2BoundedCoefficientConvergence
 public import LeanPool.GinibrePoincare.Analysis.GinibreSmoothDistributionalGradient
 public import LeanPool.GinibrePoincare.Analysis.GinibreDistributionalClosure
-public import Mathlib.Analysis.Calculus.MeanValue
 
 /-! # Nonlinear chain rule through actual smooth graph limits -/
 

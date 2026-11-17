@@ -37,10 +37,6 @@ module
 
 public import LeanPool.GinibrePoincare.Analysis.MultivariateComplexHermite
 public import LeanPool.GinibrePoincare.Concrete.Wirtinger
-public import Mathlib.Analysis.Calculus.FDeriv.Mul
-public import Mathlib.Analysis.Calculus.FDeriv.Pow
-public import Mathlib.Analysis.Calculus.FDeriv.Pi
-public import Mathlib.Analysis.Calculus.FDeriv.Comp
 
 /-!
 # Complex Hermite functions and concrete Wirtinger derivatives
@@ -62,12 +58,17 @@ namespace ComplexHermite
 
 noncomputable section
 
+/-- Evaluate a formal bivariate polynomial at a complex number and its conjugate. -/
 def diagonalEval (P : Poly) (z : ℂ) : ℂ :=
   MvPolynomial.eval ![z, conj z] P
 
+/-- Public evaluation map substituting a complex number and its conjugate into the formal
+variables. -/
 def diagonalEvalPublic (P : Poly) (z : ℂ) : ℂ :=
   MvPolynomial.eval ![z, conj z] P
 
+/-- The one-variable Wirtinger antiholomorphic derivative, expressed through real Fréchet
+derivatives. -/
 def dbarOne (f : ℂ → ℂ) (z : ℂ) : ℂ :=
   (1 / 2 : ℂ) *
     (fderiv ℝ f z 1 + Complex.I * fderiv ℝ f z Complex.I)

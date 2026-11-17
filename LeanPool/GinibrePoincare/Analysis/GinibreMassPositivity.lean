@@ -36,7 +36,6 @@ SOFTWARE.
 module
 
 public import LeanPool.GinibrePoincare.Analysis.ComplexGaussianDensity
-public import Mathlib.MeasureTheory.Measure.OpenPos
 
 /-! # Strict positivity of the Ginibre normalizing mass -/
 

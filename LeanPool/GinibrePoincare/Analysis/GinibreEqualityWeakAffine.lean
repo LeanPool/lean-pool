@@ -35,6 +35,8 @@ SOFTWARE.
 
 module
 
+public import LeanPool.GinibrePoincare.Analysis.GinibreWeakConstants
+
 public import LeanPool.GinibrePoincare.Analysis.GinibreEqualityWeakDegreeElimination
 public import LeanPool.GinibrePoincare.Analysis.GinibreEqualityWeakConjugateModes
 public import LeanPool.GinibrePoincare.Analysis.GinibreEqualityFirstQuotient

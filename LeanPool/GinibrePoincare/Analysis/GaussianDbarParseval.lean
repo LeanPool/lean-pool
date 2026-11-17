@@ -39,10 +39,6 @@ public import LeanPool.GinibrePoincare.Analysis.HermiteParsevalModes
 public import LeanPool.GinibrePoincare.Analysis.HermiteEnergy
 public import LeanPool.GinibrePoincare.Analysis.ComplexGaussianIntegrationByParts
 public import LeanPool.GinibrePoincare.Analysis.GroundStateDbar
-public import LeanPool.GinibrePoincare.Analysis.GaussianPolynomialIntegrability
-public import LeanPool.GinibrePoincare.Analysis.MultivariateHermiteIntegrability
-public import LeanPool.GinibrePoincare.Analysis.HermiteWirtinger
-public import LeanPool.GinibrePoincare.Analysis.ComplexGaussianProductIntegral
 
 /-! # Gaussian `dbar` energy and Hermite modes -/
 
@@ -584,6 +580,7 @@ theorem memLp_two_coordinate_mul_multivariateNormalized
   · simp only [ite_eq_right hij]
     exact ComplexHermite.integrable_normSq_normalizedEval n hn (p i) (q i)
 
+/-- The Gaussian L² class of a normalized multivariate Hermite function times one coordinate. -/
 def coordinateMulMultivariateNormalizedL2
     (n : ℕ) (hn : 0 < n) (p q : Fin n → ℕ) (j : Fin n) :
     Lp ℂ 2 (complexGaussianMeasure n) :=

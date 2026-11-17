@@ -52,6 +52,7 @@ open scoped Topology ContDiff
 namespace GinibrePoincare
 noncomputable section
 
+/-- Smooth compact scalar truncation equal to the identity on an expanding interval. -/
 def sobolevValueTruncation (m : ℕ) (x : ℝ) : ℝ := sobolevCutoff m x * x
 
 theorem sobolevValueTruncation_smooth (m : ℕ) : ContDiff ℝ ∞ (sobolevValueTruncation m) :=

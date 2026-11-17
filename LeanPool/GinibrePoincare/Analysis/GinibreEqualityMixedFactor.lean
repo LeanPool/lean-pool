@@ -50,10 +50,12 @@ namespace GinibrePoincare
 open MvPolynomial
 open scoped ComplexConjugate
 
+/-- Embed a holomorphic configuration polynomial into the mixed polynomial algebra. -/
 def ginibreMixedHolomorphicLift {n : ℕ} (P : ConfigurationPolynomial n) : GinibreMixedPolynomial n
   :=
   MvPolynomial.rename (fun j => (j, 0)) P
 
+/-- Embed the conjugate of a configuration polynomial into the antiholomorphic variables. -/
 def ginibreMixedAntiholomorphicLift {n : ℕ} (P : ConfigurationPolynomial n) :
   GinibreMixedPolynomial n :=
   MvPolynomial.rename (fun j => (j, 1)) (MvPolynomial.map (starRingEnd ℂ) P)

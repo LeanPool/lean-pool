@@ -35,12 +35,9 @@ SOFTWARE.
 
 module
 
-public import LeanPool.GinibrePoincare.Analysis.GinibreWeakPermutation
 public import LeanPool.GinibrePoincare.Analysis.GinibreWeightedInteriorMollification
 public import LeanPool.GinibrePoincare.Analysis.GinibreCollisionCutoffEnergy
-public import LeanPool.GinibrePoincare.Analysis.GinibreValueTruncationWeakChain
-public import LeanPool.GinibrePoincare.Analysis.GinibreWeakSobolevTruncation
-public import Mathlib.Topology.MetricSpace.Thickening
+public import LeanPool.GinibrePoincare.Analysis.GinibreWeakGradientSupport
 
 /-! # Arbitrary Ginibre weak pairs: compact interior smoothing and symmetry -/
 
@@ -64,21 +61,6 @@ def ginibreInteriorSmoothPair (n : ℕ) : Set
     (p.1 : Configuration n → ℝ) =ᵐ[ginibreMeasure n] f ∧
     (p.2 : Configuration n → EuclideanSpace ℝ (Fin n × Fin 2)) =ᵐ[ginibreMeasure n]
       ginibreEuclideanGradient f}
-
-/-- Small ordinary bump radii that stay inside any prescribed collision-free
-neighborhood and tend to zero. -/
-def ginibreInteriorBump (n : ℕ) (δ : ℝ) (hδ : 0 < δ) (m : ℕ) :
-    ContDiffBump (0 : Configuration n) :=
-  ⟨δ / (2 * ((m : ℝ) + 2)), δ / ((m : ℝ) + 2), by positivity, by
-    apply (div_lt_div_iff₀ (by positivity) (by positivity)).2
-    nlinarith [hδ]⟩
-
-theorem ginibreInteriorBump_radius_tendsto (n : ℕ) (δ : ℝ) (hδ : 0 < δ) :
-    Tendsto (fun m => (ginibreInteriorBump n δ hδ m).rOut) atTop (𝓝 0) := by
-  dsimp [ginibreInteriorBump]
-  have hden : Tendsto (fun m : ℕ => (m : ℝ) + 2) atTop atTop :=
-    tendsto_atTop_add_const_right atTop 2 tendsto_natCast_atTop_atTop
-  simpa using (tendsto_const_nhds.div_atTop hden)
 
 /-- A compact weak pair supported in the collision-free set has smooth compact
 approximants whose supports stay in that set. -/

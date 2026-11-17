@@ -35,8 +35,7 @@ SOFTWARE.
 
 module
 
-public import LeanPool.GinibrePoincare.Analysis.GaussianHermiteMoments
-public import Mathlib.MeasureTheory.Measure.CharacteristicFunction.Basic
+public import LeanPool.GinibrePoincare.Analysis.GaussianPolynomialCompleteness
 
 /-! # Euclidean coordinates for complex configurations -/
 

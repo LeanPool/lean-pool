@@ -36,7 +36,6 @@ SOFTWARE.
 module
 
 public import LeanPool.GinibrePoincare.Analysis.GlobalPhaseAction
-public import LeanPool.GinibrePoincare.Analysis.HermiteParsevalModes
 
 /-! # Exact global phase characters of all complex Hermite modes -/
 

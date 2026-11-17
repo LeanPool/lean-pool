@@ -37,6 +37,7 @@ module
 
 public import LeanPool.GinibrePoincare.Analysis.MultivariateComplexHermite
 public import LeanPool.GinibrePoincare.Analysis.GaussianPolynomialIntegrability
+public import Mathlib.Algebra.MvPolynomial.CommRing
 
 /-! # Analytic prerequisites for complex Hermite orthogonality -/
 

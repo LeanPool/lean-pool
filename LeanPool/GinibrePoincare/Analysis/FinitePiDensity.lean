@@ -35,8 +35,7 @@ SOFTWARE.
 
 module
 
-public import Mathlib.MeasureTheory.Integral.Pi
-public import Mathlib.MeasureTheory.Measure.WithDensity
+public import Mathlib.MeasureTheory.Integral.Bochner.Basic
 
 /-!
 # Densities of finite product measures

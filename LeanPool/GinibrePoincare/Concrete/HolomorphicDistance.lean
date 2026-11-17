@@ -37,7 +37,6 @@ module
 
 public import LeanPool.GinibrePoincare.Concrete.NormalizedGroundState
 public import LeanPool.GinibrePoincare.Concrete.SmoothTarget
-public import LeanPool.GinibrePoincare.Concrete.Wirtinger
 
 /-!
 # Holomorphic distance on the Ginibre side

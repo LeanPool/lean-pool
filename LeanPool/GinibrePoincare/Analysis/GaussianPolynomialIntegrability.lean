@@ -35,7 +35,6 @@ SOFTWARE.
 
 module
 
-public import LeanPool.GinibrePoincare.Concrete.MeasureModel
 public import Mathlib.Probability.Distributions.Gaussian.Fernique
 public import LeanPool.GinibrePoincare.Analysis.HermiteWirtinger
 

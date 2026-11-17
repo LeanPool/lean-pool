@@ -96,7 +96,6 @@ instance instIsProbabilityMeasureComplexGaussianMeasure (n : ℕ) :
   infer_instance
 
 /-- The Gaussian reference measure has total mass one. -/
-@[simp]
 theorem complexGaussianMeasure_univ (n : ℕ) :
     complexGaussianMeasure n Set.univ = 1 := by
   simp

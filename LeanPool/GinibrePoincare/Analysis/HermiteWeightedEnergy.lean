@@ -35,8 +35,6 @@ SOFTWARE.
 
 module
 
-public import LeanPool.GinibrePoincare.Analysis.HermiteParsevalModes
-public import LeanPool.GinibrePoincare.Analysis.HermiteEnergy
 public import LeanPool.GinibrePoincare.Analysis.GaussianDbarParseval
 
 /-!

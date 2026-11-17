@@ -35,9 +35,10 @@ SOFTWARE.
 
 module
 
-public import LeanPool.GinibrePoincare.Analysis.L2RepresentativeBridges
 public import LeanPool.GinibrePoincare.Analysis.ComplexGaussianIntegrationByParts
-public import Mathlib.MeasureTheory.Integral.IntegralEqImproper
+public import LeanPool.GinibrePoincare.Analysis.CollisionNull
+public import LeanPool.GinibrePoincare.Analysis.GroundStateDbar
+public import LeanPool.GinibrePoincare.Concrete.Generator
 
 /-! # Integrability preliminaries for Ginibre integration by parts -/
 
@@ -615,7 +616,9 @@ theorem sum_vandermondePair_logDerivative {n : ℕ}
       rw [Finset.sum_filter]
       apply Finset.sum_congr rfl
       intro ik hik
-      split_ifs <;> simp_all
+      by_cases hfirst : j = ik.1.1
+      · simp [hfirst]
+      · by_cases hsecond : j = ik.1.2 <;> simp [hfirst, hsecond]
     _ = _ := sum_incidentPair_logDerivative z hz j w
 
 /-- Collision-free logarithmic derivative of the Vandermonde, indexed by

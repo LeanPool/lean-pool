@@ -77,7 +77,7 @@ noncomputable def normalizedEval (n : ℕ) (hn : 0 < n) (p q : ℕ) (z : ℂ) : 
       (oneDimNormalization n q : ℂ) * (conj z) ^ q := by
   simp [normalizedEval, normalized, oneDimNormalization_zero, raw_zero_left, W]
 
-@[simp] theorem normalizedEval_zero_zero (n : ℕ) (hn : 0 < n) (z : ℂ) :
+theorem normalizedEval_zero_zero (n : ℕ) (hn : 0 < n) (z : ℂ) :
     normalizedEval n hn 0 0 z = 1 := by
   simp
 
@@ -99,7 +99,7 @@ noncomputable def multivariateNormalized (n : ℕ) (hn : 0 < n)
       ∏ i, (oneDimNormalization n (q i) : ℂ) * (conj (z i)) ^ q i := by
   simp [multivariateNormalized]
 
-@[simp] theorem multivariateNormalized_zero_zero (n : ℕ) (hn : 0 < n)
+theorem multivariateNormalized_zero_zero (n : ℕ) (hn : 0 < n)
     (z : Fin n → ℂ) :
     multivariateNormalized n hn 0 0 z = 1 := by
   simp [multivariateNormalized]

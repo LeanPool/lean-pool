@@ -35,7 +35,7 @@ SOFTWARE.
 
 module
 
-public import LeanPool.GinibrePoincare.Analysis.GinibreDistributionalClosure
+public import LeanPool.GinibrePoincare.Analysis.GinibreDistributionalGradient
 
 /-! # Smooth compact multipliers on the independent weak Sobolev graph
 

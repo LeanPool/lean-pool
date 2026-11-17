@@ -35,10 +35,8 @@ SOFTWARE.
 
 module
 
-public import LeanPool.GinibrePoincare.Analysis.GaussianPolynomialDensity
-public import LeanPool.GinibrePoincare.Analysis.GaussianPolynomialIntegrability
-public import Mathlib.MeasureTheory.Function.L1Space.Integrable
 public import Mathlib.Analysis.Calculus.ParametricIntegral
+public import LeanPool.GinibrePoincare.Analysis.MultivariateHermiteIntegrability
 
 /-! # Fourier tests for Gaussian polynomial completeness -/
 

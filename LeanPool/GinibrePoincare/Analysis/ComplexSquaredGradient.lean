@@ -35,7 +35,7 @@ SOFTWARE.
 
 module
 
-public import LeanPool.GinibrePoincare.Analysis.GinibreSmoothDistributionalGradient
+public import LeanPool.GinibrePoincare.Analysis.GinibreWeakGradient
 
 /-! # Actual gradient bound for squared complex observables -/
 
@@ -47,6 +47,7 @@ open scoped Topology ContDiff BigOperators
 namespace GinibrePoincare
 noncomputable section
 
+/-- Total squared norm of the complex directional derivatives over the real coordinate basis. -/
 def complexDirectionalEnergy {n : ℕ} (F : Configuration n → ℂ) (z : Configuration n) : ℝ :=
   ∑ k : Fin n × Fin 2, Complex.normSq (fderiv ℝ F z (ginibreCoordinateDirection k))
 

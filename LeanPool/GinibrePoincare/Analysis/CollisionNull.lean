@@ -36,7 +36,6 @@ SOFTWARE.
 module
 
 public import LeanPool.GinibrePoincare.Analysis.GinibreMassPositivity
-public import Mathlib.Probability.Independence.Basic
 
 /-! # The collision locus is Gaussian-null -/
 

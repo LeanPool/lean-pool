@@ -36,8 +36,6 @@ SOFTWARE.
 module
 
 public import LeanPool.GinibrePoincare.Analysis.EquilibriumFactorization
-public import Mathlib.MeasureTheory.Measure.Haar.NormedSpace
-public import Mathlib.Probability.Independence.Basic
 
 /-!
 # Probabilistic equilibrium factorization

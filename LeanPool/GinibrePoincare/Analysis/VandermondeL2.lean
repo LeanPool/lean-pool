@@ -38,7 +38,6 @@ module
 public import LeanPool.GinibrePoincare.Analysis.CollisionNull
 public import LeanPool.GinibrePoincare.Analysis.GinibreMassFiniteness
 public import LeanPool.GinibrePoincare.Concrete.NormalizedGroundState
-public import Mathlib.MeasureTheory.Function.LpSpace.Complete
 
 /-! # The normalized Vandermonde isometry on `L²` -/
 

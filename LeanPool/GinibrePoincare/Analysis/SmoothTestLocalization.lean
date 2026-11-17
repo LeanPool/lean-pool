@@ -36,7 +36,6 @@ SOFTWARE.
 module
 
 public import Mathlib.Geometry.Manifold.PartitionOfUnity
-public import Mathlib.Topology.Compactness.LocallyFinite
 
 /-! # Finite localization of actual compact smooth tests
 

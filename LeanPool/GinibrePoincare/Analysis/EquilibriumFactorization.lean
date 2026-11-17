@@ -35,13 +35,8 @@ SOFTWARE.
 
 module
 
-public import LeanPool.GinibrePoincare.Concrete.Configuration
 public import LeanPool.GinibrePoincare.Concrete.CenterOfMass
 public import LeanPool.GinibrePoincare.Concrete.MeasureModel
-public import LeanPool.GinibrePoincare.Concrete.Vandermonde
-public import LeanPool.GinibrePoincare.Concrete.Weights
-public import LeanPool.GinibrePoincare.Concrete.GroundState
-public import LeanPool.GinibrePoincare.Analysis.ComplexGaussianDensity
 public import LeanPool.GinibrePoincare.Analysis.GinibreMassFiniteness
 
 /-!
@@ -66,15 +61,19 @@ namespace GinibrePoincare
 noncomputable section
 
 -- Define the projection operators
+/-- The unit vector along the common-translation line when the particle number is positive. -/
 def unitAllOnes (n : ℕ) : Configuration n :=
   fun _ => (1 : ℂ) / Real.sqrt (n : ℝ)
 
+/-- Orthogonal projection of a configuration onto its common-translation line. -/
 def projectToCenterLine (n : ℕ) (z : Configuration n) : Configuration n :=
   fun _ => (coordinateSum z) / (n : ℂ)
 
+/-- Remove the common-translation component from each particle coordinate. -/
 def projectToOrthogonal (n : ℕ) (z : Configuration n) : Configuration n :=
   fun i => z i - (coordinateSum z) / (n : ℂ)
 
+/-- The centered configuration obtained by subtracting the empirical particle mean. -/
 def recenteredConfiguration (n : ℕ) (z : Configuration n) : Configuration n :=
   projectToOrthogonal n z
 
@@ -84,17 +83,22 @@ theorem decomposition_eq (n : ℕ) (z : Configuration n) :
   simp only [projectToCenterLine, projectToOrthogonal, coordinateSum]
   ring
 
+/-- The total squared Euclidean norm used in the equilibrium factorization identities. -/
 def configurationSqNorm' (z : Configuration n) : ℝ := configurationNormSq z
 
+/-- Squared modulus of the unnormalized coordinate sum. -/
 def centerOfMassSqNorm (n : ℕ) (z : Configuration n) : ℝ :=
   Complex.normSq (coordinateSum z)
 
+/-- Total squared norm of the centered particle configuration. -/
 def recenteredSqNorm (n : ℕ) (z : Configuration n) : ℝ :=
   configurationNormSq (recenteredConfiguration n z)
 
+/-- Squared radius of the centered configuration, scaled by the particle number. -/
 def radialObservable (n : ℕ) (z : Configuration n) : ℝ :=
   n * recenteredSqNorm n z
 
+/-- Unnormalized Ginibre density with respect to configuration Lebesgue measure. -/
 def rawGinibreDensity' (n : ℕ) (z : Configuration n) : ℝ :=
   ((n : ℝ) / Real.pi) ^ n * Real.exp (-n * configurationNormSq z) *
   Complex.normSq (vandermonde z)
@@ -337,6 +341,8 @@ theorem recentered_one (z : Configuration 1) :
 theorem radialObservable_one (z : Configuration 1) : radialObservable 1 z = 0 := by
   simp [radialObservable, recenteredSqNorm, recentered_one, configurationNormSq]
 
+/-- The density, Pythagorean and Vandermonde identities separating the center-of-mass
+component. -/
 structure EquilibriumFactorization (n : ℕ) : Prop where
   densityFactorization :
     ∀ z : Configuration n,

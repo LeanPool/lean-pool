@@ -35,9 +35,6 @@ SOFTWARE.
 module
 
 public import LeanPool.GinibrePoincare.Concrete.SmoothTarget
-public import LeanPool.GinibrePoincare.Concrete.Wirtinger
-public import Mathlib.Analysis.Calculus.FDeriv.Add
-public import Mathlib.Analysis.Calculus.FDeriv.Mul
 
 /-!
 # The concrete Ginibre pregenerator

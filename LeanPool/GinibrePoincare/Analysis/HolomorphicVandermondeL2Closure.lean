@@ -35,9 +35,8 @@ SOFTWARE.
 
 module
 
-public import LeanPool.GinibrePoincare.Analysis.HolomorphicVandermondeDivision
-public import LeanPool.GinibrePoincare.Analysis.HermiteEnergy
 public import LeanPool.GinibrePoincare.Analysis.VandermondeL2Inverse
+public import LeanPool.GinibrePoincare.Analysis.HermiteL2Family
 
 /-! # Closed zero-mode Vandermonde correspondence -/
 

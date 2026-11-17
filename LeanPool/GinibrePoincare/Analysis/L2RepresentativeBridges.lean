@@ -35,16 +35,10 @@ SOFTWARE.
 
 module
 
-public import LeanPool.GinibrePoincare.Analysis.FiniteHermiteDeficit
 public import LeanPool.GinibrePoincare.Analysis.HermiteParsevalModes
-public import LeanPool.GinibrePoincare.Analysis.GroundStateDbar
-public import LeanPool.GinibrePoincare.Analysis.VandermondeL2Inverse
-public import LeanPool.GinibrePoincare.Analysis.ComplexGaussianDensity
-public import LeanPool.GinibrePoincare.Analysis.GinibreMassFiniteness
 public import LeanPool.GinibrePoincare.Concrete.Generator
-public import Mathlib.MeasureTheory.Measure.OpenPos
-public import Mathlib.MeasureTheory.Function.LpSpace.Indicator
 public import Mathlib.Topology.ContinuousMap.BoundedCompactlySupported
+public import LeanPool.GinibrePoincare.Concrete.HolomorphicDistance
 
 /-! # Bridges between concrete representatives and `L²` classes -/
 
@@ -140,7 +134,7 @@ theorem norm_sq_centeredObservableL2 {n : ℕ} (hn : 0 < n) (f : Configuration n
   have hr : ‖centeredObservableL2 hn f hf‖ ^ 2 =
       ∫ z, centeredObservable n f z ^ 2 ∂ginibreMeasure n := by
     apply Complex.ofReal_injective
-    convert hinner using 1 ; simp [Complex.ofReal_pow]
+    convert hinner using 1; simp [Complex.ofReal_pow]
   simpa [smoothGinibreVariance, centeredObservable] using hr
 
 /-- The normalized Vandermonde image of the centered observable. -/

@@ -35,8 +35,10 @@ SOFTWARE.
 
 module
 
-public import LeanPool.GinibrePoincare.Analysis.GaussianDensity
-public import Mathlib.MeasureTheory.Integral.Lebesgue.Map
+public import Mathlib.Analysis.SpecialFunctions.Bernstein
+public import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+public import Mathlib.Data.Nat.Factorial.DoubleFactorial
+public import Mathlib.MeasureTheory.Measure.Lebesgue.Complex
 
 /-! # Transporting densities through measure-preserving equivalences -/
 

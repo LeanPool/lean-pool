@@ -36,6 +36,7 @@ SOFTWARE.
 module
 
 public import LeanPool.GinibrePoincare.Analysis.PermutationLp
+public import LeanPool.GinibrePoincare.Analysis.VandermondeL2
 
 /-! # Vandermonde multiplication and permutation symmetry in `L²` -/
 

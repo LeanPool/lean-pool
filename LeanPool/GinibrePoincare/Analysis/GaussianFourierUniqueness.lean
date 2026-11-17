@@ -39,7 +39,6 @@ public import LeanPool.GinibrePoincare.Analysis.GaussianFourierCoordinates
 public import LeanPool.GinibrePoincare.Analysis.GaussianHermiteMoments
 public import LeanPool.GinibrePoincare.Analysis.HermiteL2Family
 public import Mathlib.Analysis.InnerProductSpace.l2Space
-public import Mathlib.MeasureTheory.Integral.Bochner.ContinuousLinearMap
 
 /-! # Positive-measure reduction for Gaussian Fourier uniqueness -/
 
@@ -77,6 +76,8 @@ def gaussianRealPartPositiveMeasure {n : ℕ}
   (complexGaussianMeasure n).withDensity
     (fun z ↦ ENNReal.ofReal (max (v z).re 0))
 
+/-- The Gaussian measure weighted by the negative part of the real component of an L²
+function. -/
 def gaussianRealPartNegativeMeasure {n : ℕ}
     (v : Lp ℂ 2 (complexGaussianMeasure n)) : Measure (Configuration n) :=
   (complexGaussianMeasure n).withDensity
@@ -89,6 +90,8 @@ def gaussianImagPartPositiveMeasure {n : ℕ}
   (complexGaussianMeasure n).withDensity
     (fun z ↦ ENNReal.ofReal (max (v z).im 0))
 
+/-- The Gaussian measure weighted by the negative part of the imaginary component of an L²
+function. -/
 def gaussianImagPartNegativeMeasure {n : ℕ}
     (v : Lp ℂ 2 (complexGaussianMeasure n)) : Measure (Configuration n) :=
   (complexGaussianMeasure n).withDensity
@@ -124,6 +127,7 @@ def euclideanRealPartPositiveMeasure {n : ℕ}
     Measure (EuclideanSpace ℝ (Fin n × Fin 2)) :=
   (gaussianRealPartPositiveMeasure v).map (configurationEuclideanEquiv n)
 
+/-- Euclidean-coordinate pushforward of the negative real-part density measure. -/
 def euclideanRealPartNegativeMeasure {n : ℕ}
     (v : Lp ℂ 2 (complexGaussianMeasure n)) :
     Measure (EuclideanSpace ℝ (Fin n × Fin 2)) :=
@@ -135,6 +139,7 @@ def euclideanImagPartPositiveMeasure {n : ℕ}
     Measure (EuclideanSpace ℝ (Fin n × Fin 2)) :=
   (gaussianImagPartPositiveMeasure v).map (configurationEuclideanEquiv n)
 
+/-- Euclidean-coordinate pushforward of the negative imaginary-part density measure. -/
 def euclideanImagPartNegativeMeasure {n : ℕ}
     (v : Lp ℂ 2 (complexGaussianMeasure n)) :
     Measure (EuclideanSpace ℝ (Fin n × Fin 2)) :=

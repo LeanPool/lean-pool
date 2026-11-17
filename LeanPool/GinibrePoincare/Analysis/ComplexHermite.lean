@@ -65,6 +65,7 @@ abbrev ComplexHermiteIndex := Fin 2
 
 namespace ComplexHermite
 
+/-- Bivariate complex polynomials in the formal holomorphic and antiholomorphic variables. -/
 abbrev Poly := MvPolynomial ComplexHermiteIndex ℂ
 
 /-- Formal holomorphic coordinate. -/
@@ -92,7 +93,7 @@ noncomputable def eval (ρ : ℝ) (p q : ℕ) (z : ℂ) : ℂ :=
 @[simp] theorem raw_zero_left (ρ : ℝ) (q : ℕ) : raw ρ 0 q = W ^ q := by
   simp [raw]
 
-@[simp] theorem raw_zero_zero (ρ : ℝ) : raw ρ 0 0 = 1 := by
+theorem raw_zero_zero (ρ : ℝ) : raw ρ 0 0 = 1 := by
   simp
 
 @[simp] theorem eval_zero_right (ρ : ℝ) (p : ℕ) (z : ℂ) :
@@ -103,7 +104,7 @@ noncomputable def eval (ρ : ℝ) (p q : ℕ) (z : ℂ) : ℂ :=
     eval ρ 0 q z = (conj z) ^ q := by
   simp [eval, W]
 
-@[simp] theorem eval_zero_zero (ρ : ℝ) (z : ℂ) : eval ρ 0 0 z = 1 := by
+theorem eval_zero_zero (ρ : ℝ) (z : ℂ) : eval ρ 0 0 z = 1 := by
   simp
 
 /-- The first mixed complex Hermite polynomial is `zw - ρ`. -/

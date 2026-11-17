@@ -37,6 +37,7 @@ module
 
 public import LeanPool.GinibrePoincare.Analysis.GinibreEqualityConjugateProjection
 public import LeanPool.GinibrePoincare.Analysis.HolomorphicQuotientPhaseFinite
+public import LeanPool.GinibrePoincare.Analysis.GinibreEqualityConjugateModeDetection
 
 /-!
 # Ginibre Equality Weak Degree Elimination

@@ -6,7 +6,8 @@ Authors: Djalil Chafaï
 
 /-
 Adapted for Lean Pool from djalilchafai/ginibre-
-poincare/GinibrePoincare/Analysis/GinibreWeightedInteriorMollification.lean.
+poincare/GinibrePoincare/Analysis/GinibreWeightedInteriorMollification.lean and
+GinibrePoincare/Analysis/GinibreArbitraryWeakPairApproximation.lean.
 Module paths, interfaces, and proofs are ported to the pool's toolchain and gates.
 The original source is MIT licensed; its notice follows.
 
@@ -53,6 +54,21 @@ open MeasureTheory Filter ContinuousLinearMap
 open scoped Topology ContDiff Convolution
 namespace GinibrePoincare
 noncomputable section
+
+/-- Small ordinary bump radii that stay inside any prescribed collision-free
+neighborhood and tend to zero. -/
+def ginibreInteriorBump (n : ℕ) (δ : ℝ) (hδ : 0 < δ) (m : ℕ) :
+    ContDiffBump (0 : Configuration n) :=
+  ⟨δ / (2 * ((m : ℝ) + 2)), δ / ((m : ℝ) + 2), by positivity, by
+    apply (div_lt_div_iff₀ (by positivity) (by positivity)).2
+    nlinarith [hδ]⟩
+
+theorem ginibreInteriorBump_radius_tendsto (n : ℕ) (δ : ℝ) (hδ : 0 < δ) :
+    Tendsto (fun m => (ginibreInteriorBump n δ hδ m).rOut) atTop (𝓝 0) := by
+  dsimp [ginibreInteriorBump]
+  have hden : Tendsto (fun m : ℕ => (m : ℝ) + 2) atTop atTop :=
+    tendsto_atTop_add_const_right atTop 2 tendsto_natCast_atTop_atTop
+  simpa using (tendsto_const_nhds.div_atTop hden)
 
 /-- Actual interior compact weak pairs admit concrete smooth compact
 mollifications converging in the Ginibre value-and-gradient L² topology.

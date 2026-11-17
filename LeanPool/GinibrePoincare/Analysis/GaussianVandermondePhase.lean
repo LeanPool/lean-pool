@@ -35,8 +35,7 @@ SOFTWARE.
 
 module
 
-public import LeanPool.GinibrePoincare.Analysis.GaussianHermitePhase
-public import LeanPool.GinibrePoincare.Analysis.VandermondeL2
+public import LeanPool.GinibrePoincare.Analysis.GlobalPhaseAction
 
 /-! # Exact phase intertwining of the actual Vandermonde isometry -/
 

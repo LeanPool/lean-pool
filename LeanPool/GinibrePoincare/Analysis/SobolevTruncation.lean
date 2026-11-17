@@ -35,8 +35,8 @@ SOFTWARE.
 
 module
 
-public import LeanPool.GinibrePoincare.Analysis.EntropyL2Closure
-public import Mathlib.Analysis.Calculus.BumpFunction.SmoothApprox
+public import Mathlib.Analysis.Calculus.BumpFunction.FiniteDimension
+public import Mathlib.MeasureTheory.Function.L2Space
 
 /-!
 # Sobolev Truncation

@@ -36,7 +36,6 @@ SOFTWARE.
 module
 
 public import LeanPool.GinibrePoincare.Analysis.GinibrePermutationGradient
-public import LeanPool.GinibrePoincare.Concrete.SmoothTarget
 
 /-! # Finite permutation averaging for smooth Ginibre observables -/
 
@@ -48,6 +47,7 @@ open scoped BigOperators ContDiff
 namespace GinibrePoincare
 noncomputable section
 
+/-- Average an observable over all particle permutations to obtain a symmetric observable. -/
 def ginibrePermutationAverage {n : ℕ} (f : Configuration n → ℝ) :
     Configuration n → ℝ := fun z =>
   (Fintype.card (ParticlePermutation n) : ℝ)⁻¹ *

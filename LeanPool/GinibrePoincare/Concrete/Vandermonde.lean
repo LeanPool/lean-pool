@@ -37,7 +37,6 @@ module
 
 public import LeanPool.GinibrePoincare.Concrete.Configuration
 public import Mathlib.LinearAlgebra.Vandermonde
-public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
 
 /-!
 # The complex Vandermonde polynomial

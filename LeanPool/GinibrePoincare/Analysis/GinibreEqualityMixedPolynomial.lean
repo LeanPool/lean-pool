@@ -35,10 +35,8 @@ SOFTWARE.
 
 module
 
-public import LeanPool.GinibrePoincare.Analysis.GinibreEqualityPolynomial
-public import Mathlib.Algebra.MvPolynomial.Funext
 public import LeanPool.GinibrePoincare.Analysis.L2RepresentativeBridges
-public import Mathlib.Topology.Algebra.MvPolynomial
+public import LeanPool.GinibrePoincare.Analysis.HolomorphicVandermondeDivision
 
 /-!
 # Ginibre Equality Mixed Polynomial
@@ -52,8 +50,11 @@ namespace GinibrePoincare
 open scoped ComplexConjugate BigOperators
 open MvPolynomial
 
+/-- Complex polynomials in independent formal holomorphic and antiholomorphic particle
+coordinates. -/
 abbrev GinibreMixedPolynomial (n : ℕ) := MvPolynomial (Fin n × Fin 2) ℂ
 
+/-- Evaluate a mixed polynomial at the particle coordinates and their complex conjugates. -/
 def ginibreMixedPolynomialEval {n : ℕ} (P : GinibreMixedPolynomial n) (z : Configuration n) : ℂ :=
   MvPolynomial.eval (fun k => if k.2=0 then z k.1 else conj (z k.1)) P
 
@@ -150,6 +151,7 @@ def ginibreMixedPolynomialSpecialize {n : ℕ} (z : Configuration n) :
     GinibreMixedPolynomial n →ₐ[ℂ] ConfigurationPolynomial n :=
   MvPolynomial.aeval (fun k => if k.2=0 then C (z k.1) else X k.1)
 
+/-- Total antiholomorphic degree of a monomial exponent vector. -/
 def ginibreMixedAntiDegree {n : ℕ} (d : (Fin n × Fin 2) →₀ ℕ) : ℕ :=
   d.sum (fun k m => if k.2=0 then 0 else m)
 

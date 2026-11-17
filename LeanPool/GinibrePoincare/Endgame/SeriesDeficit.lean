@@ -35,9 +35,9 @@ SOFTWARE.
 
 module
 
-public import Mathlib.Topology.Algebra.InfiniteSum.Real
-public import Mathlib.Tactic.Linarith
-public import Mathlib.Tactic.Ring
+public import Mathlib.Topology.Algebra.InfiniteSum.Order
+public import Mathlib.Topology.Algebra.Ring.Real
+public import Mathlib.Topology.Metrizable.Uniformity
 
 /-!
 # The series arithmetic in the proof of Theorem 1.9

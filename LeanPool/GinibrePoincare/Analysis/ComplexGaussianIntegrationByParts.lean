@@ -50,10 +50,13 @@ namespace GinibrePoincare
 
 noncomputable section
 
+/-- Horizontal slice of the complex plane with fixed imaginary coordinate. -/
 def complexRealSlice (y : ℝ) (x : ℝ) : ℂ := (x : ℂ) + y * Complex.I
 
+/-- Vertical slice of the complex plane with fixed real coordinate. -/
 def complexImagSlice (x : ℝ) (y : ℝ) : ℂ := (x : ℂ) + y * Complex.I
 
+/-- Vary one particle coordinate while keeping the remaining configuration fixed. -/
 def configurationCoordinateSlice {m : ℕ} (r : Configuration m) (j : Fin m)
     (w : ℂ) : Configuration m :=
   Function.update r j w

@@ -36,7 +36,6 @@ SOFTWARE.
 module
 
 public import LeanPool.GinibrePoincare.Concrete.GaussianProbability
-public import Mathlib.Probability.Distributions.Gaussian.Real
 
 /-!
 # Density of the real coordinates of the Ginibre Gaussian

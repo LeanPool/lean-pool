@@ -36,7 +36,6 @@ SOFTWARE.
 module
 
 public import LeanPool.GinibrePoincare.Analysis.MultivariateHermiteIntegrability
-public import LeanPool.GinibrePoincare.Analysis.PolynomialCompactApproximation
 public import Mathlib.MeasureTheory.Function.ContinuousMapDense
 
 /-! # Polynomial subspaces in Gaussian `L²`

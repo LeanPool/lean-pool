@@ -36,7 +36,6 @@ SOFTWARE.
 module
 
 public import LeanPool.GinibrePoincare.Analysis.LebesgueL2Mollification
-public import Mathlib.Analysis.Calculus.ContDiff.Convolution
 public import Mathlib.Analysis.Distribution.AEEqOfIntegralContDiff
 
 /-! # Concrete smooth compact convolution in ordinary L²
@@ -129,6 +128,7 @@ theorem lebesgueL2BumpAverage_convolution_ae (n : ℕ) (φ : ContDiffBump (0 : C
       apply integral_congr_ae
       exact Eventually.of_forall (fun x => by simp only [smul_eq_mul]; ring)
 
+/-- The Lebesgue L² class of convolution with a normalized smooth compact bump. -/
 def lebesgueSmoothCompactMollification (n : ℕ) (φ : ContDiffBump (0 : Configuration n))
     (f : Configuration n → ℝ) (hf : MemLp f 2 volume) (hc : HasCompactSupport f) :
     Lp ℝ 2 (volume : Measure (Configuration n)) :=

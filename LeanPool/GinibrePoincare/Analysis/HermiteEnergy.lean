@@ -36,7 +36,6 @@ SOFTWARE.
 module
 
 public import LeanPool.GinibrePoincare.Analysis.HermiteL2Family
-public import LeanPool.GinibrePoincare.Analysis.HermiteWirtinger
 
 /-! # Finite Hermite expansions and antiholomorphic energy -/
 
