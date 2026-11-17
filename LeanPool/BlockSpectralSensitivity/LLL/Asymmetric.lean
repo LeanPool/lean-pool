@@ -213,7 +213,7 @@ private theorem pr_avoid_pos_and_inter_le (hdet : ∀ i, Determined (supp i) (Ev
     0 < pr (avoid Ev S) ∧ ∀ i ∉ S, pr (Ev i ∩ avoid Ev S) ≤ x i * pr (avoid Ev S) := by
   generalize hn : S.card = n
   induction n using Nat.strong_induction_on generalizing S with
-  | h n ih =>
+  | ind n ih =>
     have IH : ∀ T : Finset I, T.card < S.card →
         0 < pr (avoid Ev T) ∧ ∀ i ∉ T, pr (Ev i ∩ avoid Ev T) ≤ x i * pr (avoid Ev T) :=
       fun T hT ↦ ih T.card (hn ▸ hT) T rfl

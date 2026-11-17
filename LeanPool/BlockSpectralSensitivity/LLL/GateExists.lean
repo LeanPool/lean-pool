@@ -273,7 +273,7 @@ theorem card_nbr_type_two_two_le (S : {S : Finset ι // S.card = 9}) :
   set N := (nbr (badSupp (Arc := Arc)) (Sum.inr S)).filter fun j ↦ badTy j = true
   -- the support of `S` itself lies in the target but not in the image of the neighbours
   have hSmem : S.1 ∈ Finset.univ.filter fun T : Finset ι ↦ T.card = 9 ∧ 2 ≤ (S.1 ∩ T).card :=
-    (Finset.mem_filter_univ _).mpr ⟨S.2, by simp [Finset.inter_self, S.2]⟩
+    (Finset.mem_filter_univ _).mpr ⟨S.2, by simp [S.2]⟩
   have hSnot : S.1 ∉ N.image badVerts := by
     rw [Finset.mem_image]
     rintro ⟨j, hj, hjeq⟩
