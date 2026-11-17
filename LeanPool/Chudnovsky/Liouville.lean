@@ -1037,7 +1037,7 @@ private lemma boundaryIntegral_eq_zero_of_differentiableOn {L : PeriodPair} {f :
 private lemma analyticAt_dslope_self {g : ℂ → ℂ} {c : ℂ} (hg : AnalyticAt ℂ g c) :
     AnalyticAt ℂ (dslope g c) c := by
   obtain ⟨p, hp⟩ := hg
-  exact ⟨p.fslope, hp.has_fpower_series_dslope_fslope⟩
+  exact ⟨p.fslope, hp.dslope_fslope⟩
 
 /-- Finite Taylor expansion with analytic remainder, in principal-part form: for `g` analytic
 at `c`, the function `(z - c)^(-N) · g z` is a sum of finitely many negative powers of `z - c`
@@ -1710,7 +1710,6 @@ theorem IsEllipticWith.finite_order_ne_zero (hf : L.IsEllipticWith f)
   have hcod0 : {z : ℂ | meromorphicOrderAt f z = 0} ∈ Filter.codiscrete ℂ := by
     have h :=
       (meromorphicOn_univ.mpr hf.1).codiscreteWithin_setOfPred_meromorphicOrderAt_eq_zero_or_top
-      (fun u _ => hforall u)
     refine Filter.mem_of_superset h (fun z hz => ?_)
     simp only [Set.mem_ofPred_eq, Set.mem_univ, true_and] at hz ⊢
     rcases hz with h' | h'
@@ -1873,7 +1872,6 @@ theorem IsEllipticWith.exists_const_mul_of_meromorphicOrderAt_eq (hf : L.IsEllip
     have hgord0 : {z : ℂ | meromorphicOrderAt g z = 0} ∈ Filter.codiscrete ℂ := by
       have hh :=
         (meromorphicOn_univ.mpr hg.1).codiscreteWithin_setOfPred_meromorphicOrderAt_eq_zero_or_top
-          (fun u _ ↦ hforall_g u)
       refine Filter.mem_of_superset hh (fun z hz => ?_)
       simp only [Set.mem_ofPred_eq, Set.mem_univ, true_and] at hz ⊢
       rcases hz with h' | h'
