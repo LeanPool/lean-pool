@@ -12,18 +12,7 @@ import LeanPool.FiniteRamsey.SimpleGraphLemmas
 # Clique-saturated graphs
 
 A graph `G` is `n`-clique-*edge*-saturated if it is `n`-clique-free but adding any missing edge
-creates an `n`-clique, the classical `K_n`-saturated graph of extremal graph theory. This file
-also names the vertex-addition analogue, `SimpleGraph.CliqueVertexSaturated`: `n`-clique-free, but
-extending by any new vertex (with any neighbourhood among the old vertices) always creates an
-`n`-clique.
-
-## Naming
-
-`CliqueVertexSaturated` is not called `CliqueVertexCritical`: "vertex-critical" is standard
-graph-theory terminology for *chromatic* criticality (`G` is `k`-vertex-critical if `χ(G) = k` but
-`χ(G - v) < k` for every vertex `v`), a different notion from the one defined here. Naming this
-predicate after `CliqueEdgeSaturated` instead avoids that collision and makes the
-vertex-addition/edge-addition parallel explicit.
+creates an `n`-clique, the classical `K_n`-saturated graph of extremal graph theory.
 
 This file imports `LeanPool.FiniteRamsey.SimpleGraphLemmas` (for
 `SimpleGraph.cliqueFree_iso_iff` and `SimpleGraph.Iso.supEdge`) and
@@ -33,12 +22,9 @@ isomorphism transport); in a real PR series these would instead be ordinary
 
 ## Main declarations
 
-* `SimpleGraph.CliqueVertexSaturated`: `n`-clique-free, and every one-vertex extension creates an
-  `n`-clique.
-* `SimpleGraph.CliqueEdgeSaturated`: `n`-clique-free, and every one-edge extension between
-  *distinct, non-adjacent* vertices creates an `n`-clique, the classical `K_n`-saturated graph.
-* Both notions only depend on `G` up to isomorphism
-  (`SimpleGraph.cliqueVertexSaturated_iso_iff`, `SimpleGraph.cliqueEdgeSaturated_iso_iff`).
+* `SimpleGraph.CliqueEdgeSaturated`: `n`-clique-free, and every missing edge between distinct
+  vertices creates an `n`-clique.
+* `SimpleGraph.cliqueEdgeSaturated_iso_iff`: isomorphism invariance of edge saturation.
 * `SimpleGraph.not_cliqueFree_sup_edge_iff_not_cliqueFreeOn_commonNeighbors`: the common-
   neighbourhood characterisation of when adding an edge between non-adjacent `v`, `w` creates an
   `(n + 2)`-clique: exactly when `v` and `w`'s common neighbourhood already has an `n`-clique.
@@ -64,34 +50,9 @@ variable {V W : Type*} {G : SimpleGraph V} {H : SimpleGraph W} {n : ℕ}
 
 section Saturation
 
-/-- `G` is `n`-clique-vertex-saturated: it is `n`-clique-free, but extending it by any new
-vertex — whatever neighbourhood among the old vertices that vertex is given — always creates an
-`n`-clique. The vertex-addition analogue of `n`-clique-saturation
-(`SimpleGraph.CliqueEdgeSaturated`, the edge-addition analogue). -/
-def CliqueVertexSaturated (G : SimpleGraph V) (n : ℕ) : Prop :=
-  G.CliqueFree n ∧ ∀ N : Set V, ¬(G.addVertex N).CliqueFree n
-
-theorem CliqueVertexSaturated.cliqueFree (h : CliqueVertexSaturated G n) : G.CliqueFree n :=
-  h.1
-
-theorem CliqueVertexSaturated.not_cliqueFree_addVertex (h : CliqueVertexSaturated G n)
-    (N : Set V) : ¬(G.addVertex N).CliqueFree n :=
-  h.2 N
-
-/-- Vertex-saturation transfers back along an isomorphism. -/
-theorem CliqueVertexSaturated.of_iso (e : G ≃g H) (h : CliqueVertexSaturated H n) :
-    CliqueVertexSaturated G n :=
-  ⟨(cliqueFree_iso_iff e).mpr h.1, fun N hN =>
-    h.2 (e '' N) ((cliqueFree_iso_iff (e.addVertex N)).mp hN)⟩
-
-/-- Vertex-saturation only depends on `G` up to isomorphism. -/
-theorem cliqueVertexSaturated_iso_iff (e : G ≃g H) (n : ℕ) :
-    CliqueVertexSaturated G n ↔ CliqueVertexSaturated H n :=
-  ⟨.of_iso e.symm, .of_iso e⟩
-
 /-- `G` is `n`-clique-edge-saturated — a `K_n`-saturated graph in the classical extremal graph
 theory sense: it is `n`-clique-free, but adding any missing edge between *distinct* vertices
-creates an `n`-clique. The edge-addition counterpart of `SimpleGraph.CliqueVertexSaturated`.
+creates an `n`-clique.
 
 The `v ≠ w` hypothesis is essential, not merely a convenience: without it the universal
 quantifier's `v = w` instance is always available (a graph is always non-adjacent to itself,

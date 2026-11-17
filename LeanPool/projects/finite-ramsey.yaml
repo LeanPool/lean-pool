@@ -14,7 +14,7 @@ title: Finite-colour Ramsey theory
 summary: Finite-colour graph Ramsey theory on Mathlib edge labelings, with a common arrow
   relation and least-host numbers. Proves finite graph and infinite uniform existence, binomial
   upper and counting lower bounds, Schur triples and transitive tournament bounds. Supplies
-  induced, ordered and hypergraph interfaces; general induced and hypergraph specifications
+  colour-class induced-copy, ordered and hypergraph interfaces; the colour-class and hypergraph specifications
   retain explicit existence hypotheses.
 entry_module: LeanPool.FiniteRamsey
 source:

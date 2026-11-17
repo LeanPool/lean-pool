@@ -10,11 +10,11 @@ public import LeanPool.FiniteRamsey
 public import LeanPool.FiniteRamsey.ArrowNumber
 public import LeanPool.FiniteRamsey.ArrowSemantics
 public import LeanPool.FiniteRamsey.BinomialBound
+public import LeanPool.FiniteRamsey.ColorInducedArrow
 public import LeanPool.FiniteRamsey.DigraphTournament
 public import LeanPool.FiniteRamsey.DigraphTournamentRamsey
 public import LeanPool.FiniteRamsey.GraphRamseyNumber
 public import LeanPool.FiniteRamsey.HypergraphRamsey
-public import LeanPool.FiniteRamsey.InducedRamsey
 public import LeanPool.FiniteRamsey.InfiniteRamsey
 public import LeanPool.FiniteRamsey.InfiniteRamseyKUniform
 public import LeanPool.FiniteRamsey.MonochromaticClique
