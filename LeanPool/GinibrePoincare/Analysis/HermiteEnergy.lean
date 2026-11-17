@@ -418,7 +418,7 @@ private theorem dbarComponent_finset_sum {n : ℕ} {ι : Type*}
       rw [mul_add, Finset.mul_sum]
       congr 1
       simp_rw [Finset.mul_sum]
-      ring
+      ring_nf
     _ = _ := by
       rw [← Finset.sum_add_distrib]
       apply Finset.sum_congr rfl

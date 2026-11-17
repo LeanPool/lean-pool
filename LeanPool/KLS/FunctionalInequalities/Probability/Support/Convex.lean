@@ -203,7 +203,7 @@ theorem exists_pos_ball_inner_sub_pos_of_mem_support (μ : ProbabilityMeasure E)
           abel
         _ = ⟪u, (y - x₀) + (x - y)⟫ + ⟪v - u, x - x₀⟫ := by
           congr 1
-          abel
+          abel_nf
         _ = ⟪u, y - x₀⟫ + ⟪u, x - y⟫ + ⟪v - u, x - x₀⟫ := by rw [inner_add_right]
         _ = c + ⟪v - u, x - x₀⟫ + ⟪u, x - y⟫ := by
           dsimp [c]

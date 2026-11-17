@@ -116,7 +116,7 @@ theorem configurationRealPairing_complex_mem_mixedMonomialSpan {n : ℕ}
           (t i) • (fun z : Configuration n ↦ conj (z i))) by
     funext z
     apply Complex.ext <;>
-      simp [configurationRealPairing, Finset.sum_apply] <;> ring
+      simp [configurationRealPairing, Finset.sum_apply] <;> ring_nf
     all_goals simp]
   apply Submodule.sum_mem
   intro i hi

@@ -272,7 +272,7 @@ theorem hasDerivAt_configurationFourierCharacter_line {n : ℕ}
     unfold configurationFourierCharacter
     rw [configurationRealPairing_realScale]
     push_cast
-    ring]
+    ring_nf]
   let A : ℂ := (configurationRealPairing t z : ℂ) * Complex.I
   have hinner : HasDerivAt (fun w : ℂ ↦ w * A) A (r : ℂ) := by
     simpa using ((hasDerivAt_id (r : ℂ)).mul_const A)
