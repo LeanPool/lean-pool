@@ -6,6 +6,7 @@ Authors: Michał Dobranowski
 module
 
 public import LeanPool.Apportionment.Basic
+public import Plausible.Sampleable
 import LeanPool.Apportionment.Utils
 import Mathlib.Tactic.Bound
 import Mathlib.Tactic.Measurability.Init
