@@ -345,80 +345,10 @@ lemma zIter_add (σ : Ω ≃ᵐ Ω) (a b : ℤ) (ω : Ω) :
 lemma zIter_zero_apply (σ : Ω ≃ᵐ Ω) (ω : Ω) : zIter σ 0 ω = ω := by
   rw [zIter_eq_zpow, zpow_zero]; rfl
 
-/-- **Rudolph's disjoint-translates lemma**, built on `periodic_null` via ergodicity.
-Any positive-measure set
-`A` has a positive-measure measurable subset `A'` whose one-sided forward translates
-`A', σA', …, σ^{N-1}A'` are pairwise disjoint, for any `N`.
-
-Rudolph proves this by contrapositive: if no such `A'` existed, a maximality argument (take a
-sequence of subsets approaching the supremum of achievable disjoint-translate measure, use
-continuity of measure along the union) forces `A` to be `σ^{N₀}`-invariant a.e. for some
-`N₀ < N`, and then a refining-partition-tree argument turns that into "a.e. point of `A` is
-`σ^{N₀}`-periodic" -- impossible for ergodic `σ` on a non-atomic space (`periodic_null`).
-
-This is the entry point that consumes `periodic_null`.
-The covering and assembly steps below cite only its
-*statement*. -/
-theorem exists_subset_disjoint_iterates [StandardBorelSpace Ω] (μ : Measure Ω)
-    [IsProbabilityMeasure μ] [NullSingletonClass μ] (σ : Ω ≃ᵐ Ω) (hσ : Ergodic (⇑σ) μ)
-    (N : ℕ) {A : Set Ω} (hA : MeasurableSet A) (hApos : 0 < μ A) :
-    ∃ A' ⊆ A, MeasurableSet A' ∧ 0 < μ A' ∧
-      ∀ i < N, ∀ k < N, i ≠ k → Disjoint ((⇑σ)^[i] '' A') ((⇑σ)^[k] '' A') := by
-  classical
-  obtain ⟨B, hBA, hBmeas, hBpos, hBdisj⟩ := disjoint_forward_shifts μ σ hσ (N - 1) hA hApos
-  -- Two translates `σ^[i]B`, `σ^[k]B` are disjoint iff `B ∩ σ^[k-i]B = ∅` (apply the bijection
-  -- `σ^[-i]`, i.e. `zIter σ (-i)`). As `i, k` range over `{0,…,N-1}`, `|k-i|` ranges over
-  -- `1,…,N-1`, exactly the shifts `disjoint_forward_shifts` already handles.
-  have hzcomp : ∀ (a b : ℤ) (x : Ω), zIter σ a (zIter σ b x) = zIter σ (a + b) x :=
-    fun a b x => (zIter_add σ a b x).symm
-  have hzzero : ∀ x : Ω, zIter σ (0 : ℤ) x = x := zIter_zero_apply σ
-  have hznat : ∀ (n : ℕ) (x : Ω), zIter σ (n : ℤ) x = (⇑σ)^[n] x :=
-    fun n x => zIter_natCast σ n x
-  refine ⟨B, hBA, hBmeas, hBpos, ?_⟩
-  intro i hi k hk hik
-  rw [Set.disjoint_left]
-  rintro w ⟨x, hxB, hxw⟩ ⟨y, hyB, hyw⟩
-  have hxy : zIter σ (i : ℤ) x = zIter σ (k : ℤ) y := by rw [hznat, hznat, hxw, hyw]
-  have h1 : zIter σ (-(i : ℤ)) (zIter σ (i : ℤ) x) = x := by
-    rw [hzcomp, show (-(i : ℤ) + i : ℤ) = 0 from by ring]; exact hzzero x
-  have h2 : zIter σ (-(i : ℤ)) (zIter σ (k : ℤ) y) = zIter σ ((k : ℤ) - i) y := by
-    rw [hzcomp, show (-(i : ℤ) + k : ℤ) = (k : ℤ) - i from by ring]
-  have hkey : x = zIter σ ((k : ℤ) - i) y :=
-    calc x = zIter σ (-(i : ℤ)) (zIter σ (i : ℤ) x) := h1.symm
-      _ = zIter σ (-(i : ℤ)) (zIter σ (k : ℤ) y) := by rw [hxy]
-      _ = zIter σ ((k : ℤ) - i) y := h2
-  set d : ℤ := (k : ℤ) - i with hd
-  have hd0 : d ≠ 0 := by omega
-  rcases lt_or_gt_of_ne hd0 with hdlt | hdgt
-  · -- `d < 0`, i.e. `k < i`: then `x = σ^[(-d).toNat] y`, contradicting
-    -- `Disjoint B (σ^[(-d)] '' B)`.
-    set n : ℕ := (-d).toNat with hndef
-    have hn1 : 1 ≤ n := by omega
-    have hn2 : n ≤ N - 1 := by omega
-    have hdn : (n : ℤ) = -d := by rw [hndef]; exact Int.toNat_of_nonneg (by omega)
-    have hyx : zIter σ (-d) x = y :=
-      calc zIter σ (-d) x = zIter σ (-d) (zIter σ d y) := by rw [hkey]
-        _ = zIter σ (-d + d) y := by rw [hzcomp]
-        _ = zIter σ 0 y := by rw [show (-d + d : ℤ) = 0 from by ring]
-        _ = y := hzzero y
-    have hyeq : (⇑σ)^[n] x = y := by rw [← hznat n x, hdn]; exact hyx
-    exact Set.disjoint_left.mp (hBdisj n hn1 hn2) hyB ⟨x, hxB, hyeq⟩
-  · -- `d > 0`, i.e. `i < k`: then `y = σ^[d.toNat] x`, contradicting `Disjoint B (σ^[d] '' B)`.
-    set n : ℕ := d.toNat with hndef
-    have hn1 : 1 ≤ n := by omega
-    have hn2 : n ≤ N - 1 := by omega
-    have hdn : (n : ℤ) = d := by rw [hndef]; exact Int.toNat_of_nonneg (by omega)
-    have hxeq : (⇑σ)^[n] y = x := by rw [← hznat n y, hdn]; exact hkey.symm
-    exact Set.disjoint_left.mp (hBdisj n hn1 hn2) hxB ⟨y, hyB, hxeq⟩
-
-/-- **Symmetric corollary** of `exists_subset_disjoint_iterates`, in the shape
-`vitali_cover_third`'s covering argument uses internally: `2N+1` translates `zIter σ i '' A'`
-for `i ∈ {-N,…,N}` pairwise disjoint, for any window radius `N`, rather than Rudolph's `N`
-one-sided translates. Built from the same `disjoint_forward_shifts` machinery at `K = 2N`
-(differences `k - i` for `i, k ∈ {-N,…,N}` range over `{-2N,…,2N}`, exactly the shifts it
-handles), not derived from `exists_subset_disjoint_iterates` itself: shifting that lemma's
-witness by `σ^{-N}` to recenter it would break the required `A' ⊆ A`, since `A` need not be
-`σ`-invariant. -/
+/-- A positive-measure set contains a positive-measure measurable subset with disjoint
+translates over `Icc (-N) N`. The difference of two indices has absolute value at most `2N`,
+so `disjoint_forward_shifts` supplies the required exclusions. The witness stays inside the
+original set; recentering a one-sided witness would not preserve this inclusion. -/
 theorem exists_subset_disjoint_iterates_symm [StandardBorelSpace Ω] (μ : Measure Ω)
     [IsProbabilityMeasure μ] [NullSingletonClass μ] (σ : Ω ≃ᵐ Ω) (hσ : Ergodic (⇑σ) μ)
     (N : ℕ) {A : Set Ω} (hA : MeasurableSet A) (hApos : 0 < μ A) :
@@ -469,6 +399,22 @@ theorem exists_subset_disjoint_iterates_symm [StandardBorelSpace Ω] (μ : Measu
     have hdn : (n : ℤ) = d := by rw [hndef]; exact Int.toNat_of_nonneg (by omega)
     have hxeq : (⇑σ)^[n] y = x := by rw [← hznat n y, hdn]; exact hkey.symm
     exact Set.disjoint_left.mp (hBdisj n hn1 hn2) hxB ⟨y, hyB, hxeq⟩
+
+/-- A positive-measure set contains a positive-measure measurable subset whose first `N`
+forward translates are pairwise disjoint. Restrict the symmetric-window selection to natural
+indices; its witness remains a subset of the original set. -/
+theorem exists_subset_disjoint_iterates [StandardBorelSpace Ω] (μ : Measure Ω)
+    [IsProbabilityMeasure μ] [NullSingletonClass μ] (σ : Ω ≃ᵐ Ω) (hσ : Ergodic (⇑σ) μ)
+    (N : ℕ) {A : Set Ω} (hA : MeasurableSet A) (hApos : 0 < μ A) :
+    ∃ A' ⊆ A, MeasurableSet A' ∧ 0 < μ A' ∧
+      ∀ i < N, ∀ k < N, i ≠ k → Disjoint ((⇑σ)^[i] '' A') ((⇑σ)^[k] '' A') := by
+  obtain ⟨B, hBA, hBmeas, hBpos, hBdisj⟩ :=
+    exists_subset_disjoint_iterates_symm μ σ hσ N hA hApos
+  have hnat (n : ℕ) : zIter σ (n : ℤ) = (⇑σ)^[n] := funext (zIter_natCast σ n)
+  refine ⟨B, hBA, hBmeas, hBpos, ?_⟩
+  intro i hi k hk hik
+  simpa only [hnat] using hBdisj (i : ℤ) (by constructor <;> omega)
+    (k : ℤ) (by constructor <;> omega) (by omega)
 
 /-! ### Infrastructure for `vitali_cover_third`.
 

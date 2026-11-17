@@ -33,21 +33,10 @@ variable {Ω X : Type*} [MeasurableSpace Ω] [StandardBorelSpace Ω]
 `(Ω, σ, μ, X, L)` with ergodic invertible base, i.e. a *cocycle* in the sense of the paper's
 Introduction.
 
-**The base is a Lebesgue probability space.** `[StandardBorelSpace Ω]` is a parameter and
-`isProbability`/`nullSingleton` are fields, because the paper works throughout on "an ergodic
-system on a Lebesgue probability space" and the cocycle results genuinely consume that: `χ_k` is
-shown a.e. constant via `kingsyn`, which routes through `balancedKingman` and hence
-`backwardVitali`, and those require exactly `[StandardBorelSpace Ω]`, `[IsProbabilityMeasure μ]`
-and `[NullSingletonClass μ]`.
-
-`isProbability` in particular was a genuine gap rather than an added restriction: `Ergodic σ μ`
-unfolds to `MeasurePreserving + PreErgodic` and bundles no finiteness at all, so before this the
-structure could not discharge `kingsyn`'s hypotheses — a working-practice note 4 defect (a
-statement no intended caller can supply).
-
-Carrying them as fields rather than as hypotheses on each theorem keeps the ripple to zero: every
-`R : Cocycle Ω X` supplies them by `attribute [instance]` below, so no downstream signature in
-`Cocycle.lean`, `Main.lean` or `Appendix.lean` changes. -/
+The standard-Borel, probability and null-singleton assumptions supply the nonatomic base
+used by balanced Kingman and backward Vitali. Ergodicity alone includes measure preservation
+and the zero-one law, but does not imply finite measure. The probability and null-singleton
+fields provide the corresponding instances for every cocycle theorem. -/
 structure Cocycle (Ω X : Type*) [MeasurableSpace Ω] [StandardBorelSpace Ω]
     [NormedAddCommGroup X] [NormedSpace ℝ X] [MeasurableSpace X] where
   /-- The invertible measurable base transformation. -/
@@ -633,6 +622,20 @@ theorem Cocycle.integrable_logProdTrunc_posPart (R : Cocycle Ω X) [SeparableSpa
   positivity
 
 omit [MeasurableSpace X] in
+/-- `ρ` is antitone from index `1` on. -/
+theorem bernsteinNumber_antitone (T : X →L[ℝ] X) {p q : ℕ} (hp : 1 ≤ p) (hpq : p ≤ q) :
+    bernsteinNumber T q ≤ bernsteinNumber T p := by
+  induction q with
+  | zero => omega
+  | succ q ih =>
+      rcases Nat.lt_or_ge p (q + 1) with hlt | hge
+      · refine le_trans ?_ (ih (by omega))
+        obtain ⟨j, rfl⟩ : ∃ j, q = j + 1 := ⟨q - 1, by omega⟩
+        exact ChiOrder.bernsteinNumber_succ_le T j
+      · have : p = q + 1 := by omega
+        rw [this]
+
+omit [MeasurableSpace X] in
 /-- The Bernstein product vanishes exactly when its last factor does, `ρ` being antitone. -/
 theorem prod_bernstein_eq_zero_iff (T : X →L[ℝ] X) {k : ℕ} (hk : 1 ≤ k) :
     (∏ i ∈ Finset.range k, bernsteinNumber T (i + 1)) = 0 ↔ bernsteinNumber T k = 0 := by
@@ -642,19 +645,7 @@ theorem prod_bernstein_eq_zero_iff (T : X →L[ℝ] X) {k : ℕ} (hk : 1 ≤ k) 
     rw [Finset.mem_range] at hi
     refine le_antisymm ?_ (bernsteinNumber_nonneg T k)
     rw [← hzero]
-    -- `ρ` is antitone from index 1 on, so `ρ_k ≤ ρ_{i+1}` for `i + 1 ≤ k`
-    have hanti : ∀ p q : ℕ, 1 ≤ p → p ≤ q → bernsteinNumber T q ≤ bernsteinNumber T p := by
-      intro p q hp hpq
-      induction q with
-      | zero => omega
-      | succ q ih =>
-          rcases Nat.lt_or_ge p (q + 1) with hlt | hge
-          · refine le_trans ?_ (ih (by omega))
-            obtain ⟨j, rfl⟩ : ∃ j, q = j + 1 := ⟨q - 1, by omega⟩
-            exact ChiOrder.bernsteinNumber_succ_le T j
-          · have : p = q + 1 := by omega
-            rw [this]
-    exact hanti (i + 1) k (by omega) (by omega)
+    exact bernsteinNumber_antitone T (by omega) (by omega)
   · intro h
     refine Finset.prod_eq_zero (Finset.mem_range.2 (by omega : k - 1 < k)) ?_
     rw [show k - 1 + 1 = k from by omega]
@@ -859,20 +850,6 @@ theorem Cocycle.ae_tendsto_logProd (R : Cocycle Ω X) [SeparableSpace X] [BorelS
       · exfalso
         exact hnondeg ⟨n, hn, (prod_bernstein_eq_zero_iff (R.iterate n ω) hk).1 h.symm⟩
     exact R.logProdTrunc_div_eq_max k M hn hPpos
-
-omit [MeasurableSpace X] in
-/-- `ρ` is antitone from index `1` on. -/
-theorem bernsteinNumber_antitone (T : X →L[ℝ] X) {p q : ℕ} (hp : 1 ≤ p) (hpq : p ≤ q) :
-    bernsteinNumber T q ≤ bernsteinNumber T p := by
-  induction q with
-  | zero => omega
-  | succ q ih =>
-      rcases Nat.lt_or_ge p (q + 1) with hlt | hge
-      · refine le_trans ?_ (ih (by omega))
-        obtain ⟨j, rfl⟩ : ∃ j, q = j + 1 := ⟨q - 1, by omega⟩
-        exact ChiOrder.bernsteinNumber_succ_le T j
-      · have : p = q + 1 := by omega
-        rw [this]
 
 omit [MeasurableSpace X] in
 /-- `ρ_{j+1}(T)^j ≤ ∏_{i≤j} ρ_i(T)`: every factor dominates the last Bernstein number. -/

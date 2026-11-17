@@ -180,14 +180,8 @@ disjoint across `ω ∈ A`.
 Hypotheses `[StandardBorelSpace Ω] [IsProbabilityMeasure μ] [NullSingletonClass μ]` were added to
 the paper's bare `Ergodic σ μ`; see the module note above (the statement is false without them).
 
-**Status: fully proved, no `sorry`.** The non-periodicity foundation (`periodic_null`) and its
-non-atomic scaffolding, plus Rudolph's greedy covering chain (`exists_subset_disjoint_iterates`,
-`vitali_cover_third`, `vitali_cover_geometric`), are all proved; this lemma (Rudolph's backward
-Vitali theorem) is the
-final assembly, closed once `vitali_cover_geometric` was fixed to restrict `hgrow`/`hwB` to
-`s < m` (see `CoverGeometric.lean`'s own docstring for that history — an earlier whole-`Ω`,
-unbounded-`s` version was confirmed logically inconsistent for any useful `G`, via a standalone
-Lean derivation, before being fixed).
+The proof assembles the non-periodicity foundation, nonatomic splitting and Rudolph's greedy
+covering chain. The geometric covering stage uses bounded scale indices `s < m`.
 
 **Proof strategy.** Clamp to `ε' := min ε 1` for clean `ENNReal` bookkeeping (the goal is monotone
 in `ε`, so proving it for the smaller `ε'` suffices). Choose `G, m : ℕ` (via `exists_nat_gt`) large

@@ -592,102 +592,20 @@ private theorem radius_le_div_of_earlier_scale (A₀ : Set Ω) (m G : ℕ) (hG1'
     exact h
   exact hfuture
 
-/-- **Rudolph's geometric-scales covering lemma** (iterate the one-third covering lemma across
-scales, uses `vitali_cover_third`).
+/-- **Rudolph's geometric-scales covering lemma.** Select pairwise disjoint orbit windows
+whose centres lie in `A₀`, leaving measure at most `3 (G+1)/(Gm) + 1/G` uncovered within `A₀`.
 
-**IMPORTANT CORRECTION (found while attempting this proof, before writing any construction code —
-read before touching this file again).** An earlier draft of this theorem fixed the growth factor
-between consecutive scales at `3` (`hgrow : ∀ s ω ω', 3 * w s ω ≤ w (s+1) ω'`) and claimed the
-conclusion `ENNReal.ofReal (1 - (2/3)^m) < μ (⋃ …)`, i.e. that TRUE-window coverage approaches `1`
-as `m → ∞` for a *fixed* growth factor. Checking Rudolph's actual proof
-(in his geometric-scales corollary) shows this is **not achievable**: his
-growth condition (his (3.22)) has an explicit `ε`-dependent ratio `4/ε`, which **must diverge** as
-the target error `ε → 0` — a fixed ratio (`3`, or any other constant) can only ever deliver a
-fixed *ceiling* on true-window coverage, strictly below `1`, no matter how many scales `m` are
-used. Rudolph's own hypotheses even require `4/ε ≥ 4` (since `ε ≤ 1`), so growth factor `3` is
-below his own minimum viable ratio — independent confirmation this is broken, not just loose.
+The proof combines the one-third covering lemma over `m` scales. At each scale the true windows
+occupy at least the fraction `G/(G+1)` of their enlarged windows. Disjointness across scales
+bounds the total selected true-window measure by one. A global counting argument then bounds
+the final candidate remainder by `3 (G+1)/(Gm)`; the enlargement shells contribute at most `1/G`.
+This uses monotonicity of the remainders, not a geometric decay estimate at each step.
 
-**The fix**: replace the fixed factor `3` with an explicit parameter `G : ℕ` (any `G ≥ 1`), so
-`hgrow : ∀ s ω ω', G * w s ω ≤ w (s+1) ω'` (uniform across points, as the prior session already
-established is necessary — see the git history of this file for that analysis, still valid). The
-conclusion's bound now genuinely improves toward `1` as **both** `m` and `G` grow, matching
-Rudolph's real theorem where the caller picks `m` (many scales) and `G` (steep enough growth) for
-a target error, instead of hard-coding either.
-
-**The real proof shape (also corrected from the prior session's sketch — the per-step `(2/3)`
-geometric-decay plan turns out not to be how Rudolph's argument works at all).** The prior
-session's plan assumed each step's *enlarged*-window recovery could be turned into a clean
-`μ (R_{k+1}) ≤ (2/3) μ (R_k)` decay on the remainder `R_k`. This does **not** follow: the enlarged
-window recovered at step `k` (`E_k`, measure `≥ μ (R_k) / 3` **globally**, from `vitali_cover_third`
-directly) need not have most of its measure *inside* `R_k` — its centres are in `R_k`, but the
-windows themselves are ambient and can reach anywhere in `Ω`, so `μ (R_k ∩ E_k) ≥ μ (R_k)/3` is
-**not** implied and a naive per-step geometric-decay argument is unsound. Re-reading Rudolph's own
-proof (his (3.26)-(3.27), the `A_{M+1}` argument) shows he does **not** use per-step decay either:
-he instead runs a **global pigeonhole/counting argument** across all `m` steps at once:
-* Each step `k` recovers TRUE-window measure `≥ (c(G)/3) · μ (R_k)`, where `c(G) = G/(G+1)` is the
-  uniform true/enlarged ratio (`enlarge_ratio_le` above, applied level-by-level after partitioning
-  by radius value — the same "finitely many levels, `Finset.sum`" pattern `vitali_cover_third`'s
-  own proof uses, reusing the fixed-radius `measure_iUnion_zIter_window_le`/`_eq` from `Basic.lean`
-  directly, since on each level the true radius **and** the enlarged radius are both literally
-  constant — no new "variable-radius measure" primitive is needed, contrary to what the prior
-  session's docstring worried).
-* TRUE windows across **all** `m` steps are pairwise disjoint (proved via the cross-scale
-  enlargement/exclusion argument: a later, finer-scale candidate that survived step `k`'s
-  exclusion cannot meet step `k`'s claimed TRUE window, using that its own radius is `≤
-  (\text{step }k\text{'s radius})/G`, a single uniform buffer, not a per-step-shrinking one).
-  Hence the *sum* of recovered TRUE-window measures over all `m` steps is `≤ 1`.
-* Combining: `Σ_k (c(G)/3) μ (R_k) ≤ 1`, and since `R_k` is non-increasing, `Σ_k μ(R_k) ≥ m ·
-  μ (R_m)`, giving `μ (R_m) ≤ 3 (G+1) / (G m)` — **no per-step ratio needed anywhere**, only
-  monotonicity of `R_k` and the level-wise ratio bound.
-* Finally, `Ω \ (⋃ \text{TRUE windows}) ⊆ R_m ∪ ⋃_k (E_k \setminus \text{TrueWindow}_k)`, and
-  `Σ_k μ (E_k \ \text{TrueWindow}_k) ≤ (1/G) Σ_k μ(\text{TrueWindow}_k) ≤ 1/G` (from the same ratio
-  bound, rearranged). This gives the final bound below.
-
-**Domain restriction (added after cross-checking against the requirements of
-`backwardVitali`, the sole caller).** The hypotheses `hw1`, `hwB`, `hgrow`
-now range only over an explicit candidate domain `A₀` (matching Rudolph's own geometric-scales
-corollary, which
-takes an input set `A` with `μ(A) > 0`), not over all of `Ω`. Reason: a caller building `w` on a
-genuinely-evolving/shrinking domain (Rudolph's `A_1 ⊇ A_2 ⊇ …`) needs to pad `w` with "junk" values
-outside that domain; if `hgrow` had to hold for *every* pair in all of `Ω` (including domain-vs-junk
-pairs in both directions), the cross-constraints force the domain values toward a degenerate fixed
-point, which is unusable. Restricting `hgrow` to `ω, ω' ∈ A₀` removes this: junk points outside
-`A₀` are simply not constrained relative to domain points at all, and the conclusion's selected set
-`A` is required to be `⊆ A₀`. (`hwB`/`hw1` stay **global**, over all of `Ω` — they are simple
-per-point range bounds with no cross-point pairing, so junk points satisfy them trivially, e.g. by
-being set to `1` everywhere; only the *relational* hypothesis `hgrow` had the pathology, and
-`vitali_cover_third` genuinely needs a bound over all of `Ω` for the radius functions it's fed, so
-keeping `hwB` global is also required for this proof's internal machinery, not just convenient.)
-The final bound is now stated as an *absolute* uncovered-measure bound within `A₀` (matching
-Rudolph's `μ(A \ ⋃ I(x)) < ε` form) rather than a fraction of `1`, so it does not need `μ(A₀)` to
-be known.
-
-**CRITICAL FOLLOW-UP FIX (found by a coordinator review after the above was first reported as
-"done" — read this, it corrects a real defect in the version described above).** `hgrow`/`hwB`
-were quantified over *unbounded* `s : ℕ`, with no `s < m` restriction. That is jointly
-unsatisfiable for any nonempty `A₀` and `G ≥ 2`: fixing any `ω₀ ∈ A₀` and iterating `hgrow` gives
-`w s ω₀ ≥ G ^ s` for *every* `s : ℕ` (induction from `hw1`), which is unbounded as `s → ∞` and
-contradicts `hwB`'s single fixed `Bnd`. Since the conclusion's bound `3(G+1)/(Gm) + 1/G` is only
-useful for `G ≥ 2` (at `G = 1` it is always `≥ 1`), every hypothesis instantiation that would
-actually help a caller was logically inconsistent — the theorem was sorry-free and green, but
-*vacuously* provable. `#print axioms` cannot catch this class of defect (unsatisfiable-but-
-well-typed hypotheses); it only checks for `sorryAx`.
-
-**The fix**: restrict `hgrow` and `hwB` to `s < m` (matching how the internal proof actually uses
-them — every scale it ever touches is `scaleAt k` for some `k`, and `scaleAt k < m` always, since
-`scaleAt k := m - 1 - k` truncates via `ℕ`-subtraction once `k ≥ m - 1`). `hw1` needed no change
-(it is a simple lower bound with no growth/unboundedness issue). This required threading a
-`s < m` (or `s + d < m`, for the chained lemma) hypothesis through every helper that consumes
-`hgrow`/`hwB` (`hrenlB`, `hchain2`, `hfuture`, `hsafe`) and every one of their call sites — all
-dischargeable via `hscaleAt_lt : ∀ k, scaleAt k < m` (defined once, right after `scaleAt`) plus
-`omega`, since that fact is unconditionally true given `hm : 1 ≤ m`. No change to the domain
-restriction (`ω, ω' ∈ A₀`) from the paragraph above was needed — that part was correct and
-independent of this bug.
-
-**Status: fully proved, no `sorry`, re-verified after the `s < m` fix** (confirmed via
-`#print axioms vitali_cover_geometric` below — only `propext, Classical.choice, Quot.sound`; full
-downstream `lake build ProofMet.BalancedKingman` re-run clean, same sorry inventory as before this
-fix). -/
+The growth condition compares only points of `A₀`; radii outside it may be padded independently.
+The upper radius bound is global in the point variable. Both scale conditions apply only for
+`s < m`: imposing uniform upper bounds and geometric growth over all natural scales would be
+inconsistent for `G ≥ 2` on a nonempty domain with a positive initial radius. Both `m` and `G`
+can increase to make the error arbitrarily small. -/
 theorem vitali_cover_geometric [StandardBorelSpace Ω] (μ : Measure Ω)
     [IsProbabilityMeasure μ] [NullSingletonClass μ] (σ : Ω ≃ᵐ Ω) (hσ : Ergodic (⇑σ) μ)
     (A₀ : Set Ω) (hA₀ : MeasurableSet A₀)
@@ -716,11 +634,7 @@ theorem vitali_cover_geometric [StandardBorelSpace Ω] (μ : Measure Ω)
     have h2 : w s ω / G ≤ Bnd / G := Nat.div_le_div_right h1
     simp only [hrenldef]; omega
   have hrenl_ge : ∀ s ω, w s ω ≤ renl s ω := fun s ω => Nat.le_add_right _ _
-  -- **Multiplicative chain of `hgrow`** (strengthens the prior session's `hchain`, which dropped
-  -- the `G` factor entirely): any point's radius at scale `s`, times `G`, is at most *any* (later,
-  -- possibly different) point's radius at every strictly later scale — for points in `A₀`.
-  -- The hypothesis `s + d < m` keeps every intermediate `hgrow` application (at indices
-  -- `s, s+1, …, s+d`) inside the domain where `hgrow` is actually assumed.
+  -- Earlier scales have uniformly smaller radii, including for different points of `A₀`.
   have hfuture := radius_le_div_of_earlier_scale A₀ m G hG1' w hgrow
   -- **Meeting-implies-bounded-distance.** If two windows (radii `a`, `b`, centres `x`, `y`) meet,
   -- `y` lies within `a + b` steps of `x`.

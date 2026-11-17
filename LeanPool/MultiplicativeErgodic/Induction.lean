@@ -721,6 +721,17 @@ theorem Cocycle.exists_level_zero (R : Cocycle Ω X) [SeparableSpace X] [BorelSp
       (growth (R.iterate n ω) ((E ω).1 : Submodule ℝ X)) / (n : EReal)) atTop (𝓝 (lam 0)) := by
     filter_upwards [hE.2.2.2, hEpos] with ω h hp
     rw [hlam0]; exact tendsto_logEReal_div_of_tendsto_log hp h
+  have hgap : lam 1 < lam 0 := by
+    obtain ⟨ω, hm, h2, h3⟩ := (hmult.and ((hlam 1).and (hlam 0))).exists
+    have hlt := R.chi_mult_succ_lt ω (by rw [hm]; omega)
+    have hidx : R.lambdaIdx 1 ω = R.mult 0 ω + 1 := by
+      have h0 : R.lambdaIdx 0 ω = 1 := rfl
+      have hm' : R.mult 0 ω = R.lambdaIdx (0 + 1) ω - R.lambdaIdx 0 ω := rfl
+      rw [zero_add] at hm'
+      omega
+    rw [← h2, ← h3]
+    change R.chi (R.lambdaIdx 1 ω) ω < R.chi 1 ω
+    rwa [hidx]
   refine ⟨⟨d + 1, d, E, E, V, P⟩, ⟨?_, ⟨lam0, hlam0⟩, ?_, hPm, htemp, hidem, ?_, hker, hQequiv,
     hE.1, hE.2.2.1, hmult, ?_, hEgrowth, Eventually.of_forall fun ω => le_rfl, ?_, hrate, ?_⟩,
     Eventually.of_forall fun ω => rfl⟩
@@ -731,16 +742,7 @@ theorem Cocycle.exists_level_zero (R : Cocycle Ω X) [SeparableSpace X] [BorelSp
     have := R.lambdaIdx_lt_succ ω (i := 0) (by omega)
     change R.lambdaIdx (0 + 1) ω = d + 1 + 1
     omega
-  · obtain ⟨ω, hm, h2, h3⟩ := (hmult.and ((hlam 1).and (hlam 0))).exists
-    have hlt := R.chi_mult_succ_lt ω (by rw [hm]; omega)
-    have hidx : R.lambdaIdx 1 ω = R.mult 0 ω + 1 := by
-      have h0 : R.lambdaIdx 0 ω = 1 := rfl
-      have hm' : R.mult 0 ω = R.lambdaIdx (0 + 1) ω - R.lambdaIdx 0 ω := rfl
-      rw [zero_add] at hm'
-      omega
-    rw [← h2, ← h3]
-    change R.chi (R.lambdaIdx 1 ω) ω < R.chi 1 ω
-    rwa [hidx]
+  · exact hgap
   · filter_upwards [hPV] with ω h using h.1
   · filter_upwards [hTnorm, hEgrowth] with ω hT hg
     refine tendsto_of_tendsto_of_tendsto_of_le_of_le hg hT (fun n => ?_) (fun n => ?_)
@@ -752,17 +754,7 @@ theorem Cocycle.exists_level_zero (R : Cocycle Ω X) [SeparableSpace X] [BorelSp
     filter_upwards [(eventually_exp_bounds_of_tendsto (a := b) (b := lam0 + 1) hb
       (by rw [hlam0]; exact_mod_cast (by linarith : lam0 < lam0 + 1)) hg)] with n hn
     rw [mul_comm]; exact hn.1.le
-  · exact R.V_characterisation (hlam0 ▸ (show lam 1 < lam 0 by
-      obtain ⟨ω, hm, h1, h2⟩ := (hmult.and ((hlam 1).and (hlam 0))).exists
-      have hlt := R.chi_mult_succ_lt ω (by rw [hm]; omega)
-      have hidx : R.lambdaIdx 1 ω = R.mult 0 ω + 1 := by
-        have h0 : R.lambdaIdx 0 ω = 1 := rfl
-        have hm' : R.mult 0 ω = R.lambdaIdx (0 + 1) ω - R.lambdaIdx 0 ω := rfl
-        rw [zero_add] at hm'
-        omega
-      rw [← h1, ← h2]
-      change R.chi (R.lambdaIdx 1 ω) ω < R.chi 1 ω
-      rwa [hidx])) E hE V P hidem hcompl hPV hrate
+  · exact R.V_characterisation (hlam0 ▸ hgap) E hE V P hidem hcompl hPV hrate
 
 omit [StandardBorelSpace Ω] [MeasurableSpace X] in
 /-- Extend almost-everywhere complementary finite-dimensional data to total families. -/

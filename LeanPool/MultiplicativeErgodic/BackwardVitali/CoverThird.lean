@@ -554,10 +554,8 @@ selected `I(A'_u)` with `r_u ≥ r`; in both cases `I_ω ⊆ ⋃_{|s| ≤ 3 r_u 
 then gives `μ(⋃_{ω ∈ A} I_ω) ≤ Σ_u (6 r_u + 3) μ A'_u = 3 Σ_u (2 r_u + 1) μ A'_u
 = 3 μ(⋃_{A'} I)`, the last equality because the selected windows are pairwise disjoint.
 
-**Status.** The `zIter`-action infrastructure above (group law, measure-preservation, image
-measure, window count) is proved in full and is what the measure bookkeeping consumes.
-
-The two hardest conceptual sub-steps of the greedy construction are now proved in full, above:
+The measure bookkeeping uses the `zIter` group law, measure preservation, image measures and
+window counts. The greedy construction uses two selection lemmas:
 * `exists_saturated` — the single-level *measure-maximal disjoint-window selection*, via the
   "approach the achievable supremum" `ℕ`-indexed limiting sequence (not the axiom of choice;
   the sequence is built with `lt_sSup_iff`/`ENNReal.sub_lt_self` and the limit taken with
@@ -571,12 +569,8 @@ The two hardest conceptual sub-steps of the greedy construction are now proved i
   positive-measure disjoint-compatible piece via `exists_subset_disjoint_iterates_symm` and merge it
   into `A'` via `disjWin_union_of_disjoint_window`, contradicting saturation).
 
-**Status: fully proved below** (no `sorry`; `#print axioms vitali_cover_third` gives only
-`propext, Classical.choice, Quot.sound`). The construction assembles the two pieces above into
-the level-by-level induction and the final arithmetic, following the plan below (kept for
-reference — it matches the actual proof: `Sel`/`Piece`/`pieceOf` via `Nat.rec`, `Good`, the
-coverage induction, disjointness, and the arithmetic chain are all named identically in the
-proof term). Originally, for a resuming session, the plan was:
+The construction assembles these selections by descending radius, followed by the final
+counting estimate:
 1. Run the construction `B + 1` times, once per level, in *descending* radius order: at step
    `k = 0, …, B` (radius `r = B - k`), apply `exists_saturated_dichotomy` to
    `S_k = (A ∩ w⁻¹{r}) ∩ {x | Disjoint (window_r x) (Sel k)}`, where `Sel k` is the union so far

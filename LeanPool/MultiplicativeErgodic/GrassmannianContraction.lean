@@ -1089,7 +1089,8 @@ theorem growth_comp_of_le (T P : X →L[ℝ] X) {V W : Submodule ℝ X} (hWV : W
 /-- **Lemma \ref{Tsmallgrow}.** If `V` has finite codimension `k` and the bounded operator
 `P : X → X` fixes `V`, then `ρ_{k+l}(T) ≤ ρ_l(T ∘ P)`.
 
-**Statement change (working-practice note 4): `l ≠ 0` had to be added.** The paper's proof reads
+**Positive dimension.** The hypothesis `l ≠ 0` is necessary with the real-valued growth
+convention. The paper's proof reads
 `ρ_{k+l}(T) = sup_{U ∈ 𝒢_{k+l}X} g_T(U) ≤ sup_U g_T(U ∩ V) = sup_{U ∈ 𝒢_l V} g_{T∘Π}(U) ≤
 ρ_l(T∘Π)`, and every step of that is formalized below. But at `l = 0` the Lean statement is
 **false**, purely because of junk values: `𝒢_0X = {⊥}`, whose unit sphere is empty, so
@@ -1294,7 +1295,7 @@ theorem one_le_norm_of_isIdempotent {P : X →L[ℝ] X} (hidem : P.comp P = P) (
 /-- **Lemma \ref{Tbiggrow}.** Under a compatible pair of splittings `X = E ⊕ V = E' ⊕ V'`
 with `P' ∘ T = T ∘ P` and `g_T(E) > ‖T|_V‖`, we get `ρ_l(T∘P) ≤ 4‖P‖‖P'‖ρ_{l+k}(T)`.
 
-**Hypothesis-satisfiability note** (working-practice note 4). `hfast` must be stated with the
+**Restricted slow-space norm.** `hfast` must be stated with the
 *restricted* norm `‖T|_V‖`, exactly as the paper does (`proof_met.tex` line 354), and **not** with
 the ambient `‖T‖`: `growth_le_opNorm` gives `growth T E ≤ ‖T‖` for every `E`, so the variant
 `growth T E > ‖T‖` is jointly unsatisfiable with it. That version made this theorem vacuously
