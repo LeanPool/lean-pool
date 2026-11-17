@@ -972,9 +972,6 @@ theorem GroupSplitFrame.invariant (F : GroupSplitFrame s t A g gl gr labL labR)
     exact List.nodup_flatten.mp this |>.1 _ (List.mem_map.mpr ⟨c, hc, rfl⟩)
   have hr1 : g ∉ r1 := by
     rw [hrun] at hrnd; exact fun h => (List.nodup_append.mp hrnd).2.2 g h g (by simp) rfl
-  have hr2 : g ∉ r2 := by
-    rw [hrun] at hrnd
-    exact (List.nodup_cons.mp (List.nodup_append.mp hrnd).2.1).1
   have hgrps' : (A.splitStart c g gl gr).grps c = r1 ++ gl :: g :: gr :: r2 := by
     simp [Abs.splitStart, hrun, replace1_mid hr1]
   have hgrpsO : ∀ c', c' ≠ c → (A.splitStart c g gl gr).grps c' = A.grps c' := by

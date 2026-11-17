@@ -40,8 +40,7 @@ theorem lookup_map_replace {β : Type} (l : List (Nat × β)) (k k' : Nat) (v : 
   | cons p t ih =>
     simp only [List.map_cons, List.find?_cons]
     by_cases hp : p.1 = k
-    · have hpk : (p.1 == k') = false := by rw [hp]; exact hkk
-      simp only [hp, beq_self_eq_true, ite_true, hkk]
+    · simp only [hp, beq_self_eq_true, ite_true, hkk]
       rw [← hp] at ih ⊢; exact ih
     · simp only [show (p.1 == k) = false by simpa using hp, Bool.false_eq_true, ite_false]
       split <;> [rfl; exact ih]

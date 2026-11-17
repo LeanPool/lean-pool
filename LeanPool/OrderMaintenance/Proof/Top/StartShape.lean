@@ -329,7 +329,6 @@ theorem sh_src : ∀ t, Top.liveN S' t → Top.srcOf S' t ≠ NIL →
     Top.ghostN S' (Top.srcOf S' t) ∧ (t = (nd S' (Top.srcOf S' t)).t1 ∨ t = (nd S' (Top.srcOf S'
       t)).t2) := by
   intro t ht hs
-  have hvlt := C.H.hv
   rw [C.liveN] at ht
   rcases ht with ⟨htl, htv⟩ | rfl | rfl
   · have htn := SDCtx.nN (s := s) t htl.1
@@ -712,7 +711,6 @@ theorem order_mem {X e : Nat} : e ∈ Top.order S' X ↔
 
 theorem sh_tabEnt : ∀ X, Top.isN S' X → ∀ e ∈ Top.order S' X, Ent O' (Top.ht S' X - 1) e := by
   intro X hX e he
-  have hvlt := C.H.hv
   unfold Ent
   rw [C.order_mem] at he
   rcases he with ⟨rfl, he⟩ | ⟨rfl, he⟩ | ⟨h1, h2, he⟩

@@ -71,7 +71,7 @@ theorem rebuildLoop_safe (S : CostSetup mk TI PI μ ν PP Jf capf nf Rf) {Sp :
     intro budget om n A hR hL hI hN hf hlv hC hb
     have hnd : (liveH om.cur A.elist).Nodup := hL ▸ hS.1
     refine ⟨fun hf' => ?_, fun hset hc => ?_⟩
-    · obtain ⟨hprep, hφ⟩ := hC.prep hf'
+    · obtain ⟨hprep, -⟩ := hC.prep hf'
       obtain ⟨ready, n', hr, hN1, hN2⟩ := prepare_ok hN hR hf'
       obtain ⟨b, n2, hr2, hcnt2, hP2, hI2, hT2, hF2⟩ := hprep.step S
       rw [hr] at hr2
@@ -91,43 +91,27 @@ theorem rebuildLoop_safe (S : CostSetup mk TI PI μ ν PP Jf capf nf Rf) {Sp :
           om with
           cursor := (om.cur.E.getX om.cur.head).next
           cursorSet := true } with hom1
-        have hcnt : om.cur.count = A.elist.length := by
-          have := hC.curok.cnt; exact this
-        have hpost1 : (postOf A.elist om1.cursor).length + 1 = A.elist.length := by
-          change (postOf A.elist (eN om.cur om.cur.head)).length + 1 = _
-          rw [hR.inv.eList.next _ hR.head, hR.inv.eList.head,
-            postOf_succOf hR.inv.eList.nodup hR.inv.eList.nonil
-              (by rw [← hR.inv.eList.head]; exact hR.head), postOf_headD hR.ne, List.length_tail]
-          have := List.length_pos_of_ne_nil hR.ne; omega
-        have hC1 : LoopC mk TI PI μ ν Jf nf Rf om1 n' A budget Φe live₀ I D N' := by
-          refine ⟨hC.curok, by rw [hP2]; exact hC.nP, fun h => by simp [hom1] at h, fun _ =>
-            ⟨fun B' hB' => ?_, ?_⟩, hC.room, hC.live, hC.bud⟩
-          · rw [INV.elist_unique hB' hI2]
-            refine ⟨hok, ?_⟩
-            rw [hcnt2, hprep.cnt]; omega
-          · change (postOf A.elist om1.cursor).length + (om.KB - budget) ≤ Φe
-            omega
+        have hC1 : LoopC mk TI PI μ ν Jf nf Rf om1 n' A budget Φe live₀ I D N' :=
+          hC.prepared hR hf' hP2 hcnt2 hI2 hok
         exact ih budget om1 n' A hR hL hI (hN2 rfl) hf hlv hC1
       · subst hrd
         obtain ⟨hprep', hν⟩ := hF2 rfl
-        have hC1 : LoopC mk TI PI μ ν Jf nf Rf om n' A (budget - 1) Φe live₀ I D N' := by
-          refine ⟨hC.curok, by rw [hP2]; exact hC.nP, fun _ => ⟨hprep', ?_⟩,
-            fun h => absurd h (by simp [hf']), hC.room, hC.live, by have := hC.bud; omega⟩
-          have := hC.bud; omega
+        have hC1 : LoopC mk TI PI μ ν Jf nf Rf om n' A (budget - 1) Φe live₀ I D N' :=
+          hC.preparing hf' hP2 hprep' hν
         exact ih (budget - 1) om n' A hR hL hI hN1 hf hlv hC1
-    · obtain ⟨hserve, hpost⟩ := hC.serve hset
+    · obtain ⟨hserve, -⟩ := hC.serve hset
       have hN0 := hN
       obtain ⟨B, hRB, hIB, hzB, hcs⟩ := hN0
       rw [ite_eq_left hset] at hcs
       obtain ⟨pre, post, hsplit, hcpost, hpre, hLB⟩ := hcs
       have hfill := (hserve B hRB.inv).2
+      have hlive := hC.live
       have hcurA : om.cursor ∈ A.elist := by
         rw [hsplit, hcpost]
         cases post with
         | nil => exact absurd hcpost hc
         | cons a t => simp
       have hlB := nxtR'_live_le hN hL hset hRB.inv
-      have hlive := hC.live
       have hroom : n.count + 1 ≤ n.P.N := by
         rw [hC.nP, S.PN]; have := hC.room; omega
       refine ⟨elist_lt hR hcurA, fun hl => ?_, fun om3 n3 hcp3 hc3 => ?_⟩
@@ -150,23 +134,19 @@ theorem rebuildLoop_safe (S : CostSetup mk TI PI μ ν PP Jf capf nf Rf) {Sp :
         injection hcp3 with hcp3
         injection hcp3 with h1 h2
         subst h1; subst h2
-        have hC' : LoopC mk TI PI μ ν Jf nf Rf om' n' A (budget - 1) Φe live₀ I D N' := by
-          refine ⟨by rw [e1]; exact hC.curok, by rw [hP2]; exact hC.nP, fun h => absurd (e4 ▸ h)
-            (by simp [hset]), fun _ => ⟨fun B' hB' => ?_, ?_⟩, hC.room, by rw [e6]; exact hC.live,
-            by rw [e7]; have := hC.bud; omega⟩
-          · rw [INV.elist_unique hB' hRB2.inv]; exact ⟨hok2, hfill2⟩
-          · have hpo : postOf A.elist om.cursor = post := by
-              rw [hsplit]
-              exact (split_unique (hsplit ▸ hR.inv.eList.nodup) (hsplit ▸ hR.inv.eList.nonil)
-                hcpost).2
-            have hpne : post ≠ [] := by intro h; rw [h] at hcpost; exact hc hcpost
-            have hpost' : (postOf A.elist om'.cursor).length + 1 = (postOf A.elist
-              om.cursor).length := by
-              rw [hcur2, hR.inv.eList.next _ hcurA,
-                postOf_succOf hR.inv.eList.nodup hR.inv.eList.nonil hcurA,
-                hpo, List.length_tail]
-              have := List.length_pos_of_ne_nil hpne; omega
-            rw [e7]; have := hC.bud; omega
+        have hpo : postOf A.elist om.cursor = post := by
+          rw [hsplit]
+          exact (split_unique (hsplit ▸ hR.inv.eList.nodup) (hsplit ▸ hR.inv.eList.nonil)
+            hcpost).2
+        have hpne : post ≠ [] := by intro h; rw [h] at hcpost; exact hc hcpost
+        have hpost' : (postOf A.elist om'.cursor).length + 1 = (postOf A.elist
+          om.cursor).length := by
+          rw [hcur2, hR.inv.eList.next _ hcurA,
+            postOf_succOf hR.inv.eList.nodup hR.inv.eList.nonil hcurA,
+            hpo, List.length_tail]
+          have := List.length_pos_of_ne_nil hpne; omega
+        have hC' : LoopC mk TI PI μ ν Jf nf Rf om' n' A (budget - 1) Φe live₀ I D N' :=
+          hC.copied hset e1 e4 e6 e7 hP2 hRB2.inv hok2 hfill2 hpost'
         exact ih (budget - 1) om' n' A (e1 ▸ hR) (e1 ▸ hL) (e1 ▸ e2 ▸ hI) (e1 ▸ hN') (e5 ▸ hf)
           (by rw [e6]; exact hlv) hC'
 
@@ -187,20 +167,9 @@ theorem rebuildStep_safe (S : CostSetup mk TI PI μ ν PP Jf capf nf Rf) {om : O
   obtain ⟨c₀, live₀, I, D, hM⟩ := hbusy n0 hn
   set Φe := if om.cursorSet then (postOf A.elist om.cursor).length else ν n0 + om.cur.count
     with hΦe
-  have hroom : 1 + live₀ + I + 1 ≤
-      4 * max (live₀ + ((c₀ + (om.cur.P.L + 2)) / (om.KB - 1) + 1)) 16 := by
-    have := hM.Iq
-    have : live₀ + ((c₀ + (om.cur.P.L + 2)) / (om.KB - 1) + 1) ≤
-        max (live₀ + ((c₀ + (om.cur.P.L + 2)) / (om.KB - 1) + 1)) 16 := le_max_left _ _
-    omega
   have hC0 : LoopC mk TI PI μ ν Jf nf Rf { om with nxt := none } n0 A om.KB Φe live₀ I D
-      (4 * max (live₀ + ((c₀ + (om.cur.P.L + 2)) / (om.KB - 1) + 1)) 16) := by
-    refine ⟨hok, hM.nP, fun hs => ⟨(hM.prep hs).1, ?_⟩, fun hs => ⟨(hM.serve hs).1, ?_⟩, hroom,
-      hM.live, le_rfl⟩
-    · change ν n0 + om.cur.count + (om.KB - om.KB) ≤ Φe
-      simp only [hΦe, show om.cursorSet = false from hs, Bool.false_eq_true, ite_false]; omega
-    · change (postOf A.elist om.cursor).length + (om.KB - om.KB) ≤ Φe
-      simp only [hΦe, show om.cursorSet = true from hs, ite_true]; omega
+      (4 * max (live₀ + ((c₀ + (om.cur.P.L + 2)) / (om.KB - 1) + 1)) 16) :=
+    hM.loop_entry hok
   exact rebuildLoop_safe S hS (om.KB + 1) om.KB { om with nxt := none } n0 A hR hL hI hN hf hlv hC0
 
 /-- The anchor of an insertion in `cur`. -/

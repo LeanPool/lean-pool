@@ -140,7 +140,6 @@ theorem liveN (u : Nat) : Top.liveN S' u ↔ (Top.liveN (ts s) u ∧ u ≠ v) �
       rw [ite_eq_right (by omega), ite_eq_left (Or.inr hn)]
 
 theorem ghostN (u : Nat) : Top.ghostN S' u ↔ Top.ghostN (ts s) u ∨ u = v := by
-  have hv := C.H.hv
   unfold Top.ghostN
   rw [C.isN, C.draining']
   constructor

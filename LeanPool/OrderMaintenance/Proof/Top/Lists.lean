@@ -177,7 +177,6 @@ theorem filter_infix_of_convex {l : List Nat} (hl : l.Nodup) {p : Nat → Bool}
           | cons z r =>
             exfalso
             -- `y` lies between `x` and `z`, so it satisfies `p`, so it is in the filter before `z`
-            have hzt : z ∈ t := List.mem_of_mem_filter (by rw [hf]; simp)
             have hpz : p z = true := (List.mem_filter.mp (by rw [hf]; simp)).2
             have hyz : Before t y z := by
               rw [← e, hf]

@@ -174,8 +174,6 @@ theorem unit_suffix {s : Core} {A : Abs} (hI : INV s A) {x : Nat} (hx : cF s x �
   rcases hu with rfl | ⟨a, b, rfl, hok⟩
   · exact ⟨r0, hr0⟩
   · obtain ⟨ha0, hb0, hl0, hac, hbc, hlc, hna, hnb⟩ := unitOK_three hok
-    have hlx : cLs s x ∈ A.grps x := by rw [hr0]; simp only [List.mem_append, List.mem_cons,
-        List.not_mem_nil, or_false, or_true]
     have hbg := hI.mem_of_gN hnb hl0
     have hbx := hI.mem_grps_of_chk hbg hbc
     have hbl : b ≠ cLs s x := by

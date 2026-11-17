@@ -1280,6 +1280,29 @@ structure DriveInv (X : Core → Prop) (s : Core) (L : List Nat) (δ : Nat → N
     (1 ≤ j ∧ gSz t l ≤ gSz t r + 1 ∧ gSz t r ≤ gSz t l + 1)
   chk : gC t p = gC s p
 
+/-- Empty-source removal bounds follow from the drive's total size and balance invariant. -/
+theorem DriveInv.removal_bounds {X : Core → Prop} {s t : Core} {L : List Nat}
+    {δ : Nat → Nat} {p l r a b c j : Nat}
+    (h : DriveInv X s L δ p l r a b c j t) (hP : GParams s.P)
+    (hlo : s.P.G ≤ a + b + c)
+    (hhi : a + b + c ≤ s.P.G + s.P.G / (s.P.groupBudget - 1) + 1)
+    (hbal : a ≤ c + 2 ∧ c ≤ a + 2) (hz : gSz t p = 0) :
+    gSz t l < t.P.G ∧ gSz t r < t.P.G ∧
+      gmin t.P ≤ gSz t l ∧ gmin t.P ≤ gSz t r ∧
+      famT t p ≤ t.P.G + kG t.P := by
+  rw [← h.P] at hP hlo hhi
+  have hsum := h.sum
+  have hcnt := h.cnt
+  have hbalance := h.bal
+  have := hP.K2
+  have := hP.I1
+  refine ⟨?_, ?_, ?_, ?_, ?_⟩
+  · rcases hbalance with ⟨-, h1, h2⟩ | ⟨-, h1, h2⟩ <;> omega
+  · rcases hbalance with ⟨-, h1, h2⟩ | ⟨-, h1, h2⟩ <;> omega
+  · unfold gmin; rcases hbalance with ⟨-, h1, h2⟩ | ⟨-, h1, h2⟩ <;> omega
+  · unfold gmin; rcases hbalance with ⟨-, h1, h2⟩ | ⟨-, h1, h2⟩ <;> omega
+  · unfold famT kG; rw [h.ll, h.rr]; omega
+
 /-- The drive ended by removing `p`. -/
 structure DriveDone (X Y : Core → Prop) (s : Core) (L : List Nat) (t : Core) : Prop where
   x : X t ∨ Y t
@@ -1385,14 +1408,8 @@ theorem DriveInv.step {X Y : Core → Prop} {s : Core} {L : List Nat} {δ : Nat 
   · -- removal
     have he : gF t p = NIL := by
       rw [hI'.first_nil_iff hp', ← List.length_eq_zero_iff, ← hG.sz p hp]; exact hz
-    have hszl : gSz t l < t.P.G := by rcases hbal with ⟨-, h1, h2⟩ | ⟨-, h1, h2⟩ <;> omega
-    have hszr : gSz t r < t.P.G := by rcases hbal with ⟨-, h1, h2⟩ | ⟨-, h1, h2⟩ <;> omega
-    have hgl : gmin t.P ≤ gSz t l := by
-      unfold gmin; rcases hbal with ⟨-, h1, h2⟩ | ⟨-, h1, h2⟩ <;> omega
-    have hgr : gmin t.P ≤ gSz t r := by
-      unfold gmin; rcases hbal with ⟨-, h1, h2⟩ | ⟨-, h1, h2⟩ <;> omega
-    have hfam : famT t p ≤ t.P.G + kG t.P := by
-      unfold famT; rw [hD.ll, hD.rr, hkG]; omega
+    obtain ⟨hszl, hszr, hgl, hgr, hfam⟩ :=
+      hD.removal_bounds (hPt ▸ hP) (hPt ▸ hTlo) (by rw [← hPt, hq]; exact hThi) hbal0 hz
     have hg1 : 1 ≤ gmin t.P := by unfold gmin; have := hP.G4; omega
     have hrun := groupSplitStep_remove hp he (by rw [hD.ll, hD.rr]; exact hlr)
       ⟨by rw [hD.ll]; exact Fp.lSt ▸ hD.ll ▸ rfl, by rw [hD.ll]; exact hD.ll ▸ Fp.lSrc⟩

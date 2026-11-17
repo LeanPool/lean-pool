@@ -213,7 +213,6 @@ theorem lowinv_pop {t s2 : Core} {L : List Nat} {c : Nat} {job : Job} (h : LowIn
   have hgood := good_splitChunkStart c (delSt t c) A hI1
   rw [hrun] at hgood
   obtain ⟨-, A', hI2, hel2⟩ := hgood
-  have hG2 : A.elist = L := hel
   have hun1 : units (delSt t c) c ≤ unitsOf (delSt t c).P (cSz (delSt t c) c) :=
     units_le_unitsOf hI1 (hel ▸ hG1) hC1 (by rw [hP1]; exact hGP) hcL1
   refine ⟨⟨A', hI2, hel2.trans hel⟩, ⟨gh, hG1.of_gsame (GSame.of_eq R.Gs rE rhead rP)⟩,

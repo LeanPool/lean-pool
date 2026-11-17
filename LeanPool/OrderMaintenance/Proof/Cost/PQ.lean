@@ -242,12 +242,6 @@ theorem link_llist_core {st : Core} {nb1 nb2 : List Nat}
       apply hsn
       simp only [List.headD_eq_head?_getD, List.head?_cons, Option.getD_some] at e
       simp only [e, List.mem_append, List.mem_cons, true_or, or_true]
-  have hn0 : n ≠ 0 → n ∈ nb2 := by
-    rw [hn]; intro h0
-    cases nb2 with
-    | nil => exact absurd rfl h0
-    | cons a t => simp only [List.headD_eq_head?_getD, List.head?_cons, Option.getD_some,
-        List.mem_cons, true_or]
   have hnext : ∀ b, (linkSt st s p).nbNext.getX b =
       if b = s then n else if p ≠ 0 ∧ b = p then s else st.nbNext.getX b := by
     intro b; rw [linkSt_nbNext, hn']

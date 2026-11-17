@@ -135,7 +135,6 @@ theorem ew_v : ew S' cl v = tw (ts s) cl v := by
 
 /-- An old node serves as before. -/
 theorem ew_old {X : Nat} (hX : Top.isN (ts s) X) : ew S' cl X = ew (ts s) cl X := by
-  have hvlt := C.H.hv
   by_cases hXv : X = v
   · rw [hXv, C.ew_v]; unfold ew; rw [ite_eq_right (by rw [C.vl.2]; simp)]
   · have hXn := SDCtx.nN (s := s) X hX

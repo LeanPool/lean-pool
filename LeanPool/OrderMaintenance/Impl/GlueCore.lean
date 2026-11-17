@@ -143,14 +143,8 @@ theorem _root_.OrderMaintenance.Proof.DriveInv.stepAgree {X Y : Core → Prop} {
   · -- removal
     have he : gF t p = NIL := by
       rw [hI'.first_nil_iff hp', ← List.length_eq_zero_iff, ← hG.sz p hp]; exact hz
-    have hszl : gSz t l < t.P.G := by rcases hbal with ⟨-, h1, h2⟩ | ⟨-, h1, h2⟩ <;> omega
-    have hszr : gSz t r < t.P.G := by rcases hbal with ⟨-, h1, h2⟩ | ⟨-, h1, h2⟩ <;> omega
-    have hgl : gmin t.P ≤ gSz t l := by
-      unfold gmin; rcases hbal with ⟨-, h1, h2⟩ | ⟨-, h1, h2⟩ <;> omega
-    have hgr : gmin t.P ≤ gSz t r := by
-      unfold gmin; rcases hbal with ⟨-, h1, h2⟩ | ⟨-, h1, h2⟩ <;> omega
-    have hfam : famT t p ≤ t.P.G + kG t.P := by
-      unfold famT; rw [hD.ll, hD.rr, hkG]; omega
+    obtain ⟨hszl, hszr, -, -, -⟩ :=
+      hD.removal_bounds (hPt ▸ hP) (hPt ▸ hTlo) (by rw [← hPt, hq]; exact hThi) hbal0 hz
     have hg1 : 1 ≤ gmin t.P := by unfold gmin; have := hP.G4; omega
     have hrun := groupSplitStep_remove hp he (by
       rw [hD.ll, hD.rr]
