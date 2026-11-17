@@ -26,8 +26,10 @@ production `LeanPool.lean` or loads an import-all Lean environment. After local
 analysis, it records external names from dependency environments and renders all
 local module records directly from the database.
 
-Four sequential analysis stages each allow 150 minutes, including any
-compilation, and are skipped once analysis is complete. They restore the newest checkpoint compatible
+Four sequential analysis stages each allow 210 minutes, including any
+compilation, and are skipped once analysis is complete. Hosted runners analyze
+60 to 75 modules a minute, so a restart of every project fits in one run up to
+about 55,000 modules. They restore the newest checkpoint compatible
 with the toolchain, dependency and doc-gen pins. Lake first brings the compiled
 pool and doc-gen's prerequisites up to date. Each module is then analyzed by its
 own doc-gen process, four at a time, one project after another. doc-gen's
