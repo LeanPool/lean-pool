@@ -124,29 +124,15 @@ theorem initial_program (g : X → ℕ → ℕ)
       PrefixComputability.appendEncoded,UniformOracle.oraclePrefix,
       PrefixComputability.oraclePrefix,List.range_succ]
 
-private def flag (e : ℕ) : ℕ :=
-  if ((decode (α := Option ℕ) e).getD none).isSome then 0 else 1
-private def answer (e : ℕ) : ℕ := ((decode (α := Option ℕ) e).getD none).getD 0
-
-private theorem flag_primrec : Primrec flag := by
-  apply (Primrec.cond (Primrec.option_isSome.comp (Primrec.option_getD_default.comp
-    (Primrec.decode (α := Option ℕ))))
-    (Primrec.const 0) (Primrec.const 1)).of_eq
-  intro n
-  change (cond ((decode (α := Option ℕ) n).getD none).isSome 0 1) = _
-  cases hh : ((decode (α := Option ℕ) n).getD none).isSome <;> simp only [flag,hh] <;> rfl
-private theorem answer_primrec : Primrec answer :=
-  Primrec.option_getD_default.comp (Primrec.option_getD_default.comp Primrec.decode)
-
 theorem total_search {E : X → ℕ → ℕ → Option ℕ}
     (hE : Runs O (fun x z => Part.some (encode (E x (Nat.unpair z).1 (Nat.unpair z).2))))
     (f : X → ℕ → ℕ) (hsound : ∀ x n m a, a ∈ E x n m → a = f x n)
     (hcomplete : ∀ x n, ∃ m a, a ∈ E x n m) :
     Runs O (fun x n => Part.some (f x n)) := by
-  have hflag := total_comp (primrec flag_primrec) hE
+  have hflag := total_comp (primrec PrefixComputability.flag_primrec) hE
   have hfind := Runs.find hflag
   have hpair := Runs.pair (primrec Primrec.id) hfind
-  have hrun := Runs.comp (primrec answer_primrec) (Runs.comp hE hpair)
+  have hrun := Runs.comp (primrec PrefixComputability.answer_primrec) (Runs.comp hE hpair)
   apply hrun.of_eq
   intro x n
   apply Part.eq_some_iff.mpr
@@ -158,13 +144,13 @@ theorem total_search {E : X → ℕ → ℕ → Option ℕ}
   obtain ⟨a,ha⟩ := Option.isSome_iff_exists.mp hm
   have hval : a = f x n := hsound x n m a ha
   have hmem : m ∈ Nat.rfind (fun k =>
-      (fun v : ℕ => decide (v=0)) <$> Part.some (flag (encode (E x n k)))) := by
+      (fun v : ℕ => decide (v=0)) <$> Part.some (PrefixComputability.flag (encode (E x n k)))) := by
     apply Nat.mem_rfind.mpr
     constructor
-    · simp [flag,m,hm]
+    · simp [PrefixComputability.flag,m,hm]
     · intro k hk
       have hk' : (E x n k).isSome = false := Bool.eq_false_iff.mpr (Nat.find_min hex hk)
-      simp [flag,hk']
+      simp [PrefixComputability.flag,hk']
   apply Part.mem_bind_iff.mpr
   refine ⟨encode (E x n m),?_,?_⟩
   · apply Part.mem_bind_iff.mpr
@@ -177,7 +163,7 @@ theorem total_search {E : X → ℕ → ℕ → Option ℕ}
   · have hea : E x n m = some a := Option.mem_def.mp ha
     apply Part.mem_some_iff.mpr
     rw [hea]
-    simpa only [answer,Encodable.encodek,Option.getD_some] using hval.symm
+    simpa only [PrefixComputability.answer,Encodable.encodek,Option.getD_some] using hval.symm
 
 end TuringRigidity.UniformPrograms
 

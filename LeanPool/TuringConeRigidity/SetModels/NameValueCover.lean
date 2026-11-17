@@ -13,7 +13,8 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.Syntax.SigmaSeparationName
+public import LeanPool.TuringConeRigidity.Syntax.SigmaInterpretation
+public import LeanPool.TuringConeRigidity.SetModels.InternalNameValidity
 
 /-!
 # Name Value Cover
@@ -26,7 +27,7 @@ namespace OAI
 
 
 namespace TuringRigidity.BoundedForcing
-open RecursiveNames TransitiveNameModel BoundedSetTheory AtomicForcing CountableForcing
+open RecursiveNames TransitiveNameModel BoundedSetTheory CountableForcing
 universe u
 variable {c : ZFSet.{u}}
 

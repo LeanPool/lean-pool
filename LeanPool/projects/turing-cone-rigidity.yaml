@@ -32,14 +32,13 @@ main_results:
 - declaration: OAI.TuringRigidity.TwoConeMain.cones_orderIso_iff
   informal: For ordinary Turing degrees a and b, an order isomorphism between their principal
     upper cones exists if and only if a = b.
-  source_ref: 'Palomar PALOMAR-2026-11-09-000019 v2, archived at commit 99621af8867a5d272b16eb1454a15f59fb43e9ea
-    on 2026-11-11T18:07:57Z. Proposal #824, dated 2026-11-15T03:47:06Z, is exempt from the daily
-    discovery window.'
+  source_ref: Upstream RequestProject/TuringTwoConeMain.lean, theorem cones_orderIso_iff,
+    at commit 99621af8867a5d272b16eb1454a15f59fb43e9ea; Palomar PALOMAR-2026-11-09-000019 v2.
 - declaration: OAI.TuringRigidity.TwoConeMain.cone_iso_apply_val
   informal: Every order isomorphism between principal upper cones sends each degree to itself,
     without continuity, measurability, determinacy, or model-existence assumptions.
-  source_ref: Upstream RequestProject/TuringTwoConeMain.lean; independently compared by Palomar
-    v2.
+  source_ref: Upstream RequestProject/TuringTwoConeMain.lean, theorem cone_iso_apply_val,
+    at commit 99621af8867a5d272b16eb1454a15f59fb43e9ea; Palomar PALOMAR-2026-11-09-000019 v2.
 tags:
 - turing-degrees
 - computability

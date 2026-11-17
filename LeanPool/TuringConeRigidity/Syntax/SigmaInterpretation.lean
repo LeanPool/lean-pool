@@ -9,6 +9,7 @@ Adapted for Lean Pool from bjoernkjoshanssen/tt-
 auto/OAI/Computability/DegreeRigidity/Syntax/SigmaInterpretation.lean.
 Module paths, interfaces, and proofs are ported to the pool's toolchain and gates.
 Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream port repairs.
+The sigma_sep_mem theorem is moved from upstream Syntax/SigmaSeparationName.lean.
 -/
 
 module
@@ -52,6 +53,21 @@ def SigmaSeparation (M : ZFSet.{u}) : Prop :=
 
 theorem SigmaSeparation.bounded {M : ZFSet.{u}} (h : SigmaSeparation M) : Separation M :=
   fun φ e he a ha => h (.bounded φ) e he a ha
+
+theorem sigma_sep_mem (M : ZFSet.{u}) (hM : Transitive M) (hS : SigmaSeparation M)
+    (φ : SigmaFormula) (env : ℕ → ZFSet.{u}) (he : ∀ i, env i ∈ M)
+    {a : ZFSet.{u}} (ha : a ∈ M) :
+    ZFSet.sep (fun x => φ.Realize M (cons x env)) a ∈ M := by
+  obtain ⟨b,hb,hdef⟩ := hS φ env he a ha
+  have eq : b = ZFSet.sep (fun x => φ.Realize M (cons x env)) a := by
+    apply ZFSet.ext
+    intro x
+    rw [ZFSet.mem_sep]
+    constructor
+    · intro hx; exact (hdef x (hM b hb x hx)).mp hx
+    · intro hx; exact (hdef x (hM a ha x hx.1)).mpr hx
+  exact eq ▸ hb
+
 
 theorem SigmaFormula.upward (φ : SigmaFormula) (M N : ZFSet.{u})
     (hM : Transitive M) (hN : Transitive N) (hMN : M ⊆ N)

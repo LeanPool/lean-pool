@@ -25,7 +25,7 @@ public import LeanPool.TuringConeRigidity.SetModels.NameValueCover
 namespace OAI
 
 namespace TuringRigidity.BoundedForcing
-open RecursiveNames TransitiveNameModel BoundedSetTheory AtomicForcing CountableForcing
+open RecursiveNames TransitiveNameModel BoundedSetTheory CountableForcing
 universe u
 variable {c : ZFSet.{u}}
 

@@ -87,18 +87,20 @@ theorem prefix_recursive (g : ℕ → ℕ) :
     simp only [ih]
     simp [appendEncoded, oraclePrefix, List.range_succ]
 
-private def flag (e : ℕ) : ℕ :=
+/-- A zero search flag exactly when an encoded optional answer is present. -/
+def flag (e : ℕ) : ℕ :=
   if ((decode (α := Option ℕ) e).getD none).isSome then 0 else 1
-private def answer (e : ℕ) : ℕ := ((decode (α := Option ℕ) e).getD none).getD 0
+/-- Decode an optional numerical answer, using zero for an absent or invalid encoding. -/
+def answer (e : ℕ) : ℕ := ((decode (α := Option ℕ) e).getD none).getD 0
 
-private theorem flag_primrec : Primrec flag := by
+theorem flag_primrec : Primrec flag := by
   apply (Primrec.cond (Primrec.option_isSome.comp (Primrec.option_getD_default.comp
     (Primrec.decode (α := Option ℕ))))
     (Primrec.const 0) (Primrec.const 1)).of_eq
   intro n
   change (cond ((decode (α := Option ℕ) n).getD none).isSome 0 1) = _
   cases hh : ((decode (α := Option ℕ) n).getD none).isSome <;> simp only [flag,hh] <;> rfl
-private theorem answer_primrec : Primrec answer :=
+theorem answer_primrec : Primrec answer :=
   Primrec.option_getD_default.comp (Primrec.option_getD_default.comp Primrec.decode)
 
 theorem total_search {E : ℕ → ℕ → Option ℕ}
