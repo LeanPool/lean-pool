@@ -6,6 +6,7 @@ Authors: OpenAI
 module
 
 public import LeanPool.NavierStokesAndEuler.Euler.MeanVelocityPressure
+import Mathlib.Analysis.Calculus.Deriv.Comp
 import LeanPool.NavierStokesAndEuler.Euler.MeanFrameCoefficients
 import LeanPool.NavierStokesAndEuler.Euler.TimeH1PointwiseBounds
 import LeanPool.NavierStokesAndEuler.Euler.TransverseStrongEstimates

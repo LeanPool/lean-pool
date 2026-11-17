@@ -96,7 +96,7 @@ theorem quadraticPenalty_nonneg {α : Real} (hα : 0 <= α) (x y : Point n) :
     rw [dotProduct]
     exact Finset.sum_nonneg fun i _hi => by
       simpa [sq] using sq_nonneg ((x - y) i)
-  exact mul_nonneg (by linarith) hdot
+  exact mul_nonneg (by linarith only [hα]) hdot
 
 theorem norm_weightedDistanceSq_le_quadraticPenalty_mul_two
     {α : Real} (hα : 0 <= α) (x y : Point n) :
@@ -173,7 +173,7 @@ theorem upperSemicontinuousOn_doubledObjective
   have hvq : LowerSemicontinuousOn (fun q : DoubledPoint n => v q.2) (K ×ˢ L) :=
     hv.comp continuous_snd.continuousOn (fun q hq => hq.2)
   have hnegv : UpperSemicontinuousOn (fun q : DoubledPoint n => -v q.2) (K ×ˢ L) := by
-    simpa [Function.comp_def] using
+    exact
       (continuous_neg.comp_lowerSemicontinuousOn_antitone hvq
         (fun _ _ h => neg_le_neg h))
   have hpen : ContinuousOn
@@ -182,7 +182,7 @@ theorem upperSemicontinuousOn_doubledObjective
   have hnegpen : UpperSemicontinuousOn
       (fun q : DoubledPoint n => -quadraticPenalty α q.1 q.2) (K ×ˢ L) :=
     (continuousOn_iff_lower_upperSemicontinuousOn.mp hpen.neg).2
-  simpa [doubledObjective, sub_eq_add_neg] using (huq.add hnegv).add hnegpen
+  exact (huq.add hnegv).add hnegpen
 
 /--
 Let `K` and `L` be nonempty compact sets. If `u` is upper semicontinuous on
@@ -224,7 +224,7 @@ theorem value_right_le_left_of_pos_gap_of_isMaxOn_doubledObjective
   have hgap_pos : 0 < u z - v z := sub_pos.mpr hgap
   have hcompare' : u z - v z <= u x - v y - quadraticPenalty α x y := by
     simpa [doubledObjective, quadraticPenalty_self] using hcompare
-  linarith
+  linarith only [hgap, hpen, hcompare']
 
 /--
 If `(x, y)` maximizes the doubled-variable objective on `C × C` and `y ∈ C`,
@@ -242,7 +242,7 @@ theorem quadraticPenalty_le_value_sub_value_of_isMaxOn_doubledObjective
   have hcompare := hmax hdiag
   have hcompare' : u y - v y <= u x - v y - quadraticPenalty α x y := by
     simpa [doubledObjective, quadraticPenalty_self] using hcompare
-  nlinarith
+  nlinarith only [hcompare']
 
 /--
 If `(x, y)` maximizes the doubled-variable objective on `C × C` and `z ∈ C`,
@@ -260,7 +260,7 @@ theorem quadraticPenalty_le_value_sub_value_at_diagonal_of_isMaxOn_doubledObject
   have hcompare := hmax hdiag
   have hcompare' : u z - v z <= u x - v y - quadraticPenalty α x y := by
     simpa [doubledObjective, quadraticPenalty_self] using hcompare
-  nlinarith
+  nlinarith only [hcompare']
 
 /--
 Assume `(x, y)` maximizes the doubled-variable objective on `C × C`, `y ∈ C`,
@@ -277,7 +277,7 @@ theorem weightedDistanceSq_le_two_value_range_of_isMaxOn_doubledObjective
   have hpen := quadraticPenalty_le_value_sub_value_of_isMaxOn_doubledObjective
     (C := C) (u := u) (v := v) (α := α) (x := x) (y := y) hy hmax
   have hnorm := norm_weightedDistanceSq_le_quadraticPenalty_mul_two hα x y
-  nlinarith
+  nlinarith only [hlo, hhi, hpen, hnorm]
 
 /--
 Assume `(x, y)` maximizes the doubled-variable objective on `C × C`, `z ∈ C`,
@@ -294,7 +294,7 @@ theorem weightedDistanceSq_le_two_value_sub_value_at_diagonal_range_of_isMaxOn
   have hpen := quadraticPenalty_le_value_sub_value_at_diagonal_of_isMaxOn_doubledObjective
     (C := C) (u := u) (v := v) (α := α) (x := x) (y := y) (z := z) hz hmax
   have hnorm := norm_weightedDistanceSq_le_quadraticPenalty_mul_two hα x y
-  nlinarith
+  nlinarith only [hlo, hhi, hpen, hnorm]
 
 /--
 Let `α i` be a family of positive parameters for all `i` in a set belonging

@@ -89,10 +89,12 @@ Restriction and slash action under S: $(F |_k S) (it) = (it)^{-k} * F(it)$
 -/
 theorem ResToImagAxis.SlashActionS (F : ℍ → ℂ) (k : ℤ) {t : ℝ} (ht : 0 < t) :
     (F ∣[k] S).resToImagAxis t = (Complex.I) ^ (-k) * t ^ (-k) * F.resToImagAxis (1 / t) := by
-  set z : ℍ := ⟨I * t, by simp [ht]⟩ with hzdef
+  set z : ℍ := ⟨I * t, by simp only [mul_im, Complex.I_re, ofReal_im, mul_zero, Complex.I_im,
+    ofReal_re, one_mul, zero_add, ht]⟩ with hzdef
   set z' : ℍ := ⟨I * (1 / t : ℝ), by simpa [one_div_pos.2 ht]⟩ with hz'def
   have h : mk (-z)⁻¹ z.im_inv_neg_coe_pos = z' :=
-    UpperHalfPlane.ext (by simp [hzdef, hz'def, mul_comm])
+    UpperHalfPlane.ext (by simp only [hzdef, inv_neg, _root_.mul_inv_rev, inv_I, mul_neg, mul_comm,
+      neg_neg, hz'def, one_div, ofReal_inv])
   simpa [ResToImagAxis, ht, hz'def] using (by
     rw [modular_slash_S_apply, h]; simp [hzdef, mul_zpow I (t : ℂ) (-k), mul_comm (F z')] :
     (F ∣[k] S) z = I ^ (-k) * t ^ (-k) * F z')
@@ -117,7 +119,8 @@ theorem ResToImagAxis.Real.neg {F : ℍ → ℂ} (hF : ResToImagAxis.Real F) : R
   intro t ht
   have hFreal := hF t ht
   simp only [Function.resToImagAxis, ResToImagAxis, ht, ↓reduceDIte] at hFreal
-  simp [ResToImagAxis, ht, hFreal]
+  simp only [Function.resToImagAxis_apply, ResToImagAxis, ht, ↓reduceDIte, Pi.neg_apply, neg_im,
+    hFreal, neg_zero]
 
 @[fun_prop]
 theorem ResToImagAxis.Real.add {F G : ℍ → ℂ} (hF : ResToImagAxis.Real F)
@@ -125,7 +128,8 @@ theorem ResToImagAxis.Real.add {F G : ℍ → ℂ} (hF : ResToImagAxis.Real F)
   intro t ht
   have hFreal := hF t ht; have hGreal := hG t ht
   simp only [Function.resToImagAxis, ResToImagAxis, ht, ↓reduceDIte] at hFreal hGreal
-  simp [ResToImagAxis, ht, hFreal, hGreal]
+  simp only [Function.resToImagAxis_apply, ResToImagAxis, ht, ↓reduceDIte, Pi.add_apply, add_im,
+    hFreal, hGreal, add_zero]
 
 @[fun_prop]
 theorem ResToImagAxis.Real.sub {F G : ℍ → ℂ} (hF : ResToImagAxis.Real F)
@@ -138,7 +142,8 @@ theorem ResToImagAxis.Real.mul {F G : ℍ → ℂ} (hF : ResToImagAxis.Real F)
   intro t ht
   have hFreal := hF t ht; have hGreal := hG t ht
   simp only [Function.resToImagAxis, ResToImagAxis, ht, ↓reduceDIte] at hFreal hGreal
-  simp [ResToImagAxis, ht, hFreal, hGreal]
+  simp only [Function.resToImagAxis_apply, ResToImagAxis, ht, ↓reduceDIte, Pi.mul_apply, mul_im,
+    hGreal, mul_zero, hFreal, zero_mul, add_zero]
 
 @[fun_prop]
 theorem ResToImagAxis.Real.smul {F : ℍ → ℂ} {c : ℝ} (hF : ResToImagAxis.Real F) :
@@ -146,7 +151,8 @@ theorem ResToImagAxis.Real.smul {F : ℍ → ℂ} {c : ℝ} (hF : ResToImagAxis.
   intro t ht
   have hFreal := hF t ht
   simp only [Function.resToImagAxis, ResToImagAxis, ht, ↓reduceDIte] at hFreal
-  simp [ResToImagAxis, ht, hFreal]
+  simp only [Function.resToImagAxis_apply, ResToImagAxis, ht, ↓reduceDIte, Pi.smul_apply, real_smul,
+    mul_im, ofReal_re, hFreal, mul_zero, ofReal_im, zero_mul, add_zero]
 
 @[fun_prop]
 theorem ResToImagAxis.Real.pow {F : ℍ → ℂ} (hF : ResToImagAxis.Real F) (n : ℕ) :
@@ -156,7 +162,8 @@ theorem ResToImagAxis.Real.pow {F : ℍ → ℂ} (hF : ResToImagAxis.Real F) (n 
   | succ n hn => exact hn.mul hF
 
 theorem ResToImagAxis.Pos.const (c : ℝ) (hc : 0 < c) : ResToImagAxis.Pos (fun _ => c) :=
-  ⟨ResToImagAxis.Real.const c, fun t ht ↦ by simp [ResToImagAxis, ht, hc]⟩
+  ⟨ResToImagAxis.Real.const c, fun t ht ↦ by simp only [Function.resToImagAxis_apply, ResToImagAxis,
+    ht, ↓reduceDIte, ofReal_re, hc]⟩
 
 @[fun_prop]
 theorem ResToImagAxis.Pos.one : ResToImagAxis.Pos (fun _ => 1) :=
@@ -168,7 +175,8 @@ theorem ResToImagAxis.Pos.add {F G : ℍ → ℂ} (hF : ResToImagAxis.Pos F)
   rw [Pos]; refine ⟨Real.add hF.1 hG.1, fun t ht ↦ ?_⟩
   have hFpos := hF.2 t ht; have hGpos := hG.2 t ht
   simp only [Function.resToImagAxis, ResToImagAxis, ht, ↓reduceDIte] at hFpos hGpos
-  simp [ResToImagAxis, ht, add_pos hFpos hGpos]
+  simp only [Function.resToImagAxis_apply, ResToImagAxis, ht, ↓reduceDIte, Pi.add_apply, add_re,
+    add_pos hFpos hGpos]
 
 @[fun_prop]
 theorem ResToImagAxis.Pos.mul {F G : ℍ → ℂ} (hF : ResToImagAxis.Pos F)
@@ -177,7 +185,8 @@ theorem ResToImagAxis.Pos.mul {F G : ℍ → ℂ} (hF : ResToImagAxis.Pos F)
   have hFreal := hF.1 t ht; have hGreal := hG.1 t ht
   have hFpos := hF.2 t ht; have hGpos := hG.2 t ht
   simp only [Function.resToImagAxis, ResToImagAxis, ht, ↓reduceDIte] at hFreal hGreal hFpos hGpos
-  simp [ResToImagAxis, ht, hFreal, hGreal, mul_pos hFpos hGpos]
+  simp only [Function.resToImagAxis_apply, ResToImagAxis, ht, ↓reduceDIte, Pi.mul_apply, mul_re,
+    hFreal, hGreal, mul_zero, sub_zero, mul_pos hFpos hGpos]
 
 @[fun_prop]
 theorem ResToImagAxis.Pos.smul {F : ℍ → ℂ} {c : ℝ} (hF : ResToImagAxis.Pos F)
@@ -185,7 +194,8 @@ theorem ResToImagAxis.Pos.smul {F : ℍ → ℂ} {c : ℝ} (hF : ResToImagAxis.P
   rw [Pos]; refine ⟨Real.smul hF.1, fun t ht ↦ ?_⟩
   have hFreal := hF.1 t ht; have hFpos := hF.2 t ht
   simp only [Function.resToImagAxis, ResToImagAxis, ht, ↓reduceDIte] at hFreal hFpos
-  simp [ResToImagAxis, ht, mul_pos hc hFpos]
+  simp only [Function.resToImagAxis_apply, ResToImagAxis, ht, ↓reduceDIte, Pi.smul_apply, real_smul,
+    mul_re, ofReal_re, ofReal_im, zero_mul, sub_zero, mul_pos hc hFpos]
 
 @[fun_prop]
 theorem ResToImagAxis.Pos.pow {F : ℍ → ℂ} (hF : ResToImagAxis.Pos F) (n : ℕ) :
@@ -215,7 +225,7 @@ theorem ResToImagAxis.EventuallyPos.add {F G : ℍ → ℂ}
     ResToImagAxis.EventuallyPos (F + G) := by
   rw [EventuallyPos]; refine ⟨ResToImagAxis.Real.add hF.1 hG.1, ?_⟩
   obtain ⟨tF, hF0, hFpos⟩ := hF.2; obtain ⟨tG, hG0, hGpos⟩ := hG.2
-  refine ⟨max tF tG, by positivity, fun t ht ↦ ?_⟩
+  refine ⟨max tF tG, by exact lt_max_of_lt_left hF0, fun t ht ↦ ?_⟩
   have hFpos_t := hFpos t ((le_max_left ..).trans ht)
   have hGpos_t := hGpos t ((le_max_right ..).trans ht)
   have htpos : 0 < t := by grind
@@ -229,7 +239,7 @@ theorem ResToImagAxis.EventuallyPos.mul {F G : ℍ → ℂ}
     ResToImagAxis.EventuallyPos (F * G) := by
   rw [EventuallyPos]; refine ⟨ResToImagAxis.Real.mul hF.1 hG.1, ?_⟩
   obtain ⟨tF, hF0, hFpos⟩ := hF.2; obtain ⟨tG, hG0, hGpos⟩ := hG.2
-  refine ⟨max tF tG, by positivity, fun t ht ↦ ?_⟩
+  refine ⟨max tF tG, by exact lt_max_of_lt_left hF0, fun t ht ↦ ?_⟩
   have htpos : 0 < t := by grind
   have hFreal_t := hF.1 t htpos; have hGreal_t := hG.1 t htpos
   have hFpos_t := hFpos t ((le_max_left ..).trans ht)
@@ -256,7 +266,8 @@ theorem ResToImagAxis.EventuallyPos.smul {F : ℍ → ℂ} {c : ℝ} (hF : ResTo
   have htpos : 0 < t := by grind
   have hFreal_t := hF.1 t htpos; have hFpos_t := hFpos t ht
   simp only [Function.resToImagAxis, ResToImagAxis, htpos, ↓reduceDIte] at hFreal_t hFpos_t
-  simp [ResToImagAxis, htpos, mul_pos hc hFpos_t]
+  simp only [Function.resToImagAxis_apply, ResToImagAxis, htpos, ↓reduceDIte, Pi.smul_apply,
+    real_smul, mul_re, ofReal_re, ofReal_im, zero_mul, sub_zero, mul_pos hc hFpos_t]
 
 /-- If `F` is real-valued, then `F` is equal to the real part of itself on imaginary axis. -/
 theorem ResToImagAxis.Real.eq_real_part {F : ℍ → ℂ} (hF : ResToImagAxis.Real F) (t : ℝ) :
@@ -288,8 +299,10 @@ lemma isBigO_resToImagAxis_of_isBigO_atImInfty {F : ℍ → ℂ} {c : ℝ} (_hc 
   filter_upwards [Filter.eventually_ge_atTop (max A 1)] with t ht
   have ht_pos : 0 < t := lt_of_lt_of_le one_pos (le_of_max_le_right ht)
   simp only [Function.resToImagAxis, ResToImagAxis, ht_pos, ↓reduceDIte]
-  set z : ℍ := ⟨Complex.I * t, by simp [ht_pos]⟩
-  have him : z.im = t := by change (Complex.I * t).im = t; simp
+  set z : ℍ := ⟨Complex.I * t, by simp only [mul_im, Complex.I_re, ofReal_im, mul_zero,
+    Complex.I_im, ofReal_re, one_mul, zero_add, ht_pos]⟩
+  have him : z.im = t := by change (Complex.I * t).im = t; simp only [mul_im, Complex.I_re,
+    ofReal_im, mul_zero, Complex.I_im, ofReal_re, one_mul, zero_add]
   simpa [him] using hA z (by simpa [him] using le_of_max_le_left ht)
 
 /--
@@ -381,7 +394,7 @@ lemma isBigO_atImInfty_of_fourier_shift
     calc ‖a m‖ * rexp (-(2 * π) * (↑m + ↑n₀) * z.im)
         ≤ ‖a m‖ * (rexp (-(2 * π * c) * m) * rexp (-(2 * π * c) * n₀)) :=
           mul_le_mul_of_nonneg_left (hexp_bound m) (norm_nonneg _)
-      _ = ‖a m‖ * rexp (-(2 * π * c) * m) * rexp (-(2 * π * c) * n₀) := by ring
+      _ = ‖a m‖ * rexp (-(2 * π * c) * m) * rexp (-(2 * π * c) * n₀) := by ac_rfl
   have hsum_norms' : Summable fun m => ‖a m‖ * rexp (-(2 * π) * (m + n₀) * z.im) := by
     convert hsum_norms with m; rw [norm_mul, norm_exp, hexp_re]
   -- Main calculation
@@ -402,7 +415,7 @@ lemma isBigO_atImInfty_of_fourier_shift
           nlinarith only [key, Real.pi_pos, (Nat.cast_nonneg m : (0 : ℝ) ≤ m), z.im_pos]
         calc ‖a m‖ * rexp (-(2 * π) * (↑m + ↑n₀) * z.im)
             = ‖a m‖ * rexp (-(2 * π) * m * z.im) * rexp (-(2 * π) * n₀ * z.im) := by
-              rw [hsplit]; ring
+              rw [hsplit]; ac_rfl
           _ ≤ ‖a m‖ * rexp (-(2 * π * c) * m) * rexp (-(2 * π) * n₀ * z.im) := by
               apply mul_le_mul_of_nonneg_right _ (le_of_lt (Real.exp_pos _))
               exact mul_le_mul_of_nonneg_left hexp_m (norm_nonneg _)

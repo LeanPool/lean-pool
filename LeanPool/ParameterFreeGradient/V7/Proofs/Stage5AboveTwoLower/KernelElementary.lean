@@ -34,7 +34,7 @@ lemma lowerKernelPhi_nonneg {r0 theta : ℝ} (x : Point d) :
 
 lemma lowerKernelPhi_zero {r0 theta : ℝ} (hr0 : 0 < r0) (htheta : 0 < theta) :
     lowerKernelPhi (d := d) r0 theta 0 = 0 := by
-  rw [lowerKernelPhi_eq_norm_power (by linarith)]
+  rw [lowerKernelPhi_eq_norm_power (by linarith only [hr0])]
   rw [show lpNorm r0 (0 : Point d) = 0 by
     simpa only [lpNorm] using O3.lpNorm_zero (d := d) hr0]
   rw [Real.zero_rpow (by positivity : 2 * theta ≠ 0)]
@@ -44,7 +44,7 @@ lemma lowerKernelPhi_strict_of_one_lt_norm_power {r0 theta : ℝ}
     (hr0 : 0 < r0) (x : Point d)
     (hx : 1 < (lpNorm r0 x) ^ (2 * theta)) :
     1 < lowerKernelPhi r0 theta x := by
-  rw [lowerKernelPhi_eq_norm_power (by linarith)]
-  nlinarith
+  rw [lowerKernelPhi_eq_norm_power (by linarith only [hr0])]
+  linarith only [hx]
 
 end V7.Stage5AboveTwoLower

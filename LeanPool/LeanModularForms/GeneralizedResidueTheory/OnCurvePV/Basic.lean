@@ -13,7 +13,6 @@ import Mathlib.Analysis.Calculus.Deriv.Add
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 import Mathlib.CategoryTheory.Category.Init
 import Mathlib.Combinatorics.Matroid.Init
-import Mathlib.MeasureTheory.Covering.Besicovitch
 
 /-!
 # On-Curve Principal Value: General Infrastructure
@@ -81,7 +80,7 @@ lemma pv_limit_via_dyadic {γ : ℝ → ℂ} {a b t₀ : ℝ} {L : ℂ}
         tendsto_pow_atTop_atTop_of_one_lt (by norm_num : (1 : ℝ) < 2)
       have h_tendsto_inv : Tendsto (fun n : ℕ => 1 / (2 : ℝ) ^ n) atTop (𝓝 0) := by
         simp_rw [one_div]; exact tendsto_inv_atTop_zero.comp h_tendsto_pow
-      convert Tendsto.const_mul (K * δ) h_tendsto_inv using 1 <;> [ext n; skip] <;> ring
+      convert Tendsto.const_mul (K * δ) h_tendsto_inv using 1 <;> [ext n; skip] <;> ring_nf
     rw [Metric.tendsto_atTop] at this
     obtain ⟨N₂, hN₂⟩ := this (η / 4) (by linarith only [hη_pos])
     refine ⟨N₂, ?_⟩
@@ -238,7 +237,7 @@ theorem aEStronglyMeasurable_pv_integrand_piecewiseC1
     simpa only [Measure.restrict_eq_zero.mpr hP_meas_zero] using aestronglyMeasurable_zero_measure _
   have h_piecewise : AEStronglyMeasurable
       ((S ∩ Icc a b).piecewise (fun t => f (γ t) * deriv γ t) (fun _ => (0 : ℂ))) volume :=
-    AEStronglyMeasurable.piecewise hS_meas h_base_meas aestronglyMeasurable_const
+    AEStronglyMeasurable.piecewise hS_meas.nullMeasurableSet h_base_meas aestronglyMeasurable_const
   have h_eq : (fun t => if ε < ‖γ t - z₀‖ then f (γ t) * deriv γ t else 0)
       =ᵐ[volume.restrict (Icc a b)]
       (S ∩ Icc a b).piecewise (fun t => f (γ t) * deriv γ t) (fun _ => 0) := by

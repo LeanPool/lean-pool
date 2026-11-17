@@ -10,6 +10,7 @@ public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 public import Mathlib.NumberTheory.Primorial
 public import Mathlib.NumberTheory.SmoothNumbers
 import Mathlib.Algebra.Field.ZMod
+import Mathlib.Algebra.Order.Floor.Semifield
 import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Algebra.Order.Star.Real
 import Mathlib.Algebra.Ring.IsFormallyReal

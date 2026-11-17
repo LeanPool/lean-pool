@@ -478,7 +478,7 @@ theorem fCoeff_eq {d : DegSpec 8 12} (hCore : d.core = row10Core)
       Int.reduceNeg, sub_self, contribForm, heightFlat, tailContribution_same,
       headContribution_same, zero_add, fCoeff, positiveChip, add_left_inj, Fin.mk_one,
       one_ne_zero, hT4, tsub_pos_iff_lt, zeroChip, Fin.reduceFinMk, sub_zero, hH4]
-  all_goals (try (first | ring1 | ring_nf))
+  all_goals (try ring_nf)
   all_goals (try split_ifs)
   all_goals (try simp_all only [Fin.isValue, zero_le, Int.reduceNeg, add_neg_cancel, add_zero,
     nonpos_iff_eq_zero, tsub_self, ↓reduceIte, sub_self, sub_zero, not_true_eq_false,
@@ -955,7 +955,7 @@ theorem tCoeff_eq {d : DegSpec 8 12} (hCore : d.core = row10Core)
       Int.reduceNeg, sub_self, contribForm, heightT, tailContribution_same, zero_add, tCoeff,
       positiveChip, add_left_inj, Fin.mk_one, one_ne_zero, sub_zero, hT4, zeroChip,
       Fin.reduceFinMk, headContribution_same, hH4, tsub_lt_self_iff]
-  all_goals (try (first | ring1 | ring_nf))
+  all_goals (try ring_nf)
   all_goals (try split_ifs)
   all_goals (try simp_all only [Fin.isValue, rowMark_four, Int.reduceNeg, add_neg_cancel,
     add_zero, Int.reduceAdd, ↓reduceIte, zero_add, not_le, tsub_lt_self_iff])

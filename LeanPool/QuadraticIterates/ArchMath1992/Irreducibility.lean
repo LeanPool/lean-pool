@@ -11,9 +11,9 @@ import LeanPool.QuadraticIterates.Mathlib.Algebra.Polynomial.EvenComp
 import LeanPool.QuadraticIterates.Mathlib.Data.Multiset
 import LeanPool.QuadraticIterates.Mathlib.RingTheory.UniqueFactorizationDomain
 import Mathlib.Algebra.Order.Ring.Star
-import Mathlib.Data.Int.ConditionallyCompleteOrder
-import Mathlib.Data.Int.Star
-import Mathlib.Data.Rat.Star
+import Mathlib.Order.Int.ConditionallyCompleteOrder
+import Mathlib.Algebra.Order.Star.Int
+import Mathlib.Algebra.Order.Star.Rat
 import Mathlib.RingTheory.Radical.NatInt
 
 /-!

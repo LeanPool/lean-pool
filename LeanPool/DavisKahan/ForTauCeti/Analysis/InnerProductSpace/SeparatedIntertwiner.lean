@@ -5,6 +5,8 @@ Authors: Jon Crall
 -/
 module
 
+import Mathlib.Analysis.InnerProductSpace.StarOrder
+
 public import Mathlib.Analysis.InnerProductSpace.Adjoint
 public import LeanPool.DavisKahan.ForTauCeti.Analysis.RCLike.ScalarTransportFunctionalCalculus
 public import LeanPool.DavisKahan.ForTauCeti.Analysis.InnerProductSpace.LinearPMap.Resolvent

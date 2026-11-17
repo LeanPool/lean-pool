@@ -10,6 +10,7 @@ public import Mathlib.Analysis.Convolution
 import Mathlib.Analysis.Calculus.ContDiff.Convolution
 import Mathlib.Analysis.SpecialFunctions.PolarCoord
 import Mathlib.MeasureTheory.Integral.CircleIntegral
+import Mathlib.MeasureTheory.Integral.Prod
 
 /-!
 # The Cauchy kernel, the Cauchy transform, and Cauchy–Pompeiu (Forster 13.1)

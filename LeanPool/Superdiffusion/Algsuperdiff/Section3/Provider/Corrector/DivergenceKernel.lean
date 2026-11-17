@@ -328,11 +328,11 @@ theorem divKernel_apply (a b : ℝ → ℝ) (T : ℝ) (x : Vec d) (k : Fin d) :
 theorem contDiff_divKernel_apply (ha : ContDiff ℝ (⊤ : ℕ∞) a) (hb : ContDiff ℝ (⊤ : ℕ∞) b)
     (k : Fin d) : ContDiff ℝ (⊤ : ℕ∞) fun x : Vec d => divKernel a b T x k := by
   have h1 : ContDiff ℝ (⊤ : ℕ∞) fun x : Vec d => kernelPrimitive a b T (x k) :=
-    (contDiff_kernelPrimitive ha hb).comp (contDiff_apply ℝ ℝ k)
+    (contDiff_kernelPrimitive ha hb).comp (contDiff_apply ℝ (fun _ ↦ ℝ) k)
   have h2 : ContDiff ℝ (⊤ : ℕ∞) fun x : Vec d => ∏ i ∈ idxBelow d (k : ℕ), b (x i) :=
-    contDiff_prod fun i _ => hb.comp (contDiff_apply ℝ ℝ i)
+    contDiff_prod fun i _ => hb.comp (contDiff_apply ℝ (fun _ ↦ ℝ) i)
   have h3 : ContDiff ℝ (⊤ : ℕ∞) fun x : Vec d => ∏ i ∈ idxAbove d ((k : ℕ) + 1), a (x i) :=
-    contDiff_prod fun i _ => ha.comp (contDiff_apply ℝ ℝ i)
+    contDiff_prod fun i _ => ha.comp (contDiff_apply ℝ (fun _ ↦ ℝ) i)
   exact (h1.mul h2).mul h3
 
 /-- The divergence kernel vanishes outside the closed sup-norm ball of radius

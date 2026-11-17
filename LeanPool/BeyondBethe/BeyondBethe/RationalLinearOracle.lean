@@ -7,7 +7,7 @@ module
 
 
 public import LeanPool.BeyondBethe.BeyondBethe.RationalFeasibility
-public import Mathlib.Tactic
+import Mathlib.Tactic.SimpRw -- shake: keep
 
 /-! # Rational Linear Oracle -/
 

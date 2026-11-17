@@ -113,7 +113,7 @@ lemma E₂_S_transform (z : ℍ) :
 
 private lemma cexp_succ_eq_pow (z : ℍ) (n : ℕ) :
     cexp (2 * π * Complex.I * (n + 1) * z) = cexp (2 * π * Complex.I * z) ^ (n + 1) := by
-  rw [← Complex.exp_nat_mul]; congr 1; push_cast; ring
+  rw [← Complex.exp_nat_mul]; congr 1; push_cast; ac_rfl
 
 lemma tsum_eq_tsum_sigma (z : ℍ) : ∑' n : ℕ, (n + 1) *
     cexp (2 * π * Complex.I * (n + 1) * z) / (1 - cexp (2 * π * Complex.I * (n + 1) * z)) =
@@ -131,10 +131,11 @@ lemma tsum_eq_tsum_sigma (z : ℍ) : ∑' n : ℕ, (n + 1) *
   calc
     ∑' n : ℕ, (n + 1) * cexp (2 * π * Complex.I * (n + 1) * z) /
         (1 - cexp (2 * π * Complex.I * (n + 1) * z))
-      = ∑' n : ℕ, f (n + 1) := tsum_congr fun n => by simp [f, pow_one, cexp_succ_eq_pow z n, q]
+      = ∑' n : ℕ, f (n + 1) := tsum_congr fun n => by simp only [cexp_succ_eq_pow z n, pow_one,
+        Nat.cast_add, Nat.cast_one, f, q]
     _ = ∑' n : ℕ, g (n + 1) := h
     _ = ∑' n : ℕ, sigma 1 (n + 1) * cexp (2 * π * Complex.I * (n + 1) * z) :=
-        tsum_congr fun n => by simp [g, cexp_succ_eq_pow z n, q]
+        tsum_congr fun n => by simp only [cexp_succ_eq_pow z n, g, q]
 
 lemma E₂_eq (z : UpperHalfPlane) : E₂ z =
     1 - 24 * ∑' n : ℕ+, ↑n * cexp (2 * π * Complex.I * n * z) /

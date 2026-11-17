@@ -8,7 +8,7 @@ module
 
 public import LeanPool.Nivat.Algebra.Action
 public import Mathlib.Algebra.Polynomial.FieldDivision
-public import Mathlib.Data.Int.LeastGreatest
+public import Mathlib.Order.Int.LeastGreatest
 public import Lean.Elab.Tactic.Omega
 
 /-

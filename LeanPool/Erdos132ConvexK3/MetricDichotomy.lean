@@ -6,15 +6,7 @@ Authors: Egor Lyfar
 module
 
 public import Mathlib.Analysis.Real.Sqrt
-import Mathlib.Algebra.Order.Algebra
-import Mathlib.Algebra.Order.BigOperators.Expect
-import Mathlib.Analysis.Complex.Order
-import Mathlib.Combinatorics.SimpleGraph.Init
-import Mathlib.Data.EReal.Inv
-import Mathlib.Data.Sym.Sym2.Init
-import Mathlib.Tactic.ContinuousFunctionalCalculus
 import Mathlib.Tactic.LinearCombination
-import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # Metric/sign dichotomy
@@ -36,24 +28,16 @@ private lemma sqrt_thirty_nine_sq : (Real.sqrt 39) ^ 2 = 39 := by
   exact Real.sq_sqrt (by norm_num : (0 : ℝ) ≤ 39)
 
 private lemma five_thirds_lt_sqrt_three : (5 : ℝ) / 3 < Real.sqrt 3 := by
-  have hs := sqrt_three_sq
-  have hs0 := Real.sqrt_nonneg (3 : ℝ)
-  nlinarith
+  exact Real.lt_sqrt_of_sq_lt (by norm_num)
 
 private lemma three_halves_lt_sqrt_three : (3 : ℝ) / 2 < Real.sqrt 3 := by
-  have hs := sqrt_three_sq
-  have hs0 := Real.sqrt_nonneg (3 : ℝ)
-  nlinarith
+  exact Real.lt_sqrt_of_sq_lt (by norm_num)
 
 private lemma sqrt_three_lt_two : Real.sqrt 3 < (2 : ℝ) := by
-  have hs := sqrt_three_sq
-  have hs0 := Real.sqrt_nonneg (3 : ℝ)
-  nlinarith
+  exact (Real.sqrt_lt (by norm_num) (by norm_num)).2 (by norm_num)
 
 private lemma six_lt_sqrt_thirty_nine : (6 : ℝ) < Real.sqrt 39 := by
-  have hs := sqrt_thirty_nine_sq
-  have hs0 := Real.sqrt_nonneg (39 : ℝ)
-  nlinarith
+  exact Real.lt_sqrt_of_sq_lt (by norm_num)
 
 /-- First exact boundary constant in the short-sign regime. -/
 theorem first_hard_constant_pos :
@@ -76,8 +60,8 @@ theorem metric_failure_numerator_lt_majorant
   have hgap : 0 < 2 * β - 1 := by linarith
   have hγgap : γ < 2 * β - 1 := by linarith
   have hsq : γ ^ 2 < (2 * β - 1) ^ 2 := by
-    nlinarith [mul_pos (sub_pos.mpr hγgap) (add_pos_of_pos_of_nonneg hγ (le_of_lt hgap))]
-  nlinarith
+    exact (sq_lt_sq₀ hγ.le hgap.le).2 hγgap
+  linear_combination 2 * hsq
 
 /-- AM-GM in polynomial form.  In the first beta range the single identity
 `β²=1-4rp` already forces `2r+p>1`. -/
@@ -233,10 +217,9 @@ private lemma normalized_k_lower
   by_contra hnot
   have hk_le : k ≤ Real.sqrt 39 / 8 := le_of_not_gt hnot
   have hsq_rp : (r + p) ^ 2 < ((5 : ℝ) / 8) ^ 2 := by
-    nlinarith [mul_pos (sub_pos.mpr hrp_hi) (by linarith : 0 < (5 : ℝ) / 8 + (r + p))]
+    exact (sq_lt_sq₀ hrp.le (by norm_num)).2 hrp_hi
   have hsq_k : k ^ 2 ≤ (Real.sqrt 39 / 8) ^ 2 := by
-    nlinarith [mul_nonneg (sub_nonneg.mpr hk_le)
-      (by positivity : 0 ≤ Real.sqrt 39 / 8 + k)]
+    exact (sq_le_sq₀ hk.le (by positivity)).2 hk_le
   nlinarith
 
 private lemma inverse_sqrt_three_bound :

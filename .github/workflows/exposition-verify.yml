@@ -101,6 +101,9 @@ jobs:
         id: build-identity
         run: echo "revision=$(PYTHONPATH=python python3 -m lean_pool.ci_cache revision)" >> "$GITHUB_OUTPUT"
 
+      - name: Free runner disk space
+        uses: ./.github/actions/free-disk-space
+
       # Match Lean Action CI's cache lookup exactly. This workflow only needs
       # compiled Lean artifacts; restoring doc-gen output here used to make a
       # broad fallback pull an incompatible cache after every toolchain bump.
@@ -181,6 +184,7 @@ jobs:
           key: Exposition-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml', 'scripts/exposition/Extract.lean', 'scripts/exposition/extract-all.sh', 'python/lean_pool/exposition/extract.py', 'python/lean_pool/exposition/source_text.py') }}-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
           restore-keys: |
             Exposition-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml', 'scripts/exposition/Extract.lean', 'scripts/exposition/extract-all.sh', 'python/lean_pool/exposition/extract.py', 'python/lean_pool/exposition/source_text.py') }}-
+            Exposition-v1-${{ runner.os }}-
 
       - name: Extract declarations
         env:

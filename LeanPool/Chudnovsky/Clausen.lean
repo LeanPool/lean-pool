@@ -9,13 +9,9 @@ public import Mathlib.Analysis.SpecialFunctions.OrdinaryHypergeometric
 public import Mathlib.Analysis.CStarAlgebra.Classes
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 import Mathlib.Algebra.Order.Ring.Star
+import Mathlib.Analysis.Calculus.Deriv.Pow
 import Mathlib.Analysis.Calculus.SmoothSeries
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Combinatorics.Matroid.Init
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.NumberTheory.ArithmeticFunction.VonMangoldt
+import Mathlib.Topology.Algebra.Module.ModuleTopology -- shake: keep
 
 /-!
 # Clausen's formula and the hypergeometric differential equations
@@ -111,8 +107,8 @@ theorem generalizedHypergeometricSeries_apply_zero (n : ℕ) :
 
 @[simp]
 theorem generalizedHypergeometric_zero : ₃F₂ α β γ δ ε (0 : 𝔸) = 1 := by
-  simp [generalizedHypergeometric_eq_tsum, ← generalizedHypergeometricSeries_apply_eq,
-    generalizedHypergeometricSeries_apply_zero]
+  simp only [generalizedHypergeometric_eq_tsum, ← generalizedHypergeometricSeries_apply_eq,
+    generalizedHypergeometricSeries_apply_zero, tsum_pi_single]
 
 end Field
 
@@ -134,10 +130,7 @@ theorem generalizedHypergeometricSeries_radius_eq_one {𝕂 : Type*} (𝔸 : Typ
     rw [ascPochhammer_eval_eq_zero_iff] at hz
     obtain ⟨k, _, hk⟩ := hz
     exact hx k hk
-  have hxn : ∀ (x : 𝕂) (n : ℕ), (∀ kn : ℕ, (kn : 𝕂) ≠ -x) → x + (n : 𝕂) ≠ 0 := by
-    intro x n hx he
-    rw [add_comm] at he
-    exact hx n (eq_neg_of_add_eq_zero_left he)
+  -- Cancel the old coefficient factors before taking norms.
   have key : ∀ n : ℕ, generalizedHypergeometricCoefficient α β γ δ ε n /
       generalizedHypergeometricCoefficient α β γ δ ε (n + 1) =
       ((δ + n) * (ε + n) * (1 + n)) / ((α + n) * (β + n) * (γ + n)) := by
@@ -147,54 +140,37 @@ theorem generalizedHypergeometricSeries_radius_eq_one {𝕂 : Type*} (𝔸 : Typ
     have hγ := hpne γ n fun k => (h k).2.2.1
     have hδ := hpne δ n fun k => (h k).2.2.2.1
     have hε := hpne ε n fun k => (h k).2.2.2.2
-    have hαn := hxn α n fun k => (h k).1
-    have hβn := hxn β n fun k => (h k).2.1
-    have hγn := hxn γ n fun k => (h k).2.2.1
-    have hδn := hxn δ n fun k => (h k).2.2.2.1
-    have hεn := hxn ε n fun k => (h k).2.2.2.2
-    have hfac : ((n ! : 𝕂)) ≠ 0 := Nat.cast_ne_zero.2 (Nat.factorial_ne_zero n)
-    have hn1 : ((n : 𝕂) + 1) ≠ 0 := Nat.cast_add_one_ne_zero n
-    have hden : (α + (n : 𝕂)) * (β + n) * (γ + n) ≠ 0 :=
-      mul_ne_zero (mul_ne_zero hαn hβn) hγn
-    have hcn1 : generalizedHypergeometricCoefficient α β γ δ ε (n + 1) ≠ 0 := by
-      simp only [generalizedHypergeometricCoefficient]
-      refine mul_ne_zero (mul_ne_zero (mul_ne_zero (mul_ne_zero (mul_ne_zero ?_ ?_) ?_) ?_) ?_) ?_
-      · exact inv_ne_zero (Nat.cast_ne_zero.2 (Nat.factorial_ne_zero _))
-      · exact hpne α (n + 1) fun k => (h k).1
-      · exact hpne β (n + 1) fun k => (h k).2.1
-      · exact hpne γ (n + 1) fun k => (h k).2.2.1
-      · exact inv_ne_zero (hpne δ (n + 1) fun k => (h k).2.2.2.1)
-      · exact inv_ne_zero (hpne ε (n + 1) fun k => (h k).2.2.2.2)
-    have hrec : generalizedHypergeometricCoefficient α β γ δ ε n *
-          ((α + (n : 𝕂)) * (β + n) * (γ + n)) =
-        generalizedHypergeometricCoefficient α β γ δ ε (n + 1) *
-          ((δ + (n : 𝕂)) * (ε + n) * (1 + n)) := by
-      simp only [generalizedHypergeometricCoefficient, Nat.factorial_succ, ascPochhammer_succ_eval,
-        Nat.cast_mul, Nat.cast_succ]
-      field_simp
-      ring
-    exact (div_eq_div_iff hcn1 hden).mpr (hrec.trans (mul_comm _ _))
+    have hfac : (n ! : 𝕂) ≠ 0 := Nat.cast_ne_zero.2 (Nat.factorial_ne_zero n)
+    simp only [generalizedHypergeometricCoefficient, Nat.factorial_succ,
+      ascPochhammer_succ_eval, Nat.cast_mul, Nat.cast_succ,
+      div_eq_mul_inv, mul_inv_rev, inv_inv, add_comm (1 : 𝕂) (n : 𝕂)]
+    calc
+      _ = ((n ! : 𝕂) * (n ! : 𝕂)⁻¹)
+          * ((ascPochhammer 𝕂 n).eval α * ((ascPochhammer 𝕂 n).eval α)⁻¹)
+          * ((ascPochhammer 𝕂 n).eval β * ((ascPochhammer 𝕂 n).eval β)⁻¹)
+          * ((ascPochhammer 𝕂 n).eval γ * ((ascPochhammer 𝕂 n).eval γ)⁻¹)
+          * ((ascPochhammer 𝕂 n).eval δ * ((ascPochhammer 𝕂 n).eval δ)⁻¹)
+          * ((ascPochhammer 𝕂 n).eval ε * ((ascPochhammer 𝕂 n).eval ε)⁻¹)
+          * ((α + n)⁻¹ * (β + n)⁻¹ * (γ + n)⁻¹
+            * (δ + n) * (ε + n) * ((n : 𝕂) + 1)) := by ring
+      _ = _ := by
+        rw [mul_inv_cancel₀ hfac, mul_inv_cancel₀ hα, mul_inv_cancel₀ hβ,
+          mul_inv_cancel₀ hγ, mul_inv_cancel₀ hδ, mul_inv_cancel₀ hε]
+        simp only [one_mul, mul_one]
+        ring
   have limit : Tendsto
       (fun n : ℕ => ((δ + n) * (ε + n) * (1 + n)) / ((α + n) * (β + n) * (γ + n)))
       atTop (𝓝 1) := by
-    have h1 : Tendsto (fun n : ℕ => (δ + (n : 𝕂)) / (α + n)) atTop (𝓝 1) := by
-      simpa using tendsto_add_mul_div_add_mul_atTop_nhds δ α (1 : 𝕂) (d := 1) one_ne_zero
-    have h2 : Tendsto (fun n : ℕ => (ε + (n : 𝕂)) / (β + n)) atTop (𝓝 1) := by
-      simpa using tendsto_add_mul_div_add_mul_atTop_nhds ε β (1 : 𝕂) (d := 1) one_ne_zero
-    have h3 : Tendsto (fun n : ℕ => (1 + (n : 𝕂)) / (γ + n)) atTop (𝓝 1) := by
-      simpa using tendsto_add_mul_div_add_mul_atTop_nhds (1 : 𝕂) γ (1 : 𝕂) (d := 1) one_ne_zero
-    have heq : (fun n : ℕ => ((δ + (n : 𝕂)) * (ε + n) * (1 + n)) / ((α + n) * (β + n) * (γ + n)))
-        = fun n : ℕ => (δ + (n : 𝕂)) / (α + n) * ((ε + n) / (β + n)) * ((1 + n) / (γ + n)) := by
-      funext n
-      simp only [div_eq_mul_inv, mul_inv_rev]
-      ring
-    rw [heq]
-    simpa using (h1.mul h2).mul h3
+    have linear_limit (x y : 𝕂) :
+        Tendsto (fun n : ℕ => (x + (n : 𝕂)) / (y + n)) atTop (𝓝 1) := by
+      simpa only [one_mul, div_one] using
+        tendsto_add_mul_div_add_mul_atTop_nhds x y (1 : 𝕂) (d := 1) one_ne_zero
+    simpa only [@div_mul_div_comm 𝕂 _, mul_one] using
+      ((linear_limit δ α).mul (linear_limit ε β)).mul (linear_limit 1 γ)
   have limitn : Tendsto
       (fun n : ℕ => ‖((δ + (n : 𝕂)) * (ε + n) * (1 + n)) / ((α + n) * (β + n) * (γ + n))‖)
-      atTop (𝓝 1) := by simpa using Filter.Tendsto.norm limit
+      atTop (𝓝 1) := by simpa only [norm_one] using Filter.Tendsto.norm limit
   refine limitn.congr (fun n => ?_)
-  simp only [Nat.succ_eq_add_one]
   rw [← norm_div, key n]
 
 open Filter Topology in
@@ -232,19 +208,19 @@ theorem generalizedHypergeometric_summable (α β γ δ ε : ℂ) {z : ℂ} (hz 
       all_goals
         first
         | (rw [show (ascPochhammer ℂ n).eval α = 0 by
-              rw [show α = -(kn : ℂ) by linear_combination hp]
+              rw [show α = -(kn : ℂ) by exact neg_eq_iff_eq_neg.mp hp.symm]
               exact ascPochhammer_eval_neg_coe_nat_of_lt hlt]; simp)
         | (rw [show (ascPochhammer ℂ n).eval β = 0 by
-              rw [show β = -(kn : ℂ) by linear_combination hp]
+              rw [show β = -(kn : ℂ) by exact neg_eq_iff_eq_neg.mp hp.symm]
               exact ascPochhammer_eval_neg_coe_nat_of_lt hlt]; simp)
         | (rw [show (ascPochhammer ℂ n).eval γ = 0 by
-              rw [show γ = -(kn : ℂ) by linear_combination hp]
+              rw [show γ = -(kn : ℂ) by exact neg_eq_iff_eq_neg.mp hp.symm]
               exact ascPochhammer_eval_neg_coe_nat_of_lt hlt]; simp)
         | (rw [show (ascPochhammer ℂ n).eval δ = 0 by
-              rw [show δ = -(kn : ℂ) by linear_combination hp]
+              rw [show δ = -(kn : ℂ) by exact neg_eq_iff_eq_neg.mp hp.symm]
               exact ascPochhammer_eval_neg_coe_nat_of_lt hlt]; simp)
         | (rw [show (ascPochhammer ℂ n).eval ε = 0 by
-              rw [show ε = -(kn : ℂ) by linear_combination hp]
+              rw [show ε = -(kn : ℂ) by exact neg_eq_iff_eq_neg.mp hp.symm]
               exact ascPochhammer_eval_neg_coe_nat_of_lt hlt]; simp)
     rw [hc0, zero_mul]
 
@@ -295,7 +271,7 @@ private theorem DiscSummable.shift {c : ℕ → ℂ} (hc : DiscSummable c) :
   have hρ0 : 0 ≤ ρ := (norm_nonneg w).trans hwρ.le
   have hρpos : 0 < ρ := lt_of_le_of_lt (norm_nonneg w) hwρ
   have hg : Summable fun m : ℕ => (m : ℝ) * ‖c m‖ * ρ ^ m := by
-    simpa using hc.weighted 1 hρ0 hρ1
+    simpa only [pow_one] using hc.weighted 1 hρ0 hρ1
   have hg1 : Summable fun n : ℕ => ((n + 1 : ℕ) : ℝ) * ‖c (n + 1)‖ * ρ ^ (n + 1) :=
     (summable_nat_add_iff (f := fun m : ℕ => (m : ℝ) * ‖c m‖ * ρ ^ m) 1).2 hg
   have hbnd : Summable fun n : ℕ => ((n : ℝ) + 1) * ‖c (n + 1)‖ * ρ ^ n := by
@@ -397,7 +373,7 @@ private theorem ordinaryHypergeometric_discSummable (a b c : ℂ) (hc : ∀ k : 
     have hkn' : (kn : ℂ) = -a ∨ (kn : ℂ) = -b := by
       by_contra hcon
       push Not at hcon
-      exact absurd (hkn hcon.1) (by simpa using hcon.2)
+      exact absurd (hkn hcon.1) (by simpa only [ne_eq] using hcon.2)
     apply summable_of_ne_finset_zero (s := Finset.range (kn + 1))
     intro n hn
     rw [Finset.mem_range, not_lt] at hn
@@ -406,10 +382,10 @@ private theorem ordinaryHypergeometric_discSummable (a b c : ℂ) (hc : ∀ k : 
       simp only [ordinaryHypergeometricCoefficient]
       rcases hkn' with hp | hp
       · rw [show (ascPochhammer ℂ n).eval a = 0 by
-              rw [show a = -(kn : ℂ) by linear_combination hp]
+              rw [show a = -(kn : ℂ) by exact neg_eq_iff_eq_neg.mp hp.symm]
               exact ascPochhammer_eval_neg_coe_nat_of_lt hlt]; ring
       · rw [show (ascPochhammer ℂ n).eval b = 0 by
-              rw [show b = -(kn : ℂ) by linear_combination hp]
+              rw [show b = -(kn : ℂ) by exact neg_eq_iff_eq_neg.mp hp.symm]
               exact ascPochhammer_eval_neg_coe_nat_of_lt hlt]; ring
     rw [hc0, zero_mul, norm_zero]
 
@@ -490,7 +466,7 @@ theorem ordinaryHypergeometric_ode (a b c : ℂ) (hc : ∀ k : ℕ, (k : ℂ) �
   have hd2 : deriv (deriv fun w : ℂ => ₂F₁ a b c w) z = ∑' n : ℕ, C2 n * z ^ n := by
     have hev : deriv (fun w : ℂ => ₂F₁ a b c w) =ᶠ[nhds z] fun w => ∑' n : ℕ, C1 n * w ^ n := by
       have hball : Metric.ball (0 : ℂ) 1 ∈ nhds z :=
-        Metric.isOpen_ball.mem_nhds (by simpa [Metric.mem_ball, dist_zero_right] using hz)
+        Metric.isOpen_ball.mem_nhds (by simpa only [Metric.mem_ball, dist_zero_right] using hz)
       filter_upwards [hball] with w hw
       rw [Metric.mem_ball, dist_zero_right] at hw
       exact (hHD w hw).deriv
@@ -593,20 +569,21 @@ private theorem generalizedHypergeometric_discSummable (α β γ δ ε : ℂ) :
       all_goals
         first
         | (rw [show (ascPochhammer ℂ n).eval α = 0 by
-              rw [show α = -(kn : ℂ) by linear_combination hp]
+              rw [show α = -(kn : ℂ) by exact neg_eq_iff_eq_neg.mp hp.symm]
               exact ascPochhammer_eval_neg_coe_nat_of_lt hlt]; ring)
         | (rw [show (ascPochhammer ℂ n).eval β = 0 by
-              rw [show β = -(kn : ℂ) by linear_combination hp]
+              rw [show β = -(kn : ℂ) by exact neg_eq_iff_eq_neg.mp hp.symm]
               exact ascPochhammer_eval_neg_coe_nat_of_lt hlt]; ring)
         | (rw [show (ascPochhammer ℂ n).eval γ = 0 by
-              rw [show γ = -(kn : ℂ) by linear_combination hp]
+              rw [show γ = -(kn : ℂ) by exact neg_eq_iff_eq_neg.mp hp.symm]
               exact ascPochhammer_eval_neg_coe_nat_of_lt hlt]; ring)
         | (rw [show (ascPochhammer ℂ n).eval δ = 0 by
-              rw [show δ = -(kn : ℂ) by linear_combination hp]
-              exact ascPochhammer_eval_neg_coe_nat_of_lt hlt]; simp)
+              rw [show δ = -(kn : ℂ) by exact neg_eq_iff_eq_neg.mp hp.symm]
+              exact ascPochhammer_eval_neg_coe_nat_of_lt hlt]; simp only [inv_zero, mul_zero,
+                zero_mul])
         | (rw [show (ascPochhammer ℂ n).eval ε = 0 by
-              rw [show ε = -(kn : ℂ) by linear_combination hp]
-              exact ascPochhammer_eval_neg_coe_nat_of_lt hlt]; simp)
+              rw [show ε = -(kn : ℂ) by exact neg_eq_iff_eq_neg.mp hp.symm]
+              exact ascPochhammer_eval_neg_coe_nat_of_lt hlt]; simp only [inv_zero, mul_zero])
     rw [hc0, zero_mul, norm_zero]
 
 /-- Paper Thm. `dgl3f2`: on the unit disc, `g = ₃F₂(α, β, γ; δ, ε; ·)` satisfies the third-order
@@ -842,12 +819,14 @@ private theorem clausen_coeff_general (a b : ℂ)
     have hee2 : (∑ k ∈ Finset.range (nn + 1), C k * C (nn - k)) = E nn := rfl
     rw [hee1, hee2] at key
     linear_combination key
-  have ee0 : E 0 = 1 := by simp [hEdef, C0]
+  have ee0 : E 0 = 1 := by simp only [hEdef, zero_add, Finset.range_one, zero_tsub, C0, mul_one,
+    Finset.sum_singleton]
   have hAne : ∀ nn : ℕ, A nn ≠ 0 := by
     intro nn
     simp only [hAdef]
     exact mul_ne_zero (mul_ne_zero (Nat.cast_add_one_ne_zero nn)
-      (fun h => h₂ nn (by linear_combination h))) (fun h => h₁ nn (by linear_combination h))
+      (fun h => h₂ nn (by exact eq_neg_of_add_eq_zero_left h)))
+      (fun h => h₁ nn (by exact eq_neg_of_add_eq_zero_left h))
   have ee_eq_dd : ∀ nn : ℕ, E nn = D nn := by
     intro nn
     induction nn with
@@ -1052,7 +1031,8 @@ private theorem ee_rec (n : ℕ) : ((n : ℚ) + 1) ^ 3 * ee (n + 1) = AA n * ee 
 
 /-- Both coefficient sequences satisfy the same recurrence with the same initial value, hence
 they are equal. -/
-private theorem ee_zero : ee 0 = 1 := by simp [ee, cc_zero]
+private theorem ee_zero : ee 0 = 1 := by simp only [ee, zero_add, Finset.range_one, zero_tsub,
+  cc_zero, mul_one, Finset.sum_singleton]
 
 private theorem ee_eq_dd (n : ℕ) : ee n = dd n := by
   induction n with
@@ -1079,8 +1059,7 @@ theorem clausen_coeff_identity (n : ℕ) :
 /-- Clausen's formula specialized to `a = 1/12`, `b = 5/12` (paper Thm. `satzclausen`):
 `(₂F₁(1/12, 5/12; 1; z))² = ₃F₂(1/6, 5/6, 1/2; 1, 1; z)` for `‖z‖ < 1`.
 
-The analytic reduction (Cauchy product of the square, coefficient comparison) is carried out
-here; the remaining arithmetic core is `clausen_coeff_identity`. -/
+This follows directly from the general formula, with both lower parameters equal to `1`. -/
 theorem hyp2F1_sq_eq_hyp3F2 {z : ℂ} (hz : ‖z‖ < 1) : hyp2F1 z ^ 2 = hyp3F2 z := by
   -- Non-degeneracy of the lower parameter `c = 1` (and of `a = 1/12`, `b = 5/12`).
   have hnd : ∀ kn : ℕ, (kn : ℂ) ≠ -(1 / 12) ∧ (kn : ℂ) ≠ -(5 / 12) ∧ (kn : ℂ) ≠ -1 := by
@@ -1092,55 +1071,12 @@ theorem hyp2F1_sq_eq_hyp3F2 {z : ℂ} (hz : ‖z‖ < 1) : hyp2F1 z ^ 2 = hyp3F2
       rw [Nat.cast_eq_zero] at h0; omega
     · have h0 : ((kn + 1 : ℕ) : ℂ) = 0 := by push_cast; linear_combination h
       rw [Nat.cast_eq_zero] at h0; omega
-  -- Absolute convergence of the `₂F₁` series, needed for the Cauchy product.
-  have hfsum : Summable fun n : ℕ =>
-      ‖ordinaryHypergeometricCoefficient (1 / 12 : ℂ) (5 / 12) 1 n * z ^ n‖ :=
-    ordinaryHypergeometric_norm_summable (1 / 12) (5 / 12) 1 hnd hz
-  -- `hyp2F1 z` as a `tsum` of `cₖ zᵏ`.
-  have hL : hyp2F1 z =
-      ∑' n : ℕ, ordinaryHypergeometricCoefficient (1 / 12 : ℂ) (5 / 12) 1 n * z ^ n := by
-    rw [hyp2F1, ordinaryHypergeometric, ordinaryHypergeometric_sum_eq]
-    exact tsum_congr fun n => smul_eq_mul _ _
-  -- `hyp3F2 z` as a `tsum` of `dₙ zⁿ`.
-  have hR : hyp3F2 z =
-      ∑' n : ℕ, generalizedHypergeometricCoefficient (1 / 6 : ℂ) (5 / 6) (1 / 2) 1 1 n * z ^ n := by
-    rw [hyp3F2, generalizedHypergeometric, generalizedHypergeometric_sum_eq]
-    exact tsum_congr fun n => smul_eq_mul _ _
-  -- The square is the Cauchy product; compare coefficients.
-  rw [sq, hL, hR, tsum_mul_tsum_eq_tsum_sum_range_of_summable_norm hfsum hfsum]
-  refine tsum_congr fun n => ?_
-  -- Pull `zⁿ` out of the finite convolution sum.
-  have hz_pow : ∀ k ∈ Finset.range (n + 1),
-      ordinaryHypergeometricCoefficient (1 / 12 : ℂ) (5 / 12) 1 k * z ^ k *
-        (ordinaryHypergeometricCoefficient (1 / 12 : ℂ) (5 / 12) 1 (n - k) * z ^ (n - k))
-        = ordinaryHypergeometricCoefficient (1 / 12 : ℂ) (5 / 12) 1 k *
-          ordinaryHypergeometricCoefficient (1 / 12 : ℂ) (5 / 12) 1 (n - k) * z ^ n := by
-    intro k hk
-    rw [Finset.mem_range, Nat.lt_succ_iff] at hk
-    have hpow : z ^ k * z ^ (n - k) = z ^ n := by rw [← pow_add, Nat.add_sub_cancel' hk]
-    linear_combination (ordinaryHypergeometricCoefficient (1 / 12 : ℂ) (5 / 12) 1 k *
-      ordinaryHypergeometricCoefficient (1 / 12 : ℂ) (5 / 12) 1 (n - k)) * hpow
-  rw [Finset.sum_congr rfl hz_pow, ← Finset.sum_mul]
-  -- Reduce the complex coefficient identity to the rational one.
-  congr 1
-  have hq := clausen_coeff_identity n
-  have hsumcast : (∑ k ∈ Finset.range (n + 1),
-        ordinaryHypergeometricCoefficient (1 / 12 : ℂ) (5 / 12) 1 k *
-          ordinaryHypergeometricCoefficient (1 / 12 : ℂ) (5 / 12) 1 (n - k))
-      = ((∑ k ∈ Finset.range (n + 1),
-          ordinaryHypergeometricCoefficient (1 / 12 : ℚ) (5 / 12) 1 k *
-            ordinaryHypergeometricCoefficient (1 / 12 : ℚ) (5 / 12) 1 (n - k) : ℚ) : ℂ) := by
-    rw [Rat.cast_sum]
-    refine Finset.sum_congr rfl fun k _ => ?_
-    rw [Rat.cast_mul, ordinaryHypergeometricCoefficient_ratCast,
-      ordinaryHypergeometricCoefficient_ratCast]
-    norm_num
-  have hgencast :
-      generalizedHypergeometricCoefficient (1 / 6 : ℂ) (5 / 6) (1 / 2) 1 1 n
-        = ((generalizedHypergeometricCoefficient (1 / 6 : ℚ) (5 / 6) (1 / 2) 1 1 n : ℚ) : ℂ) := by
-    rw [generalizedHypergeometricCoefficient_ratCast]
-    norm_num
-  rw [hsumcast, hgencast, hq]
+  have hc : (1 / 12 : ℂ) + 5 / 12 + 1 / 2 = 1 := by norm_num
+  have hc' : 2 * (1 / 12 : ℂ) + 2 * (5 / 12) = 1 := by norm_num
+  have h := clausen_formula (1 / 12 : ℂ) (5 / 12)
+    (fun k => by rw [hc]; exact (hnd k).2.2)
+    (fun k => by rw [hc']; exact (hnd k).2.2) hz
+  convert h using 1 <;> norm_num [hyp2F1, hyp3F2]
 
 /-- The Pochhammer/factorial identity from the proof of paper Thm. `darst`:
 `(1/6)ₙ · (1/2)ₙ · (5/6)ₙ = (6n)! / ((3n)! · 12^(3n))`, stated over `ℚ`. -/

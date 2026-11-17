@@ -22,6 +22,7 @@ module
 public import Mathlib.Analysis.Fourier.AddCircle
 public import Mathlib.LinearAlgebra.Complex.FiniteDimensional
 import Mathlib.Analysis.SpecialFunctions.Gaussian.GaussianIntegral
+import Mathlib.Analysis.SpecialFunctions.PolarCoord
 import Mathlib.MeasureTheory.Integral.Gamma
 
 /-! # Definitions -/

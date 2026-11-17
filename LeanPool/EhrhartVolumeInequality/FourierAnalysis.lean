@@ -9,8 +9,10 @@ module
 public import LeanPool.EhrhartVolumeInequality.Variation
 public import Mathlib.MeasureTheory.Function.LpSpace.Basic
 import all LeanPool.EhrhartVolumeInequality.Variation
-import Mathlib.Analysis.Matrix.Order
+import Mathlib.Algebra.Order.Star.Real
+import Mathlib.Analysis.CStarAlgebra.Classes
 import Mathlib.Analysis.SpecialFunctions.PolarCoord
+import Mathlib.Geometry.Manifold.PartitionOfUnity
 
 /-!
 # Ehrhart volume inequality: FourierAnalysis
@@ -246,7 +248,7 @@ private theorem exists_momentNormalizedPhaseMaximizer
   have hbound := hcoerc x
   change phase u φ x ≤ phase u φ 0
   change phase u φ x ≤ C - δ * ‖x‖ at hbound
-  nlinarith
+  linarith
 
 private theorem momentNormalized_monomialIntegral_le_exp_mul_base
     {n : ℕ} {K : CenteredBody n}
@@ -292,7 +294,7 @@ private theorem momentNormalized_monomialIntegral_le_exp_mul_base
             apply Real.exp_le_exp.mpr
             have hx := hM x
             unfold phase at hx
-            nlinarith
+            linarith only [mul_le_mul_of_nonneg_left hx (sub_nonneg.mpr hk)]
     _ = Real.exp ((k - 1) * M) *
         (∫ x : Space n,
           monomialWeight 1 u
@@ -366,7 +368,7 @@ private theorem momentNormalized_log_monomialIntegral_div_le
                   (monomialIntegral 1 u
                     (momentNormalizedPotential F))| :=
               abs_nonneg _
-            nlinarith
+            exact le_mul_of_one_le_left hnonneg hk
     _ = (|M| +
             |Real.log
               (monomialIntegral 1 u
@@ -911,7 +913,7 @@ private theorem eventually_momentNormalized_moving_phase_le_max_add
   have hboundary : C - d * R ≤ M := by
     have hratio : (C - M) / d ≤ R := le_max_right _ _
     have hmul := (div_le_iff₀ hd).mp hratio
-    nlinarith
+    linarith
   have hnorm :
       Tendsto (fun k : ℕ => ‖u k - u₀‖)
         atTop (𝓝 (0 : ℝ)) := by
@@ -952,7 +954,7 @@ private theorem eventually_momentNormalized_moving_phase_le_max_add
     have hdecay : C - d * ‖z‖ ≤ M := by
       calc
         C - d * ‖z‖ ≤ C - d * R := by
-          nlinarith
+          exact sub_le_sub_left (mul_le_mul_of_nonneg_left hz'.le hd.le) C
         _ ≤ M := hboundary
     exact (hk z).trans
       (hdecay.trans (by dsimp [M]; linarith))
@@ -4347,7 +4349,7 @@ namespace ComplexMatrixWeightedHilbert
 
 open Set Function MeasureTheory Filter Matrix
 open scoped BigOperators ContDiff Convolution ENNReal InnerProductSpace
-  MatrixOrder Matrix.Norms.L2Operator Topology
+  Topology
 
 private def sourceMatrixHessian {n : ℕ}
     (φ : Space n → ℝ) :
@@ -5103,7 +5105,7 @@ private theorem weighted_complex_bochner_coordinate_identity_compact_right
         barPartialCoordinate
           (fun w => weightedHolomorphicDerivative a F i w) z j *
             conj (G z) ∂μ) := by
-    linear_combination hfirst
+    exact ((congrArg Neg.neg hfirst).trans (neg_neg _)).symm
   have hsecond :=
     weighted_holomorphic_hermitian_integration_by_parts_compact_right
       haone hFbar hgone hGcompact i
@@ -7855,7 +7857,7 @@ private theorem angularWeakDolbeaultResolvent_form_adjoint {n : ℕ}
       (WithLp.fst (v : angularDolbeaultGraphAmbient a)) := by
   rw [inner_sub_left]
   have h := angularWeakDolbeaultResolvent_moment_components a f v
-  linear_combination h
+  exact eq_sub_of_add_eq' h
 
 end WeightedTorusDolbeault
 
@@ -9095,7 +9097,7 @@ private theorem integrable_angularTorusFormExteriorDerivativeDensity
     sourceTorusFormFullDerivativeDensity W p -
       sourceTorusFormMixedDerivativeDensity W p =
         sourceTorusFormExteriorDerivativeDensity W p
-  linear_combination -hp
+  exact sub_eq_iff_eq_add.mpr hp.symm
 
 private theorem angularTorus_weighted_complex_dolbeault_form_bochner_identity
     {n : ℕ} {a : LogTorus n → ℝ}

@@ -31,7 +31,7 @@ namespace CKN.Leray
 theorem abs_integral_mul_le_eLpNorm_two {f g : Vec3 → ℝ} (hf : MemLp f 2 volume)
     (hg : MemLp g 2 volume) :
     |∫ x, f x * g x| ≤ (eLpNorm f 2 volume).toReal * (eLpNorm g 2 volume).toReal := by
-  have hH := MeasureTheory.eLpNorm_le_eLpNorm_mul_eLpNorm_of_nnnorm
+  have hH := MeasureTheory.eLpNorm_le_eLpNorm_mul_eLpNorm
     (μ := volume) (f := f) (g := g) (p := (2 : ℝ≥0∞)) (q := (2 : ℝ≥0∞))
     (r := (1 : ℝ≥0∞)) (b := fun a b : ℝ => a * b) (c := (1 : NNReal))
     (by exact continuous_mul) hf.aestronglyMeasurable hg.aestronglyMeasurable (by

@@ -31,15 +31,17 @@ variable {R : ℕ} (f : EdgeRankParameter R)
 /-- The trace of an `n`-strand endomorphism: the closure against
 the strand bundle. -/
 noncomputable def skeinTrace (n : ℕ) (g : skeinEnd f n) : ℂ :=
-  HomSpace.traceMap f.val n g
+  HomSpace.traceMap f.val n g.asHom
 
 /-- **The trace of a tensor product is the product of traces.** -/
 theorem skeinTrace_tensorHom {a b : ℕ}
     (u : skeinEnd f a) (v : skeinEnd f b) :
     skeinTrace f (a + b)
       (show skeinEnd f (a + b) from
-        MonoidalCategoryStruct.tensorHom u v) =
+        End.of (MonoidalCategoryStruct.tensorHom u.asHom v.asHom)) =
     skeinTrace f a u * skeinTrace f b v := by
+  rcases u with ⟨u⟩
+  rcases v with ⟨v⟩
   -- Reduce to HomSpace operations
   change HomSpace.traceMap f.val (a + b)
     (HomSpace.tensor f a a b b u v) =

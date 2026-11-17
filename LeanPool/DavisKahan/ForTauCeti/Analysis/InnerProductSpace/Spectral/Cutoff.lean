@@ -5,6 +5,7 @@ Authors: Jon Crall, Claude Opus 5
 -/
 module
 
+public import Mathlib.Analysis.CStarAlgebra.ContinuousLinearMap
 public import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Order
 public import Mathlib.Analysis.InnerProductSpace.Adjoint
 public import Mathlib.Analysis.InnerProductSpace.Positive
@@ -142,7 +143,7 @@ theorem tailCutoff_tail_bound
     have hid : 1 - (1 - u ^ 2 / x) = u ^ 2 / x := by ring
     rw [hid]
     have hmul : u ^ 4 ≤ u ^ 2 * x := by
-      nlinarith [sq_nonneg (u ^ 2)]
+      nlinarith only [hx, sq_nonneg (u ^ 2)]
     calc
       x * (u ^ 2 / x) ^ 2 = u ^ 4 / x := by
         field_simp [hxpos.ne']
@@ -266,8 +267,8 @@ theorem norm_apply_le_of_spectralCutoff_apply_eq_zero {A : E →L[ℂ] E} (hA : 
     intro t ht
     have ht0 : 0 ≤ t := spectrum_nonneg_of_nonneg hA ht
     rcases le_or_gt t s with h | h
-    · rw [max_eq_right (by linarith)]; nlinarith
-    · rw [max_eq_left (by linarith)]; nlinarith
+    · rw [max_eq_right (by linarith)]; nlinarith only [hs, ht0, h]
+    · rw [max_eq_left (by linarith)]; nlinarith only []
   have hnn : (0 : E →L[ℂ] E) ≤
       (s ^ 2 : ℝ) • (1 : E →L[ℂ] E) + (A + (s : ℝ) • 1) * A.spectralCutoff s - A * A := by
     rw [cutoff_split A hA s]
@@ -279,10 +280,10 @@ theorem norm_apply_le_of_spectralCutoff_apply_eq_zero {A : E →L[ℂ] E} (hA : 
   simp only [sub_apply, add_apply, happ, add_zero, smul_apply, one_apply_eq_self,
     inner_sub_left, map_sub, re_inner_mul_self hsa y,
     re_inner_real_smul_self (s ^ 2) y] at hform
-  have hsq : ‖A y‖ ^ 2 ≤ (s * ‖y‖) ^ 2 := by nlinarith
+  have hsq : ‖A y‖ ^ 2 ≤ (s * ‖y‖) ^ 2 := by nlinarith only [hform]
   have h1 : (0 : ℝ) ≤ ‖A y‖ := norm_nonneg _
   have h2 : (0 : ℝ) ≤ s * ‖y‖ := mul_nonneg hs (norm_nonneg _)
-  nlinarith
+  nlinarith only [hform, h2]
 
 /-- **`A` is bounded below by `s` on the orthogonal complement of the kernel of its
 `s`-cutoff.** -/
@@ -318,7 +319,7 @@ theorem le_norm_apply_of_mem_orthogonal_ker_spectralCutoff {A : E →L[ℂ] E} (
   · simp
   · have hpos : 0 < ‖y‖ := norm_pos_iff.mpr hy0
     have hkey : s * ‖y‖ ^ 2 ≤ ‖A y‖ * ‖y‖ := by linarith
-    nlinarith
+    nlinarith only [hform, hcs, hpos]
 
 section SmoothCutoff
 
@@ -491,7 +492,7 @@ theorem mul_norm_cfc_tailCutoff_le_norm_apply
     have hx0 := hCspec_nonneg x hx
     have hcut := TauCeti.tailCutoff_lower_bound (x := x) hu0
     change 0 ≤ (x - u ^ 2) * (TauCeti.tailCutoff u x) ^ 2
-    nlinarith
+    nlinarith only [hcut]
   have hlowerIdentity :
       cfc (fun x => (x - u ^ 2) * (p x) ^ 2) C =
         Pc * C * Pc - u ^ 2 • (Pc * Pc) :=

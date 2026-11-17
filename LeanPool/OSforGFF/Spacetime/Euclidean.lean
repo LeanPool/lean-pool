@@ -241,7 +241,7 @@ private theorem act_inv_poly_bound (g : E) :
     _ = ‖x‖ + ‖g⁻¹.t‖ := by rw [g⁻¹.R.norm_map x]
     _ ≤ (1 + ‖g⁻¹.t‖) * (1 + ‖x‖)^1 := by
         simp only [pow_one]
-        nlinarith [norm_nonneg x, norm_nonneg g⁻¹.t]
+        nlinarith only [norm_nonneg x, norm_nonneg g⁻¹.t]
 /-! ### Unified Action of Euclidean group on function spaces ---------
 
     UNIFIED EUCLIDEAN ACTION FRAMEWORK
@@ -287,7 +287,7 @@ lemma euclidean_pullback_polynomial_bounds (g : E) :
   calc ‖g⁻¹.R x‖
       ≤ ‖g⁻¹.R x + g⁻¹.t‖ + ‖g⁻¹.t‖ := norm_le_add_norm_add _ _
     _ ≤ (1 + ‖g⁻¹.t‖) * (1 + ‖g⁻¹.R x + g⁻¹.t‖) := by
-        nlinarith [norm_nonneg (g⁻¹.R x + g⁻¹.t), norm_nonneg g⁻¹.t]
+        nlinarith only [norm_nonneg (g⁻¹.R x + g⁻¹.t), norm_nonneg g⁻¹.t]
 
 /-- Action of Euclidean group on test functions via pullback.
     For g ∈ E and f ∈ TestFunctionℂ, define (g • f)(x) = f(g⁻¹ • x).

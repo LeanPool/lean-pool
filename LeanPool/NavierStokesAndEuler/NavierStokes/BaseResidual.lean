@@ -1393,7 +1393,7 @@ theorem derivative_fixed_prefix_bound {a : ℕ → ℕ} {h : ℝ}
   let G : SpaceTime → Chart := fun z => AxisymmetricFields.profilePoint z.1 z.2
   have hG : ContDiff ℝ ∞ G := AxisymmetricFields.contDiff_profilePoint
   obtain ⟨D, hD, hDb⟩ := compact_map_finite_bound hG hK m
-  let L := ContinuousLinearMap.apply ℝ ℝ (E := Chart) v
+  let L := ContinuousLinearMap.apply ℝ ℝ (E' := Chart) v
   let B := 1 + ‖L‖ * C
   have hB : 0 < B := add_pos_of_pos_of_nonneg zero_lt_one (mul_nonneg (norm_nonneg L) hC.le)
   have hDpos : 0 < D := lt_of_lt_of_le zero_lt_one hD

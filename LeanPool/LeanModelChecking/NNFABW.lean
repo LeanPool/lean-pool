@@ -351,8 +351,7 @@ def runDag
       exists Subtype.embedLe hle '' Y
       constructor
       · specialize h_delta_eq ⟨q, qp⟩ l
-        rw [h_delta_eq, PositiveBool.mapSubtypeImp_embed hle]
-        assumption
+        rwa [h_delta_eq, PositiveBool.mapSubtypeImp_embed hle]
       · rw [Set.subset_def]
         simp only [Set.mem_image, Set.mem_prod]
         rintro ⟨⟨q, l⟩, q'⟩ H
@@ -451,8 +450,7 @@ def runDag
       exists Subtype.embedLe hle '' Y
       constructor
       · specialize h_delta_eq ⟨z, hz⟩ (l + 1)
-        rw [h_delta_eq, PositiveBool.mapSubtypeImp_embed hle]
-        assumption
+        rwa [h_delta_eq, PositiveBool.mapSubtypeImp_embed hle]
       · rw [Set.subset_def]
         simp only [Set.mem_image, Set.mem_prod]
         rintro ⟨⟨q, l⟩, q'⟩ H
@@ -1261,8 +1259,7 @@ lemma left : φ₁.toABW.language w → (φ₁.or φ₂).toABW.language w := by
       intros
       left
       let : DecidablePred (· ∈ w 0) := by classical infer_instance
-      rw [←PositiveBool.sat_map_image (sub.or_left sub.refl) delta_forall]
-      assumption)
+      rwa [←PositiveBool.sat_map_image (sub.or_left sub.refl) delta_forall])
     (by simp [NNF.toABW]),
     replaceRoot.runDag_accepting _ G_acc _ _ (by simp [NNF.toABW, Subtype.embedLe])⟩
 
@@ -1276,8 +1273,7 @@ lemma right : φ₂.toABW.language w → (φ₁.or φ₂).toABW.language w := by
       intros
       right
       let : DecidablePred (· ∈ w 0) := by classical infer_instance
-      rw [←PositiveBool.sat_map_image (sub.or_right sub.refl) delta_forall]
-      assumption)
+      rwa [←PositiveBool.sat_map_image (sub.or_right sub.refl) delta_forall])
     (by simp [NNF.toABW]),
     replaceRoot.runDag_accepting _ G_acc _ _ (by simp [NNF.toABW, Subtype.embedLe])⟩
 
@@ -1369,8 +1365,7 @@ lemma until_mpr.base
       intros
       left
       let : DecidablePred (· ∈ w 0) := by classical infer_instance
-      rw [←PositiveBool.sat_map_image (sub.until_right sub.refl) delta_forall]
-      assumption)
+      rwa [←PositiveBool.sat_map_image (sub.until_right sub.refl) delta_forall])
     (by simp [NNF.toABW]),
     replaceRoot.runDag_accepting _ G_acc _ _ (by simp [NNF.toABW, Subtype.embedLe])⟩
 

@@ -6,13 +6,15 @@ Authors: Arseniy Akopyan
 module
 
 
-public import Mathlib.RingTheory.Flat.FaithfullyFlat.Basic
-public import Mathlib.RingTheory.Flat.TorsionFree
-public import Mathlib.RingTheory.SimpleRing.Principal
-public import Mathlib.Tactic
 public import LeanPool.NandakumarRamanaRao.NRR.PowerDiagram.BodyCells
 public import LeanPool.NandakumarRamanaRao.NRR.PowerDiagram.CellAlgebra
 public import LeanPool.NandakumarRamanaRao.NRR.Geometry.HalfspaceFiniteIntersectionAreaContinuity
+import LeanPool.NandakumarRamanaRao.NRR.PowerDiagram.CellGeometry
+import Mathlib.RingTheory.Flat.FaithfullyFlat.Basic
+import Mathlib.RingTheory.Flat.TorsionFree
+import Mathlib.RingTheory.SimpleRing.Principal
+import Mathlib.Tactic.Basify
+import Mathlib.Tactic.ENatToNat
 
 /-!
 # `NRR.PowerDiagram.CellAreaContinuityWeights`

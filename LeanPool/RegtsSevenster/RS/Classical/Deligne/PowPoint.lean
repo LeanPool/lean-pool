@@ -260,7 +260,7 @@ theorem tensorPowPoint_symPowIdem
     tensorPowPoint pt n ≫ modPowπ A X n ≫ symPowIdem A X n =
       tensorPowPoint pt n ≫ modPowπ A X n := by
   rw [symPowIdem, symmetriser, map_smul, map_sum]
-  simp only [modPowAlg_single]
+  simp only [modPowAlg_single, End.smul_asHom, End.sum_asHom]
   change tensorPowPoint pt n ≫ modPowπ A X n ≫
       (((n.factorial : ℂ))⁻¹ •
         ∑ σ : Equiv.Perm (Fin n),

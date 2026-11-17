@@ -7,6 +7,8 @@ Authors: Alejandro Soto Franco
 -- Adapted for Lean Pool's pinned Lean and Mathlib; upstream commit is recorded in projects.yml.
 module
 
+import LeanPool.EllipticPDE.Analysis.ScalarEstimates
+
 public import LeanPool.EllipticPDE.Spectrum.Variational
 
 
@@ -141,7 +143,8 @@ theorem rayleigh_euler_lagrange_on (hco : IsCoercive B) (hsymm : âˆ€ U V : H01 Î
         real_inner_self_eq_norm_sq]
       ring
     rw [hBexp, hNexp, hmin, hU] at hmain
-    nlinarith [hmain]
+    simp only [one_pow] at hmain
+    exact Analysis.quadratic_nonneg_of_rayleigh_bound hmain
   have hb := eq_zero_of_quadratic_nonneg key
   linarith
 

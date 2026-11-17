@@ -48,7 +48,7 @@ theorem Mirror.hasLaced {n : ℕ} {S : Finset α} (p q : α) :
     simp_all
   · intro h; rcases h with ⟨a, b, cp, c, cq, hcp, hc, hcq, h⟩
     use b, a, cq.Mirror, c.Mirror, cp.Mirror
-    refine ⟨?_, ?_, ?_, ?_⟩ <;> try rw [Mirror.ncup] <;> tauto
+    refine ⟨?_, ?_, ?_, ?_⟩ <;> try rw [Mirror.ncup]; tauto
     repeat' rw [List.Mirror_mem_getLast, List.Mirror_mem_head]
     simp only [List.Mirror_in, Option.mem_def]; simp at h; rw [Nat.add_comm b a]; tauto
 

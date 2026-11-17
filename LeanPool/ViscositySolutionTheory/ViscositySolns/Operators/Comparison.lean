@@ -66,14 +66,14 @@ theorem ComparisonModulus.exists_pos_apply_lt {ω : Real -> Real}
   rw [mem_nhdsWithin] at hball
   rcases hball with ⟨U, hUopen, h0U, hU⟩
   rcases Metric.mem_nhds_iff.1 (hUopen.mem_nhds h0U) with ⟨δ, hδ, hδU⟩
-  refine ⟨δ / 2, by linarith, ?_⟩
+  refine ⟨δ / 2, by linarith only [hδ], ?_⟩
   have htU : δ / 2 ∈ U := by
     apply hδU
     have hdist : dist (δ / 2) 0 < δ := by
       rw [Real.dist_eq]
-      have hδ2 : 0 < δ / 2 := by linarith
+      have hδ2 : 0 < δ / 2 := by linarith only [hδ]
       rw [sub_zero, abs_of_pos hδ2]
-      linarith
+      linarith only [hδ]
     exact hdist
   have htIoi : δ / 2 ∈ Set.Ioi (0 : Real) := by
     exact half_pos hδ
@@ -235,7 +235,7 @@ theorem OperatorComparisonConditionOn.of_norm_bound
   apply hmono
   have hsq : 0 <= ‖x - y‖ ^ 2 := sq_nonneg ‖x - y‖
   have hmul : 0 <= α * ‖x - y‖ ^ 2 := mul_nonneg hα.le hsq
-  linarith
+  linarith only [hmul]
 
 /--
 If the operator difference in the structural comparison condition is always
@@ -255,7 +255,7 @@ theorem OperatorComparisonConditionOn.of_nonpositive_difference
     OperatorComparisonConditionOn C R matrixRel F := by
   refine ⟨fun _t : Real => 0, ComparisonModulus.zero, ?_⟩
   intro α hα x hx y hy r hr X Y hXY
-  simpa using hF α hα x hx y hy r hr X Y hXY
+  exact hF α hα x hx y hy r hr X Y hXY
 
 /--
 Every constant operator satisfies the structural comparison condition, for any
@@ -288,7 +288,7 @@ theorem OperatorComparisonConditionOn.addOperator
   have hFxy := hFbound α hα x hx y hy r hr X Y hXY
   have hGxy := hGbound α hα x hx y hy r hr X Y hXY
   dsimp [addOperator]
-  linarith
+  linarith only [hFxy, hGxy]
 
 /--
 If an operator satisfies the structural comparison condition on `C`, `R`, and
@@ -309,7 +309,7 @@ theorem OperatorComparisonConditionOn.smulOperator_nonneg
         a * ω (α * ‖x - y‖ ^ 2 + ‖x - y‖) :=
     mul_le_mul_of_nonneg_left hFxy ha
   dsimp [smulOperator]
-  linarith
+  linarith only [hmul]
 
 /--
 Let `F a` be a nonempty finite family of operators. Suppose there is a single
@@ -349,7 +349,7 @@ theorem OperatorComparisonConditionOn.supOperator_of_common_modulus
     have hbranch : F a y r p Y <= F a x r p X + ω t := by
       have h := hbound a α hα x hx y hy r hr X Y hXY
       dsimp [p, t] at h ⊢
-      linarith
+      linarith only [h]
     have hle_sup :
         F a x r p X <=
           Finset.univ.sup' Finset.univ_nonempty (fun b : ι => F b x r p X) :=
@@ -400,7 +400,7 @@ theorem OperatorComparisonConditionOn.infOperator_of_common_modulus
   have hbranch : F a0 y r p Y <= F a0 x r p X + ω t := by
     have h := hbound a0 α hα x hx y hy r hr X Y hXY
     dsimp [p, t] at h ⊢
-    linarith
+    linarith only [h]
   dsimp [infOperator, p, t]
   linarith
 
@@ -426,7 +426,7 @@ theorem OperatorComparisonConditionOn.supOperator
   intro a α hα x hx y hy r hr X Y hXY
   let t : Real := α * ‖x - y‖ ^ 2 + ‖x - y‖
   have ha : F a y r (α • (x - y)) Y - F a x r (α • (x - y)) X <= ω a t := by
-    simpa [t] using hbound a α hα x hx y hy r hr X Y hXY
+    exact hbound a α hα x hx y hy r hr X Y hXY
   exact ha.trans
     (Finset.le_sup' (fun b : ι => ω b t) (Finset.mem_univ a))
 
@@ -452,7 +452,7 @@ theorem OperatorComparisonConditionOn.infOperator
   intro a α hα x hx y hy r hr X Y hXY
   let t : Real := α * ‖x - y‖ ^ 2 + ‖x - y‖
   have ha : F a y r (α • (x - y)) Y - F a x r (α • (x - y)) X <= ω a t := by
-    simpa [t] using hbound a α hα x hx y hy r hr X Y hXY
+    exact hbound a α hα x hx y hy r hr X Y hXY
   exact ha.trans
     (Finset.le_sup' (fun b : ι => ω b t) (Finset.mem_univ a))
 

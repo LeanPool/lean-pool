@@ -7,13 +7,6 @@ module
 
 public import LeanPool.DomainTheory.Neighborhood.Exercise419
 public import Mathlib.Tactic.Attr.Core
-public import Mathlib.Tactic.Basic
-import Mathlib.Data.Finset.Attr
-import Mathlib.Data.Rat.Cast.Order
-import Mathlib.Tactic.NormNum.Abs
-import Mathlib.Tactic.NormNum.DivMod
-import Mathlib.Tactic.NormNum.OfScientific
-import Mathlib.Tactic.NormNum.Pow
 
 /-!
 # Exercise 5.16 (Scott 1981, PRG-19, Lecture V) — `neg`, `merge` and `d` on `C`
@@ -83,7 +76,7 @@ abbrev flip (σ : Str) : Str := σ.map not
 theorem flip_flip (σ : Str) : flip (flip σ) = σ := by
   induction σ with
   | nil => rfl
-  | cons b σ ih => simp [ih]
+  | cons b σ ih => simp only [List.map_cons, Bool.not_not, ih]
 
 /-- `flip` preserves the prefix order. -/
 theorem flip_prefix {σ τ : Str} (h : σ <+: τ) : flip σ <+: flip τ := h.map _
@@ -100,7 +93,7 @@ def double : Str → Str
 theorem double_append (σ τ : Str) : double (σ ++ τ) = double σ ++ double τ := by
   induction σ with
   | nil => rfl
-  | cons b σ ih => simp [double, ih]
+  | cons b σ ih => simp only [List.cons_append, double_cons, ih, double]
 
 /-- `double` preserves the prefix order. -/
 theorem double_prefix {σ τ : Str} (h : σ <+: τ) : double σ <+: double τ := by
@@ -128,7 +121,7 @@ theorem not_strElem_le_strBot {σ τ : Str} : ¬ strElem σ ≤ strBot τ := by
 theorem tail_prefix {σ τ : Str} (h : σ <+: τ) : σ.tail <+: τ.tail := by
   obtain ⟨ρ, rfl⟩ := h
   cases σ with
-  | nil => simp
+  | nil => simp only [List.tail_nil, List.nil_append, List.nil_prefix]
   | cons a σ' => exact List.prefix_append σ' ρ
 
 /-! ### Determination by finite elements: an equality criterion for maps `C → V`. -/
@@ -165,7 +158,7 @@ theorem tail_hsing {σ τ : Str} (h : σ <+: τ) : strBot σ.tail ≤ tailSing �
     cases σ with
     | nil => exact List.nil_prefix
     | cons b σ' =>
-      simp_all
+      simp_all only [List.cons_prefix_cons, List.tail_cons]
 
 /-- **Exercise 5.16 / Example 4.4 — `tail : C → C`.** Built with the head-test
 combinator `liftC`:
@@ -323,7 +316,8 @@ theorem shapeElem_le_iff {b b' : Bool} {σ σ' : Str} :
   cases b <;> cases b' <;>
     simp only [shapeElem_true, shapeElem_false, SLe, strElem_le_strElem_iff,
       strBot_le_strBot_iff, strBot_le_strElem_iff, true_and]
-  · exact ⟨fun h => absurd h not_strElem_le_strBot, fun h => absurd h (by simp)⟩
+  · exact ⟨fun h => absurd h not_strElem_le_strBot, fun h => absurd h (by simp only [
+    Bool.false_eq_true, false_and, not_false_eq_true])⟩
 
 /-- The interleave value function: `mergeVal σ b₀ τ b₁` returns the interleaving
 of the tagged
@@ -367,7 +361,8 @@ theorem SLe_cons_inv {b₀ b₀' : Bool} {a : Bool} {σ₀ σ' : Str} (h : SLe b
     exact ⟨σ₀, rfl, rfl, rfl⟩
   | false =>
     cases σ' with
-    | nil => exact absurd h (by simp [SLe])
+    | nil => exact absurd h (by simp only [SLe, List.prefix_nil, reduceCtorEq,
+      not_false_eq_true])
     | cons a' σ₀' =>
       obtain ⟨rfl, h'⟩ := List.cons_prefix_cons.mp h
       exact ⟨σ₀', rfl, h'⟩
@@ -411,11 +406,11 @@ theorem mergeElem_mono {σ σ' τ τ' : Str} {b₀ b₀' b₁ b₁' : Bool}
 theorem mergeVal_diag (s : Bool) (σ : Str) : mergeVal σ s σ s = (double σ, s) := by
   induction σ with
   | nil => rfl
-  | cons a σ ih => simp [mergeVal_cons_cons, ih]
+  | cons a σ ih => simp only [mergeVal_cons_cons, ih, double_cons]
 
 /-- On the diagonal `merge(⟨(s, σ), (s, σ)⟩)` doubles `σ`. -/
 theorem mergeElem_diag (s : Bool) (σ : Str) : mergeElem σ s σ s = shapeElem s (double σ) := by
-  simp [mergeElem, mergeVal_diag]
+  simp only [mergeElem, mergeVal_diag]
 
 /-! #### A refinement lemma packaging both the representation and the order. -/
 

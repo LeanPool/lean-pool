@@ -160,7 +160,7 @@ theorem posDef_of_isSymm_of_quadForm_pos {A : Matrix (Fin N) (Fin N) ℝ} (hA : 
 /-- Evaluation of a matrix entry is smooth. -/
 lemma contDiff_matrix_entry (i j : Fin N) :
     ContDiff ℝ ∞ fun A : Matrix (Fin N) (Fin N) ℝ => A i j :=
-  (contDiff_apply ℝ ℝ j).comp (contDiff_apply ℝ (Fin N → ℝ) i)
+  (contDiff_apply ℝ (fun _ => ℝ) j).comp (contDiff_apply ℝ (fun _ => Fin N → ℝ) i)
 
 /-- The symmetrization `(A + Aᵀ)/2`. -/
 def symmetrize (A : Matrix (Fin N) (Fin N) ℝ) : Matrix (Fin N) (Fin N) ℝ :=

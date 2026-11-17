@@ -50,7 +50,7 @@ theorem contDiff_convexApproxSmoothRepresentative
   have hεr_pos : 0 < ε * r := by positivity
   have hu_indicator_mem :
       MeasureTheory.MemLp (Set.indicator U u) p MeasureTheory.volume := by
-    rw [MeasureTheory.memLp_indicator_iff_restrict hU]
+    rw [MeasureTheory.memLp_indicator_iff_restrict hU.nullMeasurableSet]
     exact hu
   have hu_indicator_loc :
       MeasureTheory.LocallyIntegrable (Set.indicator U u) MeasureTheory.volume :=
@@ -261,7 +261,7 @@ theorem eLpNorm_convexApproxSmoothing_le
   have hεr_pos : 0 < ε * r := by positivity
   have hu_indicator_mem :
       MeasureTheory.MemLp (Set.indicator U u) p MeasureTheory.volume := by
-    rw [MeasureTheory.memLp_indicator_iff_restrict hU_meas]
+    rw [MeasureTheory.memLp_indicator_iff_restrict hU_meas.nullMeasurableSet]
     exact hu
   have hconv :
       MeasureTheory.eLpNorm g p MeasureTheory.volume ≤
@@ -291,7 +291,7 @@ theorem eLpNorm_convexApproxSmoothing_le
             exact mul_le_mul' le_rfl hconv
     _ = ENNReal.ofReal (((1 - ε) ^ d)⁻¹) ^ (1 / p).toReal *
           MeasureTheory.eLpNorm u p (MeasureTheory.volume.restrict U) := by
-            rw [MeasureTheory.eLpNorm_indicator_eq_eLpNorm_restrict hU_meas]
+            rw [MeasureTheory.eLpNorm_indicator_eq_eLpNorm_restrict hU_meas.nullMeasurableSet]
 
 theorem aestronglyMeasurable_convexApproxSmoothing
     {d : ℕ} {U : Set (Vec d)} {ρ u : Vec d → ℝ} {p : ENNReal}
@@ -315,7 +315,7 @@ theorem aestronglyMeasurable_convexApproxSmoothing
   have hεr_pos : 0 < ε * r := by positivity
   have hu_indicator_mem :
       MeasureTheory.MemLp (Set.indicator U u) p MeasureTheory.volume := by
-    rw [MeasureTheory.memLp_indicator_iff_restrict hU_meas]
+    rw [MeasureTheory.memLp_indicator_iff_restrict hU_meas.nullMeasurableSet]
     exact hu
   have hg_cont : Continuous g := by
     dsimp [g]
@@ -373,11 +373,11 @@ theorem convexApproxSmoothing_sub_ae_eq
     exact hasCompactSupport_scaledConvexApproxKernel hρ.compactSupport hεr_pos
   have hu_indicator_mem :
       MeasureTheory.MemLp (Set.indicator U u) p MeasureTheory.volume := by
-    rw [MeasureTheory.memLp_indicator_iff_restrict hU_meas]
+    rw [MeasureTheory.memLp_indicator_iff_restrict hU_meas.nullMeasurableSet]
     exact hu
   have hv_indicator_mem :
       MeasureTheory.MemLp (Set.indicator U v) p MeasureTheory.volume := by
-    rw [MeasureTheory.memLp_indicator_iff_restrict hU_meas]
+    rw [MeasureTheory.memLp_indicator_iff_restrict hU_meas.nullMeasurableSet]
     exact hv
   have hu_indicator_loc :
       MeasureTheory.LocallyIntegrable (Set.indicator U u) MeasureTheory.volume :=

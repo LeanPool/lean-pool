@@ -8,7 +8,7 @@ module
 public import LeanPool.IsoGraph.Canon.Branch
 public import LeanPool.IsoGraph.Canon.Orbits
 public import LeanPool.IsoGraph.Canon.Dominate
-import Mathlib.Data.Nat.SuccPred
+import Mathlib.Order.SuccPred.Nat
 import Mathlib.Data.Rat.Cast.Order
 import Mathlib.Tactic.NormNum.Abs
 import Mathlib.Tactic.NormNum.DivMod

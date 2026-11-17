@@ -36,11 +36,10 @@ open Cardinal Ideal
 
 /-- For `i : (Cardinal.ord c).ToType`, the cardinality of the initial segment
 below `i` is strictly less than `c`. -/
-private def mk_Iio_ord_lt_proof {c : Cardinal} (i : c.ord.ToType) :
-    PLift ( #(Set.Iio i) < c ) := ⟨by
+private theorem mk_Iio_ord_lt {c : Cardinal} (i : c.ord.ToType) : #(Set.Iio i) < c := by
   have hlt := mk_Iio_lt i (h := by rw [mk_ord_toType, Ordinal.type_toType])
   rwa [mk_ord_toType] at hlt
-⟩
+
 
 variable {T : Type u} [CommRing T] [IsLocalRing T] [IsNoetherianRing T] [IsDomain T]
 /-! ## Ordinal-indexed transfinite construction
@@ -137,6 +136,246 @@ private noncomputable def mk_union_nsub_aux
   intro β hβ r hr hmem
   exact transfinite_union_primes_preserved lc U hU_le hU_mem ⟨β, hβ⟩ r hr
 
+
+omit [IsNoetherianRing T] [IsDomain T] in
+/-- A regular sequence of length two in the maximal ideal forces it to be nonzero. -/
+private lemma maximalIdeal_ne_bot_of_depth
+    (hdepth : ∃ (a b : T), a ∈ IsLocalRing.maximalIdeal T ∧
+      b ∈ IsLocalRing.maximalIdeal T ∧
+      RingTheory.Sequence.IsRegular T [a, b]) :
+    IsLocalRing.maximalIdeal T ≠ ⊥ := by
+  intro h
+  obtain ⟨a, _, ha_mem, _, hreg⟩ := hdepth
+  rw [h] at ha_mem
+  simp only [Ideal.mem_bot] at ha_mem
+  rw [RingTheory.Sequence.isRegular_cons_iff] at hreg
+  have hreg0 : IsSMulRegular T (0 : T) := ha_mem ▸ hreg.1
+  exact one_ne_zero (hreg0 (show (0 : T) • (0 : T) = 0 • 1 by simp)).symm
+
+omit [IsDomain T] in
+/-- The index set of the construction has cardinality at most `#T`. -/
+private lemma card_index_le (hT_aleph0 : Cardinal.aleph0 < Cardinal.mk T) :
+    Cardinal.mk ({q : Ideal T // q.IsPrime ∧ q ≠ ⊥} × (T ⧸ IsLocalRing.maximalIdeal T ^ 2)) ≤
+      Cardinal.mk T := by
+  have hT_inf : Infinite T := Cardinal.infinite_iff.mpr (le_of_lt hT_aleph0)
+  have h_primes_le : Cardinal.mk {q : Ideal T // q.IsPrime ∧ q ≠ ⊥} ≤ Cardinal.mk T := by
+    calc Cardinal.mk {q : Ideal T // q.IsPrime ∧ q ≠ ⊥}
+        ≤ Cardinal.mk (Ideal T) := Cardinal.mk_subtype_le _
+      _ ≤ Cardinal.mk (Finset T) :=
+          Cardinal.mk_le_of_surjective fun I =>
+            IsNoetherian.noetherian (I : Ideal T)
+      _ = Cardinal.mk T := Cardinal.mk_finset_of_infinite T
+  have h_quot_le : Cardinal.mk (T ⧸ IsLocalRing.maximalIdeal T ^ 2) ≤ Cardinal.mk T :=
+    Cardinal.mk_quotient_le
+  rw [Cardinal.mk_prod, Cardinal.lift_id, Cardinal.lift_id]
+  calc _ ≤ Cardinal.mk T * Cardinal.mk T := mul_le_mul' h_primes_le h_quot_le
+    _ = Cardinal.mk T := Cardinal.mul_eq_self (le_of_lt hT_aleph0)
+
+/-- Joint well-founded induction for the transfinite chain: every earlier ring lies in the
+predecessor ring `prev α`, and primes are preserved along the chain up to `α`. -/
+private lemma chain_le_prev_and_primes {ι : Type u} [LinearOrder ι] [WellFoundedLT ι]
+    (ring prev : ι → NSubring T) (hext : ∀ α, IsAExtension (prev α) (ring α))
+    (hprev_limit : ∀ α, ¬IsMin α → Order.IsSuccLimit α →
+      (∀ ⦃β₁ β₂ : ι⦄, β₁ < α → β₂ < α → β₁ ≤ β₂ →
+        (ring β₁).carrier ≤ (ring β₂).carrier) →
+      (∀ ⦃β₁ β₂ : ι⦄, β₁ < α → β₂ < α → β₁ ≤ β₂ →
+        ∀ (r : (ring β₁).carrier) (hmem : (r : T) ∈ (ring β₂).carrier),
+          Prime r → Prime (⟨(r : T), hmem⟩ : (ring β₂).carrier)) →
+      (∀ β, β < α → (ring β).carrier ≤ (prev α).carrier) ∧
+      (∀ β, β < α → ∀ (r : (ring β).carrier), Prime r →
+        ∀ (hmem : (r : T) ∈ (prev α).carrier), Prime (⟨(r : T), hmem⟩ : (prev α).carrier)))
+    (hprev_succ : ∀ α, ¬IsMin α → ¬Order.IsSuccLimit α →
+      ∃ γ, γ < α ∧ (∀ β, β < α → β ≤ γ) ∧ prev α = ring γ)
+    (α : ι) :
+    (∀ β, β < α → (ring β).carrier ≤ (prev α).carrier) ∧
+      (∀ ⦃β₁ β₂ : ι⦄, β₁ ≤ β₂ → β₂ ≤ α →
+        ∀ (r : (ring β₁).carrier) (hmem : (r : T) ∈ (ring β₂).carrier),
+          Prime r → Prime (⟨(r : T), hmem⟩ : (ring β₂).carrier)) := by
+  induction α using WellFoundedLT.induction with
+  | ind α IH_wf =>
+  have hmono_lt : ∀ ⦃β₁ β₂ : ι⦄, β₁ ≤ β₂ → β₂ < α →
+      (ring β₁).carrier ≤ (ring β₂).carrier := by
+    intro β₁ β₂ hle hβ₂
+    rcases eq_or_lt_of_le hle with rfl | hlt
+    · exact le_refl _
+    · exact ((IH_wf β₂ hβ₂).1 β₁ hlt).trans (hext β₂).le
+  have hprimes_lt : ∀ ⦃β₁ β₂ : ι⦄, β₁ ≤ β₂ → β₂ < α →
+      ∀ (r : (ring β₁).carrier) (hmem : (r : T) ∈ (ring β₂).carrier),
+        Prime r → Prime (⟨(r : T), hmem⟩ : (ring β₂).carrier) :=
+    fun β₁ β₂ hle hβ₂ r hmem hr => (IH_wf β₂ hβ₂).2 hle (le_refl _) r hmem hr
+  -- Earlier rings lie in `prev α`, and their primes stay prime there
+  have hprev : (∀ β, β < α → (ring β).carrier ≤ (prev α).carrier) ∧
+      (∀ β, β < α → ∀ (r : (ring β).carrier), Prime r →
+        ∀ (hmem : (r : T) ∈ (prev α).carrier),
+          Prime (⟨(r : T), hmem⟩ : (prev α).carrier)) := by
+    by_cases hmin : IsMin α
+    · exact ⟨fun β hβ => absurd (hmin (le_of_lt hβ)) (not_le.mpr hβ),
+        fun β hβ => absurd (hmin (le_of_lt hβ)) (not_le.mpr hβ)⟩
+    by_cases hlim : Order.IsSuccLimit α
+    · exact hprev_limit α hmin hlim (fun β₁ β₂ _ hβ₂ hle => hmono_lt hle hβ₂)
+        (fun β₁ β₂ _ hβ₂ hle r hmem hr => hprimes_lt hle hβ₂ r hmem hr)
+    obtain ⟨γ, hγ_lt, hγ_max, hprev_eq⟩ := hprev_succ α hmin hlim
+    rw [hprev_eq]
+    exact ⟨fun β hβ => hmono_lt (hγ_max β hβ) hγ_lt,
+      fun β hβ r hr hmem => hprimes_lt (hγ_max β hβ) hγ_lt r hmem hr⟩
+  refine ⟨hprev.1, ?_⟩
+  -- Prime transfer: β₁ ≤ β₂ ≤ α, key case is β₂ = α via prev(α)
+  intro β₁ β₂ hle hle_α r hmem hr
+  rcases eq_or_lt_of_le hle with rfl | hlt
+  · convert hr using 1
+  · rcases eq_or_lt_of_le hle_α with heq_α | hlt_α
+    · have hβ₁_lt_α : β₁ < α := heq_α ▸ hlt
+      have hmem_prev : (r : T) ∈ (prev α).carrier := hprev.1 β₁ hβ₁_lt_α r.2
+      have hprime_ring := (hext α).primes_preserved ⟨(r : T), hmem_prev⟩
+        (hprev.2 β₁ hβ₁_lt_α r hr hmem_prev)
+      cases heq_α
+      convert hprime_ring using 1
+    · exact hprimes_lt hle hlt_α r hmem hr
+
+/-- Closedness `IT ∩ A = I` for finitely generated `I` passes to the union of a chain. -/
+private lemma chain_union_closed {ι : Type u} [LinearOrder ι] [Nonempty ι]
+    (chain : NSubringChain T ι) (A : NSubring T)
+    (hA_le : ∀ α : ι, (chain.ring α).carrier ≤ A.carrier)
+    (hA_mem : ∀ x : A.carrier, ∃ α : ι, (x : T) ∈ (chain.ring α).carrier)
+    (hclosed : ∀ α : ι, ∀ (I : Ideal (chain.ring α).carrier), I.FG →
+      ∀ (c : (chain.ring α).carrier),
+        (c : T) ∈ Ideal.map (chain.ring α).carrier.subtype I → c ∈ I)
+    (I : Ideal A.carrier) (hI_fg : I.FG) (c : A.carrier)
+    (hc_mem : (c : T) ∈ Ideal.map A.carrier.subtype I) : c ∈ I := by
+  classical
+  have hfin_cover : ∀ (F : Finset A.carrier), ∃ α : ι,
+      ∀ x ∈ F, (x : T) ∈ (chain.ring α).carrier := by
+    intro F
+    induction F using Finset.induction with
+    | empty =>
+      exact ⟨Classical.arbitrary _, fun _ h => absurd h (by simp)⟩
+    | @insert a F' _ha ih =>
+      obtain ⟨α₁, hα₁⟩ := ih
+      obtain ⟨α₂, hα₂⟩ := hA_mem a
+      exact ⟨max α₁ α₂, fun x hx => by
+        rw [Finset.mem_insert] at hx
+        rcases hx with rfl | hx
+        · exact chain.mono (le_max_right α₁ α₂) hα₂
+        · exact chain.mono (le_max_left α₁ α₂) (hα₁ x hx)⟩
+  obtain ⟨s, hs⟩ := hI_fg
+  obtain ⟨γ, hγ⟩ := hfin_cover (insert c s)
+  have hgens_γ : ∀ g ∈ s, (g : T) ∈ (chain.ring γ).carrier :=
+    fun g hg => hγ g (Finset.mem_insert_of_mem hg)
+  have hc_γ : (c : T) ∈ (chain.ring γ).carrier :=
+    hγ c (Finset.mem_insert_self c s)
+  set c_γ : (chain.ring γ).carrier := ⟨(c : T), hc_γ⟩
+  let s_γ : Finset (chain.ring γ).carrier :=
+    s.attach.image (fun ⟨g, hg⟩ =>
+      (⟨(g : T), hgens_γ g hg⟩ : (chain.ring γ).carrier))
+  let J := Ideal.span (↑s_γ : Set (chain.ring γ).carrier)
+  have hc_in_JT :
+      (c_γ : T) ∈ Ideal.map (chain.ring γ).carrier.subtype J := by
+    suffices h : Ideal.map A.carrier.subtype I ≤
+        Ideal.map (chain.ring γ).carrier.subtype J by
+      exact h hc_mem
+    rw [← hs, Ideal.map_span, Ideal.map_span]
+    apply Ideal.span_mono
+    rintro t ⟨g, hg_mem, rfl⟩
+    have hg := Finset.mem_coe.mp hg_mem
+    exact ⟨⟨(g : T), hgens_γ g hg⟩,
+      Finset.mem_coe.mpr (Finset.mem_image.mpr
+        ⟨⟨g, hg⟩, Finset.mem_attach _ _, rfl⟩), rfl⟩
+  have hc_in_J : c_γ ∈ J :=
+    hclosed γ J ⟨s_γ, rfl⟩ c_γ hc_in_JT
+  let incl := Subring.inclusion (hA_le γ)
+  have hJ_le_I : Ideal.map incl J ≤ I := by
+    rw [← hs, Ideal.map_span]
+    apply Ideal.span_mono
+    rintro t ⟨x, hx_mem, rfl⟩
+    simp only [Finset.mem_coe] at hx_mem
+    rw [Finset.mem_image] at hx_mem
+    obtain ⟨⟨g, hg⟩, _, rfl⟩ := hx_mem
+    change (Subring.inclusion (hA_le γ)
+      ⟨(g : T), hgens_γ g hg⟩ : A.carrier) ∈ (↑s : Set _)
+    rw [show (Subring.inclusion (hA_le γ)
+      ⟨(g : T), hgens_γ g hg⟩ : A.carrier) = g
+      from Subtype.ext rfl]
+    exact Finset.mem_coe.mpr hg
+  have h_mem := hJ_le_I (Ideal.mem_map_of_mem incl hc_in_J)
+  rwa [show incl c_γ = c from Subtype.ext rfl] at h_mem
+
+/-- Cardinality bound for the union of a chain indexed by a small enough type. -/
+private lemma chain_union_card_le {ι : Type u} [LinearOrder ι] [Nonempty ι]
+    (chain : NSubringChain T ι)
+    (hι_card : Cardinal.mk ι ≤
+      max Cardinal.aleph0 (Cardinal.mk (IsLocalRing.ResidueField T))) :
+    Cardinal.mk ↥chain.unionSubring ≤
+      max Cardinal.aleph0 (Cardinal.mk (IsLocalRing.ResidueField T)) := by
+  set U := chain.unionSubring with hU_def
+  have hU_eq : (U : Set T) = ⋃ α, ↑(chain.ring α).carrier := by
+    rw [hU_def, NSubringChain.unionSubring]
+    exact Subring.coe_iSup_of_directed chain.directed_carriers
+  set κ' := max Cardinal.aleph0 (Cardinal.mk (IsLocalRing.ResidueField T))
+  have h1 : Cardinal.mk ↥U ≤ Cardinal.mk ι *
+      ⨆ (α : ι), Cardinal.mk ↑((chain.ring α).carrier : Set T) := by
+    have := Cardinal.mk_iUnion_le (fun α => ((chain.ring α).carrier : Set T))
+    rwa [← hU_eq] at this
+  have h2 : ⨆ (α : ι), Cardinal.mk ↑((chain.ring α).carrier : Set T) ≤ κ' :=
+    ciSup_le fun α => (chain.ring α).card_le
+  calc Cardinal.mk ↥U
+      ≤ Cardinal.mk ι *
+        ⨆ (α : ι), Cardinal.mk ↑((chain.ring α).carrier : Set T) := h1
+    _ ≤ Cardinal.mk ι * κ' := mul_le_mul_right h2 _
+    _ ≤ κ' * κ' := mul_le_mul_left hι_card κ'
+    _ ≤ max κ' κ' := Cardinal.mul_le_max_of_aleph0_le_left (le_max_left ..)
+    _ = κ' := max_self κ'
+
+/-- Assemble the union `A` of the transfinite chain and transfer surjectivity onto `T/M²`,
+closedness and prime catching from the rings of the chain to `A`. -/
+private lemma transfinite_result_of_family {ι : Type u} [LinearOrder ι] [Nonempty ι]
+    (ring prev : ι → NSubring T) (hext : ∀ α, IsAExtension (prev α) (ring α))
+    (hcombined : ∀ α, (∀ β, β < α → (ring β).carrier ≤ (prev α).carrier) ∧
+      (∀ ⦃β₁ β₂ : ι⦄, β₁ ≤ β₂ → β₂ ≤ α →
+        ∀ (r : (ring β₁).carrier) (hmem : (r : T) ∈ (ring β₂).carrier),
+          Prime r → Prime (⟨(r : T), hmem⟩ : (ring β₂).carrier)))
+    (hclosed : ∀ α : ι, ∀ (I : Ideal (ring α).carrier), I.FG →
+      ∀ (c : (ring α).carrier), (c : T) ∈ Ideal.map (ring α).carrier.subtype I → c ∈ I)
+    (hsurj : ∀ ℓ : T ⧸ IsLocalRing.maximalIdeal T ^ 2, ∃ α : ι,
+      ∃ (c : (ring α).carrier), Ideal.Quotient.mk (IsLocalRing.maximalIdeal T ^ 2) (c : T) = ℓ)
+    (hcatch : ∀ (q : Ideal T), q.IsPrime → q ≠ ⊥ → ∃ α : ι,
+      ∃ (t : (ring α).carrier), (t : T) ∈ q ∧ (t : T) ≠ 0)
+    (hι_card : Cardinal.mk ι ≤
+      max Cardinal.aleph0 (Cardinal.mk (IsLocalRing.ResidueField T))) :
+    ∃ (A : NSubring T),
+      (Function.Surjective (fun r : A.carrier =>
+        Ideal.Quotient.mk (IsLocalRing.maximalIdeal T ^ 2) (r : T))) ∧
+      (∀ (I : Ideal A.carrier), I.FG →
+        ∀ (c : A.carrier), (c : T) ∈ Ideal.map A.carrier.subtype I → c ∈ I) ∧
+      (∀ (q : Ideal T), q.IsPrime → q ≠ ⊥ →
+        ∃ (t : A.carrier), (t : T) ∈ q ∧ (t : T) ≠ 0) := by
+  have hmono : ∀ ⦃β₁ β₂ : ι⦄, β₁ ≤ β₂ →
+      (ring β₁).carrier ≤ (ring β₂).carrier := by
+    intro β₁ β₂ hle
+    rcases eq_or_lt_of_le hle with rfl | hlt
+    · exact le_refl _
+    · exact ((hcombined β₂).1 β₁ hlt).trans (hext β₂).le
+  have hprimes_pres : ∀ ⦃β₁ β₂ : ι⦄ (h : β₁ ≤ β₂)
+      (r : (ring β₁).carrier), Prime r →
+      Prime (⟨r.1, hmono h r.2⟩ : (ring β₂).carrier) := by
+    intro β₁ β₂ hle r hr
+    rcases eq_or_lt_of_le hle with rfl | hlt
+    · convert hr using 1
+    · exact (hcombined β₂).2 hle (le_refl β₂) r (hmono hle r.2) hr
+  let chain : NSubringChain T ι :=
+    { ring := ring
+      mono := hmono
+      primes_preserved := hprimes_pres }
+  let A : NSubring T := chain.unionNSubring (chain_union_card_le chain hι_card)
+  refine ⟨A, ?_, chain_union_closed chain A chain.le_union
+    (fun x => chain.mem_union_iff.mp x.2) hclosed, ?_⟩
+  · intro ℓ
+    obtain ⟨α, c, hc⟩ := hsurj ℓ
+    exact ⟨⟨(c : T), chain.le_union α c.2⟩, hc⟩
+  · intro q hq hq_ne
+    obtain ⟨α, t, ht_q, ht_ne⟩ := hcatch q hq hq_ne
+    exact ⟨⟨(t : T), chain.le_union α t.2⟩, ht_q, ht_ne⟩
+
+include T in
 /-- The transfinite construction via ordinal recursion: iterate `combined_step`
 over all (prime, residue) pairs indexed by ordinals, building an N-subring A
 of T that is surjective onto T/M², has every nonzero prime of T meeting A
@@ -145,7 +384,7 @@ nontrivially, and satisfies the closedness condition IT ∩ A = I.
 This replaces the Zorn-based `transfinite_construction_zorn` which required
 `hk_countable : #k ≤ ℵ₀` (false for our T). Instead takes `hT_aleph0 : ℵ₀ < #T`
 and propagates cardinal bounds `#R < #T` through the chain. -/
-private def transfinite_construction_proof
+theorem transfinite_construction
     [IsAdicComplete (IsLocalRing.maximalIdeal T) T]
     (hdepth : ∃ (a b : T), a ∈ IsLocalRing.maximalIdeal T ∧
       b ∈ IsLocalRing.maximalIdeal T ∧
@@ -156,58 +395,23 @@ private def transfinite_construction_proof
       IsLocalRing.maximalIdeal T ∉ associatedPrimes T (T ⧸ Ideal.span {r}))
     (hAss_ht : ∀ (r : T), r ≠ 0 →
       ∀ P ∈ associatedPrimes T (T ⧸ Ideal.span {r}), P.height ≤ 1)
-    (hT_aleph0 : Cardinal.aleph0 < Cardinal.mk T) : PLift (
+    (hT_aleph0 : Cardinal.aleph0 < Cardinal.mk T) :
     ∃ (A : NSubring T),
       (Function.Surjective (fun r : A.carrier =>
         Ideal.Quotient.mk (IsLocalRing.maximalIdeal T ^ 2) (r : T))) ∧
       (∀ (I : Ideal A.carrier), I.FG →
         ∀ (c : A.carrier), (c : T) ∈ Ideal.map A.carrier.subtype I → c ∈ I) ∧
       (∀ (q : Ideal T), q.IsPrime → q ≠ ⊥ →
-        ∃ (t : A.carrier), (t : T) ∈ q ∧ (t : T) ≠ 0) ) := ⟨by
+        ∃ (t : A.carrier), (t : T) ∈ q ∧ (t : T) ≠ 0) := by
   obtain ⟨R₀, hR₀_count⟩ := initial_NSubring hchar
   have hR₀_card : Cardinal.mk R₀.carrier < Cardinal.mk T :=
     lt_of_le_of_lt hR₀_count hT_aleph0
-  have hM_ne_bot : IsLocalRing.maximalIdeal T ≠ ⊥ := by
-    intro h
-    obtain ⟨a, _, ha_mem, _, hreg⟩ := hdepth
-    rw [h] at ha_mem
-    simp only [Ideal.mem_bot] at ha_mem
-    rw [RingTheory.Sequence.isRegular_cons_iff] at hreg
-    have hreg0 : IsSMulRegular T (0 : T) := ha_mem ▸ hreg.1
-    exact one_ne_zero (hreg0 (show (0 : T) • (0 : T) = 0 • 1 by simp)).symm
+  have hM_ne_bot : IsLocalRing.maximalIdeal T ≠ ⊥ := maximalIdeal_ne_bot_of_depth hdepth
   obtain ⟨S₀, hS₀_ext, hS₀_closed⟩ :=
     combined_step_surj_card R₀ 0 hM_not_assoc hAss_ht hR₀_card hT_aleph0 hcard hM_ne_bot
   obtain ⟨_, hS₀_closed, hS₀_card⟩ := hS₀_closed
   let V := {q : Ideal T // q.IsPrime ∧ q ≠ ⊥} × (T ⧸ IsLocalRing.maximalIdeal T ^ 2)
-  -- #V ≤ #T: product of two sets each bounded by #T
-  have hV_card : Cardinal.mk V ≤ Cardinal.mk T := by
-    have hT_inf : Infinite T := Cardinal.infinite_iff.mpr (le_of_lt hT_aleph0)
-    have h_primes_le : Cardinal.mk {q : Ideal T // q.IsPrime ∧ q ≠ ⊥} ≤ Cardinal.mk T := by
-      calc Cardinal.mk {q : Ideal T // q.IsPrime ∧ q ≠ ⊥}
-          ≤ Cardinal.mk (Ideal T) := Cardinal.mk_subtype_le _
-        _ ≤ Cardinal.mk (Finset T) :=
-            Cardinal.mk_le_of_surjective fun I =>
-              IsNoetherian.noetherian (I : Ideal T)
-        _ = Cardinal.mk T := Cardinal.mk_finset_of_infinite T
-    have h_quot_le : Cardinal.mk (T ⧸ IsLocalRing.maximalIdeal T ^ 2) ≤ Cardinal.mk T :=
-      Cardinal.mk_quotient_le
-    have : Cardinal.mk V = Cardinal.mk {q : Ideal T // q.IsPrime ∧ q ≠ ⊥} *
-        Cardinal.mk (T ⧸ IsLocalRing.maximalIdeal T ^ 2) := by
-      show Cardinal.mk V = _
-      simp only [V, Cardinal.mk_prod, Cardinal.lift_id]
-    calc Cardinal.mk V
-        = _ := this
-      _ ≤ Cardinal.mk T * Cardinal.mk T := mul_le_mul' h_primes_le h_quot_le
-      _ = Cardinal.mk T := Cardinal.mul_eq_self (le_of_lt hT_aleph0)
-  suffices ∃ (A : NSubring T),
-      (∀ ℓ : T ⧸ IsLocalRing.maximalIdeal T ^ 2,
-        ∃ a : A.carrier, Ideal.Quotient.mk (IsLocalRing.maximalIdeal T ^ 2) (a : T) = ℓ) ∧
-      (∀ (I : Ideal A.carrier), I.FG →
-        ∀ (c : A.carrier), (c : T) ∈ Ideal.map A.carrier.subtype I → c ∈ I) ∧
-      (∀ (q : Ideal T), q.IsPrime → q ≠ ⊥ →
-        ∃ (t : A.carrier), (t : T) ∈ q ∧ (t : T) ≠ 0) by
-    obtain ⟨A, hA_surj, hA_closed, hA_primes⟩ := this
-    exact ⟨A, fun ℓ => hA_surj ℓ, hA_closed, hA_primes⟩
+  have hV_card : Cardinal.mk V ≤ Cardinal.mk T := card_index_le hT_aleph0
   let κ := Cardinal.ord (Cardinal.mk V)
   have : Nonempty V :=
     ⟨⟨⟨IsLocalRing.maximalIdeal T,
@@ -216,83 +420,6 @@ private def transfinite_construction_proof
     rw [← Cardinal.mk_ne_zero_iff, Cardinal.mk_ord_toType]
     exact Cardinal.mk_ne_zero V
   obtain ⟨enum⟩ := Cardinal.eq.mp (Cardinal.mk_ord_toType (Cardinal.mk V))
-  suffices h_chain : ∃ (chain : NSubringChain T κ.ToType) (A : NSubring T),
-      (∀ α : κ.ToType, (chain.ring α).carrier ≤ A.carrier) ∧
-      (∀ x : A.carrier, ∃ α : κ.ToType, (x : T) ∈ (chain.ring α).carrier) ∧
-      (∀ α : κ.ToType, ∀ (I : Ideal (chain.ring α).carrier), I.FG →
-        ∀ (c : (chain.ring α).carrier),
-          (c : T) ∈ Ideal.map (chain.ring α).carrier.subtype I → c ∈ I) ∧
-      (∀ ℓ : T ⧸ IsLocalRing.maximalIdeal T ^ 2, ∃ α : κ.ToType,
-        ∃ (c : (chain.ring α).carrier),
-          Ideal.Quotient.mk (IsLocalRing.maximalIdeal T ^ 2) (c : T) = ℓ) ∧
-      (∀ (q : Ideal T), q.IsPrime → q ≠ ⊥ → ∃ α : κ.ToType,
-        ∃ (t : (chain.ring α).carrier), (t : T) ∈ q ∧ (t : T) ≠ 0) by
-    obtain ⟨chain, A, hA_le, hA_mem, hclosed, hsurj, hcatch⟩ := h_chain
-    refine ⟨A, ?_, ?_, ?_⟩
-    · intro ℓ
-      obtain ⟨α, c, hc⟩ := hsurj ℓ
-      exact ⟨⟨(c : T), hA_le α c.2⟩, hc⟩
-    · -- Closedness: lift f.g. ideal membership from A to some chain.ring(γ)
-      intro I hI_fg c hc_mem
-      classical
-      have hfin_cover : ∀ (F : Finset A.carrier), ∃ α : κ.ToType,
-          ∀ x ∈ F, (x : T) ∈ (chain.ring α).carrier := by
-        intro F
-        induction F using Finset.induction with
-        | empty =>
-          exact ⟨Classical.arbitrary _, fun _ h => absurd h (by simp)⟩
-        | @insert a F' _ha ih =>
-          obtain ⟨α₁, hα₁⟩ := ih
-          obtain ⟨α₂, hα₂⟩ := hA_mem a
-          exact ⟨max α₁ α₂, fun x hx => by
-            rw [Finset.mem_insert] at hx
-            rcases hx with rfl | hx
-            · exact chain.mono (le_max_right α₁ α₂) hα₂
-            · exact chain.mono (le_max_left α₁ α₂) (hα₁ x hx)⟩
-      obtain ⟨s, hs⟩ := hI_fg
-      obtain ⟨γ, hγ⟩ := hfin_cover (insert c s)
-      have hgens_γ : ∀ g ∈ s, (g : T) ∈ (chain.ring γ).carrier :=
-        fun g hg => hγ g (Finset.mem_insert_of_mem hg)
-      have hc_γ : (c : T) ∈ (chain.ring γ).carrier :=
-        hγ c (Finset.mem_insert_self c s)
-      set c_γ : (chain.ring γ).carrier := ⟨(c : T), hc_γ⟩
-      let s_γ : Finset (chain.ring γ).carrier :=
-        s.attach.image (fun ⟨g, hg⟩ =>
-          (⟨(g : T), hgens_γ g hg⟩ : (chain.ring γ).carrier))
-      let J := Ideal.span (↑s_γ : Set (chain.ring γ).carrier)
-      have hc_in_JT :
-          (c_γ : T) ∈ Ideal.map (chain.ring γ).carrier.subtype J := by
-        suffices h : Ideal.map A.carrier.subtype I ≤
-            Ideal.map (chain.ring γ).carrier.subtype J by
-          exact h hc_mem
-        rw [← hs, Ideal.map_span, Ideal.map_span]
-        apply Ideal.span_mono
-        rintro t ⟨g, hg_mem, rfl⟩
-        have hg := Finset.mem_coe.mp hg_mem
-        exact ⟨⟨(g : T), hgens_γ g hg⟩,
-          Finset.mem_coe.mpr (Finset.mem_image.mpr
-            ⟨⟨g, hg⟩, Finset.mem_attach _ _, rfl⟩), rfl⟩
-      have hc_in_J : c_γ ∈ J :=
-        hclosed γ J ⟨s_γ, rfl⟩ c_γ hc_in_JT
-      let incl := Subring.inclusion (hA_le γ)
-      have hJ_le_I : Ideal.map incl J ≤ I := by
-        rw [← hs, Ideal.map_span]
-        apply Ideal.span_mono
-        rintro t ⟨x, hx_mem, rfl⟩
-        simp only [Finset.mem_coe] at hx_mem
-        rw [Finset.mem_image] at hx_mem
-        obtain ⟨⟨g, hg⟩, _, rfl⟩ := hx_mem
-        change (Subring.inclusion (hA_le γ)
-          ⟨(g : T), hgens_γ g hg⟩ : A.carrier) ∈ (↑s : Set _)
-        rw [show (Subring.inclusion (hA_le γ)
-          ⟨(g : T), hgens_γ g hg⟩ : A.carrier) = g
-          from Subtype.ext rfl]
-        exact Finset.mem_coe.mpr hg
-      have h_mem := hJ_le_I (Ideal.mem_map_of_mem incl hc_in_J)
-      rwa [show incl c_γ = c from Subtype.ext rfl] at h_mem
-    · intro q hq hq_ne
-      obtain ⟨α, t, ht_q, ht_ne⟩ := hcatch q hq hq_ne
-      exact ⟨⟨(t : T), hA_le α t.2⟩, ht_q, ht_ne⟩
   -- Bundled return type for WellFounded.fix: ring + predecessor + properties
   let RD := fun (α : κ.ToType) => Σ' (R : NSubring T) (prev : NSubring T),
     IsAExtension prev R ∧
@@ -326,7 +453,7 @@ private def transfinite_construction_proof
     intro α IH hne hgood hIH_cb
     exact mk_union_nsub_aux α (fun β hβ => (IH β hβ).1) hne hgood.1 hgood.2
       hIH_cb hcard hT_aleph0
-        (lt_of_lt_of_le ((mk_Iio_ord_lt_proof (c := Cardinal.mk V) α).down) hV_card)
+        (lt_of_lt_of_le (mk_Iio_ord_lt (c := Cardinal.mk V) α) hV_card)
   -- prevF: predecessor ring (min→S₀, limit→union, successor→ring(γ))
   let prevF : (α : κ.ToType) → (∀ β, β < α → RD β) → NSubring T :=
     fun α IH =>
@@ -394,168 +521,46 @@ private def transfinite_construction_proof
   have hprevF_eq : ∀ (α : κ.ToType),
       (data α).2.1 = prevF α (fun γ hγ => data γ) :=
     fun α => congrArg (fun d => d.2.1) (WellFounded.fix_eq wellFounded_lt hbuildF α)
-  -- Joint WF induction: monotonicity + prime preservation avoids circularity
-  have hcombined : ∀ (α : κ.ToType),
+  -- At limits, `prev α` is the union of the earlier rings
+  have hprev_limit : ∀ α : κ.ToType, ¬IsMin α → Order.IsSuccLimit α →
+      (∀ ⦃β₁ β₂ : κ.ToType⦄, β₁ < α → β₂ < α → β₁ ≤ β₂ →
+        (ring β₁).carrier ≤ (ring β₂).carrier) →
+      (∀ ⦃β₁ β₂ : κ.ToType⦄, β₁ < α → β₂ < α → β₁ ≤ β₂ →
+        ∀ (r : (ring β₁).carrier) (hmem : (r : T) ∈ (ring β₂).carrier),
+          Prime r → Prime (⟨(r : T), hmem⟩ : (ring β₂).carrier)) →
       (∀ β, β < α → (ring β).carrier ≤ (data α).2.1.carrier) ∧
-      (∀ ⦃β₁ β₂⦄, β₁ ≤ β₂ → β₂ ≤ α →
-        ∀ (r : (ring β₁).carrier) (hmem : (r : T) ∈ (ring β₂).carrier),
-          Prime r → Prime (⟨(r : T), hmem⟩ : (ring β₂).carrier)) := by
-    refine fun α => WellFounded.induction wellFounded_lt α (C := fun α =>
-      (∀ β, β < α → (ring β).carrier ≤ (data α).2.1.carrier) ∧
-      (∀ ⦃β₁ β₂⦄, β₁ ≤ β₂ → β₂ ≤ α →
-        ∀ (r : (ring β₁).carrier) (hmem : (r : T) ∈ (ring β₂).carrier),
-          Prime r → Prime (⟨(r : T), hmem⟩ : (ring β₂).carrier))) ?_
-    intro α IH_wf
-    have hmono_lt : ∀ ⦃β₁ β₂ : κ.ToType⦄, β₁ ≤ β₂ → β₂ < α →
-        (ring β₁).carrier ≤ (ring β₂).carrier := by
-      intro β₁ β₂ hle hβ₂
-      rcases eq_or_lt_of_le hle with rfl | hlt
-      · exact le_refl _
-      · exact ((IH_wf β₂ hβ₂).1 β₁ hlt).trans (data β₂).2.2.1.le
-    have hprimes_lt : ∀ ⦃β₁ β₂ : κ.ToType⦄, β₁ ≤ β₂ → β₂ < α →
-        ∀ (r : (ring β₁).carrier) (hmem : (r : T) ∈ (ring β₂).carrier),
-          Prime r → Prime (⟨(r : T), hmem⟩ : (ring β₂).carrier) := by
-      intro β₁ β₂ hle hβ₂ r hmem hr
-      exact (IH_wf β₂ hβ₂).2 hle (le_refl _) r hmem hr
-    have hgood_α : IH_good α (fun γ hγ => data γ) := by
-      constructor
-      · intro β₁ β₂ hβ₁ hβ₂ hle
-        exact hmono_lt hle hβ₂
-      · intro β₁ β₂ hβ₁ hβ₂ hle r hmem hr
-        exact hprimes_lt hle hβ₂ r hmem hr
-    have hring_le_prev_α : ∀ β, β < α →
-        (ring β).carrier ≤ (data α).2.1.carrier := by
-      intro β hβ
+      (∀ β, β < α → ∀ (r : (ring β).carrier), Prime r →
+        ∀ (hmem : (r : T) ∈ (data α).2.1.carrier),
+          Prime (⟨(r : T), hmem⟩ : (data α).2.1.carrier)) := by
+    intro α hmin hlim hmono hprimes
+    have hgood_α : IH_good α (fun γ hγ => data γ) := ⟨hmono, hprimes⟩
+    have h_eq : (data α).2.1 =
+        (mk_union_nsub α (fun γ hγ => data γ) (not_isMin_iff.mp hmin) hgood_α
+          (fun β hβ => (data β).2.2.2.2.2.2.2)).1 := by
       rw [hprevF_eq α]
-      by_cases hmin : IsMin α
-      · exact absurd (hmin (le_of_lt hβ)) (not_le.mpr hβ)
-      · simp only [prevF, dite_eq_right hmin]
-        by_cases hlim : Order.IsSuccLimit α
-        · simp only [dite_eq_left hlim, dite_eq_left hgood_α]
-          exact (mk_union_nsub α (fun γ hγ => data γ) (not_isMin_iff.mp hmin) hgood_α
-            (fun β hβ => (data β).2.2.2.2.2.2.2)).2.2.2.1 β hβ
-        · simp only [dite_eq_right hlim]
-          let hprelim := (Order.not_isSuccLimit_iff.mp hlim).resolve_left hmin
-          let hγ_ex := Order.not_isSuccPrelimit_iff_succ_eq.mp hprelim
-          let hγ_lt := lt_of_lt_of_eq
-            (Order.lt_succ_of_not_isMax hγ_ex.choose_spec.1) hγ_ex.choose_spec.2
-          rcases eq_or_lt_of_le (Order.lt_succ_iff_of_not_isMax
-            hγ_ex.choose_spec.1 |>.mp (hγ_ex.choose_spec.2 ▸ hβ)) with rfl | hlt
-          · exact le_refl _
-          · exact ((IH_wf hγ_ex.choose hγ_lt).1 β hlt).trans
-              (data hγ_ex.choose).2.2.1.le
-    refine ⟨hring_le_prev_α, ?_⟩
-    -- Prime transfer: β₁ ≤ β₂ ≤ α, key case is β₂ = α via prev(α)
-    intro β₁ β₂ hle hle_α r hmem hr
-    rcases eq_or_lt_of_le hle with rfl | hlt
-    · convert hr using 1
-    · rcases eq_or_lt_of_le hle_α with heq_α | hlt_α
-      · have hβ₁_lt_α : β₁ < α := heq_α ▸ hlt
-        have hmem_prev : (r : T) ∈ (data α).2.1.carrier :=
-          hring_le_prev_α β₁ hβ₁_lt_α r.2
-        have h_nsub_eq := hprevF_eq α
-        have prime_transport : ∀ (S₁ S₂ : NSubring T) (h : S₁ = S₂) (x : T) (hx : x ∈ S₁.carrier),
-            Prime (⟨x, hx⟩ : S₁.carrier) → Prime (⟨x, h ▸ hx⟩ : S₂.carrier) := by
-          intro S₁ S₂ h x hx hp
-          cases h
-          exact hp
-        have hmem_prevF_carrier : (r : T) ∈ (prevF α (fun γ hγ => data γ)).carrier := by
-          rwa [← h_nsub_eq]
-        have hprime_prevF : Prime (⟨(r : T), hmem_prevF_carrier⟩ :
-            (prevF α (fun γ hγ => data γ)).carrier) := by
-          by_cases hmin : IsMin α
-          · exact absurd (hmin (le_of_lt hβ₁_lt_α)) (not_le.mpr hβ₁_lt_α)
-          · by_cases hlim : Order.IsSuccLimit α
-            · have h_prevF_eq : prevF α (fun γ hγ => data γ) =
-                  (mk_union_nsub α (fun γ hγ => data γ) (not_isMin_iff.mp hmin) hgood_α
-                    (fun β hβ => (data β).2.2.2.2.2.2.2)).1 := by
-                simp only [prevF, dite_eq_right hmin, dite_eq_left hlim, dite_eq_left hgood_α]
-              have hmem_u : (r : T) ∈
-                  (mk_union_nsub α (fun γ hγ => data γ) (not_isMin_iff.mp hmin) hgood_α
-                    (fun β hβ => (data β).2.2.2.2.2.2.2)).1.carrier := by
-                rwa [← h_prevF_eq]
-              exact prime_transport _ _ h_prevF_eq.symm _ hmem_u
-                ((mk_union_nsub α (fun γ hγ => data γ) (not_isMin_iff.mp hmin) hgood_α
-                    (fun β hβ => (data β).2.2.2.2.2.2.2)).2.2.2.2
-                  β₁ hβ₁_lt_α r hr hmem_u)
-            · have h_prevF_eq : prevF α (fun γ hγ => data γ) = ring
-                  ((Order.not_isSuccPrelimit_iff_succ_eq.mp
-                    ((Order.not_isSuccLimit_iff.mp hlim).resolve_left hmin)).choose) := by
-                simp only [prevF, dite_eq_right hmin, dite_eq_right hlim]
-                rfl
-              let hprelim := (Order.not_isSuccLimit_iff.mp hlim).resolve_left hmin
-              let hγ_ex := Order.not_isSuccPrelimit_iff_succ_eq.mp hprelim
-              let hγ_lt := lt_of_lt_of_eq
-                (Order.lt_succ_of_not_isMax hγ_ex.choose_spec.1) hγ_ex.choose_spec.2
-              have hmem_ring_γ : (r : T) ∈ (ring hγ_ex.choose).carrier := by
-                rwa [← h_prevF_eq]
-              rcases eq_or_lt_of_le (Order.lt_succ_iff_of_not_isMax
-                hγ_ex.choose_spec.1 |>.mp (hγ_ex.choose_spec.2 ▸ hβ₁_lt_α)) with rfl | hlt'
-              · exact prime_transport _ _ h_prevF_eq.symm _ hmem_ring_γ hr
-              · exact prime_transport _ _ h_prevF_eq.symm _ hmem_ring_γ
-                  (hprimes_lt (le_of_lt hlt') hγ_lt r
-                    (((IH_wf hγ_ex.choose hγ_lt).1 β₁ hlt').trans
-                      (data hγ_ex.choose).2.2.1.le r.2) hr)
-        have prime_of_eq : ∀ (S : NSubring T), S = prevF α (fun γ hγ => data γ) →
-            ∀ (hx : (r : T) ∈ S.carrier), Prime (⟨(r : T), hx⟩ : S.carrier) := by
-          rintro S rfl hx
-          exact hprime_prevF
-        have hprime_prev : Prime (⟨(r : T), hmem_prev⟩ : (data α).2.1.carrier) :=
-          prime_of_eq _ h_nsub_eq hmem_prev
-        have hext := (data α).2.2.1
-        have hprime_ring := hext.primes_preserved ⟨(r : T), hmem_prev⟩ hprime_prev
-        cases heq_α
-        convert hprime_ring using 1
-      · exact hprimes_lt hle hlt_α r hmem hr
-  have hring_le_prev : ∀ (α β : κ.ToType), β < α →
-      (ring β).carrier ≤ (data α).2.1.carrier :=
-    fun α => (hcombined α).1
-  have hmono : ∀ ⦃β₁ β₂ : κ.ToType⦄, β₁ ≤ β₂ →
-      (ring β₁).carrier ≤ (ring β₂).carrier := by
-    intro β₁ β₂ hle
-    rcases eq_or_lt_of_le hle with rfl | hlt
-    · exact le_refl _
-    · exact (hring_le_prev β₂ β₁ hlt).trans (data β₂).2.2.1.le
-  have hprimes_pres : ∀ ⦃β₁ β₂ : κ.ToType⦄ (h : β₁ ≤ β₂)
-      (r : (ring β₁).carrier), Prime r →
-      Prime (⟨r.1, hmono h r.2⟩ : (ring β₂).carrier) := by
-    intro β₁ β₂ hle r hr
-    rcases eq_or_lt_of_le hle with rfl | hlt
-    · convert hr using 1
-    · exact (hcombined β₂).2 hle (le_refl β₂) r (hmono hle r.2) hr
-  let chain : NSubringChain T κ.ToType :=
-    { ring := ring
-      mono := hmono
-      primes_preserved := hprimes_pres }
-  set U := chain.unionSubring with hU_def
-  have hU_card_le : Cardinal.mk ↥U ≤
-      max Cardinal.aleph0 (Cardinal.mk (IsLocalRing.ResidueField T)) := by
-    have hU_eq : (U : Set T) = ⋃ α, ↑(chain.ring α).carrier := by
-      rw [hU_def, NSubringChain.unionSubring]
-      exact Subring.coe_iSup_of_directed chain.directed_carriers
-    set κ' := max Cardinal.aleph0 (Cardinal.mk (IsLocalRing.ResidueField T))
-    have h1 : Cardinal.mk ↥U ≤ Cardinal.mk κ.ToType *
-        ⨆ (α : κ.ToType), Cardinal.mk ↑((chain.ring α).carrier : Set T) := by
-      have := Cardinal.mk_iUnion_le (fun α => ((chain.ring α).carrier : Set T))
-      rwa [← hU_eq] at this
-    have h2 : ⨆ (α : κ.ToType), Cardinal.mk ↑((chain.ring α).carrier : Set T) ≤ κ' :=
-      ciSup_le fun α => (chain.ring α).card_le
-    have h3 : Cardinal.mk κ.ToType ≤ κ' := by
-      rw [Cardinal.mk_ord_toType]
-      calc Cardinal.mk V ≤ Cardinal.mk T := hV_card
-        _ = Cardinal.mk (IsLocalRing.ResidueField T) := hcard
-        _ ≤ max Cardinal.aleph0 _ := le_max_right _ _
-    calc Cardinal.mk ↥U
-        ≤ Cardinal.mk κ.ToType *
-          ⨆ (α : κ.ToType), Cardinal.mk ↑((chain.ring α).carrier : Set T) := h1
-      _ ≤ Cardinal.mk κ.ToType * κ' := mul_le_mul_right h2 _
-      _ ≤ κ' * κ' := mul_le_mul_left h3 κ'
-      _ ≤ max κ' κ' := Cardinal.mul_le_max_of_aleph0_le_left (le_max_left ..)
-      _ = κ' := max_self κ'
-  let A : NSubring T := chain.unionNSubring hU_card_le
-  refine ⟨chain, A, chain.le_union, fun x => chain.mem_union_iff.mp x.2, ?_, ?_, ?_⟩
-  · intro α I hI c hc
-    exact (data α).2.2.2.2.1 I hI c hc
+      simp only [prevF, dite_eq_right hmin, dite_eq_left hlim, dite_eq_left hgood_α]
+    rw [h_eq]
+    exact ⟨(mk_union_nsub α (fun γ hγ => data γ) (not_isMin_iff.mp hmin) hgood_α
+        (fun β hβ => (data β).2.2.2.2.2.2.2)).2.2.2.1,
+      (mk_union_nsub α (fun γ hγ => data γ) (not_isMin_iff.mp hmin) hgood_α
+        (fun β hβ => (data β).2.2.2.2.2.2.2)).2.2.2.2⟩
+  -- At successors `succ γ`, `prev α` is the ring at `γ`
+  have hprev_succ : ∀ α : κ.ToType, ¬IsMin α → ¬Order.IsSuccLimit α →
+      ∃ γ, γ < α ∧ (∀ β, β < α → β ≤ γ) ∧ (data α).2.1 = ring γ := by
+    intro α hmin hlim
+    let hprelim := (Order.not_isSuccLimit_iff.mp hlim).resolve_left hmin
+    let hγ_ex := Order.not_isSuccPrelimit_iff_succ_eq.mp hprelim
+    refine ⟨hγ_ex.choose,
+      lt_of_lt_of_eq (Order.lt_succ_of_not_isMax hγ_ex.choose_spec.1) hγ_ex.choose_spec.2,
+      fun β hβ => (Order.lt_succ_iff_of_not_isMax hγ_ex.choose_spec.1).mp
+        (by rw [hγ_ex.choose_spec.2]; exact hβ), ?_⟩
+    rw [hprevF_eq α]
+    simp only [prevF, dite_eq_right hmin, dite_eq_right hlim]
+    rfl
+  refine transfinite_result_of_family ring (fun α => (data α).2.1) (fun α => (data α).2.2.1)
+    (chain_le_prev_and_primes ring (fun α => (data α).2.1) (fun α => (data α).2.2.1)
+      hprev_limit hprev_succ)
+    (fun α => (data α).2.2.2.2.1) ?_ ?_ ?_
   · -- Surjectivity: use enum to find α covering each residue class ℓ
     intro ℓ
     have hq₀ : (IsLocalRing.maximalIdeal T).IsPrime :=
@@ -572,29 +577,8 @@ private def transfinite_construction_proof
     obtain ⟨t, ht_q, ht_ne⟩ := (data α).2.2.2.2.2.2.1
     have : (enum α).1.1 = q := by simp [α, v]
     exact ⟨α, t, this ▸ ht_q, ht_ne⟩
-⟩
-
-include T in theorem transfinite_construction
-    [IsAdicComplete (IsLocalRing.maximalIdeal T) T]
-    (hdepth : ∃ (a b : T), a ∈ IsLocalRing.maximalIdeal T ∧
-      b ∈ IsLocalRing.maximalIdeal T ∧
-      RingTheory.Sequence.IsRegular T [a, b])
-    (hcard : Cardinal.mk T = Cardinal.mk (IsLocalRing.ResidueField T))
-    (hchar : ∀ (n : ℤ), n ≠ 0 → (algebraMap ℤ T n) ≠ 0)
-    (hM_not_assoc : ∀ (r : T), r ≠ 0 →
-      IsLocalRing.maximalIdeal T ∉ associatedPrimes T (T ⧸ Ideal.span {r}))
-    (hAss_ht : ∀ (r : T), r ≠ 0 →
-      ∀ P ∈ associatedPrimes T (T ⧸ Ideal.span {r}), P.height ≤ 1)
-    (hT_aleph0 : Cardinal.aleph0 < Cardinal.mk T) :
-    ∃ (A : NSubring T),
-      (Function.Surjective (fun r : A.carrier =>
-        Ideal.Quotient.mk (IsLocalRing.maximalIdeal T ^ 2) (r : T))) ∧
-      (∀ (I : Ideal A.carrier), I.FG →
-        ∀ (c : A.carrier), (c : T) ∈ Ideal.map A.carrier.subtype I → c ∈ I) ∧
-      (∀ (q : Ideal T), q.IsPrime → q ≠ ⊥ →
-        ∃ (t : A.carrier), (t : T) ∈ q ∧ (t : T) ≠ 0) := by
-  exact
-    (transfinite_construction_proof
-      hdepth hcard hchar hM_not_assoc hAss_ht hT_aleph0
-    ).down
+  · rw [Cardinal.mk_ord_toType]
+    calc Cardinal.mk V ≤ Cardinal.mk T := hV_card
+      _ = Cardinal.mk (IsLocalRing.ResidueField T) := hcard
+      _ ≤ max Cardinal.aleph0 _ := le_max_right _ _
 end

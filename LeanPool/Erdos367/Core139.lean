@@ -73,7 +73,7 @@ lemma rFullPart_pow (r m : ℕ) (hm : 1 ≤ m) :
 lemma factorization_rFullPart (r M : ℕ) :
     (rFullPart r M).factorization = M.factorization.filter (fun p => r ≤ M.factorization p) := by
   unfold rFullPart
-  apply Nat.prod_pow_factorization_eq_self
+  apply Nat.factorization_prod_pow_eq_self
   simp_all
 
 /-- If `d ≥ 1` and `d ^ r ∣ M` then `d ^ r ∣ rFullPart r M`: each prime `p ∣ d` has

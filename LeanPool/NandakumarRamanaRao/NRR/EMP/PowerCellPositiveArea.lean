@@ -6,11 +6,12 @@ Authors: Arseniy Akopyan
 module
 
 
-public import Mathlib.Tactic
-public import LeanPool.NandakumarRamanaRao.NRR.PowerDiagram.BodyCells
-public import LeanPool.NandakumarRamanaRao.NRR.PowerDiagram.CellAreaVector
 public import LeanPool.NandakumarRamanaRao.NRR.EMP.EqualAreaWeights
 public import LeanPool.NandakumarRamanaRao.NRR.Geometry.ConvexBody.PositiveAreaInterior
+import Mathlib.CategoryTheory.Category.Init
+import Mathlib.Tactic.Positivity.Finset
+public import LeanPool.NandakumarRamanaRao.NRR.PowerDiagram.BodyCells
+public import LeanPool.NandakumarRamanaRao.NRR.PowerDiagram.CellAreaVector
 
 /-!
 # `NRR.EMP.PowerCellPositiveArea` — positive area of equal‑area cells

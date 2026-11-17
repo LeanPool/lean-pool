@@ -6,7 +6,13 @@ Authors: Arseniy Akopyan
 module
 
 
+public import LeanPool.NandakumarRamanaRao.NRR.EMP.VariableBody.Children
+public import LeanPool.NandakumarRamanaRao.NRR.Multivalued.ZeroSet
+public import LeanPool.NandakumarRamanaRao.NRR.PrimeModel.ModelSites
+import LeanPool.NandakumarRamanaRao.NRR.Multivalued.ChildEvaluation
 public import LeanPool.NandakumarRamanaRao.NRR.PrimeModel.ChildEquivariance
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # Equivariant child-evaluation test map

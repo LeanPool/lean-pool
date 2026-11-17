@@ -883,7 +883,6 @@ decreasing_by
     | exact depth_lt_imp_left
     | exact depth_lt_imp_right
     | exact depth_lt_iSup _
-    | exact depth_lt_iInf _
     | exact depth_openBounds_subst_lt _
 
 /-! ### Model Existence from Truth Lemma -/

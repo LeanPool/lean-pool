@@ -10,7 +10,7 @@ public import LeanPool.HighContrastHomogenization.Support.Geometry.CubeMetric
 public import LeanPool.HighContrastHomogenization.Support.Geometry.TriadicPartition
 public import Mathlib.Data.Fin.Tuple.Sort
 public import Mathlib.Data.Fintype.Perm
-public import Mathlib.Data.Prod.Lex
+public import Mathlib.Order.Prod.Lex.Basic
 
 /-!
 # KuhnCells

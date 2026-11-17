@@ -8,6 +8,7 @@ module
 public import LeanPool.SpectralPositivity.Matrix.NonnegPower
 public import Mathlib.Analysis.Normed.Algebra.Exponential
 public import Mathlib.Topology.Instances.Matrix
+import Mathlib.Analysis.Matrix.Normed
 import Mathlib.Analysis.Normed.Algebra.MatrixExponential
 import Mathlib.Analysis.SpecialFunctions.Exponential
 

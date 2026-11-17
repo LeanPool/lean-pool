@@ -97,7 +97,7 @@ lemma PositiveTimeTestFunctionℂ.zero_on_nonpositive
   refine image_eq_zero_of_notMem_tsupport (fun hx_mem => ?_)
   have hx_pos : getTimeComponent x > 0 := by
     simpa [positiveTimeSet, HasPositiveTime] using f.property hx_mem
-  linarith
+  linarith only [hx, hx_pos]
 
 /-- Helper lemma: starRingEnd ℂ commutes through derivatives and preserves norms -/
 lemma starRingEnd_iteratedFDeriv_norm_eq (g : TestFunctionℂ) (n : ℕ) (x : SpaceTime) :
@@ -105,7 +105,7 @@ lemma starRingEnd_iteratedFDeriv_norm_eq (g : TestFunctionℂ) (n : ℕ) (x : Sp
   -- Use the fact that starRingEnd ℂ = Complex.conjLIE (as functions)
   have h : (fun x => starRingEnd ℂ (g x)) = Complex.conjLIE ∘ g := by
     ext y
-    simp_all
+    simp_all only [comp_apply, Complex.conjLIE_apply]
   rw [h]
   -- Now apply the norm preservation lemma for LinearIsometryEquiv
   exact LinearIsometryEquiv.norm_iteratedFDeriv_comp_left Complex.conjLIE g x n
@@ -142,6 +142,6 @@ lemma PositiveTimeTestFunction.zero_on_nonpositive
   refine image_eq_zero_of_notMem_tsupport (fun hx_mem => ?_)
   have hx_pos : getTimeComponent x > 0 := by
     simpa [positiveTimeSet, HasPositiveTime] using f.property hx_mem
-  linarith
+  linarith only [hx, hx_pos]
 
 end

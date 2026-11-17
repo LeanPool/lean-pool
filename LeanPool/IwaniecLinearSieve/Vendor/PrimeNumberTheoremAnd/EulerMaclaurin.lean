@@ -8,6 +8,7 @@ module
 
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
+import Mathlib.MeasureTheory.Function.Floor
 import Mathlib.NumberTheory.AbelSummation
 
 /-! We prove the 1st order Euler-Maclaurin formula by specialising Abel summation and manipulating
@@ -69,7 +70,7 @@ lemma intervalIntegrable_deriv_mul_B1 (ha : 0 ≤ a) (hab : a ≤ b) (h_cont : C
   filter_upwards [self_mem_ae_restrict (by measurability)] with x hx
   rw [Set.uIcc_of_le hab, Set.mem_Icc] at hx
   norm_cast
-  exact abs_B1_le_half (by linarith)
+  exact abs_B1_le_half (by linarith only [ha, hx])
 
 lemma integral_deriv_mul_floor_add_one (ha : 0 ≤ a) (hab : a ≤ b)
     (hf_diff : ∀ t ∈ Set.Icc a b, DifferentiableAt ℝ f t) (h_cont : ContinuousOn (deriv f) [[a,

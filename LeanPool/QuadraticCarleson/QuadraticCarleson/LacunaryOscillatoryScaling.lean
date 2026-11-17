@@ -60,7 +60,7 @@ theorem lacunary_levelSet_eq_three_normalized
   have hα3 : 0 < α / 3 := by positivity
   have hprod : (3 : ℝ≥0∞) * ENNReal.ofReal (α / 3) = ENNReal.ofReal α := by
     rw [show (3 : ℝ≥0∞) = ENNReal.ofReal (3 : ℝ) by norm_num,
-      ← ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 3)]
+      ← ENNReal.ofReal_mul (by norm_num1 : (0 : ℝ) ≤ 3)]
     congr 1
     ring
   ext x
@@ -78,12 +78,12 @@ theorem paperLog_three_mul_le (n : ℕ) {t : ℝ} (ht : 0 ≤ t) :
   | zero => simp only [paperLog_zero, le_refl]
   | succ n ih =>
       have hn := paperLog_nonnegative n ht
-      have hn3 := paperLog_nonnegative n (mul_nonneg (by norm_num : (0 : ℝ) ≤ 3) ht)
+      have hn3 := paperLog_nonnegative n (mul_nonneg (by norm_num1 : (0 : ℝ) ≤ 3) ht)
       rw [paperLog_succ, paperLog_succ]
       calc
         _ ≤ Real.log ((10 + paperLog n t) ^ 3) := by
-          apply Real.log_le_log (by linarith)
-          nlinarith [sq_nonneg (paperLog n t), pow_nonneg hn 3]
+          apply Real.log_le_log (by linarith only [hn3])
+          linarith only [ih, hn, sq_nonneg (paperLog n t), pow_nonneg hn 3]
         _ = _ := by rw [Real.log_pow]; norm_num
 
 /-- Exact source Orlicz modular under the only fixed dilation required by
@@ -139,7 +139,7 @@ theorem paperLacunaryOscillatoryMaximal_levelSet_le_scaled_orlicz
       intro x
       exact ENNReal.ofReal_le_ofReal (lacunaryOrlicz_three_mul_le (by positivity))
     _ = _ := by
-      simp_rw [ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 81)]
+      simp_rw [ENNReal.ofReal_mul (by norm_num1 : (0 : ℝ) ≤ 81)]
       rw [lintegral_const_mul' _ _ ENNReal.ofReal_ne_top]
       simp only [ENNReal.ofReal_ofNat, lacunaryScaledEndpointConstant]
       ring

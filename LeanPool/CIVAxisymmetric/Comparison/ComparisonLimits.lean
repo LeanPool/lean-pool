@@ -667,11 +667,11 @@ theorem aestronglyMeasurable_diPernaLionsCommutator_prod {ε : ℝ} {B : Vec m �
       ((μx.prod μs).prod μx) := by
     have hg : AEStronglyMeasurable (fun z : ℝ × Vec m => q z.swap) (μs.prod μx) :=
       hqmeas.prod_swap
-    have hf : Measure.QuasiMeasurePreserving
+    have hf : QuasiMeasurePreserving
         (Prod.map (Prod.snd : Vec m × ℝ → ℝ) (id : Vec m → Vec m))
         ((μx.prod μs).prod μx) (μs.prod μx) :=
       QuasiMeasurePreserving.prodMap Measure.quasiMeasurePreserving_snd
-        (Measure.QuasiMeasurePreserving.id μx)
+        (QuasiMeasurePreserving.id μx)
     exact hg.comp_quasiMeasurePreserving hf
   have hswapMeas :
       Measurable (fun t : (Vec m × ℝ) × Vec m => (t.2, t.1.2) : (Vec m × ℝ) × Vec m → Vec m × ℝ) :=

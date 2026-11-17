@@ -157,13 +157,13 @@ theorem exists_chargedCell_of_active_above_base_of_geometry
     (Finset.mem_filter.mp hI).1 hactive
   have hmax := (Finset.mem_filter.mp hJ).2
   have hlt : (2 : ℝ) ^ k₀ < (2 : ℝ) ^ (scale I + 2 - s) :=
-    (zpow_right_strictMono₀ (by norm_num : (1 : ℝ) < 2)) hbase
+    (zpow_right_strictMono₀ (by norm_num1 : (1 : ℝ) < 2)) hbase
   have hlenJ : J.length = (2 : ℝ) ^ (scale I + 2 - s) := by
     rcases max_cases ((2 : ℝ) ^ k₀) J.length with h | h
     · exact (ne_of_lt hlt (h.1.symm.trans hmax)).elim
     · exact h.1.symm.trans hmax
   refine ⟨J, badScaleCells_subset S f I₀ k₀ _ hJ, hJI, ?_⟩
-  rw [(Finset.mem_filter.mp hI).2.1, hlenJ, ← zpow_add₀ (by norm_num : (2 : ℝ) ≠ 0)]
+  rw [(Finset.mem_filter.mp hI).2.1, hlenJ, ← zpow_add₀ (by norm_num1 : (2 : ℝ) ≠ 0)]
   congr 1
   ring
 

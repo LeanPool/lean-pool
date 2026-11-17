@@ -5,9 +5,6 @@ Authors: Zeru Zhu, Jinzheng Li, Yuanjie Ren
 -/
 module
 
-public import Mathlib.Tactic.NormNum
-public import Mathlib.Tactic.Push
-public import Mathlib.Tactic.Ring
 public import LeanPool.ACMax.Counting.PoorCorner
 
 /-!

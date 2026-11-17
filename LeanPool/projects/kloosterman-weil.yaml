@@ -1,0 +1,47 @@
+slug: kloosterman-weil
+title: Kloosterman–Weil bounds via Carlitz and Stepanov
+summary: Proves the classical prime Kloosterman–Weil bound by extension-field
+  recurrences and auxiliary-polynomial point counts. Develops exact CRT
+  factorization, squarefree bounds with a unit first coefficient, and centered
+  incomplete reciprocal-phase bounds at the reduced modulus.
+branch: number theory
+entry_module: LeanPool.KloostermanWeil
+authors:
+- Charlie Dorsey
+source:
+  title: Weil Bounds Toolkit
+  url: https://github.com/charliedorsey/weil-bounds-toolkit/tree/7adcd23667b063ae54cc0e8707c89ce259e8fd31
+  github_repo: charliedorsey/weil-bounds-toolkit
+  commit: 7adcd23667b063ae54cc0e8707c89ce259e8fd31
+  announcement_url: https://leanprover.zulipchat.com/#narrow/channel/583339-AI-authored-projects/near/638228706
+  announcement_date: '2026-11-06'
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+- KloostermanWeil.weil1948_bound
+- KloostermanWeil.kloostermanUnitSum_crt
+- KloostermanWeil.centeredReducedIntervalSum_bound
+main_results:
+- declaration: KloostermanWeil.weil1948_bound
+  informal: For every prime p and nonzero coefficients m and n modulo p, the norm
+    of the standard Kloosterman sum is at most twice the square root of p.
+- declaration: KloostermanWeil.kloostermanUnitSum_crt
+  informal: Kloosterman sums factor exactly over coprime nonzero moduli, with
+    explicit Bezout-normalized coefficients.
+- declaration: KloostermanWeil.centeredReducedIntervalSum_bound
+  informal: For a positive squarefree modulus q, the mean-centered reciprocal
+    phase defined at q divided by gcd(A,q) has interval sums bounded uniformly
+    in interval length by its squarefree Weil constant times one plus log of
+    that reduced modulus.
+- declaration: KloostermanWeil.squarefreeUnitNumerator_bound
+  informal: For every nonzero squarefree modulus q and unit first coefficient,
+    the Kloosterman sum is bounded by 2 to the number of prime factors of q
+    times the square root of q.
+tags:
+- analytic-number-theory
+- exponential-sums
+- finite-fields
+msc:
+- 11L05
+- 11T23

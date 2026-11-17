@@ -7,7 +7,9 @@ module
 
 
 public import LeanPool.BeyondBethe.BeyondBethe.NumericalInterior
-public import Mathlib.Tactic
+import Mathlib.Tactic.Linarith -- shake: keep
+import Mathlib.Tactic.Ring -- shake: keep
+import Mathlib.Tactic.SimpRw -- shake: keep
 
 /-! # Numerical Capacity -/
 

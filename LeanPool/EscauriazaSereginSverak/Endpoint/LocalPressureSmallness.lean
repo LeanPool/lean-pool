@@ -630,7 +630,7 @@ private theorem boundedPressureSource_memLp_two
         eLpNorm (fun x => η x * pressureUTensor (fun z => uExt z.1)
           c (x, s) i j) 2 μ := by
       rw [eLpNorm_congr_ae hGindicator,
-        eLpNorm_indicator_eq_eLpNorm_restrict hVmeas]
+        eLpNorm_indicator_eq_eLpNorm_restrict hVmeas.nullMeasurableSet]
     have hVbounded : Bornology.IsBounded V := by
       dsimp [V]
       exact Metric.isBounded_ball.subset (vec3Ball_subset_ball x₀ ρ)

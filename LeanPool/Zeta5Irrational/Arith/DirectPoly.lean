@@ -8,7 +8,7 @@ module
 
 public import LeanPool.Zeta5Irrational.Arith.DirectBound
 import LeanPool.Zeta5Irrational.Arith.IntPoly
-import Mathlib.Data.Rat.Star
+import Mathlib.Algebra.Order.Star.Rat
 import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Polynomial.Basic
 import Mathlib.Tactic.ReduceModChar

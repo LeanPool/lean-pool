@@ -117,7 +117,7 @@ theorem stage9ActualPsi_terminal_nonneg
   have hdescent := (ogmgTerminalDescentCheck_source_iff cfg hM).mp hterminal
   unfold stage9ActualPsi Stage9Certificate.ogmgPsi ogmgFunctionValue
     ogmgGradientSq
-  linarith
+  linarith only [hdescent, hlower]
 
 /-- The exact source identity instantiated by the actual oracle data and the
 actual recursive OGM-G execution. -/
@@ -267,7 +267,7 @@ theorem finiteDataOGMG : FiniteDataOGMGStatement := by
       simpa [cfg, ogmgGradientSq] using hraw
     apply (le_div_iff₀ htheta).2
     field_simp [hMne] at hraw'
-    nlinarith
+    linarith only [hraw']
   · exact stage9Theta_zero_lower hn
 
 end O3

@@ -10,7 +10,7 @@ public import LeanPool.Incompleteness.Foundation.FirstOrder.Basic.Calculus2
 public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
 import LeanPool.Incompleteness.Arithmetization.Definability.Init
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-import Mathlib.Data.Nat.SuccPred
+import Mathlib.Order.SuccPred.Nat
 
 /-! # D1 -/
 

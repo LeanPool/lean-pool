@@ -7,6 +7,7 @@ Authors: OpenAI
 module
 
 public import LeanPool.NavierStokesAndEuler.NavierStokes.ShapeTransition
+import Mathlib.Analysis.SpecialFunctions.Sqrt
 public import LeanPool.NavierStokesAndEuler.NavierStokes.FiveProfileMoments
 public import LeanPool.NavierStokesAndEuler.NavierStokes.ActivationContinuation
 public import LeanPool.NavierStokesAndEuler.NavierStokes.ExtendedHeatedOutgoing

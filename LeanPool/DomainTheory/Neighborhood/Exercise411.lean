@@ -6,12 +6,6 @@ Authors: Catskills Research Company
 module
 
 public import LeanPool.DomainTheory.Neighborhood.Exercise410
-import Mathlib.Data.Finset.Attr
-import Mathlib.Data.Rat.Cast.Order
-import Mathlib.Tactic.NormNum.Abs
-import Mathlib.Tactic.NormNum.DivMod
-import Mathlib.Tactic.NormNum.OfScientific
-import Mathlib.Tactic.NormNum.Pow
 
 /-!
 # Exercise 4.11 (Scott 1981, PRG-19, Lecture IV) — Plotkin's uniqueness of `fix`
@@ -82,7 +76,7 @@ theorem fixElement_uniform {β γ : Type*} {W₀ : NeighborhoodSystem β} {W₁ 
     intro n
     rw [iterElem_eq_iterate f₀ n, iterElem_eq_iterate f₁ n]
     induction n with
-    | zero => simpa using hbot
+    | zero => simpa only [Function.iterate_zero, id_eq] using hbot
     | succ k ih =>
       rw [Function.iterate_succ', Function.comp_apply, Function.iterate_succ',
         Function.comp_apply, hintw, ih]

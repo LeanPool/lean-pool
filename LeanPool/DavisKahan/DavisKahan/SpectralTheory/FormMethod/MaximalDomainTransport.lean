@@ -5,9 +5,7 @@ Authors: Jon Crall, OpenAI GPT-5.6 Thinking
 -/
 module
 
-
 public import LeanPool.DavisKahan.DavisKahan.SpectralTheory.FormMethod.TraceKernelModel
-public import Mathlib.Tactic
 
 /-!
 # Transport of the maximal fourth-order graph space into the ambient Hilbert space

@@ -7,6 +7,7 @@ module
 
 public import LeanPool.QuantumParallelRepetition.Part09
 import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Order
+import Mathlib.Analysis.CStarAlgebra.ContinuousLinearMap
 
 /-! # Quantum parallel repetition, part 10 -/
 
@@ -15,6 +16,9 @@ import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Order
 noncomputable section
 
 namespace QuantumParallelRepetition
+
+-- Compare vector expressions without expanding their coordinate formulas.
+attribute [local irreducible] PiLp.instNorm Matrix.toEuclideanCLM
 
 open scoped ComplexOrder Matrix BigOperators InnerProductSpace
 open Complex Matrix Finset
@@ -808,8 +812,7 @@ theorem unconditionalFairPhysicalFlaggedStoppingTransfer
       (∑ outcome, q outcome * flagPhysical outcome) =
         ∑ h : ExactLocallySampleableTuple X Y A B D,
           exactLocallySampleableLaw G n S D h * physical h := by
-    simpa only using
-      (exactSourceAliceFlagCoupling_expectation
+    exact (exactSourceAliceFlagCoupling_expectation
         G n S D remaining positive base denominator denominator_positive
         numerator rational_normalized support_preserving nonempty physical)
   have flagPhysical_nonnegative (outcome :
@@ -832,7 +835,7 @@ theorem unconditionalFairPhysicalFlaggedStoppingTransfer
   have mismatch' :
       (∑ outcome, p outcome * if matched outcome then 0 else 1) ≤
         4 * lam := by
-    simpa only [mul_ite, mul_zero, mul_one] using mismatch
+    exact mismatch
   have physical_transfer :
       1 - epsilon / 2 - 5 * lam -
           (bad + 4 * Real.sqrt deviation + 2 * Real.sqrt clipping) ≤
@@ -909,7 +912,7 @@ theorem unconditionalFairPhysicalFlaggedStoppingTransfer
     refine Finset.sum_congr rfl fun flag _ => ?_
     refine Finset.sum_congr rfl fun x _ => ?_
     refine Finset.sum_congr rfl fun y _ => ?_
-    ring_nf
+    ac_rfl
   change
     1 - epsilon / 2 - 5 * lam -
         (bad + 4 * Real.sqrt deviation + 2 * Real.sqrt clipping) ≤
@@ -1427,9 +1430,9 @@ theorem unconditionalActualFairSelectedLocalAction_norm_sq
         (unconditionalMixedConjugateSelectedBranchUnitary
           (τ := τ) U V).property)
   change ‖toLp 2 (M.mulVec (ofLp z))‖ ^ 2 = ‖z‖ ^ 2
-  rw [rectangularMatrix_norm_sq, gram]
-  simp only [quadraticExpectation, map_one, one_apply_eq_self, inner_self_eq_norm_sq_to_K,
-    coe_algebraMap, ← ofReal_pow, ofReal_re]
+  simpa only [inner_self_eq_norm_sq_to_K, Complex.coe_algebraMap,
+    ← Complex.ofReal_pow, Complex.ofReal_re] using
+    congrArg Complex.re (matrix_mulVec_inner_self_of_gram M gram z)
 
 theorem unconditionalActualFairCleanedVector_norm_sq
     {S B N d L m : Nat}
@@ -1478,8 +1481,7 @@ theorem unconditionalActualFairCleanedRow_eq_stoppedSuccess
   simp_rw [unconditionalActualFairCleanedVector_norm_sq
     phases grid dimension harmonic width width_positive schedule ξ ζ Q A C]
   unfold dSVDensityRationalHeterogeneousPhysicalStoppedSuccessMass
-  simpa only using
-    (Fin.sum_univ_eq_sum_range
+  exact (Fin.sum_univ_eq_sum_range
       (fun k : Nat =>
         dSVDensityRationalHeterogeneousPhysicalSurvival
             N width schedule ξ ζ k *
@@ -2044,7 +2046,7 @@ private theorem unconditionalSmallSource_root_estimates
       (by norm_num : (1 / 12 : ℝ) ≤ 1 / 3)
   have delta_bound : δ ≤ R := by
     dsimp [R]
-    linarith only [scaled_nonnegative, delta_root]
+    exact le_add_of_le_of_nonneg delta_root scaled_nonnegative
   have delta_sq_bound : δ ^ 2 ≤ R := by
     linarith only [scaled_nonnegative, delta_root,
       mul_nonneg delta_nonnegative (sub_nonneg.mpr delta_bounded)]
@@ -2061,7 +2063,7 @@ private theorem unconditionalSmallSource_root_estimates
         (by norm_num : (0 : ℝ) ≤ 1 / 12)
         (by norm_num : (1 / 12 : ℝ) ≤ 1 / 6)
     dsimp [R]
-    linarith only [scaled_nonnegative, root_compare]
+    exact le_add_of_le_of_nonneg root_compare scaled_nonnegative
   exact ⟨root_nonnegative, eta_bound, delta_bound,
     delta_sq_bound, delta_sqrt_bound⟩
 
@@ -2266,8 +2268,9 @@ theorem unconditionalSmallSourcePhysicalRoundedLower
     unfold universalErrorCeiling
     have root_nonnegative :=
       Real.rpow_nonneg (by norm_num : (0 : ℝ) ≤ 2) (1 / 6 : ℝ)
-    linarith [mul_nonneg K_nonnegative
-      (show 0 ≤ 1 + (2 : ℝ) ^ (1 / 6 : ℝ) by positivity)]
+    exact add_nonneg
+      (mul_nonneg K_nonnegative (add_nonneg zero_le_one root_nonnegative))
+      (by norm_num)
   have transfer_nonnegative : 0 ≤ universalErrorCeiling K * lam :=
     mul_nonneg ceiling_nonnegative lam_nonnegative
   have quantum_nonnegative : 0 ≤ K * R :=
@@ -2312,8 +2315,7 @@ theorem pdfGreedyCeilingHorizon_pow_le_exp
   let T : ℕ := ⌈d * (n : ℝ) / τ⌉₊
   have base_nonnegative : 0 ≤ 1 - τ := sub_nonneg.mpr at_most_one
   have base_le : 1 - τ ≤ Real.exp (-τ) := by
-    have actual := Real.add_one_le_exp (-τ)
-    linarith only [actual]
+    exact Real.one_sub_le_exp_neg τ
   have ceiling : d * (n : ℝ) / τ ≤ (T : ℝ) := by
     exact Nat.le_ceil (d * (n : ℝ) / τ)
   have exponent : -τ * (T : ℝ) ≤ -d * (n : ℝ) := by
@@ -2688,7 +2690,7 @@ theorem pdfUniversalErrorCeiling_pos
 private theorem pdfRoundingCoefficient_two_le
     {K : ℝ} (lowerBound : 1 ≤ K) :
     2 ≤ pdfRoundingCoefficient K := by
-  have nonnegative : 0 ≤ K := by linarith
+  have nonnegative : 0 ≤ K := zero_le_one.trans lowerBound
   have ceiling_nonnegative : 0 ≤ universalErrorCeiling K :=
     (pdfUniversalErrorCeiling_pos lowerBound).le
   have first_nonnegative :
@@ -2705,7 +2707,7 @@ private theorem pdfRoundingCoefficient_one_le
     {K : ℝ} (lowerBound : 1 ≤ K) :
     1 ≤ pdfRoundingCoefficient K := by
   have lower := pdfRoundingCoefficient_two_le lowerBound
-  linarith
+  exact one_le_two.trans lower
 
 end
 
@@ -3048,7 +3050,7 @@ theorem pdfGap_le_one
     (G : Game X Y A B) :
     1 - entangledValue G ≤ 1 := by
   have nonnegative := entangledValue_nonneg G
-  linarith
+  exact sub_le_self 1 nonnegative
 
 theorem pdfPostselectionLogCost_lt_of_exponential
     {X Y A B : Type}
@@ -3195,7 +3197,7 @@ theorem pdf_distributionUniformExponential_of_uniform_source_rounding
   have coefficient : 1 ≤ Bqs :=
     pdfRoundingCoefficient_one_le lowerBound
   refine ⟨pdfUniversalRate Bqs,
-    pdfUniversalRate_pos (by linarith), ?_⟩
+    pdfUniversalRate_pos (lt_of_lt_of_le zero_lt_one coefficient), ?_⟩
   intro X Y A B _ _ _ _ G alice bob game_gap n length
   by_cases zero : entangledValue G = 0
   · rw [pdfRepeatedEntangledValue_eq_zero_of_entangledValue_eq_zero
@@ -3384,11 +3386,12 @@ theorem unconditionalSourcePhysicalRounding_fairTargetEnergy
           (exactGlobalHistoryFinPhi
             G n S D h.2.2.2 h.2.2.1).val‖ ^ 2) ≤
       32 * martingaleRate G n S D := by
-  have distance := exactSourceStateDistanceBound_of_positive
-    G n S D remaining positive
-  simpa only [ge_iff_le, exactSourceTupleGamma, exactSourceTuplePhi] using
-    (exactSourceEquationTwentyOne_of_fifteen
-      G n S D positive (martingaleRate G n S D) distance)
+  with_reducible
+    have distance := exactSourceStateDistanceBound_of_positive
+      G n S D remaining positive
+    simpa only [ge_iff_le, exactSourceTupleGamma, exactSourceTuplePhi] using
+      (exactSourceEquationTwentyOne_of_fifteen
+        G n S D positive (martingaleRate G n S D) distance)
 
 theorem unconditionalSourcePhysicalRounding_exists_fairStoppingHazard
     {X Y A B : Type}
@@ -3484,7 +3487,7 @@ theorem unconditionalSourcePhysicalRounding_exists_fairStoppingHazard
       d dimension alpha alpha_positive alpha_bounded
   have precision_budget :
       2 * (w + 1) * ((d : ℝ) / N) ≤ delta := by
-    simpa [delta] using budget
+    exact budget
   have grid_fine :
       (d : ℝ) / (N : ℝ) < 1 / (w + 1) := by
     apply (lt_div_iff₀
@@ -3501,8 +3504,7 @@ theorem unconditionalSourcePhysicalRounding_exists_fairStoppingHazard
   have energy :
       (∑ h : ExactLocallySampleableTuple X Y A B D,
         law h * ‖(gamma h).val - (phi h).val‖ ^ 2) ≤ 32 * eta := by
-    simpa only using
-      unconditionalSourcePhysicalRounding_fairTargetEnergy
+    exact unconditionalSourcePhysicalRounding_fairTargetEnergy
         G n S D remaining positive
   obtain ⟨L, B', Q, m, horizon, phases, resolution, harmonic,
       UA, UB, _pointwise, _tail, asynchronous, terminal, hazard⟩ :=
@@ -3514,26 +3516,9 @@ theorem unconditionalSourcePhysicalRounding_exists_fairStoppingHazard
       (exactLocallySampleableLaw_sum G n S D remaining positive)
       gamma phi eta energy
   refine ⟨w, N, L, B', Q, m, width_large, grid, horizon,
-    phases, resolution, harmonic, ?_, ?_, ?_, UA, UB, ?_⟩
-  · exact budget
-  · exact grid_fine
-  · exact scalar
-  dsimp only
-  refine ⟨?_, ?_, ?_, ?_⟩
-  · exact canonical
-  · exact asynchronous
-  · exact terminal
-  · change
-      (∑ h : ExactLocallySampleableTuple X Y A B D,
-        law h *
-          dSVDensityRationalHeterogeneousStoppedCommonPrefixHazard
-            Q m (fun _ : Fin 1 => w) (fun _ : Fin L => 0)
-            (gamma h) (phi h) UA UB) ≤
-        (34 / t) * (64 * Real.sqrt eta + delta) +
-          4 * rho ^ 2 +
-            unconditionalPrefactorBucketCoefficient * t
-    simpa only [unconditionalPrefactorBucketCoefficient]
-      using hazard
+    phases, resolution, harmonic, budget, grid_fine, scalar, UA, UB,
+    canonical, asynchronous, terminal, ?_⟩
+  simpa only [unconditionalPrefactorBucketCoefficient] using hazard
 
 theorem unconditionalSourcePhysicalRounding_largeVerifierBound
     (K eta alpha lam epsilon : ℝ)

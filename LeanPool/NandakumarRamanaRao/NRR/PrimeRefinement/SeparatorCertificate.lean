@@ -8,8 +8,10 @@ module
 
 public import LeanPool.NandakumarRamanaRao.NRR.PrimeModel.ChildTestMap
 public import LeanPool.NandakumarRamanaRao.NRR.Multivalued.Separator.ToNiceMV
-public import LeanPool.NandakumarRamanaRao.NRR.Multivalued.Separator.Fibers
 public import LeanPool.NandakumarRamanaRao.NRR.EMP.VariableBody.Partition
+public import LeanPool.NandakumarRamanaRao.NRR.Multivalued.Separator.Fibers
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # Prime-refinement separator certificates

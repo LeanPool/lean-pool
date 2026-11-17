@@ -879,12 +879,13 @@ theorem Internal.bassFreeGroupoid_end_subsingleton {ι : Type v} (G : ι → Typ
     Subsingleton (End ((Quiver.FreeGroupoid.of (BassSerreVertex G)).obj
       (BassSerreVertex.central Word.empty))) := by
   have hid : ∀ f : End ((Quiver.FreeGroupoid.of (BassSerreVertex G)).obj
-      (BassSerreVertex.central Word.empty)), f = 𝟙 _ := by
+      (BassSerreVertex.central Word.empty)), f = 1 := by
     intro f
+    apply End.ext
     obtain ⟨p, hp⟩ :=
       (CategoryTheory.Quotient.full_functor
         (@Quiver.FreeGroupoid.redStep (BassSerreVertex G)
-          (bassSerreQuiver G))).map_surjective f
+          (bassSerreQuiver G))).map_surjective f.asHom
     rw [← hp]
     rw [← Internal.bassPathHom_eq_quotient_map G p]
     have htree := Internal.bassPathHom_eq_tree G p
@@ -956,20 +957,22 @@ theorem Internal.bassFreeGroupoid_end_subsingleton_at {ι : Type v}
         (BassSerreVertex.central Word.empty)) x
   constructor
   intro f g
-  have hroot : p ≫ f ≫ Groupoid.inv p =
-      p ≫ g ≫ Groupoid.inv p := by
-    exact @Subsingleton.elim _ (Internal.bassFreeGroupoid_end_subsingleton G) _ _
+  have hroot : p ≫ f.asHom ≫ Groupoid.inv p =
+      p ≫ g.asHom ≫ Groupoid.inv p := by
+    exact congrArg End.asHom
+      (@Subsingleton.elim _ (Internal.bassFreeGroupoid_end_subsingleton G)
+        (.of _) (.of _))
   have hcancel := congrArg
     (fun z => Groupoid.inv p ≫ z ≫ p) hroot
-  unfold CategoryTheory.End at f g ⊢
+  apply End.ext
   simpa [Category.assoc] using hcancel
 
 theorem Internal.functor_map_injective_of_eq_id {C : Type u} [Category C]
     (F : C ⥤ C) (hF : F = CategoryTheory.Functor.id C) (x : C) :
-    Function.Injective (fun f : End x => F.map f) := by
+    Function.Injective (fun f : End x => F.map f.asHom) := by
   intro f g h
   rw [hF] at h
-  unfold CategoryTheory.End at f g ⊢
+  apply End.ext
   simpa only [CategoryTheory.Functor.id_obj, CategoryTheory.Functor.id_map] using h
 
 theorem Internal.bass_factorCoset_append {ι : Type v} (G : ι → Type u)
@@ -1624,18 +1627,16 @@ theorem Internal.rawFreeGroupoid_end_subsingleton {ι : Type v} (G : ι → Type
   have hRC : R ⋙ C =
       CategoryTheory.Functor.id (Quiver.FreeGroupoid (RawBassSerreVertex G)) :=
     Internal.rawBassRawFunctor_eq_id G
-  have hmap : R.map f = R.map g := by
-    have : Subsingleton (R.obj
+  have hmap : R.map f.asHom = R.map g.asHom := by
+    have : Subsingleton (End (R.obj
         ((Quiver.FreeGroupoid.of (RawBassSerreVertex G)).obj
-          (RawBassSerreVertex.central 1)) ⟶ R.obj
-        ((Quiver.FreeGroupoid.of (RawBassSerreVertex G)).obj
-          (RawBassSerreVertex.central 1))) :=
+          (RawBassSerreVertex.central 1)))) :=
       Internal.bassFreeGroupoid_end_subsingleton_at G
         (R.obj ((Quiver.FreeGroupoid.of (RawBassSerreVertex G)).obj
           (RawBassSerreVertex.central 1)))
-    exact Subsingleton.elim _ _
-  have hmapC : (R ⋙ C).map f = (R ⋙ C).map g := by
-    change C.map (R.map f) = C.map (R.map g)
+    exact congrArg End.asHom (@Subsingleton.elim _ this (.of _) (.of _))
+  have hmapC : (R ⋙ C).map f.asHom = (R ⋙ C).map g.asHom := by
+    change C.map (R.map f.asHom) = C.map (R.map g.asHom)
     exact congrArg (fun z => C.map z) hmap
   exact (Internal.functor_map_injective_of_eq_id
     (R ⋙ C) hRC

@@ -110,7 +110,8 @@ private theorem
     mfderiv 𝓘(ℝ, EuclideanSpace ℝ (Fin m)) (𝓡 m) c z
   let j' := (ContinuousLinearEquiv.prodCongr (ContinuousLinearEquiv.refl ℝ ℝ) B).trans j
   have hd : fderiv ℝ (f ∘ c) z = A.comp C := by
-    have h := mfderiv_comp z hf (c.mdifferentiableAt (by simp) hz)
+    have h := mfderiv_comp z hf (c.mdifferentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
+      ENat.top_ne_zero, not_false_eq_true]) hz)
     rw [mfderiv_eq_fderiv] at h
     exact h
   have hB : (B.symm.toContinuousLinearMap.comp A).IsInvertible :=
@@ -1234,7 +1235,7 @@ private theorem Smale.ManifoldMorse.MorseSurgeryData.indexThreeBoundary_scalar {
     a = (d.indexThreeBoundaryEquiv hindex a) • (d.indexThreeBoundaryEquiv hindex).symm 1 := by
   apply (d.indexThreeBoundaryEquiv hindex).injective
   rw [map_zsmul, LinearEquiv.apply_symm_apply, zsmul_eq_mul, mul_one]
-  simp
+  simp only [Int.cast_eq]
 
 private def Smale.ManifoldMorse.MorseSurgeryData.indexThreeAttachingClass {E M : Type}
     [NormedAddCommGroup E] [NormedSpace ℝ E] [TopologicalSpace M] [ChartedSpace E M] {f : M → ℝ}
@@ -1324,7 +1325,8 @@ theorem Smale.HomologyTransport.ker_comp_span_singleton {R A B C : Type*} [CommR
       rw [map_sub, map_smul, hr, sub_self]
     exact
       Submodule.mem_sup.mpr
-        ⟨a - r • v, hk, r • v, Submodule.smul_mem _ _ (Submodule.subset_span (by simp)),
+        ⟨a - r • v, hk, r • v,
+          Submodule.smul_mem _ _ (Submodule.subset_span (by simp only [mem_singleton_iff])),
           sub_add_cancel _ _⟩
   · apply sup_le
     · intro a ha
@@ -1337,7 +1339,7 @@ theorem Smale.HomologyTransport.ker_comp_span_singleton {R A B C : Type*} [CommR
       subst a
       change p v ∈ LinearMap.ker q
       rw [hq]
-      exact Submodule.subset_span (by simp)
+      exact Submodule.subset_span (by simp only [mem_singleton_iff])
 
 private structure
     Smale.IntegerPresentation (B : Type*) [AddCommGroup B] [Module ℤ B] (r c : ℕ) where
@@ -1463,7 +1465,8 @@ private theorem
     {r c : ℕ} (P : Smale.IntegerPresentation B r c) (z : Fin c → ℤ) :
     (∑ j, z j • P.columns j) = P.matrix.mulVec z := by
   funext i
-  simp [Smale.IntegerPresentation.matrix, Matrix.mulVec, dotProduct, mul_comm]
+  simp only [zsmul_eq_mul, mul_comm, Finset.sum_apply, Pi.mul_apply, Pi.intCast_apply, Int.cast_eq,
+      Matrix.mulVec, dotProduct, matrix]
 
 private theorem
     Smale.IntegerPresentation.mem_range_matrix_iff {B : Type*} [AddCommGroup B] [Module ℤ B]
@@ -1829,7 +1832,8 @@ private theorem Degree.DiskCube.exists_ambient {V : Type*} [NormedAddCommGroup V
   obtain ⟨e, _, he, hb⟩ :=
     exists_homeomorph_image_eq (convex_closedBall (0 : V) 1)
       (show (interior (Metric.closedBall (0 : V) 1)).Nonempty from
-        ⟨0, Metric.ball_subset_interior_closedBall (by simp)⟩)
+        ⟨0, Metric.ball_subset_interior_closedBall (by simp only [Metric.mem_ball, dist_self,
+          zero_lt_one])⟩)
       ((ProperSpace.isCompact_closedBall (0 : V) 1).isVonNBounded ℝ) (target_convex L)
       (target_interior_nonempty L) ((target_compact L).isVonNBounded ℝ)
   exact

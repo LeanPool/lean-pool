@@ -8,6 +8,7 @@ module
 public import LeanPool.PoincareThreeBody.ResonantOrbit
 import LeanPool.PoincareThreeBody.Analytic
 import LeanPool.PoincareThreeBody.Averaging
+import Mathlib.Analysis.Calculus.Deriv.Pow
 import Mathlib.Analysis.Calculus.ParametricIntervalIntegral
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
 

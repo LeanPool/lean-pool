@@ -201,7 +201,7 @@ theorem firstCoordinate_minpoly_splits_over_poweredCoordinateImageField
   have hdvd : minpoly B x ∣ P := minpoly.dvd B x hP
   let : NeZero m := ⟨Nat.ne_of_gt hm⟩
   let : NeZero (m : F) := ⟨hmF⟩
-  obtain ⟨ζ, hζ⟩ := HasEnoughRootsOfUnity.exists_primitiveRoot F m
+  obtain ⟨ζ, hζ⟩ := HasEnoughRootsOfUnity.exists_isPrimitiveRoot F m
   have hζL : IsPrimitiveRoot (algebraMap F L ζ) m :=
     hζ.map_of_injective (algebraMap F L).injective
   have hsplits : (Polynomial.X ^ m - Polynomial.C (x ^ m)).Splits :=
@@ -288,7 +288,7 @@ theorem secondCoordinate_minpoly_splits_over_poweredCoordinateImageField
   have hdvd : minpoly B y ∣ P := minpoly.dvd B y hP
   let : NeZero n := ⟨Nat.ne_of_gt hn⟩
   let : NeZero (n : F) := ⟨hnF⟩
-  obtain ⟨η, hη⟩ := HasEnoughRootsOfUnity.exists_primitiveRoot F n
+  obtain ⟨η, hη⟩ := HasEnoughRootsOfUnity.exists_isPrimitiveRoot F n
   have hηL : IsPrimitiveRoot (algebraMap F L η) n :=
     hη.map_of_injective (algebraMap F L).injective
   have hsplits : (Polynomial.X ^ n - Polynomial.C (y ^ n)).Splits :=
@@ -423,8 +423,8 @@ theorem exists_support_stabilizer_scaling_of_poweredImage_aut
   let : NeZero n := ⟨Nat.ne_of_gt hn⟩
   let : NeZero (m : F) := ⟨hmF⟩
   let : NeZero (n : F) := ⟨hnF⟩
-  obtain ⟨ζ, hζ⟩ := HasEnoughRootsOfUnity.exists_primitiveRoot F m
-  obtain ⟨η, hη⟩ := HasEnoughRootsOfUnity.exists_primitiveRoot F n
+  obtain ⟨ζ, hζ⟩ := HasEnoughRootsOfUnity.exists_isPrimitiveRoot F m
+  obtain ⟨η, hη⟩ := HasEnoughRootsOfUnity.exists_isPrimitiveRoot F n
   have hμm : (primitiveRoots m F).Nonempty :=
     ⟨ζ, (mem_primitiveRoots hm).2 hζ⟩
   have hμn : (primitiveRoots n F).Nonempty :=

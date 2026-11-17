@@ -6,6 +6,7 @@ Authors: Yuma Mizuno
 module
 
 
+public import Mathlib.RingTheory.Localization.Finiteness
 public import LeanPool.MarkoffModP.RiemannRoch.SeparableRelNorm
 public import Mathlib.FieldTheory.IsSepClosed
 
@@ -291,7 +292,7 @@ theorem count_spanSingleton_norm_eq_sum_inertiaDeg_mul_count
           FractionalIdeal.count (FractionRing S) q
             (FractionalIdeal.spanSingleton S⁰
               (algebraMap S (FractionRing S) b)) := by
-    rw [← FractionalIdeal.spanSingleton_mul_spanSingleton,
+    rw [map_mul,
       ← FractionalIdeal.spanSingleton_inv,
       FractionalIdeal.count_mul _ _
         ((FractionalIdeal.spanSingleton_ne_zero_iff).2 hma0)
@@ -299,7 +300,7 @@ theorem count_spanSingleton_norm_eq_sum_inertiaDeg_mul_count
       FractionalIdeal.count_inv]
     simp [sub_eq_add_neg]
   rw [div_eq_mul_inv, map_mul, Algebra.norm_inv,
-    ← FractionalIdeal.spanSingleton_mul_spanSingleton,
+    map_mul,
     ← FractionalIdeal.spanSingleton_inv]
   rw [FractionalIdeal.count_mul _ _
     ((FractionalIdeal.spanSingleton_ne_zero_iff).2 hna0)

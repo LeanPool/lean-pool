@@ -42,7 +42,7 @@ theorem memLp_product_indicator_slices
       by_cases hy : y ∈ B <;> simp only [Set.indicator, mem_prod, hy, hsj, and_self, false_and,
         ↓reduceIte]
     rw [heq]
-    exact (hs hsj).indicator hB
+    exact (hs hsj).indicator hB.nullMeasurableSet
   · have heq : (fun y => (B ×ˢ J).indicator F (y, s)) = fun _ => 0 := by
       funext y
       exact Set.indicator_of_notMem (fun h => hsj h.2) F

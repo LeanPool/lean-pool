@@ -238,7 +238,7 @@ theorem exists_holderOnWith_of_gradClosed_even (hd : 0 < d) (hdeven : 2 * (d / 2
   have hdR : (0 : ℝ) < (d : ℝ) := by exact_mod_cast hd
   have hd2 : (2 : ℕ) ≤ d := by omega
   have hγ1R : ((γ : ℝ≥0) : ℝ) < 1 := by exact_mod_cast hγ1
-  have hden : (0 : ℝ) < 1 - (γ : ℝ) := by linarith
+  have hden : (0 : ℝ) < 1 - (γ : ℝ) := by linarith only [hγ1R]
   -- The exponent whose Morrey exponent is `γ`.
   set P : ℝ≥0 := Real.toNNReal ((d : ℝ) / (1 - (γ : ℝ))) with hP_def
   have hPcoe : ((P : ℝ≥0) : ℝ) = (d : ℝ) / (1 - (γ : ℝ)) := by
@@ -246,11 +246,11 @@ theorem exists_holderOnWith_of_gradClosed_even (hd : 0 < d) (hdeven : 2 * (d / 2
   have hPd : (d : ℝ) < (P : ℝ) := by
     rw [hPcoe, lt_div_iff₀ hden]
     have hγ0R : (0 : ℝ) < (γ : ℝ) := by exact_mod_cast hγ0
-    nlinarith
+    nlinarith only [hdR, hγ0R]
   have hP2 : (2 : ℝ≥0) ≤ P := by
     rw [← NNReal.coe_le_coe, NNReal.coe_ofNat]
     have : (2 : ℝ) ≤ (d : ℝ) := by exact_mod_cast hd2
-    linarith [hPd]
+    linarith only [hPd, this]
   have hPs : 2⁻¹ - ((d / 2 : ℕ) : ℝ) * (d : ℝ)⁻¹ ≤ (P : ℝ)⁻¹ := by
     have hhalf : ((d / 2 : ℕ) : ℝ) * (d : ℝ)⁻¹ = 2⁻¹ := by
       have hne : ((d / 2 : ℕ) : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr (by omega)

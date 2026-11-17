@@ -6,8 +6,6 @@ Authors: Zeru Zhu, Jinzheng Li, Yuanjie Ren
 module
 
 public import LeanPool.ACMax.Counting.Quotient
-public import Mathlib.Tactic.NormNum
-public import Mathlib.Tactic.Ring
 public import Mathlib.Combinatorics.SimpleGraph.DegreeSum
 
 /-!

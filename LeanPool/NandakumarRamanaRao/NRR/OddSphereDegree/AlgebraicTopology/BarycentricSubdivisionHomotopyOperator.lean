@@ -6,13 +6,11 @@ Authors: Arseniy Akopyan
 module
 
 
-public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.FiniteSimplex
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.BarycentricSubdivisionCone
-public import Mathlib.CategoryTheory.Limits.Lattice
-public import Mathlib.CategoryTheory.Limits.Shapes.Countable
-public import Mathlib.CategoryTheory.Limits.Sifted
-public import Mathlib.Order.CompletePartialOrder
-public import Mathlib.Tactic
+import Mathlib.Analysis.Normed.Group.Basic
+import Mathlib.Tactic.Measurability.Init
+import Mathlib.Topology.Algebra.InfiniteSum.Order
+public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.FiniteSimplex
 
 /-! # Barycentric Subdivision Homotopy Operator -/
 

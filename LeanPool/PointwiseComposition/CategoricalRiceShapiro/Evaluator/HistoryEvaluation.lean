@@ -126,6 +126,16 @@ private theorem definable_code_graph {m : ℕ} (A : Code m) :
   intro w
   simp
 
+/-- Reuse the graph substitution theorem without simplifying its graph formula. -/
+private theorem definable_code_graph_values {k n : ℕ} (A : Code k)
+    (terms : Fin (k + 1) → ArithmeticSemiterm M n)
+    (values : (Fin n → M) → Fin (k + 1) → M)
+    (hvalues : ∀ w, Semiterm.val w id ∘ terms = values w) :
+    Σ-[1].Definable (fun w => Semiformula.Evalb (values w) (code A)) := by
+  refine (definable_code_graph_arguments A terms).of_iff ?_
+  intro w
+  rw [hvalues w]
+
 /-!
 ### Reading a supplied length evaluation -/
 
@@ -305,50 +315,19 @@ private theorem definable_match (Pc : Code 3) (w₀ w₁ b H bound : M) :
   have hS :
     Σ-[1].Definable (fun w : Fin 3 → M => Semiformula.Evalb ![w 0, w 1, w₀, w₁] (code Pc)) :=
     by
-    refine
-      ((definable_code_graph (M := M) Pc).retractiont (f :=
-            ![(#0 : ArithmeticSemiterm M 3), #1, &w₀, &w₁])).of_iff
-        ?_
-    intro w
-    have he :
-      (fun j => Semiterm.val w id (![(#0 : ArithmeticSemiterm M 3), #1, &w₀, &w₁] j)) =
-        ![w 0, w 1, w₀, w₁] :=
-      by
+      refine definable_code_graph_values Pc
+        ![(#0 : ArithmeticSemiterm M 3), #1, &w₀, &w₁] _ ?_
+      intro w
       funext j
-      refine Fin.cases ?_ ?_ j
-      · simp
-      · intro j1
-        refine Fin.cases ?_ ?_ j1
-        · simp
-        · intro j2
-          refine Fin.cases ?_ ?_ j2
-          · simp
-          · intro j3
-            refine Fin.cases ?_ (fun j4 => Fin.elim0 j4) j3
-            simp
-    rw [he]
+      fin_cases j <;> rfl
   have hD :
     Σ-[1].Definable (fun w : Fin 3 → M => Semiformula.Evalb ![w 0, w 2, H] (code dropCore)) :=
     by
-    refine
-      ((definable_code_graph (M := M) dropCore).retractiont (f :=
-            ![(#0 : ArithmeticSemiterm M 3), #2, &H])).of_iff
-        ?_
-    intro w
-    have he :
-      (fun j => Semiterm.val w id (![(#0 : ArithmeticSemiterm M 3), #2, &H] j)) =
-        ![w 0, w 2, H] :=
-      by
+      refine definable_code_graph_values dropCore
+        ![(#0 : ArithmeticSemiterm M 3), #2, &H] _ ?_
+      intro w
       funext j
-      refine Fin.cases ?_ ?_ j
-      · simp
-      · intro j1
-        refine Fin.cases ?_ ?_ j1
-        · simp
-        · intro j2
-          refine Fin.cases ?_ (fun j3 => Fin.elim0 j3) j2
-          simp
-    rw [he]
+      fin_cases j <;> rfl
   have hbody :
     Σ-[1].Definable
       (fun w : Fin 3 → M =>
@@ -451,25 +430,11 @@ private theorem drop_prefix [M↓[ℒₒᵣ] ⊧* 𝐏𝐀] (H bnd z : M)
   have hD :
     Σ-[1].Definable (fun w : Fin 3 → M => Semiformula.Evalb ![w 0, w 1, H] (code dropCore)) :=
     by
-    refine
-      ((definable_code_graph (M := M) dropCore).retractiont (f :=
-            ![(#0 : ArithmeticSemiterm M 3), #1, &H])).of_iff
-        ?_
-    intro w
-    have he :
-      (fun j => Semiterm.val w id (![(#0 : ArithmeticSemiterm M 3), #1, &H] j)) =
-        ![w 0, w 1, H] :=
-      by
+      refine definable_code_graph_values dropCore
+        ![(#0 : ArithmeticSemiterm M 3), #1, &H] _ ?_
+      intro w
       funext j
-      refine Fin.cases ?_ ?_ j
-      · simp
-      · intro j1
-        refine Fin.cases ?_ ?_ j1
-        · simp
-        · intro j2
-          refine Fin.cases ?_ (fun j3 => Fin.elim0 j3) j2
-          simp
-    rw [he]
+      fin_cases j <;> rfl
   have hdef :
     Σ-[1].DefinablePred
       (fun j : M =>
@@ -537,25 +502,11 @@ private theorem drops_zero_from [M↓[ℒₒᵣ] ⊧* 𝐏𝐀] (H c bound : M)
       Σ-[1].Definable
         (fun w : Fin 1 → M => Semiformula.Evalb ![(0 : M), w 0, H] (code dropCore)) :=
       by
-      refine
-        ((definable_code_graph (M := M) dropCore).retractiont (f :=
-              ![&(0 : M), (#0 : ArithmeticSemiterm M 1), &H])).of_iff
-          ?_
-      intro w
-      have he :
-        (fun j => Semiterm.val w id (![&(0 : M), (#0 : ArithmeticSemiterm M 1), &H] j)) =
-          ![(0 : M), w 0, H] :=
-        by
+        refine definable_code_graph_values dropCore
+          ![&(0 : M), (#0 : ArithmeticSemiterm M 1), &H] _ ?_
+        intro w
         funext j
-        refine Fin.cases ?_ ?_ j
-        · simp
-        · intro j1
-          refine Fin.cases ?_ ?_ j1
-          · simp
-          · intro j2
-            refine Fin.cases ?_ (fun j3 => Fin.elim0 j3) j2
-            simp
-      rw [he]
+        fin_cases j <;> rfl
     exact
       HierarchySymbol.Definable.imp (by definability)
         (HierarchySymbol.Definable.imp (by definability) hD)
@@ -638,41 +589,21 @@ private theorem definable_bad :
     Σ-[1].Definable
       (fun w : Fin 3 → M => Semiformula.Evalb ![w 1, w 2] (code codeEvaluatorHistory)) :=
     by
-    refine
-      ((definable_code_graph (M := M) codeEvaluatorHistory).retractiont (f :=
-            ![(#1 : ArithmeticSemiterm M 3), #2])).of_iff
-        ?_
-    intro w
-    have he :
-      (fun j => Semiterm.val w id (![(#1 : ArithmeticSemiterm M 3), #2] j)) = ![w 1, w 2] :=
-      by
+      refine definable_code_graph_values codeEvaluatorHistory
+        ![(#1 : ArithmeticSemiterm M 3), #2] _ ?_
+      intro w
       funext j
-      refine Fin.cases ?_ ?_ j
-      · simp
-      · intro j1
-        refine Fin.cases ?_ (fun j2 => Fin.elim0 j2) j1
-        simp
-    rw [he]
+      fin_cases j <;> rfl
   have hL :
     Σ-[1].Definable
       (fun w : Fin 3 → M =>
         Semiformula.Evalb ![w 0, w 1] (code (codeListLength (Code.proj (0 : Fin 1))))) :=
     by
-    refine
-      ((definable_code_graph (M := M) (codeListLength (Code.proj (0 : Fin 1)))).retractiont
-            (f := ![(#0 : ArithmeticSemiterm M 3), #1])).of_iff
-        ?_
-    intro w
-    have he :
-      (fun j => Semiterm.val w id (![(#0 : ArithmeticSemiterm M 3), #1] j)) = ![w 0, w 1] :=
-      by
+      refine definable_code_graph_values (codeListLength (Code.proj (0 : Fin 1)))
+        ![(#0 : ArithmeticSemiterm M 3), #1] _ ?_
+      intro w
       funext j
-      refine Fin.cases ?_ ?_ j
-      · simp
-      · intro j1
-        refine Fin.cases ?_ (fun j2 => Fin.elim0 j2) j1
-        simp
-    rw [he]
+      fin_cases j <;> rfl
   exact
     HierarchySymbol.Definable.exs
       (HierarchySymbol.Definable.exs (hH.and (hL.and (by definability))))
@@ -1563,65 +1494,31 @@ private theorem getAt_descend [M↓[ℒₒᵣ] ⊧* 𝐏𝐀] (m i z Hm : M)
     Σ-[1].Definable
       (fun w : Fin 5 → M => Semiformula.Evalb ![w 2, w 3] (code codeEvaluatorHistory)) :=
     by
-    refine
-      ((definable_code_graph (M := M) codeEvaluatorHistory).retractiont (f :=
-            ![(#2 : ArithmeticSemiterm M 5), #3])).of_iff
-        ?_
-    intro w
-    have he :
-      (fun j => Semiterm.val w id (![(#2 : ArithmeticSemiterm M 5), #3] j)) = ![w 2, w 3] :=
-      by
+      refine definable_code_graph_values codeEvaluatorHistory
+        ![(#2 : ArithmeticSemiterm M 5), #3] _ ?_
+      intro w
       funext j
-      refine Fin.cases ?_ ?_ j
-      · simp
-      · intro j1
-        refine Fin.cases ?_ (fun j2 => Fin.elim0 j2) j1
-        simp
-    rw [he]
+      fin_cases j <;> rfl
   have hDrop :
     Σ-[1].Definable (fun w : Fin 5 → M => Semiformula.Evalb ![w 1, i, w 2] (code dropCore)) :=
     by
-    refine
-      ((definable_code_graph (M := M) dropCore).retractiont (f :=
-            ![(#1 : ArithmeticSemiterm M 5), &i, #2])).of_iff
-        ?_
-    intro w
-    have he :
-      (fun j => Semiterm.val w id (![(#1 : ArithmeticSemiterm M 5), &i, #2] j)) =
-        ![w 1, i, w 2] :=
-      by
+      refine definable_code_graph_values dropCore
+        ![(#1 : ArithmeticSemiterm M 5), &i, #2] _ ?_
+      intro w
       funext j
-      refine Fin.cases ?_ ?_ j
-      · simp
-      · intro j1
-        refine Fin.cases ?_ ?_ j1
-        · simp
-        · intro j2
-          refine Fin.cases ?_ (fun j3 => Fin.elim0 j3) j2
-          simp
-    rw [he]
+      fin_cases j <;> rfl
   have hHead :
     Σ-[1].Definable
       (fun w : Fin 5 → M =>
         Semiformula.Evalb ![w 0, w 1]
           (code (codeUnpair₁ (codeSub (Code.proj (0 : Fin 1)) (codeConst 1))))) :=
     by
-    refine
-      ((definable_code_graph (M := M)
-                (codeUnpair₁ (codeSub (Code.proj (0 : Fin 1)) (codeConst 1)))).retractiont
-            (f := ![(#0 : ArithmeticSemiterm M 5), #1])).of_iff
-        ?_
-    intro w
-    have he :
-      (fun j => Semiterm.val w id (![(#0 : ArithmeticSemiterm M 5), #1] j)) = ![w 0, w 1] :=
-      by
+      refine definable_code_graph_values
+        (codeUnpair₁ (codeSub (Code.proj (0 : Fin 1)) (codeConst 1)))
+        ![(#0 : ArithmeticSemiterm M 5), #1] _ ?_
+      intro w
       funext j
-      refine Fin.cases ?_ ?_ j
-      · simp
-      · intro j1
-        refine Fin.cases ?_ (fun j2 => Fin.elim0 j2) j1
-        simp
-    rw [he]
+      fin_cases j <;> rfl
   have hdef :
     Σ-[1].DefinablePred
       (fun t : M =>
@@ -2136,65 +2033,31 @@ private theorem history_ascent_definable :
     Σ-[1].Definable
       (fun w : Fin 5 → M => Semiformula.Evalb ![w 2, w 3] (code codeEvaluatorHistory)) :=
     by
-    refine
-      ((definable_code_graph (M := M) codeEvaluatorHistory).retractiont (f :=
-            ![(#2 : ArithmeticSemiterm M 5), #3])).of_iff
-        ?_
-    intro w
-    have he :
-      (fun j => Semiterm.val w id (![(#2 : ArithmeticSemiterm M 5), #3] j)) = ![w 2, w 3] :=
-      by
+      refine definable_code_graph_values codeEvaluatorHistory
+        ![(#2 : ArithmeticSemiterm M 5), #3] _ ?_
+      intro w
       funext j
-      refine Fin.cases ?_ ?_ j
-      · simp
-      · intro j1
-        refine Fin.cases ?_ (fun j2 => Fin.elim0 j2) j1
-        simp
-    rw [he]
+      fin_cases j <;> rfl
   have hDrop :
     Σ-[1].Definable (fun w : Fin 5 → M => Semiformula.Evalb ![w 1, P, w 2] (code dropCore)) :=
     by
-    refine
-      ((definable_code_graph (M := M) dropCore).retractiont (f :=
-            ![(#1 : ArithmeticSemiterm M 5), &P, #2])).of_iff
-        ?_
-    intro w
-    have he :
-      (fun j => Semiterm.val w id (![(#1 : ArithmeticSemiterm M 5), &P, #2] j)) =
-        ![w 1, P, w 2] :=
-      by
+      refine definable_code_graph_values dropCore
+        ![(#1 : ArithmeticSemiterm M 5), &P, #2] _ ?_
+      intro w
       funext j
-      refine Fin.cases ?_ ?_ j
-      · simp
-      · intro j1
-        refine Fin.cases ?_ ?_ j1
-        · simp
-        · intro j2
-          refine Fin.cases ?_ (fun j3 => Fin.elim0 j3) j2
-          simp
-    rw [he]
+      fin_cases j <;> rfl
   have hHead :
     Σ-[1].Definable
       (fun w : Fin 5 → M =>
         Semiformula.Evalb ![w 0, w 1]
           (code (codeUnpair₁ (codeSub (Code.proj (0 : Fin 1)) (codeConst 1))))) :=
     by
-    refine
-      ((definable_code_graph (M := M)
-                (codeUnpair₁ (codeSub (Code.proj (0 : Fin 1)) (codeConst 1)))).retractiont
-            (f := ![(#0 : ArithmeticSemiterm M 5), #1])).of_iff
-        ?_
-    intro w
-    have he :
-      (fun j => Semiterm.val w id (![(#0 : ArithmeticSemiterm M 5), #1] j)) = ![w 0, w 1] :=
-      by
+      refine definable_code_graph_values
+        (codeUnpair₁ (codeSub (Code.proj (0 : Fin 1)) (codeConst 1)))
+        ![(#0 : ArithmeticSemiterm M 5), #1] _ ?_
+      intro w
       funext j
-      refine Fin.cases ?_ ?_ j
-      · simp
-      · intro j1
-        refine Fin.cases ?_ (fun j2 => Fin.elim0 j2) j1
-        simp
-    rw [he]
+      fin_cases j <;> rfl
   have hbody :
     Σ-[1].Definable
       (fun w : Fin 5 → M =>

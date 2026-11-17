@@ -8,7 +8,6 @@ module
 public import LeanPool.LeanModularForms.ValenceFormula.RectHomotopy.Geometry
 import LeanPool.LeanModularForms.ValenceFormula.RectHomotopy.HomotopyDef
 import Mathlib.CategoryTheory.Category.Init
-import Mathlib.NumberTheory.ArithmeticFunction.Misc
 
 /-!
 # Non-differentiability at partition points and derivative continuity
@@ -86,7 +85,8 @@ private lemma not_diffAt_at_one (s : ℝ) (hs : s ∈ Set.Icc (0 : ℝ) 1) :
             ((↑(1 : ℝ) : ℂ) - ↑(1 : ℝ)) * (↑(Real.pi / 6) : ℂ)) * I) = rho' := by
           rw [show ((↑(1 : ℝ) : ℂ) - ↑(1 : ℝ)) = 0 from by norm_num, zero_mul, add_zero,
             exp_pi_div_three_eq_rho']
-        simp_all
+        simp_all only [mem_Icc, neg_sub, ofReal_div, ofReal_ofNat, ofReal_one, sub_self, zero_mul,
+          add_zero]
       have h_chord : HasDerivAt (fun t' : ℝ => chordSegment rho' iPoint (t' - 1))
           (iPoint - rho') (1 : ℝ) :=
         hasDerivAt_chordSegment_shift rho' iPoint 1 1
@@ -104,7 +104,7 @@ private lemma not_diffAt_at_one (s : ℝ) (hs : s ∈ Set.Icc (0 : ℝ) 1) :
         have h2 : iPoint - rho' = (-1/2 : ℂ) + (1 - ↑(Real.sqrt 3) / 2) * I := by
           simp only [iPoint, rho']; apply Complex.ext <;> (simp; try norm_num)
         rw [h1, h2]
-        simp only [Complex.real_smul]; push_cast; ring
+        simp only [Complex.real_smul]; push_cast; ac_rfl
       rw [h_deriv_eq] at h_combined
       refine (hasDerivAt_iff_tendsto_slope.mp h_combined
         |>.mono_left (nhdsWithin_mono (1 : ℝ) (fun y hy => ne_of_gt hy))).congr' ?_
@@ -209,7 +209,7 @@ private lemma not_diffAt_at_three (s : ℝ) (hs : s ∈ Set.Icc (0 : ℝ) 1) :
         have h2 : rho - iPoint = (-1/2 : ℂ) + (↑(Real.sqrt 3) / 2 - 1) * I := by
           simp only [rho, iPoint]; apply Complex.ext <;> simp
         rw [h1, h2]
-        simp only [Complex.real_smul]; push_cast; ring
+        simp only [Complex.real_smul]; push_cast; ac_rfl
       rw [h_deriv_eq] at h_combined
       refine (hasDerivAt_iff_tendsto_slope.mp h_combined
         |>.mono_left (nhdsWithin_mono (3 : ℝ) (fun y hy => ne_of_lt hy))).congr' ?_
@@ -358,7 +358,7 @@ private lemma not_diffAt_at_four (s : ℝ) (_hs : s ∈ Set.Icc (0 : ℝ) 1) :
       simp only [Complex.mul_I_im, Complex.one_im,
                  Complex.sub_re, Complex.ofReal_re, Complex.div_ofNat_re] at h_im
       have h_H_pos : HHeight - Real.sqrt 3 / 2 > 0 := by simp only [HHeight]; norm_num
-      linarith
+      linarith only [h_im, h_H_pos]
     exact h_ne h_eq_right
 
 /-- The homotopy is NOT differentiable at t ∈ {1, 3, 4}

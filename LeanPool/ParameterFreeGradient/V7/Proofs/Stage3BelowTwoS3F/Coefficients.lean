@@ -164,7 +164,7 @@ theorem coeffC_row_sum (n : ℕ) (hn : 1 ≤ n) :
       simp [hsupport]
       field_simp [hune]
       have hrel := weight_succ_relation hkn
-      linarith
+      linarith only [hrel]
 
 theorem coeffB_row_sum (n : ℕ) (hn : 1 ≤ n) :
     ∀ k < n, (∑ i ∈ Finset.range (k + 2), coeffB n (k + 1) i) = 0 := by

@@ -9,7 +9,6 @@ module
 
 public import LeanPool.MassFormula.Defs
 import LeanPool.MassFormula.Discriminant
-import LeanPool.MassFormula.EisensteinMonogenic
 import LeanPool.MassFormula.First
 import LeanPool.MassFormula.UniformizerParam
 import Mathlib.Algebra.GroupWithZero.Submonoid.CancelMulZero
@@ -73,8 +72,8 @@ of `n`, and it vanishes in the residue field too, so the prime `ringChar 𝓀[K]
 two coincide ([Serre 1978, Remark 1°, p.1031][Serre1978]). -/
 private theorem eq_and_dvd_of_natCast_eq_zero (n : ℕ) (hn : 0 < n) (h0 : (n : ↥𝒪[K]) = 0) :
     ringChar K = ringChar 𝓀[K] ∧ ringChar 𝓀[K] ∣ n := by
-  have : IsFractionRing ↥𝒪[K] K :=
-    inferInstanceAs (IsFractionRing (valuation K).valuationSubring K)
+  have : IsFractionRing ↥𝒪[K] K := by
+    as_aux_lemma => exact inferInstance
   have hinj : Function.Injective (algebraMap ↥𝒪[K] K) := IsFractionRing.injective ↥𝒪[K] K
   -- `n` vanishes in `K`, so `ringChar K` is a prime divisor of `n`
   have hK : (n : K) = 0 := by
@@ -202,8 +201,8 @@ the derivative equal to the *constant* `π ^ m`, so `addVal_derivative_eq_d` eva
 with no discriminant computation at all. -/
 private theorem exists_mem_sigma_d_eq (n : ℕ) (hn2 : 2 ≤ n) (h0 : (n : ↥𝒪[K]) = 0)
     (m : ℕ) (hm : 0 < m) : ∃ L ∈ sigma K n, d L = n * m := by
-  have : IsFractionRing ↥𝒪[K] K :=
-    inferInstanceAs (IsFractionRing (valuation K).valuationSubring K)
+  have : IsFractionRing ↥𝒪[K] K := by
+    as_aux_lemma => exact inferInstance
   have hinj : Function.Injective (algebraMap ↥𝒪[K] K) := IsFractionRing.injective ↥𝒪[K] K
   obtain ⟨π, hπ⟩ := IsDiscreteValuationRing.exists_irreducible ↥𝒪[K]
   -- the Eisenstein model `X ^ n + π ^ m X + π` and its shape
@@ -324,8 +323,8 @@ theorem infinite_of_eq_of_dvd (n : ℕ) (hn : 0 < n) (hchar : ringChar K = ringC
       (CharP.char_ne_zero_of_finite 𝓀[K] (ringChar 𝓀[K]))
   have hn2 : 2 ≤ n := le_trans hp.two_le (Nat.le_of_dvd hn hdvd)
   have h0 : (n : ↥𝒪[K]) = 0 := by
-    have : IsFractionRing ↥𝒪[K] K :=
-      inferInstanceAs (IsFractionRing (valuation K).valuationSubring K)
+    have : IsFractionRing ↥𝒪[K] K := by
+      as_aux_lemma => exact inferInstance
     apply IsFractionRing.injective ↥𝒪[K] K
     rw [map_natCast, map_zero]
     exact (ringChar.spec K n).mpr (by rw [hchar]; exact hdvd)

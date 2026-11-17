@@ -6,10 +6,18 @@ Authors: Arseniy Akopyan
 module
 
 
-public import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
-public import Mathlib.Tactic
-public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.DegreePositiveIntegration
+public import Mathlib.Analysis.InnerProductSpace.PiL2
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.SphereOrientationPosFromMV
+public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.DegreePositiveIntegration
+import Mathlib.Algebra.Order.Star.Real
+import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Basify
+import Mathlib.Tactic.ENatToNat
+import Mathlib.Tactic.Measurability.Init
+import Mathlib.Tactic.Polynomial.Basic
+import Mathlib.Tactic.Positivity.Finset
+import Mathlib.Tactic.ReduceModChar
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.BallBoundaryLES
 /-!
 # A zero theorem for outward-pointing Euclidean vector fields

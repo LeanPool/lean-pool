@@ -107,7 +107,7 @@ private lemma coeff_ratio_isSquare_of_represents_zero {K : Type*} [Field K] [Cha
   have hx1K : (x 1 : K) ≠ 0 := hx1
   have hx1sq : (x 1 : K) ^ 2 ≠ 0 := pow_ne_zero 2 hx1K
   have hw1eq : (w 1 : K) * x 1 ^ 2 = -(w 0 : K) * x 0 ^ 2 := by
-    linear_combination h
+    simpa only [neg_mul] using eq_neg_of_add_eq_zero_right h
   rw [Rat.cast_mul, Rat.cast_neg, Rat.cast_inv]
   have hb : (w 0 : K) * x 1 ^ 2 ≠ 0 := mul_ne_zero hw0K hx1sq
   have key : (-(w 0 : K)⁻¹ * (w 1 : K)) * ((w 0 : K) * x 1 ^ 2) =

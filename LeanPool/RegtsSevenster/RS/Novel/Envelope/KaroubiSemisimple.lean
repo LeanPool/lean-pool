@@ -43,11 +43,13 @@ noncomputable instance karoubiEndAlgebra : Algebra ℂ (End X) :=
 /-- Finite-dimensional, as a subspace of the ambient skein
 endomorphisms. -/
 noncomputable instance karoubiEndFinite :
-    FiniteDimensional ℂ (End X) :=
-  FiniteDimensional.of_injective
-    (show End X →ₗ[ℂ] skeinEnd f X.X.arity from
-      karoubiHomLinearMap X X)
-    (fun _ _ h => Karoubi.Hom.ext h)
+    FiniteDimensional ℂ (End X) := by
+  have : FiniteDimensional ℂ (X.X ⟶ X.X) :=
+    homSpace_finite f (X.X.arity + X.X.arity)
+  have : FiniteDimensional ℂ (X ⟶ X) :=
+    FiniteDimensional.of_injective (karoubiHomLinearMap X X)
+      (fun _ _ h => Karoubi.Hom.ext h)
+  exact Module.Finite.equiv (End.linearEquiv (R := ℂ)).symm
 
 /-- The corner trace criterion, given nilpotent-trace vanishing
 in the ambient strand algebra. -/
@@ -58,9 +60,10 @@ theorem karoubiEnd_isSemisimpleRing_of_nilpotent_trace
   have : FiniteDimensional ℂ (End X.X) :=
     inferInstanceAs (FiniteDimensional ℂ (skeinEnd f X.X.arity))
   exact karoubiEnd_isSemisimpleRing_of_trace X
-    (HomSpace.traceMap f.val X.X.arity) hnil
-    (HomSpace.traceMap_comp_comm f)
-    (end_eq_zero_of_traces_vanish f X.X)
+    ((HomSpace.traceMap f.val X.X.arity).comp End.linearEquiv.toLinearMap) hnil
+    (fun a b => HomSpace.traceMap_comp_comm f a.asHom b.asHom)
+    (fun a ha => End.ext (end_eq_zero_of_traces_vanish f X.X a.asHom
+      (fun b => ha (End.of b))))
 
 /-- **Semisimplicity of Karoubi endomorphism algebras**, by the
 factorial trace obstruction. -/

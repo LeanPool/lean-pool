@@ -34,10 +34,11 @@ theorem blowup_rieszPressure_full_near_far_local_Lp
     let Fnear : Fin 3 → Fin 3 → Vec3 × ℝ → ℝ := fun i j => A.indicator (F i j)
     let Ffar : Fin 3 → Fin 3 → Vec3 × ℝ → ℝ := fun i j => B.indicator (F i j)
     let hNear : ∀ i j, MemLp (Fnear i j) (ENNReal.ofReal (3 / 2 : ℝ)) volume :=
-      fun i j => (hF i j).indicator ((CKN.isOpen_euclideanBall 0 L).measurableSet.prod hJ)
+      fun i j => (hF i j).indicator
+        ((CKN.isOpen_euclideanBall 0 L).measurableSet.prod hJ).nullMeasurableSet
     let hFar : ∀ i j, MemLp (Ffar i j) (ENNReal.ofReal (3 / 2 : ℝ)) volume :=
       fun i j => (hF i j).indicator
-        ((CKN.isOpen_euclideanBall 0 L).measurableSet.compl.prod hJ)
+        ((CKN.isOpen_euclideanBall 0 L).measurableSet.compl.prod hJ).nullMeasurableSet
     let p := CKN.Leray.rieszPressureSpaceTime
       (3 / 2 : ℝ) (by norm_num) F hF
     let pn := CKN.Leray.rieszPressureSpaceTime
@@ -61,10 +62,11 @@ theorem blowup_rieszPressure_full_near_far_local_Lp
   let Fnear : Fin 3 → Fin 3 → Vec3 × ℝ → ℝ := fun i j => A.indicator (F i j)
   let Ffar : Fin 3 → Fin 3 → Vec3 × ℝ → ℝ := fun i j => B.indicator (F i j)
   let hNear : ∀ i j, MemLp (Fnear i j) (ENNReal.ofReal (3 / 2 : ℝ)) volume :=
-    fun i j => (hF i j).indicator ((CKN.isOpen_euclideanBall 0 L).measurableSet.prod hJ)
+    fun i j => (hF i j).indicator
+      ((CKN.isOpen_euclideanBall 0 L).measurableSet.prod hJ).nullMeasurableSet
   let hFar : ∀ i j, MemLp (Ffar i j) (ENNReal.ofReal (3 / 2 : ℝ)) volume :=
     fun i j => (hF i j).indicator
-      ((CKN.isOpen_euclideanBall 0 L).measurableSet.compl.prod hJ)
+      ((CKN.isOpen_euclideanBall 0 L).measurableSet.compl.prod hJ).nullMeasurableSet
   let p := CKN.Leray.rieszPressureSpaceTime
     (3 / 2 : ℝ) (by norm_num) F hF
   let pn := CKN.Leray.rieszPressureSpaceTime

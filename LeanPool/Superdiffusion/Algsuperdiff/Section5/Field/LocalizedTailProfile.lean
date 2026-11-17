@@ -347,7 +347,6 @@ private theorem agmonTailRate_div_logWeight_le
   rw [hrateB, hrateL]
   have hw' : K / B * Q / w = K / (B * w) * Q := by
     field_simp [hw.ne', hB.ne']
-    try ring
   rw [hw']
   exact hmul
 

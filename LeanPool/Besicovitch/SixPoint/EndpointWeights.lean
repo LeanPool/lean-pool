@@ -152,6 +152,8 @@ private theorem endpointInput_mem_box :
 section
 
 
+-- Preserve the generated equations while exposing the enclosure expression, then check
+-- its closed rational arithmetic by kernel reduction.
 private theorem endpointOuterRadius_mem_interval :
     (734358 : ℝ) / 1000000 ≤ endpointOuterRadius cStar certifiedEndpointPair.2 ∧
       endpointOuterRadius cStar certifiedEndpointPair.2 ≤ 734359 / 1000000 := by
@@ -166,9 +168,10 @@ private theorem endpointOuterRadius_mem_interval :
       (.inv (.add (.var 0) (.literal 1)))
   let target : RationalInterval := ⟨734358 / 1000000, 734359 / 1000000, by norm_num⟩
   have hf : f.certifiesWithin endpointInputBox target = true := by
-    norm_num [f, endpointInputBox, target, RadicalExpression.certifiesWithin,
+    simp only [f, endpointInputBox, target, RadicalExpression.certifiesWithin,
       RadicalExpression.enclosure, RationalInterval.singleton, RationalInterval.add,
       RationalInterval.neg, RationalInterval.mul, RationalInterval.inv]
+    decide +kernel
   have h := RadicalExpression.certifiesWithin_sound endpointInput_mem_box hf
   simpa [f, endpointInput, target, endpointOuterRadius, RationalInterval.Contains,
     RadicalExpression.eval, div_eq_mul_inv, pow_two, sub_eq_add_neg, add_assoc] using h
@@ -183,9 +186,10 @@ private theorem endpointSecondDistance_mem_interval :
       (.neg (.var 1))
   let target : RationalInterval := ⟨2043810 / 1000000, 2043811 / 1000000, by norm_num⟩
   have hf : f.certifiesWithin endpointInputBox target = true := by
-    norm_num [f, endpointInputBox, target, RadicalExpression.certifiesWithin,
+    simp only [f, endpointInputBox, target, RadicalExpression.certifiesWithin,
       RadicalExpression.enclosure, RationalInterval.singleton, RationalInterval.add,
       RationalInterval.neg, RationalInterval.mul]
+    decide +kernel
   have h := RadicalExpression.certifiesWithin_sound endpointInput_mem_box hf
   simpa [f, endpointInput, target, endpointSecondDistance, RationalInterval.Contains,
     RadicalExpression.eval, pow_two, sub_eq_add_neg, add_assoc] using h
@@ -203,9 +207,10 @@ private theorem endpointFirstAuxiliaryRadicand_mem_interval :
     fin_cases i
     exact endpointInput_mem_box 1
   have hf : f.certifiesWithin X target = true := by
-    norm_num [f, X, endpointInputBox, target, RadicalExpression.certifiesWithin,
+    simp only [f, X, endpointInputBox, target, RadicalExpression.certifiesWithin,
       RadicalExpression.enclosure, RationalInterval.singleton, RationalInterval.add,
       RationalInterval.neg, RationalInterval.mul, RationalInterval.inv]
+    decide +kernel
   have h := RadicalExpression.certifiesWithin_sound hX hf
   simpa [f, target, RationalInterval.Contains, RadicalExpression.eval, div_eq_mul_inv,
     pow_two, sub_eq_add_neg] using h
@@ -248,9 +253,10 @@ private theorem endpointMixedAuxiliaryRadicand_mem_interval :
     · exact endpointInput_mem_box 1
     · simpa [X, value, RationalInterval.Contains] using endpointSecondDistance_mem_interval
   have hf : f.certifiesWithin X target = true := by
-    norm_num [f, X, endpointInputBox, target, RadicalExpression.certifiesWithin,
+    simp only [f, X, endpointInputBox, target, RadicalExpression.certifiesWithin,
       RadicalExpression.enclosure, RationalInterval.singleton, RationalInterval.add,
       RationalInterval.neg, RationalInterval.mul, RationalInterval.inv]
+    decide +kernel
   have h := RadicalExpression.certifiesWithin_sound hX hf
   simpa [f, value, target, RationalInterval.Contains, RadicalExpression.eval,
     div_eq_mul_inv, pow_two, sub_eq_add_neg] using h
@@ -281,9 +287,10 @@ private theorem endpointUnitAbscissa_mem_interval :
     fin_cases i
     exact endpointInput_mem_box 1
   have hf : f.certifiesWithin X target = true := by
-    norm_num [f, X, endpointInputBox, target, RadicalExpression.certifiesWithin,
+    simp only [f, X, endpointInputBox, target, RadicalExpression.certifiesWithin,
       RadicalExpression.enclosure, RationalInterval.singleton, RationalInterval.add,
       RationalInterval.neg, RationalInterval.mul, RationalInterval.inv]
+    decide +kernel
   have h := RadicalExpression.certifiesWithin_sound hX hf
   simpa [f, target, endpointUnitAbscissa, RationalInterval.Contains, RadicalExpression.eval,
     div_eq_mul_inv, pow_two, sub_eq_add_neg] using h
@@ -310,9 +317,10 @@ private theorem endpointOuterAbscissa_mem_interval :
     · simpa [X, value, RationalInterval.Contains] using endpointOuterRadius_mem_interval
     · simpa [X, value, RationalInterval.Contains] using endpointSecondDistance_mem_interval
   have hf : f.certifiesWithin X target = true := by
-    norm_num [f, X, target, RadicalExpression.certifiesWithin, RadicalExpression.enclosure,
+    simp only [f, X, target, RadicalExpression.certifiesWithin, RadicalExpression.enclosure,
       RationalInterval.singleton, RationalInterval.add, RationalInterval.neg,
       RationalInterval.mul, RationalInterval.inv]
+    decide +kernel
   have h := RadicalExpression.certifiesWithin_sound hX hf
   simpa [f, value, target, endpointOuterAbscissa, RationalInterval.Contains,
     RadicalExpression.eval, div_eq_mul_inv, pow_two, sub_eq_add_neg] using h
@@ -330,9 +338,10 @@ private theorem endpointUnitOrdinateRadicand_mem_interval :
     fin_cases i
     simpa [X, RationalInterval.Contains] using endpointUnitAbscissa_mem_interval
   have hf : f.certifiesWithin X target = true := by
-    norm_num [f, X, target, RadicalExpression.certifiesWithin, RadicalExpression.enclosure,
+    simp only [f, X, target, RadicalExpression.certifiesWithin, RadicalExpression.enclosure,
       RationalInterval.singleton, RationalInterval.add, RationalInterval.neg,
       RationalInterval.mul]
+    decide +kernel
   have h := RadicalExpression.certifiesWithin_sound hX hf
   simpa [f, target, RationalInterval.Contains, RadicalExpression.eval, pow_two,
     sub_eq_add_neg] using h
@@ -370,9 +379,10 @@ private theorem endpointOuterOrdinateRadicand_mem_interval :
     · simpa [X, value, RationalInterval.Contains] using endpointOuterRadius_mem_interval
     · simpa [X, value, RationalInterval.Contains] using endpointOuterAbscissa_mem_interval
   have hf : f.certifiesWithin X target = true := by
-    norm_num [f, X, target, RadicalExpression.certifiesWithin, RadicalExpression.enclosure,
-      RationalInterval.singleton, RationalInterval.add, RationalInterval.neg,
+    simp only [f, X, target, RadicalExpression.certifiesWithin, RadicalExpression.enclosure,
+      RationalInterval.add, RationalInterval.neg,
       RationalInterval.mul]
+    decide +kernel
   have h := RadicalExpression.certifiesWithin_sound hX hf
   simpa [f, value, target, RationalInterval.Contains, RadicalExpression.eval, pow_two,
     sub_eq_add_neg] using h
@@ -417,9 +427,10 @@ private theorem endpointChordAbscissa_mem_interval :
     · exact endpointInput_mem_box 0
     · simpa [X, value, RationalInterval.Contains] using endpointOuterRadius_mem_interval
   have hf : f.certifiesWithin X target = true := by
-    norm_num [f, X, endpointInputBox, target, RadicalExpression.certifiesWithin,
+    simp only [f, X, endpointInputBox, target, RadicalExpression.certifiesWithin,
       RadicalExpression.enclosure, RationalInterval.singleton, RationalInterval.add,
       RationalInterval.neg, RationalInterval.mul, RationalInterval.inv]
+    decide +kernel
   have h := RadicalExpression.certifiesWithin_sound hX hf
   simpa [f, value, target, endpointChordAbscissa, RationalInterval.Contains,
     RadicalExpression.eval, div_eq_mul_inv, pow_two, sub_eq_add_neg] using h
@@ -445,9 +456,10 @@ private theorem endpointChordOrdinateRadicand_mem_interval :
     · simpa [X, value, RationalInterval.Contains] using endpointOuterRadius_mem_interval
     · simpa [X, value, RationalInterval.Contains] using endpointChordAbscissa_mem_interval
   have hf : f.certifiesWithin X target = true := by
-    norm_num [f, X, target, RadicalExpression.certifiesWithin, RadicalExpression.enclosure,
-      RationalInterval.singleton, RationalInterval.add, RationalInterval.neg,
+    simp only [f, X, target, RadicalExpression.certifiesWithin, RadicalExpression.enclosure,
+      RationalInterval.add, RationalInterval.neg,
       RationalInterval.mul]
+    decide +kernel
   have h := RadicalExpression.certifiesWithin_sound hX hf
   simpa [f, value, target, RationalInterval.Contains, RadicalExpression.eval, pow_two,
     sub_eq_add_neg] using h
@@ -485,9 +497,10 @@ private theorem endpointAngularRate_mem_interval :
     · simpa [X, value, RationalInterval.Contains] using endpointChordAbscissa_mem_interval
     · simpa [X, value, RationalInterval.Contains] using endpointChordOrdinate_mem_interval
   have hf : f.certifiesWithin X target = true := by
-    norm_num [f, X, target, RadicalExpression.certifiesWithin, RadicalExpression.enclosure,
+    simp only [f, X, target, RadicalExpression.certifiesWithin, RadicalExpression.enclosure,
       RationalInterval.singleton, RationalInterval.add, RationalInterval.neg,
       RationalInterval.mul, RationalInterval.inv]
+    decide +kernel
   have h := RadicalExpression.certifiesWithin_sound hX hf
   simpa [f, value, target, endpointAngularRate, RationalInterval.Contains,
     RadicalExpression.eval, div_eq_mul_inv, sub_eq_add_neg] using h
@@ -518,9 +531,10 @@ private theorem endpointOuterAbscissaDerivative_mem_interval :
     · simpa [X, value, RationalInterval.Contains] using endpointAngularRate_mem_interval
     · simpa [X, value, RationalInterval.Contains] using endpointUnitOrdinate_mem_interval
   have hf : f.certifiesWithin X target = true := by
-    norm_num [f, X, target, RadicalExpression.certifiesWithin, RadicalExpression.enclosure,
-      RationalInterval.singleton, RationalInterval.add, RationalInterval.neg,
+    simp only [f, X, target, RadicalExpression.certifiesWithin, RadicalExpression.enclosure,
+      RationalInterval.add, RationalInterval.neg,
       RationalInterval.mul]
+    decide +kernel
   have h := RadicalExpression.certifiesWithin_sound hX hf
   simpa [f, value, target, endpointOuterAbscissaDerivative, RationalInterval.Contains,
     RadicalExpression.eval, sub_eq_add_neg] using h
@@ -550,9 +564,10 @@ private theorem endpointSecondDistanceDerivative_mem_interval :
         endpointOuterAbscissaDerivative_mem_interval
     · simpa [X, value, RationalInterval.Contains] using endpointSecondDistance_mem_interval
   have hf : f.certifiesWithin X target = true := by
-    norm_num [f, X, target, RadicalExpression.certifiesWithin, RadicalExpression.enclosure,
+    simp only [f, X, target, RadicalExpression.certifiesWithin, RadicalExpression.enclosure,
       RationalInterval.singleton, RationalInterval.add, RationalInterval.neg,
       RationalInterval.mul, RationalInterval.inv]
+    decide +kernel
   have h := RadicalExpression.certifiesWithin_sound hX hf
   simpa [f, value, target, endpointSecondDistanceDerivative, RationalInterval.Contains,
     RadicalExpression.eval, div_eq_mul_inv, sub_eq_add_neg] using h
@@ -581,9 +596,10 @@ private theorem endpointMixedDistanceDerivative_mem_interval :
     · simpa [X, value, RationalInterval.Contains] using
         endpointMixedAuxiliaryDistance_mem_interval
   have hf : f.certifiesWithin X target = true := by
-    norm_num [f, X, target, RadicalExpression.certifiesWithin, RadicalExpression.enclosure,
+    simp only [f, X, target, RadicalExpression.certifiesWithin, RadicalExpression.enclosure,
       RationalInterval.singleton, RationalInterval.add, RationalInterval.neg,
       RationalInterval.mul, RationalInterval.inv]
+    decide +kernel
   have h := RadicalExpression.certifiesWithin_sound hX hf
   simpa [f, value, target, endpointMixedDistanceDerivative, RationalInterval.Contains,
     RadicalExpression.eval, div_eq_mul_inv, sub_eq_add_neg] using h
@@ -613,9 +629,10 @@ private theorem endpointBaseAngularCoefficient_mem_interval :
     · simpa [X, value, RationalInterval.Contains] using endpointOuterOrdinate_mem_interval
     · simpa [X, value, RationalInterval.Contains] using endpointSecondDistance_mem_interval
   have hf : f.certifiesWithin X target = true := by
-    norm_num [f, X, endpointInputBox, target, RadicalExpression.certifiesWithin,
+    simp only [f, X, endpointInputBox, target, RadicalExpression.certifiesWithin,
       RadicalExpression.enclosure, RationalInterval.singleton, RationalInterval.add,
       RationalInterval.mul, RationalInterval.inv]
+    decide +kernel
   have h := RadicalExpression.certifiesWithin_sound hX hf
   simpa [f, value, target, endpointBaseAngularCoefficient, RationalInterval.Contains,
     RadicalExpression.eval, div_eq_mul_inv] using h
@@ -637,9 +654,10 @@ private theorem endpointLambdaAngularCoefficient_mem_interval :
     · simpa [X, value, RationalInterval.Contains] using endpointUnitOrdinate_mem_interval
     · exact endpointInput_mem_box 1
   have hf : f.certifiesWithin X target = true := by
-    norm_num [f, X, endpointInputBox, target, RadicalExpression.certifiesWithin,
+    simp only [f, X, endpointInputBox, target, RadicalExpression.certifiesWithin,
       RadicalExpression.enclosure, RationalInterval.singleton, RationalInterval.mul,
       RationalInterval.inv]
+    decide +kernel
   have h := RadicalExpression.certifiesWithin_sound hX hf
   simpa [f, value, target, endpointLambdaAngularCoefficient, RationalInterval.Contains,
     RadicalExpression.eval, div_eq_mul_inv] using h
@@ -671,9 +689,10 @@ private theorem endpointMuAngularCoefficient_mem_interval :
     · simpa [X, value, RationalInterval.Contains] using
         endpointMixedAuxiliaryDistance_mem_interval
   have hf : f.certifiesWithin X target = true := by
-    norm_num [f, X, target, RadicalExpression.certifiesWithin, RadicalExpression.enclosure,
-      RationalInterval.singleton, RationalInterval.add, RationalInterval.mul,
+    simp only [f, X, target, RadicalExpression.certifiesWithin, RadicalExpression.enclosure,
+      RationalInterval.add, RationalInterval.mul,
       RationalInterval.inv]
+    decide +kernel
   have h := RadicalExpression.certifiesWithin_sound hX hf
   simpa [f, value, target, endpointMuAngularCoefficient, RationalInterval.Contains,
     RadicalExpression.eval, div_eq_mul_inv] using h
@@ -702,9 +721,10 @@ private theorem endpointMuRadialCoefficient_mem_interval :
         endpointMixedDistanceDerivative_mem_interval
     · exact endpointInput_mem_box 0
   have hf : f.certifiesWithin X target = true := by
-    norm_num [f, X, endpointInputBox, target, RadicalExpression.certifiesWithin,
+    simp only [f, X, endpointInputBox, target, RadicalExpression.certifiesWithin,
       RadicalExpression.enclosure, RationalInterval.singleton, RationalInterval.add,
       RationalInterval.neg, RationalInterval.mul]
+    decide +kernel
   have h := RadicalExpression.certifiesWithin_sound hX hf
   simpa [f, value, target, endpointMuRadialCoefficient, RationalInterval.Contains,
     RadicalExpression.eval, sub_eq_add_neg] using h
@@ -738,9 +758,10 @@ private theorem endpointStationarityDeterminant_mem_interval :
     · simpa [X, value, RationalInterval.Contains] using
         endpointLambdaRadialCoefficient_mem_interval
   have hf : f.certifiesWithin X target = true := by
-    norm_num [f, X, target, RadicalExpression.certifiesWithin, RadicalExpression.enclosure,
-      RationalInterval.singleton, RationalInterval.add, RationalInterval.neg,
+    simp only [f, X, target, RadicalExpression.certifiesWithin, RadicalExpression.enclosure,
+      RationalInterval.add, RationalInterval.neg,
       RationalInterval.mul]
+    decide +kernel
   have h := RadicalExpression.certifiesWithin_sound hX hf
   simpa [f, value, target, endpointStationarityDeterminant, RationalInterval.Contains,
     RadicalExpression.eval, sub_eq_add_neg] using h
@@ -778,9 +799,10 @@ private theorem endpointLambda_mem_interval_aux :
     · simpa [X, value, RationalInterval.Contains] using
         endpointStationarityDeterminant_mem_interval
   have hf : f.certifiesWithin X target = true := by
-    norm_num [f, X, target, RadicalExpression.certifiesWithin, RadicalExpression.enclosure,
-      RationalInterval.singleton, RationalInterval.add, RationalInterval.neg,
+    simp only [f, X, target, RadicalExpression.certifiesWithin, RadicalExpression.enclosure,
+      RationalInterval.add, RationalInterval.neg,
       RationalInterval.mul, RationalInterval.inv]
+    decide +kernel
   have h := RadicalExpression.certifiesWithin_sound hX hf
   simpa [f, value, target, endpointLambda, endpointCramerLambda,
     RationalInterval.Contains, RadicalExpression.eval, div_eq_mul_inv, sub_eq_add_neg] using h
@@ -818,9 +840,10 @@ private theorem endpointMu_mem_interval_aux :
     · simpa [X, value, RationalInterval.Contains] using
         endpointStationarityDeterminant_mem_interval
   have hf : f.certifiesWithin X target = true := by
-    norm_num [f, X, target, RadicalExpression.certifiesWithin, RadicalExpression.enclosure,
-      RationalInterval.singleton, RationalInterval.add, RationalInterval.neg,
+    simp only [f, X, target, RadicalExpression.certifiesWithin, RadicalExpression.enclosure,
+      RationalInterval.add, RationalInterval.neg,
       RationalInterval.mul, RationalInterval.inv]
+    decide +kernel
   have h := RadicalExpression.certifiesWithin_sound hX hf
   simpa [f, value, target, endpointMu, endpointCramerMu, RationalInterval.Contains,
     RadicalExpression.eval, div_eq_mul_inv, sub_eq_add_neg] using h

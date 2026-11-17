@@ -5,7 +5,6 @@ Authors: Jon Crall, OpenAI GPT-5.6 Thinking
 -/
 module
 
-
 /-
 The dense-range lemma below is adapted from Adam Bornemann's private lemma
 `denseRange_of_selfAdjoint_injective` in
@@ -17,7 +16,7 @@ The original and adapted files are Apache-2.0 licensed.
 
 public import LeanPool.DavisKahan.DavisKahan.SpectralTheory.FormMethod.PositiveSurjectiveCriterion
 public import LeanPool.DavisKahan.ForTauCeti.Analysis.InnerProductSpace.CoerciveUnit
-public import Mathlib.Tactic
+import Mathlib.Tactic.Linarith -- shake: keep
 
 /-!
 # Unbounded inverse of a bounded positive resolvent

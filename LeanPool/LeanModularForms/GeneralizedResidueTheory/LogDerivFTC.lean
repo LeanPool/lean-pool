@@ -185,4 +185,12 @@ theorem integral_logDeriv_eq_neg_log_sub {f : ℝ → ℂ} {a b : ℝ} (hab : a 
     ∫ t in a..b, deriv f t / f t = Complex.log (-f b) - Complex.log (-f a) :=
   (ftc_log_neg_on_segment hab hf_cont hf_diff hf_deriv_cont hf_neg_slit).2
 
+/-- Transport interval integrability and an evaluated integral along a.e. equality. -/
+theorem intervalIntegrable_integral_eq_congr_ae {f g : ℝ → ℂ} {a b : ℝ} {c : ℂ}
+    (h : IntervalIntegrable f volume a b ∧ ∫ t in a..b, f t = c)
+    (hfg : ∀ᵐ t ∂volume, t ∈ Ι a b → f t = g t) :
+    IntervalIntegrable g volume a b ∧ ∫ t in a..b, g t = c := by
+  refine ⟨h.1.congr_ae ((ae_restrict_iff' measurableSet_uIoc).mpr hfg), ?_⟩
+  exact (intervalIntegral.integral_congr_ae hfg).symm.trans h.2
+
 end LogDerivFTC

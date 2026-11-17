@@ -51,7 +51,7 @@ theorem ExposesPoint.inner_recessionDirection_neg
   have hlt : inner ℝ normal (p + q) < inner ℝ normal p :=
     hexposed.2 hpq_mem hpq_ne
   rw [inner_add_right] at hlt
-  linarith
+  linarith only [hlt]
 
 omit [CompleteSpace E] in
 /-- Any recession direction at an exposed point pairs nonpositively with the exposing normal. -/
@@ -73,9 +73,9 @@ lemma slope_nonpos_of_forall_nonneg_add_mul_le {a b c : ℝ}
   rcases exists_nat_gt ((c - a) / b) with ⟨n, hn⟩
   have hmul : c - a < (n : ℝ) * b := by
     have hmul' := (div_lt_iff₀ hb_pos).mp hn
-    simpa [mul_comm] using hmul'
+    exact hmul'
   have hbig : c < a + (n : ℝ) * b := by
-    linarith
+    linarith only [hmul]
   have hle : a + (n : ℝ) * b ≤ c := h (n : ℝ) (Nat.cast_nonneg n)
   exact (not_le_of_gt hbig) hle
 
@@ -154,13 +154,13 @@ theorem eq_zero_of_forall_inner_sub_nonpos_of_mem_nhds
   let t : ℝ := ε / 2
   have ht_pos : 0 < t := by
     dsimp [t]
-    linarith
+    linarith only [hε_pos]
   have ht_ball : t ∈ Metric.ball (0 : ℝ) ε := by
     rw [Metric.mem_ball, dist_eq_norm, sub_zero, Real.norm_eq_abs]
     have ht_nonneg : 0 ≤ t := ht_pos.le
     rw [abs_of_nonneg ht_nonneg]
     dsimp [t]
-    linarith
+    linarith only [hε_pos]
   have ht_domain : y + t • q ∈ domain := hε_sub ht_ball
   have hnormal_t : inner ℝ q ((y + t • q) - y) ≤ 0 :=
     hnormal (y + t • q) ht_domain

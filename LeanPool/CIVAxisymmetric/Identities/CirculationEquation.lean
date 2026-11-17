@@ -153,9 +153,9 @@ theorem spatialSecondPartial_circulation_zero_zero {u : ParabolicPoint → Vec3}
   have h_circ2 : ContDiffOn ℝ 2 (fun z : Vec3 × ℝ => circulation u z) unitCylinder := by
     unfold circulation
     have h0 : ContDiffOn ℝ 2 (fun z : Vec3 × ℝ => z.1 0) unitCylinder :=
-      ((contDiff_apply ℝ ℝ 0).comp contDiff_fst).contDiffOn
+      ((contDiff_apply ℝ (fun _ : Fin 3 => ℝ) 0).comp contDiff_fst).contDiffOn
     have h1 : ContDiffOn ℝ 2 (fun z : Vec3 × ℝ => z.1 1) unitCylinder :=
-      ((contDiff_apply ℝ ℝ 1).comp contDiff_fst).contDiffOn
+      ((contDiff_apply ℝ (fun _ : Fin 3 => ℝ) 1).comp contDiff_fst).contDiffOn
     have hu0' : ContDiffOn ℝ 2 (fun z : Vec3 × ℝ => u z 0) unitCylinder := contDiffOn_component
       hu2 0
     have hu1' : ContDiffOn ℝ 2 (fun z : Vec3 × ℝ => u z 1) unitCylinder := contDiffOn_component
@@ -237,9 +237,9 @@ theorem spatialSecondPartial_circulation_two_two {u : ParabolicPoint → Vec3}
   have h_circ2 : ContDiffOn ℝ 2 (fun z : Vec3 × ℝ => circulation u z) unitCylinder := by
     unfold circulation
     have h0 : ContDiffOn ℝ 2 (fun z : Vec3 × ℝ => z.1 0) unitCylinder :=
-      ((contDiff_apply ℝ ℝ 0).comp contDiff_fst).contDiffOn
+      ((contDiff_apply ℝ (fun _ : Fin 3 => ℝ) 0).comp contDiff_fst).contDiffOn
     have h1 : ContDiffOn ℝ 2 (fun z : Vec3 × ℝ => z.1 1) unitCylinder :=
-      ((contDiff_apply ℝ ℝ 1).comp contDiff_fst).contDiffOn
+      ((contDiff_apply ℝ (fun _ : Fin 3 => ℝ) 1).comp contDiff_fst).contDiffOn
     have hu0' : ContDiffOn ℝ 2 (fun z : Vec3 × ℝ => u z 0) unitCylinder := contDiffOn_component
       hu2 0
     have hu1' : ContDiffOn ℝ 2 (fun z : Vec3 × ℝ => u z 1) unitCylinder := contDiffOn_component

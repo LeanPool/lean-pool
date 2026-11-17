@@ -8,7 +8,10 @@ module
 
 public import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
 public import Mathlib.Analysis.Normed.Module.Basic
-public import Mathlib.Topology.Algebra.Module.Equiv
+public import Mathlib.Topology.Algebra.Module.Equiv.Basic
+public import Mathlib.Topology.Algebra.Module.Equiv.Pi
+public import Mathlib.Topology.Algebra.Module.Equiv.Prod
+public import Mathlib.Topology.Algebra.Module.Equiv.Submodule
 import Mathlib.Topology.MetricSpace.Contracting
 public import LeanPool.NavierStokesAndEuler.ForMathlib.ElaborationShortcuts
 

@@ -7,6 +7,8 @@ module
 
 
 public import LeanPool.NandakumarRamanaRao.NRR.Multivalued.ZeroSet
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # `NRR.Multivalued.Operations` — constructors and transformations of nice multivalued functions

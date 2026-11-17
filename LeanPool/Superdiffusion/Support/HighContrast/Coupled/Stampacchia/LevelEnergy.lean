@@ -545,7 +545,7 @@ theorem sumCoordNorm_le {U : Set (Vec d)}
         ((eLpNorm (A.indicator (fun x => w.grad x i)) 2 (volumeMeasureOn U)).toReal) ^ 2
           = ∫ x in A, (w.grad x i) ^ 2 ∂volume := by
       intro i
-      rw [toReal_eLpNorm_two_sq_eq_integral_sq ((w.gradMemL2 i).indicator hAm)]
+      rw [toReal_eLpNorm_two_sq_eq_integral_sq ((w.gradMemL2 i).indicator hAm.nullMeasurableSet)]
       have hind : (fun x => (A.indicator (fun y => w.grad y i) x) ^ 2)
           = A.indicator (fun x => (w.grad x i) ^ 2) := by
         funext x

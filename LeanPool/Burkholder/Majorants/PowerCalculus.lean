@@ -8,6 +8,7 @@ module
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.Analysis.SpecialFunctions.Pow.Continuity
 import Mathlib.Analysis.InnerProductSpace.NormPow
+import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
 
 /-!
 # Real-power calculus for the majorants

@@ -31,7 +31,7 @@ namespace ESS
 /-- Reading a space-time field at `(x, τ)` from the triple `((τ, y), x)` preserves
 null sets. -/
 theorem serrin_quasiMeasurePreserving_triple (T : ℝ) :
-    Measure.QuasiMeasurePreserving
+    QuasiMeasurePreserving
       (fun w : (ℝ × Vec3) × Vec3 => (w.2, w.1.1))
       (((volume.restrict (Ioo 0 T)).prod (volume : Measure Vec3)).prod
         (volume : Measure Vec3))

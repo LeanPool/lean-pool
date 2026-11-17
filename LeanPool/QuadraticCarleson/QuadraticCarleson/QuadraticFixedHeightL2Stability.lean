@@ -7,7 +7,6 @@ module
 
 
 public import LeanPool.QuadraticCarleson.QuadraticCarleson.QuadraticFixedHeightAveragingNorm
-public import Mathlib.MeasureTheory.Function.LpSpace.Basic
 
 /-!
 # Stability of the genuine fixed-height quadratic maximal operator
@@ -166,7 +165,7 @@ theorem ae_abs_paperFixedHeightQuadraticMaximalReal_sub_le (height : ℕ)
   rw [ENNReal.toReal_add hgx.ne hd.ne] at ht₁
   rw [ENNReal.toReal_add hfx.ne hd.ne] at ht₂
   dsimp only [paperFixedHeightQuadraticMaximalReal]
-  exact abs_sub_le_iff.mpr ⟨by linarith, by linarith⟩
+  exact abs_sub_le_iff.mpr ⟨by linarith only [ht₁], by linarith only [ht₂]⟩
 
 /-- L² stability with exactly the proved fixed-height decay constant. -/
 theorem paperFixedHeightQuadraticMaximalReal_sub_eLpNorm_decay (height : ℕ)

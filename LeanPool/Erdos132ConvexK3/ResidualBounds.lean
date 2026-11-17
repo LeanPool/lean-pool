@@ -7,9 +7,6 @@ module
 
 public import LeanPool.Erdos132ConvexK3.Basic
 import LeanPool.Erdos132ConvexK3.Geometry
-import Mathlib.Algebra.Order.Algebra
-import Mathlib.Data.EReal.Inv
-import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # Residual one-sided and four-edge bounds

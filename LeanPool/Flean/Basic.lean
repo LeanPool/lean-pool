@@ -7,7 +7,7 @@ module
 
 public import Mathlib.Order.Closure
 
-public import Mathlib.Data.FunLike.IsApply
+public import Mathlib.Algebra.Group.IsApply
 
 public import LeanPool.Flean.Subnorm
 public import LeanPool.Flean.Rounding

@@ -202,7 +202,7 @@ theorem vorticityBackMollify_tendsto_restrict {W S : Set (Vec3 × ℝ)} (hW : Me
     Tendsto (fun n => eLpNorm (vorticityBackMollify W f (ε n) (hεpos n) - f) 2
       (volume.restrict S)) atTop (𝓝 0) := by
   have hglob : MemLp (W.indicator f) 2 (volume : Measure (Vec3 × ℝ)) :=
-    (memLp_indicator_iff_restrict hW).2 hf
+    (memLp_indicator_iff_restrict hW.nullMeasurableSet).2 hf
   have hconv := vorticityBackMollify_tendsto hglob hε hεpos
   refine tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds hconv
     (fun _ => bot_le) (fun n => ?_)

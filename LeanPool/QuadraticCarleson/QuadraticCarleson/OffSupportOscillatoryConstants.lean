@@ -57,7 +57,7 @@ theorem offSupport_step_fraction_le
       (by positivity : 0 < l * t * a)).2
     have h := mul_le_mul_of_nonneg_left hta
       (show 0 ≤ z * B * l * a by positivity)
-    nlinarith
+    linarith only [h]
   calc
     _ ≤ (A / (l * t * a) + (2 * z * B) / (l * t * a)) /
         (4 * Real.pi * mu) :=
@@ -81,7 +81,7 @@ theorem offSupport_step_power_fraction_le (k r q : ℕ)
   have h2 : mu ^ k * t ^ (k + r) * a ^ (k + (q + 2)) =
       (mu ^ k * t ^ (k + r) * a ^ (k + q)) * a ^ 2 := by
     simp only [pow_add]
-    ring
+    ac_rfl
   have h3 : mu ^ (k + 1) * t ^ (k + 1 + r) * a ^ (k + 1 + q) =
       mu * (mu ^ k * t ^ (k + r) * a ^ (k + q)) * t * a := by
     simp only [pow_add, pow_one]

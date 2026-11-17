@@ -6,6 +6,7 @@ Authors: Bastiaan J Braams
 module
 
 public import Mathlib.Analysis.Complex.MeanValue
+public import Mathlib.Analysis.Normed.Module.Connected
 public import Mathlib.MeasureTheory.Integral.CircleAverage
 public import Mathlib.Topology.Semicontinuity.Basic
 public import LeanPool.SeveralComplexVariables.SeveralComplexVariables.Integral.Circle

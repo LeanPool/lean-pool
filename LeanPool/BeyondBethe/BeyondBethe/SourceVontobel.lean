@@ -9,6 +9,7 @@ module
 public import LeanPool.BeyondBethe.BeyondBethe.Bethe
 public import Mathlib.Algebra.Order.BigOperators.Ring.Finset
 public import Mathlib.Analysis.Convex.Deriv
+public import Mathlib.Analysis.InnerProductSpace.Basic
 
 /-! # Source Vontobel -/
 

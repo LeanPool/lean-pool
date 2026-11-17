@@ -360,7 +360,7 @@ theorem smooth_test_key_subsolution
     have hρle : ρ y <= (ε / 2) * dotProduct (y - x) (y - x) := by
       have h1 : ρ y <= (ε / 2) * ‖y - x‖ ^ 2 :=
         le_trans (le_abs_self _) hb
-      nlinarith [hnormsq, half_pos hε]
+      nlinarith only [hε, hnormsq, h1, hnormsq, half_pos hε]
     have hval :
         quadraticModel x (u x) J.gradient
             (symHessian J.hessian + ε • (1 : Hessian n)) x = u x :=
@@ -370,9 +370,9 @@ theorem smooth_test_key_subsolution
           quadraticModel x (u x) J.gradient
             (symHessian J.hessian + ε • (1 : Hessian n)) y := by
       rw [hquad]
-      linarith [hy]
+      linarith only [hy, hρle, hy]
     rw [hval]
-    linarith [huy]
+    linarith only [hy, hquad, hρle, huy]
   have happ := h x hx _ hφsmooth htouch
   have hD1 :
       fderiv Real
@@ -439,8 +439,8 @@ theorem smooth_test_key_supersolution
     have hρge : -((ε / 2) * dotProduct (y - x) (y - x)) <= ρ y := by
       have h1 : -((ε / 2) * ‖y - x‖ ^ 2) <= ρ y := by
         have := neg_abs_le (ρ y)
-        linarith [hb]
-      nlinarith [hnormsq, half_pos hε]
+        linarith only [hb, this, hb]
+      nlinarith only [hε, hnormsq, h1, hnormsq, half_pos hε]
     have hval :
         quadraticModel x (u x) J.gradient
             (symHessian J.hessian + (-ε) • (1 : Hessian n)) x = u x :=
@@ -449,9 +449,9 @@ theorem smooth_test_key_supersolution
         quadraticModel x (u x) J.gradient
             (symHessian J.hessian + (-ε) • (1 : Hessian n)) y <= u y := by
       rw [hquad]
-      linarith [hy]
+      linarith only [hy, hρge, hy]
     rw [hval]
-    linarith [huy]
+    linarith only [hy, hquad, hρge, huy]
   have happ := h x hx _ hφsmooth htouch
   have hD1 :
       fderiv Real

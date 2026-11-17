@@ -601,8 +601,7 @@ theorem codim_commutator_ge_one_of_solvable {n : ℕ} (dimn : Module.finrank K L
    apply LieAlgebra.derivedSeries_lt_top_of_solvable K L
   have FD : FiniteDimensional K (⊤ : LieIdeal K L) :=by
    apply Module.finite_of_finrank_eq_succ (n:= n)
-   rw [← finrank_top K L] at dimn
-   assumption
+   rwa [← finrank_top K L] at dimn
   have t : Module.finrank K (LieAlgebra.commutator K L) < Module.finrank K (⊤ : Submodule K L) := by
    apply Submodule.finrank_lt_finrank_of_lt
    assumption
@@ -641,8 +640,7 @@ theorem finrank_commutator_le_one_of_lie_basis {n : ℕ} (B : Basis (Fin n) K L)
     rw [le_zero_iff]
     apply finrank_bot
   · apply Submodule.finrank_mono at h''
-    rw [finrank_span_singleton hX] at h''
-    assumption
+    rwa [finrank_span_singleton hX] at h''
 
 variable (K L : Type*) [CommRing K] [LieRing L] [LieAlgebra K L]
 
@@ -936,8 +934,7 @@ theorem LieEquiv.preserves_isTwoStepNilpotent (e : L ≃ₗ⁅K⁆ L') :
   · intro h
     exact LieIdeal.map_mono h
   · intro h
-    rw [LieIdeal.map_le_iff_le_comap, LieIdeal.comap_map_eq_of_equiv] at h
-    assumption
+    rwa [LieIdeal.map_le_iff_le_comap, LieIdeal.comap_map_eq_of_equiv] at h
 
 end lieequiv
 

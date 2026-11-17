@@ -7,8 +7,6 @@ module
 
 
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.SphereTopHomologyReduction
-public import Mathlib.CategoryTheory.Limits.Shapes.Kernels
-public import Mathlib.Algebra.Category.ModuleCat.Abelian
 
 /-!
 # Reduced-to-unreduced bridge for sphere top homology

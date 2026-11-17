@@ -357,7 +357,7 @@ theorem directedProjectionGap_le_of_inf_orthogonal_eq_bot (U V : Submodule 𝕜 
   set t := U.directedProjectionGap V with ht
   have ht0 : 0 ≤ t := norm_nonneg _
   have ht1 : t ≤ 1 := U.directedProjectionGap_le_one V
-  have hk0 : (0 : ℝ) ≤ 1 - t ^ 2 := by nlinarith
+  have hk0 : (0 : ℝ) ≤ 1 - t ^ 2 := by nlinarith only [ht0, ht1]
   set c := Real.sqrt (1 - t ^ 2) with hc
   have hc0 : 0 ≤ c := Real.sqrt_nonneg _
   have hcsq : c ^ 2 = 1 - t ^ 2 := Real.sq_sqrt hk0

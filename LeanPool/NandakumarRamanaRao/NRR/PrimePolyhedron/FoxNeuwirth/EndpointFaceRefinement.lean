@@ -7,6 +7,9 @@ module
 
 
 public import LeanPool.NandakumarRamanaRao.NRR.PrimePolyhedron.FoxNeuwirth.EquivariantPrismHorizontalEndpointIdentification
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Positivity.Finset
+import Mathlib.Tactic.ReduceModChar
 /-!
 # Refinement words carried by a prescribed boundary face
 

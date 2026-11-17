@@ -119,7 +119,7 @@ theorem canonical_orderInitialIdeal_sup_coordinate_eq_top_iff_graded_surjective
     refine ⟨(P * a) • g, ?_⟩
     calc
       X • ((P * a) • g) = (X * (P * a)) • g := by rw [smul_smul]
-      _ = (P * s) • g := by rw [ha]; ring
+      _ = (P * s) • g := by rw [ha]; ring_nf
       _ = P • (s • g) := by rw [smul_smul]
       _ = P • g := by rw [hsg]
   · intro hsurj

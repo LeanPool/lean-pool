@@ -93,11 +93,9 @@ theorem hasDerivAt_anariRezaeiMergePsiAlong
     simp only [anariRezaeiMergePsiAlong, anariRezaeiMergePsi,
       Function.comp_apply, Pi.add_apply, Pi.sub_apply, Pi.mul_apply,
       Pi.div_apply, id_eq]
-    ring
+    ring_nf
   · dsimp [anariRezaeiMergePsiDerivative]
     rw [Real.log_div h1mx h1ms]
-    try simp only [Function.comp_apply, Pi.add_apply, Pi.sub_apply,
-      Pi.mul_apply, Pi.div_apply, id_eq]
     field_simp [h1px, h1ps, h1mx, h1ms]
     ring
 
@@ -197,7 +195,7 @@ theorem anariRezaeiMergePsi_comm
   have h1ps : 1+s ≠ 0 := by linarith
   rw [anariRezaeiMergePsi, anariRezaeiMergePsi]
   rw [Real.log_div h1ps h1pr, Real.log_div h1pr h1ps]
-  ring
+  ring_nf
 
 theorem anariRezaeiMergePsi_nonpos
     {r s : ℝ} (hr0 : 0 ≤ r) (hs0 : 0 ≤ s)
@@ -288,10 +286,8 @@ theorem hasDerivAt_anariRezaeiMergeGapAlong
   · funext y
     simp only [anariRezaeiMergeGapAlong, anariRezaeiMergeGap,
       Function.comp_apply, Pi.add_apply, Pi.sub_apply, Pi.div_apply, id_eq]
-    ring
+    ring_nf
   · dsimp [anariRezaeiMergeGapDerivative]
-    try simp only [Function.comp_apply, Pi.add_apply, Pi.sub_apply,
-      Pi.div_apply, id_eq]
     field_simp [hxr.ne', hxC.ne', hst2.ne', hCt2.ne']
     ring
 

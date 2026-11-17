@@ -8,8 +8,6 @@ module
 public import LeanPool.Erdos132ConvexK3.Geometry
 public import LeanPool.Erdos132ConvexK3.UseSite
 import LeanPool.Erdos132ConvexK3.TailClosure
-import Mathlib.Algebra.Order.Algebra
-import Mathlib.Data.EReal.Inv
 
 /-!
 # Terminal-color closure at the maximal-gap use site
@@ -900,21 +898,10 @@ theorem erlv_case12_other_d1_bone_impossible
           have hMid : TopThreeAdjacent P d₁ d₂ d₃ s x := by
             have h := left_cover_top_three_adjacent S.classes hStart hLeft
             simpa [s] using h
-          have hzxD₃ : sqDist (P z) (P x) = d₃ := by
-            have hGrow₁ : sqDist (P z) (P x) < sqDist (P s) (P x) := by
-              simpa only [IsLeftCover, s] using hLeft
-            have hGrow₂ : sqDist (P s) (P x) < sqDist (P s) (P p) := by
-              simpa only [IsRightCover, p, x] using hRight
-            rcases hStart.2 with h₁ | h₂ | h₃ <;>
-              rcases hMid.2 with hm₁ | hm₂ | hm₃ <;>
-                linarith [S.classes.1, S.classes.2.1]
-          have hsxD₂ : sqDist (P s) (P x) = d₂ := by
-            have hGrow₁ : sqDist (P z) (P x) < sqDist (P s) (P x) := by
-              simpa only [IsLeftCover, s] using hLeft
-            have hGrow₂ : sqDist (P s) (P x) < sqDist (P s) (P p) := by
-              simpa only [IsRightCover, p, x] using hRight
-            rcases hMid.2 with hm₁ | hm₂ | hm₃ <;>
-              linarith [S.classes.1, S.classes.2.1]
+          have ranks := strict_three_rank_chain S.classes.1 S.classes.2.1
+            hStart.2 hMid.2 (Or.inl hsp) hLeft hRight
+          have hzxD₃ := ranks.1
+          have hsxD₂ := ranks.2.1
           have hxz : sqDist (P x) (P z) = d₃ := by
             simpa only [sqDist_comm] using hzxD₃
           have hxs : sqDist (P x) (P s) = d₂ := by
@@ -991,21 +978,10 @@ theorem erlv_case12_other_d1_bone_impossible
           have hMid : TopThreeAdjacent P d₁ d₂ d₃ z p := by
             have h := right_cover_top_three_adjacent S.classes hStart hRight
             simpa [p, x] using h
-          have hzxD₃ : sqDist (P z) (P x) = d₃ := by
-            have hGrow₁ : sqDist (P z) (P x) < sqDist (P z) (P p) := by
-              simpa only [IsRightCover, p, x] using hRight
-            have hGrow₂ : sqDist (P z) (P p) < sqDist (P s) (P p) := by
-              simpa only [IsLeftCover, s] using hLeft
-            rcases hStart.2 with h₁ | h₂ | h₃ <;>
-              rcases hMid.2 with hm₁ | hm₂ | hm₃ <;>
-                linarith [S.classes.1, S.classes.2.1]
-          have hzpD₂ : sqDist (P z) (P p) = d₂ := by
-            have hGrow₁ : sqDist (P z) (P x) < sqDist (P z) (P p) := by
-              simpa only [IsRightCover, p, x] using hRight
-            have hGrow₂ : sqDist (P z) (P p) < sqDist (P s) (P p) := by
-              simpa only [IsLeftCover, s] using hLeft
-            rcases hMid.2 with hm₁ | hm₂ | hm₃ <;>
-              linarith [S.classes.1, S.classes.2.1]
+          have ranks := strict_three_rank_chain S.classes.1 S.classes.2.1
+            hStart.2 hMid.2 (Or.inl hsp) hRight hLeft
+          have hzxD₃ := ranks.1
+          have hzpD₂ := ranks.2.1
           have hxz : sqDist (P x) (P z) = d₃ := by
             simpa only [sqDist_comm] using hzxD₃
           have hpz : sqDist (P p) (P z) = d₂ := by

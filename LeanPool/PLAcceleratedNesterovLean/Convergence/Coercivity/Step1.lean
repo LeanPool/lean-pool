@@ -34,7 +34,7 @@ theorem lyapunov_gap_bound (gap u_sq lam Pv_sq L : ℝ)
     (_hgap : 0 ≤ gap) (hu : 0 ≤ u_sq) (hlam : 0 < lam) (hPv : 0 ≤ Pv_sq)
     (hL : L = gap + u_sq / 2 + lam * Pv_sq) :
     gap ≤ L := by
-  nlinarith [mul_nonneg (le_of_lt hlam) hPv]
+  linarith only [hL, hu, mul_nonneg hlam.le hPv]
 
 /-- Variant: gap ≤ L when λ ≥ 0 (weak inequality, handles a = 1 edge case).
     Unfolds the Lyapunov definition directly; requires √(μ'·η) ≤ 1.
@@ -45,9 +45,9 @@ theorem gap_le_lyapunovOfState_of_sqrt_le {d : ℕ} (P : E d →L[ℝ] E d) (μ'
     f s.x - fStar f ≤ lyapunovOfState P μ' π f η s := by
   simp only [lyapunovOfState]
   have hlam_nn : 0 ≤ (1 + Real.sqrt (μ' * η)) ^ 2 / (2 * (1 - Real.sqrt (μ' * η))) :=
-    div_nonneg (sq_nonneg _) (by nlinarith)
-  nlinarith [sq_nonneg ‖auxVarOfState P μ' π η s‖,
-             mul_nonneg hlam_nn (sq_nonneg ‖P s.v‖)]
+    div_nonneg (sq_nonneg _) (by linarith only [ha_le1])
+  exact (le_add_of_nonneg_right (div_nonneg (sq_nonneg _) (by norm_num))).trans
+    (le_add_of_nonneg_right (mul_nonneg hlam_nn (sq_nonneg _)))
 
 /-- Variant: gap ≤ L when λ ≥ 0 (weak inequality, handles a = 1 edge case).
     Unfolds the Lyapunov definition directly; requires √(μ'·η) ≤ 1. -/
@@ -63,7 +63,7 @@ theorem lyapunov_u_bound (gap u_sq lam Pv_sq L : ℝ)
     (hgap : 0 ≤ gap) (_hu : 0 ≤ u_sq) (hlam : 0 < lam) (hPv : 0 ≤ Pv_sq)
     (hL : L = gap + u_sq / 2 + lam * Pv_sq) :
     u_sq ≤ 2 * L := by
-  nlinarith [mul_nonneg (le_of_lt hlam) hPv]
+  linarith only [hgap, hL, mul_nonneg hlam.le hPv]
 
 /-- From the Lyapunov definition, ‖Pv‖² ≤ L/λ. -/
 theorem lyapunov_Pv_bound (gap u_sq lam Pv_sq L : ℝ)
@@ -71,7 +71,7 @@ theorem lyapunov_Pv_bound (gap u_sq lam Pv_sq L : ℝ)
     (hL : L = gap + u_sq / 2 + lam * Pv_sq) :
     Pv_sq ≤ L / lam := by
   rw [le_div_iff₀ hlam]
-  nlinarith
+  linarith only [hgap, hu, hL]
 
 /-- Triangle inequality on u = Pperp_v + √μ' · e gives ‖Pperp_v‖ ≤ ‖u‖ + √μ'·‖e‖. -/
 theorem perp_v_bound_from_u (u Pperp_v e : E d) (sqrtmu : ℝ)

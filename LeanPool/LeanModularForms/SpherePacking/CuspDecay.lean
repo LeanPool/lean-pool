@@ -65,10 +65,14 @@ private theorem tendsto_one_atImInfty_of_cuspFunction_zero
     (hval : UpperHalfPlane.cuspFunction 1 f 0 = 1) :
     Tendsto f UpperHalfPlane.atImInfty (nhds 1) := by
   have hcont : ContinuousAt (UpperHalfPlane.cuspFunction 1 f) 0 :=
-    (ModularFormClass.analyticAt_cuspFunction_zero f one_pos (by simp)).continuousAt
+    (ModularFormClass.analyticAt_cuspFunction_zero f one_pos (by simp only [
+      CongruenceSubgroup.strictPeriods_Gamma, Nat.cast_one,
+      AddSubgroup.mem_zmultiples])).continuousAt
   rw [show (1 : ℂ) = UpperHalfPlane.cuspFunction 1 f 0 from hval.symm]
   exact (hcont.tendsto.comp tendsto_qParam_atImInfty).congr
-    (fun z => (SlashInvariantFormClass.eq_cuspFunction f z (by simp) one_ne_zero))
+    (fun z => (SlashInvariantFormClass.eq_cuspFunction f z (by simp only [
+      CongruenceSubgroup.strictPeriods_Gamma, Nat.cast_one,
+      AddSubgroup.mem_zmultiples]) one_ne_zero))
 
 /-- `E4(z) -> 1` as `Im(z) -> infinity`, from the q-expansion constant term. -/
 theorem E₄_tendsto_one_atImInfty_SP :
@@ -96,7 +100,8 @@ noncomputable def cFDelta := UpperHalfPlane.cuspFunction 1 Delta
 /-- The derivative of cFDelta at 0 equals 1. -/
 lemma deriv_cF_Delta_zero : deriv cFDelta 0 = 1 := by
   have hfps := ModularFormClass.hasFPowerSeries_cuspFunction Delta one_pos
-    (by simp)
+    (by simp only [CongruenceSubgroup.strictPeriods_Gamma, Nat.cast_one,
+      AddSubgroup.mem_zmultiples])
   rw [show cFDelta = UpperHalfPlane.cuspFunction 1 Delta from rfl,
     hfps.hasFPowerSeriesAt.deriv]
   simp only [UpperHalfPlane.qExpansionFormalMultilinearSeries,
@@ -108,7 +113,8 @@ lemma deriv_cF_Delta_zero : deriv cFDelta 0 = 1 := by
 /-- cFDelta has derivative 1 at 0. -/
 lemma cF_Delta_hasDerivAt_zero : HasDerivAt cFDelta (1 : ℂ) 0 := by
   have hana := ModularFormClass.analyticAt_cuspFunction_zero Delta one_pos
-    (by simp)
+    (by simp only [CongruenceSubgroup.strictPeriods_Gamma, Nat.cast_one,
+      AddSubgroup.mem_zmultiples])
   rw [← deriv_cF_Delta_zero,
     show cFDelta = UpperHalfPlane.cuspFunction 1 Delta from rfl]
   exact hana.differentiableAt.hasDerivAt
@@ -117,16 +123,19 @@ lemma cF_Delta_hasDerivAt_zero : HasDerivAt cFDelta (1 : ℂ) 0 := by
 lemma cF_Delta_div_q_tendsto :
     Tendsto (fun q => cFDelta q / q) (𝓝[≠] 0) (nhds 1) := by
   have h0 : cFDelta 0 = 0 := CuspFormClass.cuspFunction_apply_zero Delta one_pos
-    (by simp)
+    (by simp only [CongruenceSubgroup.strictPeriods_Gamma, Nat.cast_one,
+      AddSubgroup.mem_zmultiples])
   have hda := cF_Delta_hasDerivAt_zero
   rw [hasDerivAt_iff_tendsto_slope] at hda
-  convert hda using 1; ext q; simp [slope, h0, div_eq_mul_inv, mul_comm]
+  convert hda using 1; ext q; simp only [div_eq_mul_inv, slope, sub_zero, h0, vsub_eq_sub,
+    smul_eq_mul, mul_comm]
 
 /-- `deriv cFDelta` is continuous at 0. -/
 lemma continuousAt_deriv_cF_Delta : ContinuousAt (deriv cFDelta) 0 := by
   rw [show cFDelta = UpperHalfPlane.cuspFunction 1 Delta from rfl]
   exact (ModularFormClass.analyticAt_cuspFunction_zero Delta one_pos
-    (by simp)).deriv.continuousAt
+    (by simp only [CongruenceSubgroup.strictPeriods_Gamma, Nat.cast_one,
+      AddSubgroup.mem_zmultiples])).deriv.continuousAt
 
 /-- `cF'(q) -> 1` as `q -> 0`. -/
 lemma tendsto_deriv_cF_Delta : Tendsto (deriv cFDelta) (𝓝 0) (nhds 1) := by
@@ -190,7 +199,7 @@ private lemma summable_two_mul_pnat_pow {r : ℝ} (hr : ‖r‖ < 1) :
     Summable (fun n : ℕ+ => 2 * (↑↑n : ℝ) * r ^ (n : ℕ)) := by
   change Summable ((fun m : ℕ => 2 * (↑m : ℝ) * r ^ m) ∘ (↑· : ℕ+ → ℕ))
   exact (((summable_nat_mul_pow hr).mul_left 2).congr
-    (fun n => by ring)).comp_injective Subtype.val_injective
+    (fun n => by ac_rfl)).comp_injective Subtype.val_injective
 
 private lemma summable_norm_E2_terms {q : ℂ} (hq : ‖q‖ ≤ 1 / 2) :
     Summable (fun n : ℕ+ => ‖(↑↑n : ℂ) * q ^ (n : ℕ) / (1 - q ^ (n : ℕ))‖) := by
@@ -209,7 +218,7 @@ private lemma tsum_succ_mul_pow {r : ℝ} (hr : ‖r‖ < 1) :
 private lemma tsum_two_mul_pnat_pow {r : ℝ} (hr : ‖r‖ < 1) :
     ∑' (n : ℕ+), 2 * (↑↑n : ℝ) * r ^ (n : ℕ) = 2 * (r / (1 - r) ^ 2) := by
   rw [show (fun n : ℕ+ => 2 * (↑↑n : ℝ) * r ^ (n : ℕ)) =
-      (fun n : ℕ+ => 2 * ((↑↑n : ℝ) * r ^ (n : ℕ))) from by ext n; ring,
+      (fun n : ℕ+ => 2 * ((↑↑n : ℝ) * r ^ (n : ℕ))) from by ext n; ac_rfl,
     tsum_mul_left, tsum_pnat_eq_r_times r, tsum_succ_mul_pow hr]; ring
 
 private lemma tsum_E2_series_bound {q : ℂ} (hq : ‖q‖ ≤ 1 / 2) :
@@ -248,7 +257,8 @@ private lemma cuspFunction_sub_one_isBigO {f : ModularForm (CongruenceSubgroup.G
     (hval : UpperHalfPlane.cuspFunction 1 f 0 = 1) :
     (fun q : ℂ => UpperHalfPlane.cuspFunction 1 f q - 1) =O[𝓝 0] id := by
   have hbig := (ModularFormClass.analyticAt_cuspFunction_zero f one_pos
-    (by simp)).differentiableAt.hasFDerivAt.isBigO_sub
+    (by simp only [CongruenceSubgroup.strictPeriods_Gamma, Nat.cast_one,
+      AddSubgroup.mem_zmultiples])).differentiableAt.hasFDerivAt.isBigO_sub
   simpa only [hval, sub_zero, Function.id_def] using hbig
 
 /-- For a level-one modular form with constant q-term `1`, `‖f z - 1‖ ≤ C * ‖q(z)‖`
@@ -261,7 +271,9 @@ private lemma form_sub_one_eventually_le {k : ℤ}
   obtain ⟨C, hC, hbound⟩ := (cuspFunction_sub_one_isBigO hval).exists_pos
   exact ⟨C, hC, (tendsto_qParam_atImInfty.eventually
     (hbound.bound.mono (fun q hq => by simpa [id] using hq))).mono fun z hz => by
-      rwa [(SlashInvariantFormClass.eq_cuspFunction f z (by simp) one_ne_zero).symm]⟩
+      rwa [(SlashInvariantFormClass.eq_cuspFunction f z (by simp only [
+        CongruenceSubgroup.strictPeriods_Gamma, Nat.cast_one,
+        AddSubgroup.mem_zmultiples]) one_ne_zero).symm]⟩
 
 /-- `‖E₄ z - 1‖ ≤ C * ‖q(z)‖` eventually, for some `C > 0`. -/
 private lemma E4_sub_one_eventually_le : ∃ C > 0,
@@ -359,7 +371,8 @@ private lemma Delta_lower_bound : ∃ r > 0, ∀ z : UpperHalfPlane,
   set qz := Function.Periodic.qParam 1 (z : ℂ)
   have hDelta_eq : Δ z = cFDelta qz := by
     have := (SlashInvariantFormClass.eq_cuspFunction Delta z
-      (by simp) one_ne_zero).symm
+      (by simp only [CongruenceSubgroup.strictPeriods_Gamma, Nat.cast_one,
+        AddSubgroup.mem_zmultiples]) one_ne_zero).symm
     simp only [cFDelta] at this ⊢; exact this
   rw [hDelta_eq]
   have hq_pos : 0 < ‖qz‖ := norm_pos_iff.mpr hqz_ne

@@ -1001,7 +1001,7 @@ theorem norm_riccatiGramCommutator_le
     refine (ContinuousLinearMap.opNorm_comp_le _ _).trans ?_
     have hc : ‖(ContinuousLinearMap.adjoint X) ∘L X‖ ≤ 1 := by
       refine (ContinuousLinearMap.opNorm_comp_le _ _).trans ?_
-      rw [hXa]; nlinarith
+      rw [hXa]; nlinarith only [hX, hX0]
     nlinarith [norm_nonneg (H.B01 ∘L X), norm_nonneg
       ((ContinuousLinearMap.adjoint X) ∘L X)]
   have h3 : ‖(ContinuousLinearMap.adjoint X) ∘L H.B10‖ ≤ ‖H.B10‖ := by
@@ -1012,7 +1012,7 @@ theorem norm_riccatiGramCommutator_le
     refine (ContinuousLinearMap.opNorm_comp_le _ _).trans ?_
     have hc : ‖(ContinuousLinearMap.adjoint X) ∘L X‖ ≤ 1 := by
       refine (ContinuousLinearMap.opNorm_comp_le _ _).trans ?_
-      rw [hXa]; nlinarith
+      rw [hXa]; nlinarith only [hX, hX0]
     nlinarith [norm_nonneg ((ContinuousLinearMap.adjoint X) ∘L H.B10),
       norm_nonneg ((ContinuousLinearMap.adjoint X) ∘L X)]
   refine (norm_sub_le _ _).trans ?_

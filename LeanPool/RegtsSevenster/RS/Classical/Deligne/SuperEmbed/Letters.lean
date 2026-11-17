@@ -1217,15 +1217,15 @@ private theorem permAlg_expand
     [Preadditive A] [Linear ℂ A]
     (X : A) {n : ℕ}
     (x : SymGroupAlgebra n) :
-    permAlg X n x = ∑ σ : Equiv.Perm (Fin n), x.coeff σ • permMor X n σ
+    (permAlg X n x).asHom = ∑ σ : Equiv.Perm (Fin n), x.coeff σ • permMor X n σ
     := by
   classical
   have hlift : permAlg X n x =
-      x.coeff.sum fun σ r => r • permMor X n σ := by
+      x.coeff.sum fun σ r => r • End.of (permMor X n σ) := by
     rw [permAlg]
     exact MonoidAlgebra.lift_apply _ _
-  rw [hlift, show (x.coeff.sum fun σ r => r • permMor X n σ) =
-    ∑ σ ∈ x.coeff.support, x.coeff σ • permMor X n σ from rfl]
+  rw [hlift]
+  simp only [Finsupp.sum, End.sum_asHom, End.smul_asHom]
   refine Finset.sum_subset (Finset.subset_univ _) fun σ _ hσ => ?_
   rw [Finsupp.notMem_support_iff.mp hσ, zero_smul]
 
@@ -1253,12 +1253,12 @@ theorem nIn_permAlg_nOut
     (S : MixedLetters K par U M)
     (hβ : (β_ U U).hom = -(𝟙 (U ⊗ U))) {n : ℕ}
     (x : SymGroupAlgebra n) (c d : Fin n → K) :
-    S.nIn n c ≫ permAlg M n x ≫ S.nOut n d =
+    S.nIn n c ≫ (permAlg M n x).asHom ≫ S.nOut n d =
       if hpop : popCount (par ∘ c) = popCount (par ∘ d) then
         colourSum par x c d •
           eqToHom (congrArg (tensorPow A U) hpop)
       else 0 := by
-  have hstep : S.nIn n c ≫ permAlg M n x ≫ S.nOut n d =
+  have hstep : S.nIn n c ≫ (permAlg M n x).asHom ≫ S.nOut n d =
       ∑ σ : Equiv.Perm (Fin n),
         ((x.coeff σ * parSign σ (par ∘ c)) •
           (eqToHom (congrArg (tensorPow A U)
@@ -1312,9 +1312,9 @@ theorem colourSum_eq_zero
     {n : ℕ} {x : SymGroupAlgebra n} (hx : permAlg M n x = 0)
     (c d : Fin n → K) : colourSum par x c d = 0 := by
   by_cases hpop : popCount (par ∘ c) = popCount (par ∘ d)
-  · have hx' : permAlg M n x =
-        (0 : tensorPow A M n ⟶ tensorPow A M n) := hx
-    have h0 : S.nIn n c ≫ permAlg M n x ≫ S.nOut n d = 0 := by
+  · have hx' : (permAlg M n x).asHom =
+        (0 : tensorPow A M n ⟶ tensorPow A M n) := congrArg End.asHom hx
+    have h0 : S.nIn n c ≫ (permAlg M n x).asHom ≫ S.nOut n d = 0 := by
       rw [hx', Limits.zero_comp, Limits.comp_zero]
     rw [S.nIn_permAlg_nOut hβ x c d, dite_eq_left hpop] at h0
     by_contra hne
@@ -1349,12 +1349,14 @@ theorem permAlg_eq_zero
     {x : SymGroupAlgebra n}
     (hx : ∀ c d : Fin n → K, colourSum par x c d = 0) :
     permAlg M n x = 0 := by
+  apply End.ext
+  rw [End.zero_asHom]
   have hmid : ∀ c d : Fin n → K,
-      S.colourInto n c ≫ permAlg M n x ≫ S.colourFrom n d = 0 := by
+      S.colourInto n c ≫ (permAlg M n x).asHom ≫ S.colourFrom n d = 0 := by
     intro c d
-    calc S.colourInto n c ≫ permAlg M n x ≫ S.colourFrom n d
+    calc S.colourInto n c ≫ (permAlg M n x).asHom ≫ S.colourFrom n d
         = (normIso U n (par ∘ c)).hom ≫
-          (S.nIn n c ≫ permAlg M n x ≫ S.nOut n d) ≫
+          (S.nIn n c ≫ (permAlg M n x).asHom ≫ S.nOut n d) ≫
           (normIso U n (par ∘ d)).inv := by
           rw [S.colourInto_eq_nIn n c, S.colourFrom_eq_nOut n d]
           simp only [Category.assoc]
@@ -1365,27 +1367,27 @@ theorem permAlg_eq_zero
               Limits.comp_zero]
           · rw [dite_eq_right hpop, Limits.zero_comp, Limits.comp_zero]
   have hmid2 : ∀ c : Fin n → K,
-      S.colourInto n c ≫ permAlg M n x ≫
+      S.colourInto n c ≫ (permAlg M n x).asHom ≫
         (∑ d : Fin n → K, S.colourFrom n d ≫ S.colourInto n d) = 0
       := by
     intro c
     rw [Preadditive.comp_sum, Preadditive.comp_sum]
     refine Finset.sum_eq_zero fun d _ => ?_
-    rw [show S.colourInto n c ≫ permAlg M n x ≫
+    rw [show S.colourInto n c ≫ (permAlg M n x).asHom ≫
         S.colourFrom n d ≫ S.colourInto n d =
-      (S.colourInto n c ≫ permAlg M n x ≫ S.colourFrom n d) ≫
+      (S.colourInto n c ≫ (permAlg M n x).asHom ≫ S.colourFrom n d) ≫
         S.colourInto n d from by simp only [Category.assoc]]
     rw [hmid c d, Limits.zero_comp]
-  calc permAlg M n x
-      = 𝟙 (tensorPow A M n) ≫ permAlg M n x ≫
+  calc (permAlg M n x).asHom
+      = 𝟙 (tensorPow A M n) ≫ (permAlg M n x).asHom ≫
         𝟙 (tensorPow A M n) := by
         rw [Category.id_comp, Category.comp_id]
     _ = (∑ c : Fin n → K, S.colourFrom n c ≫ S.colourInto n c) ≫
-        permAlg M n x ≫
+        (permAlg M n x).asHom ≫
         (∑ d : Fin n → K, S.colourFrom n d ≫ S.colourInto n d) := by
         rw [S.sum_colourFrom_colourInto n]
     _ = ∑ c : Fin n → K, S.colourFrom n c ≫
-        (S.colourInto n c ≫ permAlg M n x ≫
+        (S.colourInto n c ≫ (permAlg M n x).asHom ≫
           (∑ d : Fin n → K, S.colourFrom n d ≫ S.colourInto n d))
         := by
         rw [Preadditive.sum_comp]

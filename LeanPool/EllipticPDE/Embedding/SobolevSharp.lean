@@ -351,7 +351,7 @@ theorem not_isCompactOperator_critEmb (hd : 2 < d) (hdpos : 0 < d) {p' : ℝ≥0
     refine Real.sqrt_pos.mpr ?_
     have hnn : 0 ≤ ∑ i, (b i) ^ 2 := Finset.sum_nonneg fun _ _ => sq_nonneg _
     have ha2 : 0 < a ^ 2 := by positivity
-    linarith
+    linarith only [hnn, ha2]
   have hUbound : ∀ n, ‖U n‖ ≤ B := by
     intro n
     have hsq : ‖(U n : H1amb (ball (0 : EuclideanSpace ℝ (Fin d)) 1))‖ ^ 2
@@ -363,14 +363,14 @@ theorem not_isCompactOperator_critEmb (hd : 2 < d) (hdpos : 0 < d) {p' : ℝ≥0
         rw [hzero n]
         have hla : 1 / ((n : ℝ) + 2) * a ≤ a := by
           have := hl1 n
-          nlinarith [ha0.le, (hl0 n).le]
+          nlinarith only [ha0, this, ha0.le, (hl0 n).le]
         have hla0 : 0 ≤ 1 / ((n : ℝ) + 2) * a := mul_nonneg (hl0 n).le ha0.le
-        nlinarith [hla, hla0]
+        nlinarith only [ha0, hla, hla0]
       have hi' : ∀ i : Fin d, ‖((U n : H01 (ball (0 : EuclideanSpace ℝ (Fin d)) 1)) :
           H1amb (ball (0 : EuclideanSpace ℝ (Fin d)) 1)) i.succ‖ ^ 2 = (b i) ^ 2 := fun i => by
         rw [hsucc n i]
       rw [Finset.sum_congr rfl (fun i _ => hi' i)]
-      linarith
+      linarith only [h0']
     have hsr := Real.sqrt_le_sqrt hsq
     rwa [Real.sqrt_sq (norm_nonneg _), ← hBdef] at hsr
   -- The renormalised family sits in the closed unit ball.
@@ -416,14 +416,14 @@ theorem not_isCompactOperator_critEmb (hd : 2 < d) (hdpos : 0 < d) {p' : ℝ≥0
     have hdR : (2 : ℝ) < (d : ℝ) := by exact_mod_cast hd
     have hdinv : (0 : ℝ) < (d : ℝ)⁻¹ := by positivity
     have hdlt : (d : ℝ)⁻¹ < (2 : ℝ)⁻¹ := by
-      rw [inv_lt_inv₀ (by linarith) (by norm_num)]
+      rw [inv_lt_inv₀ (by linarith only [hdR]) (by norm_num)]
       exact hdR
-    have hppos : (0 : ℝ) < (p' : ℝ)⁻¹ := by rw [hp2]; linarith
+    have hppos : (0 : ℝ) < (p' : ℝ)⁻¹ := by rw [hp2]; linarith only [hdlt]
     have hp'pos : (0 : ℝ) < (p' : ℝ) := by
       rcases (NNReal.coe_nonneg p').lt_or_eq with h | h
       · exact h
       · rw [← h] at hppos; simp at hppos
-    have h1 : (p' : ℝ)⁻¹ ≤ (2 : ℝ)⁻¹ := by rw [hp2]; linarith
+    have h1 : (p' : ℝ)⁻¹ ≤ (2 : ℝ)⁻¹ := by rw [hp2]; linarith only [hdinv]
     exact (inv_le_inv₀ hp'pos (by norm_num)).mp h1
   have h2p' : (2 : ℝ≥0∞) ≤ (p' : ℝ≥0∞) := by exact_mod_cast hp'2R
   set e : ℝ := 1 / (2 : ℝ≥0∞).toReal - 1 / ((p' : ℝ≥0∞)).toReal with hedef
@@ -491,6 +491,6 @@ theorem not_isCompactOperator_critEmb (hd : 2 < d) (hdpos : 0 < d) {p' : ℝ≥0
     simp
   rw [hvnorm] at hvzero
   have hpos : (0 : ℝ) < B⁻¹ * c := mul_pos (inv_pos.mpr hB0) hc0
-  linarith
+  linarith only [hvzero, hpos]
 
 end EllipticPdes.Embedding

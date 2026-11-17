@@ -92,7 +92,7 @@ private theorem blowupLimitAssemblyPressure_global_Lthree_of_slices
         hM.ne)).ne
   have hres : MemLp vm 3 (volume.restrict ((Set.univ : Set Vec3) ×ˢ J)) :=
     memLp_iff.2 (hbound.trans_lt hfin)
-  exact ((memLp_indicator_iff_restrict hSm).2 hres).ae_eq hind.symm
+  exact ((memLp_indicator_iff_restrict hSm.nullMeasurableSet).2 hres).ae_eq hind.symm
 
 private theorem blowupLimitAssemblyPressure_rescaled_slice_bound
     {u : ParabolicPoint → Vec3} (x₀ : Vec3) (t₀ r : ℝ) (hr : 0 < r)

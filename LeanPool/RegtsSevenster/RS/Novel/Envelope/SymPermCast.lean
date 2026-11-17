@@ -46,12 +46,13 @@ noncomputable def whiskerAlg
     [Category.{v} A] [MonoidalCategory A] [Preadditive A] [Linear ℂ A]
     [MonoidalPreadditive A] [MonoidalLinear ℂ A]
     (P X : A) : End P →ₐ[ℂ] End (P ⊗ X) where
-  toFun f := f ▷ X
-  map_one' := MonoidalCategory.id_whiskerRight P X
-  map_mul' f g := MonoidalCategory.comp_whiskerRight g f X
-  map_zero' := MonoidalPreadditive.zero_whiskerRight
-  map_add' f g := MonoidalPreadditive.add_whiskerRight f g
+  toFun f := .of (f.asHom ▷ X)
+  map_one' := End.ext (MonoidalCategory.id_whiskerRight P X)
+  map_mul' f g := End.ext (MonoidalCategory.comp_whiskerRight g.asHom f.asHom X)
+  map_zero' := End.ext MonoidalPreadditive.zero_whiskerRight
+  map_add' f g := End.ext (MonoidalPreadditive.add_whiskerRight f.asHom g.asHom)
   commutes' c := by
+    apply End.ext
     change (c • 𝟙 P) ▷ X = c • 𝟙 (P ⊗ X)
     rw [MonoidalLinear.smul_whiskerRight,
       MonoidalCategory.id_whiskerRight]
@@ -93,7 +94,7 @@ theorem permMor_viaEmbedding
     ∀ (k : ℕ) (σ : Equiv.Perm (Fin m)),
       permMor X (m + k)
           (σ.viaEmbedding (Fin.castLEEmb (Nat.le_add_right m k))) =
-        whiskerPowAlg X m k (permMor X m σ)
+        (whiskerPowAlg X m k (End.of (permMor X m σ))).asHom
   | 0, σ => by
       rw [viaEmbedding_castLEEmb_self]
       rfl
@@ -130,7 +131,7 @@ theorem permAlg_symCast
         MonoidAlgebra.single _ 1
       exact MonoidAlgebra.mapDomain_single
     rw [hsym, permAlg_single, permAlg_single]
-    exact permMor_viaEmbedding X m k σ
+    exact End.ext (permMor_viaEmbedding X m k σ)
   exact DFunLike.congr_fun hext x
 
 /-- **Vanishing propagates along the standard embeddings.**  This is

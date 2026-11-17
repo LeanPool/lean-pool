@@ -39,15 +39,15 @@ theorem MixedDirectionalQuadraticEstimateAt.of_image_linearIsometryEquiv
   refine ⟨e.symm pF, a, ?_⟩
   intro ε hε
   have htend : Filter.Tendsto (fun z : E ↦ e z) (nhds 0) (nhds 0) := by
-    simpa using (e.continuous.continuousAt (x := 0)).tendsto
+    simpa only [map_zero] using (e.continuous.continuousAt (x := 0)).tendsto
   filter_upwards [htend.eventually (hest ε hε)] with z hz
   have hpoint : e x + e z = e (x + z) := by
-    simp [map_add]
+    simp only [map_add]
   have hslope : pF = e (e.symm pF) := by
-    simp
+    simp only [LinearIsometryEquiv.apply_symm_apply]
   have hquad := inner_mixedDirectionalQuadraticSum_self_linearIsometryEquiv D v a e z
   have hnorm : ‖e z‖ ^ 2 = ‖z‖ ^ 2 := by
-    simp
+    simp only [norm_map]
   rw [hpoint] at hz
   rw [hslope] at hz
   rw [affineRemainder_comp_linearIsometryEquiv] at hz
@@ -68,7 +68,7 @@ theorem MixedDirectionalQuadraticQuotientEstimateAt.of_image_linearIsometryEquiv
   intro ε hε
   have htend_nhds :
       Filter.Tendsto (fun z : E ↦ e z) (nhdsWithin 0 {z : E | z ≠ 0}) (nhds 0) := by
-    simpa using
+    simpa only [ne_eq, map_zero] using
       ((e.continuous.continuousAt (x := 0)).tendsto.mono_left nhdsWithin_le_nhds)
   have htend_principal :
       Filter.Tendsto (fun z : E ↦ e z) (nhdsWithin 0 {z : E | z ≠ 0})
@@ -78,7 +78,7 @@ theorem MixedDirectionalQuadraticQuotientEstimateAt.of_image_linearIsometryEquiv
     intro hez
     apply hz
     have hpre := congrArg e.symm hez
-    simpa using hpre
+    simpa only [LinearIsometryEquiv.symm_apply_apply, map_zero] using hpre
   have htend :
       Filter.Tendsto (fun z : E ↦ e z) (nhdsWithin 0 {z : E | z ≠ 0})
         (nhdsWithin 0 {z : F | z ≠ 0}) := by
@@ -86,12 +86,12 @@ theorem MixedDirectionalQuadraticQuotientEstimateAt.of_image_linearIsometryEquiv
     exact Filter.tendsto_inf.2 ⟨htend_nhds, htend_principal⟩
   filter_upwards [htend.eventually (hest ε hε)] with z hz
   have hpoint : e x + e z = e (x + z) := by
-    simp [map_add]
+    simp only [map_add]
   have hslope : pF = e (e.symm pF) := by
-    simp
+    simp only [LinearIsometryEquiv.apply_symm_apply]
   have hquad := inner_mixedDirectionalQuadraticSum_self_linearIsometryEquiv D v a e z
   have hnorm : ‖e z‖ ^ 2 = ‖z‖ ^ 2 := by
-    simp
+    simp only [norm_map]
   rw [hpoint] at hz
   rw [hslope] at hz
   rw [affineRemainder_comp_linearIsometryEquiv] at hz
@@ -111,14 +111,15 @@ theorem mixedDirectionalQuadraticEstimateAt_comp_linearIsometryEquiv
     have h' :=
       MixedDirectionalQuadraticEstimateAt.of_image_linearIsometryEquiv
         (e := e.symm) (u := u) (x := e x) (v := fun i ↦ e (v i)) (D := D)
-        (by simpa [Function.comp_def] using h)
-    simpa using h'
+        (by simpa only [LinearIsometryEquiv.symm_apply_apply, LinearIsometryEquiv.symm_symm,
+          Function.comp_def] using h)
+    exact h'
   · intro h
     have h' :=
       MixedDirectionalQuadraticEstimateAt.of_image_linearIsometryEquiv
         (e := e) (u := u ∘ e) (x := x) (v := v) (D := D)
-        (by simpa [Function.comp_def] using h)
-    simpa using h'
+        (by simpa only [Function.comp_def, LinearIsometryEquiv.apply_symm_apply] using h)
+    exact h'
 
 /-- Set-level transport of mixed-directional quadratic estimate data through a linear isometry
 equivalence. -/
@@ -141,14 +142,15 @@ theorem mixedDirectionalQuadraticQuotientEstimateAt_comp_linearIsometryEquiv
     have h' :=
       MixedDirectionalQuadraticQuotientEstimateAt.of_image_linearIsometryEquiv
         (e := e.symm) (u := u) (x := e x) (v := fun i ↦ e (v i)) (D := D)
-        (by simpa [Function.comp_def] using h)
-    simpa using h'
+        (by simpa only [LinearIsometryEquiv.symm_apply_apply, LinearIsometryEquiv.symm_symm,
+          Function.comp_def] using h)
+    exact h'
   · intro h
     have h' :=
       MixedDirectionalQuadraticQuotientEstimateAt.of_image_linearIsometryEquiv
         (e := e) (u := u ∘ e) (x := x) (v := v) (D := D)
-        (by simpa [Function.comp_def] using h)
-    simpa using h'
+        (by simpa only [Function.comp_def, LinearIsometryEquiv.apply_symm_apply] using h)
+    exact h'
 
 /-- Set-level transport of mixed-directional quotient-estimate data through a linear isometry
 equivalence. -/
@@ -171,15 +173,15 @@ theorem PolarizedMixedDirectionalQuadraticEstimateAt.of_image_linearIsometryEqui
   refine ⟨e.symm pF, q, r, ?_⟩
   intro ε hε
   have htend : Filter.Tendsto (fun z : E ↦ e z) (nhds 0) (nhds 0) := by
-    simpa using (e.continuous.continuousAt (x := 0)).tendsto
+    simpa only [map_zero] using (e.continuous.continuousAt (x := 0)).tendsto
   filter_upwards [htend.eventually (hest ε hε)] with z hz
   have hpoint : e x + e z = e (x + z) := by
-    simp [map_add]
+    simp only [map_add]
   have hslope : pF = e (e.symm pF) := by
-    simp
+    simp only [LinearIsometryEquiv.apply_symm_apply]
   have hquad := inner_polarizedMixedQuadraticSum_self_linearIsometryEquiv D v q r e z
   have hnorm : ‖e z‖ ^ 2 = ‖z‖ ^ 2 := by
-    simp
+    simp only [norm_map]
   rw [hpoint] at hz
   rw [hslope] at hz
   rw [affineRemainder_comp_linearIsometryEquiv] at hz
@@ -200,7 +202,7 @@ theorem PolarizedMixedDirectionalQuadraticQuotientEstimateAt.of_image_linearIsom
   intro ε hε
   have htend_nhds :
       Filter.Tendsto (fun z : E ↦ e z) (nhdsWithin 0 {z : E | z ≠ 0}) (nhds 0) := by
-    simpa using
+    simpa only [ne_eq, map_zero] using
       ((e.continuous.continuousAt (x := 0)).tendsto.mono_left nhdsWithin_le_nhds)
   have htend_principal :
       Filter.Tendsto (fun z : E ↦ e z) (nhdsWithin 0 {z : E | z ≠ 0})
@@ -210,7 +212,7 @@ theorem PolarizedMixedDirectionalQuadraticQuotientEstimateAt.of_image_linearIsom
     intro hez
     apply hz
     have hpre := congrArg e.symm hez
-    simpa using hpre
+    simpa only [LinearIsometryEquiv.symm_apply_apply, map_zero] using hpre
   have htend :
       Filter.Tendsto (fun z : E ↦ e z) (nhdsWithin 0 {z : E | z ≠ 0})
         (nhdsWithin 0 {z : F | z ≠ 0}) := by
@@ -218,12 +220,12 @@ theorem PolarizedMixedDirectionalQuadraticQuotientEstimateAt.of_image_linearIsom
     exact Filter.tendsto_inf.2 ⟨htend_nhds, htend_principal⟩
   filter_upwards [htend.eventually (hest ε hε)] with z hz
   have hpoint : e x + e z = e (x + z) := by
-    simp [map_add]
+    simp only [map_add]
   have hslope : pF = e (e.symm pF) := by
-    simp
+    simp only [LinearIsometryEquiv.apply_symm_apply]
   have hquad := inner_polarizedMixedQuadraticSum_self_linearIsometryEquiv D v q r e z
   have hnorm : ‖e z‖ ^ 2 = ‖z‖ ^ 2 := by
-    simp
+    simp only [norm_map]
   rw [hpoint] at hz
   rw [hslope] at hz
   rw [affineRemainder_comp_linearIsometryEquiv] at hz
@@ -243,14 +245,15 @@ theorem polarizedMixedDirectionalQuadraticEstimateAt_comp_linearIsometryEquiv
     have h' :=
       PolarizedMixedDirectionalQuadraticEstimateAt.of_image_linearIsometryEquiv
         (e := e.symm) (u := u) (x := e x) (v := fun i ↦ e (v i)) (D := D)
-        (by simpa [Function.comp_def] using h)
-    simpa using h'
+        (by simpa only [LinearIsometryEquiv.symm_apply_apply, LinearIsometryEquiv.symm_symm,
+          Function.comp_def] using h)
+    exact h'
   · intro h
     have h' :=
       PolarizedMixedDirectionalQuadraticEstimateAt.of_image_linearIsometryEquiv
         (e := e) (u := u ∘ e) (x := x) (v := v) (D := D)
-        (by simpa [Function.comp_def] using h)
-    simpa using h'
+        (by simpa only [Function.comp_def, LinearIsometryEquiv.apply_symm_apply] using h)
+    exact h'
 
 /-- Set-level transport of polarized mixed-directional estimate data through a linear isometry
 equivalence. -/
@@ -274,14 +277,15 @@ theorem polarizedMixedDirectionalQuadraticQuotientEstimateAt_comp_linearIsometry
     have h' :=
       PolarizedMixedDirectionalQuadraticQuotientEstimateAt.of_image_linearIsometryEquiv
         (e := e.symm) (u := u) (x := e x) (v := fun i ↦ e (v i)) (D := D)
-        (by simpa [Function.comp_def] using h)
-    simpa using h'
+        (by simpa only [LinearIsometryEquiv.symm_apply_apply, LinearIsometryEquiv.symm_symm,
+          Function.comp_def] using h)
+    exact h'
   · intro h
     have h' :=
       PolarizedMixedDirectionalQuadraticQuotientEstimateAt.of_image_linearIsometryEquiv
         (e := e) (u := u ∘ e) (x := x) (v := v) (D := D)
-        (by simpa [Function.comp_def] using h)
-    simpa using h'
+        (by simpa only [Function.comp_def, LinearIsometryEquiv.apply_symm_apply] using h)
+    exact h'
 
 /-- Set-level transport of polarized mixed-directional quotient-estimate data through a linear
 isometry equivalence. -/

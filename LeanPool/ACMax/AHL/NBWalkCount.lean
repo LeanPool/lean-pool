@@ -6,7 +6,6 @@ Authors: Zeru Zhu, Jinzheng Li, Yuanjie Ren
 module
 
 public import Mathlib.Combinatorics.SimpleGraph.Walk.Counting
-public import Mathlib.Combinatorics.SimpleGraph.Finite
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import LeanPool.ACMax.AHL.NBWalk
 

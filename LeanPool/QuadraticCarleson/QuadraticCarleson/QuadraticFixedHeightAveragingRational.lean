@@ -58,8 +58,8 @@ theorem signedSquareModulation_sqrt_abs (lam : ℝ) :
   unfold signedSquareModulation
   rw [Real.sq_sqrt (abs_nonneg lam)]
   by_cases hl : lam < 0
-  · simp [hl, abs_of_neg hl]
-  · simp [hl, abs_of_nonneg (le_of_not_gt hl)]
+  · simp only [hl, decide_true, ↓reduceIte, abs_of_neg hl, neg_neg]
+  · simp only [hl, decide_false, Bool.false_eq_true, ↓reduceIte, abs_of_nonneg (le_of_not_gt hl)]
 
 theorem oscillatoryScaleSpec_signedSquareModulation (negative : Bool)
     (height : ℕ) (j : ℤ) {r : ℝ} (hr : 0 ≤ r)
@@ -97,7 +97,7 @@ theorem fixedScale_signedSquare_integral_enorm_le_rational
       rationalFixedHeightQuadraticMaximal height f x := by
   let a : ℝ := (2 : ℝ) ^ height / (2 : ℝ) ^ j
   let b : ℝ := (2 : ℝ) ^ (height + 1) / (2 : ℝ) ^ j
-  have hj : 0 < (2 : ℝ) ^ j := zpow_pos (by norm_num) j
+  have hj : 0 < (2 : ℝ) ^ j := zpow_pos (by norm_num1) j
   have ha : 0 < a := div_pos (by positivity) hj
   have hmem : r ∈ Ico a b := by
     constructor
@@ -130,8 +130,7 @@ theorem fixedScale_signedSquare_integral_enorm_le_rational
     have hbound := fixedHeightQuadratic_integral_rational_le
       height (signedRationalSquareModulation negative q) hqR f x
     simp only [fixedHeightQuadraticKernel, hidx] at hbound
-    simpa only [F, Set.mem_ofPred_eq,
-      coe_signedRationalSquareModulation] using hbound
+    simpa only [mem_ofPred_eq, coe_signedRationalSquareModulation] using hbound
   exact closure_minimal hsub hclosed (Ico_subset_closure_rational_Ioo hab hmem)
 
 /-- Every real nonzero modulation is controlled by the explicitly enumerated
@@ -145,6 +144,6 @@ theorem fixedHeightQuadratic_integral_enorm_le_rational
   have h := fixedScale_signedSquare_integral_enorm_le_rational
     height (oscillatoryScaleIndex lam height hlam) (decide (lam < 0))
     hs hf x
-  simpa only [signedSquareModulation_sqrt_abs, fixedHeightQuadraticKernel] using h
+  simpa only [fixedHeightQuadraticKernel, signedSquareModulation_sqrt_abs] using h
 
 end QuadraticCarleson

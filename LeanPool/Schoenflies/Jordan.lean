@@ -723,7 +723,7 @@ theorem not_three_components (harc : ∀ A : Set Plane, IsArc A → IsConnected 
         first
           | exact absurd rfl hjl
           | assumption
-          | (rw [inter_comm]; assumption)
+          | rwa [inter_comm]
   choose xx hxxΩ TT hTTarc hTTsub hTTmeet using htri
   /- ### Assembling the `K(3,3)` -/
   have hTC : ∀ i j, TT i j ∩ f '' I = {f (t i j)} := by

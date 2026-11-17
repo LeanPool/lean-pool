@@ -14,7 +14,6 @@ import LeanPool.LeanModularForms.ValenceFormula.RectHomotopy.MainTheoremBound
 import LeanPool.LeanModularForms.ValenceFormula.RectHomotopy.MainTheoremDerivCont
 import LeanPool.LeanModularForms.ValenceFormula.RectHomotopy.WindingProof
 import Mathlib.CategoryTheory.Category.Init
-import Mathlib.NumberTheory.ArithmeticFunction.Misc
 
 /-!
 # Main winding number theorem for the fundamental domain boundary

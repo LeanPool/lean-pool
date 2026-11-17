@@ -97,7 +97,7 @@ theorem interUpTo_appendSeq (X1 : ℕ → Set α) (n1 : ℕ) (X2 : ℕ → Set �
     rw [Nat.add_succ, interUpTo_succ, ih]
     have happ : appendSeq X1 n1 X2 (n1 + j) = X2 j := by
       simp only [appendSeq, ite_eq_right (by omega : ¬ n1 + j < n1)]
-      simp_all
+      simp_all only [add_tsub_cancel_left]
     rw [happ, interUpTo_succ, Set.inter_assoc]
 
 /-! ### Finite consistency. -/
@@ -164,7 +164,7 @@ theorem subset_leastFilter (C : Set (Set α)) (hCsub : ∀ X ∈ C, V.mem X)
     (hC : V.FinitelyConsistent C) {W : Set α} (hW : W ∈ C) :
     (V.leastFilter C hCsub hC).mem W := by
   refine ⟨hCsub W hW, 1, (fun _ => W), (fun _ _ => hW), ?_⟩
-  simp_all
+  simp_all only [interUpTo_succ, interUpTo_zero, Set.inter_subset_right]
 
 /-- **Exercise 1.18 — `leastFilter` is least.** Any filter `z` with `C ⊆ z`
 contains
@@ -206,15 +206,28 @@ theorem family_pairwise_nonempty :
   intro X hX Y hY
   simp only [family, Set.mem_insert_iff, Set.mem_singleton_iff] at hX hY
   rcases hX with rfl | rfl | rfl <;> rcases hY with rfl | rfl | rfl
-  · exact ⟨0, by simp [A]⟩
-  · exact ⟨1, by simp [A, B]⟩
-  · exact ⟨0, by simp [A, Cc]⟩
-  · exact ⟨1, by simp [A, B]⟩
-  · exact ⟨1, by simp [B]⟩
-  · exact ⟨2, by simp [B, Cc]⟩
-  · exact ⟨0, by simp [A, Cc]⟩
-  · exact ⟨2, by simp [B, Cc]⟩
-  · exact ⟨0, by simp [Cc]⟩
+  · exact ⟨0, by simp only [A, Fin.isValue, Set.inter_self, Set.mem_insert_iff,
+    Set.mem_singleton_iff, Fin.zero_eq_one_iff, OfNat.ofNat_ne_one, or_false]⟩
+  · exact ⟨1, by simp only [A, Fin.isValue, B, Set.mem_inter_iff, Set.mem_insert_iff,
+    Fin.one_eq_zero_iff, OfNat.ofNat_ne_one, Set.mem_singleton_iff, or_true, Fin.reduceEq,
+    or_false, and_self]⟩
+  · exact ⟨0, by simp only [A, Fin.isValue, Cc, Set.mem_inter_iff, Set.mem_insert_iff,
+    Set.mem_singleton_iff, Fin.zero_eq_one_iff, OfNat.ofNat_ne_one, or_false, Fin.reduceEq,
+    and_self]⟩
+  · exact ⟨1, by simp only [B, Fin.isValue, A, Set.mem_inter_iff, Set.mem_insert_iff,
+    Set.mem_singleton_iff, Fin.reduceEq, or_false, Fin.one_eq_zero_iff, OfNat.ofNat_ne_one,
+    or_true, and_self]⟩
+  · exact ⟨1, by simp only [B, Fin.isValue, Set.inter_self, Set.mem_insert_iff,
+    Set.mem_singleton_iff, Fin.reduceEq, or_false]⟩
+  · exact ⟨2, by simp only [B, Fin.isValue, Cc, Set.mem_inter_iff, Set.mem_insert_iff,
+    Fin.reduceEq, Set.mem_singleton_iff, or_true, and_self]⟩
+  · exact ⟨0, by simp only [Cc, Fin.isValue, A, Set.mem_inter_iff, Set.mem_insert_iff,
+    Set.mem_singleton_iff, Fin.reduceEq, or_false, Fin.zero_eq_one_iff, OfNat.ofNat_ne_one,
+    and_self]⟩
+  · exact ⟨2, by simp only [Cc, Fin.isValue, B, Set.mem_inter_iff, Set.mem_insert_iff,
+    Fin.reduceEq, Set.mem_singleton_iff, or_true, and_self]⟩
+  · exact ⟨0, by simp only [Cc, Fin.isValue, Set.inter_self, Set.mem_insert_iff,
+    Set.mem_singleton_iff, Fin.reduceEq, or_false]⟩
 
 /-- The triple `A, B, Cc` as a finite sequence. -/
 def triple : ℕ → Set (Fin 3) := fun i => if i = 0 then A else if i = 1 then B else Cc
@@ -228,7 +241,8 @@ theorem triple_mem : ∀ i, i < 3 → triple i ∈ family := by
   · exact Or.inr (Or.inr rfl)
 
 theorem triple_interUpTo_empty : triSys.interUpTo triple 3 = (∅ : Set (Fin 3)) := by
-  simp only [NeighborhoodSystem.interUpTo_succ, NeighborhoodSystem.interUpTo_zero, triSys_master]
+  simp only [NeighborhoodSystem.interUpTo_succ, NeighborhoodSystem.interUpTo_zero,
+    triSys_master]
   ext x
   fin_cases x <;> simp [triple, A, B, Cc]
 
@@ -240,7 +254,7 @@ theorem not_finitelyConsistent : ¬ triSys.FinitelyConsistent family := by
   obtain ⟨Z, hZmem, hZsub⟩ := h 3 triple triple_mem
   have hZne : Z.Nonempty := hZmem
   rw [triple_interUpTo_empty, Set.subset_empty_iff] at hZsub
-  simp_all
+  simp_all only [Set.not_nonempty_empty]
 
 end triSys
 

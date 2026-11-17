@@ -115,7 +115,7 @@ theorem toForm_def (a : α) :
 @[simp]
 theorem moves_toForm (p : Player) (a : α) :
     Form.moves p (g.toForm a) = g.toForm (G := G) '' g.moves p a := by
-  rw [toForm_def']; simp
+  rw [toForm_def']; simp only [moves_ofSets]
 
 theorem mem_moves_toForm_of_mem (p : Player) {a b : α} (hab : b ∈ g.moves p a) :
     g.toForm b ∈ Form.moves p (g.toForm (G := G) a) := by

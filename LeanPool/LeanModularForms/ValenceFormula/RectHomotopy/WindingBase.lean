@@ -8,7 +8,6 @@ module
 public import LeanPool.LeanModularForms.ValenceFormula.RectHomotopy.AngleAnalysis
 import LeanPool.LeanModularForms.ValenceFormula.RectHomotopy.HomotopyDef
 import Mathlib.CategoryTheory.Category.Init
-import Mathlib.NumberTheory.ArithmeticFunction.Misc
 
 /-!
 # Winding number base lemmas
@@ -245,22 +244,22 @@ lemma fdPolygon_avoids_line_to_ref (p : ℂ) (hp_norm : ‖p‖ > 1)
     nlinarith [Real.sq_sqrt (add_nonneg (sq_nonneg p.re) (sq_nonneg p.im)),
                sq_nonneg (Real.sqrt (p.re ^ 2 + p.im ^ 2) - 1)]
   intro s ⟨hs0, hs1⟩ t ⟨ht0, ht5⟩ heq
-  have h1s_cast : (1 : ℂ) - (s : ℂ) = ((1 - s : ℝ) : ℂ) := by push_cast; ring
-  have h1s_nn : 0 ≤ 1 - s := by linarith
+  have h1s_cast : (1 : ℂ) - (s : ℂ) = ((1 - s : ℝ) : ℂ) := by push_cast; ac_rfl
+  have h1s_nn : 0 ≤ 1 - s := by exact sub_nonneg.mpr hs1
   have heq_re : (fdPolygon t).re = (1 - s) * p.re := by
     have := congr_arg Complex.re heq
     simp only [add_re, mul_re, ofReal_re, ofReal_im, zero_mul, sub_zero, href_re,
       mul_zero, add_zero] at this
     rw [h1s_cast] at this
     simp only [ofReal_re, ofReal_im, zero_mul, sub_zero] at this
-    linarith
+    exact this
   have heq_im : (fdPolygon t).im = (1 - s) * p.im + s * refY₀ := by
     have := congr_arg Complex.im heq
     simp only [add_im, mul_im, ofReal_re, ofReal_im, zero_mul,
       add_zero, href_im] at this
     rw [h1s_cast] at this
     simp only [ofReal_re, ofReal_im, zero_mul, add_zero] at this
-    linarith
+    exact this
   by_cases ht1 : t ≤ 1
   · have hfd_re : (fdPolygon t).re = 1/2 := by
       simp only [fdPolygon, ht1, ↓reduceIte, add_re, div_ofNat_re, one_re, mul_re, I_re,
@@ -269,9 +268,9 @@ lemma fdPolygon_avoids_line_to_ref (p : ℂ) (hp_norm : ‖p‖ > 1)
     have h1 : |(1 - s) * p.re| ≤ |p.re| := by
       rw [abs_mul, abs_of_nonneg h1s_nn]; exact mul_le_of_le_one_left (abs_nonneg _) (by linarith)
     have h2 : |(1 - s) * p.re| < 1/2 := lt_of_le_of_lt h1 hp_re
-    have h3 : (1 - s) * p.re = 1/2 := by linarith
+    have h3 : (1 - s) * p.re = 1/2 := by linarith only [heq_re]
     have h4 : |(1 - s) * p.re| = 1/2 := by rw [h3]; norm_num
-    linarith
+    linarith only [hp_re, h1, h4]
   · push Not at ht1
     by_cases ht2 : t ≤ 2
     · exact (avoids_chord_rho'_to_i p hp_re hp_im_pos hp_sq s hs0 hs1 h1s_nn t
@@ -289,11 +288,11 @@ lemma fdPolygon_avoids_line_to_ref (p : ℂ) (hp_norm : ‖p‖ > 1)
           rw [hfd_re] at heq_re
           have h1 : |(1 - s) * p.re| ≤ |p.re| := by
             rw [abs_mul, abs_of_nonneg h1s_nn]
-            exact mul_le_of_le_one_left (abs_nonneg _) (by linarith)
+            exact mul_le_of_le_one_left (abs_nonneg _) (by linarith only [hs0])
           have h2 : |(1 - s) * p.re| < 1/2 := lt_of_le_of_lt h1 hp_re
-          have h3 : (1 - s) * p.re = -1/2 := by linarith
+          have h3 : (1 - s) * p.re = -1/2 := by linarith only [heq_re]
           have h4 : |(1 - s) * p.re| = 1/2 := by rw [h3]; norm_num
-          linarith
+          linarith only [hp_re, h1, h4]
         · push Not at ht4
           have hfd_im : (fdPolygon t).im = HHeight := by
             simp only [fdPolygon, not_le.mpr ht1, not_le.mpr ht2, not_le.mpr ht3,
@@ -306,7 +305,7 @@ lemma fdPolygon_avoids_line_to_ref (p : ℂ) (hp_norm : ‖p‖ > 1)
           rcases eq_or_lt_of_le hs1 with rfl | hs_lt1
           · simp only [sub_self, zero_mul, zero_add, one_mul] at heq_im; linarith [ref_Y₀_lt_H]
           · have : (1 - s) * p.im < (1 - s) * HHeight := by
-              apply mul_lt_mul_of_pos_left hp_im; linarith
+              apply mul_lt_mul_of_pos_left hp_im; exact sub_pos.mpr hs_lt1
             have : s * refY₀ < s * HHeight := by apply mul_lt_mul_of_pos_left ref_Y₀_lt_H; linarith
             have : (1 - s) * p.im + s * refY₀ < (1 - s) * HHeight + s * HHeight := by linarith
             have : (1 - s) * HHeight + s * HHeight = HHeight := by ring

@@ -6,8 +6,11 @@ Authors: Arseniy Akopyan
 module
 
 
-public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.ModTwoDegreeComparison
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.SphereTopHomologyReduction
+public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AntipodalDegree
+public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.DegreeAPIStrengthening
+import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.DegreeFunctorialityAndHomotopy
+public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.ModTwoDegreeComparison
 
 /-!
 # Bundled sphere degree setup

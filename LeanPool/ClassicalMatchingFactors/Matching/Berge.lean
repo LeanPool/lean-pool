@@ -5,11 +5,13 @@ Authors: Juan Pablo Traverso Gianini
 -/
 module
 
+public import Mathlib.Combinatorics.SimpleGraph.DegreeSum
 public import Mathlib.Combinatorics.SimpleGraph.Tutte
 public import Mathlib.Basic.Finite.Sum
 public import Mathlib.Data.Fintype.Lattice
 public import Mathlib.Data.Finset.Max
 public import Mathlib.Data.Finset.Powerset
+public import Mathlib.SetTheory.Cardinal.NatCard
 public import Mathlib.Tactic.Choose
 public import Mathlib.Tactic.Convert
 public import Mathlib.Tactic.FinCases

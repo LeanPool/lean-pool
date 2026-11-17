@@ -124,8 +124,8 @@ lemma lpNorm_averageDirection (data : LowerCompletionData p d T)
   rw [hmul, ← Real.rpow_mul hTreal.le]
   have hexp : (1 - q) * (1 / q) = -1 / p := by
     change (1 - p / (p - 1)) * (1 / (p / (p - 1))) = -1 / p
-    have hp0 : p ≠ 0 := by linarith
-    have hp1 : p - 1 ≠ 0 := by linarith
+    have hp0 : p ≠ 0 := by linarith only [hp]
+    have hp1 : p - 1 ≠ 0 := by linarith only [hp]
     field_simp [hp0, hp1]; ring
   rw [hexp]
 
@@ -222,15 +222,18 @@ lemma partialG_final_average_lower (data : LowerCompletionData p d T)
     change O3.lpNorm (O3.conjugateExponent p) (averageDirection data) =
       data.Delta at hnorm
     rw [hnorm] at hholder
-    linarith [neg_le_abs (O3.pairing (averageDirection data) x)]
+    linarith only [hholder, neg_le_abs (O3.pairing (averageDirection data) x)]
   rw [hpair] at hpairLower
-  have hTone : (0 : ℝ) < T := hTreal
   have hscaled : -(T : ℝ) * data.Delta * lpNorm p x ≤
       (Finset.range T).sum (fun i => data.xi i * x (data.sigma i)) := by
     have := mul_le_mul_of_nonneg_left hpairLower hTreal.le
     field_simp [hTreal.ne'] at this
-    nlinarith
-  nlinarith
+    linarith only [this]
+  have hbound : (T : ℝ) *
+      (-data.Delta * lpNorm p x - (T - 1 : ℕ) * data.delta / 2) ≤
+      (T : ℝ) * data.partialG (T - 1) x := by
+    linarith only [hscaled, hsumPieces]
+  exact (mul_le_mul_iff_right₀ hTreal).mp hbound
 
 lemma global_minimizer_norm_ge_half (data : LowerObjectiveData p d T)
     (hp : 2 < p) (hassum : LowerObjectiveAssumptions data)
@@ -252,12 +255,12 @@ lemma global_minimizer_norm_ge_half (data : LowerObjectiveData p d T)
   let shortSteps : ∀ s < T,
       (base.xi s = 1 ∨ base.xi s = -1) ∧ ResistingMaximumAt base s :=
     fun s hs => ⟨(hsteps s hs).2.2.2.1, (hsteps s hs).2.2.2.2.2.1⟩
-  have hpartialLast := partialH_convex_oneLipschitz base (by linarith) hlast
+  have hpartialLast := partialH_convex_oneLipschitz base (by linarith only [hp]) hlast
     shortSteps (hsteps (T - 1) hlast).2.2.2.2.2.2.1
   obtain ⟨-, -, -, -, -, -, -, -, -, -, -, -, hsmooth, -, -⟩ := hkernel
   have hsmoothLast := hsmooth base.chi hchiPos (base.partialH (T - 1))
     hpartialLast.1 hpartialLast.2
-  have hG := partialG_final_average_lower base (by linarith) hT hDelta
+  have hG := partialG_final_average_lower base (by linarith only [hp]) hT hDelta
     (fun s hs => ⟨(hsteps s hs).1, (hsteps s hs).2.2.2.1,
       (hsteps s hs).2.2.2.2.2.1⟩) minimizer
   have hHmax := le_max_left (base.partialG (T - 1) minimizer / 2)
@@ -266,16 +269,16 @@ lemma global_minimizer_norm_ge_half (data : LowerObjectiveData p d T)
   have hHlower : -base.Delta * lpNorm p minimizer / 2 -
       (T - 1 : ℕ) * base.delta / 4 ≤ base.partialH (T - 1) minimizer := by
     rw [hHformula]
-    nlinarith
+    linarith only [hG, hHmax]
   have hsmoothLower := (hsmoothLast.2.1 minimizer).1
   have hvalueLower : base.beta *
       (-base.Delta * lpNorm p minimizer / 2 -
         (T - 1 : ℕ) * base.delta / 4 - base.chi) ≤
       data.completedOracle.value minimizer := by
     rw [hcompletedValue]
-    nlinarith [mul_le_mul_of_nonneg_left
-      ((sub_le_sub_right hHlower base.chi).trans hsmoothLower) hbetaPos.le]
-  have hcandidateH := partialH_final_adversarialPoint_le base (by linarith)
+    exact mul_le_mul_of_nonneg_left
+      ((sub_le_sub_right hHlower base.chi).trans hsmoothLower) hbetaPos.le
+  have hcandidateH := partialH_final_adversarialPoint_le base (by linarith only [hp])
     hT hdeltaPos hDelta (fun s hs =>
       ⟨(hsteps s hs).1, (hsteps s hs).2.2.2.1,
         (hsteps s hs).2.2.2.2.2.1, (hsteps s hs).2.2.2.2.2.2.1⟩)
@@ -283,8 +286,10 @@ lemma global_minimizer_norm_ge_half (data : LowerObjectiveData p d T)
       -base.beta * base.Delta / 2 := by
     have happ := (hsmoothLast.2.1 (adversarialPoint base)).2
     rw [hcompletedValue]
-    nlinarith [mul_le_mul_of_nonneg_left
-      (happ.trans hcandidateH) hbetaPos.le]
+    calc
+      base.beta * _ ≤ base.beta * (-base.Delta / 2) :=
+        mul_le_mul_of_nonneg_left (happ.trans hcandidateH) hbetaPos.le
+      _ = -base.beta * base.Delta / 2 := by ring
   have hupper := (hmin (adversarialPoint base)).trans hcandidateValue
   have hTm1 : ((T - 1 : ℕ) : ℝ) = (T : ℝ) - 1 := by
     rw [Nat.cast_sub hT]
@@ -294,8 +299,14 @@ lemma global_minimizer_norm_ge_half (data : LowerObjectiveData p d T)
     rw [hTm1, hchi, hdelta]
     have hTone : (1 : ℝ) ≤ T := by exact_mod_cast hT
     field_simp [hTreal.ne']
-    nlinarith [hDeltaPos]
-  nlinarith [mul_pos hbetaPos hDeltaPos]
+    nlinarith only [hTone, hDeltaPos]
+  have hcancel :
+      -base.Delta * lpNorm p minimizer / 2 -
+        ((T - 1 : ℕ) * base.delta / 4 + base.chi) ≤ -base.Delta / 2 := by
+    apply (mul_le_mul_iff_right₀ hbetaPos).mp
+    convert hvalueLower.trans hupper using 1 <;> ring
+  apply (mul_le_mul_iff_right₀ hDeltaPos).mp
+  linarith only [hcancel, hoffset]
 
 lemma minimizerDistance_range (data : LowerObjectiveData p d T)
     (hp : 2 < p) (hassum : LowerObjectiveAssumptions data) :
@@ -327,14 +338,14 @@ lemma minimizerDistance_range (data : LowerObjectiveData p d T)
       rw [hsub]
       exact global_minimizer_norm_ge_half data hp hassum hx
     change (1 / 4 : ℝ) < sInf distances
-    linarith
+    linarith only [hlower]
   · have hupper : sInf distances ≤ lpNorm p (minimizer - data.x0) :=
       csInf_le hbelow ⟨minimizer, hmin, rfl⟩
     change sInf distances < 4
     rw [hx0] at hupper
     have hsub : minimizer - (0 : Point d) = minimizer := by module
     rw [hsub] at hupper
-    linarith
+    linarith only [hfour, hupper]
 
 /-- The embedding of iteration indices into their distinct selected coordinates. -/
 def completionSigmaEmbedding (data : LowerCompletionData p d T)
@@ -458,7 +469,7 @@ lemma completionQ_lpPower
     have hsabs : |completionSign data₁ data₂ k| = 1 := by
       have habssq : |completionSign data₁ data₂ k| ^ (2 : ℕ) = 1 := by
         rw [sq_abs, hs]
-      nlinarith [abs_nonneg (completionSign data₁ data₂ k)]
+      nlinarith only [habssq, abs_nonneg (completionSign data₁ data₂ k)]
     unfold completionQ
     rw [abs_mul, hsabs, one_mul]
 
@@ -668,7 +679,7 @@ lemma completedValue_completionQ_eq
   let shortSteps₂ : ∀ s < T,
       (base₂.xi s = 1 ∨ base₂.xi s = -1) ∧ ResistingMaximumAt base₂ s :=
     fun s hs => ⟨(hsteps₂ s hs).2.2.2.1, (hsteps₂ s hs).2.2.2.2.2.1⟩
-  have hpartial₂ := partialH_convex_oneLipschitz base₂ (by linarith) hlast
+  have hpartial₂ := partialH_convex_oneLipschitz base₂ (by linarith only [hp]) hlast
     shortSteps₂ (hsteps₂ (T - 1) hlast).2.2.2.2.2.2.1
   have hsym : SignedLpSymmetry p Q Q :=
     completionQ_signedLpSymmetry base₁ base₂ distinct₁ distinct₂

@@ -7,6 +7,8 @@ module
 
 
 public import LeanPool.NandakumarRamanaRao.NRR.PrimePolyhedron.FoxNeuwirth.RouteBMovableParameterSpace
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Positivity.Finset
 /-!
 # Route B, Step 3: decomposition of mixed-face positive-ray incidence
 

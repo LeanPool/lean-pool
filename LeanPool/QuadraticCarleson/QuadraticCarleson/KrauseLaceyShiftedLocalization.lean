@@ -83,7 +83,7 @@ theorem existsUnique_mem_centralThirdTileParent (L : ℝ) (hL : 0 < L) (x : ℝ)
     have hc := Int.ceil_lt_add_one (x / h)
     have hc' : ((⌈x / h⌉ - 1 : ℤ) : ℝ) < x / h := by
       push_cast
-      linarith
+      linarith only [hc]
     exact (lt_div_iff₀ hh).1 hc'
   have hupper : x ≤ ((n : ℝ) + 1) * h := by
     have hc := Int.le_ceil (x / h)
@@ -95,14 +95,14 @@ theorem existsUnique_mem_centralThirdTileParent (L : ℝ) (hL : 0 < L) (x : ℝ)
   refine ⟨n, ?_, ?_⟩
   · change x ∈ (centralThirdTileParent L hL n).centralThird
     rw [centralThirdTileParent_centralThird]
-    simpa only [h] using ⟨hlower, hupper⟩
+    exact ⟨hlower, hupper⟩
   · intro m hxm
     by_contra hmn
     have hd := centralThirdTileParents_pairwiseDisjoint L hL hmn
     exact Set.disjoint_left.1 hd hxm (by
       change x ∈ (centralThirdTileParent L hL n).centralThird
       rw [centralThirdTileParent_centralThird]
-      simpa only [h] using ⟨hlower, hupper⟩)
+      exact ⟨hlower, hupper⟩)
 
 /-- A finite disjoint family of central thirds which covers the support of
 `f` reconstructs `f` exactly, including all interval endpoints. -/
@@ -115,7 +115,7 @@ theorem krauseLaceyFixedScaleInput_eq_of_support_subset
   classical
   funext x
   by_cases hx : f x = 0
-  · simp [krauseLaceyFixedScaleInput, Set.indicator_apply, hx]
+  · simp only [krauseLaceyFixedScaleInput, indicator_apply, hx, ite_self, Finset.sum_const_zero]
   · have hxs : x ∈ Function.support f := hx
     rcases Set.mem_iUnion.1 (hcover hxs) with ⟨I, hxI⟩
     rcases Set.mem_iUnion.1 hxI with ⟨hIS, hxI⟩
@@ -125,7 +125,7 @@ theorem krauseLaceyFixedScaleInput_eq_of_support_subset
     · intro J hJS hJI
       have hd := hdisj hIS hJS hJI.symm
       have hxJ : x ∉ J.centralThird := fun hxJ ↦ Set.disjoint_left.1 hd hxI hxJ
-      simp [hxJ]
+      simp only [hxJ, not_false_eq_true, indicator_of_notMem]
     · intro hn
       exact (hn hIS).elim
 

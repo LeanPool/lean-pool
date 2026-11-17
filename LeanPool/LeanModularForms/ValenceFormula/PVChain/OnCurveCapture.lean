@@ -11,8 +11,6 @@ import LeanPool.LeanModularForms.ValenceFormula.OrbitSum
 import LeanPool.LeanModularForms.ValenceFormula.WindingWeights.Common
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 import Mathlib.CategoryTheory.Category.Init
-import Mathlib.MeasureTheory.Covering.Besicovitch
-import Mathlib.NumberTheory.ArithmeticFunction.Misc
 
 /-!
 # On-Curve Capture Lemmas
@@ -61,7 +59,7 @@ theorem oncurve_arc_capture
   have h_im_pos : 0 < z.im := by linarith [Real.sqrt_pos.mpr (show (0 : ℝ) < 3 by norm_num)]
   have h_normSq : z.re ^ 2 + z.im ^ 2 = 1 := by
     have : ‖z‖ ^ 2 = z.re ^ 2 + z.im ^ 2 := by rw [Complex.sq_norm, Complex.normSq_apply]; ring
-    rw [h_norm] at this; linarith
+    rw [h_norm] at this; linarith only [this]
   have h_im_sq_ge : z.im ^ 2 ≥ 3/4 := by
     nlinarith [mul_self_le_mul_self (by positivity : 0 ≤ Real.sqrt 3 / 2) h_im_ge,
       Real.sq_sqrt (show (0 : ℝ) ≤ 3 by norm_num)]
@@ -71,7 +69,7 @@ theorem oncurve_arc_capture
   have hp_fd : p ∈ 𝒟 := by
     refine ⟨?_, h_abs_re⟩
     change 1 ≤ Complex.normSq z
-    rw [Complex.normSq_apply]; nlinarith
+    rw [Complex.normSq_apply]; nlinarith only [h_normSq]
   have hp_zero : f p = 0 := modform_zero_to_uhp f h_im_pos h_zero
   have hp_in_S := hS_complete p hp_fd (orderOfVanishingAt'_ne_zero_of_eq_zero f hf p hp_zero)
   change z ∈ (↑(sArcOfS S) : Set ℂ)
@@ -164,7 +162,8 @@ theorem oncurve_seg4_capture
   have h_seg_eq : z = fdBoundarySeg1H H s - 1 := by
     rw [hz_seg, ← h4s]; exact seg4_eq_seg1_minus_one_H H s hs_Icc
   have h_periodic : Function.Periodic (modularFormCompOfComplex f) (1 : ℂ) :=
-    SlashInvariantFormClass.periodic_comp_ofComplex f (by simp)
+    SlashInvariantFormClass.periodic_comp_ofComplex f (by simp only [strictPeriods_Gamma,
+      Nat.cast_one, AddSubgroup.mem_zmultiples])
   have h_z_plus_1 : z + 1 = fdBoundarySeg1H H s := by rw [h_seg_eq]; ring
   have h_zero_seg1 : modularFormCompOfComplex f (fdBoundarySeg1H H s) = 0 := by
     rw [← h_z_plus_1]; exact (h_periodic z).symm ▸ h_zero
@@ -221,7 +220,9 @@ theorem oncurve_full_capture (S : Finset ℍ) (_hS : ∀ p ∈ S, p ∈ 𝒟)
         simp [fdBoundarySeg1H, add_re, mul_re, I_re, I_im, ofReal_re, ofReal_im]
       have h_im : (fdBoundaryH H 0).im = H := by
         rw [fdBoundary_H_eq_seg1_H (by norm_num : (0 : ℝ) ≤ 1)]
-        simp [fdBoundarySeg1H, add_im, mul_im, I_re, I_im, ofReal_re, ofReal_im]
+        simp only [fdBoundarySeg1H, one_div, ofReal_zero, zero_mul, sub_zero, add_im, inv_im,
+          im_ofNat, neg_zero, normSq_ofNat, zero_div, mul_im, ofReal_re, I_im, mul_one, ofReal_im,
+          I_re, mul_zero, add_zero, zero_add]
       exact height_contradiction f hf S hS_complete hH_ge1 hH_bound h_im h_re h_zero
     · rcases (eq_or_lt_of_le h1 : t = 1 ∨ t < 1) with rfl | h1s
       · left
@@ -262,7 +263,8 @@ theorem oncurve_full_capture (S : Finset ℍ) (_hS : ∀ p ∈ S, p ∈ 𝒟)
           rw [abs_le]; constructor <;> linarith only [h4, ht.2, ht]
         have h_im : (fdBoundaryH H t).im = H := by
           rw [fdBoundary_H_eq_seg5_H (by linarith only [h4] : (4 : ℝ) < t)]
-          simp [fdBoundarySeg5H, add_im, sub_im, mul_im, I_re, I_im, ofReal_re, ofReal_im]
+          simp only [fdBoundarySeg5H, add_im, sub_im, ofReal_im, div_ofNat_im, im_ofNat, zero_div,
+            sub_self, mul_im, ofReal_re, I_im, mul_one, I_re, mul_zero, add_zero, zero_add]
         exact height_contradiction f hf S hS_complete hH_ge1 hH_bound h_im h_re h_zero
 
 end

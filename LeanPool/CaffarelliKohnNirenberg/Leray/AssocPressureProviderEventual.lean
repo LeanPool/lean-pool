@@ -79,7 +79,7 @@ theorem associatedPressureHelmholtzTestCutoff_spatial_eventually_eq
     funext q
     exact congrArg (fun w : Vec3 => w i) (hsplit q)
   have hbase := associatedPressureSpatialPartialProd_add
-    ((contDiff_apply ℝ ℝ i).comp hV₀) ((contDiff_apply ℝ ℝ i).comp hG₀) j z
+    ((contDiff_apply ℝ (fun _ => ℝ) i).comp hV₀) ((contDiff_apply ℝ (fun _ => ℝ) i).comp hG₀) j z
   have huncut : CKN.spatialPartialProd (fun q => φ q i) j z =
       CKN.spatialPartialProd (fun q => v₀ q i) j z +
         CKN.spatialPartialProd (fun q => g₀ q i) j z := by
@@ -104,8 +104,8 @@ theorem associatedPressureHelmholtzTestCutoff_spatial_eventually_eq
       CKN.spatialPartialProd (fun q => v n q i) j z +
         CKN.spatialPartialProd (fun q => g n q i) j z :=
     associatedPressureSpatialPartialProd_add
-      ((contDiff_apply ℝ ℝ i).comp (hVn n).1)
-      ((contDiff_apply ℝ ℝ i).comp (hGn n).1) j z
+      ((contDiff_apply ℝ (fun _ => ℝ) i).comp (hVn n).1)
+      ((contDiff_apply ℝ (fun _ => ℝ) i).comp (hGn n).1) j z
   change CKN.spatialPartialProd (fun q => v n q i + g n q i) j z = _
   rw [hsum, hve, hge', huncut]
 
@@ -162,7 +162,7 @@ theorem associatedPressureHelmholtzTestCutoff_time_eventually_eq
     funext q
     exact congrArg (fun w : Vec3 => w i) (hsplit q)
   have hbase := associatedPressureTimePartialProd_add
-    ((contDiff_apply ℝ ℝ i).comp hV₀) ((contDiff_apply ℝ ℝ i).comp hG₀) z
+    ((contDiff_apply ℝ (fun _ => ℝ) i).comp hV₀) ((contDiff_apply ℝ (fun _ => ℝ) i).comp hG₀) z
   have huncut : CKN.timePartialProd (fun q => φ q i) z =
       CKN.timePartialProd (fun q => v₀ q i) z +
         CKN.timePartialProd (fun q => g₀ q i) z := by
@@ -191,8 +191,8 @@ theorem associatedPressureHelmholtzTestCutoff_time_eventually_eq
       CKN.timePartialProd (fun q => v n q i) z +
         CKN.timePartialProd (fun q => g n q i) z :=
     associatedPressureTimePartialProd_add
-      ((contDiff_apply ℝ ℝ i).comp (hVn n).1)
-      ((contDiff_apply ℝ ℝ i).comp (hGn n).1) z
+      ((contDiff_apply ℝ (fun _ => ℝ) i).comp (hVn n).1)
+      ((contDiff_apply ℝ (fun _ => ℝ) i).comp (hGn n).1) z
   change CKN.timePartialProd (fun q => v n q i + g n q i) z = _
   rw [hsum, hve', hge', huncut]
 

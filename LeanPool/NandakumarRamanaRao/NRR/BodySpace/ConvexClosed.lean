@@ -6,9 +6,12 @@ Authors: Arseniy Akopyan
 module
 
 
-public import Mathlib.Algebra.Order.Ring.Star
-public import Mathlib.Tactic
-public import Mathlib.Topology.MetricSpace.Closeds
+public import LeanPool.NandakumarRamanaRao.NRR.Geometry.ConvexBody.PlanarCircle
+public import Mathlib.Topology.Sets.VietorisTopology
+import Mathlib.Algebra.Order.Ring.Star
+import Mathlib.Tactic.Basify
+import Mathlib.Tactic.ENatToNat
+import Mathlib.Tactic.ReduceModChar
 public import LeanPool.NandakumarRamanaRao.NRR.BodySpace.Topology
 
 /-!

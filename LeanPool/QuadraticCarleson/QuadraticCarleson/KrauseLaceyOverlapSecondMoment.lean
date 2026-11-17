@@ -48,15 +48,13 @@ theorem overlapCount_sq_le_two_sum_descendant_counts
           · exact Or.inl h
           · exact (Set.disjoint_left.mp hd hxI hxJ).elim
         rcases hrel with h | h
-        · simp only [v, Set.indicator_of_mem hxI, Set.indicator_of_mem hxJ, one_mul,
-            ite_eq_left h]
+        · simp only [Set.indicator_of_mem hxI, Set.indicator_of_mem hxJ, one_mul, ite_eq_left h, v]
           exact le_self_add
-        · simp only [v, Set.indicator_of_mem hxI, Set.indicator_of_mem hxJ, one_mul,
-            ite_eq_left h]
+        · simp only [Set.indicator_of_mem hxI, Set.indicator_of_mem hxJ, one_mul, ite_eq_left h, v]
           exact le_add_self
-      · simp only [v, Set.indicator_of_notMem hxJ, mul_zero]
+      · simp only [Set.indicator_of_notMem hxJ, mul_zero, v]
         exact zero_le
-    · simp only [v, Set.indicator_of_notMem hxI, zero_mul]
+    · simp only [Set.indicator_of_notMem hxI, zero_mul, v]
       exact zero_le
   have hswap : (∑ I ∈ A, ∑ J ∈ A, if I.carrier ⊆ J.carrier then v I else 0) =
       ∑ I ∈ A, ∑ J ∈ A, if J.carrier ⊆ I.carrier then v J else 0 := Finset.sum_comm

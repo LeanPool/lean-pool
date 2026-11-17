@@ -65,6 +65,10 @@ public import LeanPool.Zeta5Irrational.Growth.Constants
 public import LeanPool.Zeta5Irrational.Growth.InnerPrime
 public import LeanPool.Zeta5Irrational.Growth.InnerSum
 public import LeanPool.Zeta5Irrational.Growth.InnerTable
+public import LeanPool.Zeta5Irrational.Growth.InnerTable.ElevenToFifteen
+public import LeanPool.Zeta5Irrational.Growth.InnerTable.FifteenToTwenty
+public import LeanPool.Zeta5Irrational.Growth.InnerTable.SevenToEleven
+public import LeanPool.Zeta5Irrational.Growth.InnerTable.ThreeToSeven
 public import LeanPool.Zeta5Irrational.Growth.OuterPrime
 public import LeanPool.Zeta5Irrational.Growth.OuterTable
 public import LeanPool.Zeta5Irrational.Growth.PieceIdx
@@ -98,6 +102,12 @@ public import LeanPool.Zeta5Irrational.Stirling
 public import LeanPool.Zeta5Irrational.Table.Bracket
 public import LeanPool.Zeta5Irrational.Table.Common
 public import LeanPool.Zeta5Irrational.Table.Intervals
+public import LeanPool.Zeta5Irrational.Table.Intervals.First
+public import LeanPool.Zeta5Irrational.Table.Intervals.Fourth
+public import LeanPool.Zeta5Irrational.Table.Intervals.Second
+public import LeanPool.Zeta5Irrational.Table.Intervals.Third
+public import LeanPool.Zeta5Irrational.Table.LowerCertificate
+public import LeanPool.Zeta5Irrational.Table.RationalSeries
 public import LeanPool.Zeta5Irrational.Table.Tail
 public import LeanPool.Zeta5Irrational.Table.U00
 public import LeanPool.Zeta5Irrational.Table.U01

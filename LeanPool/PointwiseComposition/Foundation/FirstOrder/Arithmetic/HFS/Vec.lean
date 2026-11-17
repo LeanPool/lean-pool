@@ -1316,6 +1316,11 @@ def blueprint : VecRec.Blueprint 0
   nil := .mkSigma (“y. y = 0”)
   adjoin := .mkSigma (“y x xs ih. !insertDef y x ih”)
 
+section
+
+-- Avoid expanding encoded formulas while elaborating this construction.
+attribute [local irreducible] blueprint
+
 /-- The adjointruction construction in `FFL.FirstOrder.Arithmetic.VecToSet`. -/
 noncomputable def adjointruction : VecRec.Construction V blueprint
     where
@@ -1323,6 +1328,8 @@ noncomputable def adjointruction : VecRec.Construction V blueprint
   adjoin (_ x _ ih) := insert x ih
   nil_defined := .mk fun v ↦ by simp [blueprint, emptyset_def]
   adjoin_defined := .mk fun v ↦ by simp [blueprint]
+
+end
 
 end VecToSet
 

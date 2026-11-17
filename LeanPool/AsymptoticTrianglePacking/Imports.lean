@@ -7,6 +7,7 @@ module  -- shake: keep-all --deprecated_module: ignore
 
 -- Generated project imports; run `lake exe mk_all`.
 public import LeanPool.AsymptoticTrianglePacking
+public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.BlockEstimates
 public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.BlockSplit
 public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.BoxAllocationSpec
 public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.CoarseCellCoupled

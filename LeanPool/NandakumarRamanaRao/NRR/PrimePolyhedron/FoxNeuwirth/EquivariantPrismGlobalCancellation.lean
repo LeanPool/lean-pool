@@ -6,6 +6,14 @@ Authors: Arseniy Akopyan
 module
 
 
+public import LeanPool.NandakumarRamanaRao.NRR.PrimePolyhedron.FoxNeuwirth.EquivariantPrismGenericPerturbation
+import LeanPool.NandakumarRamanaRao.NRR.PrimeModel.FixedVectors
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Basify
+import Mathlib.Tactic.ENatToNat
+import Mathlib.Tactic.Polynomial.Basic
+import Mathlib.Tactic.Positivity.Finset
+import Mathlib.Tactic.ReduceModChar
 public import LeanPool.NandakumarRamanaRao.NRR.PrimePolyhedron.FoxNeuwirth.EquivariantPrismSubdivisionMargin
 /-!
 # Global signed cancellation for the refined equivariant prism

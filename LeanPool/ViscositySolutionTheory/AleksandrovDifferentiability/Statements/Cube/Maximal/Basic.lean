@@ -563,7 +563,7 @@ theorem sourceCoordinateChartMap_measurePreserving {n : ℕ} (i : Fin n) :
           WithLp 2 (SourceTransverseSpace i × ℝ))
         ((volume : Measure (SourceTransverseSpace i)).prod (volume : Measure ℝ))
         (volume : Measure (WithLp 2 (SourceTransverseSpace i × ℝ))) := by
-    simpa [MeasureTheory.Measure.volume_eq_prod] using
+    exact
       (WithLp.volume_preserving_toLp (SourceTransverseSpace i) ℝ)
   convert hlin.comp hto using 1
   funext p

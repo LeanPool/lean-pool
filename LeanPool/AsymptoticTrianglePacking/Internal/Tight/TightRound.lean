@@ -6,10 +6,8 @@ Authors: Juan Pablo Traverso Gianini, Aristotle
 
 module
 
-public import LeanPool.AsymptoticTrianglePacking.Internal.Tight.CoverWeight
 public import LeanPool.AsymptoticTrianglePacking.Internal.Tight.CoverWeightMoments
 public import LeanPool.AsymptoticTrianglePacking.Internal.Tight.Selection
-public import LeanPool.AsymptoticTrianglePacking.Internal.Prelude
 
 
 /-!
@@ -448,7 +446,7 @@ theorem exists_tight_round_on {H : Finset (Finset V)} {p : ℝ}
         integral_coveredCount ρ hp0 hp1, integral_const]
       simp
     rw [hmean] at hmk
-    exact le_trans hmk ((div_le_div_iff_of_pos_right hθpos).mpr (by linarith))
+    exact le_trans hmk ((div_le_div_iff_of_pos_right hθpos).mpr (by linarith only [hQge]))
   -- the two failure probabilities add up to less than one
   have hkey : ((Fintype.card V : ℝ) * (Vb / t ^ 2 + Pb / s)) / a
       + ((Fintype.card V : ℝ) - (G.card : ℝ) * qlo)

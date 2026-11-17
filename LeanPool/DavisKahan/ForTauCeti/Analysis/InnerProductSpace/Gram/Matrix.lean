@@ -23,12 +23,12 @@ the span, ambient, and `gram` statements are thin corollaries.
 module
 
 public import Mathlib.Analysis.InnerProductSpace.GramMatrix
-public import Mathlib.Analysis.InnerProductSpace.PiL2
-public import Mathlib.LinearAlgebra.Isomorphisms
+import Mathlib.Analysis.InnerProductSpace.PiL2
+import Mathlib.LinearAlgebra.Isomorphisms
 public import LeanPool.DavisKahan.ForTauCeti.Analysis.InnerProductSpace.Basic
 public import LeanPool.DavisKahan.ForTauCeti.Analysis.Normed.Operator.LinearIsometry
-public import Mathlib.Analysis.Normed.Module.FiniteDimension
-public import Mathlib.Topology.MetricSpace.Sequences
+import Mathlib.Analysis.Normed.Module.FiniteDimension
+import Mathlib.Topology.MetricSpace.Sequences
 
 
 /-! # Gram matrix rigidity

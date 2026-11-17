@@ -56,11 +56,11 @@ def Lτ (τ : ℍ) : PeriodPair where
 def q (τ : ℍ) : ℂ := Function.Periodic.qParam 1 τ
 
 lemma q_eq (τ : ℍ) : q τ = Complex.exp (2 * π * Complex.I * τ) := by
-  simp [q, Function.Periodic.qParam]
+  simp only [q, Function.Periodic.qParam, ofReal_one, div_one]
 
 lemma norm_q (τ : ℍ) : ‖q τ‖ = Real.exp (-(2 * π * τ.im)) := by
   rw [q, Function.Periodic.norm_qParam]
-  simp [coe_im]
+  simp only [neg_mul, coe_im, div_one]
 
 lemma norm_q_lt_one (τ : ℍ) : ‖q τ‖ < 1 := by
   rw [norm_q, Real.exp_lt_one_iff, neg_lt_zero]
@@ -118,10 +118,10 @@ def Region : Set ℍ := {τ : ℍ | 5 / 4 < τ.im}
 
 lemma τ₁₆₃_mem_Region : τ₁₆₃ ∈ Region := by
   simp only [Region, Set.mem_ofPred_eq, τ₁₆₃_im]
-  nlinarith [Real.sq_sqrt (by norm_num : (163 : ℝ) ≥ 0).le, Real.sqrt_nonneg (163 : ℝ)]
+  nlinarith only [Real.sq_sqrt (by norm_num : (163 : ℝ) ≥ 0).le, Real.sqrt_nonneg (163 : ℝ)]
 
 lemma τ₈_mem_Region : τ₈ ∈ Region := by
   simp only [Region, Set.mem_ofPred_eq, τ₈_im]
-  nlinarith [Real.sq_sqrt (by norm_num : (2 : ℝ) ≥ 0).le, Real.sqrt_nonneg (2 : ℝ)]
+  nlinarith only [Real.sq_sqrt (by norm_num : (2 : ℝ) ≥ 0).le, Real.sqrt_nonneg (2 : ℝ)]
 
 end Chudnovsky

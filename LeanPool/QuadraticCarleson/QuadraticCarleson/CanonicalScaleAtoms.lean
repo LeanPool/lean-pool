@@ -84,7 +84,7 @@ theorem stoppingScaleLevelBadPart_eq_zero_of_notMem (A : ℕ → ℝ) {f : ℝ �
     apply levelAtom_eq_zero_of_not_mem
     rw [centeredInterval_eq_stoppingInterval]
     exact fun hc ↦ hx (mem_iUnion.mpr ⟨c, hc⟩)
-  simp [stoppingScaleLevelBadPart, hz]
+  simp only [stoppingScaleLevelBadPart, hz, indicator_zero, tsum_zero]
 
 /-- Every point sees at most one spatial scale, since canonical cells are
 literally disjoint and every positive length belongs to one scale class. -/
@@ -124,9 +124,9 @@ theorem tsum_enorm_stoppingScaleLevelBadPart (A : ℕ → ℝ) (f : ℝ → ℂ)
   obtain ⟨j₀, hj₀⟩ := stoppingScaleLevelBadPart_eq_single_scale A f k x
   simp_rw [hj₀]
   rw [tsum_eq_single j₀]
-  · simp
+  · simp only [↓reduceIte]
   · intro j hj
-    simp [hj]
+    simp only [hj, ↓reduceIte, enorm_zero]
 
 theorem pairwiseDisjoint_support_stoppingScaleLevelBadPart
     (A : ℕ → ℝ) (f : ℝ → ℂ) (k : ℕ) :
@@ -171,7 +171,7 @@ theorem lintegral_enorm_canonicalLevelBadPart_le {A : ℕ → ℝ} {f : ℝ → 
       2 * magnitudeLevelL1Mass volume A f k := by
   have hp (x : ℝ) := map_disjointLevelAtomSum A f k
     (stoppingCenter (f := f)) stoppingLength centeredStoppingIntervals_pairwiseDisjoint
-      (fun z ↦ ‖z‖ₑ) (by simp) x
+      (fun z ↦ ‖z‖ₑ) (by simp only [enorm_zero]) x
   simp_rw [canonicalLevelBadPart, hp]
   rw [lintegral_tsum (fun c ↦
     (measurable_levelAtom hf k (stoppingCenter c) (stoppingLength c)).enorm.aemeasurable)]

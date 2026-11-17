@@ -34,7 +34,7 @@ theorem amnr_velocityGradient_mixed_abs_le_of_bounded_velocity_jets
       ((1 + (2 : ℝ) ^ N * Cb) ^ n * Kv) * H * S ^ α.length * H ^ n := by
   let f := fun y : AmnrSpace => b y i
   let g := fun y => f y - f z
-  have hf : ContDiff ℝ (⊤ : ℕ∞) f := (contDiff_apply ℝ ℝ i).comp hb
+  have hf : ContDiff ℝ (⊤ : ℕ∞) f := (contDiff_apply ℝ (fun _ => ℝ) i).comp hb
   have hg : ContDiff ℝ (⊤ : ℕ∞) g := hf.sub contDiff_const
   have hfb : ∀ η r, r ≤ n → η.length + 2 * r ≤ N - 1 →
       |amnrWord b (amnrMixedWord η r) g z| ≤ (Kv * V) * S ^ η.length * H ^ r := by

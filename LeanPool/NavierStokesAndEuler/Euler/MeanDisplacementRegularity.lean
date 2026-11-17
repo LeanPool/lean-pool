@@ -7,6 +7,7 @@ Authors: OpenAI
 module
 
 public import LeanPool.NavierStokesAndEuler.Euler.MeanVariationalInverse
+import Mathlib.Analysis.Calculus.Deriv.Comp
 public import LeanPool.NavierStokesAndEuler.Euler.TimeH1OperatorProduct
 
 /-!

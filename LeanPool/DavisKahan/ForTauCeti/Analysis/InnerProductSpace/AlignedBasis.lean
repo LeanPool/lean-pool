@@ -19,8 +19,9 @@ orthonormal family, used to build the `d × d` overlap operator whose singular
 values are the principal-angle cosines.
 -/
 module
+public import Mathlib.Analysis.InnerProductSpace.SingularValues
 
-public import Mathlib.LinearAlgebra.Basis.Defs
+import Mathlib.LinearAlgebra.Basis.Defs
 public import LeanPool.DavisKahan.ForTauCeti.Analysis.InnerProductSpace.Singular.Subspace
 public import LeanPool.DavisKahan.ForTauCeti.Analysis.InnerProductSpace.Gram.Matrix
 

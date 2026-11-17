@@ -647,7 +647,7 @@ theorem IsSolenoidalOn.of_test_of_contDiff_of_memVectorL2
       have hdiff_meas :
           MeasureTheory.AEStronglyMeasurable (diff n) μ := (hdiff_mem n).aestronglyMeasurable
       simpa [gi, diff] using
-        (MeasureTheory.eLpNorm_le_eLpNorm_mul_eLpNorm_of_nnnorm
+        (MeasureTheory.eLpNorm_le_eLpNorm_mul_eLpNorm
           (μ := μ) (p := (2 : ENNReal)) (q := (2 : ENNReal)) (r := (1 : ENNReal))
           (fun a b : ℝ => a * b) 1 continuous_mul hgi_meas hdiff_meas
           (Filter.Eventually.of_forall fun x => by simp))

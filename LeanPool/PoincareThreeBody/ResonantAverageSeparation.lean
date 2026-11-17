@@ -12,9 +12,6 @@ import LeanPool.PoincareThreeBody.AnalyticDensity
 import LeanPool.PoincareThreeBody.DisturbingAverageAnalytic
 import LeanPool.PoincareThreeBody.SafeAverageAnalytic
 import Mathlib.Analysis.Analytic.Constructions
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
-import Mathlib.MeasureTheory.Covering.Besicovitch
-import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # Separation of resonant disturbing averages in the collision band

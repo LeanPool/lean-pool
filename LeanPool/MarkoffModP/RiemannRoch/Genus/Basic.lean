@@ -9,7 +9,7 @@ module
 public import LeanPool.MarkoffModP.RiemannRoch.AdeleSpace.Basic
 public import LeanPool.MarkoffModP.RiemannRoch.Genus.Polar
 public import LeanPool.MarkoffModP.RiemannRoch.Genus.Ramification
-public import Mathlib.Data.Int.LeastGreatest
+public import Mathlib.Order.Int.LeastGreatest
 public import Mathlib.FieldTheory.RatFunc.Basic
 public import Mathlib.LinearAlgebra.Basis.Basic
 

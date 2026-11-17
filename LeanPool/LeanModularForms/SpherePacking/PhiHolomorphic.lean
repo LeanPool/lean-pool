@@ -6,6 +6,7 @@ Authors: Chris Birkbeck
 module
 
 public import LeanPool.LeanModularForms.Modularforms.EtaCleanup
+public import Mathlib.Analysis.Complex.UpperHalfPlane.Topology
 import Mathlib.Combinatorics.Matroid.Init
 import Mathlib.Data.Nat.Choose.Multinomial
 import Mathlib.NumberTheory.ArithmeticFunction.VonMangoldt

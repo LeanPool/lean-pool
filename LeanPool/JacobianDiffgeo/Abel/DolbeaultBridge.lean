@@ -11,6 +11,7 @@ public import LeanPool.JacobianDiffgeo.LaurentTail.Comparison
 public import LeanPool.JacobianDiffgeo.TailDuality.Duality
 import Mathlib.CategoryTheory.Category.Init
 import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.LinearAlgebra.Dual.Lemmas
 import Mathlib.LinearAlgebra.FreeModule.PID
 import Mathlib.MeasureTheory.Covering.Besicovitch
 

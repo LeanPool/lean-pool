@@ -51,7 +51,7 @@ theorem isInjectiveSpace_sierpinski : IsInjectiveSpace.{u} Prop := by
   obtain ⟨V, hVopen, hVeq⟩ := hfopen
   refine ⟨⟨fun y => y ∈ V, continuous_Prop.2 hVopen⟩, fun x => ?_⟩
   have : (e x ∈ V) = (x ∈ {x | f x}) := by rw [← hVeq]; rfl
-  simpa using this
+  simpa only [ContinuousMap.coe_mk, eq_iff_iff, Set.mem_ofPred_eq] using this
 
 theorem proposition_1_2 : IsInjectiveSpace.{u} Sierpinski :=
   isInjectiveSpace_sierpinski
@@ -63,7 +63,7 @@ theorem IsInjectiveSpace.pi {ι : Type w} (D : ι → Type v) [∀ i, Topologica
   choose g hg using fun i =>
     h i e he ⟨fun x => f x i, (continuous_apply i).comp f.continuous⟩
   refine ⟨⟨fun y i => g i y, continuous_pi fun i => (g i).continuous⟩, fun x => ?_⟩
-  simp_all
+  exact funext fun i => hg i x
 
 theorem proposition_1_3 {ι : Type w} (D : ι → Type v) [∀ i, TopologicalSpace (D i)]
     (h : ∀ i, IsInjectiveSpace.{u} (D i)) : IsInjectiveSpace.{u} (∀ i, D i) :=
@@ -77,7 +77,7 @@ theorem IsInjectiveSpace.of_retract {D : Type v} {D' : Type v}
   intro X Y _ _ e he f
   obtain ⟨g, hg⟩ := hD e he (s.comp f)
   refine ⟨r.comp g, fun x => ?_⟩
-  simp_all
+  exact (congrArg r (hg x)).trans (hrs (f x))
 
 theorem proposition_1_4 {D : Type v} {D' : Type v} [TopologicalSpace D] [TopologicalSpace D']
     (hD : IsInjectiveSpace.{u} D) (s : C(D', D)) (r : C(D, D')) (hrs : ∀ d, r (s d) = d) :

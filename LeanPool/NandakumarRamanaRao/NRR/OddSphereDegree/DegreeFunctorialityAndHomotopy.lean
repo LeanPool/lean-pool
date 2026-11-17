@@ -83,15 +83,15 @@ def degreeMonoidHomTop {n : ℕ} (e : SphereTopHomologyIso n) :
 @[simp]
 theorem degreeMonoidHomTop_apply {n : ℕ} (e : SphereTopHomologyIso n)
     (g : TopCat.sphere.{0} n ⟶ TopCat.sphere.{0} n) :
-    degreeMonoidHomTop e g = degreeOfIsoTop e g := rfl
+    degreeMonoidHomTop e (.of g) = degreeOfIsoTop e g := rfl
 
 /-- **Power law.** The `TopCat`-degree of a `k`-fold self-composite is the `k`-th
 power of the degree: `degree (gᵏ) = (degree g)ᵏ` (powers in the endomorphism
 monoid `End (TopCat.sphere n)`). -/
 theorem degreeOfIsoTop_pow {n : ℕ} (e : SphereTopHomologyIso n)
     (g : End (TopCat.sphere.{0} n)) (k : ℕ) :
-    degreeOfIsoTop e (g ^ k) = (degreeOfIsoTop e g) ^ k := by
-  rw [← degreeMonoidHomTop_apply, map_pow, degreeMonoidHomTop_apply]
+    degreeOfIsoTop e (g ^ k).asHom = (degreeOfIsoTop e g.asHom) ^ k := by
+  exact map_pow (degreeMonoidHomTop e) g k
 
 /-! ## Homotopy-class invariant (the application form)
 

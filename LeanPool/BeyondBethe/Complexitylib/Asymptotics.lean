@@ -5,7 +5,11 @@ Authors: Samuel Schlesinger
 -/
 
 module
-public import Mathlib.Analysis.Asymptotics.SpecificAsymptotics
+public import Mathlib.Analysis.Asymptotics.Defs
+public import Mathlib.Data.Nat.Log
+public import Mathlib.Algebra.Polynomial.Degree.Defs
+public import Mathlib.Algebra.Polynomial.Eval.Defs
+import Mathlib.Analysis.Asymptotics.SpecificAsymptotics
 public import Mathlib.Data.Nat.Size
 public import Mathlib.Algebra.Polynomial.Eval.Degree
 

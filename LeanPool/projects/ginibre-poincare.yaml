@@ -1,0 +1,51 @@
+slug: ginibre-poincare
+title: Sharp symmetric Poincaré inequality for the complex Ginibre log-gas
+summary: Proves the sharp Poincaré inequality for symmetric observables in the weighted weak-H¹
+  domain, using ordinary distributional gradients on the collision-free open set, of the complex
+  Ginibre log-gas, with exhaustive affine equality cases. Includes concrete Gaussian and Ginibre
+  measures, Hermite and Slater analysis, smooth approximation, distributional gradients, and
+  closed weak-gradient spaces. This import covers Theorem 1.1 and its equality
+  cases, rather than the upstream full-paper analytic and stochastic endgame.
+branch: probability theory
+entry_module: LeanPool.GinibrePoincare
+authors:
+- Djalil Chafaï
+source:
+  title: An optimal Poincaré inequality for the complex Ginibre log-gas
+  authors:
+  - Djalil Chafaï
+  arxiv: 2608.19358v2
+  url: https://github.com/djalilchafai/ginibre-poincare/tree/a1b2ba84e7dad8ba11b5c49a18b986a762a00a41
+  github_repo: djalilchafai/ginibre-poincare
+  commit: a1b2ba84e7dad8ba11b5c49a18b986a762a00a41
+license: MIT
+status: verified
+provenance: AI
+provenance_evidence: 'Upstream formalization.yaml and proposal #644 identify agent-written Lean
+  proofs under Djalil Chafaï''s direction. The Lean Pool port and proof optimization are by
+  Codex. The MIT notice is retained in every imported source.'
+main_declarations:
+- GinibrePoincare.ginibre_symmetric_weak_poincare
+- GinibrePoincare.ginibreEquality_full_weak_affine_iff
+main_results:
+- declaration: GinibrePoincare.ginibre_symmetric_weak_poincare
+  informal: For n > 0, symmetric Ginibre L² values and their ordinary distributional L² gradients
+    satisfy variance ≤ energy / 2, with energy normalized by 1/n.
+  source_ref: 'Theorem 1.1 of arXiv:2608.19358v2; Palomar PALOMAR-2026-10-09-000001 v1 was registered
+    on 2026-10-09T00:48:41Z. Proposal #644 is dated 2026-10-12T16:36:51Z.'
+- declaration: GinibrePoincare.ginibreEquality_full_weak_affine_iff
+  informal: Equality holds exactly for almost-everywhere representatives of a + 2 Re(c ∑ᵢ zᵢ),
+    for a real a and a complex c; no smoothness or polynomial assumption is imposed.
+  source_ref: Additional exhaustive affine classification accompanying Theorem 1.1, proved in
+    upstream Analysis/GinibreEqualityWeakAffine.lean. The paper explicitly exhibits center-of-mass
+    equality examples.
+tags:
+- ginibre-ensemble
+- poincare-inequality
+- weak-gradients
+- hermite-polynomials
+- equality-cases
+msc:
+- 60E15
+- 60B20
+- 46E35

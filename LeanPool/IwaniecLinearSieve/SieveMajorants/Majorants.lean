@@ -68,12 +68,12 @@ theorem majf_of_le_two {s : ℝ} (hs : s ≤ 2) : majf s = 2 := by
 /-- Corollary to [I71, Lemma 6]: `𝔐/3 ≤ 𝔣 ≤ 2𝔐/3`. -/
 theorem majf_mem (s : ℝ) : bigM s / 3 ≤ majf s ∧ majf s ≤ 2 * bigM s / 3 := by
   have := abs_le.1 (abs_bigW_le s)
-  unfold majf; constructor <;> linarith [this.1, this.2]
+  unfold majf; constructor <;> linarith only [this.1, this.2, this]
 
 /-- Corollary to [I71, Lemma 6]: `𝔐/3 ≤ 𝔉 ≤ 2𝔐/3`. -/
 theorem majF_mem (s : ℝ) : bigM s / 3 ≤ majF s ∧ majF s ≤ 2 * bigM s / 3 := by
   have := abs_le.1 (abs_bigW_le s)
-  unfold majF; constructor <;> linarith [this.1, this.2]
+  unfold majF; constructor <;> linarith only [this.1, this.2, this]
 
 /-- Corollary to [I71, Lemma 6] for `G_r`. -/
 theorem majG_mem (r : ℕ) (s : ℝ) : bigM s / 3 ≤ majG r s ∧ majG r s ≤ 2 * bigM s / 3 := by
@@ -82,10 +82,10 @@ theorem majG_mem (r : ℕ) (s : ℝ) : bigM s / 3 ≤ majG r s ∧ majG r s ≤ 
   · exact majF_mem s
 
 theorem majG_le_two (r : ℕ) (s : ℝ) : majG r s ≤ 2 := by
-  linarith [(majG_mem r s).2, bigM_le_three s]
+  linarith only [(majG_mem r s).2, bigM_le_three s]
 
 theorem majG_pos (r : ℕ) (s : ℝ) : 0 < majG r s :=
-  lt_of_lt_of_le (by linarith [bigM_pos s]) (majG_mem r s).1
+  lt_of_lt_of_le (by linarith only [bigM_pos s]) (majG_mem r s).1
 
 theorem majf_pos (s : ℝ) : 0 < majf s := by
   simpa [majG_of_even (⟨0, rfl⟩ : Even 0)] using majG_pos 0 s
@@ -111,12 +111,12 @@ theorem hasDerivAt_majf {s : ℝ} (hs : 2 < s) :
   have hexp : ∀ x, 2 < x → x ≤ 4 → HasDerivAt (fun x => 1 + (1 / (x - 1) - log (x - 1)))
       (-(x / (x - 1) ^ 2 * majF (x - 1))) x := by
     intro x hx hx4
-    rw [majF_of_le_three (by linarith), mul_one]
-    exact (hasDerivAt_initForm (by linarith)).const_add 1
+    rw [majF_of_le_three (by linarith only [hx4]), mul_one]
+    exact (hasDerivAt_initForm (by linarith only [hx])).const_add 1
   have heq : ∀ x, 2 ≤ x → x ≤ 3 → majf x = 1 + (1 / (x - 1) - log (x - 1)) := by
     intro x hx hx3; rw [majf_eq hx hx3]; ring
   rcases lt_trichotomy s 3 with h3 | rfl | h3
-  · refine (hexp s hs (by linarith)).congr_of_eventuallyEq ?_
+  · refine (hexp s hs (by linarith only [hs, h3])).congr_of_eventuallyEq ?_
     filter_upwards [Ioo_mem_nhds hs h3] with x hx
     exact heq x hx.1.le hx.2.le
   · have hl : HasDerivWithinAt majf (-(3 / (3 - 1) ^ 2 * majF (3 - 1))) (Iic 3) 3 := by
@@ -137,10 +137,10 @@ theorem hasDerivAt_majG_succ (r : ℕ) {t : ℝ} (ht : (5 + (-1) ^ r) / 2 < t) :
   rcases Nat.even_or_odd r with hr | hr
   · rw [majG_of_odd hr.add_one, majG_of_even hr]
     rw [hr.neg_one_pow] at ht
-    exact (hasDerivAt_majF (by linarith)).congr_deriv (by ring)
+    exact (hasDerivAt_majF (by linarith only [ht])).congr_deriv (by ring)
   · rw [majG_of_even hr.add_one, majG_of_odd hr]
     rw [hr.neg_one_pow] at ht
-    exact (hasDerivAt_majf (by linarith)).congr_deriv (by ring)
+    exact (hasDerivAt_majf (by linarith only [ht])).congr_deriv (by ring)
 
 /-! ### Monotonicity -/
 theorem majF_antitone : Antitone majF := by
@@ -151,8 +151,8 @@ theorem majF_antitone : Antitone majF := by
       (fun x hx => ?_) (fun x hx => ?_) <;> rw [interior_Ici] at hx
     · exact (hasDerivAt_majF hx).differentiableAt.differentiableWithinAt
     · rw [(hasDerivAt_majF hx).deriv]
-      have := mul_pos (kernel_pos (by linarith [hx.out] : (1 : ℝ) < x)) (majf_pos (x - 1))
-      linarith
+      have := mul_pos (kernel_pos (by linarith only [hx.out, hx] : (1 : ℝ) < x)) (majf_pos (x - 1))
+      linarith only [this]
 
 theorem majf_antitone : Antitone majf := by
   refine antitone_of_antitoneOn_Iic_Ici (a := 2) ?_ ?_
@@ -162,8 +162,8 @@ theorem majf_antitone : Antitone majf := by
       (fun x hx => ?_) (fun x hx => ?_) <;> rw [interior_Ici] at hx
     · exact (hasDerivAt_majf hx).differentiableAt.differentiableWithinAt
     · rw [(hasDerivAt_majf hx).deriv]
-      have := mul_pos (kernel_pos (by linarith [hx.out] : (1 : ℝ) < x)) (majF_pos (x - 1))
-      linarith
+      have := mul_pos (kernel_pos (by linarith only [hx.out, hx] : (1 : ℝ) < x)) (majF_pos (x - 1))
+      linarith only [this]
 
 /-- [I71, Remark after Lemma 6]: `G_r` is decreasing. -/
 theorem majG_antitone (r : ℕ) : Antitone (majG r) := by
@@ -192,9 +192,9 @@ theorem majF_eq_integral {s : ℝ} (hs : 3 ≤ s) :
     continuous_majF.neg.continuousWithinAt
     (fun t ht => (hasDerivAt_majF (hs.trans_lt ht)).neg.congr_deriv (by ring))
     (fun t ht => by
-      have h1 : 0 < t - 1 := by linarith [ht.out]
+      have h1 : 0 < t - 1 := by linarith only [ht.out, hs, ht]
       have := majf_pos (t - 1)
-      have : 0 < t := by linarith
+      have : 0 < t := by linarith only [h1]
       positivity)
     (by simpa using tendsto_majF_atTop.neg)
   rw [this]; ring
@@ -207,9 +207,9 @@ theorem majf_eq_integral {s : ℝ} (hs : 2 ≤ s) :
     continuous_majf.neg.continuousWithinAt
     (fun t ht => (hasDerivAt_majf (hs.trans_lt ht)).neg.congr_deriv (by ring))
     (fun t ht => by
-      have h1 : 0 < t - 1 := by linarith [ht.out]
+      have h1 : 0 < t - 1 := by linarith only [ht.out, hs, ht]
       have := majF_pos (t - 1)
-      have : 0 < t := by linarith
+      have : 0 < t := by linarith only [h1]
       positivity)
     (by simpa using tendsto_majf_atTop.neg)
   rw [this]; ring

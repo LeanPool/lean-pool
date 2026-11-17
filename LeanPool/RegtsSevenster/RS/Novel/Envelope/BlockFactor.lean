@@ -35,7 +35,7 @@ variable {R : ℕ} (f : EdgeRankParameter R)
 private theorem skeinTrace_mul_comm' (n : ℕ)
     (u v : skeinEnd f n) :
     skeinTrace f n (u * v) = skeinTrace f n (v * u) :=
-  HomSpace.traceMap_comp_comm f v u
+  HomSpace.traceMap_comp_comm f v.asHom u.asHom
 
 /-- The skein trace is conjugation invariant. -/
 private theorem skeinTrace_conj' (n : ℕ)
@@ -123,11 +123,12 @@ private theorem bmc_finCongr_symm_self {n : ℕ} (h : n = n) :
 private theorem endCast_eq_conj {a b : ℕ} (h : a = b)
     (x : skeinEnd f a) :
     (h ▸ x : skeinEnd f b) =
-    HomSpace.comp f b a b
+    End.of (HomSpace.comp f b a b
       (bundleMapClass f ((finCongr h).symm))
       (HomSpace.comp f a a b
-        (x : SkeinObj.mk (f := f) a ⟶ SkeinObj.mk a)
-        (bundleMapClass f (finCongr h))) := by
+        x.asHom
+        (bundleMapClass f (finCongr h)))) := by
+  apply End.ext
   cases h
   -- After cases h, b = a, need x = comp(bmc(.symm), comp(x, bmc(.)))
   -- Use ∀-quantified key to avoid type-mismatch at implicit transparency
@@ -135,9 +136,9 @@ private theorem endCast_eq_conj {a b : ℕ} (h : a = b)
       HomSpace.comp f a a a
         (bundleMapClass f ((finCongr p).symm))
         (HomSpace.comp f a a a
-          (show HomSpace f.val (a + a) from x)
+          (show HomSpace f.val (a + a) from x.asHom)
           (bundleMapClass f (finCongr p))) =
-        (show HomSpace f.val (a + a) from x) := by
+        (show HomSpace f.val (a + a) from x.asHom) := by
     intro p
     rw [bmc_finCongr_self f p, bmc_finCongr_symm_self f p,
       HomSpace.comp_id_right, HomSpace.comp_id_left]
@@ -165,7 +166,8 @@ private theorem endCast_rfl (x : skeinEnd f a) (h : a = a) :
 /-- Tensor with the zero-arity identity is the identity. -/
 private theorem blockTensorEnd_one_right (x : skeinEnd f a) :
     blockTensorEnd f x (1 : skeinEnd f 0) = x := by
-  have h := rightUnitNat_class f (show HomSpace f.val (a + a) from x)
+  apply End.ext
+  have h := rightUnitNat_class f (show HomSpace f.val (a + a) from x.asHom)
   have hcast : ∀ hp : a + 0 = a,
       bundleMapClass f (finCongr hp) =
         HomSpace.ofFragment f.val (strandBundle a) := by
@@ -175,8 +177,8 @@ private theorem blockTensorEnd_one_right (x : skeinEnd f a) :
     exact bundleMapClass_refl f a
   simp only [hcast] at h
   exact (HomSpace.comp_id_right f a a
-      (blockTensorEnd f x (1 : skeinEnd f 0))).symm.trans
-    (h.trans (HomSpace.comp_id_left f a a x))
+      (blockTensorEnd f x (1 : skeinEnd f 0)).asHom).symm.trans
+    (h.trans (HomSpace.comp_id_left f a a x.asHom))
 
 -- Associativity is stated up to an arity cast, so
 -- the cast transport is unfolded on both sides.
@@ -192,21 +194,22 @@ private theorem blockTensor_assoc {a b c : ℕ}
       skeinEnd f (a + (b + c))) =
     blockTensorEnd f p₁ (blockTensorEnd f p₂ p₃)
   rw [endCast_eq_conj f h]
+  apply End.ext
   -- Use associator naturality
   have hassoc := assocNat_class f
-    (show HomSpace f.val (a + a) from p₁)
-    (show HomSpace f.val (b + b) from p₂)
-    (show HomSpace f.val (c + c) from p₃)
+    (show HomSpace f.val (a + a) from p₁.asHom)
+    (show HomSpace f.val (b + b) from p₂.asHom)
+    (show HomSpace f.val (c + c) from p₃.asHom)
   -- Rewrite the inner composition using hassoc
   conv_lhs =>
     rw [show HomSpace.comp f ((a + b) + c) ((a + b) + c) (a + (b + c))
         (show HomSpace f.val (((a + b) + c) + ((a + b) + c)) from
-          blockTensorEnd f (blockTensorEnd f p₁ p₂) p₃)
+          (blockTensorEnd f (blockTensorEnd f p₁ p₂) p₃).asHom)
         (bundleMapClass f (finCongr h)) =
       HomSpace.comp f ((a + b) + c) (a + (b + c)) (a + (b + c))
         (bundleMapClass f (finCongr h))
         (show HomSpace f.val ((a + (b + c)) + (a + (b + c))) from
-          blockTensorEnd f p₁ (blockTensorEnd f p₂ p₃)) from hassoc]
+          (blockTensorEnd f p₁ (blockTensorEnd f p₂ p₃)).asHom) from hassoc]
   -- Now: comp(α⁻¹, comp(α, RHS)) = RHS
   rw [← HomSpace.comp_assoc]
   -- comp(comp(α⁻¹, α), RHS) = RHS
@@ -428,16 +431,17 @@ private theorem blockSwap01_comm (n : ℕ) (g : skeinEnd f n) :
       blockTensorEnd f g g =
     blockTensorEnd f g g *
       permClass f (n + n) (transposeEquiv n n) := by
+  apply End.ext
   change HomSpace.comp f (n + n) (n + n) (n + n)
-      (show HomSpace f.val _ from blockTensorEnd f g g)
+      (show HomSpace f.val _ from (blockTensorEnd f g g).asHom)
       (show HomSpace f.val _ from
-        permClass f (n + n) (transposeEquiv n n)) =
+        (permClass f (n + n) (transposeEquiv n n)).asHom) =
     HomSpace.comp f (n + n) (n + n) (n + n)
       (show HomSpace f.val _ from
-        permClass f (n + n) (transposeEquiv n n))
-      (show HomSpace f.val _ from blockTensorEnd f g g)
+        (permClass f (n + n) (transposeEquiv n n)).asHom)
+      (show HomSpace f.val _ from (blockTensorEnd f g g).asHom)
   rw [permClass_eq_bundleMapClass]
-  exact braiding_comm_block f n (show HomSpace f.val (n + n) from g)
+  exact braiding_comm_block f n (show HomSpace f.val (n + n) from g.asHom)
 
 /-! ### Swap commutativity at block level -/
 

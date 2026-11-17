@@ -7,6 +7,10 @@ module
 
 
 public import LeanPool.NandakumarRamanaRao.NRR.PrimeModel.PrimeSymmetry
+public import LeanPool.NandakumarRamanaRao.NRR.ConfigurationSpace
+public import LeanPool.NandakumarRamanaRao.NRR.Representation.ZeroSum
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # Restricted prime-symmetry actions

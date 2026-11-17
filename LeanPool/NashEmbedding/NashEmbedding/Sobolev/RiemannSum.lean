@@ -12,7 +12,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Aristotle (Harmonic), Claude Fable 5 (Anthropic), Claude Opus 4.7 (Anthropic)
   — at the request of David Wiygul
 -/
-public import Mathlib.Data.Int.Star
+public import Mathlib.Algebra.Order.Star.Int
 public import Mathlib.LinearAlgebra.Complex.FiniteDimensional
 public import LeanPool.NashEmbedding.Tactics
 public import Mathlib.Topology.Separation.CompletelyRegular
@@ -144,7 +144,7 @@ lemma geom_sum_exp (M : ℕ) (hM : 0 < M) (q : ℤ) :
     have h_geo_series : ∑ j ∈ Finset.range M, ω ^ j = (ω ^ M - 1) / (ω - 1) := by
       rw [ geom_sum_eq hω_ne_one ];
     convert h_geo_series using 1 <;> norm_num [ ← Complex.exp_nat_mul, mul_div_assoc, mul_comm ];
-    · rw [ Finset.sum_range ]; congr; ext; rw [ ← Complex.exp_nat_mul ]; ring;
+    · rw [ Finset.sum_range ]; congr; ext; rw [ ← Complex.exp_nat_mul ]; ring_nf;
     · rw [ hω_pow_M, sub_self, zero_div ]
 
 /-! ## Riemann sum of a single Fourier exponential -/
@@ -175,7 +175,7 @@ lemma riemannSum_fourierExp (M : ℕ) (hM : 0 < M) (ℓ : Fin n → ℤ) :
       obtain ⟨ a, ha ⟩ := h; use a; have := geom_sum_exp M hM ( ℓ a ) ; aesop;
     convert h_prod using 1;
     rw [ Fintype.prod_sum ];
-    unfold fourierExp meshPoint; norm_num [ ← Complex.exp_sum ] ; ring;
+    unfold fourierExp meshPoint; norm_num [ ← Complex.exp_sum ] ; ring_nf;
     simp +decide only [mul_comm, mul_assoc, Finset.mul_sum _ _ _, mul_left_comm]
 
 /-! ## Bound on the normalized discrete Fourier coefficient -/
@@ -480,8 +480,8 @@ theorem riemannSum_convergence (φ : (Fin n → ℝ) → ℂ)
     have h_fourier_coeff : fourierCoeffDistrib (riemannSumDistrib n φ u M - convDistrib n φ u) m
         = ftRn n φ (fun j => (m j : ℝ)) * (((2 * π : ℝ) ^ n : ℝ)⁻¹ * riemannK n u M m -
         fourierCoeffDistrib u m) := by
-      rw [ fourierCoeffDistrib_sub ]; ring!;
-      rw [ fourierCoeffDistrib_riemannSumDistrib, fourierCoeffDistrib_convDistrib ]; ring!;
+      rw [ fourierCoeffDistrib_sub ]; ring_nf!;
+      rw [ fourierCoeffDistrib_riemannSumDistrib, fourierCoeffDistrib_convDistrib ]; ring_nf!;
           norm_num [ mul_assoc, mul_comm, mul_left_comm, Real.pi_ne_zero ];
       exact Or.inl <| by rw [ inv_eq_one_div, div_pow ]; norm_num;
     have h_fourier_coeff_bound : ‖(((2 * π : ℝ) ^ n : ℝ)⁻¹ * riemannK n u M m -
@@ -504,7 +504,7 @@ theorem riemannSum_convergence (φ : (Fin n → ℝ) → ℂ)
   have h_dom : Summable (fun m : Fin n → ℤ => weight n s m * (2 * ∑' k : Fin n → ℤ,
       ‖fourierCoeffDistrib u k‖) ^ 2 * ‖ftRn n φ (fun j => (m j : ℝ))‖ ^ 2) := by
     convert hφ_rd s |> Summable.mul_left ( ( 2 * ∑' k : Fin n → ℤ, ‖fourierCoeffDistrib u k‖ ) ^
-        2 ) using 2; first | rfl | ring;
+        2 ) using 2; ring;
   have h_ab : ∀ m : Fin n → ℤ, Filter.Tendsto (fun M : ℕ => weight n s m * ‖fourierCoeffDistrib
       (riemannSumDistrib n φ u M - convDistrib n φ u) m‖ ^ 2) Filter.atTop (nhds 0) :=
     fun m => by simpa using Filter.Tendsto.const_mul _ ( ‹∀ m : Fin n → ℤ, Filter.Tendsto ( fun

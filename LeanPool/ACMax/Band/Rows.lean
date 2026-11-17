@@ -64,7 +64,7 @@ theorem giant_le_two {n : ℕ} [Nonempty (Fin n)] (G : SimpleGraph (Fin n)) (hn 
   rw [not_le] at hcon
   obtain ⟨d, rfl⟩ : ∃ d, n = d + 20 := ⟨n - 20, by omega⟩
   rw [Nat.add_sub_cancel] at hgi
-  nlinarith [hgi, hho, hcon, hn]
+  nlinarith only [hgi, hho, hcon, hn]
 
 open Classical in
 /-- **Master finite-band inequality.** A degree-`3`-separated obstruction

@@ -398,7 +398,7 @@ theorem part_solution_test_inequality (a : CoeffField d) (hV : IsOpenBoundedConv
           coefficient_truncation_error_le (d := d) (K := K) (n := nR)
             rfl hnR hlam hM hLamM (hEll.2 x hxV)
             (ZeroTraceSobolev.gradient u x) (φ.gradToHilbertVectorL2 x) using 1
-        all_goals first | rfl | ring
+        all_goals ring
       · rw [ite_eq_right hx, inner_zero_right]
         exact mul_nonneg (div_nonneg (sq_nonneg _) (by norm_num)) real_inner_self_nonneg
     have hpre : D ≤

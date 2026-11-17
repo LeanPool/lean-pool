@@ -520,7 +520,7 @@ lemma pos {p : V} (h : IsUFormula L p) : 0 < p := by
   rcases h.case with
       (⟨_, _, _, _, _, _, rfl⟩ | ⟨_, _, _, _, _, _, rfl⟩ | ⟨_, rfl⟩ | ⟨_, rfl⟩ |
         ⟨_, _, _, _, _, rfl⟩ | ⟨_, _, _, _, _, rfl⟩ | ⟨_, _, _, rfl⟩ | ⟨_, _, _, rfl⟩) <;>
-    simp [qqRel, qqNRel, qqVerum, qqFalsum, qqAnd, qqOr, qqAll, qqExs]
+    exact lt_of_le_of_lt zero_le (lt_add_one _)
       --lemma IsSemiformula.pos {n p : V} (h : Semiformula L n p) : 0 < p := h.1.pos
 
 @[simp]
@@ -1382,19 +1382,27 @@ lemma uformula_result_induction {P : V → V → V → Prop} (hP : Σ₁-Relatio
   rcases hp.case with
     (⟨k, r, v, hkr, hv, rfl⟩ | ⟨k, r, v, hkr, hv, rfl⟩ | rfl | rfl | ⟨p₁, p₂, hp₁, hp₂, rfl⟩ |
       ⟨p₁, p₂, hp₁, hp₂, rfl⟩ | ⟨p₁, hp₁, rfl⟩ | ⟨p₁, hp₁, rfl⟩)
-  · simpa [hkr, hv] using hRel param k r v hkr hv
-  · simpa [hkr, hv] using hNRel param k r v hkr hv
-  · simpa using hverum param
-  · simpa using hfalsum param
-  · simpa [c.result_and hp₁ hp₂] using
+  · rw [c.result_rel hkr hv]
+    exact hRel param k r v hkr hv
+  · rw [c.result_nrel hkr hv]
+    exact hNRel param k r v hkr hv
+  · rw [c.result_verum]
+    exact hverum param
+  · rw [c.result_falsum]
+    exact hfalsum param
+  · rw [c.result_and hp₁ hp₂]
+    exact
       hand param p₁ p₂ hp₁ hp₂ (ih p₁ (by simp) param (by simp [f]) hp₁)
         (ih p₂ (by simp) param (by simp [f]) hp₂)
-  · simpa [c.result_or hp₁ hp₂] using
+  · rw [c.result_or hp₁ hp₂]
+    exact
       hor param p₁ p₂ hp₁ hp₂ (ih p₁ (by simp) param (by simp [f]) hp₁)
         (ih p₂ (by simp) param (by simp [f]) hp₂)
-  · simpa [c.result_all hp₁] using
+  · rw [c.result_all hp₁]
+    exact
       hall param p₁ hp₁ (ih p₁ (by simp) (c.allChanges param) (by simp [f]) hp₁)
-  · simpa [c.result_exs hp₁] using
+  · rw [c.result_exs hp₁]
+    exact
       hexs param p₁ hp₁ (ih p₁ (by simp) (c.exsChanges param) (by simp [f]) hp₁)
 
 end Construction
@@ -1876,20 +1884,28 @@ lemma semiformula_result_induction {P : V → V → V → V → Prop} (hP : Σ�
   rcases IsSemiformula.case_iff.mp hp with
     (⟨k, R, v, hR, hv, rfl⟩ | ⟨k, R, v, hR, hv, rfl⟩ | rfl | rfl | ⟨p₁, p₂, h₁, h₂, rfl⟩ |
       ⟨p₁, p₂, h₁, h₂, rfl⟩ | ⟨p₁, h₁, rfl⟩ | ⟨p₁, h₁, rfl⟩)
-  · simpa [hR, hv.isUTerm] using hRel n param k R v hR hv
-  · simpa [hR, hv.isUTerm] using hNRel n param k R v hR hv
-  · simpa using hverum n param
-  · simpa using hfalsum n param
-  · simpa [h₁.isUFormula, h₂.isUFormula] using
+  · rw [c.result_rel hR hv.isUTerm]
+    exact hRel n param k R v hR hv
+  · rw [c.result_nrel hR hv.isUTerm]
+    exact hNRel n param k R v hR hv
+  · rw [c.result_verum]
+    exact hverum n param
+  · rw [c.result_falsum]
+    exact hfalsum n param
+  · rw [c.result_and h₁.isUFormula h₂.isUFormula]
+    exact
       hand n param p₁ p₂ h₁ h₂ (ih p₁ (by simp) param (by simp [f]) n (by simp [g]) h₁)
         (ih p₂ (by simp) param (by simp [f]) n (by simp [g]) h₂)
-  · simpa [h₁.isUFormula, h₂.isUFormula] using
+  · rw [c.result_or h₁.isUFormula h₂.isUFormula]
+    exact
       hor n param p₁ p₂ h₁ h₂ (ih p₁ (by simp) param (by simp [f]) n (by simp [g]) h₁)
         (ih p₂ (by simp) param (by simp [f]) n (by simp [g]) h₂)
-  · simpa [h₁.isUFormula] using
+  · rw [c.result_all h₁.isUFormula]
+    exact
       hall n param p₁ h₁
         (ih p₁ (by simp) (c.allChanges param) (by simp [f]) (n + 1) (by simp [g]) h₁)
-  · simpa [h₁.isUFormula] using
+  · rw [c.result_exs h₁.isUFormula]
+    exact
       hexs n param p₁ h₁
         (ih p₁ (by simp) (c.exsChanges param) (by simp [f]) (n + 1) (by simp [g]) h₁)
 

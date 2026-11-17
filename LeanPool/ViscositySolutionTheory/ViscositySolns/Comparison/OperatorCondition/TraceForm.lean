@@ -119,22 +119,22 @@ theorem TraceSecondOrderComponentBoundsOn.of_norm_bounds
     refine le_trans (htrace α hα x hx y hy r hr X Y hXY) (hmonoA ?_)
     have hsq : 0 <= ‖x - y‖ ^ 2 := sq_nonneg ‖x - y‖
     have hmul : 0 <= α * ‖x - y‖ ^ 2 := mul_nonneg hα.le hsq
-    linarith
+    linarith only [hmul]
   · intro α hα x hx y hy r hr X Y hXY
     refine le_trans (hb α hα x hx y hy r hr X Y hXY) (hmonob ?_)
     have hsq : 0 <= ‖x - y‖ ^ 2 := sq_nonneg ‖x - y‖
     have hmul : 0 <= α * ‖x - y‖ ^ 2 := mul_nonneg hα.le hsq
-    linarith
+    linarith only [hmul]
   · intro α hα x hx y hy r hr X Y hXY
     refine le_trans (hc α hα x hx y hy r hr X Y hXY) (hmonoc ?_)
     have hsq : 0 <= ‖x - y‖ ^ 2 := sq_nonneg ‖x - y‖
     have hmul : 0 <= α * ‖x - y‖ ^ 2 := mul_nonneg hα.le hsq
-    linarith
+    linarith only [hmul]
   · intro α hα x hx y hy r hr X Y hXY
     refine le_trans (hf α hα x hx y hy r hr X Y hXY) (hmonof ?_)
     have hsq : 0 <= ‖x - y‖ ^ 2 := sq_nonneg ‖x - y‖
     have hmul : 0 <= α * ‖x - y‖ ^ 2 := mul_nonneg hα.le hsq
-    linarith
+    linarith only [hmul]
 
 /--
 Let `A`, `b`, `c`, and `f` define the trace-form operator
@@ -206,7 +206,7 @@ theorem ishiiOperatorComparisonConditionOn_traceSecondOrderOperator_of_component
   have hc' := hc α hα x hx y hy r hr X Y hXY
   have hf' := hf α hα x hx y hy r hr X Y hXY
   dsimp [ω]
-  linarith
+  linarith only [htrace', hb', hc', hf']
 
 /--
 Packaged form of

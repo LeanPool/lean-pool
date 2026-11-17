@@ -127,13 +127,12 @@ theorem sum_nonstandard_crossPairing_le_decay
   have hi := (Finset.mem_filter.mp hI).2
   have hlen : (2 : ℝ) ^ s ≤ I.length := by
     rw [hi.1]
-    exact (zpow_right_mono₀ (by norm_num : (1 : ℝ) ≤ 2)) (by omega)
+    exact (zpow_right_mono₀ (by norm_num1 : (1 : ℝ) ≤ 2)) (by omega)
   have hc := div_le_div_of_nonneg_left
     (show 0 ≤ 3840 * positiveDyadicAmplitudeBound ^ 2 * intervalL1Average f I₀ by
       positivity [intervalL1Average_nonneg f I₀]) (by positivity : 0 < (2 : ℝ) ^ s) hlen
   simp only [div_eq_mul_inv, ← zpow_neg] at hc
-  simpa only [div_eq_mul_inv] using
-    mul_le_mul_of_nonneg_right hc (intervalBadMass_nonneg S f I₀ k₀ s scale I)
+  exact mul_le_mul_of_nonneg_right hc (intervalBadMass_nonneg S f I₀ k₀ s scale I)
 
 /-- The actual `L²` cross row inherits the proved oscillatory kernel decay. -/
 theorem sum_abs_inner_badPieceLp_le_decay

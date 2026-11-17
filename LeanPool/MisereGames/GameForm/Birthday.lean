@@ -66,7 +66,8 @@ theorem mem_birthdayFinset {x : GameForm} {n : ℕ} : x ∈ birthdayFinset n ↔
       have := Set.fintypeSubset _ hxl
       have := Set.fintypeSubset _ hxr
       use xᴸ.toFinset, xᴿ.toFinset
-      simp_all
+      simp_all only [
+        mem_toFinset, implies_true, and_self, coe_toFinset, ofSets_leftMoves_rightMoves]
 
 end GameForm
 

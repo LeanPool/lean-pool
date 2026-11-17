@@ -65,7 +65,7 @@ an element of the endomorphism ring, so that sums and composites of
 these values elaborate at the hom-set instances. -/
 def scalarHom [Category.{v} D] [MonoidalCategory D] [Preadditive D]
     (φ : ℂ ≃+* End (𝟙_ D)) (c : ℂ) : 𝟙_ D ⟶ 𝟙_ D :=
-  φ c
+  (φ c).asHom
 
 /-- `End`-multiplication is reversed composition, and ℂ is
 commutative, so a ring isomorphism out of ℂ turns products into
@@ -75,7 +75,7 @@ theorem scalarUnit_map_mul [Category.{v} D] [MonoidalCategory D] [Preadditive D]
     (φ : ℂ ≃+* End (𝟙_ D)) (a b : ℂ) :
     scalarHom φ (a * b) = scalarHom φ a ≫ scalarHom φ b := by
   simp only [scalarHom]
-  rw [mul_comm a b, map_mul, End.mul_def]
+  rw [mul_comm a b, map_mul, End.mul_asHom]
 
 /-- **The scalar `c` as an endomorphism of `X`**: whisker the unit
 endomorphism `φ c` onto `X` and cancel the unit through the left
@@ -88,7 +88,7 @@ def scalarEnd [Category.{v} D] [MonoidalCategory D] [Preadditive D]
 theorem scalarEnd_one [Category.{v} D] [MonoidalCategory D] [Preadditive D]
     (φ : ℂ ≃+* End (𝟙_ D)) (X : D) :
     scalarEnd φ 1 X = 𝟙 X := by
-  have h : scalarHom φ 1 = 𝟙 (𝟙_ D) := map_one φ
+  have h : scalarHom φ 1 = 𝟙 (𝟙_ D) := congrArg End.asHom (map_one φ)
   simp [scalarEnd, h]
 
 /-- The action turns multiplication into composition. -/
@@ -191,7 +191,7 @@ theorem scalarEnd_add [Category.{v} D] [MonoidalCategory D] [Preadditive D]
     (φ : ℂ ≃+* End (𝟙_ D)) (a b : ℂ) (X : D) :
     scalarEnd φ (a + b) X = scalarEnd φ a X + scalarEnd φ b X := by
   have h : scalarHom φ (a + b) = scalarHom φ a + scalarHom φ b :=
-    map_add φ a b
+    congrArg End.asHom (map_add φ a b)
   simp only [scalarEnd, h, MonoidalPreadditive.add_whiskerRight,
     Preadditive.add_comp, Preadditive.comp_add]
 
@@ -200,7 +200,7 @@ theorem scalarEnd_zero [Category.{v} D] [MonoidalCategory D] [Preadditive D]
     [MonoidalPreadditive D]
     (φ : ℂ ≃+* End (𝟙_ D)) (X : D) :
     scalarEnd φ 0 X = 0 := by
-  have h : scalarHom φ 0 = (0 : 𝟙_ D ⟶ 𝟙_ D) := map_zero φ
+  have h : scalarHom φ 0 = (0 : 𝟙_ D ⟶ 𝟙_ D) := congrArg End.asHom (map_zero φ)
   simp [scalarEnd, h]
 
 /-- **The scalar action on a hom-set**: whisker the unit
@@ -314,7 +314,7 @@ def endCongrRingEquiv [Category.{v'} E] [Preadditive E]
       have h : ∀ p q : X ⟶ X, α.inv ≫ (p + q) ≫ α.hom =
           (α.inv ≫ p ≫ α.hom) + (α.inv ≫ q ≫ α.hom) := fun p q => by
         rw [Preadditive.add_comp, Preadditive.comp_add]
-      exact h f g }
+      exact End.ext (h f.asHom g.asHom) }
 
 end EndTransport
 
@@ -347,15 +347,16 @@ equivalence; `End`-multiplication is reversed composition on both
 sides, so functoriality preserves it verbatim. -/
 def indOfEndRingEquiv [SmallCategory C] [Preadditive C] [HasFiniteColimits C]
     (x : C) : End x ≃+* End (indOf.obj x) where
-  toFun f := indOf.map f
-  invFun g := Ind.yoneda.fullyFaithful.preimage g
-  left_inv f := Ind.yoneda.fullyFaithful.preimage_map f
-  right_inv g := Ind.yoneda.fullyFaithful.map_preimage g
+  toFun f := .of (indOf.map f.asHom)
+  invFun g := .of (Ind.yoneda.fullyFaithful.preimage g.asHom)
+  left_inv f := End.ext (Ind.yoneda.fullyFaithful.preimage_map f.asHom)
+  right_inv g := End.ext (Ind.yoneda.fullyFaithful.map_preimage g.asHom)
   map_mul' f g := by
-    rw [End.mul_def, End.mul_def, Functor.map_comp]
+    apply End.ext
+    rw [End.mul_asHom, End.mul_asHom, Functor.map_comp]
   map_add' f g := by
     have := indOf_additive (C := C)
-    exact Functor.map_add (F := indOf (C := C))
+    exact End.ext (Functor.map_add (F := indOf (C := C)))
 
 /-- **The scalar unit of `Ind C`**: a ring isomorphism
 `ℂ ≃+* End (𝟙_ C)` transports along the embedding and the unit

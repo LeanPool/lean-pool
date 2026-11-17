@@ -7,6 +7,12 @@ module
 
 
 public import LeanPool.NandakumarRamanaRao.NRR.PrimePolyhedron.FoxNeuwirth.AffinePrismObstruction
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Basify
+import Mathlib.Tactic.ENatToNat
+import Mathlib.Tactic.Polynomial.Basic
+import Mathlib.Tactic.Positivity.Finset
+import Mathlib.Tactic.ReduceModChar
 /-!
 # Coordinate lift of the S5 reference deviation map
 

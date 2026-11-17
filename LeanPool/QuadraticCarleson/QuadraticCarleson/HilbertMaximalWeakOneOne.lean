@@ -10,9 +10,6 @@ public import LeanPool.QuadraticCarleson.QuadraticCarleson.CalderonZygmundDyadic
 public import LeanPool.QuadraticCarleson.QuadraticCarleson.HilbertFiniteTruncationWeakOneOne
 public import LeanPool.QuadraticCarleson.QuadraticCarleson.HilbertL2Fourier
 public import LeanPool.QuadraticCarleson.QuadraticCarleson.OscillatoryReductionMaximal
-public import Mathlib.MeasureTheory.Integral.DominatedConvergence
-public import Mathlib.MeasureTheory.Function.L2Space
-public import Mathlib.Topology.Order.IsLUB
 
 /-!
 # The ordinary maximally truncated Hilbert transform
@@ -55,9 +52,9 @@ theorem zeroHilbertTruncation_eq_oneSidedTails {ε : ℝ} (hε : 0 < ε)
     constructor
     · rintro (h | h)
       · exact Or.inr h
-      · exact Or.inl (by linarith)
+      · exact Or.inl (by linarith only [h])
     · rintro (h | h)
-      · exact Or.inr (by linarith)
+      · exact Or.inr (by linarith only [h])
       · exact Or.inl h
   have hwhole : IntegrableOn (zeroHilbertIntegrand f x) {t : ℝ | ε < |t|} := by
     exact integrableOn_zeroHilbertTail hε hf x
@@ -68,7 +65,7 @@ theorem zeroHilbertTruncation_eq_oneSidedTails {ε : ℝ} (hε : 0 < ε)
     change ε < |t|
     have htneg : t < 0 := ht.trans (neg_neg_of_pos hε)
     rw [abs_of_neg htneg]
-    linarith
+    linarith only [ht]
   have hright : IntegrableOn (zeroHilbertIntegrand f x) (Ioi ε) := by
     apply hwhole.mono_set
     intro t ht
@@ -80,7 +77,7 @@ theorem zeroHilbertTruncation_eq_oneSidedTails {ε : ℝ} (hε : 0 < ε)
     intro t htl htr
     change t < -ε at htl
     change ε < t at htr
-    linarith
+    linarith only [hε, htl, htr]
   unfold quadraticHilbertTrunc zeroHilbertIntegrand
   simp only [zero_mul, phase_zero, mul_one]
   rw [hset]
@@ -91,7 +88,7 @@ theorem continuousAt_zeroHilbertTruncation_radius {ε : ℝ} (hε : 0 < ε)
     {f : ℝ → ℂ} (hf : Integrable f) (x : ℝ) :
     ContinuousAt (fun δ : ℝ ↦ quadraticHilbertTrunc 0 δ f x) ε := by
   let a : ℝ := ε / 2
-  have ha : 0 < a := by dsimp [a]; linarith
+  have ha : 0 < a := by dsimp [a]; linarith only [hε]
   have hwhole : IntegrableOn (zeroHilbertIntegrand f x) {t : ℝ | a < |t|} := by
     exact integrableOn_zeroHilbertTail ha hf x
   have hright : IntegrableOn (zeroHilbertIntegrand f x) (Ioi a) := by
@@ -108,8 +105,8 @@ theorem continuousAt_zeroHilbertTruncation_radius {ε : ℝ} (hε : 0 < ε)
     change a < |t|
     have htneg : t < 0 := ht.trans (neg_neg_of_pos ha)
     rw [abs_of_neg htneg]
-    linarith
-  have hεa : a < ε := by dsimp [a]; linarith
+    linarith only [ht]
+  have hεa : a < ε := by dsimp [a]; linarith only [hε]
   have hrightAt : ContinuousAt
       (fun δ : ℝ ↦ ∫ t in Ioi δ, zeroHilbertIntegrand f x t) ε := by
     apply (hright.continuousOn_Ici_primitive_Ioi ε hεa.le).continuousAt
@@ -117,8 +114,8 @@ theorem continuousAt_zeroHilbertTruncation_radius {ε : ℝ} (hε : 0 < ε)
   have hleftAtBound : ContinuousAt
       (fun b : ℝ ↦ ∫ t in Iio b, zeroHilbertIntegrand f x t) (-ε) := by
     apply (hleft.continuousOn_Iic_primitive_Iio (-ε)
-      (by linarith : -ε ≤ -a)).continuousAt
-    exact Iic_mem_nhds (by linarith : -ε < -a)
+      (by linarith only [hεa] : -ε ≤ -a)).continuousAt
+    exact Iic_mem_nhds (by linarith only [hεa] : -ε < -a)
   have hleftAt : ContinuousAt
       (fun δ : ℝ ↦ ∫ t in Iio (-δ), zeroHilbertIntegrand f x t) ε :=
     hleftAtBound.comp continuousAt_neg
@@ -205,7 +202,7 @@ theorem ordinaryHilbertKernel_sub_center_norm_le {x z R y : ℝ}
     not_mem_tripleCenteredInterval_abs hx
   have hxyLower : |x - z| / 2 ≤ |x - y| :=
     half_center_distance_le_distance hR.le hx hy
-  have hxzpos : 0 < |x - z| := by linarith
+  have hxzpos : 0 < |x - z| := by linarith only [hR, hxz]
   have hxypos : 0 < |x - y| := (half_pos hxzpos).trans_le hxyLower
   have hxyUpper : |x - y| ≤ 2 * |x - z| := by
     have htri : |x - y| ≤ |x - z| + |z - y| := by
@@ -213,11 +210,11 @@ theorem ordinaryHilbertKernel_sub_center_norm_le {x z R y : ℝ}
         |x - y| = |(x - z) + (z - y)| := by ring_nf
         _ ≤ |x - z| + |z - y| := abs_add_le _ _
     rw [abs_sub_comm z y] at htri
-    linarith
+    linarith only [hR, hyz, hxz, htri]
   have hxy0 : (x - y : ℂ) ≠ 0 :=
-    by simpa using Complex.ofReal_ne_zero.mpr (abs_pos.mp hxypos)
+    by simpa only [ne_eq, Complex.ofReal_sub] using Complex.ofReal_ne_zero.mpr (abs_pos.mp hxypos)
   have hxz0 : (x - z : ℂ) ≠ 0 :=
-    by simpa using Complex.ofReal_ne_zero.mpr (abs_pos.mp hxzpos)
+    by simpa only [ne_eq, Complex.ofReal_sub] using Complex.ofReal_ne_zero.mpr (abs_pos.mp hxzpos)
   have hid : ordinaryHilbertKernel x y - ordinaryHilbertKernel x z =
       ((y - z : ℝ) : ℂ) / (((x - y : ℝ) : ℂ) * ((x - z : ℝ) : ℂ)) := by
     unfold ordinaryHilbertKernel
@@ -233,7 +230,7 @@ theorem ordinaryHilbertKernel_sub_center_norm_le {x z R y : ℝ}
     _ ≤ (|y - z| * |x - y|) * (2 * |x - z|) := by
       gcongr
     _ ≤ 2 * |y - z| * (|x - y| * |x - z|) := by
-      exact le_of_eq (by ring)
+      exact le_of_eq (by ac_rfl)
 
 /-- Outside the triple interval the ordinary Hilbert kernel times an
 integrable interval atom is integrable. -/
@@ -245,7 +242,7 @@ theorem integrableOn_ordinaryHilbertKernel_mul_atom
       (centeredInterval z R) := by
   have hxz : 0 < |x - z| := by
     have := not_mem_tripleCenteredInterval_abs hx
-    linarith
+    linarith only [hR, this]
   have hmeas : AEStronglyMeasurable (ordinaryHilbertKernel x)
       (volume.restrict (centeredInterval z R)) :=
     (measurable_const.div
@@ -339,11 +336,11 @@ theorem zeroHilbertTruncation_eq_ordinaryKernel_atom_of_radius_lt
           calc
             |x - z| = |(x - y) + (y - z)| := by ring_nf
             _ ≤ |x - y| + |y - z| := abs_add_le _ _
-        linarith
+        linarith only [hyz, htri]
       have hcut : ε < |x - y| := hε.trans_le hdist
       rw [sharpQuadraticTailKernel, ite_eq_left hcut, zero_mul, phase_zero]
       unfold ordinaryHilbertKernel
-      ring
+      rfl
 
 /-- A sharp ordinary truncation has the elementary size bound `1 / ε`
 against any integrable input. Unlike the finite-annular estimate, the
@@ -381,14 +378,14 @@ theorem ofReal_inv_mul_eq_four_mul_div_four_mul {ε : ℝ} (hε : 0 < ε)
     ENNReal.ofReal (1 / ε) * m =
       4 * (m / ENNReal.ofReal (4 * ε)) := by
   rw [one_div, ENNReal.ofReal_inv_of_pos hε]
-  rw [ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 4)]
+  rw [ENNReal.ofReal_mul (by norm_num1 : (0 : ℝ) ≤ 4)]
   norm_num only [ENNReal.ofReal_ofNat]
   rw [ENNReal.div_eq_inv_mul]
-  rw [ENNReal.mul_inv (Or.inl (by norm_num)) (Or.inl (by norm_num))]
+  rw [ENNReal.mul_inv (Or.inl (by norm_num1)) (Or.inl (by decide +kernel))]
   calc
     (ENNReal.ofReal ε)⁻¹ * m =
         (4 * 4⁻¹) * ((ENNReal.ofReal ε)⁻¹ * m) := by
-      rw [ENNReal.mul_inv_cancel (by norm_num) (by norm_num), one_mul]
+      rw [ENNReal.mul_inv_cancel (by norm_num1) (by decide +kernel), one_mul]
     _ = 4 * (4⁻¹ * (ENNReal.ofReal ε)⁻¹ * m) := by ac_rfl
 
 /-- If an interval of length at most `ε` contains a point within `ε` of
@@ -405,14 +402,14 @@ theorem centeredInterval_subset_closedBall_two_mul_of_near
       |y - y₀| = |(y - z) + (z - y₀)| := by ring_nf
       _ ≤ |y - z| + |z - y₀| := abs_add_le _ _
       _ = |y - z| + |y₀ - z| := by rw [abs_sub_comm z y₀]
-      _ ≤ R := by linarith
+      _ ≤ R := by linarith only [hyz, hy₀z]
   change dist y x ≤ 2 * ε
   rw [Real.dist_eq, abs_sub_comm y x]
   calc
     |x - y| = |(x - y₀) + (y₀ - y)| := by ring_nf
     _ ≤ |x - y₀| + |y₀ - y| := abs_add_le _ _
     _ = |x - y₀| + |y - y₀| := by rw [abs_sub_comm y₀ y]
-    _ ≤ 2 * ε := by linarith
+    _ ≤ 2 * ε := by linarith only [hy₀x, hRε, hyy₀]
 
 /-- Pointwise monotonicity of the centered Hardy--Littlewood maximal
 operator. -/
@@ -455,8 +452,8 @@ theorem zeroHilbertTruncation_eq_zero_or_full_of_not_boundary
     · have hcut : ¬ ε < |x - y| := by
         intro hxy
         exact hnfar ⟨y, hy, hxy⟩
-      simp [sharpQuadraticTailKernel, hcut]
-    · simp [hsupp y hy]
+      simp only [sharpQuadraticTailKernel, hcut, ↓reduceIte, zero_mul]
+    · simp only [hsupp y hy, mul_zero]
   · right
     rw [← quadraticHilbertConvolutionTrunc_eq_quadraticHilbertTrunc]
     unfold quadraticHilbertConvolutionTrunc
@@ -476,7 +473,7 @@ theorem zeroHilbertTruncation_eq_zero_or_full_of_not_boundary
           hnear ⟨y, hy, hle⟩
         rw [sharpQuadraticTailKernel, ite_eq_left hcut, zero_mul, phase_zero]
         unfold ordinaryHilbertKernel
-        ring
+        rfl
 
 /-- For an interval lying outside its triple, a sharp radial boundary that
 crosses the interval must pass through the interval at one of the two points
@@ -495,22 +492,22 @@ theorem truncationBoundary_centeredInterval_mem_left_or_right
     have hyn' := hyn
     have hyf' := hyf
     simp only [centeredInterval, mem_Ico] at hyn' hyf' ⊢
-    have hynx : yn < x := by linarith
-    have hyfx : yf < x := by linarith
+    have hynx : yn < x := by linarith only [hR, hxabs, hyn']
+    have hyfx : yf < x := by linarith only [hR, hxabs, hyf']
     rw [abs_of_pos (sub_pos.mpr hynx)] at hnear
     rw [abs_of_pos (sub_pos.mpr hyfx)] at hfar
-    constructor <;> linarith
+    constructor <;> linarith only [hfar, hyf', hnear, hyn']
   · right
     have hsign : x - z ≤ 0 := sub_nonpos.mpr hxz
     rw [abs_of_nonpos hsign] at hxabs
     have hyn' := hyn
     have hyf' := hyf
     simp only [centeredInterval, mem_Ico] at hyn' hyf' ⊢
-    have hxyn : x < yn := by linarith
-    have hxyf : x < yf := by linarith
+    have hxyn : x < yn := by linarith only [hR, hxabs, hyn']
+    have hxyf : x < yf := by linarith only [hR, hxabs, hyf']
     rw [abs_of_neg (sub_neg.mpr hxyn)] at hnear
     rw [abs_of_neg (sub_neg.mpr hxyf)] at hfar
-    constructor <;> linarith
+    constructor <;> linarith only [hnear, hyn', hfar, hyf']
 
 /-- Outside the tripled interval, if the deleted truncation ball meets the
 interval, then the truncation radius is strictly larger than its length. -/
@@ -525,7 +522,7 @@ theorem centeredInterval_length_lt_radius_of_notMem_triple_of_near
     calc
       |x - z| = |(x - y) + (y - z)| := by ring_nf
       _ ≤ |x - y| + |y - z| := abs_add_le _ _
-  linarith
+  linarith only [hnear, hxz, hyz, htriangle]
 
 /-- A large-radius truncation of an interval-supported input is controlled
 by the centered Hardy--Littlewood maximal function as soon as the deleted
@@ -554,12 +551,12 @@ theorem enorm_zeroHilbertTruncation_le_eight_maximal_of_interval_near
     apply lintegral_mono
     intro y
     by_cases hy : y ∈ Metric.closedBall x (2 * ε)
-    · simp [hy]
+    · simp only [hy, indicator_of_mem, Std.le_refl]
     · have hyI : y ∉ centeredInterval z R := fun hy' ↦ hy (hsubset hy')
       change ‖b y‖ₑ ≤
         (Metric.closedBall x (2 * ε)).indicator (fun u ↦ ‖b u‖ₑ) y
       rw [hsupp y hyI]
-      simp
+      simp only [enorm_zero, zero_le]
   calc
     ‖quadraticHilbertTrunc 0 ε b x‖ₑ ≤
         ENNReal.ofReal (1 / ε) * ∫⁻ y, ‖b y‖ₑ := henorm
@@ -684,7 +681,7 @@ theorem stoppingBoundaryCells_finite_and_ncard_le_two (f : ℝ → ℂ) {x ε : 
     _ ≤ 1 + 1 := Nat.add_le_add
       ((Set.ncard_le_one hleftSub.finite).2 hleftSub)
       ((Set.ncard_le_one hrightSub.finite).2 hrightSub)
-    _ = 2 := by norm_num
+    _ = 2 := by decide +kernel
 
 theorem measurableSet_stoppingTripleBadUnion (f : ℝ → ℂ) :
     MeasurableSet (stoppingTripleBadUnion f) := by
@@ -699,7 +696,7 @@ theorem volume_triple_stoppingCell (f : ℝ → ℂ) (c : stoppingCell f) :
   rw [show stoppingCellCenter f c + 3 * stoppingCellLength f c / 2 -
       (stoppingCellCenter f c - 3 * stoppingCellLength f c / 2) =
       3 * stoppingCellLength f c by ring]
-  rw [ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 3),
+  rw [ENNReal.ofReal_mul (by norm_num1 : (0 : ℝ) ≤ 3),
     volume_stoppingCell_interval]
   simp only [stoppingCellLength]
   norm_num
@@ -733,7 +730,7 @@ theorem volume_stoppingTripleBadUnion_lt_top {f : ℝ → ℂ}
   apply (volume_stoppingTripleBadUnion_le_lintegral_norm hf).trans_lt
   rw [← ofReal_integral_eq_lintegral_ofReal hf.norm
     (Filter.Eventually.of_forall fun x ↦ norm_nonneg (f x))]
-  exact ENNReal.mul_lt_top (by norm_num) ENNReal.ofReal_lt_top
+  exact ENNReal.mul_lt_top (by decide +kernel) ENNReal.ofReal_lt_top
 
 /-- The bad atom carried by one canonical half-open stopping cell. -/
 def stoppingHilbertBadAtom (f : ℝ → ℂ) (c : stoppingCell f) : ℝ → ℂ :=
@@ -837,7 +834,7 @@ theorem integrableOn_stoppingFullKernelAction_compl_triple {f : ℝ → ℂ}
     rw [setIntegral_eq_integral_of_forall_compl_eq_zero]
     · exact integral_stoppingHilbertBadAtom_eq_zero c
     · intro x hx
-      simp [b, stoppingHilbertBadAtom, hx]
+      simp only [stoppingHilbertBadAtom, hx, not_false_eq_true, indicator_of_notMem, b]
   have hmaj : IntegrableOn (fun x : ℝ ↦
       (4 * R * A) * (1 / |x - z| ^ 2)) (tripleCenteredInterval z R)ᶜ :=
     (integrableOn_inv_abs_sub_sq_compl_tripleCenteredInterval z R
@@ -854,7 +851,7 @@ theorem integrableOn_stoppingFullKernelAction_compl_triple {f : ℝ → ℂ}
         (by simpa only [z, R, mem_compl_iff] using hx)
         (by simpa only [z, R] using hy)
     have hbound := norm_setIntegral_kernel_le_decay ordinaryHilbertKernel b x z R 2
-      (stoppingCellLength_pos f c) (by norm_num) hx hbI
+      (stoppingCellLength_pos f c) (by norm_num1) hx hbI
       (integrableOn_ordinaryHilbertKernel_mul_atom
         (stoppingCellLength_pos f c) hx hbI) hmean
       hreg
@@ -883,7 +880,7 @@ theorem integral_norm_stoppingHilbertBadAtom_le {f : ℝ → ℂ}
       (hf.norm.integrableOn.add hconst.norm) hI (fun x _ ↦ norm_sub_le _ _)
   have hatom : (∫ x, ‖stoppingHilbertBadAtom f c x‖) =
       ∫ x in I, ‖f x - a‖ := by
-    simp only [stoppingHilbertBadAtom, I, a, norm_indicator_eq_indicator_norm]
+    simp only [stoppingHilbertBadAtom, norm_indicator_eq_indicator_norm, I, a]
     exact integral_indicator hI
   rw [hatom]
   calc
@@ -970,7 +967,7 @@ theorem integrable_tsum_stoppingHilbertBadAtom {f : ℝ → ℂ}
       exact enorm_tsum_le_tsum_enorm
     _ ≤ 2 * ∫⁻ x, ‖f x‖ₑ :=
       lintegral_stoppingHilbertBadAtomNormSum_le hfi
-    _ < ∞ := ENNReal.mul_lt_top (by norm_num) hfi.hasFiniteIntegral
+    _ < ∞ := ENNReal.mul_lt_top (by decide +kernel) hfi.hasFiniteIntegral
 
 /-- Exact pointwise recombination of the canonical stopping atoms with the
 ordinary Calderón--Zygmund bad part. Pairwise disjointness makes the series
@@ -984,18 +981,18 @@ theorem tsum_stoppingHilbertBadAtom_eq_sub_stoppingGoodPart
   · obtain ⟨c, hxc⟩ := mem_iUnion.mp hx
     rw [tsum_eq_single c]
     · rw [stoppingGoodPart_eq_average_of_mem c hxc]
-      simp [stoppingHilbertBadAtom, hxc]
+      simp only [stoppingHilbertBadAtom, hxc, indicator_of_mem]
     · intro d hdc
       have hdis := stoppingCell_pairwiseDisjoint (f := f) hdc.symm
       have hxd : x ∉ d.1.interval (rootLength f) :=
         fun hmem ↦ Set.disjoint_left.1 hdis hxc hmem
-      simp [stoppingHilbertBadAtom, hxd]
+      simp only [stoppingHilbertBadAtom, hxd, not_false_eq_true, indicator_of_notMem]
   · rw [stoppingGoodPart_eq_of_notMem hx, sub_self]
     have hzero : (fun c : stoppingCell f ↦ stoppingHilbertBadAtom f c x) = 0 := by
       funext c
       have hxc : x ∉ c.1.interval (rootLength f) :=
         fun hmem ↦ hx (mem_iUnion.mpr ⟨c, hmem⟩)
-      simp [stoppingHilbertBadAtom, hxc]
+      simp only [stoppingHilbertBadAtom, hxc, not_false_eq_true, indicator_of_notMem, Pi.zero_apply]
     rw [hzero]
     exact tsum_zero
 
@@ -1038,7 +1035,7 @@ theorem tsum_lintegral_enorm_sharpKernel_mul_stoppingAtom_lt_top
   rw [hsum] at hs
   exact hs.trans_lt (ENNReal.mul_lt_top (by finiteness)
     ((lintegral_stoppingHilbertBadAtomNormSum_le hfi).trans_lt
-      (ENNReal.mul_lt_top (by norm_num) hfi.hasFiniteIntegral)))
+      (ENNReal.mul_lt_top (by decide +kernel) hfi.hasFiniteIntegral)))
 
 /-- A genuine countable integral/series interchange for sharp ordinary
 Hilbert truncations of the complete stopping bad part. -/
@@ -1096,9 +1093,9 @@ theorem stoppingHilbertBadAtomNormSum_boundaryMaximal_weak_bound
       {x | a < centeredHardyLittlewoodMaximal
         (stoppingHilbertBadAtomNormSum f) x} := by
     ext x
-    simp only [Set.mem_ofPred_eq]
+    simp only [mem_ofPred_eq]
     exact (ENNReal.mul_right_strictMono (a := (16 : ℝ≥0∞))
-      (by norm_num) (by norm_num)).lt_iff_lt
+      (by norm_num1) (by decide +kernel)).lt_iff_lt
   rw [hset]
   have hweak := centeredHardyLittlewoodMaximal_weak_bound
     (stoppingHilbertBadAtomNormSum f) a
@@ -1148,7 +1145,7 @@ theorem enorm_zeroHilbertTruncation_stoppingAtom_le_eight_maximal
     (y₀ := y₀)
   · intro y hy
     rw [← stoppingCell_interval_eq_centeredInterval f c] at hy
-    simp [stoppingHilbertBadAtom, hy]
+    simp only [stoppingHilbertBadAtom, hy, not_false_eq_true, indicator_of_notMem]
   · exact hε
   · exact hlen
   · rwa [← stoppingCell_interval_eq_centeredInterval f c]
@@ -1257,7 +1254,7 @@ theorem zeroHilbertTruncation_stoppingAtom_eq_of_radius_lt
     (z := stoppingCellCenter f c) (R := stoppingCellLength f c)
   · intro y hy
     rw [← stoppingCell_interval_eq_centeredInterval f c] at hy
-    simp [stoppingHilbertBadAtom, hy]
+    simp only [stoppingHilbertBadAtom, hy, not_false_eq_true, indicator_of_notMem]
   · exact hε
 
 /-- Exact stopping-cell specialization of the nonboundary dichotomy. -/
@@ -1272,7 +1269,7 @@ theorem zeroHilbertTruncation_stoppingAtom_eq_zero_or_full_of_not_boundary
     (z := stoppingCellCenter f c) (R := stoppingCellLength f c)
   · intro y hy
     rw [← stoppingCell_interval_eq_centeredInterval f c] at hy
-    simp [stoppingHilbertBadAtom, hy]
+    simp only [stoppingHilbertBadAtom, hy, not_false_eq_true, indicator_of_notMem]
   · rw [← stoppingCell_interval_eq_centeredInterval f c]
     exact hc
 
@@ -1304,11 +1301,11 @@ theorem enorm_zeroHilbertTruncation_badPart_le_fullKernel_add_boundary
       apply ENNReal.tsum_le_tsum
       intro c
       by_cases hc : c ∈ stoppingBoundaryCells f x ε
-      · simp [hc]
+      · simp only [hc, ↓reduceIte, self_le_add_left]
       · rcases zeroHilbertTruncation_stoppingAtom_eq_zero_or_full_of_not_boundary
           c hc with hzero | hfull
-        · simp [hc, hzero]
-        · simp [hc, hfull]
+        · simp only [hzero, enorm_zero, hc, ↓reduceIte, add_zero, zero_le]
+        · simp only [hfull, hc, ↓reduceIte, add_zero, Std.le_refl]
     _ = stoppingFullKernelMajorant f x +
         stoppingBoundaryTruncationMajorant f x ε := by
       rw [ENNReal.tsum_add]
@@ -1333,7 +1330,7 @@ theorem zeroHilbertTruncation_stoppingAtom_eq_of_le_length_of_notMem_triple
   have hxabs : 3 * stoppingCellLength f c / 2 <
       |x - stoppingCellCenter f c| :=
     not_mem_tripleCenteredInterval_abs hx
-  linarith
+  linarith only [hε, hxabs]
 
 /-- The part of one stopping atom's maximal truncation contributed by radii
 no larger than its own cell length. -/
@@ -1385,7 +1382,7 @@ theorem integral_norm_ordinaryHilbertKernel_stoppingAtom_le
     rw [setIntegral_eq_integral_of_forall_compl_eq_zero]
     · exact hmeanGlobal
     · intro x hx
-      simp [stoppingHilbertBadAtom, hx]
+      simp only [stoppingHilbertBadAtom, hx, not_false_eq_true, indicator_of_notMem]
   calc
     _ ≤ (8 * 2 / 3 : ℝ) *
         ∫ y in centeredInterval (stoppingCellCenter f c) (stoppingCellLength f c),
@@ -1403,7 +1400,7 @@ theorem integral_norm_ordinaryHilbertKernel_stoppingAtom_le
               ∫ y, ‖stoppingHilbertBadAtom f c y‖ :=
             setIntegral_le_integral hb.norm (Filter.Eventually.of_forall fun _ ↦ norm_nonneg _)
           _ ≤ _ := integral_norm_stoppingHilbertBadAtom_le hf c
-      · norm_num
+      · norm_num1
     _ = _ := by ring
 
 /-- ENNReal version of the off-triple cancellation estimate for one stopping
@@ -1615,8 +1612,7 @@ theorem quadraticHilbertMaximalTruncation_badPart_weak_bound_one
   have hoff : 32 * volume SO ≤
       2 * (ENNReal.ofReal (32 / 3) * (∫⁻ x, ‖f x‖ₑ) +
         128 * (∫⁻ x, ‖f x‖ₑ)) := by
-    simpa only [SO, mul_one] using
-      quadraticHilbertMaximalTruncation_badPart_weak_bound hf hfi 1
+    simpa only [mul_one] using quadraticHilbertMaximalTruncation_badPart_weak_bound hf hfi 1
   calc
     32 * volume S ≤ 32 * volume (stoppingTripleBadUnion f ∪ SO) :=
       mul_le_mul' le_rfl (measure_mono hsub)
@@ -1698,7 +1694,7 @@ def cotlarConjugatePoissonKernel (r t : ℝ) : ℝ :=
 
 theorem cotlarSharpHilbertKernel_eq_zero_of_abs_le {r t : ℝ}
     (ht : |t| ≤ r) : cotlarSharpHilbertKernel r t = 0 := by
-  simp [cotlarSharpHilbertKernel, not_lt.mpr ht]
+  simp only [cotlarSharpHilbertKernel, not_lt.mpr ht, ↓reduceIte]
 
 /-- Off the truncation ball the sharp kernel differs from the conjugate
 Poisson kernel by the explicit cubic-decay error. -/
@@ -1709,9 +1705,9 @@ theorem cotlarSharp_sub_conjugatePoisson_eq {r t : ℝ}
   have ht0 : t ≠ 0 := by
     intro h
     subst t
-    simp at ht
-    linarith
-  simp only [cotlarSharpHilbertKernel, cotlarConjugatePoissonKernel, ht, ↓reduceIte]
+    simp only [abs_zero] at ht
+    linarith only [hr, ht]
+  simp only [cotlarSharpHilbertKernel, ht, ↓reduceIte, cotlarConjugatePoissonKernel]
   field_simp
   ring
 
@@ -1725,7 +1721,7 @@ theorem abs_cotlarSharp_sub_conjugatePoisson_le {r t : ℝ}
     abs_of_nonneg (sq_nonneg r), abs_of_nonneg
       (add_nonneg (sq_nonneg t) (sq_nonneg r))]
   apply div_le_div_of_nonneg_left (sq_nonneg r) (pow_pos htpos 3)
-  nlinarith [abs_nonneg t, sq_nonneg r, sq_abs t]
+  nlinarith only [hr, ht, abs_nonneg t, sq_nonneg r, sq_abs t]
 
 /-- On the deleted ball the conjugate Poisson kernel has the natural
 `1/r` size. -/
@@ -1795,7 +1791,7 @@ theorem exists_nat_dyadic_shell {r t : ℝ} (hr : 0 < r) (ht : r < |t|) :
   have hratio : 1 ≤ |t| / r := by
     apply (le_div_iff₀ hr).2
     simpa only [one_mul] using ht.le
-  obtain ⟨n, hn, hn'⟩ := exists_nat_pow_near hratio (by norm_num : (1 : ℝ) < 2)
+  obtain ⟨n, hn, hn'⟩ := exists_nat_pow_near hratio (by norm_num1 : (1 : ℝ) < 2)
   refine ⟨n, ?_, ?_⟩
   · exact (le_div_iff₀ hr).1 hn
   · exact (div_lt_iff₀ hr).1 hn'
@@ -1804,7 +1800,7 @@ theorem exists_nat_dyadic_shell {r t : ℝ} (hr : 0 < r) (ht : r < |t|) :
 theorem cotlarPoissonKernel_le_dyadic_shell {r t : ℝ} (hr : 0 < r)
     {n : ℕ} (hn : (2 : ℝ) ^ n * r ≤ |t|) :
     cotlarPoissonKernel r t ≤ (1 / 4 : ℝ) ^ n / r := by
-  have hpow : 0 < (2 : ℝ) ^ n := pow_pos (by norm_num) _
+  have hpow : 0 < (2 : ℝ) ^ n := pow_pos (by norm_num1) _
   have ht0 : 0 < |t| := lt_of_lt_of_le (mul_pos hpow hr) hn
   have hsquare : ((2 : ℝ) ^ n * r) ^ 2 ≤ t ^ 2 := by
     rw [← sq_abs t]
@@ -1818,18 +1814,18 @@ theorem cotlarPoissonKernel_le_dyadic_shell {r t : ℝ} (hr : 0 < r)
     cotlarPoissonKernel r t = r / (t ^ 2 + r ^ 2) := rfl
     _ ≤ r / (((2 : ℝ) ^ n * r) ^ 2) := by
       exact div_le_div_of_nonneg_left hr.le (by positivity)
-        (by nlinarith [sq_nonneg r])
+        (by linarith only [hsquare, sq_nonneg r])
     _ = 1 / ((4 : ℝ) ^ n * r) := by
       rw [mul_pow, ← hfour]
       field_simp
     _ = (1 / 4 : ℝ) ^ n / r := by
-      simp [div_eq_mul_inv, mul_inv_rev, mul_comm]
+      simp only [mul_comm, div_eq_mul_inv, mul_inv_rev, one_mul, inv_pow]
 
 /-- On the same shell the sharp-to-conjugate-Poisson error has cubic decay. -/
 theorem cotlarPoissonErrorMajorant_le_dyadic_shell {r t : ℝ} (hr : 0 < r)
     (ht : r < |t|) {n : ℕ} (hn : (2 : ℝ) ^ n * r ≤ |t|) :
     cotlarPoissonErrorMajorant r t ≤ (1 / 8 : ℝ) ^ n / r := by
-  have hpow : 0 < (2 : ℝ) ^ n := pow_pos (by norm_num) _
+  have hpow : 0 < (2 : ℝ) ^ n := pow_pos (by norm_num1) _
   have ht0 : 0 < |t| := lt_of_lt_of_le (mul_pos hpow hr) hn
   rw [cotlarPoissonErrorMajorant, ite_eq_right (not_le.mpr ht)]
   have hcube : ((2 : ℝ) ^ n * r) ^ 3 ≤ |t| ^ 3 := by
@@ -1847,7 +1843,7 @@ theorem cotlarPoissonErrorMajorant_le_dyadic_shell {r t : ℝ} (hr : 0 < r)
       rw [mul_pow, ← height]
       field_simp
     _ = (1 / 8 : ℝ) ^ n / r := by
-      simp [div_eq_mul_inv, mul_inv_rev, mul_comm]
+      simp only [mul_comm, div_eq_mul_inv, mul_inv_rev, one_mul, inv_pow]
 
 /-- Sum of successively larger dyadic-ball majorants with geometric weights. -/
 noncomputable def cotlarDyadicBallSeries (q : ℝ) (r t : ℝ) : ℝ≥0∞ :=
@@ -1879,7 +1875,7 @@ theorem ofReal_cotlarPoissonKernel_le_dyadicBallSeries {r t : ℝ}
     have hone : ENNReal.ofReal ((1 / 4 : ℝ) ^ n / r) =
         (if |t| ≤ (2 : ℝ) ^ (n + 1) * r
           then ENNReal.ofReal ((1 / 4 : ℝ) ^ n / r) else 0) := by
-      simp [hn'.le]
+      simp only [one_div, inv_pow, hn'.le, ↓reduceIte]
     rw [hone]
     exact ENNReal.le_tsum (f := fun k : ℕ ↦ if |t| ≤ (2 : ℝ) ^ (k + 1) * r
       then ENNReal.ofReal ((1 / 4 : ℝ) ^ k / r) else 0) n)
@@ -1900,7 +1896,7 @@ theorem ofReal_cotlarPoissonErrorMajorant_le_dyadicBallSeries {r t : ℝ}
     have hone : ENNReal.ofReal ((1 / 8 : ℝ) ^ n / r) =
         (if |t| ≤ (2 : ℝ) ^ (n + 1) * r
           then ENNReal.ofReal ((1 / 8 : ℝ) ^ n / r) else 0) := by
-      simp [hn'.le]
+      simp only [one_div, inv_pow, hn'.le, ↓reduceIte]
     rw [hone]
     exact ENNReal.le_tsum (f := fun k : ℕ ↦ if |t| ≤ (2 : ℝ) ^ (k + 1) * r
       then ENNReal.ofReal ((1 / 8 : ℝ) ^ k / r) else 0) n)
@@ -1964,8 +1960,8 @@ theorem lintegral_cotlarDyadicBallSeries_mul_le_maximal
         intro n
         let ρn : ℝ := (2 : ℝ) ^ (n + 1) * r
         let Cn : ℝ := (2 : ℝ) ^ (n + 1) * q ^ n
-        have hρn : 0 < ρn := mul_pos (pow_pos (by norm_num) _) hr
-        have hCn : 0 ≤ Cn := mul_nonneg (pow_nonneg (by norm_num) _)
+        have hρn : 0 < ρn := mul_pos (pow_pos (by norm_num1) _) hr
+        have hCn : 0 ≤ Cn := mul_nonneg (pow_nonneg (by norm_num1) _)
           (pow_nonneg hq _)
         have hcoeff : Cn / ρn = q ^ n / r := by
           dsimp only [Cn, ρn]
@@ -1985,7 +1981,7 @@ theorem lintegral_cotlarDyadicBallSeries_mul_le_maximal
               by_cases hy : y ∈ Metric.closedBall x ρn
               · have habs : |x - y| ≤ (2 : ℝ) ^ (n + 1) * r := by
                   simpa only [Metric.mem_closedBall, Real.dist_eq, abs_sub_comm, ρn] using hy
-                simp [hy, habs]
+                simp only [habs, ↓reduceIte, hy, indicator_of_mem]
               · have habs : ¬ |x - y| ≤ (2 : ℝ) ^ (n + 1) * r := by
                   simpa only [Metric.mem_closedBall, Real.dist_eq, abs_sub_comm, ρn] using hy
                 simp [hy, habs]
@@ -2012,7 +2008,7 @@ theorem lintegral_cotlarDyadicBallSeries_quarter_le_maximal
     (∫⁻ y, cotlarDyadicBallSeries (1 / 4) r (x - y) * G y) ≤
       16 * centeredHardyLittlewoodMaximal G x := by
   have h := lintegral_cotlarDyadicBallSeries_mul_le_maximal
-    (q := (1 / 4 : ℝ)) (by norm_num) hr hG x
+    (q := (1 / 4 : ℝ)) (by norm_num1) hr hG x
   have hcoef (n : ℕ) :
       4 * ((2 : ℝ) ^ (n + 1) * (1 / 4 : ℝ) ^ n) =
         8 * (1 / 2 : ℝ) ^ n := by
@@ -2027,10 +2023,10 @@ theorem lintegral_cotlarDyadicBallSeries_quarter_le_maximal
       (4 * ((2 : ℝ) ^ (n + 1) * (1 / 4 : ℝ) ^ n))) = 16 := by
     simp_rw [hcoef]
     rw [← ENNReal.ofReal_tsum_of_nonneg (fun _ ↦ by positivity)
-      ((summable_geometric_of_lt_one (by norm_num : (0 : ℝ) ≤ 1 / 2)
-        (by norm_num : (1 / 2 : ℝ) < 1)).mul_left 8)]
+      ((summable_geometric_of_lt_one (by norm_num1 : (0 : ℝ) ≤ 1 / 2)
+        (by norm_num1 : (1 / 2 : ℝ) < 1)).mul_left 8)]
     rw [tsum_mul_left, tsum_geometric_of_lt_one
-      (by norm_num : (0 : ℝ) ≤ 1 / 2) (by norm_num : (1 / 2 : ℝ) < 1)]
+      (by norm_num1 : (0 : ℝ) ≤ 1 / 2) (by norm_num1 : (1 / 2 : ℝ) < 1)]
     norm_num
   simpa only [hsum] using h
 
@@ -2039,7 +2035,7 @@ theorem lintegral_cotlarDyadicBallSeries_eighth_le_maximal
     (∫⁻ y, cotlarDyadicBallSeries (1 / 8) r (x - y) * G y) ≤
       ENNReal.ofReal (32 / 3) * centeredHardyLittlewoodMaximal G x := by
   have h := lintegral_cotlarDyadicBallSeries_mul_le_maximal
-    (q := (1 / 8 : ℝ)) (by norm_num) hr hG x
+    (q := (1 / 8 : ℝ)) (by norm_num1) hr hG x
   have hcoef (n : ℕ) :
       4 * ((2 : ℝ) ^ (n + 1) * (1 / 8 : ℝ) ^ n) =
         8 * (1 / 4 : ℝ) ^ n := by
@@ -2055,10 +2051,10 @@ theorem lintegral_cotlarDyadicBallSeries_eighth_le_maximal
         ENNReal.ofReal (32 / 3) := by
     simp_rw [hcoef]
     rw [← ENNReal.ofReal_tsum_of_nonneg (fun _ ↦ by positivity)
-      ((summable_geometric_of_lt_one (by norm_num : (0 : ℝ) ≤ 1 / 4)
-        (by norm_num : (1 / 4 : ℝ) < 1)).mul_left 8)]
+      ((summable_geometric_of_lt_one (by norm_num1 : (0 : ℝ) ≤ 1 / 4)
+        (by norm_num1 : (1 / 4 : ℝ) < 1)).mul_left 8)]
     rw [tsum_mul_left, tsum_geometric_of_lt_one
-      (by norm_num : (0 : ℝ) ≤ 1 / 4) (by norm_num : (1 / 4 : ℝ) < 1)]
+      (by norm_num1 : (0 : ℝ) ≤ 1 / 4) (by norm_num1 : (1 / 4 : ℝ) < 1)]
     norm_num
   simpa only [hsum] using h
 
@@ -2086,14 +2082,14 @@ theorem lintegral_cotlarCentralBallMajorant_mul_le_maximal
       by_cases hy : y ∈ Metric.closedBall x r
       · have habs : |x - y| ≤ r := by
           simpa only [Metric.mem_closedBall, Real.dist_eq, abs_sub_comm] using hy
-        simp [cotlarCentralBallMajorant, hy, habs]
+        simp only [cotlarCentralBallMajorant, habs, ↓reduceIte, one_div, hy, indicator_of_mem]
       · have habs : ¬ |x - y| ≤ r := by
           simpa only [Metric.mem_closedBall, Real.dist_eq, abs_sub_comm] using hy
         simp [cotlarCentralBallMajorant, hy, habs]
     rw [hfun, lintegral_const_mul' _ _ ENNReal.ofReal_ne_top]
   rw [heq]
   convert ofReal_div_mul_lintegral_closedBall_le_maximal
-      (C := (1 : ℝ)) (ρ := r) (by norm_num) hr G x using 1; norm_num
+      (C := (1 : ℝ)) (ρ := r) (by exact zero_le_one) hr G x using 1; norm_num
 
 theorem ofReal_cotlarPoissonKernel_le_radialMajorant {r t : ℝ} (hr : 0 < r) :
     ENNReal.ofReal (cotlarPoissonKernel r t) ≤
@@ -2104,12 +2100,12 @@ theorem ofReal_cotlarPoissonKernel_le_radialMajorant {r t : ℝ} (hr : 0 < r) :
       rw [cotlarPoissonKernel, div_le_iff₀ hden, div_eq_mul_inv]
       have : 0 ≤ t ^ 2 := sq_nonneg t
       field_simp
-      nlinarith
+      linarith only [this]
     exact (ENNReal.ofReal_le_ofReal hle).trans (by
-      simp [cotlarCentralBallMajorant, ht])
+      simp only [one_div, cotlarCentralBallMajorant, ht, ↓reduceIte, self_le_add_right])
   · have htr : r < |t| := lt_of_not_ge ht
     exact (ofReal_cotlarPoissonKernel_le_dyadicBallSeries hr htr).trans (by
-      simp [cotlarCentralBallMajorant, ht])
+      simp only [one_div, cotlarCentralBallMajorant, ht, ↓reduceIte, zero_add, Std.le_refl])
 
 theorem ofReal_cotlarPoissonErrorMajorant_le_radialMajorant
     {r t : ℝ} (hr : 0 < r) :
@@ -2119,7 +2115,7 @@ theorem ofReal_cotlarPoissonErrorMajorant_le_radialMajorant
   · simp [cotlarPoissonErrorMajorant, cotlarCentralBallMajorant, ht]
   · have htr : r < |t| := lt_of_not_ge ht
     exact (ofReal_cotlarPoissonErrorMajorant_le_dyadicBallSeries hr htr).trans (by
-      simp [cotlarCentralBallMajorant, ht])
+      simp only [one_div, cotlarCentralBallMajorant, ht, ↓reduceIte, zero_add, Std.le_refl])
 
 /-- Radial Poisson kernels are dominated, after convolution, by the centered
 Hardy--Littlewood maximal operator. The harmless constant `20` comes from a
@@ -2178,8 +2174,8 @@ theorem lintegral_ofReal_cotlarPoissonErrorMajorant_mul_le_maximal
         (4 : ℝ≥0∞) + ENNReal.ofReal (32 / 3) =
             ENNReal.ofReal 4 + ENNReal.ofReal (32 / 3) := by norm_num
         _ = ENNReal.ofReal (4 + 32 / 3) := by
-          rw [ENNReal.ofReal_add (by norm_num : (0 : ℝ) ≤ 4)
-            (by norm_num : (0 : ℝ) ≤ 32 / 3)]
+          rw [ENNReal.ofReal_add (by norm_num1 : (0 : ℝ) ≤ 4)
+            (by norm_num1 : (0 : ℝ) ≤ 32 / 3)]
         _ = ENNReal.ofReal (44 / 3) := by norm_num
 
 /-- Convolution with the exact error between the sharp Hilbert kernel and
@@ -2246,7 +2242,7 @@ theorem abs_cotlarConjugatePoissonKernel_le_half_inv {r t : ℝ} (hr : 0 < r) :
   have h2r : 0 < 2 * r := by positivity
   rw [cotlarConjugatePoissonKernel, abs_div, abs_of_pos hden,
     div_le_div_iff₀ hden h2r]
-  nlinarith [sq_nonneg (|t| - r), sq_abs t]
+  linarith only [sq_nonneg (|t| - r), sq_abs t]
 
 theorem sharpQuadraticTailKernel_zero_eq_cotlarSharp
     {r t : ℝ} :
@@ -2478,7 +2474,7 @@ theorem integral_toReal_stoppingAtomSmallRadiusMaximal_le
       apply integral_congr_ae
       filter_upwards [ae_restrict_mem measurableSet_Icc.compl] with x hx
       rw [stoppingAtomSmallRadiusMaximal_eq_of_notMem_triple f c hx]
-      simp
+      simp only [toReal_enorm]
     _ ≤ _ := integral_norm_ordinaryHilbertKernel_stoppingAtom_le hf c
 
 /-- The local `L¹` masses on all canonical stopping cells form a summable
@@ -2541,7 +2537,7 @@ theorem tsum_integral_norm_ordinaryHilbertKernel_stoppingAtom_le
     _ = (32 / 3 : ℝ) * ∑' c : stoppingCell f, localMass c := tsum_mul_left
     _ = (32 / 3 : ℝ) * ∫ x in stoppingBadUnion f, ‖f x‖ := by rw [hsumLocal]
     _ ≤ (32 / 3 : ℝ) * ∫ x, ‖f x‖ := by
-      exact mul_le_mul_of_nonneg_left hbad_le (by norm_num)
+      exact mul_le_mul_of_nonneg_left hbad_le (by norm_num1)
 
 /-- Globally over all stopping cells, the small-radius maximal pieces retain
 the uniform cancellation bound. -/
@@ -2566,7 +2562,7 @@ theorem tsum_integral_toReal_stoppingAtomSmallRadiusMaximal_le
     apply integral_congr_ae
     filter_upwards [ae_restrict_mem measurableSet_Icc.compl] with x hx
     rw [stoppingAtomSmallRadiusMaximal_eq_of_notMem_triple f c hx]
-    simp
+    simp only [toReal_enorm]
   rw [heq]
   exact tsum_integral_norm_ordinaryHilbertKernel_stoppingAtom_le hf
 

@@ -10,6 +10,8 @@ public import Mathlib.Algebra.Order.Monoid.Defs
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Algebra.Ring.Basic
 
+import Mathlib.Algebra.GroupWithZero.NeZero
+
 /-!
 # Max-additive degree functions
 

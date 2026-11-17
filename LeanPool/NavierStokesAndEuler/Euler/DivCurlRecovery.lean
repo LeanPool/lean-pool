@@ -7,6 +7,7 @@ Authors: OpenAI
 module
 
 public import LeanPool.NavierStokesAndEuler.Euler.LpSpatialCutoff
+import Mathlib.Analysis.Calculus.ContDiff.WithLp
 public import LeanPool.NavierStokesAndEuler.Euler.MeanCutoffCurlBound
 public import LeanPool.NavierStokesAndEuler.Euler.MeanHarmonicDerivatives
 import LeanPool.NavierStokesAndEuler.Euler.MeanHarmonicCutoffEnergy

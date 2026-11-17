@@ -45,7 +45,7 @@ theorem ConvexOn.affineRemainder_increment
       (fun z => affineRemainder u x p (x + z)) := by
   have htranslate :
       ConvexOn ℝ ((fun z : E => x + z) ⁻¹' s) (fun z => u (x + z)) := by
-    simpa [Function.comp_def] using hu.translate_right x
+    exact hu.translate_right x
   have haffine :
       ConcaveOn ℝ ((fun z : E => x + z) ⁻¹' s) (fun z => u x + inner ℝ p z) := by
     refine ⟨htranslate.1, ?_⟩
@@ -62,7 +62,7 @@ theorem ConvexOn.affineRemainder_increment
             = u x + (a * inner ℝ p z + b * inner ℝ p w) := by
               rw [inner_add_right, inner_smul_right, inner_smul_right]
         _ = a * (u x + inner ℝ p z) + b * (u x + inner ℝ p w) := by
-              linarith
+              linarith only [hux]
     exact le_of_eq hcombo.symm
   have hconv :
       ConvexOn ℝ ((fun z : E => x + z) ⁻¹' s)
@@ -115,12 +115,12 @@ theorem SubgradientOn.inner_sub_le_affineRemainder_sub
       congr 1
       abel
     dsimp [affineRemainder]
-    linarith
+    linarith only [hinnerdiff]
   calc
     inner ℝ (p1 - p0) (y - x1)
         = inner ℝ p1 (y - x1) - inner ℝ p0 (y - x1) := hinner
     _ ≤ (u y - u x1) - inner ℝ p0 (y - x1) := by
-      linarith
+      linarith only [hsupport]
     _ = affineRemainder u x0 p0 y - affineRemainder u x0 p0 x1 := hrem.symm
 
 /-- If the affine remainder based at `x0` is nonnegative at `x1`, then the preceding comparison
@@ -131,7 +131,7 @@ theorem SubgradientOn.inner_sub_le_affineRemainder_of_nonneg
     (h0 : 0 ≤ affineRemainder u x0 p0 x1) :
     inner ℝ (p1 - p0) (y - x1) ≤ affineRemainder u x0 p0 y := by
   have h := hp1.inner_sub_le_affineRemainder_sub (x0 := x0) (p0 := p0) hy
-  linarith
+  linarith only [h0, h]
 
 /-- An upper contact with the same slope bounds the affine remainder by the quadratic opening. -/
 theorem HasUpperContactWithSlopeOn.affineRemainder_le
@@ -140,7 +140,7 @@ theorem HasUpperContactWithSlopeOn.affineRemainder_le
     affineRemainder u x p y ≤ (a / 2) * ‖y - x‖ ^ 2 := by
   dsimp [affineRemainder]
   have hupper := h.upper_inequality (y := y) hy
-  linarith
+  linarith only [hupper]
 
 /-- If the same slope gives a lower support and an upper quadratic contact, then the affine
 remainder is trapped between `0` and the quadratic opening. -/
@@ -162,7 +162,7 @@ theorem norm_affineRemainder_le_of_nonneg_and_le
     {u : E → ℝ} {x p y : E} {C : ℝ}
     (h0 : 0 ≤ affineRemainder u x p y) (hC : affineRemainder u x p y ≤ C) :
     ‖affineRemainder u x p y‖ ≤ C := by
-  simpa [Real.norm_eq_abs] using abs_affineRemainder_le_of_nonneg_and_le h0 hC
+  exact abs_affineRemainder_le_of_nonneg_and_le h0 hC
 
 /-- A quadratic trap gives a normalized affine-remainder bound away from the base point. -/
 theorem affineRemainder_div_norm_sq_le_of_nonneg_and_le
@@ -497,6 +497,6 @@ theorem exists_uniform_lineRestriction_affineRemainder_norm_div_norm_sq_le_at
   intro η hη r hr hrt
   rcases lineRestriction_affineRemainder_trap_at_of_upperContactOpening_norm_eq_one
       hp hfixed hv hη hr with ⟨h0, hupper⟩
-  exact affineRemainder_div_norm_sq_le_of_nonneg_and_le h0 (by simpa using hupper) hrt
+  exact affineRemainder_div_norm_sq_le_of_nonneg_and_le h0 (by exact hupper) hrt
 
 end AleksandrovDifferentiability

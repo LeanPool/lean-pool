@@ -1014,9 +1014,8 @@ theorem modPowAct_alg
     [Linear ℂ D] [MonoidalLinear ℂ D]
     (n : ℕ) (z : SymGroupAlgebra (n + 1)) :
     modPowAct A X n ≫
-        (modPowAlg A X (n + 1) z : End (modPow A X (n + 1))) =
-      (A ◁ (modPowAlg A X (n + 1) z :
-          End (modPow A X (n + 1)))) ≫
+        (modPowAlg A X (n + 1) z).asHom =
+      (A ◁ (modPowAlg A X (n + 1) z).asHom) ≫
         modPowAct A X n := by
   induction z using MonoidAlgebra.induction_on with
   | of σ =>
@@ -1024,10 +1023,10 @@ theorem modPowAct_alg
         MonoidAlgebra.single σ (1 : ℂ) from rfl, modPowAlg_single]
     exact modPowAct_perm A X n σ
   | add z₁ z₂ h₁ h₂ =>
-    rw [map_add]
+    rw [map_add, End.add_asHom]
     exact whisker_act_add (modPowAct A X n) h₁ h₂
   | smul r z' h =>
-    rw [map_smul]
+    rw [map_smul, End.smul_asHom]
     exact whisker_act_smul (modPowAct A X n) r h
 
 end ActPerm

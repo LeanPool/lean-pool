@@ -222,7 +222,7 @@ theorem sum_source_eLpNorm_le_restrict {V : Vec3 → Vec3} {x₀ : Vec3} {r : �
         (ENNReal.ofReal (6 / 5 : ℝ)) volume =
         eLpNorm (fun x => V x i) (ENNReal.ofReal (6 / 5 : ℝ))
           (volume.restrict (euclideanBall x₀ r)) := by
-      rw [eLpNorm_congr_ae hae, eLpNorm_indicator_eq_eLpNorm_restrict hball]
+      rw [eLpNorm_congr_ae hae, eLpNorm_indicator_eq_eLpNorm_restrict hball.nullMeasurableSet]
     rw [hrestrict]
     refine eLpNorm_mono_ae ?_ (Eventually.of_forall fun x => norm_le_pi_norm (V x) i)
     exact ((ContinuousLinearMap.proj (R := ℝ) i).continuous.comp_aestronglyMeasurable

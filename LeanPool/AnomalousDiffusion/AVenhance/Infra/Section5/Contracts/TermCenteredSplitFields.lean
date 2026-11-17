@@ -37,7 +37,7 @@ theorem sd_chiMK_component_contDiff (κm : ℝ) (m : ℕ) (k : ℤ) (t : ℝ) (j
   have h' : ContDiff ℝ (⊤ : ℕ∞) (I.chiMK κm m k t) := by
     unfold Ingredients.chiMK
     exact h
-  exact (contDiff_apply ℝ ℝ j).comp h'
+  exact (contDiff_apply ℝ (fun _ => ℝ) j).comp h'
 
 theorem sd_chiMK_component_periodic (κm : ℝ) (m : ℕ) (k : ℤ) (t : ℝ) (j : Fin 2) :
     IsZ2Periodic (fun z => I.chiMK κm m k t z j) := by
@@ -61,7 +61,7 @@ theorem sd_gradChi_periodic (κm : ℝ) (m : ℕ) (k : ℤ) (t : ℝ) (a j : Fin
 theorem sd_gradY_contDiff (hΦ : IsStreamSeq I Φ) (m : ℕ) (l : ℤ) (t : ℝ) (i a : Fin 2) :
     ContDiff ℝ (⊤ : ℕ∞) (fun x => gradMatrix (fun z => I.xFlowInv hΦ m l t z) x i a) :=
   contDiff_spaceGrad_component (f := fun z => I.xFlowInv hΦ m l t z a)
-    ((contDiff_apply ℝ ℝ a).comp (sd_xFlowInv_slice I hΦ m l t)) i
+    ((contDiff_apply ℝ (fun _ => ℝ) a).comp (sd_xFlowInv_slice I hΦ m l t)) i
 
 theorem sd_gradY_periodic (hΦ : IsStreamSeq I Φ) (m : ℕ) (l : ℤ) (t : ℝ) (i a : Fin 2) :
     IsZ2Periodic (fun x => gradMatrix (fun z => I.xFlowInv hΦ m l t z) x i a) := by

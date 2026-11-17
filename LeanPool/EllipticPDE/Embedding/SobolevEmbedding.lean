@@ -152,7 +152,7 @@ private theorem exists_landing_ideal (hd0 : 0 < d) {p₀ : ℝ≥0} (hp₀0 : (0
           = ((s : ℝ) + 1) * (d : ℝ)⁻¹ := by field_simp
       rw [hc1, hc2] at hmul
       have : (s : ℝ) * (d : ℝ)⁻¹ + (d : ℝ)⁻¹ = ((s : ℝ) + 1) * (d : ℝ)⁻¹ := by ring
-      linarith
+      linarith only [hmul]
     have hPpos : (0 : ℝ) < (P : ℝ) := by rw [hPcoe]; exact inv_pos.mpr ht0
     have hinv : ((P : ℝ≥0) : ℝ)⁻¹ < (d : ℝ)⁻¹ := by rw [hPinv]; exact hstrict
     by_contra hcon
@@ -164,7 +164,7 @@ private theorem exists_landing_ideal (hd0 : 0 < d) {p₀ : ℝ≥0} (hp₀0 : (0
     hPinv
   have hnn : (0 : ℝ) ≤ (s : ℝ) + 1 - (d : ℝ) / (p₀ : ℝ) := by
     rw [sub_nonneg, div_le_iff₀ hp₀0]
-    nlinarith
+    nlinarith only [hlt]
   refine NNReal.coe_injective ?_
   rw [hval, Real.coe_toNNReal _ hnn]
 
@@ -183,20 +183,20 @@ private theorem exists_landing_free (hd0 : 0 < d) {p₀ : ℝ≥0} (hp₀0 : (0 
     rw [hP_def, Real.coe_toNNReal _ (by positivity)]
   have hPd : (d : ℝ) < (P : ℝ) := by
     rw [hPcoe, lt_div_iff₀ hden]
-    nlinarith
+    nlinarith only [hdpos, hγ0R]
   -- the base exponent is at most the dimension, the rung count being at least one
   have hp₀d : (p₀ : ℝ) ≤ (d : ℝ) := by
     rcases Nat.eq_zero_or_pos s with rfl | hs
     · simp at hsd; linarith
     · have hs1 : (1 : ℝ) ≤ (s : ℝ) := by exact_mod_cast hs
-      nlinarith
+      nlinarith only [hp₀0, hsd, hs1]
   have hp₀P : p₀ ≤ P := by
     rw [← NNReal.coe_le_coe]
     linarith [hPd, hp₀d]
   have hPs : (p₀ : ℝ)⁻¹ - (s : ℝ) * (d : ℝ)⁻¹ ≤ (P : ℝ)⁻¹ := by
     have hzero : (p₀ : ℝ)⁻¹ - (s : ℝ) * (d : ℝ)⁻¹ = 0 := by
       field_simp
-      linarith [hsd]
+      linarith only [hsd]
     rw [hzero]
     positivity
   refine ⟨P, hp₀P, hPd, hPs, ?_⟩

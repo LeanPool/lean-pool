@@ -5,6 +5,7 @@ Authors: Juan Pablo Traverso Gianini
 -/
 module
 
+public import Mathlib.Combinatorics.SimpleGraph.DegreeSum
 public import Mathlib.Combinatorics.SimpleGraph.Tutte
 public import Mathlib.Data.Finset.Max
 public import Mathlib.Data.Finset.Powerset

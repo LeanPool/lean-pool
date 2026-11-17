@@ -7,6 +7,7 @@ Authors: Scott Armstrong
 module
 
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.AbsolutelyContinuousFun
+public import Mathlib.MeasureTheory.Integral.IntervalIntegral.LebesgueDifferentiationThm
 public import LeanPool.CaffarelliKohnNirenberg.Statements.SpaceTimeSet
 public import Mathlib.MeasureTheory.Function.LpSeminorm.Basic
 public import Mathlib.MeasureTheory.Function.LpSeminorm.CompareExp

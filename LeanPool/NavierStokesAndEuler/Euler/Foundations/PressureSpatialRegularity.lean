@@ -7,6 +7,7 @@ Authors: OpenAI
 module
 
 public import LeanPool.NavierStokesAndEuler.Euler.Foundations.CoerciveProjection
+import Mathlib.Analysis.Calculus.Deriv.Comp
 public import LeanPool.NavierStokesAndEuler.Euler.Foundations.LiftedPressure
 public import LeanPool.NavierStokesAndEuler.Euler.Foundations.MetricTransport
 import LeanPool.NavierStokesAndEuler.Euler.Foundations.InverseRegularity

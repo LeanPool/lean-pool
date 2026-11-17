@@ -340,6 +340,21 @@ macro "delimitedCompareStepTac" : tactic =>
             (first | rfl | simp [Function.update]) } <;>
           try rfl)))
 
+/-- Prove a delimited compare step using the fixed simplification rules. -/
+macro "delimitedCompareStepOnly" : tactic =>
+  `(tactic| machineStackEquality [
+      delimitedPairComparisonMachine, delimitedCompareConfiguration, delimitedComparePeekFirst,
+      delimitedComparePeekSecond, delimitedComparePop, delimitedComparePushFirst,
+      delimitedComparePushConstant, delimitedCompareGoto, delimitedCompareSetOutcome,
+      delimitedCompareFirstPrefixStatement, delimitedCompareFirstPayloadStatement,
+      delimitedCompareSecondPrefixStatement, delimitedCompareSecondPayloadStatement,
+      delimitedCompareReverseFirstStatement, delimitedCompareReverseSecondStatement,
+      delimitedCompareWordsStatement, delimitedCompareCleanupStatement,
+      delimitedCompareTrailingStatement, delimitedCompareOutcomeStatement,
+      delimitedCompareSourceStatement, delimitedComparePrefixStatement, encodedWordOrderingWord,
+      encodedWordOrderingFirst, encodedWordOrderingSecond, Turing.haltList, Turing.FinTM2.step,
+      Turing.TM2.step, Turing.TM2.stepAux])
+
 theorem delimitedCompare_firstPrefix_true
     (outcome : EncodedWordOrdering)
     (input firstCounter firstReversed secondCounter secondReversed
@@ -353,7 +368,7 @@ theorem delimitedCompare_firstPrefix_true
         input (true :: firstCounter) firstReversed
         secondCounter secondReversed firstForward secondForward
         (true :: source) (true :: sourcePrefix) output) := by
-  delimitedCompareStepTac
+  delimitedCompareStepOnly
 
 theorem delimitedCompare_firstPrefix_delimiter
     (outcome : EncodedWordOrdering)
@@ -368,7 +383,7 @@ theorem delimitedCompare_firstPrefix_delimiter
         input firstCounter firstReversed
         secondCounter secondReversed firstForward secondForward
         (false :: source) (true :: sourcePrefix) output) := by
-  delimitedCompareStepTac
+  delimitedCompareStepOnly
 
 theorem delimitedCompare_firstPrefix_missing
     (outcome : EncodedWordOrdering)
@@ -383,7 +398,7 @@ theorem delimitedCompare_firstPrefix_missing
         [] firstCounter firstReversed
         secondCounter secondReversed firstForward secondForward
         source sourcePrefix output) := by
-  delimitedCompareStepTac
+  rfl
 
 theorem delimitedCompare_firstPayload_step
     (outcome : EncodedWordOrdering) (bit marker : Bool)
@@ -398,7 +413,7 @@ theorem delimitedCompare_firstPayload_step
         input firstCounter (bit :: firstReversed)
         secondCounter secondReversed firstForward secondForward
         (bit :: source) (true :: sourcePrefix) output) := by
-  cases bit <;> cases marker <;> delimitedCompareStepTac
+  cases marker <;> delimitedCompareStepOnly
 
 theorem delimitedCompare_firstPayload_finish
     (outcome : EncodedWordOrdering)
@@ -413,7 +428,7 @@ theorem delimitedCompare_firstPayload_finish
         input [] firstReversed
         secondCounter secondReversed firstForward secondForward
         source sourcePrefix output) := by
-  delimitedCompareStepTac
+  rfl
 
 theorem delimitedCompare_firstPayload_missing
     (outcome : EncodedWordOrdering) (marker : Bool)
@@ -428,7 +443,7 @@ theorem delimitedCompare_firstPayload_missing
         [] firstCounter firstReversed
         secondCounter secondReversed firstForward secondForward
         source sourcePrefix output) := by
-  cases marker <;> delimitedCompareStepTac
+  cases marker <;> delimitedCompareStepOnly
 
 theorem delimitedCompare_secondPrefix_true
     (outcome : EncodedWordOrdering)
@@ -444,7 +459,7 @@ theorem delimitedCompare_secondPrefix_true
         (true :: secondCounter) secondReversed
         firstForward secondForward
         (true :: source) (true :: sourcePrefix) output) := by
-  delimitedCompareStepTac
+  delimitedCompareStepOnly
 
 theorem delimitedCompare_secondPrefix_delimiter
     (outcome : EncodedWordOrdering)
@@ -459,7 +474,7 @@ theorem delimitedCompare_secondPrefix_delimiter
         input firstCounter firstReversed
         secondCounter secondReversed firstForward secondForward
         (false :: source) (true :: sourcePrefix) output) := by
-  delimitedCompareStepTac
+  delimitedCompareStepOnly
 
 theorem delimitedCompare_secondPrefix_missing
     (outcome : EncodedWordOrdering)
@@ -474,7 +489,7 @@ theorem delimitedCompare_secondPrefix_missing
         [] firstCounter firstReversed
         secondCounter secondReversed firstForward secondForward
         source sourcePrefix output) := by
-  delimitedCompareStepTac
+  rfl
 
 theorem delimitedCompare_secondPayload_step
     (outcome : EncodedWordOrdering) (bit marker : Bool)
@@ -490,7 +505,7 @@ theorem delimitedCompare_secondPayload_step
         secondCounter (bit :: secondReversed)
         firstForward secondForward
         (bit :: source) (true :: sourcePrefix) output) := by
-  cases bit <;> cases marker <;> delimitedCompareStepTac
+  cases marker <;> delimitedCompareStepOnly
 
 theorem delimitedCompare_secondPayload_finish
     (outcome : EncodedWordOrdering)
@@ -505,7 +520,7 @@ theorem delimitedCompare_secondPayload_finish
         input firstCounter firstReversed
         [] secondReversed firstForward secondForward
         source sourcePrefix output) := by
-  delimitedCompareStepTac
+  rfl
 
 theorem delimitedCompare_secondPayload_missing
     (outcome : EncodedWordOrdering) (marker : Bool)
@@ -520,7 +535,7 @@ theorem delimitedCompare_secondPayload_missing
         [] firstCounter firstReversed
         secondCounter secondReversed firstForward secondForward
         source sourcePrefix output) := by
-  cases marker <;> delimitedCompareStepTac
+  cases marker <;> delimitedCompareStepOnly
 
 theorem delimitedCompare_reverseFirst_step
     (outcome : EncodedWordOrdering) (bit : Bool)
@@ -535,7 +550,7 @@ theorem delimitedCompare_reverseFirst_step
         input firstCounter firstReversed
         secondCounter secondReversed (bit :: firstForward)
         secondForward source sourcePrefix output) := by
-  cases bit <;> delimitedCompareStepTac
+  delimitedCompareStepOnly
 
 theorem delimitedCompare_reverseFirst_finish
     (outcome : EncodedWordOrdering)
@@ -550,7 +565,7 @@ theorem delimitedCompare_reverseFirst_finish
         input firstCounter []
         secondCounter secondReversed firstForward secondForward
         source sourcePrefix output) := by
-  delimitedCompareStepTac
+  rfl
 
 theorem delimitedCompare_reverseSecond_step
     (outcome : EncodedWordOrdering) (bit : Bool)
@@ -565,7 +580,7 @@ theorem delimitedCompare_reverseSecond_step
         input firstCounter firstReversed
         secondCounter secondReversed firstForward
         (bit :: secondForward) source sourcePrefix output) := by
-  cases bit <;> delimitedCompareStepTac
+  delimitedCompareStepOnly
 
 theorem delimitedCompare_reverseSecond_finish
     (outcome : EncodedWordOrdering)
@@ -580,7 +595,7 @@ theorem delimitedCompare_reverseSecond_finish
         input firstCounter firstReversed
         secondCounter [] firstForward secondForward
         source sourcePrefix output) := by
-  delimitedCompareStepTac
+  rfl
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem delimitedCompare_words_equalBit
@@ -597,7 +612,7 @@ theorem delimitedCompare_words_equalBit
         input firstCounter firstReversed
         secondCounter secondReversed
         firstForward secondForward source sourcePrefix output) := by
-  cases bit <;> delimitedCompareStepTac
+  reduceMachineConfiguration [delimitedCompareConfiguration] (delimitedCompareStepTac)
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem delimitedCompare_words_lessBit
@@ -615,7 +630,7 @@ theorem delimitedCompare_words_lessBit
         secondCounter secondReversed
         (false :: firstForward) (true :: secondForward)
         source sourcePrefix output) := by
-  delimitedCompareStepTac
+  rfl
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem delimitedCompare_words_greaterBit
@@ -633,7 +648,7 @@ theorem delimitedCompare_words_greaterBit
         secondCounter secondReversed
         (true :: firstForward) (false :: secondForward)
         source sourcePrefix output) := by
-  delimitedCompareStepTac
+  rfl
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem delimitedCompare_words_firstEmpty
@@ -649,7 +664,7 @@ theorem delimitedCompare_words_firstEmpty
         input firstCounter firstReversed
         secondCounter secondReversed [] (bit :: secondForward)
         source sourcePrefix output) := by
-  cases bit <;> delimitedCompareStepTac
+  rfl
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem delimitedCompare_words_secondEmpty
@@ -665,7 +680,7 @@ theorem delimitedCompare_words_secondEmpty
         input firstCounter firstReversed
         secondCounter secondReversed (bit :: firstForward) []
         source sourcePrefix output) := by
-  cases bit <;> delimitedCompareStepTac
+  rfl
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem delimitedCompare_words_bothEmpty
@@ -681,7 +696,7 @@ theorem delimitedCompare_words_bothEmpty
         input firstCounter firstReversed
         secondCounter secondReversed [] []
         source sourcePrefix output) := by
-  delimitedCompareStepTac
+  rfl
 
 theorem delimitedCompare_cleanup_firstCounter
     (outcome : EncodedWordOrdering) (bit : Bool)
@@ -696,7 +711,7 @@ theorem delimitedCompare_cleanup_firstCounter
         input firstCounter firstReversed
         secondCounter secondReversed firstForward secondForward
         source sourcePrefix output) := by
-  cases bit <;> delimitedCompareStepTac
+  delimitedCompareStepOnly
 
 theorem delimitedCompare_cleanup_firstReversed
     (outcome : EncodedWordOrdering) (bit : Bool)
@@ -711,7 +726,7 @@ theorem delimitedCompare_cleanup_firstReversed
         input [] firstReversed
         secondCounter secondReversed firstForward secondForward
         source sourcePrefix output) := by
-  cases bit <;> delimitedCompareStepTac
+  delimitedCompareStepOnly
 
 theorem delimitedCompare_cleanup_secondCounter
     (outcome : EncodedWordOrdering) (bit : Bool)
@@ -724,7 +739,7 @@ theorem delimitedCompare_cleanup_secondCounter
       some (delimitedCompareConfiguration 7 outcome
         input [] [] secondCounter secondReversed
         firstForward secondForward source sourcePrefix output) := by
-  cases bit <;> delimitedCompareStepTac
+  delimitedCompareStepOnly
 
 theorem delimitedCompare_cleanup_secondReversed
     (outcome : EncodedWordOrdering) (bit : Bool)
@@ -737,7 +752,7 @@ theorem delimitedCompare_cleanup_secondReversed
       some (delimitedCompareConfiguration 7 outcome
         input [] [] [] secondReversed
         firstForward secondForward source sourcePrefix output) := by
-  cases bit <;> delimitedCompareStepTac
+  delimitedCompareStepOnly
 
 theorem delimitedCompare_cleanup_firstForward
     (outcome : EncodedWordOrdering) (bit : Bool)
@@ -750,7 +765,7 @@ theorem delimitedCompare_cleanup_firstForward
       some (delimitedCompareConfiguration 7 outcome
         input [] [] [] [] firstForward secondForward
         source sourcePrefix output) := by
-  cases bit <;> delimitedCompareStepTac
+  delimitedCompareStepOnly
 
 theorem delimitedCompare_cleanup_secondForward
     (outcome : EncodedWordOrdering) (bit : Bool)
@@ -762,7 +777,7 @@ theorem delimitedCompare_cleanup_secondForward
       some (delimitedCompareConfiguration 7 outcome
         input [] [] [] [] [] secondForward
         source sourcePrefix output) := by
-  cases bit <;> delimitedCompareStepTac
+  delimitedCompareStepOnly
 
 theorem delimitedCompare_cleanup_finish
     (outcome : EncodedWordOrdering)
@@ -772,7 +787,7 @@ theorem delimitedCompare_cleanup_finish
         input [] [] [] [] [] [] source sourcePrefix output) =
       some (delimitedCompareConfiguration 8 outcome
         input [] [] [] [] [] [] source sourcePrefix output) := by
-  delimitedCompareStepTac
+  rfl
 
 theorem delimitedCompare_trailing_step
     (outcome : EncodedWordOrdering) (bit : Bool)
@@ -783,7 +798,7 @@ theorem delimitedCompare_trailing_step
       some (delimitedCompareConfiguration 8 outcome
         input [] [] [] [] [] []
         (bit :: source) (true :: sourcePrefix) output) := by
-  cases bit <;> delimitedCompareStepTac
+  delimitedCompareStepOnly
 
 theorem delimitedCompare_trailing_finish
     (outcome : EncodedWordOrdering)
@@ -793,7 +808,7 @@ theorem delimitedCompare_trailing_finish
         [] [] [] [] [] [] [] source sourcePrefix output) =
       some (delimitedCompareConfiguration 9 outcome
         [] [] [] [] [] [] [] source sourcePrefix output) := by
-  delimitedCompareStepTac
+  rfl
 
 theorem delimitedCompare_outcome_step
     (outcome : EncodedWordOrdering)
@@ -804,7 +819,7 @@ theorem delimitedCompare_outcome_step
       some (delimitedCompareConfiguration 10 outcome
         [] [] [] [] [] [] [] source sourcePrefix
         (encodedWordOrderingWord outcome ++ output)) := by
-  cases outcome <;> delimitedCompareStepTac
+  cases outcome <;> delimitedCompareStepOnly
 
 theorem delimitedCompare_source_step
     (outcome : EncodedWordOrdering) (bit : Bool)
@@ -814,7 +829,7 @@ theorem delimitedCompare_source_step
         [] [] [] [] [] [] [] (bit :: source) sourcePrefix output) =
       some (delimitedCompareConfiguration 10 outcome
         [] [] [] [] [] [] [] source sourcePrefix (bit :: output)) := by
-  cases bit <;> delimitedCompareStepTac
+  delimitedCompareStepOnly
 
 theorem delimitedCompare_source_finish
     (outcome : EncodedWordOrdering)
@@ -824,7 +839,7 @@ theorem delimitedCompare_source_finish
         [] [] [] [] [] [] [] [] sourcePrefix output) =
       some (delimitedCompareConfiguration 11 outcome
         [] [] [] [] [] [] [] [] sourcePrefix (false :: output)) := by
-  delimitedCompareStepTac
+  delimitedCompareStepOnly
 
 theorem delimitedCompare_prefix_step
     (outcome : EncodedWordOrdering) (bit : Bool)
@@ -834,7 +849,7 @@ theorem delimitedCompare_prefix_step
         [] [] [] [] [] [] [] [] (bit :: sourcePrefix) output) =
       some (delimitedCompareConfiguration 11 outcome
         [] [] [] [] [] [] [] [] sourcePrefix (true :: output)) := by
-  cases bit <;> delimitedCompareStepTac
+  delimitedCompareStepOnly
 
 theorem delimitedCompare_prefix_finish
     (outcome : EncodedWordOrdering) (output : List Bool) :
@@ -842,7 +857,7 @@ theorem delimitedCompare_prefix_finish
       (delimitedCompareConfiguration 11 outcome
         [] [] [] [] [] [] [] [] [] output) =
       some (Turing.haltList delimitedPairComparisonMachine output) := by
-  cases outcome <;> delimitedCompareStepTac
+  cases outcome <;> delimitedCompareStepOnly
 
 end CNFEncodedClauseSort
 

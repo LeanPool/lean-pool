@@ -6,6 +6,7 @@ Authors: Yunzhou Xie, Yichen Feng, Jujian Zhang, Yael Dillies
 module
 
 public import Mathlib.FieldTheory.IsAlgClosed.Basic
+public import Mathlib.LinearAlgebra.FiniteDimensional.Lemmas
 import Mathlib.RingTheory.Flat.Basic
 import Mathlib.RingTheory.TensorProduct.Free
 
@@ -358,7 +359,7 @@ lemma isoRestrict_map_one : isoRestrict' n k k⁻ A iso 1 = 1 := by
   calc
     _ = iso (inclusion n k k_bar A iso 1) :=
       LinearMap.congr_fun (comm_square n k k_bar A iso) 1
-    _ = _ := by simp
+    _ = _ := by simp only [map_one]
 
 lemma isoRestrict_map_mul (x y : ℒ ⊗[k] A) :
     isoRestrict' n k k⁻ A iso (x * y) =

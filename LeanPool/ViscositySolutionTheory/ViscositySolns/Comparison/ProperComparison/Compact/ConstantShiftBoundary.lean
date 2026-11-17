@@ -307,7 +307,7 @@ theorem strictComparison_of_constantShift_boundary
     rcases Filter.mem_atTop_sets.mp hnat with ⟨N, hN⟩
     refine ⟨N, fun i hi => ha ((i : Real) + 1) ?_⟩
     have hai : a <= (i : Real) := hN i hi
-    linarith
+    linarith only [hai]
   have hclosureNonempty : (closure C).Nonempty := by
     rcases hCne with ⟨z, hz⟩
     exact ⟨z, subset_closure hz⟩
@@ -332,12 +332,12 @@ theorem strictComparison_of_constantShift_boundary
             (fun q : DoubledPoint n =>
               doubledObjective (fun z : Point n => u z - δ) v (α' k) q)
             (closure C ×ˢ closure C) (x' k, y' k) := by
-    simpa [α', x', y'] using hφ_mono.tendsto_atTop hmax
+    exact hφ_mono.tendsto_atTop hmax
   have hα' : Tendsto α' atTop atTop := by
     exact hα.comp hφ_mono.tendsto_atTop
   have hx' : Tendsto x' atTop (nhdsWithin x0 (closure C)) := by
     have hx_ambient : Tendsto x' atTop (nhds x0) := by
-      simpa [x', Function.comp_def] using hxφ_tendsto
+      exact hxφ_tendsto
     have hx_mem : ∀ᶠ k in atTop, x' k ∈ closure C := by
       filter_upwards [hmax'] with k hk
       exact hk.2.1
@@ -437,7 +437,7 @@ theorem comparison_of_constantShift_boundary
       (husc.add upperSemicontinuousOn_const)
       hvlsc
   have hzshift : u z - δ <= v z := hshift z hz
-  linarith
+  linarith only [hδη, hzshift]
 
 /--
 Non-strict boundary comparison from the constant-shift argument, with the
@@ -581,7 +581,7 @@ theorem comparison_of_constantShiftClosureMaximizerData
       hboundary hδpos hx0closure hgap hstrict hv hFcont hproper hcomp hIshii hε
       huR husc hvlsc hx hy hmax hα
   have hzshift : u z - δ <= v z := hshift z hz
-  linarith
+  linarith only [hδη, hzshift]
 
 /--
 If the ordinary boundary-value hypotheses construct constant-shift data stated

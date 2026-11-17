@@ -8,7 +8,7 @@ module
 
 public import LeanPool.BeyondBethe.BeyondBethe.MachineOptimizerBisectionSemantics
 public import LeanPool.BeyondBethe.BeyondBethe.ExplicitBetheOptimizer
-public import Mathlib.Tactic
+import Mathlib.Tactic.Ext -- shake: keep
 
 /-!
 # Correctness of the executable row-major Bethe optimizer

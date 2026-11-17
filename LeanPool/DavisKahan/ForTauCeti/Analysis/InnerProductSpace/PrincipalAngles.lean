@@ -393,7 +393,7 @@ theorem norm_orthogonal_starProjection_comp_starProjection
         nlinarith [h]
       have hyz2 : ‖y‖ ^ 2 ≤ ‖z‖ ^ 2 := by
         have h := mul_self_le_mul_self (norm_nonneg y) hyz
-        nlinarith [h]
+        nlinarith only [h, h]
       linarith [mul_le_mul_of_nonneg_left hyz2 h1σ, p1]
     calc ‖((Submodule.span 𝕜 (Set.range w))ᗮ.starProjection ∘L
           (Submodule.span 𝕜 (Set.range u)).starProjection) z‖

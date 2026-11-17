@@ -7,12 +7,6 @@ module
 
 public import LeanPool.DomainTheory.Neighborhood.Example44
 public import LeanPool.DomainTheory.Neighborhood.Exercise326
-import Mathlib.Data.Finset.Attr
-import Mathlib.Data.Rat.Cast.Order
-import Mathlib.Tactic.NormNum.Abs
-import Mathlib.Tactic.NormNum.DivMod
-import Mathlib.Tactic.NormNum.OfScientific
-import Mathlib.Tactic.NormNum.Pow
 
 /-!
 # Exercise 4.19 (Scott 1981, PRG-19, Lecture IV) — verifying Example 4.4
@@ -75,7 +69,7 @@ open Domain.Neighborhood NeighborhoodSystem ApproximableMap ExampleB Example44
 /-- **Exercise 4.19 — Peano (i) for `{0,1}*`.** `Λ` is not a successor: `[] ≠ b ::
 σ`. -/
 theorem peano_nil_ne_cons (b : Bool) (σ : Str) : ([] : Str) ≠ b :: σ := by
-  simp
+  simp only [ne_eq, List.nil_eq, reduceCtorEq, not_false_eq_true]
 
 /-- **Exercise 4.19 — Peano (ii) for `{0,1}*`.** Each successor `b ::·` is
 injective. -/
@@ -86,7 +80,7 @@ theorem peano_cons_injective {b : Bool} {σ τ : Str} (h : b :: σ = b :: τ) : 
 disjoint:
 `0σ ≠ 1τ`. -/
 theorem peano_cons_disjoint (σ τ : Str) : (false :: σ) ≠ (true :: τ) := by
-  simp
+  simp only [ne_eq, List.cons.injEq, Bool.false_eq_true, false_and, not_false_eq_true]
 
 /-- **Exercise 4.19 — Peano (iii) for `{0,1}*`.** Induction: a predicate holding
 at `Λ` and closed
@@ -105,11 +99,11 @@ theorem peano_induction (P : Str → Prop) (hnil : P []) (hcons : ∀ b σ, P σ
 /-- A cone is never contained in a singleton (it has at least two elements). -/
 theorem not_cone_subset_singleton (τ σ : Str) : ¬ cone τ ⊆ ({σ} : Set Str) := by
   intro h
-  have h1 : τ ∈ ({σ} : Set Str) := h (by simp [mem_cone])
-  have h2 : (τ ++ [true]) ∈ ({σ} : Set Str) := h (by simp [mem_cone])
+  have h1 : τ ∈ ({σ} : Set Str) := h (by simp only [mem_cone, List.prefix_rfl])
+  have h2 : (τ ++ [true]) ∈ ({σ} : Set Str) := h (by simp only [mem_cone, List.prefix_append])
   rw [Set.mem_singleton_iff] at h1 h2
   have : τ = τ ++ [true] := h1.trans h2.symm
-  simp at this
+  simp only [List.self_eq_append_right, List.cons_ne_self] at this
 
 /-- A cone is never equal to a singleton. -/
 theorem cone_ne_singleton (τ σ : Str) : cone τ ≠ ({σ} : Set Str) := by
@@ -233,9 +227,9 @@ theorem liftC_strElem (V : NeighborhoodSystem β) (coneVal singVal : Str → V.E
   · rintro ⟨X, ⟨_, hsub⟩, hrel⟩
     rcases hrel with ⟨σ', hXcone, hY⟩ | ⟨σ', hXsing, hY⟩
     · have hpre : σ' <+: σ := by
-        simp_all
+        simp_all only [C_mem, Set.singleton_subset_iff, mem_cone]
       exact hsing hpre Y hY
-    · simp_all
+    · simp_all only [C_mem, Set.subset_singleton_iff, Set.mem_singleton_iff, forall_eq]
   · intro hY
     exact ⟨{σ}, ⟨memC_singleton σ, subset_rfl⟩, Or.inr ⟨σ, rfl, hY⟩⟩
 
@@ -309,7 +303,7 @@ theorem condT_bot (x y : T.Element) :
     · rw [NeighborhoodSystem.mem_bot] at h0; exact absurd h0 Exercise326.zero_ne_master
     · rw [NeighborhoodSystem.mem_bot] at h1; exact absurd h1 Exercise326.one_ne_master
     · exact T.bot.master_mem
-  · simp_all
+  · simp_all only [mem_bot, or_true, implies_true]
 
 /-- The defining right-hand side: `cond(empty(x), false, cond(zero(x), false,
 true))`. It uses only

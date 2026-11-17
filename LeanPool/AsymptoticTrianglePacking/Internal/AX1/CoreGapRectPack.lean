@@ -92,9 +92,8 @@ theorem card_tripleRect {A B C : Finset V} (hAB : Disjoint A B) (hAC : Disjoint 
     simp only [Finset.mem_union, Finset.mem_product] at h1 h2
     rcases h1 with ⟨hx, hy⟩ | ⟨hx, hy⟩ <;> rcases h2 with ⟨hx', hy'⟩ | ⟨hx', hy'⟩ <;>
       first
-        | exact nAB hx hx' | exact nAB hx' hx | exact nAC hx hx' | exact nAC hx' hx
-        | exact nBC hx hx' | exact nBC hx' hx
-        | exact nAB hy hy' | exact nAB hy' hy | exact nAC hy hy' | exact nAC hy' hy
+        | exact nAB hx' hx | exact nAC hx hx'
+        | exact nBC hx hx'
         | exact nBC hy hy'
   have hd123 : Disjoint (((A ×ˢ B) ∪ (B ×ˢ A)) ∪ ((A ×ˢ C) ∪ (C ×ˢ A)))
       ((B ×ˢ C) ∪ (C ×ˢ B)) := by
@@ -104,9 +103,9 @@ theorem card_tripleRect {A B C : Finset V} (hAB : Disjoint A B) (hAC : Disjoint 
     rcases h1 with (⟨hx, hy⟩ | ⟨hx, hy⟩) | (⟨hx, hy⟩ | ⟨hx, hy⟩) <;>
       rcases h2 with ⟨hx', hy'⟩ | ⟨hx', hy'⟩ <;>
       first
-        | exact nAB hx hx' | exact nAB hx' hx | exact nAC hx hx' | exact nAC hx' hx
+        | exact nAB hx hx' | exact nAC hx hx'
         | exact nBC hx hx' | exact nBC hx' hx
-        | exact nAB hy hy' | exact nAB hy' hy | exact nAC hy hy'
+        | exact nAB hy hy' | exact nAC hy hy'
   rw [tripleRect, Finset.card_union_of_disjoint hd123, Finset.card_union_of_disjoint hd12,
     Finset.card_union_of_disjoint hd1, Finset.card_union_of_disjoint hd2,
     Finset.card_union_of_disjoint hd3]

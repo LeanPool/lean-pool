@@ -9,6 +9,7 @@ public import LeanPool.Vlasov.OT.FrozenField
 public import LeanPool.Vlasov.ForMathlib.VariationalEquation
 import all LeanPool.Vlasov.ForMathlib.VariationalEquation
 import Mathlib.Algebra.Order.Ring.Star
+import Mathlib.Analysis.Calculus.Deriv.Prod
 import Mathlib.Analysis.Calculus.InverseFunctionTheorem.ContDiff
 
 /-!

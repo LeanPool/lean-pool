@@ -11,7 +11,6 @@ public import Mathlib.Algebra.MvPolynomial.Degrees
 public import Mathlib.RingTheory.MvPolynomial.Homogeneous
 public import Mathlib.Analysis.Complex.Basic
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
-public import Mathlib.Tactic
 
 /-! # Stable -/
 

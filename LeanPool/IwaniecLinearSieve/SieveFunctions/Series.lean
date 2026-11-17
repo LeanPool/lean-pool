@@ -130,7 +130,7 @@ theorem FSieve_isBigO : FSieve =O[atTop] fun s => s * exp (-s) := by
   refine Asymptotics.IsBigO.of_bound (gLead * (exp 1 / 3) * (1 - gRatio)⁻¹) ?_
   filter_upwards [eventually_ge_atTop 2] with s hs
   rw [norm_of_nonneg (FSieve_nonneg s), norm_of_nonneg (by positivity)]
-  exact (FSieve_le (by linarith)).trans_eq (by ring)
+  exact (FSieve_le (by linarith only [hs])).trans_eq (by ring)
 
 theorem g_even_le_fSieve (n : ℕ) (s : ℝ) : g (2 * n + 2) s ≤ fSieve s :=
   (summable_g_even s).le_tsum n fun _ _ => g_nonneg _ _
@@ -166,10 +166,10 @@ theorem fr_of_odd {r : ℕ} (hr : ¬ Even r) : fr r = FSieve := funext fun _ => 
 theorem shift_div_le {h : ℝ → ℝ} {C t : ℝ} (ht : 1 < t)
     (hb : h (t - 1) ≤ C * (t - 1) * exp (-(t - 1))) :
     h (t - 1) / (t - 1) ≤ C * exp 1 * exp (-t) := by
-  have ht1 : 0 < t - 1 := by linarith
+  have ht1 : 0 < t - 1 := by linarith only [ht]
   rw [div_le_iff₀ ht1]
   have e : exp (-(t - 1)) = exp 1 * exp (-t) := by rw [← exp_add]; ring_nf
-  rw [e] at hb; linarith
+  rw [e] at hb; linarith only [hb]
 
 /-- An exponentially decaying `h` gives an integrable kernel `h(t-1)/(t-1)` on `(s, ∞)`. -/
 theorem integrableOn_shift {h : ℝ → ℝ} (hh : Continuous h) {C s : ℝ} (hs : 2 ≤ s)
@@ -179,10 +179,10 @@ theorem integrableOn_shift {h : ℝ → ℝ} (hh : Continuous h) {C s : ℝ} (hs
   · refine ContinuousOn.aestronglyMeasurable ?_ measurableSet_Ioi
     exact (hh.comp (continuous_sub_right 1)).continuousOn.div
       (continuous_sub_right 1).continuousOn fun t ht => by
-        have : s < t := ht; linarith
+        have : s < t := ht; linarith only [hs, this]
   · filter_upwards [ae_restrict_mem measurableSet_Ioi] with t ht
     have ht' : s < t := ht
-    rw [norm_of_nonneg (div_nonneg (hnn _) (by linarith))]
+    rw [norm_of_nonneg (div_nonneg (hnn _) (by linarith only [hs, ht']))]
     have := shift_div_le (C := C) (by linarith) (hb (t - 1) (by linarith))
     simpa using this
 
@@ -195,19 +195,19 @@ theorem tsum_integral_Ioi_shift {φ : ℕ → ℝ → ℝ} {s : ℝ} (hs : 2 ≤
   · congr 1; funext t; exact tsum_div_const
   · refine hsum.congr fun n => setIntegral_congr_fun measurableSet_Ioi fun t ht => ?_
     have : s < t := ht
-    exact (norm_of_nonneg (div_nonneg (hnn _ _) (by linarith))).symm
+    exact (norm_of_nonneg (div_nonneg (hnn _ _) (by linarith only [hs, this]))).symm
 
 theorem integrableOn_FSieve_shift {s : ℝ} (hs : 2 ≤ s) :
     IntegrableOn (fun t => FSieve (t - 1) / (t - 1)) (Ioi s) :=
   integrableOn_shift (C := gLead * (exp 1 / 3) * (1 - gRatio)⁻¹) continuous_FSieve hs
     FSieve_nonneg fun u hu =>
-    (FSieve_le (by linarith)).trans_eq (by ring)
+    (FSieve_le (by linarith only [hs, hu])).trans_eq (by ring)
 
 theorem integrableOn_fSieve_shift {s : ℝ} (hs : 3 ≤ s) :
     IntegrableOn (fun t => fSieve (t - 1) / (t - 1)) (Ioi s) :=
-  integrableOn_shift (C := gLead * (1 - gRatio)⁻¹) continuous_fSieve (by linarith)
+  integrableOn_shift (C := gLead * (1 - gRatio)⁻¹) continuous_fSieve (by linarith only [hs])
     fSieve_nonneg fun u hu =>
-    (fSieve_le (by linarith)).trans_eq (by ring)
+    (fSieve_le (by linarith only [hs, hu])).trans_eq (by ring)
 
 theorem g_even_add_four_eq_Ioi (n : ℕ) {s : ℝ} (hs : 2 ≤ s) :
     IntegrableOn (fun t => g (2 * n + 3) (t - 1) / (t - 1)) (Ioi s) ∧

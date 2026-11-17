@@ -36,7 +36,7 @@ theorem delta_pos {eps M D : ℝ} (heps : 0 < eps) (hM : 0 < M)
   exact div_pos heps (mul_pos hM hD)
 
 theorem etaF_pos {p : ℝ} (hp : 2 < p) : 0 < etaF p := by
-  exact one_div_pos.mpr (by linarith)
+  exact one_div_pos.mpr (by linarith only [hp])
 
 theorem etaD_pos {p eps M D : ℝ} (hp : 2 < p) (heps : 0 < eps)
     (hM : 0 < M) (hD : 0 < D) : 0 < etaD p eps M D := by

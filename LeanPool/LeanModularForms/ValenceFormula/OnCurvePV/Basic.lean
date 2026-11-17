@@ -15,8 +15,6 @@ import LeanPool.LeanModularForms.ValenceFormula.WindingWeights.Rho
 import LeanPool.LeanModularForms.ValenceFormula.WindingWeights.RhoPlusOne
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 import Mathlib.CategoryTheory.Category.Init
-import Mathlib.MeasureTheory.Covering.Besicovitch
-import Mathlib.NumberTheory.ArithmeticFunction.Misc
 
 /-!
 # On-Curve PV: Infrastructure

@@ -6,8 +6,6 @@ Authors: Gershon Bialer
 module
 
 public import LeanPool.PoincareThreeBody.Polar
-import Mathlib.MeasureTheory.Integral.Bochner.Basic
-import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # Algebraic foundations of the planar Delaunay generating function

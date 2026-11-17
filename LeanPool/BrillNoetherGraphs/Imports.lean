@@ -510,6 +510,7 @@ public import LeanPool.BrillNoetherGraphs.Utilities.Subdivision.DoubledAnchorChe
 public import LeanPool.BrillNoetherGraphs.Utilities.Subdivision.ExplicitPotential
 public import LeanPool.BrillNoetherGraphs.Utilities.Subdivision.ExplicitPotentialRankOne
 public import LeanPool.BrillNoetherGraphs.Utilities.Subdivision.GraphIsoLaplacianEquiv
+public import LeanPool.BrillNoetherGraphs.Utilities.Subdivision.IndexedClosedCheck
 public import LeanPool.BrillNoetherGraphs.Utilities.Subdivision.IteratedSplitRefinement
 public import LeanPool.BrillNoetherGraphs.Utilities.Subdivision.LaplacianEquiv
 public import LeanPool.BrillNoetherGraphs.Utilities.Subdivision.LaplacianEquivSeparator

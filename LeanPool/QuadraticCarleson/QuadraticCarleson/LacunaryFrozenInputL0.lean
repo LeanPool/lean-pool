@@ -44,12 +44,12 @@ theorem stoppingCell_exists_mem_support {f : ℝ → ℂ} (c : stoppingCell f) :
   change 1 < (∫ y in c.1.interval (rootLength f), ‖f y‖) /
     dyadicLength (rootLength f) c.1.depth at hc
   rw [hz, zero_div] at hc
-  exact (by norm_num : ¬ (1 : ℝ) < 0) hc
+  exact (by norm_num1 : ¬ (1 : ℝ) < 0) hc
 
 theorem stoppingCell_length_le_rootLength {f : ℝ → ℂ} (c : stoppingCell f) :
     dyadicLength (rootLength f) c.1.depth ≤ rootLength f := by
   unfold dyadicLength
-  exact div_le_self rootLength_pos.le (one_le_pow₀ (by norm_num))
+  exact div_le_self rootLength_pos.le (one_le_pow₀ (by norm_num1))
 
 /-- A concrete bounded enlargement contains the entire canonical stopping
 union, not merely almost every point of it. -/
@@ -65,7 +65,7 @@ theorem stoppingBadUnion_subset_Icc_of_support_subset
     x < ((c.1.index : ℝ) + 1) * dyadicLength (rootLength f) c.1.depth at hc
   change (c.1.index : ℝ) * dyadicLength (rootLength f) c.1.depth ≤ y ∧
     y < ((c.1.index : ℝ) + 1) * dyadicLength (rootLength f) c.1.depth at hy
-  constructor <;> nlinarith
+  constructor <;> linarith only [hyR, hlen, hc, hy]
 
 /-- Compact support of the original input confines every function supported
 in its canonical stopping union to a common compact interval. -/
@@ -101,9 +101,9 @@ theorem frozenBlockInput_eq_zero_or_canonicalLevelBadPart
   simp_rw [hj₀]
   by_cases hj : j₀ ∈ R B c τ
   · right
-    simp [hj]
+    simp only [Finset.sum_ite_eq', hj, ↓reduceIte]
   · left
-    simp [hj]
+    simp only [Finset.sum_ite_eq', hj, ↓reduceIte]
 
 theorem norm_frozenBlockInput_le_two_mul
     {A : ℕ → ℝ} (f : ℝ → ℂ) {k : ℕ} (hAk : 0 ≤ A k)

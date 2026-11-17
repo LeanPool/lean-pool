@@ -9,7 +9,7 @@ module
 public import LeanPool.Zeta5Irrational.Construction
 public import Mathlib.LinearAlgebra.Vandermonde
 import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.Data.Rat.Star
+import Mathlib.Algebra.Order.Star.Rat
 import Mathlib.RingTheory.PiTensorProduct
 import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Polynomial.Basic

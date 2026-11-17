@@ -7,6 +7,8 @@ module
 
 
 public import LeanPool.NandakumarRamanaRao.HumanVerification.CauchyCrofton.NearestProjection
+import Mathlib.Tactic.Polynomial.Basic
+import Mathlib.Tactic.ReduceModChar
 
 /-!
 # Monotonicity of the Hausdorff perimeter
