@@ -5,8 +5,9 @@ Authors: Vladislav Kuznetsov
 -/
 module
 
+import LeanPool.ConwaySoifer.Certificates.FanCertificate
+
 public import LeanPool.ConwaySoifer.Simplified.Certificates.Checkpoints.Aown250000260000
-import Mathlib.Tactic.FinCases
 
 /-!
 # Aown 250000 260000 4
@@ -43,6 +44,8 @@ SOFTWARE.
 -/
 
 @[expose] public section
+
+prepare_fan_cache ConwaySoifer.Simplified.Certificates.Aown250000260000.model0
 
 -- Generated checkpoints are proposals; all acceptance proofs are checked by the kernel.
 
@@ -179,7 +182,7 @@ theorem excluded32_2 : ExcludedOn (model32.B 2 ++ [step32.q]) 9000000000000 (mod
       (some (6, 1, 4)) (.next ([1875000000000], [4200000000000]) (some (6, 1, 4)) (some (6, 1, 4))
       fan32Owner2Part0))))))))))))))))
       (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1 100 (by decide +kernel)
-  decide +kernel
+  certify_fan
 
 theorem excluded32_4 : ExcludedOn (model32.B 4 ++ [step32.q]) 9000000000000 (model32.caps 4)
     (model32.ord 4) 0 1 100 := by
@@ -257,7 +260,7 @@ theorem excluded33_0 : ExcludedOn (model33.B 0 ++ [step33.q]) 9000000000000 (mod
       [4200000000000]) (some (9, 3, 5)) (some (9, 3, 5)) fan33Owner0Part1)))))))))))))))))) (den :=
       9000000000000)
       (fuel := 12) (by decide +kernel) 0 1 100 (by decide +kernel)
-  decide +kernel
+  certify_fan
 
 theorem excluded33_1 : ExcludedOn (model33.B 1 ++ [step33.q]) 9000000000000 (model33.caps 1)
     (model33.ord 1) 0 1 100 := by
@@ -287,7 +290,7 @@ theorem excluded33_2 : ExcludedOn (model33.B 2 ++ [step33.q]) 9000000000000 (mod
       (.next ([1875000000000, 0], [4875000000000, -9000000000000]) (some (0, 1, 4)) (some (0, 1, 5))
       fan33Owner2Part0)))))))))))))))))))) (den := 9000000000000) (fuel := 12)
       (by decide +kernel) 0 1 100 (by decide +kernel)
-  decide +kernel
+  certify_fan
 
 theorem excluded33_4 : ExcludedOn (model33.B 4 ++ [step33.q]) 9000000000000 (model33.caps 4)
     (model33.ord 4) 0 1 100 := by

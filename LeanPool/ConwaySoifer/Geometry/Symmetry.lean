@@ -8,10 +8,6 @@ module
 public import LeanPool.ConwaySoifer.Geometry.Canonical
 public import LeanPool.ConwaySoifer.Geometry.Support
 public import Mathlib.Data.Fin.VecNotation
-import Mathlib.Tactic.FinCases
-import Mathlib.Tactic.Linarith
-import Mathlib.Tactic.NormNum.Basic
-import Mathlib.Tactic.Ring
 
 /-!
 # The symmetry group of the target triangle

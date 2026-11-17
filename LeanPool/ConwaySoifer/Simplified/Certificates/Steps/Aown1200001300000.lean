@@ -5,8 +5,18 @@ Authors: Vladislav Kuznetsov
 -/
 module
 
+public import LeanPool.ConwaySoifer.Simplified.Certificates.FanData.Aown1200001300000
+import LeanPool.ConwaySoifer.Simplified.Certificates.FanChecks.Aown1200001300000Part0
+import LeanPool.ConwaySoifer.Simplified.Certificates.FanChecks.Aown1200001300000Part1
+import LeanPool.ConwaySoifer.Simplified.Certificates.FanChecks.Aown1200001300000Part2
+import LeanPool.ConwaySoifer.Simplified.Certificates.FanChecks.Aown1200001300000Part3
+import LeanPool.ConwaySoifer.Simplified.Certificates.FanChecks.Aown1200001300000Part4
+import LeanPool.ConwaySoifer.Simplified.Certificates.FanChecks.Aown1200001300000Part5
+import LeanPool.ConwaySoifer.Simplified.Certificates.FanChecks.Aown1200001300000Part6
+import LeanPool.ConwaySoifer.Simplified.Certificates.FanChecks.Aown1200001300000Part7
+import LeanPool.ConwaySoifer.Simplified.Certificates.FanChecks.Aown1200001300000Part8
+
 public import LeanPool.ConwaySoifer.Simplified.Certificates.Checkpoints.Aown120000130000
-import Mathlib.Tactic.FinCases
 
 /-!
 # Aown 120000 130000 0
@@ -50,289 +60,63 @@ namespace ConwaySoifer.Simplified.Certificates
 open ConwaySoifer.Certificates
 namespace Aown120000130000
 
-/-- Shared exact orientation-fan tail for this local exclusion. -/
-def fan3Owner0Part0 : FanWitness := (.next ([510000000000], [570000000000]) (some (7, 1, 7)) (some
-    (7, 2, 7)) (.next ([2846400000000, 5220000000000], [6466800000000, -2610000000000]) (some (7, 2,
-    7)) (some (7, 2, 7)) (.next ([2533200000000, 2610000000000], [6153600000000, -5220000000000])
-    (some (0, 2, 7)) (some (0, 2, 7)) (.next ([313200000000, 2610000000000], [823200000000,
-    2610000000000]) (some (0, 2, 7)) (some (0, 2, 7)) (.next ([2533200000000, 2610000000000],
-    [7093200000000, 2610000000000]) (some (0, 2, 7)) (some (0, 2, 7)) (.next ([2220000000000],
-    [6270000000000]) (some (0, 2, 7)) (some (0, 2, 7)) (.next ([196800000000, -2610000000000],
-    [626400000000, 5220000000000]) (some (0, 2, 7)) (some (0, 2, 7)) (.next ([1710000000000],
-    [7290000000000]) (some (0, 2, 7)) (some (0, 2, 7)) (.next ([1140000000000], [6780000000000])
-    (some (0, 2, 7)) (some (0, 2, 7)) (.next ([0, 0], [939600000000, 7830000000000]) (some (0, 2,
-    7)) (some (0, 2, 7)) (.next ([-313200000000, -2610000000000], [1706400000000, 5220000000000])
-    (some (0, 2, 7)) (some (0, 2, 7)) (.next ([-196800000000, 2610000000000], [823200000000,
-    2610000000000]) (some (0, 2, 7)) (some (0, 2, 7)) (.next ([-313200000000, -2610000000000],
-    [1136400000000, 5220000000000]) (some (0, 2, 7)) (some (0, 2, 7)) (.next ([-116400000000,
-    -5220000000000], [313200000000, 2610000000000]) (some (0, 2, 7)) (some (0, 2, 7)) (.next
-    ([-313200000000, -2610000000000], [626400000000, 5220000000000]) (some (0, 2, 7)) (some (0, 4,
-    7)) (.next ([-570000000000], [1080000000000]) (some (0, 4, 7)) (some (1, 4, 7)) (.next
-    ([-6466800000000, 2610000000000], [9313200000000, 2610000000000]) (some (1, 4, 7)) (some (1, 4,
-    7)) (.next ([-6153600000000, 5220000000000], [8686800000000, -2610000000000]) (some (1, 4, 7))
-    (some (1, 4, 7)) (.next ([-823200000000, -2610000000000], [1136400000000, 5220000000000]) (some
-    (1, 4, 7)) (some (1, 4, 7)) (.next ([-7093200000000, -2610000000000], [9626400000000,
-    5220000000000]) (some (1, 4, 7)) (some (1, 4, 7)) (.next ([-6270000000000], [8490000000000])
-    (some (1, 4, 7)) (some (1, 4, 7)) (.next ([-626400000000, -5220000000000], [823200000000,
-    2610000000000]) (some (1, 4, 7)) (some (1, 4, 7)) (.next ([-7290000000000], [9000000000000])
-    (some (1, 4, 7)) (some (1, 4, 7)) (.next ([-6780000000000], [7920000000000]) (some (1, 4, 7))
-    (some (1, 4, 7)) (.terminal (some (1, 4, 7)) (some (1, 7, 7)) (some (1, 7,
-    7)))))))))))))))))))))))))))
-
-/-- Shared exact orientation-fan tail for this local exclusion. -/
-def fan4Owner0Part0 : FanWitness := (.next ([626400000000, 5220000000000], [196800000000,
-    -2610000000000]) (some (6, 1, 7)) (some (6, 1, 7)) (.next ([823200000000, 2610000000000],
-    [313200000000, 2610000000000]) (some (6, 1, 7)) (some (6, 1, 7)) (.next ([196800000000,
-    -2610000000000], [116400000000, 5220000000000]) (some (6, 1, 7)) (some (6, 1, 7)) (.next
-    ([313200000000, 2610000000000], [313200000000, 2610000000000]) (some (6, 1, 7)) (some (6, 1, 7))
-    (.next ([510000000000], [570000000000]) (some (0, 1, 7)) (some (0, 2, 7)) (.next ([313200000000,
-    2610000000000], [823200000000, 2610000000000]) (some (0, 2, 7)) (some (0, 2, 7)) (.next
-    ([196800000000, -2610000000000], [626400000000, 5220000000000]) (some (0, 2, 7)) (some (0, 2,
-    7)) (.next ([313200000000, 2610000000000], [1393200000000, 2610000000000]) (some (0, 2, 7))
-    (some (0, 2, 7)) (.next ([0, 0], [939600000000, 7830000000000]) (some (0, 2, 7)) (some (0, 2,
-    7)) (.next ([-453600000000, 5220000000000], [8266800000000, -2610000000000]) (some (0, 2, 7))
-    (some (0, 2, 7)) (.next ([-570000000000], [8070000000000]) (some (0, 2, 7)) (some (0, 2, 7))
-    (.next ([-766800000000, 2610000000000], [8893200000000, 2610000000000]) (some (0, 2, 7)) (some
-    (0, 2, 7)) (.next ([-1080000000000], [7500000000000]) (some (0, 2, 7)) (some (0, 2, 7)) (.next
-    ([-1393200000000, -2610000000000], [9206400000000, 5220000000000]) (some (0, 2, 7)) (some (0, 2,
-    7)) (.next ([-1590000000000], [8580000000000]) (some (0, 2, 7)) (some (0, 2, 7)) (.next
-    ([-1706400000000, -5220000000000], [8893200000000, 2610000000000]) (some (0, 2, 7)) (some (0, 2,
-    7)) (.next ([-196800000000, 2610000000000], [823200000000, 2610000000000]) (some (0, 2, 7))
-    (some (0, 7, 7)) (.next ([-313200000000, -2610000000000], [1136400000000, 5220000000000]) (some
-    (0, 7, 7)) (some (0, 7, 7)) (.next ([-116400000000, -5220000000000], [313200000000,
-    2610000000000]) (some (0, 7, 7)) (some (0, 7, 7)) (.next ([-313200000000, -2610000000000],
-    [626400000000, 5220000000000]) (some (0, 7, 7)) (some (0, 7, 7)) (.next ([-570000000000],
-    [1080000000000]) (some (0, 7, 7)) (some (1, 7, 7)) (.next ([-823200000000, -2610000000000],
-    [1136400000000, 5220000000000]) (some (1, 7, 7)) (some (1, 7, 7)) (.next ([-626400000000,
-    -5220000000000], [823200000000, 2610000000000]) (some (1, 7, 7)) (some (1, 7, 7)) (.next
-    ([-1393200000000, -2610000000000], [1706400000000, 5220000000000]) (some (1, 7, 7)) (some (1, 7,
-    7)) (.terminal (some (1, 7, 7)) (some (1, 7, 7)) (some (1, 7, 7)))))))))))))))))))))))))))
-
-/-- Shared exact orientation-fan tail for this local exclusion. -/
-def fan5Owner0Part0 : FanWitness := (.next ([823200000000, 2610000000000], [313200000000,
-    2610000000000]) (some (6, 1, 7)) (some (6, 1, 7)) (.next ([6153600000000, -5220000000000],
-    [2533200000000, 2610000000000]) (some (6, 1, 7)) (some (6, 1, 7)) (.next ([6466800000000,
-    -2610000000000], [2846400000000, 5220000000000]) (some (6, 1, 7)) (some (6, 1, 7)) (.next
-    ([196800000000, -2610000000000], [116400000000, 5220000000000]) (some (6, 1, 7)) (some (6, 7,
-    7)) (.next ([313200000000, 2610000000000], [313200000000, 2610000000000]) (some (6, 7, 7)) (some
-    (6, 7, 7)) (.next ([510000000000], [570000000000]) (some (0, 7, 7)) (some (0, 7, 7)) (.next
-    ([313200000000, 2610000000000], [823200000000, 2610000000000]) (some (0, 7, 7)) (some (0, 7, 7))
-    (.next ([196800000000, -2610000000000], [626400000000, 5220000000000]) (some (0, 7, 7)) (some
-    (0, 7, 7)) (.next ([313200000000, 2610000000000], [1393200000000, 2610000000000]) (some (0, 7,
-    7)) (some (0, 7, 7)) (.next ([0, 0], [939600000000, 7830000000000]) (some (0, 7, 7)) (some (0,
-    7, 7)) (.next ([-1140000000000], [7920000000000]) (some (0, 7, 7)) (some (0, 7, 7)) (.next
-    ([-313200000000, -2610000000000], [1706400000000, 5220000000000]) (some (0, 7, 4)) (some (0, 7,
-    4)) (.next ([-1906800000000, 2610000000000], [9313200000000, 2610000000000]) (some (0, 7, 4))
-    (some (0, 7, 4)) (.next ([-2220000000000], [8490000000000]) (some (0, 7, 4)) (some (0, 7, 4))
-    (.next ([-2533200000000, -2610000000000], [9626400000000, 5220000000000]) (some (0, 7, 4)) (some
-    (0, 7, 4)) (.next ([-313200000000, -2610000000000], [1136400000000, 5220000000000]) (some (0, 7,
-    4)) (some (0, 7, 4)) (.next ([-2533200000000, -2610000000000], [8686800000000, -2610000000000])
-    (some (0, 7, 4)) (some (0, 7, 4)) (.next ([-2846400000000, -5220000000000], [9313200000000,
-    2610000000000]) (some (0, 7, 4)) (some (0, 7, 4)) (.next ([-116400000000, -5220000000000],
-    [313200000000, 2610000000000]) (some (0, 7, 4)) (some (0, 7, 4)) (.next ([-313200000000,
-    -2610000000000], [626400000000, 5220000000000]) (some (0, 7, 4)) (some (0, 7, 4)) (.next
-    ([-570000000000], [1080000000000]) (some (0, 7, 4)) (some (1, 7, 4)) (.next ([-823200000000,
-    -2610000000000], [1136400000000, 5220000000000]) (some (1, 7, 4)) (some (1, 7, 6)) (.next
-    ([-626400000000, -5220000000000], [823200000000, 2610000000000]) (some (1, 7, 6)) (some (1, 7,
-    6)) (.next ([-1393200000000, -2610000000000], [1706400000000, 5220000000000]) (some (1, 7, 6))
-    (some (1, 7, 6)) (.terminal (some (1, 7, 6)) (some (1, 7, 6)) (some (1, 7,
-    6)))))))))))))))))))))))))))
-
-/-- Shared exact orientation-fan tail for this local exclusion. -/
-def fan7Owner0Part0 : FanWitness := (.next ([313200000000, 2610000000000], [823200000000,
-    2610000000000]) (some (7, 2, 7)) (some (7, 2, 7)) (.next ([196800000000, -2610000000000],
-    [626400000000, 5220000000000]) (some (7, 2, 7)) (some (7, 2, 7)) (.next ([313200000000,
-    2610000000000], [1393200000000, 2610000000000]) (some (7, 2, 7)) (some (7, 2, 7)) (.next ([0,
-    0], [939600000000, 7830000000000]) (some (7, 2, 7)) (some (7, 2, 7)) (.next ([-313200000000,
-    -2610000000000], [1706400000000, 5220000000000]) (some (7, 2, 7)) (some (7, 2, 7)) (.next
-    ([-1668600000000, 5220000000000], [8686800000000, -2610000000000]) (some (7, 2, 7)) (some (7, 2,
-    7)) (.next ([-1981800000000, 2610000000000], [9313200000000, 2610000000000]) (some (0, 2, 7))
-    (some (0, 2, 7)) (.next ([-1981800000000, 2610000000000], [8373600000000, -5220000000000]) (some
-    (0, 2, 7)) (some (0, 2, 7)) (.next ([-196800000000, 2610000000000], [823200000000,
-    2610000000000]) (some (0, 2, 7)) (some (0, 2, 7)) (.next ([-2295000000000], [8490000000000])
-    (some (0, 2, 7)) (some (0, 2, 7)) (.next ([-2608200000000, -2610000000000], [9626400000000,
-    5220000000000]) (some (0, 2, 7)) (some (0, 2, 7)) (.next ([-313200000000, -2610000000000],
-    [1136400000000, 5220000000000]) (some (0, 2, 7)) (some (0, 2, 7)) (.next ([-2805000000000],
-    [9510000000000]) (some (0, 2, 7)) (some (0, 2, 7)) (.next ([-116400000000, -5220000000000],
-    [313200000000, 2610000000000]) (some (0, 2, 7)) (some (0, 2, 7)) (.next ([-3375000000000],
-    [9000000000000]) (some (0, 2, 7)) (some (0, 3, 7)) (.next ([-626400000000, -5220000000000],
-    [1393200000000, 2610000000000]) (some (0, 3, 7)) (some (0, 3, 7)) (.next ([-510000000000],
-    [1080000000000]) (some (0, 3, 7)) (some (0, 3, 7)) (.next ([-313200000000, -2610000000000],
-    [626400000000, 5220000000000]) (some (0, 3, 7)) (some (0, 4, 7)) (.next ([-570000000000],
-    [1080000000000]) (some (0, 4, 7)) (some (1, 4, 7)) (.next ([-766800000000, 2610000000000],
-    [1393200000000, 2610000000000]) (some (1, 4, 7)) (some (1, 4, 7)) (.next ([-196800000000,
-    2610000000000], [313200000000, 2610000000000]) (some (1, 4, 7)) (some (1, 4, 7)) (.next
-    ([-823200000000, -2610000000000], [1136400000000, 5220000000000]) (some (1, 4, 7)) (some (1, 4,
-    7)) (.next ([-626400000000, -5220000000000], [823200000000, 2610000000000]) (some (1, 4, 7))
-    (some (1, 4, 7)) (.next ([-1393200000000, -2610000000000], [1706400000000, 5220000000000]) (some
-    (1, 4, 7)) (some (1, 4, 7)) (.terminal (some (1, 4, 7)) (some (1, 4, 7)) (some (1, 4,
-    7)))))))))))))))))))))))))))
-
-/-- Shared exact orientation-fan tail for this local exclusion. -/
-def fan7Owner0Part1 : FanWitness := (.next ([116400000000, 5220000000000], [196800000000,
-    -2610000000000]) (some (7, 2, 7)) (some (7, 2, 7)) (.next ([313200000000, 2610000000000],
-    [823200000000, 2610000000000]) (some (7, 2, 7)) (some (7, 2, 7)) (.next ([196800000000,
-    -2610000000000], [626400000000, 5220000000000]) (some (7, 2, 7)) (some (7, 2, 7)) (.next
-    ([313200000000, 2610000000000], [1393200000000, 2610000000000]) (some (7, 2, 7)) (some (7, 2,
-    7)) (.next ([0, 0], [939600000000, 7830000000000]) (some (7, 2, 7)) (some (7, 2, 7)) (.next
-    ([-313200000000, -2610000000000], [1706400000000, 5220000000000]) (some (7, 2, 7)) (some (7, 2,
-    7)) (.next ([-1668600000000, 5220000000000], [8686800000000, -2610000000000]) (some (7, 2, 7))
-    (some (7, 2, 7)) (.next ([-1981800000000, 2610000000000], [9313200000000, 2610000000000]) (some
-    (0, 2, 7)) (some (0, 2, 7)) (.next ([-196800000000, 2610000000000], [823200000000,
-    2610000000000]) (some (0, 2, 7)) (some (0, 2, 7)) (.next ([-2295000000000], [8490000000000])
-    (some (0, 2, 7)) (some (0, 2, 7)) (.next ([-2608200000000, -2610000000000], [9626400000000,
-    5220000000000]) (some (0, 2, 7)) (some (0, 2, 7)) (.next ([-313200000000, -2610000000000],
-    [1136400000000, 5220000000000]) (some (0, 2, 7)) (some (0, 2, 7)) (.next ([-2805000000000],
-    [9510000000000]) (some (0, 2, 7)) (some (0, 2, 7)) (.next ([-3375000000000], [9000000000000])
-    (some (0, 2, 7)) (some (0, 2, 7)) (.next ([-116400000000, -5220000000000], [313200000000,
-    2610000000000]) (some (0, 2, 7)) (some (0, 2, 7)) (.next ([-626400000000, -5220000000000],
-    [1393200000000, 2610000000000]) (some (0, 2, 7)) (some (0, 3, 7)) (.next ([-510000000000],
-    [1080000000000]) (some (0, 3, 7)) (some (0, 3, 7)) (.next ([-313200000000, -2610000000000],
-    [626400000000, 5220000000000]) (some (0, 3, 7)) (some (0, 4, 7)) (.next ([-570000000000],
-    [1080000000000]) (some (0, 4, 7)) (some (1, 4, 7)) (.next ([-766800000000, 2610000000000],
-    [1393200000000, 2610000000000]) (some (1, 4, 7)) (some (1, 4, 7)) (.next ([-196800000000,
-    2610000000000], [313200000000, 2610000000000]) (some (1, 4, 7)) (some (1, 4, 7)) (.next
-    ([-823200000000, -2610000000000], [1136400000000, 5220000000000]) (some (1, 4, 7)) (some (1, 4,
-    7)) (.next ([-626400000000, -5220000000000], [823200000000, 2610000000000]) (some (1, 4, 7))
-    (some (1, 4, 7)) (.next ([-1393200000000, -2610000000000], [1706400000000, 5220000000000]) (some
-    (1, 4, 7)) (some (1, 4, 7)) (.terminal (some (1, 4, 7)) (some (1, 4, 7)) (some (1, 4,
-    7)))))))))))))))))))))))))))
-
-/-- Shared exact orientation-fan tail for this local exclusion. -/
-def fan7Owner0Part2 : FanWitness := (.next ([116400000000, 5220000000000], [196800000000,
-    -2610000000000]) (some (7, 2, 7)) (some (7, 2, 7)) (.next ([313200000000, 2610000000000],
-    [823200000000, 2610000000000]) (some (7, 2, 7)) (some (7, 2, 7)) (.next ([196800000000,
-    -2610000000000], [626400000000, 5220000000000]) (some (7, 2, 7)) (some (7, 2, 7)) (.next
-    ([313200000000, 2610000000000], [1393200000000, 2610000000000]) (some (7, 2, 7)) (some (7, 2,
-    7)) (.next ([0, 0], [939600000000, 7830000000000]) (some (7, 2, 7)) (some (7, 2, 7)) (.next
-    ([-313200000000, -2610000000000], [1706400000000, 5220000000000]) (some (7, 2, 7)) (some (7, 2,
-    7)) (.next ([-1981800000000, 2610000000000], [9313200000000, 2610000000000]) (some (7, 2, 7))
-    (some (0, 2, 7)) (.next ([-196800000000, 2610000000000], [823200000000, 2610000000000]) (some
-    (0, 2, 7)) (some (0, 2, 7)) (.next ([-1981800000000, 2610000000000], [8373600000000,
-    -5220000000000]) (some (0, 2, 7)) (some (0, 2, 7)) (.next ([-2295000000000], [8490000000000])
-    (some (0, 2, 7)) (some (0, 2, 7)) (.next ([-2608200000000, -2610000000000], [9626400000000,
-    5220000000000]) (some (0, 2, 7)) (some (0, 2, 7)) (.next ([-313200000000, -2610000000000],
-    [1136400000000, 5220000000000]) (some (0, 2, 7)) (some (0, 2, 7)) (.next ([-2805000000000],
-    [9510000000000]) (some (0, 2, 7)) (some (0, 2, 7)) (.next ([-3375000000000], [9000000000000])
-    (some (0, 2, 7)) (some (0, 2, 7)) (.next ([-116400000000, -5220000000000], [313200000000,
-    2610000000000]) (some (0, 2, 7)) (some (0, 2, 7)) (.next ([-626400000000, -5220000000000],
-    [1393200000000, 2610000000000]) (some (0, 2, 7)) (some (0, 3, 7)) (.next ([-510000000000],
-    [1080000000000]) (some (0, 3, 7)) (some (0, 3, 7)) (.next ([-313200000000, -2610000000000],
-    [626400000000, 5220000000000]) (some (0, 3, 7)) (some (0, 4, 7)) (.next ([-570000000000],
-    [1080000000000]) (some (0, 4, 7)) (some (1, 4, 7)) (.next ([-766800000000, 2610000000000],
-    [1393200000000, 2610000000000]) (some (1, 4, 7)) (some (1, 4, 7)) (.next ([-196800000000,
-    2610000000000], [313200000000, 2610000000000]) (some (1, 4, 7)) (some (1, 4, 7)) (.next
-    ([-823200000000, -2610000000000], [1136400000000, 5220000000000]) (some (1, 4, 7)) (some (1, 4,
-    7)) (.next ([-626400000000, -5220000000000], [823200000000, 2610000000000]) (some (1, 4, 7))
-    (some (1, 4, 7)) (.next ([-1393200000000, -2610000000000], [1706400000000, 5220000000000]) (some
-    (1, 4, 7)) (some (1, 4, 7)) (.terminal (some (1, 4, 7)) (some (1, 4, 7)) (some (1, 4,
-    7)))))))))))))))))))))))))))
-
-/-- Shared exact orientation-fan tail for this local exclusion. -/
-def fan7Owner0Part3 : FanWitness := (.next ([5625000000000], [3375000000000]) (some (7, 1, 4)) (some
-    (7, 1, 4)) (.next ([570000000000], [510000000000]) (some (7, 1, 4)) (some (7, 1, 7)) (.next
-    ([313200000000, 2610000000000], [313200000000, 2610000000000]) (some (7, 1, 7)) (some (7, 1, 7))
-    (.next ([116400000000, 5220000000000], [196800000000, -2610000000000]) (some (7, 1, 7)) (some
-    (7, 2, 7)) (.next ([313200000000, 2610000000000], [823200000000, 2610000000000]) (some (7, 2,
-    7)) (some (7, 2, 7)) (.next ([196800000000, -2610000000000], [626400000000, 5220000000000])
-    (some (7, 2, 7)) (some (7, 2, 7)) (.next ([313200000000, 2610000000000], [1393200000000,
-    2610000000000]) (some (7, 2, 7)) (some (7, 2, 7)) (.next ([0, 0], [939600000000, 7830000000000])
-    (some (7, 2, 7)) (some (7, 2, 7)) (.next ([-1668600000000, 5220000000000], [8686800000000,
-    -2610000000000]) (some (7, 2, 7)) (some (7, 2, 7)) (.next ([-313200000000, -2610000000000],
-    [1706400000000, 5220000000000]) (some (0, 2, 7)) (some (0, 2, 7)) (.next ([-196800000000,
-    2610000000000], [823200000000, 2610000000000]) (some (0, 2, 7)) (some (0, 2, 7)) (.next
-    ([-1981800000000, 2610000000000], [9313200000000, 2610000000000]) (some (0, 2, 7)) (some (0, 2,
-    7)) (.next ([-1981800000000, 2610000000000], [8373600000000, -5220000000000]) (some (0, 2, 7))
-    (some (0, 2, 7)) (.next ([-2295000000000], [8490000000000]) (some (0, 2, 7)) (some (0, 2, 7))
-    (.next ([-2608200000000, -2610000000000], [9626400000000, 5220000000000]) (some (0, 2, 7)) (some
-    (0, 2, 7)) (.next ([-313200000000, -2610000000000], [1136400000000, 5220000000000]) (some (0, 2,
-    7)) (some (0, 2, 7)) (.next ([-2805000000000], [9510000000000]) (some (0, 2, 7)) (some (0, 2,
-    7)) (.next ([-3375000000000], [9000000000000]) (some (0, 2, 7)) (some (0, 2, 7)) (.next
-    ([-510000000000], [1080000000000]) (some (0, 2, 7)) (some (0, 2, 7)) (.next ([-313200000000,
-    -2610000000000], [626400000000, 5220000000000]) (some (0, 2, 7)) (some (0, 4, 7)) (.next
-    ([-196800000000, 2610000000000], [313200000000, 2610000000000]) (some (0, 4, 7)) (some (1, 4,
-    7)) (.next ([-823200000000, -2610000000000], [1136400000000, 5220000000000]) (some (1, 4, 7))
-    (some (1, 4, 7)) (.next ([-626400000000, -5220000000000], [823200000000, 2610000000000]) (some
-    (1, 4, 7)) (some (1, 4, 7)) (.next ([-1393200000000, -2610000000000], [1706400000000,
-    5220000000000]) (some (1, 4, 7)) (some (1, 4, 7)) (.terminal (some (1, 4, 7)) (some (1, 4, 7))
-    (some (1, 4, 7)))))))))))))))))))))))))))
-
 theorem excluded0_1 : ExcludedOn (model0.B 1 ++ [step0.q]) 9000000000000 (model0.caps 1) (model0.ord
     1) 0 1 100 := by
   apply ExclusionHint.sound (.pair 2 3) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
       100 (by decide +kernel)
-  decide +kernel
+  as_aux_lemma => exact checkedWitnessForExcluded0_1
 
 theorem excluded0_2 : ExcludedOn (model0.B 2 ++ [step0.q]) 9000000000000 (model0.caps 2) (model0.ord
     2) 0 1 100 := by
-  apply ExclusionHint.sound (.witnessedFan (.next ([7920000000000, -9000000000000], [570000000000,
-      9000000000000]) (some (0, 3, 1)) (some (0, 3, 1)) (.next ([7920000000000, -9000000000000],
-      [1080000000000, 9000000000000]) (some (0, 3, 1)) (some (0, 3, 1)) (.next ([7410000000000,
-      -9000000000000], [1080000000000, 9000000000000]) (some (0, 3, 1)) (some (0, 3, 1)) (.next
-      ([1080000000000, 9000000000000], [1080000000000, 9000000000000]) (some (0, 3, 1)) (some (0, 3,
-      1)) (.next ([1080000000000, 9000000000000], [7410000000000, -9000000000000]) (some (0, 3, 1))
-      (some (0, 3, 1)) (.next ([0, 0], [1080000000000, 9000000000000]) (some (0, 3, 1)) (some (0, 3,
-      1)) (.next ([-570000000000, -9000000000000], [8490000000000, 0]) (some (0, 3, 1)) (some (0, 3,
-      2)) (.next ([-1080000000000, -9000000000000], [9000000000000, 0]) (some (0, 3, 2)) (some (0,
-      3, 2)) (.next ([-1080000000000, -9000000000000], [8490000000000]) (some (0, 3, 2)) (some (0,
-      3, 2)) (.next ([-1080000000000, -9000000000000], [2160000000000, 18000000000000]) (some (0, 3,
-      2)) (some (3, 3, 2)) (.next ([-7410000000000, 9000000000000], [8490000000000, 0]) (some (3, 3,
-      2)) (some (3, 3, 2)) (.terminal (some (3, 1, 2)) (some (3, 1, 0)) (some (3, 1,
-      2))))))))))))))) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1 100
+  apply ExclusionHint.sound (.witnessedFan witnessForExcluded0Owner2)
+      (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1 100
       (by decide +kernel)
-  decide +kernel
+  delta witnessForExcluded0Owner2
+  as_aux_lemma => exact checkedWitnessForExcluded0_2
 
 theorem excluded0_3 : ExcludedOn (model0.B 3 ++ [step0.q]) 9000000000000 (model0.caps 3) (model0.ord
     3) 0 1 100 := by
-  apply ExclusionHint.sound (.witnessedFan (.next ([8490000000000], [510000000000]) (some (1, 0, 3))
-      (some (2, 0, 3)) (.next ([7410000000000, -9000000000000], [1590000000000, 9000000000000])
-      (some (2, 0, 3)) (some (2, 0, 3)) (.next ([1080000000000, 9000000000000], [1080000000000,
-      9000000000000]) (some (2, 0, 3)) (some (2, 3, 3)) (.next ([570000000000, 9000000000000],
-      [7920000000000, -9000000000000]) (some (2, 3, 3)) (some (2, 3, 3)) (.next ([0],
-      [1080000000000, 9000000000000]) (some (2, 3, 1)) (some (2, 3, 1)) (.next ([-510000000000],
-      [9000000000000]) (some (0, 3, 1)) (some (0, 3, 1)) (.next ([-1590000000000, -9000000000000],
-      [9000000000000]) (some (0, 3, 1)) (some (0, 3, 1)) (.next ([-1080000000000, -9000000000000],
-      [2160000000000, 18000000000000]) (some (0, 3, 1)) (some (0, 3, 1)) (.next ([-7920000000000,
-      9000000000000], [8490000000000]) (some (0, 3, 1)) (some (0, 3, 1)) (.terminal (some (0, 3, 1))
-      (some (0, 3, 1)) (some (0, 3, 1))))))))))))) (den := 9000000000000) (fuel := 12)
+  apply ExclusionHint.sound (.witnessedFan witnessForExcluded0Owner3)
+      (den := 9000000000000) (fuel := 12)
       (by decide +kernel) 0 1 100 (by decide +kernel)
-  decide +kernel
+  delta witnessForExcluded0Owner3
+  as_aux_lemma => exact checkedWitnessForExcluded0_3
 
 theorem excluded0_4 : ExcludedOn (model0.B 4 ++ [step0.q]) 9000000000000 (model0.caps 4) (model0.ord
     4) 0 1 100 := by
   apply ExclusionHint.sound (.pair 0 3) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
       100 (by decide +kernel)
-  decide +kernel
+  as_aux_lemma => exact checkedWitnessForExcluded0_4
 
 theorem excluded0_5 : ExcludedOn (model0.B 5 ++ [step0.q]) 9000000000000 (model0.caps 5) (model0.ord
     5) 0 1 100 := by
   apply ExclusionHint.sound (.pair 1 3) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
       100 (by decide +kernel)
-  decide +kernel
+  as_aux_lemma => exact checkedWitnessForExcluded0_5
 
 theorem excluded0_6 : ExcludedOn (model0.B 6 ++ [step0.q]) 9000000000000 (model0.caps 6) (model0.ord
     6) 0 1 100 := by
   apply ExclusionHint.sound (.pair 1 3) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
       100 (by decide +kernel)
-  decide +kernel
+  as_aux_lemma => exact checkedWitnessForExcluded0_6
 
 theorem excluded0_7 : ExcludedOn (model0.B 7 ++ [step0.q]) 9000000000000 (model0.caps 7) (model0.ord
     7) 0 1 100 := by
   apply ExclusionHint.sound (.pair 1 4) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
       100 (by decide +kernel)
-  decide +kernel
+  as_aux_lemma => exact checkedWitnessForExcluded0_7
 
 theorem excluded0_8 : ExcludedOn (model0.B 8 ++ [step0.q]) 9000000000000 (model0.caps 8) (model0.ord
     8) 0 1 100 := by
   apply ExclusionHint.sound (.pair 0 3) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
       100 (by decide +kernel)
-  decide +kernel
+  as_aux_lemma => exact checkedWitnessForExcluded0_8
 
 theorem excluded0_9 : ExcludedOn (model0.B 9 ++ [step0.q]) 9000000000000 (model0.caps 9) (model0.ord
     9) 0 1 100 := by
   apply ExclusionHint.sound (.pair 0 3) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
       100 (by decide +kernel)
-  decide +kernel
+  as_aux_lemma => exact checkedWitnessForExcluded0_9
 
 theorem checked0 : StepValid model0 9000000000000 step0 0 1 100 := by
   apply step_checkpoint (fuel := 12)
@@ -359,73 +143,59 @@ theorem excluded1_1 : ExcludedOn (model1.B 1 ++ [step1.q]) 9000000000000 (model1
     1) 0 1 100 := by
   apply ExclusionHint.sound (.pair 2 3) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
       100 (by decide +kernel)
-  decide +kernel
+  as_aux_lemma => exact checkedWitnessForExcluded1_1
 
 theorem excluded1_2 : ExcludedOn (model1.B 2 ++ [step1.q]) 9000000000000 (model1.caps 2) (model1.ord
     2) 0 1 100 := by
   apply ExclusionHint.sound (.pair 2 3) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
       100 (by decide +kernel)
-  decide +kernel
+  as_aux_lemma => exact checkedWitnessForExcluded1_2
 
 theorem excluded1_3 : ExcludedOn (model1.B 3 ++ [step1.q]) 9000000000000 (model1.caps 3) (model1.ord
     3) 0 1 100 := by
   apply ExclusionHint.sound (.pair 2 3) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
       100 (by decide +kernel)
-  decide +kernel
+  as_aux_lemma => exact checkedWitnessForExcluded1_3
 
 theorem excluded1_4 : ExcludedOn (model1.B 4 ++ [step1.q]) 9000000000000 (model1.caps 4) (model1.ord
     4) 0 1 100 := by
   apply ExclusionHint.sound (.pair 0 3) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
       100 (by decide +kernel)
-  decide +kernel
+  as_aux_lemma => exact checkedWitnessForExcluded1_4
 
 theorem excluded1_5 : ExcludedOn (model1.B 5 ++ [step1.q]) 9000000000000 (model1.caps 5) (model1.ord
     5) 0 1 100 := by
-  apply ExclusionHint.sound (.witnessedFan (.next ([7920000000000, -9000000000000], [570000000000,
-      9000000000000]) (some (3, 0, 2)) (some (3, 1, 2)) (.next ([1080000000000, 9000000000000],
-      [1080000000000, 9000000000000]) (some (3, 1, 2)) (some (3, 1, 3)) (.next ([1590000000000,
-      9000000000000], [7410000000000, -9000000000000]) (some (3, 1, 3)) (some (3, 1, 3)) (.next
-      ([510000000000], [8490000000000]) (some (0, 1, 3)) (some (0, 1, 3)) (.next ([0, 0],
-      [1080000000000, 9000000000000]) (some (0, 1, 3)) (some (0, 1, 3)) (.next ([-570000000000,
-      -9000000000000], [8490000000000]) (some (0, 1, 3)) (some (0, 2, 3)) (.next ([-1080000000000,
-      -9000000000000], [2160000000000, 18000000000000]) (some (0, 2, 3)) (some (0, 2, 3)) (.next
-      ([-7410000000000, 9000000000000], [9000000000000, 0]) (some (0, 2, 3)) (some (0, 2, 3)) (.next
-      ([-8490000000000], [9000000000000]) (some (0, 2, 3)) (some (0, 2, 3)) (.terminal (some (0, 2,
-      3)) (some (0, 2, 3)) (some (0, 2, 3))))))))))))) (den := 9000000000000) (fuel := 12)
+  apply ExclusionHint.sound (.witnessedFan witnessForExcluded1Owner5)
+      (den := 9000000000000) (fuel := 12)
       (by decide +kernel) 0 1 100 (by decide +kernel)
-  decide +kernel
+  delta witnessForExcluded1Owner5
+  as_aux_lemma => exact checkedWitnessForExcluded1_5
 
 theorem excluded1_6 : ExcludedOn (model1.B 6 ++ [step1.q]) 9000000000000 (model1.caps 6) (model1.ord
     6) 0 1 100 := by
-  apply ExclusionHint.sound (.witnessedFan (.next ([7410000000000, -9000000000000], [1080000000000,
-      9000000000000]) (some (3, 0, 1)) (some (3, 0, 2)) (.next ([1080000000000, 9000000000000],
-      [1080000000000, 9000000000000]) (some (3, 0, 2)) (some (3, 0, 2)) (.next ([1080000000000,
-      9000000000000], [7410000000000, -9000000000000]) (some (3, 0, 2)) (some (3, 0, 2)) (.next ([0,
-      0], [1080000000000, 9000000000000]) (some (3, 0, 2)) (some (3, 0, 2)) (.next ([-1080000000000,
-      -9000000000000], [8490000000000]) (some (3, 0, 2)) (some (3, 1, 2)) (.next ([-1080000000000,
-      -9000000000000], [2160000000000, 18000000000000]) (some (3, 1, 2)) (some (3, 1, 3)) (.next
-      ([-7410000000000, 9000000000000], [8490000000000]) (some (3, 1, 3)) (some (3, 1, 3))
-      (.terminal (some (0, 1, 3)) (some (0, 1, 3)) (some (0, 1, 3))))))))))) (den := 9000000000000)
+  apply ExclusionHint.sound (.witnessedFan witnessForExcluded1Owner6)
+      (den := 9000000000000)
       (fuel := 12) (by decide +kernel) 0 1 100 (by decide +kernel)
-  decide +kernel
+  delta witnessForExcluded1Owner6
+  as_aux_lemma => exact checkedWitnessForExcluded1_6
 
 theorem excluded1_7 : ExcludedOn (model1.B 7 ++ [step1.q]) 9000000000000 (model1.caps 7) (model1.ord
     7) 0 1 100 := by
   apply ExclusionHint.sound (.pair 1 4) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
       100 (by decide +kernel)
-  decide +kernel
+  as_aux_lemma => exact checkedWitnessForExcluded1_7
 
 theorem excluded1_8 : ExcludedOn (model1.B 8 ++ [step1.q]) 9000000000000 (model1.caps 8) (model1.ord
     8) 0 1 100 := by
   apply ExclusionHint.sound (.pair 0 3) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
       100 (by decide +kernel)
-  decide +kernel
+  as_aux_lemma => exact checkedWitnessForExcluded1_8
 
 theorem excluded1_9 : ExcludedOn (model1.B 9 ++ [step1.q]) 9000000000000 (model1.caps 9) (model1.ord
     9) 0 1 100 := by
   apply ExclusionHint.sound (.pair 0 3) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
       100 (by decide +kernel)
-  decide +kernel
+  as_aux_lemma => exact checkedWitnessForExcluded1_9
 
 theorem checked1 : StepValid model1 9000000000000 step1 0 1 100 := by
   apply step_checkpoint (fuel := 12)
@@ -452,79 +222,58 @@ theorem excluded2_1 : ExcludedOn (model2.B 1 ++ [step2.q]) 9000000000000 (model2
     1) 0 1 100 := by
   apply ExclusionHint.sound (.pair 2 3) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
       100 (by decide +kernel)
-  decide +kernel
+  as_aux_lemma => exact checkedWitnessForExcluded2_1
 
 theorem excluded2_2 : ExcludedOn (model2.B 2 ++ [step2.q]) 9000000000000 (model2.caps 2) (model2.ord
     2) 0 1 100 := by
-  apply ExclusionHint.sound (.witnessedFan (.next ([7920000000000], [1080000000000]) (some (0, 3,
-      1)) (some (0, 3, 1)) (.next ([7920000000000, -9000000000000], [1080000000000, 9000000000000])
-      (some (0, 3, 1)) (some (0, 3, 1)) (.next ([6840000000000, -9000000000000], [1080000000000,
-      9000000000000]) (some (0, 3, 1)) (some (0, 3, 1)) (.next ([6840000000000, -9000000000000],
-      [2160000000000, 9000000000000]) (some (0, 3, 1)) (some (0, 3, 1)) (.next ([1080000000000,
-      9000000000000], [1080000000000, 9000000000000]) (some (0, 3, 1)) (some (0, 3, 1)) (.next ([0,
-      9000000000000], [7920000000000, -9000000000000]) (some (0, 3, 1)) (some (0, 3, 1)) (.next ([0,
-      0], [1080000000000, 9000000000000]) (some (0, 3, 1)) (some (0, 3, 1)) (.next
-      ([-1080000000000], [9000000000000]) (some (0, 3, 1)) (some (0, 3, 2)) (.next ([-1080000000000,
-      -9000000000000], [9000000000000, 0]) (some (0, 3, 2)) (some (0, 3, 2)) (.next
-      ([-1080000000000, -9000000000000], [7920000000000, 0]) (some (0, 3, 2)) (some (0, 3, 2))
-      (.next ([-2160000000000, -9000000000000], [9000000000000]) (some (0, 3, 2)) (some (0, 3, 2))
-      (.next ([-1080000000000, -9000000000000], [2160000000000, 18000000000000]) (some (0, 3, 2))
-      (some (3, 3, 2)) (.next ([-7920000000000, 9000000000000], [7920000000000, 0]) (some (3, 3, 2))
-      (some (3, 3, 2)) (.terminal (some (3, 1, 2)) (some (3, 1, 0)) (some (3, 1, 2)))))))))))))))))
+  apply ExclusionHint.sound (.witnessedFan witnessForExcluded2Owner2)
       (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1 100 (by decide +kernel)
-  decide +kernel
+  delta witnessForExcluded2Owner2
+  as_aux_lemma => exact checkedWitnessForExcluded2_2
 
 theorem excluded2_3 : ExcludedOn (model2.B 3 ++ [step2.q]) 9000000000000 (model2.caps 3) (model2.ord
     3) 0 1 100 := by
   apply ExclusionHint.sound (.pair 0 3) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
       100 (by decide +kernel)
-  decide +kernel
+  as_aux_lemma => exact checkedWitnessForExcluded2_3
 
 theorem excluded2_4 : ExcludedOn (model2.B 4 ++ [step2.q]) 9000000000000 (model2.caps 4) (model2.ord
     4) 0 1 100 := by
   apply ExclusionHint.sound (.pair 0 3) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
       100 (by decide +kernel)
-  decide +kernel
+  as_aux_lemma => exact checkedWitnessForExcluded2_4
 
 theorem excluded2_5 : ExcludedOn (model2.B 5 ++ [step2.q]) 9000000000000 (model2.caps 5) (model2.ord
     5) 0 1 100 := by
   apply ExclusionHint.sound (.pair 0 3) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
       100 (by decide +kernel)
-  decide +kernel
+  as_aux_lemma => exact checkedWitnessForExcluded2_5
 
 theorem excluded2_6 : ExcludedOn (model2.B 6 ++ [step2.q]) 9000000000000 (model2.caps 6) (model2.ord
     6) 0 1 100 := by
-  apply ExclusionHint.sound (.witnessedFan (.next ([7920000000000, -9000000000000], [0,
-      9000000000000]) (some (3, 0, 1)) (some (3, 0, 2)) (.next ([1080000000000, 9000000000000],
-      [1080000000000, 9000000000000]) (some (3, 0, 2)) (some (3, 0, 2)) (.next ([2160000000000,
-      9000000000000], [6840000000000, -9000000000000]) (some (3, 0, 2)) (some (3, 0, 2)) (.next
-      ([1080000000000], [7920000000000]) (some (3, 0, 2)) (some (3, 0, 2)) (.next ([0, 0],
-      [1080000000000, 9000000000000]) (some (3, 0, 2)) (some (3, 0, 2)) (.next ([0, -9000000000000],
-      [7920000000000]) (some (3, 0, 2)) (some (3, 1, 2)) (.next ([-1080000000000, -9000000000000],
-      [2160000000000, 18000000000000]) (some (3, 1, 2)) (some (3, 1, 3)) (.next ([-6840000000000,
-      9000000000000], [9000000000000]) (some (3, 1, 3)) (some (3, 1, 3)) (.next ([-7920000000000],
-      [9000000000000]) (some (0, 1, 3)) (some (0, 1, 3)) (.terminal (some (0, 1, 3)) (some (0, 1,
-      3)) (some (0, 1, 3))))))))))))) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
+  apply ExclusionHint.sound (.witnessedFan witnessForExcluded2Owner6)
+      (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
       100 (by decide +kernel)
-  decide +kernel
+  delta witnessForExcluded2Owner6
+  as_aux_lemma => exact checkedWitnessForExcluded2_6
 
 theorem excluded2_7 : ExcludedOn (model2.B 7 ++ [step2.q]) 9000000000000 (model2.caps 7) (model2.ord
     7) 0 1 100 := by
   apply ExclusionHint.sound (.pair 1 4) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
       100 (by decide +kernel)
-  decide +kernel
+  as_aux_lemma => exact checkedWitnessForExcluded2_7
 
 theorem excluded2_8 : ExcludedOn (model2.B 8 ++ [step2.q]) 9000000000000 (model2.caps 8) (model2.ord
     8) 0 1 100 := by
   apply ExclusionHint.sound (.pair 0 3) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
       100 (by decide +kernel)
-  decide +kernel
+  as_aux_lemma => exact checkedWitnessForExcluded2_8
 
 theorem excluded2_9 : ExcludedOn (model2.B 9 ++ [step2.q]) 9000000000000 (model2.caps 9) (model2.ord
     9) 0 1 100 := by
   apply ExclusionHint.sound (.pair 0 3) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
       100 (by decide +kernel)
-  decide +kernel
+  as_aux_lemma => exact checkedWitnessForExcluded2_9
 
 theorem checked2 : StepValid model2 9000000000000 step2 0 1 100 := by
   apply step_checkpoint (fuel := 12)
@@ -556,15 +305,11 @@ private theorem checkedFan3Owner0Part0 :
 
 theorem excluded3_0 : ExcludedOn (model3.B 0 ++ [step3.q]) 9000000000000 (model3.caps 0) (model3.ord
     0) 0 1 100 := by
-  apply ExclusionHint.sound (.witnessedFan (.next ([1393200000000, 2610000000000], [313200000000,
-      2610000000000]) (some (7, 1, 7)) (some (7, 1, 7)) (.next ([626400000000, 5220000000000],
-      [196800000000, -2610000000000]) (some (7, 1, 7)) (some (7, 1, 7)) (.next ([823200000000,
-      2610000000000], [313200000000, 2610000000000]) (some (7, 1, 7)) (some (7, 1, 7)) (.next
-      ([196800000000, -2610000000000], [116400000000, 5220000000000]) (some (7, 1, 7)) (some (7, 1,
-      7)) (.next ([313200000000, 2610000000000], [313200000000, 2610000000000]) (some (7, 1, 7))
-      (some (7, 1, 7)) fan3Owner0Part0)))))) (den := 9000000000000) (fuel := 12) (by decide +kernel)
+  apply ExclusionHint.sound (.witnessedFan witnessForExcluded3Owner0)
+      (den := 9000000000000) (fuel := 12) (by decide +kernel)
       0 1
       100 (by decide +kernel)
+  delta witnessForExcluded3Owner0
   as_aux_lemma =>
     simp only [ExclusionHint.check, FanWitness.check,
       checkedFan3Owner0Part0,
@@ -574,71 +319,55 @@ theorem excluded3_0 : ExcludedOn (model3.B 0 ++ [step3.q]) 9000000000000 (model3
 
 theorem excluded3_1 : ExcludedOn (model3.B 1 ++ [step3.q]) 9000000000000 (model3.caps 1) (model3.ord
     1) 0 1 100 := by
-  apply ExclusionHint.sound (.witnessedFan (.next ([1080000000000, 9000000000000], [1080000000000,
-      9000000000000]) none none (.next ([2280000000000], [4500000000000]) (some (3, 1, 2)) (some (3,
-      1, 2)) (.next ([1080000000000, 9000000000000], [3420000000000, -9000000000000]) (some (3, 1,
-      2)) (some (3, 1, 2)) (.next ([1080000000000, 9000000000000], [6780000000000]) (some (3, 1, 2))
-      (some (3, 1, 2)) (.next ([0, 0], [5700000000000, -9000000000000]) (some (3, 1, 2)) (some (3,
-      1, 2)) (.next ([-1080000000000, -9000000000000], [2160000000000, 18000000000000]) (some (3, 1,
-      2)) (some (3, 1, 2)) (.next ([-4500000000000], [6780000000000]) (some (3, 1, 2)) none (.next
-      ([-3420000000000, 9000000000000], [4500000000000, 0]) none none (.next ([-6780000000000],
-      [7860000000000, 9000000000000]) none none (.terminal none none none))))))))))) (den :=
+  apply ExclusionHint.sound (.witnessedFan witnessForExcluded3Owner1)
+      (den :=
       9000000000000) (fuel := 12) (by decide +kernel) 0 1 100 (by decide +kernel)
-  decide +kernel
+  delta witnessForExcluded3Owner1
+  as_aux_lemma => exact checkedWitnessForExcluded3_1
 
 theorem excluded3_3 : ExcludedOn (model3.B 3 ++ [step3.q]) 9000000000000 (model3.caps 3) (model3.ord
     3) 0 1 100 := by
   apply ExclusionHint.sound (.pair 0 3) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
       100 (by decide +kernel)
-  decide +kernel
+  as_aux_lemma => exact checkedWitnessForExcluded3_3
 
 theorem excluded3_4 : ExcludedOn (model3.B 4 ++ [step3.q]) 9000000000000 (model3.caps 4) (model3.ord
     4) 0 1 100 := by
   apply ExclusionHint.sound (.pair 0 3) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
       100 (by decide +kernel)
-  decide +kernel
+  as_aux_lemma => exact checkedWitnessForExcluded3_4
 
 theorem excluded3_5 : ExcludedOn (model3.B 5 ++ [step3.q]) 9000000000000 (model3.caps 5) (model3.ord
     5) 0 1 100 := by
   apply ExclusionHint.sound (.pair 0 3) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
       100 (by decide +kernel)
-  decide +kernel
+  as_aux_lemma => exact checkedWitnessForExcluded3_5
 
 theorem excluded3_6 : ExcludedOn (model3.B 6 ++ [step3.q]) 9000000000000 (model3.caps 6) (model3.ord
     6) 0 1 100 := by
   apply ExclusionHint.sound (.pair 0 3) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
       100 (by decide +kernel)
-  decide +kernel
+  as_aux_lemma => exact checkedWitnessForExcluded3_6
 
 theorem excluded3_7 : ExcludedOn (model3.B 7 ++ [step3.q]) 9000000000000 (model3.caps 7) (model3.ord
     7) 0 1 100 := by
-  apply ExclusionHint.sound (.witnessedFan (.next ([6780000000000], [1140000000000, -9000000000000])
-      (some (2, 0, 1)) (some (3, 0, 2)) (.next ([6780000000000], [2220000000000]) (some (3, 0, 2))
-      (some (3, 0, 2)) (.next ([5700000000000, -9000000000000], [2220000000000]) (some (3, 0, 2))
-      (some (3, 0, 2)) (.next ([1080000000000, 9000000000000], [6840000000000, -18000000000000])
-      (some (3, 0, 2)) (some (4, 0, 2)) (.next ([1080000000000, 9000000000000], [7920000000000,
-      -9000000000000]) (some (4, 0, 2)) (some (4, 0, 2)) (.next ([0, 0], [7920000000000,
-      -9000000000000]) (some (4, 0, 2)) (some (4, 0, 2)) (.next ([-1140000000000, 9000000000000],
-      [7920000000000, -9000000000000]) (some (4, 0, 2)) (some (4, 0, 2)) (.next ([-2220000000000],
-      [9000000000000]) (some (4, 0, 2)) (some (4, 0, 2)) (.next ([-2220000000000, 0],
-      [7920000000000, -9000000000000]) (some (4, 0, 2)) (some (4, 0, 2)) (.next ([-6840000000000,
-      18000000000000], [7920000000000, -9000000000000]) (some (4, 0, 2)) (some (4, 0, 2)) (.next
-      ([-7920000000000, 9000000000000], [9000000000000, 0]) (some (4, 0, 2)) (some (4, 1, 2))
-      (.terminal (some (4, 1, 2)) (some (0, 1, 2)) (some (4, 1, 2))))))))))))))) (den :=
+  apply ExclusionHint.sound (.witnessedFan witnessForExcluded3Owner7)
+      (den :=
       9000000000000) (fuel := 12) (by decide +kernel) 0 1 100 (by decide +kernel)
-  decide +kernel
+  delta witnessForExcluded3Owner7
+  as_aux_lemma => exact checkedWitnessForExcluded3_7
 
 theorem excluded3_8 : ExcludedOn (model3.B 8 ++ [step3.q]) 9000000000000 (model3.caps 8) (model3.ord
     8) 0 1 100 := by
   apply ExclusionHint.sound (.pair 0 3) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
       100 (by decide +kernel)
-  decide +kernel
+  as_aux_lemma => exact checkedWitnessForExcluded3_8
 
 theorem excluded3_9 : ExcludedOn (model3.B 9 ++ [step3.q]) 9000000000000 (model3.caps 9) (model3.ord
     9) 0 1 100 := by
   apply ExclusionHint.sound (.pair 0 3) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
       100 (by decide +kernel)
-  decide +kernel
+  as_aux_lemma => exact checkedWitnessForExcluded3_9
 
 theorem checked3 : StepValid model3 9000000000000 step3 0 1 100 := by
   apply step_checkpoint (fuel := 12)
@@ -670,16 +399,11 @@ private theorem checkedFan4Owner0Part0 :
 
 theorem excluded4_0 : ExcludedOn (model4.B 0 ++ [step4.q]) 9000000000000 (model4.caps 0) (model4.ord
     0) 0 1 100 := by
-  apply ExclusionHint.sound (.witnessedFan (.next ([7813200000000, 2610000000000], [453600000000,
-      -5220000000000]) (some (7, 1, 7)) (some (7, 1, 7)) (.next ([7500000000000], [570000000000])
-      (some (6, 1, 7)) (some (6, 1, 7)) (.next ([8126400000000, 5220000000000], [766800000000,
-      -2610000000000]) (some (6, 1, 7)) (some (6, 1, 7)) (.next ([6420000000000], [1080000000000])
-      (some (6, 1, 7)) (some (6, 1, 7)) (.next ([7813200000000, 2610000000000], [1393200000000,
-      2610000000000]) (some (6, 1, 7)) (some (6, 1, 7)) (.next ([6990000000000], [1590000000000])
-      (some (6, 1, 7)) (some (6, 1, 7)) (.next ([7186800000000, -2610000000000], [1706400000000,
-      5220000000000]) (some (6, 1, 7)) (some (6, 1, 7)) fan4Owner0Part0)))))))) (den :=
+  apply ExclusionHint.sound (.witnessedFan witnessForExcluded4Owner0)
+      (den :=
       9000000000000) (fuel := 12) (by decide +kernel) 0
       1 100 (by decide +kernel)
+  delta witnessForExcluded4Owner0
   as_aux_lemma =>
     simp only [ExclusionHint.check, FanWitness.check,
       checkedFan4Owner0Part0,
@@ -689,74 +413,55 @@ theorem excluded4_0 : ExcludedOn (model4.B 0 ++ [step4.q]) 9000000000000 (model4
 
 theorem excluded4_1 : ExcludedOn (model4.B 1 ++ [step4.q]) 9000000000000 (model4.caps 1) (model4.ord
     1) 0 1 100 := by
-  apply ExclusionHint.sound (.witnessedFan (.next ([420000000000, -9000000000000], [0,
-      9000000000000]) none none (.next ([1080000000000, 9000000000000], [1080000000000,
-      9000000000000]) none none (.next ([660000000000, 9000000000000], [1500000000000]) none none
-      (.next ([1500000000000], [3420000000000]) none none (.next ([1080000000000, 9000000000000],
-      [3420000000000, -9000000000000]) none none (.next ([0], [5580000000000, 9000000000000]) none
-      none (.next ([0, -9000000000000], [420000000000, 0]) none none (.next ([-1080000000000,
-      -9000000000000], [2160000000000, 18000000000000]) none none (.next ([-1500000000000],
-      [2160000000000, 9000000000000]) none none (.next ([-3420000000000], [4920000000000]) none none
-      (.next ([-3420000000000, 9000000000000], [4500000000000, 0]) none none (.terminal none none
-      none))))))))))))) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1 100
+  apply ExclusionHint.sound (.witnessedFan witnessForExcluded4Owner1)
+      (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1 100
       (by decide +kernel)
-  decide +kernel
+  delta witnessForExcluded4Owner1
+  as_aux_lemma => exact checkedWitnessForExcluded4_1
 
 theorem excluded4_3 : ExcludedOn (model4.B 3 ++ [step4.q]) 9000000000000 (model4.caps 3) (model4.ord
     3) 0 1 100 := by
   apply ExclusionHint.sound (.pair 0 3) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
       100 (by decide +kernel)
-  decide +kernel
+  as_aux_lemma => exact checkedWitnessForExcluded4_3
 
 theorem excluded4_4 : ExcludedOn (model4.B 4 ++ [step4.q]) 9000000000000 (model4.caps 4) (model4.ord
     4) 0 1 100 := by
   apply ExclusionHint.sound (.pair 0 3) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
       100 (by decide +kernel)
-  decide +kernel
+  as_aux_lemma => exact checkedWitnessForExcluded4_4
 
 theorem excluded4_5 : ExcludedOn (model4.B 5 ++ [step4.q]) 9000000000000 (model4.caps 5) (model4.ord
     5) 0 1 100 := by
   apply ExclusionHint.sound (.pair 0 3) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
       100 (by decide +kernel)
-  decide +kernel
+  as_aux_lemma => exact checkedWitnessForExcluded4_5
 
 theorem excluded4_6 : ExcludedOn (model4.B 6 ++ [step4.q]) 9000000000000 (model4.caps 6) (model4.ord
     6) 0 1 100 := by
   apply ExclusionHint.sound (.pair 0 3) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
       100 (by decide +kernel)
-  decide +kernel
+  as_aux_lemma => exact checkedWitnessForExcluded4_6
 
 theorem excluded4_7 : ExcludedOn (model4.B 7 ++ [step4.q]) 9000000000000 (model4.caps 7) (model4.ord
     7) 0 1 100 := by
-  apply ExclusionHint.sound (.witnessedFan (.next ([420000000000, -9000000000000], [0,
-      9000000000000]) (some (2, 4, 1)) (some (3, 4, 2)) (.next ([1500000000000], [6840000000000,
-      -9000000000000]) (some (3, 4, 2)) (some (3, 4, 2)) (.next ([1500000000000], [7920000000000])
-      (some (3, 4, 2)) (some (3, 4, 2)) (.next ([1080000000000, 9000000000000], [6840000000000,
-      -18000000000000]) (some (3, 4, 2)) (some (3, 4, 2)) (.next ([1080000000000, 9000000000000],
-      [7920000000000, -9000000000000]) (some (3, 4, 2)) (some (3, 4, 2)) (.next ([420000000000,
-      -9000000000000], [7920000000000]) (some (3, 4, 2)) (some (3, 4, 2)) (.next ([0, 0],
-      [7920000000000, -9000000000000]) (some (3, 4, 2)) (some (4, 4, 2)) (.next ([0,
-      -9000000000000], [420000000000, 0]) (some (4, 4, 2)) (some (4, 4, 2)) (.next ([-6840000000000,
-      9000000000000], [8340000000000, -9000000000000]) (some (4, 0, 2)) (some (4, 0, 2)) (.next
-      ([-7920000000000], [9420000000000]) (some (4, 0, 2)) (some (4, 0, 2)) (.next ([-6840000000000,
-      18000000000000], [7920000000000, -9000000000000]) (some (4, 0, 2)) (some (4, 0, 2)) (.next
-      ([-7920000000000, 9000000000000], [9000000000000, 0]) (some (4, 0, 2)) (some (4, 1, 2)) (.next
-      ([-7920000000000, 0], [8340000000000, -9000000000000]) (some (4, 1, 2)) (some (4, 1, 2))
-      (.terminal (some (4, 1, 2)) (some (4, 1, 2)) (some (4, 1, 2))))))))))))))))) (den :=
+  apply ExclusionHint.sound (.witnessedFan witnessForExcluded4Owner7)
+      (den :=
       9000000000000) (fuel := 12) (by decide +kernel) 0 1 100 (by decide +kernel)
-  decide +kernel
+  delta witnessForExcluded4Owner7
+  as_aux_lemma => exact checkedWitnessForExcluded4_7
 
 theorem excluded4_8 : ExcludedOn (model4.B 8 ++ [step4.q]) 9000000000000 (model4.caps 8) (model4.ord
     8) 0 1 100 := by
   apply ExclusionHint.sound (.pair 0 3) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
       100 (by decide +kernel)
-  decide +kernel
+  as_aux_lemma => exact checkedWitnessForExcluded4_8
 
 theorem excluded4_9 : ExcludedOn (model4.B 9 ++ [step4.q]) 9000000000000 (model4.caps 9) (model4.ord
     9) 0 1 100 := by
   apply ExclusionHint.sound (.pair 0 3) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
       100 (by decide +kernel)
-  decide +kernel
+  as_aux_lemma => exact checkedWitnessForExcluded4_9
 
 theorem checked4 : StepValid model4 9000000000000 step4 0 1 100 := by
   apply step_checkpoint (fuel := 12)
@@ -788,13 +493,10 @@ private theorem checkedFan5Owner0Part0 :
 
 theorem excluded5_0 : ExcludedOn (model5.B 0 ++ [step5.q]) 9000000000000 (model5.caps 0) (model5.ord
     0) 0 1 100 := by
-  apply ExclusionHint.sound (.witnessedFan (.next ([6780000000000], [1140000000000]) (some (6, 1,
-      7)) (some (6, 1, 7)) (.next ([1393200000000, 2610000000000], [313200000000, 2610000000000])
-      (some (6, 1, 7)) (some (6, 1, 7)) (.next ([7406400000000, 5220000000000], [1906800000000,
-      -2610000000000]) (some (6, 1, 7)) (some (6, 1, 7)) (.next ([6270000000000], [2220000000000])
-      (some (6, 1, 7)) (some (6, 1, 7)) (.next ([7093200000000, 2610000000000], [2533200000000,
-      2610000000000]) (some (6, 1, 7)) (some (6, 1, 7)) fan5Owner0Part0)))))) (den :=
+  apply ExclusionHint.sound (.witnessedFan witnessForExcluded5Owner0)
+      (den :=
       9000000000000) (fuel := 12) (by decide +kernel) 0 1 100 (by decide +kernel)
+  delta witnessForExcluded5Owner0
   as_aux_lemma =>
     simp only [ExclusionHint.check, FanWitness.check,
       checkedFan5Owner0Part0,
@@ -806,49 +508,49 @@ theorem excluded5_1 : ExcludedOn (model5.B 1 ++ [step5.q]) 9000000000000 (model5
     1) 0 1 100 := by
   apply ExclusionHint.sound (.pair 2 3) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
       100 (by decide +kernel)
-  decide +kernel
+  as_aux_lemma => exact checkedWitnessForExcluded5_1
 
 theorem excluded5_2 : ExcludedOn (model5.B 2 ++ [step5.q]) 9000000000000 (model5.caps 2) (model5.ord
     2) 0 1 100 := by
   apply ExclusionHint.sound (.pair 0 4) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
       100 (by decide +kernel)
-  decide +kernel
+  as_aux_lemma => exact checkedWitnessForExcluded5_2
 
 theorem excluded5_3 : ExcludedOn (model5.B 3 ++ [step5.q]) 9000000000000 (model5.caps 3) (model5.ord
     3) 0 1 100 := by
   apply ExclusionHint.sound (.pair 0 3) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
       100 (by decide +kernel)
-  decide +kernel
+  as_aux_lemma => exact checkedWitnessForExcluded5_3
 
 theorem excluded5_4 : ExcludedOn (model5.B 4 ++ [step5.q]) 9000000000000 (model5.caps 4) (model5.ord
     4) 0 1 100 := by
   apply ExclusionHint.sound (.pair 0 3) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
       100 (by decide +kernel)
-  decide +kernel
+  as_aux_lemma => exact checkedWitnessForExcluded5_4
 
 theorem excluded5_5 : ExcludedOn (model5.B 5 ++ [step5.q]) 9000000000000 (model5.caps 5) (model5.ord
     5) 0 1 100 := by
   apply ExclusionHint.sound (.pair 0 3) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
       100 (by decide +kernel)
-  decide +kernel
+  as_aux_lemma => exact checkedWitnessForExcluded5_5
 
 theorem excluded5_7 : ExcludedOn (model5.B 7 ++ [step5.q]) 9000000000000 (model5.caps 7) (model5.ord
     7) 0 1 100 := by
   apply ExclusionHint.sound (.pair 1 4) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
       100 (by decide +kernel)
-  decide +kernel
+  as_aux_lemma => exact checkedWitnessForExcluded5_7
 
 theorem excluded5_8 : ExcludedOn (model5.B 8 ++ [step5.q]) 9000000000000 (model5.caps 8) (model5.ord
     8) 0 1 100 := by
   apply ExclusionHint.sound (.pair 0 3) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
       100 (by decide +kernel)
-  decide +kernel
+  as_aux_lemma => exact checkedWitnessForExcluded5_8
 
 theorem excluded5_9 : ExcludedOn (model5.B 9 ++ [step5.q]) 9000000000000 (model5.caps 9) (model5.ord
     9) 0 1 100 := by
   apply ExclusionHint.sound (.pair 0 3) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
       100 (by decide +kernel)
-  decide +kernel
+  as_aux_lemma => exact checkedWitnessForExcluded5_9
 
 theorem checked5 : StepValid model5 9000000000000 step5 0 1 100 := by
   apply step_checkpoint (fuel := 12)
@@ -875,55 +577,55 @@ theorem excluded6_0 : ExcludedOn (model6.B 0 ++ [step6.q]) 9000000000000 (model6
     0) 0 1 100 := by
   apply ExclusionHint.sound (.pair 4 7) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
       100 (by decide +kernel)
-  decide +kernel
+  as_aux_lemma => exact checkedWitnessForExcluded6_0
 
 theorem excluded6_1 : ExcludedOn (model6.B 1 ++ [step6.q]) 9000000000000 (model6.caps 1) (model6.ord
     1) 0 1 100 := by
   apply ExclusionHint.sound (.pair 0 3) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
       100 (by decide +kernel)
-  decide +kernel
+  as_aux_lemma => exact checkedWitnessForExcluded6_1
 
 theorem excluded6_2 : ExcludedOn (model6.B 2 ++ [step6.q]) 9000000000000 (model6.caps 2) (model6.ord
     2) 0 1 100 := by
   apply ExclusionHint.sound (.pair 0 4) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
       100 (by decide +kernel)
-  decide +kernel
+  as_aux_lemma => exact checkedWitnessForExcluded6_2
 
 theorem excluded6_3 : ExcludedOn (model6.B 3 ++ [step6.q]) 9000000000000 (model6.caps 3) (model6.ord
     3) 0 1 100 := by
   apply ExclusionHint.sound (.pair 1 3) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
       100 (by decide +kernel)
-  decide +kernel
+  as_aux_lemma => exact checkedWitnessForExcluded6_3
 
 theorem excluded6_5 : ExcludedOn (model6.B 5 ++ [step6.q]) 9000000000000 (model6.caps 5) (model6.ord
     5) 0 1 100 := by
   apply ExclusionHint.sound (.pair 2 3) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
       100 (by decide +kernel)
-  decide +kernel
+  as_aux_lemma => exact checkedWitnessForExcluded6_5
 
 theorem excluded6_6 : ExcludedOn (model6.B 6 ++ [step6.q]) 9000000000000 (model6.caps 6) (model6.ord
     6) 0 1 100 := by
   apply ExclusionHint.sound (.pair 0 3) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
       100 (by decide +kernel)
-  decide +kernel
+  as_aux_lemma => exact checkedWitnessForExcluded6_6
 
 theorem excluded6_7 : ExcludedOn (model6.B 7 ++ [step6.q]) 9000000000000 (model6.caps 7) (model6.ord
     7) 0 1 100 := by
   apply ExclusionHint.sound (.pair 0 4) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
       100 (by decide +kernel)
-  decide +kernel
+  as_aux_lemma => exact checkedWitnessForExcluded6_7
 
 theorem excluded6_8 : ExcludedOn (model6.B 8 ++ [step6.q]) 9000000000000 (model6.caps 8) (model6.ord
     8) 0 1 100 := by
   apply ExclusionHint.sound (.pair 0 3) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
       100 (by decide +kernel)
-  decide +kernel
+  as_aux_lemma => exact checkedWitnessForExcluded6_8
 
 theorem excluded6_9 : ExcludedOn (model6.B 9 ++ [step6.q]) 9000000000000 (model6.caps 9) (model6.ord
     9) 0 1 100 := by
   apply ExclusionHint.sound (.pair 0 3) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
       100 (by decide +kernel)
-  decide +kernel
+  as_aux_lemma => exact checkedWitnessForExcluded6_9
 
 theorem checked6 : StepValid model6 9000000000000 step6 0 1 100 := by
   apply step_checkpoint (fuel := 12)
@@ -1085,49 +787,49 @@ theorem excluded7_1 : ExcludedOn (model7.B 1 ++ [step7.q]) 9000000000000 (model7
     1) 0 1 100 := by
   apply ExclusionHint.sound (.pair 0 3) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
       100 (by decide +kernel)
-  decide +kernel
+  as_aux_lemma => exact checkedWitnessForExcluded7_1
 
 theorem excluded7_2 : ExcludedOn (model7.B 2 ++ [step7.q]) 9000000000000 (model7.caps 2) (model7.ord
     2) 0 1 100 := by
   apply ExclusionHint.sound (.pair 1 4) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
       100 (by decide +kernel)
-  decide +kernel
+  as_aux_lemma => exact checkedWitnessForExcluded7_2
 
 theorem excluded7_4 : ExcludedOn (model7.B 4 ++ [step7.q]) 9000000000000 (model7.caps 4) (model7.ord
     4) 0 1 100 := by
   apply ExclusionHint.sound (.pair 0 4) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
       100 (by decide +kernel)
-  decide +kernel
+  as_aux_lemma => exact checkedWitnessForExcluded7_4
 
 theorem excluded7_5 : ExcludedOn (model7.B 5 ++ [step7.q]) 9000000000000 (model7.caps 5) (model7.ord
     5) 0 1 100 := by
   apply ExclusionHint.sound (.pair 0 3) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
       100 (by decide +kernel)
-  decide +kernel
+  as_aux_lemma => exact checkedWitnessForExcluded7_5
 
 theorem excluded7_6 : ExcludedOn (model7.B 6 ++ [step7.q]) 9000000000000 (model7.caps 6) (model7.ord
     6) 0 1 100 := by
   apply ExclusionHint.sound (.pair 0 3) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
       100 (by decide +kernel)
-  decide +kernel
+  as_aux_lemma => exact checkedWitnessForExcluded7_6
 
 theorem excluded7_7 : ExcludedOn (model7.B 7 ++ [step7.q]) 9000000000000 (model7.caps 7) (model7.ord
     7) 0 1 100 := by
   apply ExclusionHint.sound (.pair 0 4) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
       100 (by decide +kernel)
-  decide +kernel
+  as_aux_lemma => exact checkedWitnessForExcluded7_7
 
 theorem excluded7_8 : ExcludedOn (model7.B 8 ++ [step7.q]) 9000000000000 (model7.caps 8) (model7.ord
     8) 0 1 100 := by
   apply ExclusionHint.sound (.pair 0 3) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
       100 (by decide +kernel)
-  decide +kernel
+  as_aux_lemma => exact checkedWitnessForExcluded7_8
 
 theorem excluded7_9 : ExcludedOn (model7.B 9 ++ [step7.q]) 9000000000000 (model7.caps 9) (model7.ord
     9) 0 1 100 := by
   apply ExclusionHint.sound (.pair 0 3) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
       100 (by decide +kernel)
-  decide +kernel
+  as_aux_lemma => exact checkedWitnessForExcluded7_9
 
 theorem checked7 : StepValid model7 9000000000000 step7 0 1 100 := by
   apply step_checkpoint (fuel := 12)

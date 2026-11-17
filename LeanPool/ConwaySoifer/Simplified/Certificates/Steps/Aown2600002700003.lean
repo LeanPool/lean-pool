@@ -5,8 +5,9 @@ Authors: Vladislav Kuznetsov
 -/
 module
 
+import LeanPool.ConwaySoifer.Certificates.FanCertificate
+
 public import LeanPool.ConwaySoifer.Simplified.Certificates.Checkpoints.Aown260000270000
-import Mathlib.Tactic.FinCases
 
 /-!
 # Aown 260000 270000 3
@@ -43,6 +44,8 @@ SOFTWARE.
 -/
 
 @[expose] public section
+
+prepare_fan_cache ConwaySoifer.Simplified.Certificates.Aown260000270000.model0
 
 -- Generated checkpoints are proposals; all acceptance proofs are checked by the kernel.
 
@@ -89,7 +92,7 @@ theorem excluded24_1 : ExcludedOn (model24.B 1 ++ [step24.q]) 9000000000000 (mod
       -9000000000000], [4680000000000, 18000000000000]) (some (3, 1, 2)) (some (3, 1, 2)) (.terminal
       (some (3, 1, 2)) none none))))))))))) (den := 9000000000000) (fuel := 12) (by decide +kernel)
       0 1 100 (by decide +kernel)
-  decide +kernel
+  certify_fan
 
 theorem excluded24_2 : ExcludedOn (model24.B 2 ++ [step24.q]) 9000000000000 (model24.caps 2)
     (model24.ord 2) 0 1 100 := by
@@ -102,7 +105,7 @@ theorem excluded24_2 : ExcludedOn (model24.B 2 ++ [step24.q]) 9000000000000 (mod
       5, 2)) (.next ([6180000000000, 0], [2340000000000, 9000000000000]) (some (0, 5, 2)) (some (0,
       5, 2)) fan24Owner2Part0)))))))) (den := 9000000000000)
       (fuel := 12) (by decide +kernel) 0 1 100 (by decide +kernel)
-  decide +kernel
+  certify_fan
 
 theorem excluded24_3 : ExcludedOn (model24.B 3 ++ [step24.q]) 9000000000000 (model24.caps 3)
     (model24.ord 3) 0 1 100 := by

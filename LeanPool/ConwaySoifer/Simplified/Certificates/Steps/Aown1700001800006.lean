@@ -5,8 +5,9 @@ Authors: Vladislav Kuznetsov
 -/
 module
 
+import LeanPool.ConwaySoifer.Certificates.FanCertificate
+
 public import LeanPool.ConwaySoifer.Simplified.Certificates.Checkpoints.Aown170000180000
-import Mathlib.Tactic.FinCases
 
 /-!
 # Aown 170000 180000 6
@@ -43,6 +44,8 @@ SOFTWARE.
 -/
 
 @[expose] public section
+
+prepare_fan_cache ConwaySoifer.Simplified.Certificates.Aown170000180000.model0
 
 -- Generated checkpoints are proposals; all acceptance proofs are checked by the kernel.
 
@@ -216,7 +219,7 @@ theorem excluded48_0 : ExcludedOn (model48.B 0 ++ [step48.q]) 9000000000000 (mod
       (.next ([990000000000], [510000000000]) (some (9, 2, 5)) (some (9, 2, 5))
       fan48Owner0Part3))))))))))))))))))))))
       (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1 100 (by decide +kernel)
-  decide +kernel
+  certify_fan
 
 theorem excluded48_1 : ExcludedOn (model48.B 1 ++ [step48.q]) 9000000000000 (model48.caps 1)
     (model48.ord 1) 0 1 100 := by
@@ -240,14 +243,14 @@ theorem excluded48_2 : ExcludedOn (model48.B 2 ++ [step48.q]) 9000000000000 (mod
       -9000000000000], [405000000000, 9000000000000]) (some (0, 6, 3)) (some (0, 6, 3))
       fan48Owner2Part0)))))))))))) (den := 9000000000000) (fuel := 12)
       (by decide +kernel) 0 1 100 (by decide +kernel)
-  decide +kernel
+  certify_fan
 
 theorem excluded48_4 : ExcludedOn (model48.B 4 ++ [step48.q]) 9000000000000 (model48.caps 4)
     (model48.ord 4) 0 1 100 := by
   apply ExclusionHint.sound (.witnessedFan (.next ([5175000000000], [375000000000]) (some (3, 0, 5))
       (some (3, 1, 5)) fan48Owner4Part0)) (den
       := 9000000000000) (fuel := 12) (by decide +kernel) 0 1 100 (by decide +kernel)
-  decide +kernel
+  certify_fan
 
 theorem excluded48_5 : ExcludedOn (model48.B 5 ++ [step48.q]) 9000000000000 (model48.caps 5)
     (model48.ord 5) 0 1 100 := by

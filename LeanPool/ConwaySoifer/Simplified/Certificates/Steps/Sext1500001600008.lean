@@ -5,8 +5,9 @@ Authors: Vladislav Kuznetsov
 -/
 module
 
+import LeanPool.ConwaySoifer.Certificates.FanCertificate
+
 public import LeanPool.ConwaySoifer.Simplified.Certificates.Checkpoints.Sext150000160000
-import Mathlib.Tactic.FinCases
 
 /-!
 # Sext 150000 160000 8
@@ -43,6 +44,8 @@ SOFTWARE.
 -/
 
 @[expose] public section
+
+prepare_fan_cache ConwaySoifer.Simplified.Certificates.Sext150000160000.model0
 
 -- Generated checkpoints are proposals; all acceptance proofs are checked by the kernel.
 
@@ -107,7 +110,7 @@ theorem excluded64_2 : ExcludedOn (model64.B 2 ++ [step64.q]) 9000000000000 (mod
       (some (5, 2, 4)) (.terminal (some (5, 2, 4)) (some (5, 2, 0)) (some (5, 2,
       4))))))))))))))))))))))))))) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1 100
       (by decide +kernel)
-  decide +kernel
+  certify_fan
 
 theorem excluded64_3 : ExcludedOn (model64.B 3 ++ [step64.q]) 9000000000000 (model64.caps 3)
     (model64.ord 3) 0 1 100 := by
@@ -116,7 +119,7 @@ theorem excluded64_3 : ExcludedOn (model64.B 3 ++ [step64.q]) 9000000000000 (mod
       (.next ([5475000000000, 9000000000000], [825000000000, -9000000000000]) (some (4, 0, 2)) (some
       (4, 0, 5)) fan64Owner3Part0)))) (den := 9000000000000)
       (fuel := 12) (by decide +kernel) 0 1 100 (by decide +kernel)
-  decide +kernel
+  certify_fan
 
 theorem excluded64_4 : ExcludedOn (model64.B 4 ++ [step64.q]) 9000000000000 (model64.caps 4)
     (model64.ord 4) 0 1 100 := by
