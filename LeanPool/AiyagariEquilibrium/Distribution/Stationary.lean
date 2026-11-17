@@ -51,9 +51,9 @@ instance isProbabilityMeasure_cesaro (μ₀ : ProbabilityMeasure P.State) (n : �
   have hsum : (∑ k ∈ Finset.range (n + 1),
       ((P.pushProb^[k] μ₀ : ProbabilityMeasure P.State) : Measure P.State)) univ
       = (n : ℝ≥0∞) + 1 := by
-    rw [Measure.finsetSum_apply]
+    rw [sum_apply]
     simp [measure_univ]
-  rw [cesaro, Measure.smul_apply, hsum, smul_eq_mul]
+  rw [cesaro, smul_apply, hsum, smul_eq_mul]
   refine ENNReal.inv_mul_cancel (by positivity) (by simp)
 
 /-- The integral against a Cesàro average is the average of the integrals. -/

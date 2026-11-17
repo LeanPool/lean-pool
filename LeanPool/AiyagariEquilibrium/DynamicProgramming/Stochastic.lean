@@ -171,7 +171,7 @@ theorem blackwell : Blackwell D.discount D.bellman where
       intro a ha
       have hterm : ∀ z : Z, D.prob z (s, a) * (v + const S c) (D.transition z (s, a))
           = D.prob z (s, a) * v (D.transition z (s, a)) + D.prob z (s, a) * c := fun z => by
-        simp only [coe_add, const_apply, Pi.add_apply]; ring
+        simp only [FunLike.coe_add, const_apply, Pi.add_apply]; ring
       have hsum : D.expectation (v + const S c) (s, a) = D.expectation v (s, a) + c := by
         simp only [expectation]
         rw [Finset.sum_congr rfl fun z _ => hterm z, Finset.sum_add_distrib,

@@ -172,7 +172,7 @@ theorem blackwell : Blackwell D.discount D.bellman where
         ≤ D.bellmanFn v s + D.discount * c := by
       intro a ha
       have h : D.objective (v + const S c) s a = D.objective v s a + D.discount * c := by
-        simp only [objective, coe_add, const_apply, Pi.add_apply]
+        simp only [objective, FunLike.coe_add, const_apply, Pi.add_apply]
         ring
       rw [h]
       have := D.le_bellmanFn v (s := s) ha
