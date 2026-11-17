@@ -854,10 +854,7 @@ theorem inverseVandermondeL2_coeFn_public {n : ℕ} (hn : 0 < n)
     (v : Lp ℂ 2 (complexGaussianMeasure n)) :
     inverseVandermondeL2 n hn v =ᵐ[ginibreMeasure n]
       inverseVandermondeFunction n v := by
-  unfold inverseVandermondeL2
-  dsimp only
-  generalize_proofs h1 h2 h3 h4 h5
-  exact (h5 v).coeFn_toLp
+  exact inverseVandermondeL2_coeFn hn v
 
 /-- The symmetric Ginibre quotient vector attached to an alternating finite
 holomorphic Hermite sum. -/

@@ -307,23 +307,18 @@ def inverseVandermondeL2 (n : ℕ) (hn : 0 < n) :
         ring
       norm_map' := inverseVandermonde_norm h }
 
-private theorem inverseVandermondeL2_coeFn {n : ℕ} (hn : 0 < n)
+/-- The inverse Vandermonde isometry agrees almost everywhere with its defining multiplier. -/
+theorem inverseVandermondeL2_coeFn {n : ℕ} (hn : 0 < n)
     (v : Lp ℂ 2 (complexGaussianMeasure n)) :
     inverseVandermondeL2 n hn v =ᵐ[ginibreMeasure n]
       inverseVandermondeFunction n v := by
-  unfold inverseVandermondeL2
-  dsimp only
-  generalize_proofs h1 h2 h3 h4 h5
-  exact (h5 v).coeFn_toLp
+  exact (inverseVandermonde_memLp (ginibreMassEvaluation n hn) v).coeFn_toLp
 
 private theorem forwardVandermondeL2_coeFn {n : ℕ} (hn : 0 < n)
     (u : Lp ℂ 2 (ginibreMeasure n)) :
     normalizedVandermondeL2 n hn u =ᵐ[complexGaussianMeasure n]
       fun z ↦ normalizedVandermondeMultiplier n z * u z := by
-  unfold normalizedVandermondeL2
-  dsimp only
-  generalize_proofs h1 h2 h3 h4 h5
-  exact (h5 u).coeFn_toLp
+  exact normalizedVandermondeL2_coeFn_public n hn u
 
 theorem normalizedVandermondeL2_inverseVandermondeL2 {n : ℕ} (hn : 0 < n)
     (v : Lp ℂ 2 (complexGaussianMeasure n)) :

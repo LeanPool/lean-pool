@@ -54,10 +54,7 @@ private theorem normalizedVandermondeL2_coeFn {n : ℕ} (hn : 0 < n)
     (u : Lp ℂ 2 (ginibreMeasure n)) :
     normalizedVandermondeL2 n hn u =ᵐ[complexGaussianMeasure n]
       fun z ↦ normalizedVandermondeMultiplier n z * u z := by
-  unfold normalizedVandermondeL2
-  dsimp only
-  generalize_proofs h1 h2 h3 h4 h5
-  exact (h5 u).coeFn_toLp
+  exact normalizedVandermondeL2_coeFn_public n hn u
 
 private theorem normalizedMultiplier_permute {n : ℕ}
     (σ : ParticlePermutation n) (z : Configuration n) :

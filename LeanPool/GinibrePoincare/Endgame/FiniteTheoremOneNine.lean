@@ -61,10 +61,7 @@ theorem transformedCenteredObservableL2_coeFn {n : ℕ} (hn : 0 < n)
   let u := centeredObservableL2 hn f hf
   have hmul : normalizedVandermondeL2 n hn u =ᵐ[complexGaussianMeasure n]
       fun z => normalizedVandermondeMultiplier n z * u z := by
-    unfold normalizedVandermondeL2
-    dsimp only
-    generalize_proofs h1 h2 h3 h4 h5
-    exact (h5 u).coeFn_toLp
+    exact normalizedVandermondeL2_coeFn_public n hn u
   have hu := (complexGaussianMeasure_absolutelyContinuous_ginibreMeasure
     (ginibreMassEvaluation n hn)).ae_eq (centeredObservableL2_coeFn hn f hf)
   filter_upwards [hmul, hu] with z hz hzu
