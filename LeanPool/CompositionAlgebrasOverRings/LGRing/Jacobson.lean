@@ -60,8 +60,7 @@ theorem isUnit_of_isUnit_image_jacobson {R : Type u} [CommRing R] (x : R)
       Ideal.Quotient.mk (Ring.jacobson R) 1 := by
     rw [map_mul, hz, map_one]; exact h.mul_val_inv
   have hmem : x * z - 1 ∈ Ring.jacobson R := Ideal.Quotient.eq.mp hxz
-  have hunit_xz : IsUnit (x * z) := by
-    apply Ideal.isUnit_of_sub_one_mem_jacobson_bot; rwa [Ideal.jacobson_bot]
+  have hunit_xz : IsUnit (x * z) := Ideal.isUnit_of_sub_one_mem_jacobson _ hmem
   exact isUnit_of_mul_isUnit_left hunit_xz
 
 /-- The residue field of `R` at a maximal ideal `𝔪` agrees with the residue field of
