@@ -37,7 +37,6 @@ module
 
 public import LeanPool.GinibrePoincare.Analysis.HermiteParsevalModes
 public import LeanPool.GinibrePoincare.Concrete.Generator
-public import Mathlib.Topology.ContinuousMap.BoundedCompactlySupported
 public import LeanPool.GinibrePoincare.Concrete.HolomorphicDistance
 
 public import LeanPool.GinibrePoincare.Analysis.GinibreL2Norm
@@ -87,11 +86,8 @@ theorem memLp_centeredObservable_of_core {n : ℕ} (hn : 0 < n)
     intro z hz hzero
     apply hz
     simp only [F, hzero, Complex.ofReal_zero]
-  let Fb := ofCompactSupport F hFc hFcomp
-  have hmemF : MemLp F 2 (ginibreMeasure n) := by
-    apply MemLp.of_bound hFc.aestronglyMeasurable ‖Fb‖
-    filter_upwards with z
-    exact Fb.norm_coe_le_norm z
+  have hmemF : MemLp F 2 (ginibreMeasure n) :=
+    hFc.memLp_of_hasCompactSupport hFcomp
   convert hmemF.sub (memLp_const (smoothGinibreMean n f : ℂ)) using 1
   ext z
   simp [F, centeredObservable]

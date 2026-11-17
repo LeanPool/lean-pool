@@ -171,39 +171,11 @@ theorem ginibreInteriorSmoothPair_average_mem_coreClosure {n : ℕ} (hn : 0 < n)
   have hF : IsSmoothCompactSymmetric F := by
     simpa [F] using ginibrePermutationAverage_smoothCompact f hf hfc
   let := ginibreMeasure_isProbabilityMeasure hn
-  obtain ⟨C, hC⟩ := hF.2.1.exists_bound_of_continuousOn hF.1.continuous.continuousOn
-  let A := max C 0
-  have hFbound : ∀ z, ‖F z‖ ≤ A := by
-    intro z
-    by_cases hz : z ∈ tsupport F
-    · exact (hC z hz).trans (le_max_left C 0)
-    · simp [F, A, image_eq_zero_of_notMem_tsupport hz]
-  have hvF : MemLp F 2 (ginibreMeasure n) := by
-    apply memLp_of_bounded (a := -A) (b := A) _
-      hF.1.continuous.aestronglyMeasurable 2
-    exact Eventually.of_forall fun z => abs_le.mp (by
-      rw [← Real.norm_eq_abs]
-      exact hFbound z)
-  have hdF : MemLp (ginibreEuclideanGradient F) 2 (ginibreMeasure n) := by
-    have hgradcont := continuous_ginibreEuclideanGradient F hF.1
-    have hgradc : HasCompactSupport (ginibreEuclideanGradient F) := by
-      apply hF.2.1.of_isClosed_subset (isClosed_tsupport _)
-      apply closure_minimal ?_ (isClosed_tsupport F)
-      intro z hz
-      by_contra hzF
-      have hd : fderiv ℝ F z = 0 := fderiv_of_notMem_tsupport ℝ hzF
-      apply hz
-      ext k
-      simp [ginibreEuclideanGradient, hd]
-    obtain ⟨D, hD⟩ := hgradc.exists_bound_of_continuousOn hgradcont.continuousOn
-    let B := max D 0
-    have hb : ∀ z, ‖ginibreEuclideanGradient F z‖ ≤ B := by
-      intro z
-      by_cases hz : z ∈ tsupport (ginibreEuclideanGradient F)
-      · exact (hD z hz).trans (le_max_left D 0)
-      · simp [B, image_eq_zero_of_notMem_tsupport hz]
-    exact MemLp.of_bound hgradcont.aestronglyMeasurable B
-      (Eventually.of_forall hb)
+  have hvF : MemLp F 2 (ginibreMeasure n) :=
+    hF.1.continuous.memLp_of_hasCompactSupport hF.2.1
+  have hdF : MemLp (ginibreEuclideanGradient F) 2 (ginibreMeasure n) :=
+    (continuous_ginibreEuclideanGradient F hF.1).memLp_of_hasCompactSupport
+      (compactSupport_ginibreEuclideanGradient F hF.2.1)
   obtain ⟨q, hq, hqconv⟩ :=
     ginibreCollisionCutoff_smoothPair_core_sequence_of_smoothCompact n hn F hF hvF hdF
   -- The averaged L² pair is exactly the value-gradient pair of `F`.

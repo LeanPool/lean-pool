@@ -129,6 +129,18 @@ theorem finiteHermite_gaussianDbarEnergy_identity {n : ℕ} (hn : 0 < n)
   rw [transformedCentered_eq_finiteHermiteFunction hn f hf c hL2]
   unfold gaussianDbarEnergy dbarNormSq
   congr 1
+  have hcint (j : Fin n) : Integrable (fun z =>
+      conj (dbarComponent (finiteHermiteFunction n hn c) j z) *
+        dbarComponent (finiteHermiteFunction n hn c) j z)
+      (complexGaussianMeasure n) := by
+    let u := finiteHermiteCombination n hn (loweredCoefficients n c j)
+    have hu := MeasureTheory.L2.integrable_inner (𝕜 := ℂ) u u
+    apply hu.congr
+    filter_upwards [finiteHermiteCombination_coeFn n hn
+      (loweredCoefficients n c j)] with z hz
+    rw [hz, ← dbarComponent_finiteHermiteFunction n hn c j z]
+    rw [RCLike.inner_apply]
+    ring
   rw [integral_finsetSum]
   · have h := finiteGaussianDbarIntegralEnergy n hn c
     have hre := congrArg Complex.re h
@@ -139,18 +151,6 @@ theorem finiteHermite_gaussianDbarEnergy_identity {n : ℕ} (hn : 0 < n)
             ∂complexGaussianMeasure n).re := by
         apply Finset.sum_congr rfl
         intro j hj
-        let u := finiteHermiteCombination n hn (loweredCoefficients n c j)
-        have hcint : Integrable (fun z =>
-            conj (dbarComponent (finiteHermiteFunction n hn c) j z) *
-              dbarComponent (finiteHermiteFunction n hn c) j z)
-            (complexGaussianMeasure n) := by
-          have hu := MeasureTheory.L2.integrable_inner (𝕜 := ℂ) u u
-          apply hu.congr
-          filter_upwards [finiteHermiteCombination_coeFn n hn
-            (loweredCoefficients n c j)] with z hz
-          rw [hz, ← dbarComponent_finiteHermiteFunction n hn c j z]
-          rw [RCLike.inner_apply]
-          ring
         calc
           _ = ∫ z, (conj (dbarComponent (finiteHermiteFunction n hn c) j z) *
               dbarComponent (finiteHermiteFunction n hn c) j z).re
@@ -158,24 +158,11 @@ theorem finiteHermite_gaussianDbarEnergy_identity {n : ℕ} (hn : 0 < n)
             apply integral_congr_ae
             filter_upwards with z
             simp [Complex.normSq_apply]
-          _ = _ := integral_re hcint
+          _ = _ := integral_re (hcint j)
       _ = finiteDbarEnergy c := by simpa [map_sum] using hre
   · intro j hj
-    let u := finiteHermiteCombination n hn (loweredCoefficients n c j)
-    have hcint : Integrable (fun z =>
-        conj (dbarComponent (finiteHermiteFunction n hn c) j z) *
-          dbarComponent (finiteHermiteFunction n hn c) j z)
-        (complexGaussianMeasure n) := by
-      have hu := MeasureTheory.L2.integrable_inner (𝕜 := ℂ) u u
-      apply hu.congr
-      filter_upwards [finiteHermiteCombination_coeFn n hn
-        (loweredCoefficients n c j)] with z hz
-      rw [hz, ← dbarComponent_finiteHermiteFunction n hn c j z]
-      rw [RCLike.inner_apply]
-      ring
-    apply hcint.re.congr
-    filter_upwards [finiteHermiteCombination_coeFn n hn
-      (loweredCoefficients n c j)] with z hz
+    apply (hcint j).re.congr
+    filter_upwards with z
     simp [Complex.normSq_apply]
 
 /-- Exact finite-mode realization of the first (Dirichlet/variance) energy
