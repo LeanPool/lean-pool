@@ -372,7 +372,7 @@ private lemma contact_subgradientImage_sub_affine
   ext q
   constructor
   · rintro ⟨x, hx, hq⟩
-    refine ⟨q + p, ⟨x, hx, ?_⟩, by abel⟩
+    refine ⟨q + p, ⟨x, hx, ?_⟩, by abel_nf⟩
     intro y
     have h := hq y
     simp only [inner_add_left, inner_sub_right] at h ⊢

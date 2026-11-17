@@ -89,7 +89,7 @@ theorem weightedExpD_integrable_lt {F : Type*} [NormedAddCommGroup F] [NormedSpa
       _ = ε⁻¹ * (Real.exp ((t + ε) * ‖x‖) * ‖g x‖) := by
         rw [← Real.exp_add]
         congr 2
-        ring
+        ring_nf
 
 
 
