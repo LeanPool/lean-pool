@@ -2394,7 +2394,7 @@ private lemma DxauxFunction1_A1_le_boundary_leTwo
       have hg : ContinuousOn g (Set.Icc c x) := by
         dsimp [g]
         exact ((continuousOn_const.mul continuousOn_const).mul
-          (continuousOn_id.rpow_const
+          (continuousOn_id.rpow_const (s := Set.Icc c x)
             (fun t ht => Or.inl (ne_of_gt (lt_of_lt_of_le hc_pos ht.1))))).mul
           ((continuousOn_const.mul continuousOn_id).add continuousOn_const)
       refine ContinuousOn.congr hg ?_
@@ -3720,7 +3720,7 @@ private lemma DxuCandidate_antidiag_le_Q2_leTwo
         have hg : ContinuousOn g (Set.Icc y (-x)) := by
           dsimp [g]
           exact ((continuousOn_const.mul continuousOn_const).mul
-            (continuousOn_id.rpow_const
+            (continuousOn_id.rpow_const (s := Set.Icc y (-x))
               (fun t ht => Or.inl (ne_of_gt (lt_of_lt_of_le hy_pos ht.1))))).mul
             ((continuousOn_const.mul continuousOn_id).add continuousOn_const)
         refine ContinuousOn.congr hg ?_
@@ -7170,7 +7170,7 @@ private lemma DyuA1_mono_x_on_Icc_pos_leTwo
     have hg : ContinuousOn g (Set.Icc lo hi) := by
       dsimp [g]
       exact ((continuousOn_const.mul
-        (continuousOn_id.rpow_const
+        (continuousOn_id.rpow_const (s := Set.Icc lo hi)
           (fun t ht => Or.inl (ne_of_gt (lt_of_lt_of_le hlo ht.1))))).mul
         continuousOn_const)
     refine ContinuousOn.congr hg ?_
@@ -8796,7 +8796,7 @@ private lemma continuousOn_uA1_leTwo (p : ℝ) (hp1 : 1 < p) :
 
 private lemma isClosed_closureA1_set_leTwo (p : ℝ) :
     IsClosed {z : ℝ × ℝ | closureA1 p z.1 z.2} := by
-  simp only [closureA1]
+  simp only [closureA1, Set.ofPred_and]
   apply IsClosed.inter
   · exact isClosed_le continuous_const continuous_fst
   apply IsClosed.inter
@@ -8805,7 +8805,7 @@ private lemma isClosed_closureA1_set_leTwo (p : ℝ) :
 
 private lemma isClosed_closureA2_set_leTwo (p : ℝ) :
     IsClosed {z : ℝ × ℝ | closureA2 p z.1 z.2} := by
-  simp only [closureA2]
+  simp only [closureA2, Set.ofPred_and]
   apply IsClosed.inter
   · exact isClosed_le continuous_const continuous_fst
   apply IsClosed.inter
@@ -9027,7 +9027,7 @@ private lemma continuousOn_auxFunction1_leTwo (p : ℝ) (hp1 : 1 < p) (hp2 : p <
     · exact Or.inr ⟨hx, h, hyx⟩
     · exact Or.inl ⟨hx, hneg, le_of_lt (not_le.mp h)⟩
   have hc1 : ContinuousOn (fun z : ℝ × ℝ => auxFunction1 p z.1 z.2) (S ∩ S1) := by
-    apply ContinuousOn.congr ((continuousOn_uA1_leTwo p hp1).mono
+    apply ContinuousOn.congr ((continuousOn_uA1_leTwo p hp1).mono (t := S ∩ S1)
       (fun z hz => hz.2.1))
     intro z hz
     exact auxFunction1_eq_uA1 p z.1 z.2 hz.2
@@ -9068,12 +9068,12 @@ private lemma continuousOn_DxauxFunction1_leTwo (p : ℝ) (hp1 : 1 < p) (hp2 : p
     · exact Or.inr ⟨hx, h, hyx⟩
     · exact Or.inl ⟨hx, hneg, le_of_lt (not_le.mp h)⟩
   have hc1 : ContinuousOn (fun z : ℝ × ℝ => DxauxFunction1 p z.1 z.2) (S ∩ S1) := by
-    apply ContinuousOn.congr ((continuousOn_DxuA1_closureA1_leTwo p hp1 hp2).mono
+    apply ContinuousOn.congr ((continuousOn_DxuA1_closureA1_leTwo p hp1 hp2).mono (t := S ∩ S1)
       (fun _ h => h.2))
     intro z hz
     exact auxFunction1_Dx_eq_DxuA1 p z.1 z.2 hz.2
   have hc2 : ContinuousOn (fun z : ℝ × ℝ => DxauxFunction1 p z.1 z.2) (S ∩ S2) := by
-    apply ContinuousOn.congr ((continuousOn_DxvLeTwo_closureA2_leTwo p hp1).mono
+    apply ContinuousOn.congr ((continuousOn_DxvLeTwo_closureA2_leTwo p hp1).mono (t := S ∩ S2)
       (fun _ h => h.2))
     intro z hz
     exact auxFunction1_Dx_eq_DxvLeTwo_leTwo p hp1 hp2 z.1 z.2 hz.2
@@ -9109,12 +9109,12 @@ private lemma continuousOn_DyauxFunction1_leTwo (p : ℝ) (hp1 : 1 < p) (hp2 : p
     · exact Or.inr ⟨hx, h, hyx⟩
     · exact Or.inl ⟨hx, hneg, le_of_lt (not_le.mp h)⟩
   have hc1 : ContinuousOn (fun z : ℝ × ℝ => DyauxFunction1 p z.1 z.2) (S ∩ S1) := by
-    apply ContinuousOn.congr ((continuousOn_DyuA1_closureA1_leTwo p hp1).mono
+    apply ContinuousOn.congr ((continuousOn_DyuA1_closureA1_leTwo p hp1).mono (t := S ∩ S1)
       (fun _ h => h.2))
     intro z hz
     exact auxFunction1_Dy_eq_DyuA1 p z.1 z.2 hz.2
   have hc2 : ContinuousOn (fun z : ℝ × ℝ => DyauxFunction1 p z.1 z.2) (S ∩ S2) := by
-    apply ContinuousOn.congr ((continuousOn_DyvLeTwo_closureA2_leTwo p hp1).mono
+    apply ContinuousOn.congr ((continuousOn_DyvLeTwo_closureA2_leTwo p hp1).mono (t := S ∩ S2)
       (fun _ h => h.2))
     intro z hz
     exact auxFunction1_Dy_eq_DyvLeTwo_leTwo p hp1 hp2 z.1 z.2 hz.2
