@@ -194,29 +194,9 @@ theorem ginibrePregeneratorL2_coeFn {n : ℕ} (hn : 0 < n)
 theorem norm_sq_ginibrePregeneratorL2 {n : ℕ} (hn : 0 < n)
     (f : Configuration n → ℝ) (hf : IsTheoremOneNineCore f) :
     ‖ginibrePregeneratorL2 hn f hf‖ ^ 2 = ginibreGeneratorNormSq n f := by
-  have hinner : inner ℂ (ginibrePregeneratorL2 hn f hf)
-      (ginibrePregeneratorL2 hn f hf) =
-      ∫ z, inner ℂ ((ginibrePregeneratorL2 hn f hf) z)
-        ((ginibrePregeneratorL2 hn f hf) z) ∂ginibreMeasure n :=
-    MeasureTheory.L2.inner_def _ _
-  rw [inner_self_eq_norm_sq_to_K] at hinner
-  have hc := ginibrePregeneratorL2_coeFn hn f hf
-  rw [integral_congr_ae (by
-    filter_upwards [hc] with z hz
-    rw [hz])] at hinner
-  have hi : (fun z => inner ℂ (ginibrePregenerator n f z : ℂ)
-      (ginibrePregenerator n f z : ℂ)) =
-      fun z => ((ginibrePregenerator n f z ^ 2 : ℝ) : ℂ) := by
-    funext z
-    simp only [RCLike.inner_apply, Complex.conj_ofReal, ← Complex.ofReal_mul,
-      pow_two]
-  rw [hi, integral_complex_ofReal] at hinner
-  have hr : ‖ginibrePregeneratorL2 hn f hf‖ ^ 2 =
-      ∫ z, ginibrePregenerator n f z ^ 2 ∂ginibreMeasure n := by
-    apply Complex.ofReal_injective
-    convert hinner using 1;
-      simp [← Complex.ofReal_pow]
-  exact hr
+  exact L2_norm_sq_eq_integral_sq_of_ae_ofReal (ginibreMeasure n)
+    (ginibrePregeneratorL2 hn f hf) (ginibrePregenerator n f)
+    (ginibrePregeneratorL2_coeFn hn f hf)
 
 theorem memLp_shiftedGinibrePregenerator_of_core {n : ℕ} (hn : 0 < n)
     (f : Configuration n → ℝ) (hf : IsTheoremOneNineCore f) :
@@ -249,31 +229,9 @@ theorem norm_sq_shiftedGinibrePregeneratorL2 {n : ℕ} (hn : 0 < n)
     (f : Configuration n → ℝ) (hf : IsTheoremOneNineCore f) :
     ‖shiftedGinibrePregeneratorL2 hn f hf‖ ^ 2 =
       shiftedGinibreGeneratorNormSq n f := by
-  have hinner : inner ℂ (shiftedGinibrePregeneratorL2 hn f hf)
-      (shiftedGinibrePregeneratorL2 hn f hf) =
-      ∫ z, inner ℂ ((shiftedGinibrePregeneratorL2 hn f hf) z)
-        ((shiftedGinibrePregeneratorL2 hn f hf) z) ∂ginibreMeasure n :=
-    MeasureTheory.L2.inner_def _ _
-  rw [inner_self_eq_norm_sq_to_K] at hinner
-  have hc := shiftedGinibrePregeneratorL2_coeFn hn f hf
-  rw [integral_congr_ae (by
-    filter_upwards [hc] with z hz
-    rw [hz])] at hinner
-  have hi : (fun z => inner ℂ
-      ((ginibrePregenerator n f z + 2 * f z : ℝ) : ℂ)
-      ((ginibrePregenerator n f z + 2 * f z : ℝ) : ℂ)) =
-      fun z => (((ginibrePregenerator n f z + 2 * f z) ^ 2 : ℝ) : ℂ) := by
-    funext z
-    simp only [RCLike.inner_apply, Complex.conj_ofReal, ← Complex.ofReal_mul,
-      pow_two]
-  rw [hi, integral_complex_ofReal] at hinner
-  have hr : ‖shiftedGinibrePregeneratorL2 hn f hf‖ ^ 2 =
-      ∫ z, (ginibrePregenerator n f z + 2 * f z) ^ 2 ∂ginibreMeasure n := by
-    apply Complex.ofReal_injective
-    convert hinner using 1;
-      simp [← Complex.ofReal_pow
-        ]
-  exact hr
+  exact L2_norm_sq_eq_integral_sq_of_ae_ofReal (ginibreMeasure n)
+    (shiftedGinibrePregeneratorL2 hn f hf) (fun z ↦ ginibrePregenerator n f z + 2 * f z)
+    (shiftedGinibrePregeneratorL2_coeFn hn f hf)
 
 /-- The Hilbert inner product of the centered observable with its concrete
 pregenerator is exactly minus the Dirichlet energy. -/

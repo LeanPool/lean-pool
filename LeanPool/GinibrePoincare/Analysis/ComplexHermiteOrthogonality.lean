@@ -70,34 +70,14 @@ theorem integrable_complex_monomial_complexCoordinateGaussianProbability
     (n a b : ℕ) :
     Integrable (fun z : ℂ ↦ z ^ a * (conj z) ^ b)
       (complexCoordinateGaussianProbability n : Measure ℂ) := by
-  apply Integrable.mono'
-    (integrable_norm_pow_complexCoordinateGaussianProbability n (a + b))
-  · fun_prop
-  · filter_upwards with z
-    simp only [norm_mul, norm_pow, Complex.norm_conj]
-    rw [← pow_add]
+  exact integrable_pow_mul_conj_pow_complexCoordinateGaussianProbability n a b
 
 /-- Each normalized complex Hermite polynomial is integrable under the
 matching complex Gaussian coordinate law. -/
 theorem integrable_normalizedEval (n : ℕ) (hn : 0 < n) (p q : ℕ) :
     Integrable (normalizedEval n hn p q)
       (complexCoordinateGaussianProbability n : Measure ℂ) := by
-  rw [show normalizedEval n hn p q = fun z ↦
-      ((oneDimNormalization n p * oneDimNormalization n q : ℝ) : ℂ) *
-        ∑ k ∈ Finset.range (min p q + 1),
-          (((-((n : ℝ)⁻¹ : ℂ)) ^ k) * (k.factorial : ℂ) *
-              (Nat.choose p k : ℂ) * (Nat.choose q k : ℂ)) *
-            z ^ (p - k) * (conj z) ^ (q - k) by
-    funext z
-    exact normalizedEval_eq_sum n hn p q z]
-  apply Integrable.const_mul
-  apply integrable_finsetSum
-  intro k hk
-  simpa only [mul_assoc] using
-    (integrable_complex_monomial_complexCoordinateGaussianProbability
-      n (p - k) (q - k)).const_mul
-        (((-((n : ℝ)⁻¹ : ℂ)) ^ k) * (k.factorial : ℂ) *
-          (Nat.choose p k : ℂ) * (Nat.choose q k : ℂ))
+  exact integrable_mvPolynomial_diagonalEval n (normalized n hn p q)
 
 /-- The degree-zero normalized complex Hermite polynomial has unit norm. -/
 theorem normalizedEval_zero_zero_inner (n : ℕ) (hn : 0 < n) :

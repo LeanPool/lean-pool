@@ -63,11 +63,7 @@ coordinate law. -/
 theorem integrable_mixedComplexMonomial (n a b : ℕ) :
     Integrable (fun z : ℂ ↦ z ^ a * (conj z) ^ b)
       (complexCoordinateGaussianProbability n : Measure ℂ) := by
-  apply Integrable.mono'
-    (integrable_norm_pow_complexCoordinateGaussianProbability n (a + b))
-  · fun_prop
-  · filter_upwards with z
-    exact le_of_eq (norm_mixedComplexMonomial a b z)
+  exact integrable_pow_mul_conj_pow_complexCoordinateGaussianProbability n a b
 
 /-- The `(a,b)` mixed moment of one complex Gaussian coordinate. -/
 noncomputable def complexGaussianMixedMoment (n a b : ℕ) : ℂ :=

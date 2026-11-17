@@ -37,7 +37,6 @@ SOFTWARE.
 
 module
 
-public import LeanPool.GinibrePoincare.Analysis.GinibreL2Norm
 
 public import LeanPool.GinibrePoincare.Analysis.GlobalPhaseAction
 public import LeanPool.GinibrePoincare.Analysis.L2RepresentativeBridges

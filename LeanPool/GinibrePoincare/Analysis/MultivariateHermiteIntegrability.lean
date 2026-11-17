@@ -64,57 +64,9 @@ theorem integrable_normalizedEval_mul (n : ℕ) (hn : 0 < n)
     Integrable (fun z : ℂ =>
       normalizedEval n hn p q z * normalizedEval n hn r s z)
       (complexCoordinateGaussianProbability n : Measure ℂ) := by
-  rw [show (fun z : ℂ =>
-      normalizedEval n hn p q z * normalizedEval n hn r s z) =
-      fun z =>
-        (((oneDimNormalization n p * oneDimNormalization n q : ℝ) : ℂ) *
-          ∑ k ∈ Finset.range (min p q + 1),
-            (((-((n : ℝ)⁻¹ : ℂ)) ^ k) * (k.factorial : ℂ) *
-                (Nat.choose p k : ℂ) * (Nat.choose q k : ℂ)) *
-              z ^ (p - k) * (conj z) ^ (q - k)) *
-        (((oneDimNormalization n r * oneDimNormalization n s : ℝ) : ℂ) *
-          ∑ l ∈ Finset.range (min r s + 1),
-            (((-((n : ℝ)⁻¹ : ℂ)) ^ l) * (l.factorial : ℂ) *
-                (Nat.choose r l : ℂ) * (Nat.choose s l : ℂ)) *
-              z ^ (r - l) * (conj z) ^ (s - l)) by
-    funext z
-    rw [normalizedEval_eq_sum, normalizedEval_eq_sum]]
-  rw [show (fun z : ℂ =>
-      (((oneDimNormalization n p * oneDimNormalization n q : ℝ) : ℂ) *
-        ∑ k ∈ Finset.range (min p q + 1),
-          (((-((n : ℝ)⁻¹ : ℂ)) ^ k) * (k.factorial : ℂ) *
-              (Nat.choose p k : ℂ) * (Nat.choose q k : ℂ)) *
-            z ^ (p - k) * (conj z) ^ (q - k)) *
-      (((oneDimNormalization n r * oneDimNormalization n s : ℝ) : ℂ) *
-        ∑ l ∈ Finset.range (min r s + 1),
-          (((-((n : ℝ)⁻¹ : ℂ)) ^ l) * (l.factorial : ℂ) *
-              (Nat.choose r l : ℂ) * (Nat.choose s l : ℂ)) *
-            z ^ (r - l) * (conj z) ^ (s - l))) =
-      fun z => ∑ k ∈ Finset.range (min p q + 1),
-        ∑ l ∈ Finset.range (min r s + 1),
-          (((oneDimNormalization n p * oneDimNormalization n q : ℝ) : ℂ) *
-            ((oneDimNormalization n r * oneDimNormalization n s : ℝ) : ℂ) *
-            (((-((n : ℝ)⁻¹ : ℂ)) ^ k) * (k.factorial : ℂ) *
-              (Nat.choose p k : ℂ) * (Nat.choose q k : ℂ)) *
-            (((-((n : ℝ)⁻¹ : ℂ)) ^ l) * (l.factorial : ℂ) *
-              (Nat.choose r l : ℂ) * (Nat.choose s l : ℂ))) *
-            (z ^ ((p - k) + (r - l)) *
-              (conj z) ^ ((q - k) + (s - l))) by
-    funext z
-    simp_rw [Finset.mul_sum, Finset.sum_mul, pow_add]
-    rw [Finset.sum_comm]
-    apply Finset.sum_congr rfl
-    intro k hk
-    apply Finset.sum_congr rfl
-    intro l hl
-    ring]
-  apply integrable_finsetSum
-  intro k hk
-  apply integrable_finsetSum
-  intro l hl
-  have hmono := integrable_complex_monomial_complexCoordinateGaussianProbability
-    n ((p - k) + (r - l)) ((q - k) + (s - l))
-  exact hmono.const_mul _
+  simpa only [normalizedEval] using
+    integrable_mul_mvPolynomial_diagonalEval_two n
+      (normalized n hn p q) (normalized n hn r s)
 
 /-- A normalized one-coordinate Hermite function times the conjugate of
 another is integrable. -/

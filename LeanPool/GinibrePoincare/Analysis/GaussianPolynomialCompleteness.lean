@@ -328,51 +328,6 @@ def gaussianL2FourierTest {n : ℕ}
   ∫ z, v z * configurationFourierCharacter t z
     ∂complexGaussianMeasure n
 
-/-- Differentiation of the Gaussian Fourier test along a fixed real
-frequency direction. -/
-theorem hasDerivAt_gaussianL2FourierTest_line {n : ℕ}
-    (v : Lp ℂ 2 (complexGaussianMeasure n)) (t : Configuration n) (r : ℝ) :
-    HasDerivAt (fun s : ℝ ↦
-      gaussianL2FourierTest v (realScaleConfiguration s t))
-      (∫ z, v z * (((configurationRealPairing t z : ℂ) * Complex.I) *
-        configurationFourierCharacter (realScaleConfiguration r t) z)
-        ∂complexGaussianMeasure n) r := by
-  let F : ℝ → Configuration n → ℂ := fun s z ↦
-    v z * configurationFourierCharacter (realScaleConfiguration s t) z
-  let F' : ℝ → Configuration n → ℂ := fun s z ↦
-    v z * (((configurationRealPairing t z : ℂ) * Complex.I) *
-      configurationFourierCharacter (realScaleConfiguration s t) z)
-  let B : Configuration n → ℝ := fun z ↦
-    ‖v z‖ * |configurationRealPairing t z|
-  have hFint : Integrable (F r) (complexGaussianMeasure n) :=
-    integrable_mul_configurationFourierCharacter v (realScaleConfiguration r t)
-  have hFmeas : ∀ᶠ s in nhds r,
-      AEStronglyMeasurable (F s) (complexGaussianMeasure n) :=
-    Filter.Eventually.of_forall fun s ↦
-      (integrable_mul_configurationFourierCharacter v
-        (realScaleConfiguration s t)).aestronglyMeasurable
-  have hF'meas : AEStronglyMeasurable (F' r)
-      (complexGaussianMeasure n) := by
-    exact (Lp.aestronglyMeasurable v).mul
-      (((Complex.continuous_ofReal.comp
-        (continuous_configurationRealPairing_left t)).mul
-        continuous_const).aestronglyMeasurable.mul
-          (continuous_configurationFourierCharacter
-            (realScaleConfiguration r t)).aestronglyMeasurable)
-  have hbound : ∀ᵐ z ∂complexGaussianMeasure n,
-      ∀ s ∈ Set.univ, ‖F' s z‖ ≤ B z := by
-    filter_upwards with z s hs
-    simp [F', B, Real.norm_eq_abs]
-  have hdiff : ∀ᵐ z ∂complexGaussianMeasure n,
-      ∀ s ∈ Set.univ, HasDerivAt (F · z) (F' s z) s := by
-    filter_upwards with z s hs
-    exact (hasDerivAt_configurationFourierCharacter_line s t z).const_mul (v z)
-  have h := hasDerivAt_integral_of_dominated_loc_of_deriv_le
-    (s := Set.univ) (x₀ := r) (F := F) (F' := F') (bound := B)
-    Filter.univ_mem hFmeas hFint hF'meas hbound
-    (integrable_norm_mul_abs_configurationRealPairing v t) hdiff
-  exact h.2
-
 /-- The inserted-moment Fourier lines form a derivative ladder. -/
 theorem hasDerivAt_gaussianL2FourierMomentLine {n : ℕ}
     (v : Lp ℂ 2 (complexGaussianMeasure n)) (t : Configuration n)
@@ -463,6 +418,24 @@ theorem gaussianL2FourierMomentLine_zeroIndex {n : ℕ}
     gaussianL2FourierMomentLine v t 0 r =
       gaussianL2FourierTest v (realScaleConfiguration r t) := by
   simp [gaussianL2FourierMomentLine, gaussianL2FourierTest]
+
+/-- Differentiation of the Gaussian Fourier test along a fixed real
+frequency direction. -/
+theorem hasDerivAt_gaussianL2FourierTest_line {n : ℕ}
+    (v : Lp ℂ 2 (complexGaussianMeasure n)) (t : Configuration n) (r : ℝ) :
+    HasDerivAt (fun s : ℝ ↦
+      gaussianL2FourierTest v (realScaleConfiguration s t))
+      (∫ z, v z * (((configurationRealPairing t z : ℂ) * Complex.I) *
+        configurationFourierCharacter (realScaleConfiguration r t) z)
+        ∂complexGaussianMeasure n) r := by
+  have h := hasDerivAt_gaussianL2FourierMomentLine v t 0 r
+  have hfun : gaussianL2FourierMomentLine v t 0 =
+      fun s : ℝ ↦ gaussianL2FourierTest v (realScaleConfiguration s t) := by
+    funext s
+    exact gaussianL2FourierMomentLine_zeroIndex v t s
+  rw [hfun] at h
+  simpa only [zero_add, gaussianL2FourierMomentLine, pow_one, mul_assoc] using h
+
 
 end
 

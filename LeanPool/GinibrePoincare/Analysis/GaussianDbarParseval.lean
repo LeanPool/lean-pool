@@ -120,23 +120,7 @@ theorem integrable_normalizedEval_complexGaussian (n : ℕ) (hn : 0 < n)
     (p q : ℕ) :
     Integrable (normalizedEval n hn p q)
       (complexCoordinateGaussianProbability n : Measure ℂ) := by
-  unfold normalizedEval normalized raw
-  simp only [map_mul, map_sum, map_pow, MvPolynomial.eval_C
-    ]
-  apply Integrable.const_mul
-  apply integrable_finsetSum
-  intro k hk
-  simp only [Z, W, MvPolynomial.eval_X, Matrix.cons_val_zero,
-    Matrix.cons_val_one]
-  have hb := integrable_pow_mul_conj_pow_complexCoordinateGaussianProbability
-    n (p - k) (q - k)
-  let C : ℂ := ((-((n : ℝ)⁻¹ : ℂ)) ^ k) * (k.factorial : ℂ) *
-    (Nat.choose p k : ℂ) * (Nat.choose q k : ℂ)
-  refine (hb.const_mul C).congr ?_
-  filter_upwards with z
-  dsimp [C]
-  push_cast
-  ring_nf
+  exact ComplexHermite.integrable_normalizedEval n hn p q
 
 theorem integrable_normalizedEval_lowering_complexGaussian
     (n : ℕ) (hn : 0 < n) (p q : ℕ) :

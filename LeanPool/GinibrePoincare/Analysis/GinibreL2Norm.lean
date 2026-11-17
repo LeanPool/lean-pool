@@ -60,6 +60,16 @@ theorem integral_norm_sq_eq_L2_norm_sq {α V : Type*} [MeasurableSpace α]
   rw [← real_inner_self_eq_norm_sq, L2.inner_def]
   simp only [real_inner_self_eq_norm_sq]
 
+/-- The squared norm of a complex L² class with a real representative is its square integral. -/
+theorem L2_norm_sq_eq_integral_sq_of_ae_ofReal {α : Type*} [MeasurableSpace α]
+    (μ : Measure α) (v : Lp ℂ 2 μ) (f : α → ℝ)
+    (h : v =ᵐ[μ] fun x ↦ (f x : ℂ)) :
+    ‖v‖ ^ 2 = ∫ x, f x ^ 2 ∂μ := by
+  rw [← integral_norm_sq_eq_L2_norm_sq μ v]
+  apply integral_congr_ae
+  filter_upwards [h] with x hx
+  rw [hx, Complex.norm_real, Real.norm_eq_abs, sq_abs]
+
 /-- Conjugation distributes over addition in complex L². -/
 theorem Lp_star_add {α : Type*} [MeasurableSpace α] {μ : Measure α}
     (u v : Lp ℂ 2 μ) : star (u + v) = star u + star v := by

@@ -40,6 +40,8 @@ public import LeanPool.GinibrePoincare.Concrete.Generator
 public import Mathlib.Topology.ContinuousMap.BoundedCompactlySupported
 public import LeanPool.GinibrePoincare.Concrete.HolomorphicDistance
 
+public import LeanPool.GinibrePoincare.Analysis.GinibreL2Norm
+
 /-! # Bridges between concrete representatives and `L²` classes -/
 
 
@@ -110,32 +112,10 @@ variance. -/
 theorem norm_sq_centeredObservableL2 {n : ℕ} (hn : 0 < n) (f : Configuration n → ℝ)
     (hf : IsTheoremOneNineCore f) :
     ‖centeredObservableL2 hn f hf‖ ^ 2 = smoothGinibreVariance n f := by
-  have hinner :
-      inner ℂ (centeredObservableL2 hn f hf) (centeredObservableL2 hn f hf) =
-        ∫ z, inner ℂ ((centeredObservableL2 hn f hf) z)
-          ((centeredObservableL2 hn f hf) z) ∂ginibreMeasure n :=
-    MeasureTheory.L2.inner_def (centeredObservableL2 hn f hf)
-      (centeredObservableL2 hn f hf)
-  rw [inner_self_eq_norm_sq_to_K] at hinner
-  have hc := centeredObservableL2_coeFn hn f hf
-  rw [integral_congr_ae (by
-    filter_upwards [hc] with z hz
-    rw [hz])] at hinner
-  have hi :
-      (fun z => inner ℂ (centeredObservable n f z : ℂ)
-        (centeredObservable n f z : ℂ)) =
-      fun z => ((centeredObservable n f z) ^ 2 : ℂ) := by
-    funext z
-    simp only [RCLike.inner_apply, Complex.conj_ofReal, ← Complex.ofReal_mul,
-      pow_two]
-  rw [hi] at hinner
-  simp_rw [← Complex.ofReal_pow] at hinner
-  rw [integral_complex_ofReal] at hinner
-  have hr : ‖centeredObservableL2 hn f hf‖ ^ 2 =
-      ∫ z, centeredObservable n f z ^ 2 ∂ginibreMeasure n := by
-    apply Complex.ofReal_injective
-    convert hinner using 1; simp [Complex.ofReal_pow]
-  simpa [smoothGinibreVariance, centeredObservable] using hr
+  simpa only [smoothGinibreVariance, centeredObservable] using
+    L2_norm_sq_eq_integral_sq_of_ae_ofReal (ginibreMeasure n)
+      (centeredObservableL2 hn f hf) (centeredObservable n f)
+      (centeredObservableL2_coeFn hn f hf)
 
 /-- The normalized Vandermonde image of the centered observable. -/
 def transformedCenteredObservableL2 {n : ℕ} (hn : 0 < n)
