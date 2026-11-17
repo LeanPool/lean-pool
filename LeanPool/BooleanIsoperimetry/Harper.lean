@@ -587,7 +587,10 @@ lemma exists_binomPrefix_layer (N b : ℕ) (hb : b < 2 ^ N) :
     have hmem := Finset.mem_filter.mp (Finset.max'_mem _ hne)
     exact ⟨Finset.max' _ hne, Finset.mem_Iic.mp hmem.1, hmem.2,
       fun s hs₁ hs₂ => not_le.mp fun hs₃ => hs₁.not_ge <| Finset.le_max' _ _ <| by aesop⟩
-  grind +suggestions
+  refine ⟨r, hr.1, hr.2.1, ?_⟩
+  by_cases hrN : r = N
+  · simpa [hrN, binomPrefix_full] using hb
+  · exact hr.2.2 (r + 1) (by omega) (by omega)
 
 /-- **Two-layer confinement (LE regime).** If `b` lies at or below the top of
 Macaulay layer `r` and `a ≤ H N b`, then `a` lies at or below the top of layer
