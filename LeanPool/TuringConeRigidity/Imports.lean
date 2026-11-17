@@ -207,6 +207,7 @@ public import LeanPool.TuringConeRigidity.Constructibility.ConstructionInputData
 public import LeanPool.TuringConeRigidity.Constructibility.ConstructionStageBound
 public import LeanPool.TuringConeRigidity.Constructibility.ContextDefinablePower
 public import LeanPool.TuringConeRigidity.Constructibility.ContextHierarchyGraph
+public import LeanPool.TuringConeRigidity.Constructibility.CountableDegreeHull
 public import LeanPool.TuringConeRigidity.Constructibility.DecodedConstructionSyntax
 public import LeanPool.TuringConeRigidity.Constructibility.DefSystemCertificate
 public import LeanPool.TuringConeRigidity.Constructibility.DomainParameterizedSyntax
@@ -606,6 +607,7 @@ public import LeanPool.TuringConeRigidity.Representation.SourceTTreeAbsoluteness
 public import LeanPool.TuringConeRigidity.Representation.SourceTWellFounded
 public import LeanPool.TuringConeRigidity.Representation.SourceTheory
 public import LeanPool.TuringConeRigidity.SetModels.BindCanonicalArithmetic
+public import LeanPool.TuringConeRigidity.SetModels.CertifiedGraphAssembly
 public import LeanPool.TuringConeRigidity.SetModels.ChoiceFromOrdinalCover
 public import LeanPool.TuringConeRigidity.SetModels.ChoiceTrace
 public import LeanPool.TuringConeRigidity.SetModels.ChoiceTraceExtension

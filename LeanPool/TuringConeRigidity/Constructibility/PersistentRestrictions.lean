@@ -13,9 +13,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 
 module
 
-public import LeanPool.TuringConeRigidity.Computability.Joins
-public import LeanPool.TuringConeRigidity.Computability.OracleCode
-public import Mathlib.Order.CompletePartialOrder
+public import LeanPool.TuringConeRigidity.Constructibility.CountableDegreeHull
 
 /-!
 # Persistent Restrictions
@@ -29,12 +27,8 @@ namespace OAI
 namespace TuringRigidity.PersistentRestrictions
 open Set
 
-theorem countable_principal_lower (a : Degree) : (Set.Iic a).Countable := by
-  obtain ⟨A, rfl⟩ := degree_surjective a
-  apply ((countable_reduces A).image degree).mono
-  intro b hb
-  obtain ⟨B, rfl⟩ := degree_surjective b
-  exact ⟨B, (degree_le_iff B A).mp hb, rfl⟩
+theorem countable_principal_lower (a : Degree) : (Set.Iic a).Countable :=
+  CountableDegreeHull.countable_principal_lower a
 
 /-- A nonempty countable lower set of Turing degrees closed under binary joins. -/
 structure CountableIdeal where
@@ -47,74 +41,75 @@ structure CountableIdeal where
 
 instance : CoeSort CountableIdeal Type := ⟨fun I => {a : Degree // a ∈ I.carrier}⟩
 
+/-- Build an ideal from a nonempty countable seed and exactly the supplied operations. -/
+def invariantHullFromOperations (operations : List (Degree → Degree))
+    (seed : Set Degree) (hseed : seed.Countable) (hne : seed.Nonempty) : CountableIdeal where
+  carrier := CountableDegreeHull.hullSet operations seed
+  nonempty := by
+    obtain ⟨x, hx⟩ := hne
+    exact ⟨x, CountableDegreeHull.subset_hullSet operations seed hx⟩
+  countable := CountableDegreeHull.countable_hullSet operations hseed
+  lower := fun {_ _} hxy hy => CountableDegreeHull.hullSet_lower operations seed hxy hy
+  join_mem := fun {_ _} hx hy => CountableDegreeHull.hullSet_join operations seed hx hy
+
 /-- Add forward and inverse images, binary joins, and all lower degrees to the current set. -/
 def closureStep (π : Degree ≃o Degree) (S : Set Degree) : Set Degree :=
-  S ∪ (π '' S ∪ (π.symm '' S ∪
-    (Set.image2 (· ⊔ ·) S S ∪ ⋃ a ∈ S, Set.Iic a)))
+  CountableDegreeHull.closureStep [π, π.symm] S
 
 theorem countable_closureStep (π : Degree ≃o Degree) {S : Set Degree}
     (hS : S.Countable) : (closureStep π S).Countable :=
-  hS.union ((hS.image π).union ((hS.image π.symm).union
-    ((hS.image2 hS (· ⊔ ·)).union (hS.biUnion fun a _ => countable_principal_lower a))))
+  CountableDegreeHull.countable_closureStep [π, π.symm] hS
 
 /-- Iterate closure under the automorphism, its inverse, joins, and lower degrees, starting
 from `S` together with bottom. -/
-def stage (π : Degree ≃o Degree) (S : Set Degree) : ℕ → Set Degree
-  | 0 => insert ⊥ S
-  | n + 1 => closureStep π (stage π S n)
+def stage (π : Degree ≃o Degree) (S : Set Degree) : ℕ → Set Degree :=
+  CountableDegreeHull.stage [π, π.symm] (insert ⊥ S)
+
+/-- Stable zero-stage equation for the original seeded hull. -/
+theorem stage_zero (π : Degree ≃o Degree) (S : Set Degree) :
+    stage π S 0 = insert ⊥ S := rfl
+
+/-- Stable successor-stage equation for the original closure operation. -/
+theorem stage_succ (π : Degree ≃o Degree) (S : Set Degree) (n : ℕ) :
+    stage π S (n + 1) = closureStep π (stage π S n) := rfl
 
 theorem countable_stage (π : Degree ≃o Degree) {S : Set Degree}
-    (hS : S.Countable) : ∀ n, (stage π S n).Countable
-  | 0 => hS.insert ⊥
-  | n + 1 => countable_closureStep π (countable_stage π hS n)
+    (hS : S.Countable) : ∀ n, (stage π S n).Countable :=
+  CountableDegreeHull.countable_stage [π, π.symm] (hS.insert ⊥)
 
-theorem stage_mono (π : Degree ≃o Degree) (S : Set Degree) : Monotone (stage π S) := by
-  apply monotone_nat_of_le_succ
-  intro n a ha
-  exact Or.inl ha
+theorem stage_mono (π : Degree ≃o Degree) (S : Set Degree) : Monotone (stage π S) :=
+  CountableDegreeHull.stage_mono [π, π.symm] (insert ⊥ S)
 
 /-- The union of all finite closure stages. -/
-def hullSet (π : Degree ≃o Degree) (S : Set Degree) : Set Degree := ⋃ n, stage π S n
+def hullSet (π : Degree ≃o Degree) (S : Set Degree) : Set Degree :=
+  CountableDegreeHull.hullSet [π, π.symm] (insert ⊥ S)
 
-theorem subset_hullSet (π : Degree ≃o Degree) (S : Set Degree) : S ⊆ hullSet π S := by
-  intro a ha
-  exact Set.mem_iUnion.mpr ⟨0, Or.inr ha⟩
+theorem subset_hullSet (π : Degree ≃o Degree) (S : Set Degree) : S ⊆ hullSet π S :=
+  fun _ hx => CountableDegreeHull.subset_hullSet _ _ (Or.inr hx)
 
 theorem hullSet_lower (π : Degree ≃o Degree) (S : Set Degree)
-    {a b : Degree} (hab : a ≤ b) (hb : b ∈ hullSet π S) : a ∈ hullSet π S := by
-  obtain ⟨n, hn⟩ := Set.mem_iUnion.mp hb
-  apply Set.mem_iUnion.mpr
-  refine ⟨n + 1, Or.inr (Or.inr (Or.inr (Or.inr ?_)))⟩
-  exact Set.mem_iUnion.mpr ⟨b, Set.mem_iUnion.mpr ⟨hn, hab⟩⟩
+    {a b : Degree} (hab : a ≤ b) (hb : b ∈ hullSet π S) : a ∈ hullSet π S :=
+  CountableDegreeHull.hullSet_lower [π, π.symm] (insert ⊥ S) hab hb
 
 theorem hullSet_join (π : Degree ≃o Degree) (S : Set Degree)
     {a b : Degree} (ha : a ∈ hullSet π S) (hb : b ∈ hullSet π S) :
-    a ⊔ b ∈ hullSet π S := by
-  obtain ⟨m, hm⟩ := Set.mem_iUnion.mp ha
-  obtain ⟨n, hn⟩ := Set.mem_iUnion.mp hb
-  apply Set.mem_iUnion.mpr
-  refine ⟨max m n + 1, Or.inr (Or.inr (Or.inr (Or.inl ?_)))⟩
-  exact ⟨a, stage_mono π S (le_max_left m n) hm,
-    b, stage_mono π S (le_max_right m n) hn, rfl⟩
+    a ⊔ b ∈ hullSet π S :=
+  CountableDegreeHull.hullSet_join [π, π.symm] (insert ⊥ S) ha hb
 
 theorem hullSet_forward (π : Degree ≃o Degree) (S : Set Degree)
-    {a : Degree} (ha : a ∈ hullSet π S) : π a ∈ hullSet π S := by
-  obtain ⟨n, hn⟩ := Set.mem_iUnion.mp ha
-  exact Set.mem_iUnion.mpr ⟨n + 1, Or.inr (Or.inl ⟨a, hn, rfl⟩)⟩
+    {a : Degree} (ha : a ∈ hullSet π S) : π a ∈ hullSet π S :=
+  CountableDegreeHull.hullSet_operation (operations := [π, π.symm])
+    (f := π) (by simp) (insert ⊥ S) ha
 
 theorem hullSet_backward (π : Degree ≃o Degree) (S : Set Degree)
-    {a : Degree} (ha : a ∈ hullSet π S) : π.symm a ∈ hullSet π S := by
-  obtain ⟨n, hn⟩ := Set.mem_iUnion.mp ha
-  exact Set.mem_iUnion.mpr ⟨n + 1, Or.inr (Or.inr (Or.inl ⟨a, hn, rfl⟩))⟩
+    {a : Degree} (ha : a ∈ hullSet π S) : π.symm a ∈ hullSet π S :=
+  CountableDegreeHull.hullSet_operation (operations := [π, π.symm])
+    (f := π.symm) (by simp) (insert ⊥ S) ha
 
 /-- The countable invariant ideal generated by the countable seed `S`. -/
 def invariantHull (π : Degree ≃o Degree) (S : Set Degree) (hS : S.Countable) :
-    CountableIdeal where
-  carrier := hullSet π S
-  nonempty := ⟨⊥, Set.mem_iUnion.mpr ⟨0, Or.inl rfl⟩⟩
-  countable := Set.countable_iUnion (countable_stage π hS)
-  lower := fun {_ _} hab hb => hullSet_lower π S hab hb
-  join_mem := fun {_ _} ha hb => hullSet_join π S ha hb
+    CountableIdeal :=
+  invariantHullFromOperations [π, π.symm] (insert ⊥ S) (hS.insert ⊥) ⟨⊥, Or.inl rfl⟩
 
 theorem countable_invariant_hull (π : Degree ≃o Degree) (S : Set Degree)
     (hS : S.Countable) : ∃ J : CountableIdeal, S ⊆ J.carrier ∧

@@ -10,6 +10,8 @@ auto/OAI/Computability/DegreeRigidity/Constructibility/InternalHierarchyRecursio
 Module paths, interfaces, and proofs are ported to the pool's toolchain and gates.
 Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream port repairs.
 The common recursion adapts upstream Constructibility/CollectionHierarchyRecursion.lean.
+Only certificate collection, graph union, and domain extension are shared through
+SetModels/CertifiedGraphAssembly.lean; semantic recursion and value closure remain here.
 -/
 
 module
@@ -50,39 +52,21 @@ theorem internal_hierarchyGraph_context (M R d q : ZFSet.{u}) (C : Context M) (h
         p.Realize M (cons f (cons y e)) ↔
           ∃ r ∈ M, HierarchyGraph M (seed R) (hull d q y) r f :=
       hp y (hd x hx y hy) f hf
-    obtain ⟨b,hb,hbdef⟩ := hR p e he x hxM (by
-      intro y hy
-      obtain ⟨f,hf,hfg⟩ := ih y hy (hd x hx y hy)
-      refine ⟨f,hf,(cert y f hy hf).mpr
-        ⟨_,iterUnion_mem M C.transitive hU hf 2,hfg⟩,?_⟩
-      intro g hg hcg
-      obtain ⟨r,_,hgg⟩ := (cert y g hy hg).mp hcg
-      exact hgg.unique hfg)
-    have hbg (f : ZFSet.{u}) : f ∈ b ↔
-        ∃ y ∈ x, ∃ r ∈ M, HierarchyGraph M (seed R) (hull d q y) r f := by
-      constructor
-      · intro hf
-        have hfM := C.transitive b hb f hf
-        obtain ⟨y,hy,hc⟩ := (hbdef f hfM).mp hf
-        exact ⟨y,hy,(cert y f hy hfM).mp hc⟩
-      · rintro ⟨y,hy,r,hr,hg⟩
-        obtain ⟨f',hf',hg'⟩ := ih y hy (hd x hx y hy)
-        have heq := hg.unique hg'
-        have hfM : f ∈ M := heq ▸ hf'
-        exact (hbdef f hfM).mpr ⟨y,hy,(cert y f hy hfM).mpr ⟨r,hr,hg⟩⟩
-    let g := ZFSet.sUnion b
-    have hgM : g ∈ M := union_mem M C.transitive hU hb
-    have hg (z : ZFSet.{u}) : z ∈ g ↔
-        ∃ y ∈ x, ∃ w ∈ hull d q y, z = ZFSet.pair w (definablePower (stage R w)) := by
-      constructor
-      · intro hz
-        obtain ⟨f,hf,hzf⟩ := ZFSet.mem_sUnion.mp hz
-        obtain ⟨y,hy,r,_,hfg⟩ := (hbg f).mp hf
-        exact ⟨y,hy,(hfg.mem_iff z).mp hzf⟩
-      · rintro ⟨y,hy,w,hw,hz⟩
+    obtain ⟨g,hgM,hg⟩ := CertifiedGraphAssembly.certified_union M (x)
+      C.transitive hU hR hxM p e he
+      (fun y f => ∃ r ∈ M, HierarchyGraph M (seed R) (hull d q y) r f)
+      (fun y z => ∃ w ∈ (hull d q) y, z = ZFSet.pair w ((fun w => definablePower (stage R w)) w))
+      (fun y hy f hf => cert y f hy hf) (by
+        intro y hy
         obtain ⟨f,hf,hfg⟩ := ih y hy (hd x hx y hy)
-        exact ZFSet.mem_sUnion.mpr ⟨f,(hbg f).mpr
-          ⟨y,hy,_,iterUnion_mem M C.transitive hU hf 2,hfg⟩,(hfg.mem_iff z).mpr ⟨w,hw,hz⟩⟩
+        exact ⟨f,hf,_,iterUnion_mem M C.transitive hU hf 2,hfg⟩) (by
+        intro _ _ f g hf hg
+        obtain ⟨_,_,hf⟩ := hf
+        obtain ⟨_,_,hg⟩ := hg
+        exact hf.unique hg) (by
+        intro _ _ _ hf z
+        obtain ⟨_,_,hf⟩ := hf
+        exact hf.mem_iff z)
     have hvalue : stageImage (seed R) x g = stage R x := by
       apply ZFSet.ext; intro z
       rw [mem_stageImage,mem_stage]
@@ -102,19 +86,9 @@ theorem internal_hierarchyGraph_context (M R d q : ZFSet.{u}) (C : Context M) (h
       (singleton_mem M C.transitive hP (orderedPair_mem M C.transitive hP hxM hvM))
     refine ⟨f,hfM,hierarchyGraph_of_mem_iff_of_context M R _ f C hs
       (hull_mem M d q C.transitive hS hdM hqM hxM) hfM (hull_transitive d q x hd) ?_⟩
-    intro z
-    change z ∈ g ∪ ({ZFSet.pair x (definablePower (stage R x))} : ZFSet.{u}) ↔ _
-    rw [ZFSet.mem_union,ZFSet.mem_singleton,hg]
-    constructor
-    · rintro (⟨y,hy,w,hw,hz⟩|hz)
-      · exact ⟨w,(hull_unfold M d q C.transitive hP hU hS hR hdM hqM hd hq hx w).mpr
-          (Or.inr ⟨y,hy,hw⟩),hz⟩
-      · exact ⟨x,self_mem_hull d q hx,hz⟩
-    · rintro ⟨w,hw,hz⟩
-      rcases (hull_unfold M d q C.transitive hP hU hS hR hdM hqM hd hq hx w).mp hw with
-        rfl|⟨y,hy,hw⟩
-      · exact Or.inr hz
-      · exact Or.inl ⟨y,hy,w,hw,hz⟩
+    exact CertifiedGraphAssembly.singleton_graph_extension (x) x
+      (hull d q) (fun w => definablePower (stage R w)) (hull d q x) g
+      (hull_unfold M d q C.transitive hP hU hS hR hdM hqM hd hq hx) hg
 
 theorem internal_hierarchyGraph (M R d q : ZFSet.{u}) (hM : Transitive M) (hT : SourceT M)
     (hs : seed R ∈ M) (hdM : d ∈ M) (hqM : q ∈ M) (hd : Transitive d)

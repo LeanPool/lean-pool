@@ -9,10 +9,13 @@ Adapted for Lean Pool from bjoernkjoshanssen/tt-
 auto/OAI/Computability/DegreeRigidity/SetModels/InternalRelationCollapse.lean.
 Module paths, interfaces, and proofs are ported to the pool's toolchain and gates.
 Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream port repairs.
+Only certificate collection, graph union, and domain extension are shared through
+SetModels/CertifiedGraphAssembly.lean; semantic recursion and value closure remain here.
 -/
 
 module
 
+public import LeanPool.TuringConeRigidity.SetModels.CertifiedGraphAssembly
 public import LeanPool.TuringConeRigidity.SetModels.RelationCollapse
 
 /-!
@@ -133,42 +136,22 @@ theorem internal_hull_graph (M d r q : ZFSet.{u}) (hM : Transitive M)
       realize_certificate M d r q hM hS hd hr hqM hq
         ((RelationHull.mem_predecessors _ _ _ _).mp hy).1 hf
     have predM := RelationHull.predecessors_mem M hM hS hd hr hxM
-    obtain ⟨B,hB,hBdef⟩ := hR certificate e he _ predM (by
-      intro y hy
-      have hyr := (RelationHull.mem_predecessors _ _ _ _).mp hy
-      obtain ⟨f,hf,hfg⟩ := ih y hyr hyr.1
-      refine ⟨f,hf,(cert y f hy hf).mpr ⟨_,iterUnion_mem M hM hU hf 2,hfg⟩,?_⟩
-      intro g hg hcg
-      obtain ⟨b,_,hgg⟩ := (cert y g hy hg).mp hcg
-      exact hgg.unique wf hfg)
-    have hBg (f : ZFSet.{u}) : f ∈ B ↔
-        ∃ y ∈ RelationHull.predecessors d r x, ∃ b ∈ M,
-          Graph d r (RelationHull.hull d r q y) b f := by
-      constructor
-      · intro hf
-        have hfM := hM B hB f hf
-        obtain ⟨y,hy,hc⟩ := (hBdef f hfM).mp hf
-        exact ⟨y,hy,(cert y f hy hfM).mp hc⟩
-      · rintro ⟨y,hy,b,hb,hg⟩
-        have hyr := (RelationHull.mem_predecessors _ _ _ _).mp hy
-        obtain ⟨f',hf',hg'⟩ := ih y hyr hyr.1
-        have hfM : f ∈ M := hg.unique wf hg' ▸ hf'
-        exact (hBdef f hfM).mpr ⟨y,hy,(cert y f hy hfM).mpr ⟨b,hb,hg⟩⟩
-    let g := ZFSet.sUnion B
-    have hgM : g ∈ M := union_mem M hM hU hB
-    have hg (z : ZFSet.{u}) : z ∈ g ↔
-        ∃ y ∈ RelationHull.predecessors d r x, ∃ w ∈ RelationHull.hull d r q y,
-          z = ZFSet.pair w (value d r wf w) := by
-      constructor
-      · intro hz
-        obtain ⟨f,hf,hzf⟩ := ZFSet.mem_sUnion.mp hz
-        obtain ⟨y,hy,b,_,hfg⟩ := (hBg f).mp hf
-        exact ⟨y,hy,(hfg.mem_iff wf z).mp hzf⟩
-      · rintro ⟨y,hy,w,hw,hz⟩
-        have hyr := (RelationHull.mem_predecessors _ _ _ _).mp hy
-        obtain ⟨f,hf,hfg⟩ := ih y hyr hyr.1
-        exact ZFSet.mem_sUnion.mpr ⟨f,(hBg f).mpr
-          ⟨y,hy,_,iterUnion_mem M hM hU hf 2,hfg⟩,(hfg.mem_iff wf z).mpr ⟨w,hw,hz⟩⟩
+    obtain ⟨g,hgM,hg⟩ := CertifiedGraphAssembly.certified_union M (RelationHull.predecessors d r x)
+      hM hU hR predM certificate e he
+      (fun y f => ∃ r' ∈ M, Graph d r (RelationHull.hull d r q y) r' f)
+      (fun y z => ∃ w ∈ (RelationHull.hull d r q) y, z = ZFSet.pair w ((value d r wf) w))
+      (fun y hy f hf => cert y f hy hf) (by
+        intro y hy
+        obtain ⟨f,hf,hfg⟩ := ih y ((RelationHull.mem_predecessors _ _ _ _).mp hy)
+          ((RelationHull.mem_predecessors _ _ _ _).mp hy).1
+        exact ⟨f,hf,_,iterUnion_mem M hM hU hf 2,hfg⟩) (by
+        intro _ _ f g hf hg
+        obtain ⟨_,_,hf⟩ := hf
+        obtain ⟨_,_,hg⟩ := hg
+        exact hf.unique wf hg) (by
+        intro _ _ _ hf z
+        obtain ⟨_,_,hf⟩ := hf
+        exact hf.mem_iff wf z)
     have hvalue : nextValue d r x g = value d r wf x := by
       apply ZFSet.ext
       intro z
@@ -188,19 +171,9 @@ theorem internal_hull_graph (M d r q : ZFSet.{u}) (hM : Transitive M)
       (singleton_mem M hM hP (orderedPair_mem M hM hP hxM hvM))
     refine ⟨f,hfM,graph_of_mem_iff d r _ f wf (RelationHull.hull_subset d r q x)
       (RelationHull.hull_closed d r q x) ?_⟩
-    intro z
-    change z ∈ g ∪ ({ZFSet.pair x (value d r wf x)} : ZFSet.{u}) ↔ _
-    rw [ZFSet.mem_union,ZFSet.mem_singleton,hg]
-    constructor
-    · rintro (⟨y,hy,w,hw,hz⟩|hz)
-      · exact ⟨w,(RelationHull.hull_unfold M d r q hM hP hU hS hR hd hr hqM hq hx w).mpr
-          (Or.inr ⟨y,hy,hw⟩),hz⟩
-      · exact ⟨x,RelationHull.self_mem d r q hx,hz⟩
-    · rintro ⟨w,hw,hz⟩
-      rcases (RelationHull.hull_unfold M d r q hM hP hU hS hR hd hr hqM hq hx w).mp hw with
-        rfl|⟨y,hy,hw⟩
-      · exact Or.inr hz
-      · exact Or.inl ⟨y,hy,w,hw,hz⟩
+    exact CertifiedGraphAssembly.singleton_graph_extension (RelationHull.predecessors d r x) x
+      (RelationHull.hull d r q) (value d r wf) (RelationHull.hull d r q x) g
+      (RelationHull.hull_unfold M d r q hM hP hU hS hR hd hr hqM hq hx) hg
 
 end TuringRigidity.RelationCollapse
 

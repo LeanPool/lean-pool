@@ -62,80 +62,73 @@ def JumpClosed (I : CountableIdeal) : Prop :=
 /-- One closure step. Including jump here avoids any assumption that `e`
 preserves jump. -/
 def closureStep {a : Degree} (e : Degree ≃o Set.Ici a) (S : Set Degree) : Set Degree :=
-  S ∪ ((fun x => (e x).val) '' S ∪ (pullback e '' S ∪
-    (degreeJump '' S ∪ (Set.image2 (· ⊔ ·) S S ∪ ⋃ x ∈ S, Set.Iic x))))
+  CountableDegreeHull.closureStep [fun x => (e x).val, pullback e, degreeJump] S
 
 theorem countable_closureStep {a : Degree} (e : Degree ≃o Set.Ici a)
     {S : Set Degree} (hS : S.Countable) : (closureStep e S).Countable :=
-  hS.union ((hS.image (fun x => (e x).val)).union ((hS.image (pullback e)).union
-    ((hS.image degreeJump).union ((hS.image2 hS (· ⊔ ·)).union
-      (hS.biUnion fun x _ => countable_principal_lower x)))))
+  CountableDegreeHull.countable_closureStep [fun x => (e x).val, pullback e, degreeJump] hS
 
 /-- The stages closing the seed and cone base under the cone-persistence operations. -/
-def stage {a : Degree} (e : Degree ≃o Set.Ici a) (S : Set Degree) : ℕ → Set Degree
-  | 0 => insert a S
-  | n + 1 => closureStep e (stage e S n)
+def stage {a : Degree} (e : Degree ≃o Set.Ici a) (S : Set Degree) : ℕ → Set Degree :=
+  CountableDegreeHull.stage [fun x => (e x).val, pullback e, degreeJump] (insert a S)
+
+/-- Stable zero-stage equation for the original seeded hull. -/
+theorem stage_zero {a : Degree} (e : Degree ≃o Set.Ici a) (S : Set Degree) :
+    stage e S 0 = insert a S := rfl
+
+/-- Stable successor-stage equation for the original closure operation. -/
+theorem stage_succ {a : Degree} (e : Degree ≃o Set.Ici a) (S : Set Degree) (n : ℕ) :
+    stage e S (n + 1) = closureStep e (stage e S n) := rfl
 
 theorem countable_stage {a : Degree} (e : Degree ≃o Set.Ici a)
-    {S : Set Degree} (hS : S.Countable) : ∀ n, (stage e S n).Countable
-  | 0 => hS.insert a
-  | n + 1 => countable_closureStep e (countable_stage e hS n)
+    {S : Set Degree} (hS : S.Countable) : ∀ n, (stage e S n).Countable :=
+  CountableDegreeHull.countable_stage [fun x => (e x).val, pullback e, degreeJump] (hS.insert a)
 
 theorem stage_mono {a : Degree} (e : Degree ≃o Set.Ici a) (S : Set Degree) :
-    Monotone (stage e S) := by
-  apply monotone_nat_of_le_succ
-  intro n x hx
-  exact Or.inl hx
+    Monotone (stage e S) :=
+  CountableDegreeHull.stage_mono [fun x => (e x).val, pullback e, degreeJump] (insert a S)
 
 /-- The union of all cone-persistence closure stages. -/
 def hullSet {a : Degree} (e : Degree ≃o Set.Ici a) (S : Set Degree) : Set Degree :=
-  ⋃ n, stage e S n
+  CountableDegreeHull.hullSet [fun x => (e x).val, pullback e, degreeJump] (insert a S)
 
 theorem base_mem_hullSet {a : Degree} (e : Degree ≃o Set.Ici a) (S : Set Degree) :
-    a ∈ hullSet e S := Set.mem_iUnion.mpr ⟨0, Or.inl rfl⟩
+    a ∈ hullSet e S :=
+  CountableDegreeHull.subset_hullSet _ _ (Or.inl rfl)
 
 theorem subset_hullSet {a : Degree} (e : Degree ≃o Set.Ici a) (S : Set Degree) :
-    S ⊆ hullSet e S := fun _ hx => Set.mem_iUnion.mpr ⟨0, Or.inr hx⟩
+    S ⊆ hullSet e S :=
+  fun _ hx => CountableDegreeHull.subset_hullSet _ _ (Or.inr hx)
 
 theorem hullSet_lower {a : Degree} (e : Degree ≃o Set.Ici a) (S : Set Degree)
-    {x y : Degree} (hxy : x ≤ y) (hy : y ∈ hullSet e S) : x ∈ hullSet e S := by
-  obtain ⟨n, hn⟩ := Set.mem_iUnion.mp hy
-  refine Set.mem_iUnion.mpr ⟨n + 1, Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ?_))))⟩
-  exact Set.mem_iUnion.mpr ⟨y, Set.mem_iUnion.mpr ⟨hn, Set.mem_Iic.mpr hxy⟩⟩
+    {x y : Degree} (hxy : x ≤ y) (hy : y ∈ hullSet e S) : x ∈ hullSet e S :=
+  CountableDegreeHull.hullSet_lower [fun x => (e x).val, pullback e, degreeJump] (insert a S) hxy hy
 
 theorem hullSet_join {a : Degree} (e : Degree ≃o Set.Ici a) (S : Set Degree)
     {x y : Degree} (hx : x ∈ hullSet e S) (hy : y ∈ hullSet e S) :
-    x ⊔ y ∈ hullSet e S := by
-  obtain ⟨m, hm⟩ := Set.mem_iUnion.mp hx
-  obtain ⟨n, hn⟩ := Set.mem_iUnion.mp hy
-  refine Set.mem_iUnion.mpr ⟨max m n + 1,
-    Or.inr (Or.inr (Or.inr (Or.inr (Or.inl ?_))))⟩
-  exact ⟨x, stage_mono e S (le_max_left m n) hm,
-    y, stage_mono e S (le_max_right m n) hn, rfl⟩
+    x ⊔ y ∈ hullSet e S :=
+  CountableDegreeHull.hullSet_join [fun x => (e x).val, pullback e, degreeJump] (insert a S) hx hy
 
 theorem hullSet_forward {a : Degree} (e : Degree ≃o Set.Ici a) (S : Set Degree)
-    {x : Degree} (hx : x ∈ hullSet e S) : (e x).val ∈ hullSet e S := by
-  obtain ⟨n, hn⟩ := Set.mem_iUnion.mp hx
-  exact Set.mem_iUnion.mpr ⟨n + 1, Or.inr (Or.inl ⟨x, hn, rfl⟩)⟩
+    {x : Degree} (hx : x ∈ hullSet e S) : (e x).val ∈ hullSet e S :=
+  CountableDegreeHull.hullSet_operation (operations := [fun x => (e x).val, pullback e, degreeJump])
+    (f := fun x => (e x).val) (by simp) (insert a S) hx
 
 theorem hullSet_backward {a : Degree} (e : Degree ≃o Set.Ici a) (S : Set Degree)
-    {x : Degree} (hx : x ∈ hullSet e S) : pullback e x ∈ hullSet e S := by
-  obtain ⟨n, hn⟩ := Set.mem_iUnion.mp hx
-  exact Set.mem_iUnion.mpr ⟨n + 1, Or.inr (Or.inr (Or.inl ⟨x, hn, rfl⟩))⟩
+    {x : Degree} (hx : x ∈ hullSet e S) : pullback e x ∈ hullSet e S :=
+  CountableDegreeHull.hullSet_operation (operations := [fun x => (e x).val, pullback e, degreeJump])
+    (f := pullback e) (by simp) (insert a S) hx
 
 theorem hullSet_jump {a : Degree} (e : Degree ≃o Set.Ici a) (S : Set Degree)
-    {x : Degree} (hx : x ∈ hullSet e S) : degreeJump x ∈ hullSet e S := by
-  obtain ⟨n, hn⟩ := Set.mem_iUnion.mp hx
-  exact Set.mem_iUnion.mpr ⟨n + 1, Or.inr (Or.inr (Or.inr (Or.inl ⟨x, hn, rfl⟩)))⟩
+    {x : Degree} (hx : x ∈ hullSet e S) : degreeJump x ∈ hullSet e S :=
+  CountableDegreeHull.hullSet_operation (operations := [fun x => (e x).val, pullback e, degreeJump])
+    (f := degreeJump) (by simp) (insert a S) hx
 
 /-- The countable invariant jump-closed ideal generated by the seed for the cone isomorphism. -/
 def invariantJumpHull {a : Degree} (e : Degree ≃o Set.Ici a)
-    (S : Set Degree) (hS : S.Countable) : CountableIdeal where
-  carrier := hullSet e S
-  nonempty := ⟨a, base_mem_hullSet e S⟩
-  countable := Set.countable_iUnion (countable_stage e hS)
-  lower := fun {_ _} hxy hy => hullSet_lower e S hxy hy
-  join_mem := fun {_ _} hx hy => hullSet_join e S hx hy
+    (S : Set Degree) (hS : S.Countable) : CountableIdeal :=
+  invariantHullFromOperations [fun x => (e x).val, pullback e, degreeJump]
+    (insert a S) (hS.insert a) ⟨a, Or.inl rfl⟩
 
 theorem countable_invariant_jump_hull {a : Degree} (e : Degree ≃o Set.Ici a)
     (S : Set Degree) (hS : S.Countable) :
