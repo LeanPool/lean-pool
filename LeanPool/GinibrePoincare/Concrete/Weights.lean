@@ -34,12 +34,9 @@ SOFTWARE.
 
 module
 
+public import Mathlib.Analysis.Complex.Exponential
 public import LeanPool.GinibrePoincare.Concrete.Vandermonde
-public import Mathlib.Algebra.Order.Field.Power
-public import Mathlib.Analysis.Complex.Trigonometric
 public import Mathlib.Analysis.Normed.Field.Basic
-public import Mathlib.Data.EReal.Inv
-public import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # Gaussian and Ginibre weights

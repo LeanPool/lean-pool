@@ -38,8 +38,6 @@ module
 public import LeanPool.GinibrePoincare.Analysis.AngularMoments
 public import LeanPool.GinibrePoincare.Analysis.RadialMoments
 public import Mathlib.Analysis.SpecialFunctions.PolarCoord
-public import Mathlib.Analysis.SpecialFunctions.Bernstein
-public import Mathlib.Data.Nat.Factorial.DoubleFactorial
 
 /-! # Polar factorization of complex Gaussian moments -/
 
