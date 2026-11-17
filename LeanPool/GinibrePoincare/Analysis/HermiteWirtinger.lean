@@ -65,7 +65,7 @@ def diagonalEval (P : Poly) (z : ℂ) : ℂ :=
 /-- Public evaluation map substituting a complex number and its conjugate into the formal
 variables. -/
 def diagonalEvalPublic (P : Poly) (z : ℂ) : ℂ :=
-  MvPolynomial.eval ![z, conj z] P
+  diagonalEval P z
 
 /-- The one-variable Wirtinger antiholomorphic derivative, expressed through real Fréchet
 derivatives. -/
@@ -75,51 +75,10 @@ def dbarOne (f : ℂ → ℂ) (z : ℂ) : ℂ :=
 
 /-- Public one-variable Wirtinger `dbar` operator. -/
 def dbarOnePublic (f : ℂ → ℂ) (z : ℂ) : ℂ :=
-  (1 / 2 : ℂ) *
-    (fderiv ℝ f z 1 + Complex.I * fderiv ℝ f z Complex.I)
+  dbarOne f z
 
 theorem dbarOnePublic_eq_dbarOne (f : ℂ → ℂ) :
     dbarOnePublic f = dbarOne f := rfl
-
-private theorem differentiable_diagonalEval (P : Poly) :
-    Differentiable ℝ (diagonalEval P) := by
-  induction P using MvPolynomial.induction_on with
-  | C a =>
-      rw [show diagonalEval (MvPolynomial.C a) = fun _ : ℂ => a by
-        funext z
-        simp [diagonalEval]]
-      exact (differentiable_const (c := a) :
-        Differentiable ℝ (fun _ : ℂ => a))
-  | add P Q hP hQ =>
-      rw [show diagonalEval (P + Q) = diagonalEval P + diagonalEval Q by
-        funext z
-        simp [diagonalEval]]
-      exact hP.add hQ
-  | mul_X P i hP =>
-      by_cases hi : i = (0 : ComplexHermiteIndex)
-      · subst i
-        rw [show diagonalEval (P * MvPolynomial.X (0 : ComplexHermiteIndex)) =
-            diagonalEval P * id by
-          funext z
-          simp [diagonalEval]]
-        exact hP.mul differentiable_id
-      · have hi' : i = (1 : ComplexHermiteIndex) := by
-          have hne : i.val ≠ 0 := by
-            intro hzero
-            apply hi
-            apply Fin.ext
-            simpa using hzero
-          apply Fin.ext
-          omega
-        subst i
-        rw [show diagonalEval (P * MvPolynomial.X (1 : ComplexHermiteIndex)) =
-            diagonalEval P * (conj : ℂ → ℂ) by
-          funext z
-          simp [diagonalEval]]
-        exact hP.mul Complex.conjCLE.differentiable
-
-theorem differentiable_diagonalEval_public (P : Poly) :
-    Differentiable ℝ (diagonalEval P) := differentiable_diagonalEval P
 
 theorem contDiff_diagonalEval_public (P : Poly) :
     ContDiff ℝ 1 (diagonalEval P) := by
@@ -148,6 +107,13 @@ theorem contDiff_diagonalEval_public (P : Poly) :
             diagonalEval P * (conj : ℂ → ℂ) by
           funext z; simp [diagonalEval]]
         exact hP.mul Complex.conjCLE.contDiff
+
+private theorem differentiable_diagonalEval (P : Poly) :
+    Differentiable ℝ (diagonalEval P) :=
+  (contDiff_diagonalEval_public P).differentiable_one
+
+theorem differentiable_diagonalEval_public (P : Poly) :
+    Differentiable ℝ (diagonalEval P) := differentiable_diagonalEval P
 
 theorem exists_fderiv_diagonalEval_polynomial (P : Poly) (v : ℂ) :
     ∃ Q : Poly, ∀ z : ℂ,

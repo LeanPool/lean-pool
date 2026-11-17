@@ -145,6 +145,29 @@ def euclideanImagPartNegativeMeasure {n : ℕ}
     Measure (EuclideanSpace ℝ (Fin n × Fin 2)) :=
   (gaussianImagPartNegativeMeasure v).map (configurationEuclideanEquiv n)
 
+/-- Push a nonnegative integrable Gaussian density to Euclidean coordinates and express its
+characteristic function through the configuration Fourier character. -/
+theorem charFun_map_gaussian_withDensity {n : ℕ} (ρ : Configuration n → ℝ)
+    (hρ : ∀ z, 0 ≤ ρ z) (hρInt : Integrable ρ (complexGaussianMeasure n))
+    (x : EuclideanSpace ℝ (Fin n × Fin 2)) :
+    charFun (((complexGaussianMeasure n).withDensity (fun z ↦ ENNReal.ofReal (ρ z))).map
+      (configurationEuclideanEquiv n)) x =
+      ∫ z, (ρ z : ℂ) * configurationFourierCharacter
+        ((configurationEuclideanEquiv n).symm x) z ∂complexGaussianMeasure n := by
+  let : IsFiniteMeasure ((complexGaussianMeasure n).withDensity
+      (fun z ↦ ENNReal.ofReal (ρ z))) :=
+    isFiniteMeasure_withDensity_ofReal hρInt.hasFiniteIntegral
+  rw [charFun_apply]
+  rw [integral_map
+    (measurable_configurationEuclideanEquiv n).aemeasurable (by fun_prop)]
+  rw [integral_withDensity_eq_integral_toReal_smul₀]
+  · apply integral_congr_ae
+    filter_upwards with z
+    rw [real_inner_configurationEuclideanEquiv]
+    simp [configurationFourierCharacter, ENNReal.toReal_ofReal (hρ z)]
+  · exact hρInt.aemeasurable.ennreal_ofReal
+  · exact Filter.Eventually.of_forall fun z ↦ ENNReal.ofReal_lt_top
+
 theorem charFun_euclideanRealPartPositiveMeasure {n : ℕ}
     (v : Lp ℂ 2 (complexGaussianMeasure n))
     (x : EuclideanSpace ℝ (Fin n × Fin 2)) :
@@ -153,20 +176,8 @@ theorem charFun_euclideanRealPartPositiveMeasure {n : ℕ}
         configurationFourierCharacter
           ((configurationEuclideanEquiv n).symm x) z
         ∂complexGaussianMeasure n := by
-  let : IsFiniteMeasure (gaussianRealPartPositiveMeasure v) :=
-    isFiniteMeasure_gaussianRealPartPositiveMeasure v
-  rw [charFun_apply]
-  unfold euclideanRealPartPositiveMeasure
-  rw [integral_map
-    (measurable_configurationEuclideanEquiv n).aemeasurable (by fun_prop)]
-  unfold gaussianRealPartPositiveMeasure
-  rw [integral_withDensity_eq_integral_toReal_smul₀]
-  · apply integral_congr_ae
-    filter_upwards with z
-    rw [real_inner_configurationEuclideanEquiv]
-    simp [configurationFourierCharacter, ENNReal.toReal_ofReal']
-  · exact (integrable_max_zero (integrable_re_Lp_two v)).aemeasurable.ennreal_ofReal
-  · exact Filter.Eventually.of_forall fun z ↦ ENNReal.ofReal_lt_top
+  exact charFun_map_gaussian_withDensity (fun z ↦ max (v z).re 0)
+    (fun _ ↦ le_max_right _ _) (integrable_max_zero (integrable_re_Lp_two v)) x
 
 theorem charFun_euclideanRealPartNegativeMeasure {n : ℕ}
     (v : Lp ℂ 2 (complexGaussianMeasure n))
@@ -176,21 +187,8 @@ theorem charFun_euclideanRealPartNegativeMeasure {n : ℕ}
         configurationFourierCharacter
           ((configurationEuclideanEquiv n).symm x) z
         ∂complexGaussianMeasure n := by
-  let : IsFiniteMeasure (gaussianRealPartNegativeMeasure v) :=
-    isFiniteMeasure_gaussianRealPartNegativeMeasure v
-  rw [charFun_apply]
-  unfold euclideanRealPartNegativeMeasure
-  rw [integral_map
-    (measurable_configurationEuclideanEquiv n).aemeasurable (by fun_prop)]
-  unfold gaussianRealPartNegativeMeasure
-  rw [integral_withDensity_eq_integral_toReal_smul₀]
-  · apply integral_congr_ae
-    filter_upwards with z
-    rw [real_inner_configurationEuclideanEquiv]
-    simp [configurationFourierCharacter, ENNReal.toReal_ofReal']
-  · exact (integrable_max_zero
-      (integrable_re_Lp_two v).neg).aemeasurable.ennreal_ofReal
-  · exact Filter.Eventually.of_forall fun z ↦ ENNReal.ofReal_lt_top
+  exact charFun_map_gaussian_withDensity (fun z ↦ max (-(v z).re) 0)
+    (fun _ ↦ le_max_right _ _) (integrable_max_zero (integrable_re_Lp_two v).neg) x
 
 theorem charFun_euclideanImagPartPositiveMeasure {n : ℕ}
     (v : Lp ℂ 2 (complexGaussianMeasure n))
@@ -200,21 +198,8 @@ theorem charFun_euclideanImagPartPositiveMeasure {n : ℕ}
         configurationFourierCharacter
           ((configurationEuclideanEquiv n).symm x) z
         ∂complexGaussianMeasure n := by
-  let : IsFiniteMeasure (gaussianImagPartPositiveMeasure v) :=
-    isFiniteMeasure_gaussianImagPartPositiveMeasure v
-  rw [charFun_apply]
-  unfold euclideanImagPartPositiveMeasure
-  rw [integral_map
-    (measurable_configurationEuclideanEquiv n).aemeasurable (by fun_prop)]
-  unfold gaussianImagPartPositiveMeasure
-  rw [integral_withDensity_eq_integral_toReal_smul₀]
-  · apply integral_congr_ae
-    filter_upwards with z
-    rw [real_inner_configurationEuclideanEquiv]
-    simp [configurationFourierCharacter, ENNReal.toReal_ofReal']
-  · exact (integrable_max_zero
-      (integrable_im_Lp_two v)).aemeasurable.ennreal_ofReal
-  · exact Filter.Eventually.of_forall fun z ↦ ENNReal.ofReal_lt_top
+  exact charFun_map_gaussian_withDensity (fun z ↦ max (v z).im 0)
+    (fun _ ↦ le_max_right _ _) (integrable_max_zero (integrable_im_Lp_two v)) x
 
 theorem charFun_euclideanImagPartNegativeMeasure {n : ℕ}
     (v : Lp ℂ 2 (complexGaussianMeasure n))
@@ -224,21 +209,8 @@ theorem charFun_euclideanImagPartNegativeMeasure {n : ℕ}
         configurationFourierCharacter
           ((configurationEuclideanEquiv n).symm x) z
         ∂complexGaussianMeasure n := by
-  let : IsFiniteMeasure (gaussianImagPartNegativeMeasure v) :=
-    isFiniteMeasure_gaussianImagPartNegativeMeasure v
-  rw [charFun_apply]
-  unfold euclideanImagPartNegativeMeasure
-  rw [integral_map
-    (measurable_configurationEuclideanEquiv n).aemeasurable (by fun_prop)]
-  unfold gaussianImagPartNegativeMeasure
-  rw [integral_withDensity_eq_integral_toReal_smul₀]
-  · apply integral_congr_ae
-    filter_upwards with z
-    rw [real_inner_configurationEuclideanEquiv]
-    simp [configurationFourierCharacter, ENNReal.toReal_ofReal']
-  · exact (integrable_max_zero
-      (integrable_im_Lp_two v).neg).aemeasurable.ennreal_ofReal
-  · exact Filter.Eventually.of_forall fun z ↦ ENNReal.ofReal_lt_top
+  exact charFun_map_gaussian_withDensity (fun z ↦ max (-(v z).im) 0)
+    (fun _ ↦ le_max_right _ _) (integrable_max_zero (integrable_im_Lp_two v).neg) x
 
 private theorem configurationFourierCharacter_neg {n : ℕ}
     (t z : Configuration n) :

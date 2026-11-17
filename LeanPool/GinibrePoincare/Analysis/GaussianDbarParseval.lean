@@ -70,7 +70,7 @@ theorem complexGaussianDbarIntegrationByParts_of_integrable
       ∂(complexCoordinateGaussianProbability n : Measure ℂ)) =
       (n : ℂ) * ∫ z, z * F z
         ∂(complexCoordinateGaussianProbability n : Measure ℂ) := by
-  unfold dbarOnePublic
+  unfold dbarOnePublic dbarOne
   rw [integral_const_mul, integral_add hDr (hDi.const_mul Complex.I),
     integral_const_mul,
     complexGaussianIntegrationByParts_real_of_integrable hn hF hFi hDr hX,
@@ -109,11 +109,11 @@ theorem complexGaussianDbarIntegrationByParts_diagonalEval
       (Filter.Eventually.of_forall fun z ↦ (hS z).symm)
   · apply ((hz.add hcz).const_mul (1 / 2 : ℂ)).congr
     filter_upwards with z
-    simp only [diagonalEvalPublic]
+    simp only [diagonalEvalPublic, diagonalEval]
     apply Complex.ext <;> simp <;> ring
   · apply ((hz.sub hcz).const_mul (1 / (2 * Complex.I) : ℂ)).congr
     filter_upwards with z
-    simp only [diagonalEvalPublic]
+    simp only [diagonalEvalPublic, diagonalEval]
     apply Complex.ext <;> simp <;> ring
 
 theorem integrable_normalizedEval_complexGaussian (n : ℕ) (hn : 0 < n)
@@ -288,7 +288,7 @@ theorem complexGaussianDbarIntegrationByParts_normalizedEval_mul_conj
       conj (normalizedEval n hn p q z)) = diagonalEvalPublic P := by
     funext z
     rw [conj_normalizedEval_swap]
-    simp [P, diagonalEvalPublic, normalizedEval, MvPolynomial.eval_mul]
+    simp [P, diagonalEvalPublic, diagonalEval, normalizedEval, MvPolynomial.eval_mul]
   rw [hfun]
   rw [show (fun z : ℂ ↦ z * (normalizedEval n hn r s z *
       conj (normalizedEval n hn p q z))) =
