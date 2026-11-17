@@ -423,7 +423,9 @@ def render_shared(template: str, fresh: str, aliases: dict[str, str]) -> str:
     return template[:padding] + core + template[len(template.rstrip()):]
 
 
-def exclusion_rows_text(source: str, aliases: dict[str, str], label: str = '') -> list[dict[str, Any]]:
+def exclusion_rows_text(
+    source: str, aliases: dict[str, str], label: str = ''
+) -> list[dict[str, Any]]:
     pattern = (r'^theorem (excluded\d+_\d+)\s*:\s*ExcludedOn (.*?) := by\n'
                r'  apply ExclusionHint.sound (.*?)\s+\(den\s*:=.*?\)\s+'
                r'\(fuel\s*:=\s*(\d+)\)')
@@ -475,7 +477,10 @@ def render_fan_sources(templates: dict[str, str], aliases: dict[str, str],
             assert '/FanChecks/' in path, path
             for check in check_rows(template):
                 row = rows[check['name']]
-                assert list(map(compact, check['arguments'])) == list(map(compact, row['arguments'])), (path, check['check'])
+                assert (
+                    list(map(compact, check['arguments']))
+                    == list(map(compact, row['arguments']))
+                ), (path, check['check'])
                 assert check['fuel'] == row['fuel'], (path, check['check'])
                 value = render_shared(check['hint'], proposals[check['name']], aliases)
                 edits.append((*check['span'], value))
@@ -683,7 +688,9 @@ def regenerate(root: Path, output: Path, name: str) -> dict[str, Any]:
     for path, (template, current) in templates.items():
         edits = []
         for row in current:
-            edits.append((*row['span'], render_shared(row['layout'], proposals[row['name']], aliases)))
+            edits.append(
+                (*row['span'], render_shared(row['layout'], proposals[row['name']], aliases))
+            )
         for match in fan_declarations(template):
             assert match[1] in generated, (path, match[1])
             edits.append((*match.span(2), render_shared(match[2], generated[match[1]], aliases)))
@@ -693,7 +700,9 @@ def regenerate(root: Path, output: Path, name: str) -> dict[str, Any]:
         destination.parent.mkdir(parents=True, exist_ok=True)
         destination.write_text(template)
     row_map = {row['name']: row for row in rows}
-    for relative, source in render_fan_sources(shared, aliases, generated, row_map, proposals).items():
+    for relative, source in render_fan_sources(
+        shared, aliases, generated, row_map, proposals
+    ).items():
         destination = output / 'corpus' / relative
         destination.parent.mkdir(parents=True, exist_ok=True)
         destination.write_text(source)
@@ -735,9 +744,15 @@ def main() -> None:
     emitted = [relative for row in results for relative in row['emitted_files']]
     assert len(emitted) == len(set(emitted)) == sum(row['files'] for row in results)
     if not options.certificate:
-        expected = {str(path.relative_to(root))
-                    for category in ('Data', 'Checkpoints', 'Steps', 'Checked', 'FanData', 'FanChecks')
-                    for path in (root / 'LeanPool/ConwaySoifer/Simplified/Certificates' / category).glob('*.lean')}
+        expected = {
+            str(path.relative_to(root))
+            for category in (
+                'Data', 'Checkpoints', 'Steps', 'Checked', 'FanData', 'FanChecks'
+            )
+            for path in (
+                root / 'LeanPool/ConwaySoifer/Simplified/Certificates' / category
+            ).glob('*.lean')
+        }
         complete_inventory(emitted, expected)
     hashes = []
     for relative in sorted(emitted):
