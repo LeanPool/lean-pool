@@ -798,7 +798,7 @@ theorem transportSolution_snorm_equalRadius_all
         ENNReal.ofReal (16 * C_g * |t|) := by
   intro n
   induction n using Nat.strong_induction_on with
-  | h n ih =>
+  | ind n ih =>
       intro hn hnN t ht
       by_cases hn_one : n = 1
       · subst n

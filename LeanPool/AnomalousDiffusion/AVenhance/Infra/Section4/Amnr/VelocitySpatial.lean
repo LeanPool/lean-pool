@@ -51,10 +51,10 @@ theorem amnr_gradient_lipschitz_of_hessian {f : Vec 2 → ℝ}
   have hg : Differentiable ℝ (fun x => fderiv ℝ f x (basisVec i)) :=
     (hdf.clm_apply (contDiff_const : ContDiff ℝ 1 (fun _ : Vec 2 => basisVec i))).differentiable
       (by norm_num)
-  apply lipschitzWith_of_nnnorm_fderiv_le hg
+  apply lipschitzWith_of_nnNorm_fderiv_le hg
   intro x
   apply NNReal.coe_le_coe.mp
-  rw [coe_nnnorm, Real.coe_toNNReal _ (by positivity)]
+  rw [coe_nnNorm, Real.coe_toNNReal _ (by positivity)]
   have hj (j : Fin 2) :
       ‖fderiv ℝ (fun y => fderiv ℝ f y (basisVec i)) x (basisVec j)‖ ≤ B := by
     have h := fderiv_clm_apply (hdf.differentiable (by norm_num) x)

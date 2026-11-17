@@ -258,7 +258,7 @@ theorem transportField_lipschitz_of_snorm_one
   refine ⟨L, hL, ?_⟩
   intro t x y
   have hLip : LipschitzWith K (b t) :=
-    lipschitzWith_of_nnnorm_fderiv_le ((hslice t).differentiable (by norm_num))
+    lipschitzWith_of_nnNorm_fderiv_le ((hslice t).differentiable (by norm_num))
       (hD' t)
   have h := (hLip.dist_le_mul x y)
   change dist (b t x) (b t y) ≤ L * dist x y at h

@@ -117,10 +117,10 @@ theorem scalarTorusRepresentative_memL2On (f : ScalarTorusL2) :
     exact (MeasurableEmbedding.subtype_coe hcellMeas).memLp_map_measure_iff.mpr hsub
   have hcellLe : (volume : Measure (Vec 2)).restrict cell ≤
       (volume : Measure (Vec 2)).restrict AVenhance.unitCube :=
-    Measure.restrict_mono_ae AVenhance.Infra.Torus.unitCell_ae_eq_unitCube.le
+    Measure.restrict_mono_ae AVenhance.Infra.Torus.unitCell_ae_eq_unitCube.subset
   have hcubeLe : (volume : Measure (Vec 2)).restrict AVenhance.unitCube ≤
       (volume : Measure (Vec 2)).restrict cell :=
-    Measure.restrict_mono_ae AVenhance.Infra.Torus.unitCell_ae_eq_unitCube.ge
+    Measure.restrict_mono_ae AVenhance.Infra.Torus.unitCell_ae_eq_unitCube.symm.subset
   exact hbase.mono_measure hcubeLe
 
 /-- The `l2NormSq` of a pulled-back torus class is its Hilbert norm squared. -/

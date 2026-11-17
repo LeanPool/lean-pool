@@ -36,7 +36,7 @@ theorem iterate_coordinate_two_index_induction
     ∀ i, i ≤ K → iterateCoordinateEnergyProfile (u i) κ (N * iterateAmplitude η i) L i := by
   intro i
   induction i using Nat.strong_induction_on with
-  | h i ih =>
+  | ind i ih =>
     intro hi
     by_cases hi0 : i = 0
     · subst i
@@ -53,7 +53,7 @@ theorem iterate_coordinate_two_index_induction
           N ^ 2 * iterateAmplitude η i ^ 2 * iterateAnalyticWeight w.length i L ^ 2 := by
         intro n
         induction n using Nat.strong_induction_on with
-        | h n ihn =>
+        | ind n ihn =>
           intro w hw s hs hs1
           have hlower (p : List (Fin 2)) (hp : p.length < w.length) :
               spaceTimeGradNormSq (fun t => spaceGrad (iterateSpatialWord p (u i t))) ≤

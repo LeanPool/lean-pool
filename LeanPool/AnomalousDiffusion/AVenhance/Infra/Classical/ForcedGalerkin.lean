@@ -504,7 +504,7 @@ theorem uniformEnergyEstimateOfLinearGrowth (D : ForcedGalerkinData E G)
   have hpoint : ∀ᵐ s ∂(volume.restrict (Icc (0 : ℝ) 1)),
       q s ≤ c * z s + G ^ 2 - D.weak.diffusivity * g s := by
     apply uniformEnergyEstimateOfLinearGrowth_point1
-    all_goals assumption
+    assumption
   have hzero : y 0 = D.initial := by
     have hsol := hu.integralSolution D.ode
     have hz := hsol 0 ⟨le_rfl, by norm_num⟩

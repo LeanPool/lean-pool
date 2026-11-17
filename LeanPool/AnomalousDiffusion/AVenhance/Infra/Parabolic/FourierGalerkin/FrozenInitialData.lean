@@ -46,7 +46,7 @@ theorem frozenInitialData_memLp_torus {θ₀ : Vec 2 → ℝ}
   have hcellLe : (volume : Measure (Vec 2)).restrict cell ≤
       (volume : Measure (Vec 2)).restrict AVenhance.unitCube := by
     exact Measure.restrict_mono_ae
-      AVenhance.Infra.Torus.unitCell_ae_eq_unitCube.le
+      AVenhance.Infra.Torus.unitCell_ae_eq_unitCube.subset
   have hθcell : MemLp θ₀ 2 ((volume : Measure (Vec 2)).restrict cell) :=
     hθ₀.mono_measure hcellLe
   let cellSubtype := {x : Vec 2 // x ∈ cell}

@@ -64,7 +64,7 @@ theorem Composition.operatorDerivativeF_ae_le_derivativeSup
     have hI : partialSup n f I ≤ derivativeSup n f := le_iSup_of_le I le_rfl
     have hae : ∀ᵐ x ∂μ,
         ‖orderedPartial n f x I‖ₑ ≤ partialSup n f I := by
-      simpa [partialSup, eLpNormEssSup_eq_essSup_enorm] using
+      simpa [partialSup, eLpNormEssSup_eq_essSup_eNorm] using
         (ae_le_essSup
           (f := fun x : Vec d ↦ ‖orderedPartial n f x I‖ₑ) (μ := μ))
     exact hae.mono fun x hx ↦ hx.trans hI
@@ -79,7 +79,7 @@ theorem Composition.operatorDerivativeF_ae_le_derivativeSup
         intro I
         have hbound : ENNReal.ofReal
             ‖orderedPartial n f x I‖ ≤ derivativeSup n f := by
-          simpa [Real.enorm_eq_ofReal_abs] using hx I
+          simpa [Real.eNorm_eq_ofReal_abs] using hx I
         rw [ENNReal.ofReal_le_iff_le_toReal htop] at hbound
         simpa [T, orderedPartial] using hbound
       have hsup : coordinateEvaluationSup T ≤ (derivativeSup n f).toReal := by
@@ -109,7 +109,7 @@ theorem Composition.operatorDerivativeF_pointwise_le_derivativeSup
     (contDiff_liftVecOne hf).continuous_iteratedFDeriv le_rfl
   have hpointCont : Continuous fun y : Vec d ↦
       ‖iteratedFDeriv ℝ n (liftVecOne f) (WithLp.toLp 1 y)‖ₑ := by
-    exact (hderivCont.comp (by fun_prop)).enorm
+    exact (hderivCont.comp (by fun_prop)).eNorm
   have hclosed : IsClosed {y : Vec d |
       ‖iteratedFDeriv ℝ n (liftVecOne f) (WithLp.toLp 1 y)‖ₑ ≤ derivativeSup n f} :=
     isClosed_le hpointCont continuous_const
@@ -213,7 +213,7 @@ theorem Composition.liftVecOneEndo_deriv_norm_le {d m r : ℕ} [Nonempty (Fin d)
     (hg.of_le (by exact_mod_cast hr)) x
   have hTreal : ‖T‖ ≤ D := by
     have hT' : ENNReal.ofReal ‖T‖ ≤ derivativeSup r g := by
-      simpa [T, Real.enorm_eq_ofReal_abs] using hT
+      simpa [T, Real.eNorm_eq_ofReal_abs] using hT
     have hToReal := (ENNReal.ofReal_le_iff_le_toReal hDtop).mp hT'
     have hDreal := ENNReal.toReal_mono ENNReal.ofReal_ne_top hD
     rw [ENNReal.toReal_ofReal hDnonneg] at hDreal
@@ -252,7 +252,7 @@ theorem compositionDerivative_norm_le_of_snorm_le
     (hf.of_le (by exact_mod_cast hr)) x
   have hpoint' : ENNReal.ofReal
       ‖iteratedFDeriv ℝ r (liftVecOne f) (WithLp.toLp 1 x)‖ ≤ derivativeSup r f := by
-    simpa [Real.enorm_eq_ofReal_abs] using hpoint
+    simpa [Real.eNorm_eq_ofReal_abs] using hpoint
   have hreal := (ENNReal.ofReal_le_iff_le_toReal htop).mp hpoint'
   have hsupReal := ENNReal.toReal_mono ENNReal.ofReal_ne_top hsup
   rw [ENNReal.toReal_ofReal hDnonneg] at hsupReal
@@ -450,11 +450,11 @@ theorem compositionEstimate10528 {d m : ℕ} [Nonempty (Fin d)]
         PiLp.coe_continuousLinearEquiv] using hderiv
     have hOp : operatorDerivativeSup 0 (h ∘ g) ≤ ENNReal.ofReal C_h := by
       unfold operatorDerivativeSup
-      rw [eLpNormEssSup_eq_essSup_enorm]
+      rw [eLpNormEssSup_eq_essSup_eNorm]
       apply essSup_le_of_ae_le (ENNReal.ofReal C_h)
       filter_upwards with x
       have h := ENNReal.ofReal_le_ofReal (hpoint x)
-      simpa [Real.enorm_eq_ofReal_abs, norm_iteratedFDeriv_zero, liftVecOne,
+      simpa [Real.eNorm_eq_ofReal_abs, norm_iteratedFDeriv_zero, liftVecOne,
         vecOneEquiv, PiLp.coe_continuousLinearEquiv] using h
     have hderiv := (derivativeSup_le_operatorDerivativeSup (h ∘ g)).trans hOp
     apply snorm_le_of_derivativeSup_le (h ∘ g) hR
@@ -588,11 +588,11 @@ theorem compositionEstimate10528 {d m : ℕ} [Nonempty (Fin d)]
     have hBnonneg : 0 ≤ B := by dsimp [B]; positivity
     have hOp : operatorDerivativeSup n (h ∘ g) ≤ ENNReal.ofReal B := by
       unfold operatorDerivativeSup
-      rw [eLpNormEssSup_eq_essSup_enorm]
+      rw [eLpNormEssSup_eq_essSup_eNorm]
       apply essSup_le_of_ae_le (ENNReal.ofReal B)
       filter_upwards with x
       have h := ENNReal.ofReal_le_ofReal (hpt x)
-      simpa [Real.enorm_eq_ofReal_abs] using h
+      simpa [Real.eNorm_eq_ofReal_abs] using h
     have hderiv := (derivativeSup_le_operatorDerivativeSup (h ∘ g)).trans hOp
     let K : ℝ := C_h * R_g ^ n * n.factorial / (n + 1 : ℝ) ^ 2
     have hpow : X * (1 + X) ^ (n - 1) ≤ (1 + X) ^ n := by

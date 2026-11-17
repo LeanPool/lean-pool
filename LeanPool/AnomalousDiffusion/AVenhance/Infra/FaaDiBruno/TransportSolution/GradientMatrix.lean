@@ -132,7 +132,7 @@ theorem spatialGradientMatrix_derivativeSup_le
       derivativeSup_le_operatorDerivativeSup _
     _ ≤ derivativeSup (n + 1) f := by
       unfold operatorDerivativeSup
-      rw [eLpNormEssSup_eq_essSup_enorm]
+      rw [eLpNormEssSup_eq_essSup_eNorm]
       apply essSup_le_of_ae_le _ ?_
       filter_upwards [operatorDerivative_ae_le_derivativeSup (n := n + 1) f]
         with x hx

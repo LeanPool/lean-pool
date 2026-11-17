@@ -96,8 +96,8 @@ theorem measurePreserving_toUnitTorus_unitCube :
   have hcellCube : (volume : Measure (Vec 2)).restrict cell =
       (volume : Measure (Vec 2)).restrict AVenhance.unitCube := by
     exact le_antisymm
-      (Measure.restrict_mono_ae AVenhance.Infra.Torus.unitCell_ae_eq_unitCube.le)
-      (Measure.restrict_mono_ae AVenhance.Infra.Torus.unitCell_ae_eq_unitCube.ge)
+      (Measure.restrict_mono_ae AVenhance.Infra.Torus.unitCell_ae_eq_unitCube.subset)
+      (Measure.restrict_mono_ae AVenhance.Infra.Torus.unitCell_ae_eq_unitCube.symm.subset)
   refine ⟨ProductGradientRepresentative.measurable_toUnitTorus_frozen, ?_⟩
   rw [← hcellCube, hmapCell]
 

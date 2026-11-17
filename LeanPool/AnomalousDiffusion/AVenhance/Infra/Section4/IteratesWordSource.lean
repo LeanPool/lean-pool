@@ -45,7 +45,7 @@ theorem iterate_continuous_enorm_le_eLpNorm_top {f : Vec 2 → ℝ}
     ae_le_eLpNormEssSup.mono (fun _ h => h.trans eLpNormEssSup_le_eLpNorm_top)
   have hd := Measure.dense_of_ae hae
   have hc : IsClosed {y : Vec 2 | ‖f y‖ₑ ≤ eLpNorm f ⊤ volume} :=
-    isClosed_le hf.enorm continuous_const
+    isClosed_le hf.eNorm continuous_const
   have hs := hc.closure_subset
   rw [hd.closure_eq] at hs
   exact hs (Set.mem_univ x)
@@ -76,7 +76,7 @@ theorem iterate_word_abs_bound_of_barNorm {f : Vec 2 → ℝ} {R B : ℝ}
     exact pow_ne_zero _ (ENNReal.inv_ne_zero.mpr (by simp))
   have h := ENNReal.toReal_mono (ENNReal.div_ne_top (by simp) hden)
     (iterate_word_enorm_bound_of_barNorm hf hR w hbar x)
-  simpa only [toReal_enorm, Real.norm_eq_abs, ENNReal.toReal_div,
+  simpa only [toReal_eNorm, Real.norm_eq_abs, ENNReal.toReal_div,
     ENNReal.toReal_mul, ENNReal.toReal_pow, ENNReal.toReal_inv,
     ENNReal.toReal_ofReal hB, ENNReal.toReal_ofReal hcoef.le,
     ENNReal.toReal_ofReal hR.le] using h

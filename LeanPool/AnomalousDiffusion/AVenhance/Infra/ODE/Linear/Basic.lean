@@ -81,7 +81,7 @@ theorem IntervalIntegrable.absolutelyContinuousOnInterval_intervalIntegral_vecto
   filter_upwards [h_disj] with J hJ
   obtain ⟨hJ₁, hJ₂⟩ := mem_ofPred_eq ▸ hJ
   simp only [Function.comp_apply, s]
-  rw [← integral_norm_eq_lintegral_enorm
+  rw [← integral_norm_eq_lintegral_eNorm
       (hg.aestronglyMeasurable_restrict_uIoc.restrict),
     integral_biUnion_finset _ (by simp +contextual [uIoc]) hJ₂]
   · refine Finset.sum_le_sum (fun i hi => ?_)

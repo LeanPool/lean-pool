@@ -89,7 +89,7 @@ theorem flow_spatialFDeriv_contDiffOn_two_of_le
       (flow_spatial_contDiff_two hb hX s t).fderiv_right (by norm_num)
     have hAt : ContDiffAt ℝ 1
         (fun y : Vec 2 => fderiv ℝ (fun z => X t z s) y) x := hslice.contDiffAt
-    have hstrict := hAt.hasStrictFDerivAt (by norm_num)
+    have hstrict := hAt.hasStrictFDerivAt_fderiv (by norm_num)
     simpa [f, dparam, JointC3Forward.flowSpatialJacobianFixedStart,
       flowSecondSpatialDerivative] using hstrict
   have hflowC1 : ContDiff ℝ 1
@@ -128,7 +128,7 @@ theorem flow_spatialFDeriv_contDiffOn_two_of_le
           (flow_spatial_contDiff_two hb hX s t).fderiv_right (by norm_num)
         have hAt : ContDiffAt ℝ 1
             (fun y : Vec 2 => fderiv ℝ (fun z => X t z s) y) x := hslice.contDiffAt
-        have hstrict := hAt.hasStrictFDerivAt (by norm_num)
+        have hstrict := hAt.hasStrictFDerivAt_fderiv (by norm_num)
         simpa [f, dparam, JointC3Forward.flowSpatialJacobianFixedStart,
           flowSecondSpatialDerivative] using hstrict)
       hDtimeCont hHcont (t, x)
