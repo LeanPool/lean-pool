@@ -20,6 +20,7 @@ public import LeanPool.Chudnovsky.Kummer
 public import LeanPool.Chudnovsky.Lattices
 public import LeanPool.Chudnovsky.Liouville
 public import LeanPool.Chudnovsky.MainTheorem
+public import LeanPool.Chudnovsky.NumericalBounds
 public import LeanPool.Chudnovsky.Numerics
 public import LeanPool.Chudnovsky.Periodicity
 public import LeanPool.Chudnovsky.PicardFuchs

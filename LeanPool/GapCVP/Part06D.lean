@@ -2330,7 +2330,7 @@ private theorem fiveFamilySourceCellPositiveLiteralList_nodup
   intro first second hequal
   have hsymbol := congrArg
     (fun literal : SignedLiteral T S => literal.1.2.2) hequal
-  simpa only [positive] using hsymbol
+  exact hsymbol
 
 private theorem fiveFamilySourceCellPositiveLiteralList_pairwise
     {T S : ℕ} (time : Time T) (position : Position T) :
@@ -2391,7 +2391,7 @@ private theorem fiveFamilySourceAcceptancePositiveLiteralList_nodup
   intro first second hequal
   have hposition := congrArg
     (fun literal : SignedLiteral T S => literal.1.2.1) hequal
-  simpa only [positive] using hposition
+  exact hposition
 
 private theorem fiveFamilySourceAcceptancePositiveLiteralList_pairwise
     {T S : ℕ} (accept : Symbol S) :

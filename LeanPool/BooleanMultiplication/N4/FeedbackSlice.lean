@@ -49,10 +49,13 @@ theorem rationalTwo_singleton_zero :
 theorem targetTwo_zero_tangent (eps : F₂) :
     targetTwo (rationalTangentAt 0 eps) =
       eps • zeroPlaceTwo + zeroFirstJetTwo := by
-  rcases f2_eq_zero_or_one eps with rfl | rfl <;>
-    funext i j <;> fin_cases i <;> fin_cases j <;>
-    simp [rationalTangentAt, targetTwo, zeroPlaceTwo, zeroFirstJetTwo, vectorWedge, aLinear,
-      bLinear, aCoord, bCoord, Pi.basisFun]
+  have hcoeff : rationalTangentAt 0 eps = eps • targetBasis 0 + targetBasis 1 := by
+    funext i
+    fin_cases i <;> simp [rationalTangentAt, targetBasis, Pi.basisFun]
+  change targetTwoLinear (rationalTangentAt 0 eps) = _
+  rw [hcoeff, map_add, map_smul]
+  change eps • targetTwo (targetBasis 0) + targetTwo (targetBasis 1) = _
+  rw [targetTwo_basis_zero, targetTwo_basis_one]
 
 theorem targetANF_targetBasis_feedback (s : Fin 7) :
     targetANF (targetBasis s) = Mul 4 s := by

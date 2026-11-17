@@ -142,8 +142,8 @@ theorem exists_kernel_bound (hd : 0 < d) {p : ℝ} (hp : (d : ℝ) < p) :
   have ha_eq : s + (d : ℝ) = (p - (d : ℝ)) / (p - 1) := by
     rw [hs_def, hn, hqconj]; field_simp; ring
   have ha_pos : 0 < s + (d : ℝ) := by
-    rw [ha_eq]; exact div_pos (by linarith) hpm1
-  have hs_lb : -(d : ℝ) < s := by linarith [ha_pos]
+    rw [ha_eq]; exact div_pos (by linarith only [hp]) hpm1
+  have hs_lb : -(d : ℝ) < s := by linarith only [ha_pos]
   have haq : (s + (d : ℝ)) / q = 1 - (d : ℝ) / p := by
     rw [ha_eq, hqconj]; field_simp
   have hp_ne0 : ENNReal.ofReal p ≠ 0 := by rw [Ne, ENNReal.ofReal_eq_zero, not_le]; exact hp0
@@ -178,7 +178,7 @@ theorem exists_kernel_bound (hd : 0 < d) {p : ℝ} (hp : (d : ℝ) < p) :
       funext w
       simp only [Function.comp_apply, dist_eq_norm, show x - (x + w) = -w from by abel, norm_neg]]
     apply MeasureTheory.integrableOn_ball_of_norm_le_rpow (C := 1) (α := -s) hfrk
-    · rw [finrank_euclideanSpace_fin]; linarith [hs_lb]
+    · rw [finrank_euclideanSpace_fin]; linarith only [ha_pos, hs_lb]
     · filter_upwards with w
       rw [Real.norm_eq_abs, abs_of_nonneg (Real.rpow_nonneg (norm_nonneg _) _), neg_neg, one_mul]
     · exact (measurable_norm.pow measurable_const).aestronglyMeasurable
@@ -317,13 +317,13 @@ private theorem lens_volume_lower_bound (_hd : 0 < d) (c x x' : EuclideanSpace �
     calc ρ = dist x x' := hρ_def
       _ ≤ dist x c + dist c x' := dist_triangle x c x'
       _ = dist x c + dist x' c := by rw [dist_comm c x']
-      _ < 2 * r := by linarith
-  have hr2 : (0 : ℝ) < r - ρ / 2 := by linarith
+      _ < 2 * r := by linarith only [h1, h2]
+  have hr2 : (0 : ℝ) < r - ρ / 2 := by linarith only [hρ_lt]
   -- Choose an inscribed centre `q` with `dist q c ≤ r - ρ/2` and `dist q m ≤ ρ/2`.
   obtain ⟨q, hqc, hqm⟩ : ∃ q : EuclideanSpace ℝ (Fin d),
       dist q c ≤ r - ρ / 2 ∧ dist q m ≤ ρ / 2 := by
     by_cases hcase : dist m c ≤ r - ρ / 2
-    · exact ⟨m, hcase, by rw [dist_self]; linarith⟩
+    · exact ⟨m, hcase, by rw [dist_self]; linarith only [hρ_pos]⟩
     · replace hcase : r - ρ / 2 < dist m c := not_le.mp hcase
       have hDpos : 0 < dist m c := lt_trans hr2 hcase
       set lam := (r - ρ / 2) / dist m c with hlam
@@ -336,27 +336,28 @@ private theorem lens_volume_lower_bound (_hd : 0 < d) (c x x' : EuclideanSpace �
       · have heq : (c + lam • (m - c)) - m = (1 - lam) • (c - m) := by module
         have hval : dist (c + lam • (m - c)) m = dist m c - (r - ρ / 2) := by
           rw [dist_eq_norm, heq, norm_smul, Real.norm_eq_abs,
-            abs_of_nonneg (by linarith : (0:ℝ) ≤ 1 - lam), ← dist_eq_norm, dist_comm c m,
+            abs_of_nonneg (by linarith only [hlam_lt] : (0:ℝ) ≤ 1 - lam), ← dist_eq_norm, dist_comm
+              c m,
             sub_mul, one_mul, hlam, div_eq_mul_inv, mul_assoc,
             inv_mul_cancel₀ (ne_of_gt hDpos), mul_one]
-        rw [hval]; linarith
+        rw [hval]; linarith only [hmc]
   -- The inscribed ball lies inside all three balls.
   have hsub : ball q (ρ / 4) ⊆ ball x (2 * ρ) ∩ ball x' (2 * ρ) ∩ ball c r := by
     refine subset_inter (subset_inter ?_ ?_) ?_
     · refine ball_subset_ball' ?_
       have hqx : dist q x ≤ ρ := by
         calc dist q x ≤ dist q m + dist m x := dist_triangle q m x
-          _ ≤ ρ / 2 + ρ / 2 := by rw [hdmx]; linarith
+          _ ≤ ρ / 2 + ρ / 2 := by rw [hdmx]; linarith only [hqm]
           _ = ρ := by ring
-      linarith
+      linarith only [hρ_pos, hqx]
     · refine ball_subset_ball' ?_
       have hqx' : dist q x' ≤ ρ := by
         calc dist q x' ≤ dist q m + dist m x' := dist_triangle q m x'
-          _ ≤ ρ / 2 + ρ / 2 := by rw [hdmx']; linarith
+          _ ≤ ρ / 2 + ρ / 2 := by rw [hdmx']; linarith only [hqm]
           _ = ρ := by ring
-      linarith
+      linarith only [hρ_pos, hqx']
     · refine ball_subset_ball' ?_
-      linarith
+      linarith only [hρ_pos, hqc]
   -- Compare volumes.
   have hWtop : volume (ball x (2 * ρ) ∩ ball x' (2 * ρ) ∩ ball c r) ≠ ⊤ :=
     ne_top_of_le_ne_top measure_ball_lt_top.ne (measure_mono (fun z hz => hz.2))
@@ -465,10 +466,11 @@ theorem exists_holder_smooth (hd : 0 < d) {p : ℝ} (hp : (d : ℝ) < p) :
     have hxW : x ∈ W :=
       Set.mem_inter
         (Set.mem_inter (mem_ball_self h2ρ)
-          (mem_ball.mpr (by linarith : dist x x' < 2 * dist x x'))) hx
+          (mem_ball.mpr (by linarith only [hρpos] : dist x x' < 2 * dist x x'))) hx
     have hx'W : x' ∈ W :=
       Set.mem_inter
-        (Set.mem_inter (mem_ball.mpr (by rw [dist_comm]; linarith : dist x' x < 2 * dist x x'))
+        (Set.mem_inter (mem_ball.mpr (by rw [dist_comm]; linarith only [hρpos] : dist x' x < 2 *
+          dist x x'))
           (mem_ball_self h2ρ)) hx'
     have hbx := hkey x hx hxW (fun z hz => hz.1.1)
     have hbx' := hkey x' hx' hx'W (fun z hz => hz.1.2)
@@ -757,7 +759,7 @@ private theorem exists_holderOnWith_of_ae_tendsto
     calc dist (U m x) (U n x)
         ≤ dist (U m x) (U m p) + dist (U m p) (U n p) + dist (U n p) (U n x) :=
           dist_triangle4 _ _ _ _
-      _ < ε := by linarith
+      _ < ε := by linarith only [hpf, e1, e2, e3]
   -- The pointwise limit and its defining tendsto.
   set u' : EuclideanSpace ℝ (Fin d) → ℝ := fun x => Filter.limUnder Filter.atTop (fun n => U n x)
     with hu'_def
@@ -909,7 +911,7 @@ theorem morrey_ball (hd : 0 < d) {p : ℝ} (hp : (d : ℝ) < p)
         calc dist w c ≤ dist w z + dist z c := dist_triangle _ _ _
           _ ≤ (φ n).rOut + dist z c := by gcongr
           _ < (φ n).rOut + r' := by gcongr
-          _ ≤ r := by linarith
+          _ ≤ r := by linarith only [hcond]
       exact partialD_convolution_eq_of_hasWeakGradOn measurableSet_ball hu hweak (φ n) k hzsub
     have hcongr : ∀ k, (fun y => partialD k (U n) y) =ᵐ[volume.restrict (Metric.ball c r')]
         (fun y => ((Metric.ball c r).indicator (g k) ⋆[L, volume] (φ n).normed volume) y) :=
@@ -965,17 +967,17 @@ theorem morrey_ball (hd : 0 < d) {p : ℝ} (hp : (d : ℝ) < p)
     have ha_lt : a < r := max_lt hxc hyc
     set r' : ℝ := (a + r) / 2 with hr'_def
     have h2r' : 2 * r' = a + r := by rw [hr'_def]; ring
-    have hr'pos : 0 < r' := by linarith
-    have har' : a < r' := by linarith
+    have hr'pos : 0 < r' := by linarith only [hr, ha_nonneg, hr'_def]
+    have har' : a < r' := by linarith only [ha_lt, hr'_def]
     have hxr' : x ∈ Metric.ball c r' :=
       Metric.mem_ball.mpr (lt_of_le_of_lt (le_max_left _ _) har')
     have hyr' : y ∈ Metric.ball c r' :=
       Metric.mem_ball.mpr (lt_of_le_of_lt (le_max_right _ _) har')
     have hev : ∀ᶠ n in Filter.atTop, r' + (φ n).rOut ≤ r := by
-      have hpos : (0 : ℝ) < r - r' := by linarith
+      have hpos : (0 : ℝ) < r - r' := by linarith only [ha_lt, hr'_def]
       filter_upwards [hφrOut.eventually (Iio_mem_nhds hpos)] with n hn
       have hn' : (φ n).rOut < r - r' := hn
-      linarith
+      linarith only [hn]
     filter_upwards [hev] with n hn
     exact (key r' hr'pos n hn).edist_le hxr' hyr'
   obtain ⟨u', hu'H, hu'ae⟩ :=

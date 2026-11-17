@@ -7,8 +7,6 @@ module
 
 public import LeanPool.Erdos132ConvexK3.CoordinatedMajorants
 import LeanPool.Erdos132ConvexK3.Geometry
-import Mathlib.Algebra.Order.Algebra
-import Mathlib.Data.EReal.Inv
 
 /-!
 # The ErLV reduction at its actual use site

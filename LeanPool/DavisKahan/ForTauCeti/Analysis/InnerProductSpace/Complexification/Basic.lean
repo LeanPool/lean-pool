@@ -24,9 +24,9 @@ Authors: Jon Crall, GPT-5.6 Thinking
 module
 
 public import Mathlib.Algebra.Module.MinimalAxioms
-public import Mathlib.Analysis.InnerProductSpace.ProdL2
+import Mathlib.Analysis.InnerProductSpace.ProdL2
 public import Mathlib.Analysis.InnerProductSpace.Adjoint
-public import Mathlib.Analysis.Normed.Operator.Banach
+import Mathlib.Analysis.Normed.Operator.Banach
 
 /-!
 # Complexification of real Hilbert spaces
@@ -443,7 +443,7 @@ theorem norm_complexify [NormedAddCommGroup E] [InnerProductSpace ℝ E]
           (T.le_opNorm _)
       change ‖T (re z)‖ ^ 2 + ‖T (im z)‖ ^ 2 ≤
         ‖T‖ ^ 2 * (‖re z‖ ^ 2 + ‖im z‖ ^ 2)
-      nlinarith
+      nlinarith only [hre, him]
   · refine ContinuousLinearMap.opNorm_le_bound _ (norm_nonneg _) fun x => ?_
     simpa using (complexify T).le_opNorm (ofReal x)
 
@@ -498,7 +498,7 @@ deleted the remaining copies and made this one public, which is the state descri
 theorem norm_re_le [NormedAddCommGroup E] (z : RealComplexification E) :
     ‖re z‖ ≤ ‖z‖ := by
   have h := norm_sq z
-  nlinarith [norm_nonneg (re z), norm_nonneg (im z), norm_nonneg z]
+  nlinarith only [h, norm_nonneg (re z), norm_nonneg (im z), norm_nonneg z]
 
 /-- **Restrict a complex operator to the real copy and take its real
 coordinate.**  No invariance assumption is needed to define this: the map is

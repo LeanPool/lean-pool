@@ -307,7 +307,7 @@ theorem nonneg_of_lyapunov_nonneg {X G : H →L[ℂ] H}
         have h2 : RCLike.re ⟪P v, v⟫_ℂ ≤ ‖P v‖ * ‖v‖ := by
           calc RCLike.re ⟪P v, v⟫_ℂ ≤ ‖⟪P v, v⟫_ℂ‖ := RCLike.re_le_norm _
             _ ≤ ‖P v‖ * ‖v‖ := norm_inner_le_norm _ _
-        nlinarith [norm_nonneg (P v), norm_nonneg v]
+        nlinarith only [h1, h2, norm_nonneg (P v), norm_nonneg v]
       have hb := hPbound v
       have hA : RCLike.re ⟪A v, v⟫_ℂ
           = ‖v‖ ^ 2 - ‖P v‖ ^ 2 - RCLike.re ⟪X (P v), P v⟫_ℂ := by
@@ -315,16 +315,16 @@ theorem nonneg_of_lyapunov_nonneg {X G : H →L[ℂ] H}
         simp only [sub_apply, inner_sub_left, map_sub]
         rw [show ((1 : H →L[ℂ] H)) v = v from rfl, hXPv, hPv, hself, hvv]
       have hnormsq : ‖P v‖ ^ 2 ≤ ‖v‖ ^ 2 := by
-        nlinarith [hnorm, norm_nonneg (P v), norm_nonneg v]
+        nlinarith only [hnorm, hnorm, norm_nonneg (P v), norm_nonneg v]
       rw [hA]
-      nlinarith [hb, hnormsq, hβ, hβ1]
+      nlinarith only [hβ1, hb, hnormsq, hb, hnormsq, hβ, hβ1]
     have hAunit : IsUnit A :=
       TauCeti.ContinuousLinearMap.isUnit_of_coercive (by positivity) hAcoer
     have hAnonneg : (0 : H →L[ℂ] H) ≤ A := by
       rw [_root_.ContinuousLinearMap.nonneg_iff_isPositive]
       refine ⟨_root_.ContinuousLinearMap.isSelfAdjoint_iff_isSymmetric.mp hAsa, fun v => ?_⟩
       rw [_root_.ContinuousLinearMap.reApplyInnerSelf_apply]
-      nlinarith [hAcoer v, norm_nonneg v, hβ]
+      nlinarith only [hβ, hAcoer, hAcoer v, norm_nonneg v, hβ]
     -- the compression of `G`
     set K : H →L[ℂ] H := P * G * P with hKdef
     have hKform : ∀ v : H, ⟪K v, v⟫_ℂ = ⟪G (P v), P v⟫_ℂ := by

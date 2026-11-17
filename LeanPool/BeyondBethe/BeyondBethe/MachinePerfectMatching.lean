@@ -7,7 +7,6 @@ module
 
 
 public import LeanPool.BeyondBethe.BeyondBethe.MachineMateAllSome
-public import Mathlib.Tactic
 
 /-!
 # A finite-word perfect-matching decision procedure

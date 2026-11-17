@@ -335,7 +335,7 @@ theorem ae_map_add_smul_secondOrderDifferentiableAt
   have hadd : MeasurableEmbedding (fun z : E => a + z) :=
     measurableEmbedding_addLeft a
   have haffine : MeasurableEmbedding (fun z : E => a + r • z) := by
-    simpa [Function.comp_def] using hadd.comp hsmul
+    exact hadd.comp hsmul
   rw [haffine.ae_map_iff]
   exact h.mono fun z hz => SecondOrderDifferentiableAt.of_comp_add_smul hr hz
 
@@ -441,7 +441,7 @@ theorem SourceAffineCompactCubeCoverIndex.ae_volume_restrict_image_secondOrderDi
     ∀ᵐ x ∂((volume : Measure (SourceCubeSpace n)).restrict
         (sourceAffineCubeImage n i.1.1 i.1.2 1)),
       SecondOrderDifferentiableAt u x := by
-  simpa [sourceAffineCubeImage] using
+  exact
     ae_volume_restrict_affineImage_sourceOpenCube_secondOrderDifferentiableAt
       (n := n) hn (u := u) (a := i.1.1) (r := i.1.2) (ne_of_gt i.2.1)
       (i.boundedOn_pullback_sourceOpenCube_three hΩ hu)

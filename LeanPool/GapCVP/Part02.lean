@@ -464,7 +464,7 @@ private theorem canonicalAnchoredVerifierWindow_allowed_iff
     have hbranch :
         AnchoredVerificationAllowed machine window ∨
           AnchoredAcceptanceAllowed machine window := by
-      simpa only [hmode] using hallowed'.2
+      exact hallowed'.2
     rcases hbranch with hverification | hacceptance
     · have hverification' := hverification
       simp only [AnchoredVerificationAllowed, CompleteVerificationAllowed,
@@ -1960,7 +1960,7 @@ private theorem initializedPhaseBlock_decodableOrBlank
       ((initializedPhaseBlock machine old payload range
         offset).2.2.1 stack) := by
   by_cases hrange : range offset = true
-  · have hrangeBool : range offset := by simpa only using hrange
+  · have hrangeBool : range offset := by exact hrange
     simp only [initializedPhaseBlock, hrangeBool, ↓reduceIte]
     exact initialPairedAtom_decodableOrBlank machine stack (payload offset)
   · have hfalse := Bool.eq_false_of_not_eq_true hrange
@@ -3477,7 +3477,7 @@ private theorem finiteHeadScriptRun_eq_fullPacked
     (fun stack => decodedFullPackedPhaseStack
       machine width row stack)
     finite.stk (emptyPrefixScript machine.tm.Γ)
-    (by simpa only [scriptStacks_empty] using hlookahead)
+    (by exact hlookahead)
   change
     executePrefixScript (machine.tm.m label) state finite.stk
       (emptyPrefixScript machine.tm.Γ) =
@@ -3799,8 +3799,8 @@ private theorem allCorrectedVerifierWindows_controls
               CLLocalWindows.leftBlock_zero, hfirst, hnext, reduceCtorEq, window] at hquery
       | some nextControl =>
           refine ⟨firstControl, nextControl, ?_, ?_⟩
-          · simpa only [completeMachineHead] using hfirst
-          · simpa only [completeMachineHead] using hnext
+          · exact hfirst
+          · exact hnext
 
 private theorem decodedFullPackedPhaseConfiguration_stack
     {verifier : List Bool × List Bool → Bool}
@@ -5451,7 +5451,7 @@ private theorem allInitializationWindows_initialControl
       (first 0).rangeHead
         (⟨0, blockSize_pos machine.tm⟩ :
           Fin (blockSize machine.tm)) = true := by
-    simpa only [firstPhaseOffset] using hrange
+    exact hrange
   have hlabel :
       (initializedPhaseBlock machine
         (completeMachineHead machine.tm (first 0))
@@ -5879,11 +5879,11 @@ private theorem evalsTo_prefix_steps_le_terminal
     omega
   have hhaltRun :
       (advance^[halting.steps]) (some initial) = some terminal := by
-    simpa only [advance] using halting.evals_in_steps
+    exact halting.evals_in_steps
   have hprefixRun :
       (advance^[partialRun.steps]) (some initial) =
         some configuration := by
-    simpa only [advance] using partialRun.evals_in_steps
+    exact partialRun.evals_in_steps
   have hremaining :
       (advance^[extra]) (some terminal) = some configuration := by
     calc
@@ -6677,7 +6677,7 @@ private theorem canonicalAnchoredVerifyingRow_blockAtom_decode
   rw [stackAtomsOfBlock_pack_canonical machine
     (rowWidth bound machine x) certificate configuration
     hsupported hspace position stack]
-  simpa only [atomBlockAt] using
+  exact
       paddedAtom_decode machine stack
         (canonicalStackAtoms_forall₂ machine stack (configuration.stk stack)
           (stackAtomSupported_supportedValues machine configuration hsupported stack))

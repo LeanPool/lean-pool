@@ -5,11 +5,12 @@ Authors: Jon Crall, OpenAI GPT-5.6 Sol
 -/
 module
 
-
 public import LeanPool.DavisKahan.DavisKahan.Specialized.FreeBeam.BeamClassicalReal
 public import LeanPool.DavisKahan.ForTauCeti.Analysis.InnerProductSpace.CompactSelfAdjointClassification
 public import Mathlib.Analysis.Normed.Operator.Compact.FredholmAlternative
-public import Mathlib.Tactic
+import Mathlib.Tactic.Abel -- shake: keep
+import Mathlib.Tactic.Linarith -- shake: keep
+import Mathlib.Tactic.Ring -- shake: keep
 
 /-!
 # Spectrum of the real free-beam realization

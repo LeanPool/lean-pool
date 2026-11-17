@@ -137,7 +137,8 @@ theorem orderOfVanishingAt'_ne_zero_of_eq_zero (hf : f ≠ 0) (p : ℍ) (hp : f 
   have h_analOn : AnalyticOnNhd ℂ (fun w : ℂ => if h : 0 < w.im then f ⟨w, h⟩ else 0)
       {w | 0 < w.im} := fun w hw => G_analyticAt f ⟨w, hw⟩
   have h_preconn : IsPreconnected {w : ℂ | 0 < w.im} :=
-    ((convex_halfSpace_im_gt 0).isConnected ⟨I, by simp [I_im]⟩).isPreconnected
+    ((convex_halfSpace_im_gt 0).isConnected ⟨I, by simp only [mem_ofPred_eq, I_im,
+      zero_lt_one]⟩).isPreconnected
   apply hf; ext z
   change f z = 0
   exact (G_eval_eq_f f z).symm.trans
@@ -146,7 +147,8 @@ theorem orderOfVanishingAt'_ne_zero_of_eq_zero (hf : f ≠ 0) (p : ℍ) (hp : f 
 
 private theorem modularFormCompOfComplex_eq' (p : ℍ) :
     modularFormCompOfComplex f (p : ℂ) = f p := by
-  simp [modularFormCompOfComplex, UpperHalfPlane.ofComplex_apply_of_im_pos p.im_pos]
+  simp only [modularFormCompOfComplex, Function.comp_apply,
+    UpperHalfPlane.ofComplex_apply_of_im_pos p.im_pos]
 
 theorem fd_im_gt_half (p : ℍ) (hp : p ∈ 𝒟) : (1 : ℝ)/2 < (p : ℂ).im := by
   by_contra h_le; push Not at h_le
@@ -168,7 +170,7 @@ private theorem no_zeros_above_height' (hf : f ≠ 0) :
   obtain ⟨H₀, hH₀_gt, hH₀_nonvan⟩ := exists_height_cusp_nonvanishing f hf
   refine ⟨H₀, hH₀_gt, fun p hp hfp => ?_⟩
   have h_eq := SlashInvariantFormClass.eq_cuspFunction f p
-      (by simp) one_ne_zero
+      (by simp only [strictPeriods_Gamma, Nat.cast_one, AddSubgroup.mem_zmultiples]) one_ne_zero
   have h_qParam_mem : Function.Periodic.qParam (1 : ℝ) (↑p : ℂ) ∈
       Metric.closedBall (0 : ℂ) (Real.exp (-2 * Real.pi * H₀)) := by
     rw [Metric.mem_closedBall, dist_zero_right, Function.Periodic.norm_qParam]
@@ -201,7 +203,7 @@ theorem finite_zeros_in_fd (hf : f ≠ 0) :
   · simp only [fdBox, Set.mem_ofPred_eq]
     refine ⟨by linarith [hre_bridge], by linarith [hre_bridge], him_gt, ?_⟩
     by_contra h_ge; push Not at h_ge
-    have : H₀ ≤ (↑p : ℂ).im := by linarith
+    have : H₀ ≤ (↑p : ℂ).im := by linarith only [h_ge]
     exact absurd hp_zero (hH₀_no_zeros p this)
   · exact (modularFormCompOfComplex_eq' f p).symm ▸ hp_zero
 
@@ -248,6 +250,7 @@ theorem orb_rho_plus_one_eq_orb_rho :
   rw [Quotient.eq'', MulAction.orbitRel_apply, MulAction.mem_orbit_iff]
   exact ⟨ModularGroup.T, by
     rw [UpperHalfPlane.modular_T_smul]; ext
-    simp [ellipticPointRho', ellipticPointRhoPlusOne', UpperHalfPlane.coe_vadd]; ring⟩
+    simp only [ellipticPointRho', UpperHalfPlane.coe_vadd, ofReal_one, ellipticPointRhoPlusOne',
+      one_div]; ring⟩
 
 end

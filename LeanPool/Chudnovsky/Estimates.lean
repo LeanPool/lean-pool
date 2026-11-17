@@ -84,9 +84,9 @@ lemma mul_Jtilde_eq (τ : ℍ) :
       (1 + 240 * (q τ + 9 * q τ ^ 2)) ^ 3 / (q τ * (1 - q τ - q τ ^ 2) ^ 24) := by
   simp only [Jtilde]
   rw [show (1728 : ℂ) * q τ * (1 - q τ - q τ ^ 2) ^ 24
-        = 1728 * (q τ * (1 - q τ - q τ ^ 2) ^ 24) by ring,
+        = 1728 * (q τ * (1 - q τ - q τ ^ 2) ^ 24) by ac_rfl,
     ← div_div, mul_div_assoc', mul_div_assoc',
-    mul_div_cancel_left₀ _ (by norm_num : (1728 : ℂ) ≠ 0)]
+    mul_div_cancel_left₀ _ (by norm_num1 : (1728 : ℂ) ≠ 0)]
 
 /-- The approximation `stilde₂` of Ramanujan's `s₂` from Theorem `theonaehers2` of the paper:
 `stilde₂(τ) = (1 + 240(q + 9q²))/(1 - 504(q + 33q²)) · (1 - 24(q + 3q²) - 3/(π·Im τ))`. -/
@@ -118,7 +118,7 @@ lemma norm_q_lt_of_mem_Region {τ : ℍ} (hτ : τ ∈ Region) :
   rw [norm_q, Real.exp_lt_exp, neg_lt_neg_iff]
   have hπ : (3.1408 : ℝ) < π := by linarith [Real.pi_gt_d4]
   have him : (5 / 4 : ℝ) < τ.im := hτ
-  nlinarith [mul_pos (sub_pos.2 hπ) (sub_pos.2 him)]
+  linarith [mul_pos (sub_pos.2 hπ) (sub_pos.2 him)]
 
 /-! ### `q`-expansions of the Eisenstein series (paper Prop. `sigmaeisen`)
 
@@ -157,11 +157,11 @@ lemma E₄_eq_tsum (τ : ℍ) :
 /-- Paper Prop. `sigmaeisen`: `E₆(τ) = 1 - 504·∑_{n≥1} σ₅(n)·qⁿ`. -/
 lemma E₆_eq_tsum (τ : ℍ) :
     E₆ τ = 1 - 504 * ∑' n : ℕ, (ArithmeticFunction.sigma 5 (n + 1) : ℂ) * q τ ^ (n + 1) := by
-  have h := EisensteinSeries.q_expansion_bernoulli (k := 6) (by norm_num) (by decide) τ
+  have h := EisensteinSeries.q_expansion_bernoulli (k := 6) (by norm_num only) (by decide) τ
   rw [show bernoulli 6 = 1 / 42 by as_aux_lemma => exact bernoulli_six_value, ← q_eq] at h
   simp only [zpow_natCast] at h
   rw [tsum_pnat_eq_tsum_succ (f := fun n ↦ (ArithmeticFunction.sigma 5 n : ℂ) * q τ ^ n)] at h
-  rw [h]; norm_num
+  rw [h]; norm_num only
 
 /-- Paper Prop. `sigmaeisen`: `E₂(τ) = 1 - 24·∑_{n≥1} σ₁(n)·qⁿ`. -/
 lemma E2_eq_tsum (τ : ℍ) :
@@ -313,14 +313,14 @@ theorem norm_eisensteinTail_sigma₁ {τ : ℍ} (hτ : τ ∈ Region) :
   set Q := ‖q τ‖ with hQdef
   have hQpos : 0 < Q := norm_q_pos τ
   have hQ : Q < 0.000389 := lt_trans (norm_q_lt_of_mem_Region hτ) exp_neg_bound
-  have hs : (1 + 1 / (4 : ℝ)) ^ (1 + 1) * Q < 1 := by norm_num; linarith
-  have htail := norm_eisensteinTail_le 1 4 (by norm_num) τ hs
-  norm_num at htail
+  have hs : (1 + 1 / (4 : ℝ)) ^ (1 + 1) * Q < 1 := by norm_num1; linarith
+  have htail := norm_eisensteinTail_le 1 4 (by norm_num1) τ hs
+  norm_num1 at htail
   rw [eisensteinTail_succ 1 3 τ]
   refine le_trans (norm_add_le _ _) ?_
   rw [norm_mul, norm_pow, Complex.norm_natCast,
     show (ArithmeticFunction.sigma 1 3 : ℕ) = 4 from by decide]
-  have hD : (0 : ℝ) < 1 - 25 / 16 * Q := by linarith
+  have hD : (0 : ℝ) < 1 - 25 / 16 * Q := by linarith only [hQ]
   have hdiv : 16 * Q ^ 4 / (1 - 25 / 16 * Q) ≤ 0.007 * Q ^ 3 := by
     rw [div_le_iff₀ hD]; linarith [pow_succ_le_of_lt 3 hQpos hQ, pow_pos hQpos 3]
   push_cast
@@ -332,14 +332,14 @@ theorem norm_eisensteinTail_sigma₃ {τ : ℍ} (hτ : τ ∈ Region) :
   set Q := ‖q τ‖ with hQdef
   have hQpos : 0 < Q := norm_q_pos τ
   have hQ : Q < 0.000389 := lt_trans (norm_q_lt_of_mem_Region hτ) exp_neg_bound
-  have hs : (1 + 1 / (4 : ℝ)) ^ (3 + 1) * Q < 1 := by norm_num; linarith
-  have htail := norm_eisensteinTail_le 3 4 (by norm_num) τ hs
-  norm_num at htail
+  have hs : (1 + 1 / (4 : ℝ)) ^ (3 + 1) * Q < 1 := by norm_num1; linarith
+  have htail := norm_eisensteinTail_le 3 4 (by norm_num1) τ hs
+  norm_num1 at htail
   rw [eisensteinTail_succ 3 3 τ]
   refine le_trans (norm_add_le _ _) ?_
   rw [norm_mul, norm_pow, Complex.norm_natCast,
     show (ArithmeticFunction.sigma 3 3 : ℕ) = 28 from by decide]
-  have hD : (0 : ℝ) < 1 - 625 / 256 * Q := by linarith
+  have hD : (0 : ℝ) < 1 - 625 / 256 * Q := by linarith only [hQ]
   have hdiv : 256 * Q ^ 4 / (1 - 625 / 256 * Q) ≤ 0.1 * Q ^ 3 := by
     rw [div_le_iff₀ hD]; linarith [pow_succ_le_of_lt 3 hQpos hQ, pow_pos hQpos 3]
   push_cast
@@ -351,14 +351,14 @@ theorem norm_eisensteinTail_sigma₅ {τ : ℍ} (hτ : τ ∈ Region) :
   set Q := ‖q τ‖ with hQdef
   have hQpos : 0 < Q := norm_q_pos τ
   have hQ : Q < 0.000389 := lt_trans (norm_q_lt_of_mem_Region hτ) exp_neg_bound
-  have hs : (1 + 1 / (4 : ℝ)) ^ (5 + 1) * Q < 1 := by norm_num; linarith
-  have htail := norm_eisensteinTail_le 5 4 (by norm_num) τ hs
-  norm_num at htail
+  have hs : (1 + 1 / (4 : ℝ)) ^ (5 + 1) * Q < 1 := by norm_num1; linarith
+  have htail := norm_eisensteinTail_le 5 4 (by norm_num1) τ hs
+  norm_num1 at htail
   rw [eisensteinTail_succ 5 3 τ]
   refine le_trans (norm_add_le _ _) ?_
   rw [norm_mul, norm_pow, Complex.norm_natCast,
     show (ArithmeticFunction.sigma 5 3 : ℕ) = 244 from by decide]
-  have hD : (0 : ℝ) < 1 - 15625 / 4096 * Q := by linarith
+  have hD : (0 : ℝ) < 1 - 15625 / 4096 * Q := by linarith only [hQ]
   have hdiv : 4096 * Q ^ 4 / (1 - 15625 / 4096 * Q) ≤ 1.6 * Q ^ 3 := by
     rw [div_le_iff₀ hD]; linarith [pow_succ_le_of_lt 3 hQpos hQ, pow_pos hQpos 3]
   push_cast
@@ -675,7 +675,7 @@ lemma horner_norm_bound (p : ℂ) {ρ : ℝ} (hp : ‖p‖ ≤ ρ) (hρ : 0 ≤ 
         ≤ l.foldr (fun (a : ℤ) (acc : ℝ) => |(a : ℝ)| + ρ * acc) 0 := by
   intro l
   induction l with
-  | nil => simp
+  | nil => simp only [List.foldr_nil, norm_zero, Std.le_refl]
   | cons a t ih =>
     rw [List.foldr_cons, List.foldr_cons]
     refine (norm_add_le _ _).trans ?_
@@ -880,7 +880,7 @@ theorem theonaeherJ_approx {τ : ℍ} (hτ : τ ∈ Region) :
   have heq : 1728 * J τ - 1728 * Jtilde τ
       = (1728 * q τ * J τ - 1728 * q τ * Jtilde τ) / q τ := by rw [eq_div_iff hq]; ring
   rw [heq, norm_div, div_lt_iff₀ hQpos]
-  nlinarith [lem3 hτ, pow_pos hQpos 2, hQpos]
+  linarith [lem3 hτ, pow_pos hQpos 2, hQpos]
 
 /-- Paper Theorem `theonaeherJ`, headline approximation bound:
 `|1728·J(τ) - 1728·Jtilde(τ)| < 0.2` for `Im τ > 5/4`. -/

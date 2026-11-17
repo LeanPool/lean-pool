@@ -5,6 +5,9 @@ Authors: Jon Crall, GPT 5.6 High
 -/
 module
 
+import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
+import Mathlib.MeasureTheory.Integral.Prod
+
 public import LeanPool.DavisKahan.ForTauCeti.Analysis.Fourier.HaagerupZsido.Defs
 public import LeanPool.DavisKahan.ForTauCeti.Analysis.SpecialFunctions.Integral.SineLaplace
 
@@ -47,7 +50,7 @@ private theorem weight_mul_exp_ratio {y : ℝ} (hy : 0 < y) :
     weight y * ((1 + Real.exp (-Real.pi * y)) /
       (1 - Real.exp (-Real.pi * y))) = 1 := by
   have hq1 : Real.exp (-(Real.pi * y)) < 1 :=
-    Real.exp_lt_one_iff.mpr (by nlinarith [Real.pi_pos])
+    Real.exp_lt_one_iff.mpr (by nlinarith only [hy, Real.pi_pos])
   have hne : 1 - Real.exp (-(Real.pi * y)) ≠ 0 := by linarith
   have hpos : (0 : ℝ) < 1 + Real.exp (-(Real.pi * y)) := by positivity
   rw [weight_eq_exp_quotient, show -Real.pi * y = -(Real.pi * y) by ring]
@@ -75,7 +78,7 @@ theorem integrable_kernel_prod :
     filter_upwards [ae_restrict_mem measurableSet_Ioi] with y hy
     have hy0 : (0 : ℝ) < y := hy
     have hq1 : Real.exp (-Real.pi * y) < 1 :=
-      Real.exp_lt_one_iff.mpr (by nlinarith [Real.pi_pos])
+      Real.exp_lt_one_iff.mpr (by nlinarith only [hy0, Real.pi_pos])
     have hne : 1 - Real.exp (-Real.pi * y) ≠ 0 := by linarith
     have hy2 : (1 : ℝ) + y ^ 2 ≠ 0 := by positivity
     calc
@@ -110,7 +113,7 @@ private theorem integral_abs_sin_mul_weightLaplaceTransform :
         intro y hy
         have hy0 : (0 : ℝ) < y := hy
         have hq1 : Real.exp (-Real.pi * y) < 1 :=
-          Real.exp_lt_one_iff.mpr (by nlinarith [Real.pi_pos])
+          Real.exp_lt_one_iff.mpr (by nlinarith only [hy0, Real.pi_pos])
         have hne : 1 - Real.exp (-Real.pi * y) ≠ 0 := by linarith
         have hy2 : (1 : ℝ) + y ^ 2 ≠ 0 := by positivity
         dsimp only
@@ -177,7 +180,7 @@ private theorem integrable_realKernel : Integrable realKernel := by
   rw [Real.norm_eq_abs, abs_realKernel]
   have h1 := weightLaplaceTransform_nonneg t
   have h2 := abs_nonneg (Real.sin t)
-  nlinarith
+  nlinarith only [h1, h2]
 
 /-- The reciprocal kernel is integrable. -/
 theorem integrable_reciprocalKernel : Integrable reciprocalKernel := by

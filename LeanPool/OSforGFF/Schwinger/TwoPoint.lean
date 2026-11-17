@@ -155,7 +155,7 @@ theorem smearedTwoPoint_tendsto_schwingerTwoPoint
     (bumpToSchwartz (φ i)) =
       ∫ u, ∫ v, (translateSchwartz (bumpToSchwartz (φ i)) x) u * C (u - v) * (bumpToSchwartz (φ i))
         v := by
-    simp_all
+    simp_all only [ne_eq, bumpToSchwartz_apply, implies_true]
   simp_rw [h_eq]
   -- bumpToSchwartz produces the normed bump, so we can directly apply double_mollifier_convergence
   -- translateSchwartz is SchwartzMap.translate, which shifts by x

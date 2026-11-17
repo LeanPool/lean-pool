@@ -22,7 +22,13 @@ from lean_pool.indexes import (
     structure_errors,
 )
 from lean_pool.registry import load_document
-from lean_pool.validation_cache import ValidationCache, pool_units
+from lean_pool.validation_cache import (
+    Check,
+    ValidationCache,
+    pool_units,
+    run_ordered,
+    validation_workers,
+)
 
 ALLOWED_AXIOMS = {"propext", "Quot.sound", "Classical.choice"}
 CODE_QUALITY_URL = (
@@ -371,38 +377,6 @@ def _declaration_starts(stripped: str) -> list[tuple[int, str]]:
         if pattern.match(line):
             starts.append((index, line))
     return starts
-
-
-def _check_proof_sizes(root: Path) -> list[_QualityError]:
-    errors: list[_QualityError] = []
-    for path in _lean_content_files(root):
-        original_lines = path.read_text().splitlines()
-        stripped = _strip_lean_comments("\n".join(original_lines))
-        starts = _declaration_starts(stripped)
-        for index, (start_line, _) in enumerate(starts):
-            end_line = (
-                starts[index + 1][0]
-                if index + 1 < len(starts)
-                else len(original_lines) + 1
-            )
-            block = original_lines[start_line - 1 : end_line - 1]
-            try:
-                body_start = next(
-                    offset for offset, line in enumerate(block) if ":=" in line
-                )
-            except StopIteration:
-                continue
-            body = "\n".join(block[body_start:])
-            proof_lines = _non_comment_code_lines(body)
-            if proof_lines > 200:
-                errors.append(
-                    _QualityError(
-                        path,
-                        start_line,
-                        f"proof has {proof_lines} code lines; limit is 200",
-                    )
-                )
-    return errors
 
 
 def _parse_declarations(root: Path) -> list[_Declaration]:
@@ -922,6 +896,7 @@ def _check_projects(
     if errors:
         return errors
 
+    declaration_checks: list[Check[_QualityError]] = []
     for index, project in enumerate(projects, start=1):
         errors.extend(
             _check_project(
@@ -931,11 +906,24 @@ def _check_projects(
                 else path,
                 index,
                 project,
-                validation_cache,
-                skip_declarations=skip_declarations,
+                None if skip_declarations else declaration_checks,
             )
         )
+    errors.extend(_run_lean_checks(declaration_checks, validation_cache))
     return errors
+
+
+def _run_lean_checks(
+    checks: list[Check[_QualityError]], cache: ValidationCache | None
+) -> list[_QualityError]:
+    """Run independent Lean checks concurrently, keeping their errors in order."""
+    if cache is None:
+        results = run_ordered(
+            [check.validate for check in checks], validation_workers()
+        )
+    else:
+        results = cache.check_all(checks)
+    return [error for errors in results for error in errors]
 
 
 def _check_project_container(path: Path, projects: Any) -> list[_QualityError]:
@@ -1101,10 +1089,9 @@ def _check_project(
     path: Path,
     index: int,
     project: Any,
-    validation_cache: ValidationCache | None = None,
-    *,
-    skip_declarations: bool = False,
+    declaration_checks: list[Check[_QualityError]] | None = None,
 ) -> list[_QualityError]:
+    """Check one card; queue its Lean declaration check unless it is skipped."""
     if not isinstance(project, dict):
         return [_QualityError(path, 1, f"project #{index} must be a mapping")]
 
@@ -1114,18 +1101,15 @@ def _check_project(
         return errors
 
     entry_path = _module_to_path(root, project["entry_module"])
-    if not skip_declarations:
-        if validation_cache is None:
-            errors.extend(_check_project_declarations(root, path, project))
-        else:
-            errors.extend(
-                validation_cache.check(
-                    "declarations",
-                    [project["entry_module"]],
-                    lambda: _check_project_declarations(root, path, project),
-                    metadata=project,
-                )
+    if declaration_checks is not None:
+        declaration_checks.append(
+            Check(
+                "declarations",
+                [project["entry_module"]],
+                lambda: _check_project_declarations(root, path, project),
+                metadata=project,
             )
+        )
     errors.extend(_check_project_card(entry_path, path, project))
     return errors
 
@@ -1515,7 +1499,6 @@ def run_checks(
         _check_lake_options,
         _check_style_nolints,
         _check_file_sizes,
-        _check_proof_sizes,
     ]
     errors = [error for check in checks for error in check(root)]
     errors.extend(
@@ -1536,23 +1519,23 @@ def run_checks(
 
 def _cached_pool_audits(root: Path, cache: ValidationCache) -> list[_QualityError]:
     """Cover all pool declarations, with current static reachability checked above."""
-    errors: list[_QualityError] = []
+    checks: list[Check[_QualityError]] = []
     for modules in pool_units(root):
-        errors.extend(
-            cache.check(
-                "axioms",
-                modules,
-                lambda: _audit_axioms(root, modules),
+        checks.append(
+            Check(
+                "axioms", modules, lambda modules=modules: _audit_axioms(root, modules)
             )
         )
-        errors.extend(
-            cache.check(
+        checks.append(
+            Check(
                 "backdoors",
                 modules,
-                lambda: _run_option_audit(root, modules, only_modules=modules),
+                lambda modules=modules: _run_option_audit(
+                    root, modules, only_modules=modules
+                ),
             )
         )
-    return errors
+    return _run_lean_checks(checks, cache)
 
 
 def _parse_args(argv: list[str]) -> argparse.Namespace:

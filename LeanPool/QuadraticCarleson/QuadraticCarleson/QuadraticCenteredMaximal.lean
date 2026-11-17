@@ -9,7 +9,6 @@ module
 public import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
 public import Mathlib.MeasureTheory.Covering.Vitali
 public import Mathlib.MeasureTheory.Integral.Layercake
-public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 public import LeanPool.QuadraticCarleson.QuadraticCarleson.Definitions
 
 /-!
@@ -39,14 +38,14 @@ theorem centered_average_covering_weak_bound
     a * volume E ≤ 4 * ∫⁻ y, f y := by
   obtain ⟨U, hUE, hdisj, hcover⟩ :=
     Vitali.exists_disjoint_subfamily_covering_enlargement_closedBall
-      E id r R hrbound 4 (by norm_num)
+      E id r R hrbound 4 (by norm_num1)
   have hpair : Pairwise (fun i j : U ↦ Disjoint
       (closedBall (i : ℝ) (r i)) (closedBall (j : ℝ) (r j))) := by
     intro i j hij
     exact hdisj i.property j.property (fun h ↦ hij (Subtype.ext h))
   have hpos (i : U) : 0 < volume (closedBall (i : ℝ) (r i)) := by
     rw [Real.volume_closedBall, ENNReal.ofReal_pos]
-    exact mul_pos (by norm_num) (hrpos i (hUE i.property))
+    exact mul_pos (by norm_num1) (hrpos i (hUE i.property))
   have hcount : Countable U := by
     have hh := Measure.countable_meas_pos_of_disjoint_iUnion (μ := (volume : Measure ℝ))
       (fun i : U ↦ measurableSet_closedBall (x := (i : ℝ)) (ε := r i)) hpair
@@ -63,7 +62,7 @@ theorem centered_average_covering_weak_bound
       4 * volume (closedBall (i : ℝ) (r i)) := by
     rw [Real.volume_closedBall, Real.volume_closedBall]
     rw [show 2 * (4 * r i) = 4 * (2 * r i) by ring,
-      ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 4)]
+      ENNReal.ofReal_mul (by norm_num1 : (0 : ℝ) ≤ 4)]
     norm_num
   calc
     a * volume E ≤ a * ∑' i : U, volume (closedBall (i : ℝ) (4 * r i)) :=
@@ -129,7 +128,7 @@ theorem finiteCenteredMaximal_weak_bound {N : ℕ} (r : Fin N → ℝ)
   choose i hi using hex
   let radii : ℝ → ℝ := fun x ↦ if hx : x ∈ E then r (i ⟨x, hx⟩) else 1
   have hselected (x : ℝ) (hx : x ∈ E) : radii x = r (i ⟨x, hx⟩) := by
-    simp [radii, hx]
+    simp only [hx, ↓reduceDIte, radii]
   have hradius (x : ℝ) (hx : x ∈ E) : 0 < radii x := by
     rw [hselected x hx]
     exact hr _
@@ -149,8 +148,8 @@ theorem centeredAverage_le_truncate_add {r : ℝ} (hr : 0 < r)
   have hden : ENNReal.ofReal (2 * r) ≠ 0 := ENNReal.ofReal_ne_zero_iff.mpr (by positivity)
   have hpoint (y : ℝ) : f y ≤ {y | b < f y}.indicator f y + b := by
     by_cases hy : b < f y
-    · simp [Set.indicator, hy]
-    · simpa [Set.indicator, hy] using le_of_not_gt hy
+    · simp only [indicator, mem_ofPred_eq, hy, ↓reduceIte, self_le_add_right]
+    · simpa only [indicator, mem_ofPred_eq, hy, ↓reduceIte, zero_add] using le_of_not_gt hy
   unfold centeredAverage
   calc
     _ ≤ (∫⁻ y in closedBall x r, {y | b < f y}.indicator f y + b) /
@@ -220,12 +219,12 @@ theorem lintegral_half_level_indicator (v : ℝ≥0∞) :
         have hcmp : a / 2 < (v : ℝ) := by
           rw [← ENNReal.ofReal_coe_nnreal] at ha
           exact (ENNReal.ofReal_lt_ofReal_iff_of_nonneg (by positivity)).mp ha
-        exact ⟨hapos, by linarith⟩
+        exact ⟨hapos, by linarith only [hcmp]⟩
       · rintro ⟨hapos, ha⟩
         refine ⟨?_, hapos⟩
         rw [← ENNReal.ofReal_coe_nnreal,
           ENNReal.ofReal_lt_ofReal_iff_of_nonneg (by positivity)]
-        linarith
+        linarith only [ha]
     rw [hs, lintegral_const, Measure.restrict_apply_univ, Real.volume_Ioo, sub_zero,
       ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 2), ENNReal.ofReal_coe_nnreal]
     norm_num
@@ -255,7 +254,7 @@ theorem lintegral_high_value_tails {f : ℝ → ℝ≥0∞} (hf : Measurable f) 
     convert lintegral_half_level_indicator (f y) using 1
     apply lintegral_congr
     intro a
-    simp [Set.indicator]
+    rfl
   simp_rw [hid']
   exact lintegral_const_mul _ (hf.pow_const 2)
 
@@ -267,7 +266,7 @@ theorem lintegral_ofReal_sq_eq_tail {g : ℝ → ℝ} (hg : Measurable g) (hnn :
     (continuous_const.mul continuous_id).intervalIntegrable _ _
   have hnn' : ∀ᵐ a ∂volume.restrict (Ioi (0 : ℝ)), 0 ≤ 2 * a := by
     filter_upwards [ae_restrict_mem measurableSet_Ioi] with a ha
-    exact mul_nonneg (by norm_num) ha.le
+    exact mul_nonneg (by norm_num1) ha.le
   have h := lintegral_comp_eq_lintegral_meas_lt_mul volume
     (Filter.Eventually.of_forall hnn) hg.aemeasurable hint hnn'
   have hid (x : ℝ) : (∫ a in 0..g x, 2 * a) = g x ^ 2 := by
@@ -301,7 +300,7 @@ theorem finiteCenteredMaximal_truncated_sq_lintegral_le {N : ℕ}
       exact lt_of_lt_of_le ((ENNReal.ofReal_lt_iff_lt_toReal ha.le (hfin x)).mpr hx)
         (min_le_left _ _)
     have hhalf : 2 * ENNReal.ofReal (a / 2) = ENNReal.ofReal a := by
-      rw [← ENNReal.ofReal_ofNat, ← ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 2)]
+      rw [← ENNReal.ofReal_ofNat, ← ENNReal.ofReal_mul (by norm_num1 : (0 : ℝ) ≤ 2)]
       congr 1
       ring
     have hw := finiteCenteredMaximal_localized_weak_bound r hr f (ENNReal.ofReal (a / 2))
@@ -309,7 +308,7 @@ theorem finiteCenteredMaximal_truncated_sq_lintegral_le {N : ℕ}
     calc
       volume {x | a < g x} * ENNReal.ofReal (2 * a) =
           2 * (ENNReal.ofReal a * volume {x | a < g x}) := by
-        rw [ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 2)]
+        rw [ENNReal.ofReal_mul (by norm_num1 : (0 : ℝ) ≤ 2)]
         norm_num
         ring
       _ ≤ 2 * (ENNReal.ofReal a * volume {x | ENNReal.ofReal a < M x}) :=
@@ -326,7 +325,7 @@ theorem finiteCenteredMaximal_truncated_sq_lintegral_le {N : ℕ}
       exact hpoint a ha
     _ = 16 * (∫⁻ a in Ioi (0 : ℝ),
           ∫⁻ y, {y | ENNReal.ofReal (a / 2) < f y}.indicator f y) :=
-      lintegral_const_mul' _ _ (by norm_num)
+      lintegral_const_mul' _ _ (by decide +kernel)
     _ = 32 * ∫⁻ y, f y ^ 2 := by rw [lintegral_high_value_tails hf]; ring
 
 /-- Increasing finite truncations recover an extended nonnegative square. -/
@@ -339,11 +338,11 @@ theorem iSup_min_nat_sq (v : ℝ≥0∞) :
     exact min_le_left _ _
   · by_cases hv : v = ⊤
     · subst v
-      simp only [min_top_left, ENNReal.top_pow (by decide : (2 : ℕ) ≠ 0)]
+      simp only [ENNReal.top_pow (by decide : (2 : ℕ) ≠ 0), min_top_left]
       rw [← ENNReal.iSup_natCast]
       apply iSup_mono
       intro n
-      exact_mod_cast (show n ≤ n ^ 2 by nlinarith)
+      exact_mod_cast (show n ≤ n ^ 2 by nlinarith only [])
     · obtain ⟨n, hn⟩ := exists_nat_ge v.toReal
       have hvn : v ≤ (n : ℝ≥0∞) := by
         rw [← ENNReal.ofReal_toReal hv]

@@ -97,8 +97,7 @@ theorem Config.main_lemma (n : ℕ) : C.MainGoal n := by
       have eq_r := rm.toDual_ofDual; set r := ofDual rm
       have eq_s := sm.toDual_ofDual; set s := ofDual sm
       exists p, q, r, s
-      rw [← eq_p, ← eq_q, ← eq_r, ← eq_s, Mirror.hasInterweavedLaced] at mgoal
-      assumption
+      rwa [← eq_p, ← eq_q, ← eq_r, ← eq_s, Mirror.hasInterweavedLaced] at mgoal
     apply C.join_n2_n3_join_n3_n2 <;> assumption
 
 namespace ErdosTuzaValtr

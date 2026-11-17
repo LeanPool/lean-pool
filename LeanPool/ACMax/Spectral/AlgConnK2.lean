@@ -135,7 +135,7 @@ theorem algConn_completeBipartite_two (n : ℕ) (hn : 4 ≤ n) :
         ≤ ∑ k : Fin m,
             ((x (Sum.inl 0) - x (Sum.inr k)) ^ 2 + (x (Sum.inl 1) - x (Sum.inr k)) ^ 2) := by
           rw [hQval, hSc]
-          nlinarith [mul_nonneg (by linarith : (0 : ℝ) ≤ (m : ℝ) - 2)
+          nlinarith only [mul_nonneg (by linarith : (0 : ℝ) ≤ (m : ℝ) - 2)
             (add_nonneg (sq_nonneg (x (Sum.inl 0))) (sq_nonneg (x (Sum.inl 1)))),
             sq_nonneg ((x (Sum.inl 0)) + (x (Sum.inl 1)))]
       _ = dotProduct x ((G.lapMatrix ℝ).mulVec x) := (hQ x).symm

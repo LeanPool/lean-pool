@@ -354,7 +354,7 @@ theorem naturalCompareWordsEqualBit
       some (naturalCompareConfiguration 6 outcome
         input firstCounter firstReversed secondCounter secondReversed
         firstForward secondForward source sourcePrefix output) := by
-  cases bit <;> naturalCompareStepTac
+  naturalCompareStepTac
 
 theorem naturalCompareWordsLessBit
     (outcome : EncodedWordOrdering)

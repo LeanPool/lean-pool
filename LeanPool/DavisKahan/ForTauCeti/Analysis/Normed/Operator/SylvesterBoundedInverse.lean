@@ -128,7 +128,7 @@ theorem opNorm_le_of_leftInverse_fixedPoint
   have hmul : (ρ + δ) * N X ≤ N C + N X * ρ := by
     have h := mul_le_mul_of_nonneg_left hbound hρδ.le
     rwa [mul_add, ← mul_assoc, ← mul_assoc, mul_inv_cancel₀ hρδ.ne', one_mul, one_mul] at h
-  nlinarith [hmul]
+  nlinarith only [hmul, hmul]
 
 /-- **Davis--Kahan 1970 Theorem 5.1, for any compatible operator norm.**
 
@@ -174,7 +174,7 @@ theorem opNorm_le_of_sylvester_of_leftInverse
   have hmul : (ρ + δ) * N X ≤ N C + N X * ρ := by
     have h := mul_le_mul_of_nonneg_left hbound hρδ.le
     rwa [mul_add, ← mul_assoc, ← mul_assoc, mul_inv_cancel₀ hρδ.ne', one_mul, one_mul] at h
-  nlinarith [hmul]
+  nlinarith only [hmul, hmul]
 
 /-- **Davis--Kahan 1970 Theorem 5.1** at the operator norm: with a bounded left
 inverse satisfying `‖A⁻¹‖ ≤ (ρ + δ)⁻¹` and `‖B‖ ≤ ρ`, any solution of
@@ -271,7 +271,7 @@ theorem opNorm_le_of_sylvester_of_rightInverse
             ((ρ + δ) * (ρ + δ)⁻¹) * N C := by ring
       _ = ρ * N X + N C := by rw [mul_inv_cancel₀ hρδ.ne']; ring
   rw [hnormalize] at hmul
-  nlinarith [hmul]
+  nlinarith only [hmul, hmul]
 
 /-- The right-inverse form of Theorem 5.1 at the ordinary operator norm. -/
 theorem norm_le_of_sylvester_of_rightInverse

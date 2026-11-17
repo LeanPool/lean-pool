@@ -42,7 +42,7 @@ theorem krauseLacey_twoScaleCorrelation_le
     have hh := hsupport ht
     change max (x - R) (y - r) ≤ t ∧ t ≤ min (x - R / 4) (y - r / 4)
     rw [max_le_iff, le_min_iff]
-    constructor <;> constructor <;> linarith [hh.1, hh.2.1, hh.2.2.1, hh.2.2.2]
+    constructor <;> constructor <;> linarith only [hh, hh.1, hh.2.1, hh.2.2.1, hh.2.2.2]
   by_cases hspatial : |y - x| ≤ 2 * R
   · simp only [hspatial, ↓reduceIte]
     by_cases hlu : l ≤ u
@@ -61,11 +61,11 @@ theorem krauseLacey_twoScaleCorrelation_le
       have hlen : u - l ≤ r := by
         have hlower : y - r ≤ l := le_max_right _ _
         have hupper : u ≤ y - r / 4 := min_le_right _ _
-        linarith
+        linarith only [hr, hlower, hupper]
       have hsep : R / 8 ≤ x - y := by
         have hlower : y - r ≤ l := le_max_right _ _
         have hupper : u ≤ x - R / 4 := min_le_left _ _
-        linarith
+        linarith only [hrR, hlu, hlower, hupper]
       have hslope (t : ℝ) (_ht : t ∈ Icc l u) :
           R ≤ |quadraticTTStarSlope (2 * Real.pi) (2 * Real.pi) x y t| := by
         have heq : quadraticTTStarSlope (2 * Real.pi) (2 * Real.pi) x y t =
@@ -73,14 +73,14 @@ theorem krauseLacey_twoScaleCorrelation_le
           unfold quadraticTTStarSlope
           ring
         rw [heq, abs_mul, abs_of_pos (by positivity : 0 < 4 * Real.pi),
-          abs_sub_comm y x, abs_of_nonneg (by linarith : 0 ≤ x - y)]
-        nlinarith [Real.pi_gt_three]
+          abs_sub_comm y x, abs_of_nonneg (by linarith only [hr, hrR, hsep] : 0 ≤ x - y)]
+        nlinarith only [hr, hrR, hsep, Real.pi_gt_three]
       rw [hid, integral_quadraticTTStar_eq_angularQuadraticCorrelation]
       have hh := angularQuadraticCorrelation_norm_le_nonstationary_scaled
         (R := r) (B := 0) (2 * Real.pi) (2 * Real.pi) x y l u hlu hr hlen
-        (fun t _ ↦ hp t) hp'.continuousOn hR hP (by norm_num)
+        (fun t _ ↦ hp t) hp'.continuousOn hR hP (by exact le_rfl)
         hslope (by simp) (fun t _ ↦ hbound t) (fun t _ ↦ hbound' t)
-      simpa only [add_zero, mul_one] using hh
+      simpa only [mul_one, add_zero] using hh
     · have hzero : p = 0 := by
         funext t
         by_contra hn
@@ -96,9 +96,9 @@ theorem krauseLacey_twoScaleCorrelation_le
       have hh := hsupport hn
       apply hspatial
       rw [abs_le]
-      constructor <;> linarith [hh.1, hh.2.1, hh.2.2.1, hh.2.2.2]
+      constructor <;> linarith only [hr, hrR, hh, hh.1, hh.2.1, hh.2.2.1, hh.2.2.2]
     rw [hzero]
-    simp
+    simp only [Pi.zero_apply, zero_mul, integral_zero, norm_zero, Std.le_refl]
 
 /-- Uniform two-scale decay for two concrete smooth positive-annular
 amplitudes, retaining the additional small-radius gain. -/
@@ -138,22 +138,22 @@ theorem annularQuadraticKernel_correlation_le_separated
     intro t ht
     have hat : a (x - t) ≠ 0 := by
       intro hz
-      exact ht (by simp [p, hz])
+      exact ht (by simp only [hz, zero_mul, p])
     have hbt : b (y - t) ≠ 0 := by
       intro hz
-      exact ht (by simp [p, hz])
+      exact ht (by simp only [hz, map_zero, mul_zero, p])
     exact ⟨(hasupp hat).1, (hasupp hat).2, (hbsupp hbt).1, (hbsupp hbt).2⟩
   have hP : 0 ≤ P := by dsimp [P]; positivity
   have hpnorm (t : ℝ) : ‖p t‖ ≤ P := by
     calc
-      ‖p t‖ = ‖a (x - t)‖ * ‖b (y - t)‖ := by simp [p]
+      ‖p t‖ = ‖a (x - t)‖ * ‖b (y - t)‖ := by simp only [Complex.norm_mul, RCLike.norm_conj, p]
       _ ≤ (D / R) * (D / r) :=
         mul_le_mul (hab _) (hbb _) (norm_nonneg _) (by positivity)
       _ = D ^ 2 / (r * R) := by ring
       _ ≤ P := by
         dsimp [P]
         rw [mul_div_assoc]
-        nlinarith [div_nonneg (sq_nonneg D) (mul_pos hr hR).le]
+        linarith only [hr, hR, div_nonneg (sq_nonneg D) (mul_pos hr hR).le]
   have hpdnorm (t : ℝ) : ‖p' t‖ ≤ P / r := by
     calc
       ‖p' t‖ ≤ ‖(-a' (x - t)) * conj (b (y - t))‖ +
@@ -172,7 +172,7 @@ theorem annularQuadraticKernel_correlation_le_separated
   have h := krauseLacey_twoScaleCorrelation_le hr hR hrR hP hp hp' x y hsupp hpnorm hpdnorm
   have hconst : 3 * P / R = 6 * D ^ 2 / (r * R ^ 2) := by dsimp [P]; ring
   simp_rw [annularQuadraticKernel_mul_conj]
-  simpa only [p, hconst] using h
+  simpa only [hconst] using h
 
 /-- KL18 (2.6), proved for the project's actual positive dyadic quadratic
 kernel. The scale gap is three and the small index is at least one. -/
@@ -189,15 +189,15 @@ theorem krauseLacey_crossScalePositiveDyadicCorrelation_le
   have hR : 0 < R := by dsimp [R]; positivity
   have hrone : 1 ≤ r := by
     change (2 : ℝ) ^ (0 : ℤ) ≤ (2 : ℝ) ^ (j - 1)
-    apply zpow_le_zpow_right₀ (by norm_num)
+    apply zpow_le_zpow_right₀ (by norm_num1)
     omega
   have hrR : r ≤ R / 8 := by
     have heq : R / 8 = (2 : ℝ) ^ (k - 4) := by
       dsimp [R]
-      rw [show k - 1 = (k - 4) + 3 by ring, zpow_add₀ (by norm_num)]
+      rw [show k - 1 = (k - 4) + 3 by ring, zpow_add₀ (by norm_num1)]
       norm_num
     rw [heq]
-    apply zpow_le_zpow_right₀ (by norm_num)
+    apply zpow_le_zpow_right₀ (by norm_num1)
     omega
   have h := annularQuadraticKernel_correlation_le_separated hr hR hrR
     positiveDyadicAmplitudeBound_nonneg
@@ -209,7 +209,7 @@ theorem krauseLacey_crossScalePositiveDyadicCorrelation_le
   apply h.trans
   split_ifs
   · exact div_le_div_of_nonneg_left (by positivity) (by positivity)
-      (by nlinarith [sq_nonneg R] : R ^ 2 ≤ r * R ^ 2)
+      (by nlinarith only [hrone, sq_nonneg R] : R ^ 2 ≤ r * R ^ 2)
   · exact le_rfl
 
 

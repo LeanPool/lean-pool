@@ -150,12 +150,12 @@ lemma partialH_final_adversarialPoint_le (data : LowerCompletionData p d T)
     rw [hiEq, adversarialPoint_at_used data
       (fun t ht => (hsteps t ht).1) hiT]
     rcases (hsteps i hiT).2.1 with hxi | hxi <;> rw [hxi] <;> norm_num
-    all_goals nlinarith [mul_nonneg (Nat.cast_nonneg i) hdelta.le]
+    all_goals linarith only [hdelta, mul_nonneg (Nat.cast_nonneg i) hdelta.le]
   rw [(hsteps (T - 1) hlast).2.2.2, hnorm]
   apply max_le
-  · linarith
+  · linarith only [hG]
   · norm_num at ⊢
-    linarith
+    linarith only [hDeltaLe]
 
 lemma partialH_query_lower (data : LowerCompletionData p d T)
     {t : ℕ}
@@ -172,7 +172,7 @@ lemma partialH_query_lower (data : LowerCompletionData p d T)
   rw [hstep.2.2.2]
   have hmax := le_max_left (data.partialG t (data.queries t) / 2)
     (lpNorm p (data.queries t) - 3 / 2)
-  linarith
+  linarith only [habs, hmax, hpiece]
 
 /-- Finite-dimensional continuous coercive functions attain a global minimum.
 The proof is the compact sublevel-ball reduction needed by the frozen carrier. -/
@@ -185,7 +185,7 @@ lemma exists_global_minimizer_of_coercive_lp {f : Point d → ℝ}
   have hcompact : IsCompact ball := isCompact_lpNorm_le hp
   have hzero : (0 : Point d) ∈ ball := by
     change O3.lpNorm p (0 : Point d) ≤ radius
-    rw [O3.lpNorm_zero (by linarith : 0 < p)]
+    rw [O3.lpNorm_zero (by linarith only [hp] : 0 < p)]
     exact hradius
   obtain ⟨minimizer, hminBall, hmin⟩ :=
     hcompact.exists_isMinOn ⟨0, hzero⟩ hcontinuous.continuousOn
@@ -221,7 +221,7 @@ lemma lower_gap_constant_identity {p Delta chi delta beta M : ℝ} {T : ℕ}
   field_simp [hM.ne', hTreal.ne', (Real.rpow_pos_of_pos hTreal _).ne']
   ring_nf at hcore ⊢
   simp [hp.ne'] at hcore ⊢
-  nlinarith
+  linarith only [hcore]
 
 /-- Frozen S5-C: coercive attainment and the exact chronological query gap. -/
 theorem _root_.V7.aboveLowerQueryGap : AboveLowerQueryGapStatement := by
@@ -261,11 +261,10 @@ theorem _root_.V7.aboveLowerQueryGap : AboveLowerQueryGapStatement := by
         (base.kernel.smooth base.chi (base.partialH (T - 1))).value x := by
       have hHformula := (hsteps (T - 1) hlast).2.2.2.2.2.2.1 x
       rw [hHformula] at hsmoothLower
-      linarith
+      linarith only [hradius, hsmoothLower, hHlower]
     have hscaled : B ≤ base.beta *
         (base.kernel.smooth base.chi (base.partialH (T - 1))).value x := by
-      have := (div_le_iff₀ hbetaPos).mp hdiv
-      nlinarith
+      simpa only [mul_comm] using (div_le_iff₀ hbetaPos).mp hdiv
     rw [hcompletedValue]
     exact hscaled
   have hcontinuous : Continuous data.completedOracle.value :=
@@ -295,7 +294,7 @@ theorem _root_.V7.aboveLowerQueryGap : AboveLowerQueryGapStatement := by
     have hraw : -(t : ℝ) * base.delta / 2 - base.chi ≤
         (base.kernel.smooth base.chi (base.partialH t)).value
           (base.queries t) := by
-      linarith
+      linarith only [happ, hHquery]
     have hscaled := mul_le_mul_of_nonneg_left hraw hbetaPos.le
     rw [← (hsteps t ht).2.2.2.2.2.2.2.1, ← hqueryValue] at hscaled
     exact hscaled
@@ -307,8 +306,10 @@ theorem _root_.V7.aboveLowerQueryGap : AboveLowerQueryGapStatement := by
       -base.beta * base.Delta / 2 := by
     have happ := (hsmoothLast.2.1 (adversarialPoint base)).2
     rw [hcompletedValue]
-    nlinarith [mul_le_mul_of_nonneg_left
-      (happ.trans hcandidateH) hbetaPos.le]
+    calc
+      base.beta * _ ≤ base.beta * (-base.Delta / 2) :=
+        mul_le_mul_of_nonneg_left (happ.trans hcandidateH) hbetaPos.le
+      _ = -base.beta * base.Delta / 2 := by ring
   have hminUpper := (hminimizer (adversarialPoint base)).trans hcandidateValue
   have htcast : (t : ℝ) + 1 ≤ (T : ℝ) := by
     exact_mod_cast (Nat.succ_le_iff.2 ht)
@@ -321,11 +322,12 @@ theorem _root_.V7.aboveLowerQueryGap : AboveLowerQueryGapStatement := by
   have hquarter : base.Delta / 4 ≤
       base.Delta / 2 - (t : ℝ) * base.delta / 2 - base.chi := by
     rw [hchi]
-    nlinarith
+    linarith only [htdelta, hTdelta]
   have hgapQuarter : base.beta * base.Delta / 4 ≤
       data.completedOracle.value (base.queries t) -
         data.completedOracle.value minimizer := by
-    nlinarith [mul_le_mul_of_nonneg_left hquarter hbetaPos.le]
+    linarith only [hqueryLower, hminUpper,
+      mul_le_mul_of_nonneg_left hquarter hbetaPos.le]
   rw [← lower_gap_constant_identity (p := p) (T := T) (M := base.kernel.Mpd)
     (Delta := base.Delta) (chi := base.chi) (delta := base.delta)
     (beta := base.beta) (by linarith) hT hMpos hDelta hdelta hchi hbeta]

@@ -129,9 +129,9 @@ theorem abs_sum_sub_integral_le {n : ℕ} {a : ℕ → ℝ} (ha : Monotone a) {b
           have h2 : (b (a (j + 1)) - b (a j)) * (F (a (j + 1)) - F (a j)) ≤
               (b (a (j + 1)) - b (a j)) * δ :=
             mul_le_mul_of_nonneg_left (hδ j hj) (sub_nonneg.2 (hβ j hj))
-          linarith
+          linarith only [h1, h2]
       _ = (b (a n) - b (a 0)) * δ := by rw [← sum_mul, sum_range_sub (fun j ↦ b (a j))]
-      _ ≤ δ * b (a n) := by nlinarith
+      _ ≤ δ * b (a n) := by nlinarith only [hδ0, hb0]
   have herr := abs_sum_mul_sub_le (β := fun j ↦ b (a j)) (e := fun j ↦ g j - F (a j)) hβ hb0 hε
   rw [abs_le] at herr ⊢
   constructor <;> linarith

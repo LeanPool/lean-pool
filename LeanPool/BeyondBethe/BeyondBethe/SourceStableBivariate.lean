@@ -9,7 +9,11 @@ module
 public import Mathlib.Analysis.Complex.Basic
 public import Mathlib.Analysis.MeanInequalities
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
-public import Mathlib.Tactic
+import Mathlib.Tactic.FieldSimp -- shake: keep
+import Mathlib.Tactic.Linarith -- shake: keep
+import Mathlib.Tactic.NormNum -- shake: keep
+import Mathlib.Tactic.Positivity -- shake: keep
+import Mathlib.Tactic.Ring -- shake: keep
 
 /-! # Source Stable Bivariate -/
 

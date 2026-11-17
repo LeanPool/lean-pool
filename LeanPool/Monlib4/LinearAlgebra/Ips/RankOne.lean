@@ -304,32 +304,29 @@ theorem colinear_of_ne_zero_rankOne_eq_rankOne [CompleteSpace E₂] [CompleteSpa
   simp only [rankOne_adjoint, ContinuousLinearMap.ext_iff, rankOne_apply] at h h₂
   specialize h b
   specialize h₂ a
-  have h₃ : a = (⟪d, b⟫_𝕜 / ⟪b, b⟫_𝕜) • c := by
-    calc a = (⟪b, b⟫_𝕜 / ⟪b, b⟫_𝕜) • a := by
-          simp_all
-      _ = (1 / ⟪b, b⟫_𝕜) • (⟪b, b⟫_𝕜 • a) := by simp only [smul_smul]; ring_nf
-      _ = (1 / ⟪b, b⟫_𝕜) • (⟪d, b⟫_𝕜 • c) := by rw [h]
-      _ = (⟪d, b⟫_𝕜 / ⟪b, b⟫_𝕜) • c := by simp only [smul_smul]; ring_nf
-  have h₄ :=
-  calc b = (⟪a, a⟫_𝕜 / ⟪a, a⟫_𝕜) • b := by
-          simp_all
-      _ = (1 / ⟪a, a⟫_𝕜) • (⟪a, a⟫_𝕜 • b) := by simp only [smul_smul]; ring_nf
-      _ = (1 / ⟪a, a⟫_𝕜) • (⟪c, a⟫_𝕜 • d) := by rw [h₂]
-      _ = (1 / ⟪a, a⟫_𝕜) • (⟪c, (⟪d, b⟫_𝕜 / ⟪b, b⟫_𝕜) • c⟫_𝕜 • d) := by rw [h₃]
-      _ = ((⟪d, b⟫_𝕜 / ⟪b, b⟫_𝕜) * (⟪c, c⟫_𝕜 / (⟪a, a⟫_𝕜))) • d := by
-        simp only [inner_smul_right, smul_smul]; ring_nf
-  have h₅ : ⟪d, b⟫_𝕜 ≠ 0 := by
-    intro h
-    rw [h, zero_div, zero_mul, zero_smul] at h₄
-    exact hb h₄
-  let α := Units.mk0 (⟪d, b⟫_𝕜 / ⟪b, b⟫_𝕜) (div_ne_zero h₅ (inner_self_ne_zero.mpr hb))
-  have h₆ : c ≠ 0 := by
-    rintro rfl
-    simp only [smul_zero] at h₃
-    exact ha h₃
-  let β := Units.mk0 (⟪c, c⟫_𝕜 / ⟪a, a⟫_𝕜)
-    (div_ne_zero (inner_self_ne_zero.mpr h₆) (inner_self_ne_zero.mpr ha))
-  exact ⟨α, β, h₃, h₄⟩
+  have inner_self_b : ⟪b, b⟫_𝕜 ≠ 0 := inner_self_ne_zero.mpr hb
+  have inner_self_a : ⟪a, a⟫_𝕜 ≠ 0 := inner_self_ne_zero.mpr ha
+  have left_equation : a = (⟪d, b⟫_𝕜 / ⟪b, b⟫_𝕜) • c := by
+    simpa only [smul_smul, inv_mul_cancel₀ inner_self_b, one_smul, div_eq_inv_mul] using
+      congrArg (fun x => (⟪b, b⟫_𝕜)⁻¹ • x) h
+  have right_equation : b = (⟪c, a⟫_𝕜 / ⟪a, a⟫_𝕜) • d := by
+    simpa only [smul_smul, inv_mul_cancel₀ inner_self_a, one_smul, div_eq_inv_mul] using
+      congrArg (fun x => (⟪a, a⟫_𝕜)⁻¹ • x) h₂
+  have left_scalar_ne_zero : ⟪d, b⟫_𝕜 / ⟪b, b⟫_𝕜 ≠ 0 := by
+    intro hz
+    rw [hz, zero_smul] at left_equation
+    exact ha left_equation
+  have right_scalar_ne_zero : ⟪c, a⟫_𝕜 / ⟪a, a⟫_𝕜 ≠ 0 := by
+    intro hz
+    rw [hz, zero_smul] at right_equation
+    exact hb right_equation
+  let α := Units.mk0 (⟪d, b⟫_𝕜 / ⟪b, b⟫_𝕜) left_scalar_ne_zero
+  let γ := Units.mk0 (⟪c, a⟫_𝕜 / ⟪a, a⟫_𝕜) right_scalar_ne_zero
+  refine ⟨α, α⁻¹ * γ, left_equation, ?_⟩
+  change b = ((α : 𝕜) * ((α : 𝕜)⁻¹ * (γ : 𝕜))) • d
+  rw [mul_inv_cancel_left₀ (Units.ne_zero α)]
+  exact right_equation
+
 
 theorem ket_eq_ket_iff {x y : E₁} :
   ket 𝕜 x = ket 𝕜 y ↔ x = y := by
@@ -399,7 +396,8 @@ theorem LinearMap.exists_sum_rankOne [FiniteDimensional 𝕜 E₁] [FiniteDimens
       T = ∑ i, ↑(rankOne 𝕜 (x i) (y i)) := by
   obtain ⟨a, b, h⟩ := ContinuousLinearMap.exists_sum_rankOne (toContinuousLinearMap T)
   refine ⟨a, b, ?_⟩
-  simpa using congrArg ContinuousLinearMap.toLinearMap h
+  simpa only [ContinuousLinearMap.toLinearMap_sum, LinearMap.coe_toContinuousLinearMap] using
+    congrArg ContinuousLinearMap.toLinearMap h
 
 theorem rankOne.sum_orthonormalBasis_eq_id {𝕜 E : Type _} [RCLike 𝕜] [NormedAddCommGroup E]
     [InnerProductSpace 𝕜 E] {ι : Type _} [Fintype ι] (b : OrthonormalBasis ι 𝕜 E) :

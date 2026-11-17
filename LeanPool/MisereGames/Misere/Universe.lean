@@ -53,7 +53,10 @@ omit [Form G] in
 private theorem sInf_mem_of_forall_mem {IsAmbient : G → Prop} {S : Set (Set.Iic IsAmbient)}
     {g : G} (hAmbient : IsAmbient g) (hS : ∀ A ∈ S, A.1 g) :
     ((sInf S : Set.Iic IsAmbient) : G → Prop) g := by
-  simp_all
+  simp_all only [
+    Subtype.forall, Set.mem_Iic, Set.Iic.coe_sInf, inf_le_left, Pi.inf_apply, Std.le_refl,
+    sInf_apply, iInf_Prop_eq, Set.mem_image, Subtype.exists, exists_and_right, exists_eq_right,
+    forall_exists_index, implies_true, inf_of_le_left]
 
 omit [Form G] in
 private theorem mem_of_sInf_mem {IsAmbient : G → Prop} {S : Set (Set.Iic IsAmbient)}
@@ -151,7 +154,7 @@ theorem closure_min (IsAmbient : G → Prop) [Universe IsAmbient IsAmbient]
     (x := ⟨A, hA⟩)
     (y := ⟨B, fun _ => Universe.isAmbient_of_mem⟩)
     hAB (by
-      simp_all)
+      simp_all only [ClosureOperator.ofCompletePred_isClosed])
 
 theorem closure_le (IsAmbient : G → Prop) [Universe IsAmbient IsAmbient]
     {A B : G → Prop} (hA : A ≤ IsAmbient) [Universe IsAmbient B] :

@@ -415,6 +415,7 @@ theorem IsConservative.measurable_feynmanKacENNReal_joint {q : alpha → ℝ}
   have hA : Measurable fun p : (NNReal × alpha) × ContinuousPath alpha ↦
       feynmanKacAdditiveFunctional q p.1.1 p.2 :=
     (stronglyMeasurable_feynmanKacAdditiveFunctional_joint hq).measurable.comp
+      (f := fun p : (NNReal × alpha) × ContinuousPath alpha ↦ (p.1.1, p.2))
       ((measurable_fst.comp measurable_fst).prodMk measurable_snd)
   have heval : Measurable fun p : (NNReal × alpha) × ContinuousPath alpha ↦
       p.2 p.1.1 :=
@@ -557,6 +558,7 @@ theorem IsConservative.measurable_feynmanKac_joint {q : alpha → ℝ}
   have hA : Measurable fun p : (NNReal × alpha) × ContinuousPath alpha ↦
       feynmanKacAdditiveFunctional q p.1.1 p.2 :=
     (stronglyMeasurable_feynmanKacAdditiveFunctional_joint hq).measurable.comp
+      (f := fun p : (NNReal × alpha) × ContinuousPath alpha ↦ (p.1.1, p.2))
       ((measurable_fst.comp measurable_fst).prodMk measurable_snd)
   have heval : Measurable fun p : (NNReal × alpha) × ContinuousPath alpha ↦
       p.2 p.1.1 :=

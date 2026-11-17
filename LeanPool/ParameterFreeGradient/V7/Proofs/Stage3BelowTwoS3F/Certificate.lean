@@ -330,6 +330,6 @@ theorem fullShape_certificate (hp : 1 < p) (hp2 : p < 2)
           have hDR : inst.R ≤ D := le_of_not_gt hnot
           have hgood := terminal_gradient_le p eps M D hp hp2 heps hM hD
             inst hDR hP hQ
-          linarith
+          linarith only [hgood, hlarge]
 
 end V7.Stage3BelowTwoS3F

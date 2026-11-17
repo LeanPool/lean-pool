@@ -9,7 +9,9 @@ module
 public import LeanPool.BeyondBethe.BeyondBethe.DirectedElementary
 public import LeanPool.BeyondBethe.BeyondBethe.TransferIdentity
 public import LeanPool.BeyondBethe.BeyondBethe.Gain
-public import Mathlib.Tactic
+import Mathlib.Tactic.Linarith -- shake: keep
+import Mathlib.Tactic.NormNum -- shake: keep
+import Mathlib.Tactic.Ring -- shake: keep
 
 /-! # Directed Pair Cost -/
 

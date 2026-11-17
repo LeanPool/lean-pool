@@ -105,7 +105,7 @@ theorem birthday_neg (x : G) : birthday (-x) = birthday x := by
     intro h
     rw [birthday_neg]
 termination_by x
-decreasing_by form_wf
+decreasing_by all_goals exact MisereGames.Moves.Subposition.of_mem_moves h
 
 @[simp]
 theorem birthday_add (g h : G) : birthday (g + h) = birthday g + birthday h := by
@@ -172,7 +172,8 @@ theorem birthday_ofNat (n : ℕ) [n.AtLeastTwo] : birthday (ofNat(n) : G) = n :=
 @[simp]
 theorem birthday_intCast (k : ℤ) : birthday (k : G) = k.natAbs := by
   match k with
-  | Int.ofNat n => simp
+  | Int.ofNat n => simp only [
+    Int.ofNat_eq_natCast, Form.intCast_nat, birthday_natCast, Int.natAbs_natCast]
   | Int.negSucc n => simpa using add_comm (G := NatOrdinal) 1 n
 
 open Lean Meta Elab Tactic

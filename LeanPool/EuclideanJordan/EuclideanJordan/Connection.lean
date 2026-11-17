@@ -175,18 +175,15 @@ theorem frameBlockRaw_sq_coeff_eq (F : JordanFrame J n) {i j : Fin n} (hij : i �
   have hij' : (inner ℝ (F.p i) (F.p j) : ℝ) = 0 := inner_p_p_of_ne F hij
   have hji' : (inner ℝ (F.p j) (F.p i) : ℝ) = 0 := inner_p_p_of_ne F (Ne.symm hij)
   have hA : a * a = (a + b) / 2 * a := by
-    have := congrArg (fun z : J => (inner ℝ z (F.p i) : ℝ)) hkey
-    simp only [inner_add_left, real_inner_smul_left, hji'] at this
-    field_simp [hij', hji'] at this
-    nlinarith [this, hτi]
+    apply mul_right_cancel₀ (ne_of_gt hτi)
+    simpa only [inner_add_left, real_inner_smul_left, hji', mul_zero, add_zero]
+      using congrArg (fun z : J => (inner ℝ z (F.p i) : ℝ)) hkey
   have hB : b * b = (a + b) / 2 * b := by
-    have := congrArg (fun z : J => (inner ℝ z (F.p j) : ℝ)) hkey
-    simp only [inner_add_left, real_inner_smul_left, hij'] at this
-    field_simp [hij', hji'] at this
-    nlinarith [this, hτj]
-  have hsq : (a - b) ^ 2 = 0 := by nlinarith [hA, hB]
-  have := pow_eq_zero_iff (n := 2) (by norm_num) |>.mp hsq
-  linarith [this]
+    apply mul_right_cancel₀ (ne_of_gt hτj)
+    simpa only [inner_add_left, real_inner_smul_left, hij', mul_zero, zero_add]
+      using congrArg (fun z : J => (inner ℝ z (F.p j) : ℝ)) hkey
+  have hsq : (a - b) ^ 2 = 0 := by nlinarith only [hA, hB]
+  exact sub_eq_zero.mp (sq_eq_zero_iff.mp hsq)
 
 /-- **`x ∘ x = a • (pᵢ + pⱼ)` for `x ∈ V_{ij}`**, with `a ≥ 0` and `a = 0` only at `x = 0`.
 
@@ -325,7 +322,7 @@ theorem block_mul_sq (F : JordanFrame J n) {i j k : Fin n} (hij : i ≠ j) (hjk 
   · subst ha
     have hx0 : x = 0 := eq_zero_of_sq_coeff_zero F hij hx hxx
     rw [hx0, zero_mul']
-    simp
+    simp only [smul_zero, mul_zero, zero_mul, smul_add, zero_smul, add_zero]
   have hz : (2 : ℝ) • (x * y) ∈ frameBlockRaw F i k :=
     Submodule.smul_mem _ _ (frameBlockRaw_mul_middle F hij hjk hik hx hy)
   obtain ⟨c, hc, hcspec⟩ := exists_sq_smul F hik hz
@@ -412,7 +409,7 @@ theorem exists_isConnector (F : JordanFrame J n) {i j : Fin n} (hij : i ≠ j) {
   obtain ⟨a, ha, haspec⟩ := exists_sq_smul F hij hx
   have hxx : (0 : ℝ) < inner ℝ x x := real_inner_self_pos.mpr hx0
   have hτi : (0 : ℝ) < inner ℝ (F.p i) (F.p i) := inner_p_self_pos F i
-  have hapos : 0 < a := by nlinarith [haspec, hxx, hτi]
+  have hapos : 0 < a := by nlinarith only [haspec, hxx, hτi]
   refine ⟨(Real.sqrt a)⁻¹ • x, Submodule.smul_mem _ _ hx, ?_⟩
   rw [smul_mul, mul_smul_comm, ha, smul_smul, smul_smul]
   have hcoef : (Real.sqrt a)⁻¹ * (Real.sqrt a)⁻¹ * a = 1 := by

@@ -71,7 +71,6 @@ theorem lintegral_directRegular_offsetTailMaximalOn_le_low_add_high
   have hboundA : ∀ I ∈ A, scale I < N := by
     intro I hI
     exact hbound I (hA hI)
-  have ha : 0 < a := Real.rpow_pos_of_pos (directQuadraticDelta_pos n) _
   have hlowMeas : AEMeasurable (fun x ↦
       offsetTailMaximalOn S A scale (f : ℝ → ℂ) ell₀ (n : ℤ) x *
         ‖interpolationLow g a x‖ₑ) volume :=
@@ -105,7 +104,7 @@ theorem lintegral_directRegular_offsetTailMaximalOn_le_low_add_high
       0 ≤ 8 * positiveDyadicAmplitudeBound *
         directQuadraticDelta n ^ (p - 1) :=
     mul_nonneg
-      (mul_nonneg (by norm_num) positiveDyadicAmplitudeBound_nonneg)
+      (mul_nonneg (by norm_num1) positiveDyadicAmplitudeBound_nonneg)
       (Real.rpow_nonneg (directQuadraticDelta_pos n).le _)
   have hhigh :
       (∫⁻ x, offsetTailMaximalOn S A scale
@@ -337,7 +336,7 @@ theorem lintegral_localizedTailMaximal_le_directQuadratic_geometric
   let D : ℤ → ℝ≥0∞ := fun s ↦ ENNReal.ofReal
     (directQuadraticDelta s.toNat ^ (p - 1) * V)
   have hB : 0 ≤ B :=
-    mul_nonneg (by norm_num) positiveDyadicAmplitudeBound_nonneg
+    mul_nonneg (by norm_num1) positiveDyadicAmplitudeBound_nonneg
   have hC : 0 ≤ C := mul_nonneg (mul_nonneg hB hG) hF
   have hfinite :=
     lintegral_localizedTailMaximal_le_sum_oneOffset_directQuadratic
@@ -362,7 +361,7 @@ theorem lintegral_localizedTailMaximal_le_directQuadratic_geometric
           C * (directQuadraticDelta s.toNat ^ (p - 1) * V) := by
       simp only [C, B]
     rw [hsecond, hthird, ENNReal.ofReal_mul hB, ENNReal.ofReal_mul hC]
-    simp only [K, D]
+    simp only [D, K]
     ring
   have hdecay :
       (∑ s ∈ O, D s) ≤ ENNReal.ofReal (20 * holderConjugate p * V) := by
@@ -376,7 +375,7 @@ theorem lintegral_localizedTailMaximal_le_directQuadratic_geometric
               directQuadraticDelta s.toNat ^ (p - 1) * V)) +
             ENNReal.ofReal (8 * positiveDyadicAmplitudeBound * G * F *
               (directQuadraticDelta s.toNat ^ (p - 1) * V))) := by
-      simpa only [O, D] using hfinite
+      exact hfinite
     _ = (K + ENNReal.ofReal B + ENNReal.ofReal C) * ∑ s ∈ O, D s := by
       simp_rw [hterm]
       rw [Finset.mul_sum]

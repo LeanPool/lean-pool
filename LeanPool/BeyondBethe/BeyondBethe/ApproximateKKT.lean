@@ -9,7 +9,10 @@ module
 public import LeanPool.BeyondBethe.BeyondBethe.StrongEntropy
 public import LeanPool.BeyondBethe.BeyondBethe.ExplicitBounds
 public import LeanPool.BeyondBethe.BeyondBethe.NumericalPotentials
-public import Mathlib.Tactic
+import Mathlib.Tactic.Linarith -- shake: keep
+import Mathlib.Tactic.NormNum -- shake: keep
+import Mathlib.Tactic.Positivity -- shake: keep
+import Mathlib.Tactic.Ring -- shake: keep
 
 /-! # Approximate KKT -/
 

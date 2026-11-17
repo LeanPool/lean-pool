@@ -32,7 +32,7 @@ theorem length_le_of_carrier_subset_physical {I J : RealInterval}
     (h : I.carrier ⊆ J.carrier) : I.length ≤ J.length := by
   have he := (Ioc_subset_Ioc_iff I.left_lt_right).mp h
   dsimp [RealInterval.length]
-  linarith [he.1, he.2]
+  linarith only [he, he.1, he.2]
 
 theorem carrier_subset_of_generationIndex_le_at_point
     {N : Finset RealInterval}
@@ -112,7 +112,7 @@ theorem norm_lengthTail_le_two_generationPrefixNormMax
       ‖∑ i ∈ Finset.range n.val, ∑ I ∈ generation N i, v I‖)).bddAbove
       ⟨m, by omega⟩
   rw [Finset.sum_congr rfl hpiece, Finset.sum_sub_distrib, hfull, hprefix]
-  exact (norm_sub_le _ _).trans (by linarith [hbound N.card le_rfl, hbound n hn])
+  exact (norm_sub_le _ _).trans (by linarith only [hn, hbound, hbound N.card le_rfl, hbound n hn])
 
 
 end KrauseLaceyGenerationLayers

@@ -55,10 +55,10 @@ theorem paperMainTermIndices_unique_translate {N n : ℕ} {L : ℝ} {k l : ℤ}
   have hNr : (0 : ℝ) < N := by exact_mod_cast hN
   rcases lt_trichotomy k l with hkl | hkl | hlk
   · have hstep : (k : ℝ) + 1 ≤ l := by exact_mod_cast Int.add_one_le_iff.mpr hkl
-    nlinarith
+    nlinarith only [hkhi, hllo, hkl, hstep]
   · exact hkl
   · have hstep : (l : ℝ) + 1 ≤ k := by exact_mod_cast Int.add_one_le_iff.mpr hlk
-    nlinarith
+    nlinarith only [hklo, hlhi, hlk, hstep]
 
 /-- The exact window recovers the truncation index by a floor. In particular,
 the lower summation index `k + 1` is strictly above `(n - L) / N`, including
@@ -71,9 +71,9 @@ theorem paperMainTermIndices_floor_eq {N n : ℕ} {L : ℝ} {k : ℤ}
   apply Int.floor_eq_iff.mpr
   constructor
   · apply (le_div_iff₀ hNr).mpr
-    nlinarith
+    linarith only [hnlo]
   · apply (div_lt_iff₀ hNr).mpr
-    nlinarith
+    linarith only [hnhi]
 
 /-- Under the window-start assumption the exponents are at least two, hence
 in particular positive as required by the paper's convention for `ℕ`. -/
@@ -82,8 +82,7 @@ theorem paperMainTermIndices_exponent_ge_two {N n : ℕ} {L : ℝ} {k : ℤ}
     (hk : (k, n) ∈ paperMainTermIndices N L) : 2 ≤ n := by
   obtain ⟨hk, hn, _⟩ := mem_paperMainTermIndices.mp hk
   have hklo := (mem_paperBohrIndices.mp hk).1
-  have hNr : (0 : ℝ) ≤ N := Nat.cast_nonneg N
-  have hnreal : (2 : ℝ) ≤ n := by nlinarith
+  have hnreal : (2 : ℝ) ≤ n := by nlinarith only [hL, hn, hklo]
   exact_mod_cast hnreal
 
 /-- The finite supremum of the nonnegative norms, with value zero for an
@@ -125,8 +124,7 @@ theorem measurable_paperMainTermSup (N : ℕ) (L : ℝ) :
         ‖harmonicPhaseSum N p.1.toNat ((2 ^ p.2 : ℕ) : ℤ) (x - p.1)‖₊ := by
     induction s using Finset.induction_on with
     | empty =>
-      simpa only [Finset.sup_empty] using
-        (measurable_const : Measurable fun _ : ℝ => (⊥ : ℝ≥0))
+      exact (measurable_const : Measurable fun _ : ℝ => (⊥ : ℝ≥0))
     | @insert p s hp ih =>
       simp only [Finset.sup_insert]
       exact (hsum p).sup ih

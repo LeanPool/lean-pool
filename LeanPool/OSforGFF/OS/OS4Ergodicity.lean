@@ -104,12 +104,14 @@ private lemma timeTranslated_exp_stronglyMeasurable (s : ℝ) (f : TestFunction�
 /-- The integral of a constant `c : ℂ` over `Icc 0 T` (with `T ≥ 0`) is `T * c`. -/
 private lemma setIntegral_const_Icc_zero {T : ℝ} (hT : 0 ≤ T) (c : ℂ) :
     ∫ _s in Set.Icc (0 : ℝ) T, c = T * c := by
-  simp_all
+  simp_all only [integral_const, MeasurableSet.univ, measureReal_restrict_apply, Set.univ_inter,
+    volume_real_Icc, sub_zero, sup_of_le_left, Complex.real_smul]
 
 /-- A constant `ℂ`-valued function is integrable on `Icc 0 T`. -/
 private lemma integrableOn_const_Icc_zero (T : ℝ) (c : ℂ) :
     MeasureTheory.IntegrableOn (fun _ : ℝ => c) (Set.Icc 0 T) MeasureTheory.volume := by
-  simp_all
+  simp_all only [ne_eq, enorm_ne_top, not_false_eq_true, integrableOn_const_iff, enorm_eq_zero,
+    volume_Icc, sub_zero, ENNReal.ofReal_lt_top, or_true]
 
 /-- The GFF exponential is integrable with respect to the GFF measure. -/
 lemma gff_exp_pairing_integrable (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ) :
@@ -181,13 +183,13 @@ lemma gff_exp_time_translated_memLp_two (m : ℝ) [Fact (0 < m)] (s : ℝ) (f : 
     apply Real.exp_le_exp.mpr
     have h_le : ω (complexTestFunctionDecompose g).1 ≤ |ω (complexTestFunctionDecompose g).1| :=
       le_abs_self _
-    linarith
+    linarith only [h_le]
   -- Conclude MemLp 2 via domination
   rw [MeasureTheory.memLp_two_iff_integrable_sq_norm h_meas]
   have h_sq_meas : AEStronglyMeasurable (fun ω => ‖Complex.exp (distributionPairingℂReal ω g)‖^2)
       (gaussianFreeFieldFree m).toMeasure := h_meas.norm.pow 2
   apply h_dom.mono' h_sq_meas
-  simp_all
+  simp_all only [norm_pow, norm_norm, Filter.eventually_true]
 
 /-! ## GFF Time Translation Invariance -/
 
@@ -195,7 +197,7 @@ lemma gff_exp_time_translated_memLp_two (m : ℝ) [Fact (0 < m)] (s : ℝ) (f : 
 lemma timeTranslationSchwartzℂ_conj_comm (t : ℝ) (f : TestFunctionℂ) :
     timeTranslationSchwartzℂ t (conjSchwartz f) = conjSchwartz (timeTranslationSchwartzℂ t f) := by
   ext x
-  simp_all
+  simp_all only [timeTranslationSchwartzℂ_apply, conjSchwartz_apply]
 
 /-- The product exp(⟨ω, T_t g₁⟩) · conj(exp(⟨ω, T_t g₂⟩)) integral is time-shift invariant.
     This follows from the GFF characteristic function and covariance time-translation invariance.
@@ -220,7 +222,7 @@ lemma gff_exp_product_time_shift_invariant (m : ℝ) [Fact (0 < m)] (g₁ g₂ :
       distributionPairingℂReal ω f + distributionPairingℂReal ω g =
       distributionPairingℂReal ω (f + g) := fun ω f g => by
     have := pairing_linear_combo ω f g 1 1
-    simp_all
+    simp_all only [one_smul, one_mul]
   simp_rw [h_add]
   -- T_t f + T_t g = T_t(f + g)
   have h_T_add : ∀ (f g : TestFunctionℂ),
@@ -345,7 +347,7 @@ lemma gff_err_sq_integrable (m : ℝ) [Fact (0 < m)] (T : ℝ) (hT : T > 0) (f :
   -- Goal matches h_sq_int up to notation: smul ↔ mul, and ∫ ω' ... ↔ EA
   have h_EA : ∫ ω' : FieldConfiguration, Complex.exp (distributionPairingℂReal ω' f) ∂μ = EA := by
     simp only [EA, A]
-    simp_all
+    simp_all only [gt_iff_lt, one_div, timeTranslationDistribution_zero]
   -- Rewrite the goal to match h_sq_int
   have h_eq : (fun ω => ‖((1 : ℝ) / T) • (∫ s in Set.Icc (0 : ℝ) T,
           Complex.exp (distributionPairingℂReal (timeTranslationDistribution s ω) f))
@@ -375,7 +377,7 @@ lemma double_integral_decay_bound :
   intro T hT
   calc ∫ s in Set.Icc (0 : ℝ) T, ∫ u in Set.Icc (0 : ℝ) T, (1 + |s - u|)^(-(3 : ℝ))
       ≤ C₀ * T := hC₀_bound T hT
-    _ ≤ 2 * T * C₀ := by nlinarith
+    _ ≤ 2 * T * C₀ := by nlinarith only [hC₀_pos, hT]
 
 /-- Product expectation stationarity. -/
 lemma gff_product_expectation_stationarity (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ)
@@ -432,7 +434,7 @@ lemma gff_covariance_timeTranslation_continuous (m : ℝ) [Fact (0 < m)]
   obtain ⟨Cg, hCg⟩ := bounded_of_continuous_tendsto_zero g.continuous (schwartz_tendsto_zero g)
   -- Time translation preserves the bound
   have hTsf_bdd : ∀ s x, ‖(timeTranslationSchwartzℂ s f) x‖ ≤ Cf := by
-    simp_all
+    simp_all only [timeTranslationSchwartzℂ_apply, implies_true]
   -- Convert to product integral for continuous_of_dominated
   have h_fubini : ∀ s, ∫ x, ∫ y, (timeTranslationSchwartzℂ s f) x * (freeCovariance m x y : ℂ) * g
     y =
@@ -478,7 +480,8 @@ lemma gff_covariance_timeTranslation_continuous (m : ℝ) [Fact (0 < m)]
     have hK_norm : Integrable (fun z => ‖(freeCovarianceKernel m z : ℂ)‖) (volume : Measure
       SpaceTime) := by
       have := hK_int.norm
-      simp_all
+      simp_all only [timeTranslationSchwartzℂ_apply, implies_true, Complex.norm_mul,
+        Complex.norm_real, norm_eq_abs, Prod.forall]
     have h_eq3 : (fun p : SpaceTime × SpaceTime => ‖(freeCovarianceKernel m (p.1 - p.2) : ℂ)‖ * ‖g
       p.2‖) =
         (fun p => ‖g p.2‖ * ‖(freeCovarianceKernel m (p.1 - p.2) : ℂ)‖) := by ext p; ring
@@ -708,7 +711,8 @@ lemma L2_time_average_variance_bound (m : ℝ) [Fact (0 < m)] (f : TestFunction�
     _ = ‖∫ ω, ‖(T⁻¹ : ℂ) * (∫ s in Set.Icc (0 : ℝ) T, A s ω) - EA‖^2 ∂μ‖ := h_lhs_eq.symm
     _ ≤ T⁻¹^2 * ‖∫ s in Set.Icc (0 : ℝ) T, ∫ u in Set.Icc (0 : ℝ) T, Cov s u‖ := h_axiom
     _ ≤ T⁻¹^2 * ∫ s in Set.Icc (0 : ℝ) T, ∫ u in Set.Icc (0 : ℝ) T, ‖Cov s u‖ := by
-        simp_all
+        simp_all only [gt_iff_lt, map_sub, inv_pow, norm_eq_abs, abs_eq_self, one_div, inv_pos,
+          pow_succ_pos, mul_le_mul_iff_right₀]
 
 /-! ## Clustering Implies Covariance Decay -/
 
@@ -765,7 +769,7 @@ private lemma clustering_decay_at (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ)
     _ ≤ c_ff * (1 + t)^(-(6:ℝ)) := hc_ff t ht
     _ ≤ c_ff * (1 + t)^(-(3:ℝ)) := by
         apply mul_le_mul_of_nonneg_left _ hc_ff_nonneg
-        exact Real.rpow_le_rpow_of_exponent_le (by linarith) (by norm_num : (-6 : ℝ) ≤ -3)
+        exact Real.rpow_le_rpow_of_exponent_le (by linarith only [ht]) (by norm_num : (-6 : ℝ) ≤ -3)
 
 /-- OS4'' clustering implies covariance decay with exponent -3. -/
 lemma clustering_implies_covariance_decay (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ)
@@ -793,8 +797,8 @@ lemma clustering_implies_covariance_decay (m : ℝ) [Fact (0 < m)] (f : TestFunc
     exact clustering_decay_at m f c_ff hc_ff_nonneg hc_ff (s - u) (sub_nonneg.mpr h_sign)
   · -- Case s < u: |s - u| = u - s
     push Not at h_sign
-    rw [show |s - u| = u - s by rw [abs_sub_comm]; exact abs_of_nonneg (by linarith)]
-    have h_nonneg : u - s ≥ 0 := by linarith
+    rw [show |s - u| = u - s by rw [abs_sub_comm]; exact abs_of_nonneg (by linarith only [h_sign])]
+    have h_nonneg : u - s ≥ 0 := by linarith only [h_sign]
     -- By norm conjugation symmetry, swap A(s-u) and A(0), then apply stationarity with shift u - s
     have h_norm_eq : ‖∫ ω, A (s - u) ω * starRingEnd ℂ (A 0 ω) ∂μ - EA * starRingEnd ℂ EA‖ =
         ‖∫ ω, A 0 ω * starRingEnd ℂ (A (s - u) ω) ∂μ - EA * starRingEnd ℂ EA‖ := by
@@ -888,7 +892,7 @@ lemma variance_decay_from_clustering (m : ℝ) [Fact (0 < m)] (f : TestFunction�
       · intro x
         left
         -- 1 + |x.1 - x.2| ≥ 1 > 0, so never zero
-        linarith [abs_nonneg (x.1 - x.2)]
+        linarith only [abs_nonneg (x.1 - x.2)]
     have h_cov_double_bound : ∫ s in Set.Icc (0 : ℝ) T, ∫ u in Set.Icc (0 : ℝ) T, ‖Cov s u‖ ≤
         c * (2 * T * C) := by
       -- First bound by ∫∫ c·(1+|s-u|)^{-3}
@@ -930,7 +934,7 @@ lemma variance_decay_from_clustering (m : ℝ) [Fact (0 < m)] (f : TestFunction�
         simp_rw [MeasureTheory.integral_const_mul]
         -- Now: c * ∫∫ (1+|s-u|)^{-3} ≤ c * (2*T*C)
         exact mul_le_mul_of_nonneg_left h_double_T hc
-      linarith
+      linarith only [h1, h2]
     -- Rewrite goal to match h_var's form
     -- The subtraction `∫ exp - mean` needs to become `(∫ exp) - mean` after scaling
     have h_goal_eq : ∀ ω, ‖(1 / T) * (∫ s in Set.Icc (0 : ℝ) T,
@@ -959,7 +963,9 @@ lemma variance_decay_from_clustering (m : ℝ) [Fact (0 < m)] (f : TestFunction�
     calc ∫ ω, ‖(1 / T) * (∫ s in Set.Icc (0 : ℝ) T, A s ω) - EA‖^2 ∂μ
         ≤ (1 / T^2) * ∫ s in Set.Icc (0 : ℝ) T, ∫ u in Set.Icc (0 : ℝ) T, ‖Cov s u‖ := h_var
       _ ≤ (1 / T^2) * (c * (2 * T * C)) := by
-          simp_all
+          simp_all only [ge_iff_le, rpow_neg_ofNat, Int.reduceNeg, zpow_neg, zpow_ofNat,
+            gt_iff_lt, one_div, Set.mem_Icc, and_imp, Complex.norm_mul, norm_inv,
+            Complex.norm_real, norm_eq_abs, inv_pos, pow_succ_pos, mul_le_mul_iff_right₀]
       _ = 2 * c * C / T := by field_simp
   -- 2·c·C / T → 0 as T → ∞
   have h_tends : Filter.Tendsto (fun T : ℝ => 2 * c * C / T) Filter.atTop (nhds 0) := by
@@ -990,11 +996,11 @@ lemma norm_sq_weighted_sum_le {n : ℕ} (w : Fin n → ℂ) (a : Fin n → ℂ) 
     calc ‖∑ j, w j * a j‖ ≤ ∑ j, ‖w j * a j‖ := norm_sum_le _ _
       _ = ∑ j, ‖w j‖ * ‖a j‖ := by simp_rw [norm_mul]
   have h2 : ‖∑ j, w j * a j‖^2 ≤ (∑ j, ‖w j‖ * ‖a j‖)^2 :=
-    sq_le_sq' (by nlinarith [norm_nonneg (∑ j, w j * a j)]) h1
+    sq_le_sq' (by linarith only [h1, norm_nonneg (∑ j, w j * a j)]) h1
   have h3 : (∑ j : Fin n, ‖w j‖ * ‖a j‖)^2 ≤ (∑ j, ‖w j‖^2) * (∑ j, ‖a j‖^2) := by
     have := Finset.sum_mul_sq_le_sq_mul_sq Finset.univ (fun j => ‖w j‖) (fun j => ‖a j‖)
     exact this
-  linarith
+  linarith only [h2, h3]
 
 /-- OS4' → OS4: Generating function ergodicity implies full ergodicity.
 
@@ -1158,7 +1164,7 @@ theorem OS4'_implies_OS4 (m : ℝ) [Fact (0 < m)] :
         convert h_sum using 1
         ext ω
         simp only [Finset.sum_apply]
-      · simp_all
+      · simp_all only [gt_iff_lt, one_div, norm_pow, norm_norm, Filter.eventually_true]
     -- Integrate
     calc ∫ ω, ‖(1 / T) * ∫ s in Set.Icc (0 : ℝ) T, A (timeTranslationDistribution s ω)
           - ∫ ω', A ω' ∂μ‖^2 ∂μ

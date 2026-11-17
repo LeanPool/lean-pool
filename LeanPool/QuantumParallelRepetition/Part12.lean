@@ -15,6 +15,9 @@ noncomputable section
 
 namespace QuantumParallelRepetition
 
+-- Compare vector expressions without expanding their coordinate formulas.
+attribute [local irreducible] PiLp.instNorm Matrix.toEuclideanCLM
+
 open scoped ComplexOrder Matrix BigOperators InnerProductSpace
 open Complex Matrix Finset
 
@@ -814,15 +817,7 @@ private theorem unconditionalActualFairSourceRoundingContext_analyticLedger
       (psiVector c h) (exactSourceTuplePsi_norm G n S D h) j
       (width_all c (schedule c j)) (fine_all c (schedule c j))
   · exact le_refl (deviation c)
-  · change
-      (∑ h : ExactLocallySampleableTuple X Y A B D,
-        law c h *
-          ∑ j : Fin c.stopping.L,
-            ‖canonical c (h, j) - source c (h, j)‖ ^ 2) ≤
-        unconditionalActualC485FairSourceClipEnergy
-          (P := c.stopping.P) (m := c.stopping.m)
-          G n S D (width_positive c) c.stopping.grid
-          c.stopping.fine (schedule c)
+  · dsimp only [clipping]
     unfold unconditionalActualC485FairSourceClipEnergy
     apply le_of_eq
     apply Finset.sum_congr rfl
@@ -913,35 +908,16 @@ private theorem unconditionalActualFairSourceRoundingContext_verifierLedger
       G n S D c.aliceDefault c.bobDefault
       p.2 p.1.2.1 p.1.2.2.1
   · intro h supported j
-    change
-      quadraticExpectation
-          (integratorActualC485WinningEffect
-            (P := c.stopping.P) (N := c.stopping.N)
-            (m := c.stopping.m)
-            G n S D c.aliceDefault c.bobDefault
-            j h.2.1 h.2.2.1)
-          (integratorActualC485SourceVector
-            (S := 1) (B := c.stopping.P) (N := c.stopping.N)
-            (d := c.d) (L := c.stopping.L) (m := c.stopping.m)
-            c.width c.schedule
-            (unconditionalExactFairGammaUnit G n S D h)
-            (exactGlobalHistoryFinPhi
-              G n S D h.2.2.2 h.2.2.1)
-            (exactSourceTuplePsi G n S D h) j) =
-        ‖integratorActualC485SourceVector
-            (S := 1) (B := c.stopping.P) (N := c.stopping.N)
-            (d := c.d) (L := c.stopping.L) (m := c.stopping.m)
-            c.width c.schedule
-            (unconditionalExactFairGammaUnit G n S D h)
-            (exactGlobalHistoryFinPhi
-              G n S D h.2.2.2 h.2.2.1)
-            (exactSourceTuplePsi G n S D h) j‖ ^ 2 *
-          exactSourceConditionalWinningProbability G n S D h
-    rw [unconditionalExactFairGammaUnit_eq_global]
-    exact unconditionalActualFairSourceSupportedBorn
-      G n S D c.positive c.aliceDefault c.bobDefault h supported
-      c.stopping.phases c.stopping.grid c.stopping.harmonic
-      c.width c.schedule j
+    simpa only [UnconditionalActualFairSourceRoundingContext.effect,
+      UnconditionalActualFairSourceRoundingContext.source,
+      UnconditionalActualFairSourceRoundingContext.gammaVector,
+      UnconditionalActualFairSourceRoundingContext.phiVector,
+      UnconditionalActualFairSourceRoundingContext.psiVector,
+      unconditionalExactFairGammaUnit_eq_global] using!
+      unconditionalActualFairSourceSupportedBorn
+        G n S D c.positive c.aliceDefault c.bobDefault h supported
+        c.stopping.phases c.stopping.grid c.stopping.harmonic
+        c.width c.schedule j
   · intro h
     exact unconditionalActualFairSourceVerifier_historyBorn_nonnegative
       G n S D c.aliceDefault c.bobDefault

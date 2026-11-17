@@ -210,7 +210,7 @@ theorem tailClosureSuperjetGraph_of_nat_hessian_add_identity
       hessian := X + δ k • (1 : Hessian n) }
   let J : Jet n := { gradient := p, hessian := X }
   have hδ : Tendsto δ atTop (nhds 0) := by
-    simpa [δ] using
+    exact
       (tendsto_one_div_add_atTop_nhds_zero_nat (𝕜 := Real))
   have hH : Tendsto (fun k : Nat => X + δ k • (1 : Hessian n)) atTop (nhds X) := by
     simpa using (tendsto_const_nhds.add (hδ.smul_const (1 : Hessian n)))
@@ -220,7 +220,7 @@ theorem tailClosureSuperjetGraph_of_nat_hessian_add_identity
   have hJ : Tendsto Jδ atTop (nhds J) := by
     rw [show nhds J =
         comap (fun K : Jet n => (K.gradient, K.hessian)) (nhds (p, X)) by
-          simpa [J] using
+          exact
             (nhds_induced (fun K : Jet n => (K.gradient, K.hessian)) J)]
     rw [tendsto_comap_iff]
     exact hJdata
@@ -229,7 +229,7 @@ theorem tailClosureSuperjetGraph_of_nat_hessian_add_identity
     tendsto_const_nhds.prodMk_nhds hJ
   refine tailClosureSuperjetGraph_of_tendsto_tailClosureSuperjetGraph hz ?_
   filter_upwards with k
-  simpa [δ, Jδ] using hmem k
+  exact hmem k
 
 /--
 If every negative identity-matrix perturbation along the sequence
@@ -252,7 +252,7 @@ theorem tailClosureSubjetGraph_of_nat_hessian_sub_identity
       hessian := X - δ k • (1 : Hessian n) }
   let J : Jet n := { gradient := p, hessian := X }
   have hδ : Tendsto δ atTop (nhds 0) := by
-    simpa [δ] using
+    exact
       (tendsto_one_div_add_atTop_nhds_zero_nat (𝕜 := Real))
   have hH : Tendsto (fun k : Nat => X - δ k • (1 : Hessian n)) atTop (nhds X) := by
     simpa using (tendsto_const_nhds.sub (hδ.smul_const (1 : Hessian n)))
@@ -262,7 +262,7 @@ theorem tailClosureSubjetGraph_of_nat_hessian_sub_identity
   have hJ : Tendsto Jδ atTop (nhds J) := by
     rw [show nhds J =
         comap (fun K : Jet n => (K.gradient, K.hessian)) (nhds (p, X)) by
-          simpa [J] using
+          exact
             (nhds_induced (fun K : Jet n => (K.gradient, K.hessian)) J)]
     rw [tendsto_comap_iff]
     exact hJdata
@@ -271,7 +271,7 @@ theorem tailClosureSubjetGraph_of_nat_hessian_sub_identity
     tendsto_const_nhds.prodMk_nhds hJ
   refine tailClosureSubjetGraph_of_tendsto_tailClosureSubjetGraph hz ?_
   filter_upwards with k
-  simpa [δ, Jδ] using hmem k
+  exact hmem k
 
 /--
 A convergent net of approximating superjet graph points gives a point in the

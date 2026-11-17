@@ -1487,16 +1487,11 @@ theorem paperVariableArityPhysicalMatrixGuardedFourFamilyCheck_valid
         ((physicalWordBinarySystem
           (encodeThreeCNF formula).length formula).check
             row column = (1 : ZMod 2))] := by
-  exact physicalMatrixGuardedFourFamilyCheck_bits global refinement ordinary shifted
-    (affineCellQuery row.val column.val (encodeThreeCNF formula)) row.val
-    (physicalFormulaGlobalBoundary formula)
-    (physicalFormulaRefinementBoundary formula)
-    (physicalFormulaOrdinaryBoundary formula)
-    (decide
-    ((physicalWordBinarySystem
-      (encodeThreeCNF formula).length formula).check
-        row column = (1 : ZMod 2)))
-    correctGlobal correctRefinement correctOrdinary correctShifted
+  apply physicalMatrixGuardedFourFamilyCheck_bits
+  · exact correctGlobal
+  · exact correctRefinement
+  · exact correctOrdinary
+  · exact correctShifted
 
 private theorem paperVariableArityPhysicalMatrixCheckEntry_transport
     (source target : GapCVP.Core.BinaryAffineSystem)
@@ -2755,8 +2750,7 @@ theorem physicalRefinementGridCard_eq
       (ExplicitGridPoint (encodeThreeCNF formula).length
         (srcFormula formula)) =
       physGridCard formula := by
-  simpa only [Fintype.card_coe, physGridCard, physFieldCard, physDegree, physicalFormulaSize,
-      physicalFormulaVariableCount] using physicalSourceGridCardinality_eq (encodeThreeCNF
+  exact physicalSourceGridCardinality_eq (encodeThreeCNF
           formula).length formula
 
 private theorem paperVariableArityPhysicalRefinementFieldCard_eq
@@ -3218,7 +3212,7 @@ private theorem paperVariableArityPhysicalRefinementDecodedFieldRowRank
     physicalRefinementDegree_pos formula
   have quotientBound : localRank / degree < grid * field := by
     apply (Nat.div_lt_iff_lt_mul degreePositive).mpr
-    simpa only [Nat.mul_assoc] using bounded
+    exact bounded
   have sourceRank :
       row.val - physicalFormulaGlobalBoundary formula =
         clause.val * (grid * field * degree) + localRank :=
@@ -4687,8 +4681,7 @@ noncomputable def
         row column formula hbound))
     (paperVariableArityPhysicalColumnGlobalTypeBit_query
       row column formula)
-    (by simpa only [physicalRefinementSourceLocalTagInRange,
-      decide_eq_true_eq] using
+    (by exact
         (paperVariableArityPhysicalRefinementLocalTagMarker_query
           row column formula hbound))
 

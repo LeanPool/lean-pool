@@ -8,7 +8,8 @@ module
 
 public import LeanPool.BeyondBethe.BeyondBethe.MachineKuhnSemantics
 public import LeanPool.BeyondBethe.BeyondBethe.MachineMatrixDimension
-public import Mathlib.Tactic
+import Mathlib.Tactic.Linarith -- shake: keep
+import Mathlib.Tactic.Ring -- shake: keep
 
 /-!
 # Reachable-state bounds for the encoded Kuhn evaluator

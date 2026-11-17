@@ -545,7 +545,7 @@ private theorem Elliptic.surfaceProjection_fibre_card (j : Kind) (p : FixedPerio
   let := affineAction_free j p v hv
   change Nat.card (FiniteQuotient.project (CyclicGroup j) p.val.Torus ⁻¹' { y }) = j.order
   rw [FiniteQuotient.fibre_card (CyclicGroup j) p.val.Torus]
-  simp [CyclicGroup, Nat.card_eq_fintype_card, ZMod.card]
+  simp only [CyclicGroup, Nat.card_eq_fintype_card, Fintype.card_multiplicative, ZMod.card]
 
 private theorem Elliptic.pow_mem_unitDisc_iff (m : ℕ) (hm : 0 < m) (z : ℂ) :
     z ^ m ∈ SpecialPeriods.unitDisc ↔ z ∈ SpecialPeriods.unitDisc := by
@@ -897,7 +897,8 @@ private theorem Elliptic.HigherHomology.MappingTorusQuotient.twist_pow_apply {X 
       (a + (((n : ℝ) / m : ℝ) : Elliptic.HigherHomology.MappingTorusQuotient.Circle),
         (B ^ n) x) := by
   induction n with
-  | zero => simp
+  | zero => simp only [pow_zero, Homeomorph.one_apply, CharP.cast_eq_zero, zero_div,
+    QuotientAddGroup.mk_zero, add_zero]
   | succ n ih =>
     rw [pow_succ', Homeomorph.mul_apply, ih, twist_apply]
     apply Prod.ext
@@ -1147,7 +1148,7 @@ private theorem Elliptic.HigherHomology.MappingTorusQuotient.project_eq_iff {X :
   · rintro ⟨g, hg⟩
     have he : Multiplicative.ofAdd ((g.toAdd.val : ℤ) : ZMod m) = g := by
       apply Multiplicative.ext
-      simp
+      simp only [ZMod.natCast_val, ZMod.intCast_cast, ZMod.cast_id', id_eq, ofAdd_toAdd]
     have hs := ofAdd_intCast_smul m B hB (g.toAdd.val : ℤ) q.1 q.2
     rw [he] at hs
     exact ⟨g.toAdd.val, hg.symm.trans hs⟩
@@ -1319,7 +1320,8 @@ private theorem Elliptic.discPower_three_eq_iff (z w : SpecialPeriods.Disc) :
 private theorem Elliptic.discPower_four_eq_iff (z w : SpecialPeriods.Disc) :
     discPower 4 (by decide) z = discPower 4 (by decide) w ↔
       ∃ r < 4, SpecialPeriods.discRotateFour^[r] w = z :=
-  discPower_eq_iff_scalar_iterate 4 (by decide) (-Complex.I) (by simp)
+  discPower_eq_iff_scalar_iterate 4 (by decide) (-Complex.I) (by simp only [norm_neg,
+    Complex.norm_I])
     Complex.isPrimitiveRoot_neg_I z w
 
 private theorem Elliptic.discPower_eq_iff_familyRotation (j : Kind) (z w : SpecialPeriods.Disc) :
@@ -1357,7 +1359,7 @@ private theorem Elliptic.mem_complexPowerChart_source (m : ℕ) (hm : 0 < m) (z 
     ⟨(complexPower_holomorphic m).contDiffAt.mem_toOpenPartialHomeomorph_source
         ((complexPower_hasDerivAt m z).hasFDerivAt_equiv
           (complexPower_coefficient_ne_zero m hm z hz))
-        (by simp),
+        (by simp only [ne_eq, WithTop.top_ne_zero, not_false_eq_true]),
       hz⟩
 
 private theorem Elliptic.complexPowerChart_source_ne_zero (m : ℕ) (hm : 0 < m) (z : ℂ) (hz : z ≠ 0)

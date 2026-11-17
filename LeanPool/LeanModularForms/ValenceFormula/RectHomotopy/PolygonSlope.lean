@@ -8,7 +8,6 @@ module
 public import LeanPool.LeanModularForms.ValenceFormula.RectHomotopy.Geometry
 import LeanPool.LeanModularForms.ValenceFormula.RectHomotopy.PolygonProps
 import Mathlib.CategoryTheory.Category.Init
-import Mathlib.NumberTheory.ArithmeticFunction.Misc
 
 /-!
 # Polygon slope analysis and derivative bounds
@@ -115,7 +114,8 @@ lemma slope_fdPolygon_seg5 (s t : ℝ) (hs : s > 4) (ht : t > 4) (hst : s ≠ t)
   erw [Complex.real_smul]
   have hne : (↑t : ℂ) - ↑s ≠ 0 := by
     simpa only [sub_ne_zero, ne_eq, Complex.ofReal_inj] using hst.symm
-  simp_all
+  simp_all only [gt_iff_lt, ne_eq, not_le, ofReal_inv, ofReal_sub, add_sub_add_right_eq_sub,
+    sub_sub_sub_cancel_right, not_false_eq_true, inv_mul_cancel₀]
 
 private lemma HHeight_sub_sqrt3_half : (↑HHeight - ↑(Real.sqrt 3) / 2 : ℂ) = 1 := by
   simp only [HHeight]; push_cast; ring
@@ -241,7 +241,7 @@ lemma slope_fdPolygon_at_t3_right (s : ℝ) (hs3 : s > 3) (hs4 : s ≤ 4) :
     simp only [fdPolygon, show ¬((3 : ℝ) ≤ 1) from by norm_num,
       show ¬((3 : ℝ) ≤ 2) from by norm_num, ↓reduceIte,
       show (3 : ℝ) ≤ 3 from le_refl 3, chordSegment]
-    ring_nf; simp; simp only [rho]; ring
+    ring_nf; simp only [zero_smul, one_smul, zero_add, one_div]; simp only [rho]; ac_rfl
   have heqs : fdPolygon s = -1/2 + (Real.sqrt 3 / 2 +
       (s - 3) * (HHeight - Real.sqrt 3 / 2)) * I := by
     simp only [fdPolygon, not_le.mpr (lt_trans (by norm_num : (1 : ℝ) < 3) hs3),

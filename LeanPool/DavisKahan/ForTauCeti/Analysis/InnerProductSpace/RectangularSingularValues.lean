@@ -6,10 +6,10 @@ Authors: Jon Crall, GPT-5.6 High, Claude Fable 5
 module
 
 public import Mathlib.Analysis.InnerProductSpace.SingularValues
-public import Mathlib.Analysis.InnerProductSpace.Positive
+import Mathlib.Analysis.InnerProductSpace.Positive
 public import LeanPool.DavisKahan.ForTauCeti.Analysis.InnerProductSpace.CourantFischer
 public import LeanPool.DavisKahan.ForTauCeti.Analysis.InnerProductSpace.Spectrum
-public import Mathlib.Analysis.InnerProductSpace.PiL2
+import Mathlib.Analysis.InnerProductSpace.PiL2
 
 
 /-!

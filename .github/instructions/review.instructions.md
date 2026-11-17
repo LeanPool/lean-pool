@@ -38,7 +38,7 @@ Each PR gets a short structured judgement covering:
   program behind it.
 - **Code quality**: 1 (clear AI slop) to 5 (mathlib-merge-ready).
 - **Significance**: one sentence saying what (or why not).
-- **Verdict**: `approve` / `request_changes` / `needs_discussion`.
+- **Verdict**: `approve` / `request_changes`.
 
 Then optionally a small list of specific, actionable findings — empty is
 fine and often correct.

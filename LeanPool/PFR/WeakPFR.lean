@@ -17,7 +17,6 @@ import LeanPool.PFR.Mathlib.LinearAlgebra.Dimension.FreeAndStrongRankCondition
 import LeanPool.PFR.Mathlib.LinearAlgebra.Quotient.Basic
 import Mathlib.Algebra.Group.Pointwise.Set.Card
 import Mathlib.LinearAlgebra.FreeModule.ModN
-import Mathlib.LinearAlgebra.FreeModule.PID
 
 /-!
 # Weak PFR over the integers
@@ -31,6 +30,13 @@ Here we use the entropic form of PFR to deduce a weak form of PFR over the integ
   $\dim A' \leq (40/\log 2)\log K$.
 
 -/
+
+-- Avoid repeated searches for empty or singleton types during simplification.
+attribute [-simp] IsEmpty.forall_iff Finset.univ_eq_empty forall_const
+  Function.const_inj Function.const_eq_zero Function.const_eq_one Set.range_const
+  exists_const IsEmpty.exists_iff add_eq_zero mul_eq_one
+  ProbabilityTheory.iIndepFun.of_subsingleton ProbabilityTheory.iIndep.of_subsingleton
+  ProbabilityTheory.iIndepSets.of_subsingleton
 
 open scoped ZhangYeungPFR
 
@@ -111,7 +117,7 @@ lemma torsion_free_doubling [FiniteRange X] [FiniteRange Y] (hX : Measurable X) 
   obtain ⟨A, mA, μA, X', Y'₁, Y'₂, hμA, h_indep, hX'_meas, hY'₁_meas, hY'₂_meas, hX'_ident,
     hY'₁_ident, hY'₂_ident, _, _, _⟩ := independent_copies3_nondep_finiteRange hX hY hY μ μ' μ'
   have h_meas (i : Fin 3) : Measurable (![X', Y'₁, Y'₂] i) := by fin_cases i <;> assumption
-  have : H[⟨X', ⟨Y'₁ - Y'₂, X' - 2 • Y'₁⟩⟩; μA] = H[X; μ] + 2 * H[Y; μ'] := calc
+  have tripleEntropy : H[⟨X', ⟨Y'₁ - Y'₂, X' - 2 • Y'₁⟩⟩; μA] = H[X; μ] + 2 * H[Y; μ'] := calc
     H[⟨X', ⟨Y'₁ - Y'₂, X' - 2 • Y'₁⟩⟩; μA] = H[⟨X', ⟨Y'₁, Y'₂⟩⟩; μA] := by
       let f : G × G × G → G × G × G := fun ⟨x, y₁, y₂⟩ ↦ (x, y₁ - y₂, x - 2 • y₁)
       change H[f ∘ ⟨X', ⟨Y'₁, Y'₂⟩⟩; μA] = _
@@ -124,7 +130,7 @@ lemma torsion_free_doubling [FiniteRange X] [FiniteRange Y] (hX : Measurable X) 
       rw [this.entropy_pair_eq_add hX'_meas (by exact Measurable.prod hY'₁_meas hY'₂_meas),
         IndepFun.entropy_pair_eq_add hY'₁_meas hY'₂_meas (h_indep.indepFun (show 1 ≠ 2 by decide)),
         hX'_ident.entropy_congr, hY'₁_ident.entropy_congr, hY'₂_ident.entropy_congr, two_mul]
-  have : H[⟨X', X' - 2 • Y'₁⟩; μA] = H[X; μ] + H[Y; μ'] := calc
+  have pairEntropy : H[⟨X', X' - 2 • Y'₁⟩; μA] = H[X; μ] + H[Y; μ'] := calc
     H[⟨X', X' - 2 • Y'₁⟩; μA] = H[⟨X', Y'₁⟩; μA] := by
       let f : G × G → G × G := fun ⟨x, y₁⟩ ↦ (x, x - 2 • y₁)
       change H[f ∘ ⟨X', Y'₁⟩; μA] = _
@@ -135,7 +141,8 @@ lemma torsion_free_doubling [FiniteRange X] [FiniteRange Y] (hX : Measurable X) 
         hX'_ident.entropy_congr, hY'₁_ident.entropy_congr]
   let f : G × G → G × G := fun ⟨x, y⟩ ↦ (x, y - x)
   have hf : f.Injective := by simp +contextual [Function.Injective, f]
-  have : H[⟨Y'₁ - Y'₂, X' - 2 • Y'₁⟩; μA] ≤ H[Y'₁ - Y'₂; μA] + H[X' - Y'₁ - Y'₂; μA] := calc
+  have jointBound :
+      H[⟨Y'₁ - Y'₂, X' - 2 • Y'₁⟩; μA] ≤ H[Y'₁ - Y'₂; μA] + H[X' - Y'₁ - Y'₂; μA] := calc
     H[⟨Y'₁ - Y'₂, X' - 2 • Y'₁⟩; μA] = H[f ∘ ⟨Y'₁ - Y'₂, X' - Y'₁ - Y'₂⟩; μA] := by
       change _ = H[⟨Y'₁ - Y'₂, X' - Y'₁ - Y'₂ - (Y'₁ - Y'₂)⟩; μA]
       rw [sub_sub_sub_cancel_right, ← sub_add_eq_sub_sub, two_nsmul]
@@ -145,13 +152,13 @@ lemma torsion_free_doubling [FiniteRange X] [FiniteRange Y] (hX : Measurable X) 
       · exact Measurable.sub (Measurable.sub hX'_meas hY'₁_meas) hY'₂_meas
     _ ≤ H[Y'₁ - Y'₂; μA] + H[X' - Y'₁ - Y'₂; μA] :=
       entropy_pair_le_add (hY'₁_meas.sub hY'₂_meas) (hX'_meas.sub hY'₁_meas |>.sub hY'₂_meas) μA
-  have : H[⟨X', ⟨Y'₁ - Y'₂, X' - 2 • Y'₁⟩⟩; μA] + H[X' - 2 • Y'₁; μA] ≤
+  have firstSubmodularity : H[⟨X', ⟨Y'₁ - Y'₂, X' - 2 • Y'₁⟩⟩; μA] + H[X' - 2 • Y'₁; μA] ≤
       H[⟨X', X' - 2 • Y'₁⟩; μA] + H[⟨Y'₁ - Y'₂, X' - 2 • Y'₁⟩; μA] := by
     have : FiniteRange (Y'₁ - Y'₂) := FiniteRange.sub Y'₁ Y'₂
     have : FiniteRange (2 • Y'₁) := by change FiniteRange ((fun x ↦ 2 • x) ∘ Y'₁); infer_instance
     apply entropy_triple_add_entropy_le μA hX'_meas (Measurable.sub hY'₁_meas hY'₂_meas)
     exact Measurable.sub hX'_meas <| Measurable.const_smul hY'₁_meas 2
-  have : H[⟨Y'₁, ⟨Y'₂, X' - Y'₁ - Y'₂⟩⟩; μA] = H[X; μ] + 2 * H[Y; μ'] := calc
+  have secondTripleEntropy : H[⟨Y'₁, ⟨Y'₂, X' - Y'₁ - Y'₂⟩⟩; μA] = H[X; μ] + 2 * H[Y; μ'] := calc
     H[⟨Y'₁, ⟨Y'₂, X' - Y'₁ - Y'₂⟩⟩; μA] = H[⟨Y'₁, ⟨Y'₂, X'⟩⟩; μA] := by
       let f : G × G × G → G × G × G := fun ⟨y₁, y₂, x⟩ ↦ (y₁, y₂, x - y₁ - y₂)
       change H[f ∘ ⟨Y'₁, ⟨Y'₂, X'⟩⟩; μA] = H[⟨Y'₁, ⟨Y'₂, X'⟩⟩; μA]
@@ -165,7 +172,7 @@ lemma torsion_free_doubling [FiniteRange X] [FiniteRange Y] (hX : Measurable X) 
         IndepFun.entropy_pair_eq_add hY'₂_meas hX'_meas (h_indep.indepFun (show 2 ≠ 0 by decide)),
         hX'_ident.entropy_congr, hY'₁_ident.entropy_congr, hY'₂_ident.entropy_congr]
       group
-  have : H[⟨Y'₁, X' - Y'₁ - Y'₂⟩; μA] = H[Y; μ'] + H[X' - Y'₂; μA] := calc
+  have firstMarginalEntropy : H[⟨Y'₁, X' - Y'₁ - Y'₂⟩; μA] = H[Y; μ'] + H[X' - Y'₂; μA] := calc
     H[⟨Y'₁, X' - Y'₁ - Y'₂⟩; μA] = H[f ∘ ⟨Y'₁, X' - Y'₂⟩; μA] := by rw [sub_right_comm]; rfl
     _ = H[⟨Y'₁, X' - Y'₂⟩; μA] := entropy_comp_of_injective μA
       (by exact Measurable.prod hY'₁_meas <| Measurable.sub hX'_meas hY'₂_meas) f hf
@@ -174,7 +181,7 @@ lemma torsion_free_doubling [FiniteRange X] [FiniteRange Y] (hX : Measurable X) 
       convert! IndepFun.entropy_pair_eq_add hY'₁_meas (hX'_meas.sub hY'₂_meas)
         <| h_indep.indepFun_sub_right h_meas 1 0 2 (by decide) (by decide)
       exact hY'₁_ident.entropy_congr.symm
-  have : H[⟨Y'₂, X' - Y'₁ - Y'₂⟩; μA] = H[Y; μ'] + H[X' - Y'₁; μA] := calc
+  have secondMarginalEntropy : H[⟨Y'₂, X' - Y'₁ - Y'₂⟩; μA] = H[Y; μ'] + H[X' - Y'₁; μA] := calc
     H[⟨Y'₂, X' - Y'₁ - Y'₂⟩; μA] = H[f ∘ ⟨Y'₂, X' - Y'₁⟩; μA] := rfl
     _ = H[⟨Y'₂, X' - Y'₁⟩; μA] := entropy_comp_of_injective μA
       (by exact Measurable.prod hY'₂_meas <| Measurable.sub hX'_meas hY'₁_meas) f hf
@@ -183,12 +190,14 @@ lemma torsion_free_doubling [FiniteRange X] [FiniteRange Y] (hX : Measurable X) 
       convert! IndepFun.entropy_pair_eq_add hY'₂_meas (hX'_meas.sub hY'₁_meas)
         <| h_indep.indepFun_sub_right h_meas 2 0 1 (by decide) (by decide)
       exact hY'₂_ident.entropy_congr.symm
-  have : H[⟨Y'₁, ⟨Y'₂, X' - Y'₁ - Y'₂⟩⟩; μA] + H[X' - Y'₁ - Y'₂; μA] ≤
+  have secondSubmodularity : H[⟨Y'₁, ⟨Y'₂, X' - Y'₁ - Y'₂⟩⟩; μA] + H[X' - Y'₁ - Y'₂; μA] ≤
       H[⟨Y'₁, X' - Y'₁ - Y'₂⟩; μA] + H[⟨Y'₂, X' - Y'₁ - Y'₂⟩; μA] := by
     apply entropy_triple_add_entropy_le μA hY'₁_meas hY'₂_meas
     exact Measurable.sub (Measurable.sub hX'_meas hY'₁_meas) hY'₂_meas
-  have : H[X' - Y'₁ - Y'₂; μA] ≤ 2 * d[X; μ # Y; μ'] + H[Y; μ'] := calc
-    H[X' - Y'₁ - Y'₂; μA] ≤ H[X' - Y'₁; μA] + H[X' - Y'₂; μA] - H[X; μ] := by linarith
+  have sumEntropyBound : H[X' - Y'₁ - Y'₂; μA] ≤ 2 * d[X; μ # Y; μ'] + H[Y; μ'] := calc
+    H[X' - Y'₁ - Y'₂; μA] ≤ H[X' - Y'₁; μA] + H[X' - Y'₂; μA] - H[X; μ] := by
+      linarith only [secondTripleEntropy, firstMarginalEntropy, secondMarginalEntropy,
+        secondSubmodularity]
     _ = 2 * d[X; μ # Y; μ'] + H[Y; μ'] := by
       nth_rw 1 [two_mul, ← hX'_ident.rdist_congr hY'₁_ident, ← hX'_ident.rdist_congr hY'₂_ident]
       have h1 : d[X'; μA # Y'₁; μA] = H[X' - Y'₁; μA] - H[X'; μA] / 2 - H[Y'₁; μA] / 2 :=
@@ -197,7 +206,7 @@ lemma torsion_free_doubling [FiniteRange X] [FiniteRange Y] (hX : Measurable X) 
         (h_indep.indepFun (show 0 ≠ 2 by decide)).rdist_eq hX'_meas hY'₂_meas
       rw [h1, h2, hY'₁_ident.entropy_congr, hY'₂_ident.entropy_congr, hX'_ident.entropy_congr]
       group
-  have : d[X; μ # 2 • Y; μ'] ≤
+  have distanceBound : d[X; μ # 2 • Y; μ'] ≤
       d[Y'₁; μA # Y'₂; μA] + (H[Y; μ'] - H[X; μ]) / 2 + 2 * d[X; μ # Y; μ'] := calc
     d[X; μ # 2 • Y; μ'] = H[X' - 2 • Y'₁; μA] - H[X; μ] / 2 - H[2 • Y; μ'] / 2 := by
       have h2Y_ident : IdentDistrib (2 • Y'₁) (2 • Y) (μ := μA) (ν := μ') :=
@@ -207,7 +216,8 @@ lemma torsion_free_doubling [FiniteRange X] [FiniteRange Y] (hX : Measurable X) 
       rw [← hX'_ident.rdist_congr h2Y_ident,
         h2Y_indep.rdist_eq hX'_meas <| Measurable.const_smul hY'₁_meas 2,
         hX'_ident.entropy_congr, h2Y_ident.entropy_congr]
-    _ ≤ H[Y'₁ - Y'₂; μA] + 2 * d[X; μ # Y; μ'] - H[X; μ] / 2 - H[2 • Y; μ'] / 2 := by linarith
+    _ ≤ H[Y'₁ - Y'₂; μA] + 2 * d[X; μ # Y; μ'] - H[X; μ] / 2 - H[2 • Y; μ'] / 2 := by
+      linarith only [tripleEntropy, pairEntropy, jointBound, firstSubmodularity, sumEntropyBound]
     _ = d[Y'₁; μA # Y'₂; μA] + (H[Y; μ'] - H[X; μ]) / 2 + 2 * d[X; μ # Y; μ'] := by
       have H2Y : H[2 • Y; μ'] = H[Y; μ'] := by
         let f (g : G) := 2 • g
@@ -216,13 +226,14 @@ lemma torsion_free_doubling [FiniteRange X] [FiniteRange Y] (hX : Measurable X) 
         (h_indep.indepFun (show 1 ≠ 2 by decide)).rdist_eq hY'₁_meas hY'₂_meas
       rw [this, hY'₁_ident.entropy_congr, hY'₂_ident.entropy_congr, H2Y]
       group
-  have : d[Y'₁; μA # Y'₂; μA] ≤ 2 * d[X; μ # Y; μ'] := by
+  have triangleBound : d[Y'₁; μA # Y'₂; μA] ≤ 2 * d[X; μ # Y; μ'] := by
     rw [two_mul]
     convert rdist_triangle hY'₁_meas hX'_meas hY'₂_meas (μ := μA) (μ' := μA) (μ'' := μA)
     · exact rdist_symm.trans (hY'₁_ident.rdist_congr hX'_ident).symm
     · exact (hX'_ident.rdist_congr hY'₂_ident).symm
   rw [← two_nsmul]
-  linarith [abs_le.mp <| diff_ent_le_rdist hX hY (μ := μ) (μ' := μ')]
+  linarith only [distanceBound, triangleBound,
+    (abs_le.mp <| diff_ent_le_rdist hX hY (μ := μ) (μ' := μ')).1]
 
 /-- If `G` is a torsion-free group and `X, Y` are `G`-valued random variables and
 `φ : G → 𝔽₂^d` is a homomorphism then `H[φ ∘ X; μ] ≤ 10 * d[X; μ # Y; μ']`. -/

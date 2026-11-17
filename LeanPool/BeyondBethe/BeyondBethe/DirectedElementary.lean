@@ -886,6 +886,6 @@ theorem rationalExpLower_bounds {s loss : ℚ} (hloss : 0 < loss) :
   · have hneg : 0 ≤ -s := neg_nonneg.mpr (le_of_not_ge hs)
     have h := rationalNegativeExpLower_bounds hneg hloss
     norm_num only [Rat.cast_neg] at h ⊢
-    convert h using 1 <;> ring
+    convert h using 1 <;> ring_nf
 
 end BeyondBethe

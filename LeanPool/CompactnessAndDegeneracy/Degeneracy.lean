@@ -44,7 +44,7 @@ private theorem twelve_sevenths_lt_sqrt_three : (12 : ℝ) / 7 < Real.sqrt 3 := 
   have hsqrt_nonneg : 0 ≤ Real.sqrt (3 : ℝ) := Real.sqrt_nonneg 3
   have hsqrt_sq : (Real.sqrt (3 : ℝ)) ^ 2 = 3 := by
     exact Real.sq_sqrt (by positivity)
-  nlinarith
+  nlinarith only [hsqrt_nonneg, hsqrt_sq]
 
 private theorem log_two_pos : 0 < Real.log (2 : ℝ) :=
   Real.log_pos (by norm_num)
@@ -96,8 +96,8 @@ private theorem binaryEntropy_subadditive (x y : ℝ)
     (hx : 0 ≤ x) (hy : 0 ≤ y) (hsum : x + y ≤ 1) :
     binaryEntropy (x + y) ≤ binaryEntropy x + binaryEntropy y := by
   by_cases hzero : x + y = 0
-  · have hxzero : x = 0 := by linarith
-    have hyzero : y = 0 := by linarith
+  · have hxzero : x = 0 := by linarith only [hx, hy, hzero]
+    have hyzero : y = 0 := by linarith only [hx, hy, hzero]
     simp only [hxzero, hyzero, add_zero, binaryEntropy_zero, Std.le_refl]
   have hpositive : 0 < x + y :=
     lt_of_le_of_ne (add_nonneg hx hy) (Ne.symm hzero)
@@ -107,10 +107,10 @@ private theorem binaryEntropy_subadditive (x y : ℝ)
     div_nonneg hy hpositive.le
   have hxscale_one : x / (x + y) ≤ 1 := by
     apply (div_le_one hpositive).mpr
-    linarith
+    linarith only [hy]
   have hyscale_one : y / (x + y) ≤ 1 := by
     apply (div_le_one hpositive).mpr
-    linarith
+    linarith only [hx]
   have hxentropy := binaryEntropy_scale_le (x + y) (x / (x + y))
     (add_nonneg hx hy) hsum hxscale hxscale_one
   have hyentropy := binaryEntropy_scale_le (x + y) (y / (x + y))
@@ -144,13 +144,13 @@ private theorem abs_binaryEntropy_sub_le_binaryEntropy_abs_sub
     have hforward :
         binaryEntropy b ≤ binaryEntropy a + binaryEntropy (b - a) := by
       have h := binaryEntropy_subadditive a (b - a)
-        hazero hdifference (by linarith)
+        hazero hdifference (by linarith only [hbone])
       have hargument : a + (b - a) = b := by ring
       rwa [hargument] at h
     have hbackward :
         binaryEntropy a ≤ binaryEntropy b + binaryEntropy (b - a) := by
       have h := binaryEntropy_subadditive (1 - b) (b - a)
-        (sub_nonneg.mpr hbone) hdifference (by linarith)
+        (sub_nonneg.mpr hbone) hdifference (by linarith only [hazero])
       have hargument : 1 - b + (b - a) = 1 - a := by ring
       rw [hargument, binaryEntropy_one_sub, binaryEntropy_one_sub] at h
       exact h
@@ -291,25 +291,25 @@ private theorem binary_pinsker (q : ℝ) (hqzero : 0 ≤ q) (hqone : q ≤ 1) :
       · exact hpositive.1
       · exfalso
         have hden : 0 < x - (2 : ℝ)⁻¹ := sub_pos.mpr hxstrict
-        linarith [hnegative.2]
+        linarith only [hxstrict, hnegative, hnegative.2]
   by_cases hhalf : (2 : ℝ)⁻¹ ≤ q
   · have hgap := habove q hqzero hqone hhalf
     unfold binaryPinskerGap at hgap
-    linarith
+    linarith only [hgap]
   · have hcomplement : (2 : ℝ)⁻¹ ≤ 1 - q := by
       norm_num at hhalf ⊢
-      linarith
+      linarith only [hhalf]
     have hgap := habove (1 - q) (sub_nonneg.mpr hqone)
-      (by linarith) hcomplement
+      (by linarith only [hqzero]) hcomplement
     unfold binaryPinskerGap at hgap
     rw [Real.binEntropy_one_sub] at hgap
-    nlinarith
+    linarith only [hgap]
 
 private theorem log_le_tangent {x c : ℝ} (hx : 0 < x) (hc : 0 < c) :
     Real.log x ≤ Real.log c + x / c - 1 := by
   have hlog := Real.log_le_sub_one_of_pos (div_pos hx hc)
   rw [Real.log_div hx.ne' hc.ne'] at hlog
-  linarith
+  linarith only [hlog]
 
 private theorem log_four_thirds_lt_one_third :
     Real.log ((4 : ℝ) / 3) < (1 : ℝ) / 3 := by
@@ -317,13 +317,13 @@ private theorem log_four_thirds_lt_one_third :
     (show (0 : ℝ) < 4 / 3 by norm_num)
     (show (4 : ℝ) / 3 ≠ 1 by norm_num)
   norm_num at hlog ⊢
-  linarith
+  linarith only [hlog]
 
 private theorem sqrt_one_add_le (x : ℝ) (hx : 0 ≤ x) :
     Real.sqrt (1 + x) ≤ 1 + x / 2 := by
   have hroot := Real.sqrt_nonneg (1 + x)
-  have hsquare := Real.sq_sqrt (show 0 ≤ 1 + x by linarith)
-  nlinarith [sq_nonneg x]
+  have hsquare := Real.sq_sqrt (show 0 ≤ 1 + x by linarith only [hx])
+  nlinarith only [hx, hroot, hsquare, sq_nonneg x]
 
 private theorem normalized_binary_cauchy (a b x y : ℝ)
     (hab : a ^ 2 + b ^ 2 = 1) :
@@ -337,7 +337,7 @@ private theorem normalized_binary_cauchy (a b x y : ℝ)
         (a ^ 2 + b ^ 2) * (x ^ 2 + y ^ 2) := by
     ring
   rw [hab, one_mul] at hidentity
-  nlinarith [sq_nonneg (a * y - b * x)]
+  nlinarith only [hroot, hsquare, hidentity, sq_nonneg (a * y - b * x)]
 
 private theorem binary_log_sum_bound (probability zeroWeight oneWeight : ℝ)
     (hprobability_zero : 0 ≤ probability)
@@ -384,7 +384,7 @@ private theorem binary_log_sum_bound (probability zeroWeight oneWeight : ℝ)
     rw [Real.log_inv, Real.log_inv]
     ring
   rw [hentropy]
-  linarith
+  linarith only [hjensen]
 
 private noncomputable def entropyTangentSigma : ℝ :=
   4 / (3 * Real.sqrt 2)
@@ -443,7 +443,7 @@ private theorem entropyTangentZeroCoefficient_eq (q : ℝ) :
   unfold entropyTangentSigma entropyTangentZeroCoefficient
   have htwo : Real.sqrt (2 : ℝ) ≠ 0 := by positivity
   field_simp [htwo]
-  nlinarith [Real.sq_sqrt (show (0 : ℝ) ≤ 2 by norm_num)]
+  nlinarith only [Real.sq_sqrt (show (0 : ℝ) ≤ 2 by norm_num)]
 
 private theorem entropyTangentOneCoefficient_eq (q : ℝ) :
     (1 - q) ^ 2 / (3 * entropyTangentSigma) +
@@ -455,7 +455,7 @@ private theorem entropyTangentOneCoefficient_eq (q : ℝ) :
   unfold entropyTangentSigma entropyTangentOneCoefficient
   have htwo : Real.sqrt (2 : ℝ) ≠ 0 := by positivity
   field_simp [htwo]
-  nlinarith [Real.sq_sqrt (show (0 : ℝ) ≤ 2 by norm_num)]
+  nlinarith only [Real.sq_sqrt (show (0 : ℝ) ≤ 2 by norm_num)]
 
 private theorem entropyTangentCoefficient_norm (q : ℝ) :
     entropyTangentZeroCoefficient q ^ 2 +
@@ -503,11 +503,12 @@ private theorem binaryConditionalLogPotential_tangent_bound
         (2 * q - 1) ^ 2 / 4 * Real.log ((4 : ℝ) / 3) +
         Real.sqrt (1 + (2 * q - 1) ^ 2 / 4) - 1 := by
   have hsum : 0 < zeroAmplitude + oneAmplitude := by
-    nlinarith [sq_nonneg zeroAmplitude, sq_nonneg oneAmplitude]
+    nlinarith only [hzeroAmplitude, honeAmplitude, hamplitudes, sq_nonneg zeroAmplitude, sq_nonneg
+        oneAmplitude]
   have hargzero : 0 < zeroAmplitude + oneAmplitude / 3 := by
-    nlinarith [sq_nonneg zeroAmplitude, sq_nonneg oneAmplitude]
+    linarith only [hzeroAmplitude, hsum, sq_nonneg zeroAmplitude, sq_nonneg oneAmplitude]
   have hargone : 0 < zeroAmplitude / 3 + oneAmplitude := by
-    nlinarith [sq_nonneg zeroAmplitude, sq_nonneg oneAmplitude]
+    linarith only [honeAmplitude, hsum, sq_nonneg zeroAmplitude, sq_nonneg oneAmplitude]
   have hthree : 0 < Real.sqrt (3 : ℝ) := by positivity
   have hargmixed :
       0 < (zeroAmplitude + oneAmplitude) / Real.sqrt 3 :=
@@ -555,7 +556,7 @@ private theorem binaryConditionalLogPotential_tangent_bound
     (entropyTangentOneCoefficient q) hamplitudes
   rw [entropyTangentCoefficient_norm] at hcauchy
   unfold binaryConditionalLogPotential
-  linarith
+  linarith only [hcombined, hcauchy]
 
 private theorem binaryConditionalLogPotential_le_kappa
     (q zeroAmplitude oneAmplitude : ℝ)
@@ -581,7 +582,7 @@ private theorem binaryConditionalLogPotential_le_kappa
     unfold kappa Real.logb
     field_simp [log_two_pos.ne']
   rw [hkappa]
-  nlinarith [sq_nonneg (2 * q - 1)]
+  linarith only [htangent, hpinsker, hsqrt, hlogscaled, sq_nonneg (2 * q - 1)]
 
 private def binaryCoinMass (q : ℝ) (outcome : Bool) : ℝ :=
   if outcome then q else 1 - q
@@ -971,7 +972,7 @@ private theorem conditionalEntropy_bound_of_marginal_interior
           (binaryEntropy kernel.childMarginal -
             binaryEntropy kernel.parentProbability) / 2) * Real.log 2 := by
     rw [hright]
-    linarith
+    linarith only [hpotential, hreduction]
   exact (mul_le_mul_iff_of_pos_right log_two_pos).mp hscaled
 
 private theorem conditionalEntropy_bound (kernel : BinaryPairKernel) :
@@ -1178,7 +1179,7 @@ private theorem withoutReplacementBinaryPairMass_sum
   have hparent_minus : 0 < (parentCount : ℝ) - 1 := by
     have htwo : (2 : ℝ) ≤ (parentCount : ℝ) := by
       exact_mod_cast hparents
-    linarith
+    linarith only [htwo]
   simp only [Fintype.univ_bool, withoutReplacementBinaryPairMass, empiricalBinaryOutcomeCount,
       ite_mul,
     mem_singleton, Bool.true_eq_false, not_false_eq_true, sum_insert, ↓reduceIte,
@@ -1210,7 +1211,7 @@ private theorem withoutReplacementBinaryPairExpectation_sub
   have hparent_minus : 0 < (parentCount : ℝ) - 1 := by
     have htwo : (2 : ℝ) ≤ (parentCount : ℝ) := by
       exact_mod_cast hparents
-    linarith
+    linarith only [htwo]
   simp only [withoutReplacementBinaryPairExpectation, Fintype.univ_bool,
       withoutReplacementBinaryPairMass,
     empiricalBinaryOutcomeCount, ite_mul, mem_singleton, Bool.true_eq_false, not_false_eq_true,
@@ -1235,7 +1236,7 @@ private theorem withoutReplacementBinaryPairExpectation_error
   have hparent_minus : 0 < (parentCount : ℝ) - 1 := by
     have htwo : (2 : ℝ) ≤ (parentCount : ℝ) := by
       exact_mod_cast hparents
-    linarith
+    linarith only [htwo]
   have hqzero : 0 ≤ q := by
     dsimp [q]
     positivity
@@ -1244,7 +1245,7 @@ private theorem withoutReplacementBinaryPairExpectation_error
     apply (div_le_one hparent_real).mpr
     exact_mod_cast hones
   have hvariance : q * (1 - q) ≤ (1 : ℝ) / 4 := by
-    nlinarith [sq_nonneg (q - 1 / 2)]
+    linarith only [sq_nonneg (q - 1 / 2)]
   have hscaledvariance :=
     mul_le_mul_of_nonneg_right hvariance hparent_real.le
   have hdelta_nonneg : 0 ≤ q * (1 - q) / ((parentCount : ℝ) - 1) := by
@@ -1259,7 +1260,7 @@ private theorem withoutReplacementBinaryPairExpectation_error
     rw [show 2 * (q * (1 - q) / ((parentCount : ℝ) - 1)) =
       (2 * (q * (1 - q))) / ((parentCount : ℝ) - 1) by ring]
     apply (div_le_div_iff₀ hparent_minus hparent_real).mpr
-    nlinarith
+    linarith only [hscaledvariance, htwo]
   have hbracket :
       |f false true + f true false - f false false - f true true| ≤
         (2 : ℝ) := by
@@ -1268,7 +1269,7 @@ private theorem withoutReplacementBinaryPairExpectation_error
     have h₀₁ := hf false true
     have h₁₀ := hf true false
     have h₁₁ := hf true true
-    constructor <;> linarith
+    constructor <;> linarith only [h₀₀, h₀₁, h₁₀, h₁₁]
   rw [withoutReplacementBinaryPairExpectation_sub
     parentCount oneCount hparents f, abs_mul]
   change
@@ -1282,7 +1283,7 @@ private theorem withoutReplacementBinaryPairExpectation_error
       (q * (1 - q) / ((parentCount : ℝ) - 1)) * 2 :=
         mul_le_mul_of_nonneg_left hbracket hdelta_nonneg
     _ ≤ 1 / (parentCount : ℝ) := by
-      nlinarith
+      linarith only [hdelta_bound]
 
 private theorem withoutReplacementBinaryPairExpectation_nonneg
     (parentCount oneCount : ℕ)
@@ -1426,7 +1427,7 @@ private theorem empiricalAverageDisagreement_error
       (kernel.childProbability_nonneg left right)
       (kernel.childProbability_le_one left right)
     dsimp [observable]
-    constructor <;> linarith
+    constructor <;> linarith only [hleft, hright]
   have herror := withoutReplacementBinaryPairExpectation_error
     parentCount oneCount hparents hones observable hobservable
   rw [← hparameter] at herror
@@ -1445,7 +1446,7 @@ private theorem binomialProbabilityMass_nonneg
     (hprobability_one : probability ≤ 1) :
     0 ≤ binomialProbabilityMass trialCount successCount probability := by
   unfold binomialProbabilityMass
-  have hcomplement : 0 ≤ 1 - probability := by linarith
+  have hcomplement : 0 ≤ 1 - probability := by linarith only [hprobability_one]
   positivity
 
 private theorem binomialProbabilityMass_succ_mul
@@ -1496,10 +1497,10 @@ private theorem binomialModeRatio_le_of_lt
       0 ≤ (mode : ℝ) - (successCount : ℝ) - 1 := by
     have hcast : (successCount : ℝ) + 1 ≤ (mode : ℝ) := by
       exact_mod_cast (show successCount + 1 ≤ mode by omega)
-    linarith
+    linarith only [hcast]
   have hproduct := mul_nonneg (Nat.cast_nonneg trialCount) hgap
   have hmode_nonneg : 0 ≤ (mode : ℝ) := Nat.cast_nonneg mode
-  nlinarith
+  linarith only [hgap, hproduct]
 
 private theorem binomialModeRatio_le_of_ge
     (trialCount mode successCount : ℕ)
@@ -1527,11 +1528,11 @@ private theorem binomialModeRatio_le_of_ge
       0 ≤ (successCount : ℝ) - (mode : ℝ) := by
     have hcast : (mode : ℝ) ≤ (successCount : ℝ) := by
       exact_mod_cast hcount
-    linarith
+    linarith only [hcast]
   have hproduct := mul_nonneg (Nat.cast_nonneg trialCount) hgap
   have hmode_le : (mode : ℝ) ≤ (trialCount : ℝ) := by
     exact_mod_cast hmode
-  nlinarith
+  linarith only [hproduct, hmode_le]
 
 private theorem binomialProbabilityMass_le_succ_of_lt_mode
     (trialCount mode successCount : ℕ)
@@ -1580,7 +1581,7 @@ private theorem binomialProbabilityMass_le_succ_of_lt_mode
         ((mode : ℝ) / (trialCount : ℝ)) *
       (((successCount + 1 : ℕ) : ℝ) *
         (1 - (mode : ℝ) / (trialCount : ℝ))) := by
-          nlinarith [hidentity]
+          simpa only [mul_assoc] using hidentity.symm
 
 private theorem binomialProbabilityMass_succ_le_of_ge_mode
     (trialCount mode successCount : ℕ)
@@ -1624,7 +1625,7 @@ private theorem binomialProbabilityMass_succ_le_of_ge_mode
         ((mode : ℝ) / (trialCount : ℝ)) *
       (((trialCount - successCount : ℕ) : ℝ) *
         ((mode : ℝ) / (trialCount : ℝ))) := by
-          nlinarith [hidentity]
+          simpa only [mul_assoc] using hidentity
     _ ≤ binomialProbabilityMass trialCount successCount
         ((mode : ℝ) / (trialCount : ℝ)) *
       (((successCount + 1 : ℕ) : ℝ) *
@@ -1801,7 +1802,7 @@ private theorem binomialProbabilityMass_mode_mul_exp_entropy
     apply (div_lt_one htrials_real).mpr
     exact_mod_cast hmode_lt
   have hcomplement : 0 < 1 - probability := by
-    linarith
+    linarith only [hprobability_one]
   have hproduct :
       0 < probability ^ mode *
         (1 - probability) ^ (trialCount - mode) := by
@@ -1925,7 +1926,7 @@ private theorem binomial_probability_term_le_one
     (show successCount ∈ Finset.range (trialCount + 1) by
       simp only [mem_range, Order.lt_add_one_iff]; omega)
   rw [hsum] at hterm
-  nlinarith
+  linarith only [hterm]
 
 private theorem log_choose_le_binary_entropy
     (trialCount successCount : ℕ)
@@ -1995,7 +1996,7 @@ private theorem log_choose_le_binary_entropy
   change Real.log (trialCount.choose successCount : ℝ) ≤
     (trialCount : ℝ) * Real.binEntropy probability
   rw [hentropy]
-  linarith
+  linarith only [hlogmass]
 
 private theorem choose_le_exp_binary_entropy
     (trialCount successCount : ℕ)
@@ -2044,7 +2045,7 @@ private theorem choose_product_le_exp_binary_entropy
 private theorem certificate_ratio_one_lt :
     (1 : ℝ) < (97 + 56 * Real.sqrt 3) / 192 := by
   have h := twelve_sevenths_lt_sqrt_three
-  nlinarith
+  linarith only [h]
 
 private theorem certifiedWindowWidth_pos : 0 < certifiedWindowWidth := by
   unfold certifiedWindowWidth Real.logb
@@ -2055,14 +2056,14 @@ private theorem certifiedWindowWidth_pos : 0 < certifiedWindowWidth := by
 
 private theorem tau_pos : 0 < tau := by
   unfold tau
-  nlinarith [twelve_sevenths_lt_sqrt_three]
+  linarith only [twelve_sevenths_lt_sqrt_three]
 
 private theorem tau_lt_one_half : tau < (1 : ℝ) / 2 := by
   have hsqrt_nonneg : 0 ≤ Real.sqrt (3 : ℝ) := Real.sqrt_nonneg 3
   have hsqrt_sq : (Real.sqrt (3 : ℝ)) ^ 2 = 3 := by
     exact Real.sq_sqrt (by positivity)
   unfold tau
-  nlinarith
+  nlinarith only [hsqrt_nonneg, hsqrt_sq]
 
 private theorem sqrt_three_pos : 0 < Real.sqrt (3 : ℝ) := by
   positivity
@@ -2071,7 +2072,7 @@ private theorem tau_complement : 1 - tau = Real.sqrt 3 * tau := by
   have hsqrt_sq : (Real.sqrt (3 : ℝ)) ^ 2 = 3 := by
     exact Real.sq_sqrt (by positivity)
   unfold tau
-  nlinarith
+  linarith only [hsqrt_sq]
 
 private theorem tau_reciprocal_identity :
     1 + 1 / Real.sqrt 3 = (1 - tau)⁻¹ := by
@@ -2080,7 +2081,7 @@ private theorem tau_reciprocal_identity :
   rw [tau_complement]
   field_simp [sqrt_three_pos.ne', tau_pos.ne']
   unfold tau
-  nlinarith
+  linarith only [hsqrt_sq]
 
 private theorem log_three_eq_twice_log_sqrt_three :
     Real.log (3 : ℝ) = 2 * Real.log (Real.sqrt 3) := by
@@ -2161,24 +2162,24 @@ private theorem entropyWindow_eq_certifiedWindowWidth :
   field_simp [log_two_pos.ne'] at hentropy ⊢
   rw [hlog_argument] at hentropy
   ring_nf at hentropy hlog ⊢
-  linarith
+  linarith only [hentropy, hlog]
 
 private theorem entropyWindow_pos : entropyLowerEndpoint < entropyUpperEndpoint := by
   have h := certifiedWindowWidth_pos
   rw [← entropyWindow_eq_certifiedWindowWidth] at h
-  linarith
+  linarith only [h]
 
 private theorem midpointBeta_gt_lower
     (hwindow : entropyLowerEndpoint < entropyUpperEndpoint) :
     entropyLowerEndpoint < midpointBeta := by
   unfold midpointBeta
-  linarith
+  linarith only [hwindow]
 
 private theorem midpointBeta_lt_upper
     (hwindow : entropyLowerEndpoint < entropyUpperEndpoint) :
     midpointBeta < entropyUpperEndpoint := by
   unfold midpointBeta
-  linarith
+  linarith only [hwindow]
 
 private theorem midpointBeta_gt_lower_unconditional :
     entropyLowerEndpoint < midpointBeta :=
@@ -2201,11 +2202,11 @@ private theorem logTwo_three_lt_two : Real.logb 2 3 < 2 := by
       _ = 2 * Real.log 2 := by rw [Real.log_pow]; norm_num
   unfold Real.logb
   apply (div_lt_iff₀ log_two_pos).mpr
-  nlinarith [hlog]
+  linarith only [hlog, hlog_four]
 
 private theorem kappa_pos : 0 < kappa := by
   unfold kappa
-  nlinarith [logTwo_three_lt_two]
+  linarith only [logTwo_three_lt_two]
 
 private theorem entropyLowerEndpoint_pos : 0 < entropyLowerEndpoint := by
   unfold entropyLowerEndpoint
@@ -2223,7 +2224,7 @@ private theorem binaryEntropy_tau_lt_one : binaryEntropy tau < 1 := by
 
 private theorem entropyUpperEndpoint_lt_one : entropyUpperEndpoint < 1 := by
   unfold entropyUpperEndpoint
-  nlinarith [binaryEntropy_tau_lt_one]
+  linarith only [binaryEntropy_tau_lt_one]
 
 private theorem midpointBeta_pos : 0 < midpointBeta :=
   entropyLowerEndpoint_pos.trans midpointBeta_gt_lower_unconditional
@@ -2274,11 +2275,11 @@ private theorem empiricalChildMarginal_entropy_error
   have hparents_real : (4 : ℝ) ≤ (parentCount : ℝ) := by
     exact_mod_cast hparents
   have hparents_pos : (0 : ℝ) < (parentCount : ℝ) := by
-    linarith
+    linarith only [hparents_real]
   have hhalf : 1 / (parentCount : ℝ) ≤ (2 : ℝ)⁻¹ := by
     apply (div_le_iff₀ hparents_pos).mpr
     norm_num
-    linarith
+    linarith only [hparents_real]
   have hmonotone := binaryEntropy_mono_on_half
     |empiricalChildMarginal parentCount oneCount kernel -
       kernel.childMarginal|
@@ -2312,13 +2313,13 @@ private theorem empiricalConditionalEntropy_bound
       empiricalConditionalEntropy parentCount oneCount kernel ≤
         kernel.conditionalEntropy + 1 / (parentCount : ℝ) := by
     have h := (abs_le.mp hconditional).2
-    linarith
+    linarith only [h]
   have hdisagreement_upper :
       kernel.averageDisagreement ≤
         empiricalAverageDisagreement parentCount oneCount kernel +
           1 / (parentCount : ℝ) := by
     have h := (abs_le.mp hdisagreement).1
-    linarith
+    linarith only [h]
   have hdisagreement_scaled := mul_le_mul_of_nonneg_left
     hdisagreement_upper logTwo_three_pos.le
   have hmarginal_upper :
@@ -2327,7 +2328,7 @@ private theorem empiricalConditionalEntropy_bound
             (empiricalChildMarginal parentCount oneCount kernel) +
           binaryEntropy (1 / (parentCount : ℝ)) := by
     have h := (abs_le.mp hmarginal).1
-    linarith
+    linarith only [h]
   have herror :
       1 / (parentCount : ℝ) +
           Real.logb 2 3 * (1 / (parentCount : ℝ)) +
@@ -2347,7 +2348,7 @@ private theorem empiricalConditionalEntropy_bound
         (1 / (parentCount : ℝ) +
           Real.logb 2 3 * (1 / (parentCount : ℝ)) +
           binaryEntropy (1 / (parentCount : ℝ)) / 2) := by
-      nlinarith
+      linarith only [hindependent, hdisagreement_scaled, hmarginal_upper]
     _ = kappa + Real.logb 2 3 *
           empiricalAverageDisagreement parentCount oneCount kernel +
         (binaryEntropy
@@ -2400,20 +2401,20 @@ private theorem logTwo_pairLayer_card_add_one_le (L : ℕ) (hL : 2 ≤ L) :
     dsimp [x]
     push_cast
     rw [hchoose]
-    nlinarith [sq_nonneg ((L : ℝ) - 1)]
+    linarith only [hLreal, hchoose, sq_nonneg ((L : ℝ) - 1)]
   have hsqrt : Real.sqrt x ≤ (L : ℝ) := by
     have hsq := Real.sq_sqrt hxpos.le
     have hsqrt_nonneg := Real.sqrt_nonneg x
-    nlinarith
+    nlinarith only [hLreal, hxle, hsq, hsqrt_nonneg]
   have hlog : Real.log x ≤ 2 * Real.sqrt x := by
     have hbound := Real.log_le_rpow_div hxpos.le
       (show (0 : ℝ) < 1 / 2 by norm_num)
     rw [← Real.sqrt_eq_rpow] at hbound
     norm_num at hbound
-    linarith
+    linarith only [hbound]
   change Real.log x / Real.log 2 ≤ 2 * (L : ℝ) / Real.log 2
   apply (div_le_div_iff_of_pos_right log_two_pos).mpr
-  linarith
+  linarith only [hsqrt, hlog]
 
 private theorem exists_empiricalEntropyError_base :
     ∃ L₀ : ℕ, 4 ≤ L₀ ∧
@@ -2474,7 +2475,7 @@ private theorem exists_entropy_exclusion_base :
       (L : ℝ) * ((L : ℝ) - 1) / 2 :=
     Nat.cast_choose_two ℝ L
   rw [hchoose]
-  nlinarith [mul_pos entropySlack_pos hLpos]
+  nlinarith only [hLreal, hLpos, hscaled, hlinear, mul_pos entropySlack_pos hLpos]
 
 private theorem exists_entropy_exclusion_depth :
     ∃ depth : ℕ, 0 < depth ∧
@@ -2487,7 +2488,7 @@ private theorem exists_entropy_exclusion_depth :
   have hdepth_nat : 0 < depth := by exact_mod_cast hdepth_real
   refine ⟨depth, hdepth_nat, ?_⟩
   have hproduct := (div_lt_iff₀ hwidth).mp hdepth
-  nlinarith
+  linarith only [hproduct]
 
 private theorem entropy_potential_increment
     (potentialBefore potentialAfter conditionalEntropy error : ℝ)
@@ -2500,7 +2501,7 @@ private theorem entropy_potential_increment
   have hwindow := entropyWindow_eq_certifiedWindowWidth
   unfold midpointBeta entropySlack at hlower
   unfold entropySlack at herror
-  linarith
+  linarith only [herror, hlower, hupper, hwindow]
 
 private theorem entropy_potential_layers_impossible
     (depth : ℕ) (potential : ℕ → ℝ)
@@ -2712,7 +2713,7 @@ private theorem le_choose_two_of_four {size : ℕ} (hsize : 4 ≤ size) :
     Nat.cast_choose_two ℝ size
   have hbound : (size : ℝ) ≤ (size.choose 2 : ℝ) := by
     rw [hchoose]
-    nlinarith [sq_nonneg ((size : ℝ) - 2)]
+    linarith only [hreal, sq_nonneg ((size : ℝ) - 2)]
   exact_mod_cast hbound
 
 private theorem pairLayer_card_ge_base
@@ -4054,7 +4055,7 @@ private theorem pairTypeGroup_mixed_card
           pairParentCoordinateOneCount parents coordinate) *
             pairParentCoordinateOneCount parents coordinate : ℕ) : ℝ) := by
     rw [Nat.cast_mul, Nat.cast_sub hones]
-    nlinarith
+    linarith only [htotal_real]
   exact_mod_cast hresult
 
 private def pairBitTypeOfOutcomes (left right : Bool) : PairBitType :=
@@ -4221,7 +4222,7 @@ private theorem withoutReplacementBinaryPairMass_eq_pairTypeGroup
   have hparent_minus : 0 < (parentCount : ℝ) - 1 := by
     have htwo : (2 : ℝ) ≤ (parentCount : ℝ) := by
       exact_mod_cast hparents
-    linarith
+    linarith only [htwo]
   cases left <;> cases right <;>
     simp [withoutReplacementBinaryPairMass,
       empiricalBinaryOutcomeCount,
@@ -4938,7 +4939,7 @@ private theorem pairChildArrayAverageDisagreement_le_radius
   rw [← Finset.sum_div]
   apply (div_le_div_iff_of_pos_right hdimension_real).mpr
   apply (div_le_iff₀ (mul_pos (by norm_num) hpair)).mpr
-  nlinarith
+  linarith only [htotal_real]
 
 private theorem pairChildArrayEntropy_empirical_bound
     {parentCount dimension : ℕ}
@@ -5322,7 +5323,7 @@ private theorem badPairChildArrays_card_le
               (dimension : ℝ) * threshold := by
         unfold pairChildArrayEntropy at hbad
         have hcleared := (div_le_iff₀ hdimension_real).mp hbad
-        nlinarith
+        linarith only [hcleared]
       have hcoefficient :
           0 ≤ (parentCount.choose 2 : ℝ) * Real.log 2 :=
         mul_nonneg (Nat.cast_nonneg _) log_two_pos.le
@@ -5334,7 +5335,7 @@ private theorem badPairChildArrays_card_le
                     parents children coordinate)) ≤ bound := by
         dsimp [bound]
         apply Real.exp_le_exp.mpr
-        nlinarith [mul_le_mul_of_nonneg_left hsum hcoefficient]
+        linarith only [hsum, hcoefficient, mul_le_mul_of_nonneg_left hsum hcoefficient]
       exact hcard.trans (hrealized.trans hexponential)
     · have hempty :
           (badPairChildArrays parents threshold).filter
@@ -5379,7 +5380,7 @@ private theorem hammingRetentionProbability_le_one (dimension : ℕ) :
     mul_nonneg
       (mul_nonneg midpointBeta_pos.le (Nat.cast_nonneg dimension))
       log_two_pos.le
-  linarith
+  linarith only [hproduct]
 
 private theorem hammingRetentionProbability_mul_wordCount_eq_exp
     (dimension : ℕ) :
@@ -5489,7 +5490,7 @@ private theorem exp_mul_div_nat_succ_tendsto_atTop
         ((dimension + 1 : ℕ) : ℝ) := by
       gcongr
       push_cast
-      nlinarith
+      linarith only [hdimension_real]
 
 private noncomputable def hammingRetentionParameter (dimension : ℕ) : unitInterval :=
   ⟨hammingRetentionProbability dimension,
@@ -5901,10 +5902,10 @@ private theorem hammingExpectedRetainedVertexVariance_le_mean
         hammingRetentionProbability dimension := by
     positivity
   have hle : 1 - hammingRetentionProbability dimension ≤ 1 := by
-    linarith
+    linarith only [hprobability]
   have hscaled := mul_le_mul_of_nonneg_left hle hfactor
   push_cast at hscaled ⊢
-  nlinarith
+  linarith only [hscaled]
 
 private noncomputable def hammingRetainedVertexCount
     (dimension : ℕ)
@@ -6089,7 +6090,7 @@ private theorem hammingRetainedVertexCount_upper_tail_probability_le
       3 * hammingRetentionProbability dimension *
           ((2 ^ dimension : ℕ) : ℝ) ≤
         hammingRetainedVertexCount dimension retained at hretained
-    nlinarith
+    linarith only [habsolute, hretained]
   calc
     (hammingRetentionMeasure dimension).real
       {retained : Set (Bool × HammingWord dimension) |
@@ -6406,7 +6407,7 @@ private theorem badPairLayerRetentionEvent_real_lt_exp_neg
       apply Real.exp_lt_exp.mpr
       have hscaled := mul_lt_mul_of_pos_left hbase
         (mul_pos hdimension_real log_two_pos)
-      nlinarith
+      linarith only [hscaled]
 
 private noncomputable def badPairLayersRetentionEvent
     {depth : ℕ}
@@ -7129,7 +7130,7 @@ private theorem hammingExpectedRetainedEdgeVariance_le
           ((∑ distance ∈ Finset.range (radius + 1),
             dimension.choose distance : ℕ) : ℝ) ^ 2 := by
   have hsecond := hammingExpectedRetainedEdgeSquare_le dimension radius
-  linarith
+  linarith only [hsecond]
 
 private noncomputable def retainedHammingWordEdges
     (dimension radius : ℕ)
@@ -7955,7 +7956,7 @@ private theorem pairGraphCopy_layer_entropy_upper_of_disagreement
   have hscaled := mul_le_mul_of_nonneg_left
     hdisagreement logTwo_three_pos.le
   unfold entropyLowerEndpoint
-  nlinarith
+  linarith only [hbase, hparents, hbound, hscaled]
 
 private theorem pairGraphCopyChildWords_injective
     {baseSize depth dimension radius : ℕ}
@@ -8350,7 +8351,7 @@ private theorem manuscriptHammingRadius_le_dimension (dimension : ℕ) :
   have htau := tau_lt_one_half
   have hreal :
       (manuscriptHammingRadius dimension : ℝ) ≤ (dimension : ℝ) := by
-    nlinarith
+    nlinarith only [hradius, htau]
   exact_mod_cast hreal
 
 private theorem manuscriptHammingRadius_ratio_tendsto :
@@ -8408,7 +8409,7 @@ private theorem eventually_manuscriptHammingRadius_binEntropy_ge
   have hneighborhood :
       Set.Ioi (Real.binEntropy tau - loss) ∈
         𝓝 (Real.binEntropy tau) :=
-    Ioi_mem_nhds (by linarith)
+    Ioi_mem_nhds (by linarith only [hloss])
   filter_upwards
     [manuscriptHammingRadius_binEntropy_tendsto hneighborhood]
     with dimension hdimension
@@ -8426,14 +8427,14 @@ private theorem sampledHammingEdgeEntropyRate_pos :
   unfold entropyUpperEndpoint at hwindow
   have hbeta := midpointBeta_lt_one
   have hbits : 0 < 1 - 2 * midpointBeta + binaryEntropy tau := by
-    nlinarith
+    linarith only [hwindow, hbeta]
   have hentropy :
       Real.binEntropy tau = binaryEntropy tau * Real.log 2 := by
     unfold binaryEntropy
     field_simp [log_two_pos.ne']
   unfold sampledHammingEdgeEntropyRate
   rw [hentropy]
-  nlinarith [mul_pos hbits log_two_pos]
+  linarith only [hbits, mul_pos hbits log_two_pos]
 
 private theorem eventually_manuscriptExpectedRetainedEdge_entropy_lower
     (loss : ℝ) (hloss : 0 < loss) :
@@ -8869,7 +8870,7 @@ private noncomputable def manuscriptExtremalPower : ℝ :=
 private theorem manuscriptExtremalPower_pos :
     0 < manuscriptExtremalPower := by
   unfold manuscriptExtremalPower
-  linarith [exponentGain_pos]
+  linarith only [exponentGain_pos]
 
 private noncomputable def manuscriptEntropyGap : ℝ :=
   certifiedWindowWidth * Real.log 2 / 16
@@ -8887,7 +8888,7 @@ private theorem sampledHammingEdgeEntropyRate_eq_manuscriptExtremalPower :
         certifiedWindowWidth / 2 := by
     have hwindow := entropyWindow_eq_certifiedWindowWidth
     unfold midpointBeta
-    linarith
+    linarith only [hwindow]
   have hupper :
       binaryEntropy tau = (entropyUpperEndpoint + 1) / 2 := by
     unfold entropyUpperEndpoint
@@ -8904,7 +8905,7 @@ private theorem sampledHammingEdgeEntropyRate_eq_manuscriptExtremalPower :
         (1 - midpointBeta) *
             ((3 : ℝ) / 2 + exponentGain) +
           certifiedWindowWidth / 8 := by
-    nlinarith [hmidpoint, hupper, hgain]
+    linarith only [hmidpoint, hupper, hgain]
   have hentropy :
       Real.binEntropy tau = binaryEntropy tau * Real.log 2 := by
     unfold binaryEntropy
@@ -8944,7 +8945,7 @@ private theorem manuscriptVertexCount_le_four_wordMean
           ((2 ^ dimension : ℕ) : ℝ) + 1 := by
     unfold manuscriptVertexCount
     exact Nat.ceil_lt_add_one hargument
-  nlinarith
+  linarith only [hmean, hceiling]
 
 private theorem eventually_manuscriptVertexCount_le_four_wordMean :
     ∀ᶠ dimension : ℕ in Filter.atTop,
@@ -8985,7 +8986,7 @@ private theorem eventually_manuscriptVertexCount_power_le_expectedRetainedEdge :
       (4 : ℝ) ^ manuscriptExtremalPower ≤
         (Real.exp (manuscriptEntropyGap * (dimension : ℝ)) /
           ((dimension + 1 : ℕ) : ℝ)) / 2 := by
-    linarith
+    linarith only [hconstant_bound]
   have hexponent :
       ((1 - midpointBeta) * (dimension : ℝ) * Real.log 2) *
             manuscriptExtremalPower +
@@ -9099,7 +9100,7 @@ private theorem manuscriptVertexCount_succ_le_two_mul
       Real.exp ((1 - midpointBeta) * Real.log 2) ≤
           Real.exp (Real.log 2) := by
         apply Real.exp_le_exp.mpr
-        nlinarith [mul_pos midpointBeta_pos log_two_pos]
+        linarith only [mul_pos midpointBeta_pos log_two_pos]
       _ = 2 := Real.exp_log (by norm_num)
   have hrecurrence :
       hammingRetentionProbability (dimension + 1) *

@@ -162,7 +162,7 @@ theorem eventually_shifted_value_sub_ge_of_closure_maximizers
       u z - δ - v z <=
         u (x i) - δ - v (y i) - quadraticPenalty (α i) (x i) (y i) := by
     simpa [doubledObjective, quadraticPenalty_self] using hcompare
-  linarith
+  linarith only [hpen_nonneg, hcompare']
 
 /--
 Assume `u ≤ v` on `frontier C` and `δ > 0`. Suppose `x0 ∈ closure C`,
@@ -449,7 +449,7 @@ theorem tendsto_weightedDistanceSq_zero_of_eventually_isMaxOn_of_tendsto_valueGa
       (C := C) (u := u) (v := v) (α := α i) (x := x i) (y := y i) hyi hmaxi
     have hnorm :=
       norm_weightedDistanceSq_le_quadraticPenalty_mul_two hαi.le (x i) (y i)
-    nlinarith
+    nlinarith only [hpen, hnorm]
 
 /--
 Let `α i`, `x i`, and `y i` be indexed by a filter `l`. If `α i -> +∞`

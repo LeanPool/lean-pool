@@ -79,7 +79,7 @@ lemma gff_cf_two_testfunctions (f g : OSforGFF.TestFunction) (t s : ℝ) :
         2 * t * s * freeCovarianceFormR m f g + s^2 * freeCovarianceFormR m g g)) := by
   have h := gff_real_characteristic m (t • f + s • g)
   rw [freeCovarianceFormR_bilinear_expand] at h
-  simp_all
+  simp_all only [one_div, ofReal_add, ofReal_mul, ofReal_pow, ofReal_ofNat, neg_mul]
 
 /-! ## OS0-Based Derivative Machinery
 
@@ -93,7 +93,8 @@ lemma gff_two_param_analytic (f g : OSforGFF.TestFunction) :
       Set.univ := by
   -- Direct application of gaussianFreeField_satisfies_OS0 with n=2, J = ![toComplex f, toComplex g]
   have h := gaussianFreeField_satisfies_OS0 m 2 ![toComplex f, toComplex g]
-  simp_all
+  simp_all only [muGFF, Fin.sum_univ_two, Fin.isValue, Matrix.cons_val_zero, Matrix.cons_val_one,
+    Matrix.cons_val_fin_one, analyticOn_univ]
 
 /-! ## OS0-Based Complex Extension via Identity Theorem
 
@@ -209,10 +210,10 @@ private lemma eq_of_analytic_agree_on_reals {F G : ℂ → ℂ}
     have h_mem_V : ((ε / 2 : ℝ) : ℂ) ∈ V := hε_ball (by
       simp only [Metric.mem_ball, Complex.dist_eq, sub_zero, Complex.norm_real]
       rw [Real.norm_eq_abs, abs_of_pos h_half_pos]
-      linarith)
+      linarith only [hε_pos])
     have h_ne : ((ε / 2 : ℝ) : ℂ) ≠ 0 := by
       simp only [ne_eq, Complex.ofReal_eq_zero]
-      linarith
+      linarith only [hε_pos]
     exact hV_sub ⟨h_mem_V, h_ne⟩ (h_agree (ε / 2))
   exact congrFun h_eq z
 
@@ -230,7 +231,7 @@ lemma gff_cf_agrees_on_reals_OS0 (f g : OSforGFF.TestFunction) (t s : ℝ) :
   -- First note: t • f + s • g is real, so toComplex (t • f + s • g) = t • toComplex f + s •
   -- toComplex g
   have h_eq_test : (t : ℂ) • toComplex f + (s : ℂ) • toComplex g = toComplex (t • f + s • g) := by
-    simp_all
+    simp_all only [one_div, neg_mul, coe_smul, toComplex_add, toComplex_smul]
   rw [h_eq_test]
   -- GJGeneratingFunctionalℂ on a real test function equals GJGeneratingFunctional
   rw [GJGeneratingFunctionalℂ_toComplex, h]
@@ -276,7 +277,7 @@ theorem gff_complex_characteristic_OS0 :
   -- Step 5: Simplify LHS
   have h_LHS : GJGeneratingFunctionalℂ (gaussianFreeFieldFree m) J = F 1 Complex.I := by
     simp only [F, hJ]
-    simp_all
+    simp_all only [implies_true, one_smul]
   -- Step 6: Simplify RHS using Qc formula
   have h_RHS : Complex.exp (-(1/2 : ℂ) * freeCovarianceℂBilinear m J J) = G 1 Complex.I := by
     simp only [G]

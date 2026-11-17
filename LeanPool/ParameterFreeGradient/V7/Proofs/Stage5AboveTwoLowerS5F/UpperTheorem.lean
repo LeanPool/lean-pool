@@ -55,7 +55,7 @@ theorem knownParameterAboveTwoUpper : KnownParameterAboveTwoUpperStatement := by
   intro p hp
   refine ⟨trialConstant p + 1, by
     have := trialConstant_pos p hp
-    linarith, ?_⟩
+    linarith only [this], ?_⟩
   intro d eps L R heps hL hR x0
   let nf := nF p eps L R
   let nd := nD p eps L R
@@ -84,7 +84,7 @@ theorem knownParameterAboveTwoUpper : KnownParameterAboveTwoUpperStatement := by
       Real.rpow_nonneg (by positivity) _
     have hC := trialConstant_pos p hp
     simp only [trace, List.length_cons, List.length_nil]
-    nlinarith
+    nlinarith only [hC, hpow]
   · have hG : eps < G := lt_of_not_ge hsmall0
     have hDG : R ≥ G / L := by
       apply (div_le_iff₀ hL).2
@@ -106,9 +106,9 @@ theorem knownParameterAboveTwoUpper : KnownParameterAboveTwoUpperStatement := by
       · rcases hscaleOrRadius with ⟨failed, hfailed⟩ | ⟨terminal, hterminal⟩
         · obtain ⟨_, _, _, _, hlt⟩ := hscale failed hfailed
           rw [hinstL] at hlt
-          linarith
+          linarith only [hlt]
         · obtain ⟨_, _, _, _, hlt⟩ := hradius terminal hterminal
-          linarith
+          linarith only [hinstR, hlt]
     obtain ⟨terminal, hterminal⟩ := hsuccessOutcome
     have hterminalData := hsuccess terminal hterminal
     let trace := cached.observation :: report.trace
@@ -135,7 +135,7 @@ theorem knownParameterAboveTwoUpper : KnownParameterAboveTwoUpperStatement := by
     have hlength : (trace.length : ℝ) = (report.calls : ℝ) + 1 := by
       simp [trace, TrialReport.calls]
     rw [hlength]
-    nlinarith
+    linarith only [hC, hcalls, hpow]
 
 end V7.Stage5AboveTwoLowerS5F
 

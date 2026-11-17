@@ -74,7 +74,7 @@ Return a single JSON object:
     "risk": "low" | "medium" | "high",
     "assessment_one_sentence": "<one sentence: the bottom line for the maintainer>"
   },
-  "verdict": "approve" | "request_changes" | "needs_discussion",
+  "verdict": "approve" | "request_changes",
   "findings": [
     {
       "file": "<repo-relative path, or empty if PR-wide>",
@@ -96,9 +96,9 @@ Verdict mapping:
   maintainer needs to act on before merging.
 - `request_changes` — it introduces tech debt or brittleness serious enough
   that the maintainer should fix it (or ask the author to) before merging.
-- `needs_discussion` — a genuine trade-off the maintainer should weigh (e.g.
-  a large `simp_all` golf that is shorter and passes today but measurably more
-  fragile), where reasonable people could go either way.
+There is no third verdict; decide. For a genuine trade-off (e.g. a large
+`simp_all` golf that is shorter and passes today but measurably more fragile),
+pick the side the evidence favours and say why.
 
 ## Style
 

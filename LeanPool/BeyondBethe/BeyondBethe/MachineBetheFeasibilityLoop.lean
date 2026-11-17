@@ -9,7 +9,6 @@ module
 public import LeanPool.BeyondBethe.BeyondBethe.MachineBetheEpigraphOracle
 public import LeanPool.BeyondBethe.BeyondBethe.MachineScheduledRoundedEllipsoid
 public import LeanPool.BeyondBethe.BeyondBethe.ScannedBetheThresholdFeasibility
-public import Mathlib.Tactic
 
 /-!
 # A finite-word fixed-precision Bethe feasibility loop

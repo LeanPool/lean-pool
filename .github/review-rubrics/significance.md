@@ -32,7 +32,7 @@ A mixed PR can arrive with no new project in it — a Mathlib bump repairing eve
 
 - `pass` — graduate-or-research-level content a mathematician would name, or `not_applicable`.
 - `block` — undergraduate exercise, utility lemma, no headline result, or unmaintainable generated bulk.
-- `discuss` — genuinely borderline: real but modest content, or generated bulk whose maintenance price a human should weigh.
+There is no third verdict; decide. Real research-level content passes even when modest. Generated bulk passes when a stated verifier checks it and its maintenance cost is proportionate to the result; otherwise it is a `block`.
 
 ## Output
 
@@ -40,7 +40,7 @@ Return a single JSON object:
 
 ```json
 {
-  "verdict": "pass" | "block" | "discuss",
+  "verdict": "pass" | "block",
   "bottom_line": "<one sentence for the maintainer>",
   "fit": "good_fit" | "borderline" | "not_a_fit" | "not_applicable",
   "level": "undergraduate" | "graduate" | "research",

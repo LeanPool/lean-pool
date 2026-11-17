@@ -63,7 +63,7 @@ theorem quadraticHilbertSchwartz_eq_integral_of_zero_near
     intro y hy
     have hyε : |y| ≤ ε := le_of_not_gt hy
     rw [hzero y (hyε.trans_lt hεr)]
-    simp
+    simp only [zero_mul, zero_div]
   apply tendsto_nhds_unique (hasQuadraticPrincipalValue_schwartz modulation f x)
   exact tendsto_const_nhds.congr' (heq.mono fun _ h ↦ h.symm)
 
@@ -92,12 +92,12 @@ theorem quadraticHilbertSchwartz_wavePacket_eq_offSupportKernelAction
     by_contra hpacket
     have hpacketReal : wavePacket s t (x - y) ≠ 0 := by
       intro h
-      exact hpacket (by simp [h])
+      exact hpacket (by simp only [h, Complex.ofReal_zero])
     have hsep := half_abs_sub_center_le_abs_sub ht hx hpacketReal
     have hdist := half_length_le_abs_sub_center ht hx
     have hyid : |x - (x - y)| = |y| := by congr 1; ring
     rw [hyid] at hsep
-    linarith
+    linarith only [hy, hsep, hdist]
 
 /-- The quadratic transform is additive in its Schwartz input. -/
 theorem quadraticHilbertSchwartz_add (modulation : ℝ) (f g : 𝓢(ℝ, ℂ)) (x : ℝ) :

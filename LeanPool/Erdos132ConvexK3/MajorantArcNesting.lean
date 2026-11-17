@@ -7,8 +7,6 @@ module
 
 public import LeanPool.Erdos132ConvexK3.GlobalReduction
 import LeanPool.Erdos132ConvexK3.Geometry
-import Mathlib.Algebra.Order.Algebra
-import Mathlib.Data.EReal.Inv
 
 /-!
 # ErLV majorant arc nesting
@@ -39,7 +37,7 @@ theorem dot_pos_of_sqDist_le
       2 * dot (b - a) (p - a) = sqDist a p + sqDist a b - sqDist p b := by
     simp [dot, sqDist]
     ring
-  nlinarith
+  linarith only [hid, hap2, hshort]
 
 theorem dot_self_pos_of_cross_pos_left
     {u v : Point ℝ} (hcross : 0 < cross u v) : 0 < dot u u := by
@@ -52,7 +50,7 @@ theorem dot_self_pos_of_cross_pos_right
     {u v : Point ℝ} (hcross : 0 < cross u v) : 0 < dot v v := by
   have hneg : 0 < cross (-v) u := by
     dsimp [cross] at hcross ⊢
-    nlinarith
+    linear_combination hcross
   simpa [dot] using dot_self_pos_of_cross_pos_left hneg
 
 /-- A ray strictly between two rays in an open half-plane is their positive

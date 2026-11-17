@@ -39,7 +39,7 @@ theorem volume_upperContactEstimateTotalBadSet_le_nonDifferentiable_add_sum_coor
   have hmeasure_iUnion :
       volume (⋃ i : Fin n, coordinateSliceBadSet sliceBad i t) ≤
         ∑ i : Fin n, volume (coordinateSliceBadSet sliceBad i t) := by
-    simpa using
+    exact
       (measure_iUnion_fintype_le (μ := volume)
         (fun i : Fin n => coordinateSliceBadSet sliceBad i t))
   dsimp [upperContactEstimateTotalBadSet]

@@ -7,7 +7,12 @@ module
 
 
 public import LeanPool.BeyondBethe.BeyondBethe.AdaptiveRoundedEllipsoid
-public import Mathlib.Tactic
+import Mathlib.Tactic.Ext -- shake: keep
+import Mathlib.Tactic.GCongr -- shake: keep
+import Mathlib.Tactic.Linarith -- shake: keep
+import Mathlib.Tactic.NormNum -- shake: keep
+import Mathlib.Tactic.Positivity -- shake: keep
+import Mathlib.Tactic.Ring -- shake: keep
 
 /-! # Rounded Ellipsoid Bit Bounds -/
 
@@ -261,7 +266,7 @@ theorem rationalEllipsoidCentralUpdate_basis_abs_sum_le {d : ℕ}
           Finset.sum_le_sum fun j _ ↦ hentry i j
     _ = 4 * d * (∑ i, ∑ j, abs (E.basis i j)) := by
       simp [Finset.mul_sum]
-      ring
+      ring_nf
 
 theorem rationalMatrixAbsBound_centralUpdate_le {d : ℕ}
     (hd : 0 < d) (E : RationalEllipsoidState d) (a : Fin d → ℚ)

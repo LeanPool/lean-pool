@@ -707,8 +707,7 @@ theorem unfoldSwitchNewOld_read
   simp only [unfoldSwitchNewOld]
   rw [BinaryLabelling.pathRead_comp,
     BinaryLabelling.pathRead_toPath, BinaryLabelling.pathRead_toPath]
-  simp? [unfoldDuplicateForward, unfoldBaseReverseEdge, unfoldLabelling,
-    unfoldEdgeLabel]
+  simp only [unfoldLabelling, unfoldEdgeLabel, unfoldDuplicateForward, unfoldBaseReverseEdge]
   change separatedMap (allArrowLabel L e₀) *
     separatedMap (allArrowLabel L (allArrowReverse e₀)) = 1
   rw [allArrowLabel_reverse]

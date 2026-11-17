@@ -155,7 +155,7 @@ private theorem currentRaggedMainBound {p eps G L R Ma : ℝ}
   have hterminalBase : (2 : ℝ) ^ S * Ma * R / eps ≤ 2 * Kbar := by
     have hMS := hMsBound S (le_refl _)
     have hLR : L * R / eps ≤ Kbar := le_max_right _ _
-    have h1 : (2 : ℝ) ^ S * Ma * R ≤ 2 * L * R := by nlinarith
+    have h1 : (2 : ℝ) ^ S * Ma * R ≤ 2 * L * R := by nlinarith only [hMS, hR]
     calc
       (2 : ℝ) ^ S * Ma * R / eps ≤ 2 * L * R / eps :=
         div_le_div_of_nonneg_right h1 heps.le

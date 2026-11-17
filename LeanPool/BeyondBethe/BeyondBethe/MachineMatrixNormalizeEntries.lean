@@ -8,7 +8,8 @@ module
 
 public import LeanPool.BeyondBethe.BeyondBethe.MachineRationalRowDivide
 public import LeanPool.BeyondBethe.BeyondBethe.FinalAssembly
-public import Mathlib.Tactic
+import Mathlib.Tactic.Linarith -- shake: keep
+import Mathlib.Tactic.Ring -- shake: keep
 
 /-!
 # Entrywise normalization of a rational matrix

@@ -383,6 +383,8 @@ private theorem star_case_at_most_eleven : ∀ {n : ℕ} [Nonempty (Fin n)] (_ :
   have hAKle := Finset.card_union_le A K
   have hFAKcard : F.card = (A ∪ K).card := congrArg Finset.card hFAK
   exfalso
+  clear * - n hn G h t₁ t₂ S₁ hS1card hS2card hFcard hexc hmoat hbulk hn11 hpairle hEFEB hAcard
+    hKexc hKexcF hKtwo hAKle hFAKcard
   omega
 
 open Classical in
@@ -735,7 +737,9 @@ private theorem star_case_twelve : ∀ {n : ℕ} [Nonempty (Fin n)] (_ : (10 : �
     rw [hFAK, Finset.sum_union hdisjAK]
   have hEB0 : ∑ x ∈ S₂, (G.degree x - 3) = 0 := by omega
   have hEF3 : ∑ x ∈ F, (G.degree x - 3) = 3 := by omega
-  have hAexc0 : ∑ x ∈ A, (G.degree x - 3) = 0 := by omega
+  have hAexc0 : ∑ x ∈ A, (G.degree x - 3) = 0 := by
+    clear * - A G h t₁ t₂ S₁ hS2card hexc hbulk hKexc hKexcF hB4 hKcard hEFsplit hEB0
+    omega
   exact star_twelve_degree_census (G := G) (h3) (hs0) (h := h) (t₁ := t₁) (t₂ := t₂)
     (hd1) (hd2) (ht12) (hht1) (hht2) (S₁ := S₁) (hS1def) (hS2def) (hcnt) (htrans) (hdisjS1F)
       (hS2card) (he1) (hexc) (hmoat) (hbulk) (hpairle)
@@ -836,8 +840,10 @@ private theorem star_thirteen_degree_census : ∀ [Nonempty (Fin (13 : ℕ))] (G
     have hdx := hAdegree3 x hxA
     omega
   have hPB0 : ((S₂ ×ˢ S₂).filter (fun q => G.Adj q.1 q.2)).card = 0 := by
+    clear * - G S₂ h t₁ t₂ S₁ hS2card hexc hmoat hbulk hpairle hF6 hB4 hEFsplit hEB0
     omega
   have hq12 : ((S₂ ×ˢ F).filter (fun q => G.Adj q.1 q.2)).card = 12 := by
+    clear * - G S₂ F h t₁ t₂ S₁ hS2card hexc hbulk hB4 hEFsplit hEB0 hPB0
     omega
   have hhInc : 2 ≤ (G.neighborFinset h ∩ F).card := by
     calc
@@ -1364,7 +1370,7 @@ private theorem star_fourteen_ledger : ∀ [Nonempty (Fin (14 : ℕ))] (G : Simp
             rw [Finset.sum_add_distrib, Finset.sum_const, smul_eq_mul, Nat.mul_comm]
   obtain ⟨kB, hkB⟩ := internalPairCount_eq_two_mul G S₂
   have hPBeven : ((S₂ ×ˢ S₂).filter (fun q => G.Adj q.1 q.2)).card = 2 * kB := by
-    simpa [internalPairCount] using hkB
+    simpa only [internalPairCount] using hkB
   set H : Finset (Fin 14) := S₂.filter (fun v => 4 ≤ G.degree v) with hHdef
   have hHsub : H ⊆ S₂ := by rw [hHdef]; exact Finset.filter_subset _ _
   have hHcard : H.card ≤ ∑ v ∈ S₂, (G.degree v - 3) := by
@@ -1382,12 +1388,12 @@ private theorem star_fourteen_ledger : ∀ [Nonempty (Fin (14 : ℕ))] (G : Simp
   have harith1 : eF + eB = 5 := by simpa [eF, eB] using hEFEB
   have harith2 : eB ≤ 1 := by simpa [eB] using hEBle
   have harith3 : q + pB = 15 + eB := by
-    simpa [q, pB, eB, hB5] using hbulk
+    simpa only [hB5, Nat.reduceMul] using hbulk
   have harith4 : pB ≤ 2 * eB := by simpa [pB, eB] using hpairle
   have harith5 : pB = 2 * kB := by simpa [pB] using hPBeven
   have harith6 : pF + q = eF + 12 := by
     calc
-      pF + q = ∑ x ∈ F, (G.degree x - 1) := by simpa [pF, q] using hFledger
+      pF + q = ∑ x ∈ F, (G.degree x - 1) := by simpa only [pF, q] using hFledger
       _ = eF + 12 := by rw [hdegSum, hF6]
   have profile_arithmetic : ∀ (ef eb pb qb pf k : ℕ),
       ef + eb = 5 → eb ≤ 1 → qb + pb = 15 + eb → pb ≤ 2 * eb →
@@ -1534,7 +1540,9 @@ private theorem star_case_fourteen : ∀ {n : ℕ} [Nonempty (Fin n)] (_ : (10 :
       (∑ x ∈ C, (G.degree x - 3)) +
       ∑ x ∈ D, (G.degree x - 3) := by
     rw [hFsplit, Finset.sum_union hdisjACD, Finset.sum_union hdisjAC]
-  have hEBle : (∑ v ∈ S₂, (G.degree v - 3)) ≤ 1 := by omega
+  have hEBle : (∑ v ∈ S₂, (G.degree v - 3)) ≤ 1 := by
+    clear * - S₂ G h t₁ t₂ S₁ hS2card hexc hbulk hB5 hCexc hDexc hEFsplit
+    omega
   obtain ⟨a₁, a₂, ha12, hAeq⟩ := Finset.card_eq_two.mp hAcard
   have ha1A : a₁ ∈ A := by rw [hAeq]; simp
   have ha2A : a₂ ∈ A := by rw [hAeq]; simp
@@ -1765,6 +1773,8 @@ private theorem star_case_fifteen_hHexc_step1 : ∀ (G : SimpleGraph (Fin (15 : 
   have hupper : ∑ b ∈ H, (G.degree b - 3) ≤
       ∑ b ∈ S₂, (G.degree b - 3) :=
     Finset.sum_le_sum_of_subset hHsub
+  clear * - H G h t₁ t₂ S₁ hS2card hexc hmoat hbulk hpairle hF6 hB6 hqeq hqsum hdegSum hEFsplit
+    hEB2 hHcard2 hlower hupper
   omega
 
 open Classical in
@@ -1927,6 +1937,8 @@ private theorem star_case_fifteen_hFge4_step1 : ∀ (G : SimpleGraph (Fin (15 : 
     rw [hFexact x hxF, hdx]
   have hsub := hdegree3High x hxF hdx
   have := Finset.card_le_card hsub
+  clear * - G h t₁ t₂ S₁ hS2card hexc hmoat hbulk hpairle hF6 hB6 hqeq hqsum hdegSum hEFsplit
+    hHcard hEB0 x hslice2 this
   omega
 
 open Classical in
@@ -2057,8 +2069,10 @@ private theorem star_case_fifteen_fireSame_step1 : ∀ [Nonempty (Fin (15 : ℕ)
   have hb2' := Finset.mem_filter.mp hb2
   set X : Finset (Fin 15) := {x, y} with hXdef
   set B : Finset (Fin 15) := {b₁, b₂} with hBdef
-  have hXcard : X.card = 2 := by simp [hXdef, hxy]
-  have hBcard : B.card = 2 := by simp [hBdef, hb12]
+  have hXcard : X.card = 2 := by simp only [hXdef, Finset.mem_singleton, hxy, not_false_eq_true,
+    Finset.card_insert_of_notMem, Finset.card_singleton, Nat.reduceAdd]
+  have hBcard : B.card = 2 := by simp only [hBdef, Finset.mem_singleton, hb12, not_false_eq_true,
+    Finset.card_insert_of_notMem, Finset.card_singleton, Nat.reduceAdd]
   have hXsub : X ⊆ F := by
     intro z hz
     rw [hXdef, Finset.mem_insert, Finset.mem_singleton] at hz
@@ -2138,9 +2152,12 @@ private theorem star_case_fifteen_fireAdjacent_step1 : ∀ [Nonempty (Fin (15 : 
   set P : Finset (Fin 15) := {p, q} with hPdef
   set X : Finset (Fin 15) := {x, y} with hXdef
   set B : Finset (Fin 15) := {b₁, b₂} with hBdef
-  have hPcard : P.card = 2 := by simp [hPdef, G.ne_of_adj hpq]
-  have hXcard : X.card = 2 := by simp [hXdef, hxy]
-  have hBcard : B.card = 2 := by simp [hBdef, hb12]
+  have hPcard : P.card = 2 := by simp only [hPdef, Finset.mem_singleton, G.ne_of_adj hpq,
+    not_false_eq_true, Finset.card_insert_of_notMem, Finset.card_singleton, Nat.reduceAdd]
+  have hXcard : X.card = 2 := by simp only [hXdef, Finset.mem_singleton, hxy, not_false_eq_true,
+    Finset.card_insert_of_notMem, Finset.card_singleton, Nat.reduceAdd]
+  have hBcard : B.card = 2 := by simp only [hBdef, Finset.mem_singleton, hb12, not_false_eq_true,
+    Finset.card_insert_of_notMem, Finset.card_singleton, Nat.reduceAdd]
   have hPsub : P ⊆ S₁ := by
     intro z hz
     rw [hPdef, Finset.mem_insert, Finset.mem_singleton] at hz
@@ -2369,8 +2386,14 @@ private theorem star_fifteen_excess_two : ∀ [Nonempty (Fin (15 : ℕ))] (G : S
   intro inst G h3 h t₁ t₂ hdh this S₁ F S₂ hdisjS1F hS2card hexc hdisj hmoat hbulk hpairle hF6 hB6
     hqeq hqsum hdegSum hFexact A C D hhS1 hAcard a₁ hAsubF ha1A hAadj hCexc hDexc hEFsplit H hHdef
     hHsub hHcard hdisjFS2 hdegree3High hEB2
-  have hEF4 : ∑ x ∈ F, (G.degree x - 3) = 4 := by omega
-  have hAexc0 : ∑ x ∈ A, (G.degree x - 3) = 0 := by omega
+  have hEF4 : ∑ x ∈ F, (G.degree x - 3) = 4 := by
+    clear * - F G h t₁ t₂ S₁ hS2card hexc hmoat hbulk hpairle hF6 hB6 hqeq hqsum hdegSum hEFsplit
+      hEB2
+    omega
+  have hAexc0 : ∑ x ∈ A, (G.degree x - 3) = 0 := by
+    clear * - A G h t₁ t₂ S₁ hS2card hexc hmoat hbulk hpairle hF6 hB6 hqeq hqsum hdegSum hCexc
+      hDexc hEFsplit hEB2
+    omega
   have hAdegree3 : ∀ x ∈ A, G.degree x = 3 := by
     intro x hxA
     have hterm : G.degree x - 3 ≤ ∑ y ∈ A, (G.degree y - 3) :=
@@ -2387,6 +2410,8 @@ private theorem star_fifteen_excess_two : ∀ [Nonempty (Fin (15 : ℕ))] (G : S
     have hcard2 : (G.neighborFinset a₁ ∩ S₂).card = 2 := by
       rw [hFexact a₁ (hAsubF ha1A), hAdegree3 a₁ ha1A]
     have := Finset.card_le_card hsub
+    clear * - H G h t₁ t₂ S₁ hS2card hexc hmoat hbulk hpairle hF6 hB6 hqeq hqsum hdegSum a₁
+      hEFsplit hHcard hEB2 hcard2 this
     omega
   have hHexc : ∑ b ∈ H, (G.degree b - 3) = 2 := by
     exact star_case_fifteen_hHexc_step1 (G := G) (h := h) (t₁ := t₁) (t₂ := t₂) (S₁ := S₁)
@@ -2539,9 +2564,13 @@ private theorem star_fifteen_excess_zero : ∀ [Nonempty (Fin (15 : ℕ))] (G : 
     have hterm : G.degree b - 3 ≤ ∑ y ∈ S₂, (G.degree y - 3) :=
       Finset.single_le_sum (fun y _ => Nat.zero_le (G.degree y - 3)) hb
     have := h3 b
+    clear * - G b h t₁ t₂ S₁ hS2card hexc hmoat hbulk hpairle hF6 hB6 hqeq hqsum hdegSum hEFsplit
+      hEB0 hterm this
     omega
   have hPempty : (S₂ ×ˢ S₂).filter (fun q => G.Adj q.1 q.2) = ∅ := by
     apply Finset.card_eq_zero.mp
+    clear * - G S₂ h t₁ t₂ S₁ hS2card hexc hmoat hbulk hpairle hF6 hB6 hqeq hqsum hdegSum hEFsplit
+      hEB0
     omega
   have hBindep : ∀ b ∈ S₂, ∀ c ∈ S₂, ¬G.Adj b c := by
     intro b hb c hc hbc
@@ -2757,6 +2786,8 @@ private theorem star_case_fifteen : ∀ {n : ℕ} [Nonempty (Fin n)] (_ : (10 : 
     exact star_case_fifteen_hHcard_step1 (G := G) (h) (t₁) (t₂) (S₁ := S₁) (H :=
       H) (hHdef) (hHsub)
   have hEBle : (∑ v ∈ S₂, (G.degree v - 3)) ≤ 2 := by
+    clear * - S₂ G h t₁ t₂ S₁ hS2card hexc hmoat hbulk hcheap hpairle hF6 hB6 hqeq hqsum hdegSum
+      hCexc hDexc hEFsplit
     omega
   have hdisjFS2 : Disjoint F S₂ := by
     rw [Finset.disjoint_left]
@@ -2770,6 +2801,8 @@ private theorem star_case_fifteen : ∀ {n : ℕ} [Nonempty (Fin n)] (_ : (10 : 
   have hEBcases : (∑ v ∈ S₂, (G.degree v - 3)) = 2 ∨
       (∑ v ∈ S₂, (G.degree v - 3)) = 1 ∨
       (∑ v ∈ S₂, (G.degree v - 3)) = 0 := by
+    clear * - S₂ G h t₁ t₂ S₁ hS2card hexc hmoat hbulk hcheap hpairle hF6 hB6 hqeq hqsum hdegSum
+      hEFsplit hEBle
     omega
   rcases hEBcases with hEB2 | hEB1 | hEB0
   · exact star_fifteen_excess_two (G := G) (h3) (h := h) (t₁ := t₁) (t₂ := t₂) (hdh)

@@ -404,7 +404,7 @@ private theorem rapidDecay_hasSum_generic {E : Type*} [NormedAddCommGroup E] [No
             ContDiff.sum (fun i _ => contDiff_const.mul (h_contDiff i l))
           have hcoe_r : (⇑r : E → ℝ) = fun y =>
               (∑' n, a.val n * b n y) - ∑ i ∈ s, G i y := by
-            ext y; simp_all
+            ext y; simp_all only [norm_eq_abs, sum_apply, smul_apply, smul_eq_mul, sub_apply]
           rw [hcoe_r]
           set h_sum := fun y => ∑ i ∈ s, G i y with h_sum_def
           have h_neg_cd : ContDiff ℝ l (-h_sum) := hg_cd.neg
@@ -418,7 +418,8 @@ private theorem rapidDecay_hasSum_generic {E : Type*} [NormedAddCommGroup E] [No
             rw [h_sum_def]
             have h_eq := iteratedFDeriv_sum (𝕜 := ℝ) (f := G) (u := s) (i := l)
               (fun i _ => contDiff_const.mul (h_contDiff i l))
-            simp_all
+            simp_all only [norm_eq_abs, sum_apply, smul_apply, smul_eq_mul, FunLike.coe_sub,
+              Finset.sum_apply]
           rw [h_iFD_h, ← h_summ_iFD.sum_add_tsum_compl (s := s)]
           abel
         have h_norm_summ : Summable (fun (i : ↥(↑s : Set ℕ)ᶜ) =>
@@ -454,7 +455,10 @@ private theorem rapidDecay_hasSum_generic {E : Type*} [NormedAddCommGroup E] [No
               set t' := t.map ⟨Subtype.val, Subtype.val_injective⟩ with ht'_def
               have h_disj : Disjoint t' s := by
                 rw [Finset.disjoint_left]
-                simp_all
+                simp_all only [norm_eq_abs, sum_apply, smul_apply, smul_eq_mul, FunLike.coe_sub,
+                  Subtype.forall, Set.mem_compl_iff, SetLike.mem_coe, Finset.mem_map,
+                  Function.Embedding.coeFn_mk, Subtype.exists, exists_and_right, exists_eq_right,
+                  forall_exists_index, not_false_eq_true, implies_true]
               have h_lt := hs₀ t' (Disjoint.mono_right hs h_disj)
               rw [Real.norm_of_nonneg (Finset.sum_nonneg fun i _ =>
                 mul_nonneg (abs_nonneg _) (apply_nonneg _ _))] at h_lt
@@ -789,7 +793,7 @@ private lemma hermiteFunction_schwartz_seminorm_bound (n k m : ℕ) :
   have hcoe : (fun t => hermiteFunction n t) = ⇑φ := (funext hφ).symm
   refine ⟨SchwartzMap.seminorm ℝ k m φ, apply_nonneg _ _, fun t => ?_⟩
   have hle := SchwartzMap.le_seminorm ℝ k m φ t
-  simp_all
+  simp_all only [implies_true, norm_eq_abs]
 
 -- The projection ‖EuclideanSpace.proj i‖ ≤ 1.
 private lemma euclidean_proj_norm_le_one (d : ℕ) (i : Fin d) :
@@ -816,7 +820,8 @@ private lemma euclidean_norm_le_l1 (d : ℕ) (x : EuclideanSpace ℝ (Fin (d + 1
 private lemma euclidean_norm_pow_le (d k : ℕ) (x : EuclideanSpace ℝ (Fin (d + 1))) :
     ‖x‖ ^ k ≤ ((d + 1 : ℝ) ^ k) * ∑ j : Fin (d + 1), |x j| ^ k := by
   rcases k with _ | k
-  · simp_all
+  · simp_all only [pow_zero, Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul,
+      Nat.cast_add, Nat.cast_one, mul_one, one_mul, le_add_iff_nonneg_left, Nat.cast_nonneg]
   have h1 : (1 : ℝ) ≤ (d + 1 : ℝ) := by exact_mod_cast Nat.succ_le_succ (Nat.zero_le d)
   calc ‖x‖ ^ (k + 1) ≤ (∑ j : Fin (d + 1), |x j|) ^ (k + 1) :=
         pow_le_pow_left₀ (norm_nonneg _) (euclidean_norm_le_l1 d x) _
@@ -1371,7 +1376,7 @@ private lemma hermiteCoeffNd_injective_succ (d' : ℕ)
     apply ih
     intro β
     have := hermiteCoeffNd_fubini d' f (Fin.snoc β n)
-    simp_all
+    simp_all only [Fin.snoc_castSucc, Fin.snoc_last]
   -- Step 2: All 1D slices are zero (by 1D completeness)
   have h_slice : ∀ y, schwartzSlice d' f y = 0 := by
     intro y
@@ -1388,7 +1393,7 @@ private lemma hermiteCoeffNd_injective_succ (d' : ℕ)
   -- Step 3: f is zero everywhere
   ext x
   have h_zero : ∀ y t, (schwartzSlice d' f y) t = 0 := by
-    simp_all
+    simp_all only [zero_apply, implies_true]
   have h_val := h_zero (euclideanInit (d' + 1) x) (x (Fin.last (d' + 1)))
   rw [schwartz_slice_eq] at h_val
   rw [zero_apply]
@@ -1531,7 +1536,7 @@ private lemma hermiteCoeffNd_decay (d' : ℕ) (k : ℝ) :
         le_add_of_nonneg_right (Nat.cast_nonneg _)
       have h_weight : (1 + (MultiIndex.abs α : ℝ)) ^ k ≤
           (1 + (MultiIndex.abs α_rest : ℝ)) ^ k := by
-        apply rpow_le_rpow_of_nonpos (by linarith) (by linarith) hk.le
+        apply rpow_le_rpow_of_nonpos (by linarith only []) (by linarith only [h_abs_rest_le]) hk.le
       -- Unweighted axiom at k=0 gives seminorm bound
       have h_ax0 := h_ax f n
       simp only [rpow_zero, mul_one] at h_ax0
@@ -1639,7 +1644,8 @@ private lemma schwartzHermiteBasisNd_weighted_product_bound (d k l : ℕ)
           rw [Finset.prod_const]
       _ ≤ (C₁ * (1 + (MultiIndex.abs α : ℝ)) ^ s₁) ^ (d + 1) := by
           have hcard : ((Finset.univ : Finset (Fin (d + 1))).erase j₀).card = d := by
-            simp_all
+            simp_all only [Finset.mem_univ, Finset.card_erase_of_mem, Finset.card_univ,
+              Fintype.card_fin, add_tsub_cancel_right]
           rw [hcard, pow_succ']
   intro α x p
   calc ‖x‖ ^ k *
@@ -2339,7 +2345,7 @@ private lemma hermiteCoeffNd_rapidDecay_schwartzMapNd (d' : ℕ) (a : RapidDecay
   simp only [hermiteCoeffNdCLM_apply, map_smul, smul_eq_mul,
     flatBasisNd, hermiteCoeffNd_basisNd_kronecker]
   -- Use injectivity of multiIndexEquiv.symm to simplify the if-condition
-  simp_all
+  simp_all only [EmbeddingLike.apply_eq_iff_eq, mul_ite, mul_one, mul_zero, tsum_ite_eq']
 
 /-- **Completeness of the multi-d Hermite expansion in Schwartz topology.**
 Proved purely algebraically! The series converges to `S_f := from(to(f))`.

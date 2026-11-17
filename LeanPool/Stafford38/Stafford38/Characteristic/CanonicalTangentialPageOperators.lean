@@ -279,7 +279,7 @@ theorem tangential_commutator_lower
       simp [Stafford.commutator]
     convert (rightMul_lower_of_orderPiece k n N d _ hc'' hz) using 1
     norm_num [tangentialDegree]
-    ring
+    ring_nf
 
 end
 end Stafford38.Characteristic.CanonicalTangentialPageOperators

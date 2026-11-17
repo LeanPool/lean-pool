@@ -433,9 +433,9 @@ private theorem
   have hτ : ContDiff ℝ ∞ τ :=
     Real.smoothTransition.contDiff.comp ((contDiff_const.mul contDiff_id).sub contDiff_const)
   have hlow (t : ℝ) (ht : t ≤ 1 / 3) : τ t = 0 :=
-    Real.smoothTransition.zero_of_nonpos (by linarith)
+    Real.smoothTransition.zero_of_nonpos (by linarith only [ht])
   have hhigh (t : ℝ) (ht : 2 / 3 ≤ t) : τ t = 1 :=
-    Real.smoothTransition.one_of_one_le (by linarith)
+    Real.smoothTransition.one_of_one_le (by linarith only [ht])
   let A : N × ℝ → N := fun p => I.family (τ p.2, p.1)
   have hA : ContMDiff (𝓘(ℝ, Z).prod 𝓘(ℝ, ℝ)) 𝓘(ℝ, Z) ∞ A :=
     I.smooth.comp ((hτ.contMDiff.comp contMDiff_snd).prodMk contMDiff_fst)
@@ -745,7 +745,7 @@ private theorem Degree.FlowTimeChange.exists_normalized_whole_level_cylinder {E 
   let _ := Smale.RegularLevel.isManifold hf hreg
   let r : ℝ := (c - a) / 2
   have hr : 0 < r := div_pos (sub_pos.mpr ha) (by norm_num)
-  have hrbound : r < c - a := by dsimp [r]; linarith
+  have hrbound : r < c - a := by dsimp [r]; linarith only [ha]
   let g : M → ℝ := fun y => f y / r
   have hg : ContMDiff 𝓘(ℝ, E) 𝓘(ℝ, ℝ) ∞ g := hf.div_const r
   have hcrit : Smale.ManifoldMorse.criticalPoints E g = Smale.ManifoldMorse.criticalPoints E f :=
@@ -783,9 +783,9 @@ private theorem Degree.FlowTimeChange.exists_normalized_whole_level_cylinder {E 
     rw [hi, he]
     constructor
     · apply div_le_div_of_nonneg_right _ hr.le
-      nlinarith [ht.2]
+      nlinarith only [hr, hrbound, ht, ht.2]
     · apply div_le_div_of_nonneg_right _ hr.le
-      nlinarith [mul_nonneg hr.le ht.1]
+      linarith only [hb, hr, ht, mul_nonneg hr.le ht.1]
   have hh := native_local_height_translation hg G hG hU hIU hspeed p.1 p.2 (hi ▸ hc) hend
   rw [hi, he] at hh
   rw [hformula]
@@ -868,7 +868,7 @@ private theorem Degree.FlowSuspension.nativeSuspensionField_eq_vertical_below {Z
   filter_upwards [eventually_lt_nhds (sub_pos.mpr hp)] with t ht
   change Ψ ((Ψ.symm p).1, (Ψ.symm p).2 + t) = (p.1, p.2 + t)
   rw [hi]
-  exact hleft (p.1, p.2 + t) (by dsimp; linarith)
+  exact hleft (p.1, p.2 + t) (by dsimp; linarith only [ht])
 
 private theorem Degree.FlowSuspension.nativeSuspensionField_eq_vertical_above {Z N : Type*}
     [NormedAddCommGroup Z] [NormedSpace ℝ Z] [TopologicalSpace N]
@@ -884,9 +884,9 @@ private theorem Degree.FlowSuspension.nativeSuspensionField_eq_vertical_above {Z
     rw [hq] at hh
     exact (congrArg Prod.fst hh).symm
   apply nativeSuspensionField_eq_vertical_of_flow_germ Ψ p
-  filter_upwards [eventually_gt_nhds (show b - p.2 < (0 : ℝ) by linarith)] with t ht
+  filter_upwards [eventually_gt_nhds (show b - p.2 < (0 : ℝ) by linarith only [hp])] with t ht
   change Ψ (q.1, q.2 + t) = (p.1, p.2 + t)
-  rw [hright (q.1, q.2 + t) (by dsimp; rw [htime]; linarith), hbase, htime]
+  rw [hright (q.1, q.2 + t) (by dsimp; rw [htime]; linarith only [ht]), hbase, htime]
 
 private theorem
     Degree.FlowSuspension.nativeSuspensionFlow_fixed_line {Z N : Type*} [NormedAddCommGroup Z]
@@ -1063,13 +1063,13 @@ private theorem Degree.FlowSuspension.exists_native_whole_level_holonomy {Z E N 
   let C := A '' L
   have hC : IsCompact C := hL.image_of_continuousOn (A.contMDiffOn_toFun.continuousOn.mono hLA)
   have hslab (p : N × ℝ) (hp : p ∈ L) : p.2 ∈ Set.Ioo (0 : ℝ) 1 := by
-    constructor <;> linarith [hp.2.1, hp.2.2]
+    constructor <;> linarith only [hp, hp.2.1, hp.2.2]
   have hCsub : C ⊆ A.target ∩ f ⁻¹' Set.Ioo (b - s) b := by
     rintro x ⟨p, hp, rfl⟩
     refine ⟨A.map_source' (hLA hp), ?_⟩
     change f (A p) ∈ Set.Ioo (b - s) b
     rw [hheight p (hslab p hp)]
-    constructor <;> nlinarith [(hslab p hp).1, (hslab p hp).2]
+    constructor <;> nlinarith only [hs, hslab, hp, (hslab p hp).1, (hslab p hp).2]
   let R :=
     Smale.PartialChart.restrictSource A
       (isOpen_univ.prod (isOpen_Ioo : IsOpen (Set.Ioo (0 : ℝ) 1)))
@@ -1136,14 +1136,14 @@ private theorem Degree.FlowSuspension.native_whole_level_exterior_tails {Z N M :
     have h0 : Ψ (x, (0 : ℝ)) = (x, 0) := hleft (x, 0) (by norm_num)
     have hf : nativeSuspensionFlow Ψ t (x, 0) = (x, t) := by
       rw [← h0, nativeSuspensionFlow_chart, zero_add]
-      exact hleft (x, t) (by linarith)
+      exact hleft (x, t) (by linarith only [ht])
     rw [hfull, hf, hformula, hformula, H.map_zero_apply]
   · intro x t ht
     have h1 : Ψ (D.symm x, (1 : ℝ)) = (x, 1) := by
       rw [hright (D.symm x, 1) (by norm_num), D.apply_symm_apply]
     have hf : nativeSuspensionFlow Ψ t (x, 1) = (x, 1 + t) := by
       rw [← h1, nativeSuspensionFlow_chart]
-      rw [hright (D.symm x, 1 + t) (by linarith), D.apply_symm_apply]
+      rw [hright (D.symm x, 1 + t) (by linarith only [ht]), D.apply_symm_apply]
     rw [hfull, hf, hformula, hformula, ← H.map_add]
     congr 1
     ring
@@ -1226,7 +1226,7 @@ private theorem Degree.FlowSuspension.exists_native_regular_level_isotopy_realiz
     intro y hy
     have hh := (hCsub hy).2
     change f y ∈ Set.Ioo (c - r) c at hh
-    exact ⟨by linarith [hh.1], lt_trans hh.2 hb⟩
+    exact ⟨by linarith only [hrbound, hh, hh.1], lt_trans hh.2 hb⟩
   have hcritical (y : M) (hy : y ∈ Smale.ManifoldMorse.criticalPoints E f) :
     ∀ᶠ x in 𝓝 y, V' x = V x := by
     have hout : y ∉ C := fun hc => hband y ⟨(hCband hc).1.le, (hCband hc).2.le⟩ hy
@@ -1594,7 +1594,7 @@ private theorem Degree.FlowSuspension.native_corrected_cylinder_tails {Z E M : T
       native_vertical_cylinder_flow Φ hΦsource hV hΦmodel F hF z hz 0 t, zero_add]
   · intro z hz t ht
     rw [native_vertical_cylinder_flow Ω hΩsource hW hΩmodel G hG z hz 1 t,
-      hright (z, 1 + t) (by dsimp; linarith), hright (z, 1) le_rfl,
+      hright (z, 1 + t) (by dsimp; linarith only [ht]), hright (z, 1) le_rfl,
       native_vertical_cylinder_flow Φ hΦsource hV hΦmodel F hF (D z) (hDU hz) 1 t]
 
 private theorem Degree.FlowSuspension.phase_slice_flow_coordinates {D Z E M : Type*}
@@ -2019,9 +2019,9 @@ private theorem Degree.FlowTimeChange.exists_arbitrary_gap_flow_cylinder {E M : 
       constructor
       · apply div_le_div_of_nonneg_right _ hr.le
         dsimp [r]
-        nlinarith [ht.2]
+        nlinarith only [ha, ht, ht.2]
       · apply div_le_div_of_nonneg_right _ hr.le
-        nlinarith [mul_nonneg hr.le ht.1]
+        linarith only [hb, hr, ht, mul_nonneg hr.le ht.1]
     have hh :=
       native_local_height_translation hg G hG hH hIH hspeed (ι (Q z.1)) z.2 (hi ▸ hc) hend
     rw [hi, he] at hh
@@ -2094,15 +2094,16 @@ private theorem Degree.FlowTimeChange.exists_normalized_connection_cylinder {E M
   let b : ℝ := (f p + f q) / 2
   let lo : ℝ := (f p + b) / 2
   let hi : ℝ := (b + f q) / 2
-  have hpb : f p < b := by dsimp [b]; linarith
-  have hbq : b < f q := by dsimp [b]; linarith
-  have hplo : f p < lo := by dsimp [lo]; linarith
-  have hlob : lo < b := by dsimp [lo]; linarith
-  have hbhi : b < hi := by dsimp [hi]; linarith
-  have hhiq : hi < f q := by dsimp [hi]; linarith
+  have hpb : f p < b := by dsimp [b]; linarith only [hpq]
+  have hbq : b < f q := by dsimp [b]; linarith only [hpq]
+  have hplo : f p < lo := by dsimp [lo]; linarith only [hpb]
+  have hlob : lo < b := by dsimp [lo]; linarith only [hpb]
+  have hbhi : b < hi := by dsimp [hi]; linarith only [hbq]
+  have hhiq : hi < f q := by dsimp [hi]; linarith only [hbq]
   have hband : ∀ y, f y ∈ Set.Icc lo hi → y ∉ Smale.ManifoldMorse.criticalPoints E f := by
     intro y hy hcrit
-    have houter : f y ∈ Set.Icc c d := ⟨by linarith [hy.1], by linarith [hy.2]⟩
+    have houter : f y ∈ Set.Icc c d := ⟨by linarith only [hc, hplo, hy, hy.1],
+      by linarith only [hd, hhiq, hy, hy.2]⟩
     rcases hpair y hcrit houter with he | he
     · rw [he] at hy
       exact (not_le_of_gt hplo) hy.1
@@ -2234,7 +2235,7 @@ private theorem Degree.FlowSuspension.vertical_transition_formula {Z : Type*} [N
       (fun s hs => (hd s hs).deriv) ht h₀
   apply Prod.ext
   · have hh : (R (t, z)).1 - t = (R (t₀, z)).1 - t₀ := congrArg Prod.fst heq
-    linarith
+    linarith only [hh]
   · have hh : (R (t, z)).2 - 0 = (R (t₀, z)).2 - 0 := congrArg Prod.snd heq
     simpa only [sub_zero] using hh
 
@@ -2259,8 +2260,8 @@ private theorem
     rw [← ball_prod_same]
     refine ⟨?_, hz⟩
     rw [Metric.mem_ball, Real.dist_eq]
-    exact abs_lt.mpr ⟨by linarith [ht.1], by linarith [ht.2]⟩
-  have ht₀ : t₀ ∈ Set.Ioo (t₀ - ε) (t₀ + ε) := ⟨by linarith, by linarith⟩
+    exact abs_lt.mpr ⟨by linarith only [ht, ht.1], by linarith only [ht, ht.2]⟩
+  have ht₀ : t₀ ∈ Set.Ioo (t₀ - ε) (t₀ + ε) := ⟨by linarith only [hε], by linarith only [hε]⟩
   let P : Z → Z := fun z => (R (t₀, z)).2
   let v : Z → ℝ := fun z => (R (t₀, z)).1 - t₀
   have hc : ContDiffOn ℝ ∞ (fun z : Z => R (t₀, z)) (Metric.ball 0 ε) :=
@@ -2291,7 +2292,7 @@ private theorem Degree.FlowSuspension.exists_transverse_transition_chart {Z : Ty
                   ∀ t ∈ Set.Ioo (t₀ - ε) (t₀ + ε), ∀ z ∈ P.source, R (t, z) = (t + v z, P z) := by
   obtain ⟨ε, Q, v, hε, hQ, hv, hQ0, hv0, hsub, hformula⟩ :=
     exists_vertical_transition_phase R hvertical hp hfix
-  have ht₀ : t₀ ∈ Set.Ioo (t₀ - ε) (t₀ + ε) := ⟨by linarith, by linarith⟩
+  have ht₀ : t₀ ∈ Set.Ioo (t₀ - ε) (t₀ + ε) := ⟨by linarith only [hε], by linarith only [hε]⟩
   have hQeq : Q =ᶠ[𝓝 (0 : Z)] (fun z => (R (t₀, z)).2) := by
     filter_upwards [Metric.ball_mem_nhds (0 : Z) hε] with z hz
     exact (congrArg Prod.snd (hformula t₀ ht₀ z hz)).symm
@@ -2514,7 +2515,7 @@ private theorem Degree.FlowSuspension.exists_native_endpoint_slice_phase {E M : 
   let Q :=
     Smale.PartialChart.restrictSource P
       (Metric.isOpen_ball : IsOpen (Metric.ball (0 : Fin m → ℝ) δ))
-  have hT : T ∈ Set.Ioo (T - ε) (T + ε) := ⟨by linarith, by linarith⟩
+  have hT : T ∈ Set.Ioo (T - ε) (T + ε) := ⟨by linarith only [hε], by linarith only [hε]⟩
   have hQ0 : (0 : Fin m → ℝ) ∈ Q.source := ⟨hP0, Metric.mem_ball_self hδ⟩
   refine ⟨Q, v, hQ0, hPfix, hv0, hv, ?_, ?_, ?_⟩
   · intro z hz
@@ -2942,7 +2943,7 @@ private theorem MorseCancel.incoming_linear_stable_plane {E M : Type*} [NormedAd
     have hh := congrArg (fun q : Model m => q.2 i) h
     change -σ i * p.2 i = -p.2 i at hh
     rw [hi] at hh
-    linarith
+    linarith only [hh]
   · intro h
     apply Prod.ext
     · simp [endpointLinearField]
@@ -2980,7 +2981,7 @@ private theorem MorseCancel.outgoing_linear_unstable_plane {E M : Type*} [Normed
   · intro h i hi
     have hh := congrArg (fun q : Model m => q.2 i) h
     simp only [endpointLinearField, hi] at hh
-    linarith
+    linarith only [hh]
   · intro h
     apply Prod.ext
     · simp [endpointLinearField]
@@ -3468,10 +3469,10 @@ private theorem Degree.TransverseGerms.exists_open_transverse_convex_blend {A B 
         ‖x‖ = ‖-((1 - α) • u x)‖ := congrArg Norm.norm he'
         _ = ‖(1 - α) • u x‖ := (norm_neg _)
         _ = (1 - α) * ‖u x‖ := by
-          rw [norm_smul, Real.norm_eq_abs, abs_of_nonneg (by linarith [hα.2])]
-        _ ≤ ‖u x‖ := (mul_le_of_le_one_left (norm_nonneg _) (by linarith [hα.1]))
+          rw [norm_smul, Real.norm_eq_abs, abs_of_nonneg (by linarith only [hα, hα.2])]
+        _ ≤ ‖u x‖ := (mul_le_of_le_one_left (norm_nonneg _) (by linarith only [hα, hα.1]))
         _ ≤ (1 / 2 : ℝ) * ‖x‖ := herr
-    exact norm_eq_zero.mp (le_antisymm (by linarith [norm_nonneg x]) (norm_nonneg x))
+    exact norm_eq_zero.mp (le_antisymm (by linarith only [hnorm, norm_nonneg x]) (norm_nonneg x))
   · rintro rfl
     simp only [show ((0 : A), (0 : B)) = (0 : A × B) from rfl, hφzero, map_zero, sub_self,
       smul_zero, add_zero, Prod.fst_zero]
@@ -4173,13 +4174,13 @@ private theorem
   have hN : IsCompact N :=
     hC.image_of_continuousOn (Φ.contMDiffOn_toFun.continuousOn.mono hCsource)
   have hslab (p : E × ℝ) (hp : p ∈ C) : p.2 ∈ Set.Ioo (0 : ℝ) 1 := by
-    constructor <;> linarith [hp.2.1, hp.2.2]
+    constructor <;> linarith only [hp, hp.2.1, hp.2.2]
   have hNsub : N ⊆ Φ.target ∩ f ⁻¹' Set.Ioo (c - 1) c := by
     rintro y ⟨p, hp, rfl⟩
     refine ⟨Φ.map_source' (hCsource hp), ?_⟩
     change f (Φ p) ∈ Set.Ioo (c - 1) c
     rw [hheight p (hCsource hp) (hslab p hp)]
-    constructor <;> linarith [(hslab p hp).1, (hslab p hp).2]
+    constructor <;> linarith only [hslab, hp, (hslab p hp).1, (hslab p hp).2]
   let R :=
     Smale.PartialChart.restrictSource Φ
       (isOpen_univ.prod (isOpen_Ioo : IsOpen (Set.Ioo (0 : ℝ) 1)))
@@ -4438,12 +4439,12 @@ private theorem Degree.FlowTimeChange.exists_small_supported_scalar_germ {E : Ty
     have hmem : ∀ᶠ x in 𝓝 (0 : E), x ∈ U := hU.mem_nhds h0U
     exact hmem.and (hv.continuous.abs.continuousAt (eventually_lt_nhds hp))
   obtain ⟨r, hr, hrsub⟩ := Metric.eventually_nhds_iff.mp hnear
-  let β : ContDiffBump (0 : E) := ⟨r / 4, r / 2, by positivity, by linarith⟩
+  let β : ContDiffBump (0 : E) := ⟨r / 4, r / 2, by positivity, by linarith only [hr]⟩
   let K := Metric.closedBall (0 : E) β.rOut
   let g (x : E) := β x * v x
   have hKsmall {x : E} (hx : x ∈ K) : Dist.dist x 0 < r := by
     have hh : Dist.dist x 0 ≤ r / 2 := hx
-    linarith
+    linarith only [hr, hh]
   have hKU : K ⊆ U := fun _ hx => (hrsub (hKsmall hx)).1
   have hsupp : tsupport g ⊆ K := by
     have hh := tsupport_mul_subset_left (f := fun x : E => β x) (g := v)
@@ -4480,9 +4481,9 @@ private theorem Degree.FlowTimeChange.exists_bounded_step_profile :
   have hτ : ContDiff ℝ ∞ τ :=
     Real.smoothTransition.contDiff.comp ((contDiff_const.mul contDiff_id).sub contDiff_const)
   have hzero (t : ℝ) (ht : t ≤ 1 / 3) : τ t = 0 :=
-    Real.smoothTransition.zero_of_nonpos (by linarith)
+    Real.smoothTransition.zero_of_nonpos (by linarith only [ht])
   have hone (t : ℝ) (ht : 2 / 3 ≤ t) : τ t = 1 :=
-    Real.smoothTransition.one_of_one_le (by linarith)
+    Real.smoothTransition.one_of_one_le (by linarith only [ht])
   have hout (t : ℝ) (ht : t ∉ Set.Icc (1 / 3 : ℝ) (2 / 3)) : deriv τ t = 0 := by
     by_cases hlo : t < 1 / 3
     · have hg : τ =ᶠ[𝓝 t] (fun _ => (0 : ℝ)) := by
@@ -4508,7 +4509,7 @@ private theorem Degree.FlowTimeChange.exists_bounded_step_profile :
     exact ⟨Real.smoothTransition.nonneg _, Real.smoothTransition.le_one _⟩
   · intro t
     have hh : |deriv τ t| ≤ C := by simpa only [Real.norm_eq_abs] using hC t
-    exact hh.trans (by dsimp [L]; linarith [le_max_left C 0])
+    exact hh.trans (by dsimp [L]; linarith only [le_max_left C 0])
 
 private theorem
     Degree.FlowTimeChange.exists_supported_phase_clock {E : Type*} [NormedAddCommGroup E]
@@ -4561,7 +4562,7 @@ private theorem
   have hpositive (p : ℝ × E) :
     1 / 2 < fderiv ℝ (Degree.RegularHeightCoordinates.displacedHeight u) p (1, 0) := by
     rw [hrate]
-    linarith [(abs_lt.mp (hsmall' p)).1]
+    linarith only [hsmall', (abs_lt.mp (hsmall' p)).1]
   have hpos (p : ℝ × E) :
     0 < fderiv ℝ (Degree.RegularHeightCoordinates.displacedHeight u) p (1, 0) :=
     (by norm_num : (0 : ℝ) < 1 / 2).trans (hpositive p)
@@ -4698,7 +4699,8 @@ private theorem Degree.FlowTimeChange.exists_compact_phase_field_support {E : Ty
     have hamp : |τ t * g z| < 1 / 12 := by
       rw [abs_mul, abs_of_nonneg (hrange t).1]
       exact (mul_le_of_le_one_left (abs_nonneg (g z)) (hrange t).2).trans_lt (hsmall z)
-    refine ⟨hz, ?_, ?_⟩ <;> linarith [(abs_lt.mp hamp).1, (abs_lt.mp hamp).2, ht.1, ht.2]
+    refine ⟨hz, ?_, ?_⟩ <;> linarith only [ht, hamp, (abs_lt.mp hamp).1, (abs_lt.mp hamp).2, ht.1,
+      ht.2]
   refine ⟨C, hC, hsub, ?_⟩
   intro p hp
   let z := Q.symm p
@@ -5104,15 +5106,15 @@ private theorem Degree.FlowTimeChange.exists_native_matched_phase_cylinder {E Z 
   · filter_upwards [hgerm, hright, hsmall₀, hsmall₁] with z hg hr h₀ h₁
     constructor
     · intro t ht
-      rw [hΞleft (z, t) (by dsimp; linarith), hΨmap]
-      exact hleft (Q z, t + v₀ z) (by dsimp; linarith [h₀.2])
+      rw [hΞleft (z, t) (by dsimp; linarith only [ht]), hΨmap]
+      exact hleft (Q z, t + v₀ z) (by dsimp; linarith only [h₀, ht, h₀.2])
     · intro t ht
       have hclock : t + g z + v₀ z = t + v₁ z := by
         change g z = v₁ z - v₀ z at hg
         rw [hg]
         ring
-      rw [hΞright (z, t) (by dsimp; linarith), hΨmap, hclock]
-      exact hr (t + v₁ z) (by linarith [h₁.1])
+      rw [hΞright (z, t) (by dsimp; linarith only [ht]), hΨmap, hclock]
+      exact hr (t + v₁ z) (by linarith only [h₁, ht, h₁.1])
 
 private theorem Degree.FlowSuspension.exists_unique_phase_corrected_cylinder {A B Z E M : Type*}
     [NormedAddCommGroup A] [NormedSpace ℝ A] [FiniteDimensional ℝ A] [NormedAddCommGroup B]

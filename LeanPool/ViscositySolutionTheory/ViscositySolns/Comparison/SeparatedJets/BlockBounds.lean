@@ -218,12 +218,12 @@ theorem blockDiagonal_of_tendsto_twoSidedJet_blockFunctionToPointFunction_sub
                 (continuous_apply (Fin.castAdd n i) :
                   Continuous fun X : Hessian (n + n) => X (Fin.castAdd n i))
         | inr j =>
-            simpa [comparisonBlockDiagonal] using
+            exact
               (continuous_const : Continuous fun _X : Hessian (n + n) => (0 : Real))
     | inr i =>
         cases j with
         | inl j =>
-            simpa [comparisonBlockDiagonal] using
+            exact
               (continuous_const : Continuous fun _X : Hessian (n + n) => (0 : Real))
         | inr j =>
             refine ((continuous_apply (Fin.natAdd n j)).comp

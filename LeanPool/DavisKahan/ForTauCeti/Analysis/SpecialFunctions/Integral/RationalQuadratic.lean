@@ -4,6 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Jon Crall, GPT 5.6 High
 -/
 module
+import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
+import Mathlib.MeasureTheory.Integral.DominatedConvergence
 
 public import LeanPool.DavisKahan.ForTauCeti.Analysis.Fourier.HaagerupZsido.Defs
 public import LeanPool.DavisKahan.ForTauCeti.Analysis.Fourier.Poisson.CauchyLattice
@@ -50,7 +52,7 @@ private theorem integrable_inv_sq_add_sq {c : ℝ} (hc : c ≠ 0) :
   apply hscaled.congr
   filter_upwards [] with x
   have hden : c ^ 2 + x ^ 2 ≠ 0 := by
-    nlinarith [sq_pos_of_ne_zero hc, sq_nonneg x]
+    nlinarith only [hc, sq_pos_of_ne_zero hc, sq_nonneg x]
   have hbase : 1 + (c⁻¹ * x) ^ 2 ≠ 0 := by positivity
   field_simp [hc, hden, hbase]
 
@@ -67,14 +69,14 @@ private theorem integral_Ioi_inv_sq_add_sq {c : ℝ} (hc : 0 < c) :
     apply setIntegral_congr_fun measurableSet_Ioi
     intro x _
     have hden : c ^ 2 + x ^ 2 ≠ 0 := by
-      nlinarith [sq_pos_of_pos hc, sq_nonneg x]
+      nlinarith only [hc, sq_pos_of_pos hc, sq_nonneg x]
     have hbase : 1 + (c⁻¹ * x) ^ 2 ≠ 0 := by positivity
     field_simp [hc.ne', hden, hbase]
   rw [hleft] at hchange
   simp only [mul_zero, integral_Ioi_inv_one_add_sq, Real.arctan_zero,
     sub_zero, inv_inv, smul_eq_mul] at hchange
   field_simp [hc.ne'] at hchange ⊢
-  nlinarith
+  nlinarith only [hchange]
 
 /-- The repeated-pole Cauchy integral needed when the two positive parameters
 coincide. -/
@@ -87,7 +89,7 @@ private theorem integral_Ioi_sq_div_sq_add_sq_sq {c : ℝ} (hc : 0 < c) :
       (c ^ 2 + x ^ 2) ^ 2
   have hderiv (x : ℝ) := by
     have hden : c ^ 2 + x ^ 2 ≠ 0 := by
-      nlinarith [sq_pos_of_pos hc, sq_nonneg x]
+      nlinarith only [hc, sq_pos_of_pos hc, sq_nonneg x]
     exact (hasDerivAt_id x).div ((hasDerivAt_pow 2 x).const_add (c ^ 2)) hden
   have hCauchy : Integrable (fun x : ℝ => (c ^ 2 + x ^ 2)⁻¹) :=
     integrable_inv_sq_add_sq hc.ne'
@@ -100,13 +102,13 @@ private theorem integral_Ioi_sq_div_sq_add_sq_sq {c : ℝ} (hc : 0 < c) :
       have hden : Continuous (fun x : ℝ => (c ^ 2 + x ^ 2) ^ 2) := by
         fun_prop
       exact (hnum.div hden fun x => pow_ne_zero _ (by
-        nlinarith [sq_pos_of_pos hc, sq_nonneg x])).aestronglyMeasurable
+        nlinarith only [hc, sq_pos_of_pos hc, sq_nonneg x])).aestronglyMeasurable
     · filter_upwards [] with x
       have hden : 0 < c ^ 2 + x ^ 2 := by
-        nlinarith [sq_pos_of_pos hc, sq_nonneg x]
+        nlinarith only [hc, sq_pos_of_pos hc, sq_nonneg x]
       have habs : |c ^ 2 - x ^ 2| ≤ c ^ 2 + x ^ 2 := by
         rw [abs_sub_le_iff]
-        constructor <;> nlinarith [sq_nonneg c, sq_nonneg x]
+        constructor <;> nlinarith only [sq_nonneg c, sq_nonneg x]
       dsimp only [g']
       have hnum : 1 * (c ^ 2 + x ^ 2) - x * ((2 : ℝ) * x ^ (2 - 1)) =
           c ^ 2 - x ^ 2 := by norm_num; ring
@@ -147,7 +149,7 @@ private theorem integral_Ioi_sq_div_sq_add_sq_sq {c : ℝ} (hc : 0 < c) :
           c ^ 2 - x ^ 2 := by norm_num; ring
       rw [hnum]
       have hden : c ^ 2 + x ^ 2 ≠ 0 := by
-        nlinarith [sq_pos_of_pos hc, sq_nonneg x]
+        nlinarith only [hc, sq_pos_of_pos hc, sq_nonneg x]
       field_simp [hden]
       ring
     _ = (1 / 2 : ℝ) * (∫ x : ℝ in Set.Ioi 0, (c ^ 2 + x ^ 2)⁻¹) -
@@ -174,7 +176,7 @@ private theorem integral_Ioi_sq_div_two_quadratics
         intro y hy
         have hy0 : y ≠ 0 := hy.ne'
         have hcden : c ^ 2 + y ^ 2 ≠ 0 := by
-          nlinarith [sq_pos_of_pos hc, sq_nonneg y]
+          nlinarith only [hc, sq_pos_of_pos hc, sq_nonneg y]
         field_simp [hy0, hcden]
         ring
       _ = Real.pi / (2 * c) := integral_Ioi_inv_sq_add_sq hc
@@ -195,7 +197,7 @@ private theorem integral_Ioi_sq_div_two_quadratics
         intro hsq
         rcases (sq_eq_sq_iff_eq_or_eq_neg.mp hsq) with h | h
         · exact hac h.symm
-        · nlinarith
+        · nlinarith only [hc, haPos, h]
       have hCInt : Integrable (fun y : ℝ => (c ^ 2 + y ^ 2)⁻¹) :=
         integrable_inv_sq_add_sq hc.ne'
       have hAInt : Integrable (fun y : ℝ => (a ^ 2 + y ^ 2)⁻¹) :=
@@ -209,9 +211,9 @@ private theorem integral_Ioi_sq_div_two_quadratics
           apply setIntegral_congr_fun measurableSet_Ioi
           intro y _
           have hcden : c ^ 2 + y ^ 2 ≠ 0 := by
-            nlinarith [sq_pos_of_pos hc, sq_nonneg y]
+            nlinarith only [hc, sq_pos_of_pos hc, sq_nonneg y]
           have haden : a ^ 2 + y ^ 2 ≠ 0 := by
-            nlinarith [sq_pos_of_pos haPos, sq_nonneg y]
+            nlinarith only [haPos, sq_pos_of_pos haPos, sq_nonneg y]
           field_simp [hdiff, hcden, haden]
           ring
         _ = (c ^ 2 / (c ^ 2 - a ^ 2)) *
@@ -253,7 +255,7 @@ private theorem integrable_sq_div_two_quadratics
       calc
         y ^ 2 / ((y ^ 2 + c ^ 2) * (y ^ 2 + a ^ 2)) ≤
             (y ^ 2 + a ^ 2) / ((y ^ 2 + c ^ 2) * (y ^ 2 + a ^ 2)) :=
-          div_le_div_of_nonneg_right (by nlinarith [sq_nonneg a]) (by positivity)
+          div_le_div_of_nonneg_right (by nlinarith only [sq_nonneg a]) (by positivity)
         _ = (c ^ 2 + y ^ 2)⁻¹ := by
           field_simp [hC.ne', hA.ne']
           ring
@@ -343,7 +345,7 @@ theorem integral_weight_mul_reciprocal_difference
     have hcommon : 0 < y ^ 2 + (c n) ^ 2 := by positivity
     have hA : 0 < y ^ 2 + a ^ 2 := by positivity
     have hAB : y ^ 2 + a ^ 2 ≤ y ^ 2 + (a + 2) ^ 2 := by
-      nlinarith
+      nlinarith only [ha]
     have hden :
         (y ^ 2 + (c n) ^ 2) * (y ^ 2 + a ^ 2) ≤
           (y ^ 2 + (c n) ^ 2) * (y ^ 2 + (a + 2) ^ 2) :=

@@ -36,6 +36,8 @@ jobs:
     - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
       with:
         persist-credentials: false
+    - name: Free runner disk space
+      uses: ./.github/actions/free-disk-space
     - name: Restore Lean dependencies
       id: dependency-cache
       uses: actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae
@@ -53,6 +55,8 @@ jobs:
           }}-${{ inputs.build_revision }}
         restore-keys: |
           LeanPoolBuild-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-
+    # Keyed only by inputs that change every page. Per-project progress inside
+    # the checkpoint decides which projects a pool edit sends back to Lake.
     - name: Restore documentation checkpoint
       id: docs-cache
       uses: actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae
@@ -64,11 +68,15 @@ jobs:
           .lake/packages/UnicodeBasic
           .lake/packages/BibtexQuery
           .lake/packages/MD4Lean
-        key: DocsState-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lakefile.toml', 'lake-manifest.json',
-          'docbuild/lakefile.toml', 'docbuild/lake-manifest.json') }}-${{ github.run_id }}-${{ github.run_attempt
-          }}-${{ inputs.stage }}
+        # Prefer a checkpoint from the same pool lakefile, then fall back to an older
+        # one: Lake rebuilds only stale docInfo, and per-project progress rechecks
+        # only projects whose compiled modules changed.
+        key: DocsState-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'docbuild/lakefile.toml',
+          'docbuild/lake-manifest.json') }}-${{ hashFiles('lakefile.toml') }}-${{ github.run_id }}-${{
+          github.run_attempt }}-${{ inputs.stage }}
         restore-keys: |
-          DocsState-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lakefile.toml', 'lake-manifest.json', 'docbuild/lakefile.toml', 'docbuild/lake-manifest.json') }}-
+          DocsState-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'docbuild/lakefile.toml', 'docbuild/lake-manifest.json') }}-${{ hashFiles('lakefile.toml') }}-
+          DocsState-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'docbuild/lakefile.toml', 'docbuild/lake-manifest.json') }}-
     - name: Install Lean
       uses: leanprover/lean-action@38fbc41a8c28c4cbaec22d7f7de508ec2e7c0dd9
       with:
@@ -99,7 +107,11 @@ jobs:
     - name: Analyze a bounded batch
       id: analysis
       if: inputs.phase == 'analysis'
-      run: PYTHONPATH=python python3 -m lean_pool.documentation batch --seconds 5400 --lake /home/runner/.elan/bin/lake
+      # Complete stages are skipped, so a long allowance only costs time when a
+      # toolchain or dependency change restarts every project. Hosted runners
+      # analyze 60 to 75 modules a minute, so four stages of 210 minutes cover
+      # about 55,000 modules; progress is saved after each.
+      run: PYTHONPATH=python python3 -m lean_pool.documentation batch --seconds 12600 --lake /home/runner/.elan/bin/lake
     - name: Save completed analysis batches
       if: inputs.phase == 'analysis'
       uses: actions/cache/save@27d5ce7f107fe9357f9df03efb73ab90386fccae

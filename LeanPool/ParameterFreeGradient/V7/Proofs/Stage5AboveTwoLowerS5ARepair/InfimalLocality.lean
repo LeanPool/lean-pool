@@ -50,7 +50,7 @@ lemma eventually_lpNorm_sub_lt {p eta : ℝ} (hp : 1 ≤ p)
   have hzero : lpNorm p (x - x) = 0 := by
     rw [sub_self]
     change O3.lpNorm p (0 : Point d) = 0
-    exact O3.lpNorm_zero (by linarith : 0 < p)
+    exact O3.lpNorm_zero (by linarith only [hp] : 0 < p)
   have hmem : Set.Iio eta ∈ nhds (lpNorm p (x - x)) := by
     rw [hzero]
     exact Iio_mem_nhds heta
@@ -99,9 +99,9 @@ lemma localSmoothingValue_eventually_eq_of_stable_minimizers
   filter_upwards [hstable] with y hy
   rcases hy with ⟨v₁, v₂, hmin₁, hmin₂, hv₁, hv₂⟩
   have heq₁ : ell₁ (y + v₁) = ell₂ (y + v₁) := by
-    convert heq (y + v₁ - x) hv₁ using 1 <;> abel
+    convert heq (y + v₁ - x) hv₁ using 1 <;> abel_nf
   have heq₂ : ell₁ (y + v₂) = ell₂ (y + v₂) := by
-    convert heq (y + v₂ - x) hv₂ using 1 <;> abel
+    convert heq (y + v₂ - x) hv₂ using 1 <;> abel_nf
   have hcost₁ : smoothingCost kernel chi ell₁ y v₁ =
       smoothingCost kernel chi ell₂ y v₁ := by
     unfold smoothingCost

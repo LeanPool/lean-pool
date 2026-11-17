@@ -178,27 +178,27 @@ theorem ballChart_fits (hd : 0 < d) {x : EuclideanSpace ℝ (Fin d)} (hx : ‖x�
     rw [htan]; exact lt_of_le_of_lt (norm_tangential_le j (y - p)) hy
   have hs : ‖tangential j y‖ ^ 2 ≤ 1 / 4 := by
     have h0 : 0 ≤ ‖tangential j y‖ := norm_nonneg _
-    nlinarith
+    nlinarith only [htan_lt, h0]
   have hyj : y j < -1 / 2 := by
     have h1 : |(y - p) j| ≤ ‖y - p‖ := by
       simpa [Real.norm_eq_abs] using PiLp.norm_apply_le (y - p) j
     have h2 : (y - p) j = y j - p j := rfl
     rw [h2, hpj] at h1
     have := (abs_lt.mp (lt_of_le_of_lt h1 hy)).2
-    linarith
+    linarith only [this]
   rw [ballGraph_eq_of_le j hs, mem_ball, dist_zero_right,
     ← sq_lt_one_iff₀ (norm_nonneg y), norm_sq_eq_tangential_add_sq j y]
-  have hpos : 0 < 1 - ‖tangential j y‖ ^ 2 := by linarith
+  have hpos : 0 < 1 - ‖tangential j y‖ ^ 2 := by linarith only [hs]
   constructor
   · intro h
-    have h' : (-(y j)) ^ 2 < 1 - ‖tangential j y‖ ^ 2 := by rw [neg_sq]; linarith
-    have := (Real.lt_sqrt (by linarith)).mpr h'
-    linarith
+    have h' : (-(y j)) ^ 2 < 1 - ‖tangential j y‖ ^ 2 := by rw [neg_sq]; linarith only [h]
+    have := (Real.lt_sqrt (by linarith only [hyj])).mpr h'
+    linarith only [this]
   · intro h
-    have h' : -(y j) < Real.sqrt (1 - ‖tangential j y‖ ^ 2) := by linarith
-    have := (Real.lt_sqrt (by linarith)).mp h'
+    have h' : -(y j) < Real.sqrt (1 - ‖tangential j y‖ ^ 2) := by linarith only [h]
+    have := (Real.lt_sqrt (by linarith only [hyj])).mp h'
     rw [neg_sq] at this
-    linarith
+    linarith only [this]
 
 /-- **`C¹` boundary of the unit ball.** Its boundary is the unit sphere, and every point of
 the sphere has the chart above. -/

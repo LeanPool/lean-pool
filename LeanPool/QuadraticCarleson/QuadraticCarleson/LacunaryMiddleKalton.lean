@@ -81,7 +81,7 @@ theorem lacunaryFrozenMainOutput_compl_levelSet_one_le
       (fivefoldExceptionalSet (stoppingCenter (f := f)) stoppingLength)ᶜ) ≤
         24 * paperBlockBudget W := by
   simpa only [ENNReal.ofReal_one, one_mul] using
-    lacunaryFrozenMainOutput_compl_levelSet_mul_le hf hblock (by norm_num : (0 : ℝ) < 1)
+    lacunaryFrozenMainOutput_compl_levelSet_mul_le hf hblock (by exact zero_lt_one : (0 : ℝ) < 1)
 
 /-- The global normalized bound includes the canonical stopping set with
 its proved L¹ cost. -/
@@ -203,7 +203,7 @@ theorem lacunaryFrozenMainOutput_compl_levelSet_one_le_logSquaredMass
         24 * ENNReal.ofReal C * frozenLogSquaredMassBudget f B c := by
   simpa only [ENNReal.ofReal_one, one_mul] using
     lacunaryFrozenMainOutput_compl_levelSet_mul_le_logSquaredMass hf hfi hblock
-      (by norm_num : (0 : ℝ) < 1)
+      (by exact zero_lt_one : (0 : ℝ) < 1)
 
 theorem lacunaryFrozenMainOutput_levelSet_one_le_logSquaredMass
     {f : ℝ → ℂ} (hf : Measurable f) (hfi : Integrable f)

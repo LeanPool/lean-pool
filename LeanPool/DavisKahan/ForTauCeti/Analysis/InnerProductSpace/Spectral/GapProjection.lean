@@ -5,6 +5,8 @@ Authors: Jon Crall, Claude Opus 5
 -/
 module
 
+import Mathlib.Analysis.InnerProductSpace.StarOrder
+
 public import LeanPool.DavisKahan.ForTauCeti.Analysis.InnerProductSpace.SeparatedIntertwiner
 public import LeanPool.DavisKahan.ForTauCeti.Analysis.InnerProductSpace.SpectralOrder
 
@@ -114,7 +116,7 @@ private theorem norm_lower_of_re_inner_le (T : E →L[𝕜] E) {c : ℝ} {x : E}
     simp [hx0]
   · have hcs : RCLike.re ⟪T x, x⟫_𝕜 ≤ ‖T x‖ * ‖x‖ :=
       le_trans (RCLike.re_le_norm _) (norm_inner_le_norm _ _)
-    have hmul : c * ‖x‖ * ‖x‖ ≤ ‖T x‖ * ‖x‖ := by nlinarith
+    have hmul : c * ‖x‖ * ‖x‖ ≤ ‖T x‖ * ‖x‖ := by nlinarith only [h, hcs]
     exact le_of_mul_le_mul_right hmul hx
 
 omit [CompleteSpace E] in
@@ -193,7 +195,7 @@ theorem spectrum_subset_union_of_formGap (hA : IsSelfAdjoint A)
     rw [hTinner]
     have := hlow x hx
     have hcle : c ≤ lam - α := min_le_left _ _
-    nlinarith [sq_nonneg ‖x‖]
+    nlinarith only [this, hcle, sq_nonneg ‖x‖]
   have hboundUperp : ∀ x ∈ Uᗮ, c * ‖x‖ ≤ ‖T x‖ := by
     intro x hx
     have hneg : c * ‖x‖ ^ 2 ≤ RCLike.re ⟪(-T) x, x⟫_𝕜 := by
@@ -202,7 +204,7 @@ theorem spectrum_subset_union_of_formGap (hA : IsSelfAdjoint A)
       rw [hTx, hTinner]
       have := hhigh x hx
       have hcle : c ≤ α + δ - lam := min_le_right _ _
-      nlinarith [sq_nonneg ‖x‖]
+      nlinarith only [this, hcle, sq_nonneg ‖x‖]
     simpa using norm_lower_of_re_inner_le (-T) hneg
   -- add the two estimates in quadrature
   have hbound : ∀ x : E, c ^ 2 * ‖x‖ ^ 2 ≤ ‖T x‖ ^ 2 := by
@@ -226,11 +228,11 @@ theorem spectrum_subset_union_of_formGap (hA : IsSelfAdjoint A)
     rw [hnormT, hnormx]
     have h1' : c ^ 2 * ‖u‖ ^ 2 ≤ ‖T u‖ ^ 2 := by
       have := mul_self_le_mul_self (by positivity : (0 : ℝ) ≤ c * ‖u‖) h1
-      nlinarith
+      nlinarith only [this]
     have h2' : c ^ 2 * ‖w‖ ^ 2 ≤ ‖T w‖ ^ 2 := by
       have := mul_self_le_mul_self (by positivity : (0 : ℝ) ≤ c * ‖w‖) h2
-      nlinarith
-    nlinarith
+      nlinarith only [this]
+    nlinarith only [h1', h2']
   -- `T * T` is invertible, hence so is `T`
   have hTsym := ContinuousLinearMap.isSelfAdjoint_iff_isSymmetric.mp hTsa
   have hTTunit : IsUnit (T * T) := by

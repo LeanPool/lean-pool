@@ -92,14 +92,14 @@ theorem exists_const_holderOnWith_of_gradClosed_domain (hd : 1 < d)
   set rb' : ℝ := |R₀| + 2 with hrb'def
   have habs : (0 : ℝ) ≤ |R₀| := abs_nonneg R₀
   have hrb : 0 < rb := by rw [hrbdef]; linarith
-  have hrb' : 0 < rb' := by rw [hrb'def]; linarith
+  have hrb' : 0 < rb' := by rw [hrb'def]; linarith only [habs]
   have hbb : ball (0 : EuclideanSpace ℝ (Fin d)) rb ⊆ ball (0 : EuclideanSpace ℝ (Fin d)) rb' :=
-    ball_subset_ball (by rw [hrbdef, hrb'def]; linarith)
+    ball_subset_ball (by rw [hrbdef, hrb'def]; linarith only [])
   have hΩcb : Ω ⊆ closedBall (0 : EuclideanSpace ℝ (Fin d)) |R₀| := fun y hy =>
     mem_closedBall.mpr (le_trans (mem_closedBall.mp (hR₀ hy)) (le_abs_self R₀))
   have hclrb : closure Ω ⊆ ball (0 : EuclideanSpace ℝ (Fin d)) rb :=
     (closure_minimal hΩcb isClosed_closedBall).trans
-      (closedBall_subset_ball (by rw [hrbdef]; linarith))
+      (closedBall_subset_ball (by rw [hrbdef]; linarith only []))
   have hclrb' : closure Ω ⊆ ball (0 : EuclideanSpace ℝ (Fin d)) rb' := hclrb.trans hbb
   have hΩrb' : Ω ⊆ ball (0 : EuclideanSpace ℝ (Fin d)) rb' := subset_closure.trans hclrb'
   -- a point of the outer ball outside the inner one, where every such extension vanishes
@@ -107,12 +107,12 @@ theorem exists_const_holderOnWith_of_gradClosed_domain (hd : 1 < d)
     (|R₀| + 3 / 2) • EuclideanSpace.single (⟨0, hd0⟩ : Fin d) (1 : ℝ) with hzdef
   have hznorm : ‖z‖ = |R₀| + 3 / 2 := by
     rw [hzdef, norm_smul, PiLp.norm_single, norm_one, mul_one, Real.norm_eq_abs,
-      abs_of_nonneg (by linarith)]
+      abs_of_nonneg (by linarith only [habs])]
   have hzin : z ∈ ball (0 : EuclideanSpace ℝ (Fin d)) rb' := by
-    rw [mem_ball_zero_iff, hznorm, hrb'def]; linarith
+    rw [mem_ball_zero_iff, hznorm, hrb'def]; linarith only []
   have hzout : z ∉ ball (0 : EuclideanSpace ℝ (Fin d)) rb := by
     rw [mem_ball_zero_iff, hznorm, hrbdef, not_lt]
-    linarith
+    linarith only []
   obtain ⟨K, hK⟩ :=
     exists_const_memLp_of_gradClosed_domain hd hΩopen hΩb hC1 hp₀ ι s hsd hp₀P hPs
   obtain ⟨KE, hKE⟩ := exists_extension_subset_bound hd0 hΩopen hΩb hC1
@@ -123,7 +123,7 @@ theorem exists_const_holderOnWith_of_gradClosed_domain (hd : 1 < d)
   set Cb : ℝ≥0 := Cm * ((d : ℝ≥0) * (KE * (((d + 1 : ℕ) : ℝ≥0) * K))) with hCbdef
   set Cd : ℝ≥0 := Real.toNNReal ((2 * rb') ^ ((morreyExponent d (P : ℝ) : ℝ≥0) : ℝ)) with hCddef
   have hCdcoe : ((Cd : ℝ≥0) : ℝ) = (2 * rb') ^ ((morreyExponent d (P : ℝ) : ℝ≥0) : ℝ) := by
-    rw [hCddef, Real.coe_toNNReal _ (Real.rpow_nonneg (by linarith) _)]
+    rw [hCddef, Real.coe_toNNReal _ (Real.rpow_nonneg (by linarith only [habs]) _)]
   refine ⟨Cb + Cb * Cd, ?_⟩
   intro F nxt dep m hdep hgrad hmem M hM i hi
   -- the ladder, run to the exponent Morrey consumes
@@ -229,7 +229,7 @@ theorem exists_const_holderOnWith_of_gradClosed_domain (hd : 1 < d)
       have h2 : dist z₀ (0 : EuclideanSpace ℝ (Fin d)) < rb' := mem_ball.mp (hVsub hz₀V)
       calc dist y z₀ ≤ dist y (0 : EuclideanSpace ℝ (Fin d))
             + dist (0 : EuclideanSpace ℝ (Fin d)) z₀ := dist_triangle _ _ _
-        _ ≤ 2 * rb' := by rw [dist_comm (0 : EuclideanSpace ℝ (Fin d)) z₀]; linarith
+        _ ≤ 2 * rb' := by rw [dist_comm (0 : EuclideanSpace ℝ (Fin d)) z₀]; linarith only [h1, h2]
     have hpow : dist y z₀ ^ ((morreyExponent d (P : ℝ) : ℝ≥0) : ℝ)
         ≤ (2 * rb') ^ ((morreyExponent d (P : ℝ) : ℝ≥0) : ℝ) :=
       Real.rpow_le_rpow dist_nonneg hyz (by positivity)
@@ -240,7 +240,9 @@ theorem exists_const_holderOnWith_of_gradClosed_domain (hd : 1 < d)
     rw [Real.norm_eq_abs]
     refine le_trans hdist (le_trans hstep ?_)
     push_cast
-    nlinarith [(Cb : ℝ≥0).coe_nonneg, (M : ℝ≥0).coe_nonneg, (Cd : ℝ≥0).coe_nonneg]
+    calc (Cb : ℝ) * M * Cd = ((Cb : ℝ) * Cd) * M := mul_right_comm _ _ _
+      _ ≤ ((Cb : ℝ) + (Cb : ℝ) * Cd) * M :=
+        mul_le_mul_of_nonneg_right (le_add_of_nonneg_left Cb.coe_nonneg) M.coe_nonneg
   refine ⟨w, ?_, hsup, ?_⟩
   · refine Filter.EventuallyEq.trans (ae_restrict_of_ae_restrict_of_subset hΩrb' hwae) ?_
     exact (ae_restrict_iff' hΩopen.measurableSet).mpr

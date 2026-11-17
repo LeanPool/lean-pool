@@ -169,7 +169,7 @@ theorem sortedPartition_tail_nonempty (γ : PiecewiseC1Curve) :
   have hlen2 : γ.sortedPartition.length ≤ 1 := by
     rcases List.exists_cons_of_ne_nil (sortedPartition_nonempty γ) with ⟨hd, tl, heq⟩
     simp_all
-  linarith
+  linarith only [hlen, hlen2]
 
 /-- The union of `Icc p.1 p.2` over all `p ∈ consecutivePairs γ` covers `[a, b]`. -/
 theorem consecutivePairs_cover (γ : PiecewiseC1Curve) :

@@ -29,6 +29,10 @@ of small doubling. This is the content of the Balog-Szemerédi-Gowers theorem, w
 proves.
 -/
 
+-- Avoid repeated searches for empty or singleton types during simplification.
+attribute [-simp] IsEmpty.forall_iff Finset.univ_eq_empty forall_const
+  add_eq_zero mul_eq_one
+
 open Finset hiding card
 open Fintype
 open scoped BigOperators Pointwise Combinatorics.Additive' Indicator

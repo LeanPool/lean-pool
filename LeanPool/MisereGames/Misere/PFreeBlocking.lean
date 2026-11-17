@@ -55,7 +55,9 @@ theorem misereOutcome_L_add_isEnd_left {g h : GameForm}
         ⟨gl + h, add_right_mem_moves_add hgl h, (misereOutcome_L_iff_winsGoingFirst.mp hsum).right⟩
   · rw [not_winsGoingFirst_iff]
     refine ⟨fun h_end => ?_, fun gr hgr => ?_⟩
-    · simp_all
+    · simp_all only [
+      minsGoingFirst_left_of_misereOutcome_L, true_and, IsEndLike.add_iff, isEndLike_iff_isEnd,
+      winsGoingFirst_of_isEndLike, not_true_eq_false]
     · rw [moves_add, Set.mem_union, Set.mem_image] at hgr
       rw [Player.neg_right]
       rcases hgr with ⟨gr', hgr', rfl⟩ | ⟨hr, hhr, rfl⟩
@@ -126,7 +128,8 @@ private theorem misereOutcome_of_add_LL_blocking {g h : GameForm}
   constructor
   · rcases (winsGoingFirst_iff g .left).mp hg_out.left with hg_end | ⟨gl, hgl, hgl_not_right⟩
     · rcases (winsGoingFirst_iff h .left).mp hh_out.left with hh_end | ⟨hl, hhl, hhl_not_right⟩
-      · simp_all
+      · simp_all only [
+        winsGoingFirst_of_isEndLike, true_and, isEndLike_iff_isEnd, IsEndLike.add_iff, and_self]
       · have hhl_pfb := Hereditary.of_mem_moves hh hhl
         have hhlL := misereOutcome_L_of_not_winsGoingFirst_right hhl_pfb.isPFree hhl_not_right
         have hsumL := misereOutcome_of_add_LL_blocking hg hhl_pfb hgL hhlL
@@ -140,7 +143,9 @@ private theorem misereOutcome_of_add_LL_blocking {g h : GameForm}
         ⟨gl + h, add_right_mem_moves_add hgl h, (misereOutcome_L_iff_winsGoingFirst.mp hsumL).right⟩
   · rw [not_winsGoingFirst_iff]
     refine ⟨fun h_end => ?_, fun gr hgr => ?_⟩
-    · simp_all
+    · simp_all only [
+      minsGoingFirst_left_of_misereOutcome_L, true_and, IsEndLike.add_iff, isEndLike_iff_isEnd,
+      winsGoingFirst_of_isEndLike, not_true_eq_false]
     · rw [moves_add, Set.mem_union, Set.mem_image] at hgr
       rcases hgr with ⟨gr', hgr', rfl⟩ | ⟨hr, hhr, rfl⟩
       · have h_left_gr' : WinsGoingFirst .left gr' := by
@@ -282,11 +287,11 @@ theorem _root_.MisereGames.GameForm.miserePlayerOutcome_right_isEnd_left_NN {g h
       refine winsGoingFirst_of_moves ⟨g + hr, add_left_mem_moves_add hhr_mem g, ?_⟩
       rw [Player.neg_right, not_winsGoingFirst_iff]
       refine ⟨?_, fun g' hg' => ?_⟩
-      · simp_all
+      · simp_all only [IsEndLike.add_iff, isEndLike_iff_isEnd, and_false, not_false_eq_true]
       · rw [Player.neg_left]
         rw [moves_add, Set.mem_union, Set.mem_image, Set.mem_image] at hg'
         rcases hg' with ⟨gl, hgl, rfl⟩ | ⟨hrl, hhrl, rfl⟩
-        · simp_all
+        · simp_all only [not_mem_moves_of_isEnd]
         · have hhrl_pfb := Hereditary.of_mem_moves hhr_pfb hhrl
           have hhrl_winsR : WinsGoingFirst .right hrl := by
             have := (not_winsGoingFirst_iff.mp

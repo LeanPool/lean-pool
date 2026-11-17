@@ -22,8 +22,8 @@ open Stage5AboveTwoLower.S5ARepair
 lemma signedLpSymmetry_lpPower {p : ℝ} (hp : 2 < p)
     {Q Qdual : Point d → Point d} (hsym : SignedLpSymmetry p Q Qdual)
     (x : Point d) : O3.lpPower p (Q x) = O3.lpPower p x := by
-  rw [← O3.Stage2RouteB.lpNorm_rpow_eq_lpPower (by linarith : p ≠ 0),
-    ← O3.Stage2RouteB.lpNorm_rpow_eq_lpPower (by linarith : p ≠ 0)]
+  rw [← O3.Stage2RouteB.lpNorm_rpow_eq_lpPower (by linarith only [hp] : p ≠ 0),
+    ← O3.Stage2RouteB.lpNorm_rpow_eq_lpPower (by linarith only [hp] : p ≠ 0)]
   have hn := hsym.1 x
   change O3.lpNorm p (Q x) = O3.lpNorm p x at hn
   rw [hn]
@@ -34,7 +34,7 @@ lemma hasDerivAt_lpPower_line {p : ℝ} (hp : 2 < p)
       (p * O3.Stage2RouteA.linePowerPair p x h t) t := by
   have hline : HasDerivAt (fun s : ℝ ↦ x + s • h) h t := by
     simpa using ((hasDerivAt_id t).smul_const h).const_add x
-  have hc := (hasFDerivAt_lpPower (by linarith : 1 < p) (x + t • h)).comp
+  have hc := (hasFDerivAt_lpPower (by linarith only [hp] : 1 < p) (x + t • h)).comp
     t hline.hasFDerivAt
   simpa [lpPowerFDeriv, pairingCLM_apply,
     O3.Stage2RouteA.linePowerPair, Function.comp_def] using hc.hasDerivAt
@@ -56,7 +56,7 @@ lemma signedLpSymmetry_linePowerPair {p : ℝ} (hp : 2 < p)
   have hright := hasDerivAt_lpPower_line hp x h t
   rw [hfun] at hleft
   have heq := hleft.unique hright
-  exact (mul_left_cancel₀ (by linarith : p ≠ 0)) heq
+  exact (mul_left_cancel₀ (by linarith only [hp] : p ≠ 0)) heq
 
 /-- Distinct columns of a frozen signed `ell_p` symmetry have disjoint
 coordinate support.  The proof differentiates the preserved `p`-power twice
@@ -85,10 +85,10 @@ lemma signedLpSymmetry_columns_disjoint {p : ℝ} (hp : 2 < p)
     by_cases hmi : m = i
     · subst m
       simp [coordinateUnit, hij]
-    · simp [coordinateUnit, hmi, Real.zero_rpow (by linarith : p - 2 ≠ 0)]
+    · simp [coordinateUnit, hmi, Real.zero_rpow (by linarith only [hp] : p - 2 ≠ 0)]
   rw [hrightZero, mul_zero] at heq
   have hsum : O3.Stage2RouteA.weightedSquareSum p ui uj 0 = 0 := by
-    exact (mul_eq_zero.mp heq).resolve_left (by linarith : p - 1 ≠ 0)
+    exact (mul_eq_zero.mp heq).resolve_left (by linarith only [hp] : p - 1 ≠ 0)
   have hterm : |ui k| ^ (p - 2) * (uj k) ^ (2 : ℕ) = 0 := by
     have hall := (Finset.sum_eq_zero_iff_of_nonneg (fun m _ ↦
       mul_nonneg (Real.rpow_nonneg (abs_nonneg (ui m)) _)
@@ -97,7 +97,7 @@ lemma signedLpSymmetry_columns_disjoint {p : ℝ} (hp : 2 < p)
   rcases mul_eq_zero.mp hterm with hui | huj
   · left
     exact abs_eq_zero.mp ((Real.rpow_eq_zero (abs_nonneg (ui k))
-      (by linarith : p - 2 ≠ 0)).mp hui)
+      (by linarith only [hp] : p - 2 ≠ 0)).mp hui)
   · right
     exact sq_eq_zero_iff.mp huj
 
@@ -124,7 +124,7 @@ lemma signedLpSymmetry_column_ne_zero {p : ℝ} (hp : 2 < p)
   have hn := hsym.1 (coordinateUnit i)
   change O3.lpNorm p (Q (coordinateUnit i)) =
     O3.lpNorm p (coordinateUnit i) at hn
-  rw [hz, O3.lpNorm_zero (by linarith), lpNorm_coordinateUnit (by linarith) i] at hn
+  rw [hz, O3.lpNorm_zero (by linarith only [hp]), lpNorm_coordinateUnit (by linarith) i] at hn
   norm_num at hn
 
 /-- A nonzero coordinate in the image of a coordinate unit under an `ℓp` symmetry. -/
@@ -183,7 +183,7 @@ lemma signedLpSymmetry_column_abs_at_index {p : ℝ} (hp : 2 < p)
   have hsum : ∑ k, |Q (coordinateUnit i) k| ^ p = 1 := by
     change (∑ k, |Q (coordinateUnit i) k| ^ p) =
       O3.lpPower p (coordinateUnit i) at hpower
-    rw [lpPower_coordinateUnit p (by linarith) i] at hpower
+    rw [lpPower_coordinateUnit p (by linarith only [hp]) i] at hpower
     exact hpower
   have hsingle : |Q (coordinateUnit i)
       (signedLpColumnIndex hp Q Qdual hsym i)| ^ p = 1 := by
@@ -192,12 +192,12 @@ lemma signedLpSymmetry_column_abs_at_index {p : ℝ} (hp : 2 < p)
     apply Finset.sum_eq_single (signedLpColumnIndex hp Q Qdual hsym i)
     · intro k _ hk
       rw [signedLpSymmetry_column_off_index hp hsym hk]
-      simp [Real.zero_rpow (by linarith : p ≠ 0)]
+      simp [Real.zero_rpow (by linarith only [hp] : p ≠ 0)]
     · intro hnot
       exact (hnot (Finset.mem_univ _)).elim
   have honepow : (1 : ℝ) ^ p = 1 := Real.one_rpow _
   exact (Real.rpow_left_inj (abs_nonneg _) zero_le_one
-    (by linarith : p ≠ 0)).mp (by simpa [honepow] using hsingle)
+    (by linarith only [hp] : p ≠ 0)).mp (by simpa [honepow] using hsingle)
 
 /-- The primal symmetry bundled as a real linear map. -/
 def signedLpLinearMap {p : ℝ}

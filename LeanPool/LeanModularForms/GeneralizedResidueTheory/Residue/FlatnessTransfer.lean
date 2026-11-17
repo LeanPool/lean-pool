@@ -11,7 +11,6 @@ import LeanPool.LeanModularForms.GeneralizedResidueTheory.HomologicalCauchy.Mero
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 import Mathlib.CategoryTheory.Category.Init
 import Mathlib.Combinatorics.Matroid.Init
-import Mathlib.MeasureTheory.Covering.Besicovitch
 
 /-!
 # Generalized Residue Theorem (Theorem 3.3) -- Convex Domain Corollary

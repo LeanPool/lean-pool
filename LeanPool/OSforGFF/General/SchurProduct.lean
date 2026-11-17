@@ -56,12 +56,8 @@ lemma sum_pairs_eq_double [Fintype ι] (g : ι × ι → ℝ) :
 
 /-- Over `ℝ`, the Hadamard product of Hermitian matrices is Hermitian. -/
 private lemma isHermitian_hadamard_real {A B : Matrix ι ι ℝ}
-    (hA : A.IsHermitian) (hB : B.IsHermitian) : (A ∘ₕ B).IsHermitian := by
-  rw [Matrix.IsHermitian]
-  ext i j
-  have hAij : A i j = A j i := by simpa using (Matrix.IsHermitian.apply hA i j).symm
-  have hBij : B i j = B j i := by simpa using (Matrix.IsHermitian.apply hB i j).symm
-  simp [Matrix.conjTranspose, Matrix.hadamard, hAij, hBij]
+    (hA : A.IsHermitian) (hB : B.IsHermitian) : (A ∘ₕ B).IsHermitian :=
+  hA.hadamard hB
 
 /-- Schur product theorem (real case, finite index):
 If A B are positive definite matrices over ℝ, then the Hadamard product is positive definite.

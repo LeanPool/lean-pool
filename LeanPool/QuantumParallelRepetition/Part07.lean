@@ -15,6 +15,11 @@ noncomputable section
 
 namespace QuantumParallelRepetition
 
+section
+
+-- Keep the chosen side contexts abstract except at explicit unfolding steps.
+attribute [local irreducible] exactReverseBobContextAt exactReverseAliceContextAt
+
 open scoped ComplexOrder Matrix BigOperators InnerProductSpace
 open Complex Matrix Finset
 
@@ -1089,7 +1094,7 @@ theorem dSVDensityRationalPublicShiftedBucketMismatch_sum_le
               (((x + phase.val) / B : ℕ) : ℝ) + 1 ≤
                 (((y + phase.val) / B : ℕ) : ℝ) := by
             exact_mod_cast Nat.succ_le_of_lt strictly
-          linarith only [cast_bound]
+          exact le_tsub_of_add_le_left cast_bound
       _ = (y : ℝ) - (x : ℝ) := by
         rw [Finset.sum_sub_distrib,
           dSVDensityRationalPublicShiftedQuotient_real_sum
@@ -1270,7 +1275,7 @@ private theorem
           min (r.val : ℝ) (s.val : ℝ) / (B : ℝ) := by
       have scaled := mul_le_mul_of_nonneg_left logarithmic
         (div_nonneg (Nat.cast_nonneg Q) positive_real.le)
-      linarith only [scaled]
+      exact add_le_add_left scaled _
 
 end
 
@@ -1389,7 +1394,7 @@ theorem
         (representative.val : ℝ) <
       Real.exp (((B : ℝ) + 1) / (Q : ℝ)) - 1
   rw [sub_div, div_self positive_representative.ne']
-  linarith only [ratio]
+  exact (sub_lt_sub_iff_right 1).mpr ratio
 
 theorem
     dSVDensityRationalPublicLogRankBucketRepresentative_relative_abs_lt
@@ -1833,18 +1838,19 @@ private theorem finiteDoubleSum_mul_add
         (left * first i j + right * second i j)) =
       left * (∑ i, ∑ j, coefficient i j * first i j) +
         right * (∑ i, ∑ j, coefficient i j * second i j) := by
-  simp_rw [mul_add, Finset.sum_add_distrib, Finset.mul_sum]
-  congr 1
-  · apply Finset.sum_congr rfl
-    intro i _
-    apply Finset.sum_congr rfl
-    intro j _
-    ac_rfl
-  · apply Finset.sum_congr rfl
-    intro i _
-    apply Finset.sum_congr rfl
-    intro j _
-    ac_rfl
+  with_reducible
+    simp_rw [mul_add, Finset.sum_add_distrib, Finset.mul_sum]
+    congr 1
+    · apply Finset.sum_congr rfl
+      intro i _
+      apply Finset.sum_congr rfl
+      intro j _
+      ac_rfl
+    · apply Finset.sum_congr rfl
+      intro i _
+      apply Finset.sum_congr rfl
+      intro j _
+      ac_rfl
 
 theorem
     exists_proofDSVDensityRationalHeterogeneousCommonStopSpectralGaugeContinuity_sq
@@ -2680,7 +2686,7 @@ theorem unconditionalPrefactor_balancedHazard_sqrt_le
           Real.sqrt a := by rw [coefficient_square, fourth_square]
   have quotient : (34 / Real.sqrt a) * a = 34 * Real.sqrt a := by
     field_simp [ne_of_gt root_positive]
-    linarith only [root_square]
+    exact root_square.symm
   apply Real.sqrt_le_iff.mpr
   constructor
   · positivity
@@ -3807,7 +3813,7 @@ private theorem finiteProductMarginal_relativeEntropy_le
       hp (finiteIndependentProductWeight_nonneg
         marginal hm_nonnegative)
   change (∑ i : ι, finiteRelativeEntropy (marginal i) (q i)) ≤ _
-  linarith only [hnonnegative]
+  exact le_add_of_nonneg_left hnonnegative
 
 end
 
@@ -5812,47 +5818,45 @@ theorem exactReverseAliceMaskedProjection_eq_of_history
         D side (seed, outcome')).1 := by
     simp only [side, exactReverseAliceSourceProjection,
       exactReverseAliceContextAt_actual]
-    apply Sigma.ext
-    · rfl
-    · apply heq_of_eq
-      apply Prod.ext
-      · exact hac
-      apply Prod.ext
-      · exact hbc
-      apply Prod.ext
-      · funext j
-        by_cases hj : j.val = seed.coordinate
-        · have hval : j.val.val = seed.coordinate.val :=
-            congrArg Subtype.val hj
-          simpa only [hval] using same_question
-        · have hleft :
-              j.val ∈ exactLeft
-                seed.coordinate seed.partition := by
-            have hmem :
-                j.val ∈ insert seed.coordinate
-                  (exactLeft seed.coordinate seed.partition) :=
-              j.property
-            exact (Finset.mem_insert.mp hmem).resolve_left hj
-          exact congrFun hal ⟨j.val, hleft⟩
-      apply Prod.ext
-      · funext j
-        have hj :
-            j.val ∈ exactRight
+    apply congrArg (Sigma.mk (exactReverseAliceContextAt (exactReverseLeftSide seed) seed))
+    apply Prod.ext
+    · exact hac
+    apply Prod.ext
+    · exact hbc
+    apply Prod.ext
+    · funext j
+      by_cases hj : j.val = seed.coordinate
+      · have hval : j.val.val = seed.coordinate.val :=
+          congrArg Subtype.val hj
+        simpa only [hval] using same_question
+      · have hleft :
+            j.val ∈ exactLeft
               seed.coordinate seed.partition := by
-          simpa only [exactReverseAliceContextAt_actual,
-            exactReverseAliceContext] using j.property
-        exact congrFun hbr ⟨j.val, hj⟩
-      funext j
-      have hj : j.val ∈ exactRightPrefix seed := by
-        have hprefix :
-            exactReverseContextOtherPrefix
-              (exactReverseAliceContextAt
-                (exactReverseLeftSide seed) seed) =
-              exactRightPrefix seed := by
-          rw [exactReverseAliceContextAt_actual,
-            exactReverseAliceContext_otherPrefix]
-        exact (Finset.ext_iff.mp hprefix j.val).mp j.property
-      exact congrFun har ⟨j.val, hj⟩
+          have hmem :
+              j.val ∈ insert seed.coordinate
+                (exactLeft seed.coordinate seed.partition) :=
+            j.property
+          exact (Finset.mem_insert.mp hmem).resolve_left hj
+        exact congrFun hal ⟨j.val, hleft⟩
+    apply Prod.ext
+    · funext j
+      have hj :
+          j.val ∈ exactRight
+            seed.coordinate seed.partition := by
+        simpa only [exactReverseAliceContextAt_actual,
+          exactReverseAliceContext] using j.property
+      exact congrFun hbr ⟨j.val, hj⟩
+    funext j
+    have hj : j.val ∈ exactRightPrefix seed := by
+      have hprefix :
+          exactReverseContextOtherPrefix
+            (exactReverseAliceContextAt
+              (exactReverseLeftSide seed) seed) =
+            exactRightPrefix seed := by
+        rw [exactReverseAliceContextAt_actual,
+          exactReverseAliceContext_otherPrefix]
+      exact (Finset.ext_iff.mp hprefix j.val).mp j.property
+    exact congrFun har ⟨j.val, hj⟩
   apply Prod.ext
   · exact hfixed
   · funext k
@@ -5885,7 +5889,7 @@ theorem exactReverseAliceMaskedProjection_eq_of_history
         rw [← hmarker]
         exact hk
       simp only [finitePrefixMask, exactReverseAliceSourceProjection, exactReverseAliceContextAt,
-        dite_eq_ite, ↓reduceDIte, Fin.val_castSucc, exactReverseAliceContext_marked_rank, hkcut,
+        ↓reduceDIte, Fin.val_castSucc, exactReverseAliceContext_marked_rank, hkcut,
         ↓reduceIte]
 
 theorem exactReverseBobMaskedProjection_eq_of_history
@@ -5957,47 +5961,45 @@ theorem exactReverseBobMaskedProjection_eq_of_history
         D side (seed, outcome')).1 := by
     simp only [side, exactReverseBobSourceProjection,
       exactReverseBobContextAt_actual]
-    apply Sigma.ext
-    · rfl
-    · apply heq_of_eq
-      apply Prod.ext
-      · exact hac
-      apply Prod.ext
-      · exact hbc
-      apply Prod.ext
-      · funext j
-        by_cases hj : j.val = seed.coordinate
-        · have hval : j.val.val = seed.coordinate.val :=
-            congrArg Subtype.val hj
-          simpa only [hval] using same_question
-        · have hright :
-              j.val ∈ exactRight
-                seed.coordinate seed.partition := by
-            have hmem :
-                j.val ∈ insert seed.coordinate
-                  (exactRight seed.coordinate seed.partition) :=
-              j.property
-            exact (Finset.mem_insert.mp hmem).resolve_left hj
-          exact congrFun hbr ⟨j.val, hright⟩
-      apply Prod.ext
-      · funext j
-        have hj :
-            j.val ∈ exactLeft
+    apply congrArg (Sigma.mk (exactReverseBobContextAt (exactReverseRightSide seed) seed))
+    apply Prod.ext
+    · exact hac
+    apply Prod.ext
+    · exact hbc
+    apply Prod.ext
+    · funext j
+      by_cases hj : j.val = seed.coordinate
+      · have hval : j.val.val = seed.coordinate.val :=
+          congrArg Subtype.val hj
+        simpa only [hval] using same_question
+      · have hright :
+            j.val ∈ exactRight
               seed.coordinate seed.partition := by
-          simpa only [exactReverseBobContextAt_actual,
-            exactReverseBobContext] using j.property
-        exact congrFun hal ⟨j.val, hj⟩
-      funext j
-      have hj : j.val ∈ exactLeftPrefix seed := by
-        have hprefix :
-            exactReverseContextOtherPrefix
-              (exactReverseBobContextAt
-                (exactReverseRightSide seed) seed) =
-              exactLeftPrefix seed := by
-          rw [exactReverseBobContextAt_actual,
-            exactReverseBobContext_otherPrefix]
-        exact (Finset.ext_iff.mp hprefix j.val).mp j.property
-      exact congrFun hbl ⟨j.val, hj⟩
+          have hmem :
+              j.val ∈ insert seed.coordinate
+                (exactRight seed.coordinate seed.partition) :=
+            j.property
+          exact (Finset.mem_insert.mp hmem).resolve_left hj
+        exact congrFun hbr ⟨j.val, hright⟩
+    apply Prod.ext
+    · funext j
+      have hj :
+          j.val ∈ exactLeft
+            seed.coordinate seed.partition := by
+        simpa only [exactReverseBobContextAt_actual,
+          exactReverseBobContext] using j.property
+      exact congrFun hal ⟨j.val, hj⟩
+    funext j
+    have hj : j.val ∈ exactLeftPrefix seed := by
+      have hprefix :
+          exactReverseContextOtherPrefix
+            (exactReverseBobContextAt
+              (exactReverseRightSide seed) seed) =
+            exactLeftPrefix seed := by
+        rw [exactReverseBobContextAt_actual,
+          exactReverseBobContext_otherPrefix]
+      exact (Finset.ext_iff.mp hprefix j.val).mp j.property
+    exact congrFun hbl ⟨j.val, hj⟩
   apply Prod.ext
   · exact hfixed
   · funext k
@@ -6030,7 +6032,7 @@ theorem exactReverseBobMaskedProjection_eq_of_history
         rw [← hmarker]
         exact hk
       simp only [finitePrefixMask, exactReverseBobSourceProjection, exactReverseBobContextAt,
-        dite_eq_ite, ↓reduceDIte, Fin.val_castSucc, exactReverseBobContext_marked_rank, hkcut,
+        ↓reduceDIte, Fin.val_castSucc, exactReverseBobContext_marked_rank, hkcut,
         ↓reduceIte]
 
 end
@@ -6310,7 +6312,7 @@ theorem exactReverseAlice_history_of_marked_context
       same_context
     simpa only [exactReverseAliceMarkedHistoryContext,
       finitePrefixMask, side, context, marker] using h
-  have hfields := eq_of_heq (Sigma.mk.inj hfixed).2
+  have hfields := sigma_mk_injective hfixed
   have hac := congrArg (fun t => t.1) hfields
   have hbc := congrArg (fun t => t.2.1) hfields
   have hside := congrArg (fun t => t.2.2.1) hfields
@@ -6407,14 +6409,12 @@ theorem exactReverseAlice_history_of_marked_context
   refine ⟨hquestion, ?_⟩
   apply (exactHistoryFlagEquiv
     (X := X) (Y := Y) (A := A) (B := B) D).injective
-  apply Sigma.ext
-  · rfl
-  · apply heq_of_eq
-    apply Prod.ext
-    · exact hreveal
-    apply Prod.ext
-    · exact congrArg Prod.fst hflag
-    · exact congrArg Prod.snd hflag
+  apply congrArg (Sigma.mk seed)
+  apply Prod.ext
+  · exact hreveal
+  apply Prod.ext
+  · exact congrArg Prod.fst hflag
+  · exact congrArg Prod.snd hflag
 
 theorem exactReverseBob_history_of_marked_context
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
@@ -6473,7 +6473,7 @@ theorem exactReverseBob_history_of_marked_context
       same_context
     simpa only [exactReverseBobMarkedHistoryContext,
       finitePrefixMask, side, context, marker] using h
-  have hfields := eq_of_heq (Sigma.mk.inj hfixed).2
+  have hfields := sigma_mk_injective hfixed
   have hac := congrArg (fun t => t.1) hfields
   have hbc := congrArg (fun t => t.2.1) hfields
   have hside := congrArg (fun t => t.2.2.1) hfields
@@ -6570,14 +6570,12 @@ theorem exactReverseBob_history_of_marked_context
   refine ⟨hquestion, ?_⟩
   apply (exactHistoryFlagEquiv
     (X := X) (Y := Y) (A := A) (B := B) D).injective
-  apply Sigma.ext
-  · rfl
-  · apply heq_of_eq
-    apply Prod.ext
-    · exact hreveal
-    apply Prod.ext
-    · exact congrArg Prod.fst hflag
-    · exact congrArg Prod.snd hflag
+  apply congrArg (Sigma.mk seed)
+  apply Prod.ext
+  · exact hreveal
+  apply Prod.ext
+  · exact congrArg Prod.fst hflag
+  · exact congrArg Prod.snd hflag
 
 theorem exactReverseAliceMarkedHistoryContext_fiber_iff
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
@@ -7309,6 +7307,8 @@ theorem exactBobSourceConditionalInformation_eq_atom_sum
         hnonnegative
         (fun index : SourceRemainingCoordinate D × Y =>
           G.conditionalXGivenY index.2)
+
+end
 
 end
 

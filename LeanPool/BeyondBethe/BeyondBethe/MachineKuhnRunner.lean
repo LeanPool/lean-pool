@@ -7,7 +7,8 @@ module
 
 
 public import LeanPool.BeyondBethe.BeyondBethe.MachineKuhnInvariant
-public import Mathlib.Tactic
+import Mathlib.Tactic.Linarith -- shake: keep
+import Mathlib.Tactic.Ring -- shake: keep
 
 /-!
 # A complete finite-word perfect-matching runner

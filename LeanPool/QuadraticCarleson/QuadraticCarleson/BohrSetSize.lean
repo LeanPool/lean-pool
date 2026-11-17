@@ -37,15 +37,15 @@ private theorem bohrRightCell_subset {k a : ℕ} {ρ : ℝ}
   have hx₁ := (div_le_iff₀ hk').mp hx.1
   have hx₂ := (lt_div_iff₀ hk').mp hx.2
   constructor
-  · constructor <;> nlinarith
+  · constructor <;> nlinarith only [hk', ha₁', hx₁, hρ, ha₂', hx₂]
   · have hfract : Int.fract ((k : ℝ) * x) = (k : ℝ) * x - a := by
       apply Int.fract_eq_iff.mpr
-      refine ⟨by nlinarith, by nlinarith, ⟨(a : ℤ), ?_⟩⟩
+      refine ⟨by linarith only [hx₁], by linarith only [hρ, hx₂], ⟨(a : ℤ), ?_⟩⟩
       push_cast
       ring
     change min (Int.fract ((k : ℝ) * x)) (1 - Int.fract ((k : ℝ) * x)) ≤ ρ
     rw [hfract]
-    exact (min_le_left _ _).trans (by nlinarith)
+    exact (min_le_left _ _).trans (by linarith only [hx₂])
 
 /-- A lower size bound at every sufficiently large frequency, obtained from
 disjoint right halves of the interior integer cells. -/
@@ -117,9 +117,9 @@ private theorem bohrSet_subset_integerCover {k : ℕ} {ρ : ℝ}
   have ha' := abs_le.mp ha
   constructor
   · apply (div_le_iff₀ hk').mpr
-    nlinarith
+    linarith only [ha']
   · apply (le_div_iff₀ hk').mpr
-    nlinarith
+    linarith only [ha']
 
 /-- Covering by the `k + 1` nearby-integer intervals gives a uniform upper
 bound at every positive natural frequency. -/
@@ -136,13 +136,13 @@ theorem bohrSet_volume_real_le {k : ℕ} {ρ : ℝ}
   have hfinite : volume (⋃ a ∈ Finset.range (k + 1), J a) ≠ ∞ := by
     apply ne_of_lt
     exact (measure_biUnion_finset_le _ _).trans_lt
-      (ENNReal.sum_lt_top.mpr fun a _ ↦ by simp [J])
+      (ENNReal.sum_lt_top.mpr fun a _ ↦ by simp only [Real.volume_Icc, ENNReal.ofReal_lt_top, J])
   have hJ : ∀ a, volume.real (J a) = 2 * ρ / k := by
     intro a
     dsimp [J]
     rw [Real.volume_real_Icc_of_le]
     · ring
-    · exact div_le_div_of_nonneg_right (by linarith) hk'.le
+    · exact div_le_div_of_nonneg_right (by linarith only [hρ0]) hk'.le
   calc
     volume.real (bohrSet k ρ) ≤ volume.real (⋃ a ∈ Finset.range (k + 1), J a) :=
       measureReal_mono hcover hfinite
@@ -152,7 +152,7 @@ theorem bohrSet_volume_real_le {k : ℕ} {ρ : ℝ}
     _ ≤ 4 * ρ := by
       rw [← mul_div_assoc]
       apply (div_le_iff₀ hk').mpr
-      nlinarith [mul_le_mul_of_nonneg_left hk1 hρ0]
+      linarith only [hρ0, hk1, mul_le_mul_of_nonneg_left hk1 hρ0]
 
 /-- The comparability stated immediately after the paper's Bohr-set
 definition, with explicit absolute constants. The paper's radius range

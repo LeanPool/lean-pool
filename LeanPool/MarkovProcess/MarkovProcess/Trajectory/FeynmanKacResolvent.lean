@@ -80,6 +80,7 @@ theorem IsConservative.feynmanKacResolvent_eq_lintegral_path {q : alpha → ℝ}
   have hA : Measurable fun p : ℝ × ContinuousPath alpha ↦
       feynmanKacAdditiveFunctional q (Real.toNNReal p.1) p.2 :=
     (stronglyMeasurable_feynmanKacAdditiveFunctional_joint hq).measurable.comp
+      (f := fun p : ℝ × ContinuousPath alpha ↦ (Real.toNNReal p.1, p.2))
       ((measurable_real_toNNReal.comp measurable_fst).prodMk measurable_snd)
   have heval : Measurable fun p : ℝ × ContinuousPath alpha ↦
       p.2 (Real.toNNReal p.1) :=
@@ -226,6 +227,7 @@ theorem IsFellerKernelSemigroup.integral_sub_feynmanKac_eq_integral_of_norm_le
   have hAs : Measurable fun p : ℝ × ContinuousPath alpha ↦
       feynmanKacAdditiveFunctional q (Real.toNNReal p.1) p.2 :=
     (stronglyMeasurable_feynmanKacAdditiveFunctional_joint hq).measurable.comp
+      (f := fun p : ℝ × ContinuousPath alpha ↦ (Real.toNNReal p.1, p.2))
       ((measurable_real_toNNReal.comp measurable_fst).prodMk measurable_snd)
   have hAt : Measurable fun p : ℝ × ContinuousPath alpha ↦
       feynmanKacAdditiveFunctional q t p.2 :=

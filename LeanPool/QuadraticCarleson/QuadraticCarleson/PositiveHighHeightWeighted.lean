@@ -41,7 +41,7 @@ theorem tsum_sqrt_mul_sq_le (a b : ℕ → ℝ≥0∞) :
     Real.HolderConjugate.two_two
     (f := fun k ↦ a k ^ (1 / 2 : ℝ)) (g := fun k ↦ b k ^ (1 / 2 : ℝ))
     (measurable_of_countable _).aemeasurable (measurable_of_countable _).aemeasurable
-  simp only [Pi.mul_apply, ENNReal.rpow_two, ennreal_sqrt_sq, lintegral_count] at h
+  simp only [Pi.mul_apply, lintegral_count, ENNReal.rpow_two, ennreal_sqrt_sq] at h
   have hp := pow_le_pow_left₀ bot_le h 2
   simpa only [mul_pow, ennreal_sqrt_sq] using hp
 
@@ -61,10 +61,10 @@ theorem weighted_level_factor (A d W : ℝ) (hA : 0 ≤ A) (hd : 0 ≤ d)
     _ = (ENNReal.ofReal d ^ 2) ^ (1 / 2 : ℝ) *
         (ENNReal.ofReal (4 * A) * M) ^ (1 / 2 : ℝ) := by rw [ennreal_sq_sqrt]
     _ = (ENNReal.ofReal d ^ 2 * (ENNReal.ofReal (4 * A) * M)) ^ (1 / 2 : ℝ) :=
-      (ENNReal.mul_rpow_of_nonneg _ _ (by norm_num)).symm
+      (ENNReal.mul_rpow_of_nonneg _ _ (by norm_num1)).symm
     _ = (ENNReal.ofReal (4 * A * d ^ 2 / W) * (ENNReal.ofReal W * M)) ^ (1 / 2 : ℝ) := by
       rw [← mul_assoc, hc, mul_assoc]
-    _ = _ := ENNReal.mul_rpow_of_nonneg _ _ (by norm_num)
+    _ = _ := ENNReal.mul_rpow_of_nonneg _ _ (by norm_num1)
 
 theorem weighted_level_sum_sq_le (A d W : ℕ → ℝ) (M : ℕ → ℝ≥0∞)
     (hA : ∀ k, 0 ≤ A k) (hd : ∀ k, 0 ≤ d k) (hW : ∀ k, 0 < W k) :
@@ -96,7 +96,7 @@ theorem paperHighContribution_disjointLevelAtoms_weighted_levelSet_le
     (magnitudeLevelL1Mass volume A f) hA (fun _ ↦ by positivity) hW
   have hp (k : ℕ) : ((2 : ℝ) ^ (-((B k : ℕ) : ℝ) / 10)) ^ 2 =
       (2 : ℝ) ^ (-((B k : ℕ) : ℝ) / 5) := by
-    rw [← Real.rpow_mul_natCast (by norm_num : (0 : ℝ) ≤ 2)]
+    rw [← Real.rpow_mul_natCast (by norm_num1 : (0 : ℝ) ≤ 2)]
     congr 1
     ring
   simpa only [hp] using h

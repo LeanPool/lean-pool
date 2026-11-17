@@ -283,7 +283,7 @@ private lemma finite_fundamentalParallelogram_inter {L : PeriodPair} {S : Set �
         ≤ ‖s • L.ω₁‖ + ‖t • L.ω₂‖ := norm_add_le _ _
       _ = |s| * ‖L.ω₁‖ + |t| * ‖L.ω₂‖ := by
           rw [norm_smul, norm_smul, Real.norm_eq_abs, Real.norm_eq_abs]
-      _ ≤ ‖L.ω₁‖ + ‖L.ω₂‖ := by nlinarith [norm_nonneg L.ω₁, norm_nonneg L.ω₂]
+      _ ≤ ‖L.ω₁‖ + ‖L.ω₂‖ := by nlinarith only [hs1, ht1, norm_nonneg L.ω₁, norm_nonneg L.ω₂]
   exact (Metric.finite_isBounded_inter_isClosed hdisc Metric.isBounded_closedBall hclosed).subset
     (Set.inter_subset_inter_left S hPsub)
 
@@ -303,7 +303,7 @@ theorem IsEllipticWith.exists_eq_const_of_differentiable (hf : L.IsEllipticWith 
         L.exists_sub_mem_lattice_of_mem_fundamentalParallelogram z
       have h := hf.2 (s • L.ω₁ + t • L.ω₂) ⟨z - (s • L.ω₁ + t • L.ω₂), hl⟩
       rw [show (s • L.ω₁ + t • L.ω₂) + ((⟨z - (s • L.ω₁ + t • L.ω₂), hl⟩ : L.lattice) : ℂ) = z
-        from by simp] at h
+        from by simp only [Complex.real_smul, add_sub_cancel]] at h
       rw [h]
       exact hM (Set.mem_image_of_mem f
         ⟨(s, t), ⟨⟨hs.1, hs.2.le⟩, ⟨ht.1, ht.2.le⟩⟩, rfl⟩)
@@ -372,7 +372,8 @@ private lemma integral_edge_eq_sub {f F : ℂ → ℂ} {p ω : ℂ}
     ∫ t in (0 : ℝ)..1, f (p + (t : ℂ) * ω) * ω = F (p + ω) - F p := by
   have hγ : ∀ t : ℝ, HasDerivAt (fun s : ℝ ↦ p + (s : ℂ) * ω) ω t := by
     intro t
-    simpa using ((Complex.ofRealCLM.hasDerivAt (x := t)).mul_const ω).const_add p
+    simpa only [hasDerivAt_const_add_iff, Complex.ofRealCLM_apply, Complex.ofReal_one,
+      one_mul] using ((Complex.ofRealCLM.hasDerivAt (x := t)).mul_const ω).const_add p
   have key : ∀ t ∈ Set.uIcc (0 : ℝ) 1,
       HasDerivAt (fun s : ℝ ↦ F (p + (s : ℂ) * ω)) (f (p + (t : ℂ) * ω) * ω) t := by
     intro t ht
@@ -633,7 +634,8 @@ private lemma coord_eq_zero_of_eq_zero {L : PeriodPair} {r s : ℝ}
   have hli := Fintype.linearIndependent_iff.mp L.indep ![r, s]
   have hsum : ∑ i, (![r, s] i) • (![L.ω₁, L.ω₂] i) = 0 := by
     rw [Fin.sum_univ_two]
-    simpa [Complex.real_smul] using h
+    simpa only [Nat.succ_eq_add_one, Nat.reduceAdd, Fin.isValue, Matrix.cons_val_zero,
+      Complex.real_smul, Matrix.cons_val_one, Matrix.cons_val_fin_one] using h
   have hall := hli hsum
   exact ⟨hall 0, hall 1⟩
 
@@ -1255,7 +1257,7 @@ private lemma boundaryIntegral_principalPart {L : PeriodPair} {v c : ℂ} (a : �
       intro k _
       apply continuousOn_const.mul
       refine (continuousOn_id.sub continuousOn_const).zpow₀ _ (fun z hz => ?_)
-      exact Or.inl (by simpa using sub_ne_zero.2 (hbne z hz))
+      exact Or.inl (by simpa only [Pi.sub_apply, id_eq, ne_eq] using sub_ne_zero.2 (hbne z hz))
     rw [boundaryIntegral_finsetSum hterm]
     apply Finset.sum_eq_zero
     intro k _
@@ -1762,7 +1764,7 @@ theorem IsEllipticWith.sum_meromorphicOrderAt_eq_zero (hf : L.IsEllipticWith f)
       Chudnovsky.residue_eq_zero_of_analyticAt hana
     rw [hres z] at hz0
     have huntop : (meromorphicOrderAt f z).untop₀ ≠ 0 := fun h =>
-      hzord (by rw [← WithTop.coe_untop₀_of_ne_top (hforall z), h]; simp)
+      hzord (by rw [← WithTop.coe_untop₀_of_ne_top (hforall z), h]; simp only [WithTop.coe_zero])
     exact huntop (by exact_mod_cast hz0)
   -- At the extra non-analyticity points the order (and hence the residue) is `0`.
   have hzero : ∀ z ∈ hg.finite_nonAnalytic.toFinset,
@@ -1772,7 +1774,7 @@ theorem IsEllipticWith.sum_meromorphicOrderAt_eq_zero (hf : L.IsEllipticWith f)
     have hord0 : meromorphicOrderAt f z = 0 := by
       by_contra hne
       exact hznotin ⟨hz.1, hne⟩
-    rw [hres z, hord0]; simp
+    rw [hres z, hord0]; simp only [WithTop.untop₀_zero, Int.cast_zero]
   have key : ∑ z ∈ (hf.finite_order_ne_zero h0).toFinset,
       Chudnovsky.residue (logDeriv f) z = 0 := by
     rw [Finset.sum_subset hsub hzero]; exact hsum0
@@ -1798,7 +1800,7 @@ private lemma codiscrete_add_preimage {S : Set ℂ} (l : ℂ)
     simp only [Set.mem_preimage, Set.mem_image]
     constructor
     · intro hz; exact ⟨z + l, hz, by ring⟩
-    · rintro ⟨w, hw, rfl⟩; simpa using hw
+    · rintro ⟨w, hw, rfl⟩; simpa only [neg_add_cancel_right] using hw
   rw [hEq]; exact key
 
 /-- **Workhorse lemma** (used throughout the paper, e.g. in `pstrichprod`,

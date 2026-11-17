@@ -145,7 +145,9 @@ theorem isSolved_winsGoingFirst {p : Player} {g : GameForm} (h_isSolved : IsSolv
     have h_gpp_isSolved := isSolved_of_mem_moves h_gp_isSolved h_gpp_mem
     exact isSolved_winsGoingFirst h_gpp_isSolved
 termination_by g
-decreasing_by form_wf
+decreasing_by
+  exact MisereGames.Moves.Subposition.trans (MisereGames.Moves.Subposition.of_mem_moves h_gpp_mem)
+    (MisereGames.Moves.Subposition.of_mem_moves h_gp_mem)
 
 theorem isSolved_ne_zero_misereOutcome {p : Player} {g : GameForm}
     (h_isSolved : IsSolved p g) (h_ne_zero : g ≠ 0) :
@@ -203,7 +205,7 @@ theorem not_isSolved_add_left {p : Player} {g h : GameForm}
     intro h_solved
     exact not_isSolved_add_left hg (isSolved_of_mem_moves h_solved (add_left_mem_moves_add hh1 g))
 termination_by h
-decreasing_by form_wf
+decreasing_by exact MisereGames.Moves.Subposition.of_mem_moves hh1
 
 theorem not_isSolved_add_right {p : Player} {g h : GameForm}
     (hh : ¬IsSolved p h) : ¬IsSolved p (g + h) := by
@@ -227,7 +229,9 @@ theorem isSolved_add_iff {p : Player} {g h : GameForm} :
 @[simp]
 theorem isSolved_zero (p : Player) : IsSolved p 0 := by
   unfold IsSolved
-  simp
+  simp only [
+    moves_zero, Set.mem_empty_iff_false, not_false_eq_true, ne_eq, not_true_eq_false,
+    isEnd_zero, imp_self, not_isOption_zero, IsEmpty.forall_iff, implies_true, and_self]
 
 @[simp]
 theorem isSolved_right_natCast (n : ℕ) : IsSolved .right (n : GameForm) := by
@@ -259,9 +263,9 @@ theorem isSolved_iff_zero {g : GameForm} : (IsSolved .left g ∧ IsSolved .right
     subst h_gr
     -- But G is solved for Right so 0 cannot be a Left option of G
     exact isSolved_zero_not_mem h_isSolved_right h_gr_mem_r
-  · simp_all
+  · simp_all only [isSolved_zero, and_self, implies_true]
 termination_by g
-decreasing_by form_wf
+decreasing_by exact MisereGames.Moves.Subposition.of_mem_moves h_gr_mem_r
 
 @[simp]
 theorem isSolved_right_intCast_iff (k : ℤ) : IsSolved .right (k : GameForm) ↔ 0 ≤ k := by
@@ -431,7 +435,7 @@ theorem hasStride_unique {p : Player} {g : GameForm} {n k : ℕ}
     subst h_kj'
     exact Nat.le_antisymm hnj' hkj
 termination_by g
-decreasing_by form_wf
+decreasing_by all_goals exact MisereGames.Moves.Subposition.of_mem_moves (by assumption)
 
 /--
 Helper for building iff lemmas
@@ -441,7 +445,7 @@ theorem hasStride_mk_iff {p : Player} (n : ℕ) {k : ℕ} {g : GameForm} (h_stri
   constructor
   · intro h
     exact hasStride_unique h h_stride
-  · simp_all
+  · simp_all only [implies_true]
 
 /--
 The good move preserves (-p)-stride: if HasStride p g (n+1) and HasStride (-p)
@@ -467,7 +471,7 @@ theorem hasStride_good_move_neg_stride {p : Player} {g : GameForm} {n r : ℕ}
     have h_eq : k1 = k2 := hasStride_unique hk1_stride hk2_stride
     rw [h_eq] at hk1_le
     have : k2 = r' + 1 := Nat.le_antisymm hk1_le hk2_ge
-    simp_all
+    simp_all only [Nat.succ_eq_add_one, ne_eq, Std.le_refl]
 
 /--
 Opponent moves have stride ≤ n.
@@ -678,7 +682,7 @@ private theorem hasStride_neg {p : Player} {g : GameForm} {n : ℕ}
     HasStride (-p) (-g) n := by
   match n with
   | 0 =>
-    simp_all
+    simp_all only [hasStride_eq_zero_iff, isSolved_neg_iff', neg_neg]
   | n + 1 =>
     rw [hasStride_succ_iff]
     refine ⟨?_, ?_, ?_, ?_, ?_⟩
@@ -754,11 +758,16 @@ theorem hasStride_right_one_iff {n : ℕ} : HasStride .right 1 n ↔ n = 0 :=
 
 theorem hasStride_left_one : HasStride .left 1 1 := by
   rw [hasStride_succ_iff]
-  simp_all
+  simp_all only [
+    not_isSolved_left_one, not_false_eq_true, leftMoves_one, Set.mem_singleton_iff, zero_le,
+    hasStride_zero_iff, true_and, exists_eq, implies_true, hasStride_eq_zero_iff,
+    Player.neg_left, forall_eq, exists_and_left, exists_prop, and_true, exists_eq_right,
+    isSolved_zero, rightMoves_one, Set.mem_empty_iff_false, zero_add, not_isEmpty_of_nonempty,
+    IsEmpty.exists_iff, ne_eq, not_true_eq_false, and_self]
 
 theorem hasStride_left_natCast (n : ℕ) : HasStride .left (n : GameForm.{u}) n := by
   induction n with
-  | zero => simp
+  | zero => simp only [Nat.cast_zero, hasStride_eq_zero_iff, isSolved_zero]
   | succ n ih =>
     exact hasStride_add ih hasStride_left_one (hasStride_right_natCast n) hasStride_right_one
 
@@ -769,7 +778,8 @@ theorem hasStride_left_natCast_iff (n : ℕ) {k : ℕ} : HasStride .left (n : Ga
 theorem hasStride_left_intCast (n : ℤ) :
     HasStride .left ((n : GameForm.{u})) n.toNat := by
   match n with
-  | .ofNat n => simp
+  | .ofNat n => simp only [
+    Int.ofNat_eq_natCast, Form.intCast_nat, Int.toNat_natCast, hasStride_left_natCast_iff]
   | .negSucc n =>
     simp only [Form.intCast_negSucc, Int.toNat_negSucc, hasStride_eq_zero_iff]
     simp [isSolved_add]
@@ -816,7 +826,9 @@ private theorem hasStride_winsGoingFirst {p : Player} {g : GameForm} {l r : ℕ}
         have h_le' : sL_gLR ≤ sR_gLR := by omega
         exact hasStride_winsGoingFirst h_gLR_strideL h_gLR_strideR h_le'
 termination_by g
-decreasing_by form_wf
+decreasing_by
+  exact MisereGames.Moves.Subposition.trans (MisereGames.Moves.Subposition.of_mem_moves h_gLR_mem)
+    (MisereGames.Moves.Subposition.of_mem_moves h_gL_mem)
 
 private theorem hasStride_not_winsGoingFirst {p : Player} {g : GameForm} {l r : ℕ}
     (h_l : HasStride p g l) (h_r : HasStride (-p) g r) (h_gt : r < l) :
@@ -922,7 +934,7 @@ theorem hasStride_isPFree {p : Player} {g : GameForm} {l r : ℕ}
       have ⟨_, _, h_l'⟩ := hasStride_of_mem_moves_neg (g' := g') h_l h_g'_mem
       exact hasStride_isPFree h_l' h_r'
 termination_by g
-decreasing_by form_wf
+decreasing_by all_goals exact MisereGames.Moves.Subposition.of_mem_moves h_g'_mem
 
 /-- A predicate containing games with prescribed Left and Right strides. -/
 class Strided (A : GameForm → Prop) where
@@ -1112,10 +1124,10 @@ theorem misereQuotient_linearOrder (a b : MisereQuotient A) : a ≤ b ∨ b ≤ 
   rcases le_total ((lb : ℤ) - rb) ((la : ℤ) - ra) with h | h
   · have hle := (Form.MisereQuotient.mk_le_mk _ _).mpr
       (misereGE_of_stride_diff_le hlb hrb hla hra h)
-    simp_all
+    simp_all only [tsub_le_iff_right, MisereQuotient.mk_out, true_or]
   · have hle := (Form.MisereQuotient.mk_le_mk _ _).mpr
       (misereGE_of_stride_diff_le hla hra hlb hrb h)
-    simp_all
+    simp_all only [tsub_le_iff_right, MisereQuotient.mk_out, or_true]
 
 /--
 The stride difference of a game in a strided class `A`. This is the left stride

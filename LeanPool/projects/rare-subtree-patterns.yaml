@@ -1,0 +1,67 @@
+slug: rare-subtree-patterns
+title: Rare subtree patterns in conditioned Bienaymé trees
+summary: >-
+  Proves marked Poisson approximation, root declumping, maximal complete
+  non-fringe r-ary height and maximum leaf-height for critical Bienaymé trees
+  conditioned on their size, under the stated stable-domain, marking, cutoff
+  and non-clustering hypotheses. Periodic offspring laws are included through
+  admissible-size limits. Single-point phase refinements are formulated along
+  phase-separated admissible subsequences. The dependency closure preserves tree coding,
+  Chen–Stein bounds, regular variation, stable densities and lattice local
+  limit estimates, with concrete offspring examples and direct consequences.
+branch: probability
+entry_module: LeanPool.RareSubtreePatterns
+authors:
+  - Igor Kortchemski
+source:
+  arxiv: 2607.22291v1
+  url: https://github.com/igor-kortchemski/rare-subtree-patterns
+  github_repo: igor-kortchemski/rare-subtree-patterns
+  commit: fc5ef722392b1af41e8b9d5fc45d5a521b7823dd
+  completion_url: https://github.com/igor-kortchemski/rare-subtree-patterns/commit/189178da782d875508c45c0b3f4c5792a99e5eb2
+  completion_date: '2026-10-30T18:19:02Z'
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+  - PoissonDeclumping.poissonApproximation
+  - PoissonDeclumping.poissonApproximation2
+  - PoissonDeclumping.maxString
+  - PoissonDeclumping.maxLeafHeight
+main_results:
+  - declaration: PoissonDeclumping.poissonApproximation
+    informal: >-
+      Under the critical stable-domain assumption, microscopicity and
+      non-clustering with a common sublinear divergent cutoff give Poisson
+      approximation for bounded expected marked counts, and a law of large
+      numbers when the expected count diverges, along admissible tree sizes.
+  - declaration: PoissonDeclumping.poissonApproximation2
+    informal: >-
+      For a root-degree set B with positive finite weight c_B, structural
+      microscopicity of the original marks and non-clustering of the
+      root-declumped marks yield Poisson approximation with the c_B-adjusted
+      parameter when expected counts are bounded, and divergence in probability
+      when they grow, along admissible tree sizes.
+  - declaration: PoissonDeclumping.maxString
+    informal: >-
+      For critical offspring laws in a stable domain, the maximum non-fringe
+      complete r-ary height has a lattice-Gumbel law for unary strings and
+      two-point localization for r at least two, with the stated offspring
+      probabilities and single-point refinements along phase-separated
+      admissible subsequences.
+  - declaration: PoissonDeclumping.maxLeafHeight
+    informal: >-
+      The maximum leaf-height has the stated lattice-Gumbel behavior when the
+      unary offspring probability is positive, and the two-point behavior
+      when it is zero, with single-point refinements along phase-separated
+      admissible subsequences and the stated nondegeneracy and stable-domain conditions.
+tags:
+  - probability
+  - branching-processes
+  - random-trees
+  - poisson-approximation
+msc:
+  - 60J80
+  - 60G50
+  - 05C05
+  - 05C80

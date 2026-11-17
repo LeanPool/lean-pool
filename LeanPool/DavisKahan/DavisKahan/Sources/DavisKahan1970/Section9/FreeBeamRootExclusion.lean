@@ -95,7 +95,7 @@ private theorem cosMulCosh_deriv_neg {b : ℝ} (hb : 0 < b) (hle : b ≤ π / 2)
     have hs : 0 < Real.sin x :=
       Real.sin_pos_of_pos_of_lt_pi hx.1 (by linarith [Real.pi_pos, hx.2])
     have hh : 0 < Real.sinh x := Real.sinh_pos_iff.mpr hx.1
-    nlinarith
+    nlinarith only [hs, hh]
   have h0 : (0 : ℝ) ∈ Set.Icc (0 : ℝ) (π / 2) := ⟨le_refl _, by positivity⟩
   have hbmem : b ∈ Set.Icc (0 : ℝ) (π / 2) := ⟨hb.le, hle⟩
   have h := hanti h0 hbmem hb
@@ -127,7 +127,7 @@ theorem cos_mul_cosh_lt_one_of_le_three_pi_div_two {b : ℝ} (hb : 0 < b)
   · have hcos : Real.cos b ≤ 0 :=
       Real.cos_nonpos_of_pi_div_two_le_of_le h.le (by linarith)
     have hcosh : 0 < Real.cosh b := Real.cosh_pos b
-    nlinarith
+    nlinarith only [hcos, hcosh]
 
 /-! ## The thin interval `(3π/2, 4.73]`
 
@@ -240,7 +240,7 @@ theorem cos_mul_cosh_lt_one_of_le_four_seventy_three {b : ℝ} (hb : 0 < b)
       rw [Real.cosh_le_cosh, abs_of_pos hb, abs_of_pos (by norm_num)]
       exact hle
     rcases le_or_gt (Real.cos b) 0 with hc | hc
-    · nlinarith [Real.cosh_pos b]
+    · nlinarith only [hcos, hcosh, Real.cosh_pos b]
     · calc Real.cos b * Real.cosh b < 0.017612 * Real.cosh b :=
             mul_lt_mul_of_pos_right hcos (Real.cosh_pos b)
         _ < 0.017612 * 56.66 := mul_lt_mul_of_pos_left hcosh (by norm_num)

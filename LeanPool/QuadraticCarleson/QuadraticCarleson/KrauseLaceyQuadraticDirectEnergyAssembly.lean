@@ -124,10 +124,10 @@ theorem localUnitMass_smallestScaleInput_le
   have hLone : 1 ≤ L := by
     dsimp [L]
     simpa only [zpow_zero] using
-      zpow_le_zpow_right₀ (by norm_num : (1 : ℝ) ≤ 2) hm
+      zpow_le_zpow_right₀ (by norm_num1 : (1 : ℝ) ≤ 2) hm
   have hwindow := integral_window_norm_smallestScaleInput_le hlam scale f m
     (sameScale_carriers_pairwiseDisjoint hlam scale hscale m)
-    hL hM (by linarith : x - 1 / 2 ≤ x + 1 / 2)
+    hL hM (by linarith only [] : x - 1 / 2 ≤ x + 1 / 2)
     (fun J hJ ↦ by
       dsimp [L]
       rw [hscale J (Finset.mem_filter.mp hJ).1,
@@ -155,7 +155,7 @@ theorem localUnitMass_smallestScaleInput_le
         ∫ t in Icc (x - 1 / 2) (x + 1 / 2),
           ‖smallestScaleInput S scale f m t‖ := hrestricted
     _ ≤ M * ((x + 1 / 2) - (x - 1 / 2) + 2 * L) := hwindow
-    _ ≤ 3 * M * L := by nlinarith
+    _ ≤ 3 * M * L := by nlinarith only [hM, hLone]
     _ = 3 * M * (2 : ℝ) ^ (m + 2) := rfl
 
 /-- The direct partition pieces satisfy the quadratic one-piece energy
@@ -184,8 +184,7 @@ theorem localizedEnergy_smallestScaleInput_le
       localUnitMass_smallestScaleInput_le hlam scale hscale f (k - s)
         hmindex hM hmass I x
   have hpow : 1 ≤ (2 : ℝ) ^ (k + 2 - s) := by
-    simpa only [zpow_zero] using
-      zpow_le_zpow_right₀ (by norm_num : (1 : ℝ) ≤ 2) hgap
+    exact zpow_le_zpow_right₀ (by norm_num1 : (1 : ℝ) ≤ 2) hgap
   have hcentral :
       (∫ x in I.centralThird, ‖smallestScaleInput S scale f (k - s) x‖) ≤
         ((3 * M) * (2 : ℝ) ^ (k + 2 - s)) * I.length := by
@@ -196,13 +195,13 @@ theorem localizedEnergy_smallestScaleInput_le
       _ ≤ ((3 * M) * (2 : ℝ) ^ (k + 2 - s)) * I.length := by
         apply mul_le_mul_of_nonneg_right _ I.length_pos.le
         calc
-          M ≤ 3 * M := by nlinarith
-          _ = (3 * M) * 1 := by ring
+          M ≤ 3 * M := by linarith only [hM]
+          _ = (3 * M) * 1 := by ac_rfl
           _ ≤ (3 * M) * (2 : ℝ) ^ (k + 2 - s) :=
-            mul_le_mul_of_nonneg_left hpow (mul_nonneg (by norm_num) hM)
+            mul_le_mul_of_nonneg_left hpow (mul_nonneg (by norm_num1) hM)
   have henergy := localizedEnergy_le_of_gap_localMass k s I hIscale
     (integrable_smallestScaleInput S scale f (k - s))
-    (A := 3 * M) (mul_nonneg (by norm_num) hM) hunit hcentral
+    (A := 3 * M) (mul_nonneg (by norm_num1) hM) hunit hcentral
   calc
     localizedEnergy k I (smallestScaleInput S scale f (k - s)) ≤
         (144 * positiveDyadicAmplitudeBound ^ 2 * (3 * M) *

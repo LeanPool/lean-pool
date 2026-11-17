@@ -84,13 +84,13 @@ theorem left_ge_neg_two_of_Ioo_subset_sourceMaximalDomain {a b : ℝ}
     have hy_source := hsub ⟨hay, hyb⟩
     rw [sourceMaximalDomain] at hy_source
     rcases hy_source with ⟨hy_left, _hy_right⟩
-    linarith
+    linarith only [hb, hyb, hy_left]
   · have hneg2b : (-2 : ℝ) < b := lt_of_not_ge hb
     rcases exists_between ha with ⟨y, hay, hyneg2⟩
     have hy_source := hsub ⟨hay, hyneg2.trans hneg2b⟩
     rw [sourceMaximalDomain] at hy_source
     rcases hy_source with ⟨hy_left, _hy_right⟩
-    linarith
+    linarith only [hyneg2, hy_left]
 
 /-- The right endpoint of any source-admissible open interval is at most `2`. -/
 theorem right_le_two_of_Ioo_subset_sourceMaximalDomain {a b : ℝ}
@@ -103,13 +103,13 @@ theorem right_le_two_of_Ioo_subset_sourceMaximalDomain {a b : ℝ}
     have hy_source := hsub ⟨hay, hyb⟩
     rw [sourceMaximalDomain] at hy_source
     rcases hy_source with ⟨_hy_left, hy_right⟩
-    linarith
+    linarith only [ha, hay, hy_right]
   · have ha2 : a < (2 : ℝ) := lt_of_not_ge ha
     rcases exists_between hb with ⟨y, h2y, hyb⟩
     have hy_source := hsub ⟨ha2.trans h2y, hyb⟩
     rw [sourceMaximalDomain] at hy_source
     rcases hy_source with ⟨_hy_left, hy_right⟩
-    linarith
+    linarith only [h2y, hy_right]
 
 theorem left_ge_neg_two (I : SourceMaximalWitnessInterval μ t) : (-2 : ℝ) ≤ I.left :=
   left_ge_neg_two_of_Ioo_subset_sourceMaximalDomain I.left_lt_right
@@ -124,7 +124,7 @@ theorem radius_le_two (I : SourceMaximalWitnessInterval μ t) : I.radius ≤ 2 :
   rw [radius]
   have hlen : I.right - I.left ≤ (2 : ℝ) - (-2 : ℝ) :=
     sub_le_sub I.right_le_two I.left_ge_neg_two
-  linarith
+  linarith only [hlen]
 
 /-- The Euclidean length of a witness interval is twice its radius. -/
 theorem length_eq_two_mul_radius (I : SourceMaximalWitnessInterval μ t) :

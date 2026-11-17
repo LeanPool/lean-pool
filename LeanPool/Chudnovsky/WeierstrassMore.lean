@@ -113,7 +113,7 @@ theorem meromorphicOrderAt_weierstrassP_sub {c : ℂ} {l₀ : ℂ} (h : l₀ ∈
 /-- `℘ - c` is an elliptic function. -/
 theorem isEllipticWith_weierstrassP_sub (c : ℂ) :
     L.IsEllipticWith (fun z => ℘[L] z - c) :=
-  ⟨by fun_prop, fun z l => by simp⟩
+  ⟨by fun_prop, fun z l => by simp only [weierstrassP_add_coe]⟩
 
 /-- **Counting bound** from the third Liouville theorem: the elliptic function `℘ - c`
 has, counted with multiplicity, at most `2` zeros in the fundamental parallelogram, since
@@ -220,7 +220,7 @@ theorem half_ne_half {a b a' b' : ℝ} (h : ¬ (a = a' ∧ b = b')) :
     a • L.ω₁ + b • L.ω₂ ≠ a' • L.ω₁ + b' • L.ω₂ := by
   intro he
   have he' : (a : ℂ) * L.ω₁ + (b : ℂ) * L.ω₂ = (a' : ℂ) * L.ω₁ + (b' : ℂ) * L.ω₂ := by
-    simpa [Complex.real_smul] using he
+    simpa only [Complex.real_smul] using he
   have key : (a - a') • L.ω₁ + (b - b') • L.ω₂ = 0 := by
     simp only [sub_smul, Complex.real_smul]; linear_combination he'
   obtain ⟨h1, h2⟩ := LinearIndependent.pair_iff.mp L.indep _ _ key
@@ -256,37 +256,43 @@ theorem weierstrassP_ne_of_half {p q : ℂ}
 
 /-- Membership of `ω₁/2` in the fundamental parallelogram. -/
 private theorem mem_fund_ω₁_div_two : L.ω₁ / 2 ∈ L.fundamentalParallelogram :=
-  ⟨1 / 2, ⟨by norm_num, by norm_num⟩, 0, ⟨le_refl 0, zero_lt_one⟩, by
-    simp [Complex.real_smul]; ring⟩
+  ⟨1 / 2, ⟨by norm_num1, by norm_num1⟩, 0, ⟨le_refl 0, zero_lt_one⟩, by
+    simp only [one_div, Complex.real_smul, Complex.ofReal_inv, Complex.ofReal_ofNat, zero_smul,
+      add_zero]; ac_rfl⟩
 
 private theorem mem_fund_ω₂_div_two : L.ω₂ / 2 ∈ L.fundamentalParallelogram :=
-  ⟨0, ⟨le_refl 0, zero_lt_one⟩, 1 / 2, ⟨by norm_num, by norm_num⟩, by
-    simp [Complex.real_smul]; ring⟩
+  ⟨0, ⟨le_refl 0, zero_lt_one⟩, 1 / 2, ⟨by norm_num1, by norm_num1⟩, by
+    simp only [zero_smul, one_div, Complex.real_smul, Complex.ofReal_inv, Complex.ofReal_ofNat,
+      zero_add]; ac_rfl⟩
 
 private theorem mem_fund_add_div_two : (L.ω₁ + L.ω₂) / 2 ∈ L.fundamentalParallelogram :=
-  ⟨1 / 2, ⟨by norm_num, by norm_num⟩, 1 / 2, ⟨by norm_num, by norm_num⟩, by
-    simp [Complex.real_smul]; ring⟩
+  ⟨1 / 2, ⟨by norm_num1, by norm_num1⟩, 1 / 2, ⟨by norm_num1, by norm_num1⟩, by
+    simp only [one_div, Complex.real_smul, Complex.ofReal_inv, Complex.ofReal_ofNat]; ring⟩
 
 private theorem ω₁_div_two_ne_ω₂_div_two : L.ω₁ / 2 ≠ L.ω₂ / 2 := by
   have h := L.half_ne_half (a := 1 / 2) (b := 0) (a' := 0) (b' := 1 / 2) (by norm_num)
   rwa [show (1 / 2 : ℝ) • L.ω₁ + (0 : ℝ) • L.ω₂ = L.ω₁ / 2 by
-        simp [Complex.real_smul]; ring,
+        simp only [one_div, Complex.real_smul, Complex.ofReal_inv, Complex.ofReal_ofNat, zero_smul,
+          add_zero]; ac_rfl,
       show (0 : ℝ) • L.ω₁ + (1 / 2 : ℝ) • L.ω₂ = L.ω₂ / 2 by
-        simp [Complex.real_smul]; ring] at h
+        simp only [zero_smul, one_div, Complex.real_smul, Complex.ofReal_inv, Complex.ofReal_ofNat,
+          zero_add]; ac_rfl] at h
 
 private theorem ω₁_div_two_ne_add_div_two : L.ω₁ / 2 ≠ (L.ω₁ + L.ω₂) / 2 := by
   have h := L.half_ne_half (a := 1 / 2) (b := 0) (a' := 1 / 2) (b' := 1 / 2) (by norm_num)
   rwa [show (1 / 2 : ℝ) • L.ω₁ + (0 : ℝ) • L.ω₂ = L.ω₁ / 2 by
-        simp [Complex.real_smul]; ring,
+        simp only [one_div, Complex.real_smul, Complex.ofReal_inv, Complex.ofReal_ofNat, zero_smul,
+          add_zero]; ac_rfl,
       show (1 / 2 : ℝ) • L.ω₁ + (1 / 2 : ℝ) • L.ω₂ = (L.ω₁ + L.ω₂) / 2 by
-        simp [Complex.real_smul]; ring] at h
+        simp only [one_div, Complex.real_smul, Complex.ofReal_inv, Complex.ofReal_ofNat]; ring] at h
 
 private theorem ω₂_div_two_ne_add_div_two : L.ω₂ / 2 ≠ (L.ω₁ + L.ω₂) / 2 := by
   have h := L.half_ne_half (a := 0) (b := 1 / 2) (a' := 1 / 2) (b' := 1 / 2) (by norm_num)
   rwa [show (0 : ℝ) • L.ω₁ + (1 / 2 : ℝ) • L.ω₂ = L.ω₂ / 2 by
-        simp [Complex.real_smul]; ring,
+        simp only [zero_smul, one_div, Complex.real_smul, Complex.ofReal_inv, Complex.ofReal_ofNat,
+          zero_add]; ac_rfl,
       show (1 / 2 : ℝ) • L.ω₁ + (1 / 2 : ℝ) • L.ω₂ = (L.ω₁ + L.ω₂) / 2 by
-        simp [Complex.real_smul]; ring] at h
+        simp only [one_div, Complex.real_smul, Complex.ofReal_inv, Complex.ofReal_ofNat]; ring] at h
 
 /-- The half-lattice values are pairwise distinct: `e₁ ≠ e₂`. -/
 theorem e₁_ne_e₂ : L.e₁ ≠ L.e₂ :=

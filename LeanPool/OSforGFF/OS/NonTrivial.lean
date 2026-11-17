@@ -135,7 +135,8 @@ theorem sqrtPropagatorMap_eq_zero_iff (m : ℝ) [Fact (0 < m)] (f : OSforGFF.Tes
     exact toComplex_injective (h_tc_zero.trans h_tc_0.symm)
   · intro h; subst h; intro k
     unfold sqrtPropagatorMap
-    simp_all
+    simp_all only [SchwartzMap.fourierTransformCLM_apply, FourierTransform.fourier_zero,
+      zero_apply, zero_mul]
 
 /-- The embedding `T : S(ℝ⁴,ℝ) → L²(ℝ⁴,ℂ)` is injective.
 
@@ -152,7 +153,8 @@ theorem embeddingMap_injective (m : ℝ) [Fact (0 < m)] :
   have h_norm_zero : ‖embeddingMap m (f - g)‖ = 0 := by rw [map_sub, h, sub_self, norm_zero]
   have h_int_zero : ∫ k, ‖sqrtPropagatorMap m (f - g) k‖ ^ 2 ∂volume = 0 := by
     have h_sq := embeddingMap_norm_sq m (f - g)
-    simp_all
+    simp_all only [map_sub, sub_self, norm_zero, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true,
+      zero_pow]
   -- Nonneg continuous integrand with zero integral vanishes a.e., hence (‖·‖²=0 ⟹ ·=0) a.e.
   have h_ae_sq : ∀ᵐ k ∂volume, ‖sqrtPropagatorMap m (f - g) k‖ ^ 2 = 0 :=
     (integral_eq_zero_iff_of_nonneg_ae (Filter.Eventually.of_forall fun k => sq_nonneg _)

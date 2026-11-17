@@ -76,7 +76,7 @@ theorem isDirection_rayIn : IsDirection (P.rayIn i) := isDirection_dir vertex_pr
 theorem off_sub_vertex_succ :
     P.off i t s - P.vertex (i + 1) = (t - P.len i) • P.tang i + s • perp (P.tang i) := by
   have hv : P.vertex (i + 1) = P.vertex i + (P.len i) • P.tang i := by
-    rw [len_smul_tang]; module
+    rw [len_smul_tang]; exact (add_sub_cancel _ _).symm
   rw [off, hv]; module
 
 /-- The block-to-far-sector distance bound, the mirror of `dist_off_vertex_le`. -/
@@ -108,7 +108,7 @@ theorem vertex_add_smul_rayIn (P : ClosedPolygon m) (i : ZMod (m + 3)) (c : ℝ)
     have h := rayIn_succ (P := P) (i := i - 1)
     rwa [hsucc] at h
   have hlen : P.vertex i = P.vertex (i - 1) + (P.len (i - 1)) • P.tang (i - 1) := by
-    rw [len_smul_tang, hsucc]; module
+    rw [len_smul_tang, hsucc]; exact (add_sub_cancel _ _).symm
   rw [pt_eq, hr, hlen]
   module
 
@@ -117,7 +117,7 @@ edge. -/
 theorem mem_edge_pred_of_smul_rayIn (hc0 : 0 ≤ c) (hc1 : c ≤ P.len (i - 1)) :
     P.vertex i + c • P.rayIn i ∈ P.edge (i - 1) := by
   rw [vertex_add_smul_rayIn]
-  exact pt_mem_edge ⟨by linarith, by linarith⟩
+  exact pt_mem_edge ⟨by linarith only [hc1], by linarith only [hc0]⟩
 
 /-- A point of the outgoing ray at distance at most the edge's length lies on that edge. -/
 theorem mem_edge_of_smul_tang (hc0 : 0 ≤ c) (hc1 : c ≤ P.len i) :
@@ -141,7 +141,9 @@ and `two_lam_lt_R` together with `rho < lam` — which gives
 `3 lam / 2 + rho / 2 < 2 lam < R`, so the point is inside the sector. -/
 
 /-- The along-coordinate of the witnesses clears the near trim. -/
-theorem lam_lt_three_halves_lam : D.lam < 3 * D.lam / 2 := by have := D.lam_pos; linarith
+theorem lam_lt_three_halves_lam : D.lam < 3 * D.lam / 2 := by
+  have := D.lam_pos
+  linarith only [this]
 
 /-- …and stays short of the far one, by `four_lam_lt_len`. -/
 theorem three_halves_lam_lt : 3 * D.lam / 2 < P.len i - D.lam := by
@@ -161,7 +163,7 @@ theorem mem_overlapL_start :
     P.off i (3 * D.lam / 2) (D.rho / 2) ∈ D.blockL i ∩ D.sectorL i := by
   have hmem : P.off i (3 * D.lam / 2) (D.rho / 2) ∈ D.blockL i :=
     D.mem_blockL_off.2 ⟨D.lam_lt_three_halves_lam, D.three_halves_lam_lt,
-      by linarith [D.rho_pos], by linarith [D.rho_pos]⟩
+      by linarith only [D.rho_pos], by linarith only [D.rho_pos]⟩
   refine ⟨hmem, D.blockL_sub_mem_arcL_start hmem, ?_⟩
   -- The sector reaches this far because `3 lam / 2 + rho / 2 < 2 lam < R`.
   refine lt_of_le_of_lt ClosedPolygon.dist_off_vertex_le ?_
@@ -176,14 +178,14 @@ theorem mem_overlapL_finish :
     P.off i (P.len i - 3 * D.lam / 2) (D.rho / 2) ∈ D.blockL i ∩ D.sectorL (i + 1) := by
   have h1 : D.lam < P.len i - 3 * D.lam / 2 := by
     have := D.lam_pos; have := D.four_lam_lt_len i; linarith
-  have h2 : P.len i - 3 * D.lam / 2 < P.len i - D.lam := by have := D.lam_pos; linarith
+  have h2 : P.len i - 3 * D.lam / 2 < P.len i - D.lam := by have := D.lam_pos; linarith only [this]
   have hmem : P.off i (P.len i - 3 * D.lam / 2) (D.rho / 2) ∈ D.blockL i :=
-    D.mem_blockL_off.2 ⟨h1, h2, by linarith [D.rho_pos], by linarith [D.rho_pos]⟩
+    D.mem_blockL_off.2 ⟨h1, h2, by linarith only [D.rho_pos], by linarith only [D.rho_pos]⟩
   refine ⟨hmem, D.blockL_sub_mem_arcL_finish hmem, ?_⟩
   refine lt_of_le_of_lt ClosedPolygon.dist_off_vertex_succ_le ?_
   rw [show P.len i - 3 * D.lam / 2 - P.len i = -(3 * D.lam / 2) by ring,
-    abs_neg, abs_of_pos (by linarith [D.lam_pos] : (0:ℝ) < 3 * D.lam / 2),
-    abs_of_pos (by linarith [D.rho_pos] : (0:ℝ) < D.rho / 2)]
+    abs_neg, abs_of_pos (by linarith only [lam_pos D] : (0:ℝ) < 3 * D.lam / 2),
+    abs_of_pos (by linarith only [D.rho_pos] : (0:ℝ) < D.rho / 2)]
   exact D.overlap_dist_lt
 
 /-- The right-hand mirror of `mem_overlapL_start`. -/
@@ -191,7 +193,7 @@ theorem mem_overlapR_start :
     P.off i (3 * D.lam / 2) (-(D.rho / 2)) ∈ D.blockR i ∩ D.sectorR i := by
   have hmem : P.off i (3 * D.lam / 2) (-(D.rho / 2)) ∈ D.blockR i :=
     D.mem_blockR_off.2 ⟨D.lam_lt_three_halves_lam, D.three_halves_lam_lt,
-      by linarith [D.rho_pos], by linarith [D.rho_pos]⟩
+      by linarith only [D.rho_pos], by linarith only [D.rho_pos]⟩
   refine ⟨hmem, D.blockR_sub_mem_arcR_start hmem, ?_⟩
   refine lt_of_le_of_lt ClosedPolygon.dist_off_vertex_le ?_
   rw [abs_of_pos (by linarith [D.lam_pos] : (0:ℝ) < 3 * D.lam / 2),
@@ -203,14 +205,14 @@ theorem mem_overlapR_finish :
     P.off i (P.len i - 3 * D.lam / 2) (-(D.rho / 2)) ∈ D.blockR i ∩ D.sectorR (i + 1) := by
   have h1 : D.lam < P.len i - 3 * D.lam / 2 := by
     have := D.lam_pos; have := D.four_lam_lt_len i; linarith
-  have h2 : P.len i - 3 * D.lam / 2 < P.len i - D.lam := by have := D.lam_pos; linarith
+  have h2 : P.len i - 3 * D.lam / 2 < P.len i - D.lam := by have := D.lam_pos; linarith only [this]
   have hmem : P.off i (P.len i - 3 * D.lam / 2) (-(D.rho / 2)) ∈ D.blockR i :=
-    D.mem_blockR_off.2 ⟨h1, h2, by linarith [D.rho_pos], by linarith [D.rho_pos]⟩
+    D.mem_blockR_off.2 ⟨h1, h2, by linarith only [D.rho_pos], by linarith only [D.rho_pos]⟩
   refine ⟨hmem, D.blockR_sub_mem_arcR_finish hmem, ?_⟩
   refine lt_of_le_of_lt ClosedPolygon.dist_off_vertex_succ_le ?_
   rw [show P.len i - 3 * D.lam / 2 - P.len i = -(3 * D.lam / 2) by ring,
-    abs_neg, abs_of_pos (by linarith [D.lam_pos] : (0:ℝ) < 3 * D.lam / 2),
-    abs_neg, abs_of_pos (by linarith [D.rho_pos] : (0:ℝ) < D.rho / 2)]
+    abs_neg, abs_of_pos (by linarith only [lam_pos D] : (0:ℝ) < 3 * D.lam / 2),
+    abs_neg, abs_of_pos (by linarith only [D.rho_pos] : (0:ℝ) < D.rho / 2)]
   exact D.overlap_dist_lt
 
 theorem blockL_nonempty : (D.blockL i).Nonempty := ⟨_, D.mem_overlapL_start.1⟩
@@ -382,12 +384,12 @@ theorem mem_tube_off {t s : ℝ} : P.off i t s ∈ D.tube i ↔
 theorem blockL_subset_tube : D.blockL i ⊆ D.tube i := by
   intro y hy
   obtain ⟨h1, h2, h3, h4⟩ := D.mem_blockL_iff.1 hy
-  exact ⟨h1, h2, by linarith [D.rho_pos], h4⟩
+  exact ⟨h1, h2, by linarith only [h3, D.rho_pos], h4⟩
 
 theorem blockR_subset_tube : D.blockR i ⊆ D.tube i := by
   intro y hy
   obtain ⟨h1, h2, h3, h4⟩ := D.mem_blockR_iff.1 hy
-  exact ⟨h1, h2, h3, by linarith [D.rho_pos]⟩
+  exact ⟨h1, h2, h3, by linarith only [h4, D.rho_pos]⟩
 
 /-- **A vertex ball minus the curve is covered by the two sectors at that vertex.** A point of
 the ball off the curve points in some direction from the vertex; by `mem_ray_or_mem_arcCCW'`
@@ -412,7 +414,7 @@ theorem ball_diff_carrier_subset :
       rw [dist_eq_norm, hcy, norm_smul, Real.norm_eq_abs,
         ClosedPolygon.isDirection_rayIn.norm, mul_one, abs_of_pos hc]
     rw [mem_ball, hd] at hy
-    have hy' : y = P.vertex i + c • P.rayIn i := by rw [← hcy]; module
+    have hy' : y = P.vertex i + c • P.rayIn i := by rw [← hcy]; exact (add_sub_cancel _ _).symm
     rw [hy']
     exact ClosedPolygon.edge_subset_carrier (ClosedPolygon.mem_edge_pred_of_smul_rayIn hc.le
       (le_trans hy.le (D.R_le_len (i - 1))))
@@ -423,7 +425,7 @@ theorem ball_diff_carrier_subset :
       rw [dist_eq_norm, hcy, norm_smul, Real.norm_eq_abs,
         ClosedPolygon.isDirection_tang.norm, mul_one, abs_of_pos hc]
     rw [mem_ball, hd] at hy
-    have hy' : y = P.vertex i + c • P.tang i := by rw [← hcy]; module
+    have hy' : y = P.vertex i + c • P.tang i := by rw [← hcy]; exact (add_sub_cancel _ _).symm
     rw [hy']
     exact ClosedPolygon.edge_subset_carrier (ClosedPolygon.mem_edge_of_smul_tang hc.le
       (le_trans hy.le (D.R_le_len i)))
@@ -443,7 +445,7 @@ theorem tube_diff_carrier_subset : D.tube i \ P.carrier ⊆ D.blockL i ∪ D.blo
       exact ClosedPolygon.off_coord P i y
     rw [hy0]
     exact ClosedPolygon.edge_subset_carrier (ClosedPolygon.pt_mem_edge
-      ⟨by linarith [D.lam_pos], by linarith [D.lam_pos]⟩)
+      ⟨by linarith [D.lam_pos], by linarith only [lam_pos D, h2]⟩)
   · exact Or.inl (D.mem_blockL_iff.2 ⟨h1, h2, h, h4⟩)
 
 /-- Each edge is covered by the ball at its first vertex, the ball at its second, and its own
@@ -460,13 +462,13 @@ theorem carrier_subset_balls_union_tubes :
     exact h1
   rcases lt_or_ge (P.len i - D.R) c with h2 | h2
   · refine Or.inl (Set.mem_iUnion.2 ⟨i + 1, ?_⟩)
-    rw [mem_ball, ClosedPolygon.dist_pt_vertex_succ, abs_of_nonpos (by linarith)]
-    linarith
+    rw [mem_ball, ClosedPolygon.dist_pt_vertex_succ, abs_of_nonpos (by linarith only [hc1])]
+    linarith only [h2]
   · refine Or.inr (Set.mem_iUnion.2 ⟨i, ?_⟩)
     rw [ClosedPolygon.pt]
     have hlam := D.lam_pos
     have hR := D.two_lam_lt_R
-    exact D.mem_tube_off.2 ⟨by linarith, by linarith, by linarith [D.rho_pos], D.rho_pos⟩
+    exact D.mem_tube_off.2 ⟨by linarith, by linarith, by linarith only [D.rho_pos], D.rho_pos⟩
 
 /-- The collar is the union of the vertex balls and the edge tubes. This is the presentation
 that makes it visibly open. -/

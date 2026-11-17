@@ -7,8 +7,6 @@ module
 
 public import LeanPool.PoincareThreeBody.Delaunay
 public import LeanPool.PoincareThreeBody.Core
-import Mathlib.MeasureTheory.Integral.Bochner.Basic
-import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # Polar canonical coordinates for the rotating Kepler limit

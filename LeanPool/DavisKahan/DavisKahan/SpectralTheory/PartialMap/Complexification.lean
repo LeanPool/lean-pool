@@ -74,7 +74,7 @@ omit [InnerProductSpace ℝ E] [CompleteSpace E] in
 /-- Each coordinate norm is bounded by the L2 norm. -/
 theorem norm_im_le (z : Eℂ) : ‖im z‖ ≤ ‖z‖ := by
   rw [← sq_le_sq₀ (norm_nonneg _) (norm_nonneg _), RealComplexification.norm_sq]
-  nlinarith [sq_nonneg ‖re z‖]
+  nlinarith only [sq_nonneg ‖re z‖]
 
 /-- Coordinatewise complexification of a real closed-operator domain. -/
 def domain (A : E →ₗ.[ℝ] E) :
@@ -470,7 +470,7 @@ theorem semiboundedBelow_complexify
   change c * (‖re (z : Eℂ)‖ ^ 2 + ‖im (z : Eℂ)‖ ^ 2) ≤
     ⟪A (domainRe A z), re (z : Eℂ)⟫_ℝ +
       ⟪A (domainIm A z), im (z : Eℂ)⟫_ℝ
-  nlinarith [hr, hi]
+  nlinarith only [hr, hi, hr, hi]
 
 omit [CompleteSpace E] in
 /-- An upper quadratic-form bound is preserved exactly by complexification. -/
@@ -488,7 +488,7 @@ theorem semiboundedAbove_complexify
     ⟪A (domainRe A z), re (z : Eℂ)⟫_ℝ +
       ⟪A (domainIm A z), im (z : Eℂ)⟫_ℝ ≤
       c * (‖re (z : Eℂ)‖ ^ 2 + ‖im (z : Eℂ)‖ ^ 2)
-  nlinarith [hr, hi]
+  nlinarith only [hr, hi, hr, hi]
 
 omit [CompleteSpace E] in
 /-- Symmetry is preserved by coordinatewise complexification. -/

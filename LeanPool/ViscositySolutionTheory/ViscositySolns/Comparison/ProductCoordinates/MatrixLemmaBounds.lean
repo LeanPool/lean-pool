@@ -243,7 +243,7 @@ theorem SemiconvexMatrixLemmaOn.regularizedDoubledConvolution_block_bounds
   have hAAHerm : (A * A).IsHermitian := by
     have htranspose : A.transpose = A := by
       ext i j
-      simpa using hHerm.apply i j
+      exact hHerm.apply i j
     have h := Matrix.isHermitian_mul_conjTranspose_self A
     simpa [htranspose] using h
   have hBHerm : B.IsHermitian :=

@@ -33,7 +33,7 @@ open CalderonZygmundLevelAtoms PositiveLevelIntegration PositiveEndpointOptimiza
 def fullHighCutoff (k : ℕ) : ℕ := 20 * 2 ^ k
 
 theorem cast_fullHighCutoff (k : ℕ) : (fullHighCutoff k : ℝ) = fullCutoff 20 k := by
-  simp [fullHighCutoff, fullCutoff, dyadicScale]
+  simp only [fullHighCutoff, Nat.cast_mul, Nat.cast_ofNat, Nat.cast_pow, fullCutoff, dyadicScale]
 
 theorem fullHighCutoff_pos (k : ℕ) : 0 < fullHighCutoff k := by
   unfold fullHighCutoff
@@ -45,7 +45,7 @@ noncomputable def fullHighPrefactorSeries : ℝ≥0∞ :=
 
 theorem fullHighPrefactorSeries_lt_top : fullHighPrefactorSeries < ∞ := by
   exact (summable_fullHighFrequencyPrefactor (β := 1 / 10) (C := 20)
-    (by norm_num) (by norm_num)).tsum_ofReal_lt_top
+    (by norm_num1) (by norm_num1)).tsum_ofReal_lt_top
 
 theorem fullHighPrefactor_eq (k : ℕ) :
     4 * fullAmplitude k * (2 : ℝ) ^ (-((fullHighCutoff k : ℕ) : ℝ) / 5) /
@@ -54,7 +54,7 @@ theorem fullHighPrefactor_eq (k : ℕ) :
   rw [cast_fullHighCutoff]
   have hp : (2 : ℝ) ^ (-(fullCutoff 20 k) / 5) =
       Real.exp (-2 * (1 / 10) * Real.log 2 * fullCutoff 20 k) := by
-    rw [Real.rpow_def_of_pos (by norm_num : (0 : ℝ) < 2)]
+    rw [Real.rpow_def_of_pos (by norm_num1 : (0 : ℝ) < 2)]
     congr 1
     ring
   rw [hp]
@@ -65,7 +65,7 @@ theorem tsum_fullHighPrefactor :
     (∑' k : ℕ, ENNReal.ofReal (4 * fullAmplitude k *
       (2 : ℝ) ^ (-((fullHighCutoff k : ℕ) : ℝ) / 5) / fullCutoff 20 k)) =
       4 * fullHighPrefactorSeries := by
-  simp_rw [fullHighPrefactor_eq, ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 4)]
+  simp_rw [fullHighPrefactor_eq, ENNReal.ofReal_mul (by norm_num1 : (0 : ℝ) ≤ 4)]
   rw [ENNReal.tsum_mul_left]
   norm_num [fullHighPrefactorSeries]
 
@@ -90,15 +90,15 @@ theorem fullHighContribution_levelSet_le_orlicz
       fullHighEndpointConstant * ∫⁻ x, ENNReal.ofReal (‖f x‖ * paperLog 1 ‖f x‖) := by
   have hmain := paperHighContribution_disjointLevelAtoms_weighted_levelSet_le
     (fun k ↦ (fullAmplitude_pos k).le) fullHighCutoff (fullCutoff 20)
-    (fun k ↦ by unfold fullCutoff; exact mul_pos (by norm_num) (dyadicScale_pos k))
+    (fun k ↦ by unfold fullCutoff; exact mul_pos (by norm_num1) (dyadicScale_pos k))
     hf hfi z R hR hdisj
   rw [tsum_fullHighPrefactor] at hmain
   have hweight : (∑' k : ℕ, ENNReal.ofReal (fullCutoff 20 k) *
       magnitudeLevelL1Mass volume fullAmplitude f k) ≤
       80 * ∫⁻ x, ENNReal.ofReal (‖f x‖ * paperLog 1 ‖f x‖) := by
-    have h := tsum_full_weight_mul_levelMass_le_orlicz volume (C := 20) (by norm_num) hf
-    norm_num only [show (4 : ℝ) * 20 = 80 by norm_num] at h
-    simp_rw [ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 80)] at h
+    have h := tsum_full_weight_mul_levelMass_le_orlicz volume (C := 20) (by norm_num1) hf
+    norm_num only [show (4 : ℝ) * 20 = 80 by norm_num1] at h
+    simp_rw [ENNReal.ofReal_mul (by norm_num1 : (0 : ℝ) ≤ 80)] at h
     rw [lintegral_const_mul' _ _ (by finiteness)] at h
     simpa only [ENNReal.ofReal_ofNat] using h
   apply hmain.trans
