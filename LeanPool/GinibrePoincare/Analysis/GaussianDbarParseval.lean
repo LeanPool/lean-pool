@@ -35,6 +35,7 @@ SOFTWARE.
 
 module
 
+public import LeanPool.GinibrePoincare.Analysis.GinibreL2Norm
 public import LeanPool.GinibrePoincare.Analysis.HermiteParsevalModes
 public import LeanPool.GinibrePoincare.Analysis.HermiteEnergy
 public import LeanPool.GinibrePoincare.Analysis.ComplexGaussianIntegrationByParts
@@ -1196,27 +1197,11 @@ theorem norm_sq_smoothDbarComponentL2 {n : ℕ}
     ‖smoothDbarComponentL2 F hF hFc j‖ ^ 2 =
       ∫ z, Complex.normSq (dbarComponent F j z)
         ∂complexGaussianMeasure n := by
-  have hinner : inner ℂ (smoothDbarComponentL2 F hF hFc j)
-      (smoothDbarComponentL2 F hF hFc j) =
-      ∫ z, inner ℂ ((smoothDbarComponentL2 F hF hFc j) z)
-        ((smoothDbarComponentL2 F hF hFc j) z)
-        ∂complexGaussianMeasure n :=
-    MeasureTheory.L2.inner_def _ _
-  rw [inner_self_eq_norm_sq_to_K] at hinner
-  have hc := smoothDbarComponentL2_coeFn F hF hFc j
-  rw [integral_congr_ae (by filter_upwards [hc] with z hz; rw [hz])] at hinner
-  have hi : (fun z => inner ℂ (dbarComponent F j z) (dbarComponent F j z)) =
-      fun z => (Complex.normSq (dbarComponent F j z) : ℂ) := by
-    funext z
-    rw [inner_self_eq_norm_sq_to_K]
-    calc
-      (‖dbarComponent F j z‖ : ℂ) ^ 2 =
-          ((‖dbarComponent F j z‖ ^ 2 : ℝ) : ℂ) := by norm_cast
-      _ = _ := congrArg Complex.ofReal (Complex.sq_norm (dbarComponent F j z))
-  rw [hi, integral_complex_ofReal] at hinner
-  apply Complex.ofReal_injective
-  push_cast
-  exact hinner
+  rw [← integral_norm_sq_eq_L2_norm_sq (complexGaussianMeasure n)
+    (smoothDbarComponentL2 F hF hFc j)]
+  apply integral_congr_ae
+  filter_upwards [smoothDbarComponentL2_coeFn F hF hFc j] with z hz
+  rw [hz, Complex.sq_norm]
 
 theorem sum_norm_sq_smoothDbarComponentL2 {n : ℕ} (_hn : 0 < n)
     (F : Configuration n → ℂ) (hF : ContDiff ℝ 1 F)

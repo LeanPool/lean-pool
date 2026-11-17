@@ -313,29 +313,14 @@ theorem norm_sq_centeredShiftedGinibreGeneratorL2 {n : ℕ} (hn : 0 < n)
     (f : Configuration n → ℝ) (hf : IsTheoremOneNineCore f) :
     ‖centeredShiftedGinibreGeneratorL2 hn f hf‖ ^ 2 =
       shiftedGinibreGeneratorNormSq n (centeredObservable n f) := by
-  have hinner : inner ℂ (centeredShiftedGinibreGeneratorL2 hn f hf)
-      (centeredShiftedGinibreGeneratorL2 hn f hf) =
-      ∫ z, inner ℂ ((centeredShiftedGinibreGeneratorL2 hn f hf) z)
-        ((centeredShiftedGinibreGeneratorL2 hn f hf) z) ∂ginibreMeasure n :=
-    MeasureTheory.L2.inner_def _ _
-  rw [inner_self_eq_norm_sq_to_K] at hinner
-  have hc := centeredShiftedGinibreGeneratorL2_coeFn hn f hf
-  rw [integral_congr_ae (by filter_upwards [hc] with z hz; rw [hz])] at hinner
-  have hcent : ∀ z, ginibrePregenerator n (centeredObservable n f) z =
-      ginibrePregenerator n f z := fun z => by
-    exact ginibrePregenerator_sub_const n f (smoothGinibreMean n f) z
-  have hi : (fun z => inner ℂ
-      ((ginibrePregenerator n f z + 2 * centeredObservable n f z : ℝ) : ℂ)
-      ((ginibrePregenerator n f z + 2 * centeredObservable n f z : ℝ) : ℂ)) =
-      fun z => (((ginibrePregenerator n (centeredObservable n f) z +
-        2 * centeredObservable n f z) ^ 2 : ℝ) : ℂ) := by
-    funext z
-    rw [hcent]
-    simp only [RCLike.inner_apply, Complex.conj_ofReal, ← Complex.ofReal_mul,
-      pow_two]
-  rw [hi, integral_complex_ofReal] at hinner
-  apply Complex.ofReal_injective
-  simpa [shiftedGinibreGeneratorNormSq, ← Complex.ofReal_pow] using hinner
+  rw [L2_norm_sq_eq_integral_sq_of_ae_ofReal (ginibreMeasure n)
+    (centeredShiftedGinibreGeneratorL2 hn f hf) _
+    (centeredShiftedGinibreGeneratorL2_coeFn hn f hf)]
+  unfold shiftedGinibreGeneratorNormSq
+  apply integral_congr_ae
+  exact Eventually.of_forall fun z =>
+    congrArg (fun a : ℝ => (a + 2 * centeredObservable n f z) ^ 2)
+      (ginibrePregenerator_sub_const n f (smoothGinibreMean n f) z).symm
 
 /-- Concrete square completion, with the shifted square applied to the
 centered observable as in Theorem 1.9. -/

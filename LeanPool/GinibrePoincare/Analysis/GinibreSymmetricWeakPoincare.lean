@@ -197,21 +197,8 @@ theorem ginibre_symmetric_weak_poincare {n : ℕ} (hn : 0 < n)
   have hclosed : IsClosed {p : Lp ℝ 2 (ginibreMeasure n) ×
       Lp (EuclideanSpace ℝ (Fin n × Fin 2)) 2 (ginibreMeasure n) |
       ginibreL2Variance n hn p.1 ≤ ginibreWeakEnergy n p.2 / 2} := by
-    have hcont : Continuous (fun p : Lp ℝ 2 (ginibreMeasure n) ×
-        Lp (EuclideanSpace ℝ (Fin n × Fin 2)) 2 (ginibreMeasure n) =>
-        ginibreWeakEnergy n p.2 / 2 - ginibreL2Variance n hn p.1) := by
-      exact (((ginibreWeakEnergy_continuous n).comp continuous_snd).div_const 2).sub
-        ((ginibreL2Variance_continuous n hn).comp continuous_fst)
-    have heq : {p : Lp ℝ 2 (ginibreMeasure n) ×
-        Lp (EuclideanSpace ℝ (Fin n × Fin 2)) 2 (ginibreMeasure n) |
-        ginibreL2Variance n hn p.1 ≤ ginibreWeakEnergy n p.2 / 2} =
-        (fun p : Lp ℝ 2 (ginibreMeasure n) ×
-          Lp (EuclideanSpace ℝ (Fin n × Fin 2)) 2 (ginibreMeasure n) =>
-          ginibreWeakEnergy n p.2 / 2 - ginibreL2Variance n hn p.1) ⁻¹' Set.Ici 0 := by
-      ext p
-      simp [Set.mem_preimage, Set.mem_Ici, sub_nonneg]
-    rw [heq]
-    exact isClosed_Ici.preimage hcont
+    exact isClosed_le ((ginibreL2Variance_continuous n hn).comp continuous_fst)
+      (((ginibreWeakEnergy_continuous n).comp continuous_snd).div_const 2)
   have hmem : (u, g) ∈ {p : Lp ℝ 2 (ginibreMeasure n) ×
       Lp (EuclideanSpace ℝ (Fin n × Fin 2)) 2 (ginibreMeasure n) |
       ginibreL2Variance n hn p.1 ≤ ginibreWeakEnergy n p.2 / 2} :=
