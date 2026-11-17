@@ -799,7 +799,8 @@ private theorem card_fractionSubring_le
             apply Cardinal.mk_le_aleph0_iff.mpr
             apply Set.Countable.to_subtype
             apply (Set.countable_iUnion (fun (n : ℕ) =>
-              Set.Subsingleton.countable (fun (t₁ : T) (ht₁ : t₁ * (↑y₂ : T) ^ n = aeval x₁ f)
+              Set.Subsingleton.countable (s := {t : T | t * (↑y₂ : T) ^ n = aeval x₁ f})
+                (fun (t₁ : T) (ht₁ : t₁ * (↑y₂ : T) ^ n = aeval x₁ f)
                 (t₂ : T) (ht₂ : t₂ * (↑y₂ : T) ^ n = aeval x₁ f) =>
                 mul_right_cancel₀ (pow_ne_zero n hy₂) (ht₁.trans ht₂.symm)))).mono
             intro t ⟨n, hn⟩

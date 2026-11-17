@@ -132,16 +132,14 @@ private lemma avoidance_countable_of_countable (R : NSubring T) (I : Ideal T) (t
     (hR_le : Cardinal.mk R.carrier ≤ Cardinal.aleph0) :
     (avoidanceGoodPrimes R I).Countable ∧ (avoidanceObstacles R I t).Countable := by
   have : Countable R.carrier := Cardinal.mk_le_aleph0_iff.mp hR_le
-  have : Countable (Polynomial R.carrier) := by
-    let : Countable (AddMonoidAlgebra R.carrier ℕ) :=
-      Countable.of_equiv _ AddMonoidAlgebra.coeffEquiv.symm
-    exact Polynomial.toFinsupp_injective.countable
+  have : Countable (Polynomial R.carrier) :=
+    Countable.of_equiv _ AddMonoidAlgebra.coeffEquiv.symm
   have hC_good_countable : (avoidanceGoodPrimes R I).Countable := by
     unfold avoidanceGoodPrimes
     exact Set.Countable.union (Set.countable_iUnion fun r =>
       Set.countable_iUnion fun _ =>
         ((associatedPrimes.finite T (T ⧸ span {(r : T)})).subset
-          fun P hP => hP.1).countable) (Set.countable_singleton _)
+          (Set.sep_subset _ (fun P => ¬(I ≤ P)))).countable) (Set.countable_singleton _)
   have hD_base_countable : (avoidanceBaseObstacles R t).Countable :=
     Set.Countable.union (Set.countable_singleton _)
       (Set.countable_iUnion fun f => Set.countable_iUnion fun hf =>
@@ -172,8 +170,9 @@ private lemma avoidanceGoodPrimes_card_le (R : NSubring T) (I : Ideal T)
         · exact (Cardinal.mk_iUnion_le _).trans
             (mul_le_mul_right (ciSup_le' fun r => by
             exact Cardinal.mk_le_aleph0_iff.mpr
-              ((Set.Finite.subset (associatedPrimes.finite T _)
-                (Set.iUnion_subset fun _ => fun P hP => hP.1)).countable.to_subtype)) _)
+              ((Set.Finite.subset (associatedPrimes.finite T (T ⧸ span {(r : T)}))
+                (Set.iUnion_subset fun (_ : (r : T) ≠ 0) =>
+                  Set.sep_subset _ (fun P => ¬(I ≤ P)))).countable.to_subtype)) _)
         · exact (Cardinal.mk_le_one_iff_set_subsingleton.mpr
             Set.subsingleton_singleton).trans (one_le_aleph0.trans hR_inf)
     _ = Cardinal.mk R.carrier := by
@@ -346,7 +345,7 @@ private lemma avoidance_shift_mod_transcendental (R : NSubring T) {I : Ideal T} 
   have hf_bar_ne : f.map ((Ideal.Quotient.mk P).comp R.carrier.subtype) ≠ 0 := by
     intro h_eq
     apply h_neg
-    have h := congr_arg (fun p => Polynomial.coeff p i) h_eq
+    have h := congr_arg (fun p => AddMonoidAlgebra.coeff p i) h_eq
     simp only [Polynomial.coeff_map, Polynomial.coeff_zero] at h
     exact Ideal.mem_comap.mpr (Ideal.Quotient.eq_zero_iff_mem.mp h)
   -- P is an associated prime of some T/(r₀), hence a good prime
