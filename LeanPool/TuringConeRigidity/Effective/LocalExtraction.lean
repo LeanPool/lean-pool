@@ -37,39 +37,13 @@ theorem noSplit_reduces {A Y G Z : Oracle} {t : ℕ} {p : Condition}
     (hno : ¬ ∃ z, UniformSplit.SplitCert A (Nat.pair (UniformPair.request (Nat.pair t (code p)))
       z)) :
     Reduces Z Y := by
-  have hrun (w : List Bool) (n : ℕ) :
-      UniformRun.run A (machine (item t 0)) (machine (item t 1)) w n =
-        CommonIdeal.run Y (meaning (machine (item t 1))) w n := by
-    simp only [UniformRun.run,hbase,CommonIdeal.run]
-  apply CodingAgreement.case1_reduces (A := columns A) (p := p) ?_ hG he
-  intro q r hpq hpr n a b ha hb
-  by_contra hab
-  rw [← hrun] at ha hb
-  apply hno
-  refine ⟨encode [n,encode q.left,encode r.left,a,b],?_⟩
-  simpa [UniformSplit.SplitCert,UniformSplit.start,UniformSplit.base,UniformSplit.program,
-    UniformPair.request,item,word,
-    show left (code p) = p.left from congrArg Condition.left (condition_code p)] using
-    And.intro hpq.1 (And.intro hpr.1 (And.intro hab (And.intro ha hb)))
+  exact UniformPair.noSplit_reduces hbase hG he hno
 
 theorem point_splittingLocation {A Y : Oracle} {t w : ℕ} {p : Condition}
     (hbase : OracleCode.eval (oracleFunction A) (meaning (machine (item t 0))) = oracleFunction Y)
     (hw : UniformSplit.PointCert A (Nat.pair (UniformPair.request (Nat.pair t (code p))) w)) :
     CodingLocations.SplittingLocation Y (meaning (machine (item t 1))) p.left (item w 2) := by
-  have hrun (v : List Bool) (n : ℕ) :
-      UniformRun.run A (machine (item t 0)) (machine (item t 1)) v n =
-        CommonIdeal.run Y (meaning (machine (item t 1))) v n := by
-    simp only [UniformRun.run,hbase,CommonIdeal.run]
-  have hh : p.left <+: word (item w 1) ∧ p.left.length ≤ item w 2 ∧
-      item w 2 < (word (item w 1)).length ∧ item w 4 ≠ item w 5 ∧
-      item w 4 ∈ CommonIdeal.run Y (meaning (machine (item t 1))) (word (item w 1)) (item w 0) ∧
-      item w 5 ∈ CommonIdeal.run Y (meaning (machine (item t 1)))
-        ((word (item w 1)).set (item w 2) (item w 3).bodd) (item w 0) := by
-    rw [← hrun,← hrun]
-    simpa [UniformSplit.PointCert,UniformSplit.start,UniformSplit.base,UniformSplit.program,
-      UniformPair.request,item,word,
-      show left (code p) = p.left from congrArg Condition.left (condition_code p)] using hw
-  exact ⟨word (item w 1),(item w 3).bodd,item w 0,item w 4,item w 5,hh⟩
+  exact UniformPair.point_splittingLocation hbase hw
 
 theorem common_unbounded_points {D : LocalInputs.Data} {Y Z : Oracle} {t : ℕ}
     (hbase : OracleCode.eval (oracleFunction D.B) (meaning (machine (item t 0))) = oracleFunction Y)

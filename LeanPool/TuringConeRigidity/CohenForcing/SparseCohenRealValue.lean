@@ -38,7 +38,8 @@ theorem val_realName (G : GenericFilter (Conditions poset)) (A : Oracle)
   obtain ⟨p,hp⟩ := G.nonempty
   have ht : (⊤ : Conditions poset) ∈ G.carrier := G.upper le_top hp
   apply ZFSet.ext; intro z
-  rw [realName,Name.mem_val]
+  rw [realName,CohenRealNameCode.realName,CohenRealNameCode.realNameFromPredicate,
+    Name.mem_val]
   simp only [Name.val_check _ ht]
   constructor
   · rintro ⟨⟨⟨q,n⟩,hbit⟩,hq,rfl⟩

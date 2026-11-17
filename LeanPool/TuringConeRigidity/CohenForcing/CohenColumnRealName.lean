@@ -14,6 +14,7 @@ Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream por
 module
 
 public import LeanPool.TuringConeRigidity.CohenForcing.CohenNiceNameConstruction
+public import LeanPool.TuringConeRigidity.CohenForcing.CohenRealNameCode
 
 /-!
 # Cohen Column Real Name
@@ -98,22 +99,11 @@ theorem realNameCode_mem (M K a : ZFSet.{0}) (hM : Transitive M) (hT : SourceT M
 theorem encode_realName (K a d r f : ZFSet.{0}) (ha : a ∈ K) (hω : ZFSet.omega ⊆ d)
     (hf : CheckGraph d r f (label (poset K) ⊤)) :
     (realName K a).encode (label (poset K)) = realNameCode K a f := by
-  have hfr : TransitiveNameModel.FunctionGraph d r f := ⟨hf.2.1,hf.2.2.1⟩
-  apply ZFSet.ext; intro z
-  change z ∈ ZFSet.range _ ↔ _
-  rw [ZFSet.mem_range,mem_realNameCode K a f z ha]
-  constructor
-  · rintro ⟨⟨⟨q,n⟩,hbit⟩,hz⟩
-    have hn := (mem_omega (natSet n)).mpr ⟨n,rfl⟩
-    obtain ⟨v,hv,hfv,_⟩ := hf.2.2.1 _ (hω hn)
-    have he := hf.correct _ (hω hn) v hv hfv
-    refine ⟨label (poset K) q,label_mem _ _,natSet n,hn,v,hfv,hbit,?_⟩
-    simpa only [realName,encode_check,he] using hz.symm
-  · rintro ⟨q,hq,n,hn,v,hfv,hbit,hz⟩
-    obtain ⟨k,rfl⟩ := (mem_omega n).mp hn
-    obtain ⟨q,rfl⟩ := label_surjective (poset K) hq
-    have he := hf.correct _ (hω hn) v (hfr.value_mem hfv) hfv
-    exact ⟨⟨(q,k),hbit⟩,by simpa only [realName,encode_check,he] using hz.symm⟩
+  apply ZFSet.ext
+  intro z
+  exact (CohenRealNameCode.mem_encode_realNameFromPredicate (poset K)
+    (fun n q => ZFSet.pair (ZFSet.pair a n) (bitSet true) ∈ q) d r f hω hf z).trans
+      (mem_realNameCode K a f z ha).symm
 
 theorem realName_internal (M K a : ZFSet.{0}) (hM : Transitive M) (hT : SourceT M) (hK : K ∈ M)
   (ha : a ∈ K) :

@@ -9,7 +9,9 @@ Adapted for Lean Pool from bjoernkjoshanssen/tt-
 auto/OAI/Computability/DegreeRigidity/Effective/UniformPair.lean.
 Also incorporates the precise step proof from the upstream
 OAI/Computability/DegreeRigidity/Effective/StablePair.lean
-under the same Apache-2.0 terms.
+under the same Apache-2.0 terms. Also incorporates the construction-independent
+certificate-conversion proofs from Effective/GuardedExtraction.lean and
+Effective/LocalExtraction.lean under the same terms.
 Module paths, interfaces, and proofs are ported to the pool's toolchain and gates.
 Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream port repairs.
 -/
@@ -279,6 +281,50 @@ theorem pair_exists (A : Oracle) : ∃ f : ℕ → ℕ,
     · rcases hm with hm | hm
       · exact Or.inl (by simpa only [f,Nat.unpair_pair] using disagreement_mono hq hm)
       · exact Or.inr ⟨d (Nat.pair x p),hp,hm,by simp only [f,Nat.unpair_pair]⟩
+
+/-- Convert the absence of a coded split into a reduction, independently of a stage construction. -/
+theorem noSplit_reduces {A Y G Z : Oracle} {t : ℕ} {p : Condition}
+    (hbase : OracleCode.eval (oracleFunction A) (meaning (machine (item t 0))) = oracleFunction Y)
+    (hG : CommonIdeal.Extends G p.left)
+    (he : OracleCode.eval (oracleFunction (join Y G)) (meaning (machine (item t 1))) =
+      oracleFunction Z)
+    (hno : ¬ ∃ z, UniformSplit.SplitCert A (Nat.pair (UniformPair.request (Nat.pair t (code p)))
+      z)) :
+    Reduces Z Y := by
+  have hrun (w : List Bool) (n : ℕ) :
+      UniformRun.run A (machine (item t 0)) (machine (item t 1)) w n =
+        CommonIdeal.run Y (meaning (machine (item t 1))) w n := by
+    simp only [UniformRun.run,hbase,CommonIdeal.run]
+  apply CodingAgreement.case1_reduces (A := columns A) (p := p) ?_ hG he
+  intro q r hpq hpr n a b ha hb
+  by_contra hab
+  rw [← hrun] at ha hb
+  apply hno
+  refine ⟨encode [n,encode q.left,encode r.left,a,b],?_⟩
+  simpa [UniformSplit.SplitCert,UniformSplit.start,UniformSplit.base,UniformSplit.program,
+    UniformPair.request,item,word,
+    show left (code p) = p.left from congrArg Condition.left (condition_code p)] using
+    And.intro hpq.1 (And.intro hpr.1 (And.intro hab (And.intro ha hb)))
+
+/-- Decode a point certificate into its splitting location without a stage-specific hypothesis. -/
+theorem point_splittingLocation {A Y : Oracle} {t w : ℕ} {p : Condition}
+    (hbase : OracleCode.eval (oracleFunction A) (meaning (machine (item t 0))) = oracleFunction Y)
+    (hw : UniformSplit.PointCert A (Nat.pair (UniformPair.request (Nat.pair t (code p))) w)) :
+    CodingLocations.SplittingLocation Y (meaning (machine (item t 1))) p.left (item w 2) := by
+  have hrun (v : List Bool) (n : ℕ) :
+      UniformRun.run A (machine (item t 0)) (machine (item t 1)) v n =
+        CommonIdeal.run Y (meaning (machine (item t 1))) v n := by
+    simp only [UniformRun.run,hbase,CommonIdeal.run]
+  have hh : p.left <+: word (item w 1) ∧ p.left.length ≤ item w 2 ∧
+      item w 2 < (word (item w 1)).length ∧ item w 4 ≠ item w 5 ∧
+      item w 4 ∈ CommonIdeal.run Y (meaning (machine (item t 1))) (word (item w 1)) (item w 0) ∧
+      item w 5 ∈ CommonIdeal.run Y (meaning (machine (item t 1)))
+        ((word (item w 1)).set (item w 2) (item w 3).bodd) (item w 0) := by
+    rw [← hrun,← hrun]
+    simpa [UniformSplit.PointCert,UniformSplit.start,UniformSplit.base,UniformSplit.program,
+      UniformPair.request,item,word,
+      show left (code p) = p.left from congrArg Condition.left (condition_code p)] using hw
+  exact ⟨word (item w 1),(item w 3).bodd,item w 0,item w 4,item w 5,hh⟩
 
 end TuringRigidity.UniformPair
 

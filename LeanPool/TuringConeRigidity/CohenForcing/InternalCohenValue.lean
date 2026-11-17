@@ -61,7 +61,8 @@ theorem val_realName (A : Oracle) :
     obtain ⟨p,hp⟩ := (pushFilter (realFilter A)).nonempty
     exact (pushFilter (realFilter A)).upper le_top hp
   apply ZFSet.ext; intro z
-  rw [realName,Name.mem_val]
+  rw [realName,CohenRealNameCode.realName,CohenRealNameCode.realNameFromPredicate,
+    Name.mem_val]
   simp only [Name.val_check _ ht]
   constructor
   · rintro ⟨⟨⟨q,n⟩,hbit⟩,hq,rfl⟩
