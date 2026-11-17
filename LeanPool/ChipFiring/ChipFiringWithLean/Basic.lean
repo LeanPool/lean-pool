@@ -127,7 +127,7 @@ def oneChip {G : CFGraph} (v_chip : G.V) : CFDiv G :=
 @[simp] lemma one_chip_apply_other {G : CFGraph} (v w : G.V) : v ≠ w → oneChip v w = 0 := by
   simp only [ne_eq, oneChip, ite_eq_right_iff, one_ne_zero, imp_false]
   intro h
-  contrapose! h
+  contrapose h
   rw [h]
 @[simp] lemma one_chip_apply_other' {G : CFGraph} (v w : G.V) : w ≠ v → oneChip v w = 0 := by
   simp only [ne_eq, oneChip, ite_eq_right_iff, one_ne_zero, imp_false, imp_self]
@@ -758,7 +758,7 @@ lemma benevolent_of_nonempty {G : CFGraph} (h_conn : graphConnected G) (S : Fins
             -- Goal: fire w -1 ≥ 0
             dsimp only [firingVector, fire]
             have : ¬ (w = v) := by
-              contrapose! h_w
+              contrapose h_w
               rw [← h_w] at h_v
               exact h_v
             simp only [this, ↓reduceIte, Int.sub_nonneg, Nat.one_le_cast, ge_iff_le]
@@ -771,9 +771,9 @@ lemma benevolent_of_nonempty {G : CFGraph} (h_conn : graphConnected G) (S : Fins
             · simp only [zero_mul, add_zero] at *; linarith
         · -- Case : x ≠ w
           have h_T := h_eff_S x
-          by_contra! x_nin_S
+          by_contra x_nin_S
           have h_xT : x ∉ T := by
-            contrapose! x_nin_S with x_in_T
+            contrapose x_nin_S with x_in_T
             dsimp only [T] at x_in_T
             simp only [mem_insert, h_x_eq_w, false_or] at x_in_T
             exact x_in_T
@@ -792,7 +792,7 @@ lemma benevolent_of_nonempty {G : CFGraph} (h_conn : graphConnected G) (S : Fins
           -- Show 0 ≤ fire x
           dsimp only [firingVector, fire]
           have : ¬ (x = v) := by
-            contrapose! x_nin_S with x_eq_v
+            contrapose x_nin_S with x_eq_v
             rw [x_eq_v]
             exact h_v
           simp only [this, ↓reduceIte, Nat.cast_nonneg]
@@ -937,7 +937,7 @@ private lemma constant_script_of_zero_prin {G : CFGraph} (h_conn : graphConnecte
         rw [h_u_in_S]
         apply lt_of_le_of_ne at h_reducer
         have : ¬ σ q = σ w := by
-          contrapose! h_w_nin_S
+          contrapose h_w_nin_S
           rw [← h_w_nin_S]
         apply h_reducer at this
         linarith
@@ -1156,14 +1156,14 @@ private lemma q_reducer_of_add_princ_reduced (G : CFGraph) (q : G.V) (D : CFDiv 
   have h_eff := h_q_reduced.1
   rcases (maxset_of_script G (-σ)) with ⟨S, ⟨w, h_w⟩, h_S⟩
   have q_S : q ∈ S := by
-    contrapose! h_q_effective with q_nin_S
+    contrapose h_q_effective with q_nin_S
     rcases h_q_reduced.exists_lt_outdeg q_nin_S ⟨w, h_w⟩ with
       ⟨v, v_in_S, h_debt⟩
     have dv_neg := lt_of_lt_of_le h_debt (h_S v v_in_S).2
     simp only [Pi.add_apply, map_neg, Pi.neg_apply, neg_neg, add_lt_iff_neg_right] at dv_neg
     unfold qEffective; push Not; use v
     suffices v ≠ q by simp only [ne_eq, this, not_false_eq_true, dv_neg, and_self]
-    contrapose! q_nin_S
+    contrapose q_nin_S
     rw [← q_nin_S]; exact v_in_S
   have ineq : (-σ) v ≤ (-σ) q := ((h_S q q_S).1 v).1
   repeat rw [Pi.neg_apply] at ineq
@@ -1213,7 +1213,7 @@ private lemma q_reduced_of_maximal {G : CFGraph} (h_conn : graphConnected G) {q 
         ← set_firing_eq_add_prin_indicator_script]
       exact q_effective_set_firing_of_legal_set G q_eff h_reduces
     · -- Show ¬ reducesTo
-      by_contra! h_reduces
+      by_contra h_reduces
       have h' : reducesTo G q D (D + prin G σ) := by use σ
       have : D = D + prin G σ := by
         exact reduces_to_antisymmetric h_conn q D (D + prin G σ) h' h_reduces
@@ -1507,7 +1507,7 @@ theorem q_effective_to_q_reduced {G : CFGraph} (h_conn : graphConnected G) {q : 
         simp only [Finset.mem_filter, mem_univ, true_and] at w_nin_S
         exact w_nin_S
       have h_active_D' : ¬ active G q D' w := by
-        contrapose! h_inactive_D with h_active_D'
+        contrapose h_inactive_D with h_active_D'
         exact (h_active_shrinks w) h_active_D'
       simp only [mem_univ, h_inactive_D, not_false_eq_true, ↓reduceIte, h_active_D', true_and,
           gt_iff_lt]
