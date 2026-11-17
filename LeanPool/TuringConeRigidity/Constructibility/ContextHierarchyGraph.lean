@@ -54,59 +54,13 @@ theorem uniform_definable_successor_context (M : ZFSet.{u}) (C : Context M) :
 
 theorem stageImage_mem_context (M : ZFSet.{u}) (C : Context M)
     {s x f : ZFSet.{u}} (hs : s ∈ M) (hx : x ∈ M) (hf : f ∈ M) : stageImage s x f ∈ M := by
-  have hr := iterUnion_mem M C.transitive C.union hf 2
-  have hd := (((defPairMem C 1 0 4).and (member_definable C 2 0)).existsMem 4).existsMem 1
-  let e := cons x (cons f (fun _ => iterUnion 2 f))
-  have he : ∀ i, e i ∈ M := by
-    intro i
-    rcases i with _|_|i
-    · exact hx
-    · exact hf
-    · exact hr
-  exact binary_union_mem M C.transitive C.pairing C.union hs
-    (hd.sep_mem C e he (union_mem M C.transitive C.union hr))
+  exact stageImage_mem_of_context M C hs hx hf
 
 theorem hierarchyGraph_of_mem_iff_context (M R d f : ZFSet.{u}) (C : Context M)
     (hs : seed R ∈ M) (hdM : d ∈ M) (hfM : f ∈ M) (hd : Transitive d)
     (hf : ∀ z, z ∈ f ↔ ∃ x ∈ d, z = ZFSet.pair x (definablePower (stage R x))) :
     HierarchyGraph M (seed R) d (iterUnion 2 f) f := by
-  have hpair (x v : ZFSet.{u}) : ZFSet.pair x v ∈ f ↔ x ∈ d ∧ v = definablePower (stage R x) := by
-    rw [hf]
-    constructor
-    · rintro ⟨y,hy,he⟩
-      obtain ⟨rfl,hv⟩ := ZFSet.pair_inj.mp he
-      exact ⟨hy,hv⟩
-    · rintro ⟨hx,rfl⟩; exact ⟨x,hx,rfl⟩
-  refine ⟨hd,⟨?_,?_⟩,?_⟩
-  · intro z hz
-    obtain ⟨x,hx,rfl⟩ := (hf z).mp hz
-    exact ⟨x,hx,_,second_mem_doubleUnion hz,rfl⟩
-  · intro x hx
-    have hp := (hpair x _).mpr ⟨hx,rfl⟩
-    exact ⟨_,second_mem_doubleUnion hp,hp,fun v _ hv => (hpair x v).mp hv |>.2⟩
-  · intro x hx v _ hv
-    have he := (hpair x v).mp hv |>.2
-    subst v
-    have hA : stageImage (seed R) x f = stage R x := by
-      apply ZFSet.ext; intro z
-      rw [mem_stageImage,mem_stage]
-      apply or_congr_right
-      constructor
-      · rintro ⟨y,hy,w,hw,hz⟩
-        rw [(hpair y w).mp hw |>.2] at hz
-        exact ⟨y,hy,hz⟩
-      · rintro ⟨y,hy,hz⟩
-        exact ⟨y,hy,_,(hpair y _).mpr ⟨hd x hx y hy,rfl⟩,hz⟩
-    refine ⟨stage R x,hA ▸ stageImage_mem_context M C hs (C.transitive d hdM x hx) hfM,?_,rfl⟩
-    refine ⟨seed_subset_stage R x,?_,?_⟩
-    · intro z hz
-      rcases (mem_stage R x z).mp hz with hz|⟨y,hy,hz⟩
-      · exact Or.inl hz
-      · have hp := (hpair y _).mpr ⟨hd x hx y hy,rfl⟩
-        exact Or.inr ⟨y,hy,_,second_mem_doubleUnion hp,hp,hz⟩
-    · intro y hy w _ hw
-      rw [(hpair y w).mp hw |>.2]
-      exact definablePower_subset_stage R hy
+  exact hierarchyGraph_of_mem_iff_of_context M R d f C hs hdM hfM hd hf
 
 end TuringRigidity.RelativeConstructible
 

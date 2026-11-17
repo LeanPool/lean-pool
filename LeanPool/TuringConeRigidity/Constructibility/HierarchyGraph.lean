@@ -9,6 +9,7 @@ Adapted for Lean Pool from bjoernkjoshanssen/tt-
 auto/OAI/Computability/DegreeRigidity/Constructibility/HierarchyGraph.lean.
 Module paths, interfaces, and proofs are ported to the pool's toolchain and gates.
 Inherited from OpenAI's Apache-2.0 DegreeRigidity development, with upstream port repairs.
+The shared context proofs also adapt upstream Constructibility/ContextHierarchyGraph.lean.
 -/
 
 module
@@ -99,11 +100,10 @@ theorem mem_stageImage (s x f z : ZFSet.{u}) :
     have hw := second_mem_doubleUnion hf
     exact ⟨ZFSet.mem_sUnion.mpr ⟨w,hw,hz⟩,y,hy,w,hw,hf,hz⟩
 
-theorem stageImage_mem (M : ZFSet.{u}) (hM : Transitive M) (hT : SourceT M)
+/-- Stage images stay in a bounded-definability context. -/
+theorem stageImage_mem_of_context (M : ZFSet.{u}) (C : Context M)
     {s x f : ZFSet.{u}} (hs : s ∈ M) (hx : x ∈ M) (hf : f ∈ M) : stageImage s x f ∈ M := by
-  let C : Context M :=
-    ⟨hM,hT.pairing,hT.union,hT.powerSet,hT.separation.finitePrefix.bounded,hT.infinity⟩
-  have hr := iterUnion_mem M hM hT.union hf 2
+  have hr := iterUnion_mem M C.transitive C.union hf 2
   have hd := (((defPairMem C 1 0 4).and (member_definable C 2 0)).existsMem 4).existsMem 1
   let e := cons x (cons f (fun _ => iterUnion 2 f))
   have he : ∀ i, e i ∈ M := by
@@ -112,10 +112,17 @@ theorem stageImage_mem (M : ZFSet.{u}) (hM : Transitive M) (hT : SourceT M)
     · exact hx
     · exact hf
     · exact hr
-  exact binary_union_mem M hM hT.pairing hT.union hs
-    (hd.sep_mem C e he (union_mem M hM hT.union hr))
+  exact binary_union_mem M C.transitive C.pairing C.union hs
+    (hd.sep_mem C e he (union_mem M C.transitive C.union hr))
 
-theorem hierarchyGraph_of_mem_iff (M R d f : ZFSet.{u}) (hM : Transitive M) (hT : SourceT M)
+theorem stageImage_mem (M : ZFSet.{u}) (hM : Transitive M) (hT : SourceT M)
+    {s x f : ZFSet.{u}} (hs : s ∈ M) (hx : x ∈ M) (hf : f ∈ M) : stageImage s x f ∈ M := by
+  let C : Context M :=
+    ⟨hM,hT.pairing,hT.union,hT.powerSet,hT.separation.finitePrefix.bounded,hT.infinity⟩
+  exact stageImage_mem_of_context M C hs hx hf
+
+/-- A coded hierarchy graph is valid under the bounded-definability context axioms. -/
+theorem hierarchyGraph_of_mem_iff_of_context (M R d f : ZFSet.{u}) (C : Context M)
     (hs : seed R ∈ M) (hdM : d ∈ M) (hfM : f ∈ M) (hd : Transitive d)
     (hf : ∀ z, z ∈ f ↔ ∃ x ∈ d, z = ZFSet.pair x (definablePower (stage R x))) :
     HierarchyGraph M (seed R) d (iterUnion 2 f) f := by
@@ -146,7 +153,7 @@ theorem hierarchyGraph_of_mem_iff (M R d f : ZFSet.{u}) (hM : Transitive M) (hT 
         exact ⟨y,hy,hz⟩
       · rintro ⟨y,hy,hz⟩
         exact ⟨y,hy,_,(hpair y _).mpr ⟨hd x hx y hy,rfl⟩,hz⟩
-    refine ⟨stage R x,hA ▸ stageImage_mem M hM hT hs (hM d hdM x hx) hfM,?_,rfl⟩
+    refine ⟨stage R x,hA ▸ stageImage_mem_of_context M C hs (C.transitive d hdM x hx) hfM,?_,rfl⟩
     refine ⟨seed_subset_stage R x,?_,?_⟩
     · intro z hz
       rcases (mem_stage R x z).mp hz with hz|⟨y,hy,hz⟩
@@ -156,6 +163,14 @@ theorem hierarchyGraph_of_mem_iff (M R d f : ZFSet.{u}) (hM : Transitive M) (hT 
     · intro y hy w _ hw
       rw [(hpair y w).mp hw |>.2]
       exact definablePower_subset_stage R hy
+
+theorem hierarchyGraph_of_mem_iff (M R d f : ZFSet.{u}) (hM : Transitive M) (hT : SourceT M)
+    (hs : seed R ∈ M) (hdM : d ∈ M) (hfM : f ∈ M) (hd : Transitive d)
+    (hf : ∀ z, z ∈ f ↔ ∃ x ∈ d, z = ZFSet.pair x (definablePower (stage R x))) :
+    HierarchyGraph M (seed R) d (iterUnion 2 f) f := by
+  let C : Context M :=
+    ⟨hM,hT.pairing,hT.union,hT.powerSet,hT.separation.finitePrefix.bounded,hT.infinity⟩
+  exact hierarchyGraph_of_mem_iff_of_context M R d f C hs hdM hfM hd hf
 
 end TuringRigidity.RelativeConstructible
 
