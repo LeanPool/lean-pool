@@ -203,7 +203,7 @@ theorem BigBoundRegularityMeans.chiPushforwardFlux_regular {β : ℝ} (I : Ingre
     have hu : ContDiff ℝ (⊤ : ℕ∞)
         (fun x => uShear β I.Λ m k
           (I.xFlowInv hΦ m (lIdx β I.Λ m k) t x) i) := by
-      exact (contDiff_apply ℝ ℝ i).comp
+      exact (contDiff_apply ℝ (fun _ => ℝ) i).comp
         ((contDiff_uShear' β I.Λ m k).comp hY)
     simpa [Ingredients.chiTilde, Ingredients.chiMK] using
       (contDiff_const : ContDiff ℝ (⊤ : ℕ∞)

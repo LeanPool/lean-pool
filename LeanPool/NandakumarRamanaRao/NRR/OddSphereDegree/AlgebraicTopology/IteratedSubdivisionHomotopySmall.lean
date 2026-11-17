@@ -6,9 +6,12 @@ Authors: Arseniy Akopyan
 module
 
 
-public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.IteratedSubdivisionSmallChains
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.BarycentricSubdivisionIter
-public import Mathlib.Tactic
+public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.SmallChains
+public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.IteratedSubdivisionSmallChains
+import Mathlib.Data.EReal.Inv
+import Mathlib.Tactic.Basify
+import Mathlib.Tactic.Measurability.Init
 
 /-!
 # Smallness/carrier control of the subdivision homotopy terms

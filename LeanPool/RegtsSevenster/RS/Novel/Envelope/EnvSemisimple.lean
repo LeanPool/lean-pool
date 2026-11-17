@@ -42,25 +42,25 @@ idempotent endomorphism. -/
 noncomputable def karoubiCorner
     [Category.{v} D] (X : Karoubi D) {e : End X} (he : IsIdempotentElem e) :
     Karoubi D :=
-  ⟨X.X, e.f, congrArg Karoubi.Hom.f he⟩
+  ⟨X.X, e.asHom.f, congrArg (fun z : End X => z.asHom.f) he⟩
 
 /-- The corner inclusion. -/
 noncomputable def cornerIncl
     [Category.{v} D] (X : Karoubi D) {e : End X} (he : IsIdempotentElem e) :
     karoubiCorner X he ⟶ X :=
-  ⟨e.f, by
-    change e.f ≫ e.f ≫ X.p = e.f
+  ⟨e.asHom.f, by
+    change e.asHom.f ≫ e.asHom.f ≫ X.p = e.asHom.f
     rw [Karoubi.comp_p]
-    exact congrArg Karoubi.Hom.f he⟩
+    exact congrArg (fun z : End X => z.asHom.f) he⟩
 
 /-- The corner projection. -/
 noncomputable def cornerProj
     [Category.{v} D] (X : Karoubi D) {e : End X} (he : IsIdempotentElem e) :
     X ⟶ karoubiCorner X he :=
-  ⟨e.f, by
-    change X.p ≫ e.f ≫ e.f = e.f
-    rw [show (e.f ≫ e.f : X.X ⟶ X.X) = e.f from
-      congrArg Karoubi.Hom.f he, Karoubi.p_comp]⟩
+  ⟨e.asHom.f, by
+    change X.p ≫ e.asHom.f ≫ e.asHom.f = e.asHom.f
+    rw [show (e.asHom.f ≫ e.asHom.f : X.X ⟶ X.X) = e.asHom.f from
+      congrArg (fun z : End X => z.asHom.f) he, Karoubi.p_comp]⟩
 
 /-- The corner is a retract: including then projecting is the
 identity on it. -/
@@ -68,31 +68,31 @@ theorem cornerIncl_proj
     [Category.{v} D] (X : Karoubi D) {e : End X} (he : IsIdempotentElem e) :
     cornerIncl X he ≫ cornerProj X he = 𝟙 (karoubiCorner X he) := by
   apply Karoubi.hom_ext
-  change e.f ≫ e.f = e.f
-  exact congrArg Karoubi.Hom.f he
+  change e.asHom.f ≫ e.asHom.f = e.asHom.f
+  exact congrArg (fun z : End X => z.asHom.f) he
 
 /-- Projecting then including is the idempotent. -/
 theorem cornerProj_incl
     [Category.{v} D] (X : Karoubi D) {e : End X} (he : IsIdempotentElem e) :
-    cornerProj X he ≫ cornerIncl X he = e := by
+    cornerProj X he ≫ cornerIncl X he = e.asHom := by
   apply Karoubi.hom_ext
-  exact congrArg Karoubi.Hom.f he
+  exact congrArg (fun z : End X => z.asHom.f) he
 
 /-- The inclusion is absorbed by the idempotent. -/
 theorem cornerIncl_absorb
     [Category.{v} D] (X : Karoubi D) {e : End X} (he : IsIdempotentElem e) :
-    cornerIncl X he ≫ e = cornerIncl X he := by
+    cornerIncl X he ≫ e.asHom = cornerIncl X he := by
   apply Karoubi.hom_ext
-  change e.f ≫ e.f = e.f
-  exact congrArg Karoubi.Hom.f he
+  change e.asHom.f ≫ e.asHom.f = e.asHom.f
+  exact congrArg (fun z : End X => z.asHom.f) he
 
 /-- And so is the projection. -/
 theorem cornerProj_absorb
     [Category.{v} D] (X : Karoubi D) {e : End X} (he : IsIdempotentElem e) :
-    e ≫ cornerProj X he = cornerProj X he := by
+    e.asHom ≫ cornerProj X he = cornerProj X he := by
   apply Karoubi.hom_ext
-  change e.f ≫ e.f = e.f
-  exact congrArg Karoubi.Hom.f he
+  change e.asHom.f ≫ e.asHom.f = e.asHom.f
+  exact congrArg (fun z : End X => z.asHom.f) he
 
 /-- Cross-composites of distinct orthogonal corners vanish. -/
 theorem cornerIncl_proj_orthogonal
@@ -102,8 +102,8 @@ theorem cornerIncl_proj_orthogonal
     (horth : e' * e = 0) :
     cornerIncl X he ≫ cornerProj X he' = 0 := by
   apply Karoubi.hom_ext
-  change e.f ≫ e'.f = (0 : X.X ⟶ X.X)
-  exact congrArg Karoubi.Hom.f horth
+  change e.asHom.f ≫ e'.asHom.f = (0 : X.X ⟶ X.X)
+  exact congrArg (fun z : End X => z.asHom.f) horth
 
 end GenericCut
 
@@ -113,7 +113,7 @@ end GenericCut
 nonzero identity is simple: monomorphisms split, and a split
 idempotent scalar is `0` or `1`. -/
 theorem env_simple_of_scalar_end (E : Env f) (hne : 𝟙 E ≠ 0)
-    (hsc : ∀ x : End E, ∃ c : ℂ, x = c • 𝟙 E) :
+    (hsc : ∀ x : End E, ∃ c : ℂ, x = c • 1) :
     Simple E := by
   constructor
   intro Y g hMono
@@ -124,13 +124,15 @@ theorem env_simple_of_scalar_end (E : Env f) (hne : 𝟙 E ≠ 0)
     exact hne hr2.symm
   · intro hg
     obtain ⟨r, hr⟩ := env_mono_split f g
-    obtain ⟨c, hc⟩ := hsc (r ≫ g)
+    obtain ⟨c, hc⟩ := hsc (End.of (r ≫ g))
+    have hc := congrArg End.asHom hc
+    change r ≫ g = c • 𝟙 E at hc
     have hidem : (r ≫ g) ≫ (r ≫ g) = r ≫ g := by
       rw [assoc, ← assoc g r g, hr, id_comp]
     rw [hc] at hidem
     have hcc : (c * c - c) • 𝟙 E = 0 := by
       rw [sub_smul, mul_smul]
-      rw [show (c • c • 𝟙 E : End E) =
+      rw [show (c • c • 𝟙 E : E ⟶ E) =
         (c • 𝟙 E) ≫ (c • 𝟙 E) from by
           rw [CategoryTheory.Linear.smul_comp,
             CategoryTheory.Linear.comp_smul, comp_id],
@@ -158,29 +160,35 @@ endomorphisms. -/
 theorem env_corner_scalar (E : Env f) {e : End E}
     (he : IsAtomicIdempotent e)
     (x : End (karoubiCorner E he.idem)) :
-    ∃ c : ℂ, x = c • 𝟙 (karoubiCorner E he.idem) := by
+    ∃ c : ℂ, x = c • 1 := by
   set y : End E :=
-    cornerProj E he.idem ≫ x ≫ cornerIncl E he.idem with hy
+    End.of (cornerProj E he.idem ≫ x.asHom ≫ cornerIncl E he.idem) with hy
   obtain ⟨c, hc⟩ := he.corner_scalar y
-  have habs : e ≫ y ≫ e = y := by
-    rw [hy, ← assoc, ← assoc, cornerProj_absorb, assoc, assoc,
-      cornerIncl_absorb]
+  have habs : e.asHom ≫ y.asHom ≫ e.asHom = y.asHom := by
+    rw [hy]
+    change e.asHom ≫ (cornerProj E he.idem ≫ x.asHom ≫
+      cornerIncl E he.idem) ≫ e.asHom = _
+    rw [← assoc, ← assoc, cornerProj_absorb, assoc, assoc, cornerIncl_absorb]
   have hyc : y = c • e := by
+    apply End.ext
     rw [← habs]
-    calc e ≫ y ≫ e = e * y * e := rfl
-      _ = c • e := hc
+    exact congrArg End.asHom hc
   refine ⟨c, ?_⟩
-  have hx : x = cornerIncl E he.idem ≫ y ≫ cornerProj E he.idem := by
-    rw [hy, ← assoc, ← assoc, cornerIncl_proj, id_comp, assoc,
-      cornerIncl_proj, comp_id]
-  rw [hx, hyc]
-  have h1 : (c • e) ≫ cornerProj E he.idem =
-      c • (e ≫ cornerProj E he.idem) :=
-    CategoryTheory.Linear.smul_comp (R := ℂ) _ _ _ c e _
-  have h2 : cornerIncl E he.idem ≫ (c • (e ≫ cornerProj E he.idem)) =
-      c • (cornerIncl E he.idem ≫ e ≫ cornerProj E he.idem) :=
+  apply End.ext
+  have hx : x.asHom = cornerIncl E he.idem ≫ y.asHom ≫ cornerProj E he.idem := by
+    rw [hy]
+    change x.asHom = cornerIncl E he.idem ≫
+      (cornerProj E he.idem ≫ x.asHom ≫ cornerIncl E he.idem) ≫ cornerProj E he.idem
+    rw [← assoc, ← assoc, cornerIncl_proj, id_comp, assoc, cornerIncl_proj, comp_id]
+  rw [hx, hyc, End.smul_asHom]
+  have h1 : (c • e.asHom) ≫ cornerProj E he.idem =
+      c • (e.asHom ≫ cornerProj E he.idem) :=
+    CategoryTheory.Linear.smul_comp (R := ℂ) _ _ _ c e.asHom _
+  have h2 : cornerIncl E he.idem ≫ (c • (e.asHom ≫ cornerProj E he.idem)) =
+      c • (cornerIncl E he.idem ≫ e.asHom ≫ cornerProj E he.idem) :=
     CategoryTheory.Linear.comp_smul (R := ℂ) _ _ _ _ c _
   rw [h1, h2, cornerProj_absorb, cornerIncl_proj]
+  rfl
 
 /-- The corner cut by an atomic idempotent has nonzero
 identity. -/
@@ -189,6 +197,7 @@ theorem env_corner_id_ne_zero (E : Env f) {e : End E}
     𝟙 (karoubiCorner E he.idem) ≠ 0 := by
   intro h
   apply he.ne_zero
+  apply End.ext
   apply Karoubi.hom_ext
   have := congrArg Karoubi.Hom.f h
   exact this
@@ -201,7 +210,9 @@ theorem env_deligneSemisimple :
     IsSemisimple (Env f) := by
   classical
   intro E
-  have : FiniteDimensional ℂ (End E) := envHomFinite f E E
+  have : FiniteDimensional ℂ (E ⟶ E) := envHomFinite f E E
+  have : FiniteDimensional ℂ (End E) :=
+    Module.Finite.equiv (End.linearEquiv (R := ℂ)).symm
   have := envEnd_isSemisimpleRing f E
   obtain ⟨ι, hfin, e, hco, hatom⟩ :=
     exists_completeOrthogonal_atomic (A := End E)
@@ -222,9 +233,10 @@ theorem env_deligneSemisimple :
         hom_inv_id := by
           rw [biproduct.lift_desc]
           rw [show ∑ j, cornerProj E (hatom j).idem ≫
-              cornerIncl E (hatom j).idem = ∑ j, e j from
+              cornerIncl E (hatom j).idem = ∑ j, (e j).asHom from
             Finset.sum_congr rfl fun j _ => cornerProj_incl E _]
-          exact hco.complete
+          simpa only [End.sum_asHom, End.one_asHom] using
+            congrArg End.asHom hco.complete
         inv_hom_id := by
           apply biproduct.hom_ext
           intro j

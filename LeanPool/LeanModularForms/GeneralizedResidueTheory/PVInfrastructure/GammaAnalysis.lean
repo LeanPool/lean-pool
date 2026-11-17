@@ -43,11 +43,11 @@ private lemma hasDerivAt_remainder_bound
   obtain ⟨s, hs_mem, hs⟩ := (hγ hε).exists_mem
   obtain ⟨δ, hδ_pos, hδ_ball⟩ := Metric.mem_nhds_iff.mp hs_mem
   refine ⟨δ, hδ_pos, fun t _ ht_lt => ?_⟩
-  have h_bound := hs t (hδ_ball (by simp [Metric.mem_ball, Real.dist_eq, ht_lt]))
+  have h_bound := hs t (hδ_ball (by simp only [Metric.mem_ball, Real.dist_eq, ht_lt]))
   simpa only [Real.norm_eq_abs] using h_bound
 
 private lemma norm_real_smul (x : ℝ) (L : ℂ) : ‖x • L‖ = |x| * ‖L‖ := by
-  simp_all
+  simp_all only [real_smul, Complex.norm_mul, norm_real, Real.norm_eq_abs]
 
 /-- The increment norm is within `M` of the linear part `|t - t₀| * ‖L‖`. -/
 private lemma abs_norm_gamma_sub_smul_le {γ : ℝ → ℂ} {t₀ : ℝ} {L : ℂ} {M : ℝ} {t : ℝ}
@@ -80,7 +80,8 @@ lemma integrand_times_t_tendsto_one
       have h_comp :
           (fun t => (t - t₀)⁻¹ • (γ t - γ t₀)) =
           (fun s => s⁻¹ • (γ (t₀ + s) - γ t₀)) ∘
-            (fun t => t - t₀) := by ext t; simp [add_sub_cancel]
+            (fun t => t - t₀) := by ext t; simp only [real_smul, ofReal_inv, ofReal_sub,
+              Function.comp_apply, add_sub_cancel]
       rw [h_comp]
       apply Tendsto.comp hγ_hasderiv
       apply tendsto_nhdsWithin_of_tendsto_nhds_of_eventually_within
@@ -91,10 +92,11 @@ lemma integrand_times_t_tendsto_one
         simp only [Set.mem_compl_iff, Set.mem_singleton_iff, sub_ne_zero]; exact ht
     have h_slope' : Tendsto (fun t => (γ t - γ t₀) * (↑(t - t₀) : ℂ)⁻¹) (𝓝[≠] t₀) (𝓝 L) := by
       simp only [show ∀ t : ℝ, (γ t - γ t₀) * (↑(t - t₀) : ℂ)⁻¹ =
-        (t - t₀)⁻¹ • (γ t - γ t₀) from fun t => by rw [Algebra.smul_def]; simp [mul_comm]]
+        (t - t₀)⁻¹ • (γ t - γ t₀) from fun t => by rw [Algebra.smul_def]; simp only [ofReal_sub,
+          map_inv₀, coe_algebraMap, mul_comm] ]
       exact h_slope
     have h_recip := h_slope'.inv₀ hL
-    simp_all
+    simp_all only [ne_eq, real_smul, ofReal_inv, ofReal_sub, mul_inv_rev, inv_inv]
   have h_prod :
       Tendsto
         (fun t => (↑(t - t₀) : ℂ) *
@@ -102,7 +104,7 @@ lemma integrand_times_t_tendsto_one
         (𝓝[≠] t₀) (𝓝 (L⁻¹ * L)) :=
     Tendsto.mul h_ratio_tendsto
       (h_deriv_tendsto.mono_left nhdsWithin_le_nhds)
-  simp_all
+  simp_all only [ne_eq, ofReal_sub, not_false_eq_true, inv_mul_cancel₀]
 
 /-- Asymptotic control:
 ‖(γ-γ₀)⁻¹ * γ' - (t-t₀)⁻¹‖ ≤ ε / |t-t₀|. -/
@@ -161,7 +163,7 @@ lemma gamma_lower_bound_of_hasDerivAt
       (‖L‖ / 2) (half_pos hLnorm_pos)
   refine ⟨δ, hδ_pos, fun t ht_pos ht_lt => ?_⟩
   have h := abs_le.mp (abs_norm_gamma_sub_smul_le (hδ_bound t ht_pos ht_lt))
-  nlinarith [h.1]
+  nlinarith only [h, h.1]
 
 /-- Upper bound on ‖γ t - γ t₀‖ from non-zero derivative.
 Uses `hasDerivAt_remainder_bound` + triangle inequality. -/
@@ -176,7 +178,7 @@ lemma gamma_upper_bound_of_hasDerivAt
     hasDerivAt_remainder_bound hγ_hasderiv ‖L‖ hLnorm_pos
   refine ⟨δ, hδ_pos, fun t ht_pos ht_lt => ?_⟩
   have h := abs_le.mp (abs_norm_gamma_sub_smul_le (hδ_bound t ht_pos ht_lt))
-  nlinarith [h.2]
+  nlinarith only [h, h.2]
 
 /-- If γ is continuous on [a,b] and injective at γ(t₀),
 then γ stays bounded away from γ(t₀) outside any
@@ -238,7 +240,7 @@ lemma t_lower_from_gamma_lower
   have h1 : εC < 2 * ‖L‖ * |t - t₀| := lt_of_lt_of_le h_gamma_lower (h_upper t ht_pos ht_lt)
   calc εC / (2 * ‖L‖)
       < (2 * ‖L‖ * |t - t₀|) / (2 * ‖L‖) :=
-        div_lt_div_of_pos_right h1 (by linarith [norm_pos_iff.mpr hL])
+        div_lt_div_of_pos_right h1 (by linarith only [hL, norm_pos_iff.mpr hL])
     _ = |t - t₀| := by field_simp
 
 /-- If γ is C² at t₀, then deriv γ is continuous at t₀. -/
@@ -253,7 +255,7 @@ lemma contAt_deriv_of_contDiffAt_two
   have h_cont_at_fderiv : ContinuousAt (fderiv ℝ γ) t₀ :=
     h_fderiv_cont.continuousAt (Metric.isOpen_ball.mem_nhds (Metric.mem_ball_self hε_pos))
   have h_deriv_eq : deriv γ = (fun t => fderiv ℝ γ t 1) := funext fun t => by
-    simp_all
+    simp_all only [gt_iff_lt, fderiv_eq_smul_deriv, one_smul]
   rw [h_deriv_eq]
   exact h_cont_at_fderiv.clm_apply continuousAt_const
 

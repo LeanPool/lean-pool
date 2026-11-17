@@ -6,7 +6,8 @@ Authors: OpenAI, Dean Cureton
 
 module
 
-public import LeanPool.GapCVP.Part07B
+public import LeanPool.GapCVP.Part06D -- shake: keep
+import LeanPool.GapCVP.Part05B
 
 /-! # GapCVP proof, part 07, continuation 03 -/
 
@@ -317,7 +318,7 @@ private theorem flatAnnotatedCountedSourceFieldTail_length_le
           input.length
       have hprevious :
           (((firstFieldSuffix^[offset]) input)).length ≤ input.length := by
-        simpa only [flatAnnotatedSourceFieldTail] using ih
+        exact ih
       omega
 
 private theorem countedFieldAt_length_le
@@ -1907,7 +1908,7 @@ private theorem flatAnnotatedSquareResolutionStep_iterate_pairs
       rw [List.length_cons, Function.iterate_succ_apply]
       simp only [List.flatMap_cons, List.append_assoc]
       rw [flatAnnotatedSquareResolutionStep_state]
-      simpa only [List.foldl_cons] using ih (resolveFlatSourceOrder major pair.1 pair.2)
+      exact ih (resolveFlatSourceOrder major pair.1 pair.2)
 
 private theorem flatAnnotatedSquareResolutionStep_outer
     (major archive suffix : List Bool) :

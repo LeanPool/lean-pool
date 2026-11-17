@@ -7,6 +7,7 @@ module
 
 public import LeanPool.AnomalousDiffusion.AVenhance.Infra.Flow.SpatialC3
 public import LeanPool.AnomalousDiffusion.AVenhance.Infra.Flow.FlowOn
+public import Mathlib.Analysis.Calculus.Deriv.Prod
 
 /-! The first spatial jet of a smooth flow is itself a characterized flow on
 the product of position and two direction columns. -/

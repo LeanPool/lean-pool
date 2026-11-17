@@ -53,7 +53,7 @@ theorem blowupLimitAssembly_trace_indicator_bound
     (memLp_congr_ae (hW t)).2
       ((Lp.memLp (v t)).continuousLinearMap_comp weakContL3OfLp)
   have hf : MemLp (B.indicator (fun y => W (y,t))) 3 volume :=
-    (memLp_indicator_iff_restrict hB).2 hlocalMem
+    (memLp_indicator_iff_restrict hB.nullMeasurableSet).2 hlocalMem
   have hnormEq : (fun x => vec3EuclideanNorm (B.indicator (fun y => W (y,t)) x)) =
       B.indicator (fun x => vec3EuclideanNorm (W (x, t))) := by
     funext x
@@ -63,7 +63,7 @@ theorem blowupLimitAssembly_trace_indicator_bound
   refine ⟨hf, ?_⟩
   change eLpNorm (fun x => vec3EuclideanNorm
     (B.indicator (fun y => W (y,t)) x)) 3 volume ≤ ENNReal.ofReal M
-  rw [hnormEq, eLpNorm_indicator_eq_eLpNorm_restrict hB]
+  rw [hnormEq, eLpNorm_indicator_eq_eLpNorm_restrict hB.nullMeasurableSet]
   have hpointEq : (fun x => vec3EuclideanNorm (W (x, t))) =ᵐ[volume.restrict B]
       (fun x => ‖v t x‖) := by
     filter_upwards [hW t] with x hx

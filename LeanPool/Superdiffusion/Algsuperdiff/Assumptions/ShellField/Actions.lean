@@ -35,6 +35,9 @@ namespace Algsuperdiff.Frozen.Assumptions.ShellField
 open HCPolySupport
 open scoped Matrix.Norms.Elementwise
 
+local instance (d : ℕ) : IsNormableSpace ℝ (Mat d) :=
+  isNormableSpace_of_finiteDimensional
+
 /-! ## Instance caches for the derivative carriers
 
 The derivative carrier `Vec d →L[ℝ] Mat d` and the Hessian carrier
@@ -151,6 +154,9 @@ noncomputable instance instSMulHessianEndomorphisms (d : ℕ) :
 
 noncomputable instance instNormedSpaceEndoCarrier (d : ℕ) :
     NormedSpace ℝ (Vec d →L[ℝ] Vec d) := inferInstance
+
+local instance (d : ℕ) : IsNormableSpace ℝ (Vec d →L[ℝ] Mat d) :=
+  ⟨⟨normSeminorm ℝ _, norm_withSeminorms ℝ _⟩⟩
 
 noncomputable section
 

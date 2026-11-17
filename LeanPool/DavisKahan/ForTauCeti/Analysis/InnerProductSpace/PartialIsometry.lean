@@ -17,11 +17,11 @@ Sub-dev II of the operator polar decomposition project — COMPLETE
 module
 
 public import Mathlib.Analysis.InnerProductSpace.Adjoint
-public import Mathlib.Analysis.InnerProductSpace.Projection.Basic
-public import Mathlib.Analysis.InnerProductSpace.Projection.Submodule
-public import Mathlib.Analysis.InnerProductSpace.LinearMap
-public import Mathlib.Analysis.InnerProductSpace.Subspace
-public import Mathlib.Algebra.Star.StarProjection
+import Mathlib.Analysis.InnerProductSpace.Projection.Basic
+import Mathlib.Analysis.InnerProductSpace.Projection.Submodule
+import Mathlib.Analysis.InnerProductSpace.LinearMap
+import Mathlib.Analysis.InnerProductSpace.Subspace
+import Mathlib.Algebra.Star.StarProjection
 
 
 /-! # Partial isometries (Sub-dev II)

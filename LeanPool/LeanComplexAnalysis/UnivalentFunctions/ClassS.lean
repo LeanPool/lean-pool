@@ -5,6 +5,7 @@ Authors: seb488, Aristotle
 -/
 module
 
+public import Mathlib.Analysis.Analytic.Basic
 public import Mathlib.Analysis.Calculus.DSlope
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 import Mathlib.Analysis.Complex.RemovableSingularity
@@ -169,7 +170,7 @@ lemma hasDerivAt_integral_of_analytic_mul (f : ℂ → ℂ) (hf : AnalyticOn ℂ
               HasDerivAt.add (hasDerivAt_const _ _) <|
                 HasDerivAt.mul (hasDerivAt_id _ |> HasDerivAt.ofReal_comp) <|
                   hasDerivAt_const _ _) using 1 <;>
-            first | rfl | (norm_num; try ring)
+            first | rfl | (norm_num; try ring_nf)
           norm_num at *
           refine lt_of_le_of_lt (norm_add_le _ _) ?_
           norm_num [abs_of_nonneg hx.1.le, abs_of_nonneg ht.1]
@@ -263,7 +264,7 @@ lemma hasDerivAt_primitiveOnBall (f : ℂ → ℂ)
         IsOpen.mem_nhds isOpen_ball <| ?_) |> DifferentiableAt.hasDerivAt) <|
           HasDerivAt.mul (hasDerivAt_id t |> HasDerivAt.ofReal_comp) <|
             hasDerivAt_const _ _) using 1 <;>
-      first | rfl | (norm_num; try ring)
+      first | rfl | (norm_num; try ring_nf)
     exact lt_of_le_of_lt (mul_le_of_le_one_left (norm_nonneg _) (
       abs_le.mpr ⟨by linarith [ht.1], by linarith [ht.2]⟩)) (by simpa using hz)
   have h_ftc_integral : ∫ t in (0 : ℝ)..1, (f (t * z) + t * z * deriv f (t * z)) =
@@ -369,8 +370,7 @@ lemma exists_log_of_analytic_nonzero_on_ball (f : ℂ → ℂ)
         simp only [real_smul]
         convert this.comp t (HasDerivAt.const_mul z (hasDerivAt_id t |>
           HasDerivAt.ofReal_comp)) using 1 <;>
-          first | rfl
-                | (ext s; simp [mul_comm])
+          first | (ext s; simp [mul_comm])
                 | (norm_num [mul_assoc, mul_comm, mul_left_comm, Function.comp_def])
       · exact (ContinuousOn.intervalIntegrable (by rw [continuousOn_congr fun t ht =>
           by rw [hH_deriv_zero _ (h_path t <| by simpa using ht)]]; exact continuousOn_const)) ..

@@ -75,15 +75,31 @@ def booleanContraction (ell : LinearForm) (q : TwoForm) : TwoForm :=
 /-- Quadratic terms created by multiplying identical quadratic monomials. -/
 def twoHadamard (q c : TwoForm) : TwoForm := fun i j => q i j * c i j
 
+/-- Contraction on two disjoint supports uses only idempotence in `F₂`. -/
+theorem booleanContraction_vectorWedge_of_disjoint (a b : F₂) (u v : LinearForm)
+    (h : ∀ i, u i * v i = 0) :
+    booleanContraction (a • u + b • v) (vectorWedge u v) =
+      (a + b) • vectorWedge u v := by
+  funext i j
+  simp only [booleanContraction, vectorWedge, Pi.add_apply, Pi.smul_apply, smul_eq_mul]
+  calc
+    _ = a * ((u i) ^ 2 * v j + (u j) ^ 2 * v i) +
+        b * (u i * (v j) ^ 2 + u j * (v i) ^ 2) +
+        (a * u j + b * v j) * (u i * v i) +
+        (a * u i + b * v i) * (u j * v j) := by ring
+    _ = _ := by
+      simp only [N3Certificate.pow_two_f2, h, mul_zero, add_zero]
+      ring
+
 /-- Boolean contraction along a rational-place support only rescales that
 place.  The two support vectors use disjoint `A` and `B` coordinates. -/
 theorem booleanContraction_rationalPlace (a b : F₂) (θ : Fin 3) :
     booleanContraction (a • placeA θ + b • placeB θ)
         (rationalPlaceTwo θ) =
       (a + b) • rationalPlaceTwo θ := by
-  funext i j
-  fin_cases θ <;> fin_cases i <;> fin_cases j <;>
-    simp [booleanContraction, rationalPlaceTwo, vectorWedge, placeA, placeB] <;> ring
+  apply booleanContraction_vectorWedge_of_disjoint
+  intro i
+  fin_cases θ <;> fin_cases i <;> rfl
 
 /-- Complete quadratic shadow of a product
 `(a + ell + Q) * (b + m + C)`. -/

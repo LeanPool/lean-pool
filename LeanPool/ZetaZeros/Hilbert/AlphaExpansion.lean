@@ -1800,7 +1800,7 @@ theorem sum_sq_pairing_le_integral_norm_sq {lam : ℝ} {N : ℕ}
 
 /-- The tensor product of two `L²` functions is `L²` for the product measure. -/
 theorem memLp_tensor_two {alpha beta : Type*} [MeasurableSpace alpha] [MeasurableSpace beta]
-    {mu : Measure alpha} {nu : Measure beta} [SFinite nu]
+    {mu : Measure alpha} {nu : Measure beta}
     {f : alpha → ℂ} {g : beta → ℂ} (hf : MemLp f 2 mu) (hg : MemLp g 2 nu) :
     MemLp (fun p : alpha × beta => f p.1 * g p.2) 2 (mu.prod nu) := by
   have h1 : Integrable (fun x => ‖f x‖ ^ 2) mu :=

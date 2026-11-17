@@ -4,16 +4,16 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Boris Alexeev
 -/
 module
+public import LeanPool.HopfProblem.HomologyTheory.SingularMayerVietoris
 
-public import LeanPool.HopfProblem.Prelude
+public import LeanPool.HopfProblem.InternalPrelude
 public import LeanPool.HopfProblem.PeriodFamily.HolomorphicPeriodMap1
 import all LeanPool.HopfProblem.HomologyTheory.SingularMayerVietoris
-import all LeanPool.HopfProblem.HomologyTheory.SphereHomology1
+import LeanPool.HopfProblem.HomologyTheory.SphereHomology1
 import all LeanPool.HopfProblem.HomologyTheory.FirstHurewicz1
-import all LeanPool.HopfProblem.HomologyTheory.SphereHomology3
+import LeanPool.HopfProblem.HomologyTheory.SphereHomology3
 import all LeanPool.HopfProblem.HomologyTheory.FirstHurewicz2
 import all LeanPool.HopfProblem.Hurewicz.SecondHurewicz
-import all LeanPool.HopfProblem.PeriodFamily.HolomorphicPeriodMap1
 
 /-!
 # Hopf problem: homology theory · first hurewicz 3
@@ -24,10 +24,9 @@ Supporting definitions and proofs for this stage of the six-sphere construction.
 
 open Set Function Filter Manifold Topology
 
-open scoped BigOperators CategoryTheory Complex.UnitDisc ComplexConjugate ContDiff ContinuousMap
-  Convolution ENNReal EuclideanSpace Fin.NatCast InnerProductSpace Interval Matrix MatrixGroups
-  Modular NNReal Pointwise RealInnerProductSpace TensorProduct UniformConvergence Uniformity
-  UpperHalfPlane
+open scoped BigOperators CategoryTheory ComplexConjugate ContDiff ContinuousMap ENNReal
+  EuclideanSpace Fin.NatCast InnerProductSpace Interval Matrix NNReal Pointwise
+  RealInnerProductSpace
 
 universe u v
 
@@ -49,7 +48,7 @@ private abbrev FirstHurewicz.AbelianPi1 (X : Type*) [TopologicalSpace X] (b : X)
 
 private def FirstHurewicz.loopQuotient {X : Type*} [TopologicalSpace X] {b : X} (p : Path b b) :
     FundamentalGroup X b :=
-  Path.Homotopic.Quotient.mk p
+  FundamentalGroup.fromPath (Path.Homotopic.Quotient.mk p)
 
 private def FirstHurewicz.loopClass {X : Type*} [TopologicalSpace X] {b : X} (p : Path b b) :
     AbelianPi1 X b :=
@@ -60,8 +59,8 @@ private theorem FirstHurewicz.loopClass_surjective {X : Type*} [TopologicalSpace
   intro a
   obtain ⟨g, hg⟩ := Quotient.exists_rep a.toMul
   change Abelianization.of g = a.toMul at hg
-  obtain ⟨p, hp⟩ := Path.Homotopic.Quotient.mk_surjective g
-  have hp' : loopQuotient p = g := hp
+  obtain ⟨p, hp⟩ := Path.Homotopic.Quotient.mk_surjective g.toPath
+  have hp' : loopQuotient p = g := CategoryTheory.End.ext hp
   refine ⟨p, ?_⟩
   rw [loopClass, hp', hg]
   rfl
@@ -78,7 +77,7 @@ private theorem
 private theorem FirstHurewicz.loopClass_homotopic {X : Type*} [TopologicalSpace X] {b : X}
     {p q : Path b b} (h : p.Homotopic q) : loopClass p = loopClass q :=
   congrArg (fun g : FundamentalGroup X b => Additive.ofMul (Abelianization.of g))
-    (Path.Homotopic.Quotient.eq.mpr h)
+    (congrArg FundamentalGroup.fromPath (Path.Homotopic.Quotient.eq.mpr h))
 
 private theorem
     FirstHurewicz.loopClass_trans {X : Type*} [TopologicalSpace X] {b : X} (p q : Path b b) :
@@ -100,7 +99,7 @@ private def
 
 private def FirstHurewicz.basedLoopQuotient {X : Type*} [TopologicalSpace X] {b x y : X}
     (r : ∀ x : X, Path b x) (p : Path x y) : FundamentalGroup X b :=
-  Path.Homotopic.Quotient.mk (basedLoop r p)
+  FundamentalGroup.fromPath (Path.Homotopic.Quotient.mk (basedLoop r p))
 
 private def FirstHurewicz.basedLoopClass {X : Type*} [TopologicalSpace X] {b x y : X}
     (r : ∀ x : X, Path b x) (p : Path x y) : AbelianPi1 X b :=
@@ -124,6 +123,7 @@ private theorem FirstHurewicz.basedLoopClass_homotopic {X : Type*} [TopologicalS
 private theorem FirstHurewicz.basedLoopQuotient_trans {X : Type*} [TopologicalSpace X] {b x y z : X}
     (r : ∀ x : X, Path b x) (p : Path x y) (q : Path y z) :
     basedLoopQuotient r (p.trans q) = basedLoopQuotient r q * basedLoopQuotient r p := by
+  apply CategoryTheory.End.ext
   simp only [basedLoopQuotient, basedLoop, Path.Homotopic.Quotient.mk_trans,
     Path.Homotopic.Quotient.mk_symm, FundamentalGroup.mul_def,
     Path.Homotopic.Quotient.trans_assoc]
@@ -248,8 +248,8 @@ private theorem FirstHurewicz.loopHomologyClass_trans {X : Type} [TopologicalSpa
 
 private def FirstHurewicz.hurewiczFunction {X : Type} [TopologicalSpace X] (b : X) :
     FundamentalGroup X b → SingularH1 X :=
-  Quotient.lift (fun p : Path b b => loopHomologyClass p)
-    (fun _ _ h => loopHomologyClass_homotopic h)
+  fun g => Quotient.lift (fun p : Path b b => loopHomologyClass p)
+    (fun _ _ h => loopHomologyClass_homotopic h) g.toPath
 
 private def FirstHurewicz.hurewiczPi1 {X : Type} [TopologicalSpace X] (b : X) :
     FundamentalGroup X b →* Multiplicative (SingularH1 X)
@@ -258,8 +258,8 @@ private def FirstHurewicz.hurewiczPi1 {X : Type} [TopologicalSpace X] (b : X) :
   map_one' := congrArg Multiplicative.ofAdd (loopHomologyClass_refl b)
   map_mul' g
     h := by
-    obtain ⟨p, rfl⟩ := Path.Homotopic.Quotient.mk_surjective g
-    obtain ⟨q, rfl⟩ := Path.Homotopic.Quotient.mk_surjective h
+    obtain ⟨⟨p⟩⟩ := g
+    obtain ⟨⟨q⟩⟩ := h
     change
       Multiplicative.ofAdd (loopHomologyClass (q.trans p)) =
         Multiplicative.ofAdd (loopHomologyClass p + loopHomologyClass q)

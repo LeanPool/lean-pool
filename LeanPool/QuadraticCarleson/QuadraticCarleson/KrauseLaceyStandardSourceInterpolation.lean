@@ -46,20 +46,20 @@ theorem lintegral_enorm_rpow_le_linf_mul_sq
   calc
     ‖F x‖ₑ ^ q = ‖F x‖ₑ ^ (q - 2) * ‖F x‖ₑ ^ (2 : ℕ) := by
       nth_rewrite 1 [show q = (q - 2) + 2 by ring]
-      rw [ENNReal.rpow_add_of_nonneg (q - 2) 2 (by linarith) (by norm_num)]
+      rw [ENNReal.rpow_add_of_nonneg (q - 2) 2 (by linarith only [hq]) (by norm_num1)]
       rw [ENNReal.rpow_two]
     _ ≤ ENNReal.ofReal (M ^ (q - 2)) * ‖F x‖ₑ ^ (2 : ℕ) := by
       gcongr
-      rw [← ENNReal.ofReal_rpow_of_nonneg hM (by linarith)]
+      rw [← ENNReal.ofReal_rpow_of_nonneg hM (by linarith only [hq])]
       apply ENNReal.rpow_le_rpow
       · rw [← ofReal_norm]
         exact ENNReal.ofReal_le_ofReal (hbound x)
-      · linarith
+      · linarith only [hq]
 
 private theorem eLpNorm_two_sq_lintegral_source {E : Type*} [ENorm E] [TopologicalSpace E]
     (F : ℝ → E) (hF : AEStronglyMeasurable F volume) :
     eLpNorm F 2 volume ^ 2 = ∫⁻ x, ‖F x‖ₑ ^ (2 : ℕ) := by
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hF]
+  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num1) (by norm_num) hF]
   simp only [ENNReal.toReal_ofNat, ENNReal.rpow_two]
   rw [← ENNReal.rpow_mul_natCast]
   norm_num
@@ -119,7 +119,7 @@ theorem energyStandardFixedPhysicalSourceAction_rpow_lintegral_le
             (2 : ℝ) ^ j) * ∫ x, ‖f x‖)) := by
   apply (lintegral_enorm_rpow_le_linf_mul_sq
     (energyStandardFixedPhysicalSourceAction S f I₀ k₀ scale R N)
-    (mul_nonneg (mul_nonneg (by norm_num) positiveDyadicAmplitudeBound_nonneg)
+    (mul_nonneg (mul_nonneg (by norm_num1) positiveDyadicAmplitudeBound_nonneg)
       (intervalL1Average_nonneg f I₀)) hq
     (norm_energyStandardFixedPhysicalSourceAction_le_localAverage
       hf I₀ k₀ j scale hlam hsub R N hN hfixed)).trans
@@ -145,7 +145,7 @@ theorem eLpNorm_energyStandardFixedPhysicalSourceAction_le
         ENNReal.ofReal ((R.card : ℝ) *
           ((2560 * positiveDyadicAmplitudeBound ^ 2 * intervalL1Average f I₀ /
             (2 : ℝ) ^ j) * ∫ x, ‖f x‖))) ^ (1 / q) := by
-  have hq0 : 0 < q := lt_of_lt_of_le (by norm_num) hq
+  have hq0 : 0 < q := lt_of_lt_of_le (by norm_num1) hq
   have hqne : ENNReal.ofReal q ≠ 0 := by
     simp only [ne_eq, ENNReal.ofReal_eq_zero]
     exact not_le.mpr hq0
@@ -210,7 +210,7 @@ theorem energyStandardFixedPhysicalSourceAction_rpow_lintegral_le_j_mul
   apply (lintegral_enorm_rpow_le_linf_mul_sq
     (energyStandardFixedPhysicalSourceAction S f I₀ k₀ scale
       (standardSourceGaps k₀ j) N)
-    (mul_nonneg (mul_nonneg (by norm_num) positiveDyadicAmplitudeBound_nonneg)
+    (mul_nonneg (mul_nonneg (by norm_num1) positiveDyadicAmplitudeBound_nonneg)
       (intervalL1Average_nonneg f I₀)) hq
     (norm_energyStandardFixedPhysicalSourceAction_le_localAverage hf I₀ k₀ j scale
       hlam hsub (standardSourceGaps k₀ j) N hN hfixed)).trans
@@ -238,7 +238,7 @@ theorem eLpNorm_energyStandardFixedPhysicalSourceAction_le_j_mul
         ENNReal.ofReal ((j : ℝ) *
           ((2560 * positiveDyadicAmplitudeBound ^ 2 * intervalL1Average f I₀ /
             (2 : ℝ) ^ j) * ∫ x, ‖f x‖))) ^ (1 / q) := by
-  have hq0 : 0 < q := lt_of_lt_of_le (by norm_num) hq
+  have hq0 : 0 < q := lt_of_lt_of_le (by norm_num1) hq
   have hqne : ENNReal.ofReal q ≠ 0 := by
     simp only [ne_eq, ENNReal.ofReal_eq_zero]
     exact not_le.mpr hq0

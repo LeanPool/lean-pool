@@ -70,21 +70,21 @@ def out : Str → Str
 /-- `del` only grows under extension: `del s <+: del (s ++ t)`. -/
 theorem del_append (s t : Str) : del s <+: del (s ++ t) := by
   induction s with
-  | nil => simp
+  | nil => simp only [del_nil, List.nil_append, List.nil_prefix]
   | cons c s₀ ih =>
     cases c with
-    | true => simpa using ih
+    | true => simpa only [del_true, List.cons_append] using ih
     | false => exact ⟨t, rfl⟩
 
 /-- `out` only grows under extension: `out σ <+: out (σ ++ t)`. -/
 theorem out_append (σ t : Str) : out σ <+: out (σ ++ t) := by
   induction σ with
-  | nil => simp
+  | nil => simp only [out_nil, List.nil_append, List.nil_prefix]
   | cons c σ₀ ih =>
     cases c with
-    | true => simpa using del_append σ₀ t
+    | true => simpa only [out_true, List.cons_append] using del_append σ₀ t
     | false =>
-      simp_all
+      simp_all only [out_false, List.cons_append, List.cons_prefix_cons, and_self]
 
 /-- **Prefix-monotonicity of the output.** Extending the input prefix can only
 extend the guaranteed

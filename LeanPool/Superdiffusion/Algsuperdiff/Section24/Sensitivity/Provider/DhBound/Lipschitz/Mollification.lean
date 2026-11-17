@@ -81,7 +81,7 @@ theorem abs_convexApproxSmoothRepresentative_le
     |convexApproxSmoothRepresentative U ρ w x0 r ε x| ≤ B := by
   have hεr : 0 < ε * r := by positivity
   have hind : MemLp (Set.indicator U w) ∞ (volume : Measure (Vec d)) :=
-    (MeasureTheory.memLp_indicator_iff_restrict hU).mpr hw
+    (MeasureTheory.memLp_indicator_iff_restrict hU.nullMeasurableSet).mpr hw
   have hpoint : ∀ y ∈ Metric.ball ((1 - ε) • x + ε • x0) (ε * r + 1),
       dist (Set.indicator U w y) (0 : ℝ) ≤ B := by
     intro y _

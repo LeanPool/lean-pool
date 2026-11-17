@@ -9,7 +9,9 @@ module
 public import LeanPool.BeyondBethe.BeyondBethe.CertificateCapacity
 public import LeanPool.BeyondBethe.BeyondBethe.ClusterAlpha
 public import LeanPool.BeyondBethe.BeyondBethe.Bethe
-public import Mathlib.Tactic
+import Mathlib.Tactic.NormNum -- shake: keep
+import Mathlib.Tactic.Ring -- shake: keep
+import Mathlib.Tactic.SimpRw -- shake: keep
 
 /-! # Cluster Certificate -/
 

@@ -8,6 +8,7 @@ module
 public import Mathlib.Analysis.Normed.Operator.Basic
 public import Mathlib.Analysis.Normed.Algebra.Spectrum
 public import Mathlib.Analysis.Normed.Operator.ContinuousAlgEquiv
+public import Mathlib.Topology.Algebra.Module.Equiv.Submodule
 
 /-! # Norm and spectrum of restricted operators -/
 

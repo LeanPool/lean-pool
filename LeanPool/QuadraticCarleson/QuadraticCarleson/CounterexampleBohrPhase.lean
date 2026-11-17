@@ -51,7 +51,7 @@ theorem paperTranslatedBohrSet_phase_witness {N : ℕ} {L x : ℝ}
     exact (mem_paperBohrIndices.mp hk).2
   refine ⟨k, n, hk, hn.1, hn.2, hbohr, ?_⟩
   apply harmonicPhaseSum_norm_ge_of_mem_bohrSet hN hkupper
-  simpa only [hkcastR] using hbohr
+  exact hbohr
 
 /-- The dyadic phase-sum lower-level set contains the full translated Bohr
 set. This packages the preceding witness in the exact set-theoretic form

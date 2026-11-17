@@ -8,10 +8,7 @@ module
 public import LeanPool.ClassificationOfSurfaces.Topology.InvarianceOfDomain
 public import LeanPool.ClassificationOfSurfaces.Moise.PlaneComplex
 import LeanPool.ClassificationOfSurfaces.Moise.NoRetraction
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.CategoryTheory.Category.Init
 import Mathlib.Geometry.Euclidean.Sphere.Basic
-import Mathlib.MeasureTheory.Covering.Besicovitch
 
 /-!
 # Brouwer's fixed-point theorem for the plane disk
@@ -110,7 +107,7 @@ private lemma fixedPointRayScale_eq_one_of_mem_sphere (p x : Plane) (hpx : p ≠
   let c := ⟪p, p⟫_ℝ
   let t := fixedPointRayScale p x
   have hroot : a * t ^ 2 + 2 * b * t + c = 1 := by
-    simpa [a, b, c, t] using fixedPointRayScale_quadratic p x hpx hp
+    simpa only [a, b, c, t] using fixedPointRayScale_quadratic p x hpx hp
   have hxinner : ⟪x, x⟫_ℝ = 1 := by
     rw [real_inner_self_eq_norm_sq, hx]
     norm_num
@@ -119,7 +116,7 @@ private lemma fixedPointRayScale_eq_one_of_mem_sphere (p x : Plane) (hpx : p ≠
     simp only [inner_add_left, inner_add_right] at hxinner
     rw [real_inner_comm p (x - p)] at hxinner
     dsimp only [a, b, c]
-    nlinarith [hxinner]
+    linarith only [hxinner, real_inner_comm p (x - p)]
   let s : EuclideanGeometry.Sphere Plane := ⟨0, 1⟩
   have hxmem : x ∈ s := by
     change dist x (0 : Plane) = 1
@@ -139,14 +136,15 @@ private lemma fixedPointRayScale_eq_one_of_mem_sphere (p x : Plane) (hpx : p ≠
           rw [inner_add_right, real_inner_comm p (x - p)]
     rwa [hinner] at hgeom
   have ht : a * t = -b + Real.sqrt (b ^ 2 + a * (1 - c)) := by
-    simpa [a, b, c, t] using fixedPointRayScale_mul_inner p x hpx
+    simpa only [a, b, c, t] using fixedPointRayScale_mul_inner p x hpx
   have hfactor : 0 < a * (t + 1) + 2 * b := by
-    nlinarith [Real.sqrt_nonneg (b ^ 2 + a * (1 - c))]
+    rw [mul_add, mul_one]
+    linarith only [ht, hab, Real.sqrt_nonneg (b ^ 2 + a * (1 - c))]
   have hprod : (t - 1) * (a * (t + 1) + 2 * b) = 0 := by
-    nlinarith [hroot, hrootOne]
+    nlinarith only [hroot, hrootOne]
   have htOne : t = 1 := by
     rcases mul_eq_zero.mp hprod with h | h
-    · linarith
+    · linarith only [h]
     · exact False.elim (hfactor.ne' h)
   exact htOne
 

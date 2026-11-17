@@ -274,7 +274,7 @@ private theorem contDiff_matVecMul {d : ℕ} (R : Mat d) :
   rw [contDiff_pi]
   intro i
   change ContDiff ℝ (⊤ : ℕ∞) (fun x : Vec d => ∑ j, R i j * x j)
-  exact ContDiff.sum fun j _ => contDiff_const.mul (contDiff_apply ℝ ℝ j)
+  exact ContDiff.sum fun j _ => contDiff_const.mul (contDiff_apply ℝ (fun _ => ℝ) j)
 
 private theorem smoothCompactProbe_translate {d : ℕ} (z : Vec d) {φ : Vec d → ℝ}
     (hφ : SmoothCompactProbe φ) :

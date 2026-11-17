@@ -1041,9 +1041,7 @@ theorem boundedFold_drain_finish
       · subst stack
         simp only [boundedFoldStacks, ↓reduceDIte, cast_eq, dite_eq_right_iff]
         intro h
-        first
-        | exact boundedFold_cast_nil (congrArg computer.tm.Γ h)
-        | exact boundedFold_cast_nil (congrArg computer.tm.Γ h.symm)
+        exact boundedFold_cast_nil (congrArg computer.tm.Γ h.symm)
       · by_cases hout : stack = computer.tm.k₁
         · subst stack
           simp only [boundedFoldStacks, ↓reduceDIte, cast_eq, hin]
@@ -1065,8 +1063,7 @@ theorem boundedFold_restore_step
         (computer.inputAlphabet.invFun bit :: input)
         counter scratch) := by
   classical
-  cases bit <;>
-    compactMachineStepTac [boundedDependentRecordFoldMachine,
+  compactMachineStepTac [boundedDependentRecordFoldMachine,
       boundedFoldRestoreConfiguration, boundedFoldPhaseConfiguration,
       boundedFoldStacks, Turing.initList]
   all_goals

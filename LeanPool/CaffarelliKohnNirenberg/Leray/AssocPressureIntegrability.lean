@@ -46,7 +46,7 @@ theorem associatedPressureTensor_memLp_fiveThirds
       (ENNReal.ofReal (5 / 3 : ℝ)) (volume : Measure (Vec3 × ℝ)) := by
   rw [associatedPressureTensor, memLp_indicator_iff_restrict
     (parabolicHomeomorph.symm.measurable
-      (by exact MeasurableSet.prod MeasurableSet.univ measurableSet_Ioo))]
+      (by exact MeasurableSet.prod MeasurableSet.univ measurableSet_Ioo)).nullMeasurableSet]
   rw [Measure.volume_eq_prod Vec3 ℝ]
   let Q : Set ParabolicPoint :=
     spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 T)
@@ -106,7 +106,7 @@ theorem associatedPressureTensor_memLp_threeHalves
     exact hi.mul hj
   rw [associatedPressureTensor, memLp_indicator_iff_restrict
     (parabolicHomeomorph.symm.measurable
-      (by exact MeasurableSet.prod MeasurableSet.univ measurableSet_Ioo))]
+      (by exact MeasurableSet.prod MeasurableSet.univ measurableSet_Ioo)).nullMeasurableSet]
   rw [Measure.volume_eq_prod Vec3 ℝ]
   let Q : Set ParabolicPoint :=
     spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 T)

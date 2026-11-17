@@ -8,6 +8,7 @@ module
 public import LeanPool.RellichKondrachov.Analysis.FunctionalSpaces.Sobolev.Euclidean.H1
 public import LeanPool.RellichKondrachov.Geometry.Manifold.Sobolev.ChartData
 import LeanPool.RellichKondrachov.Analysis.Calculus.ContDiff.Support
+import Mathlib.Geometry.Manifold.Algebra.Structures
 
 /-!
 # `RellichKondrachov.Geometry.Manifold.Sobolev.Localization`

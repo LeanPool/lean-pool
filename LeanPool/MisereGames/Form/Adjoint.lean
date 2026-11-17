@@ -123,7 +123,7 @@ theorem rootedAdjoint_not_isEnd (r g : G) (p : Player) : ¬(IsEnd p (rootedAdjoi
   all_goals by_cases h3 : moves .right g = ∅ <;>
     simp only [h2, h3, ↓reduceIte, moves_ofSets, Set.singleton_ne_empty,
       not_false_eq_true, Set.range_eq_empty_iff, Set.isEmpty_coe_sort, not_true_eq_false]
-  simp_all
+  simp_all only [and_self, not_true_eq_false]
 
 theorem adjoint_not_isEnd (g : G) (p : Player) : ¬(IsEnd p (g°)) :=
   rootedAdjoint_not_isEnd 0 g p
@@ -140,7 +140,7 @@ theorem rootedAdjoint_not_isEndLike (r g : G) (p : Player) :
     simp only [h2, h3, ↓reduceIte, ofSets_isEndLike_iff, isEnd_def, moves_ofSets,
       Set.singleton_ne_empty, not_false_eq_true, Set.range_eq_empty_iff,
       Set.isEmpty_coe_sort, not_true_eq_false]
-  simp_all
+  simp_all only [and_self, not_true_eq_false]
 
 theorem adjoint_not_isEndLike (g : G) (p : Player) : ¬(IsEndLike p (g°)) :=
   rootedAdjoint_not_isEndLike 0 g p
@@ -274,7 +274,7 @@ theorem short_rootedAdjoint {r : G} (h_root_short : IsShort r) {g : G} (h1 : IsS
         obtain ⟨gl', hgl', rfl⟩ := hgl
         exact short_rootedAdjoint h_root_short (Short.of_mem_moves h1 hgl')
 termination_by g
-decreasing_by all_goals form_wf
+decreasing_by all_goals exact MisereGames.Moves.Subposition.of_mem_moves (by assumption)
 
 /--
 The adjoint of a short game is also short.
@@ -317,7 +317,7 @@ theorem rootedAdjoint_neg (r g : G) : rootedAdjoint (-r) (-g) = -(rootedAdjoint 
     simp only [IsEnd.neg_iff_neg, Player.neg_left, Player.neg_right, hl, hr, and_self,
       and_true, and_false, ↓reduceIte, neg_ofSets, Set.neg_singleton, key]
 termination_by g
-decreasing_by all_goals form_wf
+decreasing_by exact MisereGames.Moves.Subposition.of_mem_moves hx
 
 /--
 The adjoint of the conjugate is the conjugate of the adjoint.

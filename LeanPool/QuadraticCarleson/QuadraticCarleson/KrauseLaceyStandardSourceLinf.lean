@@ -154,7 +154,7 @@ theorem integrable_energyStandardSourceParentInput
   apply integrable_finsetSum
   intro s hs
   by_cases hIs : I ∈ N s
-  · simp only [hIs, ite_eq_left, intervalBadInput]
+  · simp only [hIs, intervalBadInput, ite_eq_left]
     exact (integrable_badScaleInput S hf I₀ k₀ (scale I + 2 - s)).indicator
       I.measurableSet_centralThird
   · simp only [hIs]
@@ -257,7 +257,7 @@ theorem norm_energyStandardRegroupedSourceAction_le
   have hscaleU (I : RealInterval) (hI : I ∈ U) : I.length = (2 : ℝ) ^ ((j - 2) + 2) := by
     obtain ⟨s, hs, hIs⟩ := Finset.mem_biUnion.mp hI
     rw [hscale s hs I hIs, hfixed s hs I hIs]
-    ring
+    ring_nf
   have hdisj : Set.Pairwise (↑U : Set RealInterval)
       (Disjoint on fun I : RealInterval ↦ I.carrier) := by
     intro I hI J hJ hne
@@ -312,7 +312,7 @@ theorem energyStandardFixedPhysicalSourceAction_reindex
         intro I hIU hIN
         simp only [ite_eq_right hIN]
       rw [← hext]
-      simp
+      simp only [Finset.sum_ite_mem, Finset.inter_self]
     _ = _ := by
       rw [Finset.sum_comm]
 
@@ -440,7 +440,7 @@ theorem norm_energyStandardRegroupedSourcePiece_le_localAverage
     _ = 80 * positiveDyadicAmplitudeBound * intervalL1Average f I₀ := by
       rw [hlen, show j = (j - 2) + 2 by ring,
         krauseLacey_scale_eq_eight_mul_radius (j - 2)]
-      field_simp; ring
+      field_simp; ring_nf
 
 /-- At one fixed physical scale, the complete scalar-standard source sum is
 bounded by the local stopping average, with no loss in the number of source
@@ -468,7 +468,7 @@ theorem norm_energyStandardRegroupedSourceAction_le_localAverage
     obtain ⟨s, hs, hIs⟩ := Finset.mem_biUnion.mp hI
     rw [(Finset.mem_filter.mp (Finset.mem_filter.mp (hN s hs hIs)).1).2.1,
       hfixed s hs I hIs]
-    ring
+    ring_nf
   have hdisj : Set.Pairwise (↑U : Set RealInterval)
       (Disjoint on fun I : RealInterval ↦ I.carrier) := by
     intro I hI J hJ hne
@@ -506,7 +506,7 @@ theorem norm_energyStandardRegroupedSourceAction_le_localAverage
       by_contra h
       exact hex ⟨I, hIU, h⟩
     rw [hzero, norm_zero]
-    exact mul_nonneg (mul_nonneg (by norm_num) positiveDyadicAmplitudeBound_nonneg)
+    exact mul_nonneg (mul_nonneg (by norm_num1) positiveDyadicAmplitudeBound_nonneg)
       (intervalL1Average_nonneg f I₀)
 
 /-- Source-faithful fixed-physical-scale `L∞` estimate in the original

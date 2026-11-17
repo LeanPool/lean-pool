@@ -6,8 +6,12 @@ Authors: Arseniy Akopyan
 module
 
 
-public import Mathlib.Data.Nat.Choose.Dvd
 
+public import Mathlib.Data.Fintype.Powerset
+public import Mathlib.Data.Nat.Prime.Defs
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Data.Nat.Choose.Dvd
+import Mathlib.Tactic.Positivity.Finset
 public import LeanPool.NandakumarRamanaRao.NRR.PrimePolyhedron.FoxNeuwirth.BarredPermutation
 /-!
 # Prime shuffle coefficients in the Fox--Neuwirth boundary

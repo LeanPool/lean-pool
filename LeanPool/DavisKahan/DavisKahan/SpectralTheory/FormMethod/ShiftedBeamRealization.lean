@@ -5,12 +5,11 @@ Authors: Jon Crall, OpenAI GPT-5.6 Thinking
 -/
 module
 
-
 public import LeanPool.DavisKahan.DavisKahan.SpectralTheory.FormMethod.CoerciveFormResolvent
 public import LeanPool.DavisKahan.DavisKahan.SpectralTheory.FormMethod.FormCompactness
 public import LeanPool.DavisKahan.DavisKahan.SpectralTheory.FormMethod.BoundedGraphCompactness
 public import LeanPool.DavisKahan.DavisKahan.SinTheta.BoundedPerturbation
-public import Mathlib.Tactic
+import Mathlib.Tactic.Ring -- shake: keep
 
 /-! # Shifted Beam Realization -/
 

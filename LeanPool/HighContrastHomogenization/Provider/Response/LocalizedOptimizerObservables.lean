@@ -280,7 +280,7 @@ theorem measurable_toFullBlockVec_blockCellAverage_diagonalWeakState_subSkew
   have hw : MemScalarL2 (adaptedCell q t)
       (Set.indicator V fun _ => (1 : ℝ)) := by
     refine MeasureTheory.memLp_indicator_const (p := (2 : ℝ≥0∞)) (μ := volumeMeasureOn
-      (adaptedCell q t)) (s := V) hV (c := (1 : ℝ)) (Or.inr ?_)
+      (adaptedCell q t)) (s := V) hV.nullMeasurableSet (c := (1 : ℝ)) (Or.inr ?_)
     have hle : volumeMeasureOn (adaptedCell q t) V ≤ volume V :=
       MeasureTheory.Measure.restrict_le_self V
     exact ne_top_of_le_ne_top hVfin hle
@@ -348,7 +348,8 @@ theorem aestronglyMeasurable_alignedCellAverage_diagonalAdjointState
         (Set.indicator (adaptedCellAt q s w) fun _ => (1 : ℝ)) := by
       refine MeasureTheory.memLp_indicator_const (p := (2 : ℝ≥0∞)) (μ := volumeMeasureOn
         (adaptedCell q t)) (s := adaptedCellAt q s w)
-        (Recurrence.isOpenBoundedConvexDomain_adaptedCellAt hq s w).isOpen.measurableSet
+        (MeasurableSet.nullMeasurableSet
+          (Recurrence.isOpenBoundedConvexDomain_adaptedCellAt hq s w).isOpen.measurableSet)
         (c := (1 : ℝ)) (Or.inr ?_)
       have hle : volumeMeasureOn (adaptedCell q t) (adaptedCellAt q s w) ≤
           volume (adaptedCellAt q s w) :=

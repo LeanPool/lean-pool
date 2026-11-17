@@ -7,6 +7,9 @@ module
 
 
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.SphereSuspensionTowerFromMV
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Measurability.Init
+import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # Branch 1 finalization: the unconditional `SphereOrientationPos`

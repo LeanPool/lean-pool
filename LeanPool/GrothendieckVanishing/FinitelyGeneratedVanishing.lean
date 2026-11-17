@@ -9,6 +9,7 @@ public import LeanPool.GrothendieckVanishing.GeneratedSubsheaf
 public import Mathlib.Topology.NoetherianSpace
 import LeanPool.GrothendieckVanishing.PresheafFilteredColimit
 import Mathlib.Algebra.Category.Grp.AB
+import Mathlib.CategoryTheory.Abelian.GrothendieckAxioms.Colim
 
 /-!
 # Finitely generated vanishing reduction

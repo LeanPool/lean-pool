@@ -248,7 +248,7 @@ theorem MaterialJacobianFromP.amnrVelocityGradient_timeShift
       amnrVelocityGradient b i p (MaterialJacobianFromP.materialTimeShift s z) := by
   let f : AmnrSpace → ℝ := fun y => b y i
   let bs : AmnrSpace → Vec 2 := fun y => b (MaterialJacobianFromP.materialTimeShift s y)
-  have hf : ContDiff ℝ (⊤ : ℕ∞) f := (contDiff_apply ℝ ℝ i).comp hb
+  have hf : ContDiff ℝ (⊤ : ℕ∞) f := (contDiff_apply ℝ (fun _ => ℝ) i).comp hb
   have hmap : ContDiff ℝ (⊤ : ℕ∞) (MaterialJacobianFromP.materialTimeShift s) := by
     fun_prop [MaterialJacobianFromP.materialTimeShift]
   have hbs : ContDiff ℝ (⊤ : ℕ∞) bs := hb.comp hmap

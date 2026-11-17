@@ -6,6 +6,8 @@ Authors: Moritz Firsching
 
 module
 
+import LeanPool.Zeta5Irrational.Table.RationalSeries
+
 public import LeanPool.Zeta5Irrational.TableCheck
 import Mathlib.Analysis.Complex.ExponentialBounds
 import Mathlib.Tactic.ReduceModChar
@@ -134,8 +136,11 @@ lemma Lmid_1 :
       log_le_of_split_neg 10
         (show (1017189489 / 800000000000 : ℝ) = (1017189489 / 781250000 : ℝ) / 2 ^ 10 by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 8
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (1017189489 / 781250000 : ℚ))
+             (U := (2639034991761707932717 / 10000000000000000000000 : ℚ))
+             8 (by decide +kernel)) :
           Real.log (1017189489 / 781250000 : ℝ) ≤
             (2639034991761707932717 / 10000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
@@ -156,8 +161,11 @@ lemma Lmid_2 :
         (show (13028749591 / 4000000000000 : ℝ) = (13028749591 / 7812500000 : ℝ) / 2 ^ 9 by
           norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 12
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (13028749591 / 7812500000 : ℚ))
+             (U := (5114334076167610203283 / 10000000000000000000000 : ℚ))
+             12 (by decide +kernel)) :
           Real.log (13028749591 / 7812500000 : ℝ) ≤
             (5114334076167610203283 / 10000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
@@ -178,8 +186,11 @@ lemma Lmid_3 :
         (show (24327894059 / 4000000000000 : ℝ) = (24327894059 / 15625000000 : ℝ) / 2 ^ 8 by
           norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 11
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (24327894059 / 15625000000 : ℚ))
+             (U := (2213757000244685362471 / 5000000000000000000000 : ℚ))
+             11 (by decide +kernel)) :
           Real.log (24327894059 / 15625000000 : ℝ) ≤
             (2213757000244685362471 / 5000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
@@ -199,8 +210,11 @@ lemma Lmid_4 :
       log_le_of_split_neg 7
         (show (4102785289 / 400000000000 : ℝ) = (4102785289 / 3125000000 : ℝ) / 2 ^ 7 by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 8
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (4102785289 / 3125000000 : ℚ))
+             (U := (680579496640619414763 / 2500000000000000000000 : ℚ))
+             8 (by decide +kernel)) :
           Real.log (4102785289 / 3125000000 : ℝ) ≤
             (680579496640619414763 / 2500000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
@@ -221,8 +235,11 @@ lemma Lmid_5 :
         (show (65272891657 / 4000000000000 : ℝ) = (65272891657 / 62500000000 : ℝ) / 2 ^ 6 by
           norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 4
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (65272891657 / 62500000000 : ℚ))
+             (U := (217051289631660878473 / 5000000000000000000000 : ℚ))
+             4 (by decide +kernel)) :
           Real.log (65272891657 / 62500000000 : ℝ) ≤
             (217051289631660878473 / 5000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
@@ -243,8 +260,11 @@ lemma Lmid_6 :
         (show (99084713271 / 4000000000000 : ℝ) = (99084713271 / 62500000000 : ℝ) / 2 ^ 6 by
           norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 11
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (99084713271 / 62500000000 : ℚ))
+             (U := (460808617104656470757 / 1000000000000000000000 : ℚ))
+             11 (by decide +kernel)) :
           Real.log (99084713271 / 62500000000 : ℝ) ≤
             (460808617104656470757 / 1000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
@@ -265,8 +285,11 @@ lemma Lmid_7 :
         (show (144041816267 / 4000000000000 : ℝ) = (144041816267 / 125000000000 : ℝ) / 2 ^ 5 by
           norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 6
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (144041816267 / 125000000000 : ℚ))
+             (U := (1417899108615240212659 / 10000000000000000000000 : ℚ))
+             6 (by decide +kernel)) :
           Real.log (144041816267 / 125000000000 : ℝ) ≤
             (1417899108615240212659 / 10000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
@@ -287,8 +310,11 @@ lemma Lmid_8 :
         (show (200893556541 / 4000000000000 : ℝ) = (200893556541 / 125000000000 : ℝ) / 2 ^ 5 by
           norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 11
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (200893556541 / 125000000000 : ℚ))
+             (U := (2372307305187944700339 / 5000000000000000000000 : ℚ))
+             11 (by decide +kernel)) :
           Real.log (200893556541 / 125000000000 : ℝ) ≤
             (2372307305187944700339 / 5000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
@@ -309,8 +335,11 @@ lemma Lmid_9 :
         (show (269180899217 / 4000000000000 : ℝ) = (269180899217 / 250000000000 : ℝ) / 2 ^ 4 by
           norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 5
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (269180899217 / 250000000000 : ℚ))
+             (U := (739227235165382858631 / 10000000000000000000000 : ℚ))
+             5 (by decide +kernel)) :
           Real.log (269180899217 / 250000000000 : ℝ) ≤
             (739227235165382858631 / 10000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
@@ -331,8 +360,11 @@ lemma Lmid_10 :
         (show (21684762939 / 250000000000 : ℝ) = (21684762939 / 15625000000 : ℝ) / 2 ^ 4 by
           norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 9
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (21684762939 / 15625000000 : ℚ))
+             (U := (1638688247891813620441 / 5000000000000000000000 : ℚ))
+             9 (by decide +kernel)) :
           Real.log (21684762939 / 15625000000 : ℝ) ≤
             (1638688247891813620441 / 5000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
@@ -353,8 +385,11 @@ lemma Lmid_11 :
         (show (430695182301 / 4000000000000 : ℝ) = (430695182301 / 250000000000 : ℝ) / 2 ^ 4 by
           norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 12
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (430695182301 / 250000000000 : ℚ))
+             (U := (1087879376786883877841 / 2000000000000000000000 : ℚ))
+             12 (by decide +kernel)) :
           Real.log (430695182301 / 250000000000 : ℝ) ≤
             (1087879376786883877841 / 2000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
@@ -375,8 +410,11 @@ lemma Lmid_12 :
         (show (128866386789 / 1000000000000 : ℝ) = (128866386789 / 125000000000 : ℝ) / 2 ^ 3 by
           norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 4
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (128866386789 / 125000000000 : ℚ))
+             (U := (9519490300734709441 / 312500000000000000000 : ℚ))
+             4 (by decide +kernel)) :
           Real.log (128866386789 / 125000000000 : ℝ) ≤
             (9519490300734709441 / 312500000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
@@ -397,8 +435,11 @@ lemma Lmid_13 :
         (show (595362962907 / 4000000000000 : ℝ) = (595362962907 / 500000000000 : ℝ) / 2 ^ 3 by
           norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 7
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (595362962907 / 500000000000 : ℚ))
+             (U := (436407857070690432561 / 2500000000000000000000 : ℚ))
+             7 (by decide +kernel)) :
           Real.log (595362962907 / 500000000000 : ℝ) ≤
             (436407857070690432561 / 2500000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
@@ -419,8 +460,11 @@ lemma Lmid_14 :
         (show (166040678943 / 1000000000000 : ℝ) = (166040678943 / 125000000000 : ℝ) / 2 ^ 3 by
           norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 8
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (166040678943 / 125000000000 : ℚ))
+             (U := (1419595374534700017209 / 5000000000000000000000 : ℚ))
+             8 (by decide +kernel)) :
           Real.log (166040678943 / 125000000000 : ℝ) ≤
             (1419595374534700017209 / 5000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
@@ -441,8 +485,11 @@ lemma Lmid_15 :
         (show (716086447547 / 4000000000000 : ℝ) = (716086447547 / 500000000000 : ℝ) / 2 ^ 3 by
           norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 9
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (716086447547 / 500000000000 : ℚ))
+             (U := (56123874694974905657 / 156250000000000000000 : ℚ))
+             9 (by decide +kernel)) :
           Real.log (716086447547 / 500000000000 : ℝ) ≤
             (56123874694974905657 / 156250000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
@@ -463,8 +510,11 @@ lemma Lmid_16 :
         (show (746565554359 / 4000000000000 : ℝ) = (746565554359 / 500000000000 : ℝ) / 2 ^ 3 by
           norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 10
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (746565554359 / 500000000000 : ℚ))
+             (U := (100218832579926500607 / 250000000000000000000 : ℚ))
+             10 (by decide +kernel)) :
           Real.log (746565554359 / 500000000000 : ℝ) ≤
             (100218832579926500607 / 250000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]

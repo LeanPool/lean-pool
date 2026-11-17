@@ -11,7 +11,7 @@ public import LeanPool.VirasoroProject.VirasoroAlgebra
 public import LeanPool.VirasoroProject.HeisenbergAlgebra
 public import LeanPool.VirasoroProject.LieAlgebraRepresentationOfBasis
 public import Mathlib.Tactic.FieldSimp
-public import Mathlib.Data.Int.ConditionallyCompleteOrder
+public import Mathlib.Order.Int.ConditionallyCompleteOrder
 public import Mathlib.Order.Filter.Cofinite
 import LeanPool.VirasoroProject.CentralChargeCalc
 import LeanPool.VirasoroProject.ToMathlib.Topology.Algebra.BigOperators.FinProd
@@ -20,7 +20,7 @@ import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Analysis.Normed.Group.Basic
 import Mathlib.Data.EReal.Operations
 import Mathlib.Data.Int.Interval
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 import Mathlib.GroupTheory.GroupAction.Basic
 import Mathlib.Order.CompletePartialOrder
 import Mathlib.Tactic.Positivity.Finset

@@ -175,7 +175,7 @@ theorem euclideanEstimateMinimum_le_function {d : ℕ}
   have hterm : 0 ≤ M / 2 *
       (lpNorm 2 (x - euclideanEstimateMinimizer P M k)) ^ (2 : ℕ) :=
     mul_nonneg (div_nonneg hM.le (by norm_num)) (sq_nonneg _)
-  linarith
+  linarith only [h, hterm]
 
 /-- The actual two barycenters have the source displacement. -/
 theorem euclideanBarycenter_sub {d : ℕ} {A a : ℝ}

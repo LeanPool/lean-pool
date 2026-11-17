@@ -9,6 +9,7 @@ public import Mathlib.Topology.NoetherianSpace
 public import LeanPool.GrothendieckVanishing.FlasqueVanishing
 import LeanPool.GrothendieckVanishing.PresheafFilteredColimitGeneral
 import Mathlib.Algebra.Category.Grp.AB
+import Mathlib.CategoryTheory.Abelian.GrothendieckAxioms.Colim
 
 /-!
 # Noetherian filtered-colimit infrastructure for sheaf cohomology

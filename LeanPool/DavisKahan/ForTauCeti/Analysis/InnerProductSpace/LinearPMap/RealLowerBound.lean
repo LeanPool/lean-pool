@@ -60,7 +60,7 @@ theorem injective_shiftMap_of_lower_bound (hc : 0 < c)
   have h := hbd x
   rw [show A x - z • (x : E) = shiftMap A z x from rfl, hx, norm_zero] at h
   have hx0 : ‖(x : E)‖ = 0 :=
-    le_antisymm (by nlinarith [norm_nonneg ((x : E))]) (norm_nonneg _)
+    le_antisymm (by nlinarith only [hc, h, norm_nonneg ((x : E))]) (norm_nonneg _)
   exact Subtype.ext (by simpa using hx0)
 
 /-- **Dense range, at a real point.**  A vector orthogonal to the range of
@@ -210,7 +210,7 @@ theorem norm_sub_smul_ge_of_coercive_comp
   rcases eq_or_lt_of_le (norm_nonneg ((x : E))) with h0 | h0
   · rw [← h0, mul_zero]
     exact norm_nonneg _
-  · nlinarith
+  · nlinarith only [hcs, hb, h0]
 
 /-- **A real point is a resolvent point when the shifted operator is coercive
 against a bounded isometry.**

@@ -29,14 +29,14 @@ namespace QuadraticCarleson
 theorem ennreal_mul_le_add_sq (a b : ℝ≥0∞) : a * b ≤ a ^ 2 + b ^ 2 := by
   by_cases ha : a = ⊤
   · subst a
-    simp
+    simp only [ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, ENNReal.top_pow, top_add, le_top]
   by_cases hb : b = ⊤
   · subst b
-    simp
+    simp only [ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, ENNReal.top_pow, add_top, le_top]
   lift a to ℝ≥0 using ha
   lift b to ℝ≥0 using hb
   exact_mod_cast (show (a : ℝ) * (b : ℝ) ≤ (a : ℝ) ^ 2 + (b : ℝ) ^ 2 by
-    nlinarith [sq_nonneg ((a : ℝ) - (b : ℝ)), mul_nonneg a.2 b.2])
+    nlinarith only [sq_nonneg ((a : ℝ) - (b : ℝ)), mul_nonneg a.2 b.2])
 
 /-- The finite centered maximal operator controls its quadratic pairing with
 the input. The nonoptimal numerical constant avoids square roots. -/
@@ -81,7 +81,7 @@ theorem lintegral_selectedAverageKernel_mul {N : ℕ} (r : Fin N → ℝ)
       (closedBall x (r (σ x))).indicator (fun _ ↦ (ENNReal.ofReal (2 * r (σ x)))⁻¹) y * f y =
       (closedBall x (r (σ x))).indicator
         (fun y ↦ (ENNReal.ofReal (2 * r (σ x)))⁻¹ * f y) y := by
-    by_cases hy : y ∈ closedBall x (r (σ x)) <;> simp [Set.indicator, hy]
+    by_cases hy : y ∈ closedBall x (r (σ x)) <;> simp only [indicator, hy, ↓reduceIte, zero_mul]
   simp_rw [hid]
   rw [lintegral_indicator measurableSet_closedBall,
     lintegral_const_mul _ hf]
@@ -99,7 +99,7 @@ theorem selectedAverageKernel_pairing_le {N : ℕ} (r : Fin N → ℝ)
       apply lintegral_congr
       intro x
       simp_rw [show ∀ y, selectedAverageKernel r σ x y * f x * f y =
-        f x * (selectedAverageKernel r σ x y * f y) by intro y; ring]
+        f x * (selectedAverageKernel r σ x y * f y) by intro y; ac_rfl]
       have hrow : Measurable (fun y ↦ selectedAverageKernel r σ x y * f y) :=
         (measurable_const.indicator measurableSet_closedBall).mul hf
       rw [lintegral_const_mul _ hrow, lintegral_selectedAverageKernel_mul r σ hf]
@@ -130,7 +130,7 @@ theorem symmetric_selectedAverageKernel_pairing_le {N : ℕ} (r : Fin N → ℝ)
     intro x
     apply lintegral_congr
     intro y
-    ring
+    ac_rfl
   calc
     _ = (∫⁻ x, ∫⁻ y, selectedAverageKernel r σ x y * f x * f y) +
         ∫⁻ x, ∫⁻ y, selectedAverageKernel r σ y x * f x * f y := by
@@ -213,7 +213,7 @@ theorem adjoint_sq_lintegral_le_of_selectedAverageKernel {N : ℕ}
       simp_rw [lintegral_const_mul' _ _ hC]
     _ ≤ C * (66 * ∫⁻ x, ‖g x‖ₑ ^ 2) :=
       mul_le_mul' le_rfl (symmetric_selectedAverageKernel_pairing_le r hr hσ hgm.enorm)
-    _ = _ := by ring
+    _ = _ := by ac_rfl
 
 end FiniteRangeKernel
 

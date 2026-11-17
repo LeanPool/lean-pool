@@ -11,8 +11,8 @@ public import LeanPool.Zeta5Irrational.Arith.OuterFrame
 import LeanPool.Zeta5Irrational.Arith.MomentVal
 import LeanPool.Zeta5Irrational.Arith.OuterEntry
 import LeanPool.Zeta5Irrational.Arith.PoleVal
-import Mathlib.Data.Int.Star
-import Mathlib.Data.Rat.Star
+import Mathlib.Algebra.Order.Star.Int
+import Mathlib.Algebra.Order.Star.Rat
 import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
 import Mathlib.Tactic.Linarith

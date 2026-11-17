@@ -4,13 +4,16 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Boris Alexeev
 -/
 module
+public import Mathlib.Tactic.NormNum.Parity
+import all Mathlib.Topology.Homotopy.Lifting
+import all LeanPool.HopfProblem.CuspFibre.CuspCentralHomology2
 
-public import LeanPool.HopfProblem.Prelude
+public import LeanPool.HopfProblem.InternalPrelude
 public import LeanPool.HopfProblem.PeriodFamily.Core5
 public import LeanPool.HopfProblem.Foundations.PeriodTorusTypeOneOne
-import all LeanPool.HopfProblem.Foundations.Core1
+import LeanPool.HopfProblem.Foundations.Core1
 import all LeanPool.HopfProblem.HomologyTheory.SingularMayerVietoris
-import all LeanPool.HopfProblem.Lattice.Core1
+import LeanPool.HopfProblem.Lattice.Core1
 import all LeanPool.HopfProblem.TorusHomology.PeriodTorusHigherHomology1
 import all LeanPool.HopfProblem.TorusHomology.PeriodTorusHigherHomology2
 import all LeanPool.HopfProblem.TorusHomology.PeriodTorusHigherHomology3
@@ -23,7 +26,7 @@ import all LeanPool.HopfProblem.PeriodFamily.HolomorphicPeriodMap1
 import all LeanPool.HopfProblem.HomologyTheory.FirstHurewicz3
 import all LeanPool.HopfProblem.Lattice.Core2
 import all LeanPool.HopfProblem.Elliptic.Core1
-import all LeanPool.HopfProblem.Uniformization.SpecialPeriods1
+import LeanPool.HopfProblem.Uniformization.SpecialPeriods1
 import all LeanPool.HopfProblem.Pi1.MappingTorus
 import all LeanPool.HopfProblem.Pi1.ThreefoldOverlapMappingTorus1
 import all LeanPool.HopfProblem.Elliptic.Core2
@@ -33,7 +36,7 @@ import all LeanPool.HopfProblem.TorusHomology.PeriodTorusHigherHomology6
 import all LeanPool.HopfProblem.TorusHomology.PeriodTorusHigherHomology7
 import all LeanPool.HopfProblem.PeriodFamily.Core1
 import all LeanPool.HopfProblem.Uniformization.SpecialPeriods6
-import all LeanPool.HopfProblem.TorusHomology.PeriodTorusHigherHomology8
+import LeanPool.HopfProblem.TorusHomology.PeriodTorusHigherHomology8
 import all LeanPool.HopfProblem.PeriodFamily.Core2
 import all LeanPool.HopfProblem.Uniformization.SpecialPeriods7
 import all LeanPool.HopfProblem.Threefold.SpecialPeriods6
@@ -69,10 +72,8 @@ Supporting definitions and proofs for this stage of the six-sphere construction.
 
 open Set Function Filter Manifold Topology
 
-open scoped BigOperators CategoryTheory Complex.UnitDisc ComplexConjugate ContDiff ContinuousMap
-  Convolution ENNReal EuclideanSpace Fin.NatCast InnerProductSpace Interval Matrix MatrixGroups
-  Modular NNReal Pointwise RealInnerProductSpace TensorProduct UniformConvergence Uniformity
-  UpperHalfPlane
+open scoped BigOperators ComplexConjugate ContDiff ContinuousMap ENNReal EuclideanSpace Fin.NatCast
+  InnerProductSpace Interval Matrix NNReal Pointwise RealInnerProductSpace
 
 universe u v
 
@@ -3699,6 +3700,7 @@ private theorem PeriodFamily.Boundary.EllipticCapKernelWang.surfaceCover_eq_peri
   apply ContinuousMap.ext
   exact surfaceCover_apply j
 
+attribute [local instance high] NeZero.one in
 private theorem PeriodFamily.Boundary.EllipticCapKernelWang.surfaceCover_split (j : Elliptic.Kind) :
     (Elliptic.HigherHomology.surfaceMappingTorusHomeomorph j
               (SpecialPeriods.EllipticFilling.specialLocalData j).centralPeriod :
@@ -3732,6 +3734,7 @@ private theorem PeriodFamily.Boundary.EllipticCapKernelWang.surfaceCover_split (
   rw [Elliptic.HigherHomology.surfaceMappingTorusHomeomorph_splitPeriodTorus,
     MappingTorusHomology.Covering.productCover_real_apply]
 
+attribute [local instance high] NeZero.one in
 private theorem PeriodFamily.Boundary.EllipticCapKernelWang.surfaceCover_split_homology
     (j : Elliptic.Kind) (n : ℕ)
     (a :

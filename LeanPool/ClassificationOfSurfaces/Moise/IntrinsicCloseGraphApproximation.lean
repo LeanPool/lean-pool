@@ -6,7 +6,6 @@ Authors: Ryan McCorvie, Jack McCarthy
 module
 
 public import LeanPool.ClassificationOfSurfaces.Moise.IntrinsicGraphModel
-import Mathlib.CategoryTheory.Category.Init
 
 /-!
 # Arbitrarily close intrinsic graph approximation

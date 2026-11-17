@@ -8,8 +8,6 @@ module
 
 public import Mathlib.Analysis.Calculus.BumpFunction.InnerProduct
 public import LeanPool.QuadraticCarleson.QuadraticCarleson.Bohr
-public import Mathlib.Algebra.Order.Archimedean.Basic
-public import Mathlib.Analysis.Calculus.BumpFunction.Basic
 
 /-!
 # The dyadic kernels used in the positive estimate
@@ -58,7 +56,7 @@ theorem dyadicCutoff_eq_one {x : ℝ} (hx : |x| ≤ 1 / 4) :
 theorem dyadicCutoff_eq_zero {x : ℝ} (hx : 1 / 2 ≤ |x|) :
     dyadicCutoff x = 0 := by
   apply dyadicCutoffData.zero_of_le_dist
-  simpa [dyadicCutoffData, Real.dist_eq] using hx
+  simpa only [dyadicCutoffData, one_div, dist_zero_right, Real.norm_eq_abs] using hx
 
 theorem dyadicCutoff_support_subset :
     support dyadicCutoff ⊆ Ioo (-1 / 2 : ℝ) (1 / 2) := by
@@ -68,7 +66,7 @@ theorem dyadicCutoff_support_subset :
   have hx' : |x| < (1 / 2 : ℝ) := by
     simpa [dyadicCutoffData, Metric.mem_ball, Real.dist_eq] using hx
   rw [abs_lt] at hx'
-  constructor <;> linarith
+  constructor <;> linarith only [hx']
 
 /-! The quotient extension at the singular point. -/
 /-- The difference of adjacent dyadic cutoffs divided by the spatial variable, with value zero
@@ -80,49 +78,49 @@ noncomputable def dyadicPsi (j : ℤ) (t : ℝ) : ℝ :=
 theorem dyadicPsi_eq_quotient {j : ℤ} {t : ℝ} (ht : t ≠ 0) :
     dyadicPsi j t =
       (dyadicCutoff (2⁻¹ ^ j * t) - dyadicCutoff (2⁻¹ ^ (j - 1) * t)) / t := by
-  simp [dyadicPsi, ht]
+  simp only [dyadicPsi, ht, ↓reduceIte, inv_zpow', zpow_neg, neg_sub]
 
 theorem dyadicPsi_zero (j : ℤ) : dyadicPsi j 0 = 0 := by
-  simp [dyadicPsi]
+  simp only [dyadicPsi, ↓reduceIte]
 
 theorem dyadicPsi_eq_zero_of_abs_le {j : ℤ} {t : ℝ}
     (ht : |t| ≤ 2 ^ (j - 3 : ℤ)) : dyadicPsi j t = 0 := by
   by_cases ht0 : t = 0
-  · simp [ht0, dyadicPsi]
+  · simp only [dyadicPsi, ht0, ↓reduceIte]
   · rw [dyadicPsi_eq_quotient ht0]
     have hscale : |(2⁻¹ : ℝ) ^ (j - 1) * t| ≤ 1 / 4 := by
       rw [abs_mul, abs_zpow]
-      rw [abs_of_pos (by norm_num : (0 : ℝ) < (2 : ℝ)⁻¹)]
+      rw [abs_of_pos (by norm_num1 : (0 : ℝ) < (2 : ℝ)⁻¹)]
       norm_num
       calc
         (1 / 2 : ℝ) ^ (j - 1) * |t| ≤
             (1 / 2 : ℝ) ^ (j - 1) * (2 : ℝ) ^ (j - 3) :=
           mul_le_mul_of_nonneg_left ht
-            (le_of_lt (zpow_pos (by norm_num : (0 : ℝ) < (1 / 2 : ℝ)) _))
+            (le_of_lt (zpow_pos (by norm_num1 : (0 : ℝ) < (1 / 2 : ℝ)) _))
         _ = 1 / 4 := by
-          rw [show (1 / 2 : ℝ) = (2 : ℝ)⁻¹ by norm_num]
+          rw [show (1 / 2 : ℝ) = (2 : ℝ)⁻¹ by norm_num1]
           rw [inv_zpow, ← zpow_neg]
-          rw [← zpow_add₀ (by norm_num : (2 : ℝ) ≠ 0)]
+          rw [← zpow_add₀ (by norm_num1 : (2 : ℝ) ≠ 0)]
           ring_nf
-          norm_num
+          norm_num1
     have hscale' : |(2⁻¹ : ℝ) ^ j * t| ≤ 1 / 4 := by
       rw [abs_mul, abs_zpow]
-      rw [abs_of_pos (by norm_num : (0 : ℝ) < (2 : ℝ)⁻¹)]
+      rw [abs_of_pos (by norm_num1 : (0 : ℝ) < (2 : ℝ)⁻¹)]
       norm_num
       calc
         (1 / 2 : ℝ) ^ j * |t| ≤
             (1 / 2 : ℝ) ^ j * (2 : ℝ) ^ (j - 3) :=
           mul_le_mul_of_nonneg_left ht
-            (le_of_lt (zpow_pos (by norm_num : (0 : ℝ) < (1 / 2 : ℝ)) _))
+            (le_of_lt (zpow_pos (by norm_num1 : (0 : ℝ) < (1 / 2 : ℝ)) _))
         _ = 1 / 8 := by
-          rw [show (1 / 2 : ℝ) = (2 : ℝ)⁻¹ by norm_num]
+          rw [show (1 / 2 : ℝ) = (2 : ℝ)⁻¹ by norm_num1]
           rw [inv_zpow, ← zpow_neg]
-          rw [← zpow_add₀ (by norm_num : (2 : ℝ) ≠ 0)]
+          rw [← zpow_add₀ (by norm_num1 : (2 : ℝ) ≠ 0)]
           ring_nf
-          norm_num
-        _ ≤ 1 / 4 := by norm_num
+          norm_num1
+        _ ≤ 1 / 4 := by norm_num1
     rw [dyadicCutoff_eq_one hscale, dyadicCutoff_eq_one hscale']
-    simp
+    simp only [sub_self, zero_div]
 
 theorem dyadicPsi_contDiffAt (j : ℤ) (t : ℝ) :
     ContDiffAt ℝ ∞ (dyadicPsi j) t := by
@@ -130,10 +128,10 @@ theorem dyadicPsi_contDiffAt (j : ℤ) (t : ℝ) :
   · subst t
     apply (contDiffAt_const (c := (0 : ℝ))).congr_of_eventuallyEq
     have hball : Metric.ball (0 : ℝ) (2 ^ (j - 3 : ℤ)) ∈ 𝓝 0 :=
-      Metric.ball_mem_nhds _ (zpow_pos (by norm_num : (0 : ℝ) < 2) _)
+      Metric.ball_mem_nhds _ (zpow_pos (by norm_num1 : (0 : ℝ) < 2) _)
     filter_upwards [hball] with u hu
     apply dyadicPsi_eq_zero_of_abs_le
-    exact le_of_lt (by simpa [Metric.mem_ball, Real.dist_eq] using hu)
+    exact le_of_lt (by simpa only [Metric.mem_ball, dist_zero_right, Real.norm_eq_abs] using hu)
   · let q : ℝ → ℝ := fun u ↦
       (dyadicCutoff ((2⁻¹ : ℝ) ^ j * u) -
         dyadicCutoff ((2⁻¹ : ℝ) ^ (j - 1) * u)) / u
@@ -158,7 +156,7 @@ theorem dyadicPsi_support_subset (j : ℤ) :
   intro t ht
   have ht0 : t ≠ 0 := by
     intro h
-    exact ht (by simp [h, dyadicPsi])
+    exact ht (by simp only [dyadicPsi, h, ↓reduceIte])
   have hinner : 2 ^ (j - 3 : ℤ) < |t| := by
     by_contra h
     exact ht (dyadicPsi_eq_zero_of_abs_le (le_of_not_gt h))
@@ -167,42 +165,42 @@ theorem dyadicPsi_support_subset (j : ℤ) :
     have hlarge : 2 ^ (j - 1 : ℤ) ≤ |t| := le_of_not_gt h
     have hfirst : 1 / 2 ≤ |(2⁻¹ : ℝ) ^ j * t| := by
       rw [abs_mul, abs_zpow]
-      rw [abs_of_pos (by norm_num : (0 : ℝ) < (2 : ℝ)⁻¹)]
+      rw [abs_of_pos (by norm_num1 : (0 : ℝ) < (2 : ℝ)⁻¹)]
       calc
         (1 / 2 : ℝ) = (2⁻¹ : ℝ) ^ j * (2 : ℝ) ^ (j - 1) := by
           rw [inv_zpow, ← zpow_neg]
-          rw [← zpow_add₀ (by norm_num : (2 : ℝ) ≠ 0)]
+          rw [← zpow_add₀ (by norm_num1 : (2 : ℝ) ≠ 0)]
           ring_nf
-          norm_num
+          norm_num1
         _ ≤
             (2⁻¹ : ℝ) ^ j * |t| :=
           mul_le_mul_of_nonneg_left hlarge
-            (le_of_lt (zpow_pos (by norm_num : (0 : ℝ) < 2⁻¹) _))
+            (le_of_lt (zpow_pos (by norm_num1 : (0 : ℝ) < 2⁻¹) _))
     have hsecond : 1 / 2 ≤ |(2⁻¹ : ℝ) ^ (j - 1) * t| := by
       rw [abs_mul, abs_zpow]
-      rw [abs_of_pos (by norm_num : (0 : ℝ) < (2 : ℝ)⁻¹)]
+      rw [abs_of_pos (by norm_num1 : (0 : ℝ) < (2 : ℝ)⁻¹)]
       calc
-        (1 / 2 : ℝ) ≤ 1 := by norm_num
+        (1 / 2 : ℝ) ≤ 1 := by norm_num1
         _ = (2⁻¹ : ℝ) ^ (j - 1) * (2 : ℝ) ^ (j - 1) := by
           rw [inv_zpow, ← zpow_neg]
-          rw [← zpow_add₀ (by norm_num : (2 : ℝ) ≠ 0)]
+          rw [← zpow_add₀ (by norm_num1 : (2 : ℝ) ≠ 0)]
           ring_nf
-          norm_num
+          norm_num1
         _ ≤
             (2⁻¹ : ℝ) ^ (j - 1) * |t| :=
           mul_le_mul_of_nonneg_left hlarge
-            (le_of_lt (zpow_pos (by norm_num : (0 : ℝ) < 2⁻¹) _))
+            (le_of_lt (zpow_pos (by norm_num1 : (0 : ℝ) < 2⁻¹) _))
     have hzero : dyadicPsi j t = 0 := by
       rw [dyadicPsi_eq_quotient ht0]
       rw [dyadicCutoff_eq_zero hfirst, dyadicCutoff_eq_zero hsecond]
-      simp
+      simp only [sub_self, zero_div]
     exact ht hzero
   exact ⟨hinner, houter⟩
 
 theorem dyadicPsi_odd (j : ℤ) : Function.Odd (dyadicPsi j) := by
   intro t
   by_cases ht : t = 0
-  · simp [ht, dyadicPsi]
+  · simp only [dyadicPsi, ht, neg_zero, ↓reduceIte]
   · rw [dyadicPsi_eq_quotient ht, dyadicPsi_eq_quotient (neg_ne_zero.mpr ht)]
     have harg₁ : (2⁻¹ : ℝ) ^ j * -t = -((2⁻¹ : ℝ) ^ j * t) := by ring
     have harg₂ : (2⁻¹ : ℝ) ^ (j - 1) * -t =
@@ -230,22 +228,22 @@ private theorem oscillatoryScaleSpec_unique {lam : ℝ} {r : ℕ} {j k : ℤ}
     have hkj : k < j := lt_of_not_ge h
     have hstep : k + 1 ≤ j := Int.add_one_le_iff.mpr hkj
     have hpows : (2 : ℝ) ^ (k + 1) ≤ (2 : ℝ) ^ j :=
-      (zpow_le_zpow_iff_right₀ (by norm_num : (1 : ℝ) < 2)).2 hstep
+      (zpow_le_zpow_iff_right₀ (by norm_num1 : (1 : ℝ) < 2)).2 hstep
     have hdouble : (2 : ℝ) ^ (r + 1) ≤
         (2 : ℝ) ^ (k + 1) * Real.sqrt |lam| := by
-      rw [pow_succ, zpow_add_one₀ (by norm_num : (2 : ℝ) ≠ 0)]
-      nlinarith [hk.1]
+      rw [pow_succ, zpow_add_one₀ (by norm_num1 : (2 : ℝ) ≠ 0)]
+      linarith only [hk, hk.1]
     have hcomp := mul_le_mul_of_nonneg_right hpows ha
     exact (not_lt_of_ge (hdouble.trans hcomp)) hj.2
   · by_contra h
     have hjk : j < k := lt_of_not_ge h
     have hstep : j + 1 ≤ k := Int.add_one_le_iff.mpr hjk
     have hpows : (2 : ℝ) ^ (j + 1) ≤ (2 : ℝ) ^ k :=
-      (zpow_le_zpow_iff_right₀ (by norm_num : (1 : ℝ) < 2)).2 hstep
+      (zpow_le_zpow_iff_right₀ (by norm_num1 : (1 : ℝ) < 2)).2 hstep
     have hdouble : (2 : ℝ) ^ (r + 1) ≤
         (2 : ℝ) ^ (j + 1) * Real.sqrt |lam| := by
-      rw [pow_succ, zpow_add_one₀ (by norm_num : (2 : ℝ) ≠ 0)]
-      nlinarith [hj.1]
+      rw [pow_succ, zpow_add_one₀ (by norm_num1 : (2 : ℝ) ≠ 0)]
+      linarith only [hj, hj.1]
     have hcomp := mul_le_mul_of_nonneg_right hpows ha
     exact (not_lt_of_ge (hdouble.trans hcomp)) hk.2
 
@@ -256,17 +254,17 @@ theorem existsUnique_oscillatoryScaleSpec (lam : ℝ) (r : ℕ) (hlam : lam ≠ 
   have ha : 0 < Real.sqrt |lam| := Real.sqrt_pos.2 (abs_pos.mpr hlam)
   have hx : 0 < (2 : ℝ) ^ r / Real.sqrt |lam| := div_pos (by positivity) ha
   obtain ⟨n, hnlo, hnhi⟩ :=
-    exists_mem_Ioc_zpow hx (by norm_num : (1 : ℝ) < 2)
+    exists_mem_Ioc_zpow hx (by norm_num1 : (1 : ℝ) < 2)
   have hnSpec : OscillatoryScaleSpec lam r (n + 1) := by
     constructor
     · rw [show (2 : ℝ) ^ r =
           ((2 : ℝ) ^ r / Real.sqrt |lam|) * Real.sqrt |lam| by field_simp]
       exact mul_le_mul_of_nonneg_right hnhi ha.le
-    · rw [zpow_add_one₀ (by norm_num : (2 : ℝ) ≠ 0)]
+    · rw [zpow_add_one₀ (by norm_num1 : (2 : ℝ) ≠ 0)]
       have hmul := mul_lt_mul_of_pos_right hnlo ha
       rw [div_mul_cancel₀ _ ha.ne'] at hmul
       rw [pow_succ]
-      nlinarith
+      linarith only [hmul]
   exact ⟨n + 1, hnSpec, fun k hk ↦ oscillatoryScaleSpec_unique hk hnSpec⟩
 
 /-- The paper's integer `j(lam,r)`. The proof argument records that the
@@ -292,10 +290,10 @@ theorem oscillatoryScaleIndex_succ (lam : ℝ) (r : ℕ) (hlam : lam ≠ 0) :
   have hnext : OscillatoryScaleSpec lam (r + 1)
       (oscillatoryScaleIndex lam r hlam + 1) := by
     constructor
-    · rw [zpow_add_one₀ (by norm_num : (2 : ℝ) ≠ 0), pow_succ]
-      nlinarith [h.1]
-    · rw [zpow_add_one₀ (by norm_num : (2 : ℝ) ≠ 0), pow_succ]
-      nlinarith [h.2]
+    · rw [zpow_add_one₀ (by norm_num1 : (2 : ℝ) ≠ 0), pow_succ]
+      linarith only [hlam, h, h.1]
+    · rw [zpow_add_one₀ (by norm_num1 : (2 : ℝ) ≠ 0), pow_succ]
+      linarith only [hlam, h, h.2]
   exact oscillatoryScaleSpec_unique
     (oscillatoryScaleIndex_spec lam (r + 1) hlam) hnext
 
@@ -305,11 +303,11 @@ theorem oscillatoryScaleIndex_eq_add (lam : ℝ) (r : ℕ) (hlam : lam ≠ 0) :
     oscillatoryScaleIndex lam r hlam =
       oscillatoryScaleIndex lam 0 hlam + r := by
   induction r with
-  | zero => simp
+  | zero => simp only [CharP.cast_eq_zero, add_zero]
   | succ r ih =>
       rw [oscillatoryScaleIndex_succ, ih]
       push_cast
-      ring
+      ac_rfl
 
 /-- A selected dyadic piece lives at normalized radius between fixed
 constants at its oscillation height. -/
@@ -325,13 +323,13 @@ theorem dyadicPsi_oscillatoryScaleIndex_support_normalized
   · have hmul := mul_lt_mul_of_pos_right hj.1 ha
     calc
       (2 : ℝ) ^ ((r : ℤ) - 3) = (2 : ℝ) ^ r / 8 := by
-        rw [zpow_sub₀ (by norm_num : (2 : ℝ) ≠ 0), zpow_natCast]
+        rw [zpow_sub₀ (by norm_num1 : (2 : ℝ) ≠ 0), zpow_natCast]
         norm_num
       _ ≤ ((2 : ℝ) ^ (oscillatoryScaleIndex lam r hlam) *
-          Real.sqrt |lam|) / 8 := div_le_div_of_nonneg_right hs.1 (by norm_num)
+          Real.sqrt |lam|) / 8 := div_le_div_of_nonneg_right hs.1 (by norm_num1)
       _ = (2 : ℝ) ^ (oscillatoryScaleIndex lam r hlam - 3) *
           Real.sqrt |lam| := by
-        rw [zpow_sub₀ (by norm_num : (2 : ℝ) ≠ 0)]
+        rw [zpow_sub₀ (by norm_num1 : (2 : ℝ) ≠ 0)]
         norm_num
         ring
       _ < |t| * Real.sqrt |lam| := hmul
@@ -342,11 +340,11 @@ theorem dyadicPsi_oscillatoryScaleIndex_support_normalized
             Real.sqrt |lam| := hmul
       _ = ((2 : ℝ) ^ (oscillatoryScaleIndex lam r hlam) *
           Real.sqrt |lam|) / 2 := by
-        rw [zpow_sub₀ (by norm_num : (2 : ℝ) ≠ 0)]
+        rw [zpow_sub₀ (by norm_num1 : (2 : ℝ) ≠ 0)]
         norm_num
         ring
       _ < (2 : ℝ) ^ (r + 1) / 2 :=
-        div_lt_div_of_pos_right hs.2 (by norm_num)
+        div_lt_div_of_pos_right hs.2 (by norm_num1)
       _ = (2 : ℝ) ^ r := by rw [pow_succ]; ring
 
 /-! A finite low-oscillatory kernel. We first keep the selector `J` explicit
@@ -365,8 +363,8 @@ theorem lowOscillatoryKernel_eq_zero_of_not_mem_supports
   apply Finset.sum_eq_zero
   intro r hr
   have hψ : dyadicPsi (J r) t = 0 := by
-    simpa [Function.support] using ht r hr
-  simp [hψ]
+    simpa only [support, ne_eq, mem_ofPred_eq, Decidable.not_not] using ht r hr
+  simp only [hψ, Complex.ofReal_zero, zero_mul]
 
 theorem lowOscillatoryKernel_support_subset (lam : ℝ) (B : ℕ) (J : ℕ → ℤ) :
     support (lowOscillatoryKernel lam B J) ⊆
@@ -400,7 +398,7 @@ theorem norm_dyadicPsi_le (j : ℤ) {t : ℝ} (ht : t ≠ 0) :
       _ = dyadicCutoff (2⁻¹ ^ j * t) +
             dyadicCutoff (2⁻¹ ^ (j - 1) * t) := by
         rw [abs_of_nonneg h₁, abs_of_nonneg h₃]
-      _ ≤ 2 := by linarith
+      _ ≤ 2 := by linarith only [h₂, h₄]
   exact (div_le_div_of_nonneg_right hnum (abs_nonneg _))
 
 theorem lowOscillatoryKernel_norm_le {lam : ℝ} {B : ℕ} {J : ℕ → ℤ}
@@ -419,7 +417,7 @@ theorem lowOscillatoryKernel_norm_le {lam : ℝ} {B : ℕ} {J : ℕ → ℤ}
       rw [norm_mul, norm_phase, mul_one, Complex.norm_real, Real.norm_eq_abs]
       exact norm_dyadicPsi_le (J r) ht
     _ = (B + 1 : ℝ) * (2 / |t|) := by
-      simp [Finset.sum_const, Nat.cast_add, Nat.cast_one]
+      simp only [Finset.sum_const, Finset.card_range, nsmul_eq_mul, Nat.cast_add, Nat.cast_one]
 
 theorem lowOscillatoryKernel_support_annulus_subset (lam : ℝ) (B : ℕ) (J : ℕ → ℤ) :
     support (lowOscillatoryKernel lam B J) ⊆
@@ -504,14 +502,14 @@ theorem paperLowOscillatoryKernel_norm_le_inv_abs
         dyadicCutoff
           ((2⁻¹ : ℝ) ^ (oscillatoryScaleIndex lam 0 hlam - 1) * t)| ≤ 1 := by
     rw [abs_le]
-    constructor <;> linarith
+    constructor <;> linarith only [hlam, h₁, h₄, h₂, h₃]
   exact div_le_div_of_nonneg_right hnum (abs_nonneg t)
 
 theorem paperLowOscillatoryKernel_mul_norm_le_one
     {lam : ℝ} (hlam : lam ≠ 0) (B : ℕ) (t : ℝ) :
     ‖(t : ℂ) * paperLowOscillatoryKernel lam hlam B t‖ ≤ 1 := by
   by_cases ht : t = 0
-  · simp [ht]
+  · simp only [ht, Complex.ofReal_zero, zero_mul, norm_zero, zero_le_one]
   · rw [norm_mul, Complex.norm_real, Real.norm_eq_abs]
     calc
       |t| * ‖paperLowOscillatoryKernel lam hlam B t‖ ≤ |t| * (1 / |t|) :=
@@ -545,11 +543,11 @@ theorem paperLowOscillatoryKernel_support_normalized
   have hnorm := dyadicPsi_oscillatoryScaleIndex_support_normalized hlam r hrt
   constructor
   · calc
-      (1 / 8 : ℝ) = (2 : ℝ) ^ ((0 : ℤ) - 3) := by norm_num
+      (1 / 8 : ℝ) = (2 : ℝ) ^ ((0 : ℤ) - 3) := by norm_num1
       _ ≤ (2 : ℝ) ^ ((r : ℤ) - 3) := by
-        apply (zpow_le_zpow_iff_right₀ (by norm_num : (1 : ℝ) < 2)).2
+        apply (zpow_le_zpow_iff_right₀ (by norm_num1 : (1 : ℝ) < 2)).2
         omega
       _ < |t| * Real.sqrt |lam| := hnorm.1
-  · exact hnorm.2.trans_le (pow_le_pow_right₀ (by norm_num) hrB)
+  · exact hnorm.2.trans_le (pow_le_pow_right₀ (by norm_num1) hrB)
 
 end QuadraticCarleson

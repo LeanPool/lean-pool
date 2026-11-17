@@ -32,7 +32,7 @@ theorem stability_tendsto_setIntegral_mul_test_of_Lthree
     Tendsto (fun n => ∫ x in S, φ x * F n x ∂μ) atTop
       (nhds (∫ x in S, φ x * G x ∂μ)) := by
   let w : α → ℝ := S.indicator φ
-  have hw : MemLp w ∞ μ := hφ.indicator hS
+  have hw : MemLp w ∞ μ := hφ.indicator hS.nullMeasurableSet
   have h := stability_tendsto_integral_mul_test_of_Lthree μ F G w hF hw hconv
   have heqF (n : ℕ) :
       (∫ x, w x • F n x ∂μ) = ∫ x in S, φ x * F n x ∂μ := by

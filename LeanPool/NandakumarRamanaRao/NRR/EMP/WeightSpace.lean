@@ -6,10 +6,14 @@ Authors: Arseniy Akopyan
 module
 
 
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import Mathlib.Algebra.Order.Archimedean.Real.Basic
-public import Mathlib.Data.Fintype.Card
-public import Mathlib.Tactic
+public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
+public import Mathlib.Basic.Real.Basic
+public import Mathlib.Data.Finset.Card
+public import Mathlib.Data.Fintype.Basic
+import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+import Mathlib.Algebra.Order.Archimedean.Real.Basic
+import Mathlib.Data.Fintype.Card
+import Mathlib.Tactic.Measurability.Init
 
 /-!
 # `NRR.EMP.WeightSpace` — finite‑dimensional algebra of normalized weights

@@ -904,7 +904,9 @@ private theorem phiForest_toQ15 (A : List (List Z15)) : ∀ F : Forest,
       simp only [phiForest, phiVec]
       rw [← ihG, ← ihts, ← mulMatVec_toQ15, ← pmul_toQ15]
   termination_by F => sizeOf F
-  decreasing_by all_goals (simp_wf <;> omega)
+  decreasing_by
+    all_goals simp_wf
+    omega
 
 /-- The elementary-weight engine commutes with the inclusion `toQ15` of `Z15` in `Q15`. -/
 theorem Phi_toQ15 (A : List (List Z15)) (b : List Z15) (t : RTree) :
@@ -963,7 +965,9 @@ private theorem phiForest_smulVec (c : K) (A : List (List K)) : ∀ F : Forest,
       have hpow : c * c ^ orderF G * c ^ orderF ts = c ^ (1 + orderF G + orderF ts) := by ring
       rw [hpow]
   termination_by F => sizeOf F
-  decreasing_by all_goals (simp_wf <;> omega)
+  decreasing_by
+    all_goals simp_wf
+    omega
 
 /-- `Φ` is homogeneous of degree `|t|`: scaling the stage matrix and the weights
     entrywise by `c` multiplies the elementary weight on `t` by `c ^ order t`. -/

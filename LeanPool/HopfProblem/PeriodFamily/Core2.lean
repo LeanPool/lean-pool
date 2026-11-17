@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Boris Alexeev
 -/
 module
+public import LeanPool.HopfProblem.Foundations.Core2
+public import Mathlib.Geometry.Manifold.IsManifold.Basic
 
-public import LeanPool.HopfProblem.Prelude
+public import LeanPool.HopfProblem.InternalPrelude
 public import LeanPool.HopfProblem.TorusHomology.PeriodTorusHigherHomology8
 import all LeanPool.HopfProblem.Foundations.Core2
 import all LeanPool.HopfProblem.PeriodFamily.PeriodPoint
@@ -15,7 +17,6 @@ import all LeanPool.HopfProblem.Uniformization.SpecialPeriods2
 import all LeanPool.HopfProblem.PeriodFamily.Core1
 import all LeanPool.HopfProblem.Uniformization.SpecialPeriods6
 import all LeanPool.HopfProblem.Toric.DiagonalQuotient1
-import all LeanPool.HopfProblem.TorusHomology.PeriodTorusHigherHomology8
 
 /-!
 # Hopf problem: period family · core 2
@@ -26,10 +27,8 @@ Supporting definitions and proofs for this stage of the six-sphere construction.
 
 open Set Function Filter Manifold Topology
 
-open scoped BigOperators CategoryTheory Complex.UnitDisc ComplexConjugate ContDiff ContinuousMap
-  Convolution ENNReal EuclideanSpace Fin.NatCast InnerProductSpace Interval Matrix MatrixGroups
-  Modular NNReal Pointwise RealInnerProductSpace TensorProduct UniformConvergence Uniformity
-  UpperHalfPlane
+open scoped BigOperators ComplexConjugate ContDiff ContinuousMap ENNReal EuclideanSpace Fin.NatCast
+  InnerProductSpace Interval Matrix NNReal Pointwise RealInnerProductSpace UpperHalfPlane
 
 universe u v
 
@@ -197,10 +196,12 @@ private theorem PeriodFamily.Data.linearLift_holomorphic {V B : Type*} [NormedAd
       ω (Prod.snd : B × ComplexPlane₂ → ComplexPlane₂) := by
     rw [modelWithCornersSelf_prod]
     exact contMDiff_snd
-  apply contMDiff_pi_space.mpr
+  apply contMDiff_pi_module_iff.mpr
   intro i
-  have h₀ := ((D.rightBlock_entry_holomorphic g i 0).comp hf).mul ((contMDiff_pi_space.mp hs) 0)
-  have h₁ := ((D.rightBlock_entry_holomorphic g i 1).comp hf).mul ((contMDiff_pi_space.mp hs) 1)
+  have h₀ := ((D.rightBlock_entry_holomorphic g i 0).comp hf).mul
+    ((contMDiff_pi_module_iff.mp hs) 0)
+  have h₁ := ((D.rightBlock_entry_holomorphic g i 1).comp hf).mul
+    ((contMDiff_pi_module_iff.mp hs) 1)
   convert h₀.add h₁ using 1
   funext x
   simp [Matrix.mulVec, dotProduct, Fin.sum_univ_two, Function.comp_def]

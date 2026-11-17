@@ -151,7 +151,7 @@ def test_render_comment_refactor_mode() -> None:
                 "risk": "medium",
                 "assessment_one_sentence": "Shorter, but more fragile.",
             },
-            "verdict": "needs_discussion",
+            "verdict": "request_changes",
             "findings": [],
         },
         model="gpt-5.5",
@@ -330,7 +330,7 @@ def test_render_comment_notes_truncation() -> None:
     from lean_pool.review import LLM_REVIEW_MARKER, DiffTruncation, render_comment
 
     body = render_comment(
-        {"summary": "Reviewed a reduced diff.", "verdict": "needs_discussion"},
+        {"summary": "Reviewed a reduced diff.", "verdict": "request_changes"},
         model="gpt-5.5",
         usage=None,
         tier="flex",
@@ -547,38 +547,41 @@ def _outcome(key, verdict="pass", payload=None, usage=None):
     return review.RubricOutcome(spec=spec, result=result, verdict=verdict)
 
 
-def test_advisory_rubric_block_is_recorded_as_discuss() -> None:
-    """Code quality informs the maintainer; it does not veto a merge."""
+def test_rubric_verdicts_are_binary() -> None:
+    """Rubrics decide; there is no third, defer-to-a-human verdict."""
     from lean_pool import review
 
     quality = next(s for s in review.PROJECT_RUBRICS if not s.blocking)
     faithfulness = next(s for s in review.PROJECT_RUBRICS if s.blocking)
 
-    assert review.normalize_rubric_verdict(quality, {"verdict": "block"}) == "discuss"
+    # Code quality is advisory: it flags, it never vetoes a merge.
+    assert review.normalize_rubric_verdict(quality, {"verdict": "block"}) == "flag"
+    assert review.normalize_rubric_verdict(quality, {"verdict": "pass"}) == "pass"
     assert (
         review.normalize_rubric_verdict(faithfulness, {"verdict": "block"}) == "block"
     )
-    # An unreadable verdict is a review for a human, never a silent pass.
-    assert review.normalize_rubric_verdict(faithfulness, {}) == "discuss"
-    assert (
-        review.normalize_rubric_verdict(faithfulness, {"verdict": "approve"})
-        == "discuss"
-    )
+    # An unreadable or retired verdict fails closed, never a silent pass.
+    assert review.normalize_rubric_verdict(faithfulness, {}) == "block"
+    for retired in ("discuss", "approve"):
+        assert (
+            review.normalize_rubric_verdict(faithfulness, {"verdict": retired})
+            == "block"
+        )
 
 
 def test_aggregate_verdict_is_deterministic() -> None:
-    """Block beats discuss beats pass, and a partial diff cannot approve."""
+    """Any block requests changes, flags never do, and a partial diff cannot approve."""
     from lean_pool.review import aggregate_verdict
 
     all_pass = [_outcome("faithfulness"), _outcome("novelty")]
     one_block = [_outcome("faithfulness", "block"), _outcome("novelty")]
-    one_discuss = [_outcome("faithfulness"), _outcome("quality", "discuss")]
+    one_flag = [_outcome("faithfulness"), _outcome("quality", "flag")]
 
     assert aggregate_verdict(all_pass, truncated=False) == "approve"
     assert aggregate_verdict(one_block, truncated=False) == "request_changes"
-    assert aggregate_verdict(one_discuss, truncated=False) == "needs_discussion"
+    assert aggregate_verdict(one_flag, truncated=False) == "approve"
     # Nobody read the elided files, so clean rubrics still cannot approve.
-    assert aggregate_verdict(all_pass, truncated=True) == "needs_discussion"
+    assert aggregate_verdict(all_pass, truncated=True) == "request_changes"
     assert aggregate_verdict(one_block, truncated=True) == "request_changes"
 
 
@@ -616,7 +619,7 @@ def test_rubric_comment_carries_table_facts_and_findings() -> None:
                 ],
             },
         ),
-        _outcome("quality", verdict="discuss"),
+        _outcome("quality", verdict="flag"),
     ]
 
     body = render_rubric_comment(

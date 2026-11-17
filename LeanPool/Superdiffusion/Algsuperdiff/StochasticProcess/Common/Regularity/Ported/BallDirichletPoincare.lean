@@ -69,7 +69,8 @@ theorem normalizedL2On_euclideanBall_le_vectorGradient [NeZero d]
   have hval : eLpNorm rhoQ.toH1Function.toFun 2 (volume.restrict Q) =
       eLpNorm rho.toH1Function.toFun 2 (volume.restrict W) := by
     change eLpNorm (Set.indicator W rho.toH1Function.toFun) 2 (volume.restrict Q) = _
-    rw [eLpNorm_indicator_eq_eLpNorm_restrict (isOpen_euclideanBall z r).measurableSet,
+    rw [eLpNorm_indicator_eq_eLpNorm_restrict
+        (isOpen_euclideanBall z r).measurableSet.nullMeasurableSet,
       Measure.restrict_restrict (isOpen_euclideanBall z r).measurableSet,
       Set.inter_eq_left.mpr hWQ]
   have hgrad : ∀ i : Fin d,
@@ -82,7 +83,8 @@ theorem normalizedL2On_euclideanBall_le_vectorGradient [NeZero d]
         Set.indicator W (fun x => rho.toH1Function.grad x i) by
           funext x
           by_cases hx : x ∈ W <;> simp [hx],
-      eLpNorm_indicator_eq_eLpNorm_restrict (isOpen_euclideanBall z r).measurableSet,
+      eLpNorm_indicator_eq_eLpNorm_restrict
+        (isOpen_euclideanBall z r).measurableSet.nullMeasurableSet,
       Measure.restrict_restrict (isOpen_euclideanBall z r).measurableSet,
       Set.inter_eq_left.mpr hWQ]
   rw [hval, show (∑ i : Fin d, (eLpNorm (fun x => rhoQ.toH1Function.grad x i) 2

@@ -71,7 +71,8 @@ theorem norm_smul_le_norm_apply_of_coercive {N : E →L[𝕜] E} {c : ℝ}
       calc RCLike.re ⟪N z, z⟫_𝕜 ≤ ‖⟪N z, z⟫_𝕜‖ := RCLike.re_le_norm _
         _ ≤ ‖N z‖ * ‖z‖ := norm_inner_le_norm _ _
     have hzpos : (0 : ℝ) < ‖z‖ := norm_pos_iff.mpr hz
-    have h3 : c * ‖z‖ * ‖z‖ ≤ ‖N z‖ * ‖z‖ := by nlinarith
+    have h3 : c * ‖z‖ * ‖z‖ ≤ ‖N z‖ * ‖z‖ := by
+      simpa only [pow_two, mul_assoc] using h1.trans h2
     exact le_of_mul_le_mul_right h3 hzpos
 
 /-- Operator Lax–Milgram: a uniformly coercive bounded operator on a Hilbert
@@ -79,43 +80,36 @@ space is a unit of the algebra of bounded operators. -/
 theorem isUnit_of_coercive {N : E →L[𝕜] E} {c : ℝ} (hc : 0 < c)
     (hcoer : ∀ z, c * ‖z‖ ^ 2 ≤ RCLike.re ⟪N z, z⟫_𝕜) : IsUnit N := by
   have hlow := norm_smul_le_norm_apply_of_coercive hcoer
+  have hanti : AntilipschitzWith (Real.toNNReal c)⁻¹ N := by
+    refine ContinuousLinearMap.antilipschitz_of_bound N ?_
+    intro x
+    have hcoe : (((Real.toNNReal c)⁻¹ : NNReal) : ℝ) = c⁻¹ := by
+      rw [NNReal.coe_inv, Real.coe_toNNReal c hc.le]
+    rw [hcoe, le_inv_mul_iff₀ hc]
+    exact hlow x
   rw [ContinuousLinearMap.isUnit_iff_bijective]
-  constructor
-  · intro a b hab
-    have h1 : N (a - b) = 0 := by rw [map_sub, hab, sub_self]
-    have h2 := hlow (a - b)
-    rw [h1, norm_zero] at h2
-    have h3 : ‖a - b‖ ≤ 0 := by nlinarith [norm_nonneg (a - b)]
-    rw [← sub_eq_zero]
-    exact norm_le_zero_iff.mp h3
-  · have hanti : AntilipschitzWith (Real.toNNReal c)⁻¹ N := by
-      refine ContinuousLinearMap.antilipschitz_of_bound N ?_
-      intro x
-      have hcoe : (((Real.toNNReal c)⁻¹ : NNReal) : ℝ) = c⁻¹ := by
-        rw [NNReal.coe_inv, Real.coe_toNNReal c hc.le]
-      rw [hcoe, le_inv_mul_iff₀ hc]
-      exact hlow x
-    have hclosed :
-        IsClosed ((LinearMap.range (N : E →ₗ[𝕜] E) : Submodule 𝕜 E) : Set E) := by
-      rw [LinearMap.coe_range]
-      exact hanti.isClosed_range N.uniformContinuous
-    have : CompleteSpace (LinearMap.range (N : E →ₗ[𝕜] E)) :=
-      hclosed.completeSpace_coe
-    have : (LinearMap.range (N : E →ₗ[𝕜] E)).HasOrthogonalProjection :=
-      Submodule.HasOrthogonalProjection.ofCompleteSpace _
-    have hrange : LinearMap.range (N : E →ₗ[𝕜] E) = ⊤ := by
-      rw [← Submodule.orthogonal_eq_bot_iff, Submodule.eq_bot_iff]
-      intro z hz
-      have h0 : ⟪N z, z⟫_𝕜 = 0 :=
-        (Submodule.mem_orthogonal _ z).mp hz (N z)
-          (LinearMap.mem_range.mpr ⟨z, rfl⟩)
-      have h1 := hcoer z
-      rw [h0, map_zero] at h1
-      have h2 : ‖z‖ ^ 2 ≤ 0 := by nlinarith
-      have h3 : ‖z‖ = 0 :=
-        (pow_eq_zero_iff two_ne_zero).mp (le_antisymm h2 (sq_nonneg _))
-      exact norm_eq_zero.mp h3
-    exact LinearMap.range_eq_top.mp hrange
+  refine ⟨hanti.injective, ?_⟩
+  have hclosed :
+      IsClosed ((LinearMap.range (N : E →ₗ[𝕜] E) : Submodule 𝕜 E) : Set E) := by
+    rw [LinearMap.coe_range]
+    exact hanti.isClosed_range N.uniformContinuous
+  have : CompleteSpace (LinearMap.range (N : E →ₗ[𝕜] E)) :=
+    hclosed.completeSpace_coe
+  have : (LinearMap.range (N : E →ₗ[𝕜] E)).HasOrthogonalProjection :=
+    Submodule.HasOrthogonalProjection.ofCompleteSpace _
+  have hrange : LinearMap.range (N : E →ₗ[𝕜] E) = ⊤ := by
+    rw [← Submodule.orthogonal_eq_bot_iff, Submodule.eq_bot_iff]
+    intro z hz
+    have h0 : ⟪N z, z⟫_𝕜 = 0 :=
+      (Submodule.mem_orthogonal _ z).mp hz (N z)
+        (LinearMap.mem_range.mpr ⟨z, rfl⟩)
+    have h1 := hcoer z
+    rw [h0, map_zero] at h1
+    have h2 : ‖z‖ ^ 2 ≤ 0 := nonpos_of_mul_nonpos_right h1 hc
+    have h3 : ‖z‖ = 0 :=
+      (pow_eq_zero_iff two_ne_zero).mp (le_antisymm h2 (sq_nonneg _))
+    exact norm_eq_zero.mp h3
+  exact LinearMap.range_eq_top.mp hrange
 
 /-- `1 + W⋆ W` is invertible for every bounded Hilbert-space operator `W`:
 its quadratic form dominates `‖z‖ ^ 2`, so the operator Lax–Milgram lemma
@@ -126,8 +120,18 @@ theorem isUnit_one_add_star_mul_self (W : E →L[𝕜] E) :
   have h : (1 + star W * W) z = z + star W (W z) := rfl
   rw [h]
   simp only [inner_add_left, map_add, inner_self_eq_norm_sq,
-    ContinuousLinearMap.star_eq_adjoint, ContinuousLinearMap.adjoint_inner_left]
-  nlinarith [sq_nonneg ‖W z‖]
+    ContinuousLinearMap.star_eq_adjoint, ContinuousLinearMap.adjoint_inner_left, one_mul]
+  exact le_add_of_nonneg_right (sq_nonneg ‖W z‖)
+
+omit [CompleteSpace E] in
+/-- Cauchy--Schwarz bound on the quadratic form of a bounded operator. -/
+private theorem re_inner_apply_self_le_norm_mul_sq (B : E →L[𝕜] E) (y : E) :
+    RCLike.re ⟪B y, y⟫_𝕜 ≤ ‖B‖ * ‖y‖ ^ 2 := by
+  calc RCLike.re ⟪B y, y⟫_𝕜 ≤ ‖⟪B y, y⟫_𝕜‖ := RCLike.re_le_norm _
+    _ ≤ ‖B y‖ * ‖y‖ := norm_inner_le_norm _ _
+    _ ≤ (‖B‖ * ‖y‖) * ‖y‖ :=
+        mul_le_mul_of_nonneg_right (B.le_opNorm y) (norm_nonneg _)
+    _ = ‖B‖ * ‖y‖ ^ 2 := by ring
 
 omit [CompleteSpace E] in
 /-- Cauchy–Schwarz for the semi-inner product induced by a positive symmetric
@@ -159,18 +163,15 @@ theorem norm_apply_sq_le_of_positive {B : E →L[𝕜] E}
       rw [h1] at h0
       simpa [map_sub, map_add, RCLike.re_ofReal_mul, inner_self_eq_norm_sq]
         using h0
-    have h3 : RCLike.re ⟪B (B y), B y⟫_𝕜 ≤ ‖B‖ * ‖B y‖ ^ 2 := by
-      calc RCLike.re ⟪B (B y), B y⟫_𝕜 ≤ ‖⟪B (B y), B y⟫_𝕜‖ := RCLike.re_le_norm _
-        _ ≤ ‖B (B y)‖ * ‖B y‖ := norm_inner_le_norm _ _
-        _ ≤ (‖B‖ * ‖B y‖) * ‖B y‖ :=
-            mul_le_mul_of_nonneg_right (B.le_opNorm (B y)) (norm_nonneg _)
-        _ = ‖B‖ * ‖B y‖ ^ 2 := by ring
+    have h3 : RCLike.re ⟪B (B y), B y⟫_𝕜 ≤ ‖B‖ * ‖B y‖ ^ 2 :=
+      re_inner_apply_self_le_norm_mul_sq B (B y)
     have key : t * (t * RCLike.re ⟪B (B y), B y⟫_𝕜) ≤ t * ‖B y‖ ^ 2 := by
       refine mul_le_mul_of_nonneg_left ?_ ht.le
       calc t * RCLike.re ⟪B (B y), B y⟫_𝕜 ≤ t * (‖B‖ * ‖B y‖ ^ 2) :=
             mul_le_mul_of_nonneg_left h3 ht.le
         _ = ‖B y‖ ^ 2 := by rw [← mul_assoc, hts, one_mul]
-    have h7 : t * ‖B y‖ ^ 2 ≤ RCLike.re ⟪B y, y⟫_𝕜 := by linarith
+    have h7 : t * ‖B y‖ ^ 2 ≤ RCLike.re ⟪B y, y⟫_𝕜 := by
+      linarith only [h2, key]
     calc ‖B y‖ ^ 2 = ‖B‖ * (t * ‖B y‖ ^ 2) := by
           rw [← mul_assoc, mul_comm ‖B‖ t, hts, one_mul]
       _ ≤ ‖B‖ * RCLike.re ⟪B y, y⟫_𝕜 :=
@@ -189,7 +190,8 @@ private lemma div_one_add_le_of_sq_le {c d K : ℝ} (hc : 0 ≤ c)
   have hd : 0 ≤ d := le_trans (sq_nonneg c) hcd
   have hD : (0 : ℝ) < 1 + 2 * c + d := by linarith
   rw [div_le_iff₀ (by linarith : (0 : ℝ) < 1 + c)]
-  have h9 : c * (1 + 2 * c + d) ≤ (c + d) * (1 + c) := by nlinarith [hcd]
+  have h9 : c * (1 + 2 * c + d) ≤ (c + d) * (1 + c) := by
+    linear_combination hcd
   have h10 : c * (1 + 2 * c + d) ≤ (K * (1 + c)) * (1 + 2 * c + d) := by
     calc c * (1 + 2 * c + d) ≤ (c + d) * (1 + c) := h9
       _ ≤ (K * (1 + 2 * c + d)) * (1 + c) :=
@@ -204,7 +206,8 @@ Pure real analysis; `b = ‖B‖` at the use site. -/
 private lemma tendsto_sub_sq_div_add_sub_sq {b : ℝ} (hb : 0 < b) :
     Filter.Tendsto (fun ε : ℝ => (b - ε) ^ 2 / (b + (b - ε) ^ 2))
       (nhdsWithin 0 (Set.Ioo 0 b)) (nhds (b / (1 + b))) := by
-  have hden : b + (b - 0) ^ 2 ≠ 0 := by nlinarith
+  have hden : b + (b - 0) ^ 2 ≠ 0 :=
+    ne_of_gt (add_pos_of_pos_of_nonneg hb (sq_nonneg _))
   have h1 : Filter.Tendsto (fun ε : ℝ => (b - ε) ^ 2 / (b + (b - ε) ^ 2))
       (nhds 0) (nhds ((b - 0) ^ 2 / (b + (b - 0) ^ 2))) := by
     refine Filter.Tendsto.div ?_ ?_ hden
@@ -212,7 +215,9 @@ private lemma tendsto_sub_sq_div_add_sub_sq {b : ℝ} (hb : 0 < b) :
     · exact ((continuous_const.add
         ((continuous_const.sub continuous_id).pow 2)).tendsto 0)
   have h2 : (b - 0) ^ 2 / (b + (b - 0) ^ 2) = b / (1 + b) := by
-    rw [sub_zero, div_eq_div_iff (by nlinarith) (by linarith)]
+    rw [sub_zero, div_eq_div_iff
+      (ne_of_gt (add_pos_of_pos_of_nonneg hb (sq_nonneg _)))
+      (ne_of_gt (add_pos_of_pos_of_nonneg zero_lt_one hb.le))]
     ring
   rw [← h2]
   exact h1.mono_left nhdsWithin_le_nhds
@@ -233,16 +238,6 @@ private theorem div_one_add_le_of_forall_sub_sq_le {b K : ℝ} (hb : 0 < b)
     exact ⟨le_refl 0, hb.le⟩
   exact le_of_tendsto hcont
     (by filter_upwards [self_mem_nhdsWithin] with ε hε using h ε hε)
-
-omit [CompleteSpace E] in
-/-- Cauchy--Schwarz bound on the quadratic form of a bounded operator. -/
-private theorem re_inner_apply_self_le_norm_mul_sq (B : E →L[𝕜] E) (y : E) :
-    RCLike.re ⟪B y, y⟫_𝕜 ≤ ‖B‖ * ‖y‖ ^ 2 := by
-  calc RCLike.re ⟪B y, y⟫_𝕜 ≤ ‖⟪B y, y⟫_𝕜‖ := RCLike.re_le_norm _
-    _ ≤ ‖B y‖ * ‖y‖ := norm_inner_le_norm _ _
-    _ ≤ (‖B‖ * ‖y‖) * ‖y‖ :=
-        mul_le_mul_of_nonneg_right (B.le_opNorm y) (norm_nonneg _)
-    _ = ‖B‖ * ‖y‖ ^ 2 := by ring
 
 omit [CompleteSpace E] in
 /-- Expansion of `‖(1 + B) y‖²`.  The two cross terms are conjugate, so they add to twice the real
@@ -316,7 +311,7 @@ theorem norm_one_sub_inverse_one_add {B : E →L[𝕜] E} (hB : IsSelfAdjoint B)
       have hc := norm_apply_sq_le_of_positive hB.isSymmetric hBpos y
       rw [hval y, hNsq y, abs_of_nonneg (by positivity)]
       rw [div_mul_eq_mul_div, le_div_iff₀ (by linarith : (0 : ℝ) < 1 + ‖B‖)]
-      nlinarith [hb, hc]
+      linear_combination hb + hc
     refine norm_le_of_abs_re_inner_map_self_le hCsa.isSymmetric
       (div_nonneg hs.le (by linarith)) ?_
     intro z
@@ -334,42 +329,40 @@ theorem norm_one_sub_inverse_one_add {B : E →L[𝕜] E} (hB : IsSelfAdjoint B)
             _ ≤ ‖B u‖ * ‖u‖ := norm_inner_le_norm _ _
             _ ≤ ‖B u‖ * 1 := mul_le_mul_of_nonneg_left hu (norm_nonneg _)
             _ = ‖B u‖ := mul_one _
-        nlinarith [norm_nonneg (B u)]
-      have hCS : RCLike.re ⟪(1 - R) (N u), N u⟫_𝕜 ≤ ‖1 - R‖ * ‖N u‖ ^ 2 := by
-        calc RCLike.re ⟪(1 - R) (N u), N u⟫_𝕜
-            ≤ ‖⟪(1 - R) (N u), N u⟫_𝕜‖ := RCLike.re_le_norm _
-          _ ≤ ‖(1 - R) (N u)‖ * ‖N u‖ := norm_inner_le_norm _ _
-          _ ≤ (‖1 - R‖ * ‖N u‖) * ‖N u‖ :=
-              mul_le_mul_of_nonneg_right ((1 - R).le_opNorm _) (norm_nonneg _)
-          _ = ‖1 - R‖ * ‖N u‖ ^ 2 := by ring
+        exact pow_le_pow_left₀ hb0 h1 2
+      have hCS : RCLike.re ⟪(1 - R) (N u), N u⟫_𝕜 ≤ ‖1 - R‖ * ‖N u‖ ^ 2 :=
+        re_inner_apply_self_le_norm_mul_sq (1 - R) (N u)
       rw [hval u, hNsq u] at hCS
-      have husq : ‖u‖ ^ 2 ≤ 1 := by nlinarith [norm_nonneg u]
+      have husq : ‖u‖ ^ 2 ≤ 1 := by
+        simpa only [one_pow] using pow_le_pow_left₀ (norm_nonneg u) hu 2
       have hK0 : (0 : ℝ) ≤ ‖1 - R‖ := norm_nonneg _
       have h8 : RCLike.re ⟪B u, u⟫_𝕜 + ‖B u‖ ^ 2
           ≤ ‖1 - R‖ * (1 + 2 * RCLike.re ⟪B u, u⟫_𝕜 + ‖B u‖ ^ 2) := by
-        nlinarith [hCS]
+        linear_combination hCS + ‖1 - R‖ * husq
       exact div_one_add_le_of_sq_le hb0 hc2 h8
     have hstep2 : ∀ ε ∈ Set.Ioo (0 : ℝ) ‖B‖,
         (‖B‖ - ε) ^ 2 / (‖B‖ + (‖B‖ - ε) ^ 2) ≤ ‖1 - R‖ := by
       intro ε hε
       obtain ⟨u, hu1, hu2⟩ :=
-        B.exists_lt_apply_of_lt_opNorm (r := ‖B‖ - ε) (by linarith [hε.1])
+        B.exists_lt_apply_of_lt_opNorm (r := ‖B‖ - ε) (sub_lt_self _ hε.1)
       have hb0 := hBpos u
       have hcs := norm_apply_sq_le_of_positive hB.isSymmetric hBpos u
       have hbge : (‖B‖ - ε) ^ 2 / ‖B‖ ≤ RCLike.re ⟪B u, u⟫_𝕜 := by
         rw [div_le_iff₀ hs]
         have hsq : (‖B‖ - ε) * (‖B‖ - ε) ≤ ‖B u‖ * ‖B u‖ :=
-          mul_self_le_mul_self (by linarith [hε.2]) hu2.le
-        nlinarith [hcs, hsq]
+          mul_self_le_mul_self (sub_pos.mpr hε.2).le hu2.le
+        have hsq' : (‖B‖ - ε) ^ 2 ≤ ‖B u‖ ^ 2 := by
+          simpa only [pow_two] using hsq
+        simpa only [mul_comm] using hsq'.trans hcs
       have hmono := hstep u hu1.le
       have hmono2 : (‖B‖ - ε) ^ 2 / (‖B‖ + (‖B‖ - ε) ^ 2)
           ≤ RCLike.re ⟪B u, u⟫_𝕜 / (1 + RCLike.re ⟪B u, u⟫_𝕜) := by
         have hr2 : (‖B‖ - ε) ^ 2 ≤ RCLike.re ⟪B u, u⟫_𝕜 * ‖B‖ := by
-          rw [div_le_iff₀ hs] at hbge
-          linarith
-        rw [div_le_div_iff₀ (by nlinarith [sq_nonneg (‖B‖ - ε)]) (by linarith)]
-        nlinarith [hr2, sq_nonneg (‖B‖ - ε)]
-      linarith
+          rwa [div_le_iff₀ hs] at hbge
+        rw [div_le_div_iff₀ (add_pos_of_pos_of_nonneg hs (sq_nonneg _))
+          (add_pos_of_pos_of_nonneg zero_lt_one hb0)]
+        linear_combination hr2
+      exact hmono2.trans hmono
     exact div_one_add_le_of_forall_sub_sq_le hs hstep2
   exact le_antisymm hupper hlower
 

@@ -332,8 +332,7 @@ theorem eq_apply_graph (f : Set α → Set α) : continuous f → apply (graph f
     constructor
     · assumption
     · simp only [graph, Membership.mem, Set.Mem]
-      rw [eq_fst_pair, eq_snd_pair]
-      assumption
+      rwa [eq_fst_pair, eq_snd_pair]
 
 /-- The `K` combinator of the graph model. -/
 def K : Set α := graph (fun A => graph (fun _ => A))

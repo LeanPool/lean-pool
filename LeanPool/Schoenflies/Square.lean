@@ -95,10 +95,10 @@ theorem norm_sq_eq (x : Plane) : ‖x‖ ^ 2 = x 0 ^ 2 + x 1 ^ 2 := by
 /-- Half of Appendix C item 1's comparison: the sup norm is at most the Euclidean norm. -/
 theorem supNorm_le_norm (x : Plane) : supNorm x ≤ ‖x‖ := by
   have h0 : |x 0| ≤ ‖x‖ := by
-    have : |x 0| ^ 2 ≤ ‖x‖ ^ 2 := by rw [sq_abs, norm_sq_eq]; nlinarith [sq_nonneg (x 1)]
-    nlinarith [abs_nonneg (x 0), norm_nonneg x]
+    have : |x 0| ^ 2 ≤ ‖x‖ ^ 2 := by rw [sq_abs, norm_sq_eq]; nlinarith only []
+    nlinarith only [this, norm_nonneg x]
   have h1 : |x 1| ≤ ‖x‖ := by
-    have : |x 1| ^ 2 ≤ ‖x‖ ^ 2 := by rw [sq_abs, norm_sq_eq]; nlinarith [sq_nonneg (x 0)]
+    have : |x 1| ^ 2 ≤ ‖x‖ ^ 2 := by rw [sq_abs, norm_sq_eq]; nlinarith only []
     nlinarith [abs_nonneg (x 1), norm_nonneg x]
   exact max_le h0 h1
 
@@ -110,8 +110,8 @@ theorem norm_le_sqrt_two_mul_supNorm (x : Plane) : ‖x‖ ≤ Real.sqrt 2 * sup
     rw [← sq_abs]; nlinarith [abs_one_le_supNorm x, abs_nonneg (x 1)]
   have hbound : ‖x‖ ^ 2 ≤ (Real.sqrt 2 * supNorm x) ^ 2 := by
     rw [mul_pow, Real.sq_sqrt (by norm_num : (0 : ℝ) ≤ 2), norm_sq_eq]
-    linarith
-  nlinarith [norm_nonneg x, mul_nonneg (Real.sqrt_nonneg 2) (supNorm_nonneg x)]
+    linarith only [h1, h0]
+  nlinarith only [hbound, norm_nonneg x, mul_nonneg (Real.sqrt_nonneg 2) (supNorm_nonneg x)]
 
 /-! ### Coordinate half-planes
 
@@ -119,38 +119,20 @@ One convexity proof per direction serves all four sides of a square, and the out
 square is four of them. -/
 
 theorem convex_coord_le (i : Fin 2) (r : ℝ) : Convex ℝ {x : Plane | x i ≤ r} := by
-  intro x hx y hy a b ha hb hab
-  simp only [Set.mem_ofPred_eq] at *
-  rw [smul_add_apply]
-  have hr : a * r + b * r = r := by rw [← add_mul, hab, one_mul]
-  nlinarith [mul_le_mul_of_nonneg_left hx ha, mul_le_mul_of_nonneg_left hy hb]
+  exact convex_halfSpace_le
+    (⟨fun _ _ => rfl, fun _ _ => rfl⟩ : IsLinearMap ℝ (fun x : Plane => x i)) r
 
 theorem convex_coord_ge (i : Fin 2) (r : ℝ) : Convex ℝ {x : Plane | r ≤ x i} := by
-  intro x hx y hy a b ha hb hab
-  simp only [Set.mem_ofPred_eq] at *
-  rw [smul_add_apply]
-  have hr : a * r + b * r = r := by rw [← add_mul, hab, one_mul]
-  nlinarith [mul_le_mul_of_nonneg_left hx ha, mul_le_mul_of_nonneg_left hy hb]
+  exact convex_halfSpace_ge
+    (⟨fun _ _ => rfl, fun _ _ => rfl⟩ : IsLinearMap ℝ (fun x : Plane => x i)) r
 
 theorem convex_coord_lt (i : Fin 2) (r : ℝ) : Convex ℝ {x : Plane | x i < r} := by
-  intro x hx y hy a b ha hb hab
-  simp only [Set.mem_ofPred_eq] at *
-  rw [smul_add_apply]
-  have hr : a * r + b * r = r := by rw [← add_mul, hab, one_mul]
-  rcases eq_or_lt_of_le ha with rfl | ha'
-  · have hb1 : b = 1 := by linarith
-    subst hb1; nlinarith
-  · nlinarith [mul_lt_mul_of_pos_left hx ha', mul_le_mul_of_nonneg_left hy.le hb]
+  exact convex_halfSpace_lt
+    (⟨fun _ _ => rfl, fun _ _ => rfl⟩ : IsLinearMap ℝ (fun x : Plane => x i)) r
 
 theorem convex_coord_gt (i : Fin 2) (r : ℝ) : Convex ℝ {x : Plane | r < x i} := by
-  intro x hx y hy a b ha hb hab
-  simp only [Set.mem_ofPred_eq] at *
-  rw [smul_add_apply]
-  have hr : a * r + b * r = r := by rw [← add_mul, hab, one_mul]
-  rcases eq_or_lt_of_le ha with rfl | ha'
-  · have hb1 : b = 1 := by linarith
-    subst hb1; nlinarith
-  · nlinarith [mul_lt_mul_of_pos_left hx ha', mul_le_mul_of_nonneg_left hy.le hb]
+  exact convex_halfSpace_gt
+    (⟨fun _ _ => rfl, fun _ _ => rfl⟩ : IsLinearMap ℝ (fun x : Plane => x i)) r
 
 theorem isOpen_coord_lt (i : Fin 2) (r : ℝ) : IsOpen {x : Plane | x i < r} :=
   isOpen_lt (continuous_coord i) continuous_const
@@ -174,8 +156,10 @@ theorem closedSquare_eq_inter (c : Plane) (r : ℝ) :
   simp only [closedSquare, supDist, supNorm, sub_apply, Set.mem_ofPred_eq, mem_inter_iff,
     max_le_iff, abs_le]
   constructor
-  · rintro ⟨⟨h1, h2⟩, h3, h4⟩; exact ⟨⟨by linarith, by linarith⟩, by linarith, by linarith⟩
-  · rintro ⟨⟨h1, h2⟩, h3, h4⟩; exact ⟨⟨by linarith, by linarith⟩, by linarith, by linarith⟩
+  · rintro ⟨⟨h1, h2⟩, h3, h4⟩; exact ⟨⟨by linarith only [h1], by linarith only [h2]⟩,
+    by linarith only [h3], by linarith only [h4]⟩
+  · rintro ⟨⟨h1, h2⟩, h3, h4⟩; exact ⟨⟨by linarith only [h1], by linarith only [h2]⟩,
+    by linarith only [h3], by linarith only [h4]⟩
 
 theorem openSquare_eq_inter (c : Plane) (r : ℝ) :
     openSquare c r =
@@ -185,8 +169,10 @@ theorem openSquare_eq_inter (c : Plane) (r : ℝ) :
   simp only [openSquare, supDist, supNorm, sub_apply, Set.mem_ofPred_eq, mem_inter_iff,
     max_lt_iff, abs_lt]
   constructor
-  · rintro ⟨⟨h1, h2⟩, h3, h4⟩; exact ⟨⟨by linarith, by linarith⟩, by linarith, by linarith⟩
-  · rintro ⟨⟨h1, h2⟩, h3, h4⟩; exact ⟨⟨by linarith, by linarith⟩, by linarith, by linarith⟩
+  · rintro ⟨⟨h1, h2⟩, h3, h4⟩; exact ⟨⟨by linarith only [h1], by linarith only [h2]⟩,
+    by linarith only [h3], by linarith only [h4]⟩
+  · rintro ⟨⟨h1, h2⟩, h3, h4⟩; exact ⟨⟨by linarith only [h1], by linarith only [h2]⟩,
+    by linarith only [h3], by linarith only [h4]⟩
 
 theorem convex_closedSquare (c : Plane) (r : ℝ) : Convex ℝ (closedSquare c r) := by
   rw [closedSquare_eq_inter]
@@ -231,30 +217,30 @@ theorem isConnected_beyondSquare (r : ℝ) : IsConnected (beyondSquare r) := by
     constructor
     · rintro (h | h) <;> rcases h with h | h
       · exact Or.inl (Or.inl (Or.inl h))
-      · exact Or.inl (Or.inr (by linarith))
+      · exact Or.inl (Or.inr (by linarith only [h]))
       · exact Or.inl (Or.inl (Or.inr h))
-      · exact Or.inr (by linarith)
+      · exact Or.inr (by linarith only [h])
     · rintro (((h | h) | h) | h)
       · exact Or.inl (Or.inl h)
       · exact Or.inr (Or.inl h)
-      · exact Or.inl (Or.inr (by linarith))
-      · exact Or.inr (Or.inr (by linarith))
+      · exact Or.inl (Or.inr (by linarith only [h]))
+      · exact Or.inr (Or.inr (by linarith only [h]))
   -- Consecutive sides share a corner. Membership unfolds definitionally, so `show` states
   -- the inequality the corner satisfies and `linarith` closes it.
   have hRT : mk (r + 1) (r + 1) ∈ R ∩ T :=
-    ⟨show r < r + 1 by linarith, show r < r + 1 by linarith⟩
+    ⟨show r < r + 1 by linarith only [], show r < r + 1 by linarith only []⟩
   have hTL : mk (-r - 1) (r + 1) ∈ T ∩ L :=
-    ⟨show r < r + 1 by linarith, show -r - 1 < -r by linarith⟩
+    ⟨show r < r + 1 by linarith only [], show -r - 1 < -r by linarith only []⟩
   have hLB : mk (-r - 1) (-r - 1) ∈ L ∩ B :=
-    ⟨show -r - 1 < -r by linarith, show -r - 1 < -r by linarith⟩
+    ⟨show -r - 1 < -r by linarith only [], show -r - 1 < -r by linarith only []⟩
   have cR : IsConnected R :=
-    (convex_coord_gt 0 r).isConnected ⟨mk (r + 1) 0, show r < r + 1 by linarith⟩
+    (convex_coord_gt 0 r).isConnected ⟨mk (r + 1) 0, show r < r + 1 by linarith only []⟩
   have cL : IsConnected L :=
-    (convex_coord_lt 0 (-r)).isConnected ⟨mk (-r - 1) 0, show -r - 1 < -r by linarith⟩
+    (convex_coord_lt 0 (-r)).isConnected ⟨mk (-r - 1) 0, show -r - 1 < -r by linarith only []⟩
   have cT : IsConnected T :=
-    (convex_coord_gt 1 r).isConnected ⟨mk 0 (r + 1), show r < r + 1 by linarith⟩
+    (convex_coord_gt 1 r).isConnected ⟨mk 0 (r + 1), show r < r + 1 by linarith only []⟩
   have cB : IsConnected B :=
-    (convex_coord_lt 1 (-r)).isConnected ⟨mk 0 (-r - 1), show -r - 1 < -r by linarith⟩
+    (convex_coord_lt 1 (-r)).isConnected ⟨mk 0 (-r - 1), show -r - 1 < -r by linarith only []⟩
   have c1 : IsConnected (R ∪ T) := cR.union ⟨mk (r + 1) (r + 1), hRT.1, hRT.2⟩ cT
   have c2 : IsConnected (R ∪ T ∪ L) :=
     c1.union ⟨mk (-r - 1) (r + 1), Or.inr hTL.1, hTL.2⟩ cL

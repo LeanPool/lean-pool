@@ -7,7 +7,7 @@ module
 
 
 public import LeanPool.BeyondBethe.BeyondBethe.RawRationalBitBounds
-public import Mathlib.Tactic
+import Mathlib.Tactic.Positivity -- shake: keep
 
 /-! # Binary Rational Comparison -/
 

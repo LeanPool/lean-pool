@@ -130,11 +130,11 @@ noncomputable def spanningTreeBasis {G : Type u} [Groupoid.{u} G] [IsFreeGroupoi
   let f' : Labelling (IsFreeGroupoid.Generators G) Y := fun a b e =>
     if h : e ∈ wideSubquiverSymmetrify T a b then 1 else f ⟨⟨a, b, e⟩, h⟩
   rcases IsFreeGroupoid.unique_lift f' with ⟨F', hF', uF'⟩
-  refine ⟨F'.mapEnd _, ?_, ?_⟩
+  refine ⟨(SingleObj.toEnd Y).symm.toMonoidHom.comp (F'.mapEnd _), ?_, ?_⟩
   · suffices ∀ {x y : G} (q : x ⟶ y),
-        F'.map (IsFreeGroupoid.SpanningTree.loopOfHom T q) = (F'.map q : Y) by
+        F'.map (IsFreeGroupoid.SpanningTree.loopOfHom T q).asHom = (F'.map q : Y) by
       rintro ⟨⟨a, b, e⟩, h⟩
-      change F'.map (IsFreeGroupoid.SpanningTree.loopOfHom T (IsFreeGroupoid.of e)) = _
+      change F'.map (IsFreeGroupoid.SpanningTree.loopOfHom T (IsFreeGroupoid.of e)).asHom = _
       calc
         _ = F'.map (IsFreeGroupoid.of e) := this _
         _ = f' e := hF' a b e
@@ -159,7 +159,8 @@ noncomputable def spanningTreeBasis {G : Type u} [Groupoid.{u} G] [IsFreeGroupoi
           exact (hF' _ _ e).trans (dite_eq_left (Or.inr eT))
   · intro E hE
     ext x
-    suffices (IsFreeGroupoid.SpanningTree.functorOfMonoidHom T E).map x = F'.map x by
+    suffices (IsFreeGroupoid.SpanningTree.functorOfMonoidHom T E).map x.asHom =
+        F'.map x.asHom by
       simpa only [IsFreeGroupoid.SpanningTree.loopOfHom,
         IsFreeGroupoid.SpanningTree.functorOfMonoidHom, IsIso.inv_id,
         IsFreeGroupoid.SpanningTree.treeHom_root, Category.id_comp, Category.comp_id] using! this

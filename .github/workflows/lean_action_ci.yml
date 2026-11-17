@@ -36,6 +36,7 @@ on:
       - 'lake-manifest.json'
       - 'LeanPool/projects/**'
       - 'LeanPool/projects.yml'
+      - 'python/lean_pool/build_time_limits.py'
       - 'python/lean_pool/quality.py'
       - 'python/lean_pool/registry.py'
       - 'python/lean_pool/indexes.py'
@@ -83,6 +84,9 @@ jobs:
   plan:
     runs-on: ubuntu-latest
     name: Plan build
+    permissions:
+      contents: read
+      actions: write
     outputs:
       build_revision: ${{ steps.build-identity.outputs.revision }}
       base_build_revision: ${{ steps.build-identity.outputs.base_revision }}
@@ -92,11 +96,25 @@ jobs:
       matrix: ${{ steps.plan.outputs.matrix }}
       reuse_run_id: ${{ steps.plan.outputs.reuse_run_id }}
       previous_head: ${{ steps.plan.outputs.previous_head }}
+      queue_build: ${{ steps.plan.outputs.queue_build }}
     steps:
       - name: Checkout project
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
           fetch-depth: 0
+
+      # A push to main outside the queue (such as the generated-metadata
+      # commit) makes GitHub rebuild every queued group, but the discarded
+      # groups' runs keep building for hours. Their refs are deleted, so
+      # cancel any queue run whose ref no longer exists.
+      - name: Cancel discarded merge-group runs
+        if: github.event_name == 'merge_group'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          PYTHONPATH=python python3 -m lean_pool.merge_queue_cleanup
+          --repository "$GITHUB_REPOSITORY" --current-run-id "$GITHUB_RUN_ID"
 
       - name: Install Python tooling runtime
         uses: astral-sh/setup-uv@d0d8abe699bfb85fec6de9f7adb5ae17292296ff
@@ -183,6 +201,16 @@ jobs:
           plan=$(CHANGED_FILES_PATH="$changed_files" DIFF_AVAILABLE="$diff_available" \
                  COLD="$cold" FORCE_FULL="$FORCE_FULL" \
                  python3 scripts/ci/plan-build-shards.py)
+          # Main cannot read merge-queue caches, so after a toolchain bump it
+          # would rebuild the whole pool again; restore the queue's build instead.
+          queue_build=false
+          if [ "$EVENT_NAME" = push ] && [ "$cold" = true ] && [ "$FORCE_FULL" != true ] \
+             && PYTHONPATH=python python3 -m lean_pool.ci_artifacts restore-queue \
+                  --repository "$REPOSITORY" --head "$GITHUB_SHA" --check; then
+            plan='{"mode":"single","matrix":{"include":[{"shard":"00","projects":""}]}}'
+            queue_build=true
+          fi
+          echo "queue_build=$queue_build" >> "$GITHUB_OUTPUT"
           reuse_run_id=""
           previous_head=""
           if [ "$EVENT_NAME" = "pull_request" ] && [ "$FORCE_FULL" != "true" ] && [ "$minimal_build" != true ]; then
@@ -219,6 +247,9 @@ jobs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
           fetch-depth: 0
+
+      - name: Free runner disk space
+        uses: ./.github/actions/free-disk-space
 
       # Keep the large toolchain/Mathlib cache independent of per-commit builds.
       - name: Restore Lean dependencies
@@ -258,7 +289,9 @@ jobs:
         run: >-
           uv run --project python --group test pytest -q
           python/tests/test_ci_pr_build.py python/tests/test_indexes.py
-          -k 'test_lake_'
+          python/tests/test_axiom_audit_lean.py
+          python/tests/test_proof_length_linter.py
+          -k 'test_lake_ or test_compiled_axiom_audit'
 
       - name: Install Mathlib cache
         id: mathlib-cache
@@ -276,8 +309,30 @@ jobs:
             exit 1
           fi
 
+      - name: Restore the merge queue's full build
+        id: queue-full-build
+        if: needs.plan.outputs.queue_build == 'true' && steps.cache.outputs.cache-matched-key == ''
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          PYTHONPATH=python python3 -m lean_pool.ci_artifacts restore-queue
+          --head "$GITHUB_SHA"
+
+      # The planner gave up the sharded plan for this restore; one job cannot
+      # rebuild the whole pool in time, so hand off to a sharded full rebuild.
+      - name: Rebuild in shards when the queue build is unavailable
+        if: steps.queue-full-build.outcome == 'failure'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh workflow run lean_action_ci.yml --repo "$GITHUB_REPOSITORY" \
+            --ref "$GITHUB_REF_NAME" -f force_full=true
+          echo "::error::Could not restore the merge queue's build; started a sharded full rebuild instead."
+          exit 1
+
       - name: Reuse compiled projects from merged PRs
-        if: github.event_name == 'push' && steps.cache.outputs.cache-hit != 'true'
+        if: github.event_name == 'push' && steps.cache.outputs.cache-hit != 'true' && steps.queue-full-build.outcome != 'success'
         continue-on-error: true
         env:
           GH_TOKEN: ${{ github.token }}
@@ -320,18 +375,40 @@ jobs:
 
       - name: Build project
         id: compilation
+        env:
+          BUILD_TIME_BASE: ${{ github.event.merge_group.base_sha || github.event.pull_request.base.sha || github.event.before }}
         run: |
           set -euo pipefail
-          ~/.elan/bin/lake build LeanPool 2>&1 | tee lean-build.log
+          # Always rebuild this job's changed files after every cache/artifact
+          # restore. A same-policy cache need not have timed them while changed.
+          # `check` requires fresh timings; `watch` retains the 60-minute limit.
+          time_base=""
+          if [ -n "$BUILD_TIME_BASE" ] && ! printf '%s' "$BUILD_TIME_BASE" | grep -q '^0*$' \
+             && git cat-file -e "$BUILD_TIME_BASE" 2>/dev/null; then
+            time_base="$BUILD_TIME_BASE"
+            PYTHONPATH=python python3 -m lean_pool.build_time_limits prepare --base "$time_base"
+          fi
+          PYTHONPATH=python python3 -m lean_pool.build_time_limits watch -- ~/.elan/bin/lake build LeanPool 2>&1 | tee lean-build.log
           if grep -nE '(^|: )warning:' lean-build.log; then
             echo "::error::Lean build emitted warnings; fix them before merging."
             exit 1
           fi
+          if [ -n "$time_base" ]; then
+            PYTHONPATH=python python3 -m lean_pool.build_time_limits check \
+              --log lean-build.log --base "$time_base"
+          fi
+
+      # Lake writes setup files only as compiler inputs, each listing every
+      # transitive import (~1.6 MB; ~46 GB pool-wide). Before validating,
+      # caching, or uploading, keep just the local entries our readers use.
+      - name: Slim Lake setup files
+        run: PYTHONPATH=python python3 -m lean_pool.slim_setup
 
       # Main publishes the shared full build. A minimal-verifier PR publishes
       # only its own projects; the verifier overlays them on the main cache.
+      # A cold merge-queue build publishes it too, for main to restore.
       - name: Package build for documentation
-        if: github.ref == 'refs/heads/main' || (github.event_name == 'pull_request' && needs.plan.outputs.minimal_build == 'true')
+        if: github.ref == 'refs/heads/main' || (github.event_name == 'pull_request' && needs.plan.outputs.minimal_build == 'true') || (github.event_name == 'merge_group' && steps.cache.outputs.cache-matched-key == '')
         env:
           BUILD_EVENT: ${{ github.event_name }}
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
@@ -344,7 +421,7 @@ jobs:
           fi
 
       - name: Share build with documentation
-        if: github.ref == 'refs/heads/main' || (github.event_name == 'pull_request' && needs.plan.outputs.minimal_build == 'true')
+        if: github.ref == 'refs/heads/main' || (github.event_name == 'pull_request' && needs.plan.outputs.minimal_build == 'true') || (github.event_name == 'merge_group' && steps.cache.outputs.cache-matched-key == '')
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: lean-pool-build
@@ -449,11 +526,27 @@ jobs:
           key: LeanDependencies-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}
 
       - name: Save pool build
+        id: save-build
         if: always() && github.ref == 'refs/heads/main' && steps.compilation.outcome == 'success' && steps.cache.outputs.cache-hit != 'true'
         uses: actions/cache/save@27d5ce7f107fe9357f9df03efb73ab90386fccae
         with:
           path: .lake/build
           key: LeanPoolBuild-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-${{ needs.plan.outputs.build_revision }}
+
+      # actions/cache only warns when a save fails; a missing main cache makes
+      # every later run rebuild from an older one, so fail loudly instead.
+      - name: Verify pool build cache
+        if: always() && steps.save-build.outcome == 'success'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          KEY: LeanPoolBuild-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-${{ needs.plan.outputs.build_revision }}
+        run: |
+          set -euo pipefail
+          saved=$(gh cache list --repo "$GITHUB_REPOSITORY" --key "$KEY" --json key --jq length)
+          if [ "$saved" = 0 ]; then
+            echo "::error::Pool build cache $KEY was not saved; later runs will rebuild from a stale cache."
+            exit 1
+          fi
 
   shard:
     needs: plan
@@ -472,6 +565,9 @@ jobs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
           fetch-depth: 0
+
+      - name: Free runner disk space
+        uses: ./.github/actions/free-disk-space
 
       - name: Restore Lean dependencies
         id: dependency-cache
@@ -510,6 +606,7 @@ jobs:
       - name: Build this shard's projects
         env:
           PROJECTS: ${{ matrix.projects }}
+          BUILD_TIME_BASE: ${{ github.event.merge_group.base_sha || github.event.pull_request.base.sha || github.event.before }}
         run: |
           set -euo pipefail
           touch "$RUNNER_TEMP/build-stamp"
@@ -522,12 +619,34 @@ jobs:
               | tr '\n' ' ')
             modules="$modules $project_modules"
           done
+          # Always rebuild this job's changed files after every cache/artifact
+          # restore. A same-policy cache need not have timed them while changed.
+          # `check` requires fresh timings; `watch` retains the 60-minute limit.
+          time_base=""
+          if [ -n "$BUILD_TIME_BASE" ] && ! printf '%s' "$BUILD_TIME_BASE" | grep -q '^0*$' \
+             && git cat-file -e "$BUILD_TIME_BASE" 2>/dev/null; then
+            time_base="$BUILD_TIME_BASE"
+            # shellcheck disable=SC2086 # modules is a space-separated list on purpose
+            PYTHONPATH=python python3 -m lean_pool.build_time_limits prepare \
+              --base "$time_base" --modules $modules
+          fi
           # shellcheck disable=SC2086 # modules is a space-separated list on purpose
-          ~/.elan/bin/lake build $modules 2>&1 | tee shard-build.log
+          PYTHONPATH=python python3 -m lean_pool.build_time_limits watch -- ~/.elan/bin/lake build $modules 2>&1 | tee shard-build.log
           if grep -nE '(^|: )warning:' shard-build.log; then
             echo "::error::Lean build emitted warnings; fix them before merging."
             exit 1
           fi
+          if [ -n "$time_base" ]; then
+            # shellcheck disable=SC2086 # modules is a space-separated list on purpose
+            PYTHONPATH=python python3 -m lean_pool.build_time_limits check \
+              --log shard-build.log --base "$time_base" --modules $modules
+          fi
+
+      # Lake writes setup files only as compiler inputs, each listing every
+      # transitive import (~1.6 MB; ~46 GB pool-wide). Before validating,
+      # caching, or uploading, keep just the local entries our readers use.
+      - name: Slim Lake setup files
+        run: PYTHONPATH=python python3 -m lean_pool.slim_setup
 
       # Ship only what this build produced; unchanged (cache-replayed)
       # files stay out, so `finalize` can layer the shard outputs onto the
@@ -571,6 +690,9 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Free runner disk space
+        uses: ./.github/actions/free-disk-space
+
       - name: Restore Lean dependencies
         id: dependency-cache
         uses: actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae
@@ -608,7 +730,9 @@ jobs:
         run: >-
           uv run --project python --group test pytest -q
           python/tests/test_ci_pr_build.py python/tests/test_indexes.py
-          -k 'test_lake_'
+          python/tests/test_axiom_audit_lean.py
+          python/tests/test_proof_length_linter.py
+          -k 'test_lake_ or test_compiled_axiom_audit'
 
       - name: Install Mathlib cache
         id: mathlib-cache
@@ -674,18 +798,46 @@ jobs:
 
       - name: Build project
         id: compilation
+        env:
+          BUILD_TIME_BASE: ${{ github.event.merge_group.base_sha || github.event.pull_request.base.sha || github.event.before }}
+          # This run's shards already compiled and timed these projects'
+          # changed files, so assembly neither rebuilds nor re-times them.
+          SHARD_PROJECTS: ${{ join(fromJSON(needs.plan.outputs.matrix).include.*.projects, ' ') }}
         run: |
           set -euo pipefail
-          ~/.elan/bin/lake build LeanPool 2>&1 | tee lean-build.log
+          # Always rebuild this job's changed files after every cache/artifact
+          # restore. A same-policy cache need not have timed them while changed.
+          # `check` requires fresh timings; `watch` retains the 60-minute limit.
+          time_base=""
+          if [ -n "$BUILD_TIME_BASE" ] && ! printf '%s' "$BUILD_TIME_BASE" | grep -q '^0*$' \
+             && git cat-file -e "$BUILD_TIME_BASE" 2>/dev/null; then
+            time_base="$BUILD_TIME_BASE"
+            # shellcheck disable=SC2086 # SHARD_PROJECTS is a space-separated list on purpose
+            PYTHONPATH=python python3 -m lean_pool.build_time_limits prepare \
+              --base "$time_base" --exclude-projects $SHARD_PROJECTS
+          fi
+          PYTHONPATH=python python3 -m lean_pool.build_time_limits watch -- ~/.elan/bin/lake build LeanPool 2>&1 | tee lean-build.log
           if grep -nE '(^|: )warning:' lean-build.log; then
             echo "::error::Lean build emitted warnings; fix them before merging."
             exit 1
           fi
+          if [ -n "$time_base" ]; then
+            # shellcheck disable=SC2086 # SHARD_PROJECTS is a space-separated list on purpose
+            PYTHONPATH=python python3 -m lean_pool.build_time_limits check \
+              --log lean-build.log --base "$time_base" --exclude-projects $SHARD_PROJECTS
+          fi
+
+      # Lake writes setup files only as compiler inputs, each listing every
+      # transitive import (~1.6 MB; ~46 GB pool-wide). Before validating,
+      # caching, or uploading, keep just the local entries our readers use.
+      - name: Slim Lake setup files
+        run: PYTHONPATH=python python3 -m lean_pool.slim_setup
 
       # Main publishes the shared full build. A minimal-verifier PR publishes
       # only its own projects; the verifier overlays them on the main cache.
+      # A cold merge-queue build publishes it too, for main to restore.
       - name: Package build for documentation
-        if: github.ref == 'refs/heads/main' || (github.event_name == 'pull_request' && needs.plan.outputs.minimal_build == 'true')
+        if: github.ref == 'refs/heads/main' || (github.event_name == 'pull_request' && needs.plan.outputs.minimal_build == 'true') || (github.event_name == 'merge_group' && steps.cache.outputs.cache-matched-key == '')
         env:
           BUILD_EVENT: ${{ github.event_name }}
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
@@ -698,7 +850,7 @@ jobs:
           fi
 
       - name: Share build with documentation
-        if: github.ref == 'refs/heads/main' || (github.event_name == 'pull_request' && needs.plan.outputs.minimal_build == 'true')
+        if: github.ref == 'refs/heads/main' || (github.event_name == 'pull_request' && needs.plan.outputs.minimal_build == 'true') || (github.event_name == 'merge_group' && steps.cache.outputs.cache-matched-key == '')
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: lean-pool-build
@@ -803,11 +955,27 @@ jobs:
           key: LeanDependencies-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}
 
       - name: Save pool build
+        id: save-build
         if: always() && github.ref == 'refs/heads/main' && steps.compilation.outcome == 'success' && steps.cache.outputs.cache-hit != 'true'
         uses: actions/cache/save@27d5ce7f107fe9357f9df03efb73ab90386fccae
         with:
           path: .lake/build
           key: LeanPoolBuild-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-${{ needs.plan.outputs.build_revision }}
+
+      # actions/cache only warns when a save fails; a missing main cache makes
+      # every later run rebuild from an older one, so fail loudly instead.
+      - name: Verify pool build cache
+        if: always() && steps.save-build.outcome == 'success'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          KEY: LeanPoolBuild-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-${{ needs.plan.outputs.build_revision }}
+        run: |
+          set -euo pipefail
+          saved=$(gh cache list --repo "$GITHUB_REPOSITORY" --key "$KEY" --json key --jq length)
+          if [ "$saved" = 0 ]; then
+            echo "::error::Pool build cache $KEY was not saved; later runs will rebuild from a stale cache."
+            exit 1
+          fi
 
   # Reuse the prior green project's compiled modules and current main's cache.
   # A missing artifact falls back to the full validation sequence in this job.
@@ -821,6 +989,9 @@ jobs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
           fetch-depth: 0
+
+      - name: Free runner disk space
+        uses: ./.github/actions/free-disk-space
 
       - name: Restore Lean dependencies
         uses: actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae
@@ -882,7 +1053,9 @@ jobs:
         run: >-
           uv run --project python --group test pytest -q
           python/tests/test_ci_pr_build.py python/tests/test_indexes.py
-          -k 'test_lake_'
+          python/tests/test_axiom_audit_lean.py
+          python/tests/test_proof_length_linter.py
+          -k 'test_lake_ or test_compiled_axiom_audit'
 
       - name: Install Mathlib cache
         run: |
@@ -894,13 +1067,34 @@ jobs:
         run: PYTHONPATH=python uv run --project python --locked python -m lean_pool.rebase_fastpath check-index
 
       - name: Build combined Lean root
+        env:
+          BUILD_TIME_BASE: ${{ github.event.merge_group.base_sha || github.event.pull_request.base.sha || github.event.before }}
         run: |
           set -euo pipefail
-          ~/.elan/bin/lake build LeanPool 2>&1 | tee lean-build.log
+          # Always rebuild this job's changed files after every cache/artifact
+          # restore. A same-policy cache need not have timed them while changed.
+          # `check` requires fresh timings; `watch` retains the 60-minute limit.
+          time_base=""
+          if [ -n "$BUILD_TIME_BASE" ] && ! printf '%s' "$BUILD_TIME_BASE" | grep -q '^0*$' \
+             && git cat-file -e "$BUILD_TIME_BASE" 2>/dev/null; then
+            time_base="$BUILD_TIME_BASE"
+            PYTHONPATH=python python3 -m lean_pool.build_time_limits prepare --base "$time_base"
+          fi
+          PYTHONPATH=python python3 -m lean_pool.build_time_limits watch -- ~/.elan/bin/lake build LeanPool 2>&1 | tee lean-build.log
           if grep -nE '(^|: )warning:' lean-build.log; then
             echo "::error::Lean build emitted warnings; fix them before merging."
             exit 1
           fi
+          if [ -n "$time_base" ]; then
+            PYTHONPATH=python python3 -m lean_pool.build_time_limits check \
+              --log lean-build.log --base "$time_base"
+          fi
+
+      # Lake writes setup files only as compiler inputs, each listing every
+      # transitive import (~1.6 MB; ~46 GB pool-wide). Before validating,
+      # caching, or uploading, keep just the local entries our readers use.
+      - name: Slim Lake setup files
+        run: PYTHONPATH=python python3 -m lean_pool.slim_setup
 
       - name: Install validation dependencies
         run: cd python && uv sync --locked

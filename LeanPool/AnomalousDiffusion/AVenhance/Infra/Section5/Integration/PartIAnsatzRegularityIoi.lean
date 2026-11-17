@@ -60,7 +60,7 @@ theorem transportedGrad_contDiffOn_Ioi (hΦ : IsStreamSeq I Φ) (m : ℕ) (l : �
   have hEsm : ContDiffOn ℝ ∞ E s := by
     refine ContDiffOn.sum fun j _ => ContDiffOn.mul ?_ ?_
     · have hXj : ContDiff ℝ ∞ (fun q : ℝ × Vec 2 => I.xFlow hΦ m l q.1 q.2 j) :=
-        (contDiff_apply ℝ ℝ j).comp hXF
+        (contDiff_apply ℝ (fun _ => ℝ) j).comp hXF
       exact ((contDiff_partial hXj (0, basisVec i)).comp hpair).contDiffOn
     · exact ((hT.fderivWithin hsu (by simp)).clm_apply contDiffOn_const)
   refine hEsm.congr ?_

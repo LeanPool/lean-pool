@@ -4,12 +4,14 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Boris Alexeev
 -/
 module
+public import Mathlib.Topology.Subpath
+public import Mathlib.Tactic.NormNum.Parity
+public import Mathlib.AlgebraicTopology.FundamentalGroupoid.SimplyConnected
 
-public import LeanPool.HopfProblem.Prelude
+public import LeanPool.HopfProblem.InternalPrelude
 public import LeanPool.HopfProblem.HomologyTheory.SingularMayerVietoris
 public import LeanPool.HopfProblem.Lattice.Core1
 import all LeanPool.HopfProblem.HomologyTheory.SingularMayerVietoris
-import all LeanPool.HopfProblem.Lattice.Core1
 
 /-!
 # Hopf problem: foundations · triangle regular base fundamental group
@@ -20,10 +22,9 @@ Supporting definitions and proofs for this stage of the six-sphere construction.
 
 open Set Function Filter Manifold Topology
 
-open scoped BigOperators CategoryTheory Complex.UnitDisc ComplexConjugate ContDiff ContinuousMap
-  Convolution ENNReal EuclideanSpace Fin.NatCast InnerProductSpace Interval Matrix MatrixGroups
-  Modular NNReal Pointwise RealInnerProductSpace TensorProduct UniformConvergence Uniformity
-  UpperHalfPlane
+open scoped BigOperators CategoryTheory ComplexConjugate ContDiff ContinuousMap ENNReal
+  EuclideanSpace Fin.NatCast InnerProductSpace Interval Matrix NNReal Pointwise
+  RealInnerProductSpace
 
 universe u v
 
@@ -284,12 +285,12 @@ private theorem TriangleRegularBaseFundamentalGroup.quotient_trans_right_cancel 
 private def TriangleRegularBaseFundamentalGroup.basedLoop {X : Type*} [TopologicalSpace X] {o : X}
     (F : ∀ x, Path.Homotopic.Quotient o x) {x y : X} (p : Path.Homotopic.Quotient x y) :
     FundamentalGroup X o :=
-  ((F x).trans p).trans (F y).symm
+  FundamentalGroup.fromPath (((F x).trans p).trans (F y).symm)
 
 private def
     TriangleRegularBaseFundamentalGroup.pathDifference {X : Type*} [TopologicalSpace X] {o x : X}
     (p q : Path.Homotopic.Quotient o x) : FundamentalGroup X o :=
-  p.trans q.symm
+  FundamentalGroup.fromPath (p.trans q.symm)
 
 @[simp]
 private theorem TriangleRegularBaseFundamentalGroup.basedLoop_refl {X : Type*} [TopologicalSpace X]
@@ -313,6 +314,7 @@ private theorem
   apply
     (@eq_inv_mul_iff_mul_eq (FundamentalGroup X o) _ (basedLoop F p) (pathDifference (F y) b)
         (pathDifference (F x) a)).2
+  apply CategoryTheory.End.ext
   apply quotient_trans_right_cancel b
   simp only [basedLoop, pathDifference, FundamentalGroup.mul_def,
     Path.Homotopic.Quotient.trans_assoc, quotient_symm_trans_cancel,
@@ -373,8 +375,8 @@ private theorem TriangleRegularBaseFundamentalGroup.TwoSimplyConnectedCover.path
 private def TriangleRegularBaseFundamentalGroup.TwoSimplyConnectedCover.switchClass {X : Type*}
     [TopologicalSpace X] (D : TriangleRegularBaseFundamentalGroup.TwoSimplyConnectedCover X)
     (x : X) (hxU : x ∈ D.U) (hxV : x ∈ D.V) : FundamentalGroup X D.base :=
-  (Path.Homotopic.Quotient.mk (D.pathU x hxU)).trans
-    (Path.Homotopic.Quotient.mk (D.pathV x hxV)).symm
+  FundamentalGroup.fromPath ((Path.Homotopic.Quotient.mk (D.pathU x hxU)).trans
+    (Path.Homotopic.Quotient.mk (D.pathV x hxV)).symm)
 
 private theorem
     TriangleRegularBaseFundamentalGroup.TwoSimplyConnectedCover.switchClass_eq_of_joinedIn
@@ -385,6 +387,7 @@ private theorem
   let p := hxy.somePath
   have hU := D.pathU_trans hxU hyU p (fun t => (hxy.somePath_mem t).1)
   have hV := D.pathV_trans hxV hyV p (fun t => (hxy.somePath_mem t).2)
+  apply CategoryTheory.End.ext
   apply
     TriangleRegularBaseFundamentalGroup.quotient_trans_right_cancel
       (Path.Homotopic.Quotient.mk (D.pathV y hyV))
@@ -435,8 +438,9 @@ private theorem simplyConnectedSpace_iff_fundamentalGroup_eq_one {X : Type*} [To
     intro y γ
     exact
       Path.Homotopic.Quotient.eq.mp
-        (fundamentalGroup_eq_one_of_path (PathConnectedSpace.somePath x y) hx
-          (Path.Homotopic.Quotient.mk γ))
+        (congrArg FundamentalGroup.toPath
+          (fundamentalGroup_eq_one_of_path (PathConnectedSpace.somePath x y) hx
+            (FundamentalGroup.fromPath (Path.Homotopic.Quotient.mk γ))))
 
 private theorem simplyConnectedSpace_of_fundamentalGroup_eq_one {X : Type*} [TopologicalSpace X]
     [PathConnectedSpace X] (x : X) (hx : ∀ g : FundamentalGroup X x, g = 1) :

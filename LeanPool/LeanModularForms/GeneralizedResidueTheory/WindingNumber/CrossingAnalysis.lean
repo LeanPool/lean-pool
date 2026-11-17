@@ -14,7 +14,6 @@ import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 import Mathlib.CategoryTheory.Category.Init
 import Mathlib.Combinatorics.Matroid.Init
-import Mathlib.MeasureTheory.Covering.Besicovitch
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 
 /-!
@@ -48,7 +47,6 @@ private lemma hasDerivAt_norm_sub_const (z₀ : ℂ) (f : ℝ → ℂ) (t : ℝ)
   have hgsq := (hf.sub_const z₀).norm_sq
   convert (Real.hasDerivAt_sqrt (by positivity)).comp t hgsq using 1
   all_goals first
-    | rfl
     | (ext s; simp only [Function.comp, Real.sqrt_sq (norm_nonneg _)])
     | (rw [Real.sqrt_sq hpos.le]; field_simp [ne_of_gt hpos])
 
@@ -57,7 +55,7 @@ valid even when `a = 0`. -/
 private lemma inner_div_norm_complex (a b : ℂ) :
     inner (𝕜 := ℝ) a b / ‖a‖ = inner (𝕜 := ℝ) (a / ↑‖a‖) b := by
   have ha : a / ↑‖a‖ = (‖a‖⁻¹ : ℝ) • a := by
-    simp only [div_eq_mul_inv, Complex.real_smul, Complex.ofReal_inv]; ring
+    simp only [div_eq_mul_inv, Complex.real_smul, Complex.ofReal_inv]; ac_rfl
   rw [ha]; erw [real_inner_smul_left]; ring
 
 /-- Polar form: a nonzero complex number divided by its norm equals `exp(arg · I)`. -/
@@ -94,7 +92,8 @@ private lemma immersion_right_partition_free (γ : PiecewiseC1Immersion) {t₀ :
   by_cases hQ : Q.Nonempty
   · have hmem := Finset.mem_filter.mp (Finset.min'_mem Q hQ)
     exact ⟨Q.min' hQ, hmem.2, le_trans (γ.partition_subset hmem.1).2 (le_refl _),
-      fun s hs hc => by linarith [Finset.min'_le Q s (Finset.mem_filter.mpr ⟨hc, hs.1⟩), hs.2]⟩
+      fun s hs hc => by
+        linarith only [hQ, hs, hc, Finset.min'_le Q s (Finset.mem_filter.mpr ⟨hc, hs.1⟩), hs.2]⟩
   · exact ⟨γ.b, ht₀.2, le_refl _, fun s hs hc => hQ ⟨s, Finset.mem_filter.mpr ⟨hc, hs.1⟩⟩⟩
 
 /-- A partition-free open neighborhood `(l₀, t₀)` to the left of an interior point. -/
@@ -105,7 +104,8 @@ private lemma immersion_left_partition_free (γ : PiecewiseC1Immersion) {t₀ : 
   by_cases hQ : Q.Nonempty
   · have hmem := Finset.mem_filter.mp (Finset.max'_mem Q hQ)
     exact ⟨Q.max' hQ, hmem.2, le_trans (γ.partition_subset hmem.1).1 (le_refl _),
-      fun s hs hc => by linarith [Finset.le_max' Q s (Finset.mem_filter.mpr ⟨hc, hs.2⟩), hs.1]⟩
+      fun s hs hc => by
+        linarith only [hQ, hs, hc, Finset.le_max' Q s (Finset.mem_filter.mpr ⟨hc, hs.2⟩), hs.1]⟩
   · exact ⟨γ.a, ht₀.1, le_refl _, fun s hs hc => hQ ⟨s, Finset.mem_filter.mpr ⟨hc, hs.2⟩⟩⟩
 
 /-- One-sided slope convergence `(γ t - z₀)/(t - t₀) → L` on the right, from the
@@ -227,7 +227,7 @@ lemma piecewiseC1Immersion_norm_strictMono_near_crossing
     have hLR_inner :
         ‖L_R‖ = inner (𝕜 := ℝ) (L_R / ↑‖L_R‖) L_R := by
       have hsmul : L_R / ↑‖L_R‖ = (‖L_R‖⁻¹ : ℝ) • L_R := by
-        simp only [div_eq_mul_inv, Complex.real_smul, Complex.ofReal_inv]; ring
+        simp only [div_eq_mul_inv, Complex.real_smul, Complex.ofReal_inv]; ac_rfl
       rw [hsmul]; erw [real_inner_smul_left]; rw [real_inner_self_eq_norm_sq]
       field_simp
     rw [hLR_inner]
@@ -293,7 +293,15 @@ lemma piecewiseC1Immersion_norm_strictMono_near_crossing
       have hdiff := γ.smooth_off_partition t
         ⟨le_trans hl₁_ge_a (le_of_lt ht.1), le_trans ht.2.le ht₀.2.le⟩ (hno_L₁ t ht)
       have hne : γ.toFun t ≠ z₀ := by
-        intro heq; have := hneg_L t ht; simp_all
+        intro heq; have := hneg_L t ht; simp_all only [mem_Ioo, ne_eq, Complex.inner, map_sub,
+          mul_re, sub_re, conj_re, sub_im, conj_im,
+                                          sub_neg_eq_add, mul_neg, map_div₀, conj_ofReal,
+                                            div_ofReal_re, div_ofReal_im, gt_iff_lt, and_imp,
+                                            ofReal_sub,
+                                          norm_pos_iff, not_false_eq_true, mem_Ioi,
+                                            mem_ofPred_eq, mem_Iio, sub_self, inner_zero_left,
+                                            norm_zero, div_zero,
+                                          lt_self_iff_false]
       rw [(hasDerivAt_norm_sub γ.toFun t _ hdiff.hasDerivAt hne).deriv]
       exact hneg_L t ht
   · apply strictMonoOn_of_deriv_pos (convex_Icc _ _)
@@ -304,7 +312,15 @@ lemma piecewiseC1Immersion_norm_strictMono_near_crossing
       have hdiff := γ.smooth_off_partition t
         ⟨le_trans ht₀.1.le (le_of_lt ht.1), le_trans ht.2.le hr₁_le_b⟩ (hno_R₁ t ht)
       have hne : γ.toFun t ≠ z₀ := by
-        intro heq; have := hpos_R t ht; simp_all
+        intro heq; have := hpos_R t ht; simp_all only [mem_Ioo, ne_eq, Complex.inner, map_sub,
+          mul_re, sub_re, conj_re, sub_im, conj_im,
+                                          sub_neg_eq_add, mul_neg, map_div₀, conj_ofReal,
+                                            div_ofReal_re, div_ofReal_im, gt_iff_lt, and_imp,
+                                            ofReal_sub,
+                                          norm_pos_iff, not_false_eq_true, mem_Ioi,
+                                            mem_ofPred_eq, mem_Iio, sub_self, inner_zero_left,
+                                            norm_zero, div_zero,
+                                          lt_self_iff_false]
       rw [(hasDerivAt_norm_sub γ.toFun t _ hdiff.hasDerivAt hne).deriv]
       exact hpos_R t ht
 
@@ -440,10 +456,14 @@ lemma exists_cutoff_boundary_times_with_mono
     exists_cutoff_boundary_times γ z₀ t₀ ht₀ hcross honly
   have hg_l_pos : 0 < ‖γ.toFun l - z₀‖ := by
     apply norm_pos_iff.mpr; apply sub_ne_zero.mpr
-    intro heq; have := honly l ⟨hl_ge_a, le_trans hl_lt.le (le_of_lt ht₀.2)⟩ heq; linarith
+    intro heq; have :=
+      honly l ⟨hl_ge_a, le_trans hl_lt.le (le_of_lt ht₀.2)⟩ heq; linarith only [hl_lt,
+      this]
   have hg_r_pos : 0 < ‖γ.toFun r - z₀‖ := by
     apply norm_pos_iff.mpr; apply sub_ne_zero.mpr
-    intro heq; have := honly r ⟨le_trans (le_of_lt ht₀.1) hr_gt.le, hr_le_b⟩ heq; linarith
+    intro heq; have :=
+      honly r ⟨le_trans (le_of_lt ht₀.1) hr_gt.le, hr_le_b⟩ heq; linarith only [hr_gt,
+      this]
   exact ⟨min δ₁ (min ‖γ.toFun l - z₀‖ ‖γ.toFun r - z₀‖),
     lt_min hδ₁ (lt_min hg_l_pos hg_r_pos),
     l, r, hl_lt, hr_gt, hl_ge_a, hr_le_b, hg_anti, hg_mono,
@@ -493,7 +513,8 @@ private lemma exp_cutoff_G_const_on
       (hF_deriv t ht_ab htP h_gt).differentiableAt.neg.cexp
   · have ht_ab : t ∈ Ioo γ.a γ.b := ⟨lt_of_le_of_lt hac ht.1, lt_of_lt_of_le ht.2 hdb⟩
     have h_gt : ε < ‖γ.toFun t - z₀‖ := h_pos t ht
-    have hne : γ.toFun t - z₀ ≠ 0 := by intro h; rw [h, norm_zero] at h_gt; linarith
+    have hne : γ.toFun t - z₀ ≠ 0 := by intro h; rw [h, norm_zero] at h_gt; linarith only [hε,
+      h_gt]
     have hG_at : HasDerivAt G
         (deriv γ.toFun t * cexp (-F t) + (γ.toFun t - z₀) * (cexp (-F t) * -f t)) t := by
       rw [hG_def]
@@ -736,7 +757,7 @@ private lemma crossing_sigma_tendsto_t₀
       exact absurd (show σ ε ∈ (∅ : Set ℝ) from hK_ne ▸ ⟨hε_in, hball⟩)
         (Set.notMem_empty _)
     simp only [Metric.mem_ball, Real.dist_eq] at hσ_ball
-    linarith
+    linarith only [hδ, hσ_ball]
 
 /-- Direction convergence: as ε → 0, the ratio (γ(σ₁(ε))-z₀)/(γ(σ₂(ε))-z₀)
 (where σ₁(ε), σ₂(ε) are the boundary times from `exists_cutoff_boundary_times`)
@@ -839,7 +860,7 @@ lemma crossing_ratio_tendsto
       rw [← hL_L_eq_LR]
       have hne : (‖L_L‖ : ℂ) ≠ 0 := by exact_mod_cast ne_of_gt hL_L_pos
       have hratio : (-L_L / ↑‖L_L‖) / (L_L / ↑‖L_L‖) = -1 := by field_simp [hne, hL_L_ne]
-      rw [hratio, show -(I * ↑Real.pi) = -(↑Real.pi * I) by ring,
+      rw [hratio, show -(I * ↑Real.pi) = -(↑Real.pi * I) by ac_rfl,
           Complex.exp_neg, Complex.exp_pi_mul_I]
       norm_num
   rw [← halg]

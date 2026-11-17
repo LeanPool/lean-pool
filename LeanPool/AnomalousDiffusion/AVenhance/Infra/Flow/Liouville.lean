@@ -7,6 +7,7 @@ module
 
 public import LeanPool.AnomalousDiffusion.AVenhance.Infra.Flow.InverseC1
 public import Mathlib.Analysis.Calculus.MeanValue
+public import Mathlib.Analysis.Calculus.Deriv.Prod
 
 /-! The determinant evolution of the two-dimensional variational flow. -/
 

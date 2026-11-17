@@ -13,6 +13,7 @@ import Mathlib.Analysis.Normed.Group.Basic
 import Mathlib.Data.EReal.Operations
 import Mathlib.Order.CompletePartialOrder
 import Mathlib.RingTheory.Henselian
+import Mathlib.RingTheory.Ideal.KrullsHeightTheorem
 import Mathlib.RingTheory.Nullstellensatz
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal

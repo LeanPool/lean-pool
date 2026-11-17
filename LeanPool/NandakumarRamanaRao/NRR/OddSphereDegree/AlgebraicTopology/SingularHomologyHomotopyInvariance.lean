@@ -8,6 +8,7 @@ module
 
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.HomotopyInvariance
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.Backports.PrismSimplicialHomotopy
+import Mathlib.Algebra.Order.Algebra
 
 /-!
 # Homotopy invariance of singular homology — unconditional

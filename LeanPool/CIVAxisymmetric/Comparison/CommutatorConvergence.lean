@@ -706,7 +706,8 @@ theorem exists_contDiff_hasCompactSupport_integral_sq_sub_le {R M : ℝ} {g : Ve
     filter_upwards [hg] with y hy
     simpa [Real.norm_eq_abs] using hy
   have hGmem : MemLp (s.indicator g) 2 volume :=
-    (memLp_indicator_iff_restrict hsMeas).mpr (MemLp.of_bound hgm.restrict M hgnorm)
+    (memLp_indicator_iff_restrict hsMeas.nullMeasurableSet).mpr
+      (MemLp.of_bound hgm.restrict M hgnorm)
   have htwo : ENNReal.ofReal (2 : ℝ) = 2 := by norm_num
   have hGmem' : MemLp (s.indicator g) (ENNReal.ofReal (2 : ℝ)) volume := by
     rw [htwo]; exact hGmem

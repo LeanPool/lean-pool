@@ -76,7 +76,7 @@ private lemma dualTruncField_memLp {u : Vec3 → ℝ} {p R : ℝ}
         Real.rpow_le_rpow (abs_nonneg _) hx.2 (by linarith only [hp])
   have hbLp : MemLp b r (volume.restrict A) :=
     MemLp.of_bound hbmeas.aestronglyMeasurable (R ^ (p - 1)) hbBound
-  rw [dualTruncField, memLp_indicator_iff_restrict hAmeas]
+  rw [dualTruncField, memLp_indicator_iff_restrict hAmeas.nullMeasurableSet]
   simpa only [A, b] using hbLp
 
 private lemma dualTrunc_pairing_power {a p : ℝ} (hp : 2 ≤ p) :

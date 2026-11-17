@@ -8,6 +8,7 @@ module
 public import LeanPool.LeanStationaryHarmonicMaps.StationaryHarmonicMap.Basic
 public import Mathlib.MeasureTheory.VectorMeasure.Decomposition.Lebesgue
 import Mathlib.MeasureTheory.Constructions.HaarToSphere
+import Mathlib.MeasureTheory.Measure.Lebesgue.EqHaar
 import Mathlib.MeasureTheory.VectorMeasure.Decomposition.RadonNikodym
 
 /-!

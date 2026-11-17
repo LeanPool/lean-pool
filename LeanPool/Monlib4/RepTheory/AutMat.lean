@@ -164,7 +164,8 @@ theorem automorphism_matrix_inner'' [DecidableEq n] [Nonempty n]
         f a * LinearMap.toMatrix' (g.symm.trans g) := by
       simp_rw [← LinearEquiv.comp_coe, LinearMap.toMatrix'_comp]
     _ = f a := by
-      simp_all
+      simp_all only [LinearEquiv.symm_trans_self, LinearEquiv.refl_toLinearMap,
+        LinearMap.toMatrix'_id, mul_one]
 
 namespace Algebra
 
@@ -242,7 +243,7 @@ theorem aut_mat_inner' [DecidableEq n] (f : (M n) ≃ₐ[𝕜] M n) :
 theorem aut_mat_inner_trace_preserving [DecidableEq n]
     (f : (M n) ≃ₐ[𝕜] M n) (x : M n) :
     (f x).trace = x.trace := by
-  simp_all
+  exact Matrix.trace_map f x
 
 alias AlgEquiv.apply_matrix_trace := aut_mat_inner_trace_preserving
 
@@ -408,7 +409,7 @@ theorem matrix_linearEquiv_iff_fintype_equiv {R n m : Type*} [Ring R]
           funext i j
           rfl
         map_add' := fun _ _ => by
-          simp [Matrix.add_apply]
+          simp only [Matrix.add_apply]
           rfl
         map_smul' := fun _ _ => by
           simp only [Matrix.smul_apply, RingHom.id_apply]
@@ -576,7 +577,7 @@ lemma Matrix.pi_center {R ι : Type*} [CommSemiring R] {n : ι → Type*}
   classical
   simp_rw [Set.center_pi, Matrix.center]
   ext x
-  simp_all
+  simp_all only [Set.mem_pi, Set.mem_univ, SetLike.mem_coe, forall_const, Set.mem_ofPred_eq]
 
 lemma PiMat.center {R ι : Type*} [CommSemiring R] {n : ι → Type*}
     [∀ i, Fintype (n i)] :
@@ -599,11 +600,12 @@ theorem Matrix.commutes_with_all_iff_of_ne_zero [DecidableEq n] [Nonempty n]
   refine ⟨fun h => ?_, fun ⟨α, hα, _⟩ => ⟨α, hα⟩⟩
   obtain ⟨α, hα⟩ := h
   have : α ≠ 0 := by
-    simp_all
+    simp_all only [ne_eq, smul_eq_zero, one_ne_zero, or_false, not_false_eq_true]
   refine ⟨Units.mk0 α this, hα, fun y hy => ?_⟩
   simp only at hy
   rw [hα, ← sub_eq_zero, ← sub_smul, smul_eq_zero, sub_eq_zero] at hy
-  simp_all
+  simp_all only [ne_eq, smul_eq_zero, one_ne_zero, or_self, not_false_eq_true, or_false,
+    Units.mk0_val]
 
 theorem Algebra.autInner_eq_autInner_iff [DecidableEq n] (x y : Matrix n n 𝕜)
     [Invertible x] [Invertible y] :
@@ -622,7 +624,8 @@ theorem Matrix.one_ne_zero_iff {𝕜 n : Type*} [DecidableEq n]
     [Zero 𝕜] [One 𝕜] [NeZero (1 : 𝕜)] :
     (1 : Matrix n n 𝕜) ≠ (0 : Matrix n n 𝕜) ↔ Nonempty n := by
   simp_rw [ne_eq, ← Matrix.ext_iff, one_apply, zero_apply, not_forall]
-  simp_all
+  simp_all only [ite_eq_right_iff, one_ne_zero, imp_false, Decidable.not_not, exists_eq',
+    exists_const_iff, and_true]
 
 theorem Matrix.one_eq_zero_iff {𝕜 n : Type*} [DecidableEq n]
     [Zero 𝕜] [One 𝕜] [NeZero (1 : 𝕜)] :
@@ -646,13 +649,17 @@ theorem AlgEquiv.matrix_prod_aut {𝕜 n m : Type*} [Field 𝕜] [Fintype n]
   have h₃ : e₂ * e₁ = 0 := by
     simp only [he₁, he₂, Prod.mk_mul_mk, mul_one, mul_zero, Prod.mk_eq_zero, and_self]
   have h₄ : e₁ * e₁ = e₁ := by
-    simp_all
+    simp_all only [Prod.mk_add_mk, add_zero, zero_add, Prod.mk_eq_one, and_self, Prod.mk_mul_mk,
+      mul_zero, mul_one, Prod.mk_eq_zero]
   have h₅ : e₂ * e₂ = e₂ := by
-    simp_all
+    simp_all only [Prod.mk_add_mk, add_zero, zero_add, Prod.mk_eq_one, and_self, Prod.mk_mul_mk,
+      mul_zero, mul_one, Prod.mk_eq_zero]
   have h10 : ∀ a : 𝕜, a • e₁ = (a • 1, 0) := by
-    simp_all
+    simp_all only [Prod.mk_add_mk, add_zero, zero_add, Prod.mk_eq_one, and_self, Prod.mk_mul_mk,
+      mul_zero, mul_one, Prod.mk_eq_zero, Prod.smul_mk, smul_zero, implies_true]
   have h11 : ∀ a : 𝕜, a • e₂ = (0, a • 1) := by
-    simp_all
+    simp_all only [Prod.mk_add_mk, add_zero, zero_add, Prod.mk_eq_one, and_self, Prod.mk_mul_mk,
+      mul_zero, mul_one, Prod.mk_eq_zero, Prod.smul_mk, smul_zero, implies_true]
   have he₁' :
       e₁ ∈
         (Submodule.span 𝕜 {((1 : Mat 𝕜 n), (0 : Mat 𝕜 m)), (0, 1)} :
@@ -661,7 +668,9 @@ theorem AlgEquiv.matrix_prod_aut {𝕜 n m : Type*} [Field 𝕜] [Fintype n]
     simp_rw [Submodule.mem_span_pair, ← he₁, ← he₂, h10, h11,
       Prod.mk_add_mk, add_zero]
     use 1, 0
-    simp_all
+    simp_all only [Prod.mk_add_mk, add_zero, zero_add, Prod.mk_eq_one, and_self, Prod.mk_mul_mk,
+      mul_zero, mul_one, Prod.mk_eq_zero, Prod.smul_mk, smul_zero, implies_true, one_smul,
+      zero_smul]
   have he₂' :
       e₂ ∈
         (Submodule.span 𝕜 {((1 : Mat 𝕜 n), (0 : Mat 𝕜 m)), (0, 1)} :
@@ -670,7 +679,9 @@ theorem AlgEquiv.matrix_prod_aut {𝕜 n m : Type*} [Field 𝕜] [Fintype n]
     simp_rw [Submodule.mem_span_pair, ← he₁, ← he₂, h10, h11,
       Prod.mk_add_mk, add_zero]
     use 0, 1
-    simp_all
+    simp_all only [Prod.mk_add_mk, add_zero, zero_add, Prod.mk_eq_one, and_self, Prod.mk_mul_mk,
+      mul_zero, mul_one, Prod.mk_eq_zero, Prod.smul_mk, smul_zero, implies_true, SetLike.mem_coe,
+      zero_smul, one_smul]
   have center_eq :
       Set.center (Matrix n n 𝕜 × Matrix m m 𝕜) =
         Submodule.span 𝕜 {((1 : Mat 𝕜 n), (0 : Mat 𝕜 m)), (0, 1)} :=
@@ -762,7 +773,10 @@ theorem AlgEquiv.matrix_prod_aut {𝕜 n m : Type*} [Field 𝕜] [Fintype n]
         rcases h₉ with ⟨h₉, (h91 | h92)⟩
         · simp_all
         · rw [← @Matrix.one_eq_zero_iff 𝕜] at h92
-          simp_all
+          simp_all only [Prod.mk_add_mk, add_zero, Prod.mk_eq_one, and_self, Prod.mk_mul_mk,
+            mul_zero, Prod.mk_eq_zero, mul_one, Prod.smul_mk, smul_zero, implies_true,
+            SetLike.mem_coe, exists_const, Prod.forall, one_ne_zero, not_false_eq_true, ne_eq,
+            EmbeddingLike.apply_eq_iff_eq, and_true, or_true]
       · simp_rw [he₁, he₂, h82, ← Prod.zero_eq_mk, ← h82,
           ← Prod.one_eq_mk, _root_.map_one, _root_.map_zero,
           Prod.ext_iff, Prod.fst_one, Prod.snd_one, Prod.fst_zero,
@@ -1082,7 +1096,7 @@ theorem AlgEquiv.matrix_prod_aut' {𝕜 n m : Type*} [Field 𝕜] [Fintype n]
       f x = f (x.1, 0) + f (0, x.2) := by
         rw [← map_add, Prod.fst_add_snd]
       _ = f ((1, 0) * (x.1, 0)) + f ((0, 1) * (0, x.2)) := by
-        simp_all
+        simp_all only [Prod.mk_mul_mk, one_mul, mul_zero]
       _ = (1, 0) * f (x.1, 0) + (0, 1) * f (0, x.2) := by
         simp_rw [_root_.map_mul, h]
       _ = ((f (x.1, 0)).1, 0) + (0, (f (0, x.2)).2) := by
@@ -1103,7 +1117,7 @@ theorem AlgEquiv.matrix_prod_aut' {𝕜 n m : Type*} [Field 𝕜] [Fintype n]
       f x = f (0, x.2) + f (x.1, 0) := by
         rw [← map_add, add_comm, Prod.fst_add_snd]
       _ = f ((0, 1) * (0, x.2)) + f ((1, 0) * (x.1, 0)) := by
-        simp_all
+        simp_all only [Prod.mk_mul_mk, mul_zero, one_mul]
       _ = (1, 0) * f (0, x.2) + (0, 1) * f (x.1, 0) := by
         simp_rw [_root_.map_mul, h]
       _ = ((f (0, x.2)).1, 0) + (0, (f (x.1, 0)).2) := by

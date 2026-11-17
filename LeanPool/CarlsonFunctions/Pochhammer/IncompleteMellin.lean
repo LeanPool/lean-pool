@@ -319,7 +319,7 @@ theorem locallyIntegrableOn_indicator_Ioc {a : ℝ} {K : ℝ → ℂ}
     (hK : ContinuousOn K (Icc 0 a)) :
     LocallyIntegrableOn (Set.indicator (Ioc (0 : ℝ) a) K) (Ioi 0) := by
   have hint : IntegrableOn (Set.indicator (Ioc (0 : ℝ) a) K) (Ioi 0) := by
-    rw [integrableOn_indicator_iff measurableSet_Ioc,
+    rw [integrableOn_indicator_iff measurableSet_Ioc.nullMeasurableSet,
       inter_eq_left.mpr Ioc_subset_Ioi_self]
     exact (hK.integrableOn_compact isCompact_Icc).mono_set Ioc_subset_Icc_self
   exact hint.locallyIntegrableOn
@@ -413,7 +413,7 @@ theorem regIncompleteMellin_mul_pow {α : ℂ} {a : ℝ} {K : ℝ → ℂ} (k : 
     have hne : (t : ℂ) ≠ 0 := ofReal_ne_zero.mpr ht0
     rw [← mul_assoc, ← cpow_natCast, ← cpow_add _ _ hne]
     congr 1
-    ring
+    ring_nf
   unfold regIncompleteMellin
   rw [integral_congr_ae hfun, one_div_Gamma_eq_ascPochhammer_mul_one_div_Gamma_add_nat α k]
   ring_nf

@@ -5,14 +5,7 @@ Authors: Zeru Zhu, Jinzheng Li, Yuanjie Ren
 -/
 module
 
-public import Mathlib.Combinatorics.SimpleGraph.Acyclic
 public import Mathlib.Combinatorics.SimpleGraph.Girth
-public import Mathlib.Combinatorics.SimpleGraph.DegreeSum
-public import Mathlib.Combinatorics.SimpleGraph.Maps
-public import Mathlib.Combinatorics.SimpleGraph.Paths
-public import Mathlib.Combinatorics.SimpleGraph.Metric
-public import Mathlib.Combinatorics.SimpleGraph.Finite
-public import Mathlib.Data.ZMod.Basic
 public import Mathlib.Tactic.Ring
 
 /-!
@@ -324,7 +317,7 @@ theorem level_card_growth {V : Type*} [Fintype V] (G : SimpleGraph V) [Decidable
         = (G.neighborFinset u).filter (fun w => G.dist x w = i) := by
       ext w
       simp only [hA, Finset.mem_filter, Finset.mem_univ, true_and, SimpleGraph.mem_neighborFinset]
-      tauto
+      exact and_comm
     rw [hconv, level_unique_parent G hg x hir hu]
   have hRHS : ∑ v ∈ A, (G.degree v - 1) = ∑ v ∈ A, (B.filter (fun w => G.Adj v w)).card := by
     refine Finset.sum_congr rfl (fun v hv => ?_)
@@ -333,7 +326,7 @@ theorem level_card_growth {V : Type*} [Fintype V] (G : SimpleGraph V) [Decidable
         = (G.neighborFinset v).filter (fun w => G.dist x w = i + 1) := by
       ext w
       simp only [hB, Finset.mem_filter, Finset.mem_univ, true_and, SimpleGraph.mem_neighborFinset]
-      tauto
+      exact and_comm
     rw [hconv, level_children_count G hg x hi1 (by omega) hv]
   have hswap : ∑ u ∈ B, (A.filter (fun w => G.Adj u w)).card
       = ∑ v ∈ A, (B.filter (fun w => G.Adj v w)).card := by

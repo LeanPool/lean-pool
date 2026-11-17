@@ -766,8 +766,7 @@ theorem pi_alt : ∃ c : ℝ → ℝ, c =o[atTop] (fun _ ↦ (1 : ℝ)) ∧
     obtain rfl|hx := eq_or_ne x 1
     · simp
     obtain rfl|hx := eq_or_ne x (-1 : ℝ)
-    · simp
-      norm_num
+    · simp [Nat.floor_of_nonpos]
     have : log x ≠ 0 := by simp_all
     field
 

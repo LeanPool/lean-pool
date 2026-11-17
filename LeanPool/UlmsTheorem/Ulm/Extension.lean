@@ -983,7 +983,7 @@ lemma extend_well_defined
       rw [← add_zsmul]
     _ = (↑(φ ⟨a₂, ha₂⟩) : H) + n₂ • h := by
       congr 1
-      abel
+      abel_nf
 
 /-- If `x` has exact height `α`, is proper over `A`, and `p • x ∈ A`,
 then no coefficient prime to `p` can move a translate of `x` into

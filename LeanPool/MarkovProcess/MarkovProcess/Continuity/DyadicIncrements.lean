@@ -109,7 +109,7 @@ theorem dyadic_bound_normalization (p q γ : ℝ) (M : ℝ≥0) (n : ℕ) :
     dyadicIncrementThreshold, dyadicIncrementDecayRatio]
   rw [← ENNReal.toReal_rpow, ← ENNReal.toReal_rpow, ← ENNReal.toReal_rpow,
     ENNReal.toReal_inv, ENNReal.toReal_pow, ENNReal.toReal_ofNat]
-  simp? [← Real.rpow_natCast, ← Real.rpow_mul]
+  simp only [← Real.rpow_natCast, NNReal.coe_ofNat, Nat.ofNat_nonneg, ← Real.rpow_mul]
   rw [← Real.rpow_neg (by positivity), ← Real.rpow_mul (by positivity),
     ← Real.rpow_mul (by positivity), div_eq_mul_inv,
     ← Real.rpow_neg (by positivity), ← Real.rpow_mul (by positivity)]

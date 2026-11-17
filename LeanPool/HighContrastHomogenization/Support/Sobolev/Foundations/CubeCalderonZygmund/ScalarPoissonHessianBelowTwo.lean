@@ -1212,7 +1212,7 @@ private theorem restricted_raw_holder_vec
         Set.indicator U (fun x => HilbertVec.ofVec (G x)) := by
       funext x; by_cases hx : x ∈ U <;> simp [hx]
     rw [heq]
-    exact hG.indicator hU
+    exact hG.indicator hU.nullMeasurableSet
   have hholder := INTERNAL.abs_integral_vecDot_le_eLpNorm_toReal_mul hF hGind
   have hGind_norm : eLpNorm (fun x => HilbertVec.ofVec (Set.indicator U G x))
       q.conjugate.exponent μ ≤
@@ -1275,7 +1275,7 @@ private theorem scalar_indicator_mul_bounded_memLp_and_norm
         (mul_le_mul_of_nonneg_left (hLbound x) (abs_nonneg (r x)))
   constructor
   · rw [memLp_indicator_iff_restrict hU]; exact hlocal
-  · rw [eLpNorm_indicator_eq_eLpNorm_restrict hU]
+  · rw [eLpNorm_indicator_eq_eLpNorm_restrict hU.nullMeasurableSet]
     apply eLpNorm_le_nnreal_smul_eLpNorm_of_ae_le_mul' hlocal.aestronglyMeasurable
     filter_upwards with x
     rw [enorm_eq_nnnorm, enorm_eq_nnnorm]
@@ -1405,7 +1405,8 @@ private theorem localized_Aterm_raw_bound
   have hrind : MemLp (U.indicator r) q.exponent μ := by
     rw [memLp_indicator_iff_restrict hU]; exact hr
   have hrindeq : eLpNorm (U.indicator r) q.exponent μ =
-      eLpNorm r q.exponent (μ.restrict U) := eLpNorm_indicator_eq_eLpNorm_restrict hU
+      eLpNorm r q.exponent (μ.restrict U) :=
+    eLpNorm_indicator_eq_eLpNorm_restrict hU.nullMeasurableSet
   obtain ⟨hrvec, hrveceq⟩ := scalar_single_hilbert_memLp_and_norm i (U.indicator r) hrind
   obtain ⟨hdotvec, hdotveceq⟩ := scalar_single_hilbert_memLp_and_norm i dot hdot
   have hraw := restricted_raw_holder_vec Q q U hU hUP

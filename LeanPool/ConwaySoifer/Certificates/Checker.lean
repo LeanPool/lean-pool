@@ -8,7 +8,6 @@ module
 public import LeanPool.ConwaySoifer.Certificates.IntPoly
 public import Mathlib.Data.Int.Sqrt
 public import Mathlib.Data.Fin.VecNotation
-import Mathlib.Tactic
 
 /-!
 # The contact-sensitive exclusion checker (computable part)

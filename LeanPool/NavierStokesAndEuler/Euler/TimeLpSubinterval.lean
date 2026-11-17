@@ -25,7 +25,7 @@ open scoped Topology
 
 /-- Restrict a genuine scalar L² coefficient to a measurable closed time subinterval. -/
 def subintervalWeight (T s t : ℝ) (c : TimeLp T ℝ) : TimeLp T ℝ :=
-  (MemLp.indicator measurableSet_Icc (Lp.memLp c)).toLp ((Icc s t).indicator c)
+  (MemLp.indicator measurableSet_Icc.nullMeasurableSet (Lp.memLp c)).toLp ((Icc s t).indicator c)
 
 /-- The subinterval coefficient has its actual indicator representative. -/
 theorem subintervalWeight_ae (T s t : ℝ) (c : TimeLp T ℝ) :

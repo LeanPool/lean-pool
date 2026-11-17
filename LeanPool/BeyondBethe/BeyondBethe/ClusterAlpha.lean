@@ -8,7 +8,7 @@ module
 
 public import LeanPool.BeyondBethe.BeyondBethe.ClusterFactors
 public import LeanPool.BeyondBethe.BeyondBethe.Birkhoff
-public import Mathlib.Tactic
+import Mathlib.Tactic.SimpRw -- shake: keep
 
 /-! # Cluster Alpha -/
 

@@ -72,8 +72,6 @@ private theorem fullBlockReflect_isSymm
       toFullBlockMat]
     try
       exact hM.apply _ _
-    try
-      exact (hM.apply _ _).symm
 
 /-- The full-block matrix whose quadratic form is
 `J(Q,\overline A^{-1/2}e,\overline A^{1/2}e)`. -/

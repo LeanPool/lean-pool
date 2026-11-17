@@ -103,7 +103,6 @@ theorem maximalError_levelSet_third_le_scaled_orlicz
       maximalErrorConstant * centeredHardyLittlewoodMaximal (fun y ↦ ‖f y‖ₑ) x} ≤
         (12 * maximalErrorConstant) * ∫⁻ x, ENNReal.ofReal
           ((‖f x‖ / α) * paperLog 2 (‖f x‖ / α) ^ 2 * paperLog 4 (‖f x‖ / α)) := by
-  have hα3 : 0 < α / 3 := by positivity
   have h := scaled_centeredHardyLittlewoodMaximal_weak_bound (fun y ↦ ‖f y‖ₑ)
     maximalErrorConstant_lt_top.ne (ENNReal.ofReal (α / 3))
   have hc : ENNReal.ofReal (3 / α) * ENNReal.ofReal (α / 3) = 1 := by
@@ -149,7 +148,7 @@ theorem lacunaryOscillatory_levelSet_third_le_scaled_orlicz
       intro x
       exact ENNReal.ofReal_le_ofReal (lacunaryOrlicz_three_mul_le (by positivity))
     _ = _ := by
-      simp_rw [ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 81)]
+      simp_rw [ENNReal.ofReal_mul (by norm_num1 : (0 : ℝ) ≤ 81)]
       rw [lintegral_const_mul' _ _ ENNReal.ofReal_ne_top]
       simp only [ENNReal.ofReal_ofNat]
       ring
@@ -172,7 +171,7 @@ theorem lacunaryQuadraticCarlesonL0_levelSet_le_hilbert_remainder_add_scaled_orl
   have hparts : ENNReal.ofReal (α / 3) + 2 * ENNReal.ofReal (α / 6) +
       ENNReal.ofReal (α / 3) = ENNReal.ofReal α := by
     rw [show (2 : ℝ≥0∞) = ENNReal.ofReal (2 : ℝ) by norm_num,
-      ← ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 2),
+      ← ENNReal.ofReal_mul (by norm_num1 : (0 : ℝ) ≤ 2),
       ← ENNReal.ofReal_add (by positivity) (by positivity),
       ← ENNReal.ofReal_add (by positivity) (by positivity)]
     congr 1

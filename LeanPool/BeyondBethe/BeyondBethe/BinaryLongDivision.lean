@@ -7,7 +7,7 @@ module
 
 
 public import LeanPool.BeyondBethe.Complexitylib.Mathlib.NatBits
-public import Mathlib.Tactic
+import Mathlib.Tactic.Ring -- shake: keep
 
 /-! # Binary Long Division -/
 

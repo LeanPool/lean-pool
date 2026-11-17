@@ -4,13 +4,15 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Boris Alexeev
 -/
 module
+public import LeanPool.HopfProblem.Foundations.Core2
+public import Mathlib.Geometry.Manifold.IsManifold.Basic
 
-public import LeanPool.HopfProblem.Prelude
+public import LeanPool.HopfProblem.InternalPrelude
 public import LeanPool.HopfProblem.Foundations.Core3
 public import LeanPool.HopfProblem.Uniformization.CuspUniformization1
+import Mathlib.Geometry.Manifold.Algebra.Structures
 import all LeanPool.HopfProblem.Foundations.Core2
 import all LeanPool.HopfProblem.PeriodFamily.PeriodPoint
-import all LeanPool.HopfProblem.Uniformization.CuspUniformization1
 import all LeanPool.HopfProblem.Foundations.Core3
 
 /-!
@@ -22,10 +24,8 @@ Supporting definitions and proofs for this stage of the six-sphere construction.
 
 open Set Function Filter Manifold Topology
 
-open scoped BigOperators CategoryTheory Complex.UnitDisc ComplexConjugate ContDiff ContinuousMap
-  Convolution ENNReal EuclideanSpace Fin.NatCast InnerProductSpace Interval Matrix MatrixGroups
-  Modular NNReal Pointwise RealInnerProductSpace TensorProduct UniformConvergence Uniformity
-  UpperHalfPlane
+open scoped BigOperators ComplexConjugate ContDiff ContinuousMap ENNReal EuclideanSpace Fin.NatCast
+  InnerProductSpace Interval Matrix NNReal Pointwise RealInnerProductSpace
 
 universe u v
 
@@ -85,7 +85,7 @@ private theorem
     ContMDiff (modelWithCornersSelf ℂ V) (modelWithCornersSelf ℂ ComplexPlane₂) ω
       (fun b => P.periodEquiv b v) := by
   simp_rw [periodEquiv_coordinates]
-  apply contMDiff_pi_space.mpr
+  apply contMDiff_pi_module_iff.mpr
   intro i
   fin_cases i
   · exact

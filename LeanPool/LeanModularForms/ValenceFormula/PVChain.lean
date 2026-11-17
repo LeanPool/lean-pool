@@ -9,8 +9,6 @@ public import LeanPool.LeanModularForms.ValenceFormula.PVChain.Assembly
 public import LeanPool.LeanModularForms.ValenceFormula.PVChain.Assembly.ResidueSide
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 import Mathlib.CategoryTheory.Category.Init
-import Mathlib.MeasureTheory.Covering.Besicovitch
-import Mathlib.NumberTheory.ArithmeticFunction.Misc
 
 /-!
 # PV Chain: Residue Side and Modular Side
@@ -55,7 +53,9 @@ theorem pv_chain_identity (S : Finset UpperHalfPlane) (hS : ∀ p ∈ S, p ∈ �
       (h_res (le_trans (le_max_left _ _) hH))
       (h_mod (le_trans (le_max_right _ _) hH))
   have hpi : (2 : ℂ) * ↑Real.pi * I ≠ 0 := by
-    simp_all
+    simp_all only [ne_eq, sup_le_iff, mul_eq_zero, OfNat.ofNat_ne_zero, ofReal_eq_zero,
+      Real.pi_ne_zero, or_self,
+        I_ne_zero, not_false_eq_true]
   rw [show -(2 * ↑Real.pi * I * ((k : ℂ) / 12 - (orderAtCusp' f : ℂ))) =
     2 * ↑Real.pi * I * (-((k : ℂ) / 12 - (orderAtCusp' f : ℂ))) from by ring] at h_eq
   exact mul_left_cancel₀ hpi h_eq

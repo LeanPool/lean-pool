@@ -64,7 +64,7 @@ lemma eta_logDeriv_eql (z : ℍ) : (logDeriv (η ∘ (fun z : ℂ => -1/z))) z =
     nth_rw 2 [div_eq_mul_inv]
     · rw [← Complex.exp_neg,
           show 2⁻¹ * cexp (-(2⁻¹ * Complex.log ↑z)) * cexp (-(2⁻¹ * Complex.log ↑z)) =
-               (cexp (-(2⁻¹ * Complex.log ↑z)) * cexp (-(2⁻¹ * Complex.log ↑z)))* 2⁻¹ by ring,
+               (cexp (-(2⁻¹ * Complex.log ↑z)) * cexp (-(2⁻¹ * Complex.log ↑z)))* 2⁻¹ by ac_rfl,
           ← Complex.exp_add, ← sub_eq_add_neg,
           show -(2⁻¹ * Complex.log ↑z) - 2⁻¹ * Complex.log ↑z = -Complex.log ↑z by ring,
           Complex.exp_neg, Complex.exp_log,
@@ -114,8 +114,8 @@ lemma eta_logderivs_const : ∃ z : ℂ, z ≠ 0 ∧ {z : ℂ | 0 < z.im}.EqOn (
       simpa [ModularForm.eta] using
         (ModularForm.differentiableAt_eta_of_mem_upperHalfPlaneSet (z := x) hx)
     · apply DifferentiableOn.div
-      · fun_prop
-      · fun_prop
+      · exact differentiableOn_const (-1)
+      · exact differentiableOn_id
       intro x hx
       have hx2 := ne_zero (⟨x, hx⟩ : ℍ)
       norm_cast at *
@@ -164,4 +164,6 @@ lemma eta_equality : {z : ℂ | 0 < z.im}.EqOn ((η ∘ (fun z : ℂ => -1/z)))
     simpa [ModularForm.eta] using (ModularForm.eta_ne_zero (z := (Complex.I : ℂ)) (by simp))
   have hcd := (mul_eq_right₀ he).mp h3.symm
   rw [mul_eq_one_iff_inv_eq₀ hz, inv_eq_iff_eq_inv] at hcd
-  simp_all
+  simp_all only [ne_eq, inv_eq_zero, mem_ofPred_eq, comp_apply, Pi.smul_apply, Pi.mul_apply,
+    smul_eq_mul,
+      Complex.I_im, zero_lt_one, not_false_eq_true, inv_mul_cancel₀, one_mul]

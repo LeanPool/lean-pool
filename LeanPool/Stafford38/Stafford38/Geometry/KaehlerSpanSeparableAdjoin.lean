@@ -55,7 +55,7 @@ theorem kaehler_span_of_intermediateField_adjoin_eq_top
       rw [hgen]
       trivial
     apply IntermediateField.adjoin_induction k
-        (p := fun y _ ↦ KaehlerDifferential.D k E y ∈ W)
+        (motive := fun y _ ↦ KaehlerDifferential.D k E y ∈ W)
     · intro y hy
       change y ∈ Set.range q at hy
       obtain ⟨i, rfl⟩ := hy

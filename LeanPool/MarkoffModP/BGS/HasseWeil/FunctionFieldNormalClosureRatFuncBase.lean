@@ -189,7 +189,7 @@ theorem functionFieldNormalClosureConstantBase_adjoin_X :
     rw [← functionFieldNormalClosureConstantBase_eq_compositum K L]
     exact y.2
   refine IntermediateField.adjoin_induction (RatFunc K)
-    (p := fun z hz => ∀ hzB : z ∈ FunctionFieldNormalClosureConstantBase K L,
+    (motive := fun z _ => ∀ hzB : z ∈ FunctionFieldNormalClosureConstantBase K L,
       (⟨z, hzB⟩ : B) ∈ D) ?_ ?_ ?_ ?_ ?_ hyCompositum y.2
   · rintro z ⟨c, rfl⟩ hzB
     exact D.algebraMap_mem c

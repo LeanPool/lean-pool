@@ -48,8 +48,7 @@ theorem isSublinear_dilatedOperator (a : ℝ) (ha : 0 < a)
     IsSublinear (dilatedOperator a ha T) := by
   constructor
   · intro f g x
-    simpa only [dilatedOperator, L0Infinity.dilate_add] using
-      hT.1 (L0Infinity.dilate a ha f) (L0Infinity.dilate a ha g) (a * x)
+    exact hT.1 (L0Infinity.dilate a ha f) (L0Infinity.dilate a ha g) (a * x)
   · intro c f x
     simpa only [dilatedOperator, L0Infinity.dilate_smul] using
       hT.2 c (L0Infinity.dilate a ha f) (a * x)

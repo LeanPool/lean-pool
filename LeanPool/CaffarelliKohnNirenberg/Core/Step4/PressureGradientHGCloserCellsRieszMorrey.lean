@@ -173,7 +173,8 @@ theorem pressure_riesz_restricted_morreyNorm_bound
       · exact Set.indicator_of_mem hy _
       · rw [Set.indicator_of_notMem hy, hTzero y s hy]
     rw [hzero] at hfull
-    rw [eLpNorm_congr_ae (ae_restrict_of_ae hfull), eLpNorm_indicator_eq_eLpNorm_restrict hB]
+    rw [eLpNorm_congr_ae (ae_restrict_of_ae hfull),
+      eLpNorm_indicator_eq_eLpNorm_restrict hB.nullMeasurableSet]
     exact eLpNorm_mono_measure _ Measure.restrict_le_self
   have hn := ENNReal.rpow_le_rpow hmass (by norm_num : (0 : ℝ) ≤ 5 / 6)
   have hfinal := pressure_riesz_normalized_slice_time_bound i j hκ hκhi hF hFs hsupport z.1 z.2 r.2

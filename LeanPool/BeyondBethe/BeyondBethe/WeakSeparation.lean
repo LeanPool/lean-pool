@@ -9,7 +9,11 @@ module
 public import LeanPool.BeyondBethe.BeyondBethe.DirectedOptimizerOracle
 public import LeanPool.BeyondBethe.BeyondBethe.NumericalNearby
 public import LeanPool.BeyondBethe.BeyondBethe.NumericalPotentials
-public import Mathlib.Tactic
+import Mathlib.Tactic.Convert -- shake: keep
+import Mathlib.Tactic.Ext -- shake: keep
+import Mathlib.Tactic.Linarith -- shake: keep
+import Mathlib.Tactic.Ring -- shake: keep
+import Mathlib.Tactic.SimpRw -- shake: keep
 
 /-! # Weak Separation -/
 
@@ -81,10 +85,7 @@ theorem matrixPairing_affineMap_sub {n : ℕ} {R : Type*} [CommRing R]
         ∑ i, ∑ j, G (Fin.last n) j.castSucc * Y i j := by
     exact Finset.sum_comm
   rw [hcolZ, hcolY]
-  repeat' first
-    | rw [Finset.sum_add_distrib]
-    | rw [Finset.sum_sub_distrib]
-    | rw [Finset.sum_neg_distrib]
+  repeat' rw [Finset.sum_sub_distrib]
   have hupperBlock :
       (∑ i, ∑ j,
           (G i.castSucc j.castSucc * Z i j -

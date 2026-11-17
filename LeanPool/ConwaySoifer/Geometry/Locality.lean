@@ -6,7 +6,8 @@ Authors: Vladislav Kuznetsov
 module
 
 public import LeanPool.ConwaySoifer.Geometry.Canonical
-import Mathlib.Tactic
+import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.Linarith
 
 /-!
 # Locality: which owners can meet a boundary segment

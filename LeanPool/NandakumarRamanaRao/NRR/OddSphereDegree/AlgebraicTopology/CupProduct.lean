@@ -7,6 +7,8 @@ module
 
 
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.AlexanderWhitney
+public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.SingularCohomology
+public import Mathlib.Algebra.Category.ModuleCat.Colimits
 
 /-!
 # Cochain-level singular cup product (Alexander–Whitney formula)

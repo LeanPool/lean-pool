@@ -6,7 +6,7 @@ Authors: Vladislav Kuznetsov
 module
 
 public import LeanPool.ConwaySoifer.Certificates.Witness
-import Mathlib.Tactic
+import Mathlib.Tactic.NormNum.Basic
 
 /-! Extensional checkpoint lemmas for kernel-checked certificate replay.
 Concrete checkpoints are untrusted data; every transition is proved in Lean. -/

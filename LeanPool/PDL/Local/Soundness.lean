@@ -229,7 +229,7 @@ private theorem localLoadedDiamondList_leftNested {W : Type} {M : KripkeModel W}
     have := precons.2.2
     simp only [Option.some_subseteq] at this
     rw [← this] at negLoad_in
-    cases side <;> aesop
+    cases side <;> aesop (rule_sets := [-default])
   subst α_same -- But cannot do `subst χ_def`.
   -- This F,δ pair is also used for one result in `B`:
   have in_C : (L ∪ F.toFinset, R, some (Sum.inl (~'⌊⌊δ⌋⌋χ'))) ∈ C := by
@@ -281,7 +281,7 @@ private theorem localLoadedDiamondList_leftNested {W : Type} {M : KripkeModel W}
             -- Here δ is [] and thus α can have distance 0
             rw [distance_list_nil_self] at same_dist
             exact same_dist.symm
-          aesop
+          aesop (rule_sets := [-default])
         · intro f f_in
           simp only [List.mem_union_iff] at f_in; cases f_in
           · apply v_F; assumption
@@ -455,7 +455,7 @@ private theorem localLoadedDiamondList_leftNormal {W : Type} {M : KripkeModel W}
             Olf.change, Option.pdlOverwrite, AnyNegFormula.inSide, splitLast,
             Option.map_none] at *
         · rw [negLoad_in]; simp
-        · subst hC; exfalso; aesop
+        · subst hC; exfalso; aesop (rule_sets := [-default])
     -- We do not know `Y` yet because ltab may continue after `(L ++ F ++ [~φ], R, none)`.
     -- So let's use localTableauTruth to find a free end node, similar to αs = [] case.
     have v_Z : (M, v) ⊨ (show Sequent from (L ∪ (F.toFinset ∪ {~φ}), R, none)) := by
@@ -594,7 +594,7 @@ private theorem localLoadedDiamondList_rightNested {W : Type} {M : KripkeModel W
     have := precons.2.2
     simp only [Option.some_subseteq] at this
     rw [← this] at negLoad_in
-    cases side <;> aesop
+    cases side <;> aesop (rule_sets := [-default])
   subst α_same -- But cannot do `subst χ_def`.
   -- This F,δ pair is also used for one result in `C`:
   have in_C : (L, R ∪ F.toFinset, some (Sum.inr (~'⌊⌊δ⌋⌋χ'))) ∈ C := by
@@ -648,7 +648,7 @@ private theorem localLoadedDiamondList_rightNested {W : Type} {M : KripkeModel W
             -- Here δ is [] and thus α can have distance 0
             rw [distance_list_nil_self] at same_dist
             exact same_dist.symm
-          aesop
+          aesop (rule_sets := [-default])
         · intro f f_in
           simp only [List.mem_union_iff] at f_in; cases f_in
           · apply v_F; assumption
@@ -820,7 +820,7 @@ private theorem localLoadedDiamondList_rightNormal {W : Type} {M : KripkeModel W
             reduceCtorEq, and_false, Option.some.injEq, true_and, AnyFormula.boxes_nil,
             Olf.change, Option.pdlOverwrite, AnyNegFormula.inSide, splitLast,
             Option.map_none] at *
-        · subst hC; exfalso; aesop
+        · subst hC; exfalso; aesop (rule_sets := [-default])
         · rw [negLoad_in]; simp
     -- No IH needed because we reach a free node.
     clear IH
@@ -968,7 +968,7 @@ theorem localLoadedDiamondList (αs : List Program) {X : Sequent}
         simp_all only [and_self, and_true]
         use (L \ Lcond ∪ res, R, O)
         simp_all only [exists_prop, and_true]
-        grind
+        grind only []
       case oneSidedR YS orule YS_def => -- analogous to oneSidedL
         simp_all only [applyLocalRule, Finset.sdiff_empty, Finset.mem_image,
           exists_exists_and_eq_and, Finset.union_empty, Olf.change_old_none_none,
@@ -988,7 +988,7 @@ theorem localLoadedDiamondList (αs : List Program) {X : Sequent}
         simp_all only [and_self, and_true]
         use (L, R \ Rcond ∪ res, O)
         simp_all only [exists_prop, and_true]
-        grind
+        grind only []
       case LRnegL φ =>
         simp_all
       case LRnegR =>

@@ -7,6 +7,9 @@ module
 
 
 public import LeanPool.NandakumarRamanaRao.NRR.Geometry.ConvexBody.PlanarPerimeter
+import LeanPool.NandakumarRamanaRao.NRR.Geometry.ConvexBody.WidthContinuity
+import Mathlib.Tactic.Basify
+import Mathlib.Tactic.ENatToNat
 
 /-!
 # `NRR.Geometry.ConvexBody` — basic scalar properties of the planar perimeter

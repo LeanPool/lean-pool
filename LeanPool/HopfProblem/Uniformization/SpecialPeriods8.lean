@@ -4,14 +4,17 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Boris Alexeev
 -/
 module
+public import Mathlib.Tactic.NormNum.Parity
+public import Mathlib.Analysis.CStarAlgebra.Classes
+import all Mathlib.Topology.Homotopy.Lifting
+import all LeanPool.HopfProblem.CuspFibre.CuspCentralHomology2
 
-public import LeanPool.HopfProblem.Prelude
+public import LeanPool.HopfProblem.InternalPrelude
 public import LeanPool.HopfProblem.Elliptic.Core5
 import all LeanPool.HopfProblem.Foundations.TriangleRegularBaseFundamentalGroup
 import all LeanPool.HopfProblem.Uniformization.SpecialPeriods2
 import all LeanPool.HopfProblem.Uniformization.TriangleUniformizationGluing
 import all LeanPool.HopfProblem.Foundations.TwoOpenTransition
-import all LeanPool.HopfProblem.Elliptic.Core5
 
 /-!
 # Hopf problem: uniformization · special periods 8
@@ -22,10 +25,8 @@ Supporting definitions and proofs for this stage of the six-sphere construction.
 
 open Set Function Filter Manifold Topology
 
-open scoped BigOperators CategoryTheory Complex.UnitDisc ComplexConjugate ContDiff ContinuousMap
-  Convolution ENNReal EuclideanSpace Fin.NatCast InnerProductSpace Interval Matrix MatrixGroups
-  Modular NNReal Pointwise RealInnerProductSpace TensorProduct UniformConvergence Uniformity
-  UpperHalfPlane
+open scoped BigOperators ComplexConjugate ContDiff ContinuousMap ENNReal EuclideanSpace Fin.NatCast
+  InnerProductSpace Interval Matrix NNReal Pointwise RealInnerProductSpace
 
 universe u v
 
@@ -865,6 +866,7 @@ private theorem SpecialPeriods.Triangle.switch_right_mo1973_23604 :
   rw [meridianSlitCover.switchClass_eq_of_paths right_mem_upper_mo1973_23600
       right_mem_lower_mo1973_23601 upperOnePath lowerOnePath upperOnePath_mem_upperSlitPlane
       lowerOnePath_mem_lowerSlitPlane]
+  apply CategoryTheory.End.ext
   change
     Path.Homotopic.Quotient.mk (upperOnePath.trans lowerOnePath.symm) =
       Path.Homotopic.Quotient.mk (lowerOnePath.trans upperOnePath.symm).symm
@@ -1037,7 +1039,8 @@ private def SpecialPeriods.Triangle.meridianFreeWordHom :
 attribute [local instance] SpecialPeriods.Triangle.discreteFreeGroup in
 @[simp]
 private theorem SpecialPeriods.Triangle.meridianFreeWordHom_positiveMeridianZero :
-    meridianFreeWordHom (.mk positiveMeridianZero) = FreeGroup.of Bool.false := by
+    meridianFreeWordHom (FundamentalGroup.fromPath (.mk positiveMeridianZero)) =
+      FreeGroup.of Bool.false := by
   have hzero :=
     freeGroupCover.fundamentalGroupToMulOpposite_trans_U_V freeGroupCover_basepoint_mem
       freeGroupCover_leftPoint_mem upperZeroPath lowerZeroPath.symm
@@ -1046,7 +1049,8 @@ private theorem SpecialPeriods.Triangle.meridianFreeWordHom_positiveMeridianZero
   change
     (MulEquiv.inv' (FreeGroup Bool)).symm
         (freeGroupCover.fundamentalGroupToMulOpposite meridianBasepoint
-          freeGroupCover_basepoint_mem.1 (.mk (upperZeroPath.trans lowerZeroPath.symm))) =
+          freeGroupCover_basepoint_mem.1
+          (FundamentalGroup.fromPath (.mk (upperZeroPath.trans lowerZeroPath.symm)))) =
       _
   rw [hzero]
   change (freeGroupTransition meridianLeftPoint * (freeGroupTransition meridianBasepoint)⁻¹)⁻¹ = _
@@ -1055,36 +1059,42 @@ private theorem SpecialPeriods.Triangle.meridianFreeWordHom_positiveMeridianZero
 attribute [local instance] SpecialPeriods.Triangle.discreteFreeGroup in
 @[simp]
 private theorem SpecialPeriods.Triangle.meridianFreeWordHom_positiveMeridianOne :
-    meridianFreeWordHom (.mk positiveMeridianOne) = FreeGroup.of Bool.true := by
+    meridianFreeWordHom (FundamentalGroup.fromPath (.mk positiveMeridianOne)) =
+      FreeGroup.of Bool.true := by
   have hone :=
     freeGroupCover.fundamentalGroupToMulOpposite_trans_U_V freeGroupCover_basepoint_mem
       freeGroupCover_rightPoint_mem upperOnePath lowerOnePath.symm
       (fun s => upperOnePath_mem_upperSlitPlane s)
       (fun s => lowerOnePath_mem_lowerSlitPlane (unitInterval.symm s))
   have hword :
-    meridianFreeWordHom (.mk (upperOnePath.trans lowerOnePath.symm)) =
+    meridianFreeWordHom (FundamentalGroup.fromPath (.mk (upperOnePath.trans lowerOnePath.symm))) =
       (FreeGroup.of Bool.true)⁻¹ := by
     change
       (MulEquiv.inv' (FreeGroup Bool)).symm
           (freeGroupCover.fundamentalGroupToMulOpposite meridianBasepoint
-            freeGroupCover_basepoint_mem.1 (.mk (upperOnePath.trans lowerOnePath.symm))) =
+            freeGroupCover_basepoint_mem.1
+            (FundamentalGroup.fromPath (.mk (upperOnePath.trans lowerOnePath.symm)))) =
         _
     rw [hone]
     change
       (freeGroupTransition meridianRightPoint * (freeGroupTransition meridianBasepoint)⁻¹)⁻¹ = _
     simp
   let q : FundamentalGroup TwicePuncturedPlane meridianBasepoint :=
-    .mk (upperOnePath.trans lowerOnePath.symm)
+    FundamentalGroup.fromPath (.mk (upperOnePath.trans lowerOnePath.symm))
   have hpath :
-    (.mk positiveMeridianOne : FundamentalGroup TwicePuncturedPlane meridianBasepoint) = q⁻¹ := by
+    (FundamentalGroup.fromPath (.mk positiveMeridianOne) :
+      FundamentalGroup TwicePuncturedPlane meridianBasepoint) = q⁻¹ := by
     rw [FundamentalGroup.inv_def]
+    apply CategoryTheory.End.ext
     change
       .mk positiveMeridianOne =
         (Path.Homotopic.Quotient.mk (upperOnePath.trans lowerOnePath.symm)).symm
     rw [← Path.Homotopic.Quotient.mk_symm, Path.trans_symm, Path.symm_symm]
     rfl
   rw [hpath, map_inv]
-  change (meridianFreeWordHom (.mk (upperOnePath.trans lowerOnePath.symm)))⁻¹ = _
+  change
+    (meridianFreeWordHom
+      (FundamentalGroup.fromPath (.mk (upperOnePath.trans lowerOnePath.symm))))⁻¹ = _
   rw [hword, inv_inv]
 
 @[simp]

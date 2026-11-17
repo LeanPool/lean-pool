@@ -23,9 +23,9 @@ To be re-authored per upstream AI-contribution policy at PR time.
 -/
 module
 
-public import Mathlib.Analysis.InnerProductSpace.PiL2
+import Mathlib.Analysis.InnerProductSpace.PiL2
 public import Mathlib.Analysis.InnerProductSpace.Spectrum
-public import Mathlib.Analysis.InnerProductSpace.Adjoint
+import Mathlib.Analysis.InnerProductSpace.Adjoint
 public import LeanPool.DavisKahan.ForTauCeti.Analysis.InnerProductSpace.BasisSpan
 
 /-! # Courant–Fischer min-max and Weyl's eigenvalue perturbation inequality

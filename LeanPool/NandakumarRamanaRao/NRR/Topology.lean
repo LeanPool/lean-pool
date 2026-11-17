@@ -7,6 +7,9 @@ module
 
 
 public import LeanPool.NandakumarRamanaRao.NRR.Topology.OutwardFieldZero
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Measurability.Init
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Supporting modules for Equal-area and equal-perimeter convex partitions. -/
 

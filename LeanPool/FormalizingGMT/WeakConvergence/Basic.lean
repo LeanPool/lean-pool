@@ -14,6 +14,7 @@ public import Mathlib.MeasureTheory.Measure.Portmanteau
 public import Mathlib.Order.LiminfLimsup
 public import Mathlib.Topology.Bornology.Basic
 public import Mathlib.Topology.MetricSpace.ProperSpace
+public import Mathlib.Topology.UrysohnsLemma
 public import LeanPool.FormalizingGMT.RadonMeasures.Basic
 
 /-!

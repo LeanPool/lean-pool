@@ -7,7 +7,7 @@ Authors: Moritz Firsching
 module
 
 public import LeanPool.Zeta5Irrational.Degree
-import Mathlib.Data.Rat.Star
+import Mathlib.Algebra.Order.Star.Rat
 import Mathlib.LinearAlgebra.Lagrange
 import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Polynomial.Basic

@@ -5,12 +5,6 @@ Authors: Zeru Zhu, Jinzheng Li, Yuanjie Ren
 -/
 module
 
-public import Mathlib.Tactic.Linarith
-public import Mathlib.Tactic.NormNum
-public import Mathlib.Tactic.Ring
-public import Mathlib.Tactic.Tauto
-public import LeanPool.ACMax.Spectral.AlgConn
-public import LeanPool.ACMax.Spectral.RayleighUpper
 public import LeanPool.ACMax.Spectral.TestVector
 
 /-!
@@ -103,7 +97,7 @@ theorem algConn_le_two_of_signed {V : Type*} [Fintype V] [Nonempty V]
     refine Finset.sum_congr rfl (fun i _ => Finset.sum_congr rfl (fun j _ => ?_))
     refine if_congr ?_ rfl rfl
     rw [SimpleGraph.adj_comm]
-    tauto
+    exact and_congr_right fun _ => and_comm
   -- Count lemma `P → Z`: ordered adjacent pairs `(i ∈ P, j ∉ P ∪ N)` total `ePZ`.
   have hPZ :
       (∑ i, ∑ j, if (G.Adj i j ∧ i ∈ P ∧ j ∉ P ∪ N) then (1 : ℝ) else 0) = (ePZ : ℝ) := by
@@ -128,7 +122,7 @@ theorem algConn_le_two_of_signed {V : Type*} [Fintype V] [Nonempty V]
     refine Finset.sum_congr rfl (fun i _ => Finset.sum_congr rfl (fun j _ => ?_))
     refine if_congr ?_ rfl rfl
     rw [SimpleGraph.adj_comm]
-    tauto
+    exact and_congr_right fun _ => and_comm
   -- Count lemma `N → Z`: ordered adjacent pairs `(i ∈ N, j ∉ P ∪ N)` total `eNZ`.
   have hNZ :
       (∑ i, ∑ j, if (G.Adj i j ∧ i ∈ N ∧ j ∉ P ∪ N) then (1 : ℝ) else 0) = (eNZ : ℝ) := by
@@ -153,7 +147,7 @@ theorem algConn_le_two_of_signed {V : Type*} [Fintype V] [Nonempty V]
     refine Finset.sum_congr rfl (fun i _ => Finset.sum_congr rfl (fun j _ => ?_))
     refine if_congr ?_ rfl rfl
     rw [SimpleGraph.adj_comm]
-    tauto
+    exact and_congr_right fun _ => and_comm
   -- Quadratic form equals `4·ePN + ePZ + eNZ`.
   have hquad : dotProduct x ((G.lapMatrix ℝ).mulVec x) =
       4 * (ePN : ℝ) + (ePZ : ℝ) + (eNZ : ℝ) := by
@@ -174,7 +168,7 @@ theorem algConn_le_two_of_signed {V : Type*} [Fintype V] [Nonempty V]
           first
           | exact absurd hiN (hiPN i hiP)
           | exact absurd hjN (hiPN j hjP)
-          | (simp [hadj, hiP, hiN, hjP, hjN, Finset.mem_union] <;> norm_num)
+          | norm_num [hadj, hiP, hiN, hjP, hjN, Finset.mem_union]
       · simp [hadj]
     simp_rw [hterm, Finset.sum_add_distrib, ← Finset.mul_sum]
     rw [hPN, hNP, hPZ, hZP, hNZ, hZN]

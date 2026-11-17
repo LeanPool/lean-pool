@@ -8,7 +8,7 @@ module
 
 public import LeanPool.Zeta5Irrational.Growth.ClassSum
 public import LeanPool.Zeta5Irrational.Arith.ClassCount
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop

@@ -4,18 +4,19 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Boris Alexeev
 -/
 module
+public import Mathlib.Tactic.NormNum.Parity
 
-public import LeanPool.HopfProblem.Prelude
+public import LeanPool.HopfProblem.InternalPrelude
 public import LeanPool.HopfProblem.TorusHomology.PeriodTorusHigherHomology8
 public import LeanPool.HopfProblem.HomologyOfX.CuspCoinvariants
-import all LeanPool.HopfProblem.Foundations.Core1
+import LeanPool.HopfProblem.Foundations.Core1
 import all LeanPool.HopfProblem.HomologyTheory.SingularMayerVietoris
 import all LeanPool.HopfProblem.Lattice.Core1
 import all LeanPool.HopfProblem.TorusHomology.PeriodTorusHigherHomology1
 import all LeanPool.HopfProblem.TorusHomology.PeriodTorusHigherHomology2
 import all LeanPool.HopfProblem.CuspFibre.CuspCentralHomology2
 import all LeanPool.HopfProblem.TorusHomology.PeriodTorusHigherHomology3
-import all LeanPool.HopfProblem.TorusHomology.PeriodTorusHigherHomology4
+import LeanPool.HopfProblem.TorusHomology.PeriodTorusHigherHomology4
 import all LeanPool.HopfProblem.Toric.ToricSpace1
 import all LeanPool.HopfProblem.Toric.ToricSpace2
 import all LeanPool.HopfProblem.CuspFibre.CuspPositiveRetraction
@@ -24,7 +25,7 @@ import all LeanPool.HopfProblem.Elliptic.Core1
 import all LeanPool.HopfProblem.Toric.CuspHoneycombHexagon
 import all LeanPool.HopfProblem.TorusHomology.PeriodTorusHigherHomology6
 import all LeanPool.HopfProblem.TorusHomology.PeriodTorusHigherHomology7
-import all LeanPool.HopfProblem.CuspFibre.CuspCentralHomology1
+import LeanPool.HopfProblem.CuspFibre.CuspCentralHomology1
 import all LeanPool.HopfProblem.CuspFibre.CuspCentralHomology3
 import all LeanPool.HopfProblem.CuspFibre.CuspSpecialization
 import all LeanPool.HopfProblem.HomologyOfX.CuspCoinvariants
@@ -39,10 +40,8 @@ Supporting definitions and proofs for this stage of the six-sphere construction.
 
 open Set Function Filter Manifold Topology
 
-open scoped BigOperators CategoryTheory Complex.UnitDisc ComplexConjugate ContDiff ContinuousMap
-  Convolution ENNReal EuclideanSpace Fin.NatCast InnerProductSpace Interval Matrix MatrixGroups
-  Modular NNReal Pointwise RealInnerProductSpace TensorProduct UniformConvergence Uniformity
-  UpperHalfPlane
+open scoped BigOperators ComplexConjugate ContDiff ContinuousMap ENNReal EuclideanSpace Fin.NatCast
+  InnerProductSpace Interval Matrix NNReal Pointwise RealInnerProductSpace
 
 universe u v
 
@@ -2433,6 +2432,7 @@ private theorem CuspCentralHomology.BaseCover.zeroCorrection_deckFibrePhase_mo19
   funext i
   simp [CuspCollapse.deckFibrePhase, CuspPositive.frozenPhaseCoordinate_eq_exp]
 
+attribute [local instance high] NeZero.one in
 private theorem CuspCentralHomology.BaseCover.phaseOneCollapse_eq_of_base_eq_mo1973_14848
     {y z : (CuspHoneycombTiling.Plane)}
     (h : CuspCentralHomology.baseTorusPoint y = CuspCentralHomology.baseTorusPoint z) :
@@ -2446,6 +2446,7 @@ private theorem CuspCentralHomology.BaseCover.phaseOneCollapse_eq_of_base_eq_mo1
     (MulAction.stabilizer ToricSpace.CompactFibreTorus
         ((CuspHoneycomb.honeycombHomeomorph 0 y).1 : ToricSpace.Space)).one_mem
 
+attribute [local instance high] NeZero.one in
 private theorem CuspCentralHomology.BaseCover.phaseOne_edgeCylinder_mo1973_14849 (k : Fin 6)
     (t : unitInterval) :
     CuspCollapse.centralProject (fun _ => 0) 1 zero_lt_one
@@ -2469,6 +2470,7 @@ private theorem CuspCentralHomology.BaseCover.phaseOne_edgeCylinder_mo1973_14849
     rw [CuspCentralHomology.honeycombHomeomorph_edgeArcBase]
   simpa only [map_one, CuspCentralHomology.edgeArcBase_eq_dualSidePoint] using h
 
+attribute [local instance high] NeZero.one in
 private theorem CuspCentralHomology.BaseCover.phaseOne_doubleCylinder_mo1973_14850
     (t : unitInterval) (j : Fin 3) :
     CuspCentralHomology.doubleCylinder (fun _ => 0) 1 zero_lt_one

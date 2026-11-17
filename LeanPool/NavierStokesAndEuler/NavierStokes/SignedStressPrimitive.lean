@@ -7,6 +7,7 @@ Authors: OpenAI
 module
 
 public import LeanPool.NavierStokesAndEuler.NavierStokes.IntegratedMeanBalances
+import Mathlib.Analysis.Calculus.Deriv.Prod
 import LeanPool.NavierStokesAndEuler.NavierStokes.ParametricKernelBounds
 import LeanPool.NavierStokesAndEuler.NavierStokes.UniformCone
 import Mathlib.Analysis.Calculus.ContDiff.Bounds

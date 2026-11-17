@@ -6,13 +6,15 @@ Authors: Yury G. Kudryashov
 module
 
 public import Mathlib.MeasureTheory.Constructions.HaarToSphere
+public import Mathlib.MeasureTheory.Covering.Besicovitch
+public import Mathlib.MeasureTheory.Measure.Decomposition.RadonNikodym
 import LeanPool.SardMoreira.MeasureBallSemicontinuous
 import LeanPool.SardMoreira.MeasureComap
 import LeanPool.SardMoreira.NormedSpace
 import LeanPool.SardMoreira.Topology
 import Mathlib.Dynamics.Ergodic.Action.Regular
-import Mathlib.MeasureTheory.Measure.Decomposition.RadonNikodym
 import Mathlib.MeasureTheory.Measure.Haar.Unique
+import Mathlib.MeasureTheory.Measure.Lebesgue.EqHaar
 import Mathlib.Topology.Separation.CompletelyRegular
 
 /-!
@@ -47,7 +49,7 @@ protected theorem MeasureTheory.Measure.AbsolutelyContinuous.comap {α β : Type
 theorem MeasurableEmbedding.quasiMeasurePreserving_iff_comap {α β : Type*}
     {_ : MeasurableSpace α} {_ : MeasurableSpace β} {e : α → β} (he : MeasurableEmbedding e)
     {μ : Measure α} {ν : Measure β} :
-    Measure.QuasiMeasurePreserving e μ ν ↔ μ ≪ .comap e ν := by
+    QuasiMeasurePreserving e μ ν ↔ μ ≪ .comap e ν := by
   constructor <;> intro h
   · rw [← he.comap_map μ]
     exact h.2.comap _ fun s hs ↦ (he.measurableSet_image.mpr hs).nullMeasurableSet
@@ -57,7 +59,7 @@ theorem MeasurableEmbedding.quasiMeasurePreserving_iff_comap {α β : Type*}
     exact ν.restrict_le_self.absolutelyContinuous
 
 theorem MeasureTheory.Measure.QuasiMeasurePreserving.subtypeVal_volumeIoiPow (n : ℕ) :
-    Measure.QuasiMeasurePreserving Subtype.val (.volumeIoiPow n) volume := by
+    QuasiMeasurePreserving Subtype.val (.volumeIoiPow n) volume := by
   rw [MeasurableEmbedding.quasiMeasurePreserving_iff_comap]
   exacts [absolutelyContinuous_volumeIoiPow_left n, .subtype_coe measurableSet_Ioi]
 

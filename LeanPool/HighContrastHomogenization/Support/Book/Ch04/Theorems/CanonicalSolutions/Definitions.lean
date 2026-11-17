@@ -248,7 +248,7 @@ theorem canonicalUpperImageIndicatorTestStateCubeSet_memBlockL2
   exact
     MeasureTheory.memLp_indicator_const
       (μ := volumeMeasureOn (cubeSet Q)) (p := (2 : ℝ≥0∞))
-      (s := cubeSet R) (hs := measurableSet_cubeSet R)
+      (s := cubeSet R) (hs := (measurableSet_cubeSet R).nullMeasurableSet)
       (c := ((Pi.single i 1, 0) : BlockVec d)) (Or.inr hR_ne_top)
 
 theorem canonicalLowerImageIndicatorTestStateCubeSet_memBlockL2
@@ -275,7 +275,7 @@ theorem canonicalLowerImageIndicatorTestStateCubeSet_memBlockL2
   exact
     MeasureTheory.memLp_indicator_const
       (μ := volumeMeasureOn (cubeSet Q)) (p := (2 : ℝ≥0∞))
-      (s := cubeSet R) (hs := measurableSet_cubeSet R)
+      (s := cubeSet R) (hs := (measurableSet_cubeSet R).nullMeasurableSet)
       (c := ((0, Pi.single i 1) : BlockVec d)) (Or.inr hR_ne_top)
 
 /-- Average over `R` of the upper component of the coefficient-operator image

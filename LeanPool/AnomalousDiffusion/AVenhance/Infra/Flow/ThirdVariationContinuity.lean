@@ -786,7 +786,6 @@ private theorem third_variation_lipschitz_bound :
   refine ⟨K, hK₀, ?_, ?_⟩
   · dsimp [K, flowThirdVariationLipschitzConstant, Cforce, CthirdForce,
       CsecondForce, Ftraj, E, d, Kvar, K₂, K₃, C₂diff]
-    try rfl
   intro q hq
   have hpointq := hpoint q hq
   change ‖flowThirdVariation hb hX y s hVy h k l q 0 s -

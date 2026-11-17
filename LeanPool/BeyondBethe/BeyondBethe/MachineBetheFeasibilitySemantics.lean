@@ -7,7 +7,6 @@ module
 
 
 public import LeanPool.BeyondBethe.BeyondBethe.MachineBetheFeasibilityLoop
-public import Mathlib.Tactic
 
 /-!
 # Semantics of the finite-word Bethe feasibility loop

@@ -63,10 +63,10 @@ theorem colourSum_eq_zero_whisker
     (hW : ∀ k : ℕ, 𝟙 (W ⊗ tensorPow A U k) ≠
       (0 : W ⊗ tensorPow A U k ⟶ W ⊗ tensorPow A U k))
     {n : ℕ} {x : SymGroupAlgebra n}
-    (hx : W ◁ permAlg M n x = 0) (c d : Fin n → K) :
+    (hx : W ◁ (permAlg M n x).asHom = 0) (c d : Fin n → K) :
     colourSum par x c d = 0 := by
   by_cases hpop : popCount (par ∘ c) = popCount (par ∘ d)
-  · have h1 : W ◁ (S.nIn n c ≫ permAlg M n x ≫ S.nOut n d) = 0 := by
+  · have h1 : W ◁ (S.nIn n c ≫ (permAlg M n x).asHom ≫ S.nOut n d) = 0 := by
       rw [MonoidalCategory.whiskerLeft_comp,
         MonoidalCategory.whiskerLeft_comp, hx, Limits.zero_comp,
         Limits.comp_zero]
@@ -109,8 +109,8 @@ theorem colourSum_eq_zero_of_whisker_sum
       (0 : W ⊗ tensorPow A U k ⟶ W ⊗ tensorPow A U k))
     (hβ : (β_ U U).hom = -(𝟙 (U ⊗ U))) (p q : ℕ)
     {lam : YoungDiagram}
-    (hkill : W ◁ permAlg (sumPow (𝟙_ A) p ⊞ sumPow U q) lam.card
-      (P.e lam) = 0) :
+    (hkill : W ◁ (permAlg (sumPow (𝟙_ A) p ⊞ sumPow U q) lam.card
+      (P.e lam)).asHom = 0) :
     ∀ c d : Fin lam.card → Fin (p + 1) ⊕ Fin (q + 1),
       colourSum mixedPar (P.e lam) c d = 0 :=
   fun c d => (mixedSumLetters p q U).colourSum_eq_zero_whisker hβ W
@@ -133,7 +133,7 @@ theorem whisker_permAlg_sum_ne_zero
     (hβ : (β_ U U).hom = -(𝟙 (U ⊗ U))) (p q : ℕ)
     {lam : YoungDiagram}
     (hcell : ((p + 1, q + 1) : ℕ × ℕ) ∉ lam) :
-    W ◁ permAlg (sumPow (𝟙_ A) p ⊞ sumPow U q) lam.card (P.e lam)
+    W ◁ (permAlg (sumPow (𝟙_ A) p ⊞ sumPow U q) lam.card (P.e lam)).asHom
       ≠ 0 := by
   intro hkill
   have he : P.e lam = P₀.e lam := by
@@ -159,22 +159,22 @@ theorem whisker_permAlg_eq_zero_of_iso
     [Category.{v} A] [MonoidalCategory A] [SymmetricCategory A]
     [Preadditive A] [Linear ℂ A]
     (W : A) {X Y : A} (e : X ≅ Y)
-    {n : ℕ} (x : SymGroupAlgebra n) (h : W ◁ permAlg X n x = 0) :
-    W ◁ permAlg Y n x = 0 := by
+    {n : ℕ} (x : SymGroupAlgebra n) (h : W ◁ (permAlg X n x).asHom = 0) :
+    W ◁ (permAlg Y n x).asHom = 0 := by
   have hST : (W ◁ tensorPowMap e.inv n) ≫
       (W ◁ tensorPowMap e.hom n) = 𝟙 (W ⊗ tensorPow A Y n) := by
     rw [← MonoidalCategory.whiskerLeft_comp, ← tensorPowMap_comp,
       e.inv_hom_id, tensorPowMap_id,
       MonoidalCategory.whiskerLeft_id]
-  have hnat : (W ◁ permAlg X n x) ≫ (W ◁ tensorPowMap e.hom n) =
-      (W ◁ tensorPowMap e.hom n) ≫ (W ◁ permAlg Y n x) := by
+  have hnat : (W ◁ (permAlg X n x).asHom) ≫ (W ◁ tensorPowMap e.hom n) =
+      (W ◁ tensorPowMap e.hom n) ≫ (W ◁ (permAlg Y n x).asHom) := by
     rw [← MonoidalCategory.whiskerLeft_comp,
       ← MonoidalCategory.whiskerLeft_comp, permAlg_natural]
-  calc W ◁ permAlg Y n x
+  calc W ◁ (permAlg Y n x).asHom
       = ((W ◁ tensorPowMap e.inv n) ≫
-          (W ◁ tensorPowMap e.hom n)) ≫ (W ◁ permAlg Y n x) := by
+          (W ◁ tensorPowMap e.hom n)) ≫ (W ◁ (permAlg Y n x).asHom) := by
         rw [hST, Category.id_comp]
-    _ = (W ◁ tensorPowMap e.inv n) ≫ (W ◁ permAlg X n x) ≫
+    _ = (W ◁ tensorPowMap e.inv n) ≫ (W ◁ (permAlg X n x).asHom) ≫
         (W ◁ tensorPowMap e.hom n) := by
         rw [Category.assoc, ← hnat]
     _ = 0 := by rw [h, Limits.zero_comp, Limits.comp_zero]

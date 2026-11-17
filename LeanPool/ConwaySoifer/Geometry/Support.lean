@@ -8,7 +8,13 @@ module
 public import LeanPool.ConwaySoifer.Geometry.TriangleHalfspaces
 public import Mathlib.Analysis.Real.Sqrt
 public import Mathlib.Data.Fin.VecNotation
-import Mathlib.Tactic
+import Mathlib.Tactic.Convert
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum.RealSqrt
+import Mathlib.Tactic.Positivity
+import Mathlib.Tactic.Ring
 
 /-!
 # Support forms and orientations of equilateral triangles in triangular coordinates

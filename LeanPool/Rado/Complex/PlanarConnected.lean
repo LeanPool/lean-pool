@@ -9,6 +9,7 @@ public import Mathlib.Analysis.Complex.Basic
 public import Mathlib.Topology.Connected.PathConnected
 import Mathlib.Analysis.Complex.Convex
 import Mathlib.Analysis.Normed.Module.Connected
+import Mathlib.Analysis.Normed.Module.Convex
 import Mathlib.LinearAlgebra.Complex.FiniteDimensional
 
 /-!

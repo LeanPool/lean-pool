@@ -4,21 +4,24 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Boris Alexeev
 -/
 module
+public import LeanPool.HopfProblem.Elliptic.Core1
+public import LeanPool.HopfProblem.Lattice.Core1
+import all Mathlib.Topology.Homotopy.Lifting
 
-public import LeanPool.HopfProblem.Prelude
+public import LeanPool.HopfProblem.InternalPrelude
 public import LeanPool.HopfProblem.Threefold.SpecialPeriods9
 public import LeanPool.HopfProblem.Foundations.SplitGroupExtension
-import all LeanPool.HopfProblem.Foundations.Core1
-import all LeanPool.HopfProblem.HomologyTheory.SingularMayerVietoris
+import LeanPool.HopfProblem.Foundations.Core1
+import LeanPool.HopfProblem.HomologyTheory.SingularMayerVietoris
 import all LeanPool.HopfProblem.Lattice.Core1
 import all LeanPool.HopfProblem.TorusHomology.PeriodTorusHigherHomology1
-import all LeanPool.HopfProblem.Foundations.Core2
+import LeanPool.HopfProblem.Foundations.Core2
 import all LeanPool.HopfProblem.Toric.ToricSpace1
 import all LeanPool.HopfProblem.PeriodFamily.PeriodPoint
-import all LeanPool.HopfProblem.Foundations.Core3
+import LeanPool.HopfProblem.Foundations.Core3
 import all LeanPool.HopfProblem.Lattice.Core2
 import all LeanPool.HopfProblem.Elliptic.Core1
-import all LeanPool.HopfProblem.Threefold.SpecialPeriods1
+import LeanPool.HopfProblem.Threefold.SpecialPeriods1
 import all LeanPool.HopfProblem.Pi1.MappingTorus
 import all LeanPool.HopfProblem.Elliptic.Core2
 import all LeanPool.HopfProblem.Threefold.SpecialPeriods4
@@ -32,7 +35,6 @@ import all LeanPool.HopfProblem.HomologyOfX.ThreefoldHomology1
 import all LeanPool.HopfProblem.Pi1.FundamentalGroupVanKampen2
 import all LeanPool.HopfProblem.Elliptic.Core5
 import all LeanPool.HopfProblem.Threefold.SpecialPeriods9
-import all LeanPool.HopfProblem.Foundations.SplitGroupExtension
 
 /-!
 # Hopf problem: homology of x · threefold homology 2
@@ -43,10 +45,8 @@ Supporting definitions and proofs for this stage of the six-sphere construction.
 
 open Set Function Filter Manifold Topology
 
-open scoped BigOperators CategoryTheory Complex.UnitDisc ComplexConjugate ContDiff ContinuousMap
-  Convolution ENNReal EuclideanSpace Fin.NatCast InnerProductSpace Interval Matrix MatrixGroups
-  Modular NNReal Pointwise RealInnerProductSpace TensorProduct UniformConvergence Uniformity
-  UpperHalfPlane
+open scoped BigOperators ComplexConjugate ContDiff ContinuousMap ENNReal EuclideanSpace Fin.NatCast
+  InnerProductSpace Interval Matrix NNReal Pointwise RealInnerProductSpace
 
 universe u v
 

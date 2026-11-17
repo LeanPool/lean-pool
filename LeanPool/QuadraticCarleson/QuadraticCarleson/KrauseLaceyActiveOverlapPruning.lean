@@ -55,7 +55,7 @@ theorem overlapCount_overlapPrunedFamily_le
   let F := (overlapPrunedFamily A M).filter fun I ↦ x ∈ I.carrier
   change F.card ≤ M
   by_cases hempty : F = ∅
-  · simp [hempty]
+  · simp only [hempty, Finset.card_empty, zero_le]
   obtain ⟨I, hI, hmin⟩ := F.exists_min_image RealInterval.length
     (Finset.nonempty_iff_ne_empty.mpr hempty)
   have hi := Finset.mem_filter.mp hI
@@ -83,7 +83,7 @@ theorem overlapCount_cast_eq_sum_indicator (A : Finset RealInterval) (x : ℝ) :
     Finset.sum_filter, Set.indicator_apply]
   apply Finset.sum_congr rfl
   intro I hI
-  split_ifs <;> norm_num
+  split_ifs <;> norm_num1
 
 theorem measurable_overlapCount_cast (A : Finset RealInterval) :
     Measurable (fun x ↦ (overlapCount A x : ℝ≥0∞)) := by

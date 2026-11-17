@@ -124,9 +124,9 @@ theorem pv_tendsto_of_crossing_limit_asymmetric
     have hδR := hδR_pos ε hε_pos hε_lt
     have hδL_bd := hδL_small ε hε_pos hε_lt
     have hδR_bd := hδR_small ε hε_pos hε_lt
-    have h_left_lt : a < t₀ - δ_left ε := by linarith
-    have h_right_lt : t₀ + δ_right ε < b := by linarith
-    have h_mid_lt : t₀ - δ_left ε < t₀ + δ_right ε := by linarith
+    have h_left_lt : a < t₀ - δ_left ε := by linarith only [hδL_bd]
+    have h_right_lt : t₀ + δ_right ε < b := by linarith only [hδR_bd]
+    have h_mid_lt : t₀ - δ_left ε < t₀ + δ_right ε := by linarith only [hδL, hδR]
     -- Abbreviate the cutoff integrand
     set F := fun t => if ‖γ t - s‖ > ε then (γ t - s)⁻¹ * deriv γ t else (0 : ℂ) with hF_def
     -- F = 0 on the middle segment [t₀ - δL, t₀ + δR]
@@ -155,7 +155,11 @@ theorem pv_tendsto_of_crossing_limit_asymmetric
         mem_ae_iff.mpr (by rw [compl_compl]; exact (Set.finite_singleton _).measure_zero volume)
       filter_upwards [h_ne] with t ht_ne ht_mem
       rw [uIoc_of_le (le_of_lt h_right_lt)] at ht_mem
-      simp_all
+      simp_all only [mem_Ioo, mem_Ico, and_imp, mem_Ioc, mem_Icc, tsub_le_iff_right, and_self,
+        gt_iff_lt,
+        ite_eq_right_iff, mul_eq_zero, inv_eq_zero, ite_eq_left_iff, not_lt, zero_eq_mul,
+          mem_compl_iff, mem_singleton_iff,
+        ↓reduceIte]
     -- Integrability of F on each piece
     have hF_int_left : IntervalIntegrable F volume a (t₀ - δ_left ε) :=
       (hint_left ε hε_pos hε_lt).congr_ae
@@ -189,7 +193,9 @@ theorem pv_tendsto_of_crossing_limit_asymmetric
         ∫ t in (t₀ + δ_right ε)..b, (γ t - s)⁻¹ * deriv γ t :=
       intervalIntegral.integral_congr_ae hF_right
     -- Assemble
-    simp_all
+    simp_all only [mem_Ioo, mem_Ico, and_imp, mem_Ioc, mem_Icc, tsub_le_iff_right, and_self,
+      gt_iff_lt,
+      ite_eq_right_iff, mul_eq_zero, inv_eq_zero, ite_eq_left_iff, not_lt, zero_eq_mul, add_zero]
   exact h_limit.congr' h_ev.symm
 
 end ContourIntegral

@@ -667,7 +667,7 @@ private theorem upperAfterBandConsumption_momentBounds2 :
       (_ : R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ))) {E : { E : ℝ // (1 :
         ℝ) ≤ E }} {sigma : ℝ}
       (_ : (0 : ℝ) < sigma) (_ : sigma ≤ (1 / 2 : ℝ)) (_ : (2 : ℕ) ≤ d),
-      let j₀ : Fin d := ⟨(0 : ℕ), (by first | assumption | infer_instance | positivity)⟩;
+      let j₀ : Fin d := ⟨(0 : ℕ), (by positivity)⟩;
       let k₀ : ℕ := collarBandMeanDepth M (↑E : ℝ);
       let rho : ℝ := (3 : ℝ) ^ (-(1 / 40 : ℝ));
       let F : ℝ :=

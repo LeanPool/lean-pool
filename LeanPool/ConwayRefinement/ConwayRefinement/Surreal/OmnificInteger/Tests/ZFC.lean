@@ -61,7 +61,7 @@ example (z : ZFSet.{u}) (h : IsGameCode z)
     (⟨GameCode.mk z h, hz⟩ : OmnificCode.{u}).IsPrime :=
   OmnificCode.isPrime_of_isIrreducible _ hi
 
-example : ∀ s : ZFSet.{u}, omnificGameCodes ≠ Class.ofSet s :=
+example : ∀ s : ZFSet.{u}, omnificGameCodes ≠ (s : ZFClass.{u}) :=
   omnificGameCodes_ne_ofSet
 
 example (x : ZFSet.Surreal.OmnificInteger.{u}) (hx : Irreducible x) : Prime x :=

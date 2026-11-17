@@ -10,7 +10,6 @@ public import Mathlib.Analysis.Calculus.Deriv.Pow
 public import Mathlib.Analysis.Calculus.Deriv.Inv
 public import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 public import LeanPool.QuadraticCarleson.QuadraticCarleson.Bohr
-public import Mathlib.Analysis.Complex.RealDeriv
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.IntegrationByParts
 
 /-!
@@ -74,10 +73,10 @@ theorem quadraticTTStarSlope_sublevel_eq_Icc {lam μ : ℝ} (h : lam ≠ μ)
       Icc ((lam * x - μ * y) / (lam - μ) - η / (2 * |lam - μ|))
         ((lam * x - μ * y) / (lam - μ) + η / (2 * |lam - μ|)) := by
   ext t
-  have hpos : 0 < 2 * |lam - μ| := mul_pos (by norm_num) (abs_pos.mpr (sub_ne_zero.mpr h))
+  have hpos : 0 < 2 * |lam - μ| := mul_pos (by norm_num1) (abs_pos.mpr (sub_ne_zero.mpr h))
   rw [mem_ofPred, quadraticTTStarSlope_eq_center h, abs_mul, abs_mul,
-    abs_of_pos (show (0 : ℝ) < 2 by norm_num), ← le_div_iff₀' hpos, abs_le, mem_Icc]
-  constructor <;> rintro ⟨h₁, h₂⟩ <;> constructor <;> linarith
+    abs_of_pos (show (0 : ℝ) < 2 by norm_num1), ← le_div_iff₀' hpos, abs_le, mem_Icc]
+  constructor <;> rintro ⟨h₁, h₂⟩ <;> constructor <;> linarith only [h₁, h₂]
 
 /-- Exact exceptional-set measure, the `c = 2` form of the geometric step
 in (6.8). Intersecting with the amplitude support can only reduce this value. -/
@@ -180,7 +179,6 @@ theorem norm_integral_quadraticExponential_mul_le
     hasDerivAt_quadraticExponential a b c t
   have hpc : ContinuousOn p (Icc l r) := fun t ht ↦ (hp t ht).continuousAt.continuousWithinAt
   have hdc : Continuous d := continuous_iff_continuousAt.mpr (fun t ↦ (hd t).continuousAt)
-  have huc : ContinuousOn u (Icc l r) := hpc.div hdc.continuousOn hdnz
   have hu'c : ContinuousOn u' (Icc l r) :=
     (hp'.div hdc.continuousOn hdnz).sub
       ((hpc.mul continuousOn_const).div (hdc.pow 2).continuousOn
@@ -188,16 +186,16 @@ theorem norm_integral_quadraticExponential_mul_le
   have hvc : Continuous v := continuous_iff_continuousAt.mpr (fun t ↦ (hv t).continuousAt)
   have hv'c : Continuous v' := hdc.mul hvc
   have hparts := intervalIntegral.integral_mul_deriv_eq_deriv_mul
-    (fun t ht ↦ hu t (by simpa [uIcc_of_le hlr] using ht))
+    (fun t ht ↦ hu t (by simpa only [mem_Icc, uIcc_of_le hlr] using ht))
     (fun t _ ↦ hv t)
-    ((by simpa [uIcc_of_le hlr] using hu'c : ContinuousOn u' (uIcc l r)).intervalIntegrable)
+    ((by simpa only [uIcc_of_le hlr] using hu'c : ContinuousOn u' (uIcc l r)).intervalIntegrable)
     (hv'c.intervalIntegrable l r)
   have hid : (∫ t in l..r, p t * v t) =
       u r * v r - u l * v l - ∫ t in l..r, u' t * v t := by
     rw [← hparts]
     apply intervalIntegral.integral_congr
     intro t ht
-    have hn := hdnz t (by simpa [uIcc_of_le hlr] using ht)
+    have hn := hdnz t (by simpa only [mem_Icc, uIcc_of_le hlr] using ht)
     dsimp [u, v']
     field_simp
   have hubound (t : ℝ) (ht : t ∈ Icc l r) : ‖u t‖ ≤ P / δ := by
@@ -209,7 +207,7 @@ theorem norm_integral_quadraticExponential_mul_le
     calc
       ‖u' t‖ ≤ ‖p' t / d t‖ + ‖p t * d' / d t ^ 2‖ := norm_sub_le _ _
       _ = ‖p' t‖ / |2 * a * t + b| + ‖p t‖ * |2 * a| / |2 * a * t + b| ^ 2 := by
-        simp only [norm_div, norm_pow, norm_mul, hdnorm, hd'norm]
+        simp only [norm_div, hdnorm, norm_mul, hd'norm, norm_pow]
       _ ≤ Q / δ + P * |2 * a| / δ ^ 2 := by
         gcongr
         · exact hbound' t ht
@@ -222,9 +220,9 @@ theorem norm_integral_quadraticExponential_mul_le
     have hh := intervalIntegral.norm_integral_le_of_norm_le_const
       (a := l) (b := r) (f := fun t ↦ u' t * v t)
       (C := Q / δ + P * |2 * a| / δ ^ 2) (fun t ht ↦ ?_)
-    · simpa [abs_of_nonneg (sub_nonneg.mpr hlr)] using hh
+    · simpa only [abs_mul, Nat.abs_ofNat, ge_iff_le, abs_of_nonneg (sub_nonneg.mpr hlr)] using hh
     rw [norm_mul, hvnorm, mul_one]
-    exact hu'bound t (by simpa [uIcc_of_le hlr] using uIoc_subset_uIcc ht)
+    exact hu'bound t (by simpa only [mem_Icc, uIcc_of_le hlr] using uIoc_subset_uIcc ht)
   change ‖∫ t in l..r, p t * v t‖ ≤ _
   rw [hid]
   calc
@@ -278,8 +276,8 @@ theorem quadraticTTStarSlope_lower_bound_near_modulations
   have herror : |(lam - μ) * (t - y)| ≤ lam * |y - x| / 2 := by
     rw [abs_mul]
     exact (mul_le_mul_of_nonneg_left ht (abs_nonneg _)).trans hclose
-  rw [hid, abs_mul, abs_of_pos (show (0 : ℝ) < 2 by norm_num)]
-  linarith
+  rw [hid, abs_mul, abs_of_pos (show (0 : ℝ) < 2 by norm_num1)]
+  linarith only [htriangle, herror]
 
 /-- The complementary-interval cancellation estimate in the paper's exact
 phase normalization. No restriction on the ordering or sign of modulations
@@ -296,7 +294,7 @@ theorem norm_integral_quadraticTTStar_mul_le
       2 * P / (2 * Real.pi * η) + (r - l) *
         (Q / (2 * Real.pi * η) + P * |4 * Real.pi * (lam - μ)| /
           (2 * Real.pi * η) ^ 2) := by
-  have hπ : 0 < 2 * Real.pi := mul_pos (by norm_num) Real.pi_pos
+  have hπ : 0 < 2 * Real.pi := mul_pos (by norm_num1) Real.pi_pos
   have h := norm_integral_quadraticExponential_mul_le
     (2 * Real.pi * (lam - μ)) (4 * Real.pi * (μ * y - lam * x))
     (2 * Real.pi * (lam * x ^ 2 - μ * y ^ 2)) l r hlr hp hp'

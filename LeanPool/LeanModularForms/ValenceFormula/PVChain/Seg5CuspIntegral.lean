@@ -8,12 +8,9 @@ module
 public import LeanPool.LeanModularForms.ValenceFormula.ModularInvariance
 public import LeanPool.LeanModularForms.ValenceFormula.Boundary.Basic
 import LeanPool.LeanModularForms.ForMathlib.QExpansion
-import LeanPool.LeanModularForms.ValenceFormula.Boundary.Bounds
 import LeanPool.LeanModularForms.ValenceFormula.Boundary.Smooth
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 import Mathlib.CategoryTheory.Category.Init
-import Mathlib.MeasureTheory.Covering.Besicovitch
-import Mathlib.NumberTheory.ArithmeticFunction.Misc
 
 /-!
 # Seg5 Cusp Integral
@@ -63,7 +60,7 @@ private lemma qExpFMS_ne_zero (hf : f ≠ 0) :
     UpperHalfPlane.qExpansionFormalMultilinearSeries 1 f ≠ 0 := by
   intro h
   have hp := ModularFormClass.hasFPowerSeries_cuspFunction
-    (f := f) one_pos (by simp)
+    (f := f) one_pos (by simp only [strictPeriods_Gamma, Nat.cast_one, AddSubgroup.mem_zmultiples])
   have hp0 : HasFPowerSeriesOnBall (UpperHalfPlane.cuspFunction (1 : ℝ) f)
       (0 : FormalMultilinearSeries ℂ ℂ ℂ) 0 1 := h ▸ hp
   have hF_analytic : AnalyticOnNhd ℂ (UpperHalfPlane.cuspFunction (1 : ℝ) f)
@@ -76,7 +73,8 @@ private lemma qExpFMS_ne_zero (hf : f ≠ 0) :
   have : ∀ τ : UpperHalfPlane, f τ = 0 := by
     intro τ
     have := SlashInvariantFormClass.eq_cuspFunction f τ
-      (by simp) (by norm_num : (1 : ℝ) ≠ 0)
+      (by simp only [strictPeriods_Gamma, Nat.cast_one,
+        AddSubgroup.mem_zmultiples]) (by norm_num : (1 : ℝ) ≠ 0)
     rw [← this]
     exact hF_eq_zero (by simpa using τ.norm_qParam_lt_one 1)
   exact hf (ModularForm.ext (fun τ => this τ))
@@ -163,7 +161,8 @@ private lemma cuspFunction_factored (hf : f ≠ 0) :
       (Convex.isPreconnected (convex_ball 0 1)) h0_mem hF_local
   refine ⟨g₀, hg_diff, hg_ne, fun q hq => ?_⟩
   have := hF_eq hq
-  simp_all
+  simp_all only [ne_eq, sub_zero, smul_eq_mul, Metric.mem_ball, dist_self, zero_lt_one,
+    dist_zero_right]
 
 /-! ### Circle integral helpers -/
 
@@ -218,7 +217,7 @@ lemma seg5_q_radius_H_pos (H : ℝ) : 0 < seg5QRadiusH H :=
 omit f hf in
 /-- `seg5QRadiusH H < 1` when `H > 0`. -/
 private lemma seg5_q_radius_H_lt_one' {H : ℝ} (hH : 0 < H) : seg5QRadiusH H < 1 :=
-  Real.exp_lt_one_iff.mpr (by nlinarith [Real.pi_pos])
+  Real.exp_lt_one_iff.mpr (by nlinarith only [hH, Real.pi_pos])
 
 /-! ### Circle integral of logDeriv(cuspFunction) -/
 
@@ -297,7 +296,7 @@ lemma circleIntegral_logDeriv_cuspFunction_of_radius (hf : f ≠ 0)
     change (↑((orderAtCusp' f).toNat) : ℂ) = ↑(orderAtCusp' f)
     unfold orderAtCusp'
     push_cast [Int.toNat_natCast]; rfl
-  rw [hm_cast]; ring
+  rw [hm_cast]; ac_rfl
 
 /-! ### Height-Parameterized Seg5 Helpers -/
 
@@ -320,7 +319,9 @@ omit f hf in
 private lemma im_fdBoundary_seg5_H_pos {H : ℝ} (hH : 0 < H) (t : ℝ) :
     0 < (fdBoundarySeg5H H t).im := by
   change 0 < ((↑t : ℂ) - 9 / 2 + ↑H * I).im
-  simp_all
+  simp_all only [add_im, sub_im, ofReal_im, div_ofNat_im, im_ofNat, zero_div, sub_self, mul_im,
+    ofReal_re, I_im,
+      mul_one, I_re, mul_zero, add_zero, zero_add]
 
 omit hf in
 /-- Chain rule for logDeriv along seg5 at height H:
@@ -343,13 +344,14 @@ private lemma logDeriv_modularForm_eq_logDeriv_cuspFn_mul_qderiv_H
     have h_rw : F (q_fn w) = F (q_fn (↑(UpperHalfPlane.ofComplex w))) := by rw [h_ofC]
     rw [h_rw]
     exact (SlashInvariantFormClass.eq_cuspFunction f
-      (UpperHalfPlane.ofComplex w) (by simp)
+      (UpperHalfPlane.ofComplex w) (by simp only [strictPeriods_Gamma, Nat.cast_one,
+        AddSubgroup.mem_zmultiples])
       (by norm_num : (1 : ℝ) ≠ 0)).symm
   have hq_norm : ‖q_fn z‖ < 1 := by
     simp only [q_fn, Function.Periodic.norm_qParam]
     have him : 0 < (fdBoundarySeg5H H t).im := im_fdBoundary_seg5_H_pos hH t
     rw [show (-2 * Real.pi * z.im / (1 : ℝ)) = -2 * Real.pi * z.im by ring]
-    exact Real.exp_lt_one_iff.mpr (by nlinarith [Real.pi_pos])
+    exact Real.exp_lt_one_iff.mpr (by nlinarith only [him, Real.pi_pos])
   have hF_diff : DifferentiableAt ℂ F (q_fn z) :=
     ModularFormClass.differentiableAt_cuspFunction f one_pos
       (by simp) hq_norm

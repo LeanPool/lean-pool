@@ -42,7 +42,7 @@ theorem eventually_paperAmplitude_ge_one :
     exact (Real.tendsto_log_atTop.comp tendsto_natCast_atTop_atTop).eventually_ge_atTop _
   filter_upwards [hlog] with N hN
   unfold paperAmplitude
-  exact (le_div_iff₀ hden).mpr (by simpa [one_mul] using hN)
+  exact (le_div_iff₀ hden).mpr (by simpa only [one_mul] using hN)
 
 theorem eventually_paperAmplitude_pos :
     ∀ᶠ N : ℕ in atTop, 0 < paperAmplitude N := by
@@ -53,13 +53,13 @@ theorem paperExponentShift_rpow_eq_amplitude {N : ℕ}
     (hN : 0 < paperAmplitude N) :
     (2 : ℝ) ^ paperExponentShift N = paperAmplitude N := by
   unfold paperExponentShift
-  exact Real.rpow_logb (by norm_num) (by norm_num) hN
+  exact Real.rpow_logb (by norm_num1) (by norm_num1) hN
 
 theorem paperExponentShift_nonneg_of_amplitude_ge_one {N : ℕ}
     (hN : 1 ≤ paperAmplitude N) :
     0 ≤ paperExponentShift N := by
   unfold paperExponentShift
-  exact Real.logb_nonneg (by norm_num) hN
+  exact Real.logb_nonneg (by norm_num1) hN
 
 theorem eventually_paperExponentShift_nonneg :
     ∀ᶠ N : ℕ in atTop, 0 ≤ paperExponentShift N := by
@@ -72,7 +72,7 @@ theorem eventually_paper_window_start :
   filter_upwards [eventually_ge_atTop 2, eventually_paperExponentShift_nonneg]
     with N hN hL
   have hNr : (2 : ℝ) ≤ (N : ℝ) := by exact_mod_cast hN
-  nlinarith [sq_nonneg ((N : ℝ) - 2)]
+  linarith only [hL, hNr, sq_nonneg ((N : ℝ) - 2)]
 
 /-- The fixed small constant used for the final counterexample level. -/
 noncomputable def negativeEndpointHeightConstant : ℝ := 1 / 8
@@ -80,7 +80,7 @@ noncomputable def negativeEndpointHeightConstant : ℝ := 1 / 8
 theorem negativeEndpointHeightConstant_pos :
     0 < negativeEndpointHeightConstant := by
   unfold negativeEndpointHeightConstant
-  norm_num
+  norm_num1
 
 /-- The negative-endpoint counterexample threshold, equal to `log N / (8 * N)`. -/
 noncomputable def negativeEndpointCounterexampleHeight (N : ℕ) : ℝ :=

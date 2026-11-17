@@ -7,7 +7,6 @@ module
 
 public import LeanPool.DomainTheory.Neighborhood.Basic
 public import Mathlib.Basic.Finite.Defs
-public import Mathlib.Data.Set.Basic
 import Mathlib.Data.Set.Finite.Basic
 
 /-!
@@ -103,7 +102,7 @@ theorem singleton_isTotal (n : ℕ) :
   by_contra hc
   rw [Set.singleton_subset_iff] at hc
   have hempty : ({n} : Set ℕ) ∩ W = (∅ : Set ℕ) := by
-    simp_all
+    exact Set.singleton_inter_eq_empty.mpr hc
   have hi := y.inter_mem hn hW
   rw [hempty] at hi
   exact empty_not_mem (y.sub hi)

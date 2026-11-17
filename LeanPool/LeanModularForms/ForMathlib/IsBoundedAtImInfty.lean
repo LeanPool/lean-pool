@@ -7,12 +7,6 @@ module
 
 public import Mathlib.NumberTheory.ModularForms.EisensteinSeries.IsBoundedAtImInfty
 
-import Mathlib.Algebra.Order.Algebra
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Pow.NNReal
-import Mathlib.Data.Sym.Sym2.Init
-import Mathlib.Tactic.NormNum.GCD
-import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # Boundedness of Eisenstein series

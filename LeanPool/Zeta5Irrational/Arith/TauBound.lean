@@ -8,7 +8,7 @@ module
 
 public import LeanPool.Zeta5Irrational.Arith.BinomBasis
 public import LeanPool.Zeta5Irrational.Arith.Val
-import Mathlib.Data.Rat.Star
+import Mathlib.Algebra.Order.Star.Rat
 import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum.Ineq

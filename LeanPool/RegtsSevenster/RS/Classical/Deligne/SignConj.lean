@@ -140,8 +140,8 @@ theorem twistPow_symIdem_conj
         (tensorPow D L.obj (k + 1) ◁
           altPowIdem A R.X (k + 1)) := by
   have halt : ∀ σ : Equiv.Perm (Fin (k + 1)),
-      modPowAlg A R.X (k + 1) (MonoidAlgebra.single σ
-        ((Equiv.Perm.sign σ : ℤ) : ℂ)) =
+      (modPowAlg A R.X (k + 1) (MonoidAlgebra.single σ
+        ((Equiv.Perm.sign σ : ℤ) : ℂ))).asHom =
       ((Equiv.Perm.sign σ : ℤ) : ℂ) •
         modPowPerm (A := A) (X := R.X) (k + 1) σ := by
     intro σ
@@ -150,7 +150,7 @@ theorem twistPow_symIdem_conj
         ((Equiv.Perm.sign σ : ℤ) : ℂ) •
           MonoidAlgebra.single σ (1 : ℂ) from by
         rw [MonoidAlgebra.smul_single', mul_one],
-      map_smul, modPowAlg_single]
+      map_smul, modPowAlg_single, End.smul_asHom]
   -- The antisymmetriser's whiskered normal form, free of the
   -- identification.
   have hb : tensorPow D L.obj (k + 1) ◁
@@ -161,7 +161,7 @@ theorem twistPow_symIdem_conj
           (tensorPow D L.obj (k + 1) ◁
             modPowPerm (A := A) (X := R.X) (k + 1) σ) := by
     rw [altPowIdem, antisymmetriser, map_smul, map_sum]
-    simp only [halt]
+    simp only [End.smul_asHom, End.sum_asHom, halt]
     change tensorPow D L.obj (k + 1) ◁
         (((Nat.factorial (k + 1) : ℂ))⁻¹ •
           ∑ σ : Equiv.Perm (Fin (k + 1)),
@@ -192,7 +192,7 @@ theorem twistPow_symIdem_conj
       Linear.comp_smul _ _ _ _ _ _
   refine Eq.trans ?_ hc.symm
   rw [symPowIdem, symmetriser, map_smul, map_sum]
-  simp only [modPowAlg_single]
+  simp only [modPowAlg_single, End.smul_asHom, End.sum_asHom]
   change (((Nat.factorial (k + 1) : ℂ))⁻¹ •
       ∑ σ : Equiv.Perm (Fin (k + 1)),
         (modPowPerm (A := A)

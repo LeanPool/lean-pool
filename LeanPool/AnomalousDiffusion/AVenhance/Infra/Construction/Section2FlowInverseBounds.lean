@@ -312,7 +312,7 @@ theorem Section2FlowInverseBounds.inverseFlowJacobian_snorm_from_transport
     have hcolumn : ContDiff ℝ (⊤ : ℕ∞)
         (fun y : Vec 2 => fderiv ℝ disp y (FaaDiBruno.coordinateVector 2 j)) :=
       hdispSmooth.fderiv_right (by simp) |>.clm_apply contDiff_const
-    exact (contDiff_apply ℝ ℝ i).comp (hcolumn.of_le (by simp))
+    exact (contDiff_apply ℝ (fun _ => ℝ) i).comp (hcolumn.of_le (by simp))
   have hJfun : (fun y => constructionFlowInvJacobian hseq m t s y -
       ContinuousLinearMap.id ℝ (Vec 2)) =
       (fun y => fderiv ℝ disp y) := by

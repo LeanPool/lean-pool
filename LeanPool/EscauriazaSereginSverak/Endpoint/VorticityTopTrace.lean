@@ -46,7 +46,7 @@ theorem spatialVorticityTestCurl_contDiff
     ContDiff ℝ (⊤ : ℕ∞) (spatialTestCurl ψ) := by
   have hcomponent (i : Fin 3) :
       ContDiff ℝ (⊤ : ℕ∞) (fun x : Vec3 => ψ x i) :=
-    (contDiff_apply ℝ ℝ i).comp hψ
+    (contDiff_apply ℝ (fun _ : Fin 3 => ℝ) i).comp hψ
   have hpartial (i j : Fin 3) :
       ContDiff ℝ (⊤ : ℕ∞)
         (fun x : Vec3 => CKN.spatialDeriv (fun y => ψ y i) j x) := by

@@ -36,7 +36,7 @@ lemma csqrt_deriv (z : ℍ) : deriv (fun a : ℂ => cexp ((1 / (2 : ℂ))* (log 
     (2 : ℂ)⁻¹ • (fun a : ℂ => cexp (-(1 / (2 : ℂ)) * (log a))) z:= by
   have : (fun a ↦ cexp (1 / 2 * Complex.log a)) = cexp ∘ (fun a ↦ (1 / 2 * Complex.log a)) := by
     ext z
-    simp
+    simp only [one_div, comp_apply]
   have hzz : ↑z ∈ slitPlane := mem_slitPlane_iff.mpr (Or.inr (ne_of_lt z.2).symm)
   rw [this, deriv_comp]
   · simp only [one_div, Complex.deriv_exp, deriv_const_mul_field', neg_mul,
@@ -47,7 +47,7 @@ lemma csqrt_deriv (z : ℍ) : deriv (fun a : ℂ => cexp ((1 / (2 : ℂ))* (log 
       rw [← Complex.exp_nat_mul]; grind
     simpa [hsq, (Complex.hasDerivAt_log hzz).deriv, Complex.exp_log <| ne_zero z]
       using Complex.mul_inv_cancel <| ne_zero z
-  · fun_prop
+  · exact DifferentiableAt.cexp differentiableAt_id
   · apply DifferentiableAt.const_mul
     refine Complex.differentiableAt_log hzz
 

@@ -104,7 +104,7 @@ theorem affineRemainder_isLittleO_of_eventually_norm_div_norm_sq_le
   · subst z
     simp
   · have hquot : ‖affineRemainder u x p (x + z)‖ / ‖z‖ ^ 2 ≤ ε := by
-      exact hz (by simpa using hz0)
+      exact hz (by exact hz0)
     have hden : 0 < ‖z‖ ^ 2 := sq_pos_of_pos (norm_pos_iff.mpr hz0)
     exact (div_le_iff₀ hden).mp hquot
 

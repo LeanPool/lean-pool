@@ -109,7 +109,7 @@ theorem tri_succ (k : ℕ) : tri (k + 1) = tri k + (k + 1) := by
   have key : tri (k + 1) * 2 = (tri k + (k + 1)) * 2 := by
     have hexp : (tri k + (k + 1)) * 2 = tri k * 2 + (k + 1) * 2 := by ring
     rw [hexp, e1, e2]; ring
-  exact Nat.eq_of_mul_eq_mul_right (by norm_num) key
+  exact Nat.eq_of_mul_eq_mul_right (by decide) key
 
 theorem tri_le_succ (k : ℕ) : tri k ≤ tri (k + 1) := by
   rw [tri_succ]; omega
@@ -168,7 +168,7 @@ theorem num_injective : Function.Injective numP := by
       have h3 : tri (n₁ + m₁) ≤ num n₁ m₁ := by unfold num; omega
       omega
   have hbase : tri (n₁ + m₁) + m₁ = tri (n₂ + m₂) + m₂ := h'
-  simp_all
+  simp_all only [Nat.add_left_cancel_iff, Prod.mk.injEq, and_true, Nat.add_right_cancel_iff]
 
 /-! ### The inverse: walking the diagonals -/
 

@@ -28,38 +28,38 @@ private noncomputable def pairingCLM (g : Point d) : Point d →L[ℝ] ℝ :=
   simp [pairingCLM, O3.pairing]
 
 private lemma conjugate_gt_one {p : ℝ} (hp : 2 < p) :
-    1 < conjugateExponent p := O3.one_lt_conjugateExponent (by linarith)
+    1 < conjugateExponent p := O3.one_lt_conjugateExponent (by linarith only [hp])
 
 private lemma conjugate_involutive {p : ℝ} (hp : 2 < p) :
     conjugateExponent (conjugateExponent p) = p := by
   change O3.conjugateExponent (O3.conjugateExponent p) = p
   rw [O3.conjugateExponent_eq, O3.conjugateExponent_eq]
-  have hne : p - 1 ≠ 0 := by linarith
+  have hne : p - 1 ≠ 0 := by linarith only [hp]
   field_simp [hne]
   ring
 
 private lemma holder_pair {p : ℝ} (hp : 2 < p) :
     p.HolderConjugate (conjugateExponent p) :=
-  O3.holderConjugate_conjugateExponent (by linarith)
+  O3.holderConjugate_conjugateExponent (by linarith only [hp])
 
 private lemma aboveH_eq_regularizer {p : ℝ} (hp : 2 < p) (x : Point d) :
     aboveH p x = O3.uniformRegularizer p 0 x := by
   unfold aboveH O3.uniformRegularizer
-  rw [O3.Experimental.lpNorm_rpow_eq_lpPower (by linarith : p ≠ 0)]
+  rw [O3.Experimental.lpNorm_rpow_eq_lpPower (by linarith only [hp] : p ≠ 0)]
   simp only [sub_zero]
 
 private lemma power_map_pairing {r : ℝ} (hr : 1 < r) (x : Point d) :
     pairing (O3.powerDualityMap r x) x = (lpNorm r x) ^ r := by
   change O3.pairing (O3.powerDualityMap r x) x = (O3.lpNorm r x) ^ r
   rw [O3.Stage2RouteB.pairing_powerDualityMap_self hr]
-  exact (O3.Experimental.lpNorm_rpow_eq_lpPower (by linarith : r ≠ 0) x).symm
+  exact (O3.Experimental.lpNorm_rpow_eq_lpPower (by linarith only [hr] : r ≠ 0) x).symm
 
 private lemma power_map_norm_power {p : ℝ} (hp : 2 < p) (s : Point d) :
     (lpNorm p (aboveMirrorMap p s)) ^ p =
       (lpNorm (conjugateExponent p) s) ^ (conjugateExponent p) := by
-  rw [O3.Experimental.lpNorm_rpow_eq_lpPower (by linarith : p ≠ 0)]
+  rw [O3.Experimental.lpNorm_rpow_eq_lpPower (by linarith only [hp] : p ≠ 0)]
   rw [O3.Experimental.lpNorm_rpow_eq_lpPower
-    (by have := conjugate_gt_one hp; linarith : conjugateExponent p ≠ 0)]
+    (by have := conjugate_gt_one hp; linarith only [this] : conjugateExponent p ≠ 0)]
   unfold O3.lpPower aboveMirrorMap O3.powerDualityMap
   apply Finset.sum_congr rfl
   intro i _
@@ -68,12 +68,12 @@ private lemma power_map_norm_power {p : ℝ} (hp : 2 < p) (s : Point d) :
   by_cases hs : s i = 0
   · rw [hs, abs_zero]
     simp only [mul_zero, abs_zero]
-    rw [Real.zero_rpow (by dsimp [q]; linarith : conjugateExponent p ≠ 0)]
-    rw [Real.zero_rpow (by linarith : p ≠ 0)]
+    rw [Real.zero_rpow (by dsimp [q]; linarith only [hq] : conjugateExponent p ≠ 0)]
+    rw [Real.zero_rpow (by linarith only [hp] : p ≠ 0)]
   · have ha : 0 < |s i| := abs_pos.mpr hs
     have habsmap : |(|s i| ^ (q - 2) * s i)| = |s i| ^ (q - 1) := by
       rw [abs_mul, abs_of_nonneg (Real.rpow_nonneg ha.le _)]
-      rw [← Real.rpow_add_one' ha.le (by linarith : q - 2 + 1 ≠ 0)]
+      rw [← Real.rpow_add_one' ha.le (by linarith only [hq] : q - 2 + 1 ≠ 0)]
       congr 1
       ring
     change |(|s i| ^ (q - 2) * s i)| ^ p = |s i| ^ q
@@ -106,7 +106,7 @@ private lemma power_map_inverse {p : ℝ} (hp : 2 < p) (s : Point d) :
             (|s i| ^ (q - 2) * |s i|) * (s i / |s i|) := by
               field_simp [ha.ne']
         _ = |s i| ^ (q - 1) * (s i / |s i|) := by
-              rw [← Real.rpow_add_one' ha.le (by linarith : q - 2 + 1 ≠ 0)]
+              rw [← Real.rpow_add_one' ha.le (by linarith only [hq] : q - 2 + 1 ≠ 0)]
               congr 2
               ring
     have habsinner : |(|s i| ^ (q - 2) * s i)| = |s i| ^ (q - 1) := by
@@ -121,7 +121,7 @@ private lemma power_map_inverse {p : ℝ} (hp : 2 < p) (s : Point d) :
       change (O3.conjugateExponent p - 1) * (p - 2) +
         (O3.conjugateExponent p - 1) = 1
       rw [O3.conjugateExponent_eq]
-      field_simp [show p - 1 ≠ 0 by linarith]
+      field_simp [show p - 1 ≠ 0 by linarith only [hp]]
       ring]
     rw [Real.rpow_one]
     field_simp [ha.ne']
@@ -130,13 +130,13 @@ private lemma fenchel_attained {p : ℝ} (hp : 2 < p) (s : Point d) :
     pairing s (aboveMirrorMap p s) - aboveH p (aboveMirrorMap p s) =
       aboveHstar p s := by
   rw [mirror_pairing hp, aboveH, aboveHstar, power_map_norm_power hp]
-  have hp0 : p ≠ 0 := by linarith
+  have hp0 : p ≠ 0 := by linarith only [hp]
   have hq0 : conjugateExponent p ≠ 0 := by
     have := conjugate_gt_one hp
-    linarith
+    linarith only [this]
   change _ = (1 / O3.conjugateExponent p) * _
   rw [O3.conjugateExponent_eq]
-  field_simp [hp0, show p - 1 ≠ 0 by linarith]
+  field_simp [hp0, show p - 1 ≠ 0 by linarith only [hp]]
 
 private lemma fenchel_upper {p : ℝ} (hp : 2 < p) (s x : Point d) :
     pairing s x - aboveH p x ≤ aboveHstar p s := by
@@ -149,7 +149,7 @@ private lemma fenchel_upper {p : ℝ} (hp : 2 < p) (s x : Point d) :
     pairing s x - 1 / p * lpNorm p x ^ p ≤
         (lpNorm (conjugateExponent p) s ^ conjugateExponent p /
           conjugateExponent p + lpNorm p x ^ p / p) -
-          1 / p * lpNorm p x ^ p := by linarith
+          1 / p * lpNorm p x ^ p := by linarith only [hholder, hyoung]
     _ = 1 / conjugateExponent p *
         lpNorm (conjugateExponent p) s ^ conjugateExponent p := by ring
 
@@ -169,7 +169,7 @@ private lemma hstar_gradient {p : ℝ} (hp : 2 < p) :
   intro s
   let q := conjugateExponent p
   have hq : 1 < q := conjugate_gt_one hp
-  have hq0 : q ≠ 0 := by linarith
+  have hq0 : q ≠ 0 := by linarith only [hq]
   let coordDeriv (i : Fin d) : Point d →L[ℝ] ℝ :=
     (ContinuousLinearMap.toSpanSingleton ℝ (O3.Experimental.scalarJ q (s i))).comp
       (ContinuousLinearMap.proj i : Point d →L[ℝ] ℝ)
@@ -225,7 +225,7 @@ private lemma uniform_remainder {p : ℝ} (hp : 2 < p) (x y : Point d) :
   unfold FunctionBregman
   simp only [sub_zero] at h
   have hsub : x - y = x - y := rfl
-  linarith
+  linarith only [h]
 
 private lemma bregman_conjugacy {p : ℝ} (hp : 2 < p) (s t : Point d) :
     FunctionBregman (aboveHstar p) (aboveMirrorMap p) s t =
@@ -252,7 +252,7 @@ private lemma bregman_conjugacy {p : ℝ} (hp : 2 < p) (s t : Point d) :
   rw [hinv]
   rw [hsubLeft, hsubRight]
   rw [hcommTS, hcommTT]
-  linarith
+  linarith only [hs, ht]
 
 end V7.Stage4AboveTwo
 

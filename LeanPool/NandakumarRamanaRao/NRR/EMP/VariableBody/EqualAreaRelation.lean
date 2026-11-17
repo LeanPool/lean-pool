@@ -6,8 +6,9 @@ Authors: Arseniy Akopyan
 module
 
 
-public import Mathlib.Tactic
 public import LeanPool.NandakumarRamanaRao.NRR.EMP.VariableBody.AreaVector
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # `NRR.EMP.VariableBody.EqualAreaRelation` — closedness of the equal-area relation

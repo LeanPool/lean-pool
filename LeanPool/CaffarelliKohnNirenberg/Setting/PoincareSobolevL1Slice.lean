@@ -885,7 +885,7 @@ private lemma poincareSobolevL1_vec3_slice_euclidean_hgS_3 :
                 (S.indicator fun (x : Vec3) => g x i j) (2 : ℝ≥0∞) volume
     := by
   intro U x₀ R r g hg t ε₀ K S hS_compact hS_sub_U i j
-  apply (memLp_indicator_iff_restrict hS_compact.measurableSet).2
+  apply (memLp_indicator_iff_restrict hS_compact.measurableSet.nullMeasurableSet).2
   exact ((MemLp.eval (hg i) j).mono_measure
     (Measure.restrict_mono_set volume hS_sub_U))
 
@@ -1424,13 +1424,13 @@ theorem poincareSobolevL1_vec3_slice_euclidean
     simpa [S] using hK_compact.add (ProperSpace.isCompact_closedBall (0 : Vec3) ε₀)
   have hS_sub_U := @poincareSobolevL1_vec3_slice_euclidean_hS_sub_U_2 U x₀ R r hclosed_subset
   have huS (i : Fin 3) : MemLp (S.indicator (fun x => u x i)) (2 : ℝ≥0∞) volume := by
-    apply (memLp_indicator_iff_restrict hS_compact.measurableSet).2
+    apply (memLp_indicator_iff_restrict hS_compact.measurableSet.nullMeasurableSet).2
     exact (hu i).mono_measure (Measure.restrict_mono_set volume hS_sub_U)
   have huExt (i : Fin 3) : MemLp (U.indicator (fun x => u x i)) (2 : ℝ≥0∞) volume := by
-    apply (memLp_indicator_iff_restrict hU.measurableSet).2
+    apply (memLp_indicator_iff_restrict hU.measurableSet.nullMeasurableSet).2
     exact hu i
   have hgExt (i j : Fin 3) : MemLp (U.indicator (fun x => g x i j)) (2 : ℝ≥0∞) volume := by
-    apply (memLp_indicator_iff_restrict hU.measurableSet).2
+    apply (memLp_indicator_iff_restrict hU.measurableSet.nullMeasurableSet).2
     exact (MemLp.eval (hg i) j)
   have huExtLoc (i : Fin 3) : LocallyIntegrable (U.indicator (fun x => u x i)) volume :=
     (huExt i).locallyIntegrable (by norm_num)

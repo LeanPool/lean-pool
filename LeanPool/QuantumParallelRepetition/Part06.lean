@@ -15,6 +15,11 @@ noncomputable section
 
 namespace QuantumParallelRepetition
 
+section
+
+-- Do not expand the context-selection branches during later elaboration.
+attribute [local irreducible] exactReverseBobContextAt exactReverseAliceContextAt
+
 open scoped ComplexOrder Matrix BigOperators InnerProductSpace
 open Complex Matrix Finset
 
@@ -60,7 +65,7 @@ theorem exactAliceQuestionConditionalWeight_sum
             rw [Finset.sum_div]
             apply Finset.sum_congr rfl
             intro q _
-            split <;> simp
+            split <;> simp only [zero_div]
     _ = exactAliceQuestionMass G n D seed history x /
           exactAliceQuestionMass G n D seed history x := by
             rfl
@@ -100,7 +105,7 @@ theorem exactBobQuestionConditionalWeight_sum
             rw [Finset.sum_div]
             apply Finset.sum_congr rfl
             intro q _
-            split <;> simp
+            split <;> simp only [zero_div]
     _ = exactBobQuestionMass G n D seed history y /
           exactBobQuestionMass G n D seed history y := by
             rfl
@@ -119,58 +124,15 @@ theorem exactAliceQuestionFilter_complement_posSemidef
     (1 - exactAliceQuestionFilter
       G n S D seed history answer x).PosSemidef := by
   classical
-  let w : ExactFullQuestion X Y n → ℝ := fun q =>
-    if exactRevealCode D seed q = history ∧
-      q.1 seed.coordinate.val = x then
-      exactPriorQuestionWeight G n q /
-        exactAliceQuestionMass G n D seed history x
-    else 0
-  let E : ExactFullQuestion X Y n →
-      Matrix S.Alice S.Alice ℂ := fun q =>
-    conditionedAliceEffect G n S D answer q.1
-  have weights_nonnegative (q : ExactFullQuestion X Y n) :
-      0 ≤ w q := by
-    dsimp [w]
-    split
-    · exact div_nonneg
-        (exactPriorQuestionWeight_nonneg G n q)
-        (exactAliceQuestionMass_nonneg G n D seed history x)
-    · exact le_rfl
-  have weights_sum : (∑ q, w q) ≤ 1 := by
-    change
-      (∑ q : ExactFullQuestion X Y n,
-        if exactRevealCode D seed q = history ∧
-          q.1 seed.coordinate.val = x then
-          exactPriorQuestionWeight G n q /
-            exactAliceQuestionMass G n D seed history x
-        else 0) ≤ 1
-    rw [exactAliceQuestionConditionalWeight_sum
-      G n D seed history x]
+  unfold exactAliceQuestionFilter
+  apply posSemidef_conditional_sum_complement
+  · intro q
+    exact div_nonneg (exactPriorQuestionWeight_nonneg G n q)
+      (exactAliceQuestionMass_nonneg G n D seed history x)
+  · rw [exactAliceQuestionConditionalWeight_sum G n D seed history x]
     split <;> norm_num
-  have filter_eq :
-      exactAliceQuestionFilter
-          G n S D seed history answer x =
-        ∑ q, w q • E q := by
-    unfold exactAliceQuestionFilter
-    apply Finset.sum_congr rfl
-    intro q _
-    dsimp [w, E]
-    split <;> simp
-  have split :
-      1 - (∑ q, w q • E q) =
-        (1 - (∑ q, w q)) •
-            (1 : Matrix S.Alice S.Alice ℂ) +
-          ∑ q, w q • (1 - E q) := by
-    simp_rw [smul_sub]
-    rw [Finset.sum_sub_distrib, ← Finset.sum_smul]
-    module
-  rw [filter_eq, split]
-  apply Matrix.PosSemidef.add
-  · exact Matrix.PosSemidef.one.smul (sub_nonneg.mpr weights_sum)
-  · apply Matrix.posSemidef_sum Finset.univ
-    intro q _
-    exact (conditionedAliceEffect_complement_positive
-      G n S D answer q.1).smul (weights_nonnegative q)
+  · intro q
+    exact conditionedAliceEffect_complement_positive G n S D answer q.1
 
 theorem exactBobQuestionFilter_complement_posSemidef
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
@@ -182,58 +144,15 @@ theorem exactBobQuestionFilter_complement_posSemidef
     (1 - exactBobQuestionFilter
       G n S D seed history answer y).PosSemidef := by
   classical
-  let w : ExactFullQuestion X Y n → ℝ := fun q =>
-    if exactRevealCode D seed q = history ∧
-      q.2 seed.coordinate.val = y then
-      exactPriorQuestionWeight G n q /
-        exactBobQuestionMass G n D seed history y
-    else 0
-  let E : ExactFullQuestion X Y n →
-      Matrix S.Bob S.Bob ℂ := fun q =>
-    conditionedBobEffect G n S D answer q.2
-  have weights_nonnegative (q : ExactFullQuestion X Y n) :
-      0 ≤ w q := by
-    dsimp [w]
-    split
-    · exact div_nonneg
-        (exactPriorQuestionWeight_nonneg G n q)
-        (exactBobQuestionMass_nonneg G n D seed history y)
-    · exact le_rfl
-  have weights_sum : (∑ q, w q) ≤ 1 := by
-    change
-      (∑ q : ExactFullQuestion X Y n,
-        if exactRevealCode D seed q = history ∧
-          q.2 seed.coordinate.val = y then
-          exactPriorQuestionWeight G n q /
-            exactBobQuestionMass G n D seed history y
-        else 0) ≤ 1
-    rw [exactBobQuestionConditionalWeight_sum
-      G n D seed history y]
+  unfold exactBobQuestionFilter
+  apply posSemidef_conditional_sum_complement
+  · intro q
+    exact div_nonneg (exactPriorQuestionWeight_nonneg G n q)
+      (exactBobQuestionMass_nonneg G n D seed history y)
+  · rw [exactBobQuestionConditionalWeight_sum G n D seed history y]
     split <;> norm_num
-  have filter_eq :
-      exactBobQuestionFilter
-          G n S D seed history answer y =
-        ∑ q, w q • E q := by
-    unfold exactBobQuestionFilter
-    apply Finset.sum_congr rfl
-    intro q _
-    dsimp [w, E]
-    split <;> simp
-  have split :
-      1 - (∑ q, w q • E q) =
-        (1 - (∑ q, w q)) •
-            (1 : Matrix S.Bob S.Bob ℂ) +
-          ∑ q, w q • (1 - E q) := by
-    simp_rw [smul_sub]
-    rw [Finset.sum_sub_distrib, ← Finset.sum_smul]
-    module
-  rw [filter_eq, split]
-  apply Matrix.PosSemidef.add
-  · exact Matrix.PosSemidef.one.smul (sub_nonneg.mpr weights_sum)
-  · apply Matrix.posSemidef_sum Finset.univ
-    intro q _
-    exact (conditionedBobEffect_complement_positive
-      G n S D answer q.2).smul (weights_nonnegative q)
+  · intro q
+    exact conditionedBobEffect_complement_positive G n S D answer q.2
 
 theorem exactAliceMeanFilter_complement_posSemidef
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
@@ -391,8 +310,7 @@ theorem exactFairAliceHistoryHighOperatorPotential_nonpos
               G n S D r.seed r.history r.aliceAnswer x))
           (exactBobQuestionFilter
             G n S D r.seed r.history r.bobAnswer y) := by
-              simp only [map_sum, map_smul, LinearMap.sum_apply,
-                LinearMap.smul_apply, smul_eq_mul]
+              simp only [LinearMap.map_sum₂, LinearMap.map_smul₂, smul_eq_mul]
     _ ≤ 0 := by
       apply Finset.sum_nonpos
       intro x _
@@ -436,7 +354,7 @@ theorem exactFairBobHistoryHighOperatorPotential_nonpos
           (cfc (fun z : ℝ => z * Real.log z)
             (exactBobQuestionFilter
               G n S D r.seed r.history r.bobAnswer y)) := by
-              simp only [map_sum, map_smul, smul_eq_mul]
+              simp only [map_sum, LinearMap.map_smul, smul_eq_mul]
     _ ≤ 0 := by
       apply Finset.sum_nonpos
       intro y _
@@ -474,7 +392,7 @@ theorem exactFairAliceHistoryLowOperatorPotential_neg_le_entropy
   have bound := mul_le_mul_of_nonneg_left
     (exactFairAliceMean_spectral_entropy_le G n S D r y)
     (G.marginalY_nonneg y)
-  linarith
+  linarith only [bound]
 
 theorem exactFairBobHistoryLowOperatorPotential_neg_le_entropy
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
@@ -496,7 +414,7 @@ theorem exactFairBobHistoryLowOperatorPotential_neg_le_entropy
   have bound := mul_le_mul_of_nonneg_left
     (exactFairBobMean_spectral_entropy_le G n S D r x)
     (G.marginalX_nonneg x)
-  linarith
+  linarith only [bound]
 
 theorem exactReverseAliceFilterHighOperatorPotential_nonpos
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
@@ -1419,7 +1337,7 @@ private theorem exactAliceQuestionFilter_eq_jointPrefixOperatorFilter
     unfold exactPriorQuestionWeight
     rw [div_eq_mul_inv]
     congr 1
-    ring
+    ac_rfl
   · rw [ite_eq_right (fun h => compatible (same.mp h)),
       ite_eq_right compatible, smul_zero]
 
@@ -1491,7 +1409,7 @@ private theorem exactBobQuestionFilter_eq_jointPrefixOperatorFilter
     unfold exactPriorQuestionWeight
     rw [div_eq_mul_inv]
     congr 1
-    ring
+    ac_rfl
   · rw [ite_eq_right (fun h => compatible (same.mp h)),
       ite_eq_right compatible, smul_zero]
 
@@ -1836,8 +1754,7 @@ theorem exactFairAliceHistoryHighOperatorPotential_eq_joint
             G n S D r.seed r.history r.bobAnswer y) := by
   classical
   unfold exactFairAliceHistoryHighOperatorPotential
-  simp only [map_sum, map_smul, LinearMap.sum_apply,
-    LinearMap.smul_apply, smul_eq_mul]
+  simp only [LinearMap.map_sum₂, LinearMap.map_smul₂, smul_eq_mul]
   calc
     (∑ y : Y, G.marginalY y *
       (∑ x : X, G.conditionalXGivenY y x *
@@ -1860,7 +1777,7 @@ theorem exactFairAliceHistoryHighOperatorPotential_eq_joint
         intro y _
         apply Finset.sum_congr rfl
         intro x _
-        ring
+        ac_rfl
     _ = ∑ y : Y, ∑ x : X, G.questionWeight x y *
         bornTracePairing S.state.matrix
           (cfc (fun z : ℝ => z * Real.log z)
@@ -1889,14 +1806,14 @@ theorem exactFairBobHistoryHighOperatorPotential_eq_joint
               G n S D r.seed r.history r.bobAnswer y)) := by
   classical
   unfold exactFairBobHistoryHighOperatorPotential
-  simp only [map_sum, map_smul, smul_eq_mul]
+  simp only [map_sum, LinearMap.map_smul, smul_eq_mul]
   apply Finset.sum_congr rfl
   intro x _
   rw [Finset.mul_sum]
   apply Finset.sum_congr rfl
   intro y _
   rw [← G.marginalX_mul_conditionalYGivenX x y]
-  ring
+  ac_rfl
 
 theorem exactFairAliceHistoryLowOperatorPotential_eq_joint
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
@@ -2024,7 +1941,7 @@ theorem exactFairAcceptedJointStatistic_reindex
             intro x _
             apply Finset.sum_congr rfl
             intro y _
-            ring
+            ac_rfl
           · simp only [accepted, ↓reduceIte, sum_const_zero]
     _ = ∑ history : ExactRevealHistory X Y D seed,
       ∑ x : X, ∑ y : Y,
@@ -3243,12 +3160,13 @@ private theorem exactReverseAlicePrefixXMask_succ
       insert (context.sideRank.symm marker).val.val
         (exactReverseAlicePrefixXMask D side context
           marker.val) := by
-  classical
-  unfold exactReverseAlicePrefixXMask
-  rw [exactReverseContextQuestionPrefix_succ]
-  ext j
-  simp only [Finset.mem_union, Finset.mem_insert]
-  tauto
+  with_reducible_and_instances
+    classical
+    unfold exactReverseAlicePrefixXMask
+    rw [exactReverseContextQuestionPrefix_succ]
+    ext j
+    simp only [Finset.mem_union, Finset.mem_insert]
+    tauto
 
 private theorem exactReverseBobPrefixYMask_succ
     {n : ℕ} (D : Finset (Fin n))
@@ -3261,12 +3179,13 @@ private theorem exactReverseBobPrefixYMask_succ
       insert (context.sideRank.symm marker).val.val
         (exactReverseBobPrefixYMask D side context
           marker.val) := by
-  classical
-  unfold exactReverseBobPrefixYMask
-  rw [exactReverseContextQuestionPrefix_succ]
-  ext j
-  simp only [Finset.mem_union, Finset.mem_insert]
-  tauto
+  with_reducible_and_instances
+    classical
+    unfold exactReverseBobPrefixYMask
+    rw [exactReverseContextQuestionPrefix_succ]
+    ext j
+    simp only [Finset.mem_union, Finset.mem_insert]
+    tauto
 
 private theorem exactReverseAliceLowQuestionPotential_eq_alignedPrefix
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
@@ -4041,7 +3960,7 @@ private theorem exactReverseAliceLowOperatorPotential_neg_le_scalarEntropy
       (exactRevealMass_nonneg G n D
         (exactReverseBobMarkerDecode side context marker)
         history)
-    linarith
+    linarith only [weighted]
   · simp only [accepted, ↓reduceIte, neg_zero, Std.le_refl]
 
 private theorem exactReverseAliceAlignedCfcPrefixPotential_last_nonpos
@@ -4086,7 +4005,7 @@ private theorem exactReverseAliceFilterOperatorMarkerEntropy_sum_le_scalarEntrop
   rw [exactReverseAliceLowOperatorPotential_eq_question,
     exactReverseAliceLowQuestionPotential_eq_alignedPrefix] at low
   dsimp only at low
-  linarith
+  linarith only [nonempty, last, low]
 
 end
 
@@ -4216,7 +4135,7 @@ private theorem exactReverseBobFilterOperatorMarkerEntropy_sum_le_scalarEntropy
         G n S D side context 0 ≤
       exactReverseBobAcceptedScalarEntropy
         G n S D side context initial
-  linarith
+  linarith only [terminal, scalar]
 
 end
 
@@ -4264,8 +4183,7 @@ theorem exactFairAliceMeanBorn_eq_conditional
           (exactBobQuestionFilter
             G n S D r.seed r.history r.bobAnswer y) := by
   unfold exactAliceMeanFilter
-  simp only [map_sum, map_smul, LinearMap.sum_apply,
-    LinearMap.smul_apply, smul_eq_mul]
+  simp only [LinearMap.map_sum₂, LinearMap.map_smul₂, smul_eq_mul]
 
 theorem exactFairBobMeanBorn_eq_conditional
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
@@ -4284,7 +4202,7 @@ theorem exactFairBobMeanBorn_eq_conditional
           (exactBobQuestionFilter
             G n S D r.seed r.history r.bobAnswer y) := by
   unfold exactBobMeanFilter
-  simp only [map_sum, map_smul, smul_eq_mul]
+  simp only [map_sum, LinearMap.map_smul, smul_eq_mul]
 
 theorem exactFairAliceMeanBornMass_eq_fullOutcome_sum
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
@@ -4323,7 +4241,7 @@ theorem exactFairAliceMeanBornMass_eq_fullOutcome_sum
           Finset.mul_sum, Finset.mul_sum]
         apply Finset.sum_congr rfl
         intro x _
-        ring
+        ac_rfl
     _ = ∑ x : X, ∑ y : Y,
         exactRevealMass G n D r.seed r.history *
           G.questionWeight x y *
@@ -4383,7 +4301,7 @@ theorem exactFairBobMeanBornMass_eq_fullOutcome_sum
           Finset.mul_sum, Finset.mul_sum]
         apply Finset.sum_congr rfl
         intro y _
-        ring
+        ac_rfl
     _ = ∑ x : X, ∑ y : Y,
         exactRevealMass G n D r.seed r.history *
           G.questionWeight x y *
@@ -4653,7 +4571,7 @@ private theorem exactFairAliceScalarCountingWeight_sum_le
         nsmul_eq_mul, Nat.cast_pow, mul_sum, fullHistoryAnswerCount, mul_assoc, mul_comm]
     _ = _ := by
       rw [exactRevealMass_sum, G.marginalY_normalized]
-      ring
+      ac_rfl
 
 private theorem exactFairBobScalarCountingWeight_sum_le
     (G : Game X Y A B) (n : ℕ)
@@ -4698,7 +4616,7 @@ private theorem exactFairBobScalarCountingWeight_sum_le
         nsmul_eq_mul, Nat.cast_pow, mul_sum, fullHistoryAnswerCount, mul_assoc, mul_comm]
     _ = _ := by
       rw [exactRevealMass_sum, G.marginalX_normalized]
-      ring
+      ac_rfl
 
 private theorem exactFairAliceScalarBornMass_sum
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
@@ -4740,7 +4658,7 @@ private theorem exactFairAliceScalarBornMass_sum
           ite_eq_left accepted, Finset.mul_sum]
         apply Finset.sum_congr rfl
         intro y _
-        ring
+        ac_rfl
       · simp only [exactFairAliceScalarCountingWeight, accepted, ↓reduceIte, zero_mul,
           sum_const_zero]
     _ = _ := exactFairAliceMeanAcceptedBornMass_sum
@@ -4786,7 +4704,7 @@ private theorem exactFairBobScalarBornMass_sum
           ite_eq_left accepted, Finset.mul_sum]
         apply Finset.sum_congr rfl
         intro x _
-        ring
+        ac_rfl
       · simp only [exactFairBobScalarCountingWeight, accepted, ↓reduceIte, zero_mul,
           sum_const_zero]
     _ = _ := exactFairBobMeanAcceptedBornMass_sum
@@ -4892,7 +4810,7 @@ private theorem exactFairAliceSeedScalarEntropy_eq_weighted
       Finset.mul_sum]
     apply Finset.sum_congr rfl
     intro y _
-    ring
+    ac_rfl
   · simp only [accepted, ↓reduceIte, exactFairAliceScalarCountingWeight, zero_mul, sum_const_zero]
 
 private theorem exactFairBobSeedScalarEntropy_eq_weighted
@@ -4921,7 +4839,7 @@ private theorem exactFairBobSeedScalarEntropy_eq_weighted
       Finset.mul_sum]
     apply Finset.sum_congr rfl
     intro x _
-    ring
+    ac_rfl
   · simp only [accepted, ↓reduceIte, exactFairBobScalarCountingWeight, zero_mul, sum_const_zero]
 
 private theorem exactFairAliceSeedScalarEntropy_le
@@ -5093,7 +5011,7 @@ theorem fullHistoryAnswerCount_pos_of_postselection
       (fullHistoryAtomCountingWeight_nonneg G D L t)
       (fullHistoryAtomBornMass_le_one G n S D L t)
   have hsecond := fullHistoryAtomCountingWeight_sum_le G D L
-  linarith
+  linarith only [hp, hmass, hfirst, hsecond]
 
 theorem divisor_greedy_remaining_bounds
     {n q : ℕ} (hq : 2 ≤ q)
@@ -5164,7 +5082,7 @@ private theorem divisor_greedy_log_cost_per_remaining_le
         (η / (4 * (q : ℝ))) * (n : ℝ) := by
     have hlog := (Real.lt_log_iff_exp_lt hθ).mpr hwitness
     rw [one_div, Real.log_inv]
-    linarith
+    linarith only [hlog]
   have hlogp :
       Real.log (1 / p) ≤
         (η / (4 * (q : ℝ))) * (n : ℝ) := by
@@ -5176,7 +5094,7 @@ private theorem divisor_greedy_log_cost_per_remaining_le
           (η / (4 * (q : ℝ))) * (n : ℝ) := by
     rw [Real.log_div hN.ne' hp.ne']
     rw [one_div, Real.log_inv] at hlogp
-    linarith
+    linarith only [hcount, hlogp]
   obtain ⟨hmnat, hnmnat, hdqmnat⟩ :=
     divisor_greedy_remaining_bounds hq hD
   have hm : 0 < (m : ℝ) := by
@@ -5242,8 +5160,7 @@ private theorem exists_source_rounding_divisor
     lt_of_le_of_lt (le_max_right _ _) hq
   have hsmall : C / (q : ℝ) < δ ^ 2 := by
     apply (div_lt_iff₀ hqreal).mpr
-    have hcross := (div_lt_iff₀ hsquare).mp hthreshold
-    linarith [hC]
+    exact (div_lt_iff₀' hsquare).mp hthreshold
   refine ⟨q, hqnat, ?_⟩
   calc
     8 * K *
@@ -5295,7 +5212,6 @@ theorem arbitrarily_large_purified_divisor_greedy_conditioning_with_rounding
   refine ⟨q, hq, ?_⟩
   intro N₀
   have hqpos : 0 < q := by omega
-  have hqreal : 0 < (q : ℝ) := by exact_mod_cast hqpos
   have hrate : 0 < η / (4 * (q : ℝ)) := by positivity
   obtain ⟨n, hn, S, hS⟩ :=
     arbitrarily_large_purifiedRepeatedStrategy_of_subexponentialWitness
@@ -5409,7 +5325,7 @@ theorem exactSourceClassicalInformationRate_le_three_martingaleRate
     lt_of_le_of_ne denominator_nonnegative (Ne.symm denominator_zero)
   apply (div_le_iff₀ denominator_positive).2
   field_simp
-  linarith
+  linarith only [answer_nonnegative]
 
 theorem exactSourcePinskerRate_le_half_of_martingaleRate
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
@@ -5426,7 +5342,7 @@ theorem exactSourcePinskerRate_le_half_of_martingaleRate
   · have information :=
       exactSourceClassicalInformationRate_le_three_martingaleRate
         G n S D positive
-    nlinarith
+    nlinarith only [rate_bound, information]
 
 theorem exact_arbitrarily_large_conditioning_of_subexponentialWitness
     (G : Game X Y A B)
@@ -5492,7 +5408,7 @@ theorem exact_arbitrarily_large_conditioning_of_subexponentialWitness
       martingaleRate G n actual D ≤
         rateTolerance ^ 2 / 8 := by
     apply (le_div_iff₀ (by norm_num : (0 : ℝ) < 8)).2
-    linarith
+    linarith only [scaled_rate]
   exact ⟨n, beyond, actual, D, actual_positive,
     postselection_positive, remaining_positive, failure_small,
     actual_rate,
@@ -5551,7 +5467,7 @@ theorem exactReversePartitionInverseCard_le
         intro side _
         unfold forwardMarkedPartitionWeight
         ring
-    _ = _ := by rw [fairPartitionWeight_sum]; ring
+    _ = _ := by rw [fairPartitionWeight_sum]; ac_rfl
 
 theorem exactReverseBobSeedInverseCard_le
     {M : Type*} [Fintype M] [DecidableEq M] :
@@ -5850,7 +5766,7 @@ theorem unconditionalLiterature_sqrt_two_mul_sqrt_thirtytwo
     8 * Real.sqrt 2 * Real.sqrt (32 * η) =
         8 * Real.sqrt ((2 : ℝ) * (32 * η)) := by
           rw [Real.sqrt_mul (by norm_num : (0 : ℝ) ≤ 2)]
-          ring
+          ac_rfl
     _ = 8 * Real.sqrt ((64 : ℝ) * η) := by
           congr 2
           ring
@@ -5900,7 +5816,7 @@ theorem unconditionalLiterature_weightedAsynchronous_le
                       apply Finset.sum_congr rfl
                       intro i _
                       ring
-            _ = _ := by rw [weight_normalized]; ring
+            _ = _ := by rw [weight_normalized]; ac_rfl
     _ ≤ 8 * Real.sqrt 2 * Real.sqrt (32 * η) + δ := by
           gcongr
     _ = 64 * Real.sqrt η + δ := by
@@ -6484,7 +6400,8 @@ private theorem
     dSVDensityRationalHeterogeneousActualPhysicalFlagBornCopyConditionMask]
   cases h : dSVDensityRationalCompleteStoppedOptionalLocalSchedule
       L flag i with
-  | none => simp [dSVDensityRationalCompleteStoppedOptionalLocalEffect]
+  | none => simp only [UnitaryGroup.inv_val, mul_one, SetLike.coe_mem,
+              Unitary.star_mul_self_of_mem, dSVDensityRationalCompleteStoppedOptionalLocalEffect]
   | some outcome =>
       simpa only [UnitaryGroup.inv_val, dSVDensityRationalCompleteStoppedOptionalLocalEffect]
         using
@@ -6670,6 +6587,32 @@ section
 open WithLp
 open scoped BigOperators ComplexOrder Kronecker MatrixOrder
 
+/-- Contract the phase and work controls before applying a pair of system matrices. -/
+theorem controlledPairActionSum
+    {phase system work : Type*} [Fintype phase] [Fintype system] [Fintype work]
+    [DecidableEq phase] [DecidableEq work]
+    (U V : Matrix system system ℂ)
+    (shared : phase → phase → ℂ) (state : system → system → ℂ)
+    (residual : work → work → ℂ)
+    (φ ψ : phase) (i j : system) (a b : work) :
+    (∑ χ : phase, ∑ x : system, ∑ k : work,
+      ∑ υ : phase, ∑ y : system, ∑ l : work,
+        (if a = k then if φ = χ then U i x else 0 else 0) *
+          (if b = l then if ψ = υ then V j y else 0 else 0) *
+          (shared χ υ * state x y * residual k l)) =
+      shared φ ψ * (∑ x : system, ∑ y : system, U i x * V j y * state x y) *
+        residual a b := by
+  classical
+  simp only [mul_ite, ite_mul, zero_mul, mul_zero, sum_ite_irrel, sum_ite_eq,
+    mem_univ, ↓reduceIte, sum_const_zero]
+  rw [Finset.mul_sum, Finset.sum_mul]
+  apply Finset.sum_congr rfl
+  intro x _
+  rw [Finset.mul_sum, Finset.sum_mul]
+  apply Finset.sum_congr rfl
+  intro y _
+  ac_rfl
+
 theorem dSVDensityRationalPublicLogPhasePhysicalAlignedLocalAction_apply
     (B N d L m : ℕ)
     (U V : Matrix.unitaryGroup
@@ -6769,12 +6712,8 @@ theorem dSVDensityRationalPublicLogPhasePhysicalAlignedLocalAction_apply
           (D : Matrix (Fin (d * n)) (Fin (d * n)) ℂ))
           (e ((φ, a), i), e ((ψ, b), j)) (e q.1, e q.2) *
           source (e q.1, e q.2) :=
-      (Equiv.sum_comp (Equiv.prodCongr e e)
-        (fun q : Fin (d * n) × Fin (d * n) =>
-          ((A : Matrix (Fin (d * n)) (Fin (d * n)) ℂ) ⊗ₖ
-            (D : Matrix (Fin (d * n)) (Fin (d * n)) ℂ))
-            (e ((φ, a), i), e ((ψ, b), j)) q *
-            source q)).symm
+      (Finset.sum_equiv (Equiv.prodCongr e e)
+        (fun _ => by simp only [mem_univ]) (fun _ _ => rfl)).symm
     _ = _ := by
       simp only [Fintype.sum_prod_type, Matrix.kroneckerMap_apply]
       dsimp only [P, DSVDensityRationalPublicLogPhaseHistoryLocalIndex]
@@ -6791,17 +6730,8 @@ theorem dSVDensityRationalPublicLogPhasePhysicalAlignedLocalAction_apply
                       (D : Matrix (Fin (d * n)) (Fin (d * n)) ℂ)
                         (e ((ψ, b), j)) (e ((υ, y), l)) *
                       source (e ((χ, x), k), e ((υ, y), l))) = _
-      simp_rw [left, right, resource]
-      simp only [mul_ite, ite_mul, zero_mul, mul_zero, ofReal_inv, mul_assoc, sum_ite_irrel,
-        sum_ite_eq, mem_univ, ↓reduceIte, sum_const_zero, sum_mul]
-      split_ifs
-      · simp_rw [Finset.mul_sum]
-        apply Finset.sum_congr rfl
-        intro x _
-        apply Finset.sum_congr rfl
-        intro y _
-        ring
-      · rfl
+      simp only [left, right, resource]
+      rw [controlledPairActionSum]
 
 /--
 The DSV density rational heterogeneous target first spectral alice construction used in the
@@ -7145,6 +7075,8 @@ theorem
   apply Finset.sum_congr rfl
   intro j _
   ring
+
+end
 
 end
 

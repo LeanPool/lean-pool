@@ -23,6 +23,8 @@ public import LeanPool.NandakumarRamanaRao.NRR.EMP.VariableBody.CanonicalCellGra
 public import LeanPool.NandakumarRamanaRao.NRR.EMP.VariableBody.CanonicalCellContinuity
 public import LeanPool.NandakumarRamanaRao.NRR.EMP.VariableBody.Children
 public import LeanPool.NandakumarRamanaRao.NRR.EMP.VariableBody.Partition
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # `NRR.EMP.VariableBody` — variable-body equal-area power partitions

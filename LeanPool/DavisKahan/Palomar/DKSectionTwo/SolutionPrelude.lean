@@ -6,9 +6,9 @@ Authors: Jon Crall
 module
 
 public import Mathlib.Analysis.InnerProductSpace.LinearPMap
-public import Mathlib.Order.CompletePartialOrder
-public import Mathlib.RingTheory.PicardGroup
-public import Mathlib.Tactic
+-- Preserve the instance dictionaries in the elaborated comparator vocabulary.
+public import Mathlib.Order.CompletePartialOrder -- shake: keep
+public import Mathlib.RingTheory.PicardGroup -- shake: keep
 
 /-!
 # Davis--Kahan 1970: the four Section 2 theorems

@@ -7,6 +7,7 @@ Authors: OpenAI
 module
 
 public import LeanPool.NavierStokesAndEuler.NavierStokes.NaturalProfile
+import Mathlib.Analysis.Calculus.Deriv.Prod
 public import LeanPool.NavierStokesAndEuler.NavierStokes.SimilarityCoordinates
 public import LeanPool.NavierStokesAndEuler.NavierStokes.AxisymmetricFields
 import LeanPool.NavierStokesAndEuler.NavierStokes.BlowupImplication

@@ -183,7 +183,7 @@ theorem euclideanCoordLaplacian_convolution_indicator_eq_zero {U : Set (Vec d)}
         (K ⋆[ContinuousLinearMap.lsmul ℝ ℝ, volume] Set.indicator U u.toFun) A = 0 := by
   have hUm : MeasurableSet U := hUopen.measurableSet
   have hmem_indicator : MemLp (Set.indicator U u.toFun) 2 volume := by
-    rw [MeasureTheory.memLp_indicator_iff_restrict hUm]
+    rw [MeasureTheory.memLp_indicator_iff_restrict hUm.nullMeasurableSet]
     exact u.memL2
   have hloc_indicator : LocallyIntegrable (Set.indicator U u.toFun) volume :=
     hmem_indicator.locallyIntegrable (by norm_num)

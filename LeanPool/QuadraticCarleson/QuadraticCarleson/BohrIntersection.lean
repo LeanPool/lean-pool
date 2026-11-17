@@ -37,7 +37,7 @@ theorem exists_int_abs_sub_le_of_torusNorm_le {x ρ : ℝ}
     rw [Int.fract] at h hf hf'
     rw [abs_le]
     push_cast
-    constructor <;> linarith
+    constructor <;> linarith only [h, hf']
 
 /-- For localized Bohr sets, the integer witnessing the torus condition
 lies between zero and the frequency. -/
@@ -61,7 +61,7 @@ private theorem latticePairCode_injective {K M : ℤ} (hK : 0 < K)
   rintro ⟨a, b⟩ ⟨c, d⟩ heq
   have hq : M * a - K * b = M * c - K * d := congrArg Prod.fst heq
   have hdiv : a / K = c / K := congrArg Prod.snd heq
-  have hdvd : K ∣ M * (c - a) := ⟨d - b, by nlinarith [hq]⟩
+  have hdvd : K ∣ M * (c - a) := ⟨d - b, by linarith only [hq]⟩
   have hdvd' := Int.dvd_of_dvd_mul_right_of_gcd_one hdvd hcop
   have hmod : a % K = c % K := Int.modEq_iff_dvd.mpr hdvd'
   have hac : a = c := by
@@ -71,7 +71,7 @@ private theorem latticePairCode_injective {K M : ℤ} (hK : 0 < K)
     omega
   have hbd : b = d := by
     rw [hac] at hq
-    nlinarith
+    nlinarith only [hK, hq]
   exact Prod.ext hac hbd
 
 /-- Integer pairs in a rectangle whose determinant lies in a short interval. -/
@@ -170,9 +170,9 @@ private theorem bohrSet_inter_subset_latticeCover {k m : ℕ} {ρ : ℝ}
   have hb' := abs_le.mp hb
   constructor
   · apply (div_le_iff₀ hmr).mpr
-    nlinarith [hb'.2]
+    linarith only [hb', hb'.2]
   · apply (le_div_iff₀ hmr).mpr
-    nlinarith [hb'.1]
+    linarith only [hb', hb'.1]
 
 private theorem bohrSet_inter_volume_real_le_of_reduced {k m : ℕ} {ρ : ℝ}
     {K M d : ℤ} (hρ0 : 0 ≤ ρ) (hρ : ρ < 1 / 10)
@@ -198,16 +198,14 @@ private theorem bohrSet_inter_volume_real_le_of_reduced {k m : ℕ} {ρ : ℝ}
     rw [Real.volume_real_Icc_of_le]
     · ring
     · apply div_le_div_of_nonneg_right _ hmr.le
-      linarith
+      linarith only [hρ0]
   have hR : 0 ≤ ρ * ((K : ℝ) + M) := by
-    have hKr : (0 : ℝ) < K := by exact_mod_cast hK
-    have hMr : (0 : ℝ) < M := by exact_mod_cast hM
-    positivity
+    exact mul_nonneg hρ0 (le_of_lt (add_pos' (Int.cast_pos.mpr hK) (Int.cast_pos.mpr hM)))
   calc
     volume.real (bohrSet k ρ ∩ bohrSet m ρ) ≤ volume.real (⋃ p ∈ s, J p) :=
       measureReal_mono hcover hfinite
     _ ≤ ∑ p ∈ s, volume.real (J p) := measureReal_biUnion_finset_le _ _
-    _ = (s.card : ℝ) * (2 * ρ / m) := by simp [hJ]
+    _ = (s.card : ℝ) * (2 * ρ / m) := by simp only [hJ, Finset.sum_const, nsmul_eq_mul]
     _ ≤ (2 * (ρ * (K + M)) + 1) * (d + 1) * (2 * ρ / m) :=
       mul_le_mul_of_nonneg_right (latticePairs_card_le hK hd hR hcop) (by positivity)
 
@@ -218,29 +216,24 @@ private theorem bohrSet_inter_volume_real_le_of_le {k m : ℕ} {ρ : ℝ}
       16 * (ρ ^ 2 + ρ * (Nat.gcd k m : ℝ) / m) := by
   have hdpos : 0 < Nat.gcd k m := Nat.gcd_pos_of_pos_left m hkpos
   obtain ⟨K, M, hcop, hk, hm⟩ :=
-    Int.exists_gcd_one (m := (k : ℤ)) (n := (m : ℤ)) (by simpa using hdpos)
+    Int.exists_gcd_one (m := (k : ℤ)) (n := (m : ℤ)) (by exact hdpos)
   simp only [Int.gcd_natCast_natCast] at hk hm
   have hdi : (0 : ℤ) < Nat.gcd k m := by exact_mod_cast hdpos
-  have hki : (0 : ℤ) < k := by exact_mod_cast hkpos
-  have hmi : (0 : ℤ) < m := by exact_mod_cast hmpos
-  have hK : 0 < K := by nlinarith [hk]
-  have hM : 0 < M := by nlinarith [hm]
+  have hK : 0 < K := by nlinarith only [hkpos, hk]
+  have hM : 0 < M := by nlinarith only [hmpos, hm]
   have hkr : (k : ℝ) = (K : ℝ) * (Nat.gcd k m : ℝ) := by exact_mod_cast hk
   have hmr : (m : ℝ) = (M : ℝ) * (Nat.gcd k m : ℝ) := by exact_mod_cast hm
-  have hmrpos : (0 : ℝ) < m := by exact_mod_cast hmpos
   have hdr : (1 : ℝ) ≤ Nat.gcd k m := by exact_mod_cast hdpos
-  have hKr : (0 : ℝ) < K := by exact_mod_cast hK
-  have hMr : (0 : ℝ) < M := by exact_mod_cast hM
   have hkmr : (k : ℝ) ≤ m := by exact_mod_cast hkm
-  have hKM : (K : ℝ) ≤ M := by nlinarith [hkr, hmr]
+  have hKM : (K : ℝ) ≤ M := by nlinarith only [hkr, hmr, hdr, hkmr]
   have hcount : (2 * (ρ * ((K : ℝ) + M)) + 1) * ((Nat.gcd k m : ℝ) + 1) ≤
       8 * ρ * m + 2 * (Nat.gcd k m : ℝ) := by
     calc
       (2 * (ρ * ((K : ℝ) + M)) + 1) * ((Nat.gcd k m : ℝ) + 1) ≤
           (4 * ρ * M + 1) * (2 * (Nat.gcd k m : ℝ)) := by
         apply mul_le_mul
-        · nlinarith
-        · linarith
+        · nlinarith only [hρ0, hKM]
+        · linarith only [hdr]
         · positivity
         · positivity
       _ = 8 * ρ * m + 2 * (Nat.gcd k m : ℝ) := by rw [hmr]; ring
@@ -256,7 +249,7 @@ private theorem bohrSet_inter_volume_real_le_of_le {k m : ℕ} {ρ : ℝ}
       ring
     _ ≤ 16 * (ρ ^ 2 + ρ * (Nat.gcd k m : ℝ) / m) := by
       have hterm : 0 ≤ ρ * (Nat.gcd k m : ℝ) / m := by positivity
-      nlinarith
+      linarith only [hterm]
 
 /-- Lemma `l:bohrintersection`, with the explicit absolute constant `16`.
 The positive frequencies follow the paper's convention `ℕ = {1, 2, …}`. -/

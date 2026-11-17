@@ -5,6 +5,7 @@ Authors: Samuel Schlesinger
 -/
 
 module
+meta import Mathlib.Tactic.DeriveFintype -- shake: keep
 public import LeanPool.BeyondBethe.Complexitylib.SAT.ThreeSAT
 public import LeanPool.BeyondBethe.Complexitylib.Models.TuringMachine.Combinators.Internal.Scanner
 

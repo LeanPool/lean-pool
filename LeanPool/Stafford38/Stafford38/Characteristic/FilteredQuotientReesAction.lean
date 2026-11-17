@@ -498,7 +498,8 @@ theorem orderReesParameter_op_smul_eq_shift
     MulOpposite.op (orderReesParameter (n := n) k) • q =
       quotientOrderReesShift k I q := by
   induction q using DirectSum.induction_on with
-  | zero => simp
+  | zero =>
+      rw [(quotientOrderReesModuleOrderReesOpModule k I).smul_zero, map_zero]
   | of N q =>
       change MulOpposite.op
           (orderReesMonomial k 1
@@ -533,7 +534,7 @@ theorem orderReesParameter_op_smul_eq_shift
         exact (cast_quotientOrderPiece_coe k I (Nat.one_add N) q').trans rfl
       · simp [DirectSum.of_apply, Nat.one_add, hL]
   | add q r hq hr =>
-      rw [smul_add, map_add, hq, hr]
+      rw [(quotientOrderReesModuleOrderReesOpModule k I).smul_add, map_add, hq, hr]
 
 /-- Functional exact-signature form of parameter action. -/
 theorem orderReesParameter_op_smul_fun_eq_shift

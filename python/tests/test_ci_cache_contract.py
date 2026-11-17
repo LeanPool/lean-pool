@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+import shlex
 import subprocess
 from pathlib import Path
 
@@ -71,6 +72,11 @@ def test_documentation_publishing_is_scheduled_and_independent() -> None:
     assert names.index("Render and validate the complete local API") > names.index(
         "Save completed analysis batches"
     )
+    checkpoint = next(step for step in steps if step.get("id") == "docs-cache")
+    *_, fallback = checkpoint["with"]["restore-keys"].splitlines()
+    assert "lakefile.toml'" not in fallback.replace("docbuild/lakefile.toml", "")
+    assert "lean-toolchain" in fallback
+    assert "lake-manifest.json" in fallback
 
 
 def test_single_and_sharded_builds_use_validation_cache() -> None:
@@ -651,6 +657,8 @@ def test_scoped_checks_handle_large_diffs(tmp_path, filename):
         ("lake-manifest.json", "true", "false", True),
         ("python/lean_pool/ci_pr_build.py", "true", "false", True),
         ("python/tests/test_ci_pr_build.py", "true", "false", True),
+        ("python/lean_pool/quality.py", "true", "false", True),
+        ("python/tests/test_axiom_audit_lean.py", "true", "false", True),
         ('"python/lean_pool/quoted.py"', "true", "false", True),
         ("scripts/ProjectIndexes.lean", "true", "false", True),
         ("scripts/exposition/Extract.lean", "true", "false", True),
@@ -695,10 +703,29 @@ def test_dependency_tracking_tests_scope(
         assert tracking["if"] == "needs.plan.outputs.dependency_tests == 'true'"
 
 
-def test_profiling_is_opt_in_and_cache_pruning_is_scheduled() -> None:
-    """Advisory compilation and maintenance do not run on ordinary PR events."""
+@pytest.mark.parametrize("job_name", ["build", "finalize", "rebase"])
+def test_pinned_lean_ci_runs_compiled_axiom_audit(job_name: str) -> None:
+    """The compiled axiom fixture must run rather than silently skip in CI."""
+    jobs = yaml.safe_load((WORKFLOWS / "lean_action_ci.yml").read_text())["jobs"]
+    step = next(
+        step
+        for step in jobs[job_name]["steps"]
+        if step.get("name")
+        == "Check compiled artifact dependency tracking with pinned Lean"
+    )
+    assert step["env"]["LEAN_POOL_REQUIRE_TEST_TOOLCHAIN"] == "1"
+    command = shlex.split(step["run"])
+    assert "python/tests/test_axiom_audit_lean.py" in command
+    assert command[command.index("-k") + 1] == (
+        "test_lake_ or test_compiled_axiom_audit"
+    )
+
+
+def test_profiling_is_automatic_and_cache_pruning_is_scheduled() -> None:
+    """PRs get advisory profiles while cache maintenance stays scheduled."""
     profiling = yaml.safe_load((WORKFLOWS / "proof-profile.yml").read_text())
     assert set(profiling.get("on", profiling.get(True))) == {
+        "pull_request",
         "issue_comment",
         "workflow_dispatch",
     }
@@ -715,3 +742,54 @@ def test_profiling_is_opt_in_and_cache_pruning_is_scheduled() -> None:
             for job in workflow["jobs"].values()
             for step in job["steps"]
         )
+
+
+def test_cold_main_push_restores_the_merged_queue_build() -> None:
+    """Cold queue builds publish the full archive that a cold main push restores."""
+    workflow = (WORKFLOWS / "lean_action_ci.yml").read_text()
+    jobs = yaml.safe_load(workflow)["jobs"]
+    for name in ("build", "finalize"):
+        steps = {step.get("name"): step for step in jobs[name]["steps"]}
+        for producer in (
+            "Package build for documentation",
+            "Share build with documentation",
+        ):
+            condition = steps[producer]["if"]
+            assert (
+                "github.event_name == 'merge_group' && "
+                "steps.cache.outputs.cache-matched-key == ''"
+            ) in condition
+    plan = next(
+        step for step in jobs["plan"]["steps"] if step.get("name") == "Plan the build"
+    )
+    assert "ci_artifacts restore-queue" in plan["run"]
+    assert '--check; then\n  plan=\'{"mode":"single"' in plan["run"]
+    steps = jobs["build"]["steps"]
+    names = [step.get("name") for step in steps]
+    restore = steps[names.index("Restore the merge queue's full build")]
+    assert restore["continue-on-error"] is True
+    assert "ci_artifacts restore-queue" in restore["run"]
+    assert "--check" not in restore["run"]
+    assert names.index("Restore pool build") < names.index(
+        "Restore the merge queue's full build"
+    )
+    assert names.index("Restore the merge queue's full build") < names.index(
+        "Build project"
+    )
+    assert "needs.plan.outputs.queue_build == 'true'" in restore["if"]
+    assert "queue_build=true" in plan["run"]
+    assert jobs["plan"]["outputs"]["queue_build"]
+    fallback = steps[
+        names.index("Rebuild in shards when the queue build is unavailable")
+    ]
+    assert fallback["if"] == "steps.queue-full-build.outcome == 'failure'"
+    assert "-f force_full=true" in fallback["run"]
+    assert "exit 1" in fallback["run"]
+    assert names.index("Restore the merge queue's full build") < names.index(
+        "Rebuild in shards when the queue build is unavailable"
+    )
+    assert names.index(
+        "Rebuild in shards when the queue build is unavailable"
+    ) < names.index("Build project")
+    overlay = steps[names.index("Reuse compiled projects from merged PRs")]
+    assert "steps.queue-full-build.outcome != 'success'" in overlay["if"]

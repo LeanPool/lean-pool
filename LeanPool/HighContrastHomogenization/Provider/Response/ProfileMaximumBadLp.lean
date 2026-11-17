@@ -68,7 +68,8 @@ theorem eLpNorm_indicator_gt_one_le_mul_measure
     funext a
     by_cases ha : a ∈ bad <;> simp [I, ha]
   have hholder := ENNReal.lintegral_Lp_mul_le_Lq_mul_Lr
-    (p := 2) (q := Q) (r := R) (by norm_num) hQ hholderExp P hM hI
+    (p := 2) (q := Q) (r := R)
+    ⟨by simpa only [one_div] using hholderExp.symm, hQ0, hR0⟩ P hM hI
   have hnorm2 :
       eLpNorm (bad.indicator M) 2 P =
         (∫⁻ a, (M * I) a ^ (2 : ℝ) ∂P) ^ (1 / (2 : ℝ)) := by
@@ -269,7 +270,8 @@ theorem eLpNorm_indicator_gt_level_le_mul_measure
     funext a
     by_cases ha : a ∈ bad <;> simp [I, ha]
   have hholder := ENNReal.lintegral_Lp_mul_le_Lq_mul_Lr
-    (p := 2) (q := Q) (r := R) (by norm_num) hQ hholderExp P hM hI
+    (p := 2) (q := Q) (r := R)
+    ⟨by simpa only [one_div] using hholderExp.symm, hQ0, hR0⟩ P hM hI
   have hnorm2 :
       eLpNorm (bad.indicator M) 2 P =
         (∫⁻ a, (M * I) a ^ (2 : ℝ) ∂P) ^ (1 / (2 : ℝ)) := by

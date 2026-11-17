@@ -391,7 +391,7 @@ private theorem setIntegral_norm_sq_normalizedCoverComplexDriftCommutator_le
   have hκint : Integrable κ (volume : Measure (LogSpace n)) :=
     hκ.integrable_of_hasCompactSupport hκcompact
   have ht : MemLp t 2 (volume : Measure (LogSpace n)) :=
-    (MeasureTheory.memLp_indicator_iff_restrict hS.measurableSet).mpr hlocal
+    (MeasureTheory.memLp_indicator_iff_restrict hS.measurableSet.nullMeasurableSet).mpr hlocal
   have hq : Integrable q (volume : Measure (LogSpace n)) :=
     hκint.integrable_convolution L ht.norm.integrable_sq
   have hqnonneg (x : LogSpace n) : 0 ≤ q x := by
@@ -2253,7 +2253,7 @@ theorem complex_norm_sub_sq_le_two_mul_add
   have hsub := norm_sub_le z w
   have hsq : ‖z - w‖ ^ 2 ≤ (‖z‖ + ‖w‖) ^ 2 := by
     exact (sq_le_sq₀ (norm_nonneg _) (add_nonneg (norm_nonneg _) (norm_nonneg _))).mpr hsub
-  nlinarith [sq_nonneg (‖z‖ - ‖w‖)]
+  linarith [sq_nonneg (‖z‖ - ‖w‖)]
 
 private theorem complexEuclidean_antisymmetric_energy_le_two_norm_sq
     {n : ℕ}
@@ -2284,7 +2284,7 @@ private theorem complexEuclidean_antisymmetric_energy_le_two_norm_sq
     rw [Finset.sum_comm]
   simp only [mul_add, Finset.sum_add_distrib, ← Finset.mul_sum] at hsum
   rw [hswap] at hsum
-  nlinarith
+  linarith
 
 private theorem sourceTorusBarPartial_cutoffPhysicalField_antisymmetric
     {n : ℕ}
@@ -2779,7 +2779,7 @@ private theorem angularDolbeaultGraph_compact_barPartial_green_of_fundamentalCel
     (smul_eq_zero.mp hz).resolve_left
       (logarithmicCoverJacobianFactor_pos n).ne'
   rw [integral_const_mul] at hinner
-  linear_combination hinner
+  exact (eq_neg_of_add_eq_zero_left hinner).trans (neg_mul _ _).symm
 
 private theorem angularDolbeaultGraph_compact_barPartial_green
     {n : ℕ} {a : LogTorus n → ℝ} (ha : Continuous a)
@@ -4469,7 +4469,7 @@ private theorem normalizedCoverMollificationL2_tendsto
           exact normalizedCoverMollificationL2_dist_le k u v
     _ < ε := by
           rw [dist_comm v u]
-          nlinarith [hN k hk]
+          linarith [hN k hk]
 
 private theorem normalizedCoverMollification_global_L2_tendsto
     {n : ℕ} {h : LogSpace n → ℂ}
@@ -4571,7 +4571,7 @@ private theorem normalizedCoverMollification_localL2_tendsto_zero
   have hS : IsCompact S := hK.cthickening
   have hz : MemLp z 2 (volume : Measure (LogSpace n)) :=
     (MeasureTheory.memLp_indicator_iff_restrict
-      hS.measurableSet).mpr hlocal
+      hS.measurableSet.nullMeasurableSet).mpr hlocal
   have hagree (k : ℕ) :
       (∫ x in K,
         ‖normalizedCoverMollification h k x - h x‖ ^ 2
@@ -5374,7 +5374,7 @@ private theorem complexHilbert_norm_le_of_mem_closure_inner_bound
     exact hB
   · have hfpos : 0 < ‖f‖ :=
       lt_of_le_of_ne (norm_nonneg _) (Ne.symm hfzero)
-    nlinarith
+    nlinarith only [hsq, hfpos]
 
 end RadialPhysicalResolventDefectReduction
 

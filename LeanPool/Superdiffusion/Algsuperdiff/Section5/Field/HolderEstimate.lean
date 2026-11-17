@@ -104,7 +104,7 @@ theorem matrixOperatorNorm_streamField_sub_le (M : ABKModel d)
         streamFieldHolderConst M omega * (1 + R) := by
       have := mul_le_mul_of_nonneg_right hcoeff hR0
       convert this using 1
-      all_goals first | rfl | ring
+      all_goals ring
     have hmod0 : 0 ≤ streamFieldHolderModulus M omega R :=
       mul_nonneg (streamFieldHolderConst_nonneg M omega) hR0
     exact hmatrix.trans (hbase.trans (by

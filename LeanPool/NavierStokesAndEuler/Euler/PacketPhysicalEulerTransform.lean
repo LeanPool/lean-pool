@@ -7,6 +7,7 @@ Authors: OpenAI
 module
 
 public import LeanPool.NavierStokesAndEuler.Euler.Foundations.GraphPullback
+import Mathlib.Analysis.Calculus.FDeriv.CompCLM
 public import LeanPool.NavierStokesAndEuler.Euler.Foundations.Lagrangian
 import Mathlib.Analysis.Calculus.Deriv.Comp
 import Mathlib.Analysis.Calculus.Deriv.Prod

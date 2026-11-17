@@ -151,7 +151,7 @@ theorem finitePieceTailMax_sq_lintegral_le_of_error_majorant
         ∫⁻ x, 4 * (finitePieceTailMax N v x ^ 2 + E x ^ 2) :=
       lintegral_mono hbound
     _ = 4 * ((∫⁻ x, finitePieceTailMax N v x ^ 2) + ∫⁻ x, E x ^ 2) := by
-      rw [lintegral_const_mul' _ _ (by norm_num),
+      rw [lintegral_const_mul' _ _ (by decide +kernel),
         lintegral_add_right _ (hEmeas.pow_const 2)]
     _ ≤ 4 * (B + C) := by gcongr
 
@@ -178,7 +178,7 @@ theorem finitePieceTailMax_sq_lintegral_le_of_ae_bound
         ∫⁻ x, 4 * (finitePieceTailMax N v x ^ 2 + E x ^ 2) :=
       lintegral_mono_ae hbound
     _ = 4 * ((∫⁻ x, finitePieceTailMax N v x ^ 2) + ∫⁻ x, E x ^ 2) := by
-      rw [lintegral_const_mul' _ _ (by norm_num),
+      rw [lintegral_const_mul' _ _ (by decide +kernel),
         lintegral_add_right' _ (hEmeas.pow_const 2)]
     _ ≤ 4 * (B + C) := by gcongr
 

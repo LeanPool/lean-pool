@@ -7,7 +7,7 @@ module
 
 
 public import LeanPool.BeyondBethe.BeyondBethe.CapacityOrder
-public import Mathlib.Tactic
+import Mathlib.Tactic.FieldSimp -- shake: keep
 
 /-! # Capacity Scaling -/
 

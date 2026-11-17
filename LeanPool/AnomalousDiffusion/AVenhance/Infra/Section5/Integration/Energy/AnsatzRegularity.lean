@@ -61,7 +61,7 @@ theorem chiTilde_component_contDiff_two (hΦ : IsStreamSeq I Φ) (m : ℕ) (κm 
     (show (2 : WithTop ℕ∞) ≤ ∞ from by simp)
   have hu : ContDiff ℝ 2 (fun p : ℝ × Vec 2 =>
       uShear β I.Λ m k (I.xFlowInv hΦ m (lIdx β I.Λ m k) p.1 p.2) i) :=
-    ((contDiff_apply ℝ ℝ i).comp ((contDiff_uShear' β I.Λ m k).of_le
+    ((contDiff_apply ℝ (fun _ => ℝ) i).comp ((contDiff_uShear' β I.Λ m k).of_le
       (show (2 : WithTop ℕ∞) ≤ ∞ from by simp))).comp hXI
   simpa [Ingredients.chiTilde, Ingredients.chiMK] using hcorr.neg.mul hu
 
@@ -192,7 +192,7 @@ theorem ansatzSummand_slice_contDiff (hΦ : IsStreamSeq I Φ) (m : ℕ) (κm : �
   unfold ansatzSummand vecDot
   refine contDiff_const.mul (ContDiff.sum fun i _ => ContDiff.mul ?_ ?_)
   · have hu : ContDiff ℝ ∞ (fun x => uShear β I.Λ m k (I.xFlowInv hΦ m (lIdx β I.Λ m k) t x) i) :=
-      (contDiff_apply ℝ ℝ i).comp ((contDiff_uShear' β I.Λ m k).comp hXI)
+      (contDiff_apply ℝ (fun _ => ℝ) i).comp ((contDiff_uShear' β I.Λ m k).comp hXI)
     simpa [Ingredients.chiTilde, Ingredients.chiMK] using (contDiff_const (c := -(I.corrTime κm m
         k t))).mul hu
   · exact (contDiff_spaceGrad_component hcomp i).comp hXI

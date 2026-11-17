@@ -6,6 +6,7 @@ Authors: OpenAI
 module
 
 public import LeanPool.NavierStokesAndEuler.Euler.MeanVectorIdentities
+import Mathlib.Analysis.Calculus.ContDiff.WithLp
 import Mathlib.Analysis.Calculus.LineDeriv.IntegrationByParts
 public import LeanPool.NavierStokesAndEuler.Euler.MeanBoundaryOperator
 

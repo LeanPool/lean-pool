@@ -7,10 +7,6 @@ module
 
 public import LeanPool.ClassificationOfSurfaces.FiniteCyclicReduction
 public import LeanPool.ClassificationOfSurfaces.FiniteCyclicNormalizationResult
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.CategoryTheory.Category.Init
-import Mathlib.Combinatorics.SimpleGraph.Init
-import Mathlib.MeasureTheory.Covering.Besicovitch
 
 /-!
 # Recursive reduction of finite cyclic one-face words

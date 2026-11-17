@@ -70,12 +70,12 @@ private theorem mem_masks_block5 {m : Mask} (hlo : 160 ≤ m) (hhi : m < 192)
 private theorem mem_masks_block6 {m : Mask} (hlo : 192 ≤ m) (hhi : m < 224)
     (hperm : IsPartialPermMask m) :
     m ∈ (masks.toList.toFinset : Finset Mask) := by
-  interval_cases m <;> first | decide | exfalso; revert hperm; decide
+  interval_cases m <;> (exfalso; revert hperm; decide)
 
 private theorem mem_masks_block7 {m : Mask} (hlo : 224 ≤ m) (hhi : m < 256)
     (hperm : IsPartialPermMask m) :
     m ∈ (masks.toList.toFinset : Finset Mask) := by
-  interval_cases m <;> first | decide | exfalso; revert hperm; decide
+  interval_cases m <;> (exfalso; revert hperm; decide)
 
 private theorem mem_masks_block8 {m : Mask} (hlo : 256 ≤ m) (hhi : m < 288)
     (hperm : IsPartialPermMask m) :
@@ -85,37 +85,37 @@ private theorem mem_masks_block8 {m : Mask} (hlo : 256 ≤ m) (hhi : m < 288)
 private theorem mem_masks_block9 {m : Mask} (hlo : 288 ≤ m) (hhi : m < 320)
     (hperm : IsPartialPermMask m) :
     m ∈ (masks.toList.toFinset : Finset Mask) := by
-  interval_cases m <;> first | decide | exfalso; revert hperm; decide
+  interval_cases m <;> (exfalso; revert hperm; decide)
 
 private theorem mem_masks_block10 {m : Mask} (hlo : 320 ≤ m) (hhi : m < 352)
     (hperm : IsPartialPermMask m) :
     m ∈ (masks.toList.toFinset : Finset Mask) := by
-  interval_cases m <;> first | decide | exfalso; revert hperm; decide
+  interval_cases m <;> (exfalso; revert hperm; decide)
 
 private theorem mem_masks_block11 {m : Mask} (hlo : 352 ≤ m) (hhi : m < 384)
     (hperm : IsPartialPermMask m) :
     m ∈ (masks.toList.toFinset : Finset Mask) := by
-  interval_cases m <;> first | decide | exfalso; revert hperm; decide
+  interval_cases m <;> (exfalso; revert hperm; decide)
 
 private theorem mem_masks_block12 {m : Mask} (hlo : 384 ≤ m) (hhi : m < 416)
     (hperm : IsPartialPermMask m) :
     m ∈ (masks.toList.toFinset : Finset Mask) := by
-  interval_cases m <;> first | decide | exfalso; revert hperm; decide
+  interval_cases m <;> (exfalso; revert hperm; decide)
 
 private theorem mem_masks_block13 {m : Mask} (hlo : 416 ≤ m) (hhi : m < 448)
     (hperm : IsPartialPermMask m) :
     m ∈ (masks.toList.toFinset : Finset Mask) := by
-  interval_cases m <;> first | decide | exfalso; revert hperm; decide
+  interval_cases m <;> (exfalso; revert hperm; decide)
 
 private theorem mem_masks_block14 {m : Mask} (hlo : 448 ≤ m) (hhi : m < 480)
     (hperm : IsPartialPermMask m) :
     m ∈ (masks.toList.toFinset : Finset Mask) := by
-  interval_cases m <;> first | decide | exfalso; revert hperm; decide
+  interval_cases m <;> (exfalso; revert hperm; decide)
 
 private theorem mem_masks_block15 {m : Mask} (hlo : 480 ≤ m) (hhi : m < 512)
     (hperm : IsPartialPermMask m) :
     m ∈ (masks.toList.toFinset : Finset Mask) := by
-  interval_cases m <;> first | decide | exfalso; revert hperm; decide
+  interval_cases m <;> (exfalso; revert hperm; decide)
 
 theorem mem_masks_toFinset_of_isPartialPermMask {m : Mask} (hm : m < (1 <<< 9))
     (hperm : IsPartialPermMask m) : m ∈ (masks.toList.toFinset : Finset Mask) := by

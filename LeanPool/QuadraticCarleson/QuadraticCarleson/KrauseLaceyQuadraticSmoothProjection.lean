@@ -7,8 +7,6 @@ module
 
 
 public import LeanPool.QuadraticCarleson.QuadraticCarleson.KrauseLaceyQuadraticAnnularTail
-public import LeanPool.QuadraticCarleson.QuadraticCarleson.PositiveDyadicKernel
-public import LeanPool.QuadraticCarleson.QuadraticCarleson.HilbertMaximalWeakOneOne
 public import LeanPool.QuadraticCarleson.QuadraticCarleson.HilbertRepresentativeBridge
 public import Mathlib.Analysis.Fourier.Convolution
 
@@ -56,7 +54,7 @@ theorem annularFrequencyCutoff_eq_one {ξ : ℝ}
     annularFrequencyCutoff ξ = 1 := by
   have hmem : ξ ∈ closedBall (17 / 16 : ℝ) (15 / 16) := by
     rw [mem_closedBall, Real.dist_eq, abs_le]
-    constructor <;> linarith [hξ.1, hξ.2]
+    constructor <;> linarith only [hξ, hξ.1, hξ.2]
   have hbump : annularFrequencyCutoffData ξ = 1 :=
     annularFrequencyCutoffData.one_of_mem_closedBall hmem
   change (annularFrequencyCutoffData ξ : ℂ) = 1
@@ -69,10 +67,10 @@ theorem annularFrequencyCutoff_eq_zero {ξ : ℝ}
   have hdist : (1 : ℝ) ≤ dist ξ (17 / 16 : ℝ) := by
     rw [Real.dist_eq]
     rcases hξ with hlow | hhigh
-    · rw [abs_of_nonpos (by linarith)]
-      linarith
-    · rw [abs_of_nonneg (by linarith)]
-      linarith
+    · rw [abs_of_nonpos (by linarith only [hlow])]
+      linarith only [hlow]
+    · rw [abs_of_nonneg (by linarith only [hhigh])]
+      linarith only [hhigh]
   have hbump : annularFrequencyCutoffData ξ = 0 :=
     annularFrequencyCutoffData.zero_of_le_dist hdist
   change (annularFrequencyCutoffData ξ : ℂ) = 0
@@ -106,7 +104,7 @@ theorem scaledAnnularFrequencyCutoff_support_subset (j : ℤ) :
       scaledFrequencyAnnulus j := by
   intro ξ hξ
   have hs := annularFrequencyCutoff_support_subset hξ
-  have hpow : 0 < (2 : ℝ) ^ j := zpow_pos (by norm_num) j
+  have hpow : 0 < (2 : ℝ) ^ j := zpow_pos (by norm_num1) j
   constructor
   · exact (lt_div_iff₀ hpow).mp hs.1
   · exact (div_lt_iff₀ hpow).mp hs.2
@@ -118,7 +116,7 @@ theorem contDiff_scaledAnnularFrequencyCutoff (j : ℤ) :
 
 theorem hasCompactSupport_scaledAnnularFrequencyCutoff (j : ℤ) :
     HasCompactSupport (scaledAnnularFrequencyCutoff j) := by
-  have hc : ((2 : ℝ) ^ j)⁻¹ ≠ 0 := inv_ne_zero (zpow_ne_zero _ (by norm_num))
+  have hc : ((2 : ℝ) ^ j)⁻¹ ≠ 0 := inv_ne_zero (zpow_ne_zero _ (by norm_num1))
   change HasCompactSupport (fun x : ℝ ↦
     annularFrequencyCutoff (x / (2 : ℝ) ^ j))
   simpa only [smul_eq_mul, div_eq_inv_mul, mul_comm] using
@@ -131,19 +129,19 @@ theorem scaledFrequencyAnnulus_disjoint_of_add_six_le
     Disjoint (scaledFrequencyAnnulus j) (scaledFrequencyAnnulus k) := by
   rw [Set.disjoint_left]
   intro ξ hξj hξk
-  have hpj : 0 < (2 : ℝ) ^ j := zpow_pos (by norm_num) j
+  have hpj : 0 < (2 : ℝ) ^ j := zpow_pos (by norm_num1) j
   have hscale : (64 : ℝ) * (2 : ℝ) ^ j ≤ (2 : ℝ) ^ k := by
     calc
       (64 : ℝ) * (2 : ℝ) ^ j = (2 : ℝ) ^ (j + 6) := by
-        rw [zpow_add₀ (by norm_num : (2 : ℝ) ≠ 0)]
+        rw [zpow_add₀ (by norm_num1 : (2 : ℝ) ≠ 0)]
         norm_num
         ring
       _ ≤ (2 : ℝ) ^ k :=
-        zpow_le_zpow_right₀ (by norm_num : (1 : ℝ) ≤ 2) hjk
+        zpow_le_zpow_right₀ (by norm_num1 : (1 : ℝ) ≤ 2) hjk
   have hgap :
       (33 / 16 : ℝ) * (2 : ℝ) ^ j <
         (1 / 16 : ℝ) * (2 : ℝ) ^ k := by
-    nlinarith
+    linarith only [hpj, hscale]
   exact (not_lt_of_ge (le_of_lt hgap)) (hξk.1.trans hξj.2)
 
 /-- The integer scale in residue class `r mod 7` with nonnegative index `n`. -/
@@ -245,7 +243,7 @@ theorem hasFourierSupportIn_annularProjectionL2 (j : ℤ)
   have hcut : scaledAnnularFrequencyCutoff j ξ = 0 := by
     by_contra hne
     exact hξout (scaledAnnularFrequencyCutoff_support_subset j hne)
-  simp [annularFourierMultiplier, hcut]
+  simp only [annularFourierMultiplier, hcut, zero_mul]
 
 /-- Projecting arbitrary `L²` pieces at scales in one residue class produces
 the exact pairwise Fourier separation needed by the abstract tail theorem. -/
@@ -293,7 +291,7 @@ theorem scaledLowPassCutoff_eq_one_on_earlier_annulus
   have hnorm : |ξ / (2 : ℝ) ^ (k - 3)| ≤ 1 / 4 := by
     rw [abs_of_pos (div_pos hξpos hpk)]
     apply (div_le_iff₀ hpk).2
-    nlinarith [hξ.2]
+    linarith only [hξ, hpj, hscale, hξ.2]
   unfold scaledLowPassCutoff
   rw [dyadicCutoff_eq_one hnorm]
   norm_num
@@ -302,25 +300,25 @@ theorem scaledLowPassCutoff_eq_zero_on_current_or_later_annulus
     {j k : ℤ} (hkj : k ≤ j) {ξ : ℝ}
     (hξ : ξ ∈ scaledFrequencyAnnulus j) :
     scaledLowPassCutoff k ξ = 0 := by
-  have hpj : 0 < (2 : ℝ) ^ j := zpow_pos (by norm_num) j
-  have hpk : 0 < (2 : ℝ) ^ (k - 3) := zpow_pos (by norm_num) (k - 3)
-  have hjm : 0 < (2 : ℝ) ^ (j - 3) := zpow_pos (by norm_num) (j - 3)
+  have hpj : 0 < (2 : ℝ) ^ j := zpow_pos (by norm_num1) j
+  have hpk : 0 < (2 : ℝ) ^ (k - 3) := zpow_pos (by norm_num1) (k - 3)
+  have hjm : 0 < (2 : ℝ) ^ (j - 3) := zpow_pos (by norm_num1) (j - 3)
   have hscale : (2 : ℝ) ^ (k - 3) ≤ (2 : ℝ) ^ (j - 3) := by
-    apply zpow_le_zpow_right₀ (by norm_num : (1 : ℝ) ≤ 2)
+    apply zpow_le_zpow_right₀ (by norm_num1 : (1 : ℝ) ≤ 2)
     omega
   have hjid : (2 : ℝ) ^ j = 8 * (2 : ℝ) ^ (j - 3) := by
     calc
       (2 : ℝ) ^ j = (2 : ℝ) ^ ((j - 3) + 3) := by congr 2; omega
       _ = (2 : ℝ) ^ (j - 3) * (2 : ℝ) ^ (3 : ℤ) := by
-        rw [zpow_add₀ (by norm_num : (2 : ℝ) ≠ 0)]
-      _ = 8 * (2 : ℝ) ^ (j - 3) := by norm_num; ring
+        rw [zpow_add₀ (by norm_num1 : (2 : ℝ) ≠ 0)]
+      _ = 8 * (2 : ℝ) ^ (j - 3) := by norm_num; ac_rfl
   have hξpos : 0 < ξ := by
-    have hlower : 0 < (1 / 16 : ℝ) * (2 : ℝ) ^ j := mul_pos (by norm_num) hpj
+    have hlower : 0 < (1 / 16 : ℝ) * (2 : ℝ) ^ j := mul_pos (by norm_num1) hpj
     exact hlower.trans hξ.1
   have hnorm : 1 / 2 ≤ |ξ / (2 : ℝ) ^ (k - 3)| := by
     rw [abs_of_pos (div_pos hξpos hpk)]
     apply (le_div_iff₀ hpk).2
-    nlinarith [hξ.1]
+    linarith only [hξ, hscale, hjid, hξ.1]
   unfold scaledLowPassCutoff
   rw [dyadicCutoff_eq_zero hnorm]
   norm_num
@@ -330,7 +328,7 @@ theorem scaledLowPassCutoff_mul_scaledAnnularFrequencyCutoff_of_earlier
     scaledLowPassCutoff k ξ * scaledAnnularFrequencyCutoff j ξ =
       scaledAnnularFrequencyCutoff j ξ := by
   by_cases hcut : scaledAnnularFrequencyCutoff j ξ = 0
-  · simp [hcut]
+  · simp only [hcut, mul_zero]
   · rw [scaledLowPassCutoff_eq_one_on_earlier_annulus hjk
       (scaledAnnularFrequencyCutoff_support_subset j hcut), one_mul]
 
@@ -338,7 +336,7 @@ theorem scaledLowPassCutoff_mul_scaledAnnularFrequencyCutoff_of_current_or_later
     {j k : ℤ} (hkj : k ≤ j) (ξ : ℝ) :
     scaledLowPassCutoff k ξ * scaledAnnularFrequencyCutoff j ξ = 0 := by
   by_cases hcut : scaledAnnularFrequencyCutoff j ξ = 0
-  · simp [hcut]
+  · simp only [hcut, mul_zero]
   · rw [scaledLowPassCutoff_eq_zero_on_current_or_later_annulus hkj
       (scaledAnnularFrequencyCutoff_support_subset j hcut), zero_mul]
 
@@ -440,7 +438,7 @@ theorem lowPassProjectionL2_annularProjectionL2_of_current_or_later
   rw [← mul_assoc,
     scaledLowPassCutoff_mul_scaledAnnularFrequencyCutoff_of_current_or_later hkj,
     zero_mul]
-  simp
+  simp only [ZeroMemClass.coe_zero, AEEqFun.coeFn_zero_eq]
 
 theorem lowPassProjectionL2_add (k : ℤ)
     (v w : Lp (α := ℝ) ℂ 2 volume) :
@@ -496,7 +494,7 @@ theorem lowPassProjectionL2_finset_sum
       ∑ i ∈ S, lowPassProjectionL2 k (v i) := by
   classical
   induction S using Finset.induction_on with
-  | empty => simp [lowPassProjectionL2_zero]
+  | empty => simp only [Finset.sum_empty, lowPassProjectionL2_zero]
   | @insert a S ha ih =>
       rw [Finset.sum_insert ha, lowPassProjectionL2_add, ih,
         Finset.sum_insert ha]
@@ -633,7 +631,7 @@ theorem fourier_scaledLowPassKernel (k : ℤ) (ξ : ℝ) :
       fun t ↦ (R : ℂ) * g (R * t) := by
     funext t
     unfold scaledLowPassKernel g
-    simp only [R, smul_eq_mul]
+    simp only [smul_eq_mul, R]
     have hphase :
         (((-2 * Real.pi * t * ξ : ℝ) : ℂ) * Complex.I) =
           (((-2 * Real.pi * ((2 : ℝ) ^ (k - 3) * t) *
@@ -666,7 +664,6 @@ theorem norm_scaledLowPassKernel_le_poisson (k : ℤ) (t : ℝ) :
         cotlarPoissonKernel ((2 : ℝ) ^ (-(k - 3))) t := by
   let R : ℝ := (2 : ℝ) ^ (k - 3)
   have hR : 0 < R := by dsimp [R]; positivity
-  have hC := baseLowPassKernelDecayConstant_nonneg
   calc
     ‖scaledLowPassKernel k t‖ =
         R * ‖baseLowPassKernelSchwartz (R * t)‖ := by
@@ -676,11 +673,11 @@ theorem norm_scaledLowPassKernel_le_poisson (k : ℤ) (t : ℝ) :
       mul_le_mul_of_nonneg_left (norm_baseLowPassKernelSchwartz_le _) hR.le
     _ = baseLowPassKernelDecayConstant * cotlarPoissonKernel R⁻¹ t := by
       unfold cotlarPoissonKernel
-      field_simp; ring
+      field_simp; ac_rfl
     _ = baseLowPassKernelDecayConstant *
         cotlarPoissonKernel ((2 : ℝ) ^ (-(k - 3))) t := by
       rw [show R⁻¹ = (2 : ℝ) ^ (-(k - 3)) by
-        simp only [R, zpow_neg]]
+        simp only [zpow_neg, R]]
 
 theorem integrable_scaledLowPassKernel (k : ℤ) :
     Integrable (scaledLowPassKernel k) volume := by
@@ -744,7 +741,7 @@ theorem enorm_scaledLowPassKernel_convolution_le_maximal
       apply mul_le_mul' le_rfl
       exact lintegral_ofReal_cotlarPoissonKernel_mul_le_maximal hr hf.enorm x
     _ = (20 * ENNReal.ofReal baseLowPassKernelDecayConstant) *
-        centeredHardyLittlewoodMaximal (fun y ↦ ‖f y‖ₑ) x := by ring
+        centeredHardyLittlewoodMaximal (fun y ↦ ‖f y‖ₑ) x := by ac_rfl
 
 /-- Convolution with the low-pass kernel at the chosen scale. -/
 def lowPassKernelConvolution (k : ℤ) (f : ℝ → ℂ) (x : ℝ) : ℂ :=
@@ -758,7 +755,7 @@ theorem lowPassKernelConvolution_eq_convolution
   apply integral_congr_ae
   filter_upwards with y
   simp only [ContinuousLinearMap.mul_apply']
-  ring
+  ac_rfl
 
 theorem integrable_lowPassKernelConvolution
     (k : ℤ) {f : ℝ → ℂ} (hf : Integrable f volume) :
@@ -783,11 +780,11 @@ theorem memLp_two_centeredHardyLittlewoodMaximal_enorm
     exact ENNReal.pow_lt_top hf₂.eLpNorm_lt_top
   have hM : (∫⁻ x, M x ^ 2) < (⊤ : ℝ≥0∞) :=
     (centeredHardyLittlewoodMaximal_sq_lintegral_le hfmeas.enorm).trans_lt
-      (ENNReal.mul_lt_top (by norm_num) hinput)
+      (ENNReal.mul_lt_top (by decide +kernel) hinput)
   have hp : eLpNorm M 2 volume ^ 2 < (⊤ : ℝ≥0∞) := by
     rw [eLpNorm_two_sq_lintegral M hm.aestronglyMeasurable]
     simpa only [enorm_eq_self] using hM
-  exact (ENNReal.pow_lt_top_iff.mp hp).resolve_right (by norm_num)
+  exact (ENNReal.pow_lt_top_iff.mp hp).resolve_right (by decide +kernel)
 
 theorem memLp_two_lowPassKernelConvolution
     (k : ℤ) {f : ℝ → ℂ} (hfmeas : Measurable f)
@@ -795,7 +792,7 @@ theorem memLp_two_lowPassKernelConvolution
     MemLp (lowPassKernelConvolution k f) 2 volume := by
   let A : ℝ≥0∞ := 20 * ENNReal.ofReal baseLowPassKernelDecayConstant
   have hAtop : A ≠ (⊤ : ℝ≥0∞) := by
-    exact ENNReal.mul_ne_top (by norm_num) ENNReal.ofReal_ne_top
+    exact ENNReal.mul_ne_top (by decide +kernel) ENNReal.ofReal_ne_top
   apply (memLp_two_centeredHardyLittlewoodMaximal_enorm hfmeas hf₂).of_enorm_le_mul
     (c := A.toNNReal)
     (integrable_lowPassKernelConvolution k hf).aestronglyMeasurable
@@ -816,7 +813,7 @@ theorem fourier_lowPassKernelConvolution
   rw [Real.fourier_mul_convolution_eq hf
       (integrable_scaledLowPassKernel k) ξ,
     fourier_scaledLowPassKernel]
-  ring
+  ac_rfl
 
 /-- For an `L¹ ∩ L²` representative, the concrete kernel convolution is
 exactly the canonical `L²` low-pass Fourier multiplier. Both sides are

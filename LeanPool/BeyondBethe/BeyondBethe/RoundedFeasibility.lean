@@ -8,7 +8,10 @@ module
 
 public import LeanPool.BeyondBethe.BeyondBethe.AdaptiveRoundedEllipsoid
 public import LeanPool.BeyondBethe.BeyondBethe.RationalFeasibility
-public import Mathlib.Tactic
+import Mathlib.Tactic.FieldSimp -- shake: keep
+import Mathlib.Tactic.Linarith -- shake: keep
+import Mathlib.Tactic.Positivity -- shake: keep
+import Mathlib.Tactic.Ring -- shake: keep
 
 /-! # Rounded Feasibility -/
 

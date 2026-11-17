@@ -65,7 +65,7 @@ theorem abs_indicator_f_le (x : Vec d) : |P.V.indicator P.f x| ≤ P.D := by
 
 theorem memLp_f : MemLp P.f 2 volume := by
   have hind : MemLp (P.V.indicator P.f) 2 volume := by
-    rw [memLp_indicator_iff_restrict P.hV.isOpen.measurableSet]
+    rw [memLp_indicator_iff_restrict P.hV.isOpen.measurableSet.nullMeasurableSet]
     let := P.hV.isFiniteMeasure_restrict_volume
     refine MemLp.of_bound P.hf.aestronglyMeasurable P.D ?_
     filter_upwards with x

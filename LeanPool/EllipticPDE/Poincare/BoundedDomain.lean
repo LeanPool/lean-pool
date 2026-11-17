@@ -175,8 +175,8 @@ theorem laplaceBilin_coercive_of_bounded {Ω : Set (EuclideanSpace ℝ (Fin (n +
   have hkey : ‖U‖ * ‖U‖ ≤ (C + 1) * S := by
     have h1 : ‖U‖ ^ 2 ≤ (C + 1) * S := by
       rw [hnorm]
-      nlinarith [hpoin (U : H1amb Ω) U.2]
-    nlinarith [h1]
+      nlinarith only [hpoin, hpoin (U : H1amb Ω) U.2]
+    nlinarith only [h1]
   rw [hBUU, mul_assoc]
   calc 1 / (C + 1) * (‖U‖ * ‖U‖)
       ≤ 1 / (C + 1) * ((C + 1) * S) := mul_le_mul_of_nonneg_left hkey (by positivity)

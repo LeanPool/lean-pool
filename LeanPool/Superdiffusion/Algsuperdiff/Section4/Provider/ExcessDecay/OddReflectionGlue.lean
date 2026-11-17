@@ -123,7 +123,7 @@ private theorem tendsto_setIntegral_mul_of_tendsto_eLpNorm
       ‖(f n x - g x) * h x‖₊ ≤ 1 * ‖f n x - g x‖₊ * ‖h x‖₊ :=
     Eventually.of_forall fun x => by rw [nnnorm_mul]; simp
   have hHolder : eLpNorm (fun x => (f n x - g x) * h x) 1 μ ≤ B n := by
-    have hh' := eLpNorm_le_eLpNorm_mul_eLpNorm_of_nnnorm
+    have hh' := eLpNorm_le_eLpNorm_mul_eLpNorm
       (p := p.exponent) (q := p.conjugate.exponent) (r := 1)
       (fun x y => x * y) 1 continuous_mul ((hf n).sub hg).aestronglyMeasurable
       hh.aestronglyMeasurable hbound
@@ -282,7 +282,7 @@ private theorem fderiv_approx_sub_zeroExtendGrad_eq {V : Set (Vec d)}
 theorem memL2_zeroExtend {V : Set (Vec d)} (hV : MeasurableSet V)
     (u : H10Function V) :
     MemLp (zeroExtend V u.toH1Function.toFun) 2 (volume : Measure (Vec d)) :=
-  (MeasureTheory.memLp_indicator_iff_restrict hV).2 u.toH1Function.memL2
+  (MeasureTheory.memLp_indicator_iff_restrict hV.nullMeasurableSet).2 u.toH1Function.memL2
 
 theorem gradMemL2_zeroExtendGrad {V : Set (Vec d)} (hV : MeasurableSet V)
     (u : H10Function V) :
@@ -291,7 +291,8 @@ theorem gradMemL2_zeroExtendGrad {V : Set (Vec d)} (hV : MeasurableSet V)
   change MemLp (fun y => zeroExtendGrad V u.toH1Function.grad y i) 2
     (volume.restrict Set.univ)
   rw [Measure.restrict_univ, zeroExtendGrad_apply_coord]
-  exact (MeasureTheory.memLp_indicator_iff_restrict hV).2 (u.toH1Function.gradMemL2 i)
+  exact (MeasureTheory.memLp_indicator_iff_restrict hV.nullMeasurableSet).2
+    (u.toH1Function.gradMemL2 i)
 
 /-- **, step 2: the zero extension is a global weak-gradient graph.** Re-derivation
 of CoarseGraining's `H10Function.hasWeakGradientOn_univ_zeroExtension` (no
@@ -323,7 +324,7 @@ theorem hasWeakGradientOn_univ_zeroExtend {V : Set (Vec d)}
           zeroExtend V u.toH1Function.toFun y) 2 volume) atTop (nhds 0) := by
       refine u.tendsto_approx.congr fun n => ?_
       rw [approx_sub_zeroExtend_eq u n,
-        MeasureTheory.eLpNorm_indicator_eq_eLpNorm_restrict hV]
+        MeasureTheory.eLpNorm_indicator_eq_eLpNorm_restrict hV.nullMeasurableSet]
     simpa only [Measure.restrict_univ] using! htend
   · intro i
     have htend : Tendsto
@@ -331,7 +332,7 @@ theorem hasWeakGradientOn_univ_zeroExtend {V : Set (Vec d)}
           zeroExtendGrad V u.toH1Function.grad y i) 2 volume) atTop (nhds 0) := by
       refine (u.tendsto_approx_grad i).congr fun n => ?_
       rw [fderiv_approx_sub_zeroExtendGrad_eq u n i,
-        MeasureTheory.eLpNorm_indicator_eq_eLpNorm_restrict hV]
+        MeasureTheory.eLpNorm_indicator_eq_eLpNorm_restrict hV.nullMeasurableSet]
     simpa only [Measure.restrict_univ] using! htend
 
 /-! ## 3. Reflection transport of a global weak gradient -/

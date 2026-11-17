@@ -64,7 +64,7 @@ private theorem increment_ratio_le (gamma : ℝ) (hgamma : 0 < gamma)
   constructor
   · exact div_nonneg (sq_nonneg _) hu.le
   · rw [div_le_iff₀ hu]
-    have hlin : 2 * (k : ℝ) + 1 ≤ 2 * ((k : ℝ) + 1) := by linarith
+    have hlin : 2 * (k : ℝ) + 1 ≤ 2 * ((k : ℝ) + 1) := by linarith only
     have hsquare := (sq_le_sq₀ (by linarith) (by positivity)).2 hlin
     nlinarith
 
@@ -105,7 +105,7 @@ private theorem gamma_endpoint_identity {p eta : ℝ} {n : ℕ}
       (n : ℝ) ^ ((p + 2) / p) := by
     rw [← Real.rpow_natCast, ← Real.rpow_sub hnpos]
     congr 1
-    field_simp [show p ≠ 0 by linarith]
+    field_simp [show p ≠ 0 by linarith only [hp]]
     ring
   rw [hinv]
   have hAp : 0 < (2 * aboveBudgetConstant p) ^ ((p - 2) / p) :=

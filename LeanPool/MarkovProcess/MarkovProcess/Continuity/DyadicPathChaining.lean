@@ -215,7 +215,8 @@ theorem dyadicIndex_le {T : ℝ≥0} (hT : 0 < T) {s : ℝ≥0} (hs : s ≤ T) (
   have hbound : (s : ℝ) * 2 ^ m / T ≤ ((2 ^ m : ℕ) : ℝ) := by
     rw [div_le_iff₀ hT']
     push_cast
-    nlinarith [pow_pos (by norm_num : (0 : ℝ) < 2) m]
+    simpa only [mul_comm] using
+      mul_le_mul_of_nonneg_right hs' (pow_nonneg (by norm_num : (0 : ℝ) ≤ 2) m)
   calc dyadicIndex T m s ≤ ⌊((2 ^ m : ℕ) : ℝ)⌋₊ := Nat.floor_mono hbound
     _ = 2 ^ m := Nat.floor_natCast _
 
@@ -247,7 +248,8 @@ theorem le_dyadicTime_dyadicIndex_add {T : ℝ≥0} (hT : 0 < T) (m : ℕ) (s : 
   rw [← NNReal.coe_le_coe]
   push_cast [dyadicTime_coe]
   rw [← add_div, le_div_iff₀ hpow]
-  nlinarith [hlt]
+  refine hlt.le.trans_eq ?_
+  ring
 
 theorem tendsto_dyadicTime_dyadicIndex {T : ℝ≥0} (hT : 0 < T) (s : ℝ≥0) :
     Tendsto (fun m ↦ dyadicTime T m (dyadicIndex T m s)) atTop (𝓝 s) := by
@@ -267,8 +269,8 @@ theorem tendsto_dyadicTime_dyadicIndex {T : ℝ≥0} (hT : 0 < T) (s : ℝ≥0) 
     have h := NNReal.coe_le_coe.mpr (le_dyadicTime_dyadicIndex_add hT m s)
     push_cast at h
     exact h
-  rw [NNReal.dist_eq, abs_sub_comm, abs_of_nonneg (by linarith)]
-  linarith
+  rw [NNReal.dist_eq, abs_sub_comm, abs_of_nonneg (sub_nonneg.mpr h1)]
+  linarith only [h2]
 
 /-- Two nearby times of `[0, T]` have level-`n + r` subdivision indices that differ by at most
 `2 ^ r`, once their separation is at most `T / 2 ^ (n + 1)` and `r` is at least one. -/

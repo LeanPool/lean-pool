@@ -58,7 +58,7 @@ theorem contDiffOn_potentialVorticity_zoomPoint {lam h zc : ℝ} (hlam : 0 < lam
       (finMeridionalDomain lam h zc) := by
   set D : Set (Vec3 × ℝ) := {z | z ∈ unitCylinder ∧ z.1 0 ≠ 0} with hD
   have hrad : ContDiffOn ℝ (⊤ : ℕ∞) (fun z : Vec3 × ℝ => z.1 0) D :=
-    ((contDiff_apply ℝ ℝ (0 : Fin 3)).comp contDiff_fst).contDiffOn
+    ((contDiff_apply ℝ (fun _ : Fin 3 => ℝ) (0 : Fin 3)).comp contDiff_fst).contDiffOn
   have hazi : ContDiffOn ℝ (⊤ : ℕ∞) (fun z : Vec3 × ℝ => azimuthalVorticity v z) D :=
     (contDiffOn_azimuthalVorticity hv).mono fun z hz => hz.1
   have hPV : ContDiffOn ℝ (⊤ : ℕ∞) (fun z : Vec3 × ℝ => potentialVorticity v z) D :=
@@ -151,7 +151,7 @@ theorem contDiffOn_zoomDrift_apply {lam h zc : ℝ} {u : ParabolicPoint → Vec3
       ((contDiff_fst.comp contDiff_fst).comp_contDiffOn contDiffOn_zoomLiftPoint).mono
         fun _ hz => hz.1
     have hX : ContDiffOn ℝ (⊤ : ℕ∞) (fun w : Vec 5 × ℝ => w.1 i) (finLiftDomain lam h zc) :=
-      ((contDiff_apply ℝ ℝ i).comp contDiff_fst).contDiffOn
+      ((contDiff_apply ℝ (fun _ : Fin 5 => ℝ) i).comp contDiff_fst).contDiffOn
     exact (contDiffOn_comp_zoomLiftPoint (contDiffOn_zoomV_finMeridional hu)).mul
       (hX.div hR fun _ hz => hz.1.ne')
 

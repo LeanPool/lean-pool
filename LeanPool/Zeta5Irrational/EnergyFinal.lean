@@ -10,7 +10,7 @@ import LeanPool.Zeta5Irrational.Table.Intervals
 import LeanPool.Zeta5Irrational.Table.Tail
 import LeanPool.Zeta5Irrational.Certificates
 import Mathlib.Analysis.Real.Pi.Bounds
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Tactic.ENatToNat
 import Std.Tactic.BVDecide.Normalize.Prop
 public import LeanPool.Zeta5Irrational.EnergyRaw

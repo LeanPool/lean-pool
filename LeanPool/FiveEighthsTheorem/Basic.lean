@@ -7,6 +7,7 @@ module
 
 public import Mathlib.GroupTheory.CommutingProbability
 import Mathlib.Algebra.BigOperators.Field
+import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith.Frontend
 
 /-!

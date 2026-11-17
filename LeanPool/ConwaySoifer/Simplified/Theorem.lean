@@ -13,7 +13,7 @@ public import LeanPool.ConwaySoifer.Simplified.Complements.AownLarge
 public import LeanPool.ConwaySoifer.Simplified.Complements.AcrossSmall
 public import LeanPool.ConwaySoifer.Simplified.Complements.AcrossLarge
 public import LeanPool.ConwaySoifer.Geometry.Scaling
-import Mathlib.Tactic
+import Mathlib.Tactic.Linarith
 
 /-! The independent, unconditional assembly of the third-pass simplified proof. -/
 
