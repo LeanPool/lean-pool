@@ -147,7 +147,7 @@ theorem isLocallyBoundedOn_zoomLift {C h : ℝ} (hh : 0 < h)
       exact le_antisymm (not_lt.mp hz') (zoomLiftRadius_nonneg z.1)
     have h1 : (U ∩ univ ×ˢ Iio (-1) : Set (Vec 5 × ℝ)) =ᵐ[volume]
         (univ ∩ univ ×ˢ Iio (-1) : Set (Vec 5 × ℝ)) :=
-      (ae_eq_univ.mpr hUc).inter (ae_eq_refl _)
+      (ae_eq_univ.mpr hUc).inter .rfl
     simpa using h1
   have hq : IsLocallyBoundedOn 5 (Iio (-1)) q := by
     refine ⟨?_, ?_⟩

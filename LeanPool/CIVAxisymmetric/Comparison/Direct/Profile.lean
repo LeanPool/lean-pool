@@ -81,8 +81,8 @@ theorem comparisonProfile_eq_zero_iff {y : ℝ} : comparisonProfile y = 0 ↔ y 
 
 /-- `G` is `1`-Lipschitz, since `0 ≤ G' ≤ 1`. -/
 theorem lipschitzWith_comparisonProfile : LipschitzWith 1 comparisonProfile := by
-  refine lipschitzWith_of_nnnorm_deriv_le differentiable_comparisonProfile fun y => ?_
-  rw [deriv_comparisonProfile, ← NNReal.coe_le_coe, coe_nnnorm, Real.norm_eq_abs,
+  refine lipschitzWith_of_nnNorm_deriv_le differentiable_comparisonProfile fun y => ?_
+  rw [deriv_comparisonProfile, ← NNReal.coe_le_coe, coe_nnNorm, Real.norm_eq_abs,
     abs_of_nonneg (Real.smoothTransition.nonneg y)]
   exact Real.smoothTransition.le_one y
 
