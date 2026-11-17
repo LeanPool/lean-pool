@@ -79,10 +79,11 @@ instance instNeZeroAddLeft [NeZero m] : NeZero (k + m) :=
     is redirected using the gate's negation flags to produce the correct
     constant, without adding extra gates.  See `Circ.Internal.Nondeterminism`
     for the construction. -/
-theorem restrict_size_complexity_le [CompleteBasis Basis.andOr2] [NeZero m]
+theorem restrict_size_complexity_le (complete : CompleteBasis Basis.andOr2) [NeZero m]
     (f : BitString ((k + 1) + m) → Bool) (b : Bool) :
     Circuit.sizeComplexity Basis.andOr2 (restrictFirst f b) ≤
       Circuit.sizeComplexity Basis.andOr2 f := by
+  let := complete
   obtain ⟨G, c, hsize, heval⟩ := Circuit.size_complexity_witness (B := Basis.andOr2) f
   calc Circuit.sizeComplexity Basis.andOr2 (restrictFirst f b)
       ≤ (restrictCircuit (k := k) b c).size :=
@@ -94,11 +95,12 @@ theorem restrict_size_complexity_le [CompleteBasis Basis.andOr2] [NeZero m]
     sum of their individual complexities plus one (for the OR output gate).
 
     Uses `ShannonUpper.binopCircuit` to compose two circuits side-by-side. -/
-theorem or_size_complexity_le [CompleteBasis Basis.andOr2] [NeZero N]
+theorem or_size_complexity_le (complete : CompleteBasis Basis.andOr2) [NeZero N]
     (g₁ g₂ : BitString N → Bool) :
     Circuit.sizeComplexity Basis.andOr2 (fun x => g₁ x || g₂ x) ≤
       Circuit.sizeComplexity Basis.andOr2 g₁ +
       Circuit.sizeComplexity Basis.andOr2 g₂ + 1 := by
+  let := complete
   obtain ⟨G₁, c₁, hsize₁, heval₁⟩ := Circuit.size_complexity_witness (B := Basis.andOr2) g₁
   obtain ⟨G₂, c₂, hsize₂, heval₂⟩ := Circuit.size_complexity_witness (B := Basis.andOr2) g₂
   let c := ShannonUpper.binopCircuit AONOp.or c₁ c₂
@@ -157,7 +159,7 @@ private theorem cast_fun_fin_apply {n n' : Nat}
       one gate; and the inductive hypothesis bounds each branch by
       `2^k · (s + 1) − 1`.  After the "+1 trick":
       `(size₁ + size₂ + 1) + 1 = (size₁ + 1) + (size₂ + 1) ≤ 2^(k+1) · (s + 1)`. -/
-theorem existQuantify_complexity_le [CompleteBasis Basis.andOr2]
+theorem existQuantify_complexity_le (complete : CompleteBasis Basis.andOr2)
     (f : BitString (k + m) → Bool) [NeZero m] :
     Circuit.sizeComplexity Basis.andOr2 (existQuantify f) ≤
       2 ^ k * (Circuit.sizeComplexity Basis.andOr2 f + 1) := by
@@ -188,13 +190,15 @@ theorem existQuantify_complexity_le [CompleteBasis Basis.andOr2]
     set g₁ := existQuantify (k := k) (restrictFirst f false)
     set g₂ := existQuantify (k := k) (restrictFirst f true)
     set s := Circuit.sizeComplexity Basis.andOr2 f
-    have hor := or_size_complexity_le g₁ g₂
+    have hor := or_size_complexity_le complete g₁ g₂
     have h₁ : Circuit.sizeComplexity Basis.andOr2 g₁ + 1 ≤ 2 ^ k * (s + 1) :=
       le_trans (ih (restrictFirst f false))
-        (Nat.mul_le_mul_left _ (Nat.add_le_add_right (restrict_size_complexity_le f false) 1))
+        (Nat.mul_le_mul_left _
+          (Nat.add_le_add_right (restrict_size_complexity_le complete f false) 1))
     have h₂ : Circuit.sizeComplexity Basis.andOr2 g₂ + 1 ≤ 2 ^ k * (s + 1) :=
       le_trans (ih (restrictFirst f true))
-        (Nat.mul_le_mul_left _ (Nat.add_le_add_right (restrict_size_complexity_le f true) 1))
+        (Nat.mul_le_mul_left _
+          (Nat.add_le_add_right (restrict_size_complexity_le complete f true) 1))
     calc Circuit.sizeComplexity Basis.andOr2 (fun y => g₁ y || g₂ y) + 1
         ≤ (Circuit.sizeComplexity Basis.andOr2 g₁ +
            Circuit.sizeComplexity Basis.andOr2 g₂ + 1) + 1 :=
@@ -221,10 +225,10 @@ theorem existQuantify_complexity_shannon
     When `sizeComplexity(f) ≈ 2^(k+m)/2`, the Shannon bound
     `18 · 2^m / m` is exponentially better than the naive
     `2^k · (s + 1)`, especially for large `k`. -/
-theorem existQuantify_complexity_min [CompleteBasis Basis.andOr2]
+theorem existQuantify_complexity_min (complete : CompleteBasis Basis.andOr2)
     (f : BitString (k + m) → Bool) [NeZero m] (hm : 16 ≤ m) :
     Circuit.sizeComplexity Basis.andOr2 (existQuantify f) ≤
       min (2 ^ k * (Circuit.sizeComplexity Basis.andOr2 f + 1)) (18 * 2 ^ m / m) :=
-  le_min (existQuantify_complexity_le f) (existQuantify_complexity_shannon f hm)
+  le_min (existQuantify_complexity_le complete f) (existQuantify_complexity_shannon f hm)
 
 end CircuitComplexity
