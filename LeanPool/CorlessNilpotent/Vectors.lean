@@ -59,8 +59,8 @@ lemma Fam_congr : ∀ (k : ℕ) {s t : ℕ → ℤ}, (∀ i < 2 ^ (k + 1) - 2, s
     (Fam k s ↔ Fam k t)
   | 0, _, _, _ => by simp [Fam]
   | k + 1, s, t, h => by
-      have hp := two_le_pow k
-      have h2 : 2 ^ (k + 1 + 1) = 2 * 2 ^ (k + 1) := by rw [pow_succ]; ring
+      change ∀ i < 2 ^ (k + 2) - 2, s i = t i at h
+      rw [folded_edges k] at h
       simp only [Fam, IsFolded]
       rw [h (2 ^ (k + 1) - 2 + 1) (by omega), h (2 ^ (k + 1) - 2) (by omega),
         Fam_congr k (fun i hi => h i (by omega))]
@@ -105,9 +105,8 @@ lemma CorlessVec.length_eq {k : ℕ} {u : List ℂ} (h : CorlessVec k u) :
   induction h with
   | base => simp
   | @step₁ k u _ ih | @step₂ k u _ ih =>
-      have hp := two_le_pow k
-      rw [length_foldVector, ih, pow_succ 2 (k + 1)]
-      omega
+      rw [length_foldVector, ih]
+      exact (folded_edges k).symm
 
 lemma CorlessVec.mem {k : ℕ} {u : List ℂ} (h : CorlessVec k u) :
     ∀ x ∈ u, x = 1 ∨ x = Complex.I := by
@@ -146,13 +145,10 @@ lemma CorlessVec.fam {k : ℕ} {u : List ℂ} (h : CorlessVec k u) : Fam k (sgns
 
 /-! ### Every vector satisfying `Fam` is one of Corless's vectors -/
 
-lemma getD_mem {u : List ℂ} (hu : ∀ x ∈ u, x = 1 ∨ x = Complex.I) (i : ℕ) :
+lemma getD_mem {u : List ℂ} (hu : ∀ x ∈ u, x = 1 ∨ x = Complex.I) (i : ℕ) (hi : i < u.length) :
     u.getD i 1 = 1 ∨ u.getD i 1 = Complex.I := by
-  by_cases hi : i < u.length
-  · rw [List.getD_eq_getElem _ _ hi]
-    exact hu _ (List.getElem_mem hi)
-  · left
-    rw [List.getD_eq_default _ _ (by omega)]
+  rw [List.getD_eq_getElem _ _ hi]
+  exact hu _ (List.getElem_mem hi)
 
 /-- An entry in `{1, i}` is determined by its sign. -/
 lemma eq_of_sgn {x y : ℂ} (hx : x = 1 ∨ x = Complex.I) (hy : y = 1 ∨ y = Complex.I)
@@ -176,9 +172,10 @@ lemma CorlessVec.of_fam : ∀ (k : ℕ) {u : List ℂ}, u.length = 2 ^ (k + 1) -
       obtain rfl : u = [] := List.length_eq_zero_iff.mp (by simpa using hlen)
       exact .base
   | k + 1, u, hlen, hu, hfam => by
-      have hp := two_le_pow k
       obtain ⟨n, hn⟩ : ∃ n, n = 2 ^ (k + 1) - 2 := ⟨_, rfl⟩
-      have hlen' : u.length = 2 * n + 2 := by rw [hlen, pow_succ]; omega
+      have hlen' : u.length = 2 * n + 2 := by
+        rw [hlen, hn]
+        exact folded_edges k
       simp only [Fam, IsFolded, ← hn] at hfam
       obtain ⟨⟨hmid, hmir⟩, hfam'⟩ := hfam
       obtain ⟨v, hv⟩ : ∃ v, v = u.take n := ⟨_, rfl⟩
@@ -211,12 +208,13 @@ lemma CorlessVec.of_fam : ∀ (k : ℕ) {u : List ℂ}, u.length = 2 ^ (k + 1) -
           rw [show i = 2 * v.length + 1 - (2 * n + 1 - i) by omega,
             getD_step_right _ _ _ (by omega), hvget _ (by omega)]
           rw [show 2 * v.length + 1 - (2 * n + 1 - i) = i by omega]
-          exact eq_of_sgn (getD_mem hu _) (getD_mem hu _) hj
+          exact eq_of_sgn (getD_mem hu i hi) (getD_mem hu (2 * n + 1 - i) (by omega)) hj
       -- the two middle entries are `1, i` or `i, 1`
       rw [hu_eq]
       unfold sgns at hmid
-      rcases getD_mem hu n with ha | ha <;> rcases getD_mem hu (n + 1) with hb | hb <;>
-        rw [ha, hb] at hmid ⊢ <;> simp at hmid
+      rcases getD_mem hu n (by omega) with ha | ha <;>
+        rcases getD_mem hu (n + 1) (by omega) with hb | hb <;>
+          rw [ha, hb] at hmid ⊢ <;> simp at hmid
       · exact .step₁ ih
       · exact .step₂ ih
 
@@ -227,7 +225,7 @@ skew-symmetric tridiagonal matrix `T_{|u|+1}(u)` is nilpotent iff `u` is one of 
 recursively constructed vectors. -/
 theorem corless_conjecture {u : List ℂ} (hu : ∀ x ∈ u, x = 1 ∨ x = Complex.I) :
     IsNilpotent (T (u.length + 1) (fun i => u.getD i 1)) ↔ ∃ k, CorlessVec k u := by
-  rw [T_nilpotent_iff (getD_mem hu) (by omega)]
+  rw [T_nilpotent_iff (fun i hi => getD_mem hu i (by omega)) (by omega)]
   constructor
   · rintro ⟨k, hk, hfam⟩
     exact ⟨k, CorlessVec.of_fam k (by omega) hu hfam⟩

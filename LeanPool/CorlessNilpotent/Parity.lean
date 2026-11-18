@@ -6,6 +6,7 @@ Authors: Marcel Blattner
 module
 
 public import Mathlib.Algebra.CharP.Lemmas
+public import Mathlib.Algebra.CharP.Reduced
 public import Mathlib.Algebra.Field.ZMod
 public import Mathlib.Algebra.Polynomial.Eval.Coeff
 public import Mathlib.Tactic.LinearCombination
@@ -81,6 +82,11 @@ lemma folded_sizes (k : ℕ) :
   · omega
   · rw [pow_succ]
     omega
+
+/-- Folding duplicates the half-path edges and adds two middle edges. -/
+lemma folded_edges (k : ℕ) : 2 ^ (k + 2) - 2 = 2 * (2 ^ (k + 1) - 2) + 2 := by
+  have full := (folded_sizes k).2
+  omega
 
 /-- The reference sequence: all `1` except `-1` at position `n + 1`. -/
 def star (n : ℕ) : ℕ → ℤ := fun i => if i = n + 1 then -1 else 1
@@ -164,12 +170,8 @@ lemma pow_two_of_frob : ∀ n : ℕ, 1 ≤ n → ((1 + X : (ZMod 2)[X]) ^ n = 1 
           exact this
         rw [hfrob, ← pow_mul, show r * 2 = n + 2 by omega]
         exact h
-      have hr' : (1 + X : (ZMod 2)[X]) ^ r = 1 + X ^ r := by
-        have h0 : ((1 + X : (ZMod 2)[X]) ^ r - (1 + X ^ r)) ^ 2 = 0 := by
-          have hfrob := sub_pow_char (R := (ZMod 2)[X]) (p := 2) ((1 + X : (ZMod 2)[X]) ^ r)
-            (1 + X ^ r)
-          rw [hfrob, hsq, sub_self]
-        exact sub_eq_zero.mp (pow_eq_zero_iff (by norm_num) |>.mp h0)
+      have hr' : (1 + X : (ZMod 2)[X]) ^ r = 1 + X ^ r :=
+        frobenius_inj (ZMod 2)[X] 2 hsq
       obtain ⟨a, ha⟩ := pow_two_of_frob r hr1 hr'
       exact ⟨a + 1, by rw [pow_succ, ← ha]; omega⟩
 

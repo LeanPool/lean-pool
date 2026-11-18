@@ -138,23 +138,24 @@ lemma natDegree_E_le (s : ℕ → ℤ) (j : ℕ) : (E s j).natDegree ≤ j := by
     exact Nat.mul_le_mul_right 2 (h1.trans h2)
   omega
 
-/-- The characteristic polynomial of `T m u` is the reflection of `E s m`, where `s = u²`. -/
-lemma det_CM_eq : ∀ (m : ℕ) (s : ℕ → ℤ) (u : ℕ → ℂ), (∀ i, (s i : ℂ) = u i ^ 2) →
-    (CM m u).det = reflect m (E s m)
+/-- The characteristic polynomial of `T m u` is the reflection of `E s m`
+when `s = u²` along the path edges. -/
+lemma det_CM_eq : ∀ (m : ℕ) (s : ℕ → ℤ) (u : ℕ → ℂ),
+    (∀ i, i + 1 < m → (s i : ℂ) = u i ^ 2) → (CM m u).det = reflect m (E s m)
   | 0, s, u, _ => by simp [E]
   | 1, s, u, _ => by
       rw [det_CM_one]
       simp [E]
   | m + 2, s, u, hsu => by
       rw [det_CM_succ_succ,
-        det_CM_eq (m + 1) (fun i => s (i + 1)) (fun i => u (i + 1)) (fun i => hsu _),
-        det_CM_eq m (fun i => s (i + 2)) (fun i => u (i + 2)) (fun i => hsu _)]
+        det_CM_eq (m + 1) (fun i => s (i + 1)) (fun i => u (i + 1)) (fun i hi => hsu _ (by omega)),
+        det_CM_eq m (fun i => s (i + 2)) (fun i => u (i + 2)) (fun i hi => hsu _ (by omega))]
       have hE : E s (m + 2) = E (fun i => s (i + 1)) (m + 1)
           + C (u 0 ^ 2) * X ^ 2 * E (fun i => s (i + 2)) m := by
         simp only [E]
         rw [Dv_succ_succ_left, Polynomial.map_add, Polynomial.map_mul, Polynomial.map_mul,
           Polynomial.map_C, Polynomial.map_X, map_add, map_mul, map_mul, expand_C, expand_X,
-          ← hsu 0]
+          ← hsu 0 (by omega)]
         simp
       rw [hE, reflect_add]
       -- the first term gains a factor X, the second loses X²
@@ -213,13 +214,14 @@ noncomputable def entrySign (z : ℂ) : ℤ := if z = 1 then 1 else -1
 /-- **Corless's conjecture, matrix form.** For `u` with entries in `{1, i}`, the matrix `T m u`
 is nilpotent iff the signs `u²` satisfy `Dv = 1`, i.e. (by `corless`) iff `m = 2^(k+1) - 1` and
 the signs form one of Corless's sequences. -/
-theorem T_nilpotent_iff {u : ℕ → ℂ} (hu : ∀ i, u i = 1 ∨ u i = Complex.I) {m : ℕ} (hm : 1 ≤ m) :
+theorem T_nilpotent_iff {u : ℕ → ℂ} {m : ℕ}
+    (hu : ∀ i, i + 1 < m → u i = 1 ∨ u i = Complex.I) (hm : 1 ≤ m) :
     IsNilpotent (T m u) ↔
       ∃ k, m = 2 ^ (k + 1) - 1 ∧ Fam k (fun i => entrySign (u i)) := by
   set s : ℕ → ℤ := fun i => entrySign (u i) with hs
-  have hsu : ∀ i, (s i : ℂ) = u i ^ 2 := by
-    intro i
-    rcases hu i with h | h <;> simp [hs, h]
+  have hsu : ∀ i, i + 1 < m → (s i : ℂ) = u i ^ 2 := by
+    intro i hi
+    rcases hu i hi with h | h <;> simp [hs, h]
   have hsign : IsSign s := by
     intro i
     by_cases h : u i = 1 <;> simp [hs, entrySign, h]
