@@ -88,9 +88,9 @@ private theorem finiteMeasure_tendsto_of_open_liminf_of_mass_tendsto
   · subst μ
     apply FiniteMeasure.tendsto_zero_of_tendsto_zero_mass
     simpa using hmass
-  have hmass_ne : μ.mass ≠ 0 := μ.mass_nonzero_iff.mpr hμzero
+  have hmass_ne : μ.mass ≠ 0 := μ.mass_ne_zero_iff.mpr hμzero
   have heventually_nonzero : ∀ᶠ k in atTop, μs k ≠ 0 := by
-    simp_rw [← FiniteMeasure.mass_nonzero_iff]
+    simp_rw [← FiniteMeasure.mass_ne_zero_iff]
     exact hmass (isOpen_compl_singleton.mem_nhds hmass_ne)
   have hmass_ennreal :
       Tendsto (fun k ↦ ((μs k).mass : ℝ≥0∞)) atTop (𝓝 (μ.mass : ℝ≥0∞)) :=
@@ -108,14 +108,14 @@ private theorem finiteMeasure_tendsto_of_open_liminf_of_mass_tendsto
         ((μs k).normalize : Measure X) G =
           ((μs k).mass : ℝ≥0∞)⁻¹ * (μs k : Measure X) G := by
     filter_upwards [heventually_nonzero] with k hk
-    rw [FiniteMeasure.toMeasure_normalize_eq_of_nonzero (μ := μs k) hk]
-    simp only [Measure.coe_smul, Pi.smul_apply, Measure.nnreal_smul_coe_apply,
-      ENNReal.coe_inv ((μs k).mass_nonzero_iff.mpr hk)]
+    rw [FiniteMeasure.toMeasure_normalize_eq_of_ne_zero (μ := μs k) hk]
+    simp only [FunLike.coe_smul, Pi.smul_apply, Measure.nnreal_smul_coe_apply,
+      ENNReal.coe_inv ((μs k).mass_ne_zero_iff.mpr hk)]
   calc
     (μ.normalize : Measure X) G =
         (μ.mass : ℝ≥0∞)⁻¹ * (μ : Measure X) G := by
-      rw [FiniteMeasure.toMeasure_normalize_eq_of_nonzero (μ := μ) hμzero]
-      simp only [Measure.coe_smul, Pi.smul_apply, Measure.nnreal_smul_coe_apply,
+      rw [FiniteMeasure.toMeasure_normalize_eq_of_ne_zero (μ := μ) hμzero]
+      simp only [FunLike.coe_smul, Pi.smul_apply, Measure.nnreal_smul_coe_apply,
         ENNReal.coe_inv hmass_ne]
     _ ≤ atTop.liminf (fun k ↦ ((μs k).mass : ℝ≥0∞)⁻¹) *
         atTop.liminf (fun k ↦ (μs k : Measure X) G) := by

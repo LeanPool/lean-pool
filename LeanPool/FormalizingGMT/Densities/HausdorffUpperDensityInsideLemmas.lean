@@ -103,7 +103,7 @@ lemma hausdorffContentOuter_apply (s : ℝ) (δ : ℝ≥0∞) (E : Set X) :
           (fun (u : Set X) (_ : Metric.ediam u ≤ δ) => (Metric.ediam u) ^ s) (t i)) = ⊤ := by
         rw [iSup_pos hne, MeasureTheory.extend_eq_top
           (fun (u : Set X) (_ : Metric.ediam u ≤ δ) => (Metric.ediam u) ^ s) hi']
-      have hle := ENNReal.le_tsum (f := fun n => ⨆ (_ : (t n).Nonempty), MeasureTheory.extend
+      have hle := le_tsum (f := fun n => ⨆ (_ : (t n).Nonempty), MeasureTheory.extend
           (fun (u : Set X) (_ : Metric.ediam u ≤ δ) => (Metric.ediam u) ^ s) (t n)) i
       rw [hterm, top_le_iff] at hle
       rw [hle]
@@ -217,7 +217,7 @@ lemma hausdorffContent_cover_set_le_tsum {s : ℝ} (E : Set X) {δ τ : ℝ≥0�
         (Set.inter_subset_inter_right _ (cover_set_subset s E δ τ))) (hxA.2 (C i) hxC (h_diam i))
   calc hausdorffContent s δ A ≤ hausdorffContent s δ (⋃ i, C i ∩ A) := hausdorffContent_mono h1
     _ ≤ ∑' i, hausdorffContent s δ (C i ∩ A) := hausdorffContent_iUnion_le _
-    _ ≤ ∑' i, τ * (Metric.ediam (C i)) ^ s := ENNReal.tsum_le_tsum hterm
+    _ ≤ ∑' i, τ * (Metric.ediam (C i)) ^ s := tsum_le_tsum hterm
     _ = τ * ∑' i, (Metric.ediam (C i)) ^ s := ENNReal.tsum_mul_left
 
 /-- **Lemma 0.2 (contraction).** `H^s_δ(E(δ,τ)) ≤ τ · H^s_δ(E(δ,τ))`. -/
@@ -275,7 +275,7 @@ lemma hausdorffContent_eq_zero_of_hausdorffContent_eq_zero {s : ℝ} (hs : 0 < s
     · simp [he]
     · have h1 : (Metric.ediam (t i)) ^ s
           ≤ ∑' n, ⨆ (_ : (t n).Nonempty), (Metric.ediam (t n)) ^ s := by
-        refine le_trans (le_of_eq ?_) (ENNReal.le_tsum i)
+        refine le_trans (le_of_eq ?_) (le_tsum _ i)
         rw [iSup_pos hne']
       have h2 : (Metric.ediam (t i)) ^ s < δ' ^ s :=
         lt_of_le_of_lt h1 (ht3.trans_le (min_le_right _ _))
@@ -332,7 +332,7 @@ lemma one_le_hausdorffContentInfty_zero {A : Set X} (hA : A.Nonempty) :
   refine le_iInf fun t => le_iInf fun hcov => ?_
   obtain ⟨y, hy⟩ := hA
   obtain ⟨i, hi⟩ := Set.mem_iUnion.mp (hcov hy)
-  refine le_trans (le_of_eq ?_) (ENNReal.le_tsum i)
+  refine le_trans (le_of_eq ?_) (le_tsum _ i)
   rw [iSup_pos ⟨y, hi⟩, ENNReal.rpow_zero]
 
 end Vanishing
@@ -599,17 +599,17 @@ lemma exists_finset_tsum_compl_le {ι : Type*} (f : ι → ℝ≥0∞) (hf : ∑
     ∃ W : Finset ι, ∑' i : ((W : Set ι)ᶜ : Set ι), f i ≤ ε := by
   by_cases hle : ∑' i, f i ≤ ε
   · refine ⟨∅, le_trans ?_ hle⟩
-    have := ENNReal.sum_add_tsum_compl (s := (∅ : Finset ι)) (f := f)
+    have := sum_add_tsum_compl (s := (∅ : Finset ι)) (f := f)
     simp only [Finset.sum_empty, zero_add] at this
     exact le_of_eq this
   · push Not at hle
     have hsub : ∑' i, f i - ε < ∑' i, f i := ENNReal.sub_lt_self hf (by
       intro h; rw [h] at hle; exact absurd hle (by simp)) hε
-    rw [ENNReal.tsum_eq_iSup_sum] at hsub
+    rw [tsum_eq_iSup_sum] at hsub
     obtain ⟨W, hW⟩ := lt_iSup_iff.mp hsub
-    rw [← ENNReal.tsum_eq_iSup_sum] at hW
+    rw [← tsum_eq_iSup_sum] at hW
     refine ⟨W, ?_⟩
-    have hsplit := ENNReal.sum_add_tsum_compl (s := W) (f := f)
+    have hsplit := sum_add_tsum_compl (s := W) (f := f)
     have hWfin : ∑ i ∈ W, f i ≠ ⊤ := by
       refine ne_top_of_le_ne_top hf ?_
       rw [← hsplit]; exact le_self_add
@@ -787,13 +787,13 @@ lemma exists_cover_le {s : ℝ} (hs : 0 ≤ s) {E : Set X}
       gcongr
     calc ∑' b : ↥u, Metric.ediam (C ↑b) ^ s
         ≤ ∑' b : ↥u, (if (↑b : X × ℝ) ∈ w then t⁻¹ * f ↑b
-            else ENNReal.ofReal (5 ^ s) * (t⁻¹ * f ↑b)) := ENNReal.tsum_le_tsum hbound
+            else ENNReal.ofReal (5 ^ s) * (t⁻¹ * f ↑b)) := tsum_le_tsum hbound
       _ = ∑ b ∈ W, (if (↑b : X × ℝ) ∈ w then t⁻¹ * f ↑b
               else ENNReal.ofReal (5 ^ s) * (t⁻¹ * f ↑b))
             + ∑' b : ((W : Set ↥u)ᶜ : Set ↥u),
               (if ((b : ↥u) : X × ℝ) ∈ w then t⁻¹ * f ↑(b : ↥u)
                 else ENNReal.ofReal (5 ^ s) * (t⁻¹ * f ↑(b : ↥u))) :=
-          (ENNReal.sum_add_tsum_compl W _).symm
+          (sum_add_tsum_compl W _).symm
       _ ≤ t⁻¹ * μH[s] (U ∩ E) + ENNReal.ofReal (5 ^ s) * t⁻¹ * ε := add_le_add hfinite htail
       _ ≤ t⁻¹ * (μH[s] A + ε) + ENNReal.ofReal (5 ^ s) * t⁻¹ * ε := by gcongr
 

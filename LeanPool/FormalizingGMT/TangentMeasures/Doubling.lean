@@ -118,7 +118,7 @@ lemma limsup_normalizing_le {μ ν : Measure (EuclideanSpace ℝ (Fin n))}
   have heq : ∀ i, (c i • μ.map (blowUpMap a (r i))) (closedBall 0 1)
       = c i * μ (closedBall a (r i)) := by
     intro i
-    rw [Measure.smul_apply, smul_eq_mul, map_blowUp_apply_closedBall μ a (hr i), mul_one]
+    rw [smul_apply, smul_eq_mul, map_blowUp_apply_closedBall μ a (hr i), mul_one]
   simpa only [heq] using h1
 
 /-- Lower bound for the normalizing constants: under assumption 14.3 (1) the numbers
@@ -156,7 +156,7 @@ lemma exists_le_normalizing {μ ν : Measure (EuclideanSpace ℝ (Fin n))}
   have heq : ∀ i, (c i • μ.map (blowUpMap a (r i))) (ball 0 R)
       = c i * μ (ball a (r i * R)) := by
     intro i
-    rw [Measure.smul_apply, smul_eq_mul, map_blowUp_apply_ball μ a (hr i)]
+    rw [smul_apply, smul_eq_mul, map_blowUp_apply_ball μ a (hr i)]
   have hopen' : ν (ball 0 R) ≤ liminf (fun i ↦ c i * μ (ball a (r i * R))) atTop := by
     simpa only [heq] using hopen
   have hhalf : ν (ball 0 R) / 2 < ν (ball 0 R) := ENNReal.half_lt_self hRpos.ne' hfin
@@ -227,7 +227,7 @@ theorem zero_mem_support_of_isTangentMeasure {n : ℕ}
     have heq : ∀ i, (c i • μ.map (blowUpMap a (r i))) (closedBall 0 s)
         = c i * μ (closedBall a (r i * s)) := by
       intro i
-      rw [Measure.smul_apply, smul_eq_mul, map_blowUp_apply_closedBall μ a (hr i)]
+      rw [smul_apply, smul_eq_mul, map_blowUp_apply_closedBall μ a (hr i)]
     have hlimsup : δ / D ≤ limsup (fun i ↦ c i * μ (closedBall a (r i * s))) atTop :=
       le_limsup_of_frequently_le hbound.frequently
     refine lt_of_lt_of_le (ENNReal.div_pos_iff.2 ⟨hδ.ne', hDtop⟩) ?_
@@ -348,7 +348,7 @@ theorem exists_subseq_blowUp_weaklyConverges_tangentMeasure {n : ℕ}
       = (μ (ball a (r i)))⁻¹ * μ (closedBall a (r i * s)) := by
     intro i s
     change ((μ (ball a (r i)))⁻¹ • μ.map (blowUpMap a (r i))) (closedBall 0 s) = _
-    rw [Measure.smul_apply, smul_eq_mul, map_blowUp_apply_closedBall μ a (hr_pos i)]
+    rw [smul_apply, smul_eq_mul, map_blowUp_apply_closedBall μ a (hr_pos i)]
   have hbound : ∀ K : Set (EuclideanSpace ℝ (Fin n)), IsCompact K →
       ∃ C : ℝ≥0, ∀ k, σ k K ≤ C := by
     intro K hK
