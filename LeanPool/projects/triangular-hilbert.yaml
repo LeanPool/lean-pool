@@ -1,0 +1,47 @@
+slug: triangular-hilbert
+title: The triangular Hilbert form and Carleson's theorem
+summary: >-
+  Proves the symmetric L³ estimate and principal-value existence for the
+  triangular Hilbert form on complex Schwartz inputs, and its unique bounded
+  trilinear extension to L³. Uses the trilinear estimate to deduce almost-everywhere convergence of symmetric Fourier
+  partial sums for continuous one-periodic functions. The proof develops
+  matrix trace estimates, Gaussian scale kernels, heat-flow identities and
+  the passage from finite lattice sums to the Euclidean estimate.
+branch: harmonic analysis
+entry_module: LeanPool.Triangular
+authors:
+  - Joris Roos
+source:
+  url: https://github.com/roos-j/lean-triangular/tree/9edcdf82f32466c0275ba6d67f5b37876c23ed0c
+  github_repo: roos-j/lean-triangular
+  commit: 9edcdf82f32466c0275ba6d67f5b37876c23ed0c
+  completion_url: https://github.com/roos-j/lean-triangular/commit/069e117a02a6b8a5946fbe35bff29308bcfb17f7
+  completion_date: '2026-11-11T16:14:58Z'
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+  - Triangular.triangular_ht_bound
+  - Triangular.Auto.tendsto_truncatedForm
+  - Triangular.Auto.triangularHilbert_unique_extension
+  - Triangular.classical_carleson
+main_results:
+  - declaration: Triangular.triangular_ht_bound
+    informal: >-
+      The norm of the triangular Hilbert trilinear form is at most an absolute
+      constant times the product of the three L³ norms for complex Schwartz inputs.
+  - declaration: Triangular.Auto.tendsto_truncatedForm
+    informal: The trilinear truncations converge to the principal value as the cutoff decreases to zero.
+  - declaration: Triangular.Auto.triangularHilbert_unique_extension
+    informal: >-
+      The principal-value form extends uniquely to a continuous complex
+      trilinear form on L³, with the same norm bound.
+  - declaration: Triangular.classical_carleson
+    informal: The symmetric Fourier partial sums of a continuous one-periodic function converge to it almost everywhere.
+tags:
+  - harmonic-analysis
+  - singular-integrals
+  - fourier-series
+msc:
+  - 42B20
+  - 42A20
