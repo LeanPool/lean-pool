@@ -84,7 +84,7 @@ theorem lipschitzOnWith_symm_extChartAt_ofRiemannianMetric
         (TangentSpace (𝓘(ℝ, E)) y →L[ℝ] TangentSpace I ((extChartAt I x).symm y)) :=
     ContinuousLinearMap.toSeminormedAddCommGroup
   -- Start from a local bound on the derivative of `(extChartAt I x).symm`.
-  rcases eventually_enorm_mfderivWithin_symm_extChartAt_lt (I := I) x with ⟨C, C_pos, hC⟩
+  rcases eventually_eNorm_mfderivWithin_symm_extChartAt_lt (I := I) x with ⟨C, C_pos, hC⟩
   refine ⟨C, C_pos, ?_⟩
   let P : Set E :=
     {y | ‖mfderivWithin 𝓘(ℝ, E) I (extChartAt I x).symm (range I) y‖ₑ < C}
