@@ -57,8 +57,8 @@ by
     · constructor
       · unfold Term.neq
         rw [IsDelta0.of_open.not]
-        constructor; constructor; constructor
-        constructor; constructor
+        · constructor; constructor; constructor
+        · constructor; constructor
       · apply IsDelta0.bdEx
         rw [IsDelta0.flip]
         rw [IsDelta0.display2]
