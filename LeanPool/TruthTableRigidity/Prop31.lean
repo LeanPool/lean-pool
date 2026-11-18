@@ -124,13 +124,14 @@ theorem step_relations {F : Oracle → Oracle} (hF : Continuous F) (hP : Induces
     rw [← this]
     exact pre_prefix x (le_max_right _ _)
   · intro G H hG hH
-    have h3 : ((G : Oracle), (H : Oracle)) ∈ V₃ := hbox ⟨hG, hH⟩
-    refine ⟨?_, ?_, ?_⟩
-    · exact hRp _ (hV₂V (hV₃V h3))
-    · exact hRm _ (hV₃V h3)
-    · have e := hRh _ h3
-      dsimp only [Function.comp, Z2.of] at e
-      exact e
+    let point : Oracle × Oracle := (G, H)
+    have h3 : point ∈ V₃ := hbox ⟨hG, hH⟩
+    have h2 : point ∈ V₂ := hV₃V h3
+    have h1 : point ∈ V₁ := hV₂V h2
+    change F (zaddO G H) = Φp (ojoin (F G) (F H)) ∧
+      F G = Φm (ojoin (F (zaddO G H)) (F (znegO H))) ∧
+      F (zaddO G H) = Φh (ojoin (F G) (F (zaddO G (zaddO H H))))
+    exact ⟨hRp point h1, hRm point h2, hRh point h3⟩
 
 /-! ### Step 2: a splitting bit -/
 
