@@ -246,7 +246,7 @@ theorem lintegral_enorm_paperLowCZKernel_levelAtom_compl_fivefold_le
           hf hAk m hR hx)
     · rw [indicator_of_notMem hxE,
         integral_paperLowCZKernel_levelAtom_eq_zero_of_not_mem_expanded
-          k B m hxE, enorm_zero]
+          k B m hxE, eNorm_zero]
   calc
     (∫⁻ x in (centeredInterval z (5 * R))ᶜ,
       ‖∫ y in centeredInterval z R,
@@ -338,7 +338,7 @@ theorem tsum_lintegral_enorm_paperLowCZKernel_levelAtom_verySmall_le_atomMass
     rw [← setIntegral_norm_levelAtom_eq_integral k (z i) (R i)]
     exact lintegral_enorm_paperLowCZKernel_levelAtom_verySmall_le
       hf hAk hB hj (hR i) (hscale i)
-  have hsum := ENNReal.tsum_le_tsum hlocal
+  have hsum := tsum_le_tsum hlocal
   rwa [ENNReal.tsum_mul_left] at hsum
 
 /-- Summing the very-small estimate over a disjoint family of atoms in one
@@ -372,7 +372,7 @@ theorem tsum_lintegral_enorm_paperLowCZKernel_levelAtom_verySmall_le
     rw [← setIntegral_norm_levelAtom_eq_integral k (z i) (R i)]
     exact lintegral_enorm_paperLowCZKernel_levelAtom_verySmall_le
       hf hAk hB hj (hR i) (hscale i)
-  have hsum := ENNReal.tsum_le_tsum hlocal
+  have hsum := tsum_le_tsum hlocal
   rw [ENNReal.tsum_mul_left] at hsum
   have hmass := tsum_atomL1Mass_le_two_mul_global_level_mass
     hf hAk z R hdisj
@@ -570,7 +570,7 @@ theorem canonicalScaleLowActionMass_le_outputMass
         ∑' I : {I : stoppingCell f // I ∈ S}, ‖F I x‖ₑ := by
       apply lintegral_mono
       intro x
-      exact enorm_tsum_le_tsum_enorm
+      exact eNorm_tsum_le_tsum_eNorm
     _ = ∑' I : {I : stoppingCell f // I ∈ S},
         ∫⁻ x in Eᶜ, ‖F I x‖ₑ := by
       rw [lintegral_tsum hmeas]
@@ -578,7 +578,7 @@ theorem canonicalScaleLowActionMass_le_outputMass
         ∫⁻ x in (centeredInterval
           (stoppingCenter I.1) (5 * stoppingLength I.1))ᶜ,
           ‖F I x‖ₑ := by
-      apply ENNReal.tsum_le_tsum
+      apply tsum_le_tsum
       intro I
       exact lintegral_mono_set (hsub I)
     _ = canonicalScaleVerySmallOutputMass A f k B m j := by
@@ -667,7 +667,7 @@ theorem tsum_tsum_restrictedCanonicalVerySmallOutputMass_le
           ENNReal.ofReal (3 * lowKernelDerivativeConstant) *
             (ENNReal.ofReal (restrictedVerySmallWeight B c j m) *
               canonicalScaleAtomL1Mass A f k j) :=
-      ENNReal.tsum_le_tsum (fun m ↦ ENNReal.tsum_le_tsum (hterm m))
+      tsum_le_tsum (fun m ↦ tsum_le_tsum (hterm m))
     _ = ENNReal.ofReal (3 * lowKernelDerivativeConstant) *
         (∑' m : ℤ, ∑' j : ℤ,
           ENNReal.ofReal (restrictedVerySmallWeight B c j m) *
@@ -765,9 +765,9 @@ theorem tsum_tsum_restrictedCanonicalScaleLowActionMass_le_levelMass
       restrictedCanonicalScaleLowActionMass A f k B c m j) ≤
         ∑' m : ℤ, ∑' j : ℤ,
           restrictedCanonicalVerySmallOutputMass A f k B c m j := by
-      apply ENNReal.tsum_le_tsum
+      apply tsum_le_tsum
       intro m
-      apply ENNReal.tsum_le_tsum
+      apply tsum_le_tsum
       intro j
       exact restrictedCanonicalScaleLowActionMass_le_outputMass hf hfi hAk m j
     _ ≤ _ := tsum_tsum_restrictedCanonicalVerySmallOutputMass_le_levelMass
@@ -894,7 +894,7 @@ theorem lintegral_lacunaryVerySmallLowContribution_compl_le
               (6 * lowKernelDerivativeConstant * verySmallGeometricConstant) *
             PositiveLevelIntegration.magnitudeLevelL1Mass
               volume lacunaryAmplitude f k := by
-      apply ENNReal.tsum_le_tsum
+      apply tsum_le_tsum
       intro k
       exact lintegral_verySmallLowContributionAtLevel_compl_le
         hf hfi (lacunaryAmplitude_pos k).le (hB k)

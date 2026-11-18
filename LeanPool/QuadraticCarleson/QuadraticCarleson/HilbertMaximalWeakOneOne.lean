@@ -141,7 +141,7 @@ theorem continuous_enorm_zeroHilbertTruncation_positiveRadii
     {f : ℝ → ℂ} (hf : Integrable f) (x : ℝ) :
     Continuous (fun ε : {ε : ℝ // 0 < ε} ↦
       ‖quadraticHilbertTrunc 0 ε.1 f x‖ₑ) :=
-  (continuous_zeroHilbertTruncation_positiveRadii hf x).enorm
+  (continuous_zeroHilbertTruncation_positiveRadii hf x).eNorm
 
 /-- A fixed countable dense set of positive truncation radii. -/
 def densePositiveRadii : Set {ε : ℝ // 0 < ε} :=
@@ -170,7 +170,7 @@ theorem measurable_countableZeroHilbertMaximalTruncation
   let _ := countable_densePositiveRadii.toEncodable
   apply Measurable.iSup
   intro ε
-  exact (measurable_quadraticHilbertTrunc_l0 0 ε.1.1 f).enorm
+  exact (measurable_quadraticHilbertTrunc_l0 0 ε.1.1 f).eNorm
 
 /-- Measurability of the genuine supremum over all positive real radii. -/
 theorem measurable_zeroHilbertMaximalTruncation (f : L0Infinity) :
@@ -556,7 +556,7 @@ theorem enorm_zeroHilbertTruncation_le_eight_maximal_of_interval_near
       change ‖b y‖ₑ ≤
         (Metric.closedBall x (2 * ε)).indicator (fun u ↦ ‖b u‖ₑ) y
       rw [hsupp y hyI]
-      simp only [enorm_zero, zero_le]
+      simp only [eNorm_zero, zero_le]
   calc
     ‖quadraticHilbertTrunc 0 ε b x‖ₑ ≤
         ENNReal.ofReal (1 / ε) * ∫⁻ y, ‖b y‖ₑ := henorm
@@ -895,7 +895,7 @@ theorem integral_norm_stoppingHilbertBadAtom_le {f : ℝ → ℂ}
 theorem measurable_stoppingHilbertBadAtomNormSum {f : ℝ → ℂ}
     (hf : Measurable f) : Measurable (stoppingHilbertBadAtomNormSum f) := by
   let _ := Encodable.ofCountable (stoppingCell f)
-  exact Measurable.tsum fun c ↦ (measurable_stoppingHilbertBadAtom hf c).enorm
+  exact Measurable.tsum fun c ↦ (measurable_stoppingHilbertBadAtom hf c).eNorm
 
 /-- ENNReal form of the single-atom `L¹` estimate. -/
 theorem lintegral_enorm_stoppingHilbertBadAtom_le {f : ℝ → ℂ}
@@ -935,12 +935,12 @@ theorem lintegral_stoppingHilbertBadAtomNormSum_le {f : ℝ → ℂ}
   change (∫⁻ x, ∑' c : stoppingCell f,
     ‖stoppingHilbertBadAtom f c x‖ₑ) ≤ 2 * ∫⁻ x, ‖f x‖ₑ
   rw [lintegral_tsum (fun c ↦
-    (integrable_stoppingHilbertBadAtom hf c).1.enorm)]
+    (integrable_stoppingHilbertBadAtom hf c).1.eNorm)]
   calc
     (∑' c : stoppingCell f, ∫⁻ x, ‖stoppingHilbertBadAtom f c x‖ₑ) ≤
         ∑' c : stoppingCell f,
           2 * ∫⁻ x in c.1.interval (rootLength f), ‖f x‖ₑ :=
-      ENNReal.tsum_le_tsum fun c ↦ lintegral_enorm_stoppingHilbertBadAtom_le hf c
+      tsum_le_tsum fun c ↦ lintegral_enorm_stoppingHilbertBadAtom_le hf c
     _ = 2 * ∑' c : stoppingCell f,
           ∫⁻ x in c.1.interval (rootLength f), ‖f x‖ₑ :=
       ENNReal.tsum_mul_left
@@ -964,7 +964,7 @@ theorem integrable_tsum_stoppingHilbertBadAtom {f : ℝ → ℂ}
         ∫⁻ x, stoppingHilbertBadAtomNormSum f x := by
       apply lintegral_mono
       intro x
-      exact enorm_tsum_le_tsum_enorm
+      exact eNorm_tsum_le_tsum_eNorm
     _ ≤ 2 * ∫⁻ x, ‖f x‖ₑ :=
       lintegral_stoppingHilbertBadAtomNormSum_le hfi
     _ < ∞ := ENNReal.mul_lt_top (by decide +kernel) hfi.hasFiniteIntegral
@@ -1016,13 +1016,13 @@ theorem tsum_lintegral_enorm_sharpKernel_mul_stoppingAtom_lt_top
         change ‖sharpQuadraticTailKernel 0 ε (x - y) *
           stoppingHilbertBadAtom f c y‖ₑ ≤
             ENNReal.ofReal (1 / ε) * ‖stoppingHilbertBadAtom f c y‖ₑ
-        rw [enorm_mul]
+        rw [eNorm_mul]
         apply mul_le_mul' _ le_rfl
         have hk := ENNReal.ofReal_le_ofReal
           (sharpQuadraticTailKernel_norm_le 0 (t := x - y) hε)
         simpa only [ofReal_norm] using hk
       _ = _ := lintegral_const_mul' _ _ (by finiteness)
-  have hs := ENNReal.tsum_le_tsum hterm
+  have hs := tsum_le_tsum hterm
   rw [ENNReal.tsum_mul_left] at hs
   have hsum : (∑' c : stoppingCell f,
       ∫⁻ y, ‖stoppingHilbertBadAtom f c y‖ₑ) =
@@ -1031,7 +1031,7 @@ theorem tsum_lintegral_enorm_sharpKernel_mul_stoppingAtom_lt_top
       ∫⁻ y, ‖stoppingHilbertBadAtom f c y‖ₑ) =
       ∫⁻ y, ∑' c : stoppingCell f, ‖stoppingHilbertBadAtom f c y‖ₑ
     rw [lintegral_tsum (fun c ↦
-      (integrable_stoppingHilbertBadAtom hfi c).1.enorm)]
+      (integrable_stoppingHilbertBadAtom hfi c).1.eNorm)]
   rw [hsum] at hs
   exact hs.trans_lt (ENNReal.mul_lt_top (by finiteness)
     ((lintegral_stoppingHilbertBadAtomNormSum_le hfi).trans_lt
@@ -1189,7 +1189,7 @@ theorem sum_enorm_zeroHilbertTruncation_boundaryStoppingAtoms_le
           hf hx (hs c hc)
       _ ≤ 8 * M := mul_le_mul' le_rfl
         (centeredHardyLittlewoodMaximal_mono_pointwise
-          (fun y ↦ ENNReal.le_tsum (f := fun c' ↦ ‖stoppingHilbertBadAtom f c' y‖ₑ) c) x)
+          (fun y ↦ le_tsum (fun c' ↦ ‖stoppingHilbertBadAtom f c' y‖ₑ) c) x)
   have hboundary := stoppingBoundaryCells_finite_and_ncard_le_two f
     (ε := ε) hx
   have hcard : s.card ≤ 2 := by
@@ -1291,24 +1291,24 @@ theorem enorm_zeroHilbertTruncation_badPart_le_fullKernel_add_boundary
         quadraticHilbertTrunc 0 ε (stoppingHilbertBadAtom f c) x‖ₑ ≤
         ∑' c : stoppingCell f,
           ‖quadraticHilbertTrunc 0 ε (stoppingHilbertBadAtom f c) x‖ₑ :=
-      enorm_tsum_le_tsum_enorm
+      eNorm_tsum_le_tsum_eNorm
     _ ≤ ∑' c : stoppingCell f,
         (‖∫ y in centeredInterval (stoppingCellCenter f c)
             (stoppingCellLength f c),
           ordinaryHilbertKernel x y * stoppingHilbertBadAtom f c y‖ₑ +
         if c ∈ stoppingBoundaryCells f x ε then
           ‖quadraticHilbertTrunc 0 ε (stoppingHilbertBadAtom f c) x‖ₑ else 0) := by
-      apply ENNReal.tsum_le_tsum
+      apply tsum_le_tsum
       intro c
       by_cases hc : c ∈ stoppingBoundaryCells f x ε
       · simp only [hc, ↓reduceIte, self_le_add_left]
       · rcases zeroHilbertTruncation_stoppingAtom_eq_zero_or_full_of_not_boundary
           c hc with hzero | hfull
-        · simp only [hzero, enorm_zero, hc, ↓reduceIte, add_zero, zero_le]
+        · simp only [hzero, eNorm_zero, hc, ↓reduceIte, add_zero, zero_le]
         · simp only [hfull, hc, ↓reduceIte, add_zero, Std.le_refl]
     _ = stoppingFullKernelMajorant f x +
         stoppingBoundaryTruncationMajorant f x ε := by
-      rw [ENNReal.tsum_add]
+      rw [tsum_add]
       rfl
     _ ≤ stoppingFullKernelMajorant f x +
         16 * centeredHardyLittlewoodMaximal
@@ -1446,7 +1446,7 @@ theorem aemeasurable_stoppingFullKernelMajorant {f : ℝ → ℂ}
     (hf : Measurable f) : AEMeasurable (stoppingFullKernelMajorant f) := by
   let _ := Encodable.ofCountable (stoppingCell f)
   exact AEMeasurable.tsum fun c ↦
-    (aestronglyMeasurable_stoppingFullKernelAction hf c).enorm
+    (aestronglyMeasurable_stoppingFullKernelAction hf c).eNorm
 
 /-- The complete full-kernel majorant has the summed cancellation bound on
 the complement of the global tripled stopping union. -/
@@ -1457,12 +1457,12 @@ theorem lintegral_stoppingFullKernelMajorant_compl_triple_le
   let _ := Encodable.ofCountable (stoppingCell f)
   unfold stoppingFullKernelMajorant
   rw [lintegral_tsum (μ := volume.restrict (stoppingTripleBadUnion f)ᶜ)
-    (fun c ↦ (aestronglyMeasurable_stoppingFullKernelAction hf c).enorm.restrict)]
+    (fun c ↦ (aestronglyMeasurable_stoppingFullKernelAction hf c).eNorm.restrict)]
   calc
     _ ≤ ∑' c : stoppingCell f,
         ENNReal.ofReal (32 / 3) *
           ∫⁻ y in c.1.interval (rootLength f), ‖f y‖ₑ := by
-      apply ENNReal.tsum_le_tsum
+      apply tsum_le_tsum
       intro c
       apply (lintegral_mono_set ?_).trans
         (lintegral_enorm_ordinaryHilbertKernel_stoppingAtom_le hf hfi c)
@@ -1664,7 +1664,7 @@ theorem eLpNorm_stoppingGoodHilbertL2Representative_eq_enorm
       ‖ordinaryHilbertTransformL2 (stoppingGoodPartL2 f hf)‖ₑ := by
   change eLpNorm
     (⇑(ordinaryHilbertTransformL2 (stoppingGoodPartL2 f hf)) : ℝ → ℂ) 2 = _
-  exact (Lp.enorm_def
+  exact (Lp.eNorm_def
     (ordinaryHilbertTransformL2 (stoppingGoodPartL2 f hf))).symm
 
 theorem enorm_stoppingGoodPartL2_sq_eq_lintegral
@@ -1672,7 +1672,7 @@ theorem enorm_stoppingGoodPartL2_sq_eq_lintegral
     ‖stoppingGoodPartL2 f hf‖ₑ ^ 2 =
       ∫⁻ x, ‖stoppingGoodPart f x‖ₑ ^ 2 := by
   unfold stoppingGoodPartL2
-  rw [Lp.enorm_toLp (memLp_two_stoppingGoodPart hf),
+  rw [Lp.eNorm_toLp (memLp_two_stoppingGoodPart hf),
     eLpNorm_two_sq_lintegral _ (memLp_two_stoppingGoodPart hf).aestronglyMeasurable]
 
 theorem enorm_stoppingGoodHilbertL2_le
@@ -1877,7 +1877,7 @@ theorem ofReal_cotlarPoissonKernel_le_dyadicBallSeries {r t : ℝ}
           then ENNReal.ofReal ((1 / 4 : ℝ) ^ n / r) else 0) := by
       simp only [one_div, inv_pow, hn'.le, ↓reduceIte]
     rw [hone]
-    exact ENNReal.le_tsum (f := fun k : ℕ ↦ if |t| ≤ (2 : ℝ) ^ (k + 1) * r
+    exact le_tsum (fun k : ℕ ↦ if |t| ≤ (2 : ℝ) ^ (k + 1) * r
       then ENNReal.ofReal ((1 / 4 : ℝ) ^ k / r) else 0) n)
 
 /-- Outside its central ball, the sharp-to-Poisson error is bounded by the
@@ -1898,7 +1898,7 @@ theorem ofReal_cotlarPoissonErrorMajorant_le_dyadicBallSeries {r t : ℝ}
           then ENNReal.ofReal ((1 / 8 : ℝ) ^ n / r) else 0) := by
       simp only [one_div, inv_pow, hn'.le, ↓reduceIte]
     rw [hone]
-    exact ENNReal.le_tsum (f := fun k : ℕ ↦ if |t| ≤ (2 : ℝ) ^ (k + 1) * r
+    exact le_tsum (fun k : ℕ ↦ if |t| ≤ (2 : ℝ) ^ (k + 1) * r
       then ENNReal.ofReal ((1 / 8 : ℝ) ^ k / r) else 0) n)
 
 /-- A constant multiple of the mass of a centered ball is controlled by the
@@ -1956,7 +1956,7 @@ theorem lintegral_cotlarDyadicBallSeries_mul_le_maximal
           ∑' n : ℕ, ENNReal.ofReal
             (4 * ((2 : ℝ) ^ (n + 1) * q ^ n)) *
               centeredHardyLittlewoodMaximal G x := by
-        apply ENNReal.tsum_le_tsum
+        apply tsum_le_tsum
         intro n
         let ρn : ℝ := (2 : ℝ) ^ (n + 1) * r
         let Cn : ℝ := (2 : ℝ) ^ (n + 1) * q ^ n
@@ -2196,7 +2196,7 @@ theorem enorm_cotlarSharpPoissonErrorAction_le_maximal
     ‖cotlarSharpPoissonErrorAction r g x‖ₑ ≤
         ∫⁻ y, ‖((cotlarSharpHilbertKernel r (x - y) -
           cotlarConjugatePoissonKernel r (x - y) : ℝ) : ℂ) * g y‖ₑ :=
-      enorm_integral_le_lintegral_enorm _
+      eNorm_integral_le_lintegral_eNorm _
     _ ≤ ∫⁻ y, ENNReal.ofReal (cotlarPoissonErrorMajorant r (x - y)) *
         ‖g y‖ₑ := by
       apply lintegral_mono
@@ -2204,7 +2204,7 @@ theorem enorm_cotlarSharpPoissonErrorAction_le_maximal
       change ‖((cotlarSharpHilbertKernel r (x - y) -
         cotlarConjugatePoissonKernel r (x - y) : ℝ) : ℂ) * g y‖ₑ ≤
           ENNReal.ofReal (cotlarPoissonErrorMajorant r (x - y)) * ‖g y‖ₑ
-      rw [enorm_mul]
+      rw [eNorm_mul]
       apply mul_le_mul' ?_ le_rfl
       rw [← ofReal_norm]
       apply ENNReal.ofReal_le_ofReal
@@ -2212,7 +2212,7 @@ theorem enorm_cotlarSharpPoissonErrorAction_le_maximal
         (abs_cotlarSharp_sub_conjugatePoisson_le_majorant
           (t := x - y) hr)
     _ ≤ _ := lintegral_ofReal_cotlarPoissonErrorMajorant_mul_le_maximal hr
-      hg.enorm x
+      hg.eNorm x
 
 /-- Convolution with the positive Poisson kernel, in the normalization whose
 total mass is `π`. -/
@@ -2226,13 +2226,13 @@ theorem enorm_cotlarPoissonAction_le_maximal
   calc
     ‖cotlarPoissonAction r g x‖ₑ ≤
         ∫⁻ y, ‖(cotlarPoissonKernel r (x - y) : ℂ) * g y‖ₑ :=
-      enorm_integral_le_lintegral_enorm _
+      eNorm_integral_le_lintegral_eNorm _
     _ = ∫⁻ y, ENNReal.ofReal (cotlarPoissonKernel r (x - y)) * ‖g y‖ₑ := by
       apply lintegral_congr
       intro y
-      rw [enorm_mul, ← ofReal_norm, Complex.norm_real, Real.norm_eq_abs,
+      rw [eNorm_mul, ← ofReal_norm, Complex.norm_real, Real.norm_eq_abs,
         abs_of_nonneg (cotlarPoissonKernel_nonneg hr.le)]
-    _ ≤ _ := lintegral_ofReal_cotlarPoissonKernel_mul_le_maximal hr hg.enorm x
+    _ ≤ _ := lintegral_ofReal_cotlarPoissonKernel_mul_le_maximal hr hg.eNorm x
 
 /-- The conjugate Poisson kernel is uniformly bounded at fixed positive
 radius. -/
@@ -2339,7 +2339,7 @@ theorem quadraticHilbertMaximalTruncation_zero_add_le
   apply iSup_le
   intro ε
   rw [zeroHilbertTruncation_add hf hg ε.2]
-  apply (enorm_add_le _ _).trans
+  apply (eNorm_add_le _ _).trans
   exact add_le_add
     (le_iSup (fun r : {r : ℝ // 0 < r} ↦
       ‖quadraticHilbertTrunc 0 r f x‖ₑ) ε)
@@ -2363,7 +2363,7 @@ theorem quadraticHilbertMaximalTruncation_zero_const_mul
     quadraticHilbertMaximalTruncation 0 (fun y ↦ c * f y) x =
       ‖c‖ₑ * quadraticHilbertMaximalTruncation 0 f x := by
   unfold quadraticHilbertMaximalTruncation
-  simp_rw [zeroHilbertTruncation_const_mul, enorm_mul]
+  simp_rw [zeroHilbertTruncation_const_mul, eNorm_mul]
   rw [ENNReal.mul_iSup]
 
 theorem integrable_stoppingBadDifference {f : ℝ → ℂ}
@@ -2432,7 +2432,7 @@ theorem enorm_quadraticHilbertTrunc_stoppingGoodPart_le_conjugatePoisson
           (fun y ↦ ‖stoppingGoodPart f y‖ₑ) x := by
   rw [quadraticHilbertTrunc_zero_eq_conjugatePoisson_add_error hr
     (integrable_stoppingGoodPart_for_hilbert hf hfi) x]
-  exact (enorm_add_le _ _).trans (add_le_add_right
+  exact (eNorm_add_le _ _).trans (add_le_add_right
     (enorm_cotlarSharpPoissonErrorAction_le_maximal hr
       (measurable_stoppingGoodPart_of_measurable hf) x) _)
 
@@ -2474,7 +2474,7 @@ theorem integral_toReal_stoppingAtomSmallRadiusMaximal_le
       apply integral_congr_ae
       filter_upwards [ae_restrict_mem measurableSet_Icc.compl] with x hx
       rw [stoppingAtomSmallRadiusMaximal_eq_of_notMem_triple f c hx]
-      simp only [toReal_enorm]
+      simp only [toReal_eNorm]
     _ ≤ _ := integral_norm_ordinaryHilbertKernel_stoppingAtom_le hf c
 
 /-- The local `L¹` masses on all canonical stopping cells form a summable
@@ -2562,7 +2562,7 @@ theorem tsum_integral_toReal_stoppingAtomSmallRadiusMaximal_le
     apply integral_congr_ae
     filter_upwards [ae_restrict_mem measurableSet_Icc.compl] with x hx
     rw [stoppingAtomSmallRadiusMaximal_eq_of_notMem_triple f c hx]
-    simp only [toReal_enorm]
+    simp only [toReal_eNorm]
   rw [heq]
   exact tsum_integral_norm_ordinaryHilbertKernel_stoppingAtom_le hf
 

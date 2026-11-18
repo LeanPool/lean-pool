@@ -184,18 +184,18 @@ theorem lintegral_sparseAveragingFunction_mul_enorm
       have hm (I : RealInterval) : AEMeasurable (fun x ↦
           ENNReal.ofReal (localAverage 1 f I) *
             I.carrier.indicator (fun y ↦ ‖g y‖ₑ) x) volume :=
-        aemeasurable_const.mul (hg.aestronglyMeasurable.enorm.indicator I.measurableSet_carrier)
+        aemeasurable_const.mul (hg.aestronglyMeasurable.eNorm.indicator I.measurableSet_carrier)
       rw [lintegral_finsetSum' _ (fun I _ ↦ hm I)]
       apply Finset.sum_congr rfl
       intro I hI
       rw [lintegral_const_mul'' _
-        (hg.aestronglyMeasurable.enorm.indicator I.measurableSet_carrier),
+        (hg.aestronglyMeasurable.eNorm.indicator I.measurableSet_carrier),
         lintegral_indicator I.measurableSet_carrier]
     _ = ∑ I ∈ R, ENNReal.ofReal
         (I.length * localAverage 1 f I * localAverage 1 g I) := by
       apply Finset.sum_congr rfl
       intro I hI
-      rw [← ofReal_integral_norm_eq_lintegral_enorm hg.integrableOn,
+      rw [← ofReal_integral_norm_eq_lintegral_eNorm hg.integrableOn,
         ← ENNReal.ofReal_mul (localAverage_nonneg 1 f I),
         ← intervalL1Average_mul_length g I, localAverage_one_eq_intervalL1Average g I]
       congr 1

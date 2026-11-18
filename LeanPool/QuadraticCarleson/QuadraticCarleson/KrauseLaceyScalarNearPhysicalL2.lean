@@ -316,7 +316,7 @@ theorem eLpNorm_pruned_badLengthTailMaximal_le
   change eLpNorm ((2 : ℝ) • badSubcollectionPrefixMaximal S f I₀ k₀ s scale P P.card)
     2 volume ≤ _
   rw [eLpNorm_const_smul, show ‖(2 : ℝ)‖ₑ = ENNReal.ofReal 2 by
-      exact Real.enorm_of_nonneg (by norm_num1),
+      exact Real.eNorm_of_nonneg (by norm_num1),
     ENNReal.ofReal_mul (by norm_num1 : (0 : ℝ) ≤ 2)]
   exact mul_le_mul_right (eLpNorm_prunedActivePrefixMaximal_le hf I₀ k₀ s hk₀ hs scale
     hlam hparent hsub N hN P.card M) _

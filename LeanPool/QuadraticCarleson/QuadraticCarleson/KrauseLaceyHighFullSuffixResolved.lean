@@ -102,7 +102,7 @@ theorem dyadicSmoothHighPassMaxEnorm_add_le
   apply iSup_le
   intro m
   rw [smoothQuadraticHighPass_add lam (zpow_pos (by norm_num1) _)]
-  exact (enorm_add_le _ _).trans (add_le_add
+  exact (eNorm_add_le _ _).trans (add_le_add
     (le_iSup (fun n : ℕ ↦
       ‖smoothQuadraticHighPass lam ((2 : ℝ) ^ (j + (n : ℤ) - 3)) f x‖ₑ) m)
     (le_iSup (fun n : ℕ ↦
@@ -118,7 +118,7 @@ theorem dyadicSmoothHighPassMaxEnorm_smul
       ‖smoothQuadraticHighPass lam ((2 : ℝ) ^ (j + (m : ℤ) - 3))
         (L0Infinity.smul c f) x‖ₑ =
       ‖c‖ₑ * ‖smoothQuadraticHighPass lam ((2 : ℝ) ^ (j + (m : ℤ) - 3)) f x‖ₑ := by
-    rw [smoothQuadraticHighPass_smul lam (zpow_pos (by norm_num1) _) c f x, enorm_mul]
+    rw [smoothQuadraticHighPass_smul lam (zpow_pos (by norm_num1) _) c f x, eNorm_mul]
   simp_rw [hterm]
   exact (ENNReal.mul_iSup _ _).symm
 
@@ -192,7 +192,7 @@ theorem finiteFullDyadicSuffixMaxNNNorm_add_le
   apply Finset.sup_le
   intro m hm
   rw [finiteFullDyadicSuffix_add]
-  exact (nnnorm_add_le _ _).trans (add_le_add
+  exact (nnNorm_add_le _ _).trans (add_le_add
     (Finset.le_sup (f := fun r ↦ ‖finiteFullDyadicSuffix lam j N r f x‖₊) hm)
     (Finset.le_sup (f := fun r ↦ ‖finiteFullDyadicSuffix lam j N r g x‖₊) hm))
 
@@ -202,7 +202,7 @@ theorem finiteFullDyadicSuffixMaxNNNorm_smul
     finiteFullDyadicSuffixMaxNNNorm lam j N (L0Infinity.smul c f) x =
       ‖c‖₊ * finiteFullDyadicSuffixMaxNNNorm lam j N f x := by
   unfold finiteFullDyadicSuffixMaxNNNorm
-  simp_rw [finiteFullDyadicSuffix_smul, nnnorm_mul]
+  simp_rw [finiteFullDyadicSuffix_smul, nnNorm_mul]
   exact (NNReal.mul_finset_sup ‖c‖₊ _ _).symm
 
 theorem norm_finiteFullDyadicSuffixMaxOperator

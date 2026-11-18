@@ -184,11 +184,11 @@ theorem lacunaryMagnitudeLevels_cover {α : Type*} (f : α → ℂ) :
     strictMono_lacunaryAmplitude (fun t _ ↦ lacunaryAmplitude_cofinal t) f
 
 /-- Actual full-operator magnitude levels for the paper's optimized `A_k`. -/
-def fullMagnitudeLevelSet {α : Type*} (f : α → ℂ) (k : ℕ) : Set α :=
+noncomputable def fullMagnitudeLevelSet {α : Type*} (f : α → ℂ) (k : ℕ) : Set α :=
   magnitudeLevelSet fullAmplitude f k
 
 /-- Actual lacunary magnitude levels for `A_k = 2^(2^(2^k))`. -/
-def lacunaryMagnitudeLevelSet {α : Type*} (f : α → ℂ) (k : ℕ) : Set α :=
+noncomputable def lacunaryMagnitudeLevelSet {α : Type*} (f : α → ℂ) (k : ℕ) : Set α :=
   magnitudeLevelSet lacunaryAmplitude f k
 
 theorem measurableSet_fullMagnitudeLevelSet
@@ -533,7 +533,7 @@ theorem sum_range_fullLevelLIntegral_le_orlicz
     {C : ℝ} (hC : 0 ≤ C) {f : α → ℂ} (hf : Measurable f) (N : ℕ) :
     ∑ k ∈ Finset.range N, fullLevelLIntegral μ C f k ≤
       ∫⁻ x, ENNReal.ofReal (4 * C * (‖f x‖ * paperLog 1 ‖f x‖)) ∂μ := by
-  exact (ENNReal.summable.sum_le_tsum (Finset.range N) (fun _ _ ↦ bot_le)).trans
+  exact (CompleteLattice.summable.sum_le_tsum (Finset.range N) (fun _ _ ↦ bot_le)).trans
     (tsum_fullLevelLIntegral_le_orlicz μ hC hf)
 
 theorem sum_range_lacunaryHighLevelLIntegral_le_orlicz
@@ -542,7 +542,7 @@ theorem sum_range_lacunaryHighLevelLIntegral_le_orlicz
     ∑ k ∈ Finset.range N, lacunaryHighLevelLIntegral μ C f k ≤
       ∫⁻ x, ENNReal.ofReal
         (lacunaryHighLevelConstant C * (‖f x‖ * paperLog 2 ‖f x‖ ^ 2)) ∂μ := by
-  exact (ENNReal.summable.sum_le_tsum (Finset.range N) (fun _ _ ↦ bot_le)).trans
+  exact (CompleteLattice.summable.sum_le_tsum (Finset.range N) (fun _ _ ↦ bot_le)).trans
     (tsum_lacunaryHighLevelLIntegral_le_orlicz μ hC hf)
 
 theorem sum_range_lacunaryLowLevelLIntegral_le_orlicz
@@ -551,7 +551,7 @@ theorem sum_range_lacunaryLowLevelLIntegral_le_orlicz
     ∑ k ∈ Finset.range N, lacunaryLowLevelLIntegral μ C f k ≤
       ∫⁻ x, ENNReal.ofReal (lacunaryLowLevelConstant C *
         (‖f x‖ * paperLog 2 ‖f x‖ ^ 2 * paperLog 4 ‖f x‖)) ∂μ := by
-  exact (ENNReal.summable.sum_le_tsum (Finset.range N) (fun _ _ ↦ bot_le)).trans
+  exact (CompleteLattice.summable.sum_le_tsum (Finset.range N) (fun _ _ ↦ bot_le)).trans
     (tsum_lacunaryLowLevelLIntegral_le_orlicz μ hC hf)
 
 end PositiveLevelIntegration

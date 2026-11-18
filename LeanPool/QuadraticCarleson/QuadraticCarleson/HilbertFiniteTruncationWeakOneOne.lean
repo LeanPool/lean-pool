@@ -287,7 +287,7 @@ theorem finiteAnnularHilbertMax_le_sum {N : ℕ} (ε R : Fin N → ℝ)
         ‖annularHilbertTruncation (ε i) (R i) f x‖₊) : ℝ) ≤
         ↑(∑ i, ‖annularHilbertTruncation (ε i) (R i) f x‖₊) :=
       NNReal.coe_le_coe.mpr hnn
-    _ = _ := by simp only [NNReal.coe_sum, coe_nnnorm]
+    _ = _ := by simp only [NNReal.coe_sum, coe_nnNorm]
 
 theorem integrable_finiteAnnularHilbertMax {N : ℕ} (ε R : Fin N → ℝ)
     (hε : ∀ i, 0 < ε i) {f : ℝ → ℂ} (hf : Integrable f) :
@@ -302,7 +302,7 @@ theorem integrable_finiteAnnularHilbertMax {N : ℕ} (ε R : Fin N → ℝ)
         have hii : Integrable (fun x ↦
             ‖annularHilbertTruncation (ε i) (R i) f x‖) :=
           (integrable_annularHilbertTruncation (hε i) hf).norm
-        simp only [Finset.sup_insert, NNReal.coe_max, coe_nnnorm]
+        simp only [Finset.sup_insert, NNReal.coe_max, coe_nnNorm]
         exact hii.sup ih
   exact hs Finset.univ
 

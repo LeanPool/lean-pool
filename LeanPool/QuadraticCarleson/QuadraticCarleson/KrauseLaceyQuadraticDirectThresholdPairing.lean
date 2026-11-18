@@ -40,12 +40,12 @@ theorem lintegral_pairing_interpolationLow_le
           ∫⁻ x, ENNReal.ofReal (‖g x‖ ^ p)) ^ (1 / 2 : ℝ) := by
   have hlow := integrable_interpolationLow_local hg hgi a
   have hholder := ENNReal.lintegral_mul_le_Lp_mul_Lq volume
-    Real.HolderConjugate.two_two hU.enorm hlow.aestronglyMeasurable.enorm
+    Real.HolderConjugate.two_two hU.eNorm hlow.aestronglyMeasurable.eNorm
   calc
     _ ≤ eLpNorm U 2 volume * eLpNorm (interpolationLow g a) 2 volume := by
-      rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num1) (by decide +kernel)
+      rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num1) (by decide +kernel)
           hU.aestronglyMeasurable,
-        eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num1) (by decide +kernel)
+        eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num1) (by decide +kernel)
           hlow.aestronglyMeasurable]
       exact hholder
     _ ≤ _ := mul_le_mul' le_rfl
@@ -64,12 +64,12 @@ theorem lintegral_pairing_interpolationLow_ennreal_le
           ∫⁻ x, ENNReal.ofReal (‖g x‖ ^ p)) ^ (1 / 2 : ℝ) := by
   have hlow := integrable_interpolationLow_local hg hgi a
   have hholder := ENNReal.lintegral_mul_le_Lp_mul_Lq volume
-    Real.HolderConjugate.two_two hU hlow.aestronglyMeasurable.enorm
+    Real.HolderConjugate.two_two hU hlow.aestronglyMeasurable.eNorm
   calc
     _ ≤ eLpNorm U 2 volume * eLpNorm (interpolationLow g a) 2 volume := by
-      rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num1) (by decide +kernel)
+      rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num1) (by decide +kernel)
           hU.aestronglyMeasurable,
-        eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num1) (by decide +kernel)
+        eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num1) (by decide +kernel)
           hlow.aestronglyMeasurable]
       exact hholder
     _ ≤ _ := mul_le_mul' le_rfl

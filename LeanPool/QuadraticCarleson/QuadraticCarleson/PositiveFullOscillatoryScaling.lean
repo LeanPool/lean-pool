@@ -45,7 +45,7 @@ theorem paperOscillatoryMaximal_const_mul {f : ℝ → ℂ} (hf : Integrable f)
     (c : ℂ) (x : ℝ) :
     paperOscillatoryMaximal (fun y ↦ c * f y) x = ‖c‖ₑ * paperOscillatoryMaximal f x := by
   unfold paperOscillatoryMaximal
-  simp_rw [paperOscillatoryAction_const_mul _ _ hf, enorm_mul]
+  simp_rw [paperOscillatoryAction_const_mul _ _ hf, eNorm_mul]
   exact (ENNReal.mul_iSup _ _).symm
 
 /-- Pointwise division of an input by the oscillatory endpoint level parameter. -/

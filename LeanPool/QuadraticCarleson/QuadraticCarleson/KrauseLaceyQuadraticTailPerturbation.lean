@@ -43,7 +43,7 @@ theorem measurable_finitePieceErrorMajorant
     Measurable (finitePieceErrorMajorant N u v) := by
   classical
   unfold finitePieceErrorMajorant
-  exact Finset.measurable_sum _ fun n _ ↦ (hu n).sub (hv n) |>.enorm
+  exact Finset.measurable_sum _ fun n _ ↦ (hu n).sub (hv n) |>.eNorm
 
 private theorem enorm_sum_Ico_sub_le_errorMajorant
     (N n : ℕ) (u v : ℕ → ℝ → ℂ) (x : ℝ) :
@@ -51,7 +51,7 @@ private theorem enorm_sum_Ico_sub_le_errorMajorant
       finitePieceErrorMajorant N u v x := by
   calc
     ‖∑ j ∈ Finset.Ico n N, (u j x - v j x)‖ₑ ≤
-        ∑ j ∈ Finset.Ico n N, ‖u j x - v j x‖ₑ := enorm_sum_le _ _
+        ∑ j ∈ Finset.Ico n N, ‖u j x - v j x‖ₑ := eNorm_sum_le _ _
     _ ≤ ∑ j ∈ Finset.range N, ‖u j x - v j x‖ₑ := by
       apply Finset.sum_le_sum_of_subset_of_nonneg
         (fun j hj ↦ Finset.mem_range.mpr (Finset.mem_Ico.mp hj).2)
@@ -72,7 +72,7 @@ theorem enorm_finitePieceTail_le_finitePieceTail_add_errorMajorant
     intro j hj
     abel
   rw [htail]
-  exact (enorm_add_le _ _).trans (add_le_add le_rfl
+  exact (eNorm_add_le _ _).trans (add_le_add le_rfl
     (enorm_sum_Ico_sub_le_errorMajorant N n u v x))
 
 /-- Pointwise stability of the finite tail maximal function under a change of

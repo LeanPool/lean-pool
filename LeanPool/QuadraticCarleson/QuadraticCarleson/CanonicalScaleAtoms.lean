@@ -126,7 +126,7 @@ theorem tsum_enorm_stoppingScaleLevelBadPart (A : ℕ → ℝ) (f : ℝ → ℂ)
   rw [tsum_eq_single j₀]
   · simp only [↓reduceIte]
   · intro j hj
-    simp only [hj, ↓reduceIte, enorm_zero]
+    simp only [hj, ↓reduceIte, eNorm_zero]
 
 theorem pairwiseDisjoint_support_stoppingScaleLevelBadPart
     (A : ℕ → ℝ) (f : ℝ → ℂ) (k : ℕ) :
@@ -162,7 +162,7 @@ theorem tsum_lintegral_enorm_stoppingScaleLevelBadPart {A : ℕ → ℝ} {f : �
     (hf : Measurable f) (k : ℕ) :
     (∑' j : ℤ, ∫⁻ x, ‖stoppingScaleLevelBadPart A f j k x‖ₑ) =
       ∫⁻ x, ‖canonicalLevelBadPart A f k x‖ₑ := by
-  rw [← lintegral_tsum (fun j ↦ (measurable_stoppingScaleLevelBadPart hf j k).enorm.aemeasurable)]
+  rw [← lintegral_tsum (fun j ↦ (measurable_stoppingScaleLevelBadPart hf j k).eNorm.aemeasurable)]
   simp only [tsum_enorm_stoppingScaleLevelBadPart]
 
 theorem lintegral_enorm_canonicalLevelBadPart_le {A : ℕ → ℝ} {f : ℝ → ℂ}
@@ -171,10 +171,10 @@ theorem lintegral_enorm_canonicalLevelBadPart_le {A : ℕ → ℝ} {f : ℝ → 
       2 * magnitudeLevelL1Mass volume A f k := by
   have hp (x : ℝ) := map_disjointLevelAtomSum A f k
     (stoppingCenter (f := f)) stoppingLength centeredStoppingIntervals_pairwiseDisjoint
-      (fun z ↦ ‖z‖ₑ) (by simp only [enorm_zero]) x
+      (fun z ↦ ‖z‖ₑ) (by simp only [eNorm_zero]) x
   simp_rw [canonicalLevelBadPart, hp]
   rw [lintegral_tsum (fun c ↦
-    (measurable_levelAtom hf k (stoppingCenter c) (stoppingLength c)).enorm.aemeasurable)]
+    (measurable_levelAtom hf k (stoppingCenter c) (stoppingLength c)).eNorm.aemeasurable)]
   have heq (c : stoppingCell f) :
       (∫⁻ x, ‖levelAtom A f k (stoppingCenter c) (stoppingLength c) x‖ₑ) =
       ENNReal.ofReal (∫ x, ‖levelAtom A f k (stoppingCenter c) (stoppingLength c) x‖) := by
@@ -201,7 +201,7 @@ theorem integrable_stoppingScaleLevelBadPart {A : ℕ → ℝ} {f : ℝ → ℂ}
     (hf : Measurable f) (hfi : Integrable f) (j : ℤ) {k : ℕ} (hAk : 0 ≤ A k) :
     Integrable (stoppingScaleLevelBadPart A f j k) := by
   refine ⟨(measurable_stoppingScaleLevelBadPart hf j k).aestronglyMeasurable, ?_⟩
-  apply (ENNReal.le_tsum j).trans_lt
+  apply (le_tsum _ j).trans_lt
   rw [tsum_lintegral_enorm_stoppingScaleLevelBadPart hf]
   exact (integrable_canonicalLevelBadPart hf hfi hAk).hasFiniteIntegral
 
@@ -257,7 +257,7 @@ theorem tsum_lacunary_scale_level_L1Mass_le {f : ℝ → ℂ} (hf : Measurable f
       iUnion_magnitudeLevelSet_eq_univ
         strictMono_lacunaryAmplitude (fun t _ ↦ lacunaryAmplitude_cofinal t) f]
     simp only [Measure.restrict_univ, ofReal_norm]
-  have hs := ENNReal.tsum_le_tsum (fun k ↦
+  have hs := tsum_le_tsum (fun k ↦
     lintegral_enorm_canonicalLevelBadPart_le hf (lacunaryAmplitude_pos k).le)
   rwa [ENNReal.tsum_mul_left, hm] at hs
 

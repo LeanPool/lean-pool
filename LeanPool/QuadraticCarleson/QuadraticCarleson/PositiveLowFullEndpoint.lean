@@ -32,7 +32,7 @@ open CalderonZygmundLevelAtoms LowKernelLevelSummation
 open PositiveEndpointOptimization PositiveLevelIntegration PositiveHighHeightEstimate
 
 /-- The union of the fivefold enlargements of the atom intervals. -/
-def fivefoldExceptionalSet {ι : Type*} (z R : ι → ℝ) : Set ℝ :=
+noncomputable def fivefoldExceptionalSet {ι : Type*} (z R : ι → ℝ) : Set ℝ :=
   ⋃ i, centeredInterval (z i) (5 * R i)
 
 theorem measurableSet_fivefoldExceptionalSet {ι : Type*} [Countable ι] (z R : ι → ℝ) :
@@ -72,11 +72,11 @@ theorem paperFullLowContribution_le_majorant {ι : Type*} [Countable ι]
     (hdisj : Pairwise (Disjoint on fun i ↦ centeredInterval (z i) (R i)))
     {x : ℝ} (hx : x ∉ fivefoldExceptionalSet z R) :
     paperFullLowContribution f z R x ≤ fullLowMajorant f z R x := by
-  apply ENNReal.tsum_le_tsum
+  apply tsum_le_tsum
   intro k
   apply (paperLowLevelMaximal_disjointLevelAtomSum_le (fullHighCutoff k) hf hfi
     (fullAmplitude_pos k).le z R hdisj x).trans
-  apply ENNReal.tsum_le_tsum
+  apply tsum_le_tsum
   intro i
   exact paperLowBadAtomMaximal_levelAtom_le_majorant (fullHighCutoff k) hf
     (fullAmplitude_pos k).le (hR i)

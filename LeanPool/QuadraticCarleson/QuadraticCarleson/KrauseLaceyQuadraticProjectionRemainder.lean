@@ -1758,7 +1758,7 @@ theorem lintegral_ofReal_finiteProjectionErrorMajorant_sq_eq
   change (∫⁻ x, ENNReal.ofReal (F x) ^ 2) = _
   rw [hIntegral, ← eLpNorm_two_sq_lintegral F
     (memLp_two_finiteProjectionErrorMajorant hu).aestronglyMeasurable,
-    ← Lp.enorm_toLp (memLp_two_finiteProjectionErrorMajorant hu),
+    ← Lp.eNorm_toLp (memLp_two_finiteProjectionErrorMajorant hu),
     ENNReal.ofReal_pow (norm_nonneg _), ofReal_norm]
 
 private theorem toLp_finsetSum_eq_sum

@@ -24,7 +24,7 @@ open scoped ENNReal
 namespace QuadraticCarleson
 
 
-private def bohrRightCell (k a : ℕ) (ρ : ℝ) : Set ℝ :=
+private noncomputable def bohrRightCell (k a : ℕ) (ρ : ℝ) : Set ℝ :=
   Ico ((a : ℝ) / k) (((a : ℝ) + ρ) / k)
 
 private theorem bohrRightCell_subset {k a : ℕ} {ρ : ℝ}

@@ -662,7 +662,7 @@ theorem tsum_volume_stoppingCell_le_lintegral_norm {f : ℝ → ℂ}
     (∑' c : stoppingCell f, volume (c.1.interval (rootLength f))) ≤
         ∑' c : stoppingCell f,
           ∫⁻ x in c.1.interval (rootLength f), ENNReal.ofReal ‖f x‖ :=
-      ENNReal.tsum_le_tsum hlocal
+      tsum_le_tsum hlocal
     _ = ∫⁻ x in stoppingBadUnion f, ENNReal.ofReal ‖f x‖ := by
       rw [stoppingBadUnion,
         lintegral_iUnion measurableSet_stoppingCell_interval stoppingCell_pairwiseDisjoint]
@@ -934,7 +934,7 @@ theorem volumeReal_stoppingBadUnion_le_integral_norm {f : ℝ → ℂ}
       exact ENNReal.ofReal_ne_top) hvol
   rw [Measure.real]
   simp only [ofReal_norm] at hreal
-  exact hreal.trans_eq (integral_norm_eq_lintegral_enorm hf.1).symm
+  exact hreal.trans_eq (integral_norm_eq_lintegral_eNorm hf.1).symm
 
 theorem aestronglyMeasurable_stoppingGoodPart {f : ℝ → ℂ} (hf : Integrable f) :
     AEStronglyMeasurable (stoppingGoodPart f) volume := by

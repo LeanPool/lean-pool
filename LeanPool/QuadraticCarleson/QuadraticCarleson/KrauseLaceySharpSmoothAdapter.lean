@@ -165,14 +165,14 @@ theorem radiusRoundingBoundaryOperator_enorm_le_maximal
   calc
     ‖∫ y, radiusRoundingBoundaryKernel lam ε ρ (x - y) * f y‖ₑ ≤
         ∫⁻ y, ‖radiusRoundingBoundaryKernel lam ε ρ (x - y) * f y‖ₑ :=
-      enorm_integral_le_lintegral_enorm _
+      eNorm_integral_le_lintegral_eNorm _
     _ ≤ ∫⁻ y in closedBall x (2 * ε),
           ENNReal.ofReal (1 / ε) * ‖f y‖ₑ := by
       rw [← lintegral_indicator measurableSet_closedBall]
       apply lintegral_mono
       intro y
       by_cases hy : y ∈ closedBall x (2 * ε)
-      · simp only [enorm_mul, indicator_of_mem hy]
+      · simp only [eNorm_mul, indicator_of_mem hy]
         apply mul_le_mul'
         · simpa only [← ofReal_norm] using ENNReal.ofReal_le_ofReal
             (radiusRoundingBoundaryKernel_norm_le lam hε hερ)
@@ -186,9 +186,9 @@ theorem radiusRoundingBoundaryOperator_enorm_le_maximal
           have hxyρ : |x - y| ≤ ρ := by
             simpa only [mem_closedBall, dist_zero_right, Real.norm_eq_abs] using hs
           simpa only [mem_closedBall, Real.dist_eq, abs_sub_comm, ge_iff_le] using hxyρ.trans hρε
-        simp only [hk, zero_mul, enorm_zero, Std.le_refl]
+        simp only [hk, zero_mul, eNorm_zero, Std.le_refl]
     _ = 4 * centeredAverage (2 * ε) (fun y ↦ ‖f y‖ₑ) x := by
-      rw [MeasureTheory.lintegral_const_mul _ hf.enorm]
+      rw [MeasureTheory.lintegral_const_mul _ hf.eNorm]
       unfold centeredAverage
       rw [show ENNReal.ofReal (1 / ε) =
           4 / ENNReal.ofReal (2 * (2 * ε)) by
@@ -227,7 +227,7 @@ theorem quadraticHilbertTrunc_enorm_le_dyadicRounded_add_maximal
       linear_combination hid
     _ ≤ ‖quadraticHilbertTrunc lam ρ f x‖ₑ +
           ‖∫ y, radiusRoundingBoundaryKernel lam ε ρ (x - y) * f y‖ₑ :=
-      enorm_add_le _ _
+      eNorm_add_le _ _
     _ ≤ _ := add_le_add le_rfl hb
 
 /-- Smooth high-pass truncation kernel at radius `ρ`. For dyadic `ρ` this
@@ -582,7 +582,7 @@ theorem quadraticHilbertTrunc_enorm_le_smoothHighPass_add_maximal
       ‖smoothQuadraticHighPass lam ρ f x‖ₑ +
         8 * centeredHardyLittlewoodMaximal (fun y ↦ ‖f y‖ₑ) x := by
   rw [quadraticHilbertTrunc_eq_smoothHighPass_add_boundary lam hρ hfi]
-  exact (enorm_add_le _ _).trans (add_le_add le_rfl
+  exact (eNorm_add_le _ _).trans (add_le_add le_rfl
     (cutoffBoundaryOperator_enorm_le_maximal lam hρ f hf x))
 
 /-- The complete deterministic sharp-to-smooth comparison. Its constant
@@ -668,7 +668,7 @@ theorem finiteRadiusQuadraticHilbertMaxTestOperator_locallyIntegrable
     induction s using Finset.induction_on with
     | empty => simp only [Finset.sup_empty, bot_eq_zero', NNReal.coe_zero, measurable_const]
     | @insert ε s hε ih =>
-        simp only [Finset.sup_insert, NNReal.coe_max, coe_nnnorm]
+        simp only [Finset.sup_insert, NNReal.coe_max, coe_nnNorm]
         exact (measurable_quadraticHilbertTrunc lam ε.1.1 f.measurable_toFun).norm.max ih
   have hmeas : Measurable
       (finiteRadiusQuadraticHilbertMaxTestOperator lam s f) := by
@@ -720,7 +720,7 @@ theorem finiteRadiusSmoothHighPassMaxNNNorm_add_le
       rw [smoothQuadraticHighPass_add lam (dyadicCeilRadius_pos ε.1.1 ε.1.2)]
     _ ≤ ‖smoothQuadraticHighPass lam (dyadicCeilRadius ε.1.1 ε.1.2) f x‖₊ +
         ‖smoothQuadraticHighPass lam (dyadicCeilRadius ε.1.1 ε.1.2) g x‖₊ :=
-      nnnorm_add_le _ _
+      nnNorm_add_le _ _
     _ ≤ (s.sup fun δ ↦ ‖smoothQuadraticHighPass lam
           (dyadicCeilRadius δ.1.1 δ.1.2) f x‖₊) +
         s.sup fun δ ↦ ‖smoothQuadraticHighPass lam
@@ -750,7 +750,7 @@ theorem finiteRadiusSmoothHighPassMaxNNNorm_smul
           (dyadicCeilRadius ε.1.1 ε.1.2) f x‖₊ := by
       congr 1
       funext ε
-      rw [nnnorm_mul]
+      rw [nnNorm_mul]
     _ = ‖c‖₊ * (s.sup fun ε ↦ ‖smoothQuadraticHighPass lam
           (dyadicCeilRadius ε.1.1 ε.1.2) f x‖₊) :=
       (NNReal.mul_finset_sup ‖c‖₊ s _).symm
@@ -793,7 +793,7 @@ theorem finiteRadiusSharpMax_enorm_le_smoothHighPassMax_add_maximal
   calc
     (↑‖quadraticHilbertTrunc lam ε.1.1 f x‖₊ : ℝ≥0∞) =
         ‖quadraticHilbertTrunc lam ε.1.1 f x‖ₑ := by
-      simp only [enorm_eq_nnnorm]
+      simp only [eNorm_eq_nnNorm]
     _ ≤ ‖smoothQuadraticHighPass lam
           (dyadicCeilRadius ε.1.1 ε.1.2) f x‖ₑ +
           16 * centeredHardyLittlewoodMaximal (fun y ↦ ‖f y‖ₑ) x :=
@@ -804,7 +804,7 @@ theorem finiteRadiusSharpMax_enorm_le_smoothHighPassMax_add_maximal
             (dyadicCeilRadius δ.1.1 δ.1.2) f x‖₊ : ℝ≥0∞)) +
           16 * centeredHardyLittlewoodMaximal (fun y ↦ ‖f y‖ₑ) x := by
       apply add_le_add
-      · simpa [enorm_eq_nnnorm] using Finset.le_sup (s := s)
+      · simpa [eNorm_eq_nnNorm] using Finset.le_sup (s := s)
           (f := fun δ ↦ (↑‖smoothQuadraticHighPass lam
             (dyadicCeilRadius δ.1.1 δ.1.2) f x‖₊ : ℝ≥0∞)) hεs
       · exact le_rfl

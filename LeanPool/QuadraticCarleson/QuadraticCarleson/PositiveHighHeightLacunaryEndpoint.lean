@@ -129,7 +129,7 @@ noncomputable def paperLacunaryHighContribution (B : ℕ → ℕ) (b : ℕ → �
 
 theorem paperLacunaryHighContribution_le_real (B : ℕ → ℕ) (b : ℕ → ℝ → ℂ)
     (x : ℝ) : paperLacunaryHighContribution B b x ≤ paperHighContribution B b x := by
-  apply ENNReal.tsum_le_tsum
+  apply tsum_le_tsum
   intro k
   apply iSup_le
   intro m
@@ -146,9 +146,10 @@ theorem lacunaryHighContribution_levelSet_le_orlicz
       (fun k ↦ disjointLevelAtomSum lacunaryAmplitude f k z R) x} ≤
       lacunaryHighEndpointConstant *
         ∫⁻ x, ENNReal.ofReal (‖f x‖ * paperLog 2 ‖f x‖ ^ 2) := by
-  apply (measure_mono (fun x hx ↦ hx.trans_le
-    (paperLacunaryHighContribution_le_real _ _ x))).trans
-  exact realHighContribution_lacunaryLevels_levelSet_le_orlicz hf hfi z R hR hdisj
+  refine (measure_mono ?_).trans
+    (realHighContribution_lacunaryLevels_levelSet_le_orlicz hf hfi z R hR hdisj)
+  intro x hx
+  exact hx.trans_le (paperLacunaryHighContribution_le_real _ _ x)
 
 end PositiveHighHeightEstimate
 end QuadraticCarleson

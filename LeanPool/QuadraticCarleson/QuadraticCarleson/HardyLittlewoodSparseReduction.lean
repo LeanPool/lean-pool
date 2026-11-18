@@ -188,7 +188,7 @@ theorem measurable_finiteCenteredMaximal
     (s : Finset PositiveRational) (f : L0Infinity) :
     Measurable (finiteCenteredMaximal s f) := by
   exact Measurable.biSup (↑s : Set PositiveRational) s.countable_toSet fun q hq ↦
-    measurable_centeredAverage (q : ℝ) f.measurable_toFun.enorm
+    measurable_centeredAverage (q : ℝ) f.measurable_toFun.eNorm
 
 theorem finiteCenteredMaximal_mono {s t : Finset PositiveRational} (hst : s ⊆ t)
     (f : ℝ → ℂ) (x : ℝ) : finiteCenteredMaximal s f x ≤ finiteCenteredMaximal t f x := by
@@ -209,7 +209,7 @@ theorem lintegral_centeredMaximal_pairing_eq_iSup_finite (f g : L0Infinity) :
   simp_rw [centeredMaximal_eq_iSup_finite, ENNReal.iSup_mul]
   apply lintegral_iSup_directed_of_measurable
   · intro s
-    exact (measurable_finiteCenteredMaximal s f).mul g.measurable_toFun.enorm
+    exact (measurable_finiteCenteredMaximal s f).mul g.measurable_toFun.eNorm
   · intro s t
     refine ⟨s ∪ t, ?_, ?_⟩
     · intro x
@@ -236,7 +236,7 @@ theorem localAverage_one_le (g : L0Infinity) (I : RealInterval) {p : ℝ} (hp : 
   have hlen : ENNReal.ofReal I.length ≠ 0 :=
     ENNReal.ofReal_ne_zero_iff.mpr I.length_pos
   let : IsProbabilityMeasure μ := ⟨by
-    simp [μ, Measure.smul_apply, ENNReal.inv_mul_cancel hlen ENNReal.ofReal_ne_top]⟩
+    simp [μ, ENNReal.inv_mul_cancel hlen ENNReal.ofReal_ne_top]⟩
   have hav (r : ℝ) (hr : 0 < r) : ENNReal.ofReal (localAverage r g I) = eLpNorm' g r μ := by
     rw [ofReal_localAverage_eq_rpow_lintegral r hr g I (g.integrableOn_norm_rpow I hr.le)]
     simp only [ENNReal.div_eq_inv_mul, eLpNorm', lintegral_smul_measure, smul_eq_mul, μ]
@@ -247,7 +247,7 @@ theorem localAverage_one_le (g : L0Infinity) (I : RealInterval) {p : ℝ} (hp : 
 
 theorem sparseForm_one_le (f : ℝ → ℂ) (g : L0Infinity) (S : Set RealInterval)
     {p : ℝ} (hp : 1 ≤ p) : sparseForm 1 f g S ≤ sparseForm p f g S := by
-  apply ENNReal.tsum_le_tsum
+  apply tsum_le_tsum
   intro I
   apply ENNReal.ofReal_le_ofReal
   exact mul_le_mul_of_nonneg_left (localAverage_one_le g I.1 hp)
@@ -292,9 +292,9 @@ theorem hasSparseOneOneBound_centered_of_finite_laminar
   have hBi : B ≤ ∫⁻ x,
       centeredHardyLittlewoodMaximal (fun y ↦ ‖f y‖ₑ) x * ‖g x‖ₑ := by
     have hstar (z : ℂ) : ‖star z‖ₑ = ‖z‖ₑ := by simp [← ofReal_norm]
-    have hh := enorm_integral_le_lintegral_enorm (μ := volume)
+    have hh := eNorm_integral_le_lintegral_eNorm (μ := volume)
       (fun x ↦ centeredHardyLittlewoodBoundaryOperator f x * star (g x))
-    simpa only [B, operatorPairing, ofReal_norm, enorm_mul,
+    simpa only [B, operatorPairing, ofReal_norm, eNorm_mul,
       enorm_centeredHardyLittlewoodBoundaryOperator, hstar] using hh
   rw [lintegral_centeredMaximal_pairing_eq_iSup_finite] at hBi
   obtain ⟨s, hs⟩ := lt_iSup_iff.mp
@@ -311,13 +311,13 @@ theorem hasSparseOneOneBound_centered_of_finite_laminar
         apply lintegral_mono
         intro x
         by_cases hx : g x = 0
-        · simp only [hx, enorm_zero, mul_zero, Finset.sum_const_zero, Std.le_refl]
+        · simp only [hx, eNorm_zero, mul_zero, Finset.sum_const_zero, Std.le_refl]
         · simpa only [mul_assoc, Finset.sum_mul] using mul_le_mul' (hG f x hx) le_rfl
       _ = _ := by
         rw [lintegral_const_mul' _ _ (by decide +kernel)]
         congr 1
         exact lintegral_finsetSum _ fun shift _ ↦
-          (measurable_finiteIntervalMaximal (G shift) f).mul g.measurable_toFun.enorm
+          (measurable_finiteIntervalMaximal (G shift) f).mul g.measurable_toFun.eNorm
   have hsum : (∑ shift : Fin 3, ∫⁻ x, finiteIntervalMaximal (G shift) f x * ‖g x‖ₑ) ≤
       3 * (ENNReal.ofReal K * sparseForm 1 f g (R shift₀)) := by
     calc

@@ -463,7 +463,7 @@ theorem operatorPairing_localizedTailMaximalTestOperator_le
         (Filter.Eventually.of_forall fun x ↦ le_rfl)
     have hof : ENNReal.ofReal ‖operatorPairing T f g‖ ≤
         ∫⁻ x, ‖T f x * star (g x)‖ₑ :=
-      (ENNReal.ofReal_le_ofReal hnorm).trans_eq (ofReal_integral_norm_eq_lintegral_enorm hi)
+      (ENNReal.ofReal_le_ofReal hnorm).trans_eq (ofReal_integral_norm_eq_lintegral_eNorm hi)
     apply hof.trans
     apply lintegral_mono
     intro x

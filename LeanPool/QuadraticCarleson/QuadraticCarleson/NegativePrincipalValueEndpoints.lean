@@ -34,7 +34,7 @@ theorem functionOperatorLevelSet_measure_congr_ae
       volume (functionOperatorLevelSet S f α) := by
   apply measure_congr
   filter_upwards [hTS] with x hx
-  change (ENNReal.ofReal α < T f x) = (ENNReal.ofReal α < S f x)
+  change (ENNReal.ofReal α < T f x) ↔ (ENNReal.ofReal α < S f x)
   rw [hx]
 
 /-- The source modular bound is unchanged under a.e. replacement of each
