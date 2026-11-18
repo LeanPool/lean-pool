@@ -605,16 +605,64 @@ theorem eval3_nonnegative
     allNonnegative2 (fun q => eval2 q v z) ?_ hu p hp
   intro q hq
   exact eval2_nonnegative hq hv hz
+
+-- Expose each reduced operand through a kernel-checked equality. Keeping these
+-- equalities as lemmas lets the kernel check each convolution on concrete lists.
+local elab "reduceBellmanOperation" : conv => Lean.Elab.Tactic.withMainContext do
+  let expression ← Lean.Elab.Tactic.Conv.getLhs
+  let reduced ← Lean.Meta.reduce expression
+  if expression == reduced then return
+  let equality ← Lean.Meta.mkEq expression reduced
+  let reflexivity ← Lean.Meta.mkEqRefl reduced
+  let reductionName ← Lean.Meta.mkAuxLemma [] equality reflexivity
+    (kind? := some `polynomialReduction)
+  Lean.Elab.Tactic.Conv.updateLhs reduced (Lean.mkConst reductionName)
+
+local syntax "reduceBellmanPolynomial" : conv
+
+local macro_rules
+  | `(conv| reduceBellmanPolynomial) => `(conv| {
+      try (conv => { congr <;> reduceBellmanPolynomial })
+      reduceBellmanOperation
+    })
+
+local macro "checkBellmanChart" chart:ident formula:ident : tactic =>
+  `(tactic| {
+    unfold $chart $formula;
+    conv_lhs => { arg 1; zeta; reduceBellmanPolynomial };
+    rfl
+  })
+
+-- Keep the existing auxiliary lemma names in the public chart checks.
+private theorem chartPlus_normalized_check : allNonnegative3 chartPlus = true := by
+  checkBellmanChart chartPlus projectiveBellmanAt
+
 theorem chartPlus_check : allNonnegative3 chartPlus = true := by
-  decide +kernel
+  as_aux_lemma => exact chartPlus_normalized_check
+
+private theorem chartOne_normalized_check : allNonnegative3 chartOne = true := by
+  checkBellmanChart chartOne bellmanAt
+
 theorem chartOne_check : allNonnegative3 chartOne = true := by
-  decide +kernel
+  as_aux_lemma => exact chartOne_normalized_check
+
+private theorem chartTwo_normalized_check : allNonnegative3 chartTwo = true := by
+  checkBellmanChart chartTwo bellmanAt
+
 theorem chartTwo_check : allNonnegative3 chartTwo = true := by
-  decide +kernel
+  as_aux_lemma => exact chartTwo_normalized_check
+
+private theorem chartThree_normalized_check : allNonnegative3 chartThree = true := by
+  checkBellmanChart chartThree bellmanAt
+
 theorem chartThree_check : allNonnegative3 chartThree = true := by
-  decide +kernel
+  as_aux_lemma => exact chartThree_normalized_check
+
+private theorem chartEndpoint_normalized_check : allNonnegative3 chartEndpoint = true := by
+  checkBellmanChart chartEndpoint projectiveBellmanAt
+
 theorem chartEndpoint_check : allNonnegative3 chartEndpoint = true := by
-  decide +kernel
+  as_aux_lemma => exact chartEndpoint_normalized_check
 
 theorem chartPlus_nonnegative
     {u v z : ℝ} (hu : 0 ≤ u) (hv : 0 ≤ v) (hz : 0 ≤ z) :
