@@ -178,7 +178,8 @@ open Classical in
 /-- The canonical run of `ABW.toNBW A` extracted from a run DAG `G` of `A`: at each
 level it records the set of live states together with the breakpoint obligation
 set. -/
-def helper.p {S Q} {A : ABW S Q} {w : Nat → S} {G : RunDAG A w} : Nat → (Set Q) × (Set Q)
+noncomputable def helper.p {S Q} {A : ABW S Q} {w : Nat → S} {G : RunDAG A w} :
+    Nat → (Set Q) × (Set Q)
 | 0 => ({A.q₀}, ∅)
 | i + 1 =>
   let X' := level (G := G) (i + 1)
