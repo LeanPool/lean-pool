@@ -87,8 +87,8 @@ theorem cemeteryExtension_alive_apply' (κ : ProbabilityTheory.Kernel α α) (x 
     cemeteryExtension κ (Cemetery.alive x) s =
       κ x (Cemetery.alive ⁻¹' s) +
         (1 - κ x Set.univ) * s.indicator 1 Cemetery.delta := by
-  rw [cemeteryExtension_alive_apply, Measure.add_apply, Measure.map_apply measurable_inl hs,
-    Measure.smul_apply, Measure.dirac_apply' _ hs]
+  rw [cemeteryExtension_alive_apply, add_apply, Measure.map_apply measurable_inl hs,
+    smul_apply, Measure.dirac_apply' _ hs]
   rfl
 
 /-- On measurable sets of live states, the extension agrees exactly with the

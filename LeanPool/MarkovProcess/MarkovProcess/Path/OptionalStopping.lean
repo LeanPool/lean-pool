@@ -64,7 +64,7 @@ private theorem apply_eq_sum_indicator {S : Omega → NNReal} {V : Finset NNReal
   rw [Finset.sum_eq_single_of_mem (S omega) (hSV omega)]
   · rw [Set.indicator_of_mem (Set.mem_ofPred_eq ▸ rfl)]
   · intro v _ hv
-    exact Set.indicator_of_notMem (fun h ↦ hv h.symm) _
+    exact Set.indicator_of_notMem (fun (h : S omega = v) ↦ hv h.symm) _
 
 /-- The level sets of a stopping time with finite range are events of the filtration at the
 corresponding time. -/

@@ -130,7 +130,8 @@ theorem preimage_coordinate_killAtExit_of_notMem {S : Set (Cemetery U)}
       {omega : ContinuousPath alpha | (t : ℝ≥0∞) < exitTime U omega ∧
         omega t ∈ Subtype.val '' (Cemetery.alive ⁻¹' S)} := by
   ext omega
-  rw [Set.mem_preimage, coordinate_killAtExit, Set.mem_ofPred_eq]
+  simp only [Set.mem_preimage, Set.mem_ofPred_eq]
+  rw [coordinate_killAtExit]
   by_cases ht : (t : ℝ≥0∞) < exitTime U omega
   · rw [dite_eq_left ht]
     have hmem := mem_image_val_iff U (C := Cemetery.alive ⁻¹' S)
@@ -149,7 +150,8 @@ theorem preimage_coordinate_killAtExit_of_mem {S : Set (Cemetery U)}
           omega t ∈ Subtype.val '' (Cemetery.alive ⁻¹' S)} ∪
         {omega : ContinuousPath alpha | ¬ (t : ℝ≥0∞) < exitTime U omega} := by
   ext omega
-  rw [Set.mem_preimage, coordinate_killAtExit, Set.mem_union, Set.mem_ofPred_eq, Set.mem_ofPred_eq]
+  simp only [Set.mem_preimage, Set.mem_union, Set.mem_ofPred_eq]
+  rw [coordinate_killAtExit]
   by_cases ht : (t : ℝ≥0∞) < exitTime U omega
   · rw [dite_eq_left ht]
     have hmem := mem_image_val_iff U (C := Cemetery.alive ⁻¹' S)

@@ -375,7 +375,7 @@ private theorem partialTraj_map_historyEquiv
           rw [historyEquiv_fst]
           rfl
         · exact Subsingleton.elim _ _
-      all_goals fun_prop
+      fun_prop
   | succ n ih =>
       let _ : IsMarkovKernel (P.parameterizedDenseTimePrefixKernel e iota n) :=
         P.isMarkovKernel_parameterizedDenseTimePrefixKernel hP e iota n
