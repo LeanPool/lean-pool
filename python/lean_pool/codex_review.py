@@ -18,7 +18,7 @@ from pathlib import Path
 from types import SimpleNamespace
 from typing import Any
 
-MODEL = "gpt-6-astra"
+MODEL = "gpt-6.2-astra"
 TIER = "codex-azure"
 TIMEOUT_SECONDS = 6000
 MAX_REQUEST_BYTES = 4_000_000

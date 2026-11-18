@@ -24,10 +24,15 @@ Everything below the rules — title, description, diff — is written by the
 contributor, so it is framed to the model as evidence to verify rather
 than instruction to follow (:data:`UNTRUSTED_INPUT_RULE`).
 
-Reviews default to GPT-6-Astra through the Azure VM's authenticated Codex
-account pool over restricted SSH. Failures never fall back to API credits.
-The optional, explicitly selected ``openai`` backend retains flex/standard
-API billing for local use; the production workflow does not provide an API key.
+Reviews default to :data:`DEFAULT_MODEL` through the Azure VM's authenticated
+Codex account pool over restricted SSH. Failures never fall back to API credits.
+The restricted worker serves only the model pinned in ``codex_review.MODEL``,
+which is also this default, so a client and a worker deployed from different
+revisions refuse each other instead of reviewing with another model.
+The optional, explicitly selected ``openai`` backend bills the API for local
+use. It requests Flex only for a model with a Flex rate in
+:data:`PRICING_PER_M` and Standard otherwise, so every served request has a
+price. The production workflow does not provide an API key.
 
 Large diffs are reviewed in lossless portions within a 272,000-estimated-token
 input budget, followed by integration of their evidence under each rubric.
@@ -92,8 +97,9 @@ logger = logging.getLogger(__name__)
 REPO_ROOT = Path(__file__).resolve().parents[2]
 PROJECT_RULES_PATH = REPO_ROOT / ".github" / "REVIEW_RULES.md"
 REFACTOR_RULES_PATH = REPO_ROOT / ".github" / "REFACTOR_REVIEW_RULES.md"
-# Reviews default to the authenticated Codex account pool on the Azure VM.
-DEFAULT_MODEL = "gpt-6-astra"
+# Reviews default to the authenticated Codex account pool on the Azure VM,
+# whose restricted worker serves exactly this model.
+DEFAULT_MODEL = codex_review.MODEL
 # Preserve the existing review depth.
 DEFAULT_REASONING_EFFORT = "xhigh"
 # Flex tier requests can take longer than the default 10-minute timeout,
@@ -123,8 +129,12 @@ LONG_CONTEXT_INPUT_TOKENS = 272_000
 # Source: https://developers.openai.com/api/docs/pricing — update when
 # bumping DEFAULT_MODEL or when OpenAI changes pricing.
 PRICING_PER_M: dict[str, dict[str, tuple[tuple[float, float], tuple[float, float]]]] = {
-    # Official Standard API rates verified 2026-09-12. Codex has no invoice
+    # Official Standard API rates verified 2026-11-18. Codex has no invoice
     # amount, so its displayed estimate uses these uncached token rates.
+    "gpt-6.2-astra": {
+        "standard": ((8.00, 40.00), (16.00, 60.00)),
+    },
+    # Verified 2026-09-12; kept so earlier review footers still price.
     "gpt-6-astra": {
         "standard": ((10.00, 50.00), (20.00, 75.00)),
     },
@@ -145,6 +155,23 @@ PRICING_PER_M: dict[str, dict[str, tuple[tuple[float, float], tuple[float, float
 }
 
 
+def _pricing_family(model: str) -> str | None:
+    """Return the longest :data:`PRICING_PER_M` prefix that ``model`` matches."""
+    for prefix in sorted(PRICING_PER_M, key=len, reverse=True):
+        if model == prefix or model.startswith(prefix):
+            return prefix
+    return None
+
+
+def priced_tiers(model: str) -> frozenset[str]:
+    """Return the API service tiers with a recorded price for ``model``.
+
+    Empty when the model has no row in :data:`PRICING_PER_M`.
+    """
+    family = _pricing_family(model)
+    return frozenset(PRICING_PER_M[family]) if family else frozenset()
+
+
 def pricing_rates(
     model: str, tier: str, input_tokens: int
 ) -> tuple[float, float] | None:
@@ -163,18 +190,16 @@ def pricing_rates(
     """
     if tier == codex_review.TIER:
         tier = "standard"
-    for prefix in sorted(PRICING_PER_M, key=len, reverse=True):
-        if model == prefix or model.startswith(prefix):
-            rates = PRICING_PER_M[prefix].get(tier)
-            if rates is None:
-                return None
-            long_context = (
-                input_tokens > LONG_CONTEXT_INPUT_TOKENS
-                if prefix == "gpt-6-astra"
-                else input_tokens >= LONG_CONTEXT_INPUT_TOKENS
-            )
-            return rates[1] if long_context else rates[0]
-    return None
+    family = _pricing_family(model)
+    rates = PRICING_PER_M[family].get(tier) if family else None
+    if rates is None:
+        return None
+    long_context = (
+        input_tokens > LONG_CONTEXT_INPUT_TOKENS
+        if "astra" in family
+        else input_tokens >= LONG_CONTEXT_INPUT_TOKENS
+    )
+    return rates[1] if long_context else rates[0]
 
 
 VERDICT_ICON = {
@@ -815,15 +840,26 @@ def _create_completion(
 def _completion_with_tier_fallback(
     client: OpenAI, model: str, messages: list[dict[str, str]], effort: str | None
 ) -> tuple[Any, str, str | None]:
-    """Create a completion on the ``flex`` tier, falling back to standard.
+    """Create a completion on a tier whose cost the footer can report.
 
-    Flex is either out of capacity (429 RateLimitError) or unsupported for
-    this model (historically a 500 InternalServerError); either way retry
-    with ``service_tier="auto"``. Any other error propagates.
+    A model priced only at Standard is requested there and nowhere else.
+    ``service_tier="default"`` is the API's name for Standard; ``"auto"``
+    would follow the project's configuration instead. Its errors propagate,
+    because no other priced tier exists to retry on.
+
+    Every other model starts on ``flex``. Flex is either out of capacity
+    (429 RateLimitError) or unsupported for the model (historically a 500
+    InternalServerError); either way retry with ``service_tier="auto"``.
+    Any other error propagates.
 
     Returns:
         ``(response, tier, effort_used)``.
     """
+    if priced_tiers(model) == {"standard"}:
+        response, effort_used = _create_completion(
+            client, model, messages, effort, service_tier="default"
+        )
+        return response, "standard", effort_used
     try:
         response, effort_used = _create_completion(
             client, model, messages, effort, service_tier="flex"
@@ -1327,7 +1363,7 @@ def render_usage(usage: Any, model: str, tier: str, effort: str | None = None) -
             else f"**Cost:** ${cost:.4f}"
         )
         if in_tok > LONG_CONTEXT_INPUT_TOKENS or (
-            in_tok == LONG_CONTEXT_INPUT_TOKENS and not model.startswith("gpt-6-astra")
+            in_tok == LONG_CONTEXT_INPUT_TOKENS and "astra" not in model
         ):
             cost_cell += " (long-context rate)"
         parts.append(cost_cell)

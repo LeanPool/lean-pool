@@ -5,7 +5,8 @@ and decide which Lean projects belong in `lean-pool`.
 
 Managed with [uv](https://docs.astral.sh/uv/).
 
-LLM pull request reviews run through GPT-6-Astra through a private Codex worker.
+LLM pull request reviews run through a private Codex worker; the heading of each
+review names its model.
 See [review operations](review-operations.md) for contributor-facing behavior.
 
 ## Setup
