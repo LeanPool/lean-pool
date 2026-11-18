@@ -617,23 +617,42 @@ private meta def readBellmanPower (expression : Lean.Expr) : Lean.MetaM Nat := d
   let some power ← Lean.Meta.getNatValue? reduced | throwError "expected a closed natural power"
   return power
 
--- A transparent name can hide a larger tree than its original syntax.
-private meta def bellmanReductionDepth (expression : Lean.Expr) : Lean.MetaM Nat := do
-  let mut pending := #[(expression, 1)]
-  let mut depth := 1
-  while let some (term, level) := pending.back? do
+private meta def bellmanOperands (expression : Lean.Expr) : Array Lean.Expr :=
+  let args := expression.getAppArgs
+  if (bellmanBinaryOperation expression).isSome then #[args[4]!, args[5]!]
+  else if expression.isAppOfArity ``HPow.hPow 6 then #[args[4]!]
+  else if expression.isAppOfArity ``Neg.neg 3 then #[args[2]!]
+  else #[]
+
+-- Visit operands before their parents and reuse depths across shared expressions.
+private meta def bellmanReductionDepth (cache : IO.Ref (Lean.ExprStructMap Nat))
+    (expression : Lean.Expr) : Lean.MetaM Nat := do
+  let mut depths ← cache.get
+  let mut pending : Array (Lean.Expr × Option (Array Lean.Expr)) := #[(expression, none)]
+  while let some (term, operands) := pending.back? do
     Lean.Core.checkSystem "Bellman depth"
     pending := pending.pop
-    depth := max depth level
-    let exposed ← exposeBellmanHead term
-    let args := exposed.getAppArgs
-    let next := level + 1
-    if (bellmanBinaryOperation exposed).isSome then
-      pending := pending.push (args[4]!, next) |>.push (args[5]!, next)
-    else if exposed.isAppOfArity ``HPow.hPow 6 then
-      pending := pending.push (args[4]!, next)
-    else if exposed.isAppOfArity ``Neg.neg 3 then
-      pending := pending.push (args[2]!, next)
+    let key : Lean.ExprStructEq := ⟨term⟩
+    if (depths[key]?).isNone then
+      if let some children := operands then
+        let mut depth := 1
+        for child in children do
+          let childKey : Lean.ExprStructEq := ⟨child⟩
+          let some childDepth := depths[childKey]?
+            | throwError "Bellman operand depth is missing"
+          depth := max depth (childDepth + 1)
+        depths := depths.insert key depth
+      else
+        let children := bellmanOperands (← exposeBellmanHead term)
+        pending := pending.push (term, some children)
+        for child in children do
+          let childKey : Lean.ExprStructEq := ⟨child⟩
+          if (depths[childKey]?).isNone then
+            pending := pending.push (child, none)
+  cache.set depths
+  let rootKey : Lean.ExprStructEq := ⟨expression⟩
+  let some depth := depths[rootKey]?
+    | throwError "Bellman polynomial depth is missing"
   return depth
 
 -- The cache is local to one closed chart and includes the kernel proof of each value.
@@ -684,14 +703,14 @@ termination_by structural fuel
 local elab "reduceBellmanPolynomial" : conv => Lean.Elab.Tactic.withMainContext do
   let expression ← Lean.Elab.Tactic.Conv.getLhs
   let cache ← IO.mkRef ({} : Lean.ExprStructMap (Poly3 × Lean.Expr × Lean.Expr))
-  let (_, value, proof) ← normalizeBellmanPolynomial cache (← bellmanReductionDepth expression)
-    expression
+  let depths ← IO.mkRef ({} : Lean.ExprStructMap Nat)
+  let (_, value, proof) ← normalizeBellmanPolynomial cache
+    (← bellmanReductionDepth depths expression) expression
   Lean.Elab.Tactic.Conv.updateLhs value proof
 
-local macro "checkBellmanChart" chart:ident formula:ident : tactic =>
+local macro "checkBellmanChart" : tactic =>
   `(tactic| {
-    unfold $chart $formula;
-    conv_lhs => { arg 1; zeta; reduceBellmanPolynomial };
+    conv_lhs => { arg 1; reduceBellmanPolynomial };
     rfl
   })
 
@@ -716,11 +735,12 @@ local elab "recordAffineBellmanTerms" : tactic => Lean.Elab.Tactic.withMainConte
   unless fields.isAppOf ``AffineBellmanTerms.mk do
     throwError "expected the named affine Bellman terms"
   let cache ← IO.mkRef ({} : Lean.ExprStructMap (Poly3 × Lean.Expr × Lean.Expr))
+  let depths ← IO.mkRef ({} : Lean.ExprStructMap Nat)
   let mut value := Lean.mkConst ``AffineBellmanTerms.mk
   let mut proof ← Lean.Meta.mkEqRefl value
   for field in fields.getAppArgs do
     let (_, normalized, equality) ← normalizeBellmanPolynomial cache
-      (← bellmanReductionDepth field) field
+      (← bellmanReductionDepth depths field) field
     value := Lean.mkApp value normalized
     proof ← Lean.Meta.mkCongr proof equality
   let checked ← Lean.Meta.mkAppOptM ``Subtype.mk #[some args[0]!, some predicate, some value,
@@ -729,7 +749,7 @@ local elab "recordAffineBellmanTerms" : tactic => Lean.Elab.Tactic.withMainConte
 
 -- Preserve the existing auxiliary lemma names of the public chart checks.
 private theorem chartPlus_normalized_check : allNonnegative3 chartPlus = true := by
-  checkBellmanChart chartPlus projectiveBellmanAt
+  checkBellmanChart
 
 theorem chartPlus_check : allNonnegative3 chartPlus = true := by
   as_aux_lemma => exact chartPlus_normalized_check
@@ -768,7 +788,7 @@ theorem chartThree_check : allNonnegative3 chartThree = true := by
   as_aux_lemma => exact chartThree_normalized_check
 
 private theorem chartEndpoint_normalized_check : allNonnegative3 chartEndpoint = true := by
-  checkBellmanChart chartEndpoint projectiveBellmanAt
+  checkBellmanChart
 
 theorem chartEndpoint_check : allNonnegative3 chartEndpoint = true := by
   as_aux_lemma => exact chartEndpoint_normalized_check
