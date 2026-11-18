@@ -13,6 +13,8 @@ Misere combinatorial games.
 
 namespace MisereGames
 
+open scoped Pointwise
+
 /-!
 # Separation and downlinking
 
@@ -160,7 +162,7 @@ $\{r,\operatorname{adj}_r(H^\mathcal{R})\}$, which will act as Left's set of
 options in the construction of `rightSeparatorCandidate`. Taking $r=0$ recovers
 the set $\{0,(H^\mathcal{R})^\circ\}$.
 -/
-abbrev rightSeparatorLeftSet (r h : G) : Set G :=
+noncomputable abbrev rightSeparatorLeftSet (r h : G) : Set G :=
   {r} ∪ Set.range (fun hr : moves .right h => rootedAdjoint r (hr : G))
 
 /--
@@ -179,7 +181,7 @@ $\{r,\operatorname{adj}_r(G^\mathcal{L})\}$, the Left/Right mirror of
 `rightSeparatorLeftSet`, which will act as Right's set of options in the
 construction of `leftSeparatorCandidate`.
 -/
-abbrev leftSeparatorRightSet (r g : G) : Set G :=
+noncomputable abbrev leftSeparatorRightSet (r g : G) : Set G :=
   {r} ∪ Set.range (fun gl : moves .left g => rootedAdjoint r (gl : G))
 
 /--
@@ -312,19 +314,20 @@ lemma leftSeparating_of_rightSeparating_of_leftSeparatorCandidate_mem
 attribute [local instance] Classical.propDecidable
 
 /-- The optional root contribution to a downlink witness. -/
-public abbrev downlinkZero (r : G) (p : Player) (g h : G) : Set G :=
+public noncomputable abbrev downlinkZero (r : G) (p : Player) (g h : G) : Set G :=
   if IsEnd (-p) g ∧ IsEnd (-p) h then {r} else ∅
 
 /-- The options used in one side of a downlink witness. -/
-public abbrev downlinkOptions (r : G) (p : Player) (g h : G) (z : moves (-p) h → G) : Set G :=
+public noncomputable abbrev downlinkOptions (r : G) (p : Player) (g h : G)
+    (z : moves (-p) h → G) : Set G :=
   Set.range z ∪ Set.range (fun gp : moves (-p) g => rootedAdjoint r (gp : G)) ∪ downlinkZero r p g h
 
 /-- The Left option set of a downlink witness. -/
-abbrev downlinkLeftSet (r g h : G) (y : moves .right h → G) : Set G :=
+noncomputable abbrev downlinkLeftSet (r g h : G) (y : moves .right h → G) : Set G :=
   downlinkOptions r .left g h y
 
 /-- The Right option set of a downlink witness. -/
-abbrev downlinkRightSet (r g h : G) (x : moves .left g → G) : Set G :=
+noncomputable abbrev downlinkRightSet (r g h : G) (x : moves .left g → G) : Set G :=
   downlinkOptions r .right h g x
 
 lemma downlinkOptions_nonempty

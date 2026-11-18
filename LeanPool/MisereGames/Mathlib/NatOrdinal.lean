@@ -91,9 +91,9 @@ theorem inductionOn {C : NatOrdinal → Prop} (o : NatOrdinal)
 /-- The initial segment of `NatOrdinal` below the order type of `r`. -/
 def typein {α : Type u} (r : α → α → Prop) [IsWellOrder α r] :
     @PrincipalSeg α NatOrdinal.{u} r (· < ·) := by
-  refine ⟨RelEmbedding.ofMonotone _ fun a b ha ↦
-    ((PrincipalSeg.ofElement r a).codRestrict _ ?_ ?_).nat_ordinal_type_lt, type r, fun a ↦ ⟨?_,
-      ?_⟩⟩
+  refine ⟨RelEmbedding.ofMonotone (fun a ↦ type (Subrel r (r · a))) fun a b ha ↦
+    ((PrincipalSeg.ofElement r a).codRestrict {x | r x b} ?_ ?_).nat_ordinal_type_lt,
+    type r, fun a ↦ ⟨?_, ?_⟩⟩
   · rintro ⟨c, hc⟩
     exact trans hc ha
   · exact ha

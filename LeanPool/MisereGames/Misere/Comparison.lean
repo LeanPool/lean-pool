@@ -209,7 +209,7 @@ theorem rootedAdjoint_mem_of_isAmbient (h_root : A r) (h_sub : A ≤ IsAmbient)
       · unfold rootedAdjoint at hAdjAmbient
         simpa [hleft, hright] using hAdjAmbient
 termination_by g
-decreasing_by all_goals form_wf
+decreasing_by form_wf
 
 private theorem rightSeparatorLeftSet_mem (h_root : A r) (h_sub : A ≤ IsAmbient)
     {h : G} (hh : IsAmbient h) :
