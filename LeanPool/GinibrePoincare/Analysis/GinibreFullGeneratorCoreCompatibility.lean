@@ -140,8 +140,13 @@ private theorem weak_core_coordinate_integrals {n : ℕ} (hn : 0 < n)
   have hcθ : HasCompactSupport θ := hasCompactSupport_ginibreDirectionalFlux_core hf _
   have hfs : tsupport f ⊆ {z | CollisionFree z} := fun z hz =>
     (collisionFree_iff_not_mem_collisionSet z).mpr (hf.2.2.1 hz)
+  have hfluxSupport : tsupport θ ⊆
+      tsupport (fun z => fderiv ℝ f z (ginibreCoordinateDirection k)) :=
+    tsupport_mul_subset_right (f := ginibreLebesgueDensityReal n)
+  have hderivSupport : tsupport (fun z => fderiv ℝ f z (ginibreCoordinateDirection k)) ⊆
+      tsupport f := tsupport_fderiv_apply_subset ℝ (ginibreCoordinateDirection k)
   have hsθ : tsupport θ ⊆ {z | CollisionFree z} :=
-    (tsupport_mul_subset_right.trans (tsupport_fderiv_apply_subset ℝ _)).trans hfs
+    hfluxSupport.trans (hderivSupport.trans hfs)
   have hδ : MemLp (coreCoordinateDivergence f k) 2 (ginibreMeasure n) := by
     change MemLp (fun z => fderiv ℝ θ z (ginibreCoordinateDirection k) /
       ginibreLebesgueDensityReal n z) 2 (ginibreMeasure n)
