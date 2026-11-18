@@ -59,6 +59,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/CCDN                      https://github.com/jasondavies/ccdn-dimension-growth
   LeanPool/CIVAxisymmetric           https://github.com/scottnarmstrong/CIVAxisymmetric
   LeanPool/CaffarelliKohnNirenberg   https://github.com/scottnarmstrong/CaffarelliKohnNirenberg
+  LeanPool/CarlesonLT                https://github.com/roos-j/lean-lt-carleson
   LeanPool/CarlsonFunctions          https://github.com/bjbraams/lean-codes
   LeanPool/CategoryTheoryToolkit     https://github.com/mycaule/lean-pool
   LeanPool/CencovPetz                https://github.com/abenenson/cencov-petz
@@ -86,6 +87,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/ConnesRigidity            https://github.com/utensil/connes-rigidity
   LeanPool/ConwayRefinement          https://github.com/gaearon/conway-refinement
   LeanPool/Copula                    https://github.com/Corrram/copula
+  LeanPool/CorlessNilpotent          https://github.com/marcelbtec/corless-nilpotent
   LeanPool/CramerWold                https://github.com/Lemmy00/lean-pool
   LeanPool/CriticalPortraits         https://github.com/no-way-labs/lean-critical-portraits
   LeanPool/CryptidsGoldbach          https://github.com/google-deepmind/cryptids
@@ -137,6 +139,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/Fineqs                    https://github.com/nasqret/fineqs
   LeanPool/FiniteGraphFundamentalGroup
                                      https://github.com/Arthur742Ramos/finite-graph-fundamental-group
+  LeanPool/FiniteRamsey              https://github.com/Egly443/lean-ramsey
   LeanPool/FiveEighthsTheorem        https://github.com/ldct/lean-monorepo
   LeanPool/Flean                     https://github.com/josephmckinsey/flean
   LeanPool/FltRegular                https://github.com/leanprover-community/flt-regular
@@ -151,8 +154,10 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/GKPCarry                  https://github.com/lyfar/gkp-carry-lean
   LeanPool/GapCVP                    https://github.com/openai/ten-proofs
   LeanPool/GoemansFlow               https://github.com/jyh/dinitz-verify
+  LeanPool/GoldbergSeymour           https://github.com/wpegden/goldberg_seymour
   LeanPool/GranvilleMoore            https://github.com/AxiomMath/GranvilleMoore
   LeanPool/GraphColouringMatching    https://github.com/jtraverso/lean-pool
+  LeanPool/GraphExtremal             https://github.com/Egly443/lean-graph-extremal
   LeanPool/GrothendieckBessel        https://github.com/lukasliehr/GrothendieckBessel
   LeanPool/HadwigerNelsonBounds      https://github.com/lyfar/hadwiger-nelson-bounds-lean
   LeanPool/HajnalSzemeredi           https://github.com/jtraverso/hajnal-szemeredi
@@ -327,7 +332,9 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/SyntheticEuclid4          https://github.com/ah1112/synthetic_euclid_4
   LeanPool/ThreeGap                  https://github.com/ElVec1o/five-distance-sharp
   LeanPool/TrilinearHilbertTransform https://github.com/roos-j/lean-trilinearht
+  LeanPool/TruthTableRigidity        https://github.com/bjoernkjoshanssen/tt-auto
   LeanPool/Turan3                    https://github.com/ro-gut/turan3
+  LeanPool/TuringConeRigidity        https://github.com/bjoernkjoshanssen/tt-auto
   LeanPool/TuttePath                 https://github.com/mbaker386/tutte-homotopy-lean
   LeanPool/UlmsTheorem               https://github.com/elanroth/UlmsTheorem
   LeanPool/UnconditionalSchauderBasis
@@ -393,6 +400,7 @@ MIT permission notice that follows them.
   LeanPool/FourAP                    https://github.com/boonsuan/4ap
   LeanPool/GaussianMomentsCounterexamples
                                      https://github.com/long-mathematics/gaussian-moments-counterexamples
+  LeanPool/GinibrePoincare           https://github.com/djalilchafai/ginibre-poincare
   LeanPool/GrahamLPT                 https://github.com/JD-Jones-ASES/graham-lpt-lean
   LeanPool/HSDInteriorPointLP        https://github.com/makoto-yamashita/proof-on-a-homogeneous-self-dual-interior-point-method-for-linear-programming
   LeanPool/HersteinJordan            https://github.com/stalex444/herstein-jordan-homomorphisms
