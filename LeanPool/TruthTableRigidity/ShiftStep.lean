@@ -150,6 +150,23 @@ def Relations (F Φp Φm Φh : Oracle → Oracle) (G H : Z2) : Prop :=
   F G = Φm (ojoin (F (G + H)) (F (-H))) ∧
   F (G + H) = Φh (ojoin (F G) (F (G + (H + H))))
 
+/-- The addition and subtraction relations give translation by `κ` (equation (9)). -/
+theorem Relations.translate {F Φp Φm Φh : Oracle → Oracle} {G H T κ : Z2}
+    (hadd : Relations F Φp Φm Φh (G + T) (H + κ))
+    (hsub : Relations F Φp Φm Φh (G + (T + κ)) H) :
+    F (G + (T + κ)) = Φm (ojoin (Φp (ojoin (F (G + T)) (F (H + κ)))) (F (-H))) := by
+  rw [hsub.2.1, show G + (T + κ) + H = G + T + (H + κ) by abel, hadd.1]
+
+/-- The halving and subtraction relations recover the half-translation (equation (10)). -/
+theorem Relations.halve {F Φp Φm Φh : Oracle → Oracle} {G H T half : Z2}
+    (hdouble : half + half = T)
+    (hhalf : Relations F Φp Φm Φh (G + T) (H - half))
+    (hsub : Relations F Φp Φm Φh (G + half) H) :
+    F (G + half) = Φm (ojoin (Φh (ojoin (F (G + T)) (F (G + (H + H))))) (F (-H))) := by
+  have htranslated : G + half + H = G + T + (H - half) := by rw [← hdouble]; abel
+  have hdoubled : G + T + (H - half + (H - half)) = G + (H + H) := by rw [← hdouble]; abel
+  rw [hsub.2.1, htranslated, hhalf.2.2, hdoubled]
+
 theorem shift_functional {F : Oracle → Oracle}
     (hC : ∀ A, TTComputable A → TTComputable (F A))
     {α β τ : List Bool} (hlen : α.length = β.length) (hατ : α <+: τ)
@@ -222,19 +239,19 @@ theorem shift_functional {F : Oracle → Oracle}
       have e1 : A' (F (prep τ W)) = Ψ₁ (F (prep τ W)) := by
         funext n; simp only [A', hne, ite_false]
       rw [e1]
-      obtain ⟨Rp, -, -⟩ := hR (G + T) (H - Y) (mα (lowk hTl))
+      have hplus := hR (G + T) (H - Y) (mα (lowk hTl))
         (by rw [sub_eq_add_neg]; exact mβ (lowk (Z2.lowZero_neg hYl)))
-      obtain ⟨-, Rm, -⟩ := hR (G + T - Y) H
-        (by rw [add_sub_assoc]; exact mα (lowk (Z2.lowZero_sub hTl hYl))) hHβ
-      have e2 : G + T - Y + H = G + T + (H - Y) := by abel
-      rw [hT', ← add_sub_assoc, Rm, e2, Rp, hGT]
+      have hminus := hR (G + (T - Y)) H (mα (lowk (Z2.lowZero_sub hTl hYl))) hHβ
+      have htranslate := Relations.translate (κ := -Y)
+        (by simpa only [sub_eq_add_neg] using hplus)
+        (by simpa only [sub_eq_add_neg] using hminus)
+      rw [hT', sub_eq_add_neg, htranslate, hGT]
+      simp only [Ψ₁, P1, P2, sub_eq_add_neg]
   -- `Θ (F (τ⌢W)) = F (G + T/2)`
-  obtain ⟨-, -, Rh⟩ := hR (G + T') (H - Th) (mα (lowk (hT'l.mono (by omega))))
+  have hhalf := hR (G + T') (H - Th) (mα (lowk (hT'l.mono (by omega))))
     (by rw [sub_eq_add_neg]; exact mβ (lowk (Z2.lowZero_neg hThl)))
-  obtain ⟨-, Rm', -⟩ := hR (G + Th) H (mα (lowk hThl)) hHβ
-  have e3 : G + T' + (H - Th + (H - Th)) = G + (H + H) := by rw [← hThTh]; abel
-  have e4 : G + Th + H = G + T' + (H - Th) := by rw [← hThTh]; abel
+  have hminus := hR (G + Th) H (mα (lowk hThl)) hHβ
   change Φm (ojoin (Φh (ojoin (A' (F (prep τ W))) P3)) P2) = _
-  rw [step1, ← hGTh, Rm', e4, Rh, e3]
+  rw [step1, ← hGTh, Relations.halve hThTh hhalf hminus]
 
 end TT

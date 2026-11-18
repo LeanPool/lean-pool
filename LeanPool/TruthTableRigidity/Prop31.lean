@@ -41,9 +41,9 @@ theorem continuous_ojoin : Continuous fun p : Oracle × Oracle => ojoin p.1 p.2 
   apply continuous_pi
   intro n
   by_cases h : n % 2 = 0
-  · simp only [ojoin, h, ite_true]
+  · simp only [ojoin_apply, h, ite_true]
     exact (continuous_apply _).comp continuous_fst
-  · simp only [ojoin, h, ite_false]
+  · simp only [ojoin_apply, h, ite_false]
     exact (continuous_apply _).comp continuous_snd
 
 theorem continuous_zaddO : Continuous fun p : Oracle × Oracle => zaddO p.1 p.2 :=
@@ -235,11 +235,6 @@ theorem step_split {F : Oracle → Oracle} (hF : Continuous F) (hP : InducesProp
     simp
 
 /-! ### Step 4 and Proposition 3.1 -/
-
-theorem iterate_shift_zero (X : Oracle) (m : ℕ) : (shift^[m] X) 0 = X m := by
-  induction m generalizing X with
-  | zero => rfl
-  | succ m ih => rw [Function.iterate_succ_apply, ih]; rfl
 
 theorem prop_3_1 {F : Oracle → Oracle} (hF : Continuous F) (hP : InducesProperties F)
     (ρ : List Bool) : ∃ τ : List Bool, ρ <+: τ ∧

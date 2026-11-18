@@ -114,9 +114,6 @@ theorem lemma_4_1 {F : Oracle → Oracle} {D : Set Oracle} (hDG : IsGδ D) (hDd 
 
 /-! ### The nonconstancy form of Lemma 4.2 -/
 
-theorem pre_succ (X : Oracle) (l : ℕ) : pre X (l + 1) = pre X l ++ [X l] := by
-  simp [pre, List.range_succ]
-
 /-- A function continuous on `D` has locally constant bits on `D`. -/
 theorem locally_const_bit {F : Oracle → Oracle} {D : Set Oracle}
     (hFD : ContinuousOn F D) {Z₀ : Oracle} (hZ₀ : Z₀ ∈ D) (j : ℕ) :

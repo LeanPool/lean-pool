@@ -36,6 +36,9 @@ theorem oracleFunction_eq (X : Oracle) : oracleFunction X = fun n => Part.some (
 /-- The finite prefix `X ↾ m` of an oracle. -/
 def pre (X : Oracle) (m : ℕ) : List Bool := (List.range m).map X
 
+theorem pre_succ (X : Oracle) (l : ℕ) : pre X (l + 1) = pre X l ++ [X l] := by
+  simp [pre, List.range_succ]
+
 /-- A family of partial functions computed uniformly in the oracle by one program. -/
 def URec (F : Oracle → ℕ →. ℕ) : Prop :=
   ∃ c : OracleCode, ∀ X, OracleCode.eval (oracleFunction X) c = F X

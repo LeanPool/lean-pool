@@ -13,6 +13,7 @@ infrastructure is reused from the Apache-2.0 OpenAI degree-rigidity port.
 module
 
 public import LeanPool.TruthTableRigidity.Decode
+public import LeanPool.TruthTableRigidity.BaireLemmas
 
 /-!
 # Baire measurable functions induce only the trivial automorphism

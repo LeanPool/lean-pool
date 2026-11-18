@@ -13,7 +13,7 @@ infrastructure is reused from the Apache-2.0 OpenAI degree-rigidity port.
 module
 
 public import LeanPool.TruthTableRigidity.Uniform
-public import LeanPool.TuringConeRigidity.Effective.UniformOracle
+public import LeanPool.TuringConeRigidity.Effective.FiniteTranscript
 
 /-!
 # tt-functionals as functionals with primitive recursive finite approximations
@@ -76,18 +76,8 @@ theorem plook_partrec : Partrec₂ plook :=
     (bv_primrec.comp Primrec.snd).to₂).to_comp
 
 theorem eval_mono {g g' : ℕ →. ℕ} (h : ∀ k v, v ∈ g k → v ∈ g' k) (c : OracleCode)
-    (n v : ℕ) (hv : v ∈ OracleCode.eval g c n) : v ∈ OracleCode.eval g' c n := by
-  have := OracleCode.eval_approximates (g := g') (gs := fun m => if m = 0 then g else g') ?_ c n
-  · exact this.1 0 v (by simpa using hv)
-  · intro k
-    constructor
-    · intro m a ha
-      by_cases hm : m = 0
-      · simp only [hm, ite_true] at ha
-        exact h k a ha
-      · simpa [hm] using ha
-    · intro a ha
-      exact ⟨1, fun m hm => by simpa [show m ≠ 0 by omega] using ha⟩
+    (n v : ℕ) (hv : v ∈ OracleCode.eval g c n) : v ∈ OracleCode.eval g' c n :=
+  OracleCode.eval_mono h c n v hv
 
 theorem plook_pre (X : Oracle) (m k : ℕ) :
     plook ((pre X m).map some) k =
@@ -155,14 +145,11 @@ theorem IsTTFunctional.exists_approx {Φ : Oracle → Oracle} (h : IsTTFunctiona
   · intro X n
     have hv : bv (Φ X n) ∈ OracleCode.eval (oracleFunction X) c n := by
       rw [hc X]; exact Part.mem_some _
-    have happ : ∀ k, Approximates (oracleFunction X k)
-        (fun m => plook ((pre X m).map some) k) := by
-      intro k
-      simp only [plook_pre]
-      exact UniformOracle.prefix_approximates (fun k => bv (X k)) k
-    obtain ⟨M₀, hM₀⟩ := (OracleCode.eval_approximates happ c n).2 _ hv
+    obtain ⟨M₀, hM₀⟩ := OracleCode.eval_finite_use (fun k => bv (X k)) c n (bv (Φ X n)) hv
     have h0 : bv (Φ X n) ∈ d.eval (encode ((pre X M₀).map some, n)) := by
-      rw [hd]; exact hM₀ M₀ le_rfl
+      rw [hd]
+      change bv (Φ X n) ∈ OracleCode.eval (plook ((pre X M₀).map some)) c n
+      rwa [funext (plook_pre X M₀)]
     obtain ⟨k, hk⟩ := Nat.Partrec.Code.evaln_complete.mp h0
     refine ⟨M₀ + k, fun σ _ hσ => ?_⟩
     have hlen : M₀ + k ≤ σ.length := by

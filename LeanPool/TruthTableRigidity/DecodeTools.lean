@@ -13,7 +13,7 @@ infrastructure is reused from the Apache-2.0 OpenAI degree-rigidity port.
 module
 
 public import Mathlib.Tactic.Linarith
-public import LeanPool.TruthTableRigidity.BaireLemmas
+public import LeanPool.TruthTableRigidity.ShiftStep
 
 /-!
 # Tools for the coding lemma (Proposition 4.3)
@@ -106,7 +106,7 @@ theorem lowZero_zero (k : ℕ) : LowZero k (0 : Z2) := fun _ _ => rfl
 
 theorem lowZero_nsmul {k : ℕ} {A : Z2} (hA : LowZero k A) (c : ℕ) : LowZero k (c • A) := by
   induction c with
-  | zero => rw [zero_smul]; exact lowZero_zero k
+  | zero => rw [zero_nsmul]; exact lowZero_zero k
   | succ c ih => rw [succ_nsmul]; exact Z2.lowZero_add ih hA
 
 theorem lowZero_zpow2_two (l : ℕ) : LowZero (l + 1) (zpow2 l + zpow2 l) := by

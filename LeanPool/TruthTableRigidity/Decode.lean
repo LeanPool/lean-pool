@@ -12,6 +12,7 @@ infrastructure is reused from the Apache-2.0 OpenAI degree-rigidity port.
 
 module
 
+public import Mathlib.Algebra.Group.Subgroup.Basic
 public import LeanPool.TruthTableRigidity.DecodeTools
 
 /-!
@@ -30,7 +31,7 @@ open OAI.TuringRigidity
 
 theorem ojoin_evens_odds (B : Oracle) : ojoin (evens B) (odds B) = B := by
   funext n
-  simp only [ojoin, evens, odds]
+  simp only [ojoin_apply, evens, odds]
   split_ifs with h
   · congr 1; omega
   · congr 1; omega
@@ -63,11 +64,10 @@ theorem decode_of_good {F Φp Φm Φh : Oracle → Oracle} (hp : IsTTFunctional 
   -- (9) translation
   have tr : ∀ T ∈ C, ∀ κ ∈ C, a (T + κ) = Φm (ojoin (Φp (ojoin (a T) (F (H + κ)))) P2) := by
     intro T hT κ hκ
-    have Rp := (hgood T hT κ hκ).1.1
-    have Rm := (hgood (T + κ) (C.add_mem hT hκ) 0 C.zero_mem).1.2.1
-    simp only [add_zero] at Rm
-    change F (G + (T + κ)) = _
-    rw [Rm, show G + (T + κ) + H = G + T + (H + κ) by abel, Rp]
+    have hplus := (hgood T hT κ hκ).1
+    have hminus := (hgood (T + κ) (C.add_mem hT hκ) 0 C.zero_mem).1
+    simp only [add_zero] at hminus
+    exact hplus.translate hminus
   -- iterating the translation by `2^{l+1}`
   let Ξ : Oracle → Oracle := fun A => Φm (ojoin (Φp (ojoin A P1)) P2)
   have it : ∀ T ∈ C, ∀ c : ℕ, Ξ^[c] (a T) = a (T + c • (Y + Y)) := by
@@ -109,13 +109,10 @@ theorem decode_of_good {F Φp Φm Φh : Oracle → Oracle} (hp : IsTTFunctional 
     intro T hT hT1 hsh
     have hThTh : Z2.of (shift T) + Z2.of (shift T) = T := Z2.shift_add_shift (hT1 0 (by omega))
     generalize Z2.of (shift T) = Th at hsh hThTh ⊢
-    have Rh := (hgood T hT (-Th) (C.neg_mem hsh)).1.2.2
-    have Rm := (hgood Th hsh 0 C.zero_mem).1.2.1
-    simp only [add_zero] at Rm
-    have e1 : G + T + (H + -Th + (H + -Th)) = G + (H + H) := by rw [← hThTh]; abel
-    have e2 : G + Th + H = G + T + (H + -Th) := by rw [← hThTh]; abel
-    change _ = F (G + Th)
-    rw [Rm, e2, Rh, e1]
+    have hhalf := (hgood T hT (-Th) (C.neg_mem hsh)).1
+    have hminus := (hgood Th hsh 0 C.zero_mem).1
+    simp only [add_zero] at hminus
+    exact (Relations.halve hThTh (by simpa only [sub_eq_add_neg] using hhalf) hminus).symm
   -- the tt-functionals, acting on `A ⊕ P`
   let Ξh : Oracle → Oracle := fun B =>
     ojoin (Φm (ojoin (Φp (ojoin (evens B) (evens (evens (odds B))))) (evens (odds (odds B)))))

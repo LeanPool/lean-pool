@@ -14,6 +14,7 @@ module
 
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import LeanPool.TruthTableRigidity.Approx
+public import LeanPool.TuringConeRigidity.Computability.Joins
 
 /-!
 # Closure properties of tt-functionals
@@ -34,31 +35,19 @@ open OAI.TuringRigidity Encodable
 open scoped BigOperators
 
 /-- The recursive join `A ⊕ B`. -/
-def ojoin (A B : Oracle) : Oracle := fun n => if n % 2 = 0 then A (n / 2) else B (n / 2)
+def ojoin : Oracle → Oracle → Oracle := OAI.TuringRigidity.join
 
-theorem ojoin_even (A B : Oracle) (n : ℕ) : ojoin A B (2 * n) = A n := by
-  simp [ojoin]
+theorem ojoin_apply (A B : Oracle) (n : ℕ) :
+    ojoin A B n = if n % 2 = 0 then A (n / 2) else B (n / 2) := by
+  cases h : n.bodd <;> simp [ojoin, OAI.TuringRigidity.join, Nat.mod_two_of_bodd, h]
 
-theorem ojoin_odd (A B : Oracle) (n : ℕ) : ojoin A B (2 * n + 1) = B n := by
-  simp [ojoin, Nat.add_mod]
-  congr 1
-  omega
+theorem ojoin_even (A B : Oracle) (n : ℕ) : ojoin A B (2 * n) = A n :=
+  OAI.TuringRigidity.join_even A B n
+
+theorem ojoin_odd (A B : Oracle) (n : ℕ) : ojoin A B (2 * n + 1) = B n :=
+  OAI.TuringRigidity.join_odd A B n
 
 /-! ### Lists -/
-
-theorem filterMap_id_map_some {α : Type*} (l : List (Option α))
-    (h : (l.filterMap id).length = l.length) : (l.filterMap id).map some = l := by
-  induction l with
-  | nil => rfl
-  | cons a t ih =>
-    cases a with
-    | none =>
-      have := List.length_filterMap_le id t
-      rw [List.filterMap_cons_none rfl, List.length_cons] at h
-      omega
-    | some a =>
-      rw [List.filterMap_cons_some (f := id) rfl, List.length_cons, List.length_cons] at h
-      rw [List.filterMap_cons_some (f := id) rfl, List.map_cons, ih (by omega)]
 
 theorem pre_prefix (X : Oracle) {m M : ℕ} (h : m ≤ M) : pre X m <+: pre X M := by
   rw [List.prefix_iff_eq_take, length_pre]
@@ -98,52 +87,15 @@ prefix of the argument of primitive recursive length `u n` is a tt-functional. -
 theorem isTTFunctional_of_use {Φ : Oracle → Oracle} {u : ℕ → ℕ} {t : ℕ → List Bool → Bool}
     (hu : Primrec u) (ht : Primrec₂ t) (hΦ : ∀ X n, Φ X n = t n (pre X (u n))) :
     IsTTFunctional Φ := by
-  let τ : List (Option Bool) → ℕ → List Bool := fun σ n => (σ.take (u n)).filterMap id
-  let H : List (Option Bool) → ℕ → Option Bool := fun σ n =>
-    cond ((τ σ n).length == u n) (some (t n (τ σ n))) none
-  have hτ : Primrec₂ τ :=
-    Primrec.listFilterMap (Primrec.list_take.comp (hu.comp Primrec.snd) Primrec.fst)
-      (Primrec.snd : Primrec (Prod.snd : (List (Option Bool) × ℕ) × Option Bool → Option Bool)).to₂
-  have key : ∀ X σ n, Compat σ X → (τ σ n).length = u n → τ σ n = pre X (u n) := by
-    intro X σ n hσ hlen
-    have hle : (σ.take (u n)).length ≤ u n := by simp
-    have hle2 := List.length_filterMap_le id (σ.take (u n))
-    have heq : (τ σ n).length = (σ.take (u n)).length := by
-      simp only [τ] at hlen ⊢; omega
-    have hms := filterMap_id_map_some _ heq
-    apply List.ext_getElem?
-    intro i
-    rw [getElem?_pre]
-    split_ifs with hi
-    · have h1 : (σ.take (u n))[i]? = σ[i]? := by simp [hi]
-      have h2 : ((τ σ n).map some)[i]? = σ[i]? := by
-        rw [← h1]; exact congrArg (·[i]?) hms
-      rw [List.getElem?_map] at h2
-      obtain ⟨b, hb⟩ : ∃ b, (τ σ n)[i]? = some b := by
-        exact ⟨_, List.getElem?_eq_getElem (by omega)⟩
-      rw [hb] at h2 ⊢
-      simp only [Option.map_some] at h2
-      rw [hσ i b h2.symm]
-    · exact List.getElem?_eq_none (by omega)
-  have happ : IsApprox Φ H := by
-    refine ⟨?_, ?_, ?_⟩
-    · exact Primrec.cond (Primrec.beq.comp (Primrec.list_length.comp hτ) (hu.comp Primrec.snd))
-        (Primrec.option_some.comp (ht.comp Primrec.snd hτ)) (Primrec.const none)
-    · intro X σ n b hσ hb
-      simp only [H] at hb
-      cases hl : ((τ σ n).length == u n) with
-      | false => rw [hl] at hb; simp at hb
-      | true =>
-        rw [hl] at hb
-        simp only [Bool.cond_true, Option.some.injEq] at hb
-        rw [hΦ, ← key X σ n hσ (by simpa using hl), hb]
-    · intro X n
-      refine ⟨u n, fun σ _ hσ => ?_⟩
-      have hτX : τ σ n = pre X (u n) := by
-        simp only [τ, take_eq_of_pre_prefix hσ]
-        simp
-      simp [H, hτX, length_pre]
-  exact happ.isTTFunctional
+  let truth : ℕ → ℕ → ℕ := fun n e => bv (t n ((decode (α := List Bool) e).getD []))
+  have htruth : Primrec₂ truth := bv_primrec.comp
+    (ht.comp Primrec.fst (Primrec.option_getD_default.comp (Primrec.decode.comp Primrec.snd)))
+  have hprefix : UTot fun X n => encode (pre X (u n)) := UTot.prefixes.precomp hu.to_comp
+  have hprogram := UTot.map₂ htruth.to_comp UTot.id hprefix
+  apply isTTFunctional_of_utot
+  convert hprogram using 1
+  funext X n
+  simp [truth, hΦ]
 
 /-! ### Joins and constants -/
 
@@ -162,7 +114,7 @@ theorem IsTTFunctional.join {Φ₁ Φ₂ : Oracle → Oracle} (h₁ : IsTTFuncti
   refine isTTFunctional_of_utot ((show (fun X n => sel n (Nat.pair (bv (Φ₁ X (n / 2)))
       (bv (Φ₂ X (n / 2))))) = fun X n => bv (ojoin (Φ₁ X) (Φ₂ X) n) from ?_) ▸ this)
   funext X n
-  simp only [sel, ojoin, Nat.unpair_pair]
+  simp only [sel, ojoin_apply, Nat.unpair_pair]
   by_cases h : n % 2 = 0
   · simp [h]
   · have hb : (n % 2 == 0) = false := beq_false_of_ne h

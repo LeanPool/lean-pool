@@ -241,6 +241,11 @@ theorem Z2.add_of_disjoint {X Y : Z2} (h : ∀ i, X i = false ∨ Y i = false) :
 /-- The shift `S(X)(n) = X(n+1)`; on `N_{0^1}` this is halving. -/
 def shift (X : Oracle) : Oracle := fun n => X (n + 1)
 
+theorem iterate_shift_zero (X : Oracle) (m : ℕ) : (shift^[m] X) 0 = X m := by
+  induction m generalizing X with
+  | zero => rfl
+  | succ m ih => rw [Function.iterate_succ_apply, ih]; rfl
+
 /-- `b⌢X`. -/
 def cons (b : Bool) (X : Oracle) : Oracle := fun n => if n = 0 then b else X (n - 1)
 
