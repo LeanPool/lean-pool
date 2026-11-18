@@ -13,7 +13,7 @@ infrastructure is reused from the Apache-2.0 OpenAI degree-rigidity port.
 module
 
 public import LeanPool.TruthTableRigidity.Defs
-public import LeanPool.TuringConeRigidity.Effective.UniformOracle
+public import LeanPool.TuringConeRigidity.Effective.UniformPrograms
 
 /-!
 # Uniform oracle programs
@@ -48,10 +48,8 @@ def URec (F : Oracle → ℕ →. ℕ) : Prop :=
 def UTot (F : Oracle → ℕ → ℕ) : Prop := URec fun X n => Part.some (F X n)
 
 theorem nat_partrec_oracleCode {f : ℕ →. ℕ} (hf : Nat.Partrec f) :
-    ∃ c : OracleCode, ∀ g, OracleCode.eval g c = f := by
-  obtain ⟨c, hc⟩ := OracleCode.exists_code
-    (g := fun _ => Part.some 0) hf.recursiveIn
-  exact ⟨substCode c .zero, fun g => by rw [eval_substCode]; exact hc⟩
+    ∃ c : OracleCode, ∀ g, OracleCode.eval g c = f :=
+  UniformPrograms.oracle_free hf.recursiveIn
 
 namespace UTot
 
@@ -97,30 +95,8 @@ theorem id : UTot fun _ n => n := const Computable.id
 
 /-- A single program computes the numerical prefix of every Boolean oracle. -/
 theorem numericalPrefixes : UTot fun X m =>
-    encode (UniformOracle.oraclePrefix (fun k => bv (X k)) m) := by
-  have hstep : UTot fun X w =>
-      UniformOracle.appendEncoded (Nat.unpair (Nat.unpair w).2).2
-        (bv (X (Nat.unpair (Nat.unpair w).2).1)) :=
-    map₂ UniformOracle.appendEncoded_primrec.to_comp
-      (const (Computable.snd.comp (Computable.unpair.comp
-        (Computable.snd.comp Computable.unpair))))
-      (comp query (const (Computable.fst.comp (Computable.unpair.comp
-        (Computable.snd.comp Computable.unpair)))))
-  obtain ⟨d, hd⟩ := hstep
-  obtain ⟨c, hc⟩ := const (Computable.const (encode ([] : List ℕ)))
-  obtain ⟨e, he⟩ := const (Primrec₂.natPair.comp (Primrec.const 0) Primrec.id).to_comp
-  refine ⟨.comp (.prec c d) e, fun X => ?_⟩
-  funext n
-  simp only [OracleCode.eval, he, Part.bind_eq_bind, Part.bind_some, Nat.unpair_pair, _root_.id]
-  induction n with
-  | zero => simp [hc, UniformOracle.oraclePrefix, PrefixComputability.oraclePrefix]
-  | succ n ih =>
-    simp only [hd] at ih ⊢
-    rw [ih]
-    simp only [Part.bind_some, Nat.unpair_pair]
-    congr 1
-    simp [UniformOracle.appendEncoded, PrefixComputability.appendEncoded,
-      UniformOracle.oraclePrefix, PrefixComputability.oraclePrefix, List.range_succ]
+    encode (UniformOracle.oraclePrefix (fun k => bv (X k)) m) :=
+  UniformPrograms.initial_program (O := oracleFunction) (fun X k => bv (X k)) query
 
 /-- The bit prefixes are uniformly computable by decoding the numerical prefixes. -/
 theorem prefixes : UTot fun X m => encode (pre X m) := by
