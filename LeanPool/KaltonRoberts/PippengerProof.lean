@@ -920,13 +920,13 @@ theorem exists_perm_set_to_initial {n : ℕ} (A : Finset (Fin n)) :
     exact lt_of_lt_of_le ( Fin.is_lt _ ) ( by simpa using Finset.card_le_univ B )⟩ else ⟨g ⟨x, by
     exact Finset.mem_sdiff.mpr ⟨ Finset.mem_univ _, hx ⟩⟩ + B.card, by
     lia⟩) ⟨by
-  all_goals generalize_proofs at *;
+  generalize_proofs at *;
   intro x y hxy; by_cases hx : x ∈ B <;> by_cases hy : y ∈ B <;> simp_all +decide [ Fin.ext_iff ];
   · have := f.injective ( Fin.ext hxy ); aesop;
   · grind +revert;
   · grind;
   · have := g.injective ( Fin.ext hxy ); aesop;, by
-    all_goals generalize_proofs at *;
+    generalize_proofs at *;
     intro x;
     by_cases hx : x.val < B.card;
     · use f.symm ⟨x.val, hx⟩;
