@@ -68,14 +68,14 @@ theorem polynomialY_ne_zero [W.IsElliptic] : W.polynomialY ≠ 0 := by
   intro h
   rw [polynomialY] at h
   have h1 : (C (2 : k) : k[X]) = 0 := by
-    simpa using congr_arg (fun p => Polynomial.coeff p 1) h
+    simpa using congr_arg (fun p => AddMonoidAlgebra.coeff p 1) h
   have h0 : (C W.a₁ * X + C W.a₃ : k[X]) = 0 := by
-    simpa using congr_arg (fun p => Polynomial.coeff p 0) h
+    simpa using congr_arg (fun p => AddMonoidAlgebra.coeff p 0) h
   have h2 : (2 : k) = 0 := Polynomial.C_eq_zero.mp h1
   have ha₁ : W.a₁ = 0 := by
-    simpa using congr_arg (fun p => Polynomial.coeff p 1) h0
+    simpa using congr_arg (fun p => AddMonoidAlgebra.coeff p 1) h0
   have ha₃ : W.a₃ = 0 := by
-    simpa using congr_arg (fun p => Polynomial.coeff p 0) h0
+    simpa using congr_arg (fun p => AddMonoidAlgebra.coeff p 0) h0
   have hΔ : W.Δ = 0 := by
     simp only [WeierstrassCurve.Δ, WeierstrassCurve.b₂, WeierstrassCurve.b₄,
       WeierstrassCurve.b₆, WeierstrassCurve.b₈, ha₁, ha₃]
