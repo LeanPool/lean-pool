@@ -148,7 +148,7 @@ lemma local_step_residual {g : E → E} {L0 L1 : ℝ}
       (y - (1 / localCurvature L0 L1 (g y)) • g y - y) = -g y := by
     match_scalars
     all_goals field_simp [hM.ne']
-    all_goals ring
+    ring
   rw [he, ← sub_eq_add_neg, local_step_norm hL0 hL1 y (g y)]
   convert local_step_gradient_error hL0 hL1 hg hH y using 1
   field_simp
