@@ -875,9 +875,6 @@ jobs:
         id: compilation
         env:
           BUILD_TIME_BASE: ${{ needs.plan.outputs.diff_base }}
-          # This run's shards already compiled and timed these projects'
-          # changed files, so assembly neither rebuilds nor re-times them.
-          SHARD_PROJECTS: ${{ join(fromJSON(needs.plan.outputs.matrix).include.*.projects, ' ') }}
         run: |
           set -euo pipefail
           # After every cache/artifact restore, `prepare` forces a rebuild of
@@ -888,9 +885,7 @@ jobs:
           if [ -n "$BUILD_TIME_BASE" ] && ! printf '%s' "$BUILD_TIME_BASE" | grep -q '^0*$' \
              && git cat-file -e "$BUILD_TIME_BASE" 2>/dev/null; then
             time_base="$BUILD_TIME_BASE"
-            # shellcheck disable=SC2086 # SHARD_PROJECTS is a space-separated list on purpose
-            PYTHONPATH=python python3 -m lean_pool.build_time_limits prepare \
-              --base "$time_base" --exclude-projects $SHARD_PROJECTS
+            PYTHONPATH=python python3 -m lean_pool.build_time_limits prepare --base "$time_base"
           fi
           PYTHONPATH=python python3 -m lean_pool.build_time_limits watch -- ~/.elan/bin/lake build LeanPool 2>&1 | tee lean-build.log
           if grep -nE '(^|: )warning:' lean-build.log; then
@@ -898,9 +893,8 @@ jobs:
             exit 1
           fi
           if [ -n "$time_base" ]; then
-            # shellcheck disable=SC2086 # SHARD_PROJECTS is a space-separated list on purpose
             PYTHONPATH=python python3 -m lean_pool.build_time_limits check \
-              --log lean-build.log --base "$time_base" --exclude-projects $SHARD_PROJECTS
+              --log lean-build.log --base "$time_base"
           fi
 
       # Lake writes setup files only as compiler inputs, each listing every

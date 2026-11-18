@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+import json
 import os
 import signal
 import subprocess
@@ -714,6 +715,29 @@ def test_only_changed_modules_get_receipts(tmp_path: Path):
     assert limits.recorded_seconds(root, unchanged) is None
 
 
+def test_receipt_without_compiled_output_certifies_nothing(tmp_path: Path, capsys):
+    """A receipt naming no output cannot stand in for a module that is not built."""
+    root, base = _repository(tmp_path)
+    stem = root / ".lake/build/lib/lean" / Path(BUNDLE).with_suffix("")
+    stem.parent.mkdir(parents=True)
+    receipt = stem.with_name(stem.name + limits.RECEIPT_SUFFIX)
+    receipt.write_text(
+        json.dumps({"version": limits.RECEIPT_VERSION, "seconds": 1, "outputs": None})
+    )
+    assert limits.output_digest(root, BUNDLE) is None
+    assert limits.recorded_seconds(root, BUNDLE) is None
+    assert limits.prepare(base, root) == 0
+    assert not receipt.exists()
+    receipt.write_text(
+        json.dumps({"version": limits.RECEIPT_VERSION, "seconds": 1, "outputs": None})
+    )
+    log = tmp_path / "build.log"
+    log.write_text("")
+    capsys.readouterr()
+    assert limits.check(log, base, root, 600) == 1
+    assert "No successful build timing" in capsys.readouterr().out
+
+
 def test_missing_output_records_nothing(tmp_path: Path):
     """A timing without compiled output cannot certify a later restore."""
     root, base = _repository(tmp_path)
@@ -747,16 +771,48 @@ def test_prepare_and_check_scope_other_shard_and_explicit_empty(tmp_path: Path):
     assert limits.check(log, base, root, 600) == 1
 
 
-def test_assembly_skips_projects_its_shards_already_timed(tmp_path: Path):
-    """Assembly neither rebuilds nor re-times changed files a shard just checked."""
+def test_assembly_reuses_output_a_shard_timed(tmp_path: Path):
+    """Assembly keeps a shard's delivered output and judges its recorded time."""
     root, base = _repository(tmp_path)
-    shard_output = _artifact(root, BUNDLE_MODULE, ".olean")
-    log = tmp_path / "build.log"
-    log.write_text("")
-    assert limits.prepare(base, root, exclude_projects=["MovingSofa"]) == 0
+    shard_output = _timed(root, base, tmp_path)
+    assert limits.prepare(base, root) == 0
     assert shard_output.exists()
-    assert limits.check(log, base, root, 600, exclude_projects=["MovingSofa"]) == 0
-    assert limits.check(log, base, root, 600, exclude_projects=["Other"]) == 1
+    log = tmp_path / "build.log"
+    log.write_text(f"Replayed {BUNDLE_MODULE}\n")
+    assert limits.check(log, base, root, 600) == 0
+
+
+def test_assembly_times_a_shard_project_it_compiles_itself(tmp_path: Path, capsys):
+    """Output that never reached assembly is rebuilt there and held to the limit."""
+    root, base = _repository(tmp_path)
+    undelivered = _artifact(root, BUNDLE_MODULE, ".olean")
+    assert limits.prepare(base, root) == 0
+    assert not undelivered.exists()
+    log = tmp_path / "build.log"
+    log.write_text(f"Built {BUNDLE_MODULE} (865s)\n")
+    capsys.readouterr()
+    assert limits.check(log, base, root, 600) == 1
+    assert "took 865 s to build" in capsys.readouterr().out
+
+
+def test_fresh_slow_build_overrides_a_recorded_passing_time(tmp_path: Path):
+    """A module rebuilt over the limit fails although an earlier build passed."""
+    root, base = _repository(tmp_path)
+    _timed(root, base, tmp_path, seconds=300)
+    log = tmp_path / "build.log"
+    log.write_text(f"Built {BUNDLE_MODULE} (865s)\n")
+    assert limits.check(log, base, root, 600) == 1
+    assert limits.recorded_seconds(root, BUNDLE) == 865.0
+
+
+@pytest.mark.parametrize("command", ["prepare", "check"])
+def test_no_job_can_exempt_projects_from_timing(tmp_path: Path, command: str):
+    """The command line offers no way to leave a changed project unchecked."""
+    arguments = [command, "--base", "HEAD", "--exclude-projects", "MovingSofa"]
+    if command == "check":
+        arguments += ["--log", str(tmp_path / "build.log")]
+    with pytest.raises(SystemExit):
+        limits.main(arguments)
 
 
 def test_noncontent_change_has_no_fresh_timing_requirement(tmp_path: Path):
@@ -887,11 +943,8 @@ def test_workflow_rebuilds_changed_modules_after_all_compiled_restores() -> None
         else:
             assert "--modules" not in script
             assert "lake build LeanPool" in script
-        if name == "finalize":
-            assert "include.*.projects" in steps[index]["env"]["SHARD_PROJECTS"]
-            assert script.count("--exclude-projects $SHARD_PROJECTS") == 2
-        else:
-            assert "--exclude-projects" not in script
+        assert "--exclude-projects" not in script
+        assert "SHARD_PROJECTS" not in steps[index]["env"]
         for restore_index, step in enumerate(steps):
             run = step.get("run", "")
             cache = step.get("uses", "").startswith("actions/cache/restore@") and (

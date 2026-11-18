@@ -15,7 +15,6 @@ public import Mathlib.Algebra.Group.End
 public import Mathlib.Data.Rat.Defs
 import Mathlib.Algebra.Module.NatInt
 import Mathlib.Algebra.Order.Field.Basic
-import Mathlib.Basic.Finite.Prod
 import Mathlib.Data.Rat.Cast.Order
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith.Frontend
