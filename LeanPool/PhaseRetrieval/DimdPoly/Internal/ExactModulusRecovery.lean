@@ -1838,7 +1838,7 @@ private lemma derivative_hermite_int (n : ℕ) :
     Polynomial.derivative (Polynomial.hermite n) =
       (n : ℤ) • Polynomial.hermite (n - 1) := by
   induction n using Nat.strong_induction_on with
-  | h n ih =>
+  | ind n ih =>
       cases n with
       | zero => simp
       | succ n =>

@@ -263,7 +263,7 @@ theorem μCircle_singleton (x : Circle) :
     μCircle ({x} : Set Circle) = 0 := by
   have hvol : MeasureTheory.volume ({x} : Set Circle) = 0 :=
     volume_singleton_circle x
-  rw [AddCircle.volume_eq_smul_haarAddCircle, MeasureTheory.Measure.smul_apply] at hvol
+  rw [AddCircle.volume_eq_smul_haarAddCircle, smul_apply] at hvol
   rw [smul_eq_mul] at hvol
   have hcoef : ENNReal.ofReal (2 * Real.pi) ≠ 0 := by simp [ENNReal.ofReal_eq_zero, Real.pi_pos]
   simpa only [μCircle, Measure.addHaar_singleton] using (mul_eq_zero.mp hvol).resolve_left hcoef
@@ -2033,7 +2033,7 @@ private theorem modulation_eLpNorm_tendsto_zero {d : Nat} (f : L2Real d) (ω0 : 
           fun_prop)).mul hf.aestronglyMeasurable).sub
             ((Continuous.aestronglyMeasurable (by
               unfold modulationPhase
-              fun_prop)).mul hf.aestronglyMeasurable)).enorm.pow_const (2 : ℝ)
+              fun_prop)).mul hf.aestronglyMeasurable)).eNorm.pow_const (2 : ℝ)
     · exact Filter.Eventually.of_forall fun ω => Filter.Eventually.of_forall fun t => by
         have hnorm :
             ‖modulationPhase ω t * (f : RealVec d -> ℂ) t -
@@ -2061,7 +2061,7 @@ private theorem modulation_eLpNorm_tendsto_zero {d : Nat} (f : L2Real d) (ω0 : 
     · have hmul_mem : MeasureTheory.MemLp
           (fun t : RealVec d => (2 : ℂ) * (f : RealVec d -> ℂ) t)
           2 (MeasureTheory.volume : MeasureTheory.Measure (RealVec d)) := hf.const_mul (2 : ℂ)
-      exact (MeasureTheory.lintegral_rpow_enorm_lt_top_of_eLpNorm_lt_top
+      exact (MeasureTheory.lintegral_rpow_eNorm_lt_top_of_eLpNorm_lt_top
         (p := (2 : ℝ≥0∞))
         (μ := (MeasureTheory.volume : MeasureTheory.Measure (RealVec d)))
         (f := fun t : RealVec d => (2 : ℂ) * (f : RealVec d -> ℂ) t)
@@ -2092,7 +2092,7 @@ private theorem modulation_eLpNorm_tendsto_zero {d : Nat} (f : L2Real d) (ω0 : 
               ‖modulationPhase ω t * (f : RealVec d -> ℂ) t -
                 modulationPhase ω0 t * (f : RealVec d -> ℂ) t‖ₑ)
             (𝓝 ω0) (𝓝 (0 : ℝ≥0∞)) := by
-          simpa only [Function.comp_def, enorm_zero] using (continuous_enorm.tendsto 0).comp hdiff
+          simpa only [Function.comp_def, eNorm_zero] using (continuous_eNorm.tendsto 0).comp hdiff
         have hpow_cont : Continuous fun x : ℝ≥0∞ => x ^ (2 : ℝ) :=
           ENNReal.continuous_rpow_const
         simpa only [ENNReal.rpow_ofNat, Function.comp_def, ENNReal.zero_rpow_of_pos (by norm_num : 0
@@ -2117,7 +2117,7 @@ private theorem modulation_eLpNorm_tendsto_zero {d : Nat} (f : L2Real d) (ω0 : 
       (MeasureTheory.volume : MeasureTheory.Measure (RealVec d)) := fun ω =>
     (modulateL2_mem ω f).aestronglyMeasurable.sub (modulateL2_mem ω0 f).aestronglyMeasurable
   refine hpow.congr fun ω => ?_
-  rw [MeasureTheory.eLpNorm_eq_lintegral_rpow_enorm_toReal
+  rw [MeasureTheory.eLpNorm_eq_lintegral_rpow_eNorm_toReal
     (by norm_num : (2 : ℝ≥0∞) ≠ 0) (by norm_num : (2 : ℝ≥0∞) ≠ ∞) (hmeas ω)]
   norm_num
 

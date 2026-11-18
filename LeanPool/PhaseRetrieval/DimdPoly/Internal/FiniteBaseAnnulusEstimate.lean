@@ -156,8 +156,7 @@ private lemma rotate_one_volume_preserving_annulus
       MeasurePreserving
         (fun z : Cd d => fun i => f i (z i))
         (volume : Measure (Cd d)) (volume : Measure (Cd d)) := by
-    simpa [MeasureTheory.Measure.pi, f] using
-      (MeasureTheory.volume_preserving_pi (f := f) hf)
+    exact MeasureTheory.volume_preserving_pi (f := f) hf
   have hfun :
       (fun z : Cd d => fun i => f i (z i)) =
         fun z => Function.update z q0 ((ω : ℂ) * z q0) := by

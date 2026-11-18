@@ -379,7 +379,7 @@ instance : MetricSpace UnitPhase :=
 
 instance : CompactSpace UnitPhase := by
   change CompactSpace { θ : ℂ // ‖θ‖ = 1 }
-  apply isCompact_iff_compactSpace.mp
+  apply (isCompact_iff_compactSpace (s := {z : ℂ | ‖z‖ = 1})).mp
   have h : IsCompact (Metric.sphere (0 : ℂ) 1) := isCompact_sphere (0 : ℂ) 1
   have hset : {z : ℂ | ‖z‖ = 1} = Metric.sphere (0 : ℂ) 1 := by
     ext z
