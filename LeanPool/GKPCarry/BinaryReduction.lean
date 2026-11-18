@@ -29,11 +29,11 @@ open Nat
 `n`. -/
 theorem padicValNat_two_centralBinom (n : ℕ) :
     padicValNat 2 (Nat.centralBinom n) = (Nat.digits 2 n).sum := by
-  rw [Nat.centralBinom_eq_two_mul_choose]
+  rw [Nat.centralBinom_eq_two_mul_choose, Nat.padicValNat_def]
   have : Fact (Nat.Prime 2) := ⟨Nat.prime_two⟩
   have hn : n ≤ 2 * n := Nat.le_mul_of_pos_left n (by decide)
   have hkummer :=
-    sub_one_mul_padicValNat_choose_eq_sub_sum_digits
+    sub_one_mul_multiplicity_choose_eq_sub_sum_digits
       (p := 2) (k := n) (n := 2 * n) hn
   have hsub : 2 * n - n = n := by omega
   rw [hsub] at hkummer
@@ -50,7 +50,8 @@ theorem four_dvd_centralBinom_of_binary_popcount_ge_two
   have hval : 2 ≤ padicValNat 2 (Nat.centralBinom n) := by
     simpa [padicValNat_two_centralBinom] using hpop
   have hpow : (2 : ℕ) ^ 2 ∣ Nat.centralBinom n :=
-    dvd_trans (pow_dvd_pow 2 hval) pow_padicValNat_dvd
+    dvd_trans (pow_dvd_pow 2 hval) (by
+      simpa only [Nat.padicValNat_def] using pow_multiplicity_dvd 2 (Nat.centralBinom n))
   simpa using hpow
 
 /-- A natural number with binary popcount at most one is zero or a power of
@@ -159,9 +160,9 @@ theorem gkpPowerOfTwoConjecture_of_gkp (h : gkpConjecture) :
   rcases h (2 ^ k) hgt h64 h256 with h4 | h9
   · have hval : padicValNat 2 (Nat.centralBinom (2 ^ k)) = 1 := by
       rw [padicValNat_two_centralBinom, popcount_pow_two]
-    have : Fact (Nat.Prime 2) := ⟨Nat.prime_two⟩
     have hge : 2 ≤ padicValNat 2 (Nat.centralBinom (2 ^ k)) := by
-      apply (pow_dvd_iff_le_padicValNat
+      rw [Nat.padicValNat_def]
+      apply (pow_dvd_iff_le_multiplicity
         (by decide : (2 : ℕ) ≠ 1) (Nat.centralBinom_ne_zero _)).mp
       simpa using h4
     omega

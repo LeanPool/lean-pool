@@ -31,7 +31,7 @@ lemma orderOf_twoUnit_sq (level : ℕ) :
   rw [← orderOf_injective (Units.coeHom _) Units.val_injective]
   change orderOf ((2 : ZMod (3 ^ (level + 1))) ^ 2) = 3 ^ level
   convert ZMod.orderOf_one_add_prime Nat.prime_three (by decide) level using 1
-  all_goals norm_num
+  norm_num
 
 lemma two_dvd_orderOf_twoUnit (level : ℕ) :
     2 ∣ orderOf (twoUnit level) := by
