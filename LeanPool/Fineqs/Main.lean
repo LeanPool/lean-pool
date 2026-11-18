@@ -479,7 +479,7 @@ theorem prop_1 (n : ℕ) (hn : n > 0) :
     rcases x.2 with ⟨p, hp⟩
     have hxne : (x : Fin (n + 1) → F) ≠ 0 := by
       rw [← hp]
-      exact p.rep_nonzero
+      exact p.rep_ne_zero
     exact Function.ne_iff.mp hxne
   · intro g hg
     have hcoeff : ∀ j : Fin n, ∃ c : Fin (n + 1) → F,
