@@ -49,6 +49,25 @@ private lemma card_or4_le {α : Type*} [Fintype α] (p q r s : α → Prop)
   refine le_trans (Fintype.card_subtype_or (p := q) (q := fun e => r e ∨ s e)) ?_
   exact Nat.add_le_add_left (Fintype.card_subtype_or (p := r) (q := s)) _
 
+private lemma monoCount_le_card_patterns {n : Nat} (f : Coloring n) (p q r s : Edge n → Prop)
+    [DecidablePred p] [DecidablePred q] [DecidablePred r] [DecidablePred s]
+    (patterns : ∀ e, Edge.monochromatic f e ↔ p e ∨ q e ∨ r e ∨ s e) :
+    monoCount f ≤ Fintype.card {e : Edge n // p e} +
+      (Fintype.card {e : Edge n // q e} +
+        (Fintype.card {e : Edge n // r e} + Fintype.card {e : Edge n // s e})) := by
+  calc
+    monoCount f = Fintype.card {e : Edge n // Edge.monochromatic f e} :=
+      (Fintype.card_subtype (Edge.monochromatic f)).symm
+    _ = Fintype.card {e : Edge n // p e ∨ q e ∨ r e ∨ s e} :=
+      Fintype.card_congr (Equiv.subtypeEquivRight patterns)
+    _ ≤ _ := card_or4_le p q r s
+
+private lemma monoFraction_le_of_counts {n : Nat} (f : Coloring n) {count denominator : Nat}
+    (hcount : monoCount f ≤ count) (hdenominator : edgeCount n = denominator) :
+    monoFraction f ≤ (count : ℚ) / (denominator : ℚ) := by
+  rw [monoFraction, hdenominator]
+  exact div_le_div_of_nonneg_right (Nat.cast_le.mpr hcount) (Nat.cast_nonneg _)
+
 /-!
 ### `n = 9`
 
@@ -147,42 +166,18 @@ private lemma edgeCount_9 : edgeCount n = 3024 := by
   exact this.trans (by decide : (9 : Nat).descFactorial 4 = 3024)
 
 theorem monoFraction_f9_le_13_63 : monoFraction f9 ≤ (13 : ℚ) / 63 := by
-  classical
-  -- Upper bound `monoCount` by summing the four pattern counts.
-  have hmonoCount :
-      monoCount f9 = Fintype.card {e : Edge n // Edge.monochromatic f9 e} := by
-    simpa [monoCount, monoEdges] using
-      (Fintype.card_subtype (α := Edge n) (p := Edge.monochromatic f9)).symm
-  have hEquiv :
-      {e : Edge n // Edge.monochromatic f9 e}
-        ≃ {e : Edge n // pat0000 e ∨ pat1111 e ∨ pat1001 e ∨ pat0110 e} :=
-    Equiv.subtypeEquivRight (fun e => monochromatic_iff_patterns (e := e))
-  have hmonoPatterns :
-      monoCount f9 =
-        Fintype.card {e : Edge n // pat0000 e ∨ pat1111 e ∨ pat1001 e ∨ pat0110 e} := by
-    simpa [hmonoCount] using (Fintype.card_congr hEquiv)
-  have hUnion :
-      Fintype.card {e : Edge n // pat0000 e ∨ pat1111 e ∨ pat1001 e ∨ pat0110 e}
-        ≤
-          Fintype.card Edge0000
-            + (Fintype.card Edge1111 + (Fintype.card Edge1001 + Fintype.card Edge0110)) := by
-    dsimp only [Edge0000, Edge1111, Edge1001, Edge0110]
-    exact card_or4_le pat0000 pat1111 pat1001 pat0110
-  have hmonoNat : monoCount f9 ≤ 624 := by
-    have : monoCount f9 ≤
-        Fintype.card Edge0000
-          + (Fintype.card Edge1111 + (Fintype.card Edge1001 + Fintype.card Edge0110)) := by
-      simpa [hmonoPatterns] using hUnion
-    simpa [card_edge0000, card_edge1111, card_edge1001, card_edge0110, Nat.add_assoc] using this
-  have hcount : (monoCount f9 : ℚ) ≤ (624 : ℚ) := by exact_mod_cast hmonoNat
-  have hE : (edgeCount n : ℚ) = 3024 := by exact_mod_cast edgeCount_9
-  -- Divide both sides by `edgeCount`.
-  have hdiv : monoFraction f9 ≤ (624 : ℚ) / (edgeCount n : ℚ) := by
-    have hEpos : (0 : ℚ) ≤ (edgeCount n : ℚ) := by exact_mod_cast (Nat.zero_le (edgeCount n))
-    simpa [monoFraction] using (div_le_div_of_nonneg_right hcount hEpos)
-  have hred : (624 : ℚ) / (edgeCount n : ℚ) = (13 : ℚ) / 63 := by
-    simp [hE, show (624 : ℚ) / 3024 = (13 : ℚ) / 63 by norm_num]
-  simpa [hred] using hdiv
+  have countBound : monoCount f9 ≤ 624 := by
+    have patternBound :=
+      monoCount_le_card_patterns f9 pat0000 pat1111 pat1001 pat0110
+        (fun e => monochromatic_iff_patterns e)
+    rw [show Fintype.card {e : Edge n // pat0000 e} = 24 from card_edge0000,
+        show Fintype.card {e : Edge n // pat1111 e} = 120 from card_edge1111,
+        show Fintype.card {e : Edge n // pat1001 e} = 240 from card_edge1001,
+        show Fintype.card {e : Edge n // pat0110 e} = 240 from card_edge0110] at patternBound
+    exact patternBound
+  calc
+    monoFraction f9 ≤ (624 : ℚ) / 3024 := monoFraction_le_of_counts f9 countBound edgeCount_9
+    _ = (13 : ℚ) / 63 := by norm_num
 
 theorem exists_coloring_monoFraction_le_13_63 : ∃ f : Coloring9, monoFraction f ≤ (13 : ℚ) / 63 :=
   ⟨f9, monoFraction_f9_le_13_63⟩
@@ -310,44 +305,12 @@ private lemma monoCount_le_bound :
           + (Fintype.card (Big (n := n) hn)).descFactorial 4
           + (2 * ((Fintype.card (Small (n := n) hn)).descFactorial 2
               * (Fintype.card (Big (n := n) hn)).descFactorial 2)) := by
-  classical
-  have hMonoEq :
-      monoCount (f (n := n) hn)
-        = Fintype.card {e : Edge n // Edge.monochromatic (f (n := n) hn) e} := by
-    simpa [monoCount, monoEdges] using
-      (Fintype.card_subtype (α := Edge n) (p := Edge.monochromatic (f (n := n) hn))).symm
-  have hEquiv :
-      {e : Edge n // Edge.monochromatic (f (n := n) hn) e}
-        ≃
-        {e : Edge n //
-          pat0000 (n := n) hn e ∨
-            pat1111 (n := n) hn e ∨ pat1001 (n := n) hn e ∨ pat0110 (n := n) hn e} :=
-    Equiv.subtypeEquivRight (fun e => monochromatic_iff_patterns (n := n) hn (e := e))
-  have hMonoPatterns :
-      monoCount (f (n := n) hn)
-        = Fintype.card {e : Edge n //
-            pat0000 (n := n) hn e ∨
-              pat1111 (n := n) hn e ∨ pat1001 (n := n) hn e ∨ pat0110 (n := n) hn e} := by
-    simpa [hMonoEq] using (Fintype.card_congr hEquiv)
-  -- Bound the card of the disjunction subtype by the sum of the four pattern subtype cards.
-  have hUnion :
-      Fintype.card {e : Edge n //
-          pat0000 (n := n) hn e ∨
-            pat1111 (n := n) hn e ∨ pat1001 (n := n) hn e ∨ pat0110 (n := n) hn e}
-        ≤
-          Fintype.card (Edge0000 (n := n) hn)
-            + (Fintype.card (Edge1111 (n := n) hn)
-              + (Fintype.card (Edge1001 (n := n) hn) + Fintype.card (Edge0110 (n := n) hn))) := by
-    dsimp only [Edge0000, Edge1111, Edge1001, Edge0110]
-    exact card_or4_le (pat0000 (n := n) hn) (pat1111 (n := n) hn) (pat1001 (n := n) hn)
-      (pat0110 (n := n) hn)
-  have hMono :
-      monoCount (f (n := n) hn)
-        ≤
-          Fintype.card (Edge0000 (n := n) hn)
-            + (Fintype.card (Edge1111 (n := n) hn)
-              + (Fintype.card (Edge1001 (n := n) hn) + Fintype.card (Edge0110 (n := n) hn))) := by
-    simpa [hMonoPatterns] using hUnion
+  have hMono :=
+    monoCount_le_card_patterns (f n hn) (pat0000 hn) (pat1111 hn) (pat1001 hn) (pat0110 hn)
+      (fun e => monochromatic_iff_patterns hn (e := e))
+  change monoCount (f n hn) ≤ Fintype.card (Edge0000 hn) +
+    (Fintype.card (Edge1111 hn) +
+      (Fintype.card (Edge1001 hn) + Fintype.card (Edge0110 hn))) at hMono
   -- Evaluate the pattern cards using the bijections above.
   have h0000 := card_edge0000 (n := n) hn
   have h1111 := card_edge1111 (n := n) hn
