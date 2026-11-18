@@ -76,11 +76,6 @@ private theorem toFun_ofPkappa_annulus
   intro alpha halpha
   simp [coeffSkappa, ofPkappa]
 
-private lemma continuous_Phi_annulus
-    {d : Nat} (kappa alpha : MultiIndex d) :
-    Continuous (Phi kappa alpha) := by
-  exact DimdPolyLEAN.continuous_Phi kappa alpha
-
 private lemma continuous_evalPkappa_annulus
     {d : Nat} (kappa : MultiIndex d) (F : Pkappa d kappa) :
     Continuous (evalPkappa kappa F) := by
@@ -386,31 +381,6 @@ private theorem annulusBandLength_pos
 private theorem norm_nonneg_pkappa_annulus
     {d : Nat} {kappa : MultiIndex d} (F : Pkappa d kappa) :
     0 ≤ ‖F‖ := Real.sqrt_nonneg _
-
-private theorem norm_ne_zero_of_ne_zero_pkappa_annulus
-    {d : Nat} {kappa : MultiIndex d}
-    {F : Pkappa d kappa} (hF : F ≠ 0) :
-    ‖F‖ ≠ 0 := by
-  intro hnorm
-  apply hF
-  ext alpha
-  by_cases hmem : alpha ∈ F.support
-  · have hcoeff_ne : F alpha ≠ 0 := Finsupp.mem_support_iff.mp hmem
-    have hle :
-        ‖F alpha‖ ^ 2 ≤ Finset.sum F.support (fun a : Idx d => ‖F a‖ ^ 2) := by
-      exact
-        (Finset.single_le_sum
-          (f := fun a : Idx d => ‖F a‖ ^ 2) (s := F.support) (a := alpha)
-          (fun a _ => by positivity) hmem)
-    have hterm_pos : 0 < ‖F alpha‖ ^ 2 := pow_pos (norm_pos_iff.mpr hcoeff_ne) 2
-    have hsum_pos : 0 < Finset.sum F.support (fun a : Idx d => ‖F a‖ ^ 2) :=
-      lt_of_lt_of_le hterm_pos hle
-    change Real.sqrt (Finset.sum F.support (fun a : Idx d => ‖F a‖ ^ 2)) = 0 at hnorm
-    have hsqrt_pos :
-        0 < Real.sqrt (Finset.sum F.support (fun a : Idx d => ‖F a‖ ^ 2)) :=
-      Real.sqrt_pos.mpr hsum_pos
-    linarith only [hnorm, hsqrt_pos]
-  · exact Finsupp.notMem_support_iff.mp hmem
 
 private theorem integrable_evalPkappa_sq_annulus
     {d : Nat} (hd : 0 < d) (kappa : MultiIndex d) (F : Pkappa d kappa) :
@@ -1268,80 +1238,6 @@ private theorem Phi_eq_PhiKappaAlpha_annulus
   refine Finset.prod_congr rfl ?_
   intro q hq
   exact phi1D_eq_oneDimPhi_annulus (kappa q) (alpha q) (z q)
-
-private lemma oneDimPhi_phaseLaw_annulus
-    (k n : Nat) (t : ℝ) (z : ℂ) :
-    Hermite1DimdLEAN.oneDimPhi k n (Complex.exp (Complex.I * t) * z) =
-      Complex.exp (Complex.I * (((n : ℤ) - (k : ℤ) : ℂ) * t)) *
-        Hermite1DimdLEAN.oneDimPhi k n z := by
-  obtain ⟨radial, hradial⟩ := Hermite1DimdLEAN.oneVariableAngularFactorization k n
-  have hz : ((‖z‖ : ℂ) * Complex.exp (Complex.I * z.arg)) = z := by
-    simp [mul_comm Complex.I (z.arg : ℂ), Complex.norm_mul_exp_arg_mul_I z]
-  have hrot :
-      Complex.exp (Complex.I * t) * z =
-        ((‖z‖ : ℂ) * Complex.exp (Complex.I * (t + z.arg))) := by
-    calc
-      Complex.exp (Complex.I * t) * z =
-          Complex.exp (Complex.I * t) * ((‖z‖ : ℂ) * Complex.exp (Complex.I * z.arg)) := by rw [hz]
-      _ = ((‖z‖ : ℂ) * Complex.exp (Complex.I * t)) * Complex.exp (Complex.I * z.arg) := by ring_nf
-      _ = (‖z‖ : ℂ) * (Complex.exp (Complex.I * t) * Complex.exp (Complex.I * z.arg)) := by
-            rw [mul_assoc]
-      _ = ((‖z‖ : ℂ) * Complex.exp (Complex.I * (t + z.arg))) := by
-            rw [← Complex.exp_add]
-            congr 1
-            ring_nf
-  have hleft :
-      Hermite1DimdLEAN.oneDimPhi k n ((‖z‖ : ℂ) * Complex.exp (Complex.I * (t + z.arg))) =
-        Complex.exp (Complex.I * (((n : ℤ) - (k : ℤ) : ℂ) * (t + z.arg))) *
-          radial.eval₂ (algebraMap ℝ ℂ) ‖z‖ := by simpa using hradial ‖z‖ (t + z.arg)
-  have hright :
-      Hermite1DimdLEAN.oneDimPhi k n z =
-        Complex.exp (Complex.I * (((n : ℤ) - (k : ℤ) : ℂ) * z.arg)) *
-          radial.eval₂ (algebraMap ℝ ℂ) ‖z‖ := by simpa [hz] using hradial ‖z‖ z.arg
-  have hexp :
-      Complex.exp (Complex.I * (((n : ℤ) - (k : ℤ) : ℂ) * (t + z.arg))) =
-        Complex.exp (Complex.I * (((n : ℤ) - (k : ℤ) : ℂ) * t)) *
-          Complex.exp (Complex.I * (((n : ℤ) - (k : ℤ) : ℂ) * z.arg)) := by
-    rw [show Complex.I * ((((n : ℤ) - (k : ℤ) : ℂ) * (t + z.arg))) =
-        Complex.I * ((((n : ℤ) - (k : ℤ) : ℂ) * t)) +
-          Complex.I * ((((n : ℤ) - (k : ℤ) : ℂ) * z.arg)) by ring_nf]
-    rw [Complex.exp_add]
-  calc
-    Hermite1DimdLEAN.oneDimPhi k n (Complex.exp (Complex.I * t) * z) =
-        Hermite1DimdLEAN.oneDimPhi k n
-          ((‖z‖ : ℂ) * Complex.exp (Complex.I * (t + z.arg))) := by rw [hrot]
-    _ = Complex.exp (Complex.I * (((n : ℤ) - (k : ℤ) : ℂ) * (t + z.arg))) *
-          radial.eval₂ (algebraMap ℝ ℂ) ‖z‖ := hleft
-    _ = Complex.exp (Complex.I * (((n : ℤ) - (k : ℤ) : ℂ) * t)) *
-          Hermite1DimdLEAN.oneDimPhi k n z := by
-          rw [hexp, hright]
-          ring_nf
-
-private theorem Phi_rotate_one_exp_annulus
-    {d : Nat} (kappa alpha : MultiIndex d) (q0 : Fin d) (t : ℝ) (z : Cd d) :
-    Phi kappa alpha (Function.update z q0 (Complex.exp (Complex.I * t) * z q0)) =
-      Complex.exp (Complex.I * (((alpha q0 : ℤ) - (kappa q0 : ℤ) : ℂ) * t)) *
-        Phi kappa alpha z := by
-  exact DimdPolyLEAN.Phi_rotate_one_exp kappa alpha q0 t z
-
-private lemma fourier_mk_eq_exp_annulus
-    (n : ℤ) (θ : ℝ) :
-    (fourier n (QuotientAddGroup.mk θ : Circle) : ℂ) =
-      Complex.exp (Complex.I * (n : ℂ) * θ) := by
-  rw [fourier_coe_apply]
-  congr 1
-  push_cast
-  field_simp
-
-private theorem Phi_rotateCoord_circle_phase_annulus
-    {d : Nat} (kappa alpha : MultiIndex d) (q0 : Fin d)
-    (x : Circle) (z : Cd d) :
-    (fourier ((kappa q0 : Nat) : Int) x : ℂ) *
-      Phi kappa alpha
-        (Function.update z q0 ((fourier (1 : Int) x : ℂ) * z q0)) =
-    (fourier ((alpha q0 : Nat) : Int) x : ℂ) *
-      Phi kappa alpha z := by
-  exact DimdPolyLEAN.Phi_rotateCoord_circle_phase kappa alpha q0 x z
 
 private def fiberIndexLow
     {d : Nat} (q0 : Fin d) (D : Nat) (alpha : Idx d) : Fin (D + 1) :=

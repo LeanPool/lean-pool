@@ -52,12 +52,6 @@ private theorem toFun_ofPkappa_wip
     toFun kappa (ofPkappa kappa F) = evalPkappa kappa F := by
   exact toFun_ofPkappa kappa F
 
-private theorem summable_skappa_eval_mul_of_phi_sq_wip
-    {d : Nat} (kappa : MultiIndex d) (U : Skappa d kappa) (z : Cd d)
-    (hPhi : Summable (fun alpha : Idx d => ‖Phi kappa alpha z‖ ^ 2)) :
-    Summable (fun alpha : Idx d => coeffSkappa U alpha * Phi kappa alpha z) := by
-  exact summable_skappa_eval_mul_of_phi_sq kappa U z hPhi
-
 private theorem finite_eval_sum_tendsto_wip
     {d : Nat} {kappa : MultiIndex d}
     {H : ℕ -> Pkappa d kappa} {U : Skappa d kappa}
@@ -73,62 +67,6 @@ private theorem finite_eval_sum_tendsto_wip
   apply tendsto_finsetSum
   intro alpha halpha
   exact (hcoeff alpha).mul tendsto_const_nhds
-
-private theorem phi1D_eq_oneDimPhi_wip
-    (k n : Nat) (z : ℂ) :
-    phi1D k n z = Hermite1DimdLEAN.oneDimPhi k n z := by
-  unfold phi1D complexHermite Hermite1DimdLEAN.oneDimPhi
-  congr 1
-  · simp [one_div, mul_comm]
-  · rw [Nat.min_comm k n]
-    refine Finset.sum_congr rfl ?_
-    intro j hj
-    have hj' : j <= min n k := Nat.lt_succ_iff.mp (Finset.mem_range.mp hj)
-    have hjn : j <= n := le_trans hj' (Nat.min_le_left _ _)
-    have hfac_ne : (Nat.factorial (n - j) : ℂ) ≠ 0 := by
-      exact_mod_cast Nat.factorial_ne_zero (n - j)
-    have hfactor : (Nat.factorial j : ℂ) * (Nat.choose n j : ℂ) =
-        (Nat.factorial n : ℂ) / (Nat.factorial (n - j) : ℂ) := by
-      apply mul_right_cancel₀ hfac_ne
-      calc
-        ((Nat.factorial j : ℂ) * (Nat.choose n j : ℂ)) *
-            (Nat.factorial (n - j) : ℂ)
-            = (Nat.choose n j : ℂ) * (Nat.factorial j : ℂ) *
-                (Nat.factorial (n - j) : ℂ) := by ring
-        _ = (Nat.factorial n : ℂ) := by exact_mod_cast Nat.choose_mul_factorial_mul_factorial hjn
-        _ = ((Nat.factorial n : ℂ) / (Nat.factorial (n - j) : ℂ)) *
-              (Nat.factorial (n - j) : ℂ) := by field_simp [hfac_ne]
-    simpa [mul_assoc, mul_left_comm, mul_comm] using
-      congrArg
-        (fun x : ℂ =>
-          ((-1 : ℂ) ^ j) * x * (Nat.choose k j : ℂ) *
-            z ^ (n - j) * (star z) ^ (k - j))
-        hfactor
-
-private theorem summable_sq_hermite_phi_eval_wip
-    (k : Nat) (z : ℂ) :
-    Summable (fun n : Nat => ‖HermitekLEAN.Phi k n z‖ ^ 2) := by
-  exact HermitekLEAN.summable_norm_sq_Phi_eval k z
-
-private theorem summable_sq_phi1D_eval_wip
-    (k : Nat) (z : ℂ) :
-    Summable (fun m : Nat => ‖phi1D k m z‖ ^ 2) := by
-  have hEq :
-      (fun m : Nat => ‖phi1D k m z‖ ^ 2) =
-        fun m : Nat => ‖HermitekLEAN.Phi k m z‖ ^ 2 := by
-    funext m
-    have hphi : phi1D k m z = HermitekLEAN.Phi k m z :=
-      phi1D_eq_oneDimPhi_wip k m z
-    simp [hphi]
-  simpa [hEq] using
-    summable_sq_hermite_phi_eval_wip k z
-
-private theorem Phi_norm_sq_eq_prod_wip
-    {d : Nat} (kappa alpha : MultiIndex d) (z : Cd d) :
-    ‖Phi kappa alpha z‖ ^ 2 =
-      Finset.prod Finset.univ
-        (fun q : Fin d => ‖phi1D (kappa q) (alpha q) (z q)‖ ^ 2) := by
-  simp [Phi, norm_prod, Finset.prod_pow]
 
 private theorem summable_sq_Phi_eval_wip
     {d : Nat} (kappa : MultiIndex d) (z : Cd d) :
@@ -1227,11 +1165,6 @@ private theorem defect_nonneg_wip
     {d : Nat} {kappa : MultiIndex d}
     (F G : Pkappa d kappa) :
     0 <= defect F G := Real.sqrt_nonneg _
-
-private lemma continuous_Phi_coeff_wip
-    {d : Nat} (kappa alpha : MultiIndex d) :
-    Continuous (Phi kappa alpha) := by
-  exact continuous_Phi kappa alpha
 
 private lemma continuous_evalPkappa_coeff_wip
     {d : Nat} (kappa : MultiIndex d) (F : Pkappa d kappa) :
@@ -2867,20 +2800,6 @@ theorem lowAnnulusDefectControl
     have hempty : lowAnnuli d 0 = ∅ := by simp [lowAnnuli]
     simp [lowAnnulusMass, hempty]
   · exact finite_window_lowAnnulusDefectControl_core_wip hd kappa F hF_ne hF_norm J
-
-/-- The Gaussian square-integral norm equals `lpNorm` for a measurable representative. -/
-theorem gaussianL2Norm_eq_lpNorm_from_measurability
-    {d : Nat} {α : Type*} [NormedAddCommGroup α] (F : Cd d → α)
-    (hF : MeasureTheory.AEStronglyMeasurable F (gammaD d)) :
-    Real.sqrt (∫ z : Cd d, ‖F z‖ ^ (2 : ℝ) ∂ gammaD d) =
-      MeasureTheory.lpNorm F 2 (gammaD d) :=
-  gaussianL2Norm_eq_lpNorm_coeff_wip F hF
-
-/-- The polynomial Gaussian `lpNorm` equals its coefficient norm. -/
-theorem evalPkappa_lpNorm_eq_coefficient_norm
-    {d : Nat} (hd : 0 < d) (kappa : MultiIndex d) (F : Pkappa d kappa) :
-    MeasureTheory.lpNorm (evalPkappa kappa F) 2 (gammaD d) = ‖F‖ :=
-  evalPkappa_lpNorm_eq_norm_coeff_wip hd kappa F
 
 /-- A unit reference polynomial bounds coefficient size through its modulus defect. -/
 theorem norm_le_defect_add_two_of_norm_one

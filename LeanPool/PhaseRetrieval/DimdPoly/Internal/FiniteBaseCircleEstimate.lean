@@ -591,17 +591,6 @@ private theorem defect_pointwise_const_center_compare_of_close
     (abs_nonneg _) (abs_nonneg _) he_nonneg hba
   simpa only [one_div, Complex.norm_mul, tsub_le_iff_right, ge_iff_le, sq_abs, a, b, e] using hsafe
 
-private theorem defect_pointwise_const_center_compare_fast_of_close
-    (N : Nat) (x : Circle) {c lam u : ℂ} (hc : c ≠ 0)
-    (hclose : ‖lam - 1‖ <= 1 / 2) :
-    (1 / 2) * (‖c + circleChar N x * u‖ - ‖c‖) ^ 2 -
-        (4 * ‖lam - 1‖ * ‖u‖) ^ 2 <=
-      (‖lam * c + circleChar N x * u‖ - ‖lam * c‖) ^ 2 := by
-  have h := defect_pointwise_const_center_compare_of_close
-    (c := c) (lam := lam) (u := circleChar N x * u) hc hclose
-  simpa only [one_div, Complex.norm_mul, tsub_le_iff_right, ge_iff_le, norm_circleChar_wip, one_mul,
-    norm_mul] using h
-
 private theorem exists_factor_close_of_norm_sub_le
     {Qx c : ℂ} {theta : ℝ} (hc : c ≠ 0)
     (hclose : ‖Qx - c‖ <= theta * ‖c‖) :
@@ -1418,14 +1407,6 @@ private theorem carrierArc_dist_le_length {N : Nat} (k : Fin N) :
     · linarith only [ha.2, hb.1]
   exact hdist.trans habs
 
-private theorem carrierArc_arcSet_eq_mk_image_Ioc_union_left_wip
-    {N : Nat} (k : Fin N) :
-    arcSet (carrierArc N k) =
-      (QuotientAddGroup.mk ''
-        Set.Ioc ((carrierArc N k).left) ((carrierArc N k).right)) ∪
-        {(QuotientAddGroup.mk ((carrierArc N k).left) : Circle)} := by
-  exact DimdPolyLEAN.carrierArc_arcSet_eq_mk_image_Ioc_union_left k
-
 private theorem quotient_mk_injOn_Ioc_zero_period_wip :
     Set.InjOn (fun t : ℝ => (QuotientAddGroup.mk t : Circle))
       (Set.Ioc (0 : ℝ) (2 * Real.pi)) := by
@@ -1451,23 +1432,6 @@ private theorem carrierArc_mk_preimage_image_Ioc_inter_fundamental_wip
         Set.Ioc ((carrierArc N k).left) ((carrierArc N k).right) := by
   exact DimdPolyLEAN.carrierArc_mk_preimage_image_Ioc_inter_fundamental k
 
-private theorem volume_singleton_circle_wip (x : Circle) :
-    MeasureTheory.volume ({x} : Set Circle) = 0 := by
-  have h := AddCircle.volume_closedBall (T := 2 * Real.pi) (x := x) (ε := 0)
-  simpa only [MeasureTheory.Measure.addHaar_singleton, Metric.closedBall_zero, mul_zero,
-    ENNReal.ofReal_min, Nat.ofNat_nonneg, ENNReal.ofReal_mul, ENNReal.ofReal_ofNat,
-    ENNReal.ofReal_zero, zero_le, inf_of_le_right] using h
-
-private theorem μCircle_singleton_wip (x : Circle) :
-    μCircle ({x} : Set Circle) = 0 := by
-  have hvol : MeasureTheory.volume ({x} : Set Circle) = 0 :=
-    volume_singleton_circle_wip x
-  rw [AddCircle.volume_eq_smul_haarAddCircle, MeasureTheory.Measure.smul_apply] at hvol
-  rw [smul_eq_mul] at hvol
-  have hcoef : ENNReal.ofReal (2 * Real.pi) ≠ 0 := by simp [ENNReal.ofReal_eq_zero, Real.pi_pos]
-  simpa only [μCircle, MeasureTheory.Measure.addHaar_singleton] using
-    (mul_eq_zero.mp hvol).resolve_left hcoef
-
 private theorem carrierArc_arcSet_ae_eq_mk_image_Ioc_wip {N : Nat} (k : Fin N) :
     arcSet (carrierArc N k) =ᵐ[μCircle]
       QuotientAddGroup.mk ''
@@ -1480,22 +1444,6 @@ private theorem carrierArc_arcSet_ae_eq_mk_image_Ioc_volume_wip
       QuotientAddGroup.mk ''
         Set.Ioc ((carrierArc N k).left) ((carrierArc N k).right) := by
   exact DimdPolyLEAN.carrierArc_arcSet_ae_eq_mk_image_Ioc_volume k
-
-private theorem volume_mk_image_carrierArc_Ioc_wip {N : Nat} (k : Fin N) :
-    MeasureTheory.volume
-        ((fun t : ℝ => (QuotientAddGroup.mk t : Circle)) ''
-          Set.Ioc ((carrierArc N k).left) ((carrierArc N k).right)) =
-      ENNReal.ofReal (arcLength (carrierArc N k)) := by
-  exact DimdPolyLEAN.volume_mk_image_carrierArc_Ioc k
-
-private theorem period_smul_μCircle_mk_image_carrierArc_Ioc_wip
-    {N : Nat} (k : Fin N) :
-    ENNReal.ofReal (2 * Real.pi) *
-        μCircle
-          ((fun t : ℝ => (QuotientAddGroup.mk t : Circle)) ''
-            Set.Ioc ((carrierArc N k).left) ((carrierArc N k).right)) =
-      ENNReal.ofReal (arcLength (carrierArc N k)) := by
-  exact DimdPolyLEAN.period_smul_μCircle_mk_image_carrierArc_Ioc k
 
 private theorem period_smul_μCircle_carrierArc_wip {N : Nat} (k : Fin N) :
     ENNReal.ofReal (2 * Real.pi) *

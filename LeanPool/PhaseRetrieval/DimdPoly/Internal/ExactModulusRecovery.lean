@@ -75,20 +75,6 @@ private lemma integral_normalized_cexp_quadratic (b c : ℂ) :
   rw [← mul_assoc, show -(1 / 4 : ℝ) = -1 / 4 by ring,
     piPow_quarter_sq_mul_half, one_mul]
 
-private lemma piPowQuarterC_sq :
-    (((Real.pi ^ (-(1 / 4 : ℝ)) : ℝ) : ℂ) ^ 2) =
-      ((Real.pi ^ (-(1 / 2 : ℝ)) : ℝ) : ℂ) := by
-  rw [sq, ← Complex.ofReal_mul]
-  congr 1
-  rw [← Real.rpow_add Real.pi_pos]
-  norm_num
-
-private lemma cexp_neg_half_sq_sq (t : ℝ) :
-    Complex.exp (-((t : ℂ) ^ 2 / 2)) * Complex.exp (-((t : ℂ) ^ 2 / 2)) =
-      ((Real.exp (-(t ^ (2 : ℕ))) : ℝ) : ℂ) := by
-  rw [← Complex.exp_add, show -((t : ℂ) ^ 2 / 2) + -((t : ℂ) ^ 2 / 2) =
-    ((-(t ^ (2 : ℕ)) : ℝ) : ℂ) by push_cast; ring, Complex.ofReal_exp]
-
 private lemma star_sub_div_sqrtTwo (x ω : ℝ) :
     star (((x : ℂ) - (2 * Real.pi : ℂ) * Complex.I * (ω : ℂ)) /
         (Real.sqrt 2 : ℂ)) =
@@ -807,18 +793,6 @@ private theorem iteratedDeriv_cexp_ambiguity_kernel_at_zero_sum
   · fun_prop
   · fun_prop
 
-private theorem iteratedDeriv_cexp_ambiguity_kernel_diag_at_zero_sum
-    (k : ℕ) (z : ℂ) :
-    iteratedDeriv k
-      (fun w : ℂ =>
-        iteratedDeriv k
-          (fun u : ℂ => Complex.exp (u * w + z * u - star z * w)) 0) 0 =
-      ∑ i ∈ Finset.range (k + 1),
-        (k.choose i : ℂ) *
-          (((k.descFactorial i : ℕ) : ℂ) * z ^ (k - i)) *
-            (-(star z)) ^ (k - i) := by
-  exact iteratedDeriv_cexp_ambiguity_kernel_at_zero_sum k k z
-
 private theorem neg_one_pow_mul_of_le (k i : ℕ) (hi : i ≤ k) :
     ((-1 : ℂ) ^ k) * ((-1 : ℂ) ^ i) = (-1 : ℂ) ^ (k - i) := by
   calc
@@ -858,15 +832,6 @@ private theorem cexp_ambiguity_kernel_sum_eq_complexHermite
       or_true, Finset.mem_range, Order.lt_add_one_iff, le_inf_iff, and_true, not_le,
       RCLike.star_def, mul_eq_zero, Nat.cast_eq_zero, Nat.descFactorial_eq_zero_iff_lt,
       pow_eq_zero_iff', ne_eq, true_or, neg_eq_zero, map_eq_zero, implies_true]
-
-private theorem cexp_ambiguity_kernel_diag_sum_eq_complexHermite
-    (k : ℕ) (z : ℂ) :
-    (∑ i ∈ Finset.range (k + 1),
-        (k.choose i : ℂ) *
-          (((k.descFactorial i : ℕ) : ℂ) * z ^ (k - i)) *
-            (-(star z)) ^ (k - i)) =
-      (-1 : ℂ) ^ k * complexHermite k k z := by
-  exact cexp_ambiguity_kernel_sum_eq_complexHermite k k z
 
 private theorem iteratedDeriv_cexp_ambiguity_kernel_at_zero
     (n k : ℕ) (z : ℂ) :
@@ -2930,16 +2895,8 @@ private theorem ambiguityRep_varphiKappa_eq_tensorRep_integral
           star (realHermiteTensorRep kappa (t - ((1 / 2 : ℝ) • ξ.1))) *
             Complex.exp (-(2 * Real.pi : ℂ) * Complex.I *
               ((inner ℝ ξ.2 t : ℝ) : ℂ)) := by
-  unfold ambiguityRep
-  apply MeasureTheory.integral_congr_ae
   have hcoe := varphiKappa_coe_ae_eq_realHermiteTensorRep kappa
-  have hplus := ((MeasureTheory.measurePreserving_add_right
-    (volume : Measure (RealVec d)) ((1 / 2 : ℝ) • ξ.1)).quasiMeasurePreserving).ae_eq_comp hcoe
-  have hminus := ((MeasureTheory.measurePreserving_add_right
-    (volume : Measure (RealVec d)) (-((1 / 2 : ℝ) • ξ.1))).quasiMeasurePreserving).ae_eq_comp hcoe
-  filter_upwards [hplus, hminus] with t hp hm
-  simp only [Function.comp_apply, sub_eq_add_neg] at hp hm ⊢
-  rw [hp, hm]
+  exact ambiguityRep_eq_integral_of_ae_eq hcoe hcoe ξ
 
 /-- `TKappa`: T Kappa. -/
 noncomputable def TKappa {d : Nat} :

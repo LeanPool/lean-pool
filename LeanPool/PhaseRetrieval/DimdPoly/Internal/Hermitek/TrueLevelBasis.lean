@@ -174,18 +174,6 @@ private theorem sum_Icc_eq_sum_Fin {α : Type*} [AddCommMonoid α]
     simp_all only [coe_Icc, Set.mem_Icc, and_self, add_tsub_cancel_of_le]
   · simp_all only [mem_univ, imp_self, implies_true]
 
-private lemma filter_embedding_eq_singleton {D : ℕ} {α : Type*} [DecidableEq α]
-    (e : Fin D ↪ α) (k : Fin D) :
-    (Finset.univ : Finset (Fin D)).filter
-      (fun j => e j = e k) = {k} := by
-  ext j
-  simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_singleton]
-  constructor
-  · intro h
-    exact e.injective h
-  · intro h
-    exact congrArg e h
-
 private lemma circleL2Sq_finFourierPoly {D : ℕ} (c : Fin D → ℂ) :
     circleL2Sq (fun t : Circle => ∑ k : Fin D, c k * fourier (k.val : ℤ) t) =
       ∑ k : Fin D, ‖c k‖ ^ 2 := by

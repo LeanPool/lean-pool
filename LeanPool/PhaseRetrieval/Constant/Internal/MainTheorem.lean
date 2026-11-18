@@ -56,13 +56,6 @@ private lemma rhoFockNormSq_nonneg {D : ℕ} (a : Fin D → ℂ) : 0 ≤ rhoFock
 
 /-! ## Auxiliary lemmas for polar decomposition -/
 
-private lemma filter_embedding_eq_singleton {D : ℕ} (e : Fin D ↪ ℤ) (k : Fin D) :
-    (Finset.univ : Finset (Fin D)).filter
-      (fun j => e j = e k) = {k} := by
-  ext j
-  simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_singleton]
-  exact ⟨fun h ↦ e.injective h, congrArg e⟩
-
 private lemma integrable_pow_mul_exp_neg_sq (n : ℕ) :
     Integrable (fun r : ℝ => r ^ n * Real.exp (-r ^ 2)) volume := by
   have hs : (-1 : ℝ) < (n : ℝ) := by exact_mod_cast (show -1 < (n : ℤ) by omega)
