@@ -2644,8 +2644,8 @@ private theorem eLpNorm_stftRep_le {d : Nat} (h f : L2Real d) :
 private theorem eLpNorm_stftRep_le._simp_1_2.{u_1, u_2}
     {α : Type u_1} {E : Type u_2} {m : MeasurableSpace α} {p : ENNReal} {μ : Measure α}
     [inst : NormedAddCommGroup E] {f : α → E} :
-    (0 ≤ MeasureTheory.lpNorm f p μ) = True :=
-  @eLpNorm_stftRep_le._simp_1_1.{u_1, u_2} α E m p μ inst f
+    (0 ≤ MeasureTheory.lpNorm f p μ) = True := by
+  exact propext (iff_true_intro MeasureTheory.lpNorm_nonneg)
 
 private theorem stftRep_sq_integrable {d : Nat} (h f : L2Real d) :
     Integrable (fun p : PhaseSpace d => ‖stftRep h f p‖ ^ 2)

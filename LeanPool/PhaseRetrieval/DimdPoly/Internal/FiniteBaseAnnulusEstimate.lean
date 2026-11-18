@@ -1826,7 +1826,8 @@ private theorem high_localPart_annulus_estimate_annulus
 -- Retain the original simplifier name after earlier proof sharing changes its suffix.
 private theorem high_localPart_annulus_estimate_annulus._simp_1_2.{u_1}
     {α : Type u_1} [inst : LE α] [inst_1 : Zero α] [IsBotZeroClass α] {a : α} :
-    (0 ≤ a) = True := high_localPart_annulus_estimate_annulus._simp_1_1
+    (0 ≤ a) = True := by
+  exact propext (iff_true_intro (show 0 ≤ a from zero_le))
 
 private theorem high_annulus_coercive_step_annulus
     {d : Nat} (hd : 0 < d) {kappa : MultiIndex d}
