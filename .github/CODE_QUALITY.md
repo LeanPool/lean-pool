@@ -43,10 +43,17 @@ then have either a fresh successful build timing from its responsible job or the
 recorded time of the exact output being reused; that time is checked against the
 limit either way, and a module with neither fails the check.
 
-Shards check their assigned modules. Assembly excludes projects listed in the
-same run's shard matrix and checks all remaining changed modules; the canonical
-gate requires every shard and assembly to succeed. Single and rebased root builds
-check all changed modules. Untouched modules can still reuse compiled output.
+A receipt counts only for output that is present: a module whose `.olean` is
+missing has no recorded time, whatever its receipt says, and is compiled and
+timed again.
+
+Shards check their assigned modules. Assembly, like single and rebased root
+builds, checks every changed module, including those in the shards' projects. It
+reuses a shard's output when that output arrived with its receipt; anything
+assembly compiles itself is judged by assembly's own build time, which replaces
+any time recorded earlier. No job can exempt a project from the check. The
+canonical gate requires every shard and assembly to succeed. Untouched modules
+can still reuse compiled output.
 
 "Changed" is measured from the main commit the run is tested against: the tested
 merge commit's first parent for a PR, not the event's `base.sha`, which can trail

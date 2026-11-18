@@ -47,8 +47,10 @@ of files.
 
 Now `build_time_limits check` writes a `<Module>.timing.json` receipt beside each
 changed module's output, bound to a hash of its `.olean` files, and `prepare`
-only invalidates changed modules without a matching receipt. Receipts travel
-with every artifact that carries the outputs themselves. `ci_pr_build` restores
+only invalidates changed modules without a matching receipt. A receipt without
+its `.olean` matches nothing. Receipts travel with every artifact that carries
+the outputs themselves, so assembly checks every changed module too: it reuses
+what the shards delivered and times whatever it has to compile itself. `ci_pr_build` restores
 the unchanged-source modules of the PR's newest successful run, so a later push
 compiles only what it edited and whatever Lake's traces say depends on it.
 

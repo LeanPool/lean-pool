@@ -494,29 +494,19 @@ def violations(
 
 
 def _selected_changed_modules(
-    base: str,
-    root: Path,
-    modules: list[str] | None,
-    exclude_projects: list[str] | None = None,
+    base: str, root: Path, modules: list[str] | None
 ) -> dict[str, str]:
     """Changed modules this job is responsible for timing.
 
-    ``exclude_projects`` names projects that this run's build shards already
-    compiled fresh and checked, so the assembling job neither rebuilds nor
-    re-times them.
+    A shard names its own ``modules``. Every other job, including the one that
+    assembles the shards' outputs, answers for all changed modules: whatever it
+    compiles itself is timed like any other build.
     """
     changed = changed_modules(base, root)
-    if modules is not None:
-        selected = set(modules)
-        changed = {
-            module: path for module, path in changed.items() if module in selected
-        }
-    excluded = set(exclude_projects or ())
-    return {
-        module: path
-        for module, path in changed.items()
-        if module.split(".")[1] not in excluded
-    }
+    if modules is None:
+        return changed
+    selected = set(modules)
+    return {module: path for module, path in changed.items() if module in selected}
 
 
 def _output_stem(root: Path, path: str) -> Path:
@@ -542,7 +532,14 @@ def output_digest(root: Path, path: str) -> str | None:
 
 
 def recorded_seconds(root: Path, path: str) -> float | None:
-    """The build time recorded for the module's current outputs, if any."""
+    """The build time recorded for the module's current outputs, if any.
+
+    A module without compiled output has no recorded time, whatever its
+    receipt says.
+    """
+    digest = output_digest(root, path)
+    if digest is None:
+        return None
     stem = _output_stem(root, path)
     try:
         receipt = json.loads(stem.with_name(stem.name + RECEIPT_SUFFIX).read_text())
@@ -552,7 +549,7 @@ def recorded_seconds(root: Path, path: str) -> float | None:
             and isinstance(seconds, int | float)
             and not isinstance(seconds, bool)
             and seconds >= 0
-            and receipt["outputs"] == output_digest(root, path)
+            and receipt["outputs"] == digest
         )
     except (OSError, ValueError, KeyError, TypeError):
         return None
@@ -588,14 +585,9 @@ def _invalidate(root: Path, path: str) -> int:
     return removed
 
 
-def prepare(
-    base: str,
-    root: Path,
-    modules: list[str] | None = None,
-    exclude_projects: list[str] | None = None,
-) -> int:
+def prepare(base: str, root: Path, modules: list[str] | None = None) -> int:
     """Invalidate changed modules whose compiled outputs have no recorded time."""
-    changed = _selected_changed_modules(base, root, modules, exclude_projects)
+    changed = _selected_changed_modules(base, root, modules)
     untimed = [
         path for path in changed.values() if recorded_seconds(root, path) is None
     ]
@@ -636,11 +628,10 @@ def check(
     limit: int,
     *,
     modules: list[str] | None = None,
-    exclude_projects: list[str] | None = None,
 ) -> int:
     """Report changed files over the per-file limit; return the exit status."""
     built = module_times(log_path.read_text(errors="replace"))
-    changed = _selected_changed_modules(base, root, modules, exclude_projects)
+    changed = _selected_changed_modules(base, root, modules)
     times, fresh = changed_times(built, changed, root)
     print(
         f"Per-file build-time limit {limit} s: {len(changed)} added or modified "
@@ -680,14 +671,12 @@ def main(arguments: list[str] | None = None) -> int:
     prepare_parser.add_argument("--base", required=True)
     prepare_parser.add_argument("--root", type=Path, default=Path.cwd())
     prepare_parser.add_argument("--modules", nargs="*")
-    prepare_parser.add_argument("--exclude-projects", nargs="*", default=[])
     check_parser = commands.add_parser("check", help="check changed files' build times")
     check_parser.add_argument("--log", type=Path, required=True)
     check_parser.add_argument("--base", required=True)
     check_parser.add_argument("--limit", type=int, default=FILE_LIMIT_SECONDS)
     check_parser.add_argument("--root", type=Path, default=Path.cwd())
     check_parser.add_argument("--modules", nargs="*")
-    check_parser.add_argument("--exclude-projects", nargs="*", default=[])
     options = parser.parse_args(arguments)
     if options.command == "watch":
         build = options.build[1:] if options.build[:1] == ["--"] else options.build
@@ -695,16 +684,9 @@ def main(arguments: list[str] | None = None) -> int:
             parser.error("watch needs a command after --")
         return watch(build, options.limit)
     if options.command == "prepare":
-        return prepare(
-            options.base, options.root, options.modules, options.exclude_projects
-        )
+        return prepare(options.base, options.root, options.modules)
     return check(
-        options.log,
-        options.base,
-        options.root,
-        options.limit,
-        modules=options.modules,
-        exclude_projects=options.exclude_projects,
+        options.log, options.base, options.root, options.limit, modules=options.modules
     )
 
 
