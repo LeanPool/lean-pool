@@ -62,7 +62,7 @@ theorem measurableSet_voronoiFace (R : Fin M → Position) (k l : Fin M) :
       · rintro ⟨hx, hf⟩
         exact ⟨hkl, hx, fun p hpk hpl => hf p ⟨hpk, hpl⟩⟩
     rw [he]
-    exact (bisectorPlane R k l).closed_of_finiteDimensional.measurableSet.inter
+    exact (bisectorPlane R k l).isClosed_of_finiteDimensional.measurableSet.inter
       (MeasurableSet.iInter fun p =>
         (isOpen_lt (continuous_id.dist continuous_const)
           (continuous_id.dist continuous_const)).measurableSet)

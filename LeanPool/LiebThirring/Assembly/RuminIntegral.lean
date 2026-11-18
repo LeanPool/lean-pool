@@ -40,7 +40,8 @@ private lemma normalized_integrable :
   rw [← Ioc_union_Ioi_eq_Ioi (show (0 : ℝ) ≤ 1 by norm_num), integrableOn_union]
   constructor
   · exact hc.continuousOn.integrableOn_Icc.mono_set Ioc_subset_Icc_self
-  · exact (integrableOn_congr_fun (fun E hE => normalized_tail E hE.le) measurableSet_Ioi).mpr
+  · exact (integrableOn_congr_fun
+      (fun E (hE : E ∈ Ioi (1 : ℝ)) => normalized_tail E hE.le) measurableSet_Ioi).mpr
       integrableOn_zero
 
 private lemma normalized_integral :

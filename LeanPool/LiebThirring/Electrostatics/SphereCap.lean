@@ -94,6 +94,7 @@ theorem cap_slice_high {t s q n : ℝ} (ht : 0 < t) (hst : t ≤ s) (hs1 : s < 1
 @[expose] def sphereCone (t : ℝ) : Set Position := {x | ‖x‖ < 1 ∧ t * ‖x‖ < x 2}
 
 theorem measurableSet_sphereCone (t : ℝ) : MeasurableSet (sphereCone t) := by
+  change MeasurableSet ({x : Position | ‖x‖ < 1} ∩ {x | t * ‖x‖ < x 2})
   apply MeasurableSet.inter
   · exact isOpen_lt continuous_norm continuous_const |>.measurableSet
   · exact isOpen_lt (continuous_const.mul continuous_norm) (PiLp.continuous_apply 2 (fun _ : Fin 3
@@ -259,7 +260,7 @@ theorem unitSphereMeasure_cap {t : ℝ} (ht : 0 < t) (ht1 : t < 1) :
     exact isOpen_lt continuous_const
       ((PiLp.continuous_apply 2 (fun _ : Fin 3 => ℝ) 2).comp continuous_subtype_val)
         |>.measurableSet
-  rw [unitSphereMeasure, Measure.smul_apply, smul_eq_mul, sphere_area,
+  rw [unitSphereMeasure, smul_apply, smul_eq_mul, sphere_area,
     Measure.toSphere_apply' _ hm, cap_cone_eq, volume_sphereCone ht ht1]
   simp only [Position, finrank_euclideanSpace_fin]
   rw [← ENNReal.ofReal_inv_of_pos (by positivity : 0 < 4 * Real.pi),

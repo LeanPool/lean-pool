@@ -84,7 +84,7 @@ theorem lintegral_pair_coulomb_le_of_one_body_bound {N q : ℕ}
   let w : Position → ℝ≥0∞ := fun ξ =>
     ENNReal.ofReal ((2 * Real.pi) ^ 2) * (‖ξ‖₊ : ℝ≥0∞) ^ 2
   have hw : Measurable w :=
-    measurable_const.mul (measurable_id.nnnorm.coe_nnreal_ennreal.pow_const 2)
+    measurable_const.mul (measurable_id.nnNorm.coe_nnreal_ennreal.pow_const 2)
   have henergy : (∫⁻ y : OtherConfiguration i, ∫⁻ ξ : Position, w ξ *
       (‖(Lp.fourierTransformₗᵢ Position (SpinAmplitudes N q) (v y)) ξ‖₊ : ℝ≥0∞) ^ 2) =
       particleFourierEnergy ψ i :=
@@ -96,7 +96,7 @@ theorem lintegral_pair_coulomb_le_of_one_body_bound {N q : ℕ}
     rw [lintegral_l2_enorm_sq, ← ofReal_norm, ← ofReal_norm,
       LinearIsometryEquiv.norm_map, realFormParticleCurrying_norm]
   have hmeas : Measurable (fun y : OtherConfiguration i => (‖v y‖₊ : ℝ≥0∞) ^ 2) := by
-    simpa only [enorm_eq_nnnorm] using (Lp.stronglyMeasurable v).enorm.pow_const 2
+    simpa only [eNorm_eq_nnNorm] using (Lp.stronglyMeasurable v).eNorm.pow_const 2
   rw [realForm_pair_lintegral_eq_slices i j hij ψ]
   calc
     _ ≤ ∫⁻ y : OtherConfiguration i, (‖v y‖₊ : ℝ≥0∞) ^ 2 +
