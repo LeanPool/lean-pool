@@ -7,10 +7,6 @@ module
 
 public import LeanPool.ConwaySoifer.Simplified.Geometry.Affine
 public import Mathlib.Data.Fin.VecNotation
-import Mathlib.Tactic.FinCases
-import Mathlib.Tactic.Linarith
-import Mathlib.Tactic.NormNum.Basic
-import Mathlib.Tactic.Ring
 
 /-!
 # HexSymmetry

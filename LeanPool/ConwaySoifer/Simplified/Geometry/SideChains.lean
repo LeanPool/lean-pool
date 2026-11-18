@@ -7,9 +7,6 @@ module
 
 public import LeanPool.ConwaySoifer.Simplified.Geometry.Charging
 public import LeanPool.ConwaySoifer.Simplified.Geometry.Bridge
-import Mathlib.Tactic.FinCases
-import Mathlib.Tactic.Linarith
-import Mathlib.Tactic.Ring
 
 /-!
 # SideChains

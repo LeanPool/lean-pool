@@ -10,11 +10,6 @@ public import LeanPool.ConwaySoifer.Simplified.Geometry.AownArea
 public import LeanPool.ConwaySoifer.Simplified.Geometry.SideChains
 public import LeanPool.ConwaySoifer.Simplified.Geometry.MiddleThird
 public import LeanPool.ConwaySoifer.Simplified.Geometry.Core
-import Mathlib.Tactic.Convert
-import Mathlib.Tactic.FinCases
-import Mathlib.Tactic.Linarith
-import Mathlib.Tactic.NormNum.Basic
-import Mathlib.Tactic.Ring
 
 /-!
 # AownChains

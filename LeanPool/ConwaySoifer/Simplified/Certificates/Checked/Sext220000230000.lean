@@ -5,6 +5,8 @@ Authors: Vladislav Kuznetsov
 -/
 module
 
+import LeanPool.ConwaySoifer.Certificates.FanCertificate
+
 public import LeanPool.ConwaySoifer.Simplified.Certificates.Checkpoints.Sext220000230000
 public import LeanPool.ConwaySoifer.Simplified.Certificates.Steps.Sext2200002300000
 public import LeanPool.ConwaySoifer.Simplified.Certificates.Steps.Sext2200002300001
@@ -15,7 +17,6 @@ public import LeanPool.ConwaySoifer.Simplified.Certificates.Steps.Sext2200002300
 public import LeanPool.ConwaySoifer.Simplified.Certificates.Steps.Sext2200002300006
 public import LeanPool.ConwaySoifer.Simplified.Certificates.Steps.Sext2200002300007
 public import LeanPool.ConwaySoifer.Simplified.Certificates.Steps.Sext2200002300008
-import Mathlib.Tactic.FinCases
 
 /-!
 # Sext 220000 230000
@@ -52,6 +53,8 @@ SOFTWARE.
 -/
 
 @[expose] public section
+
+prepare_fan_cache ConwaySoifer.Simplified.Certificates.Sext220000230000.model0
 
 -- Generated checkpoints are proposals; all acceptance proofs are checked by the kernel.
 
@@ -122,7 +125,7 @@ theorem excluded70_0 : ExcludedOn (model70.B 0) 9000000000000 (model70.caps 0) (
       (some (6, 0, 2)) (some (7, 0, 2)) (.next ([5985000000000], [1215000000000]) (some (7, 0, 2))
       (some (7, 0, 2)) fan70Owner0Part1))))))))
       (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1 100 (by decide +kernel)
-  decide +kernel
+  certify_fan
 
 private theorem tail70 : ModelImpossible model70 9000000000000 0 1 100 :=
   final_checkpoint model70 9000000000000 0 1 100 0 excluded70_0
