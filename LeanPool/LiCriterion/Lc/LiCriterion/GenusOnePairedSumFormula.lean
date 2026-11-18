@@ -468,7 +468,6 @@ theorem paired_sum_formula_of_mtest_and_cauchy
         = (2⁻¹ : ℂ) * ∑' ρ : NontrivialZero, liPairedSummand n ρ := by
   intro n
   classical
-  let : Fact xiFactorizationShiftedProd := ⟨hhad⟩
   obtain ⟨r, hrpos, hr_lt_one, havoid⟩ := hsep
   let C : ℝ := 16 * ((1 : ℝ) / (1 - r) + 1 / 2) * ((1 : ℝ) / (1 - r)) ^ 2
   have hcoefficient := logDeriv_coefficient_eq_tsum
@@ -481,7 +480,7 @@ theorem paired_sum_formula_of_mtest_and_cauchy
     (fun ρ => C * ((1 : ℝ) / ‖ρ.val‖ ^ 2)) (hgenus.mul_left C)
     (paired_log_deriv_cofinite_bound hgenus r hr_lt_one havoid)
     (paired_log_deriv_limit_eq hgenus hhad r hr_lt_one havoid)
-    (fun ρ => taylorCoeff_xiPairedFactor (ρ := ρ) (n := n))
+    (fun ρ => taylorCoeff_xiPairedFactor ⟨hhad⟩ (ρ := ρ) (n := n))
     (summable_Li_paired_summand_of_genus_one hgenus n)
   change taylorCoeff (fun s : ℂ => (riemannXi s) ^ 2) n = _ at hcoefficient
   rw [taylorCoeff_xi_sq] at hcoefficient
