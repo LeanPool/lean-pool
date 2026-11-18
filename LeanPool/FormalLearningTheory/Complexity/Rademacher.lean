@@ -1120,7 +1120,7 @@ private theorem uniform_injective_tuple_measure_half
   have hn_nt : (n : ENNReal) ≠ ⊤ := ENNReal.natCast_ne_top n
   have hDsub_sing : ∀ t : α, D_sub {t} = 1 / (n : ENNReal) := by
     intro t
-    simp only [D_sub, uniformMeasure, MeasureTheory.Measure.smul_apply, smul_eq_mul]
+    simp only [D_sub, uniformMeasure, smul_apply, smul_eq_mul]
     simp_all
   have : MeasureTheory.IsFiniteMeasure D_sub := by
     constructor; rw [hD_sub_prob.measure_univ]; exact ENNReal.one_lt_top
