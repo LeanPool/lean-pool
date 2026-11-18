@@ -211,10 +211,12 @@ theorem gSGraphHomHypothesis_holds : GSGraphHomHypothesis.{u} := by
       ⟨fun q₁ q₂ => Quotient.inductionOn₂ q₁ q₂ fun a b => Quotient.sound (hall a b)⟩
     infer_instance
   -- the continuous parametrization of G
-  have hGa2 := hGa
-  rw [MeasureTheory.AnalyticSet_def] at hGa2
-  rcases hGa2 with hempty | ⟨g, hgc, hgr⟩
-  · exact absurd hempty (Set.nonempty_iff_ne_empty.mp hGne)
+  obtain ⟨β, _, _, f, hfc, hfr⟩ :=
+    MeasureTheory.analyticSet_iff_exists_polishSpace_range.mp hGa
+  have : Nonempty β := Set.range_nonempty_iff_nonempty.mp (hfr.symm ▸ hGne)
+  obtain ⟨q, hqc, hq⟩ := PolishSpace.exists_nat_nat_continuous_surjective β
+  have hgc := hfc.comp hqc
+  have hgr : Set.range (f ∘ q) = G := by rw [hq.range_comp, hfr]
   have : Nonempty α := ⟨hGne.some.1⟩
   have hpos := not_smallFam_univ (ι := Fin 0 → Bool) r hunc
   have hsymm : ∀ a b : α, (a, b) ∈ G → (b, a) ∈ G := by
