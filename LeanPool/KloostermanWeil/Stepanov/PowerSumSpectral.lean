@@ -83,7 +83,7 @@ theorem norm_esymm_power_le {ι : Type*} [Fintype ι]
     (N k : ℕ) (hN : 0 < N) :
     ‖(Finset.univ.val.map fun i => z i ^ N).esymm k‖ ≤ C ^ k := by
   induction k using Nat.strong_induction_on with
-  | h k ih =>
+  | ind k ih =>
       by_cases hk : k = 0
       · subst k
         rw [Finset.esymm_map_val]
@@ -194,7 +194,7 @@ theorem norm_le_one_of_power_sums_bounded {ι : Type*} [Fintype ι]
           (Multiset.prod_X_sub_C_coeff
             (Finset.univ.val.map fun j => z j ^ N) hkcard)
       rw [hvieta]
-      simp only [nnnorm_mul, nnnorm_pow, nnnorm_neg, nnnorm_one, one_pow, one_mul]
+      simp only [nnNorm_mul, nnNorm_pow, nnNorm_neg, nnNorm_one, one_pow, one_mul]
       exact_mod_cast (calc
           ‖(Finset.univ.val.map fun j => z j ^ N).esymm
                 (Fintype.card ι - k)‖
@@ -203,7 +203,7 @@ theorem norm_le_one_of_power_sums_bounded {ι : Type*} [Fintype ι]
           _ ≤ C ^ d := pow_le_pow_right₀ hC (by simp [d]))
     have hcauchy : pN.cauchyBound ≤
         1 + ⟨C ^ d, pow_nonneg hCnonneg d⟩ := by
-      rw [Polynomial.cauchyBound, hpNmonic.leadingCoeff, nnnorm_one, div_one]
+      rw [Polynomial.cauchyBound, hpNmonic.leadingCoeff, nnNorm_one, div_one]
       simpa [add_comm] using add_le_add_right (Finset.sup_le hcoeff) 1
     have hrootBound := Polynomial.IsRoot.norm_lt_cauchyBound hpNne hroot
     have hnormpow : ‖z i ^ N‖₊ <
