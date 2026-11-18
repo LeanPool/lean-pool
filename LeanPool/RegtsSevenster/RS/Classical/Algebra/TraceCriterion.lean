@@ -36,7 +36,7 @@ theorem isSemisimpleRing_of_trace {A : Type u} [Ring A] [Algebra ℂ A]
     IsSemisimpleRing A := by
   have : IsArtinianRing A := isArtinian_of_tower ℂ inferInstance
   -- ═══════ The radical vanishes ═══════
-  obtain ⟨n, hn⟩ := IsArtinianRing.isNilpotent_jacobson_bot (R := A)
+  obtain ⟨n, hn⟩ := IsArtinianRing.isNilpotent_jacobson A
   have hJbot : Ring.jacobson A = ⊥ := by
     rw [eq_bot_iff]
     intro j hj
@@ -44,8 +44,7 @@ theorem isSemisimpleRing_of_trace {A : Type u} [Ring A] [Algebra ℂ A]
     apply hnondeg
     intro b
     apply hnil
-    have hbj : b * j ∈ (⊥ : Ideal A).jacobson := by
-      rw [Ideal.jacobson_bot]
+    have hbj : b * j ∈ Ring.jacobson A := by
       exact Ideal.mul_mem_left _ b hj
     refine ⟨n, ?_⟩
     have hpow := Ideal.pow_mem_pow hbj n

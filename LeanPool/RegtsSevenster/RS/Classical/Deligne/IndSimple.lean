@@ -77,7 +77,7 @@ theorem simple_indOf [SmallCategory C] [Abelian C]
       calc 𝟙 (indOf.obj X) = inv m ≫ m := (IsIso.inv_hom_id m).symm
         _ = inv m ≫ 0 := congrArg (fun t => inv m ≫ t) hzero
         _ = 0 := comp_zero
-    refine id_nonzero X ?_
+    refine id_ne_zero X ?_
     refine (indOf (C := C)).map_injective ?_
     rw [CategoryTheory.Functor.map_id,
       CategoryTheory.Functor.map_zero, hid]
@@ -98,7 +98,7 @@ theorem simple_indOf [SmallCategory C] [Abelian C]
       intro h0
       exact hgm (((indOf_map_eq_zero_iff _).mpr h0).symm.trans hmap).symm
     have : Epi (Ind.yoneda.fullyFaithful.preimage (g ≫ m)) :=
-      epi_of_nonzero_to_simple hfne
+      epi_of_ne_zero_to_simple hfne
     have : Epi (g ≫ m) := by
       rw [← hmap]
       infer_instance
@@ -129,7 +129,7 @@ theorem mono_unit_ind [SmallCategory C] [MonoidalCategory C] [Abelian C]
     (hsimple : Simple (𝟙_ C)) (A : Ind C)
     [MonObj A] (hne : η[A] ≠ 0) : Mono η[A] :=
   haveI := simple_unit_ind hsimple
-  mono_of_nonzero_from_simple hne
+  mono_of_ne_zero_from_simple hne
 
 end Unit
 
