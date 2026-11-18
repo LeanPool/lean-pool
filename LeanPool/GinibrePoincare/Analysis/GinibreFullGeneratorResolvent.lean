@@ -32,6 +32,7 @@ SOFTWARE.
 
 module
 
+public import Mathlib.Analysis.InnerProductSpace.Adjoint
 public import LeanPool.GinibrePoincare.Analysis.GinibreFullGeneratorWeakSpace
 
 /-! # The weak symmetric form and its resolvent -/
@@ -78,17 +79,21 @@ def ginibreFullFormGradient (n : ℕ) (hn : 0 < n) :
     (WithLp.sndL 2 ℝ (GinibreFullValueL2 n) (GinibreFullGradientL2 n)).comp
       (ginibreFullFormSpace n hn).subtypeL
 
-/-- The full weak-H¹ resolvent, constructed by the Riesz representation theorem. -/
+/-- The bounded form resolvent is the adjoint of the inclusion into the value space. -/
+def ginibreFullFormResolventCLM (n : ℕ) (hn : 0 < n) :
+    GinibreFullValueL2 n →L[ℝ] ginibreFullFormSpace n hn :=
+  (ginibreFullFormValue n hn).adjoint
+
+/-- The full weak-H¹ resolvent applied to a concrete L² datum. -/
 def ginibreFullFormResolvent (n : ℕ) (hn : 0 < n) (f : GinibreFullValueL2 n) :
     ginibreFullFormSpace n hn :=
-  (InnerProductSpace.toDual ℝ (ginibreFullFormSpace n hn)).symm
-    ((innerSL ℝ f).comp (ginibreFullFormValue n hn))
+  ginibreFullFormResolventCLM n hn f
 
 theorem ginibreFullFormResolvent_riesz (n : ℕ) (hn : 0 < n)
     (f : GinibreFullValueL2 n) (q : ginibreFullFormSpace n hn) :
     inner ℝ (ginibreFullFormResolvent n hn f) q =
       inner ℝ f (ginibreFullFormValue n hn q) :=
-  InnerProductSpace.toDual_symm_apply
+  (ginibreFullFormValue n hn).adjoint_inner_left q f
 
 /-- Every point of the form Hilbert space is a genuine symmetric weak pair. -/
 theorem ginibreFullFormSpace_weak (n : ℕ) (hn : 0 < n)
@@ -205,29 +210,10 @@ theorem ginibreFullGenerator_resolvent_unique (n : ℕ) (hn : 0 < n)
   · have h := congrArg (ginibreFullFormGradient n hn) hr
     simpa [r, ginibreFullFormOfWeak_gradient] using h
 
-/-- The full graph resolvent is linear in its concrete L² datum. -/
+/-- The full graph resolvent viewed as a linear map. -/
 def ginibreFullFormResolventLinear (n : ℕ) (hn : 0 < n) :
-    GinibreFullValueL2 n →ₗ[ℝ] ginibreFullFormSpace n hn where
-  toFun := ginibreFullFormResolvent n hn
-  map_add' := by
-    intro f g
-    apply ext_inner_right ℝ
-    intro q
-    rw [inner_add_left, ginibreFullFormResolvent_riesz, ginibreFullFormResolvent_riesz,
-      ginibreFullFormResolvent_riesz, inner_add_left]
-  map_smul' := by
-    intro c f
-    apply ext_inner_right ℝ
-    intro q
-    rw [real_inner_smul_left, ginibreFullFormResolvent_riesz, ginibreFullFormResolvent_riesz,
-      real_inner_smul_left, RingHom.id_apply]
-
-/-- The normalized full weak resolvent as a bounded linear map. -/
-def ginibreFullFormResolventCLM (n : ℕ) (hn : 0 < n) :
-    GinibreFullValueL2 n →L[ℝ] ginibreFullFormSpace n hn :=
-  (ginibreFullFormResolventLinear n hn).mkContinuous 1 (by
-    intro f
-    simpa [ginibreFullFormResolventLinear] using ginibreFullFormResolvent_norm_le n hn f)
+    GinibreFullValueL2 n →ₗ[ℝ] ginibreFullFormSpace n hn :=
+  (ginibreFullFormResolventCLM n hn).toLinearMap
 
 /-- The value resolvent on the original concrete weighted L² space. -/
 def ginibreFullValueResolvent (n : ℕ) (hn : 0 < n) :

@@ -67,14 +67,19 @@ theorem resolventGeneratorGraph_singleValued (R : H →L[ℂ] H)
   have he := hInj (hp.trans (map_zero R).symm)
   exact neg_eq_zero.mp he
 
-/-- Genuine unbounded operator defined by its single-valued graph. -/
-def resolventGenerator (R : H →L[ℂ] H) : H →ₗ.[ℂ] H :=
-  (resolventGeneratorGraph R).toLinearPMap
+/-- The unbounded generator of an injective resolvent, defined by its single-valued graph. -/
+def resolventGenerator (R : H →L[ℂ] H) (hInj : Function.Injective R) : H →ₗ.[ℂ] H where
+  domain := (resolventGeneratorGraph R).map (LinearMap.fst ℂ H H)
+  toFun := (resolventGeneratorGraph R).toLinearPMapAux (resolventGeneratorGraph_singleValued R hInj)
 
 omit [CompleteSpace H] in
 theorem resolventGenerator_graph (R : H →L[ℂ] H) (hInj : Function.Injective R) :
-    (resolventGenerator R).graph = resolventGeneratorGraph R :=
-  Submodule.toLinearPMap_graph_eq _ (resolventGeneratorGraph_singleValued R hInj)
+    (resolventGenerator R hInj).graph = resolventGeneratorGraph R := by
+  have hsingle := resolventGeneratorGraph_singleValued R hInj
+  have heq : resolventGenerator R hInj = (resolventGeneratorGraph R).toLinearPMap := by
+    unfold resolventGenerator Submodule.toLinearPMap
+    rw [dite_eq_left hsingle]
+  exact heq ▸ Submodule.toLinearPMap_graph_eq _ hsingle
 
 omit [CompleteSpace H] in
 theorem resolventGenerator_range_pair (R : H →L[ℂ] H) (x : H) :
@@ -86,10 +91,10 @@ theorem resolventGenerator_range_pair (R : H →L[ℂ] H) (x : H) :
 omit [CompleteSpace H] in
 theorem resolventGenerator_dense_domain (R : H →L[ℂ] H)
     (hInj : Function.Injective R) (hDense : DenseRange R) :
-    Dense ((resolventGenerator R).domain : Set H) := by
+    Dense ((resolventGenerator R hInj).domain : Set H) := by
   apply hDense.mono
   rintro _ ⟨x, rfl⟩
-  have hpair : (R x, R x - x) ∈ (resolventGenerator R).graph := by
+  have hpair : (R x, R x - x) ∈ (resolventGenerator R hInj).graph := by
     rw [resolventGenerator_graph R hInj]
     exact resolventGenerator_range_pair R x
   exact LinearPMap.mem_domain_of_mem_graph hpair
@@ -130,7 +135,7 @@ theorem resolventGeneratorGraph_adjoint (R : H →L[ℂ] H)
 /-- Self-adjointness is derived from resolvent symmetry and dense range. -/
 theorem resolventGenerator_selfAdjoint (R : H →L[ℂ] H) (hR : IsSelfAdjoint R)
     (hInj : Function.Injective R) (hDense : DenseRange R) :
-    IsSelfAdjoint (resolventGenerator R) := by
+    IsSelfAdjoint (resolventGenerator R hInj) := by
   rw [LinearPMap.isSelfAdjoint_def]
   apply LinearPMap.eq_of_eq_graph
   rw [LinearPMap.adjoint_graph_eq_graph_adjoint
@@ -139,7 +144,7 @@ theorem resolventGenerator_selfAdjoint (R : H →L[ℂ] H) (hR : IsSelfAdjoint R
 
 theorem resolventGenerator_isClosed (R : H →L[ℂ] H) (hR : IsSelfAdjoint R)
     (hInj : Function.Injective R) (hDense : DenseRange R) :
-    (resolventGenerator R).IsClosed :=
+    (resolventGenerator R hInj).IsClosed :=
   (resolventGenerator_selfAdjoint R hR hInj hDense).isClosed
 
 end

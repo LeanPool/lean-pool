@@ -87,7 +87,7 @@ theorem ginibreFullEvolution_isPositive (n : ℕ) (hn : 0 < n) (t : ℝ≥0) :
 /-- The maximal generator determined by the concrete full weak Dirichlet resolvent. -/
 def ginibreFullGenerator (n : ℕ) (hn : 0 < n) :
     ginibreSymmetricL2 n →ₗ.[ℂ] ginibreSymmetricL2 n :=
-  resolventGenerator (ginibreFullComplexResolvent n hn)
+  resolventGenerator (ginibreFullComplexResolvent n hn) (ginibreFullComplexResolvent_injective n hn)
 
 /-- Full generator membership is an exact equation in the actual weak resolvent. -/
 theorem ginibreFullGenerator_graph_iff (n : ℕ) (hn : 0 < n) (u v : ginibreSymmetricL2 n) :

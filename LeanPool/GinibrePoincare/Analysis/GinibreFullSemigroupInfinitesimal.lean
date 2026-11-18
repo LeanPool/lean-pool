@@ -191,7 +191,7 @@ theorem resolventCfcOrbit_hasDerivWithinAt_range (R : H →L[ℂ] H) (hR : IsSel
 theorem resolventGenerator_hasDerivWithinAt (R : H →L[ℂ] H) (hR : IsSelfAdjoint R)
     (hInj : Function.Injective R)
     (hSpec : ∀ r ∈ spectrum ℝ R, r ∈ Set.Icc (0 : ℝ) 1)
-    (hDense : DenseRange R) (u v : H) (hp : (u, v) ∈ (resolventGenerator R).graph) :
+    (hDense : DenseRange R) (u v : H) (hp : (u, v) ∈ (resolventGenerator R hInj).graph) :
     HasDerivWithinAt (resolventCfcOrbit R u) v (Set.Ici 0) 0 := by
   rw [resolventGenerator_graph R hInj] at hp
   change R (u - v) = u at hp
@@ -213,7 +213,7 @@ theorem resolventGenerator_graph_of_hasDerivWithinAt (R : H →L[ℂ] H) (hR : I
     (hSpec : ∀ r ∈ spectrum ℝ R, r ∈ Set.Icc (0 : ℝ) 1)
     (hDense : DenseRange R) (u v : H)
     (hd : HasDerivWithinAt (resolventCfcOrbit R u) v (Set.Ici 0) 0) :
-    (u, v) ∈ (resolventGenerator R).graph := by
+    (u, v) ∈ (resolventGenerator R hInj).graph := by
   have hcomp : HasDerivWithinAt (fun t : ℝ => R (resolventCfcOrbit R u t))
       (R v) (Set.Ici 0) 0 := (R.restrictScalars ℝ).hasFDerivAt.comp_hasDerivWithinAt 0 hd
   have he : (fun t : ℝ => R (resolventCfcOrbit R u t)) = resolventCfcOrbit R (R u) := by
@@ -234,7 +234,7 @@ theorem resolventGenerator_graph_iff_right_derivative (R : H →L[ℂ] H) (hR : 
     (hInj : Function.Injective R)
     (hSpec : ∀ r ∈ spectrum ℝ R, r ∈ Set.Icc (0 : ℝ) 1)
     (hDense : DenseRange R) (u v : H) :
-    (u, v) ∈ (resolventGenerator R).graph ↔
+    (u, v) ∈ (resolventGenerator R hInj).graph ↔
       HasDerivWithinAt (resolventCfcOrbit R u) v (Set.Ici 0) 0 :=
   ⟨resolventGenerator_hasDerivWithinAt R hR hInj hSpec hDense u v,
     resolventGenerator_graph_of_hasDerivWithinAt R hR hInj hSpec hDense u v⟩
@@ -242,8 +242,9 @@ theorem resolventGenerator_graph_iff_right_derivative (R : H →L[ℂ] H) (hR : 
 /-- Every semigroup operator preserves the full generator domain and commutes with it. -/
 theorem resolventCfcEvolution_preserves_generator_graph (R : H →L[ℂ] H) (hR : IsSelfAdjoint R)
     (hInj : Function.Injective R) (t : ℝ≥0) (u v : H)
-    (hp : (u, v) ∈ (resolventGenerator R).graph) :
-    (resolventCfcEvolution R t u, resolventCfcEvolution R t v) ∈ (resolventGenerator R).graph := by
+    (hp : (u, v) ∈ (resolventGenerator R hInj).graph) :
+    (resolventCfcEvolution R t u, resolventCfcEvolution R t v) ∈
+      (resolventGenerator R hInj).graph := by
   rw [resolventGenerator_graph R hInj] at hp ⊢
   change R (u - v) = u at hp
   change R (resolventCfcEvolution R t u - resolventCfcEvolution R t v) = resolventCfcEvolution R t u

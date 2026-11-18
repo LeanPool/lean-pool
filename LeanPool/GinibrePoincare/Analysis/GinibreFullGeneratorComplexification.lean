@@ -234,6 +234,13 @@ theorem ginibreFullComplex_inner_im (n : ℕ) (f h : GinibreFullComplexL2 n) :
   apply Subtype.ext
   exact ginibreFullComplexIm_ofReal n f.val
 
+@[simp] theorem ginibreFullComplexResolvent_ofReal (n : ℕ) (hn : 0 < n)
+    (f : ginibreFullSymmetricValues n) :
+    ginibreFullComplexResolvent n hn (ginibreFullSymmetricOfReal n f) =
+      ginibreFullSymmetricOfReal n (ginibreFullSymmetricResolvent n hn f) := by
+  change ginibreFullComplexResolventReal n hn _ = _
+  simp [ginibreFullComplexResolventReal]
+
 @[simp] theorem ginibreFullComplexResolvent_re (n : ℕ) (hn : 0 < n)
     (f : ginibreSymmetricL2 n) :
     ginibreFullSymmetricRe n (ginibreFullComplexResolvent n hn f) =

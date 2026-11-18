@@ -53,23 +53,6 @@ namespace GinibrePoincare
 open MeasureTheory Filter ComplexHermite
 open scoped Topology
 
-lemma ginibreFullCenteredValue_core {n : ℕ} (hn : 0 < n)
-    (f : Configuration n → ℝ) (hf : IsTheoremOneNineCore f)
-    (u : GinibreFullValueL2 n) (hu : (u : Configuration n → ℝ) =ᵐ[ginibreMeasure n] f) :
-    ginibreFullComplexOfReal n (ginibreFullCenter n hn u) = centeredObservableL2 hn f hf := by
-  rw [ginibreFullCenter_apply]
-  apply Lp.ext
-  have hm : ginibreL2Mean n u = smoothGinibreMean n f := integral_congr_ae hu
-  filter_upwards [ginibreFullComplexOfReal_ae n (u - ginibreRealConstantL2 n hn (ginibreL2Mean n
-    u)),
-    Lp.coeFn_sub u (ginibreRealConstantL2 n hn (ginibreL2Mean n u)),
-    ginibreRealConstantL2_ae n hn (ginibreL2Mean n u), hu,
-    centeredObservableL2_coeFn hn f hf] with z hz hs hc hfz hcenter
-  rw [hz, hs]
-  change ((u z - (ginibreRealConstantL2 n hn (ginibreL2Mean n u)) z : ℝ) : ℂ) = _
-  rw [hc, hfz, hm, hcenter]
-  rfl
-
 lemma ginibreFullCenteredValue_norm_sq {n : ℕ} (hn : 0 < n) (u : GinibreFullValueL2 n) :
     ‖ginibreFullComplexOfReal n (ginibreFullCenter n hn u)‖ ^ 2 = ginibreL2Variance n hn u := by
   rw [← ginibreFullCenter_variance,

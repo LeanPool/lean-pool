@@ -65,15 +65,13 @@ theorem ginibreFullHigherMode_continuous (n : ℕ) (hn : 0 < n) (k : ℕ) :
     ((normalizedVandermondeL2 n hn).continuous.comp
       ((ginibreFullComplexOfReal n).continuous.comp (ginibreFullCenter n hn).continuous))
 
-lemma ginibreFullCenteredTransform_core {n : ℕ} (hn : 0 < n)
+lemma ginibreFullCenteredValue_core {n : ℕ} (hn : 0 < n)
     (f : Configuration n → ℝ) (hf : IsTheoremOneNineCore f)
     (u : GinibreFullValueL2 n) (hu : (u : Configuration n → ℝ) =ᵐ[ginibreMeasure n] f) :
-    ginibreFullCenteredTransform n hn u = transformedCenteredObservableL2 hn f hf := by
-  have hm : ginibreL2Mean n u = smoothGinibreMean n f := integral_congr_ae hu
-  unfold ginibreFullCenteredTransform transformedCenteredObservableL2
-  congr 1
-  apply Lp.ext
+    ginibreFullComplexOfReal n (ginibreFullCenter n hn u) = centeredObservableL2 hn f hf := by
   rw [ginibreFullCenter_apply]
+  apply Lp.ext
+  have hm : ginibreL2Mean n u = smoothGinibreMean n f := integral_congr_ae hu
   filter_upwards [ginibreFullComplexOfReal_ae n (u - ginibreRealConstantL2 n hn (ginibreL2Mean n
     u)),
     Lp.coeFn_sub u (ginibreRealConstantL2 n hn (ginibreL2Mean n u)),
@@ -83,6 +81,12 @@ lemma ginibreFullCenteredTransform_core {n : ℕ} (hn : 0 < n)
   change ((u z - (ginibreRealConstantL2 n hn (ginibreL2Mean n u)) z : ℝ) : ℂ) = _
   rw [hc, hfz, hm, hcenter]
   rfl
+
+lemma ginibreFullCenteredTransform_core {n : ℕ} (hn : 0 < n)
+    (f : Configuration n → ℝ) (hf : IsTheoremOneNineCore f)
+    (u : GinibreFullValueL2 n) (hu : (u : Configuration n → ℝ) =ᵐ[ginibreMeasure n] f) :
+    ginibreFullCenteredTransform n hn u = transformedCenteredObservableL2 hn f hf :=
+  congrArg (normalizedVandermondeL2 n hn) (ginibreFullCenteredValue_core hn f hf u hu)
 
 lemma ginibreEquality_core_pair_mode_bound {n : ℕ} (hn : 0 < n)
     (p : GinibreFullValueL2 n × GinibreFullGradientL2 n)
