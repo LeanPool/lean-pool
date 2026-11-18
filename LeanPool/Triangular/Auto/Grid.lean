@@ -62,7 +62,7 @@ lemma sq_smul_one_sub_rdiag_psd {ι : Type*} [Fintype ι] [DecidableEq ι]
   have := hf i
   nlinarith [abs_nonneg (f i), sq_abs (f i)]
 
-/-- Source `tau`: the center-integrated trace is controlled by the three energy densities. -/
+/-- The center-integrated trace is controlled by the three energy densities. -/
 theorem heatTrace_bound {ι : Type*} [Fintype ι] [DecidableEq ι]
     (Hd : HeatData ι) (hh : 0 < Hd.h) {s : ℝ} (hs : 0 < s) :
     ‖((1 / s : ℝ) : ℂ) * ∫ q : Fin 2 → ℝ, Hd.baseTrace 3 (planePt q) s‖ₑ ≤

@@ -1,13 +1,13 @@
 slug: triangular-hilbert
-title: The triangular Hilbert form and Carleson's theorem
+title: The symmetric triangular Hilbert form
 summary: >-
   Proves the symmetric L³ estimate and principal-value existence for the
   triangular Hilbert form on complex Schwartz inputs, and its unique bounded
-  trilinear extension to L³. Uses the trilinear estimate to deduce
-  almost-everywhere convergence of symmetric Fourier partial sums for
-  continuous one-periodic functions. The proof develops
-  matrix trace estimates, Gaussian scale kernels, heat-flow identities and
-  the passage from finite lattice sums to the Euclidean estimate.
+  trilinear extension to L³. The proof develops matrix trace estimates, Gaussian
+  scale kernels, heat-flow identities and the passage from finite lattice sums
+  to the Euclidean estimate. It also gives an alternative derivation of continuous
+  periodic Fourier convergence from the triangular estimate. Lean Pool's
+  CarlesonLT project proves a stronger convergence theorem.
 branch: harmonic analysis
 entry_module: LeanPool.Triangular
 authors:
@@ -29,7 +29,6 @@ main_declarations:
   - Triangular.triangular_ht_bound
   - Triangular.Auto.tendsto_truncatedForm
   - Triangular.Auto.triangularHilbert_unique_extension
-  - Triangular.classical_carleson
 main_results:
   - declaration: Triangular.triangular_ht_bound
     informal: >-
@@ -41,8 +40,6 @@ main_results:
     informal: >-
       The principal-value form extends uniquely to a continuous complex
       trilinear form on L³, with the same norm bound.
-  - declaration: Triangular.classical_carleson
-    informal: The symmetric Fourier partial sums of a continuous one-periodic function converge to it almost everywhere.
 tags:
   - harmonic-analysis
   - singular-integrals

@@ -94,7 +94,7 @@ def triangularGaussianPrimitive (c s t : ℝ) : ℝ :=
   (2 / (c * Real.sqrt (2 * Real.pi * c) * t)) *
     ((1 - t ^ 2 / (c * s)) * Real.exp (-(t ^ 2 / (c * s)) / 2))
 
-/-- Source `dist`: the scale primitive differentiates to the third Gaussian kernel. -/
+/-- The scale primitive differentiates to the third Gaussian kernel. -/
 theorem triangularGaussianPrimitive_hasDerivAt {c s t : ℝ} (hc : 0 < c) (hs : 0 < s)
     (ht : t ≠ 0) :
     HasDerivAt (fun u => triangularGaussianPrimitive c u t) (Real.sqrt s ^ 3 * gaussianD 3 (c *
@@ -115,7 +115,7 @@ theorem triangularGaussianPrimitive_hasDerivAt {c s t : ℝ} (hc : 0 < c) (hs : 
     generalize Real.sqrt s = r at *; rw [← hsq]
     generalize Real.exp (-t ^ 2 / (2 * (c * r ^ 2))) = e; field_simp; ring
 
-/-- Source `dist`: the Gaussian interval kernel is the difference of its scale primitives. -/
+/-- The Gaussian interval kernel is the difference of its scale primitives. -/
 theorem triangular_Kern_eq_primitive {a b : ℝ} (ha : 0 < a) (hab : a ≤ b) {t : ℝ} (ht : t ≠ 0) :
     Kern 3 a b t = triangularGaussianPrimitive (63 / 20) b t - triangularGaussianPrimitive (63 /
       20) a t := by
@@ -176,7 +176,7 @@ theorem triangularGaussianPrimitive_tendsto_zero {c t : ℝ} (hc : 0 < c) (ht : 
     (2 / (c * Real.sqrt (2 * Real.pi * c) * t))
   simpa [triangularGaussianPrimitive_eq_profile] using h
 
-/-- Source `dist`: Gaussian scales recover a fixed positive multiple of 1/t. -/
+/-- Gaussian scales recover a fixed positive multiple of 1/t. -/
 theorem triangular_Kern_tendsto {t : ℝ} (ht : t ≠ 0) :
     Tendsto (fun n : ℕ => Kern 3 ((n : ℝ) + 1)⁻¹ ((n : ℝ) + 1) t) atTop (𝓝 (2 / ((63 / 20 : ℝ) *
       Real.sqrt (2 * Real.pi * (63 / 20)) * t))) := by
@@ -234,7 +234,7 @@ theorem triangular_Kern_mul_tendsto {t : ℝ} (ht : t ≠ 0) :
   congr 1
   unfold triangularKernelCoefficient; field_simp
 
-/-- Source `dist`: dominated convergence for integrable cancelled kernel pairings. -/
+/-- Dominated convergence for integrable cancelled kernel pairings. -/
 theorem triangular_kernel_pairing_tendsto {X : Type*} [MeasurableSpace X] {μ : Measure X}
     {g : X → ℂ} {r : X → ℝ} (hg : Integrable g μ) (hr : Measurable r) (hz : ∀ᵐ x ∂μ, r x ≠ 0) :
     Tendsto (fun n : ℕ => ∫ x, g x * ((r x * Kern 3 ((n : ℝ) + 1)⁻¹ ((n : ℝ) + 1) (r x) : ℝ) :
