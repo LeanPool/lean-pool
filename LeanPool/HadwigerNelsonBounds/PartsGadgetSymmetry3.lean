@@ -36,7 +36,7 @@ lemma partsGadgetNegationTriple57 {pair : Fin 73 × Fin 73}
   change pair ∈ [(50, 62)] at hpair
   simp only [List.mem_cons, List.not_mem_nil, or_false] at hpair
   rcases hpair with rfl
-  all_goals decide
+  decide
 
 lemma partsGadgetTriangleWitnessValid57
     {witness : PartsGadgetTriangleWitnessData}
@@ -46,7 +46,7 @@ lemma partsGadgetTriangleWitnessValid57
   ] at hwitness
   simp only [List.mem_cons, List.not_mem_nil, or_false] at hwitness
   rcases hwitness with rfl
-  all_goals decide
+  decide
 
 lemma partsGadgetNegationNeighbor58 {neighbor : Fin 73}
     (hadj : neighbor ∈ partsGadgetNeighbors 58) :
@@ -423,7 +423,7 @@ lemma partsGadgetNegationTriple69 {pair : Fin 73 × Fin 73}
   change pair ∈ [(59, 66)] at hpair
   simp only [List.mem_cons, List.not_mem_nil, or_false] at hpair
   rcases hpair with rfl
-  all_goals decide
+  decide
 
 lemma partsGadgetTriangleWitnessValid69
     {witness : PartsGadgetTriangleWitnessData}
@@ -433,7 +433,7 @@ lemma partsGadgetTriangleWitnessValid69
   ] at hwitness
   simp only [List.mem_cons, List.not_mem_nil, or_false] at hwitness
   rcases hwitness with rfl
-  all_goals decide
+  decide
 
 lemma partsGadgetNegationNeighbor70 {neighbor : Fin 73}
     (hadj : neighbor ∈ partsGadgetNeighbors 70) :
@@ -515,7 +515,7 @@ lemma partsGadgetNegationTriple72 {pair : Fin 73 × Fin 73}
   change pair ∈ [(62, 66)] at hpair
   simp only [List.mem_cons, List.not_mem_nil, or_false] at hpair
   rcases hpair with rfl
-  all_goals decide
+  decide
 
 lemma partsGadgetTriangleWitnessValid72
     {witness : PartsGadgetTriangleWitnessData}
@@ -525,6 +525,6 @@ lemma partsGadgetTriangleWitnessValid72
   ] at hwitness
   simp only [List.mem_cons, List.not_mem_nil, or_false] at hwitness
   rcases hwitness with rfl
-  all_goals decide
+  decide
 
 end HadwigerNelsonBounds
