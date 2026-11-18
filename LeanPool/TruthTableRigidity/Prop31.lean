@@ -52,7 +52,7 @@ theorem continuous_zaddO : Continuous fun p : Oracle × Oracle => zaddO p.1 p.2 
 
 theorem continuous_znegO : Continuous znegO := isTTFunctional_neg.continuous
 
-/-! ### The reductions (2) -/
+/-! ### The reductions (1) -/
 
 theorem red_plus (G H : Z2) : TTReducible (G + H : Z2) (ojoin G H) := by
   change TTReducible (Z2.of G + Z2.of H : Z2) (ojoin G H)

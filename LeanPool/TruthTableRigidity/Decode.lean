@@ -60,7 +60,7 @@ theorem decode_of_good {F Φp Φm Φh : Oracle → Oracle} (hp : IsTTFunctional 
   set P := ojoin (ojoin P1 P1') (ojoin P2 P3) with hP
   let a : Z2 → Oracle := fun T => F (G + T)
   have hYY : Y + Y ∈ C := C.add_mem hY hY
-  -- (6) translation
+  -- (9) translation
   have tr : ∀ T ∈ C, ∀ κ ∈ C, a (T + κ) = Φm (ojoin (Φp (ojoin (a T) (F (H + κ)))) P2) := by
     intro T hT κ hκ
     have Rp := (hgood T hT κ hκ).1.1
@@ -77,7 +77,7 @@ theorem decode_of_good {F Φp Φm Φh : Oracle → Oracle} (hp : IsTTFunctional 
     | succ c ih =>
       rw [Function.iterate_succ_apply', ih, succ_nsmul, ← add_assoc]
       exact (tr _ (C.add_mem hT (C.nsmul_mem hYY c)) _ hYY).symm
-  -- (8) reading a bit
+  -- (11) reading a bit
   have rd : ∀ T ∈ C, decide (∃ c < N, (Ξ^[c] (a T)) j ≠ b) = T l := by
     intro T hT
     cases hTl : T l with
@@ -103,7 +103,7 @@ theorem decode_of_good {F Φp Φm Φh : Oracle → Oracle} (hp : IsTTFunctional 
           · exact hTl
         simpa [hl] using Z2.lowZero_add hT1 (lowZero_nsmul (lowZero_zpow2_two l) c)
       exact hb0 _ hD (mem_Ncyl_add hG hlow)
-  -- (7) halving
+  -- (10) halving
   have hv : ∀ T ∈ C, LowZero (l + 1) T → Z2.of (shift T) ∈ C →
       Φm (ojoin (Φh (ojoin (a T) P3)) P2) = a (Z2.of (shift T)) := by
     intro T hT hT1 hsh
