@@ -11,7 +11,7 @@ from lean_pool import codex_review, review
 
 def _request():
     return {
-        "model": "gpt-6-astra",
+        "model": "gpt-6.2-astra",
         "effort": "xhigh",
         "messages": [
             {"role": "system", "content": "Review the contribution."},
@@ -34,7 +34,7 @@ def test_default_routes_over_ssh_without_instantiating_openai(monkeypatch):
         assert "StrictHostKeyChecking=yes" in command
         assert command[-2:] == ["review-azure", "lean-pool-review"]
         request = json.loads(kwargs["input"])
-        assert request["model"] == "gpt-6-astra"
+        assert request["model"] == "gpt-6.2-astra"
         assert request["effort"] == "xhigh"
         assert "Trust boundary" in request["messages"][0]["content"]
         assert "$(do-not-execute)" in request["messages"][1]["content"]
@@ -43,7 +43,7 @@ def test_default_routes_over_ssh_without_instantiating_openai(monkeypatch):
             returncode=0,
             stdout=json.dumps(
                 {
-                    "model": "gpt-6-astra",
+                    "model": "gpt-6.2-astra",
                     "effort": "xhigh",
                     "payload": {"summary": "ok", "verdict": "approve"},
                     "usage": {"prompt_tokens": 20, "completion_tokens": 10},
@@ -61,7 +61,7 @@ def test_default_routes_over_ssh_without_instantiating_openai(monkeypatch):
     assert result.usage.prompt_tokens == 20
     footer = review.render_usage(result.usage, result.model, result.tier, result.effort)
     assert "no API credits" in footer
-    assert "**Estimated cost:** $0.0007" in footer
+    assert "**Estimated cost:** $0.0006" in footer
     assert "Standard API equivalent" in footer
     assert "uncached input" in footer
 
@@ -158,7 +158,7 @@ def test_worker_isolates_credentials_and_returns_structured_review(
     monkeypatch.setattr(codex_review.subprocess, "Popen", spawn)
     response = codex_review.run_codex(_request(), tmp_path)
     assert response["payload"]["verdict"] == "approve"
-    assert response["model"] == "gpt-6-astra"
+    assert response["model"] == "gpt-6.2-astra"
     assert response["usage"] == {"prompt_tokens": 30, "completion_tokens": 15}
 
 
@@ -197,17 +197,17 @@ def test_azure_rubric_footer_reports_quota():
     footer = review._render_rubric_usage(outcomes, "xhigh")
     assert "100 in / 50 out" in footer
     assert "no API credits" in footer
-    assert "**Estimated cost:** $0.0035" in footer
+    assert "**Estimated cost:** $0.0028" in footer
 
 
 @pytest.mark.parametrize(
     "input_tokens,expected",
-    [(100_000, "$1.5000"), (272_000, "$3.2200"), (272_001, "$6.1900")],
+    [(100_000, "$1.2000"), (272_000, "$2.5760"), (272_001, "$4.9520")],
 )
 def test_azure_estimate_uses_official_context_rates(input_tokens, expected):
     """The full request switches rates only above the official 272K boundary."""
     usage = SimpleNamespace(prompt_tokens=input_tokens, completion_tokens=10_000)
-    footer = review.render_usage(usage, "gpt-6-astra", codex_review.TIER)
+    footer = review.render_usage(usage, "gpt-6.2-astra", codex_review.TIER)
     assert f"**Estimated cost:** {expected}" in footer
     assert "no API credits" in footer
     assert "**Cost:**" not in footer
@@ -220,20 +220,22 @@ def test_azure_rubrics_price_each_request_before_summing():
         SimpleNamespace(prompt_tokens=100_000, completion_tokens=1_000),
         codex_review.TIER,
         None,
-        "gpt-6-astra",
+        "gpt-6.2-astra",
         "xhigh",
     )
     footer = review._render_rubric_usage([SimpleNamespace(result=result)] * 5, "xhigh")
     assert "500,000 in / 5,000 out" in footer
-    assert "**Estimated cost:** $5.2500" in footer
+    assert "**Estimated cost:** $4.2000" in footer
 
 
 def test_azure_missing_usage_does_not_claim_zero_cost():
     """Unavailable token counts are never represented as a free review."""
-    footer = review.render_usage(None, "gpt-6-astra", codex_review.TIER)
+    footer = review.render_usage(None, "gpt-6.2-astra", codex_review.TIER)
     assert "$" not in footer
     assert "no API credits" in footer
-    result = review.ReviewResult({}, None, codex_review.TIER, None, "gpt-6-astra", None)
+    result = review.ReviewResult(
+        {}, None, codex_review.TIER, None, "gpt-6.2-astra", None
+    )
     footer = review._render_rubric_usage([SimpleNamespace(result=result)], None)
     assert "$" not in footer
 
@@ -245,16 +247,16 @@ def test_azure_partial_usage_labels_partial_estimate():
         SimpleNamespace(prompt_tokens=100_000, completion_tokens=1_000),
         codex_review.TIER,
         None,
-        "gpt-6-astra",
+        "gpt-6.2-astra",
         None,
     )
     missing = review.ReviewResult(
-        {}, None, codex_review.TIER, None, "gpt-6-astra", None
+        {}, None, codex_review.TIER, None, "gpt-6.2-astra", None
     )
     footer = review._render_rubric_usage(
         [SimpleNamespace(result=known), SimpleNamespace(result=missing)], None
     )
-    assert "**Estimated cost:** $1.0500" in footer
+    assert "**Estimated cost:** $0.8400" in footer
     assert "partial" in footer
 
 

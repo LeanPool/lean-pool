@@ -93,7 +93,7 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 PROJECT_RULES_PATH = REPO_ROOT / ".github" / "REVIEW_RULES.md"
 REFACTOR_RULES_PATH = REPO_ROOT / ".github" / "REFACTOR_REVIEW_RULES.md"
 # Reviews default to the authenticated Codex account pool on the Azure VM.
-DEFAULT_MODEL = "gpt-6-astra"
+DEFAULT_MODEL = "gpt-6.2-astra"
 # Preserve the existing review depth.
 DEFAULT_REASONING_EFFORT = "xhigh"
 # Flex tier requests can take longer than the default 10-minute timeout,
@@ -123,8 +123,12 @@ LONG_CONTEXT_INPUT_TOKENS = 272_000
 # Source: https://developers.openai.com/api/docs/pricing — update when
 # bumping DEFAULT_MODEL or when OpenAI changes pricing.
 PRICING_PER_M: dict[str, dict[str, tuple[tuple[float, float], tuple[float, float]]]] = {
-    # Official Standard API rates verified 2026-09-12. Codex has no invoice
+    # Official Standard API rates verified 2026-11-18. Codex has no invoice
     # amount, so its displayed estimate uses these uncached token rates.
+    "gpt-6.2-astra": {
+        "standard": ((8.00, 40.00), (16.00, 60.00)),
+    },
+    # Verified 2026-09-12; kept so earlier review footers still price.
     "gpt-6-astra": {
         "standard": ((10.00, 50.00), (20.00, 75.00)),
     },
@@ -170,7 +174,7 @@ def pricing_rates(
                 return None
             long_context = (
                 input_tokens > LONG_CONTEXT_INPUT_TOKENS
-                if prefix == "gpt-6-astra"
+                if "astra" in prefix
                 else input_tokens >= LONG_CONTEXT_INPUT_TOKENS
             )
             return rates[1] if long_context else rates[0]
@@ -1327,7 +1331,7 @@ def render_usage(usage: Any, model: str, tier: str, effort: str | None = None) -
             else f"**Cost:** ${cost:.4f}"
         )
         if in_tok > LONG_CONTEXT_INPUT_TOKENS or (
-            in_tok == LONG_CONTEXT_INPUT_TOKENS and not model.startswith("gpt-6-astra")
+            in_tok == LONG_CONTEXT_INPUT_TOKENS and "astra" not in model
         ):
             cost_cell += " (long-context rate)"
         parts.append(cost_cell)
