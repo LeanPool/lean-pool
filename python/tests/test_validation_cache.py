@@ -13,6 +13,8 @@ from unittest.mock import patch
 import pytest
 
 from lean_pool.quality import _cached_pool_audits
+from lean_pool.shard_validation import main as shard_main
+from lean_pool.shard_validation import validate_shard
 from lean_pool.validation_cache import (
     GLOBAL_INPUTS,
     WORKERS_VARIABLE,
@@ -21,9 +23,12 @@ from lean_pool.validation_cache import (
     _module_sources,
     lint_pool,
     main,
+    merge_receipts,
     pool_units,
+    read_receipts,
     run_ordered,
     source_inventory,
+    unit_name,
     validation_workers,
 )
 
@@ -470,3 +475,118 @@ def test_lint_command_fails_without_saving_receipts(
         assert main() == 1
     assert "A.lean:1:1: error: finding" in capsys.readouterr().out
     assert not (repository / ".lake/validation-cache/v1/passes.json").exists()
+
+
+def _shard(root: Path, *units: str) -> ValidationCache:
+    return ValidationCache(
+        root, root / ".lake/validation-cache/v1", units=frozenset(units)
+    )
+
+
+def _build_logs(root: Path) -> None:
+    for modules in pool_units(root):
+        for module in modules:
+            _build_log(root, module)
+
+
+def test_units_belong_to_their_project_and_the_root_to_itself() -> None:
+    """Shard project names select the same units the pool is partitioned into."""
+    assert unit_name("LeanPool.A.Detail") == unit_name("LeanPool.A") == "A"
+    assert unit_name("LeanPool") == "__root__"
+
+
+def test_shard_cache_validates_only_its_units(repository: Path) -> None:
+    """Other shards' units are neither run nor given a receipt."""
+    cache = _shard(repository, "A")
+    calls: list[str] = []
+    for modules in pool_units(repository):
+        cache.check("lint", modules, lambda: calls.append(modules[0]) or [])
+    assert calls == ["LeanPool.A"]
+    assert list(cache.used) == ["lint:LeanPool.A"]
+
+
+def test_shard_passes_satisfy_the_whole_pool_run_only_while_inputs_match(
+    repository: Path,
+) -> None:
+    """Merged passes are reused by fingerprint; an edited project is checked again."""
+    _build_logs(repository)
+    with (
+        patch("lean_pool.validation_cache.subprocess.run") as lint,
+        patch("lean_pool.shard_validation._check_projects", return_value=[]),
+        patch("lean_pool.quality._audit_axioms", return_value=[]),
+        patch("lean_pool.quality._run_option_audit", return_value=[]),
+    ):
+        lint.return_value.returncode = 0
+        fragment = repository / "fragments/ci-validation-00"
+        shard = ValidationCache(repository, fragment, units=frozenset({"A"}))
+        assert validate_shard(repository, shard)
+    assert sorted(read_receipts(fragment / "passes.json")) == [
+        "axioms:LeanPool.A",
+        "backdoors:LeanPool.A",
+        "lint:LeanPool.A",
+        "messages:LeanPool.A",
+    ]
+    directory = repository / ".lake/validation-cache/v1"
+    assert merge_receipts(directory, [fragment.parent]) == 4
+    assert merge_receipts(directory, [fragment / "passes.json"]) == 0
+    assert _run(repository)[1] == ["LeanPool.B", "LeanPool"]
+    (repository / "LeanPool/A.lean").write_text("-- edited after the shard ran\n")
+    merge_receipts(directory, [fragment.parent])
+    assert _run(repository)[1] == ["LeanPool.A", "LeanPool"]
+
+
+def test_shard_keeps_passes_and_reports_a_failing_unit(repository: Path) -> None:
+    """One failing project costs the assembling job only that project's checks."""
+    _build_logs(repository)
+
+    def lint(command, **kwargs):
+        assert kwargs["check"] is False
+        failed = "LeanPool.A" in command
+        return type("Process", (), {"returncode": int(failed), "stdout": "output"})()
+
+    with (
+        patch("lean_pool.validation_cache.subprocess.run", side_effect=lint),
+        patch("lean_pool.shard_validation._check_projects", return_value=[]),
+        patch("lean_pool.quality._audit_axioms", return_value=[]),
+        patch("lean_pool.quality._run_option_audit", return_value=[]),
+    ):
+        shard = _shard(repository, "A", "B")
+        assert not validate_shard(repository, shard)
+    saved = read_receipts(repository / ".lake/validation-cache/v1/passes.json")
+    assert "lint:LeanPool.B" in saved and "lint:LeanPool.A" not in saved
+    assert "axioms:LeanPool.A" in saved
+
+
+def test_corrupt_fragments_merge_nothing(repository: Path) -> None:
+    """Unreadable or malformed shard output leaves the cache as it was."""
+    directory = repository / ".lake/validation-cache/v1"
+    _run(repository)
+    before = read_receipts(directory / "passes.json")
+    bad = repository / "fragments"
+    bad.mkdir()
+    (bad / "passes.json").write_text("{")
+    listed = bad / "list"
+    listed.mkdir()
+    (listed / "passes.json").write_text('{"version": 1, "receipts": {"lint:X": 1}}')
+    assert merge_receipts(directory, [bad, repository / "missing.json"]) == 0
+    assert read_receipts(directory / "passes.json") == before
+
+
+def test_shard_command_validates_the_named_units(repository: Path) -> None:
+    """The workflow's entry point scopes the cache to its project list."""
+    _build_logs(repository)
+    with (
+        patch("lean_pool.validation_cache.subprocess.run") as lint,
+        patch("lean_pool.shard_validation._check_projects", return_value=[]),
+        patch("lean_pool.quality._audit_axioms", return_value=[]),
+        patch("lean_pool.quality._run_option_audit", return_value=[]),
+    ):
+        lint.return_value.returncode = 0
+        assert shard_main(["--repo", str(repository), "--units", "B"]) == 0
+    saved = read_receipts(repository / ".lake/validation-cache/v1/passes.json")
+    assert sorted(saved) == [
+        "axioms:LeanPool.B",
+        "backdoors:LeanPool.B",
+        "lint:LeanPool.B",
+        "messages:LeanPool.B",
+    ]

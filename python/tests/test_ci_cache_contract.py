@@ -10,6 +10,8 @@ from pathlib import Path
 import pytest
 import yaml
 
+from lean_pool.validation_cache import GLOBAL_INPUTS
+
 WORKFLOWS = Path(__file__).resolve().parents[2] / ".github/workflows"
 
 
@@ -104,6 +106,55 @@ def test_single_and_sharded_builds_use_validation_cache() -> None:
         assert "validation_cache lint" in steps[names.index("Lint")]["run"]
         assert "lint-style LeanPool" in steps[names.index("Text style lint")]["run"]
     assert contracts[0] == contracts[1]
+
+
+def test_main_rebuilds_passes_whenever_a_checker_input_changes() -> None:
+    """A merge that changes only a checker input must still run CI on main.
+
+    Otherwise main's saved passes go stale and the next small PR validates the
+    whole pool in one job.
+    """
+    workflow = yaml.safe_load((WORKFLOWS / "lean_action_ci.yml").read_text())
+    patterns = workflow.get("on", workflow.get(True))["push"]["paths"]
+
+    def covered(name: str) -> bool:
+        return any(
+            name == pattern
+            or (pattern.endswith("/**") and name.startswith(pattern[:-2]))
+            for pattern in patterns
+        )
+
+    assert [name for name in GLOBAL_INPUTS if not covered(name)] == []
+
+
+def test_shards_validate_their_projects_and_assembly_decides() -> None:
+    """Shard validation only hands passes on; it can never fail or pass the run."""
+    jobs = yaml.safe_load((WORKFLOWS / "lean_action_ci.yml").read_text())["jobs"]
+    steps = jobs["shard"]["steps"]
+    names = [step.get("name") for step in steps]
+    validate = steps[names.index("Lint and audit this shard's projects")]
+    assert "lean_pool.shard_validation --repo .. --units $PROJECTS" in validate["run"]
+    assert validate["continue-on-error"] is True
+    assert names.index("Upload build outputs") < names.index(
+        "Lint and audit this shard's projects"
+    )
+    upload = steps[names.index("Upload validation passes")]
+    assert upload["with"]["name"] == "ci-validation-${{ matrix.shard }}"
+    assert upload["continue-on-error"] is True
+    assert not any(
+        step.get("uses", "").startswith("actions/cache/save@") for step in steps
+    )
+    final = jobs["finalize"]["steps"]
+    final_names = [step.get("name") for step in final]
+    merge = final[final_names.index("Merge shard validation passes")]
+    assert "validation_cache merge" in merge["run"]
+    assert (
+        final_names.index("Restore project validation")
+        < final_names.index("Download shard validation passes")
+        < final_names.index("Merge shard validation passes")
+        < final_names.index("Lint")
+        < final_names.index("Repository quality checks")
+    )
 
 
 def test_merge_queue_reports_all_required_gates_without_path_filtered_workflows() -> (
@@ -267,11 +318,16 @@ def test_minimal_verifier_pr_has_an_explicit_project_build_producer(tmp_path):
 
 
 def test_assembly_restores_projects_once_and_main_owns_full_cache():
-    """Assembly recovers PR outputs once before fresh shard files are applied."""
+    """Shards and assembly recover PR outputs before fresh shard files are applied."""
     jobs = yaml.safe_load((WORKFLOWS / "lean_action_ci.yml").read_text())["jobs"]
+    shard = [step.get("name") for step in jobs["shard"]["steps"]]
+    # A shard compiles only what a later push edited, so it needs the PR's
+    # earlier outputs (and their recorded build times) before it builds.
+    assert shard.index(
+        "Reuse compiled files from this PR's successful runs"
+    ) < shard.index("Build this shard's projects")
     assert not any(
-        "lean_pool.ci_pr_build" in step.get("run", "")
-        or "lean_pool.queue_build" in step.get("run", "")
+        "lean_pool.queue_build" in step.get("run", "")
         for step in jobs["shard"]["steps"]
     )
     steps = jobs["finalize"]["steps"]

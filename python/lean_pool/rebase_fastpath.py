@@ -348,8 +348,46 @@ def _restore_build_files(
             os.replace(staging / entry.name, destination)
 
 
-def restore(root: Path, repository: str, run_id: int, previous_head: str) -> None:
-    """Download a prior green run's project artifacts and validate before overlay."""
+def _member_source(relative: PurePosixPath) -> str:
+    """The Lean source whose compilation produced a packed build file."""
+    skip = 3 if relative.parts[2] == "ir" else 4
+    return "/".join((*relative.parts[skip:-1], relative.name.split(".")[0] + ".lean"))
+
+
+def _unchanged_members(
+    root: Path, members: list[tarfile.TarInfo], sources: dict[str, str]
+) -> list[tarfile.TarInfo]:
+    """Keep the outputs of modules whose own source is the one that was compiled."""
+    current = {}
+    kept = []
+    for entry in members:
+        source = _member_source(PurePosixPath(entry.name))
+        if source not in current:
+            path = root / source
+            current[source] = (
+                hashlib.sha256(path.read_bytes()).hexdigest()
+                if path.is_file()
+                else None
+            )
+        if current[source] is not None and sources.get(source) == current[source]:
+            kept.append(entry)
+    return kept
+
+
+def restore(
+    root: Path,
+    repository: str,
+    run_id: int,
+    previous_head: str,
+    *,
+    changed_sources: bool = False,
+) -> None:
+    """Download a prior green run's project artifacts and validate before overlay.
+
+    With ``changed_sources``, project sources may differ from the packed build:
+    only modules whose own source is unchanged are restored, and Lake's traces
+    still decide which of those are reusable after their imports changed.
+    """
     endpoint = f"repos/{repository}/actions/runs/{run_id}/artifacts?per_page=100"
     artifacts = [
         artifact
@@ -390,10 +428,12 @@ def restore(root: Path, repository: str, run_id: int, previous_head: str) -> Non
                 for project in projects
             ):
                 raise ValueError("invalid project build manifest")
+            sources = manifest.get("sources")
             if (
                 manifest.get("version") != 1
                 or manifest.get("head") != previous_head
-                or manifest.get("sources") != _source_hashes(root, projects)
+                or not isinstance(sources, dict)
+                or (not changed_sources and sources != _source_hashes(root, projects))
                 or manifest.get("inputs")
                 != {
                     name: hashlib.sha256((root / name).read_bytes()).hexdigest()
@@ -412,6 +452,8 @@ def restore(root: Path, repository: str, run_id: int, previous_head: str) -> Non
                     or not _build_file_for_project(relative, set(projects))
                 ):
                     raise ValueError(f"unexpected project artifact: {entry.name}")
+            if changed_sources:
+                members = _unchanged_members(root, members, sources)
             _restore_build_files(root, archive, members)
 
 

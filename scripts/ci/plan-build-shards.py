@@ -12,7 +12,10 @@ Emits a JSON plan on stdout for the `Lean Action CI` workflow:
 classic one-job pipeline — the fast path for a typical PR that adds or edits
 one project. `sharded` splits the build across
 parallel jobs for the cases that take hours serially: a cold cache, a
-toolchain/manifest bump, or a refactor touching many projects.
+toolchain/manifest bump, a refactor touching many projects, or a change to
+the lint and quality checkers' own inputs. That last case replays the build
+from the warm cache, but every project must be linted and audited again
+(about 100 minutes in one job), which each shard does for its own projects.
 
 Everything is computed at run time from the repository tree and the diff,
 so there is no static shard assignment to maintain as the pool grows.
@@ -37,13 +40,17 @@ Environment:
     FORCE_FULL      "true" to shard-build the whole pool regardless.
 """
 
+import ast
 import json
 import math
 import os
 import sys
 from pathlib import Path
 
-MAX_SHARDS = 10
+# Shards also validate their projects, so a whole-pool run is bounded by its
+# slowest shard. Beyond this the costliest project (MovingSofa, about 350
+# CPU-minutes cold) fills a shard alone and more shards stop helping.
+MAX_SHARDS = 14
 FILES_PER_SHARD = 250
 # Below either threshold a serial build is already fast; sharding would
 # only add scheduling and artifact overhead to the common import PR.
@@ -57,6 +64,25 @@ GLOBAL_BUILD_INPUTS = {
     "scripts/ci/LeanPoolLinters.lean",
 }
 BUILD_COSTS_PATH = Path(__file__).with_name("build-costs.json")
+VALIDATION_CACHE_PATH = (
+    Path(__file__).resolve().parents[2] / "python/lean_pool/validation_cache.py"
+)
+
+
+def validation_inputs(path: Path = VALIDATION_CACHE_PATH) -> set[str]:
+    """Files whose change invalidates every project's lint and quality receipt.
+
+    Read from the validation cache itself, without importing the package, so
+    this list cannot drift from the fingerprints it predicts.
+    """
+    module = ast.parse(path.read_text())
+    values: dict[str, tuple[str, ...]] = {}
+    for node in module.body:
+        if isinstance(node, ast.Assign) and isinstance(node.targets[0], ast.Name):
+            name = node.targets[0].id
+            if name in {"SHARED_INPUTS", "LINT_INPUTS", "QUALITY_INPUTS"}:
+                values[name] = tuple(ast.literal_eval(node.value))
+    return {name for names in values.values() for name in names}
 
 
 def unit_sources() -> dict[str, list[Path]]:
@@ -215,7 +241,10 @@ def main() -> None:
     sources = unit_sources()
     file_counts = {name: len(paths) for name, paths in sources.items()}
     global_change = bool(GLOBAL_BUILD_INPUTS.intersection(changed_files))
-    full = cold or force_full or global_change or not diff_available
+    validation_change = bool(validation_inputs().intersection(changed_files))
+    full = (
+        cold or force_full or global_change or validation_change or not diff_available
+    )
 
     if full:
         targets = set(file_counts)
@@ -225,6 +254,8 @@ def main() -> None:
             reason = "no warm build cache"
         elif global_change:
             reason = "shared compiler or build inputs changed"
+        elif validation_change:
+            reason = "lint or quality checker inputs changed"
         else:
             reason = "no diff available for this event"
     else:

@@ -13,7 +13,13 @@ from pathlib import Path
 
 import pytest
 
-from lean_pool import ci_artifacts, ci_pr_build, rebase_fastpath, slim_setup
+from lean_pool import (
+    build_time_limits,
+    ci_artifacts,
+    ci_pr_build,
+    rebase_fastpath,
+    slim_setup,
+)
 
 TOOLCHAIN = (Path(__file__).resolve().parents[2] / "lean-toolchain").read_text().strip()
 
@@ -176,18 +182,53 @@ def test_metadata_edit_reuses_build_without_skipping_validation(
 
 
 @pytest.mark.parametrize(
+    ("path", "reused"),
+    [("LeanPool/B.lean", False), ("LeanPool/B/Added.lean", True)],
+)
+def test_changed_sources_restore_only_unchanged_modules(
+    repository, monkeypatch, path, reused
+):
+    """An edited module is left for Lake to compile; untouched ones are restored."""
+    root, base, previous = repository
+    archive, compiled = _archive(root, base, previous)
+    target = root / path
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text("module\n-- edited\n")
+    head = _commit(root, "edit source")
+    _download(monkeypatch, archive, previous)
+    assert ci_pr_build.restore_prior_build(root, "owner/repo", 42, "pr", head, base)
+    assert compiled.exists() == reused
+
+
+def test_deleted_module_output_is_not_restored(repository, monkeypatch):
+    """Compiled output of a module the PR has since removed stays out of the build."""
+    root, base, previous = repository
+    (root / "LeanPool/B").mkdir()
+    (root / "LeanPool/B/Extra.lean").write_text("module\n")
+    previous = _commit(root, "add Extra")
+    extra = root / ".lake/build/lib/lean/LeanPool/B/Extra.olean"
+    extra.parent.mkdir(parents=True)
+    extra.write_text("prior compiled Extra")
+    archive, compiled = _archive(root, base, previous)
+    extra.unlink()
+    _git(root, "rm", "-q", "LeanPool/B/Extra.lean")
+    head = _commit(root, "remove Extra")
+    _download(monkeypatch, archive, previous)
+    assert ci_pr_build.restore_prior_build(root, "owner/repo", 42, "pr", head, base)
+    assert compiled.exists() and not extra.exists()
+
+
+@pytest.mark.parametrize(
     "path",
     [
-        "LeanPool/B.lean",
-        "LeanPool/B/Added.lean",
         "lean-toolchain",
         "lake-manifest.json",
         "lakefile.toml",
         "python/lean_pool/build_time_limits.py",
     ],
 )
-def test_changed_source_or_settings_avoid_download(repository, monkeypatch, path):
-    """Changed sources and build settings fall back before any artifact download."""
+def test_changed_settings_avoid_download(repository, monkeypatch, path):
+    """Changed build settings fall back before any artifact download."""
     root, base, previous = repository
     archive, compiled = _archive(root, base, previous)
     target = root / path
@@ -359,6 +400,63 @@ def test_lake_replays_and_rebuilds_after_setup_files_are_slimmed(repository):
     assert "rfl" in result.stdout + result.stderr
 
 
+def _timed_build(lake: Path, root: Path, base: str) -> tuple[int, str]:
+    """Run the workflow's prepare, build and check sequence on both PR modules."""
+    assert build_time_limits.prepare(base, root) == 0
+    result = subprocess.run(
+        [str(lake), "build", "LeanPool.B", "LeanPool.C"],
+        cwd=root,
+        capture_output=True,
+        text=True,
+    )
+    assert result.returncode == 0, result.stdout + result.stderr
+    log = root / "lean-build.log"
+    log.write_text(result.stdout + result.stderr)
+    return build_time_limits.check(log, base, root, 600), log.read_text()
+
+
+def test_lake_recompiles_only_the_edited_module_of_an_earlier_pr_build(
+    repository, monkeypatch
+):
+    """A later push compiles and times its edit; untouched modules keep their times."""
+    root, base, _ = repository
+    lake = _lake()
+    (root / "LeanPool/C.lean").write_text("module\npublic def other : Nat := 3\n")
+    previous = _commit(root, "add C")
+    status, log = _timed_build(lake, root, base)
+    assert status == 0 and "Built LeanPool.B" in log and "Built LeanPool.C" in log
+    archive = root / "build.tar.gz"
+    rebase_fastpath.pack(root, base, previous, archive)
+    shutil.rmtree(root / ".lake/build")
+    (root / "LeanPool/C.lean").write_text("module\npublic def other : Nat := 4\n")
+    head = _commit(root, "edit C")
+    _download(monkeypatch, archive, previous)
+    assert ci_pr_build.restore_prior_build(root, "owner/repo", 42, "pr", head, base)
+    status, log = _timed_build(lake, root, base)
+    assert status == 0
+    assert "Built LeanPool.C" in log and "Built LeanPool.B" not in log
+    assert build_time_limits.recorded_seconds(root, "LeanPool/B.lean") is not None
+
+
+def test_lake_output_restored_without_a_recorded_time_is_recompiled(
+    repository, monkeypatch
+):
+    """Restored output that no CI run timed cannot satisfy the build-time gate."""
+    root, base, previous = repository
+    lake = _lake()
+    subprocess.run(
+        [str(lake), "build", "LeanPool.B"], cwd=root, check=True, capture_output=True
+    )
+    archive = root / "build.tar.gz"
+    rebase_fastpath.pack(root, base, previous, archive)
+    shutil.rmtree(root / ".lake/build")
+    _download(monkeypatch, archive, previous)
+    assert ci_pr_build.restore_prior_build(root, "owner/repo", 42, "pr", previous, base)
+    assert (root / ".lake/build/lib/lean/LeanPool/B.olean").is_file()
+    assert build_time_limits.prepare(base, root) == 0
+    assert not (root / ".lake/build/lib/lean/LeanPool/B.olean").exists()
+
+
 def test_lake_keeps_unchanged_proof_after_metadata_edit(repository, monkeypatch):
     """Lake accepts matching artifacts without recompiling unchanged proofs."""
     root, base, previous = repository
@@ -382,18 +480,17 @@ def test_lake_keeps_unchanged_proof_after_metadata_edit(repository, monkeypatch)
     assert compiled.stat().st_mtime_ns == before
 
 
-def test_untracked_source_inventory_rejected_before_overlay(repository, monkeypatch):
-    """The archive's full inventory also rejects an untracked added source."""
+def test_untracked_added_source_gets_no_restored_output(repository, monkeypatch):
+    """An added source has no earlier output; its unchanged neighbours are reused."""
     root, base, previous = repository
     archive, compiled = _archive(root, base, previous)
     added = root / "LeanPool/B/Added.lean"
     added.parent.mkdir()
     added.write_text("module\n")
     _download(monkeypatch, archive, previous)
-    assert not ci_pr_build.restore_prior_build(
-        root, "owner/repo", 42, "pr", previous, base
-    )
-    assert not compiled.exists()
+    assert ci_pr_build.restore_prior_build(root, "owner/repo", 42, "pr", previous, base)
+    assert compiled.read_text() == "prior compiled B"
+    assert not list((root / ".lake/build").rglob("Added.*"))
 
 
 def test_broken_archive_preserves_existing_build(repository, monkeypatch):
