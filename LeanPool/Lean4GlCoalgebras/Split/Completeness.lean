@@ -246,7 +246,7 @@ lemma next_next_cor {Γ Δ : SplitSequent} {strat : Strategy coalgebraGame Prove
   rcases R_prop with R_prop | R_prop
   all_goals
     have ⟨φ, φ_in, φ_prop⟩ := R_prop
-    cases φ <;> simp at φ_prop <;> try grind [f]
+    cases φ <;> simp at φ_prop <;> grind [f]
 
 /-- Comparison of rule app history length and sequent history length. -/
 lemma history_length_in_cone {Γ : SplitSequent} (strat : Strategy coalgebraGame Prover)
@@ -281,7 +281,7 @@ def repPos {Γ Δ : SplitSequent} {strat : Strategy coalgebraGame Prover} (g : p
     have := (history_length_in_cone strat g.1 g.2.1).2 g.2.2
     unfold instMinNat min minOfLe
     simp [g.2.2]
-    split <;> try grind⟩
+    split <;> grind⟩
 
 /-- Rewinding the game one step changes the player. -/
 lemma rewind_turn_one_step {g n h1 h2} :
@@ -638,7 +638,7 @@ lemma rep_next_cor (Γ : SplitSequent) {Δ : SplitSequent} {strat : Strategy coa
   convert
     (rewind_history_correspondence Γ g.1 strat
       (Fin.find _ (List.mem_iff_get.1 rep)).1 _ _ _ _ g.2.1).1 _ <;>
-      (try simp_all; try grind)
+      (simp_all; try grind)
   · have length := history_length_in_cone strat g.1 g.2.1
     simp [g.2.2] at *
     grind
@@ -1460,7 +1460,7 @@ lemma diamond_in_last_of_diamond_in_first {Γ : SplitSequent}
         grind
       · convert diamond_in_of_move_move_diamond_in _ _
           ⟨_, ⟨y_u₁.1, u₁_u₂.1⟩⟩ φ φ_in using 3
-        any_goals simp
+        on_goal 1 => simp
         · grind
         · exact P_turn_u₂
 
