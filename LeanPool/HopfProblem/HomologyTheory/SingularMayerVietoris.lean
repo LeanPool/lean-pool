@@ -2957,7 +2957,7 @@ private theorem SingularMayerVietoris.formalSubdivisionIteratedHomotopy_apply {V
       ∑ j ∈ Finset.range k,
         formalSubdivisionHomotopy center n ((formalSubdivision center n)^[j] c) := by
   simp only [formalSubdivisionIteratedHomotopy, LinearMap.sum_apply, LinearMap.comp_apply,
-    Module.End.pow_apply]
+    pow_apply_eq_iterate]
 
 @[simp]
 private theorem SingularMayerVietoris.formalSubdivisionIteratedHomotopy_zero {V : Type*}
@@ -3068,12 +3068,12 @@ private theorem SingularMayerVietoris.subdivision_affineChainMap (p k n : ℕ)
     apply formalChains_ext
     intro v
     simp only [LinearMap.comp_apply, affineChainMap_simplex, subdivision_simplex,
-      Module.End.pow_apply]
+      pow_apply_eq_iterate]
     rw [inducedChain_affineChainMap,
       formalMap_subdivision_iterate (simplexCenter n) (simplexCenter p) (affineSimplex v)
         (affineSimplex_preserves_center v),
       formalMap_simplex, affineSimplex_comp_stdVertices]
-  simpa only [LinearMap.comp_apply, Module.End.pow_apply] using LinearMap.congr_fun h c
+  simpa only [LinearMap.comp_apply, pow_apply_eq_iterate] using LinearMap.congr_fun h c
 
 private theorem SingularMayerVietoris.subdivision_boundary {X : Type} [TopologicalSpace X] (k n : ℕ)
     (c : FirstHurewicz.Chains X (n + 1)) :

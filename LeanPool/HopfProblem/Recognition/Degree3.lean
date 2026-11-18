@@ -1066,7 +1066,9 @@ private def Degree.MorseCells.cellHandleHomotopyEquiv {E M : Type*} [NormedAddCo
   have hA : IsCompact A := (isClosed_le hf continuous_const).isCompact
   letI : CompactSpace A := isCompact_iff_compactSpace.mp hA
   let cell :=
-    Smale.ClosedAttachment.unionHomeomorph A _ (coreCellMap c ρ hρ hblock) hA
+    Smale.ClosedAttachment.unionHomeomorph A
+      {u : Smale.MorseHandle.UnitDisk c.NegativeCoordinates | ‖(u : c.NegativeCoordinates)‖ = 1}
+      (coreCellMap c ρ hρ hblock) hA
       (coreCellMap_injective c ρ hρ hblock) (coreCellMap_lower_iff c ρ hρ hblock)
   let core :=
     Degree.CoreAttachment.coreUnionHomotopyEquiv A (c.attachingHandleMap ρ hρ hblock)

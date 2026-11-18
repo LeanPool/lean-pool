@@ -1334,7 +1334,8 @@ private theorem Smale.FlowConstruction.frontier_sublevel_eq_of_strict_flow {X : 
     by_contra hn
     have hlt : f x < b := lt_of_not_ge hn
     exact
-      hnot (interior_maximal (fun y (hy : f y < b) => hy.le) (isOpen_lt hf continuous_const) hlt)
+      hnot (interior_maximal (t := {y | f y < b}) (s := {y | f y ≤ b})
+        (fun y hy => (show f y ≤ b from hy.le)) (isOpen_lt hf continuous_const) hlt)
   · intro hx
     refine ⟨(show f x ≤ b from hx.le), ?_⟩
     intro hi

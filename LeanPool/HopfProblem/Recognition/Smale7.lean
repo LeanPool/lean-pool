@@ -5397,7 +5397,7 @@ private theorem Smale.exists_filled_clean_bigon_of_collar_disjoint_inner {E M : 
     rw [c.symm_apply_apply]
     exact hEq hzW
   obtain ⟨j, hj, hjG, hjd⟩ :=
-    exists_smooth_open_gluing hP hQ hG.contMDiffOn (d.smooth.mono Set.inter_subset_left) hmatch
+    exists_smooth_open_gluing hP hQ hG.contMDiffOn (d.smooth.mono Set.sdiff_subset) hmatch
   have hjInner (p : ℝ × ℝ) (hp : p ∈ WhitneyPairModel.bigon h) : j (c p) = F p :=
     (hjG (hcoreP ⟨p, hp, rfl⟩)).trans (congrArg F (c.symm_apply_apply p))
   have hjCollar (p : ℝ × ℝ) (hp : p ∈ WhitneyPairModel.innerBigonCollar h r) : j p = d.map p :=

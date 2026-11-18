@@ -79,10 +79,11 @@ private theorem RiemannMapping.closure_normalizedClass {U : Set ℂ} (hUo : IsOp
     norm_num [← he, hfx₀] at hz
   · exact
       Complex.eqOn_const_or_injOn_of_tendstoLocallyUniformlyOn hUo hUc
-        (eventually_mem_nhdsWithin.mono fun g hg => hg.2.1) hFd htendsto
+        ((eventually_mem_nhdsWithin (s := normalizedClass U x₀)).mono fun _ hg => hg.2.1)
+        hFd htendsto
   · apply
       Complex.eqOn_zero_or_forall_ne_zero_of_tendstoLocallyUniformlyOn hUo hUc
-        (eventually_mem_nhdsWithin.mono fun g hg => hg.2.2.2.1)
+        ((eventually_mem_nhdsWithin (s := normalizedClass U x₀)).mono fun _ hg => hg.2.2.2.1)
         (hFd.mono fun g hg => hg.deriv hUo)
     exact htendsto.deriv hFd hUo
 
@@ -1048,7 +1049,7 @@ private theorem RiemannBoundary.exists_lipschitz_extension_primitive_openRectang
         Set.EqOn F G (openRectangle a b c d) ∧
           ∀ z ∈ openRectangle a b c d, HasDerivAt G (f z) z := by
   have hLip : LipschitzOnWith K F (openRectangle a b c d) :=
-    (convex_openRectangle a b c d).lipschitzOnWith_of_nnnorm_hasDerivWithin_le
+    (convex_openRectangle a b c d).lipschitzOnWith_of_nnNorm_hasDerivWithin_le
       (fun z hz => (hF z hz).hasDerivWithinAt) hb
   obtain ⟨G, hG, heq⟩ := hLip.extend_finite_dimension
   refine ⟨G, hG, heq, fun z hz => ?_⟩
@@ -1997,7 +1998,7 @@ private theorem
 
 private theorem RiemannBoundary.principalRoot_pow_of_sector {n : ℕ} (hn : 0 < n) {z : ℂ}
     (hz : z.arg ∈ Set.Icc 0 (Real.pi / (n : ℝ))) : principalRoot n (z ^ n) = z := by
-  apply Complex.pow_cpow_nat_inv hn.ne' _ hz.2
+  apply Complex.pow_cpow_nat_inv (n := n) ?_ hz.2
   exact (neg_neg_of_pos (div_pos Real.pi_pos (Nat.cast_pos.mpr hn))).trans_le hz.1
 
 private theorem RiemannBoundary.cubic_sector_slack_mo1973_19421 (w : ℂ) :

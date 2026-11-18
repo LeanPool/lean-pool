@@ -3830,6 +3830,8 @@ private theorem CuspCollapse.centralPolarMap_phaseDeckMap (C : ℂ → Matrix (F
 private noncomputable def CuspCollapse.centralClosedZeroHomeomorph :
     CuspRetraction.CentralFibre ≃ₜ CuspRetraction.ClosedTube 0 :=
   Homeomorph.setCongr
+    (s := {x : ToricSpace.Space | ToricSpace.time x = 0})
+    (t := {x : ToricSpace.Space | ‖ToricSpace.time x‖ ≤ 0})
     (by
       ext x
       exact norm_le_zero_iff.symm)
@@ -3838,6 +3840,8 @@ private noncomputable def CuspCollapse.quotientCentralClosedZeroHomeomorph
     (C : ℂ → Matrix (Fin 2) (Fin 2) ℂ) (ε : ℝ) :
     CuspRetraction.QuotientCentralFibre C ε ≃ₜ CuspRetraction.ClosedQuotient C ε 0 :=
   Homeomorph.setCongr
+    (s := {q : CuspQuotient.QuotientSpace C ε | CuspQuotient.projection C ε q = 0})
+    (t := {q : CuspQuotient.QuotientSpace C ε | ‖CuspQuotient.projection C ε q‖ ≤ 0})
     (by
       ext q
       exact norm_le_zero_iff.symm)

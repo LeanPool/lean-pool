@@ -2932,7 +2932,7 @@ private theorem
   have hψ : Continuous ψ := by
     exact
       (c.splitChart.symm.contMDiffOn_toFun.continuousOn.mono
-          (fun z hz => hblock hz.1)).domRestrict
+          (t := K) (fun _ hz => hblock hz.1)).domRestrict
   have hg : Continuous (fun z : K => ‖(z : c.NegativeCoordinates × c.PositiveCoordinates).1‖) :=
     continuous_subtype_val.fst.norm
   have hzero :
@@ -2999,7 +2999,7 @@ private theorem
   have hψ : Continuous ψ := by
     exact
       (c.splitChart.symm.contMDiffOn_toFun.continuousOn.mono
-          (fun z hz => hblock hz.1)).domRestrict
+          (t := K) (fun _ hz => hblock hz.1)).domRestrict
   have hg : Continuous (fun z : K => ‖(z : c.NegativeCoordinates × c.PositiveCoordinates).2‖) :=
     continuous_subtype_val.snd.norm
   have hzero :
@@ -3426,9 +3426,10 @@ private theorem MorseCancel.signed_morse_chart_negative_card_eq {E M : Type*} [N
   rw [hc, hd] at hs
   calc
     Fintype.card { i // c.weights i = -1 } = {i | c.weights i = -1}.ncard :=
-      Set.fintypeCard_eq_ncard _
+      Set.fintypeCard_eq_ncard {i | c.weights i = -1}
     _ = {i | d.weights i = -1}.ncard := hs
-    _ = Fintype.card { i // d.weights i = -1 } := (Set.fintypeCard_eq_ncard _).symm
+    _ = Fintype.card { i // d.weights i = -1 } :=
+      (Set.fintypeCard_eq_ncard {i | d.weights i = -1}).symm
 
 attribute [local instance 100] Classical.propDecidable in
 private theorem
@@ -4685,7 +4686,7 @@ private theorem Smale.TransverseCoordinates.dense_native_translations {D Z F H K
     apply μ.dense_of_ae
     rw [MeasureTheory.ae_iff]
     simpa only [Set.mem_compl_iff, Classical.not_not, Set.ofPred_mem_eq] using hT
-  exact hdense.mono hgood
+  exact hdense.mono (fun a ha => hgood a ha)
 
 private theorem Smale.ChartMapPerturbation.mfderiv_eq_of_translation_germ {D F H X : Type*}
     [NormedAddCommGroup D] [NormedSpace ℝ D] [NormedAddCommGroup F] [NormedSpace ℝ F]
