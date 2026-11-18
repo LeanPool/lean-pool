@@ -141,7 +141,7 @@ private theorem green_sum (n : ℕ) {f g : Configuration n → ℝ}
   simp_rw [derivative_greenFlux hf hg]
   unfold densityDivergence
   simp only [Finset.mul_sum, ← Finset.sum_sub_distrib]
-  ring
+  ring_nf
 
 /-- The concrete weighted Green identity, with a globally smooth second function. -/
 theorem ginibre_density_mixed_green_identity {n : ℕ} (hn : 0 < n)
