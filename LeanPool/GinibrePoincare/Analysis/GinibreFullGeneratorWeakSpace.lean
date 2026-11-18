@@ -36,6 +36,7 @@ SOFTWARE.
 module
 
 public import LeanPool.GinibrePoincare.Analysis.GinibreDistributionalClosure
+public import LeanPool.GinibrePoincare.Analysis.GinibreWeakConstants
 public import LeanPool.GinibrePoincare.Analysis.GinibreWeakPermutation
 
 /-!
@@ -179,6 +180,46 @@ theorem ginibreFullWeakSpace_isClosed (n : ℕ) (hn : 0 < n) :
 instance ginibreFullWeakSpace_complete (n : ℕ) (hn : 0 < n) :
     CompleteSpace (ginibreFullWeakSpace n hn) :=
   (ginibreFullWeakSpace_isClosed n hn).completeSpace_coe
+
+/-- Centering on actual Ginibre L², bundled as a continuous real-linear map. -/
+def ginibreFullCenter (n : ℕ) (hn : 0 < n) : GinibreFullValueL2 n →L[ℝ] GinibreFullValueL2 n :=
+  ContinuousLinearMap.id ℝ _ -
+    (innerSL ℝ (ginibreRealConstantL2 n hn 1)).smulRight (ginibreRealConstantL2 n hn 1)
+
+theorem ginibreFullCenter_apply (n : ℕ) (hn : 0 < n) (u : GinibreFullValueL2 n) :
+    ginibreFullCenter n hn u = u - ginibreRealConstantL2 n hn (ginibreL2Mean n u) := by
+  have hmean : inner ℝ (ginibreRealConstantL2 n hn 1) u = ginibreL2Mean n u := by
+    rw [L2.inner_def]
+    unfold ginibreL2Mean
+    apply integral_congr_ae
+    filter_upwards [ginibreRealConstantL2_ae n hn 1] with z hz
+    simp [hz]
+  have hc : ginibreL2Mean n u • ginibreRealConstantL2 n hn 1 =
+      ginibreRealConstantL2 n hn (ginibreL2Mean n u) := by
+    apply Lp.ext
+    filter_upwards [Lp.coeFn_smul (ginibreL2Mean n u) (ginibreRealConstantL2 n hn 1),
+      ginibreRealConstantL2_ae n hn 1,
+      ginibreRealConstantL2_ae n hn (ginibreL2Mean n u)] with z hs hone hconst
+    rw [hs]
+    change ginibreL2Mean n u * (ginibreRealConstantL2 n hn 1) z = _
+    rw [hone, hconst, mul_one]
+  simp [ginibreFullCenter, hmean, hc]
+
+/-- Centering preserves the actual symmetric ordinary weak gradient. -/
+theorem ginibreFullCenter_weak_pair {n : ℕ} (hn : 0 < n)
+    (u : GinibreFullValueL2 n) (g : GinibreFullGradientL2 n)
+    (hu : IsGinibreDistributionalGradient n u g) (hs : IsGinibreSymmetricWeakPair (u, g)) :
+    IsGinibreDistributionalGradient n (ginibreFullCenter n hn u) g ∧
+      IsGinibreSymmetricWeakPair (ginibreFullCenter n hn u, g) := by
+  let p : ginibreFullWeakSpace n hn := ⟨(u, g), hu, hs⟩
+  let c : ginibreFullWeakSpace n hn :=
+    ⟨(ginibreRealConstantL2 n hn (ginibreL2Mean n u), 0),
+      ginibreRealConstantL2_weak n hn _, ginibreRealConstantL2_symmetric_pair n hn _⟩
+  have hp := (p-c).property
+  change IsGinibreDistributionalGradient n
+    (u - ginibreRealConstantL2 n hn (ginibreL2Mean n u)) (g-0) ∧
+    IsGinibreSymmetricWeakPair (u - ginibreRealConstantL2 n hn (ginibreL2Mean n u), g-0) at hp
+  simpa only [ginibreFullCenter_apply, sub_zero] using hp
 
 end
 end GinibrePoincare

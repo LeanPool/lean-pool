@@ -64,22 +64,6 @@ theorem ginibreFullGenerator_real_poincare {n : ℕ} (hn : 0 < n)
   rw [heq] at hp
   linarith
 
-/-- Full graph dissipation is the actual weak Dirichlet energy. -/
-theorem ginibreFullGenerator_dissipation_eq_energy {n : ℕ} (hn : 0 < n)
-    (u v : ginibreFullSymmetricValues n)
-    (hgraph : (ginibreFullSymmetricOfReal n u, ginibreFullSymmetricOfReal n v) ∈
-      (ginibreFullGenerator n hn).graph) :
-    ∃ g : GinibreFullGradientL2 n,
-      IsGinibreDistributionalGradient n u.val g ∧
-      IsGinibreSymmetricWeakPair (u.val, g) ∧
-      ginibreWeakEnergy n g = -inner ℝ v.val (ginibreFullCenter n hn u.val) := by
-  obtain ⟨g, hug, hsg, hvar⟩ := (ginibreFullGenerator_real_graph_iff_exists_gradient hn u v).mp
-    hgraph
-  obtain ⟨huc, hsc⟩ := ginibreFullCenter_weak_pair hn u.val g hug hsg
-  refine ⟨g, hug, hsg, ?_⟩
-  simpa only [ginibreWeakEnergy, real_inner_self_eq_norm_sq] using
-    hvar (ginibreFullCenter n hn u.val) g huc hsc
-
 /-- The centered dissipation and both exact deficits for the same graph-domain gradient. -/
 theorem ginibreFullGenerator_deficit_identities_with_dissipation {n : ℕ} (hn : 0 < n)
     (u v : ginibreFullSymmetricValues n)

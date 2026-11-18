@@ -94,10 +94,15 @@ theorem ginibreFull_core_divergence_ae {n : ℕ} (hn : 0 < n)
     rw [← Finset.sum_div, mul_div_assoc]
   · exact (mul_div_cancel_left₀ _ hρ).symm
 
+/-- Every actual Theorem 1.9 core pair belongs to the full symmetric weak domain. -/
+def ginibreFullCorePair {n : ℕ} (hn : 0 < n) (f : Configuration n → ℝ)
+    (hf : IsTheoremOneNineCore f) : ginibreFullWeakSpace n hn :=
+  ginibreFullSmoothCompactWeakPair n hn f hf.isSmoothCompactSymmetric
+
 /-- The actual weighted real L² gradient of a smooth collision-free core observable. -/
 def ginibreFullCoreGradient {n : ℕ} (hn : 0 < n) (f : Configuration n → ℝ)
     (hf : IsTheoremOneNineCore f) : GinibreFullGradientL2 n :=
-  (ginibreFull_smoothCompact_memLp n hn f hf.1 hf.2.1).2.toLp (ginibreEuclideanGradient f)
+  (ginibreFullCorePair hn f hf).val.2
 
 theorem ginibreFullCoreGradient_ae {n : ℕ} (hn : 0 < n) (f : Configuration n → ℝ)
     (hf : IsTheoremOneNineCore f) :
@@ -221,17 +226,12 @@ theorem ginibreFullGenerator_weak_core_green {n : ℕ} (hn : 0 < n)
 /-- Actual weighted real L² class of the core value. -/
 def ginibreFullCoreValue {n : ℕ} (hn : 0 < n) (f : Configuration n → ℝ)
     (hf : IsTheoremOneNineCore f) : GinibreFullValueL2 n :=
-  (ginibreFull_smoothCompact_memLp n hn f hf.1 hf.2.1).1.toLp f
+  (ginibreFullCorePair hn f hf).val.1
 
 theorem ginibreFullCoreValue_ae {n : ℕ} (hn : 0 < n) (f : Configuration n → ℝ)
     (hf : IsTheoremOneNineCore f) :
     (ginibreFullCoreValue hn f hf : Configuration n → ℝ) =ᵐ[ginibreMeasure n] f :=
   (ginibreFull_smoothCompact_memLp n hn f hf.1 hf.2.1).1.coeFn_toLp
-
-/-- Every actual Theorem 1.9 core pair belongs to the full symmetric weak domain. -/
-def ginibreFullCorePair {n : ℕ} (hn : 0 < n) (f : Configuration n → ℝ)
-    (hf : IsTheoremOneNineCore f) : ginibreFullWeakSpace n hn :=
-  ginibreFullSmoothCompactWeakPair n hn f hf.isSmoothCompactSymmetric
 
 /-- The full weak form resolvent agrees exactly with `(I - A)⁻¹` on every
 actual collision-free symmetric smooth core function. -/

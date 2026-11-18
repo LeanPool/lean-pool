@@ -167,4 +167,20 @@ theorem ginibreFullGenerator_real_energy_identity {n : ℕ} (hn : 0 < n)
   have h := heq u.val g hu hs
   simpa only [ginibreWeakEnergy, real_inner_self_eq_norm_sq] using h
 
+/-- Full graph dissipation is the actual weak Dirichlet energy. -/
+theorem ginibreFullGenerator_dissipation_eq_energy {n : ℕ} (hn : 0 < n)
+    (u v : ginibreFullSymmetricValues n)
+    (hgraph : (ginibreFullSymmetricOfReal n u, ginibreFullSymmetricOfReal n v) ∈
+      (ginibreFullGenerator n hn).graph) :
+    ∃ g : GinibreFullGradientL2 n,
+      IsGinibreDistributionalGradient n u.val g ∧
+      IsGinibreSymmetricWeakPair (u.val, g) ∧
+      ginibreWeakEnergy n g = -inner ℝ v.val (ginibreFullCenter n hn u.val) := by
+  obtain ⟨g, hug, hsg, hvar⟩ := (ginibreFullGenerator_real_graph_iff_exists_gradient hn u v).mp
+    hgraph
+  obtain ⟨huc, hsc⟩ := ginibreFullCenter_weak_pair hn u.val g hug hsg
+  refine ⟨g, hug, hsg, ?_⟩
+  simpa only [ginibreWeakEnergy, real_inner_self_eq_norm_sq] using
+    hvar (ginibreFullCenter n hn u.val) g huc hsc
+
 end GinibrePoincare

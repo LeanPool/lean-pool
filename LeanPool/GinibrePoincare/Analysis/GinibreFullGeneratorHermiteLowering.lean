@@ -83,22 +83,6 @@ theorem ginibreFullTransformedDbar_weak_coefficient {n : ℕ} (hn : 0 < n)
     hc.mem_of_tendsto hlim (Eventually.of_forall hmem)
   exact htarget
 
-/-- Centering preserves the actual symmetric ordinary weak gradient. -/
-theorem ginibreFullCenter_weak_pair {n : ℕ} (hn : 0 < n)
-    (u : GinibreFullValueL2 n) (g : GinibreFullGradientL2 n)
-    (hu : IsGinibreDistributionalGradient n u g) (hs : IsGinibreSymmetricWeakPair (u, g)) :
-    IsGinibreDistributionalGradient n (ginibreFullCenter n hn u) g ∧
-      IsGinibreSymmetricWeakPair (ginibreFullCenter n hn u, g) := by
-  let p : ginibreFullWeakSpace n hn := ⟨(u, g), hu, hs⟩
-  let c : ginibreFullWeakSpace n hn :=
-    ⟨(ginibreRealConstantL2 n hn (ginibreL2Mean n u), 0),
-      ginibreRealConstantL2_weak n hn _, ginibreRealConstantL2_symmetric_pair n hn _⟩
-  have hp := (p-c).property
-  change IsGinibreDistributionalGradient n
-    (u - ginibreRealConstantL2 n hn (ginibreL2Mean n u)) (g-0) ∧
-    IsGinibreSymmetricWeakPair (u - ginibreRealConstantL2 n hn (ginibreL2Mean n u), g-0) at hp
-  simpa only [ginibreFullCenter_apply, sub_zero] using hp
-
 /-- Full weighted Hermite energy is an exact convergent series for every
 actual symmetric weak pair. -/
 theorem ginibreFullWeak_weighted_hermite_energy {n : ℕ} (hn : 0 < n)

@@ -34,6 +34,7 @@ module
 
 public import Mathlib.Analysis.InnerProductSpace.StarOrder
 public import Mathlib.Analysis.CStarAlgebra.ContinuousLinearMap
+public import Mathlib.Topology.MetricSpace.Equicontinuity
 public import LeanPool.GinibrePoincare.Analysis.GinibreFullSemigroupMultiplier
 
 /-! # Resolvent construction of a strongly continuous contraction semigroup
@@ -154,6 +155,16 @@ theorem resolventCfcEvolution_range_dist (R : H →L[ℂ] H) (hR : IsSelfAdjoint
     _ ≤ _ := hbound
     _ ≤ _ := hrange
 
+omit [CompleteSpace H] in
+/-- A family of norm-bounded contractions is equicontinuous. -/
+theorem equicontinuous_of_opNorm_le_one {ι : Type*} (F : ι → H →L[ℂ] H)
+    (hF : ∀ i, ‖F i‖ ≤ 1) : Equicontinuous (fun i x => F i x) := by
+  refine Metric.equicontinuous_of_continuity_modulus id tendsto_id _ ?_
+  intro x y i
+  change dist (F i x) (F i y) ≤ dist x y
+  rw [dist_eq_norm, dist_eq_norm, ← map_sub]
+  simpa only [one_mul] using (F i).le_of_opNorm_le (hF i) (x - y)
+
 /-- Strong continuity on the complete Hilbert space, proved by dense-range approximation. -/
 theorem continuous_resolventCfcEvolution (R : H →L[ℂ] H) (hR : IsSelfAdjoint R)
     (hSpec : ∀ r ∈ spectrum ℝ R, r ∈ Set.Icc (0 : ℝ) 1)
@@ -161,28 +172,21 @@ theorem continuous_resolventCfcEvolution (R : H →L[ℂ] H) (hR : IsSelfAdjoint
     Continuous (fun t : ℝ≥0 => resolventCfcEvolution R t x) := by
   apply continuous_iff_continuousAt.mpr
   intro t
+  have hEq := equicontinuous_of_opNorm_le_one (resolventCfcEvolution R)
+    (resolventCfcEvolution_norm_le R hSpec)
+  have hClosed := hEq.isClosed_setOfPred_tendsto (l := 𝓝 t)
+    (resolventCfcEvolution R t).continuous
+  apply (closure_minimal _ hClosed) (hDense x)
+  rintro _ ⟨y, rfl⟩
+  change ContinuousAt (fun s : ℝ≥0 => resolventCfcEvolution R s (R y)) t
   apply Metric.continuousAt_iff.mpr
   intro ε hε
-  obtain ⟨y, hy⟩ := hDense.exists_dist_lt x (show 0 < ε / 3 by positivity)
-  refine ⟨ε / (3 * (‖y‖ + 1)), by positivity, ?_⟩
-  intro s hs
-  have hnear : dist s t * ‖y‖ < ε / 3 := by
-    have he := (lt_div_iff₀ (show 0 < 3 * (‖y‖ + 1) by positivity)).mp hs
-    nlinarith [dist_nonneg (x := s) (y := t), norm_nonneg y]
-  have hfirst : dist (resolventCfcEvolution R s x) (resolventCfcEvolution R s (R y)) ≤ dist x (R
-    y) := by
-    rw [dist_eq_norm, dist_eq_norm, ← map_sub]
-    exact resolventCfcEvolution_contracts R hSpec s (x - R y)
-  have hlast : dist (resolventCfcEvolution R t (R y)) (resolventCfcEvolution R t x) ≤ dist x (R
-    y) := by
-    rw [dist_comm, dist_eq_norm, dist_eq_norm, ← map_sub]
-    exact resolventCfcEvolution_contracts R hSpec t (x - R y)
-  have hmid := resolventCfcEvolution_range_dist R hR hSpec s t y
-  have htri := dist_triangle (resolventCfcEvolution R s x)
-    (resolventCfcEvolution R s (R y)) (resolventCfcEvolution R t x)
-  have htri' := dist_triangle (resolventCfcEvolution R s (R y))
-    (resolventCfcEvolution R t (R y)) (resolventCfcEvolution R t x)
-  linarith
+  refine ⟨ε / (‖y‖ + 1), by positivity, fun s hs => ?_⟩
+  calc
+    _ ≤ dist s t * ‖y‖ := resolventCfcEvolution_range_dist R hR hSpec s t y
+    _ ≤ dist s t * (‖y‖ + 1) :=
+      mul_le_mul_of_nonneg_left (le_add_of_nonneg_right zero_le_one) dist_nonneg
+    _ < ε := (lt_div_iff₀ (by positivity : 0 < ‖y‖ + 1)).mp hs
 
 /-- Strong continuity at zero follows from dense resolvent range, without a spectral gap. -/
 theorem resolventCfcEvolution_continuousAt_zero (R : H →L[ℂ] H)

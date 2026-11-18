@@ -135,37 +135,37 @@ theorem resolventCfcDifferenceQuotient_tendsto (R : H →L[ℂ] H) (hR : IsSelfA
     (hDense : DenseRange R) (x : H) :
     Tendsto (fun t : ℝ => resolventCfcDifferenceQuotient R t x)
       (𝓝[Set.Ioi 0] 0) (𝓝 ((R - 1) x)) := by
-  apply Metric.tendsto_nhds.mpr
-  intro ε hε
-  obtain ⟨y, hy⟩ := hDense.exists_dist_lt x
-    (show 0 < ε / (3 * (‖R - 1‖ + 1)) by positivity)
-  have hsmall : ∀ᶠ t : ℝ in 𝓝[Set.Ioi 0] 0, t < ε / (3 * (‖y‖ + 1)) :=
-    (eventually_lt_nhds (show (0 : ℝ) < ε / (3 * (‖y‖ + 1)) by positivity)).filter_mono
-      nhdsWithin_le_nhds
-  filter_upwards [self_mem_nhdsWithin, hsmall] with t ht hnear
-  have htpos : 0 < t := ht
-  have hfirst : dist (resolventCfcDifferenceQuotient R t x)
-      (resolventCfcDifferenceQuotient R t (R y)) ≤ dist x (R y) := by
-    rw [dist_eq_norm, dist_eq_norm, ← map_sub]
-    exact ((resolventCfcDifferenceQuotient R t).le_opNorm (x - R y)).trans
-      (by simpa only [one_mul] using (mul_le_mul_of_nonneg_right
-        (resolventCfcDifferenceQuotient_norm_le R hR hSpec htpos) (norm_nonneg (x - R y))))
-  have hlast : dist ((R - 1) (R y)) ((R - 1) x) ≤ ‖R - 1‖ * dist x (R y) := by
-    rw [dist_comm, dist_eq_norm, dist_eq_norm, ← map_sub]
-    exact (R - 1).le_opNorm (x - R y)
-  have hmid := resolventCfcDifferenceQuotient_range_error R hR hSpec htpos y
-  have hm : t * ‖y‖ < ε / 3 := by
-    have he := (lt_div_iff₀ (show 0 < 3 * (‖y‖ + 1) by positivity)).mp hnear
-    nlinarith [norm_nonneg y]
-  have ha : (‖R - 1‖ + 1) * dist x (R y) < ε / 3 := by
-    have he := (lt_div_iff₀ (show 0 < 3 * (‖R - 1‖ + 1) by positivity)).mp hy
-    nlinarith
-  have htri := dist_triangle (resolventCfcDifferenceQuotient R t x)
-    (resolventCfcDifferenceQuotient R t (R y)) ((R - 1) x)
-  have htri' := dist_triangle (resolventCfcDifferenceQuotient R t (R y))
-    ((R - 1) (R y)) ((R - 1) x)
-  rw [← dist_eq_norm] at hmid
-  linarith
+  let quotient (t : ℝ) : H →L[ℂ] H :=
+    if 0 < t then resolventCfcDifferenceQuotient R t else 0
+  have hbound (t : ℝ) : ‖quotient t‖ ≤ 1 := by
+    unfold quotient
+    split_ifs with ht
+    · exact resolventCfcDifferenceQuotient_norm_le R hR hSpec ht
+    · simp
+  have hEq := equicontinuous_of_opNorm_le_one quotient hbound
+  have hClosed := hEq.isClosed_setOfPred_tendsto (l := 𝓝[Set.Ioi 0] 0) (R - 1).continuous
+  have hRange : Set.range R ⊆ {y | Tendsto (fun t => quotient t y)
+      (𝓝[Set.Ioi 0] 0) (𝓝 ((R - 1) y))} := by
+    rintro _ ⟨y, rfl⟩
+    apply Metric.tendsto_nhds.mpr
+    intro ε hε
+    have hsmall : ∀ᶠ t : ℝ in 𝓝[Set.Ioi 0] 0, t < ε / (‖y‖ + 1) :=
+      (eventually_lt_nhds (show (0 : ℝ) < ε / (‖y‖ + 1) by positivity)).filter_mono
+        nhdsWithin_le_nhds
+    filter_upwards [self_mem_nhdsWithin, hsmall] with t ht hnear
+    have hpos : 0 < t := ht
+    change dist (quotient t (R y)) ((R - 1) (R y)) < ε
+    have heq : quotient t = resolventCfcDifferenceQuotient R t := ite_eq_left hpos
+    rw [heq, dist_eq_norm]
+    calc
+      _ ≤ t * ‖y‖ := resolventCfcDifferenceQuotient_range_error R hR hSpec hpos y
+      _ ≤ t * (‖y‖ + 1) :=
+        mul_le_mul_of_nonneg_left (le_add_of_nonneg_right zero_le_one) hpos.le
+      _ < ε := (lt_div_iff₀ (by positivity : 0 < ‖y‖ + 1)).mp hnear
+  have hlim := (closure_minimal hRange hClosed) (hDense x)
+  apply hlim.congr'
+  filter_upwards [self_mem_nhdsWithin] with t ht
+  simp [quotient, show 0 < t from ht]
 
 /-- The exact derivative on the entire resolvent domain. -/
 theorem resolventCfcOrbit_hasDerivWithinAt_range (R : H →L[ℂ] H) (hR : IsSelfAdjoint R)

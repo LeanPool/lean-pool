@@ -35,7 +35,8 @@ SOFTWARE.
 
 module
 
-public import LeanPool.GinibrePoincare.Analysis.GinibreSymmetricWeakPoincare
+public import LeanPool.GinibrePoincare.Analysis.GinibreSmoothDistributionalGradient
+public import LeanPool.GinibrePoincare.Analysis.GinibreWeakPermutation
 
 /-! # Constant Ginibre values have zero weak gradients -/
 
@@ -45,6 +46,40 @@ noncomputable section
 namespace GinibrePoincare
 open MeasureTheory
 open scoped BigOperators ContDiff
+
+/-- The constant function `c`, represented in actual Ginibre `L²`. -/
+def ginibreRealConstantL2 (n : ℕ) (hn : 0 < n) (c : ℝ) :
+    Lp ℝ 2 (ginibreMeasure n) := by
+  letI := ginibreMeasure_isProbabilityMeasure hn
+  exact (memLp_const c : MemLp (fun _ : Configuration n => c)
+    2 (ginibreMeasure n)).toLp (fun _ => c)
+
+theorem ginibreRealConstantL2_ae (n : ℕ) (hn : 0 < n) (c : ℝ) :
+    (ginibreRealConstantL2 n hn c : Configuration n → ℝ) =ᵐ[ginibreMeasure n]
+      fun _ => c := by
+  let := ginibreMeasure_isProbabilityMeasure hn
+  exact (memLp_const c : MemLp (fun _ : Configuration n => c)
+    2 (ginibreMeasure n)).coeFn_toLp
+
+/-- Mean of an actual Ginibre `L²` class. -/
+def ginibreL2Mean (n : ℕ) (u : Lp ℝ 2 (ginibreMeasure n)) : ℝ :=
+  ∫ z, u z ∂ginibreMeasure n
+
+theorem ginibreL2Mean_continuous (n : ℕ) (hn : 0 < n) :
+    Continuous (ginibreL2Mean n) := by
+  let := ginibreMeasure_isProbabilityMeasure hn
+  have h1 : MemLp (fun _ : Configuration n => (1 : ℝ)) 2 (ginibreMeasure n) :=
+    memLp_const 1
+  have h := continuous_L2_integral_mul (ginibreMeasure n)
+    (fun _ : Configuration n => (1 : ℝ)) h1
+  have heq : ginibreL2Mean n = fun u => ∫ z, u z * 1 ∂ginibreMeasure n := by
+    funext u
+    unfold ginibreL2Mean
+    congr 1
+    funext z
+    ring
+  rw [heq]
+  exact h
 
 /-- Every actual real constant has the ordinary zero weak gradient. -/
 theorem ginibreRealConstantL2_weak (n : ℕ) (hn : 0 < n) (c : ℝ) :
