@@ -103,7 +103,7 @@ lemma exists_dvd_int (n : CyclotomicIntegers p) (hn : n ≠ 0) :
   have : IsCyclotomicExtension {p} ℚ (CyclotomicField p ℚ) :=
     CyclotomicField.instIsCyclotomicExtensionSingletonNatSetOfCharZero p ℚ
   have : IsGalois ℚ (CyclotomicField p ℚ) := IsCyclotomicExtension.isGalois {p} _ _
-  convert RingOfIntegers.dvd_norm ℚ (equiv p n) using 1
+  convert NumberField.RingOfIntegers.dvd_norm ℚ (equiv p n) using 1
   ext1
   exact DFunLike.congr_arg (algebraMap ℚ _) (Algebra.coe_norm_int (equiv p n))
 
