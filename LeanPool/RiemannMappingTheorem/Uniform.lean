@@ -25,28 +25,28 @@ namespace UniformSpace -- uniform thickening
 
 /-- The `U`-thickening of `S`: the union of `U`-balls around each point of
 `S`. Equals `{a | ∃ x ∈ S, (x, a) ∈ U}`. -/
-def thickening (U : Set (α × α)) (S : Set α) : Set α := ⋃ x ∈ S, ball x U
+def thickening (U : Set (α × α)) (S : Set α) : Set α := ⋃ x ∈ S, (SetRel.inv U).ball x
 
 lemma mem_thickening : a ∈ thickening u s ↔ ∃ x ∈ s, (x, a) ∈ u := by
-  simp only [thickening, ball, mem_iUnion, Set.mem_preimage, exists_prop]
+  simp only [thickening, mem_iUnion, exists_prop]
+  rfl
 
-@[simp] lemma thickening_singleton : thickening u {a} = ball a u := by
+@[simp] lemma thickening_singleton : thickening u {a} = (SetRel.inv u).ball a := by
   simp only [thickening, mem_singleton_iff, iUnion_iUnion_eq_left]
 
 @[simp] lemma monotone_thickening : Monotone (thickening · s) := by
   intro u v huv
   apply iUnion₂_mono
-  simp only [ball] at huv ⊢
-  exact fun _ _ => preimage_mono huv
+  exact fun a _ => SetRel.ball_mono (inv_mono huv) a
 
 lemma thickening_mono : Monotone (thickening u) :=
   fun _ _ h => iUnion₂_mono' (fun a ha => ⟨a, h ha, subset_rfl⟩)
 
 @[simp] lemma thickening_comp : thickening v (thickening u s) = thickening (u ○ v) s := by
-  ext; simp [thickening, ball]
+  ext; simp [thickening, SetRel.ball, SetRel.inv]
 
-lemma disjoint_ball_iff : Disjoint (ball a u) t ↔ ∀ b ∈ t, (a, b) ∉ u := by
-  rw [← compl_compl (ball a u), disjoint_compl_left_iff_subset]
+lemma disjoint_ball_iff : Disjoint ((SetRel.inv u).ball a) t ↔ ∀ b ∈ t, (a, b) ∉ u := by
+  rw [← compl_compl ((SetRel.inv u).ball a), disjoint_compl_left_iff_subset]
   rfl
 
 lemma thickening_inter_eq_empty : thickening u s ∩ t = ∅ ↔ ∀ a ∈ s, ∀ b ∈ t, (a, b) ∉ u := by
@@ -61,7 +61,7 @@ lemma thickening_inter_thickening_eq_empty_of_comp (hv : SetRel.IsSymm v) (hvu :
     (hST : thickening u s ∩ t = ∅) :
     thickening v s ∩ thickening v t = ∅ := by
   simp only [←thickening_inter_eq_empty_comm hv, thickening_comp]
-  exact subset_eq_empty (inter_subset_inter_left _ (monotone_thickening hvu)) hST
+  exact eq_empty_of_subset (inter_subset_inter_left _ (monotone_thickening hvu)) hST
 
 end UniformSpace
 
@@ -112,8 +112,10 @@ lemma nhds_inf_uniform_nhds_eq_bot {s : Set α} (hf : 𝓝 a ⊓ 𝓟 s = ⊥) :
   exact uniform_nhds_inf_uniform_nhds_eq_bot hf
 
 lemma nhds_set_eq_uniform_nhds_set_of_isCompact {s : Set α} (hs : IsCompact s) :
-    𝓝ˢ s = 𝓝ᵘ s :=
-  (hs.nhdsSet_basis_uniformity (basis_sets _)).eq_of_same_basis ⟨fun _ => mem_uniform_nhds_set_iff⟩
+    𝓝ˢ s = 𝓝ᵘ s := by
+  have hb := (basis_sets (𝓤 α)).comap Prod.swap
+  rw [comap_swap_uniformity] at hb
+  exact (hs.nhdsSet_basis_uniformity hb).eq_of_same_basis ⟨fun _ => mem_uniform_nhds_set_iff⟩
 
 end UniformSpace
 
