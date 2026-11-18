@@ -75,9 +75,10 @@ theorem persistenceFormula_eval_iff [M↓[ℒₒᵣ] ⊧* 𝐈𝐎𝐩𝐞𝐧] 
   by simp [persistenceFormula, certificateSentence, Semiformula.eval_substs, numeral_eq_natCast]
 
 /-- The full induction scheme of `𝐏𝐀` holds in every model of `𝐏𝐀`. -/
-theorem models_inductionScheme_univ [M↓[ℒₒᵣ] ⊧* 𝐏𝐀] : M↓[ℒₒᵣ] ⊧* InductionScheme ℒₒᵣ Set.univ :=
+theorem models_inductionScheme_univ [M↓[ℒₒᵣ] ⊧* 𝐏𝐀] :
+    M↓[ℒₒᵣ] ⊧* InductionScheme ℒₒᵣ (fun _ ↦ True) :=
   by
-  have : InductionScheme ℒₒᵣ Set.univ ≼ 𝐏𝐀 :=
+  have : InductionScheme ℒₒᵣ (fun _ ↦ True) ≼ 𝐏𝐀 :=
     Entailment.WeakerThan.ofSubset Set.subset_union_right
   exact models_of_subtheory (show M↓[ℒₒᵣ] ⊧* 𝐏𝐀 from inferInstance)
 
@@ -118,7 +119,7 @@ theorem certificate_persistence_of_stage_induction [M↓[ℒₒᵣ] ⊧* 𝐏�
   have : Inhabited M := ⟨0⟩
   intro s
   refine
-    InductionScheme.succ_induction (C := Set.univ) (P := fun s : M =>
+    InductionScheme.succ_induction (C := fun _ ↦ True) (P := fun s : M =>
       ∀ t u y : M,
         s ≤ t →
           Semiformula.Evalb ![s, ((q : ℕ) : M), u, y]

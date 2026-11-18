@@ -232,7 +232,7 @@ lemma bind_bvar (n : Fin n₁) : bind b e (#n : Semiterm L ξ₁ n₁) = b n :=
 
 lemma eq_bind (ω : Rew L ξ₁ n₁ ξ₂ n₂) : ω = bind (ω ∘ bvar) (ω ∘ fvar) :=
   by
-  ext t; induction t
+  ext t
   · simp
   · simp [*]
 
@@ -1040,7 +1040,7 @@ def toEmpty [DecidableEq ξ] {n : ℕ} :
 lemma emb_toEmpty [DecidableEq ξ] (t : Semiterm L ξ n) (ht : t.freeVariables = ∅) :
     Rew.emb (t.toEmpty ht) = t :=
   by
-  induction t <;> try simp [toEmpty, Rew.func, *, Function.comp_def]
+  induction t <;> simp [toEmpty, Rew.func, *, Function.comp_def]
   case fvar => simp at ht
 
 @[simp]

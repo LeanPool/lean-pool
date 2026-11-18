@@ -107,7 +107,7 @@ variable
 
 /-- The re Ch construction in `FFL.FirstOrder.Theory`. -/
 noncomputable def reCh (T : Theory L) : Σ₁.Semisentence 1 :=
-  .mkSigma (codeOfREPred (Encodable.encode '' T)) <| by simp [codeOfREPred, codeOfPartrec']
+  .mkSigma (codeOfREPred (· ∈ Encodable.encode '' T)) <| by simp [codeOfREPred, codeOfPartrec']
 
 variable (T : Theory L) [T.RE]
 
@@ -124,7 +124,7 @@ lemma reWitness_spec (V : Type) [ORingStructure V] [V↓[ℒₒᵣ] ⊧* 𝐈Σ�
     Semiformula.eval_ex
 
 @[simp, grind .]
-lemma rePred_codes_of_RE : REPred (Encodable.encode '' T) :=
+lemma rePred_codes_of_RE : REPred (· ∈ Encodable.encode '' T) :=
   (PointwiseComposition.REPred.projection
         ((PointwiseComposition.REPred.and (Theory.RE.re.comp Computable.snd))
           (PrimrecPred.computablePred

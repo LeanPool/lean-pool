@@ -27,7 +27,7 @@ namespace FirstOrder
 namespace Arithmetic
 
 /-- Data and laws for 𝐐 in `𝐐`. -/
-inductive RobinsonQ : ArithmeticTheory
+inductive RobinsonQ : ArithmeticSentence → Prop
   | equal : ∀ φ ∈ 𝐄𝐐 ℒₒᵣ, RobinsonQ φ
   | succNeZero : RobinsonQ “∀ a, a + 1 ≠ 0”
   | succInj : RobinsonQ “∀ a b, a + 1 = b + 1 → a = b”
@@ -39,7 +39,7 @@ inductive RobinsonQ : ArithmeticTheory
   | ltDef : RobinsonQ “∀ a b, a < b ↔ ∃ c, a + (c + 1) = b”
 
 /-- The «term𝐐» construction in `FFL.FirstOrder.Arithmetic`. -/
-notation "𝐐" => RobinsonQ
+notation "𝐐" => Set.ofPred RobinsonQ
 
 namespace RobinsonQ
 
@@ -270,8 +270,7 @@ lemma numeral_ne_of_ne {n m : ℕ} (h : n ≠ m) : (numeral n : M) ≠ numeral m
     exact numeral_zero_succ_ne;
   | n + 1, m + 1 =>
     have := numeral_ne_of_ne (n := n) (m := m) (by omega);
-    contrapose! this;
-    apply numeral_succ_inj this;
+    exact fun he ↦ this (numeral_succ_inj he)
 
 lemma numeral_lt_of_lt {n m : ℕ} (h : n < m) : (numeral n : M) < numeral m := by
   apply Arithmetic.lt_def.mpr; obtain ⟨k, rfl, hk⟩ := Arithmetic.lt_def.mp h;

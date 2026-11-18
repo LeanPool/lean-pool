@@ -705,7 +705,7 @@ instance pair_definable : Σ₀-Function₂[V] pair :=
   pair_defined.to_definable
 
 instance : Bounded₂ (pair : V → V → V) :=
-  ⟨‘x y. (y * y + x) + (x * x + x + y)’, by intro v; simp [pair]; split_ifs <;> try simp [*]⟩
+  ⟨‘x y. (y * y + x) + (x * x + x + y)’, by intro v; simp [pair]; split_ifs <;> simp [*]⟩
 
 /-- The unpair construction in `FFL.FirstOrder.Arithmetic`. -/
 noncomputable def unpair (a : V) : V × V :=

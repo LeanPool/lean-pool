@@ -73,7 +73,7 @@ theorem pa_formula_induction {P : M → Prop} (φ : ArithmeticSemiformula M 1)
   have := models_inductionScheme_univ (M := M)
   have : Inhabited M := ⟨0⟩
   exact
-    InductionScheme.succ_induction (C := Set.univ)
+    InductionScheme.succ_induction (C := fun _ ↦ True)
       (by
         refine ⟨φ.enumerateFVar, Rew.rewriteMap φ.idxOfFVar ▹ φ, trivial, ?_⟩
         intro x

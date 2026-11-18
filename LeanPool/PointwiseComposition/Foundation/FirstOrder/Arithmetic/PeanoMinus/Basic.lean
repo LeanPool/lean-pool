@@ -83,7 +83,7 @@ end Axiom
 end PeanoMinus
 
 /-- Data and laws for 𝐏𝐀⁻ in `𝐏𝐀⁻`. -/
-inductive PeanoMinus : ArithmeticTheory
+inductive PeanoMinus : ArithmeticSentence → Prop
   | equal : ∀ φ ∈ 𝐄𝐐 ℒₒᵣ, PeanoMinus φ
   | addZero : PeanoMinus PeanoMinus.Axiom.addZero
   | addAssoc : PeanoMinus PeanoMinus.Axiom.addAssoc
@@ -104,7 +104,7 @@ inductive PeanoMinus : ArithmeticTheory
   | ltTri : PeanoMinus PeanoMinus.Axiom.ltTri
 
 /-- The «term𝐏𝐀⁻» construction in `FFL.FirstOrder.Arithmetic`. -/
-notation "𝐏𝐀⁻" => PeanoMinus
+notation "𝐏𝐀⁻" => Set.ofPred PeanoMinus
 
 namespace PeanoMinus
 
@@ -193,7 +193,7 @@ lemma equiv_singleton_finiteConj :
         Entailment.WeakerThan.ofAxmProof fun {σ} hσ ↦ by rcases hσ with rfl; exact hConj⟩
 
 @[simp]
-instance : ℕ↓[ℒₒᵣ] ⊧* 𝐏𝐀⁻ :=
+instance instModelsSetStrucORingSentenceStrNat : ℕ↓[ℒₒᵣ] ⊧* 𝐏𝐀⁻ :=
   ⟨by
     intro σ h
     rcases h <;> simp only [models_iff, Semiformula.eval_all, Nat.succ_eq_add_one, Nat.reduceAdd,
