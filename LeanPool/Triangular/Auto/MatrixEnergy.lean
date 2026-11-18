@@ -1942,14 +1942,41 @@ def cycMb : Matrix (Fin 3) (Fin 3) (Matrix ι ι ℂ) := !![0, W0, W2ᴴ; W0ᴴ,
 /-- The block-diagonal matrix of the three vertex weights. -/
 def cycDb : Matrix (Fin 3) (Fin 3) (Matrix ι ι ℂ) := !![D0, 0, 0; 0, D1, 0; 0, 0, D2]
 
-/-- The projector onto block zero. -/
-def cycP0 : Matrix (Fin 3) (Fin 3) (Matrix ι ι ℂ) := !![1, 0, 0; 0, 0, 0; 0, 0, 0]
+/-- The diagonal projector onto one block of the cyclic matrix. -/
+def cycProjector (j : Fin 3) : Matrix (Fin 3) (Fin 3) (Matrix ι ι ℂ) :=
+  Matrix.diagonal fun k => if k = j then 1 else 0
 
-/-- The projector onto block one. -/
-def cycP1 : Matrix (Fin 3) (Fin 3) (Matrix ι ι ℂ) := !![0, 0, 0; 0, 1, 0; 0, 0, 0]
+omit [Fintype ι] in
+private lemma cycProjector_zero :
+    cycProjector (ι := ι) 0 = !![1, 0, 0; 0, 0, 0; 0, 0, 0] := by
+  ext i j a b; fin_cases i <;> fin_cases j <;> rfl
 
-/-- The projector onto block two. -/
-def cycP2 : Matrix (Fin 3) (Fin 3) (Matrix ι ι ℂ) := !![0, 0, 0; 0, 0, 0; 0, 0, 1]
+omit [Fintype ι] in
+private lemma cycProjector_one :
+    cycProjector (ι := ι) 1 = !![0, 0, 0; 0, 1, 0; 0, 0, 0] := by
+  ext i j a b; fin_cases i <;> fin_cases j <;> rfl
+
+omit [Fintype ι] in
+private lemma cycProjector_two :
+    cycProjector (ι := ι) 2 = !![0, 0, 0; 0, 0, 0; 0, 0, 1] := by
+  ext i j a b; fin_cases i <;> fin_cases j <;> rfl
+
+omit [Fintype ι] in
+private lemma cycProjector_conjTranspose (j : Fin 3) :
+    (blk3 (cycProjector (ι := ι) j))ᴴ = blk3 (cycProjector j) := by
+  change blk3 ((cycProjector j)ᴴ) = _
+  rw [cycProjector, Matrix.diagonal_conjTranspose]
+  congr 2
+  funext k
+  change star (if k = j then (1 : Matrix ι ι ℂ) else 0) = _
+  by_cases hk : k = j <;> simp [hk, Matrix.star_eq_conjTranspose]
+
+private lemma cycProjector_mul_self (j : Fin 3) :
+    blk3 (cycProjector (ι := ι) j) * blk3 (cycProjector j) = blk3 (cycProjector j) := by
+  rw [← blk3_mul, cycProjector, Matrix.diagonal_mul_diagonal]
+  congr 2
+  funext k
+  split_ifs <;> simp
 
 lemma cyc_cube_trace :
     ((blk3 (cycDb D0 D1 D2) * blk3 (cycMb W0 W1 W2)) ^ 3).trace = 3 * (D0 * W0 * D1 * W1 * D2 *
@@ -2103,50 +2130,50 @@ lemma matCost_eigen_sandwich {κ : Type*} [Fintype κ] [DecidableEq κ]
   rw [Finset.mul_sum, ENNReal.ofReal_sum_of_nonneg (fun j _ => by positivity)]
 
 private lemma cyc_project_gram_zero :
-    blk3 (cycMb W0 W1 W2) * blk3 cycP0 * blk3 (cycMb W0 W1 W2) =
+    blk3 (cycMb W0 W1 W2) * blk3 (cycProjector 0) * blk3 (cycMb W0 W1 W2) =
       emb2 (ι := ι) 1 2 * ((rowMat W0 W2)ᴴ * rowMat W0 W2) * (emb2 (ι := ι) 1 2)ᴴ := by
   rw [rowMat_gram, emb2_conj_fromBlocks₁₂, ← blk3_mul, ← blk3_mul]
   congr 1
-  simp only [cycMb, cycP0, Matrix.mul_fin_three, mul_zero, zero_mul, add_zero, mul_one]
+  simp only [cycMb, cycProjector_zero, Matrix.mul_fin_three, mul_zero, zero_mul, add_zero, mul_one]
 
 private lemma cyc_project_insert_zero :
-    blk3 (cycMb W0 W1 W2) * blk3 cycP0 * blk3 (cycDb D0 D1 D2) * blk3 (cycMb W0 W1 W2) =
+    blk3 (cycMb W0 W1 W2) * blk3 (cycProjector 0) * blk3 (cycDb D0 D1 D2) * blk3 (cycMb W0 W1 W2) =
       emb2 (ι := ι) 1 2 * ((rowMat W0 W2)ᴴ * D0 * rowMat W0 W2) * (emb2 (ι := ι) 1 2)ᴴ := by
   rw [rowMat_insert, emb2_conj_fromBlocks₁₂, ← blk3_mul, ← blk3_mul, ← blk3_mul]
   congr 1
-  simp only [cycMb, cycP0, cycDb, Matrix.mul_fin_three, mul_zero, zero_mul, add_zero, one_mul,
-    Matrix.mul_assoc]
+  simp only [cycMb, cycProjector_zero, cycDb, Matrix.mul_fin_three, mul_zero, zero_mul, add_zero,
+    one_mul, Matrix.mul_assoc]
 
 private lemma cyc_project_gram_one :
-    blk3 (cycMb W0 W1 W2) * blk3 cycP1 * blk3 (cycMb W0 W1 W2) =
+    blk3 (cycMb W0 W1 W2) * blk3 (cycProjector 1) * blk3 (cycMb W0 W1 W2) =
       emb2 (ι := ι) 2 0 * ((rowMat W1 W0)ᴴ * rowMat W1 W0) * (emb2 (ι := ι) 2 0)ᴴ := by
   rw [rowMat_gram, emb2_conj_fromBlocks₂₀, ← blk3_mul, ← blk3_mul]
   congr 1
-  simp only [cycMb, cycP1, Matrix.mul_fin_three, mul_zero, zero_mul, add_zero, zero_add,
+  simp only [cycMb, cycProjector_one, Matrix.mul_fin_three, mul_zero, zero_mul, add_zero, zero_add,
     mul_one]
 
 private lemma cyc_project_insert_one :
-    blk3 (cycMb W0 W1 W2) * blk3 cycP1 * blk3 (cycDb D0 D1 D2) * blk3 (cycMb W0 W1 W2) =
+    blk3 (cycMb W0 W1 W2) * blk3 (cycProjector 1) * blk3 (cycDb D0 D1 D2) * blk3 (cycMb W0 W1 W2) =
       emb2 (ι := ι) 2 0 * ((rowMat W1 W0)ᴴ * D1 * rowMat W1 W0) * (emb2 (ι := ι) 2 0)ᴴ := by
   rw [rowMat_insert, emb2_conj_fromBlocks₂₀, ← blk3_mul, ← blk3_mul, ← blk3_mul]
   congr 1
-  simp only [cycMb, cycP1, cycDb, Matrix.mul_fin_three, mul_zero, zero_mul, add_zero,
+  simp only [cycMb, cycProjector_one, cycDb, Matrix.mul_fin_three, mul_zero, zero_mul, add_zero,
     zero_add, one_mul, Matrix.mul_assoc]
 
 private lemma cyc_project_gram_two :
-    blk3 (cycMb W0 W1 W2) * blk3 cycP2 * blk3 (cycMb W0 W1 W2) =
+    blk3 (cycMb W0 W1 W2) * blk3 (cycProjector 2) * blk3 (cycMb W0 W1 W2) =
       emb2 (ι := ι) 0 1 * ((rowMat W2 W1)ᴴ * rowMat W2 W1) * (emb2 (ι := ι) 0 1)ᴴ := by
   rw [rowMat_gram, emb2_conj_fromBlocks₀₁, ← blk3_mul, ← blk3_mul]
   congr 1
-  simp only [cycMb, cycP2, Matrix.mul_fin_three, mul_zero, zero_mul, add_zero, zero_add,
+  simp only [cycMb, cycProjector_two, Matrix.mul_fin_three, mul_zero, zero_mul, add_zero, zero_add,
     mul_one]
 
 private lemma cyc_project_insert_two :
-    blk3 (cycMb W0 W1 W2) * blk3 cycP2 * blk3 (cycDb D0 D1 D2) * blk3 (cycMb W0 W1 W2) =
+    blk3 (cycMb W0 W1 W2) * blk3 (cycProjector 2) * blk3 (cycDb D0 D1 D2) * blk3 (cycMb W0 W1 W2) =
       emb2 (ι := ι) 0 1 * ((rowMat W2 W1)ᴴ * D2 * rowMat W2 W1) * (emb2 (ι := ι) 0 1)ᴴ := by
   rw [rowMat_insert, emb2_conj_fromBlocks₀₁, ← blk3_mul, ← blk3_mul, ← blk3_mul]
   congr 1
-  simp only [cycMb, cycP2, cycDb, Matrix.mul_fin_three, mul_zero, zero_mul, add_zero,
+  simp only [cycMb, cycProjector_two, cycDb, Matrix.mul_fin_three, mul_zero, zero_mul, add_zero,
     zero_add, one_mul, Matrix.mul_assoc]
 
 theorem cyc_cube_le (hD0 : D0.IsHermitian) (hD1 : D1.IsHermitian) (hD2 : D2.IsHermitian) {d : ℝ}
@@ -2166,10 +2193,11 @@ theorem cyc_cube_le (hD0 : D0.IsHermitian) (hD1 : D1.IsHermitian) (hD2 : D2.IsHe
   have hMM : (M * M).PosSemidef := by
     have := Matrix.posSemidef_conjTranspose_mul_self M
     rwa [hMH.eq] at this
-  have hPsum : blk3 (cycP0 (ι := ι)) + blk3 cycP1 + blk3 cycP2 = 1 := by
+  have hPsum :
+      blk3 (cycProjector (ι := ι) 0) + blk3 (cycProjector 1) + blk3 (cycProjector 2) = 1 := by
     rw [← blk3_add, ← blk3_add, ← blk3_one]
     congr 1
-    simp [cycP0, cycP1, cycP2, Matrix.one_fin_three]
+    simp [cycProjector_zero, cycProjector_one, cycProjector_two, Matrix.one_fin_three]
   have hPSDcompl : ∀ P : Matrix (Fin 3) (Fin 3) (Matrix ι ι ℂ), (blk3 P)ᴴ = blk3 P →
       blk3 P * blk3 P = blk3 P → (M * M - M * blk3 P * M).PosSemidef := by
     intro P hPH hPP
@@ -2184,21 +2212,6 @@ theorem cyc_cube_le (hD0 : D0.IsHermitian) (hD1 : D1.IsHermitian) (hD2 : D2.IsHe
         _ = _ := by
             rw [Matrix.conjTranspose_mul, hMH.eq]; simp only [Matrix.mul_assoc]
     rw [e]; exact Matrix.posSemidef_conjTranspose_mul_self _
-  have hP0H : (blk3 (cycP0 (ι := ι)))ᴴ = blk3 cycP0 := by
-    rw [cycP0, blk3_conjTranspose]; simp
-  have hP1H : (blk3 (cycP1 (ι := ι)))ᴴ = blk3 cycP1 := by
-    rw [cycP1, blk3_conjTranspose]; simp
-  have hP2H : (blk3 (cycP2 (ι := ι)))ᴴ = blk3 cycP2 := by
-    rw [cycP2, blk3_conjTranspose]; simp
-  have hP0P : blk3 (cycP0 (ι := ι)) * blk3 cycP0 = blk3 cycP0 := by
-    rw [← blk3_mul]; congr 1
-    ext v w; fin_cases v <;> fin_cases w <;> simp [cycP0, Matrix.mul_apply, Fin.sum_univ_three]
-  have hP1P : blk3 (cycP1 (ι := ι)) * blk3 cycP1 = blk3 cycP1 := by
-    rw [← blk3_mul]; congr 1
-    ext v w; fin_cases v <;> fin_cases w <;> simp [cycP1, Matrix.mul_apply, Fin.sum_univ_three]
-  have hP2P : blk3 (cycP2 (ι := ι)) * blk3 cycP2 = blk3 cycP2 := by
-    rw [← blk3_mul]; congr 1
-    ext v w; fin_cases v <;> fin_cases w <;> simp [cycP2, Matrix.mul_apply, Fin.sum_univ_three]
   have hT0 := cyc_project_gram_zero W0 W1 W2
   have hK0 := cyc_project_insert_zero W0 W1 W2 D0 D1 D2
   have hT1 := cyc_project_gram_one W0 W1 W2
@@ -2216,15 +2229,18 @@ theorem cyc_cube_le (hD0 : D0.IsHermitian) (hD1 : D1.IsHermitian) (hD2 : D2.IsHe
     rw [← matCost_isometry (emb2 (ι := ι) p r) (emb2_isometry hpr)
         (Matrix.posSemidef_conjTranspose_mul_self _), ← hT, ← hK]
     exact matCost_anti hMM (Matrix.le_iff.2 (hPSDcompl P hPH hPP)) _
-  have e0 := hc _ 1 2 (by decide) W0 W2 D0 hP0H hP0P hT0 hK0
-  have e1 := hc _ 2 0 (by decide) W1 W0 D1 hP1H hP1P hT1 hK1
-  have e2 := hc _ 0 1 (by decide) W2 W1 D2 hP2H hP2P hT2 hK2
-  have hsplit : M * blk3 cycP0 * D * M + M * blk3 cycP1 * D * M + M * blk3 cycP2 * D * M =
-      M * D * M := by
+  have e0 := hc _ 1 2 (by decide) W0 W2 D0
+    (cycProjector_conjTranspose 0) (cycProjector_mul_self 0) hT0 hK0
+  have e1 := hc _ 2 0 (by decide) W1 W0 D1
+    (cycProjector_conjTranspose 1) (cycProjector_mul_self 1) hT1 hK1
+  have e2 := hc _ 0 1 (by decide) W2 W1 D2
+    (cycProjector_conjTranspose 2) (cycProjector_mul_self 2) hT2 hK2
+  have hsplit : M * blk3 (cycProjector 0) * D * M + M * blk3 (cycProjector 1) * D * M +
+      M * blk3 (cycProjector 2) * D * M = M * D * M := by
     rw [← Matrix.add_mul, ← Matrix.add_mul, ← Matrix.add_mul, ← Matrix.add_mul,
       ← Matrix.mul_add, ← Matrix.mul_add, hPsum, Matrix.mul_one]
-  have hb3 := matCost_add3_le (M * M) (M * blk3 cycP0 * D * M) (M * blk3 cycP1 * D * M) (M * blk3
-      cycP2 * D * M)
+  have hb3 := matCost_add3_le (M * M) (M * blk3 (cycProjector 0) * D * M)
+    (M * blk3 (cycProjector 1) * D * M) (M * blk3 (cycProjector 2) * D * M)
   rw [hsplit] at hb3
   obtain ⟨U, hUdef⟩ : ∃ U, U = hMH.eigenvectorUnitary := ⟨_, rfl⟩
   obtain ⟨m, hmdef⟩ : ∃ m, m = hMH.eigenvalues := ⟨_, rfl⟩
@@ -2270,8 +2286,9 @@ theorem cyc_cube_le (hD0 : D0.IsHermitian) (hD1 : D1.IsHermitian) (hD2 : D2.IsHe
     _ = ENNReal.ofReal (10 / 3 * d) * matCost (M * M) (M * D * M) := by
         rw [hcostQ, ← ENNReal.ofReal_mul (by positivity)]
         congr 1; ring
-    _ ≤ ENNReal.ofReal (10 / 3 * d) * (3 * (matCost (M * M) (M * blk3 cycP0 * D * M) +
-          matCost (M * M) (M * blk3 cycP1 * D * M) + matCost (M * M) (M * blk3 cycP2 * D * M)))
+    _ ≤ ENNReal.ofReal (10 / 3 * d) * (3 * (matCost (M * M) (M * blk3 (cycProjector 0) * D * M) +
+          matCost (M * M) (M * blk3 (cycProjector 1) * D * M) +
+          matCost (M * M) (M * blk3 (cycProjector 2) * D * M)))
         := by gcongr
     _ ≤ ENNReal.ofReal (10 / 3 * d) * (3 * (
           matCost ((rowMat W0 W2)ᴴ * rowMat W0 W2) ((rowMat W0 W2)ᴴ * D0 * rowMat W0 W2) +

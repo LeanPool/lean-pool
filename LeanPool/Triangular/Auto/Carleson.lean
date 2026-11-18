@@ -165,12 +165,17 @@ lemma contDiff_exp_comp {f : ℝ × ℝ → ℝ} (hf : ContDiff ℝ ∞ f) :
     ContDiff ℝ ∞ fun p => Complex.exp ((f p : ℂ) * Complex.I) :=
   Complex.contDiff_exp.comp ((contDiff_ofReal_comp hf).mul contDiff_const)
 
+private lemma contDiff_modulatedInput {amplitude phase weight : ℝ × ℝ → ℝ}
+    (ha : ContDiff ℝ ∞ amplitude) (hp : ContDiff ℝ ∞ phase) (hw : ContDiff ℝ ∞ weight) :
+    ContDiff ℝ ∞ fun q => (amplitude q : ℂ) * Complex.exp ((phase q : ℂ) * Complex.I) *
+      (weight q : ℂ) :=
+  ((contDiff_ofReal_comp ha).mul (contDiff_exp_comp hp)).mul (contDiff_ofReal_comp hw)
+
 lemma contDiff_carlesonF₀ {a ν : ℝ → ℝ} (ha : ContDiff ℝ ∞ a) (hν : ContDiff ℝ ∞ ν) (σ : ℝ) :
     ContDiff ℝ ∞ (carlesonF₀ a ν σ) := by
   have hb : ContDiff ℝ ∞ (carlesonBump₀ : ℝ → ℝ) := carlesonBump₀.contDiff (n := ⊤)
   unfold carlesonF₀
-  refine ((contDiff_ofReal_comp ?_).mul (contDiff_exp_comp ?_)).mul (contDiff_ofReal_comp ?_)
-    <;> fun_prop
+  exact contDiff_modulatedInput (by fun_prop) (by fun_prop) (by fun_prop)
 
 lemma contDiff_carlesonF₁ {g : ℝ → ℂ} (hg : ContDiff ℝ ∞ g) : ContDiff ℝ ∞ (carlesonF₁ g) := by
   have hb : ContDiff ℝ ∞ (carlesonBump₁ : ℝ → ℝ) := carlesonBump₁.contDiff (n := ⊤)
@@ -182,26 +187,28 @@ lemma contDiff_carlesonF₂ {a ν : ℝ → ℝ} (ha : ContDiff ℝ ∞ a) (hν 
     ContDiff ℝ ∞ (carlesonF₂ a ν σ) := by
   have hb : ContDiff ℝ ∞ (carlesonBump₁ : ℝ → ℝ) := carlesonBump₁.contDiff (n := ⊤)
   unfold carlesonF₂
-  refine ((contDiff_ofReal_comp ?_).mul (contDiff_exp_comp ?_)).mul (contDiff_ofReal_comp ?_)
-    <;> fun_prop
+  exact contDiff_modulatedInput (by fun_prop) (by fun_prop) (by fun_prop)
+
+private lemma modulatedInput_eq_zero {a : ℝ → ℝ} {A : ℝ}
+    (ha : ∀ x, A < |x| → a x = 0) (bump : ContDiffBump (0 : ℝ)) (phase : ℝ)
+    (p : ℝ × ℝ) (hp : p ∉ Icc (-A) A ×ˢ Icc (-(A + bump.rOut)) (A + bump.rOut)) :
+    (a p.1 : ℂ) * Complex.exp ((phase : ℂ) * Complex.I) * (bump (p.2 + p.1 / 2) : ℂ) = 0 := by
+  by_cases first : A < |p.1|
+  · simp [ha _ first]
+  have second : A + bump.rOut < |p.2| := by
+    by_contra h
+    exact hp ⟨abs_le.mp (not_lt.mp first), abs_le.mp (not_lt.mp h)⟩
+  have vanishes : bump (p.2 + p.1 / 2) = 0 := by
+    apply carlesonBump_eq_zero
+    have := abs_sub_abs_le_abs_sub p.2 (-(p.1 / 2))
+    rw [sub_neg_eq_add, abs_neg, abs_div, abs_two] at this
+    linarith [not_lt.mp first, abs_nonneg p.1]
+  simp [vanishes]
 
 lemma hasCompactSupport_carlesonF₀ {a : ℝ → ℝ} {A : ℝ} (ha : ∀ x, A < |x| → a x = 0)
     (ν : ℝ → ℝ) (σ : ℝ) : HasCompactSupport (carlesonF₀ a ν σ) := by
-  refine HasCompactSupport.intro
-    ((isCompact_Icc (a := -A) (b := A)).prod (isCompact_Icc (a := -(A + 2)) (b := A + 2)))
-    fun p hp => ?_
-  by_cases h₁ : A < |p.1|
-  · simp [carlesonF₀, ha _ h₁]
-  have h₂ : A + 2 < |p.2| := by
-    by_contra h₂
-    exact hp ⟨abs_le.mp (not_lt.mp h₁), abs_le.mp (not_lt.mp h₂)⟩
-  have h₃ : carlesonBump₀ (p.2 + p.1 / 2) = 0 := by
-    apply carlesonBump_eq_zero
-    change (2 : ℝ) ≤ |p.2 + p.1 / 2|
-    have := abs_sub_abs_le_abs_sub p.2 (-(p.1 / 2))
-    rw [sub_neg_eq_add, abs_neg, abs_div, abs_two] at this
-    linarith [not_lt.mp h₁, abs_nonneg p.1]
-  simp [carlesonF₀, h₃]
+  exact HasCompactSupport.intro (isCompact_Icc.prod isCompact_Icc) fun p hp =>
+    modulatedInput_eq_zero ha carlesonBump₀ (σ * ν p.1 * (p.1 + p.2)) p hp
 
 /-- The box containing the support of the second input. -/
 def carlesonBox (L : ℝ) : Set (ℝ × ℝ) := Icc (-(L + 9)) (L + 9) ×ˢ Icc (-(L + 9)) (L + 9)
@@ -227,20 +234,10 @@ lemma hasCompactSupport_carlesonF₁ {g : ℝ → ℂ} {L : ℝ} (hg : ∀ x, L 
 lemma hasCompactSupport_carlesonF₂ {a : ℝ → ℝ} {A : ℝ} (ha : ∀ x, A < |x| → a x = 0)
     (ν : ℝ → ℝ) (σ : ℝ) : HasCompactSupport (carlesonF₂ a ν σ) := by
   refine HasCompactSupport.intro
-    ((isCompact_Icc (a := -(A + 9)) (b := A + 9)).prod (isCompact_Icc (a := -A) (b := A)))
-    fun p hp => ?_
-  by_cases h₁ : A < |p.2|
-  · simp [carlesonF₂, ha _ h₁]
-  have h₂ : A + 9 < |p.1| := by
-    by_contra h₂
-    exact hp ⟨abs_le.mp (not_lt.mp h₂), abs_le.mp (not_lt.mp h₁)⟩
-  have h₃ : carlesonBump₁ (p.1 + p.2 / 2) = 0 := by
-    apply carlesonBump_eq_zero
-    change (9 : ℝ) ≤ |p.1 + p.2 / 2|
-    have := abs_sub_abs_le_abs_sub p.1 (-(p.2 / 2))
-    rw [sub_neg_eq_add, abs_neg, abs_div, abs_two] at this
-    linarith [not_lt.mp h₁, abs_nonneg p.2]
-  simp [carlesonF₂, h₃]
+    ((isCompact_Icc (a := -(A + carlesonBump₁.rOut)) (b := A + carlesonBump₁.rOut)).prod
+      (isCompact_Icc (a := -A) (b := A))) fun p hp => ?_
+  exact modulatedInput_eq_zero ha carlesonBump₁ (σ * ν p.2 * p.1) p.swap fun h =>
+    hp ⟨h.2, h.1⟩
 
 /-- Coordinates `((x, t), u) ↦ ((x, y), z)` with `t = x + y + z` and `u = y + x/2`. -/
 def carlesonCoord : ((ℝ × ℝ) × ℝ) ≃L[ℝ] ((ℝ × ℝ) × ℝ) where
@@ -337,17 +334,27 @@ lemma carleson_trunc_eq (a ν : ℝ → ℝ) (g : ℝ → ℂ) (σ ε : ℝ)
     integral_prod _ hi]
   exact integral_congr_ae (ae_of_all _ hw)
 
+private lemma eLpNorm_modulatedInput {amplitude first second weight : ℝ × ℝ → ℝ}
+    (ha : Measurable amplitude) (h₀ : Measurable first) (h₁ : Measurable second)
+    (hw : Measurable weight) :
+    eLpNorm (fun q => (amplitude q : ℂ) * Complex.exp ((first q : ℂ) * Complex.I) *
+      (weight q : ℂ)) 3 volume =
+    eLpNorm (fun q => (amplitude q : ℂ) * Complex.exp ((second q : ℂ) * Complex.I) *
+      (weight q : ℂ)) 3 volume :=
+  eLpNorm_congr_norm_ae (by fun_prop) (by fun_prop)
+    (ae_of_all _ fun _ => by simp only [norm_mul, Complex.norm_exp_ofReal_mul_I])
+
 lemma eLpNorm_carlesonF₀ {a ν : ℝ → ℝ} (ha : Measurable a) (hν : Measurable ν) (σ : ℝ) :
     eLpNorm (carlesonF₀ a ν σ) 3 volume = eLpNorm (carlesonF₀ a ν 1) 3 volume := by
   have hb := carlesonBump₀.continuous.measurable
-  exact eLpNorm_congr_norm_ae (by unfold carlesonF₀; fun_prop) (by unfold carlesonF₀; fun_prop)
-    (ae_of_all _ fun p => by simp only [carlesonF₀, norm_mul, Complex.norm_exp_ofReal_mul_I])
+  unfold carlesonF₀
+  exact eLpNorm_modulatedInput (by fun_prop) (by fun_prop) (by fun_prop) (by fun_prop)
 
 lemma eLpNorm_carlesonF₂ {a ν : ℝ → ℝ} (ha : Measurable a) (hν : Measurable ν) (σ : ℝ) :
     eLpNorm (carlesonF₂ a ν σ) 3 volume = eLpNorm (carlesonF₂ a ν 1) 3 volume := by
   have hb := carlesonBump₁.continuous.measurable
-  exact eLpNorm_congr_norm_ae (by unfold carlesonF₂; fun_prop) (by unfold carlesonF₂; fun_prop)
-    (ae_of_all _ fun p => by simp only [carlesonF₂, norm_mul, Complex.norm_exp_ofReal_mul_I])
+  unfold carlesonF₂
+  exact eLpNorm_modulatedInput (by fun_prop) (by fun_prop) (by fun_prop) (by fun_prop)
 
 /-- The modulated sine form `∫∫ a(x)² g(x-t) m(t) sin(ν(x)t)/t`. -/
 def carlesonForm (a ν : ℝ → ℝ) (g : ℝ → ℂ) : ℂ :=
@@ -411,11 +418,12 @@ theorem carleson_smooth_bound (bound : HasTriangularHilbertBound) :
     let S₁ := (hasCompactSupport_carlesonF₁ hgL).toSchwartzMap (contDiff_carlesonF₁ hg)
     let S₂ := (hasCompactSupport_carlesonF₂ haA ν σ).toSchwartzMap (contDiff_carlesonF₂ ha hν σ)
     have hint : ∀ ε > 0, Integrable (carlesonTrunc a ν g σ ε) := fun ε hε =>
-      triangularHilbertTruncation_integrable S₀ S₁ S₂ hε
+      truncatedIntegrand_integrable S₀ S₁ S₂ hε
     obtain ⟨l, hl, hb⟩ := hmain S₀ S₁ S₂
     refine ⟨l, ?_, ?_, fun ε hε => (carleson_trunc_eq a ν g σ ε (hint ε hε)).1⟩
     · refine hl.congr' ?_
       filter_upwards [self_mem_nhdsWithin] with ε hε
+      rw [Triangular.truncatedForm_eq_integral]
       exact (carleson_trunc_eq a ν g σ ε (hint ε hε)).2
     · have hb' : ‖l‖ ≤ C * (eLpNorm (carlesonF₀ a ν σ) 3 volume).toReal *
           (eLpNorm (carlesonF₁ g) 3 volume).toReal *
