@@ -86,7 +86,7 @@ theorem evalR_trimKeep (p : IPoly) (x : ℝ) : evalR (trimKeep p) x = evalR p x 
     simpa [hq] using h
 
 theorem Rat.cast_num_of_den_eq_one {q : Rat} (h : q.den = 1) : ((q.num : Int) : ℝ) = (q : ℝ) := by
-  have := Rat.coe_int_num_of_den_eq_one h
+  have := Rat.intCast_num_of_den_eq_one h
   rw [← this]; push_cast; rfl
 
 /-- The real point represented by `mkPt`. -/

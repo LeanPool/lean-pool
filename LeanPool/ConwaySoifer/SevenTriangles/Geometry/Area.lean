@@ -154,13 +154,14 @@ theorem stdTriangle_section (x : ℝ) :
     rw [this, Real.volume_Icc]
     by_cases hx1 : x ≤ 1
     · rw [Set.indicator_of_mem (show x ∈ Set.Icc (0 : ℝ) 1 from ⟨hx, hx1⟩)]; ring_nf
-    · rw [Set.indicator_of_notMem (fun h => hx1 h.2), ENNReal.ofReal_of_nonpos (by linarith)]
+    · rw [Set.indicator_of_notMem (s := Set.Icc (0 : ℝ) 1) (fun h => hx1 h.2),
+        ENNReal.ofReal_of_nonpos (by linarith)]
   · have : Prod.mk x ⁻¹' stdTriangle = ∅ := by
       ext y
       simp only [Set.mem_preimage, stdTriangle, Set.mem_ofPred_eq, Set.mem_empty_iff_false,
         iff_false]
       rintro ⟨h1, _, _⟩; exact hx h1
-    rw [this, measure_empty, Set.indicator_of_notMem (fun h => hx h.1)]
+    rw [this, measure_empty, Set.indicator_of_notMem (s := Set.Icc (0 : ℝ) 1) (fun h => hx h.1)]
 
 theorem volume_stdTriangle : volume stdTriangle = ENNReal.ofReal (1 / 2) := by
   rw [Measure.volume_eq_prod, Measure.prod_apply isClosed_stdTriangle.measurableSet]

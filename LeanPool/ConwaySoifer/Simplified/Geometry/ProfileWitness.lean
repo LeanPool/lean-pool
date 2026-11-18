@@ -86,28 +86,28 @@ private theorem profileWitness0 {Q : EquilateralTriangle} {s : ℝ} (hs0 : 0 < s
     fin_cases i
     · exact hw
     · convert he using 1; norm_num [profile0q0Point]
-      all_goals ring
+      ring
     · convert hf using 1; norm_num [profile0q0Point]
     · convert hp using 1; norm_num [profile0q0Point, witness]
-      all_goals constructor <;> ring
+      constructor <;> ring
   · apply profile0q1_obstruction hs0 hs hq
     intro i
     fin_cases i
     · exact hw
     · convert he using 1; norm_num [profile0q1Point]
-      all_goals ring
+      ring
     · convert hf using 1; norm_num [profile0q1Point]
     · convert hp using 1; norm_num [profile0q1Point, witness]
-      all_goals constructor <;> ring
+      constructor <;> ring
   · apply profile0q2_obstruction hs0 hs hq
     intro i
     fin_cases i
     · exact hw
     · convert he using 1; norm_num [profile0q2Point]
-      all_goals ring
+      ring
     · convert hf using 1; norm_num [profile0q2Point]
     · convert hp using 1; norm_num [profile0q2Point, witness]
-      all_goals ring
+      ring
 
 private theorem profileWitness1 {Q : EquilateralTriangle} {s : ℝ} (hs0 : 0 < s) (hs : s ≤ 1 / 10)
     (hq : 0 < Q.side) (n : Fin 3)
@@ -121,31 +121,31 @@ private theorem profileWitness1 {Q : EquilateralTriangle} {s : ℝ} (hs0 : 0 < s
     fin_cases i
     · exact hw
     · convert he using 1; norm_num [profile1q0Point]
-      all_goals ring
+      ring
     · convert hf using 1; norm_num [profile1q0Point]
-      all_goals ring
+      ring
     · convert hp using 1; norm_num [profile1q0Point, witness]
-      all_goals constructor <;> ring
+      constructor <;> ring
   · apply profile1q1_obstruction hs0 hs hq
     intro i
     fin_cases i
     · exact hw
     · convert he using 1; norm_num [profile1q1Point]
-      all_goals ring
+      ring
     · convert hf using 1; norm_num [profile1q1Point]
-      all_goals ring
+      ring
     · convert hp using 1; norm_num [profile1q1Point, witness]
-      all_goals constructor <;> ring
+      constructor <;> ring
   · apply profile1q2_obstruction hs0 hs hq
     intro i
     fin_cases i
     · exact hw
     · convert he using 1; norm_num [profile1q2Point]
-      all_goals ring
+      ring
     · convert hf using 1; norm_num [profile1q2Point]
-      all_goals ring
+      ring
     · convert hp using 1; norm_num [profile1q2Point, witness]
-      all_goals ring
+      ring
 
 private theorem profileWitness2 {Q : EquilateralTriangle} {s : ℝ} (hs0 : 0 < s) (hs : s ≤ 1 / 10)
     (hq : 0 < Q.side) (n : Fin 3)
@@ -159,31 +159,31 @@ private theorem profileWitness2 {Q : EquilateralTriangle} {s : ℝ} (hs0 : 0 < s
     fin_cases i
     · exact hw
     · convert he using 1; norm_num [profile2q0Point]
-      all_goals ring
+      ring
     · convert hf using 1; norm_num [profile2q0Point]
-      all_goals ring
+      ring
     · convert hp using 1; norm_num [profile2q0Point, witness]
-      all_goals constructor <;> ring
+      constructor <;> ring
   · apply profile2q1_obstruction hs0 hs hq
     intro i
     fin_cases i
     · exact hw
     · convert he using 1; norm_num [profile2q1Point]
-      all_goals ring
+      ring
     · convert hf using 1; norm_num [profile2q1Point]
-      all_goals ring
+      ring
     · convert hp using 1; norm_num [profile2q1Point, witness]
-      all_goals constructor <;> ring
+      constructor <;> ring
   · apply profile2q2_obstruction hs0 hs hq
     intro i
     fin_cases i
     · exact hw
     · convert he using 1; norm_num [profile2q2Point]
-      all_goals ring
+      ring
     · convert hf using 1; norm_num [profile2q2Point]
-      all_goals ring
+      ring
     · convert hp using 1; norm_num [profile2q2Point, witness]
-      all_goals ring
+      ring
 
 private theorem profileWitness3 {Q : EquilateralTriangle} {s : ℝ} (hs0 : 0 < s) (hs : s ≤ 1 / 10)
     (hq : 0 < Q.side) (n : Fin 3)
@@ -198,27 +198,27 @@ private theorem profileWitness3 {Q : EquilateralTriangle} {s : ℝ} (hs0 : 0 < s
     · exact hw
     · convert he using 1; norm_num [profile3q0Point]
     · convert hf using 1; norm_num [profile3q0Point]
-      all_goals ring
+      ring
     · convert hp using 1; norm_num [profile3q0Point, witness]
-      all_goals constructor <;> ring
+      constructor <;> ring
   · apply profile3q1_obstruction hs0 hs hq
     intro i
     fin_cases i
     · exact hw
     · convert he using 1; norm_num [profile3q1Point]
     · convert hf using 1; norm_num [profile3q1Point]
-      all_goals ring
+      ring
     · convert hp using 1; norm_num [profile3q1Point, witness]
-      all_goals constructor <;> ring
+      constructor <;> ring
   · apply profile3q2_obstruction hs0 hs hq
     intro i
     fin_cases i
     · exact hw
     · convert he using 1; norm_num [profile3q2Point]
     · convert hf using 1; norm_num [profile3q2Point]
-      all_goals ring
+      ring
     · convert hp using 1; norm_num [profile3q2Point, witness]
-      all_goals ring
+      ring
 
 private theorem profileWitness4 {Q : EquilateralTriangle} {s : ℝ} (hs0 : 0 < s) (hs : s ≤ 1 / 10)
     (hq : 0 < Q.side) (n : Fin 3)
@@ -232,31 +232,31 @@ private theorem profileWitness4 {Q : EquilateralTriangle} {s : ℝ} (hs0 : 0 < s
     fin_cases i
     · exact hw
     · convert he using 1; norm_num [profile4q0Point]
-      all_goals ring
+      ring
     · convert hf using 1; norm_num [profile4q0Point]
-      all_goals ring
+      ring
     · convert hp using 1; norm_num [profile4q0Point, witness]
-      all_goals constructor <;> ring
+      constructor <;> ring
   · apply profile4q1_obstruction hs0 hs hq
     intro i
     fin_cases i
     · exact hw
     · convert he using 1; norm_num [profile4q1Point]
-      all_goals ring
+      ring
     · convert hf using 1; norm_num [profile4q1Point]
-      all_goals ring
+      ring
     · convert hp using 1; norm_num [profile4q1Point, witness]
-      all_goals constructor <;> ring
+      constructor <;> ring
   · apply profile4q2_obstruction hs0 hs hq
     intro i
     fin_cases i
     · exact hw
     · convert he using 1; norm_num [profile4q2Point]
-      all_goals ring
+      ring
     · convert hf using 1; norm_num [profile4q2Point]
-      all_goals ring
+      ring
     · convert hp using 1; norm_num [profile4q2Point, witness]
-      all_goals ring
+      ring
 
 private theorem profileWitness5 {Q : EquilateralTriangle} {s : ℝ} (hs0 : 0 < s) (hs : s ≤ 1 / 10)
     (hq : 0 < Q.side) (n : Fin 3)
@@ -270,31 +270,31 @@ private theorem profileWitness5 {Q : EquilateralTriangle} {s : ℝ} (hs0 : 0 < s
     fin_cases i
     · exact hw
     · convert he using 1; norm_num [profile5q0Point]
-      all_goals ring
+      ring
     · convert hf using 1; norm_num [profile5q0Point]
-      all_goals ring
+      ring
     · convert hp using 1; norm_num [profile5q0Point, witness]
-      all_goals constructor <;> ring
+      constructor <;> ring
   · apply profile5q1_obstruction hs0 hs hq
     intro i
     fin_cases i
     · exact hw
     · convert he using 1; norm_num [profile5q1Point]
-      all_goals ring
+      ring
     · convert hf using 1; norm_num [profile5q1Point]
-      all_goals ring
+      ring
     · convert hp using 1; norm_num [profile5q1Point, witness]
-      all_goals constructor <;> ring
+      constructor <;> ring
   · apply profile5q2_obstruction hs0 hs hq
     intro i
     fin_cases i
     · exact hw
     · convert he using 1; norm_num [profile5q2Point]
-      all_goals ring
+      ring
     · convert hf using 1; norm_num [profile5q2Point]
-      all_goals ring
+      ring
     · convert hp using 1; norm_num [profile5q2Point, witness]
-      all_goals ring
+      ring
 
 private theorem profileWitness6 {Q : EquilateralTriangle} {s : ℝ} (hs0 : 0 < s) (hs : s ≤ 1 / 10)
     (hq : 0 < Q.side) (n : Fin 3)
@@ -308,31 +308,31 @@ private theorem profileWitness6 {Q : EquilateralTriangle} {s : ℝ} (hs0 : 0 < s
     fin_cases i
     · exact hw
     · convert he using 1; norm_num [profile6q0Point]
-      all_goals ring
+      ring
     · convert hf using 1; norm_num [profile6q0Point]
-      all_goals ring
+      ring
     · convert hp using 1; norm_num [profile6q0Point, witness]
-      all_goals constructor <;> ring
+      constructor <;> ring
   · apply profile6q1_obstruction hs0 hs hq
     intro i
     fin_cases i
     · exact hw
     · convert he using 1; norm_num [profile6q1Point]
-      all_goals ring
+      ring
     · convert hf using 1; norm_num [profile6q1Point]
-      all_goals ring
+      ring
     · convert hp using 1; norm_num [profile6q1Point, witness]
-      all_goals constructor <;> ring
+      constructor <;> ring
   · apply profile6q2_obstruction hs0 hs hq
     intro i
     fin_cases i
     · exact hw
     · convert he using 1; norm_num [profile6q2Point]
-      all_goals ring
+      ring
     · convert hf using 1; norm_num [profile6q2Point]
-      all_goals ring
+      ring
     · convert hp using 1; norm_num [profile6q2Point, witness]
-      all_goals ring
+      ring
 
 private theorem profileWitness7 {Q : EquilateralTriangle} {s : ℝ} (hs0 : 0 < s) (hs : s ≤ 1 / 10)
     (hq : 0 < Q.side) (n : Fin 3)
@@ -346,31 +346,31 @@ private theorem profileWitness7 {Q : EquilateralTriangle} {s : ℝ} (hs0 : 0 < s
     fin_cases i
     · exact hw
     · convert he using 1; norm_num [profile7q0Point]
-      all_goals ring
+      ring
     · convert hf using 1; norm_num [profile7q0Point]
-      all_goals ring
+      ring
     · convert hp using 1; norm_num [profile7q0Point, witness]
-      all_goals constructor <;> ring
+      constructor <;> ring
   · apply profile7q1_obstruction hs0 hs hq
     intro i
     fin_cases i
     · exact hw
     · convert he using 1; norm_num [profile7q1Point]
-      all_goals ring
+      ring
     · convert hf using 1; norm_num [profile7q1Point]
-      all_goals ring
+      ring
     · convert hp using 1; norm_num [profile7q1Point, witness]
-      all_goals constructor <;> ring
+      constructor <;> ring
   · apply profile7q2_obstruction hs0 hs hq
     intro i
     fin_cases i
     · exact hw
     · convert he using 1; norm_num [profile7q2Point]
-      all_goals ring
+      ring
     · convert hf using 1; norm_num [profile7q2Point]
-      all_goals ring
+      ring
     · convert hp using 1; norm_num [profile7q2Point, witness]
-      all_goals ring
+      ring
 
 theorem profile_witness {Q : EquilateralTriangle} {s : ℝ} (hs0 : 0 < s) (hs : s ≤ 1 / 10)
     (hq : 0 < Q.side) (k : Fin 8) (n : Fin 3)

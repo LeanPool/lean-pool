@@ -78,7 +78,7 @@ theorem sqDist_convexHull_le (S : Set Point) (s : ℝ)
     intro v hv'
     rw [sqDist_comm]
     exact hv v hv'
-  have hr := convexHull_min hp' (convex_sqDist_sublevel p s) hq
+  have hr := convexHull_min (fun v hv => hp' v hv) (convex_sqDist_sublevel p s) hq
   change sqDist q p ≤ s at hr
   rwa [sqDist_comm] at hr
 
