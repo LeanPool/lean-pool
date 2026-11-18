@@ -21,11 +21,15 @@ open Polynomial Finset
 
 namespace Corless
 
+/-- A sequence of `2n + 2` weights has opposite middle weights and mirrored halves. -/
+def IsFolded (s : ℕ → ℤ) (n : ℕ) : Prop :=
+  s (n + 1) = -s n ∧ ∀ i < n, s (2 * n + 1 - i) = s i
+
 /-- Lemma 1 (folding identity). For a path with `2n + 3` vertices whose two middle edges carry
 opposite signs and whose two halves are mirror images, `D = (D of a half)²`. -/
-lemma Dv_fold (s : ℕ → ℤ) (n : ℕ) (hmid : s (n + 1) = -s n)
-    (hmir : ∀ i, i < n → s (2 * n + 1 - i) = s i) :
+lemma Dv_fold (s : ℕ → ℤ) (n : ℕ) (h : IsFolded s n) :
     Dv s (2 * n + 3) = Dv s (n + 1) ^ 2 := by
+  obtain ⟨hmid, hmir⟩ := h
   have hsplit := Dv_split s n (n + 1)
   rw [show n + (n + 1) + 2 = 2 * n + 3 by omega] at hsplit
   have hleft := Dv_succ_succ_left (fun i => s (i + n + 1)) n
@@ -102,11 +106,12 @@ lemma Dv_star (n : ℕ) : Dv (star n) (2 * n + 3) = f (n + 1) ^ 2 := by
     intro i hi
     have : i ≠ n + 1 := by omega
     simp [star, this]
-  · simp [star]
-  · intro i hi
-    have h1 : 2 * n + 1 - i ≠ n + 1 := by omega
-    have h2 : i ≠ n + 1 := by omega
-    simp [star, h1, h2]
+  · constructor
+    · simp [star]
+    · intro i hi
+      have h1 : 2 * n + 1 - i ≠ n + 1 := by omega
+      have h2 : i ≠ n + 1 := by omega
+      simp [star, h1, h2]
 
 /-- `f (2^(k+1) - 1) ≡ 1 (mod 2)`, proved through the folding identity. -/
 lemma f_pow_two (k : ℕ) : ∃ A : ℤ[X], f (2 ^ (k + 1) - 1) = 1 + 2 * A := by

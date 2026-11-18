@@ -34,15 +34,17 @@ lemma Dv_hyb_step (s t : ℕ → ℤ) (j m : ℕ) :
     Dv (hyb s t (j + 1)) (j + m + 2) - Dv (hyb s t j) (j + m + 2)
       = C (s j - t j) * X * Dv (hyb s t j) j * Dv (fun i => hyb s t j (i + j + 2)) m := by
   rw [Dv_split (hyb s t (j + 1)) j m, Dv_split (hyb s t j) j m]
+  have agree (i : ℕ) (hi : i ≠ j) : hyb s t (j + 1) i = hyb s t j i := by
+    simp only [hyb, show i < j + 1 ↔ i < j by omega]
   have e1 : Dv (hyb s t (j + 1)) (j + 1) = Dv (hyb s t j) (j + 1) :=
-    Dv_congr fun i hi => by simp [hyb, show i < j by omega, show i < j + 1 by omega]
+    Dv_congr fun i hi => agree i (by omega)
   have e2 : Dv (hyb s t (j + 1)) j = Dv (hyb s t j) j :=
-    Dv_congr fun i hi => by simp [hyb, show i < j by omega, show i < j + 1 by omega]
+    Dv_congr fun i hi => agree i (by omega)
   have e3 : Dv (fun i => hyb s t (j + 1) (i + j + 1)) (m + 1)
       = Dv (fun i => hyb s t j (i + j + 1)) (m + 1) :=
-    Dv_congr fun i _ => by simp only [hyb]; split_ifs <;> first | rfl | omega
+    Dv_congr fun i _ => agree (i + j + 1) (by omega)
   have e4 : Dv (fun i => hyb s t (j + 1) (i + j + 2)) m = Dv (fun i => hyb s t j (i + j + 2)) m :=
-    Dv_congr fun i _ => by simp only [hyb]; split_ifs <;> first | rfl | omega
+    Dv_congr fun i _ => agree (i + j + 2) (by omega)
   have e5 : hyb s t (j + 1) j = s j := by simp [hyb]
   have e6 : hyb s t j j = t j := by simp [hyb]
   rw [e1, e2, e3, e4, e5, e6, C_sub]
@@ -163,12 +165,10 @@ lemma indep (N : ℕ) (w : ℕ → ZMod 2)
 be opposite and the two halves to be mirror images. -/
 theorem fold_of_mod4 (k : ℕ) {s : ℕ → ℤ} (hs : IsSign s)
     (h : ∃ R : ℤ[X], Dv s (2 ^ (k + 2) - 1) = 1 + 4 * R) :
-    s (2 ^ (k + 1) - 1) = -s (2 ^ (k + 1) - 2) ∧
-      ∀ i < 2 ^ (k + 1) - 2, s (2 * (2 ^ (k + 1) - 1) - 1 - i) = s i := by
+    IsFolded s (2 ^ (k + 1) - 2) := by
   set n := 2 ^ (k + 1) - 2
   obtain ⟨hN, hM⟩ : 2 ^ (k + 1) - 1 = n + 1 ∧ 2 ^ (k + 2) - 1 = 2 * n + 3 :=
     folded_sizes k
-  rw [hN, show 2 * (n + 1) - 1 = 2 * n + 1 by omega]
   rw [hM] at h
   obtain ⟨R, hR⟩ := h
   -- D(star) ≡ 1 (mod 4)
@@ -257,33 +257,26 @@ lemma eq_one_of_sq {p : ℤ[X]} (h : p ^ 2 = 1) (h0 : p.coeff 0 = 1) : p = 1 := 
 /-- Corless's family at dimension `2^(k+1) - 1`, as a property of the first `2^(k+1) - 2` signs. -/
 def Fam : ℕ → (ℕ → ℤ) → Prop
   | 0, _ => True
-  | k + 1, s => s (2 ^ (k + 1) - 1) = -s (2 ^ (k + 1) - 2) ∧
-      (∀ i < 2 ^ (k + 1) - 2, s (2 * (2 ^ (k + 1) - 1) - 1 - i) = s i) ∧ Fam k s
+  | k + 1, s => IsFolded s (2 ^ (k + 1) - 2) ∧ Fam k s
 
-lemma fold_eq {k : ℕ} {s : ℕ → ℤ} (hmid : s (2 ^ (k + 1) - 1) = -s (2 ^ (k + 1) - 2))
-    (hmir : ∀ i < 2 ^ (k + 1) - 2, s (2 * (2 ^ (k + 1) - 1) - 1 - i) = s i) :
+lemma fold_eq {k : ℕ} {s : ℕ → ℤ} (h : IsFolded s (2 ^ (k + 1) - 2)) :
     Dv s (2 ^ (k + 2) - 1) = Dv s (2 ^ (k + 1) - 1) ^ 2 := by
-  set n := 2 ^ (k + 1) - 2
-  obtain ⟨hN, hM⟩ : 2 ^ (k + 1) - 1 = n + 1 ∧ 2 ^ (k + 2) - 1 = 2 * n + 3 :=
-    folded_sizes k
-  rw [hM, hN]
-  rw [hN] at hmid hmir
-  exact Dv_fold s n hmid fun i hi => by
-    have := hmir i hi
-    rwa [show 2 * (n + 1) - 1 - i = 2 * n + 1 - i by omega] at this
+  obtain ⟨half, full⟩ := folded_sizes k
+  rw [full, half]
+  exact Dv_fold s _ h
 
 lemma one_of_fam {s : ℕ → ℤ} : ∀ k, Fam k s → Dv s (2 ^ (k + 1) - 1) = 1
   | 0, _ => by simp
-  | k + 1, ⟨hmid, hmir, hk⟩ => by
-      rw [fold_eq hmid hmir, one_of_fam k hk, one_pow]
+  | k + 1, ⟨folded, hk⟩ => by
+      rw [fold_eq folded, one_of_fam k hk, one_pow]
 
 lemma fam_of_one {s : ℕ → ℤ} (hs : IsSign s) : ∀ k, Dv s (2 ^ (k + 1) - 1) = 1 → Fam k s
   | 0, _ => trivial
   | k + 1, h => by
-      obtain ⟨hmid, hmir⟩ := fold_of_mod4 k hs ⟨0, by rw [h]; ring⟩
-      refine ⟨hmid, hmir, fam_of_one hs k ?_⟩
+      have folded := fold_of_mod4 k hs ⟨0, by rw [h]; ring⟩
+      refine ⟨folded, fam_of_one hs k ?_⟩
       apply eq_one_of_sq _ (Dv_coeff_zero s _)
-      rw [← fold_eq hmid hmir, h]
+      rw [← fold_eq folded, h]
 
 /-- **Corless's conjecture.** For a sign sequence `s`, the weighted path with `m ≥ 1` vertices has
 `D = 1` (equivalently: the skew-symmetric tridiagonal matrix with superdiagonal `u`, `u² = s`, is

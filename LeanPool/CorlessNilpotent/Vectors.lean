@@ -28,13 +28,28 @@ open Polynomial
 
 namespace Corless
 
+/-- Insert two entries between a list and its reflection. -/
+def foldVector {α : Type*} (u : List α) (a b : α) : List α := u ++ [a, b] ++ u.reverse
+
+lemma length_foldVector {α : Type*} (u : List α) (a b : α) :
+    (foldVector u a b).length = 2 * u.length + 2 := by
+  simp [foldVector]
+  omega
+
+lemma eq_of_foldVector_eq {α : Type*} {u v : List α} {a b c d : α}
+    (h : foldVector u a b = foldVector v c d) : u = v := by
+  have lengths := congrArg List.length h
+  simp only [length_foldVector] at lengths
+  simp only [foldVector, List.append_assoc] at h
+  exact (List.append_inj h (by omega)).1
+
 /-- Corless's recursively constructed vectors (Theorem 4.2 of Corless 2021). -/
 inductive CorlessVec : ℕ → List ℂ → Prop
   | base : CorlessVec 0 []
   | step₁ {k : ℕ} {u : List ℂ} :
-      CorlessVec k u → CorlessVec (k + 1) (u ++ [1, Complex.I] ++ u.reverse)
+      CorlessVec k u → CorlessVec (k + 1) (foldVector u 1 Complex.I)
   | step₂ {k : ℕ} {u : List ℂ} :
-      CorlessVec k u → CorlessVec (k + 1) (u ++ [Complex.I, 1] ++ u.reverse)
+      CorlessVec k u → CorlessVec (k + 1) (foldVector u Complex.I 1)
 
 /-- The signs `u i ^ 2` of a vector with entries in `{1, i}`, as in `T_nilpotent_iff`. -/
 noncomputable def sgns (u : List ℂ) : ℕ → ℤ := fun i => if u.getD i 1 = 1 then 1 else -1
@@ -50,38 +65,38 @@ lemma Fam_congr : ∀ (k : ℕ) {s t : ℕ → ℤ}, (∀ i < 2 ^ (k + 1) - 2, s
   | k + 1, s, t, h => by
       have hp := two_le_pow k
       have h2 : 2 ^ (k + 1 + 1) = 2 * 2 ^ (k + 1) := by rw [pow_succ]; ring
-      simp only [Fam]
-      rw [h (2 ^ (k + 1) - 1) (by omega), h (2 ^ (k + 1) - 2) (by omega),
+      simp only [Fam, IsFolded]
+      rw [h (2 ^ (k + 1) - 2 + 1) (by omega), h (2 ^ (k + 1) - 2) (by omega),
         Fam_congr k (fun i hi => h i (by omega))]
       constructor
-      · rintro ⟨h1, h2', h3⟩
-        refine ⟨h1, fun i hi => ?_, h3⟩
+      · rintro ⟨⟨h1, h2'⟩, h3⟩
+        refine ⟨⟨h1, fun i hi => ?_⟩, h3⟩
         rw [← h _ (by omega), ← h i (by omega)]
         exact h2' i hi
-      · rintro ⟨h1, h2', h3⟩
-        refine ⟨h1, fun i hi => ?_, h3⟩
+      · rintro ⟨⟨h1, h2'⟩, h3⟩
+        refine ⟨⟨h1, fun i hi => ?_⟩, h3⟩
         rw [h _ (by omega), h i (by omega)]
         exact h2' i hi
 
 /-! ### Entries of `u ++ [a, b] ++ rev u` -/
 
 lemma getD_step_left (u : List ℂ) (a b : ℂ) {i : ℕ} (hi : i < u.length) :
-    (u ++ [a, b] ++ u.reverse).getD i 1 = u.getD i 1 := by
-  rw [List.append_assoc, List.getD_append _ _ _ _ hi]
+    (foldVector u a b).getD i 1 = u.getD i 1 := by
+  rw [foldVector, List.append_assoc, List.getD_append _ _ _ _ hi]
 
-lemma getD_step_a (u : List ℂ) (a b : ℂ) : (u ++ [a, b] ++ u.reverse).getD u.length 1 = a := by
-  rw [List.append_assoc, List.getD_append_right _ _ _ _ le_rfl, Nat.sub_self]
+lemma getD_step_a (u : List ℂ) (a b : ℂ) : (foldVector u a b).getD u.length 1 = a := by
+  rw [foldVector, List.append_assoc, List.getD_append_right _ _ _ _ le_rfl, Nat.sub_self]
   simp
 
 lemma getD_step_b (u : List ℂ) (a b : ℂ) :
-    (u ++ [a, b] ++ u.reverse).getD (u.length + 1) 1 = b := by
-  rw [List.append_assoc, List.getD_append_right _ _ _ _ (by omega),
+    (foldVector u a b).getD (u.length + 1) 1 = b := by
+  rw [foldVector, List.append_assoc, List.getD_append_right _ _ _ _ (by omega),
     show u.length + 1 - u.length = 1 by omega]
   simp
 
 lemma getD_step_right (u : List ℂ) (a b : ℂ) {i : ℕ} (hi : i < u.length) :
-    (u ++ [a, b] ++ u.reverse).getD (2 * u.length + 1 - i) 1 = u.getD i 1 := by
-  rw [List.append_assoc, List.getD_append_right _ _ _ _ (by omega),
+    (foldVector u a b).getD (2 * u.length + 1 - i) 1 = u.getD i 1 := by
+  rw [foldVector, List.append_assoc, List.getD_append_right _ _ _ _ (by omega),
     List.getD_append_right _ _ _ _ (by simp; omega)]
   simp only [List.length_cons, List.length_nil]
   rw [show 2 * u.length + 1 - i - u.length - (0 + 1 + 1) = u.length - 1 - i by omega,
@@ -93,52 +108,35 @@ lemma CorlessVec.length_eq {k : ℕ} {u : List ℂ} (h : CorlessVec k u) :
     u.length = 2 ^ (k + 1) - 2 := by
   induction h with
   | base => simp
-  | @step₁ k u _ ih =>
+  | @step₁ k u _ ih | @step₂ k u _ ih =>
       have hp := two_le_pow k
-      simp only [List.length_append, List.length_reverse, List.length_cons, List.length_nil, ih]
-      rw [pow_succ 2 (k + 1)]
-      omega
-  | @step₂ k u _ ih =>
-      have hp := two_le_pow k
-      simp only [List.length_append, List.length_reverse, List.length_cons, List.length_nil, ih]
-      rw [pow_succ 2 (k + 1)]
+      rw [length_foldVector, ih, pow_succ 2 (k + 1)]
       omega
 
 lemma CorlessVec.mem {k : ℕ} {u : List ℂ} (h : CorlessVec k u) :
     ∀ x ∈ u, x = 1 ∨ x = Complex.I := by
   induction h with
   | base => simp
-  | step₁ _ ih =>
+  | step₁ _ ih | step₂ _ ih =>
       intro x hx
-      simp only [List.mem_append, List.mem_reverse, List.mem_cons, List.not_mem_nil,
+      simp only [foldVector, List.mem_append, List.mem_reverse, List.mem_cons, List.not_mem_nil,
         or_false] at hx
       rcases hx with (hx | hx) | hx
       · exact ih x hx
-      · exact hx
-      · exact ih x hx
-  | step₂ _ ih =>
-      intro x hx
-      simp only [List.mem_append, List.mem_reverse, List.mem_cons, List.not_mem_nil,
-        or_false] at hx
-      rcases hx with (hx | hx) | hx
-      · exact ih x hx
-      · exact hx.symm
+      · first | exact hx | exact hx.symm
       · exact ih x hx
 
 lemma fam_step {k : ℕ} {u : List ℂ} {a b : ℂ} (hlen : u.length = 2 ^ (k + 1) - 2)
     (hfam : Fam k (sgns u)) (hab : (a = 1 ∧ b = Complex.I) ∨ (a = Complex.I ∧ b = 1)) :
-    Fam (k + 1) (sgns (u ++ [a, b] ++ u.reverse)) := by
-  have hp := two_le_pow k
-  simp only [Fam]
-  refine ⟨?_, ?_, ?_⟩
-  · rw [show 2 ^ (k + 1) - 1 = u.length + 1 by omega, show 2 ^ (k + 1) - 2 = u.length by omega]
-    unfold sgns
+    Fam (k + 1) (sgns (foldVector u a b)) := by
+  simp only [Fam, IsFolded, ← hlen]
+  refine ⟨⟨?_, ?_⟩, ?_⟩
+  · unfold sgns
     rw [getD_step_a, getD_step_b]
     rcases hab with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;> simp [I_ne_one]
   · intro i hi
     unfold sgns
-    rw [show 2 * (2 ^ (k + 1) - 1) - 1 - i = 2 * u.length + 1 - i by omega,
-      getD_step_right _ _ _ (by omega), getD_step_left _ _ _ (by omega)]
+    rw [getD_step_right _ _ _ hi, getD_step_left _ _ _ hi]
   · rw [Fam_congr k (t := sgns u) (fun i hi => by
       unfold sgns
       rw [getD_step_left _ _ _ (by omega)])]
@@ -185,9 +183,8 @@ lemma CorlessVec.of_fam : ∀ (k : ℕ) {u : List ℂ}, u.length = 2 ^ (k + 1) -
       have hp := two_le_pow k
       obtain ⟨n, hn⟩ : ∃ n, n = 2 ^ (k + 1) - 2 := ⟨_, rfl⟩
       have hlen' : u.length = 2 * n + 2 := by rw [hlen, pow_succ]; omega
-      simp only [Fam] at hfam
-      obtain ⟨hmid, hmir, hfam'⟩ := hfam
-      rw [show 2 ^ (k + 1) - 1 = n + 1 by omega, ← hn] at hmid
+      simp only [Fam, IsFolded, ← hn] at hfam
+      obtain ⟨⟨hmid, hmir⟩, hfam'⟩ := hfam
       obtain ⟨v, hv⟩ : ∃ v, v = u.take n := ⟨_, rfl⟩
       have hvlen : v.length = n := by rw [hv, List.length_take]; omega
       have hvget : ∀ i < n, v.getD i 1 = u.getD i 1 := by
@@ -203,8 +200,8 @@ lemma CorlessVec.of_fam : ∀ (k : ℕ) {u : List ℂ}, u.length = 2 ^ (k + 1) -
         exact hfam'
       have ih := CorlessVec.of_fam k (by omega) hvmem hvfam
       -- `u` is `v ++ [a, b] ++ rev v` with `a, b` its two middle entries
-      have hu_eq : u = v ++ [u.getD n 1, u.getD (n + 1) 1] ++ v.reverse := by
-        apply ext_getD (by simp [hlen', hvlen]; omega)
+      have hu_eq : u = foldVector v (u.getD n 1) (u.getD (n + 1) 1) := by
+        apply ext_getD (by rw [length_foldVector, hvlen, hlen'])
         intro i hi
         rcases Nat.lt_or_ge i n with h1 | h1
         · rw [getD_step_left _ _ _ (by omega), hvget i h1]
@@ -214,7 +211,7 @@ lemma CorlessVec.of_fam : ∀ (k : ℕ) {u : List ℂ}, u.length = 2 ^ (k + 1) -
           · rw [show i = v.length + 1 by omega, getD_step_b, hvlen]
         · -- the right half mirrors the left half
           have hj := hmir (2 * n + 1 - i) (by omega)
-          rw [show 2 * (2 ^ (k + 1) - 1) - 1 - (2 * n + 1 - i) = i by omega] at hj
+          rw [show 2 * n + 1 - (2 * n + 1 - i) = i by omega] at hj
           rw [show i = 2 * v.length + 1 - (2 * n + 1 - i) by omega,
             getD_step_right _ _ _ (by omega), hvget _ (by omega)]
           rw [show 2 * v.length + 1 - (2 * n + 1 - i) = i by omega]
@@ -247,7 +244,7 @@ open Classical in
 noncomputable def vecs : ℕ → Finset (List ℂ)
   | 0 => {[]}
   | k + 1 => (vecs k).biUnion fun u =>
-      {u ++ [1, Complex.I] ++ u.reverse, u ++ [Complex.I, 1] ++ u.reverse}
+      {foldVector u 1 Complex.I, foldVector u Complex.I 1}
 
 lemma mem_vecs (k : ℕ) : ∀ {u : List ℂ}, u ∈ vecs k ↔ CorlessVec k u := by
   induction k with
@@ -282,20 +279,15 @@ lemma card_vecs : ∀ k, (vecs k).card = 2 ^ k
         intro u _
         convert Finset.card_pair _
         intro h
-        rw [List.append_assoc, List.append_assoc] at h
-        have := (List.append_inj h rfl).2
-        simp only [List.cons_append, List.cons.injEq] at this
-        exact I_ne_one this.1.symm
-      · intro u hu v hv huv
+        have middle := congrArg (fun w : List ℂ => w.getD u.length 1) h
+        rw [getD_step_a, getD_step_a] at middle
+        exact I_ne_one middle.symm
+      · intro u _ v _ huv
         rw [Function.onFun, Finset.disjoint_left]
         intro w hw hw'
-        have hlu := ((mem_vecs k).mp hu).length_eq
-        have hlv := ((mem_vecs k).mp hv).length_eq
         simp only [Finset.mem_insert, Finset.mem_singleton] at hw hw'
         apply huv
-        rcases hw with rfl | rfl <;> rcases hw' with h | h <;>
-          · rw [List.append_assoc, List.append_assoc] at h
-            exact (List.append_inj h (by rw [hlu, hlv])).1
+        rcases hw with rfl | rfl <;> rcases hw' with h | h <;> exact eq_of_foldVector_eq h
 
 /-- **The count.** Exactly `2^k` vectors `u` of length `2^(k+1) - 2` with entries in `{1, i}` give
 a nilpotent `T(u)`. Since `u` is the superdiagonal of `T(u)`, these are `2^k` distinct matrices of
