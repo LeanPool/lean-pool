@@ -8,6 +8,8 @@ module
 
 public import Mathlib.Data.List.Basic
 public import Mathlib.Tactic
+public import LeanPool.FullyDynamicMatching.FD1D.DensePolynomial
+meta import LeanPool.FullyDynamicMatching.FD1D.DensePolynomial
 
 /-!
 # Sparse exact polynomial certificate
@@ -24,72 +26,7 @@ namespace FD1D
 
 namespace BellmanCertificate
 
-/-- A dense polynomial represented by its coefficient list, in increasing degree order. -/
-structure DPoly (R : Type) where
-  /-- Coefficients in increasing degree order; trailing zero coefficients are permitted. -/
-  coeffs : List R
-deriving DecidableEq, Repr
-
 namespace DPoly
-
-/-- The dense representation of a constant polynomial. -/
-def const (a : R) : DPoly R := ⟨[a]⟩
-
-/-- Coefficientwise addition, extending the shorter list by zeros. -/
-def addCoeffs [Add R] : List R → List R → List R
-  | [], q => q
-  | p, [] => p
-  | a :: p, b :: q => (a + b) :: addCoeffs p q
-
-/-- Negation of every coefficient. -/
-def neg [Neg R] (p : DPoly R) : DPoly R :=
-  ⟨p.coeffs.map (-·)⟩
-
-/-- Addition of dense polynomials by their coefficient lists. -/
-def add [Add R] (p q : DPoly R) : DPoly R :=
-  ⟨addCoeffs p.coeffs q.coeffs⟩
-
-/-- Left multiplication of every coefficient by the given scalar. -/
-def scale [Mul R] (a : R) (p : DPoly R) : DPoly R :=
-  ⟨p.coeffs.map (a * ·)⟩
-
-/-- Convolution of coefficient lists for polynomial multiplication. -/
-def mulCoeffs [Zero R] [Add R] [Mul R] : List R → List R → List R
-  | [], _ => []
-  | a :: p, q =>
-      addCoeffs (q.map (a * ·)) (0 :: mulCoeffs p q)
-
-/-- Multiplication of dense polynomials by coefficient convolution. -/
-def mul [Zero R] [Add R] [Mul R] (p q : DPoly R) : DPoly R :=
-  ⟨mulCoeffs p.coeffs q.coeffs⟩
-
-/-- Natural powers computed by repeated polynomial multiplication. -/
-def pow [Zero R] [One R] [Add R] [Mul R] (p : DPoly R) : ℕ → DPoly R
-  | 0 => const 1
-  | n + 1 => mul (pow p n) p
-
-instance : Zero (DPoly R) := ⟨⟨[]⟩⟩
-instance [One R] : One (DPoly R) := ⟨const 1⟩
-instance [Add R] : Add (DPoly R) := ⟨add⟩
-instance [Neg R] : Neg (DPoly R) := ⟨neg⟩
-instance [Neg R] [Add R] : Sub (DPoly R) := ⟨fun p q => p + -q⟩
-instance [Zero R] [Add R] [Mul R] : Mul (DPoly R) := ⟨mul⟩
-instance [Zero R] [One R] [Add R] [Mul R] : Pow (DPoly R) Nat := ⟨pow⟩
-instance (n : ℕ) [OfNat R (n + 2)] : OfNat (DPoly R) (n + 2) :=
-  ⟨const (OfNat.ofNat (n + 2))⟩
-
-@[simp] theorem coeffs_zero :
-    (0 : DPoly R).coeffs = [] := rfl
-
-@[simp] theorem coeffs_one [One R] :
-    (1 : DPoly R).coeffs = [1] := rfl
-
-@[simp] theorem coeffs_ofNat (n : ℕ) [OfNat R (n + 2)] :
-    (OfNat.ofNat (n + 2) : DPoly R).coeffs =
-      [OfNat.ofNat (n + 2)] := rfl
-
-/-- The indeterminate, with coefficient list `[0, 1]`. -/
-def X [Zero R] [One R] : DPoly R := ⟨[0, 1]⟩
 
 /-- Horner evaluation of a coefficient list after applying the coefficient map. -/
 def evalCoeffs [Zero S] [Add S] [Mul S]
@@ -405,8 +342,17 @@ def eval3 (p : Poly3) (u v z : ℝ) : ℝ :=
   norm_num [eval3, eval2, eval1, DPoly.eval, DPoly.const,
     DPoly.evalCoeffs]
 
-/-- Polynomial numerator used to certify the Bellman inequality in affine coordinates. -/
-def bellmanAt (s r v : Poly3) : Poly3 :=
+/-- The leading sum and two subtrahends of the affine Bellman numerator. -/
+structure AffineBellmanTerms where
+  /-- The sum from which the other two terms are subtracted. -/
+  leadingSum : Poly3
+  /-- The subtrahend carrying the affine `bp` factor. -/
+  firstSubtrahend : Poly3
+  /-- The final subtrahend. -/
+  secondSubtrahend : Poly3
+
+/-- The three polynomial terms of the affine Bellman numerator. -/
+def affineBellmanTerms (s r v : Poly3) : AffineBellmanTerms :=
   let A := 1 + v
   let S := s + 2
   let BB := s + 1
@@ -422,10 +368,18 @@ def bellmanAt (s r v : Poly3) : Poly3 :=
     -M ^ 2 * (r ^ 2 * S + 4 * W0) +
       M * (4 * M - C) * (r * A * S + 2 * W0) +
       2 * C * (3 * C - 4 * M) * (A ^ 2 * S + W0)
-  600 * BB ^ 5 * M ^ 4 * C * (r * A * S + 2 * W0) +
-    25 * BB ^ 5 * dM * bc -
-    50 * S * M ^ 5 * dB * bp -
-    12 * BB ^ 5 * M ^ 5 * (S * (A ^ 2 - 1) + W0)
+  { leadingSum :=
+      600 * BB ^ 5 * M ^ 4 * C * (r * A * S + 2 * W0) + 25 * BB ^ 5 * dM * bc
+    firstSubtrahend := 50 * S * M ^ 5 * dB * bp
+    secondSubtrahend := 12 * BB ^ 5 * M ^ 5 * (S * (A ^ 2 - 1) + W0) }
+
+/-- Combine the signed terms in the affine Bellman numerator. -/
+def AffineBellmanTerms.combine (terms : AffineBellmanTerms) : Poly3 :=
+  terms.leadingSum - terms.firstSubtrahend - terms.secondSubtrahend
+
+/-- Polynomial numerator used to certify the Bellman inequality in affine coordinates. -/
+def bellmanAt (s r v : Poly3) : Poly3 :=
+  (affineBellmanTerms s r v).combine
 
 /-- Homogenized Bellman polynomial for a rational coordinate with the given denominator. -/
 def projectiveBellmanAt (den s num v : Poly3) : Poly3 :=
@@ -501,7 +455,7 @@ theorem eval3_bellmanAt (s r v : Poly3) (u₀ v₀ z₀ : ℝ) :
     eval3 (bellmanAt s r v) u₀ v₀ z₀ =
       bellmanRealAt (eval3 s u₀ v₀ z₀)
         (eval3 r u₀ v₀ z₀) (eval3 v u₀ v₀ z₀) := by
-  simp [bellmanAt, bellmanRealAt]
+  simp [bellmanAt, affineBellmanTerms, AffineBellmanTerms.combine, bellmanRealAt]
 
 theorem eval3_projectiveBellmanAt
     (den s num v : Poly3) (u₀ v₀ z₀ : ℝ) :
@@ -606,47 +560,92 @@ theorem eval3_nonnegative
   intro q hq
   exact eval2_nonnegative hq hv hz
 
--- Share normalizations of closed operands within one chart, and keep each
--- reduction as a kernel-checked equality for the surrounding convolution.
-local elab "reduceBellmanPolynomial" : conv => Lean.Elab.Tactic.withMainContext do
-  let cache ← IO.mkRef ({} : Lean.ExprStructMap (Lean.Expr × Lean.Expr))
-  let rec normalize (fuel : Nat) (expression : Lean.Expr) :
-      Lean.Elab.Tactic.TacticM (Lean.Expr × Lean.Expr) := do
-    match fuel with
-    | 0 => throwError "invalid Bellman reduction tree"
-    | fuel + 1 =>
-      let closed := !expression.hasFVar && !expression.hasMVar && !expression.hasLooseBVars
-      let key : Lean.ExprStructEq := ⟨expression⟩
-      if closed then
-        if let some result := (← cache.get)[key]? then return result
-      let isOperation := expression.isAppOf ``HAdd.hAdd ||
-          expression.isAppOf ``HSub.hSub ||
-          expression.isAppOf ``HMul.hMul ||
-          expression.isAppOf ``HPow.hPow ||
-          expression.isAppOf ``Neg.neg
-      let (operands, congruence) ← if isOperation then
-        Lean.Elab.Tactic.Conv.convert expression do
-          Lean.Elab.Tactic.evalTactic (← `(conv| congr))
-          for child in ← Lean.Elab.Tactic.getGoals do
-            Lean.Elab.Tactic.setGoals [child]
-            let (value, proof) ← normalize fuel (← Lean.Elab.Tactic.Conv.getLhs)
-            Lean.Elab.Tactic.Conv.updateLhs value proof
-            (← Lean.Elab.Tactic.getMainGoal).refl
-          Lean.Elab.Tactic.setGoals []
+private meta instance {R : Type} [Lean.ToExpr R] : Lean.ToExpr (DPoly R) where
+  toExpr p :=
+    let ⟨coefficients⟩ := p
+    Lean.mkApp2 (Lean.mkConst ``DPoly.mk) (Lean.toTypeExpr R) (Lean.toExpr coefficients)
+  toTypeExpr := Lean.mkApp (Lean.mkConst ``DPoly) (Lean.toTypeExpr R)
+
+private meta def readBellmanInteger (expression : Lean.Expr) : Lean.MetaM (Option Int) := do
+  if let some integer ← Lean.Meta.getIntValue? expression then
+    return some integer
+  match_expr expression with
+  | Int.ofNat n => return (← Lean.Meta.getNatValue? n).map Int.ofNat
+  | Int.negSucc n => return (← Lean.Meta.getNatValue? n).map Int.negSucc
+  | _ => return none
+
+private meta def readBellmanCoefficients {R : Type}
+    (read : Lean.Expr → Lean.MetaM (Option R)) (expression : Lean.Expr) :
+    Lean.MetaM (Option (DPoly R)) := do
+  let_expr DPoly.mk _ coefficients := expression | return none
+  return (← Lean.Meta.getListLitOf? coefficients read).map fun values => ⟨values.toList⟩
+
+-- Compute on coefficient data, then have the kernel verify the explicit reduction.
+-- The meta code produces the proposed value; only the checked equality is reused.
+private meta def checkBellmanReduction (operands value : Lean.Expr) :
+    Lean.MetaM Lean.Expr := do
+  let equality ← Lean.Meta.mkEq operands value
+  let reflexivity ← Lean.Meta.mkEqRefl value
+  let certificate ← Lean.Meta.mkAuxLemma [] equality reflexivity
+    (kind? := some `polynomialReduction)
+  return Lean.mkConst certificate
+
+private meta def bellmanBinaryOperation (expression : Lean.Expr) :
+    Option (Poly3 → Poly3 → Poly3) :=
+  if expression.isAppOfArity ``HAdd.hAdd 6 then some (· + ·)
+  else if expression.isAppOfArity ``HSub.hSub 6 then some (· - ·)
+  else if expression.isAppOfArity ``HMul.hMul 6 then some (· * ·)
+  else none
+
+-- The cache is local to one closed chart and includes the kernel proof of each value.
+private meta def normalizeBellmanPolynomial
+    (cache : IO.Ref (Lean.ExprStructMap (Poly3 × Lean.Expr × Lean.Expr)))
+    (fuel : Nat) (expression : Lean.Expr) : Lean.MetaM (Poly3 × Lean.Expr × Lean.Expr) := do
+  match fuel with
+  | 0 => throwError "invalid Bellman reduction tree"
+  | fuel + 1 =>
+    let key : Lean.ExprStructEq := ⟨expression⟩
+    if let some result := (← cache.get)[key]? then return result
+    let args := expression.getAppArgs
+    let (value, operands, congruence) ←
+      if let some operation := bellmanBinaryOperation expression then do
+        let (left, leftExpr, leftProof) ← normalizeBellmanPolynomial cache fuel args[4]!
+        let (right, rightExpr, rightProof) ← normalizeBellmanPolynomial cache fuel args[5]!
+        let operator := Lean.mkAppN expression.getAppFn args[*...4]
+        let firstProof ← Lean.Meta.mkCongrArg operator leftProof
+        let congruence ← Lean.Meta.mkCongr firstProof rightProof
+        pure (operation left right, Lean.mkApp2 operator leftExpr rightExpr, congruence)
+      else if expression.isAppOfArity ``HPow.hPow 6 then do
+        let (base, baseExpr, baseProof) ← normalizeBellmanPolynomial cache fuel args[4]!
+        let exponent := args[5]!
+        let some power ← Lean.Meta.getNatValue? exponent | throwError "expected a literal power"
+        let operator := Lean.mkAppN expression.getAppFn args[*...4]
+        let firstProof ← Lean.Meta.mkCongrArg operator baseProof
+        let congruence ← Lean.Meta.mkCongrFun firstProof exponent
+        pure (base ^ power, Lean.mkApp2 operator baseExpr exponent, congruence)
+      else if expression.isAppOfArity ``Neg.neg 3 then do
+        let (value, valueExpr, proof) ← normalizeBellmanPolynomial cache fuel args[2]!
+        let operator := Lean.mkAppN expression.getAppFn args[*...2]
+        pure (-value, Lean.mkApp operator valueExpr, ← Lean.Meta.mkCongrArg operator proof)
       else
-        pure (expression, ← Lean.Meta.mkEqRefl expression)
-      let reduced ← Lean.Meta.reduce operands
-      let proof ← if operands == reduced then pure congruence else do
-        let equality ← Lean.Meta.mkEq operands reduced
-        let reflexivity ← Lean.Meta.mkEqRefl reduced
-        let reductionName ← Lean.Meta.mkAuxLemma [] equality reflexivity
-          (kind? := some `polynomialReduction)
-        Lean.Meta.mkEqTrans congruence (Lean.mkConst reductionName)
-      let result := (reduced, proof)
-      if closed then cache.modify (·.insert key result)
-      return result
+        let reduced ← Lean.Meta.reduce expression
+        let read := readBellmanCoefficients
+          (readBellmanCoefficients (readBellmanCoefficients readBellmanInteger))
+        let some value ← read reduced | throwError "expected closed Bellman coefficients"
+        pure (value, expression, ← Lean.Meta.mkEqRefl expression)
+    let quoted := Lean.toExpr value
+    let reduction ← checkBellmanReduction operands quoted
+    let proof ← Lean.Meta.mkEqTrans congruence reduction
+    let result := (value, quoted, proof)
+    cache.modify (·.insert key result)
+    return result
+termination_by structural fuel
+
+local elab "reduceBellmanPolynomial" : conv => Lean.Elab.Tactic.withMainContext do
   let expression ← Lean.Elab.Tactic.Conv.getLhs
-  let (value, proof) ← normalize (expression.sizeWithoutSharing + 1) expression
+  let cache ← IO.mkRef ({} : Lean.ExprStructMap (Poly3 × Lean.Expr × Lean.Expr))
+  let (_, value, proof) ← normalizeBellmanPolynomial cache (expression.sizeWithoutSharing + 1)
+    expression
   Lean.Elab.Tactic.Conv.updateLhs value proof
 
 local macro "checkBellmanChart" chart:ident formula:ident : tactic =>
@@ -656,99 +655,69 @@ local macro "checkBellmanChart" chart:ident formula:ident : tactic =>
     rfl
   })
 
--- The affine formula ends in two subtractions. Expose the three
--- summands so the large positive sum and each subtrahend can be checked separately.
-local elab "bellmanOperand% " chart:ident index:num : term => do
-  let definition ← Lean.Meta.unfoldDefinition (← Lean.Elab.Term.elabTerm chart none)
-  unless definition.isAppOf ``bellmanAt do
-    throwError "expected an affine Bellman chart"
-  let expression ← Lean.Meta.zetaReduce (← Lean.Meta.unfoldDefinition definition)
-  let subtraction (value : Lean.Expr) : Lean.Elab.Term.TermElabM (Lean.Expr × Lean.Expr) := do
-    unless value.isAppOf ``HSub.hSub do
-      throwError "the Bellman polynomial no longer ends in two subtractions"
-    let .app (.app _ left) right := value | throwError "expected a binary subtraction"
-    return (left, right)
-  let (leftGroup, lastNegative) ← subtraction expression
-  let (positive, firstNegative) ← subtraction leftGroup
-  match index.getNat with
-  | 0 => return positive
-  | 1 => return firstNegative
-  | 2 => return lastNegative
-  | _ => throwError "expected Bellman operand 0, 1 or 2"
-
--- Store the normalized value with its equality to the original operand.
-local elab "recordBellmanOperand" : tactic => Lean.Elab.Tactic.withMainContext do
+-- The proof-only record keeps the normalized terms and their kernel equality together.
+local elab "recordAffineBellmanTerms" : tactic => Lean.Elab.Tactic.withMainContext do
   let target ← (← Lean.Elab.Tactic.getMainGoal).getType
-  unless target.isAppOf ``Subtype do throwError "expected a checked Bellman operand"
+  unless target.isAppOf ``Subtype do throwError "expected checked affine Bellman terms"
   let args := target.getAppArgs
   let predicate := args[1]!
-  let .lam _ _ body _ := predicate | throwError "expected an operand equality"
-  let some (_, original, _) := body.eq? | throwError "expected an operand equality"
-  let (value, proof) ← Lean.Elab.Tactic.Conv.convert original do
-    Lean.Elab.Tactic.evalTactic (← `(conv| reduceBellmanPolynomial))
+  let .lam _ _ body _ := predicate | throwError "expected an equality of affine Bellman terms"
+  let some (_, original, _) := body.eq? | throwError "expected an equality of affine Bellman terms"
+  let fields ← Lean.Meta.zetaReduce (← Lean.Meta.unfoldDefinition original)
+  unless fields.isAppOf ``AffineBellmanTerms.mk do
+    throwError "expected the named affine Bellman terms"
+  let cache ← IO.mkRef ({} : Lean.ExprStructMap (Poly3 × Lean.Expr × Lean.Expr))
+  let mut value := Lean.mkConst ``AffineBellmanTerms.mk
+  let mut proof ← Lean.Meta.mkEqRefl value
+  for field in fields.getAppArgs do
+    let (_, normalized, equality) ← normalizeBellmanPolynomial cache
+      (field.sizeWithoutSharing + 1) field
+    value := Lean.mkApp value normalized
+    proof ← Lean.Meta.mkCongr proof equality
   let checked ← Lean.Meta.mkAppOptM ``Subtype.mk #[some args[0]!, some predicate, some value,
     some proof]
-  Lean.Elab.Tactic.closeMainGoal `recordBellmanOperand checked
+  Lean.Elab.Tactic.closeMainGoal `recordAffineBellmanTerms checked
 
--- Keep the existing auxiliary lemma names in the public chart checks.
+-- Preserve the existing auxiliary lemma names of the public chart checks.
 private theorem chartPlus_normalized_check : allNonnegative3 chartPlus = true := by
   checkBellmanChart chartPlus projectiveBellmanAt
 
 theorem chartPlus_check : allNonnegative3 chartPlus = true := by
   as_aux_lemma => exact chartPlus_normalized_check
 
-private def chartOneOperand0 : {p : Poly3 // bellmanOperand% chartOne 0 = p} := by
-  recordBellmanOperand
-
-private def chartOneOperand1 : {p : Poly3 // bellmanOperand% chartOne 1 = p} := by
-  recordBellmanOperand
-
-private def chartOneOperand2 : {p : Poly3 // bellmanOperand% chartOne 2 = p} := by
-  recordBellmanOperand
+private noncomputable def chartOneTerms :
+    {terms : AffineBellmanTerms // affineBellmanTerms (2 * U + 2 * V + Z) (-U) (U + V) =
+      terms} := by
+  recordAffineBellmanTerms
 
 private theorem chartOne_normalized_check : allNonnegative3 chartOne = true := by
-  change allNonnegative3
-    ((bellmanOperand% chartOne 0) - (bellmanOperand% chartOne 1)
-      - (bellmanOperand% chartOne 2)) = true
-  rw [chartOneOperand0.property, chartOneOperand1.property, chartOneOperand2.property]
+  change allNonnegative3 (AffineBellmanTerms.combine _) = true
+  rw [chartOneTerms.property]
   rfl
 
 theorem chartOne_check : allNonnegative3 chartOne = true := by
   as_aux_lemma => exact chartOne_normalized_check
 
-private def chartTwoOperand0 : {p : Poly3 // bellmanOperand% chartTwo 0 = p} := by
-  recordBellmanOperand
-
-private def chartTwoOperand1 : {p : Poly3 // bellmanOperand% chartTwo 1 = p} := by
-  recordBellmanOperand
-
-private def chartTwoOperand2 : {p : Poly3 // bellmanOperand% chartTwo 2 = p} := by
-  recordBellmanOperand
+private noncomputable def chartTwoTerms :
+    {terms : AffineBellmanTerms // affineBellmanTerms (2 * U + 2 * V + Z) (-2 * U - V) (U + V) =
+      terms} := by
+  recordAffineBellmanTerms
 
 private theorem chartTwo_normalized_check : allNonnegative3 chartTwo = true := by
-  change allNonnegative3
-    ((bellmanOperand% chartTwo 0) - (bellmanOperand% chartTwo 1)
-      - (bellmanOperand% chartTwo 2)) = true
-  rw [chartTwoOperand0.property, chartTwoOperand1.property, chartTwoOperand2.property]
+  change allNonnegative3 (AffineBellmanTerms.combine _) = true
+  rw [chartTwoTerms.property]
   rfl
 
 theorem chartTwo_check : allNonnegative3 chartTwo = true := by
   as_aux_lemma => exact chartTwo_normalized_check
 
-private def chartThreeOperand0 : {p : Poly3 // bellmanOperand% chartThree 0 = p} := by
-  recordBellmanOperand
-
-private def chartThreeOperand1 : {p : Poly3 // bellmanOperand% chartThree 1 = p} := by
-  recordBellmanOperand
-
-private def chartThreeOperand2 : {p : Poly3 // bellmanOperand% chartThree 2 = p} := by
-  recordBellmanOperand
+private noncomputable def chartThreeTerms :
+    {terms : AffineBellmanTerms // affineBellmanTerms (U + 2 * V + Z) (-U - 2 * V) V = terms} := by
+  recordAffineBellmanTerms
 
 private theorem chartThree_normalized_check : allNonnegative3 chartThree = true := by
-  change allNonnegative3
-    ((bellmanOperand% chartThree 0) - (bellmanOperand% chartThree 1)
-      - (bellmanOperand% chartThree 2)) = true
-  rw [chartThreeOperand0.property, chartThreeOperand1.property, chartThreeOperand2.property]
+  change allNonnegative3 (AffineBellmanTerms.combine _) = true
+  rw [chartThreeTerms.property]
   rfl
 
 theorem chartThree_check : allNonnegative3 chartThree = true := by
