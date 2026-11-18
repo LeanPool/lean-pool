@@ -399,7 +399,7 @@ lemma primeHom_δ {q : ℕ} (i : Fin (q + 2)) :
   have hj := j.isLt
   simp only [SimplexCategory.len_mk] at hj
   split_ifs <;>
-    (try simp_all only [Fin.val_castSucc, Fin.val_succ]) <;> omega
+    simp_all only [Fin.val_castSucc, Fin.val_succ] <;> omega
 
 /-- **`prime` shifts faces**: `prime(δ_i) = δ_{i+1}` (prepending the `0`-th vertex pushes the
 omitted vertex up by one). -/
