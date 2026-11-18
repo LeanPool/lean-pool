@@ -31,10 +31,13 @@ which is also this default, so a client and a worker deployed from different
 revisions refuse each other instead of reviewing with another model.
 The optional, explicitly selected ``openai`` backend bills the API for local
 use. A model that :data:`PRICING_PER_M` prices only at Standard is requested
-at Standard, so its cost is always reported. Every other model is requested
-on Flex first and, when Flex has no capacity, once more with
-``service_tier="auto"``, which follows the API project's configuration. The
-production workflow does not provide an API key.
+at Standard (``service_tier="default"``), the one tier its row can price.
+Every other model is requested on Flex first; an HTTP 429 or 5xx from that
+request (no Flex capacity, Flex unsupported for the model, or a server error)
+is retried once with ``service_tier="auto"``, which follows the API project's
+configuration. The footer reports a cost when the response carries usage and
+the table has a rate for the model and tier that served it. The production
+workflow does not provide an API key.
 
 Large diffs are reviewed in lossless portions within a 272,000-estimated-token
 input budget, followed by integration of their evidence under each rubric.
