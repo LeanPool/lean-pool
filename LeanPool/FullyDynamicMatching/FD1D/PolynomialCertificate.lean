@@ -342,17 +342,8 @@ def eval3 (p : Poly3) (u v z : ℝ) : ℝ :=
   norm_num [eval3, eval2, eval1, DPoly.eval, DPoly.const,
     DPoly.evalCoeffs]
 
-/-- The leading sum and two subtrahends of the affine Bellman numerator. -/
-structure AffineBellmanTerms where
-  /-- The sum from which the other two terms are subtracted. -/
-  leadingSum : Poly3
-  /-- The subtrahend carrying the affine `bp` factor. -/
-  firstSubtrahend : Poly3
-  /-- The final subtrahend. -/
-  secondSubtrahend : Poly3
-
-/-- The three polynomial terms of the affine Bellman numerator. -/
-def affineBellmanTerms (s r v : Poly3) : AffineBellmanTerms :=
+/-- Polynomial numerator used to certify the Bellman inequality in affine coordinates. -/
+def bellmanAt (s r v : Poly3) : Poly3 :=
   let A := 1 + v
   let S := s + 2
   let BB := s + 1
@@ -368,18 +359,10 @@ def affineBellmanTerms (s r v : Poly3) : AffineBellmanTerms :=
     -M ^ 2 * (r ^ 2 * S + 4 * W0) +
       M * (4 * M - C) * (r * A * S + 2 * W0) +
       2 * C * (3 * C - 4 * M) * (A ^ 2 * S + W0)
-  { leadingSum :=
-      600 * BB ^ 5 * M ^ 4 * C * (r * A * S + 2 * W0) + 25 * BB ^ 5 * dM * bc
-    firstSubtrahend := 50 * S * M ^ 5 * dB * bp
-    secondSubtrahend := 12 * BB ^ 5 * M ^ 5 * (S * (A ^ 2 - 1) + W0) }
-
-/-- Combine the signed terms in the affine Bellman numerator. -/
-def AffineBellmanTerms.combine (terms : AffineBellmanTerms) : Poly3 :=
-  terms.leadingSum - terms.firstSubtrahend - terms.secondSubtrahend
-
-/-- Polynomial numerator used to certify the Bellman inequality in affine coordinates. -/
-def bellmanAt (s r v : Poly3) : Poly3 :=
-  (affineBellmanTerms s r v).combine
+  600 * BB ^ 5 * M ^ 4 * C * (r * A * S + 2 * W0) +
+    25 * BB ^ 5 * dM * bc -
+    50 * S * M ^ 5 * dB * bp -
+    12 * BB ^ 5 * M ^ 5 * (S * (A ^ 2 - 1) + W0)
 
 /-- Homogenized Bellman polynomial for a rational coordinate with the given denominator. -/
 def projectiveBellmanAt (den s num v : Poly3) : Poly3 :=
@@ -455,7 +438,7 @@ theorem eval3_bellmanAt (s r v : Poly3) (u₀ v₀ z₀ : ℝ) :
     eval3 (bellmanAt s r v) u₀ v₀ z₀ =
       bellmanRealAt (eval3 s u₀ v₀ z₀)
         (eval3 r u₀ v₀ z₀) (eval3 v u₀ v₀ z₀) := by
-  simp [bellmanAt, affineBellmanTerms, AffineBellmanTerms.combine, bellmanRealAt]
+  simp [bellmanAt, bellmanRealAt]
 
 theorem eval3_projectiveBellmanAt
     (den s num v : Poly3) (u₀ v₀ z₀ : ℝ) :
@@ -707,11 +690,11 @@ local elab "reduceBellmanPolynomial" : conv => Lean.Elab.Tactic.withMainContext 
     (← bellmanReductionDepth expression) expression
   Lean.Elab.Tactic.Conv.updateLhs value proof
 
+-- The staged path is optional. Closed charts still admit the original kernel check.
 local macro "checkBellmanChart" : tactic =>
-  `(tactic| {
-    conv_lhs => { arg 1; reduceBellmanPolynomial };
-    rfl
-  })
+  `(tactic| first
+    | { conv_lhs => { arg 1; reduceBellmanPolynomial }; rfl }
+    | decide +kernel)
 
 -- Preserve the existing auxiliary lemma names of the public chart checks.
 private theorem chartPlus_normalized_check : allNonnegative3 chartPlus = true := by
