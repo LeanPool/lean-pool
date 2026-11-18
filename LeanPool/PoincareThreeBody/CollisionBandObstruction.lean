@@ -34,7 +34,9 @@ def resonantCollisionBandActions (eccentricity : ℝ) :
 
 theorem resonantCollisionBandActions_dense (eccentricity : ℝ) :
     Dense (resonantCollisionBandActions eccentricity) := by
-  apply Subtype.dense_iff.mpr
+  refine (Subtype.dense_iff
+    (s := {candidate : InteriorPositiveAction eccentricity | 1 / 2 < candidate.1.1 ^ 2})
+    (t := resonantCollisionBandActions eccentricity)).mpr ?_
   intro action haction
   have hopen : IsOpen
       {candidate : InteriorPositiveAction eccentricity | 1 / 2 < candidate.1.1 ^ 2} :=
