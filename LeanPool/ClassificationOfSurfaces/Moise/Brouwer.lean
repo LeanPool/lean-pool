@@ -83,7 +83,8 @@ private lemma fixedPointRayScale_quadratic (p x : Plane) (hpx : p ≠ x)
   have hc : ⟪p, p⟫_ℝ ≤ 1 := by
     rw [real_inner_self_eq_norm_sq]
     nlinarith [norm_nonneg p]
-  simpa [fixedPointRayScale] using quadratic_root
+  simpa only [inner_self_eq_norm_sq_to_K, RCLike.ofReal_real_eq_id, id_eq,
+    fixedPointRayScale] using quadratic_root
     ⟪x - p, x - p⟫_ℝ ⟪p, x - p⟫_ℝ ⟪p, p⟫_ℝ ha hc
 
 private lemma fixedPointRayEndpoint_mem_sphere (p x : Plane) (hpx : p ≠ x)

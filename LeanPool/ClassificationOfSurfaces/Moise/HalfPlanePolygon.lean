@@ -29,7 +29,7 @@ namespace Moise
 theorem convex_halfPlaneSet : Convex ℝ HalfPlaneSet := by
   have hlinear : IsLinearMap ℝ (fun v : Plane ↦ v 0) :=
     .mk (fun _ _ ↦ rfl) (fun _ _ ↦ rfl)
-  simpa [HalfPlaneSet] using convex_halfSpace_ge hlinear (0 : ℝ)
+  simpa only [HalfPlaneSet, Fin.isValue] using convex_halfSpace_ge hlinear (0 : ℝ)
 
 /-- A polygonal circle carried by the closed right half-plane bounds its disk there. -/
 theorem PolygonalCircle.closedRegion_subset_halfPlane (J : PolygonalCircle)
@@ -106,14 +106,15 @@ theorem coordZero_pos_of_mem_open_subset_halfPlane {O : Set Plane}
     rw [dist_eq_norm]
     rw [show y - x = -(ε / 2) •
         planePoint 1 0 by
-      simp [y, sub_eq_add_neg, add_assoc]]
+      simp only [sub_eq_add_neg, add_assoc, add_neg_cancel_comm_assoc, neg_smul, y]]
     rw [norm_smul, norm_neg, hvertexNorm, mul_one, Real.norm_eq_abs,
       abs_of_pos (half_pos hε)]
     linarith
   have hyO : y ∈ O := hball (Metric.mem_ball.mpr hxy)
   have hyNonneg : 0 ≤ y 0 := hOH hyO
   have hyCoord : y 0 = x 0 - ε / 2 := by
-    simp [y]
+    simp only [Fin.isValue, PiLp.sub_apply, PiLp.smul_apply, planePoint_apply_zero, smul_eq_mul,
+      mul_one, y]
   rw [hyCoord, hxZero] at hyNonneg
   linarith
 

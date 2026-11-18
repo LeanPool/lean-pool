@@ -214,8 +214,10 @@ theorem triangle_edge_split_union (p : Fin 3 → Plane) (hp : AffineIndependent 
                 simp only [Set.mem_union, Set.mem_iUnion]
                 constructor
                 · rintro (hx | hx)
-                  · exact ⟨{0, 2, 3}, by simp [referenceEdgeSplitTriangles], hx⟩
-                  · exact ⟨{1, 2, 3}, by simp [referenceEdgeSplitTriangles], hx⟩
+                  · exact ⟨{0, 2, 3}, by simp only [referenceEdgeSplitTriangles, Fin.isValue,
+                    Finset.mem_insert, Finset.mem_singleton, true_or], hx⟩
+                  · exact ⟨{1, 2, 3}, by simp only [referenceEdgeSplitTriangles, Fin.isValue,
+                    Finset.mem_insert, Finset.mem_singleton, or_true], hx⟩
                 · rintro ⟨t, ht, hxt⟩
                   simp only [referenceEdgeSplitTriangles, Finset.mem_insert,
                     Finset.mem_singleton] at ht
@@ -232,7 +234,9 @@ theorem triangle_edge_split_union (p : Fin 3 → Plane) (hp : AffineIndependent 
     rw [e.toAffineMap.image_convexHull]
     congr 1
     ext x
-    simp [Set.mem_image]
+    simp only [AffineEquiv.coe_toAffineMap, Set.mem_image, Set.mem_range,
+      exists_exists_eq_and,
+    Function.comp_apply]
   have himage := congrArg (fun A : Set Plane => e '' A) href'
   rw [Set.image_union, hImageHull, hImageHull, hImageHull] at himage
   have hcomp0 : e ∘ ![s 0, s 2, AffineMap.lineMap (s 0) (s 1) c] =
@@ -303,19 +307,31 @@ theorem diamondFan_left_union {a : ℝ} (ha0 : -2 < a) (ha1 : a < 2) :
   have htop : diamondFanPosition a '' (({0, 4, 2} : Finset (Fin 5)) : Set _) =
       ({planePoint 0 a, planePoint (-1) 0, planePoint 0 2} : Set Plane) := by
     ext x
-    simp [diamondFanPosition]
+    simp only [diamondFanPosition, Fin.isValue, Finset.coe_insert, Finset.coe_singleton,
+      Set.image_insert_eq,
+    Matrix.cons_val_zero, Matrix.cons_val, Set.image_singleton,
+      Set.mem_insert_iff, Set.mem_singleton_iff]
     tauto
   have hbottom : diamondFanPosition a '' (({0, 3, 4} : Finset (Fin 5)) : Set _) =
       ({planePoint 0 a, planePoint (-1) 0, planePoint 0 (-2)} : Set Plane) := by
     ext x
-    simp [diamondFanPosition]
+    simp only [diamondFanPosition, Fin.isValue, Finset.coe_insert, Finset.coe_singleton,
+      Set.image_insert_eq,
+    Matrix.cons_val_zero, Matrix.cons_val, Set.image_singleton,
+      Set.mem_insert_iff, Set.mem_singleton_iff]
     tauto
   have houter : Set.range ![planePoint 0 2, planePoint 0 (-2), planePoint (-1) 0] =
       ({planePoint (-1) 0, planePoint 0 (-2), planePoint 0 2} : Set Plane) := by
     ext x
-    simp
+    simp only [Nat.succ_eq_add_one, Nat.reduceAdd, Matrix.range_cons, Matrix.range_empty,
+      Set.union_empty,
+    Set.union_singleton, Set.union_insert, Set.mem_insert_iff,
+      Set.mem_singleton_iff]
   rw [htop, hbottom, diamondLeftRegion, houter]
-  simpa using hsplit
+  simpa only [Nat.succ_eq_add_one, Nat.reduceAdd, Matrix.tail_cons, Matrix.head_cons,
+    Matrix.range_cons,
+    Matrix.range_empty, Set.union_empty, Set.union_singleton,
+    Set.union_insert] using hsplit
 
 theorem diamondFan_right_union {a : ℝ} (ha0 : -2 < a) (ha1 : a < 2) :
     convexHull ℝ (diamondFanPosition a '' (({1, 2, 4} : Finset (Fin 5)) : Set _)) ∪
@@ -331,19 +347,33 @@ theorem diamondFan_right_union {a : ℝ} (ha0 : -2 < a) (ha1 : a < 2) :
   have htop : diamondFanPosition a '' (({1, 2, 4} : Finset (Fin 5)) : Set _) =
       ({planePoint 0 a, planePoint 1 0, planePoint 0 2} : Set Plane) := by
     ext x
-    simp [diamondFanPosition]
+    simp only [diamondFanPosition, Fin.isValue, Finset.coe_insert, Finset.coe_singleton,
+      Set.image_insert_eq,
+    Matrix.cons_val_one, Matrix.cons_val_zero, Matrix.cons_val,
+      Set.image_singleton, Set.mem_insert_iff,
+    Set.mem_singleton_iff]
     tauto
   have hbottom : diamondFanPosition a '' (({1, 4, 3} : Finset (Fin 5)) : Set _) =
       ({planePoint 0 a, planePoint 1 0, planePoint 0 (-2)} : Set Plane) := by
     ext x
-    simp [diamondFanPosition]
+    simp only [diamondFanPosition, Fin.isValue, Finset.coe_insert, Finset.coe_singleton,
+      Set.image_insert_eq,
+    Matrix.cons_val_one, Matrix.cons_val_zero, Matrix.cons_val,
+      Set.image_singleton, Set.mem_insert_iff,
+    Set.mem_singleton_iff]
     tauto
   have houter : Set.range ![planePoint 0 2, planePoint 0 (-2), planePoint 1 0] =
       ({planePoint 1 0, planePoint 0 (-2), planePoint 0 2} : Set Plane) := by
     ext x
-    simp
+    simp only [Nat.succ_eq_add_one, Nat.reduceAdd, Matrix.range_cons, Matrix.range_empty,
+      Set.union_empty,
+    Set.union_singleton, Set.union_insert, Set.mem_insert_iff,
+      Set.mem_singleton_iff]
   rw [htop, hbottom, diamondRightRegion, houter]
-  simpa using hsplit
+  simpa only [Nat.succ_eq_add_one, Nat.reduceAdd, Matrix.tail_cons, Matrix.head_cons,
+    Matrix.range_cons,
+    Matrix.range_empty, Set.union_empty, Set.union_singleton,
+    Set.union_insert] using hsplit
 
 private theorem diamondFan_inter_02_12 {a : ℝ} (ha0 : -2 < a) (ha1 : a < 2) :
     convexHull ℝ (diamondFanPosition a '' (({0, 4, 2} : Finset (Fin 5)) : Set _)) ∩
@@ -464,10 +494,14 @@ theorem diamondFanMesh_support (a : ℝ) (ha0 : -2 < a) (ha1 : a < 2) :
     · exact Or.inl (Or.inr hxt)
     · exact Or.inr (Or.inr hxt)
   · rintro ((hxt | hxt) | (hxt | hxt))
-    · exact ⟨{0, 4, 2}, by simp [diamondFanTriangles], hxt⟩
-    · exact ⟨{0, 3, 4}, by simp [diamondFanTriangles], hxt⟩
-    · exact ⟨{1, 2, 4}, by simp [diamondFanTriangles], hxt⟩
-    · exact ⟨{1, 4, 3}, by simp [diamondFanTriangles], hxt⟩
+    · exact ⟨{0, 4, 2}, by simp only [diamondFanTriangles, Fin.isValue, Finset.mem_insert,
+      Finset.mem_singleton, true_or], hxt⟩
+    · exact ⟨{0, 3, 4}, by simp only [diamondFanTriangles, Fin.isValue, Finset.mem_insert,
+      Finset.mem_singleton, true_or, or_true], hxt⟩
+    · exact ⟨{1, 2, 4}, by simp only [diamondFanTriangles, Fin.isValue, Finset.mem_insert,
+      Finset.mem_singleton, true_or, or_true], hxt⟩
+    · exact ⟨{1, 4, 3}, by simp only [diamondFanTriangles, Fin.isValue, Finset.mem_insert,
+      Finset.mem_singleton, or_true], hxt⟩
 
 /-- Slack from the upper-right side of the diamond. -/
 noncomputable def diamondSlackUR : Plane →ᵃ[ℝ] ℝ :=
@@ -503,7 +537,11 @@ theorem diamondSlackLL_apply (x y : ℝ) :
 
 @[simp] theorem diamondSlackUR_eq (p : Plane) :
     diamondSlackUR p = 2 - 2 * p 0 - p 1 := by
-  simp [diamondSlackUR]
+  simp only [diamondSlackUR, AffineMap.coe_sub, AffineMap.coe_const, AffineMap.coe_smul,
+    nsmul_eq_mul,
+    Nat.cast_ofNat, Pi.sub_apply, Function.const_apply, Pi.mul_apply,
+    Pi.ofNat_apply, cartesianX_apply, Fin.isValue,
+    cartesianY_apply]
 
 @[simp] theorem diamondSlackUL_eq (p : Plane) :
     diamondSlackUL p = 2 + 2 * p 0 - p 1 := by
@@ -702,7 +740,9 @@ noncomputable def diamondFanCenterRealization (a : ℝ) (ha0 : -2 < a) (ha1 : a 
     (diamondFanMesh a ha0 ha1).toPlaneComplex.baryEval
         (diamondFanCenterRealization a ha0 ha1).1 = planePoint 0 a := by
   change (∑ v : Fin 5, Pi.single 4 1 v • diamondFanPosition a v) = planePoint 0 a
-  simp [Pi.single_apply]
+  simp only [Fin.isValue, Pi.single_apply, ite_smul, one_smul, zero_smul, Finset.sum_ite_eq',
+    Finset.mem_univ,
+    ↓reduceIte, diamondFanPosition_apply_four]
 
 theorem diamondFanSupportHomeomorph_center (a b : ℝ)
     (ha0 : -2 < a) (ha1 : a < 2) (hb0 : -2 < b) (hb1 : b < 2) :
@@ -762,7 +802,9 @@ theorem diamondFanSupportHomeomorph_center (a b : ℝ)
         (diamondFanMesh a ha0 ha1).toPlaneComplex_isPure2).symm_apply_apply x)
   rw [hinv]
   change (∑ v : Fin 5, Pi.single 4 1 v • diamondFanPosition b v) = planePoint 0 b
-  simp [Pi.single_apply]
+  simp only [Fin.isValue, Pi.single_apply, ite_smul, one_smul, zero_smul, Finset.sum_ite_eq',
+    Finset.mem_univ,
+    ↓reduceIte, diamondFanPosition_apply_four]
 
 /-- The barycentric fan move, viewed as a self-homeomorphism of the original diamond support. -/
 noncomputable def diamondFanPatchHomeomorph (a b : ℝ)

@@ -158,11 +158,12 @@ theorem inverseOn_affineOn_of_subdivides_targetComplex
     have hrange : Set.range (fun v : t => F.complex.position v) =
         F.complex.position '' (t : Set F.complex.Vertex) := by
       ext x
-      simp
+      simp only [Set.mem_range, Subtype.exists, exists_prop, Set.mem_image, SetLike.mem_coe]
     rw [← hrange]
     apply interior_convexHull_nonempty_iff_affineSpan_eq_top.mpr
     exact ((F.complex.affineIndependent t ht).affineSpan_eq_top_iff_card_eq_finrank_add_one).mpr
-      (by simp [htcard, Plane])
+      (by simp only [Fintype.card_coe, htcard, Plane, finrank_euclideanSpace, Fintype.card_fin,
+        Nat.reduceAdd])
   have haInjOn : Set.InjOn a (F.complex.cellCarrier t) := by
     intro x hx y hy hxy
     apply F.injOn

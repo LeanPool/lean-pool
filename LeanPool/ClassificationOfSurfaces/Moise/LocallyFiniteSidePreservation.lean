@@ -382,8 +382,8 @@ theorem faceFillingsGraphAvoidInteriors_of_verticesAvoid
       (G := G) f e p hpe hef
     exact Set.disjoint_left.mp hinteriorCarrier hpInterior hpCarrier
   let I := Set.Icc (0 : ℝ) 1
-  let z0 : I := ⟨0, by simp [I]⟩
-  let z1 : I := ⟨1, by simp [I]⟩
+  let z0 : I := ⟨0, by simp only [Set.mem_Icc, Std.le_refl, zero_le_one, and_self, I]⟩
+  let z1 : I := ⟨1, by simp only [Set.mem_Icc, zero_le_one, Std.le_refl, and_self, I]⟩
   let gpath : I → Plane := fun r ↦
     G.graphReplacementMap (edgePathInOneSkeleton (K := K) e r)
   have hgpath : Continuous gpath := by
@@ -437,7 +437,8 @@ theorem faceFillingsGraphAvoidInteriors_of_verticesAvoid
       have hAExterior : Set.MapsTo gpath A J.exteriorRegion :=
         J.mapsTo_exteriorRegion_of_isPreconnected isPreconnected_Ioc
           hgpath.continuousOn (hoffCarrier hAoutside)
-          ⟨z1, by simp [A, z0, z1], hz1Exterior⟩
+          ⟨z1, by simp only [Set.Icc.mk_zero, Set.Icc.mk_one, Set.mem_Ioc, zero_lt_one,
+            Std.le_refl, and_self, A, z0, z1], hz1Exterior⟩
       have hrA : r ∈ A := by
         constructor
         · change (0 : ℝ) < r.1
@@ -471,7 +472,8 @@ theorem faceFillingsGraphAvoidInteriors_of_verticesAvoid
         have hAExterior : Set.MapsTo gpath A J.exteriorRegion :=
           J.mapsTo_exteriorRegion_of_isPreconnected isPreconnected_Ico
             hgpath.continuousOn (hoffCarrier hAoutside)
-            ⟨z0, by simp [A, z0, z1], hz0Exterior⟩
+            ⟨z0, by simp only [Set.Icc.mk_zero, Set.Icc.mk_one, Set.mem_Ico, Std.le_refl,
+              zero_lt_one, and_self, A, z0, z1], hz0Exterior⟩
         have hrA : r ∈ A := by
           constructor
           · exact r.2.1

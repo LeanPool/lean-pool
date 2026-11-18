@@ -165,7 +165,9 @@ theorem range_walkGeometricPath_mapLe_restrictedTo (C : Set Plane)
   by_cases hzero : p.length = 0
   · cases p with
     | nil => rfl
-    | cons h q => simp at hzero
+    | cons h q => simp only [SimpleGraph.Walk.length_cons, Nat.add_eq_zero_iff,
+      SimpleGraph.Walk.length_eq_zero_iff,
+    one_ne_zero, and_false] at hzero
   · have hpos : 0 < p.length := Nat.pos_of_ne_zero hzero
     have hlength : p'.length = p.length := by
       change (SimpleGraph.Walk.map (.ofLE hle) p).length = p.length
@@ -177,8 +179,8 @@ theorem range_walkGeometricPath_mapLe_restrictedTo (C : Set Plane)
     apply Set.Subset.antisymm
     · intro x hx
       obtain ⟨i, hi⟩ := K.exists_walkSegment_of_mem_range p'
-        (by simpa [hlength] using hpos) hx
-      let j : Fin p.length := ⟨i.val, by simpa [hlength] using i.isLt⟩
+        (by simpa only [hlength] using hpos) hx
+      let j : Fin p.length := ⟨i.val, by simpa only [hlength] using i.isLt⟩
       apply (K.restrictedTo C).walkSegment_subset_range p j
       rw [hmap i.val, hmap (i.val + 1)] at hi
       simpa [j] using hi
@@ -332,7 +334,7 @@ private theorem cycle_adj (p : K.vertexGraph.Walk v v) (hp : p.IsCycle)
     have heq : i.val + 1 = p.length := by omega
     have hadj := p.adj_getVert_succ i.val_lt
     rw [heq, p.getVert_length] at hadj
-    simpa using hadj
+    simpa only [SimpleGraph.Walk.getVert_zero] using hadj
 
 private theorem cycle_edge_face (p : K.vertexGraph.Walk v v) (hp : p.IsCycle)
     (i : ZMod p.length) :

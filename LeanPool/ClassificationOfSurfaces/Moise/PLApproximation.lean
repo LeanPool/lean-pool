@@ -98,7 +98,7 @@ theorem interior_convexHull_fin3_eq_simplex_interior (p : Fin 3 → Plane)
     · exact b.affineCombination_coord_eq_self x
   · rintro ⟨w, hw, hwI, hwx⟩ i
     have hwx' : (Finset.univ.affineCombination ℝ p) w = x := by
-      simpa [S] using hwx
+      simpa only [Nat.reduceAdd] using hwx
     have hbp : (b : Fin 3 → Plane) = p := rfl
     rw [← hbp] at hwx'
     have hcoord := congrArg (b.coord i) hwx'.symm
@@ -160,7 +160,7 @@ theorem PlaneComplex.frontier_cellCarrier_coveredBy_oneSkeleton (K : PlaneComple
   have hscard : s.card = 2 := by
     change ((Finset.univ.erase i).map qe).card = 2
     rw [Finset.card_map, Finset.card_erase_of_mem (Finset.mem_univ i)]
-    simp
+    simp only [Finset.card_univ, Fintype.card_fin, Nat.add_one_sub_one]
   have hsK : s ∈ K.simplexes := K.down_closed t (K.mem_simplexes_of_mem_cells ht)
     s hsSub (Finset.card_pos.mp (by omega))
   have hsOne : s ∈ K.oneSkeleton.simplexes :=
@@ -464,7 +464,9 @@ theorem PlaneComplex.exists_face_containing_polygon_edge
     rcases hone_or_two with hone | htwo
     · obtain ⟨v, rfl⟩ := Finset.card_eq_one.mp hone
       have hmv : m = K.position v := by
-        simpa [PlaneComplex.cellCarrier] using hms
+        simpa only [cellCarrier, Finset.coe_singleton, Set.image_singleton,
+          convexHull_singleton,
+    Set.mem_singleton_iff] using hms
       exact (hm_ne_vertex v hmv).elim
     · exact htwo
   obtain ⟨v, w, hvw, rfl⟩ := Finset.card_eq_two.mp hscard
@@ -472,18 +474,20 @@ theorem PlaneComplex.exists_face_containing_polygon_edge
   let B := K.position w
   have hAB : A ≠ B := by
     intro h
-    exact hvw (K.position_injective (by simpa [A, B] using h))
+    exact hvw (K.position_injective (by simpa only [A, B] using h))
   have himage : K.position '' (({v, w} : Finset K.Vertex) : Set K.Vertex) =
       ({K.position v, K.position w} : Set Plane) := by
     ext x
-    simp
+    simp only [Finset.coe_insert, Finset.coe_singleton, Set.image_insert_eq,
+      Set.image_singleton,
+    Set.mem_insert_iff, Set.mem_singleton_iff]
   have hmABSegment : m ∈ segment ℝ A B := by
     simpa only [PlaneComplex.cellCarrier, himage, convexHull_pair, A, B] using hms
   have hmAB : m ∈ openSegment ℝ A B := by
     rw [← insert_endpoints_openSegment] at hmABSegment
     rcases hmABSegment with h | h | h
-    · exact (hm_ne_vertex v (by simpa [A] using h)).elim
-    · exact (hm_ne_vertex w (by simpa [B] using h)).elim
+    · exact (hm_ne_vertex v (by simpa only [A] using h)).elim
+    · exact (hm_ne_vertex w (by simpa only [B] using h)).elim
     · exact h
   have hbaseAB : segment ℝ A B ⊆ J.carrier := by
     rw [← hsupport]
@@ -497,7 +501,7 @@ theorem PlaneComplex.exists_face_containing_polygon_edge
     rw [mem_affineSpan_pair_iff_exists_lineMap_eq]
     rw [PolygonalCircle.edgeSegment, segment_eq_image_lineMap] at hyEdge
     obtain ⟨r, -, hry⟩ := hyEdge
-    exact ⟨r, by simpa [P, Q] using hry⟩
+    exact ⟨r, by simpa only [P, Q] using hry⟩
   have hmABline : m ∈ affineSpan ℝ ({A, B} : Set Plane) := by
     rw [mem_affineSpan_pair_iff_exists_lineMap_eq]
     rw [openSegment_eq_image_lineMap] at hmAB
@@ -517,10 +521,12 @@ theorem PlaneComplex.exists_face_containing_polygon_edge
       affineSpan ℝ ({P, Q} : Set Plane) := hlineAB.symm.trans hlinePQ
   have hAline : A ∈ affineSpan ℝ ({P, Q} : Set Plane) := by
     rw [← hABlinePQ]
-    exact subset_affineSpan ℝ ({A, B} : Set Plane) (by simp)
+    exact subset_affineSpan ℝ ({A, B} : Set Plane) (by simp only [Set.mem_insert_iff,
+      Set.mem_singleton_iff, true_or])
   have hBline : B ∈ affineSpan ℝ ({P, Q} : Set Plane) := by
     rw [← hABlinePQ]
-    exact subset_affineSpan ℝ ({A, B} : Set Plane) (by simp)
+    exact subset_affineSpan ℝ ({A, B} : Set Plane) (by simp only [Set.mem_insert_iff,
+      Set.mem_singleton_iff, or_true])
   have hAoutside : A ∉ openSegment ℝ P Q := by
     intro hAopen
     have hAedge : A ∈ J.edgeSegment i :=
@@ -561,7 +567,7 @@ theorem PolygonalCircle.exists_mapEmbedding_of_affineOn_complex
     {f : Plane → Plane} (hinj : Set.InjOn f K.support)
     (haffine : ∀ s ∈ K.simplexes, IsAffineOn f (K.cellCarrier s)) :
     ∃ J' : PolygonalCircle, J'.carrier = f '' J.carrier := by
-  have hinjJ : Set.InjOn f J.carrier := by simpa [← hsupport] using hinj
+  have hinjJ : Set.InjOn f J.carrier := by simpa only [← hsupport] using hinj
   have hedge : ∀ i : ZMod J.n,
       f '' J.edgeSegment i =
         segment ℝ (f (J.vertex i)) (f (J.vertex (i + 1))) := by
@@ -673,7 +679,7 @@ theorem PolygonalCircle.closedRegion_subset_closedBall_of_carrier_subset
     let ray : Set Plane := line '' Set.Ici (1 : ℝ)
     have hxRay : x ∈ ray := by
       refine ⟨1, Set.mem_Ici.mpr le_rfl, ?_⟩
-      simp [line]
+      simp only [AffineMap.lineMap_apply_one, line]
     have hrayPreconnected : IsPreconnected ray := by
       have hlineContinuous : ContinuousOn line (Set.Ici (1 : ℝ)) :=
         line.continuous_of_finiteDimensional.continuousOn
@@ -687,7 +693,7 @@ theorem PolygonalCircle.closedRegion_subset_closedBall_of_carrier_subset
         rw [dist_lineMap_left, Real.norm_eq_abs, abs_of_nonneg ht0, dist_comm c x]
       rw [hdformula] at hyt
       have hdle : dist x c ≤ t * dist x c :=
-        by simpa using mul_le_mul_of_nonneg_right ht (dist_nonneg : 0 ≤ dist x c)
+        by simpa only [one_mul] using mul_le_mul_of_nonneg_right ht (dist_nonneg : 0 ≤ dist x c)
       exact (not_lt_of_ge (hdle.trans hyt)) hdist
     have hraySplit : ray ⊆ J.interiorRegion ∪ J.exteriorRegion := by
       rw [J.interior_union_exterior]
@@ -857,7 +863,7 @@ theorem exists_continuous_extension_of_close_on_frontier
     change h x + e x = b x
     rw [hex]
     change h x + (b x - h x) = b x
-    module
+    exact add_sub_cancel (h x) (b x)
   · intro x hx
     change dist (h x + e x) (h x) ≤ r
     rw [dist_eq_norm, add_sub_cancel_left]
@@ -991,7 +997,9 @@ theorem IsPLOnSet.comp_polygonal_embedding (J J' : PolygonalCircle)
     rw [← convexHull_pair]
     congr 1
     ext x
-    simp
+    simp only [Finset.coe_insert, Finset.coe_singleton, Set.image_insert_eq,
+      Set.image_singleton,
+    Set.mem_insert_iff, Set.mem_singleton_iff]
   rw [← hpair]
   exact convexHull_mono (Set.image_mono hsi)
 
@@ -1780,7 +1788,7 @@ theorem PlaneComplex.cellwiseExtensionMap_isPL (K : PlaneComplex)
     intro a ha
     dsimp [lines]
     rw [List.mem_flatMap]
-    exact ⟨tc, by simp, ha⟩
+    exact ⟨tc, by simp only [Finset.mem_toList, Finset.mem_attach], ha⟩
   obtain ⟨z, hzInterior⟩ := R.interior_triangleCarrier_nonempty T
   have hhit : (interior (R.triangleCarrier T.1) ∩
       target.toPlaneComplex.support).Nonempty := by

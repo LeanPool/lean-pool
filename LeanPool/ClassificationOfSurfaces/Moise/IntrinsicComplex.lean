@@ -130,7 +130,7 @@ theorem faceCarrier_closed (t : Finset K.Vertex) : IsClosed (K.faceCarrier t) :=
         stdSimplex ℝ K.Vertex ∩ ⋂ v ∈ {v : K.Vertex | v ∉ t},
           {x : K.Vertex → ℝ | x v = 0} := by
       ext x
-      simp [ambientFaceCarrier]
+      simp only [ambientFaceCarrier, Set.mem_ofPred_eq, Set.mem_inter_iff, Set.mem_iInter]
     rw [hrepr]
     exact (isClosed_stdSimplex ℝ K.Vertex).inter
       (isClosed_biInter fun v _ => isClosed_eq (continuous_apply v) continuous_const)
@@ -238,7 +238,7 @@ theorem faceCarrier_edge_subset_oneSkeleton (e : K.Edge) :
 theorem oneSkeleton_eq_iUnion_faceCarrier :
     K.oneSkeleton = ⋃ e : K.Edge, K.faceCarrier e.1 := by
   ext x
-  simp [oneSkeleton]
+  simp only [oneSkeleton, Subtype.exists, exists_prop, Set.mem_ofPred_eq, Set.mem_iUnion]
 
 theorem oneSkeleton_closed : IsClosed K.oneSkeleton := by
   rw [K.oneSkeleton_eq_iUnion_faceCarrier]
@@ -531,12 +531,14 @@ theorem continuous_edgePath (e : K.Edge) : Continuous (K.edgePath e) := by
 theorem edgePath_zero (e : K.Edge) :
     K.edgePath e ⟨0, by simp⟩ = K.edgeFirstPoint e := by
   apply Subtype.ext
-  simp [edgePath, AffineMap.lineMap_apply_module]
+  simp only [edgePath, AffineMap.lineMap_apply_module, sub_zero, one_smul, zero_smul, add_zero,
+    Subtype.coe_eta]
 
 theorem edgePath_one (e : K.Edge) :
     K.edgePath e ⟨1, by simp⟩ = K.edgeSecondPoint e := by
   apply Subtype.ext
-  simp [edgePath, AffineMap.lineMap_apply_module]
+  simp only [edgePath, AffineMap.lineMap_apply_module, sub_self, zero_smul, one_smul, zero_add,
+    Subtype.coe_eta]
 
 @[simp] theorem edgePath_apply_first (e : K.Edge) (r : Set.Icc (0 : ℝ) 1) :
     (K.edgePath e r).1 (K.edgeFirst e) = 1 - r.1 := by
@@ -569,12 +571,12 @@ theorem injective_mappedEdgePath {h : K.realization → Plane} (hh : Function.In
 
 theorem mappedEdgePath_zero (h : K.realization → Plane) (e : K.Edge) :
     K.mappedEdgePath h e ⟨0, by simp⟩ = h (K.edgeFirstPoint e) := by
-  change h (K.edgePath e ⟨0, by simp⟩) = _
+  change h (K.edgePath e ⟨0, by simp only [Set.mem_Icc, Std.le_refl, zero_le_one, and_self]⟩) = _
   rw [K.edgePath_zero e]
 
 theorem mappedEdgePath_one (h : K.realization → Plane) (e : K.Edge) :
     K.mappedEdgePath h e ⟨1, by simp⟩ = h (K.edgeSecondPoint e) := by
-  change h (K.edgePath e ⟨1, by simp⟩) = _
+  change h (K.edgePath e ⟨1, by simp only [Set.mem_Icc, zero_le_one, Std.le_refl, and_self]⟩) = _
   rw [K.edgePath_one e]
 
 /-- Intrinsic face carriers meet exactly in the carrier of the common vertex set. -/
@@ -588,9 +590,9 @@ theorem faceCarrier_inter (s t : Finset K.Vertex) :
   · intro hst
     constructor
     · intro v hv
-      exact hst v (by simp [hv])
+      exact hst v (by simp only [Finset.mem_inter, hv, false_and, not_false_eq_true])
     · intro v hv
-      exact hst v (by simp [hv])
+      exact hst v (by simp only [Finset.mem_inter, hv, and_false, not_false_eq_true])
 
 /-- The canonical interval path covers exactly the barycentric carrier of its edge. -/
 theorem range_edgePath (e : K.Edge) :
@@ -713,10 +715,10 @@ theorem exists_eq_vertexPoint_of_mem_faceCarrier_of_card_le_one
     have := Finset.card_pos.mpr hsNonempty
     omega
   obtain ⟨v, rfl⟩ := Finset.card_eq_one.mp hsCard
-  have hvt : v ∈ t.1 := hst (by simp)
+  have hvt : v ∈ t.1 := hst (by simp only [Finset.mem_singleton])
   let vUsed : K.UsedVertex := ⟨v, t.1, t.2, hvt⟩
   exact ⟨vUsed, K.eq_vertexPoint_of_mem_faceCarrier_singleton vUsed x (by
-    simpa [vUsed] using hx)⟩
+    simpa only [vUsed] using hx)⟩
 
 /-- Exact range of an intrinsic edge after applying an ambient map. -/
 theorem range_mappedEdgePath (h : K.realization → Plane) (e : K.Edge) :
@@ -911,7 +913,9 @@ theorem barycentricMap_isPL (p : K.Vertex → Plane) :
     ∑ v, (LinearMap.proj v).smulRight (p v)
   refine K.isPLMap_of_affine (K.barycentricMap p) a.toAffineMap ?_
   intro x
-  simp [barycentricMap, a]
+  simp only [barycentricMap, LinearMap.coe_toAffineMap, LinearMap.coe_sum,
+    LinearMap.coe_smulRight,
+    LinearMap.coe_proj, Function.eval, Finset.sum_apply, a]
 
 /-- A homeomorphism of canonical realizations that is intrinsically PL in both directions. -/
 structure PLHomeomorph (L : IntrinsicTwoComplex) where

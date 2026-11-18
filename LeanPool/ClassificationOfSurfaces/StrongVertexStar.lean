@@ -112,7 +112,7 @@ private theorem tendsto_approachPoint
           (Pi.single v (1 : ℝ) : T.Vertex → ℝ)
           (Pi.single w (1 : ℝ) : T.Vertex → ℝ)) :=
     AffineMap.lineMap_continuous
-  simpa [Function.comp_def] using
+  simpa only [Function.comp_def, AffineMap.lineMap_apply_zero] using
     hcontinuous.continuousAt.tendsto.comp tendsto_approachRatio
 
 private theorem approachPoint_mem_faceCarrier

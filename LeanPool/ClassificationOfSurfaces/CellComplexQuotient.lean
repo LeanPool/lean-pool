@@ -152,7 +152,8 @@ def wordEdgeOccurrences {Edge : Type} [DecidableEq Edge]
 theorem mem_wordEdgeOccurrences {Edge : Type} [DecidableEq Edge]
     (word : List (SignedDart Edge)) (e : Edge) (i : Fin word.length) :
     i ∈ wordEdgeOccurrences word e ↔ SignedDart.edgeName (word.get i) = e := by
-  simp [wordEdgeOccurrences]
+  simp only [wordEdgeOccurrences, List.get_eq_getElem, Finset.mem_filter, Finset.mem_univ,
+    true_and]
 
 /-- A one-face presentation is incidence-valid when every edge name occurs once or twice, with
 orientation ignored. Boundary status is then derived from the occurrence count. -/

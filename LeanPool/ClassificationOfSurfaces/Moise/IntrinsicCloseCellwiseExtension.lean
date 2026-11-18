@@ -415,8 +415,8 @@ theorem graphAvoidsInteriors_of_verticesAvoid
     exact Set.disjoint_left.mp hinteriorCarrier hxInterior
       (A.intrinsicMap_mem_imagePolygon t hxt ⟨e, hxe⟩)
   let I := Set.Icc (0 : ℝ) 1
-  let z0 : I := ⟨0, by simp [I]⟩
-  let z1 : I := ⟨1, by simp [I]⟩
+  let z0 : I := ⟨0, by simp only [Set.mem_Icc, Std.le_refl, zero_le_one, and_self, I]⟩
+  let z1 : I := ⟨1, by simp only [Set.mem_Icc, zero_le_one, Std.le_refl, and_self, I]⟩
   let gpath : I → Plane := fun s ↦ A.intrinsicMap (K.edgePath e s)
   have hpathCarrier (s : I) : K.edgePath e s ∈ K.faceCarrier e.1 := by
     rw [← K.range_edgePath e]
@@ -465,7 +465,8 @@ theorem graphAvoidsInteriors_of_verticesAvoid
         simpa only [gpath, z1, K.edgePath_one, K.vertexPoint_edgeSecondUsed] using hv
       have hBExterior : Set.MapsTo gpath B J.exteriorRegion :=
         J.mapsTo_exteriorRegion_of_isPreconnected isPreconnected_Ioc hgpath.continuousOn
-          (hoffCarrier hBout) ⟨z1, by simp [B, z0, z1], hz1Exterior⟩
+          (hoffCarrier hBout) ⟨z1, by simp only [Set.Icc.mk_zero, Set.Icc.mk_one, Set.mem_Ioc,
+            zero_lt_one, Std.le_refl, and_self, B, z0, z1], hz1Exterior⟩
       have hrB : r ∈ B := by
         constructor
         · change (0 : ℝ) < r.1
@@ -498,7 +499,8 @@ theorem graphAvoidsInteriors_of_verticesAvoid
           simpa only [gpath, z0, K.edgePath_zero, K.vertexPoint_edgeFirstUsed] using hv
         have hBExterior : Set.MapsTo gpath B J.exteriorRegion :=
           J.mapsTo_exteriorRegion_of_isPreconnected isPreconnected_Ico hgpath.continuousOn
-            (hoffCarrier hBout) ⟨z0, by simp [B, z0, z1], hz0Exterior⟩
+            (hoffCarrier hBout) ⟨z0, by simp only [Set.Icc.mk_zero, Set.Icc.mk_one, Set.mem_Ico,
+              Std.le_refl, zero_lt_one, and_self, B, z0, z1], hz0Exterior⟩
         have hrB : r ∈ B := by
           constructor
           · change (0 : ℝ) ≤ r.1

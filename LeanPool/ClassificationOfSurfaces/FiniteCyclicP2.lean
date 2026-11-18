@@ -705,7 +705,7 @@ private theorem sum_replace_add {ι : Type*} [Fintype ι] [DecidableEq ι]
     intro x hx
     have hne : x ≠ selected :=
       Finset.ne_of_mem_erase hx
-    simp [hne]
+    simp only [hne, ↓reduceIte]
   rw [hsum]
   calc
     (left + ∑ x ∈ Finset.univ.erase selected, values x) + right =

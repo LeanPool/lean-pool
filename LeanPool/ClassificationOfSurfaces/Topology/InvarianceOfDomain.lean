@@ -462,7 +462,9 @@ theorem invariance_of_domain_open_map (f : E → E) (U : Set E) (hU : IsOpen U)
   obtain ⟨ε, hε , hclosedball⟩ := hclosedball x hxU
   -- Define `g` as a scaling and translating function.
   let g := fun (v : E) => ε • v + x
-  have hg_inj : Function.Injective g := by simp [Function.Injective, g, hε.ne']
+  have hg_inj : Function.Injective g := by simp only [Function.Injective, add_left_inj, ne_eq,
+    hε.ne', not_false_eq_true, smul_right_inj, imp_self,
+    implies_true, g]
   have h_g_eq : g '' closedBall 0 1 = closedBall x ε := by
     rw [← Set.image_image (fun v ↦ v + x) (fun v ↦ ε • v) (closedBall 0 1), Set.image_smul,
       smul_unitClosedBall]

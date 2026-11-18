@@ -133,7 +133,7 @@ theorem exists_lastExitData {γ : ℝ → Plane} {center : Plane} {radius : ℝ}
     have htu : t.1 < u := by dsimp [u]; linarith
     have hdistut : dist u t.1 < δ := by
       rw [Real.dist_eq]
-      have : u - t.1 = d := by simp [u]
+      have : u - t.1 = d := by simp only [add_sub_cancel_left, u]
       rw [this, abs_of_pos hd]
       exact hdδ
     have hγclose : dist (γ u) (γ t.1) < ε := hclose hu hdistut
@@ -142,7 +142,7 @@ theorem exists_lastExitData {γ : ℝ → Plane} {center : Plane} {radius : ℝ}
         dist (γ u) center ≤ dist (γ u) (γ t.1) + dist (γ t.1) center :=
           dist_triangle _ _ _
         _ < ε + dist (γ t.1) center := by linarith
-        _ = radius := by simp [ε]
+        _ = radius := by simp only [sub_add_cancel, ε]
     exact hafter u hu htu (Metric.mem_closedBall.mpr huinner.le)
   exact ⟨{
     parameter := t.1
@@ -215,7 +215,7 @@ theorem exists_weakLastExitData {γ : ℝ → Plane} {center : Plane} {radius : 
     have htu : t.1 < u := by dsimp [u]; linarith
     have hdistut : dist u t.1 < δ := by
       rw [Real.dist_eq]
-      have : u - t.1 = d := by simp [u]
+      have : u - t.1 = d := by simp only [add_sub_cancel_left, u]
       rw [this, abs_of_pos hd]
       exact hdδ
     have hγclose : dist (γ u) (γ t.1) < ε := hclose hu hdistut
@@ -224,7 +224,7 @@ theorem exists_weakLastExitData {γ : ℝ → Plane} {center : Plane} {radius : 
         dist (γ u) center ≤ dist (γ u) (γ t.1) + dist (γ t.1) center :=
           dist_triangle _ _ _
         _ < ε + dist (γ t.1) center := by linarith
-        _ = radius := by simp [ε]
+        _ = radius := by simp only [sub_add_cancel, ε]
     exact hafter u hu htu (Metric.mem_closedBall.mpr huinner.le)
   exact ⟨{
     parameter := t.1
@@ -279,12 +279,12 @@ theorem exists_twoSidedExitData {γ : ℝ → Plane} {first second : Plane} {rad
   have hqcont : Continuous q := by fun_prop
   have hρcont : ContinuousOn ρ (Set.Icc (0 : ℝ) 1) :=
     hcont.comp hqcont.continuousOn hqMaps
-  have hρzero : ρ 0 = second := by simp [ρ, q, hfinish]
+  have hρzero : ρ 0 = second := by simp only [mul_zero, sub_zero, hfinish, ρ, q]
   have hleftFirstBall : γ a ∈ Metric.closedBall first radius := by
     rw [Metric.mem_closedBall]
     exact L.on_sphere.le
   have hleftOutsideSecond : ρ 1 ∉ Metric.closedBall second radius := by
-    have hρone : ρ 1 = γ a := by simp [ρ, q, a]
+    have hρone : ρ 1 = γ a := by simp only [mul_one, sub_sub_cancel, ρ, q, a]
     rw [hρone]
     exact fun hsecond => Set.disjoint_left.mp hdisjoint hleftFirstBall hsecond
   obtain ⟨R⟩ := exists_lastExitData hradius hρcont hρzero hleftOutsideSecond
@@ -367,9 +367,9 @@ theorem exists_boundaryExitData {γ : ℝ → Plane} {first second : Plane} {rad
       linarith
   have hρcont : ContinuousOn ρ (Set.Icc (0 : ℝ) 1) := by
     exact hcont.comp (by fun_prop) hqMaps
-  have hρstart : dist (ρ 0) second = radius := by simp [ρ, q, hfinish]
+  have hρstart : dist (ρ 0) second = radius := by simp only [mul_zero, sub_zero, hfinish, ρ, q]
   have hρfinishOutside : ρ 1 ∉ Metric.closedBall second radius := by
-    have hρone : ρ 1 = γ a := by simp [ρ, q, a]
+    have hρone : ρ 1 = γ a := by simp only [mul_one, sub_sub_cancel, ρ, q, a]
     rw [hρone]
     intro hsecond
     exact Set.disjoint_left.mp hdisjoint
@@ -461,7 +461,7 @@ theorem eq_endpoint_of_mem_radial_segment {center p x : Plane} {radius : ℝ}
   have ht1 : t = 1 := by
     exact mul_right_cancel₀ hradius.ne'
       (hdist.symm.trans (hxsphere.trans (one_mul radius).symm))
-  simp [ht1]
+  simp only [ht1, AffineMap.lineMap_apply_one]
 
 theorem disjoint_radial_segments_away_center {center p q : Plane} {radius : ℝ}
     (hradius : 0 < radius) (hp : dist p center = radius)
@@ -497,7 +497,7 @@ theorem Path.trans_injective_of_range_inter {X : Type*} [TopologicalSpace X]
       ⟨⟨a, rfl⟩, ⟨b, hst.symm⟩⟩
     have hjoin : γ a = y := by
       have : γ a ∈ ({y} : Set X) := hinter ▸ hmem
-      simpa using this
+      simpa only [Set.mem_singleton_iff] using this
     have ha : a = (1 : unitInterval) := hγ (hjoin.trans γ.target.symm)
     have hb : b = (0 : unitInterval) := hδ (hst.symm.trans (hjoin.trans δ.source.symm))
     apply Subtype.ext
@@ -513,7 +513,7 @@ theorem Path.trans_injective_of_range_inter {X : Type*} [TopologicalSpace X]
       ⟨⟨a, rfl⟩, ⟨b, hst⟩⟩
     have hjoin : γ a = y := by
       have : γ a ∈ ({y} : Set X) := hinter ▸ hmem
-      simpa using this
+      simpa only [Set.mem_singleton_iff] using this
     have ha : a = (1 : unitInterval) := hγ (hjoin.trans γ.target.symm)
     have hb : b = (0 : unitInterval) := hδ (hst.trans (hjoin.trans δ.source.symm))
     apply Subtype.ext
@@ -567,7 +567,7 @@ private theorem exists_disjoint_image_face_thickenings {h : Plane → Plane}
     rw [Set.disjoint_iff_inter_eq_empty, K.image_cellCarrier_inter hinj hs ht]
     have hinter : s ∩ t = ∅ := Finset.disjoint_iff_inter_eq_empty.mp hst
     rw [hinter, PlaneComplex.cellCarrier]
-    simp
+    simp only [Finset.coe_empty, Set.image_empty, convexHull_empty]
   exact hdisjoint.exists_thickenings hcompactS hcompactT.isClosed
 
 /-- Moise's pairwise-disjoint circular vertex regions, also disjoint from every nonincident
@@ -598,7 +598,9 @@ theorem edge_lineMap_mem_support (i : Fin (Fintype.card K.EdgeFace)) {t : ℝ}
       (({K.edgeFirst i, K.edgeSecond i} : Finset K.Vertex) : Set K.Vertex) =
       {K.position (K.edgeFirst i), K.position (K.edgeSecond i)} := by
     ext x
-    simp
+    simp only [Finset.coe_insert, Finset.coe_singleton, Set.image_insert_eq,
+      Set.image_singleton,
+    Set.mem_insert_iff, Set.mem_singleton_iff]
   rw [himage, convexHull_pair]
   exact lineMap_mem_segment ℝ _ _ ht
 
@@ -612,12 +614,12 @@ theorem edgeCurve_continuousOn {h : Plane → Plane} (hcont : ContinuousOn h K.s
 @[simp] theorem edgeCurve_zero (h : Plane → Plane)
     (i : Fin (Fintype.card K.EdgeFace)) :
     K.edgeCurve h i 0 = h (K.position (K.edgeFirst i)) := by
-  simp [edgeCurve]
+  simp only [edgeCurve, AffineMap.lineMap_apply_zero]
 
 @[simp] theorem edgeCurve_one (h : Plane → Plane)
     (i : Fin (Fintype.card K.EdgeFace)) :
     K.edgeCurve h i 1 = h (K.position (K.edgeSecond i)) := by
-  simp [edgeCurve]
+  simp only [edgeCurve, AffineMap.lineMap_apply_one]
 
 /-- The two ordered circle crossings which delimit the central part of an embedded edge. -/
 structure EdgeTrimData (h : Plane → Plane) (D : K.VertexDiskControl h)
@@ -775,14 +777,14 @@ theorem exists_edgeTrimData
   have hρcont : ContinuousOn ρ (Set.Icc (0 : ℝ) 1) := by
     exact (K.edgeCurve_continuousOn hcont i).comp hqcont.continuousOn hqMaps
   have hρzero : ρ 0 = h (K.position (K.edgeSecond i)) := by
-    simp [ρ, q]
+    simp only [mul_zero, sub_zero, edgeCurve_one, ρ, q]
   have hleftFirstBall : K.edgeCurve h i a ∈
       Metric.closedBall (h (K.position (K.edgeFirst i))) D.radius := by
     rw [Metric.mem_closedBall]
     exact L.on_sphere.le
   have hleftOutsideSecond : ρ 1 ∉
       Metric.closedBall (h (K.position (K.edgeSecond i))) D.radius := by
-    have hρone : ρ 1 = K.edgeCurve h i a := by simp [ρ, q, a]
+    have hρone : ρ 1 = K.edgeCurve h i a := by simp only [mul_one, sub_sub_cancel, ρ, q, a]
     rw [hρone]
     intro hsecond
     exact Set.disjoint_left.mp
@@ -972,7 +974,9 @@ theorem disjoint_centralCarrier {j : Fin (Fintype.card K.EdgeFace)}
         (({K.edgeFirst i, K.edgeSecond i} : Finset K.Vertex) : Set K.Vertex) =
         {K.position (K.edgeFirst i), K.position (K.edgeSecond i)} := by
       ext z
-      simp
+      simp only [Finset.coe_insert, Finset.coe_singleton, Set.image_insert_eq,
+        Set.image_singleton,
+    Set.mem_insert_iff, Set.mem_singleton_iff]
     rw [himage, convexHull_pair]
     exact openSegment_subset_segment ℝ _ _ hxOpen
   have hx'Support : x' ∈ K.support := by
@@ -982,7 +986,9 @@ theorem disjoint_centralCarrier {j : Fin (Fintype.card K.EdgeFace)}
         (({K.edgeFirst j, K.edgeSecond j} : Finset K.Vertex) : Set K.Vertex) =
         {K.position (K.edgeFirst j), K.position (K.edgeSecond j)} := by
       ext z
-      simp
+      simp only [Finset.coe_insert, Finset.coe_singleton, Set.image_insert_eq,
+        Set.image_singleton,
+    Set.mem_insert_iff, Set.mem_singleton_iff]
     rw [himage, convexHull_pair]
     exact openSegment_subset_segment ℝ _ _ hx'Open
   have hxx' : x = x' := hinj hxSupport hx'Support (hxy.trans hx'y.symm)
@@ -1112,7 +1118,9 @@ theorem exists_centralPolygonalArc {h : Plane → Plane}
         (({K.edgeFirst i, K.edgeSecond i} : Finset K.Vertex) : Set K.Vertex) =
         {K.position (K.edgeFirst i), K.position (K.edgeSecond i)} := by
       ext z
-      simp
+      simp only [Finset.coe_insert, Finset.coe_singleton, Set.image_insert_eq,
+        Set.image_singleton,
+    Set.mem_insert_iff, Set.mem_singleton_iff]
     rw [himage, convexHull_pair]
     exact lineMap_mem_segment ℝ _ _
       ⟨(K.edgeTrim hcont D i).left_pos.le.trans ht.1,
@@ -1155,7 +1163,9 @@ theorem resolvedCarrier_subset_tube (A : K.CentralPolygonalArc hcont D C i) :
       (({K.edgeFirst i, K.edgeSecond i} : Finset K.Vertex) : Set K.Vertex) =
       {K.position (K.edgeFirst i), K.position (K.edgeSecond i)} := by
     ext z
-    simp
+    simp only [Finset.coe_insert, Finset.coe_singleton, Set.image_insert_eq,
+      Set.image_singleton,
+    Set.mem_insert_iff, Set.mem_singleton_iff]
   rw [himage, convexHull_pair]
   exact lineMap_mem_segment ℝ _ _
     ⟨(K.edgeTrim hcont D i).left_pos.le,
@@ -1180,7 +1190,9 @@ theorem resolvedCarrier_subset_edgeConvexHull
       (({K.edgeFirst i, K.edgeSecond i} : Finset K.Vertex) : Set K.Vertex) =
       {K.position (K.edgeFirst i), K.position (K.edgeSecond i)} := by
     ext z
-    simp
+    simp only [Finset.coe_insert, Finset.coe_singleton, Set.image_insert_eq,
+      Set.image_singleton,
+    Set.mem_insert_iff, Set.mem_singleton_iff]
   rw [himage, convexHull_pair]
   exact lineMap_mem_segment ℝ _ _
     ⟨(K.edgeTrim hcont D i).left_pos.le,
@@ -1238,7 +1250,7 @@ theorem resolvedWalk_length_pos (A : K.CentralPolygonalArc hcont D C i) :
   apply A.start_ne_finish
   rw [← A.data.resolvedVertex_start, ← A.data.resolvedVertex_finish]
   congr 2
-  exact Fin.ext (by simp [hzero])
+  exact Fin.ext (by simp only [Fin.coe_ofNat_eq_mod, hzero, zero_add, Nat.mod_succ, Fin.val_last])
 
 /-- The polygonal arc model from Chapter 6.1 gives a continuous injective unit-interval
 parameterization. -/
@@ -1394,7 +1406,9 @@ theorem trimmedCarrier_avoids_nonincident
       (({K.edgeFirst i, K.edgeSecond i} : Finset K.Vertex) : Set K.Vertex) =
       {K.position (K.edgeFirst i), K.position (K.edgeSecond i)} := by
     ext x
-    simp
+    simp only [Finset.coe_insert, Finset.coe_singleton, Set.image_insert_eq,
+      Set.image_singleton,
+    Set.mem_insert_iff, Set.mem_singleton_iff]
   rw [himage, convexHull_pair]
   exact openSegment_subset_segment ℝ _ _
 
@@ -1430,11 +1444,13 @@ theorem completeCarrier_subset_edgeConvexHull
   have hfirstSource : K.position (K.edgeFirst i) ∈
       K.cellCarrier (K.edgeAt i).1 := by
     rw [K.edgeAt_eq, PlaneComplex.cellCarrier]
-    exact subset_convexHull ℝ _ ⟨K.edgeFirst i, by simp, rfl⟩
+    exact subset_convexHull ℝ _ ⟨K.edgeFirst i, by simp only [Finset.coe_insert,
+      Finset.coe_singleton, Set.mem_insert_iff, Set.mem_singleton_iff, true_or], rfl⟩
   have hsecondSource : K.position (K.edgeSecond i) ∈
       K.cellCarrier (K.edgeAt i).1 := by
     rw [K.edgeAt_eq, PlaneComplex.cellCarrier]
-    exact subset_convexHull ℝ _ ⟨K.edgeSecond i, by simp, rfl⟩
+    exact subset_convexHull ℝ _ ⟨K.edgeSecond i, by simp only [Finset.coe_insert,
+      Finset.coe_singleton, Set.mem_insert_iff, Set.mem_singleton_iff, or_true], rfl⟩
   have hfirst : h (K.position (K.edgeFirst i)) ∈
       convexHull ℝ (h '' K.cellCarrier (K.edgeAt i).1) :=
     subset_convexHull ℝ _ ⟨_, hfirstSource, rfl⟩
@@ -1530,7 +1546,7 @@ theorem range_completePath (A : K.CentralPolygonalArc hcont D C i) :
     Set.range A.completePath = A.completeCarrier := by
   rw [completePath, Path.trans_range, Path.trans_range, Path.range_segment,
     Path.range_segment, A.range_middlePath]
-  simp [completeCarrier, leftSpoke, rightSpoke, Set.union_assoc]
+  simp only [completeCarrier, leftSpoke, rightSpoke, Set.union_assoc]
 
 theorem middlePath_injective (A : K.CentralPolygonalArc hcont D C i) :
     Function.Injective A.middlePath := by
@@ -1684,7 +1700,7 @@ theorem firstCenter_not_mem_trimmedCarrier (A : K.CentralPolygonalArc hcont D C 
   apply A.trimmedCarrier_avoids_first hx
   · intro heq
     have heq' : h (K.position (K.edgeFirst i)) = A.leftEndpoint := by
-      simpa [leftEndpoint] using heq
+      simpa only [leftEndpoint] using heq
     have hs := A.leftEndpoint_on_sphere
     rw [← heq', dist_self] at hs
     linarith [D.radius_pos]
@@ -1696,7 +1712,7 @@ theorem secondCenter_not_mem_trimmedCarrier (A : K.CentralPolygonalArc hcont D C
   apply A.trimmedCarrier_avoids_second hx
   · intro heq
     have heq' : h (K.position (K.edgeSecond i)) = A.rightEndpoint := by
-      simpa [rightEndpoint] using heq
+      simpa only [rightEndpoint] using heq
     have hs := A.rightEndpoint_on_sphere
     rw [← heq', dist_self] at hs
     linarith [D.radius_pos]
@@ -1754,7 +1770,7 @@ theorem disjoint_leftSpoke_trimmedCarrier {j : Fin (Fintype.card K.EdgeFace)}
     · have hxEq : x = A'.leftEndpoint := by
         by_contra hne
         apply A'.trimmedCarrier_avoids_first hxTrim hne
-        simpa [hv] using hxBall
+        simpa only [Metric.mem_closedBall, hv] using hxBall
       have hxSphere : dist x (h (K.position (K.edgeFirst i))) = D.radius := by
         rw [hxEq, hv]
         exact A'.leftEndpoint_on_sphere
@@ -1766,7 +1782,7 @@ theorem disjoint_leftSpoke_trimmedCarrier {j : Fin (Fintype.card K.EdgeFace)}
     · have hxEq : x = A'.rightEndpoint := by
         by_contra hne
         apply A'.trimmedCarrier_avoids_second hxTrim hne
-        simpa [hv] using hxBall
+        simpa only [Metric.mem_closedBall, hv] using hxBall
       have hxSphere : dist x (h (K.position (K.edgeFirst i))) = D.radius := by
         rw [hxEq, hv]
         exact A'.rightEndpoint_on_sphere
@@ -1794,7 +1810,7 @@ theorem disjoint_rightSpoke_trimmedCarrier {j : Fin (Fintype.card K.EdgeFace)}
     · have hxEq : x = A'.leftEndpoint := by
         by_contra hne
         apply A'.trimmedCarrier_avoids_first hxTrim hne
-        simpa [hv] using hxBall
+        simpa only [Metric.mem_closedBall, hv] using hxBall
       have hxSphere : dist x (h (K.position (K.edgeSecond i))) = D.radius := by
         rw [hxEq, hv]
         exact A'.leftEndpoint_on_sphere
@@ -1806,7 +1822,7 @@ theorem disjoint_rightSpoke_trimmedCarrier {j : Fin (Fintype.card K.EdgeFace)}
     · have hxEq : x = A'.rightEndpoint := by
         by_contra hne
         apply A'.trimmedCarrier_avoids_second hxTrim hne
-        simpa [hv] using hxBall
+        simpa only [Metric.mem_closedBall, hv] using hxBall
       have hxSphere : dist x (h (K.position (K.edgeSecond i))) = D.radius := by
         rw [hxEq, hv]
         exact A'.rightEndpoint_on_sphere
@@ -1823,9 +1839,9 @@ theorem disjoint_leftOpenSpoke_leftOpenSpoke {j : Fin (Fintype.card K.EdgeFace)}
     (A : K.CentralPolygonalArc hcont D C i) (hij : i ≠ j) :
     Disjoint A.leftOpenSpoke A'.leftOpenSpoke := by
   by_cases hv : K.edgeFirst i = K.edgeFirst j
-  · simpa [leftOpenSpoke, leftSpoke, hv] using
+  · simpa only [leftOpenSpoke, leftSpoke, hv] using
       disjoint_radial_segments_away_center D.radius_pos A.leftEndpoint_on_sphere
-        (by simpa [hv] using A'.leftEndpoint_on_sphere)
+        (by simpa only [hv] using A'.leftEndpoint_on_sphere)
         (CentralPolygonalArc.leftEndpoint_ne_leftEndpoint (A' := A') A hij)
   · exact (D.vertices_disjoint _ _ hv).mono
       (Set.sdiff_subset.trans A.leftSpoke_subset_disk)
@@ -1836,9 +1852,9 @@ theorem disjoint_leftOpenSpoke_rightOpenSpoke {j : Fin (Fintype.card K.EdgeFace)
     (A : K.CentralPolygonalArc hcont D C i) (hij : i ≠ j) :
     Disjoint A.leftOpenSpoke A'.rightOpenSpoke := by
   by_cases hv : K.edgeFirst i = K.edgeSecond j
-  · simpa [leftOpenSpoke, leftSpoke, rightOpenSpoke, rightSpoke, hv, segment_symm] using
+  · simpa only [leftOpenSpoke, leftSpoke, hv, segment_symm, rightOpenSpoke, rightSpoke] using
       disjoint_radial_segments_away_center D.radius_pos A.leftEndpoint_on_sphere
-        (by simpa [hv] using A'.rightEndpoint_on_sphere)
+        (by simpa only [hv] using A'.rightEndpoint_on_sphere)
         (CentralPolygonalArc.leftEndpoint_ne_rightEndpoint (A' := A') A hij)
   · exact (D.vertices_disjoint _ _ hv).mono
       (Set.sdiff_subset.trans A.leftSpoke_subset_disk)
@@ -1849,9 +1865,9 @@ theorem disjoint_rightOpenSpoke_leftOpenSpoke {j : Fin (Fintype.card K.EdgeFace)
     (A : K.CentralPolygonalArc hcont D C i) (hij : i ≠ j) :
     Disjoint A.rightOpenSpoke A'.leftOpenSpoke := by
   by_cases hv : K.edgeSecond i = K.edgeFirst j
-  · simpa [rightOpenSpoke, rightSpoke, leftOpenSpoke, leftSpoke, hv, segment_symm] using
+  · simpa only [rightOpenSpoke, rightSpoke, hv, leftOpenSpoke, leftSpoke, segment_symm] using
       disjoint_radial_segments_away_center D.radius_pos A.rightEndpoint_on_sphere
-        (by simpa [hv] using A'.leftEndpoint_on_sphere)
+        (by simpa only [hv] using A'.leftEndpoint_on_sphere)
         (CentralPolygonalArc.rightEndpoint_ne_leftEndpoint (A' := A') A hij)
   · exact (D.vertices_disjoint _ _ hv).mono
       (Set.sdiff_subset.trans A.rightSpoke_subset_disk)
@@ -1862,9 +1878,9 @@ theorem disjoint_rightOpenSpoke_rightOpenSpoke {j : Fin (Fintype.card K.EdgeFace
     (A : K.CentralPolygonalArc hcont D C i) (hij : i ≠ j) :
     Disjoint A.rightOpenSpoke A'.rightOpenSpoke := by
   by_cases hv : K.edgeSecond i = K.edgeSecond j
-  · simpa [rightOpenSpoke, rightSpoke, hv, segment_symm] using
+  · simpa only [rightOpenSpoke, rightSpoke, hv, segment_symm] using
       disjoint_radial_segments_away_center D.radius_pos A.rightEndpoint_on_sphere
-        (by simpa [hv] using A'.rightEndpoint_on_sphere)
+        (by simpa only [hv] using A'.rightEndpoint_on_sphere)
         (CentralPolygonalArc.rightEndpoint_ne_rightEndpoint (A' := A') A hij)
   · exact (D.vertices_disjoint _ _ hv).mono
       (Set.sdiff_subset.trans A.rightSpoke_subset_disk)
@@ -1914,11 +1930,11 @@ theorem completeCarrier_avoids_nonincident
   have hvFirst : v ≠ K.edgeFirst i := by
     intro heq
     apply hv
-    simp [K.edgeAt_eq, heq]
+    simp only [K.edgeAt_eq, heq, Finset.mem_insert, Finset.mem_singleton, true_or]
   have hvSecond : v ≠ K.edgeSecond i := by
     intro heq
     apply hv
-    simp [K.edgeAt_eq, heq]
+    simp only [K.edgeAt_eq, heq, Finset.mem_insert, Finset.mem_singleton, or_true]
   rw [Set.disjoint_left]
   intro x hxBall hxCarrier
   rcases hxCarrier with (hxLeft | hxTrim) | hxRight
@@ -2172,14 +2188,18 @@ theorem edgeReplacementMap_continuous {h : Plane → Plane}
     (C : K.CentralTubeControl hcont D) (i : Fin (Fintype.card K.EdgeFace)) :
     K.edgeReplacementMap hcont D C i (K.position (K.edgeFirst i)) =
       h (K.position (K.edgeFirst i)) := by
-  simp [edgeReplacementMap, K.edgeParameter_apply_first]
+  simp only [edgeReplacementMap, K.edgeParameter_apply_first, Set.mem_Icc, Std.le_refl,
+    zero_le_one, and_self,
+    Path.extend_apply, Set.Icc.mk_zero, Path.source]
 
 @[simp] theorem edgeReplacementMap_second {h : Plane → Plane}
     (hcont : ContinuousOn h K.support) (D : K.VertexDiskControl h)
     (C : K.CentralTubeControl hcont D) (i : Fin (Fintype.card K.EdgeFace)) :
     K.edgeReplacementMap hcont D C i (K.position (K.edgeSecond i)) =
       h (K.position (K.edgeSecond i)) := by
-  simp [edgeReplacementMap, K.edgeParameter_apply_second]
+  simp only [edgeReplacementMap, K.edgeParameter_apply_second, Set.mem_Icc, zero_le_one,
+    Std.le_refl, and_self,
+    Path.extend_apply, Set.Icc.mk_one, Path.target]
 
 theorem edgeReplacementMap_image_cellCarrier {h : Plane → Plane}
     (hcont : ContinuousOn h K.support) (D : K.VertexDiskControl h)
@@ -2203,7 +2223,9 @@ theorem edgeReplacementMap_image_cellCarrier {h : Plane → Plane}
           (({K.edgeFirst i, K.edgeSecond i} : Finset K.Vertex) : Set K.Vertex) =
           {K.position (K.edgeFirst i), K.position (K.edgeSecond i)} := by
         ext z
-        simp
+        simp only [Finset.coe_insert, Finset.coe_singleton, Set.image_insert_eq,
+          Set.image_singleton,
+    Set.mem_insert_iff, Set.mem_singleton_iff]
       rw [himage, convexHull_pair]
       exact lineMap_mem_segment ℝ _ _ t.2
     refine ⟨x, hx, ?_⟩
@@ -2259,19 +2281,22 @@ private theorem mem_openSegment_of_mem_edge_not_vertex
     apply hnv
     refine ⟨K.edgeFirst i, ?_, hxFirst.symm⟩
     exact K.down_closed (K.edgeAt i).1 (K.edgeAt_mem_simplexes i) {K.edgeFirst i}
-      (by simp [K.edgeAt_eq]) (Finset.singleton_nonempty _)
+      (by simp only [K.edgeAt_eq, Finset.singleton_subset_iff, Finset.mem_insert,
+        Finset.mem_singleton, true_or]) (Finset.singleton_nonempty _)
   · intro hxSecond
     apply hnv
     refine ⟨K.edgeSecond i, ?_, hxSecond.symm⟩
     exact K.down_closed (K.edgeAt i).1 (K.edgeAt_mem_simplexes i) {K.edgeSecond i}
-      (by simp [K.edgeAt_eq]) (Finset.singleton_nonempty _)
+      (by simp only [K.edgeAt_eq, Finset.subset_insert]) (Finset.singleton_nonempty _)
   · rw [← convexHull_pair]
     rw [K.edgeAt_eq, PlaneComplex.cellCarrier] at hx
     have himage : K.position ''
         (({K.edgeFirst i, K.edgeSecond i} : Finset K.Vertex) : Set K.Vertex) =
         {K.position (K.edgeFirst i), K.position (K.edgeSecond i)} := by
       ext z
-      simp
+      simp only [Finset.coe_insert, Finset.coe_singleton, Set.image_insert_eq,
+        Set.image_singleton,
+    Set.mem_insert_iff, Set.mem_singleton_iff]
     rwa [himage] at hx
 
 theorem edgeIndexAt_eq_of_not_vertex {x : Plane}
@@ -2346,7 +2371,9 @@ theorem vertexPoint_or_exists_edge_of_mem_support
   · obtain ⟨v, rfl⟩ := Finset.card_eq_one.mp hsone
     left
     refine ⟨v, hs, ?_⟩
-    simpa [PlaneComplex.cellCarrier] using hxs
+    simpa only [cellCarrier, Finset.coe_singleton, Set.image_singleton,
+      convexHull_singleton,
+    Set.mem_singleton_iff] using hxs
   · let e : K.EdgeFace := ⟨s, Finset.mem_filter.mpr ⟨hs, hstwo⟩⟩
     obtain ⟨i, hi⟩ := K.exists_edgeAt e
     right
@@ -2367,7 +2394,8 @@ theorem graphReplacementMap_mem_targetConvexHull
     rw [K.graphReplacementMap_vertex hcont D C hv]
     exact subset_convexHull ℝ _ ⟨K.position v,
       K.cellCarrier_subset_support hv
-        (subset_convexHull ℝ _ ⟨v, by simp, rfl⟩), rfl⟩
+        (subset_convexHull ℝ _ ⟨v, by simp only [Finset.coe_singleton,
+          Set.mem_singleton_iff], rfl⟩), rfl⟩
   · have himage : K.edgeReplacementMap hcont D C i x ∈
         (K.replacementArc hcont D C i).completeCarrier := by
       rw [← K.edgeReplacementMap_image_cellCarrier hcont D C i]
@@ -2437,7 +2465,7 @@ theorem edgeReplacementMap_eq_middle {h : Plane → Plane}
         ⟨2 * (2 * K.edgeParameter i x - 1), hu⟩) = _
   rw [A.parameterization.curve_eq]
   congr 2
-  simp [Path.segment_apply, AffineMap.lineMap_apply_module]
+  simp only [Path.segment_apply, AffineMap.lineMap_apply_module, smul_eq_mul]
   ring
 
 theorem edgeReplacementMap_eq_right {h : Plane → Plane}
@@ -2561,14 +2589,18 @@ theorem graphReplacementMap_affineOn_middle {h : Plane → Plane}
     refine ⟨g, ?_⟩
     intro x hx
     have hx' : x = R.position p := by
-      simpa [R, PlaneComplex.cellCarrier] using hx
+      simpa only [cellCarrier, Finset.coe_singleton, Set.image_singleton,
+        convexHull_singleton,
+    Set.mem_singleton_iff] using hx
     subst x
     rfl
   · obtain ⟨p, q, hpq, rfl⟩ := Finset.card_eq_two.mp hcard
     have hp : R.position p ∈ R.cellCarrier ({p, q} : Finset R.Vertex) :=
-      subset_convexHull ℝ _ ⟨p, by simp, rfl⟩
+      subset_convexHull ℝ _ ⟨p, by simp only [Finset.coe_insert, Finset.coe_singleton,
+        Set.mem_insert_iff, Set.mem_singleton_iff, true_or], rfl⟩
     have hq : R.position q ∈ R.cellCarrier ({p, q} : Finset R.Vertex) :=
-      subset_convexHull ℝ _ ⟨q, by simp, rfl⟩
+      subset_convexHull ℝ _ ⟨q, by simp only [Finset.coe_insert, Finset.coe_singleton,
+        Set.mem_insert_iff, Set.mem_singleton_iff, or_true], rfl⟩
     let a := min (z (R.position p)) (z (R.position q))
     let b := max (z (R.position p)) (z (R.position q))
     have hab : a ≤ b := min_le_max
@@ -2585,7 +2617,7 @@ theorem graphReplacementMap_affineOn_middle {h : Plane → Plane}
       · left
         have hcn : c < n * A.exitData.left := by
           rw [div_lt_iff₀ hn] at hv0
-          simpa [mul_comm] using hv0
+          simpa only [Fin.isValue, mul_comm] using hv0
         exact hcn.le.trans (le_min (hzExitBounds hp).1 (hzExitBounds hq).1)
       · have hv0' : A.exitData.left ≤ c / n := le_of_not_gt hv0
         by_cases hv1 : c / n ≤ A.exitData.right
@@ -2641,7 +2673,7 @@ theorem graphReplacementMap_affineOn_middle {h : Plane → Plane}
           have hcn : n * A.exitData.right < c := by
             have : A.exitData.right < c / n := lt_of_not_ge hv1
             rw [lt_div_iff₀ hn] at this
-            simpa [mul_comm] using this
+            simpa only [mul_comm, gt_iff_lt] using this
           exact (max_le (hzExitBounds hp).2 (hzExitBounds hq).2).trans hcn.le
     obtain ⟨s, hs, hssegment⟩ := exists_face_containing_axis_segment_of_no_vertex
       A.parameterization.source hn.le hab ha hb A.parameterization.source_support
@@ -2652,15 +2684,17 @@ theorem graphReplacementMap_affineOn_middle {h : Plane → Plane}
       have himage : R.position '' (({p, q} : Finset R.Vertex) : Set R.Vertex) =
           {R.position p, R.position q} := by
         ext x
-        simp
+        simp only [Finset.coe_insert, Finset.coe_singleton, Set.image_insert_eq,
+          Set.image_singleton,
+    Set.mem_insert_iff, Set.mem_singleton_iff]
       rw [himage, convexHull_pair, image_segment]
       simp only [middleSourceMap_apply]
       change segment ℝ (planePoint (z (R.position p)) 0)
           (planePoint (z (R.position q)) 0) = _
       rcases le_total (z (R.position p)) (z (R.position q)) with hpqz | hqpz
-      · simp [a, b, min_eq_left hpqz, max_eq_right hpqz]
+      · simp only [min_eq_left hpqz, max_eq_right hpqz, a, b]
       · rw [segment_symm]
-        simp [a, b, min_eq_right hqpz, max_eq_left hqpz]
+        simp only [min_eq_right hqpz, max_eq_left hqpz, a, b]
     obtain ⟨g, hg⟩ := A.parameterization.map_affineOn s hs
     refine ⟨g.comp (middleSourceMap K A), ?_⟩
     intro x hx
@@ -2697,7 +2731,9 @@ theorem graphReplacementMap_affineOn_subdivision {h : Plane → Plane}
     intro x hx
     have hx' : x = K.position v := by
       have := hut hx
-      simpa [PlaneComplex.cellCarrier] using this
+      simpa only [cellCarrier, Finset.coe_singleton, Set.image_singleton,
+        convexHull_singleton,
+    Set.mem_singleton_iff] using this
     subst x
     rfl
   · have htEdge : t ∈ K.edges := Finset.mem_filter.mpr ⟨ht, httwo⟩
@@ -2746,12 +2782,13 @@ theorem edgeReplacementMap_mem_interiorCarrier {h : Plane → Plane}
     apply hnv
     refine ⟨K.edgeFirst i, ?_, ?_⟩
     · exact K.down_closed (K.edgeAt i).1 (K.edgeAt_mem_simplexes i) {K.edgeFirst i}
-        (by simp [K.edgeAt_eq]) (Finset.singleton_nonempty _)
+        (by simp only [K.edgeAt_eq, Finset.singleton_subset_iff, Finset.mem_insert,
+          Finset.mem_singleton, true_or]) (Finset.singleton_nonempty _)
     · calc
         x = AffineMap.lineMap (K.position (K.edgeFirst i))
             (K.position (K.edgeSecond i)) (K.edgeParameter i x) :=
           (K.lineMap_edgeParameter_eq i hx).symm
-        _ = K.position (K.edgeFirst i) := by simp [hparam]
+        _ = K.position (K.edgeFirst i) := by simp only [hparam, AffineMap.lineMap_apply_zero]
   · intro heq
     have hpath := K.edgeReplacementMap_eq_path hcont D C i hx
     have hone : A.completePath
@@ -2763,12 +2800,12 @@ theorem edgeReplacementMap_mem_interiorCarrier {h : Plane → Plane}
     apply hnv
     refine ⟨K.edgeSecond i, ?_, ?_⟩
     · exact K.down_closed (K.edgeAt i).1 (K.edgeAt_mem_simplexes i) {K.edgeSecond i}
-        (by simp [K.edgeAt_eq]) (Finset.singleton_nonempty _)
+        (by simp only [K.edgeAt_eq, Finset.subset_insert]) (Finset.singleton_nonempty _)
     · calc
         x = AffineMap.lineMap (K.position (K.edgeFirst i))
             (K.position (K.edgeSecond i)) (K.edgeParameter i x) :=
           (K.lineMap_edgeParameter_eq i hx).symm
-        _ = K.position (K.edgeSecond i) := by simp [hparam]
+        _ = K.position (K.edgeSecond i) := by simp only [hparam, AffineMap.lineMap_apply_one]
 
 theorem vertex_image_ne_edgeReplacementMap {h : Plane → Plane}
     (hcont : ContinuousOn h K.support) (D : K.VertexDiskControl h)
@@ -2805,8 +2842,12 @@ theorem graphReplacementMap_injectiveOn {h : Plane → Plane}
     by_cases hvy : K.IsGraphVertexPoint y
     · obtain ⟨w, hw, rfl⟩ := hvy
       apply hinj
-      · exact K.cellCarrier_subset_support hv (by simp [PlaneComplex.cellCarrier])
-      · exact K.cellCarrier_subset_support hw (by simp [PlaneComplex.cellCarrier])
+      · exact K.cellCarrier_subset_support hv (by simp only [cellCarrier, Finset.coe_singleton,
+        Set.image_singleton, convexHull_singleton,
+    Set.mem_singleton_iff])
+      · exact K.cellCarrier_subset_support hw (by simp only [cellCarrier, Finset.coe_singleton,
+        Set.image_singleton, convexHull_singleton,
+    Set.mem_singleton_iff])
       rw [K.graphReplacementMap_vertex hcont D C hv,
         K.graphReplacementMap_vertex hcont D C hw] at hxy
       exact hxy
@@ -2888,9 +2929,13 @@ theorem graphReplacementMap_dist_lt_two_mul {h : Plane → Plane}
       K.graphReplacementMap_eq_edge_on_cellCarrier hcont D C i hxi
     rw [hxMap]
     have hfirst : K.position (K.edgeFirst i) ∈ K.cellCarrier (K.edgeAt i).1 := by
-      exact subset_convexHull ℝ _ ⟨K.edgeFirst i, by simp [K.edgeAt_eq], rfl⟩
+      exact subset_convexHull ℝ _ ⟨K.edgeFirst i, by simp only [K.edgeAt_eq, Finset.coe_insert,
+        Finset.coe_singleton, Set.mem_insert_iff, Set.mem_singleton_iff,
+    true_or], rfl⟩
     have hsecond : K.position (K.edgeSecond i) ∈ K.cellCarrier (K.edgeAt i).1 := by
-      exact subset_convexHull ℝ _ ⟨K.edgeSecond i, by simp [K.edgeAt_eq], rfl⟩
+      exact subset_convexHull ℝ _ ⟨K.edgeSecond i, by simp only [K.edgeAt_eq, Finset.coe_insert,
+        Finset.coe_singleton, Set.mem_insert_iff, Set.mem_singleton_iff,
+    or_true], rfl⟩
     rcases hyCarrier with (hyLeft | hyMiddle) | hyRight
     · have hyBall := A.leftSpoke_subset_disk hyLeft
       calc
@@ -2900,7 +2945,7 @@ theorem graphReplacementMap_dist_lt_two_mul {h : Plane → Plane}
               dist (h (K.position (K.edgeFirst i))) (h x) := dist_triangle _ _ _
         _ < η + η := add_lt_add
           ((Metric.mem_closedBall.mp hyBall).trans_lt hD)
-          (by simpa [dist_comm] using
+          (by simpa only [dist_comm] using
             hsmall (K.edgeAt i).1 (K.edgeAt_mem_simplexes i) x hxi _ hfirst)
         _ = 2 * η := by ring
     · have hyTube := A.resolvedCarrier_subset_tube
@@ -2917,7 +2962,9 @@ theorem graphReplacementMap_dist_lt_two_mul {h : Plane → Plane}
             (({K.edgeFirst i, K.edgeSecond i} : Finset K.Vertex) : Set K.Vertex) =
             {K.position (K.edgeFirst i), K.position (K.edgeSecond i)} := by
           ext y
-          simp
+          simp only [Finset.coe_insert, Finset.coe_singleton, Set.image_insert_eq,
+            Set.image_singleton,
+    Set.mem_insert_iff, Set.mem_singleton_iff]
         rw [himage, convexHull_pair]
         exact lineMap_mem_segment ℝ _ _ htIcc
       calc
@@ -2926,7 +2973,7 @@ theorem graphReplacementMap_dist_lt_two_mul {h : Plane → Plane}
                 (K.edgeCurve h i t) + dist (K.edgeCurve h i t) (h x) :=
           dist_triangle _ _ _
         _ < η + η := add_lt_add (hdist.trans (C.radius_lt_vertex.trans hD))
-          (by simpa [edgeCurve, dist_comm] using
+          (by simpa only [edgeCurve, dist_comm] using
             hsmall (K.edgeAt i).1 (K.edgeAt_mem_simplexes i) x hxi _ htCarrier)
         _ = 2 * η := by ring
     · have hyBall := A.rightSpoke_subset_disk hyRight
@@ -2937,7 +2984,7 @@ theorem graphReplacementMap_dist_lt_two_mul {h : Plane → Plane}
               dist (h (K.position (K.edgeSecond i))) (h x) := dist_triangle _ _ _
         _ < η + η := add_lt_add
           ((Metric.mem_closedBall.mp hyBall).trans_lt hD)
-          (by simpa [dist_comm] using
+          (by simpa only [dist_comm] using
             hsmall (K.edgeAt i).1 (K.edgeAt_mem_simplexes i) x hxi _ hsecond)
         _ = 2 * η := by ring
 
@@ -2997,7 +3044,7 @@ theorem exists_graph_PL_approximation_facewise (K : PlaneComplex)
     by_cases hv : K.position v ∈ K.support
     · obtain ⟨w0, hwpos, hwface⟩ :=
         K.exists_sampledEdgeSubdivision_vertex_position_eq cuts v hv
-      let w : L.Vertex := ⟨w0, ⟨{w0}, hwface, by simp⟩⟩
+      let w : L.Vertex := ⟨w0, ⟨{w0}, hwface, by simp only [Finset.mem_singleton]⟩⟩
       have hw : ({w} : Finset L.Vertex) ∈ L.simplexes := L0.used_vertex_face w
       calc
         f (K.position v) = f (L.position w) := by rw [show L.position w = K.position v from hwpos]
@@ -3009,12 +3056,13 @@ theorem exists_graph_PL_approximation_facewise (K : PlaneComplex)
         apply hvL
         rw [heq]
         exact L.cellCarrier_subset_support hw
-          (subset_convexHull ℝ _ ⟨w, by simp, rfl⟩)
+          (subset_convexHull ℝ _ ⟨w, by simp only [Finset.coe_singleton,
+            Set.mem_singleton_iff], rfl⟩)
       have hne : ¬∃ i : Fin (Fintype.card L.EdgeFace),
           K.position v ∈ L.cellCarrier (L.edgeAt i).1 := by
         rintro ⟨i, hi⟩
         exact hvL (L.cellCarrier_subset_support (L.edgeAt_mem_simplexes i) hi)
-      simp [f, PlaneComplex.graphReplacementMap, hnv, hne]
+      simp only [graphReplacementMap, hnv, ↓reduceIte, hne, ↓reduceDIte, f]
   · intro x hx
     have hbound := L.graphReplacementMap_dist_lt_two_mul hgraphL hcontL D C hsmallL hD x
       (by rwa [hsub.1])

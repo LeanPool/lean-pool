@@ -165,8 +165,8 @@ theorem IsPreconnected.thickening {A : Set Plane} (hA : IsPreconnected A)
       simpa [add, dist_eq_norm] using hv
     · rintro ⟨a, ha, hxa⟩
       refine ⟨(a, x - a), ⟨ha, ?_⟩, ?_⟩
-      · simpa [dist_eq_norm] using hxa
-      · simp [add]
+      · simpa only [dist_eq_norm, sub_zero] using hxa
+      · simp only [add_sub_cancel, add]
   rw [← himage]
   exact IsPreconnected.image hprod add hadd.continuousOn
 

@@ -420,7 +420,10 @@ theorem markedFace_parameter_side (point : P → Plane) (p : P)
         have hline := hnonneg v (huT hv)
         change 0 ≤ M.position v 0 - point p 0 at hline
         rw [hpoint] at hline
-        simpa [M, AffineMap.lineMap_apply_module] using hline
+        simpa only [cartesianX_apply, Fin.isValue, sub_nonneg, ge_iff_le,
+          AffineMap.lineMap_apply_module,
+    PiLp.add_apply, PiLp.smul_apply,
+          smul_eq_mul] using hline
       · have hΔ' : K.position (K.edgeSecond i) 0 - K.position (K.edgeFirst i) 0 < 0 := by
           exact lt_of_le_of_ne (le_of_not_gt hΔ) (sub_ne_zero.mpr hx.symm)
         left
@@ -429,7 +432,10 @@ theorem markedFace_parameter_side (point : P → Plane) (p : P)
         have hline := hnonneg v (huT hv)
         change 0 ≤ M.position v 0 - point p 0 at hline
         rw [hpoint] at hline
-        simpa [M, AffineMap.lineMap_apply_module] using hline
+        simpa only [cartesianX_apply, Fin.isValue, sub_nonneg, ge_iff_le,
+          AffineMap.lineMap_apply_module,
+    PiLp.add_apply, PiLp.smul_apply,
+          smul_eq_mul] using hline
     · by_cases hΔ : 0 < K.position (K.edgeSecond i) 0 - K.position (K.edgeFirst i) 0
       · left
         intro v hv
@@ -437,7 +443,10 @@ theorem markedFace_parameter_side (point : P → Plane) (p : P)
         have hline := hnonpos v (huT hv)
         change M.position v 0 - point p 0 ≤ 0 at hline
         rw [hpoint] at hline
-        simpa [M, AffineMap.lineMap_apply_module] using hline
+        simpa only [cartesianX_apply, Fin.isValue, tsub_le_iff_right, zero_add,
+          ge_iff_le,
+    AffineMap.lineMap_apply_module, PiLp.add_apply, PiLp.smul_apply,
+          smul_eq_mul] using hline
       · have hΔ' : K.position (K.edgeSecond i) 0 - K.position (K.edgeFirst i) 0 < 0 := by
           exact lt_of_le_of_ne (le_of_not_gt hΔ) (sub_ne_zero.mpr hx.symm)
         right
@@ -446,7 +455,10 @@ theorem markedFace_parameter_side (point : P → Plane) (p : P)
         have hline := hnonpos v (huT hv)
         change M.position v 0 - point p 0 ≤ 0 at hline
         rw [hpoint] at hline
-        simpa [M, AffineMap.lineMap_apply_module] using hline
+        simpa only [cartesianX_apply, Fin.isValue, tsub_le_iff_right, zero_add,
+          ge_iff_le,
+    AffineMap.lineMap_apply_module, PiLp.add_apply, PiLp.smul_apply,
+          smul_eq_mul] using hline
   · have hxy : K.position (K.edgeFirst i) 1 ≠ K.position (K.edgeSecond i) 1 := by
       intro hy
       apply K.position_injective.ne (K.edgeFirst_ne_edgeSecond i)
@@ -460,7 +472,10 @@ theorem markedFace_parameter_side (point : P → Plane) (p : P)
         have hline := hnonneg v (huT hv)
         change 0 ≤ M.position v 1 - point p 1 at hline
         rw [hpoint] at hline
-        simpa [M, AffineMap.lineMap_apply_module] using hline
+        simpa only [cartesianY_apply, Fin.isValue, sub_nonneg, ge_iff_le,
+          AffineMap.lineMap_apply_module,
+    PiLp.add_apply, PiLp.smul_apply,
+          smul_eq_mul] using hline
       · have hΔ' : K.position (K.edgeSecond i) 1 - K.position (K.edgeFirst i) 1 < 0 := by
           exact lt_of_le_of_ne (le_of_not_gt hΔ) (sub_ne_zero.mpr hxy.symm)
         left
@@ -469,7 +484,10 @@ theorem markedFace_parameter_side (point : P → Plane) (p : P)
         have hline := hnonneg v (huT hv)
         change 0 ≤ M.position v 1 - point p 1 at hline
         rw [hpoint] at hline
-        simpa [M, AffineMap.lineMap_apply_module] using hline
+        simpa only [cartesianY_apply, Fin.isValue, sub_nonneg, ge_iff_le,
+          AffineMap.lineMap_apply_module,
+    PiLp.add_apply, PiLp.smul_apply,
+          smul_eq_mul] using hline
     · by_cases hΔ : 0 < K.position (K.edgeSecond i) 1 - K.position (K.edgeFirst i) 1
       · left
         intro v hv
@@ -477,7 +495,10 @@ theorem markedFace_parameter_side (point : P → Plane) (p : P)
         have hline := hnonpos v (huT hv)
         change M.position v 1 - point p 1 ≤ 0 at hline
         rw [hpoint] at hline
-        simpa [M, AffineMap.lineMap_apply_module] using hline
+        simpa only [cartesianY_apply, Fin.isValue, tsub_le_iff_right, zero_add,
+          ge_iff_le,
+    AffineMap.lineMap_apply_module, PiLp.add_apply, PiLp.smul_apply,
+          smul_eq_mul] using hline
       · have hΔ' : K.position (K.edgeSecond i) 1 - K.position (K.edgeFirst i) 1 < 0 := by
           exact lt_of_le_of_ne (le_of_not_gt hΔ) (sub_ne_zero.mpr hxy.symm)
         right
@@ -486,7 +507,10 @@ theorem markedFace_parameter_side (point : P → Plane) (p : P)
         have hline := hnonpos v (huT hv)
         change M.position v 1 - point p 1 ≤ 0 at hline
         rw [hpoint] at hline
-        simpa [M, AffineMap.lineMap_apply_module] using hline
+        simpa only [cartesianY_apply, Fin.isValue, tsub_le_iff_right, zero_add,
+          ge_iff_le,
+    AffineMap.lineMap_apply_module, PiLp.add_apply, PiLp.smul_apply,
+          smul_eq_mul] using hline
 
 theorem markedFaceCarrier_parameter_side (point : P → Plane) (p : P)
     (i : Fin (Fintype.card K.EdgeFace)) (r : ℝ)

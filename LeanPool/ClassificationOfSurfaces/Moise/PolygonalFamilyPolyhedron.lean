@@ -130,7 +130,7 @@ noncomputable def edgeLines : List (Plane →ᵃ[ℝ] ℝ) :=
 theorem edgeLine_mem_edgeLines (i : ι) (k : ZMod (J i).n) :
     (J i).edgeLine k ∈ edgeLines J := by
   rw [edgeLines, List.mem_flatMap]
-  exact ⟨i, by simp, (J i).edgeLine_mem_edgeLines k⟩
+  exact ⟨i, by simp only [Finset.mem_toList, Finset.mem_univ], (J i).edgeLine_mem_edgeLines k⟩
 
 /-- The common supporting-line arrangement. -/
 noncomputable def arrangementMesh : TriangleMesh :=
@@ -173,13 +173,13 @@ theorem arrangementTriangleCarrier_interior_nonempty
   have hrange : Set.range (fun v : t ↦ (arrangementMesh J).position v) =
       (arrangementMesh J).position '' (t : Set _) := by
     ext x
-    simp
+    simp only [Set.mem_range, Subtype.exists, exists_prop, Set.mem_image, SetLike.mem_coe]
   rw [← hrange]
   apply
     ((arrangementMesh J).affineIndependent_triangle t ht)
       |>.affineSpan_eq_top_iff_card_eq_finrank_add_one.mpr
   rw [Fintype.card_coe, (arrangementMesh J).card_triangle t ht]
-  simp [Plane]
+  simp only [Plane, finrank_euclideanSpace, Fintype.card_fin, Nat.reduceAdd]
 
 theorem closure_interior_arrangementTriangleCarrier
     {t : Finset (arrangementMesh J).Vertex} (ht : t ∈ (arrangementMesh J).triangles) :

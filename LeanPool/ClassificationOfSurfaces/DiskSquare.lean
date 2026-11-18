@@ -122,7 +122,7 @@ theorem isClosed_square : IsClosed square := by
   exact isClosed_le continuous_maxAbs continuous_const
 
 theorem zero_mem_square : (0 : ℂ) ∈ square := by
-  simp [square]
+  simp only [square, mem_ofPred_eq, maxAbs_zero, zero_le_one]
 
 theorem ball_zero_one_subset_square :
     Metric.ball (0 : ℂ) 1 ⊆ square := by
@@ -445,13 +445,15 @@ theorem firstSideWeights_length (r : ℕ) :
 @[simp]
 theorem finalSideWeights_sum (l : ℕ) :
     (finalSideWeights l).sum = 4 * l := by
-  simp [finalSideWeights]
+  simp only [finalSideWeights, List.sum_append, List.sum_replicate, smul_eq_mul, List.sum_cons,
+    List.sum_nil,
+    add_zero]
   omega
 
 @[simp]
 theorem firstSideWeights_sum (r : ℕ) :
     (firstSideWeights r).sum = 4 * r := by
-  simp [firstSideWeights]
+  simp only [firstSideWeights, List.sum_cons, List.sum_replicate, smul_eq_mul]
   omega
 
 theorem finalSideWeights_positive {l : ℕ} (hl : 0 < l) :
@@ -570,12 +572,16 @@ theorem finalSideWeights_take_last (l : ℕ) :
 theorem finalSideWeights_get_last (l : ℕ) :
     (finalSideWeights l).get
         ⟨l, by simp only [finalSideWeights_length]; omega⟩ = l := by
-  simp [finalSideWeights]
+  simp only [finalSideWeights, List.get_eq_getElem, List.length_replicate,
+    Std.le_refl,
+    List.getElem_append_right, tsub_self, List.getElem_cons_zero]
 
 theorem firstSideWeights_get_zero (r : ℕ) :
     (firstSideWeights r).get
         ⟨0, by simp only [firstSideWeights_length]; omega⟩ = r := by
-  simp [firstSideWeights]
+  simp only [firstSideWeights, List.length_cons, Fin.zero_eta, List.get_eq_getElem,
+    Fin.coe_ofNat_eq_mod,
+    List.length_replicate, Nat.zero_mod, List.getElem_cons_zero]
 
 theorem finalSideWeightedCircle_apply
     (l : ℕ) (hl : 0 < l) (t : unitInterval) :
@@ -1616,12 +1622,15 @@ theorem finalOldArcLocal_re_eq_one_iff_endpoint
         rw [← Circle.exp_zero]
         apply Circle.exp_eq_exp.mpr
         refine ⟨-1, ?_⟩
-        simp [PolygonCell.sideAngle]
+        simp only [PolygonCell.sideAngle, Fin.val_last, Icc.coe_one, Nat.cast_add, Nat.cast_one,
+          Int.reduceNeg,
+    Int.cast_neg, Int.cast_one, neg_mul, one_mul]
         field_simp [hl.ne']
         ring
       rw [hcell]
       exact finalSideCellHomeomorph_side_re l hl 1
-    · have hsl : s = ⟨l, by simp⟩ := Subtype.ext hs
+    · have hsl : s = ⟨l, by simp only [mem_Icc, Nat.cast_nonneg, Std.le_refl,
+      and_self]⟩ := Subtype.ext hs
       subst s
       rw [finalOldArcLocal_apply]
       change
@@ -1663,7 +1672,9 @@ theorem finalOldArcLocal_zero_im
     rw [← Circle.exp_zero]
     apply Circle.exp_eq_exp.mpr
     refine ⟨-1, ?_⟩
-    simp [PolygonCell.sideAngle]
+    simp only [PolygonCell.sideAngle, Fin.val_last, Icc.coe_one, Nat.cast_add, Nat.cast_one,
+      Int.reduceNeg,
+    Int.cast_neg, Int.cast_one, neg_mul, one_mul]
     field_simp [hl.ne']
     ring
   rw [hcell, finalSideCellHomeomorph_side]
@@ -1705,7 +1716,8 @@ theorem finalOldArcLocal_abs_im_eq_one_of_re_eq_one
     subst s
     rw [finalOldArcLocal_zero_im]
     norm_num
-  · have hsl : s = ⟨l, by simp⟩ := Subtype.ext h
+  · have hsl : s = ⟨l, by simp only [mem_Icc, Nat.cast_nonneg, Std.le_refl,
+    and_self]⟩ := Subtype.ext h
     subst s
     rw [finalOldArcLocal_last_im]
     norm_num
@@ -1783,7 +1795,8 @@ theorem firstOldArcLocal_re_eq_one_iff_endpoint
         norm_num
       rw [hcell]
       exact firstSideCellHomeomorph_side_re r hr 1
-    · have hsr : s = ⟨r, by simp⟩ := Subtype.ext hs
+    · have hsr : s = ⟨r, by simp only [mem_Icc, Nat.cast_nonneg, Std.le_refl,
+      and_self]⟩ := Subtype.ext hs
       subst s
       rw [firstOldArcLocal_apply]
       change
@@ -1805,7 +1818,10 @@ theorem firstOldArcLocal_re_eq_one_iff_endpoint
         apply congrArg (fun z : Circle ↦ (z : ℂ))
         apply Circle.exp_eq_exp.mpr
         refine ⟨1, ?_⟩
-        simp [PolygonCell.sideAngle]
+        simp only [PolygonCell.sideAngle, Fin.coe_ofNat_eq_mod, Nat.zero_mod, CharP.cast_eq_zero,
+          Icc.coe_zero,
+    add_zero, mul_zero, Nat.cast_add, Nat.cast_one, zero_div, Int.cast_one,
+          one_mul, zero_add]
         field_simp [hr.ne']
         ring
       rw [hcell]
@@ -1867,7 +1883,10 @@ theorem firstOldArcLocal_last_im
     apply congrArg (fun z : Circle ↦ (z : ℂ))
     apply Circle.exp_eq_exp.mpr
     refine ⟨1, ?_⟩
-    simp [PolygonCell.sideAngle]
+    simp only [PolygonCell.sideAngle, Fin.coe_ofNat_eq_mod, Nat.zero_mod, CharP.cast_eq_zero,
+      Icc.coe_zero,
+    add_zero, mul_zero, Nat.cast_add, Nat.cast_one, zero_div, Int.cast_one,
+      one_mul, zero_add]
     field_simp [hr.ne']
     ring
   rw [hcell, firstSideCellHomeomorph_side]
@@ -1881,7 +1900,7 @@ theorem firstOldArcLocal_last_im
         (finalSideBoundaryHomeomorph r hr
           (Circle.exp
             (PolygonCell.sideAngle (Fin.last r) 1))).1.im := by
-          simpa using him.symm
+          simpa only [finalSideBoundaryHomeomorph_one_im, unitInterval.symm_one] using him.symm
     _ = 1 := finalSideBoundaryHomeomorph_one_im r hr
 
 theorem firstOldArcLocal_abs_im_eq_one_of_re_eq_one
@@ -1893,7 +1912,8 @@ theorem firstOldArcLocal_abs_im_eq_one_of_re_eq_one
     subst s
     rw [firstOldArcLocal_zero_im]
     norm_num
-  · have hsr : s = ⟨r, by simp⟩ := Subtype.ext h
+  · have hsr : s = ⟨r, by simp only [mem_Icc, Nat.cast_nonneg, Std.le_refl,
+    and_self]⟩ := Subtype.ext h
     subst s
     rw [firstOldArcLocal_last_im]
     norm_num
@@ -2437,7 +2457,7 @@ theorem exists_finalOldArc_of_re_nonpos
   have hzRange : leftPerimeter z ∈ Set.range perimeter := by
     apply (intermediate_value_univ
       (⟨0, by constructor <;> positivity⟩ : Set.Icc (0 : ℝ) l)
-      ⟨l, by simp⟩ hcontinuous)
+      ⟨l, by simp only [mem_Icc, Nat.cast_nonneg, Std.le_refl, and_self]⟩ hcontinuous)
     simpa only [perimeter, leftPerimeter_finalOldArc_zero,
       leftPerimeter_finalOldArc_last] using leftPerimeter_mem_Icc z hz
   rcases hzRange with ⟨s, hs⟩
@@ -2457,7 +2477,7 @@ theorem exists_firstOldArc_of_re_nonneg
   have hzRange : rightPerimeter z ∈ Set.range perimeter := by
     apply (intermediate_value_univ
       (⟨0, by constructor <;> positivity⟩ : Set.Icc (0 : ℝ) r)
-      ⟨r, by simp⟩ hcontinuous)
+      ⟨r, by simp only [mem_Icc, Nat.cast_nonneg, Std.le_refl, and_self]⟩ hcontinuous)
     simpa only [perimeter, rightPerimeter_firstOldArc_zero,
       rightPerimeter_firstOldArc_last] using rightPerimeter_mem_Icc z hz
   rcases hzRange with ⟨s, hs⟩
@@ -2553,7 +2573,7 @@ theorem outerArc_apply_of_le
   rw [ite_eq_left hx]
   apply congrArg (finalOldArc l hl)
   apply Subtype.ext
-  simp [finalArcParameter, min_eq_left hx]
+  simp only [finalArcParameter, min_eq_left hx]
 
 theorem outerArc_apply_of_not_le
     (l r : ℕ) (hl : 0 < l) (hr : 0 < r)
@@ -2573,7 +2593,7 @@ theorem outerArc_apply_of_not_le
   rw [ite_eq_right hx]
   apply congrArg (firstOldArc r hr)
   apply Subtype.ext
-  simp [firstArcParameter, max_eq_left (by linarith : 0 ≤ x.1 - l)]
+  simp only [firstArcParameter, max_eq_left (by linarith : 0 ≤ x.1 - l)]
 
 @[simp]
 theorem outerArc_zero
@@ -2724,10 +2744,12 @@ theorem outerArc_cross_endpoints
   have hsNotLast : sx.1 ≠ l := by
     intro hsLast
     have hsEq :
-        sx = (⟨l, by simp⟩ : Set.Icc (0 : ℝ) l) :=
+        sx = (⟨l, by simp only [mem_Icc, Nat.cast_nonneg, Std.le_refl,
+          and_self]⟩ : Set.Icc (0 : ℝ) l) :=
       Subtype.ext hsLast
     have htEq :
-        ty = (⟨r, by simp⟩ : Set.Icc (0 : ℝ) r) :=
+        ty = (⟨r, by simp only [mem_Icc, Nat.cast_nonneg, Std.le_refl,
+          and_self]⟩ : Set.Icc (0 : ℝ) r) :=
       Subtype.ext htLast
     have him := congrArg (fun q : boundary ↦ q.1.im) harc
     rw [hsEq, htEq, finalOldArc_last_im, firstOldArc_last_im] at him
@@ -3148,7 +3170,7 @@ theorem outerArc_source_right_side
     rw [outerArc_apply_of_le l r hl hr x hxLe]
     have hxLast :
         (⟨x.1, ⟨x.2.1, hxLe⟩⟩ : Set.Icc (0 : ℝ) l) =
-          ⟨l, by simp⟩ := by
+          ⟨l, by simp only [mem_Icc, Nat.cast_nonneg, Std.le_refl, and_self]⟩ := by
       apply Subtype.ext
       dsimp [x, sourceSideParameter, s, polygonSideParameter] at hsZero ⊢
       simp only [Nat.cast_add]

@@ -73,7 +73,7 @@ theorem continuous_boundaryParam : Continuous boundaryParam := by
 @[simp]
 theorem boundaryParam_zero :
     boundaryParam 0 = Moise.standardTriangleVertex 0 := by
-  simp [boundaryParam]
+  simp only [boundaryParam, zero_le_one, ↓reduceIte, Fin.isValue, AffineMap.lineMap_apply_zero]
 
 @[simp]
 theorem boundaryParam_one :
@@ -294,7 +294,10 @@ theorem surjective_boundaryQuotMap : Function.Surjective boundaryQuotMap := by
     change boundaryParam (1 + t) = p.1
     by_cases ht0 : t = 0
     · subst t
-      simpa [Moise.standardTriangleVertex] using htp
+      simpa only [add_zero, boundaryParam_one, standardTriangleVertex, Fin.isValue,
+        Matrix.cons_val_one,
+    Matrix.cons_val_zero, Matrix.cons_val,
+        AffineMap.lineMap_apply_zero] using htp
     · have htpos : 0 < t := lt_of_le_of_ne ht.1 (Ne.symm ht0)
       rw [boundaryParam, ite_eq_right (by linarith), ite_eq_left (by linarith [ht.2])]
       convert htp using 1; ring_nf
@@ -310,7 +313,9 @@ theorem surjective_boundaryQuotMap : Function.Surjective boundaryQuotMap := by
     change boundaryParam (2 + t) = p.1
     by_cases ht0 : t = 0
     · subst t
-      simpa [Moise.standardTriangleVertex] using htp
+      simpa only [add_zero, boundaryParam_two, standardTriangleVertex, Fin.isValue,
+        Matrix.cons_val,
+    Matrix.cons_val_zero, AffineMap.lineMap_apply_zero] using htp
     · have htpos : 0 < t := lt_of_le_of_ne ht.1 (Ne.symm ht0)
       rw [boundaryParam, ite_eq_right (by linarith), ite_eq_right (by linarith)]
       convert htp using 1; ring_nf
@@ -435,7 +440,8 @@ theorem circleBoundaryHomeomorph_side
   have hicases : i = 0 ∨ i = 1 ∨ i = 2 := by
     fin_cases i <;> simp
   rcases hicases with rfl | rfl | rfl
-  · have hxval : x = (t : ℝ) := by simp [x]
+  · have hxval : x = (t : ℝ) := by simp only [Fin.isValue, Fin.coe_ofNat_eq_mod, Nat.zero_mod,
+    CharP.cast_eq_zero, zero_add, x]
     have hrot : finRotate 3 (0 : Fin 3) = 1 := rfl
     rw [hxval, hrot, boundaryParam, ite_eq_left t.2.2]
   · have hxval : x = 1 + (t : ℝ) := by norm_num [x]

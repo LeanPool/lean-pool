@@ -54,14 +54,18 @@ noncomputable def edgeLine (i : ZMod J.n) : Plane →ᵃ[ℝ] ℝ :=
 
 @[simp] theorem edgeLine_terminal (i : ZMod J.n) :
     J.edgeLine i (J.vertex (i + 1)) = 0 := by
-  simp [edgeLine, edgeNormalLinear]
+  simp only [edgeLine, edgeNormalLinear, Fin.isValue, PiLp.sub_apply, LinearMap.coe_mk,
+    AddHom.coe_mk,
+    AffineMap.coe_mk']
   ring
 
 theorem edgeLine_eq_zero_of_mem_edgeSegment (i : ZMod J.n) {x : Plane}
     (hx : x ∈ J.edgeSegment i) : J.edgeLine i x = 0 := by
   rw [edgeSegment, segment_eq_image] at hx
   obtain ⟨t, ht, rfl⟩ := hx
-  simp [edgeLine, edgeNormalLinear]
+  simp only [edgeLine, edgeNormalLinear, Fin.isValue, PiLp.sub_apply, LinearMap.coe_mk,
+    AddHom.coe_mk,
+    AffineMap.coe_mk', PiLp.add_apply, PiLp.smul_apply, smul_eq_mul]
   ring
 
 theorem edgeLine_surjective (i : ZMod J.n) : Function.Surjective (J.edgeLine i) := by
@@ -73,8 +77,10 @@ theorem edgeLine_surjective (i : ZMod J.n) : Function.Surjective (J.edgeLine i) 
     apply J.adjacent_ne i
     ext j
     fin_cases j
-    · exact (sub_eq_zero.mp (by simpa [dx, PiLp.sub_apply] using h.1)).symm
-    · exact (sub_eq_zero.mp (by simpa [dy, PiLp.sub_apply] using h.2)).symm
+    · exact (sub_eq_zero.mp (by simpa only [Fin.zero_eta, Fin.isValue, PiLp.sub_apply,
+      dx] using h.1)).symm
+    · exact (sub_eq_zero.mp (by simpa only [Fin.mk_one, Fin.isValue, PiLp.sub_apply,
+      dy] using h.2)).symm
   have hden : dx ^ 2 + dy ^ 2 ≠ 0 := by
     rcases hxy with hx | hy
     · nlinarith [sq_pos_of_ne_zero hx]
@@ -222,12 +228,12 @@ theorem arrangementTriangleCarrier_interior_nonempty
   have hrange : Set.range (fun v : t => J.arrangementMesh.position v) =
       J.arrangementMesh.position '' (t : Set _) := by
     ext x
-    simp
+    simp only [Set.mem_range, Subtype.exists, exists_prop, Set.mem_image, SetLike.mem_coe]
   rw [← hrange]
   have hAI := J.arrangementMesh.affineIndependent_triangle t ht
   apply hAI.affineSpan_eq_top_iff_card_eq_finrank_add_one.mpr
   rw [Fintype.card_coe, J.arrangementMesh.card_triangle t ht]
-  simp [Plane]
+  simp only [Plane, finrank_euclideanSpace, Fintype.card_fin, Nat.reduceAdd]
 
 theorem closure_interior_arrangementTriangleCarrier
     {t : Finset J.arrangementMesh.Vertex} (ht : t ∈ J.arrangementMesh.triangles) :
@@ -384,7 +390,7 @@ theorem frontier_closedRegion : frontier J.closedRegion = J.carrier := by
   · intro x hx
     have hxclosed : x ∈ J.closedRegion := by
       have hx' := frontier_subset_closure hx
-      simpa [J.isCompact_closedRegion.isClosed.closure_eq] using hx'
+      simpa only [J.isCompact_closedRegion.isClosed.closure_eq] using hx'
     rw [J.closedRegion_eq_union] at hxclosed
     rcases hxclosed with hxinside | hxcarrier
     · have hxint : x ∈ interior J.closedRegion :=

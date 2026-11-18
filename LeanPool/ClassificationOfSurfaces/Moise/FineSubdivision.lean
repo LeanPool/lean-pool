@@ -71,7 +71,7 @@ noncomputable def boxCuts (p : Plane) (r : ℝ) : List (Plane →ᵃ[ℝ] ℝ) :
     a ∈ boxCuts p r ↔
       a = verticalCut (p 0 - r) ∨ a = verticalCut (p 0 + r) ∨
       a = horizontalCut (p 1 - r) ∨ a = horizontalCut (p 1 + r) := by
-  simp [boxCuts]
+  simp only [boxCuts, Fin.isValue, List.mem_cons, List.not_mem_nil, or_false]
 
 /-- All box cuts associated to a finite set of centers. -/
 noncomputable def coverCuts (centers : Finset Plane) (r : ℝ) :
@@ -82,7 +82,7 @@ theorem boxCut_mem_coverCuts {centers : Finset Plane} {p : Plane} (hp : p ∈ ce
     (r : ℝ) {a : Plane →ᵃ[ℝ] ℝ} (ha : a ∈ boxCuts p r) :
     a ∈ coverCuts centers r := by
   simp only [coverCuts, List.mem_flatMap]
-  exact ⟨p, by simpa using hp, ha⟩
+  exact ⟨p, by simpa only [Finset.mem_toList] using hp, ha⟩
 
 private theorem coordinate_dist_le (x y : Plane) (k : Fin 2) :
     |x k - y k| ≤ dist x y := by
