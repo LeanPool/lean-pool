@@ -505,7 +505,6 @@ lemma integral_set_eq_zero_of_rectangles
       le_trans hn (le_add_of_nonneg_right zero_le_one)⟩, Set.mem_univ w⟩
   have hset : s =ᵐ[μ₀] ⋃ n, s ∩ Φ n := by
     filter_upwards [hcov] with z hz
-    apply propext
     constructor
     · intro hzs
       obtain ⟨n, hzn⟩ := Set.mem_iUnion.mp hz

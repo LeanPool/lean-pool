@@ -73,14 +73,14 @@ private theorem legacyProduct_rectangle_le (s : Set α) (t : Set β) :
 /-- First-coordinate projection preserves null sets for the legacy product. -/
 theorem legacyProduct_quasiMeasurePreserving_fst :
     QuasiMeasurePreserving Prod.fst (legacyProduct μ ν) μ := by
-  refine ⟨measurable_fst, AbsolutelyContinuous.mk fun s hs hzero => ?_⟩
+  refine ⟨measurable_fst.aemeasurable, AbsolutelyContinuous.mk fun s hs hzero => ?_⟩
   rw [map_apply measurable_fst hs, ← prod_univ, ← nonpos_iff_eq_zero]
   exact (legacyProduct_rectangle_le _ _).trans_eq (by rw [hzero, zero_mul])
 
 /-- Second-coordinate projection preserves null sets for the legacy product. -/
 theorem legacyProduct_quasiMeasurePreserving_snd :
     QuasiMeasurePreserving Prod.snd (legacyProduct μ ν) ν := by
-  refine ⟨measurable_snd, AbsolutelyContinuous.mk fun s hs hzero => ?_⟩
+  refine ⟨measurable_snd.aemeasurable, AbsolutelyContinuous.mk fun s hs hzero => ?_⟩
   rw [map_apply measurable_snd hs, ← univ_prod, ← nonpos_iff_eq_zero]
   exact (legacyProduct_rectangle_le _ _).trans_eq (by rw [hzero, mul_zero])
 
@@ -100,12 +100,12 @@ theorem integrable_mul_legacyProduct {f : α → ℝ} {g : β → ℝ}
     legacyProduct_quasiMeasurePreserving_fst).mul
       (hg.aestronglyMeasurable.comp_quasiMeasurePreserving
         legacyProduct_quasiMeasurePreserving_snd), ?_⟩
-  rw [hasFiniteIntegral_iff_enorm]
+  rw [hasFiniteIntegral_iff_eNorm]
   calc
     ∫⁻ z, ‖f z.1 * g z.2‖ₑ ∂legacyProduct μ ν ≤
         ∫⁻ x, ∫⁻ y, ‖f x * g y‖ₑ ∂ν ∂μ := lintegral_legacyProduct_le _
     _ = (∫⁻ x, ‖f x‖ₑ ∂μ) * ∫⁻ y, ‖g y‖ₑ ∂ν := by
-      simp [enorm_mul, lintegral_const_mul', lintegral_mul_const', hg.2.ne]
+      simp [lintegral_const_mul', lintegral_mul_const', hg.2.ne]
     _ < ∞ := ENNReal.mul_lt_top hf.2 hg.2
 
 end Malliavin
