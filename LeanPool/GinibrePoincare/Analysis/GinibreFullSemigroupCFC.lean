@@ -125,37 +125,6 @@ theorem resolventCfcEvolution_range_error (R : H →L[ℂ] H) (hR : IsSelfAdjoin
     (mul_le_mul_of_nonneg_right (resolventCfcEvolution_range_error_norm_le R hR hSpec t)
       (norm_nonneg x))
 
-/-- Strong continuity at zero follows from dense resolvent range, without a spectral gap. -/
-theorem resolventCfcEvolution_continuousAt_zero (R : H →L[ℂ] H)
-    (hR : IsSelfAdjoint R)
-    (hSpec : ∀ r ∈ spectrum ℝ R, r ∈ Set.Icc (0 : ℝ) 1)
-    (hDense : DenseRange R) (x : H) :
-    ContinuousAt (fun t : ℝ≥0 => resolventCfcEvolution R t x) 0 := by
-  apply Metric.continuousAt_iff.mpr
-  intro ε hε
-  obtain ⟨y, hy⟩ := hDense.exists_dist_lt x (show 0 < ε / 3 by positivity)
-  refine ⟨ε / (3 * (‖y‖ + 1)), by positivity, ?_⟩
-  intro t ht
-  have ht' : (t : ℝ) < ε / (3 * (‖y‖ + 1)) := by
-    change dist (t : ℝ) 0 < _ at ht
-    simpa [Real.dist_eq, abs_of_nonneg t.coe_nonneg] using ht
-  have hfirst : dist (resolventCfcEvolution R t x) (resolventCfcEvolution R t (R y)) ≤ dist x (R
-    y) := by
-    rw [dist_eq_norm, dist_eq_norm, ← map_sub]
-    exact resolventCfcEvolution_contracts R hSpec t (x - R y)
-  have hmid := resolventCfcEvolution_range_error R hR hSpec t y
-  have hsmall : (t : ℝ) * ‖y‖ < ε / 3 := by
-    have hp : 0 < 3 * (‖y‖ + 1) := by positivity
-    have he := (lt_div_iff₀ hp).mp ht'
-    nlinarith [t.coe_nonneg, norm_nonneg y]
-  have htri := dist_triangle (resolventCfcEvolution R t x)
-    (resolventCfcEvolution R t (R y)) x
-  have htri' := dist_triangle (resolventCfcEvolution R t (R y)) (R y) x
-  rw [resolventCfcEvolution_zero R hR]
-  simp only [one_apply_eq_self]
-  have hy' : dist (R y) x < ε / 3 := by simpa only [dist_comm] using hy
-  linarith
-
 /-- Uniform continuity estimate on the dense resolvent range. -/
 theorem resolventCfcEvolution_range_dist (R : H →L[ℂ] H) (hR : IsSelfAdjoint R)
     (hSpec : ∀ r ∈ spectrum ℝ R, r ∈ Set.Icc (0 : ℝ) 1)
@@ -214,6 +183,14 @@ theorem continuous_resolventCfcEvolution (R : H →L[ℂ] H) (hR : IsSelfAdjoint
   have htri' := dist_triangle (resolventCfcEvolution R s (R y))
     (resolventCfcEvolution R t (R y)) (resolventCfcEvolution R t x)
   linarith
+
+/-- Strong continuity at zero follows from dense resolvent range, without a spectral gap. -/
+theorem resolventCfcEvolution_continuousAt_zero (R : H →L[ℂ] H)
+    (hR : IsSelfAdjoint R)
+    (hSpec : ∀ r ∈ spectrum ℝ R, r ∈ Set.Icc (0 : ℝ) 1)
+    (hDense : DenseRange R) (x : H) :
+    ContinuousAt (fun t : ℝ≥0 => resolventCfcEvolution R t x) 0 :=
+  (continuous_resolventCfcEvolution R hR hSpec hDense x).continuousAt
 
 /-- Self-adjointness of every spectral evolution operator. -/
 theorem resolventCfcEvolution_selfAdjoint (R : H →L[ℂ] H) (t : ℝ≥0) :

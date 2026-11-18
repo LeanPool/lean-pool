@@ -6,6 +6,9 @@ Authors: Djalil Chafaï
 
 module
 
+public import LeanPool.GinibrePoincare.Analysis.GinibreFullSemigroupConstants
+public import LeanPool.GinibrePoincare.Analysis.GinibreFullSemigroupDeficitConsequences
+public import LeanPool.GinibrePoincare.Analysis.GinibreMixedGreenIdentity
 public import LeanPool.GinibrePoincare.Endgame.FullTheoremOneNine
 
 /-!
