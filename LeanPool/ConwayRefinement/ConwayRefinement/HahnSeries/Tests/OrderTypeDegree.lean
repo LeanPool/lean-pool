@@ -10,8 +10,7 @@ public import LeanPool.ConwayRefinement.ConwayRefinement.Surreal.HahnSeries.Degr
 public import Mathlib.Order.Prod.Lex.Basic
 public import Mathlib.Order.Sum.Order
 
-import Mathlib.Data.Finsupp.Basic
-import Mathlib.Data.Finsupp.Single
+
 
 /-!
 # API checks for support order type and degree

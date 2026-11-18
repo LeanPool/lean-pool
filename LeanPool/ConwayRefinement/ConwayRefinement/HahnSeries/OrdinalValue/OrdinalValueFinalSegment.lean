@@ -9,7 +9,6 @@ public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.Truncation
 
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Negative
-import Mathlib.Tactic.Linarith
 
 /-!
 # Final support segments and Berarducci's ordinal value

@@ -142,7 +142,7 @@ theorem pderiv_pderiv_comm (i j : σ) (p : MvPolynomial σ R) :
   | mul_X p k ih =>
     rw [pderiv_mul, pderiv_mul, map_add, map_add, pderiv_mul, pderiv_mul, pderiv_mul, pderiv_mul,
       ih, hX, hX]
-    ring
+    ac_rfl
 
 /-- The variables of a partial derivative are among those of the polynomial. -/
 theorem vars_pderiv_subset (i : σ) (p : MvPolynomial σ R) : (pderiv i p).vars ⊆ p.vars := by

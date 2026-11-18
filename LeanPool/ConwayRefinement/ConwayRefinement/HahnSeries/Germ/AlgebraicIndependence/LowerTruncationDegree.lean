@@ -9,8 +9,6 @@ public import LeanPool.ConwayRefinement.ConwayRefinement.Algebra.MvPolynomial.Co
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Germ.AlgebraicIndependence.Lifts
 public import LeanPool.ConwayRefinement.ConwayRefinement.SetTheory.Ordinal.PairBounds
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Germ.AlgebraicIndependence.Boundary
-import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Germ.AlgebraicIndependence.Convolution
-import LeanPool.ConwayRefinement.ConwayRefinement.SetTheory.Ordinal.Separation
 import LeanPool.ConwayRefinement.ConwayRefinement.Topology.Order.LeftNeighborhood
 
 /-!
@@ -458,7 +456,7 @@ theorem exists_lt_forall_degree_pow_leibniz_le {a : Nonpositive G K} {m : NatOrd
             rw [mul_smul_comm]
             congr 1
             rw [pow_succ]
-            ring
+            ac_rfl
           rw [hpowsucc, mul_sub, hmulsmul, succ_nsmul, add_smul, one_smul]
           abel
         rw [hsplit]
@@ -559,11 +557,10 @@ theorem exists_lt_forall_degree_monomial_leibniz_le
                 (MvPolynomial.monomial d' (1 : K))) := by
             rw [map_mul, map_pow, MvPolynomial.aeval_X]
           rw [hsplit, MvPolynomial.pderiv_mul, map_add, e1, e2, add_mul]
-          congr 1
-          · by_cases hji : j = i
-            · rw [ite_eq_left hji, ite_eq_left hji, hji]
-            · rw [ite_eq_right hji, ite_eq_right hji, zero_mul, zero_mul]
-          · ring
+          by_cases hji : j = i
+          · subst j
+            simp only [ite_true, mul_assoc]
+          · simp only [ite_eq_right hji, zero_mul, zero_add, mul_assoc]
         rw [Finset.sum_congr rfl hterm, Finset.sum_add_distrib, ← Finset.mul_sum,
           Finset.sum_ite_eq' t i (fun _ ↦ ((n + 1 : ℕ) • (V i ^ n) *
             aeval V (MvPolynomial.monomial d' (1 : K))) * translatedTruncLE γ (V i)),

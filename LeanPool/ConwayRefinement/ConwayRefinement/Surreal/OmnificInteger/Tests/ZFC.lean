@@ -3,7 +3,7 @@ Copyright (c) 2026 Dan Abramov. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Dan Abramov
 -/
-module
+module -- shake: keep-all
 
 public import LeanPool.ConwayRefinement.ConwayRefinement.Surreal.OmnificInteger.Primality.ZFC
 public import LeanPool.ConwayRefinement.ConwayRefinement.Examples.OmnificInteger.ZFCDegreeTwoPrime

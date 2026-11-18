@@ -40,7 +40,12 @@ public section
 -- TODO: upstream
 theorem Set.image2_eq_range {α β γ : Type*} (f : α → β → γ) (s : Set α) (t : Set β) :
     Set.image2 f s t = Set.range (fun x : s × t ↦ f x.1 x.2) := by
-  aesop
+  ext x
+  constructor
+  · rintro ⟨a, ha, b, hb, rfl⟩
+    exact ⟨(⟨a, ha⟩, ⟨b, hb⟩), rfl⟩
+  · rintro ⟨⟨a, b⟩, rfl⟩
+    exact ⟨a, a.property, b, b.property, rfl⟩
 
 namespace ArchimedeanClass
 

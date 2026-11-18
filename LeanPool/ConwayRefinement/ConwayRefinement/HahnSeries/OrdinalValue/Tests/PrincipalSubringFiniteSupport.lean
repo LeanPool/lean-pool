@@ -176,7 +176,7 @@ theorem redistributionLeft_mul_right :
           outsideCoefficient *
         HahnSeries.Nonpositive.finiteSupportScalarHom (G := ℝ)
           outsideCoefficient⁻¹) *
-          extendedBinomial := by ring
+          extendedBinomial := by ac_rfl
     _ = extendedBinomial := by
       rw [← (HahnSeries.Nonpositive.finiteSupportScalarHom
         (G := ℝ) (K := Berarducci.PrincipalSubringFractionField ℚ)).map_mul]
@@ -221,7 +221,7 @@ theorem inversePositiveDegree_is_redistributionWitness :
             outsideCoefficient *
           HahnSeries.Nonpositive.finiteSupportScalarHom (G := ℝ)
             outsideCoefficient⁻¹) *
-            extendedBinomial := by ring
+            extendedBinomial := by ac_rfl
         _ = extendedBinomial := by
           rw [← (HahnSeries.Nonpositive.finiteSupportScalarHom
             (G := ℝ) (K := Berarducci.PrincipalSubringFractionField ℚ)).map_mul]

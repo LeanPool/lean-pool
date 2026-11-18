@@ -191,7 +191,7 @@ private theorem value_eval (w : Multiset (Factor (G := G) (R := R))) :
       change V (translated x.1 γ * x.1 ^ m * (eval r * eval r)) = _ at h
       dsimp only at h
       rw [h]
-      ring
+      ac_rfl
     · have hone : V (translated x.1 γ) = 1 := by
         have hne : V (translated x.1 γ) ≠ 0 := by
           dsimp only
@@ -207,7 +207,7 @@ private theorem value_eval (w : Multiset (Factor (G := G) (R := R))) :
           (NatOrdinal.of.injective hone))
       dsimp only at hmul h hone
       rw [mul_assoc, hmul, h, hone]
-      ring
+      ac_rfl
   rcases eq_or_ne r 0 with hr0 | hr0
   · rw [heval, hvp, hr0, eval_zero, valueProd_zero, mul_one, mul_one]
     apply cantorBendixsonValue_pow_eq_of_eventually (x.1 : HahnSeries G R) x.1.property

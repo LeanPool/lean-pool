@@ -17,9 +17,7 @@ public import Mathlib.Order.Comparable
 
 import LeanPool.ConwayRefinement.CombinatorialGames.Game.Functor
 import LeanPool.ConwayRefinement.CombinatorialGames.Mathlib.Small
-import Mathlib.Lean.PrettyPrinter.Delaborator
 import Mathlib.Logic.Hydra
-import Mathlib.Order.GameAdd
 
 /-!
 # Combinatorial (pre-)games

@@ -8,7 +8,6 @@ module
 public import LeanPool.ConwayRefinement.ConwayRefinement.Algebra.DirectSum.HomogeneousDivisibility
 public import LeanPool.ConwayRefinement.ConwayRefinement.Algebra.DirectSum.LeadingGrade
 
-import Mathlib.Tactic.Abel
 import Mathlib.Algebra.Ring.Divisibility.Basic
 public import Mathlib.Algebra.Prime.Defs
 

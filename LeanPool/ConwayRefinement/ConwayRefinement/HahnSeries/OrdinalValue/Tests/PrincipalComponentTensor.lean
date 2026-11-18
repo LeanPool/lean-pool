@@ -9,7 +9,7 @@ public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Tests.Fixtur
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.PrincipalComponentTensor
 public import Mathlib.LinearAlgebra.TensorProduct.Basis
 
-import Mathlib.Tactic.NormNum
+
 
 /-!
 # API checks for extension of scalars on a homogeneous component

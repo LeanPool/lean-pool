@@ -11,7 +11,6 @@ public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrderType
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.OrdinalValueConstantMul
 
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.OrdinalValueImage
-import Mathlib.Tactic.Abel
 
 /-!
 # The exponent of Berarducci's ordinal value

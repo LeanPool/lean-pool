@@ -8,7 +8,11 @@ module
 public import LeanPool.ConwayRefinement.ConwayRefinement.Standalone.Mathlib.Examples.NegativeMonomialRoots
 
 import Mathlib.Tactic.FieldSimp
-import Mathlib.Tactic.Linarith
+import Mathlib.Data.Rat.Cast.Order
+import Mathlib.Tactic.Linarith.Frontend
+import Mathlib.Tactic.NormNum.Abs
+import Mathlib.Tactic.NormNum.DivMod
+import Mathlib.Tactic.NormNum.OfScientific
 
 /-! # Negative Monomial Roots Proof -/
 

@@ -3,7 +3,7 @@ Copyright (c) 2026 Violeta Hernández Palacios. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Violeta Hernández Palacios
 -/
-module
+module -- shake: keep-all
 
 public import LeanPool.ConwayRefinement.ConwayRefinement.Surreal.HahnSeries.NormalFormMul
 

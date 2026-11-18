@@ -14,7 +14,7 @@ public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.IntegerPart.
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Monomial
 public import Mathlib.RingTheory.UniqueFactorizationDomain.Basic
 
-import LeanPool.ConwayRefinement.ConwayRefinement.Surreal.ArchimedeanAssumptions
+
 
 /-!
 # Every irreducible omnific integer is prime
@@ -81,7 +81,8 @@ theorem eq_one_or_eq_neg_one_of_isUnit [CharZero R]
     rw [← HahnSeries.C_one] at h'
     rw [Int.cast_mul]
     exact HahnSeries.C_injective h'
-  have hm1 : m * n = 1 := by exact_mod_cast hmn
+  have hm1 : m * n = 1 :=
+    Int.cast_injective (α := R) (hmn.trans Int.cast_one.symm)
   rcases Int.eq_one_or_neg_one_of_mul_eq_one hm1 with h1 | h1
   · left
     apply CardSuppLTTruncationIntegerPart.toNonpositiveRingHom_injective Z
@@ -283,13 +284,7 @@ theorem prime_intCast [CharZero R] {z : ℤ} (hz : Prime z) :
     rwa [map_intCast, Int.cast_id, map_zero] at this
   · intro h
     apply hz.not_isUnit
-    rcases eq_one_or_eq_neg_one_of_isUnit Z hZ h with h1 | h1
-    · have := congrArg (intCoeffRingHom Z hZ) h1
-      rw [map_intCast, Int.cast_id, map_one] at this
-      rw [this]; exact isUnit_one
-    · have := congrArg (intCoeffRingHom Z hZ) h1
-      rw [map_intCast, Int.cast_id, map_neg, map_one] at this
-      rw [this]; exact isUnit_one.neg
+    simpa only [map_intCast, Int.cast_id] using h.map (intCoeffRingHom Z hZ)
   · rw [intCast_dvd_iff Z hZ hz.ne_zero, map_mul] at hab
     rcases hz.dvd_or_dvd hab with h | h
     · exact Or.inl ((intCast_dvd_iff Z hZ hz.ne_zero a).mpr h)
@@ -304,21 +299,9 @@ theorem irreducible_int_of_irreducible_intCast [CharZero R] {z : ℤ}
     rw [hab, Int.cast_mul]
   rcases hz.isUnit_or_isUnit hab' with h | h
   · left
-    rcases eq_one_or_eq_neg_one_of_isUnit Z hZ h with h1 | h1
-    · have := congrArg (intCoeffRingHom Z hZ) h1
-      rw [map_intCast, Int.cast_id, map_one] at this
-      rw [this]; exact isUnit_one
-    · have := congrArg (intCoeffRingHom Z hZ) h1
-      rw [map_intCast, Int.cast_id, map_neg, map_one] at this
-      rw [this]; exact isUnit_one.neg
+    simpa only [map_intCast, Int.cast_id] using h.map (intCoeffRingHom Z hZ)
   · right
-    rcases eq_one_or_eq_neg_one_of_isUnit Z hZ h with h1 | h1
-    · have := congrArg (intCoeffRingHom Z hZ) h1
-      rw [map_intCast, Int.cast_id, map_one] at this
-      rw [this]; exact isUnit_one
-    · have := congrArg (intCoeffRingHom Z hZ) h1
-      rw [map_intCast, Int.cast_id, map_neg, map_one] at this
-      rw [this]; exact isUnit_one.neg
+    simpa only [map_intCast, Int.cast_id] using h.map (intCoeffRingHom Z hZ)
 
 end HahnSeries.Nonpositive
 

@@ -9,7 +9,6 @@ public import Mathlib.Data.Set.Finite.Basic
 public import Mathlib.Data.Finset.Lattice.Fold
 public import Mathlib.Algebra.Group.Basic
 
-import Mathlib.Data.Finset.Image
 import Mathlib.Data.Finset.Union
 
 /-!

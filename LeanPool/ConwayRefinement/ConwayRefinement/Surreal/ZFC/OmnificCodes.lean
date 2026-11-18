@@ -9,7 +9,7 @@ public import LeanPool.ConwayRefinement.ConwayRefinement.Surreal.ZFC.OmnificInte
 public import Mathlib.Algebra.Group.Irreducible.Defs
 public import Mathlib.Algebra.Prime.Defs
 
-import Mathlib.Algebra.Divisibility.Units
+
 
 /-!
 # Factorisation predicates quantified over omnific ZFC codes

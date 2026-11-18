@@ -10,7 +10,6 @@ public import LeanPool.ConwayRefinement.ConwayRefinement.SetTheory.Ordinal.PairB
 public import Mathlib.SetTheory.Ordinal.Exponential
 public import Mathlib.SetTheory.Ordinal.Topology
 
-import Mathlib.Topology.Maps.Basic
 import Mathlib.Topology.Order.IsNormal
 
 /-!

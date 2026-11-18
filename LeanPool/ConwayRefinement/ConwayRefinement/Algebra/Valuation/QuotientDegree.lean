@@ -8,7 +8,7 @@ module
 public import LeanPool.ConwayRefinement.ConwayRefinement.Algebra.Valuation.MaxAddDegree
 public import Mathlib.RingTheory.Ideal.Quotient.Defs
 
-import Mathlib.Order.Minimal
+
 
 /-!
 # Least-representative degree on a quotient ring

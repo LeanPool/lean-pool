@@ -9,7 +9,8 @@ public import LeanPool.ConwayRefinement.ConwayRefinement.Algebra.LoweringDerivat
 public import LeanPool.ConwayRefinement.ConwayRefinement.Algebra.Valuation.FiltrationDegree
 public import Mathlib.RingTheory.TensorProduct.Basic
 
-import LeanPool.ConwayRefinement.ConwayRefinement.Algebra.Valuation.BasisOver
+import Mathlib.RingTheory.TensorProduct.Maps
+import Mathlib.Tactic.ContinuousFunctionalCalculus
 
 /-!
 # The associated graded ring `gr_{I_•} A`

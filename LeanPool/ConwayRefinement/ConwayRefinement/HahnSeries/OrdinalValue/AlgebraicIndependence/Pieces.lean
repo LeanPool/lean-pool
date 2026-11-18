@@ -115,7 +115,7 @@ theorem translatedTruncation_window_sub_mem (a b : ℝ) (E : K⟦ℝ⟧) {ξ : �
   · rw [ite_eq_left h0, ite_eq_left h0, ite_eq_left ⟨by
       linarith, by
       linarith⟩, show ξ + δ + b = b + ξ + δ by
-      ring,
+      ac_rfl,
       sub_self]
   · rw [ite_eq_right h0, ite_eq_right h0, sub_zero]
 

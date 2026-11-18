@@ -8,7 +8,6 @@ module
 public import LeanPool.ConwayRefinement.ConwayRefinement.Algebra.LoweringDerivation.Mu
 
 import LeanPool.ConwayRefinement.ConwayRefinement.Algebra.GradedRing.HomogeneousZeroDivisors
-import Mathlib.Algebra.Module.Torsion.Field
 import Mathlib.LinearAlgebra.Basis.VectorSpace
 import Mathlib.RingTheory.Flat.Basic
 import Mathlib.Tactic.LinearCombination
@@ -256,7 +255,7 @@ theorem exists_rep_coordinate_identity (h0 : GradeZeroScalars 𝒜) {j : ℕ} {�
     rw [← RingHom.map_mul, ← RingHom.map_mul, ← RingHom.map_add]
     congr 1
     simp only [nsmul_eq_mul]
-    ring
+    ac_rfl
 
 /-- The Leibniz rule as an identity between tensors,
 `(∂ ⊗ 1) ν_{j+1}(x^(r+1) y) = (1 ⊗ m)(ν_j(∂x), ν_j(∂y))`: `∂ ⊗ 1` applied to a tensor `T` with

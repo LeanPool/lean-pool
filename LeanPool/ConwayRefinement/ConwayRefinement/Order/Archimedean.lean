@@ -10,8 +10,8 @@ public import Mathlib.Data.Set.Countable
 public import Mathlib.Order.WellFoundedSet
 
 import Mathlib.Basic.Real.Embedding
-import Mathlib.Topology.Order.Basic
-import Mathlib.Topology.Instances.Real.Lemmas
+import Mathlib.Data.EReal.Operations
+import Mathlib.Topology.MetricSpace.Bounded
 
 /-!
 # Countability in Archimedean ordered groups

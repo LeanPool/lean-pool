@@ -8,7 +8,6 @@ module
 public import LeanPool.ConwayRefinement.ConwayRefinement.SetTheory.Ordinal.SetOrderType
 
 import LeanPool.ConwayRefinement.ConwayRefinement.SetTheory.Ordinal.OrderedUnion
-import Mathlib.SetTheory.Ordinal.Principal
 
 /-!
 # API certificate for the separated indexed-union estimate

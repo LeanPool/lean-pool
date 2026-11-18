@@ -8,8 +8,7 @@ module
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.OrdinalValue
 public import LeanPool.ConwayRefinement.ConwayRefinement.SetTheory.Ordinal.AdditivelyPrincipal
 
-import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrderType
-import Mathlib.Tactic.Abel
+
 
 /-!
 # Image of Berarducci's ordinal value

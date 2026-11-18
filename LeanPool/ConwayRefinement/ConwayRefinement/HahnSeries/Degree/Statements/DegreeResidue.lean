@@ -10,7 +10,6 @@ public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.FiniteSuppor
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrderType
 public import Mathlib.Basic.Real.Basic
 
-import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.DegreeValuation
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.FiniteSupportResidue
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.OrderTypeMultiplicativity
 

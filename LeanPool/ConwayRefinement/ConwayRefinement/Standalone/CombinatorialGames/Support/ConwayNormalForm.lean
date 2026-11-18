@@ -13,8 +13,6 @@ public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.IntegerPart.
 public import LeanPool.ConwayRefinement.ConwayRefinement.Surreal.OmnificInteger.RefinementConjecture
 public import LeanPool.ConwayRefinement.ConwayRefinement.Algebra.Divisibility.DenominatorIdeal
 
-import LeanPool.ConwayRefinement.ConwayRefinement.SetTheory.Ordinal.Degree
-import LeanPool.ConwayRefinement.ConwayRefinement.Surreal.HahnSeries.DegreeTransfer
 import LeanPool.ConwayRefinement.ConwayRefinement.Blueprint
 
 /-!

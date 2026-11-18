@@ -10,7 +10,6 @@ public import LeanPool.ConwayRefinement.CombinatorialGames.NatOrdinal.Basic
 public import Mathlib.Algebra.Order.Hom.Monoid
 
 import LeanPool.ConwayRefinement.CombinatorialGames.Tactic.GameCmp
-import Mathlib.Algebra.Order.Hom.Monoid
 import Mathlib.Data.Set.Finite.Lattice
 
 /-!

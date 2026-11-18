@@ -7,7 +7,6 @@ module
 
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Germ.AlgebraicIndependence.LimitOrdinalEvaluation
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Germ.AlgebraicIndependence.TruncationPolynomial
-import LeanPool.ConwayRefinement.ConwayRefinement.Algebra.GradedRing.OrdinalGenerators
 
 /-!
 # Scalar leading coefficients when the degree is a limit ordinal

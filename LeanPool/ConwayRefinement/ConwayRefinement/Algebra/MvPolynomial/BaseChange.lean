@@ -8,7 +8,7 @@ module
 public import Mathlib.RingTheory.TensorProduct.MvPolynomial
 public import Mathlib.RingTheory.Flat.Basic
 
-import Mathlib.RingTheory.MvPolynomial.Tower
+
 
 /-!
 # Algebraic independence under a flat extension of scalars

@@ -8,11 +8,10 @@ module
 public import Mathlib.Algebra.Ring.Defs
 public import Mathlib.Algebra.Group.Defs
 public import Mathlib.Data.Finset.Insert
-import Mathlib.Algebra.Ring.Defs
 public import Mathlib.Data.Fintype.Defs
 public import Mathlib.Logic.Small.Defs
 
-import Mathlib.Tactic.DeriveFintype
+
 
 /-!
 # Type of players

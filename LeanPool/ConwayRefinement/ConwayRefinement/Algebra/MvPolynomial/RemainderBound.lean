@@ -9,7 +9,6 @@ module
 import LeanPool.ConwayRefinement.ConwayRefinement.Blueprint
 public import LeanPool.ConwayRefinement.ConwayRefinement.Algebra.MvPolynomial.TermDegree
 public import LeanPool.ConwayRefinement.ConwayRefinement.SetTheory.Ordinal.PairBounds
-import Mathlib.Tactic.Abel
 
 /-!
 # A uniform degree bound for terms with two translated truncations

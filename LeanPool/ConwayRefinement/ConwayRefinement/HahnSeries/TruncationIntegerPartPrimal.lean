@@ -94,8 +94,8 @@ theorem isPrimal_truncationIntegerPart_iff (Z : Subring L)
           Subring.residueSubring constantCoeffAlgHom (Subring.fracSubring Z))) :=
   by
     let e := truncationIntegerPartEquivResidueSubring (G := G) (L := L) Z
-    rw [← RingEquiv.isPrimal_iff e b]
-    exact Subring.isPrimal_residueSubring_iff (e b).2
+    exact (RingEquiv.isPrimal_iff e b).symm.trans
+      (Subring.isPrimal_residueSubring_iff (e b).2)
 
 /-- At constant coefficient one, primality in the truncation integer part is exactly primality
 in the ambient nonpositive Hahn ring. This is the nonzero-residue case used in LM24,

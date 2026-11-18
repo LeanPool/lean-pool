@@ -7,7 +7,6 @@ module
 
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Negative
 public import Mathlib.Algebra.Order.Ring.Rat
-import Mathlib.Tactic.NormNum
 
 /-!
 # API checks for the strictly negative presentation

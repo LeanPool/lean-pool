@@ -11,11 +11,11 @@ public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue
 public import Mathlib.RingTheory.Ideal.Prime
 
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.MainLemma
-import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.OrdinalValueConstantMul
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.ResidualPointValue
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.Statements.MainLemma
 import LeanPool.ConwayRefinement.ConwayRefinement.Topology.Order.LeftNeighborhood
-import Mathlib.Topology.Instances.Real.Lemmas
+import Mathlib.Data.EReal.Operations
+import Mathlib.Topology.MetricSpace.Bounded
 
 /-!
 # Berarducci's induction on complexity
@@ -160,7 +160,7 @@ theorem ordinalValue_eval [CharZero K] (w : FormalExpression K) :
       rw [eval_eq, valueProd, Multiset.map_singleton, Multiset.map_singleton,
         Multiset.prod_singleton, Multiset.prod_singleton] at h
       rw [h]
-      ring
+      ac_rfl
     · have hone : ordinalValue (translatedTruncation (x.1 : K⟦ℝ⟧) γ) = 1 := by
         have hne : ordinalValue (translatedTruncation (x.1 : K⟦ℝ⟧) γ) ≠ 0 := by
           rw [(mem_residualPointSet_iff.mp hγ).2]
@@ -171,7 +171,7 @@ theorem ordinalValue_eval [CharZero K] (w : FormalExpression K) :
       have h := hIHred 0 (by simp) (by simp)
       rw [eval_zero, valueProd_zero, one_mul, one_mul] at h
       rw [mul_assoc, ordinalValue_mul_of_ordinalValue_eq_one hone, h, hone]
-      ring
+      ac_rfl
   rcases eq_or_ne r 0 with hr0 | hr0
   · -- no other factor: the pure-power form of Lemma 8.2
     rw [heval, hvp, hr0, eval_zero, valueProd_zero, mul_one, mul_one]

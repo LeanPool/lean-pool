@@ -9,7 +9,7 @@ public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrderType
 public import LeanPool.ConwayRefinement.ConwayRefinement.Surreal.HahnSeries.Full
 public import LeanPool.ConwayRefinement.ConwayRefinement.Surreal.HahnSeries.Degree
 
-import LeanPool.ConwayRefinement.ConwayRefinement.SetTheory.Ordinal.Degree
+
 
 /-!
 # Degree of Conway normal forms in the full Hahn field

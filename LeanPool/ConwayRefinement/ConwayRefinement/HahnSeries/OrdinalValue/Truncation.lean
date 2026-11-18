@@ -8,7 +8,7 @@ module
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.Germ
 public import Mathlib.Topology.MetricSpace.Pseudo.Defs
 
-import Mathlib.Tactic.Linarith
+
 
 /-!
 # Berarducci germs at a real exponent

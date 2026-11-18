@@ -8,8 +8,6 @@ module
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.CriticalPointExistence
 
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.OrdinalValueDegree
-import Mathlib.Tactic.Linarith
-import Mathlib.Tactic.NormNum
 
 /-!
 # API checks for Berarducci critical points

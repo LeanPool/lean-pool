@@ -9,9 +9,9 @@ public import Mathlib.Algebra.Group.Pointwise.Set.Basic
 public import Mathlib.Order.WellFoundedSet
 public import Mathlib.Topology.MetricSpace.Pseudo.Defs
 
-import Mathlib.Topology.Instances.Real.Lemmas
 import Mathlib.Topology.Order.MonotoneConvergence
 import Mathlib.Topology.Sequences
+import Mathlib.Topology.Algebra.Ring.Real
 
 /-!
 # Sumsets of well-ordered sets of reals

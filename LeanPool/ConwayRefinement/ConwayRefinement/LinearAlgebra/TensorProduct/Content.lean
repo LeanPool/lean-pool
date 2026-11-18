@@ -178,7 +178,7 @@ private theorem contentCoordinates_mulRightFactor_apply
       simp only [contentCoordinates,
         TensorProduct.equivFinsuppOfBasisLeft_apply_tmul_apply]
       rw [_root_.Algebra.smul_def, _root_.Algebra.smul_def]
-      ring
+      ac_rfl
   | add x y hx hy => simp [map_add, hx, hy, mul_add]
 
 omit [IsDomain D] in

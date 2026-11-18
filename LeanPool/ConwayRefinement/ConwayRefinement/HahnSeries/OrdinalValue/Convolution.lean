@@ -11,7 +11,8 @@ public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue
 public import Mathlib.Topology.MetricSpace.Pseudo.Defs
 
 import LeanPool.ConwayRefinement.ConwayRefinement.Topology.Order.PWOSumset
-import Mathlib.Topology.Instances.Real.Lemmas
+import Mathlib.Data.EReal.Operations
+import Mathlib.Topology.MetricSpace.Bounded
 
 /-!
 # Berarducci's convolution formula for germs

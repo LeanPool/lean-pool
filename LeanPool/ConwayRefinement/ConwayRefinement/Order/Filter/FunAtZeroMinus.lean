@@ -11,11 +11,9 @@ public import Mathlib.Topology.MetricSpace.Pseudo.Defs
 public import Mathlib.LinearAlgebra.TensorProduct.Map
 
 import LeanPool.ConwayRefinement.ConwayRefinement.Topology.Order.LeftNeighborhood
-import Mathlib.LinearAlgebra.TensorProduct.RightExactness
 import Mathlib.LinearAlgebra.Basis.VectorSpace
 import Mathlib.RingTheory.Flat.Basic
 import Mathlib.Topology.MetricSpace.Pseudo.Lemmas
-import Mathlib.Tactic.Linarith
 
 /-!
 # Functions at `0⁻` with values in a vector space

@@ -9,7 +9,6 @@ public import Mathlib.SetTheory.Cardinal.Order
 public import Mathlib.SetTheory.Ordinal.Basic
 public import Mathlib.Data.Multiset.DershowitzManna
 import Mathlib.Data.Finset.Max
-import Lean.Elab.Tactic.Omega
 
 /-!
 # Selection and decreasing multiset complexity

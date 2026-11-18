@@ -9,7 +9,7 @@ public import LeanPool.ConwayRefinement.ConwayRefinement.Topology.CantorBendixso
 public import Mathlib.Topology.Homeomorph.Defs
 public import Mathlib.Topology.DiscreteSubset
 
-import Mathlib.Topology.Maps.Basic
+
 
 /-!
 # Local reconstruction of Cantor–Bendixson stages

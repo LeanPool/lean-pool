@@ -9,11 +9,7 @@ public import LeanPool.ConwayRefinement.ConwayRefinement.Surreal.OmnificInteger.
 public import LeanPool.ConwayRefinement.ConwayRefinement.Examples.OmnificInteger.OneRowNormalForm
 
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.CharZero
-import LeanPool.ConwayRefinement.ConwayRefinement.SetTheory.Ordinal.Degree
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.OneRow
-import LeanPool.ConwayRefinement.ConwayRefinement.Surreal.ArchimedeanAssumptions
-import LeanPool.ConwayRefinement.ConwayRefinement.Surreal.HahnSeries.DegreeTransfer
-import LeanPool.ConwayRefinement.ConwayRefinement.Surreal.HahnSeries.IntegerPart
 import LeanPool.ConwayRefinement.ConwayRefinement.Surreal.HahnSeries.RealLeadingSplit
 
 /-!

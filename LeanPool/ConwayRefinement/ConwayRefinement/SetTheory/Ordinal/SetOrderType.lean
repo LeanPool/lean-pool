@@ -10,8 +10,7 @@ public import Mathlib.Order.WellFoundedSet
 public import Mathlib.SetTheory.Ordinal.Principal
 public import Mathlib.SetTheory.Cardinal.Aleph
 
-import Mathlib.Order.Sum.Order
-import Mathlib.Order.Hom.Set
+
 
 /-!
 # Order type of a partially well-ordered set

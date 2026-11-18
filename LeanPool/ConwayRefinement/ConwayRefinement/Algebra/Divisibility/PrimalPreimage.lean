@@ -10,9 +10,9 @@ public import Mathlib.Algebra.Algebra.Subalgebra.Basic
 public import Mathlib.Algebra.Ring.Subring.Basic
 public import Mathlib.Algebra.Field.Subfield.Basic
 public import Mathlib.Algebra.GroupWithZero.Divisibility
-import Mathlib.Tactic.Ring
 import Mathlib.Tactic.FieldSimp
 import LeanPool.ConwayRefinement.ConwayRefinement.Blueprint
+import Mathlib.Tactic.Ring.RingNF
 
 /-!
 # Primality in a ring cut out by a residue condition
@@ -200,7 +200,7 @@ theorem fracSubring_eq_top_of_isPrimal_of_residue_eq_zero
     refine ⟨P, Subtype.ext ?_⟩
     change algebraMap L A x * p * (algebraMap L A x⁻¹ * p) = p * p
     rw [show algebraMap L A x * p * (algebraMap L A x⁻¹ * p) =
-      algebraMap L A (x * x⁻¹) * (p * p) by rw [map_mul]; ring,
+      algebraMap L A (x * x⁻¹) * (p * p) by rw [map_mul]; ac_rfl,
       mul_inv_cancel₀ hx, map_one, one_mul]
   obtain ⟨p₁, p₂, hp₁, hp₂, hprod⟩ := hp hdiv
   have hprodA : p = (p₁ : A) * p₂ := congrArg Subtype.val hprod
@@ -210,9 +210,9 @@ theorem fracSubring_eq_top_of_isPrimal_of_residue_eq_zero
     have hcancel : p * (algebraMap L A x⁻¹ * (p₁ : A)) = p * (q : A) := by
       calc
         p * (algebraMap L A x⁻¹ * (p₁ : A)) =
-            (p₁ : A) * (algebraMap L A x⁻¹ * p) := by ring
+            (p₁ : A) * (algebraMap L A x⁻¹ * p) := by ac_rfl
         _ = (p₁ : A) * ((p₂ : A) * q) := by rw [hDA]
-        _ = p * q := by rw [hprodA]; ring
+        _ = p * q := by rw [hprodA]; ac_rfl
     have hscalar : algebraMap L A x⁻¹ * (p₁ : A) = q :=
       mul_left_cancel₀ hp0 hcancel
     have hres : x⁻¹ * π (p₁ : A) = π (q : A) := by
@@ -229,9 +229,9 @@ theorem fracSubring_eq_top_of_isPrimal_of_residue_eq_zero
     have hcancel : p * (algebraMap L A x * (p₂ : A)) = p * (q : A) := by
       calc
         p * (algebraMap L A x * (p₂ : A)) =
-            (p₂ : A) * (algebraMap L A x * p) := by ring
+            (p₂ : A) * (algebraMap L A x * p) := by ac_rfl
         _ = (p₂ : A) * ((p₁ : A) * q) := by rw [hCA]
-        _ = p * q := by rw [hprodA]; ring
+        _ = p * q := by rw [hprodA]; ac_rfl
     have hscalar : algebraMap L A x * (p₂ : A) = q :=
       mul_left_cancel₀ hp0 hcancel
     have hres : x * π (p₂ : A) = π (q : A) := by
@@ -277,8 +277,8 @@ theorem isPrimal_residue_of_isPrimal {b : A} (hb : π b ∈ S)
     refine ⟨⟨algebraMap L A e, hmem3⟩, Subtype.ext ?_⟩
     change algebraMap L A c * (algebraMap L A d * b') = b * algebraMap L A e
     calc algebraMap L A c * (algebraMap L A d * b')
-        = algebraMap L A (c * d * (π b)⁻¹) * b := by rw [hb', map_mul, map_mul]; ring
-      _ = b * algebraMap L A e := by rw [hce]; ring
+        = algebraMap L A (c * d * (π b)⁻¹) * b := by rw [hb', map_mul, map_mul]; ac_rfl
+      _ = b * algebraMap L A e := by rw [hce]; ac_rfl
   obtain ⟨b₁, b₂, h₁, h₂, hprod⟩ := h key
   refine ⟨residueHom π S b₁, residueHom π S b₂, ?_, ?_, ?_⟩
   · simpa [residueHom, Subtype.ext_iff] using map_dvd (residueHom π S) h₁
@@ -305,11 +305,11 @@ theorem isPrimal_of_isPrimal_residueSubring {b : A} (hb : π b ∈ S)
       calc (nrm π c * nrm π d)
             * (algebraMap L A (scale π c) * algebraMap L A (scale π d))
           = (nrm π c * algebraMap L A (scale π c))
-            * (nrm π d * algebraMap L A (scale π d)) := by ring
+            * (nrm π d * algebraMap L A (scale π d)) := by ac_rfl
         _ = c * d := by rw [hc, hd]
     calc nrm π c * nrm π d = (nrm π c * nrm π d) * algebraMap L A σ * algebraMap L A σ⁻¹ := by
           rw [mul_assoc, ← map_mul, mul_inv_cancel₀ hσ0, map_one, mul_one]
-      _ = b * (e * algebraMap L A σ⁻¹) := by rw [this, hcd]; ring
+      _ = b * (e * algebraMap L A σ⁻¹) := by rw [this, hcd]; ac_rfl
   set w : A := e * algebraMap L A (σ⁻¹ * π b) with hw
   have hres : π w = π (nrm π c) * π (nrm π d) := by
     have h2 := congrArg π hsplit
@@ -327,9 +327,9 @@ theorem isPrimal_of_isPrimal_residueSubring {b : A} (hb : π b ∈ S)
     refine ⟨⟨w, hmemw⟩, Subtype.ext ?_⟩
     change nrm π c * algebraMap L A (π b) * nrm π d = b * w
     calc nrm π c * algebraMap L A (π b) * nrm π d
-        = (nrm π c * nrm π d) * algebraMap L A (π b) := by ring
+        = (nrm π c * nrm π d) * algebraMap L A (π b) := by ac_rfl
       _ = (b * (e * algebraMap L A σ⁻¹)) * algebraMap L A (π b) := by rw [hsplit]
-      _ = b * (e * algebraMap L A (σ⁻¹ * π b)) := by rw [map_mul]; ring
+      _ = b * (e * algebraMap L A (σ⁻¹ * π b)) := by rw [map_mul]; ac_rfl
       _ = b * w := by rw [hw]
   obtain ⟨b₁, b₂, h₁, h₂, hprod⟩ := h key
   refine ⟨(b₁ : A), (b₂ : A), ?_, ?_, ?_⟩
@@ -344,13 +344,13 @@ theorem isPrimal_of_isPrimal_residueSubring {b : A} (hb : π b ∈ S)
                 rw [mul_inv_cancel₀ hb0, map_one, mul_one]
             _ = nrm π c * algebraMap L A (π b)
                   * (algebraMap L A (scale π c) * algebraMap L A (π b)⁻¹) := by
-                rw [map_mul]; ring
-      _ = (b₁ : A) * ((u : A) * algebraMap L A (scale π c * (π b)⁻¹)) := by rw [hu']; ring
+                rw [map_mul]; ac_rfl
+      _ = (b₁ : A) * ((u : A) * algebraMap L A (scale π c * (π b)⁻¹)) := by rw [hu']; ac_rfl
   · obtain ⟨u, hu⟩ := h₂
     refine ⟨(u : A) * algebraMap L A (scale π d), ?_⟩
     have hu' : nrm π d = (b₂ : A) * u := congrArg Subtype.val hu
     calc d = nrm π d * algebraMap L A (scale π d) := hd.symm
-      _ = (b₂ : A) * ((u : A) * algebraMap L A (scale π d)) := by rw [hu']; ring
+      _ = (b₂ : A) * ((u : A) * algebraMap L A (scale π d)) := by rw [hu']; ac_rfl
   · exact congrArg Subtype.val hprod
 
 /-- Converse, case `π b ≠ 0`: primal residue plus primal in the ambient algebra gives primal
@@ -365,7 +365,7 @@ theorem isPrimal_residueSubring_of_isPrimal {b : A} (hb : π b ∈ S) (hb0 : π 
   obtain ⟨b₁, b₂, ⟨f, hf⟩, ⟨g, hg⟩, hprod⟩ := hA (Dvd.intro _ hcd.symm)
   -- cancellation, available because `A` is a domain and `b ≠ 0`
   have hefg : (e : A) = f * g := by
-    have : b * (e : A) = b * (f * g) := by rw [← hcd, hf, hg, hprod]; ring
+    have : b * (e : A) = b * (f * g) := by rw [← hcd, hf, hg, hprod]; ac_rfl
     exact mul_left_cancel₀ hbne this
   have hpb : π b = π b₁ * π b₂ := by rw [hprod, map_mul]
   have hb₁0 : π b₁ ≠ 0 := fun h ↦ hb0 (by rw [hpb, h, zero_mul])
@@ -389,12 +389,12 @@ theorem isPrimal_residueSubring_of_isPrimal {b : A} (hb : π b ∈ S) (hb0 : π 
     field_simp
   have e₂ : π (b₂ * algebraMap L A η) = b₂' := by
     simp only [map_mul, AlgHom.commutes, Algebra.algebraMap_self, RingHom.id_apply, hη]
-    have : π b₂ * (π b₁ * b₁'⁻¹) = (π b₁ * π b₂) * b₁'⁻¹ := by ring
+    have : π b₂ * (π b₁ * b₁'⁻¹) = (π b₁ * π b₂) * b₁'⁻¹ := by ac_rfl
     rw [this, ← hpb, hbb]; field_simp
   have e₃ : π (f * algebraMap L A η) = s := by
     have hpc : π c = π b₁ * π f := by rw [hf, map_mul]
     simp only [map_mul, AlgHom.commutes, Algebra.algebraMap_self, RingHom.id_apply, hη]
-    have : π f * (π b₁ * b₁'⁻¹) = (π b₁ * π f) * b₁'⁻¹ := by ring
+    have : π f * (π b₁ * b₁'⁻¹) = (π b₁ * π f) * b₁'⁻¹ := by ac_rfl
     rw [this, ← hpc, hcs]; field_simp
   have hηinv : η⁻¹ = b₁' * (π b₁)⁻¹ := by rw [hη]; field_simp
   have e₄ : π (g * algebraMap L A η⁻¹) = u := by
@@ -404,23 +404,23 @@ theorem isPrimal_residueSubring_of_isPrimal {b : A} (hb : π b ∈ S) (hb0 : π 
     have h5 : π g * (b₁' * (π b₁)⁻¹) * (π b₁ * π b₂) = (π b₂ * π g) * b₁' := by
       field_simp
     rw [h5, hpd, hdu, show u * (π b₁ * π b₂) = u * π b by rw [hpb], hbb]
-    ring
+    ac_rfl
   refine ⟨⟨b₁ * algebraMap L A η⁻¹, mem_residueSubring.mpr (by rw [e₁]; exact hb₁')⟩,
           ⟨b₂ * algebraMap L A η, mem_residueSubring.mpr (by rw [e₂]; exact hb₂')⟩, ?_, ?_, ?_⟩
   · exact ⟨⟨f * algebraMap L A η, mem_residueSubring.mpr (by rw [e₃]; exact hs)⟩, Subtype.ext (by
       change (c : A) = b₁ * algebraMap L A η⁻¹ * (f * algebraMap L A η)
       rw [hf, show b₁ * algebraMap L A η⁻¹ * (f * algebraMap L A η)
-          = b₁ * f * (algebraMap L A η⁻¹ * algebraMap L A η) by ring, ← map_mul,
+          = b₁ * f * (algebraMap L A η⁻¹ * algebraMap L A η) by ac_rfl, ← map_mul,
         inv_mul_cancel₀ hη0, map_one, mul_one])⟩
   · exact ⟨⟨g * algebraMap L A η⁻¹, mem_residueSubring.mpr (by rw [e₄]; exact hu)⟩, Subtype.ext (by
       change (d : A) = b₂ * algebraMap L A η * (g * algebraMap L A η⁻¹)
       rw [hg, show b₂ * algebraMap L A η * (g * algebraMap L A η⁻¹)
-          = b₂ * g * (algebraMap L A η * algebraMap L A η⁻¹) by ring, ← map_mul,
+          = b₂ * g * (algebraMap L A η * algebraMap L A η⁻¹) by ac_rfl, ← map_mul,
         mul_inv_cancel₀ hη0, map_one, mul_one])⟩
   · refine Subtype.ext ?_
     change b = b₁ * algebraMap L A η⁻¹ * (b₂ * algebraMap L A η)
     rw [hprod, show b₁ * algebraMap L A η⁻¹ * (b₂ * algebraMap L A η)
-        = b₁ * b₂ * (algebraMap L A η⁻¹ * algebraMap L A η) by ring, ← map_mul,
+        = b₁ * b₂ * (algebraMap L A η⁻¹ * algebraMap L A η) by ac_rfl, ← map_mul,
       inv_mul_cancel₀ hη0, map_one, mul_one]
 
 /-! ### Lemma 9.2.1, case `π b = 0` -/
@@ -444,12 +444,12 @@ theorem isPrimal_fracSubring_of_isPrimal_residueSubring {b : A} (hb : π b ∈ S
       calc (nrm π (c : A) * nrm π (d : A))
             * (algebraMap L A (scale π (c : A)) * algebraMap L A (scale π (d : A)))
           = (nrm π (c : A) * algebraMap L A (scale π (c : A)))
-            * (nrm π (d : A) * algebraMap L A (scale π (d : A))) := by ring
+            * (nrm π (d : A) * algebraMap L A (scale π (d : A))) := by ac_rfl
         _ = (c : A) * d := by rw [hc, hd]
     calc nrm π (c : A) * nrm π (d : A)
         = (nrm π (c : A) * nrm π (d : A)) * algebraMap L A σ * algebraMap L A σ⁻¹ := by
           rw [mul_assoc, ← map_mul, mul_inv_cancel₀ hσ0, map_one, mul_one]
-      _ = b * ((e : A) * algebraMap L A σ⁻¹) := by rw [h1, hcd]; ring
+      _ = b * ((e : A) * algebraMap L A σ⁻¹) := by rw [h1, hcd]; ac_rfl
   -- the quotient's residue lies in `Frac S`; clear its denominator
   set w : A := (e : A) * algebraMap L A σ⁻¹ with hw
   have hwF : π w ∈ fracSubring S := by
@@ -468,9 +468,9 @@ theorem isPrimal_fracSubring_of_isPrimal_residueSubring {b : A} (hb : π b ∈ S
     refine ⟨⟨w * algebraMap L A s, hmemw⟩, Subtype.ext ?_⟩
     change nrm π (c : A) * algebraMap L A s * nrm π (d : A) = b * (w * algebraMap L A s)
     calc nrm π (c : A) * algebraMap L A s * nrm π (d : A)
-        = (nrm π (c : A) * nrm π (d : A)) * algebraMap L A s := by ring
+        = (nrm π (c : A) * nrm π (d : A)) * algebraMap L A s := by ac_rfl
       _ = (b * w) * algebraMap L A s := by rw [hsplit, hw]
-      _ = b * (w * algebraMap L A s) := by ring
+      _ = b * (w * algebraMap L A s) := by ac_rfl
   obtain ⟨b₁, b₂, ⟨v, hv⟩, ⟨u, hu⟩, hprod⟩ := h key
   have hv' : nrm π (c : A) * algebraMap L A s = (b₁ : A) * v := congrArg Subtype.val hv
   have hu' : nrm π (d : A) = (b₂ : A) * u := congrArg Subtype.val hu
@@ -489,15 +489,15 @@ theorem isPrimal_fracSubring_of_isPrimal_residueSubring {b : A} (hb : π b ∈ S
             rw [show nrm π (c : A) * algebraMap L A s
                 * (algebraMap L A s⁻¹ * algebraMap L A (scale π (c : A)))
                 = nrm π (c : A) * algebraMap L A (scale π (c : A))
-                  * (algebraMap L A s * algebraMap L A s⁻¹) by ring, hs', mul_one]
+                  * (algebraMap L A s * algebraMap L A s⁻¹) by ac_rfl, hs', mul_one]
         _ = (b₁ : A) * ((v : A) * algebraMap L A (s⁻¹ * scale π (c : A))) := by
-            rw [hv', map_mul]; ring
+            rw [hv', map_mul]; ac_rfl
   · refine ⟨⟨(u : A) * algebraMap L A (scale π (d : A)), ?_⟩, Subtype.ext ?_⟩
     · rw [mem_residueSubring, map_mul, AlgHom.commutes]
       exact (fracSubring S).mul_mem (le_fracSubring u.2) (mem_scale_frac π d.2)
     · change (d : A) = (b₂ : A) * ((u : A) * algebraMap L A (scale π (d : A)))
       calc (d : A) = nrm π (d : A) * algebraMap L A (scale π (d : A)) := hd.symm
-        _ = (b₂ : A) * ((u : A) * algebraMap L A (scale π (d : A))) := by rw [hu']; ring
+        _ = (b₂ : A) * ((u : A) * algebraMap L A (scale π (d : A))) := by rw [hu']; ac_rfl
   · refine Subtype.ext ?_
     change b = (b₁ : A) * (b₂ : A)
     simpa using congrArg Subtype.val hprod
@@ -520,8 +520,8 @@ private theorem eta_rescale {b c d e : A} (hb : π b ∈ S) (hc : π c ∈ S) (h
     · obtain ⟨s₁, hs₁, hs₁0, hs₁b⟩ := exists_den hb₂F
       obtain ⟨s₂, hs₂, hs₂0, hs₂f⟩ := exists_den hfF
       refine ⟨s₁ * s₂, mul_ne_zero hs₁0 hs₂0, ?_, ?_, ?_⟩
-      · rw [show s₁ * s₂ * π b₂ = s₂ * (s₁ * π b₂) by ring]; exact S.mul_mem hs₂ hs₁b
-      · rw [show s₁ * s₂ * π f = s₁ * (s₂ * π f) by ring]; exact S.mul_mem hs₁ hs₂f
+      · rw [show s₁ * s₂ * π b₂ = s₂ * (s₁ * π b₂) by ac_rfl]; exact S.mul_mem hs₂ hs₁b
+      · rw [show s₁ * s₂ * π f = s₁ * (s₂ * π f) by ac_rfl]; exact S.mul_mem hs₁ hs₂f
       · rw [hg0, zero_mul]; exact S.zero_mem
     · refine ⟨π g, hg0, ?_, ?_, ?_⟩
       · rw [mul_comm, ← map_mul, ← hdg]; exact hd
@@ -537,16 +537,16 @@ private theorem eta_rescale {b c d e : A} (hb : π b ∈ S) (hc : π c ∈ S) (h
     · rw [mem_residueSubring, map_mul, AlgHom.commutes, mul_comm]; exact hηf
     · change c = b₁ * algebraMap L A η⁻¹ * (f * algebraMap L A η)
       rw [hcf, show b₁ * algebraMap L A η⁻¹ * (f * algebraMap L A η)
-          = b₁ * f * (algebraMap L A η⁻¹ * algebraMap L A η) by ring, hinv, mul_one]
+          = b₁ * f * (algebraMap L A η⁻¹ * algebraMap L A η) by ac_rfl, hinv, mul_one]
   · refine ⟨⟨g * algebraMap L A η⁻¹, ?_⟩, Subtype.ext ?_⟩
     · rw [mem_residueSubring, map_mul, AlgHom.commutes]; exact hηg
     · change d = b₂ * algebraMap L A η * (g * algebraMap L A η⁻¹)
       rw [hdg, show b₂ * algebraMap L A η * (g * algebraMap L A η⁻¹)
-          = b₂ * g * (algebraMap L A η * algebraMap L A η⁻¹) by ring, hinv', mul_one]
+          = b₂ * g * (algebraMap L A η * algebraMap L A η⁻¹) by ac_rfl, hinv', mul_one]
   · refine Subtype.ext ?_
     change b = b₁ * algebraMap L A η⁻¹ * (b₂ * algebraMap L A η)
     rw [hprod, show b₁ * algebraMap L A η⁻¹ * (b₂ * algebraMap L A η)
-        = b₁ * b₂ * (algebraMap L A η⁻¹ * algebraMap L A η) by ring, hinv, mul_one]
+        = b₁ * b₂ * (algebraMap L A η⁻¹ * algebraMap L A η) by ac_rfl, hinv, mul_one]
 
 /-- Converse, case `π b = 0`. -/
 theorem isPrimal_residueSubring_of_isPrimal_pre_fracSubring {b : A} (hb : π b ∈ S) (hb0 : π b = 0)
@@ -565,16 +565,16 @@ theorem isPrimal_residueSubring_of_isPrimal_pre_fracSubring {b : A} (hb : π b �
   have hcf : (c : A) = (b₁ : A) * f := congrArg Subtype.val hf
   have hdg : (d : A) = (b₂ : A) * g := congrArg Subtype.val hg
   have hefg : (e : A) = (f : A) * g := by
-    have h6 : b * (e : A) = b * ((f : A) * g) := by rw [← hcd, hcf, hdg, hprod']; ring
+    have h6 : b * (e : A) = b * ((f : A) * g) := by rw [← hcd, hcf, hdg, hprod']; ac_rfl
     exact mul_left_cancel₀ hbne h6
   have hzero : π (b₁ : A) = 0 ∨ π (b₂ : A) = 0 :=
     mul_eq_zero.mp (by rw [← map_mul, ← hprod']; exact hb0)
   rcases hzero with h1 | h2
   · exact eta_rescale hb c.2 d.2 e.2 b₂.2 f.2 hprod' hcf hdg hefg h1
   · obtain ⟨B₁, B₂, hd1, hd2, hp⟩ :=
-      eta_rescale hb d.2 c.2 e.2 b₁.2 g.2 (by rw [hprod']; ring) hdg hcf
-        (by rw [hefg]; ring) h2
-    exact ⟨B₂, B₁, hd2, hd1, by rw [hp]; ring⟩
+      eta_rescale hb d.2 c.2 e.2 b₁.2 g.2 (by rw [hprod']; ac_rfl) hdg hcf
+        (by rw [hefg]; ac_rfl) h2
+    exact ⟨B₂, B₁, hd2, hd1, by rw [hp]; ac_rfl⟩
 
 /-! ### Lemma 9.2.1 -/
 
@@ -651,7 +651,7 @@ theorem exists_refinement_residueSubring_of_ambient_of_residue_ne_zero
     dsimp only [η]
     have hae : π (a : A) = π e * π f := by rw [ha, map_mul]
     calc
-      π f * (π e * (e₀ : L)⁻¹) = (π e * π f) * (e₀ : L)⁻¹ := by ring
+      π f * (π e * (e₀ : L)⁻¹) = (π e * π f) * (e₀ : L)⁻¹ := by ac_rfl
       _ = π (a : A) * (e₀ : L)⁻¹ := by rw [hae]
       _ = (e₀ : L) * f₀ * (e₀ : L)⁻¹ := by rw [ha₀']
       _ = f₀ := by field_simp
@@ -659,7 +659,7 @@ theorem exists_refinement_residueSubring_of_ambient_of_residue_ne_zero
     simp only [map_mul, AlgHom.commutes, Algebra.algebraMap_self, RingHom.id_apply]
     dsimp only [η]
     have hce : π (c : A) = π e * π g := by rw [hc, map_mul]
-    rw [show π g * (π e * (e₀ : L)⁻¹) = (π e * π g) * (e₀ : L)⁻¹ by ring,
+    rw [show π g * (π e * (e₀ : L)⁻¹) = (π e * π g) * (e₀ : L)⁻¹ by ac_rfl,
       ← hce, hc₀']
     field_simp
   have hH : π (h * algebraMap L A η⁻¹) = h₀ := by
@@ -682,19 +682,19 @@ theorem exists_refinement_residueSubring_of_ambient_of_residue_ne_zero
     simp only [Subring.coe_mul]
   · rw [ha]
     rw [show (e * algebraMap L A η⁻¹) * (f * algebraMap L A η) =
-      e * f * (algebraMap L A η⁻¹ * algebraMap L A η) by ring,
+      e * f * (algebraMap L A η⁻¹ * algebraMap L A η) by ac_rfl,
       ← map_mul, inv_mul_cancel₀ hη0, map_one, mul_one]
   · rw [hb]
     rw [show (g * algebraMap L A η) * (h * algebraMap L A η⁻¹) =
-      g * h * (algebraMap L A η * algebraMap L A η⁻¹) by ring,
+      g * h * (algebraMap L A η * algebraMap L A η⁻¹) by ac_rfl,
       ← map_mul, mul_inv_cancel₀ hη0, map_one, mul_one]
   · rw [hc]
     rw [show (e * algebraMap L A η⁻¹) * (g * algebraMap L A η) =
-      e * g * (algebraMap L A η⁻¹ * algebraMap L A η) by ring,
+      e * g * (algebraMap L A η⁻¹ * algebraMap L A η) by ac_rfl,
       ← map_mul, inv_mul_cancel₀ hη0, map_one, mul_one]
   · rw [hd]
     rw [show (f * algebraMap L A η) * (h * algebraMap L A η⁻¹) =
-      f * h * (algebraMap L A η * algebraMap L A η⁻¹) by ring,
+      f * h * (algebraMap L A η * algebraMap L A η⁻¹) by ac_rfl,
       ← map_mul, mul_inv_cancel₀ hη0, map_one, mul_one]
 
 /-- A nonzero exact ambient four-factor refinement can be rescaled into the residue subring when
@@ -733,11 +733,11 @@ theorem exists_refinement_residueSubring_of_ambient
       have haEF' := congrArg Subtype.val haEF
       simp only [Subring.coe_mul] at habcd' hcEG' hdFH' haEF'
       rw [habcd', hcEG', hdFH', haEF']
-      ring
+      ac_rfl
     · obtain ⟨F, E, hFd, hEc, haFE⟩ := eta_rescale a.2 d.2 c.2 b.2
           (by rw [hfrac]; exact Subring.mem_top _)
           (by rw [hfrac]; exact Subring.mem_top _)
-          (by rw [ha]; ring) hd hc (by rw [hb]; ring) hf0
+          (by rw [ha]; ac_rfl) hd hc (by rw [hb]; ac_rfl) hf0
       obtain ⟨H, hdFH⟩ := hFd
       obtain ⟨G, hcEG⟩ := hEc
       refine ⟨E, F, G, H, ?_, ?_, hcEG, hdFH⟩
@@ -751,7 +751,7 @@ theorem exists_refinement_residueSubring_of_ambient
         have haFE' := congrArg Subtype.val haFE
         simp only [Subring.coe_mul] at habcd' hcEG' hdFH' haFE'
         rw [habcd', hcEG', hdFH', haFE']
-        ring
+        ac_rfl
   · exact exists_refinement_residueSubring_of_ambient_of_residue_ne_zero
       haS haπ habcd ha hb hc hd
 
