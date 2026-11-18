@@ -92,30 +92,6 @@ theorem helper_stageLastPositive_128.{u_1, u_2} :
   apply Fin.ext
   simp
 
-theorem helper_stageToLast_135.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
-      [ DecidableEq V] [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
-      (e0 : E) (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-      (generating phi : PartialEdgeColoring E k)
-      (ett : ExtendedTashkinovTree G k e0 input T generating) (base : HierarchyBase ett phi)
-      (H : TashkinovHierarchy ett base) (_ : TreeSequence G e0),
-    (∀ (A : TreeSequence G e0), TreeSequenceInitialSegment A A) →
-    (∀ (a d : ℕ) (hbound : a + d ≤ H.dividerCount + (1 : ℕ)),
-        TreeSequenceInitialSegment
-          (H.stage (⟨a, by omega⟩ : Fin (H.dividerCount + (2 : ℕ))))
-          (H.stage (⟨a + d, by omega⟩ : Fin (H.dividerCount + (2 : ℕ))))) →
-    let lastStage : TreeSequence G e0 := HierarchyStarredStage H (Fin.last H.dividerCount);
-    (H.dividerCount = (0 : ℕ) → lastStage = base.core) →
-    (H.dividerCount ≠ (0 : ℕ) →
-        lastStage = H.stage (⟨H.dividerCount, by omega⟩ : Fin (H.dividerCount + (2 : ℕ)))) →
-    TreeSequenceInitialSegment (ett.series.data.tree (Fin.last ett.rounds).castSucc)
-      lastStage := by
-  intro V E _ _ _ _ G k e0 input T generating phi ett base H B segmentRefl stageSegment lastStage
-      lastZero lastPositive
-  exact base.lastRoundInitialSegmentCore.trans
-    (H.coreInitialSegmentOfStarredStage (Fin.last _))
-
 theorem helper_hbNested_194.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]

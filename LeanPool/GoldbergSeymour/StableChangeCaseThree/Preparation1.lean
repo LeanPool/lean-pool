@@ -79,37 +79,6 @@ abbrev helperPrefixMaximum1187Conditions.{u_1, u_2} : Prop :=
 alias helper_equalTrees_536 :=
   SharedFacts.StableChangeCasesOneTwoSplitTail.equalTrees
 
-theorem helper_terminalRoute_392.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E]
-      [DecidableEq V] [DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
-      (e0 : E) (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-      (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi)
-      (base : HierarchyBase ett phi) (_ : HierarchyCounterexample base)
-      (alpha beta : Fin k),
-    let n : Fin (ett.rounds + (1 : ℕ)) := Fin.last ett.rounds;
-    let Tn : TreeSequence G e0 := ett.series.data.tree n.castSucc;
-    let Dn : Finset (Fin k) := TashkinovStoredColors ett.series.data n;
-    (∀ {S U W : TreeSequence G e0},
-        TreeSequenceInitialSegment S W →
-          TreeSequenceInitialSegment U W →
-            S.length ≤ U.length → TreeSequenceInitialSegment S U) →
-    (∀ (c : Fin k), c = alpha ∨ c = beta → c ∉ TreeMissingColors phi Tn ∪ Dn) →
-    (∀ c ∈ ett.series.data.stored n, c ∈ TreeMissingColors phi Tn ∪ Dn) →
-    ett.series.data.kind n = some TashkinovExtensionKind.PE ∧
-        TashkinovAugmentationSequence phi Tn T ∨
-      (ett.series.data.kind n = some TashkinovExtensionKind.SE ∨
-          ett.series.data.kind n = some TashkinovExtensionKind.RE) ∧
-        ∃ (f : E) (seed : TreeSequence G e0),
-          ett.series.data.connectingEdges n = { f } ∧
-            TreeSequenceAdjoinEdge Tn f seed ∧
-              TashkinovAugmentationSequence phi seed T ∧
-                phi f ≠ some alpha ∧ phi f ≠ some beta := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C alpha beta n Tn Dn commonPrefix notControlled
-      storedOrMissing
-  exact ett.terminalRouteAvoiding alpha beta notControlled
-
 theorem helper_missingA_629.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E]
@@ -184,67 +153,6 @@ theorem helper_missingA_629.{u_1, u_2} :
   · rw [hsigma]
     exact behavior.1 v hvQ
 
-theorem helper_fullBase_847.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
-      [ DecidableEq V] [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
-      (e0 : E) (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-      (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi)
-      (base : HierarchyBase ett phi) (C : HierarchyCounterexample base),
-    IsProperEdgeColoring G phi →
-    IsOneEdgeUncolored phi e0 →
-    LowerRoundInductionHypothesis G k e0 ett.rounds →
-    ∀ (beta : Fin k) (sigma : PartialEdgeColoring E k),
-    let H : TashkinovHierarchy ett base := C.hierarchy;
-    let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
-    let A : TreeSequence G e0 := HierarchyStarredStage H q;
-    let n : Fin (ett.rounds + (1 : ℕ)) := Fin.last ett.rounds;
-    let Tn : TreeSequence G e0 := ett.series.data.tree n.castSucc;
-    let Dn : Finset (Fin k) := TashkinovStoredColors ett.series.data n;
-    let ell : ℕ := T.length - A.length;
-    let Y : TreeSequence G e0 :=
-      TreeSequencePrefix T (min (A.length + (ell - (1 : ℕ))) T.length)
-        (have this : (1 : ℕ) ≤ A.length := A.positive;
-        have this_1 : (1 : ℕ) ≤ T.length := T.positive;
-        Decidable.byContradiction
-          fun (a : ¬(1 : ℕ) ≤ min (A.length + (ell - (1 : ℕ))) T.length) ↦ by omega)
-        (Nat.min_le_right (A.length + (ell - (1 : ℕ))) T.length);
-    beta ∈ MissingColors G phi (T.vertex (HierarchyFirstMissingPosition phi T beta)) ∧
-        (↑(HierarchyFirstMissingPosition phi T beta) : ℕ) ≤ Y.length →
-    IsProperEdgeColoring G sigma →
-    IsOneEdgeUncolored sigma e0 →
-    (ett.series.data.kind n = some TashkinovExtensionKind.PE →
-        CombinedStableColoring Tn base.closure Dn phi sigma) →
-    ModColoring ett sigma →
-    (ett.series.data.kind n = some TashkinovExtensionKind.PE ∧
-          TashkinovAugmentationSequence sigma Tn T ∨
-        (ett.series.data.kind n = some TashkinovExtensionKind.SE ∨
-            ett.series.data.kind n = some TashkinovExtensionKind.RE) ∧
-          ∃ (f : E) (seed : TreeSequence G e0),
-            ett.series.data.connectingEdges n = { f } ∧
-              TreeSequenceAdjoinEdge Tn f seed ∧
-                TashkinovAugmentationSequence sigma seed T) →
-    (∀ (corr : CorrespondingExtendedTashkinovTree G k e0 ett sigma T),
-        corr.replacementETT.series.data.tree
-              (Fin.last corr.replacementETT.rounds).castSucc =
-            Tn ∧
-          corr.replacementETT.series.data.kind (Fin.last corr.replacementETT.rounds) =
-              ett.series.data.kind n ∧
-            TashkinovStoredColors corr.replacementETT.series.data
-                (Fin.last corr.replacementETT.rounds) =
-              Dn) →
-    ∃ (corr : CorrespondingExtendedTashkinovTree G k e0 ett sigma T),
-    MaximumProperty corr.replacementETT ∧
-    ∃ (baseT : HierarchyBase corr.replacementETT sigma),
-    baseT.core = base.core ∧
-    baseT.closure = base.closure := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C hproper hone hlower beta sigma H q A n Tn Dn
-      ell Y hb sigmaProper sigmaOne combined hmod sigmaRoute corrData
-  exact base.fullTransport C.maximum hlower H hproper hone sigma sigmaProper sigmaOne hmod
-    combined sigmaRoute
-
-
 /-- Existing proof-module entry point for the shared interface or construction. -/
 theorem helper_segTrans_511.{u_1, u_2} :
     SharedFacts.ChangeLemmaBothOutsidePreparation1.initialSegmentTransitiveStatement.{u_1, u_2} :=
@@ -260,84 +168,6 @@ alias helper_stageToT_552 :=
 
 alias helper_lastPositive_561 :=
   SharedFacts.ChangeLemmaBothOutsidePreparation1.lastStarredStageOfPositiveCount
-
-theorem helper_coreToA_572.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
-      [ DecidableEq V] [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
-      (e0 : E) (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-      (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi)
-      (base : HierarchyBase ett phi) (C : HierarchyCounterexample base),
-    let H : TashkinovHierarchy ett base := C.hierarchy;
-    let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
-    let A : TreeSequence G e0 := HierarchyStarredStage H q;
-    (∀ (S : TreeSequence G e0), TreeSequenceInitialSegment S S) →
-    (∀ {S U W : TreeSequence G e0},
-        TreeSequenceInitialSegment S U →
-          TreeSequenceInitialSegment U W → TreeSequenceInitialSegment S W) →
-    (∀ (a d : ℕ) (hbound : a + d ≤ H.dividerCount + (1 : ℕ)),
-        TreeSequenceInitialSegment
-          (H.stage
-            (⟨a, by
-                have := GoldbergSeymour.TreeSequence.positive T
-                omega⟩ :
-              Fin (H.dividerCount + (2 : ℕ))))
-          (H.stage
-            (⟨a + d, by
-                have := GoldbergSeymour.TreeSequence.positive T
-                omega⟩ :
-              Fin (H.dividerCount + (2 : ℕ))))) →
-    (H.dividerCount = (0 : ℕ) → A = base.core) →
-    (H.dividerCount ≠ (0 : ℕ) →
-        A =
-          H.stage
-            (⟨H.dividerCount,
-                by
-                have := GoldbergSeymour.TreeSequence.positive T
-                omega⟩ :
-              Fin (H.dividerCount + (2 : ℕ)))) →
-    TreeSequenceInitialSegment base.core A := by
-  intro V E _ _ _ _ G k e0 input T phi ett base C H q A segRefl segTrans stageSegment lastZero
-      lastPositive
-  exact H.coreInitialSegmentOfStarredStage q
-
-theorem helper_ordinaryToA_589.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
-      [ DecidableEq V] [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
-      (e0 : E) (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-      (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi)
-      (base : HierarchyBase ett phi) (C : HierarchyCounterexample base),
-    let H : TashkinovHierarchy ett base := C.hierarchy;
-    let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
-    let A : TreeSequence G e0 := HierarchyStarredStage H q;
-    let n : Fin (ett.rounds + (1 : ℕ)) := Fin.last ett.rounds;
-    let Tn : TreeSequence G e0 := ett.series.data.tree n.castSucc;
-    (∀ (a d : ℕ) (hbound : a + d ≤ H.dividerCount + (1 : ℕ)),
-        TreeSequenceInitialSegment
-          (H.stage
-            (⟨a, by
-                have := GoldbergSeymour.TreeSequence.positive T
-                omega⟩ :
-              Fin (H.dividerCount + (2 : ℕ))))
-          (H.stage
-            (⟨a + d, by
-                have := GoldbergSeymour.TreeSequence.positive T
-                omega⟩ :
-              Fin (H.dividerCount + (2 : ℕ))))) →
-    (H.dividerCount ≠ (0 : ℕ) →
-        A =
-          H.stage
-            (⟨H.dividerCount,
-                by
-                have := GoldbergSeymour.TreeSequence.positive T
-                omega⟩ :
-              Fin (H.dividerCount + (2 : ℕ)))) →
-    TreeSequenceInitialSegment Tn A →
-    ∀ (j : Fin (H.dividerCount + (1 : ℕ))),
-    TreeSequenceInitialSegment (H.stage j.castSucc) A := by
-  intro V E _ _ _ _ G k e0 input T phi ett base C H q A n Tn stageSegment lastPositive TnToA j
-  exact H.stageInitialSegmentOfStarredStage j q (Fin.le_last _)
 
 theorem helper_firstMissing_607.{u_1, u_2} :
     open scoped Classical in

@@ -2532,36 +2532,6 @@ theorem helper_hclassPrepared_1698.{u_1, u_2} :
   exact ⟨p, indices, gammaClass, deltaClass, hincreasing, hclass,
     hgammaClass, hdeltaClass, hchain, hinjective, hmissing.2⟩
 
-theorem helper_hb1Tj_1978.{u_1, u_2} :
-    open scoped Classical in
-  ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
-  [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ) (e0 : E)
-  (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-  (generating : PartialEdgeColoring E k)
-  (ett : ExtendedTashkinovTree G k e0 input T generating)
-  (hpositive : (0 : ℕ) < ett.rounds) (v : V) (sigma : PartialEdgeColoring E k),
-  let q : Fin ett.rounds := (⟨ett.rounds - (1 : ℕ), by omega⟩ : Fin ett.rounds);
-  ∀ (hqTerminal : (↑q : ℕ) + (1 : ℕ) = ett.rounds) (hvFinal : v ∈ TreeSequenceVertexSet T)
-    (hfirstUpper : ETTFirstAppearanceIndex ett v hvFinal ≤ (↑q : ℕ) + (1 : ℕ))
-    (hfirstPositive : (0 : ℕ) < ETTFirstAppearanceIndex ett v hvFinal),
-  let jSlot : Fin ett.rounds :=
-    (⟨ETTFirstAppearanceIndex ett v hvFinal - (1 : ℕ), by omega⟩ : Fin ett.rounds);
-  ∀ (trace : ExtensionBaseRestorationTrace ett v hvFinal sigma)
-    (hterminalJ : v ∈ TreeSequenceVertexSet (ett.series.data.tree jSlot.succ.castSucc)),
-  let rho1 : PartialEdgeColoring E k := trace.coloring (Fin.last trace.steps);
-  StableColoringBeforeVertex T v hvFinal
-      (TashkinovStoredColors ett.series.data jSlot.castSucc)
-      (ett.series.data.coloring jSlot.castSucc) rho1 →
-  TreeVerticesBefore (ett.series.data.tree jSlot.succ.castSucc) v hterminalJ ⊆
-      TreeVerticesBefore T v hvFinal →
-  StableColoringBeforeVertex (ett.series.data.tree jSlot.succ.castSucc) v hterminalJ
-    (TashkinovStoredColors ett.series.data jSlot.castSucc)
-    (ett.series.data.coloring jSlot.castSucc) rho1 := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett hpositive v sigma q hqTerminal hvFinal
-      hfirstUpper hfirstPositive jSlot trace hterminalJ rho1 hb1Rho hbeforeTjFinal
-  exact StableColoringOn.mono hb1Rho hbeforeTjFinal (fun _ membership => membership)
-
 theorem helper_hinitialB_2039.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
