@@ -31,7 +31,9 @@ namespace HermitianMat
 /-- The symmetrized matrix product `(A * B + B * A) / 2`, regarded as a Hermitian matrix. -/
 def symmMul : HermitianMat d 𝕜 :=
   ⟨(2 : 𝕜)⁻¹ • (A.mat * B.mat + B.mat * A.mat),
-    by simp [selfAdjoint, IsSelfAdjoint, add_comm, Matrix.star_eq_conjTranspose]⟩
+    by
+      change IsSelfAdjoint ((2 : 𝕜)⁻¹ • (A.mat * B.mat + B.mat * A.mat))
+      simp [IsSelfAdjoint, add_comm, Matrix.star_eq_conjTranspose]⟩
 
 theorem symmMul_comm : A.symmMul B = B.symmMul A := by
   apply HermitianMat.ext
