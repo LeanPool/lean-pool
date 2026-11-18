@@ -18,6 +18,9 @@ Main declarations: `Triangular.triangular_ht_bound`, `Triangular.Auto.tendsto_tr
   `Triangular.Auto.triangularHilbert_unique_extension`
 Tags: harmonic-analysis, singular-integrals, fourier-series
 MSC: 42B20, 42A20
+-/
+
+/-! ## Application to Fourier convergence
 
 As an application, `Triangular.classical_carleson` gives an alternative proof of
 almost-everywhere Fourier convergence for continuous one-periodic functions.
