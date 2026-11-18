@@ -71,10 +71,11 @@ private theorem ybar_le_wid {n : ℕ} (S : Setting n) : S.ybar ≤ (wid : ℝ) :
   rw [hw]
   linarith
 
-/-- **Constant gain `1/40` with the κ-image length gap** (Theorem S4 of
-`docs/results/explicit-constant-gain-1-40-2026-10-21.md`). Every injective
+/-- **Constant gain `1/40` with the κ-image length gap**. Every injective
 general-position configuration of at least `10000` points has more than
-`(1/3 + 1/40) n` distinct distances. -/
+`(1/3 + 1/40) n` distinct distances. See the
+[main theorem in McKenna’s paper](https://github.com/mysticflounder/distinct-distances-general-position/blob/091530ea585b132a0c893910a9a367a00660659a/paper/distinct-distances-general-position.tex#L131-L137).
+-/
 theorem numDistances_gt_one_third_add_kappa_image_gap {n : ℕ} {p : Config n}
     (hp : Function.Injective p) (hgp : InGeneralPosition (Config.toFinset p))
     (hn : 10000 ≤ n) :

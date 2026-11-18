@@ -13,10 +13,10 @@ public import LeanPool.DistinctDistances.PlanarGeneralPosition
 
 Defines `Point`, `Config`, `Config.toFinset`, and the proof-local minimum
 `hIndexed`. The energy decomposition is naturally stated over function-indexed
-configurations `Fin n → ℝ²`. The canonical Problem 98 function is
-`Erdos98.h` in the `LeanFormalizations` dependency and is stated over finite
-sets. This repository does not yet contain the adapter identifying `hIndexed`
-with `Erdos98.h`; that adapter is an explicit remaining formalization task.
+configurations `Fin n → ℝ²`. Formal Conjectures defines the corresponding
+finite-set minimum `Erdos98.h` in its
+[formalization of Erdős Problem 98](https://github.com/google-deepmind/formal-conjectures/blob/7db2ea3b91bfbd0ab620215163e6c488bbb916d5/FormalConjectures/ErdosProblems/98.lean#L55-L62).
+The comparison with `hIndexed` remains a separate formalization task.
 -/
 
 @[expose] public section
@@ -37,7 +37,7 @@ noncomputable def Config.toFinset {n : ℕ} (p : Config n) : Finset Point :=
 
 /-- Proof-local indexed minimum distinct-distance count over general-position configurations.
 
-The comparison with the canonical `Erdos98.h` is not yet formalized. -/
+The comparison with `Erdos98.h` from Formal Conjectures is not yet formalized. -/
 noncomputable def hIndexed (n : ℕ) : ℕ := sInf {k : ℕ | ∃ p : Config n, Function.Injective p ∧
     InGeneralPosition (Config.toFinset p) ∧
     k = distinctDistances (Config.toFinset p)}

@@ -54,12 +54,30 @@ def rationalExpression (n d : Nat) : Expr :=
 def splitWords (line : String) : List String :=
   (line.splitOn " ").filter (· ≠ "")
 
-/-- Parse the nonempty lines of a certificate literal into fields. -/
-def splitNonemptyLines (s : String) : List (List String) :=
-  ((s.splitOn "\n").map splitWords).filter (· ≠ [])
+/-- Read the nonempty rows of a certificate and keep their literal line numbers. -/
+def certificateRows (text : String) : TermElabM (List (Nat × List String)) := do
+  let rows := (text.splitOn "\n").zipIdx.filterMap fun (line, index) ↦
+    match splitWords line with
+    | [] => none
+    | fields => some (index + 1, fields)
+  if rows.isEmpty then throwError "empty certificate table"
+  return rows
 
-/-- Read a natural-number field from the generated certificate format. -/
-def parseNatural (w : String) : Nat := w.toNat!
+/-- Read a natural field with a diagnostic pointing to the input row. -/
+def parseNatural (row : Nat) (field : String) : TermElabM Nat := do
+  let some value := field.toNat? | throwError "certificate row {row}: invalid natural '{field}'"
+  return value
+
+/-- Read exactly the declared number of natural-number fields. -/
+def parseFields (row count : Nat) (fields : List String) : TermElabM (Array Nat) := do
+  unless fields.length == count do
+    throwError "certificate row {row}: expected {count} fields, got {fields.length}"
+  fields.toArray.mapM (parseNatural row)
+
+/-- Build a rational literal with a nonzero denominator. -/
+def checkedRational (row numerator denominator : Nat) : TermElabM Expr := do
+  if denominator == 0 then throwError "certificate row {row}: zero denominator"
+  return rationalExpression numerator denominator
 
 /-- The tree with `xs[i]` at the path of the binary digits of `i` (lowest first); `xs` is
 padded to a power of two with its last entry. -/
@@ -90,27 +108,29 @@ def productType (α β : Expr) : Expr := mkApp2 (Lean.mkConst ``Prod [Level.zero
 
 /-- Elaborate rational pairs into a low-bit-indexed tree. -/
 elab "s4_qtree% " s:str : term => do
-  let xs := (splitNonemptyLines s.getString).toArray.map fun ws ↦
-    rationalExpression (parseNatural ws[0]!) (parseNatural ws[1]!)
+  let xs ← (← certificateRows s.getString).toArray.mapM fun (row, words) ↦ do
+    let fields ← parseFields row 2 words
+    checkedRational row fields[0]! fields[1]!
   return lowBitExpressionTree (Lean.mkConst ``Rat) xs
 
 /-- Elaborate triples of natural numbers into a low-bit-indexed tree. -/
 elab "s4_ntree3% " s:str : term => do
   let nat := Lean.mkConst ``Nat
-  let xs := (splitNonemptyLines s.getString).toArray.map fun ws ↦
-    productExpression nat (productType nat nat) (naturalExpression (parseNatural ws[0]!))
-      (productExpression nat nat (naturalExpression (parseNatural ws[1]!))
-        (naturalExpression (parseNatural ws[2]!)))
+  let xs ← (← certificateRows s.getString).toArray.mapM fun (row, words) ↦ do
+    let fields ← parseFields row 3 words
+    return productExpression nat (productType nat nat) (naturalExpression fields[0]!)
+      (productExpression nat nat (naturalExpression fields[1]!) (naturalExpression fields[2]!))
   return lowBitExpressionTree (productType nat (productType nat nat)) xs
 
 /-- Elaborate triples of rational numbers into a low-bit-indexed tree. -/
 elab "s4_ctree% " s:str : term => do
   let q := Lean.mkConst ``Rat
-  let xs := (splitNonemptyLines s.getString).toArray.map fun ws ↦
-    productExpression q (productType q q)
-      (rationalExpression (parseNatural ws[0]!) (parseNatural ws[1]!))
-      (productExpression q q (rationalExpression (parseNatural ws[2]!) (parseNatural ws[3]!))
-        (rationalExpression (parseNatural ws[4]!) (parseNatural ws[5]!)))
+  let xs ← (← certificateRows s.getString).toArray.mapM fun (row, words) ↦ do
+    let fields ← parseFields row 6 words
+    let first ← checkedRational row fields[0]! fields[1]!
+    let second ← checkedRational row fields[2]! fields[3]!
+    let third ← checkedRational row fields[4]! fields[5]!
+    return productExpression q (productType q q) first (productExpression q q second third)
   return lowBitExpressionTree (productType q (productType q q)) xs
 
 /-- The constructor and the number of arguments of a tag name. -/
@@ -151,15 +171,17 @@ decreasing_by all_goals omega
 elab "s4_rows% " s:str : term => do
   let tagT := Lean.mkConst ``Tag
   let mut leaves : Array Expr := #[]
-  for ws in splitNonemptyLines s.getString do
-    let some (c, k) := tagConstructor ws[1]! | throwError "unknown tag {ws[1]!}"
-    unless ws.length == k + 2 do throwError "tag {ws[1]!}: expected {k} arguments"
-    let tag := mkAppN (Lean.mkConst c)
-      ((ws.drop 2).toArray.map fun w ↦ naturalExpression (parseNatural w))
+  for (row, words) in ← certificateRows s.getString do
+    let weight :: name :: args := words
+      | throwError "certificate row {row}: expected a weight and tag"
+    let some (constructor, count) := tagConstructor name
+      | throwError "certificate row {row}: unknown tag '{name}'"
+    let terms := (← parseFields row count args).map naturalExpression
+    let tag := mkAppN (Lean.mkConst constructor) terms
+    let weight ← parseNatural row weight
     leaves := leaves.push
       (mkApp3 (Lean.mkConst ``FarkasPackedCheck.WTree.leaf) tagT
-        (naturalExpression (parseNatural ws[0]!)) tag)
-  if leaves.isEmpty then throwError "no rows"
+        (naturalExpression weight) tag)
   return balancedExpressionTree (mkApp3 (Lean.mkConst ``FarkasPackedCheck.WTree.node) tagT)
     leaves 0 leaves.size
 

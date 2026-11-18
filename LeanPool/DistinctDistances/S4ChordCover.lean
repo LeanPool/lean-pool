@@ -214,6 +214,7 @@ def parseChordTree (ws : Array String) : Nat → Nat → Option (Expr × Nat)
       | some "c" => do
           let z ← ws[i + 1]?.bind String.toInt?
           let d ← ws[i + 2]?.bind String.toNat?
+          guard (d != 0)
           return (mkApp (Lean.mkConst ``ChordBoxTree.cert) (signedRationalExpression z d), i + 3)
       | some "D" => some (Lean.mkConst ``ChordBoxTree.disk, i + 1)
       | some "A" => do
