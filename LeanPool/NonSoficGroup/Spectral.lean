@@ -1955,12 +1955,12 @@ private def UnitaryRepresentation.toRepresentation
     ext x
     simp only [map_one, LinearEquiv.coe_coe, LinearIsometryEquiv.coe_toLinearEquiv,
       LinearIsometryEquiv.coe_one,
-      id_eq, Module.End.one_apply]
+      id_eq, one_apply_eq_self]
   map_mul' g h := by
     ext x
     simp only [map_mul, LinearEquiv.coe_coe, LinearIsometryEquiv.coe_toLinearEquiv,
       LinearIsometryEquiv.coe_mul,
-      Function.comp_apply, Module.End.mul_apply]
+      Function.comp_apply, mul_apply_eq_comp]
 
 private def unitaryFixedSubmodule
     {G : Type u₁} {H : Type v₁} [Group G]
@@ -3636,7 +3636,7 @@ private theorem permutation_small_support_coarea
   classical
   generalize hn : (positiveNatSupport f).card = n
   induction n using Nat.strong_induction_on generalizing f with
-  | h n ih =>
+  | ind n ih =>
     by_cases hnonempty : (positiveNatSupport f).Nonempty
     · let A : Finset V := positiveNatSupport f
       have hA : A.Nonempty := hnonempty
@@ -6765,9 +6765,9 @@ private theorem permutationMarkovLinear_pow_apply
     ((permutationMarkovLinear p) ^ k) x =
       ((permutationMarkov p)^[k]) x := by
   induction k with
-  | zero => simp only [pow_zero, Module.End.one_apply, Function.iterate_zero, id_eq]
+  | zero => simp only [pow_zero, one_apply_eq_self, Function.iterate_zero, id_eq]
   | succ k ih =>
-      rw [pow_succ', Module.End.mul_apply,
+      rw [pow_succ', mul_apply_eq_comp,
         Function.iterate_succ_apply']
       rw [ih, permutationMarkovLinear_apply]
 
@@ -6839,7 +6839,7 @@ private theorem eventually_linear_pairedWordAverage_pow
   induction k generalizing q with
   | zero =>
       exact Filter.Eventually.of_forall fun n => by
-        simp only [pow_zero, Module.End.one_apply, pairedWordAverage]
+        simp only [pow_zero, one_apply_eq_self, pairedWordAverage]
   | succ k ih =>
       have hnodes :
           ∀ᶠ n in l, ∀ i : ι,
@@ -6849,7 +6849,7 @@ private theorem eventually_linear_pairedWordAverage_pow
         (Filter.eventually_all).2 fun i =>
           ih (s i * q.1, s i * q.2)
       filter_upwards [hbase q, hnodes] with n hn hnode
-      rw [pow_succ, Module.End.mul_apply, hn,
+      rw [pow_succ, mul_apply_eq_comp, hn,
         pairedWordAverage, pairedWordAverage, map_smul, map_sum]
       apply congrArg (fun x => (Fintype.card ι : ℂ)⁻¹ • x)
       exact Finset.sum_congr rfl fun i _ => hnode i
@@ -6989,9 +6989,9 @@ private theorem representationFamilyMarkovLinear_subtype_pow_apply
         (fun i : ↥S => (i : G)) ^ k) x =
       ((unitaryFinsetMarkov π S)^[k]) x := by
   induction k with
-  | zero => simp only [pow_zero, Module.End.one_apply, Function.iterate_zero, id_eq]
+  | zero => simp only [pow_zero, one_apply_eq_self, Function.iterate_zero, id_eq]
   | succ k ih =>
-      rw [pow_succ', Module.End.mul_apply,
+      rw [pow_succ', mul_apply_eq_comp,
         Function.iterate_succ_apply', ih,
         representationFamilyMarkovLinear_subtype_apply]
 
@@ -7019,9 +7019,9 @@ private theorem linear_pairedWordAverage_pow
     (k : ℕ) (q : G × G) :
     (L ^ k) (z q) = pairedWordAverage s z k q := by
   induction k generalizing q with
-  | zero => simp only [pow_zero, Module.End.one_apply, pairedWordAverage]
+  | zero => simp only [pow_zero, one_apply_eq_self, pairedWordAverage]
   | succ k ih =>
-      rw [pow_succ, Module.End.mul_apply, hbase q,
+      rw [pow_succ, mul_apply_eq_comp, hbase q,
         pairedWordAverage, pairedWordAverage,
         map_smul, map_sum]
       apply congrArg (fun x => (Fintype.card ι : ℂ)⁻¹ • x)
@@ -8649,7 +8649,6 @@ private theorem exists_expanding_residual_finpartition
         have hdisjoint : Disjoint (R \ C) C :=
           Finset.sdiff_disjoint
         have hunion : (R \ C) ⊔ C = R := by
-          change (R \ C) ∪ C = R
           exact Finset.sdiff_union_of_subset hCR
         let P : Finpartition R :=
           Q.extend hCnonempty.ne_empty hdisjoint hunion
