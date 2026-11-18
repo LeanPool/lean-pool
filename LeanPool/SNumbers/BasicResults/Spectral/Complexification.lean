@@ -134,7 +134,7 @@ product on the complexification. -/
       simp only [Complex.conj_re, Complex.conj_im, inner_re, inner_im,
         real_inner_comm u.1 v.1, real_inner_comm u.2 v.2,
         real_inner_comm v.1 u.2, real_inner_comm v.2 u.1]
-    all_goals ring
+    ring
   re_inner_nonneg u := by
     rw [RCLike.re_to_complex, inner_re]
     exact add_nonneg real_inner_self_nonneg real_inner_self_nonneg
