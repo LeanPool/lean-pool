@@ -706,7 +706,7 @@ noncomputable def nominalDfSfin (M : Class) (N : Class) (a : Var) (dv_M_a : a �
                     Prod.mk.injEq] at h;
                   repeat'
                     ((rcases h with ⟨rfl, rfl⟩));
-                    all_goals aesop))) (TAlphaWff.classMem (TAlphaClass.cab (TAlphaWff.classEq
+                    aesop))) (TAlphaWff.classMem (TAlphaClass.cab (TAlphaWff.classEq
                   (TAlphaClass.cab (TAlphaWff.neg (TAlphaWff.conj
                         (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _))
                           (TAlphaClass.cab (TAlphaWff.neg (TAlphaWff.conj (TAlphaWff.classMem
@@ -751,6 +751,6 @@ noncomputable def nominalDfSfin (M : Class) (N : Class) (a : Var) (dv_M_a : a �
                     Prod.mk.injEq] at h;
                   repeat'
                     ((rcases h with ⟨rfl, rfl⟩));
-                    all_goals aesop))))))
+                    aesop))))))
 
 end NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired
