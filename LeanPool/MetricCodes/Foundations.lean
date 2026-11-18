@@ -4929,7 +4929,7 @@ theorem nonnegative_eigenvector_coordinate_pos {n k L : ℕ}
             Nat.dist i.val q.val = distance → v q = 0 := by
       intro distance
       induction distance using Nat.strong_induction_on with
-      | h distance ih =>
+      | ind distance ih =>
           intro q hdistance
           by_cases hequal : i.val = q.val
           · have hiq : i = q := Fin.ext hequal
@@ -7835,7 +7835,7 @@ theorem nonnegative_eigenvector_coordinate_pos
             Nat.dist i.val j.val = distance → v j = 0 := by
       intro distance
       induction distance using Nat.strong_induction_on with
-      | h distance ih =>
+      | ind distance ih =>
           intro j hdistance
           by_cases hequal : i.val = j.val
           · have hij : i = j := Fin.ext hequal

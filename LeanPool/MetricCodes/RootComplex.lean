@@ -807,14 +807,14 @@ theorem naturalDiagonalDerivation_eq_sum {ι : Type*} [Fintype ι]
   apply MvPolynomial.derivation_ext
   intro j
   rw [naturalDiagonalDerivation_X]
-  change _ = (Derivation.coeFnAddMonoidHom
+  change _ = (FunLike.coeAddMonoidHom _ _ _
     (∑ i : ι, (w i : ℂ) •
       ((MvPolynomial.X i : MvPolynomial ι ℂ) •
         (MvPolynomial.pderiv i :
           Derivation ℂ (MvPolynomial ι ℂ) (MvPolynomial ι ℂ)))))
       (MvPolynomial.X j)
   rw [map_sum, Finset.sum_apply]
-  simp only [Derivation.coeFnAddMonoidHom_apply, Derivation.smul_apply, MvPolynomial.pderiv_X,
+  simp only [FunLike.coeAddMonoidHom_apply, smul_apply, MvPolynomial.pderiv_X,
     Pi.single_apply, smul_eq_mul, mul_ite, mul_one, mul_zero, smul_ite, smul_zero,
     Finset.sum_ite_eq, Finset.mem_univ, ↓reduceIte]
 
@@ -824,7 +824,7 @@ theorem naturalDiagonalDerivation_apply {ι : Type*} [Fintype ι]
       ∑ i : ι, (w i : ℂ) •
         (MvPolynomial.X i * MvPolynomial.pderiv i p) := by
   rw [naturalDiagonalDerivation_eq_sum]
-  change (Derivation.coeFnAddMonoidHom
+  change (FunLike.coeAddMonoidHom _ _ _
     (∑ i : ι, (w i : ℂ) •
       ((MvPolynomial.X i : MvPolynomial ι ℂ) •
         (MvPolynomial.pderiv i :
@@ -832,7 +832,7 @@ theorem naturalDiagonalDerivation_apply {ι : Type*} [Fintype ι]
   rw [map_sum, Finset.sum_apply]
   apply Finset.sum_congr rfl
   intro i _
-  simp only [Derivation.coeFnAddMonoidHom_apply, Derivation.smul_apply, smul_eq_mul]
+  simp only [FunLike.coeAddMonoidHom_apply, smul_apply, smul_eq_mul]
 
 theorem naturalDiagonalDerivation_coeff {ι : Type*} [Fintype ι]
     (w : ι → ℕ) (p : MvPolynomial ι ℂ) (d : ι →₀ ℕ) :
@@ -915,7 +915,7 @@ theorem conjugatedTotalAmbientCartan_eq_euler_sub_defect {r n : ℕ}
   apply MvPolynomial.derivation_ext
   intro i
   rw [conjugatedTotalAmbientCartan_X]
-  simp only [Nat.cast_mul, Nat.cast_ofNat, Derivation.coe_sub, Derivation.coe_smul, Pi.sub_apply,
+  simp only [Nat.cast_mul, Nat.cast_ofNat, FunLike.coe_sub, FunLike.coe_smul, Pi.sub_apply,
     Pi.smul_apply, naturalDiagonalDerivation_X, Nat.cast_one, one_smul]
 
 theorem naturalDiagonalDerivation_one_of_homogeneous

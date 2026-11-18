@@ -477,7 +477,7 @@ theorem actualExteriorRootBracketCoboundary_zeroExtension_of_card_ne
   intro β _
   apply Finset.sum_eq_zero
   intro γ _
-  simp only [Module.End.mul_apply, actualExteriorRootCreation_apply,
+  simp only [mul_apply_eq_comp, actualExteriorRootCreation_apply,
     actualExteriorRootContraction_apply,
     rootPolynomialChainZeroExtension_apply]
   split_ifs with hα hβ hγ hcard <;> simp only [smul_zero, smul_eq_zero]
@@ -643,7 +643,7 @@ theorem fullRootExteriorActionAtom_pair
   apply LinearMap.ext
   intro f
   funext S
-  simp only [LinearMap.add_apply, Module.End.mul_apply, LinearMap.neg_apply, map_neg, Pi.add_apply,
+  simp only [LinearMap.add_apply, mul_apply_eq_comp, LinearMap.neg_apply, map_neg, Pi.add_apply,
     Pi.neg_apply, sub_eq_add_neg]
 
 theorem fullRootExteriorAction_square_eq_unordered_structureConstants
@@ -901,7 +901,7 @@ theorem fullRootExteriorBracketAtom_single_apply
   classical
   have hsupport := rootExteriorBracketAtom_support_iff
     S.val T.val α β γ
-  simp only [fullRootExteriorBracketAtom, Module.End.mul_apply,
+  simp only [fullRootExteriorBracketAtom, mul_apply_eq_comp,
     actualExteriorRootCreation_apply, actualExteriorRootContraction_apply,
     Pi.single_apply]
   by_cases hγ : γ ∈ T.val
@@ -1086,7 +1086,7 @@ theorem smul_operator_anticommutator
       (a * b) • (A * B + B * A) := by
   apply LinearMap.ext
   intro x
-  simp only [LinearMap.add_apply, Module.End.mul_apply,
+  simp only [LinearMap.add_apply, mul_apply_eq_comp,
     LinearMap.smul_apply, map_smul, smul_smul, smul_add]
   ac_rfl
 
@@ -1581,7 +1581,7 @@ theorem fullRootExteriorAction_zeroExtension_of_card_ne
   apply Finset.sum_eq_zero
   intro α _
   unfold fullRootExteriorActionAtom
-  simp only [Module.End.mul_apply, fullRootExteriorPolynomialAction_apply]
+  simp only [mul_apply_eq_comp, fullRootExteriorPolynomialAction_apply]
   by_cases hα : α ∈ S
   · simp only [actualExteriorRootContraction_apply, hα, ↓reduceIte, map_zero, ]
   · have hcard : (insert α S).card ≠ k + 1 := by
@@ -1612,7 +1612,7 @@ theorem fullRootExteriorBracketAtom_zeroExtension_of_card_ne
     fullRootExteriorBracketAtom r n α β γ
         (rootPolynomialChainZeroExtension r n (k + 1) f) S = 0 := by
   classical
-  simp only [fullRootExteriorBracketAtom, Module.End.mul_apply,
+  simp only [fullRootExteriorBracketAtom, mul_apply_eq_comp,
     actualExteriorRootCreation_apply, actualExteriorRootContraction_apply]
   by_cases hγ : γ ∈ S
   · by_cases hβ : β ∈ S.erase γ
@@ -1695,7 +1695,7 @@ theorem rootActionBracketBoundary_mixed_square_eq_zero_of_bridge
     (fun L : Module.End ℝ (FullRootExteriorPolynomialChain r n) =>
       L (rootPolynomialChainZeroExtension r n (k + 2) f) T.val)
     (fullRootExteriorAction_square_add_mixed_eq_zero r n)
-  simp only [LinearMap.add_apply, Pi.add_apply, Module.End.mul_apply,
+  simp only [LinearMap.add_apply, Pi.add_apply, mul_apply_eq_comp,
     LinearMap.zero_apply, Pi.zero_apply] at hfull
   rw [fullRootExteriorAction_zeroExtension_eq_zeroExtension f,
     hB f] at hfull
@@ -1736,7 +1736,7 @@ theorem rootBracketBoundary_comp_self_apply_eq_zero
     (fun L : Module.End ℝ (FullRootExteriorPolynomialChain r n) =>
       L (rootPolynomialChainZeroExtension r n (k + 2) f) T.val)
     (fullRootExteriorBracket_mul_self_zero r n)
-  simp only [Module.End.mul_apply, LinearMap.zero_apply,
+  simp only [mul_apply_eq_comp, LinearMap.zero_apply,
     Pi.zero_apply] at hfull
   rw [fullRootExteriorBracket_zeroExtension_eq_zeroExtension f,
     fullRootExteriorBracket_zeroExtension_apply] at hfull
@@ -1766,7 +1766,7 @@ private theorem lowerHodgeExteriorStructureAtom_apply_metriccodes2_30c2550d
   classical
   by_cases hα : α ∈ S
   · by_cases hβ : β ∈ S.erase α
-    · simp only [Module.End.mul_apply, fullRootExteriorPolynomialAction_apply,
+    · simp only [mul_apply_eq_comp, fullRootExteriorPolynomialAction_apply,
         actualExteriorRootCreation_apply, actualExteriorRootContraction_apply,
         hα, hβ, ite_true, dite_true]
       split
@@ -1775,7 +1775,7 @@ private theorem lowerHodgeExteriorStructureAtom_apply_metriccodes2_30c2550d
           exfalso
           apply h
           simpa only [Finset.mem_erase] using hβ
-    · simp only [Module.End.mul_apply, fullRootExteriorPolynomialAction_apply,
+    · simp only [mul_apply_eq_comp, fullRootExteriorPolynomialAction_apply,
         actualExteriorRootCreation_apply, actualExteriorRootContraction_apply,
         hα, hβ, ite_true, dite_true, dite_false, map_smul]
       split
@@ -1791,7 +1791,7 @@ private theorem lowerHodgeExteriorStructureAtom_apply_metriccodes2_30c2550d
         · congr 1
           ext δ
           simp only [Finset.mem_insert, Finset.mem_erase, ne_eq]
-  · simp only [Module.End.mul_apply, fullRootExteriorPolynomialAction_apply,
+  · simp only [mul_apply_eq_comp, fullRootExteriorPolynomialAction_apply,
       actualExteriorRootCreation_apply, hα, ite_false, dite_false, map_zero]
 
 theorem fullRootExteriorLowerRootStructureIncidence_zeroExtension_apply
@@ -1827,7 +1827,7 @@ theorem fullRootExteriorLowerRootStructureIncidence_zeroExtension_apply
       intro γ _
       by_cases heq : β = α
       · subst β
-        simp only [rootStructureConstant_output_eq_right_zero, Module.End.mul_apply,
+        simp only [rootStructureConstant_output_eq_right_zero, mul_apply_eq_comp,
           fullRootExteriorPolynomialAction_apply, actualExteriorRootCreation_apply,
           actualExteriorRootContraction_apply, Finset.mem_erase, ne_eq, not_true_eq_false,
           false_and, ↓reduceIte, rootPolynomialChainZeroExtension_apply, not_false_eq_true,
@@ -1849,7 +1849,7 @@ theorem fullRootExteriorLowerRootStructureIncidence_zeroExtension_apply
         · rw [dite_eq_left hγ]
           have hγ' : rootStructureConstant γ α β = 0 := by
             rw [rootStructureConstant_swap, hγ, neg_zero]
-          simp only [hγ', Module.End.mul_apply, fullRootExteriorPolynomialAction_apply,
+          simp only [hγ', mul_apply_eq_comp, fullRootExteriorPolynomialAction_apply,
             actualExteriorRootCreation_apply, actualExteriorRootContraction_apply, Finset.mem_erase,
             ne_eq, rootPolynomialChainZeroExtension_apply, smul_dite, smul_zero, smul_ite,
             positiveRootOperator_apply, polarization_apply, zero_smul, neg_zero]
@@ -1945,7 +1945,7 @@ theorem actualOrderedRootBracketCoboundaryAtom_single_transpose
         (Pi.single S.val p) T.val := by
   classical
   rw [fullRootExteriorBracketAtom_single_apply]
-  simp only [Module.End.mul_apply, actualExteriorRootCreation_apply,
+  simp only [mul_apply_eq_comp, actualExteriorRootCreation_apply,
     actualExteriorRootContraction_apply, Pi.single_apply]
   by_cases hα : α ∈ S.val
   · by_cases hβ : β ∈ S.val.erase α
@@ -2044,7 +2044,7 @@ theorem rootJointHarmonicBracketActionMixed_add_lowerStructure_eq_zero
     (fullRootExteriorAction_orderedBracketCoboundary_anticommute
       (r := r) (n := n))
   simp only [LinearMap.add_apply, Pi.add_apply,
-    Module.End.mul_apply] at hfull
+    mul_apply_eq_comp] at hfull
   rw [actualOrderedRootBracketCoboundary_zeroExtension g,
     fullRootExteriorAction_zeroExtension_eq_zeroExtension,
     fullRootExteriorAction_zeroExtension_eq_zeroExtension g,
@@ -2161,7 +2161,7 @@ theorem fullRootExteriorUpperPolynomialAction_creation_commute
   apply LinearMap.ext
   intro f
   funext S
-  simp only [Module.End.mul_apply,
+  simp only [mul_apply_eq_comp,
     fullRootExteriorUpperPolynomialAction_apply,
     actualExteriorRootCreation_apply]
   split_ifs <;> simp
@@ -2175,7 +2175,7 @@ theorem fullRootExteriorUpperPolynomialAction_contraction_commute
   apply LinearMap.ext
   intro f
   funext S
-  simp only [Module.End.mul_apply,
+  simp only [mul_apply_eq_comp,
     fullRootExteriorUpperPolynomialAction_apply,
     actualExteriorRootContraction_apply]
   split_ifs <;> simp
@@ -2344,7 +2344,7 @@ theorem fullRootExteriorUpperStructureAtom_apply
   classical
   by_cases hα : α ∈ S
   · by_cases hβ : β ∈ S.erase α
-    · simp only [Module.End.mul_apply, fullRootExteriorUpperPolynomialAction_apply,
+    · simp only [mul_apply_eq_comp, fullRootExteriorUpperPolynomialAction_apply,
         actualExteriorRootCreation_apply, actualExteriorRootContraction_apply,
         hα, hβ, ite_true, dite_true]
       split
@@ -2353,7 +2353,7 @@ theorem fullRootExteriorUpperStructureAtom_apply
           exfalso
           apply h
           simpa only [Finset.mem_erase] using hβ
-    · simp only [Module.End.mul_apply, fullRootExteriorUpperPolynomialAction_apply,
+    · simp only [mul_apply_eq_comp, fullRootExteriorUpperPolynomialAction_apply,
         actualExteriorRootCreation_apply, actualExteriorRootContraction_apply,
         hα, hβ, ite_true, dite_true, dite_false, map_smul]
       split
@@ -2369,7 +2369,7 @@ theorem fullRootExteriorUpperStructureAtom_apply
         · congr 1
           ext δ
           simp only [Finset.mem_insert, Finset.mem_erase, ne_eq]
-  · simp only [Module.End.mul_apply, fullRootExteriorUpperPolynomialAction_apply,
+  · simp only [mul_apply_eq_comp, fullRootExteriorUpperPolynomialAction_apply,
       actualExteriorRootCreation_apply, hα, ite_false, dite_false, map_zero]
 
 theorem rootJointHarmonicActionUpperRootStructureCross_apply_coe
@@ -2658,7 +2658,7 @@ theorem fullRootExteriorUpperRootStructureIncidence_zeroExtension_apply
       intro γ _
       by_cases heq : β = α
       · subst β
-        simp only [rootStructureConstant_output_eq_left_zero, Module.End.mul_apply,
+        simp only [rootStructureConstant_output_eq_left_zero, mul_apply_eq_comp,
           fullRootExteriorUpperPolynomialAction_apply, actualExteriorRootCreation_apply,
           actualExteriorRootContraction_apply, Finset.mem_erase, ne_eq, not_true_eq_false,
           false_and, ↓reduceIte, rootPolynomialChainZeroExtension_apply, not_false_eq_true,
@@ -2678,7 +2678,7 @@ theorem fullRootExteriorUpperRootStructureIncidence_zeroExtension_apply
         intro γ _
         by_cases hγ : rootStructureConstant β γ α = 0
         · rw [dite_eq_left hγ]
-          simp only [hγ, Module.End.mul_apply, fullRootExteriorUpperPolynomialAction_apply,
+          simp only [hγ, mul_apply_eq_comp, fullRootExteriorUpperPolynomialAction_apply,
             actualExteriorRootCreation_apply, actualExteriorRootContraction_apply, Finset.mem_erase,
             ne_eq, rootPolynomialChainZeroExtension_apply, smul_dite, smul_zero, smul_ite,
             positiveRootUpperOperator_apply, polarization_apply, zero_smul]
@@ -2772,7 +2772,7 @@ theorem rootJointHarmonicActionBracketMixed_add_upperStructure_eq_zero
     (fun L : Module.End ℝ (FullRootExteriorPolynomialChain r n) =>
       L (rootPolynomialChainZeroExtension r n (k + 1) g) S.val.val)
     (fullRootExteriorActionCoboundary_bracket_eq_neg_upperStructure r n)
-  simp only [LinearMap.add_apply, Pi.add_apply, Module.End.mul_apply,
+  simp only [LinearMap.add_apply, Pi.add_apply, mul_apply_eq_comp,
     LinearMap.neg_apply, Pi.neg_apply] at hfull
   rw [fullRootExteriorBracket_zeroExtension_eq_zeroExtension g,
     ← rootActionCoboundary_zeroExtension,
@@ -4455,7 +4455,7 @@ def unusedCoordinateEulerDefect {r n : ℕ} :
 @[simp] theorem totalYoungRowEuler_apply {r n : ℕ}
     (f : MvPolynomial (Fin ((r + 1) * n)) ℂ) :
     totalYoungRowEuler f = ∑ a : Fin (r + 1), rowDerivation a a f := by
-  change (Derivation.coeFnAddMonoidHom
+  change (FunLike.coeAddMonoidHom _ _ _
     (∑ a : Fin (r + 1), rowDerivation a a)) f = _
   rw [map_sum, Finset.sum_apply]
   rfl
@@ -4503,7 +4503,7 @@ theorem totalYoungRowEuler_X {r n : ℕ}
       ∑ a : Fin (r + 1), ∑ p : Fin (r + 1),
         conjugateIsotropicVariable h a p *
           antiholomorphicDerivative h a p f := by
-  change (Derivation.coeFnAddMonoidHom
+  change (FunLike.coeAddMonoidHom _ _ _
     (∑ a : Fin (r + 1), ∑ p : Fin (r + 1),
       conjugateIsotropicVariable h a p •
         antiholomorphicDerivative h a p)) f = _
@@ -4602,7 +4602,7 @@ theorem antiholomorphicDerivative_X_unused {r n : ℕ}
           (fun t : Fin n => 2 * (r + 1) ≤ t.val),
             MvPolynomial.X (variableIndex a t) *
               MvPolynomial.pderiv (variableIndex a t) f := by
-  change (Derivation.coeFnAddMonoidHom
+  change (FunLike.coeAddMonoidHom _ _ _
     (∑ a : Fin (r + 1),
       ∑ t ∈ Finset.univ.filter
         (fun t : Fin n => 2 * (r + 1) ≤ t.val),
@@ -5474,8 +5474,8 @@ theorem occupiedRowEuler_eq_isotropicDerivatives
             antiholomorphicDerivative h b q g) := by
   simp only [holomorphicDerivative, antiholomorphicDerivative,
     isotropicVariable, conjugateIsotropicVariable,
-    Derivation.add_apply, Derivation.sub_apply,
-    Derivation.smul_apply, Algebra.smul_def]
+    add_apply, sub_apply,
+    smul_apply, Algebra.smul_def]
   have hI : (MvPolynomial.C Complex.I :
       MvPolynomial (Fin ((r + 1) * n)) ℂ) ^ 2 = -1 := by
     rw [pow_two, ← map_mul, Complex.I_mul_I, map_neg, map_one]
@@ -5998,7 +5998,7 @@ theorem ambientSumPositiveRoot_apply_antiholomorphic {r n : ℕ}
       ∑ a : Fin (r + 1),
         (isotropicVariable h a p * antiholomorphicDerivative h a q f -
           isotropicVariable h a q * antiholomorphicDerivative h a p f) := by
-  change (Derivation.coeFnAddMonoidHom
+  change (FunLike.coeAddMonoidHom _ _ _
     (∑ a : Fin (r + 1),
       (isotropicVariable h a p • antiholomorphicDerivative h a q -
         isotropicVariable h a q • antiholomorphicDerivative h a p))) f = _
@@ -6106,11 +6106,11 @@ theorem ambientSumPositiveRoot_eq_zero_of_all_positive_root_highest
   rcases lt_trichotomy p q with hpq | hpq | hqp
   · exact hroots (.sum p q hpq)
   · subst q
-    simp only [ambientSumPositiveRoot_self, Derivation.coe_zero, Pi.zero_apply]
+    simp only [ambientSumPositiveRoot_self, FunLike.coe_zero, Pi.zero_apply]
   · have hroot : ambientSumPositiveRoot h q p f = 0 :=
       hroots (.sum q p hqp)
     have hswap := DFunLike.congr_fun (ambientSumPositiveRoot_swap h p q) f
-    simpa only [Derivation.coe_neg, Pi.neg_apply, hroot, neg_zero] using hswap
+    simpa only [FunLike.coe_neg, Pi.neg_apply, hroot, neg_zero] using hswap
 
 theorem ambientSumPositiveRoot_holomorphicDerivative_of_all_positive_root_highest
     {r n : ℕ} (h : 2 * (r + 1) ≤ n)
@@ -6124,7 +6124,7 @@ theorem ambientSumPositiveRoot_holomorphicDerivative_of_all_positive_root_highes
   classical
   by_cases hpq : p = q
   · subst q
-    simp only [ambientSumPositiveRoot_self, holomorphicDerivative_apply, Derivation.coe_zero,
+    simp only [ambientSumPositiveRoot_self, holomorphicDerivative_apply, FunLike.coe_zero,
       Pi.zero_apply, ↓reduceIte]
   · rw [ite_eq_right hpq]
     exact ambientSumPositiveRoot_holomorphicDerivative_of_rootKernel
@@ -6550,10 +6550,10 @@ theorem fin_descending_ascending_induction
     ∀ b p : Fin m, P b p := by
   intro b
   induction hd : m - b.val using Nat.strong_induction_on generalizing b with
-  | h d ih =>
+  | ind d ih =>
       intro p
       induction hp : p.val using Nat.strong_induction_on generalizing p with
-      | h e ihe =>
+      | ind e ihe =>
           apply hstep b p
           · intro a hba q
             apply ih (m - a.val) (by omega) a rfl q
@@ -6909,8 +6909,8 @@ theorem ambientShortPositiveRoot_negative_commutator
             complexAmbientRotation (r := r) (oddCoordinate hn p) t⁆ := by
       apply Derivation.ext
       intro f
-      simp only [complexDerivationBracket_apply, Derivation.add_apply,
-        Derivation.neg_apply, Derivation.smul_apply,
+      simp only [complexDerivationBracket_apply, add_apply,
+        neg_apply, smul_apply,
         map_add, map_neg, Derivation.map_smul]
       module
     _ = _ := by
@@ -7363,14 +7363,14 @@ theorem signedDiagonalDerivation_eq_sum
   apply MvPolynomial.derivation_ext
   intro j
   rw [signedDiagonalDerivation_X]
-  change _ = (Derivation.coeFnAddMonoidHom
+  change _ = (FunLike.coeAddMonoidHom _ _ _
     (∑ i : ι, ((2 : ℂ) * ((w i p : ℤ) : ℂ)) •
       ((MvPolynomial.X i : MvPolynomial ι ℂ) •
         (MvPolynomial.pderiv i :
           Derivation ℂ (MvPolynomial ι ℂ) (MvPolynomial ι ℂ)))))
       (MvPolynomial.X j)
   rw [map_sum, Finset.sum_apply]
-  simp only [Derivation.coeFnAddMonoidHom_apply, Derivation.smul_apply, MvPolynomial.pderiv_X,
+  simp only [FunLike.coeAddMonoidHom_apply, smul_apply, MvPolynomial.pderiv_X,
     Pi.single_apply, smul_eq_mul, mul_ite, mul_one, mul_zero, smul_ite, smul_zero,
     Finset.sum_ite_eq, Finset.mem_univ, ↓reduceIte]
 
@@ -7382,7 +7382,7 @@ theorem signedDiagonalDerivation_apply
       ∑ i : ι, ((2 : ℂ) * ((w i p : ℤ) : ℂ)) •
         (MvPolynomial.X i * MvPolynomial.pderiv i q) := by
   rw [signedDiagonalDerivation_eq_sum]
-  change (Derivation.coeFnAddMonoidHom
+  change (FunLike.coeAddMonoidHom _ _ _
     (∑ i : ι, ((2 : ℂ) * ((w i p : ℤ) : ℂ)) •
       ((MvPolynomial.X i : MvPolynomial ι ℂ) •
         (MvPolynomial.pderiv i :
@@ -7390,7 +7390,7 @@ theorem signedDiagonalDerivation_apply
   rw [map_sum, Finset.sum_apply]
   apply Finset.sum_congr rfl
   intro i _
-  simp only [Derivation.coeFnAddMonoidHom_apply, Derivation.smul_apply, smul_eq_mul]
+  simp only [FunLike.coeAddMonoidHom_apply, smul_apply, smul_eq_mul]
 
 theorem signedWeight_apply
     {ι : Type*} [Fintype ι] {m : ℕ}
@@ -7583,7 +7583,7 @@ theorem jointEigenComponent_mem_of_invariant_sum
       ∀ c ∈ U, u c ∈ W := by
     intro k
     induction k using Nat.strong_induction_on with
-    | h k ih =>
+    | ind k ih =>
       intro U u hcard hueigen huseparated husum c hc
       by_cases hempty : U.erase c = ∅
       · have hsingleton : U = {c} := by

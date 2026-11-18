@@ -326,7 +326,7 @@ theorem polarization_eq_zero_of_simpleRoots
     polarization r n i j p = 0 := by
   induction hd : j.val - i.val using Nat.strong_induction_on
       generalizing i j with
-  | h d ih =>
+  | ind d ih =>
     by_cases hstep : j.val = i.val + 1
     · let a : Fin r := ⟨i.val, by omega⟩
       have hfirst : a.castSucc = i := Fin.ext rfl
@@ -2036,7 +2036,7 @@ theorem reachable_zero {r m : ℕ} (v : Vertex r m) :
     (grid r m).Reachable (fun _ => 0) v := by
   classical
   induction hN : height v using Nat.strong_induction_on generalizing v with
-  | h N ih =>
+  | ind N ih =>
       by_cases hz : v = (fun _ => 0)
       · subst v
         exact SimpleGraph.Reachable.rfl
@@ -6191,7 +6191,7 @@ theorem rowEuler_lowerPolarizationPath_append_singleton
             map_sub, map_add, map_smul]
           split_ifs <;>
             (try simp only [map_zero, add_zero,
-              sub_zero]) <;> try abel
+              sub_zero]) <;> abel
 
 theorem sort_headD_eq_polarizationPathStart
     {r : ℕ} (row : Fin (r + 1))

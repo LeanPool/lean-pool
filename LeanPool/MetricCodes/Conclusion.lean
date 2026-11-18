@@ -6575,7 +6575,7 @@ theorem gtChannelCharacteristic_aeval_canonicalAxis_eq_zero
   simpa only [canonicalGelfandTsetlinAxisTensor_apply, EuclideanSpace.basisFun_apply,
     canonicalGelfandTsetlinFibre_apply, TensorProduct.tmul_smul, map_smul, smul_eq_zero,
       inv_eq_zero, pow_zero,
-    Module.End.one_apply] using
+    one_apply_eq_self] using
     gtChannelCharacteristic_aeval_apply_canonicalAxis_iterate_eq_zero lam mu h hgram p
       (canonicalGelfandTsetlinAxisTensor_mem_gtSignedEigenvectorSpan lam mu h hn hgram p) 0
 
