@@ -224,6 +224,18 @@ theorem ginibreFullComplex_inner_im (n : ℕ) (f h : GinibreFullComplexL2 n) :
   rw [hI] at hi
   linarith
 
+/-- Real part of the inner product on the symmetric subspace. -/
+theorem ginibreFullSymmetric_inner_re (n : ℕ) (f h : ginibreSymmetricL2 n) :
+    (inner ℂ f h).re = inner ℝ (ginibreFullSymmetricRe n f) (ginibreFullSymmetricRe n h) +
+      inner ℝ (ginibreFullSymmetricIm n f) (ginibreFullSymmetricIm n h) :=
+  ginibreFullComplex_inner_re n f.val h.val
+
+/-- Imaginary part of the inner product on the symmetric subspace. -/
+theorem ginibreFullSymmetric_inner_im (n : ℕ) (f h : ginibreSymmetricL2 n) :
+    (inner ℂ f h).im = inner ℝ (ginibreFullSymmetricRe n f) (ginibreFullSymmetricIm n h) -
+      inner ℝ (ginibreFullSymmetricIm n f) (ginibreFullSymmetricRe n h) :=
+  ginibreFullComplex_inner_im n f.val h.val
+
 @[simp] theorem ginibreFullSymmetricRe_ofReal (n : ℕ) (f : ginibreFullSymmetricValues n) :
     ginibreFullSymmetricRe n (ginibreFullSymmetricOfReal n f) = f := by
   apply Subtype.ext
@@ -261,36 +273,10 @@ theorem ginibreFullComplexResolvent_symmetric (n : ℕ) (hn : 0 < n)
     inner ℂ (ginibreFullComplexResolvent n hn f) h =
       inner ℂ f (ginibreFullComplexResolvent n hn h) := by
   apply Complex.ext
-  · have hleft := ginibreFullComplex_inner_re n (ginibreFullComplexResolvent n hn f).val h.val
-    have hright := ginibreFullComplex_inner_re n f.val (ginibreFullComplexResolvent n hn h).val
-    change (inner ℂ (ginibreFullComplexResolvent n hn f) h).re =
-      inner ℝ (ginibreFullSymmetricRe n (ginibreFullComplexResolvent n hn f))
-        (ginibreFullSymmetricRe n h) +
-        inner ℝ (ginibreFullSymmetricIm n (ginibreFullComplexResolvent n hn f))
-          (ginibreFullSymmetricIm n h) at hleft
-    change (inner ℂ f (ginibreFullComplexResolvent n hn h)).re =
-      inner ℝ (ginibreFullSymmetricRe n f) (ginibreFullSymmetricRe n (ginibreFullComplexResolvent
-        n hn h)) +
-        inner ℝ (ginibreFullSymmetricIm n f) (ginibreFullSymmetricIm n
-          (ginibreFullComplexResolvent n hn h)) at hright
-    rw [hleft, hright, ginibreFullComplexResolvent_re, ginibreFullComplexResolvent_im,
-      ginibreFullComplexResolvent_re, ginibreFullComplexResolvent_im,
-      ginibreFullSymmetricResolvent_symmetric, ginibreFullSymmetricResolvent_symmetric]
-  · have hleft := ginibreFullComplex_inner_im n (ginibreFullComplexResolvent n hn f).val h.val
-    have hright := ginibreFullComplex_inner_im n f.val (ginibreFullComplexResolvent n hn h).val
-    change (inner ℂ (ginibreFullComplexResolvent n hn f) h).im =
-      inner ℝ (ginibreFullSymmetricRe n (ginibreFullComplexResolvent n hn f))
-        (ginibreFullSymmetricIm n h) -
-        inner ℝ (ginibreFullSymmetricIm n (ginibreFullComplexResolvent n hn f))
-          (ginibreFullSymmetricRe n h) at hleft
-    change (inner ℂ f (ginibreFullComplexResolvent n hn h)).im =
-      inner ℝ (ginibreFullSymmetricRe n f) (ginibreFullSymmetricIm n (ginibreFullComplexResolvent
-        n hn h)) -
-        inner ℝ (ginibreFullSymmetricIm n f) (ginibreFullSymmetricRe n
-          (ginibreFullComplexResolvent n hn h)) at hright
-    rw [hleft, hright, ginibreFullComplexResolvent_re, ginibreFullComplexResolvent_im,
-      ginibreFullComplexResolvent_re, ginibreFullComplexResolvent_im,
-      ginibreFullSymmetricResolvent_symmetric, ginibreFullSymmetricResolvent_symmetric]
+  · simp only [ginibreFullSymmetric_inner_re, ginibreFullComplexResolvent_re,
+      ginibreFullComplexResolvent_im, ginibreFullSymmetricResolvent_symmetric]
+  · simp only [ginibreFullSymmetric_inner_im, ginibreFullComplexResolvent_re,
+      ginibreFullComplexResolvent_im, ginibreFullSymmetricResolvent_symmetric]
 
 instance ginibreFullComplexSymmetric_complete (n : ℕ) : CompleteSpace (ginibreSymmetricL2 n) :=
   (isClosed_ginibreSymmetricL2 n).completeSpace_coe
@@ -331,16 +317,9 @@ theorem ginibreFullComplexResolvent_opNorm_le (n : ℕ) (hn : 0 < n) :
 /-- Positivity is inherited from the two genuine real Dirichlet resolvents. -/
 theorem ginibreFullComplexResolvent_inner_nonneg (n : ℕ) (hn : 0 < n)
     (f : ginibreSymmetricL2 n) : 0 ≤ (inner ℂ f (ginibreFullComplexResolvent n hn f)).re := by
-  have h := ginibreFullComplex_inner_re n f.val (ginibreFullComplexResolvent n hn f).val
-  change (inner ℂ f (ginibreFullComplexResolvent n hn f)).re =
-    inner ℝ (ginibreFullSymmetricRe n f) (ginibreFullSymmetricRe n (ginibreFullComplexResolvent n
-      hn f)) +
-      inner ℝ (ginibreFullSymmetricIm n f) (ginibreFullSymmetricIm n (ginibreFullComplexResolvent
-        n hn f)) at h
-  rw [ginibreFullComplexResolvent_re, ginibreFullComplexResolvent_im] at h
+  rw [ginibreFullSymmetric_inner_re, ginibreFullComplexResolvent_re, ginibreFullComplexResolvent_im]
   have hR := ginibreFullValueResolvent_positive n hn (ginibreFullSymmetricRe n f).val
   have hI := ginibreFullValueResolvent_positive n hn (ginibreFullSymmetricIm n f).val
-  rw [h]
   change 0 ≤ inner ℝ (ginibreFullSymmetricRe n f).val
       (ginibreFullValueResolvent n hn (ginibreFullSymmetricRe n f).val) +
     inner ℝ (ginibreFullSymmetricIm n f).val

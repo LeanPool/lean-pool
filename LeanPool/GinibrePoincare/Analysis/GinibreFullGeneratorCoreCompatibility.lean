@@ -83,8 +83,9 @@ theorem ginibreFull_core_divergence_ae {n : ℕ} (hn : 0 < n)
       fderiv ℝ (fun y => ginibreLebesgueDensityReal n y *
         fderiv ℝ f y (ginibreCoordinateDirection k)) z (ginibreCoordinateDirection k) /
           ginibreLebesgueDensityReal n z) =ᵐ[ginibreMeasure n] ginibrePregenerator n f := by
-  have hcf := ginibre_ae_collisionFree n hn
-  filter_upwards [hcf, ginibreLebesgueDensityReal_ne_zero_ae hn] with z hz hρ
+  filter_upwards [ginibreLebesgueDensityReal_ne_zero_ae hn] with z hρ
+  have hz : CollisionFree z := (vandermonde_ne_zero_iff z).mp fun hzero =>
+    hρ (by simp [ginibreLebesgueDensityReal, vandermondeWeight, hzero])
   have h := ginibreLebesgueDensityReal_mul_pregenerator_eq_divergence hn f hf.1 z hz
   simp only [Fintype.sum_prod_type, Fin.sum_univ_two, ginibreCoordinateDirection,
     Fin.isValue, ite_true, ite_false, one_ne_zero]

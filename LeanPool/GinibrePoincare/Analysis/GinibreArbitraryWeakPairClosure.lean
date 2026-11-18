@@ -112,31 +112,6 @@ theorem ginibreWeakPair_mem_closure_interiorSmooth {n : ℕ} (hn : 0 < n)
   exact Eventually.of_forall (fun k =>
     ginibreValueTruncation_mem_closure_interiorSmooth hn u g hg k)
 
-/-- The Reynolds average of any smooth compact scalar observable is again
-smooth, compactly supported, and symmetric. -/
-theorem ginibrePermutationAverage_smoothCompact {n : ℕ}
-    (f : Configuration n → ℝ) (hf : ContDiff ℝ ∞ f) (hfc : HasCompactSupport f) :
-    IsSmoothCompactSymmetric (ginibrePermutationAverage f) := by
-  refine ⟨ginibrePermutationAverage_smooth f hf, ?_, ginibrePermutationAverage_symmetric f⟩
-  classical
-  let e (σ : ParticlePermutation n) : Configuration n ≃L[ℝ] Configuration n :=
-    ContinuousLinearEquiv.piCongrLeft ℝ (fun _ : Fin n => ℂ) σ.symm
-  have he (σ : ParticlePermutation n) (z : Configuration n) : e σ z = permute σ z := by
-    ext i
-    simp [e, ContinuousLinearEquiv.piCongrLeft, Equiv.piCongrLeft_apply, permute]
-  have hcomp (σ : ParticlePermutation n) :
-      HasCompactSupport (fun z => f (permute σ z)) := by
-    have hc := hfc.comp_homeomorph (e σ).toHomeomorph
-    convert hc using 1
-    funext z
-    change f (permute σ z) = f (e σ z)
-    rw [← he]
-  convert (HasCompactSupport.finset_sum (s := Finset.univ)
-      (f := fun σ z => f (permute σ z)) (fun σ _ => hcomp σ)).mul_left
-        (f := fun _ => (Fintype.card (ParticlePermutation n) : ℝ)⁻¹) using 1
-  funext z
-  simp only [ginibrePermutationAverage, Pi.mul_apply, Finset.sum_apply]
-
 /-- Averaging a smooth compact weak-pair approximation yields an element of the
 collision-free core closure. -/
 theorem ginibreInteriorSmoothPair_average_mem_coreClosure {n : ℕ} (hn : 0 < n)
@@ -159,38 +134,8 @@ theorem ginibreInteriorSmoothPair_average_mem_coreClosure {n : ℕ} (hn : 0 < n)
     ginibreCollisionCutoff_smoothPair_core_sequence_of_smoothCompact n hn F hF hvF hdF
   -- The averaged L² pair is exactly the value-gradient pair of `F`.
   have hpvF : (ginibreRealPermutationAverageL2 p.1 : Configuration n → ℝ)
-      =ᵐ[ginibreMeasure n] F := by
-    classical
-  have hterm (σ : ParticlePermutation n) :
-        (ginibreRealPermutationL2 σ p.1 : Configuration n → ℝ) =ᵐ[ginibreMeasure n]
-          fun z => f (permute σ z) := by
-      have hcomp := (ginibre_measurePreserving_permute σ).quasiMeasurePreserving.ae_eq_comp hpv
-      filter_upwards [ginibreRealPermutationL2_ae σ p.1, hcomp] with z hz hp
-      rw [hz]
-      exact hp
-    have hsum (s : Finset (ParticlePermutation n)) :
-        ((∑ σ ∈ s, ginibreRealPermutationL2 σ p.1 : Lp ℝ 2 (ginibreMeasure n)) :
-          Configuration n → ℝ) =ᵐ[ginibreMeasure n]
-          fun z => ∑ σ ∈ s, f (permute σ z) := by
-      refine (Lp.coeFn_fun_finsetSum s
-        (fun σ => ginibreRealPermutationL2 σ p.1)).trans ?_
-      filter_upwards [eventuallyEq_sum (s := s) (fun σ _ => hterm σ)] with z hz
-      simpa only [Finset.sum_apply] using hz
-    unfold ginibreRealPermutationAverageL2
-    simp only [smul_apply, sum_apply]
-    filter_upwards [Lp.coeFn_smul
-      ((Fintype.card (ParticlePermutation n) : ℝ)⁻¹)
-      (∑ σ : ParticlePermutation n, ginibreRealPermutationL2 σ p.1),
-      hsum Finset.univ] with z hscale hsumz
-    change (↑((Fintype.card (ParticlePermutation n) : ℝ)⁻¹ •
-      ∑ σ : ParticlePermutation n, ginibreRealPermutationL2 σ p.1) :
-        Configuration n → ℝ) z = F z
-    rw [hscale]
-    change (Fintype.card (ParticlePermutation n) : ℝ)⁻¹ *
-      (↑(∑ σ : ParticlePermutation n, ginibreRealPermutationL2 σ p.1) :
-        Configuration n → ℝ) z = F z
-    rw [hsumz]
-    simp [F, ginibrePermutationAverage]
+      =ᵐ[ginibreMeasure n] F :=
+    ginibreRealPermutationAverageL2_ae p.1 f hpv
   have hpgF : (ginibreGradientPermutationAverageL2 p.2 :
       Configuration n → EuclideanSpace ℝ (Fin n × Fin 2))
       =ᵐ[ginibreMeasure n] ginibreEuclideanGradient F := by

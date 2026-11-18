@@ -37,7 +37,7 @@ module
 
 public import LeanPool.GinibrePoincare.Analysis.GinibreDistributionalGradient
 public import LeanPool.GinibrePoincare.Analysis.GinibreWeakSobolevMultipliers
-public import LeanPool.GinibrePoincare.Analysis.GinibrePermutationGradient
+public import LeanPool.GinibrePoincare.Analysis.GinibrePermutationAverage
 public import LeanPool.GinibrePoincare.Analysis.GinibreL2Norm
 
 /-! # Particle permutations on actual Ginibre weak-pair spaces -/
@@ -272,6 +272,36 @@ def ginibreRealPermutationAverageL2 {n : ℕ} :
   let N : ℝ := (Fintype.card (ParticlePermutation n) : ℝ)⁻¹
   exact N • ∑ σ : ParticlePermutation n,
     (ginibreRealPermutationL2 σ).toContinuousLinearMap
+
+/-- The scalar L² Reynolds operator has its literal finite-average representative. -/
+theorem ginibreRealPermutationAverageL2_ae {n : ℕ}
+    (u : Lp ℝ 2 (ginibreMeasure n)) (f : Configuration n → ℝ)
+    (hu : (u : Configuration n → ℝ) =ᵐ[ginibreMeasure n] f) :
+    (ginibreRealPermutationAverageL2 u : Configuration n → ℝ) =ᵐ[ginibreMeasure n]
+      ginibrePermutationAverage f := by
+  classical
+  have hterm (σ : ParticlePermutation n) :
+      (ginibreRealPermutationL2 σ u : Configuration n → ℝ) =ᵐ[ginibreMeasure n]
+        fun z => f (permute σ z) := by
+    have hcomp := (ginibre_measurePreserving_permute σ).quasiMeasurePreserving.ae_eq_comp hu
+    filter_upwards [ginibreRealPermutationL2_ae σ u, hcomp] with z hp hc
+    simp only [Function.comp_apply] at hc
+    rw [hp, hc]
+  unfold ginibreRealPermutationAverageL2
+  simp only [smul_apply, sum_apply]
+  filter_upwards [Lp.coeFn_smul ((Fintype.card (ParticlePermutation n) : ℝ)⁻¹)
+      (∑ σ : ParticlePermutation n, ginibreRealPermutationL2 σ u),
+    Lp.coeFn_fun_finsetSum Finset.univ (fun σ => ginibreRealPermutationL2 σ u),
+    ae_all_iff.mpr hterm] with z hscale hsum hall
+  change (↑((Fintype.card (ParticlePermutation n) : ℝ)⁻¹ •
+    ∑ σ : ParticlePermutation n, ginibreRealPermutationL2 σ u) : Configuration n → ℝ) z = _
+  rw [hscale]
+  change (Fintype.card (ParticlePermutation n) : ℝ)⁻¹ *
+    (∑ σ : ParticlePermutation n, ginibreRealPermutationL2 σ u : Lp ℝ 2 (ginibreMeasure n)) z = _
+  rw [hsum]
+  simp only [ginibrePermutationAverage]
+  congr 1
+  exact Finset.sum_congr rfl (fun σ _ => hall σ)
 
 /-- The compatible Reynolds average on vector Ginibre L² gradients. -/
 def ginibreGradientPermutationAverageL2 {n : ℕ} :

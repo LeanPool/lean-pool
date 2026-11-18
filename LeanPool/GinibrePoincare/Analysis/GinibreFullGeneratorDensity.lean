@@ -33,7 +33,7 @@ SOFTWARE.
 module
 
 public import LeanPool.GinibrePoincare.Analysis.GinibreFullGeneratorResolvent
-public import LeanPool.GinibrePoincare.Analysis.GinibreArbitraryWeakPairClosure
+public import LeanPool.GinibrePoincare.Analysis.GinibreSmoothDistributionalGradient
 
 /-! # Density and the real symmetric Ginibre resolvent -/
 
@@ -133,48 +133,16 @@ theorem ginibreFullSymmetricValues_inner_average (n : ℕ)
 theorem ginibreFull_L2_sum_ae {n : ℕ} {ι : Type*} (s : Finset ι)
     (f : ι → GinibreFullValueL2 n) :
     ((∑ i ∈ s, f i : GinibreFullValueL2 n) : Configuration n → ℝ) =ᵐ[ginibreMeasure n]
-      fun z => ∑ i ∈ s, f i z := by
-  classical
-  induction s using Finset.induction_on with
-  | empty =>
-    filter_upwards [Lp.coeFn_zero (E := ℝ) (p := 2) (μ := ginibreMeasure n)] with z hz
-    simpa using hz
-  | @insert i s hi ih =>
-    filter_upwards [Lp.coeFn_add (f i) (∑ j ∈ s, f j), ih] with z hadd hs
-    simp only [Finset.sum_insert hi]
-    rw [hadd]
-    change f i z + (∑ j ∈ s, f j : GinibreFullValueL2 n) z = _
-    rw [hs]
+      fun z => ∑ i ∈ s, f i z :=
+  Lp.coeFn_fun_finsetSum s f
 
 /-- The scalar L² Reynolds operator has its literal finite-average representative. -/
 theorem ginibreFull_permutationAverage_ae {n : ℕ}
     (u : GinibreFullValueL2 n) (f : Configuration n → ℝ)
     (hu : (u : Configuration n → ℝ) =ᵐ[ginibreMeasure n] f) :
     (ginibreRealPermutationAverageL2 u : Configuration n → ℝ) =ᵐ[ginibreMeasure n]
-      ginibrePermutationAverage f := by
-  classical
-  have hterm (σ : ParticlePermutation n) :
-      (ginibreRealPermutationL2 σ u : Configuration n → ℝ) =ᵐ[ginibreMeasure n]
-        fun z => f (permute σ z) := by
-    have hcomp := (ginibre_measurePreserving_permute σ).quasiMeasurePreserving.ae_eq_comp hu
-    filter_upwards [ginibreRealPermutationL2_ae σ u, hcomp] with z hp hc
-    simp only [Function.comp_apply] at hc
-    rw [hp, hc]
-  unfold ginibreRealPermutationAverageL2
-  simp only [smul_apply, sum_apply]
-  filter_upwards [Lp.coeFn_smul ((Fintype.card (ParticlePermutation n) : ℝ)⁻¹)
-      (∑ σ : ParticlePermutation n, ginibreRealPermutationL2 σ u),
-    ginibreFull_L2_sum_ae Finset.univ (fun σ => ginibreRealPermutationL2 σ u),
-    ae_all_iff.mpr hterm] with z hscale hsum hall
-  change (↑((Fintype.card (ParticlePermutation n) : ℝ)⁻¹ •
-    ∑ σ : ParticlePermutation n, ginibreRealPermutationL2 σ u) : Configuration n → ℝ) z = _
-  rw [hscale]
-  change (Fintype.card (ParticlePermutation n) : ℝ)⁻¹ *
-    (∑ σ : ParticlePermutation n, ginibreRealPermutationL2 σ u : GinibreFullValueL2 n) z = _
-  rw [hsum]
-  simp only [ginibrePermutationAverage]
-  congr 1
-  exact Finset.sum_congr rfl (fun σ _ => hall σ)
+      ginibrePermutationAverage f :=
+  ginibreRealPermutationAverageL2_ae u f hu
 
 /-- Full symmetric weak-H¹ values detect every actual symmetric L² value.
 This is a concrete density statement, proved using all smooth compact tests. -/
