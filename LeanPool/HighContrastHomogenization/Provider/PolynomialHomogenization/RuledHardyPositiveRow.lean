@@ -149,7 +149,7 @@ theorem rawWhitneyRowEnergy_positive_eq_volume_mul_ruledPositiveRowEnergy
       apply tsum_congr
       intro i
       exact volume_mul_positiveWhitneyCellEnergy system s F i
-    _ = X + Y := by rw [ENNReal.tsum_add]
+    _ = X + Y := by rw [tsum_add]
     _ = volume U * ruledPositiveRowEnergy system s F := by
       unfold ruledPositiveRowEnergy ruledPositiveRowL2Energy
         ruledPositiveRowGagliardoEnergy
@@ -403,7 +403,7 @@ private theorem ruledPositiveRowL2Energy_le_boundaryWeightedEnergy
         (volume U)⁻¹ *
           (∑' i : system.CellIndex,
             K * ∫⁻ x in system.cell i, g x ∂volume) := by
-      exact mul_le_mul_right (ENNReal.tsum_le_tsum hcell) _
+      exact mul_le_mul_right (tsum_le_tsum hcell) _
     _ = (volume U)⁻¹ *
         (K * ∑' i : system.CellIndex,
           ∫⁻ x in system.cell i, g x ∂volume) := by

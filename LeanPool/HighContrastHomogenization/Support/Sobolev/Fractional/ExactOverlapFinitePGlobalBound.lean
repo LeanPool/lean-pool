@@ -50,7 +50,7 @@ private theorem memLp_hilbert_overlap_of_memLp {d : ℕ}
         mul_inv_cancel₀ hvolQ.ne', ENNReal.ofReal_one, mul_one]
     rw [hcancel]
     refine Measure.le_iff'.2 fun A => ?_
-    simp only [Measure.smul_apply, smul_eq_mul]
+    simp only [smul_apply, smul_eq_mul]
     refine mul_le_mul_right ?_ _
     rw [ScalarOverlap.cubeMeasure, cubeMeasure]
     exact Measure.le_iff'.1 (Measure.restrict_mono hsub le_rfl) A
@@ -87,8 +87,8 @@ private theorem eLpNorm_overlap_residual_le_two_mul {d : ℕ}
   have hm_le : ‖m‖ₑ ≤ eLpNorm f p.exponent μ := by
     calc
       ‖m‖ₑ = ‖∫ x, f x ∂μ‖ₑ := by rw [hmean]
-      _ ≤ ∫⁻ x, ‖f x‖ₑ ∂μ := enorm_integral_le_lintegral_enorm _
-      _ = eLpNorm f 1 μ := (eLpNorm_one_eq_lintegral_enorm hF'.aestronglyMeasurable).symm
+      _ ≤ ∫⁻ x, ‖f x‖ₑ ∂μ := eNorm_integral_le_lintegral_eNorm _
+      _ = eLpNorm f 1 μ := (eLpNorm_one_eq_lintegral_eNorm hF'.aestronglyMeasurable).symm
       _ ≤ eLpNorm f p.exponent μ :=
         eLpNorm_le_eLpNorm_of_exponent_le hp_one
   have hconst : eLpNorm (fun _ : Vec d => m) p.exponent μ = ‖m‖ₑ := by
@@ -113,7 +113,7 @@ private theorem eLpNorm_rpow_eq_lintegral_enorm {α E : Type*}
     {f : α → E} (p : FiniteLpExponent) (hf : AEStronglyMeasurable f μ) :
     (eLpNorm f p.exponent μ) ^ p.exponent.toReal =
       ∫⁻ x, ‖f x‖ₑ ^ p.exponent.toReal ∂μ := by
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal
     (zero_lt_one.trans p.one_lt).ne' p.lt_top.ne hf, ← ENNReal.rpow_mul]
   have hp : p.exponent.toReal ≠ 0 :=
     ENNReal.toReal_pos (zero_lt_one.trans p.one_lt).ne' p.lt_top.ne |>.ne'

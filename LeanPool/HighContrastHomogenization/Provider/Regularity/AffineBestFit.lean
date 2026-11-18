@@ -267,7 +267,7 @@ noncomputable local instance originCubeAffineL2SubmoduleHasOrthogonalProjection
   let : FiniteDimensional ℝ (originCubeAffineL2Submodule d k) :=
     (originCubeAffineL2LinearMap d k).finiteDimensional_range
   let : CompleteSpace (originCubeAffineL2Submodule d k) :=
-    FiniteDimensional.complete ℝ _
+    FiniteDimensional.completeSpace ℝ _
   infer_instance
 
 /-- Affine coefficients are linearly equivalent to the literal range of the

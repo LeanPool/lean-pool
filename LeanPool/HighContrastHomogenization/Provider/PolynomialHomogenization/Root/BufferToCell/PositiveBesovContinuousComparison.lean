@@ -84,7 +84,7 @@ private theorem normalizedDomainMeasure_isProbability
     {V : Set (Vec d)} (hVpos : 0 < volume V) (hVtop : volume V ≠ ⊤) :
     IsProbabilityMeasure (normalizedDomainMeasure V) := by
   refine ⟨?_⟩
-  rw [normalizedDomainMeasure, Measure.smul_apply,
+  rw [normalizedDomainMeasure, smul_apply,
     Measure.restrict_apply_univ, smul_eq_mul]
   exact ENNReal.inv_mul_cancel hVpos.ne' hVtop
 
@@ -94,7 +94,7 @@ private theorem eLpNorm_two_eq_rpow
     (hf : AEStronglyMeasurable f mu) :
     eLpNorm f 2 mu =
       (∫⁻ x, ‖f x‖ₑ ^ (2 : ℝ) ∂mu) ^ (1 / (2 : ℝ)) := by
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hf]
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num) hf]
   norm_num
 
 private theorem integral_normalizedDomainMeasure_eq_volumeAverageVec
@@ -133,13 +133,13 @@ theorem ofReal_vecNormSq_volumeAverageVec_le_eVolumeAverage
     change Integrable F (normalizedDomainMeasure V)
     exact hF.smul_measure (ENNReal.inv_ne_top.mpr hVpos.ne')
   have hL1 : ‖∫ x, FH x ∂mu‖ₑ ≤ ∫⁻ x, ‖FH x‖ₑ ∂mu :=
-    enorm_integral_le_lintegral_enorm _
+    eNorm_integral_le_lintegral_eNorm _
   have hL2 : (∫⁻ x, ‖FH x‖ₑ ∂mu) ≤
       (∫⁻ x, ‖FH x‖ₑ ^ (2 : ℝ) ∂mu) ^ (1 / (2 : ℝ)) := by
     have hcmp := eLpNorm_le_eLpNorm_of_exponent_le
       (μ := mu) (p := 1) (q := 2) (f := FH)
       (by norm_num)
-    rwa [eLpNorm_one_eq_lintegral_enorm hFHmu.aestronglyMeasurable,
+    rwa [eLpNorm_one_eq_lintegral_eNorm hFHmu.aestronglyMeasurable,
       eLpNorm_two_eq_rpow _ _ hFHmu.aestronglyMeasurable] at hcmp
   have hpow := ENNReal.rpow_le_rpow (hL1.trans hL2)
     (by norm_num : (0 : ℝ) ≤ 2)

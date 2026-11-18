@@ -168,12 +168,12 @@ theorem profileAdjointCenterVariance_le_variance
     Response.profileAdjointCenterVariance P m hq t
         (fun a => a.subSkew h0 hh0) p r ≤
         eLpNorm (fun a => ENNReal.ofReal C * ENNReal.ofReal (Z a)) 2 P := by
-      refine eLpNorm_mono_enorm ?_ fun a => ?_
+      refine eLpNorm_mono_eNorm ?_ fun a => ?_
       · exact (ENNReal.measurable_ofReal.comp_aemeasurable
           (Response.AEMeasurable.sqrt_metricBlockNormSq_sub_const
             (Response.aemeasurable_blockCellAverage_diagonalWeakAdjointState_subSkew
               hq t h0 hh0 p r) m _)).aestronglyMeasurable
-      simp only [enorm_eq_self]
+      simp only [eNorm_eq_self]
       exact hpoint a
     _ ≤ ENNReal.ofReal C *
         eLpNorm (fun a => ENNReal.ofReal (Z a)) 2 P :=
@@ -187,13 +187,13 @@ theorem profileAdjointCenterVariance_le_variance
         have hZofReal : AEStronglyMeasurable (fun a => ENNReal.ofReal (Z a)) P :=
           (ENNReal.measurable_ofReal.comp_aemeasurable
             hZmeas.aemeasurable).aestronglyMeasurable
-        rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hZofReal,
-          eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hZmeas]
+        rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num) hZofReal,
+          eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num) hZmeas]
         congr 1
         refine lintegral_congr fun a => ?_
         congr 1
-        simp only [enorm_eq_self]
-        rw [Real.enorm_eq_ofReal (hZ0 a)]
+        simp only [eNorm_eq_self]
+        rw [Real.eNorm_eq_ofReal (hZ0 a)]
       rw [heq]
       simp only [hZ]
       rfl

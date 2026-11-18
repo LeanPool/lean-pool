@@ -184,7 +184,7 @@ theorem scaleVariance_mean_le_of_comparability
     funext a
     rw [Pi.smul_apply, smul_eq_mul]
   rw [hsmul, eLpNorm_const_smul,
-    Real.enorm_eq_ofReal (mul_nonneg (Real.sqrt_nonneg _) hcP0)]
+    Real.eNorm_eq_ofReal (mul_nonneg (Real.sqrt_nonneg _) hcP0)]
 
 /-- **The conversion at a supplied comparability constant.**  The caller's
 constant replaces the entry route's `kap2Value`, and with it every geometric

@@ -273,7 +273,7 @@ private theorem vector_multiplier_eLpNorm
     eLpNorm f p μ ≤ C.toNNReal • eLpNorm g p μ := by
   apply eLpNorm_le_nnreal_smul_eLpNorm_of_ae_le_mul' hf
   filter_upwards with x
-  rw [enorm_eq_nnnorm, enorm_eq_nnnorm]
+  rw [eNorm_eq_nnNorm, eNorm_eq_nnNorm]
   apply ENNReal.coe_le_coe.mpr
   refine (NNReal.coe_le_coe).mp ?_
   change ‖f x‖ ≤ (C.toNNReal : ℝ) * ‖g x‖
@@ -286,7 +286,7 @@ private theorem scalar_multiplier_eLpNorm
     eLpNorm f p μ ≤ C.toNNReal • eLpNorm g p μ := by
   apply eLpNorm_le_nnreal_smul_eLpNorm_of_ae_le_mul' hf
   filter_upwards with x
-  rw [enorm_eq_nnnorm, enorm_eq_nnnorm]
+  rw [eNorm_eq_nnNorm, eNorm_eq_nnNorm]
   apply ENNReal.coe_le_coe.mpr
   refine (NNReal.coe_le_coe).mp ?_
   change ‖f x‖ ≤ (C.toNNReal : ℝ) * ‖g x‖
@@ -1278,7 +1278,7 @@ private theorem scalar_indicator_mul_bounded_memLp_and_norm
   · rw [eLpNorm_indicator_eq_eLpNorm_restrict hU.nullMeasurableSet]
     apply eLpNorm_le_nnreal_smul_eLpNorm_of_ae_le_mul' hlocal.aestronglyMeasurable
     filter_upwards with x
-    rw [enorm_eq_nnnorm, enorm_eq_nnnorm]
+    rw [eNorm_eq_nnNorm, eNorm_eq_nnNorm]
     apply ENNReal.coe_le_coe.mpr
     refine (NNReal.coe_le_coe).mp ?_
     change ‖r x * L x‖ ≤ (C.toNNReal : ℝ) * ‖r x‖
@@ -1443,7 +1443,7 @@ private theorem localized_Aterm_raw_bound
       eLpNorm (fun x ↦ HilbertVec.ofVec (V x)) q.conjugate.exponent μ := by
     apply eLpNorm_le_nnreal_smul_eLpNorm_of_ae_le_mul' hdotmeas
     filter_upwards with x
-    rw [enorm_eq_nnnorm, enorm_eq_nnnorm]
+    rw [eNorm_eq_nnNorm, eNorm_eq_nnNorm]
     apply ENNReal.coe_le_coe.mpr
     refine (NNReal.coe_le_coe).mp ?_
     change ‖dot x‖ ≤ (C.toNNReal : ℝ) * ‖HilbertVec.ofVec (V x)‖
@@ -1533,7 +1533,7 @@ private theorem localized_Eterm_raw_bound
       eLpNorm (fun x ↦ HilbertVec.ofVec (b x)) q.exponent μ := by
     apply eLpNorm_le_nnreal_smul_eLpNorm_of_ae_le_mul' hdotmeas
     filter_upwards with x
-    rw [enorm_eq_nnnorm, enorm_eq_nnnorm]
+    rw [eNorm_eq_nnNorm, eNorm_eq_nnNorm]
     apply ENNReal.coe_le_coe.mpr
     refine (NNReal.coe_le_coe).mp ?_
     change ‖dot x‖ ≤ (C.toNNReal : ℝ) * ‖HilbertVec.ofVec (b x)‖

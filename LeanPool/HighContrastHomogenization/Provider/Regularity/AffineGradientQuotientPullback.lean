@@ -43,7 +43,7 @@ theorem ae_affinePullback {L : Mat d} (hL : IsUnit L.det)
     ∀ᵐ y ∂(volumeMeasureOn (matImage L⁻¹ U)), P (matVecMul L y) := by
   let hq : MeasureTheory.QuasiMeasurePreserving (matVecMul L)
       (volumeMeasureOn (matImage L⁻¹ U)) (volumeMeasureOn U) := by
-    refine ⟨(continuous_matVecMul L).measurable, ?_⟩
+    refine ⟨(continuous_matVecMul L).measurable.aemeasurable, ?_⟩
     rw [map_restrict_volume_affinePullback hL hU]
     exact Measure.AbsolutelyContinuous.rfl.smul_left _
   exact hq.tendsto_ae hP

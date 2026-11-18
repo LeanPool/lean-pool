@@ -129,9 +129,9 @@ private theorem eLpNorm_fullWeakRoot_le_profileMajorant
     aestronglyMeasurable_weakProfileMajorant hU hV hM hEn A B alpha H
   have hmono : eLpNorm fullRoot 2 P ≤
       eLpNorm (fun a ↦ majorant a + ENNReal.ofReal c * center a) 2 P := by
-    apply eLpNorm_mono_enorm_ae hroot
+    apply eLpNorm_mono_eNorm_ae hroot
     filter_upwards [hpoint] with a ha
-    simpa only [majorant, enorm_eq_self] using ha
+    simpa only [majorant, eNorm_eq_self] using ha
   have hmajorantNorm : eLpNorm majorant 2 P ≤
       ENNReal.ofReal A * (eLpNorm U 2 P + eLpNorm V 2 P) +
         ENNReal.ofReal B *
@@ -369,9 +369,9 @@ private theorem eLpNorm_fullWeakRoot_le_profileMajorantAt
     aestronglyMeasurable_weakProfileMajorantAt hU hV hM hEn A B alpha H lev
   have hmono : eLpNorm fullRoot 2 P ≤
       eLpNorm (fun a ↦ majorant a + ENNReal.ofReal c * center a) 2 P := by
-    apply eLpNorm_mono_enorm_ae hroot
+    apply eLpNorm_mono_eNorm_ae hroot
     filter_upwards [hpoint] with a ha
-    simpa only [majorant, enorm_eq_self] using ha
+    simpa only [majorant, eNorm_eq_self] using ha
   have hmajorantNorm : eLpNorm majorant 2 P ≤
       ENNReal.ofReal A * (eLpNorm U 2 P + eLpNorm V 2 P) +
         ENNReal.ofReal B *

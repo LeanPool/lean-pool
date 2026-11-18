@@ -52,7 +52,7 @@ theorem axisCube_eLpNorm_rpow_exponent_eq_lintegral_enorm
     (hF : AEStronglyMeasurable F (axisCubeNormalizedMeasure z L)) :
     (eLpNorm F p.exponent (axisCubeNormalizedMeasure z L)) ^ p.exponent.toReal =
       ∫⁻ x, ‖F x‖ₑ ^ p.exponent.toReal ∂axisCubeNormalizedMeasure z L := by
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (finiteLpExponent_exponent_ne_zero p)
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (finiteLpExponent_exponent_ne_zero p)
     p.lt_top.ne hF]
   rw [← ENNReal.rpow_mul]
   have hp : p.exponent.toReal ≠ 0 :=

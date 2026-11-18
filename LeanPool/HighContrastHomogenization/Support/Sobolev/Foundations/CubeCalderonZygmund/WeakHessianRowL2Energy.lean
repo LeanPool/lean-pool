@@ -41,7 +41,7 @@ theorem sqWeightedMeasure_apply_univ_eq_eLpNorm_two_sq
   change (∫⁻ x, ENNReal.ofReal (‖f x‖ ^ (2 : ℕ)) ∂μ) = _
   simp_rw [ENNReal.ofReal_pow (norm_nonneg _), ofReal_norm]
   rw [← ENNReal.rpow_natCast,
-    eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hf,
+    eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num) hf,
     ← ENNReal.rpow_mul]
   norm_num
 
@@ -80,7 +80,7 @@ theorem eLpNorm_hess_eq_ofReal_norm_hessCoordToScalarL2
   calc
     eLpNorm (fun x ↦ H.hess i j x) 2 (volumeMeasureOn U) =
         ‖H.hessCoordToScalarL2 i j‖ₑ := by
-      exact (Lp.enorm_toLp (H.hess_memL2 i j)).symm
+      exact (Lp.eNorm_toLp (H.hess_memL2 i j)).symm
     _ = ENNReal.ofReal ‖H.hessCoordToScalarL2 i j‖ :=
       (ofReal_norm _).symm
 

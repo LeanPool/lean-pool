@@ -100,7 +100,7 @@ noncomputable def normalizedVolume {d : ℕ} (U : BoundedMeasurableDomain d) :
 
 @[simp] theorem normalizedVolume_apply_univ {d : ℕ} (U : BoundedMeasurableDomain d) :
     U.normalizedVolume Set.univ = 1 := by
-  rw [normalizedVolume, MeasureTheory.Measure.smul_apply, U.restrictedVolume_apply_univ]
+  rw [normalizedVolume, smul_apply, U.restrictedVolume_apply_univ]
   exact ENNReal.inv_mul_cancel U.volume_ne_zero U.volume_ne_top
 
 theorem normalizedVolume_ne_zero {d : ℕ} (U : BoundedMeasurableDomain d) :

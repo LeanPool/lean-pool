@@ -46,7 +46,7 @@ theorem tsum_pow_le_two_of_le_third {c : ℝ≥0∞} (hc : c ≤ 3⁻¹) :
   have hc2 : c ≤ 2⁻¹ :=
     hc.trans (ENNReal.inv_le_inv.2 (by norm_num))
   have hsum : (∑' n : ℕ, c ^ n) ≤ ∑' n : ℕ, ((2 : ℝ≥0∞)⁻¹) ^ n :=
-    ENNReal.tsum_le_tsum fun n => pow_le_pow_left' hc2 n
+    tsum_le_tsum fun n => pow_le_pow_left' hc2 n
   refine hsum.trans ?_
   rw [ENNReal.tsum_geometric]
   have hhalf : (1 : ℝ≥0∞) - 2⁻¹ = 2⁻¹ :=
@@ -56,7 +56,7 @@ theorem tsum_pow_le_two_of_le_third {c : ℝ≥0∞} (hc : c ≤ 3⁻¹) :
 /-- Finite geometric sums with ratio at most `3⁻¹` are at most `2` in `ℝ≥0∞`. -/
 theorem sum_range_pow_le_two_of_le_third {c : ℝ≥0∞} (hc : c ≤ 3⁻¹) (N : ℕ) :
     (∑ n ∈ Finset.range N, c ^ n) ≤ 2 :=
-  (ENNReal.sum_le_tsum (Finset.range N)).trans (tsum_pow_le_two_of_le_third hc)
+  (sum_le_tsum (Finset.range N)).trans (tsum_pow_le_two_of_le_third hc)
 
 /-- The kernel-insertion prefactor collapses to a dimensional constant:
 `3^{d/p + s} ≤ 3^{d+1}` for `s < 1 ≤ p`, in `ℝ≥0∞`. -/

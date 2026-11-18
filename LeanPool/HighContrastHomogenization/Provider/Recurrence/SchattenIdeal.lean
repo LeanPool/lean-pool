@@ -182,7 +182,7 @@ theorem lqSchattenSize_le_of_le {P : Measure (CoeffSpace d)} {Ej Ep : BlockMat d
       ≤ eLpNorm (K • fun b => schattenSize Q (W b) Ej) (ENNReal.ofReal Q) P :=
         eLpNorm_mono hWm hptwise
     _ = ‖K‖ₑ * lqSchattenSize P Q W Ej := eLpNorm_const_smul K _ _ _
-    _ = ENNReal.ofReal K * lqSchattenSize P Q W Ej := by rw [Real.enorm_eq_ofReal hK0]
+    _ = ENNReal.ofReal K * lqSchattenSize P Q W Ej := by rw [Real.eNorm_eq_ofReal hK0]
 
 /-- **The averaged fluctuation after the change of normalization.**
 The averaged centered response is estimated at the child normalization by

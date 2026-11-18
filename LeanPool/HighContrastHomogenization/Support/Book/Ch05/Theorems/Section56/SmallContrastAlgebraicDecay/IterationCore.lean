@@ -64,7 +64,7 @@ theorem algebraic_decay_induction_core
     ∀ m, F m ≤ K * decay m := by
   intro m
   induction m using Nat.strong_induction_on with
-  | h m ih =>
+  | ind m ih =>
       by_cases hmN : m < N
       · exact hbase m hmN
       · have hNm : N ≤ m := Nat.le_of_not_gt hmN

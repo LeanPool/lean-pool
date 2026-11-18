@@ -109,7 +109,6 @@ theorem measureReal_shiftedCrude_badPairEvent_quenchedProbeEnvelope_eq_zero_of_g
       localizedNormalizedProbeJMax hP hStruct (N0 + m) (N0 + n) aω}
   have htail_empty_ae : tailSet =ᵐ[P] (∅ : Set (RegCoeffField d)) := by
     filter_upwards [hmax_ae] with aω hmax
-    apply propext
     change (A * lam <
         localizedNormalizedProbeJMax hP hStruct (N0 + m) (N0 + n) aω) ↔ False
     exact iff_false_intro (not_lt_of_ge (hmax.trans hA_le_A_lam))

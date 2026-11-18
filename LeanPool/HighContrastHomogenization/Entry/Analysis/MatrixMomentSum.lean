@@ -294,12 +294,12 @@ theorem integral_prod_le_prod_eLpNorm {Ω : Type*} [MeasurableSpace Ω]
     exact mul_inv_cancel₀ hNR.ne'
   have h := ENNReal.lintegral_prod_norm_pow_le (Finset.univ : Finset (Fin N))
     (f := fun k a => ‖f k a‖ₑ ^ (N : ℝ))
-    (fun k _ => (hmem k).aestronglyMeasurable.enorm.pow_const _)
+    (fun k _ => (hmem k).aestronglyMeasurable.eNorm.pow_const _)
     hw (fun _ _ => inv_nonneg.mpr hNR.le)
   have he (k : Fin N) :
       (∫⁻ a, ‖f k a‖ₑ ^ (N : ℝ) ∂μ) ^ ((N : ℝ)⁻¹) =
         eLpNorm (f k) (ENNReal.ofReal (N : ℝ)) μ := by
-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal hp0 ENNReal.ofReal_ne_top
+    rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal hp0 ENNReal.ofReal_ne_top
       (hmem k).aestronglyMeasurable, ENNReal.toReal_ofReal hNR.le, one_div]
   simp only [← ENNReal.rpow_mul, mul_inv_cancel₀ hNR.ne', ENNReal.rpow_one, he] at h
   have hr := ENNReal.toReal_mono (ENNReal.prod_ne_top (fun k _ => (hmem k).eLpNorm_ne_top)) h

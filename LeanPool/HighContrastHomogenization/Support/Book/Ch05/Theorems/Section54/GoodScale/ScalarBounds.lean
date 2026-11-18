@@ -236,14 +236,14 @@ theorem expectedJScalarFormula_special_eq_of_P4
   have hcross2 :
       sigma ^ (2⁻¹ : ℝ) * (sigma ^ (-(2⁻¹ : ℝ)) * vecDot e e) = 1 := by
     convert hcross using 1
-    all_goals norm_num
+    norm_num
   have hq2 : sigma ^ (2⁻¹ : ℝ) * (sigma ^ (2⁻¹ : ℝ) * vecDot e e) = sigma := by
     convert hq using 1
-    all_goals norm_num
+    norm_num
   have hp2 :
       sigma ^ (-(2⁻¹ : ℝ)) * (sigma ^ (-(2⁻¹ : ℝ)) * vecDot e e) = sigma⁻¹ := by
     convert hp using 1
-    all_goals norm_num
+    norm_num
   dsimp [specialPAtScale, specialQAtScale]
   change expectedJScalarFormula hP hStruct (k : ℤ)
       (sigma ^ (-(1 / 2 : ℝ)) • e) (sigma ^ (1 / 2 : ℝ) • e) =
@@ -289,11 +289,11 @@ theorem tauScalarFormula_special_eq_of_P4
     rw [rpow_neg_half_sq_eq_inv hsigma_pos, heDot, mul_one]
   have hq2 : sigma ^ (2⁻¹ : ℝ) * (sigma ^ (2⁻¹ : ℝ) * vecDot e e) = sigma := by
     convert hq using 1
-    all_goals norm_num
+    norm_num
   have hp2 :
       sigma ^ (-(2⁻¹ : ℝ)) * (sigma ^ (-(2⁻¹ : ℝ)) * vecDot e e) = sigma⁻¹ := by
     convert hp using 1
-    all_goals norm_num
+    norm_num
   dsimp [specialPAtScale, specialQAtScale]
   change tauScalarFormula hP hStruct (m : ℤ) (k : ℤ)
       (sigma ^ (-(1 / 2 : ℝ)) • e) (sigma ^ (1 / 2 : ℝ) • e) =

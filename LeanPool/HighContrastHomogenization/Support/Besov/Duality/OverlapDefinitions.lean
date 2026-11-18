@@ -51,10 +51,10 @@ theorem normalizedCubeMeasure_eq_smul_restrict_of_mem_centersAtDepth {d : ℕ}
       exact hx.1
     · intro hx
       exact ⟨hx, hsubset hx.2⟩
-  rw [normalizedCubeMeasure, MeasureTheory.Measure.smul_apply]
+  rw [normalizedCubeMeasure, smul_apply]
   rw [cubeMeasure, MeasureTheory.Measure.restrict_apply ht]
-  rw [MeasureTheory.Measure.smul_apply, MeasureTheory.Measure.restrict_apply ht]
-  rw [HCPolySupport.normalizedCubeMeasure, MeasureTheory.Measure.smul_apply]
+  rw [smul_apply, MeasureTheory.Measure.restrict_apply ht]
+  rw [HCPolySupport.normalizedCubeMeasure, smul_apply]
   change ENNReal.ofReal ((cubeVolume S)⁻¹) * MeasureTheory.volume (t ∩ cubeSet S) =
     ENNReal.ofReal (HCPolySupport.cubeVolume Q / cubeVolume S) *
       (ENNReal.ofReal ((HCPolySupport.cubeVolume Q)⁻¹) *

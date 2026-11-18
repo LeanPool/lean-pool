@@ -76,7 +76,6 @@ theorem axisCube_stoppingAxisCubeCorner_ae_eq_closedBall {d : ℕ} [NeZero d]
     rw [ae_iff]
     simpa using! (volume_sphere_eq_zero (d := d) x (S * r))
   filter_upwards [hsphere] with y hy
-  apply propext
   constructor
   · intro hyball
     exact Metric.ball_subset_closedBall hyball
@@ -186,7 +185,6 @@ theorem stoppingComparison_concentricDepth_axisCube_ae_eq_closedBall
     rw [ae_iff]
     simpa using! (volume_sphere_eq_zero (d := d) x (5 * r))
   filter_upwards [hsphere] with y hy
-  apply propext
   constructor
   · intro hyball
     exact Metric.ball_subset_closedBall hyball

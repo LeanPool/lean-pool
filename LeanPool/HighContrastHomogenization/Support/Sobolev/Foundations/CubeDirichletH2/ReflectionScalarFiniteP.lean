@@ -165,9 +165,9 @@ theorem eLpNorm_cubeFaceReflectionBlockSet_cubeDirichletOddReflectionScalar
       rw [cubeFaceReflectionBlockSet_eq_iUnion_cellCube Q]
       exact MeasureTheory.AEStronglyMeasurable.iUnion fun choice ↦
         aestronglyMeasurable_cubeDirichletOddReflectionScalar_cell Q choice F hF
-    rw [MeasureTheory.eLpNorm_eq_lintegral_rpow_enorm_toReal
+    rw [MeasureTheory.eLpNorm_eq_lintegral_rpow_eNorm_toReal
         (finiteLpExponent_ne_zero p) p.lt_top.ne hae,
-      MeasureTheory.eLpNorm_eq_lintegral_rpow_enorm_toReal
+      MeasureTheory.eLpNorm_eq_lintegral_rpow_eNorm_toReal
         (finiteLpExponent_ne_zero p) p.lt_top.ne hF,
       lintegral_cubeFaceReflectionBlockSet_cubeDirichletOddReflectionScalar]
     rw [ENNReal.mul_rpow_of_nonneg _ _

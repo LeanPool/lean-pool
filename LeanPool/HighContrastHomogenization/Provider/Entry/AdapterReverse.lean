@@ -305,7 +305,7 @@ theorem centeredCube_sub_adaptedMean_le [NeZero d] {P : Measure (CoeffSpace d)}
                 (2 * (1 - g)⁻¹ * ((3 : ℝ) ^ (-m) * (3 : ℝ) ^ ((J : ℝ) * (1 - g)))))) •
               toFullBlockMat E)) X) := by linarith only [hstep0]
   rw [half_blockQuadratic_majorant] at hstep1
-  have hins : Finset.Icc J n = insert n (Finset.Ico J n) := (Finset.Ico_insert_right hJn).symm
+  have hins : Finset.Icc J n = insert n (Finset.Ico J n) := (Finset.insert_right_Ico hJn).symm
   have hnotmem : n ∉ Finset.Ico J n := by simp
   rw [hins, Finset.sum_insert hnotmem] at hstep1
   -- the starting row: every cell has the adapted mean as its annealed block

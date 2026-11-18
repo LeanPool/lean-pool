@@ -105,7 +105,7 @@ private theorem measurable_scalar_gagliardoKernel_enorm_sq {d : ℕ}
     (i : Fin d) :
     Measurable (fun z =>
       ‖Gagliardo.gagliardoKernel s.1 (2 : ℝ≥0∞) (fun x => F x i) z‖ₑ ^ (2 : ℝ)) :=
-  (measurable_scalar_gagliardoKernel s F hF i).enorm.pow measurable_const
+  (measurable_scalar_gagliardoKernel s F hF i).eNorm.pow measurable_const
 
 /-- The coordinate energy is one product-measure lintegral of the finite
 sum of scalar ambient-distance kernels when the chosen representative is
@@ -133,7 +133,7 @@ private theorem sum_enorm_sq_coordinate_diff_eq_ofReal_numerator {d : ℕ}
   refine Finset.sum_congr rfl ?_
   intro i _hi
   norm_num
-  rw [Real.enorm_eq_ofReal_abs,
+  rw [Real.eNorm_eq_ofReal_abs,
     ← ENNReal.ofReal_pow (abs_nonneg (F z.1 i - F z.2 i)), sq_abs]
 
 private theorem sum_scalar_gagliardoKernel_eq_distance_mul_numerator {d : ℕ}

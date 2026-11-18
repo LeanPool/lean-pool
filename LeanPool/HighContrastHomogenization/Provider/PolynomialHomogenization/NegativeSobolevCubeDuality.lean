@@ -253,7 +253,7 @@ private theorem compact_test_norm_le_perturbed_unit
           CubeEuclideanWspSmoothTest.graph errS‖ₑ := by
         rw [hsplit, map_add]
       _ ≤ ‖CubeEuclideanWspSmoothTest.graph h‖ₑ +
-          ‖CubeEuclideanWspSmoothTest.graph errS‖ₑ := enorm_add_le _ _
+          ‖CubeEuclideanWspSmoothTest.graph errS‖ₑ := eNorm_add_le _ _
       _ = cubeEuclideanWspFullENorm Q sF FiniteLpExponent.two.conjugate h.toField +
           cubeEuclideanWspFullENorm Q sF FiniteLpExponent.two.conjugate errS.toField := by
         rw [CubeEuclideanWspSmoothTest.graph_enorm_eq_cubeEuclideanWspFullENorm,

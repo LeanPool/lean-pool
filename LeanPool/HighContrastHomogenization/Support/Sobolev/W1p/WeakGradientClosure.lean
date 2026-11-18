@@ -77,7 +77,7 @@ private theorem tendsto_setIntegral_mul_of_tendsto_eLpNorm_finiteLp
   rw [hdiff_eq n]
   have hbound : ∀ᵐ x ∂μ,
       ‖(f n x - g x) * h x‖₊ ≤ 1 * ‖f n x - g x‖₊ * ‖h x‖₊ :=
-    Eventually.of_forall fun x => by rw [nnnorm_mul]; simp
+    Eventually.of_forall fun x => by rw [nnNorm_mul]; simp
   have hHolder : eLpNorm (fun x => (f n x - g x) * h x) 1 μ ≤ B n := by
     have h := eLpNorm_le_eLpNorm_mul_eLpNorm
       (p := p.exponent) (q := p.conjugate.exponent) (r := 1)
@@ -91,7 +91,7 @@ private theorem tendsto_setIntegral_mul_of_tendsto_eLpNorm_finiteLp
     _ = (eLpNorm (fun x => (f n x - g x) * h x) 1 μ).toReal := by
       have hmeas : AEStronglyMeasurable (fun x => (f n x - g x) * h x) μ :=
         ((hf n).sub hg).aestronglyMeasurable.mul hh.aestronglyMeasurable
-      rw [eLpNorm_one_eq_lintegral_enorm hmeas]
+      rw [eLpNorm_one_eq_lintegral_eNorm hmeas]
       simp_rw [ofReal_norm]
     _ ≤ (B n).toReal := by
       apply ENNReal.toReal_mono _ hHolder

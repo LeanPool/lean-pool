@@ -55,7 +55,7 @@ theorem exactAggregation_finiteLq_le_tsum (a : ℕ → ℝ≥0∞) (N : ℕ) (q 
     (Finset.sum (Finset.range (N + 1)) fun i => (a i) ^ q) ^ q⁻¹ ≤
       (∑' i : ℕ, (a i) ^ q) ^ q⁻¹ := by
   apply ENNReal.rpow_le_rpow
-  · simpa using ENNReal.sum_le_tsum
+  · simpa using sum_le_tsum
       (f := fun i : ℕ => (a i) ^ q) (s := Finset.range (N + 1))
   · exact inv_nonneg.mpr hq
 

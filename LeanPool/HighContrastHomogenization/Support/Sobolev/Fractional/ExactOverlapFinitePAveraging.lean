@@ -151,7 +151,7 @@ private theorem ennreal_rpow_finset_sum_le_sum_rpow {ι : Type*}
 
 private theorem enorm_sq_eq_ofReal_sq (z : ℝ) :
     ‖z‖ₑ ^ (2 : ℕ) = ENNReal.ofReal (z ^ 2) := by
-  rw [Real.enorm_eq_ofReal_abs, ← ENNReal.ofReal_pow (abs_nonneg z), sq_abs]
+  rw [Real.eNorm_eq_ofReal_abs, ← ENNReal.ofReal_pow (abs_nonneg z), sq_abs]
 
 private theorem hilbertMat_norm_sq_eq_sum_sq {d : ℕ} (A : HilbertMat d) :
     ‖A‖ ^ 2 = ∑ i : Fin d, ∑ k : Fin d, A i k ^ 2 := by
@@ -278,7 +278,7 @@ private theorem enorm_rpow_euclideanCoordDeriv_averagingField_coord_le
             p.exponent.toReal :=
           ENNReal.rpow_le_rpow
             (by
-              rw [Real.enorm_eq_ofReal_abs, ← ofReal_norm]
+              rw [Real.eNorm_eq_ofReal_abs, ← ofReal_norm]
               exact ENNReal.ofReal_le_ofReal (by
                 simpa [Pi.sub_apply, euclideanNorm_eq_norm_ofVec] using
                   (abs_coordinate_le_euclideanNorm
@@ -553,7 +553,7 @@ private theorem memLp_hilbert_overlap_of_memLp {d : ℕ}
         mul_inv_cancel₀ hvolQ.ne', ENNReal.ofReal_one, mul_one]
     rw [hcancel]
     refine Measure.le_iff'.2 fun A => ?_
-    simp only [Measure.smul_apply, smul_eq_mul]
+    simp only [smul_apply, smul_eq_mul]
     refine mul_le_mul_right ?_ _
     rw [ScalarOverlap.cubeMeasure, cubeMeasure]
     exact Measure.le_iff'.1 (Measure.restrict_mono hsub le_rfl) A
@@ -632,7 +632,7 @@ theorem lintegral_enorm_rpow_sub_averagingField_le_overlapDepthENorm_rpow
                     p.exponent.toReal ∂ ScalarOverlap.normalizedCubeMeasure S.1) := by
               apply Finset.sum_congr rfl
               intro S _hS
-              rw [eLpNorm_eq_lintegral_rpow_enorm_toReal
+              rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal
                 (zero_lt_one.trans p.one_lt).ne' p.lt_top.ne
                 (by
                   simpa only [WithLp.toLp_sub] using
@@ -798,7 +798,7 @@ theorem lintegral_enorm_rpow_averagingCompetitorW1p_jacobian_le_depthENorm
                           p.exponent.toReal ∂ ScalarOverlap.normalizedCubeMeasure S.1) := by
                     apply Finset.sum_congr rfl
                     intro S _hS
-                    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal
+                    rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal
                       (zero_lt_one.trans p.one_lt).ne' p.lt_top.ne
                       (by
                         simpa only [WithLp.toLp_sub] using

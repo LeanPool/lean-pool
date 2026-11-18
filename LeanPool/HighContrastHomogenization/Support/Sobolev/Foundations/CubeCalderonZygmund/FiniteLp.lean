@@ -130,7 +130,7 @@ private theorem sqWeightedMeasure_univ_ne_top_of_memLp_two
   simpa only [MeasureTheory.Measure.restrict_univ, ← ofReal_norm,
     ENNReal.ofReal_rpow_of_nonneg (norm_nonneg _) zero_le_two,
     ENNReal.toReal_ofNat, Real.rpow_two] using
-    (MeasureTheory.lintegral_rpow_enorm_lt_top_of_eLpNorm_lt_top
+    (MeasureTheory.lintegral_rpow_eNorm_lt_top_of_eLpNorm_lt_top
       (by norm_num : (2 : ℝ≥0∞) ≠ 0) (by norm_num : (2 : ℝ≥0∞) ≠ ∞)
       hf.eLpNorm_lt_top).ne
 
@@ -143,7 +143,7 @@ private theorem sqWeightedMeasure_univ_eq_eLpNorm_two_sq
   change (∫⁻ x, ENNReal.ofReal (‖f x‖ ^ (2 : ℕ)) ∂μ) = _
   simp_rw [ENNReal.ofReal_pow (norm_nonneg _), ofReal_norm]
   rw [← ENNReal.rpow_natCast,
-    MeasureTheory.eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hf,
+    MeasureTheory.eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num) hf,
     ← ENNReal.rpow_mul]
   norm_num
 
@@ -154,7 +154,7 @@ private theorem lintegral_ofReal_norm_rpow_ne_top_of_memLp
     (∫⁻ x, ENNReal.ofReal (‖f x‖ ^ p.exponent.toReal) ∂μ) ≠ ∞ := by
   simpa only [← ofReal_norm,
     ENNReal.ofReal_rpow_of_nonneg (norm_nonneg _) ENNReal.toReal_nonneg] using
-    (MeasureTheory.lintegral_rpow_enorm_lt_top_of_eLpNorm_lt_top
+    (MeasureTheory.lintegral_rpow_eNorm_lt_top_of_eLpNorm_lt_top
       (ne_of_gt (zero_lt_one.trans p.one_lt)) p.lt_top.ne hf.eLpNorm_lt_top).ne
 
 private theorem lintegral_ofReal_norm_rpow_div_ne_top_of_memLp
@@ -291,7 +291,7 @@ private theorem memVectorL2_openCubeSet_of_euclideanMemLpTwo
     have heq : ENNReal.ofReal (cubeVolume Q) • normalizedCubeMeasure Q = cubeMeasure Q := by
       rw [normalizedCubeMeasure]
       ext s
-      rw [MeasureTheory.Measure.smul_apply, MeasureTheory.Measure.smul_apply]
+      rw [smul_apply, smul_apply]
       change ENNReal.ofReal (cubeVolume Q) *
           (ENNReal.ofReal ((cubeVolume Q)⁻¹) * (cubeMeasure Q) s) =
         (cubeMeasure Q) s
@@ -322,7 +322,7 @@ private theorem memLp_openCubeSet_of_euclideanMemLp
     have heq : ENNReal.ofReal (cubeVolume Q) • normalizedCubeMeasure Q = cubeMeasure Q := by
       rw [normalizedCubeMeasure]
       ext s
-      rw [MeasureTheory.Measure.smul_apply, MeasureTheory.Measure.smul_apply]
+      rw [smul_apply, smul_apply]
       change ENNReal.ofReal (cubeVolume Q) *
           (ENNReal.ofReal ((cubeVolume Q)⁻¹) * (cubeMeasure Q) s) =
         (cubeMeasure Q) s
@@ -891,7 +891,7 @@ private theorem eLpNorm_rpow_finiteLpExponent_eq_lintegral_ofReal_norm_rpow
     (hf : AEStronglyMeasurable f μ) :
     (eLpNorm f p.exponent μ) ^ p.exponent.toReal =
       ∫⁻ x, ENNReal.ofReal (‖f x‖ ^ p.exponent.toReal) ∂μ := by
-  rw [MeasureTheory.eLpNorm_eq_lintegral_rpow_enorm_toReal
+  rw [MeasureTheory.eLpNorm_eq_lintegral_rpow_eNorm_toReal
     (ne_of_gt (zero_lt_one.trans p.one_lt)) p.lt_top.ne hf,
     ← ENNReal.rpow_mul]
   have hp : p.exponent.toReal ≠ 0 :=

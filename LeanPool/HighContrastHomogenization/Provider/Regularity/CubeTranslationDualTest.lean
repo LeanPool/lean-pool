@@ -111,7 +111,7 @@ theorem normalizedCubeMeasure_real_le_volume_div (Q : TriadicCube d)
   have hvol : 0 < cubeVolume Q := cubeVolume_pos Q
   have hle : normalizedCubeMeasure Q G ≤
       ENNReal.ofReal ((cubeVolume Q)⁻¹) * volume G := by
-    rw [normalizedCubeMeasure, Measure.smul_apply, smul_eq_mul, cubeMeasure,
+    rw [normalizedCubeMeasure, smul_apply, smul_eq_mul, cubeMeasure,
       Measure.restrict_apply' (measurableSet_cubeSet Q)]
     gcongr
     exact Set.inter_subset_left
@@ -519,7 +519,7 @@ theorem cubeTranslationTest_depthAverage_le_depth (d n : ℕ) (t : Vec d) (j : �
 private theorem normalizedCubeMeasure_apply_of_subset (Q : TriadicCube d)
     {S : Set (Vec d)} (hsub : S ⊆ cubeSet Q) :
     normalizedCubeMeasure Q S = ENNReal.ofReal ((cubeVolume Q)⁻¹) * volume S := by
-  rw [normalizedCubeMeasure, Measure.smul_apply, smul_eq_mul, cubeMeasure,
+  rw [normalizedCubeMeasure, smul_apply, smul_eq_mul, cubeMeasure,
     Measure.restrict_apply' (measurableSet_cubeSet Q),
     Set.inter_eq_self_of_subset_left hsub]
 
