@@ -55,7 +55,7 @@ theorem squarefreeRootArithmetic_prime (Q : ℤ[X]) {p : ℕ} (hp : p.Prime) :
 
 theorem arithmeticFunction_mul_prime (f g : ArithmeticFunction ℝ) {p : ℕ} (hp : p.Prime) :
     (f * g) p = f 1 * g p + f p * g 1 := by
-  rw [mul_apply, Nat.sum_divisorsAntidiagonal (fun d e => f d * g e)]
+  rw [ArithmeticFunction.mul_apply, Nat.sum_divisorsAntidiagonal (fun d e => f d * g e)]
   rw [hp.divisors, sum_insert (by simpa using hp.ne_one.symm), sum_singleton]
   simp [Nat.div_self hp.pos]
 

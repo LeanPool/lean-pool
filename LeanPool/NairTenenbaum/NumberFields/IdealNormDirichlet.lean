@@ -48,7 +48,8 @@ theorem idealNormCount_partialSum_limit :
     show Icc 1 n = Ioc 0 n from Icc_succ_left_eq_Ioc _ _,
     show 1 = Nat.card {I : Ideal (𝓞 K) // absNorm I = 0} by simp [Ideal.absNorm_eq_zero_iff],
     Finset.sum_Ioc_add_eq_sum_Icc (n.zero_le),
-    ← Finset.card_preimage_eq_sum_card_image_eq (fun k _ => finite_setOfPred_absNorm_eq k)]
+    ← Finset.card_preimage_eq_sum_card_image_eq
+      (fun k _ => Ring.HasFiniteQuotients.finite_absNorm_eq k)]
   simp [Set.coe_eq_subtype]
 
 theorem lSeriesSummable_idealNormCount {σ : ℝ} (hσ : 1 < σ) :

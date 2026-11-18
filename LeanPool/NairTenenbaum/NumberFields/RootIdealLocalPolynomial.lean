@@ -27,7 +27,7 @@ theorem squarefreeRootArithmetic_series (Q : ℤ[X]) {p : ℕ} (hp : p.Prime) :
   by_cases hk1 : k = 1
   · simp [hk1, squarefreeRootArithmetic_prime Q hp, Polynomial.coeff_one]
   have H : ¬ Squarefree (p ^ k) := by simp [Nat.squarefree_pow_iff hp.ne_one hk0, hk1]
-  simp [squarefreeRootArithmetic, H, coeff_add, coeff_X, Polynomial.coeff_one, hk0, Ne.symm hk1]
+  simp [squarefreeRootArithmetic, H, coeff_X, Polynomial.coeff_one, hk0, Ne.symm hk1]
 
 variable (K : Type*) [Field K] [NumberField K]
 
