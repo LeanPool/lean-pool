@@ -2640,13 +2640,6 @@ private theorem eLpNorm_stftRep_le {d : Nat} (h f : L2Real d) :
           (MeasureTheory.lpNorm (f : RealVec d -> ℂ) 2 μ *
             MeasureTheory.lpNorm (h : RealVec d -> ℂ) 2 μ) := by rw [hnorms.liminf_eq]
 
--- Retain the original simplifier name after earlier proof sharing changes its suffix.
-private theorem eLpNorm_stftRep_le._simp_1_2.{u_1, u_2}
-    {α : Type u_1} {E : Type u_2} {m : MeasurableSpace α} {p : ENNReal} {μ : Measure α}
-    [inst : NormedAddCommGroup E] {f : α → E} :
-    (0 ≤ MeasureTheory.lpNorm f p μ) = True := by
-  exact propext (iff_true_intro MeasureTheory.lpNorm_nonneg)
-
 private theorem stftRep_sq_integrable {d : Nat} (h f : L2Real d) :
     Integrable (fun p : PhaseSpace d => ‖stftRep h f p‖ ^ 2)
       (MeasureTheory.volume : MeasureTheory.Measure (PhaseSpace d)) := by

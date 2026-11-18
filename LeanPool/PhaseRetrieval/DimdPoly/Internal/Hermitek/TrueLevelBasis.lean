@@ -524,18 +524,8 @@ private lemma qkn_div_rn_bound (k n : ℕ) :
           apply Finset.sum_le_sum_of_subset_of_nonneg (Finset.erase_subset _ _)
           intro j _ _
           apply div_nonneg
-          · -- Retain generated helpers without normalizing the surrounding asymptotic data.
-            simpa only [one_div, inv_pos, sqrt_pos, Nat.cast_pos, mul_nonneg_iff_of_pos_left,
-              sqrt_div, inv_nonneg, sqrt_nonneg, sqrt_mul, sqrt_inv, sup_le_iff, and_true, pow_pos,
-              sub_sub_cancel_left, zpow_neg, mem_range, lt_add_iff_pos_left, Order.lt_add_one_iff,
-              le_inf_iff, zero_le, and_self, pow_zero, Nat.choose_zero_right, Nat.cast_one, mul_one,
-              tsub_zero, one_mul, CharP.cast_eq_zero, mul_zero, zpow_ofNat, inv_one,
-              div_self_eq_one₀, ne_eq, Nat.cast_eq_zero, sum_erase_eq_sub, not_false_eq_true,
-              div_self, mem_erase, Decidable.not_not, zero_le_one] using
-              (show (0 : ℝ) ≤ (Nat.choose k j : ℝ) *
-                  ((Nat.factorial n : ℝ) / (Nat.factorial (n - j) : ℝ)) from
-                mul_nonneg (Nat.cast_nonneg _)
-                  (div_nonneg (Nat.cast_nonneg _) (Nat.cast_nonneg _)))
+          · exact mul_nonneg (Nat.cast_nonneg _)
+              (div_nonneg (Nat.cast_nonneg _) (Nat.cast_nonneg _))
           · positivity
   rw [hdiff, Real.norm_eq_abs, abs_mul, abs_of_nonneg (le_of_lt hc_pos)]
   calc c * |∑ j ∈ (Finset.range (min k n + 1)).erase 0, S j|
@@ -3207,80 +3197,6 @@ private lemma summable_circleCoeff_sq {k : ℕ} {G : ℂ → ℂ} (hG : G ∈ Hk
   have hmul : d n * d n ≤ M * d n := mul_le_mul_of_nonneg_right hd_le hd_nonneg
   simpa only [Complex.norm_mul, norm_real, norm_eq_abs, pow_two, ge_iff_le, d] using hmul
 
-private lemma truncCirclePoly_eq_sum (k J : ℕ) (r : ℝ) (G : ℂ → ℂ) :
-    truncCirclePoly k r J G =
-      fun t : Circle =>
-        ∑ n : Fin (J + 1), hermiteCoeff k G n.1 * (qkn k n.1 r : ℂ) * fourier (n.1 : ℤ) t := by
-  ext t
-  unfold truncCirclePoly finiteCirclePoly
-  rw [show frequencyBand 0 (J + 1) = Finset.Icc 0 J by simp [HermiteLEAN.frequencyBand]]
-  unfold positiveTrigonometricPolynomial
-  calc
-    ∑ n ∈ Finset.Icc 0 J,
-        finiteCircleCoeff k r (fun n : Fin (J + 1) => hermiteCoeff k G n.1) n *
-          fourier (n : ℤ) t
-      = ∑ n : Fin (J + 1),
-          finiteCircleCoeff k r (fun n : Fin (J + 1) => hermiteCoeff k G n.1) n.1 *
-            fourier (n.1 : ℤ) t := by
-              simpa only [fourier_apply, natCast_zsmul, zero_add, add_tsub_cancel_right] using
-                (sum_Icc_eq_sum_Fin 0 (J + 1) (Nat.succ_le_succ (Nat.zero_le J))
-                  (fun n =>
-                    finiteCircleCoeff k r (fun n : Fin (J + 1) => hermiteCoeff k G n.1) n *
-                      fourier (n : ℤ) t))
-    _ = ∑ n : Fin (J + 1), hermiteCoeff k G n.1 * (qkn k n.1 r : ℂ) * fourier (n.1 : ℤ) t := by
-          simp [finiteCircleCoeff, show ∀ n : Fin (J + 1), n.1 ≤ J by
-            intro n
-            exact Nat.le_of_lt_succ n.isLt]
-
-private lemma continuous_truncCirclePoly (k J : ℕ) (r : ℝ) (G : ℂ → ℂ) :
-    Continuous (truncCirclePoly k r J G) := by
-  rw [truncCirclePoly_eq_sum]
-  classical
-  refine continuous_finsetSum _ ?_
-  intro n hn
-  exact continuous_const.mul (map_continuous (fourier (n : ℤ)))
-
-private lemma summable_circleSeries_terms {k : ℕ} {G : ℂ → ℂ} (hG : G ∈ Hk k) {r : ℝ}
-    (hr : 0 < r) (t : Circle) :
-    Summable (fun n => hermiteCoeff k G n * (qkn k n r : ℂ) * fourier (n : ℤ) t) := by
-  have hcoeff := summable_sq_hermiteCoeff hG
-  have hqkn := summable_sq_qkn k hr
-  refine Summable.of_norm_bounded
-    (g := fun n => (‖hermiteCoeff k G n‖ ^ 2 + |qkn k n r| ^ 2) / 2)
-    (((hcoeff.add hqkn).div_const 2)) ?_
-  intro n
-  have hmul :
-      ‖hermiteCoeff k G n * (qkn k n r : ℂ) * fourier (n : ℤ) t‖ ≤
-        ‖hermiteCoeff k G n‖ * |qkn k n r| := by
-    simp_all only [sq_abs, fourier_apply, natCast_zsmul, Complex.norm_mul, norm_real, norm_eq_abs,
-      Circle.norm_coe, mul_one, Std.le_refl]
-  have hAMGM :
-      ‖hermiteCoeff k G n‖ * |qkn k n r| ≤
-        (‖hermiteCoeff k G n‖ ^ 2 + |qkn k n r| ^ 2) / 2 := by
-    linarith only [sq_nonneg (‖hermiteCoeff k G n‖ - |qkn k n r|)]
-  exact hmul.trans hAMGM
-
-private lemma truncCirclePoly_tendsto_circleSeries_pointwise {k : ℕ} {G : ℂ → ℂ} (hG : G ∈ Hk k)
-    {r : ℝ} (hr : 0 < r) (t : Circle) :
-    Filter.Tendsto
-      (fun J => truncCirclePoly k r J G t)
-      Filter.atTop
-      (nhds (circleSeries k (hermiteCoeff k G) r t)) := by
-  let a : ℕ → ℂ := fun n => hermiteCoeff k G n * (qkn k n r : ℂ) * fourier (n : ℤ) t
-  have hs : Summable a := summable_circleSeries_terms hG hr t
-  have hconv :
-      Filter.Tendsto (fun J => ∑ n ∈ Finset.range J, a n)
-        Filter.atTop (nhds (circleSeries k (hermiteCoeff k G) r t)) := by
-    simpa only [fourier_apply, natCast_zsmul, circleSeries, a] using hs.hasSum.tendsto_sum_nat
-  have hEqFun :
-      (fun J => truncCirclePoly k r J G t) =
-        (fun J => ∑ n ∈ Finset.range (J + 1), a n) := by
-    ext J
-    simpa only [fourier_apply, natCast_zsmul, sum_range, a, Finset.sum_range] using
-      congrFun (truncCirclePoly_eq_sum k J r G) t
-  rw [hEqFun]
-  exact hconv.comp (Filter.tendsto_atTop_atTop.mpr (fun b => ⟨b, fun n hn => by omega⟩))
-
 private theorem norm_toLp_sq (F : C(Circle, ℂ)) :
     ‖ContinuousMap.toLp 2 AddCircle.haarAddCircle ℂ F‖ ^ 2 = circleL2Sq F := by
   let f := ContinuousMap.toLp 2 AddCircle.haarAddCircle ℂ F
@@ -3326,17 +3242,6 @@ private theorem circleL2Sq_tendsto_partial_fourier_sums
   apply congrArg circleL2Sq
   funext t
   simp only [F, ContinuousMap.sum_apply, ContinuousMap.smul_apply, smul_eq_mul, Finset.sum_range]
-
-private theorem circleSeries_l2_identity._proof_1_3 (b n : ℕ)
-    (hn : @LE.le ℕ Nat.instPreorder.toLE b n)
-    (h : ¬ @LE.le ℕ Nat.instPreorder.toLE b (n + 1)) : False :=
-  h (Nat.le_succ_of_le hn)
-
--- Retain the arithmetic declaration generated by the original canonical proof.
-private theorem circleSeries_l2_identity_canonical._proof_1_1 (b n : ℕ)
-    (hn : @LE.le ℕ Nat.instPreorder.toLE b n)
-    (h : ¬ @LE.le ℕ Nat.instPreorder.toLE b (n + 1)) : False :=
-  h (Nat.le_succ_of_le hn)
 
 private theorem circleSeries_l2_identity_canonical :
     ∀ {k : ℕ} {G : ℂ → ℂ},

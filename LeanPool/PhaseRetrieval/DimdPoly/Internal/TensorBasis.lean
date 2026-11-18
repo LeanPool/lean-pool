@@ -352,11 +352,6 @@ theorem toFun_ofPkappa
 private theorem summable_sq_hermite_phi_eval
     (k : Nat) (z : ℂ) :
     Summable (fun n : Nat => ‖HermitekLEAN.Phi k n z‖ ^ 2) := by
-  -- Preserve the imported definition's local equation lemma.
-  have hsum_apply {D : ℕ} (a : Fin D → ℂ) (w : ℂ) :
-      HermitekLEAN.finiteHermiteSum k a w =
-        ∑ n : Fin D, a n * HermitekLEAN.Phi k n.1 w := by
-    simp only [HermitekLEAN.finiteHermiteSum]
   exact HermitekLEAN.summable_norm_sq_Phi_eval k z
 
 private theorem summable_sq_phi1D_eval

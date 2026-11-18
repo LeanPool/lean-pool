@@ -2711,19 +2711,6 @@ theorem realHermite1D_memLp_inner_orthonormal :
   · intro n m
     exact realHermiteGenerating_no_conj_interchange_of_finite_sum n m
 
--- Preserve the generated declarations when specializing the two simplification steps below.
-private theorem realHermiteTensorRep_memLp_of_realHermite1D_memLp._simp_1_1.{u_1}
-    {α : Type u_1} [inst : Fintype α] (x : α) :
-    (x ∈ (Finset.univ : Finset α)) = True :=
-  propext (iff_true_intro (Finset.mem_univ x))
-
-private theorem realHermiteTensorRep_memLp_of_realHermite1D_memLp._simp_1_2.{u_4}
-    {E : Type u_4} [inst : SeminormedAddGroup E] (a : E) :
-    (0 ≤ ‖a‖) = True := propext (iff_true_intro (norm_nonneg a))
-
-private theorem realHermiteTensorRep_memLp_of_realHermite1D_memLp._simp_1_3
-    {a : Prop} : (a → a) = True := propext (iff_true_intro id)
-
 theorem realHermiteTensorRep_memLp_of_realHermite1D_memLp
     {d : Nat} (alpha : Idx d)
     (hmem1 : ∀ n : Nat, MemLp (realHermite1D n) 2 (volume : Measure ℝ)) :
