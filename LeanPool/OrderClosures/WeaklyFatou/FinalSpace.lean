@@ -25,7 +25,8 @@ universe u
 /-! ## Component spaces and the final `c₀`-sum -/
 
 /-- Terminal tree functions `L_n`. -/
-def terminalTreeFunctions (n : ℕ) : Set (BoundedContinuousFunction (TreeProduct n) ℝ) :=
+noncomputable def terminalTreeFunctions (n : ℕ) :
+    Set (BoundedContinuousFunction (TreeProduct n) ℝ) :=
   treeFunction n '' {t : TreeNode n | TreeNode.level t = n}
 
 /-- Paper Proposition `prop:component`. -/
