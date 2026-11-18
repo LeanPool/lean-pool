@@ -606,25 +606,48 @@ theorem eval3_nonnegative
   intro q hq
   exact eval2_nonnegative hq hv hz
 
--- Expose each reduced operand through a kernel-checked equality. Keeping these
--- equalities as lemmas lets the kernel check each convolution on concrete lists.
-local elab "reduceBellmanOperation" : conv => Lean.Elab.Tactic.withMainContext do
+-- Share normalizations of closed operands within one chart, and keep each
+-- reduction as a kernel-checked equality for the surrounding convolution.
+local elab "reduceBellmanPolynomial" : conv => Lean.Elab.Tactic.withMainContext do
+  let cache ← IO.mkRef ({} : Lean.ExprStructMap (Lean.Expr × Lean.Expr))
+  let rec normalize (fuel : Nat) (expression : Lean.Expr) :
+      Lean.Elab.Tactic.TacticM (Lean.Expr × Lean.Expr) := do
+    match fuel with
+    | 0 => throwError "invalid Bellman reduction tree"
+    | fuel + 1 =>
+      let closed := !expression.hasFVar && !expression.hasMVar && !expression.hasLooseBVars
+      let key : Lean.ExprStructEq := ⟨expression⟩
+      if closed then
+        if let some result := (← cache.get)[key]? then return result
+      let isOperation := expression.isAppOf ``HAdd.hAdd ||
+          expression.isAppOf ``HSub.hSub ||
+          expression.isAppOf ``HMul.hMul ||
+          expression.isAppOf ``HPow.hPow ||
+          expression.isAppOf ``Neg.neg
+      let (operands, congruence) ← if isOperation then
+        Lean.Elab.Tactic.Conv.convert expression do
+          Lean.Elab.Tactic.evalTactic (← `(conv| congr))
+          for child in ← Lean.Elab.Tactic.getGoals do
+            Lean.Elab.Tactic.setGoals [child]
+            let (value, proof) ← normalize fuel (← Lean.Elab.Tactic.Conv.getLhs)
+            Lean.Elab.Tactic.Conv.updateLhs value proof
+            (← Lean.Elab.Tactic.getMainGoal).refl
+          Lean.Elab.Tactic.setGoals []
+      else
+        pure (expression, ← Lean.Meta.mkEqRefl expression)
+      let reduced ← Lean.Meta.reduce operands
+      let proof ← if operands == reduced then pure congruence else do
+        let equality ← Lean.Meta.mkEq operands reduced
+        let reflexivity ← Lean.Meta.mkEqRefl reduced
+        let reductionName ← Lean.Meta.mkAuxLemma [] equality reflexivity
+          (kind? := some `polynomialReduction)
+        Lean.Meta.mkEqTrans congruence (Lean.mkConst reductionName)
+      let result := (reduced, proof)
+      if closed then cache.modify (·.insert key result)
+      return result
   let expression ← Lean.Elab.Tactic.Conv.getLhs
-  let reduced ← Lean.Meta.reduce expression
-  if expression == reduced then return
-  let equality ← Lean.Meta.mkEq expression reduced
-  let reflexivity ← Lean.Meta.mkEqRefl reduced
-  let reductionName ← Lean.Meta.mkAuxLemma [] equality reflexivity
-    (kind? := some `polynomialReduction)
-  Lean.Elab.Tactic.Conv.updateLhs reduced (Lean.mkConst reductionName)
-
-local syntax "reduceBellmanPolynomial" : conv
-
-local macro_rules
-  | `(conv| reduceBellmanPolynomial) => `(conv| {
-      try (conv => { congr <;> reduceBellmanPolynomial })
-      reduceBellmanOperation
-    })
+  let (value, proof) ← normalize (expression.sizeWithoutSharing + 1) expression
+  Lean.Elab.Tactic.Conv.updateLhs value proof
 
 local macro "checkBellmanChart" chart:ident formula:ident : tactic =>
   `(tactic| {
@@ -633,6 +656,40 @@ local macro "checkBellmanChart" chart:ident formula:ident : tactic =>
     rfl
   })
 
+-- The affine formula ends in two subtractions. Expose the three
+-- summands so the large positive sum and each subtrahend can be checked separately.
+local elab "bellmanOperand% " chart:ident index:num : term => do
+  let definition ← Lean.Meta.unfoldDefinition (← Lean.Elab.Term.elabTerm chart none)
+  unless definition.isAppOf ``bellmanAt do
+    throwError "expected an affine Bellman chart"
+  let expression ← Lean.Meta.zetaReduce (← Lean.Meta.unfoldDefinition definition)
+  let subtraction (value : Lean.Expr) : Lean.Elab.Term.TermElabM (Lean.Expr × Lean.Expr) := do
+    unless value.isAppOf ``HSub.hSub do
+      throwError "the Bellman polynomial no longer ends in two subtractions"
+    let .app (.app _ left) right := value | throwError "expected a binary subtraction"
+    return (left, right)
+  let (leftGroup, lastNegative) ← subtraction expression
+  let (positive, firstNegative) ← subtraction leftGroup
+  match index.getNat with
+  | 0 => return positive
+  | 1 => return firstNegative
+  | 2 => return lastNegative
+  | _ => throwError "expected Bellman operand 0, 1 or 2"
+
+-- Store the normalized value with its equality to the original operand.
+local elab "recordBellmanOperand" : tactic => Lean.Elab.Tactic.withMainContext do
+  let target ← (← Lean.Elab.Tactic.getMainGoal).getType
+  unless target.isAppOf ``Subtype do throwError "expected a checked Bellman operand"
+  let args := target.getAppArgs
+  let predicate := args[1]!
+  let .lam _ _ body _ := predicate | throwError "expected an operand equality"
+  let some (_, original, _) := body.eq? | throwError "expected an operand equality"
+  let (value, proof) ← Lean.Elab.Tactic.Conv.convert original do
+    Lean.Elab.Tactic.evalTactic (← `(conv| reduceBellmanPolynomial))
+  let checked ← Lean.Meta.mkAppOptM ``Subtype.mk #[some args[0]!, some predicate, some value,
+    some proof]
+  Lean.Elab.Tactic.closeMainGoal `recordBellmanOperand checked
+
 -- Keep the existing auxiliary lemma names in the public chart checks.
 private theorem chartPlus_normalized_check : allNonnegative3 chartPlus = true := by
   checkBellmanChart chartPlus projectiveBellmanAt
@@ -640,20 +697,59 @@ private theorem chartPlus_normalized_check : allNonnegative3 chartPlus = true :=
 theorem chartPlus_check : allNonnegative3 chartPlus = true := by
   as_aux_lemma => exact chartPlus_normalized_check
 
+private def chartOneOperand0 : {p : Poly3 // bellmanOperand% chartOne 0 = p} := by
+  recordBellmanOperand
+
+private def chartOneOperand1 : {p : Poly3 // bellmanOperand% chartOne 1 = p} := by
+  recordBellmanOperand
+
+private def chartOneOperand2 : {p : Poly3 // bellmanOperand% chartOne 2 = p} := by
+  recordBellmanOperand
+
 private theorem chartOne_normalized_check : allNonnegative3 chartOne = true := by
-  checkBellmanChart chartOne bellmanAt
+  change allNonnegative3
+    ((bellmanOperand% chartOne 0) - (bellmanOperand% chartOne 1)
+      - (bellmanOperand% chartOne 2)) = true
+  rw [chartOneOperand0.property, chartOneOperand1.property, chartOneOperand2.property]
+  rfl
 
 theorem chartOne_check : allNonnegative3 chartOne = true := by
   as_aux_lemma => exact chartOne_normalized_check
 
+private def chartTwoOperand0 : {p : Poly3 // bellmanOperand% chartTwo 0 = p} := by
+  recordBellmanOperand
+
+private def chartTwoOperand1 : {p : Poly3 // bellmanOperand% chartTwo 1 = p} := by
+  recordBellmanOperand
+
+private def chartTwoOperand2 : {p : Poly3 // bellmanOperand% chartTwo 2 = p} := by
+  recordBellmanOperand
+
 private theorem chartTwo_normalized_check : allNonnegative3 chartTwo = true := by
-  checkBellmanChart chartTwo bellmanAt
+  change allNonnegative3
+    ((bellmanOperand% chartTwo 0) - (bellmanOperand% chartTwo 1)
+      - (bellmanOperand% chartTwo 2)) = true
+  rw [chartTwoOperand0.property, chartTwoOperand1.property, chartTwoOperand2.property]
+  rfl
 
 theorem chartTwo_check : allNonnegative3 chartTwo = true := by
   as_aux_lemma => exact chartTwo_normalized_check
 
+private def chartThreeOperand0 : {p : Poly3 // bellmanOperand% chartThree 0 = p} := by
+  recordBellmanOperand
+
+private def chartThreeOperand1 : {p : Poly3 // bellmanOperand% chartThree 1 = p} := by
+  recordBellmanOperand
+
+private def chartThreeOperand2 : {p : Poly3 // bellmanOperand% chartThree 2 = p} := by
+  recordBellmanOperand
+
 private theorem chartThree_normalized_check : allNonnegative3 chartThree = true := by
-  checkBellmanChart chartThree bellmanAt
+  change allNonnegative3
+    ((bellmanOperand% chartThree 0) - (bellmanOperand% chartThree 1)
+      - (bellmanOperand% chartThree 2)) = true
+  rw [chartThreeOperand0.property, chartThreeOperand1.property, chartThreeOperand2.property]
+  rfl
 
 theorem chartThree_check : allNonnegative3 chartThree = true := by
   as_aux_lemma => exact chartThree_normalized_check
