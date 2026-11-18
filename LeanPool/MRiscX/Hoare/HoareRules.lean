@@ -73,7 +73,7 @@ theorem BL_TO_WL : ∀ (code : Code) (P Q : Assertion) (l : UInt64) (L_w L_b L :
   exists s'
   unfold weak
   constructor
-  · apply weak_L_w_with_L_from_L_b <;> try assumption
+  · apply weak_L_w_with_L_from_L_b <;> assumption
   · constructor <;> try assumption
     apply Set.notMem_subset (t := L_b) <;> try assumption
     apply Set.sdiff_subset
@@ -108,7 +108,7 @@ theorem WL_TO_BL : ∀ (c : Code) (P Q : Assertion) (l : UInt64) (L_w L_b L : Se
   constructor
   · intros _
     exists n'
-    try repeat (constructor <;> try assumption)
+    repeat (constructor <;> try assumption)
     · simp_all
     · intros n'' Hn''
       specialize H4' n'' Hn''
@@ -345,7 +345,7 @@ theorem S_LOOP {α : Type} [Preorder α] [WellFoundedLT α] :
         specialize hweak'' h_code'
         rcases hweak'' with ⟨m', hm'_pos, hrun', hpc_in, hsafe'⟩
         refine ⟨m + m', Nat.add_gt_zero _ _ hm_pos, ?_, hpc_in, ?_⟩
-        · apply MState.runNSteps_add <;> try assumption
+        · apply MState.runNSteps_add <;> assumption
         · intro n hn
           apply MState.run_n_plus_m_pc_not_in_set (set := (L_w ∪ L_b)) <;> try assumption
           intro n' hn'
