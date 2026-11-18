@@ -30,9 +30,8 @@ The restricted worker serves only the model pinned in ``codex_review.MODEL``,
 which is also this default, so a client and a worker deployed from different
 revisions refuse each other instead of reviewing with another model.
 The optional, explicitly selected ``openai`` backend bills the API for local
-use. It requests Flex only for a model with a Flex rate in
-:data:`PRICING_PER_M` and Standard otherwise, so every served request has a
-price. The production workflow does not provide an API key.
+use; :func:`_completion_with_tier_fallback` chooses its service tier. The
+production workflow does not provide an API key.
 
 Large diffs are reviewed in lossless portions within a 272,000-estimated-token
 input budget, followed by integration of their evidence under each rubric.
