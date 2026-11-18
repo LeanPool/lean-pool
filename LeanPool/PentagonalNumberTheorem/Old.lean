@@ -118,8 +118,7 @@ theorem phiCoeff_eq_zero_iff (n : ℤ) : phiCoeff n = 0 ↔ n ∉ Set.range pent
   · split_ifs with hsq h1 h2
     · simp
     · simp
-    · intro _
-      by_contra! hmem
+    · intro _ hmem
       obtain ⟨k, h⟩ := hmem
       rw [← h, pentagonalDelta_pentagonal, sq, Int.sqrt_eq] at h1 h2
       obtain h | h := le_total 0 (6 * k - 1)
@@ -128,7 +127,7 @@ theorem phiCoeff_eq_zero_iff (n : ℤ) : phiCoeff n = 0 ↔ n ∉ Set.range pent
       · rw [Int.ofNat_natAbs_of_nonpos h] at h2
         simp_all
     · intro _
-      contrapose! hsq with hmem
+      contrapose hsq with hmem
       obtain ⟨k, h⟩ := hmem
       rw [← h, pentagonalDelta_pentagonal]
       exact IsSquare.sq _
@@ -186,7 +185,7 @@ theorem hasSum_phi :
   have hrange (x : ℕ) (hx : x ∉ Set.range fun k ↦ (pentagonal'' k).toNat) :
       PowerSeries.monomial x (phiCoeff x) = 0 := by
     have hx: (x : ℤ) ∉ Set.range pentagonal'' := by
-      contrapose! hx
+      contrapose hx
       obtain ⟨y, hy⟩ := hx
       use y
       simp [hy]
@@ -795,7 +794,7 @@ theorem down_notPosPentagonal (hn : 0 < n) (x : FerrersDiagram n)
   rw [and_comm, not_and]
   intro h
   rw [getLast_down, length_down]
-  by_contra!
+  intro heq
   obtain hlt := x.diagSize_lt_length hn hdown
   simp_all
 
@@ -808,7 +807,7 @@ theorem down_notNegPentagonal (hn : 0 < n) (x : FerrersDiagram n)
   rw [and_comm, not_and]
   intro h
   rw [getLast_down, length_down]
-  by_contra!
+  intro heq
   obtain hlt := x.diagSize_lt_length hn hdown
   simp_all
 
@@ -1030,7 +1029,7 @@ theorem diagSize_up (hn : 0 < n) (x : FerrersDiagram n)
     simp only [IsToDown, not_lt] at hdown
     obtain heq | hlt := eq_or_lt_of_le <| Nat.lt_iff_add_one_le.mp hlt
     · apply lt_of_le_of_ne (heq ▸ hdown)
-      contrapose! hpospen with heq'
+      contrapose hpospen with heq'
       constructor
       · exact heq'
       · intro i hi
@@ -1986,7 +1985,7 @@ theorem phiCoeff_eq_card_sub (hn : 0 < n) :
       all_goals
       · ext x
         simp only [Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false]
-        contrapose! hpen
+        contrapose hpen
         obtain ⟨k, hk, _⟩ := pentagonal_exists_k hn x (by simp [hpen])
         use k
         apply Int.eq_of_mul_eq_mul_left (show 2 ≠ 0 by simp)
