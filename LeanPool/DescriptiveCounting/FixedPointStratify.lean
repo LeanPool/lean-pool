@@ -467,7 +467,8 @@ theorem strat2Assign_inflLimit [Finite A] :
       (d₁.stratGate_inflStage_succ d₂ (Nat.card (BAtom d₁.B A))).mpr
         (Or.inr (d₁.isFixedPt_inflStep_card A))⟩
   set G := sInf {n | StratGate ((d₁.stratify d₂).inflStage A n)} with hGdef
-  have hG : StratGate ((d₁.stratify d₂).inflStage A G) := Nat.sInf_mem hEx
+  have hG : StratGate ((d₁.stratify d₂).inflStage A G) :=
+    Nat.sInf_mem (s := {n | StratGate ((d₁.stratify d₂).inflStage A n)}) hEx
   have hGmin : ∀ m < G, ¬StratGate ((d₁.stratify d₂).inflStage A m) :=
     fun m hm hmem => absurd (Nat.sInf_le hmem) (Nat.not_le_of_lt hm)
   funext i x
