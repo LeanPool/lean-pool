@@ -6,8 +6,6 @@ Authors: Vladislav Kuznetsov
 module
 
 public import LeanPool.ConwaySoifer.Geometry.Support
-import Mathlib.Tactic.Linarith
-import Mathlib.Tactic.Ring
 
 /-! The forbidden corner section, proved directly on two closed orientation sectors.
 No Boolean geometry checks or external polynomial results are used. -/

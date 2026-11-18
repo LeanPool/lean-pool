@@ -1351,6 +1351,14 @@ noncomputable def fiveForbiddenOneBitGuardedComputable
     first second third fourth
   [sorted.1, sorted.2.1, sorted.2.2.1, sorted.2.2.2]
 
+private theorem fiveFamilyForbiddenEncodedMinimum_maximum_mem {α : Type} [Encodable α]
+    (first second atom : α) :
+    (atom = fiveFamilyForbiddenEncodedMinimum first second ∨
+      atom = fiveFamilyForbiddenEncodedMaximum first second) ↔
+      atom = first ∨ atom = second := by
+  unfold fiveFamilyForbiddenEncodedMinimum fiveFamilyForbiddenEncodedMaximum
+  split_ifs <;> tauto
+
 private theorem fiveFamilyForbiddenEncodedSortedAtomList_mem
     {α : Type} [Encodable α]
     (first second third fourth atom : α) :
@@ -1358,11 +1366,49 @@ private theorem fiveFamilyForbiddenEncodedSortedAtomList_mem
       first second third fourth ↔
       atom = first ∨ atom = second ∨
         atom = third ∨ atom = fourth := by
-  simp only [fiveForbiddenEncodedSortedAtomList,
-    fiveForbiddenEncodedSortedAtoms,
-    fiveFamilyForbiddenEncodedMinimum,
-    fiveFamilyForbiddenEncodedMaximum]
-  split_ifs <;> simp_all <;> aesop
+  let lowFirst := fiveFamilyForbiddenEncodedMinimum first second
+  let highFirst := fiveFamilyForbiddenEncodedMaximum first second
+  let lowSecond := fiveFamilyForbiddenEncodedMinimum third fourth
+  let highSecond := fiveFamilyForbiddenEncodedMaximum third fourth
+  let middleLeft := fiveFamilyForbiddenEncodedMaximum lowFirst lowSecond
+  let middleRight := fiveFamilyForbiddenEncodedMinimum highFirst highSecond
+  let outerLow := fiveFamilyForbiddenEncodedMinimum lowFirst lowSecond
+  let outerHigh := fiveFamilyForbiddenEncodedMaximum highFirst highSecond
+  change atom ∈ [outerLow,
+    fiveFamilyForbiddenEncodedMinimum middleLeft middleRight,
+    fiveFamilyForbiddenEncodedMaximum middleLeft middleRight, outerHigh] ↔ _
+  simp only [List.mem_cons, List.not_mem_nil, or_false]
+  calc
+    _ ↔ (atom = outerLow ∨ atom = outerHigh) ∨
+        (atom = fiveFamilyForbiddenEncodedMinimum middleLeft middleRight ∨
+          atom = fiveFamilyForbiddenEncodedMaximum middleLeft middleRight) := by tauto
+    _ ↔ (atom = outerLow ∨ atom = outerHigh) ∨
+        (atom = middleLeft ∨ atom = middleRight) := by
+          rw [fiveFamilyForbiddenEncodedMinimum_maximum_mem]
+    _ ↔ (atom = fiveFamilyForbiddenEncodedMinimum lowFirst lowSecond ∨
+          atom = fiveFamilyForbiddenEncodedMaximum lowFirst lowSecond) ∨
+        (atom = fiveFamilyForbiddenEncodedMinimum highFirst highSecond ∨
+          atom = fiveFamilyForbiddenEncodedMaximum highFirst highSecond) := by
+            change ((atom = outerLow ∨ atom = outerHigh) ∨
+              (atom = middleLeft ∨ atom = middleRight)) ↔
+              ((atom = outerLow ∨ atom = middleLeft) ∨
+                (atom = middleRight ∨ atom = outerHigh))
+            tauto
+    _ ↔ (atom = lowFirst ∨ atom = lowSecond) ∨
+        (atom = highFirst ∨ atom = highSecond) := by
+          rw [fiveFamilyForbiddenEncodedMinimum_maximum_mem,
+            fiveFamilyForbiddenEncodedMinimum_maximum_mem]
+    _ ↔ (atom = fiveFamilyForbiddenEncodedMinimum first second ∨
+          atom = fiveFamilyForbiddenEncodedMaximum first second) ∨
+        (atom = fiveFamilyForbiddenEncodedMinimum third fourth ∨
+          atom = fiveFamilyForbiddenEncodedMaximum third fourth) := by
+            change ((atom = lowFirst ∨ atom = lowSecond) ∨
+              (atom = highFirst ∨ atom = highSecond)) ↔
+              ((atom = lowFirst ∨ atom = highFirst) ∨
+                (atom = lowSecond ∨ atom = highSecond))
+            tauto
+    _ ↔ _ := by rw [fiveFamilyForbiddenEncodedMinimum_maximum_mem,
+      fiveFamilyForbiddenEncodedMinimum_maximum_mem, or_assoc]
 
 theorem fiveFamilyForbiddenEncodedSortedAtomList_pairwise
     {α : Type} [Encodable α]

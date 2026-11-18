@@ -8,9 +8,6 @@ module
 public import LeanPool.ConwaySoifer.Simplified.Geometry.AownCut
 public import LeanPool.ConwaySoifer.Simplified.Geometry.Midpoint
 public import LeanPool.ConwaySoifer.Geometry.AownFacts
-import Mathlib.Tactic.FieldSimp
-import Mathlib.Tactic.Linarith
-import Mathlib.Tactic.Ring
 
 /-!
 # AownLarge

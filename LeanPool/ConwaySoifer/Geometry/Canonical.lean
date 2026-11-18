@@ -7,8 +7,6 @@ module
 
 public import LeanPool.ConwaySoifer.Geometry.Owners
 public import Mathlib.Data.Fin.VecNotation
-import Mathlib.Tactic.FinCases
-import Mathlib.Tactic.NormNum.Basic
 
 /-!
 # The four normalized contact cases

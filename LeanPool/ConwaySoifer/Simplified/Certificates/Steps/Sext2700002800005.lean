@@ -5,8 +5,9 @@ Authors: Vladislav Kuznetsov
 -/
 module
 
+import LeanPool.ConwaySoifer.Certificates.FanCertificate
+
 public import LeanPool.ConwaySoifer.Simplified.Certificates.Checkpoints.Sext270000280000
-import Mathlib.Tactic.FinCases
 
 /-!
 # Sext 270000 280000 5
@@ -43,6 +44,8 @@ SOFTWARE.
 -/
 
 @[expose] public section
+
+prepare_fan_cache ConwaySoifer.Simplified.Certificates.Sext270000280000.model0
 
 -- Generated checkpoints are proposals; all acceptance proofs are checked by the kernel.
 
@@ -96,14 +99,14 @@ theorem excluded40_1 : ExcludedOn (model40.B 1 ++ [step40.q]) 9000000000000 (mod
       [5355000000000, 0]) (some (4, 1, 3)) (some (4, 1, 3)) (.terminal (some (4, 1, 3)) (some (4, 1,
       3)) (some (4, 1, 3))))))))))))))))))) (den := 9000000000000) (fuel := 12) (by decide +kernel)
       0 1 100 (by decide +kernel)
-  decide +kernel
+  certify_fan
 
 theorem excluded40_2 : ExcludedOn (model40.B 2 ++ [step40.q]) 9000000000000 (model40.caps 2)
     (model40.ord 2) 0 1 100 := by
   apply ExclusionHint.sound (.witnessedFan (.next ([1374000000000], [252000000000]) (some (0, 5, 3))
       (some (0, 5, 3)) fan40Owner2Part0)) (den := 9000000000000) (fuel
       := 12) (by decide +kernel) 0 1 100 (by decide +kernel)
-  decide +kernel
+  certify_fan
 
 theorem excluded40_3 : ExcludedOn (model40.B 3 ++ [step40.q]) 9000000000000 (model40.caps 3)
     (model40.ord 3) 0 1 100 := by
@@ -137,7 +140,7 @@ theorem excluded40_6 : ExcludedOn (model40.B 6 ++ [step40.q]) 9000000000000 (mod
       ([-6570000000000], [9000000000000]) (some (0, 1, 3)) (some (0, 1, 3)) (.terminal (some (0, 1,
       3)) (some (0, 1, 3)) (some (0, 1, 3))))))))))))) (den := 9000000000000) (fuel := 12)
       (by decide +kernel) 0 1 100 (by decide +kernel)
-  decide +kernel
+  certify_fan
 
 theorem excluded40_7 : ExcludedOn (model40.B 7 ++ [step40.q]) 9000000000000 (model40.caps 7)
     (model40.ord 7) 0 1 100 := by

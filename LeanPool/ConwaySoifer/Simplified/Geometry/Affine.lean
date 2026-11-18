@@ -6,7 +6,6 @@ Authors: Vladislav Kuznetsov
 module
 
 public import LeanPool.ConwaySoifer.Geometry.Symmetry
-import Mathlib.Tactic.Ring
 
 /-!
 # Affine

@@ -8,11 +8,6 @@ module
 public import LeanPool.ConwaySoifer.Simplified.Geometry.LocalSideCover
 public import LeanPool.ConwaySoifer.Simplified.Geometry.SideChains
 public import LeanPool.ConwaySoifer.Simplified.Certificates.Coverage
-import Mathlib.Tactic.Convert
-import Mathlib.Tactic.FinCases
-import Mathlib.Tactic.Linarith
-import Mathlib.Tactic.NormNum.Basic
-import Mathlib.Tactic.Ring
 
 /-!
 # SextSmall

@@ -5,6 +5,8 @@ Authors: Vladislav Kuznetsov
 -/
 module
 
+import LeanPool.ConwaySoifer.Certificates.FanCertificate
+
 public import LeanPool.ConwaySoifer.Simplified.Certificates.Checkpoints.Sext120000130000
 public import LeanPool.ConwaySoifer.Simplified.Certificates.Steps.Sext1200001300000
 public import LeanPool.ConwaySoifer.Simplified.Certificates.Steps.Sext1200001300001
@@ -13,7 +15,6 @@ public import LeanPool.ConwaySoifer.Simplified.Certificates.Steps.Sext1200001300
 public import LeanPool.ConwaySoifer.Simplified.Certificates.Steps.Sext1200001300004
 public import LeanPool.ConwaySoifer.Simplified.Certificates.Steps.Sext1200001300005
 public import LeanPool.ConwaySoifer.Simplified.Certificates.Steps.Sext1200001300006
-import Mathlib.Tactic.FinCases
 
 /-!
 # Sext 120000 130000
@@ -50,6 +51,8 @@ SOFTWARE.
 -/
 
 @[expose] public section
+
+prepare_fan_cache ConwaySoifer.Simplified.Certificates.Sext120000130000.model0
 
 -- Generated checkpoints are proposals; all acceptance proofs are checked by the kernel.
 
@@ -117,7 +120,7 @@ theorem excluded53_0 : ExcludedOn (model53.B 0) 9000000000000 (model53.caps 0) (
       5220000000000], [6811800000000, -2610000000000]) (some (0, 3, 4)) (some (0, 3, 4))
       fan53Owner0Part0)))))))))))))))))))) (den := 9000000000000) (fuel := 12)
       (by decide +kernel) 0 1 100 (by decide +kernel)
-  decide +kernel
+  certify_fan
 
 private theorem tail53 : ModelImpossible model53 9000000000000 0 1 100 :=
   final_checkpoint model53 9000000000000 0 1 100 0 excluded53_0

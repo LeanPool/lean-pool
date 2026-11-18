@@ -12,7 +12,6 @@ public import LeanPool.ConwaySoifer.Simplified.Certificates.Steps.Sext1700001800
 public import LeanPool.ConwaySoifer.Simplified.Certificates.Steps.Sext1700001800003
 public import LeanPool.ConwaySoifer.Simplified.Certificates.Steps.Sext1700001800004
 public import LeanPool.ConwaySoifer.Simplified.Certificates.Steps.Sext1700001800005
-import Mathlib.Tactic.FinCases
 
 /-!
 # Sext 170000 180000

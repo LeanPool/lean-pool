@@ -6,8 +6,6 @@ Authors: Vladislav Kuznetsov
 module
 
 public import LeanPool.ConwaySoifer.Geometry.Rays
-import Mathlib.Tactic.Linarith
-import Mathlib.Tactic.NormNum.Basic
 
 /-!
 Necessary outward-normal conditions for genuine full ray endpoints and strict

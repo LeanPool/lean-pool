@@ -5,8 +5,9 @@ Authors: Vladislav Kuznetsov
 -/
 module
 
+import LeanPool.ConwaySoifer.Certificates.FanCertificate
+
 public import LeanPool.ConwaySoifer.Simplified.Certificates.Checkpoints.Sext100000110000
-import Mathlib.Tactic.FinCases
 
 /-!
 # Sext 100000 110000 5
@@ -43,6 +44,8 @@ SOFTWARE.
 -/
 
 @[expose] public section
+
+prepare_fan_cache ConwaySoifer.Simplified.Certificates.Sext100000110000.model0
 
 -- Generated checkpoints are proposals; all acceptance proofs are checked by the kernel.
 
@@ -81,7 +84,7 @@ theorem excluded40_2 : ExcludedOn (model40.B 2 ++ [step40.q]) 9000000000000 (mod
       0], [6150000000000, 9000000000000]) (some (0, 5, 4)) (some (0, 5, 4)) (.terminal (some (0, 5,
       4)) (some (0, 5, 0)) (some (0, 5, 4))))))))))))))))))))))))))) (den := 9000000000000) (fuel :=
       12) (by decide +kernel) 0 1 100 (by decide +kernel)
-  decide +kernel
+  certify_fan
 
 theorem excluded40_3 : ExcludedOn (model40.B 3 ++ [step40.q]) 9000000000000 (model40.caps 3)
     (model40.ord 3) 0 1 100 := by
@@ -119,7 +122,7 @@ theorem excluded40_7 : ExcludedOn (model40.B 7 ++ [step40.q]) 9000000000000 (mod
       (.next ([-3750000000000], [7200000000000]) (some (3, 1, 2)) (some (3, 1, 2)) (.terminal (some
       (3, 1, 2)) (some (3, 1, 0)) (some (3, 1, 2))))))))))))) (den := 9000000000000) (fuel := 12)
       (by decide +kernel) 0 1 100 (by decide +kernel)
-  decide +kernel
+  certify_fan
 
 theorem excluded40_8 : ExcludedOn (model40.B 8 ++ [step40.q]) 9000000000000 (model40.caps 8)
     (model40.ord 8) 0 1 100 := by
@@ -198,7 +201,7 @@ theorem excluded41_6 : ExcludedOn (model41.B 6 ++ [step41.q]) 9000000000000 (mod
       [9000000000000, 0]) (some (0, 1, 2)) (some (0, 1, 2)) (.terminal (some (0, 1, 2)) (some (0, 1,
       2)) (some (0, 1, 2))))))))))))) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
       100 (by decide +kernel)
-  decide +kernel
+  certify_fan
 
 theorem excluded41_7 : ExcludedOn (model41.B 7 ++ [step41.q]) 9000000000000 (model41.caps 7)
     (model41.ord 7) 0 1 100 := by

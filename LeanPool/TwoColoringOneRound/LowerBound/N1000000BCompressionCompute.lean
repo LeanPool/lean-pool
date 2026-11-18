@@ -19,13 +19,6 @@ public import LeanPool.TwoColoringOneRound.LowerBound.N1000000BCompressionComput
 public import LeanPool.TwoColoringOneRound.LowerBound.N1000000BCompressionComputeS0
 public import LeanPool.TwoColoringOneRound.LowerBound.N1000000BCompressionComputeSi
 
-import Mathlib.Algebra.Order.Field.Basic
-import Mathlib.Data.Nat.Totient
-import Mathlib.Data.Sym.Sym2.Init
-import Mathlib.Tactic.ContinuousFunctionalCalculus
-import Mathlib.Tactic.NormNum.GCD
-import Mathlib.Tactic.Positivity.Finset
-
 /-!
 # LeanPool.TwoColoringOneRound.LowerBound.N1000000BCompressionCompute
 -/
