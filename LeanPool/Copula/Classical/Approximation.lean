@@ -82,10 +82,10 @@ noncomputable def measure (F : (Fin d → I) → ℝ) :
 theorem measure_univ (hF : IsClassical F) (D : Division a b) :
     D.measure F univ = ENNReal.ofReal (rectangleIncrement F a b) := by
   induction D with
-  | leaf hab => simp only [measure, Measure.smul_apply, MeasureTheory.measure_univ,
+  | leaf hab => simp only [measure, smul_apply, MeasureTheory.measure_univ,
     smul_eq_mul, mul_one]
   | @cut a b i t hat htb left right ihl ihr =>
-    rw [measure, Measure.add_apply, ihl, ihr,
+    rw [measure, add_apply, ihl, ihr,
       ← ENNReal.ofReal_add (hF.increasing _ _ left.ordered) (hF.increasing _ _ right.ordered),
       ← rectangleIncrement_split]
 
@@ -107,13 +107,13 @@ theorem measure_Iic_le (hF : IsClassical F) (D : Division a b) (u : Fin d → I)
   induction D with
   | @leaf a b hab =>
     by_cases hb : b ≤ u
-    · simp only [measure, Measure.smul_apply, measurableSet_Iic, Measure.dirac_apply', mem_Iic, hb,
+    · simp only [measure, smul_apply, measurableSet_Iic, Measure.dirac_apply', mem_Iic, hb,
       indicator_of_mem, Pi.one_apply, smul_eq_mul, mul_one, inf_eq_left.mpr (hab.trans hb),
       inf_of_le_left, Std.le_refl]
-    · simp only [measure, Measure.smul_apply, measurableSet_Iic, Measure.dirac_apply', mem_Iic, hb,
+    · simp only [measure, smul_apply, measurableSet_Iic, Measure.dirac_apply', mem_Iic, hb,
       not_false_eq_true, indicator_of_notMem, smul_eq_mul, mul_zero, zero_le]
   | @cut a b i t hat htb left right ihl ihr =>
-    rw [measure, Measure.add_apply, clip_cut a b u i t,
+    rw [measure, add_apply, clip_cut a b u i t,
       ENNReal.ofReal_add (hF.increasing _ _ (inf_le_inf left.ordered le_rfl))
         (hF.increasing _ _ (inf_le_inf right.ordered le_rfl))]
     exact add_le_add ihl ihr
@@ -125,7 +125,7 @@ theorem le_measure_Iic (hF : IsClassical F) (D : Division a b) {ε : ℝ}
   induction D with
   | @leaf a b hab =>
     by_cases hb : b ≤ u
-    · simpa only [measure, Measure.smul_apply, measurableSet_Iic, Measure.dirac_apply', mem_Iic, hb,
+    · simpa only [measure, smul_apply, measurableSet_Iic, Measure.dirac_apply', mem_Iic, hb,
       indicator_of_mem, Pi.one_apply, smul_eq_mul,
       mul_one] using ENNReal.ofReal_le_ofReal (hF.rectangleIncrement_clip_le a b w hab)
     · obtain ⟨i, hi⟩ := not_forall.mp hb
@@ -142,7 +142,7 @@ theorem le_measure_Iic (hF : IsClassical F) (D : Division a b) {ε : ℝ}
       rw [rectangleIncrement_eq_zero_of_eq _ _ i he, ENNReal.ofReal_zero]
       exact bot_le
   | @cut a b i t hat htb left right ihl ihr =>
-    rw [measure, Measure.add_apply, clip_cut a b w i t,
+    rw [measure, add_apply, clip_cut a b w i t,
       ENNReal.ofReal_add (hF.increasing _ _ (inf_le_inf left.ordered le_rfl))
         (hF.increasing _ _ (inf_le_inf right.ordered le_rfl))]
     exact add_le_add (ihl hmesh.1) (ihr hmesh.2)
