@@ -43,7 +43,7 @@ private theorem polynomial_X_pow_sub_C_X_irreducible
   have hqDegree : q.natDegree = m := by
     simpa only [q] using
       (Polynomial.natDegree_X_pow_sub_C
-        (R := R) (n := m) (r := (Polynomial.X : R)))
+        (R := R) (n := m) (a := (Polynomial.X : R)))
   have hqEisenstein : q.IsEisensteinAt P := by
     refine {
       leading := ?_

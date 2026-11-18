@@ -128,7 +128,7 @@ theorem divisorCount_mul_corvajaZannierEnvelope_lt_currentOrder
     rw [← Real.mul_rpow horderNonneg (mul_nonneg horderNonneg horderNonneg)]
     convert Real.pow_rpow_inv_natCast horderNonneg
       (by norm_num : (3 : ℕ) ≠ 0) using 1
-    all_goals ring_nf
+    ring_nf
   have hrootTerm :
       coefficient * (((currentOrder * currentOrder : ℕ) : ℝ) ^ ((1 : ℝ) / 3)) <
         (currentOrder : ℝ) := by

@@ -187,7 +187,7 @@ theorem reciprocalPolynomialRingHom_surj
     have hz := z.property
     change RatFunc.inftyValuation K f ≤ 1 at hz
     rw [RatFunc.inftyValuation_apply,
-      RatFunc.inftyValuation_of_nonzero K hf,
+      RatFunc.inftyValuation_of_ne_zero K hf,
       ← WithZero.exp_zero, WithZero.exp_le_exp] at hz
     exact hz
   have hnd : f.num.natDegree ≤ f.denom.natDegree := by
@@ -424,6 +424,14 @@ local instance reciprocalIntegralClosureInfinityAlgebra :
     Algebra (integralClosure K[X] N)
       (RatFuncInfinityIntegralClosure K N) :=
   ratFuncInfinityReciprocalIntegralClosureAlgebra K N
+
+local instance reciprocalIntegralClosureInfinitySMul :
+    SMul (integralClosure K[X] N) (RatFuncInfinityIntegralClosure K N) :=
+  Algebra.toSMul
+
+local instance reciprocalPolynomialInfinitySMul :
+    SMul K[X] (RatFuncInfinityIntegralClosure K N) :=
+  Algebra.toSMul
 
 local instance reciprocalIntegralClosureInfinityAmbientTower :
     IsScalarTower (integralClosure K[X] N)

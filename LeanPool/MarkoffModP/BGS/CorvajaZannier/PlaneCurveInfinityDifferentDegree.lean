@@ -416,7 +416,7 @@ theorem infinityNormalizedCoefficient_isUnit_of_natDegree_eq
         push_cast
         ring
   rw [RatFunc.inftyValuation_apply,
-    RatFunc.inftyValuation_of_nonzero (F := K) (mul_ne_zero hleft hright),
+    RatFunc.inftyValuation_of_ne_zero (F := K) (mul_ne_zero hleft hright),
     RatFunc.intDegree_mul hleft hright,
     hpow,
     RatFunc.intDegree_inv, RatFunc.intDegree_X,
@@ -436,7 +436,7 @@ theorem infinityNormalizedIntegralPolynomial_isPrimitive
   have hcoeffG : G.coeff i =
       infinityNormalizedCoefficient K a (F.coeff i) (hcoeff i) := by
     simp only [G, infinityNormalizedIntegralPolynomial, coeff_sum,
-      coeff_monomial]
+      coeff_monomial_apply]
     simp [Polynomial.sum, hFi]
   apply G.contentIdeal.eq_top_of_isUnit_mem (G.coeff_mem_contentIdeal i)
   rw [hcoeffG]

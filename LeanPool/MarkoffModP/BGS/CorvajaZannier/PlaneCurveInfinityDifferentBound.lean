@@ -180,7 +180,7 @@ theorem infinityNormalizedCoefficient_mem
   have hright : algebraMap K[X] (RatFunc K) P ≠ 0 :=
     RatFunc.algebraMap_ne_zero hP
   rw [RatFunc.inftyValuation_apply,
-    RatFunc.inftyValuation_of_nonzero (F := K) (mul_ne_zero hleft hright),
+    RatFunc.inftyValuation_of_ne_zero (F := K) (mul_ne_zero hleft hright),
     RatFunc.intDegree_mul hleft hright,
     ratFunc_intDegree_pow K (RatFunc.X⁻¹) hXinv a,
     RatFunc.intDegree_inv, RatFunc.intDegree_X,
@@ -227,7 +227,7 @@ theorem infinityNormalizedIntegralPolynomial_map
   ext i
   rw [coeff_map]
   simp only [infinityNormalizedIntegralPolynomial, coeff_sum,
-    coeff_monomial]
+    coeff_monomial_apply]
   simp only [sum, Finset.sum_ite_eq', mem_support_iff, ne_eq, ite_not]
   by_cases hzero : F.coeff i = 0
   · simp [hzero, infinityNormalizedPolynomial, coeff_C_mul]

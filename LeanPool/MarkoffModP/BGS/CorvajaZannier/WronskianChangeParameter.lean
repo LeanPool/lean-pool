@@ -61,7 +61,7 @@ private lemma changeParameterCoeff_diag (E : Derivation C L L) (a : L) (n : ℕ)
 
 private lemma derivation_iterate_succ (E : Derivation C L L) (n : ℕ) (x : L) :
     E ((E.toLinearMap ^ n) x) = (E.toLinearMap ^ (n + 1)) x := by
-  rw [pow_succ', Module.End.mul_apply]
+  rw [pow_succ', mul_apply_eq_comp]
   rfl
 
 private lemma changeParameterCoeff_sum_succ (E : Derivation C L L) (a x : L) (n : ℕ) :
@@ -98,7 +98,7 @@ private lemma derivation_iterate_eq_changeParameterCoeff_sum
   | succ n ih =>
       calc
         (D.toLinearMap ^ (n + 1)) x = D ((D.toLinearMap ^ n) x) := by
-          rw [pow_succ', Module.End.mul_apply]
+          rw [pow_succ', mul_apply_eq_comp]
           rfl
         _ = D (∑ k ∈ range (n + 1),
             changeParameterCoeff E a n k * (E.toLinearMap ^ k) x) := by rw [ih]

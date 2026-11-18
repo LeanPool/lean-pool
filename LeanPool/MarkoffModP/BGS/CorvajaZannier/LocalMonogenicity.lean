@@ -256,8 +256,10 @@ lemma adjoin_eq_top_of_quotient [Algebra R S] [IsLocalRing R] [IsLocalRing S]
         (sup_le (Ideal.span_le.mpr (Set.singleton_subset_iff.mpr
           (hn (Ideal.pow_mem_pow hπ_ms n)))) le_rfl) hxa,
       by ring⟩
-  refine eq_top_iff.mpr (Submodule.le_of_le_smul_of_le_jacobson_bot
-    (Module.finite_def.mp inferInstance) (IsLocalRing.maximalIdeal_le_jacobson ⊥)
+  refine eq_top_iff.mpr (Submodule.le_of_le_smul_of_le_jacobson
+    (Module.finite_def.mp inferInstance)
+    (by simpa only [Ideal.jacobson_bot] using
+      IsLocalRing.maximalIdeal_le_jacobson (⊥ : Ideal R))
     (?_ : ⊤ ≤ A.toSubmodule ⊔ mR • ⊤))
   intro s _
   obtain ⟨t, ht, hst⟩ := h_lift s

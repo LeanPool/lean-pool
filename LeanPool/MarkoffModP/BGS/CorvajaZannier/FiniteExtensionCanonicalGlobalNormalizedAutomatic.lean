@@ -190,7 +190,7 @@ omit [DecidableEq K] [DecidableEq (RatFunc K)] in
     probeRatFuncReciprocalDerivation K x =
       -RatFunc.X ^ 2 * probeRatFuncDerivation K x := by
   classical
-  simp only [probeRatFuncReciprocalDerivation, Derivation.smul_apply,
+  simp only [probeRatFuncReciprocalDerivation, smul_apply,
     Algebra.smul_def, Algebra.algebraMap_self_apply]
 
 omit [DecidableEq K] [DecidableEq (RatFunc K)] in
@@ -249,7 +249,7 @@ theorem probeRatFuncReciprocalDerivation_mem_infinityIntegers
       Valuation.Integer.not_isUnit_iff_valuation_lt_one] at hyMax
     change RatFunc.inftyValuation K (y : RatFunc K) < 1 at hyMax
     rw [RatFunc.inftyValuation_apply,
-      RatFunc.inftyValuation_of_nonzero K hy,
+      RatFunc.inftyValuation_of_ne_zero K hy,
       ← exp_zero, exp_lt_exp] at hyMax
     exact hyMax
   by_cases hEy : probeRatFuncReciprocalDerivation K (y : RatFunc K) = 0
@@ -257,7 +257,7 @@ theorem probeRatFuncReciprocalDerivation_mem_infinityIntegers
   change RatFunc.inftyValuation K
     (probeRatFuncReciprocalDerivation K (y : RatFunc K)) ≤ 1
   rw [RatFunc.inftyValuation_apply,
-    RatFunc.inftyValuation_of_nonzero K hEy,
+    RatFunc.inftyValuation_of_ne_zero K hEy,
     ← exp_zero, exp_le_exp]
   exact probeRatFuncReciprocalDerivation_intDegree_nonpositive_of_negative
     K (y : RatFunc K) hyDegree
@@ -483,7 +483,7 @@ theorem probeAmbientReciprocalDerivation_extends
     algebraMap (RatFunc K) L
       (probeRatFuncDerivation K (r : RatFunc K)) at hcomp
   rw [probeAmbientReciprocalDerivation,
-    Derivation.smul_apply, Algebra.smul_def,
+    smul_apply, Algebra.smul_def,
     Algebra.algebraMap_self_apply]
   change -(algebraMap (RatFunc K) L RatFunc.X) ^ 2 *
       (D.restrictScalars K)
@@ -519,7 +519,7 @@ theorem probeAmbientReciprocalDerivation_changeParameter
   apply Derivation.ext
   intro z
   simp only [probeAmbientReciprocalDerivation,
-    Derivation.smul_apply, Algebra.smul_def,
+    smul_apply, Algebra.smul_def,
     Algebra.algebraMap_self_apply]
   change (D.restrictScalars K) z =
     -(sL ^ 2) * (-(xL ^ 2) * (D.restrictScalars K) z)

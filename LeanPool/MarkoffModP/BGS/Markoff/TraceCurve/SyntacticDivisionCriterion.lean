@@ -77,11 +77,11 @@ theorem splitTraceCoverPolynomial_isRelPrime_coordinateProduct :
   intro q hqCover hqProduct hqPrime
   rcases hqPrime.dvd_mul.mp hqProduct with hqZero | hqOne
   · have hassociated := hqPrime.associated_of_dvd
-      (MvPolynomial.X_prime (i := (0 : Fin 2))) hqZero
+      (MvPolynomial.prime_X (i := (0 : Fin 2))) hqZero
     exact coordinateZero_not_dvd_splitTraceCoverPolynomial sigma e d hdOdd
       (hassociated.dvd_iff_dvd_left.mp hqCover)
   · have hassociated := hqPrime.associated_of_dvd
-      (MvPolynomial.X_prime (i := (1 : Fin 2))) hqOne
+      (MvPolynomial.prime_X (i := (1 : Fin 2))) hqOne
     exact coordinateOne_not_dvd_splitTraceCoverPolynomial sigma e d hsigma heOdd
       (hassociated.dvd_iff_dvd_left.mp hqCover)
 

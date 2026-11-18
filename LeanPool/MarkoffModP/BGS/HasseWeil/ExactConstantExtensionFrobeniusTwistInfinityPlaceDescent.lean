@@ -680,6 +680,8 @@ theorem frobeniusTwistField_infinityPlace_ramificationIdx_eq_one
     IsIntegralClosure.isDedekindDomain V (RatFunc C) T A
   let : MulSemiringAction (T ≃ₐ[F] T) A :=
     infinityIntegralClosureGalAction C F T
+  let : SMul (T ≃ₐ[F] T) A :=
+    (infinityIntegralClosureGalAction C F T).toMulAction.toSMul
   intro Q
   rw [← infinityPlaceInertiaGroup_card_eq_ramificationIdx C F T Q]
   have hInertia : infinityPlaceInertiaGroup C F T Q = ⊥ := by

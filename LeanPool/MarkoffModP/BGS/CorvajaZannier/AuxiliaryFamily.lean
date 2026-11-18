@@ -224,8 +224,8 @@ theorem auxiliaryGridPolynomial_eq_zero_iff
     have hinner :
         (fun s : Fin h => Polynomial.ofFn (k + 1) fun r => d (r, s)) = 0 := by
       funext s
-      apply Polynomial.ext
-      intro n
+      apply AddMonoidAlgebra.ext
+      ext n
       by_cases hn : n < k + 1
       · simpa [hn] using hd (⟨n, hn⟩, s)
       · simp [Polynomial.ofFn_coeff_eq_zero_of_ge, Nat.le_of_not_gt hn]

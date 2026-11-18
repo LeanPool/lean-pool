@@ -73,7 +73,7 @@ theorem functionFieldNormalClosureConstantCompositum_fixingSubgroup :
     exact (IntermediateField.mem_fixingSubgroup_iff
       (functionFieldNormalClosureConstantCompositum K L) g).mp hg c.1
         (IntermediateField.subset_adjoin (RatFunc K) _ ⟨c, rfl⟩)
-  · apply (IntermediateField.le_iff_le
+  · apply (IntermediateField.le_fixedField_iff_le_fixingSubgroup
       (functionFieldNormalClosureConstantRestriction K L).ker
       (functionFieldNormalClosureConstantCompositum K L)).mp
     unfold functionFieldNormalClosureConstantCompositum

@@ -120,7 +120,7 @@ theorem exactConstantExtensionFrobeniusTwistField_algebraicClosure_eq_bot
       (Polynomial.splits_X_pow_nat_card_sub_X (K := C))
   have hp0 : p ≠ 0 := by
     dsimp [p]
-    exact FiniteField.X_pow_card_sub_X_ne_zero C Fintype.one_lt_card
+    exact Polynomial.X_pow_sub_X_ne_zero Fintype.one_lt_card
   have hroot : (p.map (algebraMap C S)).IsRoot s := by
     simp [p, hspow]
   obtain ⟨c, hc⟩ := hpSplit.mem_range_of_isRoot hp0 hroot
