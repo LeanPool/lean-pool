@@ -941,8 +941,11 @@ end AveragedTrace
 
 section GaussianIntervalKernel
 
+/-- The scale integrand in the Gaussian interval kernel. -/
+def kernIntegrand (m : ℕ) (s t : ℝ) : ℝ := √s ^ m * gaussianD m (63 / 20 * s) t / s
+
 /-- The Gaussian derivative kernel integrated over the scale interval `a..b`. -/
-def Kern (m : ℕ) (a b t : ℝ) : ℝ := ∫ s in a..b, √s ^ m * gaussianD m (63 / 20 * s) t / s
+def Kern (m : ℕ) (a b t : ℝ) : ℝ := ∫ s in a..b, kernIntegrand m s t
 
 end GaussianIntervalKernel
 
@@ -1064,17 +1067,17 @@ noncomputable section
 
 section Kernels
 
-/-- The scale integrand in the interval kernel `Kern`. -/
-def kernIntegrand (m : ℕ) (s t : ℝ) : ℝ := √s ^ m * gaussianD m (63 / 20 * s) t / s
-
 lemma Kern_eq (m : ℕ) (a b t : ℝ) : Kern m a b t = ∫ s in a..b, kernIntegrand m s t := rfl
 
 lemma continuousOn_kernIntegrand_joint (m : ℕ) :
     ContinuousOn (fun z : ℝ × ℝ => kernIntegrand m z.1 z.2) {z | 0 < z.1} := by
+  let rescale : ℝ × ℝ → ℝ × ℝ := fun z => (63 / 20 * z.1, z.2)
+  have hs : Continuous (fun z : ℝ × ℝ => 63 / 20 * z.1) := continuous_const.mul continuous_fst
+  have hmap : Continuous rescale := hs.prodMk continuous_snd
+  have hpositive : Set.MapsTo rescale {z | 0 < z.1} {z | 0 < z.1} :=
+    fun _ hz => mul_pos (by norm_num : (0 : ℝ) < 63 / 20) hz
   have hg : ContinuousOn (fun z : ℝ × ℝ => gaussianD m (63 / 20 * z.1) z.2) {z | 0 < z.1} :=
-    (continuousOn_gaussianD_joint m).comp ((continuous_const.mul continuous_fst).prodMk
-      continuous_snd).continuousOn fun z hz => by
-        simp only [Set.mem_ofPred_eq] at hz ⊢; exact mul_pos (by norm_num) hz
+    (continuousOn_gaussianD_joint m).comp' hmap.continuousOn hpositive
   exact (((Real.continuous_sqrt.comp continuous_fst).pow m).continuousOn.mul hg).div
     continuous_fst.continuousOn fun z hz => ne_of_gt hz
 
