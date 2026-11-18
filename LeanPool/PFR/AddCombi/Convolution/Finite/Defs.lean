@@ -82,7 +82,7 @@ lemma conv_eq_expect_sub (f g : G → K) (a : G) : (f ∗ g) a = 𝔼 t, f (a - 
   rw [conv_apply]
   refine expect_nbij (fun x ↦ x.2) (fun x _ ↦ mem_univ _) ?_ ?_ fun b _ ↦
     ⟨(a - b, b), mem_filter.2 ⟨mem_univ _, sub_add_cancel _ _⟩, rfl⟩
-  any_goals unfold Set.InjOn
+  on_goal 2 => unfold Set.InjOn
   all_goals aesop
 
 public
