@@ -322,7 +322,7 @@ theorem ContDiffMBOn.of_comp_of_boundedBelow (hU : IsOpen U) (hj : SmoothMBOn j 
       have ha : Tendsto (fun t : ℝ ↦ t⁻¹ • (j (γ (q + t • h)) - j (γ q))) (𝓝[≠] 0) (𝓝 R) :=
         hjγ1.hasDirDerivAt hq h
       have hS : HasStrictFDerivAt j A (γ q) :=
-        (hjF.contDiffAt (hU.mem_nhds hγq)).hasStrictFDerivAt (by simp)
+        (hjF.contDiffAt (hU.mem_nhds hγq)).hasStrictFDerivAt_fderiv (by simp)
       have hlo := hasStrictFDerivAt_iff_isLittleO.mp hS
       -- `A (γ_t) - a_t → 0`, where `γ_t, a_t` are the difference quotients
       have hsmall : Tendsto (fun t : ℝ ↦ A (t⁻¹ • (γ (q + t • h) - γ q)) -

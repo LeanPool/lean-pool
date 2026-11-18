@@ -128,7 +128,7 @@ variable {U : Set E}
 
 /-- For `y ∈ U`, `secondB g y` is `(m + 1)`-multilinear. -/
 def secondBML (hU : IsOpen U) (hg : ContDiffMBOn 1 (unc g) (U ×ˢ univ)) {y : E} (hy : y ∈ U) :
-    MultilinearMap ℝ (fun _ : Fin (m + 1) ↦ E) F where
+    MultilinearMap (RingHom.id ℝ) (fun _ : Fin (m + 1) ↦ E) F where
   toFun := secondB g y
   map_update_add' := by
     intro inst u i a b
