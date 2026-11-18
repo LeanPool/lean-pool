@@ -23,12 +23,6 @@ namespace Corless
 /-- `s` before position `j`, `t` from position `j` on. -/
 def hyb (s t : ℕ → ℤ) (j : ℕ) : ℕ → ℤ := fun i => if i < j then s i else t i
 
-lemma IsSign.hyb {s t : ℕ → ℤ} (hs : IsSign s) (ht : IsSign t) (j : ℕ) : IsSign (hyb s t j) :=
-  fun i => by unfold Corless.hyb; split_ifs; exacts [hs i, ht i]
-
-lemma IsSign.shift {s : ℕ → ℤ} (hs : IsSign s) (k : ℕ) : IsSign (fun i => s (i + k)) :=
-  fun i => hs (i + k)
-
 /-- Changing the weight of edge `j` changes `D` by `(new - old) · X · D(left) · D(right)`. -/
 lemma Dv_hyb_step (s t : ℕ → ℤ) (j m : ℕ) :
     Dv (hyb s t (j + 1)) (j + m + 2) - Dv (hyb s t j) (j + m + 2)
@@ -66,27 +60,28 @@ lemma Dv_sub_eq (s t : ℕ → ℤ) (M : ℕ) :
 
 /-- Modulo 4, the difference only sees which signs differ: with `s j - t j = 2 δ j`,
 `D s - D t ≡ 2 ∑ δ j · X · f j · f (M - 2 - j)`. -/
-lemma Dv_sub_mod4 {s t : ℕ → ℤ} (hs : IsSign s) (ht : IsSign t) (δ : ℕ → ℤ)
-    (hδ : ∀ j, s j - t j = 2 * δ j) (M : ℕ) :
+lemma Dv_sub_mod4 {s t : ℕ → ℤ} {M : ℕ} (hs : IsSign s M) (ht : IsSign t M) (δ : ℕ → ℤ)
+    (hδ : ∀ j, j + 1 < M → s j - t j = 2 * δ j) :
     ∃ R : ℤ[X], Dv s M - Dv t M
       = 2 * ∑ j ∈ range (M - 1), C (δ j) * X * f j * f (M - 2 - j) + 4 * R := by
   rw [Dv_sub_eq]
-  have key : ∀ j, ∃ R : ℤ[X],
+  have key : ∀ j, j + 1 < M → ∃ R : ℤ[X],
       C (s j - t j) * X * Dv (hyb s t j) j * Dv (fun i => hyb s t j (i + j + 2)) (M - 2 - j)
         = 2 * (C (δ j) * X * f j * f (M - 2 - j)) + 4 * R := by
-    intro j
-    obtain ⟨A, hA⟩ := Dv_parity (hs.hyb ht j) j
-    obtain ⟨B, hB⟩ := Dv_parity ((hs.hyb ht j).shift (j + 2)) (M - 2 - j)
+    intro j hj
+    obtain ⟨A, hA⟩ := Dv_parity j (s := hyb s t j) fun i hi => by
+      simpa only [hyb, ite_eq_left (show i < j by omega)] using hs i (by omega)
+    obtain ⟨B, hB⟩ := Dv_parity (M - 2 - j) (s := fun i => hyb s t j (i + j + 2)) fun i hi => by
+      simpa only [hyb, ite_eq_right (show ¬i + j + 2 < j by omega)] using ht (i + j + 2) (by omega)
     refine ⟨C (δ j) * X * (A * f (M - 2 - j) + f j * B + 2 * A * B), ?_⟩
-    have hB' : Dv (fun i => hyb s t j (i + j + 2)) (M - 2 - j) = f (M - 2 - j) + 2 * B := by
-      rw [← hB]
-      congr 1
-    rw [hA, hB', hδ, C_mul, show (C (2 : ℤ) : ℤ[X]) = 2 by simp]
+    rw [hA, hB, hδ j hj, C_mul, show (C (2 : ℤ) : ℤ[X]) = 2 by simp]
     ring
-  choose R hR using key
+  let R (j : ℕ) := if hj : j + 1 < M then (key j hj).choose else 0
   refine ⟨∑ j ∈ range (M - 1), R j, ?_⟩
   rw [Finset.mul_sum, Finset.mul_sum, ← Finset.sum_add_distrib]
-  exact Finset.sum_congr rfl fun j _ => hR j
+  refine Finset.sum_congr rfl fun j hj => ?_
+  have hj' : j + 1 < M := by simpa [Finset.mem_range, Nat.lt_sub_iff_add_lt] using hj
+  simpa only [R, dite_eq_left hj'] using (key j hj').choose_spec
 
 /-! ### Independence over 𝔽₂ -/
 
@@ -163,13 +158,13 @@ lemma indep (N : ℕ) (w : ℕ → ZMod 2)
 
 /-- Lemma 4. On a path with `2^(k+2) - 1` vertices, `D ≡ 1 (mod 4)` forces the two middle signs to
 be opposite and the two halves to be mirror images. -/
-theorem fold_of_mod4 (k : ℕ) {s : ℕ → ℤ} (hs : IsSign s)
+theorem fold_of_mod4 (k : ℕ) {s : ℕ → ℤ} (hs : IsSign s (2 ^ (k + 2) - 1))
     (h : ∃ R : ℤ[X], Dv s (2 ^ (k + 2) - 1) = 1 + 4 * R) :
     IsFolded s (2 ^ (k + 1) - 2) := by
   set n := 2 ^ (k + 1) - 2
   obtain ⟨hN, hM⟩ : 2 ^ (k + 1) - 1 = n + 1 ∧ 2 ^ (k + 2) - 1 = 2 * n + 3 :=
     folded_sizes k
-  rw [hM] at h
+  rw [hM] at h hs
   obtain ⟨R, hR⟩ := h
   -- D(star) ≡ 1 (mod 4)
   obtain ⟨A, hA⟩ := f_pow_two k
@@ -178,14 +173,14 @@ theorem fold_of_mod4 (k : ℕ) {s : ℕ → ℤ} (hs : IsSign s)
     rw [Dv_star, hA]; ring
   -- the halved differences
   let δ : ℕ → ℤ := fun j => (s j - star n j) / 2
-  have hδ : ∀ j, s j - star n j = 2 * δ j := by
-    intro j
+  have hδ : ∀ j, j + 1 < 2 * n + 3 → s j - star n j = 2 * δ j := by
+    intro j hj
     simp only [δ]
     by_cases h2 : j = n + 1
     · subst h2
-      rcases hs (n + 1) with h1 | h1 <;> simp [star, h1]
-    · rcases hs j with h1 | h1 <;> simp [star, h1, h2]
-  obtain ⟨R', hR'⟩ := Dv_sub_mod4 hs (isSign_star n) δ hδ (2 * n + 3)
+      rcases hs (n + 1) hj with h1 | h1 <;> simp [star, h1]
+    · rcases hs j hj with h1 | h1 <;> simp [star, h1, h2]
+  obtain ⟨R', hR'⟩ := Dv_sub_mod4 hs (isSign_star n _) δ hδ
   rw [hR, hstar, show 2 * n + 3 - 1 = 2 * (n + 1) by omega] at hR'
   -- divide by 2 and reduce modulo 2
   have hsum2 : ∑ j ∈ range (2 * (n + 1)), C (δ j) * X * f j * f (2 * n + 3 - 2 - j)
@@ -228,13 +223,13 @@ theorem fold_of_mod4 (k : ℕ) {s : ℕ → ℤ} (hs : IsSign s)
   · -- middle: j = n, partner 2n + 1 - n = n + 1
     have h0 := hw0 n (by omega)
     rw [show 2 * n + 1 - n = n + 1 by omega] at h0
-    rcases hs n with h1 | h1 <;> rcases hs (n + 1) with h2 | h2 <;>
+    rcases hs n (by omega) with h1 | h1 <;> rcases hs (n + 1) (by omega) with h2 | h2 <;>
       simp [hw, δ, star, h1, h2] at h0 ⊢
   · intro i hi
     have h0 := hw0 i (by omega)
     have hi1 : i ≠ n + 1 := by omega
     have hi2 : 2 * n + 1 - i ≠ n + 1 := by omega
-    rcases hs i with h1 | h1 <;> rcases hs (2 * n + 1 - i) with h2 | h2 <;>
+    rcases hs i (by omega) with h1 | h1 <;> rcases hs (2 * n + 1 - i) (by omega) with h2 | h2 <;>
       simp [hw, δ, star, hi1, hi2, h1, h2] at h0 ⊢
 
 /-! ### The classification -/
@@ -270,23 +265,28 @@ lemma one_of_fam {s : ℕ → ℤ} : ∀ k, Fam k s → Dv s (2 ^ (k + 1) - 1) =
   | k + 1, ⟨folded, hk⟩ => by
       rw [fold_eq folded, one_of_fam k hk, one_pow]
 
-lemma fam_of_one {s : ℕ → ℤ} (hs : IsSign s) : ∀ k, Dv s (2 ^ (k + 1) - 1) = 1 → Fam k s
-  | 0, _ => trivial
-  | k + 1, h => by
+lemma fam_of_one {s : ℕ → ℤ} : ∀ k, IsSign s (2 ^ (k + 1) - 1) →
+    Dv s (2 ^ (k + 1) - 1) = 1 → Fam k s
+  | 0, _, _ => trivial
+  | k + 1, hs, h => by
       have folded := fold_of_mod4 k hs ⟨0, by rw [h]; ring⟩
-      refine ⟨folded, fam_of_one hs k ?_⟩
+      have hsize : 2 ^ (k + 1) - 1 ≤ 2 ^ (k + 2) - 1 := by
+        obtain ⟨half, full⟩ := folded_sizes k
+        rw [half, full]
+        omega
+      refine ⟨folded, fam_of_one k (hs.mono hsize) ?_⟩
       apply eq_one_of_sq _ (Dv_coeff_zero s _)
       rw [← fold_eq folded, h]
 
 /-- **Corless's conjecture.** For a sign sequence `s`, the weighted path with `m ≥ 1` vertices has
 `D = 1` (equivalently: the skew-symmetric tridiagonal matrix with superdiagonal `u`, `u² = s`, is
 nilpotent) exactly when `m = 2^(k+1) - 1` and the signs form one of Corless's sequences. -/
-theorem corless {s : ℕ → ℤ} (hs : IsSign s) {m : ℕ} (hm : 1 ≤ m) :
+theorem corless {s : ℕ → ℤ} {m : ℕ} (hs : IsSign s m) (hm : 1 ≤ m) :
     Dv s m = 1 ↔ ∃ k, m = 2 ^ (k + 1) - 1 ∧ Fam k s := by
   constructor
   · intro h
     obtain ⟨k, rfl⟩ := dimension hs hm h
-    exact ⟨k, rfl, fam_of_one hs k h⟩
+    exact ⟨k, rfl, fam_of_one k hs h⟩
   · rintro ⟨k, rfl, hk⟩
     exact one_of_fam k hk
 

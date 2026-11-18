@@ -55,17 +55,20 @@ noncomputable def f (j : ℕ) : ℤ[X] := Dv (fun _ => 1) j
 lemma f_succ_succ (j : ℕ) : f (j + 2) = f (j + 1) + X * f j := by
   simp [f, Dv_succ_succ]
 
-/-- A sign sequence: every weight is `1` or `-1`. -/
-def IsSign (s : ℕ → ℤ) : Prop := ∀ i, s i = 1 ∨ s i = -1
+/-- Every edge of the path with `m` vertices has weight `1` or `-1`. -/
+def IsSign (s : ℕ → ℤ) (m : ℕ) : Prop := ∀ i, i + 1 < m → s i = 1 ∨ s i = -1
+
+lemma IsSign.mono {s : ℕ → ℤ} {m n : ℕ} (hs : IsSign s n) (hm : m ≤ n) : IsSign s m :=
+  fun i hi => hs i (hi.trans_le hm)
 
 /-- Reduction modulo 2: for a sign sequence, `D ≡ f (mod 2)`. -/
-lemma Dv_parity {s : ℕ → ℤ} (hs : IsSign s) : ∀ j, ∃ R : ℤ[X], Dv s j = f j + 2 * R
-  | 0 => ⟨0, by simp [f]⟩
-  | 1 => ⟨0, by simp [f]⟩
-  | j + 2 => by
-      obtain ⟨R1, h1⟩ := Dv_parity hs (j + 1)
-      obtain ⟨R0, h0⟩ := Dv_parity hs j
-      rcases hs j with h | h
+lemma Dv_parity {s : ℕ → ℤ} : ∀ j, IsSign s j → ∃ R : ℤ[X], Dv s j = f j + 2 * R
+  | 0, _ => ⟨0, by simp [f]⟩
+  | 1, _ => ⟨0, by simp [f]⟩
+  | j + 2, hs => by
+      obtain ⟨R1, h1⟩ := Dv_parity (j + 1) (hs.mono (by omega))
+      obtain ⟨R0, h0⟩ := Dv_parity j (hs.mono (by omega))
+      rcases hs j (by omega) with h | h
       · exact ⟨R1 + X * R0, by rw [Dv_succ_succ, f_succ_succ, h1, h0, h]; simp; ring⟩
       · exact ⟨R1 - X * f j - X * R0, by rw [Dv_succ_succ, f_succ_succ, h1, h0, h]; simp; ring⟩
 
@@ -91,7 +94,7 @@ lemma folded_edges (k : ℕ) : 2 ^ (k + 2) - 2 = 2 * (2 ^ (k + 1) - 2) + 2 := by
 /-- The reference sequence: all `1` except `-1` at position `n + 1`. -/
 def star (n : ℕ) : ℕ → ℤ := fun i => if i = n + 1 then -1 else 1
 
-lemma isSign_star (n : ℕ) : IsSign (star n) := fun i => by
+lemma isSign_star (n m : ℕ) : IsSign (star n) m := fun i _ => by
   by_cases h : i = n + 1 <;> simp [star, h]
 
 lemma Dv_star (n : ℕ) : Dv (star n) (2 * n + 3) = f (n + 1) ^ 2 := by
@@ -117,7 +120,7 @@ lemma f_pow_two (k : ℕ) : ∃ A : ℤ[X], f (2 ^ (k + 1) - 1) = 1 + 2 * A := b
       let n := 2 ^ (k + 1) - 2
       obtain ⟨hN, hM⟩ : 2 ^ (k + 1) - 1 = n + 1 ∧ 2 ^ (k + 2) - 1 = 2 * n + 3 :=
         folded_sizes k
-      obtain ⟨R, hR⟩ := Dv_parity (isSign_star n) (2 * n + 3)
+      obtain ⟨R, hR⟩ := Dv_parity (2 * n + 3) (isSign_star n _)
       rw [hN] at hA
       refine ⟨2 * A + 2 * A ^ 2 - R, ?_⟩
       rw [hM]
@@ -177,9 +180,9 @@ lemma pow_two_of_frob : ∀ n : ℕ, 1 ≤ n → ((1 + X : (ZMod 2)[X]) ^ n = 1 
 
 /-- Corless's dimension theorem: if `D = 1` for a sign sequence on a path with `m ≥ 1` vertices,
 then `m = 2^(k+1) - 1` for some `k`. -/
-theorem dimension {s : ℕ → ℤ} (hs : IsSign s) {m : ℕ} (hm : 1 ≤ m) (h : Dv s m = 1) :
+theorem dimension {s : ℕ → ℤ} {m : ℕ} (hs : IsSign s m) (hm : 1 ≤ m) (h : Dv s m = 1) :
     ∃ k, m = 2 ^ (k + 1) - 1 := by
-  obtain ⟨R, hR⟩ := Dv_parity hs m
+  obtain ⟨R, hR⟩ := Dv_parity m hs
   have hf : fbar m = 1 := by
     have : f m = 1 - 2 * R := by rw [← h, hR]; ring
     have h2 : Polynomial.map (Int.castRingHom (ZMod 2)) (2 : ℤ[X]) = 2 := by simp

@@ -8,8 +8,7 @@ module
 public import Mathlib.Algebra.Polynomial.Expand
 public import Mathlib.Algebra.Polynomial.Reverse
 public import Mathlib.Basic.Complex.Basic
-public import Mathlib.LinearAlgebra.Eigenspace.Zero
-public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
+public import Mathlib.LinearAlgebra.Matrix.Charpoly.Coeff
 public import LeanPool.CorlessNilpotent.Main
 
 /-!
@@ -53,17 +52,15 @@ lemma det_CM_one (u : ℕ → ℂ) : (CM 1 u).det = X := by
 lemma det_CM_succ_succ (m : ℕ) (u : ℕ → ℂ) :
     (CM (m + 2) u).det = X * (CM (m + 1) (fun i => u (i + 1))).det
       + C (u 0 ^ 2) * (CM m (fun i => u (i + 2))).det := by
-  rw [Matrix.det_succ_column_zero, Fin.sum_univ_succ, Fin.sum_univ_succ]
-  -- terms with row index ≥ 2 vanish: column 0 has entries only in rows 0 and 1
-  have hrest : ∑ i : Fin m, (-1 : ℂ[X]) ^ ((i.succ.succ : Fin (m + 2)) : ℕ)
-      * CM (m + 2) u i.succ.succ 0
-      * ((CM (m + 2) u).submatrix (i.succ.succ).succAbove Fin.succ).det = 0 := by
-    apply Finset.sum_eq_zero
-    intro i _
-    have h1 : CM (m + 2) u i.succ.succ 0 = 0 := by
+  rw [Matrix.det_succ_column_zero, Fin.sum_univ_succ,
+    Finset.sum_eq_single (0 : Fin (m + 1))]
+  rotate_left
+  · intro i _ hi
+    refine Fin.cases (fun h => (h rfl).elim) (fun j _ => ?_) i hi
+    have hz : CM (m + 2) u j.succ.succ 0 = 0 := by
       simp [CM_apply, Fin.ext_iff, Fin.val_succ]
-    rw [h1, mul_zero, zero_mul]
-  rw [hrest, add_zero]
+    rw [hz, mul_zero, zero_mul]
+  · simp
   -- first minor: rows and columns 1, …, m+1
   have hA : (CM (m + 2) u).submatrix (Fin.succAbove (0 : Fin (m + 2))) Fin.succ
       = CM (m + 1) (fun i => u (i + 1)) := by
@@ -72,21 +69,19 @@ lemma det_CM_succ_succ (m : ℕ) (u : ℕ → ℂ) :
   -- second minor: rows 0, 2, …, m+1 and columns 1, …, m+1; its first row is (-u 0, 0, …, 0)
   have hB : ((CM (m + 2) u).submatrix (Fin.succAbove (Fin.succ (0 : Fin (m + 1)))) Fin.succ).det
       = -C (u 0) * (CM m (fun i => u (i + 2))).det := by
-    rw [Fin.succ_zero_eq_one, Matrix.det_succ_row_zero, Fin.sum_univ_succ]
-    have hrest' : ∑ j : Fin m, (-1 : ℂ[X]) ^ ((j.succ : Fin (m + 1)) : ℕ)
-        * (CM (m + 2) u).submatrix (Fin.succAbove (1 : Fin (m + 2))) Fin.succ 0 j.succ
-        * (((CM (m + 2) u).submatrix (Fin.succAbove (1 : Fin (m + 2))) Fin.succ).submatrix Fin.succ
-            (j.succ).succAbove).det = 0 := by
-      apply Finset.sum_eq_zero
-      intro j _
-      have h1 :
-          (CM (m + 2) u).submatrix (Fin.succAbove (1 : Fin (m + 2))) Fin.succ 0 j.succ = 0 := by
+    rw [Fin.succ_zero_eq_one, Matrix.det_succ_row_zero,
+      Finset.sum_eq_single (0 : Fin (m + 1))]
+    rotate_left
+    · intro j _ hj
+      refine Fin.cases (fun h => (h rfl).elim) (fun i _ => ?_) j hj
+      have hz :
+          (CM (m + 2) u).submatrix (Fin.succAbove (1 : Fin (m + 2))) Fin.succ 0 i.succ = 0 := by
         simp only [submatrix_apply, CM_apply]
         have e0 : (Fin.succAbove (1 : Fin (m + 2))) 0 = 0 := rfl
         rw [e0]
         simp [Fin.ext_iff, Fin.val_succ]
-      rw [h1, mul_zero, zero_mul]
-    rw [hrest', add_zero]
+      rw [hz, mul_zero, zero_mul]
+    · simp
     have hC : ((CM (m + 2) u).submatrix (Fin.succAbove (1 : Fin (m + 2))) Fin.succ).submatrix
         Fin.succ (Fin.succAbove (0 : Fin (m + 1))) = CM m (fun i => u (i + 2)) := by
       ext i j
@@ -177,11 +172,13 @@ lemma det_CM_eq : ∀ (m : ℕ) (s : ℕ → ℤ) (u : ℕ → ℂ),
 /-- A complex square matrix is nilpotent iff its characteristic polynomial is `X ^ size`. -/
 lemma isNilpotent_iff_charpoly_matrix {m : ℕ} (A : Matrix (Fin m) (Fin m) ℂ) :
     IsNilpotent A ↔ A.charpoly = X ^ m := by
-  have h := LinearMap.isNilpotent_iff_charpoly (Matrix.toLin' A)
-  rw [Module.finrank_fintype_fun_eq_card, Fintype.card_fin, Matrix.charpoly_toLin'] at h
-  rw [← h]
-  exact (IsNilpotent.map_iff (f := Matrix.toLinAlgEquiv' (R := ℂ) (n := Fin m))
-    (Matrix.toLinAlgEquiv' (R := ℂ) (n := Fin m)).injective).symm
+  constructor
+  · intro h
+    simpa only [Fintype.card_fin, isNilpotent_iff_eq_zero, sub_eq_zero] using
+      A.isNilpotent_charpoly_sub_pow_of_isNilpotent h
+  · intro h
+    refine ⟨m, ?_⟩
+    simpa only [h, map_pow, aeval_X] using A.aeval_self_charpoly
 
 /-- `reflect m (E s m) = X ^ m` iff `Dv s m = 1`. -/
 lemma reflect_E_eq_iff (s : ℕ → ℤ) (m : ℕ) : reflect m (E s m) = X ^ m ↔ Dv s m = 1 := by
@@ -222,8 +219,8 @@ theorem T_nilpotent_iff {u : ℕ → ℂ} {m : ℕ}
   have hsu : ∀ i, i + 1 < m → (s i : ℂ) = u i ^ 2 := by
     intro i hi
     rcases hu i hi with h | h <;> simp [hs, h]
-  have hsign : IsSign s := by
-    intro i
+  have hsign : IsSign s m := by
+    intro i _
     by_cases h : u i = 1 <;> simp [hs, entrySign, h]
   rw [isNilpotent_iff_charpoly_matrix, Matrix.charpoly, charmatrix_T, det_CM_eq m s u hsu,
     reflect_E_eq_iff, corless hsign hm]
