@@ -17,9 +17,9 @@ public import LeanPool.TruthTableRigidity.Decode
 /-!
 # Baire measurable functions induce only the trivial automorphism
 
-Section 4 of the note: the coding lemma (Proposition 4.3) for Baire measurable functions,
-and its consequences (Remark 4.5): if both `π` and `π⁻¹` are induced by Baire measurable
-functions (in particular, by Borel functions), then `π` is the identity.
+Section 4 of the note: the global Baire-measurable variant of the coding lemma (Proposition 4.3),
+and its consequences: Proposition 4.5 gives a one-sided inequality.
+Remark 4.10 gives the Baire-measurable form of the two-sided rigidity in Proposition 4.9.
 -/
 
 @[expose] public section
@@ -35,9 +35,11 @@ Baire measurable `F : 2^ω → 2^ω` induces it. -/
 def InducedByBaireMeasurable (π : TTDegree ≃o TTDegree) : Prop :=
   ∃ F : Oracle → Oracle, BaireMeasurableFun F ∧ InducedBy π F
 
-/-- **Proposition 4.3 (Coding lemma).** If a Baire measurable `F` induces an automorphism of
+/-- **Global Baire-measurable variant of Proposition 4.3.**
+If a Baire measurable `F` induces an automorphism of
 the tt-degrees, then there is a nonempty open `U ⊆ 2^ω × 2^ω` such that for every `X`,
-`X ≤tt F(X) ⊕ F(G) ⊕ F(H)` for comeager many `(G, H) ∈ U`. -/
+`X ≤tt F(X) ⊕ F(G) ⊕ F(H)` for comeager many `(G, H) ∈ U`. The paper allows an inducing
+map on a dense `Gδ` domain and an arbitrary representative in place of `F(X)`. -/
 theorem coding_lemma {π : TTDegree ≃o TTDegree} {F : Oracle → Oracle}
     (hF : BaireMeasurableFun F) (hπ : InducedBy π F) :
     ∃ U : Set (Oracle × Oracle), IsOpen U ∧ U.Nonempty ∧ ∀ X : Oracle,
@@ -114,7 +116,8 @@ theorem coding_lemma {π : TTDegree ≃o TTDegree} {F : Oracle → Oracle}
   · exact k4
   · exact k5
 
-/-- If a Baire measurable `F` induces `π`, then `π⁻¹(z) ≤ z` for every degree `z`. -/
+/-- **Global Baire-measurable case of Proposition 4.5.** If a Baire measurable
+`F` induces `π`, then `π⁻¹(z) ≤ z` for every degree `z`. -/
 theorem symm_le_of_baireMeasurable {π : TTDegree ≃o TTDegree} {F : Oracle → Oracle}
     (hF : BaireMeasurableFun F) (hπ : InducedBy π F) (a : TTDegree) : π.symm a ≤ a := by
   have hP := hπ.inducesProperties
@@ -147,8 +150,8 @@ theorem le_apply_of_inducedByBaireMeasurable {π : TTDegree ≃o TTDegree}
   have := symm_le_of_baireMeasurable hF hπ (π a)
   rwa [OrderIso.symm_apply_apply] at this
 
-/-- **Remark 4.5.** If both `π` and `π⁻¹` are induced by Baire measurable functions, then `π`
-is the identity. -/
+/-- **Baire-measurable formulation in Remark 4.10.** If both `π` and `π⁻¹` are induced
+by Baire-measurable functions, then `π` is the identity. -/
 theorem eq_refl_of_inducedByBaireMeasurable {π : TTDegree ≃o TTDegree}
     (h : InducedByBaireMeasurable π) (h' : InducedByBaireMeasurable π.symm) :
     π = OrderIso.refl TTDegree := by
@@ -157,7 +160,7 @@ theorem eq_refl_of_inducedByBaireMeasurable {π : TTDegree ≃o TTDegree}
   have h2 := π.monotone (le_apply_of_inducedByBaireMeasurable h' a)
   rwa [OrderIso.apply_symm_apply] at h2
 
-/-- Under the hypotheses of Remark 4.5, a Baire measurable `F` inducing `π` satisfies
+/-- Under the hypotheses of Remark 4.10, a Baire measurable `F` inducing `π` satisfies
 `F(X) ≡tt X` for all `X`. -/
 theorem ttEquiv_of_inducedBy_baireMeasurable {π : TTDegree ≃o TTDegree} {F : Oracle → Oracle}
     (hF : BaireMeasurableFun F) (hπ : InducedBy π F) (h' : InducedByBaireMeasurable π.symm)
@@ -166,7 +169,7 @@ theorem ttEquiv_of_inducedBy_baireMeasurable {π : TTDegree ≃o TTDegree} {F : 
   rw [eq_refl_of_inducedByBaireMeasurable ⟨F, hF, hπ⟩ h'] at this
   exact ttDegree_eq_iff.mp this
 
-/-- **Borel case of Remark 4.5.** If `π` and `π⁻¹` are induced by Borel measurable functions,
+/-- **Borel case of Remark 4.10.** If `π` and `π⁻¹` are induced by Borel measurable functions,
 then `π` is the identity. -/
 theorem eq_refl_of_inducedByBorel_of_symm {π : TTDegree ≃o TTDegree} {F F' : Oracle → Oracle}
     (hF : Measurable F) (hπ : InducedBy π F) (hF' : Measurable F') (hπ' : InducedBy π.symm F') :

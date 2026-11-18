@@ -49,12 +49,13 @@ theorem InducedBy.nonconst_residual {π : TTDegree ≃o TTDegree} {F : Oracle �
     A₀))
   exact hZS (hsub Z hZD hZα)
 
-/-! ### Lemma 4.1 -/
+/-! ### A global-map variant of Lemma 4.1 -/
 
-/-- **Lemma 4.1.** Let `F` satisfy (M) and (J′) and be continuous on a dense `Gδ` set `D`.
+/-- **Global-map variant of Lemma 4.1.** Let `F` satisfy (M) and (J′) and be continuous
+on a dense `Gδ` set `D`.
 Then there are strings `α, β` of the same length and tt-functionals `Φ+, Φ−, Φ1/2` such that
 comeager many pairs in `N_α × N_β` satisfy the relations `(R+)`, `(R−)`, `(R1/2)` and have
-first coordinate in `D`. -/
+first coordinate in `D`. This formulation takes global monotonicity and join reductions. -/
 theorem lemma_4_1 {F : Oracle → Oracle} {D : Set Oracle} (hDG : IsGδ D) (hDd : Dense D)
     (hFD : ContinuousOn F D) (hmono : ∀ A B, TTReducible A B → TTReducible (F A) (F B))
     (hjoin : ∀ A B, TTReducible (F (ojoin A B)) (ojoin (F A) (F B))) :
@@ -100,28 +101,18 @@ theorem lemma_4_1 {F : Oracle → Oracle} {D : Set Oracle} (hDG : IsGδ D) (hDd 
     hFD.comp cN.continuousOn fun p hp => hp.1.2
   have cFD : ContinuousOn (fun p : Oracle × Oracle => F (fD p)) E₀ :=
     hFD.comp cD.continuousOn fun p hp => hp.2
-  have cj : ∀ {g h : Oracle × Oracle → Oracle}, ContinuousOn g E₀ → ContinuousOn h E₀ →
-      ContinuousOn (fun p => ojoin (g p) (h p)) E₀ := fun hg hh =>
-    continuous_ojoin.comp_continuousOn (hg.prodMk hh)
-  -- (R+)
-  obtain ⟨V₁, -, hV₁, hV₁ne, Φp, hp, hRp⟩ := uniformization_on hE₀G hE₀d isOpen_univ
-    Set.univ_nonempty cFA (cj cF1 cF2) (fun p _ _ =>
-      (hmono _ _ (red_plus p.1 p.2)).trans (hjoin _ _))
-  -- (R−)
-  obtain ⟨V₂, hV₂V, hV₂, hV₂ne, Φm, hm, hRm⟩ := uniformization_on hE₀G hE₀d hV₁ hV₁ne cF1
-    (cj cFA cFN) (fun p _ _ => (hmono _ _ (red_minus p.1 p.2)).trans (hjoin _ _))
-  -- (R1/2)
-  obtain ⟨V₃, hV₃V, hV₃, hV₃ne, Φh, hh, hRh⟩ := uniformization_on hE₀G hE₀d hV₂ hV₂ne cFA
-    (cj cF1 cFD) (fun p _ _ => (hmono _ _ (red_half p.1 p.2)).trans (hjoin _ _))
+  obtain ⟨V₃, -, hV₃, hV₃ne, Φp, Φm, Φh, hp, hm, hh, hR⟩ :=
+    uniformize_relations hE₀G hE₀d isOpen_univ Set.univ_nonempty cF1 cF2 cFA cFN cFD
+      hmono hjoin
   obtain ⟨⟨x, y⟩, hxy⟩ := hV₃ne
   obtain ⟨k, hk⟩ := exists_cyl_prod_subset hV₃ hxy
   refine ⟨pre x k, pre y k, by simp [length_pre], Φp, Φm, Φh, hp, hm, hh, ?_⟩
   filter_upwards [hE₀res] with p hpE h1 h2
   rw [mem_Ncyl_pre] at h1 h2
   have h3 : p ∈ V₃ := hk ⟨h1, h2⟩
-  refine ⟨⟨hRp p hpE (hV₂V (hV₃V h3)), hRm p hpE (hV₃V h3), hRh p hpE h3⟩, hpE.1.1.1.1⟩
+  refine ⟨hR p hpE h3, hpE.1.1.1.1⟩
 
-/-! ### Lemma 4.2 -/
+/-! ### The nonconstancy form of Lemma 4.2 -/
 
 theorem pre_succ (X : Oracle) (l : ℕ) : pre X (l + 1) = pre X l ++ [X l] := by
   simp [pre, List.range_succ]
@@ -138,8 +129,8 @@ theorem locally_const_bit {F : Oracle → Oracle} {D : Set Oracle}
   obtain ⟨k, hk⟩ := exists_cyl_subset hto hZ₀t
   exact ⟨k, fun Z hZD hZ => ht Z (hk hZ) hZD⟩
 
-/-- **Lemma 4.2.** A splitting bit for a function continuous on `D` and not constant on
-`D ∩ N_α`. -/
+/-- **Nonconstancy form of Lemma 4.2.** A splitting bit for a function continuous on `D`
+and nonconstant on `D ∩ N_α`. -/
 theorem lemma_4_2 {F : Oracle → Oracle} {D : Set Oracle} (hFD : ContinuousOn F D)
     {α : List Bool} (hnc : ∃ Z ∈ D, Z ∈ Ncyl α ∧ ∃ Z' ∈ D, Z' ∈ Ncyl α ∧ F Z ≠ F Z') :
     ∃ (j : ℕ) (b i : Bool) (σ q₁ : List Bool), α <+: σ ∧ σ ++ [!i] <+: q₁ ∧

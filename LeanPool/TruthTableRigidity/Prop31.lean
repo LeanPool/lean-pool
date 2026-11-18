@@ -81,6 +81,36 @@ theorem red_half (G H : Z2) : TTReducible (G + H : Z2) (ojoin G (G + (H + H) : Z
 
 /-! ### Step 1: uniform relations on a box -/
 
+/-- Uniformize the addition, subtraction and halving reductions on one open set. The
+five evaluations of `F` need only be continuous on the given dense `Gδ` set. -/
+theorem uniformize_relations {F : Oracle → Oracle} {E U : Set (Oracle × Oracle)}
+    (hEG : IsGδ E) (hEd : Dense E) (hU : IsOpen U) (hne : U.Nonempty)
+    (hfst : ContinuousOn (fun p : Oracle × Oracle => F p.1) E)
+    (hsnd : ContinuousOn (fun p : Oracle × Oracle => F p.2) E)
+    (hadd : ContinuousOn (fun p : Oracle × Oracle => F (zaddO p.1 p.2)) E)
+    (hneg : ContinuousOn (fun p : Oracle × Oracle => F (znegO p.2)) E)
+    (hdouble : ContinuousOn (fun p : Oracle × Oracle => F (zaddO p.1 (zaddO p.2 p.2))) E)
+    (hmono : ∀ A B, TTReducible A B → TTReducible (F A) (F B))
+    (hjoin : ∀ A B, TTReducible (F (ojoin A B)) (ojoin (F A) (F B))) :
+    ∃ V ⊆ U, IsOpen V ∧ V.Nonempty ∧
+      ∃ Φp Φm Φh : Oracle → Oracle, IsTTFunctional Φp ∧ IsTTFunctional Φm ∧
+        IsTTFunctional Φh ∧ ∀ p ∈ E, p ∈ V → Relations F Φp Φm Φh p.1 p.2 := by
+  have continuousOn_join {φ ψ : Oracle × Oracle → Oracle}
+      (hφ : ContinuousOn φ E) (hψ : ContinuousOn ψ E) :
+      ContinuousOn (fun p => ojoin (φ p) (ψ p)) E :=
+    continuous_ojoin.comp_continuousOn (hφ.prodMk hψ)
+  obtain ⟨V₁, hV₁U, hV₁, hV₁ne, Φp, hp, hRp⟩ := uniformization_on hEG hEd hU hne hadd
+    (continuousOn_join hfst hsnd) (fun p _ _ =>
+      (hmono _ _ (red_plus p.1 p.2)).trans (hjoin _ _))
+  obtain ⟨V₂, hV₂V₁, hV₂, hV₂ne, Φm, hm, hRm⟩ := uniformization_on hEG hEd hV₁ hV₁ne hfst
+    (continuousOn_join hadd hneg) (fun p _ _ =>
+      (hmono _ _ (red_minus p.1 p.2)).trans (hjoin _ _))
+  obtain ⟨V₃, hV₃V₂, hV₃, hV₃ne, Φh, hh, hRh⟩ := uniformization_on hEG hEd hV₂ hV₂ne hadd
+    (continuousOn_join hfst hdouble) (fun p _ _ =>
+      (hmono _ _ (red_half p.1 p.2)).trans (hjoin _ _))
+  exact ⟨V₃, hV₃V₂.trans (hV₂V₁.trans hV₁U), hV₃, hV₃ne, Φp, Φm, Φh, hp, hm, hh,
+    fun p hpE hpV => ⟨hRp p hpE (hV₂V₁ (hV₃V₂ hpV)), hRm p hpE (hV₃V₂ hpV), hRh p hpE hpV⟩⟩
+
 theorem step_relations {F : Oracle → Oracle} (hF : Continuous F) (hP : InducesProperties F)
     (ρ : List Bool) :
     ∃ α β : List Bool, ρ <+: α ∧ α.length = β.length ∧
@@ -99,18 +129,9 @@ theorem step_relations {F : Oracle → Oracle} (hF : Continuous F) (hP : Induces
     continuous_zaddO.comp₂ continuous_snd continuous_snd
   have cDbl : Continuous fun p : Oracle × Oracle => F (zaddO p.1 (zaddO p.2 p.2)) :=
     hF.comp' (continuous_zaddO.comp₂ continuous_fst cDouble)
-  -- (R+)
-  obtain ⟨V₁, hV₁U, hV₁, hV₁ne, Φp, hp, hRp⟩ := uniformization hU₀ hU₀ne cAdd
-    (continuous_ojoin.comp₂ cF1 cF2) (fun p _ =>
-      (hP.mono _ _ (red_plus p.1 p.2)).trans (hP.join _ _))
-  -- (R−)
-  obtain ⟨V₂, hV₂V, hV₂, hV₂ne, Φm, hm, hRm⟩ := uniformization hV₁ hV₁ne cF1
-    (continuous_ojoin.comp₂ cAdd cNeg) (fun p _ =>
-      (hP.mono _ _ (red_minus p.1 p.2)).trans (hP.join _ _))
-  -- (R1/2)
-  obtain ⟨V₃, hV₃V, hV₃, hV₃ne, Φh, hh, hRh⟩ := uniformization hV₂ hV₂ne cAdd
-    (continuous_ojoin.comp₂ cF1 cDbl) (fun p _ =>
-      (hP.mono _ _ (red_half p.1 p.2)).trans (hP.join _ _))
+  obtain ⟨V₃, hV₃U, hV₃, hV₃ne, Φp, Φm, Φh, hp, hm, hh, hR⟩ :=
+    uniformize_relations IsGδ.univ dense_univ hU₀ hU₀ne cF1.continuousOn cF2.continuousOn
+      cAdd.continuousOn cNeg.continuousOn cDbl.continuousOn hP.mono hP.join
   obtain ⟨⟨x, y⟩, hxy⟩ := hV₃ne
   obtain ⟨k₀, hk₀⟩ := exists_cyl_prod_subset hV₃ hxy
   set k := max k₀ ρ.length
@@ -118,20 +139,13 @@ theorem step_relations {F : Oracle → Oracle} (hF : Continuous F) (hP : Induces
     rw [Ncyl_pre, Ncyl_pre]
     exact fun p hp => hk₀ ⟨cyl_antitone x (le_max_left _ _) hp.1,
       cyl_antitone y (le_max_left _ _) hp.2⟩
-  have hxρ : x ∈ Ncyl ρ := (hV₁U (hV₂V (hV₃V hxy))).1
+  have hxρ : x ∈ Ncyl ρ := (hV₃U hxy).1
   refine ⟨pre x k, pre y k, ?_, by simp [length_pre], Φp, Φm, Φh, hp, hm, hh, ?_⟩
   · have : pre x ρ.length = ρ := hxρ
     rw [← this]
     exact pre_prefix x (le_max_right _ _)
   · intro G H hG hH
-    let point : Oracle × Oracle := (G, H)
-    have h3 : point ∈ V₃ := hbox ⟨hG, hH⟩
-    have h2 : point ∈ V₂ := hV₃V h3
-    have h1 : point ∈ V₁ := hV₂V h2
-    change F (zaddO G H) = Φp (ojoin (F G) (F H)) ∧
-      F G = Φm (ojoin (F (zaddO G H)) (F (znegO H))) ∧
-      F (zaddO G H) = Φh (ojoin (F G) (F (zaddO G (zaddO H H))))
-    exact ⟨hRp point h1, hRm point h2, hRh point h3⟩
+    exact hR (G, H) (Set.mem_univ _) (hbox ⟨hG, hH⟩)
 
 /-! ### Step 2: a splitting bit -/
 

@@ -17,8 +17,8 @@ public import LeanPool.TruthTableRigidity.Prop31
 /-!
 # Continuous functions induce only the trivial automorphism of the tt-degrees
 
-Theorem 1.3 of the paper: if an automorphism `π` of the truth-table degrees is
-induced by a continuous function `F : 2^ω → 2^ω`, then `π` is the identity.
+The rigidity conclusion of Theorem 1.3 in the paper says that an automorphism `π` of the
+truth-table degrees induced by a continuous function `F : 2^ω → 2^ω` is the identity.
 -/
 
 @[expose] public section
@@ -45,17 +45,8 @@ theorem prop_3_3 {π : TTDegree ≃o TTDegree} {F : Oracle → Oracle} (hF : Con
   have hcover : ⋃ t, C t = Set.univ := by
     apply Set.eq_univ_of_forall
     intro Z
-    obtain ⟨X, hX⟩ := ttDegree_surjective (π.symm (ttDegree Z))
-    have hFX : ttDegree (F X) = ttDegree Z := by rw [hπ, hX, OrderIso.apply_symm_apply]
-    obtain ⟨h1, h2⟩ := ttDegree_eq_iff.mp hFX
-    obtain ⟨Φ, hΦ, hΦZ⟩ := (hle X).trans h1
-    obtain ⟨Λ, hΛ, hΛZ⟩ := h2
-    obtain ⟨Λ', hΛ', hΛ'Z⟩ := h1
-    refine Set.mem_iUnion.mpr ⟨(⟨Φ, hΦ⟩, ⟨Λ, hΛ⟩, ⟨Λ', hΛ'⟩), ?_, ?_⟩
-    · change Λ (F (Φ Z)) = Z
-      rw [hΦZ, hΛZ]
-    · change Λ' Z = F (Φ Z)
-      rw [hΦZ, hΛ'Z]
+    obtain ⟨Φ, Λ, Λ', hΛ, hΛ'⟩ := hπ.exists_inverse_witness hle Z
+    exact Set.mem_iUnion.mpr ⟨(Φ, Λ, Λ'), hΛ, hΛ'⟩
   obtain ⟨t, Z₀, hZ₀⟩ := nonempty_interior_of_iUnion_of_closed hclosed hcover
   obtain ⟨k, hk⟩ := exists_cyl_subset isOpen_interior hZ₀
   set σ := pre Z₀ k
@@ -71,8 +62,8 @@ theorem prop_3_3 {π : TTDegree ≃o TTDegree} {F : Oracle → Oracle} (hF : Con
   rw [hπ] at e1
   rw [← e1, OrderIso.symm_apply_apply]
 
-/-- **Theorem 1.3.** An automorphism of the truth-table degrees which is induced by a
-continuous function `F : 2^ω → 2^ω` is the identity. -/
+/-- **Rigidity conclusion of Theorem 1.3.** An automorphism of the truth-table degrees
+induced by a continuous function `F : 2^ω → 2^ω` is the identity. -/
 theorem eq_refl_of_inducedByContinuous {π : TTDegree ≃o TTDegree}
     (h : InducedByContinuous π) : π = OrderIso.refl TTDegree := by
   obtain ⟨F, hF, hπ⟩ := h

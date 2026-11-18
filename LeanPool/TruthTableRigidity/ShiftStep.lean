@@ -41,6 +41,71 @@ theorem prep_rep_ge {m i : ℕ} (X : Oracle) (h : m ≤ i) :
 theorem lowZero_prep_rep (m : ℕ) (X : Oracle) : LowZero m (prep (List.replicate m false) X) :=
   fun _ hi => prep_rep_lt X hi
 
+/-- The 2-adic integer `2^l = 0^l⌢1⌢0^ω`. -/
+def zpow2 (l : ℕ) : Z2 := prep (List.replicate l false) (cons true zzero)
+
+theorem lowZero_zpow2 (l : ℕ) : LowZero l (zpow2 l) := lowZero_prep_rep l _
+
+theorem ttComputable_zpow2 (l : ℕ) : TTComputable (zpow2 l) :=
+  (ttComputable_const_false.apply (isTTFunctional_cons true)).apply (isTTFunctional_prep _)
+
+theorem zpow2_apply (l k : ℕ) : zpow2 l k = decide (k = l) := by
+  simp only [zpow2]
+  by_cases h : k < l
+  · rw [prep_rep_lt _ h]; simp; omega
+  · rw [prep_rep_ge _ (by omega)]
+    by_cases h' : k = l
+    · subst h'; simp [cons]
+    · simp [cons, show k - l ≠ 0 by omega, h', zzero]
+
+/-! ### Shifting the translations -/
+
+theorem prep_rep_apply_self (l : ℕ) (W : Oracle) : prep (List.replicate l false) W l = W 0 := by
+  rw [prep_rep_ge _ le_rfl, Nat.sub_self]
+
+theorem shift_prep_rep_succ (l : ℕ) (W : Oracle) :
+    shift (prep (List.replicate (l + 1) false) W) = prep (List.replicate l false) W := by
+  funext i
+  simp only [shift]
+  by_cases h : i < l
+  · rw [prep_rep_lt _ h, prep_rep_lt _ (by omega)]
+  · rw [prep_rep_ge _ (by omega), prep_rep_ge _ (by omega)]
+    congr 1; omega
+
+theorem prep_rep_succ_shift_of_false (l : ℕ) {W : Oracle} (hW : W 0 = false) :
+    prep (List.replicate (l + 1) false) (shift W) = prep (List.replicate l false) W := by
+  funext i
+  by_cases h : i < l
+  · rw [prep_rep_lt _ (by omega : i < l + 1), prep_rep_lt _ h]
+  · by_cases h' : i = l
+    · subst h'; rw [prep_rep_lt _ (by omega), prep_rep_ge _ le_rfl, Nat.sub_self, hW]
+    · rw [prep_rep_ge _ (by omega), prep_rep_ge _ (by omega)]
+      simp only [shift]; congr 1; omega
+
+theorem prep_rep_eq_add_of_true (l : ℕ) {W : Oracle} (hW : W 0 = true) :
+    Z2.of (prep (List.replicate l false) W) =
+      Z2.of (prep (List.replicate (l + 1) false) (shift W)) + zpow2 l := by
+  symm
+  rw [Z2.add_of_disjoint]
+  · funext i
+    simp only [zpow2, Z2.of_apply]
+    by_cases h : i < l
+    · rw [prep_rep_lt _ (by omega : i < l + 1), prep_rep_lt _ h, prep_rep_lt _ h]; rfl
+    · by_cases h' : i = l
+      · subst h'
+        rw [prep_rep_lt _ (by omega), prep_rep_ge _ le_rfl, prep_rep_ge _ le_rfl,
+          Nat.sub_self, hW]; rfl
+      · rw [prep_rep_ge _ (by omega), prep_rep_ge _ (by omega), prep_rep_ge _ (by omega)]
+        simp only [shift, cons, show i - l ≠ 0 by omega, ite_false, zzero, Bool.or_false]
+        congr 1; omega
+  · intro i
+    simp only [Z2.of_apply]
+    by_cases h' : i = l
+    · subst h'; exact Or.inl (lowZero_prep_rep (i + 1) _ i (by omega))
+    · right
+      rw [zpow2_apply]
+      simp [h']
+
 theorem prep_zzero_ge {τ : List Bool} {i : ℕ} (h : τ.length ≤ i) : prep τ zzero i = false := by
   rw [prep_ge _ _ h]; rfl
 
@@ -99,11 +164,10 @@ theorem shift_functional {F : Oracle → Oracle}
   -- the computable parameters
   let G : Z2 := prep τ zzero
   let H : Z2 := prep β zzero
-  let Y : Z2 := prep (List.replicate l false) (cons true zzero)
+  let Y := zpow2 l
   have hG : TTComputable G := ttComputable_prep τ
   have hH : TTComputable H := ttComputable_prep β
-  have hY : TTComputable Y :=
-    (ttComputable_const_false.apply (isTTFunctional_cons true)).apply (isTTFunctional_prep _)
+  have hY : TTComputable Y := ttComputable_zpow2 l
   have hP1 : TTComputable (F (H - Y)) := hC _ (hH.sub hY)
   have hP2 : TTComputable (F (-H)) := hC _ hH.neg
   have hP3 : TTComputable (F (G + (H + H))) := hC _ (hG.add (hH.add hH))
@@ -116,11 +180,8 @@ theorem shift_functional {F : Oracle → Oracle}
     hm.comp ((hp.comp (isTTFunctional_id.join (isTTFunctional_const hP1))).join
       (isTTFunctional_const hP2))
   let A' : Oracle → Oracle := fun A n => if A j = b then A n else Ψ₁ A n
-  have hA' : IsTTFunctional A' := by
-    have := (isTTFunctional_select j b).comp (isTTFunctional_id.join hΨ₁)
-    refine (show _ = A' from ?_) ▸ this
-    funext A n
-    simp only [Function.comp, id, ojoin_even, ojoin_odd, A']
+  have hA' : IsTTFunctional A' :=
+    isTTFunctional_id.ite_eq isTTFunctional_id hΨ₁ j b
   let Θ : Oracle → Oracle := fun A => Φm (ojoin (Φh (ojoin (A' A) P3)) P2)
   have hΘ : IsTTFunctional Θ :=
     hm.comp ((hh.comp (hA'.join (isTTFunctional_const hP3))).join (isTTFunctional_const hP2))
@@ -131,20 +192,14 @@ theorem shift_functional {F : Oracle → Oracle}
   let Th : Z2 := Z2.of (shift T')
   have hTl : LowZero l T := lowZero_prep_rep l W
   have hT'l : LowZero (l + 1) T' := lowZero_prep_rep (l + 1) _
-  have hYl : LowZero l Y := lowZero_prep_rep l _
+  have hYl : LowZero l Y := lowZero_zpow2 l
   have hThl : LowZero l Th := lowZero_shift hT'l
   have hThTh : Th + Th = T' := Z2.shift_add_shift (hT'l 0 (by omega))
   have hGT : G + T = prep τ W := prep_add_prep τ W
-  have hShift : shift T' = prep (List.replicate l false) (shift W) := by
-    funext i
-    simp only [shift, T']
-    by_cases h : i < l
-    · rw [prep_rep_lt _ h, prep_rep_lt _ (by omega)]
-    · rw [prep_rep_ge _ (by omega), prep_rep_ge _ (by omega)]
-      congr 1; omega
   have hGTh : G + Th = prep τ (shift W) := by
     change (Z2.of (prep τ zzero) + Z2.of (shift T') : Z2) = _
-    rw [hShift]; exact prep_add_prep τ (shift W)
+    rw [show shift T' = prep (List.replicate l false) (shift W) from shift_prep_rep_succ l _]
+    exact prep_add_prep τ (shift W)
   -- membership in the box
   have hGα : G ∈ Ncyl α := Ncyl_antitone hατ (prep_mem τ zzero)
   have hHβ : H ∈ Ncyl β := prep_mem β zzero
@@ -156,42 +211,12 @@ theorem shift_functional {F : Oracle → Oracle}
   have step1 : A' (F (prep τ W)) = F (G + T') := by
     cases hW : W 0 with
     | false =>
-      have hTT' : T' = T := by
-        funext i
-        simp only [T, T']
-        by_cases h : i < l
-        · rw [prep_rep_lt _ (by omega : i < l + 1), prep_rep_lt _ h]
-        · by_cases h' : i = l
-          · subst h'; rw [prep_rep_lt _ (by omega), prep_rep_ge _ le_rfl, Nat.sub_self, hW]
-          · rw [prep_rep_ge _ (by omega), prep_rep_ge _ (by omega)]
-            simp only [shift]; congr 1; omega
+      have hTT' : T' = T := prep_rep_succ_shift_of_false l hW
       funext n
       simp only [A', hsplit, hW, Bool.xor_false, ite_true]
       rw [hTT', hGT]
     | true =>
-      have hTY : T = T' + Y := by
-        symm
-        rw [Z2.add_of_disjoint]
-        · funext i
-          simp only [T, T', Y]
-          by_cases h : i < l
-          · rw [prep_rep_lt _ (by omega : i < l + 1), prep_rep_lt _ h, prep_rep_lt _ h]; rfl
-          · by_cases h' : i = l
-            · subst h'
-              rw [prep_rep_lt _ (by omega), prep_rep_ge _ le_rfl, prep_rep_ge _ le_rfl,
-                Nat.sub_self, hW]; rfl
-            · rw [prep_rep_ge _ (by omega), prep_rep_ge _ (by omega), prep_rep_ge _ (by omega)]
-              simp only [shift, cons, show i - l ≠ 0 by omega, ite_false, zzero, Bool.or_false]
-              congr 1; omega
-        · intro i
-          simp only [Y]
-          by_cases h' : i = l
-          · subst h'; exact Or.inl (hT'l _ (by omega))
-          · right
-            by_cases h : i < l
-            · exact prep_rep_lt _ h
-            · rw [prep_rep_ge _ (by omega)]
-              simp [cons, show i - l ≠ 0 by omega]; rfl
+      have hTY : T = T' + Y := prep_rep_eq_add_of_true l hW
       have hT' : T' = T - Y := by rw [hTY]; abel
       have hne : ¬ (F (prep τ W) j = b) := by rw [hsplit, hW]; simp
       have e1 : A' (F (prep τ W)) = Ψ₁ (F (prep τ W)) := by

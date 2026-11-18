@@ -22,22 +22,11 @@ public import LeanPool.TruthTableRigidity.Cantor
 
 @[expose] public section
 
+open Filter Topology
+
 namespace TT
 
 open OAI.TuringRigidity
-
-theorem isTTFunctional_evens : IsTTFunctional evens := by
-  refine isTTFunctional_of_use (u := fun n => 2 * n + 1) (t := fun n L => L.getD (2 * n) false)
-    (Primrec.succ.comp (Primrec.nat_mul.comp (Primrec.const 2) Primrec.id))
-    (getD_primrec.comp Primrec.snd (Primrec.nat_mul.comp (Primrec.const 2) Primrec.fst)) ?_
-  intro X n; rw [getD_pre X (by omega)]; rfl
-
-theorem isTTFunctional_odds : IsTTFunctional odds := by
-  refine isTTFunctional_of_use (u := fun n => 2 * n + 2) (t := fun n L => L.getD (2 * n + 1) false)
-    (Primrec.succ.comp (Primrec.succ.comp (Primrec.nat_mul.comp (Primrec.const 2) Primrec.id)))
-    (getD_primrec.comp Primrec.snd
-      (Primrec.succ.comp (Primrec.nat_mul.comp (Primrec.const 2) Primrec.fst))) ?_
-  intro X n; rw [getD_pre X (by omega)]; rfl
 
 theorem ttReducible_ojoin_left (A B : Oracle) : TTReducible A (ojoin A B) :=
   ⟨evens, isTTFunctional_evens, evens_ojoin A B⟩
@@ -132,32 +121,90 @@ theorem InducedBy.inducesProperties {π : TTDegree ≃o TTDegree} {F : Oracle �
     change TTReducible W (fun _ => false)
     rw [← ttDegree_le_iff, hdeg W, hdeg (fun _ => false)]
 
-/-! ### Uniformization by Baire category (Lemma 2.3) -/
+/-! ### Uniformization by Baire category (Lemma 2.4) -/
+
+/-- A countable family of closed sets covering `E ∩ U` contains a member that covers a
+nonempty open subset of `U` when `E` is dense `Gδ`. -/
+theorem exists_open_subset_of_closed_cover {B ι : Type*} [TopologicalSpace B] [BaireSpace B]
+    [Countable ι] [Nonempty ι] {E U : Set B} (hEG : IsGδ E) (hEd : Dense E)
+    (hU : IsOpen U) (hne : U.Nonempty) {K : ι → Set B} (hclosed : ∀ i, IsClosed (K i))
+    (hcover : ∀ x ∈ E, x ∈ U → ∃ i, x ∈ K i) :
+    ∃ i, ∃ V ⊆ U, IsOpen V ∧ V.Nonempty ∧ V ⊆ K i := by
+  let f : ι → Set B := fun i => K i ∪ Uᶜ
+  have hcov : E ⊆ ⋃ i, f i := by
+    intro x hxE
+    by_cases hx : x ∈ U
+    · obtain ⟨i, hi⟩ := hcover x hxE hx
+      exact Set.mem_iUnion.mpr ⟨i, Or.inl hi⟩
+    · exact Set.mem_iUnion.mpr ⟨Classical.arbitrary ι, Or.inr hx⟩
+  have hdense := hEG.dense_iUnion_interior_of_closed hEd
+    (fun i => (hclosed i).union hU.isClosed_compl) hcov
+  obtain ⟨x, hxU, hx⟩ := hdense.inter_open_nonempty U hU hne
+  obtain ⟨i, hxi⟩ := Set.mem_iUnion.mp hx
+  refine ⟨i, U ∩ interior (f i), Set.inter_subset_left, hU.inter isOpen_interior,
+    ⟨x, hxU, hxi⟩, fun y hy => ?_⟩
+  exact (interior_subset hy.2).resolve_right (fun h => h hy.1)
+
+/-- An equation between functions continuous on `E` defines a relatively closed subset. -/
+theorem eq_of_mem_closure {B : Type*} [TopologicalSpace B] {E : Set B} {f g : B → Oracle}
+    (hf : ContinuousOn f E) (hg : ContinuousOn g E) (Q : B → Prop) {y : B} (hy : y ∈ E)
+    (hcl : y ∈ closure {x | x ∈ E ∧ Q x ∧ f x = g x}) : f y = g y := by
+  by_contra hne
+  have hc : ContinuousWithinAt (fun z => (f z, g z)) E y := (hf y hy).prodMk (hg y hy)
+  have hopen : IsOpen {p : Oracle × Oracle | p.1 ≠ p.2} := isClosed_diagonal.isOpen_compl
+  have hev : ∀ᶠ z in 𝓝[E] y, f z ≠ g z :=
+    hc.eventually (hopen.mem_nhds (show (f y, g y).1 ≠ (f y, g y).2 from hne))
+  rw [eventually_nhdsWithin_iff] at hev
+  obtain ⟨z, hz1, hz2⟩ := (mem_closure_iff_frequently.mp hcl).and_eventually hev |>.exists
+  exact hz2 hz1.1 hz1.2.2
+
+/-- **Lemma 2.4, relative version.** Let `E` be a dense `Gδ` subset of a Baire space and let
+`φ, ψ` be continuous on `E` with `φ x ≤tt ψ x` for `x ∈ E ∩ U`.  Then a single tt-functional
+witnesses this on `E ∩ V` for some nonempty open `V ⊆ U`. -/
+theorem uniformization_on {B : Type*} [TopologicalSpace B] [BaireSpace B] {E U : Set B}
+    (hEG : IsGδ E) (hEd : Dense E) (hU : IsOpen U) (hne : U.Nonempty) {φ ψ : B → Oracle}
+    (hφ : ContinuousOn φ E) (hψ : ContinuousOn ψ E)
+    (h : ∀ x ∈ E, x ∈ U → TTReducible (φ x) (ψ x)) :
+    ∃ V ⊆ U, IsOpen V ∧ V.Nonempty ∧
+      ∃ Φ, IsTTFunctional Φ ∧ ∀ x ∈ E, x ∈ V → φ x = Φ (ψ x) := by
+  let S : {Φ : Oracle → Oracle // IsTTFunctional Φ} → Set B :=
+    fun Φ => {x | x ∈ E ∧ x ∈ U ∧ φ x = Φ.1 (ψ x)}
+  have : Nonempty {Φ : Oracle → Oracle // IsTTFunctional Φ} := ⟨⟨id, isTTFunctional_id⟩⟩
+  have hcover : ∀ x ∈ E, x ∈ U → ∃ Φ, x ∈ closure (S Φ) := by
+    intro x hxE hx
+    obtain ⟨Φ, hΦ, hx'⟩ := h x hxE hx
+    exact ⟨⟨Φ, hΦ⟩, subset_closure ⟨hxE, hx, hx'.symm⟩⟩
+  obtain ⟨Φ, V, hVU, hV, hVne, hVsub⟩ :=
+    exists_open_subset_of_closed_cover hEG hEd hU hne (fun _ => isClosed_closure) hcover
+  have hc : ContinuousOn (fun z => Φ.1 (ψ z)) E := Φ.2.continuous.comp_continuousOn hψ
+  exact ⟨V, hVU, hV, hVne, Φ.1, Φ.2, fun y hyE hy =>
+    eq_of_mem_closure hφ hc (· ∈ U) hyE (hVsub hy)⟩
 
 theorem uniformization {B : Type*} [TopologicalSpace B] [BaireSpace B] {U : Set B}
     (hU : IsOpen U) (hne : U.Nonempty) {φ ψ : B → Oracle} (hφ : Continuous φ)
     (hψ : Continuous ψ) (h : ∀ x ∈ U, TTReducible (φ x) (ψ x)) :
     ∃ V ⊆ U, IsOpen V ∧ V.Nonempty ∧
       ∃ Φ, IsTTFunctional Φ ∧ ∀ x ∈ V, φ x = Φ (ψ x) := by
-  let f : {Φ : Oracle → Oracle // IsTTFunctional Φ} → Set B :=
-    fun Φ => {x | φ x = Φ.1 (ψ x)} ∪ Uᶜ
-  have hclosed : ∀ Φ, IsClosed (f Φ) := fun Φ =>
-    (isClosed_eq hφ (Φ.2.continuous.comp hψ)).union hU.isClosed_compl
-  have hcover : ⋃ Φ, f Φ = Set.univ := by
-    apply Set.eq_univ_of_forall
-    intro x
-    by_cases hx : x ∈ U
-    · obtain ⟨Φ, hΦ, hx'⟩ := h x hx
-      exact Set.mem_iUnion.mpr ⟨⟨Φ, hΦ⟩, Or.inl hx'.symm⟩
-    · obtain ⟨Φ, hΦ⟩ : ∃ Φ : Oracle → Oracle, IsTTFunctional Φ := ⟨id, isTTFunctional_id⟩
-      exact Set.mem_iUnion.mpr ⟨⟨Φ, hΦ⟩, Or.inr hx⟩
-  have hdense := dense_iUnion_interior_of_closed hclosed hcover
-  obtain ⟨x, hxU, hx⟩ := hdense.inter_open_nonempty U hU hne
-  obtain ⟨Φ, hxΦ⟩ := Set.mem_iUnion.mp hx
-  refine ⟨U ∩ interior (f Φ), Set.inter_subset_left, hU.inter isOpen_interior, ⟨x, hxU, hxΦ⟩,
-    Φ.1, Φ.2, fun y hy => ?_⟩
-  rcases interior_subset hy.2 with hy' | hy'
-  · exact hy'
-  · exact absurd hy.1 hy'
+  obtain ⟨V, hVU, hV, hVne, Φ, hΦ, hEq⟩ := uniformization_on IsGδ.univ dense_univ hU hne
+    hφ.continuousOn hψ.continuousOn (fun x _ hx => h x hx)
+  exact ⟨V, hVU, hV, hVne, Φ, hΦ, fun x hx => hEq x (Set.mem_univ _) hx⟩
+
+/-- Given `X ≤tt F(X)`, every `Z` has a preimage up to truth-table equivalence of the
+form `Φ Z`, together with functional witnesses for both reductions. -/
+theorem InducedBy.exists_inverse_witness {π : TTDegree ≃o TTDegree} {F : Oracle → Oracle}
+    (hπ : InducedBy π F) (hle : ∀ X, TTReducible X (F X)) (Z : Oracle) :
+    ∃ Φ Λ Λ' : {Φ : Oracle → Oracle // IsTTFunctional Φ},
+      Λ.1 (F (Φ.1 Z)) = Z ∧ Λ'.1 Z = F (Φ.1 Z) := by
+  obtain ⟨X, hX⟩ := ttDegree_surjective (π.symm (ttDegree Z))
+  have hFX : ttDegree (F X) = ttDegree Z := by rw [hπ, hX, OrderIso.apply_symm_apply]
+  obtain ⟨h1, h2⟩ := ttDegree_eq_iff.mp hFX
+  obtain ⟨Φ, hΦ, hΦZ⟩ := (hle X).trans h1
+  obtain ⟨Λ, hΛ, hΛZ⟩ := h2
+  obtain ⟨Λ', hΛ', hΛ'Z⟩ := h1
+  refine ⟨⟨Φ, hΦ⟩, ⟨Λ, hΛ⟩, ⟨Λ', hΛ'⟩, ?_, ?_⟩
+  · change Λ (F (Φ Z)) = Z
+    rw [hΦZ, hΛZ]
+  · change Λ' Z = F (Φ Z)
+    rw [hΦZ, hΛ'Z]
 
 end TT

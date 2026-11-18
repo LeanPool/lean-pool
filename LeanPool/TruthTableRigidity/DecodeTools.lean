@@ -72,56 +72,13 @@ theorem isTTFunctional_someNe (N : ℕ) (b : Bool) :
     · have : pre Z N = List.replicate N b := h.mpr (by push Not at hc; exact hc)
       simp [hc, this]
 
-/-- Definition by cases on bit `j` of a tt-functional is a tt-functional. -/
-theorem IsTTFunctional.ite {C Φ Ψ : Oracle → Oracle} (hC : IsTTFunctional C)
-    (hΦ : IsTTFunctional Φ) (hΨ : IsTTFunctional Ψ) (j : ℕ) :
-    IsTTFunctional fun B n => if C B j = true then Φ B n else Ψ B n := by
-  have hsel : IsTTFunctional fun Q n =>
-      if Q (2 * j) = true then Q (2 * (2 * n) + 1) else Q (2 * (2 * n + 1) + 1) := by
-    refine isTTFunctional_of_use (u := fun n => 4 * n + 2 * j + 4)
-      (t := fun n L => if L.getD (2 * j) false = true then L.getD (4 * n + 1) false
-        else L.getD (4 * n + 3) false) ?_ ?_ ?_
-    · exact Primrec.nat_add.comp (Primrec.nat_add.comp
-        (Primrec.nat_mul.comp (Primrec.const 4) Primrec.id) (Primrec.const (2 * j)))
-        (Primrec.const 4)
-    · exact Primrec.ite (Primrec.eq.comp (getD_primrec.comp Primrec.snd (Primrec.const _))
-        (Primrec.const true))
-        (getD_primrec.comp Primrec.snd (Primrec.nat_add.comp
-          (Primrec.nat_mul.comp (Primrec.const 4) Primrec.fst) (Primrec.const 1)))
-        (getD_primrec.comp Primrec.snd (Primrec.nat_add.comp
-          (Primrec.nat_mul.comp (Primrec.const 4) Primrec.fst) (Primrec.const 3)))
-    · intro X n
-      rw [getD_pre X (by omega), getD_pre X (by omega), getD_pre X (by omega)]
-      congr 2 <;> ring_nf
-  have := hsel.comp (hC.join (hΦ.join hΨ))
-  convert this using 1
-  funext B n
-  simp only [Function.comp, ojoin_even, ojoin_odd]
-
 /-! ### 2-adic arithmetic -/
-
-/-- The 2-adic integer `2^l = 0^l⌢1⌢0^ω`. -/
-def zpow2 (l : ℕ) : Z2 := prep (List.replicate l false) (cons true zzero)
 
 /-- The 2-adic integer `0^l⌢S^m(X)`. -/
 def zseq (l : ℕ) (X : Oracle) (m : ℕ) : Z2 := prep (List.replicate l false) (shift^[m] X)
 
-theorem lowZero_zpow2 (l : ℕ) : LowZero l (zpow2 l) := lowZero_prep_rep l _
-
 theorem lowZero_zseq (l : ℕ) (X : Oracle) (m : ℕ) : LowZero l (zseq l X m) :=
   lowZero_prep_rep l _
-
-theorem ttComputable_zpow2 (l : ℕ) : TTComputable (zpow2 l) :=
-  (ttComputable_const_false.apply (isTTFunctional_cons true)).apply (isTTFunctional_prep _)
-
-theorem zpow2_apply (l k : ℕ) : zpow2 l k = decide (k = l) := by
-  simp only [zpow2]
-  by_cases h : k < l
-  · rw [prep_rep_lt _ h]; simp; omega
-  · rw [prep_rep_ge _ (by omega)]
-    by_cases h' : k = l
-    · subst h'; simp [cons]
-    · simp [cons, show k - l ≠ 0 by omega, h', zzero]
 
 theorem trunc_zpow2 (l k : ℕ) : trunc (zpow2 l) k = if l < k then 2 ^ l else 0 := by
   induction k with

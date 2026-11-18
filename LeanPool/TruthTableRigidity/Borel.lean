@@ -16,16 +16,16 @@ public import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
 public import LeanPool.TruthTableRigidity.BaireMain
 
 /-!
-# Borel functions induce only the trivial automorphism (Theorem 1.1)
+# Borel functions induce only the trivial automorphism (special case of Corollary 1.2)
 
 If a Borel function `F` induces `π`, then `X ≤tt F(X)` for all `X` (from the Baire measurable
 case).  Then we choose, Borel-ly, a preimage under `F` up to tt-equivalence: for each `Z`,
 take the first triple `(Φ, Λ, Λ')` of tt-functionals (in a fixed enumeration) with
 `Λ(F(Φ Z)) = Z` and `Λ'(Z) = F(Φ Z)`, and put `F'(Z) = Φ(Z)`.  This `F'` is Borel and induces
-`π⁻¹`, so Remark 4.5 applies.
+`π⁻¹`, so Remark 4.10 applies.
 
-This replaces the appeal to the Lusin–Novikov uniformization theorem in Section 4.5 of the
-note: the reduction `X ≤tt F(X)` makes the uniformization explicit.
+The least-witness selection gives an alternative proof for the Borel case. The proof of
+Corollary 1.2 in the paper instead applies Theorem 1.1 to a dense `Gδ` continuity set.
 -/
 
 @[expose] public section
@@ -52,16 +52,9 @@ theorem InducedByBorel.symm {π : TTDegree ≃o TTDegree} (h : InducedByBorel π
     (e n).2.1.1 (F ((e n).1.1 Z)) = Z ∧ (e n).2.2.1 Z = F ((e n).1.1 Z)
   have hcover : ∀ Z, ∃ n, p n Z := by
     intro Z
-    obtain ⟨X, hX⟩ := ttDegree_surjective (π.symm (ttDegree Z))
-    have hFX : ttDegree (F X) = ttDegree Z := by rw [hπ, hX, OrderIso.apply_symm_apply]
-    obtain ⟨h1, h2⟩ := ttDegree_eq_iff.mp hFX
-    obtain ⟨Φ, hΦ, hΦZ⟩ := (hle X).trans h1
-    obtain ⟨Λ, hΛ, hΛZ⟩ := h2
-    obtain ⟨Λ', hΛ', hΛ'Z⟩ := h1
-    obtain ⟨n, hn⟩ := he (⟨Φ, hΦ⟩, ⟨Λ, hΛ⟩, ⟨Λ', hΛ'⟩)
-    refine ⟨n, ?_, ?_⟩
-    · rw [hn]; change Λ (F (Φ Z)) = Z; rw [hΦZ, hΛZ]
-    · rw [hn]; change Λ' Z = F (Φ Z); rw [hΦZ, hΛ'Z]
+    obtain ⟨Φ, Λ, Λ', hΛ, hΛ'⟩ := hπ.exists_inverse_witness hle Z
+    obtain ⟨n, hn⟩ := he (Φ, Λ, Λ')
+    exact ⟨n, by simpa only [p, hn] using And.intro hΛ hΛ'⟩
   have hmeas : ∀ n, MeasurableSet {Z | p n Z} := by
     intro n
     have c1 : Measurable fun Z => F ((e n).1.1 Z) := hF.comp (e n).1.2.continuous.measurable

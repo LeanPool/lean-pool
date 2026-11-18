@@ -22,7 +22,7 @@ Topological preliminaries for the Baire measurable case (Section 4 of the note):
 
 * `BaireMeasurableFun F`: preimages of open sets have the Baire property;
 * a Baire measurable `F` is continuous on a dense `Gδ` set (Kechris 8.38);
-* uniformization on a dense `Gδ` subset (Lemma 2.3, relative version);
+* uniformization on a dense `Gδ` subset (Lemma 2.4, relative version);
 * removing the parameters (Lemma 4.4);
 * translations and shears of `2^ω × 2^ω` preserve comeager sets.
 -/
@@ -68,51 +68,6 @@ theorem BaireMeasurableFun.exists_continuousOn {F : Oracle → Oracle}
   filter_upwards [(hu1 s hs).mem_nhds hxu] with z hz hzD
   exact ((hDR hzD) s hs).mpr hz
 
-/-! ### Uniformization on a dense `Gδ` set -/
-
-/-- An equation between functions continuous on `E` defines a relatively closed subset. -/
-theorem eq_of_mem_closure {B : Type*} [TopologicalSpace B] {E : Set B} {f g : B → Oracle}
-    (hf : ContinuousOn f E) (hg : ContinuousOn g E) (Q : B → Prop) {y : B} (hy : y ∈ E)
-    (hcl : y ∈ closure {x | x ∈ E ∧ Q x ∧ f x = g x}) : f y = g y := by
-  by_contra hne
-  have hc : ContinuousWithinAt (fun z => (f z, g z)) E y := (hf y hy).prodMk (hg y hy)
-  have hopen : IsOpen {p : Oracle × Oracle | p.1 ≠ p.2} := isClosed_diagonal.isOpen_compl
-  have hev : ∀ᶠ z in 𝓝[E] y, f z ≠ g z :=
-    hc.eventually (hopen.mem_nhds (show (f y, g y).1 ≠ (f y, g y).2 from hne))
-  rw [eventually_nhdsWithin_iff] at hev
-  obtain ⟨z, hz1, hz2⟩ := (mem_closure_iff_frequently.mp hcl).and_eventually hev |>.exists
-  exact hz2 hz1.1 hz1.2.2
-
-/-- **Lemma 2.3, relative version.** Let `E` be a dense `Gδ` subset of a Baire space and let
-`φ, ψ` be continuous on `E` with `φ x ≤tt ψ x` for `x ∈ E ∩ U`.  Then a single tt-functional
-witnesses this on `E ∩ V` for some nonempty open `V ⊆ U`. -/
-theorem uniformization_on {B : Type*} [TopologicalSpace B] [BaireSpace B] {E U : Set B}
-    (hEG : IsGδ E) (hEd : Dense E) (hU : IsOpen U) (hne : U.Nonempty) {φ ψ : B → Oracle}
-    (hφ : ContinuousOn φ E) (hψ : ContinuousOn ψ E)
-    (h : ∀ x ∈ E, x ∈ U → TTReducible (φ x) (ψ x)) :
-    ∃ V ⊆ U, IsOpen V ∧ V.Nonempty ∧
-      ∃ Φ, IsTTFunctional Φ ∧ ∀ x ∈ E, x ∈ V → φ x = Φ (ψ x) := by
-  let S : {Φ : Oracle → Oracle // IsTTFunctional Φ} → Set B :=
-    fun Φ => {x | x ∈ E ∧ x ∈ U ∧ φ x = Φ.1 (ψ x)}
-  let f : {Φ : Oracle → Oracle // IsTTFunctional Φ} → Set B := fun Φ => closure (S Φ) ∪ Uᶜ
-  have hclosed : ∀ Φ, IsClosed (f Φ) := fun Φ => isClosed_closure.union hU.isClosed_compl
-  have hcover : E ⊆ ⋃ Φ, f Φ := by
-    intro x hxE
-    by_cases hx : x ∈ U
-    · obtain ⟨Φ, hΦ, hx'⟩ := h x hxE hx
-      exact Set.mem_iUnion.mpr ⟨⟨Φ, hΦ⟩, Or.inl (subset_closure ⟨hxE, hx, hx'.symm⟩)⟩
-    · exact Set.mem_iUnion.mpr ⟨⟨id, isTTFunctional_id⟩, Or.inr hx⟩
-  have hdense := hEG.dense_iUnion_interior_of_closed hEd hclosed hcover
-  obtain ⟨x, hxU, hx⟩ := hdense.inter_open_nonempty U hU hne
-  obtain ⟨Φ, hxΦ⟩ := Set.mem_iUnion.mp hx
-  refine ⟨U ∩ interior (f Φ), Set.inter_subset_left, hU.inter isOpen_interior, ⟨x, hxU, hxΦ⟩,
-    Φ.1, Φ.2, fun y hyE hy => ?_⟩
-  rcases interior_subset hy.2 with hy' | hy'
-  · have hc : ContinuousOn (fun z => Φ.1 (ψ z)) E :=
-      Φ.2.continuous.comp_continuousOn hψ
-    exact eq_of_mem_closure hφ hc (· ∈ U) hyE hy'
-  · exact absurd hy.1 hy'
-
 /-! ### Removing the parameters (Lemma 4.4) -/
 
 theorem exists_box_subset {U : Set (Oracle × Oracle)} (hU : IsOpen U) (hne : U.Nonempty) :
@@ -128,30 +83,25 @@ theorem remove_parameters {U : Set (Oracle × Oracle)} (hU : IsOpen U) (hne : U.
     (h : ∀ᶠ p in residual (Oracle × Oracle), p ∈ U → TTReducible A (ojoin X (ojoin p.1 p.2))) :
     TTReducible A X := by
   obtain ⟨E, hEh, hEG, hEd⟩ := mem_residual.mp h
-  let f : {Φ : Oracle → Oracle // IsTTFunctional Φ} → Set (Oracle × Oracle) :=
-    fun Φ => {p | A = Φ.1 (ojoin X (ojoin p.1 p.2))} ∪ Uᶜ
+  let K (Φ : {Φ : Oracle → Oracle // IsTTFunctional Φ}) : Set (Oracle × Oracle) :=
+    {p | A = Φ.1 (ojoin X (ojoin p.1 p.2))}
   have hcont : Continuous fun p : Oracle × Oracle => ojoin X (ojoin p.1 p.2) :=
     continuous_ojoin.comp (continuous_const.prodMk continuous_ojoin)
-  have hclosed : ∀ Φ, IsClosed (f Φ) := fun Φ =>
-    (isClosed_eq continuous_const (Φ.2.continuous.comp hcont)).union hU.isClosed_compl
-  have hcover : E ⊆ ⋃ Φ, f Φ := by
-    intro p hpE
-    by_cases hp : p ∈ U
-    · obtain ⟨Φ, hΦ, hp'⟩ := hEh hpE hp
-      exact Set.mem_iUnion.mpr ⟨⟨Φ, hΦ⟩, Or.inl hp'.symm⟩
-    · exact Set.mem_iUnion.mpr ⟨⟨id, isTTFunctional_id⟩, Or.inr hp⟩
-  have hdense := hEG.dense_iUnion_interior_of_closed hEd hclosed hcover
-  obtain ⟨x, hxU, hx⟩ := hdense.inter_open_nonempty U hU hne
-  obtain ⟨Φ, hxΦ⟩ := Set.mem_iUnion.mp hx
-  obtain ⟨γ, δ, hγδ⟩ := exists_box_subset (hU.inter isOpen_interior) ⟨x, hxU, hxΦ⟩
-  have hmem := hγδ (show (prep γ zzero, prep δ zzero) ∈ Ncyl γ ×ˢ Ncyl δ from
-    ⟨prep_mem γ zzero, prep_mem δ zzero⟩)
-  rcases interior_subset hmem.2 with h1 | h1
-  · have h1 : A = Φ.1 (ojoin X (ojoin (prep γ zzero) (prep δ zzero))) := h1
-    refine ⟨fun Z => Φ.1 (ojoin Z (ojoin (prep γ zzero) (prep δ zzero))),
-      Φ.2.comp (isTTFunctional_id.join (isTTFunctional_const
-        (ojoin_ttReducible (ttComputable_prep γ) (ttComputable_prep δ)))), h1.symm⟩
-  · exact absurd hmem.1 h1
+  have hclosed : ∀ Φ, IsClosed (K Φ) := fun Φ =>
+    isClosed_eq continuous_const (Φ.2.continuous.comp hcont)
+  have hcover : ∀ p ∈ E, p ∈ U → ∃ Φ, p ∈ K Φ := by
+    intro p hpE hpU
+    obtain ⟨Φ, hΦ, hp⟩ := hEh hpE hpU
+    exact ⟨⟨Φ, hΦ⟩, hp.symm⟩
+  have : Nonempty {Φ : Oracle → Oracle // IsTTFunctional Φ} := ⟨⟨id, isTTFunctional_id⟩⟩
+  obtain ⟨Φ, V, -, hV, hVne, hVK⟩ :=
+    exists_open_subset_of_closed_cover hEG hEd hU hne hclosed hcover
+  obtain ⟨γ, δ, hγδ⟩ := exists_box_subset hV hVne
+  have hmem : (prep γ zzero, prep δ zzero) ∈ V := hγδ ⟨prep_mem γ zzero, prep_mem δ zzero⟩
+  have hEq : A = Φ.1 (ojoin X (ojoin (prep γ zzero) (prep δ zzero))) := hVK hmem
+  exact ⟨fun Z => Φ.1 (ojoin Z (ojoin (prep γ zzero) (prep δ zzero))),
+    Φ.2.comp (isTTFunctional_id.join (isTTFunctional_const
+      (ojoin_ttReducible (ttComputable_prep γ) (ttComputable_prep δ)))), hEq.symm⟩
 
 /-! ### Comeager sets and countable sets -/
 

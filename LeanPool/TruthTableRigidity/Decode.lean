@@ -28,54 +28,6 @@ namespace TT
 
 open OAI.TuringRigidity
 
-/-! ### Shifting the translations -/
-
-theorem prep_rep_apply_self (l : ℕ) (W : Oracle) : prep (List.replicate l false) W l = W 0 := by
-  rw [prep_rep_ge _ le_rfl, Nat.sub_self]
-
-theorem shift_prep_rep_succ (l : ℕ) (W : Oracle) :
-    shift (prep (List.replicate (l + 1) false) W) = prep (List.replicate l false) W := by
-  funext i
-  simp only [shift]
-  by_cases h : i < l
-  · rw [prep_rep_lt _ h, prep_rep_lt _ (by omega)]
-  · rw [prep_rep_ge _ (by omega), prep_rep_ge _ (by omega)]
-    congr 1; omega
-
-theorem prep_rep_succ_shift_of_false (l : ℕ) {W : Oracle} (hW : W 0 = false) :
-    prep (List.replicate (l + 1) false) (shift W) = prep (List.replicate l false) W := by
-  funext i
-  by_cases h : i < l
-  · rw [prep_rep_lt _ (by omega : i < l + 1), prep_rep_lt _ h]
-  · by_cases h' : i = l
-    · subst h'; rw [prep_rep_lt _ (by omega), prep_rep_ge _ le_rfl, Nat.sub_self, hW]
-    · rw [prep_rep_ge _ (by omega), prep_rep_ge _ (by omega)]
-      simp only [shift]; congr 1; omega
-
-theorem prep_rep_eq_add_of_true (l : ℕ) {W : Oracle} (hW : W 0 = true) :
-    Z2.of (prep (List.replicate l false) W) =
-      Z2.of (prep (List.replicate (l + 1) false) (shift W)) + zpow2 l := by
-  symm
-  rw [Z2.add_of_disjoint]
-  · funext i
-    simp only [zpow2, Z2.of_apply]
-    by_cases h : i < l
-    · rw [prep_rep_lt _ (by omega : i < l + 1), prep_rep_lt _ h, prep_rep_lt _ h]; rfl
-    · by_cases h' : i = l
-      · subst h'
-        rw [prep_rep_lt _ (by omega), prep_rep_ge _ le_rfl, prep_rep_ge _ le_rfl,
-          Nat.sub_self, hW]; rfl
-      · rw [prep_rep_ge _ (by omega), prep_rep_ge _ (by omega), prep_rep_ge _ (by omega)]
-        simp only [shift, cons, show i - l ≠ 0 by omega, ite_false, zzero, Bool.or_false]
-        congr 1; omega
-  · intro i
-    simp only [Z2.of_apply]
-    by_cases h' : i = l
-    · subst h'; exact Or.inl (lowZero_prep_rep (i + 1) _ i (by omega))
-    · right
-      rw [zpow2_apply]
-      simp [h']
-
 theorem ojoin_evens_odds (B : Oracle) : ojoin (evens B) (odds B) = B := by
   funext n
   simp only [ojoin, evens, odds]

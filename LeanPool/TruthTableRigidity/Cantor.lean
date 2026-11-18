@@ -205,22 +205,6 @@ theorem isTTFunctional_xor (b : Bool) : IsTTFunctional fun X n => xor b (X n) :=
   · exact (Primrec.dom_bool₂ xor).comp (Primrec.const b) (getD_primrec.comp Primrec.snd Primrec.fst)
   · intro X n; rw [getD_pre X (by omega)]
 
-/-- Selecting, according to bit `2j` of the argument, the even or the odd half. -/
-theorem isTTFunctional_select (j : ℕ) (b : Bool) :
-    IsTTFunctional fun B n => if B (2 * j) = b then B (2 * n) else B (2 * n + 1) := by
-  refine isTTFunctional_of_use (u := fun n => 2 * n + 2 * j + 2)
-    (t := fun n L => if L.getD (2 * j) false = b then L.getD (2 * n) false
-      else L.getD (2 * n + 1) false) ?_ ?_ ?_
-  · exact Primrec.succ.comp (Primrec.succ.comp (Primrec.nat_add.comp
-      (Primrec.nat_mul.comp (Primrec.const 2) Primrec.id) (Primrec.const (2 * j))))
-  · exact Primrec.ite (Primrec.eq.comp (getD_primrec.comp Primrec.snd (Primrec.const _))
-      (Primrec.const b))
-      (getD_primrec.comp Primrec.snd (Primrec.nat_mul.comp (Primrec.const 2) Primrec.fst))
-      (getD_primrec.comp Primrec.snd (Primrec.succ.comp
-        (Primrec.nat_mul.comp (Primrec.const 2) Primrec.fst)))
-  · intro X n
-    rw [getD_pre X (by omega), getD_pre X (by omega), getD_pre X (by omega)]
-
 /-- `val L = ∑ L[i] 2^i`. -/
 def val (L : List Bool) : ℕ := L.foldr (fun b s => bv b + 2 * s) 0
 
@@ -268,6 +252,56 @@ theorem oddsL_primrec : Primrec₂ oddsL :=
 def evens (A : Oracle) : Oracle := fun n => A (2 * n)
 /-- The odd half of an oracle. -/
 def odds (A : Oracle) : Oracle := fun n => A (2 * n + 1)
+
+theorem isTTFunctional_evens : IsTTFunctional evens := by
+  refine isTTFunctional_of_use (u := fun n => 2 * n + 1) (t := fun n L => L.getD (2 * n) false)
+    (Primrec.succ.comp (Primrec.nat_mul.comp (Primrec.const 2) Primrec.id))
+    (getD_primrec.comp Primrec.snd (Primrec.nat_mul.comp (Primrec.const 2) Primrec.fst)) ?_
+  intro X n; rw [getD_pre X (by omega)]; rfl
+
+theorem isTTFunctional_odds : IsTTFunctional odds := by
+  refine isTTFunctional_of_use (u := fun n => 2 * n + 2) (t := fun n L => L.getD (2 * n + 1) false)
+    (Primrec.succ.comp (Primrec.succ.comp (Primrec.nat_mul.comp (Primrec.const 2) Primrec.id)))
+    (getD_primrec.comp Primrec.snd
+      (Primrec.succ.comp (Primrec.nat_mul.comp (Primrec.const 2) Primrec.fst))) ?_
+  intro X n; rw [getD_pre X (by omega)]; rfl
+
+/-- Definition by cases on bit `j` of a tt-functional is a tt-functional. -/
+theorem IsTTFunctional.ite_eq {C Φ Ψ : Oracle → Oracle} (hC : IsTTFunctional C)
+    (hΦ : IsTTFunctional Φ) (hΨ : IsTTFunctional Ψ) (j : ℕ) (b : Bool) :
+    IsTTFunctional fun B n => if C B j = b then Φ B n else Ψ B n := by
+  have hsel : IsTTFunctional fun Q n =>
+      if Q (2 * j) = b then Q (2 * (2 * n) + 1) else Q (2 * (2 * n + 1) + 1) := by
+    refine isTTFunctional_of_use (u := fun n => 4 * n + 2 * j + 4)
+      (t := fun n L => if L.getD (2 * j) false = b then L.getD (4 * n + 1) false
+        else L.getD (4 * n + 3) false) ?_ ?_ ?_
+    · exact Primrec.nat_add.comp (Primrec.nat_add.comp
+        (Primrec.nat_mul.comp (Primrec.const 4) Primrec.id) (Primrec.const (2 * j)))
+        (Primrec.const 4)
+    · exact Primrec.ite (Primrec.eq.comp (getD_primrec.comp Primrec.snd (Primrec.const _))
+        (Primrec.const b))
+        (getD_primrec.comp Primrec.snd (Primrec.nat_add.comp
+          (Primrec.nat_mul.comp (Primrec.const 4) Primrec.fst) (Primrec.const 1)))
+        (getD_primrec.comp Primrec.snd (Primrec.nat_add.comp
+          (Primrec.nat_mul.comp (Primrec.const 4) Primrec.fst) (Primrec.const 3)))
+    · intro X n
+      rw [getD_pre X (by omega), getD_pre X (by omega), getD_pre X (by omega)]
+      congr 2 <;> omega
+  have := hsel.comp (hC.join (hΦ.join hΨ))
+  convert this using 1
+  funext B n
+  simp only [Function.comp, ojoin_even, ojoin_odd]
+
+/-- Definition by cases on the truth of a bit of a tt-functional. -/
+theorem IsTTFunctional.ite {C Φ Ψ : Oracle → Oracle} (hC : IsTTFunctional C)
+    (hΦ : IsTTFunctional Φ) (hΨ : IsTTFunctional Ψ) (j : ℕ) :
+    IsTTFunctional fun B n => if C B j = true then Φ B n else Ψ B n :=
+  hC.ite_eq hΦ hΨ j true
+
+/-- Selecting, according to bit `2j` of the argument, the even or the odd half. -/
+theorem isTTFunctional_select (j : ℕ) (b : Bool) :
+    IsTTFunctional fun B n => if B (2 * j) = b then B (2 * n) else B (2 * n + 1) :=
+  isTTFunctional_evens.ite_eq isTTFunctional_evens isTTFunctional_odds j b
 
 @[simp] theorem evens_ojoin (A B : Oracle) : evens (ojoin A B) = A := by
   funext n; exact ojoin_even A B n
