@@ -184,9 +184,9 @@ lemma norm_integral_le_eLpNorm_one_toReal
     (g : Ω → ℝ) :
     ‖∫ ω : Ω, g ω ∂μ‖ ≤ (eLpNorm g 1 μ).toReal := by
   by_cases hg : AEStronglyMeasurable g μ
-  · rw [eLpNorm_eq_lintegral_rpow_enorm_toReal _ _ hg] <;> norm_num
+  · rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal _ _ hg] <;> norm_num
     convert! norm_integral_le_lintegral_norm g using 1
-    norm_num [Real.enorm_eq_ofReal_abs]
+    norm_num [Real.eNorm_eq_ofReal_abs]
   · rw [integral_non_aestronglyMeasurable hg, norm_zero]
     exact ENNReal.toReal_nonneg
 

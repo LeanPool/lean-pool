@@ -130,7 +130,7 @@ lemma eLpNorm_one_ofReal_eq_measure_univ_rpow_inv
     {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω)
     {p α : ℝ} (hp : 0 < p) (hα : 0 < α) :
     eLpNorm ↓(1 : ℝ) ↱(p / α) μ = (μ ⊤) ^ (α / p) := by
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal] <;> norm_num [hp, hα, div_eq_mul_inv,
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal] <;> norm_num [hp, hα, div_eq_mul_inv,
     aestronglyMeasurable_const]
   rw [ENNReal.toReal_ofReal (by positivity), inv_eq_one_div, div_eq_mul_inv]
   norm_num [mul_comm]
@@ -229,7 +229,7 @@ theorem locally_integralLpNorm_difference_le
                 rw [le_div_iff₀] at h1q <;> nlinarith
               ) hu.aestronglyMeasurable hv.aestronglyMeasurable hR huR hvR
             ) ↱C using 1
-        · simpa only [Pi.smul_def, smul_eq_mul, Real.enorm_of_nonneg hC.le] using
+        · simpa only [Pi.smul_def, smul_eq_mul, Real.eNorm_of_nonneg hC.le] using
             eLpNorm_const_smul C (fun ω => 1 + ‖u ω‖ ^ α + ‖v ω‖ ^ α) ↱(p / α) μ
         · rw [ENNReal.ofReal_mul hC.le]
       · exact (eLpNorm_norm (u - v)
@@ -250,7 +250,7 @@ theorem locally_integralLpNorm_difference_le
     · exact h3C.mono fun ω hω => hω.trans (le_abs_self _)
     · rw [show (fun ω => 3 * C * ‖(u - v) ω‖) =
           (3 * C) • (fun ω => ‖(u - v) ω‖) from rfl,
-        eLpNorm_const_smul, Real.enorm_of_nonneg (by positivity),
+        eLpNorm_const_smul, Real.eNorm_of_nonneg (by positivity),
         eLpNorm_norm (u - v) (hu.aestronglyMeasurable.sub hv.aestronglyMeasurable)]
 
 theorem locally_integralLpNorm_difference_le_real
