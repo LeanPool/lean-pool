@@ -80,12 +80,13 @@ theorem ginibreFull_smoothCompact_memLp (n : ℕ) (hn : 0 < n)
   exact ⟨hf.continuous.memLp_of_hasCompactSupport hc,
     (continuous_ginibreEuclideanGradient f hf).memLp_of_hasCompactSupport hgc⟩
 
-/-- Every smooth compact symmetric observable is represented by an actual
-symmetric ordinary distributional weak pair. -/
-theorem ginibreFull_smoothCompact_symmetric_pair (n : ℕ) (hn : 0 < n)
+/-- The actual weighted value-gradient pair of a smooth compact symmetric observable. -/
+def ginibreFullSmoothCompactWeakPair (n : ℕ) (hn : 0 < n)
     (f : Configuration n → ℝ) (hf : IsSmoothCompactSymmetric f) :
-    ∃ p : ginibreFullWeakSpace n hn, (p.val.1 : Configuration n → ℝ) =ᵐ[ginibreMeasure n] f := by
-  obtain ⟨hmv, hmg⟩ := ginibreFull_smoothCompact_memLp n hn f hf.1 hf.2.1
+    ginibreFullWeakSpace n hn := by
+  let hmem := ginibreFull_smoothCompact_memLp n hn f hf.1 hf.2.1
+  let hmv := hmem.1
+  let hmg := hmem.2
   let u := hmv.toLp f
   let g := hmg.toLp (ginibreEuclideanGradient f)
   have hweak := ginibre_smooth_distributional_gradient n hn u g f hf.1 hmv.coeFn_toLp hmg.coeFn_toLp
@@ -107,7 +108,15 @@ theorem ginibreFull_smoothCompact_symmetric_pair (n : ℕ) (hn : 0 < n)
       rw [hp, hc, hg]
       have heq : (fun y => f (permute σ y)) = f := funext (hf.2.2 σ)
       rw [← ginibreEuclideanGradient_comp_permute σ f hf.1 z, heq]
-  exact ⟨⟨(u, g), hweak, hsym⟩, hmv.coeFn_toLp⟩
+  exact ⟨(u, g), hweak, hsym⟩
+
+/-- Every smooth compact symmetric observable is represented by an actual
+symmetric ordinary distributional weak pair. -/
+theorem ginibreFull_smoothCompact_symmetric_pair (n : ℕ) (hn : 0 < n)
+    (f : Configuration n → ℝ) (hf : IsSmoothCompactSymmetric f) :
+    ∃ p : ginibreFullWeakSpace n hn, (p.val.1 : Configuration n → ℝ) =ᵐ[ginibreMeasure n] f :=
+  ⟨ginibreFullSmoothCompactWeakPair n hn f hf,
+    (ginibreFull_smoothCompact_memLp n hn f hf.1 hf.2.1).1.coeFn_toLp⟩
 
 /-- The Reynolds average preserves pairing with every symmetric L² value. -/
 theorem ginibreFullSymmetricValues_inner_average (n : ℕ)

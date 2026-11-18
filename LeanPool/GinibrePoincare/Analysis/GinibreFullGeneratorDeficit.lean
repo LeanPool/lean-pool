@@ -34,6 +34,7 @@ module
 
 public import LeanPool.GinibrePoincare.Analysis.GinibreEqualityWeakDeficit
 public import LeanPool.GinibrePoincare.Analysis.GinibreFullGeneratorVariational
+public import LeanPool.GinibrePoincare.Analysis.GinibreSymmetricWeakPoincare
 
 /-! # Deficits from the variational generator graph
 
@@ -50,6 +51,32 @@ Graph membership supplies both weak differentiability and summability.
 noncomputable section
 namespace GinibrePoincare
 open MeasureTheory
+
+/-- The actual generator quadratic form is the full distributional-gradient
+energy, for every real graph element. -/
+theorem ginibreFullGenerator_real_energy_identity {n : ℕ} (hn : 0 < n)
+    (u v : ginibreFullSymmetricValues n)
+    (hgraph : (ginibreFullSymmetricOfReal n u, ginibreFullSymmetricOfReal n v) ∈
+      (ginibreFullGenerator n hn).graph) :
+    ∃ g : GinibreFullGradientL2 n,
+      IsGinibreDistributionalGradient n u.val g ∧ IsGinibreSymmetricWeakPair (u.val, g) ∧
+      ginibreWeakEnergy n g = -inner ℝ v.val u.val := by
+  obtain ⟨g, hu, hs, heq⟩ := (ginibreFullGenerator_real_graph_iff_exists_gradient hn u v).mp hgraph
+  refine ⟨g, hu, hs, ?_⟩
+  have h := heq u.val g hu hs
+  simpa only [ginibreWeakEnergy, real_inner_self_eq_norm_sq] using h
+
+/-- The sharp Poincaré lower bound extends to every real element of the actual
+full generator domain. -/
+theorem ginibreFullGenerator_real_poincare {n : ℕ} (hn : 0 < n)
+    (u v : ginibreFullSymmetricValues n)
+    (hgraph : (ginibreFullSymmetricOfReal n u, ginibreFullSymmetricOfReal n v) ∈
+      (ginibreFullGenerator n hn).graph) :
+    2 * ginibreL2Variance n hn u.val ≤ -inner ℝ v.val u.val := by
+  obtain ⟨g, hu, hs, heq⟩ := ginibreFullGenerator_real_energy_identity hn u v hgraph
+  have hp := ginibre_symmetric_weak_poincare hn u.val g hu hs
+  rw [heq] at hp
+  linarith
 
 /-- Full graph dissipation is the actual weak Dirichlet energy. -/
 theorem ginibreFullGenerator_dissipation_eq_energy {n : ℕ} (hn : 0 < n)

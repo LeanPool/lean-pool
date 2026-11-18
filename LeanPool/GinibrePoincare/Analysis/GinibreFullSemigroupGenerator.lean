@@ -78,8 +78,10 @@ theorem resolventGenerator_graph (R : H →L[ℂ] H) (hInj : Function.Injective 
     (resolventGenerator R hInj).graph = resolventGeneratorGraph R := by
   have hsingle := resolventGeneratorGraph_singleValued R hInj
   have heq : resolventGenerator R hInj = (resolventGeneratorGraph R).toLinearPMap := by
-    unfold resolventGenerator Submodule.toLinearPMap
-    rw [dite_eq_left hsingle]
+    apply LinearPMap.ext
+    · exact (Submodule.toLinearPMap_domain (resolventGeneratorGraph R)).symm
+    · intro x _ hx
+      exact (Submodule.toLinearPMap_apply_aux hsingle ⟨x, hx⟩).symm
   exact heq ▸ Submodule.toLinearPMap_graph_eq _ hsingle
 
 omit [CompleteSpace H] in

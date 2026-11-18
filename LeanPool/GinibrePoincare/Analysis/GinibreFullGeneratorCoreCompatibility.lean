@@ -230,18 +230,8 @@ theorem ginibreFullCoreValue_ae {n : ℕ} (hn : 0 < n) (f : Configuration n → 
 
 /-- Every actual Theorem 1.9 core pair belongs to the full symmetric weak domain. -/
 def ginibreFullCorePair {n : ℕ} (hn : 0 < n) (f : Configuration n → ℝ)
-    (hf : IsTheoremOneNineCore f) : ginibreFullWeakSpace n hn := by
-  have hweak := ginibre_smooth_distributional_gradient n hn
-    (ginibreFullCoreValue hn f hf) (ginibreFullCoreGradient hn f hf) f hf.1
-    (ginibreFullCoreValue_ae hn f hf) (ginibreFullCoreGradient_ae hn f hf)
-  refine ⟨(ginibreFullCoreValue hn f hf, ginibreFullCoreGradient hn f hf), hweak, ?_⟩
-  obtain ⟨p, hp⟩ := ginibreFull_smoothCompact_symmetric_pair n hn f hf.isSmoothCompactSymmetric
-  have hv : ginibreFullCoreValue hn f hf = p.val.1 :=
-    Lp.ext ((ginibreFullCoreValue_ae hn f hf).trans hp.symm)
-  have hg : ginibreFullCoreGradient hn f hf = p.val.2 :=
-    ginibre_distributional_gradient_unique n hn _ _ _ hweak (by simpa only [hv] using p.property.1)
-  rw [hv, hg]
-  exact p.property.2
+    (hf : IsTheoremOneNineCore f) : ginibreFullWeakSpace n hn :=
+  ginibreFullSmoothCompactWeakPair n hn f hf.isSmoothCompactSymmetric
 
 /-- The full weak form resolvent agrees exactly with `(I - A)⁻¹` on every
 actual collision-free symmetric smooth core function. -/
