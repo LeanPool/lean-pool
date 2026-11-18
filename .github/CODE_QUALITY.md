@@ -149,7 +149,7 @@ Branch protection requires the build, separation and documentation gates; the me
 
 ### 6. LLM Review
 
-A private worker polls open PRs and `/review` comments every ten minutes. Automatic content reviews wait for successful Lean Action CI on the current head. Anyone can request a review on any open PR with `/review`. The worker posts the existing sticky comment with the reviewed head SHA, rubric verdicts, findings, and token accounting. Reviews use GPT-6-Astra at `xhigh` with Codex subscription quota and no paid API fallback. See [review operations](../python/review-operations.md).
+A private worker polls open PRs and `/review` comments every ten minutes. Automatic content reviews wait for successful Lean Action CI on the current head. Anyone can request a review on any open PR with `/review`. The worker posts the existing sticky comment with the reviewed head SHA, rubric verdicts, findings, and token accounting. Reviews run at `xhigh` on Codex subscription quota with no paid API fallback; the heading of each review names the model that produced it. See [review operations](../python/review-operations.md).
 
 The rules applied depend on what the PR does:
 
