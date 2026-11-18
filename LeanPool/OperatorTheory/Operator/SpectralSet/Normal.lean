@@ -45,10 +45,10 @@ theorem norm_aeval_le_polynomialSupNorm_of_isStarNormal_aeval {A : Type*} [CStar
     refine iSup₂_le fun k hk => ?_
     rw [spectrum.map_polynomial_aeval] at hk
     obtain ⟨z, hz, rfl⟩ := hk
-    rw [ENNReal.coe_le_coe, ← NNReal.coe_le_coe, coe_nnnorm, Real.coe_toNNReal _ hM0]
+    rw [ENNReal.coe_le_coe, ← NNReal.coe_le_coe, coe_nnNorm, Real.coe_toNNReal _ hM0]
     exact norm_eval_le_polynomialSupNorm p (bddAbove_norm_eval_image_of_isCompact p hK) (hσ hz)
-  rw [IsStarNormal.spectralRadius_eq_nnnorm (aeval a p), ENNReal.coe_le_coe,
-    ← NNReal.coe_le_coe, coe_nnnorm, Real.coe_toNNReal _ hM0] at hbound
+  rw [IsStarNormal.spectralRadius_eq_nnNorm (aeval a p), ENNReal.coe_le_coe,
+    ← NNReal.coe_le_coe, coe_nnNorm, Real.coe_toNNReal _ hM0] at hbound
   exact hbound
 
 /-- For a normal element `a` of a C*-algebra and a compact `K ⊇ σ(a)`,
