@@ -601,8 +601,7 @@ lemma quotient_regular_sequence_isCohenMacaulay_iff_isCohenMacaulay [IsLocalRing
       IsLocalHom.of_surjective _ Ideal.Quotient.mk_surjective
     IsLocalRing.of_surjective (Ideal.Quotient.mk _) Ideal.Quotient.mk_surjective
   have reg' : IsRegular R rs :=
-    ⟨reg, by simpa using (show (⊤ : Ideal R) ≠ Ideal.ofList rs from
-      ((span_le.mpr mem).trans_lt IsPrime.ne_top'.lt_top).ne_top.symm)⟩
+    RingTheory.Sequence.IsRegular.of_isWeaklyRegular_of_mem_maximalIdeal R mem reg
   simp only [isCohenMacaulayLocalRing_def,
     ← ringKrullDim_add_length_eq_ringKrullDim_of_isRegular rs reg',
     ← IsLocalRing.depth_quotient_regular_sequence_add_length_eq_depth rs reg mem, WithBot.coe_add]

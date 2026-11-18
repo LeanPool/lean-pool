@@ -168,8 +168,8 @@ theorem Polynomial.isCM_of_isCM [IsNoetherianRing R] [IsCohenMacaulayRing R] :
         apply Localization.mk_eq_mk_iff.mpr (Localization.r_of_eq ?_)
         simp [mul_comm]
     exists_of_eq {x y} eq := by
-      have eq' (n : ℕ) : (algebraMap R (Localization.AtPrime q)) (Polynomial.coeff x n) =
-        (algebraMap R (Localization.AtPrime q)) (Polynomial.coeff y n) := by
+      have eq' (n : ℕ) : (algebraMap R (Localization.AtPrime q)) (x.coeff n) =
+        (algebraMap R (Localization.AtPrime q)) (y.coeff n) := by
         simp only [algebraMap_def, coe_mapRingHom, S] at eq
         rw [← Polynomial.coeff_map, ← Polynomial.coeff_map, eq]
         --simp `failed to synthesize FaithfulSMul R (Localization.AtPrime q)`
