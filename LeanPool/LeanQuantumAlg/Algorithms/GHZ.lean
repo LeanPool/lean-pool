@@ -67,7 +67,7 @@ theorem norm_ghzVec : ‖ghzVec‖ = 1 := by
       refine (Fin.sum_univ_eight (f := fun i : Fin (2 ^ 3) =>
         ‖(((ket 0 : PureState 3) + (ket 7 : PureState 3) : StateVector 3) i)‖ ^ 2)).trans ?_
       simp +decide [PureState.ket_apply]
-      all_goals norm_num
+      norm_num
     rw [hsum]
   rw [h, inv_mul_cancel₀ (Real.sqrt_ne_zero'.mpr (by norm_num))]
 
