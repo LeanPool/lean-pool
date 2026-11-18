@@ -139,7 +139,7 @@ def jetPolynomial (N : ℕ) (a : ℕ → ℝ) : ℝ[X] :=
 
 theorem jetPolynomial_coeff (N : ℕ) (a : ℕ → ℝ) (j : ℕ) :
     (jetPolynomial N a).coeff j = if j ∈ Finset.Icc 1 N then a j else 0 := by
-  simp only [jetPolynomial, Polynomial.finsetSum_coeff, Polynomial.coeff_monomial,
+  simp only [jetPolynomial, Polynomial.finsetSum_coeff, Polynomial.coeff_monomial_apply,
       Finset.sum_ite_eq', Finset.mem_Icc]
 
 @[simp] theorem jetPolynomial_zero (N : ℕ) (a : ℕ → ℝ) :

@@ -534,7 +534,8 @@ theorem radialDirection_smooth (B n : ℕ) :
       (HarmonicResidual.liftDomain strip.domain) := by
   have hr := ((HarmonicMeanInteraction.slowGeometry (ActualPrimary.commonContext B)
     (operators B) (radius_pos B)).radial_class.smooth n)
-  exact (hr.comp contDiffOn_fst (fun _ hx => hx.1)).prodMk contDiffOn_const
+  exact (hr.comp contDiffOn_fst
+    (fun _ (hx : _ ∈ HarmonicResidual.liftDomain strip.domain) => hx.1)).prodMk contDiffOn_const
 
 theorem axialDirection_smooth (B n : ℕ) :
     ContDiffOn ℝ ∞ (CorrectionStep.axialDirection (ActualPrimary.commonContext B) n)

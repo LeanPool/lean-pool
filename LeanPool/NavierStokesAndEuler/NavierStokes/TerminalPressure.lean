@@ -790,7 +790,7 @@ theorem physicalHeat_sq (C h : ℝ) {p : SimilarityProfile.PhysicalPoint} (hs : 
         RadialHeatProfile.profile (1 + h) (2 * (1 - p.1) / p.2.1) ^ 2 := by
   have he := physicalHeat_sq_div C h hs
   rw [Real.rpow_sub hs, Real.rpow_one] at he
-  apply (div_left_inj' hs.ne').mp
+  apply (div_left_inj₀ hs.ne').mp
   convert! he using 1
   ring
 
@@ -952,7 +952,7 @@ theorem integrableOn_Ioi_of_eventually_zero {g : ℝ → ℝ} {r : ℝ} (hr : 0 
     IntegrableOn g (Ioi r) := by
   obtain ⟨b, hb⟩ := Filter.eventually_atTop.1 hz
   have hi : IntegrableOn g (Icc r (max r b)) :=
-    (hg.mono (fun u hu => hr.trans_le hu.1)).integrableOn_Icc
+    (hg.mono (fun u (hu : u ∈ Icc r (max r b)) => hr.trans_le hu.1)).integrableOn_Icc
   apply (hi.integrable_indicator measurableSet_Icc).integrableOn.congr
   filter_upwards [ae_restrict_mem measurableSet_Ioi] with u hu
   by_cases hm : u ≤ max r b

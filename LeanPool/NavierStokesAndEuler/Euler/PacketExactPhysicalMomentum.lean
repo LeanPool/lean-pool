@@ -72,7 +72,8 @@ theorem parent_frame_time (X u : ℝ × E → E) (F : ℝ × E → E →L[ℝ] E
     have h := congrArg (fun L : (ℝ × E) →L[ℝ] E => L (0,v)) het
     have hfq := congrArg (fun L : E →L[ℝ] E => L v) hframe.eq_of_nhds
     simp only [comp_apply,inr_apply] at hfq
-    simpa only [add_apply,comp_apply,zero_apply,map_zero,zero_add,flip_apply,prod_apply,
+    simpa only [add_apply,comp_apply,zero_apply,map_zero,zero_add,flip_apply,
+      ContinuousLinearMap.prod_apply,
       coe_fst',← hfq] using h
   exact hfirst.trans (((hX.isSymmSndFDerivAt (by simp)).eq (1,0) (0,v)).trans hsecond)
 

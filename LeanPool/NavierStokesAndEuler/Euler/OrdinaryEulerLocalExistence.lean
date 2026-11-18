@@ -283,7 +283,7 @@ theorem normalized_lipschitz (B : E →L[ℝ] E →L[ℝ] E) :
     exact (mul_le_mul (mul_le_mul_of_nonneg_left (radial_norm y) (norm_nonneg B))
       (radial_sub_norm x y) (norm_nonneg _) (by positivity)).trans_eq (by ring)
   exact (add_le_add h1 h2).trans_eq (by
-      simp only [NNReal.coe_mul,NNReal.coe_ofNat,coe_nnnorm]; ring)
+      simp only [NNReal.coe_mul,NNReal.coe_ofNat,coe_nnNorm]; ring)
 
 theorem normalized_eq (B : E →L[ℝ] E →L[ℝ] E) (x : E) :
     normalized B x=((1+‖x‖)⁻¹)^2 • B x x := by

@@ -69,12 +69,12 @@ theorem lpNorm_const_smul {𝕜 : Type*} [NormedField 𝕜] [NormedSpace 𝕜 E]
     (p : ℝ≥0∞) (c : 𝕜) (f : Space → E) :
     comparisonLpNorm p (fun x => c • f x) = ‖c‖ * comparisonLpNorm p f := by
   change (eLpNorm (c • f) p volume).toReal = ‖c‖ * (eLpNorm f p volume).toReal
-  rw [eLpNorm_const_smul, ENNReal.toReal_mul, toReal_enorm]
+  rw [eLpNorm_const_smul, ENNReal.toReal_mul, toReal_eNorm]
 
 theorem lpNorm_one_eq_integral_norm {f : Space → E} (hf : Integrable f volume) :
     comparisonLpNorm 1 f = ∫ x : Space, ‖f x‖ := by
-  rw [comparisonLpNorm, eLpNorm_one_eq_lintegral_enorm hf.aestronglyMeasurable,
-    integral_norm_eq_lintegral_enorm hf.aestronglyMeasurable]
+  rw [comparisonLpNorm, eLpNorm_one_eq_lintegral_eNorm hf.aestronglyMeasurable,
+    integral_norm_eq_lintegral_eNorm hf.aestronglyMeasurable]
 
 theorem lpNorm_two_sq_eq_l2Sq [InnerProductSpace ℝ E] {f : Space → E}
     (hf : MemLp f 2 volume) : comparisonLpNorm 2 f ^ 2 = l2Sq f := by

@@ -105,7 +105,7 @@ theorem eLpNorm_fderiv_cutoff_smul_le {f : ℝ³ → E} (hf : ContDiff ℝ 1 f)
       rw [eLpNorm_norm _ (hf.continuous_fderiv (by simp)).aestronglyMeasurable]
       change _ + eLpNorm ((derivativeConstant ℝ³ 1 / R) • (fun x => ‖f x‖)) 2 volume = _
       rw [eLpNorm_const_smul, eLpNorm_norm _ hf.continuous.aestronglyMeasurable,
-        Real.enorm_eq_ofReal (div_nonneg (derivativeConstant_pos 1).le hR.le)]
+        Real.eNorm_eq_ofReal (div_nonneg (derivativeConstant_pos 1).le hR.le)]
 
 /-- The homogeneous `H¹ → L⁶` inequality without a support assumption.
 Only the function itself must have finite `L²` norm for this extended-norm

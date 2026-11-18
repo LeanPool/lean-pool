@@ -581,7 +581,8 @@ theorem StageRealizations.velocity_prefix {B N0 Nr : ℕ}
       (cartesianChartDomain qbig n a i) :=
   mixedVelocity_eqOn p (commonContext B) (ActualInitialization.initialCycleState B N0)
     a i _ n (cartesianChartDomain_open qbig n ha i) A D
-    (fun k => ((hA k).mono (fun _ hx => hx.1)).differentiableOn (by simp))
+    (fun k => ((hA k).mono
+      (fun _ (hx : _ ∈ cartesianChartDomain qbig n a i) => hx.1)).differentiableOn (by simp))
     (H.potential n hn a ha i) (H.direct n hn a ha i) J
 
 theorem StageRealizations.pressure_prefix {B N0 Nr : ℕ}

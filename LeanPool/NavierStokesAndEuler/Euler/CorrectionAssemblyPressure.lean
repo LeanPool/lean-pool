@@ -214,7 +214,7 @@ theorem FiniteFamily.signedPressurePath_value_base (F : FiniteFamily period hT A
     (C : ComparisonData period hT A) (q : ℕ) (hq : 6 ≤ q) (t : Icc (0 : ℝ) T) :
     value period (F.signedPressurePath period q hq t) =
       value period (F.signedPressurePath period 6 le_rfl t) := by
-  exact Nat.le_induction (P := fun n hn => value period (F.signedPressurePath period n hn t) =
+  exact Nat.le_induction (motive := fun n hn => value period (F.signedPressurePath period n hn t) =
       value period (F.signedPressurePath period 6 le_rfl t)) rfl
     (fun n hn ih => (F.signedPressurePath_value_succ period C n hn t).trans ih) q hq
 

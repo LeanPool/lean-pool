@@ -118,7 +118,7 @@ theorem pair_sub_apply (j m : ℤ) (a b : D → ℂ) (x : D) :
       ErrorHarmonics.conjugatePair j a m x - ErrorHarmonics.conjugatePair j b m x := by
   simp only [ParticularWaveAssembly.pair_apply]
   split_ifs <;> simp only [sub_div, map_sub, map_div₀, map_zero, add_zero, zero_add, sub_self]
-  all_goals ring
+  ring
 
 theorem coefficientBlock_uniform
     (k : ι → ℕ → ℝ) (Φ : ι → ℕ → D → ℝ) (kp : ι → ℕ → ℤ)

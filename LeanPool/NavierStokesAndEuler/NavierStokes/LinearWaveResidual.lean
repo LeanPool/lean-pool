@@ -166,7 +166,7 @@ theorem gradient_mode (R : E → ℝ) (Vr Vθ Vz : E → E) (κ : ℝ)
         Fin.zero_eta, Fin.isValue, Matrix.cons_val_zero, strippedPressureGradient, phaseNormal,
         div_eq_mul_inv, Fin.mk_one, Matrix.cons_val_one, Complex.ofReal_mul, Fin.reduceFinMk,
         Matrix.cons_val]
-  all_goals ring
+  ring
 
 /-- The two linear advection terms produce `K` and exactly the displayed
 base-derivative and radial-flow connection terms. -/

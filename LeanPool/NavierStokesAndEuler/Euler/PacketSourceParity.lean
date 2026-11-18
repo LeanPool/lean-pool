@@ -157,7 +157,7 @@ variable {P : ℝ} [Fact (0 < P)] (M : EulerMeanPacketProvider.Data)
 include hT I C hmean hhigh hcorrector E eM hSym hF hDM hI hprimary hprimaryParity in
 theorem profiles_parity (p : ℕ) : ProfileParity M.T (profiles O primary p) := by
   induction p using Nat.strong_induction_on with
-  | h p ih =>
+  | ind p ih =>
     by_cases hp0 : p = 0
     · subst p
       rw [profiles_zero]

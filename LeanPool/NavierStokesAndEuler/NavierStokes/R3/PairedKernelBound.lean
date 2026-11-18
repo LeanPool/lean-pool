@@ -55,8 +55,8 @@ omit [NormedSpace ℝ E] in
 theorem lpNorm_one_eq_integral_norm {f : Space → E}
     (hf : AEStronglyMeasurable f volume) :
     comparisonLpNorm 1 f = ∫ x, ‖f x‖ := by
-  rw [comparisonLpNorm, eLpNorm_one_eq_lintegral_enorm hf,
-    integral_norm_eq_lintegral_enorm hf]
+  rw [comparisonLpNorm, eLpNorm_one_eq_lintegral_eNorm hf,
+    integral_norm_eq_lintegral_eNorm hf]
 
 /-- Nonnegative constant factors pass through the real comparison norm. -/
 theorem lpNorm_const_smul_of_nonneg {f : Space → E} {p : ℝ≥0∞}

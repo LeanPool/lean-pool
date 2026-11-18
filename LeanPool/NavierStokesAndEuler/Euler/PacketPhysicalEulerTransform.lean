@@ -121,7 +121,7 @@ theorem euler_residual_of_pullback
   have hgs := hG.comp (f := fun y => (t, y)) x (hasFDerivAt_prodMk_right t x)
   have hadv : Dw (0,G (t,x)) = DG (0,A.symm (G (t,x))) := by
     have h := congrArg (fun L : E →L[ℝ] E => L (A.symm (G (t,x)))) (hspace.unique hgs)
-    simpa only [comp_apply,prod_apply,zero_apply,ContinuousLinearEquiv.coe_coe,
+    simpa only [comp_apply,ContinuousLinearMap.prod_apply,zero_apply,ContinuousLinearEquiv.coe_coe,
       ContinuousLinearEquiv.apply_symm_apply,inr_apply] using h
   have hpress : gradient (fun y => q (t,y)) (X (t,x)) =
       adjoint (𝕜 := ℝ) (E := E) (F := E) A.symm.toContinuousLinearMap

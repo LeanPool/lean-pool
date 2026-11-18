@@ -166,7 +166,7 @@ theorem derivative_elliptic_middle (A G H : SmoothL2Field ℝ) (a b j : Fin 3)
   have hbi : IntervalIntegrable B volume ε 1 := by
     apply ContinuousOn.intervalIntegrable_of_Icc hε1
     exact (continuousOn_const.mul (continuousOn_id.inv₀
-      (fun t ht => (hε.trans_le ht.1).ne'))).mul continuousOn_const
+      (fun t (ht : t ∈ Icc ε 1) => (hε.trans_le ht.1).ne'))).mul continuousOn_const
   have h := norm_sub_le_integral_of_norm_deriv_le_of_le hε1 hc.continuousOn
     (fun t ht => (hd t ht).differentiableAt.differentiableWithinAt)
     (Eventually.of_forall hb) hbi

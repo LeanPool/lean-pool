@@ -140,7 +140,7 @@ theorem metricEnergy_compact (K : LiftDomain period → Vector3 →L[ℝ] Vector
     HasCompactSupport (metricEnergy period K e) := by
   apply he.mono
   intro x hx
-  contrapose! hx
+  contrapose hx
   simp only [Function.mem_support, not_not] at hx
   simp [Function.mem_support, metricEnergy, hx]
 
@@ -255,7 +255,7 @@ theorem transportFlux_compact (κ : ℝ) (m : Vector3)
     HasCompactSupport (transportFlux period κ m K e) := by
   apply he.mono
   intro x hx
-  contrapose! hx
+  contrapose hx
   simp only [Function.mem_support, not_not] at hx ⊢
   apply PiLp.ext
   intro i
