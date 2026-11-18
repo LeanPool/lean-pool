@@ -168,11 +168,10 @@ lemma refined_weight_case_b {k : ℕ} (hk : 1 ≤ k) (i j : Fin n → ℤ)
   convert mul_le_mul_of_nonneg_right h_rho ( pow_nonneg ( show 0 ≤ 1 + ∑ l : Fin n, ( i l : ℝ )
     ^ 2 by
     exact add_nonneg zero_le_one <| Finset.sum_nonneg fun _ _ => sq_nonneg _ ) k ) using 1
-  all_goals (first
-    | (rw [ ← mul_pow, add_mul, div_mul_cancel₀ _ ( by
+  rw [ ← mul_pow, add_mul, div_mul_cancel₀ _ ( by
       exact ne_of_gt <| add_pos_of_pos_of_nonneg zero_lt_one <| Finset.sum_nonneg fun _ _ =>
         sq_nonneg _ ) ]; norm_num [ add_sq, Finset.sum_add_distrib, Finset.mul_sum _ _ _,
-        Finset.sum_mul _ _ _, mul_assoc, mul_comm, mul_left_comm ]; ring))
+        Finset.sum_mul _ _ _, mul_assoc, mul_comm, mul_left_comm ]; ring
 
 /-! ## Refined weight inequality -/
 
@@ -404,8 +403,9 @@ lemma mt3_young_S1
       norm_num at *;
   · refine ⟨ ?_, ?_ ⟩;
     · convert this.1 using 1
-      all_goals ((ext m; rw [ ← Equiv.tsum_eq ( Equiv.subLeft m ) ]; norm_num [
-          mul_assoc, mul_comm, mul_left_comm ]))
+      ext m
+      rw [ ← Equiv.tsum_eq ( Equiv.subLeft m ) ]
+      norm_num [mul_assoc, mul_comm, mul_left_comm]
     · have hlhs : (∑' m : Fin n → ℤ, (∑' i, weight n (↑k / 2) i * ‖a i‖ * ‖b (m - i)‖) ^ 2)
                 = (∑' m : Fin n → ℤ, (∑' i, ‖b i‖ * (weight n (↑k / 2) (m - i) * ‖a (m - i)‖)) ^
                     2) := by
@@ -451,7 +451,7 @@ lemma mt3_young_S2
   · refine ⟨ this.1, this.2.trans ?_ ⟩;
     refine mul_le_mul ?_ ?_ ?_ ?_;
     · convert tsum_norm_sq_le hn ( by linarith : ( n : ℝ ) < 2 * r ) ha using 1
-      all_goals rfl
+      rfl
     · rw [ sobolevNormSq_half_weight ];
     · exact tsum_nonneg fun _ => sq_nonneg _;
     · exact mul_nonneg ( tsum_nonneg fun _ => by
@@ -580,9 +580,10 @@ lemma mt3_unsquared_bound {k : ℕ} (hk : 1 ≤ k)
                                    weight n (1 / 2 : ℝ) i * weight n (((k : ℝ) - 1) / 2) (m -
                                        i)) := by
         convert refined_weight_half hk i ( m - i ) using 1
-        all_goals (norm_num)
+        norm_num
       convert mul_le_mul_of_nonneg_right h_bound ( norm_nonneg ( a i * b ( m - i ) ) ) using 1
-      all_goals ((norm_num; ring))
+      norm_num
+      ring
   have h_summable : Summable (fun i : Fin n → ℤ => weight n ((k : ℝ) / 2) i * ‖a i‖ * ‖b (m -
       i)‖) ∧ Summable (fun i : Fin n → ℤ => ‖a i‖ * weight n ((k : ℝ) / 2) (m - i) * ‖b (m -
       i)‖) ∧ Summable (fun i : Fin n → ℤ => weight n (((k : ℝ) - 1) / 2) i * ‖a i‖ * weight n (1
@@ -766,7 +767,7 @@ theorem third_multiplication_theorem_seq
                 norm_cast ] ), hn, hr, hkr, ha, hb ];
   refine le_trans ( Summable.tsum_le_tsum h_sum ?_ ?_ ) ?_;
   · convert h_mem using 1
-    all_goals rfl
+    rfl
   · refine Summable.add ?_ ?_;
     · have := mt3_young_S1 hn hr ha ( show MemSobolev n r b from ?_ );
       · have := mt3_young_S2 hn hr ( show MemSobolev n r a from ?_ ) hb;

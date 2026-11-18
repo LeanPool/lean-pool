@@ -626,7 +626,7 @@ theorem realize_fB (hn : 0 < n) {f : (Fin n → ℝ) → ℝ} (hf : SmoothPeriod
     rw [gram_dot_reindex e hU0_d, gram_bumpFamily hχε_sm hχε_supp hχε_cube hf0 hM_pos]
     simp only [Matrix.smul_apply, smul_eq_mul, pe]
     congr 2
-    all_goals ring
+    ring
   -- smoothness and periodicity of the defect function (real part)
   have hpe_sm : ContDiff ℝ ∞ (pe n χε) := pe_contDiff hχε_sm hχε_supp
   have hdef_sm : ∀ i j : Fin n, ContDiff ℝ ∞ (fun x : Fin n → ℝ =>

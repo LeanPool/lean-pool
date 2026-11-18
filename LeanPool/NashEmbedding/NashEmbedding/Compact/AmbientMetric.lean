@@ -80,8 +80,8 @@ def pinv (L : E →L[ℝ] E') : E' →L[ℝ] E :=
 /-- **L1.** The adjoint is smooth (it is a linear isometry equivalence). -/
 theorem contDiff_adjoint :
     ContDiff ℝ ∞ (fun L : E →L[ℝ] E' => L.adjoint) := by
-  have h1 : CompleteSpace E := FiniteDimensional.complete ℝ E
-  have h2 : CompleteSpace E' := FiniteDimensional.complete ℝ E'
+  have h1 : CompleteSpace E := FiniteDimensional.completeSpace ℝ E
+  have h2 : CompleteSpace E' := FiniteDimensional.completeSpace ℝ E'
   let f : (E →L[ℝ] E') →ₗ[ℝ] (E' →L[ℝ] E) :=
     { toFun := fun L => L.adjoint
       map_add' := fun L L' => map_add ContinuousLinearMap.adjoint L L'
@@ -95,8 +95,8 @@ theorem contDiff_adjoint :
 /-- **L2.** For injective `L`, `L† ∘ L` is invertible. -/
 theorem isInvertible_adjoint_comp_self {L : E →L[ℝ] E'} (hL : Injective L) :
     (L.adjoint ∘L L).IsInvertible := by
-  have h1 : CompleteSpace E := FiniteDimensional.complete ℝ E
-  have h2 : CompleteSpace E' := FiniteDimensional.complete ℝ E'
+  have h1 : CompleteSpace E := FiniteDimensional.completeSpace ℝ E
+  have h2 : CompleteSpace E' := FiniteDimensional.completeSpace ℝ E'
   have hker : (L.adjoint ∘L L : E →L[ℝ] E).toLinearMap.ker = ⊥ := by
     rw [Submodule.eq_bot_iff]
     intro x hx
@@ -121,7 +121,7 @@ theorem pinv_comp {L : E →L[ℝ] E'} (hL : Injective L) :
 /-- **L4.** `pinv` is smooth at injective maps. -/
 theorem contDiffAt_pinv {L : E →L[ℝ] E'} (hL : Injective L) :
     ContDiffAt ℝ ∞ (pinv : (E →L[ℝ] E') → (E' →L[ℝ] E)) L := by
-  have h1 : CompleteSpace E := FiniteDimensional.complete ℝ E
+  have h1 : CompleteSpace E := FiniteDimensional.completeSpace ℝ E
   have hA : ContDiffAt ℝ ∞ (fun M : E →L[ℝ] E' => M.adjoint ∘L M) L :=
     (contDiff_adjoint.clm_comp contDiff_id).contDiffAt
   have hinv : ContDiffAt ℝ ∞ (ContinuousLinearMap.inverse : (E →L[ℝ] E) → (E →L[ℝ] E))
@@ -138,9 +138,9 @@ theorem contDiffAt_pinv {L : E →L[ℝ] E'} (hL : Injective L) :
 theorem pinv_comp_equiv {F : Type*} [NormedAddCommGroup F] [InnerProductSpace ℝ F]
     [FiniteDimensional ℝ F] {L : E →L[ℝ] E'} (_hL : Injective L) (S : F ≃L[ℝ] E) :
     pinv (L ∘L (S : F →L[ℝ] E)) = ((S.symm : E →L[ℝ] F) ∘L pinv L) := by
-  have h1 : CompleteSpace E := FiniteDimensional.complete ℝ E
-  have h2 : CompleteSpace E' := FiniteDimensional.complete ℝ E'
-  have h3 : CompleteSpace F := FiniteDimensional.complete ℝ F
+  have h1 : CompleteSpace E := FiniteDimensional.completeSpace ℝ E
+  have h2 : CompleteSpace E' := FiniteDimensional.completeSpace ℝ E'
+  have h3 : CompleteSpace F := FiniteDimensional.completeSpace ℝ F
   have hSadj : ((S : F →L[ℝ] E).adjoint).IsInvertible := by
     refine ContinuousLinearMap.IsInvertible.of_inverse (g := ((S.symm : E →L[ℝ] F).adjoint)) ?_ ?_
     · rw [← ContinuousLinearMap.adjoint_comp]; simp [ContinuousLinearMap.adjoint_id]
@@ -220,14 +220,14 @@ theorem tcoord_isInvertible {x₀ x : M} (hx : x ∈ (chartAt H x₀).source) :
 
 omit [FiniteDimensional ℝ E] in
 /-- **L7.** The metric, read in the trivialization at `x₀`, is smooth near `x₀`
-  (unfold `g.contMDiff` with `contMDiffAt_section`). -/
+  (unfold `g.contMDiff` with `contMDiffAt_section_iff`). -/
 theorem contMDiffAt_metric_trivialization
     (g : ContMDiffRiemannianMetric I ∞ E (TangentSpace I : M → Type _)) (x₀ : M) :
     ContMDiffAt I 𝓘(ℝ, E →L[ℝ] E →L[ℝ] ℝ) ∞
       (fun x => (trivializationAt (E →L[ℝ] E →L[ℝ] ℝ)
         (fun y => TangentSpace I y →L[ℝ] TangentSpace I y →L[ℝ] ℝ) x₀ ⟨x, g.inner x⟩).2) x₀ :=
-  -- `(contMDiffAt_section x₀).1 (g.contMDiff x₀)`, up to unfolding `TotalSpace.mk'`.
-  (contMDiffAt_section (F := E →L[ℝ] E →L[ℝ] ℝ) x₀).1 (g.contMDiff x₀)
+  -- `(contMDiffAt_section_iff x₀).1 (g.contMDiff x₀)`, up to unfolding `TotalSpace.mk'`.
+  (contMDiffAt_section_iff (F := E →L[ℝ] E →L[ℝ] ℝ) x₀).1 (g.contMDiff x₀)
 
 omit [FiniteDimensional ℝ E] in
 /-- **L7'.** Evaluation of the trivialized metric: for `x` in the chart at `x₀`,
