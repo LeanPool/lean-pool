@@ -11,15 +11,20 @@ import pytest
 
 from lean_pool.quality import (
     _audit_axioms,
+    _audit_build_messages,
     _card_is_current,
+    _check_build_messages,
+    _is_compiler_command,
     _parse_axiom_output,
     _parse_declarations,
     _parse_option_audit_output,
     _project_card,
+    _QualityError,
     _strip_lean_comments,
     _write_project_card,
     run_checks,
 )
+from lean_pool.validation_cache import ValidationCache
 
 HEADER = """/-
 Copyright (c) 2026 Test Author. All rights reserved.
@@ -192,6 +197,201 @@ def test_quality_check_rejects_set_option(tmp_path: Path) -> None:
     errors = run_checks(tmp_path, skip_lean_axioms=True)
 
     assert any("set_option is forbidden" in error.message for error in errors)
+
+
+def _write_build_log(root: Path, module: str, log: object) -> None:
+    """Write what Lake keeps beside one compiled module."""
+    path = root / ".lake/build/lib/lean" / (module.replace(".", "/") + ".trace")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps({"schemaVersion": "2025-09-10", "log": log}))
+
+
+COMPILER_COMMAND = {
+    "level": "trace",
+    "message": ".> LEAN_PATH=/pool/.lake lean /pool/LeanPool/Basic.lean -o Basic.olean",
+}
+
+
+def test_build_message_audit_reports_the_printed_suggestion(tmp_path: Path) -> None:
+    """A fallback or suggestion is an error at the line the compiler named."""
+    _write_minimal_repo(tmp_path)
+    fallback = {
+        "level": "info",
+        "message": "LeanPool/Basic.lean:7:4: Try this:\n  [apply] ring_nf\n\n"
+        "The `ring` tactic failed to close the goal.",
+    }
+    _write_build_log(tmp_path, "LeanPool.Basic", [COMPILER_COMMAND, fallback])
+    [error] = _audit_build_messages(tmp_path, ["LeanPool.Basic"])
+    assert (error.path, error.line) == (tmp_path / "LeanPool/Basic.lean", 7)
+    assert error.message.startswith(
+        "prints a message on every build (info): Try this: [apply] ring_nf The `ring`"
+    )
+
+
+@pytest.mark.parametrize(
+    "command",
+    [
+        COMPILER_COMMAND["message"],
+        ".> lean LeanPool/Basic.lean -o Basic.olean",
+        ".> PATH LEAN_PATH=/a:/b ELAN= /bin/lean /pool/LeanPool/Basic.lean -o x",
+    ],
+)
+def test_build_message_audit_accepts_a_silent_module(
+    tmp_path: Path, command: str
+) -> None:
+    """The compiler command that Lake records for itself is not a message."""
+    _write_minimal_repo(tmp_path)
+    _write_build_log(
+        tmp_path, "LeanPool.Basic", [{"level": "trace", "message": command}]
+    )
+    assert _audit_build_messages(tmp_path, ["LeanPool.Basic"]) == []
+
+
+def _lake_compiler_record(checkout: str, lean: str) -> dict[str, str]:
+    """Render what Lake 4.35 logs for compiling `LeanPool/Basic.lean`.
+
+    `compileLeanModule` runs `lean` with `LEAN_PATH` as its only variable, and
+    `mkCmdLog` joins the pieces with single spaces without quoting any.
+    """
+    build = f"{checkout}/.lake/build"
+    search = f"{checkout}/.lake/packages/mathlib/.lake/build/lib/lean:{build}/lib/lean"
+    arguments = [
+        f"{checkout}/LeanPool/Basic.lean",
+        f"-o {build}/lib/lean/LeanPool/Basic.olean",
+        f"-i {build}/lib/lean/LeanPool/Basic.ilean",
+        f"-c {build}/ir/LeanPool/Basic.c",
+        f"--setup {build}/ir/LeanPool/Basic.setup.json",
+        "--json",
+    ]
+    message = f".> LEAN_PATH={search} {lean} {' '.join(arguments)}"
+    return {"level": "trace", "message": message}
+
+
+SPACED_LEAN = "/home/Jane Doe/.elan/toolchains/lean 4/bin/lean"
+
+
+def test_build_message_audit_reads_a_checkout_and_toolchain_with_spaces(
+    tmp_path: Path,
+) -> None:
+    """Lake quotes nothing, so spaces in its paths must not hide the record."""
+    root = tmp_path / "pool with space"
+    root.mkdir()
+    _write_minimal_repo(root)
+    record = _lake_compiler_record(root.as_posix(), SPACED_LEAN)
+    _write_build_log(root, "LeanPool.Basic", [record])
+    assert _audit_build_messages(root, ["LeanPool.Basic"]) == []
+    noise = {"level": "info", "message": "LeanPool/Basic.lean:7:4: Try this: simp"}
+    _write_build_log(root, "LeanPool.Basic", [record, noise])
+    [error] = _audit_build_messages(root, ["LeanPool.Basic"])
+    assert error.message == "prints a message on every build (info): Try this: simp"
+
+
+def test_build_message_audit_reads_windows_paths_with_spaces() -> None:
+    """Backslash separators and a drive letter name the same compiler run."""
+    record = _lake_compiler_record(
+        "C:/Users/Jane Doe/pool", "C:/Users/Jane Doe/.elan/bin/lean.exe"
+    )
+    record["message"] = record["message"].replace("/", "\\")
+    assert _is_compiler_command(record, "LeanPool/Basic.lean")
+
+
+@pytest.mark.parametrize(
+    "command",
+    [
+        ".> echo /bin/lean LeanPool/Basic.lean",
+        ".> /usr/bin/cp /bin/lean /pool with space/LeanPool/Basic.lean",
+        ".> /bin/lean /y/Other.lean -o /pool with space/LeanPool/Basic.lean",
+        ".> /bin/lean -o /pool with space/LeanPool/Basic.lean",
+        ".> /bin/lean /pool with space/NotLeanPool/Basic.lean",
+        ".> echo x > /bin/lean /pool with space/LeanPool/Basic.lean",
+        ".> /bin/leanir /pool with space/LeanPool/Basic.lean",
+    ],
+)
+def test_build_message_audit_rejects_other_commands_with_spaced_paths(
+    command: str,
+) -> None:
+    """Allowing spaces in paths must not let another command pass as the compiler."""
+    entry = {"level": "trace", "message": command}
+    assert not _is_compiler_command(entry, "LeanPool/Basic.lean")
+
+
+def test_build_message_audit_reports_other_commands_beside_the_compiler(
+    tmp_path: Path,
+) -> None:
+    """A command that only mentions the source is not the compiler's record."""
+    _write_minimal_repo(tmp_path)
+    other = {"level": "trace", "message": ".> printf %s LeanPool/Basic.lean"}
+    _write_build_log(tmp_path, "LeanPool.Basic", [COMPILER_COMMAND, other])
+    [error] = _audit_build_messages(tmp_path, ["LeanPool.Basic"])
+    assert error.message == (
+        "prints a message on every build (trace): .> printf %s LeanPool/Basic.lean"
+    )
+
+
+@pytest.mark.parametrize(
+    "log",
+    [
+        None,
+        "not a list",
+        ["not an entry"],
+        [],
+        [{"level": "info", "message": "no compiler command recorded"}],
+        [{"level": "trace"}],
+        [{"level": "trace", "message": 17}],
+        [{"level": "trace", "message": "ordinary non-command trace record"}],
+        [
+            {
+                "level": "trace",
+                "message": ".> lean /pool/LeanPool/Other.lean -o Other.olean",
+            }
+        ],
+        [{"level": "trace", "message": ".> echo LeanPool/Basic.lean"}],
+        [{"level": "trace", "message": ".> lean Other.lean -o LeanPool/Basic.lean"}],
+        [
+            {
+                "level": "trace",
+                "message": "lean /pool/LeanPool/Basic.lean -o Basic.olean",
+            }
+        ],
+        [COMPILER_COMMAND, {"level": "info"}],
+        [COMPILER_COMMAND, {"message": "no level"}],
+    ],
+)
+def test_build_message_audit_fails_without_a_recognised_log(
+    tmp_path: Path, log: object
+) -> None:
+    """A missing log or a changed format must not look like a silent build."""
+    _write_minimal_repo(tmp_path)
+    if log is not None:
+        _write_build_log(tmp_path, "LeanPool.Basic", log)
+    [error] = _audit_build_messages(tmp_path, ["LeanPool.Basic"])
+    assert error.message == "build log is missing or unreadable"
+    (tmp_path / ".lake/build/lib/lean/LeanPool").mkdir(parents=True, exist_ok=True)
+    (tmp_path / ".lake/build/lib/lean/LeanPool/Basic.trace").write_text("{broken")
+    [error] = _audit_build_messages(tmp_path, ["LeanPool.Basic"])
+    assert error.message == "build log is missing or unreadable"
+
+
+@pytest.mark.parametrize("level", ["warning", "error", "unexpected", "trace"])
+def test_build_message_audit_rejects_every_other_level(
+    tmp_path: Path, level: str
+) -> None:
+    """Only the record of this module's compiler run is exempt, whatever its level."""
+    _write_minimal_repo(tmp_path)
+    entry = {"level": level, "message": "printed from a custom elaborator"}
+    _write_build_log(tmp_path, "LeanPool.Basic", [COMPILER_COMMAND, entry])
+    [error] = _audit_build_messages(tmp_path, ["LeanPool.Basic"])
+    assert (error.path, error.line) == (tmp_path / "LeanPool/Basic.lean", 1)
+    assert error.message == (
+        f"prints a message on every build ({level}): printed from a custom elaborator"
+    )
+
+
+def test_unbuilt_pool_reports_one_missing_build(tmp_path: Path) -> None:
+    """Without any build the audit asks for one, not once per module."""
+    _write_minimal_repo(tmp_path)
+    [error] = _check_build_messages(tmp_path)
+    assert "no build logs found" in error.message
 
 
 def test_quality_check_rejects_programmatic_option_manipulation(
@@ -727,6 +927,42 @@ def test_quality_check_accepts_project_card_after_imports(tmp_path: Path) -> Non
     # The project-card position check must accept this layout. (lake env lean
     # for the declarations check fails in the test sandbox; that's unrelated.)
     assert not any("project card for p is out of date" in e.message for e in errors)
+
+
+def test_project_declarations_are_queued_once_with_and_without_cache(
+    tmp_path: Path,
+) -> None:
+    """Queued declaration checks still run per project and only passes are reused."""
+    _write_minimal_repo(tmp_path)
+    (tmp_path / "LeanPool.lean").write_text(
+        "import LeanPool.Basic\nimport LeanPool.MyProj\n"
+    )
+    card = _project_card(_PROJECT_FIXTURE)
+    (tmp_path / "LeanPool" / "MyProj.lean").write_text(
+        f"{HEADER}\nimport LeanPool.Basic\n\n{card}\ndef hello : Nat := 1\n"
+    )
+    _write_project_yaml(tmp_path, [{"slug": "p", "entry_module": "LeanPool.MyProj"}])
+    failure = _QualityError(tmp_path / "card.yaml", 1, "declarations do not check")
+    directory = tmp_path / ".lake/validation-cache/v1"
+    with patch(
+        "lean_pool.quality._check_project_declarations", return_value=[failure]
+    ) as declarations:
+        assert run_checks(tmp_path, skip_lean_axioms=True) == [failure]
+        cache = ValidationCache(tmp_path, directory)
+        assert run_checks(tmp_path, skip_lean_axioms=True, validation_cache=cache) == [
+            failure
+        ]
+        assert "declarations:LeanPool.MyProj" not in cache.used
+        assert declarations.call_count == 2
+        assert {call.args[2]["slug"] for call in declarations.call_args_list} == {"p"}
+        declarations.return_value = []
+        cache = ValidationCache(tmp_path, directory)
+        assert run_checks(tmp_path, skip_lean_axioms=True, validation_cache=cache) == []
+        cache.save()
+        cache = ValidationCache(tmp_path, directory)
+        assert run_checks(tmp_path, skip_lean_axioms=True, validation_cache=cache) == []
+        assert declarations.call_count == 3
+        assert cache.hits == 1
 
 
 def test_quality_check_falls_back_when_lake_missing(tmp_path: Path) -> None:

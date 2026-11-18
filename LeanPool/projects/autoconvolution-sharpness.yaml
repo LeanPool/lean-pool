@@ -1,0 +1,45 @@
+slug: autoconvolution-sharpness
+title: Sharpness of the Martin–O’Bryant autoconvolution inequality
+summary: Proves that nonzero nonnegative finite step functions on the real line
+  have autoconvolution norm ratios arbitrarily close to one. The ratio is the
+  squared L2 norm divided by the product of the L1 and essential-supremum norms,
+  all for Lebesgue measure. Develops polynomial coefficient blocks, digit
+  separation, collision estimates, and reusable convolution plateau bounds.
+branch: real and harmonic analysis
+entry_module: LeanPool.AutoconvolutionSharpness
+authors:
+- Tonći Crmarić
+- Vjekoslav Kovač
+- Jelena Rupčić
+source:
+  title: Sharpness of the Martin–O’Bryant autoconvolution inequality
+  arxiv: '2611.12685'
+  url: https://github.com/VjekoKovac/lean-autoconvolutions/tree/e6a8e69129f67621693430dceeae42050377ffa6
+  github_repo: VjekoKovac/lean-autoconvolutions
+  commit: e6a8e69129f67621693430dceeae42050377ffa6
+  announcement_url: https://github.com/VjekoKovac/lean-autoconvolutions/commit/bc9b516a45c9d82948619d15653984b84e3cc5ab
+  announcement_date: '2026-11-12'
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+- Autoconvolutions.sharpness
+main_results:
+- declaration: Autoconvolutions.sharpness
+  informal: For every positive real epsilon, some finite sequence of nonnegative
+    real heights, including a positive height, gives a step function on successive
+    integer unit intervals whose autoconvolution norm ratio exceeds one minus epsilon.
+- declaration: Autoconvolutions.Construction.witness_ratio_lower
+  informal: The explicitly constructed polynomial gives a quantitative lower bound
+    for the Lebesgue autoconvolution ratio in terms of factorial and geometric factors.
+- declaration: Autoconvolutions.blocks_energy_le
+  informal: An injectively indexed family of separated coefficient plateaus supplies
+    a lower bound on the squared L2 norm of a step function's autoconvolution.
+tags:
+- harmonic-analysis
+- convolution
+- inequalities
+- polynomials
+msc:
+- 26D15
+- 42A85

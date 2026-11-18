@@ -273,7 +273,7 @@ private lemma rightEdge_min_dist_from_non_seg1 (H : ℝ) (s : ℂ)
           simp only [fdBoundaryH, show ¬((3 : ℝ) ≤ 1) from by norm_num, ↓reduceIte,
             show ¬((3 : ℝ) ≤ 2) from by norm_num, show (3 : ℝ) ≤ 3 from le_refl _]
           convert Complex.norm_exp_ofReal_mul_I (2 * Real.pi / 3) using 2
-          push_cast; ring
+          push_cast; ring_nf
         exact rightEdge_min_dist_from_non_seg1_arc s hs_norm _ this
       · by_cases h4 : t ≤ 4
         · exact rightEdge_min_dist_from_non_seg1_seg4 s hs_re _

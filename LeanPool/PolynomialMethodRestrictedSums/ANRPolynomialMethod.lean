@@ -535,7 +535,9 @@ private lemma elimination_polynomial_coeff_top_eq_one
     induction s using Finset.induction with
     | empty => simp +decide
     | @insert a s ha ih =>
-      simp_all? +decide [Finset.prod_insert ha, MvPolynomial.coeff_mul]
+      simp_all +decide only [gt_iff_lt, Finset.card_pos, Finset.prod_insert ha, not_false_eq_true,
+          Finset.card_insert_of_notMem, single_add, coeff_mul, AddMonoidAlgebra.coeff_sub, coe_sub,
+          Pi.sub_apply, coeff_C]
       -- The only non-zero term in the sum is when $x = (fun | i => 1)$ and $y = (fun | i =>
       -- #s)$.
       have h_nonzero_term : ∀ x y : (Fin (k + 1)) →₀ ℕ,
@@ -629,7 +631,7 @@ private lemma elimination_polynomial_sub_top_totalDegree_lt
       MvPolynomial.mem_support_iff, coeff_sub, ne_eq]
     intro b a
     by_cases hb : b i = #(A i)
-    · simp_all? +decide [MvPolynomial.coeff_X_pow]
+    · simp_all +decide only [coeff_X_pow, lt_self_iff_false]
       by_cases h : (fun₀ | i => #(A i)) = b
       · simp_all only [ite_true, sub_self, not_true_eq_false]
       · simp only [ite_eq_right h, sub_zero] at a
@@ -683,7 +685,7 @@ private lemma elimination_polynomial_sub_top_totalDegree_lt
             specialize h_snd_zero ((-1) ^ # (A i \ x) * ∏ x ∈ A i \ x, x); simp_all
         exact Eq.symm (h_deg_sub b
           (by simp_all only [MvPolynomial.mem_support_iff, ne_eq, not_false_eq_true]))
-    · contrapose! a; simp_all? +decide [MvPolynomial.coeff_X_pow]
+    · contrapose! a; simp_all +decide only [coeff_X_pow]
       rw [ite_eq_right (by intro h; replace h := congr_arg (fun f => f i) h; aesop)]
       simp_all only [sub_zero]
       exact Classical.not_not.1 fun h => hb <|
@@ -1156,7 +1158,9 @@ theorem ANR_polynomial_method (h : MvPolynomial (Fin (k + 1)) (ZMod p))
                 simpa [Finsupp.sum_fintype] using by
                   linarith [show h.totalDegree ≥ 0 from Nat.zero_le _])
             exact h_coeff_zero _ (h_diff_deg h_diff_zero h_diff_zero)
-          simp? +zetaDelta at *
+          simp +zetaDelta only [ne_eq, Order.lt_add_one_iff, Finset.image_val, Finset.filter_val,
+              Multiset.dedup_subset', add_sub_cancel_left, forall_self_imp,
+              AddMonoidAlgebra.coeff_sub, coe_sub, Pi.sub_apply] at *
           exact eq_of_sub_eq_zero h_coeff_eq
       · intro d hd_ne_zero
         by_contra h_contra

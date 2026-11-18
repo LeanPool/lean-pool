@@ -431,7 +431,8 @@ theorem LinearMap.IsSymmetric.directSum_isInternal_of_commute' {𝕜 E : Type*} 
     specialize h_sum x
     rw [Submodule.mem_iSup_iff_exists_finsupp] at h_sum
     rcases h_sum with ⟨f, hf₁, hf₂⟩
-    exact ⟨∑ i ∈ f.support, .of _ i ⟨f i, hf₁ i⟩, by simp_all?; exact hf₂⟩
+    exact ⟨∑ i ∈ f.support, .of _ i ⟨f i, hf₁ i⟩,
+      by simp_all only [map_sum, DirectSum.coeAddMonoidHom_of]; exact hf₂⟩
 
 /-- An orthonormal basis of simultaneous eigenvectors for two commuting symmetric endomorphisms. -/
 noncomputable def LinearMap.sharedEigenbasis {A B : EuclideanSpace 𝕜 d →ₗ[𝕜] EuclideanSpace 𝕜 d}

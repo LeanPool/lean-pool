@@ -5,13 +5,14 @@ Authors: Vladislav Kuznetsov
 -/
 module
 
+import LeanPool.ConwaySoifer.Certificates.FanCertificate
+
 public import LeanPool.ConwaySoifer.Simplified.Certificates.Checkpoints.Aown220000230000
 public import LeanPool.ConwaySoifer.Simplified.Certificates.Steps.Aown2200002300000
 public import LeanPool.ConwaySoifer.Simplified.Certificates.Steps.Aown2200002300001
 public import LeanPool.ConwaySoifer.Simplified.Certificates.Steps.Aown2200002300002
 public import LeanPool.ConwaySoifer.Simplified.Certificates.Steps.Aown2200002300003
 public import LeanPool.ConwaySoifer.Simplified.Certificates.Steps.Aown2200002300004
-import Mathlib.Tactic.FinCases
 
 /-!
 # Aown 220000 230000
@@ -49,6 +50,8 @@ SOFTWARE.
 
 @[expose] public section
 
+prepare_fan_cache ConwaySoifer.Simplified.Certificates.Aown220000230000.model0
+
 -- Generated checkpoints are proposals; all acceptance proofs are checked by the kernel.
 
 namespace ConwaySoifer.Simplified.Certificates
@@ -79,7 +82,7 @@ theorem excluded38_3 : ExcludedOn (model38.B 3) 9000000000000 (model38.caps 3) (
       3)) (.next ([-7230000000000, -9000000000000], [7680000000000]) (some (0, 1, 3)) (some (0, 1,
       3)) (.terminal (some (0, 1, 3)) (some (0, 1, 3)) (some (0, 1, 3))))))))))))))))) (den :=
       9000000000000) (fuel := 12) (by decide +kernel) 0 1 100 (by decide +kernel)
-  decide +kernel
+  certify_fan
 
 private theorem tail38 : ModelImpossible model38 9000000000000 0 1 100 :=
   final_checkpoint model38 9000000000000 0 1 100 3 excluded38_3

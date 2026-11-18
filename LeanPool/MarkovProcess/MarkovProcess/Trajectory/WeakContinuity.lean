@@ -85,6 +85,55 @@ theorem abs_integral_sub_le_of_approx_on (mu : Measure X) [IsProbabilityMeasure 
   rw [integral_add (integrable_const eps) (hind.const_mul _), integral_const, integral_const_mul,
     integral_indicator_one hKc, probReal_univ, smul_eq_mul, one_mul]
 
+/-- Tightness and compact approximation reduce convergence of bounded continuous integrals
+ to convergence on a family of test functions. The tightness bound is needed only eventually. -/
+theorem tendsto_integral_of_tight_approximation [T2Space X]
+    {ι : Type*} {l : Filter ι} (mu : ι → Measure X) (nu : Measure X)
+    [∀ i, IsProbabilityMeasure (mu i)] [IsProbabilityMeasure nu]
+    (tests : Set (X →ᵇ ℝ)) (F : X →ᵇ ℝ)
+    (htight : ∀ eta : ℝ, 0 < eta → ∃ K : Set X, IsCompact K ∧
+      (∀ᶠ i in l, mu i Kᶜ ≤ ENNReal.ofReal eta) ∧ nu Kᶜ ≤ ENNReal.ofReal eta)
+    (happrox : ∀ K : Set X, IsCompact K → ∀ eps : ℝ, 0 < eps →
+      ∃ G ∈ tests, ‖G‖ ≤ ‖F‖ + eps ∧ ∀ x ∈ K, |G x - F x| ≤ eps)
+    (htests : ∀ G ∈ tests, Tendsto (fun i ↦ ∫ x, G x ∂mu i) l (nhds (∫ x, G x ∂nu))) :
+    Tendsto (fun i ↦ ∫ x, F x ∂mu i) l (nhds (∫ x, F x ∂nu)) := by
+  rw [Metric.tendsto_nhds]
+  intro eps heps
+  let error := eps / 5
+  have herror : 0 < error := by dsimp [error]; positivity
+  let bound := ‖F‖ + (‖F‖ + error)
+  have hbound : 0 < bound := by
+    dsimp [bound]
+    exact add_pos_of_nonneg_of_pos (norm_nonneg F)
+      (add_pos_of_nonneg_of_pos (norm_nonneg F) herror)
+  let eta := error / bound
+  have heta : 0 < eta := div_pos herror hbound
+  obtain ⟨K, hK, hmass, hnu⟩ := htight eta heta
+  obtain ⟨G, hG, hGnorm, hGapprox⟩ := happrox K hK error herror
+  have hnorm : ‖F‖ + ‖G‖ ≤ bound := add_le_add_right hGnorm _
+  have hestimate : ∀ rho : Measure X, ∀ _ : IsProbabilityMeasure rho,
+      rho Kᶜ ≤ ENNReal.ofReal eta →
+      |(∫ x, F x ∂rho) - ∫ x, G x ∂rho| ≤ 2 * error := by
+    intro rho _ hrho
+    have hreal : rho.real Kᶜ ≤ eta :=
+      ENNReal.toReal_le_of_le_ofReal heta.le hrho
+    have hproduct : (‖F‖ + ‖G‖) * rho.real Kᶜ ≤ error := by
+      refine (mul_le_mul hnorm hreal measureReal_nonneg hbound.le).trans_eq ?_
+      exact mul_div_cancel₀ error hbound.ne'
+    have h := abs_integral_sub_le_of_approx_on rho F G hK.isClosed.measurableSet
+      herror.le hGapprox
+    exact h.trans ((add_le_add_right hproduct error).trans_eq (two_mul error).symm)
+  have hnear := Metric.tendsto_nhds.mp (htests G hG) error herror
+  filter_upwards [hmass, hnear] with i hi hclose
+  rw [Real.dist_eq] at hclose ⊢
+  have hleft := hestimate (mu i) inferInstance hi
+  have hright := hestimate nu inferInstance hnu
+  have htriangle := abs_sub_le (∫ x, F x ∂mu i) (∫ x, G x ∂mu i) (∫ x, F x ∂nu)
+  have htriangle' := abs_sub_le (∫ x, G x ∂mu i) (∫ x, G x ∂nu) (∫ x, F x ∂nu)
+  rw [abs_sub_comm] at hright
+  dsimp [error] at hleft hright hclose
+  linarith only [hleft, hright, hclose, htriangle, htriangle']
+
 end TruncationError
 
 namespace SubMarkovKernelSemigroup
@@ -124,63 +173,21 @@ theorem IsFellerKernelSemigroup.continuous_integral_continuousProcess
     (hmom : P.HasKolmogorovMoments p q M) (F : ContinuousPath alpha →ᵇ ℝ) :
     Continuous fun x ↦ ∫ omega, F omega ∂(continuousProcess P hP x) := by
   have hKreg := KolmogorovRegular.of_hasKolmogorovMoments P hP hmom
-  refine continuous_iff_continuousAt.mpr fun x0 ↦ Metric.tendsto_nhds.mpr fun eps heps ↦ ?_
-  set eps5 : ℝ := eps / 5 with heps5def
-  have heps5 : 0 < eps5 := by positivity
-  set Ctot : ℝ := ‖F‖ + (‖F‖ + eps5) with hCtotdef
-  have hCtotpos : 0 < Ctot := by
-    rw [hCtotdef]
-    have := norm_nonneg F
-    linarith
-  set eta : ℝ := eps5 / Ctot with hetadef
-  have hetapos : 0 < eta := div_pos heps5 hCtotpos
-  obtain ⟨K0, hK0compact, hK0nhds⟩ := exists_compact_mem_nhds x0
-  obtain ⟨Kp, hKpcompact, hKpmass⟩ :=
-    IsConservative.exists_isCompact_measure_compl_le P hP hmom hK0compact
-      (eps := ENNReal.ofReal eta) (ENNReal.ofReal_pos.mpr hetapos)
-  obtain ⟨G, hGcyl, hGnorm, hGapprox⟩ :=
-    ContinuousPath.exists_boundedCylinder_approx F hKpcompact heps5
-  have hKpmeas : MeasurableSet Kp := hKpcompact.isClosed.measurableSet
-  have herror : ∀ x ∈ K0, |(∫ omega, F omega ∂(continuousProcess P hP x)) -
-      ∫ omega, G omega ∂(continuousProcess P hP x)| ≤ 2 * eps5 := by
-    intro x hx
-    have hmass : (continuousProcess P hP x).real Kpᶜ ≤ eta := by
-      rw [measureReal_def]
-      exact ENNReal.toReal_le_of_le_ofReal hetapos.le (hKpmass x hx)
-    have hbase := abs_integral_sub_le_of_approx_on (continuousProcess P hP x) F G hKpmeas
-      heps5.le hGapprox
-    have hFG : ‖F‖ + ‖G‖ ≤ Ctot := by
-      rw [hCtotdef]
-      linarith [hGnorm]
-    have hprod : (‖F‖ + ‖G‖) * (continuousProcess P hP x).real Kpᶜ ≤ eps5 := by
-      calc (‖F‖ + ‖G‖) * (continuousProcess P hP x).real Kpᶜ ≤ Ctot * eta :=
-            mul_le_mul hFG hmass measureReal_nonneg hCtotpos.le
-        _ = eps5 := by
-            rw [hetadef]
-            field_simp
-    linarith [hbase, hprod]
-  have hcylinder :=
-    IsFellerKernelSemigroup.continuous_integral_boundedCylinder P hP hFeller hKreg hGcyl
-  have hnear : ∀ᶠ x in nhds x0, |(∫ omega, G omega ∂(continuousProcess P hP x)) -
-      ∫ omega, G omega ∂(continuousProcess P hP x0)| < eps5 := by
-    have h := Metric.tendsto_nhds.mp (hcylinder.continuousAt (x := x0)) eps5 heps5
-    simpa only [Real.dist_eq] using h
-  filter_upwards [hnear, hK0nhds] with x hxnear hxK0
-  rw [Real.dist_eq]
-  have h1 := herror x hxK0
-  have h2 := herror x0 (mem_of_mem_nhds hK0nhds)
-  have h2' : |(∫ omega, G omega ∂(continuousProcess P hP x0)) -
-      ∫ omega, F omega ∂(continuousProcess P hP x0)| ≤ 2 * eps5 := by
-    rw [abs_sub_comm]
-    exact h2
-  have htri1 := abs_sub_le (∫ omega, F omega ∂(continuousProcess P hP x))
-    (∫ omega, G omega ∂(continuousProcess P hP x))
-    (∫ omega, F omega ∂(continuousProcess P hP x0))
-  have htri2 := abs_sub_le (∫ omega, G omega ∂(continuousProcess P hP x))
-    (∫ omega, G omega ∂(continuousProcess P hP x0))
-    (∫ omega, F omega ∂(continuousProcess P hP x0))
-  rw [heps5def] at h1 h2' hxnear
-  linarith [htri1, htri2, h1, h2', hxnear]
+  refine continuous_iff_continuousAt.mpr fun x0 ↦ ?_
+  refine tendsto_integral_of_tight_approximation (fun x ↦ continuousProcess P hP x)
+    (continuousProcess P hP x0) {G | ContinuousPath.IsBoundedCylinder G} F ?_ ?_ ?_
+  · intro eta heta
+    obtain ⟨K0, hK0, hneighbourhood⟩ := exists_compact_mem_nhds x0
+    obtain ⟨K, hK, hmass⟩ :=
+      IsConservative.exists_isCompact_measure_compl_le P hP hmom hK0
+        (eps := ENNReal.ofReal eta) (ENNReal.ofReal_pos.mpr heta)
+    exact ⟨K, hK, Filter.Eventually.mono hneighbourhood fun x hx ↦ hmass x hx,
+      hmass x0 (mem_of_mem_nhds hneighbourhood)⟩
+  · intro K hK eps heps
+    exact ContinuousPath.exists_boundedCylinder_approx F hK heps
+  · intro G hG
+    exact (IsFellerKernelSemigroup.continuous_integral_boundedCylinder
+      P hP hFeller hKreg hG).continuousAt
 
 /-- The law of the continuous-path process, read as a probability measure on path space. -/
 def IsConservative.pathLaw (x : alpha) : ProbabilityMeasure (ContinuousPath alpha) :=

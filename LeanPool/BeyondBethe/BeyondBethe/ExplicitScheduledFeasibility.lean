@@ -7,7 +7,8 @@ module
 
 
 public import LeanPool.BeyondBethe.BeyondBethe.ScheduledFeasibility
-public import Mathlib.Tactic
+import Mathlib.Tactic.Positivity -- shake: keep
+import Mathlib.Tactic.Ring -- shake: keep
 
 /-! # Explicit Scheduled Feasibility -/
 

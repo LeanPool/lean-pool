@@ -24,6 +24,9 @@ open scoped BigOperators
 
 namespace GapCVP
 
+-- Keep enumeration abstract while elaborating the large dependent matrix types.
+attribute [local irreducible] List.finRange
+
 open GapCVP.TraceGolf (oneStep rebound)
 
 namespace GaussianAdaptivePhysicalUpdatedMatrixCatalogueTM

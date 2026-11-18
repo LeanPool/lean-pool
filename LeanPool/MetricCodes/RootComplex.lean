@@ -11,9 +11,7 @@ public import Mathlib.Algebra.Polynomial.Homogenize
 public import Mathlib.LinearAlgebra.Vandermonde
 import Mathlib.Algebra.Lie.OfAssociative
 import Mathlib.Algebra.MvPolynomial.Monad
-import Mathlib.Algebra.Order.Floor.Semifield
 import Mathlib.RingTheory.MvPolynomial.EulerIdentity
-import Mathlib.Tactic.NormNum.RealSqrt
 
 /-!
 # Universal root complexes
@@ -1030,7 +1028,7 @@ theorem maximalTotalAmbientCartan_mem_nullSubstitution_range
   have hfadjoin : f ∈ Algebra.adjoin ℂ
       (Set.range (fun ap : Fin (r + 1) × Fin (r + 1) =>
         isotropicVariable h ap.1 ap.2)) := by
-    simpa [g] using hadjoin
+    simpa only [AlgEquiv.apply_symm_apply, g] using hadjoin
   exact exists_nullSubstitution_of_mem_adjoin_isotropicVariable h f hfadjoin
 
 end HigherYoungMaximalCartanNullSubstitutionRange
@@ -3464,7 +3462,7 @@ theorem finrank_youngGramRadialWeightQuotient_eq_fullGramKoszulCoefficient_of_re
     rw [← finrank_youngMultihomogeneousSubmodule] at hprefdim
     omega
   rw [hdim]
-  simpa [fullGramKoszulCoefficient, len] using hprefix
+  simpa only [fullGramKoszulCoefficient, gramPrefixPairFinset_length, len] using hprefix
 
 theorem finrank_jointHarmonicWeight_eq_fullGramKoszulCoefficient_of_recurrence
     {r n : ℕ}
@@ -4729,7 +4727,7 @@ theorem rootSelectedExponent_sub_baseline {r : ℕ}
           ∑ α : PositiveRoot r, second α := by
     simpa only [add_comm] using (Finset.sum_sdiff (Finset.subset_univ S) (f := second))
   have hsecond : (∑ α : PositiveRoot r, second α) = i.val := by
-    simpa [second, Finset.sum_boole] using positiveRootSecond_card i
+    simpa only [Finset.sum_boole, Nat.cast_id, second] using positiveRootSecond_card i
   have hcharge : rootFamilyCharge S i =
       (∑ α ∈ S, (first α : ℤ)) -
         ∑ α ∈ S, (second α : ℤ) := by
@@ -4803,7 +4801,7 @@ theorem rootFamily_selectedMonomial {r : ℕ}
             Finsupp.single (positiveRootFirst α) 1) 1 := by
     simpa only [MvPolynomial.X] using hfirst.symm
   rw [hsecond', hfirst']
-  simp [rootSelectedExponent]
+  simp only [MvPolynomial.monomial_mul_monomial, mul_one, rootSelectedExponent]
 
 /-- The exponent vector whose coordinate at `i` is the value of the permutation at `i`. -/
 def rootPermutationExponent {r : ℕ}

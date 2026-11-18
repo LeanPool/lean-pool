@@ -9,7 +9,11 @@ module
 public import LeanPool.BeyondBethe.BeyondBethe.NumericalNearby
 public import Mathlib.Analysis.Convex.Strong
 public import Mathlib.Analysis.Convex.Deriv
-public import Mathlib.Tactic
+import Mathlib.Tactic.Convert -- shake: keep
+import Mathlib.Tactic.Ext -- shake: keep
+import Mathlib.Tactic.Linarith -- shake: keep
+import Mathlib.Tactic.NormNum -- shake: keep
+import Mathlib.Tactic.Ring -- shake: keep
 
 /-! # Strong Entropy -/
 

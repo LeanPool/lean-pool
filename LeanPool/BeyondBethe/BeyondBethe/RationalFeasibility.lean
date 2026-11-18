@@ -8,7 +8,13 @@ module
 
 public import LeanPool.BeyondBethe.BeyondBethe.RationalEllipsoid
 public import LeanPool.BeyondBethe.BeyondBethe.AlgorithmicSpec
-public import Mathlib.Tactic
+import Mathlib.Tactic.Ext -- shake: keep
+import Mathlib.Tactic.FieldSimp -- shake: keep
+import Mathlib.Tactic.Linarith -- shake: keep
+import Mathlib.Tactic.NormNum -- shake: keep
+import Mathlib.Tactic.Positivity -- shake: keep
+import Mathlib.Tactic.Ring -- shake: keep
+import Mathlib.Tactic.SimpRw -- shake: keep
 
 /-! # Rational Feasibility -/
 

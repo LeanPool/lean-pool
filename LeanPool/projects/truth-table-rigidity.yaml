@@ -1,0 +1,44 @@
+slug: truth-table-rigidity
+title: Baire-measurable rigidity of the truth-table degrees
+summary: Proves that an automorphism of the truth-table degrees induced by a Baire-measurable
+  map on Cantor space is the identity. It suffices to have a continuous inducing map on
+  a comeager set. The formalization develops total oracle functionals, the truth-table degree
+  order, and a Baire-category coding and inversion argument.
+branch: computability theory
+entry_module: LeanPool.TruthTableRigidity
+authors:
+- Bjørn Kjos-Hanssen
+source:
+  title: Baire measurable functions and automorphisms of the truth-table degrees
+  authors:
+  - Bjørn Kjos-Hanssen
+  arxiv: 2610.16059
+  url: https://github.com/bjoernkjoshanssen/tt-auto/tree/3190d8d1a78e709297423d1343f68395127be5de
+  github_repo: bjoernkjoshanssen/tt-auto
+  commit: 3190d8d1a78e709297423d1343f68395127be5de
+license: Apache-2.0
+status: verified
+provenance: AI
+provenance_evidence: The upstream NOTICE and README credit Aristotle (Harmonic) for the original
+  truth-table development. OpenAI's oracle-program infrastructure is reused from the existing
+  Turing cone rigidity project. The Lean Pool port is by Codex.
+main_declarations:
+- TT.eq_refl_of_inducedOn_comeager
+- TT.eq_refl_of_inducedByBaireMeasurable'
+main_results:
+- declaration: TT.eq_refl_of_inducedOn_comeager
+  informal: An order automorphism of the truth-table degrees is the identity if some Cantor-space
+    map induces it on a comeager set and is continuous there.
+  source_ref: Theorem 1.1 of arXiv:2610.16059, submitted 2026-10-12T02:01:06Z.
+- declaration: TT.eq_refl_of_inducedByBaireMeasurable'
+  informal: A Baire-measurable map on Cantor space can induce only the identity automorphism
+    of the truth-table degrees.
+  source_ref: Corollary 1.2 of arXiv:2610.16059.
+tags:
+- truth-table-reducibility
+- computability-theory
+- rigidity
+- baire-category
+msc:
+- 03D28
+- 03B35

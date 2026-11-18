@@ -8,7 +8,6 @@ module
 
 public import LeanPool.BeyondBethe.BeyondBethe.MachineBetheFeasibilitySemantics
 public import LeanPool.BeyondBethe.BeyondBethe.RationalEncodingBounds
-public import Mathlib.Tactic
 
 /-!
 # Ordinary binary bounds for scheduled ellipsoid states

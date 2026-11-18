@@ -7,10 +7,6 @@ module
 
 public import LeanPool.ConwaySoifer.Simplified.Geometry.AownChains
 public import LeanPool.ConwaySoifer.Simplified.Geometry.AownCentral
-import Mathlib.Tactic.Convert
-import Mathlib.Tactic.FinCases
-import Mathlib.Tactic.Linarith
-import Mathlib.Tactic.Ring
 
 /-!
 # AownSmall

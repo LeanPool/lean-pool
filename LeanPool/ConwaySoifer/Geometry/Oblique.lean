@@ -7,10 +7,6 @@ module
 
 public import LeanPool.ConwaySoifer.Geometry.Area
 public import LeanPool.ConwaySoifer.SevenTriangles.Geometry.Wedge
-import Mathlib.Tactic.Convert
-import Mathlib.Tactic.FinCases
-import Mathlib.Tactic.NormNum.Basic
-import Mathlib.Tactic.Ring
 
 /-!
 # Bridge to the vendored oblique-coordinate library

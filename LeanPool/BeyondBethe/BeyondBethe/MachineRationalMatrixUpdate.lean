@@ -7,7 +7,6 @@ module
 
 
 public import LeanPool.BeyondBethe.BeyondBethe.MachineListUpdate
-public import Mathlib.Tactic
 
 /-!
 # Mutable rational-matrix memory

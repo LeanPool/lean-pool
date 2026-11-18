@@ -12,7 +12,6 @@ public import LeanPool.ConwaySoifer.Simplified.Certificates.Steps.Sint3200003300
 public import LeanPool.ConwaySoifer.Simplified.Certificates.Steps.Sint3200003300003
 public import LeanPool.ConwaySoifer.Simplified.Certificates.Steps.Sint3200003300004
 public import LeanPool.ConwaySoifer.Simplified.Certificates.Steps.Sint3200003300005
-import Mathlib.Tactic.FinCases
 
 /-!
 # Sint 320000 330000

@@ -8,7 +8,11 @@ module
 
 public import LeanPool.BeyondBethe.BeyondBethe.TransferIdentity
 public import Mathlib.Analysis.SpecialFunctions.BinaryEntropy
-public import Mathlib.Tactic
+import Mathlib.Tactic.Convert -- shake: keep
+import Mathlib.Tactic.FieldSimp -- shake: keep
+import Mathlib.Tactic.Linarith -- shake: keep
+import Mathlib.Tactic.NormNum -- shake: keep
+import Mathlib.Tactic.Ring -- shake: keep
 
 /-! # Excursion Transfer -/
 

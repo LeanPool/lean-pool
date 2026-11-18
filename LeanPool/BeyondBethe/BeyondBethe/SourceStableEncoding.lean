@@ -8,7 +8,12 @@ module
 
 public import LeanPool.BeyondBethe.BeyondBethe.SourceStableInduction
 public import LeanPool.BeyondBethe.BeyondBethe.CapacityOrder
-public import Mathlib.Tactic
+import Mathlib.Tactic.Convert -- shake: keep
+import Mathlib.Tactic.Ext -- shake: keep
+import Mathlib.Tactic.FieldSimp -- shake: keep
+import Mathlib.Tactic.Ring -- shake: keep
+import Mathlib.Tactic.SimpRw -- shake: keep
+import Mathlib.Algebra.MvPolynomial.CommRing
 
 /-! # Source Stable Encoding -/
 

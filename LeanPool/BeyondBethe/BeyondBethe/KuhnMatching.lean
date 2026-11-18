@@ -8,7 +8,8 @@ module
 
 public import LeanPool.BeyondBethe.BeyondBethe.Permanent
 public import Mathlib.Data.List.FinRange
-public import Mathlib.Tactic
+import Aesop -- shake: keep
+import Mathlib.Tactic.Tauto -- shake: keep
 
 /-! # Kuhn Matching -/
 

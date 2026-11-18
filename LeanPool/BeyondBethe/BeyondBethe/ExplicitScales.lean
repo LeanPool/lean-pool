@@ -9,7 +9,10 @@ module
 public import LeanPool.BeyondBethe.BeyondBethe.ExplicitBounds
 public import LeanPool.BeyondBethe.BeyondBethe.CertifiedPairWeights
 public import LeanPool.BeyondBethe.BeyondBethe.NumericalScales
-public import Mathlib.Tactic
+import Mathlib.Tactic.GCongr -- shake: keep
+import Mathlib.Tactic.Linarith -- shake: keep
+import Mathlib.Tactic.NormNum -- shake: keep
+import Mathlib.Tactic.Positivity -- shake: keep
 
 /-! # Explicit Scales -/
 

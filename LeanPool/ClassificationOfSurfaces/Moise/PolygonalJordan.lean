@@ -108,7 +108,7 @@ noncomputable def mapEmbedding (f : Plane → Plane)
   consecutive_inter i := by
     have hedgeNext : f '' J.edgeSegment (i + 1) =
         segment ℝ (f (J.vertex (i + 1))) (f (J.vertex (i + 2))) := by
-      convert hedge (i + 1) using 1; ring
+      convert hedge (i + 1) using 1; ring_nf
     have hsub (k : ZMod J.n) : J.edgeSegment k ⊆ J.carrier := fun x hx =>
       Set.mem_iUnion.mpr ⟨k, hx⟩
     rw [← hedge i, ← hedgeNext, ← hinj.image_inter (hsub i) (hsub (i + 1))]
@@ -171,7 +171,7 @@ noncomputable def mapHomeomorph (h : Plane ≃ₜ Plane)
   consecutive_inter i := by
     have hedgeNext : h '' J.edgeSegment (i + 1) =
         segment ℝ (h (J.vertex (i + 1))) (h (J.vertex (i + 2))) := by
-      convert hedge (i + 1) using 1; ring
+      convert hedge (i + 1) using 1; ring_nf
     rw [← hedge i, ← hedgeNext, ← Set.image_inter h.injective]
     have hJ : J.edgeSegment i ∩ J.edgeSegment (i + 1) = {J.vertex (i + 1)} := by
       simpa only [edgeSegment, add_assoc, one_add_one_eq_two] using J.consecutive_inter i
@@ -723,15 +723,15 @@ theorem incident_complexDirections_ne (i : ZMod J.n) :
   have hxout : x ∈ J.edgeSegment i := by
     have := add_mem_segment_of_mem_segment_zero (p := J.vertex i) hqout
     rw [hx, edgeSegment]
-    convert this using 1; simp only [outgoingVector]; abel
+    convert this using 1; simp only [outgoingVector]; abel_nf
   have hxin : x ∈ J.edgeSegment (i - 1) := by
     have := add_mem_segment_of_mem_segment_zero (p := J.vertex i) hqin
     rw [edgeSegment, segment_symm]
     rw [hx]
-    convert this using 1; simp only [incomingRayVector, sub_add_cancel]; abel
+    convert this using 1; simp only [incomingRayVector, sub_add_cancel]; abel_nf
   have hinter : J.edgeSegment (i - 1) ∩ J.edgeSegment i = {J.vertex i} := by
     convert J.consecutive_inter (i - 1) using 1 <;>
-      simp only [edgeSegment, sub_add_cancel]; ring
+      simp only [edgeSegment, sub_add_cancel]; ring_nf
   have hxvertex : x = J.vertex i := by
     have hxinter : x ∈ J.edgeSegment (i - 1) ∩ J.edgeSegment i := ⟨hxin, hxout⟩
     rw [hinter] at hxinter
@@ -1135,7 +1135,7 @@ theorem ball_diff_carrier_eq_vertexSectors {r : ℝ}
       apply Set.mem_iUnion.mpr
       refine ⟨i, ?_⟩
       rw [edgeSegment]
-      convert hseg using 1; simp only [outgoingVector]; abel
+      convert hseg using 1; simp only [outgoingVector]; abel_nf
     · exfalso
       apply hxcarrier
       have hlenPrev := hlen (i - 1)
@@ -1151,7 +1151,7 @@ theorem ball_diff_carrier_eq_vertexSectors {r : ℝ}
       apply Set.mem_iUnion.mpr
       refine ⟨i - 1, ?_⟩
       rw [edgeSegment, segment_symm]
-      convert hseg using 1; simp only [incomingRayVector, sub_add_cancel]; abel
+      convert hseg using 1; simp only [incomingRayVector, sub_add_cancel]; abel_nf
   · intro x hx
     rcases hx with hx | hx
     · exact J.vertexForwardSector_subset_ball_diff_carrier hsep i hx
@@ -1395,7 +1395,7 @@ theorem edgeTube_diff_carrier_eq_sides (i : ZMod J.n) {trim width : ℝ}
       rw [← edgeCoordinateInv, J.edgeCoordinateInv_edgeCoordinate] at hseg
       exact Set.mem_iUnion.mpr ⟨i, by
         rw [edgeSegment]
-        convert hseg using 1; simp only [outgoingVector]; abel⟩
+        convert hseg using 1; simp only [outgoingVector]; abel_nf⟩
     · exact Or.inr ⟨htube.1, htube.2.1, htube.2.2.1, him⟩
   · rintro x (hx | hx)
     · refine ⟨J.edgePositiveSide_subset_edgeTube i hwidth hx, ?_⟩
@@ -1645,7 +1645,7 @@ theorem edgeCore_subset_edgeSegment (i : ZMod J.n) {trim : ℝ} (htrim : 0 < tri
       segment ℝ (J.vertex i) (J.vertex (i + 1))
   convert hseg using 1
   simp only [outgoingVector]
-  abel
+  abel_nf
 
 theorem disjoint_edgeCore_otherEdges (i : ZMod J.n) {trim : ℝ} (htrim : 0 < trim)
     (hlen : 4 * trim < J.edgeLength i) :

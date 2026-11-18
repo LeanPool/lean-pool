@@ -7,7 +7,9 @@ module
 
 
 public import LeanPool.BeyondBethe.BeyondBethe.Entropy
-public import Mathlib.Tactic
+import Mathlib.Tactic.Ring -- shake: keep
+import Mathlib.Tactic.SimpRw -- shake: keep
+import Mathlib.Tactic.SplitIfs -- shake: keep
 
 /-! # Gibbs -/
 

@@ -257,7 +257,7 @@ theorem norm_energyStandardRegroupedSourceAction_le
   have hscaleU (I : RealInterval) (hI : I ∈ U) : I.length = (2 : ℝ) ^ ((j - 2) + 2) := by
     obtain ⟨s, hs, hIs⟩ := Finset.mem_biUnion.mp hI
     rw [hscale s hs I hIs, hfixed s hs I hIs]
-    ring
+    ring_nf
   have hdisj : Set.Pairwise (↑U : Set RealInterval)
       (Disjoint on fun I : RealInterval ↦ I.carrier) := by
     intro I hI J hJ hne
@@ -440,7 +440,7 @@ theorem norm_energyStandardRegroupedSourcePiece_le_localAverage
     _ = 80 * positiveDyadicAmplitudeBound * intervalL1Average f I₀ := by
       rw [hlen, show j = (j - 2) + 2 by ring,
         krauseLacey_scale_eq_eight_mul_radius (j - 2)]
-      field_simp; ring
+      field_simp; ring_nf
 
 /-- At one fixed physical scale, the complete scalar-standard source sum is
 bounded by the local stopping average, with no loss in the number of source
@@ -468,7 +468,7 @@ theorem norm_energyStandardRegroupedSourceAction_le_localAverage
     obtain ⟨s, hs, hIs⟩ := Finset.mem_biUnion.mp hI
     rw [(Finset.mem_filter.mp (Finset.mem_filter.mp (hN s hs hIs)).1).2.1,
       hfixed s hs I hIs]
-    ring
+    ring_nf
   have hdisj : Set.Pairwise (↑U : Set RealInterval)
       (Disjoint on fun I : RealInterval ↦ I.carrier) := by
     intro I hI J hJ hne

@@ -1,0 +1,42 @@
+slug: corless-nilpotent
+title: Corless's nilpotent Bohemian matrix conjecture
+summary: >-
+  Classifies the nilpotent complex skew-symmetric tridiagonal matrices with
+  superdiagonal entries in {1, i} and counts them in each admissible dimension.
+  The proof relates characteristic polynomials to weighted path matching
+  polynomials, then uses the mod-2 dimension restriction and a mod-4 folding
+  argument to recover the recursive superdiagonal vectors.
+branch: linear algebra
+entry_module: LeanPool.CorlessNilpotent
+authors:
+  - Marcel Blattner
+source:
+  doi: 10.5206/mt.v1i2.14360
+  url: https://github.com/marcelbtec/corless-nilpotent/tree/1f4fa000540c5f8ab3f657fa436adb45a1404ade
+  github_repo: marcelbtec/corless-nilpotent
+  commit: 1f4fa000540c5f8ab3f657fa436adb45a1404ade
+  announcement_url: https://github.com/marcelbtec/corless-nilpotent/releases/tag/v1.0.0
+  announcement_date: '2026-11-17T15:54:53Z'
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+  - Corless.corless_conjecture
+  - Corless.card_nilpotent
+main_results:
+  - declaration: Corless.corless_conjecture
+    informal: >-
+      For a superdiagonal vector with entries 1 or i, the associated
+      skew-symmetric tridiagonal matrix is nilpotent exactly when the vector
+      belongs to Corless's recursively folded family.
+  - declaration: Corless.card_nilpotent
+    informal: >-
+      For each nonnegative k, exactly 2^k superdiagonal vectors yield
+      nilpotent matrices of dimension 2^(k+1) - 1.
+tags:
+  - nilpotent-matrices
+  - characteristic-polynomials
+  - matching-polynomials
+msc:
+  - 15A18
+  - 05C31

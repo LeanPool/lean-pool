@@ -7,7 +7,10 @@ module
 
 
 public import LeanPool.BeyondBethe.BeyondBethe.SourceStableSpecialization
-public import Mathlib.Tactic
+import Mathlib.Tactic.Convert -- shake: keep
+import Mathlib.Tactic.Linarith -- shake: keep
+import Mathlib.Tactic.Ring -- shake: keep
+import Mathlib.Algebra.MvPolynomial.CommRing
 
 /-! # Source Stable Slice -/
 

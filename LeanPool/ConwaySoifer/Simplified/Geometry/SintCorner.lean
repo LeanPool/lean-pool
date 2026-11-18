@@ -7,11 +7,6 @@ module
 
 public import LeanPool.ConwaySoifer.Simplified.Geometry.SideChains
 public import LeanPool.ConwaySoifer.Simplified.Geometry.ProfileWitness
-import Mathlib.Tactic.Convert
-import Mathlib.Tactic.Linarith
-import Mathlib.Tactic.NormNum.Basic
-import Mathlib.Tactic.Positivity
-import Mathlib.Tactic.Ring
 
 /-!
 # SintCorner

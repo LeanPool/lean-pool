@@ -13,7 +13,6 @@ public import LeanPool.TwoColoringOneRound.SimpleBounds
 public import LeanPool.TwoColoringOneRound.UpperBound
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 import Mathlib.MeasureTheory.Covering.Besicovitch
-import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # 2-Coloring Cycles in One Round

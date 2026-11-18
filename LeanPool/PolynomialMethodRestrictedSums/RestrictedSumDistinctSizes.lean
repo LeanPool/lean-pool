@@ -136,13 +136,14 @@ lemma vandermonde_degree_eq (k : ℕ) (p : ℕ) [Fact (Nat.Prime p)] :
         replace hcontra := congr_arg
           (MvPolynomial.eval (fun i => if i = fst then 1 else 0)) hcontra
         aesop;
-      · simp? +decide [Finset.prod_eq_zero_iff, sub_eq_zero];
+      · simp +decide only [prod_eq_zero_iff, sub_eq_zero, X_inj, Prod.exists, exists_eq_right',
+            not_exists];
         exact fun x hx => lt_irrefl x (right _ _ hx);
     convert h_total_deg
         (Finset.filter (fun ij => ij.2.val < ij.1.val)
           (Finset.univ : Finset (Fin (k + 1) × Fin (k + 1)))) _ using 1;
     · unfold vandermondePolynomial
-      simp? (config := { decide := Bool.true }) [Finset.prod_filter];
+      simp (config := { decide := Bool.true }) only [Fin.val_fin_lt, prod_filter];
       erw [Finset.prod_product];
     · rw [show
             (Finset.filter (fun ij : Fin (k + 1) × Fin (k + 1) => (ij.2 : ℕ) < ij.1) Finset.univ
@@ -195,7 +196,8 @@ lemma vandermonde_coeff_nonzero (c : Fin (k + 1) → ℕ) (m : ℕ)
          intro h_coeff_zero_in_charP
          have h_coeff_not_zero_in_K : (expectedValue c m : ℚ) ≠ 0 := by
            norm_num [expectedValue, h_sum];
-           simp_all? +decide [Finset.prod_eq_zero_iff];
+           simp_all +decide only [ne_eq, prod_eq_zero_iff, mem_univ, true_and, not_exists,
+               Nat.cast_eq_zero];
            exact ⟨⟨Nat.factorial_ne_zero _,
                fun i j => by split_ifs <;> norm_num; exact sub_ne_zero_of_ne <|
                    mod_cast Ne.symm <| by aesop⟩, fun i => Nat.factorial_ne_zero _⟩;
@@ -257,11 +259,15 @@ lemma vandermonde_coeff_nonzero (c : Fin (k + 1) → ℕ) (m : ℕ)
            exact Or.inl
              (Finset.prod_congr rfl fun i hi =>
                Finset.prod_congr rfl fun j hj => by split_ifs <;> simp +decide [*]);
-         simp_all? +decide [ZMod.intCast_zmod_eq_zero_iff_dvd];
+         simp_all +decide only [ne_eq, Fin.val_fin_lt, algebraMap_int_eq, eq_intCast,
+             ZMod.intCast_zmod_eq_zero_iff_dvd];
          obtain ⟨a, ha⟩ := h_coeff_not_zero_in_K';
-         simp_all? +decide [expectedValue];
+         simp_all +decide only [expectedValue, Fin.val_fin_lt, div_eq_zero_iff, mul_eq_zero,
+             Nat.cast_eq_zero, not_or, Int.cast_mul, Int.cast_natCast];
          rw [eq_div_iff] at h_coeff_not_zero_in_K <;> norm_cast at *
-             <;> simp_all? +decide [Finset.prod_eq_zero_iff, Nat.factorial_ne_zero];
+             <;> simp_all +decide only [Nat.factorial_ne_zero, not_false_eq_true, prod_eq_zero_iff,
+                 mem_univ, true_and, not_exists, and_false, exists_const, and_true, Nat.cast_prod,
+                 Int.cast_mul, Int.cast_natCast];
          -- Since $p$ is prime and $p \mid m! \prod_{i>j} (c_i - c_j)$, it must divide one of the
          -- factors.
          have h_div :
@@ -270,7 +276,7 @@ lemma vandermonde_coeff_nonzero (c : Fin (k + 1) → ℕ) (m : ℕ)
            have h_div : (p : ℤ) ∣ (m.factorial : ℤ) *
                (∏ i : Fin (k + 1), ∏ j : Fin (k + 1),
                    if j.val < i.val then (c i - c j : ℤ) else 1) := by
-             simp_all? +decide [Int.subNatNat_eq_coe];
+             simp_all +decide only [Int.subNatNat_eq_coe, Fin.val_fin_lt];
              exact h_coeff_not_zero_in_K ▸ dvd_mul_of_dvd_left (dvd_mul_right _ _) _;
            exact Or.resolve_left (Int.Prime.dvd_mul' (Fact.out : Nat.Prime p) h_div) (
                by norm_cast; exact mt (Nat.Prime.dvd_factorial (Fact.out : Nat.Prime p) |>.1) (
@@ -281,8 +287,9 @@ lemma vandermonde_coeff_nonzero (c : Fin (k + 1) → ℕ) (m : ℕ)
              i > j ∧ (p : ℤ) ∣ (c i - c j : ℤ) := by
            have :=
                Fact.mk (Fact.out : Nat.Prime p);
-                   simp_all? +decide
-                       [← ZMod.intCast_zmod_eq_zero_iff_dvd, Finset.prod_eq_zero_iff];
+                   simp_all +decide only [Fin.val_fin_lt, ← ZMod.intCast_zmod_eq_zero_iff_dvd,
+                       Int.cast_prod, Int.cast_ite, Int.cast_sub, Int.cast_natCast, Int.cast_one,
+                       prod_eq_zero_iff, mem_univ, true_and, gt_iff_lt];
            obtain ⟨i, j, h⟩ := h_div; use i, j; aesop;
          exact h_distinct _ _ hij (by
            obtain ⟨x, hx⟩ := h_div_factor
@@ -361,7 +368,8 @@ theorem restricted_sum_distinct_sizes (A : Fin (k + 1) → Finset (ZMod p))
               exact lt_of_le_of_lt a (hσ _ _ (Fin.castSucc_lt_succ));
           have hc_ge_id_sum : ∑ i, c (σ i) ≥ ∑ i ∈ Finset.range (k + 1), i := by
             simpa only [Finset.sum_range] using Finset.sum_le_sum fun i _ => hc_ge_id i;
-          simp_all? +decide [Finset.sum_range_id, Equiv.sum_comp σ fun i => c i];
+          simp_all +decide only [ne_eq, ge_iff_le, Equiv.sum_comp σ fun i => c i, sum_range_id,
+              add_tsub_cancel_right];
           rwa [Nat.choose_two_right];
       -- Apply Theorem 2.1 with this h, the sets A_i, and parameters c_i, m. The theorem gives |S| ≥
       -- m + 1.
@@ -472,10 +480,13 @@ theorem restricted_sum_distinct_sizes (A : Fin (k + 1) → Finset (ZMod p))
               simp [hij, heq]
           · rintro ⟨a, ⟨ha₁, ha₂⟩, rfl⟩
             use a
-            simp_all? +decide [Finset.prod_eq_zero_iff]
+            simp_all +decide only [ne_eq, ge_iff_le, Order.add_one_le_iff, Fin.val_fin_lt, map_prod,
+                prod_eq_zero_iff, mem_univ, true_and, not_exists, mem_filter, Fintype.mem_piFinset,
+                implies_true, and_true]
             intro i j
             split_ifs <;>
-              simp_all? (config := { decide := Bool.true }) [sub_eq_iff_eq_add]
+              simp_all (config := { decide := Bool.true }) only [map_sub, eval_X, sub_eq_iff_eq_add,
+                  zero_add, not_lt, map_one, one_ne_zero, not_false_eq_true]
             exact Ne.symm (ha₂ _ _ ‹_›)
       simp_all only [ne_eq, ge_iff_le, Order.add_one_le_iff, gt_iff_lt, m, c]
       -- After `aesop`, the goal is
