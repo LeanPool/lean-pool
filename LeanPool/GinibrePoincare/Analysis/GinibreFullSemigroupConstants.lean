@@ -60,11 +60,6 @@ theorem ginibreFullValueResolvent_mean (n : ℕ) (hn : 0 < n) (u : GinibreFullVa
   rw [← ginibreRealConstantL2_one_inner n hn, ← ginibreRealConstantL2_one_inner n hn]
   rw [← ginibreFullValueResolvent_symmetric, ginibreFullValueResolvent_constant]
 
-/-- The actual zero constant is the Hilbert-space zero. -/
-@[simp] theorem ginibreRealConstantL2_zero (n : ℕ) (hn : 0 < n) :
-    ginibreRealConstantL2 n hn 0 = 0 := by
-  rw [ginibreRealConstantL2_eq_smul_one, zero_smul]
-
 /-- The sharp gap gives the concrete full real resolvent contraction `1/3`
  on every zero-mean datum. -/
 theorem ginibreFullValueResolvent_centered_norm_le (n : ℕ) (hn : 0 < n)

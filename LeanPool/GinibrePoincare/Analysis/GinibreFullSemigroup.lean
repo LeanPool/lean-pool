@@ -33,6 +33,7 @@ SOFTWARE.
 module
 
 public import LeanPool.GinibrePoincare.Analysis.GinibreFullGeneratorGraph
+public import LeanPool.GinibrePoincare.Analysis.GinibreFullGeneratorSpectrum
 public import LeanPool.GinibrePoincare.Analysis.GinibreFullSemigroupInfinitesimal
 
 /-! # The actual full symmetric Ginibre weak diffusion semigroup

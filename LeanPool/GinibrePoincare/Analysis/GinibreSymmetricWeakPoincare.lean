@@ -365,11 +365,7 @@ private theorem coordinateSumLinear_attains_symmetric_weak_poincare
         rw [coordinateSum_ginibre_gaussian n hn]
         exact hmoments.1
   have hvar : ginibreL2Variance n hn u = 1 / 2 := by
-    have hc0 : ginibreRealConstantL2 n hn 0 = 0 := by
-      apply Lp.ext
-      filter_upwards [ginibreRealConstantL2_ae n hn 0] with z hz
-      simp [hz]
-    rw [ginibreL2Variance, hmean, hc0, sub_zero]
+    rw [ginibreL2Variance, hmean, ginibreRealConstantL2_zero, sub_zero]
     rw [← integral_square_eq_L2_norm_sq]
     have hsecond : (∫ z, f z ^ 2 ∂ginibreMeasure n) = 1 / 2 := by
       have hmap : (∫ s : ℂ, L s ^ 2 ∂((ginibreMeasure n).map coordinateSum)) =

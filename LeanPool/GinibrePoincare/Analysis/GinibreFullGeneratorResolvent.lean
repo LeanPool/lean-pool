@@ -210,11 +210,6 @@ theorem ginibreFullGenerator_resolvent_unique (n : ℕ) (hn : 0 < n)
   · have h := congrArg (ginibreFullFormGradient n hn) hr
     simpa [r, ginibreFullFormOfWeak_gradient] using h
 
-/-- The full graph resolvent viewed as a linear map. -/
-def ginibreFullFormResolventLinear (n : ℕ) (hn : 0 < n) :
-    GinibreFullValueL2 n →ₗ[ℝ] ginibreFullFormSpace n hn :=
-  (ginibreFullFormResolventCLM n hn).toLinearMap
-
 /-- The value resolvent on the original concrete weighted L² space. -/
 def ginibreFullValueResolvent (n : ℕ) (hn : 0 < n) :
     GinibreFullValueL2 n →L[ℝ] GinibreFullValueL2 n :=

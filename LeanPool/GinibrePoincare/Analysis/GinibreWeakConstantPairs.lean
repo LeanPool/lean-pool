@@ -90,6 +90,11 @@ theorem ginibreRealConstantL2_eq_smul_one (n : ℕ) (hn : 0 < n) (c : ℝ) :
   change c = c * (ginibreRealConstantL2 n hn 1) z
   rw [hone, mul_one]
 
+/-- The actual zero constant is the Hilbert-space zero. -/
+@[simp] theorem ginibreRealConstantL2_zero (n : ℕ) (hn : 0 < n) :
+    ginibreRealConstantL2 n hn 0 = 0 := by
+  rw [ginibreRealConstantL2_eq_smul_one, zero_smul]
+
 /-- Every actual real constant has the ordinary zero weak gradient. -/
 theorem ginibreRealConstantL2_weak (n : ℕ) (hn : 0 < n) (c : ℝ) :
     IsGinibreDistributionalGradient n (ginibreRealConstantL2 n hn c) 0 := by
