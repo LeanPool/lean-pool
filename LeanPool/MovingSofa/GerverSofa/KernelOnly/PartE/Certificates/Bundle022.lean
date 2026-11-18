@@ -5,7 +5,7 @@ Authors: Dawid Trela
 -/
 module
 
-import LeanPool.MovingSofa.KernelCertificate
+import LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.FastRejection
 
 public import LeanPool.MovingSofa.GerverSofa.KernelOnly.Core.Bundle005
 /-!
@@ -3208,52 +3208,52 @@ open CertificateCells9e0a1773d8
 namespace CoverCertificatefdb2e5aa72
 
 private theorem checked000 : adaptiveCoverCheck 2 cell000 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell000 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell000 (by gerver_fast_rejection)
 
 private theorem checked001 : adaptiveCoverCheck 2 cell001 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell001 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell001 (by gerver_fast_rejection)
 
 private theorem checked002 : adaptiveCoverCheck 2 cell002 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell002 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell002 (by gerver_fast_rejection)
 
 private theorem checked003 : adaptiveCoverCheck 2 cell003 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell003 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell003 (by gerver_fast_rejection)
 
 private theorem checked010 : adaptiveCoverCheck 2 cell010 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell010 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell010 (by gerver_fast_rejection)
 
 private theorem checked011 : adaptiveCoverCheck 2 cell011 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell011 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell011 (by gerver_fast_rejection)
 
 private theorem checked012 : adaptiveCoverCheck 2 cell012 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell012 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell012 (by gerver_fast_rejection)
 
 private theorem checked013 : adaptiveCoverCheck 2 cell013 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell013 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell013 (by gerver_fast_rejection)
 
 private theorem checked100 : adaptiveCoverCheck 2 cell100 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell100 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell100 (by gerver_fast_rejection)
 
 private theorem checked101 : adaptiveCoverCheck 2 cell101 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell101 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell101 (by gerver_fast_rejection)
 
 private theorem checked102 : adaptiveCoverCheck 2 cell102 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell102 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell102 (by gerver_fast_rejection)
 
 private theorem checked103 : adaptiveCoverCheck 2 cell103 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell103 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell103 (by gerver_fast_rejection)
 
 private theorem checked110 : adaptiveCoverCheck 2 cell110 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell110 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell110 (by gerver_fast_rejection)
 
 private theorem checked111 : adaptiveCoverCheck 2 cell111 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell111 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell111 (by gerver_fast_rejection)
 
 private theorem checked112 : adaptiveCoverCheck 2 cell112 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell112 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell112 (by gerver_fast_rejection)
 
 private theorem checked113 : adaptiveCoverCheck 2 cell113 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell113 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell113 (by gerver_fast_rejection)
 
 private theorem checked00 : adaptiveCoverCheck 3 cell00 = true := by
   exact adaptiveCoverCheck_succ_of_children 2 cell00
@@ -3264,10 +3264,10 @@ private theorem checked01 : adaptiveCoverCheck 3 cell01 = true := by
     checked010 checked011 checked012 checked013
 
 private theorem checked02 : adaptiveCoverCheck 3 cell02 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 3 cell02 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 3 cell02 (by gerver_fast_rejection)
 
 private theorem checked03 : adaptiveCoverCheck 3 cell03 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 3 cell03 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 3 cell03 (by gerver_fast_rejection)
 
 private theorem checked10 : adaptiveCoverCheck 3 cell10 = true := by
   exact adaptiveCoverCheck_succ_of_children 2 cell10
@@ -3278,10 +3278,10 @@ private theorem checked11 : adaptiveCoverCheck 3 cell11 = true := by
     checked110 checked111 checked112 checked113
 
 private theorem checked12 : adaptiveCoverCheck 3 cell12 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 3 cell12 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 3 cell12 (by gerver_fast_rejection)
 
 private theorem checked13 : adaptiveCoverCheck 3 cell13 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 3 cell13 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 3 cell13 (by gerver_fast_rejection)
 
 private theorem checked0 : adaptiveCoverCheck 4 cell0 = true := by
   exact adaptiveCoverCheck_succ_of_children 3 cell0
@@ -3292,10 +3292,10 @@ private theorem checked1 : adaptiveCoverCheck 4 cell1 = true := by
     checked10 checked11 checked12 checked13
 
 private theorem checked2 : adaptiveCoverCheck 4 cell2 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell2 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell2 (by gerver_fast_rejection)
 
 private theorem checked3 : adaptiveCoverCheck 4 cell3 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell3 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell3 (by gerver_fast_rejection)
 
 private theorem checkedRoot : adaptiveCoverCheck 5 cellRoot = true := by
   exact adaptiveCoverCheck_succ_of_children 4 cellRoot
@@ -3339,100 +3339,100 @@ open CertificateCells5867c25b03
 namespace CoverCertificatefeab482a88
 
 private theorem checked0000 : adaptiveCoverCheck 1 cell0000 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell0000 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell0000 (by gerver_fast_rejection)
 
 private theorem checked0001 : adaptiveCoverCheck 1 cell0001 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell0001 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell0001 (by gerver_fast_rejection)
 
 private theorem checked0002 : adaptiveCoverCheck 1 cell0002 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell0002 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell0002 (by gerver_fast_rejection)
 
 private theorem checked0003 : adaptiveCoverCheck 1 cell0003 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell0003 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell0003 (by gerver_fast_rejection)
 
 private theorem checked0010 : adaptiveCoverCheck 1 cell0010 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell0010 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell0010 (by gerver_fast_rejection)
 
 private theorem checked0011 : adaptiveCoverCheck 1 cell0011 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell0011 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell0011 (by gerver_fast_rejection)
 
 private theorem checked0012 : adaptiveCoverCheck 1 cell0012 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell0012 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell0012 (by gerver_fast_rejection)
 
 private theorem checked0013 : adaptiveCoverCheck 1 cell0013 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell0013 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell0013 (by gerver_fast_rejection)
 
 private theorem checked0100 : adaptiveCoverCheck 1 cell0100 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell0100 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell0100 (by gerver_fast_rejection)
 
 private theorem checked0101 : adaptiveCoverCheck 1 cell0101 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell0101 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell0101 (by gerver_fast_rejection)
 
 private theorem checked0102 : adaptiveCoverCheck 1 cell0102 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell0102 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell0102 (by gerver_fast_rejection)
 
 private theorem checked0103 : adaptiveCoverCheck 1 cell0103 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell0103 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell0103 (by gerver_fast_rejection)
 
 private theorem checked0110 : adaptiveCoverCheck 1 cell0110 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell0110 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell0110 (by gerver_fast_rejection)
 
 private theorem checked0111 : adaptiveCoverCheck 1 cell0111 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell0111 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell0111 (by gerver_fast_rejection)
 
 private theorem checked0112 : adaptiveCoverCheck 1 cell0112 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell0112 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell0112 (by gerver_fast_rejection)
 
 private theorem checked0113 : adaptiveCoverCheck 1 cell0113 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell0113 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell0113 (by gerver_fast_rejection)
 
 private theorem checked1000 : adaptiveCoverCheck 1 cell1000 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell1000 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell1000 (by gerver_fast_rejection)
 
 private theorem checked1001 : adaptiveCoverCheck 1 cell1001 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell1001 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell1001 (by gerver_fast_rejection)
 
 private theorem checked1002 : adaptiveCoverCheck 1 cell1002 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell1002 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell1002 (by gerver_fast_rejection)
 
 private theorem checked1003 : adaptiveCoverCheck 1 cell1003 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell1003 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell1003 (by gerver_fast_rejection)
 
 private theorem checked1010 : adaptiveCoverCheck 1 cell1010 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell1010 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell1010 (by gerver_fast_rejection)
 
 private theorem checked1011 : adaptiveCoverCheck 1 cell1011 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell1011 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell1011 (by gerver_fast_rejection)
 
 private theorem checked1012 : adaptiveCoverCheck 1 cell1012 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell1012 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell1012 (by gerver_fast_rejection)
 
 private theorem checked1013 : adaptiveCoverCheck 1 cell1013 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell1013 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell1013 (by gerver_fast_rejection)
 
 private theorem checked1100 : adaptiveCoverCheck 1 cell1100 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell1100 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell1100 (by gerver_fast_rejection)
 
 private theorem checked1101 : adaptiveCoverCheck 1 cell1101 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell1101 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell1101 (by gerver_fast_rejection)
 
 private theorem checked1102 : adaptiveCoverCheck 1 cell1102 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell1102 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell1102 (by gerver_fast_rejection)
 
 private theorem checked1103 : adaptiveCoverCheck 1 cell1103 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell1103 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell1103 (by gerver_fast_rejection)
 
 private theorem checked1110 : adaptiveCoverCheck 1 cell1110 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell1110 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell1110 (by gerver_fast_rejection)
 
 private theorem checked1111 : adaptiveCoverCheck 1 cell1111 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell1111 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell1111 (by gerver_fast_rejection)
 
 private theorem checked1112 : adaptiveCoverCheck 1 cell1112 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell1112 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell1112 (by gerver_fast_rejection)
 
 private theorem checked1113 : adaptiveCoverCheck 1 cell1113 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell1113 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell1113 (by gerver_fast_rejection)
 
 private theorem checked000 : adaptiveCoverCheck 2 cell000 = true := by
   exact adaptiveCoverCheck_succ_of_children 1 cell000
@@ -3443,10 +3443,10 @@ private theorem checked001 : adaptiveCoverCheck 2 cell001 = true := by
     checked0010 checked0011 checked0012 checked0013
 
 private theorem checked002 : adaptiveCoverCheck 2 cell002 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell002 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell002 (by gerver_fast_rejection)
 
 private theorem checked003 : adaptiveCoverCheck 2 cell003 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell003 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell003 (by gerver_fast_rejection)
 
 private theorem checked010 : adaptiveCoverCheck 2 cell010 = true := by
   exact adaptiveCoverCheck_succ_of_children 1 cell010
@@ -3457,10 +3457,10 @@ private theorem checked011 : adaptiveCoverCheck 2 cell011 = true := by
     checked0110 checked0111 checked0112 checked0113
 
 private theorem checked012 : adaptiveCoverCheck 2 cell012 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell012 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell012 (by gerver_fast_rejection)
 
 private theorem checked013 : adaptiveCoverCheck 2 cell013 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell013 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell013 (by gerver_fast_rejection)
 
 private theorem checked100 : adaptiveCoverCheck 2 cell100 = true := by
   exact adaptiveCoverCheck_succ_of_children 1 cell100
@@ -3471,10 +3471,10 @@ private theorem checked101 : adaptiveCoverCheck 2 cell101 = true := by
     checked1010 checked1011 checked1012 checked1013
 
 private theorem checked102 : adaptiveCoverCheck 2 cell102 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell102 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell102 (by gerver_fast_rejection)
 
 private theorem checked103 : adaptiveCoverCheck 2 cell103 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell103 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell103 (by gerver_fast_rejection)
 
 private theorem checked110 : adaptiveCoverCheck 2 cell110 = true := by
   exact adaptiveCoverCheck_succ_of_children 1 cell110
@@ -3485,10 +3485,10 @@ private theorem checked111 : adaptiveCoverCheck 2 cell111 = true := by
     checked1110 checked1111 checked1112 checked1113
 
 private theorem checked112 : adaptiveCoverCheck 2 cell112 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell112 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell112 (by gerver_fast_rejection)
 
 private theorem checked113 : adaptiveCoverCheck 2 cell113 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell113 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell113 (by gerver_fast_rejection)
 
 private theorem checked00 : adaptiveCoverCheck 3 cell00 = true := by
   exact adaptiveCoverCheck_succ_of_children 2 cell00
@@ -3499,10 +3499,10 @@ private theorem checked01 : adaptiveCoverCheck 3 cell01 = true := by
     checked010 checked011 checked012 checked013
 
 private theorem checked02 : adaptiveCoverCheck 3 cell02 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 3 cell02 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 3 cell02 (by gerver_fast_rejection)
 
 private theorem checked03 : adaptiveCoverCheck 3 cell03 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 3 cell03 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 3 cell03 (by gerver_fast_rejection)
 
 private theorem checked10 : adaptiveCoverCheck 3 cell10 = true := by
   exact adaptiveCoverCheck_succ_of_children 2 cell10
@@ -3513,10 +3513,10 @@ private theorem checked11 : adaptiveCoverCheck 3 cell11 = true := by
     checked110 checked111 checked112 checked113
 
 private theorem checked12 : adaptiveCoverCheck 3 cell12 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 3 cell12 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 3 cell12 (by gerver_fast_rejection)
 
 private theorem checked13 : adaptiveCoverCheck 3 cell13 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 3 cell13 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 3 cell13 (by gerver_fast_rejection)
 
 private theorem checked0 : adaptiveCoverCheck 4 cell0 = true := by
   exact adaptiveCoverCheck_succ_of_children 3 cell0
@@ -3527,10 +3527,10 @@ private theorem checked1 : adaptiveCoverCheck 4 cell1 = true := by
     checked10 checked11 checked12 checked13
 
 private theorem checked2 : adaptiveCoverCheck 4 cell2 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell2 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell2 (by gerver_fast_rejection)
 
 private theorem checked3 : adaptiveCoverCheck 4 cell3 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell3 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell3 (by gerver_fast_rejection)
 
 private theorem checkedRoot : adaptiveCoverCheck 5 cellRoot = true := by
   exact adaptiveCoverCheck_succ_of_children 4 cellRoot
@@ -3574,16 +3574,16 @@ open CertificateCellsca01649193
 namespace CoverCertificatebf967458da
 
 private theorem checked0 : adaptiveCoverCheck 4 cell0 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell0 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell0 (by gerver_fast_rejection)
 
 private theorem checked1 : adaptiveCoverCheck 4 cell1 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell1 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell1 (by gerver_fast_rejection)
 
 private theorem checked2 : adaptiveCoverCheck 4 cell2 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell2 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell2 (by gerver_fast_rejection)
 
 private theorem checked3 : adaptiveCoverCheck 4 cell3 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell3 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell3 (by gerver_fast_rejection)
 
 private theorem checkedRoot : adaptiveCoverCheck 5 cellRoot = true := by
   exact adaptiveCoverCheck_succ_of_children 4 cellRoot
@@ -3627,16 +3627,16 @@ open CertificateCells469c6912b9
 namespace CoverCertificate0ae56857be
 
 private theorem checked0 : adaptiveCoverCheck 4 cell0 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell0 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell0 (by gerver_fast_rejection)
 
 private theorem checked1 : adaptiveCoverCheck 4 cell1 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell1 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell1 (by gerver_fast_rejection)
 
 private theorem checked2 : adaptiveCoverCheck 4 cell2 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell2 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell2 (by gerver_fast_rejection)
 
 private theorem checked3 : adaptiveCoverCheck 4 cell3 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell3 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell3 (by gerver_fast_rejection)
 
 private theorem checkedRoot : adaptiveCoverCheck 5 cellRoot = true := by
   exact adaptiveCoverCheck_succ_of_children 4 cellRoot
@@ -3681,76 +3681,76 @@ open CertificateCellscf0a854a36
 namespace CoverCertificate2ea7c8ddef
 
 private theorem checked1000 : adaptiveCoverCheck 0 cell1000 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 0 cell1000 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 0 cell1000 (by gerver_fast_rejection)
 
 private theorem checked1001 : adaptiveCoverCheck 0 cell1001 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 0 cell1001 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 0 cell1001 (by gerver_fast_rejection)
 
 private theorem checked1002 : adaptiveCoverCheck 0 cell1002 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 0 cell1002 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 0 cell1002 (by gerver_fast_rejection)
 
 private theorem checked1003 : adaptiveCoverCheck 0 cell1003 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 0 cell1003 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 0 cell1003 (by gerver_fast_rejection)
 
 private theorem checked1010 : adaptiveCoverCheck 0 cell1010 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 0 cell1010 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 0 cell1010 (by gerver_fast_rejection)
 
 private theorem checked1011 : adaptiveCoverCheck 0 cell1011 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 0 cell1011 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 0 cell1011 (by gerver_fast_rejection)
 
 private theorem checked1012 : adaptiveCoverCheck 0 cell1012 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 0 cell1012 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 0 cell1012 (by gerver_fast_rejection)
 
 private theorem checked1013 : adaptiveCoverCheck 0 cell1013 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 0 cell1013 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 0 cell1013 (by gerver_fast_rejection)
 
 private theorem checked1100 : adaptiveCoverCheck 0 cell1100 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 0 cell1100 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 0 cell1100 (by gerver_fast_rejection)
 
 private theorem checked1101 : adaptiveCoverCheck 0 cell1101 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 0 cell1101 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 0 cell1101 (by gerver_fast_rejection)
 
 private theorem checked1102 : adaptiveCoverCheck 0 cell1102 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 0 cell1102 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 0 cell1102 (by gerver_fast_rejection)
 
 private theorem checked1103 : adaptiveCoverCheck 0 cell1103 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 0 cell1103 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 0 cell1103 (by gerver_fast_rejection)
 
 private theorem checked1110 : adaptiveCoverCheck 0 cell1110 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 0 cell1110 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 0 cell1110 (by gerver_fast_rejection)
 
 private theorem checked1111 : adaptiveCoverCheck 0 cell1111 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 0 cell1111 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 0 cell1111 (by gerver_fast_rejection)
 
 private theorem checked1112 : adaptiveCoverCheck 0 cell1112 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 0 cell1112 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 0 cell1112 (by gerver_fast_rejection)
 
 private theorem checked1113 : adaptiveCoverCheck 0 cell1113 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 0 cell1113 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 0 cell1113 (by gerver_fast_rejection)
 
 private theorem checked000 : adaptiveCoverCheck 1 cell000 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell000 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell000 (by gerver_fast_rejection)
 
 private theorem checked001 : adaptiveCoverCheck 1 cell001 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell001 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell001 (by gerver_fast_rejection)
 
 private theorem checked002 : adaptiveCoverCheck 1 cell002 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell002 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell002 (by gerver_fast_rejection)
 
 private theorem checked003 : adaptiveCoverCheck 1 cell003 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell003 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell003 (by gerver_fast_rejection)
 
 private theorem checked010 : adaptiveCoverCheck 1 cell010 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell010 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell010 (by gerver_fast_rejection)
 
 private theorem checked011 : adaptiveCoverCheck 1 cell011 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell011 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell011 (by gerver_fast_rejection)
 
 private theorem checked012 : adaptiveCoverCheck 1 cell012 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell012 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell012 (by gerver_fast_rejection)
 
 private theorem checked013 : adaptiveCoverCheck 1 cell013 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell013 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell013 (by gerver_fast_rejection)
 
 private theorem checked100 : adaptiveCoverCheck 1 cell100 = true := by
   exact adaptiveCoverCheck_succ_of_children 0 cell100
@@ -3761,10 +3761,10 @@ private theorem checked101 : adaptiveCoverCheck 1 cell101 = true := by
     checked1010 checked1011 checked1012 checked1013
 
 private theorem checked102 : adaptiveCoverCheck 1 cell102 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell102 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell102 (by gerver_fast_rejection)
 
 private theorem checked103 : adaptiveCoverCheck 1 cell103 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell103 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell103 (by gerver_fast_rejection)
 
 private theorem checked110 : adaptiveCoverCheck 1 cell110 = true := by
   exact adaptiveCoverCheck_succ_of_children 0 cell110
@@ -3775,10 +3775,10 @@ private theorem checked111 : adaptiveCoverCheck 1 cell111 = true := by
     checked1110 checked1111 checked1112 checked1113
 
 private theorem checked112 : adaptiveCoverCheck 1 cell112 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell112 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell112 (by gerver_fast_rejection)
 
 private theorem checked113 : adaptiveCoverCheck 1 cell113 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell113 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell113 (by gerver_fast_rejection)
 
 private theorem checked00 : adaptiveCoverCheck 2 cell00 = true := by
   exact adaptiveCoverCheck_succ_of_children 1 cell00
@@ -3789,10 +3789,10 @@ private theorem checked01 : adaptiveCoverCheck 2 cell01 = true := by
     checked010 checked011 checked012 checked013
 
 private theorem checked02 : adaptiveCoverCheck 2 cell02 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell02 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell02 (by gerver_fast_rejection)
 
 private theorem checked03 : adaptiveCoverCheck 2 cell03 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell03 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell03 (by gerver_fast_rejection)
 
 private theorem checked10 : adaptiveCoverCheck 2 cell10 = true := by
   exact adaptiveCoverCheck_succ_of_children 1 cell10
@@ -3803,10 +3803,10 @@ private theorem checked11 : adaptiveCoverCheck 2 cell11 = true := by
     checked110 checked111 checked112 checked113
 
 private theorem checked12 : adaptiveCoverCheck 2 cell12 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell12 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell12 (by gerver_fast_rejection)
 
 private theorem checked13 : adaptiveCoverCheck 2 cell13 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell13 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell13 (by gerver_fast_rejection)
 
 private theorem checked0 : adaptiveCoverCheck 3 cell0 = true := by
   exact adaptiveCoverCheck_succ_of_children 2 cell0
@@ -3817,10 +3817,10 @@ private theorem checked1 : adaptiveCoverCheck 3 cell1 = true := by
     checked10 checked11 checked12 checked13
 
 private theorem checked2 : adaptiveCoverCheck 3 cell2 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 3 cell2 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 3 cell2 (by gerver_fast_rejection)
 
 private theorem checked3 : adaptiveCoverCheck 3 cell3 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 3 cell3 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 3 cell3 (by gerver_fast_rejection)
 
 private theorem checkedRoot : adaptiveCoverCheck 4 cellRoot = true := by
   exact adaptiveCoverCheck_succ_of_children 3 cellRoot
@@ -3865,88 +3865,88 @@ open CertificateCellseb0fd3147a
 namespace CoverCertificate75cf82dc9c
 
 private theorem checked0000 : adaptiveCoverCheck 0 cell0000 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 0 cell0000 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 0 cell0000 (by gerver_fast_rejection)
 
 private theorem checked0001 : adaptiveCoverCheck 0 cell0001 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 0 cell0001 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 0 cell0001 (by gerver_fast_rejection)
 
 private theorem checked0002 : adaptiveCoverCheck 0 cell0002 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 0 cell0002 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 0 cell0002 (by gerver_fast_rejection)
 
 private theorem checked0003 : adaptiveCoverCheck 0 cell0003 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 0 cell0003 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 0 cell0003 (by gerver_fast_rejection)
 
 private theorem checked0010 : adaptiveCoverCheck 0 cell0010 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 0 cell0010 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 0 cell0010 (by gerver_fast_rejection)
 
 private theorem checked0011 : adaptiveCoverCheck 0 cell0011 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 0 cell0011 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 0 cell0011 (by gerver_fast_rejection)
 
 private theorem checked0012 : adaptiveCoverCheck 0 cell0012 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 0 cell0012 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 0 cell0012 (by gerver_fast_rejection)
 
 private theorem checked0013 : adaptiveCoverCheck 0 cell0013 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 0 cell0013 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 0 cell0013 (by gerver_fast_rejection)
 
 private theorem checked0100 : adaptiveCoverCheck 0 cell0100 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 0 cell0100 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 0 cell0100 (by gerver_fast_rejection)
 
 private theorem checked0101 : adaptiveCoverCheck 0 cell0101 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 0 cell0101 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 0 cell0101 (by gerver_fast_rejection)
 
 private theorem checked0102 : adaptiveCoverCheck 0 cell0102 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 0 cell0102 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 0 cell0102 (by gerver_fast_rejection)
 
 private theorem checked0103 : adaptiveCoverCheck 0 cell0103 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 0 cell0103 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 0 cell0103 (by gerver_fast_rejection)
 
 private theorem checked0110 : adaptiveCoverCheck 0 cell0110 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 0 cell0110 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 0 cell0110 (by gerver_fast_rejection)
 
 private theorem checked0111 : adaptiveCoverCheck 0 cell0111 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 0 cell0111 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 0 cell0111 (by gerver_fast_rejection)
 
 private theorem checked0112 : adaptiveCoverCheck 0 cell0112 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 0 cell0112 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 0 cell0112 (by gerver_fast_rejection)
 
 private theorem checked0113 : adaptiveCoverCheck 0 cell0113 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 0 cell0113 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 0 cell0113 (by gerver_fast_rejection)
 
 private theorem checked1000 : adaptiveCoverCheck 0 cell1000 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 0 cell1000 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 0 cell1000 (by gerver_fast_rejection)
 
 private theorem checked1001 : adaptiveCoverCheck 0 cell1001 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 0 cell1001 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 0 cell1001 (by gerver_fast_rejection)
 
 private theorem checked1002 : adaptiveCoverCheck 0 cell1002 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 0 cell1002 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 0 cell1002 (by gerver_fast_rejection)
 
 private theorem checked1003 : adaptiveCoverCheck 0 cell1003 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 0 cell1003 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 0 cell1003 (by gerver_fast_rejection)
 
 private theorem checked1010 : adaptiveCoverCheck 0 cell1010 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 0 cell1010 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 0 cell1010 (by gerver_fast_rejection)
 
 private theorem checked1011 : adaptiveCoverCheck 0 cell1011 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 0 cell1011 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 0 cell1011 (by gerver_fast_rejection)
 
 private theorem checked1012 : adaptiveCoverCheck 0 cell1012 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 0 cell1012 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 0 cell1012 (by gerver_fast_rejection)
 
 private theorem checked1013 : adaptiveCoverCheck 0 cell1013 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 0 cell1013 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 0 cell1013 (by gerver_fast_rejection)
 
 private theorem checked1100 : adaptiveCoverCheck 0 cell1100 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 0 cell1100 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 0 cell1100 (by gerver_fast_rejection)
 
 private theorem checked1101 : adaptiveCoverCheck 0 cell1101 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 0 cell1101 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 0 cell1101 (by gerver_fast_rejection)
 
 private theorem checked1102 : adaptiveCoverCheck 0 cell1102 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 0 cell1102 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 0 cell1102 (by gerver_fast_rejection)
 
 private theorem checked1103 : adaptiveCoverCheck 0 cell1103 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 0 cell1103 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 0 cell1103 (by gerver_fast_rejection)
 
 private theorem checked000 : adaptiveCoverCheck 1 cell000 = true := by
   exact adaptiveCoverCheck_succ_of_children 0 cell000
@@ -3957,10 +3957,10 @@ private theorem checked001 : adaptiveCoverCheck 1 cell001 = true := by
     checked0010 checked0011 checked0012 checked0013
 
 private theorem checked002 : adaptiveCoverCheck 1 cell002 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell002 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell002 (by gerver_fast_rejection)
 
 private theorem checked003 : adaptiveCoverCheck 1 cell003 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell003 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell003 (by gerver_fast_rejection)
 
 private theorem checked010 : adaptiveCoverCheck 1 cell010 = true := by
   exact adaptiveCoverCheck_succ_of_children 0 cell010
@@ -3971,10 +3971,10 @@ private theorem checked011 : adaptiveCoverCheck 1 cell011 = true := by
     checked0110 checked0111 checked0112 checked0113
 
 private theorem checked012 : adaptiveCoverCheck 1 cell012 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell012 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell012 (by gerver_fast_rejection)
 
 private theorem checked013 : adaptiveCoverCheck 1 cell013 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell013 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell013 (by gerver_fast_rejection)
 
 private theorem checked100 : adaptiveCoverCheck 1 cell100 = true := by
   exact adaptiveCoverCheck_succ_of_children 0 cell100
@@ -3985,23 +3985,23 @@ private theorem checked101 : adaptiveCoverCheck 1 cell101 = true := by
     checked1010 checked1011 checked1012 checked1013
 
 private theorem checked102 : adaptiveCoverCheck 1 cell102 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell102 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell102 (by gerver_fast_rejection)
 
 private theorem checked103 : adaptiveCoverCheck 1 cell103 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell103 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell103 (by gerver_fast_rejection)
 
 private theorem checked110 : adaptiveCoverCheck 1 cell110 = true := by
   exact adaptiveCoverCheck_succ_of_children 0 cell110
     checked1100 checked1101 checked1102 checked1103
 
 private theorem checked111 : adaptiveCoverCheck 1 cell111 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell111 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell111 (by gerver_fast_rejection)
 
 private theorem checked112 : adaptiveCoverCheck 1 cell112 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell112 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell112 (by gerver_fast_rejection)
 
 private theorem checked113 : adaptiveCoverCheck 1 cell113 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell113 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell113 (by gerver_fast_rejection)
 
 private theorem checked00 : adaptiveCoverCheck 2 cell00 = true := by
   exact adaptiveCoverCheck_succ_of_children 1 cell00
@@ -4012,10 +4012,10 @@ private theorem checked01 : adaptiveCoverCheck 2 cell01 = true := by
     checked010 checked011 checked012 checked013
 
 private theorem checked02 : adaptiveCoverCheck 2 cell02 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell02 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell02 (by gerver_fast_rejection)
 
 private theorem checked03 : adaptiveCoverCheck 2 cell03 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell03 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell03 (by gerver_fast_rejection)
 
 private theorem checked10 : adaptiveCoverCheck 2 cell10 = true := by
   exact adaptiveCoverCheck_succ_of_children 1 cell10
@@ -4026,22 +4026,22 @@ private theorem checked11 : adaptiveCoverCheck 2 cell11 = true := by
     checked110 checked111 checked112 checked113
 
 private theorem checked12 : adaptiveCoverCheck 2 cell12 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell12 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell12 (by gerver_fast_rejection)
 
 private theorem checked13 : adaptiveCoverCheck 2 cell13 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell13 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell13 (by gerver_fast_rejection)
 
 private theorem checked30 : adaptiveCoverCheck 2 cell30 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell30 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell30 (by gerver_fast_rejection)
 
 private theorem checked31 : adaptiveCoverCheck 2 cell31 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell31 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell31 (by gerver_fast_rejection)
 
 private theorem checked32 : adaptiveCoverCheck 2 cell32 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell32 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell32 (by gerver_fast_rejection)
 
 private theorem checked33 : adaptiveCoverCheck 2 cell33 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell33 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell33 (by gerver_fast_rejection)
 
 private theorem checked0 : adaptiveCoverCheck 3 cell0 = true := by
   exact adaptiveCoverCheck_succ_of_children 2 cell0
@@ -4052,7 +4052,7 @@ private theorem checked1 : adaptiveCoverCheck 3 cell1 = true := by
     checked10 checked11 checked12 checked13
 
 private theorem checked2 : adaptiveCoverCheck 3 cell2 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 3 cell2 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 3 cell2 (by gerver_fast_rejection)
 
 private theorem checked3 : adaptiveCoverCheck 3 cell3 = true := by
   exact adaptiveCoverCheck_succ_of_children 2 cell3
@@ -4101,16 +4101,16 @@ open CertificateCellsa5ae349f6a
 namespace CoverCertificate94c7306624
 
 private theorem checked0 : adaptiveCoverCheck 3 cell0 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 3 cell0 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 3 cell0 (by gerver_fast_rejection)
 
 private theorem checked1 : adaptiveCoverCheck 3 cell1 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 3 cell1 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 3 cell1 (by gerver_fast_rejection)
 
 private theorem checked2 : adaptiveCoverCheck 3 cell2 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 3 cell2 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 3 cell2 (by gerver_fast_rejection)
 
 private theorem checked3 : adaptiveCoverCheck 3 cell3 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 3 cell3 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 3 cell3 (by gerver_fast_rejection)
 
 private theorem checkedRoot : adaptiveCoverCheck 4 cellRoot = true := by
   exact adaptiveCoverCheck_succ_of_children 3 cellRoot
@@ -4155,16 +4155,16 @@ open CertificateCellsed6c91cc2c
 namespace CoverCertificatefc8969e3d2
 
 private theorem checked0 : adaptiveCoverCheck 3 cell0 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 3 cell0 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 3 cell0 (by gerver_fast_rejection)
 
 private theorem checked1 : adaptiveCoverCheck 3 cell1 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 3 cell1 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 3 cell1 (by gerver_fast_rejection)
 
 private theorem checked2 : adaptiveCoverCheck 3 cell2 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 3 cell2 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 3 cell2 (by gerver_fast_rejection)
 
 private theorem checked3 : adaptiveCoverCheck 3 cell3 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 3 cell3 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 3 cell3 (by gerver_fast_rejection)
 
 private theorem checkedRoot : adaptiveCoverCheck 4 cellRoot = true := by
   exact adaptiveCoverCheck_succ_of_children 3 cellRoot
@@ -4209,88 +4209,88 @@ open CertificateCellsd58d6f2902
 namespace CoverCertificate0773e6576d
 
 private theorem checked000 : adaptiveCoverCheck 1 cell000 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell000 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell000 (by gerver_fast_rejection)
 
 private theorem checked001 : adaptiveCoverCheck 1 cell001 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell001 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell001 (by gerver_fast_rejection)
 
 private theorem checked002 : adaptiveCoverCheck 1 cell002 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell002 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell002 (by gerver_fast_rejection)
 
 private theorem checked003 : adaptiveCoverCheck 1 cell003 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell003 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell003 (by gerver_fast_rejection)
 
 private theorem checked010 : adaptiveCoverCheck 1 cell010 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell010 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell010 (by gerver_fast_rejection)
 
 private theorem checked011 : adaptiveCoverCheck 1 cell011 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell011 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell011 (by gerver_fast_rejection)
 
 private theorem checked012 : adaptiveCoverCheck 1 cell012 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell012 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell012 (by gerver_fast_rejection)
 
 private theorem checked013 : adaptiveCoverCheck 1 cell013 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell013 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell013 (by gerver_fast_rejection)
 
 private theorem checked030 : adaptiveCoverCheck 1 cell030 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell030 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell030 (by gerver_fast_rejection)
 
 private theorem checked031 : adaptiveCoverCheck 1 cell031 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell031 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell031 (by gerver_fast_rejection)
 
 private theorem checked032 : adaptiveCoverCheck 1 cell032 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell032 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell032 (by gerver_fast_rejection)
 
 private theorem checked033 : adaptiveCoverCheck 1 cell033 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell033 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell033 (by gerver_fast_rejection)
 
 private theorem checked100 : adaptiveCoverCheck 1 cell100 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell100 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell100 (by gerver_fast_rejection)
 
 private theorem checked101 : adaptiveCoverCheck 1 cell101 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell101 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell101 (by gerver_fast_rejection)
 
 private theorem checked102 : adaptiveCoverCheck 1 cell102 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell102 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell102 (by gerver_fast_rejection)
 
 private theorem checked103 : adaptiveCoverCheck 1 cell103 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell103 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell103 (by gerver_fast_rejection)
 
 private theorem checked110 : adaptiveCoverCheck 1 cell110 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell110 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell110 (by gerver_fast_rejection)
 
 private theorem checked111 : adaptiveCoverCheck 1 cell111 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell111 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell111 (by gerver_fast_rejection)
 
 private theorem checked112 : adaptiveCoverCheck 1 cell112 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell112 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell112 (by gerver_fast_rejection)
 
 private theorem checked113 : adaptiveCoverCheck 1 cell113 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell113 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell113 (by gerver_fast_rejection)
 
 private theorem checked120 : adaptiveCoverCheck 1 cell120 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell120 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell120 (by gerver_fast_rejection)
 
 private theorem checked121 : adaptiveCoverCheck 1 cell121 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell121 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell121 (by gerver_fast_rejection)
 
 private theorem checked122 : adaptiveCoverCheck 1 cell122 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell122 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell122 (by gerver_fast_rejection)
 
 private theorem checked123 : adaptiveCoverCheck 1 cell123 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell123 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell123 (by gerver_fast_rejection)
 
 private theorem checked130 : adaptiveCoverCheck 1 cell130 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell130 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell130 (by gerver_fast_rejection)
 
 private theorem checked131 : adaptiveCoverCheck 1 cell131 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell131 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell131 (by gerver_fast_rejection)
 
 private theorem checked132 : adaptiveCoverCheck 1 cell132 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell132 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell132 (by gerver_fast_rejection)
 
 private theorem checked133 : adaptiveCoverCheck 1 cell133 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell133 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell133 (by gerver_fast_rejection)
 
 private theorem checked00 : adaptiveCoverCheck 2 cell00 = true := by
   exact adaptiveCoverCheck_succ_of_children 1 cell00
@@ -4301,7 +4301,7 @@ private theorem checked01 : adaptiveCoverCheck 2 cell01 = true := by
     checked010 checked011 checked012 checked013
 
 private theorem checked02 : adaptiveCoverCheck 2 cell02 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell02 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell02 (by gerver_fast_rejection)
 
 private theorem checked03 : adaptiveCoverCheck 2 cell03 = true := by
   exact adaptiveCoverCheck_succ_of_children 1 cell03
@@ -4324,28 +4324,28 @@ private theorem checked13 : adaptiveCoverCheck 2 cell13 = true := by
     checked130 checked131 checked132 checked133
 
 private theorem checked20 : adaptiveCoverCheck 2 cell20 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell20 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell20 (by gerver_fast_rejection)
 
 private theorem checked21 : adaptiveCoverCheck 2 cell21 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell21 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell21 (by gerver_fast_rejection)
 
 private theorem checked22 : adaptiveCoverCheck 2 cell22 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell22 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell22 (by gerver_fast_rejection)
 
 private theorem checked23 : adaptiveCoverCheck 2 cell23 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell23 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell23 (by gerver_fast_rejection)
 
 private theorem checked30 : adaptiveCoverCheck 2 cell30 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell30 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell30 (by gerver_fast_rejection)
 
 private theorem checked31 : adaptiveCoverCheck 2 cell31 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell31 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell31 (by gerver_fast_rejection)
 
 private theorem checked32 : adaptiveCoverCheck 2 cell32 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell32 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell32 (by gerver_fast_rejection)
 
 private theorem checked33 : adaptiveCoverCheck 2 cell33 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell33 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell33 (by gerver_fast_rejection)
 
 private theorem checked0 : adaptiveCoverCheck 3 cell0 = true := by
   exact adaptiveCoverCheck_succ_of_children 2 cell0
@@ -4406,100 +4406,100 @@ open CertificateCellsaa730af275
 namespace CoverCertificate6cd163be74
 
 private theorem checked000 : adaptiveCoverCheck 1 cell000 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell000 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell000 (by gerver_fast_rejection)
 
 private theorem checked001 : adaptiveCoverCheck 1 cell001 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell001 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell001 (by gerver_fast_rejection)
 
 private theorem checked002 : adaptiveCoverCheck 1 cell002 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell002 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell002 (by gerver_fast_rejection)
 
 private theorem checked003 : adaptiveCoverCheck 1 cell003 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell003 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell003 (by gerver_fast_rejection)
 
 private theorem checked010 : adaptiveCoverCheck 1 cell010 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell010 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell010 (by gerver_fast_rejection)
 
 private theorem checked011 : adaptiveCoverCheck 1 cell011 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell011 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell011 (by gerver_fast_rejection)
 
 private theorem checked012 : adaptiveCoverCheck 1 cell012 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell012 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell012 (by gerver_fast_rejection)
 
 private theorem checked013 : adaptiveCoverCheck 1 cell013 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell013 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell013 (by gerver_fast_rejection)
 
 private theorem checked020 : adaptiveCoverCheck 1 cell020 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell020 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell020 (by gerver_fast_rejection)
 
 private theorem checked021 : adaptiveCoverCheck 1 cell021 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell021 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell021 (by gerver_fast_rejection)
 
 private theorem checked022 : adaptiveCoverCheck 1 cell022 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell022 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell022 (by gerver_fast_rejection)
 
 private theorem checked023 : adaptiveCoverCheck 1 cell023 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell023 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell023 (by gerver_fast_rejection)
 
 private theorem checked030 : adaptiveCoverCheck 1 cell030 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell030 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell030 (by gerver_fast_rejection)
 
 private theorem checked031 : adaptiveCoverCheck 1 cell031 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell031 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell031 (by gerver_fast_rejection)
 
 private theorem checked032 : adaptiveCoverCheck 1 cell032 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell032 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell032 (by gerver_fast_rejection)
 
 private theorem checked033 : adaptiveCoverCheck 1 cell033 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell033 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell033 (by gerver_fast_rejection)
 
 private theorem checked100 : adaptiveCoverCheck 1 cell100 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell100 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell100 (by gerver_fast_rejection)
 
 private theorem checked101 : adaptiveCoverCheck 1 cell101 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell101 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell101 (by gerver_fast_rejection)
 
 private theorem checked102 : adaptiveCoverCheck 1 cell102 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell102 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell102 (by gerver_fast_rejection)
 
 private theorem checked103 : adaptiveCoverCheck 1 cell103 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell103 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell103 (by gerver_fast_rejection)
 
 private theorem checked110 : adaptiveCoverCheck 1 cell110 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell110 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell110 (by gerver_fast_rejection)
 
 private theorem checked111 : adaptiveCoverCheck 1 cell111 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell111 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell111 (by gerver_fast_rejection)
 
 private theorem checked112 : adaptiveCoverCheck 1 cell112 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell112 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell112 (by gerver_fast_rejection)
 
 private theorem checked113 : adaptiveCoverCheck 1 cell113 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell113 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell113 (by gerver_fast_rejection)
 
 private theorem checked120 : adaptiveCoverCheck 1 cell120 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell120 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell120 (by gerver_fast_rejection)
 
 private theorem checked121 : adaptiveCoverCheck 1 cell121 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell121 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell121 (by gerver_fast_rejection)
 
 private theorem checked122 : adaptiveCoverCheck 1 cell122 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell122 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell122 (by gerver_fast_rejection)
 
 private theorem checked123 : adaptiveCoverCheck 1 cell123 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell123 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell123 (by gerver_fast_rejection)
 
 private theorem checked130 : adaptiveCoverCheck 1 cell130 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell130 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell130 (by gerver_fast_rejection)
 
 private theorem checked131 : adaptiveCoverCheck 1 cell131 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell131 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell131 (by gerver_fast_rejection)
 
 private theorem checked132 : adaptiveCoverCheck 1 cell132 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell132 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell132 (by gerver_fast_rejection)
 
 private theorem checked133 : adaptiveCoverCheck 1 cell133 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell133 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell133 (by gerver_fast_rejection)
 
 private theorem checked00 : adaptiveCoverCheck 2 cell00 = true := by
   exact adaptiveCoverCheck_succ_of_children 1 cell00
@@ -4534,28 +4534,28 @@ private theorem checked13 : adaptiveCoverCheck 2 cell13 = true := by
     checked130 checked131 checked132 checked133
 
 private theorem checked20 : adaptiveCoverCheck 2 cell20 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell20 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell20 (by gerver_fast_rejection)
 
 private theorem checked21 : adaptiveCoverCheck 2 cell21 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell21 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell21 (by gerver_fast_rejection)
 
 private theorem checked22 : adaptiveCoverCheck 2 cell22 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell22 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell22 (by gerver_fast_rejection)
 
 private theorem checked23 : adaptiveCoverCheck 2 cell23 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell23 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell23 (by gerver_fast_rejection)
 
 private theorem checked30 : adaptiveCoverCheck 2 cell30 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell30 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell30 (by gerver_fast_rejection)
 
 private theorem checked31 : adaptiveCoverCheck 2 cell31 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell31 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell31 (by gerver_fast_rejection)
 
 private theorem checked32 : adaptiveCoverCheck 2 cell32 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell32 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell32 (by gerver_fast_rejection)
 
 private theorem checked33 : adaptiveCoverCheck 2 cell33 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell33 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell33 (by gerver_fast_rejection)
 
 private theorem checked0 : adaptiveCoverCheck 3 cell0 = true := by
   exact adaptiveCoverCheck_succ_of_children 2 cell0
@@ -4616,16 +4616,16 @@ open CertificateCellse47b06e09b
 namespace CoverCertificate105a276d33
 
 private theorem checked0 : adaptiveCoverCheck 3 cell0 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 3 cell0 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 3 cell0 (by gerver_fast_rejection)
 
 private theorem checked1 : adaptiveCoverCheck 3 cell1 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 3 cell1 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 3 cell1 (by gerver_fast_rejection)
 
 private theorem checked2 : adaptiveCoverCheck 3 cell2 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 3 cell2 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 3 cell2 (by gerver_fast_rejection)
 
 private theorem checked3 : adaptiveCoverCheck 3 cell3 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 3 cell3 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 3 cell3 (by gerver_fast_rejection)
 
 private theorem checkedRoot : adaptiveCoverCheck 4 cellRoot = true := by
   exact adaptiveCoverCheck_succ_of_children 3 cellRoot
@@ -4670,16 +4670,16 @@ open CertificateCells6d37377041
 namespace CoverCertificate7b7ada8a92
 
 private theorem checked0 : adaptiveCoverCheck 3 cell0 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 3 cell0 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 3 cell0 (by gerver_fast_rejection)
 
 private theorem checked1 : adaptiveCoverCheck 3 cell1 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 3 cell1 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 3 cell1 (by gerver_fast_rejection)
 
 private theorem checked2 : adaptiveCoverCheck 3 cell2 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 3 cell2 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 3 cell2 (by gerver_fast_rejection)
 
 private theorem checked3 : adaptiveCoverCheck 3 cell3 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 3 cell3 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 3 cell3 (by gerver_fast_rejection)
 
 private theorem checkedRoot : adaptiveCoverCheck 4 cellRoot = true := by
   exact adaptiveCoverCheck_succ_of_children 3 cellRoot
@@ -4723,16 +4723,16 @@ open CertificateCellse508f838c4
 namespace CoverCertificate216e1a86b9
 
 private theorem checked0 : adaptiveCoverCheck 4 cell0 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell0 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell0 (by gerver_fast_rejection)
 
 private theorem checked1 : adaptiveCoverCheck 4 cell1 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell1 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell1 (by gerver_fast_rejection)
 
 private theorem checked2 : adaptiveCoverCheck 4 cell2 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell2 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell2 (by gerver_fast_rejection)
 
 private theorem checked3 : adaptiveCoverCheck 4 cell3 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell3 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell3 (by gerver_fast_rejection)
 
 private theorem checkedRoot : adaptiveCoverCheck 5 cellRoot = true := by
   exact adaptiveCoverCheck_succ_of_children 4 cellRoot
@@ -4776,16 +4776,16 @@ open CertificateCells1cda533a6e
 namespace CoverCertificatecbce86617c
 
 private theorem checked0 : adaptiveCoverCheck 4 cell0 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell0 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell0 (by gerver_fast_rejection)
 
 private theorem checked1 : adaptiveCoverCheck 4 cell1 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell1 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell1 (by gerver_fast_rejection)
 
 private theorem checked2 : adaptiveCoverCheck 4 cell2 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell2 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell2 (by gerver_fast_rejection)
 
 private theorem checked3 : adaptiveCoverCheck 4 cell3 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell3 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell3 (by gerver_fast_rejection)
 
 private theorem checkedRoot : adaptiveCoverCheck 5 cellRoot = true := by
   exact adaptiveCoverCheck_succ_of_children 4 cellRoot
@@ -4829,16 +4829,16 @@ open CertificateCells3babcd7448
 namespace CoverCertificate5b9a8c2094
 
 private theorem checked0 : adaptiveCoverCheck 5 cell0 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell0 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell0 (by gerver_fast_rejection)
 
 private theorem checked1 : adaptiveCoverCheck 5 cell1 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell1 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell1 (by gerver_fast_rejection)
 
 private theorem checked2 : adaptiveCoverCheck 5 cell2 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell2 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell2 (by gerver_fast_rejection)
 
 private theorem checked3 : adaptiveCoverCheck 5 cell3 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell3 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell3 (by gerver_fast_rejection)
 
 private theorem checkedRoot : adaptiveCoverCheck 6 cellRoot = true := by
   exact adaptiveCoverCheck_succ_of_children 5 cellRoot
@@ -4882,16 +4882,16 @@ open CertificateCellsbbdc1f9510
 namespace CoverCertificatee500b98dc1
 
 private theorem checked0 : adaptiveCoverCheck 5 cell0 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell0 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell0 (by gerver_fast_rejection)
 
 private theorem checked1 : adaptiveCoverCheck 5 cell1 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell1 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell1 (by gerver_fast_rejection)
 
 private theorem checked2 : adaptiveCoverCheck 5 cell2 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell2 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell2 (by gerver_fast_rejection)
 
 private theorem checked3 : adaptiveCoverCheck 5 cell3 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell3 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell3 (by gerver_fast_rejection)
 
 private theorem checkedRoot : adaptiveCoverCheck 6 cellRoot = true := by
   exact adaptiveCoverCheck_succ_of_children 5 cellRoot
@@ -4936,100 +4936,100 @@ open CertificateCells44a650755e
 namespace CoverCertificatec4a9c16244
 
 private theorem checked000 : adaptiveCoverCheck 1 cell000 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell000 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell000 (by gerver_fast_rejection)
 
 private theorem checked001 : adaptiveCoverCheck 1 cell001 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell001 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell001 (by gerver_fast_rejection)
 
 private theorem checked002 : adaptiveCoverCheck 1 cell002 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell002 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell002 (by gerver_fast_rejection)
 
 private theorem checked003 : adaptiveCoverCheck 1 cell003 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell003 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell003 (by gerver_fast_rejection)
 
 private theorem checked010 : adaptiveCoverCheck 1 cell010 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell010 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell010 (by gerver_fast_rejection)
 
 private theorem checked011 : adaptiveCoverCheck 1 cell011 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell011 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell011 (by gerver_fast_rejection)
 
 private theorem checked012 : adaptiveCoverCheck 1 cell012 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell012 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell012 (by gerver_fast_rejection)
 
 private theorem checked013 : adaptiveCoverCheck 1 cell013 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell013 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell013 (by gerver_fast_rejection)
 
 private theorem checked020 : adaptiveCoverCheck 1 cell020 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell020 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell020 (by gerver_fast_rejection)
 
 private theorem checked021 : adaptiveCoverCheck 1 cell021 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell021 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell021 (by gerver_fast_rejection)
 
 private theorem checked022 : adaptiveCoverCheck 1 cell022 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell022 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell022 (by gerver_fast_rejection)
 
 private theorem checked023 : adaptiveCoverCheck 1 cell023 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell023 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell023 (by gerver_fast_rejection)
 
 private theorem checked030 : adaptiveCoverCheck 1 cell030 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell030 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell030 (by gerver_fast_rejection)
 
 private theorem checked031 : adaptiveCoverCheck 1 cell031 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell031 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell031 (by gerver_fast_rejection)
 
 private theorem checked032 : adaptiveCoverCheck 1 cell032 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell032 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell032 (by gerver_fast_rejection)
 
 private theorem checked033 : adaptiveCoverCheck 1 cell033 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell033 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell033 (by gerver_fast_rejection)
 
 private theorem checked100 : adaptiveCoverCheck 1 cell100 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell100 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell100 (by gerver_fast_rejection)
 
 private theorem checked101 : adaptiveCoverCheck 1 cell101 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell101 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell101 (by gerver_fast_rejection)
 
 private theorem checked102 : adaptiveCoverCheck 1 cell102 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell102 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell102 (by gerver_fast_rejection)
 
 private theorem checked103 : adaptiveCoverCheck 1 cell103 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell103 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell103 (by gerver_fast_rejection)
 
 private theorem checked110 : adaptiveCoverCheck 1 cell110 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell110 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell110 (by gerver_fast_rejection)
 
 private theorem checked111 : adaptiveCoverCheck 1 cell111 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell111 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell111 (by gerver_fast_rejection)
 
 private theorem checked112 : adaptiveCoverCheck 1 cell112 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell112 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell112 (by gerver_fast_rejection)
 
 private theorem checked113 : adaptiveCoverCheck 1 cell113 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell113 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell113 (by gerver_fast_rejection)
 
 private theorem checked120 : adaptiveCoverCheck 1 cell120 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell120 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell120 (by gerver_fast_rejection)
 
 private theorem checked121 : adaptiveCoverCheck 1 cell121 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell121 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell121 (by gerver_fast_rejection)
 
 private theorem checked122 : adaptiveCoverCheck 1 cell122 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell122 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell122 (by gerver_fast_rejection)
 
 private theorem checked123 : adaptiveCoverCheck 1 cell123 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell123 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell123 (by gerver_fast_rejection)
 
 private theorem checked130 : adaptiveCoverCheck 1 cell130 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell130 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell130 (by gerver_fast_rejection)
 
 private theorem checked131 : adaptiveCoverCheck 1 cell131 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell131 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell131 (by gerver_fast_rejection)
 
 private theorem checked132 : adaptiveCoverCheck 1 cell132 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell132 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell132 (by gerver_fast_rejection)
 
 private theorem checked133 : adaptiveCoverCheck 1 cell133 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell133 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell133 (by gerver_fast_rejection)
 
 private theorem checked00 : adaptiveCoverCheck 2 cell00 = true := by
   exact adaptiveCoverCheck_succ_of_children 1 cell00
@@ -5064,28 +5064,28 @@ private theorem checked13 : adaptiveCoverCheck 2 cell13 = true := by
     checked130 checked131 checked132 checked133
 
 private theorem checked20 : adaptiveCoverCheck 2 cell20 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell20 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell20 (by gerver_fast_rejection)
 
 private theorem checked21 : adaptiveCoverCheck 2 cell21 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell21 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell21 (by gerver_fast_rejection)
 
 private theorem checked22 : adaptiveCoverCheck 2 cell22 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell22 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell22 (by gerver_fast_rejection)
 
 private theorem checked23 : adaptiveCoverCheck 2 cell23 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell23 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell23 (by gerver_fast_rejection)
 
 private theorem checked30 : adaptiveCoverCheck 2 cell30 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell30 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell30 (by gerver_fast_rejection)
 
 private theorem checked31 : adaptiveCoverCheck 2 cell31 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell31 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell31 (by gerver_fast_rejection)
 
 private theorem checked32 : adaptiveCoverCheck 2 cell32 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell32 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell32 (by gerver_fast_rejection)
 
 private theorem checked33 : adaptiveCoverCheck 2 cell33 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell33 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell33 (by gerver_fast_rejection)
 
 private theorem checked0 : adaptiveCoverCheck 3 cell0 = true := by
   exact adaptiveCoverCheck_succ_of_children 2 cell0
@@ -5146,100 +5146,100 @@ open CertificateCells9dff8fd68c
 namespace CoverCertificated58785d59b
 
 private theorem checked000 : adaptiveCoverCheck 1 cell000 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell000 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell000 (by gerver_fast_rejection)
 
 private theorem checked001 : adaptiveCoverCheck 1 cell001 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell001 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell001 (by gerver_fast_rejection)
 
 private theorem checked002 : adaptiveCoverCheck 1 cell002 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell002 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell002 (by gerver_fast_rejection)
 
 private theorem checked003 : adaptiveCoverCheck 1 cell003 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell003 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell003 (by gerver_fast_rejection)
 
 private theorem checked010 : adaptiveCoverCheck 1 cell010 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell010 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell010 (by gerver_fast_rejection)
 
 private theorem checked011 : adaptiveCoverCheck 1 cell011 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell011 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell011 (by gerver_fast_rejection)
 
 private theorem checked012 : adaptiveCoverCheck 1 cell012 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell012 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell012 (by gerver_fast_rejection)
 
 private theorem checked013 : adaptiveCoverCheck 1 cell013 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell013 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell013 (by gerver_fast_rejection)
 
 private theorem checked020 : adaptiveCoverCheck 1 cell020 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell020 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell020 (by gerver_fast_rejection)
 
 private theorem checked021 : adaptiveCoverCheck 1 cell021 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell021 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell021 (by gerver_fast_rejection)
 
 private theorem checked022 : adaptiveCoverCheck 1 cell022 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell022 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell022 (by gerver_fast_rejection)
 
 private theorem checked023 : adaptiveCoverCheck 1 cell023 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell023 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell023 (by gerver_fast_rejection)
 
 private theorem checked030 : adaptiveCoverCheck 1 cell030 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell030 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell030 (by gerver_fast_rejection)
 
 private theorem checked031 : adaptiveCoverCheck 1 cell031 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell031 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell031 (by gerver_fast_rejection)
 
 private theorem checked032 : adaptiveCoverCheck 1 cell032 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell032 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell032 (by gerver_fast_rejection)
 
 private theorem checked033 : adaptiveCoverCheck 1 cell033 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell033 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell033 (by gerver_fast_rejection)
 
 private theorem checked100 : adaptiveCoverCheck 1 cell100 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell100 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell100 (by gerver_fast_rejection)
 
 private theorem checked101 : adaptiveCoverCheck 1 cell101 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell101 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell101 (by gerver_fast_rejection)
 
 private theorem checked102 : adaptiveCoverCheck 1 cell102 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell102 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell102 (by gerver_fast_rejection)
 
 private theorem checked103 : adaptiveCoverCheck 1 cell103 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell103 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell103 (by gerver_fast_rejection)
 
 private theorem checked110 : adaptiveCoverCheck 1 cell110 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell110 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell110 (by gerver_fast_rejection)
 
 private theorem checked111 : adaptiveCoverCheck 1 cell111 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell111 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell111 (by gerver_fast_rejection)
 
 private theorem checked112 : adaptiveCoverCheck 1 cell112 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell112 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell112 (by gerver_fast_rejection)
 
 private theorem checked113 : adaptiveCoverCheck 1 cell113 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell113 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell113 (by gerver_fast_rejection)
 
 private theorem checked120 : adaptiveCoverCheck 1 cell120 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell120 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell120 (by gerver_fast_rejection)
 
 private theorem checked121 : adaptiveCoverCheck 1 cell121 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell121 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell121 (by gerver_fast_rejection)
 
 private theorem checked122 : adaptiveCoverCheck 1 cell122 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell122 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell122 (by gerver_fast_rejection)
 
 private theorem checked123 : adaptiveCoverCheck 1 cell123 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell123 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell123 (by gerver_fast_rejection)
 
 private theorem checked130 : adaptiveCoverCheck 1 cell130 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell130 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell130 (by gerver_fast_rejection)
 
 private theorem checked131 : adaptiveCoverCheck 1 cell131 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell131 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell131 (by gerver_fast_rejection)
 
 private theorem checked132 : adaptiveCoverCheck 1 cell132 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell132 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell132 (by gerver_fast_rejection)
 
 private theorem checked133 : adaptiveCoverCheck 1 cell133 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell133 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell133 (by gerver_fast_rejection)
 
 private theorem checked00 : adaptiveCoverCheck 2 cell00 = true := by
   exact adaptiveCoverCheck_succ_of_children 1 cell00
@@ -5274,28 +5274,28 @@ private theorem checked13 : adaptiveCoverCheck 2 cell13 = true := by
     checked130 checked131 checked132 checked133
 
 private theorem checked20 : adaptiveCoverCheck 2 cell20 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell20 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell20 (by gerver_fast_rejection)
 
 private theorem checked21 : adaptiveCoverCheck 2 cell21 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell21 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell21 (by gerver_fast_rejection)
 
 private theorem checked22 : adaptiveCoverCheck 2 cell22 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell22 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell22 (by gerver_fast_rejection)
 
 private theorem checked23 : adaptiveCoverCheck 2 cell23 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell23 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell23 (by gerver_fast_rejection)
 
 private theorem checked30 : adaptiveCoverCheck 2 cell30 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell30 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell30 (by gerver_fast_rejection)
 
 private theorem checked31 : adaptiveCoverCheck 2 cell31 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell31 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell31 (by gerver_fast_rejection)
 
 private theorem checked32 : adaptiveCoverCheck 2 cell32 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell32 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell32 (by gerver_fast_rejection)
 
 private theorem checked33 : adaptiveCoverCheck 2 cell33 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell33 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell33 (by gerver_fast_rejection)
 
 private theorem checked0 : adaptiveCoverCheck 3 cell0 = true := by
   exact adaptiveCoverCheck_succ_of_children 2 cell0
@@ -5356,16 +5356,16 @@ open CertificateCells0eb9c7dd4e
 namespace CoverCertificate770e3357d2
 
 private theorem checked0 : adaptiveCoverCheck 3 cell0 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 3 cell0 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 3 cell0 (by gerver_fast_rejection)
 
 private theorem checked1 : adaptiveCoverCheck 3 cell1 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 3 cell1 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 3 cell1 (by gerver_fast_rejection)
 
 private theorem checked2 : adaptiveCoverCheck 3 cell2 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 3 cell2 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 3 cell2 (by gerver_fast_rejection)
 
 private theorem checked3 : adaptiveCoverCheck 3 cell3 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 3 cell3 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 3 cell3 (by gerver_fast_rejection)
 
 private theorem checkedRoot : adaptiveCoverCheck 4 cellRoot = true := by
   exact adaptiveCoverCheck_succ_of_children 3 cellRoot
@@ -5410,16 +5410,16 @@ open CertificateCellsa1f8281244
 namespace CoverCertificate4042eb5094
 
 private theorem checked0 : adaptiveCoverCheck 3 cell0 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 3 cell0 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 3 cell0 (by gerver_fast_rejection)
 
 private theorem checked1 : adaptiveCoverCheck 3 cell1 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 3 cell1 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 3 cell1 (by gerver_fast_rejection)
 
 private theorem checked2 : adaptiveCoverCheck 3 cell2 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 3 cell2 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 3 cell2 (by gerver_fast_rejection)
 
 private theorem checked3 : adaptiveCoverCheck 3 cell3 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 3 cell3 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 3 cell3 (by gerver_fast_rejection)
 
 private theorem checkedRoot : adaptiveCoverCheck 4 cellRoot = true := by
   exact adaptiveCoverCheck_succ_of_children 3 cellRoot
@@ -5464,112 +5464,112 @@ open CertificateCellsa31bfb0e48
 namespace CoverCertificate9283dd1f18
 
 private theorem checked000 : adaptiveCoverCheck 1 cell000 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell000 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell000 (by gerver_fast_rejection)
 
 private theorem checked001 : adaptiveCoverCheck 1 cell001 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell001 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell001 (by gerver_fast_rejection)
 
 private theorem checked002 : adaptiveCoverCheck 1 cell002 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell002 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell002 (by gerver_fast_rejection)
 
 private theorem checked003 : adaptiveCoverCheck 1 cell003 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell003 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell003 (by gerver_fast_rejection)
 
 private theorem checked010 : adaptiveCoverCheck 1 cell010 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell010 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell010 (by gerver_fast_rejection)
 
 private theorem checked011 : adaptiveCoverCheck 1 cell011 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell011 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell011 (by gerver_fast_rejection)
 
 private theorem checked012 : adaptiveCoverCheck 1 cell012 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell012 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell012 (by gerver_fast_rejection)
 
 private theorem checked013 : adaptiveCoverCheck 1 cell013 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell013 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell013 (by gerver_fast_rejection)
 
 private theorem checked020 : adaptiveCoverCheck 1 cell020 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell020 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell020 (by gerver_fast_rejection)
 
 private theorem checked021 : adaptiveCoverCheck 1 cell021 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell021 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell021 (by gerver_fast_rejection)
 
 private theorem checked022 : adaptiveCoverCheck 1 cell022 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell022 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell022 (by gerver_fast_rejection)
 
 private theorem checked023 : adaptiveCoverCheck 1 cell023 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell023 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell023 (by gerver_fast_rejection)
 
 private theorem checked030 : adaptiveCoverCheck 1 cell030 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell030 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell030 (by gerver_fast_rejection)
 
 private theorem checked031 : adaptiveCoverCheck 1 cell031 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell031 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell031 (by gerver_fast_rejection)
 
 private theorem checked032 : adaptiveCoverCheck 1 cell032 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell032 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell032 (by gerver_fast_rejection)
 
 private theorem checked033 : adaptiveCoverCheck 1 cell033 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell033 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell033 (by gerver_fast_rejection)
 
 private theorem checked100 : adaptiveCoverCheck 1 cell100 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell100 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell100 (by gerver_fast_rejection)
 
 private theorem checked101 : adaptiveCoverCheck 1 cell101 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell101 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell101 (by gerver_fast_rejection)
 
 private theorem checked102 : adaptiveCoverCheck 1 cell102 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell102 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell102 (by gerver_fast_rejection)
 
 private theorem checked103 : adaptiveCoverCheck 1 cell103 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell103 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell103 (by gerver_fast_rejection)
 
 private theorem checked110 : adaptiveCoverCheck 1 cell110 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell110 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell110 (by gerver_fast_rejection)
 
 private theorem checked111 : adaptiveCoverCheck 1 cell111 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell111 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell111 (by gerver_fast_rejection)
 
 private theorem checked112 : adaptiveCoverCheck 1 cell112 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell112 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell112 (by gerver_fast_rejection)
 
 private theorem checked113 : adaptiveCoverCheck 1 cell113 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell113 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell113 (by gerver_fast_rejection)
 
 private theorem checked120 : adaptiveCoverCheck 1 cell120 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell120 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell120 (by gerver_fast_rejection)
 
 private theorem checked121 : adaptiveCoverCheck 1 cell121 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell121 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell121 (by gerver_fast_rejection)
 
 private theorem checked122 : adaptiveCoverCheck 1 cell122 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell122 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell122 (by gerver_fast_rejection)
 
 private theorem checked123 : adaptiveCoverCheck 1 cell123 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell123 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell123 (by gerver_fast_rejection)
 
 private theorem checked130 : adaptiveCoverCheck 1 cell130 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell130 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell130 (by gerver_fast_rejection)
 
 private theorem checked131 : adaptiveCoverCheck 1 cell131 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell131 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell131 (by gerver_fast_rejection)
 
 private theorem checked132 : adaptiveCoverCheck 1 cell132 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell132 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell132 (by gerver_fast_rejection)
 
 private theorem checked133 : adaptiveCoverCheck 1 cell133 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell133 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell133 (by gerver_fast_rejection)
 
 private theorem checked310 : adaptiveCoverCheck 1 cell310 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell310 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell310 (by gerver_fast_rejection)
 
 private theorem checked311 : adaptiveCoverCheck 1 cell311 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell311 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell311 (by gerver_fast_rejection)
 
 private theorem checked312 : adaptiveCoverCheck 1 cell312 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell312 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell312 (by gerver_fast_rejection)
 
 private theorem checked313 : adaptiveCoverCheck 1 cell313 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell313 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell313 (by gerver_fast_rejection)
 
 private theorem checked00 : adaptiveCoverCheck 2 cell00 = true := by
   exact adaptiveCoverCheck_succ_of_children 1 cell00
@@ -5604,29 +5604,29 @@ private theorem checked13 : adaptiveCoverCheck 2 cell13 = true := by
     checked130 checked131 checked132 checked133
 
 private theorem checked20 : adaptiveCoverCheck 2 cell20 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell20 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell20 (by gerver_fast_rejection)
 
 private theorem checked21 : adaptiveCoverCheck 2 cell21 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell21 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell21 (by gerver_fast_rejection)
 
 private theorem checked22 : adaptiveCoverCheck 2 cell22 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell22 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell22 (by gerver_fast_rejection)
 
 private theorem checked23 : adaptiveCoverCheck 2 cell23 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell23 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell23 (by gerver_fast_rejection)
 
 private theorem checked30 : adaptiveCoverCheck 2 cell30 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell30 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell30 (by gerver_fast_rejection)
 
 private theorem checked31 : adaptiveCoverCheck 2 cell31 = true := by
   exact adaptiveCoverCheck_succ_of_children 1 cell31
     checked310 checked311 checked312 checked313
 
 private theorem checked32 : adaptiveCoverCheck 2 cell32 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell32 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell32 (by gerver_fast_rejection)
 
 private theorem checked33 : adaptiveCoverCheck 2 cell33 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell33 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell33 (by gerver_fast_rejection)
 
 private theorem checked0 : adaptiveCoverCheck 3 cell0 = true := by
   exact adaptiveCoverCheck_succ_of_children 2 cell0
@@ -5687,100 +5687,100 @@ open CertificateCellsba54477f25
 namespace CoverCertificate5607aeacca
 
 private theorem checked000 : adaptiveCoverCheck 1 cell000 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell000 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell000 (by gerver_fast_rejection)
 
 private theorem checked001 : adaptiveCoverCheck 1 cell001 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell001 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell001 (by gerver_fast_rejection)
 
 private theorem checked002 : adaptiveCoverCheck 1 cell002 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell002 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell002 (by gerver_fast_rejection)
 
 private theorem checked003 : adaptiveCoverCheck 1 cell003 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell003 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell003 (by gerver_fast_rejection)
 
 private theorem checked010 : adaptiveCoverCheck 1 cell010 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell010 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell010 (by gerver_fast_rejection)
 
 private theorem checked011 : adaptiveCoverCheck 1 cell011 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell011 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell011 (by gerver_fast_rejection)
 
 private theorem checked012 : adaptiveCoverCheck 1 cell012 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell012 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell012 (by gerver_fast_rejection)
 
 private theorem checked013 : adaptiveCoverCheck 1 cell013 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell013 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell013 (by gerver_fast_rejection)
 
 private theorem checked020 : adaptiveCoverCheck 1 cell020 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell020 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell020 (by gerver_fast_rejection)
 
 private theorem checked021 : adaptiveCoverCheck 1 cell021 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell021 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell021 (by gerver_fast_rejection)
 
 private theorem checked022 : adaptiveCoverCheck 1 cell022 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell022 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell022 (by gerver_fast_rejection)
 
 private theorem checked023 : adaptiveCoverCheck 1 cell023 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell023 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell023 (by gerver_fast_rejection)
 
 private theorem checked030 : adaptiveCoverCheck 1 cell030 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell030 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell030 (by gerver_fast_rejection)
 
 private theorem checked031 : adaptiveCoverCheck 1 cell031 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell031 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell031 (by gerver_fast_rejection)
 
 private theorem checked032 : adaptiveCoverCheck 1 cell032 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell032 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell032 (by gerver_fast_rejection)
 
 private theorem checked033 : adaptiveCoverCheck 1 cell033 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell033 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell033 (by gerver_fast_rejection)
 
 private theorem checked100 : adaptiveCoverCheck 1 cell100 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell100 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell100 (by gerver_fast_rejection)
 
 private theorem checked101 : adaptiveCoverCheck 1 cell101 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell101 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell101 (by gerver_fast_rejection)
 
 private theorem checked102 : adaptiveCoverCheck 1 cell102 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell102 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell102 (by gerver_fast_rejection)
 
 private theorem checked103 : adaptiveCoverCheck 1 cell103 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell103 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell103 (by gerver_fast_rejection)
 
 private theorem checked110 : adaptiveCoverCheck 1 cell110 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell110 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell110 (by gerver_fast_rejection)
 
 private theorem checked111 : adaptiveCoverCheck 1 cell111 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell111 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell111 (by gerver_fast_rejection)
 
 private theorem checked112 : adaptiveCoverCheck 1 cell112 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell112 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell112 (by gerver_fast_rejection)
 
 private theorem checked113 : adaptiveCoverCheck 1 cell113 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell113 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell113 (by gerver_fast_rejection)
 
 private theorem checked120 : adaptiveCoverCheck 1 cell120 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell120 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell120 (by gerver_fast_rejection)
 
 private theorem checked121 : adaptiveCoverCheck 1 cell121 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell121 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell121 (by gerver_fast_rejection)
 
 private theorem checked122 : adaptiveCoverCheck 1 cell122 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell122 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell122 (by gerver_fast_rejection)
 
 private theorem checked123 : adaptiveCoverCheck 1 cell123 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell123 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell123 (by gerver_fast_rejection)
 
 private theorem checked200 : adaptiveCoverCheck 1 cell200 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell200 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell200 (by gerver_fast_rejection)
 
 private theorem checked201 : adaptiveCoverCheck 1 cell201 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell201 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell201 (by gerver_fast_rejection)
 
 private theorem checked202 : adaptiveCoverCheck 1 cell202 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell202 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell202 (by gerver_fast_rejection)
 
 private theorem checked203 : adaptiveCoverCheck 1 cell203 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell203 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell203 (by gerver_fast_rejection)
 
 private theorem checked00 : adaptiveCoverCheck 2 cell00 = true := by
   exact adaptiveCoverCheck_succ_of_children 1 cell00
@@ -5811,32 +5811,32 @@ private theorem checked12 : adaptiveCoverCheck 2 cell12 = true := by
     checked120 checked121 checked122 checked123
 
 private theorem checked13 : adaptiveCoverCheck 2 cell13 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell13 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell13 (by gerver_fast_rejection)
 
 private theorem checked20 : adaptiveCoverCheck 2 cell20 = true := by
   exact adaptiveCoverCheck_succ_of_children 1 cell20
     checked200 checked201 checked202 checked203
 
 private theorem checked21 : adaptiveCoverCheck 2 cell21 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell21 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell21 (by gerver_fast_rejection)
 
 private theorem checked22 : adaptiveCoverCheck 2 cell22 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell22 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell22 (by gerver_fast_rejection)
 
 private theorem checked23 : adaptiveCoverCheck 2 cell23 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell23 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell23 (by gerver_fast_rejection)
 
 private theorem checked30 : adaptiveCoverCheck 2 cell30 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell30 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell30 (by gerver_fast_rejection)
 
 private theorem checked31 : adaptiveCoverCheck 2 cell31 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell31 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell31 (by gerver_fast_rejection)
 
 private theorem checked32 : adaptiveCoverCheck 2 cell32 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell32 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell32 (by gerver_fast_rejection)
 
 private theorem checked33 : adaptiveCoverCheck 2 cell33 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell33 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell33 (by gerver_fast_rejection)
 
 private theorem checked0 : adaptiveCoverCheck 3 cell0 = true := by
   exact adaptiveCoverCheck_succ_of_children 2 cell0
@@ -5897,16 +5897,16 @@ open CertificateCells40378f08af
 namespace CoverCertificate093986cbf5
 
 private theorem checked0 : adaptiveCoverCheck 3 cell0 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 3 cell0 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 3 cell0 (by gerver_fast_rejection)
 
 private theorem checked1 : adaptiveCoverCheck 3 cell1 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 3 cell1 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 3 cell1 (by gerver_fast_rejection)
 
 private theorem checked2 : adaptiveCoverCheck 3 cell2 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 3 cell2 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 3 cell2 (by gerver_fast_rejection)
 
 private theorem checked3 : adaptiveCoverCheck 3 cell3 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 3 cell3 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 3 cell3 (by gerver_fast_rejection)
 
 private theorem checkedRoot : adaptiveCoverCheck 4 cellRoot = true := by
   exact adaptiveCoverCheck_succ_of_children 3 cellRoot
@@ -5951,16 +5951,16 @@ open CertificateCellsbef31c9887
 namespace CoverCertificate4478c1ce2d
 
 private theorem checked0 : adaptiveCoverCheck 3 cell0 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 3 cell0 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 3 cell0 (by gerver_fast_rejection)
 
 private theorem checked1 : adaptiveCoverCheck 3 cell1 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 3 cell1 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 3 cell1 (by gerver_fast_rejection)
 
 private theorem checked2 : adaptiveCoverCheck 3 cell2 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 3 cell2 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 3 cell2 (by gerver_fast_rejection)
 
 private theorem checked3 : adaptiveCoverCheck 3 cell3 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 3 cell3 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 3 cell3 (by gerver_fast_rejection)
 
 private theorem checkedRoot : adaptiveCoverCheck 4 cellRoot = true := by
   exact adaptiveCoverCheck_succ_of_children 3 cellRoot
@@ -6004,16 +6004,16 @@ open CertificateCells6837eba069
 namespace CoverCertificate52d1f78193
 
 private theorem checked0 : adaptiveCoverCheck 4 cell0 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell0 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell0 (by gerver_fast_rejection)
 
 private theorem checked1 : adaptiveCoverCheck 4 cell1 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell1 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell1 (by gerver_fast_rejection)
 
 private theorem checked2 : adaptiveCoverCheck 4 cell2 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell2 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell2 (by gerver_fast_rejection)
 
 private theorem checked3 : adaptiveCoverCheck 4 cell3 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell3 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell3 (by gerver_fast_rejection)
 
 private theorem checkedRoot : adaptiveCoverCheck 5 cellRoot = true := by
   exact adaptiveCoverCheck_succ_of_children 4 cellRoot
@@ -6057,16 +6057,16 @@ open CertificateCells21829695a9
 namespace CoverCertificate263f6f95b0
 
 private theorem checked0 : adaptiveCoverCheck 4 cell0 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell0 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell0 (by gerver_fast_rejection)
 
 private theorem checked1 : adaptiveCoverCheck 4 cell1 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell1 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell1 (by gerver_fast_rejection)
 
 private theorem checked2 : adaptiveCoverCheck 4 cell2 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell2 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell2 (by gerver_fast_rejection)
 
 private theorem checked3 : adaptiveCoverCheck 4 cell3 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell3 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell3 (by gerver_fast_rejection)
 
 private theorem checkedRoot : adaptiveCoverCheck 5 cellRoot = true := by
   exact adaptiveCoverCheck_succ_of_children 4 cellRoot
@@ -6110,113 +6110,113 @@ open CertificateCellsd170a2bed6
 namespace CoverCertificatefad4f5904e
 
 private theorem checked0000 : adaptiveCoverCheck 1 cell0000 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell0000 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell0000 (by gerver_fast_rejection)
 
 private theorem checked0001 : adaptiveCoverCheck 1 cell0001 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell0001 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell0001 (by gerver_fast_rejection)
 
 private theorem checked0002 : adaptiveCoverCheck 1 cell0002 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell0002 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell0002 (by gerver_fast_rejection)
 
 private theorem checked0003 : adaptiveCoverCheck 1 cell0003 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 1 cell0003 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 1 cell0003 (by gerver_fast_rejection)
 
 private theorem checked000 : adaptiveCoverCheck 2 cell000 = true := by
   exact adaptiveCoverCheck_succ_of_children 1 cell000
     checked0000 checked0001 checked0002 checked0003
 
 private theorem checked001 : adaptiveCoverCheck 2 cell001 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell001 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell001 (by gerver_fast_rejection)
 
 private theorem checked002 : adaptiveCoverCheck 2 cell002 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell002 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell002 (by gerver_fast_rejection)
 
 private theorem checked003 : adaptiveCoverCheck 2 cell003 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell003 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell003 (by gerver_fast_rejection)
 
 private theorem checked010 : adaptiveCoverCheck 2 cell010 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell010 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell010 (by gerver_fast_rejection)
 
 private theorem checked011 : adaptiveCoverCheck 2 cell011 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell011 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell011 (by gerver_fast_rejection)
 
 private theorem checked012 : adaptiveCoverCheck 2 cell012 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell012 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell012 (by gerver_fast_rejection)
 
 private theorem checked013 : adaptiveCoverCheck 2 cell013 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell013 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell013 (by gerver_fast_rejection)
 
 private theorem checked020 : adaptiveCoverCheck 2 cell020 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell020 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell020 (by gerver_fast_rejection)
 
 private theorem checked021 : adaptiveCoverCheck 2 cell021 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell021 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell021 (by gerver_fast_rejection)
 
 private theorem checked022 : adaptiveCoverCheck 2 cell022 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell022 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell022 (by gerver_fast_rejection)
 
 private theorem checked023 : adaptiveCoverCheck 2 cell023 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell023 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell023 (by gerver_fast_rejection)
 
 private theorem checked030 : adaptiveCoverCheck 2 cell030 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell030 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell030 (by gerver_fast_rejection)
 
 private theorem checked031 : adaptiveCoverCheck 2 cell031 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell031 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell031 (by gerver_fast_rejection)
 
 private theorem checked032 : adaptiveCoverCheck 2 cell032 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell032 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell032 (by gerver_fast_rejection)
 
 private theorem checked033 : adaptiveCoverCheck 2 cell033 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell033 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell033 (by gerver_fast_rejection)
 
 private theorem checked100 : adaptiveCoverCheck 2 cell100 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell100 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell100 (by gerver_fast_rejection)
 
 private theorem checked101 : adaptiveCoverCheck 2 cell101 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell101 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell101 (by gerver_fast_rejection)
 
 private theorem checked102 : adaptiveCoverCheck 2 cell102 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell102 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell102 (by gerver_fast_rejection)
 
 private theorem checked103 : adaptiveCoverCheck 2 cell103 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell103 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell103 (by gerver_fast_rejection)
 
 private theorem checked110 : adaptiveCoverCheck 2 cell110 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell110 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell110 (by gerver_fast_rejection)
 
 private theorem checked111 : adaptiveCoverCheck 2 cell111 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell111 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell111 (by gerver_fast_rejection)
 
 private theorem checked112 : adaptiveCoverCheck 2 cell112 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell112 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell112 (by gerver_fast_rejection)
 
 private theorem checked113 : adaptiveCoverCheck 2 cell113 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell113 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell113 (by gerver_fast_rejection)
 
 private theorem checked120 : adaptiveCoverCheck 2 cell120 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell120 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell120 (by gerver_fast_rejection)
 
 private theorem checked121 : adaptiveCoverCheck 2 cell121 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell121 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell121 (by gerver_fast_rejection)
 
 private theorem checked122 : adaptiveCoverCheck 2 cell122 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell122 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell122 (by gerver_fast_rejection)
 
 private theorem checked123 : adaptiveCoverCheck 2 cell123 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell123 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell123 (by gerver_fast_rejection)
 
 private theorem checked130 : adaptiveCoverCheck 2 cell130 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell130 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell130 (by gerver_fast_rejection)
 
 private theorem checked131 : adaptiveCoverCheck 2 cell131 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell131 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell131 (by gerver_fast_rejection)
 
 private theorem checked132 : adaptiveCoverCheck 2 cell132 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell132 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell132 (by gerver_fast_rejection)
 
 private theorem checked133 : adaptiveCoverCheck 2 cell133 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell133 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell133 (by gerver_fast_rejection)
 
 private theorem checked00 : adaptiveCoverCheck 3 cell00 = true := by
   exact adaptiveCoverCheck_succ_of_children 2 cell00
@@ -6251,28 +6251,28 @@ private theorem checked13 : adaptiveCoverCheck 3 cell13 = true := by
     checked130 checked131 checked132 checked133
 
 private theorem checked20 : adaptiveCoverCheck 3 cell20 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 3 cell20 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 3 cell20 (by gerver_fast_rejection)
 
 private theorem checked21 : adaptiveCoverCheck 3 cell21 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 3 cell21 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 3 cell21 (by gerver_fast_rejection)
 
 private theorem checked22 : adaptiveCoverCheck 3 cell22 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 3 cell22 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 3 cell22 (by gerver_fast_rejection)
 
 private theorem checked23 : adaptiveCoverCheck 3 cell23 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 3 cell23 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 3 cell23 (by gerver_fast_rejection)
 
 private theorem checked30 : adaptiveCoverCheck 3 cell30 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 3 cell30 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 3 cell30 (by gerver_fast_rejection)
 
 private theorem checked31 : adaptiveCoverCheck 3 cell31 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 3 cell31 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 3 cell31 (by gerver_fast_rejection)
 
 private theorem checked32 : adaptiveCoverCheck 3 cell32 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 3 cell32 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 3 cell32 (by gerver_fast_rejection)
 
 private theorem checked33 : adaptiveCoverCheck 3 cell33 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 3 cell33 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 3 cell33 (by gerver_fast_rejection)
 
 private theorem checked0 : adaptiveCoverCheck 4 cell0 = true := by
   exact adaptiveCoverCheck_succ_of_children 3 cell0
@@ -6332,148 +6332,148 @@ open CertificateCells3fed941c0c
 namespace CoverCertificatec88446cc5e
 
 private theorem checked000 : adaptiveCoverCheck 2 cell000 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell000 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell000 (by gerver_fast_rejection)
 
 private theorem checked001 : adaptiveCoverCheck 2 cell001 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell001 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell001 (by gerver_fast_rejection)
 
 private theorem checked002 : adaptiveCoverCheck 2 cell002 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell002 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell002 (by gerver_fast_rejection)
 
 private theorem checked003 : adaptiveCoverCheck 2 cell003 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell003 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell003 (by gerver_fast_rejection)
 
 private theorem checked010 : adaptiveCoverCheck 2 cell010 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell010 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell010 (by gerver_fast_rejection)
 
 private theorem checked011 : adaptiveCoverCheck 2 cell011 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell011 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell011 (by gerver_fast_rejection)
 
 private theorem checked012 : adaptiveCoverCheck 2 cell012 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell012 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell012 (by gerver_fast_rejection)
 
 private theorem checked013 : adaptiveCoverCheck 2 cell013 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell013 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell013 (by gerver_fast_rejection)
 
 private theorem checked020 : adaptiveCoverCheck 2 cell020 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell020 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell020 (by gerver_fast_rejection)
 
 private theorem checked021 : adaptiveCoverCheck 2 cell021 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell021 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell021 (by gerver_fast_rejection)
 
 private theorem checked022 : adaptiveCoverCheck 2 cell022 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell022 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell022 (by gerver_fast_rejection)
 
 private theorem checked023 : adaptiveCoverCheck 2 cell023 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell023 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell023 (by gerver_fast_rejection)
 
 private theorem checked030 : adaptiveCoverCheck 2 cell030 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell030 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell030 (by gerver_fast_rejection)
 
 private theorem checked031 : adaptiveCoverCheck 2 cell031 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell031 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell031 (by gerver_fast_rejection)
 
 private theorem checked032 : adaptiveCoverCheck 2 cell032 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell032 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell032 (by gerver_fast_rejection)
 
 private theorem checked033 : adaptiveCoverCheck 2 cell033 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell033 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell033 (by gerver_fast_rejection)
 
 private theorem checked100 : adaptiveCoverCheck 2 cell100 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell100 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell100 (by gerver_fast_rejection)
 
 private theorem checked101 : adaptiveCoverCheck 2 cell101 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell101 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell101 (by gerver_fast_rejection)
 
 private theorem checked102 : adaptiveCoverCheck 2 cell102 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell102 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell102 (by gerver_fast_rejection)
 
 private theorem checked103 : adaptiveCoverCheck 2 cell103 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell103 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell103 (by gerver_fast_rejection)
 
 private theorem checked110 : adaptiveCoverCheck 2 cell110 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell110 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell110 (by gerver_fast_rejection)
 
 private theorem checked111 : adaptiveCoverCheck 2 cell111 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell111 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell111 (by gerver_fast_rejection)
 
 private theorem checked112 : adaptiveCoverCheck 2 cell112 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell112 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell112 (by gerver_fast_rejection)
 
 private theorem checked113 : adaptiveCoverCheck 2 cell113 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell113 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell113 (by gerver_fast_rejection)
 
 private theorem checked120 : adaptiveCoverCheck 2 cell120 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell120 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell120 (by gerver_fast_rejection)
 
 private theorem checked121 : adaptiveCoverCheck 2 cell121 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell121 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell121 (by gerver_fast_rejection)
 
 private theorem checked122 : adaptiveCoverCheck 2 cell122 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell122 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell122 (by gerver_fast_rejection)
 
 private theorem checked123 : adaptiveCoverCheck 2 cell123 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell123 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell123 (by gerver_fast_rejection)
 
 private theorem checked130 : adaptiveCoverCheck 2 cell130 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell130 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell130 (by gerver_fast_rejection)
 
 private theorem checked131 : adaptiveCoverCheck 2 cell131 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell131 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell131 (by gerver_fast_rejection)
 
 private theorem checked132 : adaptiveCoverCheck 2 cell132 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell132 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell132 (by gerver_fast_rejection)
 
 private theorem checked133 : adaptiveCoverCheck 2 cell133 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell133 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell133 (by gerver_fast_rejection)
 
 private theorem checked200 : adaptiveCoverCheck 2 cell200 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell200 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell200 (by gerver_fast_rejection)
 
 private theorem checked201 : adaptiveCoverCheck 2 cell201 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell201 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell201 (by gerver_fast_rejection)
 
 private theorem checked202 : adaptiveCoverCheck 2 cell202 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell202 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell202 (by gerver_fast_rejection)
 
 private theorem checked203 : adaptiveCoverCheck 2 cell203 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell203 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell203 (by gerver_fast_rejection)
 
 private theorem checked210 : adaptiveCoverCheck 2 cell210 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell210 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell210 (by gerver_fast_rejection)
 
 private theorem checked211 : adaptiveCoverCheck 2 cell211 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell211 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell211 (by gerver_fast_rejection)
 
 private theorem checked212 : adaptiveCoverCheck 2 cell212 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell212 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell212 (by gerver_fast_rejection)
 
 private theorem checked213 : adaptiveCoverCheck 2 cell213 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell213 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell213 (by gerver_fast_rejection)
 
 private theorem checked300 : adaptiveCoverCheck 2 cell300 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell300 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell300 (by gerver_fast_rejection)
 
 private theorem checked301 : adaptiveCoverCheck 2 cell301 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell301 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell301 (by gerver_fast_rejection)
 
 private theorem checked302 : adaptiveCoverCheck 2 cell302 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell302 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell302 (by gerver_fast_rejection)
 
 private theorem checked303 : adaptiveCoverCheck 2 cell303 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell303 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell303 (by gerver_fast_rejection)
 
 private theorem checked310 : adaptiveCoverCheck 2 cell310 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell310 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell310 (by gerver_fast_rejection)
 
 private theorem checked311 : adaptiveCoverCheck 2 cell311 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell311 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell311 (by gerver_fast_rejection)
 
 private theorem checked312 : adaptiveCoverCheck 2 cell312 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell312 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell312 (by gerver_fast_rejection)
 
 private theorem checked313 : adaptiveCoverCheck 2 cell313 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell313 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell313 (by gerver_fast_rejection)
 
 private theorem checked00 : adaptiveCoverCheck 3 cell00 = true := by
   exact adaptiveCoverCheck_succ_of_children 2 cell00
@@ -6516,10 +6516,10 @@ private theorem checked21 : adaptiveCoverCheck 3 cell21 = true := by
     checked210 checked211 checked212 checked213
 
 private theorem checked22 : adaptiveCoverCheck 3 cell22 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 3 cell22 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 3 cell22 (by gerver_fast_rejection)
 
 private theorem checked23 : adaptiveCoverCheck 3 cell23 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 3 cell23 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 3 cell23 (by gerver_fast_rejection)
 
 private theorem checked30 : adaptiveCoverCheck 3 cell30 = true := by
   exact adaptiveCoverCheck_succ_of_children 2 cell30
@@ -6530,10 +6530,10 @@ private theorem checked31 : adaptiveCoverCheck 3 cell31 = true := by
     checked310 checked311 checked312 checked313
 
 private theorem checked32 : adaptiveCoverCheck 3 cell32 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 3 cell32 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 3 cell32 (by gerver_fast_rejection)
 
 private theorem checked33 : adaptiveCoverCheck 3 cell33 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 3 cell33 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 3 cell33 (by gerver_fast_rejection)
 
 private theorem checked0 : adaptiveCoverCheck 4 cell0 = true := by
   exact adaptiveCoverCheck_succ_of_children 3 cell0
@@ -6593,16 +6593,16 @@ open CertificateCellsb780467ddc
 namespace CoverCertificate8053b84bb6
 
 private theorem checked0 : adaptiveCoverCheck 4 cell0 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell0 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell0 (by gerver_fast_rejection)
 
 private theorem checked1 : adaptiveCoverCheck 4 cell1 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell1 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell1 (by gerver_fast_rejection)
 
 private theorem checked2 : adaptiveCoverCheck 4 cell2 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell2 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell2 (by gerver_fast_rejection)
 
 private theorem checked3 : adaptiveCoverCheck 4 cell3 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell3 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell3 (by gerver_fast_rejection)
 
 private theorem checkedRoot : adaptiveCoverCheck 5 cellRoot = true := by
   exact adaptiveCoverCheck_succ_of_children 4 cellRoot
@@ -6646,16 +6646,16 @@ open CertificateCellse5752d8306
 namespace CoverCertificatea83bf6868e
 
 private theorem checked0 : adaptiveCoverCheck 4 cell0 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell0 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell0 (by gerver_fast_rejection)
 
 private theorem checked1 : adaptiveCoverCheck 4 cell1 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell1 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell1 (by gerver_fast_rejection)
 
 private theorem checked2 : adaptiveCoverCheck 4 cell2 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell2 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell2 (by gerver_fast_rejection)
 
 private theorem checked3 : adaptiveCoverCheck 4 cell3 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 4 cell3 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 4 cell3 (by gerver_fast_rejection)
 
 private theorem checkedRoot : adaptiveCoverCheck 5 cellRoot = true := by
   exact adaptiveCoverCheck_succ_of_children 4 cellRoot
@@ -6699,16 +6699,16 @@ open CertificateCells18ee7077e5
 namespace CoverCertificatec458632307
 
 private theorem checked0 : adaptiveCoverCheck 5 cell0 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell0 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell0 (by gerver_fast_rejection)
 
 private theorem checked1 : adaptiveCoverCheck 5 cell1 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell1 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell1 (by gerver_fast_rejection)
 
 private theorem checked2 : adaptiveCoverCheck 5 cell2 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell2 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell2 (by gerver_fast_rejection)
 
 private theorem checked3 : adaptiveCoverCheck 5 cell3 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell3 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell3 (by gerver_fast_rejection)
 
 private theorem checkedRoot : adaptiveCoverCheck 6 cellRoot = true := by
   exact adaptiveCoverCheck_succ_of_children 5 cellRoot
@@ -6752,16 +6752,16 @@ open CertificateCells481c5d2cb5
 namespace CoverCertificate5ac90060dc
 
 private theorem checked0 : adaptiveCoverCheck 5 cell0 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell0 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell0 (by gerver_fast_rejection)
 
 private theorem checked1 : adaptiveCoverCheck 5 cell1 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell1 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell1 (by gerver_fast_rejection)
 
 private theorem checked2 : adaptiveCoverCheck 5 cell2 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell2 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell2 (by gerver_fast_rejection)
 
 private theorem checked3 : adaptiveCoverCheck 5 cell3 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 5 cell3 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 5 cell3 (by gerver_fast_rejection)
 
 private theorem checkedRoot : adaptiveCoverCheck 6 cellRoot = true := by
   exact adaptiveCoverCheck_succ_of_children 5 cellRoot
@@ -6805,16 +6805,16 @@ open CertificateCellsc1762ca3ac
 namespace CoverCertificatee2e2523660
 
 private theorem checked0 : adaptiveCoverCheck 6 cell0 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell0 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell0 (by gerver_fast_rejection)
 
 private theorem checked1 : adaptiveCoverCheck 6 cell1 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell1 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell1 (by gerver_fast_rejection)
 
 private theorem checked2 : adaptiveCoverCheck 6 cell2 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell2 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell2 (by gerver_fast_rejection)
 
 private theorem checked3 : adaptiveCoverCheck 6 cell3 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell3 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell3 (by gerver_fast_rejection)
 
 private theorem checkedRoot : adaptiveCoverCheck 7 cellRoot = true := by
   exact adaptiveCoverCheck_succ_of_children 6 cellRoot
@@ -6858,16 +6858,16 @@ open CertificateCells105558b317
 namespace CoverCertificate2c610dcf32
 
 private theorem checked0 : adaptiveCoverCheck 6 cell0 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell0 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell0 (by gerver_fast_rejection)
 
 private theorem checked1 : adaptiveCoverCheck 6 cell1 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell1 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell1 (by gerver_fast_rejection)
 
 private theorem checked2 : adaptiveCoverCheck 6 cell2 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell2 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell2 (by gerver_fast_rejection)
 
 private theorem checked3 : adaptiveCoverCheck 6 cell3 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 6 cell3 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 6 cell3 (by gerver_fast_rejection)
 
 private theorem checkedRoot : adaptiveCoverCheck 7 cellRoot = true := by
   exact adaptiveCoverCheck_succ_of_children 6 cellRoot
@@ -6911,148 +6911,148 @@ open CertificateCells411895cea3
 namespace CoverCertificate7a43bce112
 
 private theorem checked000 : adaptiveCoverCheck 2 cell000 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell000 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell000 (by gerver_fast_rejection)
 
 private theorem checked001 : adaptiveCoverCheck 2 cell001 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell001 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell001 (by gerver_fast_rejection)
 
 private theorem checked002 : adaptiveCoverCheck 2 cell002 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell002 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell002 (by gerver_fast_rejection)
 
 private theorem checked003 : adaptiveCoverCheck 2 cell003 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell003 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell003 (by gerver_fast_rejection)
 
 private theorem checked010 : adaptiveCoverCheck 2 cell010 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell010 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell010 (by gerver_fast_rejection)
 
 private theorem checked011 : adaptiveCoverCheck 2 cell011 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell011 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell011 (by gerver_fast_rejection)
 
 private theorem checked012 : adaptiveCoverCheck 2 cell012 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell012 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell012 (by gerver_fast_rejection)
 
 private theorem checked013 : adaptiveCoverCheck 2 cell013 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell013 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell013 (by gerver_fast_rejection)
 
 private theorem checked020 : adaptiveCoverCheck 2 cell020 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell020 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell020 (by gerver_fast_rejection)
 
 private theorem checked021 : adaptiveCoverCheck 2 cell021 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell021 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell021 (by gerver_fast_rejection)
 
 private theorem checked022 : adaptiveCoverCheck 2 cell022 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell022 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell022 (by gerver_fast_rejection)
 
 private theorem checked023 : adaptiveCoverCheck 2 cell023 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell023 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell023 (by gerver_fast_rejection)
 
 private theorem checked030 : adaptiveCoverCheck 2 cell030 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell030 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell030 (by gerver_fast_rejection)
 
 private theorem checked031 : adaptiveCoverCheck 2 cell031 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell031 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell031 (by gerver_fast_rejection)
 
 private theorem checked032 : adaptiveCoverCheck 2 cell032 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell032 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell032 (by gerver_fast_rejection)
 
 private theorem checked033 : adaptiveCoverCheck 2 cell033 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell033 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell033 (by gerver_fast_rejection)
 
 private theorem checked100 : adaptiveCoverCheck 2 cell100 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell100 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell100 (by gerver_fast_rejection)
 
 private theorem checked101 : adaptiveCoverCheck 2 cell101 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell101 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell101 (by gerver_fast_rejection)
 
 private theorem checked102 : adaptiveCoverCheck 2 cell102 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell102 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell102 (by gerver_fast_rejection)
 
 private theorem checked103 : adaptiveCoverCheck 2 cell103 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell103 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell103 (by gerver_fast_rejection)
 
 private theorem checked110 : adaptiveCoverCheck 2 cell110 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell110 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell110 (by gerver_fast_rejection)
 
 private theorem checked111 : adaptiveCoverCheck 2 cell111 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell111 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell111 (by gerver_fast_rejection)
 
 private theorem checked112 : adaptiveCoverCheck 2 cell112 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell112 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell112 (by gerver_fast_rejection)
 
 private theorem checked113 : adaptiveCoverCheck 2 cell113 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell113 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell113 (by gerver_fast_rejection)
 
 private theorem checked120 : adaptiveCoverCheck 2 cell120 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell120 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell120 (by gerver_fast_rejection)
 
 private theorem checked121 : adaptiveCoverCheck 2 cell121 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell121 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell121 (by gerver_fast_rejection)
 
 private theorem checked122 : adaptiveCoverCheck 2 cell122 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell122 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell122 (by gerver_fast_rejection)
 
 private theorem checked123 : adaptiveCoverCheck 2 cell123 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell123 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell123 (by gerver_fast_rejection)
 
 private theorem checked130 : adaptiveCoverCheck 2 cell130 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell130 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell130 (by gerver_fast_rejection)
 
 private theorem checked131 : adaptiveCoverCheck 2 cell131 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell131 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell131 (by gerver_fast_rejection)
 
 private theorem checked132 : adaptiveCoverCheck 2 cell132 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell132 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell132 (by gerver_fast_rejection)
 
 private theorem checked133 : adaptiveCoverCheck 2 cell133 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell133 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell133 (by gerver_fast_rejection)
 
 private theorem checked200 : adaptiveCoverCheck 2 cell200 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell200 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell200 (by gerver_fast_rejection)
 
 private theorem checked201 : adaptiveCoverCheck 2 cell201 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell201 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell201 (by gerver_fast_rejection)
 
 private theorem checked202 : adaptiveCoverCheck 2 cell202 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell202 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell202 (by gerver_fast_rejection)
 
 private theorem checked203 : adaptiveCoverCheck 2 cell203 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell203 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell203 (by gerver_fast_rejection)
 
 private theorem checked210 : adaptiveCoverCheck 2 cell210 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell210 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell210 (by gerver_fast_rejection)
 
 private theorem checked211 : adaptiveCoverCheck 2 cell211 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell211 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell211 (by gerver_fast_rejection)
 
 private theorem checked212 : adaptiveCoverCheck 2 cell212 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell212 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell212 (by gerver_fast_rejection)
 
 private theorem checked213 : adaptiveCoverCheck 2 cell213 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell213 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell213 (by gerver_fast_rejection)
 
 private theorem checked300 : adaptiveCoverCheck 2 cell300 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell300 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell300 (by gerver_fast_rejection)
 
 private theorem checked301 : adaptiveCoverCheck 2 cell301 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell301 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell301 (by gerver_fast_rejection)
 
 private theorem checked302 : adaptiveCoverCheck 2 cell302 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell302 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell302 (by gerver_fast_rejection)
 
 private theorem checked303 : adaptiveCoverCheck 2 cell303 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell303 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell303 (by gerver_fast_rejection)
 
 private theorem checked310 : adaptiveCoverCheck 2 cell310 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell310 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell310 (by gerver_fast_rejection)
 
 private theorem checked311 : adaptiveCoverCheck 2 cell311 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell311 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell311 (by gerver_fast_rejection)
 
 private theorem checked312 : adaptiveCoverCheck 2 cell312 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell312 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell312 (by gerver_fast_rejection)
 
 private theorem checked313 : adaptiveCoverCheck 2 cell313 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 2 cell313 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 2 cell313 (by gerver_fast_rejection)
 
 private theorem checked00 : adaptiveCoverCheck 3 cell00 = true := by
   exact adaptiveCoverCheck_succ_of_children 2 cell00
@@ -7095,10 +7095,10 @@ private theorem checked21 : adaptiveCoverCheck 3 cell21 = true := by
     checked210 checked211 checked212 checked213
 
 private theorem checked22 : adaptiveCoverCheck 3 cell22 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 3 cell22 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 3 cell22 (by gerver_fast_rejection)
 
 private theorem checked23 : adaptiveCoverCheck 3 cell23 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 3 cell23 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 3 cell23 (by gerver_fast_rejection)
 
 private theorem checked30 : adaptiveCoverCheck 3 cell30 = true := by
   exact adaptiveCoverCheck_succ_of_children 2 cell30
@@ -7109,10 +7109,10 @@ private theorem checked31 : adaptiveCoverCheck 3 cell31 = true := by
     checked310 checked311 checked312 checked313
 
 private theorem checked32 : adaptiveCoverCheck 3 cell32 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 3 cell32 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 3 cell32 (by gerver_fast_rejection)
 
 private theorem checked33 : adaptiveCoverCheck 3 cell33 = true := by
-  exact adaptiveCoverCheck_true_of_rejected 3 cell33 (by gerver_kernel_decide)
+  exact adaptiveCoverCheck_true_of_rejected 3 cell33 (by gerver_fast_rejection)
 
 private theorem checked0 : adaptiveCoverCheck 4 cell0 = true := by
   exact adaptiveCoverCheck_succ_of_children 3 cell0

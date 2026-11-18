@@ -28,6 +28,8 @@ public import LeanPool.MovingSofa.GerverSofa.KernelOnly.Core.Bundle005
 public import LeanPool.MovingSofa.GerverSofa.KernelOnly.Core.Bundle006
 public import LeanPool.MovingSofa.GerverSofa.KernelOnly.Core.Bundle007
 public import LeanPool.MovingSofa.GerverSofa.KernelOnly.Core.Bundle008
+public import LeanPool.MovingSofa.GerverSofa.KernelOnly.Core.PartBHighRows
+public import LeanPool.MovingSofa.GerverSofa.KernelOnly.Core.PartBMiddleRows
 public import LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.CachedIntervals
 public import LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Bundle001
 public import LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Bundle002
@@ -61,4 +63,5 @@ public import LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Bundl
 public import LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Bundle030
 public import LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Bundle031
 public import LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Bundle032
+public import LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.FastRejection
 public import LeanPool.MovingSofa.KernelCertificate

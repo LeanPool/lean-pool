@@ -13356,3 +13356,19 @@ end LeanCert.Engine
 end
 
 end
+
+namespace LeanCert.Core.IntervalRat
+
+/-- The sign-based product has exactly the endpoints of the four-product hull. -/
+theorem mulFast_eq_mul (I J : IntervalRat) : mulFast I J = mul I J := by
+  have hlo := mulFast_lo I J
+  have hhi := mulFast_hi I J
+  generalize mulFast I J = a at *
+  generalize mul I J = b at *
+  cases a
+  cases b
+  cases hlo
+  cases hhi
+  rfl
+
+end LeanCert.Core.IntervalRat
