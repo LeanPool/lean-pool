@@ -163,7 +163,7 @@ theorem volume_verticalStrip_lt_top (A : ℝ) {a : ℝ} (ha : 0 < a) :
         measure_mono (verticalStrip_subset_iUnion_band A ha)
     _ ≤ ∑' n : ℕ, volume (band A a n) := measure_iUnion_le _
     _ ≤ ∑' n : ℕ, ENNReal.ofReal (2 * A * (a⁻¹ * (1 / 2) ^ n)) :=
-        ENNReal.tsum_le_tsum fun n => volume_band_le hA ha n
+        tsum_le_tsum fun n => volume_band_le hA ha n
     _ = ∑' n : ℕ, ENNReal.ofReal (2 * A * a⁻¹) * ENNReal.ofReal ((1 / 2) ^ n) :=
         tsum_congr fun n => by
           rw [← ENNReal.ofReal_mul (by positivity)]

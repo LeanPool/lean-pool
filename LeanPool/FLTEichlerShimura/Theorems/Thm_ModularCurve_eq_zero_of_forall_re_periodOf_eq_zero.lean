@@ -307,7 +307,7 @@ theorem exp_F_const [Γ.FiniteIndex] (hF : ModularCurve.HasEquivariantPrimitiveO
     have him : 0 < (Function.Periodic.invQParam (M : ℝ) p).im :=
       Function.Periodic.im_invQParam_pos_of_norm_lt_one (hNpos hM) (mem_ball_zero_iff.mp hp) hp0
     have : Φ M F ρ₀ p = cexp (F (ρ₀⁻¹ • ⟨_, him⟩)) := by
-      rw [Φ, UpperHalfPlane.cuspFunction, Function.Periodic.cuspFunction_eq_of_nonzero _ _ hp0,
+      rw [Φ, UpperHalfPlane.cuspFunction, Function.Periodic.cuspFunction_eq_of_ne_zero _ _ hp0,
         Function.comp_apply, K, ofComplex_apply_of_im_pos him]
     rw [this]
     exact hbound _

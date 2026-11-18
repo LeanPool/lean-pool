@@ -189,7 +189,7 @@ theorem exists_addOrderOf_eq_and_eq_zmultiples_iff {A : Type*} [AddCommGroup A] 
   · rintro ⟨g, hg, rfl⟩
     exact ⟨inferInstance, by rw [Nat.card_zmultiples, hg]⟩
   · rintro ⟨hc, hcard⟩
-    obtain ⟨g, hg⟩ := (AddSubgroup.isAddCyclic_iff_exists_zmultiples_eq_top G).mp hc
+    obtain ⟨g, hg⟩ := (AddSubgroup.isAddCyclic_iff_exists_zmultiples_eq G).mp hc
     exact ⟨g, by rw [← Nat.card_zmultiples, hg, hcard], hg.symm⟩
 
 theorem natCard_cycSubH [E.IsElliptic] [NeZero p] : Nat.card (CycSubH E p) = dedekindPsi p := by

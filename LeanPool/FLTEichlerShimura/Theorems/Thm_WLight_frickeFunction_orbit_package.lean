@@ -298,10 +298,10 @@ private lemma cuspFunction_const (N : ℕ) (c : ℂ) :
     refine Filter.Tendsto.congr' ?_ (tendsto_const_nhds :
       Filter.Tendsto (fun _ : ℂ => (c : ℂ)) (nhdsWithin (0 : ℂ) {(0 : ℂ)}ᶜ) (nhds (c : ℂ)))
     filter_upwards [self_mem_nhdsWithin] with q hq
-    exact (Function.Periodic.cuspFunction_eq_of_nonzero (N : ℝ)
+    exact (Function.Periodic.cuspFunction_eq_of_ne_zero (N : ℝ)
       ((fun _ : ℍ => (c : ℂ)) ∘ ofComplex) hq).symm
   · change Function.Periodic.cuspFunction N ((fun _ : ℍ => c) ∘ ofComplex) q = c
-    rw [Function.Periodic.cuspFunction_eq_of_nonzero _ _ hq]
+    rw [Function.Periodic.cuspFunction_eq_of_ne_zero _ _ hq]
     rfl
 
 private lemma NiceK.const {K : IntermediateField ℚ ℂ} {N : ℕ} (c : ↥K) :

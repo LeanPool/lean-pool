@@ -134,7 +134,7 @@ theorem coeffCoboundaries_le_coeffCocycles (ρ : Representation K G V) :
   rintro z ⟨v, rfl⟩ g h
   change ρ (g * h) v - v = (ρ g v - v) + ρ g (ρ h v - v)
   rw [map_mul, map_sub]
-  simp only [Module.End.mul_apply]
+  simp only [mul_apply_eq_comp]
   abel
 
 end Cocycles

@@ -133,8 +133,8 @@ theorem solution
     have hx : (f * f - ((W.apOfModel ℓ : ℤ) : ℤ_[p]) • f
         + ((ℓ : ℕ) : ℤ_[p]) • (1 : Module.End ℤ_[p] (TateModule p (MPoint W)))) x
         = f (f x) - ((W.apOfModel ℓ : ℤ) : ℤ_[p]) • (f x) + ((ℓ : ℕ) : ℤ_[p]) • x := by
-      simp only [LinearMap.add_apply, LinearMap.sub_apply, Module.End.mul_apply,
-        LinearMap.smul_apply, Module.End.one_apply]
+      simp only [LinearMap.add_apply, LinearMap.sub_apply, mul_apply_eq_comp,
+        LinearMap.smul_apply, one_apply_eq_self]
     rw [hx, LinearMap.zero_apply]
     rw [show ((ℓ : ℕ) : ℤ_[p]) = ((ℓ : ℤ) : ℤ_[p]) by push_cast; ring]
     refine Subtype.ext (funext fun k => ?_)

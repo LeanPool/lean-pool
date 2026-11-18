@@ -17,6 +17,8 @@ Licensed under Apache License 2.0
 
 module
 
+public import Mathlib.FieldTheory.IsAlgClosed.Basic
+
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_DivisorClassGroup
 public import LeanPool.FLTEichlerShimura.Definitions.Def_WeierstrassCurve_FunctionFieldQuadratic
 
@@ -1011,7 +1013,7 @@ theorem es1a10_ncPole_addSumY_ne_const
   have hq0 : (X ^ 3 + C W.a₂ * X ^ 2 + C (W.a₄ - W.a₁ * d) * X
       + C (W.a₆ - d ^ 2 - W.a₃ * d) : F[X]) ≠ 0 := by
     intro hq
-    have h3 := congrArg (fun q => Polynomial.coeff q 3) hq
+    have h3 := congrArg (fun q => AddMonoidAlgebra.coeff q 3) hq
     simp only [Polynomial.coeff_add, Polynomial.coeff_X_pow, Polynomial.coeff_C_mul,
       Polynomial.coeff_C, Polynomial.coeff_X, Polynomial.coeff_zero] at h3
     norm_num at h3
@@ -2331,7 +2333,7 @@ theorem es1a9_addSumY_ne_const_nc
   have hq0 : (X ^ 3 + C W.a₂ * X ^ 2 + C (W.a₄ - W.a₁ * d) * X
       + C (W.a₆ - d ^ 2 - W.a₃ * d) : F[X]) ≠ 0 := by
     intro hq
-    have h3 := congrArg (fun q => Polynomial.coeff q 3) hq
+    have h3 := congrArg (fun q => AddMonoidAlgebra.coeff q 3) hq
     simp only [Polynomial.coeff_add, Polynomial.coeff_X_pow, Polynomial.coeff_C_mul,
       Polynomial.coeff_C, Polynomial.coeff_X, Polynomial.coeff_zero] at h3
     norm_num at h3

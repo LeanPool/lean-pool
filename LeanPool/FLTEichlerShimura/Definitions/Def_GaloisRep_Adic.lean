@@ -185,7 +185,7 @@ noncomputable def residual (ρ : GaloisRepAdic A) :
       rw [MonoidHom.coe_mk, OneHom.coe_mk]
       induction w using TensorProduct.inductionOn with
       | tmul c v =>
-        rw [LinearMap.baseChange_tmul, Module.End.one_apply, ← sub_eq_zero,
+        rw [LinearMap.baseChange_tmul, one_apply_eq_self, ← sub_eq_zero,
           ← TensorProduct.tmul_sub]
         exact hkill _ (h1 σ hσ v) c
       | add x y hx hy => rw [map_add, map_add, hx, hy] }
@@ -282,7 +282,7 @@ def ofResidualGaloisRep {k : Type} [Field k] (ρ : ResidualGaloisRep k) : Galois
       intro n
       obtain ⟨L, hL, h1⟩ := ρ.factorsThroughFiniteLevel
       refine ⟨L, hL, fun σ hσ v => ?_⟩
-      rw [h1 σ hσ, Module.End.one_apply, sub_self]
+      rw [h1 σ hσ, one_apply_eq_self, sub_self]
       exact Submodule.zero_mem _ }
 
 end GaloisRepAdic

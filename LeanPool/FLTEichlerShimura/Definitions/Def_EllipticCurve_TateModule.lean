@@ -762,7 +762,7 @@ theorem rep_eq_one_of_forall_torsionBy (g : G)
     (h : ∀ n : ℕ, ∀ m ∈ Submodule.torsionBy ℤ M ((p ^ n : ℕ) : ℤ), g • m = m) :
     rep p M G g = 1 := by
   refine LinearMap.ext fun x => Subtype.ext (funext fun n => ?_)
-  rw [rep_apply, Module.End.one_apply]
+  rw [rep_apply, one_apply_eq_self]
   exact h n _ (proj_mem_torsionBy n x)
 
 end action

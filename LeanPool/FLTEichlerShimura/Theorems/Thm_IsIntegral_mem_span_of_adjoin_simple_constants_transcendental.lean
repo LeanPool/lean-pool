@@ -26,7 +26,6 @@ import Mathlib.RingTheory.DedekindDomain.IntegralClosure
 import Mathlib.RingTheory.Polynomial.IsIntegral
 import Mathlib.CategoryTheory.Category.Init
 import Mathlib.RingTheory.Adjoin.Polynomial.Transcendental
-import Mathlib.MeasureTheory.Integral.Bochner.Basic
 
 /-!
 # Descent of integrality along a transcendental constant
@@ -278,7 +277,7 @@ theorem isIntegral_KFldT_of (htS : t ∈ S) {y : K} (hyK : y ∈ KFld F S)
   obtain ⟨P, hPm, hPe⟩ := hyI
   refine ⟨P, hPm, ?_⟩
   apply Subtype.ext
-  rw [ZeroMemClass.coe_zero, ← hPe, Polynomial.eval₂_def, Polynomial.eval₂_def,
+  rw [ZeroMemClass.coe_zero, ← hPe, Polynomial.eval₂_eq_sum, Polynomial.eval₂_eq_sum,
     Polynomial.sum_def, Polynomial.sum_def, AddSubmonoidClass.coe_finsetSum]
   refine Finset.sum_congr rfl fun n _ => ?_
   simp only [SubmonoidClass.coe_pow, MulMemClass.coe_mul]

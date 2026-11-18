@@ -467,7 +467,7 @@ lemma e14_ne_zero : e14 ≠ 0 := by
 
 lemma exists_D_jf_mul_Δ_eq :
     ∃ c : ℂ, c ≠ 0 ∧ ∀ z : ℍ, D jf z * Δ z = c * (E₄ z ^ 2 * E₆ z) := by
-  obtain ⟨c, hc⟩ := (finrank_eq_one_iff_of_nonzero' e14 e14_ne_zero).mp finrank_fourteen g14
+  obtain ⟨c, hc⟩ := (finrank_eq_one_iff_of_ne_zero' e14 e14_ne_zero).mp finrank_fourteen g14
   have hpt : ∀ z : ℍ, D jf z * Δ z = c * (E₄ z ^ 2 * E₆ z) := fun z => by
     rw [← g14_apply, ← e14_apply, ← hc]
     rfl

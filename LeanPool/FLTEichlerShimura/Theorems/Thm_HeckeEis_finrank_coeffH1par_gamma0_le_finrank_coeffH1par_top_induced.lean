@@ -100,11 +100,11 @@ theorem mem_range_of_geomSum_eq_zero {V : Type*} [AddCommGroup V] [Module ℂ V]
   obtain ⟨a, b, hab⟩ := hcop
   have key : v = aeval A (a * (X - C 1)) v := by
     have := congrArg (fun p => aeval A p v) hab
-    simp only [map_add, map_mul, map_one, LinearMap.add_apply, Module.End.mul_apply,
-      Module.End.one_apply] at this
+    simp only [map_add, map_mul, map_one, LinearMap.add_apply, mul_apply_eq_comp,
+      one_apply_eq_self] at this
     rw [show aeval A Φ v = 0 from hv, map_zero, add_zero] at this
-    rw [map_mul, Module.End.mul_apply]; exact this.symm
-  rw [key, mul_comm, map_mul, Module.End.mul_apply, map_sub, aeval_X, aeval_C,
+    rw [map_mul, mul_apply_eq_comp]; exact this.symm
+  rw [key, mul_comm, map_mul, mul_apply_eq_comp, map_sub, aeval_X, aeval_C,
     Algebra.algebraMap_eq_smul_one, one_smul]
   exact LinearMap.mem_range_self _ _
 
@@ -199,7 +199,7 @@ theorem Sh_mem_coeffCocycles {z : ↥(Γ0 N) → Vn n} (hz : z ∈ coeffCocycles
   rw [add_right_inj]
   change ρ n x.out (ρ n ((tr (g : SL(2, ℤ)) x : ↥(Γ0 N)) : SL(2, ℤ)) (z (tr (h : SL(2, ℤ)) ((g :
     SL(2, ℤ))⁻¹ • x)))) = _
-  rw [← Module.End.mul_apply, ← map_mul, out_mul_tr, map_mul, Module.End.mul_apply]
+  rw [← mul_apply_eq_comp, ← map_mul, out_mul_tr, map_mul, mul_apply_eq_comp]
 
 theorem Sh_mem_coeffCoboundaries {z : ↥(Γ0 N) → Vn n} (hz : z ∈ coeffCoboundaries (ρΓ N n)) :
     Sh z ∈ coeffCoboundaries W := by
@@ -209,7 +209,7 @@ theorem Sh_mem_coeffCoboundaries {z : ↥(Γ0 N) → Vn n} (hz : z ∈ coeffCobo
   rw [Pi.sub_apply, hW, Sh_apply, map_sub]
   rw [sub_left_inj]
   change _ = ρ n x.out (ρ n ((tr (g : SL(2, ℤ)) x : ↥(Γ0 N)) : SL(2, ℤ)) v)
-  rw [← Module.End.mul_apply (ρ n x.out), ← map_mul, out_mul_tr, map_mul, Module.End.mul_apply]
+  rw [← mul_apply_eq_comp (ρ n x.out), ← map_mul, out_mul_tr, map_mul, mul_apply_eq_comp]
 
 theorem mem_coeffCoboundaries_of_Sh {z : ↥(Γ0 N) → Vn n}
     (h : Sh z ∈ coeffCoboundaries W) : z ∈ coeffCoboundaries (ρΓ N n) := by
@@ -244,13 +244,13 @@ theorem mem_coeffCoboundaries_of_Sh {z : ↥(Γ0 N) → Vn n}
   have : z δ = ρ n ((σ0 : ↥(Γ0 N)) : SL(2, ℤ))⁻¹ (ρ n (((σ0 * δ * σ0⁻¹ : ↥(Γ0 N))) : SL(2, ℤ)) (F
     x0) - F x0) :=
     by
-    rw [← hk, ← Module.End.mul_apply, ← map_mul, inv_mul_cancel, map_one, Module.End.one_apply]
-  rw [this, map_sub, ← Module.End.mul_apply, ← map_mul]
+    rw [← hk, ← mul_apply_eq_comp, ← map_mul, inv_mul_cancel, map_one, one_apply_eq_self]
+  rw [this, map_sub, ← mul_apply_eq_comp, ← map_mul]
   refine congrArg₂ (· - ·) ?_ ?_
   swap
   · simp only [MonoidHom.coe_comp, Function.comp_apply, Subgroup.coe_subtype, Subgroup.coe_inv]
   change ρ n ((δ * σ0⁻¹ : ↥(Γ0 N)) : SL(2, ℤ)) (F x0) = _
-  rw [← Module.End.mul_apply (ρ n _), ← map_mul]
+  rw [← mul_apply_eq_comp (ρ n _), ← map_mul]
   congr 2
   rw [Subgroup.coe_mul, Subgroup.coe_mul, Subgroup.coe_mul, Subgroup.coe_inv]
   group
@@ -352,13 +352,13 @@ theorem cocycle_pow {Z : ↥Gt → X0 N → Vn n} (hZ : Z ∈ coeffCocycles W) (
   | zero =>
     rw [pow_zero, Finset.sum_range_zero]
     have h := hZ 1 1
-    rw [mul_one, map_one, Module.End.one_apply] at h
+    rw [mul_one, map_one, one_apply_eq_self] at h
     simpa using h
   | succ M ih =>
-    rw [pow_succ', hZ, ih, Finset.sum_range_succ', pow_zero, Module.End.one_apply, add_comm,
+    rw [pow_succ', hZ, ih, Finset.sum_range_succ', pow_zero, one_apply_eq_self, add_comm,
       map_sum]
     congr 1
-    exact Finset.sum_congr rfl fun i _ => by rw [pow_succ', Module.End.mul_apply]
+    exact Finset.sum_congr rfl fun i _ => by rw [pow_succ', mul_apply_eq_comp]
 
 end PowerSum
 
@@ -390,18 +390,18 @@ theorem Sh_mem_coeffParabolicCocycles {z : ↥(Γ0 N) → Vn n}
   set A : Module.End ℂ (X0 N → Vn n) := W g with hA
   have h1 : Sh z (g ^ M) = (A ^ M - 1) F := by
     funext x
-    rw [Sh_apply, LinearMap.sub_apply, Module.End.one_apply, hA, ← map_pow, Pi.sub_apply, hW]
+    rw [Sh_apply, LinearMap.sub_apply, one_apply_eq_self, hA, ← map_pow, Pi.sub_apply, hW]
     rw [show (((g ^ M : ↥Gt)) : SL(2, ℤ)) = (g : SL(2, ℤ)) ^ M from rfl, hfix']
     have hx := hu x
-    rw [LinearMap.sub_apply, Module.End.one_apply] at hx
+    rw [LinearMap.sub_apply, one_apply_eq_self] at hx
     rw [← hx, map_sub]
     refine congrArg₂ (· - ·) ?_ rfl
     change ρ n x.out (ρ n ((tr ((g : SL(2, ℤ)) ^ M) x : ↥(Γ0 N)) : SL(2, ℤ)) (u x)) = _
-    rw [← Module.End.mul_apply (ρ n x.out), ← map_mul, out_mul_tr, hfix', map_mul,
-      Module.End.mul_apply]
+    rw [← mul_apply_eq_comp (ρ n x.out), ← map_mul, out_mul_tr, hfix', map_mul,
+      mul_apply_eq_comp]
   have h2 := cocycle_pow (Sh_mem_coeffCocycles W hW hz.1) g M
   have h3 : (A ^ M - 1) F = ∑ i ∈ Finset.range M, (A ^ i) ((A - 1) F) := by
-    rw [← geom_sum_mul A M, Module.End.mul_apply, LinearMap.coe_sum, Finset.sum_apply]
+    rw [← geom_sum_mul A M, mul_apply_eq_comp, LinearMap.coe_sum, Finset.sum_apply]
   have hsum : ∑ i ∈ Finset.range M, (A ^ i) (Sh z g - (A - 1) F) = 0 := by
     simp only [map_sub, Finset.sum_sub_distrib]
     rw [← h2, ← h3, h1, sub_self]
@@ -439,7 +439,7 @@ theorem eq_zero_of_apply_S_T {Z : ↥Gt → X0 N → Vn n} (hZ : Z ∈ coeffCocy
     (hT : Z ⟨ModularGroup.T, Subgroup.mem_top _⟩ = 0) : Z = 0 := by
   have z1 : Z 1 = 0 := by
     have h := hZ 1 1
-    rw [mul_one, map_one, Module.End.one_apply] at h
+    rw [mul_one, map_one, one_apply_eq_self] at h
     simpa using h
   have zinv : ∀ g : ↥Gt, Z g⁻¹ = -(W g⁻¹ (Z g)) := fun g => by
     have h := hZ g⁻¹ g

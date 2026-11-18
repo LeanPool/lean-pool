@@ -109,7 +109,7 @@ theorem solution :
     first | exact this
   set M : ModularForm 𝒮ℒ 6 := (CuspForm.discriminantEquiv G).mcast (by norm_num) with hM
   obtain ⟨c, hc⟩ : ∃ c : ℂ, c • E₆ = M :=
-    (finrank_eq_one_iff_of_nonzero' E₆ (E_ne_zero (by norm_num) ⟨3, rfl⟩)).mp
+    (finrank_eq_one_iff_of_ne_zero' E₆ (E_ne_zero (by norm_num) ⟨3, rfl⟩)).mp
       (Module.rank_eq_one_iff_finrank_eq_one.mp levelOne_weight_six_rank_one) M
   have hpt : (B : ℍ → ℂ) = ModularForm.discriminant * (c • (⇑ModularForm.E₆ : ℍ → ℂ)) := by
     rw [← hGB]

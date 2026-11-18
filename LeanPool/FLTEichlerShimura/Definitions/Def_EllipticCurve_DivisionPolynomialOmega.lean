@@ -120,11 +120,11 @@ lemma coeff_halveCoeff (r : Poly) (m : Fin 5 →₀ ℕ) :
 
 /-- Coefficientwise application of `halveCoeff` to a polynomial in the x-coordinate. -/
 def halveX (p : Poly[X]) : Poly[X] :=
-  ⟨AddMonoidAlgebra.ofCoeff (p.toFinsupp.coeff.mapRange halveCoeff halveCoeff_zero)⟩
+  AddMonoidAlgebra.ofCoeff (p.coeff.mapRange halveCoeff halveCoeff_zero)
 
 @[simp] lemma coeff_halveX (p : Poly[X]) (i : ℕ) : (halveX p).coeff i = halveCoeff (p.coeff i) := by
   rcases p with ⟨f⟩
-  simp [halveX, Polynomial.coeff]
+  simp [halveX]
 
 @[simp] lemma halveX_zero : halveX 0 = 0 := by
   ext i
@@ -132,11 +132,11 @@ def halveX (p : Poly[X]) : Poly[X] :=
 
 /-- Coefficientwise halving of the universal bivariate polynomial's integer coefficients. -/
 def halve (p : Poly[X][Y]) : Poly[X][Y] :=
-  ⟨AddMonoidAlgebra.ofCoeff (p.toFinsupp.coeff.mapRange halveX halveX_zero)⟩
+  AddMonoidAlgebra.ofCoeff (p.coeff.mapRange halveX halveX_zero)
 
 @[simp] lemma coeff_halve (p : Poly[X][Y]) (i : ℕ) : (halve p).coeff i = halveX (p.coeff i) := by
   rcases p with ⟨f⟩
-  simp [halve, Polynomial.coeff]
+  simp [halve]
 
 lemma halveCoeff_two_mul (r : Poly) : halveCoeff (2 * r) = r := by
   ext m
@@ -150,7 +150,9 @@ lemma halveX_two_mul (p : Poly[X]) : halveX (2 * p) = p := by
     halveCoeff_two_mul]
 
 lemma halve_two_mul (p : Poly[X][Y]) : halve (2 * p) = p := by
-  ext i : 1
+  apply AddMonoidAlgebra.ext
+  apply Finsupp.ext
+  intro i
   rw [coeff_halve, show (2 : Poly[X][Y]) = C 2 from (map_ofNat C 2).symm, coeff_C_mul,
     halveX_two_mul]
 

@@ -307,7 +307,7 @@ theorem dualHeckeRep_C (a : ℤ) (φ : Module.Dual ℂ (CuspForm (CongruenceSubg
     dualHeckeRep N (MvPolynomial.C a) φ = a • φ := by
   ext f
   rw [dualHeckeRep_apply_apply, ← MvPolynomial.algebraMap_eq, eq_intCast, map_intCast,
-    Module.End.intCast_apply, map_zsmul, LinearMap.smul_apply]
+    intCast_apply_eq_smul, map_zsmul, LinearMap.smul_apply]
 
 /-- Each prime Hecke operator in the dual action preserves the period lattice. -/
 def PeriodLatticeHeckeStable : Prop :=
@@ -324,7 +324,7 @@ theorem periodLattice_stable_of (h : PeriodLatticeHeckeStable N) (t : HeckeAlg)
   | add p q hp hq => rw [map_add,
     LinearMap.add_apply]; exact Submodule.add_mem _ (hp x hx) (hq x hx)
   | mul_X p ℓ hp =>
-    rw [map_mul, Module.End.mul_apply]
+    rw [map_mul, mul_apply_eq_comp]
     exact hp _ (h ℓ x hx)
 
 variable (N)
@@ -372,7 +372,7 @@ theorem periodLatticeHeckeEnd_of_not (h : ¬ PeriodLatticeHeckeStable N) (t : He
   have e : periodLatticeHeckeEnd N = (Int.castRingHom (Module.End ℤ (periodLattice N))).comp
       (MvPolynomial.eval₂Hom (Int.castRingHom ℤ) (0 : Nat.Primes → ℤ)) := dite_eq_right h
   rw [e, RingHom.comp_apply, MvPolynomial.eval₂Hom_zero_apply]
-  simp only [eq_intCast, Int.cast_id, Module.End.intCast_apply]
+  simp only [eq_intCast, Int.cast_id, intCast_apply_eq_smul]
 
 variable (N)
 

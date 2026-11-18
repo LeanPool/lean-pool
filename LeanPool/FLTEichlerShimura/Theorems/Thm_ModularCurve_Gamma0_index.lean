@@ -220,9 +220,13 @@ private theorem firstColumnClass_eq_iff (A B : SpecialLinearGroup (Fin 2) R) :
     have h1' : (u : R) * A.1 0 0 = B.1 0 0 := h1
     have h2' : (u : R) * A.1 1 0 = B.1 1 0 := h2
     change (A⁻¹ * B).1 1 0 = 0
-    rw [SpecialLinearGroup.coe_mul, SpecialLinearGroup.SL2_inv_expl A,
-      (Matrix.two_mul_expl _ B.1).2.2.1]
-    simp only [Matrix.cons_val_one, Matrix.cons_val_zero]
+    have h10 : (A⁻¹).1 1 0 = -A.1 1 0 :=
+      congrArg (fun C : SpecialLinearGroup (Fin 2) R => C.1 1 0)
+        (SpecialLinearGroup.SL2_inv_expl A)
+    have h11 : (A⁻¹).1 1 1 = A.1 0 0 :=
+      congrArg (fun C : SpecialLinearGroup (Fin 2) R => C.1 1 1)
+        (SpecialLinearGroup.SL2_inv_expl A)
+    rw [SpecialLinearGroup.coe_mul, (Matrix.two_mul_expl _ B.1).2.2.1, h10, h11]
     rw [← h1', ← h2']; ring
   · intro hAB
     have hB : B = A * (A⁻¹ * B) := (mul_inv_cancel_left A B).symm

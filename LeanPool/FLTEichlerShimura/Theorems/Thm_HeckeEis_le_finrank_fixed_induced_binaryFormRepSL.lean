@@ -123,7 +123,7 @@ theorem pow_shift_apply (hΦ : ∀ f x, Φ f x = A (f (σ⁻¹ x))) (i : ℕ) (f
   induction i generalizing x with
   | zero => simp
   | succ i ih =>
-    rw [pow_succ', pow_succ', pow_succ', Module.End.mul_apply, hΦ, ih, Module.End.mul_apply,
+    rw [pow_succ', pow_succ', pow_succ', mul_apply_eq_comp, hΦ, ih, mul_apply_eq_comp,
       mul_inv_rev,
       Equiv.Perm.mul_apply]
 
@@ -264,7 +264,7 @@ noncomputable def avg (p : ℕ) : Module.End k (X → V) := ∑ i ∈ Finset.ran
 omit [Fintype X] [DecidableEq X] in
 theorem avg_mem_ker (hΦ : ∀ f x, Φ f x = A (f (σ⁻¹ x))) {p : ℕ} (hσ : σ ^ p = 1) (hA : A ^ p = 1)
     (g : X → V) : avg Φ p g ∈ LinearMap.ker (Φ - 1) := by
-  rw [LinearMap.mem_ker, ← Module.End.mul_apply, avg, mul_geom_sum, shift_pow_eq_one σ A Φ hΦ hσ hA,
+  rw [LinearMap.mem_ker, ← mul_apply_eq_comp, avg, mul_geom_sum, shift_pow_eq_one σ A Φ hΦ hσ hA,
     sub_self,
     LinearMap.zero_apply]
 
@@ -279,13 +279,13 @@ theorem extZero_fixed_mem_ker (hΦ : ∀ f x, Φ f x = A (f (σ⁻¹ x)))
     extZero k (fixedPts σ) V (fun y => (u y : V)) ∈ LinearMap.ker (Φ - 1) := by
   rw [LinearMap.mem_ker]
   funext x
-  rw [LinearMap.sub_apply, Module.End.one_apply, Pi.sub_apply, hΦ, Pi.zero_apply, sub_eq_zero]
+  rw [LinearMap.sub_apply, one_apply_eq_self, Pi.sub_apply, hΦ, Pi.zero_apply, sub_eq_zero]
   by_cases hx : σ x = x
   · have hx' : σ⁻¹ x = x := by rw [Equiv.Perm.inv_eq_iff_eq]; exact hx.symm
     have hmem : x ∈ fixedPts σ := (mem_fixedPts σ).mpr hx
     rw [hx', extZero_apply_mem _ hmem]
     have h2 := (u ⟨x, hmem⟩).2
-    rw [LinearMap.mem_ker, LinearMap.sub_apply, Module.End.one_apply, sub_eq_zero] at h2
+    rw [LinearMap.mem_ker, LinearMap.sub_apply, one_apply_eq_self, sub_eq_zero] at h2
     exact h2
   · have hx' : σ⁻¹ x ∉ fixedPts σ := by
       rw [mem_fixedPts, Equiv.Perm.inv_def, Equiv.apply_symm_apply]
@@ -450,7 +450,7 @@ theorem binaryFormRepSL_pow_eq_one (n : ℕ) (hn : Even n) {g : SL(2, ℤ)} {p :
     (binaryFormRepSL ℂ n g) ^ p = 1 := by
   rw [← map_pow, hg]
   refine LinearMap.ext fun P => ?_
-  rw [HeckeEis.binaryFormRepSL_neg_one_apply, hn.neg_one_pow, one_smul, Module.End.one_apply]
+  rw [HeckeEis.binaryFormRepSL_neg_one_apply, hn.neg_one_pow, one_smul, one_apply_eq_self]
 
 noncomputable def xPow (n : ℕ) : BinaryForm ℂ n :=
   ⟨X 0 ^ n, (MvPolynomial.mem_homogeneousSubmodule _ _).mpr (MvPolynomial.isHomogeneous_X_pow 0 n)⟩
@@ -537,7 +537,7 @@ theorem T_conjunct [NeZero N]
     intro c
     rw [LinearMap.mem_ker]
     funext x
-    rw [LinearMap.sub_apply, Module.End.one_apply, Pi.sub_apply, hW, hL0, hL0, map_smul,
+    rw [LinearMap.sub_apply, one_apply_eq_self, Pi.sub_apply, hW, hL0, hL0, map_smul,
       binaryFormRepSL_T_xPow, hπ, Pi.zero_apply, sub_self]
   have hinj : Function.Injective (LinearMap.codRestrict _ L0 hmem) := by
     intro c d h

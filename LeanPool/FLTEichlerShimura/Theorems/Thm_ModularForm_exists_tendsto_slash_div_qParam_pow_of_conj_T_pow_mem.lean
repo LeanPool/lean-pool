@@ -94,7 +94,7 @@ theorem exists_tendsto_div_qParam_pow {Γ' : Subgroup (GL (Fin 2) ℝ)} {k : ℤ
     have e := congrArg (fun p : FormalMultilinearSeries ℂ ℂ ℂ => p.coeff m) hp0
     simp only [FormalMultilinearSeries.coeff_ofScalars] at e
     exact e
-  obtain ⟨n, g, hg, hg0, hfg⟩ := hG.exists_eventuallyEq_pow_smul_nonzero_iff.mpr hne
+  obtain ⟨n, g, hg, hg0, hfg⟩ := hG.exists_eventuallyEq_pow_smul_ne_zero_iff.mpr hne
   refine ⟨n, g 0, hg0, ?_⟩
   have hq : Tendsto (fun τ : ℍ => Function.Periodic.qParam h τ) atImInfty (𝓝[≠] 0) :=
     (Function.Periodic.qParam_tendsto hh).comp UpperHalfPlane.tendsto_coe_atImInfty

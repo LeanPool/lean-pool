@@ -142,7 +142,7 @@ theorem linePow_expand (τ : ℂ) :
   refine sum_congr rfl fun m hm => ?_
   rw [mul_pow, ← map_pow, X_pow_eq_monomial, X_pow_eq_monomial, C_mul_monomial,
     monomial_mul_monomial, ex]
-  rw [mul_comm (monomial _ _) ((n.choose m : MvPolynomial (Fin 2) ℂ)), ← C_eq_coe_nat,
+  rw [mul_comm (monomial _ _) ((n.choose m : MvPolynomial (Fin 2) ℂ)), ← C_eq_natCast,
     C_mul_monomial]
   simp only [mul_one]
 

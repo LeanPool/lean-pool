@@ -14,6 +14,8 @@ Licensed under Apache License 2.0
 
 module
 
+public import Mathlib.LinearAlgebra.Dual.Lemmas
+
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_Repartitions
 
 import Mathlib.Algebra.Order.Star.Int

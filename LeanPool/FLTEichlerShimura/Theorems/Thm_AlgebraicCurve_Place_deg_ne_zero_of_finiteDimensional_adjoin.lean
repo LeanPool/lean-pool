@@ -17,6 +17,8 @@ Licensed under Apache License 2.0
 
 module
 
+public import Mathlib.FieldTheory.IntermediateField.Adjoin.Defs
+
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_DivisorClassGroup
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_inertiaDeg_pos_of_finiteDimensional

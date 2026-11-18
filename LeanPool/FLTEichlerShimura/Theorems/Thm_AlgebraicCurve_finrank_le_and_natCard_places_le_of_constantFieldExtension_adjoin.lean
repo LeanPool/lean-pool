@@ -108,7 +108,8 @@ theorem linearIndependent_pow_of_transcendental {k A : Type*} [Field k] [Ring A]
   have hzero : (∑ n : Fin N, Polynomial.monomial (n : ℕ) (a n)) = 0 :=
     hinj (by rw [hpoly, map_zero])
   have hcoeff := congrArg (fun p : Polynomial k => p.coeff (m : ℕ)) hzero
-  simp only [Polynomial.finsetSum_coeff, Polynomial.coeff_monomial, Polynomial.coeff_zero] at hcoeff
+  simp only [Polynomial.finsetSum_coeff, Polynomial.coeff_monomial, Finsupp.single_apply,
+    Polynomial.coeff_zero] at hcoeff
   rw [Finset.sum_eq_single m (fun n _ hn => ite_eq_right (fun h => hn (Fin.ext h))) (by
     simp)] at hcoeff
   simpa using hcoeff

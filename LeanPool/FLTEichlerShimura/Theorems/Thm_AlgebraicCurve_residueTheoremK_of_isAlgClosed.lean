@@ -1900,7 +1900,7 @@ theorem kwF4R1V384a_completionLinearCombination_surjective
       (WithZero (Multiplicative ℤ))
   rw [← Set.range_eq_univ, ← LinearMap.coe_range,
     ← (LinearMap.range (kwFfgcCompletionLinearCombination E w' b))
-        |>.closed_of_finiteDimensional.closure_eq]
+        |>.isClosed_of_finiteDimensional.closure_eq]
   exact (kw_ffgc_denseRange_completionLinearCombination E w' b).closure_range
 
 theorem kwF4R1V384a_semilocalComponent_surjective (v : Place K E) (w' : v.fiber F) :
@@ -2340,7 +2340,7 @@ theorem kwF4R1V386a_inertiaDeg_completion_eq
     have hcomap : (maximalIdeal w'.adicCompletionIntegers).comap
         (algebraMap (w'.restrict E).adicCompletionIntegers w'.adicCompletionIntegers)
         = maximalIdeal (w'.restrict E).adicCompletionIntegers :=
-      ((IsLocalRing.local_hom_TFAE (algebraMap (w'.restrict E).adicCompletionIntegers
+      ((IsLocalRing.local_hom_tfae (algebraMap (w'.restrict E).adicCompletionIntegers
         w'.adicCompletionIntegers)).out 1 5).mp ‹IsLocalHom _›
     exact ⟨hcomap.symm⟩
   rw [Ideal.inertiaDeg_eq_of_isMaximal
