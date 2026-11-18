@@ -5,12 +5,13 @@ Authors: Vladislav Kuznetsov
 -/
 module
 
+import LeanPool.ConwaySoifer.Certificates.FanCertificate
+
 public import LeanPool.ConwaySoifer.Simplified.Certificates.Checkpoints.Aown240000250000
 public import LeanPool.ConwaySoifer.Simplified.Certificates.Steps.Aown2400002500000
 public import LeanPool.ConwaySoifer.Simplified.Certificates.Steps.Aown2400002500001
 public import LeanPool.ConwaySoifer.Simplified.Certificates.Steps.Aown2400002500002
 public import LeanPool.ConwaySoifer.Simplified.Certificates.Steps.Aown2400002500003
-import Mathlib.Tactic.FinCases
 
 /-!
 # Aown 240000 250000
@@ -47,6 +48,8 @@ SOFTWARE.
 -/
 
 @[expose] public section
+
+prepare_fan_cache ConwaySoifer.Simplified.Certificates.Aown240000250000.model0
 
 -- Generated checkpoints are proposals; all acceptance proofs are checked by the kernel.
 
@@ -131,7 +134,7 @@ theorem excluded26_0 : ExcludedOn (model26.B 0) 9000000000000 (model26.caps 0) (
       [525000000000]) (some (8, 5, 7)) (some (8, 5, 7)) fan26Owner0Part1))))))))))))))))))))))))
       (den :=
       9000000000000) (fuel := 12) (by decide +kernel) 0 1 100 (by decide +kernel)
-  decide +kernel
+  certify_fan
 
 private theorem tail26 : ModelImpossible model26 9000000000000 0 1 100 :=
   final_checkpoint model26 9000000000000 0 1 100 0 excluded26_0

@@ -5,12 +5,13 @@ Authors: Vladislav Kuznetsov
 -/
 module
 
+import LeanPool.ConwaySoifer.Certificates.FanCertificate
+
 public import LeanPool.ConwaySoifer.Simplified.Certificates.Checkpoints.Sext310000320000
 public import LeanPool.ConwaySoifer.Simplified.Certificates.Steps.Sext3100003200000
 public import LeanPool.ConwaySoifer.Simplified.Certificates.Steps.Sext3100003200001
 public import LeanPool.ConwaySoifer.Simplified.Certificates.Steps.Sext3100003200002
 public import LeanPool.ConwaySoifer.Simplified.Certificates.Steps.Sext3100003200003
-import Mathlib.Tactic.FinCases
 
 /-!
 # Sext 310000 320000
@@ -48,6 +49,8 @@ SOFTWARE.
 
 @[expose] public section
 
+prepare_fan_cache ConwaySoifer.Simplified.Certificates.Sext310000320000.model0
+
 -- Generated checkpoints are proposals; all acceptance proofs are checked by the kernel.
 
 namespace ConwaySoifer.Simplified.Certificates
@@ -81,7 +84,7 @@ theorem excluded32_2 : ExcludedOn (model32.B 2) 9000000000000 (model32.caps 2) (
       (some (1, 3, 4)) (.terminal (some (1, 3, 4)) (some (1, 3, 0)) (some (1, 3,
       4))))))))))))))))))))) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1 100
       (by decide +kernel)
-  decide +kernel
+  certify_fan
 
 private theorem tail32 : ModelImpossible model32 9000000000000 0 1 100 :=
   final_checkpoint model32 9000000000000 0 1 100 2 excluded32_2

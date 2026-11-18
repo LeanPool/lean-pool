@@ -5,6 +5,8 @@ Authors: Vladislav Kuznetsov
 -/
 module
 
+import LeanPool.ConwaySoifer.Certificates.FanCertificate
+
 public import LeanPool.ConwaySoifer.Simplified.Certificates.Checkpoints.Aown160000170000
 public import LeanPool.ConwaySoifer.Simplified.Certificates.Steps.Aown1600001700000
 public import LeanPool.ConwaySoifer.Simplified.Certificates.Steps.Aown1600001700001
@@ -12,7 +14,6 @@ public import LeanPool.ConwaySoifer.Simplified.Certificates.Steps.Aown1600001700
 public import LeanPool.ConwaySoifer.Simplified.Certificates.Steps.Aown1600001700003
 public import LeanPool.ConwaySoifer.Simplified.Certificates.Steps.Aown1600001700004
 public import LeanPool.ConwaySoifer.Simplified.Certificates.Steps.Aown1600001700005
-import Mathlib.Tactic.FinCases
 
 /-!
 # Aown 160000 170000
@@ -50,6 +51,8 @@ SOFTWARE.
 
 @[expose] public section
 
+prepare_fan_cache ConwaySoifer.Simplified.Certificates.Aown160000170000.model0
+
 -- Generated checkpoints are proposals; all acceptance proofs are checked by the kernel.
 
 namespace ConwaySoifer.Simplified.Certificates
@@ -78,7 +81,7 @@ theorem excluded48_5 : ExcludedOn (model48.B 5) 9000000000000 (model48.caps 5) (
       (some (0, 3, 4)) (.next ([-4125000000000], [6705000000000]) (some (0, 3, 4)) (some (0, 3, 4))
       (.terminal (some (0, 3, 4)) (some (0, 3, 4)) (some (0, 3, 4))))))))))))))))) (den :=
       9000000000000) (fuel := 12) (by decide +kernel) 0 1 100 (by decide +kernel)
-  decide +kernel
+  certify_fan
 
 private theorem tail48 : ModelImpossible model48 9000000000000 0 1 100 :=
   final_checkpoint model48 9000000000000 0 1 100 5 excluded48_5

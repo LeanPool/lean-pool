@@ -5,8 +5,9 @@ Authors: Vladislav Kuznetsov
 -/
 module
 
+import LeanPool.ConwaySoifer.Certificates.FanCertificate
+
 public import LeanPool.ConwaySoifer.Simplified.Certificates.Checkpoints.Aown120000130000
-import Mathlib.Tactic.FinCases
 
 /-!
 # Aown 120000 130000 3
@@ -43,6 +44,8 @@ SOFTWARE.
 -/
 
 @[expose] public section
+
+prepare_fan_cache ConwaySoifer.Simplified.Certificates.Aown120000130000.model0
 
 -- Generated checkpoints are proposals; all acceptance proofs are checked by the kernel.
 
@@ -107,7 +110,7 @@ theorem excluded24_4 : ExcludedOn (model24.B 4 ++ [step24.q]) 9000000000000 (mod
       9000000000000]) (some (3, 0, 2)) (some (3, 1, 2)) fan24Owner4Part0)) (den := 9000000000000)
       (fuel := 12) (by decide +kernel) 0 1 100
       (by decide +kernel)
-  decide +kernel
+  certify_fan
 
 theorem excluded24_6 : ExcludedOn (model24.B 6 ++ [step24.q]) 9000000000000 (model24.caps 6)
     (model24.ord 6) 0 1 100 := by
@@ -204,7 +207,7 @@ theorem excluded25_6 : ExcludedOn (model25.B 6 ++ [step25.q]) 9000000000000 (mod
       (some (4, 2, 3)) (.next ([-1185000000000], [1305000000000]) (some (4, 2, 3)) (some (4, 2, 3))
       (.terminal (some (4, 2, 0)) (some (4, 2, 0)) (some (4, 2, 0))))))))))))))))))))) (den :=
       9000000000000) (fuel := 12) (by decide +kernel) 0 1 100 (by decide +kernel)
-  decide +kernel
+  certify_fan
 
 theorem excluded25_7 : ExcludedOn (model25.B 7 ++ [step25.q]) 9000000000000 (model25.caps 7)
     (model25.ord 7) 0 1 100 := by
@@ -295,7 +298,7 @@ theorem excluded26_6 : ExcludedOn (model26.B 6 ++ [step26.q]) 9000000000000 (mod
       (some (4, 2, 3)) (.next ([-1185000000000], [1305000000000]) (some (4, 2, 3)) (some (4, 2, 3))
       (.terminal (some (4, 2, 0)) (some (4, 2, 0)) (some (4, 2, 0))))))))))))))))))))) (den :=
       9000000000000) (fuel := 12) (by decide +kernel) 0 1 100 (by decide +kernel)
-  decide +kernel
+  certify_fan
 
 theorem excluded26_7 : ExcludedOn (model26.B 7 ++ [step26.q]) 9000000000000 (model26.caps 7)
     (model26.ord 7) 0 1 100 := by
@@ -328,7 +331,7 @@ theorem excluded26_9 : ExcludedOn (model26.B 9 ++ [step26.q]) 9000000000000 (mod
       ([-5220000000000], [7845000000000]) (some (0, 1, 4)) (some (0, 1, 4)) (.terminal (some (0, 1,
       4)) (some (0, 1, 4)) (some (0, 1, 4))))))))))))))))))) (den := 9000000000000) (fuel := 12)
       (by decide +kernel) 0 1 100 (by decide +kernel)
-  decide +kernel
+  certify_fan
 
 theorem checked26 : StepValid model26 9000000000000 step26 0 1 100 := by
   apply step_checkpoint (fuel := 12)

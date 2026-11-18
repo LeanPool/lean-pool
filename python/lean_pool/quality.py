@@ -22,7 +22,13 @@ from lean_pool.indexes import (
     structure_errors,
 )
 from lean_pool.registry import load_document
-from lean_pool.validation_cache import ValidationCache, pool_units
+from lean_pool.validation_cache import (
+    Check,
+    ValidationCache,
+    pool_units,
+    run_ordered,
+    validation_workers,
+)
 
 ALLOWED_AXIOMS = {"propext", "Quot.sound", "Classical.choice"}
 CODE_QUALITY_URL = (
@@ -890,6 +896,7 @@ def _check_projects(
     if errors:
         return errors
 
+    declaration_checks: list[Check[_QualityError]] = []
     for index, project in enumerate(projects, start=1):
         errors.extend(
             _check_project(
@@ -899,11 +906,24 @@ def _check_projects(
                 else path,
                 index,
                 project,
-                validation_cache,
-                skip_declarations=skip_declarations,
+                None if skip_declarations else declaration_checks,
             )
         )
+    errors.extend(_run_lean_checks(declaration_checks, validation_cache))
     return errors
+
+
+def _run_lean_checks(
+    checks: list[Check[_QualityError]], cache: ValidationCache | None
+) -> list[_QualityError]:
+    """Run independent Lean checks concurrently, keeping their errors in order."""
+    if cache is None:
+        results = run_ordered(
+            [check.validate for check in checks], validation_workers()
+        )
+    else:
+        results = cache.check_all(checks)
+    return [error for errors in results for error in errors]
 
 
 def _check_project_container(path: Path, projects: Any) -> list[_QualityError]:
@@ -1069,10 +1089,9 @@ def _check_project(
     path: Path,
     index: int,
     project: Any,
-    validation_cache: ValidationCache | None = None,
-    *,
-    skip_declarations: bool = False,
+    declaration_checks: list[Check[_QualityError]] | None = None,
 ) -> list[_QualityError]:
+    """Check one card; queue its Lean declaration check unless it is skipped."""
     if not isinstance(project, dict):
         return [_QualityError(path, 1, f"project #{index} must be a mapping")]
 
@@ -1082,18 +1101,15 @@ def _check_project(
         return errors
 
     entry_path = _module_to_path(root, project["entry_module"])
-    if not skip_declarations:
-        if validation_cache is None:
-            errors.extend(_check_project_declarations(root, path, project))
-        else:
-            errors.extend(
-                validation_cache.check(
-                    "declarations",
-                    [project["entry_module"]],
-                    lambda: _check_project_declarations(root, path, project),
-                    metadata=project,
-                )
+    if declaration_checks is not None:
+        declaration_checks.append(
+            Check(
+                "declarations",
+                [project["entry_module"]],
+                lambda: _check_project_declarations(root, path, project),
+                metadata=project,
             )
+        )
     errors.extend(_check_project_card(entry_path, path, project))
     return errors
 
@@ -1494,6 +1510,7 @@ def run_checks(
         if validation_cache is None:
             errors.extend(_check_axioms(root))
             errors.extend(_check_option_backdoors(root))
+            errors.extend(_check_build_messages(root))
         else:
             errors.extend(_cached_pool_audits(root, validation_cache))
     return sorted(
@@ -1501,25 +1518,163 @@ def run_checks(
     )
 
 
-def _cached_pool_audits(root: Path, cache: ValidationCache) -> list[_QualityError]:
-    """Cover all pool declarations, with current static reachability checked above."""
+# Lake stores what the compiler printed for each module beside its compiled
+# files and replays it from caches. Its own `trace` entry records the command.
+BUILD_LOGS = Path(".lake/build/lib/lean")
+_BUILD_MESSAGE = re.compile(
+    r"(?P<path>\S+\.lean):(?P<line>\d+):\d+:\s*(?P<text>.*)", re.S
+)
+
+
+MISSING_BUILD_LOG = "build log is missing or unreadable"
+
+
+def _check_build_messages(root: Path) -> list[_QualityError]:
+    """Audit the stored build messages of every pool module."""
+    units = pool_units(root)
+    errors = [
+        error for modules in units for error in _audit_build_messages(root, modules)
+    ]
+    missing = sum(error.message == MISSING_BUILD_LOG for error in errors)
+    if missing and missing == sum(map(len, units)):
+        return [
+            _QualityError(
+                root / "LeanPool.lean",
+                1,
+                "no build logs found; build the pool before auditing its messages",
+            )
+        ]
+    return errors
+
+
+def _audit_build_messages(root: Path, modules: list[str]) -> list[_QualityError]:
+    """Reject every message the compiler printed while building these modules.
+
+    Finished pool code builds silently. A message is a suggestion nobody
+    followed (`Try this` from `simp?`, from a `ring` that fell back to
+    `ring_nf`, from a linter) or leftover diagnostic output. Reading Lake's
+    logs covers all of them without listing spellings. Only Lake's record of
+    compiling this very module is exempt, and a log without that record
+    fails, so a changed log format cannot pass unnoticed.
+    """
     errors: list[_QualityError] = []
-    for modules in pool_units(root):
+    for module in modules:
+        source = _module_to_path(root, module)
+        relative = source.relative_to(root)
+        log = _build_log(root / BUILD_LOGS / relative, relative.as_posix())
+        if log is None:
+            errors.append(_QualityError(source, 1, MISSING_BUILD_LOG))
+            continue
         errors.extend(
-            cache.check(
-                "axioms",
-                modules,
-                lambda: _audit_axioms(root, modules),
-            )
-        )
-        errors.extend(
-            cache.check(
-                "backdoors",
-                modules,
-                lambda: _run_option_audit(root, modules, only_modules=modules),
-            )
+            _build_message_error(root, source, entry)
+            for entry in log
+            if not _is_compiler_command(entry, relative.as_posix())
         )
     return errors
+
+
+def _build_log(compiled: Path, source: str) -> list[dict[str, str]] | None:
+    """Read one module's Lake log; `None` unless it has the expected shape.
+
+    Every entry needs a textual level and message, and one of them must be
+    the record of compiling `source`, which every real build writes.
+    """
+    try:
+        log = json.loads(compiled.with_suffix(".trace").read_text())["log"]
+    except (OSError, ValueError, KeyError, TypeError):
+        return None
+    if not isinstance(log, list):
+        return None
+    for entry in log:
+        if not isinstance(entry, dict) or not all(
+            isinstance(entry.get(field), str) for field in ("level", "message")
+        ):
+            return None
+    if not any(_is_compiler_command(entry, source) for entry in log):
+        return None
+    return log
+
+
+# `Lake.Util.Proc.mkCmdLog` writes `<cwd>> [NAME=value ...] <command> <arguments>`
+# with a bare `PATH` in place of its value, and quotes nothing. A path may hold
+# spaces, so the record is matched around the module's source instead of being
+# split into words. One assumption keeps that reading unambiguous: no directory
+# name ends in a space, so a space before `/` or `C:/` always starts a new word.
+_ABSOLUTE = r"(?:/|[A-Za-z]:/)"
+_DIRECTORY = rf"{_ABSOLUTE}(?:(?:[^ ]| (?!{_ABSOLUTE}))*/)?"
+_COMPILER_BEFORE_SOURCE = re.compile(
+    r"[^>]*> (?:PATH )*(?:[A-Za-z_][A-Za-z0-9_]*=.*? )?"
+    rf"(?:{_DIRECTORY})?lean(?:\.exe)? (?:{_DIRECTORY})?"
+)
+
+
+def _is_compiler_command(entry: dict[str, str], source: str) -> bool:
+    """Whether Lake wrote this entry to record compiling `source`.
+
+    That is a `trace` entry which runs the Lean compiler, named bare or by an
+    absolute path, with the module's source as its first argument. Lake logs
+    other external commands in the same form, so the prefix alone proves
+    nothing. An unquoted variable value can still hide where the command
+    begins; no reading of the text can rule that out.
+    """
+    if entry["level"] != "trace":
+        return False
+    message = entry["message"].replace("\\", "/")
+    position = -1
+    while (position := message.find(source, position + 1)) >= 0:
+        end = position + len(source)
+        if message[end : end + 1] in ("", " ") and _COMPILER_BEFORE_SOURCE.fullmatch(
+            message, 0, position
+        ):
+            return True
+    return False
+
+
+def _build_message_error(
+    root: Path, source: Path, entry: dict[str, str]
+) -> _QualityError:
+    """Point at the source line a build message names, else at its module."""
+    message = entry["message"]
+    path, line, summary = source, 1, message
+    if match := _BUILD_MESSAGE.match(message):
+        named = root / match["path"]
+        if named.is_file():
+            path, line = named, int(match["line"])
+        summary = match["text"]
+    summary = " ".join(summary.split())
+    if len(summary) > 160:
+        summary = summary[:157] + "..."
+    return _QualityError(
+        path, line, f"prints a message on every build ({entry['level']}): {summary}"
+    )
+
+
+def _cached_pool_audits(root: Path, cache: ValidationCache) -> list[_QualityError]:
+    """Cover all pool declarations, with current static reachability checked above."""
+    checks: list[Check[_QualityError]] = []
+    for modules in pool_units(root):
+        checks.append(
+            Check(
+                "axioms", modules, lambda modules=modules: _audit_axioms(root, modules)
+            )
+        )
+        checks.append(
+            Check(
+                "backdoors",
+                modules,
+                lambda modules=modules: _run_option_audit(
+                    root, modules, only_modules=modules
+                ),
+            )
+        )
+        checks.append(
+            Check(
+                "messages",
+                modules,
+                lambda modules=modules: _audit_build_messages(root, modules),
+            )
+        )
+    return _run_lean_checks(checks, cache)
 
 
 def _parse_args(argv: list[str]) -> argparse.Namespace:

@@ -7,7 +7,6 @@ module
 
 
 public import LeanPool.BeyondBethe.BeyondBethe.KuhnMatching
-public import Mathlib.Tactic
 
 /-!
 # A small-step evaluator for the Kuhn matching algorithm

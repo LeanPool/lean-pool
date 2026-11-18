@@ -9,12 +9,6 @@ public import LeanPool.ConwaySoifer.Geometry.Support
 public import LeanPool.ConwaySoifer.Geometry.Area
 public import Mathlib.MeasureTheory.Measure.Haar.NormedSpace
 public import Mathlib.Data.Fin.VecNotation
-import Mathlib.Tactic.Convert
-import Mathlib.Tactic.FieldSimp
-import Mathlib.Tactic.FinCases
-import Mathlib.Tactic.Linarith
-import Mathlib.Tactic.Positivity
-import Mathlib.Tactic.Ring
 
 /-!
 # Caps of a triangle cut by a line

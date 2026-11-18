@@ -803,7 +803,13 @@ def construction : Language.TermRec.Construction V L (blueprint pL) where
   func (_ _ _ _ v') := listMax v'
   bvar_defined := by intro v; simp [blueprint]
   fvar_defined := by intro v; simp [blueprint]
-  func_defined := by intro v; simp [blueprint]
+  func_defined := by
+    intro v
+    simp only [blueprint]
+    -- Avoid reducing the large encoded formula during kernel conversion.
+    rw [HierarchySymbol.Semiformula.val_mkSigma]
+    rw [Semiformula.eval_substs]
+    simp
 
 end BV
 end IsUTerm

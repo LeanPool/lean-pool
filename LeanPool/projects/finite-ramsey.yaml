@@ -1,0 +1,44 @@
+authors:
+- Brian Sanders
+license: Apache-2.0
+status: verified
+provenance: AI
+provenance_evidence: 'Proposal #721 and upstream commit metadata identify human-directed AI-written
+  proofs; the source headers credit Brian Sanders. Port and optimization by Codex.'
+branch: combinatorics
+msc:
+- 05C55
+- 05D10
+slug: finite-ramsey
+title: Finite-colour Ramsey theory
+summary: Finite-colour graph Ramsey theory on Mathlib edge labelings, with a common arrow relation
+  and least-host numbers. Proves finite graph and infinite uniform existence, binomial upper and counting
+  lower bounds, and transitive tournament bounds. Derives Schur triples as an application. Supplies
+  colour-class induced-copy, ordered and hypergraph interfaces; the colour-class and hypergraph specifications
+  retain explicit existence hypotheses.
+entry_module: LeanPool.FiniteRamsey
+source:
+  title: Finite-colour Ramsey theory
+  authors:
+  - Brian Sanders
+  url: https://github.com/Egly443/lean-ramsey
+  github_repo: Egly443/lean-ramsey
+  commit: ae8c9d97bae6d963a925754f8e2374f1c1b14587
+main_declarations:
+- SimpleGraph.exists_arrow
+- SimpleGraph.lt_ramseyNumber_of_choose_lt
+main_results:
+- declaration: SimpleGraph.exists_arrow
+  informal: Every family of finite target graphs indexed by a finite colour type is arrowed by some
+    finite complete host.
+  source_ref: 'Upstream lean-ramsey at ae8c9d97bae6d963a925754f8e2374f1c1b14587; proposed in #721
+    on 2026-10-27T10:39:24Z.'
+- declaration: SimpleGraph.lt_ramseyNumber_of_choose_lt
+  informal: The first-moment counting inequality gives a strict lower bound for the diagonal Ramsey
+    number.
+  source_ref: 'Upstream lean-ramsey at ae8c9d97bae6d963a925754f8e2374f1c1b14587; proposed in #721
+    on 2026-10-27T10:39:24Z.'
+tags:
+- ramsey-theory
+- edge-colorings
+- combinatorics

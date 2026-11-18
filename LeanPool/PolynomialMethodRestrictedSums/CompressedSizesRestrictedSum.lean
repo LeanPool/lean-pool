@@ -158,7 +158,8 @@ lemma transformSeq_props {k : ℕ} {b : Fin (k + 1) → ℕ}
           simp_all only [ne_eq, gt_iff_lt, ge_iff_le]
           obtain ⟨left, right⟩ := hj
           by_cases hi : i = j <;> by_cases hj :
-            j_1 = j <;> simp_all? +decide [ Function.update_apply ];
+            j_1 = j <;> simp_all +decide only [lt_self_iff_false, ne_eq, not_false_eq_true,
+                Function.update_of_ne, Function.update_self];
           · refine lt_of_le_of_lt ( right _ a ) ?_;
             refine lt_of_lt_of_le ?_ ( Nat.le_sub_one_of_lt left );
             exact tsub_lt_tsub_left_of_le ( by linarith [ Fin.is_lt j, Fin.is_lt j_1 ] ) (
@@ -185,7 +186,8 @@ lemma transformSeq_props {k : ℕ} {b : Fin (k + 1) → ℕ}
         refine ⟨?_, ?_, ?_⟩
         · -- ValidSeq of the update
           convert h_valid_b'
-          refine le_antisymm ?_ ?_ <;> simp_all? +decide [Finset.max']
+          refine le_antisymm ?_ ?_ <;> simp_all +decide only [ne_eq, gt_iff_lt, ge_iff_le, max',
+              id_eq, sup'_le_iff, mem_filter, mem_univ, true_and, le_sup'_iff]
           · exact fun i hi => not_lt.1 fun contra => not_lt_of_ge (right i contra) hi
           · exact ⟨j, left, le_rfl⟩
         · -- ∑ x, update b max' (b max' - 1) x = ∑ i, b i - 1

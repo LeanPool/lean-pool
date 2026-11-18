@@ -169,9 +169,12 @@ private theorem tendstoUniformlyOn_resolvent_resolvent
         (S' t (S'.resolvent μ (S'.resolvent μ z)))
   have hsplit : (t : ℝ) * ε₁ + ε₁ ≤ ε / 3 := by
     have hmul := mul_le_mul_of_nonneg_right htb hε₁.le
-    linarith [key]
+    exact (add_le_add_left hmul ε₁).trans_eq key
   rw [dist_eq_norm, norm_sub_rev]
-  linarith [hterm1, hterm2, hterm3, htri]
+  have htail := (add_le_add hterm2 hterm3).trans hsplit
+  have hsum : _ < ε / 3 + ε / 3 := add_lt_add_of_lt_of_le hterm1 htail
+  rw [← add_assoc] at hsum
+  exact (htri.trans_lt hsum).trans (by linarith only [hε])
 
 /-- **The Trotter--Kato theorem.**  If the resolvents of the semigroups `S i` converge strongly to
 the resolvent of `S'` at one positive shift, then the orbits converge uniformly on every bounded

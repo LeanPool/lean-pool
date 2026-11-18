@@ -22,6 +22,9 @@ open scoped BigOperators
 
 namespace GapCVP
 
+-- Keep enumeration abstract while elaborating dependent matrix types.
+attribute [local irreducible] List.finRange
+
 open GapCVP.TraceGolf (oneStep rebound)
 
 namespace PhysicalInterpolationDirectMomentBitTM
@@ -1674,21 +1677,9 @@ private theorem paperVariableArityPhysicalSourceWordValue_injective
     Function.Injective
       (sourceWordValue encodingLength
         (srcFormula formula)) := by
-  intro left right equal
-  apply funext
-  intro index
-  have coordinate := congrArg
-    (fun value : PaperVariableArityPhysicalWordField
-      encodingLength formula =>
-      (GapCVP.Factor400BinaryConstructiveSourcePlaces.sourceFormulaFieldBasis
-        encodingLength
-        (srcFormula formula)).equivFun
-        value index) equal
-  rw [sourceFormulaFieldBasis_sourceWordValue_coordinate,
-    sourceFormulaFieldBasis_sourceWordValue_coordinate] at coordinate
-  cases leftBit : left index <;>
-    cases rightBit : right index <;>
-    simp_all [bitValue]
+  open Factor400BinaryConstructivePaperVariableAritySourceFieldOperationsMachine renaming
+    paperVariableArityPhysicalSourceWordValue_injective → sourceFieldWordValue_injective in
+    exact sourceFieldWordValue_injective encodingLength (srcFormula formula)
 
 end PhysicalFieldWordSemantics
 
@@ -4837,6 +4828,9 @@ end ShiftedTupleBetaTM
 
 namespace SatisfyingWordSourceRankSemantics
 
+-- Concrete enumeration proofs in this scope need definitional reduction.
+attribute [local semireducible] List.finRange
+
 open GapCVP.SourceOrder GapCVP.ShiftedTupleBetaTM
 
 /-- GapCVP reduction support. -/
@@ -6117,6 +6111,9 @@ end BinaryCompactSourceVariableRankTM
 
 namespace ShiftedTupleBetaSourceCorrectness
 
+-- Concrete enumeration proofs in this scope need definitional reduction.
+attribute [local semireducible] List.finRange
+
 open Turing GapCVP.BinaryEncoding GapCVP.SourceFourFamilyBooleanPredicateTM
 open GapCVP.SourceMixedRadixMaskSelectedRankTaggedSquareBasisPairTM
 open GapCVP.SourceNormalizedVariableRankScanTM GapCVP.CLStructuralPrefixWriter
@@ -6783,6 +6780,21 @@ private theorem paperVariableArityReverseNameEquality_false
     (second == first) = false := by
   exact beq_eq_false_iff_ne.mpr (Ne.symm hne)
 
+private theorem eraseDups_append_repeated {α : Type*} [BEq α] [LawfulBEq α]
+    (seen middle suffix : List α) (atom : α) :
+    (seen ++ atom :: (middle ++ atom :: suffix)).eraseDups =
+      (seen ++ atom :: (middle ++ suffix)).eraseDups := by
+  classical
+  rw [List.eraseDups_append (as := seen), List.eraseDups_append (as := seen)]
+  by_cases present : atom ∈ seen
+  · simp only [List.removeAll, List.elem_eq_contains, List.contains_eq_mem, present,
+      decide_true, Bool.not_true, Bool.false_eq_true, not_false_eq_true,
+      List.filter_cons_of_neg, List.filter_append]
+  · simp only [List.removeAll, List.elem_eq_contains, List.contains_eq_mem, present,
+      decide_false, Bool.not_false, List.filter_cons_of_pos, List.filter_append,
+      List.eraseDups_cons, List.filter_filter, BEq.rfl, Bool.not_true,
+      Bool.false_eq_true, not_false_eq_true, List.filter_cons_of_neg]
+
 private theorem paperVariableAritySignedTripleFirstOccurrence_prefix_suffix
     (seen : List ℕ) (first second third : Literal)
     (suffix : List ℕ) :
@@ -6791,16 +6803,29 @@ private theorem paperVariableAritySignedTripleFirstOccurrence_prefix_suffix
         suffix).eraseDups := by
   classical
   rw [paperSourceEraseDupsThree_pairwise]
-  by_cases hfirst : first = second <;>
-    by_cases hsecond : first = third <;>
-    by_cases hthird : second = third <;>
-    by_cases hname : first.1 = second.1 <;>
-    by_cases hseenFirst : first.1 ∈ seen <;>
-    by_cases hseenSecond : second.1 ∈ seen <;>
-    by_cases hseenThird : third.1 ∈ seen <;>
-      simp_all [List.eraseDups_append, List.removeAll,
-        List.eraseDups_cons,
-        paperVariableArityReverseNameEquality_false]
+  by_cases firstSecond : first = second
+  · subst second
+    by_cases firstThird : first = third
+    · subst third
+      simpa only [List.append_assoc, List.cons_append, List.nil_append, ↓reduceIte,
+        or_self, List.append_nil, List.map_cons, List.map_nil] using
+        (eraseDups_append_repeated seen [] (first.1 :: suffix) first.1).trans
+          (eraseDups_append_repeated seen [] suffix first.1)
+    · simpa only [List.append_assoc, List.cons_append, List.nil_append, ↓reduceIte,
+        firstThird, or_self, List.map_cons, List.map_nil] using
+        eraseDups_append_repeated seen [] (third.1 :: suffix) first.1
+  · by_cases firstThird : first = third
+    · subst third
+      simpa only [List.append_assoc, List.cons_append, List.nil_append, firstSecond,
+        ↓reduceIte, true_or, List.append_nil, List.map_cons, List.map_nil] using
+        eraseDups_append_repeated seen [second.1] suffix first.1
+    · by_cases secondThird : second = third
+      · subst third
+        simpa only [List.append_assoc, List.cons_append, List.nil_append, firstSecond,
+          ↓reduceIte, or_true, List.append_nil, List.map_cons, List.map_nil] using
+          eraseDups_append_repeated (seen ++ [first.1]) [] suffix second.1
+      · simp only [firstSecond, firstThird, secondThird, or_self, ↓reduceIte,
+          List.map_cons, List.map_nil, List.cons_append, List.nil_append]
 
 private theorem paperVariableAritySignedClauseStreamFirstOccurrence
     (clauses : List ThreeClause) (seen suffix : List ℕ) :

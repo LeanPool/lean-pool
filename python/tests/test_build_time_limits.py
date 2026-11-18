@@ -184,7 +184,11 @@ def test_watch_kills_a_stop_ignoring_lean_after_its_parent_exits(
         "    print('still writing', flush=True)\n"
         "    time.sleep(0.1)\n",
     )
-    build = ["/bin/sh", "-c", f"'{lean}' '{script}' > /dev/null & sleep 2; exit 0"]
+    build = [
+        "/bin/sh",
+        "-c",
+        f"trap 'exit 0' TERM; '{lean}' '{script}' > /dev/null & wait",
+    ]
     started = time.monotonic()
     assert limits.watch(build, limit=1, poll=0.2, grace=0.5) == 124
     assert time.monotonic() - started < 30
@@ -321,8 +325,12 @@ def _resistant_build(
 
 def _assert_not_running(pid: int) -> None:
     """A killed orphan may await its adopter's reap, but cannot retain a writer."""
-    process = next((p for p in limits.read_process_table() if p.pid == pid), None)
-    assert process is None or limits._process_state(process.pid) in {None, "Z", "X"}
+    deadline = time.monotonic() + 2
+    while time.monotonic() < deadline:
+        if limits._process_state(pid) in {None, "Z", "X"}:
+            return
+        time.sleep(0.01)
+    pytest.fail(f"owned process {pid} is still running after cleanup")
 
 
 @pytest.mark.parametrize("escape_session", [False, True])
@@ -429,7 +437,7 @@ def test_cleanup_observer_failure_cannot_return_success(tmp_path: Path, monkeypa
     _assert_not_running(int((tmp_path / "child.pid").read_text()))
 
 
-def test_watch_prunes_exited_process_handles(monkeypatch):
+def test_watch_prunes_exited_process_handles(tmp_path: Path, monkeypatch):
     """Sequential compiler-sized processes do not accumulate ownership handles."""
     open_pidfd, close = limits.os.pidfd_open, limits.os.close
     active: set[int] = set()
@@ -441,6 +449,7 @@ def test_watch_prunes_exited_process_handles(monkeypatch):
         active.add(descriptor)
         opened += 1
         peak = max(peak, len(active))
+        (tmp_path / str(pid)).touch()
         return descriptor
 
     def track_close(descriptor):
@@ -449,11 +458,17 @@ def test_watch_prunes_exited_process_handles(monkeypatch):
 
     monkeypatch.setattr(limits.os, "pidfd_open", track_open)
     monkeypatch.setattr(limits.os, "close", track_close)
+    child = (
+        "import os,pathlib,time\n"
+        f"observed=pathlib.Path({str(tmp_path)!r})/str(os.getpid())\n"
+        "deadline=time.monotonic()+5\n"
+        "while not observed.exists() and time.monotonic()<deadline:time.sleep(0.005)\n"
+        "assert observed.exists(), 'watcher never observed child'\n"
+    )
     script = (
         "import subprocess,sys\n"
         "for _ in range(40):\n"
-        " subprocess.run([sys.executable,'-c','import time;time.sleep(0.02)'],"
-        "check=True)\n"
+        f" subprocess.run([sys.executable,'-c',{child!r}],check=True)\n"
     )
     assert limits.watch([sys.executable, "-c", script], 60, 0.005) == 0
     assert opened > 10

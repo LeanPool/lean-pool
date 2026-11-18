@@ -22,6 +22,9 @@ open scoped BigOperators
 
 namespace GapCVP
 
+-- Avoid expanding symbolic finite enumerations during elaboration.
+attribute [local irreducible] List.finRange
+
 open GapCVP.TraceGolf (oneStep rebound)
 
 namespace Factor400FinitePRadiusBounds

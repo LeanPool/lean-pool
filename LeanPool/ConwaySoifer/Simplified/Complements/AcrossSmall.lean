@@ -7,11 +7,6 @@ module
 
 public import LeanPool.ConwaySoifer.Simplified.Geometry.AcrossArea
 public import LeanPool.ConwaySoifer.Simplified.Geometry.AcrossFour
-import Mathlib.Tactic.Convert
-import Mathlib.Tactic.FieldSimp
-import Mathlib.Tactic.FinCases
-import Mathlib.Tactic.Linarith
-import Mathlib.Tactic.Ring
 
 /-!
 # AcrossSmall

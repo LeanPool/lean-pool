@@ -9,12 +9,7 @@ public import LeanPool.ConwaySoifer.Geometry.Diameter
 public import Mathlib.Analysis.Convex.Topology
 public import Mathlib.Topology.Order.Monotone
 public import Mathlib.Topology.Order.DenselyOrdered
-import Mathlib.Tactic.Convert
-import Mathlib.Tactic.FieldSimp
-import Mathlib.Tactic.FunProp
-import Mathlib.Tactic.Linarith
-import Mathlib.Tactic.Positivity
-import Mathlib.Tactic.Ring
+import Mathlib.Tactic.Positivity.Finset
 
 /-!
 Full ray sections of the actual closed filled triangles. The transfer theorem

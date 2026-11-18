@@ -685,8 +685,9 @@ open scoped Kronecker in
 theorem trace_mul_kron_one_right {R : Type*} [Ring R]
     (M : Matrix (dA × dB) (dA × dB) R) (A : Matrix dA dA R) :
     (M * (A ⊗ₖ (1 : Matrix dB dB R))).trace = (M.traceRight * A).trace := by
-  simp? [trace, mul_apply, kroneckerMap_apply, traceRight, one_apply,
-    Fintype.sum_prod_type, Finset.sum_mul]
+  simp only [trace, diag_apply, mul_apply, kroneckerMap_apply, one_apply, mul_ite, mul_one,
+      mul_zero, Fintype.sum_prod_type, Finset.sum_ite_eq', Finset.mem_univ, ↓reduceIte, traceRight,
+      of_apply, Finset.sum_mul]
   exact Finset.sum_congr rfl fun _ _ => Finset.sum_comm
 
 variable [DecidableEq dA] [Fintype dA] [Fintype dB] in
@@ -697,8 +698,10 @@ open scoped Kronecker in
 theorem trace_mul_one_kron_right {R : Type*} [Ring R]
     (M : Matrix (dA × dB) (dA × dB) R) (B : Matrix dB dB R) :
     (M * ((1 : Matrix dA dA R) ⊗ₖ B)).trace = (M.traceLeft * B).trace := by
-  simp? [trace, mul_apply, kroneckerMap_apply, traceLeft, one_apply,
-    Fintype.sum_prod_type, Finset.sum_mul]
+  simp only [trace, diag_apply, mul_apply, kroneckerMap_apply, one_apply, ite_mul, one_mul,
+      zero_mul, mul_ite, mul_zero, Fintype.sum_prod_type, Finset.sum_ite_irrel,
+      Finset.sum_const_zero, Finset.sum_ite_eq', Finset.mem_univ, ↓reduceIte, traceLeft, of_apply,
+      Finset.sum_mul]
   rw [Finset.sum_comm]
   exact Finset.sum_congr rfl fun _ _ => Finset.sum_comm
 
@@ -853,21 +856,25 @@ theorem IsHermitian.cfc_eigenvalues {M : Matrix d d 𝕜} (hM : M.IsHermitian) (
         norm_num +zetaDelta at *;
       refine Polynomial.funext fun t => ?_;
       convert h_char_poly t using 1;
-      · simp? [ Matrix.det_apply', Polynomial.eval_finsetSum ];
-        simp? [ Matrix.one_apply, Polynomial.eval_prod ];
+      · simp only [det_apply', Polynomial.eval_finsetSum, Polynomial.eval_mul,
+            Polynomial.eval_intCast, sub_apply, smul_apply, smul_eq_mul];
+        simp only [Polynomial.eval_prod, one_apply, mul_ite, mul_one, mul_zero];
         congr! 3;
         aesop;
-      · simp? [ Matrix.det_apply', Polynomial.eval_finsetSum ];
-        simp? [ Matrix.one_apply, Polynomial.eval_prod ];
+      · simp only [charmatrix_diagonal, Function.comp_apply, det_apply', Polynomial.eval_finsetSum,
+            Polynomial.eval_mul, Polynomial.eval_intCast, sub_apply, smul_apply, smul_eq_mul];
+        simp only [Polynomial.eval_prod, one_apply, mul_ite, mul_one, mul_zero];
         exact Finset.sum_congr rfl fun _ _ => by congr; ext; aesop;
-    simp_all? [ Matrix.charmatrix, Matrix.det_diagonal ];
+    simp_all only [charmatrix, scalar_apply, RingHom.mapMatrix_apply, Matrix.map_mul, map_zero,
+        diagonal_map, Function.comp_apply, diagonal_sub, det_diagonal,
+        Unitary.conjStarAlgAut_apply];
     rw [ Polynomial.roots_prod ];
     · bound;
     · exact Finset.prod_ne_zero_iff.mpr fun i _ => Polynomial.X_sub_C_ne_zero _;
   have := Matrix.IsHermitian.roots_charpoly_eq_eigenvalues (cfc_predicate f M);
   rw [← Matrix.IsHermitian.cfc_eq] at h_eigenvalues_cfc
   rw [ h_eigenvalues_cfc ] at this;
-  simp? [ Function.comp ] at this;
+  simp only [Function.comp] at this;
   rw [ Multiset.map_univ_eq_iff ] at this;
   obtain ⟨ e, he ⟩ := this;
   use e.symm
@@ -896,18 +903,20 @@ lemma IsHermitian.eigenvalues_eq_of_unitary_similarity_diagonal {d 𝕜 : Type*}
         intro t
         have h_det : Matrix.det (t • 1 - U * Matrix.diagonal (fun i => (f i : 𝕜)) * Uᴴ) =
             Matrix.det (U * (t • 1 - Matrix.diagonal (fun i => (f i : 𝕜))) * Uᴴ) := by
-          simp? [ mul_sub, sub_mul, Matrix.mul_assoc ];
+          simp only [Matrix.mul_assoc, mul_sub, Algebra.mul_smul_comm, mul_one, sub_mul,
+              Algebra.smul_mul_assoc];
           rw [ show U * Uᴴ = 1 from by exact hU.2 ];
         rw [h_det, Matrix.det_mul_comm, ← mul_assoc]
         rw [← star_eq_conjTranspose, Matrix.UnitaryGroup.star_mul_self ⟨U, hU⟩]
         simp only [one_mul]
       refine Polynomial.funext fun t => ?_;
-      convert h_det t using 1 <;> simp? [ Matrix.charpoly, Matrix.det_apply' ];
-      · simp? [ Polynomial.eval_finsetSum, Polynomial.eval_mul, Polynomial.eval_prod,
-          Matrix.one_apply ];
+      convert h_det t using 1 <;> simp only [charpoly, det_apply', sub_apply, smul_apply,
+          smul_eq_mul, charmatrix_diagonal];
+      · simp only [Polynomial.eval_finsetSum, Polynomial.eval_mul, Polynomial.eval_intCast,
+            Polynomial.eval_prod, one_apply, mul_ite, mul_one, mul_zero];
         exact Finset.sum_congr rfl fun _ _ => by congr; ext; aesop;
-      · simp? [ Polynomial.eval_finsetSum, Polynomial.eval_mul, Polynomial.eval_prod,
-          Matrix.one_apply ];
+      · simp only [Polynomial.eval_finsetSum, Polynomial.eval_mul, Polynomial.eval_intCast,
+            Polynomial.eval_prod, one_apply, mul_ite, mul_one, mul_zero];
         exact Finset.sum_congr rfl fun _ _ => by congr; ext; aesop;
     rw [ h, h_char_poly ];
   -- The roots of the characteristic polynomial of A are its eigenvalues (by
@@ -918,7 +927,7 @@ lemma IsHermitian.eigenvalues_eq_of_unitary_similarity_diagonal {d 𝕜 : Type*}
   -- The roots of the characteristic polynomial of D are the diagonal entries f.
   have h_diag_roots : (Matrix.charpoly (Matrix.diagonal fun i => (f i : 𝕜))).roots =
       Multiset.map (fun i => (f i : 𝕜)) Finset.univ.val := by
-    simp? [ Matrix.charpoly, Matrix.det_diagonal ];
+    simp only [charpoly, charmatrix_diagonal, det_diagonal];
     rw [ Polynomial.roots_prod ];
     · aesop;
     · exact Finset.prod_ne_zero_iff.mpr fun i _ => Polynomial.X_sub_C_ne_zero _;
@@ -1134,37 +1143,42 @@ private lemma spectrum_prod_complex {d d₂ : Type*}
         obtain ⟨left, rfl⟩ := hD
         obtain ⟨left_1, rfl⟩ := hE
         simp_all only
-        by_cases h : fst = fst_1 <;> by_cases h' : snd = snd_1 <;> simp? [ h, h',
-            Matrix.one_apply ];
+        by_cases h : fst = fst_1 <;> by_cases h' : snd = snd_1 <;> simp only [h, h', one_apply,
+            ↓reduceIte, mul_one, diagonal_apply_eq, ne_eq, Prod.mk.injEq, and_false,
+            not_false_eq_true, mul_zero, sub_zero, diagonal_apply_ne, mul_eq_zero, and_true,
+            and_self];
         · exact Or.inr ( left_1 ( by aesop ) );
         · exact Or.inl ( left h );
         · exact Or.inl ( left h );
-      simp_all? [ Matrix.det_diagonal ];
+      simp_all only [ne_eq, kronecker, det_diagonal];
       exact Fintype.prod_prod_type fun (x_2 : d × d₂) => D x_2.1 x_2.1 * E x_2.2 x_2.2 - x
     exact h_det_diag.symm ▸ Finset.prod_ne_zero_iff.mpr fun i _ => Finset.prod_ne_zero_iff.mpr
         fun j _ => sub_ne_zero_of_ne <| by solve_by_elim;
   refine ⟨ D i i, ?_, E j j, ?_, ?_ ⟩
-  · simp_all? [ spectrum.mem_iff ];
-    simp_all? [ Matrix.isUnit_iff_isUnit_det ];
+  · simp_all only [spectrum.mem_iff, ne_eq, kronecker];
+    simp_all only [isUnit_iff_isUnit_det, isUnit_iff_ne_zero, ne_eq, Decidable.not_not];
     have h_det_diag : Matrix.det (P⁻¹ * (D i i • 1 - A) * P) = 0 := by
-      simp_all? [ mul_sub, sub_mul, mul_assoc ];
+      simp_all only [mul_assoc, mul_sub, Algebra.mul_smul_comm, mul_one, sub_mul,
+          Algebra.smul_mul_assoc, isUnit_iff_ne_zero, ne_eq, not_false_eq_true, nonsing_inv_mul];
       rw [ Matrix.det_eq_zero_of_row_eq_zero i ]
       intro j_1
       subst hij
       simp_all only [map_mul, sub_apply, smul_apply, smul_eq_mul]
       obtain ⟨left, rfl⟩ := hD
       obtain ⟨left_1, rfl⟩ := hE
-      by_cases hij : i = j_1 <;> simp_all? [ Matrix.one_apply ];
+      by_cases hij : i = j_1 <;> simp_all only [one_apply, ↓reduceIte, mul_one, sub_self,
+          mul_zero, zero_sub, neg_eq_zero];
       exact left hij;
-    simp_all? [ Matrix.det_mul];
+    simp_all only [det_mul, det_nonsing_inv, Ring.inverse_eq_inv', mul_eq_zero, inv_eq_zero,
+        false_or, or_false];
     convert h_det_diag using 1;
     exact congr_arg Matrix.det ( by ext i j; by_cases hi : i = j <;> simp [ hi, Algebra.smul_def
         ] );
-  · simp_all? [ spectrum.mem_iff ];
+  · simp_all only [spectrum.mem_iff, ne_eq, kronecker];
     -- Since $E$ is diagonal, $E j j - B$ is singular, hence not invertible.
     have h_singular : Matrix.det (E j j • 1 - B) = 0 := by
       have h_singular : Matrix.det (Q⁻¹ * (E j j • 1 - B) * Q) = 0 := by
-        simp? [ mul_sub, sub_mul, hE.2 ];
+        simp only [mul_sub, Algebra.mul_smul_comm, mul_one, sub_mul, Algebra.smul_mul_assoc, hE.2];
         rw [ Matrix.det_eq_zero_of_row_eq_zero j ]
         intro j_1
         subst hij
@@ -1175,7 +1189,7 @@ private lemma spectrum_prod_complex {d d₂ : Type*}
         obtain ⟨left_1, rfl⟩ := hE
         by_cases h : j = j_1 <;> aesop;
       simp_all [ Matrix.det_mul ];
-    simp_all? [ Matrix.isUnit_iff_isUnit_det ];
+    simp_all only [isUnit_iff_isUnit_det, isUnit_iff_ne_zero, ne_eq, Decidable.not_not];
     convert h_singular using 1;
     simp [ Algebra.smul_def ];
   · simp_all [ spectrum.mem_iff ];
@@ -1216,20 +1230,24 @@ theorem spectrum_prod {d d₂ : Type*}
     -- eigenvectors $v$ and $w$ such that $A*v = y*v$ and $B*w = z*w$.
     obtain ⟨v, hv⟩ : ∃ v : d → 𝕜, v ≠ 0 ∧ A.mulVec v = y • v := by
       rw [ spectrum.mem_iff ] at hy;
-      simp_all? [ Matrix.isUnit_iff_isUnit_det ];
+      simp_all only [isUnit_iff_isUnit_det, isUnit_iff_ne_zero, ne_eq, Decidable.not_not];
       have := Matrix.exists_mulVec_eq_zero_iff.mpr hy;
-      simp_all? [ funext_iff, Matrix.mulVec, dotProduct ];
-      simp_all? [ sub_mul, Matrix.one_apply, Algebra.algebraMap_eq_smul_one ];
+      simp_all only [ne_eq, funext_iff, Pi.zero_apply, not_forall, mulVec, dotProduct, sub_apply,
+          Pi.smul_apply];
+      simp_all only [Algebra.algebraMap_eq_smul_one, smul_apply, one_apply, smul_ite, smul_zero,
+          sub_mul, ite_mul, Algebra.smul_mul_assoc, one_mul, zero_mul, Finset.sum_sub_distrib,
+          Finset.sum_ite_eq, Finset.mem_univ, ↓reduceIte];
       exact ⟨ this.choose, this.choose_spec.1, fun x => by
           linear_combination -this.choose_spec.2 x ⟩
     obtain ⟨w, hw⟩ : ∃ w : d₂ → 𝕜, w ≠ 0 ∧ B.mulVec w = z • w := by
       rw [ spectrum.mem_iff ] at hz;
-      simp_all? [ Matrix.isUnit_iff_isUnit_det ];
+      simp_all only [isUnit_iff_isUnit_det, isUnit_iff_ne_zero, ne_eq, Decidable.not_not];
       have := Matrix.exists_mulVec_eq_zero_iff.mpr hz;
-      simp_all? [ Matrix.sub_mulVec ];
-      obtain ⟨ w, hw, hw' ⟩ := this; use w; simp_all? [ sub_eq_zero,
-          Algebra.algebraMap_eq_smul_one ];
-      simp_all? [ funext_iff, Matrix.mulVec, dotProduct ];
+      simp_all only [ne_eq, sub_mulVec];
+      obtain ⟨ w, hw, hw' ⟩ := this; use w; simp_all only [Algebra.algebraMap_eq_smul_one,
+          sub_eq_zero, not_false_eq_true, true_and];
+      simp_all only [funext_iff, Pi.zero_apply, not_forall, mulVec, dotProduct, Pi.smul_apply,
+          smul_apply, Algebra.smul_mul_assoc];
       simp_all [ Matrix.one_apply];
     refine spectrum.mem_iff.mpr ?_;
     -- Consider the vector $v \otimes w$.
@@ -1238,8 +1256,9 @@ theorem spectrum_prod {d d₂ : Type*}
     have h_eigenvector : (Matrix.kroneckerMap (· * ·) A B).mulVec v_tensor_w = (y * z) •
         v_tensor_w := by
       ext ⟨ i, j ⟩;
-      simp? [ Matrix.mulVec, dotProduct] at *
-      simp? [ funext_iff, Matrix.mulVec, dotProduct ] at hv hw ⊢
+      simp only [ne_eq, mulVec, dotProduct, kroneckerMap_apply, Pi.smul_apply] at *
+      simp only [funext_iff, Pi.zero_apply, not_forall, mulVec, dotProduct,
+          Pi.smul_apply] at hv hw ⊢
       erw [ Finset.sum_product ]
       simp_all only [v_tensor_w]
       obtain ⟨left, right⟩ := hv
@@ -1266,7 +1285,8 @@ theorem spectrum_prod {d d₂ : Type*}
           v_tensor_w] at *
       rw [ ← Matrix.exists_mulVec_eq_zero_iff ]
       refine ⟨ v_tensor_w, ?_, h_eigenvector_zero ⟩;
-      simp? [ funext_iff ] at hv hw ⊢
+      simp only [funext_iff, Pi.zero_apply, not_forall, Pi.smul_apply, ne_eq,
+          Prod.forall] at hv hw ⊢
       obtain ⟨left, right⟩ := hv
       obtain ⟨left_1, right_1⟩ := hw
       exact ⟨left.choose, left_1.choose, mul_ne_zero left.choose_spec left_1.choose_spec⟩
@@ -1337,8 +1357,9 @@ lemma sub_iInf_eignevalues (hA : A.IsHermitian) :
     -- \Lambda - \lambda_{\min} I$.
     have h_diag : Q.conjTranspose * (A - (iInf (Matrix.IsHermitian.eigenvalues hA)) • 1) * Q =
         Matrix.diagonal (fun i => Λ i - (iInf (Matrix.IsHermitian.eigenvalues hA))) := by
-      simp? [ hΛ, mul_sub, sub_mul, mul_assoc, hQ ];
-      simp? [ ← mul_assoc, hQ];
+      simp only [hΛ, mul_assoc, mul_sub, Algebra.mul_smul_comm, mul_one, sub_mul, hQ,
+          Algebra.smul_mul_assoc];
+      simp only [← mul_assoc, hQ, one_mul];
       ext i j; by_cases hij : i = j <;> aesop;
     -- Since $Q$ is unitary, we have $Q^* (A - \lambda_{\min} I) Q = \Lambda -
     -- \lambda_{\min} I$, and thus $x^* (A - \lambda_{\min} I) x = (Q^* x)^* (\Lambda -
@@ -1347,7 +1368,8 @@ lemma sub_iInf_eignevalues (hA : A.IsHermitian) :
         1).mulVec x = Star.star (Q.conjTranspose.mulVec x) ⬝ᵥ (Matrix.diagonal (fun i => Λ i -
         (iInf (Matrix.IsHermitian.eigenvalues hA)))).mulVec (Q.conjTranspose.mulVec x) := by
       rw [ ← h_diag ];
-      simp? [ Matrix.mul_assoc, Matrix.dotProduct_mulVec, mul_eq_one_comm.mp hQ];
+      simp only [dotProduct_mulVec, Matrix.mul_assoc, mulVec_mulVec, mul_eq_one_comm.mp hQ,
+          mul_one];
       simp only [mulVec_conjTranspose, star_star, vecMul_vecMul];
       rw [ ← Matrix.mul_assoc, mul_eq_one_comm.mp hQ, one_mul ];
     simp_all only [ge_iff_le, dotProduct, Pi.star_apply, RCLike.star_def, mulVec, sub_apply,
@@ -1484,7 +1506,7 @@ theorem IsHermitian.spectrum_subset_Ici_of_sub {d 𝕜 : Type*} [Fintype d] [Dec
             Matrix.IsHermitian.eigenvectorUnitary_apply, mul_ite, mul_zero,
             Finset.sum_ite_eq', Finset.mem_univ, ↓reduceIte, Matrix.star_apply,
             Unitary.conjStarAlgAut_apply]
-          simp? [ mul_comm, mul_left_comm, Algebra.smul_def ]
+          simp only [Algebra.smul_def, mul_comm, mul_left_comm]
           congr! 1
           simp [Algebra.algebraMap_eq_smul_one]
         -- Substitute the decomposition of $A$ into the expression $(star v ⬝ᵥ (A.mulVec v))$.
@@ -1581,7 +1603,8 @@ theorem IsHermitian.spectrum_subset_Ici_of_sub {d 𝕜 : Type*} [Fintype d] [Dec
           congr 1
           simp_rw [← WithLp.ofLp_smul, ← WithLp.ofLp_sum, h_sum]
         convert h_inner using 1;
-        simp? [ dotProduct, Finset.mul_sum _ _ _ ];
+        simp only [dotProduct, Pi.star_apply, RCLike.star_def, Finset.mul_sum _ _ _,
+            Finset.sum_apply, Pi.smul_apply, smul_eq_mul];
         exact Finset.sum_comm.trans ( Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _
             _ => by ring );
       rw [ h_expand ];
@@ -1590,7 +1613,7 @@ theorem IsHermitian.spectrum_subset_Ici_of_sub {d 𝕜 : Type*} [Fintype d] [Dec
       rw [ ← Finset.mul_sum _ _ _, h_sum ];
     rw [Matrix.posSemidef_iff_dotProduct_mulVec] at hl
     have := hl.2 v
-    simp? [Matrix.sub_mulVec] at this
+    simp only [sub_mulVec, dotProduct_sub, sub_nonneg] at this
     exact le_trans h_eigenvalue this;
   change (⨅ i, hA.eigenvalues i) ≤ μ
   have := h_lower_bound v hv₁
@@ -1723,7 +1746,7 @@ variable {A : ∀ i, Matrix (d i) (d i) R}
 theorem IsHermitian.piProd [CommSemiring R] [StarRing R] (hA : ∀ i, (A i).IsHermitian) :
     (piProd A).IsHermitian := by
   ext j k
-  simp? [Matrix.piProd]
+  simp only [Matrix.piProd, conjTranspose_apply, of_apply, star_prod]
   exact Finset.prod_congr rfl fun i _ => by
     simpa using congr_fun (congr_fun (hA i) (j i)) (k i)
 
@@ -1760,14 +1783,15 @@ theorem PosSemidef.piProd [∀ i, Finite (d i)] [RCLike R] (hA : ∀ i, (A i).Po
   have hBigB_conjTranspose_mul_BigB : Matrix.of (fun j k : (∀ i, d i) => ∏ i, (B i * star (B i))
       (j i) (k i)) = Matrix.of (fun j k : (∀ i, d i) => ∏ i, (B i) (j i) (k i)) * star
       (Matrix.of (fun j k : (∀ i, d i) => ∏ i, (B i) (j i) (k i))) := by
-    ext j k; simp? [ Matrix.mul_apply]
+    ext j k; simp only [mul_apply, star_apply, RCLike.star_def, of_apply, star_prod]
     simp only [Finset.prod_sum, ← Finset.prod_mul_distrib];
     refine Finset.sum_bij ( fun p hp => fun i => p i ( Finset.mem_univ i ) ) ?_ ?_ ?_ ?_ <;>
-        simp? +decide;
+        simp +decide only [Finset.univ_pi_univ, Finset.mem_univ, imp_self, implies_true,
+            forall_const, exists_const, Finset.prod_attach_univ];
     · simp [ funext_iff ];
     · exact fun b => ⟨ fun i _ => b i, rfl ⟩;
   simp only [Matrix.posSemidef_iff_dotProduct_mulVec] at hA ⊢
-  simp_all? [Matrix.piProd]
+  simp_all only [Matrix.piProd]
   constructor
   · ext1
     simp [Matrix.mul_apply, mul_comm]

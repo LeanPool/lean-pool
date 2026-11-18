@@ -5,8 +5,9 @@ Authors: Vladislav Kuznetsov
 -/
 module
 
+import LeanPool.ConwaySoifer.Certificates.FanCertificate
+
 public import LeanPool.ConwaySoifer.Simplified.Certificates.Checkpoints.Sint150000160000
-import Mathlib.Tactic.FinCases
 
 /-!
 # Sint 150000 160000 7
@@ -43,6 +44,8 @@ SOFTWARE.
 -/
 
 @[expose] public section
+
+prepare_fan_cache ConwaySoifer.Simplified.Certificates.Sint150000160000.model0
 
 -- Generated checkpoints are proposals; all acceptance proofs are checked by the kernel.
 
@@ -96,7 +99,7 @@ theorem excluded56_1 : ExcludedOn (model56.B 1 ++ [step56.q]) 9000000000000 (mod
       (some (4, 1, 0)) (.next ([-6570000000000], [7320000000000]) (some (4, 1, 0)) (some (4, 1, 0))
       (.terminal (some (4, 1, 0)) (some (4, 1, 0)) (some (4, 1, 0))))))))))))))))))))) (den :=
       9000000000000) (fuel := 12) (by decide +kernel) 0 1 100 (by decide +kernel)
-  decide +kernel
+  certify_fan
 
 theorem excluded56_2 : ExcludedOn (model56.B 2 ++ [step56.q]) 9000000000000 (model56.caps 2)
     (model56.ord 2) 0 1 100 := by
@@ -112,7 +115,7 @@ theorem excluded56_2 : ExcludedOn (model56.B 2 ++ [step56.q]) 9000000000000 (mod
       ([-3030000000000, -9000000000000], [8250000000000]) (some (0, 1, 2)) (some (0, 1, 2))
       (.terminal (some (0, 1, 2)) (some (3, 1, 0)) (some (3, 1, 2))))))))))))) (den :=
       9000000000000) (fuel := 12) (by decide +kernel) 0 1 100 (by decide +kernel)
-  decide +kernel
+  certify_fan
 
 theorem excluded56_3 : ExcludedOn (model56.B 3 ++ [step56.q]) 9000000000000 (model56.caps 3)
     (model56.ord 3) 0 1 100 := by
@@ -158,7 +161,7 @@ theorem excluded56_6 : ExcludedOn (model56.B 6 ++ [step56.q]) 9000000000000 (mod
       9000000000000], [3150000000000, -9000000000000]) (some (7, 1, 7)) (some (7, 2, 7))
       fan56Owner6Part0)))))))))))))))))))))))) (den := 9000000000000)
       (fuel := 12) (by decide +kernel) 0 1 100 (by decide +kernel)
-  decide +kernel
+  certify_fan
 
 theorem excluded56_7 : ExcludedOn (model56.B 7 ++ [step56.q]) 9000000000000 (model56.caps 7)
     (model56.ord 7) 0 1 100 := by

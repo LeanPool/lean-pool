@@ -22,9 +22,9 @@ LOGGER = logging.getLogger(__name__)
 
 def validate_shard(root: Path, cache: ValidationCache) -> bool:
     """Lint and audit only the cache's units; save their passes either way."""
-    failed = lint_pool(root, cache, keep_going=True)
-    for unit in failed:
-        print(f"lint failed: {unit}")
+    failed = lint_pool(root, cache)
+    for error in failed:
+        print(error)
     errors = _check_projects(root, cache) + _cached_pool_audits(root, cache)
     for error in errors:
         print(error.format(root))

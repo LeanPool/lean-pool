@@ -104,7 +104,7 @@ theorem coordinateAbs_norm (x : Space I) :
     apply Finset.sum_congr rfl
     intro i _
     simp only [coordinateAbs, sq_abs]
-  nlinarith [norm_nonneg (coordinateAbs x), norm_nonneg x]
+  exact (sq_eq_sq₀ (norm_nonneg _) (norm_nonneg _)).mp hsquare
 
 omit [Fintype I] [DecidableEq I] [Nonempty I] in
 theorem coordinateAbs_ne_zero {x : Space I} (hx : x ≠ 0) :

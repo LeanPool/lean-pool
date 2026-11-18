@@ -275,8 +275,9 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
-      # Restored dependency and pool-build caches overflow the runner's
-      # default free space ("No space left on device" from 2026-11-05).
+      # Inline copy of .github/actions/free-disk-space: this job checks out
+      # the PR head, which may predate that action. Workflow Lint keeps the
+      # two identical.
       - name: Free runner disk space
         run: |
           sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc \
@@ -406,8 +407,9 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
-      # Restored dependency and pool-build caches overflow the runner's
-      # default free space ("No space left on device" from 2026-11-05).
+      # Inline copy of .github/actions/free-disk-space: this job checks out
+      # the PR head, which may predate that action. Workflow Lint keeps the
+      # two identical.
       - name: Free runner disk space
         run: |
           sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc \

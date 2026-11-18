@@ -7,7 +7,6 @@ module
 
 
 public import LeanPool.BeyondBethe.BeyondBethe.Permanent
-public import Mathlib.Tactic
 
 /-! # Matching Algorithm -/
 

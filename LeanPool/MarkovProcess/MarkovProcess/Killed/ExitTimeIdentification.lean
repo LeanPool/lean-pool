@@ -116,6 +116,7 @@ theorem IsConservative.killedResolvent_zero_eq_iSup (U : Set alpha) (hU : IsOpen
   have hGmeas : Measurable G := by
     refine (Measure.measurable_lintegral hf).comp ?_
     exact (IsConservative.measurable_killedKernel P hP U hU).comp
+      (f := fun t : ℝ ↦ (Real.toNNReal t, x))
       (measurable_real_toNNReal.prodMk measurable_const)
   have hFmeas : ∀ n : ℕ,
       Measurable fun t : ℝ ↦ ENNReal.ofReal (Real.exp (-((n : ℝ) + 1)⁻¹ * t)) * G t := by

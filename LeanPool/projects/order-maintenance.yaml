@@ -1,0 +1,47 @@
+slug: order-maintenance
+title: Verified worst-case constant-step order maintenance
+summary: Verifies an order-maintenance program against a list specification, with a constant worst-case
+  instruction bound and logarithmic word width in the number of operations. Includes fixed-width
+  and preallocated allocation-free RAM variants, a zeroing-game bound, and reusable machine cost
+  semantics.
+branch: computer science
+entry_module: LeanPool.OrderMaintenance
+authors:
+- Denis Firsov
+source:
+  title: Order Maintenance in Worst-Case Constant Time, Verified
+  authors:
+  - Denis Firsov
+  arxiv: '2610.38616'
+  url: https://github.com/dfirsov/order_maintenance/tree/312b7b7d0686550ce7106fff1f6a47acb3e72866
+  github_repo: dfirsov/order_maintenance
+  commit: 312b7b7d0686550ce7106fff1f6a47acb3e72866
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+- OrderMaintenance.Impl.theoremAB_word
+- OrderMaintenance.Impl.theoremAB_flat_word
+- OrderMaintenance.Zeroing.zeroing
+main_results:
+- declaration: OrderMaintenance.Impl.theoremAB_word
+  informal: "For every parameter 4 \u2264 K_B < 2^512, every valid finite operation trace and sufficiently\
+    \ wide fixed words, the RAM program returns the list specification answers and each operation\
+    \ takes at most opB K_B steps, independent of the trace length and number of live elements. Word\
+    \ width grows logarithmically with the number of operations."
+- declaration: OrderMaintenance.Impl.theoremAB_flat_word
+  informal: The translated program has no allocation instructions and satisfies the same specification
+    with at most five times the operation-step bound, on sufficiently large preallocated zero-filled
+    memory and sufficiently wide fixed words.
+- declaration: OrderMaintenance.Zeroing.zeroing
+  informal: In the zeroing game starting from zero, resetting a maximal coordinate before adding
+    total nonnegative mass at most R bounds every coordinate by R times one plus the (n-1)st harmonic
+    number.
+tags:
+- data-structures
+- order-maintenance
+- verified-complexity
+- word-ram
+msc:
+- 68P05
+- 68Q60

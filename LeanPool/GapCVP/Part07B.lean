@@ -21,6 +21,9 @@ open scoped BigOperators
 
 namespace GapCVP
 
+-- Avoid expanding symbolic finite enumerations during elaboration.
+attribute [local irreducible] List.finRange
+
 open GapCVP.TraceGolf (oneStep rebound)
 
 namespace CNFFiveFamilyPackedInitialCellDecoderTM
@@ -403,6 +406,7 @@ private theorem fiveFamilyPackedInitialSourceVariableCode_valid
               (initialPhaseCell bound machine original position)) :
             Variable (rowWidth bound machine original)
               (completePhaseSymbolCount machine.tm))) true := by
+  rw [GapCVP.CL.encode_variable]
   unfold fivePackedInitialSourceVariableCode
     fivePackedInitialSourceVariablePairInput
     fivePackedInitialPositionSymbolCode

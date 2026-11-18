@@ -7,9 +7,6 @@ module
 
 public import LeanPool.MetricCodes.Foundations
 import all Mathlib.Analysis.SpecialFunctions.BinaryEntropy
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Ring.Star
-import Mathlib.Algebra.Order.Star.Real
 
 /-!
 # Binary-code asymptotics
@@ -52,22 +49,22 @@ def terminalDegree (u : ℝ) (n : ℕ) : ℕ :=
 theorem tendsto_shellWeight_ratio {a : ℝ} (ha : 0 ≤ a) :
     Tendsto (fun n : ℕ => (shellWeight a n : ℝ) / (n : ℝ))
       atTop (nhds a) := by
-  simpa only [shellWeight] using MetricCodes.Hamming.tendsto_longitudinal_ratio ha
+  exact Hamming.tendsto_longitudinal_ratio ha
 
 theorem tendsto_supportDegree_ratio {b : ℝ} (hb : 0 ≤ b) :
     Tendsto (fun n : ℕ => (supportDegree b n : ℝ) / (n : ℝ))
       atTop (nhds b) := by
-  simpa only [supportDegree] using MetricCodes.Hamming.tendsto_longitudinal_ratio hb
+  exact tendsto_shellWeight_ratio hb
 
 theorem tendsto_complementDegree_ratio {g : ℝ} (hg : 0 ≤ g) :
     Tendsto (fun n : ℕ => (complementDegree g n : ℝ) / (n : ℝ))
       atTop (nhds g) := by
-  simpa only [complementDegree] using MetricCodes.Hamming.tendsto_longitudinal_ratio hg
+  exact tendsto_shellWeight_ratio hg
 
 theorem tendsto_terminalDegree_ratio {u : ℝ} (hu : 0 ≤ u) :
     Tendsto (fun n : ℕ => (terminalDegree u n : ℝ) / (n : ℝ))
       atTop (nhds u) := by
-  simpa only [terminalDegree] using MetricCodes.Hamming.tendsto_longitudinal_ratio hu
+  exact tendsto_shellWeight_ratio hu
 
 theorem tendsto_dimension_ratio :
     Tendsto (fun n : ℕ => (n : ℝ) / (n : ℝ))
@@ -6299,6 +6296,20 @@ theorem clebschNormSq_cross_degree_harmonic_balance
           mul_zero, add_zero]
 
 
+private theorem clebschMomentElimination
+    (firstFactor secondFactor crossFactor secondCoefficient scale : ℝ)
+    (currentNorm nextNorm firstMoment secondMoment : ℝ)
+    (hfirst : firstFactor * firstMoment = scale * nextNorm)
+    (hsecond : secondFactor * secondMoment = secondCoefficient * firstMoment)
+    (hcross : scale * currentNorm =
+      scale * nextNorm + crossFactor * firstMoment - secondMoment) :
+    scale * (currentNorm * (secondFactor * firstFactor) -
+      nextNorm * (firstFactor * secondFactor +
+        (crossFactor * secondFactor - secondCoefficient))) = 0 := by
+  linear_combination (firstFactor * secondFactor) * hcross -
+    firstFactor * hsecond +
+    (crossFactor * secondFactor - secondCoefficient) * hfirst
+
 theorem clebschNormSq_succ_mul
     {w N p q t : ℕ}
     (hsupport : 2 * p + (t + 1) ≤ w)
@@ -6337,28 +6348,56 @@ theorem clebschNormSq_succ_mul
     change 0 < MetricCodes.Boolean.harmonicCoefficient N q (t + 1)
     exact MetricCodes.Boolean.harmonicCoefficient_pos
       (Nat.succ_pos t) hcomplement
+  -- Keep the moment factors abstract to avoid a large polynomial expansion.
+  let firstMomentFactor := A + B - 2 * T + 2
+  let secondMomentFactor := A + B - 2 * T + 3
+  let crossMomentFactor := 2 * T - B - 1
+  let secondMomentCoefficient := A + B * T - T ^ 2 + T + 1
+  let positiveFactor := T * (B - T + 1)
+  let successorFactor := (A + B - T + 2) * (A - T + 1)
+  have halgebra : firstMomentFactor * secondMomentFactor +
+      (crossMomentFactor * secondMomentFactor - secondMomentCoefficient) = successorFactor := by
+    dsimp [firstMomentFactor, secondMomentFactor, crossMomentFactor,
+      secondMomentCoefficient, successorFactor]
+    ring
+  change firstMomentFactor * M₁ = positiveFactor * M₀ at hfirst
+  change secondMomentFactor * M₂ = secondMomentCoefficient * M₁ at hsecond
+  change positiveFactor * Mprev = positiveFactor * M₀ + crossMomentFactor * M₁ - M₂ at hcross
   have hcancel :
       T * (B - T + 1) *
         (Mprev * ((A + B - 2 * T + 3) *
           (A + B - 2 * T + 2)) -
           M₀ * ((A + B - T + 2) *
             (A - T + 1))) = 0 := by
-    linear_combination
-      ((A + B - 2 * T + 2) *
-        (A + B - 2 * T + 3)) * hcross -
-      (A + B - 2 * T + 2) * hsecond +
-      ((2 * T - B - 1) *
-        (A + B - 2 * T + 3) -
-        (A + B * T - T ^ 2 + T + 1)) * hfirst
+    change positiveFactor *
+      (Mprev * (secondMomentFactor * firstMomentFactor) - M₀ * successorFactor) = 0
+    rw [← halgebra]
+    exact clebschMomentElimination
+      firstMomentFactor secondMomentFactor crossMomentFactor secondMomentCoefficient
+      positiveFactor Mprev M₀ M₁ M₂ hfirst hsecond hcross
   have hidentity :
       Mprev * ((A + B - 2 * T + 3) *
         (A + B - 2 * T + 2)) =
       M₀ * ((A + B - T + 2) * (A - T + 1)) := by
     apply sub_eq_zero.mp
     exact (mul_eq_zero.mp hcancel).resolve_left hpositive.ne'
-  dsimp [A, B, T, M₀, Mprev] at hidentity
-  push_cast at hidentity
-  linear_combination hidentity
+  have hT : T = (t : ℝ) + 1 := by
+    simp only [T, Nat.cast_add, Nat.cast_one]
+  have hfirstFactor : A + B - 2 * T + 3 = A + B - 2 * (t : ℝ) + 1 := by
+    rw [hT]
+    ring
+  have hsecondFactor : A + B - 2 * T + 2 = A + B - 2 * (t : ℝ) := by
+    rw [hT]
+    ring
+  have hthirdFactor : A + B - T + 2 = A + B - (t : ℝ) + 1 := by
+    rw [hT]
+    ring
+  have hfourthFactor : A - T + 1 = A - (t : ℝ) := by
+    rw [hT]
+    ring
+  rw [hfirstFactor, hsecondFactor, hthirdFactor, hfourthFactor] at hidentity
+  exact hidentity
+
 
 theorem clebschNormSq_div_succ
     {w N p q t : ℕ}
@@ -6394,7 +6433,7 @@ theorem clebschNormSq_div_succ
   have hnorm := (clebschNormSq_pos w N p q (t + 1)).ne'
   have hidentity := clebschNormSq_succ_mul hsupport hcomplement
   apply (div_eq_div_iff hnorm hfactor.ne').2
-  nlinarith only [hidentity]
+  exact hidentity.trans (mul_comm _ _)
 
 private theorem centeredExpectation_diagonal_algebra
     {N W P Q T : ℝ}
@@ -6798,7 +6837,7 @@ theorem johnsonMiddleSignedScalar_eq_sqrt_hattedDiagonal
         dsimp [D]
         exact lt_of_not_ge hD
       dsimp [D] at hnegative ⊢
-      linarith
+      linarith only [hD]
   have hleft :
       0 ≤ (johnsonDiagonalChannelSign n w p q j * D) * S :=
     mul_nonneg hsign hS.le
@@ -7659,10 +7698,30 @@ theorem johnsonAdjacentRawSquare_compact_algebra
       (N * (W - j - P + Q) * (C - j + P - Q) *
         (j - P - Q + 1) * (N - P - Q - j + 1)) /
         (W * C * G * (G + 1))
+  have hweight : W - j - P + Q = W - 2 * P - T := by
+    dsimp [j]
+    ring
+  have hcomplement : C - j + P - Q = C - 2 * Q - T := by
+    dsimp [j]
+    ring
+  have hdegree : j - P - Q + 1 = T + 1 := by
+    dsimp [j]
+    ring
+  have hlast : N - P - Q - j + 1 = (W - 2 * P) + (C - 2 * Q) - T + 1 := by
+    dsimp [j]
+    rw [hNC]
+    ring
+  rw [hweight, hcomplement, hdegree, hlast]
+  -- Keep the affine factors abstract during rational normalization.
+  let degreeFactor := T + 1
+  let complementFactor := C - 2 * Q - T
+  let lastFactor := (W - 2 * P) + (C - 2 * Q) - T + 1
+  let weightFactor := W - 2 * P - T
+  change (N / (W * C)) * (degreeFactor * complementFactor) *
+      (lastFactor * weightFactor / ((G + 1) * G)) =
+    (N * weightFactor * complementFactor * degreeFactor * lastFactor) /
+      (W * C * G * (G + 1))
   field_simp [hW, hC, hG, hGone]
-  dsimp [j]
-  rw [hNC]
-  ring
 
 end
 
@@ -7685,11 +7744,30 @@ theorem johnsonNu_radicand_factor
           (p : ℝ) - (q : ℝ)) *
         ((j : ℝ) - (p : ℝ) - (q : ℝ) + 1) *
         ((n : ℝ) - (p : ℝ) - (q : ℝ) - (j : ℝ) + 1) := by
-  unfold MetricCodes.johnsonJ MetricCodes.johnsonM
-    MetricCodes.johnsonDelta MetricCodes.johnsonSigma
-    MetricCodes.johnsonJ1 MetricCodes.johnsonJ2
-  rw [Nat.cast_sub hwn]
-  ring
+  have hfirst :
+      MetricCodes.johnsonJ n j ^ 2 - MetricCodes.johnsonM n w ^ 2 =
+        ((w : ℝ) - j) * ((n : ℝ) - w - j) := by
+    unfold MetricCodes.johnsonJ MetricCodes.johnsonM
+    rw [sq_sub_sq, mul_comm]
+    congr 1 <;> ring
+  have hsecond :
+      MetricCodes.johnsonJ n j ^ 2 - MetricCodes.johnsonDelta n w p q ^ 2 =
+        ((w : ℝ) - j - p + q) * ((n : ℝ) - w - j + p - q) := by
+    unfold MetricCodes.johnsonJ MetricCodes.johnsonDelta
+      MetricCodes.johnsonJ1 MetricCodes.johnsonJ2
+    rw [Nat.cast_sub hwn]
+    rw [sq_sub_sq, mul_comm]
+    congr 1 <;> ring
+  have hthird :
+      (MetricCodes.johnsonSigma n w p q + 1) ^ 2 - MetricCodes.johnsonJ n j ^ 2 =
+        ((j : ℝ) - p - q + 1) * ((n : ℝ) - p - q - j + 1) := by
+    unfold MetricCodes.johnsonSigma MetricCodes.johnsonJ
+      MetricCodes.johnsonJ1 MetricCodes.johnsonJ2
+    rw [Nat.cast_sub hwn]
+    rw [sq_sub_sq, mul_comm]
+    congr 1 <;> ring
+  rw [hfirst, hsecond, hthird, Nat.cast_sub hwn]
+  ac_rfl
 
 theorem johnsonNu_denominator_factor (n j : ℕ) :
     (2 * MetricCodes.johnsonJ n j - 1) *
@@ -7782,7 +7860,7 @@ theorem johnsonNu_denominator_pos
   have hjreal : (2 : ℝ) * (j : ℝ) + 1 < (n : ℝ) := by
     exact_mod_cast hjbound
   rw [johnsonNu_denominator_factor]
-  apply mul_pos <;> linarith
+  apply mul_pos <;> linarith only [hjreal]
 
 
 theorem johnsonEdge_sq_factored

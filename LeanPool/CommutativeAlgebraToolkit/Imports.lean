@@ -1,0 +1,33 @@
+/-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+module  -- shake: keep-all --deprecated_module: ignore
+
+-- Generated project imports; run `lake exe mk_all`.
+public import LeanPool.CommutativeAlgebraToolkit
+public import LeanPool.CommutativeAlgebraToolkit.DerivationLeibnizProd
+public import LeanPool.CommutativeAlgebraToolkit.DerivationLieMulLeft
+public import LeanPool.CommutativeAlgebraToolkit.FinitePresentationPiRightHomBijective
+public import LeanPool.CommutativeAlgebraToolkit.FlatAssociatedPrimes
+public import LeanPool.CommutativeAlgebraToolkit.FlatProdPi
+public import LeanPool.CommutativeAlgebraToolkit.FormallySmoothMapBaseChange
+public import LeanPool.CommutativeAlgebraToolkit.FractionRingQuotient
+public import LeanPool.CommutativeAlgebraToolkit.FrobeniusRangePow
+public import LeanPool.CommutativeAlgebraToolkit.HasseDerivXPowMul
+public import LeanPool.CommutativeAlgebraToolkit.InjectiveIffDivisible
+public import LeanPool.CommutativeAlgebraToolkit.IsAdicCompleteOfIsNilpotent
+public import LeanPool.CommutativeAlgebraToolkit.IsNoetherianRingIffFinitePresentation
+public import LeanPool.CommutativeAlgebraToolkit.IsPerfectNormalClosure
+public import LeanPool.CommutativeAlgebraToolkit.IsSimpleModuleTrace
+public import LeanPool.CommutativeAlgebraToolkit.MonoidGroupCompletion
+public import LeanPool.CommutativeAlgebraToolkit.NoetherianIsOpenOfStableUnderGeneralization
+public import LeanPool.CommutativeAlgebraToolkit.PolynomialIntegerValued
+public import LeanPool.CommutativeAlgebraToolkit.PolynomialIsCoprimeX
+public import LeanPool.CommutativeAlgebraToolkit.PrimaryComponentInjective
+public import LeanPool.CommutativeAlgebraToolkit.RatSmulMemIndivisible
+public import LeanPool.CommutativeAlgebraToolkit.ResultantProdXSubC
+public import LeanPool.CommutativeAlgebraToolkit.SemilocalStableRange
+public import LeanPool.CommutativeAlgebraToolkit.SubalgebraIsUnitOfIsIntegral
+public import LeanPool.CommutativeAlgebraToolkit.TensorProductMemRangeRTensorBasis

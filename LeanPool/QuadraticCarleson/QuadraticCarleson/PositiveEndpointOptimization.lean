@@ -382,7 +382,7 @@ theorem paperLog_one_index_le_two_mul_paperLog_four_of_mem
     · exact hsq
   rw [Real.log_pow] at hlog
   norm_num at hlog ⊢
-  convert hlog using 1; ring
+  convert hlog using 1; ring_nf
 
 /-- Complete pointwise conversion of the lacunary low-frequency loss on a
 magnitude band into the paper's endpoint Orlicz weight. -/

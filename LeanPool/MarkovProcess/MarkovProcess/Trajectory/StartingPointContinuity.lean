@@ -74,45 +74,11 @@ theorem IsFellerKernelSemigroup.continuous_integral_boundedContinuous_finiteSetK
     (hP : P.IsConservative) (I : Finset NNReal) (f : (I → alpha) →ᵇ ℝ) :
     Continuous fun x ↦ ∫ path, f path ∂finiteSetKernel P I x := by
   let : IsMarkovKernel (finiteSetKernel P I) := hP.isMarkovKernel_finiteSetKernel P I
-  have hcompact : ∀ g : C_c(I → alpha, ℝ),
-      Continuous fun x ↦ ∫ path, g path ∂finiteSetKernel P I x :=
-    fun g ↦ hFeller.continuous_integral_compactlySupported_finiteSetKernel hP I g
-  refine continuous_iff_continuousAt.mpr fun x0 ↦ Metric.tendsto_nhds.mpr fun eps heps ↦ ?_
-  have hnorm : (0 : ℝ) ≤ ‖f‖ := norm_nonneg f
-  have hdpos : 0 < eps / (3 * (‖f‖ + 1)) := by positivity
-  obtain ⟨g, hg01, hgint⟩ :=
-    exists_compactlySupported_one_sub_lt_integral (finiteSetKernel P I x0) hdpos
-  have hsmall : ‖f‖ * (eps / (3 * (‖f‖ + 1))) ≤ eps / 3 := by
-    rw [mul_div_assoc', div_le_div_iff₀ (by positivity) (by norm_num : (0 : ℝ) < 3)]
-    have hexpand : eps * (3 * (‖f‖ + 1)) - ‖f‖ * eps * 3 = 3 * eps := by ring
-    linarith only [hexpand, heps]
-  have htrunc : ∀ᶠ x in nhds x0,
-      |(∫ path, (f • g) path ∂finiteSetKernel P I x)
-        - ∫ path, (f • g) path ∂finiteSetKernel P I x0| < eps / 3 := by
-    have h := Metric.tendsto_nhds.mp ((hcompact (f • g)).continuousAt (x := x0)) (eps / 3)
-      (by positivity)
-    simpa only [Real.dist_eq] using h
-  have hmass : ∀ᶠ x in nhds x0,
-      1 - (∫ path, g path ∂finiteSetKernel P I x) < eps / (3 * (‖f‖ + 1)) :=
-    Tendsto.eventually_lt_const (by simp only [Pi.sub_apply]; linarith only [hgint])
-      ((continuous_const.sub (hcompact g)).continuousAt (x := x0))
-  filter_upwards [htrunc, hmass] with x hxtrunc hxmass
-  rw [Real.dist_eq]
-  have hkey := abs_integral_sub_integral_smul_le (finiteSetKernel P I x) f g hg01
-  have hkey0 := abs_integral_sub_integral_smul_le (finiteSetKernel P I x0) f g hg01
-  have hbound : ‖f‖ * (1 - ∫ path, g path ∂finiteSetKernel P I x)
-      ≤ ‖f‖ * (eps / (3 * (‖f‖ + 1))) :=
-    mul_le_mul_of_nonneg_left hxmass.le hnorm
-  have hbound0 : ‖f‖ * (1 - ∫ path, g path ∂finiteSetKernel P I x0)
-      ≤ ‖f‖ * (eps / (3 * (‖f‖ + 1))) :=
-    mul_le_mul_of_nonneg_left (by linarith only [hgint]) hnorm
-  have htri := abs_sub_le (∫ path, f path ∂finiteSetKernel P I x)
-    (∫ path, (f • g) path ∂finiteSetKernel P I x) (∫ path, f path ∂finiteSetKernel P I x0)
-  have htri0 := abs_sub_le (∫ path, (f • g) path ∂finiteSetKernel P I x)
-    (∫ path, (f • g) path ∂finiteSetKernel P I x0) (∫ path, f path ∂finiteSetKernel P I x0)
-  have hcomm := abs_sub_comm (∫ path, (f • g) path ∂finiteSetKernel P I x0)
-    (∫ path, f path ∂finiteSetKernel P I x0)
-  linarith only [hkey, hkey0, hxtrunc, hbound, hbound0, hsmall, htri, htri0, hcomm]
+  refine continuous_iff_continuousAt.mpr fun x0 ↦ ?_
+  exact tendsto_integral_boundedContinuous_of_tendsto_compactlySupported
+    (fun x ↦ finiteSetKernel P I x) (finiteSetKernel P I x0)
+    (fun g ↦ (hFeller.continuous_integral_compactlySupported_finiteSetKernel hP I g).continuousAt)
+    f
 
 end BoundedContinuousTest
 
