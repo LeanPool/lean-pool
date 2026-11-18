@@ -214,7 +214,7 @@ theorem lt_ramseyNumber_of_choose_lt {n k : ℕ} (hk : k ≤ n)
 `ramseyNumber ![4, 4] > 6`, i.e. `ramseyNumber ![4, 4] ≥ 7`. This is far short of the true value
 `ramseyNumber ![4, 4] = 18` (proved by exhaustive search, not by this counting argument), since the
 union bound over all `k`-subsets is wasteful for small `n`; its real content is asymptotic, giving
-`2 ^ (k / 2) ≤ ramseyNumber ![k, k]` for every `k` (`RamseyLowerBoundAsymptotic.lean`), which no
+`2 ^ (k / 2) ≤ ramseyNumber ![k, k]` for `k ≥ 3` (`RamseyLowerBoundAsymptotic.lean`), which no
 exact search could hope to match at large `k`. -/
 example : (6 : ℕ).choose 4 * 2 < 2 ^ (4 : ℕ).choose 2 := by decide
 

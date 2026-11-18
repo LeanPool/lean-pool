@@ -130,7 +130,7 @@ theorem choose_pow_half_mul_two_lt {k : ℕ} (hk : 3 ≤ k) :
 /-! ### The closed-form bound -/
 
 /-- The classical closed-form lower bound. For `k ≥ 3`, `ramseyNumber ![k, k] ≥ 2 ^ (k / 2)`. If
-`2 ^ (k / 2) ≤ k` (only `k = 3, 5` under `Nat` truncation), this is weaker than the trivial
+`2 ^ (k / 2) ≤ k` (only `k = 3, 4, 5` under `Nat` truncation), this is weaker than the trivial
 `le_ramseyNumber_self`; otherwise it follows from `lt_ramseyNumber_of_choose_lt` via
 `choose_pow_half_mul_two_lt`. -/
 theorem two_pow_half_le_ramseyNumber {k : ℕ} (hk3 : 3 ≤ k) :
