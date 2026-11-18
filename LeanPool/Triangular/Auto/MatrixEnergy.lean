@@ -2126,6 +2126,53 @@ lemma matCost_eigen_sandwich {κ : Type*} [Fintype κ] [DecidableEq κ]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [Finset.mul_sum, ENNReal.ofReal_sum_of_nonneg (fun j _ => by positivity)]
 
+private lemma cyc_project_gram_zero :
+    blk3 (cycMb W0 W1 W2) * blk3 cycP0 * blk3 (cycMb W0 W1 W2) =
+      emb2 (ι := ι) 1 2 * ((rowMat W0 W2)ᴴ * rowMat W0 W2) * (emb2 (ι := ι) 1 2)ᴴ := by
+  rw [rowMat_gram, emb2_conj_fromBlocks₁₂, ← blk3_mul, ← blk3_mul]
+  congr 1
+  simp only [cycMb, cycP0, Matrix.mul_fin_three, mul_zero, zero_mul, add_zero, mul_one]
+
+private lemma cyc_project_insert_zero :
+    blk3 (cycMb W0 W1 W2) * blk3 cycP0 * blk3 (cycDb D0 D1 D2) * blk3 (cycMb W0 W1 W2) =
+      emb2 (ι := ι) 1 2 * ((rowMat W0 W2)ᴴ * D0 * rowMat W0 W2) * (emb2 (ι := ι) 1 2)ᴴ := by
+  rw [rowMat_insert, emb2_conj_fromBlocks₁₂, ← blk3_mul, ← blk3_mul, ← blk3_mul]
+  congr 1
+  simp only [cycMb, cycP0, cycDb, Matrix.mul_fin_three, mul_zero, zero_mul, add_zero, one_mul,
+    Matrix.mul_assoc]
+
+private lemma cyc_project_gram_one :
+    blk3 (cycMb W0 W1 W2) * blk3 cycP1 * blk3 (cycMb W0 W1 W2) =
+      emb2 (ι := ι) 2 0 * ((rowMat W1 W0)ᴴ * rowMat W1 W0) * (emb2 (ι := ι) 2 0)ᴴ := by
+  rw [rowMat_gram, emb2_conj_fromBlocks₂₀, ← blk3_mul, ← blk3_mul]
+  congr 1
+  simp only [cycMb, cycP1, Matrix.mul_fin_three, mul_zero, zero_mul, add_zero, zero_add,
+    mul_one]
+
+private lemma cyc_project_insert_one :
+    blk3 (cycMb W0 W1 W2) * blk3 cycP1 * blk3 (cycDb D0 D1 D2) * blk3 (cycMb W0 W1 W2) =
+      emb2 (ι := ι) 2 0 * ((rowMat W1 W0)ᴴ * D1 * rowMat W1 W0) * (emb2 (ι := ι) 2 0)ᴴ := by
+  rw [rowMat_insert, emb2_conj_fromBlocks₂₀, ← blk3_mul, ← blk3_mul, ← blk3_mul]
+  congr 1
+  simp only [cycMb, cycP1, cycDb, Matrix.mul_fin_three, mul_zero, zero_mul, add_zero,
+    zero_add, one_mul, Matrix.mul_assoc]
+
+private lemma cyc_project_gram_two :
+    blk3 (cycMb W0 W1 W2) * blk3 cycP2 * blk3 (cycMb W0 W1 W2) =
+      emb2 (ι := ι) 0 1 * ((rowMat W2 W1)ᴴ * rowMat W2 W1) * (emb2 (ι := ι) 0 1)ᴴ := by
+  rw [rowMat_gram, emb2_conj_fromBlocks₀₁, ← blk3_mul, ← blk3_mul]
+  congr 1
+  simp only [cycMb, cycP2, Matrix.mul_fin_three, mul_zero, zero_mul, add_zero, zero_add,
+    mul_one]
+
+private lemma cyc_project_insert_two :
+    blk3 (cycMb W0 W1 W2) * blk3 cycP2 * blk3 (cycDb D0 D1 D2) * blk3 (cycMb W0 W1 W2) =
+      emb2 (ι := ι) 0 1 * ((rowMat W2 W1)ᴴ * D2 * rowMat W2 W1) * (emb2 (ι := ι) 0 1)ᴴ := by
+  rw [rowMat_insert, emb2_conj_fromBlocks₀₁, ← blk3_mul, ← blk3_mul, ← blk3_mul]
+  congr 1
+  simp only [cycMb, cycP2, cycDb, Matrix.mul_fin_three, mul_zero, zero_mul, add_zero,
+    zero_add, one_mul, Matrix.mul_assoc]
+
 theorem cyc_cube_le (hD0 : D0.IsHermitian) (hD1 : D1.IsHermitian) (hD2 : D2.IsHermitian) {d : ℝ}
     (hd : 0 ≤ d) (h0 : ((d ^ 2 : ℝ) • (1 : Matrix ι ι ℂ) - D0 * D0).PosSemidef)
     (h1 : ((d ^ 2 : ℝ) • (1 : Matrix ι ι ℂ) - D1 * D1).PosSemidef)
@@ -2176,42 +2223,12 @@ theorem cyc_cube_le (hD0 : D0.IsHermitian) (hD1 : D1.IsHermitian) (hD2 : D2.IsHe
   have hP2P : blk3 (cycP2 (ι := ι)) * blk3 cycP2 = blk3 cycP2 := by
     rw [← blk3_mul]; congr 1
     ext v w; fin_cases v <;> fin_cases w <;> simp [cycP2, Matrix.mul_apply, Fin.sum_univ_three]
-  have hT0 : M * blk3 cycP0 * M =
-      emb2 (ι := ι) 1 2 * ((rowMat W0 W2)ᴴ * rowMat W0 W2) * (emb2 (ι := ι) 1 2)ᴴ := by
-    rw [rowMat_gram, emb2_conj_fromBlocks₁₂, ← blk3_mul, ← blk3_mul]
-    congr 1
-    ext v w; fin_cases v <;> fin_cases w <;>
-      simp [cycMb, cycP0, Matrix.mul_apply, Fin.sum_univ_three]
-  have hK0 : M * blk3 cycP0 * D * M =
-      emb2 (ι := ι) 1 2 * ((rowMat W0 W2)ᴴ * D0 * rowMat W0 W2) * (emb2 (ι := ι) 1 2)ᴴ := by
-    rw [rowMat_insert, emb2_conj_fromBlocks₁₂, ← blk3_mul, ← blk3_mul, ← blk3_mul]
-    congr 1
-    ext v w; fin_cases v <;> fin_cases w <;>
-      simp [cycMb, cycP0, cycDb, Matrix.mul_apply, Fin.sum_univ_three, Matrix.mul_assoc]
-  have hT1 : M * blk3 cycP1 * M =
-      emb2 (ι := ι) 2 0 * ((rowMat W1 W0)ᴴ * rowMat W1 W0) * (emb2 (ι := ι) 2 0)ᴴ := by
-    rw [rowMat_gram, emb2_conj_fromBlocks₂₀, ← blk3_mul, ← blk3_mul]
-    congr 1
-    ext v w; fin_cases v <;> fin_cases w <;>
-      simp [cycMb, cycP1, Matrix.mul_apply, Fin.sum_univ_three]
-  have hK1 : M * blk3 cycP1 * D * M =
-      emb2 (ι := ι) 2 0 * ((rowMat W1 W0)ᴴ * D1 * rowMat W1 W0) * (emb2 (ι := ι) 2 0)ᴴ := by
-    rw [rowMat_insert, emb2_conj_fromBlocks₂₀, ← blk3_mul, ← blk3_mul, ← blk3_mul]
-    congr 1
-    ext v w; fin_cases v <;> fin_cases w <;>
-      simp [cycMb, cycP1, cycDb, Matrix.mul_apply, Fin.sum_univ_three, Matrix.mul_assoc]
-  have hT2 : M * blk3 cycP2 * M =
-      emb2 (ι := ι) 0 1 * ((rowMat W2 W1)ᴴ * rowMat W2 W1) * (emb2 (ι := ι) 0 1)ᴴ := by
-    rw [rowMat_gram, emb2_conj_fromBlocks₀₁, ← blk3_mul, ← blk3_mul]
-    congr 1
-    ext v w; fin_cases v <;> fin_cases w <;>
-      simp [cycMb, cycP2, Matrix.mul_apply, Fin.sum_univ_three]
-  have hK2 : M * blk3 cycP2 * D * M =
-      emb2 (ι := ι) 0 1 * ((rowMat W2 W1)ᴴ * D2 * rowMat W2 W1) * (emb2 (ι := ι) 0 1)ᴴ := by
-    rw [rowMat_insert, emb2_conj_fromBlocks₀₁, ← blk3_mul, ← blk3_mul, ← blk3_mul]
-    congr 1
-    ext v w; fin_cases v <;> fin_cases w <;>
-      simp [cycMb, cycP2, cycDb, Matrix.mul_apply, Fin.sum_univ_three, Matrix.mul_assoc]
+  have hT0 := cyc_project_gram_zero W0 W1 W2
+  have hK0 := cyc_project_insert_zero W0 W1 W2 D0 D1 D2
+  have hT1 := cyc_project_gram_one W0 W1 W2
+  have hK1 := cyc_project_insert_one W0 W1 W2 D0 D1 D2
+  have hT2 := cyc_project_gram_two W0 W1 W2
+  have hK2 := cyc_project_insert_two W0 W1 W2 D0 D1 D2
   have hc : ∀ (P : Matrix (Fin 3) (Fin 3) (Matrix ι ι ℂ)) (p r : Fin 3) (hpr : p ≠ r) (W V Dv :
       Matrix ι ι ℂ), (blk3 P)ᴴ = blk3 P → blk3 P * blk3 P = blk3 P →
       M * blk3 P * M = emb2 (ι := ι) p r * ((rowMat W V)ᴴ * rowMat W V) * (emb2 (ι := ι) p r)ᴴ →

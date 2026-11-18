@@ -2163,13 +2163,15 @@ def qYp (s : ℝ) (p : Fin 3 → ℝ) : ℝ := Hd.Yprev p (sig α s) η v
 /-- The mixed neighbor cost along the chosen heat variances. -/
 def qZ (s : ℝ) (p : Fin 3 → ℝ) : ℝ := Hd.Z p (sig α s) η v
 
+/-- The vertex energies, trace variations and combined costs used in the dissipation estimates. -/
+def dissipationFamily : Set (ℝ → (Fin 3 → ℝ) → ℝ) :=
+  {Hd.qE α η v, Hd.qDr α η v, Hd.qDn α η v, Hd.qDp α η v, Hd.qV α η v + Hd.qA α η v,
+    Hd.qYn α η v + Hd.qB α η v, Hd.qYp α η v + Hd.qC α η v, Hd.qZ α η v, Hd.qV α η v,
+    Hd.qYn α η v, Hd.qYp α η v, Hd.qA α η v, Hd.qB α η v, Hd.qC α η v}
+
 lemma family_good (hh : 0 < Hd.h) (hη : 0 < η) (hα1 : ∀ k, 1 ≤ α k)
     (hα2 : ∀ k, α k ≤ 2) {sa sb : ℝ} (hsa : 0 < sa) (hab : sa ≤ sb) :
-    ∀ Q ∈ ({Hd.qE α η v, Hd.qDr α η v, Hd.qDn α η v, Hd.qDp α η v,
-      Hd.qV α η v + Hd.qA α η v, Hd.qYn α η v + Hd.qB α η v,
-      Hd.qYp α η v + Hd.qC α η v, Hd.qZ α η v, Hd.qV α η v,
-      Hd.qYn α η v, Hd.qYp α η v, Hd.qA α η v, Hd.qB α η v, Hd.qC α η v} :
-        Set (ℝ → (Fin 3 → ℝ) → ℝ)),
+    ∀ Q ∈ Hd.dissipationFamily α η v,
       ContinuousOn (fun z : ℝ × (Fin 3 → ℝ) => Q z.1 z.2) (Set.Ioi 0 ×ˢ Set.univ) ∧
       ∃ C, ∀ s ∈ Set.Icc sa sb, ∀ p, |Q s p| ≤ C * phi (2 * sb) v p ^ 2 := by
   have hα0 : ∀ k, 0 < α k := fun k => zero_lt_one.trans_le (hα1 k)
@@ -2183,7 +2185,7 @@ lemma family_good (hh : 0 < Hd.h) (hη : 0 < η) (hα1 : ∀ k, 1 ≤ α k)
     · simp only [sig]; nlinarith [hα2 k, hs.2]
   have B := fun s (hs : s ∈ Set.Icc sa sb) p => hC p (sig α s) (hrange s hs) v
   intro Q hQ
-  simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hQ
+  simp only [dissipationFamily, Set.mem_insert_iff, Set.mem_singleton_iff] at hQ
   rcases hQ with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl
   · exact ⟨c1, C, fun s hs p => (B s hs p).1⟩
   · exact ⟨c2, C, fun s hs p => (B s hs p).2.1⟩
@@ -2212,6 +2214,15 @@ lemma family_good (hh : 0 < Hd.h) (hη : 0 < η) (hα1 : ∀ k, 1 ≤ α k)
   · exact ⟨c6, C, fun s hs p => (B s hs p).2.2.2.2.2.1⟩
   · exact ⟨c7, C, fun s hs p => (B s hs p).2.2.2.2.2.2.1⟩
 
+lemma weighted_integrable (hh : 0 < Hd.h) (hη : 0 < η) (hα1 : ∀ k, 1 ≤ α k)
+    (hα2 : ∀ k, α k ≤ 2) {β sa sb : ℝ} (hβ : 0 < β) (hsa : 0 < sa) (hab : sa ≤ sb)
+    (Q : ℝ → (Fin 3 → ℝ) → ℝ) (hQ : Q ∈ Hd.dissipationFamily α η v) (m : ℕ) :
+    (∀ s ∈ Set.Icc sa sb, Integrable (fun p => Gm β m s p * Q s p)) ∧
+      Integrable (fun z : ℝ × (Fin 3 → ℝ) => Gm β m z.1 z.2 * Q z.1 z.2)
+        ((volume.restrict (Set.Ioc sa sb)).prod volume) := by
+  obtain ⟨continuity, bound⟩ := Hd.family_good α η v hh hη hα1 hα2 hsa hab Q hQ
+  exact good_integrable hsa (by linarith : 0 < 2 * sb) hβ v continuity bound m
+
 end HeatData
 
 end VertexEnergies
@@ -2230,22 +2241,17 @@ theorem vertex_identities (hh : 0 < Hd.h) (hη : 0 < η) (hα1 : ∀ k, 1 ≤ α
       Gm β 0 s p * (Hd.qYn α η v + Hd.qB α η v) s p = ∫ p, Gm β 2 s p * Hd.qE α η v s p ∧ ∫ p, Gm
       β 0 s p * (Hd.qYp α η v + Hd.qC α η v) s p = ∫ p, Gm β 2 s p * Hd.qE α η v s p ∧ ∫ p, Gm β 0
       s p * Hd.qZ α η v s p = ∫ p, Gm β 2 s p * Hd.qE α η v s p := by
-  have G := Hd.family_good α η v hh hη hα1 hα2 hsa hab
-  have hsb : 0 < 2 * sb := by linarith
-  have integ : ∀ Q ∈ ({Hd.qE α η v, Hd.qDr α η v, Hd.qDn α η v, Hd.qDp α η v,
-      Hd.qV α η v + Hd.qA α η v, Hd.qYn α η v + Hd.qB α η v, Hd.qYp α η v + Hd.qC α η v,
-      Hd.qZ α η v, Hd.qV α η v, Hd.qYn α η v, Hd.qYp α η v, Hd.qA α η v, Hd.qB α η v,
-      Hd.qC α η v} : Set (ℝ → (Fin 3 → ℝ) → ℝ)),
-      ∀ m, Integrable (fun p => Gm β m s p * Q s p) := fun Q hQ m =>
-    (good_integrable (Q := fun z => Q z.1 z.2) hsa hsb hβ v (G Q hQ).1 (G Q hQ).2 m).1 s hs
-  have iE := integ (Hd.qE α η v) (by simp)
-  have iDr := integ (Hd.qDr α η v) (by simp)
-  have iDn := integ (Hd.qDn α η v) (by simp)
-  have iDp := integ (Hd.qDp α η v) (by simp)
-  have iVA := integ (Hd.qV α η v + Hd.qA α η v) (by simp)
-  have iYB := integ (Hd.qYn α η v + Hd.qB α η v) (by simp)
-  have iYC := integ (Hd.qYp α η v + Hd.qC α η v) (by simp)
-  have iZ := integ (Hd.qZ α η v) (by simp)
+  have integ (Q : ℝ → (Fin 3 → ℝ) → ℝ) (hQ : Q ∈ Hd.dissipationFamily α η v) (m : ℕ) :
+      Integrable (fun p => Gm β m s p * Q s p) :=
+    (Hd.weighted_integrable α η v hh hη hα1 hα2 hβ hsa hab Q hQ m).1 s hs
+  have iE := integ (Hd.qE α η v) (by simp [dissipationFamily])
+  have iDr := integ (Hd.qDr α η v) (by simp [dissipationFamily])
+  have iDn := integ (Hd.qDn α η v) (by simp [dissipationFamily])
+  have iDp := integ (Hd.qDp α η v) (by simp [dissipationFamily])
+  have iVA := integ (Hd.qV α η v + Hd.qA α η v) (by simp [dissipationFamily])
+  have iYB := integ (Hd.qYn α η v + Hd.qB α η v) (by simp [dissipationFamily])
+  have iYC := integ (Hd.qYp α η v + Hd.qC α η v) (by simp [dissipationFamily])
+  have iZ := integ (Hd.qZ α η v) (by simp [dissipationFamily])
   have hσ : ∀ k, 0 < sig α s k := fun k =>
     mul_pos (zero_lt_one.trans_le (hα1 k)) (hsa.trans_le hs.1)
   have hrow := fun p => Hd.e_heat_row p (sig α s) hh.le hη hσ v
@@ -2376,21 +2382,7 @@ theorem smeared_plane_dissipation (hh : 0 < Hd.h) (hη : 0 < η)
   have hα1 : ∀ k, 1 ≤ α k := fun k => by rcases hα k with h | h <;> rw [h]; norm_num
   have hα2 : ∀ k, α k ≤ 2 := fun k => by rcases hα k with h | h <;> rw [h] <;> norm_num
   have hα0 : ∀ k, 0 < α k := fun k => zero_lt_one.trans_le (hα1 k)
-  have hsb : 0 < 2 * sb := by linarith
-  have G := fun v => Hd.family_good α η v hh hη hα1 hα2 hsa hab
-  have slice : ∀ v, ∀ Q ∈ ({Hd.qE α η v, Hd.qDr α η v, Hd.qDn α η v, Hd.qDp α η v,
-      Hd.qV α η v + Hd.qA α η v, Hd.qYn α η v + Hd.qB α η v, Hd.qYp α η v + Hd.qC α η v,
-      Hd.qZ α η v, Hd.qV α η v, Hd.qYn α η v, Hd.qYp α η v, Hd.qA α η v, Hd.qB α η v,
-      Hd.qC α η v} : Set (ℝ → (Fin 3 → ℝ) → ℝ)), ∀ m, ∀ s ∈ Set.Icc sa sb,
-      Integrable (fun p => Gm β m s p * Q s p) := fun v Q hQ m =>
-    (good_integrable (Q := fun z => Q z.1 z.2) hsa hsb hβ v (G v Q hQ).1 (G v Q hQ).2 m).1
-  have joint : ∀ v, ∀ Q ∈ ({Hd.qE α η v, Hd.qDr α η v, Hd.qDn α η v, Hd.qDp α η v,
-      Hd.qV α η v + Hd.qA α η v, Hd.qYn α η v + Hd.qB α η v, Hd.qYp α η v + Hd.qC α η v,
-      Hd.qZ α η v, Hd.qV α η v, Hd.qYn α η v, Hd.qYp α η v, Hd.qA α η v, Hd.qB α η v,
-      Hd.qC α η v} : Set (ℝ → (Fin 3 → ℝ) → ℝ)), ∀ m,
-      Integrable (fun z : ℝ × (Fin 3 → ℝ) => Gm β m z.1 z.2 * Q z.1 z.2) ((volume.restrict (Set.Ioc
-          sa sb)).prod volume) := fun v Q hQ m =>
-    (good_integrable (Q := fun z => Q z.1 z.2) hsa hsb hβ v (G v Q hQ).1 (G v Q hQ).2 m).2
+  have weighted := fun v => Hd.weighted_integrable α η v hh hη hα1 hα2 hβ hsa hab
   set F : ℝ → (Fin 3 → ℝ) → ℝ := fun s p => Gm β 0 s p * ∑ v, Hd.qE α η v s p with hF
   set Φ : Fin 3 → ℝ × (Fin 3 → ℝ) → ℝ := fun v z =>
     β / 2 * (Gm β 2 z.1 z.2 * Hd.qE α η v z.1 z.2) +
@@ -2412,19 +2404,15 @@ theorem smeared_plane_dissipation (hh : 0 < Hd.h) (hη : 0 < η)
     refine (hG0.mul hE).congr_deriv ?_
     simp only [hFs, hΦ, Gm, Fin.sum_univ_three]
     ring
-  have mem : ∀ v, ∀ Q, Q = Hd.qE α η v ∨ Q = Hd.qA α η v ∨ Q = Hd.qB α η v ∨
-      Q = Hd.qC α η v ∨ Q = Hd.qV α η v → Q ∈ ({Hd.qE α η v, Hd.qDr α η v, Hd.qDn α η v,
-      Hd.qDp α η v, Hd.qV α η v + Hd.qA α η v, Hd.qYn α η v + Hd.qB α η v,
-      Hd.qYp α η v + Hd.qC α η v, Hd.qZ α η v, Hd.qV α η v, Hd.qYn α η v, Hd.qYp α η v,
-      Hd.qA α η v, Hd.qB α η v, Hd.qC α η v} : Set (ℝ → (Fin 3 → ℝ) → ℝ)) := by
-    intro v Q hQ
-    rcases hQ with rfl | rfl | rfl | rfl | rfl <;> simp
   have hΦint : ∀ v, Integrable (Φ v) ((volume.restrict (Set.Ioc sa sb)).prod volume) := by
     intro v
-    exact ((((joint v _ (mem v _ (Or.inl rfl)) 2).const_mul (β / 2)).add ((joint v _ (mem v _
-        (Or.inr (Or.inl rfl))) 0).const_mul (α v / 2))).add ((joint v _ (mem v _ (Or.inr (Or.inr
-        (Or.inl rfl)))) 0).const_mul (α (v + 1) / 2))).add ((joint v _ (mem v _ (Or.inr (Or.inr
-        (Or.inr (Or.inl rfl))))) 0).const_mul (α (v - 1) / 2))
+    have iE := (weighted v (Hd.qE α η v) (by simp [dissipationFamily]) 2).2.const_mul (β / 2)
+    have iA := (weighted v (Hd.qA α η v) (by simp [dissipationFamily]) 0).2.const_mul (α v / 2)
+    have iB :=
+      (weighted v (Hd.qB α η v) (by simp [dissipationFamily]) 0).2.const_mul (α (v + 1) / 2)
+    have iC :=
+      (weighted v (Hd.qC α η v) (by simp [dissipationFamily]) 0).2.const_mul (α (v - 1) / 2)
+    exact ((iE.add iA).add iB).add iC
   have hFsint : Integrable (fun z : ℝ × (Fin 3 → ℝ) => Fs z.1 z.2) ((volume.restrict (Set.Ioc sa
       sb)).prod volume) :=
     integrable_finsetSum _ fun v _ => hΦint v
@@ -2433,46 +2421,53 @@ theorem smeared_plane_dissipation (hh : 0 < Hd.h) (hη : 0 < η)
     have : F s = fun p => ∑ v, Gm β 0 s p * Hd.qE α η v s p := by
       funext p; simp only [hF, Finset.mul_sum]
     rw [this]
-    exact integrable_finsetSum _ fun v _ => slice v _ (mem v _ (Or.inl rfl)) 0 s hs
-  have hVint : ∀ v, Integrable (fun z : ℝ × (Fin 3 → ℝ) => Gm β 0 z.1 z.2 * Hd.qV α η v z.1 z.2)
-      ((volume.restrict (Set.Ioc sa sb)).prod volume) := fun v =>
-    joint v _ (mem v _ (Or.inr (Or.inr (Or.inr (Or.inr rfl))))) 0
+    exact integrable_finsetSum _ fun v _ =>
+      (weighted v (Hd.qE α η v) (by simp [dissipationFamily]) 0).1 s hs
+  have hVint (v : Fin 3) := (weighted v (Hd.qV α η v) (by simp [dissipationFamily]) 0).2
   have hstep : ∀ s ∈ Set.Icc sa sb, ∫ p, Fs s p ≤ -(1 / 28) * ∑ v, Hd.Vbar α η v s := by
     intro s hs
     have hs0 : 0 < s := hsa.trans_le hs.1
     have hσ : ∀ k, 0 < sig α s k := fun k => mul_pos (hα0 k) hs0
-    have sl := fun v Q (hQ : Q ∈ ({Hd.qE α η v, Hd.qDr α η v, Hd.qDn α η v, Hd.qDp α η v,
-      Hd.qV α η v + Hd.qA α η v, Hd.qYn α η v + Hd.qB α η v, Hd.qYp α η v + Hd.qC α η v,
-      Hd.qZ α η v, Hd.qV α η v, Hd.qYn α η v, Hd.qYp α η v, Hd.qA α η v, Hd.qB α η v,
-      Hd.qC α η v} : Set (ℝ → (Fin 3 → ℝ) → ℝ))) m => slice v Q hQ m s hs
+    have slice (v : Fin 3) (Q : ℝ → (Fin 3 → ℝ) → ℝ)
+        (hQ : Q ∈ Hd.dissipationFamily α η v) (m : ℕ) := (weighted v Q hQ m).1 s hs
+    have iE (v : Fin 3) := (slice v (Hd.qE α η v) (by simp [dissipationFamily]) 2).const_mul (β / 2)
+    have iVA (v : Fin 3) :=
+      (slice v (Hd.qV α η v + Hd.qA α η v) (by simp [dissipationFamily]) 0).const_mul (α v / 2)
+    have iYB (v : Fin 3) :=
+      (slice v (Hd.qYn α η v + Hd.qB α η v) (by simp [dissipationFamily]) 0).const_mul
+        (α (v + 1) / 2)
+    have iYC (v : Fin 3) :=
+      (slice v (Hd.qYp α η v + Hd.qC α η v) (by simp [dissipationFamily]) 0).const_mul
+        (α (v - 1) / 2)
+    have iZ (v : Fin 3) := slice v (Hd.qZ α η v) (by simp [dissipationFamily]) 0
+    have iV (v : Fin 3) := slice v (Hd.qV α η v) (by simp [dissipationFamily]) 0
+    have iYn (v : Fin 3) := slice v (Hd.qYn α η v) (by simp [dissipationFamily]) 0
+    have iYp (v : Fin 3) := slice v (Hd.qYp α η v) (by simp [dissipationFamily]) 0
     set K : Fin 3 → (Fin 3 → ℝ) → ℝ := fun v p =>
       β / 2 * (Gm β 2 s p * Hd.qE α η v s p) +
         α v / 2 * (Gm β 0 s p * (Hd.qV α η v + Hd.qA α η v) s p) +
         α (v + 1) / 2 * (Gm β 0 s p * (Hd.qYn α η v + Hd.qB α η v) s p) +
         α (v - 1) / 2 * (Gm β 0 s p * (Hd.qYp α η v + Hd.qC α η v) s p) -
         33 / 20 * (Gm β 0 s p * Hd.qZ α η v s p) with hK
-    have hKint : ∀ v, Integrable (K v) := fun v =>
-      (((((sl v _ (by simp) 2).const_mul (β / 2)).add ((sl v _ (by simp) 0).const_mul (α v /
-          2))).add ((sl v _ (by simp) 0).const_mul (α (v + 1) / 2))).add ((sl v _ (by simp)
-          0).const_mul (α (v - 1) / 2))).sub ((sl v (Hd.qZ α η v) (by simp) 0).const_mul (33 / 20))
+    have hKint (v : Fin 3) : Integrable (K v) :=
+      ((((iE v).add (iVA v)).add (iYB v)).add (iYC v)).sub ((iZ v).const_mul (33 / 20))
     have hK0 : ∀ v, ∫ p, K v p = 0 := by
       intro v
-      obtain ⟨i1, i2, i3, i4⟩ := Hd.vertex_identities α η v hh hη hα1 hα2 hβ hsa hab hs
+      obtain ⟨e1, e2, e3, e4⟩ := Hd.vertex_identities α η v hh hη hα1 hα2 hβ hsa hab hs
       have hsv := (sum_three_eq v α).1
-      simp only [hK]
-      rw [integral_sub, integral_add, integral_add, integral_add, integral_const_mul,
-        integral_const_mul, integral_const_mul, integral_const_mul, integral_const_mul, i1, i2,
-        i3, i4]
-      · have hs3 : α v + α (v + 1) + α (v - 1) = 16 / 5 := by linarith
-        linear_combination ((∫ p, Gm β 2 s p * Hd.qE α η v s p) / 2) * hs3 + ((∫ p, Gm β 2 s p *
-            Hd.qE α η v s p) / 2) * hβdef
-      all_goals first
-        | exact (sl v _ (by simp) _).const_mul _
-        | exact ((sl v _ (by simp) _).const_mul _).add ((sl v _ (by simp) _).const_mul _)
-        | exact (((sl v _ (by simp) _).const_mul _).add ((sl v _ (by simp) _).const_mul _)).add ((sl
-            v _ (by simp) _).const_mul _)
-        | exact ((((sl v _ (by simp) _).const_mul _).add ((sl v _ (by simp) _).const_mul _)).add
-            ((sl v _ (by simp) _).const_mul _)).add ((sl v _ (by simp) _).const_mul _)
+      have integralEA := (iE v).add (iVA v)
+      have integralEAB := integralEA.add (iYB v)
+      have splitZ := integral_sub (integralEAB.add (iYC v)) ((iZ v).const_mul (33 / 20))
+      have splitC := integral_add integralEAB (iYC v)
+      have splitB := integral_add integralEA (iYB v)
+      have splitA := integral_add (iE v) (iVA v)
+      simp only [Pi.add_apply] at splitZ splitC splitB splitA e1 e2 e3
+      simp only [hK, Pi.add_apply]
+      rw [splitZ, splitC, splitB, splitA, integral_const_mul, integral_const_mul,
+        integral_const_mul, integral_const_mul, integral_const_mul, e1, e2, e3, e4]
+      have hs3 : α v + α (v + 1) + α (v - 1) = 16 / 5 := by linarith
+      linear_combination ((∫ p, Gm β 2 s p * Hd.qE α η v s p) / 2) * hs3 + ((∫ p, Gm β 2 s p *
+          Hd.qE α η v s p) / 2) * hβdef
     set H : (Fin 3 → ℝ) → ℝ := fun p => ∑ v, (33 / 20 * Hd.qZ α η v s p - (α v * Hd.qV α η v s p + α
         (v + 1) * Hd.qYn α η v s p +
         α (v - 1) * Hd.qYp α η v s p) / 2) with hH
@@ -2487,8 +2482,9 @@ theorem smeared_plane_dissipation (hh : 0 < Hd.h) (hη : 0 < η)
         funext p; simp only [hH, Finset.mul_sum]; refine Finset.sum_congr rfl fun v _ => ?_; ring
       rw [this]
       refine integrable_finsetSum _ fun v _ => ?_
-      exact ((sl v _ (by simp) 0).const_mul _).sub (((((sl v _ (by simp) 0).const_mul _).add ((sl v
-          _ (by simp) 0).const_mul _)).add ((sl v _ (by simp) 0).const_mul _)).div_const _)
+      have costs := ((iV v).const_mul (α v)).add ((iYn v).const_mul (α (v + 1)))
+      exact ((iZ v).const_mul (33 / 20)).sub
+        ((costs.add ((iYp v).const_mul (α (v - 1)))).div_const 2)
     have hG0nn : ∀ p, 0 ≤ Gm β 0 s p := fun p => by
       simp only [Gm, gaussianD_zero, gaussian]; positivity
     have hpt : ∀ p, Gm β 0 s p * H p ≤ -(1 / 28) * ∑ v, Gm β 0 s p * Hd.qV α η v s p := by
@@ -2506,10 +2502,9 @@ theorem smeared_plane_dissipation (hh : 0 < Hd.h) (hη : 0 < η)
             integral_finsetSum _ fun v _ => hKint v]
           simp [hK0]
       _ ≤ ∫ p, -(1 / 28) * ∑ v, Gm β 0 s p * Hd.qV α η v s p :=
-          integral_mono hHint ((integrable_finsetSum _ fun v _ =>
-            sl v _ (by simp) 0).const_mul _) hpt
+          integral_mono hHint ((integrable_finsetSum _ fun v _ => iV v).const_mul _) hpt
       _ = -(1 / 28) * ∑ v, Hd.Vbar α η v s := by
-          rw [integral_const_mul, integral_finsetSum _ fun v _ => sl v _ (by simp) 0]
+          rw [integral_const_mul, integral_finsetSum _ fun v _ => iV v]
           rfl
   have hIoc : Set.uIoc sa sb = Set.Ioc sa sb := Set.uIoc_of_le hab
   have hae : ∀ᵐ p ∂(volume : Measure (Fin 3 → ℝ)),

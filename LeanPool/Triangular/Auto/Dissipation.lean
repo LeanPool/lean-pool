@@ -54,10 +54,8 @@ lemma Jbar_integrable (hh : 0 < Hd.h) {η : ℝ} (hη : 0 < η) {α : Fin 3 → 
     funext p; rw [Finset.mul_sum]
   rw [e]
   refine integrable_finsetSum _ fun v _ => ?_
-  have G := Hd.family_good α η v hh hη hα1 hα2 hs (le_refl s)
-  exact (good_integrable (Q := fun z => Hd.qE α η v z.1 z.2) hs (by positivity : (0 : ℝ) < 2 * s)
-      (by norm_num : (0 : ℝ) < 1 / 10) v (G _ (by simp)).1 (G _ (by simp)).2 0).1 s
-    ⟨le_rfl, le_rfl⟩
+  exact (Hd.weighted_integrable α η v hh hη hα1 hα2 (by norm_num : (0 : ℝ) < 1 / 10) hs le_rfl
+    (Hd.qE α η v) (by simp [dissipationFamily]) 0).1 s ⟨le_rfl, le_rfl⟩
 
 end HeatData
 
@@ -289,9 +287,8 @@ lemma costDensity_integrable (hh : 0 < Hd.h) {η : ℝ} (hη : 0 < η) {α : Fin
     funext z; rw [costDensity, Finset.mul_sum]
   rw [e]
   refine integrable_finsetSum _ fun v _ => ?_
-  have G := Hd.family_good α η v hh hη hα1 hα2 hta hab
-  exact (good_integrable (Q := fun z => Hd.qV α η v z.1 z.2) hta (by linarith : (0 : ℝ) < 2 * tb)
-    (by norm_num : (0 : ℝ) < 1 / 10) v (G _ (by simp)).1 (G _ (by simp)).2 0).2
+  exact (Hd.weighted_integrable α η v hh hη hα1 hα2 (by norm_num : (0 : ℝ) < 1 / 10) hta hab
+    (Hd.qV α η v) (by simp [dissipationFamily]) 0).2
 
 lemma costDensity_nonneg (α : Fin 3 → ℝ) (η : ℝ) (z : ℝ × (Fin 3 → ℝ)) :
     0 ≤ Hd.costDensity α η z := by
@@ -322,10 +319,8 @@ lemma integral_Vbar_eq (hh : 0 < Hd.h) {η : ℝ} (hη : 0 < η) {α : Fin 3 →
   rw [← integral_finsetSum]
   · congr 1; funext p; rw [Finset.mul_sum]
   · intro v _
-    have G := Hd.family_good α η v hh hη hα1 hα2 hta hab
-    exact (good_integrable (Q := fun z => Hd.qV α η v z.1 z.2) hta
-      (by linarith : (0 : ℝ) < 2 * tb) (by norm_num : (0 : ℝ) < 1 / 10) v (G _ (by simp)).1
-      (G _ (by simp)).2 0).1 s ⟨hs.1.le, hs.2⟩
+    exact (Hd.weighted_integrable α η v hh hη hα1 hα2 (by norm_num : (0 : ℝ) < 1 / 10) hta hab
+      (Hd.qV α η v) (by simp [dissipationFamily]) 0).1 s ⟨hs.1.le, hs.2⟩
 
 lemma ofReal_integral_Vbar (hh : 0 < Hd.h) {η : ℝ} (hη : 0 < η) {α : Fin 3 → ℝ}
     (hα1 : ∀ k, 1 ≤ α k) (hα2 : ∀ k, α k ≤ 2) {ta tb : ℝ} (hta : 0 < ta) (hab : ta ≤ tb) :
