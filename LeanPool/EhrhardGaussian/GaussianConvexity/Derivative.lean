@@ -30,7 +30,7 @@ namespace EhrhardGaussian.GaussianConvexity
 theorem hasDerivAt_dslope_zero {f : ℝ → ℝ} (hf : AnalyticAt ℝ f 0) :
     HasDerivAt (dslope f 0) (iteratedDeriv 2 f 0 / 2) 0 := by
   obtain ⟨p, hp⟩ := hf
-  have hg : AnalyticAt ℝ (dslope f 0) 0 := ⟨p.fslope, hp.has_fpower_series_dslope_fslope⟩
+  have hg : AnalyticAt ℝ (dslope f 0) 0 := ⟨p.fslope, hp.dslope_fslope⟩
   have heq : f = fun x => x * dslope f 0 x + f 0 := by
     funext x
     have h := sub_smul_dslope f 0 x
