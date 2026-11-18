@@ -334,7 +334,6 @@ theorem selectedIndexPushforwardMass_eq_leafMass {L : ℕ}
           Icc (0 : ℝ) 1) : Set ℝ) =ᵐ[volume]
       Ioc (q.lowerMass i) (q.lowerMass i + q.leafMass i) := by
     filter_upwards [ae_ne_zero] with u hu
-    apply propext
     change
       (q.selectedIndex u = i ∧ u ∈ Icc (0 : ℝ) 1) ↔
         u ∈ Ioc (q.lowerMass i) (q.lowerMass i + q.leafMass i)
