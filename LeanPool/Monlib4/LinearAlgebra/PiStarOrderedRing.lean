@@ -22,10 +22,10 @@ import Mathlib.Tactic.NormNum.Pow
 
 /-- Coordinate projection of a set of dependent functions along `Pi.single`. -/
 def Set.ofPi {ι : Type _} {B : ι → Type _} [DecidableEq ι] [∀ i, Zero (B i)] (s : Set (∀ i, B i)) :
-    ∀ i, Set (B i) := fun i x => Pi.single i x ∈ s
+    ∀ i, Set (B i) := fun i => {x | Pi.single i x ∈ s}
 
 theorem Set.piOfPi {ι : Type _} {B : ι → Type _} [DecidableEq ι] [∀ i, AddZeroClass (B i)]
-    {s : ∀ i, Set (B i)} (h : ∀ i, s i 0) : (Set.univ.pi s).ofPi = s := by
+    {s : ∀ i, Set (B i)} (h : ∀ i, 0 ∈ s i) : (Set.univ.pi s).ofPi = s := by
   ext i x
   change Pi.single i x ∈ Set.univ.pi s ↔ x ∈ s i
   constructor
@@ -42,7 +42,7 @@ theorem Set.piOfPi {ι : Type _} {B : ι → Type _} [DecidableEq ι] [∀ i, Ad
 /-- Coordinate projection of an additive submonoid of dependent functions along `Pi.single`. -/
 def AddSubmonoid.ofPi {ι : Type _} {B : ι → Type _} [DecidableEq ι] [∀ i, AddZeroClass (B i)] :
     AddSubmonoid (∀ i, B i) → ∀ i, AddSubmonoid (B i) := fun h i =>
-  { carrier := fun x => x ∈ Set.ofPi h.carrier i
+  { carrier := Set.ofPi h.carrier i
     zero_mem' := by
       change Pi.single i 0 ∈ h.carrier
       simp_all
@@ -58,7 +58,7 @@ theorem AddSubmonoid.piOfPi {ι : Type _} {B : ι → Type _} [DecidableEq ι] [
   simp_all
 
 theorem Set.ofPi_mem' {ι : Type _} {B : ι → Type _} [DecidableEq ι] [∀ i, AddZeroClass (B i)]
-    {s : ∀ i, Set (B i)} {S : Set (∀ i, B i)} (hs : Set.univ.pi s ⊆ S) (h : ∀ i, s i 0) (i : ι) :
+    {s : ∀ i, Set (B i)} {S : Set (∀ i, B i)} (hs : Set.univ.pi s ⊆ S) (h : ∀ i, 0 ∈ s i) (i : ι) :
     s i ⊆ S.ofPi i := by
   intro x hx
   change Pi.single i x ∈ S

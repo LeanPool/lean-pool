@@ -360,8 +360,8 @@ theorem ContinuousLinearMap.exists_sum_rankOne
     ∃ (x : Fin (Module.finrank 𝕜 E₁) × Fin (Module.finrank 𝕜 E₂) → E₂)
       (y : Fin (Module.finrank 𝕜 E₁) × Fin (Module.finrank 𝕜 E₂) → E₁),
       T = ∑ i, rankOne 𝕜 (x i) (y i) := by
-  let := FiniteDimensional.complete 𝕜 E₁
-  let := FiniteDimensional.complete 𝕜 E₂
+  let := FiniteDimensional.completeSpace 𝕜 E₁
+  let := FiniteDimensional.completeSpace 𝕜 E₂
   let e₁ := stdOrthonormalBasis 𝕜 E₁
   let e₂ := stdOrthonormalBasis 𝕜 E₂
   let b : Fin (Module.finrank 𝕜 E₁) × Fin (Module.finrank 𝕜 E₂) → E₁ := fun ij =>
@@ -595,23 +595,23 @@ theorem ContinuousLinearMap.linearMap_adjoint {𝕜 B C : Type _} [RCLike 𝕜] 
     [NormedAddCommGroup C] [InnerProductSpace 𝕜 B] [InnerProductSpace 𝕜 C] [FiniteDimensional 𝕜 B]
     [FiniteDimensional 𝕜 C] (x : B →L[𝕜] C) :
     LinearMap.adjoint (x : B →ₗ[𝕜] C) =
-      @ContinuousLinearMap.adjoint 𝕜 _ _ _ _ _ _ _ (FiniteDimensional.complete 𝕜 B)
-        (FiniteDimensional.complete 𝕜 C) x :=
+      @ContinuousLinearMap.adjoint 𝕜 _ _ _ _ _ _ _ (FiniteDimensional.completeSpace 𝕜 B)
+        (FiniteDimensional.completeSpace 𝕜 C) x :=
   rfl
 
 theorem LinearMap.toContinuousLinearMap_adjoint {𝕜 B C : Type _} [RCLike 𝕜] [NormedAddCommGroup B]
     [NormedAddCommGroup C] [InnerProductSpace 𝕜 B] [InnerProductSpace 𝕜 C] [FiniteDimensional 𝕜 B]
     [FiniteDimensional 𝕜 C] {x : B →ₗ[𝕜] C} :
-  letI := FiniteDimensional.complete 𝕜 B
-  letI := FiniteDimensional.complete 𝕜 C
+  letI := FiniteDimensional.completeSpace 𝕜 B
+  letI := FiniteDimensional.completeSpace 𝕜 C
   ContinuousLinearMap.adjoint (toContinuousLinearMap x) =
     toContinuousLinearMap (LinearMap.adjoint x) :=
 rfl
 theorem LinearMap.toContinuousLinearMap_adjoint' {𝕜 B C : Type _} [RCLike 𝕜] [NormedAddCommGroup B]
     [NormedAddCommGroup C] [InnerProductSpace 𝕜 B] [InnerProductSpace 𝕜 C] [FiniteDimensional 𝕜 B]
     [FiniteDimensional 𝕜 C] {x : B →ₗ[𝕜] C} :
-  letI := FiniteDimensional.complete 𝕜 B
-  letI := FiniteDimensional.complete 𝕜 C
+  letI := FiniteDimensional.completeSpace 𝕜 B
+  letI := FiniteDimensional.completeSpace 𝕜 C
   ContinuousLinearMap.toLinearMap (ContinuousLinearMap.adjoint (toContinuousLinearMap x)) =
     LinearMap.adjoint x :=
 rfl
@@ -621,7 +621,7 @@ open scoped InnerProductSpace
 theorem OrthonormalBasis.repr_adjoint {ι 𝕜 E : Type*} [RCLike 𝕜] [NormedAddCommGroup E]
   [InnerProductSpace 𝕜 E] [Fintype ι] (b : OrthonormalBasis ι 𝕜 E) :
   letI := Module.Basis.finiteDimensional_of_finite b.toBasis
-  letI := FiniteDimensional.complete 𝕜 E
+  letI := FiniteDimensional.completeSpace 𝕜 E
   ContinuousLinearMap.adjoint b.repr.toContinuousLinearEquiv.toContinuousLinearMap
     = b.repr.symm.toContinuousLinearEquiv.toContinuousLinearMap := by
   simp_all
@@ -630,11 +630,11 @@ theorem OrthonormalBasis.repr_adjoint'
   {ι 𝕜 E : Type*} [RCLike 𝕜] [NormedAddCommGroup E]
   [InnerProductSpace 𝕜 E] [Fintype ι] (b : OrthonormalBasis ι 𝕜 E) :
   haveI := Module.Basis.finiteDimensional_of_finite b.toBasis
-  haveI := FiniteDimensional.complete 𝕜 E
+  haveI := FiniteDimensional.completeSpace 𝕜 E
   LinearMap.adjoint b.repr.toLinearMap
     = b.repr.symm.toLinearMap :=
 haveI := Module.Basis.finiteDimensional_of_finite b.toBasis
-haveI := FiniteDimensional.complete 𝕜 E
+haveI := FiniteDimensional.completeSpace 𝕜 E
 calc LinearMap.adjoint b.repr.toLinearMap
     =  ContinuousLinearMap.adjoint b.repr.toContinuousLinearEquiv.toContinuousLinearMap := rfl
   _ = b.repr.symm.toContinuousLinearEquiv.toContinuousLinearMap := by rw [b.repr_adjoint]

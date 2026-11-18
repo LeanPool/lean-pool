@@ -133,7 +133,7 @@ by rw [← ContinuousLinearMap.toLinearMapAlgEquiv_apply, AlgEquiv.spectrum_eq]
 variable {B : Type*} [NormedAddCommGroup B] [InnerProductSpace ℂ B]
   [FiniteDimensional ℂ B]
 
-local instance : CompleteSpace B := FiniteDimensional.complete ℂ B
+local instance : CompleteSpace B := FiniteDimensional.completeSpace ℂ B
 
 open scoped MatrixOrder ComplexOrder FiniteDimensional
 theorem ContinuousLinearMap.nonneg_iff_isSelfAdjoint_and_nonneg_spectrum
@@ -938,8 +938,8 @@ theorem LinearMap.IsPositive'.add_ker_eq_inf_ker
     (by rw [h, inner_neg_right, neg_le, neg_zero]; exact hT.2 x)
     (hS.2 x)
   obtain ⟨f, rfl⟩ := (LinearMap.isPositive'_iff_exists_adjoint_hMul_self _).mp hS
-  simp only [Module.End.mul_apply, LinearMap.adjoint_inner_right, inner_self_eq_zero] at this
-  simp_all only [Module.End.mul_apply, map_zero, zero_eq_neg]
+  simp only [mul_apply_eq_comp, LinearMap.adjoint_inner_right, inner_self_eq_zero] at this
+  simp_all only [mul_apply_eq_comp, map_zero, zero_eq_neg]
 
 theorem mem_unitary_iff_isStarNormal_and_decomposition_left_sq_add_right_sq_eq_one
   {B : Type*} [Ring B] [StarRing B]

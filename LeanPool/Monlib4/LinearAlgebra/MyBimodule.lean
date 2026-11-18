@@ -87,11 +87,11 @@ theorem Bimodule.sum_rsmul (x : H₂) {k : Type _} {s : Finset k} (a : k → H�
 
 theorem Bimodule.one_lsmul (x : H₁ ⊗[R] H₂) : 1 •ₗ x = x := by
   rw [Bimodule.lsmul, LinearMap.mulLeft_one, ← Module.End.one_eq_id, TensorProduct.map_one,
-    Module.End.one_apply]
+    one_apply_eq_self]
 
 theorem Bimodule.rsmul_one (x : H₁ ⊗[R] H₂) : x •ᵣ 1 = x := by
   rw [Bimodule.rsmul, LinearMap.mulRight_one, ← Module.End.one_eq_id, TensorProduct.map_one,
-    Module.End.one_apply]
+    one_apply_eq_self]
 
 theorem Bimodule.lsmul_one (x : H₁) : x •ₗ (1 : H₁ ⊗[R] H₂) = x ⊗ₜ 1 := by
   rw [Algebra.TensorProduct.one_def, Bimodule.lsmul_apply, mul_one]
@@ -158,7 +158,7 @@ theorem LinearMap.IsBimoduleMap.nsmul {x : l(R,H₁ ⊗[R] H₂)} (hx : x.IsBimo
 noncomputable def LinearMap.IsBimoduleMaps (R H₁ H₂ : Type _) [CommSemiring R]
   [Semiring H₁] [Semiring H₂] [Algebra R H₁] [Algebra R H₂] :
     Submodule R (l(R, H₁ ⊗[R] H₂)) where
-  carrier x := x.IsBimoduleMap
+  carrier := {x | x.IsBimoduleMap}
   add_mem' x y := x.add y
   zero_mem' := LinearMap.isBimoduleMap.zero
   smul_mem' r _ x := x.smul r

@@ -206,7 +206,7 @@ theorem Matrix.kroneckerToTensorProduct_comp_toKronecker :
       1 := by
   rw [TensorProduct.ext_iff']
   intro x y
-  simp_rw [LinearMap.comp_apply, TensorProduct.toKronecker_to_tensorProduct, Module.End.one_apply]
+  simp_rw [LinearMap.comp_apply, TensorProduct.toKronecker_to_tensorProduct, one_apply_eq_self]
 
 local notation "ℍ" => Matrix n n ℂ
 
@@ -273,7 +273,7 @@ theorem LinearMap.pi_mul'_apply_includeBlock' {i j : k} :
   simp only [LinearMap.comp_apply, TensorProduct.map_tmul, LinearMap.mul'_apply,
     includeBlock_apply, Pi.mul_apply, dite_hMul, hMul_dite, MulZeroClass.mul_zero,
     MulZeroClass.zero_mul, ite_apply_lm, LinearMap.zero_apply, ite_apply, Pi.zero_apply,
-    Module.End.one_apply]
+    one_apply_eq_self]
   by_cases h : j = a
   · simp_rw [matrixDirectSumFromTo, directSumFromTo, LinearMap.comp_apply]
     simp [Pi.single, Function.update, h]

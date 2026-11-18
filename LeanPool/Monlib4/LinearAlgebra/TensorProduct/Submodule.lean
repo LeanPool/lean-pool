@@ -376,8 +376,8 @@ lemma euclideanSpaceTensor'_apply {R : Type*} [RCLike R] {ι₁ ι₂ : Type*}
 open scoped FiniteDimensional
 theorem LinearIsometryEquiv.linearMap_adjoint {f : E ≃ₗᵢ[𝕜] F} :
   LinearMap.adjoint f.toLinearMap = f.symm.toLinearMap := by
-  let := FiniteDimensional.complete 𝕜 E
-  let := FiniteDimensional.complete 𝕜 F
+  let := FiniteDimensional.completeSpace 𝕜 E
+  let := FiniteDimensional.completeSpace 𝕜 F
   calc
     LinearMap.adjoint f.toLinearMap =
         ContinuousLinearMap.adjoint

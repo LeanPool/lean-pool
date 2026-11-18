@@ -89,15 +89,15 @@ variable {A B : Type*} [ha : starAlgebra A] [hb : starAlgebra B]
 theorem symmMap_rankOne_apply (a : A) (b : B) :
     symmMap _ _ _ (|a⟩⟨b| : B →ₗ[ℂ] A) =
       |hb.modAut (-(2*hB.k)-1) (star b)⟩⟨star a| :=
-letI := FiniteDimensional.complete ℂ A
-letI := FiniteDimensional.complete ℂ B
+letI := FiniteDimensional.completeSpace ℂ A
+letI := FiniteDimensional.completeSpace ℂ B
 by rw [symmMap_apply, rankOne_real, ContinuousLinearMap.linearMap_adjoint, rankOne_adjoint]
 
 theorem symmMap_symm_rankOne_apply (a : A) (b : B) :
     (symmMap _ _ _).symm (|a⟩⟨b| : B →ₗ[ℂ] A) =
       |star b⟩⟨ha.modAut (-(2*hA.k)-1) (star a)| :=
-letI := FiniteDimensional.complete ℂ A
-letI := FiniteDimensional.complete ℂ B
+letI := FiniteDimensional.completeSpace ℂ A
+letI := FiniteDimensional.completeSpace ℂ B
 by rw [symmMap_symm_apply, ContinuousLinearMap.linearMap_adjoint, rankOne_adjoint, rankOne_real]
 
 open scoped BigOperators
