@@ -597,6 +597,26 @@ private meta def bellmanBinaryOperation (expression : Lean.Expr) :
   else if expression.isAppOfArity ``HMul.hMul 6 then some (· * ·)
   else none
 
+-- Expose transparent wrappers without unfolding the operations we stage.
+private meta def exposeBellmanHead (expression : Lean.Expr) : Lean.MetaM Lean.Expr := do
+  let isStagedHead (term : Lean.Expr) : Bool :=
+    let head := term.getAppFn
+    #[``HAdd.hAdd, ``HSub.hSub, ``HMul.hMul, ``HPow.hPow, ``Neg.neg,
+      ``OfNat.ofNat, ``DPoly.mk, ``U, ``V, ``Z].any head.isConstOf
+  let expression := expression.consumeMData
+  if isStagedHead expression then
+    return expression
+  Lean.Meta.whnfHeadPred expression fun term => return !isStagedHead term
+
+private meta def readBellmanPower (expression : Lean.Expr) : Lean.MetaM Nat := do
+  if let some power ← Lean.Meta.getNatValue? expression then
+    return power
+  let reduced ← Lean.Meta.whnfD expression
+  if reduced.isConstOf ``Nat.zero then
+    return 0
+  let some power ← Lean.Meta.getNatValue? reduced | throwError "expected a closed natural power"
+  return power
+
 -- The cache is local to one closed chart and includes the kernel proof of each value.
 private meta def normalizeBellmanPolynomial
     (cache : IO.Ref (Lean.ExprStructMap (Poly3 × Lean.Expr × Lean.Expr)))
@@ -606,6 +626,7 @@ private meta def normalizeBellmanPolynomial
   | fuel + 1 =>
     let key : Lean.ExprStructEq := ⟨expression⟩
     if let some result := (← cache.get)[key]? then return result
+    let expression ← exposeBellmanHead expression
     let args := expression.getAppArgs
     let (value, operands, congruence) ←
       if let some operation := bellmanBinaryOperation expression then do
@@ -618,7 +639,7 @@ private meta def normalizeBellmanPolynomial
       else if expression.isAppOfArity ``HPow.hPow 6 then do
         let (base, baseExpr, baseProof) ← normalizeBellmanPolynomial cache fuel args[4]!
         let exponent := args[5]!
-        let some power ← Lean.Meta.getNatValue? exponent | throwError "expected a literal power"
+        let power ← readBellmanPower exponent
         let operator := Lean.mkAppN expression.getAppFn args[*...4]
         let firstProof ← Lean.Meta.mkCongrArg operator baseProof
         let congruence ← Lean.Meta.mkCongrFun firstProof exponent
