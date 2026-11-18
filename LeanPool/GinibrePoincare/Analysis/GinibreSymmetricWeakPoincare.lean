@@ -76,11 +76,6 @@ def ginibreL2Variance (n : ℕ) (hn : 0 < n)
     (u : Lp ℝ 2 (ginibreMeasure n)) : ℝ :=
   ‖u - ginibreRealConstantL2 n hn (ginibreL2Mean n u)‖ ^ 2
 
-/-- Dirichlet energy of a distributional weak pair in the paper's normalization. -/
-def ginibreWeakEnergy (n : ℕ)
-    (g : Lp (EuclideanSpace ℝ (Fin n × Fin 2)) 2 (ginibreMeasure n)) : ℝ :=
-  (1 / (n : ℝ)) * ‖g‖ ^ 2
-
 theorem ginibreL2Mean_continuous (n : ℕ) (hn : 0 < n) :
     Continuous (ginibreL2Mean n) := by
   let := ginibreMeasure_isProbabilityMeasure hn
@@ -121,10 +116,6 @@ theorem ginibreL2Variance_continuous (n : ℕ) (hn : 0 < n) :
     simp only [ginibreL2Variance, hconst]
   rw [hrepr]
   exact (continuous_norm.comp (continuous_id.sub hc)).pow 2
-
-theorem ginibreWeakEnergy_continuous (n : ℕ) :
-    Continuous (ginibreWeakEnergy n) := by
-  exact continuous_const.mul (continuous_norm.pow 2)
 
 /-- A weak gradient representative has the corresponding smooth Dirichlet energy. -/
 theorem ginibreWeakEnergy_eq_smoothGinibreEnergy {n : ℕ}

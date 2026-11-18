@@ -68,17 +68,9 @@ theorem ginibreFull_smoothCompact_memLp (n : ℕ) (hn : 0 < n)
     (f : Configuration n → ℝ) (hf : ContDiff ℝ ∞ f) (hc : HasCompactSupport f) :
     MemLp f 2 (ginibreMeasure n) ∧ MemLp (ginibreEuclideanGradient f) 2 (ginibreMeasure n) := by
   let := ginibreMeasure_isProbabilityMeasure hn
-  have hgc : HasCompactSupport (ginibreEuclideanGradient f) := by
-    apply hc.of_isClosed_subset (isClosed_tsupport _)
-    apply closure_minimal ?_ (isClosed_tsupport f)
-    intro z hz
-    by_contra hzF
-    have hd : fderiv ℝ f z = 0 := fderiv_of_notMem_tsupport ℝ hzF
-    apply hz
-    ext k
-    simp [ginibreEuclideanGradient, hd]
   exact ⟨hf.continuous.memLp_of_hasCompactSupport hc,
-    (continuous_ginibreEuclideanGradient f hf).memLp_of_hasCompactSupport hgc⟩
+    (continuous_ginibreEuclideanGradient f hf).memLp_of_hasCompactSupport
+      (compactSupport_ginibreEuclideanGradient f hc)⟩
 
 /-- The actual weighted value-gradient pair of a smooth compact symmetric observable. -/
 def ginibreFullSmoothCompactWeakPair (n : ℕ) (hn : 0 < n)

@@ -59,6 +59,15 @@ open scoped Topology ContDiff
 namespace GinibrePoincare
 noncomputable section
 
+/-- Dirichlet energy of a distributional weak pair in the paper's normalization. -/
+def ginibreWeakEnergy (n : ℕ)
+    (g : Lp (EuclideanSpace ℝ (Fin n × Fin 2)) 2 (ginibreMeasure n)) : ℝ :=
+  (1 / (n : ℝ)) * ‖g‖ ^ 2
+
+theorem ginibreWeakEnergy_continuous (n : ℕ) :
+    Continuous (ginibreWeakEnergy n) := by
+  exact continuous_const.mul (continuous_norm.pow 2)
+
 /-- The real coordinate direction indexed by a particle and its real or imaginary component. -/
 def ginibreCoordinateDirection {n : ℕ} (k : Fin n × Fin 2) : Configuration n :=
   if k.2 = 0 then realCoordinateDirection k.1 else imaginaryCoordinateDirection k.1

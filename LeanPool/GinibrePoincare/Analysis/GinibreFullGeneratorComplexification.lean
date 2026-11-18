@@ -306,7 +306,9 @@ theorem ginibreFullComplexResolvent_norm_le (n : ℕ) (hn : 0 < n)
   have hIm := ginibreFullSymmetricResolvent_norm_le n hn (ginibreFullSymmetricIm n f)
   have hReSq := (sq_le_sq₀ (norm_nonneg _) (norm_nonneg _)).mpr hRe
   have hImSq := (sq_le_sq₀ (norm_nonneg _) (norm_nonneg _)).mpr hIm
-  nlinarith [norm_nonneg f, norm_nonneg (ginibreFullComplexResolvent n hn f)]
+  apply (sq_le_sq₀ (norm_nonneg _) (norm_nonneg _)).mp
+  rw [hr, hf]
+  exact add_le_add hReSq hImSq
 
 theorem ginibreFullComplexResolvent_opNorm_le (n : ℕ) (hn : 0 < n) :
     ‖ginibreFullComplexResolvent n hn‖ ≤ 1 :=
