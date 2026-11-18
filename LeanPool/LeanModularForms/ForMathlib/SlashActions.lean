@@ -29,28 +29,28 @@ open ModularForm MatrixGroups UpperHalfPlane
 
 /-- Slash action under -I₂ as a GL(n, ℝ)⁺ matrix. See `ModularForm.slash_neg_one'` for the SL(2, ℤ)
 version. -/
-theorem ModularForm.slash_neg_one {k : ℤ} (f : ℍ → ℂ) (hk : Even k) :
+theorem ModularForm.slash_neg_one_of_even {k : ℤ} (f : ℍ → ℂ) (hk : Even k) :
     f ∣[k] (-1 : (GL (Fin 2) ℝ)) =
     f ∣[k] (1 : (GL (Fin 2) ℝ)) := by simp [slash_def, denom, hk.neg_one_zpow, Matrix.det_neg, σ]
 
-/-- Slash action under -I₂ as a SL(2, ℤ) matrix. See `ModularForm.slash_neg_one` for the GL(n, ℝ)⁺
-version. -/
+/-- Slash action under -I₂ as a SL(2, ℤ) matrix.
+See `ModularForm.slash_neg_one_of_even` for the GL(n, ℝ)⁺ version. -/
 theorem ModularForm.slash_neg_one' {k : ℤ} (f : ℍ → ℂ) (hk : Even k) :
     f ∣[k] (-1 : SL(2, ℤ)) = f ∣[k] (1 : SL(2, ℤ)) := by simp [SL_slash_def, denom, hk.neg_one_zpow]
 
 /-- See `ModularForm.slash_neg'` for the version where `g` is a SL(2, ℤ) matrix. -/
-theorem ModularForm.slash_neg {k : ℤ} (g : GL (Fin 2) ℝ) (f : ℍ → ℂ) (hk : Even k) :
+theorem ModularForm.slash_neg_of_even {k : ℤ} (g : GL (Fin 2) ℝ) (f : ℍ → ℂ) (hk : Even k) :
     f ∣[k] (-g) = f ∣[k] g := by
-  rw [← neg_one_mul, SlashAction.slash_mul, slash_neg_one f hk, SlashAction.slash_one]
+  rw [← neg_one_mul, SlashAction.slash_mul, slash_neg_one_of_even f hk, SlashAction.slash_one]
 
-/-- See `ModularForm.slash_neg` for the version where `g` is a GL(n, ℝ)⁺ matrix. -/
+/-- See `ModularForm.slash_neg_of_even` for the version where `g` is a GL(n, ℝ)⁺ matrix. -/
 theorem ModularForm.slash_neg' {k : ℤ} (g : SL(2, ℤ)) (f : ℍ → ℂ) (hk : Even k) :
     f ∣[k] (-g) = f ∣[k] g := by
-  rw [SL_slash, ← slash_neg _ _ hk]
+  rw [SL_slash, ← slash_neg_of_even _ _ hk]
   congr
   ext
   simp only [Matrix.SpecialLinearGroup.coe_int_neg, Units.val_neg,
     Matrix.SpecialLinearGroup.coe_GL_coe_matrix, Matrix.SpecialLinearGroup.coe_neg,
-    Matrix.SpecialLinearGroup.map_apply_coe, RingHom.mapMatrix_apply, Int.coe_castRingHom,
+    Matrix.SpecialLinearGroup.map_apply_coe, Int.coe_castRingHom,
     Matrix.neg_apply, Matrix.map_apply, neg_neg, Matrix.SpecialLinearGroup.mapGL_coe_matrix,
     algebraMap_int_eq]

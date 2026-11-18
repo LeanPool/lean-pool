@@ -34,7 +34,7 @@ theorem vAdd_width_periodic (hn : ↑Γ.width ∣ n) (τ : ℍ) :
   have hdenom : denom (SpecialLinearGroup.toGL ((SpecialLinearGroup.map (Int.castRingHom ℝ))
       (ModularGroup.T ^ n))) (↑τ : ℂ) = 1 := by
     simp only [denom, Fin.isValue, SpecialLinearGroup.coe_GL_coe_matrix,
-      SpecialLinearGroup.map_apply_coe, coe_T_zpow, RingHom.mapMatrix_apply, Int.coe_castRingHom,
+      SpecialLinearGroup.map_apply_coe, coe_T_zpow, Int.coe_castRingHom,
       map_apply, of_apply, cons_val', cons_val_zero, cons_val_fin_one, cons_val_one, Int.cast_zero,
       Complex.ofReal_zero, zero_mul, Int.cast_one, Complex.ofReal_one, zero_add]
   rw [hdenom]; simp

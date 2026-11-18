@@ -54,7 +54,7 @@ private lemma eball_one_eq_ball {F : ℂ → ℂ} (hF : AnalyticOnNhd ℂ F (Met
     AnalyticOnNhd ℂ F (Metric.ball 0 1) :=
   hF.mono (fun _x hx => by
     simp only [Metric.mem_ball, dist_zero_right, Metric.mem_eball, edist_zero_right] at *
-    rw [enorm_eq_nnnorm, ENNReal.coe_lt_one_iff]; exact_mod_cast hx)
+    rw [eNorm_eq_nnNorm, ENNReal.coe_lt_one_iff]; exact_mod_cast hx)
 
 private lemma qExpFMS_ne_zero (hf : f ≠ 0) :
     UpperHalfPlane.qExpansionFormalMultilinearSeries 1 f ≠ 0 := by

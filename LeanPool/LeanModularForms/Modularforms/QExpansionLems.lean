@@ -55,7 +55,7 @@ theorem modform_tendto_ndhs_zero {k : ℤ} (n : ℕ) [ModularFormClass F Γ(n) k
   · apply Metric.ball_mem_nhds
     exact Real.zero_lt_one
   intro y hy hy0
-  apply Function.Periodic.cuspFunction_eq_of_nonzero
+  apply Function.Periodic.cuspFunction_eq_of_ne_zero
   simpa only [ne_eq, mem_compl_iff, mem_singleton_iff] using hy0
 
 theorem derivWithin_mul2 (f g : ℂ → ℂ) (s : Set ℂ) (hf : DifferentiableOn ℂ f s)
@@ -113,8 +113,7 @@ lemma iteratedDeriv_eq_iteratedDerivWithin (n : ℕ) (f : ℂ → ℂ) (s : Set 
   rw [← iteratedDerivWithin_univ]
   simp_rw [iteratedDerivWithin]
   rw [iteratedFDerivWithin_congr_set]
-  apply EventuallyEq.symm
-  exact eventuallyEqSet_univ.2 (IsOpen.mem_nhds hs hz)
+  exact (eventuallyEqSet_univ.2 (IsOpen.mem_nhds hs hz)).symm
 
 lemma qExpansion_mul_coeff (a b : ℤ) (f : ModularForm Γ(n) a) (g : ModularForm Γ(n) b)
     [hn : NeZero n] : qExpansion n (f.mul g) = qExpansion n f * qExpansion n g := by

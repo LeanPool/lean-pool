@@ -52,7 +52,7 @@ private lemma not_diffAt_at_two (s : ℝ) (hs0 : s ≠ 0) :
       HasDerivAt g_left ((1 - s) • (((Real.pi : ℝ) / 6) * I * I) + s • (iPoint - rho')) (2 : ℝ) :=
     (h_arc_left.const_smul (1 - s)).add (h_chord_left.const_smul s)
   have h_slope_left_iio := (hasDerivAt_iff_tendsto_slope.mp h_combined_left).mono_left
-    (nhdsWithin_mono (2 : ℝ) (fun y (hy : y < _) => ne_of_lt hy))
+    (nhdsWithin_mono (s := Iio (2 : ℝ)) 2 (fun y hy => ne_of_lt hy))
   have h_mem_left : Ioo 1 2 ∈ 𝓝[<] (2 : ℝ) := Ioo_mem_nhdsLT (by norm_num : (1 : ℝ) < 2)
   have h_left_val :
       Tendsto (slope (fun t' => fdBoundaryToPolygonHomotopy (t', s)) 2)
@@ -87,7 +87,7 @@ private lemma not_diffAt_at_two (s : ℝ) (hs0 : s ≠ 0) :
       HasDerivAt g_right ((1 - s) • (((Real.pi : ℝ) / 6) * I * I) + s • (rho - iPoint)) (2 : ℝ) :=
     (h_arc_right.const_smul (1 - s)).add (h_chord_right.const_smul s)
   have h_slope_right_ioi := (hasDerivAt_iff_tendsto_slope.mp h_combined_right).mono_left
-    (nhdsWithin_mono (2 : ℝ) (fun y (hy : _ < y) => ne_of_gt hy))
+    (nhdsWithin_mono (s := Ioi (2 : ℝ)) 2 (fun y hy => ne_of_gt hy))
   have h_mem_right : Ioo 2 3 ∈ 𝓝[>] (2 : ℝ) := Ioo_mem_nhdsGT (by norm_num : (2 : ℝ) < 3)
   have h_right_val :
       Tendsto (slope (fun t' => fdBoundaryToPolygonHomotopy (t', s)) 2)

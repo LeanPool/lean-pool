@@ -643,7 +643,7 @@ private lemma diagConj_scaling (a : Fin n → ℕ) (ha : ∀ i, 0 < a i)
     simp only [C, mul_assoc]; rw [mul_inv_cancel_left]
   have h_entry := congr_arg (fun (g : GL (Fin n) ℚ) => (↑g : Matrix _ _ ℚ) i j) h_mul
   simp only [Units.val_mul, diagMat_val _ _ ha, mapGL_coe_matrix, map_apply_coe,
-    RingHom.mapMatrix_apply, Int.coe_castRingHom, algebraMap_int_eq,
+    Int.coe_castRingHom, algebraMap_int_eq,
     Matrix.diagonal_mul, Matrix.mul_diagonal, Matrix.map_apply] at h_entry
   have h_dvd : (a i : ℤ) ∣ ∏ k, (a k : ℤ) := Finset.dvd_prod_of_mem _ (Finset.mem_univ i)
   refine ⟨(∏ k, (a k : ℤ)) / (a i : ℤ) * σ.val i j * (a j : ℤ), ?_⟩
@@ -685,7 +685,7 @@ private lemma diagSandwich_scaling (b : Fin n → ℕ) (hb : ∀ i, 0 < b i)
       have h_entry := congr_arg
         (fun (g : GL (Fin n) ℚ) => (↑g : Matrix (Fin n) (Fin n) ℚ) p q) h_Db
       simp only [Units.val_mul, diagMat_val _ _ hb, mapGL_coe_matrix, map_apply_coe,
-        RingHom.mapMatrix_apply, Int.coe_castRingHom, algebraMap_int_eq,
+        Int.coe_castRingHom, algebraMap_int_eq,
         Matrix.mul_diagonal, Matrix.diagonal_mul, Matrix.map_apply] at h_entry
       have hbq_ne : (b q : ℚ) ≠ 0 := Nat.cast_ne_zero.mpr (hb q).ne'
       field_simp at h_entry ⊢; linarith only [h_entry]
@@ -703,7 +703,7 @@ private lemma diagSandwich_scaling (b : Fin n → ℕ) (hb : ∀ i, 0 < b i)
   refine ⟨∑ p, ∑ q, (F.val i p) * (h_D_scale p q).choose * (E.val q j), ?_⟩
   push_cast; apply Finset.sum_congr rfl; intro p _; apply Finset.sum_congr rfl; intro q _
   have hDpq := (h_D_scale p q).choose_spec
-  simp only [F_GL, E_GL, mapGL_coe_matrix, map_apply_coe, RingHom.mapMatrix_apply,
+  simp only [F_GL, E_GL, mapGL_coe_matrix, map_apply_coe,
     Int.coe_castRingHom, algebraMap_int_eq, Matrix.map_apply]
   set z := (h_D_scale p q).choose
   have h1 : (∏ k, (b k : ℚ)) * ((↑(F.val i p) : ℚ) * (D_mat p q * (↑(E.val q j) : ℚ))) =
@@ -722,7 +722,7 @@ private lemma coprime_coupling_mem_H (a b : Fin n → ℕ)
   set C := (diagMat n a)⁻¹ * (σ : GL (Fin n) ℚ) * diagMat n a
   have h_det : (↑C : Matrix (Fin n) (Fin n) ℚ).det = 1 := by
     simp only [C, Units.val_mul, Matrix.det_mul, mapGL_coe_matrix, map_apply_coe,
-      RingHom.mapMatrix_apply, algebraMap_int_eq, Int.coe_castRingHom]
+      algebraMap_int_eq, Int.coe_castRingHom]
     rw [show (σ.val.map (Int.cast : ℤ → ℚ)).det = 1 from by
       rw [show σ.val.map (Int.cast : ℤ → ℚ) = (Int.castRingHom ℚ).mapMatrix σ.val from by
         ext i j; simp only [map_apply, RingHom.mapMatrix_apply, Int.coe_castRingHom],

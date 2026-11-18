@@ -93,7 +93,7 @@ private lemma upperTriGL_eq_diagMat_mul (a : Fin n → ℕ) (ha : ∀ i, 0 < a i
   apply Units.ext
   have hunip_val : (↑(mapGL ℚ (unipSL n a hdiv B)) : Matrix _ _ ℚ) =
       (unipSL n a hdiv B).val.map (Int.cast) := by
-    simp only [mapGL_coe_matrix, algebraMap_int_eq, map_apply_coe, RingHom.mapMatrix_apply,
+    simp only [mapGL_coe_matrix, algebraMap_int_eq, map_apply_coe,
       Int.coe_castRingHom]
   simp only [upperTriGL_val, Units.val_mul, hunip_val, diagMat_val n a ha]
   ext i j
@@ -136,7 +136,7 @@ private lemma relIndex_eq_comap_index (K : Subgroup (GL (Fin n) ℚ)) :
   have h_inj : Function.Injective f := by
     intro x y hxy; ext i j
     have h := congr_arg (fun g => (Units.val g) i j) hxy
-    simp only [f, mapGL_coe_matrix, map_apply_coe, RingHom.mapMatrix_apply,
+    simp only [f, mapGL_coe_matrix, map_apply_coe,
       Matrix.map_apply] at h; exact_mod_cast h
   have h_H_eq : H = Subgroup.map f ⊤ := by
     simp only [H, SLnZSubgroup]; exact MonoidHom.range_eq_map f
@@ -153,10 +153,10 @@ private lemma transpose_mul_diagMat (a : Fin n → ℕ) (ha : ∀ i, 0 < a i) (�
     diagMat n a * (σ.transpose : GL (Fin n) ℚ) =
     (ρ.transpose : GL (Fin n) ℚ) * diagMat n a := by
   apply Units.ext
-  simp only [Units.val_mul, mapGL_coe_matrix, map_apply_coe, RingHom.mapMatrix_apply,
+  simp only [Units.val_mul, mapGL_coe_matrix, map_apply_coe,
     diagMat_val n a ha, SpecialLinearGroup.coe_transpose, Matrix.transpose_map]
   have hM := congr_arg Units.val h
-  simp only [Units.val_mul, mapGL_coe_matrix, map_apply_coe, RingHom.mapMatrix_apply,
+  simp only [Units.val_mul, mapGL_coe_matrix, map_apply_coe,
     diagMat_val n a ha] at hM
   simpa [Matrix.transpose_mul, Matrix.diagonal_transpose] using congr_arg Matrix.transpose hM
 
@@ -366,10 +366,10 @@ private lemma conj_diagMat_mem_of_Gamma0 (a : Fin 2 → ℕ) (ha : ∀ i, 0 < a 
     simp only [← mul_assoc, inv_mul_cancel, one_mul] at h'; exact h'
   apply Units.ext
   have hτ_val : (↑(mapGL ℚ τ) : Matrix _ _ ℚ) = τ.val.map (Int.cast) := by
-    simp only [mapGL_coe_matrix, algebraMap_int_eq, map_apply_coe, RingHom.mapMatrix_apply,
+    simp only [mapGL_coe_matrix, algebraMap_int_eq, map_apply_coe,
       Int.coe_castRingHom]
   have hσ_val : (↑(mapGL ℚ σ) : Matrix _ _ ℚ) = σ.val.map (Int.cast) := by
-    simp only [mapGL_coe_matrix, algebraMap_int_eq, map_apply_coe, RingHom.mapMatrix_apply,
+    simp only [mapGL_coe_matrix, algebraMap_int_eq, map_apply_coe,
       Int.coe_castRingHom]
   simp only [Units.val_mul, hτ_val, hσ_val]
   ext i j
@@ -395,7 +395,7 @@ private lemma Gamma0_of_conj_diagMat_mem (a : Fin 2 → ℕ) (ha : ∀ i, 0 < a 
       (↑((σ : GL (Fin 2) ℚ) * diagMat 2 a) : Matrix (Fin 2) (Fin 2) ℚ) i j := by
       intro i j; rw [Units.ext_iff.mp h_mul]
     have := h10 1 0
-    simp only [Units.val_mul, mapGL_coe_matrix, map_apply_coe, RingHom.mapMatrix_apply,
+    simp only [Units.val_mul, mapGL_coe_matrix, map_apply_coe,
       diagMat_val 2 a ha, Matrix.diagonal_mul, Matrix.mul_diagonal,
       Matrix.map_apply] at this
     exact this
@@ -414,7 +414,7 @@ private lemma conjDiag_relIndex_eq_Gamma0_index
   have h_inj : Function.Injective f := by
     intro σ₁ σ₂ h; ext i j
     have heq := congr_arg (fun g => (Units.val g) i j) h
-    simp only [f, mapGL_coe_matrix, map_apply_coe, RingHom.mapMatrix_apply,
+    simp only [f, mapGL_coe_matrix, map_apply_coe,
       Matrix.map_apply] at heq; exact_mod_cast heq
   have h_H_eq : H = Subgroup.map f ⊤ := by simp only [H, f, MonoidHom.range_eq_map]
   have h_gamma0_iff : ∀ σ : SL(2, ℤ),

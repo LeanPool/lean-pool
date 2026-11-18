@@ -407,6 +407,7 @@ private lemma integrableOn_logDeriv_mul_deriv_farSet
   intro γ S₀ g K'
   have hK'_compact : IsCompact K' := by
     refine IsCompact.of_isClosed_subset isCompact_Icc ?_ (fun _ ⟨ht, _⟩ => ht)
+    simp only [K', Set.ofPred_and]
     apply IsClosed.inter isClosed_Icc
     have : IsClosed (⋂ (s : ℂ) (_ : s ∈ S₀), {t : ℝ | ε ≤ ‖γ t - s‖}) :=
       isClosed_iInter fun s => isClosed_iInter fun _ =>
@@ -445,7 +446,8 @@ private lemma integrableOn_logDeriv_mul_deriv_farSet
       (continuous_norm.comp_continuousOn h_cont)
     set M := ‖logDeriv g (γ t_max)‖ * max H 1
     refine IntegrableOn.of_bound
-      ((measure_mono (inter_subset_left (s := Icc 0 5))).trans_lt measure_Icc_lt_top)
+      ((measure_mono (show K' ⊆ Icc (0 : ℝ) 5 from fun _ ht => ht.1)).trans_lt
+        measure_Icc_lt_top)
       h_asm M ?_
     have h_compl_ae : ({(1 : ℝ), 3, 4} : Set ℝ)ᶜ ∈ ae (volume : Measure ℝ) := by
       rw [mem_ae_iff, compl_compl]
@@ -502,8 +504,9 @@ private lemma pvIntegrand_intervalIntegrable
     exact ite_eq_left h_near
   have h_int_K' := integrableOn_logDeriv_mul_deriv_farSet f S hH h_capture hε
   have hK_meas : MeasurableSet K := by
+    simp only [K, Set.ofPred_and]
     apply measurableSet_uIoc.inter
-    apply MeasurableSet.compl
+    apply MeasurableSet.compl (s := {t : ℝ | ∃ s ∈ (S₀ : Set ℂ), ‖γ t - s‖ ≤ ε})
     suffices h : IsClosed (⋃ s ∈ (S₀ : Set ℂ), {t : ℝ | ‖γ t - s‖ ≤ ε}) by
       change MeasurableSet ({t : ℝ | ∃ s ∈ (S₀ : Set ℂ), ‖γ t - s‖ ≤ ε} : Set ℝ)
       have hset : {t : ℝ | ∃ s ∈ (S₀ : Set ℂ), ‖γ t - s‖ ≤ ε} =
@@ -521,7 +524,7 @@ private lemma pvIntegrand_intervalIntegrable
     integrableOn_zero.congr_fun h_compl_zero.symm (measurableSet_uIoc.diff hK_meas)
   rw [intervalIntegrable_iff]
   have := h_int_K.union h_int_compl
-  rwa [union_sdiff_cancel (fun t ht => ht.1)] at this
+  rwa [union_sdiff_cancel (s := K) (fun t ht => ht.1)] at this
 
 omit hf in
 private theorem tendsto_pvIntegral_split

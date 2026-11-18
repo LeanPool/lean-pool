@@ -71,7 +71,7 @@ lemma SLnZ_subgroup_hasIntEntries {g : GL (Fin n) ℚ}
     (hg : g ∈ SLnZSubgroup n) : HasIntEntries n g := by
   obtain ⟨σ, rfl⟩ := hg
   exact ⟨σ.val, by simp only [mapGL_coe_matrix, algebraMap_int_eq, map_apply_coe,
-    RingHom.mapMatrix_apply, Int.coe_castRingHom]⟩
+    Int.coe_castRingHom]⟩
 
 /-- The identity matrix has integer entries. -/
 @[simp]
@@ -118,8 +118,8 @@ lemma SLnZ_le_posDetInt : (SLnZSubgroup n).toSubmonoid ≤ posDetIntSubmonoid n 
   intro g hg; rw [Subgroup.mem_toSubmonoid, MonoidHom.mem_range] at hg
   obtain ⟨A, rfl⟩ := hg
   exact ⟨⟨A.val, by simp only [mapGL_coe_matrix, algebraMap_int_eq, map_apply_coe,
-    RingHom.mapMatrix_apply, Int.coe_castRingHom]⟩,
-    by simp only [mapGL_coe_matrix, algebraMap_int_eq, map_apply_coe, RingHom.mapMatrix_apply,
+    Int.coe_castRingHom]⟩,
+    by simp only [mapGL_coe_matrix, algebraMap_int_eq, map_apply_coe,
       Int.coe_castRingHom, det_intMat_cast, A.prop, Int.cast_one, zero_lt_one]⟩
 
 /-! ### Helper lemmas for the commensurator proof (Shimura Lemma 3.10) -/
@@ -231,7 +231,7 @@ private lemma conj_ker_mem_SLnZ (g : GL (Fin n) ℚ) (A : Matrix (Fin n) (Fin n)
     change (g.val * (delta : GL (Fin n) ℚ).val : Matrix _ _ ℚ) =
         ((γ : GL (Fin n) ℚ).val * g.val : Matrix _ _ ℚ)
     simp only [mapGL_coe_matrix, algebraMap_int_eq,
-      map_apply_coe, RingHom.mapMatrix_apply, Int.coe_castRingHom] at *
+      map_apply_coe, Int.coe_castRingHom] at *
     rw [hA, intMat_map_mul, intMat_map_mul, h_int_eq])
   calc (delta : GL (Fin n) ℚ)
       = g⁻¹ * (g * (delta : GL (Fin n) ℚ)) := by rw [inv_mul_cancel_left]
@@ -298,7 +298,7 @@ private lemma conj_ker_mem_SLnZ_inv (g : GL (Fin n) ℚ) (A : Matrix (Fin n) (Fi
     change ((delta : GL (Fin n) ℚ).val * g.val : Matrix _ _ ℚ) =
         (g.val * (γ : GL (Fin n) ℚ).val : Matrix _ _ ℚ)
     simp only [mapGL_coe_matrix, algebraMap_int_eq,
-      map_apply_coe, RingHom.mapMatrix_apply, Int.coe_castRingHom] at *
+      map_apply_coe, Int.coe_castRingHom] at *
     rw [hA, intMat_map_mul, intMat_map_mul, h_int_eq])
   rw [SLnZSubgroup, MonoidHom.mem_range]
   exact ⟨delta, by rw [← h_unit_eq]; group⟩
