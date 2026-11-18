@@ -32,8 +32,9 @@ SOFTWARE.
 
 module
 
-public import Mathlib.Analysis.SpecialFunctions.Bernstein
 public import Mathlib.Analysis.InnerProductSpace.LinearPMap
+public import Mathlib.Tactic.Abel
+public import Mathlib.Tactic.LinearCombination
 
 /-! # The self-adjoint generator graph determined by an injective resolvent -/
 

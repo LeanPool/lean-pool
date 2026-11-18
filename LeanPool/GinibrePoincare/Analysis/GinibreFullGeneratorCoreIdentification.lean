@@ -33,7 +33,7 @@ SOFTWARE.
 module
 
 public import LeanPool.GinibrePoincare.Analysis.GinibreFullGeneratorSymmetry
-public import LeanPool.GinibrePoincare.Analysis.GinibreFullSemigroup
+public import LeanPool.GinibrePoincare.Analysis.GinibreFullGeneratorGraph
 
 /-! # The differential pregenerator belongs to the full operator graph -/
 

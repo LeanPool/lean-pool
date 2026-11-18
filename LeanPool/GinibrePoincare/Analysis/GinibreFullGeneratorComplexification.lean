@@ -388,31 +388,9 @@ theorem ginibreFullComplexResolvent_injective (n : ℕ) (hn : 0 < n) :
 
 /-- Dense range in the actual complex symmetric Ginibre Hilbert space. -/
 theorem ginibreFullComplexResolvent_denseRange (n : ℕ) (hn : 0 < n) :
-    DenseRange (ginibreFullComplexResolvent n hn) := by
-  let K := (ginibreFullComplexResolvent n hn).toLinearMap.range.topologicalClosure
-  let : CompleteSpace K := (Submodule.isClosed_topologicalClosure _).completeSpace_coe
-  have horth : Kᗮ = ⊥ := by
-    apply le_antisymm ?_ bot_le
-    intro a ha
-    change a = 0
-    have hRa : ginibreFullComplexResolvent n hn a = 0 := by
-      apply ext_inner_right ℂ
-      intro f
-      have hmem : ginibreFullComplexResolvent n hn f ∈ K :=
-        Submodule.le_topologicalClosure _ ⟨f, rfl⟩
-      have hzero := (Submodule.mem_orthogonal' K a).mp ha _ hmem
-      rw [ginibreFullComplexResolvent_symmetric]
-      simpa using hzero
-    exact (ginibreFullComplexResolvent_eq_zero_iff n hn a).mp hRa
-  have hK : K = ⊤ := Submodule.orthogonal_eq_bot_iff.mp horth
-  change Dense (Set.range (ginibreFullComplexResolvent n hn))
-  rw [dense_iff_closure_eq]
-  change closure ((ginibreFullComplexResolvent n hn).toLinearMap.range : Set (ginibreSymmetricL2
-    n)) = Set.univ
-  rw [← Submodule.topologicalClosure_coe]
-  change (K : Set (ginibreSymmetricL2 n)) = Set.univ
-  rw [hK]
-  rfl
+    DenseRange (ginibreFullComplexResolvent n hn) :=
+  denseRange_of_injective_symmetric _ (ginibreFullComplexResolvent_symmetric n hn)
+    (ginibreFullComplexResolvent_injective n hn)
 
 /-- The spectrum of the actual full symmetric resolvent lies in `[0,1]`. -/
 theorem ginibreFullComplexResolvent_spectrum (n : ℕ) (hn : 0 < n) :

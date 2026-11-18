@@ -7,6 +7,7 @@ Authors: Djalil Chafaï
 module
 
 public import LeanPool.GinibrePoincare.Analysis.GinibreFullGeneratorCoreIdentification
+public import LeanPool.GinibrePoincare.Analysis.GinibreFullSemigroup
 public import LeanPool.GinibrePoincare.Analysis.GinibreFullSemigroupConstants
 public import LeanPool.GinibrePoincare.Analysis.GinibreFullSemigroupDeficitConsequences
 public import LeanPool.GinibrePoincare.Analysis.GinibreMixedGreenIdentity

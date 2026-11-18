@@ -252,34 +252,20 @@ theorem ginibreFullSymmetricResolvent_injective (n : ℕ) (hn : 0 < n) :
     rw [map_sub, heq, sub_self]
   exact sub_eq_zero.mp ((ginibreFullSymmetricResolvent_eq_zero_iff n hn (f - h)).mp hz)
 
+/-- An injective symmetric endomorphism of a Hilbert space has dense range. -/
+theorem denseRange_of_injective_symmetric {𝕜 H : Type*} [RCLike 𝕜] [NormedAddCommGroup H]
+    [InnerProductSpace 𝕜 H] [CompleteSpace H] (R : H →L[𝕜] H)
+    (hSymm : R.toLinearMap.IsSymmetric) (hInj : Function.Injective R) : DenseRange R := by
+  change Dense (R.toLinearMap.range : Set H)
+  rw [Submodule.dense_iff_topologicalClosure_eq_top, Submodule.topologicalClosure_eq_top_iff,
+    hSymm.orthogonal_range, LinearMap.ker_eq_bot.mpr hInj]
+
 /-- Every symmetric L² observable is approximable by values of the full
 resolvent; consequently the concrete full form generator has dense domain. -/
 theorem ginibreFullSymmetricResolvent_denseRange (n : ℕ) (hn : 0 < n) :
-    DenseRange (ginibreFullSymmetricResolvent n hn) := by
-  let K := (ginibreFullSymmetricResolvent n hn).toLinearMap.range.topologicalClosure
-  let : CompleteSpace K := (Submodule.isClosed_topologicalClosure _).completeSpace_coe
-  have horth : Kᗮ = ⊥ := by
-    apply le_antisymm ?_ bot_le
-    intro a ha
-    change a = 0
-    have hRa : ginibreFullSymmetricResolvent n hn a = 0 := by
-      apply ext_inner_right ℝ
-      intro f
-      have hmem : ginibreFullSymmetricResolvent n hn f ∈ K :=
-        Submodule.le_topologicalClosure _ ⟨f, rfl⟩
-      have hzero := (Submodule.mem_orthogonal' K a).mp ha _ hmem
-      rw [ginibreFullSymmetricResolvent_symmetric]
-      simpa using hzero
-    exact (ginibreFullSymmetricResolvent_eq_zero_iff n hn a).mp hRa
-  have hK : K = ⊤ := Submodule.orthogonal_eq_bot_iff.mp horth
-  change Dense (Set.range (ginibreFullSymmetricResolvent n hn))
-  rw [dense_iff_closure_eq]
-  change closure ((ginibreFullSymmetricResolvent n hn).toLinearMap.range : Set
-    (ginibreFullSymmetricValues n)) = Set.univ
-  rw [← Submodule.topologicalClosure_coe]
-  change (K : Set (ginibreFullSymmetricValues n)) = Set.univ
-  rw [hK]
-  rfl
+    DenseRange (ginibreFullSymmetricResolvent n hn) :=
+  denseRange_of_injective_symmetric _ (ginibreFullSymmetricResolvent_symmetric n hn)
+    (ginibreFullSymmetricResolvent_injective n hn)
 
 end
 end GinibrePoincare

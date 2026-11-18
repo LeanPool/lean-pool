@@ -119,6 +119,56 @@ theorem ginibreFullCorePregenerator_ae {n : ℕ} (hn : 0 < n) (f : Configuration
   exact ((continuous_ginibrePregenerator_of_core hf).memLp_of_hasCompactSupport
     (hasCompactSupport_ginibrePregenerator hf.2.1)).coeFn_toLp
 
+private def coreCoordinateDivergence {n : ℕ} (f : Configuration n → ℝ) (k : Fin n × Fin 2)
+    (z : Configuration n) : ℝ :=
+  fderiv ℝ (fun y => ginibreLebesgueDensityReal n y *
+    fderiv ℝ f y (ginibreCoordinateDirection k)) z (ginibreCoordinateDirection k) /
+      ginibreLebesgueDensityReal n z
+
+private theorem weak_core_coordinate_integrals {n : ℕ} (hn : 0 < n)
+    (u : GinibreFullValueL2 n) (g : GinibreFullGradientL2 n)
+    (hu : IsGinibreDistributionalGradient n u g)
+    (f : Configuration n → ℝ) (hf : IsTheoremOneNineCore f) (k : Fin n × Fin 2) :
+    Integrable (fun z => g z k * fderiv ℝ f z (ginibreCoordinateDirection k)) (ginibreMeasure n) ∧
+    Integrable (fun z => u z * coreCoordinateDivergence f k z) (ginibreMeasure n) ∧
+    (∫ z, g z k * fderiv ℝ f z (ginibreCoordinateDirection k) ∂ginibreMeasure n) =
+      -(∫ z, u z * coreCoordinateDivergence f k z ∂ginibreMeasure n) := by
+  let := ginibreMeasure_isProbabilityMeasure hn
+  let θ : Configuration n → ℝ := fun z =>
+    ginibreLebesgueDensityReal n z * fderiv ℝ f z (ginibreCoordinateDirection k)
+  have hθ : ContDiff ℝ ∞ θ := contDiff_ginibreDirectionalFlux_core hf _
+  have hcθ : HasCompactSupport θ := hasCompactSupport_ginibreDirectionalFlux_core hf _
+  have hfs : tsupport f ⊆ {z | CollisionFree z} := fun z hz =>
+    (collisionFree_iff_not_mem_collisionSet z).mpr (hf.2.2.1 hz)
+  have hsθ : tsupport θ ⊆ {z | CollisionFree z} :=
+    (tsupport_mul_subset_right.trans (tsupport_fderiv_apply_subset ℝ _)).trans hfs
+  have hδ : MemLp (coreCoordinateDivergence f k) 2 (ginibreMeasure n) := by
+    change MemLp (fun z => fderiv ℝ θ z (ginibreCoordinateDirection k) /
+      ginibreLebesgueDensityReal n z) 2 (ginibreMeasure n)
+    have hc : HasCompactSupport (fun z => fderiv ℝ θ z (ginibreCoordinateDirection k)) :=
+      hcθ.fderiv_apply ℝ _
+    have hcont : Continuous (fun z => fderiv ℝ θ z (ginibreCoordinateDirection k)) :=
+      (hθ.continuous_fderiv (by simp)).clm_apply continuous_const
+    have hs := (tsupport_fderiv_apply_subset ℝ (ginibreCoordinateDirection k)).trans hsθ
+    have hdiv := collisionFree_test_div_density n hn _ hcont hc hs
+    exact hdiv.1.memLp_of_hasCompactSupport hdiv.2
+  have hdf : MemLp (fun z => fderiv ℝ f z (ginibreCoordinateDirection k)) 2 (ginibreMeasure n) := by
+    have hcont : Continuous (fun z => fderiv ℝ f z (ginibreCoordinateDirection k)) :=
+      (hf.1.continuous_fderiv (by simp)).clm_apply continuous_const
+    exact hcont.memLp_of_hasCompactSupport (hf.2.1.fderiv_apply ℝ _)
+  let projection : EuclideanSpace ℝ (Fin n × Fin 2) →L[ℝ] ℝ := PiLp.proj 2 (fun _ => ℝ) k
+  have hg : MemLp (fun z => g z k) 2 (ginibreMeasure n) := projection.comp_memLp g
+  refine ⟨hg.integrable_mul hdf, (Lp.memLp u).integrable_mul hδ, ?_⟩
+  have h := ginibreFull_distributional_density_pairing n hn u g hu k θ hθ hcθ hsθ
+  have he : (∫ z, g z k * (θ z / ginibreLebesgueDensityReal n z) ∂ginibreMeasure n) =
+      ∫ z, g z k * fderiv ℝ f z (ginibreCoordinateDirection k) ∂ginibreMeasure n := by
+    apply integral_congr_ae
+    filter_upwards [ginibreFull_core_flux_div_density_ae hn f (ginibreCoordinateDirection k)]
+      with z hz
+    rw [hz]
+  rw [he] at h
+  exact h
+
 /-- Exact integration by parts between every ordinary Ginibre weak pair and
 an actual collision-free smooth core observable, with normalization `1/n`. -/
 theorem ginibreFullGenerator_weak_core_green {n : ℕ} (hn : 0 < n)
@@ -128,51 +178,11 @@ theorem ginibreFullGenerator_weak_core_green {n : ℕ} (hn : 0 < n)
     (1 / (n : ℝ)) * inner ℝ g (ginibreFullCoreGradient hn f hf) =
       -inner ℝ u (ginibreFullCorePregenerator hn f hf) := by
   let := ginibreMeasure_isProbabilityMeasure hn
-  let θ (k : Fin n × Fin 2) : Configuration n → ℝ := fun z =>
-    ginibreLebesgueDensityReal n z * fderiv ℝ f z (ginibreCoordinateDirection k)
-  let δ (k : Fin n × Fin 2) : Configuration n → ℝ := fun z =>
-    fderiv ℝ (θ k) z (ginibreCoordinateDirection k) / ginibreLebesgueDensityReal n z
-  have hθ (k) : ContDiff ℝ ∞ (θ k) := contDiff_ginibreDirectionalFlux_core hf _
-  have hcθ (k) : HasCompactSupport (θ k) := hasCompactSupport_ginibreDirectionalFlux_core hf _
-  have hfs : tsupport f ⊆ {z | CollisionFree z} := fun z hz =>
-    (collisionFree_iff_not_mem_collisionSet z).mpr (hf.2.2.1 hz)
-  have hsθ (k) : tsupport (θ k) ⊆ {z | CollisionFree z} :=
-    (tsupport_mul_subset_right.trans (tsupport_fderiv_apply_subset ℝ _)).trans hfs
-  have hδ (k) : MemLp (δ k) 2 (ginibreMeasure n) := by
-    have hc : HasCompactSupport (fun z => fderiv ℝ (θ k) z (ginibreCoordinateDirection k)) :=
-      (hcθ k).fderiv_apply ℝ _
-    have hcont : Continuous (fun z => fderiv ℝ (θ k) z (ginibreCoordinateDirection k)) :=
-      ((hθ k).continuous_fderiv (by simp)).clm_apply continuous_const
-    have hs := (tsupport_fderiv_apply_subset ℝ (ginibreCoordinateDirection k)).trans (hsθ k)
-    have hdiv := collisionFree_test_div_density n hn _ hcont hc hs
-    exact hdiv.1.memLp_of_hasCompactSupport hdiv.2
-  have hdf (k) : MemLp (fun z => fderiv ℝ f z (ginibreCoordinateDirection k)) 2 (ginibreMeasure
-    n) := by
-    have hcont : Continuous (fun z => fderiv ℝ f z (ginibreCoordinateDirection k)) :=
-      (hf.1.continuous_fderiv (by simp)).clm_apply continuous_const
-    exact hcont.memLp_of_hasCompactSupport (hf.2.1.fderiv_apply ℝ _)
-  have hgk (k) : MemLp (fun z => g z k) 2 (ginibreMeasure n) := by
-    let P : EuclideanSpace ℝ (Fin n × Fin 2) →L[ℝ] ℝ := PiLp.proj 2 (fun _ => ℝ) k
-    exact P.comp_memLp g
-  have hInt (k) : Integrable (fun z => g z k * fderiv ℝ f z (ginibreCoordinateDirection k))
-      (ginibreMeasure n) := (hgk k).integrable_mul (hdf k)
-  have hIntδ (k) : Integrable (fun z => u z * δ k z) (ginibreMeasure n) :=
-    (Lp.memLp u).integrable_mul (hδ k)
-  have hpair (k) : (∫ z, g z k * fderiv ℝ f z (ginibreCoordinateDirection k) ∂ginibreMeasure n) =
-      -(∫ z, u z * δ k z ∂ginibreMeasure n) := by
-    have h := ginibreFull_distributional_density_pairing n hn u g hu k (θ k) (hθ k) (hcθ k) (hsθ k)
-    have he : (∫ z, g z k * (θ k z / ginibreLebesgueDensityReal n z) ∂ginibreMeasure n) =
-        ∫ z, g z k * fderiv ℝ f z (ginibreCoordinateDirection k) ∂ginibreMeasure n := by
-      apply integral_congr_ae
-      filter_upwards [ginibreFull_core_flux_div_density_ae hn f (ginibreCoordinateDirection k)]
-        with z hz
-      rw [hz]
-    rw [he] at h
-    exact h
+  have hcoordinate (k : Fin n × Fin 2) := weak_core_coordinate_integrals hn u g hu f hf k
   have hinner : inner ℝ g (ginibreFullCoreGradient hn f hf) =
       ∑ k : Fin n × Fin 2, ∫ z, g z k * fderiv ℝ f z (ginibreCoordinateDirection k)
         ∂ginibreMeasure n := by
-    rw [L2.inner_def, ← integral_finsetSum Finset.univ (fun k _ => hInt k)]
+    rw [L2.inner_def, ← integral_finsetSum Finset.univ (fun k _ => (hcoordinate k).1)]
     apply integral_congr_ae
     filter_upwards [ginibreFullCoreGradient_ae hn f hf] with z hz
     rw [hz, PiLp.inner_apply]
@@ -180,12 +190,11 @@ theorem ginibreFullGenerator_weak_core_green {n : ℕ} (hn : 0 < n)
     intro k hk
     rw [ginibreEuclideanGradient_coordinate]
     change fderiv ℝ f z (ginibreCoordinateDirection k) * g z k = _
-    ring
-  rw [hinner]
-  simp_rw [hpair]
-  rw [Finset.sum_neg_distrib, ← integral_finsetSum Finset.univ (fun k _ => hIntδ k)]
-  have hsum : (fun z => ∑ k : Fin n × Fin 2, u z * δ k z) =
-      fun z => u z * ∑ k : Fin n × Fin 2, δ k z := by
+    exact mul_comm _ _
+  rw [hinner, Finset.sum_congr rfl (fun k _ => (hcoordinate k).2.2)]
+  rw [Finset.sum_neg_distrib, ← integral_finsetSum Finset.univ (fun k _ => (hcoordinate k).2.1)]
+  have hsum : (fun z => ∑ k : Fin n × Fin 2, u z * coreCoordinateDivergence f k z) =
+      fun z => u z * ∑ k : Fin n × Fin 2, coreCoordinateDivergence f k z := by
     funext z
     exact (Finset.mul_sum _ _ _).symm
   rw [hsum]
@@ -195,12 +204,13 @@ theorem ginibreFullGenerator_weak_core_green {n : ℕ} (hn : 0 < n)
   apply integral_congr_ae
   filter_upwards [ginibreFull_core_divergence_ae hn f hf,
     ginibreFullCorePregenerator_ae hn f hf] with z hdiv hgen
-  change (1 / (n : ℝ)) * (u z * ∑ k : Fin n × Fin 2, δ k z) =
+  change (1 / (n : ℝ)) * (u z * ∑ k : Fin n × Fin 2, coreCoordinateDivergence f k z) =
     (ginibreFullCorePregenerator hn f hf) z * u z
   rw [hgen]
-  change (1 / (n : ℝ)) * (∑ k : Fin n × Fin 2, δ k z) = ginibrePregenerator n f z at hdiv
+  change (1 / (n : ℝ)) * (∑ k : Fin n × Fin 2, coreCoordinateDivergence f k z) =
+    ginibrePregenerator n f z at hdiv
   rw [mul_left_comm, hdiv]
-  ring
+  exact mul_comm _ _
 
 /-- Actual weighted real L² class of the core value. -/
 def ginibreFullCoreValue {n : ℕ} (hn : 0 < n) (f : Configuration n → ℝ)

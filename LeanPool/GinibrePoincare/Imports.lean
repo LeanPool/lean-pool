@@ -68,6 +68,7 @@ public import LeanPool.GinibrePoincare.Analysis.GinibreFullGeneratorCoreIdentifi
 public import LeanPool.GinibrePoincare.Analysis.GinibreFullGeneratorDbarTransform
 public import LeanPool.GinibrePoincare.Analysis.GinibreFullGeneratorDeficit
 public import LeanPool.GinibrePoincare.Analysis.GinibreFullGeneratorDensity
+public import LeanPool.GinibrePoincare.Analysis.GinibreFullGeneratorGraph
 public import LeanPool.GinibrePoincare.Analysis.GinibreFullGeneratorHermiteLowering
 public import LeanPool.GinibrePoincare.Analysis.GinibreFullGeneratorResolvent
 public import LeanPool.GinibrePoincare.Analysis.GinibreFullGeneratorSpectrum

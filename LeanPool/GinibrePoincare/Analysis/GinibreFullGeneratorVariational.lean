@@ -32,7 +32,7 @@ SOFTWARE.
 
 module
 
-public import LeanPool.GinibrePoincare.Analysis.GinibreFullSemigroup
+public import LeanPool.GinibrePoincare.Analysis.GinibreFullGeneratorGraph
 public import LeanPool.GinibrePoincare.Analysis.GinibreSymmetricWeakPoincare
 
 /-! # Variational characterization of the full Ginibre generator -/
