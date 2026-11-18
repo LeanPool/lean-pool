@@ -797,7 +797,7 @@ private theorem finite_of_bounded_union_with_uniform_volume
           hc.ne',
           not_false_eq_true, ENNReal.top_mul]
       _ ≤ ∑' n : ℕ, volume (f (e n : ι)) :=
-        ENNReal.tsum_le_tsum fun n => h_volume (e n) (e n).property
+        tsum_le_tsum fun n => h_volume (e n) (e n).property
   have h_subset :
       (⋃ n : ℕ, f (e n : ι)) ⊆ ⋃ x ∈ s, f x := by
     intro x hx
@@ -1246,7 +1246,7 @@ private theorem PeriodicSpherePacking.encard_lattice_inter_ball_le_volume_ball_a
       (fun hv => by
         have hp := euclidean_ball_volume_positive (0 : EuclideanSpace ℝ (Fin d)) (by norm_num :
           (0 : ℝ) < 1)
-        simp only [hv, Measure.coe_zero, Pi.zero_apply, lt_self_iff_false] at hp)
+        simp only [hv, FunLike.coe_zero, Pi.zero_apply, lt_self_iff_false] at hp)
   apply (ENNReal.le_div_iff_mul_le (Or.inl hnonzero) (Or.inl hfinite)).2
   calc
     (T.encard : ℝ≥0∞) * volume D =
@@ -2752,7 +2752,9 @@ private noncomputable def successorCoordinateHomeomorphism (α : Type*) [Topolog
   continuous_toFun := by
     simpa only [Nat.succ_eq_add_one, Fin.consEquiv, Equiv.toFun_as_coe,
       Equiv.coe_fn_mk] using! Continuous.finCons (by fun_prop) (by fun_prop)
-  continuous_invFun := by fun_prop
+  continuous_invFun := by
+    change Continuous (fun f : Fin n.succ → α => (f 0, Fin.tail f))
+    fun_prop
 
 private theorem coordinate_torus_projection_is_open_quotient (n : ℕ) : IsOpenQuotientMap
   (coordinateTorusProjection n) := by
@@ -5311,7 +5313,8 @@ private theorem LinearProgrammingBound' (hd : 0 < d) :
       let e := SchwartzMap.latticeCoordinateEquiv P.lattice
       have hcomp : e.toLinearMap * e.symm.toLinearMap = 1 := by
         ext x
-        simp only [End.mul_apply, LinearEquiv.coe_coe, LinearEquiv.apply_symm_apply, End.one_apply]
+        simp only [mul_apply_eq_comp, LinearEquiv.coe_coe, LinearEquiv.apply_symm_apply,
+          one_apply_eq_self]
       have hdetcomp := congrArg
         (LinearMap.det :
           ((EuclideanSpace ℝ (Fin d)) →ₗ[ℝ]
